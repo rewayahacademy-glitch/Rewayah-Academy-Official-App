@@ -6,7 +6,8 @@
 // permissions du profil (`PermissionsFinance`), jamais d'un role.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
+import 'package:flutter_riverpod/misc.dart'
+    show FutureProviderFamily, ProviderOrFamily;
 
 import '../../../core/capacites/port_beneficiaires_paiement.dart';
 import '../../../core/comptable/modeles_comptable.dart';
@@ -23,6 +24,7 @@ final FutureProvider<List<ProfilPaiementBeneficiaire>> beneficiairesProvider =
           .watch(portBeneficiairesPaiementProvider)
           .liste(FiltreBeneficiaires.tout),
       retry: (int retryCount, Object error) => null,
+      dependencies: <ProviderOrFamily>[portBeneficiairesPaiementProvider],
     );
 
 /// Le profil d'un beneficiaire.
@@ -32,6 +34,7 @@ profilBeneficiaireProvider =
       (Ref ref, String id) =>
           ref.watch(portBeneficiairesPaiementProvider).profil(id),
       retry: (int retryCount, Object error) => null,
+      dependencies: <ProviderOrFamily>[portBeneficiairesPaiementProvider],
     );
 
 /// Le journal d'un profil (CPT-BR-17).
@@ -41,6 +44,7 @@ journalBeneficiaireProvider =
       (Ref ref, String id) =>
           ref.watch(portBeneficiairesPaiementProvider).journal(id),
       retry: (int retryCount, Object error) => null,
+      dependencies: <ProviderOrFamily>[portBeneficiairesPaiementProvider],
     );
 
 /// Les filtres de la liste (`?filtre=`), chacun un ensemble d'etats du

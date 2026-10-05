@@ -8,7 +8,8 @@
 // aucun montant (FI6).
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
+import 'package:flutter_riverpod/misc.dart'
+    show FutureProviderFamily, ProviderOrFamily;
 
 import '../../../core/capacites/port_encaissements.dart';
 import '../../../core/comptable/modeles_comptable.dart';
@@ -102,6 +103,7 @@ final FutureProvider<List<Encaissement>> listeEncaissementsProvider =
       (Ref ref) =>
           ref.watch(portEncaissementsProvider).liste(FiltreEncaissements.tout),
       retry: (int _, Object _) => null,
+      dependencies: <ProviderOrFamily>[portEncaissementsProvider],
     );
 
 /// Le detail d'un encaissement.
@@ -109,6 +111,7 @@ final FutureProviderFamily<Encaissement, String> detailEncaissementProvider =
     FutureProvider.family<Encaissement, String>(
       (Ref ref, String id) => ref.watch(portEncaissementsProvider).detail(id),
       retry: (int _, Object _) => null,
+      dependencies: <ProviderOrFamily>[portEncaissementsProvider],
     );
 
 /// Le journal d'un encaissement ou d'un remboursement (§48, CPT-BR-17).
@@ -117,4 +120,5 @@ journalEncaissementProvider =
     FutureProvider.family<List<EntreeJournal>, String>(
       (Ref ref, String id) => ref.watch(portEncaissementsProvider).journal(id),
       retry: (int _, Object _) => null,
+      dependencies: <ProviderOrFamily>[portEncaissementsProvider],
     );

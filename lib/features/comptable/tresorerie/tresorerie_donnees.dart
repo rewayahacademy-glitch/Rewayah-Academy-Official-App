@@ -7,6 +7,7 @@
 // le bouton « Reessayer » des blocs (meme reglage que la Vue globale).
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 
 import '../../../core/capacites/port_politique_reserve.dart';
 import '../../../core/capacites/port_tresorerie.dart';
@@ -20,12 +21,14 @@ final syntheseTresorerieProvider =
     FutureProvider.autoDispose<SyntheseTresorerie>(
       (Ref ref) => ref.watch(portTresorerieProvider).resume(),
       retry: _sansRetentative,
+      dependencies: <ProviderOrFamily>[portTresorerieProvider],
     );
 
 /// Les sept coffres.
 final coffresTresorerieProvider = FutureProvider.autoDispose<List<SoldeCoffre>>(
   (Ref ref) => ref.watch(portTresorerieProvider).coffres(),
   retry: _sansRetentative,
+  dependencies: <ProviderOrFamily>[portTresorerieProvider],
 );
 
 /// L'historique des allocations, tout coffre confondu.
@@ -35,6 +38,7 @@ final historiqueTresorerieProvider =
           .watch(portTresorerieProvider)
           .historique(FiltreHistoriqueTresorerie.tout),
       retry: _sansRetentative,
+      dependencies: <ProviderOrFamily>[portTresorerieProvider],
     );
 
 /// La prevision datee.
@@ -42,6 +46,7 @@ final previsionTresorerieProvider =
     FutureProvider.autoDispose<List<LignePrevision>>(
       (Ref ref) => ref.watch(portTresorerieProvider).prevision(),
       retry: _sansRetentative,
+      dependencies: <ProviderOrFamily>[portTresorerieProvider],
     );
 
 /// Les mouvements permis et refuses par la politique, lus ensemble : l'ecran
@@ -52,19 +57,24 @@ final mouvementsTresorerieProvider =
       final (List<MouvementPermis> permis, List<MouvementBloque> bloques) =
           await (port.mouvementsPermis(), port.mouvementsBloques()).wait;
       return MouvementsCoffres.depuis(permis: permis, bloques: bloques);
-    }, retry: _sansRetentative);
+    },
+      retry: _sansRetentative,
+      dependencies: <ProviderOrFamily>[portTresorerieProvider],
+    );
 
 /// Les indicateurs de la Reserve strategique (lecture, CPT-BR-12).
 final indicateursReserveProvider =
     FutureProvider.autoDispose<IndicateursReserve>(
       (Ref ref) => ref.watch(portPolitiqueReserveProvider).indicateurs(),
       retry: _sansRetentative,
+      dependencies: <ProviderOrFamily>[portPolitiqueReserveProvider],
     );
 
 /// La politique en vigueur (lecture, CPT-BR-12).
 final politiqueReserveProvider = FutureProvider.autoDispose<PolitiqueReserve>(
   (Ref ref) => ref.watch(portPolitiqueReserveProvider).politique(),
   retry: _sansRetentative,
+  dependencies: <ProviderOrFamily>[portPolitiqueReserveProvider],
 );
 
 /// Relit tout ce que l'ecran affiche, apres un mouvement ou sur

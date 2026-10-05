@@ -73,7 +73,7 @@ Future<void> _comptable(
   double texte = 1,
   bool affiches = false,
   Locale? locale,
-  bool racine = true,
+  bool racine = false,
 }) async {
   final GoRouter routeur = GoRouter(
     routes: <RouteBase>[
@@ -90,9 +90,9 @@ Future<void> _comptable(
       mode: mode,
       texte: texte,
       locale: locale,
-      // Les memes surcharges a la racine, comme les tests de capture des
-      // voies : sans elles, Tresorerie affiche « en preparation » (voir
-      // l'ecart de la fiche, captures `ecart_route_demo_*`).
+      // Par defaut AUCUNE surcharge a la racine, comme l'app en
+      // preproduction (CPT-RC, M1) : seule la `ProviderScope` imbriquee de
+      // la coquille de demonstration pose les ports.
       surcharges: racine
           ? surchargesCoquilleComptableDemo(montantsAffiches: affiches)
           : const <Override>[],
@@ -154,21 +154,6 @@ void main() {
         lessThan(largeurSonde('FamilleInexistante') * 0.6),
       );
     });
-
-    for (final EcranDemoComptable e in <EcranDemoComptable>[
-      EcranDemoComptable.tresorerie,
-      EcranDemoComptable.alimenter,
-    ]) {
-      testWidgets('ecart : route demo sans surcharges racine, ${e.name}', (
-        WidgetTester tester,
-      ) async {
-        fixerVueCapture(tester, _mobile, 3, zoneSure: _zone);
-        await _comptable(tester, e, racine: false);
-        debugPrint(
-          'PNG ${await capturer(tester, 'ecart_route_demo_${e.name}_390x844@3_light_masques')}',
-        );
-      });
-    }
 
     const Set<EcranDemoComptable> monetaires = <EcranDemoComptable>{
       EcranDemoComptable.aujourdhui,

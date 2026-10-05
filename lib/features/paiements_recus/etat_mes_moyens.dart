@@ -3,6 +3,7 @@
 // CPT-BR-16).
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 
 import '../../core/capacites/port_mes_moyens_paiement.dart';
 import '../../core/comptable/modeles_comptable.dart';
@@ -18,6 +19,7 @@ final FutureProvider<EtatMesMoyensPaiement> mesMoyensPaiementProvider =
     FutureProvider<EtatMesMoyensPaiement>(
       (Ref ref) => ref.watch(portMesMoyensPaiementProvider).etat(),
       retry: (int retryCount, Object error) => null,
+      dependencies: <ProviderOrFamily>[portMesMoyensPaiementProvider],
     );
 
 /// Le journal de mes changements (CPT-BR-17).
@@ -25,6 +27,7 @@ final FutureProvider<List<EntreeJournal>> journalMesMoyensProvider =
     FutureProvider<List<EntreeJournal>>(
       (Ref ref) => ref.watch(portMesMoyensPaiementProvider).journal(),
       retry: (int retryCount, Object error) => null,
+      dependencies: <ProviderOrFamily>[portMesMoyensPaiementProvider],
     );
 
 /// Les etats qui appellent la notice « Informations de paiement a

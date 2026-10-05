@@ -3,7 +3,8 @@
 // montant (FI6).
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
+import 'package:flutter_riverpod/misc.dart'
+    show FutureProviderFamily, ProviderOrFamily;
 
 import '../../../../core/capacites/port_encaissements.dart';
 import '../../../../core/capacites/port_rapprochement.dart';
@@ -18,6 +19,7 @@ final FutureProvider<List<ElementRapprochement>> elementsRapprochementProvider =
           .watch(portRapprochementProvider)
           .aRapprocher(FiltreRapprochement.tout),
       retry: (int _, Object _) => null,
+      dependencies: <ProviderOrFamily>[portRapprochementProvider],
     );
 
 /// Les correspondances proposees par la source pour une transaction.
@@ -26,6 +28,7 @@ propositionRapprochementProvider =
     FutureProvider.family<PropositionRapprochement, String>(
       (Ref ref, String id) => ref.watch(portRapprochementProvider).proposer(id),
       retry: (int _, Object _) => null,
+      dependencies: <ProviderOrFamily>[portRapprochementProvider],
     );
 
 /// Le journal d'un element du rapprochement (§48, CPT-BR-17).
@@ -34,6 +37,7 @@ journalRapprochementProvider =
     FutureProvider.family<List<EntreeJournal>, String>(
       (Ref ref, String id) => ref.watch(portRapprochementProvider).journal(id),
       retry: (int _, Object _) => null,
+      dependencies: <ProviderOrFamily>[portRapprochementProvider],
     );
 
 /// Les remboursements et avoirs (§26, CPT-BR-15).
@@ -43,6 +47,7 @@ final FutureProvider<List<Remboursement>> remboursementsProvider =
           .watch(portEncaissementsProvider)
           .remboursements(FiltreRemboursements.tout),
       retry: (int _, Object _) => null,
+      dependencies: <ProviderOrFamily>[portEncaissementsProvider],
     );
 
 /// Le libelle d'une nature d'element (§25).

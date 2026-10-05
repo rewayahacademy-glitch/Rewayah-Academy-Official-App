@@ -8,7 +8,8 @@
 // devient un entier en unites mineures, sans `double` (FI6).
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
+import 'package:flutter_riverpod/misc.dart'
+    show FutureProviderFamily, ProviderOrFamily;
 
 import '../../../core/capacites/port_obligations_contractuels.dart';
 import '../../../core/comptable/modeles_comptable.dart';
@@ -67,6 +68,7 @@ obligationsContractuelsProvider =
           .watch(portObligationsContractuelsProvider)
           .liste(FiltreObligationsContractuels.tout),
       retry: (int retryCount, Object error) => null,
+      dependencies: <ProviderOrFamily>[portObligationsContractuelsProvider],
     );
 
 /// Ce dont part le formulaire, et si le compte peut creer (§34).
@@ -76,6 +78,7 @@ contexteCreationObligationProvider =
       (Ref ref) =>
           ref.watch(portObligationsContractuelsProvider).contexteCreation(),
       retry: (int retryCount, Object error) => null,
+      dependencies: <ProviderOrFamily>[portObligationsContractuelsProvider],
     );
 
 /// Le detail d'une obligation.
@@ -85,6 +88,7 @@ obligationContractuelProvider = FutureProvider.autoDispose
       (Ref ref, String id) =>
           ref.watch(portObligationsContractuelsProvider).detail(id),
       retry: (int retryCount, Object error) => null,
+      dependencies: <ProviderOrFamily>[portObligationsContractuelsProvider],
     );
 
 /// Le journal d'une obligation (CPT-BR-17).
@@ -94,6 +98,7 @@ journalObligationContractuelProvider = FutureProvider.autoDispose
       (Ref ref, String id) =>
           ref.watch(portObligationsContractuelsProvider).journal(id),
       retry: (int retryCount, Object error) => null,
+      dependencies: <ProviderOrFamily>[portObligationsContractuelsProvider],
     );
 
 /// Lit un montant saisi (« 350 », « 350,50 », « 1 250.5 ») en unites
