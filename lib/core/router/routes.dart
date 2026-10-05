@@ -347,6 +347,12 @@ abstract final class Routes {
   /// finiraient par diverger.
   static const String enseignantBienvenue = '/enseignant/bienvenue';
 
+  /// Le contrat a signer de nouveau (Q-2 = a, 05/10/2026) : un enseignant
+  /// actif qui a signe la version 2026-09 y est mene quand la politique de
+  /// controle est publiee (`resignatureContratEnseignantProvider`). Fermee
+  /// le reste du temps (`deciderRedirection`).
+  static const String enseignantContrat = '/enseignant/contrat';
+
   /// Racine des ecrans contextuels d'une seance.
   static const String enseignantSeance = '/enseignant/seance';
 

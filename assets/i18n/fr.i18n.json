@@ -682,6 +682,7 @@
     "pointCoordonnees": "Vous ne voyez jamais les coordonnées d'une famille : ni nom complet, ni courriel, ni téléphone.",
     "lireTexte": "Lire le texte complet",
     "accepter": "J'ai lu et j'accepte",
+    "resignature": "Le contrat a été mis à jour : la politique de contrôle des cours y est maintenant jointe. Signez cette nouvelle version pour continuer.",
     "accepteLe": "Accepté le {date}",
     "erreur": "La signature n'a pas abouti. Réessayez dans un instant.",
     "horsLigne": "Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.",

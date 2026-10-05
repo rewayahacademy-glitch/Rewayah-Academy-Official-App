@@ -828,6 +828,9 @@ class Traductions$contrat$fr {
 	/// fr: 'J'ai lu et j'accepte'
 	String get accepter => 'J\'ai lu et j\'accepte';
 
+	/// fr: 'Le contrat a été mis à jour : la politique de contrôle des cours y est maintenant jointe. Signez cette nouvelle version pour continuer.'
+	String get resignature => 'Le contrat a été mis à jour : la politique de contrôle des cours y est maintenant jointe. Signez cette nouvelle version pour continuer.';
+
 	/// fr: 'Accepté le {date}'
 	String accepteLe({required Object date}) => 'Accepté le ${date}';
 
@@ -16479,6 +16482,7 @@ extension on Traductions {
 			'contrat.pointCoordonnees' => 'Vous ne voyez jamais les coordonnées d\'une famille : ni nom complet, ni courriel, ni téléphone.',
 			'contrat.lireTexte' => 'Lire le texte complet',
 			'contrat.accepter' => 'J\'ai lu et j\'accepte',
+			'contrat.resignature' => 'Le contrat a été mis à jour : la politique de contrôle des cours y est maintenant jointe. Signez cette nouvelle version pour continuer.',
 			'contrat.accepteLe' => ({required Object date}) => 'Accepté le ${date}',
 			'contrat.erreur' => 'La signature n\'a pas abouti. Réessayez dans un instant.',
 			'contrat.horsLigne' => 'Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.',
@@ -16949,9 +16953,9 @@ extension on Traductions {
 			'eleveConnexion.saisie.champ' => 'Code',
 			'eleveConnexion.saisie.aide' => 'Chiffres de 2 à 9 et lettres, sans I ni O.',
 			'eleveConnexion.saisie.valider' => 'Connecter l\'appareil',
-			'eleveConnexion.saisie.scanner' => 'Scanner le QR code',
 			_ => null,
 		} ?? switch (path) {
+			'eleveConnexion.saisie.scanner' => 'Scanner le QR code',
 			'eleveConnexion.saisie.horsLigne' => 'Le code pourra être vérifié au retour du réseau.',
 			'eleveConnexion.lecteur.titre' => 'Scanner le QR code',
 			'eleveConnexion.lecteur.consigne' => 'Visez le QR code affiché sur l\'appareil du tuteur.',
@@ -17463,9 +17467,9 @@ extension on Traductions {
 			'admin.progression.promouvoirEnvoyer' => 'Enregistrer',
 			'admin.progression.promouvoirErreur' => ({required Object message}) => 'Le changement n\'a pas abouti : ${message}',
 			'admin.progression.champMotif' => 'Motif',
-			'admin.progression.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.progression.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
 			'admin.progression.journalisation' => 'Chaque exception posée, close, et chaque changement de niveau est inscrit au journal d\'audit.',
 			'admin.programmes.titre' => 'Programmes',
 			'admin.programmes.intro' => 'Le curriculum Rewayah, versionné : une version publiée ne peut plus être modifiée, toute évolution académique en crée une nouvelle.',
@@ -17977,9 +17981,9 @@ extension on Traductions {
 			'compte.profilEnfant' => ({required Object prenom}) => 'Profil de ${prenom}',
 			'compte.identifiantEnfant' => ({required Object identifiant}) => 'Identifiant : ${identifiant}',
 			'compte.roles.admin' => 'Administrateur',
-			'compte.roles.accountant' => 'Comptable',
 			_ => null,
 		} ?? switch (path) {
+			'compte.roles.accountant' => 'Comptable',
 			'compte.roles.controller' => 'Contrôleur',
 			'compte.roles.teacher' => 'Enseignant',
 			'compte.roles.guardian' => 'Tuteur',
@@ -18491,9 +18495,9 @@ extension on Traductions {
 			'classe.pageCatalogue.proposees' => 'Classes proposées',
 			'classe.pageCatalogue.indisponible' => 'Le choix de classe en ligne n\'est pas encore ouvert.',
 			'classe.pageCatalogue.aucune' => 'Aucune classe ne convient pour l\'instant',
-			'classe.pageCatalogue.aucuneDetail' => ({required Object prenom}) => 'Aucune classe ouverte ne correspond au profil de ${prenom} en ce moment.',
 			_ => null,
 		} ?? switch (path) {
+			'classe.pageCatalogue.aucuneDetail' => ({required Object prenom}) => 'Aucune classe ouverte ne correspond au profil de ${prenom} en ce moment.',
 			'classe.pageCatalogue.eleveInconnuTitre' => 'Ce profil n\'est pas dans votre foyer',
 			'classe.pageCatalogue.eleveInconnuPhrase' => 'Revenez à l\'accueil et choisissez le profil élève concerné.',
 			'classe.pageCatalogue.horairesAbsents' => 'Les jours et heures de cette classe ne sont pas encore affichés ici.',
@@ -19005,9 +19009,9 @@ extension on Traductions {
 			'controleur.historique.cleDate' => 'Date',
 			'controleur.historique.cleDuree' => 'Durée observée',
 			'controleur.historique.cleElevesPresents' => 'Présents',
-			'controleur.historique.cleReponse' => 'Réponse',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.historique.cleReponse' => 'Réponse',
 			'controleur.historique.sansComplement' => 'Aucun complément.',
 			'controleur.historique.faitsIndisponibles' => 'Le relevé automatique de cette visite (heures, élèves présents, reconnexions) n\'est pas encore reçu : la séance vient de se terminer ou la connexion a été coupée. Il s\'affichera ici dès sa réception. Le reste du rapport reste fiable.',
 			'controleur.historique.motif' => ({required Object motif}) => 'Motif : ${motif}',
@@ -19519,9 +19523,9 @@ extension on Traductions {
 			'tc.observation.disponibilite.fermee' => 'L\'observation des séances par les parents n\'est pas encore ouverte. Elle sera proposée ici dès son ouverture.',
 			'tc.observation.disponibilite.reseauTitre' => 'Vérification impossible',
 			'tc.observation.disponibilite.reseau' => 'La disponibilité de l\'observation n\'a pas pu être vérifiée. Aucune visite n\'a commencé.',
-			'tc.observation.disponibilite.capaciteTitre' => 'Observation indisponible',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.disponibilite.capaciteTitre' => 'Observation indisponible',
 			'tc.observation.disponibilite.capacite' => 'L\'observation n\'est pas disponible pour le moment.',
 			'tc.observation.connexion.titre' => 'Connexion et vérification',
 			'tc.observation.connexion.phrase' => 'Vos visites restantes sont vérifiées. La visite commence dès que l\'entrée est acceptée, connexion vidéo comprise.',

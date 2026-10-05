@@ -114,3 +114,23 @@ correction). Sa cible tactile (72 en guidée) déborde sans prendre de hauteur.
 Si le directeur veut zéro à 320, les seules voies restantes sont : cacher le
 lien sous cette largeur, ou ouvrir l'ADR-011 pour que la mention porte le lien
 dans son texte. **Décision du directeur.**
+
+## 7. Décisions du 05/10/2026 (JUR-LIEN-385-1)
+
+- **Q-3 = b (§6 tranché)** : le lien « En savoir plus » n'est pas affiché
+  sous **388** de large (`InformationControle.largeurMinimaleLien`). Mesures
+  (polices du dépôt) : à texte ×1 le lien tient sur la ligne de la mention à
+  partir de 388 dans la salle guidée ; à texte ×2 il fait passer en-tête +
+  commandes au-dessus de 30 % sous 375 (30,8 % à 360 × 779) ; à texte ×1,5,
+  31,3 % à 320 × 690 (27,8 % sans lien). Sous le seuil, la mention elle-même
+  ouvre la même lecture (cible débordante, qui ne prend jamais une touche au
+  chevron Retour). Reste, indépendant du lien : à 320 × 690 texte ×2,
+  30,1 % sans lien (208 pour 207) ; à 375 × 667 texte ×2, 31,2 %.
+- **Q-2 = a (§1, dernier paragraphe tranché)** : quand
+  `politiqueControlePubliee` passe à vrai, un enseignant qui a signé le
+  contrat `2026-09` (et pas `2026-10-jur`) est mené au contrat à sa
+  prochaine entrée (`/enseignant/contrat` s'il est actif, `/attente/contrat`
+  s'il est en attente), avec la phrase `t.contrat.resignature`
+  (`lib/core/dossier/resignature_contrat.dart`, lecture de ses
+  acceptations). Tant que l'interrupteur est faux, rien ne change. Le serveur
+  n'exige toujours pas la version (DB-ADM-03, BR-1).

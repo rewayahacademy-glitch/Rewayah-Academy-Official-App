@@ -111,6 +111,7 @@ import '../../features/tc_observation_ui/routes_tc_g.dart';
 import '../admin/admin_domaine.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
+import '../dossier/resignature_contrat.dart';
 import '../mouvement/transitions.dart';
 import '../session/session_controleur.dart';
 import '../session/session_state.dart';
@@ -151,6 +152,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
   });
   // --- fin du bloc DASH-EA-PROD ---------------------------------------------
 
+  // Q-2 = a : la nouvelle signature du contrat enseignant se lit apres la
+  // session (acceptations) ; le routeur se reveille quand elle change.
+  ref.listen<bool>(resignatureContratEnseignantProvider, (bool? _, bool _) {
+    rafraichisseur.declencher();
+  });
+
   // Lu une fois, a la construction du routeur : un role ne change pas sans
   // reconnexion, qui recree ce provider. `routesTcA` n'en a besoin que pour
   // distinguer l'affichage eleve/tuteur au sein de l'Espace Groupe -- la
@@ -173,6 +180,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         routeConnue: etat.error == null,
         cheminComplet: etat.uri.toString(),
         retour: etat.uri.queryParameters['retour'],
+        resignatureContrat: ref.read(resignatureContratEnseignantProvider),
       );
     },
     // Un chemin qu'aucune route ne sert : une page d'etat dans la charte, qui
@@ -845,6 +853,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.enseignantBienvenue,
         builder: (BuildContext _, GoRouterState _) =>
             const BienvenueEnseignantPage(),
+      ),
+      // Q-2 = a : la page du contrat, ouverte seulement quand l'enseignant
+      // doit signer la nouvelle version (`deciderRedirection`).
+      GoRoute(
+        path: Routes.enseignantContrat,
+        builder: (BuildContext _, GoRouterState _) => const ContratPage(),
       ),
       GoRoute(
         path: '${Routes.enseignantSeance}/:seanceId/cahier',
