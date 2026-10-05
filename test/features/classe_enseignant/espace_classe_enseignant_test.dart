@@ -287,8 +287,19 @@ void main() {
         findsNWidgets(3),
       );
       expect(find.byType(AvatarTile), findsNWidgets(4));
-      // Jamais de photo, ni d'eleve ni d'enseignante.
-      expect(find.byType(Image), findsNothing);
+      // Jamais de photo, ni d'eleve ni d'enseignante. Le drapeau du pays de
+      // l'enseignante (ENS-DRAPEAU-1) est une image decorative, pas une photo.
+      expect(
+        find.byWidgetPredicate(
+          (Widget w) =>
+              w is Image &&
+              !(w.image is AssetImage &&
+                  (w.image as AssetImage).assetName.startsWith(
+                    'assets/flags/',
+                  )),
+        ),
+        findsNothing,
+      );
       expect(find.byType(PhotoEnseignant), findsNothing);
       // Le lien vers la revue du groupe est garde, au bord de fin, sous la
       // carte.
