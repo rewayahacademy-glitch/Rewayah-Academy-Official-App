@@ -120,6 +120,11 @@ class _FilContextuelState extends State<FilContextuel>
   /// La hauteur du clavier logiciel au dernier releve, en points logiques.
   double _clavier = 0;
 
+  /// La liste des messages du fil, donnee a `FilDiscussion` (R-COM-15 :
+  /// la lecture suit le clavier). Elle porte aussi l'en-tete du fil et,
+  /// a texte agrandi, la tete de la page (R-02) : c'est la meme position.
+  final ScrollController _defilement = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -135,6 +140,7 @@ class _FilContextuelState extends State<FilContextuel>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _defilement.dispose();
     super.dispose();
   }
 
@@ -155,10 +161,9 @@ class _FilContextuelState extends State<FilContextuel>
     _clavier = nouveau;
     if (ecart == 0) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final ScrollPosition? position = _defilementDesMessages()?.position;
-      if (!mounted || position == null || !position.hasContentDimensions) {
-        return;
-      }
+      if (!mounted || !_defilement.hasClients) return;
+      final ScrollPosition position = _defilement.position;
+      if (!position.hasContentDimensions) return;
       position.jumpTo(
         (position.pixels + ecart).clamp(
           position.minScrollExtent,
@@ -166,23 +171,6 @@ class _FilContextuelState extends State<FilContextuel>
         ),
       );
     });
-  }
-
-  /// La premiere zone defilante du fil : la liste des messages (l'en-tete
-  /// ne defile pas, le champ vient apres elle).
-  ScrollableState? _defilementDesMessages() {
-    ScrollableState? trouve;
-    void visiter(Element e) {
-      if (trouve != null) return;
-      if (e is StatefulElement && e.state is ScrollableState) {
-        trouve = e.state as ScrollableState;
-        return;
-      }
-      e.visitChildren(visiter);
-    }
-
-    (context as Element).visitChildren(visiter);
-    return trouve;
   }
 
   Future<void> _envoyer(String idLocal, String texte) async {
@@ -225,6 +213,7 @@ class _FilContextuelState extends State<FilContextuel>
     if (!widget.ecritureOuverte || !fil.peut(CapaciteFil.ecrire)) {
       // Lecture seule : le meme fil, sans champ ; la phrase dit la limite.
       return FilDiscussion(
+        defilement: _defilement,
         key: ValueKey<String>('fil-metier-lecture-${fil.id}'),
         entete: entete,
         messages: connus,
@@ -236,6 +225,7 @@ class _FilContextuelState extends State<FilContextuel>
     final Future<void> Function(EnregistrementVocal, String)? vocal =
         widget.onEnvoyerVocal;
     return FilDiscussion(
+      defilement: _defilement,
       key: ValueKey<String>('fil-metier-${fil.id}'),
       entete: entete,
       messages: <MessageFil>[

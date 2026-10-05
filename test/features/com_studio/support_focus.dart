@@ -85,6 +85,9 @@ Future<void> entrer(WidgetTester tester) async {
     await tester.pumpAndSettle();
   }
   await tester.ensureVisible(entrerFocus);
+  // COM-RC tour 2 (R-02) : a texte agrandi, la tete de la page defile aussi
+  // avec le fil ; la liste se repose avant le toucher.
+  await tester.pumpAndSettle();
   await tester.tap(entrerFocus);
   await tester.pumpAndSettle();
 }

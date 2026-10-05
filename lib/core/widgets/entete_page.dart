@@ -51,52 +51,121 @@ class EntetePage extends StatelessWidget {
   /// Les actions a droite du titre.
   final List<Widget> actions;
 
+  /// La largeur sous laquelle une action d'en-tete ne descend pas (cible
+  /// tactile) : c'est elle que l'en-tete retire de sa rangee pour savoir la
+  /// place qui reste au titre.
+  static const double _largeurAction = AppTouchTarget.standard;
+
+  /// Echelle de texte au-dela de laquelle le texte est dit agrandi.
+  static const double _echelleAgrandie = 1.3;
+
+  /// Vrai quand le titre (ou le sous-titre) ne tient pas a cote du retour et
+  /// des actions (COM-RC tour 2, R-05 et R-09) : un de ses mots serait coupe
+  /// meme reduit a l'echelle minimale lisible, ou, a texte agrandi, il
+  /// devrait etre reduit pour tenir. Le titre passe alors sous la rangee du
+  /// retour et des actions, sur toute la largeur : il garde la taille du
+  /// texte agrandi autant que la largeur le permet, et ne se coupe jamais
+  /// dans un mot (« Aujourd'hu / i », « communication / s » a 320 et texte
+  /// x2).
+  bool _empile(
+    BuildContext context,
+    double largeur,
+    TextStyle styleTitre,
+    TextStyle styleSousTitre,
+  ) {
+    if (!largeur.isFinite) return false;
+    final double reserve =
+        (onRetour == null ? 0 : AppTouchTarget.standard + AppSpacing.md) +
+        actions.length * (_largeurAction + AppSpacing.xs);
+    if (reserve == 0) return false;
+    final double colonne = largeur - reserve;
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    const TextScaler minimale = TextScaler.linear(echelleMinimaleLisible);
+    if (largeurMotLePlusLong(context, titre, styleTitre, minimale) > colonne) {
+      return true;
+    }
+    if (echelle.scale(1) <= _echelleAgrandie) return false;
+    if (largeurMotLePlusLong(context, titre, styleTitre, echelle) > colonne) {
+      return true;
+    }
+    final String? sous = sousTitre;
+    return sous != null &&
+        largeurMotLePlusLong(context, sous, styleSousTitre, echelle) > colonne;
+  }
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final bool mobile = AppGabarit.de(context) == Gabarit.mobile;
-    final TextStyle styleTitre =
-        (mobile ? textes.headlineSmall : textes.headlineMedium) ??
-        const TextStyle();
+    final TextStyle styleTitre = palette.inkStrong.applyTo(
+      (mobile ? textes.headlineSmall : textes.headlineMedium) ??
+          const TextStyle(),
+    );
+    final TextStyle styleSousTitre = palette.inkMuted.applyTo(
+      textes.bodyLarge ?? const TextStyle(),
+    );
 
-    return Row(
+    final Widget colonneTitre = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        if (onRetour != null) ...<Widget>[
-          DisqueRetour(onPress: onRetour!),
-          Ecart.hMd,
-        ],
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              titreFocalisable(
-                focusTitre,
-                // COUPE-MOTS-1 : entre les mots, jamais dans un mot
-                // (« Centre de com / mande », « Cahier de trans / mission »).
-                Semantics(
-                  header: true,
-                  child: TexteSansCoupure(
-                    titre,
-                    style: palette.inkStrong.applyTo(styleTitre),
-                  ),
-                ),
-              ),
-              if (sousTitre != null) ...<Widget>[
-                Ecart.vXs,
-                TexteSansCoupure(
-                  sousTitre!,
-                  style: palette.inkMuted.applyTo(
-                    textes.bodyLarge ?? const TextStyle(),
-                  ),
-                ),
-              ],
-            ],
+        titreFocalisable(
+          focusTitre,
+          // COUPE-MOTS-1 : entre les mots, jamais dans un mot
+          // (« Centre de com / mande », « Cahier de trans / mission »).
+          Semantics(
+            header: true,
+            child: TexteSansCoupure(titre, style: styleTitre),
           ),
         ),
-        for (final Widget action in actions) ...<Widget>[Ecart.hXs, action],
+        if (sousTitre != null) ...<Widget>[
+          Ecart.vXs,
+          TexteSansCoupure(sousTitre!, style: styleSousTitre),
+        ],
       ],
+    );
+
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) {
+        if (_empile(
+          context,
+          contraintes.maxWidth,
+          styleTitre,
+          styleSousTitre,
+        )) {
+          // Le retour et les actions d'abord, aux deux bouts de leur
+          // rangee ; le titre dessous, sur toute la largeur.
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  if (onRetour != null) DisqueRetour(onPress: onRetour!),
+                  const Spacer(),
+                  for (final Widget action in actions) ...<Widget>[
+                    Ecart.hXs,
+                    action,
+                  ],
+                ],
+              ),
+              Ecart.vMd,
+              colonneTitre,
+            ],
+          );
+        }
+        return Row(
+          children: <Widget>[
+            if (onRetour != null) ...<Widget>[
+              DisqueRetour(onPress: onRetour!),
+              Ecart.hMd,
+            ],
+            Expanded(child: colonneTitre),
+            for (final Widget action in actions) ...<Widget>[Ecart.hXs, action],
+          ],
+        );
+      },
     );
   }
 }

@@ -92,8 +92,9 @@ TextesFilDiscussion textesCanal(ResumeCanal canal) {
 /// L'en-tete d'un canal : son nom, son statut s'il est restreint ou prive,
 /// sa section et son nombre de membres.
 ///
-/// Volontairement court (deux lignes) : il ne defile pas, et le fil doit
-/// garder sa place au-dessus du champ, meme a 390 avec un texte double. La
+/// Volontairement court (deux lignes) : en taille normale il reste fixe
+/// au-dessus du fil, qui doit garder sa place au-dessus du champ ; a texte
+/// agrandi ou sur une vue basse, il defile avec les messages (R-02). La
 /// description du canal est dans son panneau (« A propos ») ; ses non-lus
 /// sont dans la liste, et tombent quand il s'ouvre.
 ///
@@ -228,12 +229,18 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
   /// La hauteur du clavier logiciel au dernier releve, en points logiques.
   double _clavier = 0;
 
+  /// La liste des messages du canal, donnee a `FilDiscussion` : la lecture
+  /// suit le clavier (R-COM-15) et le Focus garde sa position. Elle porte
+  /// aussi l'en-tete du canal et, a texte agrandi, la tete de la page
+  /// (R-02) : c'est la meme position.
+  final ScrollController _defilement = ScrollController();
+
   /// Le Focus du Studio qui entoure le canal ; nul hors d'un Studio.
   EtatFocusStudio? _focus;
 
   /// La position de lecture du fil, gardee pendant le Focus.
   late final SourceDefilement _sourceDefilement = SourceDefilement(
-    () => _defilementDesMessages()?.position,
+    () => _defilement.hasClients ? _defilement.position : null,
   );
 
   /// Le controleur du champ du fil, tenu par le canal (R-22) : le fil
@@ -273,6 +280,7 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
   void dispose() {
     _retirerSources();
     WidgetsBinding.instance.removeObserver(this);
+    _defilement.dispose();
     _champ.dispose();
     super.dispose();
   }
@@ -304,10 +312,9 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
     _clavier = nouveau;
     if (ecart == 0) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final ScrollPosition? position = _defilementDesMessages()?.position;
-      if (!mounted || position == null || !position.hasContentDimensions) {
-        return;
-      }
+      if (!mounted || !_defilement.hasClients) return;
+      final ScrollPosition position = _defilement.position;
+      if (!position.hasContentDimensions) return;
       position.jumpTo(
         (position.pixels + ecart).clamp(
           position.minScrollExtent,
@@ -315,24 +322,6 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
         ),
       );
     });
-  }
-
-  /// La premiere zone defilante du canal : la liste des messages (l'en-tete
-  /// ne defile pas, le champ vient apres elle).
-  ScrollableState? _defilementDesMessages() {
-    if (!mounted) return null;
-    ScrollableState? trouve;
-    void visiter(Element e) {
-      if (trouve != null) return;
-      if (e is StatefulElement && e.state is ScrollableState) {
-        trouve = e.state as ScrollableState;
-        return;
-      }
-      e.visitChildren(visiter);
-    }
-
-    (context as Element).visitChildren(visiter);
-    return trouve;
   }
 
   Future<void> _envoyer(String idLocal, String texte) async {
@@ -391,6 +380,7 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
     if (!canal.peut(CapaciteCanal.ecrire)) {
       // Lecture seule : le meme fil, sans champ ; la phrase dit la limite.
       return FilDiscussion(
+        defilement: _defilement,
         key: ValueKey<String>('studio-fil-lecture-${canal.id}'),
         entete: _entete(canal, focus: focus),
         messages: connus,
@@ -416,6 +406,7 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
     // session, spec section 8.2) et remis a la reouverture du canal
     // (COM-STU-2, R-22).
     return FilDiscussion(
+      defilement: _defilement,
       key: ValueKey<String>('studio-fil-${canal.id}'),
       entete: _entete(canal, focus: focus),
       controleur: _champ,

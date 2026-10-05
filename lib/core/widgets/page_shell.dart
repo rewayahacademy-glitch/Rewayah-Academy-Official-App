@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import '../accessibilite/texte_sans_coupure.dart';
 import '../theme/app_elevation.dart';
@@ -39,6 +40,12 @@ const double _hauteurTeteFixe = 360;
 /// les premiers viennent de `Skeleton` et d'`EmptyState`, la seconde de
 /// `NavShell`. Un gabarit qui saurait tout finirait par etre la seule chose que
 /// personne n'ose modifier.
+///
+/// **Tete confiee** (COM-RC tour 2, R-02) : quand la tete doit defiler
+/// (texte agrandi sur telephone, vue tres basse) et que le corps, non
+/// defilant, contient une liste qui la prend ([TetePageConfiee], un fil de
+/// discussion), la tete defile avec cette liste : le premier ecran garde le
+/// champ du fil au lieu d'une tete qui repousse le corps sous le pli.
 ///
 /// **Zone sure** : le corps est en `SafeArea`, et c'est la coquille qui retire
 /// de son `MediaQuery` l'encart deja consomme par sa barre ou sa colonne
@@ -326,6 +333,36 @@ class _Bascule extends StatefulWidget {
 class _BasculeState extends State<_Bascule> {
   final GlobalKey _cleTete = GlobalKey(debugLabel: 'PageShell.tete');
   final GlobalKey _cleCorps = GlobalKey(debugLabel: 'PageShell.corps');
+  final RelaisTetePage _relais = RelaisTetePage._();
+  bool _reconstructionPrevue = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _relais._auChangement = _auChangementDePreneur;
+  }
+
+  @override
+  void dispose() {
+    // Un preneur peut se retirer apres cette page (meme demontage) : le
+    // relais ne rappelle plus personne.
+    _relais._auChangement = null;
+    super.dispose();
+  }
+
+  /// Un preneur arrive ou part pendant une construction : la bascule se
+  /// reconstruit a l'image suivante, jamais pendant la construction en
+  /// cours.
+  void _auChangementDePreneur() {
+    if (_reconstructionPrevue) return;
+    _reconstructionPrevue = true;
+    SchedulerBinding.instance
+      ..addPostFrameCallback((_) {
+        _reconstructionPrevue = false;
+        if (mounted) setState(() {});
+      })
+      ..ensureVisualUpdate();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -340,40 +377,127 @@ class _BasculeState extends State<_Bascule> {
         children: widget.tete,
       ),
     );
-    final Widget corps = KeyedSubtree(key: _cleCorps, child: widget.corps);
+    Widget corps({required bool confiee}) => KeyedSubtree(
+      key: _cleCorps,
+      child: TetePageConfiee._(
+        relais: _relais,
+        tete: confiee ? tete : null,
+        child: widget.corps,
+      ),
+    );
 
     return LayoutBuilder(
-      builder: (BuildContext _, BoxConstraints contraintes) =>
-          widget.teteDefilante(contraintes.maxHeight)
-          ? SingleChildScrollView(
-              // Un corps non defilant (liste paresseuse) garde le defileur
-              // principal de la page dans les deux branches : sur mobile, sa
-              // liste reste attachee au meme controleur et garde sa position.
-              primary: widget.defilante ? null : false,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  tete,
-                  if (widget.defilante)
-                    corps
-                  else
-                    SizedBox(height: contraintes.maxHeight, child: corps),
-                ],
-              ),
-            )
-          : Column(
+      builder: (BuildContext _, BoxConstraints contraintes) {
+        final bool teteDefilante = widget.teteDefilante(contraintes.maxHeight);
+        // COM-RC tour 2 (R-02) : un corps non defilant dont la liste a pris
+        // la tete (un fil de discussion) la fait defiler avec ses messages.
+        // Le premier ecran montre alors la fin du fil et son champ, au lieu
+        // d'une tete qui occupait la hauteur et repoussait le champ sous le
+        // pli (canal du Studio, Messages de l'administration, a 320 et texte
+        // x2).
+        if (teteDefilante && !widget.defilante && _relais.pris) {
+          return corps(confiee: true);
+        }
+        return _disposition(
+          teteDefilante: teteDefilante,
+          hauteur: contraintes.maxHeight,
+          tete: tete,
+          corps: corps(confiee: false),
+        );
+      },
+    );
+  }
+
+  Widget _disposition({
+    required bool teteDefilante,
+    required double hauteur,
+    required Widget tete,
+    required Widget corps,
+  }) {
+    return teteDefilante
+        ? SingleChildScrollView(
+            // Un corps non defilant (liste paresseuse) garde le defileur
+            // principal de la page dans les deux branches : sur mobile, sa
+            // liste reste attachee au meme controleur et garde sa position.
+            primary: widget.defilante ? null : false,
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 tete,
-                Expanded(
-                  child: widget.defilante
-                      ? SingleChildScrollView(child: corps)
-                      : corps,
-                ),
+                if (widget.defilante)
+                  corps
+                else
+                  SizedBox(height: hauteur, child: corps),
               ],
             ),
-    );
+          )
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              tete,
+              Expanded(
+                child: widget.defilante
+                    ? SingleChildScrollView(child: corps)
+                    : corps,
+              ),
+            ],
+          );
   }
+}
+
+/// Le relais entre [PageShell] et la liste qui peut prendre sa tete (COM-RC
+/// tour 2, R-02) : un preneur s'y declare, la page le sait a l'image
+/// suivante.
+class RelaisTetePage {
+  RelaisTetePage._();
+
+  final Set<Object> _preneurs = <Object>{};
+  VoidCallback? _auChangement;
+
+  /// Vrai quand au moins une liste a pris la tete.
+  bool get pris => _preneurs.isNotEmpty;
+
+  /// [preneur] (l'etat d'un fil) sait faire defiler la tete de la page avec
+  /// sa liste.
+  void prendre(Object preneur) {
+    if (_preneurs.add(preneur)) _auChangement?.call();
+  }
+
+  /// [preneur] ne prend plus la tete (demontage, autre page).
+  void rendre(Object preneur) {
+    if (_preneurs.remove(preneur)) _auChangement?.call();
+  }
+}
+
+/// Ce que [PageShell] confie au corps d'une page **non defilante** : la tete
+/// de la page, quand elle doit defiler (texte agrandi sur telephone, vue
+/// tres basse) et qu'une liste du corps l'a prise (COM-RC tour 2, R-02).
+///
+/// Un fil de discussion ([FilDiscussion]) se declare preneur par [relais] ;
+/// la page lui confie alors sa tete ([tete] non nul), qu'il pose en premier
+/// element de sa liste. Sans preneur (chargement, erreur, liste des fils),
+/// la tete reste a sa place et defile au-dessus du corps, comme avant.
+class TetePageConfiee extends InheritedWidget {
+  const TetePageConfiee._({
+    required this.relais,
+    required this.tete,
+    required super.child,
+  });
+
+  /// Le relais ou se declarer preneur.
+  final RelaisTetePage relais;
+
+  /// La tete confiee, ou nul : la page la rend elle-meme.
+  final Widget? tete;
+
+  /// La tete confiee au-dessus de [context], ou nul hors d'une page non
+  /// defilante.
+  static TetePageConfiee? de(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<TetePageConfiee>();
+
+  @override
+  bool updateShouldNotify(TetePageConfiee ancien) =>
+      relais != ancien.relais || tete != ancien.tete;
 }
 
 /// La colonne de contenu : gouttiere du gabarit, largeur bornee, centree.

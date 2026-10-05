@@ -193,7 +193,7 @@ class CartePieceJointe extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Text(
+                    _NomFichier(
                       piece.nom,
                       style: palette.surfaceRaised.applyTo(
                         textes.titleSmall ?? const TextStyle(),
@@ -272,6 +272,109 @@ class CartePieceJointe extends StatelessWidget {
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+/// Le nom d'un fichier sur une ligne, jamais coupe au milieu d'un mot
+/// (COM-RC tour 2, R-11 : « Devoir_semaine_3.pd / f » a 768).
+///
+/// Un nom de fichier n'a souvent aucune espace : le moteur de texte le
+/// couperait n'importe ou. Quand il ne tient pas sur une ligne, son milieu
+/// s'efface (« Devoir_se…e_3.pdf ») : le debut et l'extension restent
+/// visibles. Le nom complet reste celui que lit le lecteur d'ecran.
+class _NomFichier extends StatelessWidget {
+  /// Cree le nom.
+  const _NomFichier(this.nom, {this.style});
+
+  /// Le nom complet du fichier.
+  final String nom;
+
+  /// Son style.
+  final TextStyle? style;
+
+  /// La marque de l'effacement.
+  static const String ellipse = '\u2026';
+
+  /// Le nombre de caracteres gardes avant l'extension, quand il y en a.
+  static const int _finGardee = 3;
+
+  /// [nom] raccourci par le milieu pour tenir dans [largeur], ou [nom] s'il
+  /// tient.
+  static String raccourci({
+    required String nom,
+    required double largeur,
+    required TextStyle style,
+    required TextDirection sens,
+    required TextScaler echelle,
+  }) {
+    bool tient(String texte) {
+      final TextPainter p = TextPainter(
+        text: TextSpan(text: texte, style: style),
+        textDirection: sens,
+        textScaler: echelle,
+        maxLines: 1,
+      )..layout();
+      final bool ok = p.width <= largeur;
+      p.dispose();
+      return ok;
+    }
+
+    if (!largeur.isFinite || tient(nom)) return nom;
+    final Characters lettres = nom.characters;
+    final int point = nom.lastIndexOf('.');
+    // L'extension (« .pdf ») et quelques caracteres avant elle.
+    final int longueurExtension = point > 0
+        ? nom.substring(point).characters.length
+        : 0;
+    // La queue la plus longue qui tient apres l'ellipse, jamais plus courte
+    // que l'extension.
+    int fin = (longueurExtension + _finGardee).clamp(0, lettres.length - 1);
+    while (fin > longueurExtension &&
+        !tient('$ellipse${lettres.skip(lettres.length - fin)}')) {
+      fin--;
+    }
+    final String queue = lettres.skip(lettres.length - fin).toString();
+    final int maxDebut = lettres.length - fin;
+    // Le plus long debut qui tient avec la queue.
+    int bas = 0;
+    int haut = maxDebut;
+    while (bas < haut) {
+      final int milieu = (bas + haut + 1) ~/ 2;
+      if (tient('${lettres.take(milieu)}$ellipse$queue')) {
+        bas = milieu;
+      } else {
+        haut = milieu - 1;
+      }
+    }
+    return '${lettres.take(bas)}$ellipse$queue';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final TextStyle complet = DefaultTextStyle.of(context).style.merge(style);
+    final TextDirection sens = Directionality.of(context);
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    return Semantics(
+      label: nom,
+      child: ExcludeSemantics(
+        child: LayoutBuilder(
+          builder: (BuildContext _, BoxConstraints c) => Text(
+            raccourci(
+              nom: nom,
+              largeur: c.maxWidth,
+              style: complet,
+              sens: sens,
+              echelle: echelle,
+            ),
+            style: style,
+            maxLines: 1,
+            softWrap: false,
+            // Filet de securite : une queue qui ne tient meme pas seule.
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
       ),
     );
   }

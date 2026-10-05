@@ -50,6 +50,7 @@ import '../theme/app_spacing.dart';
 import 'action_principale.dart';
 import 'empty_state.dart';
 import 'espace_travail_adaptatif.dart';
+import 'page_shell.dart';
 
 /// Le raccourci d'envoi au clavier (R-25) : Ctrl+Entree, ou Cmd+Entree sur
 /// Mac, declenche [onEnvoyer] quand le focus est dans [child]. Entree seule
@@ -227,6 +228,7 @@ class FilDiscussion extends StatefulWidget {
     this.emplacementPieceJointe,
     this.emplacementVocal,
     this.controleur,
+    this.defilement,
     this.cleBrouillon,
     this.lectureSeule,
   }) : assert(
@@ -265,6 +267,11 @@ class FilDiscussion extends StatefulWidget {
   /// Focus) ; `null` : le fil a le sien. Un controleur donne n'est jamais
   /// libere par le fil.
   final TextEditingController? controleur;
+
+  /// Le controleur de la liste des messages, quand l'ecran doit la suivre
+  /// (garder la fin du fil visible a l'ouverture du clavier) ; `null` : le
+  /// fil a le sien. Un controleur donne n'est jamais libere par le fil.
+  final ScrollController? defilement;
 
   /// L'endroit du brouillon du champ (`PortBrouillons`, COM-BR-12), ou
   /// `null` : aucun brouillon. Le texte est garde a chaque frappe et remis a
@@ -331,7 +338,14 @@ class _FilDiscussionState extends State<FilDiscussion> {
   static const Key _cleEntete = ValueKey<String>('fil-discussion-entete');
 
   TextEditingController? _proprio;
-  final ScrollController _defilement = ScrollController();
+  ScrollController? _defilementPropre;
+  ScrollController get _defilement =>
+      widget.defilement ?? (_defilementPropre ??= ScrollController());
+
+  /// La tete de page prise par le fil (COM-RC tour 2, R-02) : le relais de
+  /// la page ou il s'est declare, et la tete qu'elle lui confie.
+  RelaisTetePage? _relaisTete;
+  Widget? _teteDePage;
   final List<_MessageLocal> _locaux = <_MessageLocal>[];
   late final Set<String> _presentsALOuverture = <String>{
     for (final MessageFil m in widget.messages) m.id,
@@ -364,6 +378,23 @@ class _FilDiscussionState extends State<FilDiscussion> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    // R-02 (COM-RC tour 2) : dans une page non defilante, le fil prend la
+    // tete de la page. Quand la page la lui confie (texte agrandi sur
+    // telephone, vue basse), elle defile avec les messages, avant l'en-tete
+    // du fil ; le premier ecran montre la fin du fil et son champ.
+    final TetePageConfiee? page = TetePageConfiee.de(context);
+    final RelaisTetePage? relais = page?.relais;
+    if (!identical(relais, _relaisTete)) {
+      _relaisTete?.rendre(this);
+      _relaisTete = relais?..prendre(this);
+    }
+    final Widget? tete = page?.tete;
+    if ((tete == null) != (_teteDePage == null)) {
+      // La liste gagne ou perd la tete en haut : la fin du fil reste a
+      // l'ecran.
+      WidgetsBinding.instance.addPostFrameCallback((_) => _allerEnBas(false));
+    }
+    _teteDePage = tete;
     final CleBrouillon? cle = widget.lectureSeule == null
         ? widget.cleBrouillon
         : null;
@@ -400,7 +431,8 @@ class _FilDiscussionState extends State<FilDiscussion> {
     // Retirer une ecoute d'un controleur exterieur deja libere est permis.
     _champ.removeListener(_auChangement);
     _proprio?.dispose();
-    _defilement.dispose();
+    _relaisTete?.rendre(this);
+    _defilementPropre?.dispose();
     super.dispose();
   }
 
@@ -617,7 +649,9 @@ class _FilDiscussionState extends State<FilDiscussion> {
             MediaQuery.textScalerOf(context).scale(1) >=
                 FilDiscussion.echelleTexteAgrandi ||
             hauteurSansClavier < FilDiscussion.hauteurBasse;
+        final Widget? teteDePage = _teteDePage;
         final List<Widget> elements = <Widget>[
+          ?teteDePage,
           if (entete != null && enteteDefilante) entete,
           ...bulles,
         ];
@@ -657,9 +691,8 @@ class _FilDiscussionState extends State<FilDiscussion> {
                         child: Text(
                           limite,
                           key: FilDiscussion.cleLectureSeule,
-                          style: AppPalette.of(context).inkMuted.applyTo(
-                            styles.bodyMedium ?? const TextStyle(),
-                          ),
+                          style: AppPalette.of(context).inkMuted
+                              .applyTo(styles.bodyMedium ?? const TextStyle()),
                         ),
                       ),
               ),

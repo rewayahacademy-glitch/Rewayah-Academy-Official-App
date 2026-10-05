@@ -30,16 +30,19 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/carte_piece_jointe.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
+import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/espace_travail_adaptatif.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/features/com_messages/entete_fil_contexte.dart';
 import 'package:rewayah_academy/features/com_messages/messages_admin.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 import 'package:rewayah_academy/features/com_studio/canal_page.dart';
-import 'package:rewayah_academy/features/com_studio/port_studio.dart' show Canal;
+import 'package:rewayah_academy/features/com_studio/port_studio.dart'
+    show Canal;
 import 'package:rewayah_academy/features/com_vocal/composer_vocal.dart';
 import 'package:rewayah_academy/features/com_vocal/envoi_vocal.dart';
 import 'package:rewayah_academy/features/com_vocal/lecteur_vocal.dart';
@@ -70,34 +73,49 @@ Finder get _bulles => _dansFil(
   ),
 );
 
-/// Le fil montre au moins une bulle et le champ, dans l'ecran, sans
-/// debordement (R-02). A texte x2, `PageShell` fait defiler sa tete avec le
-/// corps : la page est d'abord amenee au fil, comme la personne le fait.
-Future<void> _filLisible(WidgetTester tester, Size taille) async {
+/// Le fil montre au moins une bulle et le champ AU PREMIER ECRAN, sans rien
+/// faire defiler, et sans debordement (R-02, COM-RC tour 2) : la tete de la
+/// page ne repousse plus le champ sous le pli. Elle reste atteignable en
+/// remontant le fil.
+Future<void> _filLisible(
+  WidgetTester tester,
+  Size taille, {
+  required Finder titrePage,
+}) async {
   expect(tester.takeException(), isNull);
-  final Finder page = find.ancestor(
-    of: find.byType(FilDiscussion),
-    matching: find.byType(Scrollable),
-  );
-  if (page.evaluate().isNotEmpty) {
-    final ScrollPosition p = tester.state<ScrollableState>(page.first).position;
-    p.jumpTo(p.maxScrollExtent);
-    await tester.pumpAndSettle();
-  }
   expect(find.byKey(FilDiscussion.champKey), findsOneWidget);
   final Rect liste = tester.getRect(_listeFil);
   expect(liste.height, greaterThan(100), reason: 'la liste a de la place');
   final Rect champ = tester.getRect(find.byKey(FilDiscussion.champKey));
   expect(champ.top, greaterThanOrEqualTo(0));
-  expect(champ.top, lessThan(taille.height));
+  // La saisie est bornee a 40 % de la hauteur et defile elle-meme : la
+  // ligne d'ecriture du champ (une cible de 48) est a l'ecran.
+  expect(
+    champ.top + AppTouchTarget.standard,
+    lessThanOrEqualTo(taille.height),
+    reason: 'le champ est a l ecran au premier ecran',
+  );
   expect(_bulles, findsWidgets);
   final bool uneVisible = _bulles.evaluate().any((Element e) {
     final Rect r = tester.getRect(
       find.byElementPredicate((Element x) => x == e),
     );
-    return r.bottom > liste.top && r.top < liste.bottom;
+    return r.bottom > liste.top &&
+        r.top < liste.bottom &&
+        r.top < taille.height &&
+        r.bottom > 0;
   });
-  expect(uneVisible, isTrue, reason: 'au moins un message a l ecran');
+  expect(uneVisible, isTrue, reason: 'au moins un message au premier ecran');
+  expect(tester.takeException(), isNull);
+  // La tete de la page n'a pas disparu : elle defile avec le fil.
+  await tester.scrollUntilVisible(
+    titrePage,
+    -200,
+    scrollable: find
+        .descendant(of: _listeFil, matching: find.byType(Scrollable))
+        .first,
+  );
+  expect(titrePage, findsOneWidget);
   expect(tester.takeException(), isNull);
 }
 
@@ -198,7 +216,11 @@ void main() {
         taille: _petit,
         echelleTexte: 2,
       );
-      await _filLisible(tester, _petit);
+      await _filLisible(
+        tester,
+        _petit,
+        titrePage: find.text(t.com.messages.titre),
+      );
     });
 
     testWidgets('Messages de l enseignant', (WidgetTester tester) async {
@@ -209,7 +231,11 @@ void main() {
         taille: _petit,
         echelleTexte: 2,
       );
-      await _filLisible(tester, _petit);
+      await _filLisible(
+        tester,
+        _petit,
+        titrePage: find.text(t.com.messages.titre),
+      );
     });
 
     testWidgets('Messages de l administration', (WidgetTester tester) async {
@@ -220,7 +246,13 @@ void main() {
         taille: _petit,
         echelleTexte: 2,
       );
-      await _filLisible(tester, _petit);
+      await _filLisible(
+        tester,
+        _petit,
+        // Le titre de la spec, ou son repli sur l'onglet (R-09) : l'en-tete
+        // de la page, avec son retour.
+        titrePage: find.byType(EntetePage),
+      );
     });
 
     testWidgets('canal du Studio', (WidgetTester tester) async {
@@ -231,7 +263,11 @@ void main() {
         taille: _petit,
         echelleTexte: 2,
       );
-      await _filLisible(tester, _petit);
+      await _filLisible(
+        tester,
+        _petit,
+        titrePage: find.text(t.com.studio.titre),
+      );
     });
 
     testWidgets('390 : (i) est dans la rangee de l en-tete du fil, pas dans '
@@ -345,12 +381,24 @@ void main() {
     final Finder carte = _dansFil(find.byType(CartePieceJointe));
     expect(carte, findsOneWidget);
     expect(
-      find.descendant(of: carte, matching: find.text('Devoir_semaine_3.pdf')),
+      // Le nom complet est lu ; a l'ecran, il peut etre raccourci par le
+      // milieu (COM-RC tour 2, R-11).
+      find.descendant(
+        of: carte,
+        matching: find.byWidgetPredicate(
+          (Widget w) =>
+              w is Semantics && w.properties.label == 'Devoir_semaine_3.pdf',
+        ),
+      ),
       findsOneWidget,
     );
     expect(
       _dansFil(
-        find.text(t.com.socle.composants.lecture.pieceJointe(nom: 'Devoir_semaine_3.pdf')),
+        find.text(
+          t.com.socle.composants.lecture.pieceJointe(
+            nom: 'Devoir_semaine_3.pdf',
+          ),
+        ),
       ),
       findsNothing,
     );

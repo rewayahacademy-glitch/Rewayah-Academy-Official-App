@@ -240,7 +240,9 @@ void main() {
       expect(
         find.descendant(
           of: find.byType(PileCartes),
-          matching: find.text('Fiche_ancienne.pdf'),
+          // Le nom complet est lu ; a l'ecran, il peut etre raccourci par
+          // le milieu (COM-RC tour 2, R-11).
+          matching: find.bySemanticsLabel('Fiche_ancienne.pdf'),
         ),
         findsOneWidget,
       );
