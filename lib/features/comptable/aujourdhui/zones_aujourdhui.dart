@@ -33,7 +33,7 @@ import 'file_attention.dart';
 /// Une ligne d'une zone d'Aujourd'hui, posee dans une [CarteLignes] : un
 /// titre, une precision, a la fin un montant ou une pastille, et le chevron
 /// quand la ligne mene a un ecran. Texte agrandi (200 %) : la fin passe sous
-/// le titre, au bord de fin, et aucun mot n'est coupe.
+/// le titre avec le chevron, au bord de fin, et aucun mot n'est coupe.
 class LigneZone extends StatelessWidget {
   /// Cree la ligne.
   const LigneZone({
@@ -86,44 +86,68 @@ class LigneZone extends StatelessWidget {
         ],
       ],
     );
-    final Widget corps = f == null
-        ? textes0
-        : empiler
-        ? Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              textes0,
-              Ecart.vXs,
-              Align(alignment: AlignmentDirectional.centerEnd, child: f),
-            ],
-          )
-        : Row(
-            children: <Widget>[
-              Expanded(child: textes0),
-              Ecart.hMd,
-              f,
-            ],
-          );
-    final Widget ligne = Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.md,
-      ),
-      child: Row(
-        children: <Widget>[
-          Expanded(child: corps),
-          if (onPress != null) ...<Widget>[
-            Ecart.hSm,
-            IconTheme(
-              data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
-              // Le chevron se miroite en arabe : une direction de lecture.
-              child: Icon(AppIcons.chevron.repos),
-            ),
-          ],
-        ],
-      ),
+    final Widget chevron = IconTheme(
+      data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
+      // Le chevron se miroite en arabe : une direction de lecture.
+      child: Icon(AppIcons.chevron.repos),
     );
+    final bool menant = onPress != null;
+    final Widget ligne;
+    if (empiler) {
+      // Texte agrandi : le titre prend toute la largeur de la carte ; la fin
+      // et le chevron passent dessous, au bord de fin, pour qu'aucun mot ne
+      // se coupe dans une carte etroite (marge laterale resserree d'un cran).
+      ligne = Padding(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            textes0,
+            if (f != null || menant) ...<Widget>[
+              Ecart.vXs,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  if (f != null) Flexible(child: f),
+                  if (menant) ...<Widget>[Ecart.hSm, chevron],
+                ],
+              ),
+            ],
+          ],
+        ),
+      );
+    } else {
+      final Widget corps = f == null
+          ? textes0
+          : Row(
+              children: <Widget>[
+                Expanded(flex: 3, child: textes0),
+                Ecart.hMd,
+                // Borne la fin : une pastille et un montant passent a la
+                // ligne au lieu de deborder dans une colonne etroite.
+                Flexible(
+                  flex: 2,
+                  child: Align(
+                    alignment: AlignmentDirectional.centerEnd,
+                    child: f,
+                  ),
+                ),
+              ],
+            );
+      ligne = Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.md,
+        ),
+        child: Row(
+          children: <Widget>[
+            Expanded(child: corps),
+            if (menant) ...<Widget>[Ecart.hSm, chevron],
+          ],
+        ),
+      );
+    }
     final VoidCallback? appui = onPress;
     return MergeSemantics(
       child: appui == null

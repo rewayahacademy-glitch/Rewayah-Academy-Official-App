@@ -10,6 +10,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 
 import '../comptable/modeles_comptable.dart';
 import '../comptable/statuts_comptable.dart';
@@ -222,8 +223,13 @@ class AujourdhuiComptableIndisponible implements PortAujourdhuiComptable {
       );
 }
 
-/// Le port ; la demonstration le surcharge (`aujourdhui_demo.dart`).
+/// Le port ; la demonstration le surcharge (`aujourdhui_demo.dart`) dans
+/// la portee de sa coquille, sous la portee racine de l'application : il se
+/// declare donc surchargeable en portee (`dependencies`), sinon les
+/// fournisseurs qui le lisent restent branches sur la racine
+/// (indisponible).
 final Provider<PortAujourdhuiComptable> portAujourdhuiComptableProvider =
     Provider<PortAujourdhuiComptable>(
       (Ref _) => const AujourdhuiComptableIndisponible(),
+      dependencies: const <ProviderOrFamily>[],
     );

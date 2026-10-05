@@ -17,6 +17,8 @@
 //   « Encaissements recents » ; « Alertes », « Prestataires », « Activite
 //   recente » et « Acces rapides » ;
 // - tablette : la meme chose sur deux colonnes ;
+// - tablette et bureau en texte agrandi (200 %) : une seule colonne, dans
+//   le meme ordre ;
 // - telephone (M01 ecran 1) : une tache dominante, pas un bureau
 //   compresse (§36, §45) : Tresorerie libre, « A traiter » (trois lignes),
 //   le resume des alertes, trois echeances ; le reste derriere « Voir tout »
@@ -30,6 +32,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 import 'package:go_router/go_router.dart';
 
 import '../../../core/capacites/capacite_indisponible.dart';
@@ -60,6 +63,7 @@ final FutureProvider<AujourdhuiComptable> aujourdhuiComptableProvider =
     FutureProvider<AujourdhuiComptable>(
       (Ref ref) => ref.watch(portAujourdhuiComptableProvider).aujourdhui(),
       retry: (int retryCount, Object error) => null,
+      dependencies: <ProviderOrFamily>[portAujourdhuiComptableProvider],
     );
 
 /// Le nombre de lignes d'une liste d'Aujourd'hui sur telephone : le reste
@@ -120,7 +124,14 @@ class _Corps extends StatelessWidget {
   Widget build(BuildContext context) {
     final Gabarit gabarit = AppGabarit.de(context);
     if (gabarit == Gabarit.mobile) return _Telephone(jour: jour);
-    final bool bureau = gabarit == Gabarit.desktop;
+    // Texte agrandi (200 %) : plusieurs colonnes n'ont plus la place d'un
+    // montant et de son libelle (les mots se coupent) ; tablette et bureau
+    // empilent les zones sur une seule colonne, dans le meme ordre (meme
+    // seuil que `LigneCleValeur`).
+    final bool texteAgrandi =
+        MediaQuery.textScalerOf(context).scale(AppSpacing.lg) / AppSpacing.lg >=
+        AppGabarit.seuilTexteColonne;
+    final bool bureau = gabarit == Gabarit.desktop && !texteAgrandi;
     final a = t.comptable.aujourdhui;
     final Widget colonneA = _Colonne(<Widget>[
       _zoneATraiter(context, jour.aTraiterHorsPaiements),
@@ -155,6 +166,15 @@ class _Corps extends StatelessWidget {
       _zone(titre: a.activiteRecente, corps: ZoneActivite(jour.activite)),
       _zone(titre: a.accesRapides, corps: const ZoneAccesRapides()),
     ]);
+    if (texteAgrandi) {
+      return _Colonne(<Widget>[
+        ResumeTresorerie(jour.tresorerie),
+        _Reserve(jour: jour),
+        colonneA,
+        colonneB,
+        colonneC,
+      ]);
+    }
     final Widget entete = Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
