@@ -6,6 +6,7 @@ import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/service_groupes.dart' show TypePublicGroupe;
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
@@ -676,10 +677,14 @@ class _EnteteGroupe extends ConsumerWidget {
           Ecart.vSm,
           // Le seuil affiche est celui du groupe, jamais un chiffre calcule
           // ici : cinq enfants, six adultes, et c'est la base qui le tient.
+          // COUPE-MOTS-3b : jamais « élèves sur 6 places 3 » en arabe.
           StatusPill(
-            libelle: LibellesGroupe.capacitePhrase(
-              membres: groupe.nbMembres,
-              seuil: groupe.seuilMax,
+            libelle: isolerSiAutreSens(
+              LibellesGroupe.capacitePhrase(
+                membres: groupe.nbMembres,
+                seuil: groupe.seuilMax,
+              ),
+              Directionality.of(context),
             ),
             ton: groupe.complet ? TonEtat.avertissement : TonEtat.neutre,
           ),
@@ -818,6 +823,10 @@ class _ProgressionClasse extends StatelessWidget {
       chapitre: valeur.chapitre,
       pourcentage: (valeur.fraction * 100).round(),
     );
+    // COUPE-MOTS-3b : une etape ecrite dans l'autre sens que l'interface
+    // (« Chapitre 1 · 60 % » en arabe) est isolee a l'affichage : elle ne se
+    // lit plus « % 1 · 60 ». Le lecteur d'ecran lit le texte nu.
+    final String affiche = isolerSiAutreSens(texte, Directionality.of(context));
     final TextStyle? style = Theme.of(context).textTheme.titleSmall;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -846,7 +855,7 @@ class _ProgressionClasse extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      TexteSansCoupure(texte, style: style),
+                      TexteSansCoupure(affiche, style: style),
                       Ecart.vSm,
                       barre,
                     ],
@@ -854,7 +863,7 @@ class _ProgressionClasse extends StatelessWidget {
                 }
                 return Row(
                   children: <Widget>[
-                    Flexible(child: Text(texte, style: style)),
+                    Flexible(child: Text(affiche, style: style)),
                     Ecart.hLg,
                     Expanded(child: barre),
                   ],

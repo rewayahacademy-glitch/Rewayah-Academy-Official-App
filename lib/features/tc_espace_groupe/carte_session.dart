@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
@@ -660,8 +661,13 @@ class _ConseilAppareil extends StatelessWidget {
           ),
           Ecart.hSm,
           Expanded(
+            // COUPE-MOTS-3b : « ... pris en charge. », jamais « .Tablette »
+            // dans l'interface arabe (libelle encore sans traduction).
             child: Text(
-              LibellesGroupe.conseilAppareil,
+              isolerSiAutreSens(
+                LibellesGroupe.conseilAppareil,
+                Directionality.of(context),
+              ),
               style: palette.inkMuted.applyTo(
                 textes.bodySmall ?? const TextStyle(),
               ),

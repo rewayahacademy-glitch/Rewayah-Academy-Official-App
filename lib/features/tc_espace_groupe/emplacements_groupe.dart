@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:flutter_riverpod/misc.dart' show ProviderFamily;
 
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/i18n/taille_fichier.dart';
 import '../../core/icons/app_icons.dart';
@@ -316,7 +317,11 @@ class _BarreProgression extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text(texte, style: Theme.of(context).textTheme.titleSmall),
+            // COUPE-MOTS-3b : « Chapitre 1 · 60 % », jamais « % 60 » en arabe.
+            Text(
+              isolerSiAutreSens(texte, Directionality.of(context)),
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
             Ecart.vSm,
             LinearProgressIndicator(value: valeur.fraction),
           ],
