@@ -1541,6 +1541,7 @@
       "cloreTitre": "Clore la surcharge de {prenom}",
       "poserMotif": "Pourquoi ce changement ?",
       "poserMotifRequis": "Une règle sans motif ne se relit pas six mois plus tard.",
+      "manqueValeur": "Il manque la valeur : choisissez-en une dans la liste, ou touchez « Autre » et écrivez-la.",
       "poserEnvoyer": "Poser la règle",
       "cloreEnvoyer": "Clore la surcharge",
       "erreurFile": "La file des demandes n'a pas pu se charger. Réessayez dans un instant."
@@ -1571,6 +1572,7 @@
       "libreSurPlusieurs": "Libre sur {nombre} des heures proposées",
       "sansHeureCommune": "Aucune heure commune",
       "quelleHeure": "Sur quelle heure ?",
+      "manqueHeure": "Il manque l'heure : choisissez-la sous « Sur quelle heure ? ».",
       "creneau": "{jour} à {heure} h",
       "motif": "Pourquoi passer outre ?",
       "motifRequis": "{prenom} n'a pas posé cette heure. L'attribuer quand même peut se justifier, et cela s'inscrit au journal.",
@@ -1621,7 +1623,6 @@
       "actionCloturer": "Clôturer le groupe",
       "ajouterTitre": "Ajouter un élève à {libelle}",
       "manqueEleve": "Il manque l'élève : choisissez-le dans la liste.",
-      "manqueMotif": "Il manque le motif : écrivez-le, il s'inscrit au journal d'audit.",
       "champMotif": "Motif",
       "motifRequis": "Un motif est requis, il s'inscrit au journal d'audit.",
       "ajouterEnvoyer": "Ajouter",
@@ -1655,6 +1656,7 @@
       "aucun": "Aucun élève à diagnostiquer",
       "aucunDetail": "Tous les élèves inscrits ont déjà un niveau décidé.",
       "champNiveau": "Niveau de placement",
+      "manqueNiveau": "Il manque le niveau de placement : choisissez-le dans la liste des niveaux.",
       "champMotif": "Motif",
       "motifRequis": "Un motif est requis, il s'inscrit au journal d'audit.",
       "decider": "Décider le placement",
@@ -1836,6 +1838,7 @@
       "clorerExceptionErreur": "La clôture n'a pas abouti : {message}",
       "promouvoirTitre": "Changer le niveau de {eleve}",
       "promouvoirChampNiveau": "Nouveau niveau",
+      "manqueNiveau": "Il manque le nouveau niveau : choisissez-le dans la liste des niveaux.",
       "promouvoirEnvoyer": "Enregistrer",
       "promouvoirErreur": "Le changement n'a pas abouti : {message}",
       "champMotif": "Motif",
@@ -2856,6 +2859,7 @@
       "demandeMinutes": "{minutes} min",
       "demandeMotif": "Pourquoi ce changement ?",
       "demandeMotifRequis": "Un motif est nécessaire : c'est lui qui permet de trancher.",
+      "demandeManqueValeur": "Il manque la durée demandée : choisissez-la dans la liste, ou touchez « Autre » et écrivez-la.",
       "demandeEnvoyer": "Envoyer la demande",
       "demandeEnvoyee": "Demande envoyée. L'administration la tranchera.",
       "aucunEnfant": "Aucun enfant dans le foyer",
@@ -4819,6 +4823,164 @@
         "doubleSoumission": "La même action a été envoyée deux fois.",
         "notificationDansLApplication": "La notification n'a pas pu partir sur le téléphone, elle reste visible dans l'application.",
         "emancipation": "Émancipation d'un élève devenu adulte : non construite dans cette vague."
+      }
+    }
+  },
+  "formulaire": {
+    "motif": {
+      "manque": "Il manque le motif : choisissez-en un dans la liste, ou touchez « Autre » et écrivez-le.",
+      "autreVide": "Vous avez choisi « Autre » : écrivez le motif en quelques mots.",
+      "autreChamp": "Le motif, en quelques mots"
+    },
+    "entier": {
+      "bornes": "Entre {min} et {max}",
+      "horsBornes": "Choisissez une valeur entre {min} et {max}, ou l'une des valeurs proposées."
+    }
+  },
+  "motifs": {
+    "ajoutEleve": {
+      "diagnostic": "Placement après diagnostic",
+      "attente": "Sortie de la liste d'attente",
+      "transfert": "Transfert depuis une autre classe",
+      "famille": "Demande de la famille"
+    },
+    "retraitEleve": {
+      "famille": "Demande de la famille",
+      "transfert": "Transfert vers une autre classe",
+      "ecartNiveau": "Écart de niveau durable",
+      "finInscription": "Fin de l'inscription"
+    },
+    "clotureClasse": {
+      "finCycle": "Fin du cycle de la classe",
+      "remplissage": "Faible remplissage",
+      "transfert": "Élèves transférés dans d'autres classes",
+      "remplacement": "Enseignant absent sans remplacement",
+      "erreur": "Classe créée par erreur"
+    },
+    "attribution": {
+      "confirmee": "Heure confirmée avec la famille",
+      "aucuneCommune": "Aucune heure commune",
+      "continuite": "Continuité avec le même enseignant",
+      "famille": "Demande de la famille"
+    },
+    "refusDemande": {
+      "aucunEnseignant": "Aucun enseignant disponible sur cet horaire",
+      "exceptionnel": "Un changement d'enseignant reste exceptionnel",
+      "reglePlateforme": "La règle de la plateforme s'applique",
+      "plafond": "Plafond d'élèves déjà atteint",
+      "insuffisant": "Informations insuffisantes pour trancher"
+    },
+    "poserRegle": {
+      "famille": "Demande de la famille accordée",
+      "pedagogique": "Besoin pédagogique de l'élève",
+      "age": "Durée adaptée à l'âge",
+      "charge": "Charge de l'enseignant",
+      "erreur": "Correction d'une erreur de saisie"
+    },
+    "cloreSurcharge": {
+      "termine": "Besoin ponctuel terminé",
+      "famille": "Demande de la famille",
+      "changement": "Changement de classe ou d'enseignant",
+      "erreur": "Règle posée par erreur"
+    },
+    "annulationEvaluation": {
+      "absenceEleve": "Absence de l'élève",
+      "absenceEnseignant": "Absence de l'enseignant",
+      "pasPret": "Élève pas encore prêt",
+      "report": "Report à une autre date",
+      "erreur": "Évaluation planifiée par erreur"
+    },
+    "changementNiveau": {
+      "reussie": "Évaluation réussie",
+      "stable": "Unité acquise et stable",
+      "enseignant": "Décision de l'enseignant",
+      "reevaluation": "Réévaluation demandée par la famille",
+      "placement": "Correction du niveau de placement"
+    },
+    "blocage": {
+      "prerequis": "Prérequis pas encore stables",
+      "renforcement": "Renforcement nécessaire avant d'avancer",
+      "aRevoir": "Évaluation à revoir",
+      "absences": "Absences répétées"
+    },
+    "derogation": {
+      "aucunGroupe": "Aucun groupe approprié",
+      "avance": "Progression plus rapide que le groupe",
+      "enseignant": "Décision de l'enseignant",
+      "direction": "Accord de la direction pédagogique"
+    },
+    "cloreException": {
+      "stables": "Prérequis désormais stables",
+      "groupe": "Élève placé dans un groupe adapté",
+      "inutile": "Exception plus nécessaire",
+      "erreur": "Exception posée par erreur"
+    },
+    "placement": {
+      "debutant": "Débutant : parcours de base",
+      "lecture": "Niveau constaté à la lecture",
+      "declaratif": "Pré-diagnostic déclaratif confirmé",
+      "procheNiveau": "Groupe le plus proche du niveau évalué",
+      "provisoire": "Placement provisoire, à réévaluer"
+    },
+    "refusDossier": {
+      "illisible": "Pièce d'identité illisible",
+      "expiree": "Pièce d'identité expirée",
+      "nom": "Nom différent de celui du compte",
+      "nonTransmise": "Pièce requise non transmise",
+      "accord": "Accord requis manquant"
+    },
+    "presenceCorrigee": {
+      "nonDetectee": "Présence non détectée par l'application",
+      "reseau": "Coupure réseau pendant le cours",
+      "retard": "Arrivée en retard",
+      "appareil": "Connexion depuis un autre appareil",
+      "erreur": "Erreur de saisie"
+    },
+    "presenceExcusee": {
+      "prevenue": "Absence prévenue à l'avance",
+      "reseau": "Coupure réseau signalée",
+      "conge": "Jour férié ou congé",
+      "familiale": "Raison familiale"
+    },
+    "reglageEnseignant": {
+      "horaire": "Horaire qui ne convient plus",
+      "niveau": "Niveau qui ne correspond plus",
+      "fuseau": "Changement de fuseau horaire",
+      "fratrie": "Réunir les enfants du foyer"
+    },
+    "reglageDuree": {
+      "tropLongue": "Durée trop longue pour l'âge",
+      "plusDeTemps": "Besoin de plus de temps",
+      "pause": "Pause nécessaire pendant le cours",
+      "horaire": "Contraintes d'horaire de la famille"
+    },
+    "reglageMinimum": {
+      "ecourtees": "Séances souvent écourtées",
+      "reseau": "Coupures réseau fréquentes",
+      "duree": "Durée des cours modifiée",
+      "horaire": "Contraintes d'horaire de la famille"
+    },
+    "signalement": {
+      "pedagogique": {
+        "renforcement": "Un renforcement est conseillé sur la leçon en cours.",
+        "revision": "Un peu de révision à la maison aidera avant le prochain cours.",
+        "regularite": "La régularité du travail à la maison fera la différence.",
+        "echange": "Un échange avec l'académie est proposé."
+      },
+      "presence": {
+        "absences": "Plusieurs absences récentes : la régularité aide à progresser.",
+        "retards": "Arrivées en retard lors des dernières séances.",
+        "prevenir": "Merci de prévenir l'académie en cas d'absence."
+      },
+      "technique": {
+        "son": "Le son ou la connexion a gêné le cours.",
+        "essai": "Un essai de l'appareil avant le cours est conseillé.",
+        "camera": "La caméra ou le micro n'a pas fonctionné."
+      },
+      "changement": {
+        "classe": "Un changement de classe est à l'étude.",
+        "niveau": "Le niveau de la classe ne semble plus adapté.",
+        "suite": "L'académie reviendra vers vous pour en parler."
       }
     }
   }

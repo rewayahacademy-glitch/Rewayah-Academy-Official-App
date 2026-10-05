@@ -7,6 +7,7 @@ import '../../core/admin/service_comptes.dart';
 import '../../core/admin/service_evaluations.dart';
 import '../../core/admin/service_programme.dart';
 import '../../core/domain/enums.dart';
+import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
@@ -19,6 +20,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/selecteur_motif.dart';
 import '../../core/widgets/selecteur_niveau_programme.dart';
 import '../../core/widgets/selecteur_personne.dart';
 import '../../core/widgets/skeleton.dart';
@@ -307,6 +309,7 @@ void _ouvrirAnnulation(
     context,
     titre: t.admin.evaluations.annulerTitre(eleve: evaluation.eleveLibelle),
     constructeur: (BuildContext contexte) => _FeuilleMotif(
+      motifs: MotifsProposes.annulationEvaluation(),
       libelleEnvoyer: t.admin.evaluations.annulerEnvoyer,
       onEnvoyer: (String motif) => ref
           .read(serviceEvaluationsProvider)
@@ -599,12 +602,15 @@ class _FeuilleResultatEtat extends State<_FeuilleResultat> {
 /// Meme forme que `admin_groupes/groupes_page.dart::_FeuilleMotif`.
 class _FeuilleMotif extends StatefulWidget {
   const _FeuilleMotif({
+    required this.motifs,
     required this.libelleEnvoyer,
     required this.onEnvoyer,
     required this.messageErreur,
     required this.onSucces,
   });
 
+  /// Les motifs proposes en puces (FORM-L1), « Autre » en dernier.
+  final List<String> motifs;
   final String libelleEnvoyer;
   final Future<void> Function(String motif) onEnvoyer;
   final String Function({required String message}) messageErreur;
@@ -617,6 +623,7 @@ class _FeuilleMotif extends StatefulWidget {
 class _FeuilleMotifEtat extends State<_FeuilleMotif> {
   final TextEditingController _motif = TextEditingController();
   bool _envoi = false;
+  bool _motifManquant = false;
   String? _erreur;
 
   @override
@@ -626,6 +633,11 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
   }
 
   Future<void> _envoyer() async {
+    // Bouton jamais grise (K-56) : sans motif, on dit ce qui manque.
+    if (_motif.text.trim().isEmpty) {
+      setState(() => _motifManquant = true);
+      return;
+    }
     setState(() {
       _envoi = true;
       _erreur = null;
@@ -651,13 +663,12 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
           style: Theme.of(context).textTheme.bodySmall,
         ),
         Ecart.vSm,
-        TextField(
-          controller: _motif,
-          maxLines: 2,
-          decoration: InputDecoration(
-            labelText: t.admin.evaluations.champMotif,
-          ),
-          onChanged: (String _) => setState(() {}),
+        SelecteurMotif(
+          motifs: widget.motifs,
+          controleur: _motif,
+          libelleChamp: t.admin.evaluations.champMotif,
+          erreur: _motifManquant ? t.formulaire.motif.manque : null,
+          onChange: (String _) => setState(() => _motifManquant = false),
         ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,
@@ -670,7 +681,7 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
         ActionPrincipale(
           libelle: widget.libelleEnvoyer,
           enCours: _envoi,
-          onPress: _motif.text.trim().isEmpty ? null : _envoyer,
+          onPress: _envoyer,
         ),
       ],
     );

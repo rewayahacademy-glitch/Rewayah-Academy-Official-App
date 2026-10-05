@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/app.dart';
 import 'package:rewayah_academy/core/admin/admin_domaine.dart';
 import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
@@ -161,6 +162,16 @@ Finder get _champMotif => find
     )
     .first;
 
+/// FORM-L1 : le motif libre s'ecrit apres « Autre », derniere puce.
+Future<void> _ouvrirAutre(WidgetTester tester) async {
+  if (find.byKey(SelecteurMotif.cleAutre).evaluate().isEmpty) return;
+  if (find.text(t.dossiers.refus.champ).evaluate().isNotEmpty) return;
+  await tester.ensureVisible(find.byKey(SelecteurMotif.cleAutre));
+  await tester.pumpAndSettle();
+  await tester.tap(find.byKey(SelecteurMotif.cleAutre));
+  await tester.pumpAndSettle();
+}
+
 const Size _mobile = Size(390, 844);
 const Size _bureau = Size(1440, 900);
 
@@ -178,12 +189,15 @@ void main() {
     await tester.tap(find.text(t.dossiers.refuser).last);
     await _stabiliser(tester);
     expect(find.text(t.dossiers.refus.erreurVide), findsOneWidget);
+    await _ouvrirAutre(tester);
     await tester.enterText(_champMotif, '   ');
     await tester.tap(find.text(t.dossiers.refuser).last);
     await _stabiliser(tester);
-    expect(find.text(t.dossiers.refus.erreurVide), findsOneWidget);
+    // « Autre » vide : le selecteur precise que c'est le champ qui manque.
+    expect(find.text(t.formulaire.motif.autreVide), findsOneWidget);
     expect(etat.nombreDecisions, 0);
 
+    await _ouvrirAutre(tester);
     await tester.enterText(_champMotif, 'Photo illisible.');
     await _stabiliser(tester);
     await tester.tap(find.text(t.dossiers.refuser).last);
@@ -201,6 +215,7 @@ void main() {
     await _monter(tester, _mobile, etat: etat);
     await _ouvrir(tester, 'Omar');
     await _toucher(tester, t.dossiers.refuser);
+    await _ouvrirAutre(tester);
     await tester.enterText(_champMotif, 'Photo floue.');
     await _stabiliser(tester);
     await tester.tap(find.text(t.commun.annuler));
@@ -225,6 +240,7 @@ void main() {
     await _monter(tester, _mobile, etat: etat);
     await _ouvrir(tester, 'Omar');
     await _toucher(tester, t.dossiers.refuser);
+    await _ouvrirAutre(tester);
     await tester.enterText(_champMotif, 'Photo floue.');
     await _stabiliser(tester);
 
@@ -282,6 +298,7 @@ void main() {
     const double clavier = 336;
     tester.view.viewInsets = const FakeViewPadding(bottom: clavier);
     await _stabiliser(tester);
+    await _ouvrirAutre(tester);
     await tester.enterText(_champMotif, 'Photo illisible.');
     await _stabiliser(tester);
 
@@ -317,6 +334,7 @@ void main() {
     await _monter(tester, _bureau, etat: etat, port: port);
     await _ouvrir(tester, 'Omar');
     await _toucher(tester, t.dossiers.refuser);
+    await _ouvrirAutre(tester);
     await tester.enterText(_champMotif, 'Motif fictif.');
     await _stabiliser(tester);
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
@@ -343,6 +361,7 @@ void main() {
     await _monter(tester, _bureau, etat: etat);
     await _ouvrir(tester, 'Inès');
     await _toucher(tester, t.dossiers.refuser);
+    await _ouvrirAutre(tester);
     await tester.enterText(_champMotif, 'Motif fictif.');
     await _stabiliser(tester);
     await tester.tap(find.text(t.dossiers.refuser).last);

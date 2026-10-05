@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/app.dart';
 import 'package:rewayah_academy/core/admin/admin_domaine.dart';
 import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
@@ -192,7 +193,8 @@ void main() {
     expect(find.text('Refuser le dossier'), findsOneWidget);
     await _taperTexte(tester, 'Refuser le dossier');
     // AD-8 : le motif est dans 02D (dialogue a 1440), plus en ligne.
-    expect(find.byType(TextField), findsOneWidget);
+    // FORM-L1 : motifs en puces ; le champ s'ouvre par « Autre ».
+    expect(find.byKey(SelecteurMotif.cleAutre), findsOneWidget);
     expect(find.text(t.dossiers.refus.corps), findsOneWidget);
     final ActionPrincipale confirmer = tester.widget<ActionPrincipale>(
       find

@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_parcours/libelles_parcours.dart';
 import '../../core/tc_parcours/port_signalement.dart';
@@ -10,6 +13,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/choice_card_group.dart';
+import '../../core/widgets/selecteur_motif.dart';
 
 /// Le signalement structure, depuis la fiche d'un eleve (spec section 12.2).
 ///
@@ -83,6 +87,7 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
 
   CategorieSignalement _categorie = CategorieSignalement.pedagogique;
   bool _envoi = false;
+  bool _interneManquante = false;
   String? _erreur;
 
   @override
@@ -135,9 +140,14 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
           maxLines: 3,
           // Le bouton depend de ce champ : sans ce rappel, il resterait inerte
           // alors que la note est saisie.
-          onChanged: (String _) => setState(() {}),
+          onChanged: (String _) => setState(() => _interneManquante = false),
           decoration: InputDecoration(
             labelText: t.tc.parcours.signalement.interne,
+            // Bouton jamais grise (K-56) : la note manquante se dit ici.
+            errorText: _interneManquante
+                ? t.tc.parcours.signalement.interneRequis
+                : null,
+            errorMaxLines: 3,
           ),
         ),
         Ecart.vXs,
@@ -149,13 +159,9 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
         ),
         Ecart.vLg,
 
-        TextField(
-          controller: _famille,
-          maxLines: 3,
-          decoration: InputDecoration(
-            labelText: t.tc.parcours.signalement.famille,
-          ),
-        ),
+        // L7 : une phrase-type bienveillante par categorie, « Autre » pour
+        // l'ecrire ; facultatif, rien n'est retenu d'office.
+        Text(t.tc.parcours.signalement.famille, style: textes.titleSmall),
         Ecart.vXs,
         Text(
           t.tc.parcours.signalement.familleAide,
@@ -163,21 +169,27 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
             textes.bodySmall ?? const TextStyle(),
           ),
         ),
+        Ecart.vSm,
+        SelecteurMotif(
+          motifs: MotifsProposes.signalement(_categorie.valeurSql),
+          controleur: _famille,
+          libelleChamp: t.choix.autreInvite,
+          lignesMin: 2,
+          lignesMax: 3,
+        ),
         Ecart.vXl,
 
         ActionPrincipale(
           libelle: t.tc.parcours.signalement.envoyer,
           enCours: _envoi,
-          onPress: _interne.text.trim().isEmpty ? null : _envoyer,
+          onPress: () {
+            if (_interne.text.trim().isEmpty) {
+              setState(() => _interneManquante = true);
+            } else {
+              unawaited(_envoyer());
+            }
+          },
         ),
-        if (_interne.text.trim().isEmpty) ...<Widget>[
-          Ecart.vSm,
-          Text(
-            t.tc.parcours.signalement.interneRequis,
-            textAlign: TextAlign.center,
-            style: textes.bodySmall,
-          ),
-        ],
         if (_erreur case final String message) ...<Widget>[
           Ecart.vMd,
           Text(
@@ -202,7 +214,16 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
       choix.valeurs.first,
     );
     if (choisie != null) {
-      setState(() => _categorie = choisie);
+      setState(() {
+        // Une phrase-type de l'ancienne categorie ne vaut plus : elle
+        // s'efface ; un texte ecrit a la main reste.
+        if (MotifsProposes.signalement(
+          _categorie.valeurSql,
+        ).contains(_famille.text)) {
+          _famille.clear();
+        }
+        _categorie = choisie;
+      });
     }
   }
 

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/core/admin/service_admin.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -225,8 +226,16 @@ void main() {
         ActionPrincipale,
         t.admin.demandes.refuser,
       );
-      expect(tester.widget<ActionPrincipale>(refuser).onPress, isNull);
+      // Jamais grise (K-56) : presse sans motif, il dit ce qui manque.
+      expect(tester.widget<ActionPrincipale>(refuser).onPress, isNotNull);
+      await tester.tap(refuser);
+      await tester.pumpAndSettle();
+      expect(find.text(t.formulaire.motif.manque), findsOneWidget);
+      expect(admin.verdicts, isEmpty);
 
+      // FORM-L1 : « Autre » ouvre le champ libre.
+      await tester.tap(find.byKey(SelecteurMotif.cleAutre));
+      await tester.pumpAndSettle();
       await tester.enterText(
         find.byType(TextField),
         'La duree actuelle a ete posee la semaine derniere.',
@@ -456,11 +465,24 @@ void main() {
       );
       // Une regle sans motif ne se relit pas six mois plus tard : la base la
       // refuse, et l'ecran ne fait pas semblant.
-      expect(tester.widget<ActionPrincipale>(poser).onPress, isNull);
+      // Jamais grise (K-56) : presse trop tot, il dit ce qui manque.
+      expect(tester.widget<ActionPrincipale>(poser).onPress, isNotNull);
+      await tester.tap(poser);
+      await tester.pumpAndSettle();
+      expect(find.text(t.admin.demandes.manqueValeur), findsOneWidget);
 
       await tester.tap(find.text(t.admin.demandes.minutes(valeur: '45')));
+      await tester.pumpAndSettle();
+      await tester.tap(poser);
+      await tester.pumpAndSettle();
+      expect(find.text(t.formulaire.motif.manque), findsOneWidget);
+      expect(regles.posees, isEmpty);
+
+      await tester.ensureVisible(find.byKey(SelecteurMotif.cleAutre));
+      await tester.tap(find.byKey(SelecteurMotif.cleAutre));
+      await tester.pumpAndSettle();
       await tester.enterText(
-        find.byType(TextField),
+        find.byType(TextField).last,
         'Trajet entre deux cours.',
       );
       await tester.pumpAndSettle();
@@ -499,12 +521,14 @@ void main() {
         ActionPrincipale,
         t.admin.demandes.cloreEnvoyer,
       );
-      expect(tester.widget<ActionPrincipale>(clore).onPress, isNull);
+      expect(tester.widget<ActionPrincipale>(clore).onPress, isNotNull);
+      await tester.tap(clore);
+      await tester.pumpAndSettle();
+      expect(find.text(t.formulaire.motif.manque), findsOneWidget);
+      expect(regles.closes, isEmpty);
 
-      await tester.enterText(
-        find.byType(TextField),
-        'Elle a grandi, retour a la duree commune.',
-      );
+      // FORM-L1 : le motif propose part tel quel.
+      await tester.tap(find.text(t.motifs.cloreSurcharge.termine));
       await tester.pumpAndSettle();
       await tester.tap(clore);
       await tester.pumpAndSettle();

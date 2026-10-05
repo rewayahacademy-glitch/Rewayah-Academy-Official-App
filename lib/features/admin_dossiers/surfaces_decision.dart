@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/capacites/port_revue_dossiers.dart';
+import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -16,6 +17,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
+import '../../core/widgets/selecteur_motif.dart';
 import 'decision_dossier.dart';
 import 'file_dossiers.dart' show actualiserDossiers;
 import 'textes_dossier.dart';
@@ -256,38 +258,27 @@ class _CorpsState extends ConsumerState<_Corps> {
             Ecart.vSm,
             Text(t.dossiers.refus.corps, style: textes.bodyMedium),
             Ecart.vLg,
-            TextField(
-              controller: champ,
+            SelecteurMotif(
+              motifs: MotifsProposes.refusDossier(),
+              controleur: champ,
               focusNode: _champ,
-              autofocus: true,
               // HL-A-5 : le motif envoye (ou dont le resultat est inconnu)
               // ne se modifie plus ; etat de rendu seulement.
-              readOnly:
+              lectureSeule:
                   e is DecisionEnvoi ||
                   e is DecisionInconnue ||
                   e is DecisionVerification,
-              minLines: 3,
-              maxLines: null,
-              keyboardType: TextInputType.multiline,
-              textInputAction: TextInputAction.newline,
-              onChanged: (String v) {
-                if (v.trim().isNotEmpty) {
+              lignesMin: 3,
+              lignesMax: 8,
+              // AD-11 (1.4.4) : le libelle du champ libre passe a la ligne.
+              libelleChamp: t.dossiers.refus.champ,
+              aide: t.dossiers.refus.aide,
+              erreur: surface.erreurVide ? t.dossiers.refus.erreurVide : null,
+              onChange: (String v) {
+                if (v.isNotEmpty) {
                   surface.erreurVide = false;
                 }
               },
-              decoration: InputDecoration(
-                // AD-11 (1.4.4) : labelText tient sur une ligne en ellipse,
-                // coupe a 390 et 200 % ; le widget Text passe a la ligne.
-                label: Text(t.dossiers.refus.champ),
-                helperText: t.dossiers.refus.aide,
-                // AD-11 (1.4.4) : 3 lignes coupaient l'aide a 200 % (472 de
-                // large a 1440) ; borne large, l'aide n'est jamais coupee.
-                helperMaxLines: 8,
-                errorText: surface.erreurVide
-                    ? t.dossiers.refus.erreurVide
-                    : null,
-                errorMaxLines: 3,
-              ),
             ),
             statut,
           ],

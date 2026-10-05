@@ -13,6 +13,7 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/features/reglages_enfant/reglages_enfant_page.dart';
 
 import '../router/support_routeur.dart';
@@ -230,14 +231,19 @@ void main() {
         findsOneWidget,
       );
       // Sans motif, le bouton n'aboutit pas : la base refuse une demande sans
-      // lui, et l'ecran ne fait pas semblant.
+      // lui. Il n'est jamais grise (K-56) : il dit ce qui manque (FORM-L1).
       final Finder envoyer = find.widgetWithText(
         ActionPrincipale,
         t.tuteur.reglages.demandeEnvoyer,
       );
-      expect(tester.widget<ActionPrincipale>(envoyer).onPress, isNull);
+      expect(tester.widget<ActionPrincipale>(envoyer).onPress, isNotNull);
+      await tester.tap(envoyer);
+      await tester.pumpAndSettle();
+      expect(find.text(t.formulaire.motif.manque), findsOneWidget);
+      expect(matching.demandes, isEmpty);
 
-      await tester.enterText(find.byType(TextField), 'Horaire impossible');
+      // Le motif propose part tel quel.
+      await tester.tap(find.text(t.motifs.reglageEnseignant.horaire));
       await tester.pumpAndSettle();
       await tester.tap(envoyer);
       await tester.pumpAndSettle();
@@ -245,7 +251,10 @@ void main() {
       expect(matching.demandes, hasLength(1));
       expect(matching.demandes.single.sorte, SorteDemande.reaffectation);
       expect(matching.demandes.single.sujetId, 'e1');
-      expect(matching.demandes.single.motif, 'Horaire impossible');
+      expect(
+        matching.demandes.single.motif,
+        t.motifs.reglageEnseignant.horaire,
+      );
       expect(matching.demandes.single.valeur, isNull);
       expect(find.text(t.tuteur.reglages.demandeEnvoyee), findsOneWidget);
     });
@@ -285,7 +294,11 @@ void main() {
       await tester.tap(
         find.text(t.tuteur.reglages.demandeMinutes(minutes: '30')),
       );
-      await tester.enterText(find.byType(TextField).first, 'Elle decroche');
+      // « Autre » : le motif ecrit a la main part tel quel.
+      await tester.ensureVisible(find.byKey(SelecteurMotif.cleAutre));
+      await tester.tap(find.byKey(SelecteurMotif.cleAutre));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).last, 'Elle decroche');
       await tester.pumpAndSettle();
       await tester.tap(
         find.widgetWithText(ActionPrincipale, t.tuteur.reglages.demandeEnvoyer),
@@ -294,6 +307,7 @@ void main() {
 
       expect(matching.demandes.single.sorte, SorteDemande.regle);
       expect(matching.demandes.single.valeur, 30);
+      expect(matching.demandes.single.motif, 'Elle decroche');
     });
   });
 }

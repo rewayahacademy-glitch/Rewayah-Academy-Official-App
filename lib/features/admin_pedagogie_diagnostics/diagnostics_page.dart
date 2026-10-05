@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/service_diagnostics.dart';
 import '../../core/admin/service_programme.dart';
+import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
@@ -13,6 +14,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/selecteur_motif.dart';
 import '../../core/widgets/selecteur_niveau_programme.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
@@ -55,7 +57,15 @@ class _DiagnosticsPageEtat extends ConsumerState<DiagnosticsPage> {
 
   Future<void> _decider(String studentId) async {
     final String? niveauId = _niveauId;
-    if (niveauId == null) return;
+    // Bouton jamais grise (K-56) : presse trop tot, il dit ce qui manque.
+    if (niveauId == null) {
+      setState(() => _erreur = t.admin.diagnostics.manqueNiveau);
+      return;
+    }
+    if (_motif.text.trim().isEmpty) {
+      setState(() => _erreur = t.formulaire.motif.manque);
+      return;
+    }
     setState(() {
       _envoi = true;
       _erreur = null;
@@ -107,8 +117,11 @@ class _DiagnosticsPageEtat extends ConsumerState<DiagnosticsPage> {
                   motif: _motif,
                   envoi: _envoi,
                   erreur: _erreur,
-                  onNiveau: (String id) => setState(() => _niveauId = id),
-                  onMotifChange: (String _) => setState(() {}),
+                  onNiveau: (String id) => setState(() {
+                    _niveauId = id;
+                    _erreur = null;
+                  }),
+                  onMotifChange: (String _) => setState(() => _erreur = null),
                   onDecider: (String studentId) =>
                       unawaited(_decider(studentId)),
                 ),
@@ -266,13 +279,15 @@ class _Decision extends StatelessWidget {
         Ecart.vSm,
         Text(t.admin.diagnostics.motifRequis, style: textes.bodySmall),
         Ecart.vSm,
-        TextField(
-          controller: motif,
-          maxLines: 2,
-          onChanged: onMotifChange,
-          decoration: InputDecoration(labelText: t.admin.diagnostics.champMotif),
+        SelecteurMotif(
+          motifs: MotifsProposes.placement(),
+          controleur: motif,
+          libelleChamp: t.admin.diagnostics.champMotif,
+          // Le motif manquant se dit sous les puces.
+          erreur: erreur == t.formulaire.motif.manque ? erreur : null,
+          onChange: onMotifChange,
         ),
-        if (erreur != null) ...<Widget>[
+        if (erreur != null && erreur != t.formulaire.motif.manque) ...<Widget>[
           Ecart.vMd,
           Text(erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
         ],
@@ -280,9 +295,7 @@ class _Decision extends StatelessWidget {
         ActionPrincipale(
           libelle: t.admin.diagnostics.decider,
           enCours: envoi,
-          onPress: niveauId == null || motif.text.trim().isEmpty
-              ? null
-              : onDecider,
+          onPress: onDecider,
         ),
       ],
     );

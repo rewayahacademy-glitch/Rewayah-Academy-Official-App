@@ -10,6 +10,7 @@ import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/presence/vue_presence.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/features/presence_correction/presence_correction.dart';
 import 'package:rewayah_academy/features/presence_correction/presence_correction_page.dart';
 
@@ -75,12 +76,13 @@ Widget _monter(
     peutExcuser: true,
   ),
   List<Override> surcharges = const <Override>[],
+  PresenceCorrectionLibelles libelles = _libelles,
 }) => hote(
   PresenceCorrectionPage(
     cible: PresenceCorrectionCible(ligne: _participant, vue: _vue()),
     capacites: capacites,
     adaptateur: adaptateur,
-    libelles: _libelles,
+    libelles: libelles,
   ),
   surcharges: surcharges,
 );
@@ -116,10 +118,58 @@ void main() {
       ActionPrincipale,
       _libelles.confirmer,
     );
-    expect(tester.widget<ActionPrincipale>(confirmer).onPress, isNull);
+    // Jamais grise (K-56) : presse sans motif, il dit ce qui manque.
+    expect(tester.widget<ActionPrincipale>(confirmer).onPress, isNotNull);
 
     await tester.tap(confirmer);
+    await tester.pumpAndSettle();
+    expect(find.text(_libelles.motifRequis), findsNWidgets(2));
     expect(adaptateur.commandes, isEmpty);
+  });
+
+  testWidgets('FORM-L1 : le motif propose part tel quel, « Autre » exige un '
+      'texte', (WidgetTester tester) async {
+    final _AdaptateurFaux adaptateur = _AdaptateurFaux();
+    const PresenceCorrectionLibelles avecMotifs = PresenceCorrectionLibelles(
+      titre: 'Presence',
+      corriger: 'Correction manuelle',
+      excuser: 'Absence excusee',
+      confirmation: 'Confirmer la decision',
+      motif: 'Motif',
+      motifRequis: 'Le motif est obligatoire.',
+      confirmer: 'Confirmer',
+      annuler: 'Annuler',
+      mutationEnCours: 'Enregistrement en cours',
+      succes: 'Decision enregistree',
+      erreur: 'La decision n a pas abouti.',
+      horsLigne: 'Impossible de corriger sans reseau.',
+      motifsCorrection: <String>['Coupure reseau', 'Arrivee en retard'],
+      motifsExcuse: <String>['Absence prevenue'],
+      motifManquant: 'Il manque le motif.',
+    );
+
+    await tester.pumpWidget(_monter(adaptateur, libelles: avecMotifs));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(avecMotifs.corriger));
+    await tester.pumpAndSettle();
+    expect(find.text('Absence prevenue'), findsNothing);
+    final Finder confirmer = find.widgetWithText(
+      ActionPrincipale,
+      avecMotifs.confirmer,
+    );
+
+    await tester.tap(find.byKey(SelecteurMotif.cleAutre));
+    await tester.pumpAndSettle();
+    await tester.tap(confirmer);
+    await tester.pumpAndSettle();
+    expect(find.text(t.formulaire.motif.autreVide), findsOneWidget);
+    expect(adaptateur.commandes, isEmpty);
+
+    await tester.tap(find.text('Arrivee en retard'));
+    await tester.pumpAndSettle();
+    await tester.tap(confirmer);
+    await tester.pumpAndSettle();
+    expect(adaptateur.commandes.single.motif, 'Arrivee en retard');
   });
 
   testWidgets('la correction reste activable au clavier', (

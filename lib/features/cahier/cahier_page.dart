@@ -8,6 +8,7 @@ import '../../core/coran/service_coran.dart' show PositionLecture;
 import '../../core/enseignant/depot_cahiers.dart';
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
+import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -1379,6 +1380,9 @@ PresenceCorrectionLibelles libellesCorrectionCahier() =>
       succes: t.enseignant.cahier.exceptionSucces,
       erreur: t.enseignant.cahier.exceptionErreur,
       horsLigne: t.enseignant.cahier.exceptionHorsLigne,
+      motifsCorrection: MotifsProposes.presenceCorrigee(),
+      motifsExcuse: MotifsProposes.presenceExcusee(),
+      motifManquant: t.formulaire.motif.manque,
     );
 
 /// Ce que l'ecran dit une fois le cahier parti (doc 04 §20.7 et §20.8).

@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/core/admin/personnes_proposables.dart';
 import 'package:rewayah_academy/core/admin/service_comptes.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
@@ -267,6 +268,8 @@ void main() {
         expect(find.text(t.admin.groupes.manqueEleve), findsOneWidget);
 
         await _presser(tester, _carte('e-ines'));
+        // FORM-L1 : le motif libre s'ecrit apres « Autre ».
+        await _presser(tester, find.byKey(SelecteurMotif.cleAutre));
         await tester.enterText(
           find.widgetWithText(TextField, t.admin.groupes.champMotif),
           'Inscription confirmee',

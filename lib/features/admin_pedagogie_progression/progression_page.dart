@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/service_programme.dart';
 import '../../core/admin/service_progression.dart';
+import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
@@ -14,6 +15,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/selecteur_motif.dart';
 import '../../core/widgets/selecteur_niveau_programme.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
@@ -277,6 +279,9 @@ void _ouvrirPoseException(
       eleve: eleve.libelle,
     ),
     constructeur: (BuildContext contexte) => _FeuilleMotif(
+      motifs: type == TypeExceptionProgression.blocage
+          ? MotifsProposes.blocage()
+          : MotifsProposes.derogation(),
       libelleEnvoyer: t.admin.progression.poserExceptionEnvoyer,
       onEnvoyer: (String motif) => ref
           .read(serviceProgressionProvider)
@@ -302,6 +307,7 @@ void _ouvrirClotureException(
     context,
     titre: t.admin.progression.clorerExceptionTitre(eleve: eleve.libelle),
     constructeur: (BuildContext contexte) => _FeuilleMotif(
+      motifs: MotifsProposes.cloreException(),
       libelleEnvoyer: t.admin.progression.clorerExceptionEnvoyer,
       onEnvoyer: (String motif) => ref
           .read(serviceProgressionProvider)
@@ -339,6 +345,7 @@ class _FeuillePromotionEtat extends ConsumerState<_FeuillePromotion> {
   String? _niveauId;
   final TextEditingController _motif = TextEditingController();
   bool _envoi = false;
+  bool _motifManquant = false;
   String? _erreur;
 
   @override
@@ -349,7 +356,18 @@ class _FeuillePromotionEtat extends ConsumerState<_FeuillePromotion> {
 
   Future<void> _envoyer() async {
     final String? niveauId = _niveauId;
-    if (niveauId == null) return;
+    // Bouton jamais grise (K-56) : presse trop tot, il dit ce qui manque.
+    if (niveauId == null) {
+      setState(() => _erreur = t.admin.progression.manqueNiveau);
+      return;
+    }
+    if (_motif.text.trim().isEmpty) {
+      setState(() {
+        _erreur = null;
+        _motifManquant = true;
+      });
+      return;
+    }
     setState(() {
       _envoi = true;
       _erreur = null;
@@ -393,8 +411,10 @@ class _FeuillePromotionEtat extends ConsumerState<_FeuillePromotion> {
                 : _NiveauxVersion(
                     versionId: versionActive.requireValue!.id,
                     selectionne: _niveauId,
-                    onSelectionner: (String id) =>
-                        setState(() => _niveauId = id),
+                    onSelectionner: (String id) => setState(() {
+                      _niveauId = id;
+                      _erreur = null;
+                    }),
                   ),
           AsyncValue<VersionProgramme?>(hasError: true) => Text(
             t.admin.progression.erreur,
@@ -406,11 +426,12 @@ class _FeuillePromotionEtat extends ConsumerState<_FeuillePromotion> {
         Ecart.vSm,
         Text(t.admin.progression.motifRequis, style: Theme.of(context).textTheme.bodySmall),
         Ecart.vSm,
-        TextField(
-          controller: _motif,
-          maxLines: 2,
-          onChanged: (String _) => setState(() {}),
-          decoration: InputDecoration(labelText: t.admin.progression.champMotif),
+        SelecteurMotif(
+          motifs: MotifsProposes.changementNiveau(),
+          controleur: _motif,
+          libelleChamp: t.admin.progression.champMotif,
+          erreur: _motifManquant ? t.formulaire.motif.manque : null,
+          onChange: (String _) => setState(() => _motifManquant = false),
         ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,
@@ -420,9 +441,7 @@ class _FeuillePromotionEtat extends ConsumerState<_FeuillePromotion> {
         ActionPrincipale(
           libelle: t.admin.progression.promouvoirEnvoyer,
           enCours: _envoi,
-          onPress: _niveauId == null || _motif.text.trim().isEmpty
-              ? null
-              : _envoyer,
+          onPress: _envoyer,
         ),
       ],
     );
@@ -465,12 +484,15 @@ class _NiveauxVersion extends ConsumerWidget {
 /// Meme forme que `admin_groupes/groupes_page.dart::_FeuilleMotif`.
 class _FeuilleMotif extends StatefulWidget {
   const _FeuilleMotif({
+    required this.motifs,
     required this.libelleEnvoyer,
     required this.onEnvoyer,
     required this.messageErreur,
     required this.onSucces,
   });
 
+  /// Les motifs proposes en puces (FORM-L1), « Autre » en dernier.
+  final List<String> motifs;
   final String libelleEnvoyer;
   final Future<void> Function(String motif) onEnvoyer;
   final String Function({required String message}) messageErreur;
@@ -483,6 +505,7 @@ class _FeuilleMotif extends StatefulWidget {
 class _FeuilleMotifEtat extends State<_FeuilleMotif> {
   final TextEditingController _motif = TextEditingController();
   bool _envoi = false;
+  bool _motifManquant = false;
   String? _erreur;
 
   @override
@@ -492,6 +515,11 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
   }
 
   Future<void> _envoyer() async {
+    // Bouton jamais grise (K-56) : sans motif, on dit ce qui manque.
+    if (_motif.text.trim().isEmpty) {
+      setState(() => _motifManquant = true);
+      return;
+    }
     setState(() {
       _envoi = true;
       _erreur = null;
@@ -516,11 +544,12 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
       children: <Widget>[
         Text(t.admin.progression.motifRequis, style: Theme.of(context).textTheme.bodySmall),
         Ecart.vSm,
-        TextField(
-          controller: _motif,
-          maxLines: 2,
-          decoration: InputDecoration(labelText: t.admin.progression.champMotif),
-          onChanged: (String _) => setState(() {}),
+        SelecteurMotif(
+          motifs: widget.motifs,
+          controleur: _motif,
+          libelleChamp: t.admin.progression.champMotif,
+          erreur: _motifManquant ? t.formulaire.motif.manque : null,
+          onChange: (String _) => setState(() => _motifManquant = false),
         ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,
@@ -530,7 +559,7 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
         ActionPrincipale(
           libelle: widget.libelleEnvoyer,
           enCours: _envoi,
-          onPress: _motif.text.trim().isEmpty ? null : _envoyer,
+          onPress: _envoyer,
         ),
       ],
     );

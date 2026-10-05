@@ -1,12 +1,126 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/action_principale.dart';
 import '../widgets/app_bottom_sheet.dart';
+import '../widgets/selecteur_motif.dart';
 import '../widgets/setting_row.dart';
 import 'service_configuration.dart';
+
+/// Les valeurs proposees d'un reglage entier, et les bornes de la saisie libre
+/// (FORM-L13).
+@immutable
+class ReglageEntierPropose {
+  /// Cree une proposition.
+  const ReglageEntierPropose({
+    required this.proposees,
+    required this.min,
+    required this.max,
+  });
+
+  /// Les valeurs proposees en puces.
+  final List<int> proposees;
+
+  /// La plus petite valeur acceptee par la saisie libre.
+  final int min;
+
+  /// La plus grande valeur acceptee par la saisie libre.
+  final int max;
+}
+
+/// Les propositions des treize reglages entiers de Configuration, par cle
+/// `app_config` (FORM-L13, decide par delegation le 05/10).
+///
+/// **Aucune regle metier n'est inventee ici** : chaque valeur vient d'un
+/// defaut de migration, d'une valeur deja proposee ailleurs dans le code ou de
+/// `docs/current` ; sans source, la valeur la plus prudente est retenue. La
+/// source et le raisonnement de chaque ligne sont dans
+/// `docs/current/FORM-L1-7-13_MOTIFS.md` (section L13). Le serveur n'impose
+/// aucune borne : ces bornes ne protegent que la saisie.
+const Map<String, ReglageEntierPropose> reglagesEntiersProposes =
+    <String, ReglageEntierPropose>{
+      // Defaut 5 (0001_fondations).
+      'absence_threshold_minutes': ReglageEntierPropose(
+        proposees: <int>[5, 10, 15],
+        min: 1,
+        max: 30,
+      ),
+      // Defaut 60 (0005) ; 45 et 90 : doc 07 ; liste de `FeuilleRegle`.
+      'session_duration_minutes': ReglageEntierPropose(
+        proposees: <int>[30, 45, 60, 90],
+        min: 30,
+        max: 90,
+      ),
+      // Defaut 45 (0005) ; liste de `FeuilleRegle`.
+      'session_paid_minimum_minutes': ReglageEntierPropose(
+        proposees: <int>[30, 45, 60],
+        min: 15,
+        max: 90,
+      ),
+      // Defaut 30 (0005) ; liste de `FeuilleRegle`.
+      'break_minutes_between_sessions': ReglageEntierPropose(
+        proposees: <int>[15, 30, 45],
+        min: 15,
+        max: 60,
+      ),
+      // Defaut 5 (0005) ; liste de `FeuilleRegle` ; 6 : doc 07 (adultes).
+      'max_students_per_teacher': ReglageEntierPropose(
+        proposees: <int>[3, 4, 5, 6],
+        min: 1,
+        max: 6,
+      ),
+      // Defaut 4 (0005, 0033).
+      'matching_horizon_weeks': ReglageEntierPropose(
+        proposees: <int>[2, 4, 8],
+        min: 1,
+        max: 12,
+      ),
+      // Defaut 11 (0001) ; 15 et 18 : bornes des tranches d'age (0043).
+      'camera_auto_allow_min_age': ReglageEntierPropose(
+        proposees: <int>[11, 15, 18],
+        min: 5,
+        max: 18,
+      ),
+      // Defaut 8 (0001) ; 7 et 10 : bornes des tranches d'age (0043).
+      'child_ui_mode_max_age': ReglageEntierPropose(
+        proposees: <int>[7, 8, 10],
+        min: 5,
+        max: 10,
+      ),
+      // Defaut 2, regle C11 (0001) : deux appareils actifs au plus.
+      'max_devices_per_student': ReglageEntierPropose(
+        proposees: <int>[1, 2],
+        min: 1,
+        max: 2,
+      ),
+      // Defaut 1 (0001).
+      'max_concurrent_sessions_per_profile': ReglageEntierPropose(
+        proposees: <int>[1, 2],
+        min: 1,
+        max: 2,
+      ),
+      // Defaut 2 (0001), 7 (0017) ; 5 et 6 : doc 07 (capacites + enseignant).
+      'max_participants_per_session': ReglageEntierPropose(
+        proposees: <int>[2, 5, 6, 7],
+        min: 2,
+        max: 7,
+      ),
+      // Defaut 30 (0001, doc 06) ; plus court seulement, par prudence.
+      'recording_retention_days': ReglageEntierPropose(
+        proposees: <int>[7, 15, 30],
+        min: 1,
+        max: 30,
+      ),
+      // Defaut 90 (0004) ; plus court seulement, par prudence.
+      'kyc_retention_days': ReglageEntierPropose(
+        proposees: <int>[30, 60, 90],
+        min: 1,
+        max: 90,
+      ),
+    };
 
 /// Une ligne Configuration qui edite un entier de `app_config` par une
 /// feuille de saisie -- meme mecanique que `_FeuilleTraitement` de
@@ -81,6 +195,8 @@ class ConfigLigneEntiere extends ConsumerWidget {
       titre: titre,
       constructeur: (BuildContext _) => _FeuilleEntiere(
         valeurInitiale: valeur,
+        proposition: reglagesEntiersProposes[cle],
+        affichage: affichage,
         champValeur: champValeur,
         envoyer: envoyer,
         valeurInvalide: valeurInvalide,
@@ -96,6 +212,8 @@ class ConfigLigneEntiere extends ConsumerWidget {
 class _FeuilleEntiere extends StatefulWidget {
   const _FeuilleEntiere({
     required this.valeurInitiale,
+    required this.proposition,
+    required this.affichage,
     required this.champValeur,
     required this.envoyer,
     required this.valeurInvalide,
@@ -105,6 +223,10 @@ class _FeuilleEntiere extends StatefulWidget {
   });
 
   final int valeurInitiale;
+
+  /// Les valeurs proposees ; nul pour une cle sans proposition (champ seul).
+  final ReglageEntierPropose? proposition;
+  final String Function(int valeur) affichage;
   final String champValeur;
   final String envoyer;
   final String valeurInvalide;
@@ -120,6 +242,7 @@ class _FeuilleEntiereEtat extends State<_FeuilleEntiere> {
   late final TextEditingController _champ = TextEditingController(
     text: '${widget.valeurInitiale}',
   );
+  late int? _choisie = widget.valeurInitiale;
   bool _envoi = false;
   String? _erreur;
 
@@ -130,9 +253,19 @@ class _FeuilleEntiereEtat extends State<_FeuilleEntiere> {
   }
 
   Future<void> _envoyer() async {
-    final int? v = int.tryParse(_champ.text.trim());
+    final ReglageEntierPropose? p = widget.proposition;
+    final int? v = p == null ? int.tryParse(_champ.text.trim()) : _choisie;
     if (v == null || v < 0) {
       setState(() => _erreur = widget.valeurInvalide);
+      return;
+    }
+    if (p != null && (v < p.min || v > p.max)) {
+      setState(
+        () => _erreur = t.formulaire.entier.horsBornes(
+          min: widget.affichage(p.min),
+          max: widget.affichage(p.max),
+        ),
+      );
       return;
     }
     setState(() {
@@ -155,12 +288,26 @@ class _FeuilleEntiereEtat extends State<_FeuilleEntiere> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        TextField(
-          controller: _champ,
-          keyboardType: TextInputType.number,
-          autofocus: true,
-          decoration: InputDecoration(labelText: widget.champValeur),
-        ),
+        if (widget.proposition case final ReglageEntierPropose p)
+          SelecteurEntier(
+            proposees: p.proposees,
+            min: p.min,
+            max: p.max,
+            affichage: widget.affichage,
+            valeurInitiale: widget.valeurInitiale,
+            libelleChamp: widget.champValeur,
+            onChange: (int? v) => setState(() {
+              _choisie = v;
+              _erreur = null;
+            }),
+          )
+        else
+          TextField(
+            controller: _champ,
+            keyboardType: TextInputType.number,
+            autofocus: true,
+            decoration: InputDecoration(labelText: widget.champValeur),
+          ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,
           Text(

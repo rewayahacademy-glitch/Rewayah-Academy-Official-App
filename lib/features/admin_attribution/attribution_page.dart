@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/admin/service_admin.dart';
+import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/matching/service_attribution.dart';
@@ -18,6 +19,7 @@ import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/section_header.dart';
+import '../../core/widgets/selecteur_motif.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 
@@ -171,7 +173,9 @@ class _AttributionPageEtat extends ConsumerState<AttributionPage> {
               onChoisirEnseignant: _choisirEnseignant,
               onChoisirCreneau: (Creneau creneau) =>
                   setState(() => _creneauChoisi = creneau),
-              onMotifChange: (String _) => setState(() {}),
+              onMotifChange: (String _) => setState(() => _erreur = null),
+              onManque: (String message) =>
+                  setState(() => _erreur = message),
               onAttribuer: _attribuer,
             ),
             AsyncValue<List<FoyerEnAttente>>(hasError: true) => EmptyState(
@@ -206,6 +210,7 @@ class _Corps extends StatelessWidget {
     required this.onChoisirEnseignant,
     required this.onChoisirCreneau,
     required this.onMotifChange,
+    required this.onManque,
     required this.onAttribuer,
   });
 
@@ -222,6 +227,9 @@ class _Corps extends StatelessWidget {
   onChoisirEnseignant;
   final void Function(Creneau creneau) onChoisirCreneau;
   final void Function(String motif) onMotifChange;
+
+  /// Dit ce qui manque quand on presse trop tot (bouton jamais grise).
+  final void Function(String message) onManque;
   final Future<void> Function({
     required FoyerEnAttente eleve,
     required EnseignantCandidat enseignant,
@@ -267,6 +275,7 @@ class _Corps extends StatelessWidget {
             onChoisirEnseignant: onChoisirEnseignant,
             onChoisirCreneau: onChoisirCreneau,
             onMotifChange: onMotifChange,
+            onManque: onManque,
             onAttribuer: onAttribuer,
           );
 
@@ -437,6 +446,7 @@ class _ColonneEnseignants extends ConsumerWidget {
     required this.onChoisirEnseignant,
     required this.onChoisirCreneau,
     required this.onMotifChange,
+    required this.onManque,
     required this.onAttribuer,
   });
 
@@ -450,6 +460,9 @@ class _ColonneEnseignants extends ConsumerWidget {
   onChoisirEnseignant;
   final void Function(Creneau creneau) onChoisirCreneau;
   final void Function(String motif) onMotifChange;
+
+  /// Dit ce qui manque quand on presse trop tot (bouton jamais grise).
+  final void Function(String message) onManque;
   final Future<void> Function({
     required FoyerEnAttente eleve,
     required EnseignantCandidat enseignant,
@@ -493,6 +506,7 @@ class _ColonneEnseignants extends ConsumerWidget {
             onChoisirEnseignant: onChoisirEnseignant,
             onChoisirCreneau: onChoisirCreneau,
             onMotifChange: onMotifChange,
+            onManque: onManque,
             onAttribuer: onAttribuer,
           ),
           AsyncValue<List<EnseignantCandidat>>(hasError: true) => EmptyState(
@@ -522,6 +536,7 @@ class _Candidats extends StatelessWidget {
     required this.onChoisirEnseignant,
     required this.onChoisirCreneau,
     required this.onMotifChange,
+    required this.onManque,
     required this.onAttribuer,
   });
 
@@ -536,6 +551,9 @@ class _Candidats extends StatelessWidget {
   onChoisirEnseignant;
   final void Function(Creneau creneau) onChoisirCreneau;
   final void Function(String motif) onMotifChange;
+
+  /// Dit ce qui manque quand on presse trop tot (bouton jamais grise).
+  final void Function(String message) onManque;
   final Future<void> Function({
     required FoyerEnAttente eleve,
     required EnseignantCandidat enseignant,
@@ -577,6 +595,7 @@ class _Candidats extends StatelessWidget {
                 erreur: erreur,
                 onChoisirCreneau: onChoisirCreneau,
                 onMotifChange: onMotifChange,
+                onManque: onManque,
                 onAttribuer: onAttribuer,
               ),
             ),
@@ -669,6 +688,7 @@ class _Confirmation extends StatelessWidget {
     required this.erreur,
     required this.onChoisirCreneau,
     required this.onMotifChange,
+    required this.onManque,
     required this.onAttribuer,
   });
 
@@ -680,6 +700,9 @@ class _Confirmation extends StatelessWidget {
   final String? erreur;
   final void Function(Creneau creneau) onChoisirCreneau;
   final void Function(String motif) onMotifChange;
+
+  /// Dit ce qui manque quand on presse trop tot (bouton jamais grise).
+  final void Function(String message) onManque;
   final Future<void> Function({
     required FoyerEnAttente eleve,
     required EnseignantCandidat enseignant,
@@ -696,8 +719,8 @@ class _Confirmation extends StatelessWidget {
       enseignant,
     );
     final bool motifRequis = !enseignant.croise;
-    final bool pret =
-        creneauChoisi != null && (!motifRequis || motif.text.trim().isNotEmpty);
+    // Le motif manquant se dit sous les puces, pas sous le bouton.
+    final bool motifManquant = erreur == t.formulaire.motif.manque;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -732,13 +755,12 @@ class _Confirmation extends StatelessWidget {
             style: textes.bodySmall,
           ),
           Ecart.vSm,
-          TextField(
-            controller: motif,
-            // Sans ce rappel, le bouton resterait inerte alors que le motif est
-            // saisi : piege de l'etape 3, deja paye deux fois.
-            onChanged: onMotifChange,
-            maxLines: 2,
-            decoration: InputDecoration(labelText: t.admin.attribution.motif),
+          SelecteurMotif(
+            motifs: MotifsProposes.attribution(),
+            controleur: motif,
+            libelleChamp: t.admin.attribution.motif,
+            erreur: motifManquant ? erreur : null,
+            onChange: onMotifChange,
           ),
           Ecart.vLg,
         ],
@@ -748,17 +770,25 @@ class _Confirmation extends StatelessWidget {
             enseignant: enseignant.libelleCourt,
           ),
           enCours: envoi,
-          onPress: pret
-              ? () => unawaited(
-                  onAttribuer(
-                    eleve: eleve,
-                    enseignant: enseignant,
-                    creneau: creneauChoisi!,
-                  ),
-                )
-              : null,
+          // Bouton jamais grise (K-56) : presse trop tot, il dit ce qui manque.
+          onPress: () {
+            final Creneau? creneau = creneauChoisi;
+            if (creneau == null) {
+              onManque(t.admin.attribution.manqueHeure);
+            } else if (motifRequis && motif.text.trim().isEmpty) {
+              onManque(t.formulaire.motif.manque);
+            } else {
+              unawaited(
+                onAttribuer(
+                  eleve: eleve,
+                  enseignant: enseignant,
+                  creneau: creneau,
+                ),
+              );
+            }
+          },
         ),
-        if (erreur != null) ...<Widget>[
+        if (erreur != null && !motifManquant) ...<Widget>[
           Ecart.vSm,
           Text(
             erreur!,

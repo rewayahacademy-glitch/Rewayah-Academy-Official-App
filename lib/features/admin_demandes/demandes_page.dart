@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/admin/service_admin.dart';
 import '../../core/domain/enums.dart';
+import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/matching/service_matching.dart';
@@ -17,6 +18,7 @@ import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/selecteur_motif.dart';
 import '../../core/widgets/skeleton.dart';
 
 /// `ADM-06` : les demandes des quatre parties, et les regles d'un eleve.
@@ -120,13 +122,17 @@ class _DemandesPageEtat extends ConsumerState<DemandesPage> {
                   envoi: _envoi,
                   erreur: _erreur,
                   onOuvrirRefus: () => setState(() => _refusEnCours = true),
-                  onMotifChange: (String _) => setState(() {}),
+                  onMotifChange: (String _) => setState(() => _erreur = null),
                   onAccorder: () => unawaited(
                     _decider(file.requireValue.first, accepte: true),
                   ),
-                  onRefuser: () => unawaited(
-                    _decider(file.requireValue.first, accepte: false),
-                  ),
+                  // Bouton jamais grise (K-56) : sans motif, il dit ce qui
+                  // manque au lieu de partir.
+                  onRefuser: () => _motif.text.trim().isEmpty
+                      ? setState(() => _erreur = t.formulaire.motif.manque)
+                      : unawaited(
+                          _decider(file.requireValue.first, accepte: false),
+                        ),
                 ),
         AsyncValue<List<Demande>>(hasError: true) => EmptyState(
           message: t.admin.demandes.erreurFile,
@@ -170,6 +176,8 @@ class _Demande extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    // Le motif manquant se dit sous les puces, pas sous les boutons.
+    final bool motifManquant = erreur == t.formulaire.motif.manque;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -223,22 +231,21 @@ class _Demande extends StatelessWidget {
         Text(t.admin.demandes.verdict, style: textes.titleMedium),
         Ecart.vMd,
         if (refusEnCours) ...<Widget>[
-          TextField(
-            controller: motif,
-            // Le bouton de refus depend de ce champ : sans ce rappel, il
-            // resterait inerte alors que le motif est saisi.
-            onChanged: onMotifChange,
-            maxLines: 2,
-            decoration: InputDecoration(labelText: t.admin.demandes.motif),
-          ),
-          Ecart.vSm,
           Text(t.admin.demandes.motifRequis, style: textes.bodySmall),
+          Ecart.vSm,
+          SelecteurMotif(
+            motifs: MotifsProposes.refusDemande(),
+            controleur: motif,
+            libelleChamp: t.admin.demandes.motif,
+            erreur: motifManquant ? erreur : null,
+            onChange: onMotifChange,
+          ),
           Ecart.vMd,
           ActionPrincipale(
             libelle: t.admin.demandes.refuser,
             enCours: envoi,
             niveau: NiveauAction.destructive,
-            onPress: motif.text.trim().isEmpty ? null : onRefuser,
+            onPress: onRefuser,
           ),
         ] else ...<Widget>[
           ActionPrincipale(
@@ -253,7 +260,7 @@ class _Demande extends StatelessWidget {
             niveau: NiveauAction.secondaire,
           ),
         ],
-        if (erreur != null) ...<Widget>[
+        if (erreur != null && !motifManquant) ...<Widget>[
           Ecart.vMd,
           Text(
             erreur!,
@@ -550,13 +557,10 @@ class _FeuilleRegleEtat extends ConsumerState<FeuilleRegle> {
   final TextEditingController _motif = TextEditingController();
   int? _valeurChoisie;
   bool _enCours = false;
+  bool _motifManquant = false;
   String? _erreur;
 
   bool get _clot => widget.surchargeId != null;
-
-  /// Vrai quand le geste peut aboutir : un motif, et une valeur si l'on pose.
-  bool get _pret =>
-      _motif.text.trim().isNotEmpty && (_clot || _valeurChoisie != null);
 
   @override
   void dispose() {
@@ -567,6 +571,18 @@ class _FeuilleRegleEtat extends ConsumerState<FeuilleRegle> {
   Future<void> _envoyer() async {
     final CleRegle? cle = widget.cle;
     final int? valeur = _valeurChoisie;
+    // Bouton jamais grise (K-56) : presse trop tot, il dit ce qui manque.
+    if (!_clot && valeur == null) {
+      setState(() => _erreur = t.admin.demandes.manqueValeur);
+      return;
+    }
+    if (_motif.text.trim().isEmpty) {
+      setState(() {
+        _erreur = null;
+        _motifManquant = true;
+      });
+      return;
+    }
     setState(() {
       _enCours = true;
       _erreur = null;
@@ -642,6 +658,7 @@ class _FeuilleRegleEtat extends ConsumerState<FeuilleRegle> {
                 ),
             ],
             onChange: (ReponseChoix reponse) => setState(() {
+              _erreur = null;
               _valeurChoisie = int.tryParse(
                 reponse.valeurs.isEmpty
                     ? reponse.saisieLibre ?? ''
@@ -651,18 +668,19 @@ class _FeuilleRegleEtat extends ConsumerState<FeuilleRegle> {
           ),
           Ecart.vMd,
         ],
-        TextField(
-          controller: _motif,
-          decoration: InputDecoration(labelText: t.admin.demandes.poserMotif),
-          // Sans ceci, le bouton ne se reconstruit pas a la frappe et reste
-          // inerte alors que le motif est saisi (piege de l'etape 3).
-          onChanged: (String _) => setState(() {}),
-          maxLines: 2,
+        Text(t.admin.demandes.poserMotif, style: textes.titleSmall),
+        Ecart.vXs,
+        Text(t.admin.demandes.poserMotifRequis, style: textes.bodySmall),
+        Ecart.vSm,
+        SelecteurMotif(
+          motifs: _clot
+              ? MotifsProposes.cloreSurcharge()
+              : MotifsProposes.poserRegle(),
+          controleur: _motif,
+          libelleChamp: t.admin.demandes.poserMotif,
+          erreur: _motifManquant ? t.formulaire.motif.manque : null,
+          onChange: (String _) => setState(() => _motifManquant = false),
         ),
-        if (_motif.text.trim().isEmpty) ...<Widget>[
-          Ecart.vSm,
-          Text(t.admin.demandes.poserMotifRequis, style: textes.bodySmall),
-        ],
         if (_erreur != null) ...<Widget>[
           Ecart.vSm,
           Text(
@@ -678,7 +696,7 @@ class _FeuilleRegleEtat extends ConsumerState<FeuilleRegle> {
               ? t.admin.demandes.cloreEnvoyer
               : t.admin.demandes.poserEnvoyer,
           enCours: _enCours,
-          onPress: _pret ? _envoyer : null,
+          onPress: _envoyer,
         ),
       ],
     );
