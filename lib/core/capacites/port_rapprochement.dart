@@ -52,6 +52,7 @@ class ElementRapprochement {
     this.reference,
     this.prestataire,
     this.cibleId,
+    this.cibleLibelle,
     this.permissions = PermissionsFinance.lectureSeule,
   });
 
@@ -81,6 +82,10 @@ class ElementRapprochement {
 
   /// L'element deja relie, s'il y en a un.
   final String? cibleId;
+
+  /// Le libelle rendu de l'element relie (« Mensualite d'octobre ·
+  /// Youssef ») : l'ecran ne montre jamais un identifiant (CPT-ENC-2).
+  final String? cibleLibelle;
 
   /// Ce que la source permet (`rapprocher`).
   final PermissionsFinance permissions;

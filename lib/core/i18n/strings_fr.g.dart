@@ -12430,6 +12430,143 @@ class Traductions$comptable$encaissements$fr {
 
 	// Translations
 
+	/// fr: 'Tous'
+	String get filtreTous => 'Tous';
+
+	/// fr: 'Confirmés'
+	String get filtreConfirmes => 'Confirmés';
+
+	/// fr: 'En attente'
+	String get filtreEnAttente => 'En attente';
+
+	/// fr: 'Échoués'
+	String get filtreEchoues => 'Échoués';
+
+	/// fr: 'Remboursés'
+	String get filtreRembourses => 'Remboursés';
+
+	/// fr: 'Contestés'
+	String get filtreContestes => 'Contestés';
+
+	/// fr: 'À rapprocher'
+	String get filtreARapprocher => 'À rapprocher';
+
+	/// fr: 'Rechercher une famille ou une référence'
+	String get recherche => 'Rechercher une famille ou une référence';
+
+	/// fr: 'Date'
+	String get colDate => 'Date';
+
+	/// fr: 'Famille'
+	String get colFamille => 'Famille';
+
+	/// fr: 'Référence'
+	String get colReference => 'Référence';
+
+	/// fr: 'Brut'
+	String get colBrut => 'Brut';
+
+	/// fr: 'Frais'
+	String get colFrais => 'Frais';
+
+	/// fr: 'Net'
+	String get colNet => 'Net';
+
+	/// fr: 'Moyen'
+	String get colMoyen => 'Moyen';
+
+	/// fr: 'État'
+	String get colEtat => 'État';
+
+	/// fr: 'Pour {prenoms}'
+	String profilsPour({required Object prenoms}) => 'Pour ${prenoms}';
+
+	/// fr: '{moyen} · {prestataire}'
+	String moyenPrestataire({required Object moyen, required Object prestataire}) => '${moyen} · ${prestataire}';
+
+	/// fr: 'Aucun encaissement pour l'instant.'
+	String get videTitre => 'Aucun encaissement pour l\'instant.';
+
+	/// fr: 'Les paiements des familles apparaîtront ici dès que le prestataire les aura transmis.'
+	String get videPhrase => 'Les paiements des familles apparaîtront ici dès que le prestataire les aura transmis.';
+
+	/// fr: 'Aucun encaissement ne correspond.'
+	String get videFiltreTitre => 'Aucun encaissement ne correspond.';
+
+	/// fr: 'Choisissez « Tous » ou effacez la recherche pour revoir toute la liste.'
+	String get videFiltrePhrase => 'Choisissez « Tous » ou effacez la recherche pour revoir toute la liste.';
+
+	/// fr: 'Voir tous les encaissements'
+	String get voirTous => 'Voir tous les encaissements';
+
+	/// fr: 'Ouvrir le détail de l'encaissement de {famille}'
+	String ouvrirDetailLecteur({required Object famille}) => 'Ouvrir le détail de l\'encaissement de ${famille}';
+
+	/// fr: 'Fermer le détail'
+	String get fermerDetail => 'Fermer le détail';
+
+	/// fr: 'Montant brut'
+	String get brut => 'Montant brut';
+
+	/// fr: 'Frais du prestataire'
+	String get frais => 'Frais du prestataire';
+
+	/// fr: 'Net reçu'
+	String get net => 'Net reçu';
+
+	/// fr: 'Frais et change communiqués par le prestataire, jamais recalculés ici.'
+	String get fraisSource => 'Frais et change communiqués par le prestataire, jamais recalculés ici.';
+
+	/// fr: 'Référence'
+	String get reference => 'Référence';
+
+	/// fr: 'Prestataire'
+	String get prestataire => 'Prestataire';
+
+	/// fr: 'Moyen de paiement'
+	String get moyen => 'Moyen de paiement';
+
+	/// fr: 'Foyer'
+	String get foyer => 'Foyer';
+
+	/// fr: 'Date'
+	String get date => 'Date';
+
+	/// fr: 'État'
+	String get etat => 'État';
+
+	/// fr: 'Devise'
+	String get devise => 'Devise';
+
+	/// fr: 'Affectation par profil'
+	String get affectation => 'Affectation par profil';
+
+	/// fr: 'La source n'a rendu aucune affectation pour cet encaissement.'
+	String get affectationAucune => 'La source n\'a rendu aucune affectation pour cet encaissement.';
+
+	/// fr: 'Rapprochement'
+	String get rapprochement => 'Rapprochement';
+
+	/// fr: 'Pas encore rapproché'
+	String get rapprochementAucun => 'Pas encore rapproché';
+
+	/// fr: 'Ouvrir le rapprochement'
+	String get ouvrirRapprochement => 'Ouvrir le rapprochement';
+
+	/// fr: '« Confirmé » s'affiche seulement après la confirmation du prestataire.'
+	String get confirmeNote => '« Confirmé » s\'affiche seulement après la confirmation du prestataire.';
+
+	/// fr: 'En attente de la confirmation du prestataire : rien n'est encore acquis.'
+	String get enAttenteNote => 'En attente de la confirmation du prestataire : rien n\'est encore acquis.';
+
+	/// fr: 'Journal de l'encaissement'
+	String get journal => 'Journal de l\'encaissement';
+
+	/// fr: 'Aucune opération enregistrée pour cet encaissement.'
+	String get journalVide => 'Aucune opération enregistrée pour cet encaissement.';
+
+	late final Traductions$comptable$encaissements$rap$fr rap = Traductions$comptable$encaissements$rap$fr.internal(_root);
+
 	/// fr: 'Encaissements'
 	String get titre => 'Encaissements';
 
@@ -18299,6 +18436,159 @@ class Traductions$comptable$tresorerie$transfert$fr {
 	String get aucunCouple => 'Aucun mouvement n\'est permis par la politique pour votre compte.';
 }
 
+// Path: comptable.encaissements.rap
+class Traductions$comptable$encaissements$rap$fr {
+	Traductions$comptable$encaissements$rap$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À rapprocher'
+	String get vueTransactions => 'À rapprocher';
+
+	/// fr: 'Remboursements et avoirs'
+	String get vueRemboursements => 'Remboursements et avoirs';
+
+	/// fr: 'Paiement attendu'
+	String get natPaiementAttendu => 'Paiement attendu';
+
+	/// fr: 'Transaction prestataire'
+	String get natTransaction => 'Transaction prestataire';
+
+	/// fr: 'Solde ou mensualité'
+	String get natMensualite => 'Solde ou mensualité';
+
+	/// fr: 'Frais'
+	String get natFrais => 'Frais';
+
+	/// fr: 'Remboursement'
+	String get natRemboursement => 'Remboursement';
+
+	/// fr: 'Payout'
+	String get natPayout => 'Payout';
+
+	/// fr: 'Preuve'
+	String get natPreuve => 'Preuve';
+
+	/// fr: '{nature} · {date}'
+	String natureDate({required Object nature, required Object date}) => '${nature} · ${date}';
+
+	/// fr: 'Choisissez une transaction.'
+	String get choisirTitre => 'Choisissez une transaction.';
+
+	/// fr: 'Ses correspondances proposées, son état et son journal s'ouvrent ici.'
+	String get choisirPhrase => 'Ses correspondances proposées, son état et son journal s\'ouvrent ici.';
+
+	/// fr: 'Rien à rapprocher.'
+	String get videTitre => 'Rien à rapprocher.';
+
+	/// fr: 'Chaque transaction reçue est déjà reliée à ce qui l'attendait.'
+	String get videPhrase => 'Chaque transaction reçue est déjà reliée à ce qui l\'attendait.';
+
+	/// fr: 'Aucune transaction dans cet état.'
+	String get videFiltreTitre => 'Aucune transaction dans cet état.';
+
+	/// fr: 'Choisissez « Tous » pour revoir toutes les transactions.'
+	String get videFiltrePhrase => 'Choisissez « Tous » pour revoir toutes les transactions.';
+
+	/// fr: 'Voir toutes les transactions'
+	String get voirToutes => 'Voir toutes les transactions';
+
+	/// fr: 'Ouvrir le rapprochement de {libelle}'
+	String ouvrirLecteur({required Object libelle}) => 'Ouvrir le rapprochement de ${libelle}';
+
+	/// fr: 'Correspondances proposées'
+	String get candidats => 'Correspondances proposées';
+
+	/// fr: 'La source ne propose aucune correspondance pour cette transaction.'
+	String get candidatsAucun => 'La source ne propose aucune correspondance pour cette transaction.';
+
+	/// fr: 'Reliée à : {libelle}'
+	String relieA({required Object libelle}) => 'Reliée à : ${libelle}';
+
+	/// fr: 'Rapprocher'
+	String get rapprocher => 'Rapprocher';
+
+	/// fr: 'Rapprocher avec {libelle}'
+	String rapprocherLecteur({required Object libelle}) => 'Rapprocher avec ${libelle}';
+
+	/// fr: 'Doublon potentiel'
+	String get doublonTitre => 'Doublon potentiel';
+
+	/// fr: 'Cette transaction ressemble à une autre déjà reçue. Vérifiez avant de rapprocher : un doublon n'est jamais validé en silence.'
+	String get doublonPhrase => 'Cette transaction ressemble à une autre déjà reçue. Vérifiez avant de rapprocher : un doublon n\'est jamais validé en silence.';
+
+	/// fr: 'Marquer comme doublon'
+	String get marquerDoublon => 'Marquer comme doublon';
+
+	/// fr: 'État rendu par la source : {etat}'
+	String resultat({required Object etat}) => 'État rendu par la source : ${etat}';
+
+	/// fr: 'Nous ne savons pas si l'opération a été prise en compte. Actualisez la liste avant de réessayer.'
+	String get erreurEnvoi => 'Nous ne savons pas si l\'opération a été prise en compte. Actualisez la liste avant de réessayer.';
+
+	/// fr: 'Actualiser'
+	String get actualiser => 'Actualiser';
+
+	/// fr: 'Journal de la transaction'
+	String get journal => 'Journal de la transaction';
+
+	/// fr: 'Aucune opération enregistrée pour cette transaction.'
+	String get journalVide => 'Aucune opération enregistrée pour cette transaction.';
+
+	/// fr: 'Bénéficiaire'
+	String get beneficiaire => 'Bénéficiaire';
+
+	/// fr: 'Motif'
+	String get motif => 'Motif';
+
+	/// fr: 'Montant'
+	String get montant => 'Montant';
+
+	/// fr: 'Source'
+	String get source => 'Source';
+
+	/// fr: 'Demandé le {date}'
+	String demandeLe({required Object date}) => 'Demandé le ${date}';
+
+	/// fr: 'Approbation requise par la politique'
+	String get approbationRequise => 'Approbation requise par la politique';
+
+	/// fr: 'Sans approbation selon la politique'
+	String get approbationNon => 'Sans approbation selon la politique';
+
+	/// fr: 'Les règles de remboursement appartiennent à la politique Finance. Ici, on les applique ; on ne les réécrit pas.'
+	String get politiqueNote => 'Les règles de remboursement appartiennent à la politique Finance. Ici, on les applique ; on ne les réécrit pas.';
+
+	/// fr: 'Exécuter le remboursement'
+	String get executer => 'Exécuter le remboursement';
+
+	/// fr: 'Exécuter le remboursement de {beneficiaire}'
+	String executerLecteur({required Object beneficiaire}) => 'Exécuter le remboursement de ${beneficiaire}';
+
+	/// fr: 'Exécuter ce remboursement ?'
+	String get executerTitre => 'Exécuter ce remboursement ?';
+
+	/// fr: 'Le montant et les conditions viennent de la politique Finance. Le prestataire confirmera l'exécution.'
+	String get executerPhrase => 'Le montant et les conditions viennent de la politique Finance. Le prestataire confirmera l\'exécution.';
+
+	/// fr: 'Aucun remboursement ni avoir en cours.'
+	String get remboursementsVideTitre => 'Aucun remboursement ni avoir en cours.';
+
+	/// fr: 'Journal du remboursement'
+	String get journalRemboursement => 'Journal du remboursement';
+
+	/// fr: 'Aucune opération enregistrée pour ce remboursement.'
+	String get journalRemboursementVide => 'Aucune opération enregistrée pour ce remboursement.';
+
+	/// fr: 'Opération incertaine'
+	String get erreurEnvoiTitre => 'Opération incertaine';
+
+	/// fr: 'Les demandes de remboursement apparaîtront ici avec leur motif et leur état.'
+	String get remboursementsVidePhrase => 'Les demandes de remboursement apparaîtront ici avec leur motif et leur état.';
+}
+
 // Path: comptable.beneficiaires.recevoir
 class Traductions$comptable$beneficiaires$recevoir$fr {
 	Traductions$comptable$beneficiaires$recevoir$fr.internal(this._root);
@@ -23622,6 +23912,99 @@ extension on Traductions {
 			'comptable.tresorerie.titre' => 'Trésorerie et coffres',
 			'comptable.tresorerie.sousTitre' => 'La Trésorerie libre est le seul chiffre dépensable.',
 			'comptable.tresorerie.alimenter' => 'Alimenter la Réserve stratégique',
+			'comptable.encaissements.filtreTous' => 'Tous',
+			'comptable.encaissements.filtreConfirmes' => 'Confirmés',
+			'comptable.encaissements.filtreEnAttente' => 'En attente',
+			'comptable.encaissements.filtreEchoues' => 'Échoués',
+			'comptable.encaissements.filtreRembourses' => 'Remboursés',
+			'comptable.encaissements.filtreContestes' => 'Contestés',
+			'comptable.encaissements.filtreARapprocher' => 'À rapprocher',
+			'comptable.encaissements.recherche' => 'Rechercher une famille ou une référence',
+			'comptable.encaissements.colDate' => 'Date',
+			'comptable.encaissements.colFamille' => 'Famille',
+			'comptable.encaissements.colReference' => 'Référence',
+			'comptable.encaissements.colBrut' => 'Brut',
+			'comptable.encaissements.colFrais' => 'Frais',
+			'comptable.encaissements.colNet' => 'Net',
+			'comptable.encaissements.colMoyen' => 'Moyen',
+			'comptable.encaissements.colEtat' => 'État',
+			'comptable.encaissements.profilsPour' => ({required Object prenoms}) => 'Pour ${prenoms}',
+			'comptable.encaissements.moyenPrestataire' => ({required Object moyen, required Object prestataire}) => '${moyen} · ${prestataire}',
+			'comptable.encaissements.videTitre' => 'Aucun encaissement pour l\'instant.',
+			'comptable.encaissements.videPhrase' => 'Les paiements des familles apparaîtront ici dès que le prestataire les aura transmis.',
+			'comptable.encaissements.videFiltreTitre' => 'Aucun encaissement ne correspond.',
+			'comptable.encaissements.videFiltrePhrase' => 'Choisissez « Tous » ou effacez la recherche pour revoir toute la liste.',
+			'comptable.encaissements.voirTous' => 'Voir tous les encaissements',
+			'comptable.encaissements.ouvrirDetailLecteur' => ({required Object famille}) => 'Ouvrir le détail de l\'encaissement de ${famille}',
+			'comptable.encaissements.fermerDetail' => 'Fermer le détail',
+			'comptable.encaissements.brut' => 'Montant brut',
+			'comptable.encaissements.frais' => 'Frais du prestataire',
+			'comptable.encaissements.net' => 'Net reçu',
+			'comptable.encaissements.fraisSource' => 'Frais et change communiqués par le prestataire, jamais recalculés ici.',
+			'comptable.encaissements.reference' => 'Référence',
+			'comptable.encaissements.prestataire' => 'Prestataire',
+			'comptable.encaissements.moyen' => 'Moyen de paiement',
+			'comptable.encaissements.foyer' => 'Foyer',
+			'comptable.encaissements.date' => 'Date',
+			'comptable.encaissements.etat' => 'État',
+			'comptable.encaissements.devise' => 'Devise',
+			'comptable.encaissements.affectation' => 'Affectation par profil',
+			'comptable.encaissements.affectationAucune' => 'La source n\'a rendu aucune affectation pour cet encaissement.',
+			'comptable.encaissements.rapprochement' => 'Rapprochement',
+			'comptable.encaissements.rapprochementAucun' => 'Pas encore rapproché',
+			'comptable.encaissements.ouvrirRapprochement' => 'Ouvrir le rapprochement',
+			'comptable.encaissements.confirmeNote' => '« Confirmé » s\'affiche seulement après la confirmation du prestataire.',
+			'comptable.encaissements.enAttenteNote' => 'En attente de la confirmation du prestataire : rien n\'est encore acquis.',
+			'comptable.encaissements.journal' => 'Journal de l\'encaissement',
+			'comptable.encaissements.journalVide' => 'Aucune opération enregistrée pour cet encaissement.',
+			'comptable.encaissements.rap.vueTransactions' => 'À rapprocher',
+			'comptable.encaissements.rap.vueRemboursements' => 'Remboursements et avoirs',
+			'comptable.encaissements.rap.natPaiementAttendu' => 'Paiement attendu',
+			'comptable.encaissements.rap.natTransaction' => 'Transaction prestataire',
+			'comptable.encaissements.rap.natMensualite' => 'Solde ou mensualité',
+			'comptable.encaissements.rap.natFrais' => 'Frais',
+			'comptable.encaissements.rap.natRemboursement' => 'Remboursement',
+			'comptable.encaissements.rap.natPayout' => 'Payout',
+			'comptable.encaissements.rap.natPreuve' => 'Preuve',
+			'comptable.encaissements.rap.natureDate' => ({required Object nature, required Object date}) => '${nature} · ${date}',
+			'comptable.encaissements.rap.choisirTitre' => 'Choisissez une transaction.',
+			'comptable.encaissements.rap.choisirPhrase' => 'Ses correspondances proposées, son état et son journal s\'ouvrent ici.',
+			'comptable.encaissements.rap.videTitre' => 'Rien à rapprocher.',
+			'comptable.encaissements.rap.videPhrase' => 'Chaque transaction reçue est déjà reliée à ce qui l\'attendait.',
+			'comptable.encaissements.rap.videFiltreTitre' => 'Aucune transaction dans cet état.',
+			'comptable.encaissements.rap.videFiltrePhrase' => 'Choisissez « Tous » pour revoir toutes les transactions.',
+			'comptable.encaissements.rap.voirToutes' => 'Voir toutes les transactions',
+			'comptable.encaissements.rap.ouvrirLecteur' => ({required Object libelle}) => 'Ouvrir le rapprochement de ${libelle}',
+			'comptable.encaissements.rap.candidats' => 'Correspondances proposées',
+			'comptable.encaissements.rap.candidatsAucun' => 'La source ne propose aucune correspondance pour cette transaction.',
+			'comptable.encaissements.rap.relieA' => ({required Object libelle}) => 'Reliée à : ${libelle}',
+			'comptable.encaissements.rap.rapprocher' => 'Rapprocher',
+			'comptable.encaissements.rap.rapprocherLecteur' => ({required Object libelle}) => 'Rapprocher avec ${libelle}',
+			'comptable.encaissements.rap.doublonTitre' => 'Doublon potentiel',
+			'comptable.encaissements.rap.doublonPhrase' => 'Cette transaction ressemble à une autre déjà reçue. Vérifiez avant de rapprocher : un doublon n\'est jamais validé en silence.',
+			'comptable.encaissements.rap.marquerDoublon' => 'Marquer comme doublon',
+			'comptable.encaissements.rap.resultat' => ({required Object etat}) => 'État rendu par la source : ${etat}',
+			'comptable.encaissements.rap.erreurEnvoi' => 'Nous ne savons pas si l\'opération a été prise en compte. Actualisez la liste avant de réessayer.',
+			'comptable.encaissements.rap.actualiser' => 'Actualiser',
+			'comptable.encaissements.rap.journal' => 'Journal de la transaction',
+			'comptable.encaissements.rap.journalVide' => 'Aucune opération enregistrée pour cette transaction.',
+			'comptable.encaissements.rap.beneficiaire' => 'Bénéficiaire',
+			'comptable.encaissements.rap.motif' => 'Motif',
+			'comptable.encaissements.rap.montant' => 'Montant',
+			'comptable.encaissements.rap.source' => 'Source',
+			'comptable.encaissements.rap.demandeLe' => ({required Object date}) => 'Demandé le ${date}',
+			'comptable.encaissements.rap.approbationRequise' => 'Approbation requise par la politique',
+			'comptable.encaissements.rap.approbationNon' => 'Sans approbation selon la politique',
+			'comptable.encaissements.rap.politiqueNote' => 'Les règles de remboursement appartiennent à la politique Finance. Ici, on les applique ; on ne les réécrit pas.',
+			'comptable.encaissements.rap.executer' => 'Exécuter le remboursement',
+			'comptable.encaissements.rap.executerLecteur' => ({required Object beneficiaire}) => 'Exécuter le remboursement de ${beneficiaire}',
+			'comptable.encaissements.rap.executerTitre' => 'Exécuter ce remboursement ?',
+			'comptable.encaissements.rap.executerPhrase' => 'Le montant et les conditions viennent de la politique Finance. Le prestataire confirmera l\'exécution.',
+			'comptable.encaissements.rap.remboursementsVideTitre' => 'Aucun remboursement ni avoir en cours.',
+			'comptable.encaissements.rap.journalRemboursement' => 'Journal du remboursement',
+			'comptable.encaissements.rap.journalRemboursementVide' => 'Aucune opération enregistrée pour ce remboursement.',
+			'comptable.encaissements.rap.erreurEnvoiTitre' => 'Opération incertaine',
+			'comptable.encaissements.rap.remboursementsVidePhrase' => 'Les demandes de remboursement apparaîtront ici avec leur motif et leur état.',
 			'comptable.encaissements.titre' => 'Encaissements',
 			'comptable.encaissements.sousTitre' => 'Un paiement n\'est confirmé qu\'après le prestataire.',
 			'comptable.encaissements.detailTitre' => 'Détail de l\'encaissement',
