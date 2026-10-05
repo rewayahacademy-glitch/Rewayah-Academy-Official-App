@@ -43,12 +43,14 @@ import 'visibilite_canal.dart';
 
 /// L'icone d'un element partage dans un canal (D-FUS-9, decision du
 /// directeur du 05/10) : la nature de sa piece quand il en a une, sinon
-/// l'epingle ou le lien (plus les replis « texte » et « fleche »).
+/// l'epingle, le lien, ou le document (`file-text`) pour un fichier sans
+/// piece decrite : un fichier ne s'affiche jamais avec une epingle.
 AppIcon iconeElementPartage(ElementPartage e) => switch (e.piece) {
   final PieceJointe piece => CartePieceJointe.iconeNature(piece.nature),
   null => switch (e.nature) {
     NaturePartage.lien => AppIcons.lien,
-    NaturePartage.epingle || NaturePartage.fichier => AppIcons.epingle,
+    NaturePartage.epingle => AppIcons.epingle,
+    NaturePartage.fichier => AppIcons.supports,
   },
 };
 

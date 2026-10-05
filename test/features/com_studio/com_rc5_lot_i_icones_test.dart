@@ -30,8 +30,8 @@ void main() {
       expect(enregistres.icone, same(AppIcons.signet));
     });
 
-    test('panneau du canal : epingle et lien sans piece, nature de la '
-        'piece sinon', () {
+    test('panneau du canal : epingle, lien et document (fichier) sans '
+        'piece, nature de la piece sinon', () {
       expect(
         iconeElementPartage(
           ElementPartage(
@@ -53,6 +53,17 @@ void main() {
         ),
         same(AppIcons.lien),
       );
+      // Contre-preuve : a 71e3e555, un fichier sans piece prenait l'epingle
+      // (panneau du canal et resultats « Fichiers » de la recherche).
+      final AppIcon fichier = iconeElementPartage(
+        ElementPartage(
+          id: 'f1',
+          titre: 'Programme du trimestre',
+          nature: NaturePartage.fichier,
+        ),
+      );
+      expect(fichier, same(AppIcons.supports));
+      expect(fichier, isNot(same(AppIcons.epingle)));
       for (final AppIcon repli in <AppIcon>[
         AppIcons.texteStructure,
         AppIcons.flecheAction,
