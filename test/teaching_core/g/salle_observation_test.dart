@@ -366,7 +366,7 @@ void main() {
       await _presser(tester, find.text(v.quitter));
       expect(find.text(v.quitterQuestion), findsOneWidget);
       expect(
-        find.text(v.quitterConsequence(duree: '1 min 42 s')),
+        find.text(v.quitterConsequence(duree: '1\u00A0min\u00A042\u00A0s')),
         findsOneWidget,
       );
       await _presser(tester, find.text(t.commun.annuler));
