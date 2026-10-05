@@ -23,6 +23,7 @@ import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/grille_bento.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart';
 import 'package:rewayah_academy/features/demo/adulte_demo.dart';
@@ -398,6 +399,87 @@ void main() {
     expect(find.byType(ClocheNotifications), findsOneWidget);
     expect(find.byType(CarteSession), findsNothing);
     await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  // BENTO-3d (remarque hors demande de BENTO-3c-R) : le squelette compare ses
+  // moities au meme seuil que le contenu, [largeurMinCarteClasse] x
+  // max(1, echelle du texte). Monte seul dans une place de largeur donnee :
+  // a texte x1 la bascule est a 2 x 360 + 16 = 736 px ; a texte x2, a
+  // 2 x 720 + 16 = 1456 px. A 1120 px et texte x2 (la grille a 1440 px
+  // d'ecran), chaque moitie offrirait 552 px : sans le facteur d'echelle les
+  // deux premieres grandes tuiles resteraient cote a cote. A texte 0,85,
+  // le seuil ne descend pas sous 736 : sans le plancher max(1, ...), il
+  // tomberait a 2 x 306 + 16 = 628 et 735 px passerait cote a cote.
+  group('squelette : bascule cote a cote (BENTO-3d)', () {
+    for (final TextDirection sens in TextDirection.values) {
+      for (final (double, double, bool) cas in const <(double, double, bool)>[
+        (735, 1, false),
+        (736, 1, true),
+        (735, 0.85, false),
+        (1120, 2, false),
+        (1455, 2, false),
+        (1456, 2, true),
+      ]) {
+        testWidgets('${cas.$1.toInt()} px, texte x${cas.$2}, '
+            '${sens.name} : les deux premieres grandes tuiles '
+            '${cas.$3 ? 'cote a cote' : 'empilees, en pleine largeur'}', (
+          WidgetTester tester,
+        ) async {
+          taille(tester, Size(cas.$1 + 100, 3000));
+          await tester.pumpWidget(
+            app(
+              child: Builder(
+                builder: (BuildContext c) => MediaQuery(
+                  data: MediaQuery.of(c)
+                      .copyWith(textScaler: TextScaler.linear(cas.$2)),
+                  child: Directionality(
+                    textDirection: sens,
+                    child: Align(
+                      alignment: AlignmentDirectional.topStart,
+                      child: SizedBox(
+                        width: cas.$1,
+                        child: const SqueletteAccueilAdulte(),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+          await tester.pump(const Duration(seconds: 1));
+          expect(tester.takeException(), isNull);
+          // Contexte : la grille a quatre colonnes (pas la pile d'une
+          // colonne), et le seuil vaut bien 736 a texte x1.
+          expect(GrilleBento.colonnesPour(cas.$1, cas.$2), 4);
+          expect(largeurMinCarteClasse * 2 + GrilleBento.ecart, 736);
+          final Finder blocs = find.descendant(
+            of: find.byType(SqueletteAccueilAdulte),
+            matching: find.byType(Skeleton),
+          );
+          expect(blocs, findsNWidgets(5));
+          final Rect s = tester.getRect(blocs.at(0));
+          final Rect a = tester.getRect(blocs.at(1));
+          final Rect p = tester.getRect(blocs.at(2));
+          if (cas.$3) {
+            expect(a.top, moreOrLessEquals(s.top, epsilon: 1));
+            expect(
+              sens == TextDirection.ltr ? a.left >= s.right : a.right <= s.left,
+              isTrue,
+              reason: 'la seconde a cote de la premiere, dans le sens',
+            );
+            final double moitie = (cas.$1 - GrilleBento.ecart) / 2;
+            expect(s.width, moreOrLessEquals(moitie, epsilon: 1));
+            expect(a.width, moreOrLessEquals(moitie, epsilon: 1));
+          } else {
+            expect(a.top, greaterThan(s.bottom), reason: 'empilees');
+            expect(s.width, moreOrLessEquals(cas.$1, epsilon: 1));
+            expect(a.width, moreOrLessEquals(cas.$1, epsilon: 1));
+          }
+          expect(p.top, greaterThan(math.max(s.bottom, a.bottom)));
+          await tester.pumpWidget(const SizedBox.shrink());
+        });
+      }
+    }
   });
 
   testWidgets('erreur : « Reessayer », et rien d\'invente', (
