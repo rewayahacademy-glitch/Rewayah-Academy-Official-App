@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
@@ -278,27 +279,33 @@ class _CarteMission extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Row(
+          // COUPE-MOTS-CTRL-1 (revue BENTO-3b-R C7) : le libelle et la
+          // pastille partagent la ligne quand elle suffit (pastille au bord
+          // de fin) ; sinon la pastille passe dessous. Dans une `Row`, a
+          // 320 px et texte x2, la pastille ne laissait au libelle qu'une
+          // colonne etroite : « Classe / a obser / ver mai / ntenan / t ».
+          // Le libelle passe a la ligne entre les mots, jamais dans un mot.
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
             children: <Widget>[
-              Expanded(
-                child: Semantics(
-                  header: true,
-                  // Decision du directeur C1 = a (27/09), textes revus le
-                  // 02/10 : un titre pendant le direct, un autre avant.
-                  child: Text(
-                    _enDirect
-                        ? t.controleur.controle.missionEnDirect
-                        : t.controleur.controle.mission,
-                    style: doux,
-                  ),
+              Semantics(
+                header: true,
+                // Decision du directeur C1 = a (27/09), textes revus le
+                // 02/10 : un titre pendant le direct, un autre avant.
+                child: TexteSansCoupure(
+                  _enDirect
+                      ? t.controleur.controle.missionEnDirect
+                      : t.controleur.controle.mission,
+                  style: doux,
                 ),
               ),
               // La seance en direct se reconnait au premier coup d'oeil
               // (ON-AIR-1) : le meme composant que partout ailleurs.
-              if (_enDirect || _dejaControlee) ...<Widget>[
-                Ecart.hSm,
+              if (_enDirect || _dejaControlee)
                 const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect),
-              ],
             ],
           ),
           Ecart.vSm,

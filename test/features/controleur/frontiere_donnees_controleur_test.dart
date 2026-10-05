@@ -674,8 +674,8 @@ void main() {
       addTearDown(c.dispose);
       // Aucune mission, aucun fait, aucun eleve : rien de la demonstration.
       expect(await c.read(missionControleProvider.future), isNull);
-      expect(await c.read(faitsVisiteProvider.future), isNull);
-      expect(await c.read(rosterControleProvider.future), isEmpty);
+      expect(await c.read(faitsVisiteProvider('seance-A').future), isNull);
+      expect(await c.read(rosterControleProvider('seance-A').future), isEmpty);
       // Les ports d'envoi et d'echanges ne sont pas ceux de la
       // demonstration, et ne repondent pas sans serveur.
       expect(

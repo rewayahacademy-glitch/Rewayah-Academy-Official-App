@@ -9,6 +9,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' show StringCharacters;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
 /// Le nom d'un eleve tel que le controleur le lit (decision du directeur
 /// C7 = a, 27/09) : le prenom et l'initiale du nom, « Mariam S. ». Une seule
@@ -133,6 +134,10 @@ bool texteObligatoire({
   required NatureObservation? nature,
 }) => important || nature == NatureObservation.interventionAdmin;
 
-/// Le roster autorise de la visite. **Neutre par defaut** : aucun eleve.
-final FutureProvider<List<EleveRoster>> rosterControleProvider =
-    FutureProvider<List<EleveRoster>>((Ref _) async => const <EleveRoster>[]);
+/// Le roster autorise de la visite de la seance donnee, lu PAR SEANCE
+/// (CTRL-SEANCE-1) : l'observation de la Classe A ne propose jamais les
+/// prenoms de la Classe B. **Neutre par defaut** : aucun eleve.
+final FutureProviderFamily<List<EleveRoster>, String> rosterControleProvider =
+    FutureProvider.family<List<EleveRoster>, String>(
+      (Ref _, String _) async => const <EleveRoster>[],
+    );

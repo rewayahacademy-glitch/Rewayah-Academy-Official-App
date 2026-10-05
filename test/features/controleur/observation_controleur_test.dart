@@ -13,6 +13,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle_page.dart';
@@ -251,7 +252,7 @@ void main() {
               visite.seanceId: visite,
             }),
           ),
-          rosterControleProvider.overrideWith((Ref _) async {
+          rosterControleProvider.overrideWith((Ref _, String _) async {
             appels++;
             if (appels == 1) throw StateError('connexion coupee');
             return const <EleveRoster>[EleveRoster(id: 'e1', prenom: 'Amina')];
@@ -378,6 +379,124 @@ void main() {
     expect(find.text(o.echec), findsOneWidget);
     expect(find.text('Accueil chaleureux des eleves.'), findsOneWidget);
     expect(find.text(t.controleur.compteRendu.envoyer), findsOneWidget);
+  });
+
+  // CTRL-MSG-1 : un texte facultatif laisse vide n'est pas « garde ».
+  testWidgets('Sans serveur ni texte : l echec ne parle pas d un texte garde', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final CompteRenduEnSuspens visite = CompteRenduEnSuspens(
+      seanceId: 'seance-A',
+      classe: 'Classe Al-Fajr',
+      debut: DateTime(2026, 9, 28, 16),
+    );
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: <Override>[
+          visitesObserveesProvider.overrideWith(
+            () => VisitesObservees(<String, CompteRenduEnSuspens>{
+              visite.seanceId: visite,
+            }),
+          ),
+        ],
+        child: TranslationProvider(
+          child: MaterialApp(
+            theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+            locale: AppLocale.fr.flutterLocale,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            home: ObservationControlePage(seanceId: visite.seanceId),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await _toucher(
+      tester,
+      find.byKey(
+        ObservationControlePage.cleNature(NatureObservation.pointPositif),
+      ),
+    );
+    await _toucher(tester, _bouton(t.commun.continuer));
+    await _toucher(
+      tester,
+      find.byKey(
+        ObservationControlePage.cleDomaine(DomaineObservation.interaction),
+      ),
+    );
+    await _toucher(tester, _bouton(t.commun.continuer));
+    await _toucher(
+      tester,
+      find.byKey(
+        ObservationControlePage.clePersonne(PersonneConcernee.classeEntiere),
+      ),
+    );
+    await _toucher(tester, _bouton(t.commun.continuer));
+    // Texte facultatif : on passe sans rien ecrire.
+    expect(find.text(o.texteFacultatif), findsOneWidget);
+    await _toucher(tester, _bouton(t.commun.continuer));
+    expect(find.text(o.sansTexte), findsOneWidget);
+    await _toucher(tester, _bouton(t.controleur.compteRendu.envoyer));
+    expect(find.text(t.controleur.compteRendu.envoyeTitre), findsNothing);
+    expect(find.text(o.echecSansTexte), findsOneWidget);
+    expect(find.text(o.echec), findsNothing);
+    expect(find.textContaining('texte est gardé'), findsNothing);
+    expect(o.echecSansTexte, contains("n'est pas confirmé"));
+    expect(find.text(t.controleur.compteRendu.envoyer), findsOneWidget);
+  });
+
+  // CTRL-MSG-1 : seance inconnue (rechargement de la PWA) par la route reelle.
+  testWidgets('Seance inconnue : visite plus en memoire, cause vraie', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final GoRouter routeur = GoRouter(
+      initialLocation: adresseObservation(
+        Routes.controleurObservation,
+        ChoixCompteRendu.pointImportant,
+        seanceId: 'seance-inconnue',
+      ),
+      routes: <RouteBase>[
+        // Le meme constructeur que `app_router.dart`.
+        GoRoute(
+          path: Routes.controleurObservation,
+          builder: (BuildContext _, GoRouterState etat) =>
+              ObservationControlePage(
+                seanceId: etat.uri.queryParameters['seance'],
+                choix: choixObservationDepuis(
+                  etat.uri.queryParameters,
+                  etat.extra,
+                ),
+              ),
+        ),
+      ],
+    );
+    await tester.pumpWidget(
+      ProviderScope(
+        child: TranslationProvider(
+          child: MaterialApp.router(
+            theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+            locale: AppLocale.fr.flutterLocale,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            routerConfig: routeur,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text(t.controleur.compteRendu.visiteInconnue), findsOneWidget);
+    expect(
+      find.text(t.controleur.compteRendu.visiteInconnueAide),
+      findsOneWidget,
+    );
+    expect(find.text(t.controleur.controle.indisponible), findsNothing);
+    expect(find.textContaining('autre contrôleur'), findsNothing);
   });
   // Revue CT-5 : le choix est porte par l'adresse, un rechargement de la PWA
   // ou un lien direct (sans `extra`) garde le « point important ».
