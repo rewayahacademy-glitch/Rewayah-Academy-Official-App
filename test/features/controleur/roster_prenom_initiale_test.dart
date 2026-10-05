@@ -69,7 +69,7 @@ Future<void> _jusquAuRoster(
             visite.seanceId: visite,
           }),
         ),
-        rosterControleProvider.overrideWith((Ref _) async => _roster),
+        rosterControleProvider.overrideWith((Ref _, String _) async => _roster),
       ],
     ),
   );
