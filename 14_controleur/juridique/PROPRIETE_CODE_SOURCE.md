@@ -30,22 +30,30 @@
 ```
 Copyright (c) 2025-2026 Abdoulaye Mouhidine Sow. All rights reserved.
 
-This source code is the property of Abdoulaye Mouhidine Sow (the "Owner").
+The software named "Rewayah Academy App" (Dart package "rewayah_academy",
+the "Software") is the property of Abdoulaye Mouhidine Sow (the "Owner").
 It is not open source. No licence is granted except as stated below.
+
+Identification. The Software is the source code kept in the Git repository
+github.com/rewayahacademy-glitch/Rewayah-Academy-Official-App, or in any
+repository it is moved or copied to, with all its branches, earlier and later
+versions, and works derived from it. Reference version: Git commit
+4a7aa2befe354ace408d3c75c8ea177fb70544e1 of 22 September 2026. A Git commit
+identifier is a cryptographic fingerprint of the whole code at that date.
 
 1. Licence to Rewayah Academy Ltd. REWAYAH ACADEMY LTD (company number
    16624644, England and Wales) holds a free, non-exclusive, worldwide,
    perpetual and irrevocable licence to use, run, host, deploy, maintain and
-   have maintained this software for its own academy activities, covering
+   have maintained the Software for its own academy activities, covering
    every version it has deployed and every update the Owner provides.
 2. Restrictions. Rewayah Academy Ltd may not sell, assign, sub-license, rent
-   or charge the source code, include it in any sale of its business, shares
+   or charge the Software, include it in any sale of its business, shares
    or assets, or claim ownership of it.
-3. Transfers by the Owner. The Owner may sell, assign or license the source
-   code to anyone. Every such transfer is subject to the licence in clause 1,
-   which binds every successor in title (Copyright, Designs and Patents Act
-   1988, s. 90(4)). No transfer may withdraw, disable or restrict a version
-   deployed by Rewayah Academy Ltd.
+3. Transfers by the Owner. The Owner may sell, assign or license the
+   Software to anyone. Every such transfer is subject to the licence in
+   clause 1, which binds every successor in title (Copyright, Designs and
+   Patents Act 1988, s. 90(4)). No transfer may withdraw, disable or restrict
+   a version deployed by Rewayah Academy Ltd.
 4. Data. This notice gives the Owner, or any successor, no rights in the
    data, content, trade marks, domain names or accounts of Rewayah Academy
    Ltd or of its users.
@@ -62,7 +70,7 @@ It is not open source. No licence is granted except as stated below.
 Version anglaise, à signer (les registres d'une société anglaise se tiennent en anglais) :
 
 > **REWAYAH ACADEMY LTD (company number 16624644). Written decision of the sole director, dated ____ 2026.**
-> The director, Abdoulaye Mouhidine Sow, declares that he personally owns the source code of the application used by the company and is therefore interested in this decision (Companies Act 2006, s. 177). It is decided that the company accepts the free, perpetual and irrevocable licence set out in the `LICENSE` file of the repository, together with its restrictions. The company acknowledges that it does not own the source code and that the source code is not among its transferable assets.
+> The director, Abdoulaye Mouhidine Sow, declares that he personally owns the software named "Rewayah Academy App" (the "Software"), kept in the Git repository github.com/rewayahacademy-glitch/Rewayah-Academy-Official-App (reference version: Git commit 4a7aa2befe354ace408d3c75c8ea177fb70544e1 of 22 September 2026), which the company uses and is therefore interested in this decision (Companies Act 2006, s. 177). It is decided that the company accepts the free, perpetual and irrevocable licence set out in the `LICENSE` file of the repository, together with its restrictions. The company acknowledges that it does not own the Software and that the Software is not among its transferable assets.
 > Signed: ______________________ Abdoulaye Mouhidine Sow, Director
 
 **Comment signer.** Imprimer la version anglaise, dater, signer à la main, scanner en PDF. Ou signer le PDF électroniquement (une signature électronique est valable en droit anglais). Ranger le PDF dans un dossier « Registres société » du Drive, à côté du certificat d'incorporation. Ne pas le déposer à Companies House et ne pas le verser dans un dépôt.
@@ -75,3 +83,4 @@ Version anglaise, à signer (les registres d'une société anglaise se tiennent 
 | Fin de la licence | Seulement si l'académie est dissoute | « Irrévocable » protège l'académie ; une résiliation pour faute ouvrirait une porte de retrait. |
 | Modifications faites par ou pour l'académie | Elles appartiennent au propriétaire et entrent dans la licence | Évite deux propriétaires sur un même code. |
 | Dépôt GitHub | Il est sur le compte `rewayahacademy-glitch`. Il est recommandé que ce compte, ou son transfert, reste sous le contrôle personnel du propriétaire | Détenir le compte n'est pas détenir les droits, mais cela évite tout litige pratique. |
+| Nom du logiciel | « Rewayah Academy App », identifié par le dépôt GitHub et un commit de référence (4a7aa2be, 22/09/2026) | Un identifiant de commit Git est une empreinte cryptographique de tout le code : il prouve, sans dépôt officiel, quel code est visé et à quelle date. Les versions antérieures, postérieures et dérivées sont incluses. |
