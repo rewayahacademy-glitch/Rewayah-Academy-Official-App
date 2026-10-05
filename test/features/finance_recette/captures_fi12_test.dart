@@ -182,8 +182,12 @@ class _DirectionEnEchec implements PortFinanceDirection {
   const _DirectionEnEchec();
 
   @override
-  Future<VueGlobaleFinance> vueGlobale() =>
+  Future<VueGlobaleFinance> vueGlobale({DateTime? mois}) =>
       Future<VueGlobaleFinance>.error(_echec);
+
+  @override
+  Future<List<DateTime>> moisDisponibles() =>
+      Future<List<DateTime>>.error(_echec);
 }
 
 /// Un mois sans activite : les zeros restent (le vide de la vue globale).
@@ -191,16 +195,22 @@ class _DirectionSansActivite implements PortFinanceDirection {
   const _DirectionSansActivite();
 
   @override
-  Future<VueGlobaleFinance> vueGlobale() async => VueGlobaleFinance(
-    mois: DateTime(2026, 7),
-    encaisse: const Montant(0, 'USD'),
-    revenuAcademique: const Montant(0, 'USD'),
-    paieEnseignants: const Montant(0, 'USD'),
-    margeProjeteePourMille: null,
-    impayes: const Montant(0, 'USD'),
-    essaisEnCours: 0,
-    soldesCrediteurs: const Montant(0, 'USD'),
-  );
+  Future<List<DateTime>> moisDisponibles() async => <DateTime>[
+    DateTime(2026, 7),
+  ];
+
+  @override
+  Future<VueGlobaleFinance> vueGlobale({DateTime? mois}) async =>
+      VueGlobaleFinance(
+        mois: DateTime(2026, 7),
+        encaisse: const Montant(0, 'USD'),
+        revenuAcademique: const Montant(0, 'USD'),
+        paieEnseignants: const Montant(0, 'USD'),
+        margeProjeteePourMille: null,
+        impayes: const Montant(0, 'USD'),
+        essaisEnCours: 0,
+        soldesCrediteurs: const Montant(0, 'USD'),
+      );
 }
 
 /// Les politiques commerciales, lectures en echec.
@@ -223,6 +233,14 @@ class _RevenusEnEchec implements PortRevenusEnseignant {
   @override
   Future<RevenusEnseignant> moisEnCours() =>
       Future<RevenusEnseignant>.error(_echec);
+
+  @override
+  Future<RevenusEnseignant> duMois(DateTime mois) =>
+      Future<RevenusEnseignant>.error(_echec);
+
+  @override
+  Future<List<DateTime>> moisDisponibles() =>
+      Future<List<DateTime>>.error(_echec);
 
   @override
   Future<List<LigneReleve>> releve() => Future<List<LigneReleve>>.error(_echec);
@@ -821,7 +839,11 @@ class _DirectionEnCours implements PortFinanceDirection {
   const _DirectionEnCours();
 
   @override
-  Future<VueGlobaleFinance> vueGlobale() => _jamais<VueGlobaleFinance>();
+  Future<VueGlobaleFinance> vueGlobale({DateTime? mois}) =>
+      _jamais<VueGlobaleFinance>();
+
+  @override
+  Future<List<DateTime>> moisDisponibles() => _jamais<List<DateTime>>();
 }
 
 /// Les politiques, lectures en cours sans fin.
@@ -1780,6 +1802,54 @@ void main() {
             verifier: c.verifier,
           );
         });
+      }
+    }
+  });
+
+  // FI-DIR-1 (decisions du 05/10) : les ecrans touches, a 390, 1440 et 320
+  // a texte 200 %, clair et sombre.
+  group('Capture : FI-DIR-1', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+
+    final List<_Cas> touches = <_Cas>[
+      for (final _Cas c in _cas)
+        if (<String>{
+          'foyer_a_regulariser',
+          'foyer_production',
+          'revenus_contenu',
+          'admin_vue_globale',
+          'admin_politiques',
+        }.contains(c.nom))
+          c,
+      _route(
+        'finances_mariam',
+        _fiche(_mariam, 'finances'),
+        () => _tuteur(_reg),
+      ),
+    ];
+    for (final _Cas cas in touches) {
+      for (final (String l, Size taille, double echelle)
+          in <(String, Size, double)>[
+            ('390', const Size(390, 2400), 1),
+            ('1440', const Size(1440, 2200), 1),
+            ('320_200pc', const Size(320, 3600), 2),
+          ]) {
+        for (final ThemeMode mode in <ThemeMode>[
+          ThemeMode.light,
+          ThemeMode.dark,
+        ]) {
+          final String fichier = 'fidir1_${cas.nom}_${l}_${mode.name}';
+          testWidgets(fichier, (WidgetTester tester) async {
+            await _capturer(
+              tester,
+              fichier,
+              cas,
+              taille,
+              mode: mode,
+              echelle: echelle,
+            );
+          });
+        }
       }
     }
   });

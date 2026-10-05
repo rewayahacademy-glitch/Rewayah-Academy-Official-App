@@ -217,8 +217,15 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
     portRevenusEnseignantProvider.overrideWithValue(
       RevenusEnseignantDemo(vide: vide),
     ),
+    moisRevenusProvider.overrideWith(MoisRevenus.new),
+    moisRevenusDisponiblesProvider.overrideWith(
+      (Ref ref) => ref.watch(portRevenusEnseignantProvider).moisDisponibles(),
+    ),
     revenusEnseignantProvider.overrideWith(
-      (Ref ref) => ref.watch(portRevenusEnseignantProvider).moisEnCours(),
+      (Ref ref) => lireRevenus(
+        ref.watch(portRevenusEnseignantProvider),
+        ref.watch(moisRevenusProvider),
+      ),
     ),
     // Le releve aussi : resolu a la racine, il lisait la session de
     // l'application, et son echec s'affichait « Impossible de charger » au

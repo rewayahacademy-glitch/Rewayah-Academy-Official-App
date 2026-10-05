@@ -206,7 +206,9 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
     // l'acces des freres et soeurs n'est jamais charge ici. Une lecture
     // absente ou en echec ne change rien a l'ecran (port neutre en
     // production) : Rejoindre ne disparait que sur un « ferme » explicite,
-    // et jamais selon un solde, que ce port ne porte pas.
+    // et jamais selon un solde, que ce port ne porte pas. L'enfant ne voit
+    // que l'etat « ferme », jamais « Essai : n/2 » ni « Accès actif » (FI-Q12
+    // (b), decide par delegation le 05/10 ; revue FI-VAGUE-R R4-03).
     final AsyncValue<AccesBeneficiaire?>? acces = prochain == null
         ? null
         : ref.watch(accesAppelantProvider);

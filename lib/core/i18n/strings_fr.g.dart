@@ -1011,9 +1011,6 @@ class Traductions$foyer$fr {
 	/// fr: 'Foyer'
 	String get titre => 'Foyer';
 
-	/// fr: 'Enfants du foyer'
-	String get membresEnfants => 'Enfants du foyer';
-
 	/// fr: 'Ajouter un profil élève'
 	String get ajouterProfil => 'Ajouter un profil élève';
 
@@ -2590,6 +2587,13 @@ class Traductions$commun$dates$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+
+	/// fr: '{mois} {annee}'
+	String moisAnnee({required Object mois, required Object annee}) => '${mois} ${annee}';
+
+	/// fr: 'Mois'
+	String get choixMois => 'Mois';
+
 	List<String> get jours => [
 		'Lundi',
 		'Mardi',
@@ -4441,8 +4445,8 @@ class Traductions$ficheEleve$finances$fr {
 	/// fr: 'Voir les mouvements'
 	String get voirMouvements => 'Voir les mouvements';
 
-	/// fr: 'Les absences ordinaires n'entraînent pas de réduction sur le mois une fois celui-ci financé. Vous pouvez consulter l'historique de présence dans l'onglet Historique.'
-	String get noteAbsences => 'Les absences ordinaires n\'entraînent pas de réduction sur le mois une fois celui-ci financé. Vous pouvez consulter l\'historique de présence dans l\'onglet Historique.';
+	/// fr: 'Les absences ordinaires n'entraînent pas de réduction sur le mois une fois celui-ci financé.'
+	String get noteAbsences => 'Les absences ordinaires n\'entraînent pas de réduction sur le mois une fois celui-ci financé.';
 
 	/// fr: 'Pas de consommation par séance'
 	String get faitSeance => 'Pas de consommation par séance';
@@ -4461,6 +4465,21 @@ class Traductions$ficheEleve$finances$fr {
 
 	/// fr: 'Voir les mouvements {dePrenom}'
 	String voirMouvementsSemantique({required Object dePrenom}) => 'Voir les mouvements ${dePrenom}';
+
+	/// fr: 'Télécharger le reçu'
+	String get telechargerRecu => 'Télécharger le reçu';
+
+	/// fr: 'Le reçu n'est pas encore disponible'
+	String get recuIndisponibleTitre => 'Le reçu n\'est pas encore disponible';
+
+	/// fr: 'Le téléchargement des reçus arrive avec la mise en service des paiements. Chaque paiement reste visible dans les mouvements.'
+	String get recuIndisponiblePhrase => 'Le téléchargement des reçus arrive avec la mise en service des paiements. Chaque paiement reste visible dans les mouvements.';
+
+	/// fr: 'Le reçu n'a pas pu être préparé'
+	String get recuEchecTitre => 'Le reçu n\'a pas pu être préparé';
+
+	/// fr: 'Vérifiez votre connexion, puis réessayez.'
+	String get recuEchecPhrase => 'Vérifiez votre connexion, puis réessayez.';
 }
 
 // Path: ficheEleve.mouvements
@@ -9432,8 +9451,8 @@ class Traductions$enseignant$profil$fr {
 	/// fr: 'Rémunération'
 	String get remuneration => 'Rémunération';
 
-	/// fr: 'Mes revenus'
-	String get revenus => 'Mes revenus';
+	/// fr: 'Revenus estimés'
+	String get revenus => 'Revenus estimés';
 
 	/// fr: 'Estimation du mois en cours, Classe par Classe'
 	String get revenusDetail => 'Estimation du mois en cours, Classe par Classe';
@@ -9594,11 +9613,11 @@ class Traductions$enseignant$revenus$fr {
 
 	// Translations
 
-	/// fr: 'Mes revenus'
-	String get titre => 'Mes revenus';
+	/// fr: 'Revenus estimés'
+	String get titre => 'Revenus estimés';
 
-	/// fr: 'Une estimation de votre rémunération du mois en cours, Classe par Classe.'
-	String get intro => 'Une estimation de votre rémunération du mois en cours, Classe par Classe.';
+	/// fr: 'Une estimation de votre rémunération du mois choisi, Classe par Classe.'
+	String get intro => 'Une estimation de votre rémunération du mois choisi, Classe par Classe.';
 
 	/// fr: 'Estimation'
 	String get estimation => 'Estimation';
@@ -12837,6 +12856,54 @@ class Traductions$admin$finance$vue$fr {
 	/// fr: 'Aucune alerte ce mois.'
 	String get aucuneAlerte => 'Aucune alerte ce mois.';
 
+	/// fr: 'État des paiements'
+	String get etatPaiements => 'État des paiements';
+
+	/// fr: 'Les profils du mois selon l'état de leur période. Un essai n'est jamais compté comme payant.'
+	String get etatPaiementsDetail => 'Les profils du mois selon l\'état de leur période. Un essai n\'est jamais compté comme payant.';
+
+	/// fr: 'Financés'
+	String get etatFinances => 'Financés';
+
+	/// fr: 'À régulariser'
+	String get etatARegulariser => 'À régulariser';
+
+	/// fr: 'En essai'
+	String get etatEnEssai => 'En essai';
+
+	/// fr: 'En confirmation'
+	String get etatEnConfirmation => 'En confirmation';
+
+	/// fr: '{valeur} % des profils du mois'
+	String etatPart({required Object valeur}) => '${valeur} % des profils du mois';
+
+	/// fr: 'Aucun état de paiement rendu pour ce mois.'
+	String get etatVide => 'Aucun état de paiement rendu pour ce mois.';
+
+	/// fr: 'Top classes'
+	String get topClasses => 'Top classes';
+
+	/// fr: 'Les classes qui ont le plus encaissé {deMois}.'
+	String topClassesDetail({required Object deMois}) => 'Les classes qui ont le plus encaissé ${deMois}.';
+
+	/// fr: '{rang}. Classe {classe}'
+	String topClasse({required Object rang, required Object classe}) => '${rang}. Classe ${classe}';
+
+	/// fr: 'Aucune classe n'a encaissé ce mois.'
+	String get topClassesVide => 'Aucune classe n\'a encaissé ce mois.';
+
+	/// fr: 'Dernières opérations'
+	String get dernieresOperations => 'Dernières opérations';
+
+	/// fr: 'Les derniers mouvements sur les profils des familles, le plus récent d'abord.'
+	String get dernieresOperationsDetail => 'Les derniers mouvements sur les profils des familles, le plus récent d\'abord.';
+
+	/// fr: '{libelle} · {prenom}'
+	String operation({required Object libelle, required Object prenom}) => '${libelle} · ${prenom}';
+
+	/// fr: 'Aucun mouvement pour l'instant.'
+	String get dernieresOperationsVide => 'Aucun mouvement pour l\'instant.';
+
 	late final Traductions$admin$finance$vue$alerte$fr alerte = Traductions$admin$finance$vue$alerte$fr.internal(_root);
 }
 
@@ -12871,6 +12938,12 @@ class Traductions$admin$finance$pol$fr {
 
 	/// fr: 'Le brouillon s'appliquera à partir de cette date, jamais à une facture déjà payée.'
 	String get dateEffetDetail => 'Le brouillon s\'appliquera à partir de cette date, jamais à une facture déjà payée.';
+
+	/// fr: 'Réglable dans le brouillon : elle sera appliquée à la publication, une fois le serveur branché.'
+	String get dateEffetReglable => 'Réglable dans le brouillon : elle sera appliquée à la publication, une fois le serveur branché.';
+
+	/// fr: 'Changer la date d'effet'
+	String get changerDate => 'Changer la date d\'effet';
 
 	/// fr: '{jour} {mois} {annee}'
 	String date({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}';
@@ -13121,8 +13194,20 @@ class Traductions$admin$finance$pol$fr {
 	/// fr: 'Inactif'
 	String get railInactif => 'Inactif';
 
-	/// fr: 'Le seul moyen de paiement au lancement : une règle fixe, pas un réglage.'
-	String get railWebDetail => 'Le seul moyen de paiement au lancement : une règle fixe, pas un réglage.';
+	/// fr: 'Le seul moyen de paiement proposé aux familles au lancement.'
+	String get railWebDetail => 'Le seul moyen de paiement proposé aux familles au lancement.';
+
+	/// fr: 'Achat intégré iOS'
+	String get railIos => 'Achat intégré iOS';
+
+	/// fr: 'Facturation Google Play'
+	String get railAndroid => 'Facturation Google Play';
+
+	/// fr: 'Préparé (inactif)'
+	String get railPrepare => 'Préparé (inactif)';
+
+	/// fr: 'Prévu pour plus tard : aucun bouton de paiement mobile n'est montré aux familles au lancement.'
+	String get railMobileDetail => 'Prévu pour plus tard : aucun bouton de paiement mobile n\'est montré aux familles au lancement.';
 
 	/// fr: 'Conservation de la place'
 	String get conservation => 'Conservation de la place';
@@ -13160,8 +13245,41 @@ class Traductions$admin$finance$pol$fr {
 	/// fr: 'Objectif {objectif} %, forte {forte} %, stretch {stretch} %'
 	String margeValeur({required Object objectif, required Object forte, required Object stretch}) => 'Objectif ${objectif} %, forte ${forte} %, stretch ${stretch} %';
 
-	/// fr: 'Un repère pour lire la vue globale, jamais une sanction, un refus ni un blocage. Il ne se modifie pas sur cet écran pour l'instant.'
-	String get margeDetail => 'Un repère pour lire la vue globale, jamais une sanction, un refus ni un blocage. Il ne se modifie pas sur cet écran pour l\'instant.';
+	/// fr: 'Un repère pour lire la vue globale, jamais une sanction, un refus ni un blocage.'
+	String get margeDetail => 'Un repère pour lire la vue globale, jamais une sanction, un refus ni un blocage.';
+
+	/// fr: 'Marge objectif'
+	String get margeObjectif => 'Marge objectif';
+
+	/// fr: 'Marge nette visée, toutes charges comprises : un repère de pilotage, jamais une sanction ni un blocage.'
+	String get margeObjectifDetail => 'Marge nette visée, toutes charges comprises : un repère de pilotage, jamais une sanction ni un blocage.';
+
+	/// fr: 'Performance forte'
+	String get margeForte => 'Performance forte';
+
+	/// fr: 'Le repère d'un mois très bon ; il ne descend pas sous l'objectif.'
+	String get margeForteDetail => 'Le repère d\'un mois très bon ; il ne descend pas sous l\'objectif.';
+
+	/// fr: 'Scénario stretch'
+	String get margeStretch => 'Scénario stretch';
+
+	/// fr: 'Le repère ambitieux ; il ne descend pas sous la performance forte.'
+	String get margeStretchDetail => 'Le repère ambitieux ; il ne descend pas sous la performance forte.';
+
+	/// fr: '{valeur} %'
+	String pourcentValeur({required Object valeur}) => '${valeur} %';
+
+	/// fr: '%'
+	String get unitePourcent => '%';
+
+	/// fr: 'Une marge ne dépasse pas 100 %.'
+	String get erreurMargeMax => 'Une marge ne dépasse pas 100 %.';
+
+	/// fr: 'La performance forte ne descend pas sous l'objectif ({objectif}).'
+	String erreurMargeForte({required Object objectif}) => 'La performance forte ne descend pas sous l\'objectif (${objectif}).';
+
+	/// fr: 'Le scénario stretch ne descend pas sous la performance forte ({forte}).'
+	String erreurMargeStretch({required Object forte}) => 'Le scénario stretch ne descend pas sous la performance forte (${forte}).';
 
 	/// fr: 'Budgets'
 	String get budgets => 'Budgets';
@@ -17167,6 +17285,8 @@ extension on Traductions {
 			'commun.theme.clair' => 'Thème clair',
 			'commun.theme.sombre' => 'Thème sombre',
 			'commun.demarrage.ouverture' => 'Ouverture de Rewayah',
+			'commun.dates.moisAnnee' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
+			'commun.dates.choixMois' => 'Mois',
 			'commun.dates.jours.0' => 'Lundi',
 			'commun.dates.jours.1' => 'Mardi',
 			'commun.dates.jours.2' => 'Mercredi',
@@ -17620,10 +17740,10 @@ extension on Traductions {
 			'contrat.pointEnregistrement' => 'Chaque cours est enregistré en audio, conservé trente jours, puis effacé. Chaque écoute est inscrite au journal, avec le nom de qui écoute.',
 			'contrat.pointControle' => 'Un contrôleur qualité peut assister à un cours sans être vu. La salle le rappelle en permanence, que la visite ait lieu ou non.',
 			'contrat.pointCoordonnees' => 'Vous ne voyez jamais les coordonnées d\'une famille : ni nom complet, ni courriel, ni téléphone.',
-			'contrat.lireTexte' => 'Lire le texte complet',
-			'contrat.accepter' => 'J\'ai lu et j\'accepte',
 			_ => null,
 		} ?? switch (path) {
+			'contrat.lireTexte' => 'Lire le texte complet',
+			'contrat.accepter' => 'J\'ai lu et j\'accepte',
 			'contrat.accepteLe' => ({required Object date}) => 'Accepté le ${date}',
 			'contrat.erreur' => 'La signature n\'a pas abouti. Réessayez dans un instant.',
 			'contrat.horsLigne' => 'Vous êtes hors ligne. Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.',
@@ -17839,7 +17959,6 @@ extension on Traductions {
 			'foyer.transactions.videPhrase' => 'Les recharges et les mensualités des profils apparaîtront ici.',
 			'foyer.transactions.erreurTitre' => 'Les dernières transactions ne peuvent pas être lues',
 			'foyer.titre' => 'Foyer',
-			'foyer.membresEnfants' => 'Enfants du foyer',
 			'foyer.ajouterProfil' => 'Ajouter un profil élève',
 			'foyer.sousTitre' => 'Les profils élèves de votre foyer',
 			'foyer.membres' => 'Profils élèves',
@@ -18043,13 +18162,18 @@ extension on Traductions {
 			'ficheEleve.finances.videTitre' => ({required Object prenom}) => 'Aucune finance enregistrée pour ${prenom}',
 			'ficheEleve.finances.videPhrase' => 'Aucun solde ni aucune mensualité n\'est encore rendu pour ce profil. Ils apparaîtront ici après son inscription à une classe.',
 			'ficheEleve.finances.voirMouvements' => 'Voir les mouvements',
-			'ficheEleve.finances.noteAbsences' => 'Les absences ordinaires n\'entraînent pas de réduction sur le mois une fois celui-ci financé. Vous pouvez consulter l\'historique de présence dans l\'onglet Historique.',
+			'ficheEleve.finances.noteAbsences' => 'Les absences ordinaires n\'entraînent pas de réduction sur le mois une fois celui-ci financé.',
 			'ficheEleve.finances.faitSeance' => 'Pas de consommation par séance',
 			'ficheEleve.finances.faitPeriode' => 'Accès lié à la période financée',
 			'ficheEleve.finances.historiqueTitre' => 'Historique des transactions',
 			'ficheEleve.finances.voirTout' => 'Voir tout',
 			'ficheEleve.finances.voirToutSemantique' => ({required Object dePrenom}) => 'Voir tous les mouvements ${dePrenom}',
 			'ficheEleve.finances.voirMouvementsSemantique' => ({required Object dePrenom}) => 'Voir les mouvements ${dePrenom}',
+			'ficheEleve.finances.telechargerRecu' => 'Télécharger le reçu',
+			'ficheEleve.finances.recuIndisponibleTitre' => 'Le reçu n\'est pas encore disponible',
+			'ficheEleve.finances.recuIndisponiblePhrase' => 'Le téléchargement des reçus arrive avec la mise en service des paiements. Chaque paiement reste visible dans les mouvements.',
+			'ficheEleve.finances.recuEchecTitre' => 'Le reçu n\'a pas pu être préparé',
+			'ficheEleve.finances.recuEchecPhrase' => 'Vérifiez votre connexion, puis réessayez.',
 			'ficheEleve.mouvements.titre' => 'Mouvements',
 			'ficheEleve.mouvements.dateHeure' => ({required Object date, required Object heure}) => '${date} à ${heure}',
 			'ficheEleve.mouvements.heureChiffres' => ({required Object heures, required Object minutes}) => '${heures}:${minutes}',
@@ -18130,14 +18254,14 @@ extension on Traductions {
 			'creneaux.demandeEnvoyer' => 'Envoyer la demande',
 			'creneaux.demandeEnvoyee' => 'Demande envoyée. L\'administration la tranchera.',
 			'creneaux.eleves' => ({required Object nombre}) => '${nombre} élèves',
+			_ => null,
+		} ?? switch (path) {
 			'creneaux.erreur' => ({required Object message}) => 'L\'opération n\'a pas abouti : ${message}',
 			'priere.fajr' => 'Fajr',
 			'priere.dhuhr' => 'Dhuhr',
 			'priere.asr' => 'Asr',
 			'priere.maghrib' => 'Maghrib',
 			'priere.isha' => 'Isha',
-			_ => null,
-		} ?? switch (path) {
 			'priere.entree' => ({required Object priere, required Object minutes}) => '${priere}, ${minutes} min',
 			'priere.annonce' => ({required Object priere, required Object heure}) => 'Ce cours sera interrompu pour ${priere}, vers ${heure}.',
 			'priere.annonceAucune' => 'Aucune interruption prévue pendant ce cours.',
@@ -18585,6 +18709,22 @@ extension on Traductions {
 			'admin.finance.vue.sansHistorique' => 'Aucun mois rendu pour l\'instant.',
 			'admin.finance.vue.alertes' => 'Alertes',
 			'admin.finance.vue.aucuneAlerte' => 'Aucune alerte ce mois.',
+			'admin.finance.vue.etatPaiements' => 'État des paiements',
+			'admin.finance.vue.etatPaiementsDetail' => 'Les profils du mois selon l\'état de leur période. Un essai n\'est jamais compté comme payant.',
+			'admin.finance.vue.etatFinances' => 'Financés',
+			'admin.finance.vue.etatARegulariser' => 'À régulariser',
+			'admin.finance.vue.etatEnEssai' => 'En essai',
+			'admin.finance.vue.etatEnConfirmation' => 'En confirmation',
+			'admin.finance.vue.etatPart' => ({required Object valeur}) => '${valeur} % des profils du mois',
+			'admin.finance.vue.etatVide' => 'Aucun état de paiement rendu pour ce mois.',
+			'admin.finance.vue.topClasses' => 'Top classes',
+			'admin.finance.vue.topClassesDetail' => ({required Object deMois}) => 'Les classes qui ont le plus encaissé ${deMois}.',
+			'admin.finance.vue.topClasse' => ({required Object rang, required Object classe}) => '${rang}. Classe ${classe}',
+			'admin.finance.vue.topClassesVide' => 'Aucune classe n\'a encaissé ce mois.',
+			'admin.finance.vue.dernieresOperations' => 'Dernières opérations',
+			'admin.finance.vue.dernieresOperationsDetail' => 'Les derniers mouvements sur les profils des familles, le plus récent d\'abord.',
+			'admin.finance.vue.operation' => ({required Object libelle, required Object prenom}) => '${libelle} · ${prenom}',
+			'admin.finance.vue.dernieresOperationsVide' => 'Aucun mouvement pour l\'instant.',
 			'admin.finance.vue.alerte.aRegulariser' => 'Période à régulariser',
 			'admin.finance.vue.alerte.aRegulariserMontant' => ({required Object qui, required Object montant}) => '${qui} : il manque ${montant} pour financer la période en cours.',
 			'admin.finance.vue.alerte.aRegulariserSansMontant' => ({required Object qui}) => '${qui} : la période en cours n\'est pas financée.',
@@ -18606,6 +18746,8 @@ extension on Traductions {
 			'admin.finance.pol.enVigueur' => ({required Object date}) => 'En vigueur depuis le ${date}',
 			'admin.finance.pol.dateEffet' => ({required Object date}) => 'Date d\'effet : ${date}',
 			'admin.finance.pol.dateEffetDetail' => 'Le brouillon s\'appliquera à partir de cette date, jamais à une facture déjà payée.',
+			'admin.finance.pol.dateEffetReglable' => 'Réglable dans le brouillon : elle sera appliquée à la publication, une fois le serveur branché.',
+			'admin.finance.pol.changerDate' => 'Changer la date d\'effet',
 			'admin.finance.pol.date' => ({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}',
 			'admin.finance.pol.differences' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Une valeur diffère de la version active : elle est rappelée sous son champ.', other: '${n} valeurs diffèrent de la version active : chacune est rappelée sous son champ.', ), 
 			'admin.finance.pol.aucuneDifference' => 'Aucune différence avec la version active pour l\'instant : modifiez un champ pour préparer la prochaine version.',
@@ -18626,6 +18768,8 @@ extension on Traductions {
 			'admin.finance.pol.seances' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} séance', other: '${n} séances', ), 
 			'admin.finance.pol.classes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} classe', other: '${n} classes', ), 
 			'admin.finance.pol.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} jour', other: '${n} jours', ), 
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.uniteEleves' => 'élèves',
 			'admin.finance.pol.uniteSeances' => 'séances',
 			'admin.finance.pol.uniteClasses' => 'classes',
@@ -18650,8 +18794,6 @@ extension on Traductions {
 			'admin.finance.pol.remiseAucuneValeur' => 'Prix normal',
 			'admin.finance.pol.remiseAucuneDetail' => 'Aucune remise : les premiers membres payants paient le tarif plein.',
 			'admin.finance.pol.remiseRang' => ({required Object rang}) => '${rang}e membre payant',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.remiseRangDetail' => 'Ce membre reçoit cette remise sur son prix mensuel ; les membres déjà facturés ne changent pas.',
 			'admin.finance.pol.remiseRangSuivants' => ({required Object rang}) => '${rang}e membre payant et suivants',
 			'admin.finance.pol.remiseRangSuivantsDetail' => 'Chaque membre payant à partir de ce rang reçoit cette remise sur son prix mensuel.',
@@ -18686,7 +18828,11 @@ extension on Traductions {
 			'admin.finance.pol.railWeb' => 'Paiement web (Stripe)',
 			'admin.finance.pol.railActif' => 'Actif',
 			'admin.finance.pol.railInactif' => 'Inactif',
-			'admin.finance.pol.railWebDetail' => 'Le seul moyen de paiement au lancement : une règle fixe, pas un réglage.',
+			'admin.finance.pol.railWebDetail' => 'Le seul moyen de paiement proposé aux familles au lancement.',
+			'admin.finance.pol.railIos' => 'Achat intégré iOS',
+			'admin.finance.pol.railAndroid' => 'Facturation Google Play',
+			'admin.finance.pol.railPrepare' => 'Préparé (inactif)',
+			'admin.finance.pol.railMobileDetail' => 'Prévu pour plus tard : aucun bouton de paiement mobile n\'est montré aux familles au lancement.',
 			'admin.finance.pol.conservation' => 'Conservation de la place',
 			'admin.finance.pol.conservationDetail' => 'Le délai pendant lequel la place d\'un élève reste réservée quand sa nouvelle période n\'est pas financée.',
 			'admin.finance.pol.relances' => 'Règles de relance',
@@ -18699,7 +18845,18 @@ extension on Traductions {
 			'admin.finance.pol.pilotageDetail' => 'Des repères pour lire les chiffres, jamais des règles qui bloquent.',
 			'admin.finance.pol.marge' => 'Marge de référence',
 			'admin.finance.pol.margeValeur' => ({required Object objectif, required Object forte, required Object stretch}) => 'Objectif ${objectif} %, forte ${forte} %, stretch ${stretch} %',
-			'admin.finance.pol.margeDetail' => 'Un repère pour lire la vue globale, jamais une sanction, un refus ni un blocage. Il ne se modifie pas sur cet écran pour l\'instant.',
+			'admin.finance.pol.margeDetail' => 'Un repère pour lire la vue globale, jamais une sanction, un refus ni un blocage.',
+			'admin.finance.pol.margeObjectif' => 'Marge objectif',
+			'admin.finance.pol.margeObjectifDetail' => 'Marge nette visée, toutes charges comprises : un repère de pilotage, jamais une sanction ni un blocage.',
+			'admin.finance.pol.margeForte' => 'Performance forte',
+			'admin.finance.pol.margeForteDetail' => 'Le repère d\'un mois très bon ; il ne descend pas sous l\'objectif.',
+			'admin.finance.pol.margeStretch' => 'Scénario stretch',
+			'admin.finance.pol.margeStretchDetail' => 'Le repère ambitieux ; il ne descend pas sous la performance forte.',
+			'admin.finance.pol.pourcentValeur' => ({required Object valeur}) => '${valeur} %',
+			'admin.finance.pol.unitePourcent' => '%',
+			'admin.finance.pol.erreurMargeMax' => 'Une marge ne dépasse pas 100 %.',
+			'admin.finance.pol.erreurMargeForte' => ({required Object objectif}) => 'La performance forte ne descend pas sous l\'objectif (${objectif}).',
+			'admin.finance.pol.erreurMargeStretch' => ({required Object forte}) => 'Le scénario stretch ne descend pas sous la performance forte (${forte}).',
 			'admin.finance.pol.budgets' => 'Budgets',
 			'admin.finance.pol.budgetsDetail' => 'Non contraignants : des repères de dépense, jamais un blocage ni une sanction.',
 			'admin.finance.pol.budgetsNonFixes' => 'Pas encore fixés',
@@ -19125,6 +19282,8 @@ extension on Traductions {
 			'admin.agents.emissionEnCours' => 'Émission',
 			'admin.agents.emis' => 'Jeton émis',
 			'admin.agents.emisDetail' => 'Remettez ce lien à l\'agent. Il n\'apparaîtra plus : ni cet écran ni la base ne peuvent le retrouver.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.agents.copier' => 'Copier le lien',
 			'admin.agents.copie' => 'Lien copié',
 			'admin.agents.termine' => 'J\'ai copié le lien',
@@ -19164,8 +19323,6 @@ extension on Traductions {
 			'agent.titre' => 'Entrée d\'un agent',
 			'agent.intro' => 'Cette page ouvre l\'application en lecture seule, avec le jeton remis par l\'académie.',
 			'agent.jeton' => 'Jeton d\'observation',
-			_ => null,
-		} ?? switch (path) {
 			'agent.jetonExemple' => 'rag_...',
 			'agent.entrer' => 'Ouvrir l\'application',
 			'agent.ouverture' => 'Ouverture',
@@ -19639,6 +19796,8 @@ extension on Traductions {
 			'eleve.accueil.pausePriereDetail' => ({required Object priere, required Object heure}) => '${priere}, vers ${heure}',
 			'eleve.coran.titre' => 'Le Coran',
 			'eleve.coran.page' => ({required Object page, required Object total}) => 'Page ${page} sur ${total}',
+			_ => null,
+		} ?? switch (path) {
 			'eleve.coran.juz' => ({required Object juz}) => 'Juz ${juz}',
 			'eleve.coran.mecquoise' => 'Révélée à La Mecque',
 			'eleve.coran.medinoise' => 'Révélée à Médine',
@@ -19678,8 +19837,6 @@ extension on Traductions {
 			'eleve.suivi.tronquee' => ({required Object nombre}) => 'Les ${nombre} cours les plus récents sont affichés.',
 			'eleve.suivi.fin' => ({required Object nombre}) => '${nombre} cours au suivi.',
 			'eleve.suivi.finUn' => '1 cours au suivi.',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.titre' => 'Accueil',
 			'tuteur.accueil.voirLaClasse' => 'Voir la classe',
 			'tuteur.accueil.prochaineSeance' => 'Prochaine séance',
@@ -20153,6 +20310,8 @@ extension on Traductions {
 			'enseignant.cahier.dureeEtInterruption' => ({required Object minutes, required Object interruption}) => '${minutes} min de cours, dont ${interruption} min d\'interruption',
 			'enseignant.cahier.unEleve' => '1 élève',
 			'enseignant.cahier.eleves' => ({required Object nombre}) => '${nombre} élèves',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.toutEstNominal' => 'Tout s\'est passé comme prévu.',
 			'enseignant.cahier.toutEstNominalDetail' => 'Validez, et votre journée continue.',
 			'enseignant.cahier.exceptions' => 'À regarder',
@@ -20192,8 +20351,6 @@ extension on Traductions {
 			'enseignant.cahier.suiteRenforcer' => 'Renforcer',
 			'enseignant.cahier.suspendreNouveau' => 'Suspendre le nouveau',
 			'enseignant.cahier.devoirPrecedent' => ({required Object devoir}) => 'Devoir précédent : ${devoir}',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.devoirPlage' => ({required Object sourate, required Object debut, required Object fin}) => 'Réviser la sourate ${sourate}, versets ${debut} à ${fin}.',
 			'enseignant.cahier.suspendreNouveauDetail' => 'La révision continue, rien de nouveau n\'est ajouté pour cet élève.',
 			'enseignant.cahier.position' => ({required Object sourate, required Object verset}) => 'Lecture : sourate ${sourate}, verset ${verset}',
@@ -20246,7 +20403,7 @@ extension on Traductions {
 			'enseignant.cahier.corrigeLe' => ({required Object date}) => 'Corrigé le ${date}',
 			'enseignant.profil.titre' => 'Profil',
 			'enseignant.profil.remuneration' => 'Rémunération',
-			'enseignant.profil.revenus' => 'Mes revenus',
+			'enseignant.profil.revenus' => 'Revenus estimés',
 			'enseignant.profil.revenusDetail' => 'Estimation du mois en cours, Classe par Classe',
 			'enseignant.profil.compteValide' => 'Compte enseignant vérifié',
 			'enseignant.profil.intro' => 'Ce que l\'académie sait de vous, et ce que vous pouvez y changer.',
@@ -20297,8 +20454,8 @@ extension on Traductions {
 			'enseignant.profil.enregistrer' => 'Enregistrer',
 			'enseignant.profil.enregistre' => 'Modification enregistrée',
 			'enseignant.profil.editionErreur' => 'La modification n\'a pas abouti. Réessayez dans un instant.',
-			'enseignant.revenus.titre' => 'Mes revenus',
-			'enseignant.revenus.intro' => 'Une estimation de votre rémunération du mois en cours, Classe par Classe.',
+			'enseignant.revenus.titre' => 'Revenus estimés',
+			'enseignant.revenus.intro' => 'Une estimation de votre rémunération du mois choisi, Classe par Classe.',
 			'enseignant.revenus.estimation' => 'Estimation',
 			'enseignant.revenus.periode' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
 			'enseignant.revenus.totalEstime' => 'Revenu estimé du mois',
@@ -20667,6 +20824,8 @@ extension on Traductions {
 			'tc.groupe.duree.minutes' => ({required Object minutes}) => '${minutes} min',
 			'tc.groupe.duree.heures' => ({required Object heures}) => '${heures} h',
 			'tc.groupe.duree.heuresMinutes' => ({required Object heures, required Object minutes}) => '${heures} h ${minutes}',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.horloges.votreHeure' => 'Votre heure',
 			'tc.groupe.horloges.chezEnseignant' => ({required Object nomme}) => 'Chez ${nomme}',
 			'tc.groupe.horloges.heureGroupe' => 'Heure de la classe',
@@ -20706,8 +20865,6 @@ extension on Traductions {
 			'tc.bibliotheque.aucunResultat.invitation' => 'Essayez un autre mot, ou relâchez les filtres.',
 			'tc.bibliotheque.indisponible.message' => 'La bibliothèque est momentanément indisponible',
 			'tc.bibliotheque.indisponible.action' => 'Réessayer',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.introuvable.message' => 'Ce support ne vous est pas ouvert',
 			'tc.bibliotheque.introuvable.invitation' => 'Il a peut-être été retiré, ou il est réservé à un autre groupe. Votre enseignant peut vous le rouvrir.',
 			'tc.bibliotheque.offline.aTelecharger' => 'À télécharger',
@@ -21181,6 +21338,8 @@ extension on Traductions {
 			'adulte.recharge.revenirPaiements' => 'Revenir aux paiements du foyer',
 			'adulte.recharge.commandeRendue' => 'Le paiement est envoyé. Ne payez pas une seconde fois : suivez son état.',
 			'adulte.recharge.suivrePaiement' => 'Suivre le paiement',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.recharge.resultat.preparationTitre' => 'Paiement en préparation',
 			'adulte.recharge.resultat.preparationPhrase' => 'Vérifiez la répartition avant de payer.',
 			'adulte.recharge.resultat.attenteTitre' => 'Paiement en cours de confirmation',
@@ -21220,8 +21379,6 @@ extension on Traductions {
 			'adulte.recharge.resultat.lectureEchecTitre' => 'L\'état du paiement n\'a pas pu être lu.',
 			'adulte.recharge.resultat.lectureEchecPhrase' => 'Le paiement n\'est pas annulé pour autant. Ne payez pas une seconde fois : réessayez la lecture.',
 			'adulte.paiements.beneficiaires' => 'Bénéficiaires',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.paiements.recharger' => 'Recharger',
 			'adulte.paiements.recapitulatif' => ({required Object valeur}) => 'Récapitulatif du foyer : ${valeur}. Chaque solde reste celui de son bénéficiaire.',
 			'adulte.paiements.bientotEpuise' => 'Bientôt épuisé',

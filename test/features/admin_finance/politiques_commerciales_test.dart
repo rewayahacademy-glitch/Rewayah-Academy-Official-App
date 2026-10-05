@@ -313,6 +313,10 @@ const Set<String> _reglables = <String>{
   'capaciteDebutant',
   'minimum',
   'conservation',
+  // FI-Q21.1 : les trois reperes de la marge de reference.
+  'margeObjectif',
+  'margeForte',
+  'margeStretch',
 };
 
 void main() {
@@ -527,8 +531,9 @@ void main() {
         find.descendant(of: carte, matching: find.byType(TextField)),
         findsNothing,
       );
-      // Le paiement web seul : une ligne lue, jamais un champ ; la marge de
-      // reference non plus.
+      // Le paiement web : un interrupteur, jamais un champ de saisie
+      // (FI-Q21.1) ; la marge : trois champs, deja comptes dans les
+      // reglables.
       expect(find.text(pol.railWeb), findsOneWidget);
       expect(find.text(pol.railActif), findsOneWidget);
       expect(
@@ -737,12 +742,14 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text(pol.aucuneDifference), findsNothing);
       expect(find.text(pol.differences(n: 2)), findsOneWidget);
+      // FI-Q21.1 : la marge se regle repere par repere ; seul l'objectif
+      // differe, il est rappele sous son champ.
+      expect(_saisie(tester, 'margeObjectif'), '32');
       expect(
-        tester.widget<Text>(_comparaison('marge')).data,
-        pol.versionActiveValeur(
-          valeur: pol.margeValeur(objectif: '30', forte: '35', stretch: '40'),
-        ),
+        tester.widget<Text>(_comparaison('margeObjectif')).data,
+        pol.versionActiveValeur(valeur: pol.pourcentValeur(valeur: '30')),
       );
+      expect(_comparaison('margeForte'), findsNothing);
       expect(
         tester.widget<Text>(_comparaison('rails')).data,
         pol.versionActiveValeur(valeur: pol.railActif),
@@ -1609,6 +1616,204 @@ void main() {
         findsOneWidget,
       );
       expect(find.textContaining('brouillon-'), findsNothing);
+    });
+  });
+
+  group('FI-DIR-1 : FI-Q21 et R6-08', () {
+    testWidgets('Q21.1 : la marge de reference se regle en brouillon, '
+        'repere par repere, et part au port en pour mille', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(1440, 2600));
+      final _Port port = _avecBrouillon();
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+      expect(_saisie(tester, 'margeObjectif'), '30');
+      expect(_saisie(tester, 'margeForte'), '35');
+      expect(_saisie(tester, 'margeStretch'), '40');
+      expect(
+        tester
+            .widget<TextField>(_champ('margeObjectif'))
+            .decoration!
+            .suffixText,
+        pol.unitePourcent,
+      );
+      await tester.enterText(_champ('margeObjectif'), '33');
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<Text>(_comparaison('margeObjectif')).data,
+        pol.versionActiveValeur(valeur: pol.pourcentValeur(valeur: '30')),
+      );
+      expect(find.text(pol.differences(n: 1)), findsOneWidget);
+      await _publier(tester);
+      expect(port.publies.single.margeReferencePourMille, (
+        objectif: 330,
+        forte: 350,
+        stretch: 400,
+      ));
+    });
+
+    testWidgets('Q21.1 : la coherence des reperes, une phrase sous le champ', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(1440, 2600));
+      final _Port port = _avecBrouillon();
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+      String? erreur(String id) =>
+          tester.widget<TextField>(_champ(id)).decoration!.errorText;
+      await tester.enterText(_champ('margeForte'), '25');
+      await tester.pump();
+      expect(
+        erreur('margeForte'),
+        pol.erreurMargeForte(objectif: pol.pourcentValeur(valeur: '30')),
+      );
+      await tester.enterText(_champ('margeForte'), '35');
+      await tester.enterText(_champ('margeStretch'), '34');
+      await tester.pump();
+      expect(
+        erreur('margeStretch'),
+        pol.erreurMargeStretch(forte: pol.pourcentValeur(valeur: '35')),
+      );
+      await tester.enterText(_champ('margeStretch'), '101');
+      await tester.pump();
+      expect(erreur('margeStretch'), pol.erreurMargeMax);
+      await _publier(tester);
+      expect(port.publies, isEmpty);
+      expect(find.text(pol.champsACorriger), findsOneWidget);
+    });
+
+    testWidgets('Q21.1 et Q21.2 : le paiement web en interrupteur, iOS et '
+        'Android « Préparé (inactif) », jamais un reglage', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(1440, 2600));
+      final _Port port = _avecBrouillon();
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+      for (final String id in <String>['railIos', 'railAndroid']) {
+        final Finder ligne = find.byKey(
+          PolitiquesCommercialesContenu.champKey(id),
+        );
+        expect(
+          find.descendant(of: ligne, matching: find.text(pol.railPrepare)),
+          findsOneWidget,
+          reason: id,
+        );
+        expect(
+          find.descendant(of: ligne, matching: find.byType(Switch)),
+          findsNothing,
+        );
+      }
+      final Finder web = find.descendant(
+        of: find.byKey(PolitiquesCommercialesContenu.champKey('rails')),
+        matching: find.byType(Switch),
+      );
+      expect(web, findsOneWidget);
+      await _toucher(tester, web);
+      expect(
+        tester.widget<Text>(_comparaison('rails')).data,
+        pol.versionActiveValeur(valeur: pol.railActif),
+      );
+      await _publier(tester);
+      expect(port.publies.single.railsActifs, isEmpty);
+    });
+
+    testWidgets('Q21.2 : en lecture aussi, iOS et Android « Préparé '
+        '(inactif) »', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 2600));
+      await tester.pumpWidget(_hote(surcharges: _avec(_sansBrouillon())));
+      await tester.pumpAndSettle();
+      expect(find.text(pol.railPrepare), findsNWidgets(2));
+      expect(find.byType(Switch), findsNothing);
+    });
+
+    testWidgets('Q21.3 : edition directe, aucun bouton « Modifier » par '
+        'carte', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 2600));
+      await tester.pumpWidget(_hote(surcharges: _avec(_avecBrouillon())));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Modifier'), findsNothing);
+      expect(_champ('tarifEnfant'), findsOneWidget);
+    });
+
+    testWidgets('Q21.4 : la date d effet se regle dans le brouillon et part '
+        'avec lui', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 2600));
+      final _Port port = _avecBrouillon();
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+      expect(find.text(pol.dateEffetReglable), findsOneWidget);
+      await _toucher(tester, find.text(pol.changerDate));
+      expect(find.byType(DatePickerDialog), findsOneWidget);
+      // Le calendrier s'ouvre sur janvier 2027 (date du brouillon).
+      await tester.tap(find.text('15'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+      final String attendue = pol.dateEffet(
+        date: dateEffetEnTexte(DateTime(2027, 1, 15)),
+      );
+      expect(_dansEntete(find.text(attendue)), findsOneWidget);
+      await _publier(tester);
+      expect(port.publies.single.dateEffet, DateTime(2027, 1, 15));
+    });
+
+    testWidgets('Q21.4 : sans brouillon, aucune date a regler', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(1440, 2600));
+      await tester.pumpWidget(_hote(surcharges: _avec(_sansBrouillon())));
+      await tester.pumpAndSettle();
+      expect(find.text(pol.changerDate), findsNothing);
+    });
+
+    testWidgets('R6-08 : 1440, les sections se lisent rangee par rangee, '
+        'l en-tete tient sur une rangee, l historique en fin de page', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(1440, 900));
+      await tester.pumpWidget(_hote(surcharges: _avec(_avecBrouillon())));
+      await tester.pumpAndSettle();
+      Offset haut(String titre) => tester.getTopLeft(
+        find
+            .ancestor(of: find.text(titre), matching: find.byType(AppCard))
+            .first,
+      );
+      final List<String> ordre = <String>[
+        pol.tarifs,
+        pol.essai,
+        pol.remises,
+        pol.enseignants,
+        pol.sectionClasses,
+        pol.paiement,
+        pol.pilotage,
+        pol.invariants,
+      ];
+      for (int i = 0; i < ordre.length; i += 2) {
+        final Offset gauche = haut(ordre[i]);
+        final Offset droite = haut(ordre[i + 1]);
+        // Meme rangee : meme haut, la gauche avant la droite.
+        expect(droite.dy, gauche.dy, reason: ordre[i + 1]);
+        expect(droite.dx, greaterThan(gauche.dx), reason: ordre[i + 1]);
+        if (i > 0) {
+          expect(
+            gauche.dy,
+            greaterThan(haut(ordre[i - 1]).dy),
+            reason: ordre[i],
+          );
+        }
+      }
+      // Le premier ecran (900 de haut) montre deja les premieres sections.
+      expect(haut(pol.tarifs).dy, lessThan(900));
+      // L'historique apres la publication.
+      expect(
+        tester
+            .getTopLeft(find.byKey(PolitiquesCommercialesContenu.historiqueKey))
+            .dy,
+        greaterThan(tester.getTopLeft(find.text(pol.publier)).dy),
+      );
+      expect(tester.takeException(), isNull);
     });
   });
 

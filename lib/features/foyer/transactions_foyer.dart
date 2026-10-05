@@ -1,7 +1,8 @@
 // Les dernieres transactions du Foyer, sur ordinateur (FI-5b, guide Finance
 // V4 §5.1 « Desktop », maquette 05) : les trois derniers mouvements du foyer,
 // tels que la source les rend (`PortPaiementsFoyer.derniersMouvements`),
-// puis « Voir tout » vers l'historique des paiements du foyer (X-12,
+// puis « Voir tout » vers l'historique des paiements du foyer (X-12, FI-Q4 (a)
+// decide par delegation le 05/10 ;
 // `PaiementsComptePage` sans soldes ; revue FI-VAGUE-R R1-07).
 //
 // Aucun tri ni agregat ici (FI6) : la liste arrive arretee. En production le

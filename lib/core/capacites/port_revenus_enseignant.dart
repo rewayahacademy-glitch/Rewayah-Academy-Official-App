@@ -172,6 +172,14 @@ abstract interface class PortRevenusEnseignant {
   /// Les revenus estimes du mois en cours (FI-BR-11).
   Future<RevenusEnseignant> moisEnCours();
 
+  /// Les revenus estimes du mois [mois] (premier jour), parmi
+  /// [moisDisponibles] (FI-BR-11 ; choix du mois garde, FI-Q18 (a)).
+  Future<RevenusEnseignant> duMois(DateTime mois);
+
+  /// Les mois que la source sait rendre, le plus recent d'abord (premier
+  /// jour de chaque mois) : le choix du mois ne propose qu'eux (FI-BR-11).
+  Future<List<DateTime>> moisDisponibles();
+
   /// Le releve des mois arretes par l'academie, du plus recent au plus
   /// ancien (FI-BR-11). Une capacite absente se dit indisponible : l'ecran
   /// n'invente jamais un mois « paye ».
@@ -186,6 +194,14 @@ class RevenusEnseignantIndisponibles implements PortRevenusEnseignant {
   @override
   Future<RevenusEnseignant> moisEnCours() =>
       Future<RevenusEnseignant>.error(const CapaciteIndisponible('FI-BR-11'));
+
+  @override
+  Future<RevenusEnseignant> duMois(DateTime mois) =>
+      Future<RevenusEnseignant>.error(const CapaciteIndisponible('FI-BR-11'));
+
+  @override
+  Future<List<DateTime>> moisDisponibles() =>
+      Future<List<DateTime>>.error(const CapaciteIndisponible('FI-BR-11'));
 
   @override
   Future<List<LigneReleve>> releve() =>

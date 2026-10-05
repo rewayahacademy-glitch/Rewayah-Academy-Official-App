@@ -21,10 +21,9 @@
 // « (demonstration) » sur chaque montant (REVUE_EA-R m4, 02_DECOUPAGE E-9) :
 // AUCUN composant ne l'ecrit aujourd'hui (`MontantArgent`, `formaterMontant`
 // rendent le montant nu) ; seul le ruban « Démonstration » de la coquille
-// (`RepereDemonstration`) marque l'ecran. Le ruban suffit-il, ou chaque
-// montant porte-t-il la marque : question 5 au directeur (revue FI-VAGUE-R,
-// R1-13 et R7-02). Le jour de la reponse, la marque se pose dans le composant
-// d'argent, jamais dans ces donnees.
+// (`RepereDemonstration`) marque l'ecran, et il suffit (FI-Q5 (a), decide par
+// delegation le 05/10 ; revue FI-VAGUE-R R1-13 et R7-02) : aucun montant ne
+// porte de marque propre.
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_acces_foyer.dart';
@@ -1303,8 +1302,77 @@ abstract final class DonneesFinanceDemo {
           montant: revenuDemo(adulte: true),
         ),
       ],
+      etatPaiements: etatPaiementsDemo(),
+      topClasses: topClassesDemo(),
+      // Les mouvements du foyer de demonstration ou Ibrahim est a
+      // regulariser, comme l'alerte : le plus recent d'abord (FI-BR-05).
+      dernieresOperations: derniersMouvements(
+        JeuFoyerFinance.unARegulariser,
+        limite: 5,
+      ),
     );
   }
+
+  /// L'etat des paiements du mois de reference (revue FI-VAGUE-R R6-02),
+  /// sur les MEMES sieges que le revenu et les impayes : finances = sieges
+  /// eligibles des classes, a regulariser = sieges qui ont un manque, en
+  /// essai = les essais en cours de la vue, en confirmation = aucun paiement
+  /// en attente dans la demonstration. Les parts sont calculees ICI, sur le
+  /// total de ces profils (pour mille, arrondi inferieur), jamais a l'ecran.
+  static List<CompteEtatPaiements> etatPaiementsDemo() {
+    int finances = 0;
+    int aRegulariser = 0;
+    for (final _ClasseDemo c in _classesDemo()) {
+      finances += c.eligibles > c.capacite ? c.capacite : c.eligibles;
+      aRegulariser += c.manques.length;
+    }
+    final int essais = profils(JeuFoyerFinance.unEnEssai)
+        .where((FinancesProfil p) => p.etat == EtatFinancier.essai)
+        .length;
+    const int enConfirmation = 0;
+    final int total = finances + aRegulariser + essais + enConfirmation;
+    CompteEtatPaiements compte(EtatPaiementsProfils etat, int n) =>
+        CompteEtatPaiements(
+          etat: etat,
+          profils: n,
+          partPourMille: total == 0 ? null : n * 1000 ~/ total,
+        );
+    return <CompteEtatPaiements>[
+      compte(EtatPaiementsProfils.finances, finances),
+      compte(EtatPaiementsProfils.aRegulariser, aRegulariser),
+      compte(EtatPaiementsProfils.enEssai, essais),
+      compte(EtatPaiementsProfils.enConfirmation, enConfirmation),
+    ];
+  }
+
+  /// Les classes de la demonstration rangees par encaisse du mois, la
+  /// premiere d'abord (revue FI-VAGUE-R R6-02) : le tarif de chaque siege
+  /// finance, comme [revenuDemo], dont la somme est l'encaisse de la vue.
+  static List<EncaissementClasse> topClassesDemo() {
+    final PolitiqueCommerciale p = politiqueLancement;
+    final List<EncaissementClasse> lignes = <EncaissementClasse>[
+      for (final _ClasseDemo c in _classesDemo())
+        EncaissementClasse(
+          classe: c.nom,
+          encaisse: Montant(
+            (c.adulte ? p.tarifAdulte : p.tarifEnfant).mineur *
+                (c.eligibles > c.capacite ? c.capacite : c.eligibles),
+            devise,
+          ),
+        ),
+    ];
+    return lignes..sort(
+      (EncaissementClasse a, EncaissementClasse b) =>
+          b.encaisse.mineur.compareTo(a.encaisse.mineur),
+    );
+  }
+
+  /// Vrai quand [mois] est le mois de reference de la demonstration : le
+  /// seul qu'elle sait rendre, la politique etant entree en vigueur en
+  /// octobre 2026 (aucun mois invente avant le lancement).
+  static bool estMoisDeReference(DateTime? mois) =>
+      mois == null ||
+      (mois.year == debutMois.year && mois.month == debutMois.month);
 }
 
 /// Les paiements du foyer en demonstration (FI-BR-03, FI-BR-04).
@@ -1663,6 +1731,19 @@ class RevenusEnseignantDemo implements PortRevenusEnseignant {
   Future<RevenusEnseignant> moisEnCours() async =>
       DonneesFinanceDemo.revenus(vide: vide, jeu: jeu);
 
+  /// Le seul mois de la demonstration est le mois de reference ; un autre
+  /// mois n'est pas invente (FI-BR-11).
+  @override
+  Future<RevenusEnseignant> duMois(DateTime mois) =>
+      DonneesFinanceDemo.estMoisDeReference(mois)
+      ? moisEnCours()
+      : Future<RevenusEnseignant>.error(const CapaciteIndisponible('FI-BR-11'));
+
+  @override
+  Future<List<DateTime>> moisDisponibles() async => <DateTime>[
+    DonneesFinanceDemo.debutMois,
+  ];
+
   /// Le releve est arrete par l'academie, a partir de la paie reelle, hors
   /// lot (ADR-007) : la demonstration n'invente pas un mois arrete, elle dit
   /// le releve indisponible, comme la production (FI-BR-11).
@@ -1676,7 +1757,16 @@ class FinanceDirectionDemo implements PortFinanceDirection {
   /// Cree le double.
   const FinanceDirectionDemo();
 
+  /// Le seul mois de la demonstration est le mois de reference ; un autre
+  /// mois n'est pas invente (FI-BR-12).
   @override
-  Future<VueGlobaleFinance> vueGlobale() async =>
-      DonneesFinanceDemo.vueGlobale();
+  Future<VueGlobaleFinance> vueGlobale({DateTime? mois}) =>
+      DonneesFinanceDemo.estMoisDeReference(mois)
+      ? Future<VueGlobaleFinance>.value(DonneesFinanceDemo.vueGlobale())
+      : Future<VueGlobaleFinance>.error(const CapaciteIndisponible('FI-BR-12'));
+
+  @override
+  Future<List<DateTime>> moisDisponibles() async => <DateTime>[
+    DonneesFinanceDemo.debutMois,
+  ];
 }

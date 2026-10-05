@@ -1,5 +1,6 @@
-// Mes revenus de l'enseignant (FI-10, guide Finance V4 §1.4, §4, §5.5 et §8
-// F6 ; maquette 17_finance/V/08).
+// Revenus estimes de l'enseignant (FI-10, guide Finance V4 §1.4, §4, §5.5 et
+// §8 F6 ; maquette 17_finance/V/08 ; titre « Revenus estimés », FI-Q16 (a),
+// decide par delegation le 05/10).
 //
 // **Une estimation, jamais une paie definitive** : le mot est ecrit en tete,
 // et la mention de bas de page dit que le releve de l'academie fait foi.
@@ -17,9 +18,10 @@
 // donnee de famille : ni prenom d'eleve, ni solde, ni montant paye par un
 // eleve (guide §5.5).
 //
-// Hors de l'ecran, et pour cause : les variations « vs mois precedent » et
-// le choix d'un autre mois n'existent dans aucun contrat (FI-BR-11) ; ils ne
-// sont pas inventes (selecteur de mois : selon la reponse du directeur).
+// Le choix du mois est garde (FI-Q18 (a), decide par delegation le 05/10 ;
+// revue FI-VAGUE-R R5-05) : il ne propose que les mois rendus par la source
+// (`moisDisponibles`, FI-BR-11). Les variations « vs mois precedent »
+// n'existent dans aucun contrat : elles ne sont pas inventees.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,16 +51,52 @@ import '../../core/widgets/ligne_finance.dart';
 import '../../core/widgets/montant_argent.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
+import '../../core/widgets/selecteur_mois.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 
-/// Les revenus estimes du mois en cours, lus par le port (FI-BR-11). Aucune
+/// Le mois choisi sur les revenus ; nul : le mois en cours (FI-Q18 (a)).
+/// Remis a nul quand la personne connectee change.
+class MoisRevenus extends Notifier<DateTime?> {
+  @override
+  DateTime? build() {
+    surveillerPersonneConnectee(ref);
+    return null;
+  }
+
+  /// Choisit [mois] (premier jour).
+  void choisir(DateTime mois) => state = mois;
+}
+
+/// Le mois choisi sur les revenus.
+final NotifierProvider<MoisRevenus, DateTime?> moisRevenusProvider =
+    NotifierProvider<MoisRevenus, DateTime?>(MoisRevenus.new);
+
+/// Les mois que la source sait rendre, le plus recent d'abord (FI-BR-11).
+/// Sans source (production), aucun choix n'est pose.
+final FutureProvider<List<DateTime>> moisRevenusDisponiblesProvider =
+    FutureProvider<List<DateTime>>((Ref ref) {
+      surveillerPersonneConnectee(ref);
+      return ref.watch(portRevenusEnseignantProvider).moisDisponibles();
+    }, retry: (int retryCount, Object error) => null);
+
+/// Lit les revenus du mois [mois] sur [port] : le mois en cours quand il est
+/// nul.
+Future<RevenusEnseignant> lireRevenus(
+  PortRevenusEnseignant port,
+  DateTime? mois,
+) => mois == null ? port.moisEnCours() : port.duMois(mois);
+
+/// Les revenus estimes du mois choisi, lus par le port (FI-BR-11). Aucune
 /// relance automatique : une capacite absente ne revient pas en insistant,
 /// et « Reessayer » reste un geste de la personne (`BlocAsynchrone`).
 final FutureProvider<RevenusEnseignant> revenusEnseignantProvider =
     FutureProvider<RevenusEnseignant>((Ref ref) {
       surveillerPersonneConnectee(ref);
-      return ref.watch(portRevenusEnseignantProvider).moisEnCours();
+      return lireRevenus(
+        ref.watch(portRevenusEnseignantProvider),
+        ref.watch(moisRevenusProvider),
+      );
     }, retry: (int retryCount, Object error) => null);
 
 /// Le releve des mois arretes par l'academie, lu par le port (FI-BR-11). Meme
@@ -90,27 +128,51 @@ class RevenusEnseignantPage extends ConsumerWidget {
         erreur != null &&
         erreur is! CapaciteIndisponible &&
         (ref.watch(horsLigneProvider).value ?? false);
+    // Le choix du mois : seulement quand la source rend ses mois ; il reste
+    // en place pendant la lecture d'un autre mois, et sur un mois vide.
+    final List<DateTime> mois =
+        ref.watch(moisRevenusDisponiblesProvider).value ?? const <DateTime>[];
     return PageShell(
       titre: t.enseignant.revenus.titre,
       entete: Text(t.enseignant.revenus.intro),
       onRetour: onRetour ?? () => _retour(context),
       child: echecHorsLigne
           ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire)
-          : BlocAsynchrone<RevenusEnseignant>(
-              valeur: revenus,
-              squelette: const Skeleton.liste(lignes: 6),
-              onReessayer: relire,
-              estVide: (RevenusEnseignant r) => r.classes.isEmpty,
-              vide: EmptyState(
-                message: t.enseignant.revenus.vide,
-                invitation: t.enseignant.revenus.videDetail,
-                icone: AppIcons.finance,
-                registre: RegistreVide.subi,
-              ),
-              construire: (RevenusEnseignant r) => _Corps(revenus: r),
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                if (mois.isNotEmpty) ...<Widget>[
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: SelecteurMois(
+                      key: selecteurMoisKey,
+                      mois: mois,
+                      choisi: ref.watch(moisRevenusProvider),
+                      onChoix: ref.read(moisRevenusProvider.notifier).choisir,
+                    ),
+                  ),
+                  Ecart.vLg,
+                ],
+                BlocAsynchrone<RevenusEnseignant>(
+                  valeur: revenus,
+                  squelette: const Skeleton.liste(lignes: 6),
+                  onReessayer: relire,
+                  estVide: (RevenusEnseignant r) => r.classes.isEmpty,
+                  vide: EmptyState(
+                    message: t.enseignant.revenus.vide,
+                    invitation: t.enseignant.revenus.videDetail,
+                    icone: AppIcons.finance,
+                    registre: RegistreVide.subi,
+                  ),
+                  construire: (RevenusEnseignant r) => _Corps(revenus: r),
+                ),
+              ],
             ),
     );
   }
+
+  /// La cle du choix du mois.
+  static const Key selecteurMoisKey = ValueKey<String>('fi-revenus-mois');
 
   static void _retour(BuildContext context) {
     if (context.canPop()) {

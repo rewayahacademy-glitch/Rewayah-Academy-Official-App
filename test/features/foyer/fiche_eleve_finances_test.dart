@@ -848,6 +848,78 @@ void main() {
     });
   });
 
+  group('FI-DIR-1 : reçu et note sur les absences', () {
+    testWidgets('FI-Q7 : « Télécharger le reçu » visible, et l appui dit '
+        'honnetement « pas encore disponible »', (WidgetTester tester) async {
+      await _monter(tester, depart: _chemin(_mariam));
+      final Finder recu = find.byKey(FinancesElevePage.recuKey);
+      expect(recu, findsOneWidget);
+      expect(
+        find.descendant(of: recu, matching: find.text('Télécharger le reçu')),
+        findsOneWidget,
+      );
+      expect(find.byKey(FinancesElevePage.recuEtatKey), findsNothing);
+      // Sous le lien des mouvements, jamais un second bouton plein.
+      expect(
+        tester.getTopLeft(recu).dy,
+        greaterThan(
+          tester.getBottomLeft(find.byKey(FinancesElevePage.mouvementsKey)).dy,
+        ),
+      );
+      verifierUnSeulBoutonPlein(tester);
+      await _toucher(tester, recu);
+      final Finder etat = find.byKey(FinancesElevePage.recuEtatKey);
+      expect(etat, findsOneWidget);
+      expect(
+        find.descendant(
+          of: etat,
+          matching: find.text(t.ficheEleve.finances.recuIndisponibleTitre),
+        ),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('FI-Q7 : 1440, le reçu sous « Recharger », dans la colonne '
+        'de la vue financiere', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        depart: _chemin(_mariam),
+        taille: const Size(1440, 1600),
+      );
+      final Finder recu = find.byKey(FinancesElevePage.recuKey);
+      expect(recu, findsOneWidget);
+      expect(
+        tester.getTopLeft(recu).dy,
+        greaterThan(
+          tester.getBottomLeft(find.byKey(FinancesElevePage.rechargerKey)).dy,
+        ),
+      );
+      verifierUnSeulBoutonPlein(tester);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('FI-Q7 : aucune periode financee (essai), aucun reçu propose', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        jeu: JeuFoyerFinance.unEnEssai,
+        depart: _chemin(DonneesFinanceDemo.aichaId),
+      );
+      expect(find.byKey(FinancesElevePage.recuKey), findsNothing);
+    });
+
+    test('note sur les absences : le texte tranche le 05/10, sans renvoi a '
+        'un onglet qui n existe pas', () {
+      expect(
+        t.ficheEleve.finances.noteAbsences,
+        "Les absences ordinaires n'entraînent pas de réduction sur le mois "
+        'une fois celui-ci financé.',
+      );
+    });
+  });
+
   group('Etats', () {
     testWidgets('essai : ni mensualite ni detail, « Essai : n/2 »', (
       WidgetTester tester,

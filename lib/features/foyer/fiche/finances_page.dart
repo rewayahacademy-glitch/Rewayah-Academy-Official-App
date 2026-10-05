@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/capacites/capacite_indisponible.dart';
 import '../../../core/capacites/port_accents_profils.dart';
+import '../../../core/capacites/port_recus.dart';
 import '../../../core/finance/finances_profil.dart';
 import '../../../core/finance/format_montant.dart';
 import '../../../core/finance/mouvements_profil.dart';
@@ -89,6 +90,12 @@ class FinancesElevePage extends ConsumerWidget {
 
   /// La note sur les absences (FIN4-04).
   static const Key noteAbsencesKey = Key('ficheEleve.finances.noteAbsences');
+
+  /// « Télécharger le reçu » (FI-Q7 (a), FI-BR-05).
+  static const Key recuKey = Key('ficheEleve.finances.recu');
+
+  /// L'etat honnete du recu, apres un appui (pas encore disponible, echec).
+  static const Key recuEtatKey = Key('ficheEleve.finances.recuEtat');
 
   /// La colonne d'identite sur bureau (identite et parametres).
   static const Key colonneIdentiteKey = Key(
@@ -734,6 +741,14 @@ class VueFinancesProfil extends ConsumerWidget {
             ),
           ),
         ],
+        // Le recu du dernier paiement (maquette 06, revue 3 g) : une action
+        // secondaire, seulement quand une periode a ete financee (un
+        // paiement existe). Montre avant que le serveur produise les recus,
+        // sur un etat honnete (FI-Q7 (a), decide par delegation le 05/10).
+        if (finance.periode != null) ...<Widget>[
+          Ecart.vLg,
+          BoutonRecu(profilId: finance.profilId, bureau: bureau),
+        ],
       ],
     );
 
@@ -846,6 +861,91 @@ class _BandeauFaits extends StatelessWidget {
           ],
         ],
       ),
+    );
+  }
+}
+
+/// « Télécharger le reçu » (FI-6a, maquette 06 ; FI-BR-05) : une action
+/// secondaire qui appelle le port des recus. Tant qu'il rend
+/// `CapaciteIndisponible` (production et demonstration), l'appui le dit sous
+/// le bouton, en une note honnete : rien n'est telecharge, rien n'est
+/// invente (K-28, K-59). Un echec d'une autre nature se dit avec son geste.
+class BoutonRecu extends ConsumerStatefulWidget {
+  /// Cree le bouton.
+  const BoutonRecu({required this.profilId, required this.bureau, super.key});
+
+  /// Le profil dont on demande le dernier recu.
+  final String profilId;
+
+  /// Sur bureau : au bord de fin, largeur du contenu (contrat B).
+  final bool bureau;
+
+  @override
+  ConsumerState<BoutonRecu> createState() => _BoutonRecuState();
+}
+
+enum _EtatRecu { repos, enCours, indisponible, echec }
+
+class _BoutonRecuState extends ConsumerState<BoutonRecu> {
+  _EtatRecu _etat = _EtatRecu.repos;
+
+  Future<void> _telecharger() async {
+    setState(() => _etat = _EtatRecu.enCours);
+    _EtatRecu resultat;
+    try {
+      await ref.read(portRecusProvider).telechargerDernierRecu(widget.profilId);
+      resultat = _EtatRecu.repos;
+    } on CapaciteIndisponible {
+      resultat = _EtatRecu.indisponible;
+    } on Object {
+      resultat = _EtatRecu.echec;
+    }
+    if (!mounted) return;
+    setState(() => _etat = resultat);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final finances = t.ficheEleve.finances;
+    final Widget bouton = ActionPrincipale(
+      key: FinancesElevePage.recuKey,
+      libelle: finances.telechargerRecu,
+      niveau: NiveauAction.secondaire,
+      pleineLargeur: !widget.bureau,
+      enCours: _etat == _EtatRecu.enCours,
+      onPress: _telecharger,
+    );
+    final (String, String, TonEtat)? etat = switch (_etat) {
+      _EtatRecu.indisponible => (
+        finances.recuIndisponibleTitre,
+        finances.recuIndisponiblePhrase,
+        TonEtat.accent,
+      ),
+      _EtatRecu.echec => (
+        finances.recuEchecTitre,
+        finances.recuEchecPhrase,
+        TonEtat.alerte,
+      ),
+      _ => null,
+    };
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Align(alignment: AlignmentDirectional.centerEnd, child: bouton),
+        if (etat != null) ...<Widget>[
+          Ecart.vSm,
+          Semantics(
+            liveRegion: true,
+            child: BandeauAttention(
+              key: FinancesElevePage.recuEtatKey,
+              titre: etat.$1,
+              message: etat.$2,
+              ton: etat.$3,
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

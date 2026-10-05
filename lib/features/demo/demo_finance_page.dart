@@ -68,8 +68,16 @@ class DemoFinancePage extends StatelessWidget {
         portFinanceDirectionProvider.overrideWithValue(
           const FinanceDirectionDemo(),
         ),
+        // Le choix du mois (FI-Q18, R6-03) : le mois choisi, les mois rendus
+        // et la vue de ce mois, tous dans ce conteneur.
+        moisVueGlobaleProvider.overrideWith(MoisVueGlobale.new),
+        moisVueGlobaleDisponiblesProvider.overrideWith(
+          (Ref _) => const FinanceDirectionDemo().moisDisponibles(),
+        ),
         vueGlobaleFinanceProvider.overrideWith(
-          (Ref _) => const FinanceDirectionDemo().vueGlobale(),
+          (Ref ref) => const FinanceDirectionDemo().vueGlobale(
+            mois: ref.watch(moisVueGlobaleProvider),
+          ),
         ),
         portPolitiquesCommercialesProvider.overrideWithValue(
           const PolitiquesCommercialesDemo(),

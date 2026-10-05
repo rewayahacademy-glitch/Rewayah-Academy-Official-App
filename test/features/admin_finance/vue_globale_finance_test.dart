@@ -15,10 +15,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/port_finance_direction.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
 import 'package:rewayah_academy/core/finance/montant.dart';
+import 'package:rewayah_academy/core/finance/mouvements_profil.dart';
 import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
@@ -29,6 +31,7 @@ import 'package:rewayah_academy/core/widgets/bandeau_attention.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/admin_finance/vue_globale_finance.dart';
 import 'package:rewayah_academy/features/demo/finance_demo.dart';
 
@@ -38,14 +41,29 @@ import '../../support/harnais.dart';
 
 /// Un port de test qui rend [vue], ou echoue avec [erreur].
 class _Port implements PortFinanceDirection {
-  const _Port({this.vue, this.erreur});
+  const _Port({this.vue, this.erreur, this.mois, this.parMois});
   final VueGlobaleFinance? vue;
   final Object? erreur;
 
+  /// Les mois rendus ; nul : aucun choix (capacite absente).
+  final List<DateTime>? mois;
+
+  /// La vue d'un mois choisi (cle : son mois).
+  final Map<int, VueGlobaleFinance>? parMois;
+
   @override
-  Future<VueGlobaleFinance> vueGlobale() => erreur == null
-      ? Future<VueGlobaleFinance>.value(vue)
-      : Future<VueGlobaleFinance>.error(erreur!);
+  Future<VueGlobaleFinance> vueGlobale({DateTime? mois}) {
+    if (erreur != null) return Future<VueGlobaleFinance>.error(erreur!);
+    final VueGlobaleFinance? choisie = mois == null
+        ? null
+        : parMois?[mois.month];
+    return Future<VueGlobaleFinance>.value(choisie ?? vue);
+  }
+
+  @override
+  Future<List<DateTime>> moisDisponibles() => mois == null
+      ? Future<List<DateTime>>.error(const CapaciteIndisponible('FI-BR-12'))
+      : Future<List<DateTime>>.value(mois);
 }
 
 Montant _usd(int unites) => Montant(unites * 100, 'USD');
@@ -693,6 +711,238 @@ void main() {
         expect(find.text('page $route'), findsOneWidget);
       });
     }
+  });
+
+  group('FI-DIR-1 : FI-R6 (a) et FI-Q18 (a)', () {
+    Finder dans(Key cle, Finder f) =>
+        find.descendant(of: find.byKey(cle), matching: f);
+
+    final VueGlobaleFinance complete = VueGlobaleFinance(
+      mois: DateTime(2026, 11),
+      encaisse: _usd(690),
+      revenuAcademique: _usd(690),
+      paieEnseignants: _usd(143),
+      margeProjeteePourMille: 792,
+      impayes: _usd(8),
+      essaisEnCours: 1,
+      soldesCrediteurs: _usd(57),
+      etatPaiements: const <CompteEtatPaiements>[
+        CompteEtatPaiements(
+          etat: EtatPaiementsProfils.finances,
+          profils: 13,
+          partPourMille: 866,
+        ),
+        CompteEtatPaiements(
+          etat: EtatPaiementsProfils.aRegulariser,
+          profils: 1,
+          partPourMille: 66,
+        ),
+        CompteEtatPaiements(etat: EtatPaiementsProfils.enEssai, profils: 1),
+        CompteEtatPaiements(
+          etat: EtatPaiementsProfils.enConfirmation,
+          profils: 0,
+          partPourMille: 0,
+        ),
+      ],
+      // Un ordre qui n'est PAS celui des montants : l'ecran garde l'ordre
+      // rendu, il ne trie rien.
+      topClasses: <EncaissementClasse>[
+        EncaissementClasse(classe: 'Al-Huda', encaisse: _usd(200)),
+        EncaissementClasse(classe: 'An-Nour', encaisse: _usd(250)),
+      ],
+      dernieresOperations: <MouvementFoyer>[
+        MouvementFoyer(
+          profilId: 'p1',
+          prenom: 'Ibrahim',
+          mouvement: MouvementProfil(
+            id: 'op1',
+            date: DateTime(2026, 11, 3, 14, 32),
+            nature: NatureMouvement.recharge,
+            montant: _usd(40),
+            statut: StatutMouvement.enConfirmation,
+          ),
+        ),
+        MouvementFoyer(
+          profilId: 'p2',
+          prenom: 'Mariam',
+          mouvement: MouvementProfil(
+            id: 'op2',
+            date: DateTime(2026, 11, 1, 8, 5),
+            nature: NatureMouvement.debitPeriode,
+            montant: const Montant(-5000, 'USD'),
+            periode: DateTime(2026, 11),
+          ),
+        ),
+      ],
+    );
+
+    testWidgets('R6-02 : État des paiements, Top classes et Dernières '
+        'opérations, chaque nombre tel que rendu', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 3200));
+      await tester.pumpWidget(_hote(surcharges: _avec(_Port(vue: complete))));
+      await tester.pumpAndSettle();
+      final vue = t.admin.finance.vue;
+      expect(find.text(vue.etatPaiements), findsOneWidget);
+      expect(find.text(vue.topClasses), findsOneWidget);
+      expect(find.text(vue.dernieresOperations), findsOneWidget);
+      // Les quatre etats nommes, leur nombre et leur part rendue.
+      for (final (String libelle, String nombre) in <(String, String)>[
+        (vue.etatFinances, '13'),
+        (vue.etatARegulariser, '1'),
+        (vue.etatEnEssai, '1'),
+        (vue.etatEnConfirmation, '0'),
+      ]) {
+        expect(
+          dans(VueGlobaleFinanceContenu.etatPaiementsKey, find.text(libelle)),
+          findsOneWidget,
+          reason: libelle,
+        );
+        expect(
+          dans(VueGlobaleFinanceContenu.etatPaiementsKey, find.text(nombre)),
+          findsWidgets,
+          reason: nombre,
+        );
+      }
+      expect(
+        dans(
+          VueGlobaleFinanceContenu.etatPaiementsKey,
+          find.text(vue.etatPart(valeur: '86,6')),
+        ),
+        findsOneWidget,
+      );
+      // Sans part rendue, aucune part inventee : trois parts seulement.
+      expect(
+        dans(
+          VueGlobaleFinanceContenu.etatPaiementsKey,
+          find.textContaining('% des profils'),
+        ),
+        findsNWidgets(3),
+      );
+      // Le classement dans l'ordre rendu : Al-Huda premier.
+      final Finder huda = dans(
+        VueGlobaleFinanceContenu.topClassesKey,
+        find.text(vue.topClasse(rang: '1', classe: 'Al-Huda')),
+      );
+      final Finder nour = dans(
+        VueGlobaleFinanceContenu.topClassesKey,
+        find.text(vue.topClasse(rang: '2', classe: 'An-Nour')),
+      );
+      expect(huda, findsOneWidget);
+      expect(nour, findsOneWidget);
+      expect(tester.getTopLeft(huda).dy, lessThan(tester.getTopLeft(nour).dy));
+      expect(
+        dans(
+          VueGlobaleFinanceContenu.topClassesKey,
+          find.text(formaterMontant(_usd(250))),
+        ),
+        findsOneWidget,
+      );
+      // Les operations : prenom, heure, montant signe, etat en mots.
+      expect(
+        dans(
+          VueGlobaleFinanceContenu.operationsKey,
+          find.textContaining('Ibrahim'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        dans(
+          VueGlobaleFinanceContenu.operationsKey,
+          find.textContaining('14:32'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        dans(
+          VueGlobaleFinanceContenu.operationsKey,
+          find.text(formaterMontant(_usd(40), signe: true)),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        dans(VueGlobaleFinanceContenu.operationsKey, find.byType(StatusPill)),
+        findsOneWidget,
+      );
+      // Sur bureau, etat des paiements et classement cote a cote.
+      expect(
+        tester
+            .getTopLeft(find.byKey(VueGlobaleFinanceContenu.etatPaiementsKey))
+            .dy,
+        tester
+            .getTopLeft(find.byKey(VueGlobaleFinanceContenu.topClassesKey))
+            .dy,
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('R6-02 : rien de rendu, chaque carte le dit, aucun chiffre '
+        'invente', (WidgetTester tester) async {
+      _taille(tester, const Size(390, 3200));
+      await tester.pumpWidget(
+        _hote(surcharges: _avec(_Port(vue: _sansActivite))),
+      );
+      await tester.pumpAndSettle();
+      final vue = t.admin.finance.vue;
+      expect(find.text(vue.etatVide), findsOneWidget);
+      expect(find.text(vue.topClassesVide), findsOneWidget);
+      expect(find.text(vue.dernieresOperationsVide), findsOneWidget);
+      expect(find.textContaining('% des profils'), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('R6-03 et FI-Q18 : le choix du mois propose les seuls mois '
+        'rendus et relit la vue du mois choisi', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 3200));
+      await tester.pumpWidget(
+        _hote(
+          surcharges: _avec(
+            _Port(
+              vue: complete,
+              mois: <DateTime>[DateTime(2026, 11), DateTime(2026, 8)],
+              parMois: <int, VueGlobaleFinance>{8: _sansRevenu},
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final Finder selecteur = find.byKey(
+        VueGlobaleFinanceContenu.selecteurMoisKey,
+      );
+      expect(selecteur, findsOneWidget);
+      expect(
+        find.descendant(of: selecteur, matching: find.text('novembre 2026')),
+        findsOneWidget,
+      );
+      await tester.tap(selecteur);
+      await tester.pumpAndSettle();
+      // Deux mois, ceux du port, et aucun autre.
+      expect(find.text('août 2026'), findsOneWidget);
+      expect(find.text('octobre 2026'), findsNothing);
+      await tester.tap(find.text('août 2026'));
+      await tester.pumpAndSettle();
+      expect(
+        find.descendant(of: selecteur, matching: find.text('août 2026')),
+        findsOneWidget,
+      );
+      // La vue d'aout : revenu nul, la phrase de la marge absente le dit.
+      expect(
+        find.text(t.admin.finance.vue.sansRevenu(mois: 'août 2026')),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('R6-03 : sans mois rendus (production), aucun choix pose', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(1440, 2400));
+      await tester.pumpWidget(_hote(surcharges: _avec(_Port(vue: complete))));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(VueGlobaleFinanceContenu.selecteurMoisKey),
+        findsNothing,
+      );
+    });
   });
 
   group('gabarits', () {

@@ -25,6 +25,16 @@
 // Aucun calcul de prix ni de remise ici (FI6) : seule la conversion d'une
 // saisie en unites entieres vers les unites mineures (`montantDepuisUnites`).
 //
+// FI-Q21, decide par delegation le 05/10 : (1) la marge de reference (trois
+// reperes, en pourcentage entier) et le paiement web sont modifiables dans un
+// brouillon ; (2) les paiements iOS et Android se lisent « Préparé
+// (inactif) », jamais un reglage ; (3) edition directe des champs (K-57),
+// sans bouton « Modifier » par carte ; (4) la date d'effet se regle dans le
+// brouillon et s'appliquera a la publication, au branchement du serveur.
+// FI-R6 (a) (revue FI-VAGUE-R R6-08) : les sections se lisent rangee par
+// rangee (gauche puis droite, puis la rangee suivante), l'en-tete de version
+// tient sur une rangee sur ordinateur et l'historique passe en fin de page.
+//
 // FI-11c : l'historique des versions (lecture seule, la version active
 // marquee) et, sous un brouillon, l'« Apercu avant publication » : un foyer
 // de 1 a 5 enfants payants et le taux horaire d'une classe. Les montants de
@@ -142,6 +152,9 @@ enum _Nature {
   seances,
   classes,
   jours,
+
+  /// Un repere de marge : saisi en pourcentage entier, rendu en pour mille.
+  pourcent,
 }
 
 /// Un parametre de la politique : son libelle, sa consequence (K-58), sa
@@ -189,6 +202,10 @@ class _Champ {
   /// reste alors en lecture.
   String? get saisieInitiale {
     final Object? v = lue;
+    if (v is int && nature == _Nature.pourcent) {
+      // Un pour mille qui n'est pas un pourcentage entier reste en lecture.
+      return v % 10 == 0 ? '${v ~/ 10}' : null;
+    }
     if (v is int) return '$v';
     if (v is Montant) {
       final int? unites = unitesEntieresDe(v);
@@ -207,6 +224,7 @@ class _Champ {
 
   /// La valeur d'une saisie [unites] (deja validee), dans la forme du port.
   Object depuisSaisie(int unites) {
+    if (nature == _Nature.pourcent) return unites * 10;
     final String? d = deviseMontant;
     if (estMontant && d != null) {
       return montantDepuisUnites(
@@ -297,6 +315,12 @@ class _PolitiquesCommercialesContenuState
   /// ECARTS D8 : un interrupteur).
   late bool _essaiActif = _lue.essaiActif;
 
+  /// Le paiement web a l'ecran, dans un brouillon (FI-Q21.1).
+  late bool _webActif = _lue.railsActifs.contains(RailPaiement.webStripe);
+
+  /// La date d'effet a l'ecran, dans un brouillon (FI-Q21.4).
+  late DateTime _dateEffet = _lue.dateEffet;
+
   PolitiqueCommerciale get _lue => widget.brouillon ?? widget.active;
   bool get _estBrouillon => widget.brouillon != null;
 
@@ -379,6 +403,22 @@ class _PolitiquesCommercialesContenuState
         // Une capacite nulle porte deja sa propre erreur.
         if (plusPetite >= 1 && s > plusPetite) {
           return pol.erreurMinimum(capacite: pol.eleves(n: plusPetite));
+        }
+      case 'margeObjectif' || 'margeForte' || 'margeStretch':
+        if (s > 100) return pol.erreurMargeMax;
+        if (c.id == 'margeForte') {
+          if (autre('margeObjectif') case final int objectif
+              when (v as int) < objectif) {
+            return pol.erreurMargeForte(
+              objectif: _texteValeur(objectif, c.nature),
+            );
+          }
+        }
+        if (c.id == 'margeStretch') {
+          if (autre('margeForte') case final int forte
+              when (v as int) < forte) {
+            return pol.erreurMargeStretch(forte: _texteValeur(forte, c.nature));
+          }
         }
       default:
         if (c.nature == _Nature.remise && v is Montant) {
@@ -581,6 +621,42 @@ class _PolitiquesCommercialesContenuState
     ];
   }
 
+  /// Les trois reperes de la marge de reference (guide §1.5), saisis en
+  /// pourcentage entier dans un brouillon (FI-Q21.1).
+  List<_Champ> _marge() {
+    final pol = t.admin.finance.pol;
+    final ({int objectif, int forte, int stretch}) m =
+        _lue.margeReferencePourMille;
+    final ({int objectif, int forte, int stretch}) a =
+        widget.active.margeReferencePourMille;
+    return <_Champ>[
+      _Champ(
+        id: 'margeObjectif',
+        libelle: pol.margeObjectif,
+        consequence: pol.margeObjectifDetail,
+        nature: _Nature.pourcent,
+        lue: m.objectif,
+        active: a.objectif,
+      ),
+      _Champ(
+        id: 'margeForte',
+        libelle: pol.margeForte,
+        consequence: pol.margeForteDetail,
+        nature: _Nature.pourcent,
+        lue: m.forte,
+        active: a.forte,
+      ),
+      _Champ(
+        id: 'margeStretch',
+        libelle: pol.margeStretch,
+        consequence: pol.margeStretchDetail,
+        nature: _Nature.pourcent,
+        lue: m.stretch,
+        active: a.stretch,
+      ),
+    ];
+  }
+
   List<_Champ> _tousLesChamps() => <_Champ>[
     ..._tarifs(),
     ..._essai(),
@@ -588,6 +664,7 @@ class _PolitiquesCommercialesContenuState
     ..._enseignants(),
     ..._classes(),
     ..._paiement(),
+    ..._marge(),
   ];
 
   /// Le brouillon tel qu'il est a l'ecran, dans la forme du port.
@@ -599,7 +676,7 @@ class _PolitiquesCommercialesContenuState
     return PolitiqueCommerciale(
       version: b.version,
       statut: b.statut,
-      dateEffet: b.dateEffet,
+      dateEffet: _dateEffet,
       tarifEnfant: v['tarifEnfant']! as Montant,
       tarifAdulte: v['tarifAdulte']! as Montant,
       essaisMax: v['essais']! as int,
@@ -620,8 +697,12 @@ class _PolitiquesCommercialesContenuState
       classesObjectif: v['classesObjectif']! as int,
       classesMax: v['classesMax']! as int,
       joursConservationPlace: v['conservation']! as int,
-      margeReferencePourMille: b.margeReferencePourMille,
-      railsActifs: b.railsActifs,
+      margeReferencePourMille: (
+        objectif: v['margeObjectif']! as int,
+        forte: v['margeForte']! as int,
+        stretch: v['margeStretch']! as int,
+      ),
+      railsActifs: _railsAEcran,
       allocationInternet: v['internet'] as Montant?,
       joursRelance: b.joursRelance,
       budgets: b.budgets,
@@ -664,7 +745,6 @@ class _PolitiquesCommercialesContenuState
     final int differences = _estBrouillon
         ? _tousLesChamps().where(_differe).length +
               (_essaiDiffere ? 1 : 0) +
-              (_margeDiffere ? 1 : 0) +
               (_railsDifferent ? 1 : 0) +
               (_relancesDifferent ? 1 : 0) +
               (_budgetsDifferent ? 1 : 0)
@@ -703,24 +783,27 @@ class _PolitiquesCommercialesContenuState
         for (final _Champ c in _classes()) _ligne(c),
       ]),
       _section(pol.paiement, pol.paiementDetail, <Widget>[
-        LigneCleValeur(
-          key: PolitiquesCommercialesContenu.champKey('rails'),
-          cle: pol.railWeb,
-          detailCle: pol.railWebDetail,
-          valeur: _texteRail(_lue),
-          complement: _railsDifferent
-              ? _texteComparaison(
-                  'rails',
-                  _texteRail(widget.active),
-                  chiffres: false,
-                )
-              : null,
-        ),
+        _ligneRailWeb(),
+        for (final String rail in <String>[pol.railIos, pol.railAndroid])
+          LigneCleValeur(
+            key: PolitiquesCommercialesContenu.champKey(
+              rail == pol.railIos ? 'railIos' : 'railAndroid',
+            ),
+            cle: rail,
+            detailCle: pol.railMobileDetail,
+            valeur: pol.railPrepare,
+          ),
         for (final _Champ c in _paiement()) _ligne(c),
         ..._lignesRelance(),
       ]),
       _section(pol.pilotage, pol.pilotageDetail, <Widget>[
-        _ligneMarge(),
+        Text(
+          pol.margeDetail,
+          style: palette.inkMuted.applyTo(
+            textes.bodySmall ?? const TextStyle(),
+          ),
+        ),
+        for (final _Champ c in _marge()) _ligne(c),
         ..._lignesBudgets(),
       ]),
       _invariants(),
@@ -741,38 +824,34 @@ class _PolitiquesCommercialesContenuState
           key: PolitiquesCommercialesContenu.enteteKey,
           active: widget.active,
           brouillon: widget.brouillon,
+          dateEffet: _dateEffet,
+          onChangerDate: _estBrouillon ? _changerDate : null,
           differences: differences,
         ),
         Ecart.vXxl,
-        _Historique(
-          key: PolitiquesCommercialesContenu.historiqueKey,
-          versions: widget.versions,
-          active: widget.active,
-        ),
-        Ecart.vXxl,
+        // Rangee par rangee (revue FI-VAGUE-R R6-08) : l'ordre de lecture
+        // suit l'ordre du guide §5.7, a gauche puis a droite, et jamais une
+        // colonne entiere avant l'autre.
         LayoutBuilder(
           builder: (BuildContext contexte, BoxConstraints contraintes) {
             if (_enColonne(contexte, contraintes)) {
               return PileCartes(children: sections);
             }
             return PileCartes(
-              axe: Axis.horizontal,
-              alignement: CrossAxisAlignment.start,
               children: <Widget>[
-                Expanded(
-                  child: PileCartes(
+                for (int i = 0; i < sections.length; i += 2)
+                  PileCartes(
+                    axe: Axis.horizontal,
+                    alignement: CrossAxisAlignment.start,
                     children: <Widget>[
-                      for (int i = 0; i < sections.length; i += 2) sections[i],
+                      Expanded(child: sections[i]),
+                      Expanded(
+                        child: i + 1 < sections.length
+                            ? sections[i + 1]
+                            : const SizedBox.shrink(),
+                      ),
                     ],
                   ),
-                ),
-                Expanded(
-                  child: PileCartes(
-                    children: <Widget>[
-                      for (int i = 1; i < sections.length; i += 2) sections[i],
-                    ],
-                  ),
-                ),
               ],
             );
           },
@@ -797,8 +876,39 @@ class _PolitiquesCommercialesContenuState
             ),
           ),
         ],
+        // L'historique en fin de page (R6-08) : il ne remplit plus le
+        // premier ecran sur ordinateur.
+        Ecart.vXxl,
+        _Historique(
+          key: PolitiquesCommercialesContenu.historiqueKey,
+          versions: widget.versions,
+          active: widget.active,
+        ),
       ],
     );
+  }
+
+  /// Ouvre le calendrier et regle la date d'effet du brouillon (FI-Q21.4) :
+  /// a partir du lendemain, jamais retroactive (guide §1.3).
+  Future<void> _changerDate() async {
+    final DateTime maintenant = DateTime.now();
+    final DateTime premier = DateTime(
+      maintenant.year,
+      maintenant.month,
+      maintenant.day + 1,
+    );
+    final DateTime dernier = DateTime(maintenant.year + 5, 12, 31);
+    final DateTime choisie =
+        await showDatePicker(
+          context: context,
+          initialDate: _dateEffet.isBefore(premier) ? premier : _dateEffet,
+          firstDate: premier,
+          lastDate: dernier,
+          helpText: t.admin.finance.pol.changerDate,
+        ) ??
+        _dateEffet;
+    if (!mounted || choisie == _dateEffet) return;
+    setState(() => _dateEffet = choisie);
   }
 
   List<Widget> _bandeauPublication() {
@@ -962,7 +1072,8 @@ class _PolitiquesCommercialesContenuState
 
   /// Les regles de relance (guide §5.7 « regles de relance visibles »,
   /// ECARTS D7) : une ligne par relance, ou « Pas encore fixées ». Lues,
-  /// jamais un champ sur cet ecran pour l'instant (question 21).
+  /// jamais un champ : FI-Q21 n'ouvre au brouillon que la marge et le paiement
+  /// web (decide par delegation le 05/10).
   List<Widget> _lignesRelance() {
     final pol = t.admin.finance.pol;
     final List<int>? jours = _lue.joursRelance;
@@ -1012,7 +1123,8 @@ class _PolitiquesCommercialesContenuState
 
   /// Les budgets de pilotage, **non contraignants** (guide §5.7, ECARTS
   /// D5) : une ligne par budget, ou « Pas encore fixés ». Lus, jamais un
-  /// champ sur cet ecran pour l'instant (question 21).
+  /// champ : FI-Q21 n'ouvre au brouillon que la marge et le paiement web
+  /// (decide par delegation le 05/10).
   List<Widget> _lignesBudgets() {
     final pol = t.admin.finance.pol;
     final List<BudgetPilotage> budgets = _lue.budgets;
@@ -1069,20 +1181,60 @@ class _PolitiquesCommercialesContenuState
     ].join(pol.separateurComparaison);
   }
 
-  /// Vrai quand la marge de reference du brouillon differe de l'active.
-  bool get _margeDiffere =>
-      _estBrouillon &&
-      _lue.margeReferencePourMille != widget.active.margeReferencePourMille;
+  /// Les rails du brouillon a l'ecran : le paiement web selon son
+  /// interrupteur, les autres rails tels que le brouillon les porte.
+  Set<RailPaiement> get _railsAEcran => <RailPaiement>{
+    for (final RailPaiement r in _lue.railsActifs)
+      if (r != RailPaiement.webStripe) r,
+    if (_webActif) RailPaiement.webStripe,
+  };
 
-  /// Vrai quand les rails actifs du brouillon different de l'active.
+  /// Vrai quand les rails actifs a l'ecran different de l'active.
   bool get _railsDifferent =>
-      _estBrouillon && !setEquals(_lue.railsActifs, widget.active.railsActifs);
+      _estBrouillon && !setEquals(_railsAEcran, widget.active.railsActifs);
 
-  /// Le rail web de [p] en mots : actif ou inactif.
-  String _texteRail(PolitiqueCommerciale p) =>
-      p.railsActifs.contains(RailPaiement.webStripe)
-      ? t.admin.finance.pol.railActif
-      : t.admin.finance.pol.railInactif;
+  /// Le rail web en mots : actif ou inactif.
+  String _texteRailWeb(bool actif) =>
+      actif ? t.admin.finance.pol.railActif : t.admin.finance.pol.railInactif;
+
+  /// Le paiement web : un interrupteur dans un brouillon (FI-Q21.1), une
+  /// ligne lue sinon.
+  Widget _ligneRailWeb() {
+    final pol = t.admin.finance.pol;
+    final bool actifEnVigueur = widget.active.railsActifs.contains(
+      RailPaiement.webStripe,
+    );
+    if (!_estBrouillon) {
+      return LigneCleValeur(
+        key: PolitiquesCommercialesContenu.champKey('rails'),
+        cle: pol.railWeb,
+        detailCle: pol.railWebDetail,
+        valeur: _texteRailWeb(
+          _lue.railsActifs.contains(RailPaiement.webStripe),
+        ),
+      );
+    }
+    return _InterrupteurPolitique(
+      key: PolitiquesCommercialesContenu.champKey('rails'),
+      libelle: pol.railWeb,
+      consequence: pol.railWebDetail,
+      etat: _texteRailWeb(_webActif),
+      valeur: _webActif,
+      onChanged: (bool v) => setState(() {
+        _webActif = v;
+        if (_publication == _Publication.champsACorriger) {
+          _publication = _Publication.aucune;
+        }
+      }),
+      comparaison: _railsDifferent
+          ? _texteComparaison(
+              'rails',
+              _texteRailWeb(actifEnVigueur),
+              chiffres: false,
+            )
+          : null,
+    );
+  }
 
   String _suffixe(_Champ c) {
     final pol = t.admin.finance.pol;
@@ -1098,32 +1250,8 @@ class _PolitiquesCommercialesContenuState
       _Nature.seances => pol.uniteSeances,
       _Nature.classes => pol.uniteClasses,
       _Nature.jours => pol.uniteJours,
+      _Nature.pourcent => pol.unitePourcent,
     };
-  }
-
-  /// La marge de reference : lue, jamais un champ sur cet ecran pour
-  /// l'instant, jamais une sanction (FI21).
-  Widget _ligneMarge() {
-    final pol = t.admin.finance.pol;
-    final ({int objectif, int forte, int stretch}) m =
-        _lue.margeReferencePourMille;
-    final ({int objectif, int forte, int stretch}) a =
-        widget.active.margeReferencePourMille;
-    String texte(({int objectif, int forte, int stretch}) r) => pol.margeValeur(
-      objectif: pourMilleEnTexte(r.objectif),
-      forte: pourMilleEnTexte(r.forte),
-      stretch: pourMilleEnTexte(r.stretch),
-    );
-    return LigneCleValeur(
-      key: PolitiquesCommercialesContenu.champKey('marge'),
-      cle: pol.marge,
-      detailCle: pol.margeDetail,
-      valeur: texte(m),
-      chiffres: true,
-      complement: _margeDiffere
-          ? _texteComparaison('marge', texte(a), chiffres: false)
-          : null,
-    );
   }
 
   /// Les regles fixes : du texte, jamais un champ (FI22).
@@ -1181,6 +1309,7 @@ String _texteValeur(Object? valeur, _Nature nature) {
     ),
     final Montant m => formaterMontant(m),
     final int n => switch (nature) {
+      _Nature.pourcent => pol.pourcentValeur(valeur: pourMilleEnTexte(n)),
       _Nature.eleves => pol.eleves(n: n),
       _Nature.seances => pol.seances(n: n),
       _Nature.classes => pol.classes(n: n),
@@ -1198,19 +1327,35 @@ String dateEffetEnTexte(DateTime date) => t.admin.finance.pol.date(
 );
 
 /// L'en-tete de version (PolicyVersionHeader) : le brouillon et sa date
-/// d'effet, la version active, et ce qui les distingue ; ou la seule version
-/// active quand aucun brouillon n'est ouvert.
+/// d'effet (reglable, FI-Q21.4), la version active, et ce qui les
+/// distingue ; ou la seule version active quand aucun brouillon n'est
+/// ouvert. Sur ordinateur, une seule rangee (revue FI-VAGUE-R R6-08) : il ne
+/// remplit plus le premier ecran.
 class _EnteteVersion extends StatelessWidget {
   const _EnteteVersion({
     required this.active,
     required this.brouillon,
+    required this.dateEffet,
+    required this.onChangerDate,
     required this.differences,
     super.key,
   });
 
   final PolitiqueCommerciale active;
   final PolitiqueCommerciale? brouillon;
+
+  /// La date d'effet du brouillon a l'ecran.
+  final DateTime dateEffet;
+
+  /// Ouvre le calendrier de la date d'effet ; nul hors brouillon.
+  final VoidCallback? onChangerDate;
   final int differences;
+
+  /// La cle de « Changer la date d'effet ».
+  static const Key changerDateKey = ValueKey<String>('fi-pol-changer-date');
+
+  /// La cle de la date d'effet du brouillon.
+  static const Key dateEffetKey = ValueKey<String>('fi-pol-date-effet');
 
   @override
   Widget build(BuildContext context) {
@@ -1220,42 +1365,65 @@ class _EnteteVersion extends StatelessWidget {
     final TextStyle attenue = palette.inkMuted.applyTo(
       textes.bodyMedium ?? const TextStyle(),
     );
-    Widget version(StatusPill pastille, String titre, String detail) =>
-        MergeSemantics(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              pastille,
-              Ecart.vSm,
-              Text(titre, style: textes.titleMedium),
-              Ecart.vXs,
-              Text(detail, style: attenue),
-            ],
-          ),
-        );
+    Widget version(
+      StatusPill pastille,
+      String titre,
+      String detail, {
+      Key? cleDetail,
+    }) => MergeSemantics(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          pastille,
+          Ecart.vSm,
+          Text(titre, style: textes.titleMedium),
+          Ecart.vXs,
+          Text(detail, key: cleDetail, style: attenue),
+        ],
+      ),
+    );
     final Widget versionActive = version(
       StatusPill(libelle: pol.statutPubliee, ton: TonEtat.succes),
       pol.versionActive(version: active.version),
       pol.enVigueur(date: dateEffetEnTexte(active.dateEffet)),
     );
     final PolitiqueCommerciale? b = brouillon;
-    return CarteGroupee(
-      sections: <Widget>[
-        if (b != null) ...<Widget>[
-          version(
-            StatusPill(
-              libelle: pol.statutBrouillon,
-              ton: TonEtat.avertissement,
-            ),
-            pol.versionBrouillon(version: b.version),
-            pol.dateEffet(date: dateEffetEnTexte(b.dateEffet)),
-          ),
-          Text(pol.dateEffetDetail, style: attenue),
-        ],
-        versionActive,
-        if (b != null)
-          Column(
+    final VoidCallback? changer = onChangerDate;
+    final Widget? versionBrouillon = b == null
+        ? null
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              version(
+                StatusPill(
+                  libelle: pol.statutBrouillon,
+                  ton: TonEtat.avertissement,
+                ),
+                pol.versionBrouillon(version: b.version),
+                pol.dateEffet(date: dateEffetEnTexte(dateEffet)),
+                cleDetail: dateEffetKey,
+              ),
+              Ecart.vXs,
+              Text(pol.dateEffetDetail, style: attenue),
+              Ecart.vXs,
+              Text(pol.dateEffetReglable, style: attenue),
+              if (changer != null) ...<Widget>[
+                Ecart.vSm,
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: LienFleche(
+                    key: changerDateKey,
+                    libelle: pol.changerDate,
+                    onPress: changer,
+                  ),
+                ),
+              ],
+            ],
+          );
+    final Widget etat = b != null
+        ? Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -1269,9 +1437,25 @@ class _EnteteVersion extends StatelessWidget {
               Text(pol.nonEnregistre, style: attenue),
             ],
           )
-        else
-          Text(pol.sansBrouillon, style: textes.bodyLarge),
-      ],
+        : Text(pol.sansBrouillon, style: textes.bodyLarge);
+    final List<Widget> blocs = <Widget>[?versionBrouillon, versionActive, etat];
+    return LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints contraintes) {
+        if (_enColonne(contexte, contraintes)) {
+          return CarteGroupee(sections: blocs);
+        }
+        return AppCard(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              for (int i = 0; i < blocs.length; i++) ...<Widget>[
+                if (i > 0) Ecart.hXl,
+                Expanded(child: blocs[i]),
+              ],
+            ],
+          ),
+        );
+      },
     );
   }
 }

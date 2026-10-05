@@ -15,6 +15,14 @@
 // alertes, redigees ici depuis leur nature (K-41), chacune avec un seul lien
 // vers sa cible (R6-04, revue 12 i).
 //
+// FI-R6 (a), decide par delegation le 05/10 (revue FI-VAGUE-R R6-02, R6-03,
+// maquette 09) : le choix du mois (parmi les seuls mois rendus par la
+// source), l'« État des paiements » (profils par etat, avec leur part), le
+// « Top classes » (encaisse par classe, dans l'ordre rendu) et les
+// « Dernières opérations » (mouvements des profils, deja arretes). Donnees de
+// demonstration derriere la garde de la demonstration ; en production, le
+// port rend `CapaciteIndisponible` et l'ecran dit « Pas encore disponible ».
+//
 // La longueur d'une barre est une mise a l'echelle de dessin
 // (`longueursDeBarres` du port pour les montants, une marge sur 100 %),
 // jamais un chiffre affiche : les nombres lus sont ceux du port.
@@ -33,6 +41,7 @@ import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_finance_direction.dart';
 import '../../core/finance/format_montant.dart';
 import '../../core/finance/montant.dart';
+import '../../core/finance/mouvements_profil.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -46,15 +55,47 @@ import '../../core/theme/app_typography.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
+import '../../core/widgets/carte_groupee.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/ligne_cle_valeur.dart';
+import '../../core/widgets/ligne_finance.dart';
+import '../../core/widgets/ligne_transaction.dart';
 import '../../core/widgets/montant_argent.dart';
 import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/section_header.dart';
+import '../../core/widgets/selecteur_mois.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../foyer/fiche/mouvements_page.dart'
+    show dateHeureMouvement, iconeMouvement, libelleMouvement, libelleStatut;
 
-/// La vue globale du mois, lue sur le port de la direction.
+/// Le mois choisi sur la Vue globale ; nul : le mois en cours (FI-Q18 (a),
+/// revue FI-VAGUE-R R6-03). Remis a nul quand la personne connectee change.
+class MoisVueGlobale extends Notifier<DateTime?> {
+  @override
+  DateTime? build() {
+    surveillerPersonneConnectee(ref);
+    return null;
+  }
+
+  /// Choisit [mois] (premier jour).
+  void choisir(DateTime mois) => state = mois;
+}
+
+/// Le mois choisi sur la Vue globale.
+final NotifierProvider<MoisVueGlobale, DateTime?> moisVueGlobaleProvider =
+    NotifierProvider<MoisVueGlobale, DateTime?>(MoisVueGlobale.new);
+
+/// Les mois que la source sait rendre, le plus recent d'abord (FI-BR-12) :
+/// le choix du mois ne propose qu'eux. Sans source (production), aucun choix.
+final FutureProvider<List<DateTime>> moisVueGlobaleDisponiblesProvider =
+    FutureProvider<List<DateTime>>((Ref ref) {
+      surveillerPersonneConnectee(ref);
+      return ref.watch(portFinanceDirectionProvider).moisDisponibles();
+    }, retry: (int retryCount, Object error) => null);
+
+/// La vue globale du mois choisi, lue sur le port de la direction.
 ///
 /// `retry` nul : pas de retentative silencieuse de Riverpod 3 derriere le
 /// bouton « Reessayer » de l'ecran (meme reglage que
@@ -62,7 +103,9 @@ import '../../core/widgets/status_pill.dart';
 final FutureProvider<VueGlobaleFinance> vueGlobaleFinanceProvider =
     FutureProvider<VueGlobaleFinance>((Ref ref) {
       surveillerPersonneConnectee(ref);
-      return ref.watch(portFinanceDirectionProvider).vueGlobale();
+      return ref
+          .watch(portFinanceDirectionProvider)
+          .vueGlobale(mois: ref.watch(moisVueGlobaleProvider));
     }, retry: (int retryCount, Object error) => null);
 
 /// Ce que fait le lien d'une alerte (R6-04) : ouvrir sa cible dans le routeur
@@ -101,11 +144,34 @@ class VueGlobaleFinanceBloc extends ConsumerWidget {
     if (echecHorsLigne) {
       return EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire);
     }
-    return BlocAsynchrone<VueGlobaleFinance>(
-      valeur: vue,
-      squelette: const _Squelette(),
-      onReessayer: relire,
-      construire: (VueGlobaleFinance v) => VueGlobaleFinanceContenu(vue: v),
+    // Le choix du mois (maquette 09, en tete) : seulement quand la source
+    // rend ses mois ; il reste en place pendant la lecture d'un autre mois.
+    final List<DateTime> mois =
+        ref.watch(moisVueGlobaleDisponiblesProvider).value ??
+        const <DateTime>[];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        if (mois.isNotEmpty) ...<Widget>[
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: SelecteurMois(
+              key: VueGlobaleFinanceContenu.selecteurMoisKey,
+              mois: mois,
+              choisi: ref.watch(moisVueGlobaleProvider),
+              onChoix: ref.read(moisVueGlobaleProvider.notifier).choisir,
+            ),
+          ),
+          Ecart.vLg,
+        ],
+        BlocAsynchrone<VueGlobaleFinance>(
+          valeur: vue,
+          squelette: const _Squelette(),
+          onReessayer: relire,
+          construire: (VueGlobaleFinance v) => VueGlobaleFinanceContenu(vue: v),
+        ),
+      ],
     );
   }
 }
@@ -123,6 +189,18 @@ class VueGlobaleFinanceContenu extends StatelessWidget {
 
   /// La cle de la liste des alertes.
   static const Key alertesKey = ValueKey<String>('fi-vue-alertes');
+
+  /// La cle du choix du mois.
+  static const Key selecteurMoisKey = ValueKey<String>('fi-vue-mois');
+
+  /// La cle de la carte « État des paiements ».
+  static const Key etatPaiementsKey = ValueKey<String>('fi-vue-etat-paiements');
+
+  /// La cle de la carte « Top classes ».
+  static const Key topClassesKey = ValueKey<String>('fi-vue-top-classes');
+
+  /// La cle de la carte « Dernières opérations ».
+  static const Key operationsKey = ValueKey<String>('fi-vue-operations');
 
   /// La cle de la grille des graphiques.
   static const Key graphiquesKey = ValueKey<String>('fi-vue-graphiques');
@@ -298,6 +376,22 @@ class VueGlobaleFinanceContenu extends StatelessWidget {
               ),
         ),
         Ecart.vXxl,
+        // Maquette 09 : l'etat des paiements et le classement des classes
+        // cote a cote des que la largeur loge deux cartes.
+        LayoutBuilder(
+          builder: (BuildContext contexte, BoxConstraints contraintes) =>
+              _Grille(
+                colonnes: colonnesPour(
+                  contraintes.maxWidth,
+                  MediaQuery.textScalerOf(contexte),
+                ).clamp(1, 2),
+                children: <Widget>[
+                  _EtatPaiements(comptes: vue.etatPaiements),
+                  _TopClasses(classes: vue.topClasses, mois: mois),
+                ],
+              ),
+        ),
+        Ecart.vXxl,
         SectionHeader(titre: vueT.alertes),
         Ecart.vMd,
         if (vue.alertes.isEmpty)
@@ -315,6 +409,8 @@ class VueGlobaleFinanceContenu extends StatelessWidget {
               for (final AlerteFinance a in vue.alertes) _bandeau(context, a),
             ],
           ),
+        Ecart.vXxl,
+        _DernieresOperations(operations: vue.dernieresOperations),
       ],
     );
   }
@@ -692,4 +788,195 @@ class _Squelette extends StatelessWidget {
       Skeleton.liste(lignes: 4),
     ],
   );
+}
+
+/// Le titre d'une carte de la vue et sa phrase.
+class _TitreCarte extends StatelessWidget {
+  const _TitreCarte({required this.titre, required this.detail});
+
+  final String titre;
+  final String detail;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Semantics(header: true, child: Text(titre, style: textes.titleSmall)),
+        Ecart.vXs,
+        Text(
+          detail,
+          style: palette.inkMuted.applyTo(
+            textes.bodySmall ?? const TextStyle(),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Une phrase d'etat vide dans une carte de la vue.
+class _VideCarte extends StatelessWidget {
+  const _VideCarte(this.texte);
+
+  final String texte;
+
+  @override
+  Widget build(BuildContext context) => Text(
+    texte,
+    style: AppPalette.of(context).inkMuted
+        .applyTo(Theme.of(context).textTheme.bodyMedium ?? const TextStyle()),
+  );
+}
+
+/// « État des paiements » (maquette 09, revue 12 g) : un nombre de profils
+/// par etat, nomme (jamais la couleur seule), et sa part quand la source la
+/// rend. Aucun compte ni pourcentage calcule ici (FI6).
+class _EtatPaiements extends StatelessWidget {
+  const _EtatPaiements({required this.comptes});
+
+  final List<CompteEtatPaiements> comptes;
+
+  @override
+  Widget build(BuildContext context) {
+    final vueT = t.admin.finance.vue;
+    return AppCard(
+      key: VueGlobaleFinanceContenu.etatPaiementsKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          _TitreCarte(
+            titre: vueT.etatPaiements,
+            detail: vueT.etatPaiementsDetail,
+          ),
+          Ecart.vMd,
+          if (comptes.isEmpty)
+            _VideCarte(vueT.etatVide)
+          else
+            for (int i = 0; i < comptes.length; i++) ...<Widget>[
+              if (i > 0) ...<Widget>[Ecart.vSm, const FiletCarte(), Ecart.vSm],
+              LigneCleValeur(
+                key: ValueKey<String>('fi-vue-etat-${comptes[i].etat.name}'),
+                cle: switch (comptes[i].etat) {
+                  EtatPaiementsProfils.finances => vueT.etatFinances,
+                  EtatPaiementsProfils.aRegulariser => vueT.etatARegulariser,
+                  EtatPaiementsProfils.enEssai => vueT.etatEnEssai,
+                  EtatPaiementsProfils.enConfirmation =>
+                    vueT.etatEnConfirmation,
+                },
+                detailCle: switch (comptes[i].partPourMille) {
+                  final int p => vueT.etatPart(valeur: pourMilleEnTexte(p)),
+                  null => null,
+                },
+                valeur: '${comptes[i].profils}',
+                chiffres: true,
+                valeurForte: true,
+                valeurEnFin: true,
+              ),
+            ],
+        ],
+      ),
+    );
+  }
+}
+
+/// « Top classes » (maquette 09, revue 12 h) : les classes dans l'ordre
+/// rendu, le rang est la position ; chaque encaisse est celui de la source.
+class _TopClasses extends StatelessWidget {
+  const _TopClasses({required this.classes, required this.mois});
+
+  final List<EncaissementClasse> classes;
+  final String mois;
+
+  @override
+  Widget build(BuildContext context) {
+    final vueT = t.admin.finance.vue;
+    return AppCard(
+      key: VueGlobaleFinanceContenu.topClassesKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          _TitreCarte(
+            titre: vueT.topClasses,
+            detail: vueT.topClassesDetail(deMois: deDevant(mois)),
+          ),
+          Ecart.vMd,
+          if (classes.isEmpty)
+            _VideCarte(vueT.topClassesVide)
+          else
+            for (int i = 0; i < classes.length; i++) ...<Widget>[
+              if (i > 0) ...<Widget>[Ecart.vSm, const FiletCarte(), Ecart.vSm],
+              LigneFinance(
+                libelle: vueT.topClasse(
+                  rang: '${i + 1}',
+                  classe: classes[i].classe,
+                ),
+                montant: classes[i].encaisse,
+              ),
+            ],
+        ],
+      ),
+    );
+  }
+}
+
+/// « Dernières opérations » (maquette 09, revue 12 j) : les mouvements des
+/// profils des familles, tels que la source les rend (deja tries), avec leur
+/// heure et leur etat ; aucun lien « Voir tout » tant qu'aucune page de la
+/// direction ne porte l'historique complet.
+class _DernieresOperations extends StatelessWidget {
+  const _DernieresOperations({required this.operations});
+
+  final List<MouvementFoyer> operations;
+
+  @override
+  Widget build(BuildContext context) {
+    final vueT = t.admin.finance.vue;
+    return Column(
+      key: VueGlobaleFinanceContenu.operationsKey,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        SectionHeader(titre: vueT.dernieresOperations),
+        Ecart.vXs,
+        Text(
+          vueT.dernieresOperationsDetail,
+          style: AppPalette.of(context).inkMuted.applyTo(
+            Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+          ),
+        ),
+        Ecart.vMd,
+        if (operations.isEmpty)
+          _VideCarte(vueT.dernieresOperationsVide)
+        else
+          CarteGroupee(
+            sections: <Widget>[
+              for (final MouvementFoyer m in operations)
+                LigneTransaction(
+                  key: ValueKey<String>('fi-vue-op-${m.mouvement.id}'),
+                  icone: iconeMouvement(m.mouvement.nature),
+                  libelle: vueT.operation(
+                    libelle: libelleMouvement(m.mouvement),
+                    prenom: m.prenom,
+                  ),
+                  date: dateHeureMouvement(m.mouvement.date),
+                  montant: m.mouvement.montant,
+                  statut: switch (m.mouvement.statut) {
+                    StatutMouvement.enConfirmation => StatusPill(
+                      libelle: libelleStatut(m.mouvement.statut),
+                      ton: TonEtat.accent,
+                    ),
+                    StatutMouvement.enregistre => null,
+                  },
+                ),
+            ],
+          ),
+      ],
+    );
+  }
 }

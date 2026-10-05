@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../finance/montant.dart';
+import '../finance/mouvements_profil.dart';
 import 'capacite_indisponible.dart';
 
 /// La nature d'une alerte de la vue globale.
@@ -124,6 +125,61 @@ class PartRevenu {
   final Montant montant;
 }
 
+/// Un etat de paiement des profils (maquette 09 « État des paiements » ;
+/// revue FI-VAGUE-R R6-02, revue 12 g). Un etat se dit par son nom, jamais
+/// par la couleur seule (FI17).
+enum EtatPaiementsProfils {
+  /// La periode du mois est financee.
+  finances,
+
+  /// La periode du mois est a regulariser.
+  aRegulariser,
+
+  /// Le profil est en essai, jamais compte payant (FI4).
+  enEssai,
+
+  /// Un paiement attend sa confirmation (FI9).
+  enConfirmation,
+}
+
+/// Le nombre de profils dans un etat de paiement, tel que la source le rend :
+/// l'ecran ne compte ni ne divise rien (FI6).
+@immutable
+class CompteEtatPaiements {
+  /// Cree le compte.
+  const CompteEtatPaiements({
+    required this.etat,
+    required this.profils,
+    this.partPourMille,
+  });
+
+  /// L'etat.
+  final EtatPaiementsProfils etat;
+
+  /// Le nombre de profils dans cet etat.
+  final int profils;
+
+  /// La part de ces profils parmi les profils du mois, en pour mille, `null`
+  /// quand la source ne la rend pas.
+  final int? partPourMille;
+}
+
+/// Une classe du classement « Top classes » (maquette 09 ; revue 12 h) : son
+/// nom et ce qu'elle a encaisse sur le mois, dans l'ordre rendu (le rang est
+/// la position).
+@immutable
+class EncaissementClasse {
+  /// Cree la ligne.
+  const EncaissementClasse({required this.classe, required this.encaisse});
+
+  /// Le nom propre de la classe (« An-Nour ») ; l'ecran ecrit « Classe »
+  /// devant.
+  final String classe;
+
+  /// L'encaisse de la classe sur le mois, tel que rendu par la source.
+  final Montant encaisse;
+}
+
 /// Les sept indicateurs de la vue globale (revue FI-1a ligne 12).
 @immutable
 class VueGlobaleFinance {
@@ -142,6 +198,9 @@ class VueGlobaleFinance {
     this.paieParMois = const <MontantMensuel>[],
     this.margeParMois = const <MargeMensuelle>[],
     this.revenuParType = const <PartRevenu>[],
+    this.etatPaiements = const <CompteEtatPaiements>[],
+    this.topClasses = const <EncaissementClasse>[],
+    this.dernieresOperations = const <MouvementFoyer>[],
   });
 
   /// Le mois de la vue (premier jour).
@@ -192,6 +251,18 @@ class VueGlobaleFinance {
 
   /// Le revenu academique du mois de la vue, par type d'eleve.
   final List<PartRevenu> revenuParType;
+
+  /// L'etat des paiements des profils du mois, dans l'ordre rendu (revue
+  /// FI-VAGUE-R R6-02). Vide quand la source ne le rend pas.
+  final List<CompteEtatPaiements> etatPaiements;
+
+  /// Les classes qui ont le plus encaisse sur le mois, la premiere d'abord.
+  /// Vide quand la source ne le rend pas.
+  final List<EncaissementClasse> topClasses;
+
+  /// Les derniers mouvements des profils des familles, le plus recent
+  /// d'abord, deja arretes par la source (aucun tri a l'ecran).
+  final List<MouvementFoyer> dernieresOperations;
 }
 
 /// Les longueurs de dessin des barres d'un graphique, entre 0 et 1 : chaque
@@ -209,11 +280,18 @@ List<double> longueursDeBarres(List<int> valeurs) {
   ];
 }
 
-/// La Finance de la direction. Series, repartition et cibles d'alerte
-/// arrivent par la meme lecture (FI-BR-12, revue FI-VAGUE-R R6-01, R6-04).
+/// La Finance de la direction. Series, repartition, cibles d'alerte, etat
+/// des paiements, classement des classes et derniers mouvements arrivent par
+/// la meme lecture (FI-BR-12, revue FI-VAGUE-R R6-01, R6-02, R6-04).
 abstract interface class PortFinanceDirection {
-  /// La vue globale du mois en cours (FI-BR-12).
-  Future<VueGlobaleFinance> vueGlobale();
+  /// La vue globale du mois [mois] (premier jour), ou du mois en cours quand
+  /// il est nul (FI-BR-12 ; choix du mois, revue FI-VAGUE-R R6-03, FI-Q18).
+  Future<VueGlobaleFinance> vueGlobale({DateTime? mois});
+
+  /// Les mois que la source sait rendre, le plus recent d'abord (premier
+  /// jour de chaque mois) : le choix du mois ne propose qu'eux, jamais un
+  /// mois invente (FI-BR-12).
+  Future<List<DateTime>> moisDisponibles();
 }
 
 /// **Aucune source serveur a ce jour** (FI-BR-12).
@@ -222,8 +300,12 @@ class FinanceDirectionIndisponible implements PortFinanceDirection {
   const FinanceDirectionIndisponible();
 
   @override
-  Future<VueGlobaleFinance> vueGlobale() =>
+  Future<VueGlobaleFinance> vueGlobale({DateTime? mois}) =>
       Future<VueGlobaleFinance>.error(const CapaciteIndisponible('FI-BR-12'));
+
+  @override
+  Future<List<DateTime>> moisDisponibles() =>
+      Future<List<DateTime>>.error(const CapaciteIndisponible('FI-BR-12'));
 }
 
 /// Le port de la vue globale ; la demonstration le surcharge.

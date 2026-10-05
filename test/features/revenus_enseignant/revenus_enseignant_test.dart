@@ -516,6 +516,56 @@ void main() {
       await tester.pump();
     }
 
+    testWidgets('FI-Q16 : le titre est « Revenus estimés », jamais « Mes '
+        'revenus »', (WidgetTester tester) async {
+      await monterPage(tester, const RevenusEnseignantDemo());
+      await _attendre(tester);
+      expect(t.enseignant.revenus.titre, 'Revenus estimés');
+      expect(t.enseignant.profil.revenus, 'Revenus estimés');
+      expect(find.text('Revenus estimés'), findsWidgets);
+      expect(find.text('Mes revenus'), findsNothing);
+    });
+
+    testWidgets('FI-Q18 : le choix du mois propose les seuls mois rendus, '
+        'relit le mois choisi et reste pose sur un mois vide', (
+      WidgetTester tester,
+    ) async {
+      final _PortDeuxMois port = _PortDeuxMois();
+      await monterPage(tester, port, taille: const Size(390, 2400));
+      await _attendre(tester);
+      final Finder selecteur = find.byKey(
+        RevenusEnseignantPage.selecteurMoisKey,
+      );
+      expect(selecteur, findsOneWidget);
+      expect(
+        find.descendant(of: selecteur, matching: find.text('octobre 2026')),
+        findsOneWidget,
+      );
+      expect(find.text(t.enseignant.revenus.estimation), findsOneWidget);
+      await tester.tap(selecteur);
+      await tester.pumpAndSettle();
+      expect(find.text('septembre 2026'), findsOneWidget);
+      expect(find.text('août 2026'), findsNothing);
+      await tester.tap(find.text('septembre 2026'));
+      await _attendre(tester);
+      expect(port.demandes, <DateTime>[DateTime(2026, 9)]);
+      // Septembre : aucune heure assuree, l'etat vide, le choix reste.
+      expect(find.text(t.enseignant.revenus.vide), findsOneWidget);
+      expect(selecteur, findsOneWidget);
+      expect(
+        find.descendant(of: selecteur, matching: find.text('septembre 2026')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('FI-Q18 : production, aucun mois rendu, aucun choix pose', (
+      WidgetTester tester,
+    ) async {
+      await monterPage(tester, const RevenusEnseignantIndisponibles());
+      await _attendre(tester);
+      expect(find.byKey(RevenusEnseignantPage.selecteurMoisKey), findsNothing);
+    });
+
     testWidgets('chargement : le squelette, aucun chiffre', (
       WidgetTester tester,
     ) async {
@@ -975,8 +1025,42 @@ class _PortFige implements PortRevenusEnseignant {
   Future<RevenusEnseignant> moisEnCours() => reponse;
 
   @override
+  Future<RevenusEnseignant> duMois(DateTime mois) => reponse;
+
+  @override
+  Future<List<DateTime>> moisDisponibles() =>
+      Future<List<DateTime>>.error(const CapaciteIndisponible('FI-BR-11'));
+
+  @override
   Future<List<LigneReleve>> releve() =>
       lignes?.call() ??
+      Future<List<LigneReleve>>.error(const CapaciteIndisponible('FI-BR-11'));
+}
+
+/// Deux mois rendus : octobre (le jeu nominal) et septembre (aucune heure
+/// assuree) ; les mois demandes sont gardes.
+class _PortDeuxMois implements PortRevenusEnseignant {
+  _PortDeuxMois();
+
+  final List<DateTime> demandes = <DateTime>[];
+
+  @override
+  Future<RevenusEnseignant> moisEnCours() async => DonneesFinanceDemo.revenus();
+
+  @override
+  Future<RevenusEnseignant> duMois(DateTime mois) async {
+    demandes.add(mois);
+    return DonneesFinanceDemo.revenus(vide: mois.month == 9);
+  }
+
+  @override
+  Future<List<DateTime>> moisDisponibles() async => <DateTime>[
+    DateTime(2026, 10),
+    DateTime(2026, 9),
+  ];
+
+  @override
+  Future<List<LigneReleve>> releve() =>
       Future<List<LigneReleve>>.error(const CapaciteIndisponible('FI-BR-11'));
 }
 
@@ -986,6 +1070,13 @@ class _PortEnEchec implements PortRevenusEnseignant {
 
   @override
   Future<RevenusEnseignant> moisEnCours() async => throw Exception('reseau');
+
+  @override
+  Future<RevenusEnseignant> duMois(DateTime mois) async =>
+      throw Exception('reseau');
+
+  @override
+  Future<List<DateTime>> moisDisponibles() async => throw Exception('reseau');
 
   @override
   Future<List<LigneReleve>> releve() async => throw Exception('reseau');

@@ -75,9 +75,8 @@ bool financesDisponibles(AsyncValue<FinancesFoyer> lecture) =>
 
 /// Vrai quand « Recharger plusieurs profils » est pose : les finances sont
 /// rendues. C'est alors lui le seul bouton plein du Foyer (Q-FI-2, E-17) ;
-/// sinon (production, chargement, erreur), « Ajouter un profil eleve » le
-/// reste (Q-FI-2 pour le cas sans source : question 1 au directeur, revue
-/// FI-VAGUE-R ; comportement d'avant garde).
+/// sinon (production, chargement, erreur), « Ajouter un profil eleve » est
+/// le bouton plein (FI-Q1 (a), decide par delegation le 05/10).
 bool rechargePosee(AsyncValue<FinancesFoyer> lecture) =>
     lecture.hasValue && !lecture.hasError;
 
@@ -154,11 +153,10 @@ class SyntheseSoldesFoyer extends ConsumerWidget {
 /// « Vue financiere du foyer » (FI-5, maquette 05, guide §5.1 « Desktop ») :
 /// le mois courant seul.
 ///
-/// **Q-FI-8 sans reponse du directeur** : defaut propose = panneau garde, sur
-/// le mois courant (« Ce mois-ci »), SANS selecteur de mois (aucun contrat de
-/// lecture par mois), memes libelles que la rangee de tete. Il porte aussi
-/// « Paiements du mois », que la rangee cede a son 4e bloc (Q-FI-7). A
-/// retirer ou etendre selon la reponse.
+/// **FI-Q2 (a), decide par delegation le 05/10** : le panneau est garde, sur
+/// le mois courant (« Ce mois-ci »), sans selecteur de mois, memes libelles
+/// que la rangee de tete. Il porte aussi « Paiements du mois », que la
+/// rangee cede a son 4e bloc (Q-FI-7).
 ///
 /// Meme source que la synthese : le chargement montre un squelette ; une
 /// erreur se dit une seule fois, dans la synthese (avec « Reessayer » ou

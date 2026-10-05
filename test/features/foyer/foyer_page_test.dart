@@ -166,7 +166,7 @@ void main() {
       expect(lieu(routeur), Routes.tuteurFoyer);
       expect(find.byType(FoyerPage), findsOneWidget);
       expect(find.text(t.foyer.titre), findsWidgets);
-      expect(find.text(t.foyer.membresEnfants), findsOneWidget);
+      expect(find.text(t.foyer.membres), findsOneWidget);
 
       // Le foyer fictif arrive dans l'ordre inverse : l'ecran les range par
       // prenom (A1 avant A2), sans dependre de l'ordre de la vue.
@@ -279,7 +279,7 @@ void main() {
 
       expect(_etat(NatureEtat.aucunResultat), findsOneWidget);
       expect(find.text(t.foyer.vide.titre), findsOneWidget);
-      expect(find.text(t.foyer.membresEnfants), findsNothing);
+      expect(find.text(t.foyer.membres), findsNothing);
       // L'ajout reste a sa place unique : l'en-tete.
       expect(find.byKey(FoyerPage.ajouterKey), findsOneWidget);
       expect(find.text(t.foyer.appareilsFoyer), findsOneWidget);

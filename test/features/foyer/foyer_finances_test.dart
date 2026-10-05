@@ -267,11 +267,14 @@ void main() {
   });
 
   testWidgets('libelles de la fiche (R1-09) : « Soldes et paiements », '
-      '« Enfants du foyer », « Total des soldes (lecture) », « À payer ce '
-      'mois »', (WidgetTester tester) async {
+      '« Profils élèves » (FI-Q3 (b), jamais « Enfants du foyer »), « Total '
+      'des soldes (lecture) », « À payer ce mois »', (
+    WidgetTester tester,
+  ) async {
     await _monter(tester, jeu: JeuFoyerFinance.tousFinances);
     expect(find.text('Soldes et paiements'), findsOneWidget);
-    expect(find.text('Enfants du foyer'), findsOneWidget);
+    expect(find.text('Profils élèves'), findsOneWidget);
+    expect(find.text('Enfants du foyer'), findsNothing);
     expect(find.text('Total des soldes (lecture)'), findsOneWidget);
     expect(find.text('À payer ce mois'), findsWidgets);
     expect(find.text(t.foyer.sousTitre), findsNothing);

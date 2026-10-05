@@ -111,9 +111,9 @@ class _Direction extends FinanceDirectionDemo {
   int lectures = 0;
 
   @override
-  Future<VueGlobaleFinance> vueGlobale() {
+  Future<VueGlobaleFinance> vueGlobale({DateTime? mois}) {
     lectures++;
-    return super.vueGlobale();
+    return super.vueGlobale(mois: mois);
   }
 }
 

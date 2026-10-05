@@ -205,9 +205,9 @@ class FoyerPage extends ConsumerWidget {
     //
     // Avec les finances rendues, « Recharger plusieurs profils » est le seul
     // bouton plein et l'ajout passe en secondaire, a sa place (Q-FI-2,
-    // E-17, revue FI-VAGUE-R R1-01). Sans source (production), en
-    // chargement ou en erreur, l'ajout reste plein : le cas sans source est
-    // la question 1 au directeur, le comportement d'avant est garde.
+    // E-17, revue FI-VAGUE-R R1-01). Sans source de paiement (production),
+    // en chargement ou en erreur, « Ajouter un profil eleve » est le bouton
+    // plein (FI-Q1 (a), decide par delegation le 05/10).
     final AsyncValue<FinancesFoyer> finances = ref.watch(financesFoyerProvider);
     final bool avecFinances = financesDisponibles(finances);
     final Widget ajouter = ActionPrincipale(
@@ -229,7 +229,7 @@ class FoyerPage extends ConsumerWidget {
     final bool large = gabarit.estLarge;
     final Widget profils = KeyedSubtree(
       key: membresKey,
-      child: _Membres(aller, grille: large, titulaireAdulte: adulte != null),
+      child: _Membres(aller, grille: large),
     );
     final VoidCallback? nouvelleDemande = onNouvelleDemande;
     final Widget membres = adulte == null
@@ -502,19 +502,12 @@ class _GrilleCartes extends StatelessWidget {
 
 /// Les membres : chargement, contenu, vide, erreur, hors ligne.
 class _Membres extends ConsumerWidget {
-  const _Membres(
-    this.aller, {
-    this.grille = false,
-    this.titulaireAdulte = false,
-  });
+  const _Membres(this.aller, {this.grille = false});
 
   final void Function(String chemin) aller;
 
   /// Vrai des la tablette : les cartes en grille.
   final bool grille;
-
-  /// Vrai pour « Ma famille » du titulaire adulte.
-  final bool titulaireAdulte;
 
   void _relire(WidgetRef ref) => ref.invalidate(elevesDuFoyerProvider);
 
@@ -557,31 +550,20 @@ class _Membres extends ConsumerWidget {
         titre: t.foyer.vide.titre,
         phrase: t.foyer.vide.phrase,
       ),
-      construire: (List<ProfilEleveFoyer> p) => _ListeMembres(
-        p,
-        aller,
-        grille: grille,
-        titulaireAdulte: titulaireAdulte,
-      ),
+      construire: (List<ProfilEleveFoyer> p) =>
+          _ListeMembres(p, aller, grille: grille),
     );
   }
 }
 
 class _ListeMembres extends ConsumerWidget {
-  const _ListeMembres(
-    this.profils,
-    this.aller, {
-    required this.grille,
-    required this.titulaireAdulte,
-  });
+  const _ListeMembres(this.profils, this.aller, {required this.grille});
 
   final List<ProfilEleveFoyer> profils;
 
   final void Function(String chemin) aller;
 
   final bool grille;
-
-  final bool titulaireAdulte;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -694,10 +676,10 @@ class _ListeMembres extends ConsumerWidget {
         Semantics(
           header: true,
           child: Text(
-            // « Enfants du foyer » (E-7, R1-09) ; « Profils élèves » garde
-            // pour le titulaire adulte, lui-meme beneficiaire (question 3 au
-            // directeur).
-            titulaireAdulte ? t.foyer.membres : t.foyer.membresEnfants,
+            // « Profils élèves » pour tous les titulaires (FI-Q3 (b), decide
+            // par delegation le 05/10) : juste aussi quand le titulaire
+            // adulte suit lui-meme des cours.
+            t.foyer.membres,
             style: palette.inkStrong.applyTo(
               Theme.of(context).textTheme.titleMedium ?? const TextStyle(),
             ),
