@@ -52,17 +52,6 @@ final FutureProviderFamily<ClasseFoyer?, String> classeDeLEleveProvider =
       return classes.isEmpty ? null : classes.first;
     });
 
-/// Largeur minimale (texte 100 %) de la carte classe pour qu'elle partage sa
-/// bande avec « Avant le prochain cours » (BENTO-2b, revue BENTO-2-R M1) :
-/// a 310 px, la colonne « Duree » coupait « Duré/e » et « 45 mi/n ». Elle
-/// croit avec l'echelle du texte. Cote a cote des que la grille fait
-/// 736 px x echelle (2 x 360 + l'ecart) : a texte 100 %, ecran de 864 px
-/// avec le rail replie (80 px, gouttieres 2 x 24), 1040 px avec la barre
-/// laterale depliee ; dessous (tablette de 600 a 863 px, texte agrandi),
-/// pleine largeur. Les bascules 863/864, 1024 et 1440 x2 sont mesurees par
-/// `accueil_famille_test.dart` (BENTO-2c), sans autre source.
-const double largeurMinCarteClasse = 360;
-
 /// La cle de lecture d'une presence : une seance, un eleve.
 typedef ClePresenceEleve = ({String seanceId, String eleveId});
 

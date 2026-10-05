@@ -75,6 +75,23 @@ class TuileBento {
       colonnes >= 3 ? (etendueLarge ?? etendue) : etendue;
 }
 
+/// Largeur minimale (texte 100 %) de la carte classe pour qu'elle partage sa
+/// bande avec « Avant le prochain cours » (BENTO-2b, revue BENTO-2-R M1) :
+/// a 310 px, la colonne « Duree » coupait « Duré/e » et « 45 mi/n ». Elle
+/// croit avec l'echelle du texte. Cote a cote des que la grille fait
+/// 736 px x echelle (2 x 360 + l'ecart) : a texte 100 %, ecran de 864 px
+/// avec le rail replie (80 px, gouttieres 2 x 24), 1040 px avec la barre
+/// laterale depliee ; dessous (tablette de 600 a 863 px, texte agrandi),
+/// pleine largeur. Les bascules 863/864, 1024 et 1440 x2 sont mesurees par
+/// `accueil_famille_test.dart` (BENTO-2c), sans autre source.
+///
+/// Partagee par l'accueil famille (BENTO-2b) et l'accueil adulte (BENTO-3),
+/// qui comparent chaque moitie de grille a cette largeur x echelle du texte
+/// (revue BENTO-3b-R m5, BENTO-3c). Sur l'accueil adulte, la grille fait
+/// l'ecran moins 128 px : bascule entre 863 et 864 px a texte 100 %, et
+/// empilement a 1440 px texte x2, mesures par `accueil_adulte_page_test.dart`.
+const double largeurMinCarteClasse = 360;
+
 /// La place d'une tuile, en cellules de la grille.
 @immutable
 class PlacementBento {
