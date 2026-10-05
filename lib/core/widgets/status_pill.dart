@@ -120,6 +120,9 @@ class StatusPill extends StatelessWidget {
               child: TexteSansCoupure(
                 libelle,
                 textAlign: TextAlign.center,
+                // N-10 : un long motif passe a la ligne sans etirer la
+                // pastille sur toute la largeur de sa ligne.
+                largeurAuPlusLong: true,
                 style: fond.applyTo(
                   Theme.of(context).textTheme.labelMedium ?? const TextStyle(),
                 ),

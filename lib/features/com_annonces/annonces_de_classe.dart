@@ -173,10 +173,10 @@ class _AnnoncesDeClasseState extends ConsumerState<AnnoncesDeClasse> {
         children: <Widget>[
           SectionHeader(titre: a.section),
           Ecart.vMd,
-          VueEtatCommunication(
-            etat: horsLigne
-                ? EtatCommunication.horsLigne
-                : EtatCommunication.erreur,
+          // R-23 : hors ligne ou echec, par l'aide partagee.
+          VueEtatCommunication.depuisErreur(
+            erreur,
+            horsLigne: horsLigne,
             onReessayer: () =>
                 ref.invalidate(annoncesDeClasseProvider(widget.classeId)),
           ),

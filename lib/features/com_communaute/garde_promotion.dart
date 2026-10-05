@@ -45,8 +45,9 @@ class GardePromotion extends StatelessWidget {
   /// Le verdict rendu par le port, s'il y en a un.
   final VerificationPromotion? verification;
 
-  /// Vrai sous le composer d'une reponse (revue COM-R, R-01) : les titres
-  /// et consignes parlent de la reponse, la politique reste la meme.
+  /// Vrai sous le composer d'une reponse (revue COM-R, R-01) : l'en-tete
+  /// est le texte exact de la spec, sans titre invente (COM-RC tour 4), et
+  /// les consignes parlent de la reponse ; la politique reste la meme.
   final bool pourReponse;
 
   /// La cle de l'aide, pour les tests.
@@ -164,11 +165,14 @@ class _Verdict extends StatelessWidget {
     final VerdictPromotion verdict = verification.verdict;
     final bool bloque = verdict.bloque;
     final AppColorPair paire = bloque ? palette.washAlert : palette.washWarning;
-    final String titre = pourReponse
-        ? (bloque ? g.reponse.titreBlocage : g.reponse.titreAvertissement)
-        : (bloque ? g.titreBlocage : g.titreAvertissement);
     final String texte =
         GardePromotion.texteDe(verdict, pourReponse: pourReponse) ?? '';
+    // COM-RC tour 4 (reserve de R-01) : sous une reponse, aucun titre
+    // invente ; l'en-tete du verdict est le texte exact de la spec (section
+    // 5.2, section 22). Une publication garde son titre et sa phrase.
+    final String titre = pourReponse
+        ? texte
+        : (bloque ? g.titreBlocage : g.titreAvertissement);
     final String? motif = verification.motif?.libelle;
 
     return Semantics(
@@ -184,6 +188,11 @@ class _Verdict extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Row(
+              // Le texte exact d'une reponse tient sur plusieurs lignes :
+              // l'icone reste sur la premiere.
+              crossAxisAlignment: pourReponse
+                  ? CrossAxisAlignment.start
+                  : CrossAxisAlignment.center,
               children: <Widget>[
                 ExcludeSemantics(
                   child: IconTheme(
@@ -212,11 +221,13 @@ class _Verdict extends StatelessWidget {
                 ),
               ],
             ),
-            Ecart.vSm,
-            Text(
-              texte,
-              style: paire.applyTo(textes.bodyMedium ?? const TextStyle()),
-            ),
+            if (!pourReponse) ...<Widget>[
+              Ecart.vSm,
+              Text(
+                texte,
+                style: paire.applyTo(textes.bodyMedium ?? const TextStyle()),
+              ),
+            ],
             if (motif != null) ...<Widget>[
               Ecart.vSm,
               Text(

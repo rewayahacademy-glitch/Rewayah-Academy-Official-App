@@ -2121,6 +2121,9 @@ class Traductions$historique$fr {
 	/// fr: '{jour} {mois} {annee}'
 	String dateCourte({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}';
 
+	/// fr: '{jour} {mois}'
+	String dateCourteSansAnnee({required Object jour, required Object mois}) => '${jour} ${mois}';
+
 	/// fr: '{jourSemaine} {jour} {mois} {annee}'
 	String dateLongue({required Object jourSemaine, required Object jour, required Object mois, required Object annee}) => '${jourSemaine} ${jour} ${mois} ${annee}';
 
@@ -16237,6 +16240,9 @@ class Traductions$com$communaute$reponses$fr {
 	/// fr: 'Cette réponse n'a pas encore été confirmée.'
 	String get nonConfirmee => 'Cette réponse n\'a pas encore été confirmée.';
 
+	/// fr: 'Refusée par la politique de la Communauté'
+	String get refusee => 'Refusée par la politique de la Communauté';
+
 	/// fr: 'Renvoyer la réponse'
 	String get reessayer => 'Renvoyer la réponse';
 
@@ -17806,14 +17812,8 @@ class Traductions$com$communaute$garde$reponse$fr {
 
 	// Translations
 
-	/// fr: 'Réponse à revoir'
-	String get titreAvertissement => 'Réponse à revoir';
-
-	/// fr: 'Réponse bloquée'
-	String get titreBlocage => 'Réponse bloquée';
-
-	/// fr: 'Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l'offre avant d'envoyer.'
-	String get avertissement => 'Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant d\'envoyer.';
+	/// fr: 'Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l'offre avant de publier.'
+	String get avertissement => 'Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant de publier.';
 
 	/// fr: 'Liens de la réponse'
 	String get liensTitre => 'Liens de la réponse';
@@ -20605,6 +20605,7 @@ extension on Traductions {
 			'historique.moisCourts.10' => 'nov.',
 			'historique.moisCourts.11' => 'déc.',
 			'historique.dateCourte' => ({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}',
+			'historique.dateCourteSansAnnee' => ({required Object jour, required Object mois}) => '${jour} ${mois}',
 			'historique.dateLongue' => ({required Object jourSemaine, required Object jour, required Object mois, required Object annee}) => '${jourSemaine} ${jour} ${mois} ${annee}',
 			'historique.plage' => ({required Object debut, required Object fin}) => '${debut} - ${fin}',
 			'historique.duree.secondes' => ({required Object s}) => '${s} s',
@@ -21087,9 +21088,9 @@ extension on Traductions {
 			'enseignant.eleve.objectif' => 'Objectif',
 			'enseignant.eleve.presence' => 'Présence récente',
 			'enseignant.eleve.travail' => 'Travail',
-			'enseignant.eleve.travailReprise' => ({required Object page}) => 'Reprise à la ${page}',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.eleve.travailReprise' => ({required Object page}) => 'Reprise à la ${page}',
 			'enseignant.eleve.derniereSeance' => 'Dernière séance',
 			'enseignant.eleve.nonRenseigne' => 'Non renseigné',
 			'enseignant.eleve.signaler' => 'Signaler un besoin',
@@ -21601,9 +21602,9 @@ extension on Traductions {
 			'controleur.observation.climat' => 'Comportement / climat',
 			'controleur.observation.climatAide' => 'Quand il s\'agit du comportement ou de l\'ambiance de la classe',
 			'controleur.observation.autre' => 'Autre',
-			'controleur.observation.autreAide' => 'Quand aucun autre domaine ne convient · précisez-le dans votre texte',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.observation.autreAide' => 'Quand aucun autre domaine ne convient · précisez-le dans votre texte',
 			'controleur.observation.questionPersonne' => 'Qui est concerné ?',
 			'controleur.observation.contextePersonne' => 'Indiquez qui l\'observation concerne. Un élève se choisit dans la liste de la Classe, prénom seulement.',
 			'controleur.observation.enseignant' => 'Enseignant',
@@ -22115,9 +22116,9 @@ extension on Traductions {
 			'tc.parcours.avant.rienDetail' => 'Votre enseignant proposera le travail à la fin de la prochaine séance.',
 			'tc.parcours.avant.nonBranche' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			'tc.parcours.avant.nonBrancheDetail' => 'Cela ne veut pas dire qu\'il n\'y a rien à préparer : cet écran ne sait pas encore le lire.',
-			'tc.parcours.avant.reprendre' => 'Reprendre le cours',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.avant.reprendre' => 'Reprendre le cours',
 			'tc.parcours.avant.reprendreDepuis' => ({required Object position}) => 'Reprendre le cours à ${position}',
 			'tc.parcours.intention.apprendre' => 'À apprendre',
 			'tc.parcours.intention.revoir' => 'À revoir',
@@ -22629,9 +22630,9 @@ extension on Traductions {
 			'com.messages.entree.voirTout' => 'Voir toutes les conversations',
 			'com.messages.entree.toutes' => 'Toutes vos conversations',
 			'com.messages.entree.aLireUne' => '1 conversation à lire',
-			'com.messages.entree.aLire' => ({required Object nombre}) => '${nombre} conversations à lire',
 			_ => null,
 		} ?? switch (path) {
+			'com.messages.entree.aLire' => ({required Object nombre}) => '${nombre} conversations à lire',
 			'com.messages.entree.ouverture' => 'Ouverture de la conversation',
 			'com.messages.entree.inaccessibleTitre' => 'Conversation inaccessible',
 			'com.messages.entree.inaccessible' => 'Cette conversation n\'est plus ouverte pour vous. Choisissez une autre personne dans la liste.',
@@ -22760,9 +22761,7 @@ extension on Traductions {
 			'com.communaute.garde.liensTitre' => 'Liens de la publication',
 			'com.communaute.garde.consigneBlocage' => 'Modifiez la publication, puis publiez-la de nouveau.',
 			'com.communaute.garde.panne' => 'La politique de la Communauté n\'a pas pu relire ce contenu : rien n\'est parti. Vérifiez la connexion, puis réessayez.',
-			'com.communaute.garde.reponse.titreAvertissement' => 'Réponse à revoir',
-			'com.communaute.garde.reponse.titreBlocage' => 'Réponse bloquée',
-			'com.communaute.garde.reponse.avertissement' => 'Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant d\'envoyer.',
+			'com.communaute.garde.reponse.avertissement' => 'Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant de publier.',
 			'com.communaute.garde.reponse.liensTitre' => 'Liens de la réponse',
 			'com.communaute.garde.reponse.consigneBlocage' => 'Modifiez la réponse, puis envoyez-la de nouveau.',
 			'com.communaute.lien.interne' => 'Lien interne Rewayah',
@@ -22811,6 +22810,7 @@ extension on Traductions {
 			'com.communaute.reponses.champVide' => 'Écrivez une réponse pour l\'envoyer.',
 			'com.communaute.reponses.enCours' => 'Envoi en cours',
 			'com.communaute.reponses.nonConfirmee' => 'Cette réponse n\'a pas encore été confirmée.',
+			'com.communaute.reponses.refusee' => 'Refusée par la politique de la Communauté',
 			'com.communaute.reponses.reessayer' => 'Renvoyer la réponse',
 			'com.communaute.reponses.indisponible' => 'Les réponses ne sont pas encore disponibles ici.',
 			'com.communaute.reponses.menu' => ({required Object nom}) => 'Actions sur la réponse de ${nom}',

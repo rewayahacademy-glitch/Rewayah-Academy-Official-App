@@ -130,7 +130,8 @@ void main() {
           _dansGarde(find.byKey(GardePromotion.cleBlocage)),
           findsOneWidget,
         );
-        expect(find.text(g.reponse.titreBlocage), findsOneWidget);
+        // COM-RC tour 4 : aucun titre invente, le texte exact seulement.
+        expect(find.text(g.titreBlocage), findsNothing);
         expect(find.text(g.bloqueAffilie), findsOneWidget);
         // Le texte reste dans le champ : rien n'est perdu, rien n'est parti.
         expect(

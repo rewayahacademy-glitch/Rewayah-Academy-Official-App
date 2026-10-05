@@ -323,6 +323,17 @@ String dateCourte(DateTime instant) => t.historique.dateCourte(
   annee: instant.year,
 );
 
+/// « 4 oct. » dans l'annee de [maintenant], « 4 oct. 2025 » sinon : la
+/// colonne de date d'une ligne tient sur une ligne a texte x1 (COM-RC tour
+/// 4, N-10).
+String dateCompacte(DateTime instant, DateTime maintenant) =>
+    instant.year == maintenant.year
+    ? t.historique.dateCourteSansAnnee(
+        jour: instant.day,
+        mois: t.historique.moisCourts[instant.month - 1],
+      )
+    : dateCourte(instant);
+
 /// « mercredi 23 septembre 2026 ».
 String dateLongueHistorique(DateTime instant) => t.historique.dateLongue(
   jourSemaine: t.commun.dates.jours[instant.weekday - 1].toLowerCase(),

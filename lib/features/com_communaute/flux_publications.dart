@@ -152,6 +152,7 @@ class FluxPublications extends ConsumerWidget {
     this.avecBandeau = false,
     this.enTete,
     this.entreeComposer,
+    this.videAuCentre = false,
   });
 
   /// La categorie et la recherche.
@@ -174,6 +175,28 @@ class FluxPublications extends ConsumerWidget {
 
   /// L'entree « Nouvelle publication », ou `null` sans capacite.
   final Widget? entreeComposer;
+
+  /// Vrai quand la colonne centrale dit le vide (bureau, COM-RC tour 4,
+  /// N-5) : le flux ne le repete pas, un seul etat vide a l'ecran.
+  final bool videAuCentre;
+
+  /// L'etat vide du flux pour [filtre] : le meme texte dans le flux
+  /// (telephone) et au centre (bureau).
+  static Widget vueVide(FiltreFlux filtre) {
+    final c = t.com.communaute;
+    final bool recherche = filtre.recherche.trim().isNotEmpty;
+    return VueEtatCommunication(
+      etat: EtatCommunication.vide,
+      titreVide: recherche ? c.rechercheVideTitre : c.videTitre,
+      // « Dans cette categorie » seulement quand une categorie est
+      // retenue ; sur « Toutes », la Communaute entiere est vide.
+      phraseVide: recherche
+          ? c.rechercheVide
+          : filtre.categorieId == null
+          ? c.videToutes
+          : c.vide,
+    );
+  }
 
   /// La cle de la zone qui defile, pour les tests.
   static const ValueKey<String> cleDefilement = ValueKey<String>(
@@ -204,8 +227,6 @@ class FluxPublications extends ConsumerWidget {
     );
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final DateTime maintenant = ref.watch(horlogeCommunauteProvider)();
-    final c = t.com.communaute;
-    final bool recherche = filtre.recherche.trim().isNotEmpty;
 
     final Widget corps = BlocAsynchrone<List<PublicationCommunaute>>(
       valeur: lues.whenData(
@@ -216,17 +237,7 @@ class FluxPublications extends ConsumerWidget {
       titreEchec: t.com.socle.composants.etats.erreurTitre,
       onReessayer: () =>
           ref.invalidate(publicationsCommunauteProvider(lecture)),
-      vide: VueEtatCommunication(
-        etat: EtatCommunication.vide,
-        titreVide: recherche ? c.rechercheVideTitre : c.videTitre,
-        // « Dans cette categorie » seulement quand une categorie est
-        // retenue ; sur « Toutes », la Communaute entiere est vide.
-        phraseVide: recherche
-            ? c.rechercheVide
-            : filtre.categorieId == null
-            ? c.videToutes
-            : c.vide,
-      ),
+      vide: videAuCentre ? const SizedBox.shrink() : vueVide(filtre),
       erreurVersEtat: (Object erreur, VoidCallback? reessayer) =>
           VueEtatCommunication.depuisErreur(
             erreur,

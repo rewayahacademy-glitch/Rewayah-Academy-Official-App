@@ -461,10 +461,15 @@ class LigneNotification extends StatelessWidget {
     required this.onPress,
     super.key,
     this.selectionnee = false,
+    this.maintenant,
   });
 
   /// La notification.
   final NotificationTuteur notification;
+
+  /// L'instant de reference de la date compacte (sans l'annee en cours) ;
+  /// l'heure de l'appareil par defaut.
+  final DateTime? maintenant;
 
   /// L'ouverture de la notification (detail ou destination), ou `null`.
   final VoidCallback? onPress;
@@ -565,7 +570,12 @@ class LigneNotification extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Text(dateCourte(quand), style: fort),
+                    // N-10 : sans l'annee en cours, la date tient sur une
+                    // ligne (« 4 oct. », plus « 4 oct. / 2026 »).
+                    Text(
+                      dateCompacte(quand, maintenant ?? DateTime.now()),
+                      style: fort,
+                    ),
                     Ecart.vXs,
                     Text(
                       heureMinute(quand),

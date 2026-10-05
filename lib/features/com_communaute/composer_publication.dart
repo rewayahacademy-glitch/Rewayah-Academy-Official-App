@@ -284,6 +284,16 @@ class _ComposerPublicationState extends ConsumerState<ComposerPublication> {
       if (!mounted) return;
       setState(() => _enCours = false);
       widget.onPubliee(publiee);
+    } on ContenuRefuse catch (refus) {
+      // COM-RC tour 4 (reserve de R-01) : un refus du serveur au nom de la
+      // politique se dit comme le verdict du garde, avec son motif ; jamais
+      // un echec generique a renvoyer.
+      if (!mounted) return;
+      setState(() {
+        _enCours = false;
+        _verdict = refus.verification;
+      });
+      _montrerVerdict();
     } on Object catch (erreur) {
       if (!mounted) return;
       setState(() {

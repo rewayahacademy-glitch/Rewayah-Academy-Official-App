@@ -27,7 +27,13 @@ class TexteSansCoupure extends StatelessWidget {
     this.maxLignes,
     this.voisins = const <String>[],
     this.plancher = 1,
+    this.largeurAuPlusLong = false,
   });
+
+  /// Vrai : passe a la ligne, le texte prend la largeur de sa plus longue
+  /// ligne, pas toute la place offerte (une pastille ne s'etire pas sur la
+  /// largeur de sa ligne, COM-RC tour 4, N-10).
+  final bool largeurAuPlusLong;
 
   /// Les libelles voisins de MEME largeur (segments d'un `ControleSegmente`) :
   /// l'echelle est bornee par le mot le plus long de tous, pour que les
@@ -86,6 +92,9 @@ class TexteSansCoupure extends StatelessWidget {
           style: style,
           textAlign: textAlign,
           textScaler: pour(c.maxWidth),
+          textWidthBasis: largeurAuPlusLong
+              ? TextWidthBasis.longestLine
+              : TextWidthBasis.parent,
         ),
       ),
     );

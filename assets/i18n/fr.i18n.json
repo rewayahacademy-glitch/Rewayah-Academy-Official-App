@@ -2447,6 +2447,7 @@
     },
     "moisCourts": ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."],
     "dateCourte": "{jour} {mois} {annee}",
+    "dateCourteSansAnnee": "{jour} {mois}",
     "dateLongue": "{jourSemaine} {jour} {mois} {annee}",
     "plage": "{debut} - {fin}",
     "duree": {
@@ -5030,9 +5031,7 @@
         "consigneBlocage": "Modifiez la publication, puis publiez-la de nouveau.",
         "panne": "La politique de la Communauté n'a pas pu relire ce contenu : rien n'est parti. Vérifiez la connexion, puis réessayez.",
         "reponse": {
-          "titreAvertissement": "Réponse à revoir",
-          "titreBlocage": "Réponse bloquée",
-          "avertissement": "Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l'offre avant d'envoyer.",
+          "avertissement": "Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l'offre avant de publier.",
           "liensTitre": "Liens de la réponse",
           "consigneBlocage": "Modifiez la réponse, puis envoyez-la de nouveau."
         }
@@ -5094,6 +5093,7 @@
         "champVide": "Écrivez une réponse pour l'envoyer.",
         "enCours": "Envoi en cours",
         "nonConfirmee": "Cette réponse n'a pas encore été confirmée.",
+        "refusee": "Refusée par la politique de la Communauté",
         "reessayer": "Renvoyer la réponse",
         "indisponible": "Les réponses ne sont pas encore disponibles ici.",
         "menu": "Actions sur la réponse de {nom}",

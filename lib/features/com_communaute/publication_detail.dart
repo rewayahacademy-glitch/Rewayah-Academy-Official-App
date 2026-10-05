@@ -43,6 +43,7 @@ import '../../core/widgets/vue_etat_communication.dart';
 import 'feuille_signalement_communaute.dart';
 import 'flux_publications.dart';
 import 'port_communaute.dart';
+import 'port_garde_promotion.dart';
 import 'reponses.dart';
 
 Duration? _sansRetentative(int essai, Object erreur) => null;
@@ -154,14 +155,24 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
 
   String get _id => widget.publicationId;
 
-  Future<bool> _repondre(String texte) {
+  Future<IssueEnvoiReponse> _repondre(String texte) async {
     _compteur++;
     final ReponseEnAttente reponse = ReponseEnAttente(
       cle: 'rep-$_id-${DateTime.now().microsecondsSinceEpoch}-$_compteur',
       texte: texte,
     );
     setState(() => _enAttente.add(reponse));
-    return _envoyer(reponse);
+    final IssueEnvoiReponse issue = await _envoyer(reponse);
+    // Un premier envoi refuse revient dans le composer, avec son motif : la
+    // ligne en attente disparait (COM-RC tour 4, reserve de R-01).
+    if (issue is ReponseRefusee && mounted) {
+      setState(
+        () => _enAttente.removeWhere(
+          (ReponseEnAttente r) => r.cle == reponse.cle,
+        ),
+      );
+    }
+    return issue;
   }
 
   void _remplacer(ReponseEnAttente reponse) {
@@ -171,7 +182,10 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
     if (i >= 0) _enAttente[i] = reponse;
   }
 
-  Future<bool> _envoyer(ReponseEnAttente reponse) async {
+  /// Envoie [reponse]. Un refus du serveur au nom de la politique
+  /// ([ContenuRefuse]) n'est pas un echec : la ligne dit le refus et son
+  /// motif, sans « Renvoyer » (COM-RC tour 4, reserve de R-01).
+  Future<IssueEnvoiReponse> _envoyer(ReponseEnAttente reponse) async {
     setState(() => _remplacer(reponse.avecEchec(false)));
     try {
       await ref
@@ -181,16 +195,22 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
             texte: reponse.texte,
             cleIdempotence: reponse.cle,
           );
+    } on ContenuRefuse catch (refus) {
+      if (mounted) {
+        setState(() => _remplacer(reponse.refusee(refus.verification)));
+      }
+      return ReponseRefusee(refus.verification);
     } on Object {
       if (mounted) setState(() => _remplacer(reponse.avecEchec(true)));
-      return false;
+      return const ReponseNonConfirmee();
     }
-    if (!mounted) return true;
+    const IssueEnvoiReponse confirmee = ReponseConfirmee();
+    if (!mounted) return confirmee;
     // Un renvoi accuse (« Réessayer » dans la liste) efface aussi le
     // brouillon que le composer gardait pour ce texte : il ne reviendra pas
     // dans le champ a la reouverture.
     await _effacerBrouillonEnvoye(reponse.texte);
-    if (!mounted) return true;
+    if (!mounted) return confirmee;
     // La reponse quitte l'attente quand la liste relue la contient : jamais
     // de trou entre l'accuse et la relecture.
     ref
@@ -209,7 +229,7 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
         ),
       );
     }
-    return true;
+    return confirmee;
   }
 
   Future<void> _effacerBrouillonEnvoye(String texte) async {
@@ -286,14 +306,11 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
                     libelleAction: widget.onRevenir == null ? null : p.revenir,
                     onAction: widget.onRevenir,
                   ),
-                  CapaciteIndisponible() => VueEtatCommunication(
-                    etat: EtatCommunication.indisponible,
-                    dependance: erreur.dependance,
-                  ),
-                  _ => VueEtatCommunication(
-                    etat: horsLigne
-                        ? EtatCommunication.horsLigne
-                        : EtatCommunication.erreur,
+                  // R-23 : la capacite absente, le hors ligne et l'echec
+                  // passent par l'aide partagee, jamais recopies ici.
+                  _ => VueEtatCommunication.depuisErreur(
+                    erreur,
+                    horsLigne: horsLigne,
                     onReessayer: reessayer,
                   ),
                 },

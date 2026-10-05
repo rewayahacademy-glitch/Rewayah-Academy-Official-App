@@ -164,8 +164,13 @@ void main() {
         for (final String fichier in <String>[
           'lib/core/widgets/badge_non_lu.dart',
           'lib/core/widgets/carte_piece_jointe.dart',
+          // COM-RC tour 4 (N-7) : la recherche partagee et la tete de page
+          // confiee (`TetePageConfiee`) aussi.
+          'lib/core/widgets/champ_recherche.dart',
           'lib/core/widgets/espace_travail_adaptatif.dart',
           'lib/core/widgets/fil_discussion.dart',
+          'lib/core/widgets/page_shell.dart',
+          'lib/core/widgets/surface_recherche.dart',
           'lib/core/widgets/vue_etat_communication.dart',
         ])
           if (RegExp(r'\bAppRole\b|\.role\b')

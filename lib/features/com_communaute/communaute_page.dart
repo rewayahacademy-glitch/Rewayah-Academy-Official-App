@@ -308,6 +308,8 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
       avecBandeau: !avecContexte && !surfaceRecherche,
       enTete: uneColonne && !surfaceRecherche ? _teteMobile() : null,
       entreeComposer: surfaceRecherche ? null : entree,
+      // Bureau : le vide se dit au centre, une seule fois (N-5).
+      videAuCentre: !uneColonne,
     );
     final r = t.com.communaute.recherche;
     // Telephone : la recherche ouverte est la surface partagee (R-07), le
@@ -427,9 +429,10 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
     }
     final String? selection = _selection;
     if (selection == null) {
-      // Le flux est vide (aucune publication, ou aucune pour ce filtre) : il
-      // dit deja son etat vide, le centre n'en ajoute pas un second a cote
-      // (revue COM-R, R-13).
+      // Le flux est vide (aucune publication, ou aucune pour ce filtre) :
+      // le centre dit le vide, une seule fois, et le flux ne le repete pas
+      // (revue COM-R, R-13 ; COM-RC tour 4, N-5 : a 1440, la colonne
+      // centrale n'est plus une page blanche).
       final AsyncValue<List<PublicationCommunaute>> lues = ref.watch(
         publicationsCommunauteProvider((
           categorieId: _filtre.categorieId,
@@ -439,7 +442,13 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
       if (lues.hasValue &&
           !lues.hasError &&
           filtrerPublications(lues.requireValue, _filtre.recherche).isEmpty) {
-        return const SizedBox.shrink(key: CommunautePage.cleAucuneSelection);
+        return Center(
+          key: CommunautePage.cleAucuneSelection,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(AppSpacing.xl),
+            child: FluxPublications.vueVide(_filtre),
+          ),
+        );
       }
       final c = t.com.communaute.publication;
       return VueChoisirCommunication(

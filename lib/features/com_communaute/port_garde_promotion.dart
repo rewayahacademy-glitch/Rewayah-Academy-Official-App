@@ -215,6 +215,22 @@ class GardePromotionFixtures implements PortGardePromotion {
   }
 }
 
+/// Le serveur refuse un contenu au nom de la politique (COM-BR-05,
+/// COM-BR-07 ; COM-RC tour 4, reserve de R-01) : le port qui publie ou
+/// repond echoue avec ce refus, qui porte le verdict et son motif. L'ecran
+/// le dit comme un refus, avec son motif, jamais comme un echec a renvoyer :
+/// renvoyer le meme contenu serait refuse de nouveau.
+class ContenuRefuse implements Exception {
+  /// Cree le refus. Le verdict d'un refus retient le contenu.
+  const ContenuRefuse(this.verification);
+
+  /// Le verdict et le motif rendus par le serveur.
+  final VerificationPromotion verification;
+
+  @override
+  String toString() => 'ContenuRefuse(${verification.verdict.name})';
+}
+
 /// Relit un contenu par le garde (revue COM-R, R-17) : rend le verdict, ou
 /// `null` quand le garde n'a pas de contrat (`CapaciteIndisponible`,
 /// COM-BR-07), et le contenu part au serveur, seul juge. Toute autre erreur

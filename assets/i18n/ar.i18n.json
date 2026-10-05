@@ -204,7 +204,7 @@
           "pieceJointe": "مرفق: {nom}",
           "vocal": "رسالة صوتية مدتها {duree}",
           "vocalSansDuree": "رسالة صوتية",
-          "horodatage": "{date}، {heure}"
+          "horodatage": "{date} · {heure}"
         },
         "badge": {
           "nonLuUn": "1 غير مقروء",
@@ -390,7 +390,7 @@
         "dateCourte": "{numero} {mois}"
       },
       "noms": {
-        "avecFonction": "{nom}، {fonction}",
+        "avecFonction": "{nom} · {fonction}",
         "deux": "{premier} و{second}",
         "plusieurs": "{premier} و{nombre} أشخاص آخرين",
         "surObjet": "محادثة بخصوص {objet}",
@@ -526,9 +526,7 @@
         "consigneBlocage": "عدِّل المنشور ثم انشره من جديد.",
         "panne": "تعذّر على سياسة المجتمع مراجعة هذا المحتوى، فلم يُرسَل شيء. تحقّق من الاتصال ثم أعد المحاولة.",
         "reponse": {
-          "titreAvertissement": "ردّ يحتاج إلى مراجعة",
-          "titreBlocage": "ردّ محظور",
-          "avertissement": "يبدو أن هذا الرد يتضمن ترويجًا تجاريًا. احذف الرابط أو الرمز أو العرض قبل الإرسال.",
+          "avertissement": "يبدو أن هذا الرد يتضمن ترويجًا تجاريًا. احذف الرابط أو الرمز أو العرض قبل النشر.",
           "liensTitre": "روابط الرد",
           "consigneBlocage": "عدِّل الرد ثم أرسله من جديد."
         }
@@ -590,6 +588,7 @@
         "champVide": "اكتب ردًّا لإرساله.",
         "enCours": "جارٍ الإرسال",
         "nonConfirmee": "لم يُؤكَّد هذا الردّ بعد.",
+        "refusee": "رفضته سياسة المجتمع",
         "reessayer": "إعادة إرسال الردّ",
         "indisponible": "الردود غير متاحة هنا بعد.",
         "menu": "إجراءات على ردّ {nom}",

@@ -755,7 +755,7 @@ class _Traductions$com$messages$noms$ar extends Traductions$com$messages$noms$fr
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String avecFonction({required Object nom, required Object fonction}) => '${nom}، ${fonction}';
+	@override String avecFonction({required Object nom, required Object fonction}) => '${nom} · ${fonction}';
 	@override String deux({required Object premier, required Object second}) => '${premier} و${second}';
 	@override String plusieurs({required Object premier, required Object nombre}) => '${premier} و${nombre} أشخاص آخرين';
 	@override String surObjet({required Object objet}) => 'محادثة بخصوص ${objet}';
@@ -1034,6 +1034,7 @@ class _Traductions$com$communaute$reponses$ar extends Traductions$com$communaute
 	@override String get champVide => 'اكتب ردًّا لإرساله.';
 	@override String get enCours => 'جارٍ الإرسال';
 	@override String get nonConfirmee => 'لم يُؤكَّد هذا الردّ بعد.';
+	@override String get refusee => 'رفضته سياسة المجتمع';
 	@override String get reessayer => 'إعادة إرسال الردّ';
 	@override String get indisponible => 'الردود غير متاحة هنا بعد.';
 	@override String menu({required Object nom}) => 'إجراءات على ردّ ${nom}';
@@ -1457,7 +1458,7 @@ class _Traductions$com$socle$composants$lecture$ar extends Traductions$com$socle
 	@override String pieceJointe({required Object nom}) => 'مرفق: ${nom}';
 	@override String vocal({required Object duree}) => 'رسالة صوتية مدتها ${duree}';
 	@override String get vocalSansDuree => 'رسالة صوتية';
-	@override String horodatage({required Object date, required Object heure}) => '${date}، ${heure}';
+	@override String horodatage({required Object date, required Object heure}) => '${date} · ${heure}';
 }
 
 // Path: com.socle.composants.badge
@@ -1616,9 +1617,7 @@ class _Traductions$com$communaute$garde$reponse$ar extends Traductions$com$commu
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get titreAvertissement => 'ردّ يحتاج إلى مراجعة';
-	@override String get titreBlocage => 'ردّ محظور';
-	@override String get avertissement => 'يبدو أن هذا الرد يتضمن ترويجًا تجاريًا. احذف الرابط أو الرمز أو العرض قبل الإرسال.';
+	@override String get avertissement => 'يبدو أن هذا الرد يتضمن ترويجًا تجاريًا. احذف الرابط أو الرمز أو العرض قبل النشر.';
 	@override String get liensTitre => 'روابط الرد';
 	@override String get consigneBlocage => 'عدِّل الرد ثم أرسله من جديد.';
 }
@@ -2141,7 +2140,7 @@ extension on TraductionsAr {
 			'com.socle.composants.lecture.pieceJointe' => ({required Object nom}) => 'مرفق: ${nom}',
 			'com.socle.composants.lecture.vocal' => ({required Object duree}) => 'رسالة صوتية مدتها ${duree}',
 			'com.socle.composants.lecture.vocalSansDuree' => 'رسالة صوتية',
-			'com.socle.composants.lecture.horodatage' => ({required Object date, required Object heure}) => '${date}، ${heure}',
+			'com.socle.composants.lecture.horodatage' => ({required Object date, required Object heure}) => '${date} · ${heure}',
 			'com.socle.composants.badge.nonLuUn' => '1 غير مقروء',
 			'com.socle.composants.badge.nonLus' => ({required Object nombre}) => '${nombre} غير مقروءة',
 			'com.socle.composants.badge.nonLusSemantique' => ({required Object nombre}) => '${nombre} عناصر غير مقروءة',
@@ -2292,7 +2291,7 @@ extension on TraductionsAr {
 			'com.messages.ligne.legende' => ({required Object objet, required Object apercu}) => '${objet} · ${apercu}',
 			'com.messages.ligne.sansApercu' => 'لا توجد رسائل حاليًا',
 			'com.messages.ligne.dateCourte' => ({required Object numero, required Object mois}) => '${numero} ${mois}',
-			'com.messages.noms.avecFonction' => ({required Object nom, required Object fonction}) => '${nom}، ${fonction}',
+			'com.messages.noms.avecFonction' => ({required Object nom, required Object fonction}) => '${nom} · ${fonction}',
 			'com.messages.noms.deux' => ({required Object premier, required Object second}) => '${premier} و${second}',
 			'com.messages.noms.plusieurs' => ({required Object premier, required Object nombre}) => '${premier} و${nombre} أشخاص آخرين',
 			'com.messages.noms.surObjet' => ({required Object objet}) => 'محادثة بخصوص ${objet}',
@@ -2403,9 +2402,7 @@ extension on TraductionsAr {
 			'com.communaute.garde.liensTitre' => 'روابط المنشور',
 			'com.communaute.garde.consigneBlocage' => 'عدِّل المنشور ثم انشره من جديد.',
 			'com.communaute.garde.panne' => 'تعذّر على سياسة المجتمع مراجعة هذا المحتوى، فلم يُرسَل شيء. تحقّق من الاتصال ثم أعد المحاولة.',
-			'com.communaute.garde.reponse.titreAvertissement' => 'ردّ يحتاج إلى مراجعة',
-			'com.communaute.garde.reponse.titreBlocage' => 'ردّ محظور',
-			'com.communaute.garde.reponse.avertissement' => 'يبدو أن هذا الرد يتضمن ترويجًا تجاريًا. احذف الرابط أو الرمز أو العرض قبل الإرسال.',
+			'com.communaute.garde.reponse.avertissement' => 'يبدو أن هذا الرد يتضمن ترويجًا تجاريًا. احذف الرابط أو الرمز أو العرض قبل النشر.',
 			'com.communaute.garde.reponse.liensTitre' => 'روابط الرد',
 			'com.communaute.garde.reponse.consigneBlocage' => 'عدِّل الرد ثم أرسله من جديد.',
 			'com.communaute.lien.interne' => 'رابط داخلي في رواية',
@@ -2454,6 +2451,7 @@ extension on TraductionsAr {
 			'com.communaute.reponses.champVide' => 'اكتب ردًّا لإرساله.',
 			'com.communaute.reponses.enCours' => 'جارٍ الإرسال',
 			'com.communaute.reponses.nonConfirmee' => 'لم يُؤكَّد هذا الردّ بعد.',
+			'com.communaute.reponses.refusee' => 'رفضته سياسة المجتمع',
 			'com.communaute.reponses.reessayer' => 'إعادة إرسال الردّ',
 			'com.communaute.reponses.indisponible' => 'الردود غير متاحة هنا بعد.',
 			'com.communaute.reponses.menu' => ({required Object nom}) => 'إجراءات على ردّ ${nom}',
@@ -2500,9 +2498,9 @@ extension on TraductionsAr {
 			'com.communaute.demo.vente' => 'بيع محظور',
 			'com.communaute.demo.signalementNonConfirme' => 'إبلاغ غير مؤكَّد',
 			'com.communaute.demo.choisir' => 'اختر حالة لتجربتها داخل واجهة المعلّم.',
+			'com.communaute.demo.aujourdhui' => 'اليوم، مع الاختصار',
 			_ => null,
 		} ?? switch (path) {
-			'com.communaute.demo.aujourdhui' => 'اليوم، مع الاختصار',
 			'com.communaute.demo.nominal' => 'ستة منشورات',
 			'com.communaute.demo.publication' => 'منشور مفتوح',
 			'com.communaute.demo.vide' => 'لا توجد منشورات',

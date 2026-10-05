@@ -32,7 +32,7 @@ import 'package:rewayah_academy/features/demo/communications/com_studio_demo.dar
 import 'package:rewayah_academy/features/notifications/detail_notification.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/filtres_historique.dart'
-    show dateCourte;
+    show dateCompacte;
 
 import '../../router/support_routeur.dart';
 import '../../support/aucun_mot_coupe.dart';
@@ -363,4 +363,6 @@ void main() {
 }
 
 /// La date courte d'une ligne, telle que la ligne l'ecrit.
-String dateCourteTest(NotificationTuteur n) => dateCourte(n.date.toLocal());
+// COM-RC tour 4 (N-10) : la date compacte, sans l'annee en cours.
+String dateCourteTest(NotificationTuteur n) =>
+    dateCompacte(n.date.toLocal(), DateTime.now());

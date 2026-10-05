@@ -16,6 +16,12 @@
 // (le serveur reste seul juge) ; un garde en panne la retient et propose
 // « Réessayer » (R-17).
 //
+// COM-RC tour 4 (reserve de R-01) : un refus du serveur au nom de la
+// politique (`ContenuRefuse`) n'est pas un echec a renvoyer. Au premier
+// envoi, la reponse revient dans le champ avec le refus et son motif ; apres
+// un renvoi, la ligne dit « Refusée » avec le texte exact et son motif, sans
+// « Renvoyer ». Ctrl+Entree (Cmd+Entree) envoie depuis le champ (N-2).
+//
 // Le texte en cours est un brouillon de session (`PortBrouillons`, spec
 // section 8.2), range sous l'identifiant de la publication : changer de
 // publication ne melange jamais deux reponses. COM-RC tour 2 (R-22) : le
@@ -46,11 +52,41 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/carte_groupee.dart';
+import '../../core/widgets/fil_discussion.dart' show raccourciEnvoi;
 import '../../core/widgets/menu_actions.dart';
 import 'flux_publications.dart';
 import 'garde_promotion.dart';
 import 'port_communaute.dart';
 import 'port_garde_promotion.dart';
+
+/// L'issue de l'envoi d'une reponse au serveur (COM-RC tour 4, reserve de
+/// R-01) : confirmee, non confirmee (a renvoyer), ou refusee au nom de la
+/// politique, avec son verdict et son motif (jamais a renvoyer telle quelle).
+sealed class IssueEnvoiReponse {
+  const IssueEnvoiReponse();
+}
+
+/// Le serveur a confirme la reponse.
+final class ReponseConfirmee extends IssueEnvoiReponse {
+  /// Cree l'issue.
+  const ReponseConfirmee();
+}
+
+/// L'envoi n'a pas ete confirme (reseau, panne) : la reponse se renvoie.
+final class ReponseNonConfirmee extends IssueEnvoiReponse {
+  /// Cree l'issue.
+  const ReponseNonConfirmee();
+}
+
+/// Le serveur a refuse la reponse ([ContenuRefuse]) : le verdict dit
+/// pourquoi.
+final class ReponseRefusee extends IssueEnvoiReponse {
+  /// Cree l'issue.
+  const ReponseRefusee(this.verification);
+
+  /// Le verdict et le motif du serveur.
+  final VerificationPromotion verification;
+}
 
 /// Une reponse ecrite ici, en attente de l'accuse du serveur.
 @immutable
@@ -60,6 +96,7 @@ class ReponseEnAttente {
     required this.cle,
     required this.texte,
     this.echec = false,
+    this.refus,
   });
 
   /// La cle d'idempotence, rejouee telle quelle a chaque renvoi.
@@ -71,9 +108,17 @@ class ReponseEnAttente {
   /// Vrai si l'envoi n'a pas ete confirme.
   final bool echec;
 
+  /// Le refus du serveur, s'il a refuse la reponse au nom de la politique ;
+  /// une reponse refusee ne se renvoie pas.
+  final VerificationPromotion? refus;
+
   /// La meme reponse, dans un autre etat.
   ReponseEnAttente avecEchec(bool valeur) =>
       ReponseEnAttente(cle: cle, texte: texte, echec: valeur);
+
+  /// La meme reponse, refusee par le serveur.
+  ReponseEnAttente refusee(VerificationPromotion verification) =>
+      ReponseEnAttente(cle: cle, texte: texte, refus: verification);
 }
 
 /// Les reponses d'une publication (`ReplyThread`).
@@ -118,6 +163,10 @@ class FilReponses extends StatelessWidget {
   /// La cle de la ligne d'une reponse en attente, pour les tests.
   static ValueKey<String> cleEnAttente(String cle) =>
       ValueKey<String>('communaute-reponse-attente-$cle');
+
+  /// La cle du refus rendu sous une reponse refusee, pour les tests.
+  static ValueKey<String> cleRefus(String cle) =>
+      ValueKey<String>('communaute-reponse-refus-$cle');
 
   @override
   Widget build(BuildContext context) {
@@ -239,6 +288,7 @@ class _LigneEnAttente extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     final r = t.com.communaute.reponses;
     final VoidCallback? renvoyer = onRenvoyer;
+    final VerificationPromotion? refus = reponse.refus;
     return Semantics(
       liveRegion: true,
       child: Column(
@@ -246,7 +296,9 @@ class _LigneEnAttente extends StatelessWidget {
         children: <Widget>[
           AvatarNom.enLigne(
             prenom: t.com.socle.composants.composer.auteurSoi,
-            role: reponse.echec ? r.nonConfirmee : r.enCours,
+            role: refus != null
+                ? r.refusee
+                : (reponse.echec ? r.nonConfirmee : r.enCours),
             diametre: AppAvatar.petit,
           ),
           Ecart.vSm,
@@ -257,7 +309,18 @@ class _LigneEnAttente extends StatelessWidget {
               textes.bodyMedium ?? const TextStyle(),
             ),
           ),
-          if (reponse.echec && renvoyer != null) ...<Widget>[
+          // COM-RC tour 4 (reserve de R-01) : un refus du serveur se dit
+          // comme un refus, avec le texte exact et son motif ; jamais
+          // « Renvoyer », qui serait refuse de nouveau.
+          if (refus != null && refus.verdict.retient) ...<Widget>[
+            Ecart.vSm,
+            SizedBox(
+              key: FilReponses.cleRefus(reponse.cle),
+              width: double.infinity,
+              child: GardePromotion(verification: refus, pourReponse: true),
+            ),
+          ],
+          if (refus == null && reponse.echec && renvoyer != null) ...<Widget>[
             Ecart.vSm,
             ActionPrincipale(
               libelle: r.reessayer,
@@ -289,8 +352,9 @@ class ComposerReponse extends ConsumerStatefulWidget {
   /// La publication a laquelle on repond.
   final String publicationId;
 
-  /// Envoie le texte ; rend vrai si le serveur l'a confirme.
-  final Future<bool> Function(String texte) onEnvoyer;
+  /// Envoie le texte ; rend l'issue : confirmee, non confirmee, ou refusee
+  /// par le serveur avec son verdict (le texte revient alors dans le champ).
+  final Future<IssueEnvoiReponse> Function(String texte) onEnvoyer;
 
   /// La cle du champ, pour les tests.
   static const ValueKey<String> cleChamp = ValueKey<String>(
@@ -470,28 +534,47 @@ class _ComposerReponseState extends ConsumerState<ComposerReponse> {
       _verdict = null;
       _restaure = false;
     });
-    final bool confirme = await widget.onEnvoyer(texte);
-    // Un texte saisi depuis est un nouveau brouillon : il reste.
-    if (confirme && _texte.text.trim().isEmpty) {
-      await _persistance.effacer(_cle);
+    final IssueEnvoiReponse issue = await widget.onEnvoyer(texte);
+    switch (issue) {
+      case ReponseConfirmee():
+        // Un texte saisi depuis est un nouveau brouillon : il reste.
+        if (_texte.text.trim().isEmpty) await _persistance.effacer(_cle);
+      case ReponseNonConfirmee():
+        break;
+      case ReponseRefusee(:final VerificationPromotion verification):
+        // COM-RC tour 4 (reserve de R-01) : le serveur a refuse la reponse
+        // au nom de la politique. Elle revient dans le champ, le refus et
+        // son motif dessous, comme un verdict du garde ; rien n'est perdu.
+        if (!mounted) return;
+        if (_texte.text.trim().isEmpty) _texte.text = texte;
+        setState(() => _verdict = verification);
+        _ramenerDansLaVue();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final r = t.com.communaute.reponses;
-    final Widget champ = TextField(
-      key: ComposerReponse.cleChamp,
-      controller: _texte,
-      minLines: 1,
-      maxLines: 5,
-      keyboardType: TextInputType.multiline,
-      textCapitalization: TextCapitalization.sentences,
-      decoration: InputDecoration(
-        labelText: r.champ,
-        hintText: r.aide,
-        helperText: _videSignale ? r.champVide : null,
-        helperMaxLines: 3,
+    // COM-RC tour 4 (N-2) : Ctrl+Entree (Cmd+Entree) envoie depuis le
+    // champ, comme les trois autres composers ; Entree garde le saut de
+    // ligne.
+    final Widget champ = raccourciEnvoi(
+      onEnvoyer: () {
+        if (!_enCours) unawaited(_envoyer());
+      },
+      child: TextField(
+        key: ComposerReponse.cleChamp,
+        controller: _texte,
+        minLines: 1,
+        maxLines: 5,
+        keyboardType: TextInputType.multiline,
+        textCapitalization: TextCapitalization.sentences,
+        decoration: InputDecoration(
+          labelText: r.champ,
+          hintText: r.aide,
+          helperText: _videSignale ? r.champVide : null,
+          helperMaxLines: 3,
+        ),
       ),
     );
     final Widget envoyer = ActionPrincipale(

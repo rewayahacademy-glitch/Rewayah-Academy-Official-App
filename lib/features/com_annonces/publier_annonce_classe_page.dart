@@ -86,10 +86,10 @@ class PublierAnnonceClassePage extends ConsumerWidget {
                 phrase: p.indisponible,
                 dependance: erreur.dependance,
               )
-            : VueEtatCommunication(
-                etat: horsLigne
-                    ? EtatCommunication.horsLigne
-                    : EtatCommunication.erreur,
+            // R-23 : hors ligne ou echec, par l'aide partagee.
+            : VueEtatCommunication.depuisErreur(
+                erreur,
+                horsLigne: horsLigne,
                 onReessayer: () =>
                     ref.invalidate(annoncesDeClasseProvider(groupeId)),
               ),
