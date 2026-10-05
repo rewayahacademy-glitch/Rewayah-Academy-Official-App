@@ -4855,7 +4855,7 @@
       "remplissage": "Faible remplissage",
       "transfert": "Élèves transférés dans d'autres classes",
       "remplacement": "Enseignant absent sans remplacement",
-      "erreur": "Classe créée par erreur"
+      "parErreur": "Classe créée par erreur"
     },
     "attribution": {
       "confirmee": "Heure confirmée avec la famille",
@@ -4875,20 +4875,20 @@
       "pedagogique": "Besoin pédagogique de l'élève",
       "age": "Durée adaptée à l'âge",
       "charge": "Charge de l'enseignant",
-      "erreur": "Correction d'une erreur de saisie"
+      "parErreur": "Correction d'une erreur de saisie"
     },
     "cloreSurcharge": {
       "termine": "Besoin ponctuel terminé",
       "famille": "Demande de la famille",
       "changement": "Changement de classe ou d'enseignant",
-      "erreur": "Règle posée par erreur"
+      "parErreur": "Règle posée par erreur"
     },
     "annulationEvaluation": {
       "absenceEleve": "Absence de l'élève",
       "absenceEnseignant": "Absence de l'enseignant",
       "pasPret": "Élève pas encore prêt",
       "report": "Report à une autre date",
-      "erreur": "Évaluation planifiée par erreur"
+      "parErreur": "Évaluation planifiée par erreur"
     },
     "changementNiveau": {
       "reussie": "Évaluation réussie",
@@ -4913,7 +4913,7 @@
       "stables": "Prérequis désormais stables",
       "groupe": "Élève placé dans un groupe adapté",
       "inutile": "Exception plus nécessaire",
-      "erreur": "Exception posée par erreur"
+      "parErreur": "Exception posée par erreur"
     },
     "placement": {
       "debutant": "Débutant : parcours de base",
@@ -4934,7 +4934,7 @@
       "reseau": "Coupure réseau pendant le cours",
       "retard": "Arrivée en retard",
       "appareil": "Connexion depuis un autre appareil",
-      "erreur": "Erreur de saisie"
+      "parErreur": "Erreur de saisie"
     },
     "presenceExcusee": {
       "prevenue": "Absence prévenue à l'avance",

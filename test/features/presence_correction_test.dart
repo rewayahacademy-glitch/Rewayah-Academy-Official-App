@@ -123,7 +123,8 @@ void main() {
 
     await tester.tap(confirmer);
     await tester.pumpAndSettle();
-    expect(find.text(_libelles.motifRequis), findsNWidgets(2));
+    // Le message d'erreur remplace l'aide sous le champ.
+    expect(find.text(_libelles.motifRequis), findsOneWidget);
     expect(adaptateur.commandes, isEmpty);
   });
 

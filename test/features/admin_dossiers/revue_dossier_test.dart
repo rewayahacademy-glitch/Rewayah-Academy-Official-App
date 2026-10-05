@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/app.dart';
 import 'package:rewayah_academy/core/admin/admin_domaine.dart';
 import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
@@ -19,6 +18,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/features/admin_dossiers/etat_file_dossiers.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
@@ -208,7 +208,10 @@ void main() {
     expect(confirmer.pleineLargeur, isFalse);
     // Un seul bouton destructif dans la surface : l'autre est Annuler.
     expect(find.text(t.commun.annuler), findsOneWidget);
-    // 02D s'ouvre sur le champ.
+    // FORM-L1 : 02D s'ouvre sur les motifs proposes ; « Autre » donne le
+    // focus au champ libre.
+    await tester.tap(find.byKey(SelecteurMotif.cleAutre));
+    await tester.pumpAndSettle();
     expect(FocusManager.instance.primaryFocus?.debugLabel, 'adm02d-motif');
   });
 

@@ -11668,7 +11668,7 @@ class Traductions$motifs$clotureClasse$fr {
 	String get remplacement => 'Enseignant absent sans remplacement';
 
 	/// fr: 'Classe créée par erreur'
-	String get erreur => 'Classe créée par erreur';
+	String get parErreur => 'Classe créée par erreur';
 }
 
 // Path: motifs.attribution
@@ -11737,7 +11737,7 @@ class Traductions$motifs$poserRegle$fr {
 	String get charge => 'Charge de l\'enseignant';
 
 	/// fr: 'Correction d'une erreur de saisie'
-	String get erreur => 'Correction d\'une erreur de saisie';
+	String get parErreur => 'Correction d\'une erreur de saisie';
 }
 
 // Path: motifs.cloreSurcharge
@@ -11758,7 +11758,7 @@ class Traductions$motifs$cloreSurcharge$fr {
 	String get changement => 'Changement de classe ou d\'enseignant';
 
 	/// fr: 'Règle posée par erreur'
-	String get erreur => 'Règle posée par erreur';
+	String get parErreur => 'Règle posée par erreur';
 }
 
 // Path: motifs.annulationEvaluation
@@ -11782,7 +11782,7 @@ class Traductions$motifs$annulationEvaluation$fr {
 	String get report => 'Report à une autre date';
 
 	/// fr: 'Évaluation planifiée par erreur'
-	String get erreur => 'Évaluation planifiée par erreur';
+	String get parErreur => 'Évaluation planifiée par erreur';
 }
 
 // Path: motifs.changementNiveau
@@ -11869,7 +11869,7 @@ class Traductions$motifs$cloreException$fr {
 	String get inutile => 'Exception plus nécessaire';
 
 	/// fr: 'Exception posée par erreur'
-	String get erreur => 'Exception posée par erreur';
+	String get parErreur => 'Exception posée par erreur';
 }
 
 // Path: motifs.placement
@@ -11941,7 +11941,7 @@ class Traductions$motifs$presenceCorrigee$fr {
 	String get appareil => 'Connexion depuis un autre appareil';
 
 	/// fr: 'Erreur de saisie'
-	String get erreur => 'Erreur de saisie';
+	String get parErreur => 'Erreur de saisie';
 }
 
 // Path: motifs.presenceExcusee
@@ -20625,7 +20625,7 @@ extension on Traductions {
 			'motifs.clotureClasse.remplissage' => 'Faible remplissage',
 			'motifs.clotureClasse.transfert' => 'Élèves transférés dans d\'autres classes',
 			'motifs.clotureClasse.remplacement' => 'Enseignant absent sans remplacement',
-			'motifs.clotureClasse.erreur' => 'Classe créée par erreur',
+			'motifs.clotureClasse.parErreur' => 'Classe créée par erreur',
 			'motifs.attribution.confirmee' => 'Heure confirmée avec la famille',
 			'motifs.attribution.aucuneCommune' => 'Aucune heure commune',
 			'motifs.attribution.continuite' => 'Continuité avec le même enseignant',
@@ -20641,16 +20641,16 @@ extension on Traductions {
 			'motifs.poserRegle.pedagogique' => 'Besoin pédagogique de l\'élève',
 			'motifs.poserRegle.age' => 'Durée adaptée à l\'âge',
 			'motifs.poserRegle.charge' => 'Charge de l\'enseignant',
-			'motifs.poserRegle.erreur' => 'Correction d\'une erreur de saisie',
+			'motifs.poserRegle.parErreur' => 'Correction d\'une erreur de saisie',
 			'motifs.cloreSurcharge.termine' => 'Besoin ponctuel terminé',
 			'motifs.cloreSurcharge.famille' => 'Demande de la famille',
 			'motifs.cloreSurcharge.changement' => 'Changement de classe ou d\'enseignant',
-			'motifs.cloreSurcharge.erreur' => 'Règle posée par erreur',
+			'motifs.cloreSurcharge.parErreur' => 'Règle posée par erreur',
 			'motifs.annulationEvaluation.absenceEleve' => 'Absence de l\'élève',
 			'motifs.annulationEvaluation.absenceEnseignant' => 'Absence de l\'enseignant',
 			'motifs.annulationEvaluation.pasPret' => 'Élève pas encore prêt',
 			'motifs.annulationEvaluation.report' => 'Report à une autre date',
-			'motifs.annulationEvaluation.erreur' => 'Évaluation planifiée par erreur',
+			'motifs.annulationEvaluation.parErreur' => 'Évaluation planifiée par erreur',
 			'motifs.changementNiveau.reussie' => 'Évaluation réussie',
 			'motifs.changementNiveau.stable' => 'Unité acquise et stable',
 			'motifs.changementNiveau.enseignant' => 'Décision de l\'enseignant',
@@ -20667,7 +20667,7 @@ extension on Traductions {
 			'motifs.cloreException.stables' => 'Prérequis désormais stables',
 			'motifs.cloreException.groupe' => 'Élève placé dans un groupe adapté',
 			'motifs.cloreException.inutile' => 'Exception plus nécessaire',
-			'motifs.cloreException.erreur' => 'Exception posée par erreur',
+			'motifs.cloreException.parErreur' => 'Exception posée par erreur',
 			'motifs.placement.debutant' => 'Débutant : parcours de base',
 			'motifs.placement.lecture' => 'Niveau constaté à la lecture',
 			'motifs.placement.declaratif' => 'Pré-diagnostic déclaratif confirmé',
@@ -20682,7 +20682,7 @@ extension on Traductions {
 			'motifs.presenceCorrigee.reseau' => 'Coupure réseau pendant le cours',
 			'motifs.presenceCorrigee.retard' => 'Arrivée en retard',
 			'motifs.presenceCorrigee.appareil' => 'Connexion depuis un autre appareil',
-			'motifs.presenceCorrigee.erreur' => 'Erreur de saisie',
+			'motifs.presenceCorrigee.parErreur' => 'Erreur de saisie',
 			'motifs.presenceExcusee.prevenue' => 'Absence prévenue à l\'avance',
 			'motifs.presenceExcusee.reseau' => 'Coupure réseau signalée',
 			'motifs.presenceExcusee.conge' => 'Jour férié ou congé',

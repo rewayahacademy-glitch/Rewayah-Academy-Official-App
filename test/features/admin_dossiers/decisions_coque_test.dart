@@ -12,7 +12,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/app.dart';
 import 'package:rewayah_academy/core/admin/admin_domaine.dart';
 import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
@@ -22,6 +21,7 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
@@ -244,9 +244,11 @@ void main() {
     await tester.enterText(_champMotif, 'Photo floue.');
     await _stabiliser(tester);
 
+    // FORM-L1 : les puces de motifs allongent la feuille ; le glissement
+    // doit depasser la moitie de sa hauteur pour demander la fermeture.
     await tester.drag(
       find.text(t.dossiers.refus.titre).last,
-      const Offset(0, 400),
+      const Offset(0, 700),
     );
     await _stabiliser(tester);
     expect(find.text(t.dossiers.refus.abandonQuestion), findsOneWidget);

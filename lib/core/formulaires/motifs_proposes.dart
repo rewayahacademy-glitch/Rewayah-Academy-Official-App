@@ -31,7 +31,7 @@ abstract final class MotifsProposes {
     t.motifs.clotureClasse.remplissage,
     t.motifs.clotureClasse.transfert,
     t.motifs.clotureClasse.remplacement,
-    t.motifs.clotureClasse.erreur,
+    t.motifs.clotureClasse.parErreur,
   ];
 
   /// Attribuer sur une heure que la famille n'a pas posee.
@@ -57,7 +57,7 @@ abstract final class MotifsProposes {
     t.motifs.poserRegle.pedagogique,
     t.motifs.poserRegle.age,
     t.motifs.poserRegle.charge,
-    t.motifs.poserRegle.erreur,
+    t.motifs.poserRegle.parErreur,
   ];
 
   /// Revenir a la regle de la plateforme.
@@ -65,7 +65,7 @@ abstract final class MotifsProposes {
     t.motifs.cloreSurcharge.termine,
     t.motifs.cloreSurcharge.famille,
     t.motifs.cloreSurcharge.changement,
-    t.motifs.cloreSurcharge.erreur,
+    t.motifs.cloreSurcharge.parErreur,
   ];
 
   /// Annuler une evaluation.
@@ -74,7 +74,7 @@ abstract final class MotifsProposes {
     t.motifs.annulationEvaluation.absenceEnseignant,
     t.motifs.annulationEvaluation.pasPret,
     t.motifs.annulationEvaluation.report,
-    t.motifs.annulationEvaluation.erreur,
+    t.motifs.annulationEvaluation.parErreur,
   ];
 
   /// Changer le niveau d'un eleve (promotion).
@@ -107,7 +107,7 @@ abstract final class MotifsProposes {
     t.motifs.cloreException.stables,
     t.motifs.cloreException.groupe,
     t.motifs.cloreException.inutile,
-    t.motifs.cloreException.erreur,
+    t.motifs.cloreException.parErreur,
   ];
 
   /// Decider un placement apres diagnostic.
@@ -134,7 +134,7 @@ abstract final class MotifsProposes {
     t.motifs.presenceCorrigee.reseau,
     t.motifs.presenceCorrigee.retard,
     t.motifs.presenceCorrigee.appareil,
-    t.motifs.presenceCorrigee.erreur,
+    t.motifs.presenceCorrigee.parErreur,
   ];
 
   /// Excuser une absence.

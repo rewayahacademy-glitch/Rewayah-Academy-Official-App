@@ -227,8 +227,10 @@ class _SelecteurMotifEtat extends State<SelecteurMotif> {
               label: Text(widget.libelleChamp ?? t.formulaire.motif.autreChamp),
               helperText: widget.aide,
               helperMaxLines: 8,
+              // Sans puce, il n'y a pas de « Autre » a rappeler : le message
+              // de l'appelant s'affiche tel quel sous le champ.
               errorText: erreur != null && autreVide
-                  ? t.formulaire.motif.autreVide
+                  ? (_sansPuce ? erreur : t.formulaire.motif.autreVide)
                   : null,
               errorMaxLines: 4,
             ),
