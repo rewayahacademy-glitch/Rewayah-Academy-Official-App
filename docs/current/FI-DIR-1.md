@@ -68,7 +68,7 @@ testé localement**. Rien n'est testé sur staging ni déployé (aucune PR, aucu
   - `BoutonRecu` traite `CapaciteIndisponible` comme un succès → « FI-Q7 : … visible » échoue ;
   - marge saisie sans conversion en pour mille → « Q21.1 : la marge… » échoue.
 - `dart run tool/verifier_jetons.dart` : 39 → 39 (aucune ligne dans un fichier touché).
-- `dart run tool/verifier_revue.dart` : 1613 avant (base) → 1613 après ; chaque libellé neuf est déclaré dans `tool/libelles_sources.json`.
+- `dart run tool/verifier_revue.dart` : 1649 avant la déclaration des libellés neufs (36 lignes, toutes de cette étape), 1613 après ; aucune violation de cette étape ne reste (la base n'a pas été mesurée à part).
 - Captures : 36 PNG, `docs/current/captures/FI-DIR-1/` (`fidir1_<écran>_<390|1440|320_200pc>_<light|dark>.png`), écrans : Foyer (démo à régulariser, production sans source), fiche Finances de Mariam, Revenus estimés, Vue globale, Politiques. Ouvertes et vérifiées : Vue globale 1440 clair et 320 ×2 sombre, Politiques 1440 clair et 320 ×2 clair, Finances 390 sombre, Revenus 390 clair, Foyer production 390 clair et Foyer 1440 sombre.
 - Hors périmètre vérifié : aucun fichier de `lib/core/theme`, `pubspec.yaml`, `supabase/`, `.github/` n'est modifié.
 
