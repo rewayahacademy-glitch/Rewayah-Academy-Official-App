@@ -13,13 +13,16 @@ Décidé par délégation le 05/10/2026. Le directeur a demandé de prendre ces 
 
 ## Conditions avant toute fusion ou publication réelle
 
-1. **L'alias support@rewayahacademy.com doit exister.** À ce jour, aucun message n'a été envoyé ni reçu à cette adresse, alors que contact@rewayahacademy.com reçoit bien. Seul le directeur peut créer l'alias, en 2 minutes :
-   - admin.google.com, puis Utilisateurs, puis staff@rewayahacademy.com, puis « Adresses e-mail secondaires » : ajouter `support` ;
-   - dans Gmail, ouvrir Paramètres, puis « Comptes », puis « Envoyer des e-mails en tant que » : ajouter support@rewayahacademy.com et cocher « Traiter comme un alias ».
-
-   Aucun connecteur de cette session ne modifie les réglages Gmail ou Workspace.
+1. **Alias support@rewayahacademy.com : créé par le directeur le 05/10/2026.** Les alias actifs de staff@rewayahacademy.com sont contact@, inscriptions@, recrutement@, invoices@ et support@. Usage retenu dans l'app : support@ pour le contact confidentialité et l'aide, inscriptions@ pour les inscriptions et recrutement@ pour les candidatures d'enseignants.
 2. **Représentant dans l'UE.** Il n'en faut pas tant qu'aucune famille de l'UE n'est inscrite. Dès que l'application s'ouvre à l'UE, remplacer « pas encore désigné » par le nom et l'adresse du représentant.
-3. **Inscription à l'ICO (data protection fee).** Aucune trace dans la boîte mail. Elle est obligatoire avant de traiter des données réelles au Royaume-Uni (environ 52 £ par an, catégorie « tier 1 »).
+3. **Inscription à l'ICO (data protection fee).** Aucune trace dans la boîte mail. Le directeur a décidé le 05/10/2026 de ne pas en faire une condition bloquante : il s'inscrit après la mise en production et les tests. La redevance est due dès que des données réelles sont traitées (environ 52 £ par an).
+
+## Autres éléments trouvés dans la boîte mail
+
+- **Wise Business :** e-mail du 05/06/2026, « Your business can no longer get paid by card ». Le compte ne peut plus être payé par carte bancaire ; il reste utilisable pour recevoir des virements.
+- **VertoFX :** compte ouvert le 22/09/2026, avec des portefeuilles GBP et USD et des coordonnées bancaires dédiées. C'est un moyen de paiement possible pour la voie Finance.
+- **Rapid Formations :** le numéro de téléphone professionnel offert n'a jamais été activé ; quatre relances ont été reçues en août et septembre.
+- **Déclaration de confirmation :** déposée le 01/09/2026 ; la prochaine est due en août 2027.
 
 ## Ce qui n'est jamais versé dans un dépôt
 
