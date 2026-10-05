@@ -177,4 +177,146 @@ void main() {
     expect(tester.getRect(find.byKey(cleCorps)).bottom, closeTo(300, 0.5));
     expect(tester.getRect(find.byKey(cleBarre)).bottom, closeTo(300, 0.5));
   });
+
+  // PAGESHELL-200-1b (reserves 1 et 2 de la revue PAGESHELL-200-1) : le
+  // corps recoit max(minimum utile, vue - tete). Le minimum utile est ce que
+  // ses `ColonneCorps` signalent leur manquer : un bandeau et une barre
+  // agrandis qui ne tiennent pas sous la tete ne debordent plus, la page
+  // defile d'autant et la barre se rejoint.
+  group('PAGESHELL-200-1b : minimum utile du corps', () {
+    const ValueKey<String> cleEtiree = ValueKey<String>('etiree');
+
+    /// Une salle : un bandeau haut, une zone etiree, une barre.
+    Widget salle({double bandeau = 300, Widget? enTete}) => ColonneCorps(
+      key: cleCorps,
+      minimumEtire: 48,
+      children: <Widget>[
+        ?enTete,
+        SizedBox(height: bandeau, child: const Text('bandeau')),
+        Expanded(
+          key: cleEtiree,
+          child: ListView(
+            children: <Widget>[
+              for (int i = 0; i < 10; i++)
+                SizedBox(height: 40, child: Text('ligne $i')),
+            ],
+          ),
+        ),
+        const SizedBox(key: cleBarre, height: 96, child: Text('barre')),
+      ],
+    );
+
+    Future<void> monter(
+      WidgetTester tester,
+      Widget corps, {
+      Size taille = const Size(320, 568),
+      TextDirection sens = TextDirection.ltr,
+    }) async {
+      vue(tester, taille, zoneSure);
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await tester.pumpWidget(
+        hotePage(
+          Directionality(
+            textDirection: sens,
+            child: PageShell(titre: 'Salle', defilante: false, child: corps),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    /// La barre entiere se rejoint en defilant la page jusqu'au bout.
+    Future<void> barreAtteignable(WidgetTester tester, Size taille) async {
+      final ScrollPosition page = defileurPage(tester);
+      page.jumpTo(page.maxScrollExtent);
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+      final Rect barre = tester.getRect(find.byKey(cleBarre));
+      expect(barre.bottom, lessThanOrEqualTo(taille.height - zoneSure.bottom));
+      expect(barre.top, greaterThanOrEqualTo(zoneSure.top));
+      expect(
+        tester.getSize(find.byKey(cleEtiree)).height,
+        greaterThanOrEqualTo(48),
+      );
+    }
+
+    for (final TextDirection sens in TextDirection.values) {
+      testWidgets('320x568 a 200 %, ${sens.name} : le corps recoit ce qui '
+          'lui manque, la page defile', (WidgetTester tester) async {
+        await monter(tester, salle(), sens: sens);
+        expect(tester.takeException(), isNull);
+        // 300 + 48 + 96 ne tiennent pas sous la tete : la page defile.
+        expect(defileurPage(tester).maxScrollExtent, greaterThan(0));
+        expect(
+          tester.getSize(find.byKey(cleCorps)).height,
+          closeTo(300 + 48 + 96, 0.5),
+        );
+        await barreAtteignable(tester, const Size(320, 568));
+      });
+    }
+
+    testWidgets('colonnes imbriquees : les deux colonnes sont servies', (
+      WidgetTester tester,
+    ) async {
+      await monter(
+        tester,
+        ColonneCorps(
+          key: cleCorps,
+          children: <Widget>[
+            // Ni la colonne exterieure ni l'interieure ne tiennent : il faut
+            // plusieurs mises en page du corps pour servir les deux.
+            const SizedBox(height: 320, child: Text('bandeau')),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: salle(bandeau: 120),
+              ),
+            ),
+          ],
+        ),
+        taille: const Size(800, 360),
+      );
+      expect(tester.takeException(), isNull);
+      expect(defileurPage(tester).maxScrollExtent, greaterThan(0));
+      await barreAtteignable(tester, const Size(800, 360));
+    });
+
+    testWidgets('un bandeau qui grandit seul relance la page, sans '
+        'debordement', (WidgetTester tester) async {
+      final ValueNotifier<double> hauteur = ValueNotifier<double>(100);
+      addTearDown(hauteur.dispose);
+      await monter(
+        tester,
+        salle(
+          bandeau: 0,
+          enTete: ValueListenableBuilder<double>(
+            valueListenable: hauteur,
+            builder: (BuildContext _, double h, Widget? _) =>
+                SizedBox(height: h),
+          ),
+        ),
+        taille: const Size(390, 844),
+      );
+      expect(tester.takeException(), isNull);
+      expect(defileurPage(tester).maxScrollExtent, 0);
+
+      hauteur.value = 700;
+      await tester.pump();
+      // L'image ou la colonne se remet en page seule : aucun debordement
+      // signale, la page est relancee a la fin de l'image.
+      expect(tester.takeException(), isNull);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(defileurPage(tester).maxScrollExtent, greaterThan(0));
+      await barreAtteignable(tester, const Size(390, 844));
+
+      // Et quand il rapetisse, la page reprend sa hauteur.
+      defileurPage(tester).jumpTo(0);
+      hauteur.value = 100;
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(defileurPage(tester).maxScrollExtent, 0);
+    });
+  });
 }

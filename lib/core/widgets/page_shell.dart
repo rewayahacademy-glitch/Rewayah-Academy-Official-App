@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart' show SchedulerBinding;
 
 import '../accessibilite/texte_sans_coupure.dart';
 import '../theme/app_elevation.dart';
@@ -222,7 +223,8 @@ class PageShell extends StatelessWidget {
                 // paresseuse) y recoit la hauteur laissee sous la tete
                 // (PAGESHELL-200-1), ou, si la tete en laisse moins de la
                 // moitie, la hauteur de la vue : la tete defile, puis la
-                // liste occupe tout l'ecran.
+                // liste occupe tout l'ecran. Jamais moins que ce qu'il
+                // signale lui manquer (`ColonneCorps`, PAGESHELL-200-1b).
                 // Meme regle sur mobile a 200 % de texte : la tete (titre,
                 // sous-titre, onglets) y prend presque toute la hauteur et
                 // ne laissait au corps qu'une bande (390x844, 44 de
@@ -332,6 +334,10 @@ class _BasculeState extends State<_Bascule> {
   final GlobalKey _cleTete = GlobalKey(debugLabel: 'PageShell.tete');
   final GlobalKey _cleCorps = GlobalKey(debugLabel: 'PageShell.corps');
 
+  /// Ce que les `ColonneCorps` du corps signalent leur manquer
+  /// (PAGESHELL-200-1b).
+  final _ManqueCorps _manque = _ManqueCorps();
+
   /// AD-M4-DEFIL : le defileur d'une page defilante, recree a chaque bascule
   /// avec la position de l'ancien. Le meme decalage garde le meme contenu
   /// sous la tete dans les deux branches : en tete fixe, le haut du corps
@@ -379,7 +385,10 @@ class _BasculeState extends State<_Bascule> {
         children: widget.tete,
       ),
     );
-    final Widget corps = KeyedSubtree(key: _cleCorps, child: widget.corps);
+    final Widget corps = KeyedSubtree(
+      key: _cleCorps,
+      child: _PorteeManque(manque: _manque, child: widget.corps),
+    );
 
     return LayoutBuilder(
       builder: (BuildContext _, BoxConstraints contraintes) {
@@ -408,6 +417,7 @@ class _BasculeState extends State<_Bascule> {
                     // premier affichage.
                     : _TeteEtCorps(
                         hauteurVue: contraintes.maxHeight,
+                        manque: _manque,
                         children: <Widget>[tete, corps],
                       ),
               )
@@ -431,35 +441,51 @@ class _BasculeState extends State<_Bascule> {
 }
 
 /// La tete puis le corps non defilant, en defilement global
-/// (PAGESHELL-200-1).
+/// (PAGESHELL-200-1, PAGESHELL-200-1b).
 ///
-/// Le corps recoit la hauteur que la tete laisse dans la vue : au premier
-/// affichage, la page tient dans la vue et le bas du corps (une barre de
-/// commandes, une zone de saisie) reste dans la zone sure. Quand la tete
-/// laisse moins de la moitie de la vue (zoom a 400 % sur une vue tres basse,
-/// AD-11), un corps aussi ecrase serait inutilisable : il recoit alors toute
-/// la hauteur de la vue, la tete defile, puis le corps occupe l'ecran.
+/// Le corps recoit `max(minimum utile, vue - tete)` :
 ///
-/// La hauteur de la tete n'est connue qu'a sa mise en page : un `Column`
-/// ne sait pas donner au second enfant ce que le premier laisse dans une
-/// hauteur non bornee, d'ou ce rendu a deux enfants.
+/// - **vue - tete** : au premier affichage, la page tient dans la vue et le
+///   bas du corps (une barre de commandes, une zone de saisie) reste dans la
+///   zone sure ;
+/// - quand la tete laisse moins de la moitie de la vue (zoom a 400 % sur une
+///   vue tres basse, AD-11), un corps aussi ecrase serait inutilisable : il
+///   recoit alors toute la hauteur de la vue, la tete defile, puis le corps
+///   occupe l'ecran ;
+/// - **le minimum utile** : ce que les [ColonneCorps] du corps signalent leur
+///   manquer. Une salle dont le bandeau et la barre agrandis ne tiennent pas
+///   dans `vue - tete` (telephone en paysage a 200 % sous les barres du
+///   systeme, 320x568 a 200 %) recoit la hauteur qui lui manque : la page
+///   defile d'autant, la barre se rejoint au lieu de deborder hors d'atteinte.
+///
+/// La hauteur de la tete n'est connue qu'a sa mise en page, et le manque du
+/// corps qu'a la sienne : un `Column` ne sait faire ni l'un ni l'autre dans
+/// une hauteur non bornee, d'ou ce rendu a deux enfants.
 class _TeteEtCorps extends MultiChildRenderObjectWidget {
-  const _TeteEtCorps({required this.hauteurVue, required super.children})
-    : assert(children.length == 2, 'une tete et un corps');
+  const _TeteEtCorps({
+    required this.hauteurVue,
+    required this.manque,
+    required super.children,
+  }) : assert(children.length == 2, 'une tete et un corps');
 
   /// La hauteur de la vue qui defile.
   final double hauteurVue;
 
+  /// Ce que les colonnes du corps signalent leur manquer.
+  final _ManqueCorps manque;
+
   @override
   _RenduTeteEtCorps createRenderObject(BuildContext context) =>
-      _RenduTeteEtCorps(hauteurVue);
+      _RenduTeteEtCorps(hauteurVue, manque);
 
   @override
   void updateRenderObject(
     BuildContext context,
     _RenduTeteEtCorps renderObject,
   ) {
-    renderObject.hauteurVue = hauteurVue;
+    renderObject
+      ..hauteurVue = hauteurVue
+      ..manque = manque;
   }
 }
 
@@ -469,7 +495,11 @@ class _RenduTeteEtCorps extends RenderBox
     with
         ContainerRenderObjectMixin<RenderBox, _ParentDataTeteEtCorps>,
         RenderBoxContainerDefaultsMixin<RenderBox, _ParentDataTeteEtCorps> {
-  _RenduTeteEtCorps(this._hauteurVue);
+  _RenduTeteEtCorps(this._hauteurVue, this._manque);
+
+  /// Au plus ce nombre de mises en page du corps par passe : une colonne
+  /// signale son manque, une colonne imbriquee le sien a la passe suivante.
+  static const int _passesMax = 4;
 
   double _hauteurVue;
   set hauteurVue(double valeur) {
@@ -480,7 +510,37 @@ class _RenduTeteEtCorps extends RenderBox
     markNeedsLayout();
   }
 
-  /// La hauteur donnee au corps sous une tete de hauteur [tete].
+  _ManqueCorps _manque;
+  set manque(_ManqueCorps valeur) {
+    if (identical(valeur, _manque)) {
+      return;
+    }
+    if (identical(_manque.rendu, this)) {
+      _manque.rendu = null;
+    }
+    _manque = valeur;
+    if (attached) {
+      _manque.rendu = this;
+    }
+    markNeedsLayout();
+  }
+
+  @override
+  void attach(PipelineOwner owner) {
+    super.attach(owner);
+    _manque.rendu = this;
+  }
+
+  @override
+  void detach() {
+    if (identical(_manque.rendu, this)) {
+      _manque.rendu = null;
+    }
+    super.detach();
+  }
+
+  /// La hauteur donnee au corps sous une tete de hauteur [tete], avant ce
+  /// que le corps signale lui manquer.
   double _hauteurCorps(double tete) {
     if (!_hauteurVue.isFinite) {
       return 0;
@@ -511,6 +571,8 @@ class _RenduTeteEtCorps extends RenderBox
     _corps.getMaxIntrinsicWidth(double.infinity),
   );
 
+  // Les mesures sans mise en page ignorent le manque du corps : il n'est
+  // connu qu'en le mettant en page.
   @override
   double computeMinIntrinsicHeight(double width) {
     final double tete = _tete.getMinIntrinsicHeight(width);
@@ -538,8 +600,23 @@ class _RenduTeteEtCorps extends RenderBox
     final double largeur = constraints.maxWidth;
     _tete.layout(BoxConstraints.tightFor(width: largeur), parentUsesSize: true);
     final double tete = _tete.size.height;
-    final double corps = _hauteurCorps(tete);
-    _corps.layout(BoxConstraints.tight(Size(largeur, corps)));
+    final double base = _hauteurCorps(tete);
+    double corps = base;
+    _manque.enMiseEnPage = true;
+    try {
+      for (int passe = 1; ; passe++) {
+        _corps.layout(BoxConstraints.tight(Size(largeur, corps)));
+        final double manque = _manque.valeur;
+        if (manque <= _ManqueCorps.tolerance || passe == _passesMax) {
+          break;
+        }
+        corps += manque;
+      }
+    } finally {
+      _manque
+        ..enMiseEnPage = false
+        ..supplement = corps - base;
+    }
     (_tete.parentData! as _ParentDataTeteEtCorps).offset = Offset.zero;
     (_corps.parentData! as _ParentDataTeteEtCorps).offset = Offset(0, tete);
     size = constraints.constrain(Size(largeur, tete + corps));
@@ -552,6 +629,211 @@ class _RenduTeteEtCorps extends RenderBox
   @override
   void paint(PaintingContext context, Offset offset) =>
       defaultPaint(context, offset);
+}
+
+/// Ce que les [ColonneCorps] d'un corps non defilant signalent leur manquer
+/// (PAGESHELL-200-1b). Un par `PageShell`.
+class _ManqueCorps {
+  /// En deca, un ecart est un arrondi, pas un debordement.
+  static const double tolerance = 0.5;
+
+  /// L'ecart de chaque colonne entre son besoin et sa hauteur : positif, il
+  /// lui manque de la hauteur ; negatif, elle en a de trop.
+  final Map<RenderObject, double> _ecarts = <RenderObject, double>{};
+
+  /// Le rendu de la tete et du corps en defilement global, quand il est
+  /// monte. Nul en tete fixe : le manque n'y est pas pris en compte.
+  _RenduTeteEtCorps? rendu;
+
+  /// Vrai pendant que [rendu] met le corps en page : il lit le manque juste
+  /// apres, rien a relancer.
+  bool enMiseEnPage = false;
+
+  /// Ce que [rendu] a donne au corps en plus de `vue - tete` a sa derniere
+  /// mise en page.
+  double supplement = 0;
+
+  /// Le plus grand manque signale : la hauteur a ajouter au corps.
+  double get valeur => _ecarts.values.fold<double>(0, math.max);
+
+  /// Enregistre l'[ecart] de [source] entre son besoin et sa hauteur.
+  ///
+  /// Une colonne remise en page seule (son bandeau change de hauteur sans
+  /// que la page bouge) ne peut pas redemander la mise en page de la page
+  /// pendant la sienne : la page est relancee a la fin de l'image, quand il
+  /// manque de la hauteur ou qu'un supplement donne n'est peut-etre plus
+  /// utile. Rend vrai quand cette relance doit combler un manque.
+  bool signaler(RenderObject source, double ecart) {
+    final double ancien = _ecarts[source] ?? 0;
+    _ecarts[source] = ecart;
+    if (enMiseEnPage ||
+        (ecart - ancien).abs() <= tolerance ||
+        (ecart <= tolerance && supplement <= tolerance)) {
+      return false;
+    }
+    return _relancer() && ecart > tolerance;
+  }
+
+  /// [source] quitte l'arbre : son manque ne compte plus.
+  void oublier(RenderObject source) {
+    final double? ancien = _ecarts.remove(source);
+    if (ancien != null && !enMiseEnPage && supplement > tolerance) {
+      _relancer();
+    }
+  }
+
+  /// Redemande la mise en page de [rendu] a la fin de l'image. Faux s'il
+  /// n'est pas monte.
+  bool _relancer() {
+    final _RenduTeteEtCorps? cible = rendu;
+    if (cible == null || !cible.attached) {
+      return false;
+    }
+    SchedulerBinding.instance.addPostFrameCallback((Duration _) {
+      if (cible.attached) {
+        cible.markNeedsLayout();
+      }
+    });
+    return true;
+  }
+}
+
+/// Donne aux [ColonneCorps] du corps le [_ManqueCorps] de leur `PageShell`.
+class _PorteeManque extends InheritedWidget {
+  const _PorteeManque({required this.manque, required super.child});
+
+  final _ManqueCorps manque;
+
+  @override
+  bool updateShouldNotify(_PorteeManque ancien) =>
+      !identical(manque, ancien.manque);
+}
+
+/// Une colonne de corps non defilant qui dit a `PageShell` la hauteur qui
+/// lui manque (PAGESHELL-200-1b).
+///
+/// Ses enfants sans flex gardent leur hauteur naturelle (un bandeau, une
+/// barre de commandes) ; ses enfants flexibles se partagent le reste, sans
+/// descendre ensemble sous [minimumEtire]. Quand la hauteur recue n'y suffit
+/// pas, la colonne signale a la page ce qui lui manque, et la page, quand sa
+/// tete defile avec le corps, donne au corps cette hauteur en plus : la page
+/// defile au lieu de couper le bas de la colonne.
+///
+/// Hors `PageShell`, ou en tete fixe, c'est un `Column` ordinaire.
+class ColonneCorps extends Column {
+  /// Cree la colonne.
+  const ColonneCorps({
+    required super.children,
+    super.key,
+    super.crossAxisAlignment = CrossAxisAlignment.stretch,
+    this.minimumEtire = 0,
+  });
+
+  /// La hauteur sous laquelle les enfants flexibles, ensemble, ne sont plus
+  /// utiles.
+  final double minimumEtire;
+
+  @override
+  RenderFlex createRenderObject(BuildContext context) => _RenduColonneCorps(
+    context.dependOnInheritedWidgetOfExactType<_PorteeManque>()?.manque,
+    minimumEtire,
+    crossAxisAlignment: crossAxisAlignment,
+    textDirection: getEffectiveTextDirection(context),
+    verticalDirection: verticalDirection,
+    textBaseline: textBaseline,
+    clipBehavior: clipBehavior,
+    spacing: spacing,
+  );
+
+  @override
+  void updateRenderObject(BuildContext context, RenderFlex renderObject) {
+    super.updateRenderObject(context, renderObject);
+    (renderObject as _RenduColonneCorps)
+      ..manque = context
+          .dependOnInheritedWidgetOfExactType<_PorteeManque>()
+          ?.manque
+      ..minimumEtire = minimumEtire;
+  }
+}
+
+class _RenduColonneCorps extends RenderFlex {
+  _RenduColonneCorps(
+    this._manque,
+    this._minimumEtire, {
+    super.crossAxisAlignment,
+    super.textDirection,
+    super.verticalDirection,
+    super.textBaseline,
+    super.clipBehavior,
+    super.spacing,
+  }) : super(direction: Axis.vertical);
+
+  _ManqueCorps? _manque;
+  set manque(_ManqueCorps? valeur) {
+    if (identical(valeur, _manque)) {
+      return;
+    }
+    _manque?.oublier(this);
+    _manque = valeur;
+    markNeedsLayout();
+  }
+
+  double _minimumEtire;
+  set minimumEtire(double valeur) {
+    if (valeur == _minimumEtire) {
+      return;
+    }
+    _minimumEtire = valeur;
+    markNeedsLayout();
+  }
+
+  /// Vrai quand la page est relancee a la fin de cette image pour combler
+  /// le manque : la colonne ne le signale pas comme un debordement.
+  bool _relancePrevue = false;
+
+  @override
+  void performLayout() {
+    super.performLayout();
+    final _ManqueCorps? manque = _manque;
+    if (manque == null) {
+      return;
+    }
+    double besoin = 0;
+    bool flexible = false;
+    int enfants = 0;
+    for (RenderBox? enfant = firstChild; enfant != null;) {
+      final FlexParentData donnees = enfant.parentData! as FlexParentData;
+      if ((donnees.flex ?? 0) > 0) {
+        flexible = true;
+      } else {
+        besoin += enfant.size.height;
+      }
+      enfants++;
+      enfant = donnees.nextSibling;
+    }
+    if (flexible) {
+      besoin += _minimumEtire;
+    }
+    if (enfants > 1) {
+      besoin += spacing * (enfants - 1);
+    }
+    _relancePrevue = manque.signaler(this, besoin - size.height);
+  }
+
+  @override
+  void paint(PaintingContext context, Offset offset) {
+    if (_relancePrevue) {
+      defaultPaint(context, offset);
+      return;
+    }
+    super.paint(context, offset);
+  }
+
+  @override
+  void detach() {
+    _manque?.oublier(this);
+    super.detach();
+  }
 }
 
 /// La colonne de contenu : gouttiere du gabarit, largeur bornee, centree.
