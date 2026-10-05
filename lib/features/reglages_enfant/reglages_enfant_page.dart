@@ -364,81 +364,88 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
             valeurRegleProvider((profilId: widget.enfant.id, cle: cle)),
           );
 
-    return Padding(
-      padding: EdgeInsetsDirectional.only(
-        start: metriques.marge,
-        end: metriques.marge,
-        top: metriques.marge,
-        bottom: MediaQuery.viewInsetsOf(context).bottom + metriques.marge,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Text(_titre(), style: textes.titleMedium),
-          Ecart.vMd,
-          if (_envoyee)
-            Text(t.tuteur.reglages.demandeEnvoyee, style: textes.bodyMedium)
-          else ...<Widget>[
-            if (actuelle?.value != null) ...<Widget>[
-              Text(
-                t.tuteur.reglages.demandeActuelle(
-                  minutes: '${actuelle!.requireValue}',
+    // FORM-L1 : les puces de motifs allongent la feuille ; elle defile au
+    // lieu de deborder (vue basse, texte agrandi).
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsetsDirectional.only(
+          start: metriques.marge,
+          end: metriques.marge,
+          top: metriques.marge,
+          bottom: MediaQuery.viewInsetsOf(context).bottom + metriques.marge,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Text(_titre(), style: textes.titleMedium),
+            Ecart.vMd,
+            if (_envoyee)
+              Text(t.tuteur.reglages.demandeEnvoyee, style: textes.bodyMedium)
+            else ...<Widget>[
+              if (actuelle?.value != null) ...<Widget>[
+                Text(
+                  t.tuteur.reglages.demandeActuelle(
+                    minutes: '${actuelle!.requireValue}',
+                  ),
+                  style: textes.bodySmall,
                 ),
+                Ecart.vMd,
+              ],
+              if (_avecValeur) ...<Widget>[
+                ChoiceCardGroup(
+                  options: <OptionChoix>[
+                    for (final int minutes in dureesProposees)
+                      OptionChoix(
+                        valeur: '$minutes',
+                        libelle: t.tuteur.reglages.demandeMinutes(
+                          minutes: '$minutes',
+                        ),
+                      ),
+                  ],
+                  onChange: (ReponseChoix reponse) => setState(() {
+                    _erreur = null;
+                    _valeur = int.tryParse(
+                      reponse.valeurs.isEmpty
+                          ? reponse.saisieLibre ?? ''
+                          : reponse.valeurs.first,
+                    );
+                  }),
+                ),
+                Ecart.vMd,
+              ],
+              Text(t.tuteur.reglages.demandeMotif, style: textes.titleSmall),
+              Ecart.vXs,
+              Text(
+                t.tuteur.reglages.demandeMotifRequis,
                 style: textes.bodySmall,
               ),
-              Ecart.vMd,
-            ],
-            if (_avecValeur) ...<Widget>[
-              ChoiceCardGroup(
-                options: <OptionChoix>[
-                  for (final int minutes in dureesProposees)
-                    OptionChoix(
-                      valeur: '$minutes',
-                      libelle: t.tuteur.reglages.demandeMinutes(
-                        minutes: '$minutes',
-                      ),
-                    ),
-                ],
-                onChange: (ReponseChoix reponse) => setState(() {
-                  _erreur = null;
-                  _valeur = int.tryParse(
-                    reponse.valeurs.isEmpty
-                        ? reponse.saisieLibre ?? ''
-                        : reponse.valeurs.first,
-                  );
-                }),
-              ),
-              Ecart.vMd,
-            ],
-            Text(t.tuteur.reglages.demandeMotif, style: textes.titleSmall),
-            Ecart.vXs,
-            Text(t.tuteur.reglages.demandeMotifRequis, style: textes.bodySmall),
-            Ecart.vSm,
-            SelecteurMotif(
-              motifs: _motifsProposes(),
-              controleur: _motif,
-              libelleChamp: t.tuteur.reglages.demandeMotif,
-              erreur: _motifManquant ? t.formulaire.motif.manque : null,
-              onChange: (String _) => setState(() => _motifManquant = false),
-            ),
-            if (_erreur != null) ...<Widget>[
               Ecart.vSm,
-              Text(
-                _erreur!,
-                style: palette.inkAlert.applyTo(
-                  textes.bodySmall ?? const TextStyle(),
+              SelecteurMotif(
+                motifs: _motifsProposes(),
+                controleur: _motif,
+                libelleChamp: t.tuteur.reglages.demandeMotif,
+                erreur: _motifManquant ? t.formulaire.motif.manque : null,
+                onChange: (String _) => setState(() => _motifManquant = false),
+              ),
+              if (_erreur != null) ...<Widget>[
+                Ecart.vSm,
+                Text(
+                  _erreur!,
+                  style: palette.inkAlert.applyTo(
+                    textes.bodySmall ?? const TextStyle(),
+                  ),
                 ),
+              ],
+              Ecart.vMd,
+              ActionPrincipale(
+                libelle: t.tuteur.reglages.demandeEnvoyer,
+                enCours: _enCours,
+                onPress: _envoyer,
               ),
             ],
-            Ecart.vMd,
-            ActionPrincipale(
-              libelle: t.tuteur.reglages.demandeEnvoyer,
-              enCours: _enCours,
-              onPress: _envoyer,
-            ),
           ],
-        ],
+        ),
       ),
     );
   }

@@ -40,9 +40,8 @@ void _fenetre(WidgetTester tester, Size taille) {
 Widget _hoteTexte(Widget enfant, {double echelle = 1}) => hote(
   Builder(
     builder: (BuildContext context) => MediaQuery(
-      data: MediaQuery.of(
-        context,
-      ).copyWith(textScaler: TextScaler.linear(echelle)),
+      data: MediaQuery.of(context)
+          .copyWith(textScaler: TextScaler.linear(echelle)),
       child: Scaffold(
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -142,7 +141,10 @@ void main() {
           SelecteurMotif(motifs: MotifsProposes.ajoutEleve(), controleur: c),
         ),
       );
-      expect(find.widgetWithText(TextField, 'Texte ecrit avant'), findsOneWidget);
+      expect(
+        find.widgetWithText(TextField, 'Texte ecrit avant'),
+        findsOneWidget,
+      );
       c.clear();
       await tester.pumpAndSettle();
       expect(find.byType(TextField), findsNothing);
@@ -178,9 +180,7 @@ void main() {
           final TextEditingController c = TextEditingController();
           addTearDown(c.dispose);
           // La liste aux phrases les plus longues.
-          final List<String> motifs = MotifsProposes.signalement(
-            'pedagogique',
-          );
+          final List<String> motifs = MotifsProposes.signalement('pedagogique');
           await tester.pumpWidget(
             _hoteTexte(
               SelecteurMotif(motifs: motifs, controleur: c),
@@ -257,7 +257,10 @@ void main() {
       );
       await _presser(tester, find.byType(MenuActions).first);
       await _presser(tester, find.text(t.admin.groupes.actionAjouter).last);
-      await _presser(tester, find.byKey(const ValueKey<String>('personne-e-ines')));
+      await _presser(
+        tester,
+        find.byKey(const ValueKey<String>('personne-e-ines')),
+      );
 
       final Finder envoyer = find.widgetWithText(
         ActionPrincipale,

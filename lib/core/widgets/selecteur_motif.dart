@@ -83,8 +83,7 @@ class SelecteurMotif extends StatefulWidget {
   static const Key cleAutre = ValueKey<String>('selecteur-motif-autre');
 
   /// La cle de la puce d'indice [indice].
-  static Key clePuce(int indice) =>
-      ValueKey<String>('selecteur-motif-$indice');
+  static Key clePuce(int indice) => ValueKey<String>('selecteur-motif-$indice');
 
   @override
   State<SelecteurMotif> createState() => _SelecteurMotifEtat();
@@ -174,9 +173,8 @@ class _SelecteurMotifEtat extends State<SelecteurMotif> {
     final bool autre = _retenue == _autre;
     final bool autreVide = autre && _libre.text.trim().isEmpty;
     final String? erreur = widget.erreur;
-    final TextStyle styleErreur = AppPalette.of(context).inkAlert.applyTo(
-      Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
-    );
+    final TextStyle styleErreur = AppPalette.of(context).inkAlert
+        .applyTo(Theme.of(context).textTheme.bodyMedium ?? const TextStyle());
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -238,10 +236,7 @@ class _SelecteurMotifEtat extends State<SelecteurMotif> {
         ],
         if (erreur != null && !autreVide) ...<Widget>[
           Ecart.vSm,
-          Semantics(
-            liveRegion: true,
-            child: Text(erreur, style: styleErreur),
-          ),
+          Semantics(liveRegion: true, child: Text(erreur, style: styleErreur)),
         ],
       ],
     );
