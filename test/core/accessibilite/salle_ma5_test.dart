@@ -19,6 +19,7 @@ import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
 import 'package:rewayah_academy/features/salle_seance/dock_seance.dart';
 
+import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart' show stabiliser;
 
 Future<void> _monter(
@@ -177,56 +178,6 @@ void main() {
     }
   }
 
-  // MA-CMD-1 (directeur, 02/10/2026) : a 200 % et a 390 px, en-tete et
-  // commandes tiennent dans 30 % de l'ecran ; les commandes se masquent et
-  // une touche sur l'ecran les fait revenir.
-  testWidgets('MA-CMD-1 : 390, texte x2, commandes compactes et masquables', (
-    WidgetTester tester,
-  ) async {
-    await _monter(tester, echelle: 2);
-    final Finder rejoindre = find.text(LibellesGroupe.rejoindre);
-    await tester.ensureVisible(rejoindre);
-    await tester.tap(rejoindre);
-    await stabiliser(tester);
-    final Finder entrer = find.byKey(
-      const ValueKey<String>('preparation-entrer'),
-    );
-    await tester.ensureVisible(entrer);
-    await tester.tap(entrer);
-    await tester.pump(const Duration(milliseconds: 500));
-
-    final double hauteurEntete = tester
-        .getSize(find.byKey(const ValueKey<String>('entete-seance-compacte')))
-        .height;
-    final double hauteurCommandes = tester
-        .getSize(find.byKey(CommandesMasquables.commandesKey))
-        .height;
-    expect(
-      hauteurEntete + hauteurCommandes,
-      lessThanOrEqualTo(844 * 0.30),
-      reason: 'en-tete $hauteurEntete + commandes $hauteurCommandes',
-    );
-
-    double opacite() => tester
-        .widget<AnimatedOpacity>(
-          find.ancestor(
-            of: find.byKey(CommandesMasquables.commandesKey),
-            matching: find.byType(AnimatedOpacity),
-          ),
-        )
-        .opacity;
-    expect(opacite(), 1);
-    await tester.pump(CommandesMasquables.delaiParDefaut);
-    await tester.pump(const Duration(seconds: 1));
-    expect(opacite(), 0);
-    // Une touche au milieu de l'ecran (sur le support) les fait revenir.
-    await tester.tapAt(const Offset(195, 400));
-    await tester.pump(const Duration(milliseconds: 500));
-    expect(opacite(), 1);
-    expect(find.byTooltip(t.salle.seance.sortir), findsOneWidget);
-    expect(tester.takeException(), isNull);
-  });
-
   // L'eleve courant de la salle suit celui de la demonstration : Idriss ne
   // voit jamais « M Mariam » en haut a droite sur bureau.
   testWidgets('MA-5 : la salle d\'Idriss sur bureau porte son prenom', (
@@ -250,5 +201,69 @@ void main() {
     expect(find.text('M'), findsNothing);
     expect(find.text('I'), findsWidgets);
     expect(tester.takeException(), isNull);
+  });
+
+  // Mesure faite avec les polices du depot, comme les autres mesures de mise
+  // en page de la salle (information_controle_test) : la police de test
+  // (Ahem, glyphes carres de 1 em) elargit chaque texte d'environ moitie et
+  // fait passer la mention de l'en-tete sur trois lignes, ce qu'aucun ecran
+  // reel ne montre. Mesure du 05/10/2026 a 390 x 844, texte x2 : en-tete 155
+  // + commandes 88 = 243 pour une limite de 253,2 (avec Ahem : 272).
+  group('MA-CMD-1 avec les vraies polices', () {
+    setUpAll(chargerPolicesDuDepot);
+
+    // MA-CMD-1 (directeur, 02/10/2026) : a 200 % et a 390 px, en-tete et
+    // commandes tiennent dans 30 % de l'ecran ; les commandes se masquent et
+    // une touche sur l'ecran les fait revenir.
+    testWidgets('MA-CMD-1 : 390, texte x2, commandes compactes et masquables', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, echelle: 2);
+      final Finder rejoindre = find.text(LibellesGroupe.rejoindre);
+      await tester.ensureVisible(rejoindre);
+      await tester.tap(rejoindre);
+      await stabiliser(tester);
+      final Finder entrer = find.byKey(
+        const ValueKey<String>('preparation-entrer'),
+      );
+      await tester.ensureVisible(entrer);
+      await tester.tap(entrer);
+      await tester.pump(const Duration(milliseconds: 500));
+
+      // Le lien « En savoir plus » (JUR-APP-1) est bien la : la mesure le
+      // compte, il ne passe pas en etant cache.
+      expect(find.text(t.salle.informationControle.lien), findsOneWidget);
+
+      final double hauteurEntete = tester
+          .getSize(find.byKey(const ValueKey<String>('entete-seance-compacte')))
+          .height;
+      final double hauteurCommandes = tester
+          .getSize(find.byKey(CommandesMasquables.commandesKey))
+          .height;
+      expect(
+        hauteurEntete + hauteurCommandes,
+        lessThanOrEqualTo(844 * 0.30),
+        reason: 'en-tete $hauteurEntete + commandes $hauteurCommandes',
+      );
+
+      double opacite() => tester
+          .widget<AnimatedOpacity>(
+            find.ancestor(
+              of: find.byKey(CommandesMasquables.commandesKey),
+              matching: find.byType(AnimatedOpacity),
+            ),
+          )
+          .opacity;
+      expect(opacite(), 1);
+      await tester.pump(CommandesMasquables.delaiParDefaut);
+      await tester.pump(const Duration(seconds: 1));
+      expect(opacite(), 0);
+      // Une touche au milieu de l'ecran (sur le support) les fait revenir.
+      await tester.tapAt(const Offset(195, 400));
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(opacite(), 1);
+      expect(find.byTooltip(t.salle.seance.sortir), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
   });
 }
