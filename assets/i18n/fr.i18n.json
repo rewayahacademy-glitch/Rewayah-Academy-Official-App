@@ -4760,6 +4760,7 @@
           "annonce": "Nouveau message de {auteur} : {texte}",
           "brouillon": "@:com.socle.lexique.brouillon",
           "brouillonRestaure": "Brouillon restauré",
+          "enregistrerVocal": "@:com.vocal.composer.enregistrer",
           "aucunMessageTitre": "Aucun message pour le moment",
           "aucunMessage": "Écrivez le premier message de cette conversation : il s'affichera ici."
         },

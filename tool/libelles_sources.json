@@ -70,6 +70,7 @@
   "com.socle.composants.badge.nonLuUnSemantique": "spec Communications V1 du directeur (04/10), sections 19, 24 et 25 ; libelle propose par un agent (COM-F, widgets), a valider par le directeur",
   "com.socle.composants.composer.aucunMessageTitre": "revue COM-R (05/10), constat R-24 : etat vide du fil ; libelle propose par un agent (COM-RC), a valider par le directeur",
   "com.socle.composants.composer.aucunMessage": "revue COM-R (05/10), constat R-24 : etat vide du fil ; libelle propose par un agent (COM-RC), a valider par le directeur",
+  "com.socle.composants.composer.enregistrerVocal": "decision du directeur (05/10) sur R-28 : un bouton micro a cote d Envoyer ouvre l enregistrement vocal ; libelle repris de com.vocal.composer.enregistrer",
   "com.socle.composants.badge.information":"spec Communications V1 du directeur (04/10), sections 5.5, 8, 19, 20 et 25 ; libelle propose par un agent (COM-F), a valider par le directeur",
   "com.socle.composants.badge.aLire": "spec Communications V1 du directeur (04/10), sections 5.5, 8, 19, 20 et 25 ; libelle propose par un agent (COM-F), a valider par le directeur",
   "com.socle.composants.badge.actionRequise": "spec Communications V1 du directeur (04/10), sections 5.5, 8, 19, 20 et 25 ; libelle propose par un agent (COM-F), a valider par le directeur",

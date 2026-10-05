@@ -447,7 +447,7 @@ Future<void> Function(WidgetTester) _vocal(
   HorlogeManuelle horloge, {
   bool arreter = false,
 }) => (WidgetTester tester) async {
-  await _toucher(tester, find.byKey(ComposerVocal.cleEnregistrer));
+  await _toucher(tester, find.byKey(FilDiscussion.cleMicro));
   horloge.avancer(const Duration(seconds: 12));
   await tester.pump(const Duration(seconds: 12));
   await _stabiliser(tester);
@@ -457,7 +457,7 @@ Future<void> Function(WidgetTester) _vocal(
 };
 
 Future<void> _vocalRefuse(WidgetTester tester) =>
-    _toucher(tester, find.byKey(ComposerVocal.cleEnregistrer));
+    _toucher(tester, find.byKey(FilDiscussion.cleMicro));
 
 Future<void> _annonceDeClasse(WidgetTester tester) async {
   final Finder annonces = find.byType(AnnoncesDeClasse);

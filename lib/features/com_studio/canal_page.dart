@@ -276,8 +276,8 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
   /// Le Focus du Studio qui entoure le canal ; nul hors d'un Studio.
   EtatFocusStudio? _focus;
 
-  /// Le Focus etait-il actif au dernier rendu ?
-  bool _focusAuDernierRendu = false;
+  /// Le Focus etait-il actif au dernier changement lu ?
+  bool _focusActif = false;
 
   /// Les entrees dans le Focus : a chacune, le fil ramene sa saisie a
   /// l'ecran quand elle defile avec les messages (N-4, section 23 :
@@ -315,16 +315,29 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
     final EtatFocusStudio? focus = PorteeFocusStudio.de(context);
     if (!identical(focus, _focus)) {
       _retirerSources();
+      _focus?.removeListener(_surFocus);
       _focus = focus;
+      focus?.addListener(_surFocus);
       focus?.restaurateur
         ?..inscrire(cleSourceDefilement, _sourceDefilement)
         ..inscrire(cleSourceChamp, _sourceChamp);
+      _focusActif = focus?.actif ?? false;
     }
+  }
+
+  /// COM-R-3, constat 6 : une entree dans le Focus se compte ici, au
+  /// changement d'`EtatFocusStudio`, jamais pendant la construction.
+  void _surFocus() {
+    final bool actif = _focus?.actif ?? false;
+    if (actif == _focusActif) return;
+    _focusActif = actif;
+    if (actif && mounted) setState(() => _entreesFocus++);
   }
 
   @override
   void dispose() {
     _retirerSources();
+    _focus?.removeListener(_surFocus);
     WidgetsBinding.instance.removeObserver(this);
     _defilement.dispose();
     _champ.dispose();
@@ -432,8 +445,6 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final Canal canal = widget.canal;
     final bool focus = _focus?.actif ?? false;
-    if (focus && !_focusAuDernierRendu) _entreesFocus++;
-    _focusAuDernierRendu = focus;
     // N-1 (COM-RC tour 4) : quand l'en-tete defile (texte agrandi, vue
     // basse), le nom du canal reste fixe au-dessus du fil ; son statut, sa
     // ligne section et membres et « Mode focus » defilent dessous.
@@ -481,6 +492,9 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
       enteteCompacte: compacte,
       enteteSuite: suite,
       demandeSaisieVisible: _entreesFocus,
+      // Decision du directeur (Focus a 320, texte x2) : la saisie se reduit
+      // a une ligne, une bulle au moins reste a l'ecran.
+      saisieReduite: focus,
       controleur: _champ,
       cleBrouillon: cleBrouillonCanal(canal.id),
       messages: <MessageFil>[

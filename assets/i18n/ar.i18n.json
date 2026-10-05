@@ -255,6 +255,7 @@
           "annonce": "رسالة جديدة من {auteur}: {texte}",
           "brouillon": "@:com.socle.lexique.brouillon",
           "brouillonRestaure": "تمت استعادة المسودة",
+          "enregistrerVocal": "@:com.vocal.composer.enregistrer",
           "aucunMessageTitre": "لا توجد رسائل حاليًا",
           "aucunMessage": "اكتب أول رسالة في هذه المحادثة، وستظهر هنا."
         },
