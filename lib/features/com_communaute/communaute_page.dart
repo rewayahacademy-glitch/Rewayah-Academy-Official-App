@@ -224,6 +224,8 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
     final bool texteAgrandi = SeuilsTexteAgrandi.texteAgrandi(context);
     final bool phraseRepliee = surfacePrincipale || (telephone && texteAgrandi);
     return PageShell(
+      // D-FUS-3 : seul le bandeau hors ligne des Communications.
+      bandeauHorsLigne: const BandeauHorsLigneCommunication(),
       titre: c.titre,
       sousTitre: phraseRepliee ? null : c.sousTitre,
       onRetour: _retour,

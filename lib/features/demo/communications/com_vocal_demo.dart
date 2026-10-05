@@ -389,6 +389,8 @@ class _ComVocalDemoState extends ConsumerState<ComVocalDemo> {
         portLectureVocaleProvider.overrideWithValue(_lectures),
       ],
       child: PageShell(
+        // D-FUS-3 : le corps pose le bandeau des Communications.
+        bandeauHorsLigne: const SizedBox.shrink(),
         titre: t.com.vocal.titre,
         sousTitre: t.com.socle.navigation.demo.detail,
         onRetour: () => GoRouter.of(context).go(Routes.demoCommunications),

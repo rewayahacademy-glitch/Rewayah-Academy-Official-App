@@ -112,6 +112,9 @@ class MessagesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PageShell(
+      // D-FUS-3 : le corps pose le bandeau hors ligne des Communications ;
+      // pas de bandeau generique en plus.
+      bandeauHorsLigne: const SizedBox.shrink(),
       titre: t.com.messages.titre,
       onRetour: switch (cheminRetour) {
         final String chemin => () => unawaited(_retour(context, chemin)),
@@ -273,12 +276,10 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        // Ligne COM-FUS (socle) : le bandeau hors ligne global
-        // (`OfflineBanner`, texte `reseau.horsLigne`) s'affiche aussi et dit
-        // « l'envoi attendra », alors qu'un message n'est pas mis en file :
-        // il passe en « non confirme » avec « Reessayer ». Le masquer sur les
-        // surfaces Communications ou adapter son texte se decide a COM-FUS,
-        // hors de cette voie.
+        // D-FUS-3 (05/10, choix a) : seul ce bandeau s'affiche ; la page
+        // retire le bandeau generique de `PageShell` (`reseau.horsLigne`,
+        // « l'envoi attendra »), car un message n'est pas mis en file : il
+        // passe en « non confirme » avec « Reessayer ».
         if (horsLigne) ...<Widget>[
           const BandeauHorsLigneCommunication(encadre: true),
           Ecart.vLg,

@@ -64,7 +64,20 @@ class PageShell extends StatelessWidget {
     this.defilante = true,
     this.actionsCoquille = true,
     this.focusTitre,
+    this.bandeauHorsLigne = const OfflineBanner(),
   });
+
+  /// Le bandeau hors ligne pose en tete de page, sans gouttiere. Par defaut,
+  /// le bandeau generique de l'application ([OfflineBanner], texte
+  /// `reseau.horsLigne`, « l'envoi attendra »).
+  ///
+  /// **D-FUS-3 (decision du directeur du 05/10, choix a ; revue COM-R,
+  /// R-03)** : les pages des Communications ne gardent que leur propre
+  /// bandeau, car aucun message n'y est mis en file. Elles passent ici
+  /// `BandeauHorsLigneCommunication` (meme place, meme rendu), ou
+  /// `SizedBox.shrink()` quand leur corps pose deja ce bandeau lui-meme
+  /// (Messages, Studio). Les autres ecrans ne changent pas.
+  final Widget bandeauHorsLigne;
 
   /// Le focus du titre, pour qu'une page y ramene le lecteur (voir
   /// [EntetePage.focusTitre]).
@@ -215,7 +228,7 @@ class PageShell extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            const OfflineBanner(),
+            bandeauHorsLigne,
             Expanded(
               child: _Colonne(
                 gouttiere: gabarit.gouttiere,

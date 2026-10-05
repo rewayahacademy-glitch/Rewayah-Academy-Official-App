@@ -211,10 +211,14 @@ void main() {
       );
     });
 
-    testWidgets('hors ligne : le bandeau le dit', (WidgetTester tester) async {
+    testWidgets('hors ligne : le bandeau le dit, un seul (D-FUS-3)', (
+      WidgetTester tester,
+    ) async {
       await _monter(tester, horsLigne: true);
       await _toucherCloche(tester);
-      expect(find.text(t.reseau.horsLigne), findsOneWidget);
+      // D-FUS-3 (05/10, choix a) : seul le bandeau des Communications.
+      expect(find.text(t.reseau.horsLigne), findsNothing);
+      expect(find.text(t.com.socle.composants.etats.horsLigne), findsOneWidget);
       expect(find.text(t.notifications.indisponibleTitre), findsOneWidget);
     });
 

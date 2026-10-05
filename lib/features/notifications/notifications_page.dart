@@ -253,6 +253,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         if (!sorti && _detailSeul) setState(() => _selection = null);
       },
       child: PageShell(
+        // D-FUS-3 : seul le bandeau hors ligne des Communications.
+        bandeauHorsLigne: const BandeauHorsLigneCommunication(),
         titre: t.notifications.titre,
         onRetour: _retourPage,
         child: valeur.error is CapaciteIndisponible

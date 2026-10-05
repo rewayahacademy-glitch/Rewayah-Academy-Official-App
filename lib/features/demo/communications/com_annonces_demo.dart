@@ -37,6 +37,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/admin_shell.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/page_shell.dart';
+import '../../../core/widgets/vue_etat_communication.dart';
 import '../../com_annonces/administration_communications_page.dart';
 import '../../com_annonces/annonces_de_classe.dart';
 import '../../com_annonces/file_moderation.dart';
@@ -941,9 +942,7 @@ List<Override> surchargesAdministrationDemo({
   portReglesAudienceProvider.overrideWithValue(regles),
   reglesAudienceProvider.overrideWith((Ref _) => regles.regles()),
   portModerationProvider.overrideWithValue(moderation),
-  capacitesModerationProvider.overrideWith(
-    (Ref _) => moderation.capacites(),
-  ),
+  capacitesModerationProvider.overrideWith((Ref _) => moderation.capacites()),
   fileModerationProvider.overrideWith((Ref _) => moderation.file()),
   moderationDemonstrationProvider.overrideWithValue(true),
   portCapacitesCommunicationsProvider.overrideWithValue(
@@ -1130,6 +1129,8 @@ class _ComAnnoncesDemoState extends State<ComAnnoncesDemo> {
           : classeId != null && libelleClasse != null
           ? PageShell(
               key: const ValueKey<String>('demo-espace-classe'),
+              // D-FUS-3 : seul le bandeau hors ligne des Communications.
+              bandeauHorsLigne: const BandeauHorsLigneCommunication(),
               titre: libelleClasse,
               sousTitre: t.com.annonces.demo.detail,
               onRetour: () => GoRouter.of(context).go(
