@@ -241,7 +241,13 @@ void main() {
           await entrer(tester);
           expect(find.byKey(BandeauSortieFocus.cle), findsOneWidget);
           expect(quitterFocus, findsOneWidget);
-          expect(find.byKey(FilDiscussion.champKey), findsOneWidget);
+          // COM-RC tour 3 (R-02) : a texte x2, la saisie defile avec le fil
+          // (apres le dernier message) ; le Focus garde la position de
+          // lecture, prise en haut du fil pour toucher « Mode focus ».
+          expect(
+            find.byKey(FilDiscussion.champKey, skipOffstage: false),
+            findsOneWidget,
+          );
           expect(tester.takeException(), isNull);
         });
       }
@@ -290,7 +296,13 @@ void main() {
       await tester.dragFrom(const Offset(195, 4), const Offset(0, -400));
       await tester.pumpAndSettle();
       sortieVisible('un geste sur le haut de la page');
-      // Le champ prend le focus (et se rend visible).
+      // Le champ prend le focus (et se rend visible). COM-RC tour 3 (R-02) :
+      // a texte x2, la saisie defile avec le fil ; on la ramene a l'ecran.
+      await tester.ensureVisible(
+        find.byKey(FilDiscussion.champKey, skipOffstage: false),
+      );
+      await tester.pumpAndSettle();
+      sortieVisible('le retour au champ');
       await tester.showKeyboard(find.byKey(FilDiscussion.champKey));
       await tester.pumpAndSettle();
       sortieVisible('l ouverture du champ');

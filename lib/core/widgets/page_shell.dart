@@ -381,6 +381,7 @@ class _BasculeState extends State<_Bascule> {
       key: _cleCorps,
       child: TetePageConfiee._(
         relais: _relais,
+        titulaire: _relais.titulaire,
         tete: confiee ? tete : null,
         child: widget.corps,
       ),
@@ -457,6 +458,12 @@ class RelaisTetePage {
   /// Vrai quand au moins une liste a pris la tete.
   bool get pris => _preneurs.isNotEmpty;
 
+  /// Le seul preneur a qui la tete est confiee : le premier arrive encore
+  /// present (COM-RC tour 3). La tete porte une cle globale : deux preneurs
+  /// sous la meme page (deux fils) ne la montent jamais ensemble. Quand le
+  /// titulaire la rend, le suivant la recoit a l'image suivante.
+  Object? get titulaire => _preneurs.isEmpty ? null : _preneurs.first;
+
   /// [preneur] (l'etat d'un fil) sait faire defiler la tete de la page avec
   /// sa liste.
   void prendre(Object preneur) {
@@ -475,17 +482,24 @@ class RelaisTetePage {
 ///
 /// Un fil de discussion ([FilDiscussion]) se declare preneur par [relais] ;
 /// la page lui confie alors sa tete ([tete] non nul), qu'il pose en premier
-/// element de sa liste. Sans preneur (chargement, erreur, liste des fils),
-/// la tete reste a sa place et defile au-dessus du corps, comme avant.
+/// element de sa liste. Un seul preneur la pose : le [titulaire] (deux fils
+/// sous la meme page ne se partagent jamais sa cle globale). Sans preneur
+/// (chargement, erreur, liste des fils), la tete reste a sa place et defile
+/// au-dessus du corps, comme avant.
 class TetePageConfiee extends InheritedWidget {
   const TetePageConfiee._({
     required this.relais,
+    required this.titulaire,
     required this.tete,
     required super.child,
   });
 
   /// Le relais ou se declarer preneur.
   final RelaisTetePage relais;
+
+  /// Le seul preneur autorise a poser [tete] ([RelaisTetePage.titulaire]) ;
+  /// tout autre preneur la laisse de cote.
+  final Object? titulaire;
 
   /// La tete confiee, ou nul : la page la rend elle-meme.
   final Widget? tete;
@@ -497,7 +511,9 @@ class TetePageConfiee extends InheritedWidget {
 
   @override
   bool updateShouldNotify(TetePageConfiee ancien) =>
-      relais != ancien.relais || tete != ancien.tete;
+      relais != ancien.relais ||
+      !identical(titulaire, ancien.titulaire) ||
+      tete != ancien.tete;
 }
 
 /// La colonne de contenu : gouttiere du gabarit, largeur bornee, centree.

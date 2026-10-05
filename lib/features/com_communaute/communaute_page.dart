@@ -216,9 +216,17 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
         MediaQuery.sizeOf(context).width < AppGabarit.seuilTablette;
     final bool surfacePrincipale =
         telephone && _surface == SurfaceMobile.principal;
+    // COM-RC tour 3 : sur telephone a texte agrandi, la phrase se replie
+    // aussi sur le flux. A 320 et texte x2, elle prenait quatre lignes a
+    // cote du retour et aucune publication n'etait au premier ecran ; le
+    // bandeau des regles dit deja ce qu'est l'espace.
+    final bool texteAgrandi =
+        MediaQuery.textScalerOf(context).scale(1) >=
+        FluxPublications.echelleSerree;
+    final bool phraseRepliee = surfacePrincipale || (telephone && texteAgrandi);
     return PageShell(
       titre: c.titre,
-      sousTitre: surfacePrincipale ? null : c.sousTitre,
+      sousTitre: phraseRepliee ? null : c.sousTitre,
       onRetour: _retour,
       defilante: false,
       child: LayoutBuilder(

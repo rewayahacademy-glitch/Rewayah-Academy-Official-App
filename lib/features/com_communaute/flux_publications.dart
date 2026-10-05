@@ -14,6 +14,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/sens_du_contenu.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -327,6 +328,8 @@ class _CartePublication extends StatelessWidget {
           Ecart.vMd,
           Text(
             p.titre,
+            // Le contenu garde le sens de sa langue (COM-RC tour 3).
+            textDirection: sensDuContenu(context, p.titre),
             style: palette.inkStrong.applyTo(
               textes.titleSmall ?? const TextStyle(),
             ),
@@ -334,6 +337,7 @@ class _CartePublication extends StatelessWidget {
           Ecart.vXs,
           Text(
             p.texte,
+            textDirection: sensDuContenu(context, p.texte),
             maxLines: 3,
             overflow: TextOverflow.ellipsis,
             style: palette.inkMuted.applyTo(

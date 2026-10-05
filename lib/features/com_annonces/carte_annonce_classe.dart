@@ -17,6 +17,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../core/accessibilite/sens_du_contenu.dart';
 import '../../core/communications/modeles_communication.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/theme/app_palette.dart';
@@ -137,6 +138,8 @@ class CarteAnnonceClasse extends StatelessWidget {
           header: true,
           child: Text(
             annonce.titre,
+            // Le contenu garde le sens de sa langue (COM-RC tour 3).
+            textDirection: sensDuContenu(context, annonce.titre),
             style: palette.inkStrong.applyTo(
               textes.titleMedium ?? const TextStyle(),
             ),
@@ -151,10 +154,15 @@ class CarteAnnonceClasse extends StatelessWidget {
         ),
         Ecart.vMd,
         if (complete)
-          Text(annonce.texte, style: styleTexte)
+          Text(
+            annonce.texte,
+            textDirection: sensDuContenu(context, annonce.texte),
+            style: styleTexte,
+          )
         else
           Text(
             annonce.texte,
+            textDirection: sensDuContenu(context, annonce.texte),
             style: styleTexte,
             maxLines: lignesCarte,
             overflow: TextOverflow.ellipsis,
@@ -172,7 +180,7 @@ class CarteAnnonceClasse extends StatelessWidget {
               // La largeur du texte : celle de la carte moins ses marges.
               contraintes.maxWidth - 2 * _marge,
               MediaQuery.textScalerOf(context),
-              Directionality.of(context),
+              sensDuContenu(context, annonce.texte),
             );
         final VoidCallback? lire = onLire;
         final VoidCallback? ouvrirClasse = onOuvrirClasse;

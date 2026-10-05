@@ -11,6 +11,8 @@
 // : tant que le serveur ne donne pas de politique (port de production,
 // `CapaciteIndisponible`), aucune action n'est proposee, une phrase le dit.
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -284,6 +286,11 @@ class CartePieceJointe extends StatelessWidget {
 /// couperait n'importe ou. Quand il ne tient pas sur une ligne, son milieu
 /// s'efface (« Devoir_se…e_3.pdf ») : le debut et l'extension restent
 /// visibles. Le nom complet reste celui que lit le lecteur d'ecran.
+///
+/// COM-RC tour 3 : le debut garde au moins [debutMinimal] caracteres (a 320
+/// et texte x2, il ne restait que « …_3.pdf »). Quand ce debut, l'ellipse et
+/// l'extension ne tiennent pas sur une ligne, le nom passe sur deux : le
+/// debut, puis l'ellipse et la fin (« Devoir_s » / « …e_3.pdf »).
 class _NomFichier extends StatelessWidget {
   /// Cree le nom.
   const _NomFichier(this.nom, {this.style});
@@ -300,8 +307,12 @@ class _NomFichier extends StatelessWidget {
   /// Le nombre de caracteres gardes avant l'extension, quand il y en a.
   static const int _finGardee = 3;
 
+  /// Le debut du nom garde au moins ces caracteres avant l'ellipse.
+  static const int debutMinimal = 6;
+
   /// [nom] raccourci par le milieu pour tenir dans [largeur], ou [nom] s'il
-  /// tient.
+  /// tient ; sur deux lignes (separees par un saut de ligne) quand une seule
+  /// ne garde pas [debutMinimal] caracteres du debut.
   static String raccourci({
     required String nom,
     required double largeur,
@@ -323,32 +334,62 @@ class _NomFichier extends StatelessWidget {
 
     if (!largeur.isFinite || tient(nom)) return nom;
     final Characters lettres = nom.characters;
+    final int total = lettres.length;
+    if (total < 2) return nom;
+    String debut(int n) => lettres.take(n).toString();
+    String fin(int n) => lettres.skip(total - n).toString();
+
+    // Le plus long debut (au plus [plafond]) tel que [forme] tienne.
+    int plusLong(int plafond, bool Function(int n) forme) {
+      int bas = 0;
+      int haut = plafond;
+      while (bas < haut) {
+        final int milieu = (bas + haut + 1) ~/ 2;
+        if (forme(milieu)) {
+          bas = milieu;
+        } else {
+          haut = milieu - 1;
+        }
+      }
+      return bas;
+    }
+
     final int point = nom.lastIndexOf('.');
     // L'extension (« .pdf ») et quelques caracteres avant elle.
     final int longueurExtension = point > 0
         ? nom.substring(point).characters.length
         : 0;
-    // La queue la plus longue qui tient apres l'ellipse, jamais plus courte
-    // que l'extension.
-    int fin = (longueurExtension + _finGardee).clamp(0, lettres.length - 1);
-    while (fin > longueurExtension &&
-        !tient('$ellipse${lettres.skip(lettres.length - fin)}')) {
-      fin--;
-    }
-    final String queue = lettres.skip(lettres.length - fin).toString();
-    final int maxDebut = lettres.length - fin;
-    // Le plus long debut qui tient avec la queue.
-    int bas = 0;
-    int haut = maxDebut;
-    while (bas < haut) {
-      final int milieu = (bas + haut + 1) ~/ 2;
-      if (tient('${lettres.take(milieu)}$ellipse$queue')) {
-        bas = milieu;
-      } else {
-        haut = milieu - 1;
+    final int finPlancher = longueurExtension.clamp(1, total - 1);
+    // Une ligne : la queue la plus longue (jamais plus courte que
+    // l'extension) qui laisse au debut ses caracteres minimaux.
+    for (
+      int queue = (longueurExtension + _finGardee).clamp(1, total - 1);
+      queue >= finPlancher;
+      queue--
+    ) {
+      final String suite = fin(queue);
+      final int maxDebut = total - queue;
+      final int garde = plusLong(
+        maxDebut,
+        (int n) => tient('${debut(n)}$ellipse$suite'),
+      );
+      if (garde >= math.min(debutMinimal, maxDebut)) {
+        return '${debut(garde)}$ellipse$suite';
       }
     }
-    return '${lettres.take(bas)}$ellipse$queue';
+    // Deux lignes : le plus long debut qui tient seul, puis l'ellipse et la
+    // plus longue fin qui tient (le reste entier s'il tient sans ellipse).
+    final int premiere = math.max(
+      1,
+      plusLong(total - 1, (int n) => tient(debut(n))),
+    );
+    final int reste = total - premiere;
+    if (tient(fin(reste))) return '${debut(premiere)}\n${fin(reste)}';
+    final int queue = math.max(
+      1,
+      plusLong(reste, (int n) => tient('$ellipse${fin(n)}')),
+    );
+    return '${debut(premiere)}\n$ellipse${fin(queue)}';
   }
 
   @override
@@ -369,7 +410,7 @@ class _NomFichier extends StatelessWidget {
               echelle: echelle,
             ),
             style: style,
-            maxLines: 1,
+            maxLines: 2,
             softWrap: false,
             // Filet de securite : une queue qui ne tient meme pas seule.
             overflow: TextOverflow.ellipsis,

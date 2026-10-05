@@ -34,6 +34,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/sens_du_contenu.dart';
 import '../../core/communications/modeles_communication.dart';
 import '../../core/communications/persistance_brouillon.dart';
 import '../../core/communications/port_brouillons.dart';
@@ -202,6 +203,8 @@ class _LigneReponse extends StatelessWidget {
         Ecart.vSm,
         Text(
           reponse.texte,
+          // Le contenu garde le sens de sa langue (COM-RC tour 3).
+          textDirection: sensDuContenu(context, reponse.texte),
           style: palette.inkStrong.applyTo(
             textes.bodyMedium ?? const TextStyle(),
           ),
@@ -249,6 +252,7 @@ class _LigneEnAttente extends StatelessWidget {
           Ecart.vSm,
           Text(
             reponse.texte,
+            textDirection: sensDuContenu(context, reponse.texte),
             style: palette.inkStrong.applyTo(
               textes.bodyMedium ?? const TextStyle(),
             ),

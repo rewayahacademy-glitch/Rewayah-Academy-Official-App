@@ -16,6 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 
+import '../../core/accessibilite/sens_du_contenu.dart';
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/communications/modeles_communication.dart';
 import '../../core/communications/moderation.dart';
@@ -23,6 +25,7 @@ import '../../core/communications/port_brouillons.dart';
 import '../../core/communications/port_elements_enregistres.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -114,6 +117,12 @@ class PublicationDetail extends ConsumerStatefulWidget {
   /// La cle de l'action « Enregistrer ».
   static const ValueKey<String> cleEnregistrer = ValueKey<String>(
     'communaute-enregistrer',
+  );
+
+  /// La ligne de l'auteur posee sous sa rangee (telephone, texte agrandi),
+  /// pour les tests.
+  static const ValueKey<String> cleLigneAuteur = ValueKey<String>(
+    'publication-ligne-auteur',
   );
 
   /// La cle du menu de la publication.
@@ -338,6 +347,19 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
     final int nombre =
         (reponses.value?.length ?? publication.nombreReponses) +
         _enAttente.length;
+    final String moment = momentCommunaute(publication.publieeLe, maintenant);
+    final String ligneAuteur = ligneAuteurCommunaute(
+      publication.auteur.fonction,
+      moment,
+    );
+    // COM-RC tour 3 : sur telephone a texte agrandi, la colonne du nom,
+    // serree entre l'avatar, (i) et le menu, faisait quatre lignes de
+    // fonction et de moment (« Il y a 2 / h », 30 % de l'ecran a 320 et
+    // texte x2). La ligne passe sous la rangee, sur toute la largeur.
+    final bool compacte =
+        MediaQuery.textScalerOf(context).scale(1) >=
+            FluxPublications.echelleSerree &&
+        MediaQuery.sizeOf(context).width < AppGabarit.seuilTablette;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -353,10 +375,8 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
               child: RangeeEnteteEspace(
                 child: AvatarNom.enLigne(
                   prenom: publication.auteur.nomAffiche,
-                  role: ligneAuteurCommunaute(
-                    publication.auteur.fonction,
-                    momentCommunaute(publication.publieeLe, maintenant),
-                  ),
+                  // Compacte, la ligne de l'auteur passe sous la rangee.
+                  role: compacte ? null : ligneAuteur,
                   diametre: AppAvatar.petit,
                 ),
               ),
@@ -377,12 +397,21 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
             ],
           ],
         ),
+        if (compacte) ...<Widget>[
+          Ecart.vXs,
+          _LigneAuteurCompacte(
+            fonction: publication.auteur.fonction,
+            moment: moment,
+            ligne: ligneAuteur,
+          ),
+        ],
         Ecart.vLg,
         Semantics(
           header: true,
           child: Text(
             publication.titre,
             key: PublicationDetail.cleTitre,
+            textDirection: sensDuContenu(context, publication.titre),
             style: palette.inkStrong.applyTo(
               textes.titleMedium ?? const TextStyle(),
             ),
@@ -391,6 +420,8 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
         Ecart.vSm,
         Text(
           publication.texte,
+          // Le contenu garde le sens de sa langue (COM-RC tour 3).
+          textDirection: sensDuContenu(context, publication.texte),
           style: palette.inkStrong.applyTo(
             textes.bodyLarge ?? const TextStyle(),
           ),
@@ -478,6 +509,79 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// La ligne de l'auteur sous sa rangee, sur une ligne (COM-RC tour 3) : la
+/// fonction s'abrege si la place manque, le moment reste entier ; le lecteur
+/// d'ecran lit la ligne complete.
+class _LigneAuteurCompacte extends StatelessWidget {
+  const _LigneAuteurCompacte({
+    required this.fonction,
+    required this.moment,
+    required this.ligne,
+  });
+
+  final String? fonction;
+  final String moment;
+  final String ligne;
+
+  /// La part de la largeur que le moment peut prendre en restant sur la
+  /// ligne de la fonction ; au-dela, la ligne entiere passe a la ligne
+  /// entre ses mots.
+  static const double _partMomentMax = 0.6;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextStyle style = AppPalette.of(context).inkMuted
+        .applyTo(Theme.of(context).textTheme.bodySmall ?? const TextStyle());
+    final String? f = fonction;
+    final bool avecFonction = f != null && f.isNotEmpty;
+    // « · Il y a 2 h » : la ligne de l'auteur sans sa fonction.
+    final String suite = avecFonction
+        ? t.com.communaute.publication
+              .auteur(fonction: '', moment: moment)
+              .trimLeft()
+        : moment;
+    final TextDirection sens = Directionality.of(context);
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    return Semantics(
+      key: PublicationDetail.cleLigneAuteur,
+      label: ligne,
+      child: ExcludeSemantics(
+        child: LayoutBuilder(
+          builder: (BuildContext _, BoxConstraints c) {
+            final TextPainter mesure = TextPainter(
+              text: TextSpan(text: suite, style: style),
+              textDirection: sens,
+              textScaler: echelle,
+              maxLines: 1,
+            )..layout();
+            final bool tient = mesure.width <= c.maxWidth * _partMomentMax;
+            mesure.dispose();
+            if (!tient) {
+              // Tres peu de place : la ligne entiere, entre ses mots.
+              return TexteSansCoupure(ligne, style: style);
+            }
+            return Row(
+              children: <Widget>[
+                if (avecFonction)
+                  Flexible(
+                    child: Text(
+                      f,
+                      style: style,
+                      maxLines: 1,
+                      softWrap: false,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                Text(suite, style: style, maxLines: 1, softWrap: false),
+              ],
+            );
+          },
+        ),
+      ),
     );
   }
 }

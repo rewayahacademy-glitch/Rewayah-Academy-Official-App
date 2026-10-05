@@ -16,6 +16,7 @@
 // - R-25 : Ctrl+Entree envoie, Entree seule n'envoie pas (fil, publication
 //   de la Communaute, publieur d'annonce).
 
+import 'package:flutter/gestures.dart' show HitTestEntry;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -62,7 +63,7 @@ Finder _dansFil(Finder f) =>
     find.descendant(of: find.byType(FilDiscussion), matching: f);
 
 /// La liste des messages du fil (premier defilant du fil).
-Finder get _listeFil => _dansFil(find.byType(ListView)).first;
+Finder get _listeFil => _dansFil(find.byType(CustomScrollView)).first;
 
 /// Les bulles rendues du fil.
 Finder get _bulles => _dansFil(
@@ -72,6 +73,16 @@ Finder get _bulles => _dansFil(
         (w.key! as ValueKey<String>).value.startsWith('message-'),
   ),
 );
+
+/// Vrai quand [o] est [ancetre] ou l'un de ses descendants.
+bool _sous(RenderObject o, RenderObject ancetre) {
+  RenderObject? courant = o;
+  while (courant != null) {
+    if (identical(courant, ancetre)) return true;
+    courant = courant.parent;
+  }
+  return false;
+}
 
 /// Le fil montre au moins une bulle et le champ AU PREMIER ECRAN, sans rien
 /// faire defiler, et sans debordement (R-02, COM-RC tour 2) : la tete de la
@@ -95,6 +106,31 @@ Future<void> _filLisible(
     lessThanOrEqualTo(taille.height),
     reason: 'le champ est a l ecran au premier ecran',
   );
+  // COM-RC tour 3 : « Envoyer » est entier au premier ecran, et rien ne le
+  // couvre ni ne le coupe (le defilement initial va jusqu'au bas de la
+  // saisie, pas seulement jusqu'au dernier message).
+  final Finder envoyer = find.byKey(FilDiscussion.envoyerKey);
+  final Rect bouton = tester.getRect(envoyer);
+  expect(
+    bouton.top >= 0 && bouton.bottom <= taille.height,
+    isTrue,
+    reason: '« Envoyer » ($bouton) est entier au premier ecran',
+  );
+  expect(bouton.top, greaterThanOrEqualTo(champ.bottom));
+  for (final Offset coin in <Offset>[
+    bouton.topLeft + const Offset(2, 2),
+    bouton.bottomRight - const Offset(2, 2),
+  ]) {
+    expect(
+      tester.hitTestOnBinding(coin).path.any(
+        (HitTestEntry e) =>
+            e.target is RenderObject &&
+            _sous(e.target as RenderObject, tester.renderObject(envoyer)),
+      ),
+      isTrue,
+      reason: 'le toucher en $coin atteint « Envoyer »',
+    );
+  }
   expect(_bulles, findsWidgets);
   final bool uneVisible = _bulles.evaluate().any((Element e) {
     final Rect r = tester.getRect(

@@ -16,10 +16,11 @@
 //
 // COM-RC (revue COM-R) :
 // - R-02 : a texte agrandi ou sur une vue basse, l'en-tete defile avec les
-//   messages (premier element de la liste) ; les actions de l'espace de
-//   travail (retour, panneau de contexte) se posent dans la rangee de
-//   l'en-tete ; la saisie, vocal compris, est bornee a 40 % de la hauteur
-//   et defile elle-meme ;
+//   messages (premier element de la liste), et la saisie aussi, apres le
+//   dernier message (COM-RC tour 3) ; les actions de l'espace de travail
+//   (retour, panneau de contexte) se posent dans la rangee de l'en-tete ;
+//   sinon, la saisie, vocal compris, est bornee a 40 % de la hauteur et
+//   defile elle-meme ;
 // - R-04 : pendant l'enregistrement et la pre-ecoute d'un vocal, son
 //   panneau remplace la rangee texte (un seul « Envoyer » a l'ecran) ;
 // - R-22 : le fil porte la persistance du brouillon de son champ
@@ -40,6 +41,7 @@ import 'dart:ui' show FlutterView;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../accessibilite/sens_du_contenu.dart';
 import '../communications/persistance_brouillon.dart';
 import '../communications/port_brouillons.dart';
 import '../i18n/strings.g.dart';
@@ -214,7 +216,9 @@ class _MessageLocal {
 /// presents a l'ouverture ne le sont pas.
 ///
 /// A texte agrandi (au moins 150 %) ou sous [hauteurBasse], l'en-tete
-/// defile avec les messages ; la saisie ne prend jamais plus de
+/// defile avec les messages, et la saisie aussi, apres le dernier message :
+/// le fil s'ouvre sur le bas de la saisie, « Envoyer » entier (R-02, COM-RC
+/// tour 3). Sinon, la saisie reste sous la liste et ne prend jamais plus de
 /// [partSaisieMax] de la hauteur de l'ecran, ni plus de [partSaisieFilMax]
 /// de celle du fil (clavier ouvert) : au-dela, elle defile (R-02).
 class FilDiscussion extends StatefulWidget {
@@ -339,6 +343,12 @@ class _FilDiscussionState extends State<FilDiscussion> {
 
   static const Key _cleEntete = ValueKey<String>('fil-discussion-entete');
 
+  /// La saisie garde son etat (texte, focus, panneau vocal) quand elle passe
+  /// de sous la liste a dans la liste (texte agrandi, rotation).
+  final GlobalKey _cleZoneSaisie = GlobalKey(
+    debugLabel: 'FilDiscussion.saisie',
+  );
+
   TextEditingController? _proprio;
   ScrollController? _defilementPropre;
   ScrollController get _defilement =>
@@ -386,7 +396,12 @@ class _FilDiscussionState extends State<FilDiscussion> {
       _relaisTete?.rendre(this);
       _relaisTete = relais?..prendre(this);
     }
-    final Widget? tete = page?.tete;
+    // Un seul preneur recoit la tete (COM-RC tour 3) : elle porte une cle
+    // globale et ne se monte jamais a deux endroits. Un second fil sous la
+    // meme page attend que le premier la rende.
+    final Widget? tete = page != null && identical(page.titulaire, this)
+        ? page.tete
+        : null;
     if ((tete == null) != (_teteDePage == null)) {
       // La liste gagne ou perd la tete en haut : la fin du fil reste a
       // l'ecran.
@@ -634,48 +649,78 @@ class _FilDiscussionState extends State<FilDiscussion> {
           if (entete != null && enteteDefilante) entete,
           ...bulles,
         ];
+        // COM-RC tour 3 (R-02) : quand l'en-tete defile (texte agrandi, vue
+        // basse), la saisie defile aussi, apres le dernier message. Bornee
+        // sous la liste, elle depassait sa borne a 320 et texte x2 et
+        // coupait « Envoyer » au bas de l'ecran ; dans la liste, le
+        // defilement initial va jusqu'au bas de la saisie : le dernier
+        // message, le champ et « Envoyer » entier au premier ecran. Elle est
+        // une tranche a part de la liste : un message ajoute ne la
+        // reconstruit pas (le champ garde son focus).
+        final bool saisieDansListe = limite == null && enteteDefilante;
+        final Widget saisie = KeyedSubtree(
+          key: _cleZoneSaisie,
+          child: zoneSaisie,
+        );
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             if (entete != null && !enteteDefilante) entete,
             Expanded(
               key: FilDiscussion.cleMessages,
-              child: ListView.separated(
+              child: CustomScrollView(
                 controller: _defilement,
-                padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-                itemCount: elements.length,
-                separatorBuilder: (BuildContext _, int _) => Ecart.vMd,
-                itemBuilder: (BuildContext _, int i) => elements[i],
+                slivers: <Widget>[
+                  SliverList.separated(
+                    itemCount: elements.length,
+                    separatorBuilder: (BuildContext _, int _) => Ecart.vMd,
+                    itemBuilder: (BuildContext _, int i) => elements[i],
+                  ),
+                  SliverToBoxAdapter(
+                    child: saisieDansListe
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: AppSpacing.lg),
+                            child: KeyedSubtree(
+                              key: FilDiscussion.cleSaisie,
+                              child: saisie,
+                            ),
+                          )
+                        : Ecart.vLg,
+                  ),
+                ],
               ),
             ),
-            // La saisie, vocal compris, ne prend jamais plus de 40 % de la
-            // hauteur de l'ecran (60 % du fil, clavier ouvert) : au-dela,
-            // elle defile elle-meme.
-            ConstrainedBox(
-              key: FilDiscussion.cleSaisie,
-              constraints: BoxConstraints(
-                maxHeight: math.min(
-                  MediaQuery.sizeOf(context).height *
-                      FilDiscussion.partSaisieMax,
-                  hauteur.isFinite
-                      ? hauteur * FilDiscussion.partSaisieFilMax
-                      : double.infinity,
+            // Hors de ce cas, la saisie, vocal compris, reste sous la liste
+            // et ne prend jamais plus de 40 % de la hauteur de l'ecran
+            // (60 % du fil, clavier ouvert) : au-dela, elle defile
+            // elle-meme.
+            if (!saisieDansListe)
+              ConstrainedBox(
+                key: FilDiscussion.cleSaisie,
+                constraints: BoxConstraints(
+                  maxHeight: math.min(
+                    MediaQuery.sizeOf(context).height *
+                        FilDiscussion.partSaisieMax,
+                    hauteur.isFinite
+                        ? hauteur * FilDiscussion.partSaisieFilMax
+                        : double.infinity,
+                  ),
+                ),
+                child: SingleChildScrollView(
+                  child: limite == null
+                      ? saisie
+                      : Padding(
+                          padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+                          child: Text(
+                            limite,
+                            key: FilDiscussion.cleLectureSeule,
+                            style: AppPalette.of(context).inkMuted.applyTo(
+                              styles.bodyMedium ?? const TextStyle(),
+                            ),
+                          ),
+                        ),
                 ),
               ),
-              child: SingleChildScrollView(
-                child: limite == null
-                    ? zoneSaisie
-                    : Padding(
-                        padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-                        child: Text(
-                          limite,
-                          key: FilDiscussion.cleLectureSeule,
-                          style: AppPalette.of(context).inkMuted
-                              .applyTo(styles.bodyMedium ?? const TextStyle()),
-                        ),
-                      ),
-              ),
-            ),
           ],
         );
       },
@@ -738,6 +783,8 @@ class _Bulle extends StatelessWidget {
             Ecart.vXs,
             Text(
               texte,
+              // Le message garde le sens de sa langue (COM-RC tour 3).
+              textDirection: sensDuContenu(context, texte),
               style: fond.applyTo(textes.bodyLarge ?? const TextStyle()),
             ),
           ],
