@@ -14,6 +14,7 @@
 // reponses sont memorisees par cle d'idempotence : la meme cle rejouee rend
 // la meme reponse, une seule fois agie.
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
 import '../../../core/capacites/capacite_indisponible.dart';
@@ -23,6 +24,8 @@ import '../../../core/comptable/modeles_comptable.dart';
 import '../../../core/comptable/statuts_comptable.dart';
 import '../../../core/finance/montant.dart';
 import '../../../core/i18n/strings.g.dart';
+import '../../comptable/encaissements/donnees_encaissements.dart';
+import '../../comptable/encaissements/rapprochement/donnees_rapprochement.dart';
 import 'socle_comptable_demo.dart';
 
 /// Les donnees de la demonstration, lisibles par les tests.
@@ -592,7 +595,38 @@ class RapprochementDemo implements PortRapprochement {
 }
 
 /// Les surcharges de la demonstration des encaissements.
-List<Override> surchargesDemoEncaissements() => <Override>[
-  portEncaissementsProvider.overrideWithValue(EncaissementsDemo()),
-  portRapprochementProvider.overrideWithValue(RapprochementDemo()),
-];
+///
+/// La coquille de demonstration est une portee imbriquee : un lecteur
+/// derive (liste, detail, journal) non surcharge vivrait dans le conteneur
+/// racine et lirait le vrai port, sans source. Chaque lecteur de la voie
+/// est donc recree ici, dans la portee, sur les ports de demonstration
+/// (meme parade que `demo_finance_page.dart`).
+List<Override> surchargesDemoEncaissements() {
+  final EncaissementsDemo enc = EncaissementsDemo();
+  final RapprochementDemo rap = RapprochementDemo();
+  return <Override>[
+    portEncaissementsProvider.overrideWithValue(enc),
+    portRapprochementProvider.overrideWithValue(rap),
+    listeEncaissementsProvider.overrideWith(
+      (Ref _) => enc.liste(FiltreEncaissements.tout),
+    ),
+    detailEncaissementProvider.overrideWith(
+      (Ref _, String id) => enc.detail(id),
+    ),
+    journalEncaissementProvider.overrideWith(
+      (Ref _, String id) => enc.journal(id),
+    ),
+    remboursementsProvider.overrideWith(
+      (Ref _) => enc.remboursements(FiltreRemboursements.tout),
+    ),
+    elementsRapprochementProvider.overrideWith(
+      (Ref _) => rap.aRapprocher(FiltreRapprochement.tout),
+    ),
+    propositionRapprochementProvider.overrideWith(
+      (Ref _, String id) => rap.proposer(id),
+    ),
+    journalRapprochementProvider.overrideWith(
+      (Ref _, String id) => rap.journal(id),
+    ),
+  ];
+}

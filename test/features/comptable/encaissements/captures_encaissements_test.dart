@@ -153,13 +153,12 @@ void main() {
         _telephone(tester);
         await _monter(tester, EcranDemoComptable.rapprochement, mode: mode);
         await _png(tester, 'enc2_rapprochement_390x844@3_$m');
-        await tester.tap(
-          find.byKey(
-            ReconciliationWorkspace.ligneKey(
-              DonneesEncaissementsDemo.trxDoublon,
-            ),
-          ),
+        final Finder doublon = find.byKey(
+          ReconciliationWorkspace.ligneKey(DonneesEncaissementsDemo.trxDoublon),
         );
+        await tester.ensureVisible(doublon);
+        await stabiliser(tester);
+        await tester.tap(doublon);
         await stabiliser(tester);
         await _png(tester, 'enc2_rapprochement_feuille_doublon_390x844@3_$m');
       });
