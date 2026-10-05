@@ -60,11 +60,14 @@ String libelleTypeCarte(TypeCarteClasse type) => switch (type) {
   TypeCarteClasse.rappel => t.classe.cartes.types.rappel,
 };
 
-/// L'icone d'un modele de carte.
+/// L'icone d'un modele de carte, une par modele, prise dans le jeu gele.
+/// Le devoir garde celle du « Travail » de la Classe ; le lien utile prend
+/// celle des supports (`file-text`) : `livreOuvert` dessinait le meme livre
+/// que le devoir (revue CARTES-PERSO-1, deuxieme passe).
 AppIcon iconeTypeCarte(TypeCarteClasse type) => switch (type) {
   TypeCarteClasse.annonce => AppIcons.info,
   TypeCarteClasse.devoir => AppIcons.lecon,
-  TypeCarteClasse.lien => AppIcons.livreOuvert,
+  TypeCarteClasse.lien => AppIcons.supports,
   TypeCarteClasse.rappel => AppIcons.horloge,
 };
 

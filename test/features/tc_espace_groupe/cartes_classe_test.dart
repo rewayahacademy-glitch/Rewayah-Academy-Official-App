@@ -577,6 +577,59 @@ void main() {
       );
     });
 
+    testWidgets('hors ligne, port qui echoue apres une premiere lecture : '
+        'les cartes deja lues restent, sans erreur ni bloc « rien » '
+        '(lectureHorsLigne, revue CARTES-PERSO-1)', (
+      WidgetTester tester,
+    ) async {
+      final _PortTest port = _PortTest(
+        () async => CartesClasseVM(cartes: _troisCartes()),
+      );
+      await tester.pumpWidget(
+        _hote(
+          const BlocCartesClasse(groupeId: _id),
+          horsLigne: true,
+          surcharges: _avec(port),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(_cartes, findsNWidgets(3));
+      expect(port.lectures, 1);
+      // Le reseau tombe : toute relecture echoue desormais.
+      port.lecture = () => Future<CartesClasseVM>.error(StateError('reseau'));
+      ProviderScope.containerOf(tester.element(find.byType(BlocCartesClasse)))
+          .invalidate(cartesClasseProvider(_id));
+      await tester.pumpAndSettle();
+      expect(port.lectures, 2);
+      // Les cartes deja lues restent consultables, dans leur ordre.
+      expect(_cartes, findsNWidgets(3));
+      expect(
+        <String>[
+          for (final VueCarteClasse v in tester.widgetList<VueCarteClasse>(
+            _cartes,
+          ))
+            v.carte.titre,
+        ],
+        <String>[
+          'Réviser la sourate Al-Fil',
+          'Récitation modèle',
+          'Pas de séance pendant les vacances',
+        ],
+      );
+      expect(find.text(t.classe.cartes.erreurLecture), findsNothing);
+      expect(find.byKey(BlocCartesClasse.sansDonneesKey), findsNothing);
+      expect(find.text(t.commun.etats.actions.reessayer), findsNothing);
+    });
+
+    test('chaque modele a son pictogramme : devoir et lien utile ne '
+        'partagent plus le meme livre (revue CARTES-PERSO-1)', () {
+      final Set<int> points = <int>{
+        for (final TypeCarteClasse type in TypeCarteClasse.values)
+          iconeTypeCarte(type).repos.codePoint,
+      };
+      expect(points, hasLength(TypeCarteClasse.values.length));
+    });
+
     testWidgets('Interface guidee : titre et texte, sans le modele ; le lien '
         'est un bouton pleine largeur de sa carte, non plein', (
       WidgetTester tester,
