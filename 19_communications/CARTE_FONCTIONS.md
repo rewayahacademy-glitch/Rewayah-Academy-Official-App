@@ -49,9 +49,9 @@ Abréviations des rôles : **T** tuteur (et élève adulte, rôle `guardian`), *
 
 | Fonction | Seul endroit | Route réelle par rôle | Entrée réelle | Capacité lue | Port | Serveur |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Flux, catégories, publication, réponses (COM-M02, COM-W02) | `lib/features/com_communaute/communaute_page.dart`, `flux_publications.dart`, `publication_detail.dart`, `composer_publication.dart` | E `/enseignant/communaute` | raccourci sur Aujourd'hui (`EntreeCommunaute` dans `journee_page.dart`, réponse du directeur) | `CapacitesCommunaute.peutPublier`, `peutRepondre` (portées par `PortCommunaute`) | `PortCommunaute` | COM-BR-05 |
-| Garde anti-promotion (`CommunityPromotionGuard`) et états de lien | `lib/features/com_communaute/garde_promotion.dart`, `etat_lien.dart` | idem | composer de publication | aucune | `PortGardePromotion` | COM-BR-07 |
-| Signalement | `lib/features/com_communaute/feuille_signalement_communaute.dart` | idem | menu d'une publication | aucune | `PortModeration.signaler` (socle) | COM-BR-06 |
+| Flux, catégories, publication, réponses (COM-M02, COM-W02) | `lib/features/com_communaute/communaute_page.dart`, `flux_publications.dart`, `publication_detail.dart`, `composer_publication.dart` | E `/enseignant/communaute`, `/enseignant/communaute/:publicationId` (publication ouverte) | raccourci sur Aujourd'hui (`EntreeCommunaute` dans `journee_page.dart`, réponse du directeur) | `CapacitesCommunaute.peutPublier`, `peutRepondre` (portées par `PortCommunaute`) | `PortCommunaute` | COM-BR-05 |
+| Garde anti-promotion (`CommunityPromotionGuard`) et états de lien | `lib/features/com_communaute/garde_promotion.dart`, `etat_lien.dart`, `port_garde_promotion.dart` | idem | composer de publication et composer de réponse (`reponses.dart`, COM-RC R-01) ; une panne du garde retient le contenu et propose « Réessayer » (R-17) | aucune | `PortGardePromotion.verifier`, `verifierReponse` | COM-BR-07 |
+| Signalement | `lib/features/com_communaute/feuille_signalement_communaute.dart` | idem | menu d'une publication ou d'une réponse | `CapacitesModeration.peutSignaler` | `PortModeration.signaler` (clé d'idempotence, `ResultatSignalement.dejaSignale`) et `mesSignalements` (socle, COM-RC R-18) | COM-BR-06 |
 
 ## 4. Le Studio (COM-STU-1, COM-STU-2, COM-STU-3), administration seule
 
@@ -69,21 +69,24 @@ Abréviations des rôles : **T** tuteur (et élève adulte, rôle `guardian`), *
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | Centre de notifications partagé | `lib/features/notifications/notifications_page.dart` | T (élève adulte compris) `/tuteur/notifications` ; E `/enseignant/notifications` ; C `/controleur/notifications` ; A `/admin/notifications` | la cloche de l'en-tête du rôle (`ClocheNotifications`), jamais pour l'élève mineur | aucune | `PortNotifications` (DB-CPT-04, neutre) | COM-BR-09 |
 | Annonces de la Classe | `lib/features/com_annonces/annonces_de_classe.dart` | aucune route propre | T : Espace Classe ; E : fiche de Classe ; élève adulte de démonstration : `ma_classe_adulte_page.dart` | aucune | `PortAnnonces` | COM-BR-10 |
-| Publier une annonce de Classe (enseignant) | `lib/features/com_annonces/publier_annonce_classe_page.dart` + `publieur_annonce.dart` (publieur unique) | E `/enseignant/groupe/:groupeId/annonce` | lien « Publier une annonce » des annonces de la Classe | `CapaciteCommunication.publierAnnonce` (et `CapaciteAnnonces.publier` portée par la Classe) | `PortAnnonces.ciblesPublication`, `publier` | COM-BR-10 |
+| Publier une annonce de Classe (enseignant) | `lib/features/com_annonces/publier_annonce_classe_page.dart` + `publieur_annonce.dart` (publieur unique) | E `/enseignant/groupe/:groupeId/annonce` | lien « Publier une annonce » des annonces de la Classe | `CapaciteAnnonces.publier` portée par la Classe, lue par l'entrée et par la page même ouverte par URL (COM-RC R-20) ; `CapaciteCommunication.programmer` | `PortAnnonces.annoncesDeClasse`, `ciblesPublication`, `publier` | COM-BR-10 |
 | Administration des communications, onglet Annonces (indicateurs, publiées, planifiées, matrice) | `lib/features/com_annonces/administration_communications_page.dart`, `annonces_planifiees.dart`, `matrice_audience.dart`, `publieur_annonce.dart` | A `/admin/operations/communications/annonces` (la racine `/admin/operations/communications` y redirige) | tableau de bord, ligne Communications ; domaine Opérations, aucun 9e domaine | `publierAnnonce`, `programmer` | `PortAnnonces`, `PortReglesAudience` | COM-BR-10, COM-BR-11 |
-| Onglet Modération (file, masquer, restaurer, rejeter, approuver) | `lib/features/com_annonces/file_moderation.dart` | A `/admin/operations/communications/moderation` | onglet Modération | `CapaciteCommunication.moderer`, `CapacitesModeration` | `PortModeration` (socle) | COM-BR-06 |
+| Onglet Modération (file, masquer, restaurer, rejeter, approuver) | `lib/features/com_annonces/file_moderation.dart` | A `/admin/operations/communications/moderation` | onglet Modération | `CapacitesModeration` (source unique, `voitLaFile`, `peut(action)`) | `PortModeration` (socle) | COM-BR-06 |
 
 ## 6. Socle (COM-F, COM-F-b, compléments COM-FUS)
 
 | Fonction | Seul endroit | Capacité | Port | Serveur |
 | :--- | :--- | :--- | :--- | :--- |
 | Fil et composer texte (envoi honnête, identifiant local de bulle à l'envoi, complément de bulle, saisie empilée à texte agrandi) | `lib/core/widgets/fil_discussion.dart` | portée par l'écran | appelant | COM-BR-02 |
-| Capacités Communications | `lib/core/communications/capacites_communication.dart` (six capacités : `publierAnnonce`, `programmer`, `moderer`, `parametresCanal`, `ecrireDansFil`, `envoyerVocal`) | source unique | `PortCapacitesCommunications` (neutre) | COM-BR-16 |
+| Capacités Communications | `lib/core/communications/capacites_communication.dart` (quatre capacités : `publierAnnonce`, `programmer`, `ecrireDansFil`, `envoyerVocal` ; `moderer` et `parametresCanal`, lues nulle part, retirées à COM-RC R-21 : la modération lit `CapacitesModeration`, le canal `CapaciteCanal.parametres`) | source unique | `PortCapacitesCommunications` (neutre) | COM-BR-16 |
 | Pièces jointes (carte, politique) | `lib/core/widgets/carte_piece_jointe.dart`, `lib/core/communications/port_pieces_jointes.dart` | aucune | `PortPolitiquePiecesJointes` | COM-BR-04 (aucun envoi ni ouverture rendus) |
-| Modération et signalement | `lib/core/communications/moderation.dart` | `moderer` | `PortModeration` | COM-BR-06 |
+| Modération et signalement | `lib/core/communications/moderation.dart` | `CapacitesModeration` | `PortModeration` | COM-BR-06 |
 | Brouillons, éléments enregistrés | `lib/core/communications/port_brouillons.dart`, `port_elements_enregistres.dart` | aucune | mémoire de session | COM-BR-12 |
 | Badge non lu, états de communication, espace adaptatif, bandeau hors ligne | `lib/core/widgets/badge_non_lu.dart`, `vue_etat_communication.dart`, `espace_travail_adaptatif.dart` | aucune | aucun | aucun |
 | Démonstration de toutes les voies | `lib/features/demo/communications/` | ouvertes par surcharge, hors production | doubles | aucun |
+
+Correction COM-RC (revue COM-R, R-21, 5 octobre 2026) : capacités mortes retirées, route de la
+publication ouverte ajoutée, garde des réponses et signalement idempotent reportés.
 
 ## 7. Ce que la carte ne couvre pas encore
 

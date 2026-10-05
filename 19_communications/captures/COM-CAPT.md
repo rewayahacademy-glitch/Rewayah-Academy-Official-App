@@ -191,6 +191,9 @@ E = écart de composition. « RAS » : rien à relever.
 
 ## Défauts transmis à COM-R et COM-RC
 
+**14 défauts numérotés** (et non 15, chiffre corrigé après la revue COM-R, R-28), puis les
+écarts relevés dans le corps du rapport qui n'y étaient pas reportés.
+
 1. Texte ×2 à 320 : l'en-tête du fil ne défile pas et masque messages et composer (Messages
    tuteur, enseignant et admin, canal du Studio), avec des débordements de 21 à 129 px.
 2. Texte ×2 à 320 : mots coupés au milieu (indicateurs du Studio, titre admin
@@ -211,3 +214,17 @@ E = écart de composition. « RAS » : rien à relever.
 12. RTL : dates des bulles non localisées.
 13. Annonce de Classe placée avant la séance sur la page Classe du tuteur.
 14. Titre « Communications » au lieu de « Administration des communications ».
+
+Écarts du corps du rapport, absents de la liste d'origine (ajoutés à COM-RC, R-28) :
+
+- Fil à 390 et 320 en texte ×1 : l'en-tête du fil et (i) ne laissent qu'environ 300 pt (390)
+  et 100 pt (320) aux messages (repris en R-02).
+- Messages à 1440 : colonne des fils étroite (~256 px), « Rechercher une conve… » tronqué
+  (repris en R-10).
+- Studio : « Mode focus » est un lien centré sous le titre, pas une action d'en-tête (repris
+  en R-12).
+- Vocal : on y entre par un lien texte sous le champ, et non par un bouton micro (composition,
+  rattaché à R-04).
+- Administration : la pastille « Démonstration » est répétée quatre fois (repris en R-15).
+- RTL, hors périmètre COM : la navigation des coquilles tuteur et enseignant, et le champ
+  « Rechercher un écran » de la coquille admin, restent en français.
