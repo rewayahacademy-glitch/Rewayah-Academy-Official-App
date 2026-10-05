@@ -18,6 +18,7 @@ import 'package:rewayah_academy/core/accessibilite/commandes_masquables.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
 
@@ -88,10 +89,10 @@ void main() {
                 );
                 await stabiliser(tester);
                 ProviderScope.containerOf(
-                  tester.element(find.byType(EcranAccessibiliteDemo)),
-                ).read(preferencesLocalesProvider.notifier).lectureGrande(
-                  grande,
-                );
+                      tester.element(find.byType(EcranAccessibiliteDemo)),
+                    )
+                    .read(preferencesLocalesProvider.notifier)
+                    .lectureGrande(grande);
                 await tester.pump();
                 await tester.tap(
                   find.byKey(const ValueKey<String>('coran-ma-principale')),
@@ -102,14 +103,25 @@ void main() {
 
                 // La derniere ligne utile, amenee a l'ecran : au-dessus des
                 // commandes, jamais dessous.
-                final Finder derniere = find.text(
-                  etat == EtatSansTexte.indisponible
-                      ? t.eleve.coran.reessayer
-                      : (DonneesAccessibiliteDemo.mineur(eleve)
-                            ? t.eleve.coran.absentDetail
-                            : t.accessibilite.coran.absentDetailVous),
+                // « Reessayer » : le bouton entier, pas seulement son libelle.
+                final Finder derniere = etat == EtatSansTexte.indisponible
+                    ? find
+                          .ancestor(
+                            of: find.text(t.eleve.coran.reessayer).first,
+                            matching: find.byType(ActionPrincipale),
+                          )
+                          .first
+                    : find
+                          .text(
+                            DonneesAccessibiliteDemo.mineur(eleve)
+                                ? t.eleve.coran.absentDetail
+                                : t.accessibilite.coran.absentDetailVous,
+                          )
+                          .first; // a 1440, deux pages en vis-a-vis
+                await Scrollable.ensureVisible(
+                  tester.element(derniere),
+                  alignment: 1,
                 );
-                await Scrollable.ensureVisible(tester.element(derniere), alignment: 1);
                 await stabiliser(tester);
                 expect(
                   tester.getRect(derniere).bottom,
@@ -122,7 +134,9 @@ void main() {
                         0.5,
                   ),
                 );
-                debugPrint('PNG ${await capturer(tester, '${fichier}_defile')}');
+                debugPrint(
+                  'PNG ${await capturer(tester, '${fichier}_defile')}',
+                );
                 _mesurer(tester);
               });
             }

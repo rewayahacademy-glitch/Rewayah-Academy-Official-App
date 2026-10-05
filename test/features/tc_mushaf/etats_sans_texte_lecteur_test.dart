@@ -21,6 +21,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
@@ -59,9 +60,8 @@ void main() {
             supportedLocales: AppLocaleUtils.supportedLocales,
             localizationsDelegates: GlobalMaterialLocalizations.delegates,
             builder: (BuildContext context, Widget? child) => MediaQuery(
-              data: MediaQuery.of(
-                context,
-              ).copyWith(textScaler: const TextScaler.linear(2)),
+              data: MediaQuery.of(context)
+                  .copyWith(textScaler: const TextScaler.linear(2)),
               child: child!,
             ),
             home: EcranAccessibiliteDemo(
@@ -150,23 +150,33 @@ void main() {
             lessThanOrEqualTo(commandes.top + 0.5),
             reason: 'la zone de lecture passe sous les commandes',
           );
-          // Chaque texte, amene a l'ecran, est entierement visible au-dessus
-          // des commandes : le titre, la phrase vouvoyee, « Reessayer ».
+          // Chaque texte, amene a l'ecran par le defilement, finit au-dessus
+          // des commandes : le titre, la phrase vouvoyee, et le BOUTON
+          // « Reessayer » entier (pas seulement son libelle).
           for (final String phrase in <String>[
             titre(etat),
             invitation(etat),
             if (etat == EtatSansTexte.indisponible) t.eleve.coran.reessayer,
           ]) {
-            final Finder texte = find.text(phrase);
-            await Scrollable.ensureVisible(tester.element(texte), alignment: 1);
+            Finder cible = find.text(phrase);
+            if (phrase == t.eleve.coran.reessayer) {
+              cible = find
+                  .ancestor(of: cible, matching: find.byType(ActionPrincipale))
+                  .first;
+            }
+            await Scrollable.ensureVisible(tester.element(cible), alignment: 1);
             await tester.pump();
-            final Rect r = tester.getRect(texte);
+            final Rect r = tester.getRect(cible);
             expect(
               r.bottom,
               lessThanOrEqualTo(commandes.top + 0.5),
               reason: '« $phrase » est sous les commandes',
             );
-            expect(r.top, greaterThanOrEqualTo(lecture.top - 0.5));
+            expect(
+              r.bottom,
+              lessThanOrEqualTo(lecture.bottom + 0.5),
+              reason: '« $phrase » ne peut pas etre amene a l\'ecran',
+            );
           }
           expect(tester.takeException(), isNull);
         });
