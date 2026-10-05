@@ -3129,6 +3129,8 @@
       "preflightIndisponible": "La vérification du matériel n'a pas abouti. Réessayez avant de lancer le cours.",
       "lancerHorsLigne": "Sans réseau, la salle ne peut pas s'ouvrir. Reconnectez-vous pour lancer le cours.",
       "erreurPartielle": "Les horaires de prière et vos pauses n'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.",
+      "erreurPartielleRetards": "Les cahiers à terminer n'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.",
+      "erreurPartielleTout": "Les horaires de prière, vos pauses et les cahiers à terminer n'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.",
       "absenceDetectee": "{eleve} n'est pas entré en salle.",
       "coupureDetectee": "{eleve} a perdu la connexion.",
       "coursAnnule": "Le cours de {heure} est annulé.",

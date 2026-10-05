@@ -152,22 +152,26 @@ void main() {
         // Aucun texte de la feuille n'est tronque (ellipse ou lignes
         // coupees) : la feuille entiere est mise en page dans son defilement,
         // chaque paragraphe se controle, meme hors de l'ecran.
-        final List<RenderParagraph> paragraphes = tester
-            .renderObjectList<RenderParagraph>(
-              find.descendant(
-                of: find.byType(FeuilleAjusterCahier),
-                matching: find.byType(RichText),
-              ),
-            )
-            .toList();
-        expect(paragraphes, isNotEmpty);
-        for (final RenderParagraph p in paragraphes) {
-          expect(
-            p.didExceedMaxLines,
-            isFalse,
-            reason: 'tronque : ${p.text.toPlainText()}',
-          );
+        void aucunTexteTronque() {
+          final List<RenderParagraph> paragraphes = tester
+              .renderObjectList<RenderParagraph>(
+                find.descendant(
+                  of: find.byType(FeuilleAjusterCahier),
+                  matching: find.byType(RichText),
+                ),
+              )
+              .toList();
+          expect(paragraphes, isNotEmpty);
+          for (final RenderParagraph p in paragraphes) {
+            expect(
+              p.didExceedMaxLines,
+              isFalse,
+              reason: 'tronque : ${p.text.toPlainText()}',
+            );
+          }
         }
+
+        aucunTexteTronque();
 
         // Le bouton du bas : atteint en defilant le corps de la feuille, puis
         // tape ; la feuille se referme sur la decision.
@@ -197,6 +201,8 @@ void main() {
               .devoirPrecedent!,
         );
         await stabiliser(tester);
+        // EN-7c-MINEURS : le meme controle apres la saisie du long devoir.
+        aucunTexteTronque();
         expect(
           tester
               .state<ScrollableState>(

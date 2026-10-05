@@ -241,8 +241,17 @@ class _Corps extends ConsumerWidget {
         : const <String>[];
     // LIB-ERR-1 : l'echec partiel dit ce qui manque, que les seances sont a
     // jour, et se relance d'un bouton.
-    final bool partielle =
-        reglages.hasError || pause.hasError || retards.hasError;
+    final bool horairesIllisibles = reglages.hasError || pause.hasError;
+    final bool partielle = horairesIllisibles || retards.hasError;
+    // LIB-ERR-2 : le texte cite ce qui manque vraiment (horaires et pauses,
+    // cahiers a terminer, ou les deux).
+    final String? phrasePartielle = !partielle
+        ? null
+        : horairesIllisibles && retards.hasError
+        ? t.enseignant.journee.erreurPartielleTout
+        : retards.hasError
+        ? t.enseignant.journee.erreurPartielleRetards
+        : t.enseignant.journee.erreurPartielle;
 
     // ENS-13B : les offres arrivent en Alerte utile ; une offre acceptee et
     // confirmee par le serveur devient la carte « Remplacement » (EN-8).
@@ -294,6 +303,7 @@ class _Corps extends ConsumerWidget {
                   : 0,
               offres: offres,
               coursAnnule: _retrouverParId(toutes, annulee),
+              phrasePartielle: phrasePartielle,
               onReessayerPartiel: partielle
                   ? () {
                       ref
@@ -1324,6 +1334,7 @@ class _AlertesUtiles extends ConsumerWidget {
     this.entete = true,
     this.offres = const <OffreRemplacement>[],
     this.coursAnnule,
+    this.phrasePartielle,
     this.onReessayerPartiel,
   });
 
@@ -1336,6 +1347,7 @@ class _AlertesUtiles extends ConsumerWidget {
 
   /// Relance des lectures secondaires (prieres, pauses, cahiers en retard)
   /// quand elles ont echoue, ou `null` si tout a ete lu (LIB-ERR-1).
+  final String? phrasePartielle;
   final VoidCallback? onReessayerPartiel;
 
   /// Le cours annule du jour : une carte attenuee avant toute autre alerte,
@@ -1411,7 +1423,7 @@ class _AlertesUtiles extends ConsumerWidget {
           if (coursAnnule != null || alertes.isNotEmpty || offres.isNotEmpty)
             Ecart.vLg,
           Text(
-            t.enseignant.journee.erreurPartielle,
+            phrasePartielle ?? t.enseignant.journee.erreurPartielle,
             key: const ValueKey<String>('journee-erreur-partielle'),
             style: Theme.of(context).textTheme.bodyMedium,
           ),

@@ -8643,6 +8643,12 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Les horaires de prière et vos pauses n'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.'
 	String get erreurPartielle => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.';
 
+	/// fr: 'Les cahiers à terminer n'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.'
+	String get erreurPartielleRetards => 'Les cahiers à terminer n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.';
+
+	/// fr: 'Les horaires de prière, vos pauses et les cahiers à terminer n'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.'
+	String get erreurPartielleTout => 'Les horaires de prière, vos pauses et les cahiers à terminer n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.';
+
 	/// fr: '{eleve} n'est pas entré en salle.'
 	String absenceDetectee({required Object eleve}) => '${eleve} n\'est pas entré en salle.';
 
@@ -18322,6 +18328,8 @@ extension on Traductions {
 			'enseignant.journee.preflightIndisponible' => 'La vérification du matériel n\'a pas abouti. Réessayez avant de lancer le cours.',
 			'enseignant.journee.lancerHorsLigne' => 'Sans réseau, la salle ne peut pas s\'ouvrir. Reconnectez-vous pour lancer le cours.',
 			'enseignant.journee.erreurPartielle' => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.',
+			'enseignant.journee.erreurPartielleRetards' => 'Les cahiers à terminer n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.',
+			'enseignant.journee.erreurPartielleTout' => 'Les horaires de prière, vos pauses et les cahiers à terminer n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.',
 			'enseignant.journee.absenceDetectee' => ({required Object eleve}) => '${eleve} n\'est pas entré en salle.',
 			'enseignant.journee.coupureDetectee' => ({required Object eleve}) => '${eleve} a perdu la connexion.',
 			'enseignant.journee.coursAnnule' => ({required Object heure}) => 'Le cours de ${heure} est annulé.',
@@ -18728,10 +18736,10 @@ extension on Traductions {
 			'controleur.observation.pointPositifAide' => 'Quand une pratique mérite d\'être relevée · elle figure au rapport comme point positif',
 			'controleur.observation.aSuivre' => 'À suivre',
 			'controleur.observation.aSuivreAide' => 'Quand un point devra être revu lors d\'une prochaine visite · il figure au rapport comme point à suivre',
-			'controleur.observation.interventionAdmin' => 'Intervention de l\'administration souhaitée',
-			'controleur.observation.interventionAdminAide' => 'Quand l\'administration doit agir · votre texte sera demandé, elle le reçoit avec le rapport',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.observation.interventionAdmin' => 'Intervention de l\'administration souhaitée',
+			'controleur.observation.interventionAdminAide' => 'Quand l\'administration doit agir · votre texte sera demandé, elle le reçoit avec le rapport',
 			'controleur.observation.questionDomaine' => 'Quel domaine concerne-t-elle ?',
 			'controleur.observation.contexteDomaine' => 'Le domaine aide l\'administration à lire votre observation.',
 			'controleur.observation.pedagogie' => 'Pédagogie',
@@ -19242,10 +19250,10 @@ extension on Traductions {
 			'tc.observation.reglages.maxVisites' => 'Visites par séance',
 			'tc.observation.reglages.tempsTotal' => 'Temps total par séance',
 			'tc.observation.reglages.plafondVisite' => 'Durée maximale d\'une visite',
-			'tc.observation.reglages.diminuer' => 'Diminuer',
-			'tc.observation.reglages.augmenter' => 'Augmenter',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.reglages.diminuer' => 'Diminuer',
+			'tc.observation.reglages.augmenter' => 'Augmenter',
 			'tc.observation.reglages.enregistrer' => 'Enregistrer',
 			'tc.observation.reglages.invalideVisites' => 'Au moins une visite par séance.',
 			'tc.observation.reglages.invalideTemps' => 'Au moins trente secondes par séance.',
