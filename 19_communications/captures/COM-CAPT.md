@@ -546,3 +546,60 @@ démonstration). Rien n'est branché, rien n'est testé sur staging, rien n'est 
 - Nouveaux : 4, mineurs ou à arbitrer.
 - N-1, qui bloquait le passage à `verifie` (COM-R-2, §6.4), est corrigé à l'image ; la
   contre-vérification reste à faire par la revue.
+
+## Après COM-RC tour 6
+
+Date : 5 octobre 2026. Captures refaites sur `ui/communications-v1` @ `145af740`, sans
+modifier le test de capture (`test/capture/communications_capture_test.dart`, inchangé depuis
+`27689f94`) : COM-RC tour 5 (lots H et I, décisions du 05/10 : D-FUS-1, D-FUS-3, R-08, R-12,
+R-16, R-27, R-28) et tour 6 (mineurs de COM-R-4 §8.3 : `8730207a`, `9a473bd8`, `7a5b276b`,
+`145af740`). `CAPTURE_DIR` = `19_communications/captures/com-v1`. **187 captures**, mêmes noms
+qu'au tour 4 : **114 fichiers modifiés**, aucun ajouté, aucun retiré. **Aucun débordement de
+rendu** : `com_debordements.txt` n'est pas produit. Un échantillon de onze PNG a été lu (cités
+ci-dessous) ; les autres ne l'ont pas été à ce tour.
+
+Statut de preuve : `présent dans le code` et `testé localement` (rendu d'un état de
+démonstration). Rien n'est branché, rien n'est testé sur staging, rien n'est déployé.
+
+### Ce qui a changé, à l'image
+
+| Point | Verdict | Capture |
+| :--- | :--- | :--- |
+| Focus à 320×2 (R-28, Focus 320) | **corrigé** : la zone d'écriture tient sur une ligne (« Message » et le micro), sans aide ni « Envoyer » inerte ; la dernière bulle (« Samira, Merci à tous pour la semaine. ») reste visible au-dessus. Le défaut nouveau n° 4 du tour 4 est levé. « Envoyer » revient au focus ou à la saisie (code, non vérifiable à l'image) | `com_studio_focus_320x2_clair.png` |
+| Bouton micro (R-28) | **présent** : un bouton icône rond à côté d'« Envoyer », à 390 (Messages métier, Studio), à 1440 et en Focus ; le lien « Enregistrer un message vocal » sous le champ a disparu (reste « Vocal ouvert par un lien » du tour 4 levé) | `com_messages_fil_tuteur_390_clair.png`, `com_studio_canal_390_clair.png`, `com_studio_focus_1440_clair.png` |
+| Un seul bandeau hors ligne (D-FUS-3, R-03) | **corrigé** : un seul bandeau, celui des Communications (« Vous êtes hors ligne. Les nouveaux messages ne peuvent pas être actualisés. »), plus de bandeau générique au-dessus. Les pages d'annonces (phrase propre, COM-R-4 8.3-2) n'ont pas de capture hors ligne : vérifié par test seulement | `com_messages_hors_ligne_tuteur_390_clair.png`, `com_studio_hors_ligne_390_clair.png` |
+| « Mode focus » et « Quitter le focus » au début (R-12) | **corrigé pour l'alignement** : « Mode focus » est au début de la ligne sous l'en-tête du canal à 390, à côté du titre à 1440 ; « Quitter le focus » suit « Le Studio » au début, plus centré | `com_studio_canal_390_clair.png`, `com_studio_canal_1440_clair.png`, `com_studio_focus_1440_clair.png` |
+| Page Classe du tuteur (R-16) | sans séance ouverte ou proche dans la démonstration, « Annonces de la Classe 1 » reste en tête, puis « Planning » et « Avant le prochain cours » ; la règle « séance avant annonces » n'est pas visible à l'image | `com_annonce_classe_tuteur_390_clair.png` |
+| Studio Aujourd'hui (UX_REVIEW_COM-STU-2 point 4) | **corrigé** : 24 entre les tuiles et « À traiter aujourd'hui » à 390, 32 à 768. Le squelette de chargement (point 14) n'est pas capturé (état transitoire) : vérifié par test | `com_studio_aujourdhui_390_clair.png`, `com_studio_aujourdhui_768_clair.png` |
+| Liste des canaux (UX_REVIEW_COM-STU-1 point 6) | **corrigé** : 32 entre deux sections à 1440 (« Organisation », « Admissions & familles », « Pédagogie & qualité »…), au lieu de 20 | `com_studio_canal_1440_clair.png` |
+| Dates (D-FUS-1, R-08) | « Dimanche 4 octobre, 09:52 », sans l'année en cours, virgule française | `com_messages_fil_tuteur_390_clair.png` |
+
+### Défauts vus
+
+1. **« Envoyer » dépasse toujours le fil** (reste de R-12) : en Focus à 1440, bulles de 320 à
+   1007, bouton jusqu'à ~1120 ; dans le canal à 1440, bulles jusqu'à ~1062, bouton jusqu'à
+   ~1127. Mineur (`com_studio_focus_1440_clair.png`, `com_studio_canal_1440_clair.png`).
+2. **Micro petit à texte ×2** (n° 2 du tour 4, en partie) : à 320×2, le bouton micro garde une
+   icône de taille fixe, nettement plus petite que « Envoyer » à côté. Mineur
+   (`com_studio_canal_320x2_clair.png`).
+3. **« Mode focus » en retrait** : son libellé commence ~12 après le bord du titre du canal (marge
+   interne du bouton texte) ; aligné au début, pas au filet. Cosmétique
+   (`com_studio_canal_390_clair.png`).
+4. **Champ du Studio plus haut que ses voisins à 390** : le champ « Message » du canal fait deux
+   hauteurs de ligne, le micro et « Envoyer » une seule ; dans Messages métier, le champ fait une
+   ligne. Mineur (`com_studio_canal_390_clair.png`, `com_studio_hors_ligne_390_clair.png`).
+5. **Démonstration incohérente sur la Classe du tuteur** : page « Classe fictive A », « Eleve
+   A1 » sans accent, mais annonce « Classe An-Nour ». Données de démonstration, pas de rendu
+   (`com_annonce_classe_tuteur_390_clair.png`).
+6. Restent du tour 4, non revus à ce tour : ligne de contexte tronquée à 320 (n° 1), moment
+   relatif coupé à 390 (n° 3), N-9 (panneau de pré-écoute coupé en bas).
+
+### Bilan
+
+- Corrigés à l'image depuis le tour 4 : Focus 320×2 (une ligne, bulle visible), micro à côté
+  d'« Envoyer », un seul bandeau hors ligne, alignement de « Mode focus » et « Quitter le
+  focus », écarts du Studio (sections des canaux, Aujourd'hui).
+- Vérifiés par test seulement : accusé tardif (8.3-1), phrase hors ligne des annonces (8.3-2),
+  squelette d'Aujourd'hui (8.3-3, point 14).
+- Restants : « Envoyer » hors du fil à 1440 (R-12), micro à texte ×2, N-9, et les défauts
+  mineurs ci-dessus.
