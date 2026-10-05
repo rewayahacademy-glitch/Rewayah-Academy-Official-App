@@ -593,6 +593,191 @@
       "vide": "لا توجد منشورات في هذه الفئة."
     },
     "studio": {
+      "focus": {
+        "entrer": "@:com.socle.lexique.modeFocus",
+        "quitter": "@:com.socle.lexique.quitterFocus",
+        "actif": "التركيز مفعّل",
+        "actifAvecEchap": "التركيز مفعّل. اضغط Esc للخروج.",
+        "aide": "أخفِ اللوحات الثانوية للتركيز على هذه المحادثة."
+      },
+      "aujourdhui": {
+        "titre": "@:com.socle.lexique.aujourdhui",
+        "sousTitre": "ما يستحق انتباهك في الاستوديو",
+        "indicateurs": {
+          "titre": "مؤشرات الانتباه",
+          "aTraiter": "@:com.socle.lexique.aTraiter",
+          "mentions": "الإشارات والردود",
+          "decisions": "قرارات معلّقة",
+          "nonLus": "غير مقروءة"
+        },
+        "blocs": {
+          "aTraiter": "للمعالجة اليوم",
+          "mentions": "الإشارات والردود",
+          "decisions": "قرارات معلّقة",
+          "echeances": "مواعيد قريبة",
+          "activite": "النشاط الأخير",
+          "brouillons": "المسودات",
+          "acces": "وصول سريع"
+        },
+        "videsBlocs": {
+          "aTraiter": "لا شيء للمعالجة اليوم.",
+          "mentions": "لا توجد إشارات أو ردود في الانتظار.",
+          "decisions": "لا توجد قرارات معلّقة.",
+          "echeances": "لا توجد مواعيد قريبة.",
+          "activite": "لا يوجد نشاط حديث."
+        },
+        "videTitre": "لا شيء للمعالجة حاليًا",
+        "dansCanal": "في {nom}",
+        "echeance": "الموعد {date}",
+        "seTraiteDans": "يُعالَج في {module}",
+        "ouvrirDans": "فتح في {module}: {libelle}",
+        "modules": {
+          "studio": "@:com.socle.lexique.studio",
+          "finance": "المالية",
+          "planning": "الجدولة",
+          "dossiers": "الملفات",
+          "classes": "الفصول",
+          "admissions": "القبول",
+          "demandes": "الطلبات",
+          "communications": "إدارة الاتصالات"
+        },
+        "acces": {
+          "messages": "@:com.socle.lexique.messagesMetier",
+          "messagesDetail": "المحادثات مع الأسر والمعلّمين والمراقبين",
+          "annonces": "الإعلانات",
+          "annoncesDetail": "نشر الإعلانات ومتابعتها",
+          "dossiers": "ملفات للتصديق",
+          "dossiersDetail": "الملفات الجاهزة لاتخاذ قرار",
+          "classes": "الفصول",
+          "classesDetail": "الفصول ومواعيدها ومعلّموها",
+          "demandes": "طلبات بانتظار القرار",
+          "demandesDetail": "طلبات التغيير المنتظرة"
+        }
+      },
+      "brouillons": {
+        "titre": "المسودات",
+        "detail": "الرسائل التي بدأتها في قناة ولم تُرسل بعد. تبقى على هذا الجهاز طوال الجلسة، دون مزامنة.",
+        "dansCanal": "مسودة في {nom}",
+        "canalInconnu": "مسودة في قناة",
+        "canalIndisponible": "مسودة في قناة لم تعد متاحة",
+        "modifie": "عُدّلت في {moment}",
+        "reprendre": "متابعة المسودة في {nom}",
+        "videTitre": "لا توجد مسودات",
+        "vide": "ستظهر هنا أي رسالة بدأتها في قناة ولم تُرسل بعد.",
+        "tous": "عرض كل المسودات ({nombre})",
+        "restaure": "استُعيدت المسودة. يمكنك متابعة رسالتك."
+      },
+      "sousTitre": "مساحة عمل الفريق",
+      "navigation": {
+        "aujourdhui": "@:com.socle.lexique.aujourdhui",
+        "brouillons": "المسودات",
+        "canaux": "القنوات",
+        "enregistres": "العناصر المحفوظة"
+      },
+      "choisirTitre": "اختر قناة",
+      "choisir": "اختر قناة من القائمة لقراءة النقاش والكتابة فيه.",
+      "aucunCanalTitre": "لا توجد قنوات حاليًا",
+      "aucunCanal": "ستظهر هنا القنوات المفتوحة لك.",
+      "sections": {
+        "organisation": "التنظيم",
+        "admissionsFamilles": "القبول والأسر",
+        "pedagogieQualite": "التعليم والجودة",
+        "planningRemplacements": "الجدولة والاستبدال",
+        "finance": "المالية",
+        "support": "الدعم",
+        "produitTechnique": "المنتج والتقنية",
+        "direction": "الإدارة العليا"
+      },
+      "visibilite": {
+        "restreint": "محدودة",
+        "prive": "خاصة",
+        "visibleDetail": "مفتوحة لكل الفريق.",
+        "restreintDetail": "مفتوحة لجزء من الفريق، وأنت منهم.",
+        "priveDetail": "قناة خاصة، مفتوحة لأعضائها فقط. وأنت منهم."
+      },
+      "canal": {
+        "membresUn": "عضو واحد",
+        "membres": "{nombre} أعضاء",
+        "aide": "اكتب في {nom}",
+        "lectureSeule": "يمكنك قراءة هذه القناة. الكتابة فيها غير مفتوحة لك.",
+        "aucunMessageTitre": "لا توجد رسائل حاليًا",
+        "aucunMessage": "ستظهر رسائل هذه القناة هنا فور نشرها.",
+        "indisponibleTitre": "القناة غير متاحة",
+        "indisponible": "هذه القناة غير متاحة لك. اختر قناة أخرى من القائمة.",
+        "pieceJointe": "مرفق: {nom}",
+        "vocal": "رسالة صوتية مدتها {duree}",
+        "vocalSansDuree": "رسالة صوتية",
+        "horodatage": "{date}، {heure}",
+        "auteurEtMoment": "{auteur} · {moment}"
+      },
+      "panneau": {
+        "titre": "حول القناة",
+        "aPropos": "حول",
+        "section": "القسم",
+        "visibilite": "الظهور",
+        "epingles": "@:com.socle.lexique.elementsEpingles",
+        "fichiers": "الملفات الأخيرة",
+        "liens": "روابط مفيدة",
+        "vous": "أنت",
+        "parametres": "إعدادات القناة",
+        "parametresDetail": "سيتاح تعديل الإعدادات مع خدمة الاستوديو.",
+        "ouvrir": "فتح {titre}",
+        "lienExterne": "موقع خارجي: {hote}",
+        "aucunPartageTitre": "لا شيء مشترك حاليًا",
+        "aucunPartage": "ستظهر هنا العناصر المثبتة والملفات والروابط الخاصة بهذه القناة."
+      },
+      "enregistrer": {
+        "enregistrer": "@:com.socle.lexique.enregistrer",
+        "retirer": "إزالة",
+        "semantiqueEnregistrer": "حفظ {titre}",
+        "semantiqueRetirer": "إزالة {titre} من العناصر المحفوظة",
+        "ajoute": "أضيف إلى العناصر المحفوظة: {titre}.",
+        "retire": "أزيل من العناصر المحفوظة: {titre}.",
+        "nonConfirme": "لم يتأكد الحفظ بعد. أعد المحاولة بعد لحظة."
+      },
+      "enregistres": {
+        "detail": "القنوات والعناصر التي تحتفظ بها في متناولك. يُفتح كل منها في مكانه الأصلي.",
+        "videTitre": "لا توجد عناصر محفوظة",
+        "vide": "اضغط على حفظ في لوحة قناة لتجد هنا قناة أو عنصرًا.",
+        "ouvrir": "فتح {titre}",
+        "sansDestination": "{type}، لم يعد يُفتح من هنا",
+        "types": {
+          "canal": "قناة",
+          "publication": "منشور",
+          "message": "رسالة",
+          "element": "عنصر من الاستوديو"
+        }
+      },
+      "recherche": {
+        "champ": "البحث في الاستوديو",
+        "aide": "قناة أو رسالة أو ملف",
+        "fermer": "إغلاق البحث",
+        "effacer": "مسح البحث",
+        "aucunTitre": "لا توجد نتائج",
+        "aucun": "لا شيء يطابق «{texte}» في قنواتك. جرّب كلمة أخرى.",
+        "aucunDansFiltre": "لا شيء من هذا النوع يطابق البحث. اختر الكل لرؤية النتائج الأخرى.",
+        "resultatUn": "نتيجة واحدة",
+        "resultats": "{nombre} نتائج",
+        "filtre": "نوع النتيجة",
+        "tout": "الكل",
+        "canaux": "القنوات",
+        "messages": "الرسائل",
+        "fichiers": "الملفات",
+        "dansCanal": "في {canal}",
+        "messageDe": "{auteur}، في {canal}"
+      },
+      "demo": {
+        "focus": "قناة في وضع التركيز",
+        "aujourdhuiVide": "اليوم دون نشاط",
+        "horsDemo": "في التطبيق، يفتح هذا السطر {module}. يبقى العرض التجريبي على هذه الصفحة.",
+        "choisir": "اختر حالة لتجربتها.",
+        "normale": "الاستوديو وقنواته",
+        "echec": "إرسال غير مؤكد",
+        "horsLigne": "غير متصل",
+        "canalPrive": "عنوان قناة خاصة غير مفتوحة لك",
+        "sansCanaux": "لا توجد قناة مفتوحة",
+        "vue": "الحالة: {situation}"
+      },
       "titre": "@:com.socle.lexique.studio",
       "vide": "لا يوجد نشاط للمعالجة هنا."
     },
