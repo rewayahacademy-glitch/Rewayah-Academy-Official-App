@@ -11,10 +11,12 @@ import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/carte_lignes.dart';
+import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/grille_bento.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
+import 'activite_recente.dart';
 import 'tuiles_compteur.dart';
 
 /// `ADM-01` : le centre de commande.
@@ -32,6 +34,17 @@ class TableauDeBordPage extends ConsumerWidget {
   /// des lignes se dit en jours, et un test cale sur l'horloge de la machine
   /// changerait de resultat selon l'heure a laquelle la CI le lance.
   final DateTime Function() horloge;
+
+  /// Largeur de la colonne « Activite recente » sur bureau : celle de la file
+  /// du contrat D (DESIGN-GOV §4 bis.4).
+  static const double largeurActivite = 336;
+
+  /// En dessous, la grille Bento n'aurait plus ses quatre colonnes
+  /// (`GrilleBento`, 600) : l'activite passe sous les tuiles.
+  static const double largeurPrincipaleMin = GrilleBento.seuilQuatreColonnes;
+
+  /// La date du jour, au bord de fin de l'en-tete (bureau seulement).
+  static const Key cleDate = ValueKey<String>('adm01-date');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -83,100 +96,173 @@ class TableauDeBordPage extends ConsumerWidget {
         valeurs.foyersSansEnseignant == 0 &&
         valeurs.rapportsManquants == 0;
 
+    // 1. AGIR ET SAVOIR : les compteurs, rendus des que la lecture aboutit,
+    // zeros compris (D8). Les getters, jamais le type d'execution : Riverpod 3
+    // relance un provider en echec tout seul, et l'etat repasse par
+    // `AsyncLoading` en conservant `hasError`.
+    final Widget compteurs = indicateurs.hasValue
+        ? _Compteurs(
+            indicateurs: indicateurs.requireValue,
+            apercu: apercu,
+            // La file passe par `read_kyc_documents()`, qui refuse la lecture
+            // quand le genre du lecteur est inconnu. Ce refus n'emporte que
+            // les noms : le chiffre vient d'une autre fonction et reste juste
+            // (D11, erreur par source).
+            apercuErreur: dossiers.hasError
+                ? t.admin.tableau.apercuErreur
+                : null,
+            // m1 (AD-NETTOYAGE) : la tuile compte comme la liste « A traiter »
+            // (enseignants seulement, meme cache). Tant que la liste n'est pas
+            // lue, le compteur serveur reste la valeur (il compte encore les
+            // tuteurs : BR-1.c).
+            dossiersEnAttente: dossiers.hasValue
+                ? RevueDossiersDepuisValidation.enseignantsSeulement(
+                    dossiers.requireValue,
+                  ).length
+                : null,
+          )
+        : indicateurs.hasError
+        // Une seule source pour les six chiffres : une phrase a la place de
+        // toute la grille, jamais des tuiles a 0 (D10). L'encre d'alerte,
+        // jamais la paire : `surfaceAlert` ecrit en blanc, illisible sur la
+        // page.
+        ? Text(
+            t.admin.tableau.compteursErreur,
+            style: palette.inkAlert.applyTo(
+              textes.bodySmall ?? const TextStyle(),
+            ),
+          )
+        : const _SqueletteCompteurs();
+
+    // 3. ALLER : les raccourcis vers Operations, Personnes et Securite.
+    //
+    // **Ni un menu, ni un ecran vide.** Le gel d'architecture retire le
+    // regroupement autonome « Outils » (un deuxieme menu, doublon de la
+    // sidebar a huit domaines) mais garde les raccourcis : Groupes, Comptes et
+    // Acces des agents restent atteints depuis l'Accueil
+    // (docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md,
+    // cartographie ADM-07 et ADM-08 ; DASH_STRATEGIE §3.1, Q2 : aucun lien
+    // Planning tant que la page n'existe pas).
+    //
+    // `ADM-08` avant les agents, et pas par gout : c'est le seul ecran qui
+    // montre une personne inscrite qui n'a pas encore depose sa piece. Sans
+    // lui, trois enseignants ont attendu sept jours sans qu'aucun ecran ne les
+    // nomme (defaut mesure le 18 septembre 2026).
+    final Widget raccourcis = CarteLignes(
+      lignes: <Widget>[
+        // AD-X : la file reunie des dossiers et des demandes (ADM-18), la
+        // liste « Elements a traiter » de l'image ADMIN-SHELL-01 sur sa page.
+        SettingRow(
+          title: t.admin.tableau.outilsTraitement,
+          description: t.admin.tableau.outilsTraitementDetail,
+          icon: AppIcons.attribution,
+          onPress: () =>
+              GoRouter.of(context).go(Routes.adminOperationsTraitement),
+        ),
+        SettingRow(
+          title: t.admin.groupes.titre,
+          description: t.admin.tableau.outilsGroupesDetail,
+          icon: AppIcons.classes,
+          onPress: () => GoRouter.of(context).go(Routes.adminOperationsGroupes),
+        ),
+        SettingRow(
+          title: t.admin.tableau.outilsComptes,
+          description: t.admin.tableau.outilsComptesDetail,
+          icon: AppIcons.profil,
+          onPress: () => GoRouter.of(context).go(Routes.adminPersonnesComptes),
+        ),
+        SettingRow(
+          title: t.admin.tableau.outilsAccesAgents,
+          description: t.admin.tableau.outilsAccesAgentsDetail,
+          icon: AppIcons.controleQualite,
+          onPress: () =>
+              GoRouter.of(context).go(Routes.adminSecuriteAuditAccesAgents),
+        ),
+      ],
+    );
+
+    final Widget principal = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        compteurs,
+        if (calme) ...<Widget>[
+          Ecart.vLg,
+          Text(t.admin.tableau.calme, style: textes.bodyMedium),
+        ],
+      ],
+    );
+
     return PageShell(
       titre: t.admin.tableau.titre,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          // 1. AGIR ET SAVOIR : les compteurs, rendus des que la lecture
-          // aboutit, zeros compris (D8). Les getters, jamais le type
-          // d'execution : Riverpod 3 relance un provider en echec tout seul,
-          // et l'etat repasse par `AsyncLoading` en conservant `hasError`.
-          if (indicateurs.hasValue)
-            _Compteurs(
-              indicateurs: indicateurs.requireValue,
-              apercu: apercu,
-              // La file passe par `read_kyc_documents()`, qui refuse la
-              // lecture quand le genre du lecteur est inconnu. Ce refus
-              // n'emporte que les noms : le chiffre vient d'une autre
-              // fonction et reste juste (D11, erreur par source).
-              apercuErreur: dossiers.hasError
-                  ? t.admin.tableau.apercuErreur
-                  : null,
-              // m1 (AD-NETTOYAGE) : la tuile compte comme la liste « A
-              // traiter » (enseignants seulement, meme cache). Tant que la
-              // liste n'est pas lue, le compteur serveur reste la valeur
-              // (il compte encore les tuteurs : BR-1.c).
-              dossiersEnAttente: dossiers.hasValue
-                  ? RevueDossiersDepuisValidation.enseignantsSeulement(
-                      dossiers.requireValue,
-                    ).length
-                  : null,
-            )
-          else if (indicateurs.hasError)
-            // Une seule source pour les six chiffres : une phrase a la place
-            // de toute la grille, jamais des tuiles a 0 (D10).
-            Text(
-              t.admin.tableau.compteursErreur,
-              // L'encre d'alerte, jamais la paire : `surfaceAlert`
-              // ecrit en blanc, illisible sur la page.
-              style: palette.inkAlert.applyTo(
-                textes.bodySmall ?? const TextStyle(),
-              ),
-            )
-          else
-            const _SqueletteCompteurs(),
-          if (calme) ...<Widget>[
-            Ecart.vLg,
-            Text(t.admin.tableau.calme, style: textes.bodyMedium),
-          ],
-          Ecart.vXxl,
-
-          // 2. ALLER : les raccourcis vers Operations, Personnes et Securite.
-          //
-          // **Ni un menu, ni un ecran vide.** Le gel d'architecture retire le
-          // regroupement autonome « Outils » (un deuxieme menu, doublon de la
-          // sidebar a huit domaines) mais garde les raccourcis : Groupes,
-          // Comptes et Acces des agents restent atteints depuis l'Accueil
-          // (docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md,
-          // cartographie ADM-07 et ADM-08 ; DASH_STRATEGIE §3.1, Q2 : aucun
-          // lien Planning tant que la page n'existe pas).
-          //
-          // `ADM-08` avant les agents, et pas par gout : c'est le seul ecran
-          // qui montre une personne inscrite qui n'a pas encore depose sa
-          // piece. Sans lui, trois enseignants ont attendu sept jours sans
-          // qu'aucun ecran ne les nomme (defaut mesure le 18 septembre 2026).
-          CarteLignes(
-            lignes: <Widget>[
-              SettingRow(
-                title: t.admin.groupes.titre,
-                description: t.admin.tableau.outilsGroupesDetail,
-                icon: AppIcons.classes,
-                onPress: () =>
-                    GoRouter.of(context).go(Routes.adminOperationsGroupes),
-              ),
-              SettingRow(
-                title: t.admin.tableau.outilsComptes,
-                description: t.admin.tableau.outilsComptesDetail,
-                icon: AppIcons.profil,
-                onPress: () =>
-                    GoRouter.of(context).go(Routes.adminPersonnesComptes),
-              ),
-              SettingRow(
-                title: t.admin.tableau.outilsAccesAgents,
-                description: t.admin.tableau.outilsAccesAgentsDetail,
-                icon: AppIcons.controleQualite,
-                onPress: () =>
-                    GoRouter.of(context)
-                        .go(Routes.adminSecuriteAuditAccesAgents),
-              ),
-            ],
+      // AD-X (ADMIN-SHELL-01) : le sous-titre de l'image du directeur, et la
+      // date du jour au bord de fin sur bureau. La salutation de l'image
+      // n'est pas reprise : un titre d'ecran ne se souhaite pas la bienvenue.
+      sousTitre: t.admin.tableau.sousTitre,
+      actionsEntete: <Widget>[
+        if (DataCollection.enTableau(context))
+          Text(
+            _dateDuJour(maintenant),
+            key: TableauDeBordPage.cleDate,
+            style: palette.inkMuted.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
+            ),
           ),
-        ],
+      ],
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints contraintes) {
+          // 2. SAVOIR CE QUI S'EST PASSE : l'activite recente. Colonne de fin
+          // de 336 (la file du contrat D) quand la place le permet, sous les
+          // tuiles sinon ; jamais deux colonnes a 200 % de texte.
+          final bool deuxColonnes =
+              MediaQuery.textScalerOf(context).scale(1) < 2 &&
+              contraintes.maxWidth >=
+                  TableauDeBordPage.largeurActivite +
+                      AppSpacing.xxl +
+                      TableauDeBordPage.largeurPrincipaleMin;
+          if (deuxColonnes) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(child: principal),
+                    Ecart.hXxl,
+                    const SizedBox(
+                      width: TableauDeBordPage.largeurActivite,
+                      child: ActiviteRecente(),
+                    ),
+                  ],
+                ),
+                Ecart.vXxxl,
+                raccourcis,
+              ],
+            );
+          }
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              principal,
+              Ecart.vXxl,
+              const ActiviteRecente(),
+              Ecart.vXxl,
+              raccourcis,
+            ],
+          );
+        },
       ),
     );
   }
 }
+
+/// « lundi 5 octobre 2026 » : la date du jour de l'en-tete (ADMIN-SHELL-01).
+String _dateDuJour(DateTime jour) => t.historique.dateLongue(
+  jourSemaine: t.commun.dates.jours[jour.weekday - 1].toLowerCase(),
+  jour: jour.day,
+  mois: t.commun.dates.mois[jour.month - 1],
+  annee: jour.year,
+);
 
 /// Les memes tuiles que [_Compteurs], vides, le temps de la premiere lecture
 /// (D11, DESIGN-GOV §4 bis.6 regle 3) : la page ne saute pas quand les

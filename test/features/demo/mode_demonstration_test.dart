@@ -207,7 +207,8 @@ void main() {
         // K-47 (HL-A-6) : D03 (famille dispensee, un tuteur) est retire.
         9,
       );
-      expect(await conteneur.read(demandesProvider.future), isEmpty);
+      // AD-X : deux demandes fictives (Espace de traitement).
+      expect(await conteneur.read(demandesProvider.future), hasLength(2));
     });
 
     test('aucun service admin ne resout un adaptateur Supabase', () async {

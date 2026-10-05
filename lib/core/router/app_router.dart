@@ -27,6 +27,7 @@ import '../../features/admin_pedagogie_programmes/programmes_page.dart';
 import '../../features/admin_pedagogie_progression/progression_page.dart';
 import '../../features/admin_pedagogie_qualite/qualite_page.dart';
 import '../../features/admin_tableau/tableau_de_bord_page.dart';
+import '../../features/admin_traitement/traitement_page.dart';
 import '../../features/agent_entree/agent_entree_page.dart';
 import '../../features/appareils/ajouter_enfant_page.dart';
 import '../../features/appareils/appairage_page.dart';
@@ -933,10 +934,21 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // (migration `0017`) : c'est le noyau du produit, l'Attribution et les
       // Demandes restent des fonctions secondaires atteignables depuis
       // l'Accueil.
+      // AD-X : la racine mene a l'Espace de traitement (`ADM-18`), comme
+      // l'image ADMIN-SHELL-02 du directeur (« Operations » actif sur la file
+      // reunie). Les Classes (`ADM-09`) restent a leur adresse, reliees par
+      // la sous-navigation Operations (`ongletsOperations()`).
       GoRoute(
         path: Routes.adminOperations,
         redirect: (BuildContext _, GoRouterState _) =>
-            Routes.adminOperationsGroupes,
+            Routes.adminOperationsTraitement,
+      ),
+      GoRoute(
+        path: Routes.adminOperationsTraitement,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: TraitementPage(),
+        ),
       ),
       GoRoute(
         path: Routes.adminOperationsGroupes,

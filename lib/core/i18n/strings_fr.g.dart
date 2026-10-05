@@ -1417,6 +1417,7 @@ class Traductions$admin$fr {
 
 	// Translations
 	late final Traductions$admin$tableau$fr tableau = Traductions$admin$tableau$fr.internal(_root);
+	late final Traductions$admin$traitement$fr traitement = Traductions$admin$traitement$fr.internal(_root);
 	late final Traductions$admin$demandes$fr demandes = Traductions$admin$demandes$fr.internal(_root);
 	late final Traductions$admin$attribution$fr attribution = Traductions$admin$attribution$fr.internal(_root);
 	late final Traductions$admin$groupes$fr groupes = Traductions$admin$groupes$fr.internal(_root);
@@ -5024,6 +5025,149 @@ class Traductions$admin$tableau$fr {
 
 	/// fr: 'En attente depuis {jours} jours'
 	String attenteJours({required Object jours}) => 'En attente depuis ${jours} jours';
+
+	/// fr: 'Vue d'ensemble de l'activité et des éléments à traiter.'
+	String get sousTitre => 'Vue d\'ensemble de l\'activité et des éléments à traiter.';
+
+	late final Traductions$admin$tableau$activite$fr activite = Traductions$admin$tableau$activite$fr.internal(_root);
+
+	/// fr: 'Espace de traitement'
+	String get outilsTraitement => 'Espace de traitement';
+
+	/// fr: 'Les dossiers d'identité et les demandes en attente, dans une seule file.'
+	String get outilsTraitementDetail => 'Les dossiers d\'identité et les demandes en attente, dans une seule file.';
+}
+
+// Path: admin.traitement
+class Traductions$admin$traitement$fr {
+	Traductions$admin$traitement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Espace de traitement'
+	String get titre => 'Espace de traitement';
+
+	/// fr: 'Traitez, examinez et validez les éléments en attente dans Rewayah.'
+	String get sousTitre => 'Traitez, examinez et validez les éléments en attente dans Rewayah.';
+
+	/// fr: '1 élément en attente'
+	String get compteurUn => '1 élément en attente';
+
+	/// fr: '{n} éléments en attente'
+	String compteur({required Object n}) => '${n} éléments en attente';
+
+	/// fr: 'Tous'
+	String get filtreTous => 'Tous';
+
+	/// fr: 'Dossiers'
+	String get filtreDossiers => 'Dossiers';
+
+	/// fr: 'Demandes'
+	String get filtreDemandes => 'Demandes';
+
+	/// fr: 'Trier'
+	String get tri => 'Trier';
+
+	/// fr: 'Plus récent'
+	String get triRecent => 'Plus récent';
+
+	/// fr: 'Plus ancien'
+	String get triAncien => 'Plus ancien';
+
+	/// fr: 'Aujourd'hui'
+	String get groupeAujourdhui => 'Aujourd\'hui';
+
+	/// fr: 'Hier'
+	String get groupeHier => 'Hier';
+
+	/// fr: 'Cette semaine'
+	String get groupeSemaine => 'Cette semaine';
+
+	/// fr: 'Plus ancien'
+	String get groupePlusAncien => 'Plus ancien';
+
+	/// fr: 'Dossier d'identité · Enseignant'
+	String get natureDossier => 'Dossier d\'identité · Enseignant';
+
+	/// fr: 'Demande · Changement d'enseignant'
+	String get natureReaffectation => 'Demande · Changement d\'enseignant';
+
+	/// fr: 'Demande · Plafond d'élèves'
+	String get naturePlafond => 'Demande · Plafond d\'élèves';
+
+	/// fr: 'Demande · Changement de règle'
+	String get natureRegle => 'Demande · Changement de règle';
+
+	/// fr: 'Demande'
+	String get natureDemande => 'Demande';
+
+	/// fr: 'Demande pour {nom}'
+	String titreDemande({required Object nom}) => 'Demande pour ${nom}';
+
+	/// fr: '{nom}, {nature}, {quand}'
+	String ligneSemantique({required Object nom, required Object nature, required Object quand}) => '${nom}, ${nature}, ${quand}';
+
+	/// fr: 'Informations générales'
+	String get infos => 'Informations générales';
+
+	/// fr: 'Nom'
+	String get cleNom => 'Nom';
+
+	/// fr: 'Prénom'
+	String get clePrenom => 'Prénom';
+
+	/// fr: 'Type de dossier'
+	String get cleType => 'Type de dossier';
+
+	/// fr: 'Date de dépôt'
+	String get cleDepot => 'Date de dépôt';
+
+	/// fr: 'Pièce d'identité'
+	String get clePiece => 'Pièce d\'identité';
+
+	/// fr: 'Déposée, à vérifier'
+	String get pieceAVerifier => 'Déposée, à vérifier';
+
+	/// fr: 'Personne concernée'
+	String get cleConcerne => 'Personne concernée';
+
+	/// fr: 'Demandée par'
+	String get cleParQui => 'Demandée par';
+
+	/// fr: 'Date de la demande'
+	String get cleDateDemande => 'Date de la demande';
+
+	/// fr: 'Ouvrir la demande pour {nom}'
+	String ouvrirDemande({required Object nom}) => 'Ouvrir la demande pour ${nom}';
+
+	/// fr: 'Suivi du traitement'
+	String get suiviTitre => 'Suivi du traitement';
+
+	/// fr: 'L'assignation, l'échéance, la priorité, l'historique et les notes ne sont pas encore branchés : le serveur ne les fournit pas encore. La décision se prend dans le dossier ou la demande, avec ses vérifications.'
+	String get suiviPhrase => 'L\'assignation, l\'échéance, la priorité, l\'historique et les notes ne sont pas encore branchés : le serveur ne les fournit pas encore. La décision se prend dans le dossier ou la demande, avec ses vérifications.';
+
+	/// fr: 'Rien à traiter pour le moment'
+	String get vide => 'Rien à traiter pour le moment';
+
+	/// fr: 'Les dossiers d'identité et les demandes en attente arrivent ici, dès leur dépôt.'
+	String get videDetail => 'Les dossiers d\'identité et les demandes en attente arrivent ici, dès leur dépôt.';
+
+	/// fr: 'Aucun élément avec ce filtre'
+	String get videFiltre => 'Aucun élément avec ce filtre';
+
+	/// fr: 'Choisissez « Tous » pour revoir toute la file.'
+	String get videFiltreDetail => 'Choisissez « Tous » pour revoir toute la file.';
+
+	/// fr: 'Les dossiers d'identité n'ont pas pu être lus. Le serveur ne répond pas pour le moment : réessayez dans un instant. Les demandes restent affichées.'
+	String get erreurDossiers => 'Les dossiers d\'identité n\'ont pas pu être lus. Le serveur ne répond pas pour le moment : réessayez dans un instant. Les demandes restent affichées.';
+
+	/// fr: 'Les demandes n'ont pas pu être lues. Le serveur ne répond pas pour le moment : réessayez dans un instant. Les dossiers restent affichés.'
+	String get erreurDemandes => 'Les demandes n\'ont pas pu être lues. Le serveur ne répond pas pour le moment : réessayez dans un instant. Les dossiers restent affichés.';
+
+	/// fr: 'La file n'a pas pu être lue. Le serveur ne répond pas pour le moment : réessayez dans un instant.'
+	String get erreur => 'La file n\'a pas pu être lue. Le serveur ne répond pas pour le moment : réessayez dans un instant.';
 }
 
 // Path: admin.demandes
@@ -5298,8 +5442,26 @@ class Traductions$admin$groupes$fr {
 
 	// Translations
 
-	/// fr: 'Groupes'
-	String get titre => 'Groupes';
+	/// fr: 'Classes'
+	String get titre => 'Classes';
+
+	/// fr: 'Toutes les classes'
+	String get filtreToutes => 'Toutes les classes';
+
+	/// fr: 'Actives'
+	String get filtreActives => 'Actives';
+
+	/// fr: 'Clôturées'
+	String get filtreCloturees => 'Clôturées';
+
+	/// fr: 'Public'
+	String get filtrePublic => 'Public';
+
+	/// fr: 'Fermer l'inspecteur'
+	String get inspecteurFermer => 'Fermer l\'inspecteur';
+
+	/// fr: 'Informations générales'
+	String get inspecteurInfos => 'Informations générales';
 
 	/// fr: 'Chaque groupe réunit un enseignant et ses élèves autour d'un créneau commun : c'est là que se donne le cours.'
 	String get intro => 'Chaque groupe réunit un enseignant et ses élèves autour d\'un créneau commun : c\'est là que se donne le cours.';
@@ -12353,6 +12515,30 @@ class Traductions$dossiers$revue$etats$fr {
 	String get refusNonAutorise => 'Ce dossier ne peut pas être refusé dans son état actuel.';
 }
 
+// Path: admin.tableau.activite
+class Traductions$admin$tableau$activite$fr {
+	Traductions$admin$tableau$activite$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Activité récente'
+	String get titre => 'Activité récente';
+
+	/// fr: 'Voir tout le journal'
+	String get voirTout => 'Voir tout le journal';
+
+	/// fr: 'Aucune activité récente.'
+	String get vide => 'Aucune activité récente.';
+
+	/// fr: 'L'activité récente n'a pas pu être lue. Le journal ne répond pas pour le moment : réessayez dans un instant, les compteurs restent justes.'
+	String get erreur => 'L\'activité récente n\'a pas pu être lue. Le journal ne répond pas pour le moment : réessayez dans un instant, les compteurs restent justes.';
+
+	/// fr: '{qui} · {quand}'
+	String ligne({required Object qui, required Object quand}) => '${qui} · ${quand}';
+}
+
 // Path: admin.journal.evenements
 class Traductions$admin$journal$evenements$fr {
 	Traductions$admin$journal$evenements$fr.internal(this._root);
@@ -17138,6 +17324,55 @@ extension on Traductions {
 			'admin.tableau.attenteAujourdhui' => 'Déposé aujourd\'hui',
 			'admin.tableau.attenteUnJour' => 'En attente depuis 1 jour',
 			'admin.tableau.attenteJours' => ({required Object jours}) => 'En attente depuis ${jours} jours',
+			'admin.tableau.sousTitre' => 'Vue d\'ensemble de l\'activité et des éléments à traiter.',
+			'admin.tableau.activite.titre' => 'Activité récente',
+			'admin.tableau.activite.voirTout' => 'Voir tout le journal',
+			'admin.tableau.activite.vide' => 'Aucune activité récente.',
+			'admin.tableau.activite.erreur' => 'L\'activité récente n\'a pas pu être lue. Le journal ne répond pas pour le moment : réessayez dans un instant, les compteurs restent justes.',
+			'admin.tableau.activite.ligne' => ({required Object qui, required Object quand}) => '${qui} · ${quand}',
+			'admin.tableau.outilsTraitement' => 'Espace de traitement',
+			'admin.tableau.outilsTraitementDetail' => 'Les dossiers d\'identité et les demandes en attente, dans une seule file.',
+			'admin.traitement.titre' => 'Espace de traitement',
+			'admin.traitement.sousTitre' => 'Traitez, examinez et validez les éléments en attente dans Rewayah.',
+			'admin.traitement.compteurUn' => '1 élément en attente',
+			'admin.traitement.compteur' => ({required Object n}) => '${n} éléments en attente',
+			'admin.traitement.filtreTous' => 'Tous',
+			'admin.traitement.filtreDossiers' => 'Dossiers',
+			'admin.traitement.filtreDemandes' => 'Demandes',
+			'admin.traitement.tri' => 'Trier',
+			'admin.traitement.triRecent' => 'Plus récent',
+			'admin.traitement.triAncien' => 'Plus ancien',
+			'admin.traitement.groupeAujourdhui' => 'Aujourd\'hui',
+			'admin.traitement.groupeHier' => 'Hier',
+			'admin.traitement.groupeSemaine' => 'Cette semaine',
+			'admin.traitement.groupePlusAncien' => 'Plus ancien',
+			'admin.traitement.natureDossier' => 'Dossier d\'identité · Enseignant',
+			'admin.traitement.natureReaffectation' => 'Demande · Changement d\'enseignant',
+			'admin.traitement.naturePlafond' => 'Demande · Plafond d\'élèves',
+			'admin.traitement.natureRegle' => 'Demande · Changement de règle',
+			'admin.traitement.natureDemande' => 'Demande',
+			'admin.traitement.titreDemande' => ({required Object nom}) => 'Demande pour ${nom}',
+			'admin.traitement.ligneSemantique' => ({required Object nom, required Object nature, required Object quand}) => '${nom}, ${nature}, ${quand}',
+			'admin.traitement.infos' => 'Informations générales',
+			'admin.traitement.cleNom' => 'Nom',
+			'admin.traitement.clePrenom' => 'Prénom',
+			'admin.traitement.cleType' => 'Type de dossier',
+			'admin.traitement.cleDepot' => 'Date de dépôt',
+			'admin.traitement.clePiece' => 'Pièce d\'identité',
+			'admin.traitement.pieceAVerifier' => 'Déposée, à vérifier',
+			'admin.traitement.cleConcerne' => 'Personne concernée',
+			'admin.traitement.cleParQui' => 'Demandée par',
+			'admin.traitement.cleDateDemande' => 'Date de la demande',
+			'admin.traitement.ouvrirDemande' => ({required Object nom}) => 'Ouvrir la demande pour ${nom}',
+			'admin.traitement.suiviTitre' => 'Suivi du traitement',
+			'admin.traitement.suiviPhrase' => 'L\'assignation, l\'échéance, la priorité, l\'historique et les notes ne sont pas encore branchés : le serveur ne les fournit pas encore. La décision se prend dans le dossier ou la demande, avec ses vérifications.',
+			'admin.traitement.vide' => 'Rien à traiter pour le moment',
+			'admin.traitement.videDetail' => 'Les dossiers d\'identité et les demandes en attente arrivent ici, dès leur dépôt.',
+			'admin.traitement.videFiltre' => 'Aucun élément avec ce filtre',
+			'admin.traitement.videFiltreDetail' => 'Choisissez « Tous » pour revoir toute la file.',
+			'admin.traitement.erreurDossiers' => 'Les dossiers d\'identité n\'ont pas pu être lus. Le serveur ne répond pas pour le moment : réessayez dans un instant. Les demandes restent affichées.',
+			'admin.traitement.erreurDemandes' => 'Les demandes n\'ont pas pu être lues. Le serveur ne répond pas pour le moment : réessayez dans un instant. Les dossiers restent affichés.',
+			'admin.traitement.erreur' => 'La file n\'a pas pu être lue. Le serveur ne répond pas pour le moment : réessayez dans un instant.',
 			'admin.demandes.titre' => 'Demandes et règles',
 			'admin.demandes.restanteUne' => '1 demande en attente',
 			'admin.demandes.restantes' => ({required Object n}) => '${n} demandes en attente',
@@ -17220,7 +17455,13 @@ extension on Traductions {
 			'admin.attribution.journalisation' => 'Chaque attribution est journalisée : qui a décidé, quand, sur quelle heure, et le motif s\'il a fallu passer outre.',
 			'admin.attribution.effet' => 'L\'élève quitte cette file et ses cours sont posés au calendrier tout de suite.',
 			'admin.attribution.erreur' => ({required Object message}) => 'L\'attribution n\'a pas abouti : ${message}',
-			'admin.groupes.titre' => 'Groupes',
+			'admin.groupes.titre' => 'Classes',
+			'admin.groupes.filtreToutes' => 'Toutes les classes',
+			'admin.groupes.filtreActives' => 'Actives',
+			'admin.groupes.filtreCloturees' => 'Clôturées',
+			'admin.groupes.filtrePublic' => 'Public',
+			'admin.groupes.inspecteurFermer' => 'Fermer l\'inspecteur',
+			'admin.groupes.inspecteurInfos' => 'Informations générales',
 			'admin.groupes.intro' => 'Chaque groupe réunit un enseignant et ses élèves autour d\'un créneau commun : c\'est là que se donne le cours.',
 			'admin.groupes.colonneGroupe' => 'Groupe',
 			'admin.groupes.colonneEnseignant' => 'Enseignant',
@@ -17409,6 +17650,8 @@ extension on Traductions {
 			'admin.evaluations.resultatEchec' => 'Échec',
 			'admin.evaluations.resultatARevoir' => 'À revoir',
 			'admin.evaluations.planifier' => 'Planifier une évaluation',
+			_ => null,
+		} ?? switch (path) {
 			'admin.evaluations.planifierTitre' => 'Planifier une évaluation',
 			'admin.evaluations.manqueEleve' => 'Il manque l\'élève : choisissez-le dans la liste.',
 			'admin.evaluations.manqueNiveau' => 'Il manque le niveau évalué : choisissez-le dans la liste des niveaux.',
@@ -17464,8 +17707,6 @@ extension on Traductions {
 			'admin.progression.promouvoirErreur' => ({required Object message}) => 'Le changement n\'a pas abouti : ${message}',
 			'admin.progression.champMotif' => 'Motif',
 			'admin.progression.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.progression.journalisation' => 'Chaque exception posée, close, et chaque changement de niveau est inscrit au journal d\'audit.',
 			'admin.programmes.titre' => 'Programmes',
 			'admin.programmes.intro' => 'Le curriculum Rewayah, versionné : une version publiée ne peut plus être modifiée, toute évolution académique en crée une nouvelle.',
@@ -17923,6 +18164,8 @@ extension on Traductions {
 			'compte.fuseau' => 'Fuseau horaire',
 			'compte.academie' => 'Académie',
 			'compte.securite' => 'Sécurité',
+			_ => null,
+		} ?? switch (path) {
 			'compte.statut' => 'Statut',
 			'compte.reglagesTitre' => 'Réglages',
 			'compte.reglagesIntro' => 'Ces préférences restent sur cet appareil et s\'appliquent tout de suite.',
@@ -17978,8 +18221,6 @@ extension on Traductions {
 			'compte.identifiantEnfant' => ({required Object identifiant}) => 'Identifiant : ${identifiant}',
 			'compte.roles.admin' => 'Administrateur',
 			'compte.roles.accountant' => 'Comptable',
-			_ => null,
-		} ?? switch (path) {
 			'compte.roles.controller' => 'Contrôleur',
 			'compte.roles.teacher' => 'Enseignant',
 			'compte.roles.guardian' => 'Tuteur',
@@ -18437,6 +18678,8 @@ extension on Traductions {
 			'classe.introuvablePhrase' => 'Elle a peut-être pris fin, ou elle concerne un autre élève du foyer.',
 			'classe.seance.aucune' => 'Aucune séance planifiée',
 			'classe.seance.aucuneDetail' => ({required Object prenom}) => 'La prochaine séance de ${prenom} apparaîtra ici dès qu\'elle sera programmée.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.seance.illisible' => 'La prochaine séance n\'a pas pu être lue.',
 			'classe.seance.presence' => ({required Object prenom, required Object etat}) => '${prenom} : ${etat}',
 			'classe.observation.commentCaMarche' => 'Comment ça marche ?',
@@ -18492,8 +18735,6 @@ extension on Traductions {
 			'classe.pageCatalogue.indisponible' => 'Le choix de classe en ligne n\'est pas encore ouvert.',
 			'classe.pageCatalogue.aucune' => 'Aucune classe ne convient pour l\'instant',
 			'classe.pageCatalogue.aucuneDetail' => ({required Object prenom}) => 'Aucune classe ouverte ne correspond au profil de ${prenom} en ce moment.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageCatalogue.eleveInconnuTitre' => 'Ce profil n\'est pas dans votre foyer',
 			'classe.pageCatalogue.eleveInconnuPhrase' => 'Revenez à l\'accueil et choisissez le profil élève concerné.',
 			'classe.pageCatalogue.horairesAbsents' => 'Les jours et heures de cette classe ne sont pas encore affichés ici.',
@@ -18951,6 +19192,8 @@ extension on Traductions {
 			'enseignant.creneaux.cleHeureLocale' => 'Heure locale',
 			'enseignant.creneaux.cleDuree' => 'Durée',
 			'enseignant.creneaux.duree' => ({required Object minutes}) => '${minutes} min',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.ficheGroupe.creneauHebdo' => ({required Object jour, required Object heure}) => '${jour} à ${heure}, chaque semaine',
 			'enseignant.ficheGroupe.aucunMembre' => 'Aucun élève dans cette Classe',
 			'enseignant.ficheGroupe.aucunMembreDetail' => 'L\'administration compose les Classes : celle-ci n\'a pas encore d\'élève.',
@@ -19006,8 +19249,6 @@ extension on Traductions {
 			'controleur.historique.cleDuree' => 'Durée observée',
 			'controleur.historique.cleElevesPresents' => 'Présents',
 			'controleur.historique.cleReponse' => 'Réponse',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.historique.sansComplement' => 'Aucun complément.',
 			'controleur.historique.faitsIndisponibles' => 'Le relevé automatique de cette visite (heures, élèves présents, reconnexions) n\'est pas encore reçu : la séance vient de se terminer ou la connexion a été coupée. Il s\'affichera ici dès sa réception. Le reste du rapport reste fiable.',
 			'controleur.historique.motif' => ({required Object motif}) => 'Motif : ${motif}',
@@ -19465,6 +19706,8 @@ extension on Traductions {
 			'tc.realtime.etat.restauration_impossible' => 'Impossible de retrouver le support en cours. Demandez à l’enseignant de le présenter à nouveau.',
 			'tc.observation.entree.titre' => 'Observer la séance',
 			'tc.observation.entree.tuteurIntro' => 'Vous pouvez regarder un court moment le cours de votre enfant. Votre micro et votre caméra restent fermés.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.entree.adminIntro' => 'Choisissez votre mode avant d\'entrer. Il ne change plus ensuite.',
 			'tc.observation.entree.controleurIntro' => 'Vous entrez en observation invisible. Aucun micro, aucune caméra.',
 			'tc.observation.entree.entrer' => 'Entrer',
@@ -19520,8 +19763,6 @@ extension on Traductions {
 			'tc.observation.disponibilite.reseauTitre' => 'Vérification impossible',
 			'tc.observation.disponibilite.reseau' => 'La disponibilité de l\'observation n\'a pas pu être vérifiée. Aucune visite n\'a commencé.',
 			'tc.observation.disponibilite.capaciteTitre' => 'Observation indisponible',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.disponibilite.capacite' => 'L\'observation n\'est pas disponible pour le moment.',
 			'tc.observation.connexion.titre' => 'Connexion et vérification',
 			'tc.observation.connexion.phrase' => 'Vos visites restantes sont vérifiées. La visite commence dès que l\'entrée est acceptée, connexion vidéo comprise.',
@@ -19979,6 +20220,8 @@ extension on Traductions {
 			'adulte.demo.donnees.totalRecharge20' => '20,00 € (démonstration)',
 			'adulte.demo.donnees.totalRecharge25' => '25,00 € (démonstration)',
 			'adulte.demo.donnees.totalRecharge30' => '30,00 € (démonstration)',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.donnees.totalRecharge35' => '35,00 € (démonstration)',
 			'adulte.demo.donnees.totalRecharge40' => '40,00 € (démonstration)',
 			'adulte.demo.etats.adulteSeul' => 'L\'adulte est seul, sans foyer.',
