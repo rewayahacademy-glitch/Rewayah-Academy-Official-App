@@ -13,10 +13,13 @@
 import 'package:flutter_riverpod/misc.dart' show Override;
 
 import '../../../core/capacites/port_tresorerie.dart';
+import '../../../core/capacites/port_validations_finance.dart';
 import '../../../core/comptable/modeles_comptable.dart';
 import '../../../core/comptable/statuts_comptable.dart';
 import '../../../core/finance/montant.dart';
+import '../../../core/widgets/pastilles_comptable.dart' show libelleCoffre;
 import 'socle_comptable_demo.dart';
+import 'validations_demo.dart';
 
 /// La tresorerie en demonstration.
 class TresorerieDemo implements PortTresorerie {
@@ -210,6 +213,21 @@ class TresorerieDemo implements PortTresorerie {
       );
     }
     if (couple.sensible || origine.protege) {
+      // Le registre unique (CPT-VAL-1) : la demande part dans l'onglet
+      // « A valider » de la direction ; rien ne bouge avant sa decision.
+      RegistreValidationsDemo.instance.deposer(
+        nature: origine == Coffre.reserveStrategique
+            ? NatureDemandeValidation.retraitReserve
+            : NatureDemandeValidation.sortieCoffreProtege,
+        demandeurId: SocleComptableDemo.comptableId,
+        demandeurNom: SocleComptableDemo.leComptable.nom,
+        objet: '${libelleCoffre(origine)} → ${libelleCoffre(destination)}',
+        montant: montant,
+        raison: RaisonBlocage.validationRequise,
+        cleIdempotence: cleIdempotence,
+        objetId: id,
+        precision: 'Sortie d’un coffre protégé.',
+      );
       return ResultatMouvement(
         mouvementId: id,
         execute: false,

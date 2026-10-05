@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
+import 'a_valider/a_valider_page.dart';
 import 'politiques_commerciales.dart';
 import 'reserve_delegation_page.dart';
 import 'vue_globale_finance.dart';
@@ -19,9 +20,13 @@ enum OngletFinance {
   /// Reserve et delegation (`/admin/finance/reserve-delegation`, Comptable
   /// V1 : spec Finance operationnelle §37, voie CPT-DIR).
   reserveDelegation,
+
+  /// A valider (`/admin/finance/a-valider`, decision Q-8 = (a) du 05/10,
+  /// CPT-VAL-1) : les demandes du Comptable a valider ou refuser.
+  aValider,
 }
 
-/// Le domaine Finance de la direction (FI-1b) : trois onglets, dans la vraie
+/// Le domaine Finance de la direction (FI-1b) : quatre onglets, dans la vraie
 /// coquille admin.
 ///
 /// - **Vue globale** (FI-11a) : lit `PortFinanceDirection`
@@ -36,6 +41,10 @@ enum OngletFinance {
 ///   `StrategicReservePolicyPanel` et `FinanceDelegationPolicyPanel`
 ///   ([ReserveDelegationPage]), lus par `PortPolitiqueReserve` (CPT-BR-12)
 ///   et `PortDelegationFinance` (CPT-BR-13).
+/// - **A valider** (CPT-VAL-1, decision Q-8 = (a) du 05/10) : les demandes
+///   du Comptable ([AValiderBloc]), lues par `PortValidationsFinance`
+///   (CPT-BR-09). En production le port rend `CapaciteIndisponible` :
+///   « Pas encore disponible », aucune decision possible.
 ///
 /// **Ce fichier est gele apres CPT-F** (`20_comptable/02_DECOUPAGE.md`) :
 /// la voie CPT-DIR ecrit dans `reserve_delegation_page.dart` et son dossier,
@@ -63,6 +72,7 @@ class FinancePage extends StatelessWidget {
         OngletFinance.vueGlobale => const VueGlobaleFinanceBloc(),
         OngletFinance.politiques => const PolitiquesCommercialesBloc(),
         OngletFinance.reserveDelegation => const ReserveDelegationPage(),
+        OngletFinance.aValider => const AValiderBloc(),
       },
     );
   }

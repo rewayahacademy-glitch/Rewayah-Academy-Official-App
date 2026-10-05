@@ -9,10 +9,12 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 
 import '../../../core/capacites/capacite_indisponible.dart';
 import '../../../core/capacites/port_obligations_contractuels.dart';
+import '../../../core/capacites/port_validations_finance.dart';
 import '../../../core/comptable/modeles_comptable.dart';
 import '../../../core/comptable/statuts_comptable.dart';
 import '../../../core/finance/montant.dart';
 import 'socle_comptable_demo.dart';
+import 'validations_demo.dart';
 
 /// Le prefixe des identifiants d'obligation payable (la cible de « Payer »).
 const String _payablePrefixe = 'obl-pay-';
@@ -230,12 +232,49 @@ class ObligationsContractuelsDemo implements PortObligationsContractuels {
   @override
   Future<List<ObligationContractuel>> liste(
     FiltreObligationsContractuels filtre,
-  ) async => <ObligationContractuel>[
-    for (final ObligationContractuel o in _obligations)
-      if ((filtre.etat == null || o.etat == filtre.etat) &&
-          (filtre.type == null || o.type == filtre.type))
-        o,
-  ];
+  ) async {
+    _suivreValidations();
+    return <ObligationContractuel>[
+      for (final ObligationContractuel o in _obligations)
+        if ((filtre.etat == null || o.etat == filtre.etat) &&
+            (filtre.type == null || o.type == filtre.type))
+          o,
+    ];
+  }
+
+  /// Applique la decision du registre unique des validations (CPT-VAL-1),
+  /// comme le fera le serveur : validee, l'obligation est approuvee
+  /// (montant fige) ; refusee, elle porte le motif rendu.
+  void _suivreValidations() {
+    for (int i = 0; i < _obligations.length; i++) {
+      final ObligationContractuel o = _obligations[i];
+      if (o.etat != EtatObligationContractuel.aApprouver) continue;
+      final DemandeValidation? d = RegistreValidationsDemo.instance.derniere(
+        o.id,
+      );
+      if (d == null) continue;
+      if (d.etat == EtatDemandeValidation.validee) {
+        _obligations[i] = _approuvee(o, d.decideur ?? _direction);
+      } else if (d.etat == EtatDemandeValidation.refusee) {
+        _obligations[i] = ObligationContractuel(
+          id: o.id,
+          type: o.type,
+          beneficiaire: o.beneficiaire,
+          objet: o.objet,
+          montant: o.montant,
+          echeance: o.echeance,
+          etat: EtatObligationContractuel.refusee,
+          auteur: o.auteur,
+          justificatif: o.justificatif,
+          centreCout: o.centreCout,
+          approbateur: d.decideur ?? o.approbateur,
+          profilBeneficiaire: o.profilBeneficiaire,
+          lignes: o.lignes,
+          motifRefus: d.motifDecision,
+        );
+      }
+    }
+  }
 
   @override
   Future<ContexteCreationObligation> contexteCreation() async =>
@@ -263,6 +302,7 @@ class ObligationsContractuelsDemo implements PortObligationsContractuels {
 
   @override
   Future<ObligationContractuel> detail(String obligationId) {
+    _suivreValidations();
     for (final ObligationContractuel o in _obligations) {
       if (o.id == obligationId) {
         return Future<ObligationContractuel>.value(o);
@@ -319,6 +359,19 @@ class ObligationsContractuelsDemo implements PortObligationsContractuels {
       ),
     );
     _obligations.insert(0, creee);
+    // Le registre unique (CPT-VAL-1) : l'approbation revient a une autre
+    // personne, dans l'onglet « A valider » de la direction.
+    RegistreValidationsDemo.instance.deposer(
+      nature: NatureDemandeValidation.obligationAApprouver,
+      demandeurId: SocleComptableDemo.comptableId,
+      demandeurNom: _comptable,
+      objet: brouillon.objet,
+      montant: brouillon.montant,
+      raison: RaisonBlocage.nonApprouvee,
+      cleIdempotence: cleIdempotence,
+      objetId: creee.id,
+      precision: 'Montant figé après approbation.',
+    );
     return creee;
   }
 
@@ -331,34 +384,58 @@ class ObligationsContractuelsDemo implements PortObligationsContractuels {
       throw const CapaciteIndisponible('CPT-BR-08');
     }
     final ObligationContractuel o = _obligations[i];
-    final ObligationContractuel approuvee = ObligationContractuel(
-      id: o.id,
-      type: o.type,
-      beneficiaire: o.beneficiaire,
-      objet: o.objet,
-      montant: o.montant,
-      echeance: o.echeance,
-      etat: EtatObligationContractuel.approuvee,
-      auteur: o.auteur,
-      justificatif: o.justificatif,
-      centreCout: o.centreCout,
-      approbateur: _comptable,
-      obligationPayableId: '$_payablePrefixe${o.id}',
-      profilBeneficiaire: o.profilBeneficiaire,
-      lignes: o.lignes,
-      permissions: o.profilBeneficiaire == EtatProfilPaiement.verifie
-          ? const PermissionsFinance(
-              actions: <ActionFinance>{ActionFinance.payer},
-            )
-          : const PermissionsFinance(
-              blocages: <ActionFinance, RaisonBlocage>{
-                ActionFinance.payer: RaisonBlocage.infosManquantes,
-              },
-            ),
+    final ObligationContractuel approuvee = _approuvee(o, _comptable);
+    // La demande correspondante du registre est decidee par le Comptable
+    // (une autre personne que la direction qui l'a creee).
+    final DemandeValidation? d = RegistreValidationsDemo.instance.derniere(
+      o.id,
     );
+    if (d != null && d.etat == EtatDemandeValidation.enAttente) {
+      try {
+        RegistreValidationsDemo.instance.decider(
+          lecteurId: SocleComptableDemo.comptableId,
+          lecteurNom: _comptable,
+          demandeId: d.id,
+          decision: DecisionValidation.valider,
+          cleIdempotence: 'approbation-${o.id}',
+        );
+      } on RefusDecision {
+        // Le registre refuse (demandeur lui-meme) : l'obligation reste
+        // telle que la source de demonstration l'a decidee.
+      }
+    }
     _obligations[i] = approuvee;
     return approuvee;
   }
+
+  static ObligationContractuel _approuvee(
+    ObligationContractuel o,
+    String approbateur,
+  ) => ObligationContractuel(
+    id: o.id,
+    type: o.type,
+    beneficiaire: o.beneficiaire,
+    objet: o.objet,
+    montant: o.montant,
+    echeance: o.echeance,
+    etat: EtatObligationContractuel.approuvee,
+    auteur: o.auteur,
+    justificatif: o.justificatif,
+    centreCout: o.centreCout,
+    approbateur: approbateur,
+    obligationPayableId: '$_payablePrefixe${o.id}',
+    profilBeneficiaire: o.profilBeneficiaire,
+    lignes: o.lignes,
+    permissions: o.profilBeneficiaire == EtatProfilPaiement.verifie
+        ? const PermissionsFinance(
+            actions: <ActionFinance>{ActionFinance.payer},
+          )
+        : const PermissionsFinance(
+            blocages: <ActionFinance, RaisonBlocage>{
+              ActionFinance.payer: RaisonBlocage.infosManquantes,
+            },
+          ),
+  );
 
   @override
   Future<ObligationContractuel> inviterBeneficiaire(String obligationId) =>

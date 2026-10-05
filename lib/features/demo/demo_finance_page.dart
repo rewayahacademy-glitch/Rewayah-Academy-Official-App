@@ -1,7 +1,7 @@
 // Le domaine Finance en demonstration : /demo/finance (hors production,
 // FI-1b).
 //
-// `?ecran=vueGlobale|politiques|reserveDelegation` (Vue globale par defaut) : la VRAIE coquille
+// `?ecran=vueGlobale|politiques|reserveDelegation|aValider` (Vue globale par defaut) : la VRAIE coquille
 // admin (`AdminShell`, domaine Finance actif) sur la VRAIE page Finance. La
 // Vue globale lit le port de la direction, surcharge ici par la
 // demonstration (`FinanceDirectionDemo`, FI-11a) ; Politiques lit

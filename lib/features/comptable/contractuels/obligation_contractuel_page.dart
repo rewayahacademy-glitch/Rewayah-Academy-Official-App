@@ -42,6 +42,7 @@ import '../../../core/widgets/pastilles_comptable.dart';
 import '../../../core/widgets/section_header.dart';
 import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/status_pill.dart';
+import '../validation/suivi_validation.dart';
 import 'contractuels_commun.dart';
 import 'contractuels_page.dart' show libelleTypeObligation;
 
@@ -68,6 +69,7 @@ class _ObligationContractuelPageState
   void _relire() {
     ref.invalidate(obligationContractuelProvider(widget.obligationId));
     ref.invalidate(journalObligationContractuelProvider(widget.obligationId));
+    ref.invalidate(demandesValidationObjetProvider(widget.obligationId));
   }
 
   /// Approuve : le montant se fige, une obligation payable naitra. Le port
@@ -343,6 +345,12 @@ class _Corps extends ConsumerWidget {
           _Phrase(texte: libelleRaisonBlocage(raison), fort: true),
           Ecart.vLg,
         ],
+        // CPT-VAL-1 : ou en est la demande d'approbation dans l'onglet
+        // « A valider » de la direction, rendue par la source.
+        SuiviValidation(
+          objetId: o.id,
+          marge: const EdgeInsetsDirectional.only(bottom: AppSpacing.lg),
+        ),
         if (erreur != null) ...<Widget>[
           Semantics(
             liveRegion: true,

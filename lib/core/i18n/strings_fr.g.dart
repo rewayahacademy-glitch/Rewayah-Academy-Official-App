@@ -2436,6 +2436,7 @@ class Traductions$comptable$fr {
 	late final Traductions$comptable$encaissements$fr encaissements = Traductions$comptable$encaissements$fr.internal(_root);
 	late final Traductions$comptable$beneficiaires$fr beneficiaires = Traductions$comptable$beneficiaires$fr.internal(_root);
 	late final Traductions$comptable$contractuels$fr contractuels = Traductions$comptable$contractuels$fr.internal(_root);
+	late final Traductions$comptable$validation$fr validation = Traductions$comptable$validation$fr.internal(_root);
 	late final Traductions$comptable$direction$fr direction = Traductions$comptable$direction$fr.internal(_root);
 	late final Traductions$comptable$demo$fr demo = Traductions$comptable$demo$fr.internal(_root);
 }
@@ -5819,6 +5820,9 @@ class Traductions$admin$finance$fr {
 
 	/// fr: 'Réserve et délégation'
 	String get reserveDelegation => 'Réserve et délégation';
+
+	/// fr: 'À valider'
+	String get aValider => 'À valider';
 
 	late final Traductions$admin$finance$vue$fr vue = Traductions$admin$finance$vue$fr.internal(_root);
 	late final Traductions$admin$finance$pol$fr pol = Traductions$admin$finance$pol$fr.internal(_root);
@@ -12905,6 +12909,132 @@ class Traductions$comptable$contractuels$fr {
 	String get detailTitre => 'Obligation';
 }
 
+// Path: comptable.validation
+class Traductions$comptable$validation$fr {
+	Traductions$comptable$validation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les demandes du Comptable qui attendent la décision d'une autre personne habilitée. Celui qui demande ne valide jamais sa propre demande.'
+	String get sousTitre => 'Les demandes du Comptable qui attendent la décision d\'une autre personne habilitée. Celui qui demande ne valide jamais sa propre demande.';
+
+	/// fr: 'À décider'
+	String get aDecider => 'À décider';
+
+	/// fr: 'Décidées récemment'
+	String get decidees => 'Décidées récemment';
+
+	/// fr: 'Rien à valider'
+	String get videTitre => 'Rien à valider';
+
+	/// fr: 'Les prochaines demandes du Comptable apparaîtront ici.'
+	String get videPhrase => 'Les prochaines demandes du Comptable apparaîtront ici.';
+
+	late final Traductions$comptable$validation$natures$fr natures = Traductions$comptable$validation$natures$fr.internal(_root);
+
+	/// fr: 'Demandée par {demandeur} le {date}'
+	String demandePar({required Object demandeur, required Object date}) => 'Demandée par ${demandeur} le ${date}';
+
+	/// fr: 'Validée par {decideur} le {date}'
+	String valideePar({required Object decideur, required Object date}) => 'Validée par ${decideur} le ${date}';
+
+	/// fr: 'Refusée par {decideur} le {date}'
+	String refuseePar({required Object decideur, required Object date}) => 'Refusée par ${decideur} le ${date}';
+
+	/// fr: 'Motif : {motif}'
+	String motif({required Object motif}) => 'Motif : ${motif}';
+
+	/// fr: 'Voir la demande : {objet}'
+	String ouvrir({required Object objet}) => 'Voir la demande : ${objet}';
+
+	/// fr: 'Votre propre demande'
+	String get votreDemandeTitre => 'Votre propre demande';
+
+	/// fr: 'Une autre personne habilitée la décidera : vous ne validez jamais une demande que vous avez faite.'
+	String get votreDemandePhrase => 'Une autre personne habilitée la décidera : vous ne validez jamais une demande que vous avez faite.';
+
+	late final Traductions$comptable$validation$detail$fr detail = Traductions$comptable$validation$detail$fr.internal(_root);
+
+	/// fr: 'Valider'
+	String get valider => 'Valider';
+
+	/// fr: 'Refuser'
+	String get refuser => 'Refuser';
+
+	/// fr: 'Annuler'
+	String get annuler => 'Annuler';
+
+	/// fr: 'Fermer'
+	String get fermer => 'Fermer';
+
+	/// fr: 'Confirmer le refus'
+	String get confirmerRefus => 'Confirmer le refus';
+
+	/// fr: 'Motif du refus'
+	String get motifTitre => 'Motif du refus';
+
+	/// fr: 'Le Comptable lira ce motif avec la décision. Choisissez-en un, ou précisez le vôtre.'
+	String get motifPhrase => 'Le Comptable lira ce motif avec la décision. Choisissez-en un, ou précisez le vôtre.';
+
+	late final Traductions$comptable$validation$motifs$fr motifs = Traductions$comptable$validation$motifs$fr.internal(_root);
+
+	/// fr: 'Précisez le motif'
+	String get motifAutreChamp => 'Précisez le motif';
+
+	/// fr: 'Choisissez un motif pour refuser.'
+	String get erreurMotif => 'Choisissez un motif pour refuser.';
+
+	/// fr: 'Précisez le motif pour refuser.'
+	String get erreurMotifAutre => 'Précisez le motif pour refuser.';
+
+	/// fr: 'Votre décision est enregistrée : la demande est validée.'
+	String get decisionValidee => 'Votre décision est enregistrée : la demande est validée.';
+
+	/// fr: 'Votre décision est enregistrée : la demande est refusée, avec son motif.'
+	String get decisionRefusee => 'Votre décision est enregistrée : la demande est refusée, avec son motif.';
+
+	/// fr: 'Décision non enregistrée'
+	String get refusTitre => 'Décision non enregistrée';
+
+	/// fr: 'Vous avez fait cette demande : une autre personne habilitée doit la décider. Rien n'a changé.'
+	String get refusDemandeur => 'Vous avez fait cette demande : une autre personne habilitée doit la décider. Rien n\'a changé.';
+
+	/// fr: 'Un refus demande un motif. Choisissez-en un, puis confirmez.'
+	String get refusMotif => 'Un refus demande un motif. Choisissez-en un, puis confirmez.';
+
+	/// fr: 'Cette demande a déjà été décidée. Relisez la liste.'
+	String get refusDejaDecidee => 'Cette demande a déjà été décidée. Relisez la liste.';
+
+	/// fr: 'Décision non confirmée'
+	String get inconnuTitre => 'Décision non confirmée';
+
+	/// fr: 'Nous ne savons pas si votre décision a été enregistrée. Relisez la liste avant de décider à nouveau.'
+	String get inconnuPhrase => 'Nous ne savons pas si votre décision a été enregistrée. Relisez la liste avant de décider à nouveau.';
+
+	/// fr: 'Relire la liste'
+	String get relireListe => 'Relire la liste';
+
+	/// fr: 'Hors ligne : reconnectez-vous pour décider.'
+	String get horsLigne => 'Hors ligne : reconnectez-vous pour décider.';
+
+	/// fr: 'Demandée le {date}. Une autre personne habilitée décidera ; rien ne part avant sa décision.'
+	String suiviEnAttente({required Object date}) => 'Demandée le ${date}. Une autre personne habilitée décidera ; rien ne part avant sa décision.';
+
+	/// fr: 'Validée par {decideur} le {date}.'
+	String suiviValidee({required Object decideur, required Object date}) => 'Validée par ${decideur} le ${date}.';
+
+	/// fr: 'Refusée par {decideur} le {date}. Motif : {motif}'
+	String suiviRefusee({required Object decideur, required Object date, required Object motif}) => 'Refusée par ${decideur} le ${date}. Motif : ${motif}';
+
+	/// fr: 'Nous n'avons pas pu lire l'état de la demande de validation. Réessayez dans un instant.'
+	String get erreurSuivi => 'Nous n\'avons pas pu lire l\'état de la demande de validation. Réessayez dans un instant.';
+
+	/// fr: 'Réessayer'
+	String get reessayer => 'Réessayer';
+}
+
 // Path: comptable.direction
 class Traductions$comptable$direction$fr {
 	Traductions$comptable$direction$fr.internal(this._root);
@@ -19179,6 +19309,96 @@ class Traductions$comptable$beneficiaires$recevoir$fr {
 	String get configurer => 'Configurer mes paiements';
 }
 
+// Path: comptable.validation.natures
+class Traductions$comptable$validation$natures$fr {
+	Traductions$comptable$validation$natures$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Paiement sensible'
+	String get payoutSensible => 'Paiement sensible';
+
+	/// fr: 'Retrait de la Réserve stratégique'
+	String get retraitReserve => 'Retrait de la Réserve stratégique';
+
+	/// fr: 'Obligation ponctuelle'
+	String get obligationAApprouver => 'Obligation ponctuelle';
+
+	/// fr: 'Paie du Comptable'
+	String get payoutDuComptable => 'Paie du Comptable';
+
+	/// fr: 'Sortie d'un coffre protégé'
+	String get sortieCoffreProtege => 'Sortie d\'un coffre protégé';
+}
+
+// Path: comptable.validation.detail
+class Traductions$comptable$validation$detail$fr {
+	Traductions$comptable$validation$detail$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demande de validation'
+	String get titre => 'Demande de validation';
+
+	/// fr: 'Nature'
+	String get nature => 'Nature';
+
+	/// fr: 'Objet'
+	String get objet => 'Objet';
+
+	/// fr: 'Demandée par'
+	String get demandeur => 'Demandée par';
+
+	/// fr: 'Date de la demande'
+	String get date => 'Date de la demande';
+
+	/// fr: 'Raison'
+	String get raison => 'Raison';
+
+	/// fr: 'Montant exact'
+	String get montant => 'Montant exact';
+
+	/// fr: 'État'
+	String get etat => 'État';
+
+	/// fr: 'Historique'
+	String get historique => 'Historique';
+
+	/// fr: 'Aucune entrée pour l'instant.'
+	String get historiqueVide => 'Aucune entrée pour l\'instant.';
+}
+
+// Path: comptable.validation.motifs
+class Traductions$comptable$validation$motifs$fr {
+	Traductions$comptable$validation$motifs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Coordonnées du bénéficiaire à vérifier'
+	String get coordonnees => 'Coordonnées du bénéficiaire à vérifier';
+
+	/// fr: 'Montant à vérifier à la source'
+	String get montant => 'Montant à vérifier à la source';
+
+	/// fr: 'Justificatif manquant ou illisible'
+	String get justificatif => 'Justificatif manquant ou illisible';
+
+	/// fr: 'Hors de la politique de la Réserve'
+	String get reserve => 'Hors de la politique de la Réserve';
+
+	/// fr: 'À reporter au prochain cycle'
+	String get reporter => 'À reporter au prochain cycle';
+
+	/// fr: 'Autre'
+	String get autre => 'Autre';
+}
+
 // Path: comptable.direction.reservePanneau
 class Traductions$comptable$direction$reservePanneau$fr {
 	Traductions$comptable$direction$reservePanneau$fr.internal(this._root);
@@ -21374,6 +21594,7 @@ extension on Traductions {
 			'admin.finance.vueGlobale' => 'Vue globale',
 			'admin.finance.politiques' => 'Politiques commerciales',
 			'admin.finance.reserveDelegation' => 'Réserve et délégation',
+			'admin.finance.aValider' => 'À valider',
 			'admin.finance.vue.moisAnnee' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
 			'admin.finance.vue.contexte' => ({required Object deMois}) => 'Les chiffres ${deMois}, chacun à part : ce qui est encaissé, ce qui est reconnu comme revenu, ce qui est dû aux enseignants et ce qui reste sur les profils des familles.',
 			'admin.finance.vue.indicateurs' => 'Indicateurs du mois',
@@ -21471,9 +21692,9 @@ extension on Traductions {
 			'admin.finance.pol.remisesDetail' => 'Par rang de membre payant du foyer, sans jamais réécrire une facture déjà payée.',
 			'admin.finance.pol.remiseAucune' => ({required Object rang}) => 'Jusqu\'au ${rang}e membre payant',
 			'admin.finance.pol.remiseAucuneValeur' => 'Prix normal',
-			'admin.finance.pol.remiseAucuneDetail' => 'Aucune remise : les premiers membres payants paient le tarif plein.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.finance.pol.remiseAucuneDetail' => 'Aucune remise : les premiers membres payants paient le tarif plein.',
 			'admin.finance.pol.remiseRang' => ({required Object rang}) => '${rang}e membre payant',
 			'admin.finance.pol.remiseRangDetail' => 'Ce membre reçoit cette remise sur son prix mensuel ; les membres déjà facturés ne changent pas.',
 			'admin.finance.pol.remiseRangSuivants' => ({required Object rang}) => '${rang}e membre payant et suivants',
@@ -21985,9 +22206,9 @@ extension on Traductions {
 			'admin.notifications.vide' => 'Aucune notification',
 			'admin.notifications.videDetail' => 'Rien à signaler pour l\'instant.',
 			'agent.titre' => 'Entrée d\'un agent',
-			'agent.intro' => 'Cette page ouvre l\'application en lecture seule, avec le jeton remis par l\'académie.',
 			_ => null,
 		} ?? switch (path) {
+			'agent.intro' => 'Cette page ouvre l\'application en lecture seule, avec le jeton remis par l\'académie.',
 			'agent.jeton' => 'Jeton d\'observation',
 			'agent.jetonExemple' => 'rag_...',
 			'agent.entrer' => 'Ouvrir l\'application',
@@ -22499,9 +22720,9 @@ extension on Traductions {
 			'eleve.suivi.videDetail' => 'Vos cours s\'afficheront ici, du plus récent au plus ancien, avec votre présence.',
 			'eleve.suivi.erreur' => 'Le suivi n\'a pas pu être lu. Réessayez dans un instant.',
 			'eleve.suivi.tronquee' => ({required Object nombre}) => 'Les ${nombre} cours les plus récents sont affichés.',
-			'eleve.suivi.fin' => ({required Object nombre}) => '${nombre} cours au suivi.',
 			_ => null,
 		} ?? switch (path) {
+			'eleve.suivi.fin' => ({required Object nombre}) => '${nombre} cours au suivi.',
 			'eleve.suivi.finUn' => '1 cours au suivi.',
 			'tuteur.accueil.titre' => 'Accueil',
 			'tuteur.accueil.voirLaClasse' => 'Voir la classe',
@@ -23013,9 +23234,9 @@ extension on Traductions {
 			'enseignant.cahier.suite' => ({required Object eleve}) => 'La suite pour ${eleve}',
 			'enseignant.cahier.suiteContinuer' => 'Continuer',
 			'enseignant.cahier.suiteRenforcer' => 'Renforcer',
-			'enseignant.cahier.suspendreNouveau' => 'Suspendre le nouveau',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.cahier.suspendreNouveau' => 'Suspendre le nouveau',
 			'enseignant.cahier.devoirPrecedent' => ({required Object devoir}) => 'Devoir précédent : ${devoir}',
 			'enseignant.cahier.devoirPlage' => ({required Object sourate, required Object debut, required Object fin}) => 'Réviser la sourate ${sourate}, versets ${debut} à ${fin}.',
 			'enseignant.cahier.suspendreNouveauDetail' => 'La révision continue, rien de nouveau n\'est ajouté pour cet élève.',
@@ -23527,9 +23748,9 @@ extension on Traductions {
 			'tc.bibliotheque.vide.invitation' => 'Vos enseignants déposeront ici les supports de vos cours.',
 			'tc.bibliotheque.aucunResultat.message' => 'Aucun support ne correspond',
 			'tc.bibliotheque.aucunResultat.invitation' => 'Essayez un autre mot, ou relâchez les filtres.',
-			'tc.bibliotheque.indisponible.message' => 'La bibliothèque est momentanément indisponible',
 			_ => null,
 		} ?? switch (path) {
+			'tc.bibliotheque.indisponible.message' => 'La bibliothèque est momentanément indisponible',
 			'tc.bibliotheque.indisponible.action' => 'Réessayer',
 			'tc.bibliotheque.introuvable.message' => 'Ce support ne vous est pas ouvert',
 			'tc.bibliotheque.introuvable.invitation' => 'Il a peut-être été retiré, ou il est réservé à un autre groupe. Votre enseignant peut vous le rouvrir.',
@@ -24041,9 +24262,9 @@ extension on Traductions {
 			'adulte.recharge.resultat.indisponibleTitre' => 'Suivi du paiement pas encore disponible',
 			'adulte.recharge.resultat.indisponiblePhrase' => 'L\'état des paiements n\'est pas encore disponible dans l\'application. Aucun paiement n\'a été effectué ici.',
 			'adulte.recharge.resultat.lectureEchecTitre' => 'L\'état du paiement n\'a pas pu être lu.',
-			'adulte.recharge.resultat.lectureEchecPhrase' => 'Le paiement n\'est pas annulé pour autant. Ne payez pas une seconde fois : réessayez la lecture.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.recharge.resultat.lectureEchecPhrase' => 'Le paiement n\'est pas annulé pour autant. Ne payez pas une seconde fois : réessayez la lecture.',
 			'adulte.paiements.beneficiaires' => 'Bénéficiaires',
 			'adulte.paiements.recharger' => 'Recharger',
 			'adulte.paiements.recapitulatif' => ({required Object valeur}) => 'Récapitulatif du foyer : ${valeur}. Chaque solde reste celui de son bénéficiaire.',
@@ -24555,9 +24776,9 @@ extension on Traductions {
 			'comptable.paiements.confirmation.confirmerUn' => ({required Object montant}) => 'Confirmer le paiement de ${montant}',
 			'comptable.paiements.confirmation.confirmerLot' => ({required num n, required Object montants}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Confirmer le paiement prêt de ${montants}', other: 'Confirmer les ${n} paiements prêts : ${montants}', ), 
 			'comptable.paiements.confirmation.demanderValidation' => 'Demander validation',
-			'comptable.paiements.confirmation.annuler' => 'Annuler',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.paiements.confirmation.annuler' => 'Annuler',
 			'comptable.paiements.confirmation.fermer' => 'Fermer',
 			'comptable.paiements.confirmation.soumisTitre' => 'Envoyé au prestataire',
 			'comptable.paiements.confirmation.soumisPhrase' => 'Un paiement envoyé n\'est pas encore reçu : son état vient du suivi du prestataire. Actualisez le suivi pour le voir avancer.',
@@ -25022,6 +25243,66 @@ extension on Traductions {
 			'comptable.contractuels.sousTitre' => 'Les montants sont définis à la création de l\'obligation, figés après approbation.',
 			'comptable.contractuels.nouvelle' => 'Nouvelle obligation',
 			'comptable.contractuels.detailTitre' => 'Obligation',
+			'comptable.validation.sousTitre' => 'Les demandes du Comptable qui attendent la décision d\'une autre personne habilitée. Celui qui demande ne valide jamais sa propre demande.',
+			'comptable.validation.aDecider' => 'À décider',
+			'comptable.validation.decidees' => 'Décidées récemment',
+			'comptable.validation.videTitre' => 'Rien à valider',
+			'comptable.validation.videPhrase' => 'Les prochaines demandes du Comptable apparaîtront ici.',
+			'comptable.validation.natures.payoutSensible' => 'Paiement sensible',
+			'comptable.validation.natures.retraitReserve' => 'Retrait de la Réserve stratégique',
+			'comptable.validation.natures.obligationAApprouver' => 'Obligation ponctuelle',
+			'comptable.validation.natures.payoutDuComptable' => 'Paie du Comptable',
+			'comptable.validation.natures.sortieCoffreProtege' => 'Sortie d\'un coffre protégé',
+			'comptable.validation.demandePar' => ({required Object demandeur, required Object date}) => 'Demandée par ${demandeur} le ${date}',
+			'comptable.validation.valideePar' => ({required Object decideur, required Object date}) => 'Validée par ${decideur} le ${date}',
+			'comptable.validation.refuseePar' => ({required Object decideur, required Object date}) => 'Refusée par ${decideur} le ${date}',
+			'comptable.validation.motif' => ({required Object motif}) => 'Motif : ${motif}',
+			'comptable.validation.ouvrir' => ({required Object objet}) => 'Voir la demande : ${objet}',
+			'comptable.validation.votreDemandeTitre' => 'Votre propre demande',
+			'comptable.validation.votreDemandePhrase' => 'Une autre personne habilitée la décidera : vous ne validez jamais une demande que vous avez faite.',
+			'comptable.validation.detail.titre' => 'Demande de validation',
+			'comptable.validation.detail.nature' => 'Nature',
+			'comptable.validation.detail.objet' => 'Objet',
+			'comptable.validation.detail.demandeur' => 'Demandée par',
+			'comptable.validation.detail.date' => 'Date de la demande',
+			'comptable.validation.detail.raison' => 'Raison',
+			'comptable.validation.detail.montant' => 'Montant exact',
+			'comptable.validation.detail.etat' => 'État',
+			'comptable.validation.detail.historique' => 'Historique',
+			'comptable.validation.detail.historiqueVide' => 'Aucune entrée pour l\'instant.',
+			'comptable.validation.valider' => 'Valider',
+			'comptable.validation.refuser' => 'Refuser',
+			'comptable.validation.annuler' => 'Annuler',
+			'comptable.validation.fermer' => 'Fermer',
+			'comptable.validation.confirmerRefus' => 'Confirmer le refus',
+			'comptable.validation.motifTitre' => 'Motif du refus',
+			'comptable.validation.motifPhrase' => 'Le Comptable lira ce motif avec la décision. Choisissez-en un, ou précisez le vôtre.',
+			'comptable.validation.motifs.coordonnees' => 'Coordonnées du bénéficiaire à vérifier',
+			'comptable.validation.motifs.montant' => 'Montant à vérifier à la source',
+			'comptable.validation.motifs.justificatif' => 'Justificatif manquant ou illisible',
+			'comptable.validation.motifs.reserve' => 'Hors de la politique de la Réserve',
+			'comptable.validation.motifs.reporter' => 'À reporter au prochain cycle',
+			'comptable.validation.motifs.autre' => 'Autre',
+			'comptable.validation.motifAutreChamp' => 'Précisez le motif',
+			'comptable.validation.erreurMotif' => 'Choisissez un motif pour refuser.',
+			'comptable.validation.erreurMotifAutre' => 'Précisez le motif pour refuser.',
+			'comptable.validation.decisionValidee' => 'Votre décision est enregistrée : la demande est validée.',
+			'comptable.validation.decisionRefusee' => 'Votre décision est enregistrée : la demande est refusée, avec son motif.',
+			'comptable.validation.refusTitre' => 'Décision non enregistrée',
+			'comptable.validation.refusDemandeur' => 'Vous avez fait cette demande : une autre personne habilitée doit la décider. Rien n\'a changé.',
+			_ => null,
+		} ?? switch (path) {
+			'comptable.validation.refusMotif' => 'Un refus demande un motif. Choisissez-en un, puis confirmez.',
+			'comptable.validation.refusDejaDecidee' => 'Cette demande a déjà été décidée. Relisez la liste.',
+			'comptable.validation.inconnuTitre' => 'Décision non confirmée',
+			'comptable.validation.inconnuPhrase' => 'Nous ne savons pas si votre décision a été enregistrée. Relisez la liste avant de décider à nouveau.',
+			'comptable.validation.relireListe' => 'Relire la liste',
+			'comptable.validation.horsLigne' => 'Hors ligne : reconnectez-vous pour décider.',
+			'comptable.validation.suiviEnAttente' => ({required Object date}) => 'Demandée le ${date}. Une autre personne habilitée décidera ; rien ne part avant sa décision.',
+			'comptable.validation.suiviValidee' => ({required Object decideur, required Object date}) => 'Validée par ${decideur} le ${date}.',
+			'comptable.validation.suiviRefusee' => ({required Object decideur, required Object date, required Object motif}) => 'Refusée par ${decideur} le ${date}. Motif : ${motif}',
+			'comptable.validation.erreurSuivi' => 'Nous n\'avons pas pu lire l\'état de la demande de validation. Réessayez dans un instant.',
+			'comptable.validation.reessayer' => 'Réessayer',
 			'comptable.direction.versionDepuis' => ({required Object version, required Object date}) => 'Version ${version}, en vigueur depuis le ${date}',
 			'comptable.direction.versionSansDate' => ({required Object version}) => 'Version ${version}',
 			'comptable.direction.auteur' => ({required Object auteur}) => 'Enregistrée par ${auteur}',
@@ -25070,8 +25351,6 @@ extension on Traductions {
 			'comptable.direction.reservePanneau.cadenceTitre' => 'Cadence',
 			'comptable.direction.reservePanneau.cadenceDetail' => 'Quand l\'alimentation a lieu.',
 			'comptable.direction.reservePanneau.cadence.clotureCycle' => 'À chaque clôture de cycle',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.reservePanneau.cadence.hebdomadaire' => 'Chaque semaine',
 			'comptable.direction.reservePanneau.cadence.mensuelle' => 'Chaque mois',
 			'comptable.direction.reservePanneau.cadence.apresEncaissementConsolide' => 'Après chaque encaissement consolidé',

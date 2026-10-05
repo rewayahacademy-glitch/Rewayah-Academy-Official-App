@@ -49,6 +49,7 @@ import '../../../core/widgets/pastilles_comptable.dart';
 import '../../../core/widgets/section_header.dart';
 import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/status_pill.dart';
+import '../validation/suivi_validation.dart';
 import 'confirmation/confirmation_payout.dart';
 import 'ligne_obligation.dart';
 import 'paiements_donnees.dart';
@@ -104,7 +105,8 @@ class _DetailPaiementPageState extends ConsumerState<DetailPaiementPage> {
   void _relire() {
     ref
       ..invalidate(obligationPayableProvider(widget.obligationId))
-      ..invalidate(journalObligationProvider(widget.obligationId));
+      ..invalidate(journalObligationProvider(widget.obligationId))
+      ..invalidate(demandesValidationObjetProvider(widget.obligationId));
   }
 
   @override
@@ -210,6 +212,10 @@ class _Contenu extends StatelessWidget {
       children: <Widget>[
         _Identite(obligation: o),
         for (final Widget alerte in alertes) ...<Widget>[Ecart.vLg, alerte],
+        // CPT-VAL-1 : ou en est la demande de validation, rendue par la
+        // source (« Validation demandee », « Validee », « Refusee » et son
+        // motif).
+        SuiviValidation(objetId: o.id),
         if (s != null) ...<Widget>[
           Ecart.vLg,
           BandeauAttention(

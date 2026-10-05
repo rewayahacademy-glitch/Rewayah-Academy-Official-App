@@ -14,11 +14,16 @@ import 'package:rewayah_academy/core/widgets/montant_sensible.dart';
 import 'package:rewayah_academy/features/comptable/paiements/detail_paiement_page.dart';
 import 'package:rewayah_academy/features/comptable/paiements/signaler_ecart.dart';
 import 'package:rewayah_academy/features/demo/comptable/paiements_demo.dart';
+import 'package:rewayah_academy/features/demo/comptable/validations_demo.dart';
 import 'package:rewayah_academy/features/demo/comptable/socle_comptable_demo.dart';
 
 import 'support_paiements.dart';
 
 void main() {
+  // Le registre unique des validations de la demonstration (CPT-VAL-1)
+  // repart de l'etat de depart a chaque test.
+  setUp(RegistreValidationsDemo.instance.reinitialiser);
+
   final p = t.comptable.paiements;
   const Size bureau = Size(1440, 1600);
 

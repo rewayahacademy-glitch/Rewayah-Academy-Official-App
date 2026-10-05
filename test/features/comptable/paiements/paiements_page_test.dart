@@ -23,11 +23,16 @@ import 'package:rewayah_academy/features/comptable/paiements/detail_paiement_pag
 import 'package:rewayah_academy/features/comptable/paiements/ligne_obligation.dart';
 import 'package:rewayah_academy/features/comptable/paiements/paiements_page.dart';
 import 'package:rewayah_academy/features/demo/comptable/paiements_demo.dart';
+import 'package:rewayah_academy/features/demo/comptable/validations_demo.dart';
 import 'package:rewayah_academy/features/demo/comptable/socle_comptable_demo.dart';
 
 import 'support_paiements.dart';
 
 void main() {
+  // Le registre unique des validations de la demonstration (CPT-VAL-1)
+  // repart de l'etat de depart a chaque test.
+  setUp(RegistreValidationsDemo.instance.reinitialiser);
+
   final p = t.comptable.paiements;
   final String masqueUsd = MontantSensible.masquePour('USD');
 

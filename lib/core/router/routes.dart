@@ -664,6 +664,11 @@ abstract final class Routes {
   static const String adminFinanceReserveDelegation =
       '/admin/finance/reserve-delegation';
 
+  /// Le quatrieme onglet du domaine Finance de la direction : « A valider »
+  /// (decision Q-8 = (a) du 05/10, CPT-VAL-1) : les demandes du Comptable
+  /// qu'une autre personne habilitee valide ou refuse.
+  static const String adminFinanceAValider = '/admin/finance/a-valider';
+
   /// La coquille du Comptable en demonstration : `?ecran=...&montants=...`.
   /// Enregistree seulement hors production (`environnementAutoriseDemo`).
   static const String demoComptable = '/demo/comptable';

@@ -21,10 +21,13 @@ import '../../../core/capacites/capacite_indisponible.dart';
 import '../../../core/capacites/port_capacite_payout.dart';
 import '../../../core/capacites/port_obligations_payables.dart';
 import '../../../core/capacites/port_payout.dart';
+import '../../../core/capacites/port_validations_finance.dart';
 import '../../../core/comptable/modeles_comptable.dart';
 import '../../../core/comptable/statuts_comptable.dart';
 import '../../../core/finance/montant.dart';
+import '../../../core/widgets/comptable/ligne_activite.dart' show dateComptable;
 import 'socle_comptable_demo.dart';
+import 'validations_demo.dart';
 
 /// Les identifiants remarquables de la demonstration, pour les tests et la
 /// recette.
@@ -102,6 +105,51 @@ class EtatDemoPaiements {
   int _sequence = 0;
 
   String _id(String prefixe) => '$prefixe-${++_sequence}';
+
+  /// Applique aux obligations la decision du registre unique des
+  /// validations (CPT-VAL-1), comme le fera le serveur : une demande en
+  /// attente retire « Demander validation » ; validee, le paiement devient
+  /// payable par le Comptable (sauf sa propre paie, toujours traitee par un
+  /// autre responsable) ; refusee, la demande peut etre refaite apres
+  /// correction.
+  void suivreValidations() {
+    for (final ObligationPayable o in obligations.values.toList()) {
+      if (o.etat != EtatPaiementSortant.validationRequise) continue;
+      final DemandeValidation? d = RegistreValidationsDemo.instance.derniere(
+        o.id,
+      );
+      if (d == null) continue;
+      switch (d.etat) {
+        case EtatDemandeValidation.enAttente:
+          obligations[o.id] = _copie(
+            o,
+            permissions: PermissionsFinance(
+              actions: o.permissions.actions.difference(<ActionFinance>{
+                ActionFinance.demanderValidation,
+              }),
+              blocages: o.permissions.blocages,
+            ),
+          );
+        case EtatDemandeValidation.validee:
+          if (o.permissions.raisonDe(ActionFinance.payer) ==
+              RaisonBlocage.validationRequise) {
+            obligations[o.id] = _copie(
+              o,
+              etat: EtatPaiementSortant.pretAPayer,
+              permissions: _peutPayer,
+            );
+          }
+        case EtatDemandeValidation.refusee:
+          obligations[o.id] = _copie(
+            o,
+            permissions: _bloque(
+              RaisonBlocage.validationRequise,
+              validation: true,
+            ),
+          );
+      }
+    }
+  }
 }
 
 /// Les obligations payables en demonstration.
@@ -113,14 +161,16 @@ class ObligationsPayablesDemo implements PortObligationsPayables {
   final EtatDemoPaiements etat;
 
   @override
-  Future<List<ObligationPayable>> liste(FiltreObligations filtre) async => etat
-      .obligations
-      .values
-      .where((ObligationPayable o) => _retenue(o, filtre))
-      .toList();
+  Future<List<ObligationPayable>> liste(FiltreObligations filtre) async {
+    etat.suivreValidations();
+    return etat.obligations.values
+        .where((ObligationPayable o) => _retenue(o, filtre))
+        .toList();
+  }
 
   @override
   Future<ObligationPayable> detail(String obligationId) async {
+    etat.suivreValidations();
     final ObligationPayable? o = etat.obligations[obligationId];
     if (o == null) {
       throw const ObligationIntrouvableDemo();
@@ -169,6 +219,7 @@ class PayoutDemo implements PortPayout {
 
   @override
   Future<PreflightLot> preflight(List<ObligationChoisie> selection) async {
+    etat.suivreValidations();
     final List<ObligationChoisie> prets = <ObligationChoisie>[];
     final List<ExclusionLot> exclus = <ExclusionLot>[];
     bool sensible = false;
@@ -325,14 +376,44 @@ class PayoutDemo implements PortPayout {
     required String obligationId,
     required String motif,
     required String cleIdempotence,
-  }) async => etat.validations.putIfAbsent(
-    cleIdempotence,
-    () => DemandeValidationDeposee(
-      demandeId: etat._id('validation'),
+  }) async {
+    final DemandeValidationDeposee? deja = etat.validations[cleIdempotence];
+    if (deja != null) return deja;
+    final ObligationPayable? o = etat.obligations[obligationId];
+    if (o == null) throw const ObligationIntrouvableDemo();
+    // Le registre unique (CPT-VAL-1) : la demande part dans l'onglet
+    // « A valider » de la direction, qui seule la decide.
+    final bool sienne =
+        o.permissions.raisonDe(ActionFinance.payer) ==
+        RaisonBlocage.autoPaiement;
+    final DateTime? modification = o.destination?.derniereModification;
+    final DemandeValidation demande = RegistreValidationsDemo.instance.deposer(
+      nature: sienne
+          ? NatureDemandeValidation.payoutDuComptable
+          : NatureDemandeValidation.payoutSensible,
+      demandeurId: SocleComptableDemo.comptableId,
+      demandeurNom: SocleComptableDemo.leComptable.nom,
+      objet: '${o.periode} · ${o.beneficiaire.nom}',
+      montant: o.montant,
+      raison:
+          o.permissions.raisonDe(ActionFinance.payer) ??
+          RaisonBlocage.validationRequise,
+      cleIdempotence: cleIdempotence,
+      objetId: o.id,
+      precision: modification != null
+          ? 'Coordonnées du bénéficiaire modifiées le '
+                '${dateComptable(modification)}.'
+          : o.beneficiaire.lieALOperateur
+          ? 'Bénéficiaire lié à la personne qui prépare le paiement.'
+          : null,
+    );
+    etat.suivreValidations();
+    return etat.validations[cleIdempotence] = DemandeValidationDeposee(
+      demandeId: demande.id,
       obligationId: obligationId,
-      etat: EtatDemandeValidation.enAttente,
-    ),
-  );
+      etat: demande.etat,
+    );
+  }
 
   void _changerEtat(ObligationPayable o, EtatPaiementSortant nouvel) {
     if (o.etat == nouvel) return;

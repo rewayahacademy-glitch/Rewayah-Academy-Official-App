@@ -54,6 +54,7 @@ import 'comptable/encaissements_demo.dart';
 import 'comptable/paiements_demo.dart';
 import 'comptable/socle_comptable_demo.dart';
 import 'comptable/tresorerie_demo.dart';
+import 'comptable/validations_demo.dart';
 import 'demo_finance_page.dart' show DemoFinancePage, adresseDemoFinance;
 import 'mode_demonstration.dart';
 import 'repere_demonstration.dart';
@@ -223,7 +224,14 @@ List<Override> surchargesCoquilleComptableDemo({
   ...surchargesDemoEncaissements(),
   ...surchargesDemoBeneficiaires(),
   ...surchargesDemoContractuels(),
-  ...surchargesDemoDirection(),
+  // Le Comptable lit ses propres demandes de validation (CPT-VAL-1) : la
+  // source lui rend « approuver » bloquee sur chacune (autoPaiement).
+  ...surchargesDemoDirection(
+    validations: ValidationsFinanceDemo(
+      lecteurId: SocleComptableDemo.comptableId,
+      lecteurNom: SocleComptableDemo.leComptable.nom,
+    ),
+  ),
 ];
 
 /// La page : la liste des ecrans, ou la coquille sur l'ecran choisi.

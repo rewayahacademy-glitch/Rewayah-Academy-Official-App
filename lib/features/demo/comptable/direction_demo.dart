@@ -14,6 +14,7 @@ import '../../../core/capacites/port_validations_finance.dart';
 import '../../../core/comptable/modeles_comptable.dart';
 import '../../../core/comptable/statuts_comptable.dart';
 import 'socle_comptable_demo.dart';
+import 'validations_demo.dart';
 
 /// Qui enregistre une politique : « la direction », jamais « admin ».
 const String _laDirection = 'La direction';
@@ -224,29 +225,6 @@ class DelegationFinanceDemo implements PortDelegationFinance {
       List<EntreeJournal>.unmodifiable(_journal);
 }
 
-/// Les validations en demonstration : aucune demande (l'ecran Direction
-/// attend CPT-Q1).
-class ValidationsFinanceDemo implements PortValidationsFinance {
-  /// Cree le double.
-  const ValidationsFinanceDemo();
-
-  @override
-  Future<List<DemandeValidation>> demandes(
-    FiltreDemandesValidation filtre,
-  ) async => const <DemandeValidation>[];
-
-  @override
-  Future<DemandeValidation> decider({
-    required String demandeId,
-    required DecisionValidation decision,
-    String? motif,
-  }) => throw UnsupportedError('Aucune demande en demonstration.');
-
-  @override
-  Future<List<EntreeJournal>> journal(String demandeId) async =>
-      const <EntreeJournal>[];
-}
-
 /// Les instances de la demonstration, gardees pour toute la vie de la page :
 /// la demonstration Finance reconstruit ses surcharges a chaque rendu, et une
 /// version enregistree ne doit pas s'effacer.
@@ -254,11 +232,14 @@ final PolitiqueReserveDemo _reserve = PolitiqueReserveDemo();
 final DelegationFinanceDemo _delegation = DelegationFinanceDemo();
 
 /// Les surcharges de la demonstration Direction (lues aussi par la
-/// demonstration Finance, `/demo/finance?ecran=reserveDelegation`).
-List<Override> surchargesDemoDirection() => <Override>[
+/// demonstration Finance, `/demo/finance?ecran=reserveDelegation` et
+/// `?ecran=aValider`). Les validations lisent le registre unique de la
+/// demonstration au nom de [validations] (la direction par defaut ; la
+/// coquille du Comptable y passe le Comptable, CPT-VAL-1).
+List<Override> surchargesDemoDirection({
+  ValidationsFinanceDemo validations = const ValidationsFinanceDemo(),
+}) => <Override>[
   portPolitiqueReserveProvider.overrideWithValue(_reserve),
   portDelegationFinanceProvider.overrideWithValue(_delegation),
-  portValidationsFinanceProvider.overrideWithValue(
-    const ValidationsFinanceDemo(),
-  ),
+  portValidationsFinanceProvider.overrideWithValue(validations),
 ];

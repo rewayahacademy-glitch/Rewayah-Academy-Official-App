@@ -1,12 +1,30 @@
 // Les validations des operations sensibles (spec §21.4, §9.5 ; CPT-BR-09).
-// **Interface seulement**, posee par CPT-F ; **propriete de la voie CPT-DIR
-// ensuite** (`20_comptable/02_DECOUPAGE.md`, liste B). L'ecran Direction qui
-// decide attend la reponse du directeur a CPT-Q1 ; cote Comptable, seul
-// l'etat « Validation demandee » s'affiche.
+// Interface posee par CPT-F, completee par CPT-VAL-1 (05/10) apres la
+// decision Q-8 = (a) du directeur : un onglet « A valider » dans la Finance
+// de la direction recoit les demandes du Comptable (paiement sensible,
+// retrait de la Reserve strategique, obligation ponctuelle, sa propre paie),
+// avec Valider et Refuser (motif obligatoire). Cote Comptable, la demande
+// passe « Validation demandee » puis « Validee » ou « Refusee (motif) ».
 //
 // Une decision est prise par une **autre personne que le demandeur** : le
-// serveur le garantit, l'ecran ne fait que rendre les demandes et la
-// decision.
+// serveur le garantit et le rend en capacite sur chaque demande
+// ([DemandeValidation.permissions] : `approuver` permise, ou bloquee avec
+// `autoPaiement` quand la personne connectee est le demandeur). L'ecran ne
+// lit jamais un role et ne compare jamais deux noms : il rend la capacite.
+// Aucune decision n'est annoncee avant la reponse de la source.
+//
+// RPC attendues au branchement (BR-1, `docs/current/CPT-VAL-1.md` ; rien
+// n'est branche, aucun fichier `supabase/` touche) :
+// - `finance_validations_lister(etat?, nature?, objet_id?)` : les demandes
+//   visibles par l'appelant (la direction : toutes ; le Comptable : les
+//   siennes), chacune avec `actions_permises` / `raison_blocage` calcules
+//   pour l'appelant ;
+// - `finance_validation_decider(demande_id, decision, motif?, cle)` :
+//   `security definer`, refuse `demandeur_ne_peut_pas_valider` si
+//   `auth.uid()` est le demandeur, `motif_obligatoire` pour un refus sans
+//   motif, `deja_decidee` si la demande n'est plus en attente ; idempotent
+//   par cle ; ecrit le journal ;
+// - `finance_validation_journal(demande_id)` (CPT-BR-17).
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -50,6 +68,9 @@ class DemandeValidation {
     this.objetId,
     this.decideur,
     this.motifDecision,
+    this.dateDecision,
+    this.precision,
+    this.permissions = PermissionsFinance.lectureSeule,
   });
 
   /// L'identifiant.
@@ -84,6 +105,18 @@ class DemandeValidation {
 
   /// Le motif d'un refus.
   final String? motifDecision;
+
+  /// La date de la decision, une fois decidee.
+  final DateTime? dateDecision;
+
+  /// La precision de la raison, rendue par la source (« Coordonnees
+  /// modifiees le 2 octobre 2026 »), ou `null`.
+  final String? precision;
+
+  /// Ce que la personne connectee peut faire de cette demande, calcule par
+  /// la source : `approuver` (valider ou refuser) permise, ou bloquee avec
+  /// la raison rendue (`autoPaiement` : c'est sa propre demande).
+  final PermissionsFinance permissions;
 }
 
 /// La decision.
@@ -99,7 +132,7 @@ enum DecisionValidation {
 @immutable
 class FiltreDemandesValidation {
   /// Cree le filtre.
-  const FiltreDemandesValidation({this.etat, this.nature});
+  const FiltreDemandesValidation({this.etat, this.nature, this.objetId});
 
   /// Toutes.
   static const FiltreDemandesValidation tout = FiltreDemandesValidation();
@@ -109,6 +142,45 @@ class FiltreDemandesValidation {
 
   /// Une nature.
   final NatureDemandeValidation? nature;
+
+  /// Les demandes d'un seul objet (obligation, mouvement), pour le suivi
+  /// cote Comptable.
+  final String? objetId;
+
+  @override
+  bool operator ==(Object other) =>
+      other is FiltreDemandesValidation &&
+      other.etat == etat &&
+      other.nature == nature &&
+      other.objetId == objetId;
+
+  @override
+  int get hashCode => Object.hash(etat, nature, objetId);
+}
+
+/// Pourquoi la source refuse une decision. Rien n'a change.
+enum MotifRefusDecision {
+  /// La personne connectee est le demandeur : elle ne decide jamais.
+  demandeurNePeutPasValider,
+
+  /// Un refus sans motif.
+  motifObligatoire,
+
+  /// La demande n'est plus en attente (decidee entre-temps).
+  dejaDecidee,
+}
+
+/// Le refus explicite d'une decision par la source : rien n'a change. Toute
+/// autre erreur laisse l'issue inconnue (la reponse a pu se perdre).
+class RefusDecision implements Exception {
+  /// Cree le refus.
+  const RefusDecision(this.motif);
+
+  /// Le motif.
+  final MotifRefusDecision motif;
+
+  @override
+  String toString() => 'RefusDecision(${motif.name})';
 }
 
 /// Les validations (CPT-BR-09).
@@ -116,10 +188,14 @@ abstract interface class PortValidationsFinance {
   /// Les demandes, filtrees.
   Future<List<DemandeValidation>> demandes(FiltreDemandesValidation filtre);
 
-  /// Decide, avec un motif obligatoire pour un refus.
+  /// Decide, avec un motif obligatoire pour un refus, sous la cle
+  /// d'idempotence tiree par l'ecran et rejouee telle quelle. Rend la
+  /// demande telle que la source l'a enregistree ; jette [RefusDecision]
+  /// quand la source refuse (rien n'a change).
   Future<DemandeValidation> decider({
     required String demandeId,
     required DecisionValidation decision,
+    required String cleIdempotence,
     String? motif,
   });
 
@@ -142,6 +218,7 @@ class ValidationsFinanceIndisponibles implements PortValidationsFinance {
   Future<DemandeValidation> decider({
     required String demandeId,
     required DecisionValidation decision,
+    required String cleIdempotence,
     String? motif,
   }) => Future<DemandeValidation>.error(_manque);
 
