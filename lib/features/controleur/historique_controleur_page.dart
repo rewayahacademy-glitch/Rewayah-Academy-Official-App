@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
@@ -431,7 +432,10 @@ class _DetailRapport extends StatelessWidget {
                 if (r.presents.isNotEmpty)
                   LigneCleValeur(
                     cle: h.cleElevesPresents,
-                    valeur: r.presents.join(', '),
+                    // Chaque nom dans son isolat : la virgule et le point
+                    // de l'initiale restent a leur place, nom arabe ou
+                    // latin (CTRL-ROSTER-C7-1b).
+                    valeur: r.presents.map(isolerSens).join(', '),
                   ),
               ],
             ),

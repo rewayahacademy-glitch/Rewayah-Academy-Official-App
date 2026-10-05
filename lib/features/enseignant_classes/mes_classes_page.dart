@@ -12,6 +12,7 @@ import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/domain/enums.dart';
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
@@ -232,7 +233,7 @@ LigneRubrique _ligne(ClasseListee l, VoidCallback? onPress) {
   // élèves » se lisait « élèves 3 ». La ligne entiere, et non chaque segment :
   // isolee segment par segment, une legende qui passe a la ligne a 320 px se
   // lisait dans le desordre (« · Niveau 2 / 3 · Français / élèves »).
-  final String contexte = _isole(
+  final String contexte = isolerSens(
     <String>[
       if (niveau != null) t.enseignant.classes.niveau(niveau: '$niveau'),
       if (langue != null && langue.trim().isNotEmpty) langue.trim(),
@@ -243,7 +244,7 @@ LigneRubrique _ligne(ClasseListee l, VoidCallback? onPress) {
     ].join(' · '),
   );
   final DateTime? p = l.prochaine;
-  final String quand = _isole(
+  final String quand = isolerSens(
     p == null
         ? t.enseignant.classes.sansProchaine
         : t.enseignant.classes.prochaine(
@@ -318,7 +319,3 @@ class _CahierAValider extends StatelessWidget {
     );
   }
 }
-
-/// Isole [texte] dans son propre sens de lecture (premier caractere fort),
-/// sans changer l'ordre des segments voisins.
-String _isole(String texte) => '\u2068$texte\u2069';
