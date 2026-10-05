@@ -15,6 +15,7 @@
 // Regenerer (seulement sur l'ancien code) : EMPREINTE_CORAN=ecrire.
 
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -108,7 +109,9 @@ String _releve(WidgetTester tester, String scenario, Finder racines) {
       final List<String> types = <String>[];
       void visiter(Element e, int profondeur) {
         types.add('${'  ' * profondeur}${e.widget.runtimeType}');
-        e.visitChildElements((Element enfant) => visiter(enfant, profondeur + 1));
+        e.visitChildElements(
+          (Element enfant) => visiter(enfant, profondeur + 1),
+        );
       }
 
       visiter(bloc, 0);
@@ -156,9 +159,8 @@ Widget _hote(Widget enfant, ProviderContainer racine, double echelle) =>
           supportedLocales: AppLocaleUtils.supportedLocales,
           localizationsDelegates: GlobalMaterialLocalizations.delegates,
           builder: (BuildContext context, Widget? child) => MediaQuery(
-            data: MediaQuery.of(
-              context,
-            ).copyWith(textScaler: TextScaler.linear(echelle)),
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: TextScaler.linear(echelle)),
             child: child!,
           ),
           home: enfant,

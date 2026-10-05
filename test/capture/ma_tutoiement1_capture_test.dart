@@ -27,41 +27,19 @@ import '../support/aucun_mot_coupe.dart';
 import '../teaching_core/c/goldens/corpus_reference.dart';
 import 'outil_capture.dart';
 
-/// [exceptions] : les paragraphes exclus de la mesure. Seul cas : le bouton
-/// « Reessayer » de l'etat « texte non charge » des vues de rendu
-/// (`tc_mushaf`), qui se coupe en plein mot a 320 x2 dans le cadre de page,
-/// AVANT cette etape et quel que soit le registre (meme capture chez
-/// l'enfant tutoye). Defaut signale dans le rapport de l'etape, hors de son
-/// perimetre (le rendu de `tc_mushaf` ne change pas ici).
-void _mesurer(
-  WidgetTester tester, {
-  Set<String> exceptions = const <String>{},
-}) {
+/// La mesure : aucun mot coupe ni tronque, sans aucune exception.
+/// MA-CORAN-X2-1 (05/10/2026) : « Reessayer » n'est plus exclu a 320 x2 ;
+/// l'etat sans texte s'arrete au-dessus des commandes et defile.
+void _mesurer(WidgetTester tester) {
   final List<String> fautes = motsCoupes(
     tester,
     find.byKey(cadreCapture),
     traitDUnionPermis: true,
-    exceptions: exceptions,
   );
   if (fautes.isNotEmpty) debugPrint('FAUTES ${fautes.toSet().join(' | ')}');
-  if (exceptions.isNotEmpty) {
-    // La trace du defaut anterieur exclu, pour le rapport.
-    final List<String> brutes = motsCoupes(
-      tester,
-      find.byKey(cadreCapture),
-      traitDUnionPermis: true,
-    );
-    debugPrint('EXCLUES ${brutes.toSet().join(' | ')}');
-  }
   expect(fautes, isEmpty, reason: 'Un mot coupe ou tronque');
   expect(tester.takeException(), isNull);
 }
-
-/// Le defaut anterieur exclu (voir [_mesurer]) : seulement la ou il se voit.
-Set<String> _exceptions(EtatSansTexte etat, String format) =>
-    etat == EtatSansTexte.indisponible && format == '320_x2'
-    ? const <String>{'Réessayer'}
-    : const <String>{};
 
 const List<(String, Size, double, double)> _formats =
     <(String, Size, double, double)>[
@@ -133,7 +111,7 @@ void main() {
               theme: theme,
             );
             debugPrint('PNG ${await capturer(tester, fichier)}');
-            _mesurer(tester, exceptions: _exceptions(etat, nom));
+            _mesurer(tester);
           });
         }
 
@@ -176,7 +154,7 @@ void main() {
             theme: ThemeMode.light,
           );
           debugPrint('PNG ${await capturer(tester, fichier)}');
-          _mesurer(tester, exceptions: _exceptions(etat, nom));
+          _mesurer(tester);
         });
       }
       final String agrandi =

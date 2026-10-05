@@ -345,8 +345,8 @@ class _ContenuDePage extends ConsumerWidget {
       EtatLecteur.chargement => const Center(
         child: CircularProgressIndicator.adaptive(),
       ),
-      EtatLecteur.indisponible => Center(
-        child: EmptyState(
+      EtatLecteur.indisponible => EtatSansTexteLecteur(
+        EmptyState(
           message: t.eleve.coran.indisponible,
           invitation:
               enrobage?.indisponibleDetail ?? t.eleve.coran.indisponibleDetail,
@@ -355,8 +355,8 @@ class _ContenuDePage extends ConsumerWidget {
           onAction: () => ref.invalidate(pageCorpusProvider(vue.numero)),
         ),
       ),
-      EtatLecteur.corpusAbsent => Center(
-        child: EmptyState(
+      EtatLecteur.corpusAbsent => EtatSansTexteLecteur(
+        EmptyState(
           message: t.eleve.coran.absent,
           invitation: enrobage?.absentDetail ?? t.eleve.coran.absentDetail,
           icone: AppIcons.rienAAfficher,
@@ -624,7 +624,15 @@ class NoticeComposition extends StatelessWidget {
   final DisponibiliteLayout fidelite;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => Directionality(
+    // MUSHAF-DIR-1 : une phrase francaise, au sens de la langue de
+    // l'interface (le point final reste a la fin), meme posee dans une page
+    // feuilletee de droite a gauche.
+    textDirection: sensInterface(context),
+    child: _notice(context),
+  );
+
+  Widget _notice(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 

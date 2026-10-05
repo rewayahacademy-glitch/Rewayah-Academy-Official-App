@@ -72,15 +72,15 @@ class _EtatNonLisible extends ConsumerWidget {
       EtatLecteur.chargement => const Center(
         child: CircularProgressIndicator.adaptive(),
       ),
-      EtatLecteur.corpusAbsent => Center(
-        child: EmptyState(
+      EtatLecteur.corpusAbsent => EtatSansTexteLecteur(
+        EmptyState(
           message: t.eleve.coran.absent,
           invitation: enrobage?.absentDetail ?? t.eleve.coran.absentDetail,
           icone: AppIcons.rienAAfficher,
         ),
       ),
-      EtatLecteur.indisponible || EtatLecteur.lecture => Center(
-        child: EmptyState(
+      EtatLecteur.indisponible || EtatLecteur.lecture => EtatSansTexteLecteur(
+        EmptyState(
           message: t.eleve.coran.indisponible,
           invitation:
               enrobage?.indisponibleDetail ?? t.eleve.coran.indisponibleDetail,
