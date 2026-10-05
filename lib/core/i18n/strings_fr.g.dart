@@ -3553,11 +3553,11 @@ class Traductions$accessibilite$apres$fr {
 	/// fr: 'Votre prochaine séance et votre travail n'ont pas pu être chargés, sans doute à cause de la connexion. Réessayez, ou retrouvez-les dans votre Classe.'
 	String get erreurVous => 'Votre prochaine séance et votre travail n\'ont pas pu être chargés, sans doute à cause de la connexion. Réessayez, ou retrouvez-les dans votre Classe.';
 
-	/// fr: 'Tu es hors ligne : ta prochaine séance et ton travail s'afficheront quand la connexion reviendra.'
-	String get horsLigne => 'Tu es hors ligne : ta prochaine séance et ton travail s\'afficheront quand la connexion reviendra.';
+	/// fr: 'Ta prochaine séance et ton travail s'afficheront quand la connexion reviendra.'
+	String get horsLigne => 'Ta prochaine séance et ton travail s\'afficheront quand la connexion reviendra.';
 
-	/// fr: 'Vous êtes hors ligne : votre prochaine séance et votre travail s'afficheront quand la connexion reviendra.'
-	String get horsLigneVous => 'Vous êtes hors ligne : votre prochaine séance et votre travail s\'afficheront quand la connexion reviendra.';
+	/// fr: 'Votre prochaine séance et votre travail s'afficheront quand la connexion reviendra.'
+	String get horsLigneVous => 'Votre prochaine séance et votre travail s\'afficheront quand la connexion reviendra.';
 
 	/// fr: 'Ta prochaine séance s'affichera dans ta Classe.'
 	String get prochaineInconnue => 'Ta prochaine séance s\'affichera dans ta Classe.';
@@ -8838,11 +8838,11 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Les horaires de prière et vos pauses n'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.'
 	String get erreurPartielle => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.';
 
-	/// fr: 'Les cahiers à terminer n'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.'
-	String get erreurPartielleRetards => 'Les cahiers à terminer n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.';
+	/// fr: 'Vos cahiers de transmission à terminer n'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.'
+	String get erreurPartielleRetards => 'Vos cahiers de transmission à terminer n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.';
 
-	/// fr: 'Les horaires de prière, vos pauses et les cahiers à terminer n'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.'
-	String get erreurPartielleTout => 'Les horaires de prière, vos pauses et les cahiers à terminer n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.';
+	/// fr: 'Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.'
+	String get erreurPartielleTout => 'Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.';
 
 	/// fr: '{eleve} n'est pas entré en salle.'
 	String absenceDetectee({required Object eleve}) => '${eleve} n\'est pas entré en salle.';
@@ -16553,8 +16553,8 @@ extension on Traductions {
 			'accessibilite.apres.videVous' => 'Votre prochaine séance n\'est pas encore programmée. Elle s\'affichera ici et dans votre Classe.',
 			'accessibilite.apres.erreur' => 'Ta prochaine séance et ton travail n\'ont pas pu être chargés, sans doute à cause de la connexion. Réessaie, ou retrouve-les dans ta Classe.',
 			'accessibilite.apres.erreurVous' => 'Votre prochaine séance et votre travail n\'ont pas pu être chargés, sans doute à cause de la connexion. Réessayez, ou retrouvez-les dans votre Classe.',
-			'accessibilite.apres.horsLigne' => 'Tu es hors ligne : ta prochaine séance et ton travail s\'afficheront quand la connexion reviendra.',
-			'accessibilite.apres.horsLigneVous' => 'Vous êtes hors ligne : votre prochaine séance et votre travail s\'afficheront quand la connexion reviendra.',
+			'accessibilite.apres.horsLigne' => 'Ta prochaine séance et ton travail s\'afficheront quand la connexion reviendra.',
+			'accessibilite.apres.horsLigneVous' => 'Votre prochaine séance et votre travail s\'afficheront quand la connexion reviendra.',
 			'accessibilite.apres.prochaineInconnue' => 'Ta prochaine séance s\'affichera dans ta Classe.',
 			'accessibilite.apres.prochaineInconnueVous' => 'Votre prochaine séance s\'affichera dans votre Classe.',
 			'accessibilite.monEspace.titre' => 'Mon espace',
@@ -18652,8 +18652,8 @@ extension on Traductions {
 			'enseignant.journee.preflightIndisponible' => 'La vérification du matériel n\'a pas abouti. Réessayez avant de lancer le cours.',
 			'enseignant.journee.lancerHorsLigne' => 'Sans réseau, la salle ne peut pas s\'ouvrir. Reconnectez-vous pour lancer le cours.',
 			'enseignant.journee.erreurPartielle' => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.',
-			'enseignant.journee.erreurPartielleRetards' => 'Les cahiers à terminer n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.',
-			'enseignant.journee.erreurPartielleTout' => 'Les horaires de prière, vos pauses et les cahiers à terminer n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.',
+			'enseignant.journee.erreurPartielleRetards' => 'Vos cahiers de transmission à terminer n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.',
+			'enseignant.journee.erreurPartielleTout' => 'Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.',
 			'enseignant.journee.absenceDetectee' => ({required Object eleve}) => '${eleve} n\'est pas entré en salle.',
 			'enseignant.journee.coupureDetectee' => ({required Object eleve}) => '${eleve} a perdu la connexion.',
 			'enseignant.journee.coursAnnule' => ({required Object heure}) => 'Le cours de ${heure} est annulé.',
