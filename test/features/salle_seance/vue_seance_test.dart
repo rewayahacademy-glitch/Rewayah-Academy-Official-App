@@ -170,7 +170,7 @@ void main() {
       expect(_vue(r).ligneEtat, 'Classe An-Nour · La séance se poursuit.');
       expect(
         _vue(r, EtatDemoSalle.repos).ligneEtat,
-        'Classe An-Nour · 32 min restantes',
+        'Classe An-Nour · \u200E32\u00A0min restantes',
       );
     });
 
