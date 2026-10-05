@@ -118,10 +118,10 @@ void main() {
         fixerVueCapture(tester, const Size(320, 3600), 2);
         await tester.pumpWidget(
           _app(
-            ecran: (_) => Scaffold(
+            ecran: (_) => const Scaffold(
               body: SingleChildScrollView(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child: const FeuilleCarteClasse(groupeId: _id),
+                padding: EdgeInsets.all(AppSpacing.lg),
+                child: FeuilleCarteClasse(groupeId: _id),
               ),
             ),
             langue: langue,
@@ -162,10 +162,10 @@ void main() {
           fixerVueCapture(tester, const Size(320, 2200), 2);
           await tester.pumpWidget(
             _app(
-              ecran: (_) => Scaffold(
+              ecran: (_) => const Scaffold(
                 body: SingleChildScrollView(
-                  padding: const EdgeInsets.all(AppSpacing.lg),
-                  child: const BlocCartesClasse(groupeId: _id),
+                  padding: EdgeInsets.all(AppSpacing.lg),
+                  child: BlocCartesClasse(groupeId: _id),
                 ),
               ),
               langue: langue,
