@@ -10,7 +10,8 @@
 //   `publierAnnonce`, COM-BR-16), les quatre indicateurs, les annonces
 //   publiees et planifiees, la matrice des regles de portee ;
 // - **Moderation** : la file (`FileModeration`) ;
-// - **Messages** : la voie COM-MSG-2 la remplit ; ecran provisoire ici.
+// - **Messages** : une autre page, `MessagesAdminPage` (COM-MSG-2), montee
+//   par le routeur sur sa route (COM-FUS) ; ce fichier ne la connait pas.
 //
 // **Les quatre indicateurs** ne viennent que de lectures reelles ou de
 // demonstration marquee : publiees et planifiees (`PortAnnonces`,
@@ -56,17 +57,15 @@ import 'port_annonces.dart';
 import 'port_regles_audience.dart';
 import 'publieur_annonce.dart';
 
-/// Les trois onglets de l'Administration des communications, dans l'ordre de
-/// [ongletsCommunications].
+/// Les onglets de l'Administration des communications que cette page rend,
+/// dans l'ordre de [ongletsCommunications] (le troisieme, Messages, est
+/// `MessagesAdminPage`, COM-MSG-2).
 enum OngletCommunications {
   /// Les annonces (COM-ANN-2).
   annonces,
 
   /// La file de moderation (COM-ANN-2).
   moderation,
-
-  /// Les fils de messages, cote administration (COM-MSG-2).
-  messages,
 }
 
 /// L'Administration des communications.
@@ -75,16 +74,12 @@ class AdministrationCommunicationsPage extends ConsumerStatefulWidget {
   const AdministrationCommunicationsPage({
     required this.onglet,
     super.key,
-    this.filId,
     this.onglets,
     this.horloge,
   });
 
   /// L'onglet ouvert.
   final OngletCommunications onglet;
-
-  /// Le fil ouvert dans l'onglet Messages, s'il y en a un.
-  final String? filId;
 
   /// Les onglets et leurs adresses ; par defaut, ceux du socle
   /// ([ongletsCommunications]). La demonstration passe les siens, pour
@@ -156,13 +151,6 @@ class _AdministrationCommunicationsPageState
           }),
         ),
         OngletCommunications.moderation => const FileModeration(),
-        // L'onglet Messages appartient a COM-MSG-2.
-        OngletCommunications.messages => EtatSysteme(
-          nature: NatureEtat.indisponible,
-          titre: t.com.socle.composants.etats.indisponibleTitre,
-          phrase: n.administrationDetail,
-          dependance: 'COM-MSG-2',
-        ),
       },
     );
   }

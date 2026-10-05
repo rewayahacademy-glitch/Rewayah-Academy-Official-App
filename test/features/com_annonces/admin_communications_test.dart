@@ -21,6 +21,7 @@ import 'package:rewayah_academy/features/com_annonces/annonces_planifiees.dart';
 import 'package:rewayah_academy/features/com_annonces/matrice_audience.dart';
 import 'package:rewayah_academy/features/com_annonces/port_annonces.dart';
 import 'package:rewayah_academy/features/com_annonces/port_regles_audience.dart';
+import 'package:rewayah_academy/features/com_messages/messages_admin.dart';
 import 'package:rewayah_academy/features/demo/communications/com_annonces_demo.dart';
 
 import '../../support/garde_interface.dart';
@@ -360,15 +361,18 @@ void main() {
       expect(_valeurTuile(tester, i.publiees), 3);
     });
 
-    testWidgets('onglet Messages : la voie COM-MSG-2, pas encore disponible', (
-      WidgetTester tester,
-    ) async {
-      await monterAdministration(tester, onglet: OngletCommunications.messages);
-      expect(
-        find.text(t.com.socle.navigation.provisoire.administrationDetail),
-        findsOneWidget,
+    testWidgets('onglet Messages : la page de la voie COM-MSG-2 (COM-FUS), '
+        'sans les indicateurs des annonces', (WidgetTester tester) async {
+      final routeur = await monterAdministration(tester);
+      await taper(
+        tester,
+        find.text(t.com.socle.navigation.ongletMessages).first,
       );
+      expect(routeur.state.uri.path, Routes.adminCommunicationsMessages);
+      expect(find.byType(MessagesAdminPage), findsOneWidget);
+      expect(find.byType(AdministrationCommunicationsPage), findsNothing);
       expect(find.byType(StatTile), findsNothing);
+      expect(tester.takeException(), isNull);
     });
   });
 }

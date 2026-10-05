@@ -24,6 +24,7 @@ import 'package:rewayah_academy/features/com_annonces/file_moderation.dart';
 import 'package:rewayah_academy/features/com_annonces/port_annonces.dart';
 import 'package:rewayah_academy/features/com_annonces/port_regles_audience.dart';
 import 'package:rewayah_academy/features/com_annonces/publier_annonce_classe_page.dart';
+import 'package:rewayah_academy/features/com_messages/messages_admin.dart';
 import 'package:rewayah_academy/features/demo/communications/com_annonces_demo.dart';
 
 import '../../support/harnais.dart';
@@ -116,10 +117,17 @@ Future<GoRouter> _monter(
         builder: (BuildContext _, GoRouterState _) =>
             coquille(OngletCommunications.moderation),
       ),
+      // COM-FUS : l'onglet Messages est une autre page (COM-MSG-2), montee
+      // dans la meme coquille, comme le fait le routeur.
       GoRoute(
         path: Routes.adminCommunicationsMessages,
-        builder: (BuildContext _, GoRouterState _) =>
-            coquille(OngletCommunications.messages),
+        builder: (BuildContext _, GoRouterState _) => AdminShell(
+          domaines: domainesAdmin(voitDirection: false),
+          domaineActif: AdminDomaine.operations,
+          onAller: (String _) {},
+          onCompte: () {},
+          child: const MessagesAdminPage(),
+        ),
       ),
       GoRoute(
         path: Routes.publierAnnoncePour(':groupeId'),
@@ -196,7 +204,6 @@ Future<GoRouter> monterAdministration(
   depart: switch (onglet) {
     OngletCommunications.annonces => Routes.adminCommunicationsAnnonces,
     OngletCommunications.moderation => Routes.adminCommunicationsModeration,
-    OngletCommunications.messages => Routes.adminCommunicationsMessages,
   },
   surcharges:
       surcharges ??

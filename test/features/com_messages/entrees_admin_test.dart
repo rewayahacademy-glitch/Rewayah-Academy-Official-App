@@ -11,12 +11,10 @@
 //
 // Operations reste le domaine allume : aucun neuvieme domaine (Q4).
 //
-// Le routeur est un fichier du socle (`02_DECOUPAGE`, regle des fichiers 2) :
-// monter `MessagesAdminPage` sur la route de l'onglet est une ligne ouverte
-// pour COM-FUS. D'ici la, l'onglet garde l'ecran provisoire du socle : le
-// parcours de la vraie coquille s'arrete a l'adresse et a l'onglet, les tests
-// K-07 complets sont en attente (`skip`), et la page elle-meme est prouvee
-// montee seule, sur les memes adresses.
+// Depuis COM-FUS, le routeur monte `MessagesAdminPage` sur la route de
+// l'onglet et sur `/:filId` : les tests K-07 parcourent la vraie coquille
+// jusqu'au fil. La page est aussi prouvee montee seule, sur les memes
+// adresses.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -49,11 +47,6 @@ import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 
 import '../../support/harnais.dart';
 import 'support_messages.dart';
-
-/// La ligne COM-FUS qui leve l'attente des tests K-07 de l'onglet.
-const String _attenteComFus =
-    'COM-FUS : le routeur (socle) montera MessagesAdminPage sur '
-    'adminCommunicationsMessages ; ecran provisoire du socle d ici la';
 
 const Participant _rachid = Participant(
   id: 'p-rachid',
@@ -214,24 +207,15 @@ void main() {
       expect(_chemin(routeur), Routes.adminCommunicationsMessages);
       expect(find.byType(SousNavigationDomaine), findsOneWidget);
       expect(find.byType(AdminShell), findsOneWidget);
-      // Ecran provisoire du socle tant que COM-FUS n'a pas monte la page.
-      final Iterable<AdministrationCommunicationsPage> socle = tester
-          .widgetList<AdministrationCommunicationsPage>(
-            find.byType(AdministrationCommunicationsPage),
-          );
-      final Iterable<MessagesAdminPage> page = tester
-          .widgetList<MessagesAdminPage>(find.byType(MessagesAdminPage));
-      expect(socle.length + page.length, 1);
-      if (socle.isNotEmpty) {
-        expect(socle.single.onglet, OngletCommunications.messages);
-      }
+      // COM-FUS : la page de COM-MSG-2, plus l'ecran provisoire du socle.
+      expect(find.byType(MessagesAdminPage), findsOneWidget);
+      expect(find.byType(AdministrationCommunicationsPage), findsNothing);
       expect(tester.takeException(), isNull);
     });
 
     testWidgets(
       '1440 : tableau de bord, Communications, Messages ; le fil '
       'du controleur sur sa mission s ouvre dans la coquille',
-      skip: _attenteComFusActive,
       (WidgetTester tester) async {
         final GoRouter routeur = await _monter(tester);
         await _ouvrirOngletMessages(tester);
@@ -275,7 +259,6 @@ void main() {
     testWidgets(
       '390 : une surface a la fois, le retour du fil ramene a la '
       'liste de l onglet',
-      skip: _attenteComFusActive,
       (WidgetTester tester) async {
         final GoRouter routeur = await _monter(
           tester,
@@ -300,7 +283,6 @@ void main() {
     testWidgets(
       'production (port neutre) : pas encore disponible, sans '
       '« Reessayer »',
-      skip: _attenteComFusActive,
       (WidgetTester tester) async {
         await _monter(tester, port: const MessagesMetierIndisponibles());
         await _ouvrirOngletMessages(tester);
@@ -339,19 +321,14 @@ void main() {
         await _stabiliser(tester);
         expect(_chemin(routeur), Routes.adminFilPour('fil-dossier-omar'));
         expect(find.byType(AdminShell), findsOneWidget);
-        // L'onglet Messages, sur le fil du dossier : l'ecran provisoire du
-        // socle le recoit tant que COM-FUS n'a pas monte MessagesAdminPage.
-        final Iterable<AdministrationCommunicationsPage> socle = tester
-            .widgetList<AdministrationCommunicationsPage>(
-              find.byType(AdministrationCommunicationsPage),
-            );
-        if (socle.isNotEmpty) {
-          expect(socle.single.onglet, OngletCommunications.messages);
-          expect(socle.single.filId, 'fil-dossier-omar');
-        } else {
-          expect(find.byType(MessagesAdminPage), findsOneWidget);
-          expect(find.byType(FilDiscussion), findsOneWidget);
-        }
+        // L'onglet Messages, sur le fil du dossier (COM-FUS).
+        expect(
+          tester
+              .widget<MessagesAdminPage>(find.byType(MessagesAdminPage))
+              .filId,
+          'fil-dossier-omar',
+        );
+        expect(find.byType(FilDiscussion), findsOneWidget);
         expect(tester.takeException(), isNull);
       });
     }
@@ -423,12 +400,8 @@ void main() {
   });
 }
 
-/// Les tests K-07 de l'onglet attendent la ligne COM-FUS ([_attenteComFus]) :
-/// a lever quand le routeur du socle monte MessagesAdminPage.
-const bool _attenteComFusActive = _attenteComFus != '';
-
 /// [MessagesAdminPage] montee seule, sur les adresses de l'onglet (liste et
-/// fil), hors de la coquille : la route du socle la montera a COM-FUS.
+/// fil), hors de la coquille (le routeur la monte depuis COM-FUS).
 Future<GoRouter> _monterPage(
   WidgetTester tester, {
   Size taille = const Size(1440, 900),

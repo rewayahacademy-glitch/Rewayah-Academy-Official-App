@@ -44,6 +44,7 @@ import '../../com_annonces/port_annonces.dart';
 import '../../com_annonces/port_regles_audience.dart';
 import '../../com_annonces/publier_annonce_classe_page.dart';
 import '../../notifications/notifications_page.dart';
+import 'com_messages_demo.dart';
 import 'demo_communications_page.dart';
 
 /// La demonstration de la voie COM-ANN.
@@ -929,14 +930,18 @@ String adressePublierDemo() => Uri(
 ).toString();
 
 /// Les onglets de l'Administration de demonstration : les libelles du
-/// socle, des adresses qui restent dans la demonstration.
+/// socle, des adresses qui restent dans la demonstration. L'onglet Messages
+/// est une autre page (COM-MSG-2, COM-FUS) : il mene a la demonstration des
+/// Messages de l'administration.
 List<({String libelle, String chemin})> ongletsAdministrationDemo() =>
     <({String libelle, String chemin})>[
       for (final (int i, ({String libelle, String chemin}) o)
           in ongletsCommunications().indexed)
         (
           libelle: o.libelle,
-          chemin: adresseAdministrationDemo(OngletCommunications.values[i]),
+          chemin: i < OngletCommunications.values.length
+              ? adresseAdministrationDemo(OngletCommunications.values[i])
+              : adresseDemoMessages(RoleDemoCommunications.admin),
         ),
     ];
 

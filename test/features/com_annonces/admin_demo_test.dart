@@ -99,6 +99,28 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('COM-FUS : l onglet Messages mene a la demonstration des '
+      'Messages de l administration', (WidgetTester tester) async {
+    final GoRouter routeur = await _monter(
+      tester,
+      adresseAdministrationDemo(OngletCommunications.annonces),
+    );
+    await _toucher(
+      tester,
+      find.text(t.com.socle.navigation.ongletMessages).first,
+    );
+    expect(routeur.state.uri.path, Routes.demoCommunications);
+    expect(
+      routeur.state.uri.queryParameters['voie'],
+      VoieDemoCommunications.messages.name,
+    );
+    expect(
+      routeur.state.uri.queryParameters['role'],
+      RoleDemoCommunications.admin.name,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('la demonstration publie et la liste suit', (
     WidgetTester tester,
   ) async {

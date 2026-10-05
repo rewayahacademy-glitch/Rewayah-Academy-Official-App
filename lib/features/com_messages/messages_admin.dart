@@ -5,12 +5,9 @@
 // `/admin/operations/communications/messages/:filId`, dans la VRAIE coquille
 // admin (`_CoquilleAdmin`, domaine Operations : aucun neuvieme domaine), sous
 // la sous-navigation des trois onglets du socle (`ongletsCommunications`).
-// La page d'Annonces (COM-ANN) n'importe jamais ce fichier : le routeur
-// montera cette page directement sur la route de l'onglet. Le routeur est un
-// fichier du socle (`02_DECOUPAGE`, regle des fichiers 2) : ce montage est une
-// ligne ouverte pour COM-FUS (« monter MessagesAdminPage sur
-// `adminCommunicationsMessages` et `/:filId` »). D'ici la, la route garde
-// l'ecran provisoire du socle, et cette page est prouvee montee seule
+// La page d'Annonces (COM-ANN) n'importe jamais ce fichier : le routeur monte
+// cette page directement sur `adminCommunicationsMessages` et `/:filId`
+// (COM-FUS), parcours prouve depuis la vraie coquille admin
 // (`test/features/com_messages/entrees_admin_test.dart`).
 //
 // Le meme espace que le tuteur et l'enseignant (`EspaceMessagesMetier`) :

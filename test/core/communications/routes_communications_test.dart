@@ -27,6 +27,7 @@ import 'package:rewayah_academy/features/admin_tableau/tableau_de_bord_page.dart
 import 'package:rewayah_academy/features/com_annonces/administration_communications_page.dart';
 import 'package:rewayah_academy/features/com_annonces/publier_annonce_classe_page.dart';
 import 'package:rewayah_academy/features/com_communaute/communaute_page.dart';
+import 'package:rewayah_academy/features/com_messages/messages_admin.dart';
 import 'package:rewayah_academy/features/com_messages/messages_page.dart';
 import 'package:rewayah_academy/features/com_studio/studio_page.dart';
 import 'package:rewayah_academy/features/compte/espaces_compte.dart';
@@ -387,14 +388,9 @@ void main() {
       await tester.tap(find.text(t.com.socle.navigation.ongletMessages).first);
       await stabiliser(tester);
       expect(_chemin(routeur), Routes.adminCommunicationsMessages);
-      expect(
-        tester
-            .widget<AdministrationCommunicationsPage>(
-              find.byType(AdministrationCommunicationsPage),
-            )
-            .onglet,
-        OngletCommunications.messages,
-      );
+      // COM-FUS : l'onglet Messages monte la page de COM-MSG-2.
+      expect(find.byType(MessagesAdminPage), findsOneWidget);
+      expect(find.byType(AdministrationCommunicationsPage), findsNothing);
       expect(tester.takeException(), isNull);
     });
 
