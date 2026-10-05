@@ -13,6 +13,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_groupe/cartes_classe.dart';
 import '../../core/theme/app_palette.dart';
@@ -293,16 +294,20 @@ class _FeuilleCarteClasseEtat extends ConsumerState<FeuilleCarteClasse> {
             _changerType(TypeCarteClasse.values.byName(valeur));
           },
         ),
+        _Libelle(t.classe.cartes.feuille.champTitre),
+        Ecart.vXs,
         TextField(
           key: FeuilleCarteClasse.titreKey,
           controller: _titre,
           onChanged: (String _) => _revalider(),
           textInputAction: TextInputAction.next,
+          // Le titre se relit en entier, meme a 320 px et texte x2.
+          minLines: 1,
+          maxLines: 3,
           decoration: InputDecoration(
-            labelText: t.classe.cartes.feuille.champTitre,
             helperText: aideLongueurTitre,
-            helperMaxLines: 3,
-            errorMaxLines: 4,
+            helperMaxLines: 6,
+            errorMaxLines: 8,
             errorText: _erreur(const <DefautCarte>[
               DefautCarte.titreVide,
               DefautCarte.titreLong,
@@ -310,6 +315,8 @@ class _FeuilleCarteClasseEtat extends ConsumerState<FeuilleCarteClasse> {
           ),
         ),
         Ecart.vLg,
+        _Libelle(t.classe.cartes.feuille.champTexte),
+        Ecart.vXs,
         TextField(
           key: FeuilleCarteClasse.texteKey,
           controller: _texte,
@@ -317,24 +324,24 @@ class _FeuilleCarteClasseEtat extends ConsumerState<FeuilleCarteClasse> {
           minLines: 3,
           maxLines: 6,
           decoration: InputDecoration(
-            labelText: t.classe.cartes.feuille.champTexte,
             helperText: aideLongueurTexte,
-            helperMaxLines: 3,
-            errorMaxLines: 4,
+            helperMaxLines: 6,
+            errorMaxLines: 8,
             errorText: _erreur(const <DefautCarte>[DefautCarte.texteLong]),
           ),
         ),
         Ecart.vLg,
+        _Libelle(t.classe.cartes.feuille.champLien),
+        Ecart.vXs,
         TextField(
           key: FeuilleCarteClasse.lienKey,
           controller: _lien,
           onChanged: (String _) => _revalider(),
           keyboardType: TextInputType.url,
           decoration: InputDecoration(
-            labelText: t.classe.cartes.feuille.champLien,
             helperText: t.classe.cartes.feuille.aideLien,
-            helperMaxLines: 3,
-            errorMaxLines: 4,
+            helperMaxLines: 6,
+            errorMaxLines: 8,
             errorText: _erreur(const <DefautCarte>[DefautCarte.lienInvalide]),
           ),
         ),
@@ -385,4 +392,17 @@ class _FeuilleCarteClasseEtat extends ConsumerState<FeuilleCarteClasse> {
       ],
     );
   }
+}
+
+/// Le libelle d'un champ, pose au-dessus de lui, en entier, et lu juste
+/// avant lui : celui de la decoration se tronque a 320 px et texte x2
+/// (« Lien de la carte (facu... »).
+class _Libelle extends StatelessWidget {
+  const _Libelle(this.texte);
+
+  final String texte;
+
+  @override
+  Widget build(BuildContext context) =>
+      TexteSansCoupure(texte, style: Theme.of(context).textTheme.titleSmall);
 }

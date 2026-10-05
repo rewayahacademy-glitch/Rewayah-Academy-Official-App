@@ -17,6 +17,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/isolat_bidi.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/tc_groupe/cartes_classe.dart';
@@ -384,11 +385,11 @@ void main() {
       await tester.pumpAndSettle();
       final List<double> hauts = <double>[
         for (final String titre in <String>[
-          'Réviser la sourate Al\u2011Fil',
+          'Réviser la sourate Al-Fil',
           'Récitation modèle',
           'Pas de séance pendant les vacances',
         ])
-          tester.getTopLeft(find.text(titre)).dy,
+          tester.getTopLeft(find.text(texteAffiche(titre))).dy,
       ];
       expect(hauts, List<double>.of(hauts)..sort());
       expect(
@@ -439,7 +440,7 @@ void main() {
       expect(find.byKey(BlocCartesClasse.ajouterKey), findsNothing);
       final Finder copier = find.widgetWithText(
         LienFleche,
-        t.classe.cartes.copierLien(titre: 'Récitation modèle'),
+        t.classe.cartes.copierLien(titre: isolerSens('Récitation modèle')),
       );
       expect(copier, findsOneWidget);
       await tester.tap(copier);
@@ -476,7 +477,7 @@ void main() {
         findsNothing,
       );
       expect(
-        find.text('https://rewayah.academy/demo/recitation'),
+        find.text(isolerSens('https://rewayah.academy/demo/recitation')),
         findsOneWidget,
       );
       expect(find.byKey(BlocCartesClasse.ajouterKey), findsOneWidget);
@@ -574,7 +575,10 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.text(t.classe.cartes.types.devoir), findsNothing);
-      expect(find.text('Réviser la sourate Al\u2011Fil'), findsOneWidget);
+      expect(
+        find.text(texteAffiche('Réviser la sourate Al-Fil')),
+        findsOneWidget,
+      );
       final String libelle = t.classe.cartes.copierLien(
         titre: 'Récitation modèle',
       );
@@ -620,7 +624,7 @@ void main() {
       if (titre == null) {
         await tester.tap(find.byKey(BlocCartesClasse.ajouterKey));
       } else {
-        await tester.tap(find.text(titre));
+        await tester.tap(find.text(texteAffiche(titre)));
       }
       await tester.pumpAndSettle();
     }
@@ -639,8 +643,11 @@ void main() {
       await tester.tap(find.byKey(FeuilleCarteClasse.enregistrerKey));
       await tester.pumpAndSettle();
       expect(find.byType(FeuilleCarteClasse), findsNothing);
-      expect(find.text('Récitation de la sourate'), findsOneWidget);
-      expect(find.text('Récitation modèle'), findsNothing);
+      expect(
+        find.text(texteAffiche('Récitation de la sourate')),
+        findsOneWidget,
+      );
+      expect(find.text(texteAffiche('Récitation modèle')), findsNothing);
       expect(find.text(t.classe.cartes.enregistree), findsOneWidget);
     });
 
@@ -751,7 +758,10 @@ void main() {
         find.text(t.classe.cartes.feuille.retirerConfirmer).last,
       );
       await tester.pumpAndSettle();
-      expect(find.text('Pas de séance pendant les vacances'), findsNothing);
+      expect(
+        find.text(texteAffiche('Pas de séance pendant les vacances')),
+        findsNothing,
+      );
       expect(find.text(t.classe.cartes.retiree), findsOneWidget);
       expect(_cartes, findsNWidgets(2));
     });
@@ -814,7 +824,9 @@ void main() {
               // Une adresse est un seul « mot » sans espace : plus large que
               // la colonne a 320 px et texte x2, elle passe forcement a la
               // ligne. Elle se lit en entier ; seul l'enseignant la voit.
-              exceptions: <String>{'https://rewayah.academy/demo/recitation'},
+              exceptions: <String>{
+                isolerSens('https://rewayah.academy/demo/recitation'),
+              },
             );
             expect(tester.takeException(), isNull);
           });

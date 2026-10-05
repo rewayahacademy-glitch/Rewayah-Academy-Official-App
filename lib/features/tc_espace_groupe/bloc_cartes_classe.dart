@@ -21,6 +21,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
@@ -249,8 +250,11 @@ class _Contenu extends StatelessWidget {
   }
 }
 
-/// Le texte a l'affichage, ses traits d'union rendus insecables.
-String _insecable(String texte) => texte.replaceAll('-', '\u2011');
+/// Un texte de l'enseignant a l'affichage : ses traits d'union rendus
+/// insecables, et isole dans son propre sens de lecture (un texte francais
+/// dans l'interface arabe garde son point a la fin, CTRL-ROSTER-C7-1b).
+String texteAffiche(String texte) =>
+    isolerSens(texte.replaceAll('-', '\u2011'));
 
 /// Une carte de la Classe.
 ///
@@ -320,10 +324,10 @@ class VueCarteClasse extends StatelessWidget {
         // Des mots de l'enseignant : un mot plus large que la carte se
         // resserre au lieu d'etre coupe (lecon 8, K-61), et un mot compose
         // (« Al-Fil ») garde son trait d'union insecable (U+2011, MA-4).
-        TexteSansCoupure(_insecable(carte.titre), style: textes.titleSmall),
+        TexteSansCoupure(texteAffiche(carte.titre), style: textes.titleSmall),
         if (texte != null && texte.isNotEmpty) ...<Widget>[
           Ecart.vXs,
-          TexteSansCoupure(_insecable(texte), style: textes.bodyMedium),
+          TexteSansCoupure(texteAffiche(texte), style: textes.bodyMedium),
         ],
         if (echeance != null) ...<Widget>[
           Ecart.vSm,
@@ -335,7 +339,7 @@ class VueCarteClasse extends StatelessWidget {
         if (lien != null && lien.isNotEmpty) ...<Widget>[
           Ecart.vSm,
           if (modifier != null)
-            Text(lien, style: discret)
+            Text(isolerSens(lien), style: discret)
           else if (guidee)
             // Le titre est juste au-dessus : le bouton dit seulement son
             // geste, le lecteur d'ecran lit le libelle entier.
@@ -353,7 +357,9 @@ class VueCarteClasse extends StatelessWidget {
             Align(
               alignment: AlignmentDirectional.centerStart,
               child: LienFleche(
-                libelle: t.classe.cartes.copierLien(titre: carte.titre),
+                libelle: t.classe.cartes.copierLien(
+                  titre: isolerSens(carte.titre),
+                ),
                 onPress: onCopierLien,
               ),
             ),
