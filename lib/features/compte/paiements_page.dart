@@ -7,7 +7,6 @@ import '../../core/capacites/port_paiements_foyer.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
-import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
@@ -18,7 +17,6 @@ import '../../core/widgets/skeleton.dart';
 import '../foyer/finances_foyer.dart' show financesFoyerProvider;
 import 'carte_rubriques.dart';
 import 'donnees_compte.dart';
-import 'soldes_foyer.dart';
 
 /// Les paiements et recus du foyer (`/tuteur/compte/paiements`).
 ///
@@ -31,15 +29,14 @@ import 'soldes_foyer.dart';
 /// justificatif ; le montant (unites mineures, devise) et les statuts seront
 /// mis en mots avec DB-CPT-03, jamais recalcules ici.
 ///
-/// **Paiements du foyer du titulaire** (EA-9, planche 4.1) : avec [soldes],
-/// la page pose d'abord le groupe par profil eleve prevu ici (section 1
-/// ter-9), `SoldesFoyerSection` : une ligne par beneficiaire autorise, son
-/// solde tel que rendu, le seul bouton « Recharger », le recapitulatif ;
-/// puis l'historique sous son titre. Le second adulte rattache n'a que
-/// l'historique, en lecture seule (E3, EA-BR-16) : jamais [soldes].
+/// **Paiements du foyer du titulaire** (EA-9) : l'historique, precede du
+/// raccourci « Recharger » ci-dessous. Ses soldes ne sont plus poses ici :
+/// la synthese et les cartes de Ma famille les portent, comme sur le Foyer
+/// du tuteur (E-11, revue FI-VAGUE-R R1-06). Le second adulte rattache n'a
+/// que l'historique, en lecture seule (E3, EA-BR-16) : jamais [onRecharger].
 ///
-/// **Raccourci vers la recharge du foyer** (FI-7, guide Finance V4 §4) : sans
-/// [soldes], [onRecharger] pose « Recharger » au-dessus de l'historique, qui
+/// **Raccourci vers la recharge du foyer** (FI-7, guide Finance V4 §4) :
+/// [onRecharger] pose « Recharger » au-dessus de l'historique, qui
 /// ouvre LA recharge du Foyer (`/tuteur/foyer/recharge`), jamais un second
 /// centre de paiement. Il n'apparait que si les finances du foyer sont
 /// rendues (capacite lue dans les donnees, comme sur le Foyer) : ni en
@@ -50,7 +47,6 @@ class PaiementsComptePage extends ConsumerWidget {
     super.key,
     this.onRetour,
     this.titre,
-    this.soldes = false,
     this.onRecharger,
   });
 
@@ -63,18 +59,11 @@ class PaiementsComptePage extends ConsumerWidget {
   /// que la page d'arrivee porte le nom de la ligne tapee.
   final String? titre;
 
-  /// Vrai pour le titulaire d'un foyer : les soldes des beneficiaires avant
-  /// l'historique (EA-9).
-  final bool soldes;
-
   /// Ouvre la recharge (EA-10, FI-7).
   final VoidCallback? onRecharger;
 
   /// « Recharger », raccourci vers la recharge du foyer (FI-7).
   static const Key rechargerKey = Key('paiements.raccourciRecharge');
-
-  /// Le titre « Historique des paiements », avec [soldes].
-  static const Key historiqueKey = Key('paiements.historique');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -118,31 +107,7 @@ class PaiementsComptePage extends ConsumerWidget {
     return PageShell(
       titre: titre ?? t.compte.tuteur.pagePaiements.titre,
       onRetour: onRetour ?? () => GoRouter.of(context).go(Routes.tuteurCompte),
-      child: ColonneSousPage(
-        child: !soldes
-            ? _avecRaccourci(ref, historique)
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  SoldesFoyerSection(onRecharger: onRecharger),
-                  Ecart.vSection,
-                  Semantics(
-                    header: true,
-                    child: Text(
-                      key: historiqueKey,
-                      t.adulte.paiements.historique,
-                      style: AppPalette.of(context).inkStrong.applyTo(
-                        Theme.of(context).textTheme.titleMedium ??
-                            const TextStyle(),
-                      ),
-                    ),
-                  ),
-                  Ecart.vSm,
-                  historique,
-                ],
-              ),
-      ),
+      child: ColonneSousPage(child: _avecRaccourci(ref, historique)),
     );
   }
 

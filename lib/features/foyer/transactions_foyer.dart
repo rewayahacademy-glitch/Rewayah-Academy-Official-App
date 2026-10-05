@@ -1,7 +1,8 @@
 // Les dernieres transactions du Foyer, sur ordinateur (FI-5b, guide Finance
 // V4 §5.1 « Desktop », maquette 05) : les trois derniers mouvements du foyer,
 // tels que la source les rend (`PortPaiementsFoyer.derniersMouvements`),
-// puis « Voir tout » vers les mouvements du profil du plus recent.
+// puis « Voir tout » vers l'historique des paiements du foyer (X-12,
+// `PaiementsComptePage` sans soldes ; revue FI-VAGUE-R R1-07).
 //
 // Aucun tri ni agregat ici (FI6) : la liste arrive arretee. En production le
 // port rend `CapaciteIndisponible` : aucun bloc, jamais une transaction
@@ -16,6 +17,7 @@ import '../../core/finance/mouvements_profil.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
+import '../../core/session/session_controleur.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/carte_groupee.dart';
@@ -31,11 +33,12 @@ const int nombreDernieresTransactions = 3;
 
 /// Les derniers mouvements du foyer, relus a chaque ouverture du Foyer.
 final FutureProvider<List<MouvementFoyer>> derniersMouvementsFoyerProvider =
-    FutureProvider<List<MouvementFoyer>>(
-      (Ref ref) => ref
+    FutureProvider<List<MouvementFoyer>>((Ref ref) {
+      surveillerPersonneConnectee(ref);
+      return ref
           .watch(portPaiementsFoyerProvider)
-          .derniersMouvements(limite: nombreDernieresTransactions),
-    );
+          .derniersMouvements(limite: nombreDernieresTransactions);
+    });
 
 /// Vrai quand la source des transactions existe : faux en production
 /// (`CapaciteIndisponible`), ou la page garde sa composition sans ce bloc.
@@ -46,10 +49,19 @@ bool transactionsDisponibles(AsyncValue<List<MouvementFoyer>> lecture) =>
 /// ligne ; rien du tout sans source (production).
 class DernieresTransactionsFoyer extends ConsumerWidget {
   /// Cree le bloc.
-  const DernieresTransactionsFoyer({required this.aller, super.key});
+  const DernieresTransactionsFoyer({
+    required this.aller,
+    super.key,
+    this.onVoirTout,
+  });
 
   /// Ouvre un chemin (le routeur, ou la coquille de la demonstration).
   final void Function(String chemin) aller;
+
+  /// Ouvre l'historique du foyer ; par defaut, Compte > Paiements du tuteur
+  /// (`PaiementsComptePage` sans soldes). Le titulaire adulte y passe sa
+  /// page « Paiements du foyer ».
+  final VoidCallback? onVoirTout;
 
   /// Le bloc.
   static const Key cle = Key('foyer.transactions');
@@ -127,18 +139,17 @@ class DernieresTransactionsFoyer extends ConsumerWidget {
                   ),
                 ),
               ),
-              // « Voir tout » mene aux mouvements du profil du plus recent :
-              // une destination qui existe, jamais un lien inerte.
+              // « Voir tout » mene a l'historique du foyer entier, jamais aux
+              // mouvements d'un seul enfant (X-12) ; son nom lu commence par
+              // le libelle visible (WCAG 2.5.3, R1-12).
               if (premier != null)
                 LienFleche(
                   key: voirToutKey,
                   libelle: t.foyer.transactions.voirTout,
-                  libelleSemantique: t.foyer.transactions.voirToutSemantique(
-                    prenom: premier.prenom,
-                  ),
-                  onPress: () => aller(
-                    Routes.ficheEleveSousPage(premier.profilId, 'mouvements'),
-                  ),
+                  libelleSemantique: t.foyer.transactions.voirToutSemantique,
+                  onPress:
+                      onVoirTout ??
+                      () => aller(Routes.compteTuteurSousPage('paiements')),
                 ),
             ],
           ),

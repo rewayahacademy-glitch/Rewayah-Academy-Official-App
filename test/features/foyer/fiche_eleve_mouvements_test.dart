@@ -16,6 +16,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
+import 'package:rewayah_academy/core/capacites/port_accents_profils.dart';
 import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_politiques_commerciales.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
@@ -25,20 +26,27 @@ import 'package:rewayah_academy/core/finance/montant.dart';
 import 'package:rewayah_academy/core/finance/mouvements_profil.dart';
 import 'package:rewayah_academy/core/finance/suivi_paiement.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/theme/accent_profil.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/avatar_nom.dart';
+import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
+import 'package:rewayah_academy/core/widgets/identite_profil.dart';
 import 'package:rewayah_academy/core/widgets/ligne_allocation.dart';
 import 'package:rewayah_academy/core/widgets/ligne_transaction.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
+import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/demo/finance_demo.dart';
 import 'package:rewayah_academy/features/foyer/fiche/finances_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/mouvements_page.dart';
+import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/ligne_membre.dart';
 
@@ -107,6 +115,7 @@ Future<GoRouter> _monter(
   double echelle = 1,
   Brightness luminosite = Brightness.light,
   TextDirection sens = TextDirection.ltr,
+  Map<String, AccentProfil>? accents,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -120,6 +129,10 @@ Future<GoRouter> _monter(
           appairage: _foyer(DonneesFinanceDemo.profils(jeu)),
         ),
         horlogeFoyerProvider.overrideWithValue(() => _maintenant),
+        if (accents != null)
+          portAccentsProfilsProvider.overrideWithValue(
+            AccentsProfilsEnMemoire(accents),
+          ),
         if (horsLigne)
           horsLigneProvider.overrideWith((Ref ref) => Stream<bool>.value(true)),
         if (avecFinances) ...<Override>[
@@ -275,7 +288,13 @@ void main() {
       final GoRouter routeur = await _monter(tester);
       await _toucher(tester, find.text('Mariam').first);
       expect(lieu(routeur), Routes.ficheElevePour(_mariam));
-      await _toucher(tester, find.text(t.ficheEleve.lignes.finances));
+      await _toucher(
+        tester,
+        find.descendant(
+          of: find.byKey(OngletsFiche.cle),
+          matching: find.text(t.ficheEleve.onglets.finances),
+        ),
+      );
       expect(lieu(routeur), Routes.ficheEleveSousPage(_mariam, 'finances'));
       await _toucher(tester, find.byKey(FinancesElevePage.mouvementsKey));
       expect(lieu(routeur), _chemin(_mariam));
@@ -579,6 +598,131 @@ void main() {
     });
   });
 
+  group('Revue FI-VAGUE-R (R2-05, R2-08)', () {
+    testWidgets('R2-05 : chaque ligne porte l icone de son type et la date '
+        'avec l heure', (WidgetTester tester) async {
+      await _monter(tester, depart: _chemin(_mariam));
+      final List<MouvementProfil> attendus = DonneesFinanceDemo.mouvements(
+        JeuFoyerFinance.unARegulariser,
+        _mariam,
+      );
+      final List<LigneTransaction> lignes = tester
+          .widgetList<LigneTransaction>(find.byType(LigneTransaction))
+          .toList();
+      expect(lignes, hasLength(attendus.length));
+      for (final (int i, MouvementProfil m) in attendus.indexed) {
+        expect(lignes[i].icone, iconeMouvement(m.nature));
+        expect(lignes[i].date, dateHeureMouvement(m.date));
+        expect(lignes[i].date, isNot(dateEcheance(m.date)));
+        expect(find.text(lignes[i].date), findsWidgets);
+      }
+      expect(iconeMouvement(NatureMouvement.recharge), AppIcons.ajouter);
+      // L'heure locale, au format de la langue : « 1er octobre 2026 à 09:30 ».
+      final DateTime d = DateTime(2026, 10, 1, 9, 30);
+      expect(
+        dateHeureMouvement(d),
+        t.ficheEleve.mouvements.dateHeure(
+          date: dateEcheance(d),
+          heure: '09:30',
+        ),
+      );
+    });
+
+    testWidgets('R2-05 : 1440, la date du tableau porte l heure', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        depart: _chemin(_mariam),
+        taille: const Size(1440, 1200),
+      );
+      final Finder tableau = find.byKey(MouvementsElevePage.tableauKey);
+      for (final MouvementProfil m in DonneesFinanceDemo.mouvements(
+        JeuFoyerFinance.unARegulariser,
+        _mariam,
+      )) {
+        expect(
+          find.descendant(
+            of: tableau,
+            matching: find.text(dateHeureMouvement(m.date)),
+          ),
+          findsWidgets,
+        );
+      }
+    });
+
+    testWidgets('R2-05 : le filtre par personne montre l avatar de chaque '
+        'profil', (WidgetTester tester) async {
+      await _monter(tester, depart: _chemin(_mariam));
+      final MenuFiltre<String> menu = tester.widget<MenuFiltre<String>>(
+        find.byKey(MouvementsElevePage.filtreKey),
+      );
+      expect(menu.entrees, isNotEmpty);
+      for (final EntreeFiltre<String> e in menu.entrees) {
+        expect(e.avatar, isNotNull, reason: e.libelle);
+      }
+      await _toucher(tester, find.byKey(MouvementsElevePage.filtreKey));
+      for (final EntreeFiltre<String> e in menu.entrees) {
+        expect(
+          find.byWidgetPredicate(
+            (Widget w) => w is AvatarNom && w.prenom == e.libelle,
+          ),
+          findsOneWidget,
+          reason: e.libelle,
+        );
+      }
+    });
+
+    testWidgets('R2-08 : dans la repartition du recu, le bandeau ne depasse '
+        'pas la ligne et le prenom s aligne sur le cercle', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        depart: _chemin(_mariam),
+        accents: <String, AccentProfil>{
+          _mariam: AccentProfil.menthe,
+          _ibrahim: AccentProfil.ciel,
+          DonneesFinanceDemo.aichaId: AccentProfil.rose,
+        },
+      );
+      await _toucher(
+        tester,
+        find.byKey(
+          MouvementsElevePage.voirRecuKey('demo-fi-mvt-$_mariam-recharge'),
+        ),
+      );
+      final Finder parts = find.descendant(
+        of: find.byKey(MouvementsElevePage.recuKey),
+        matching: find.byType(LigneAllocation),
+      );
+      expect(parts, findsWidgets);
+      for (final Element e in parts.evaluate()) {
+        final LigneAllocation l = e.widget as LigneAllocation;
+        final Finder ligne = find.byWidget(l);
+        final Rect cadre = tester.getRect(ligne);
+        final Finder bandeau = find.descendant(
+          of: ligne,
+          matching: find.byKey(BandeauProfil.bandeauKey),
+        );
+        expect(bandeau, findsOneWidget, reason: l.prenom);
+        expect(
+          tester.getRect(bandeau).top,
+          greaterThanOrEqualTo(cadre.top),
+          reason: l.prenom,
+        );
+        final Rect cercle = tester.getRect(
+          find.descendant(of: ligne, matching: find.byType(AvatarTile)),
+        );
+        final Rect prenom = tester.getRect(
+          find.descendant(of: ligne, matching: find.text(l.prenom)),
+        );
+        expect(prenom.top, cercle.top, reason: l.prenom);
+      }
+      expect(tester.takeException(), isNull);
+    });
+  });
+
   group('Etats', () {
     testWidgets('vide : « Aucun mouvement » (essai)', (
       WidgetTester tester,
@@ -628,7 +772,7 @@ void main() {
       );
       expect(_etat(NatureEtat.echecServeur), findsOneWidget);
       expect(
-        find.text(t.ficheEleve.mouvements.erreurTitre(prenom: 'Mariam')),
+        find.text(t.ficheEleve.mouvements.erreurTitre(dePrenom: 'de Mariam')),
         findsOneWidget,
       );
       await tester.tap(find.text(t.commun.etats.actions.reessayer));

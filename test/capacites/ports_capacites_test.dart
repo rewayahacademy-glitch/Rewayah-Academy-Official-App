@@ -12,6 +12,7 @@ import 'package:rewayah_academy/core/capacites/port_politique_revue_kyc.dart';
 import 'package:rewayah_academy/core/capacites/port_preferences_persistantes.dart';
 import 'package:rewayah_academy/core/capacites/port_profil_eleve_titulaire.dart';
 import 'package:rewayah_academy/core/capacites/port_progression_famille.dart';
+import 'package:rewayah_academy/core/capacites/port_recharge_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_resume_seance_famille.dart';
 import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
 import 'package:rewayah_academy/core/capacites/port_support.dart';
@@ -23,10 +24,11 @@ import '../fixtures/tuteur/faux_classes_foyer.dart';
 import '../fixtures/tuteur/faux_identite_titulaire.dart';
 import '../fixtures/tuteur/foyers.dart';
 
-/// Les trois familles d'identifiants admises : registre backend, lot qui
-/// ecrit l'adaptateur, ou besoin serveur de la vague Admin (K-28).
+/// Les quatre familles d'identifiants admises : registre backend, lot qui
+/// ecrit l'adaptateur, besoin serveur de la vague Admin (K-28) ou de la
+/// vague Finance (`FI-BR.md`, revue FI-VAGUE-R R7-07).
 final RegExp _dependanceValide = RegExp(
-  r'^(DB-[A-Z]{3}-\d{2}|LOT-[A-E]|AD-BR-\d{2})$',
+  r'^(DB-[A-Z]{3}-\d{2}|LOT-[A-E]|AD-BR-\d{2}|FI-BR-\d{2})$',
 );
 
 Matcher _indisponible(String dependance) => throwsA(
@@ -106,7 +108,7 @@ void main() {
       (
         'acces du foyer',
         (ProviderContainer c) => c.read(portAccesFoyerProvider).acces(),
-        'LOT-E',
+        'FI-BR-08',
       ),
       (
         'paiements',
@@ -119,6 +121,32 @@ void main() {
         (ProviderContainer c) =>
             c.read(portPaiementsFoyerProvider).detail('p1'),
         'DB-CPT-03',
+      ),
+      // Les ports neutres de la vague Finance citent le besoin FI-BR qui les
+      // remplace, jamais l'ancien EA-BR (R7-07).
+      (
+        'soldes du foyer',
+        (ProviderContainer c) => c.read(portPaiementsFoyerProvider).soldes(),
+        'FI-BR-03',
+      ),
+      (
+        'beneficiaires de la recharge',
+        (ProviderContainer c) =>
+            c.read(portRechargeFoyerProvider).beneficiaires(),
+        'FI-BR-06',
+      ),
+      (
+        'verification de la recharge',
+        (ProviderContainer c) =>
+            c.read(portRechargeFoyerProvider).verifier(const <ChoixRecharge>[]),
+        'FI-BR-06',
+      ),
+      (
+        'paiement de la recharge',
+        (ProviderContainer c) => c
+            .read(portRechargeFoyerProvider)
+            .payer(recapitulatifId: 'r1', cle: 'k1'),
+        'FI-BR-06',
       ),
       (
         'notifications',

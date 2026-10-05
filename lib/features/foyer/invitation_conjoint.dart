@@ -24,6 +24,7 @@
 // champ.
 
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,6 +33,7 @@ import 'package:uuid/uuid.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_accents_profils.dart';
 import '../../core/capacites/port_recharge_foyer.dart';
+import '../../core/finance/finances_profil.dart';
 import '../../core/finance/format_montant.dart';
 import '../../core/finance/montant.dart';
 import '../../core/finance/politique_commerciale.dart';
@@ -67,8 +69,11 @@ import '../../core/widgets/page_etape.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
+import '../acces_finance/acces_finance.dart'
+    show aRegulariser, messageRegularisation;
 import '../compte/donnees_compte.dart' show dateLongue;
-import 'finances_foyer.dart' show politiqueActiveProvider;
+import 'finances_foyer.dart'
+    show financesFoyerProvider, politiqueActiveProvider;
 import 'ligne_membre.dart' show dateEcheance;
 import 'photo_eleve.dart';
 import 'place_adulte.dart';

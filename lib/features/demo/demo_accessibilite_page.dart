@@ -33,6 +33,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
+import '../acces_finance/acces_finance.dart';
 import '../accueil_eleve/accueil_accessibilite.dart';
 import '../accueil_eleve/apres_seance_accessibilite.dart';
 import '../accueil_eleve/coran_accessibilite.dart';
@@ -450,21 +451,36 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
                 : _index == EcranAccessibiliteDemo.indexMaClasse
                 ? maClasse
                 : _index == EcranAccessibiliteDemo.indexAccueil
-                ? AccueilAccessibilite(
-                    key: const ValueKey<String>('demo-accueil'),
-                    prenom: DonneesAccessibiliteDemo.prenom(widget.eleve),
-                    tutoiement: DonneesAccessibiliteDemo.mineur(widget.eleve),
-                    espace: DonneesAccessibiliteDemo.espaceAccueil(
-                      widget.moment,
-                    ),
-                    onRejoindre: entrer,
-                    onVoirClasse: () =>
-                        _aller(EcranAccessibiliteDemo.indexMaClasse),
-                    onTache: () => _aller(EcranAccessibiliteDemo.indexMaClasse),
-                    onCoran: () => _aller(EcranAccessibiliteDemo.indexCoran),
-                    // L'aide vit dans Mon espace en demonstration (MA14,
-                    // MA-8) : aucune route reelle hors de la demonstration.
-                    onAide: () => _aller(EcranAccessibiliteDemo.indexMonEspace),
+                ? Consumer(
+                    builder: (BuildContext _, WidgetRef ref, Widget? _) {
+                      // L'acces de l'eleve (FI-9a, revue FI-VAGUE-R R4-01),
+                      // la meme regle que l'Accueil et l'Espace groupe.
+                      final ({bool ferme, bool enLecture}) acces =
+                          rejoindreSelonAcces(ref.watch(accesAppelantProvider));
+                      return AccueilAccessibilite(
+                        key: const ValueKey<String>('demo-accueil'),
+                        prenom: DonneesAccessibiliteDemo.prenom(widget.eleve),
+                        tutoiement: DonneesAccessibiliteDemo.mineur(
+                          widget.eleve,
+                        ),
+                        espace: DonneesAccessibiliteDemo.espaceAccueil(
+                          widget.moment,
+                        ),
+                        accesFerme: acces.ferme,
+                        onRejoindre: acces.enLecture ? null : entrer,
+                        onVoirClasse: () =>
+                            _aller(EcranAccessibiliteDemo.indexMaClasse),
+                        onTache: () =>
+                            _aller(EcranAccessibiliteDemo.indexMaClasse),
+                        onCoran: () =>
+                            _aller(EcranAccessibiliteDemo.indexCoran),
+                        // L'aide vit dans Mon espace en demonstration (MA14,
+                        // MA-8) : aucune route reelle hors de la
+                        // demonstration.
+                        onAide: () =>
+                            _aller(EcranAccessibiliteDemo.indexMonEspace),
+                      );
+                    },
                   )
                 : _index == EcranAccessibiliteDemo.indexCoran
                 ? Consumer(

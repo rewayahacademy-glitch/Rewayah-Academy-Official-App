@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
@@ -49,6 +50,7 @@ class PageShell extends StatelessWidget {
     super.key,
     this.titre,
     this.sousTitre,
+    this.ligneSousTitre,
     this.onRetour,
     this.actionsEntete = const <Widget>[],
     this.entete,
@@ -72,6 +74,10 @@ class PageShell extends StatelessWidget {
 
   /// Une ligne sous le titre, en encre attenuee.
   final String? sousTitre;
+
+  /// Une ligne composee sous le titre, a la place de [sousTitre] (voir
+  /// [EntetePage.ligneSousTitre]).
+  final Widget? ligneSousTitre;
 
   /// Le retour d'une page de niveau 2 ou d'une tache focalisee : sans lui,
   /// aucun disque retour n'est rendu.
@@ -112,7 +118,10 @@ class PageShell extends StatelessWidget {
         onRetour ??
         (actionsCoquille ? ActionsEnteteCoquille.retourDe(context) : null);
     final bool enteteRiche =
-        retour != null || sousTitre != null || actionsTete.isNotEmpty;
+        retour != null ||
+        sousTitre != null ||
+        ligneSousTitre != null ||
+        actionsTete.isNotEmpty;
 
     // La tete ne defile pas : le titre d'ecran, puis l'en-tete (un onglet, le
     // selecteur d'enfant de `TUT-01`, une ligne de contexte). C'est une zone
@@ -135,6 +144,7 @@ class PageShell extends StatelessWidget {
           EntetePage(
             titre: titre!,
             sousTitre: sousTitre,
+            ligneSousTitre: ligneSousTitre,
             onRetour: retour,
             actions: actionsTete,
             focusTitre: focusTitre,
@@ -142,7 +152,13 @@ class PageShell extends StatelessWidget {
         else
           titreFocalisable(
             focusTitre,
-            Text(titre!, style: textes.headlineLarge ?? const TextStyle()),
+            // R8-02 : comme `EntetePage`, le titre passe a la ligne ENTRE les
+            // mots, jamais dans un mot (« Politiques / commerci / ales » a
+            // 390 et 200 %).
+            TexteSansCoupure(
+              titre!,
+              style: textes.headlineLarge ?? const TextStyle(),
+            ),
           ),
         Ecart.vXxl,
       ] else if (enteteRiche) ...<Widget>[

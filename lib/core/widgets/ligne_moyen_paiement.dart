@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../finance/politique_commerciale.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
@@ -68,12 +69,13 @@ class LigneMoyenPaiement extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text(
+                  TexteSansCoupure(
                     t.argent.moyen.webStripe,
                     style: (actif ? palette.inkStrong : palette.inkMuted)
                         .applyTo(textes.titleSmall ?? const TextStyle()),
                   ),
-                  Text(
+                  // R8-03 : « confirmation. » entier a 320 px et 200 %.
+                  TexteSansCoupure(
                     t.argent.moyen.webStripeDetail,
                     style: palette.inkMuted.applyTo(
                       textes.bodyMedium ?? const TextStyle(),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../finance/finances_profil.dart';
+import '../i18n/jour_du_mois.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_palette.dart';
@@ -26,7 +27,7 @@ class BadgePeriodeFinancee extends StatelessWidget {
     final DateTime fin = periode.fin.toLocal();
     return t.argent.periode.jusquau(
       date: t.foyer.membre.date(
-        jour: fin.day.toString(),
+        jour: jourDuMois(fin.day),
         mois: t.commun.dates.mois[fin.month - 1],
         annee: fin.year.toString(),
       ),

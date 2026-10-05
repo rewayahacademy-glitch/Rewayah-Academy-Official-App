@@ -81,6 +81,12 @@ class DemoFinancePage extends StatelessWidget {
         // Reserve et delegation (Comptable V1, CPT-F) : la politique de la
         // Reserve et la delegation de la demonstration Direction.
         ...surchargesDemoDirection(),
+        // Le lien d'une alerte ouvre une page de Personnes ou d'Operations,
+        // domaines sans demonstration ici : il reste en place (K-28), comme
+        // `onAller` plus bas, au lieu de sortir vers une route reelle gardee.
+        ouvrirCibleAlerteFinanceProvider.overrideWithValue(
+          (BuildContext _, CibleAlerteFinance _) {},
+        ),
       ],
       child: RepereDemonstration(
         child: AdminShell(

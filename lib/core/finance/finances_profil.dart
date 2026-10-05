@@ -64,13 +64,23 @@ enum NatureLigneMensualite {
 @immutable
 class LigneMensualite {
   /// Cree la ligne.
-  const LigneMensualite({required this.nature, required this.montant});
+  const LigneMensualite({
+    required this.nature,
+    required this.montant,
+    this.rang,
+  });
 
   /// Ce que represente la ligne.
   final NatureLigneMensualite nature;
 
   /// Son montant, signe compris (negatif pour une remise ou un avoir).
   final Montant montant;
+
+  /// Le rang familial du membre payant (3 = troisieme), **rendu par la
+  /// source** pour une remise de rang (« Remise familiale 3e membre », guide
+  /// §5.2) ; `null` pour les autres lignes, ou quand la source ne le rend pas
+  /// (le libelle reste alors « Remise familiale », jamais un rang suppose).
+  final int? rang;
 }
 
 /// La periode financee d'un profil (FI2) : l'acces depend d'elle, jamais du

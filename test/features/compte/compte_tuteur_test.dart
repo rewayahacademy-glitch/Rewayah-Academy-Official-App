@@ -513,7 +513,7 @@ void main() {
       );
       expect(_texte(t.compte.tuteur.pageAcces.sansEcheance), findsOneWidget);
       expect(_texte('Ouvert jusqu\'au 30 octobre 2026'), findsOneWidget);
-      expect(_texte('Terminé le 1 septembre 2026'), findsOneWidget);
+      expect(_texte('Terminé le 1er septembre 2026'), findsOneWidget);
       expect(_texte(t.compte.tuteur.pageAcces.titulaire), findsOneWidget);
       expect(find.textContaining('bonnement'), findsNothing);
     });

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/auth/service_auth.dart';
 import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_identite_titulaire.dart';
@@ -348,7 +349,9 @@ class CarteIdentiteCompte extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Text(
+                        // R8-03 : une adresse est un seul mot ; elle se
+                        // reduit plutot que de se couper (320 px, 200 %).
+                        TexteSansCoupure(
                           identite.courriel ??
                               t.compte.tuteur.identite.courrielAbsent,
                           style: palette.inkStrong.applyTo(

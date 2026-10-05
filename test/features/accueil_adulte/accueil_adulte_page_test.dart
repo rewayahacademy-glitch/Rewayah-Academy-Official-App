@@ -9,16 +9,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/capacites/port_acces_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
+import 'package:rewayah_academy/features/acces_finance/acces_finance.dart';
 import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart';
 import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 import 'package:rewayah_academy/features/demo/classe_demo.dart';
@@ -30,6 +33,8 @@ import 'package:rewayah_academy/features/tc_espace_groupe/carte_session.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/emplacements_groupe.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../../router/support_routeur.dart' show sessionActive;
+import '../../support/harnais.dart' show FausseSourceSession;
 
 void main() {
   Widget app({required Widget child, List<Override> overrides = const []}) =>
@@ -202,6 +207,85 @@ void main() {
     expect(find.byType(AccueilAdultePage), findsNothing);
   });
 
+  // FI-9a, revue FI-VAGUE-R R4-01 : l'acces de l'adulte, borne a sa
+  // session, decide de Rejoindre, comme sur l'Accueil de l'enfant.
+  Future<void> monterPorteOuverte(
+    WidgetTester tester,
+    PortMonAcces acces,
+  ) async {
+    taille(tester, const Size(390, 1200));
+    final GoRouter routeur = GoRouter(
+      initialLocation: adresseDemoAdulte(
+        EcranDemoAdulte.accueil,
+        seance: EtatDemoClasse.fenetreOuverte,
+      ),
+      routes: <RouteBase>[
+        ...routesDemoAdulte('dev'),
+        ...routesDemoClasse('dev'),
+      ],
+    );
+    addTearDown(routeur.dispose);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: <Override>[
+          // L'acces est relu par personne connectee : la session la nomme.
+          sourceSessionProvider.overrideWithValue(
+            FausseSourceSession(sessionActive(AppRole.student)),
+          ),
+          portMonAccesProvider.overrideWithValue(acces),
+        ],
+        child: TranslationProvider(
+          child: MaterialApp.router(
+            theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+            locale: AppLocale.fr.flutterLocale,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            routerConfig: routeur,
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+  }
+
+  Finder boutonEntree() => find.descendant(
+    of: find.byType(EmplacementEntreeVue),
+    matching: find.byType(ActionPrincipale),
+  );
+
+  AccesBeneficiaire accesAdulte({required bool ouvert}) => AccesBeneficiaire(
+    eleveId: 'adulte-autonome',
+    prenom: 'Mamadou',
+    etatAffiche: EtatAccesAffiche.sansEcheance,
+    seancesPayantesOuvertes: ouvert,
+  );
+
+  testWidgets('porte ouverte, acces ferme : Rejoindre retire, la copie de '
+      'l\'adulte, aucune cause inventee', (WidgetTester tester) async {
+    await monterPorteOuverte(tester, _MonAcces(accesAdulte(ouvert: false)));
+    await tester.pumpAndSettle();
+    expect(find.byType(CarteSession), findsOneWidget);
+    expect(boutonEntree(), findsNothing);
+    expect(find.byKey(BandeauAccesAdulte.cle), findsOneWidget);
+    expect(find.text(t.argent.acces.adulteSeancesFermees), findsOneWidget);
+    expect(find.textContaining('manque'), findsNothing);
+  });
+
+  testWidgets('porte ouverte, acces en lecture : Rejoindre present et '
+      'inerte, puis actif', (WidgetTester tester) async {
+    final Completer<AccesBeneficiaire?> reponse =
+        Completer<AccesBeneficiaire?>();
+    await monterPorteOuverte(tester, _MonAcces.attente(reponse.future));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(boutonEntree(), findsOneWidget);
+    expect(tester.widget<ActionPrincipale>(boutonEntree()).onPress, isNull);
+    reponse.complete(accesAdulte(ouvert: true));
+    await tester.pumpAndSettle();
+    expect(tester.widget<ActionPrincipale>(boutonEntree()).onPress, isNotNull);
+    expect(find.byKey(BandeauAccesAdulte.cle), findsNothing);
+  });
+
   testWidgets('vue du second adulte : jamais la Classe du titulaire, '
       'l\'accueil est indisponible (EA-BR-13, EA-5)', (
     WidgetTester tester,
@@ -363,4 +447,17 @@ void main() {
       findsNothing,
     );
   });
+}
+
+/// L'acces de l'adulte connecte, borne a sa session (FI-BR-08).
+class _MonAcces implements PortMonAcces {
+  _MonAcces(AccesBeneficiaire acces)
+    : _lecture = Future<AccesBeneficiaire?>.value(acces);
+
+  _MonAcces.attente(this._lecture);
+
+  final Future<AccesBeneficiaire?> _lecture;
+
+  @override
+  Future<AccesBeneficiaire?> monAcces() => _lecture;
 }

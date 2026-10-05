@@ -21,12 +21,14 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
 import 'package:rewayah_academy/core/finance/mouvements_profil.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/badge_periode_financee.dart';
 import 'package:rewayah_academy/core/widgets/bandeau_attention.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
@@ -279,14 +281,31 @@ void main() {
       final GoRouter routeur = await _monter(tester);
       await _toucher(tester, find.text('Mariam').first);
       expect(lieu(routeur), Routes.ficheElevePour(_mariam));
-      // La ligne « Finances » dit l'etat lu.
-      expect(find.text(t.ficheEleve.lignes.finances), findsOneWidget);
+      // R2-02 : sous 1200, les onglets Général / Finances (Q-FI-1), pas
+      // une ligne du groupe des parametres.
+      final Finder onglets = find.byKey(OngletsFiche.cle);
+      expect(onglets, findsOneWidget);
       expect(
-        find.text(PastilleFinanciere.libelleDe(EtatFinancier.finance)),
-        findsOneWidget,
+        find.descendant(
+          of: find.byKey(FicheElevePage.parametresKey),
+          matching: find.text(t.ficheEleve.lignes.finances),
+        ),
+        findsNothing,
       );
-      await _toucher(tester, find.text(t.ficheEleve.lignes.finances));
+      await _toucher(
+        tester,
+        find.descendant(
+          of: onglets,
+          matching: find.text(t.ficheEleve.onglets.finances),
+        ),
+      );
       expect(lieu(routeur), _chemin(_mariam));
+      // Sur Finances, les memes onglets, « Finances » selectionne ; «
+      // Général » ramene a la fiche.
+      expect(
+        tester.widget<OngletsFiche>(find.byType(OngletsFiche)).actif,
+        OngletFiche.finances,
+      );
       expect(find.byType(FinancesElevePage), findsOneWidget);
       expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, 1);
       verifierUnSeulBoutonPlein(tester);
@@ -336,6 +355,188 @@ void main() {
     });
   });
 
+  group('Revue FI-VAGUE-R (R2-01 a R2-06)', () {
+    testWidgets('R2-02 : « Général » ramene a la fiche ; 1440 : aucun '
+        'segmente, la ligne « Finances » du groupe y mene', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await _monter(tester, depart: _chemin(_mariam));
+      await _toucher(
+        tester,
+        find.descendant(
+          of: find.byKey(OngletsFiche.cle),
+          matching: find.text(t.ficheEleve.onglets.general),
+        ),
+      );
+      expect(lieu(routeur), Routes.ficheElevePour(_mariam));
+
+      final GoRouter bureau = await _monter(
+        tester,
+        depart: Routes.ficheElevePour(_mariam),
+        taille: const Size(1440, 1600),
+      );
+      expect(find.byKey(OngletsFiche.cle), findsNothing);
+      expect(
+        find.text(PastilleFinanciere.libelleDe(EtatFinancier.finance)),
+        findsOneWidget,
+      );
+      await _toucher(tester, find.text(t.ficheEleve.lignes.finances));
+      expect(lieu(bureau), _chemin(_mariam));
+      expect(find.byKey(OngletsFiche.cle), findsNothing);
+    });
+
+    testWidgets('sans source : aucun onglet sur la fiche', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        avecFinances: false,
+        depart: Routes.ficheElevePour(_mariam),
+      );
+      expect(find.byKey(OngletsFiche.cle), findsNothing);
+    });
+
+    testWidgets('R2-01 : 1440, trois colonnes (identite et parametres, vue '
+        'et actions, historique et « Voir tout »), bandeau du bas a trois '
+        'faits, titre « Mariam · Finances » et chemin « Foyer › Mariam »', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        depart: _chemin(_mariam),
+        taille: const Size(1440, 1600),
+      );
+      expect(
+        find.text(t.ficheEleve.finances.titreBureau(prenom: 'Mariam')),
+        findsOneWidget,
+      );
+      expect(find.byKey(FilArianeFiche.foyerKey), findsOneWidget);
+      expect(
+        find.text(t.ficheEleve.filAriane.suite(prenom: 'Mariam')),
+        findsOneWidget,
+      );
+      final Rect gauche = tester.getRect(
+        find.byKey(FinancesElevePage.colonneIdentiteKey),
+      );
+      final Rect milieu = tester.getRect(find.byKey(FinancesElevePage.vueKey));
+      final Rect droite = tester.getRect(
+        find.byKey(FinancesElevePage.historiqueKey),
+      );
+      expect(gauche.right, lessThan(milieu.left));
+      expect(milieu.right, lessThan(droite.left));
+      // Le groupe existant des parametres, sans la ligne « Finances ».
+      final Finder parametres = find.descendant(
+        of: find.byKey(FinancesElevePage.colonneIdentiteKey),
+        matching: find.byKey(FicheElevePage.parametresKey),
+      );
+      expect(parametres, findsOneWidget);
+      expect(
+        find.descendant(
+          of: parametres,
+          matching: find.text(t.ficheEleve.lignes.finances),
+        ),
+        findsNothing,
+      );
+      // L'historique : les derniers mouvements rendus.
+      expect(
+        find.descendant(
+          of: find.byKey(FinancesElevePage.historiqueKey),
+          matching: find.text(t.ficheEleve.mouvements.nature.recharge),
+        ),
+        findsOneWidget,
+      );
+      // Le bandeau du bas : trois faits, la note sur les absences comprise.
+      final Finder bas = find.byKey(FinancesElevePage.bandeauBasKey);
+      for (final String fait in <String>[
+        t.ficheEleve.finances.faitSeance,
+        t.ficheEleve.finances.faitPeriode,
+        t.ficheEleve.finances.noteAbsences,
+      ]) {
+        expect(
+          find.descendant(of: bas, matching: find.text(fait)),
+          findsOneWidget,
+          reason: fait,
+        );
+      }
+      expect(find.byKey(FinancesElevePage.noteAbsencesKey), findsNothing);
+      expect(find.byKey(OngletsFiche.cle), findsNothing);
+      // Un seul acces aux mouvements : « Voir tout ».
+      expect(find.byKey(FinancesElevePage.mouvementsKey), findsNothing);
+      verifierUnSeulBoutonPlein(tester);
+      await _toucher(tester, find.byKey(FinancesElevePage.voirToutKey));
+      expect(lieu(routeur), Routes.ficheEleveSousPage(_mariam, 'mouvements'));
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('1440 : « Foyer » du fil d Ariane mene au Foyer', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        depart: _chemin(_mariam),
+        taille: const Size(1440, 1600),
+      );
+      await _toucher(tester, find.byKey(FilArianeFiche.foyerKey));
+      expect(lieu(routeur), Routes.tuteurFoyer);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('R2-03 et R2-04 : 390, la note sur les absences sous la vue, '
+        'puis « Recharger Mariam », puis « Voir les mouvements » 8 dessous', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, depart: _chemin(_mariam));
+      expect(t.ficheEleve.finances.voirMouvements, 'Voir les mouvements');
+      final Finder note = find.byKey(FinancesElevePage.noteAbsencesKey);
+      expect(
+        find.descendant(
+          of: note,
+          matching: find.text(t.ficheEleve.finances.noteAbsences),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(FinancesElevePage.mouvementsKey),
+          matching: find.text('Voir les mouvements'),
+        ),
+        findsOneWidget,
+      );
+      final Rect vue = tester.getRect(find.byKey(FinancesElevePage.vueKey));
+      final Rect rectNote = tester.getRect(note);
+      final Rect bouton = tester.getRect(
+        find.byKey(FinancesElevePage.rechargerKey),
+      );
+      final Rect lien = tester.getRect(
+        find.byKey(FinancesElevePage.mouvementsKey),
+      );
+      expect(rectNote.top, greaterThanOrEqualTo(vue.bottom));
+      expect(bouton.top, greaterThan(rectNote.bottom));
+      expect(lien.top - bouton.bottom, 8);
+    });
+
+    testWidgets('R2-06 : la periode financee une seule fois, dans la vue '
+        'financiere, jamais sous l identite', (WidgetTester tester) async {
+      await _monter(tester, depart: _chemin(_mariam));
+      final Finder periode = find.byType(BadgePeriodeFinancee);
+      expect(periode, findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(FinancesElevePage.vueKey),
+          matching: periode,
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(FinancesElevePage.identiteKey),
+          matching: periode,
+        ),
+        findsNothing,
+      );
+    });
+  });
+
   group('Les huit cas du lot F3', () {
     testWidgets('1. aucune remise : Mariam, rang 1, tarif et total seuls', (
       WidgetTester tester,
@@ -370,8 +571,11 @@ void main() {
         (LigneMensualite l) => l.nature == NatureLigneMensualite.remiseRang,
       );
       expect(remise.montant.mineur, -500);
+      // R2-07 : le rang rendu par la source est dans le libelle.
+      expect(remise.rang, 3);
+      expect(find.text(t.ficheEleve.finances.remiseRang), findsNothing);
       _attendreLigne(
-        t.ficheEleve.finances.remiseRang,
+        t.ficheEleve.finances.remiseRangDe(rang: '3'),
         formaterMontant(remise.montant),
       );
       _attendreLigne(
@@ -396,8 +600,9 @@ void main() {
         (LigneMensualite l) => l.nature == NatureLigneMensualite.remiseRang,
       );
       expect(remise.montant.mineur, -700);
+      expect(remise.rang, 4);
       _attendreLigne(
-        t.ficheEleve.finances.remiseRang,
+        t.ficheEleve.finances.remiseRangDe(rang: '4'),
         formaterMontant(remise.montant),
       );
     });
@@ -636,7 +841,7 @@ void main() {
       expect(bandeau.titre, t.ficheEleve.finances.expireTitre);
       expect(
         bandeau.message,
-        t.ficheEleve.finances.moisNonFinance(mois: octobre),
+        t.ficheEleve.finances.moisNonFinance(deMois: deDevant(octobre)),
       );
       expect(_ligneDebit(tester).$1, t.ficheEleve.finances.periodeAFinancer);
       expect(find.byKey(FinancesElevePage.rechargerKey), findsOneWidget);
@@ -701,7 +906,7 @@ void main() {
       );
       expect(_etat(NatureEtat.echecServeur), findsOneWidget);
       expect(
-        find.text(t.ficheEleve.finances.erreurTitre(prenom: 'Mariam')),
+        find.text(t.ficheEleve.finances.erreurTitre(dePrenom: 'de Mariam')),
         findsOneWidget,
       );
       expect(find.byKey(FinancesElevePage.rechargerKey), findsNothing);
@@ -735,6 +940,8 @@ void main() {
       );
       expect(find.byType(LigneFinance), findsNothing);
       expect(find.byKey(FinancesElevePage.rechargerKey), findsNothing);
+      // Comme la fiche sans source : aucun onglet Général / Finances.
+      expect(find.byKey(OngletsFiche.cle), findsNothing);
     });
 
     testWidgets('vide : la source ne rend pas ce profil', (

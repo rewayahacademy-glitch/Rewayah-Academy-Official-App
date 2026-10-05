@@ -16,13 +16,16 @@ import '../../core/capacites/port_paiements_foyer.dart';
 import '../../core/capacites/port_politiques_commerciales.dart';
 import '../../core/finance/finances_profil.dart';
 import '../../core/finance/format_montant.dart';
+import '../../core/finance/periode_a_financer.dart';
 import '../../core/finance/politique_commerciale.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/session/session_controleur.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/app_card.dart';
 import '../../core/widgets/badge_periode_financee.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
@@ -35,9 +38,10 @@ import 'ligne_membre.dart' show dateEcheance;
 /// invalide avant de revenir au Foyer (route `recharge`), pour qu'il les
 /// relise.
 final FutureProvider<FinancesFoyer> financesFoyerProvider =
-    FutureProvider<FinancesFoyer>(
-      (Ref ref) => ref.watch(portPaiementsFoyerProvider).finances(),
-    );
+    FutureProvider<FinancesFoyer>((Ref ref) {
+      surveillerPersonneConnectee(ref);
+      return ref.watch(portPaiementsFoyerProvider).finances();
+    });
 
 /// La politique commerciale active, pour le nombre de seances d'essai : une
 /// valeur commerciale n'est jamais ecrite dans un ecran (guide §8 F1).
@@ -64,9 +68,23 @@ bool aRecharger(FinancesProfil p) => switch (p.etat) {
   _ => false,
 };
 
+/// Vrai quand la source des finances du foyer existe : faux seulement en
+/// production (`CapaciteIndisponible`), ou le Foyer reste celui d'avant.
+bool financesDisponibles(AsyncValue<FinancesFoyer> lecture) =>
+    !(lecture.hasError && lecture.error is CapaciteIndisponible);
+
+/// Vrai quand « Recharger plusieurs profils » est pose : les finances sont
+/// rendues. C'est alors lui le seul bouton plein du Foyer (Q-FI-2, E-17) ;
+/// sinon (production, chargement, erreur), « Ajouter un profil eleve » le
+/// reste (Q-FI-2 pour le cas sans source : question 1 au directeur, revue
+/// FI-VAGUE-R ; comportement d'avant garde).
+bool rechargePosee(AsyncValue<FinancesFoyer> lecture) =>
+    lecture.hasValue && !lecture.hasError;
+
 /// La synthese « Soldes et paiements » en tete du Foyer : chargement,
 /// contenu, erreur et hors ligne ; rien du tout quand la source n'existe pas
-/// (production).
+/// (production). Son titre est le sous-titre de la page (maquettes 03 et
+/// 05, revue FI-VAGUE-R R1-09) : aucun titre repete ici.
 class SyntheseSoldesFoyer extends ConsumerWidget {
   /// Cree la synthese.
   const SyntheseSoldesFoyer({required this.onRechargerPlusieurs, super.key});
@@ -87,16 +105,6 @@ class SyntheseSoldesFoyer extends ConsumerWidget {
     final AsyncValue<FinancesFoyer> lecture = ref.watch(financesFoyerProvider);
     final Object? erreur = lecture.hasError ? lecture.error : null;
     if (erreur is CapaciteIndisponible) return const SizedBox.shrink();
-    final AppPalette palette = AppPalette.of(context);
-    final Widget titre = Semantics(
-      header: true,
-      child: Text(
-        t.foyer.finances.titre,
-        style: palette.inkStrong.applyTo(
-          Theme.of(context).textTheme.titleMedium ?? const TextStyle(),
-        ),
-      ),
-    );
     final Widget corps;
     if (erreur != null) {
       void relire() => ref.invalidate(financesFoyerProvider);
@@ -110,36 +118,92 @@ class SyntheseSoldesFoyer extends ConsumerWidget {
     } else if (!lecture.hasValue) {
       corps = const Skeleton.liste(lignes: 2);
     } else {
+      final bool mobile = AppGabarit.de(context) == Gabarit.mobile;
+      // Le seul bouton plein du Foyer (K-56, Q-FI-2, E-17) : « Ajouter un
+      // profil eleve » passe en secondaire tant qu'il est pose. Pleine
+      // largeur sur telephone ; compact ailleurs, en tete du 4e bloc de la
+      // rangee (FI-5), jamais un bouton etire sur 650 px (K-42.6).
+      final Widget bouton = ActionPrincipale(
+        key: rechargerKey,
+        libelle: t.foyer.finances.rechargerPlusieurs,
+        pleineLargeur: mobile,
+        onPress: onRechargerPlusieurs,
+      );
+      corps = ResumeSoldes(
+        synthese: lecture.requireValue.synthese,
+        action: mobile
+            ? bouton
+            : Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: IntrinsicWidth(child: bouton),
+              ),
+        note: t.foyer.finances.noteSoldes,
+      );
+    }
+    return KeyedSubtree(
+      key: cle,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[corps, Ecart.vSection],
+      ),
+    );
+  }
+}
+
+/// « Vue financiere du foyer » (FI-5, maquette 05, guide §5.1 « Desktop ») :
+/// le mois courant seul.
+///
+/// **Q-FI-8 sans reponse du directeur** : defaut propose = panneau garde, sur
+/// le mois courant (« Ce mois-ci »), SANS selecteur de mois (aucun contrat de
+/// lecture par mois), memes libelles que la rangee de tete. Il porte aussi
+/// « Paiements du mois », que la rangee cede a son 4e bloc (Q-FI-7). A
+/// retirer ou etendre selon la reponse.
+///
+/// Meme source que la synthese : le chargement montre un squelette ; une
+/// erreur se dit une seule fois, dans la synthese (avec « Reessayer » ou
+/// « hors ligne »), ce panneau se retire alors ; sans source (production),
+/// rien.
+class VueFinanciereFoyer extends ConsumerWidget {
+  /// Cree le panneau.
+  const VueFinanciereFoyer({super.key});
+
+  /// Le panneau.
+  static const Key cle = Key('foyer.finances.vueFinanciere');
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<FinancesFoyer> lecture = ref.watch(financesFoyerProvider);
+    if (lecture.hasError) return const SizedBox.shrink();
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final Widget corps;
+    if (!lecture.hasValue) {
+      corps = const Skeleton.liste(lignes: 3);
+    } else {
+      final SyntheseFoyer s = lecture.requireValue.synthese;
       corps = Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          ResumeSoldes(synthese: lecture.requireValue.synthese),
-          Ecart.vLg,
-          // Secondaire : le seul bouton plein du Foyer reste « Ajouter un
-          // profil eleve » (un bouton dominant par ecran, D5).
-          // FI-5 : pleine largeur sur telephone ; compacte au bord de fin
-          // ailleurs, jamais un bouton etire sur 650 px (K-42.6).
-          if (AppGabarit.de(context) == Gabarit.mobile)
-            ActionPrincipale(
-              key: rechargerKey,
-              libelle: t.foyer.finances.rechargerPlusieurs,
-              niveau: NiveauAction.secondaire,
-              onPress: onRechargerPlusieurs,
-            )
-          else
-            Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: IntrinsicWidth(
-                child: ActionPrincipale(
-                  key: rechargerKey,
-                  libelle: t.foyer.finances.rechargerPlusieurs,
-                  niveau: NiveauAction.secondaire,
-                  pleineLargeur: false,
-                  onPress: onRechargerPlusieurs,
-                ),
-              ),
-            ),
+          LigneCleValeur(
+            cle: t.argent.soldes.total,
+            valeur: formaterMontant(s.totalSoldes),
+            chiffres: true,
+            valeurEnFin: true,
+          ),
+          LigneCleValeur(
+            cle: t.argent.soldes.aPayer,
+            valeur: formaterMontant(s.aPayerCeMois),
+            chiffres: true,
+            valeurEnFin: true,
+          ),
+          LigneCleValeur(
+            cle: t.argent.soldes.paiements,
+            valeur: '${s.paiementsDuMois}',
+            chiffres: true,
+            valeurEnFin: true,
+          ),
         ],
       );
     }
@@ -148,7 +212,25 @@ class SyntheseSoldesFoyer extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
-        children: <Widget>[titre, Ecart.vSm, corps, Ecart.vSection],
+        children: <Widget>[
+          Semantics(
+            header: true,
+            child: Text(
+              t.foyer.finances.vueFinanciere,
+              style: palette.inkStrong.applyTo(
+                textes.titleMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
+          Text(
+            t.foyer.finances.vueFinancierePeriode,
+            style: palette.inkMuted.applyTo(
+              textes.bodySmall ?? const TextStyle(),
+            ),
+          ),
+          Ecart.vSm,
+          AppCard(child: corps),
+        ],
       ),
     );
   }
@@ -182,6 +264,9 @@ class BlocFinanceMembre extends ConsumerWidget {
       final m? when aRecharger(finance) => formaterMontant(m),
       _ => null,
     };
+    // Le mois que le debit attendu finance : la carte dit la meme chose que
+    // la fiche Finances du meme enfant (guide §1.7, revue FI-VAGUE-R R1-05).
+    final String? mois = moisAFinancer(finance);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -207,23 +292,44 @@ class BlocFinanceMembre extends ConsumerWidget {
         ],
         if (manque != null) ...<Widget>[
           Ecart.vXs,
-          Text(t.foyer.finances.manque(montant: manque), style: note),
+          Text(
+            mois == null
+                ? t.foyer.finances.manque(montant: manque)
+                : t.ficheEleve.finances.manquePourMois(
+                    montant: manque,
+                    mois: mois,
+                  ),
+            style: note,
+          ),
         ],
         LigneCleValeur(
           cle: t.foyer.finances.soldeActuel,
           valeur: formaterMontant(finance.solde),
           chiffres: true,
         ),
-        LigneCleValeur(
-          cle: t.foyer.finances.prochainDebit,
-          valeur: debit == null
-              ? t.foyer.finances.aucunDebit
-              : t.foyer.finances.prochainDebitValeur(
-                  date: dateEcheance(debit.date),
-                  montant: formaterMontant(debit.montant),
-                ),
-          chiffres: debit != null,
-        ),
+        // Periode en cours non financee : le debit attendu est celui du mois
+        // a financer, jamais un « prochain débit » a une date deja passee.
+        if (debit != null && periodeNonFinancee(finance))
+          LigneCleValeur(
+            cle: t.ficheEleve.finances.periodeAFinancer,
+            valeur: t.ficheEleve.finances.periodeAFinancerValeur(
+              mois: t.commun.dates.mois[debit.date.month - 1],
+              annee: debit.date.year.toString(),
+              montant: formaterMontant(debit.montant),
+            ),
+            chiffres: true,
+          )
+        else
+          LigneCleValeur(
+            cle: t.foyer.finances.prochainDebit,
+            valeur: debit == null
+                ? t.foyer.finances.aucunDebit
+                : t.foyer.finances.prochainDebitValeur(
+                    date: dateEcheance(debit.date),
+                    montant: formaterMontant(debit.montant),
+                  ),
+            chiffres: debit != null,
+          ),
       ],
     );
   }

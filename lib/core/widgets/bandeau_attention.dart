@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_palette.dart';
@@ -80,7 +81,9 @@ class BandeauAttention extends StatelessWidget {
                   children: <Widget>[
                     Semantics(
                       header: true,
-                      child: Text(
+                      // R8-03 : entre les mots, jamais dans un mot
+                      // (« temporaire / ment »).
+                      child: TexteSansCoupure(
                         titre,
                         style: paire.applyTo(
                           textes.titleSmall ?? const TextStyle(),
@@ -88,7 +91,7 @@ class BandeauAttention extends StatelessWidget {
                       ),
                     ),
                     Ecart.vXs,
-                    Text(
+                    TexteSansCoupure(
                       message,
                       style: paire.applyTo(
                         textes.bodyMedium ?? const TextStyle(),

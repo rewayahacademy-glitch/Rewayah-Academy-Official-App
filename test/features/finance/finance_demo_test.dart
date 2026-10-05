@@ -87,8 +87,8 @@ void main() {
     });
 
     test('classes par enseignant : objectif 3, maximum 4', () {
-      expect(p.groupesObjectif, 3);
-      expect(p.groupesMax, 4);
+      expect(p.classesObjectif, 3);
+      expect(p.classesMax, 4);
     });
 
     test('place conservee 7 jours', () {

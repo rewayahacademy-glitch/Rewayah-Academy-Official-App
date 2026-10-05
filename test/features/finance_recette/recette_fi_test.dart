@@ -190,11 +190,11 @@ class _RechargeEspion extends RechargeFoyerFinanceDemo {
   }
 }
 
-/// Coche Mariam, prend le premier montant propose et passe a l'etape 2.
+/// Coche Mariam et prend le premier montant propose : le recapitulatif
+/// arrive sur la meme page (une seule page, R3-01).
 Future<void> _versEtape2(WidgetTester tester) async {
   await toucherFi(tester, find.byKey(RechargeFoyerPage.caseDe(_mariam)));
   await toucherFi(tester, find.byKey(RechargeFoyerPage.plusDe(_mariam)));
-  await toucherFi(tester, find.byKey(RechargeFoyerPage.verifierKey));
   expect(find.byKey(RechargeFoyerPage.recapitulatifKey), findsOneWidget);
 }
 
@@ -339,10 +339,19 @@ final List<_EcranComposition> _ecransComposition = <_EcranComposition>[
   (
     nom: 'Fiche > Finances',
     monter: _tuteur(Routes.ficheEleveSousPage(_ibrahim, 'finances')),
-    blocs: () => <Finder>[
-      find.byKey(FinancesElevePage.identiteKey),
-      find.byKey(FinancesElevePage.vueKey),
-    ],
+    // R2-01 : sur bureau, trois colonnes (identite et parametres, vue
+    // financiere et actions, historique) ; sur telephone, une pile.
+    blocs: () {
+      final Finder colonne = find.byKey(FinancesElevePage.colonneIdentiteKey);
+      return <Finder>[
+        if (colonne.evaluate().isNotEmpty)
+          colonne
+        else
+          find.byKey(FinancesElevePage.identiteKey),
+        find.byKey(FinancesElevePage.vueKey),
+        find.byKey(FinancesElevePage.historiqueKey),
+      ];
+    },
     tacheFocalisee: false,
   ),
   (
@@ -412,10 +421,19 @@ final List<_EcranComposition> _ecransComposition = <_EcranComposition>[
         taille: taille,
       );
     },
-    blocs: () => <Finder>[
-      find.byKey(FinancesElevePage.identiteKey),
-      find.byKey(FinancesElevePage.vueKey),
-    ],
+    // R2-01 : sur bureau, trois colonnes (identite et parametres, vue
+    // financiere et actions, historique) ; sur telephone, une pile.
+    blocs: () {
+      final Finder colonne = find.byKey(FinancesElevePage.colonneIdentiteKey);
+      return <Finder>[
+        if (colonne.evaluate().isNotEmpty)
+          colonne
+        else
+          find.byKey(FinancesElevePage.identiteKey),
+        find.byKey(FinancesElevePage.vueKey),
+        find.byKey(FinancesElevePage.historiqueKey),
+      ];
+    },
     tacheFocalisee: false,
   ),
   (
@@ -548,7 +566,8 @@ void main() {
   // « Suivre le paiement », « Revenir aux paiements » d'un paiement
   // indisponible (recharge_foyer_adulte_test.dart).
   group('(a) Recharge', () {
-    testWidgets('etape 2 : le retour ramene a l etape 1, les choix gardes', (
+    testWidgets('une seule page : decocher retire la ligne du recapitulatif, '
+        'les autres choix gardes ; le retour ramene au Foyer', (
       WidgetTester tester,
     ) async {
       final GoRouter routeur = await monterTuteurFi(
@@ -556,15 +575,17 @@ void main() {
         depart: Routes.tuteurFoyerRecharge,
       );
       await _versEtape2(tester);
+      await toucherFi(tester, find.byKey(RechargeFoyerPage.caseDe(_mariam)));
+      expect(cheminFi(routeur), Routes.tuteurFoyerRecharge);
+      expect(find.byKey(RechargeFoyerPage.recapitulatifKey), findsNothing);
+      expect(find.byKey(RechargeFoyerPage.payerKey), findsOneWidget);
+      expect(_coche(tester, _mariam), isFalse);
+      expect(_coche(tester, _ibrahim), isFalse);
       await toucherFi(
         tester,
         dansFi(find.byType(RechargeFoyerPage), find.byType(DisqueRetour)),
       );
-      expect(cheminFi(routeur), Routes.tuteurFoyerRecharge);
-      expect(find.byKey(RechargeFoyerPage.recapitulatifKey), findsNothing);
-      expect(find.byKey(RechargeFoyerPage.verifierKey), findsOneWidget);
-      expect(_coche(tester, _mariam), isTrue);
-      expect(_coche(tester, _ibrahim), isFalse);
+      expect(cheminFi(routeur), Routes.tuteurFoyer);
       expect(tester.takeException(), isNull);
     });
 
@@ -897,9 +918,13 @@ void main() {
         ),
         findsOneWidget,
       );
+      // Le manque pour le mois que le debit attendu finance (R1-05).
       expect(
         find.text(
-          t.foyer.finances.manque(montant: formaterMontant(ibrahim.manque!)),
+          t.ficheEleve.finances.manquePourMois(
+            montant: formaterMontant(ibrahim.manque!),
+            mois: t.commun.dates.mois[ibrahim.prochainDebit!.date.month - 1],
+          ),
         ),
         findsOneWidget,
       );
@@ -981,7 +1006,6 @@ void main() {
         expect(_coche(tester, autre), isFalse, reason: autre);
       }
       await toucherFi(tester, find.byKey(RechargeFoyerPage.plusDe(_ibrahim)));
-      await toucherFi(tester, find.byKey(RechargeFoyerPage.verifierKey));
       expect(
         espion.verifies.last.map((MontantRecharge c) => c.beneficiaireId),
         <String>[_ibrahim],
@@ -1134,7 +1158,7 @@ void main() {
     });
 
     testWidgets('4 bis. l eleve adulte : un avatar garde sa couleur de Ma '
-        'famille aux Paiements du foyer et a la recharge ; l adulte autonome, '
+        'famille a la recharge ; l adulte autonome, '
         'de Mes finances a sa recharge', (WidgetTester tester) async {
       Future<Map<String, Set<AccentProfil?>>> releve(
         List<String> adresses,
@@ -1160,10 +1184,18 @@ void main() {
 
       final Map<String, Set<AccentProfil?>> famille = await releve(<String>[
         adresseDemoAdulte(EcranDemoAdulte.maFamille),
-        adresseDemoAdulte(EcranDemoAdulte.paiementsFoyer),
         adresseDemoAdulte(EcranDemoAdulte.recharge),
       ]);
       expect(famille.keys, containsAll(<String>['Aïcha', 'Oumar']));
+      // Paiements du foyer ne pose plus aucun avatar : ses soldes sont
+      // portes par Ma famille (E-11, revue FI-VAGUE-R R1-06), comme Compte
+      // > Paiements du tuteur. Aucune couleur ne peut y changer (releve
+      // vide, dit ici pour ne pas le supposer).
+      await monterAdulteFi(
+        tester,
+        adresseDemoAdulte(EcranDemoAdulte.paiementsFoyer),
+      );
+      expect(_accentsRendus(tester), isEmpty);
       final Map<String, Set<AccentProfil?>> seul = await releve(<String>[
         adresseDemoAdulte(
           EcranDemoAdulte.paiements,
@@ -1340,7 +1372,7 @@ void main() {
       );
       // Les boutons d'action ne s'etirent pas a la colonne.
       for (final (String chemin, Key bouton) in <(String, Key)>[
-        (Routes.tuteurFoyerRecharge, RechargeFoyerPage.verifierKey),
+        (Routes.tuteurFoyerRecharge, RechargeFoyerPage.payerKey),
         (
           Routes.resultatRechargePour(
             DonneesFinanceDemo.commandeDemo(EtatPaiement.termine),
@@ -1475,8 +1507,9 @@ void main() {
         profilId: _ibrahim,
         seances: <Seance>[_coursEnDirect(_ibrahim)],
         surcharges: <Override>[
-          portAccesFoyerProvider.overrideWithValue(
-            const AccesFoyerFinanceDemo(JeuFoyerFinance.unARegulariser),
+          // L'acces de l'enfant, borne a sa session (FI-BR-08, R4-02).
+          portMonAccesProvider.overrideWithValue(
+            const MonAccesFinanceDemo(JeuFoyerFinance.unARegulariser, _ibrahim),
           ),
           portPaiementsFoyerProvider.overrideWithValue(espion),
         ],
@@ -1644,8 +1677,9 @@ void main() {
           profilId: _ibrahim,
           seances: <Seance>[_coursEnDirect(_ibrahim)],
           surcharges: <Override>[
-            portAccesFoyerProvider.overrideWithValue(
-              AccesFoyerFinanceDemo(jeu),
+            // L'acces de l'enfant, borne a sa session (FI-BR-08, R4-02).
+            portMonAccesProvider.overrideWithValue(
+              MonAccesFinanceDemo(jeu, _ibrahim),
             ),
             portPaiementsFoyerProvider.overrideWithValue(espion),
           ],
@@ -1857,6 +1891,7 @@ void main() {
         tarifEnfant: l.tarifEnfant,
         tarifAdulte: l.tarifAdulte,
         essaisMax: 3,
+        essaiActif: l.essaiActif,
         remisesParRang: l.remisesParRang,
         baseHoraire: l.baseHoraire,
         plafondHoraire: l.plafondHoraire,
@@ -1864,8 +1899,8 @@ void main() {
         capaciteAdulte: l.capaciteAdulte,
         capaciteDebutant: l.capaciteDebutant,
         minimumOuverture: l.minimumOuverture,
-        groupesObjectif: l.groupesObjectif,
-        groupesMax: l.groupesMax,
+        classesObjectif: l.classesObjectif,
+        classesMax: l.classesMax,
         joursConservationPlace: l.joursConservationPlace,
         margeReferencePourMille: l.margeReferencePourMille,
         railsActifs: l.railsActifs,

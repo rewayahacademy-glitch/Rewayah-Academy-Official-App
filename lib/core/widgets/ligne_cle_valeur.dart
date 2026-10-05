@@ -32,6 +32,11 @@ class LigneCleValeur extends StatelessWidget {
     this.valeurEnFin = false,
   });
 
+  /// La marge au-dessus et au-dessous de la ligne : un bandeau de profil
+  /// pose en [meneur] y remonte sans depasser la ligne (`BandeauProfil`,
+  /// `remontee`).
+  static const double margeVerticale = AppSpacing.sm;
+
   /// Ce que la valeur designe : « Horaire », « Duree », « Presence ».
   final String cle;
 
@@ -151,7 +156,7 @@ class LigneCleValeur extends StatelessWidget {
     final Widget? tete = meneur;
     return MergeSemantics(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+        padding: const EdgeInsets.symmetric(vertical: margeVerticale),
         child: tete == null
             ? corps
             : Row(

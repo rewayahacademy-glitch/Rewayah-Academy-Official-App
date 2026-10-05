@@ -1,12 +1,13 @@
 // EA-9 : Paiements du foyer du titulaire, atteints depuis la VRAIE coquille
 // adulte (K-07) : on tape la VRAIE destination « Mon espace », la VRAIE ligne
-// « Ma famille », puis la VRAIE ligne « Paiements du foyer ». Une ligne par
-// beneficiaire autorise avec son solde tel que rendu, une pastille pour la
-// seule exception rendue, un seul bouton « Recharger » au bord de fin, 16
-// sous la liste, le recapitulatif discret et l'historique (F9, F10, F12).
-// Puis la colonne droite de Ma famille sur bureau (planche 6), la vue du
-// second adulte (historique seul, E3, F7) et les etats de la section
-// (chargement, erreur, hors ligne, vide, indisponible).
+// « Ma famille », puis la VRAIE ligne « Paiements du foyer ». Depuis la revue
+// FI-VAGUE-R R1-06 (E-11), ses soldes ne sont plus repetes : un seul
+// « Recharger », raccourci vers la recharge du foyer, puis l'historique.
+// Ma famille a la composition du Foyer du tuteur, avec une source de
+// finances, a 1440 et 390 (synthese, cartes, un seul bouton plein). Puis la
+// vue du second adulte (historique seul, E3, F7) et les etats de la section
+// des soldes, qui reste un composant (chargement, erreur, hors ligne, vide,
+// indisponible).
 
 import 'dart:async';
 
@@ -19,14 +20,14 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/finance/finances_profil.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
-import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
-import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
+import 'package:rewayah_academy/core/widgets/resume_soldes.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart';
@@ -34,10 +35,11 @@ import 'package:rewayah_academy/features/compte/paiements_page.dart';
 import 'package:rewayah_academy/features/compte/soldes_foyer.dart';
 import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
+import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
+import 'package:rewayah_academy/features/foyer/finances_foyer.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart'
     show RechargeFoyerPage;
-import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
 import 'package:rewayah_academy/features/foyer/place_adulte.dart';
 import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
@@ -85,9 +87,6 @@ void main() {
     return routeur;
   }
 
-  Finder dansSoldes(Finder f) =>
-      find.descendant(of: find.byKey(SoldesFoyerSection.cle), matching: f);
-
   /// Aucun chiffre economique ajoute par Flutter (F12), jamais « admin »
   /// (K-53.6), jamais l'etat normal en pastille (E12), jamais un « budget »
   /// (F9).
@@ -104,8 +103,8 @@ void main() {
     }
   }
 
-  testWidgets('Mon espace > Ma famille > Paiements du foyer, tapes : un solde '
-      'par beneficiaire, une seule pastille, un seul « Recharger »', (
+  testWidgets('Mon espace > Ma famille > Paiements du foyer, tapes : aucune '
+      'section de soldes, un seul « Recharger », l\'historique rendu (R1-06)', (
     WidgetTester tester,
   ) async {
     taille(tester, const Size(390, 844));
@@ -133,76 +132,25 @@ void main() {
     // En-tete sobre : le nom de la ligne tapee.
     expect(find.text(t.adulte.famille.paiementsFoyer), findsOneWidget);
 
-    // Une ligne par beneficiaire autorise, dans l'ordre rendu, avec son
-    // solde TEL QUE RENDU, un libelle de demonstration sans unite (E2 = c,
-    // revue EA-R m3 et m17).
-    final d = t.adulte.demo.donnees;
-    for (final (String prenom, String solde) in <(String, String)>[
-      ('Mamadou', d.soldeTitulaire),
-      ('Mariama', d.soldeSecondAdulte),
-      ('Aïcha', d.soldeAicha),
-      ('Oumar', d.soldeOumar),
-    ]) {
-      expect(dansSoldes(find.text(prenom)), findsOneWidget, reason: prenom);
-      expect(dansSoldes(find.text(solde)), findsOneWidget, reason: solde);
-    }
-    double haut(Finder f) => tester.getTopLeft(f).dy;
-    expect(
-      haut(dansSoldes(find.text('Mamadou'))),
-      lessThan(haut(dansSoldes(find.text('Mariama')))),
-    );
-    // La photo ou les initiales de chaque beneficiaire nomme (K-44).
-    expect(dansSoldes(find.byType(PhotoEleve)), findsNWidgets(4));
-    // Une seule pastille : l'exception rendue, avec son mot.
-    final List<StatusPill> pastilles = tester
-        .widgetList<StatusPill>(dansSoldes(find.byType(StatusPill)))
-        .toList();
-    expect(pastilles, hasLength(1));
-    expect(pastilles.single.libelle, t.adulte.paiements.bientotEpuise);
-    expect(pastilles.single.ton, TonEtat.avertissement);
-    // La pastille est sur la ligne d'Aicha, pas ailleurs.
-    final double pastille = haut(dansSoldes(find.byType(StatusPill)));
-    expect(pastille, greaterThan(haut(dansSoldes(find.text('Aïcha')))));
-    expect(pastille, lessThan(haut(dansSoldes(find.text('Oumar')))));
-
-    // Un seul bouton dominant : « Recharger », au bord de fin, 16 sous la
-    // liste des beneficiaires.
+    // Les soldes ne sont plus repetes ici (E-11, revue FI-VAGUE-R R1-06) :
+    // la synthese et les cartes de Ma famille les portent.
+    expect(find.byKey(SoldesFoyerSection.cle), findsNothing);
+    expect(find.byType(ResumeSoldes), findsNothing);
+    // Un seul bouton : « Recharger », raccourci vers LA recharge (FI-7).
     expect(find.byType(ActionPrincipale), findsOneWidget);
-    final Finder recharger = find.byKey(SoldesFoyerSection.rechargerKey);
+    final Finder recharger = find.byKey(PaiementsComptePage.rechargerKey);
     expect(
       find.descendant(of: recharger, matching: find.text('Recharger')),
       findsOneWidget,
     );
-    final Finder groupe = dansSoldes(find.byType(GroupeReglages)).first;
-    expect(
-      tester.getTopLeft(recharger).dy - tester.getBottomLeft(groupe).dy,
-      AppSpacing.lg,
+    // L'historique : le paiement qui a recharge le foyer, avec son
+    // justificatif, sous « Recharger ».
+    final Finder paiement = find.textContaining(
+      t.compte.tuteur.pagePaiements.paiementDu(date: ''),
     );
-    expect(
-      tester.getTopRight(recharger).dx,
-      moreOrLessEquals(tester.getTopRight(groupe).dx, epsilon: 0.5),
-    );
-    // Le recapitulatif, discret, sous le bouton ; puis l'historique.
-    expect(
-      find.text(
-        t.adulte.paiements.recapitulatif(valeur: d.totalAvecSecondAdulte),
-      ),
-      findsOneWidget,
-    );
-    expect(
-      haut(find.byKey(SoldesFoyerSection.recapitulatifKey)),
-      greaterThan(haut(recharger)),
-    );
-    expect(find.byKey(PaiementsComptePage.historiqueKey), findsOneWidget);
-    expect(
-      haut(find.byKey(PaiementsComptePage.historiqueKey)),
-      greaterThan(haut(find.byKey(SoldesFoyerSection.recapitulatifKey))),
-    );
-    // L'historique garde sa source reelle, indisponible (DB-CPT-03).
-    expect(
-      find.text(t.compte.tuteur.pagePaiements.indisponibleTitre),
-      findsOneWidget,
-    );
+    expect(paiement, findsOneWidget);
+    expect(find.text(t.compte.tuteur.pagePaiements.justificatif), findsOne);
+    expect(haut(tester, paiement), greaterThan(haut(tester, recharger)));
     rienDInvente();
 
     // « Recharger » ouvre la recharge (EA-10), retour aux paiements du foyer.
@@ -219,42 +167,49 @@ void main() {
     expect(find.byType(FoyerPage), findsOneWidget);
   });
 
-  testWidgets('sans second adulte rattache, aucune ligne pour lui ; '
-      'titulaire femme : Mariama titulaire, Mamadou rattache', (
-    WidgetTester tester,
-  ) async {
-    taille(tester, const Size(390, 844));
-    final GoRouter routeur = await monterCoquille(
-      tester,
-      adresseDemoAdulte(
-        EcranDemoAdulte.paiementsFoyer,
-        etat: EtatDemoAdulte.titulaireSansConjoint,
-      ),
-    );
-    expect(dansSoldes(find.text('Mariama')), findsNothing);
-    expect(dansSoldes(find.text('Mamadou')), findsOneWidget);
+  testWidgets('les finances du foyer du titulaire : lui, le second adulte '
+      'seulement s\'il est rattache, puis les enfants ; titulaire femme : '
+      'Mariama titulaire, Mamadou rattache', (WidgetTester tester) async {
+    List<String> prenoms(
+      EtatDemoAdulte etat,
+      GenreTitulaireDemo genre,
+    ) => <String>[
+      for (final FinancesProfil p in DonneesAdulteDemo.finances(etat, genre))
+        p.prenom,
+    ];
     expect(
-      find.text(
-        t.adulte.paiements.recapitulatif(
-          valeur: t.adulte.demo.donnees.totalSansSecondAdulte,
-        ),
-      ),
-      findsOneWidget,
+      prenoms(EtatDemoAdulte.conjointActif, GenreTitulaireDemo.homme),
+      <String>['Mamadou', 'Mariama', 'Aïcha', 'Oumar'],
     );
-
-    routeur.go(
-      adresseDemoAdulte(
-        EcranDemoAdulte.paiementsFoyer,
-        genre: GenreTitulaireDemo.femme,
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(dansSoldes(find.text('Mariama')), findsOneWidget);
-    expect(dansSoldes(find.text('Mamadou')), findsOneWidget);
     expect(
-      haut(tester, dansSoldes(find.text('Mariama'))),
-      lessThan(haut(tester, dansSoldes(find.text('Mamadou')))),
+      prenoms(EtatDemoAdulte.titulaireSansConjoint, GenreTitulaireDemo.homme),
+      <String>['Mamadou', 'Aïcha', 'Oumar'],
     );
+    expect(
+      prenoms(EtatDemoAdulte.conjointActif, GenreTitulaireDemo.femme),
+      <String>['Mariama', 'Mamadou', 'Aïcha', 'Oumar'],
+    );
+    // Le foyer que l'adulte seul vient d'ouvrir : lui seul.
+    expect(
+      <String>[
+        for (final FinancesProfil p in DonneesAdulteDemo.finances(
+          EtatDemoAdulte.conjointActif,
+          GenreTitulaireDemo.homme,
+          foyerNouveau: true,
+        ))
+          p.prenom,
+      ],
+      <String>['Mamadou'],
+    );
+    // Les enfants portent les identifiants de Ma famille : leur carte lit
+    // leur finance.
+    final List<FinancesProfil> f = DonneesAdulteDemo.finances(
+      EtatDemoAdulte.conjointActif,
+      GenreTitulaireDemo.homme,
+    );
+    expect(f[2].profilId, DonneesAdulteDemo.aichaId);
+    expect(f[3].profilId, DonneesAdulteDemo.oumarId);
+    expect(f.take(2).every((FinancesProfil p) => p.estAdulte), isTrue);
   });
 
   testWidgets('le second adulte rattache : l\'historique seul, ni soldes, ni '
@@ -283,53 +238,104 @@ void main() {
     expect(find.byType(RechargeFoyerPage), findsNothing);
   });
 
-  testWidgets('bureau : la colonne droite de Ma famille porte les soldes et '
-      'son seul « Recharger », puis l\'historique en une ligne (planche 6)', (
-    WidgetTester tester,
-  ) async {
+  for (final Size ecran in const <Size>[Size(1440, 1000), Size(390, 844)]) {
+    testWidgets('Ma famille a ${ecran.width.toInt()} : la composition du Foyer '
+        'du tuteur avec une source de finances (E-11, FI-5b, R1-06) : '
+        'synthese, cartes, un seul bouton plein, aucune section de soldes', (
+      WidgetTester tester,
+    ) async {
+      taille(tester, ecran);
+      await monterCoquille(
+        tester,
+        adresseDemoAdulte(EcranDemoAdulte.maFamille),
+      );
+      final bool bureau = ecran.width >= 1200;
+
+      // Aucune section de soldes repetee : la synthese les porte.
+      expect(find.byKey(SoldesFoyerSection.cle), findsNothing);
+      expect(find.byKey(SoldesFoyerSection.rechargerKey), findsNothing);
+      // « Soldes et paiements » en sous-titre (R1-09), la synthese en tete
+      // des profils.
+      expect(find.text(t.foyer.finances.titre), findsOneWidget);
+      final Finder synthese = find.byKey(SyntheseSoldesFoyer.cle);
+      expect(synthese, findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(FoyerPage.membresKey),
+          matching: synthese,
+        ),
+        findsOneWidget,
+      );
+      expect(
+        haut(tester, find.byKey(FoyerPage.titulaireKey)),
+        lessThan(haut(tester, synthese)),
+      );
+      // La finance de chaque enfant sur sa carte : « Voir le détail ».
+      for (final String id in <String>[
+        DonneesAdulteDemo.aichaId,
+        DonneesAdulteDemo.oumarId,
+      ]) {
+        expect(find.byKey(FoyerPage.voirDetailKey(id)), findsOneWidget);
+      }
+      // Un seul bouton plein : « Recharger plusieurs profils » (Q-FI-2,
+      // E-17, R1-01) ; « Ajouter un profil eleve » en secondaire.
+      final List<ActionPrincipale> pleins = tester
+          .widgetList<ActionPrincipale>(find.byType(ActionPrincipale))
+          .where((ActionPrincipale a) => a.niveau == NiveauAction.principale)
+          .toList();
+      expect(pleins, hasLength(1));
+      expect(pleins.single.key, SyntheseSoldesFoyer.rechargerKey);
+      expect(
+        tester
+            .widget<ActionPrincipale>(find.byKey(FoyerPage.ajouterKey))
+            .niveau,
+        NiveauAction.secondaire,
+      );
+      // Bureau : les cartes cote a cote, la vue financiere du mois sous la
+      // grille ; telephone : les cartes l'une sous l'autre.
+      final Rect aicha = tester.getRect(
+        find.byKey(FoyerPage.voirDetailKey(DonneesAdulteDemo.aichaId)),
+      );
+      final Rect oumar = tester.getRect(
+        find.byKey(FoyerPage.voirDetailKey(DonneesAdulteDemo.oumarId)),
+      );
+      if (bureau) {
+        expect(aicha.top, moreOrLessEquals(oumar.top, epsilon: 0.5));
+        expect(oumar.left, greaterThan(aicha.right));
+        expect(find.byKey(VueFinanciereFoyer.cle), findsOneWidget);
+      } else {
+        expect(oumar.top, greaterThan(aicha.bottom));
+      }
+      rienDInvente();
+      expect(tester.takeException(), isNull);
+
+      // « Paiements du foyer » mene a l'historique et a « Recharger ».
+      final Finder ligne = find.descendant(
+        of: find.byKey(paiementsFoyerKey),
+        matching: find.text(t.adulte.famille.paiementsFoyer),
+      );
+      await tester.ensureVisible(ligne);
+      await tester.tap(ligne);
+      await tester.pumpAndSettle();
+      expect(find.byType(PaiementsComptePage), findsOneWidget);
+      final Finder recharger = find.byKey(PaiementsComptePage.rechargerKey);
+      await tester.ensureVisible(recharger);
+      await tester.tap(recharger);
+      await tester.pumpAndSettle();
+      expect(find.byType(RechargeFoyerPage), findsOneWidget);
+    });
+  }
+
+  testWidgets('Ma famille : « Recharger plusieurs profils » ouvre la recharge '
+      'de la demonstration, jamais une fiche', (WidgetTester tester) async {
     taille(tester, const Size(1440, 1000));
     await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maFamille));
-
-    final Finder section = find.byKey(SoldesFoyerSection.cle);
-    expect(section, findsOneWidget);
-    expect(
-      find.descendant(
-        of: section,
-        matching: find.text(t.adulte.famille.paiementsFoyer),
-      ),
-      findsOneWidget,
-    );
-    // A droite des membres.
-    expect(
-      tester.getTopLeft(section).dx,
-      greaterThan(tester.getTopRight(find.byKey(FoyerPage.membresKey)).dx),
-    );
-    // Un bouton dominant par colonne : « Ajouter un profil eleve » et
-    // « Recharger » (UX_REVIEW_07 ligne 7 a).
-    expect(find.byType(ActionPrincipale), findsNWidgets(2));
-    expect(
-      find.descendant(
-        of: section,
-        matching: find.byKey(SoldesFoyerSection.rechargerKey),
-      ),
-      findsOneWidget,
-    );
-    final Finder historique = find.descendant(
-      of: find.byKey(paiementsFoyerKey),
-      matching: find.text(t.adulte.paiements.historique),
-    );
-    expect(historique, findsOneWidget);
-    rienDInvente();
-
-    await tester.tap(find.byKey(SoldesFoyerSection.rechargerKey));
+    final Finder recharger = find.byKey(SyntheseSoldesFoyer.rechargerKey);
+    await tester.ensureVisible(recharger);
+    await tester.tap(recharger);
     await tester.pumpAndSettle();
     expect(find.byType(RechargeFoyerPage), findsOneWidget);
-
-    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maFamille));
-    await tester.tap(find.text(t.adulte.paiements.historique));
-    await tester.pumpAndSettle();
-    expect(find.byType(PaiementsComptePage), findsOneWidget);
-    expect(find.byKey(PaiementsComptePage.historiqueKey), findsOneWidget);
+    expect(find.byType(FicheElevePage), findsNothing);
   });
 
   group('etats de la section des soldes', () {
@@ -408,17 +414,17 @@ void main() {
       expect(etat(tester)?.nature, NatureEtat.horsLigne);
     });
 
-    testWidgets('indisponible : la dependance EA-BR-23, sans « Reessayer »', (
+    testWidgets('indisponible : la dependance FI-BR-03, sans « Reessayer »', (
       WidgetTester tester,
     ) async {
       await monter(
         tester,
-        () => Future<SoldesFoyer>.error(const CapaciteIndisponible('EA-BR-23')),
+        () => Future<SoldesFoyer>.error(const CapaciteIndisponible('FI-BR-03')),
       );
       await tester.pumpAndSettle();
       final EtatSysteme? e = etat(tester);
       expect(e?.nature, NatureEtat.indisponible);
-      expect(e?.dependance, 'EA-BR-23');
+      expect(e?.dependance, 'FI-BR-03');
       expect(e?.titre, t.adulte.paiements.soldesIndisponiblesTitre);
     });
 

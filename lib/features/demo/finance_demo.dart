@@ -7,6 +7,8 @@
 // - le foyer de demonstration (Mariam, Ibrahim, Aicha) et les six jeux du
 //   guide F2 (tous finances, un a regulariser, un en essai, aucun paiement,
 //   un profil, cinq profils) ;
+// - les finances du foyer du titulaire adulte de la demonstration EA
+//   (`profilsFoyerTitulaire`, revue FI-VAGUE-R R1-06) ;
 // - les doubles de demonstration des ports Finance, qui CALCULENT ici ce que
 //   le serveur arretera apres BR-1 (mensualites par rang, synthese du foyer,
 //   revenus de l'enseignant) : jamais dans un widget (FI6, FI-11c).
@@ -16,9 +18,13 @@
 // Les valeurs des maquettes (30 $, 2024, « Remise famille -5 $ » sur Mariam)
 // ne sont PAS recopiees : Mariam est au rang 1, sans remise (guide §1.3).
 //
-// L'affichage d'un montant de demonstration porte « (demonstration) »
-// (REVUE_EA-R m4) : c'est le composant d'argent qui l'ecrit (FI-3a), jamais
-// ces donnees.
+// « (demonstration) » sur chaque montant (REVUE_EA-R m4, 02_DECOUPAGE E-9) :
+// AUCUN composant ne l'ecrit aujourd'hui (`MontantArgent`, `formaterMontant`
+// rendent le montant nu) ; seul le ruban « Démonstration » de la coquille
+// (`RepereDemonstration`) marque l'ecran. Le ruban suffit-il, ou chaque
+// montant porte-t-il la marque : question 5 au directeur (revue FI-VAGUE-R,
+// R1-13 et R7-02). Le jour de la reponse, la marque se pose dans le composant
+// d'argent, jamais dans ces donnees.
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_acces_foyer.dart';
@@ -56,6 +62,45 @@ enum JeuFoyerFinance {
   cinqProfils,
 }
 
+/// Les jeux des revenus de l'enseignant de demonstration (guide §8 F6).
+enum JeuRevenusEnseignant {
+  /// Classe pleine, classe a 80 %, classe d'adultes au minimum d'ouverture.
+  nominal,
+
+  /// Une place de la classe a 80 % tenue par un eleve en essai present a
+  /// chaque seance du mois : il compte, la classe passe a 5 sieges eligibles
+  /// sur tout le mois. Le port rend un nombre de sieges par Classe et par
+  /// mois ; un essai sur une seule seance attend le detail par seance du
+  /// serveur (FI-BR-11).
+  essaiDansLaSeance,
+
+  /// Un eleve finance absent dans la classe pleine : il compte, la classe
+  /// reste pleine et le montant ne bouge pas.
+  financeAbsent,
+
+  /// Le nominal, plus une seance assuree en remplacement d'un collegue.
+  remplacement,
+}
+
+/// L'etat d'une place pendant une seance (guide §1.4, definition des sieges
+/// eligibles).
+enum SiegeSeance {
+  /// Eleve dont la periode est financee, present.
+  financePresent,
+
+  /// Eleve dont la periode est financee, absent : il compte.
+  financeAbsent,
+
+  /// Eleve en essai valide, present : il compte.
+  essaiPresent,
+
+  /// Eleve en essai, absent : il ne compte pas.
+  essaiAbsent,
+
+  /// Place non attribuee : elle ne compte pas.
+  placeVide,
+}
+
 /// Une classe de l'enseignant de demonstration (revue FI-1c-R M2).
 ///
 /// `eligibles` : les sieges dont la periode est financee (guide §1.4) ;
@@ -71,6 +116,7 @@ typedef _ClasseDemo = ({
   int eligibles,
   List<int> manques,
   bool adulte,
+  TypeClasseRevenus type,
 });
 
 /// Un profil de demonstration, avant ses donnees financieres.
@@ -112,12 +158,18 @@ abstract final class DonneesFinanceDemo {
 
   /// La politique commerciale de lancement (guide §1), publiee.
   static final PolitiqueCommerciale politiqueLancement = PolitiqueCommerciale(
-    version: 'lancement-2026-10',
+    // Un numero de version comme la maquette 10 (« v2.0.0 »), jamais un
+    // identifiant technique (revue FI-VAGUE-R R6-10).
+    version: 'v1.0.0',
     statut: StatutPolitique.publiee,
     dateEffet: DateTime(2026, 10),
     tarifEnfant: usd(50),
     tarifAdulte: usd(60),
     essaisMax: 2,
+    // L'essai existe au lancement (guide §1.2). Relances et budgets : le
+    // guide ne fixe aucune valeur, la demonstration n'en invente pas
+    // (`joursRelance` nul, `budgets` vide ; revue FI-VAGUE-R R6-06).
+    essaiActif: true,
     remisesParRang: <RemiseRang>[
       RemiseRang(aPartirDuRang: 3, remise: usd(-5)),
       RemiseRang(aPartirDuRang: 4, remise: usd(-7)),
@@ -128,8 +180,8 @@ abstract final class DonneesFinanceDemo {
     capaciteAdulte: 6,
     capaciteDebutant: 4,
     minimumOuverture: 4,
-    groupesObjectif: 3,
-    groupesMax: 4,
+    classesObjectif: 3,
+    classesMax: 4,
     joursConservationPlace: 7,
     margeReferencePourMille: (objectif: 300, forte: 350, stretch: 400),
     railsActifs: const <RailPaiement>{RailPaiement.webStripe},
@@ -139,12 +191,13 @@ abstract final class DonneesFinanceDemo {
   /// politique de lancement, une date d'effet plus tardive. Aucune valeur
   /// inventee ; la comparaison apparait des qu'un champ est modifie a l'ecran.
   static final PolitiqueCommerciale politiqueBrouillon = PolitiqueCommerciale(
-    version: 'brouillon-2027-01',
+    version: 'v1.1.0',
     statut: StatutPolitique.brouillon,
     dateEffet: DateTime(2027),
     tarifEnfant: politiqueLancement.tarifEnfant,
     tarifAdulte: politiqueLancement.tarifAdulte,
     essaisMax: politiqueLancement.essaisMax,
+    essaiActif: politiqueLancement.essaiActif,
     remisesParRang: politiqueLancement.remisesParRang,
     baseHoraire: politiqueLancement.baseHoraire,
     plafondHoraire: politiqueLancement.plafondHoraire,
@@ -152,12 +205,14 @@ abstract final class DonneesFinanceDemo {
     capaciteAdulte: politiqueLancement.capaciteAdulte,
     capaciteDebutant: politiqueLancement.capaciteDebutant,
     minimumOuverture: politiqueLancement.minimumOuverture,
-    groupesObjectif: politiqueLancement.groupesObjectif,
-    groupesMax: politiqueLancement.groupesMax,
+    classesObjectif: politiqueLancement.classesObjectif,
+    classesMax: politiqueLancement.classesMax,
     joursConservationPlace: politiqueLancement.joursConservationPlace,
     margeReferencePourMille: politiqueLancement.margeReferencePourMille,
     railsActifs: politiqueLancement.railsActifs,
     allocationInternet: politiqueLancement.allocationInternet,
+    joursRelance: politiqueLancement.joursRelance,
+    budgets: politiqueLancement.budgets,
   );
 
   /// Mariam, premier profil du foyer.
@@ -233,6 +288,7 @@ abstract final class DonneesFinanceDemo {
         LigneMensualite(
           nature: NatureLigneMensualite.remiseRang,
           montant: remise,
+          rang: rang,
         ),
     ];
   }
@@ -374,6 +430,73 @@ abstract final class DonneesFinanceDemo {
     adulte: true,
   );
 
+  /// Les finances du foyer du titulaire adulte de la demonstration EA
+  /// (revue FI-VAGUE-R R1-06, E-11) : le titulaire au rang 1, le second
+  /// adulte rattache au rang 2 quand il l'est, tous deux au tarif adulte,
+  /// puis les enfants aux rangs suivants. Tous ont leur mois de reference
+  /// finance ; le dernier enfant a le solde le plus bas, sans jamais etre
+  /// dit « a recharger » par un seuil (FI2). Aucune Classe ni age : la
+  /// demonstration EA ne les rend pas dans ces donnees (rien d'invente).
+  static List<FinancesProfil> profilsFoyerTitulaire({
+    required ({String id, String prenom}) titulaire,
+    ({String id, String prenom})? secondAdulte,
+    List<({String id, String prenom})> enfants =
+        const <({String id, String prenom})>[],
+  }) {
+    final List<int> soldesEnfants = <int>[3, 20];
+    return <FinancesProfil>[
+      _finance(
+        _ProfilDemo(titulaire.id, titulaire.prenom, 'accent-titulaire', null),
+        rang: 1,
+        etat: EtatFinancier.finance,
+        solde: 15,
+        adulte: true,
+      ),
+      if (secondAdulte != null)
+        _finance(
+          _ProfilDemo(
+            secondAdulte.id,
+            secondAdulte.prenom,
+            'accent-second-adulte',
+            null,
+          ),
+          rang: 2,
+          etat: EtatFinancier.finance,
+          solde: 10,
+          adulte: true,
+        ),
+      for (final (int i, ({String id, String prenom}) e) in enfants.indexed)
+        _finance(
+          _ProfilDemo(e.id, e.prenom, 'accent-${e.id}', null),
+          rang: (secondAdulte == null ? 2 : 3) + i,
+          etat: EtatFinancier.finance,
+          solde: soldesEnfants[i % soldesEnfants.length],
+        ),
+    ];
+  }
+
+  /// Les finances d'un foyer de [liste], synthese comprise, lue (FI1) :
+  /// additionnee ici, dans le double de demonstration.
+  static FinancesFoyer foyerDe(
+    List<FinancesProfil> liste, {
+    required int paiementsDuMois,
+  }) => FinancesFoyer(
+    profils: liste,
+    synthese: SyntheseFoyer(
+      totalSoldes: _somme(liste.map((FinancesProfil p) => p.solde)),
+      aPayerCeMois: _somme(
+        liste
+            .where((FinancesProfil p) => p.manque != null)
+            .map((FinancesProfil p) => p.manque!),
+      ),
+      profilsFinances: liste
+          .where((FinancesProfil p) => p.etat == EtatFinancier.finance)
+          .length,
+      profils: liste.length,
+      paiementsDuMois: paiementsDuMois,
+    ),
+  );
+
   /// Le nombre de paiements du mois dans le jeu [jeu].
   static int paiementsDuMois(JeuFoyerFinance jeu) => switch (jeu) {
     JeuFoyerFinance.aucunPaiement => 0,
@@ -383,25 +506,8 @@ abstract final class DonneesFinanceDemo {
 
   /// Les finances du foyer du jeu [jeu], synthese comprise. La synthese est
   /// une LECTURE (FI1) : additionnee ici, dans le double de demonstration.
-  static FinancesFoyer finances(JeuFoyerFinance jeu) {
-    final List<FinancesProfil> liste = profils(jeu);
-    return FinancesFoyer(
-      profils: liste,
-      synthese: SyntheseFoyer(
-        totalSoldes: _somme(liste.map((FinancesProfil p) => p.solde)),
-        aPayerCeMois: _somme(
-          liste
-              .where((FinancesProfil p) => p.manque != null)
-              .map((FinancesProfil p) => p.manque!),
-        ),
-        profilsFinances: liste
-            .where((FinancesProfil p) => p.etat == EtatFinancier.finance)
-            .length,
-        profils: liste.length,
-        paiementsDuMois: paiementsDuMois(jeu),
-      ),
-    );
-  }
+  static FinancesFoyer finances(JeuFoyerFinance jeu) =>
+      foyerDe(profils(jeu), paiementsDuMois: paiementsDuMois(jeu));
 
   /// La fin du dernier acces d'un profil payant sans periode financee : la
   /// fin de sa derniere periode, ou celle de son essai (FIN4-13). Elle est
@@ -420,10 +526,43 @@ abstract final class DonneesFinanceDemo {
   /// cause** (FI12). L'etat affiche vient de l'echeance, par la meme regle
   /// que les ecrans (`etatAccesAffiche`) : un profil payant non finance est
   /// « expire » ; seul l'essai en cours reste sans echeance.
-  static List<AccesBeneficiaire> acces(JeuFoyerFinance jeu) =>
-      <AccesBeneficiaire>[
-        for (final FinancesProfil p in profils(jeu)) _acces(p),
-      ];
+  static List<AccesBeneficiaire> acces(
+    JeuFoyerFinance jeu, {
+    Map<String, EtatPlace> places = const <String, EtatPlace>{},
+  }) => <AccesBeneficiaire>[
+    for (final FinancesProfil p in profils(jeu)) _avecPlace(_acces(p), places),
+  ];
+
+  /// Le jour de demonstration ou une place est liberee : le lendemain de la
+  /// fin de conservation (7 jours au lancement) du mois de reference.
+  static final DateTime jourPlaceLiberee = DateTime(2026, 10, 9);
+
+  /// Le jour de demonstration ou un acces suspendu est reactive.
+  static final DateTime jourReactivation = DateTime(2026, 10, 3);
+
+  /// L'etat de place de [a] selon [places] (FI-BR-08, guide §8 F5) : une
+  /// place liberee ferme les seances payantes (l'enfant lit la copie
+  /// neutre), une reactivation les rouvre. Le compte n'est jamais ferme.
+  static AccesBeneficiaire _avecPlace(
+    AccesBeneficiaire a,
+    Map<String, EtatPlace> places,
+  ) {
+    final EtatPlace? place = places[a.eleveId];
+    if (place == null) return a;
+    return AccesBeneficiaire(
+      eleveId: a.eleveId,
+      prenom: a.prenom,
+      finAcces: a.finAcces,
+      etatAffiche: a.etatAffiche,
+      seancesPayantesOuvertes: place == EtatPlace.reactivee,
+      essaisUtilises: a.essaisUtilises,
+      essaisMax: a.essaisMax,
+      place: place,
+      datePlace: place == EtatPlace.liberee
+          ? jourPlaceLiberee
+          : jourReactivation,
+    );
+  }
 
   // Revue FI-1c-CORR-R m2 : le guide §1.7 dit « Acces a regulariser » pour
   // un profil payant dont la nouvelle periode n'est pas financee. Cet etat
@@ -511,6 +650,9 @@ abstract final class DonneesFinanceDemo {
   /// n'a ete recharge (aucun paiement, essai seul).
   static RecuPaiement? recu(JeuFoyerFinance jeu) => _recuDe(profils(jeu));
 
+  /// Le recu du paiement qui a recharge les profils de [liste] (R1-06).
+  static RecuPaiement? recuDe(List<FinancesProfil> liste) => _recuDe(liste);
+
   /// Le recu du paiement qui a recharge [liste] : une allocation par profil
   /// recharge, `null` sans aucun.
   static RecuPaiement? _recuDe(List<FinancesProfil> liste) {
@@ -539,12 +681,18 @@ abstract final class DonneesFinanceDemo {
   static List<MouvementProfil> mouvements(
     JeuFoyerFinance jeu,
     String profilId,
+  ) => mouvementsDans(profils(jeu), profilId);
+
+  /// Les mouvements du profil [profilId] parmi [liste], comme [mouvements].
+  static List<MouvementProfil> mouvementsDans(
+    List<FinancesProfil> liste,
+    String profilId,
   ) {
-    final FinancesProfil? p = profils(jeu)
+    final FinancesProfil? p = liste
         .where((FinancesProfil f) => f.profilId == profilId)
         .firstOrNull;
     if (p == null) return const <MouvementProfil>[];
-    return _mouvementsDe(p, recu(jeu));
+    return _mouvementsDe(p, _recuDe(liste));
   }
 
   /// Les [limite] derniers mouvements du foyer du jeu [jeu] (FI-5b) : ceux
@@ -554,10 +702,17 @@ abstract final class DonneesFinanceDemo {
   static List<MouvementFoyer> derniersMouvements(
     JeuFoyerFinance jeu, {
     int limite = 3,
+  }) => derniersMouvementsDans(profils(jeu), limite: limite);
+
+  /// Les [limite] derniers mouvements des profils de [liste], comme
+  /// [derniersMouvements].
+  static List<MouvementFoyer> derniersMouvementsDans(
+    List<FinancesProfil> liste, {
+    int limite = 3,
   }) {
     final List<MouvementFoyer> tous = <MouvementFoyer>[
-      for (final FinancesProfil p in profils(jeu))
-        for (final MouvementProfil m in mouvements(jeu, p.profilId))
+      for (final FinancesProfil p in liste)
+        for (final MouvementProfil m in mouvementsDans(liste, p.profilId))
           MouvementFoyer(profilId: p.profilId, prenom: p.prenom, mouvement: m),
     ];
     // `List.sort` n'est pas stable : l'indice departage deux dates egales.
@@ -874,9 +1029,11 @@ abstract final class DonneesFinanceDemo {
   static RevenusClasse _classe(
     String id,
     String nom, {
+    required TypeClasseRevenus type,
     required int minutes,
     required int capacite,
     required int eligibles,
+    bool enRemplacement = false,
   }) {
     final Montant taux = tauxEffectif(
       siegesEligibles: eligibles,
@@ -885,12 +1042,32 @@ abstract final class DonneesFinanceDemo {
     return RevenusClasse(
       classeId: id,
       classe: nom,
+      type: type,
       minutesAssurees: minutes,
       capacite: capacite,
       siegesEligibles: eligibles > capacite ? capacite : eligibles,
       tauxHoraireEffectif: taux,
       montantEstime: Montant(minutes * taux.mineur ~/ 60, devise),
+      enRemplacement: enRemplacement,
     );
+  }
+
+  /// Les sieges eligibles d'une seance (guide §1.4) : un eleve finance
+  /// compte, present ou absent ; un eleve en essai compte s'il est present ;
+  /// une place vide ne compte pas ; jamais au-dela de la capacite.
+  static int siegesEligibles(
+    List<SiegeSeance> sieges, {
+    required int capacite,
+  }) {
+    final int n = sieges
+        .where(
+          (SiegeSeance s) =>
+              s == SiegeSeance.financePresent ||
+              s == SiegeSeance.financeAbsent ||
+              s == SiegeSeance.essaiPresent,
+        )
+        .length;
+    return n > capacite ? capacite : n;
   }
 
   /// Les classes de l'enseignant de demonstration : une classe pleine, une
@@ -909,6 +1086,7 @@ abstract final class DonneesFinanceDemo {
         eligibles: p.capaciteEnfant,
         manques: const <int>[],
         adulte: false,
+        type: TypeClasseRevenus.enfants,
       ),
       // Quatre sieges finances et Ibrahim, dont la periode n'est pas financee
       // : 42 sur 50, il manque 8 (jeu `unARegulariser`, FIN4-09).
@@ -920,6 +1098,7 @@ abstract final class DonneesFinanceDemo {
         eligibles: 4,
         manques: const <int>[8],
         adulte: false,
+        type: TypeClasseRevenus.enfants,
       ),
       (
         id: 'demo-fi-classe-salam',
@@ -929,51 +1108,122 @@ abstract final class DonneesFinanceDemo {
         eligibles: p.minimumOuverture,
         manques: const <int>[],
         adulte: true,
+        type: TypeClasseRevenus.adultes,
       ),
     ];
   }
 
   /// Les revenus estimes de l'enseignant de demonstration (jeux du guide §8
-  /// F6 : classe pleine, classe a 80 %, classe au minimum). L'aide Internet
-  /// est celle de la politique : aucune tant qu'elle n'en fixe pas le montant
-  /// (§1.4), la demonstration n'en invente pas. [vide] : aucune heure
-  /// assuree sur le mois.
-  static RevenusEnseignant revenus({bool vide = false}) {
+  /// F6, [JeuRevenusEnseignant]). L'aide Internet est celle de la politique :
+  /// aucune tant qu'elle n'en fixe pas le montant (§1.4), la demonstration
+  /// n'en invente pas. [vide] : aucune heure assuree sur le mois.
+  ///
+  /// Seul le jeu nominal porte les sieges de [vueGlobale] (revues FI-1c-R M2,
+  /// FI-1c-CORR-R m5) ; les autres jeux sont des variantes de fixture, que la
+  /// vue globale de la direction ne lit pas.
+  static RevenusEnseignant revenus({
+    bool vide = false,
+    JeuRevenusEnseignant jeu = JeuRevenusEnseignant.nominal,
+  }) {
+    final PolitiqueCommerciale p = politiqueLancement;
     final List<RevenusClasse> classes = <RevenusClasse>[
-      if (!vide)
+      if (!vide) ...<RevenusClasse>[
         for (final _ClasseDemo c in _classesDemo())
           _classe(
             c.id,
             c.nom,
+            type: c.type,
             minutes: c.minutes,
             capacite: c.capacite,
-            eligibles: c.eligibles,
+            eligibles: switch ((jeu, c.id)) {
+              // Mariam absente a une seance : financee, elle compte, la
+              // Classe reste pleine (guide §1.4).
+              (JeuRevenusEnseignant.financeAbsent, 'demo-fi-classe-nour') =>
+                siegesEligibles(<SiegeSeance>[
+                  for (int i = 1; i < c.capacite; i++)
+                    SiegeSeance.financePresent,
+                  SiegeSeance.financeAbsent,
+                ], capacite: c.capacite),
+              // La place d'Ibrahim tenue, a chaque seance du mois, par un
+              // eleve en essai present : il compte sur tout le mois.
+              (JeuRevenusEnseignant.essaiDansLaSeance, 'demo-fi-classe-huda') =>
+                siegesEligibles(<SiegeSeance>[
+                  for (int i = 1; i < c.capacite; i++)
+                    SiegeSeance.financePresent,
+                  SiegeSeance.essaiPresent,
+                ], capacite: c.capacite),
+              _ => c.eligibles,
+            },
           ),
+        // Une seance d'une heure assuree pour un collegue, dans une Classe de
+        // debutants qu'il tient : elle est remuneree a celui qui l'assure.
+        if (jeu == JeuRevenusEnseignant.remplacement)
+          _classe(
+            'demo-fi-classe-fajr',
+            'Al-Fajr',
+            type: TypeClasseRevenus.debutants,
+            minutes: 60,
+            capacite: p.capaciteDebutant,
+            eligibles: siegesEligibles(<SiegeSeance>[
+              for (int i = 1; i < p.capaciteDebutant; i++)
+                SiegeSeance.financePresent,
+              SiegeSeance.placeVide,
+            ], capacite: p.capaciteDebutant),
+            enRemplacement: true,
+          ),
+      ],
     ];
+    final Montant total = _somme(
+      classes.map((RevenusClasse c) => c.montantEstime),
+    );
+    final int minutes = classes.fold<int>(
+      0,
+      (int s, RevenusClasse c) => s + c.minutesAssurees,
+    );
     return RevenusEnseignant(
       debut: debutMois,
       fin: finMois,
       classes: classes,
-      totalEstime: _somme(classes.map((RevenusClasse c) => c.montantEstime)),
-      baseHoraire: politiqueLancement.baseHoraire,
-      plafondHoraire: politiqueLancement.plafondHoraire,
-      allocationInternet: politiqueLancement.allocationInternet,
+      total: TotalRevenus(
+        minutesAssurees: minutes,
+        capacite: classes.fold<int>(
+          0,
+          (int s, RevenusClasse c) => s + c.capacite,
+        ),
+        siegesEligibles: classes.fold<int>(
+          0,
+          (int s, RevenusClasse c) => s + c.siegesEligibles,
+        ),
+        // Le total rapporte aux heures assurees, arrondi a l'unite mineure
+        // inferieure : il ne depasse donc jamais le plus haut taux effectif.
+        tauxHoraireMoyen: Montant(
+          minutes == 0 ? 0 : total.mineur * 60 ~/ minutes,
+          devise,
+        ),
+      ),
+      totalEstime: total,
+      baseHoraire: p.baseHoraire,
+      plafondHoraire: p.plafondHoraire,
+      allocationInternet: p.allocationInternet,
     );
   }
 
   /// Le revenu academique du mois de reference : un tarif par siege eligible
   /// des classes de l'enseignant de demonstration, enfant ou adulte, hors
   /// taxe (FI13). Les remises de rang dependent des foyers, que ces sieges ne
-  /// disent pas : la demonstration n'en invente pas.
-  static Montant revenuDemo() {
+  /// disent pas : la demonstration n'en invente pas. [adulte] restreint aux
+  /// classes d'adultes (`true`) ou d'enfants (`false`) : la repartition de
+  /// la vue globale (revue FI-VAGUE-R R6-01).
+  static Montant revenuDemo({bool? adulte}) {
     final PolitiqueCommerciale p = politiqueLancement;
     return _somme(<Montant>[
       for (final _ClasseDemo c in _classesDemo())
-        Montant(
-          (c.adulte ? p.tarifAdulte : p.tarifEnfant).mineur *
-              (c.eligibles > c.capacite ? c.capacite : c.eligibles),
-          devise,
-        ),
+        if (adulte == null || c.adulte == adulte)
+          Montant(
+            (c.adulte ? p.tarifAdulte : p.tarifEnfant).mineur *
+                (c.eligibles > c.capacite ? c.capacite : c.eligibles),
+            devise,
+          ),
     ]);
   }
 
@@ -1007,13 +1257,13 @@ abstract final class DonneesFinanceDemo {
     final FinancesFoyer finance = finances(JeuFoyerFinance.tousFinances);
     final Montant revenu = revenuDemo();
     final Montant paie = revenus().totalEstime;
+    final int marge = (revenu.mineur - paie.mineur) * 1000 ~/ revenu.mineur;
     return VueGlobaleFinance(
       mois: debutMois,
       encaisse: revenu,
       revenuAcademique: revenu,
       paieEnseignants: paie,
-      margeProjeteePourMille:
-          (revenu.mineur - paie.mineur) * 1000 ~/ revenu.mineur,
+      margeProjeteePourMille: marge,
       impayes: impayesDemo(),
       essaisEnCours: profils(JeuFoyerFinance.unEnEssai)
           .where((FinancesProfil p) => p.etat == EtatFinancier.essai)
@@ -1023,11 +1273,34 @@ abstract final class DonneesFinanceDemo {
         AlerteFinance(
           id: 'demo-fi-alerte-ibrahim',
           nature: NatureAlerteFinance.aRegulariser,
+          cible: CibleAlerteFinance.comptes,
           prenom: _ibrahim.prenom,
           classe: _ibrahim.classe,
           // Le seul siege a regulariser des classes : son manque est
           // l'impaye du mois, jamais un second chiffre.
           montant: impayesDemo(),
+        ),
+      ],
+      // La politique est entree en vigueur en octobre 2026 (date d'effet de
+      // [politiqueLancement]) : les series n'ont qu'un mois, celui de la
+      // vue, aucun historique invente avant le lancement.
+      encaisseParMois: <MontantMensuel>[
+        MontantMensuel(mois: debutMois, montant: revenu),
+      ],
+      paieParMois: <MontantMensuel>[
+        MontantMensuel(mois: debutMois, montant: paie),
+      ],
+      margeParMois: <MargeMensuelle>[
+        MargeMensuelle(mois: debutMois, pourMille: marge),
+      ],
+      revenuParType: <PartRevenu>[
+        PartRevenu(
+          type: TypeEleveRevenu.enfant,
+          montant: revenuDemo(adulte: false),
+        ),
+        PartRevenu(
+          type: TypeEleveRevenu.adulte,
+          montant: revenuDemo(adulte: true),
         ),
       ],
     );
@@ -1073,6 +1346,60 @@ class PaiementsFoyerFinanceDemo implements PortPaiementsFoyer {
   @override
   Future<List<MouvementFoyer>> derniersMouvements({int limite = 3}) async =>
       DonneesFinanceDemo.derniersMouvements(jeu, limite: limite);
+
+  // Les soldes rediges d'EA-9 sont remplaces par `finances()` (FI-BR-03).
+  @override
+  Future<SoldesFoyer> soldes() =>
+      Future<SoldesFoyer>.error(const CapaciteIndisponible('FI-BR-03'));
+}
+
+/// Les paiements du foyer du titulaire adulte en demonstration (revue
+/// FI-VAGUE-R R1-06) : ses finances, ses mouvements et l'historique d'un
+/// seul paiement, celui du recu qui a recharge le foyer. Rien n'est envoye
+/// (K-28).
+class PaiementsFoyerProfilsDemo implements PortPaiementsFoyer {
+  /// Cree le double pour les profils [profils].
+  const PaiementsFoyerProfilsDemo(this.profils);
+
+  /// Les finances des membres du foyer, dans l'ordre du foyer.
+  final List<FinancesProfil> profils;
+
+  RecuPaiement? get _recu => DonneesFinanceDemo.recuDe(profils);
+
+  @override
+  Future<FinancesFoyer> finances() async => DonneesFinanceDemo.foyerDe(
+    profils,
+    paiementsDuMois: _recu == null ? 0 : 1,
+  );
+
+  @override
+  Future<List<PaiementFoyer>> historique() async => <PaiementFoyer>[
+    if (_recu case final RecuPaiement r)
+      PaiementFoyer(
+        id: 'demo-fi-paiement-${r.reference}',
+        montantMineur: r.total.mineur,
+        devise: r.total.devise,
+        statutServeur: 'completed',
+        date: r.date,
+        justificatifDisponible: true,
+      ),
+  ];
+
+  @override
+  Future<PaiementFoyer?> detail(String id) async {
+    for (final PaiementFoyer p in await historique()) {
+      if (p.id == id) return p;
+    }
+    return null;
+  }
+
+  @override
+  Future<List<MouvementProfil>> mouvements(String profilId) async =>
+      DonneesFinanceDemo.mouvementsDans(profils, profilId);
+
+  @override
+  Future<List<MouvementFoyer>> derniersMouvements({int limite = 3}) async =>
+      DonneesFinanceDemo.derniersMouvementsDans(profils, limite: limite);
 
   // Les soldes rediges d'EA-9 sont remplaces par `finances()` (FI-BR-03).
   @override
@@ -1225,17 +1552,55 @@ class RechargeAdulteDemo implements PortRechargeFoyer {
       Future<SuiviPaiement>.error(const CapaciteIndisponible('FI-BR-17'));
 }
 
-/// L'acces du foyer en demonstration (FI-BR-08).
+/// L'acces du foyer en demonstration (FI-BR-08), pour le titulaire.
 class AccesFoyerFinanceDemo implements PortAccesFoyer {
-  /// Cree le double pour le jeu [jeu].
-  const AccesFoyerFinanceDemo(this.jeu);
+  /// Cree le double pour le jeu [jeu] ; [places] : l'etat de place rendu
+  /// par eleve (place liberee, acces reactive).
+  const AccesFoyerFinanceDemo(
+    this.jeu, {
+    this.places = const <String, EtatPlace>{},
+  });
 
   /// Le jeu du foyer.
   final JeuFoyerFinance jeu;
 
+  /// L'etat de place par eleve.
+  final Map<String, EtatPlace> places;
+
   @override
   Future<List<AccesBeneficiaire>> acces() async =>
-      DonneesFinanceDemo.acces(jeu);
+      DonneesFinanceDemo.acces(jeu, places: places);
+}
+
+/// L'acces de l'eleve connecte en demonstration (FI-BR-08, revue
+/// FI-VAGUE-R R4-02) : **sa seule ligne**, comme le serveur la rendra pour
+/// sa session ; aucune autre ligne du foyer n'existe dans ce double.
+class MonAccesFinanceDemo implements PortMonAcces {
+  /// Cree le double pour l'eleve [eleveId] du jeu [jeu].
+  const MonAccesFinanceDemo(this.jeu, this.eleveId, {this.place});
+
+  /// Le jeu du foyer.
+  final JeuFoyerFinance jeu;
+
+  /// L'eleve connecte.
+  final String eleveId;
+
+  /// L'etat de place rendu pour lui.
+  final EtatPlace? place;
+
+  @override
+  Future<AccesBeneficiaire?> monAcces() async {
+    final EtatPlace? etat = place;
+    for (final AccesBeneficiaire a in DonneesFinanceDemo.acces(
+      jeu,
+      places: etat == null
+          ? const <String, EtatPlace>{}
+          : <String, EtatPlace>{eleveId: etat},
+    )) {
+      if (a.eleveId == eleveId) return a;
+    }
+    return null;
+  }
 }
 
 /// Les politiques commerciales en demonstration (FI-BR-01, FI-BR-02).
@@ -1283,14 +1648,27 @@ class PolitiquesCommercialesDemo implements PortPolitiquesCommerciales {
 /// Les revenus de l'enseignant en demonstration (FI-BR-11).
 class RevenusEnseignantDemo implements PortRevenusEnseignant {
   /// Cree le double ; [vide] rend un mois sans heure assuree.
-  const RevenusEnseignantDemo({this.vide = false});
+  const RevenusEnseignantDemo({
+    this.vide = false,
+    this.jeu = JeuRevenusEnseignant.nominal,
+  });
 
   /// Vrai pour un mois sans heure assuree.
   final bool vide;
 
+  /// Le jeu du guide §8 F6.
+  final JeuRevenusEnseignant jeu;
+
   @override
   Future<RevenusEnseignant> moisEnCours() async =>
-      DonneesFinanceDemo.revenus(vide: vide);
+      DonneesFinanceDemo.revenus(vide: vide, jeu: jeu);
+
+  /// Le releve est arrete par l'academie, a partir de la paie reelle, hors
+  /// lot (ADR-007) : la demonstration n'invente pas un mois arrete, elle dit
+  /// le releve indisponible, comme la production (FI-BR-11).
+  @override
+  Future<List<LigneReleve>> releve() =>
+      Future<List<LigneReleve>>.error(const CapaciteIndisponible('FI-BR-11'));
 }
 
 /// La vue globale de la direction en demonstration (FI-BR-12).

@@ -152,7 +152,7 @@ void main() {
   }
 
   testWidgets('1440 : trois dernieres transactions, montants signes, '
-      '« Voir tout » vers les mouvements du profil du plus recent', (
+      '« Voir tout » vers l historique du foyer (R1-07, R1-12)', (
     WidgetTester tester,
   ) async {
     final GoRouter routeur = await _monter(tester, largeur: 1440);
@@ -187,18 +187,81 @@ void main() {
     expect(transactions.top, greaterThan(derniereCarte.bottom));
 
     final Finder voirTout = find.byKey(DernieresTransactionsFoyer.voirToutKey);
+    // Le nom lu contient le libelle visible (WCAG 2.5.3, R1-12).
+    final SemanticsHandle semantique = tester.ensureSemantics();
+    final String lu = tester.getSemantics(voirTout).label;
+    semantique.dispose();
+    expect(lu, contains(t.foyer.transactions.voirTout));
     await tester.ensureVisible(voirTout);
     await tester.tap(voirTout);
     await stabiliser(tester);
-    expect(
-      routeur.state.uri.path,
-      Routes.ficheEleveSousPage(attendus.first.profilId, 'mouvements'),
-    );
+    // L'historique du foyer entier, jamais les mouvements d'un seul enfant
+    // (X-12, R1-07).
+    expect(routeur.state.uri.path, Routes.compteTuteurSousPage('paiements'));
   });
 
-  testWidgets('390 : inchange, une colonne, aucune transaction', (
+  testWidgets('1440 : « Vue financière du foyer » sur le mois courant, a '
+      'cote des transactions (R1-02, defaut Q-FI-8)', (
     WidgetTester tester,
   ) async {
+    await _monter(tester, largeur: 1440);
+    expect(tester.takeException(), isNull);
+    final Finder vue = find.byKey(VueFinanciereFoyer.cle);
+    expect(vue, findsOneWidget);
+    final SyntheseFoyer s = DonneesFinanceDemo.finances(_jeu).synthese;
+    for (final String texte in <String>[
+      t.foyer.finances.vueFinanciere,
+      t.foyer.finances.vueFinancierePeriode,
+      t.argent.soldes.paiements,
+      formaterMontant(s.totalSoldes),
+      formaterMontant(s.aPayerCeMois),
+      '${s.paiementsDuMois}',
+    ]) {
+      expect(
+        find.descendant(of: vue, matching: find.text(texte)),
+        findsOneWidget,
+        reason: texte,
+      );
+    }
+    final Rect panneau = tester.getRect(vue);
+    final Rect transactions = tester.getRect(
+      find.byKey(DernieresTransactionsFoyer.cle),
+    );
+    expect(transactions.left, greaterThan(panneau.right));
+    expect(panneau.top, moreOrLessEquals(transactions.top, epsilon: 1));
+  });
+
+  testWidgets('768 (tablette, R1-04) : cartes en deux colonnes, synthese '
+      'sur deux rangees, aucun debordement', (WidgetTester tester) async {
+    await _monter(tester, largeur: 768);
+    expect(tester.takeException(), isNull);
+    final List<Rect> cartes = _cartes(tester);
+    expect(_colonnes(cartes), 2);
+    expect(cartes[1].left, greaterThanOrEqualTo(cartes[0].right + 16 - 1));
+    // Total et « À payer » sur la premiere rangee ; « Profils financés » et
+    // le bouton sur la seconde.
+    final Finder synthese = find.byKey(SyntheseSoldesFoyer.cle);
+    double haut(String texte) => tester
+        .getTopLeft(find.descendant(of: synthese, matching: find.text(texte)))
+        .dy;
+    final double rangee1 = haut(t.argent.soldes.total);
+    expect(haut(t.argent.soldes.aPayer), moreOrLessEquals(rangee1));
+    final double rangee2 = haut(t.argent.soldes.profilsFinances);
+    expect(rangee2, greaterThan(rangee1));
+    expect(
+      tester.getTopLeft(find.byKey(SyntheseSoldesFoyer.rechargerKey)).dy,
+      moreOrLessEquals(rangee2, epsilon: 1),
+    );
+    // La vue financiere, puis les transactions, l'une sous l'autre.
+    final Rect vue = tester.getRect(find.byKey(VueFinanciereFoyer.cle));
+    final Rect transactions = tester.getRect(
+      find.byKey(DernieresTransactionsFoyer.cle),
+    );
+    expect(transactions.top, greaterThan(vue.bottom));
+  });
+
+  testWidgets('390 : inchange, une colonne, aucune transaction ni vue '
+      'financiere', (WidgetTester tester) async {
     await _monter(tester, largeur: 390);
     expect(tester.takeException(), isNull);
     final List<Rect> cartes = _cartes(tester);
@@ -209,6 +272,7 @@ void main() {
     }
     expect(find.byKey(SyntheseSoldesFoyer.cle), findsOneWidget);
     expect(find.byKey(DernieresTransactionsFoyer.cle), findsNothing);
+    expect(find.byKey(VueFinanciereFoyer.cle), findsNothing);
   });
 
   testWidgets('1440 sans source (production) : aucun bloc d argent ni de '
@@ -218,6 +282,7 @@ void main() {
     expect(find.byKey(SyntheseSoldesFoyer.cle), findsNothing);
     expect(find.byType(BlocFinanceMembre), findsNothing);
     expect(find.byKey(DernieresTransactionsFoyer.cle), findsNothing);
+    expect(find.byKey(VueFinanciereFoyer.cle), findsNothing);
     expect(find.byType(LigneTransaction), findsNothing);
     expect(_colonnes(_cartes(tester)), greaterThanOrEqualTo(2));
     // Les annexes gardent leur largeur de colonne, jamais etirees.

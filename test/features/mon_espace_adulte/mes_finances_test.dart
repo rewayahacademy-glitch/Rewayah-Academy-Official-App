@@ -49,6 +49,7 @@ import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_pag
 
 import '../../router/support_routeur.dart' show stabiliser;
 import '../../support/garde_interface.dart';
+import '../../support/harnais.dart' show sansPersonneConnectee;
 
 /// La finance de Mamadou, adulte seul, telle que la demonstration la rend.
 final FinancesProfil _mamadou = DonneesFinanceDemo.financesAdulte(
@@ -163,6 +164,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: <Override>[
+          sansPersonneConnectee(),
           portPaiementsFoyerProvider.overrideWithValue(
             espion ?? _PaiementsFoyerEspion(),
           ),
@@ -360,7 +362,6 @@ void main() {
         tester,
         find.byKey(RechargeFoyerPage.plusDe(DonneesAdulteDemo.mamadouId)),
       );
-      await toucher(tester, find.byKey(RechargeFoyerPage.verifierKey));
       expect(
         find.byKey(RechargeFoyerPage.ligneDe(DonneesAdulteDemo.mamadouId)),
         findsOneWidget,
@@ -467,6 +468,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: <Override>[
+          sansPersonneConnectee(),
           horsLigneProvider.overrideWith(
             (Ref _) => Stream<bool>.value(horsLigne),
           ),

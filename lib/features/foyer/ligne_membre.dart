@@ -6,6 +6,7 @@ import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/finance/finances_profil.dart';
 import '../../core/foyer/selection_eleve.dart';
+import '../../core/i18n/jour_du_mois.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/offres/offre_horaire.dart';
@@ -68,11 +69,12 @@ final class _Classes extends ClasseMembre {
   final List<String> libelles;
 }
 
-/// La date d'une echeance d'acces, en toutes lettres : « 30 octobre 2026 ».
+/// La date d'une echeance d'acces, en toutes lettres : « 30 octobre 2026 »,
+/// « 1er novembre 2026 » (R8-05).
 String dateEcheance(DateTime date) {
   final DateTime locale = date.toLocal();
   return t.foyer.membre.date(
-    jour: locale.day.toString(),
+    jour: jourDuMois(locale.day),
     mois: t.commun.dates.mois[locale.month - 1],
     annee: locale.year.toString(),
   );
@@ -133,17 +135,31 @@ EtapeParcours? etapeInscriptionLue(
 
 /// La legende d'un membre : sa classe quand on la connait, sinon son
 /// inscription en cours quand on la connait, puis son acces.
+///
+/// [avecAcces] faux : l'acces n'est pas repete, la carte le dit deja par la
+/// pastille de periode financee a la meme date (revue FI-VAGUE-R R1-11).
 String legendeMembre({
   required ProfilEleveFoyer profil,
   required ClasseMembre classe,
   required DateTime maintenant,
   EtapeParcours? inscription,
+  bool avecAcces = true,
 }) {
   final String? classeLue = classe is _Classes || inscription == null
       ? texteClasse(classe)
       : libelleEtapeFiche(inscription);
+  if (!avecAcces) return classeLue ?? '';
   final String acces = statutAcces(profil, maintenant);
   return classeLue == null ? acces : '$classeLue · $acces';
+}
+
+/// Vrai quand la fin de la periode financee et l'echeance d'acces tombent le
+/// meme jour (heure locale) : une seule echeance, dite une seule fois.
+bool memeEcheance(DateTime? finPeriode, DateTime? finAcces) {
+  if (finPeriode == null || finAcces == null) return false;
+  final DateTime a = finPeriode.toLocal();
+  final DateTime b = finAcces.toLocal();
+  return a.year == b.year && a.month == b.month && a.day == b.day;
 }
 
 /// Ce que la lecture du port des classes dit d'un membre.
@@ -223,8 +239,6 @@ class CarteMembre extends StatelessWidget {
       cercleEnHaut: true,
       // La fleche au bout de la carte, a toute largeur (revue FI-2-R M1).
       texteEtire: true,
-      // « Abdourahmane » entier a 320 px et 200 % (revue FI-2-CORR-R).
-      nomSansCoupure: true,
       avatar: PhotoEleve(
         prenom: profil.prenom,
         cleAvatar: profil.cleAvatar,

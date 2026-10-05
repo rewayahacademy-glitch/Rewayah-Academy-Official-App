@@ -41,7 +41,15 @@ class CarteSession extends StatefulWidget {
     this.identite,
     this.actionHorsEntree,
     this.tutoiement = false,
+    this.entreeRetiree = false,
   });
+
+  /// Vrai quand l'acces de l'eleve connecte ferme ses seances (FI-9a,
+  /// FI-BR-08) : « Rejoindre » est retire de la carte, jamais grise, et
+  /// l'hote dit pourquoi au-dessus (copie neutre). Les lignes d'etat
+  /// (annulee, hors ligne, a venir) restent : seul le bouton part.
+  /// [EmplacementEntree] n'est pas touche (HU-1).
+  final bool entreeRetiree;
 
   /// Vrai pour l'eleve mineur en Mode Accessibilite (MA4) : « Ton heure »,
   /// « Tu es dans la salle ». Faux partout ailleurs : un adulte, un tuteur ou
@@ -137,6 +145,7 @@ class _CarteSessionState extends State<CarteSession> {
       tutoiement: widget.tutoiement,
     );
     final TextTheme textes = Theme.of(context).textTheme;
+    final bool retire = widget.entreeRetiree && emplacement.estBouton;
 
     return AppCard(
       dominante: true,
@@ -196,18 +205,21 @@ class _CarteSessionState extends State<CarteSession> {
             ),
           ],
           // Le bouton se pose 16 sous le contenu qu'il confirme (R20).
-          Ecart.vLg,
-          EmplacementEntreeVue(
-            emplacement: emplacement,
-            // Le tuteur ne rejoint pas la classe de son enfant : il l'observe
-            // (lot C-obs, routes D8). Son emplacement reste une ligne d'etat.
-            sansBouton: espace.role == RoleEspaceGroupe.tuteur,
-            onEntrer: widget.onRejoindre,
-            onReessayer: widget.onReessayer,
-            focusRetour: _focusTitre,
-          ),
+          if (!retire) ...<Widget>[
+            Ecart.vLg,
+            EmplacementEntreeVue(
+              emplacement: emplacement,
+              // Le tuteur ne rejoint pas la classe de son enfant : il
+              // l'observe (lot C-obs, routes D8). Son emplacement reste une
+              // ligne d'etat.
+              sansBouton: espace.role == RoleEspaceGroupe.tuteur,
+              onEntrer: widget.onRejoindre,
+              onReessayer: widget.onReessayer,
+              focusRetour: _focusTitre,
+            ),
+          ],
           if (widget.actionHorsEntree != null &&
-              !emplacement.estBouton &&
+              (!emplacement.estBouton || retire) &&
               !emplacement.reessayer) ...<Widget>[
             Ecart.vLg,
             widget.actionHorsEntree!,

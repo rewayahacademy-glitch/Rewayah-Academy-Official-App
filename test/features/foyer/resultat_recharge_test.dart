@@ -28,9 +28,13 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
+import 'package:rewayah_academy/core/widgets/identite_profil.dart';
+import 'package:rewayah_academy/core/widgets/ligne_allocation.dart';
+import 'package:rewayah_academy/core/widgets/ligne_cle_valeur.dart';
 import 'package:rewayah_academy/core/widgets/ligne_moyen_paiement.dart';
 import 'package:rewayah_academy/features/demo/finance_demo.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
@@ -59,10 +63,11 @@ FauxServiceAppairage _foyer() =>
 
 /// Un port qui rend l'etat que le test choisit (et compte les lectures).
 class _PortEtat extends RechargeFoyerFinanceDemo {
-  _PortEtat(this.etat, {this.motif, this.erreur}) : super(_jeu);
+  _PortEtat(this.etat, {this.motif, this.erreur, this.date}) : super(_jeu);
 
   EtatPaiement etat;
   final String? motif;
+  final DateTime? date;
   final Error? erreur;
   int lectures = 0;
 
@@ -76,7 +81,7 @@ class _PortEtat extends RechargeFoyerFinanceDemo {
       etat: etat,
       total: DonneesFinanceDemo.usd(50),
       reference: 'REF-TEST',
-      date: DonneesFinanceDemo.aujourdhui,
+      date: date ?? DonneesFinanceDemo.aujourdhui,
       moyen: RailPaiement.webStripe,
       motif: motif,
       allocations: <AllocationProfil>[
@@ -173,8 +178,10 @@ Uri _lieu(GoRouter routeur) => routeur.routerDelegate.currentConfiguration.uri;
 /// Ce qui n'apparait JAMAIS hors de `termine` (FI9).
 void _aucunSucces() {
   expect(find.text(t.adulte.recharge.resultat.soldesTitre), findsNothing);
-  expect(find.text(t.adulte.recharge.resultat.retourSoldes), findsNothing);
   expect(find.textContaining('Nouveau solde'), findsNothing);
+  // Ni coche « Credite » ni « + » (R3-04).
+  expect(find.byKey(LigneAllocation.crediteKey), findsNothing);
+  expect(find.textContaining('+'), findsNothing);
   expect(
     find.byKey(ResultatRechargePage.etatKey(EtatPaiement.termine)),
     findsNothing,
@@ -210,6 +217,67 @@ void main() {
         );
         verifierUnSeulBoutonPlein(tester);
         final r = t.adulte.recharge.resultat;
+        // R3-04 : chaque part creditee porte la coche lue « Credite » et
+        // son « + », a `termine` seulement.
+        final bool termine = etat == EtatPaiement.termine;
+        expect(
+          find.byKey(LigneAllocation.crediteKey),
+          termine ? findsNWidgets(2) : findsNothing,
+        );
+        expect(
+          find.bySemanticsLabel(
+            RegExp(RegExp.escape(t.argent.allocation.credite)),
+          ),
+          termine ? findsNWidgets(2) : findsNothing,
+        );
+        for (final int part in <int>[10, 40]) {
+          expect(
+            find.text(
+              formaterMontant(DonneesFinanceDemo.usd(part), signe: true),
+            ),
+            termine ? findsOneWidget : findsNothing,
+          );
+          expect(
+            find.text(formaterMontant(DonneesFinanceDemo.usd(part))),
+            termine ? findsNothing : findsOneWidget,
+          );
+        }
+        // R3-06 : « Retour aux soldes » dans tous les etats, jamais
+        // « Revenir aux paiements du foyer » pour la meme cible.
+        expect(find.text(t.adulte.recharge.revenirPaiements), findsNothing);
+        if (find.byKey(ResultatRechargePage.revenirKey).evaluate().isNotEmpty) {
+          expect(find.text(r.retourSoldes), findsOneWidget);
+        }
+        // R3-03 (FI12-E07) : dans la carte, la ligne garde la marge de la
+        // carte des deux cotes, et le bandeau remonte dans la marge de la
+        // ligne : l'avatar a cote du prenom, jamais sous lui.
+        final Rect carte = tester.getRect(
+          find.byKey(ResultatRechargePage.repartitionKey),
+        );
+        for (final String profil in <String>[_mariam, _ibrahim]) {
+          final Rect ligne = tester.getRect(
+            find.descendant(
+              of: find.byKey(ResultatRechargePage.allocationDe(profil)),
+              matching: find.byType(LigneCleValeur),
+            ),
+          );
+          expect(ligne.left - carte.left, greaterThanOrEqualTo(AppSpacing.lg));
+          expect(
+            carte.right - ligne.right,
+            greaterThanOrEqualTo(AppSpacing.lg),
+          );
+          expect(
+            tester
+                .widget<BandeauProfil>(
+                  find.descendant(
+                    of: find.byKey(ResultatRechargePage.allocationDe(profil)),
+                    matching: find.byType(BandeauProfil),
+                  ),
+                )
+                .remontee,
+            LigneCleValeur.margeVerticale,
+          );
+        }
         switch (etat) {
           case EtatPaiement.preparation:
             expect(find.text(r.preparationPhrase), findsOneWidget);
@@ -316,7 +384,6 @@ void main() {
     );
     await _taper(tester, find.byKey(RechargeFoyerPage.caseDe(_mariam)));
     await _taper(tester, find.byKey(RechargeFoyerPage.plusDe(_mariam)));
-    await _taper(tester, find.byKey(RechargeFoyerPage.verifierKey));
     await _taper(tester, find.byKey(RechargeFoyerPage.payerKey));
     expect(_lieu(routeur).path, Routes.tuteurFoyerRechargeResultat);
     final String commande = _lieu(routeur).queryParameters['commande']!;
@@ -430,7 +497,6 @@ void main() {
       );
       await _taper(tester, find.byKey(RechargeFoyerPage.caseDe(_mariam)));
       await _taper(tester, find.byKey(RechargeFoyerPage.plusDe(_mariam)));
-      await _taper(tester, find.byKey(RechargeFoyerPage.verifierKey));
       await tester.ensureVisible(find.byKey(RechargeFoyerPage.payerKey));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(RechargeFoyerPage.payerKey));
@@ -473,6 +539,19 @@ void main() {
     _aucunSucces();
   });
 
+  testWidgets('R8-05 : la ligne Date ecrit « 1er novembre 2026 »', (
+    WidgetTester tester,
+  ) async {
+    await _monter(
+      tester,
+      depart: c1,
+      port: _PortEtat(EtatPaiement.termine, date: DateTime(2026, 11, 1, 12)),
+    );
+    expect(tester.takeException(), isNull);
+    expect(find.text('1er novembre 2026'), findsOneWidget);
+    expect(find.text('1 novembre 2026'), findsNothing);
+  });
+
   group('la selection est gardee (echec, annule, perime, preparation)', () {
     bool coche(WidgetTester tester, String id) =>
         tester
@@ -488,14 +567,14 @@ void main() {
         )
         .data!;
 
-    // « Reessayer » et « Recommencer » : l'etape 1, profils et montants
+    // « Reessayer » et « Recommencer » : la recharge, profils et montants
     // repris.
     for (final (EtatPaiement etat, Key bouton) in <(EtatPaiement, Key)>[
       (EtatPaiement.echec, ResultatRechargePage.reessayerKey),
       (EtatPaiement.annule, ResultatRechargePage.recommencerKey),
       (EtatPaiement.perime, ResultatRechargePage.recommencerKey),
     ]) {
-      testWidgets('${etat.name} : $bouton revient a l etape 1, profils et '
+      testWidgets('${etat.name} : $bouton revient a la recharge, profils et '
           'montants repris', (WidgetTester tester) async {
         final GoRouter routeur = await _monter(
           tester,
@@ -511,8 +590,10 @@ void main() {
         expect(_lieu(routeur).path, Routes.tuteurFoyerRecharge);
         expect(_lieu(routeur).queryParameters['etape'], isNull);
         expect(find.byType(RechargeFoyerPage), findsOneWidget);
-        expect(find.byKey(RechargeFoyerPage.verifierKey), findsOneWidget);
-        expect(find.byKey(RechargeFoyerPage.payerKey), findsNothing);
+        // La recharge, une seule page : la selection reprise, son
+        // recapitulatif rendu et « Payer » sur place (R3-01).
+        expect(find.byKey(RechargeFoyerPage.payerKey), findsOneWidget);
+        expect(find.byKey(RechargeFoyerPage.ligneDe(_mariam)), findsOneWidget);
         expect(coche(tester, _mariam), isTrue);
         expect(coche(tester, _ibrahim), isTrue);
         expect(
@@ -526,14 +607,14 @@ void main() {
       });
     }
 
-    // « Changer de moyen de paiement » et la preparation : l'etape 2, ou le
-    // moyen se choisit, avec la meme selection ; jamais la meme
-    // destination que « Reessayer » (revue FI-8).
+    // « Changer de moyen de paiement » et la preparation : la recharge, une
+    // seule page (R3-01), ou le moyen se choisit et le recapitulatif se lit,
+    // avec la meme selection.
     for (final (EtatPaiement etat, Key bouton) in <(EtatPaiement, Key)>[
       (EtatPaiement.echec, ResultatRechargePage.changerMoyenKey),
       (EtatPaiement.preparation, ResultatRechargePage.verifierKey),
     ]) {
-      testWidgets('${etat.name} : $bouton ouvre l etape 2, moyen et '
+      testWidgets('${etat.name} : $bouton ouvre la recharge, moyen et '
           'recapitulatif de la meme selection', (WidgetTester tester) async {
         final GoRouter routeur = await _monter(
           tester,
@@ -543,18 +624,12 @@ void main() {
         );
         await _taper(tester, find.byKey(bouton));
         expect(_lieu(routeur).path, Routes.tuteurFoyerRecharge);
-        expect(
-          _lieu(routeur).queryParameters['etape'],
-          Routes.etapeVerification,
-        );
-        expect(find.text(t.adulte.recharge.verifierTitre), findsOneWidget);
+        expect(_lieu(routeur).queryParameters['etape'], isNull);
         expect(find.byKey(RechargeFoyerPage.moyenKey), findsOneWidget);
         expect(find.byType(LigneMoyenPaiement), findsOneWidget);
         expect(find.byKey(RechargeFoyerPage.payerKey), findsOneWidget);
         expect(find.byKey(RechargeFoyerPage.ligneDe(_mariam)), findsOneWidget);
         expect(find.byKey(RechargeFoyerPage.ligneDe(_ibrahim)), findsOneWidget);
-        // « Modifier » revient a l'etape 1 sans rien perdre.
-        await _taper(tester, find.byKey(RechargeFoyerPage.modifierDe(_mariam)));
         expect(coche(tester, _mariam), isTrue);
         expect(coche(tester, _ibrahim), isTrue);
         expect(
@@ -617,7 +692,6 @@ void main() {
     final String recharge = Routes.rechargePour(<String>[_mariam]);
     final GoRouter routeur = await _monter(tester, depart: recharge);
     await _taper(tester, find.byKey(RechargeFoyerPage.plusDe(_mariam)));
-    await _taper(tester, find.byKey(RechargeFoyerPage.verifierKey));
     await _taper(tester, find.byKey(RechargeFoyerPage.payerKey));
     expect(_lieu(routeur).path, Routes.tuteurFoyerRechargeResultat);
     final String commande = _lieu(routeur).queryParameters['commande']!;
@@ -704,7 +778,7 @@ void main() {
     ) async {
       await _monter(tester, depart: Routes.tuteurFoyerRechargeResultat);
       expect(find.text(t.adulte.recharge.resultat.videTitre), findsOneWidget);
-      await _taper(tester, find.text(t.adulte.recharge.revenirPaiements));
+      await _taper(tester, find.text(t.adulte.recharge.resultat.retourSoldes));
       expect(find.byType(FoyerPage), findsOneWidget);
     });
 

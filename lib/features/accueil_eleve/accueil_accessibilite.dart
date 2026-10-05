@@ -23,6 +23,7 @@ import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
+import '../acces_finance/acces_finance.dart';
 import '../tc_espace_groupe/carte_session.dart';
 import '../tc_espace_groupe/emplacements_groupe.dart';
 import '../tc_mes_groupes/photo_enseignant.dart';
@@ -49,7 +50,14 @@ class AccueilAccessibilite extends StatelessWidget {
     super.key,
     this.onRejoindre,
     this.onTache,
+    this.accesFerme = false,
   });
+
+  /// Vrai quand l'acces de l'eleve ferme ses seances (FI-9a, lu par l'hote
+  /// sur `accesAppelantProvider`) : Rejoindre est retire de la carte et la
+  /// copie neutre le dit, sans cause ni montant (guide §1.7). L'hote rend
+  /// aussi [onRejoindre] nul tant que l'acces se lit.
+  final bool accesFerme;
 
   /// Le prenom de l'eleve, jamais son age.
   final String prenom;
@@ -111,11 +119,21 @@ class AccueilAccessibilite extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        // Le mineur lit la copie de l'enfant, l'adulte autonome la sienne :
+        // choisi par [tutoiement] (age legal, MA4), jamais par un role.
+        if (accesFerme) ...<Widget>[
+          if (tutoiement)
+            const BandeauAccesEnfant()
+          else
+            const BandeauAccesAdulte(),
+          Ecart.vLg,
+        ],
         SectionHeader(titre: t.accessibilite.accueil.prochaineSeance),
         Ecart.vMd,
         CarteSession(
           espace: espace,
-          onRejoindre: onRejoindre,
+          entreeRetiree: accesFerme,
+          onRejoindre: accesFerme ? null : onRejoindre,
           tutoiement: tutoiement,
           identite: _IdentiteClasse(identite: espace.identite),
           actionHorsEntree: mobile

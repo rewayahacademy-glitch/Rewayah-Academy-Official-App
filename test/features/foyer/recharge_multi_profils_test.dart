@@ -1,6 +1,9 @@
 // FI-7 (guide Finance V4 §1.6, §4, §5.3, §8 LOT F4 ; maquettes 04 et 07) :
 // la recharge multi-profils du tuteur, UN seul moteur (`RechargeFoyerPage`)
-// sur `/tuteur/foyer/recharge`. Un, plusieurs ou tous les profils ; un
+// sur `/tuteur/foyer/recharge`, UNE seule page (revue FI-VAGUE-R, R3-01 :
+// ni etapes ni « Tout selectionner ») ; profils et paiement cote a cote,
+// solde et montant suggere lisibles, et le bandeau « Acces a regulariser »
+// a 1440 (R3-02, FI-VAGUE-CORR). Un, plusieurs ou tous les profils ; un
 // montant par profil, desactive tant que le profil n'est pas coche ; le
 // total RENDU par le port, jamais additionne a l'ecran ; le seul paiement
 // web (ni App Store ni Play) ; « Recharger Ibrahim » (Foyer) et « Recharger »
@@ -11,6 +14,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -25,9 +29,11 @@ import 'package:rewayah_academy/core/finance/format_montant.dart';
 import 'package:rewayah_academy/core/finance/montant.dart';
 import 'package:rewayah_academy/core/finance/politique_commerciale.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/bouton_icone.dart';
@@ -154,8 +160,8 @@ bool _actif(WidgetTester tester, Key cle) =>
     find.byKey(cle).evaluate().isNotEmpty &&
     tester.widget<BoutonIcone>(find.byKey(cle)).onPress != null;
 
-VoidCallback? _verifier(WidgetTester tester) => tester
-    .widget<ActionPrincipale>(find.byKey(RechargeFoyerPage.verifierKey))
+VoidCallback? _payer(WidgetTester tester) => tester
+    .widget<ActionPrincipale>(find.byKey(RechargeFoyerPage.payerKey))
     .onPress;
 
 Finder _dans(Key parent, Finder f) =>
@@ -189,17 +195,44 @@ class _PortEspion extends RechargeFoyerFinanceDemo {
   }
 }
 
-/// Un port dont la verification attend [verrou] : l'ecran reste occupe.
-class _PortLent extends RechargeFoyerFinanceDemo {
-  _PortLent() : super(JeuFoyerFinance.tousFinances);
+/// Un port qui arrete un total qui n'est PAS la somme choisie : une remise
+/// de [remise] sur la somme des montants recus (revue FI-VAGUE-R R3-01,
+/// « Payer {total rendu par le port} »).
+class _PortRemise extends RechargeFoyerFinanceDemo {
+  _PortRemise() : super(JeuFoyerFinance.tousFinances);
 
-  final Completer<void> verrou = Completer<void>();
+  static final Montant remise = DonneesFinanceDemo.usd(5);
 
   @override
   Future<RecapitulatifRecharge> verifierMontants(
     List<MontantRecharge> choix,
   ) async {
-    await verrou.future;
+    final RecapitulatifRecharge r = await super.verifierMontants(choix);
+    final int somme = choix.fold<int>(
+      0,
+      (int s, MontantRecharge m) => s + m.montant.mineur,
+    );
+    return RecapitulatifRecharge(
+      id: r.id,
+      lignes: r.lignes,
+      total: formaterMontant(Montant(somme - remise.mineur, remise.devise)),
+    );
+  }
+}
+
+/// Un port dont la verification attend [verrou] tant que [lente] est
+/// vrai : l'ecran reste en attente du recapitulatif.
+class _PortLent extends RechargeFoyerFinanceDemo {
+  _PortLent() : super(JeuFoyerFinance.tousFinances);
+
+  final Completer<void> verrou = Completer<void>();
+  bool lente = true;
+
+  @override
+  Future<RecapitulatifRecharge> verifierMontants(
+    List<MontantRecharge> choix,
+  ) async {
+    if (lente) await verrou.future;
     return super.verifierMontants(choix);
   }
 }
@@ -218,6 +251,7 @@ class _PolitiqueTousRails implements PortPolitiquesCommerciales {
       tarifEnfant: l.tarifEnfant,
       tarifAdulte: l.tarifAdulte,
       essaisMax: l.essaisMax,
+      essaiActif: l.essaiActif,
       remisesParRang: l.remisesParRang,
       baseHoraire: l.baseHoraire,
       plafondHoraire: l.plafondHoraire,
@@ -225,8 +259,8 @@ class _PolitiqueTousRails implements PortPolitiquesCommerciales {
       capaciteAdulte: l.capaciteAdulte,
       capaciteDebutant: l.capaciteDebutant,
       minimumOuverture: l.minimumOuverture,
-      groupesObjectif: l.groupesObjectif,
-      groupesMax: l.groupesMax,
+      classesObjectif: l.classesObjectif,
+      classesMax: l.classesMax,
       joursConservationPlace: l.joursConservationPlace,
       margeReferencePourMille: l.margeReferencePourMille,
       railsActifs: RailPaiement.values.toSet(),
@@ -269,8 +303,14 @@ void main() {
     await _monter(tester, jeu: JeuFoyerFinance.unProfil);
     expect(find.byType(RechargeFoyerPage), findsOneWidget);
     expect(find.text(t.adulte.recharge.titre), findsOneWidget);
-    expect(find.text(t.adulte.recharge.profils), findsOneWidget);
-    expect(find.byKey(RechargeFoyerPage.repartitionKey), findsOneWidget);
+    // Un seul beneficiaire rendu (revue FI-VAGUE-R R4-06) : le singulier,
+    // sans note de repartition.
+    expect(find.text(t.adulte.recharge.phraseUnique), findsOneWidget);
+    expect(find.text(t.adulte.recharge.phrase), findsNothing);
+    expect(find.text(t.adulte.recharge.profilUnique), findsOneWidget);
+    expect(find.text(t.adulte.recharge.profils), findsNothing);
+    expect(find.byKey(RechargeFoyerPage.repartitionKey), findsNothing);
+    expect(find.text(t.adulte.recharge.repartition), findsNothing);
     // Non coche : montant desactive, « 0 $ », la raison du bouton inactif.
     expect(_coche(tester, _mariam), isFalse);
     expect(_actif(tester, RechargeFoyerPage.plusDe(_mariam)), isFalse);
@@ -279,7 +319,12 @@ void main() {
       formaterMontant(const Montant(0, 'USD')),
     );
     expect(find.text(t.adulte.recharge.raisonAucun), findsOneWidget);
-    expect(_verifier(tester), isNull);
+    expect(_payer(tester), isNull);
+    // Une seule page (R3-01) : ni barre d'etape « 1 sur 2 », ni « Tout
+    // selectionner », ni « Verifier la recharge ».
+    expect(find.text(t.commun.etape.sur(n: 1, total: 2)), findsNothing);
+    expect(find.textContaining('Tout sélectionner'), findsNothing);
+    expect(find.text(t.adulte.recharge.verifier), findsNothing);
 
     await _cocher(tester, _mariam);
     expect(find.text(t.adulte.recharge.raisonMontant), findsOneWidget);
@@ -289,20 +334,22 @@ void main() {
       formaterMontant(DonneesFinanceDemo.usd(10)),
     );
     expect(find.byKey(RechargeFoyerPage.raisonKey), findsNothing);
-    await _taper(tester, find.byKey(RechargeFoyerPage.verifierKey));
 
-    expect(find.text(t.adulte.recharge.verifierTitre), findsOneWidget);
+    // Le recapitulatif arrive sur la meme page, sans geste de plus.
+    expect(find.text(t.commun.etape.sur(n: 2, total: 2)), findsNothing);
     expect(find.byKey(RechargeFoyerPage.ligneDe(_mariam)), findsOneWidget);
     final String total = formaterMontant(DonneesFinanceDemo.usd(10));
-    expect(_dans(RechargeFoyerPage.totalKey, find.text(total)), findsOneWidget);
+    // Dans la carte du total : la ligne de Mariam et le total rendu.
     expect(
-      _dans(
-        RechargeFoyerPage.totalKey,
-        find.text(t.adulte.recharge.repartition),
-      ),
-      findsOneWidget,
+      _dans(RechargeFoyerPage.totalKey, find.text(total)),
+      findsNWidgets(2),
     );
+    // Une seule ligne au recapitulatif : rien a repartir (R4-06).
+    expect(find.text(t.adulte.recharge.repartition), findsNothing);
     expect(find.byType(LigneMoyenPaiement), findsOneWidget);
+    // Q-FI-4 (R3-05) : aucune promesse « sécurisé » tant que le rail n'est
+    // pas branche.
+    expect(find.textContaining('sécuris'), findsNothing);
     expect(find.text(t.adulte.recharge.payer(montant: total)), findsOneWidget);
     verifierUnSeulBoutonPlein(tester);
 
@@ -330,12 +377,13 @@ void main() {
     await _plus(tester, _ibrahim, 4);
     // Aicha n'est pas cochee : son montant reste desactive.
     expect(_actif(tester, RechargeFoyerPage.plusDe(_aicha)), isFalse);
-    await _taper(tester, find.byKey(RechargeFoyerPage.verifierKey));
 
-    expect(port.envois, hasLength(1));
+    // Chaque choix complet redemande le recapitulatif ; le dernier porte
+    // tous les montants choisis.
+    expect(port.envois, isNotEmpty);
     expect(
       <String, Montant>{
-        for (final MontantRecharge m in port.envois.single)
+        for (final MontantRecharge m in port.envois.last)
           m.beneficiaireId: m.montant,
       },
       <String, Montant>{
@@ -369,18 +417,57 @@ void main() {
       findsNothing,
     );
 
-    // « Modifier » : retour sans perte, le montant d'Ibrahim garde.
-    await _taper(tester, find.byKey(RechargeFoyerPage.modifierDe(_ibrahim)));
-    expect(_coche(tester, _mariam), isTrue);
-    expect(_coche(tester, _ibrahim), isTrue);
+    expect(
+      find.text(t.adulte.recharge.payer(montant: 'TOTAL-ARRETE-PAR-LE-PORT')),
+      findsOneWidget,
+    );
+
+    // Relecture sur place (R3-01) : Ibrahim decoche, le recapitulatif suit ;
+    // recoche, son montant revient (W-337).
+    await _cocher(tester, _ibrahim);
+    expect(find.byKey(RechargeFoyerPage.ligneDe(_ibrahim)), findsNothing);
+    expect(
+      port.envois.last.map((MontantRecharge m) => m.beneficiaireId),
+      <String>[_mariam],
+    );
+    await _cocher(tester, _ibrahim);
     expect(
       _montantAffiche(tester, _ibrahim),
       formaterMontant(DonneesFinanceDemo.usd(40)),
     );
+    expect(find.byKey(RechargeFoyerPage.ligneDe(_ibrahim)), findsOneWidget);
   });
 
-  testWidgets('tous les profils : « Tout selectionner », un montant pour '
-      'chacun, cinq lignes au recapitulatif', (WidgetTester tester) async {
+  testWidgets('remise : le port rend un total different de la somme choisie, '
+      'le bouton dit « Payer {total rendu} », jamais la somme', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, port: _PortRemise());
+    await _cocher(tester, _mariam);
+    await _plus(tester, _mariam, 1);
+    await _cocher(tester, _ibrahim);
+    await _plus(tester, _ibrahim, 4);
+
+    final String somme = formaterMontant(DonneesFinanceDemo.usd(50));
+    final String rendu = formaterMontant(DonneesFinanceDemo.usd(45));
+    expect(rendu, isNot(somme));
+    expect(_payer(tester), isNotNull);
+    expect(
+      tester
+          .widget<ActionPrincipale>(find.byKey(RechargeFoyerPage.payerKey))
+          .libelle,
+      t.adulte.recharge.payer(montant: rendu),
+    );
+    expect(find.text(t.adulte.recharge.payer(montant: somme)), findsNothing);
+    // La carte du total dit le meme total rendu, jamais la somme.
+    expect(_dans(RechargeFoyerPage.totalKey, find.text(rendu)), findsOneWidget);
+    expect(find.text(somme), findsNothing);
+  });
+
+  testWidgets('tous les profils : chacun coche (sans « Tout selectionner », '
+      'E-14), un montant pour chacun, cinq lignes au recapitulatif', (
+    WidgetTester tester,
+  ) async {
     await _monter(tester, jeu: JeuFoyerFinance.cinqProfils);
     final List<String> ids = <String>[
       for (final FinancesProfil p in DonneesFinanceDemo.profils(
@@ -388,19 +475,20 @@ void main() {
       ))
         p.profilId,
     ];
-    await _taper(tester, find.byKey(RechargeFoyerPage.toutSelectionnerKey));
+    expect(find.textContaining('Tout sélectionner'), findsNothing);
+    for (final String id in ids) {
+      await _cocher(tester, id);
+    }
     for (final String id in ids) {
       expect(_coche(tester, id), isTrue);
       expect(_actif(tester, RechargeFoyerPage.plusDe(id)), isTrue);
     }
-    expect(find.text(t.adulte.recharge.toutDeselectionner), findsOneWidget);
-    expect(_verifier(tester), isNull);
+    expect(_payer(tester), isNull);
     expect(find.text(t.adulte.recharge.raisonMontant), findsOneWidget);
     for (final String id in ids) {
       await _plus(tester, id, 1);
     }
-    expect(_verifier(tester), isNotNull);
-    await _taper(tester, find.byKey(RechargeFoyerPage.verifierKey));
+    expect(_payer(tester), isNotNull);
     for (final String id in ids) {
       expect(find.byKey(RechargeFoyerPage.ligneDe(id)), findsOneWidget);
     }
@@ -418,7 +506,7 @@ void main() {
     await _monter(tester);
     await _cocher(tester, _mariam);
     await _plus(tester, _mariam, 2);
-    expect(_verifier(tester), isNotNull);
+    expect(_payer(tester), isNotNull);
     // Decochee : montant desactive (« 0 »), plus rien a verifier.
     await _cocher(tester, _mariam);
     expect(_actif(tester, RechargeFoyerPage.plusDe(_mariam)), isFalse);
@@ -427,7 +515,7 @@ void main() {
       _montantAffiche(tester, _mariam),
       formaterMontant(const Montant(0, 'USD')),
     );
-    expect(_verifier(tester), isNull);
+    expect(_payer(tester), isNull);
     // Recochee : son montant revient (W-337).
     await _cocher(tester, _mariam);
     expect(
@@ -439,7 +527,7 @@ void main() {
     await _taper(tester, find.byKey(RechargeFoyerPage.moinsDe(_mariam)));
     expect(_actif(tester, RechargeFoyerPage.moinsDe(_mariam)), isFalse);
     expect(find.text(t.adulte.recharge.raisonMontant), findsOneWidget);
-    expect(_verifier(tester), isNull);
+    expect(_payer(tester), isNull);
   });
 
   testWidgets('« Recharger Ibrahim » depuis le Foyer : la meme route, Ibrahim '
@@ -459,7 +547,7 @@ void main() {
       find.text(t.adulte.recharge.montantSuggere(montant: manque)),
       findsOneWidget,
     );
-    expect(_verifier(tester), isNotNull);
+    expect(_payer(tester), isNotNull);
   });
 
   testWidgets('?profils=inconnu : rien n est coche, rien n est bloque, la '
@@ -473,8 +561,7 @@ void main() {
     await _cocher(tester, _mariam);
     await _plus(tester, _mariam, 1);
     expect(find.byKey(RechargeFoyerPage.raisonKey), findsNothing);
-    expect(_verifier(tester), isNotNull);
-    await _taper(tester, find.byKey(RechargeFoyerPage.verifierKey));
+    expect(_payer(tester), isNotNull);
     expect(find.byKey(RechargeFoyerPage.ligneDe(_mariam)), findsOneWidget);
   });
 
@@ -490,9 +577,8 @@ void main() {
     expect(find.text(t.adulte.recharge.raisonAucun), findsNothing);
     await _plus(tester, _mariam, 1);
     expect(find.byKey(RechargeFoyerPage.raisonKey), findsNothing);
-    expect(_verifier(tester), isNotNull);
-    // « Tout selectionner » ne compte que les profils rendus.
-    expect(find.text(t.adulte.recharge.toutSelectionner), findsOneWidget);
+    expect(_payer(tester), isNotNull);
+    expect(find.byKey(RechargeFoyerPage.ligneDe(_mariam)), findsOneWidget);
   });
 
   testWidgets('Compte > Paiements : « Recharger » ouvre LA meme route ; sans '
@@ -542,33 +628,35 @@ void main() {
     expect(routeur.state.uri.path, Routes.tuteurFoyer);
   });
 
-  testWidgets('« Tout selectionner » est fige pendant la verification, '
-      'comme les cases (revue FI-7)', (WidgetTester tester) async {
+  testWidgets('recapitulatif en cours : « Payer » attend ; une reponse '
+      'depassee par un choix plus recent est ignoree (R3-01)', (
+    WidgetTester tester,
+  ) async {
     final _PortLent port = _PortLent();
     await _monter(tester, port: port);
     await _cocher(tester, _mariam);
     await _plus(tester, _mariam, 1);
-    final Finder verifier = find.byKey(RechargeFoyerPage.verifierKey);
-    await tester.ensureVisible(verifier);
-    await tester.pumpAndSettle();
-    await tester.tap(verifier);
-    await tester.pump();
-    final Finder tout = find.byKey(RechargeFoyerPage.toutSelectionnerKey);
-    await tester.ensureVisible(tout);
-    await tester.pump();
-    await tester.tap(tout, warnIfMissed: false);
-    await tester.pump();
-    expect(_coche(tester, _ibrahim), isFalse);
-    expect(_coche(tester, _aicha), isFalse);
+    // La premiere demande (10 $) attend : « Payer » aussi, sans total.
+    expect(_payer(tester), isNull);
+    expect(
+      tester
+          .widget<ActionPrincipale>(find.byKey(RechargeFoyerPage.payerKey))
+          .enCours,
+      isTrue,
+    );
+    expect(find.text(t.adulte.recharge.payerSeul), findsOneWidget);
+    // Un choix plus recent (20 $) repond d'abord ; l'ancien arrive ensuite.
+    port.lente = false;
+    await _plus(tester, _mariam, 1);
     port.verrou.complete();
     await stabiliser(tester);
-    // Le recapitulatif correspond aux cases : Mariam seule.
-    expect(find.byKey(RechargeFoyerPage.ligneDe(_mariam)), findsOneWidget);
-    expect(find.byKey(RechargeFoyerPage.ligneDe(_ibrahim)), findsNothing);
-    await _taper(tester, find.byKey(RechargeFoyerPage.modifierDe(_mariam)));
-    expect(_coche(tester, _mariam), isTrue);
-    expect(_coche(tester, _ibrahim), isFalse);
-    expect(_coche(tester, _aicha), isFalse);
+    final String vingt = formaterMontant(DonneesFinanceDemo.usd(20));
+    expect(
+      _dans(RechargeFoyerPage.ligneDe(_mariam), find.text(vingt)),
+      findsOneWidget,
+    );
+    expect(find.text(t.adulte.recharge.payer(montant: vingt)), findsOneWidget);
+    expect(_payer(tester), isNotNull);
   });
 
   test('demonstration : les montants proposes sont croissants, un manque '
@@ -624,7 +712,6 @@ void main() {
     await _monter(tester, politiques: const _PolitiqueTousRails());
     await _cocher(tester, _mariam);
     await _plus(tester, _mariam, 1);
-    await _taper(tester, find.byKey(RechargeFoyerPage.verifierKey));
     final Iterable<LigneMoyenPaiement> lignes = tester
         .widgetList<LigneMoyenPaiement>(find.byType(LigneMoyenPaiement));
     expect(lignes.map((LigneMoyenPaiement l) => l.rail), <RailPaiement>[
@@ -640,8 +727,9 @@ void main() {
     await _monter(tester, horsLigne: true);
     await _cocher(tester, _mariam);
     await _plus(tester, _mariam, 1);
-    expect(_verifier(tester), isNull);
-    expect(find.text(t.adulte.recharge.horsLigneVerifier), findsOneWidget);
+    expect(_payer(tester), isNull);
+    expect(find.text(t.adulte.recharge.horsLignePayer), findsOneWidget);
+    expect(find.byKey(RechargeFoyerPage.recapitulatifKey), findsNothing);
   });
 
   testWidgets('erreur de verification : dite, les choix gardes', (
@@ -650,10 +738,9 @@ void main() {
     await _monter(tester, port: _PortEspion(echec: true));
     await _cocher(tester, _mariam);
     await _plus(tester, _mariam, 1);
-    await _taper(tester, find.byKey(RechargeFoyerPage.verifierKey));
     expect(find.text(t.adulte.recharge.verificationEchecTitre), findsOneWidget);
     expect(_coche(tester, _mariam), isTrue);
-    expect(_verifier(tester), isNotNull);
+    expect(_payer(tester), isNull);
   });
 
   testWidgets('production : la recharge se dit indisponible, sans bouton', (
@@ -662,9 +749,144 @@ void main() {
     await _monter(tester, avecFinances: false);
     final EtatSysteme e = tester.widget<EtatSysteme>(find.byType(EtatSysteme));
     expect(e.nature, NatureEtat.indisponible);
-    expect(e.dependance, 'EA-BR-24');
-    expect(find.byKey(RechargeFoyerPage.verifierKey), findsNothing);
+    expect(e.dependance, 'FI-BR-06');
+    expect(find.byKey(RechargeFoyerPage.payerKey), findsNothing);
     expect(find.byType(LigneMoyenPaiement), findsNothing);
+  });
+
+  // Des le seuil de la composition large (1200, AppGabarit.seuilLarge),
+  // pas seulement a 1440 : a 1200 et 1280 le solde tenait sur trois lignes
+  // (contre-revue FI-VAGUE-CORR).
+  for (final double largeur in <double>[1200, 1280, 1440]) {
+    testWidgets('${largeur.toInt()} : les profils et le paiement cote a '
+        'cote, l\'explication sous le total, le bandeau « Acces a '
+        'regulariser » dessous, sans croix, qui ajoute Ibrahim a la recharge '
+        '(R3-02)', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        jeu: JeuFoyerFinance.unARegulariser,
+        taille: Size(largeur, 1200),
+      );
+      final Rect profils = tester.getRect(
+        find.byKey(RechargeFoyerPage.profilsKey),
+      );
+      final Rect explication = tester.getRect(
+        find.byKey(RechargeFoyerPage.repartitionKey),
+      );
+      final Rect total = tester.getRect(find.byKey(RechargeFoyerPage.totalKey));
+      final Rect payer = tester.getRect(find.byKey(RechargeFoyerPage.payerKey));
+      // Les profils et le paiement cote a cote, en haut de la page : jamais
+      // une colonne de telephone centree (contrat D).
+      expect(profils.right, lessThan(total.left));
+      expect(total.top, lessThan(profils.bottom));
+      expect(total.right - profils.left, greaterThan(AppPage.largeurDialogue));
+      // L'explication du paiement unique sous le total qu'elle explique,
+      // dans la meme colonne : jamais seule dans une colonne vide
+      // (FI-VAGUE-CORR).
+      expect(
+        _dans(
+          RechargeFoyerPage.totalKey,
+          find.byKey(RechargeFoyerPage.repartitionKey),
+        ),
+        findsOneWidget,
+      );
+      expect(explication.left, greaterThanOrEqualTo(total.left));
+      expect(explication.right, lessThanOrEqualTo(total.right));
+      // La colonne des profils a la moitie de la page, bornee a la colonne
+      // de dialogue, et le solde comme le montant suggere tiennent sur une ou
+      // deux lignes (l'ancienne composition les coupait en quatre lignes
+      // chacun dans la police de test, six a l'ecran ; trois a 1200 et 1280
+      // tant que le montant restait a cote dans une colonne de 430 ou 470).
+      expect(profils.width, greaterThanOrEqualTo(total.width - 0.5));
+      expect(profils.width, lessThanOrEqualTo(AppPage.largeurDialogue + 0.5));
+      int mesures = 0;
+      for (final String id in <String>[_mariam, _ibrahim, _aicha]) {
+        final Finder textes = find.descendant(
+          of: find.byKey(RechargeFoyerPage.profilDe(id)),
+          matching: find.byType(RichText),
+        );
+        for (final Element e in textes.evaluate()) {
+          final RenderParagraph p = e.renderObject! as RenderParagraph;
+          final String texte = p.text.toPlainText();
+          if (!texte.contains(':')) continue;
+          final double ligne = p.getFullHeightForCaret(
+            const TextPosition(offset: 0),
+          );
+          expect(
+            (p.size.height / ligne).round(),
+            lessThanOrEqualTo(2),
+            reason: '« $texte » doit tenir sur une ou deux lignes',
+          );
+          mesures++;
+        }
+      }
+      // Trois soldes et le montant suggere d'Ibrahim, au moins.
+      expect(mesures, greaterThanOrEqualTo(4));
+      // Le bandeau, en bas, sur toute la largeur, sans croix (Q-FI-6).
+      final Finder bandeau = find.byKey(RechargeFoyerPage.bandeauKey);
+      expect(bandeau, findsOneWidget);
+      expect(tester.getRect(bandeau).top, greaterThan(payer.bottom));
+      expect(tester.getRect(bandeau).left, moreOrLessEquals(profils.left));
+      expect(
+        _dans(
+          RechargeFoyerPage.bandeauKey,
+          find.text(t.argent.acces.regulariserTitre),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: bandeau,
+          matching: find.byWidgetPredicate(
+            (Widget w) => w is Icon && w.icon == AppIcons.fermer.repos,
+          ),
+        ),
+        findsNothing,
+      );
+      expect(_coche(tester, _ibrahim), isFalse);
+      await _taper(tester, find.byKey(RechargeFoyerPage.ajouterDe(_ibrahim)));
+      // Coche, le manque suggere retenu, le recapitulatif rendu ; le lien,
+      // qui ne peut plus rien, disparait (K-56).
+      expect(_coche(tester, _ibrahim), isTrue);
+      final String manque = formaterMontant(DonneesFinanceDemo.usd(8));
+      expect(_montantAffiche(tester, _ibrahim), manque);
+      expect(find.byKey(RechargeFoyerPage.ligneDe(_ibrahim)), findsOneWidget);
+      expect(find.byKey(RechargeFoyerPage.ajouterDe(_ibrahim)), findsNothing);
+      expect(bandeau, findsOneWidget);
+      expect(_payer(tester), isNotNull);
+      verifierUnSeulBoutonPlein(tester);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets('390 : une seule colonne, le bandeau en tete', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, jeu: JeuFoyerFinance.unARegulariser);
+    final Rect bandeau = tester.getRect(
+      find.byKey(RechargeFoyerPage.bandeauKey),
+    );
+    final Rect profils = tester.getRect(
+      find.byKey(RechargeFoyerPage.profilsKey),
+    );
+    final Rect total = tester.getRect(find.byKey(RechargeFoyerPage.totalKey));
+    expect(bandeau.bottom, lessThan(profils.top));
+    expect(profils.bottom, lessThan(total.top));
+    // L'explication sous le total (maquette 04).
+    expect(
+      _dans(
+        RechargeFoyerPage.totalKey,
+        find.byKey(RechargeFoyerPage.repartitionKey),
+      ),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('production : aucune finance du foyer, aucun bandeau', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, avecFinances: false);
+    expect(find.byKey(RechargeFoyerPage.bandeauKey), findsNothing);
   });
 
   group('responsive : 320 a 200 % et 1440, LTR et RTL, clair et sombre', () {
@@ -700,7 +922,6 @@ void main() {
                 find.byKey(RechargeFoyerPage.plusDe(_mariam)),
               );
               expect(ligne.contains(montant.center), isTrue);
-              await _taper(tester, find.byKey(RechargeFoyerPage.verifierKey));
               expect(tester.takeException(), isNull);
               verifierUnSeulBoutonPlein(tester);
               // « Payer » au bord de fin du moyen de paiement.

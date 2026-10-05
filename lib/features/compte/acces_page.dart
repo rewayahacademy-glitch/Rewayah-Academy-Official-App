@@ -94,12 +94,30 @@ class AccesComptePage extends ConsumerWidget {
   static LigneRubrique _ligne(AccesBeneficiaire a, FinancesProfil? finance) {
     final String? essai = libelleEssai(a);
     final bool regulariser = aRegulariser(finance);
+    // La place rendue par la source (FI-BR-08) : liberee, elle passe avant
+    // le manque ; reactivee, elle se dit tant qu'aucun manque n'est rendu.
+    final bool liberee = a.place == EtatPlace.liberee;
+    final String? place = phrasePlace(a, prenom: a.prenom);
     return LigneRubrique(
       icone: AppIcons.profil,
       libelle: a.prenom,
-      legende: regulariser ? messageRegularisation(finance!) : _echeance(a),
-      controle: regulariser
+      legende: liberee
+          ? place
+          : regulariser
+          ? messageRegularisation(finance!)
+          : place ?? _echeance(a),
+      controle: liberee
+          ? StatusPill(
+              libelle: t.argent.acces.pastilleSuspendu,
+              ton: TonEtat.avertissement,
+            )
+          : regulariser
           ? const PastilleFinanciere(etat: EtatFinancier.aRegulariser)
+          : a.place == EtatPlace.reactivee
+          ? StatusPill(
+              libelle: t.argent.acces.pastilleReactive,
+              ton: TonEtat.succes,
+            )
           : essai != null
           ? StatusPill(
               libelle: essai,

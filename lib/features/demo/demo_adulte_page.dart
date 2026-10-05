@@ -42,6 +42,7 @@ import '../../core/auth/service_auth.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_mes_finances.dart';
 import '../../core/capacites/port_notifications.dart';
+import '../../core/capacites/port_paiements_foyer.dart';
 import '../../core/capacites/port_politiques_commerciales.dart';
 import '../../core/capacites/port_recharge_foyer.dart';
 import '../../core/config/env.dart';
@@ -74,7 +75,7 @@ import '../appareils/liste_appareils_eleve.dart'
 import '../compte/aide_page.dart';
 import '../compte/apparence_page.dart';
 import '../compte/donnees_compte.dart'
-    show identiteTitulaireProvider, soldesFoyerProvider;
+    show identiteTitulaireProvider, paiementsFoyerProvider;
 import '../compte/informations_legales_page.dart';
 import '../compte/informations_page.dart';
 import '../compte/paiements_page.dart';
@@ -82,11 +83,14 @@ import '../compte/preferences_page.dart';
 import '../compte/securite_page.dart';
 import '../foyer/creer_mon_profil_indisponible.dart';
 import '../foyer/fiche_eleve_page.dart';
-import '../foyer/finances_foyer.dart' show politiqueActiveProvider;
+import '../foyer/finances_foyer.dart'
+    show financesFoyerProvider, politiqueActiveProvider;
 import '../foyer/formulaire_profil_eleve.dart';
 import '../foyer/foyer_page.dart';
 import '../foyer/invitation_conjoint.dart';
 import '../foyer/place_adulte.dart';
+import '../foyer/transactions_foyer.dart'
+    show derniersMouvementsFoyerProvider, nombreDernieresTransactions;
 import '../ma_classe_adulte/ma_classe_adulte_page.dart';
 import '../mon_espace_adulte/mes_finances_page.dart';
 import '../mon_espace_adulte/mon_espace_adulte_page.dart';
@@ -1144,6 +1148,8 @@ class CoquilleAdulteDemo extends StatelessWidget {
             // `eleve=`, elle coche aussi son profil : il n'en a pas d'autre.
             EcranDemoAdulte.maRecharge => RechargeFoyerPage(
               preselection: <String>{mesFinances.profilId},
+              // Son seul profil : aucune finance du foyer lue (FI-9b).
+              regularisation: false,
               onAbandon: versPaiements,
               onTerminee: versPaiements,
               // La demo de l'adulte seul ne rend aucune commande payee : par
@@ -1338,9 +1344,21 @@ class CoquilleAdulteDemo extends StatelessWidget {
         );
       } else if (p == Routes.tuteurFoyerAppareils) {
         context.go(_adresse(EcranDemoAdulte.appareils));
+      } else if (p == Routes.tuteurFoyerRecharge) {
+        // La recharge de la synthese, ou celle d'une carte (`?profils=`),
+        // ce profil coche (R1-06).
+        final String? profils = uri.queryParameters['profils'];
+        context.go(
+          _adresse(
+            EcranDemoAdulte.recharge,
+            eleve: profils == null || profils.contains(',') ? null : profils,
+          ),
+        );
       } else if (p.startsWith('${Routes.tuteurFoyer}/')) {
+        // La fiche, ou une de ses sous-pages (« Voir le détail » d'une
+        // carte) : la demonstration n'a que la fiche, ouverte a sa place.
         final String id = p.substring(Routes.tuteurFoyer.length + 1);
-        if (!id.contains('/')) versFiche(id);
+        versFiche(id.split('/').first);
       }
     }
 
@@ -1360,20 +1378,26 @@ class CoquilleAdulteDemo extends StatelessWidget {
       ),
     );
     final EtatPlaceAdulte place = titulaire.place;
+    final PaiementsFoyerProfilsDemo paiements = PaiementsFoyerProfilsDemo(
+      DonneesAdulteDemo.finances(etat, genre, foyerNouveau: foyerNouveau),
+    );
 
     final Widget page = switch (vu) {
-      // Le titulaire : les soldes de ses beneficiaires, « Recharger » et
-      // l'historique (EA-9, EA-BR-23).
+      // Le titulaire : « Recharger », raccourci vers LA recharge du foyer,
+      // puis l'historique (FI-7). Ses soldes ne sont plus repetes ici : la
+      // synthese et les cartes de Ma famille les portent (E-11, revue
+      // FI-VAGUE-R R1-06).
       EcranDemoAdulte.paiementsFoyer => PaiementsComptePage(
         titre: t.adulte.famille.paiementsFoyer,
         onRetour: versMaFamille,
-        soldes: true,
         onRecharger: versRecharge,
       ),
       // La recharge (EA-10, EA-BR-24 et 25) : les beneficiaires et leurs
       // offres, la verification, puis un etat honnete, jamais un paiement
-      // reussi (F13). Rien n'est paye.
+      // reussi (F13). Rien n'est paye. Ouverte depuis la carte d'un enfant,
+      // ce profil coche (`eleve`).
       EcranDemoAdulte.recharge => RechargeFoyerPage(
+        preselection: <String>{?eleve},
         onAbandon: () => context.go(_adresse(EcranDemoAdulte.paiementsFoyer)),
         onTerminee: () => context.go(_adresse(EcranDemoAdulte.paiementsFoyer)),
         // Le paiement EA ne rend jamais de commande (F13) : par surete, une
@@ -1473,6 +1497,8 @@ class CoquilleAdulteDemo extends StatelessWidget {
         eleveId: eleve ?? DonneesAdulteDemo.aichaId,
         onAller: allerFoyer,
         onRetour: versMaFamille,
+        // Aucune page Finances de demonstration : pas d'onglets.
+        avecPageFinances: false,
       ),
       EcranDemoAdulte.appareils => AppareilsPage(
         onAller: allerFoyer,
@@ -1517,7 +1543,6 @@ class CoquilleAdulteDemo extends StatelessWidget {
                 ),
                 onPaiementsFoyer: () =>
                     context.go(_adresse(EcranDemoAdulte.paiementsFoyer)),
-                onRecharger: versRecharge,
                 onAProposForfait: () =>
                     context.go(_adresse(EcranDemoAdulte.aProposForfait)),
                 // Validation refusee : la nouvelle demande relance
@@ -1566,10 +1591,30 @@ class CoquilleAdulteDemo extends StatelessWidget {
               DonneesAdulteDemo.identite(genre, VueDemoAdulte.titulaire),
         ),
         foyerTitulaireProvider.overrideWith((Ref _) async => titulaire),
-        // Les soldes du foyer (EA-9, EA-BR-23), au titulaire seulement (F7).
-        soldesFoyerProvider.overrideWith(
-          (Ref _) async =>
-              DonneesAdulteDemo.soldes(etat, genre, foyerNouveau: foyerNouveau),
+        // Les finances du foyer, au titulaire seulement (F7) : Ma famille a
+        // la composition du Foyer du tuteur (E-11, revue FI-VAGUE-R R1-06),
+        // la synthese, la finance de chaque enfant sur sa carte et les
+        // dernieres transactions ; « Paiements du foyer », l'historique.
+        // Les fournisseurs derives sont surcharges ici : sous ce
+        // ProviderScope imbrique, ils se resoudraient sinon sur le port reel
+        // (indisponible). Reseau coupe : les lectures echouent (hors ligne).
+        portPaiementsFoyerProvider.overrideWithValue(paiements),
+        financesFoyerProvider.overrideWith(
+          (Ref _) => reseauCoupe
+              ? Future<FinancesFoyer>.error(_reseauCoupe)
+              : paiements.finances(),
+        ),
+        derniersMouvementsFoyerProvider.overrideWith(
+          (Ref _) => reseauCoupe
+              ? Future<List<MouvementFoyer>>.error(_reseauCoupe)
+              : paiements.derniersMouvements(
+                  limite: nombreDernieresTransactions,
+                ),
+        ),
+        paiementsFoyerProvider.overrideWith(
+          (Ref _) => reseauCoupe
+              ? Future<List<PaiementFoyer>>.error(_reseauCoupe)
+              : paiements.historique(),
         ),
         // L'invitation (EA-6, EA-BR-15) : rien n'est envoye (K-28).
         portInvitationConjointProvider.overrideWithValue(_InvitationDemo(etat)),
@@ -1768,7 +1813,7 @@ class _RechargeDemo implements PortRechargeFoyer {
     if (etat == EtatDemoAdulte.doubleSoumission) {
       await Future<void>.delayed(latenceSimulee);
     }
-    throw const CapaciteIndisponible('EA-BR-25');
+    throw const CapaciteIndisponible('FI-BR-06');
   }
 
   // La recharge se choisit par montants depuis FI-7 (un seul moteur) ; le
