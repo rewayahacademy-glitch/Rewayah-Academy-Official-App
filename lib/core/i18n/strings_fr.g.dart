@@ -12591,6 +12591,65 @@ class Traductions$comptable$beneficiaires$fr {
 
 	// Translations
 
+	/// fr: 'Le profil de paiement de chaque enseignant et de chaque contractuel. Seul le bénéficiaire saisit ou modifie ses coordonnées : vous pouvez le relancer, lui demander une mise à jour ou suspendre ses paiements.'
+	String get intro => 'Le profil de paiement de chaque enseignant et de chaque contractuel. Seul le bénéficiaire saisit ou modifie ses coordonnées : vous pouvez le relancer, lui demander une mise à jour ou suspendre ses paiements.';
+
+	/// fr: 'Tous'
+	String get filtreTous => 'Tous';
+
+	/// fr: 'Infos manquantes'
+	String get filtreInfos => 'Infos manquantes';
+
+	/// fr: 'En vérification'
+	String get filtreVerification => 'En vérification';
+
+	/// fr: 'Suspendus'
+	String get filtreSuspendus => 'Suspendus';
+
+	/// fr: 'Invitations envoyées'
+	String get filtreInvitations => 'Invitations envoyées';
+
+	/// fr: 'Bénéficiaire'
+	String get colonneBeneficiaire => 'Bénéficiaire';
+
+	/// fr: 'Type'
+	String get colonneType => 'Type';
+
+	/// fr: 'Destination'
+	String get colonneDestination => 'Destination';
+
+	/// fr: 'État du profil'
+	String get colonneEtat => 'État du profil';
+
+	/// fr: 'Paiements en attente'
+	String get colonneEnAttente => 'Paiements en attente';
+
+	/// fr: 'Enseignant'
+	String get typeEnseignant => 'Enseignant';
+
+	/// fr: 'Contractuel'
+	String get typeContractuel => 'Contractuel';
+
+	/// fr: '{n} en attente'
+	String enAttente({required Object n}) => '${n} en attente';
+
+	/// fr: 'Aucun'
+	String get aucunEnAttente => 'Aucun';
+
+	/// fr: 'Aucun bénéficiaire pour l'instant.'
+	String get vide => 'Aucun bénéficiaire pour l\'instant.';
+
+	/// fr: 'Les enseignants et les contractuels apparaissent ici dès qu'un paiement les concerne.'
+	String get videDetail => 'Les enseignants et les contractuels apparaissent ici dès qu\'un paiement les concerne.';
+
+	/// fr: 'Aucun bénéficiaire avec ce filtre.'
+	String get videFiltre => 'Aucun bénéficiaire avec ce filtre.';
+
+	/// fr: 'Choisissez « Tous » pour revoir toute la liste.'
+	String get videFiltreDetail => 'Choisissez « Tous » pour revoir toute la liste.';
+
+	late final Traductions$comptable$beneficiaires$profil$fr profil = Traductions$comptable$beneficiaires$profil$fr.internal(_root);
+
 	/// fr: 'Bénéficiaires'
 	String get titre => 'Bénéficiaires';
 
@@ -18589,6 +18648,129 @@ class Traductions$comptable$encaissements$rap$fr {
 	String get remboursementsVidePhrase => 'Les demandes de remboursement apparaîtront ici avec leur motif et leur état.';
 }
 
+// Path: comptable.beneficiaires.profil
+class Traductions$comptable$beneficiaires$profil$fr {
+	Traductions$comptable$beneficiaires$profil$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Profil de paiement de {nom}'
+	String carteTitre({required Object nom}) => 'Profil de paiement de ${nom}';
+
+	/// fr: 'État du profil'
+	String get etat => 'État du profil';
+
+	/// fr: 'Dernière modification'
+	String get derniereModification => 'Dernière modification';
+
+	/// fr: 'Capacité de paiement du corridor'
+	String get capacite => 'Capacité de paiement du corridor';
+
+	/// fr: 'Pas encore évaluée'
+	String get capaciteNonEvaluee => 'Pas encore évaluée';
+
+	/// fr: 'Paiements qui attendent ce profil'
+	String get enAttente => 'Paiements qui attendent ce profil';
+
+	/// fr: 'Seul {nom} peut saisir ou modifier ses coordonnées de paiement. Vous en voyez une version masquée.'
+	String proprietaire({required Object nom}) => 'Seul ${nom} peut saisir ou modifier ses coordonnées de paiement. Vous en voyez une version masquée.';
+
+	/// fr: 'Historique des paiements'
+	String get historiqueTitre => 'Historique des paiements';
+
+	/// fr: 'Aucun paiement versé à ce bénéficiaire pour l'instant.'
+	String get historiqueVide => 'Aucun paiement versé à ce bénéficiaire pour l\'instant.';
+
+	/// fr: 'Journal du profil'
+	String get journalTitre => 'Journal du profil';
+
+	/// fr: 'Aucune modification enregistrée sur ce profil pour l'instant.'
+	String get journalVide => 'Aucune modification enregistrée sur ce profil pour l\'instant.';
+
+	/// fr: 'Que faire pour ce profil'
+	String get actionsTitre => 'Que faire pour ce profil';
+
+	/// fr: 'Relancer {nom}'
+	String relancer({required Object nom}) => 'Relancer ${nom}';
+
+	/// fr: 'Ouvre le fil « Profil de paiement » avec un message prérempli, dans les Messages métier.'
+	String get relancerDetail => 'Ouvre le fil « Profil de paiement » avec un message prérempli, dans les Messages métier.';
+
+	/// fr: 'Demander une mise à jour à {nom}'
+	String demanderMiseAJour({required Object nom}) => 'Demander une mise à jour à ${nom}';
+
+	/// fr: 'Suspendre les paiements de {nom}'
+	String suspendre({required Object nom}) => 'Suspendre les paiements de ${nom}';
+
+	/// fr: 'Reprendre les paiements de {nom}'
+	String reprendre({required Object nom}) => 'Reprendre les paiements de ${nom}';
+
+	/// fr: 'Voir le fil « Profil de paiement »'
+	String get voirFil => 'Voir le fil « Profil de paiement »';
+
+	/// fr: '{nom} n'a pas de compte Rewayah : une invitation sécurisée lui permet de saisir lui-même sa méthode. Renvoyez-la depuis son obligation, dans Contractuels.'
+	String externe({required Object nom}) => '${nom} n\'a pas de compte Rewayah : une invitation sécurisée lui permet de saisir lui-même sa méthode. Renvoyez-la depuis son obligation, dans Contractuels.';
+
+	/// fr: 'Voir les obligations des contractuels'
+	String get voirContractuels => 'Voir les obligations des contractuels';
+
+	/// fr: 'Aucune action n'est ouverte sur ce profil : il est à jour.'
+	String get aucuneAction => 'Aucune action n\'est ouverte sur ce profil : il est à jour.';
+
+	/// fr: 'Message prêt dans le fil « Profil de paiement »'
+	String get relanceTitre => 'Message prêt dans le fil « Profil de paiement »';
+
+	/// fr: 'Objet : Profil de paiement'
+	String get relanceObjet => 'Objet : Profil de paiement';
+
+	/// fr: 'Vos informations de paiement doivent être complétées avant votre prochain versement. Vous pouvez les ajouter depuis votre espace personnel.'
+	String get messageModele => 'Vos informations de paiement doivent être complétées avant votre prochain versement. Vous pouvez les ajouter depuis votre espace personnel.';
+
+	/// fr: 'Demande de mise à jour enregistrée pour {nom}.'
+	String miseAJourDemandee({required Object nom}) => 'Demande de mise à jour enregistrée pour ${nom}.';
+
+	/// fr: 'Paiements de {nom} suspendus : aucun versement ne part tant qu'ils ne sont pas repris.'
+	String suspendus({required Object nom}) => 'Paiements de ${nom} suspendus : aucun versement ne part tant qu\'ils ne sont pas repris.';
+
+	/// fr: 'Paiements de {nom} repris.'
+	String repris({required Object nom}) => 'Paiements de ${nom} repris.';
+
+	/// fr: 'L'action n'a pas abouti. Vérifiez votre connexion, puis réessayez.'
+	String get erreurAction => 'L\'action n\'a pas abouti. Vérifiez votre connexion, puis réessayez.';
+
+	/// fr: 'Cette action n'est pas encore branchée sur le service qui la traite. Réessayez plus tard.'
+	String get erreurIndisponible => 'Cette action n\'est pas encore branchée sur le service qui la traite. Réessayez plus tard.';
+
+	/// fr: 'Suspendre les paiements de {nom} ?'
+	String suspensionTitre({required Object nom}) => 'Suspendre les paiements de ${nom} ?';
+
+	/// fr: 'Aucun versement ne partira vers ce bénéficiaire tant que vous ne les reprenez pas. Ses coordonnées ne changent pas. Choisissez le motif : il sera inscrit au journal du profil.'
+	String get suspensionContexte => 'Aucun versement ne partira vers ce bénéficiaire tant que vous ne les reprenez pas. Ses coordonnées ne changent pas. Choisissez le motif : il sera inscrit au journal du profil.';
+
+	/// fr: 'Coordonnées à vérifier'
+	String get motifVerifier => 'Coordonnées à vérifier';
+
+	/// fr: 'La méthode semble incorrecte ou n'a pas pu être confirmée.'
+	String get motifVerifierDetail => 'La méthode semble incorrecte ou n\'a pas pu être confirmée.';
+
+	/// fr: 'Anomalie signalée'
+	String get motifAnomalie => 'Anomalie signalée';
+
+	/// fr: 'Un paiement récent a échoué ou un écart a été signalé.'
+	String get motifAnomalieDetail => 'Un paiement récent a échoué ou un écart a été signalé.';
+
+	/// fr: 'Demande du bénéficiaire'
+	String get motifDemande => 'Demande du bénéficiaire';
+
+	/// fr: 'Le bénéficiaire a demandé à ne plus recevoir de versement pour l'instant.'
+	String get motifDemandeDetail => 'Le bénéficiaire a demandé à ne plus recevoir de versement pour l\'instant.';
+
+	/// fr: 'Choisissez un motif pour continuer.'
+	String get motifRequis => 'Choisissez un motif pour continuer.';
+}
+
 // Path: comptable.beneficiaires.recevoir
 class Traductions$comptable$beneficiaires$recevoir$fr {
 	Traductions$comptable$beneficiaires$recevoir$fr.internal(this._root);
@@ -18596,6 +18778,114 @@ class Traductions$comptable$beneficiaires$recevoir$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+
+	/// fr: 'Paiements'
+	String get rubrique => 'Paiements';
+
+	/// fr: 'Vos méthodes de paiement, gérées par vous seul.'
+	String get ligneDetail => 'Vos méthodes de paiement, gérées par vous seul.';
+
+	/// fr: 'Ajoutez une méthode de paiement pour que l'académie puisse vous verser votre prochain paiement.'
+	String get noticeDetail => 'Ajoutez une méthode de paiement pour que l\'académie puisse vous verser votre prochain paiement.';
+
+	/// fr: 'Vous n'avez encore aucune méthode de paiement. Ajoutez-en une pour recevoir vos versements.'
+	String get phraseAucunMoyen => 'Vous n\'avez encore aucune méthode de paiement. Ajoutez-en une pour recevoir vos versements.';
+
+	/// fr: 'Votre méthode de paiement est incomplète. Complétez-la pour recevoir votre prochain versement.'
+	String get phraseIncomplet => 'Votre méthode de paiement est incomplète. Complétez-la pour recevoir votre prochain versement.';
+
+	/// fr: 'Votre nouvelle méthode est en cours de vérification. Son état se met à jour ici.'
+	String get phraseEnVerification => 'Votre nouvelle méthode est en cours de vérification. Son état se met à jour ici.';
+
+	/// fr: 'Votre méthode de paiement est vérifiée. Vos prochains versements y seront envoyés.'
+	String get phraseVerifie => 'Votre méthode de paiement est vérifiée. Vos prochains versements y seront envoyés.';
+
+	/// fr: 'Vos versements sont suspendus. Contactez l'académie pour en connaître la raison.'
+	String get phraseSuspendu => 'Vos versements sont suspendus. Contactez l\'académie pour en connaître la raison.';
+
+	/// fr: 'Une mise à jour de votre méthode de paiement est demandée. Remplacez-la pour recevoir votre prochain versement.'
+	String get phraseActionRequise => 'Une mise à jour de votre méthode de paiement est demandée. Remplacez-la pour recevoir votre prochain versement.';
+
+	/// fr: 'Une invitation sécurisée vous a été envoyée. Ajoutez votre méthode de paiement pour la compléter.'
+	String get phraseInvitationEnvoyee => 'Une invitation sécurisée vous a été envoyée. Ajoutez votre méthode de paiement pour la compléter.';
+
+	/// fr: 'Vos versements sont suspendus le temps de vérifier votre nouvelle méthode : c'est une protection contre la fraude.'
+	String get suspenduTemporairement => 'Vos versements sont suspendus le temps de vérifier votre nouvelle méthode : c\'est une protection contre la fraude.';
+
+	/// fr: 'Mes méthodes de paiement'
+	String get mesMethodes => 'Mes méthodes de paiement';
+
+	/// fr: 'Méthode préférée'
+	String get preferee => 'Méthode préférée';
+
+	/// fr: 'Ancienne méthode, conservée inactive'
+	String get inactive => 'Ancienne méthode, conservée inactive';
+
+	/// fr: 'Faire de {methode} ma méthode préférée'
+	String choisirPreferee({required Object methode}) => 'Faire de ${methode} ma méthode préférée';
+
+	/// fr: 'Remplacer {methode}'
+	String remplacer({required Object methode}) => 'Remplacer ${methode}';
+
+	/// fr: 'Supprimer {methode}'
+	String supprimer({required Object methode}) => 'Supprimer ${methode}';
+
+	/// fr: 'Supprimer {methode} ?'
+	String supprimerQuestion({required Object methode}) => 'Supprimer ${methode} ?';
+
+	/// fr: 'Vous ne recevrez plus de versement sur cette méthode. Si c'est la seule, votre prochain versement attendra une nouvelle méthode.'
+	String get supprimerConsequence => 'Vous ne recevrez plus de versement sur cette méthode. Si c\'est la seule, votre prochain versement attendra une nouvelle méthode.';
+
+	/// fr: 'Ajouter une méthode de paiement'
+	String get ajouter => 'Ajouter une méthode de paiement';
+
+	/// fr: 'Ajouter une méthode de paiement'
+	String get ajoutTitre => 'Ajouter une méthode de paiement';
+
+	/// fr: 'Remplacer {methode}'
+	String remplacementTitre({required Object methode}) => 'Remplacer ${methode}';
+
+	/// fr: 'Choisissez le type de méthode. Vous saisirez ensuite vos coordonnées dans un espace sécurisé : l'application ne les voit pas et ne les conserve pas.'
+	String get ajoutContexte => 'Choisissez le type de méthode. Vous saisirez ensuite vos coordonnées dans un espace sécurisé : l\'application ne les voit pas et ne les conserve pas.';
+
+	/// fr: 'Continuer vers la saisie sécurisée'
+	String get continuerSaisie => 'Continuer vers la saisie sécurisée';
+
+	/// fr: 'Choisissez un type de méthode pour continuer.'
+	String get typeRequis => 'Choisissez un type de méthode pour continuer.';
+
+	/// fr: 'Aucun type de méthode n'est proposé pour l'instant. Contactez l'académie pour en ouvrir un.'
+	String get aucunType => 'Aucun type de méthode n\'est proposé pour l\'instant. Contactez l\'académie pour en ouvrir un.';
+
+	/// fr: 'Tout changement est vérifié avant le prochain versement.'
+	String get verificationAnnoncee => 'Tout changement est vérifié avant le prochain versement.';
+
+	/// fr: 'Méthode ajoutée : elle est en cours de vérification.'
+	String get ajoutee => 'Méthode ajoutée : elle est en cours de vérification.';
+
+	/// fr: 'Nouvelle méthode enregistrée : elle est en cours de vérification.'
+	String get remplacee => 'Nouvelle méthode enregistrée : elle est en cours de vérification.';
+
+	/// fr: 'Méthode supprimée.'
+	String get supprimee => 'Méthode supprimée.';
+
+	/// fr: 'Méthode préférée mise à jour.'
+	String get prefereeChoisie => 'Méthode préférée mise à jour.';
+
+	/// fr: 'Le changement n'a pas abouti. Vérifiez votre connexion, puis réessayez.'
+	String get erreurAction => 'Le changement n\'a pas abouti. Vérifiez votre connexion, puis réessayez.';
+
+	/// fr: 'Ce changement n'est pas encore branché sur le service de paiement. Réessayez plus tard.'
+	String get erreurIndisponible => 'Ce changement n\'est pas encore branché sur le service de paiement. Réessayez plus tard.';
+
+	/// fr: 'Historique de mes changements'
+	String get journalTitre => 'Historique de mes changements';
+
+	/// fr: 'Aucun changement enregistré pour l'instant.'
+	String get journalVide => 'Aucun changement enregistré pour l\'instant.';
+
+	/// fr: 'Vous seul pouvez modifier ces informations : ni la comptabilité ni la direction ne peuvent le faire à votre place.'
+	String get seulVous => 'Vous seul pouvez modifier ces informations : ni la comptabilité ni la direction ne peuvent le faire à votre place.';
 
 	/// fr: 'Recevoir mes paiements'
 	String get titre => 'Recevoir mes paiements';
@@ -24010,9 +24300,102 @@ extension on Traductions {
 			'comptable.encaissements.detailTitre' => 'Détail de l\'encaissement',
 			'comptable.encaissements.rapprochementTitre' => 'Rapprochement',
 			'comptable.encaissements.rapprochementSousTitre' => 'Relier chaque transaction à ce qui l\'attendait.',
+			'comptable.beneficiaires.intro' => 'Le profil de paiement de chaque enseignant et de chaque contractuel. Seul le bénéficiaire saisit ou modifie ses coordonnées : vous pouvez le relancer, lui demander une mise à jour ou suspendre ses paiements.',
+			'comptable.beneficiaires.filtreTous' => 'Tous',
+			'comptable.beneficiaires.filtreInfos' => 'Infos manquantes',
+			'comptable.beneficiaires.filtreVerification' => 'En vérification',
+			'comptable.beneficiaires.filtreSuspendus' => 'Suspendus',
+			'comptable.beneficiaires.filtreInvitations' => 'Invitations envoyées',
+			'comptable.beneficiaires.colonneBeneficiaire' => 'Bénéficiaire',
+			'comptable.beneficiaires.colonneType' => 'Type',
+			'comptable.beneficiaires.colonneDestination' => 'Destination',
+			'comptable.beneficiaires.colonneEtat' => 'État du profil',
+			'comptable.beneficiaires.colonneEnAttente' => 'Paiements en attente',
+			'comptable.beneficiaires.typeEnseignant' => 'Enseignant',
+			'comptable.beneficiaires.typeContractuel' => 'Contractuel',
+			'comptable.beneficiaires.enAttente' => ({required Object n}) => '${n} en attente',
+			'comptable.beneficiaires.aucunEnAttente' => 'Aucun',
+			'comptable.beneficiaires.vide' => 'Aucun bénéficiaire pour l\'instant.',
+			'comptable.beneficiaires.videDetail' => 'Les enseignants et les contractuels apparaissent ici dès qu\'un paiement les concerne.',
+			'comptable.beneficiaires.videFiltre' => 'Aucun bénéficiaire avec ce filtre.',
+			'comptable.beneficiaires.videFiltreDetail' => 'Choisissez « Tous » pour revoir toute la liste.',
+			'comptable.beneficiaires.profil.carteTitre' => ({required Object nom}) => 'Profil de paiement de ${nom}',
+			'comptable.beneficiaires.profil.etat' => 'État du profil',
+			'comptable.beneficiaires.profil.derniereModification' => 'Dernière modification',
+			'comptable.beneficiaires.profil.capacite' => 'Capacité de paiement du corridor',
+			'comptable.beneficiaires.profil.capaciteNonEvaluee' => 'Pas encore évaluée',
+			'comptable.beneficiaires.profil.enAttente' => 'Paiements qui attendent ce profil',
+			'comptable.beneficiaires.profil.proprietaire' => ({required Object nom}) => 'Seul ${nom} peut saisir ou modifier ses coordonnées de paiement. Vous en voyez une version masquée.',
+			'comptable.beneficiaires.profil.historiqueTitre' => 'Historique des paiements',
+			'comptable.beneficiaires.profil.historiqueVide' => 'Aucun paiement versé à ce bénéficiaire pour l\'instant.',
+			'comptable.beneficiaires.profil.journalTitre' => 'Journal du profil',
+			'comptable.beneficiaires.profil.journalVide' => 'Aucune modification enregistrée sur ce profil pour l\'instant.',
+			'comptable.beneficiaires.profil.actionsTitre' => 'Que faire pour ce profil',
+			'comptable.beneficiaires.profil.relancer' => ({required Object nom}) => 'Relancer ${nom}',
+			'comptable.beneficiaires.profil.relancerDetail' => 'Ouvre le fil « Profil de paiement » avec un message prérempli, dans les Messages métier.',
+			'comptable.beneficiaires.profil.demanderMiseAJour' => ({required Object nom}) => 'Demander une mise à jour à ${nom}',
+			'comptable.beneficiaires.profil.suspendre' => ({required Object nom}) => 'Suspendre les paiements de ${nom}',
+			'comptable.beneficiaires.profil.reprendre' => ({required Object nom}) => 'Reprendre les paiements de ${nom}',
+			'comptable.beneficiaires.profil.voirFil' => 'Voir le fil « Profil de paiement »',
+			'comptable.beneficiaires.profil.externe' => ({required Object nom}) => '${nom} n\'a pas de compte Rewayah : une invitation sécurisée lui permet de saisir lui-même sa méthode. Renvoyez-la depuis son obligation, dans Contractuels.',
+			'comptable.beneficiaires.profil.voirContractuels' => 'Voir les obligations des contractuels',
+			'comptable.beneficiaires.profil.aucuneAction' => 'Aucune action n\'est ouverte sur ce profil : il est à jour.',
+			'comptable.beneficiaires.profil.relanceTitre' => 'Message prêt dans le fil « Profil de paiement »',
+			'comptable.beneficiaires.profil.relanceObjet' => 'Objet : Profil de paiement',
+			'comptable.beneficiaires.profil.messageModele' => 'Vos informations de paiement doivent être complétées avant votre prochain versement. Vous pouvez les ajouter depuis votre espace personnel.',
+			'comptable.beneficiaires.profil.miseAJourDemandee' => ({required Object nom}) => 'Demande de mise à jour enregistrée pour ${nom}.',
+			'comptable.beneficiaires.profil.suspendus' => ({required Object nom}) => 'Paiements de ${nom} suspendus : aucun versement ne part tant qu\'ils ne sont pas repris.',
+			'comptable.beneficiaires.profil.repris' => ({required Object nom}) => 'Paiements de ${nom} repris.',
+			'comptable.beneficiaires.profil.erreurAction' => 'L\'action n\'a pas abouti. Vérifiez votre connexion, puis réessayez.',
+			'comptable.beneficiaires.profil.erreurIndisponible' => 'Cette action n\'est pas encore branchée sur le service qui la traite. Réessayez plus tard.',
+			'comptable.beneficiaires.profil.suspensionTitre' => ({required Object nom}) => 'Suspendre les paiements de ${nom} ?',
+			'comptable.beneficiaires.profil.suspensionContexte' => 'Aucun versement ne partira vers ce bénéficiaire tant que vous ne les reprenez pas. Ses coordonnées ne changent pas. Choisissez le motif : il sera inscrit au journal du profil.',
+			'comptable.beneficiaires.profil.motifVerifier' => 'Coordonnées à vérifier',
+			'comptable.beneficiaires.profil.motifVerifierDetail' => 'La méthode semble incorrecte ou n\'a pas pu être confirmée.',
+			'comptable.beneficiaires.profil.motifAnomalie' => 'Anomalie signalée',
+			'comptable.beneficiaires.profil.motifAnomalieDetail' => 'Un paiement récent a échoué ou un écart a été signalé.',
+			'comptable.beneficiaires.profil.motifDemande' => 'Demande du bénéficiaire',
+			'comptable.beneficiaires.profil.motifDemandeDetail' => 'Le bénéficiaire a demandé à ne plus recevoir de versement pour l\'instant.',
+			'comptable.beneficiaires.profil.motifRequis' => 'Choisissez un motif pour continuer.',
 			'comptable.beneficiaires.titre' => 'Bénéficiaires',
 			'comptable.beneficiaires.sousTitre' => 'Coordonnées masquées : seul le bénéficiaire modifie les siennes.',
 			'comptable.beneficiaires.profilTitre' => 'Profil de paiement',
+			'comptable.beneficiaires.recevoir.rubrique' => 'Paiements',
+			'comptable.beneficiaires.recevoir.ligneDetail' => 'Vos méthodes de paiement, gérées par vous seul.',
+			'comptable.beneficiaires.recevoir.noticeDetail' => 'Ajoutez une méthode de paiement pour que l\'académie puisse vous verser votre prochain paiement.',
+			'comptable.beneficiaires.recevoir.phraseAucunMoyen' => 'Vous n\'avez encore aucune méthode de paiement. Ajoutez-en une pour recevoir vos versements.',
+			'comptable.beneficiaires.recevoir.phraseIncomplet' => 'Votre méthode de paiement est incomplète. Complétez-la pour recevoir votre prochain versement.',
+			'comptable.beneficiaires.recevoir.phraseEnVerification' => 'Votre nouvelle méthode est en cours de vérification. Son état se met à jour ici.',
+			'comptable.beneficiaires.recevoir.phraseVerifie' => 'Votre méthode de paiement est vérifiée. Vos prochains versements y seront envoyés.',
+			'comptable.beneficiaires.recevoir.phraseSuspendu' => 'Vos versements sont suspendus. Contactez l\'académie pour en connaître la raison.',
+			'comptable.beneficiaires.recevoir.phraseActionRequise' => 'Une mise à jour de votre méthode de paiement est demandée. Remplacez-la pour recevoir votre prochain versement.',
+			'comptable.beneficiaires.recevoir.phraseInvitationEnvoyee' => 'Une invitation sécurisée vous a été envoyée. Ajoutez votre méthode de paiement pour la compléter.',
+			'comptable.beneficiaires.recevoir.suspenduTemporairement' => 'Vos versements sont suspendus le temps de vérifier votre nouvelle méthode : c\'est une protection contre la fraude.',
+			'comptable.beneficiaires.recevoir.mesMethodes' => 'Mes méthodes de paiement',
+			'comptable.beneficiaires.recevoir.preferee' => 'Méthode préférée',
+			'comptable.beneficiaires.recevoir.inactive' => 'Ancienne méthode, conservée inactive',
+			'comptable.beneficiaires.recevoir.choisirPreferee' => ({required Object methode}) => 'Faire de ${methode} ma méthode préférée',
+			'comptable.beneficiaires.recevoir.remplacer' => ({required Object methode}) => 'Remplacer ${methode}',
+			'comptable.beneficiaires.recevoir.supprimer' => ({required Object methode}) => 'Supprimer ${methode}',
+			'comptable.beneficiaires.recevoir.supprimerQuestion' => ({required Object methode}) => 'Supprimer ${methode} ?',
+			'comptable.beneficiaires.recevoir.supprimerConsequence' => 'Vous ne recevrez plus de versement sur cette méthode. Si c\'est la seule, votre prochain versement attendra une nouvelle méthode.',
+			'comptable.beneficiaires.recevoir.ajouter' => 'Ajouter une méthode de paiement',
+			'comptable.beneficiaires.recevoir.ajoutTitre' => 'Ajouter une méthode de paiement',
+			'comptable.beneficiaires.recevoir.remplacementTitre' => ({required Object methode}) => 'Remplacer ${methode}',
+			'comptable.beneficiaires.recevoir.ajoutContexte' => 'Choisissez le type de méthode. Vous saisirez ensuite vos coordonnées dans un espace sécurisé : l\'application ne les voit pas et ne les conserve pas.',
+			'comptable.beneficiaires.recevoir.continuerSaisie' => 'Continuer vers la saisie sécurisée',
+			'comptable.beneficiaires.recevoir.typeRequis' => 'Choisissez un type de méthode pour continuer.',
+			'comptable.beneficiaires.recevoir.aucunType' => 'Aucun type de méthode n\'est proposé pour l\'instant. Contactez l\'académie pour en ouvrir un.',
+			'comptable.beneficiaires.recevoir.verificationAnnoncee' => 'Tout changement est vérifié avant le prochain versement.',
+			'comptable.beneficiaires.recevoir.ajoutee' => 'Méthode ajoutée : elle est en cours de vérification.',
+			'comptable.beneficiaires.recevoir.remplacee' => 'Nouvelle méthode enregistrée : elle est en cours de vérification.',
+			'comptable.beneficiaires.recevoir.supprimee' => 'Méthode supprimée.',
+			'comptable.beneficiaires.recevoir.prefereeChoisie' => 'Méthode préférée mise à jour.',
+			'comptable.beneficiaires.recevoir.erreurAction' => 'Le changement n\'a pas abouti. Vérifiez votre connexion, puis réessayez.',
+			'comptable.beneficiaires.recevoir.erreurIndisponible' => 'Ce changement n\'est pas encore branché sur le service de paiement. Réessayez plus tard.',
+			'comptable.beneficiaires.recevoir.journalTitre' => 'Historique de mes changements',
+			'comptable.beneficiaires.recevoir.journalVide' => 'Aucun changement enregistré pour l\'instant.',
+			'comptable.beneficiaires.recevoir.seulVous' => 'Vous seul pouvez modifier ces informations : ni la comptabilité ni la direction ne peuvent le faire à votre place.',
 			'comptable.beneficiaires.recevoir.titre' => 'Recevoir mes paiements',
 			'comptable.beneficiaires.recevoir.sousTitre' => 'Vos coordonnées de paiement, modifiables par vous seul.',
 			'comptable.beneficiaires.recevoir.notice' => 'Informations de paiement à compléter',

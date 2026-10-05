@@ -102,10 +102,43 @@ class BrouillonMoyenPaiement {
   final bool preferee;
 }
 
+/// Ce que rend le parcours de saisie securisee (CPT-BEN-2) : un **jeton
+/// opaque** et ce que la personne a choisi chez le prestataire (pays,
+/// devise, operateur). Jamais un numero, un IBAN ou un nom de titulaire :
+/// l'app ne les voit pas.
+@immutable
+class SaisieSecurisee {
+  /// Cree le retour.
+  const SaisieSecurisee({
+    required this.jeton,
+    required this.pays,
+    required this.devise,
+    this.operateur,
+  });
+
+  /// Le jeton opaque, a passer tel quel dans [BrouillonMoyenPaiement].
+  final String jeton;
+
+  /// Le pays choisi pendant la saisie.
+  final String pays;
+
+  /// La devise de la methode.
+  final String devise;
+
+  /// L'operateur, s'il compte.
+  final String? operateur;
+}
+
 /// Mes moyens de paiement (CPT-BR-16).
 abstract interface class PortMesMoyensPaiement {
   /// L'etat courant.
   Future<EtatMesMoyensPaiement> etat();
+
+  /// Ouvre la saisie securisee d'une methode de type [type] (chez le
+  /// prestataire, ou champ chiffre jamais conserve) et rend son jeton.
+  /// Ajoute par CPT-BEN-2 : sans lui, le brouillon n'a aucune source de
+  /// jeton (ligne pour CPT-BR-16).
+  Future<SaisieSecurisee> ouvrirSaisieSecurisee(String type);
 
   /// Ajoute une methode (verification a suivre, §19).
   Future<EtatMesMoyensPaiement> ajouter(BrouillonMoyenPaiement brouillon);
@@ -136,6 +169,10 @@ class MesMoyensPaiementIndisponibles implements PortMesMoyensPaiement {
   @override
   Future<EtatMesMoyensPaiement> etat() =>
       Future<EtatMesMoyensPaiement>.error(_manque);
+
+  @override
+  Future<SaisieSecurisee> ouvrirSaisieSecurisee(String type) =>
+      Future<SaisieSecurisee>.error(_manque);
 
   @override
   Future<EtatMesMoyensPaiement> ajouter(BrouillonMoyenPaiement brouillon) =>
