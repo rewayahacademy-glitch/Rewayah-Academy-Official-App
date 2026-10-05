@@ -17,6 +17,8 @@ import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'action_principale.dart';
+import 'page_shell.dart' show ColonneCorps;
+import 'zone_saisie.dart';
 
 /// Un message deja connu du fil (lu depuis le serveur ou la demonstration).
 @immutable
@@ -146,6 +148,10 @@ class FilDiscussion extends StatefulWidget {
   /// Le bouton d'envoi, pour les tests.
   static const Key envoyerKey = ValueKey<String>('fil-discussion-envoyer');
 
+  /// La hauteur sous laquelle la liste des messages n'est plus lisible :
+  /// une bulle d'une ligne (SUPERPOS-1).
+  static const double minimumListe = AppSpacing.titreEcran * 2;
+
   @override
   State<FilDiscussion> createState() => _FilDiscussionState();
 }
@@ -249,8 +255,11 @@ class _FilDiscussionState extends State<FilDiscussion> {
           onReessayer: () => _tenter(m),
         ),
     ];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    // SUPERPOS-1 : une colonne de corps qui dit a `PageShell` la hauteur qui
+    // lui manque (clavier ouvert, texte double) : la page defile au lieu de
+    // couper la saisie, et la liste garde au moins une bulle lisible.
+    return ColonneCorps(
+      minimumEtire: FilDiscussion.minimumListe,
       children: <Widget>[
         Expanded(
           child: ListView.separated(
@@ -382,41 +391,25 @@ class _Saisie extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // SUPERPOS-1 : la zone de saisie partagee du core. L'envoi est une icone
+    // nommee DANS le champ, centree en hauteur ; tant que le champ est vide,
+    // elle n'est pas rendue (jamais grisee) et la raison est ecrite sous le
+    // champ. Le champ prend toute la largeur : a 320 en texte double, il
+    // ne cede plus la moitie de la ligne a un bouton a cote.
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Expanded(
-            child: TextField(
-              key: FilDiscussion.champKey,
-              controller: champ,
-              minLines: 1,
-              maxLines: 5,
-              keyboardType: TextInputType.multiline,
-              textInputAction: TextInputAction.newline,
-              textCapitalization: TextCapitalization.sentences,
-              decoration: InputDecoration(
-                labelText: textes.libelleChamp,
-                hintText: textes.aideChamp,
-                floatingLabelBehavior: FloatingLabelBehavior.auto,
-                // La raison du bouton inactif, lisible sous le champ.
-                helperText: vide ? textes.champVide : null,
-                helperMaxLines: 3,
-              ),
-            ),
-          ),
-          Ecart.hSm,
-          // Une action se nomme, elle ne s'illustre pas : « Envoyer » en
-          // toutes lettres, inerte (et dit comme tel) tant que le champ est
-          // vide ; la raison est ecrite sous le champ.
-          ActionPrincipale(
-            key: FilDiscussion.envoyerKey,
-            libelle: textes.envoyer,
-            onPress: vide ? null : onEnvoyer,
-            pleineLargeur: false,
-          ),
-        ],
+      child: ZoneSaisie(
+        cleChamp: FilDiscussion.champKey,
+        controleur: champ,
+        libelle: textes.libelleChamp,
+        aide: textes.aideChamp,
+        explication: vide ? textes.champVide : null,
+        maxLignes: 5,
+        envoi: EnvoiZoneSaisie(
+          cle: FilDiscussion.envoyerKey,
+          libelle: textes.envoyer,
+          onEnvoyer: onEnvoyer,
+        ),
       ),
     );
   }

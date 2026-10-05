@@ -1,24 +1,29 @@
 // Mode demonstration tuteur (P2-07) : repere visible sur tous les ecrans.
 //
-// Un bandeau d'angle, pose par `RewayahApp.builder`, pour qu'aucune capture de
-// l'apercu ne passe pour la production.
-
-import 'dart:math' as math;
+// Une bande en tete, posee par `RewayahApp.builder`, pour qu'aucune capture
+// de l'apercu ne passe pour la production (SUPERPOS-1 : dans le flux, plus
+// par-dessus).
 
 import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
-import '../../core/widgets/offline_banner.dart' show ReserveCoinFin;
+import '../../core/theme/app_color_pair.dart';
+import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_spacing.dart';
 
 /// Le libelle du repere, traduit (K-41) : `commun.demonstration.repere`.
 String get libelleRepereDemonstration => t.commun.demonstration.repere;
 
-/// L'emprise du ruban le long du bord superieur, depuis le coin de fin : la
-/// geometrie du `Banner` de Flutter (bas du ruban a 40 du coin, a 45 degres),
-/// soit 40 x racine de 2. Le bandeau hors ligne garde son texte en deca.
-const double empriseRepereDemonstration = 40 * math.sqrt2;
-
-/// Coiffe [child] d'un bandeau d'angle « Démonstration ».
+/// Le repere « Démonstration » de l'apercu, sur tous les ecrans.
+///
+/// SUPERPOS-1 (decision du 05/10/2026, prise par delegation) : le repere
+/// etait un ruban d'angle peint **par-dessus** l'application (`Banner`) ; a
+/// 320 en texte double, il couvrait le bouton du compte de la coquille admin,
+/// et en arabe le debut du titre de la page. Il devient une bande fine, en
+/// tete, **dans le flux** : elle prend sa place et pousse l'application
+/// dessous, qui ne recoit plus la zone sure du haut (la bande la porte). Le
+/// registre est doux (`washAccent`) : une seule zone pleine par ecran, celle
+/// de l'action principale. Le mot reste en entier a 320 en texte double.
 class RepereDemonstration extends StatelessWidget {
   /// Cree le repere.
   const RepereDemonstration({super.key, required this.child});
@@ -26,38 +31,65 @@ class RepereDemonstration extends StatelessWidget {
   /// Le rendu de l'application.
   final Widget? child;
 
+  /// La bande du repere (tests, captures).
+  static const Key bandeKey = ValueKey<String>('repere-demonstration');
+
   @override
   Widget build(BuildContext context) {
-    final TextDirection sens = Directionality.of(context);
-    // Le bandeau est peint, donc muet pour un lecteur d'ecran : ce noeud
-    // l'annonce (revue P2-10, constat 2), sans rien changer au rendu.
-    return Semantics(
-      container: true,
-      label: t.commun.demonstration.repereLu,
-      child: Banner(
-        message: libelleRepereDemonstration,
-        location: BannerLocation.topEnd,
-        textDirection: sens,
-        layoutDirection: sens,
-        color: Theme.of(context).colorScheme.tertiary,
-        // La famille vient du theme : un `TextStyle` nu laisse le bandeau
-        // (peint, hors `DefaultTextStyle`) sans police, donc illisible
-        // (revue AD-S, K-42). Couleurs inchangees.
-        textStyle: (Theme.of(context).textTheme.labelSmall ?? const TextStyle())
-            .copyWith(
-              color: Theme.of(context).colorScheme.onTertiary,
-              fontSize: 9,
-              fontWeight: FontWeight.w600,
-              height: 1,
-              // Le bandeau de `Banner` ne fait que 80 de long : sans
-              // interlettrage et en 9, le mot y tient en entier.
-              letterSpacing: 0,
+    final AppPalette palette = AppPalette.of(context);
+    final AppColorPair paire = palette.washAccent;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        // Le repere est lu une fois, en entier (revue P2-10, constat 2).
+        Semantics(
+          container: true,
+          label: t.commun.demonstration.repereLu,
+          excludeSemantics: true,
+          // Pose au-dessus du navigateur, hors de tout `Material` : sans
+          // lui, le texte heriterait du style d'erreur de `MaterialApp`.
+          child: Material(
+            type: MaterialType.transparency,
+            child: DecoratedBox(
+              key: bandeKey,
+              decoration: BoxDecoration(
+                color: paire.background,
+                border: Border(bottom: palette.borderHairline.asBorderSide()),
+              ),
+              child: SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.lg,
+                    vertical: AppSpacing.xs,
+                  ),
+                  child: Text(
+                    libelleRepereDemonstration,
+                    textAlign: TextAlign.center,
+                    style: paire.applyTo(
+                      Theme.of(context).textTheme.labelMedium ??
+                          const TextStyle(),
+                    ),
+                  ),
+                ),
+              ),
             ),
-        child: ReserveCoinFin(
-          largeur: empriseRepereDemonstration,
-          child: child ?? const SizedBox.shrink(),
+          ),
         ),
-      ),
+        Expanded(
+          // Un conteneur semantique propre : la barriere d'une route
+          // (`BlockSemantics`) masque les noeuds peints avant elle dans le
+          // meme conteneur, donc la bande, sans lui.
+          child: Semantics(
+            container: true,
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: true,
+              child: child ?? const SizedBox.shrink(),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

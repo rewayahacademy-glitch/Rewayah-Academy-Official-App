@@ -15,10 +15,10 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/core/widgets/zone_saisie.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle_page.dart';
 import 'package:rewayah_academy/features/controleur/controle_page.dart';
@@ -66,12 +66,11 @@ Future<void> _attendre(WidgetTester tester) async {
 
 Future<void> _ecrireEtEnvoyer(WidgetTester tester, String texte) async {
   final e = t.controleur.echanges;
-  // Champ vide : le bouton est inactif, la raison est ecrite.
+  // Champ vide : le bouton n'est pas rendu (jamais grise, SUPERPOS-1), sa
+  // place est gardee, la raison est ecrite.
   expect(find.text(e.champVide), findsOneWidget);
-  final ActionPrincipale inactif = tester.widget<ActionPrincipale>(
-    find.byKey(FilDiscussion.envoyerKey),
-  );
-  expect(inactif.onPress, isNull);
+  expect(find.byKey(FilDiscussion.envoyerKey), findsNothing);
+  expect(find.byKey(ZoneSaisie.placeEnvoiKey), findsOneWidget);
 
   await tester.enterText(find.byKey(FilDiscussion.champKey), texte);
   await tester.pump();

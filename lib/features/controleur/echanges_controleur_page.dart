@@ -41,6 +41,11 @@ class EchangesControleurPage extends ConsumerStatefulWidget {
   /// La mission dont le fil s'ouvre a l'arrivee, ou nulle pour la liste.
   final String? missionOuverte;
 
+  /// Le contexte de la visite en une phrase (en-tete compact, SUPERPOS-1).
+  static const Key contexteCompactKey = ValueKey<String>(
+    'echanges-contexte-compact',
+  );
+
   @override
   ConsumerState<EchangesControleurPage> createState() =>
       _EchangesControleurPageState();
@@ -209,22 +214,58 @@ class _ContexteEpingle extends StatelessWidget {
 
   final FilEchange fil;
 
+  /// Au-dela de cette echelle de texte, le contexte tient en une phrase.
+  static const double echelleCompacte = 1.3;
+
+  /// Sous cette hauteur de vue, aussi (telephone en paysage).
+  static const double hauteurCompacte = 600;
+
   @override
   Widget build(BuildContext context) {
     final e = t.controleur.echanges;
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final Widget titre = Text(
+      e.contexte,
+      style: palette.inkMuted.applyTo(textes.labelLarge ?? const TextStyle()),
+    );
+    // SUPERPOS-1 : en-tete compact. A texte agrandi ou sur une vue basse,
+    // les trois lignes cle / valeur poussaient le fil et sa saisie hors de
+    // l'ecran (320 en texte double : la page entiere n'etait qu'en-tete) ;
+    // le contexte tient alors en une phrase, sans rien retirer.
+    final double echelle = MediaQuery.textScalerOf(context).scale(1);
+    final bool compact =
+        echelle > _ContexteEpingle.echelleCompacte ||
+        MediaQuery.sizeOf(context).height < _ContexteEpingle.hauteurCompacte;
+    if (compact) {
+      return Semantics(
+        key: EchangesControleurPage.contexteCompactKey,
+        container: true,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            titre,
+            Ecart.vXs,
+            Text(
+              <String>[
+                fil.classe,
+                dateDeLAppareil(fil.debutMission),
+                heureDeLAppareil(fil.debutMission),
+              ].join(' · '),
+              style: palette.inkStrong.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
     return Semantics(
       container: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            e.contexte,
-            style: palette.inkMuted.applyTo(
-              textes.labelLarge ?? const TextStyle(),
-            ),
-          ),
+          titre,
           Ecart.vSm,
           LigneCleValeur(cle: e.cleClasse, valeur: fil.classe),
           LigneCleValeur(
