@@ -157,9 +157,13 @@ class _Corps extends StatelessWidget {
       ),
     ]);
     final Widget colonneC = _Colonne(<Widget>[
+      // « Voir tout » comme les deux autres colonnes : les trois titres
+      // s'alignent (CPT-RC, revue CPT-R m5) et la file complete s'ouvre.
       _zone(
         titre: a.alertes,
         compteur: jour.alertes.length,
+        libelleAction: a.voirTout,
+        onAction: () => context.go(Routes.comptableAttention),
         corps: FileAttention(elements: jour.alertes, vide: a.alertesVide),
       ),
       _zone(titre: a.prestataires, corps: ZonePrestataires(jour.prestataires)),
@@ -175,19 +179,23 @@ class _Corps extends StatelessWidget {
         colonneC,
       ]);
     }
-    final Widget entete = Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Expanded(
-          flex: bureau ? 3 : 1,
-          child: ResumeTresorerie(jour.tresorerie),
-        ),
-        Ecart.hXxl,
-        Expanded(
-          flex: bureau ? 2 : 1,
-          child: _Reserve(jour: jour),
-        ),
-      ],
+    // Les deux cartes de tete a la meme hauteur (CPT-RC, revue CPT-R m5) :
+    // plus de vide sous la Tresorerie libre a cote de la Reserve.
+    final Widget entete = IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Expanded(
+            flex: bureau ? 3 : 1,
+            child: ResumeTresorerie(jour.tresorerie),
+          ),
+          Ecart.hXxl,
+          Expanded(
+            flex: bureau ? 2 : 1,
+            child: _Reserve(jour: jour),
+          ),
+        ],
+      ),
     );
     final Widget colonnes = bureau
         ? Row(

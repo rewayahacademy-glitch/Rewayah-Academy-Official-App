@@ -124,7 +124,7 @@ void main() {
         Routes.comptableEncaissements,
         surcharges: _demo(),
       );
-      await tester.tap(find.byType(BasculeMontants));
+      await tester.tap(find.byKey(BasculeMontants.cleBouton));
       await tester.pumpAndSettle();
       final Encaissement bah = _enc(DonneesEncaissementsDemo.encConfirme);
       expect(find.text(formaterMontant(bah.brut)), findsWidgets);

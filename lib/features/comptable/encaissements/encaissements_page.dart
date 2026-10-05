@@ -112,7 +112,7 @@ class _EncaissementsPageState extends ConsumerState<EncaissementsPage> {
         onglets: ongletsTresorerieComptable(),
         indexActif: 1,
       ),
-      actionsEntete: const <Widget>[BasculeMontants()],
+      actionsEntete: const <Widget>[BasculeMontants(avecEtat: true)],
       defilante: !panneau || sansSource,
       child: sansSource
           ? const EnPreparationComptable()

@@ -138,7 +138,7 @@ class _ObligationContractuelPageState
     return PageShell(
       titre: c.detailTitre,
       onRetour: () => retourComptable(context, Routes.comptableContractuels),
-      actionsEntete: const <Widget>[BasculeMontants()],
+      actionsEntete: const <Widget>[BasculeMontants(avecEtat: true)],
       actions: action == null
           ? null
           : _ZoneAction(

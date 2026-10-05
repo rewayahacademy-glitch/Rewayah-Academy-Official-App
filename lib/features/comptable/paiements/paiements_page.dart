@@ -262,7 +262,7 @@ class _PaiementsAEffectuerPageState
         onglets: ongletsPaiementsComptable(),
         indexActif: 0,
       ),
-      actionsEntete: const <Widget>[BasculeMontants()],
+      actionsEntete: const <Widget>[BasculeMontants(avecEtat: true)],
       // Au bureau, le tableau defile lui-meme sous son en-tete de colonnes ;
       // ailleurs, la page defile et porte les cartes.
       defilante: !bureau,

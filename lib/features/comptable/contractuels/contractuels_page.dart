@@ -101,7 +101,7 @@ class _ContractuelsPageState extends ConsumerState<ContractuelsPage> {
       defilante: !bureau,
       entete: _entete(context, contexte, raison, toutes, liste.hasValue),
       actionsEntete: <Widget>[
-        const BasculeMontants(),
+        const BasculeMontants(avecEtat: true),
         // Sur bureau, en haut a droite (H08 W06) ; sur telephone l'en-tete
         // est deja plein, le bouton passe sous les onglets.
         if (contexte != null && contexte.peutCreer && bureau)

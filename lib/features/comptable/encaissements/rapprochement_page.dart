@@ -44,7 +44,7 @@ class RapprochementPage extends ConsumerWidget {
         onglets: ongletsTresorerieComptable(),
         indexActif: 2,
       ),
-      actionsEntete: const <Widget>[BasculeMontants()],
+      actionsEntete: const <Widget>[BasculeMontants(avecEtat: true)],
       child: sansSource
           ? const EnPreparationComptable()
           : BlocEncaissements<List<ElementRapprochement>>(

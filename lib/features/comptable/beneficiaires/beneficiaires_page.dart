@@ -88,7 +88,7 @@ class _BeneficiairesPageEtat extends ConsumerState<BeneficiairesPage> {
         onglets: ongletsPaiementsComptable(),
         indexActif: 2,
       ),
-      actionsEntete: const <Widget>[BasculeMontants()],
+      actionsEntete: const <Widget>[BasculeMontants(avecEtat: true)],
       // `DataCollection` defile lui-meme (en-tete de colonnes colle).
       defilante: false,
       // Texte agrandi (`AppGabarit.seuilTexteColonne`) : l'introduction

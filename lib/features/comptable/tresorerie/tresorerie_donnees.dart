@@ -52,12 +52,13 @@ final previsionTresorerieProvider =
 /// Les mouvements permis et refuses par la politique, lus ensemble : l'ecran
 /// ne propose un geste qu'une fois les deux listes connues.
 final mouvementsTresorerieProvider =
-    FutureProvider.autoDispose<MouvementsCoffres>((Ref ref) async {
-      final PortTresorerie port = ref.watch(portTresorerieProvider);
-      final (List<MouvementPermis> permis, List<MouvementBloque> bloques) =
-          await (port.mouvementsPermis(), port.mouvementsBloques()).wait;
-      return MouvementsCoffres.depuis(permis: permis, bloques: bloques);
-    },
+    FutureProvider.autoDispose<MouvementsCoffres>(
+      (Ref ref) async {
+        final PortTresorerie port = ref.watch(portTresorerieProvider);
+        final (List<MouvementPermis> permis, List<MouvementBloque> bloques) =
+            await (port.mouvementsPermis(), port.mouvementsBloques()).wait;
+        return MouvementsCoffres.depuis(permis: permis, bloques: bloques);
+      },
       retry: _sansRetentative,
       dependencies: <ProviderOrFamily>[portTresorerieProvider],
     );

@@ -186,11 +186,13 @@ class _NouvelleObligationPageState
       onRetour: () => retourComptable(context, Routes.comptableContractuels),
       actionsCoquille: false,
       actions: formulaire
-          ? _Pied(
-              horsLigne: horsLigne,
-              erreur: _erreurCreation,
-              enCours: _enCours,
-              onCreer: () => _creer(contexte),
+          ? _ColonneFormulaire(
+              child: _Pied(
+                horsLigne: horsLigne,
+                erreur: _erreurCreation,
+                enCours: _enCours,
+                onCreer: () => _creer(contexte),
+              ),
             )
           : null,
       child: echecHorsLigne
@@ -204,29 +206,50 @@ class _NouvelleObligationPageState
                   return _Refus(contexte: contexte);
                 }
                 _preremplir(contexte);
-                return _Formulaire(
-                  contexte: contexte,
-                  nomExterne: _nomExterne,
-                  objet: _objet,
-                  justificatif: _justificatif,
-                  montant: _montant,
-                  beneficiaire: _beneficiaire,
-                  echeance: _echeance,
-                  centreCout: _centreCout,
-                  erreurNom: _erreurNom,
-                  erreurObjet: _erreurObjet,
-                  erreurMontant: _erreurMontant,
-                  onBeneficiaire: (String v) => setState(() {
-                    _beneficiaire = v;
-                    _erreurNom = false;
-                  }),
-                  onCentreCout: (String v) => setState(() => _centreCout = v),
-                  onChangerEcheance: _choisirEcheance,
+                return _ColonneFormulaire(
+                  child: _Formulaire(
+                    contexte: contexte,
+                    nomExterne: _nomExterne,
+                    objet: _objet,
+                    justificatif: _justificatif,
+                    montant: _montant,
+                    beneficiaire: _beneficiaire,
+                    echeance: _echeance,
+                    centreCout: _centreCout,
+                    erreurNom: _erreurNom,
+                    erreurObjet: _erreurObjet,
+                    erreurMontant: _erreurMontant,
+                    onBeneficiaire: (String v) => setState(() {
+                      _beneficiaire = v;
+                      _erreurNom = false;
+                    }),
+                    onCentreCout: (String v) => setState(() => _centreCout = v),
+                    onChangerEcheance: _choisirEcheance,
+                  ),
                 );
               },
             ),
     );
   }
+}
+
+/// La colonne du formulaire et de son pied, bornee a la largeur d'un
+/// formulaire (`AppPage.largeurFormulaire`) et calee au debut de la ligne :
+/// au bureau, une tache focalisee ne s'etire pas sur 1 120 px (CPT-RC, revue
+/// CPT-R m4). Sur telephone et tablette etroite, toute la largeur.
+class _ColonneFormulaire extends StatelessWidget {
+  const _ColonneFormulaire({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Align(
+    alignment: AlignmentDirectional.topStart,
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: AppPage.largeurFormulaire),
+      child: child,
+    ),
+  );
 }
 
 /// Le pied : l'erreur eventuelle et l'unique bouton plein. Hors ligne, le

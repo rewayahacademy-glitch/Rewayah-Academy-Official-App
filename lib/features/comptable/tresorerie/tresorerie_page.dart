@@ -89,7 +89,7 @@ class TresoreriePage extends ConsumerWidget {
         onglets: ongletsTresorerieComptable(),
         indexActif: 0,
       ),
-      actionsEntete: const <Widget>[BasculeMontants()],
+      actionsEntete: const <Widget>[BasculeMontants(avecEtat: true)],
       child: sansSource
           ? EmptyState(
               message: t.comptable.commun.enPreparationTitre,
@@ -252,7 +252,10 @@ class _BlocSynthese extends StatelessWidget {
   Widget build(BuildContext context) => _Bloc<SyntheseTresorerie>(
     provider: syntheseTresorerieProvider,
     squelette: const Skeleton.texte(lignes: 3),
-    construire: ResumeTresorerie.new,
+    // Toute la largeur de la colonne (CPT-RC, revue CPT-R m4) : la carte
+    // ne s'arrete plus a la moitie gauche au bureau.
+    construire: (SyntheseTresorerie s) =>
+        SizedBox(width: double.infinity, child: ResumeTresorerie(s)),
   );
 }
 

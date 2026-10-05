@@ -29,7 +29,7 @@ class DetailEncaissementPage extends StatelessWidget {
     return PageShell(
       titre: t.comptable.encaissements.detailTitre,
       onRetour: () => retourComptable(context, Routes.comptableEncaissements),
-      actionsEntete: const <Widget>[BasculeMontants()],
+      actionsEntete: const <Widget>[BasculeMontants(avecEtat: true)],
       child: DetailEncaissementLu(encaissementId: encaissementId),
     );
   }

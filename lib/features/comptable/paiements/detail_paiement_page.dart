@@ -118,7 +118,7 @@ class _DetailPaiementPageState extends ConsumerState<DetailPaiementPage> {
       titre: p.detailTitre,
       sousTitre: p.detailSousTitre,
       onRetour: () => retourComptable(context, Routes.comptablePaiements),
-      actionsEntete: const <Widget>[BasculeMontants()],
+      actionsEntete: const <Widget>[BasculeMontants(avecEtat: true)],
       child: BlocAsynchrone<ObligationPayable>(
         valeur: valeur,
         squelette: const Skeleton.texte(lignes: 8),

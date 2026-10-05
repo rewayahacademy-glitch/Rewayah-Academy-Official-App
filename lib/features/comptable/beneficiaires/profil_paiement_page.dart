@@ -188,7 +188,7 @@ class _ProfilPaiementPageEtat extends ConsumerState<ProfilPaiementPage> {
     return PageShell(
       titre: t.comptable.beneficiaires.profilTitre,
       onRetour: () => retourComptable(context, Routes.comptableBeneficiaires),
-      actionsEntete: const <Widget>[BasculeMontants()],
+      actionsEntete: const <Widget>[BasculeMontants(avecEtat: true)],
       child: BlocAsynchrone<ProfilPaiementBeneficiaire>(
         valeur: local == null
             ? lu
