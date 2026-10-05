@@ -35,6 +35,7 @@ import 'package:rewayah_academy/core/widgets/pastille_etat_seance.dart';
 import 'package:rewayah_academy/core/widgets/point_rappel.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/com_communaute/entree_communaute.dart';
+import 'package:rewayah_academy/features/demo/communications/com_communaute_demo.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
 
 import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
@@ -202,19 +203,23 @@ Future<void> _ouvrir(
   FauxServiceReseau? reseau,
   DateTime? maintenant,
   Size taille = const Size(390, 2400),
+  List<Override> autres = const <Override>[],
 }) async {
   _fenetre(tester, taille);
   await tester.pumpWidget(
     hote(
       const JourneePage(),
-      surcharges: _surcharges(
-        enseignant: enseignant,
-        regles: regles,
-        priere: priere,
-        presence: presence,
-        reseau: reseau,
-        maintenant: maintenant,
-      ),
+      surcharges: <Override>[
+        ..._surcharges(
+          enseignant: enseignant,
+          regles: regles,
+          priere: priere,
+          presence: presence,
+          reseau: reseau,
+          maintenant: maintenant,
+        ),
+        ...autres,
+      ],
     ),
   );
   await tester.pumpAndSettle();
@@ -1232,13 +1237,27 @@ void main() {
       },
     );
 
-    testWidgets('remplie par COM-COMU : l ecart du socle, puis la ligne', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('R-27, production : Communaute fermee, la ligne n est pas '
+        'rendue', (WidgetTester tester) async {
       await _ouvrir(
         tester,
         enseignant: FauxServiceEnseignant()
           ..seancesRendues = <SeanceEnseignant>[_anNour()],
+      );
+      final Finder entree = find.byType(EntreeCommunaute);
+      expect(entree, findsOneWidget);
+      expect(find.byKey(EntreeCommunaute.cleLien), findsNothing);
+      expect(find.text(t.com.socle.lexique.communaute), findsNothing);
+      expect(tester.getSize(entree).height, 0);
+    });
+
+    testWidgets('remplie par COM-COMU (Communaute ouverte, demonstration) : '
+        'l ecart du socle, puis la ligne', (WidgetTester tester) async {
+      await _ouvrir(
+        tester,
+        enseignant: FauxServiceEnseignant()
+          ..seancesRendues = <SeanceEnseignant>[_anNour()],
+        autres: surchargesCommunauteDemo(SituationDemoCommunaute.nominal),
       );
       // La voie COM-COMU remplit l'emplacement : la ligne a une hauteur, et
       // l'ecart fixe par la page (contrat du socle) la precede.

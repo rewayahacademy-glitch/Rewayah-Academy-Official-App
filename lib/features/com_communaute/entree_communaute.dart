@@ -12,17 +12,24 @@
 // socle : la page dit l'ecart a poser avant le contenu ([ecartAvant], celui
 // qui separe les lignes de « Ma journee ») ; la ligne le rend devant son
 // contenu, et seulement quand elle rend quelque chose.
+//
+// R-27 (decision du directeur du 05/10, choix a) : tant que la Communaute
+// n'est pas ouverte (le port de production rend `CapaciteIndisponible`), la
+// ligne n'est pas rendue : l'enseignant ne tombe plus sur « Pas encore
+// disponible ». Elle reste visible en demonstration, ou le port repond.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 import 'package:go_router/go_router.dart';
 
+import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/widgets/lien_fleche.dart';
+import 'port_communaute.dart';
 
 /// L'adresse ouverte par le raccourci : la Communaute de l'enseignant. La
 /// demonstration la remplace par la sienne, hors production.
@@ -46,6 +53,17 @@ class EntreeCommunaute extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // R-27 : la ligne n'apparait que quand la Communaute repond. Une
+    // capacite absente (production) la masque ; pendant la lecture, rien
+    // n'est rendu, pour ne pas montrer puis retirer un lien. Un echec
+    // ordinaire la garde : la page dira « Reessayer ».
+    final AsyncValue<CapacitesCommunaute> capacites = ref.watch(
+      capacitesCommunauteProvider,
+    );
+    if (capacites.error is CapaciteIndisponible ||
+        (!capacites.hasValue && !capacites.hasError)) {
+      return const SizedBox.shrink();
+    }
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final e = t.com.communaute.entree;
