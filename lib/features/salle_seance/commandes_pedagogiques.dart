@@ -24,6 +24,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/app_card.dart';
 import '../../core/widgets/controle_segmente.dart';
 import 'actions_seance.dart';
 import 'barre_support.dart';
@@ -63,16 +64,43 @@ class DeclencheurCommandes extends StatelessWidget {
   final FocusNode? focusNode;
 
   @override
-  Widget build(BuildContext context) => BoutonPanneau(
-    icone: AppIcons.stylet,
-    libelle: t.salle.seance.commandes.declencheur,
-    // Le nom lu contient le mot visible (W-253) : « Ouvrir les commandes du
-    // support et du tableau » (plan V2 §20).
-    libelleSemantique: t.salle.seance.commandes.declencheurSemantique,
-    onPress: onPress,
-    ouvert: ouvert,
-    focusNode: focusNode,
-  );
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    // La carte pressable du core (K-54), comme le bouton Eleves ; le mot
+    // passe a la ligne a 200 % et a 320 au lieu de deborder ou d'etre coupe.
+    return Semantics(
+      selected: ouvert,
+      child: AppCard(
+        onPress: onPress,
+        // Le nom lu contient le mot visible (W-253) : « Ouvrir les commandes
+        // du support et du tableau » (plan V2 §20).
+        libelleSemantique: t.salle.seance.commandes.declencheurSemantique,
+        focusNode: focusNode,
+        marge: AppSpacing.md,
+        child: ExcludeSemantics(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              // Planche 1 : un chevron vers le haut, le panneau monte.
+              IconTheme(
+                data: palette.inkAccent.asIconTheme(size: AppSpacing.xl),
+                child: Icon(AppIcons.replier.repos),
+              ),
+              Ecart.hSm,
+              Flexible(
+                child: TexteSansCoupure(
+                  t.salle.seance.commandes.declencheur,
+                  style: palette.inkStrong.applyTo(
+                    Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 /// Le contenu du panneau « Commandes ».

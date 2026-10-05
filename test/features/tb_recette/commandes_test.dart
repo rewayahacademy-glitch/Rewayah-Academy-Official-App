@@ -425,6 +425,8 @@ void main() {
         find.byKey(const ValueKey<String>('bouton-agrandir')),
         findsNothing,
       );
+      await tester.ensureVisible(focus);
+      await tester.pump();
       await tester.tap(focus);
       await _attendre(tester);
       // Le bouton Eleves se replie ; la sortie est dans les Commandes et dans
@@ -438,6 +440,8 @@ void main() {
         find.byKey(const ValueKey<String>('bouton-agrandir')),
         findsOneWidget,
       );
+      await tester.ensureVisible(focus);
+      await tester.pump();
       await tester.tap(focus);
       await _attendre(tester);
       expect(_dans(focus, t.salle.seance.commandes.focus), findsOneWidget);

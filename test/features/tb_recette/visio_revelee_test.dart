@@ -325,10 +325,7 @@ void main() {
         await _ouvrir(tester, role);
         // Ouverte au doigt (mode tactile) : seul le lecteur d'ecran la
         // retient.
-        expect(
-          FocusManager.instance.highlightMode,
-          FocusHighlightMode.touch,
-        );
+        expect(FocusManager.instance.highlightMode, FocusHighlightMode.touch);
         await _attendreDelai(tester);
         await _attendreDelai(tester);
         await _fondre(tester);
@@ -347,7 +344,10 @@ void main() {
   // se tape a travers le chevauchement.
   group('UX-07 : barre posee par-dessus le contenu, Quitter au-dessus', () {
     for (final (RoleSeance, Size) cas in <(RoleSeance, Size)>[
-      (RoleSeance.enseignant, const Size(320, 568)),
+      // TB-4 : la barre de l'enseignant n'a plus que Micro, Camera, Quitter
+      // (une rangee a 320 x 568) ; le cas du petit ecran couche la garde
+      // au-dessus du tiers.
+      (RoleSeance.enseignant, const Size(700, 320)),
       (RoleSeance.eleve, const Size(844, 390)),
     ]) {
       final (RoleSeance role, Size taille) = cas;
@@ -365,8 +365,7 @@ void main() {
             );
         final RenderBox dessous = pile.firstChild!;
         final RenderBox dessus = pile.lastChild!;
-        final Rect contenu =
-            dessous.localToGlobal(Offset.zero) & dessous.size;
+        final Rect contenu = dessous.localToGlobal(Offset.zero) & dessous.size;
         final Rect barre = tester.getRect(
           find.byKey(CommandesMasquables.commandesKey),
         );

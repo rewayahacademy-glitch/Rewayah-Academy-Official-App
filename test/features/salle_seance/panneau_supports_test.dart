@@ -227,17 +227,17 @@ void main() {
               _chevauche(panneau, tester.getRect(find.byType(ZoneSupport))),
               isFalse,
             );
-            // Colonne droite : les outils, puis Eleves et Supports.
-            final double outils = tester
-                .getTopLeft(find.text(t.salle.seance.outils.titre))
-                .dy;
+            // TB-4 : plus de carte d'outils permanente (dans les
+            // Commandes) ; la colonne droite garde le bouton Eleves, a droite
+            // du support.
+            expect(find.text(t.salle.seance.outils.titre), findsNothing);
             expect(
               tester
                   .getTopLeft(
                     find.byKey(const ValueKey<String>('bouton-eleves')),
                   )
-                  .dy,
-              greaterThan(outils),
+                  .dx,
+              greaterThan(tester.getRect(find.byType(ZoneSupport)).right),
             );
           }
         });
