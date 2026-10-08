@@ -345,6 +345,7 @@ class _BienvenuePageState extends ConsumerState<BienvenuePage>
                     // Hors production seulement : sans lanceur, l'entree
                     // ne rend rien.
                     const EntreeDemonstration(),
+                    Ecart.vLg,
                   ],
                 ),
               ),
@@ -446,10 +447,10 @@ class _Page extends StatelessWidget {
       ],
     );
 
-    final Widget contenu = bureau
+    Widget contenu({required bool reduit}) => bureau
         ? Row(
             children: <Widget>[
-              _Pictogramme(icone: page.icone, bureau: true),
+              _Pictogramme(icone: page.icone, disque: _Pictogramme.bureau),
               const SizedBox(width: AppSpacing.titreEcran),
               Expanded(child: texte),
             ],
@@ -457,41 +458,52 @@ class _Page extends StatelessWidget {
         : Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Center(child: _Pictogramme(icone: page.icone, bureau: false)),
-              Ecart.vXxxl,
+              Center(
+                child: _Pictogramme(
+                  icone: page.icone,
+                  disque: reduit ? _Pictogramme.reduit : _Pictogramme.mobile,
+                ),
+              ),
+              if (reduit) Ecart.vLg else Ecart.vXxxl,
               texte,
             ],
           );
 
     // Une page ne deborde jamais : centree quand la place suffit, defilante
-    // sinon (320 px, texte x2).
+    // sinon (320 px, texte x2). Peu de hauteur : le pictogramme se reduit
+    // pour laisser le texte en vue.
     return LayoutBuilder(
       builder: (BuildContext _, BoxConstraints c) => SingleChildScrollView(
         key: ValueKey<String>('bienvenue-page-${page.cle}'),
         child: ConstrainedBox(
           constraints: BoxConstraints(minHeight: c.maxHeight),
-          child: Center(child: contenu),
+          child: Center(child: contenu(reduit: c.maxHeight < _hauteurReduite)),
         ),
       ),
     );
   }
 }
 
+/// Sous cette hauteur de page, le pictogramme prend sa petite taille.
+const double _hauteurReduite = 480;
+
 /// Le pictogramme d'une page, dans un disque doux. Decoratif : l'idee est
 /// dite par le titre.
 class _Pictogramme extends StatelessWidget {
-  const _Pictogramme({required this.icone, required this.bureau});
+  const _Pictogramme({required this.icone, required this.disque});
+
+  /// Les diametres, multiples de l'echelle comme le pictogramme
+  /// d'`EmptyState`.
+  static const double bureau = AppSpacing.respiration * 3;
+  static const double mobile = AppSpacing.xxxl * 4;
+  static const double reduit = AppSpacing.respiration;
 
   final AppIcon icone;
-  final bool bureau;
+  final double disque;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    // Multiples de l'echelle, comme le pictogramme d'`EmptyState`.
-    final double disque = bureau
-        ? AppSpacing.respiration * 3
-        : AppSpacing.xxxl * 4;
     return ExcludeSemantics(
       child: SizedBox.square(
         dimension: disque,
@@ -538,12 +550,15 @@ class _Sorties extends StatelessWidget {
       pleineLargeur: false,
     );
     if (bureau) {
-      return Wrap(
-        alignment: WrapAlignment.end,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        spacing: AppSpacing.sm,
-        runSpacing: AppSpacing.sm,
-        children: <Widget>[dejaCompte, commencer],
+      return Align(
+        alignment: AlignmentDirectional.centerEnd,
+        child: Wrap(
+          alignment: WrapAlignment.end,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: <Widget>[dejaCompte, commencer],
+        ),
       );
     }
     return Column(
