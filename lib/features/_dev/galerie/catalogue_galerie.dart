@@ -75,6 +75,7 @@ import '../../../core/widgets/sous_navigation_domaine.dart';
 import '../../../core/widgets/stat_tile.dart';
 import '../../../core/widgets/status_pill.dart';
 import '../../../core/widgets/timeline_row.dart';
+import '../../../core/widgets/zone_saisie.dart';
 import '../../admin_tableau/tuiles_compteur.dart';
 import '../../disponibilites/grille_semaine.dart';
 import 'entrees_etats_tuteur.dart';
@@ -1401,6 +1402,83 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
               ],
               textes: _textesFil,
               onEnvoyer: (String _) async {},
+            ),
+          ),
+        ),
+      ),
+    ],
+  ),
+  // SUPERPOS-1 : la zone de saisie multiligne partagee (etiquette au-dessus,
+  // hauteur qui grandit avec le texte, envoi integre et centre).
+  EntreeGalerie(
+    nom: 'ZoneSaisie',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'formulaire vide',
+        (BuildContext _) => Material(
+          type: MaterialType.transparency,
+          child: ZoneSaisie(
+            controleur: TextEditingController(),
+            libelle: 'Motif du refus',
+            explication: 'Le motif est envoye au titulaire du dossier.',
+            minLignes: 3,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'erreur',
+        (BuildContext _) => Material(
+          type: MaterialType.transparency,
+          child: ZoneSaisie(
+            controleur: TextEditingController(),
+            libelle: 'Motif du refus',
+            erreur: 'Le motif est obligatoire.',
+            minLignes: 3,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'lecture seule',
+        (BuildContext _) => Material(
+          type: MaterialType.transparency,
+          child: ZoneSaisie(
+            controleur: TextEditingController(text: 'Photo illisible.'),
+            libelle: 'Motif du refus',
+            lectureSeule: true,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'envoi integre, vide',
+        (BuildContext _) => Material(
+          type: MaterialType.transparency,
+          child: ZoneSaisie(
+            controleur: TextEditingController(),
+            libelle: _textesFil.libelleChamp,
+            aide: _textesFil.aideChamp,
+            explication: _textesFil.champVide,
+            envoi: EnvoiZoneSaisie(
+              libelle: _textesFil.envoyer,
+              onEnvoyer: _rien,
+            ),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'envoi integre, plusieurs lignes',
+        (BuildContext _) => Material(
+          type: MaterialType.transparency,
+          child: ZoneSaisie(
+            controleur: TextEditingController(
+              text:
+                  'La seance a commence avec huit minutes de retard.\n'
+                  'La connexion est revenue a 18:10.',
+            ),
+            libelle: _textesFil.libelleChamp,
+            envoi: EnvoiZoneSaisie(
+              libelle: _textesFil.envoyer,
+              onEnvoyer: _rien,
             ),
           ),
         ),

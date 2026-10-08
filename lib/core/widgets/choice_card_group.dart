@@ -406,6 +406,12 @@ class _Carte extends StatelessWidget {
 extension on _Carte {
   /// Le contenu de la carte cote a cote : radio ou coche en haut a droite,
   /// icone dans un disque puis titre, centres.
+  ///
+  /// SUPERPOS-1 (decision du 05/10/2026, prise par delegation) : le radio a
+  /// sa propre ligne, en tete, dans le flux. Peint dans un `Stack`, il
+  /// recouvrait le disque de l'icone a 320 de large (92 de contenu par
+  /// carte). La carte est posee dans une `IntrinsicHeight` (groupe cote a
+  /// cote) : le contenu prend la hauteur restante, centre.
   Widget _contenuVertical(
     AppPalette palette,
     AppColorPair paire,
@@ -416,11 +422,24 @@ extension on _Carte {
     final AppColorPair fondDisque = retenue
         ? palette.surfaceActionDouce
         : palette.surfaceSunken;
-    return Stack(
+    final Widget indicateur = radio
+        ? RadioChoix(retenue: retenue, disponible: _disponible)
+        : retenue
+        ? IconTheme(
+            data: IconThemeData(
+              color: paire.onBackground,
+              size: AppSpacing.xxl,
+            ),
+            child: Icon(AppIcons.succes.actif),
+          )
+        : const SizedBox.square(dimension: AppSpacing.xxl);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.only(top: AppSpacing.lg),
+        Align(alignment: AlignmentDirectional.topEnd, child: indicateur),
+        Ecart.vXs,
+        Expanded(
+          child: Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -479,21 +498,6 @@ extension on _Carte {
               ],
             ),
           ),
-        ),
-        PositionedDirectional(
-          top: 0,
-          end: 0,
-          child: radio
-              ? RadioChoix(retenue: retenue, disponible: _disponible)
-              : retenue
-              ? IconTheme(
-                  data: IconThemeData(
-                    color: paire.onBackground,
-                    size: AppSpacing.xxl,
-                  ),
-                  child: Icon(AppIcons.succes.actif),
-                )
-              : const SizedBox.shrink(),
         ),
       ],
     );
