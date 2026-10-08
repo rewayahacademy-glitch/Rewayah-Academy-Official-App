@@ -517,6 +517,11 @@ class _LecteurCoranAccessibiliteEtat
             // Finition MA-CMD-1 : la barre du bas s'efface avec les
             // commandes et revient a la meme touche.
             effacerBarreBasse: true,
+            // MA-CORAN-X2-1 : une page sans texte (non chargee, vide) ne passe
+            // plus sous les commandes : son titre, sa phrase et « Reessayer »
+            // restent lisibles a texte x2. Une page lue garde tout l'ecran,
+            // exactement comme avant (le rendu du Coran ne change pas).
+            margeLecture: vue != null && !vue.aDuTexte,
           ),
         ),
         if (vue != null && vue.aDuTexte)

@@ -21,14 +21,46 @@ import 'effacement_barre_basse.dart';
 ///
 /// Avec [effacerBarreBasse] (lecteur du Coran, finition de MA-CMD-1), la
 /// barre du bas de `NavShell` s'efface et revient avec elles.
+///
+/// MA-CORAN-X2-1 (05/10/2026) : avec [margeLecture], le contenu s'arrete
+/// au-dessus de la hauteur mesuree des commandes (un etat sans texte du
+/// lecteur, texte x2 : son titre et « Reessayer » ne passent plus dessous).
+/// Meme contrat que la marge de lecture de TB-2 (`ui/supports-tableau-v1`) :
+/// [margeDe], [recouvrementDe], [partMaxMarge].
 class CommandesMasquables extends StatefulWidget {
   const CommandesMasquables({
     required this.contenu,
     required this.commandes,
     this.delai = delaiParDefaut,
     this.effacerBarreBasse = false,
+    this.margeLecture = false,
     super.key,
   });
+
+  /// Vrai : le contenu s'arrete au-dessus des commandes (marge de lecture
+  /// egale a leur hauteur mesuree) ; elles ne couvrent rien, et leur
+  /// masquage ne change ni la taille ni le repere du contenu. Si cette marge
+  /// depasse [partMaxMarge] de la hauteur, les commandes se posent
+  /// par-dessus et [recouvrementDe] dit la hauteur recouverte.
+  final bool margeLecture;
+
+  /// La part maximale de la hauteur que la marge de lecture peut prendre.
+  static const double partMaxMarge = 1 / 3;
+
+  /// La marge de lecture mesuree sous le contenu (0 sans marge, ou hors de
+  /// [CommandesMasquables]).
+  static double margeDe(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<_MargeCommandes>()?.marge ?? 0;
+
+  /// La hauteur du contenu que les commandes recouvrent quand elles se
+  /// posent par-dessus malgre la marge de lecture (au-dela de
+  /// [partMaxMarge]) ; 0 quand la marge les loge, sans marge de lecture, ou
+  /// hors de [CommandesMasquables]. Un etat sans texte s'en ecarte d'autant.
+  static double recouvrementDe(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<_MargeCommandes>()
+          ?.recouvrement ??
+      0;
 
   /// Vrai : la barre du bas de `NavShell` suit les commandes (effacee quand
   /// elles se masquent, revenue a la meme touche, toujours visible avec
@@ -63,6 +95,26 @@ class _CommandesMasquablesState extends State<CommandesMasquables> {
 
   /// Le dernier etat signale a la barre (evite les signaux repetes).
   bool _barreEffacee = false;
+
+  /// La derniere marge de lecture mesuree (transmise au contenu).
+  double _marge = 0;
+
+  /// La hauteur du contenu recouverte par les commandes posees par-dessus.
+  double _recouvrement = 0;
+
+  /// Une marge mesuree differente : transmise au cadre suivant (a
+  /// l'ouverture ou quand le texte change de taille, jamais au masquage).
+  void _surMarge(double marge, double recouvrement) {
+    if (marge == _marge && recouvrement == _recouvrement) return;
+    SchedulerBinding.instance.addPostFrameCallback((Duration _) {
+      if (mounted && (marge != _marge || recouvrement != _recouvrement)) {
+        setState(() {
+          _marge = marge;
+          _recouvrement = recouvrement;
+        });
+      }
+    });
+  }
 
   @override
   void initState() {
@@ -151,13 +203,22 @@ class _CommandesMasquablesState extends State<CommandesMasquables> {
     return Listener(
       behavior: HitTestBehavior.translucent,
       onPointerDown: (PointerDownEvent _) => _montrer(),
-      child: Stack(
+      child: CustomMultiChildLayout(
+        delegate: _DispositionCommandes(
+          margeLecture: widget.margeLecture,
+          onMarge: _surMarge,
+        ),
         children: <Widget>[
-          Positioned.fill(child: widget.contenu),
-          PositionedDirectional(
-            start: 0,
-            end: 0,
-            bottom: 0,
+          LayoutId(
+            id: _Partie.contenu,
+            child: _MargeCommandes(
+              marge: _marge,
+              recouvrement: _recouvrement,
+              child: widget.contenu,
+            ),
+          ),
+          LayoutId(
+            id: _Partie.commandes,
             child: Focus(
               canRequestFocus: false,
               skipTraversal: true,
@@ -183,4 +244,57 @@ class _CommandesMasquablesState extends State<CommandesMasquables> {
       ),
     );
   }
+}
+
+enum _Partie { contenu, commandes }
+
+/// Le contenu garde l'ecran ; les commandes, posees en bas sur toute la
+/// largeur, gardent leur hauteur naturelle (comme un enfant pose en bas
+/// d'une pile). Avec la marge de lecture, le contenu s'arrete au-dessus
+/// d'elles, visibles ou masquees (aucun relayout au masquage).
+class _DispositionCommandes extends MultiChildLayoutDelegate {
+  _DispositionCommandes({required this.margeLecture, required this.onMarge});
+
+  final bool margeLecture;
+  final void Function(double marge, double recouvrement) onMarge;
+
+  @override
+  void performLayout(Size size) {
+    final Size barre = layoutChild(
+      _Partie.commandes,
+      BoxConstraints(minWidth: size.width, maxWidth: size.width),
+    );
+    positionChild(_Partie.commandes, Offset(0, size.height - barre.height));
+    final double marge =
+        margeLecture &&
+            barre.height <= size.height * CommandesMasquables.partMaxMarge
+        ? barre.height
+        : 0;
+    onMarge(marge, margeLecture ? barre.height - marge : 0);
+    layoutChild(
+      _Partie.contenu,
+      BoxConstraints.tight(Size(size.width, size.height - marge)),
+    );
+    positionChild(_Partie.contenu, Offset.zero);
+  }
+
+  @override
+  bool shouldRelayout(_DispositionCommandes ancien) =>
+      ancien.margeLecture != margeLecture;
+}
+
+/// La marge de lecture mesuree, pour le contenu.
+class _MargeCommandes extends InheritedWidget {
+  const _MargeCommandes({
+    required this.marge,
+    required this.recouvrement,
+    required super.child,
+  });
+
+  final double marge;
+  final double recouvrement;
+
+  @override
+  bool updateShouldNotify(_MargeCommandes ancien) =>
+      ancien.marge != marge || ancien.recouvrement != recouvrement;
 }
