@@ -84,6 +84,18 @@ Future<StockagePreferencesMemoire> _monter(
   return stockage;
 }
 
+/// Laisse passer [secondes] secondes, image par image (un seul `pump` long
+/// ne rendrait pas le passage de page qu'il declenche).
+Future<void> _attendre(WidgetTester tester, int secondes) async {
+  for (int i = 0; i < secondes * 10; i++) {
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+}
+
+/// La position annoncee par la barre du bas (« 1 / 5 »).
+Finder _position(int numero) =>
+    find.text(t.bienvenue.position(numero: numero, total: 5));
+
 double _valeurSegment(WidgetTester tester, int i) => tester
     .widget<LinearProgressIndicator>(
       find.byKey(ValueKey<String>('bienvenue-segment-$i')),
@@ -128,7 +140,8 @@ void main() {
         await tester.pump(AppMouvement.navigation);
       }
       expect(find.text(_titres[4]), findsOneWidget);
-      await tester.pump(const Duration(seconds: 30));
+      await _attendre(tester, 30);
+      expect(_position(5), findsOneWidget);
       expect(find.text(_titres[4]), findsOneWidget);
       expect(find.text(_titres[0]), findsNothing);
       expect(
@@ -145,7 +158,8 @@ void main() {
       final TestGesture doigt = await tester.startGesture(
         tester.getCenter(find.byKey(const ValueKey<String>('bienvenue-pages'))),
       );
-      await tester.pump(const Duration(seconds: 20));
+      await _attendre(tester, 20);
+      expect(_position(1), findsOneWidget);
       expect(find.text(_titres[0]), findsOneWidget);
       final double gele = _valeurSegment(tester, 0);
       expect(gele, closeTo(1 / 3, 0.05));
@@ -164,7 +178,8 @@ void main() {
       await _monter(tester);
       await tester.sendKeyEvent(LogicalKeyboardKey.tab);
       await tester.pump();
-      await tester.pump(const Duration(seconds: 20));
+      await _attendre(tester, 20);
+      expect(_position(1), findsOneWidget);
       expect(find.text(_titres[0]), findsOneWidget);
     });
 
@@ -172,7 +187,8 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monter(tester, mouvementReduit: true);
-      await tester.pump(const Duration(seconds: 30));
+      await _attendre(tester, 30);
+      expect(_position(1), findsOneWidget);
       expect(find.text(_titres[0]), findsOneWidget);
       // La ligne dit la position, sans se charger.
       expect(_valeurSegment(tester, 0), 1);
@@ -185,7 +201,8 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monter(tester, lecteurEcran: true);
-      await tester.pump(const Duration(seconds: 30));
+      await _attendre(tester, 30);
+      expect(_position(1), findsOneWidget);
       expect(find.text(_titres[0]), findsOneWidget);
       expect(_valeurSegment(tester, 0), 1);
       expect(find.text(t.bienvenue.position(numero: 1, total: 5)), findsOne);
@@ -205,7 +222,8 @@ void main() {
       await tester.pumpAndSettle(AppMouvement.navigation);
       expect(find.text(_titres[1]), findsOneWidget);
 
-      await tester.pump(const Duration(seconds: 30));
+      await _attendre(tester, 30);
+      expect(_position(2), findsOneWidget);
       expect(find.text(_titres[1]), findsOneWidget);
       expect(_valeurSegment(tester, 1), 1);
     });
