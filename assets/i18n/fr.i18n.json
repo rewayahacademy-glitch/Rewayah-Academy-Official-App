@@ -1344,7 +1344,7 @@
       "actualiser": "Actualiser les dossiers",
       "aucuneSelection": "Sélectionnez un dossier à examiner.",
       "suivants": "Charger les dossiers suivants",
-      "ouvrirDe": "Ouvrir le dossier {deNom}",
+      "ouvrirDe": "Ouvrir le dossier de {nom}",
       "ouvrirElide": "Ouvrir le dossier d'{nom}",
       "enVerification": "En cours de vérification",
       "sansNom": "Dossier sans nom disponible",
@@ -1356,7 +1356,7 @@
       "suivantAnnonce": "Dossier suivant : {nom}"
     },
     "detail": {
-      "titreDe": "Dossier {deNom}",
+      "titreDe": "Dossier de {nom}",
       "titreElide": "Dossier d'{nom}"
     },
     "visionneuse": {
@@ -1444,9 +1444,9 @@
     },
     "validation": {
       "titre": "Valider ce dossier ?",
-      "corpsActivation": "Le dossier {deNom} sera validé. Son compte pourra accéder à son espace.",
+      "corpsActivation": "Le dossier de {nom} sera validé. Son compte pourra accéder à son espace.",
       "corpsActivationElide": "Le dossier d'{nom} sera validé. Son compte pourra accéder à son espace.",
-      "corpsDocumentaire": "Le dossier {deNom} sera validé. Les autres conditions d’accès resteront applicables.",
+      "corpsDocumentaire": "Le dossier de {nom} sera validé. Les autres conditions d’accès resteront applicables.",
       "corpsDocumentaireElide": "Le dossier d'{nom} sera validé. Les autres conditions d’accès resteront applicables.",
       "indisponible": "La validation est indisponible pour le moment.",
       "envoi": "Validation en cours…",

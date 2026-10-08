@@ -250,7 +250,7 @@ void main() {
         ),
       );
 
-      expect(find.text('Tuteur de Amina observe'), findsOneWidget);
+      expect(find.text("Tuteur d'Amina observe"), findsOneWidget);
       expect(
         find.text(t.tc.observation.annonce.restant(secondes: 80)),
         findsOneWidget,

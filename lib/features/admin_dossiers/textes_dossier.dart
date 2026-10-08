@@ -1,5 +1,4 @@
 import '../../core/domain/enums.dart';
-import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 
 const String _voyelles = 'aeiouàâäéèêëîïôöùûüAEIOUÀÂÄÉÈÊËÎÏÔÖÙÛÜ';
@@ -11,22 +10,22 @@ bool elide(String nom) => nom.isNotEmpty && _voyelles.contains(nom[0]);
 /// « Ouvrir le dossier de/d'{nom} ».
 String ouvrirDossier(String nom) => elide(nom)
     ? t.dossiers.file.ouvrirElide(nom: nom)
-    : t.dossiers.file.ouvrirDe(deNom: deDevant(nom));
+    : t.dossiers.file.ouvrirDe(nom: nom);
 
 /// « Dossier de/d'{nom} ».
 String titreDossier(String nom) => elide(nom)
     ? t.dossiers.detail.titreElide(nom: nom)
-    : t.dossiers.detail.titreDe(deNom: deDevant(nom));
+    : t.dossiers.detail.titreDe(nom: nom);
 
 /// Le corps de la confirmation de validation : « Le dossier de/d'{nom} sera
 /// validé… », elision choisie par la meme fonction que [ouvrirDossier].
 String corpsValidation(String nom, {required bool activation}) => activation
     ? (elide(nom)
           ? t.dossiers.validation.corpsActivationElide(nom: nom)
-          : t.dossiers.validation.corpsActivation(deNom: deDevant(nom)))
+          : t.dossiers.validation.corpsActivation(nom: nom))
     : (elide(nom)
           ? t.dossiers.validation.corpsDocumentaireElide(nom: nom)
-          : t.dossiers.validation.corpsDocumentaire(deNom: deDevant(nom)));
+          : t.dossiers.validation.corpsDocumentaire(nom: nom));
 
 /// Le nom affiche, ou « Dossier sans nom disponible ».
 String nomOuDefaut(String nom) =>

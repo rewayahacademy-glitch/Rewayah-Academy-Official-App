@@ -4654,8 +4654,8 @@ class Traductions$dossiers$file$fr {
 	/// fr: 'Charger les dossiers suivants'
 	String get suivants => 'Charger les dossiers suivants';
 
-	/// fr: 'Ouvrir le dossier {deNom}'
-	String ouvrirDe({required Object deNom}) => 'Ouvrir le dossier ${deNom}';
+	/// fr: 'Ouvrir le dossier de {nom}'
+	String ouvrirDe({required Object nom}) => 'Ouvrir le dossier de ${nom}';
 
 	/// fr: 'Ouvrir le dossier d'{nom}'
 	String ouvrirElide({required Object nom}) => 'Ouvrir le dossier d\'${nom}';
@@ -4693,8 +4693,8 @@ class Traductions$dossiers$detail$fr {
 
 	// Translations
 
-	/// fr: 'Dossier {deNom}'
-	String titreDe({required Object deNom}) => 'Dossier ${deNom}';
+	/// fr: 'Dossier de {nom}'
+	String titreDe({required Object nom}) => 'Dossier de ${nom}';
 
 	/// fr: 'Dossier d'{nom}'
 	String titreElide({required Object nom}) => 'Dossier d\'${nom}';
@@ -4881,14 +4881,14 @@ class Traductions$dossiers$validation$fr {
 	/// fr: 'Valider ce dossier ?'
 	String get titre => 'Valider ce dossier ?';
 
-	/// fr: 'Le dossier {deNom} sera validé. Son compte pourra accéder à son espace.'
-	String corpsActivation({required Object deNom}) => 'Le dossier ${deNom} sera validé. Son compte pourra accéder à son espace.';
+	/// fr: 'Le dossier de {nom} sera validé. Son compte pourra accéder à son espace.'
+	String corpsActivation({required Object nom}) => 'Le dossier de ${nom} sera validé. Son compte pourra accéder à son espace.';
 
 	/// fr: 'Le dossier d'{nom} sera validé. Son compte pourra accéder à son espace.'
 	String corpsActivationElide({required Object nom}) => 'Le dossier d\'${nom} sera validé. Son compte pourra accéder à son espace.';
 
-	/// fr: 'Le dossier {deNom} sera validé. Les autres conditions d’accès resteront applicables.'
-	String corpsDocumentaire({required Object deNom}) => 'Le dossier ${deNom} sera validé. Les autres conditions d’accès resteront applicables.';
+	/// fr: 'Le dossier de {nom} sera validé. Les autres conditions d’accès resteront applicables.'
+	String corpsDocumentaire({required Object nom}) => 'Le dossier de ${nom} sera validé. Les autres conditions d’accès resteront applicables.';
 
 	/// fr: 'Le dossier d'{nom} sera validé. Les autres conditions d’accès resteront applicables.'
 	String corpsDocumentaireElide({required Object nom}) => 'Le dossier d\'${nom} sera validé. Les autres conditions d’accès resteront applicables.';
@@ -17010,7 +17010,7 @@ extension on Traductions {
 			'dossiers.file.actualiser' => 'Actualiser les dossiers',
 			'dossiers.file.aucuneSelection' => 'Sélectionnez un dossier à examiner.',
 			'dossiers.file.suivants' => 'Charger les dossiers suivants',
-			'dossiers.file.ouvrirDe' => ({required Object deNom}) => 'Ouvrir le dossier ${deNom}',
+			'dossiers.file.ouvrirDe' => ({required Object nom}) => 'Ouvrir le dossier de ${nom}',
 			'dossiers.file.ouvrirElide' => ({required Object nom}) => 'Ouvrir le dossier d\'${nom}',
 			'dossiers.file.enVerification' => 'En cours de vérification',
 			'dossiers.file.sansNom' => 'Dossier sans nom disponible',
@@ -17020,7 +17020,7 @@ extension on Traductions {
 			'dossiers.file.heureChiffres' => ({required Object heures, required Object minutes}) => '${heures}:${minutes}',
 			'dossiers.file.zoneUtc' => 'UTC',
 			'dossiers.file.suivantAnnonce' => ({required Object nom}) => 'Dossier suivant : ${nom}',
-			'dossiers.detail.titreDe' => ({required Object deNom}) => 'Dossier ${deNom}',
+			'dossiers.detail.titreDe' => ({required Object nom}) => 'Dossier de ${nom}',
 			'dossiers.detail.titreElide' => ({required Object nom}) => 'Dossier d\'${nom}',
 			'dossiers.visionneuse.chargement' => 'Chargement de la pièce…',
 			'dossiers.visionneuse.erreur' => 'La pièce ne peut pas être affichée.',
@@ -17096,9 +17096,9 @@ extension on Traductions {
 			'dossiers.refus.continuerSaisie' => 'Continuer la saisie',
 			'dossiers.refus.abandonner' => 'Abandonner',
 			'dossiers.validation.titre' => 'Valider ce dossier ?',
-			'dossiers.validation.corpsActivation' => ({required Object deNom}) => 'Le dossier ${deNom} sera validé. Son compte pourra accéder à son espace.',
+			'dossiers.validation.corpsActivation' => ({required Object nom}) => 'Le dossier de ${nom} sera validé. Son compte pourra accéder à son espace.',
 			'dossiers.validation.corpsActivationElide' => ({required Object nom}) => 'Le dossier d\'${nom} sera validé. Son compte pourra accéder à son espace.',
-			'dossiers.validation.corpsDocumentaire' => ({required Object deNom}) => 'Le dossier ${deNom} sera validé. Les autres conditions d’accès resteront applicables.',
+			'dossiers.validation.corpsDocumentaire' => ({required Object nom}) => 'Le dossier de ${nom} sera validé. Les autres conditions d’accès resteront applicables.',
 			'dossiers.validation.corpsDocumentaireElide' => ({required Object nom}) => 'Le dossier d\'${nom} sera validé. Les autres conditions d’accès resteront applicables.',
 			'dossiers.validation.indisponible' => 'La validation est indisponible pour le moment.',
 			'dossiers.validation.envoi' => 'Validation en cours…',

@@ -30,14 +30,18 @@ const Set<String> _parametresNoms = <String>{
   'ville',
 };
 
-/// Les espaces des autres voies (decision : ne pas y toucher) et les cles de
-/// la Finance, corrigees sur `ui/finance-v1`.
+/// Les espaces des autres voies (decision : ne pas y toucher), les cles de
+/// la Finance, corrigees sur `ui/finance-v1`, et les dossiers (deja elides).
 bool _horsPerimetre(String cle) =>
     cle.startsWith('com.') ||
     cle.startsWith('comptable.') ||
     cle == 'ficheEleve.acces.ligne' ||
     cle == 'tuteur.accueil.accesJusqua' ||
-    cle == 'tuteur.accueil.accesSansFin';
+    cle == 'tuteur.accueil.accesSansFin' ||
+    // Les dossiers ont leur propre elision, par des cles « ...Elide » et
+    // sans h (« de Hana », textes_dossier.dart) : la cle « de » ne sert
+    // qu'a un nom qui commence par une consonne.
+    cle.startsWith('dossiers.');
 
 void main() {
   setUp(() => LocaleSettings.setLocaleSync(AppLocale.fr));

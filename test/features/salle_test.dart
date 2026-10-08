@@ -1357,7 +1357,7 @@ void main() {
         );
 
         expect(find.byType(IndicateurObservation), findsOneWidget);
-        expect(find.text('Tuteur de Amina observe'), findsOneWidget);
+        expect(find.text("Tuteur d'Amina observe"), findsOneWidget);
       },
     );
 
@@ -1384,7 +1384,7 @@ void main() {
 
         // Elle porte le prenom d'un enfant qui n'est pas forcement le sien.
         expect(find.byType(IndicateurObservation), findsNothing);
-        expect(find.text('Tuteur de Amina observe'), findsNothing);
+        expect(find.text("Tuteur d'Amina observe"), findsNothing);
       },
     );
   });
