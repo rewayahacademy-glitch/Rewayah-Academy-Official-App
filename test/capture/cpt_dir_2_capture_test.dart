@@ -206,7 +206,7 @@ void main() {
         ThemeMode.dark,
       ]) {
         final String n = p.$3;
-        if (p.$4)
+        if (p.$4) {
           testWidgets('390x844 @3, $n, ${mode.name}', (
             WidgetTester tester,
           ) async {
@@ -217,6 +217,7 @@ void main() {
               'PNG ${await capturer(tester, '${n}_390x844@3_${mode.name}_masques')}',
             );
           });
+        }
         testWidgets('1440x900 @1, $n, ${mode.name}', (
           WidgetTester tester,
         ) async {
