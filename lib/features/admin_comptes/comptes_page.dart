@@ -52,7 +52,7 @@ class ComptesPage extends ConsumerStatefulWidget {
 
 class _ComptesPageEtat extends ConsumerState<ComptesPage> {
   /// Le filtre courant. `null` veut dire « tous ».
-  AccountStatus? _etat;
+  _EtatAffiche? _etat;
   AppRole? _role;
 
   /// Vrai : seuls les acces echus (DASH-ADM-ECHUS).
@@ -75,7 +75,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
 
   /// Une seule pastille retenue a la fois dans la rangee des etats : « Tous »,
   /// un etat, ou « Acces echus ». Choisir l'une relache les autres.
-  void _choisir({AccountStatus? etat, bool echus = false}) {
+  void _choisir({_EtatAffiche? etat, bool echus = false}) {
     setState(() {
       _etat = echus ? null : etat;
       _echus = echus;
@@ -138,7 +138,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
                 role: _role,
                 echus: _echus,
                 onEchus: (bool echus) => _choisir(echus: echus),
-                onEtat: (AccountStatus? etat) => _choisir(etat: etat),
+                onEtat: (_EtatAffiche? etat) => _choisir(etat: etat),
                 onRole: (AppRole? role) => setState(() => _role = role),
               ),
             ),
@@ -175,13 +175,13 @@ class _Corps extends StatelessWidget {
   });
 
   final List<CompteAdmin> comptes;
-  final AccountStatus? etat;
+  final _EtatAffiche? etat;
   final AppRole? role;
 
   /// Vrai : seuls les acces echus.
   final bool echus;
   final void Function(bool echus) onEchus;
-  final void Function(AccountStatus? etat) onEtat;
+  final void Function(_EtatAffiche? etat) onEtat;
   final void Function(AppRole? role) onRole;
 
   @override
@@ -203,7 +203,7 @@ class _Corps extends StatelessWidget {
     final List<CompteAdmin> filtres = comptes
         .where(
           (CompteAdmin c) =>
-              (etat == null || _dansEtat(c, etat!)) &&
+              (etat == null || _etatAffiche(c) == etat) &&
               (role == null || c.role == role) &&
               (!echus || c.accesEchu(maintenant)),
         )
@@ -220,13 +220,11 @@ class _Corps extends StatelessWidget {
     // Rendre les quatre etats et les six roles produisait onze pastilles qui
     // repoussaient la liste sous le pli : l'accent doit porter la selection,
     // pas decorer un inventaire de possibilites (registre produit d'Impeccable).
-    final Map<AccountStatus, int> parEtat = <AccountStatus, int>{};
+    final Map<_EtatAffiche, int> parEtat = <_EtatAffiche, int>{};
     final Set<AppRole> rolesPresents = <AppRole>{};
     for (final CompteAdmin compte in comptes) {
-      final AccountStatus? e = compte.etat;
-      if (e != null && _dansEtat(compte, e)) {
-        parEtat[e] = (parEtat[e] ?? 0) + 1;
-      }
+      final _EtatAffiche e = _etatAffiche(compte);
+      parEtat[e] = (parEtat[e] ?? 0) + 1;
       final AppRole? r = compte.role;
       if (r != null) {
         rolesPresents.add(r);
@@ -293,11 +291,11 @@ class _Corps extends StatelessWidget {
               retenue: etat == null && !echus,
               onPress: () => onEtat(null),
             ),
-            for (final AccountStatus valeur in AccountStatus.values)
+            for (final _EtatAffiche valeur in _EtatAffiche.values)
               if (parEtat.containsKey(valeur) || etat == valeur)
                 FilterPill(
                   key: ValueKey<String>('comptes-filtre-etat-${valeur.name}'),
-                  libelle: _nomEtat(valeur),
+                  libelle: valeur.libelle,
                   compteur: parEtat[valeur] ?? 0,
                   retenue: etat == valeur,
                   onPress: () => onEtat(valeur),
@@ -392,14 +390,10 @@ class _Corps extends StatelessWidget {
                 ),
                 ColonneDonnees<CompteAdmin>(
                   titre: t.admin.comptes.colonneEtat,
-                  texte: (CompteAdmin c) => c.etat == null
-                      ? t.admin.comptes.etatInconnu
-                      : _nomEtat(c.etat!),
+                  texte: (CompteAdmin c) => _etatAffiche(c).libelle,
                   rendu: (BuildContext _, CompteAdmin c) => StatusPill(
-                    libelle: c.etat == null
-                        ? t.admin.comptes.etatInconnu
-                        : _nomEtat(c.etat!),
-                    ton: _tonEtat(c.etat),
+                    libelle: _etatAffiche(c).libelle,
+                    ton: _etatAffiche(c).ton,
                   ),
                 ),
                 ColonneDonnees<CompteAdmin>(
@@ -438,18 +432,55 @@ class _Corps extends StatelessWidget {
   };
 }
 
-/// Vrai quand [compte] entre dans la pastille d'etat [etat].
+/// L'etat d'un compte tel que la page le montre : le badge de la ligne et
+/// la pastille de filtre disent la MEME chose, et chaque compte entre dans
+/// exactement une pastille (« Tous » = la somme des autres).
 ///
-/// Decision « pastille-attente » du 05/10 (AD-NETTOYAGE-2, decidee par
-/// delegation du directeur) : « En attente » ne compte que les enseignants
-/// qui attendent une decision, le meme chiffre que la tuile « Dossiers a
-/// valider » du Centre de commande (enseignants seulement, m1
-/// d'AD-NETTOYAGE). Un tuteur `pending_kyc` n'a aucune piece a faire valider
-/// (voir [_pieceSansObjet]) : il reste dans « Tous » et sous son role.
-bool _dansEtat(CompteAdmin compte, AccountStatus etat) =>
-    etat == AccountStatus.pendingKyc
-    ? compte.attendUneDecision
-    : compte.etat == etat;
+/// Decision « pastille-attente » du 05/10 (AD-NETTOYAGE-2, par delegation du
+/// directeur) : « En attente » ne compte que les enseignants qui attendent
+/// une decision, le chiffre de la tuile « Dossiers a valider ». Un autre
+/// compte `pending_kyc` dont le role est lu (tuteur, eleve, personnel)
+/// n'attend aucune decision (K-47 : seul l'enseignant depose une piece) : il
+/// se dit « Sans décision » (decide par delegation le 08/10, revue croisee de
+/// LIB-DIR-1). Un compte `pending_kyc` au role illisible : on ne sait pas
+/// s'il attend une decision, il se dit « État inconnu », comme le bandeau
+/// qui le signale.
+enum _EtatAffiche {
+  attente,
+  sansDecision,
+  actif,
+  provisoire,
+  suspendu,
+  inconnu;
+
+  String get libelle => switch (this) {
+    _EtatAffiche.attente => t.admin.comptes.etatEnAttente,
+    _EtatAffiche.sansDecision => t.admin.comptes.etatSansDecision,
+    _EtatAffiche.actif => t.admin.comptes.etatActif,
+    _EtatAffiche.provisoire => t.admin.comptes.etatProvisoire,
+    _EtatAffiche.suspendu => t.admin.comptes.etatSuspendu,
+    _EtatAffiche.inconnu => t.admin.comptes.etatInconnu,
+  };
+
+  TonEtat get ton => switch (this) {
+    _EtatAffiche.attente => TonEtat.avertissement,
+    _EtatAffiche.actif => TonEtat.succes,
+    _EtatAffiche.suspendu => TonEtat.alerte,
+    _EtatAffiche.sansDecision ||
+    _EtatAffiche.provisoire ||
+    _EtatAffiche.inconnu => TonEtat.neutre,
+  };
+}
+
+_EtatAffiche _etatAffiche(CompteAdmin c) => switch (c.etat) {
+  AccountStatus.pendingKyc when c.attendUneDecision => _EtatAffiche.attente,
+  AccountStatus.pendingKyc when c.role != null => _EtatAffiche.sansDecision,
+  AccountStatus.pendingKyc => _EtatAffiche.inconnu,
+  AccountStatus.active => _EtatAffiche.actif,
+  AccountStatus.provisionalActive => _EtatAffiche.provisoire,
+  AccountStatus.disabled => _EtatAffiche.suspendu,
+  null => _EtatAffiche.inconnu,
+};
 
 /// Vrai quand la piece d'identite n'a pas de sens pour ce compte : le tuteur
 /// (toujours) et les autres roles lisibles tant qu'ils n'en ont depose aucune.
@@ -458,21 +489,6 @@ bool _pieceSansObjet(CompteAdmin c) =>
     (c.role != null &&
         c.role != AppRole.teacher &&
         c.piece == EtatPiece.aucune);
-
-String _nomEtat(AccountStatus etat) => switch (etat) {
-  AccountStatus.pendingKyc => t.admin.comptes.etatEnAttente,
-  AccountStatus.active => t.admin.comptes.etatActif,
-  AccountStatus.provisionalActive => t.admin.comptes.etatProvisoire,
-  AccountStatus.disabled => t.admin.comptes.etatSuspendu,
-};
-
-TonEtat _tonEtat(AccountStatus? etat) => switch (etat) {
-  AccountStatus.pendingKyc => TonEtat.avertissement,
-  AccountStatus.active => TonEtat.succes,
-  AccountStatus.provisionalActive => TonEtat.neutre,
-  AccountStatus.disabled => TonEtat.alerte,
-  null => TonEtat.neutre,
-};
 
 String _nomRole(AppRole role) => switch (role) {
   AppRole.admin => t.admin.comptes.roleAdmin,

@@ -6704,6 +6704,9 @@ class Traductions$admin$comptes$fr {
 	/// fr: 'État inconnu'
 	String get etatInconnu => 'État inconnu';
 
+	/// fr: 'Sans décision'
+	String get etatSansDecision => 'Sans décision';
+
 	/// fr: 'Administration'
 	String get roleAdmin => 'Administration';
 
@@ -7955,12 +7958,6 @@ class Traductions$tuteur$accueil$fr {
 	/// fr: 'Accès'
 	String get acces => 'Accès';
 
-	/// fr: 'Accès de {prenom} jusqu'au {date}'
-	String accesJusqua({required Object prenom, required Object date}) => 'Accès de ${prenom} jusqu\'au ${date}';
-
-	/// fr: 'Accès de {prenom} sans date de fin'
-	String accesSansFin({required Object prenom}) => 'Accès de ${prenom} sans date de fin';
-
 	/// fr: 'Aucun enfant dans le foyer'
 	String get aucunEnfant => 'Aucun enfant dans le foyer';
 
@@ -8886,8 +8883,8 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Tous vos cahiers de transmission sont terminés.'
 	String get aTerminerVide => 'Tous vos cahiers de transmission sont terminés.';
 
-	/// fr: 'Les cahiers de transmission à terminer n'ont pas pu être lus'
-	String get aTerminerSansDonnees => 'Les cahiers de transmission à terminer n\'ont pas pu être lus';
+	/// fr: 'Les cahiers de transmission à terminer n'ont pas pu être lus.'
+	String get aTerminerSansDonnees => 'Les cahiers de transmission à terminer n\'ont pas pu être lus.';
 
 	/// fr: 'Les cahiers de transmission à terminer n'ont pas pu être lus. Réessayez dans un instant.'
 	String get aTerminerErreur => 'Les cahiers de transmission à terminer n\'ont pas pu être lus. Réessayez dans un instant.';
@@ -17657,6 +17654,7 @@ extension on Traductions {
 			'admin.comptes.etatProvisoire' => 'Provisoire',
 			'admin.comptes.etatSuspendu' => 'Suspendu',
 			'admin.comptes.etatInconnu' => 'État inconnu',
+			'admin.comptes.etatSansDecision' => 'Sans décision',
 			'admin.comptes.roleAdmin' => 'Administration',
 			'admin.comptes.roleComptable' => 'Comptable',
 			'admin.comptes.roleControleur' => 'Contrôleur',
@@ -17977,9 +17975,9 @@ extension on Traductions {
 			'compte.profilEnfant' => ({required Object dePrenom}) => 'Profil ${dePrenom}',
 			'compte.identifiantEnfant' => ({required Object identifiant}) => 'Identifiant : ${identifiant}',
 			'compte.roles.admin' => 'Administrateur',
-			'compte.roles.accountant' => 'Comptable',
 			_ => null,
 		} ?? switch (path) {
+			'compte.roles.accountant' => 'Comptable',
 			'compte.roles.controller' => 'Contrôleur',
 			'compte.roles.teacher' => 'Enseignant',
 			'compte.roles.guardian' => 'Tuteur',
@@ -18336,8 +18334,6 @@ extension on Traductions {
 			'tuteur.accueil.blocReglagesDetail' => 'Photo, caméra et affichage, enfant par enfant.',
 			'tuteur.accueil.blocGroupesDetail' => 'Le groupe, l\'enseignant et le prochain cours de chaque enfant.',
 			'tuteur.accueil.acces' => 'Accès',
-			'tuteur.accueil.accesJusqua' => ({required Object prenom, required Object date}) => 'Accès de ${prenom} jusqu\'au ${date}',
-			'tuteur.accueil.accesSansFin' => ({required Object prenom}) => 'Accès de ${prenom} sans date de fin',
 			'tuteur.accueil.aucunEnfant' => 'Aucun enfant dans le foyer',
 			'tuteur.accueil.aucunEnfantDetail' => 'Ajoutez votre premier enfant pour commencer.',
 			'tuteur.accueil.erreur' => 'Le foyer n\'a pas pu être lu en entier. Réessayez dans un instant.',
@@ -18492,9 +18488,9 @@ extension on Traductions {
 			'classe.pageCatalogue.indisponible' => 'Le choix de classe en ligne n\'est pas encore ouvert.',
 			'classe.pageCatalogue.aucune' => 'Aucune classe ne convient pour l\'instant',
 			'classe.pageCatalogue.aucuneDetail' => ({required Object dePrenom}) => 'Aucune classe ouverte ne correspond au profil ${dePrenom} en ce moment.',
+			'classe.pageCatalogue.eleveInconnuTitre' => 'Ce profil n\'est pas dans votre foyer',
 			_ => null,
 		} ?? switch (path) {
-			'classe.pageCatalogue.eleveInconnuTitre' => 'Ce profil n\'est pas dans votre foyer',
 			'classe.pageCatalogue.eleveInconnuPhrase' => 'Revenez à l\'accueil et choisissez le profil élève concerné.',
 			'classe.pageCatalogue.horairesAbsents' => 'Les jours et heures de cette classe ne sont pas encore affichés ici.',
 			'classe.pageCatalogue.seanceHebdo' => ({required Object jour, required Object heure, required Object duree}) => '${jour} à ${heure} · ${duree} min',
@@ -18668,7 +18664,7 @@ extension on Traductions {
 			'enseignant.journee.maJournee' => 'Ma journée',
 			'enseignant.journee.aTerminer' => 'À terminer',
 			'enseignant.journee.aTerminerVide' => 'Tous vos cahiers de transmission sont terminés.',
-			'enseignant.journee.aTerminerSansDonnees' => 'Les cahiers de transmission à terminer n\'ont pas pu être lus',
+			'enseignant.journee.aTerminerSansDonnees' => 'Les cahiers de transmission à terminer n\'ont pas pu être lus.',
 			'enseignant.journee.aTerminerErreur' => 'Les cahiers de transmission à terminer n\'ont pas pu être lus. Réessayez dans un instant.',
 			'enseignant.journee.aTerminerAide' => 'Le cahier de transmission aide vos élèves et vous permet d\'ajuster le prochain cours.',
 			'enseignant.journee.rappelCahier' => 'Des cahiers de transmission attendent d\'être terminés',
@@ -19006,9 +19002,9 @@ extension on Traductions {
 			'controleur.historique.cleDuree' => 'Durée observée',
 			'controleur.historique.cleElevesPresents' => 'Présents',
 			'controleur.historique.cleReponse' => 'Réponse',
+			'controleur.historique.sansComplement' => 'Aucun complément.',
 			_ => null,
 		} ?? switch (path) {
-			'controleur.historique.sansComplement' => 'Aucun complément.',
 			'controleur.historique.faitsIndisponibles' => 'Le relevé automatique de cette visite (heures, élèves présents, reconnexions) n\'est pas encore reçu : la séance vient de se terminer ou la connexion a été coupée. Il s\'affichera ici dès sa réception. Le reste du rapport reste fiable.',
 			'controleur.historique.motif' => ({required Object motif}) => 'Motif : ${motif}',
 			'controleur.historique.ajouterComplement' => 'Ajouter un complément',
@@ -19520,9 +19516,9 @@ extension on Traductions {
 			'tc.observation.disponibilite.reseauTitre' => 'Vérification impossible',
 			'tc.observation.disponibilite.reseau' => 'La disponibilité de l\'observation n\'a pas pu être vérifiée. Aucune visite n\'a commencé.',
 			'tc.observation.disponibilite.capaciteTitre' => 'Observation indisponible',
+			'tc.observation.disponibilite.capacite' => 'L\'observation n\'est pas disponible pour le moment.',
 			_ => null,
 		} ?? switch (path) {
-			'tc.observation.disponibilite.capacite' => 'L\'observation n\'est pas disponible pour le moment.',
 			'tc.observation.connexion.titre' => 'Connexion et vérification',
 			'tc.observation.connexion.phrase' => 'Vos visites restantes sont vérifiées. La visite commence dès que l\'entrée est acceptée, connexion vidéo comprise.',
 			'tc.observation.connexion.enCours' => 'Connexion et vérification en cours',

@@ -288,7 +288,12 @@ class EmplacementEntree {
           : t.classe.entree.rejoindre,
       libelleLecteur: enseignant
           ? t.enseignant.journee.rejoindreSalleLecteur(classe: nomClasse)
-          : t.classe.entree.rejoindreLecteur(deClasse: deDevant(nomClasse)),
+          : t.classe.entree.rejoindreLecteur(
+              deClasse: deDevant(
+                nomClasse,
+                cle: 'classe.entree.rejoindreLecteur',
+              ),
+            ),
       detail: detail,
       annonce: annonce,
       avisDst: dst,

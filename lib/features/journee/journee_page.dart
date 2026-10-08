@@ -528,10 +528,17 @@ EmplacementEntree emplacementJournee(
     EtatCtaSeance.remplirCahier => (
       t.enseignant.journee.remplirCahier,
       t.enseignant.journee.remplirCahierLecteur(classe: nomClasse),
-      t.enseignant.journee.cahierObligatoire(classe: deDevant(nomClasse)),
+      t.enseignant.journee.cahierObligatoire(
+        classe: deDevant(
+          nomClasse,
+          cle: 'enseignant.journee.cahierObligatoire',
+        ),
+      ),
     ),
     EtatCtaSeance.voirCahier => (
-      t.enseignant.journee.voirCahier(classe: deDevant(nomClasse)),
+      t.enseignant.journee.voirCahier(
+        classe: deDevant(nomClasse, cle: 'enseignant.journee.voirCahier'),
+      ),
       t.enseignant.journee.voirCahierLecteur(classe: nomClasse),
       null,
     ),
@@ -766,7 +773,10 @@ class _CarteProchaineSeance extends ConsumerWidget {
                   child: LienFleche(
                     key: const ValueKey<String>('journee-voir-cahier'),
                     libelle: t.enseignant.journee.voirCahier(
-                      classe: deDevant(nom),
+                      classe: deDevant(
+                        nom,
+                        cle: 'enseignant.journee.voirCahier',
+                      ),
                     ),
                     onPress: () => unawaited(
                       GoRouter.of(context)

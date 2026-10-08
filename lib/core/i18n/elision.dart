@@ -10,29 +10,41 @@
 // Decision « fi-elision » du 05/10 (par delegation du directeur) : la regle
 // vaut dans toute l'application. Un libelle qui met « de » devant un nom
 // porte un parametre `{deNom}` (`{dePrenom}`, `{deClasse}`...) que l'appelant
-// remplit avec [deDevant] ; de meme `{queNom}` avec [queDevant]. Les autres
-// langues n'ont pas cette preposition dans le parametre : hors du francais,
-// les deux fonctions rendent le nom tel quel, et la traduction place le nom
-// la ou sa grammaire le demande.
+// remplit avec [deDevant] ; de meme `{queNom}` avec [queDevant].
+//
+// Une seule regle (revue croisee de LIB-DIR-1, decidee par delegation le
+// 08/10) : voyelle, accentuee ou non, et « y » prononce « i ». Jamais devant
+// h : les prenoms transcrits de l'arabe ont un h aspire (« de Hamza »,
+// « de Hana »), comme le faisaient deja les dossiers (textes_dossier.dart).
+//
+// Langue : l'arabe ne traduit qu'une partie des cles (98 sur plus de 4000),
+// les autres s'affichent en francais (`fallback_strategy: base_locale`). Le
+// texte francais de repli garde donc « de » / « d' ». Seul un appelant dont
+// la cle EST traduite dans la langue active doit recevoir le nom seul : il
+// passe [cle], et la fonction regarde si la langue active la traduit.
 
 import 'strings.g.dart';
 
-/// Les sons de voyelle qui appellent l'elision (h muet compris).
-const String _voyelles = 'aeiouàâäéèêëïîôöùûüh';
+/// Les voyelles qui appellent l'elision (h exclu, voir l'en-tete).
+const String _voyelles = 'aeiouàâäéèêëïîôöùûü';
 
 /// Compose « de {nom} » ou « d'{nom} » selon que [nom] commence par un son
-/// de voyelle (a, e, i, o, u, leurs formes accentuees, et h).
+/// de voyelle (a, e, i, o, u, leurs formes accentuees ; « y » devant une
+/// consonne). Jamais devant h.
 ///
 /// « y » suivi d'une voyelle est une consonne (contre-revue FI-VAGUE-CORR) :
 /// « de Youssef », « de Yasmine », « de Yahya ». Suivi d'une consonne, il se
 /// prononce « i » et elide : « d'Yvette ».
 ///
-/// Hors du francais, rend [nom] seul (voir l'en-tete du fichier).
-String deDevant(String nom) => _elide('de', 'd', nom);
+/// [cle] : la cle du libelle, a passer quand elle a une traduction hors du
+/// francais. Si la langue active la traduit, le nom est rendu seul (la
+/// traduction place le nom ou sa grammaire le demande) ; sinon le texte
+/// affiche est le repli francais, et l'elision francaise s'applique.
+String deDevant(String nom, {String? cle}) => _elide('de', 'd', nom, cle);
 
 /// Compose « que {nom} » ou « qu'{nom} » (LIB-OBJ-1 : « Ce qu'Aya doit
 /// atteindre »), selon la meme regle que [deDevant].
-String queDevant(String nom) => _elide('que', 'qu', nom);
+String queDevant(String nom, {String? cle}) => _elide('que', 'qu', nom, cle);
 
 /// Vrai quand [nom] commence par un son de voyelle, au sens de [deDevant].
 bool commenceParVoyelle(String nom) {
@@ -46,8 +58,15 @@ bool commenceParVoyelle(String nom) {
       : _voyelles.contains(premiere);
 }
 
-String _elide(String mot, String elide, String nom) {
-  if (LocaleSettings.currentLocale != AppLocale.fr) {
+/// Vrai quand la langue active n'est pas le francais et traduit [cle]
+/// elle-meme (sans repli sur le francais).
+bool _traduiteHorsFrancais(String? cle) =>
+    cle != null &&
+    LocaleSettings.currentLocale != AppLocale.fr &&
+    t.$meta.getTranslation(cle) != null;
+
+String _elide(String mot, String elide, String nom, String? cle) {
+  if (_traduiteHorsFrancais(cle)) {
     return nom;
   }
   return commenceParVoyelle(nom) ? "$elide'$nom" : '$mot $nom';

@@ -1,5 +1,6 @@
 // Captures de recette de LIB-DIR-1 (decisions du 05/10, par delegation du
-// directeur) : vraies polices, vrai theme, clair.
+// directeur) : vraies polices, vrai theme, clair et sombre (suffixe
+// « _sombre »).
 //
 // - Journee enseignant a 320 x2 : la carte « A terminer » (pastille
 //   « Obligatoire »), avec 1 et 4 cahiers ; la journee de la demonstration
@@ -169,15 +170,58 @@ void main() {
   group('Capture : LIB-DIR-1', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
 
-    for (final int nombre in const <int>[1, 4]) {
-      testWidgets('journee, A terminer, $nombre cahier(s), 320 x2', (
+    for (final ThemeMode mode in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
+      final String suffixe = mode == ThemeMode.dark ? '_sombre' : '';
+      for (final int nombre in const <int>[1, 4]) {
+        testWidgets(
+          'journee, A terminer, $nombre cahier(s), 320 x2, ${mode.name}',
+          (WidgetTester tester) async {
+            fixerVueCapture(tester, const Size(320, 900), 1);
+            await tester.pumpWidget(
+              hoteCapture(
+                const JourneePage(),
+                surcharges: _surchargesJournee(_quatre.take(nombre).toList()),
+                themeMode: mode,
+                echelleTexte: 2,
+              ),
+            );
+            await stabiliser(tester);
+            expect(tester.takeException(), isNull);
+            final Finder titre = find.text(t.enseignant.journee.aTerminer);
+            await tester.ensureVisible(titre);
+            await stabiliser(tester);
+            final Finder bloc = find
+                .ancestor(of: titre, matching: find.byType(Column))
+                .first;
+            expect(
+              find.descendant(
+                of: bloc,
+                matching: find.text(t.enseignant.cahier.obligatoire),
+              ),
+              findsOneWidget,
+            );
+            _sansCoupure(tester, bloc);
+            debugPrint(
+              'PNG ${await capturer(tester, 'journee_a_terminer_${nombre}_320x2$suffixe')}',
+            );
+          },
+        );
+      }
+
+      testWidgets('journee de la demonstration (ruban), 320 x2, ${mode.name}', (
         WidgetTester tester,
       ) async {
         fixerVueCapture(tester, const Size(320, 900), 1);
         await tester.pumpWidget(
           hoteCapture(
-            const JourneePage(),
-            surcharges: _surchargesJournee(_quatre.take(nombre).toList()),
+            const CoquilleEnseignantDemo(
+              ecran: EcranDemoEnseignant.aujourdhui,
+              etat: EtatDemoEnseignant.nominal,
+            ),
+            surcharges: <Override>[
+              depotRapportsProvider.overrideWithValue(FauxDepotRapports()),
+            ],
+            themeMode: mode,
             echelleTexte: 2,
           ),
         );
@@ -186,136 +230,124 @@ void main() {
         final Finder titre = find.text(t.enseignant.journee.aTerminer);
         await tester.ensureVisible(titre);
         await stabiliser(tester);
-        final Finder bloc = find
-            .ancestor(of: titre, matching: find.byType(Column))
-            .first;
-        expect(
-          find.descendant(
-            of: bloc,
-            matching: find.text(t.enseignant.cahier.obligatoire),
-          ),
-          findsOneWidget,
-        );
-        _sansCoupure(tester, bloc);
-        debugPrint(
-          'PNG ${await capturer(tester, 'journee_a_terminer_${nombre}_320x2')}',
-        );
-      });
-    }
-
-    testWidgets('journee de la demonstration (ruban), 320 x2', (
-      WidgetTester tester,
-    ) async {
-      fixerVueCapture(tester, const Size(320, 900), 1);
-      await tester.pumpWidget(
-        hoteCapture(
-          const CoquilleEnseignantDemo(
-            ecran: EcranDemoEnseignant.aujourdhui,
-            etat: EtatDemoEnseignant.nominal,
-          ),
-          surcharges: <Override>[
-            depotRapportsProvider.overrideWithValue(FauxDepotRapports()),
-          ],
-          echelleTexte: 2,
-        ),
-      );
-      await stabiliser(tester);
-      expect(tester.takeException(), isNull);
-      final Finder titre = find.text(t.enseignant.journee.aTerminer);
-      await tester.ensureVisible(titre);
-      await stabiliser(tester);
-      expect(tester.takeException(), isNull);
-      _sansCoupure(
-        tester,
-        find.ancestor(of: titre, matching: find.byType(Column)).first,
-      );
-      debugPrint('PNG ${await capturer(tester, 'journee_demo_320x2')}');
-    });
-
-    testWidgets('page A terminer vide, 320 x2', (WidgetTester tester) async {
-      fixerVueCapture(tester, const Size(320, 900), 1);
-      await tester.pumpWidget(
-        hoteCapture(
-          const ListeATerminerPage(),
-          surcharges: <Override>[
-            ..._surchargesJournee(const <CahierEnRetard>[]),
-            cahiersEnRetardProvider.overrideWith(
-              (Ref _) async => const <CahierEnRetard>[],
-            ),
-          ],
-          echelleTexte: 2,
-        ),
-      );
-      await stabiliser(tester);
-      expect(
-        find.text('Tous vos cahiers de transmission sont terminés.'),
-        findsOneWidget,
-      );
-      _sansCoupure(tester, find.byKey(cadreCapture));
-      debugPrint('PNG ${await capturer(tester, 'a_terminer_vide_320x2')}');
-    });
-
-    testWidgets('cahier de transmission, titre, 320 x2', (
-      WidgetTester tester,
-    ) async {
-      fixerVueCapture(tester, const Size(320, 900), 1);
-      await tester.pumpWidget(
-        hoteCapture(
-          const CahierPage(seanceId: DonneesEnseignantDemo.cahierDemoSeanceId),
-          surcharges: <Override>[
-            ...surchargesCoquilleEnseignantDemo(EtatDemoEnseignant.nominal),
-            soumissionCahierProvider.overrideWithValue(
-              const SoumissionCahierDemo(),
-            ),
-            horlogeCahierProvider.overrideWithValue(
-              () => DonneesEnseignantDemo.maintenant,
-            ),
-            depotRapportsProvider.overrideWithValue(FauxDepotRapports()),
-          ],
-          echelleTexte: 2,
-        ),
-      );
-      await stabiliser(tester);
-      expect(tester.takeException(), isNull);
-      // Le titre est « Cahier de transmission {deClasse} » (cahierLigne).
-      final Finder titre = find.textContaining(
-        t.enseignant.cahier.titre,
-        findRichText: true,
-      );
-      expect(titre, findsWidgets);
-      _sansCoupure(tester, titre.first);
-      debugPrint('PNG ${await capturer(tester, 'cahier_titre_320x2')}');
-    });
-
-    for (final (String, Size) vue in const <(String, Size)>[
-      ('390', Size(390, 900)),
-      ('1440', Size(1440, 900)),
-    ]) {
-      testWidgets('comptes, ${vue.$1}', (WidgetTester tester) async {
-        fixerVueCapture(tester, vue.$2, 1);
-        await tester.pumpWidget(
-          hoteCapture(const ComptesPage(), surcharges: _surchargesComptes()),
-        );
-        await stabiliser(tester);
         expect(tester.takeException(), isNull);
-        debugPrint('PNG ${await capturer(tester, 'comptes_${vue.$1}')}');
+        _sansCoupure(
+          tester,
+          find.ancestor(of: titre, matching: find.byType(Column)).first,
+        );
+        debugPrint(
+          'PNG ${await capturer(tester, 'journee_demo_320x2$suffixe')}',
+        );
       });
 
-      testWidgets('classes, ${vue.$1}', (WidgetTester tester) async {
-        fixerVueCapture(tester, vue.$2, 1);
+      testWidgets('page A terminer vide, 320 x2, ${mode.name}', (
+        WidgetTester tester,
+      ) async {
+        fixerVueCapture(tester, const Size(320, 900), 1);
         await tester.pumpWidget(
           hoteCapture(
-            const GroupesPage(),
-            surcharges: surchargesFormL2(
-              comptes: FauxComptesFormL2(comptesFormL2),
+            const ListeATerminerPage(),
+            surcharges: <Override>[
+              ..._surchargesJournee(const <CahierEnRetard>[]),
+              cahiersEnRetardProvider.overrideWith(
+                (Ref _) async => const <CahierEnRetard>[],
+              ),
+            ],
+            themeMode: mode,
+            echelleTexte: 2,
+          ),
+        );
+        await stabiliser(tester);
+        expect(
+          find.text('Tous vos cahiers de transmission sont terminés.'),
+          findsOneWidget,
+        );
+        _sansCoupure(tester, find.byKey(cadreCapture));
+        debugPrint(
+          'PNG ${await capturer(tester, 'a_terminer_vide_320x2$suffixe')}',
+        );
+      });
+
+      testWidgets('cahier de transmission, titre, 320 x2, ${mode.name}', (
+        WidgetTester tester,
+      ) async {
+        fixerVueCapture(tester, const Size(320, 900), 1);
+        await tester.pumpWidget(
+          hoteCapture(
+            const CahierPage(
+              seanceId: DonneesEnseignantDemo.cahierDemoSeanceId,
             ),
+            surcharges: <Override>[
+              ...surchargesCoquilleEnseignantDemo(EtatDemoEnseignant.nominal),
+              soumissionCahierProvider.overrideWithValue(
+                const SoumissionCahierDemo(),
+              ),
+              horlogeCahierProvider.overrideWithValue(
+                () => DonneesEnseignantDemo.maintenant,
+              ),
+              depotRapportsProvider.overrideWithValue(FauxDepotRapports()),
+            ],
+            themeMode: mode,
+            echelleTexte: 2,
           ),
         );
         await stabiliser(tester);
         expect(tester.takeException(), isNull);
-        expect(find.text('Classes'), findsWidgets);
-        debugPrint('PNG ${await capturer(tester, 'classes_${vue.$1}')}');
+        // Le titre est « Cahier de transmission {deClasse} » (cahierLigne).
+        final Finder titre = find.textContaining(
+          t.enseignant.cahier.titre,
+          findRichText: true,
+        );
+        expect(titre, findsWidgets);
+        _sansCoupure(tester, titre.first);
+        debugPrint(
+          'PNG ${await capturer(tester, 'cahier_titre_320x2$suffixe')}',
+        );
       });
+
+      for (final (String, Size) vue in const <(String, Size)>[
+        ('390', Size(390, 900)),
+        ('1440', Size(1440, 900)),
+      ]) {
+        testWidgets('comptes, ${vue.$1}, ${mode.name}', (
+          WidgetTester tester,
+        ) async {
+          fixerVueCapture(tester, vue.$2, 1);
+          await tester.pumpWidget(
+            hoteCapture(
+              const ComptesPage(),
+              surcharges: _surchargesComptes(),
+              themeMode: mode,
+            ),
+          );
+          await stabiliser(tester);
+          expect(tester.takeException(), isNull);
+          debugPrint(
+            'PNG ${await capturer(tester, 'comptes_${vue.$1}$suffixe')}',
+          );
+        });
+
+        testWidgets('classes, ${vue.$1}, ${mode.name}', (
+          WidgetTester tester,
+        ) async {
+          fixerVueCapture(tester, vue.$2, 1);
+          await tester.pumpWidget(
+            hoteCapture(
+              const GroupesPage(),
+              surcharges: surchargesFormL2(
+                comptes: FauxComptesFormL2(comptesFormL2),
+              ),
+              themeMode: mode,
+            ),
+          );
+          await stabiliser(tester);
+          expect(tester.takeException(), isNull);
+          expect(find.text('Classes'), findsWidgets);
+          debugPrint(
+            'PNG ${await capturer(tester, 'classes_${vue.$1}$suffixe')}',
+          );
+        });
+      }
     }
   });
 }

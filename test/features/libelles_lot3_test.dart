@@ -93,7 +93,8 @@ void main() {
   test('elision : « de » et « que » devant une voyelle ou un h', () {
     expect(deDevant('Aya'), "d'Aya");
     expect(deDevant('Élodie'), "d'Élodie");
-    expect(deDevant('Hadi'), "d'Hadi");
+    // Jamais devant h (revue croisee de LIB-DIR-1, 08/10).
+    expect(deDevant('Hadi'), 'de Hadi');
     expect(deDevant('Nour'), 'de Nour');
     expect(queDevant('Aya'), "qu'Aya");
     expect(queDevant('Ibrahim'), "qu'Ibrahim");

@@ -1,10 +1,11 @@
 // Decision « fi-elision » du 05/10 (FI-R4-08, par delegation du directeur) :
-// « de » et « que » devant un nom s'elident devant une voyelle ou un h muet,
-// dans toute l'application (hors voies Communications et Comptable, et hors
+// « de » et « que » devant un nom s'elident devant une voyelle, dans toute
+// l'application (jamais devant h : revue croisee du 08/10) (hors voies Communications et Comptable, et hors
 // Finance, deja faite sur sa branche).
 //
 // - la regle de lib/core/i18n/elision.dart, y compris « y » consonne ;
-// - hors du francais, le nom reste seul (la traduction n'a pas de « de ») ;
+// - hors du francais : le nom seul pour une cle traduite, l'elision
+//   francaise pour un texte de repli (voir aussi elision_repli_arabe_test) ;
 // - des phrases reelles, ecrites en dur ;
 // - aucun texte francais ne garde « de {prenom} » ou « que {prenom} ».
 
@@ -36,8 +37,6 @@ bool _horsPerimetre(String cle) =>
     cle.startsWith('com.') ||
     cle.startsWith('comptable.') ||
     cle == 'ficheEleve.acces.ligne' ||
-    cle == 'tuteur.accueil.accesJusqua' ||
-    cle == 'tuteur.accueil.accesSansFin' ||
     // Les dossiers ont leur propre elision, par des cles « ...Elide » et
     // sans h (« de Hana », textes_dossier.dart) : la cle « de » ne sert
     // qu'a un nom qui commence par une consonne.
@@ -48,18 +47,20 @@ void main() {
   tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
 
   group('la regle', () {
-    test('voyelle, accent et h muet : « d\' » et « qu\' »', () {
+    test('voyelle et accent : « d\' » et « qu\' »', () {
       expect(deDevant('Aïcha'), "d'Aïcha");
       expect(deDevant('Élodie'), "d'Élodie");
       expect(deDevant('Ibrahim'), "d'Ibrahim");
       expect(deDevant('Omar'), "d'Omar");
-      expect(deDevant('Hadi'), "d'Hadi");
       expect(deDevant('Al-Badr'), "d'Al-Badr");
       expect(queDevant('Aïcha'), "qu'Aïcha");
       expect(queDevant('Ibrahim'), "qu'Ibrahim");
     });
 
-    test('consonne : « de » et « que »', () {
+    test('consonne et h (aspire) : « de » et « que »', () {
+      expect(deDevant('Hamza'), 'de Hamza');
+      expect(deDevant('Hana'), 'de Hana');
+      expect(queDevant('Hadi'), 'que Hadi');
       expect(deDevant('Nour'), 'de Nour');
       expect(deDevant('Bilal'), 'de Bilal');
       expect(queDevant('Nour'), 'que Nour');
@@ -72,12 +73,72 @@ void main() {
       expect(deDevant('Yvette'), "d'Yvette");
     });
 
-    test('hors du francais, le nom reste seul', () async {
+    test('en arabe, une cle traduite recoit le nom seul', () async {
       // L'arabe est charge a la demande (import differe) : setLocale attend.
       await LocaleSettings.setLocale(AppLocale.ar);
       expect(LocaleSettings.currentLocale, AppLocale.ar);
-      expect(deDevant('Aïcha'), 'Aïcha');
-      expect(queDevant('Nour'), 'Nour');
+      const String cle = 'classe.entree.rejoindreLecteur';
+      expect(deDevant('Al-Badr', cle: cle), 'Al-Badr');
+      expect(
+        t.classe.entree.rejoindreLecteur(
+          deClasse: deDevant('Al-Badr', cle: cle),
+        ),
+        'الانضمام إلى حصة Al-Badr',
+      );
+    });
+
+    test('en arabe, une cle NON traduite garde l elision francaise', () async {
+      await LocaleSettings.setLocale(AppLocale.ar);
+      // Repli francais : la cle passee n'est pas traduite en arabe.
+      expect(deDevant('Aïcha', cle: 'ficheEleve.lignes.appareils'), "d'Aïcha");
+      expect(queDevant('Nour'), 'que Nour');
+    });
+
+    test('en francais, la cle ne change rien', () {
+      expect(
+        deDevant('Al-Badr', cle: 'classe.entree.rejoindreLecteur'),
+        "d'Al-Badr",
+      );
+    });
+
+    test('les cles traduites en arabe qui recoivent un nom elide passent '
+        'leur cle a deDevant', () {
+      // Chaque cle arabe qui porte un parametre `{de...}` / `{que...}`, ou
+      // un `{classe}` rempli par deDevant cote francais, doit etre appelee
+      // avec `cle:` : sinon l'arabe recevrait « d'Al-Badr ».
+      final Map<String, dynamic> ar = jsonDecode(
+        File('assets/i18n/ar.i18n.json').readAsStringSync(),
+      ) as Map<String, dynamic>;
+      final Set<String> trouvees = <String>{};
+      void parcourir(String chemin, Object? noeud) {
+        if (noeud is Map<String, dynamic>) {
+          noeud.forEach(
+            (String k, Object? v) =>
+                parcourir(chemin.isEmpty ? k : '$chemin.$k', v),
+          );
+        } else if (noeud is String &&
+            RegExp(r'\{(?:de|que)[A-Z]\w*\}').hasMatch(noeud)) {
+          trouvees.add(chemin);
+        }
+      }
+
+      parcourir('', ar);
+      const Set<String> appeleesAvecCle = <String>{
+        'classe.entree.rejoindreLecteur',
+      };
+      expect(trouvees.difference(appeleesAvecCle), isEmpty);
+      // Et les appels du code passent bien leur cle.
+      final String code = <String>[
+        'lib/core/tc_horloge/emplacement_entree.dart',
+        'lib/features/journee/journee_page.dart',
+      ].map((String f) => File(f).readAsStringSync()).join();
+      for (final String cle in <String>[
+        'classe.entree.rejoindreLecteur',
+        'enseignant.journee.cahierObligatoire',
+        'enseignant.journee.voirCahier',
+      ]) {
+        expect(code, contains("cle: '$cle'"), reason: cle);
+      }
     });
   });
 
