@@ -606,14 +606,19 @@ void main() {
           RegExp(r':(\w+)'),
           (Match m) => 'id-${m[1]}',
         );
+        // Q-2 = a : `/enseignant/contrat` ne s'ouvre qu'a l'enseignant qui
+        // doit signer de nouveau ; cet etat compte comme une session de plus.
         final bool atteint = sessions.any(
-          (SessionState s) =>
-              deciderRedirection(
-                session: s,
-                cheminDemande: chemin,
-                maintenant: maintenant,
-              ) ==
-              null,
+          (SessionState s) => <bool>[false, true].any(
+            (bool resignature) =>
+                deciderRedirection(
+                  session: s,
+                  cheminDemande: chemin,
+                  maintenant: maintenant,
+                  resignatureContrat: resignature,
+                ) ==
+                null,
+          ),
         );
         expect(atteint, isTrue, reason: '$modele : aucune session n y entre');
       }
