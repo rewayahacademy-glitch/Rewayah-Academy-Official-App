@@ -43,6 +43,8 @@ import 'package:rewayah_academy/features/foyer/place_adulte.dart';
 import 'package:rewayah_academy/features/ma_classe_adulte/ma_classe_adulte_page.dart';
 import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
+import '../../support/harnais.dart' show sansPersonneConnectee;
+
 void main() {
   Widget app({
     required Widget child,
@@ -51,6 +53,8 @@ void main() {
   }) => ProviderScope(
     overrides: <Override>[
       horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(horsLigne)),
+      // La source de session, comme l'application la pose toujours (R7-04).
+      sansPersonneConnectee(),
       ...overrides,
     ],
     child: TranslationProvider(
@@ -72,6 +76,9 @@ void main() {
     addTearDown(routeur.dispose);
     await tester.pumpWidget(
       ProviderScope(
+        // La source de session, comme l'application la pose toujours :
+        // les lectures d'argent suivent la personne connectee (R7-04).
+        overrides: <Override>[sansPersonneConnectee()],
         child: TranslationProvider(
           child: MaterialApp.router(
             theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),

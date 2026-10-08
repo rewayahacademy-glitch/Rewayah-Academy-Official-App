@@ -26,25 +26,33 @@ final FutureProvider<IdentiteTitulaire> identiteTitulaireProvider =
       return ref.watch(portIdentiteTitulaireProvider).lire();
     });
 
+// Les trois lectures d'argent et d'acces ci-dessous suivent la personne
+// connectee (revue FI-VAGUE-CORR-R, R7-04) : sur un appareil partage, la
+// personne suivante declenche une nouvelle lecture, jamais la valeur gardee
+// de la precedente (meme precedent que `monAccesProvider`).
+
 /// L'acces de chaque profil eleve du foyer.
 final FutureProvider<List<AccesBeneficiaire>> accesFoyerProvider =
-    FutureProvider<List<AccesBeneficiaire>>(
-      (Ref ref) => ref.watch(portAccesFoyerProvider).acces(),
-    );
+    FutureProvider<List<AccesBeneficiaire>>((Ref ref) {
+      surveillerPersonneConnectee(ref);
+      return ref.watch(portAccesFoyerProvider).acces();
+    });
 
 /// L'historique des paiements du foyer (indisponible tant que DB-CPT-03
 /// manque).
 final FutureProvider<List<PaiementFoyer>> paiementsFoyerProvider =
-    FutureProvider<List<PaiementFoyer>>(
-      (Ref ref) => ref.watch(portPaiementsFoyerProvider).historique(),
-    );
+    FutureProvider<List<PaiementFoyer>>((Ref ref) {
+      surveillerPersonneConnectee(ref);
+      return ref.watch(portPaiementsFoyerProvider).historique();
+    });
 
 /// Les soldes des beneficiaires du foyer, pour le titulaire (EA-9 ;
 /// indisponibles tant que FI-BR-03, qui remplace EA-BR-23, manque).
 final FutureProvider<SoldesFoyer> soldesFoyerProvider =
-    FutureProvider<SoldesFoyer>(
-      (Ref ref) => ref.watch(portPaiementsFoyerProvider).soldes(),
-    );
+    FutureProvider<SoldesFoyer>((Ref ref) {
+      surveillerPersonneConnectee(ref);
+      return ref.watch(portPaiementsFoyerProvider).soldes();
+    });
 
 /// Le canal d'aide de l'academie (indisponible tant que DB-CPT-07 manque).
 final FutureProvider<CanalSupport?> canalSupportProvider =

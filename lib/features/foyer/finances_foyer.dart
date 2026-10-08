@@ -45,10 +45,12 @@ final FutureProvider<FinancesFoyer> financesFoyerProvider =
 
 /// La politique commerciale active, pour le nombre de seances d'essai : une
 /// valeur commerciale n'est jamais ecrite dans un ecran (guide §8 F1).
+/// Liee a la personne connectee (R7-04), comme les finances du foyer.
 final FutureProvider<PolitiqueCommerciale> politiqueActiveProvider =
-    FutureProvider<PolitiqueCommerciale>(
-      (Ref ref) => ref.watch(portPolitiquesCommercialesProvider).active(),
-    );
+    FutureProvider<PolitiqueCommerciale>((Ref ref) {
+      surveillerPersonneConnectee(ref);
+      return ref.watch(portPolitiquesCommercialesProvider).active();
+    });
 
 /// La finance de chaque profil rendu, par identifiant ; vide tant que la
 /// lecture n'a pas abouti (aucun bloc d'argent plutot qu'un bloc faux).

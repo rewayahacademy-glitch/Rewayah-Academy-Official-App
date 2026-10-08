@@ -9,6 +9,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override, ProviderListenable;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/capacites/port_acces_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_finance_direction.dart';
 import 'package:rewayah_academy/core/capacites/port_mes_finances.dart';
 import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
@@ -22,6 +23,7 @@ import 'package:rewayah_academy/core/finance/politique_commerciale.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/features/admin_finance/politiques_commerciales.dart';
 import 'package:rewayah_academy/features/admin_finance/vue_globale_finance.dart';
+import 'package:rewayah_academy/features/compte/donnees_compte.dart';
 import 'package:rewayah_academy/features/demo/finance_demo.dart';
 import 'package:rewayah_academy/features/foyer/fiche/mouvements_page.dart';
 import 'package:rewayah_academy/features/foyer/finances_foyer.dart';
@@ -52,6 +54,31 @@ class _Paiements extends PaiementsFoyerFinanceDemo {
   Future<List<MouvementFoyer>> derniersMouvements({int limite = 3}) {
     lectures++;
     return super.derniersMouvements(limite: limite);
+  }
+
+  @override
+  Future<List<PaiementFoyer>> historique() {
+    lectures++;
+    return super.historique();
+  }
+
+  @override
+  Future<SoldesFoyer> soldes() {
+    lectures++;
+    return super.soldes();
+  }
+}
+
+/// L'acces des profils du foyer, lectures comptees.
+class _Acces extends AccesFoyerFinanceDemo {
+  _Acces() : super(JeuFoyerFinance.unARegulariser);
+
+  int lectures = 0;
+
+  @override
+  Future<List<AccesBeneficiaire>> acces() {
+    lectures++;
+    return super.acces();
   }
 }
 
@@ -137,8 +164,10 @@ void main() {
   late _Revenus revenus;
   late _Direction direction;
   late _Politiques politiques;
+  late _Acces accesFoyer;
 
   setUp(() {
+    accesFoyer = _Acces();
     paiements = _Paiements();
     recharge = _Recharge();
     mesFinances = _MesFinances();
@@ -187,6 +216,19 @@ void main() {
       politiquesCommercialesProvider,
       () => politiques.lectures,
     ),
+    // Contre-revue FI-VAGUE-CORR-R (R7-04, mineur 2) : l'extension Foyer.
+    ('acces du foyer (Compte)', accesFoyerProvider, () => accesFoyer.lectures),
+    (
+      'historique des paiements du foyer (Compte)',
+      paiementsFoyerProvider,
+      () => paiements.lectures,
+    ),
+    ('soldes du foyer (Compte)', soldesFoyerProvider, () => paiements.lectures),
+    (
+      'politique active (Foyer)',
+      politiqueActiveProvider,
+      () => politiques.lectures,
+    ),
   ];
 
   for (final (
@@ -207,6 +249,7 @@ void main() {
           portRevenusEnseignantProvider.overrideWithValue(revenus),
           portFinanceDirectionProvider.overrideWithValue(direction),
           portPolitiquesCommercialesProvider.overrideWithValue(politiques),
+          portAccesFoyerProvider.overrideWithValue(accesFoyer),
         ],
       );
       addTearDown(conteneur.dispose);

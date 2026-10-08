@@ -190,7 +190,10 @@ Future<GoRouter> monterAdulteFi(
   addTearDown(routeur.dispose);
   await tester.pumpWidget(
     ProviderScope(
-      overrides: surcharges,
+      // La source de session, comme l'application la pose toujours
+      // (`main.dart`) : les lectures d'argent suivent la personne connectee
+      // (R7-04).
+      overrides: <Override>[sansPersonneConnectee(), ...surcharges],
       child: TranslationProvider(
         child: MaterialApp.router(
           theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
