@@ -5,9 +5,13 @@
 // Avant : le radio etait peint dans un `Stack`, en haut a la fin de la
 // carte ; a 320 de large, la carte n'a que 92 de contenu et le radio
 // recouvrait le disque de l'icone (et, en texte double, le libelle).
-// Contre-epreuve faite : ce test echoue sur l'ancien `_contenuVertical`.
+// Et en texte double a 320, « homme » se coupait en « hom / me » : les
+// cartes passent en liste quand un mot ne tient pas dans une carte.
+// Contre-epreuve faite : ce test echoue sur l'ancien rendu (recouvrement a
+// 320, mot coupe a 320 x2).
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
@@ -16,6 +20,22 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/choice_card_group.dart';
 
 import '../../support/garde_interface.dart';
+
+/// Aucun mot de [libelle] n'est coupe sur deux lignes.
+void _verifierMotsEntiers(WidgetTester tester, String libelle) {
+  final RenderParagraph rendu = tester.renderObject<RenderParagraph>(
+    find.text(libelle),
+  );
+  int debut = 0;
+  for (final String mot in libelle.split(' ')) {
+    final List<TextBox> boites = rendu.getBoxesForSelection(
+      TextSelection(baseOffset: debut, extentOffset: debut + mot.length),
+    );
+    final Set<double> lignes = <double>{for (final TextBox b in boites) b.top};
+    expect(lignes, hasLength(1), reason: '« $mot » est coupe');
+    debut += mot.length + 1;
+  }
+}
 
 void main() {
   for (final (double, double, TextDirection) cas
@@ -27,7 +47,7 @@ void main() {
         (1440, 1, TextDirection.ltr),
       ]) {
     testWidgets('${cas.$1.toInt()} x${cas.$2.toInt()} ${cas.$3.name} : le '
-        'radio ne recouvre ni l icone ni le libelle', (
+        'radio ne recouvre ni l icone ni le libelle, aucun mot coupe', (
       WidgetTester tester,
     ) async {
       tester.view.physicalSize = Size(cas.$1, 900);
@@ -51,15 +71,15 @@ void main() {
                     autoriserSaisieLibre: false,
                     coteACote: true,
                     valeurInitiale: const ReponseChoix(valeurs: <String>{'h'}),
-                    options: <OptionChoix>[
+                    options: const <OptionChoix>[
                       OptionChoix(
                         valeur: 'h',
-                        libelle: 'Homme',
+                        libelle: 'Un homme',
                         icone: AppIcons.homme,
                       ),
                       OptionChoix(
                         valeur: 'f',
-                        libelle: 'Femme',
+                        libelle: 'Une femme',
                         icone: AppIcons.femme,
                       ),
                     ],
@@ -76,8 +96,8 @@ void main() {
       final Finder radios = find.byType(RadioChoix);
       expect(radios, findsNWidgets(2));
       for (final (int i, String libelle) in <(int, String)>[
-        (0, 'Homme'),
-        (1, 'Femme'),
+        (0, 'Un homme'),
+        (1, 'Une femme'),
       ]) {
         final Finder icone = find.byIcon(
           i == 0 ? AppIcons.homme.actif : AppIcons.femme.repos,
@@ -98,6 +118,7 @@ void main() {
           find.text(libelle),
           disque,
         ]);
+        _verifierMotsEntiers(tester, libelle);
       }
     });
   }

@@ -71,6 +71,8 @@ class ZoneSaisie extends StatelessWidget {
     this.autofocus = false,
     this.majuscules = TextCapitalization.sentences,
     this.onChanged,
+    this.actionClavier = TextInputAction.newline,
+    this.onSubmitted,
   }) : assert(minLignes >= 1 && maxLignes >= minLignes);
 
   /// Le texte saisi.
@@ -120,6 +122,15 @@ class ZoneSaisie extends StatelessWidget {
 
   /// Chaque changement du texte.
   final ValueChanged<String>? onChanged;
+
+  /// La touche d'action du clavier : par defaut, a la ligne. `done` pour un
+  /// champ court (une position de reprise) dont le texte passe seulement a
+  /// la ligne a l'ecran, sans retour saisi : il se lit en entier a 320 en
+  /// texte double au lieu de defiler de cote.
+  final TextInputAction actionClavier;
+
+  /// La validation au clavier (avec [actionClavier] autre que `newline`).
+  final ValueChanged<String>? onSubmitted;
 
   /// La place reservee du bouton d'envoi tant que le champ est vide (tests).
   static const Key placeEnvoiKey = ValueKey<String>('zone-saisie-place-envoi');
@@ -171,8 +182,11 @@ class ZoneSaisie extends StatelessWidget {
       readOnly: lectureSeule,
       minLines: min,
       maxLines: max,
-      keyboardType: TextInputType.multiline,
-      textInputAction: TextInputAction.newline,
+      keyboardType: actionClavier == TextInputAction.newline
+          ? TextInputType.multiline
+          : TextInputType.text,
+      textInputAction: actionClavier,
+      onSubmitted: onSubmitted,
       textCapitalization: majuscules,
       onChanged: onChanged,
       decoration: InputDecoration(

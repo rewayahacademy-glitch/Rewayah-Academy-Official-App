@@ -17,9 +17,11 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/enseignant/depot_cahiers.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/choice_card_group.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/features/demo/controleur_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
@@ -169,6 +171,55 @@ void main() {
         });
       }
 
+      // Les cartes cote a cote de l'etape Genre (radio dans le flux).
+      testWidgets('cartes cote a cote $s', (WidgetTester tester) async {
+        _vue(tester, c);
+        await tester.pumpWidget(
+          TranslationProvider(
+            child: MaterialApp(
+              debugShowCheckedModeBanner: false,
+              theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+              darkTheme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+              themeMode: c.$3,
+              home: Directionality(
+                textDirection: c.$4,
+                child: Scaffold(
+                  body: SafeArea(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(16),
+                      child: ChoiceCardGroup(
+                        autoriserSaisieLibre: false,
+                        coteACote: true,
+                        valeurInitiale: const ReponseChoix(
+                          valeurs: <String>{'h'},
+                        ),
+                        options: <OptionChoix>[
+                          OptionChoix(
+                            valeur: 'h',
+                            libelle: t.inscription.genreHomme,
+                            icone: AppIcons.homme,
+                          ),
+                          OptionChoix(
+                            valeur: 'f',
+                            libelle: t.inscription.genreFemme,
+                            icone: AppIcons.femme,
+                          ),
+                        ],
+                        onChange: (ReponseChoix _) {},
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+        await _stabiliser(tester);
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'superpos1_${_phase}_genre_$s')}',
+        );
+      });
+
       testWidgets('cahier, clavier ouvert $s', (WidgetTester tester) async {
         _vue(tester, c, clavier: 300);
         final GoRouter routeur = GoRouter(
@@ -177,9 +228,11 @@ void main() {
         );
         await tester.pumpWidget(_routeur(routeur, c));
         await _stabiliser(tester);
-        final Finder champ = find.byType(TextField).first;
+        final Finder champ = find.byKey(
+          const ValueKey<String>('cahier-reprise'),
+        );
         await tester.ensureVisible(champ);
-        await tester.enterText(champ, 'Bonne séance.\nRévision à faire.');
+        await tester.enterText(champ, 'Al-Mulk, verset 12');
         await _stabiliser(tester);
         debugPrint(
           'PNG ${await capturerVue(tester, 'superpos1_${_phase}_cahier_$s')}',

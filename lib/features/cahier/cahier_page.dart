@@ -298,27 +298,24 @@ class _CahierState extends ConsumerState<_Cahier> {
           child: Text(t.enseignant.cahier.reprise, style: textes.titleSmall),
         ),
         Ecart.vSm,
-        Semantics(
-          label: t.enseignant.cahier.reprise,
-          child: TextField(
-            key: const ValueKey<String>('cahier-reprise'),
-            controller: _reprise,
-            focusNode: _focusReprise,
-            textInputAction: TextInputAction.done,
-            onChanged: (String valeur) {
-              if (_repriseManquante && valeur.trim().isNotEmpty) {
-                setState(() => _repriseManquante = false);
-              }
-            },
-            decoration: InputDecoration(
-              helperText: t.enseignant.cahier.repriseDetail,
-              helperMaxLines: 2,
-              errorText: _repriseManquante
-                  ? t.enseignant.cahier.repriseRequise
-                  : null,
-              errorMaxLines: 3,
-            ),
-          ),
+        // SUPERPOS-1 : zone de saisie partagee ; a 320 en texte double, la
+        // position saisie defilait de cote dans une ligne (« l-Mulk, verset
+        // 12 ») et l'aide se coupait (« d'un rempla… ») : le texte passe a
+        // la ligne, l'aide est entiere.
+        ZoneSaisie(
+          cleChamp: const ValueKey<String>('cahier-reprise'),
+          controleur: _reprise,
+          noeud: _focusReprise,
+          libelle: t.enseignant.cahier.reprise,
+          libelleVisible: false,
+          explication: t.enseignant.cahier.repriseDetail,
+          erreur: _repriseManquante ? t.enseignant.cahier.repriseRequise : null,
+          actionClavier: TextInputAction.done,
+          onChanged: (String valeur) {
+            if (_repriseManquante && valeur.trim().isNotEmpty) {
+              setState(() => _repriseManquante = false);
+            }
+          },
         ),
         Ecart.vXxl,
         Text(
