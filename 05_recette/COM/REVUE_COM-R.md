@@ -559,3 +559,74 @@ reste que des mineurs et des restes déclarés, dont aucun ne bloque `verifie`.
 - Statut de preuve : `présent dans le code` et `testé localement`. Rien n'est branché, testé sur
   staging ni déployé ; `verifie` ne vaut ni fusion dans `main` ni mise en production.
 - Avant HU-1 : données de démonstration de la Classe du tuteur cohérentes ; relecture arabe.
+
+## 10. Contre-vérification du tour 7 de COM-RC (COM-R-6)
+
+Date : 8 octobre 2026. Session 01HS7t3c, qui n'a écrit aucun code COM. Lecture seule. Ordre du
+directeur du 08/10 : tout défaut est corrigé par la session sans lui être soumis ; la relecture
+arabe par un agent remplace celle d'un arabophone.
+
+Périmètre :
+- code : `ui/communications-v1` @ `5c0bffa3`, diff depuis `7356160b` (7 commits, 78 fichiers) ;
+- captures : `pilotage/tuteur-v1` @ `0d33c946`, 200 PNG, section « Après COM-RC tour 7 » de
+  `COM-CAPT.md`.
+
+Méthode : relecture du diff et des tests ; comparaison scriptée des fichiers `fr` et `ar` et des
+sources de libellés ; échantillon de 30 libellés arabes ; captures régénérées et comparées octet
+par octet ; huit PNG lus.
+
+### 10.1 Chiffres rejoués (worktree propre à `5c0bffa3`)
+
+| Contrôle | Annoncé | Rejoué |
+| :--- | :--- | :--- |
+| `dart analyze --fatal-infos` | 0 | 0 |
+| `flutter test -j 3` | +6516, ~3095, 0 échec | +6516, ~3095, 0 échec (« All tests passed! », 14 min 51 s) |
+| `verifier_jetons` | 39 | 39 |
+| `verifier_revue` | 1627 | 1627 |
+| Captures (`communications_capture_test`, `com_rc7_k_capture_test`) | 200 à `5c0bffa3` | 200 régénérées, **200 identiques octet par octet** à `0d33c946` |
+
+### 10.2 Constats attendus
+
+| # | État | Preuve |
+| :--- | :--- | :--- |
+| §9.3-1 (N-9 périmé dans COM-CAPT) | **corrigé** | `708ef8f5` : `COM-CAPT.md:595`, `:606` disent N-9 corrigé |
+| §9.3-2 (3 libellés hors ligne) | **corrigé** | `7356160b` : « relu conforme par COM-R-5, validé par délégation le 05/10 » |
+| « Envoyer » dans la colonne à 768 et 1440 | **corrigé** | `fil_discussion.dart` : bulles reçues pleine colonne, bulles de soi à 92 % au bord d'« Envoyer », téléphone à 86 % ; `com_rc_lot_k_test.dart` ; à l'image, les bulles et « Envoyer » finissent au même bord (`com_studio_canal_1440_clair`, `com_controleur_echanges_1440_clair`) |
+| Micro à l'échelle du texte | **corrigé** | `BoutonIcone(suitTexte:)` : icône bornée à ×2, cible `max(48, icône + 16)` ; défaut inchangé pour les autres appelants ; à l'image, le micro est à la hauteur d'« Envoyer » à 320×2 |
+| Retrait de « Mode focus » | **corrigé** | `ActionPrincipale(affleurant:)` (défaut `false`) : décalage de la marge interne, sens RTL respecté |
+| Champ du Studio d'une ligne à 390 | **corrigé** | aide peinte seulement si elle tient sur une ligne, toujours lue par le lecteur d'écran ; captures `com_studio_canal_saisie_390_*` |
+| Contexte, moment, « An-Nour », date | **corrigé** | `texte_sans_coupure.dart` (`nombresLiesSiTient`, `traitsDUnionInsecables`, gluon U+2060) ; à l'image : « Organisation générale » sur deux lignes à 320×2, « 4 octobre » non coupé |
+| Démo An-Nour, R-16 | **corrigé** | `demo_an_nour.dart` ; à l'image, Classe An-Nour, Sayyida Mariam partout, « Salle ouverte, Cours dans 10 min », la séance passe avant les annonces |
+| Arabe, 26 libellés et démos | **corrigé**, jugé acceptable | 66 valeurs `ar` modifiées et 388 ajoutées (démos Messages, Studio et Communauté ; `tc.groupe`, `classe.*`, `nav.*`) ; parité `com.*` et `notifications.*` complète. Sur l'échantillon : grammaire juste, pluriels accordés (منذ ساعة، منذ ساعتين، منذ 3 ساعات، منذ 11 ساعة), terminologie unifiée (مجدولة، جدولة، رد), deux-points sans espace, marque RTL (U+200F) après un paramètre suivi de « ، », initiales isolées (س‌م). Aucune faute vue. Relecture par agent seulement : acceptable en vertu de l'ordre du 08/10 |
+
+Comportements laissés à l'image, acceptés :
+- Focus à 320×2 sans « Envoyer » tant que le champ est vide (décision Focus 320) ;
+- fonction de l'auteur abrégée à 320×2 dans la Communauté ;
+- nom de fichier arabe à extension latine lu `pdf.3_واجب_الأسبوع` (ordre bidi standard).
+
+### 10.3 Constats nouveaux, tous mineurs
+
+| # | Fichier:ligne | Constat | Correction proposée |
+| :--- | :--- | :--- | :--- |
+| 1 | `assets/i18n/fr.i18n.json`, `com.vocal.demo.auteurEnseignante` ; `tool/libelles_sources.json` | Seul libellé français validé dont le texte change (« Mme Mariam » devient « Sayyida Mariam »). Sa source dit encore « validé par délégation le 05/10 », sans trace du tour 7. Libellé de démonstration. | Ajouter « modifié au tour 7 (Sayyida, docs/current/00) » à la source. |
+| 2 | `ar.i18n.json`, 6 valeurs `»…«` ; test `com_rc_tour7_m_test.dart:378` | Les guillemets arabes sont stockés dans l'ordre visuel parce que le moteur ne les retourne pas. Le rendu est juste à l'image. En revanche, le lecteur d'écran, le copier-coller et tout moteur qui appliquerait le miroir Unicode (U+00AB et U+00BB sont `Bidi_Mirrored`) recevraient des guillemets inversés. | Garder, avec le test, mais le vérifier sur l'aperçu web réel avant ouverture en arabe ; sinon, guillemets droits « " » ou isolation. |
+| 3 | `lib/core/tc_groupe/libelles_tc_groupe.dart` (`minutesAvant`) ; `accueil_famille/bloc_seance.dart`, `accueil_eleve/accueil_eleve_page.dart` | Hors du périmètre COM, le tour change le compte à rebours de l'Accueil famille et de l'Accueil élève : arrondi au supérieur, 0 sous une minute. Le changement est cohérent (« dans 10 min » à côté de 14:10) et testé, mais il touche des écrans hors lot. | Le reporter dans le suivi des écrans Accueil (aucune régression vue : suite complète verte). |
+
+Vérifié sans défaut dans ce diff :
+- aucun rôle lu ;
+- aucune couleur, police ni rayon en dur (jetons 39) ;
+- aucune démo hors garde, aucun appel réseau, aucun fichier `supabase/`, `.github/` ni `pubspec.yaml` ;
+- un seul `skip` ajouté, celui du groupe de capture sans `CAPTURE_DIR`, comme les autres ;
+- un test renommé, aucun supprimé ; les 14 `expect` retirés suivent les renommages (« Élève », « Sayyida »), contre 214 ajoutés ;
+- worktree propre après les contrôles ;
+- aucun tiret cadratin.
+
+### 10.4 Verdict de COM-R-6 : COM-RC (tour 7) ACCEPTÉE, COM-RC-7 passe à `verifie`
+
+Les deux mineurs de §9 sont corrigés. Les corrections annoncées sont présentes, testées et
+visibles à l'image. Les captures sont celles de `5c0bffa3`, et les chiffres se rejouent à
+l'identique. L'arabe échantillonné est de bonne qualité. Il reste trois mineurs, dont aucun ne
+bloque `verifie`.
+
+- Statut de preuve : `présent dans le code` et `testé localement`. Rien n'est branché, testé sur
+  staging ni déployé ; `verifie` ne vaut ni fusion dans `main` ni mise en production.
