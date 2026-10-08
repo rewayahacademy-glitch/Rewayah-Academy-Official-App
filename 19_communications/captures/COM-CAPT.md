@@ -604,3 +604,30 @@ démonstration). Rien n'est branché, rien n'est testé sur staging, rien n'est 
   squelette d'Aujourd'hui (8.3-3, point 14).
 - Restants : « Envoyer » hors du fil à 1440 (R-12), micro à texte ×2, et les défauts
   mineurs ci-dessus. N-9 corrigé (COM-R-5, 05/10).
+
+## Après COM-RC tour 7 (08/10, code ui/communications-v1 @ 5c0bffa3)
+
+Ordre du directeur du 08/10 : tout défaut vu est corrigé par la session, sans lui être soumis.
+Captures régénérées par `communications_capture_test.dart` et `com_rc7_k_capture_test.dart`
+(CAPTURE_DIR = ce dossier) : **200 PNG** (187 + 13 nouvelles : échanges du contrôleur 390/768/1440
+clair et sombre, Planning de la Classe du tuteur), 108 modifiées. Aucun débordement (`com_debordements.txt` absent).
+
+Corrigés et vus à l'image (36 captures ouvertes par la passe M, plus celles des lots K et L) :
+
+- « Envoyer » dans la colonne du fil à 768 et 1440 (canal, Focus, Messages) ; bulles reçues
+  pleine colonne, bulles de soi à 92 % au bord d'« Envoyer » dès 600 ; téléphone inchangé (86 %).
+- Micro à la hauteur d'« Envoyer » en texte ×2 (icône bornée à ×2, cible ≥ 48).
+- « Mode focus » et les boutons texte de début de ligne sans retrait (bouton affleurant, RTL).
+- Champ du Studio d'une ligne à 390 (aide sur une ligne, toujours lue par les lecteurs d'écran).
+- Ligne de contexte et nom du canal sur 2 lignes à 320, rien de coupé ; moment relatif insécable ;
+  « An‑Nour » insécable (en-tête, liste des fils) ; date « Dimanche 4 octobre » non coupée.
+- Démonstration cohérente : Classe An-Nour, « Sayyida Mariam » partout (page Classe, annonce,
+  Messages), accents ; une séance proche montre la séance avant les annonces (R-16).
+- Arabe : 26 libellés relus (agent, pas d'arabophone humain), pluriels (« منذ ساعتين »),
+  terminologie unifiée, ordre bidi de la carte de séance, guillemets tournés vers l'extérieur,
+  initiales arabes séparées (« س‌م »), démonstrations Messages, Studio et Communauté entièrement
+  en arabe dans l'interface arabe.
+
+Comportements voulus, vus et laissés : Focus 320×2 sans « Envoyer » tant que le champ est vide
+(décision Focus 320) ; fonction de l'auteur abrégée à 320×2 dans la Communauté pour garder le
+moment entier ; extension latine d'un nom de fichier arabe rendue selon l'ordre bidi normal.
