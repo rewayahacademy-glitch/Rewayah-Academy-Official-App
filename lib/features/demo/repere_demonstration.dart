@@ -24,6 +24,12 @@ String get libelleRepereDemonstration => t.commun.demonstration.repere;
 /// dessous, qui ne recoit plus la zone sure du haut (la bande la porte). Le
 /// registre est doux (`washAccent`) : une seule zone pleine par ecran, celle
 /// de l'action principale. Le mot reste en entier a 320 en texte double.
+///
+/// **Clavier ouvert, la bande se ferme** (decide par delegation le 05/10) :
+/// a 320 x 640, un clavier de 300 ne laisse que 340 de vue ; la bande y
+/// prenait la hauteur qui manquait a la page sous la feuille de refus (14 de
+/// debordement). Le repere revient des que le clavier se ferme ; l'arbre de
+/// l'application ne change pas de place (son etat est garde).
 class RepereDemonstration extends StatelessWidget {
   /// Cree le repere.
   const RepereDemonstration({super.key, required this.child});
@@ -38,44 +44,46 @@ class RepereDemonstration extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final AppColorPair paire = palette.washAccent;
+    final bool clavier = MediaQuery.viewInsetsOf(context).bottom > 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         // Le repere est lu une fois, en entier (revue P2-10, constat 2).
-        Semantics(
-          container: true,
-          label: t.commun.demonstration.repereLu,
-          excludeSemantics: true,
-          // Pose au-dessus du navigateur, hors de tout `Material` : sans
-          // lui, le texte heriterait du style d'erreur de `MaterialApp`.
-          child: Material(
-            type: MaterialType.transparency,
-            child: DecoratedBox(
-              key: bandeKey,
-              decoration: BoxDecoration(
-                color: paire.background,
-                border: Border(bottom: palette.borderHairline.asBorderSide()),
-              ),
-              child: SafeArea(
-                bottom: false,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.lg,
-                    vertical: AppSpacing.xs,
-                  ),
-                  child: Text(
-                    libelleRepereDemonstration,
-                    textAlign: TextAlign.center,
-                    style: paire.applyTo(
-                      Theme.of(context).textTheme.labelMedium ??
-                          const TextStyle(),
+        if (!clavier)
+          Semantics(
+            container: true,
+            label: t.commun.demonstration.repereLu,
+            excludeSemantics: true,
+            // Pose au-dessus du navigateur, hors de tout `Material` : sans
+            // lui, le texte heriterait du style d'erreur de `MaterialApp`.
+            child: Material(
+              type: MaterialType.transparency,
+              child: DecoratedBox(
+                key: bandeKey,
+                decoration: BoxDecoration(
+                  color: paire.background,
+                  border: Border(bottom: palette.borderHairline.asBorderSide()),
+                ),
+                child: SafeArea(
+                  bottom: false,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.lg,
+                      vertical: AppSpacing.xs,
+                    ),
+                    child: Text(
+                      libelleRepereDemonstration,
+                      textAlign: TextAlign.center,
+                      style: paire.applyTo(
+                        Theme.of(context).textTheme.labelMedium ??
+                            const TextStyle(),
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
         Expanded(
           // Un conteneur semantique propre : la barriere d'une route
           // (`BlockSemantics`) masque les noeuds peints avant elle dans le
@@ -84,7 +92,9 @@ class RepereDemonstration extends StatelessWidget {
             container: true,
             child: MediaQuery.removePadding(
               context: context,
-              removeTop: true,
+              // Clavier ouvert, sans bande : l'application garde la zone
+              // sure du haut.
+              removeTop: !clavier,
               child: child ?? const SizedBox.shrink(),
             ),
           ),

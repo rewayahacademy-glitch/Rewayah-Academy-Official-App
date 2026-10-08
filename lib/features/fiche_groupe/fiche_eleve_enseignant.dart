@@ -25,6 +25,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/zone_saisie.dart';
 import '../foyer/photo_eleve.dart';
 import 'preparation_seance.dart';
 
@@ -554,35 +555,28 @@ class _SignalerBesoinState extends State<SignalerBesoin> {
           ),
         ],
         Ecart.vXl,
-        TextField(
-          key: SignalerBesoin.detailsKey,
-          controller: _details,
-          focusNode: _focusDetails,
-          minLines: 2,
-          maxLines: 5,
+        ZoneSaisie(
+          cleChamp: SignalerBesoin.detailsKey,
+          controleur: _details,
+          noeud: _focusDetails,
+          libelle: t.enseignant.signalement.details,
+          explication: t.enseignant.signalement.detailsAide,
+          erreur: _erreurDetails,
+          minLignes: 2,
+          maxLignes: 5,
           onChanged: (String _) {
             // L'erreur se retire des la correction.
             if (_erreurDetails != null) setState(_validerDetails);
           },
-          decoration: InputDecoration(
-            labelText: t.enseignant.signalement.details,
-            helperText: t.enseignant.signalement.detailsAide,
-            helperMaxLines: 2,
-            errorText: _erreurDetails,
-            errorMaxLines: 3,
-          ),
         ),
         Ecart.vLg,
-        TextField(
-          key: SignalerBesoin.resumeKey,
-          controller: _resume,
-          minLines: 2,
-          maxLines: 4,
-          decoration: InputDecoration(
-            labelText: t.enseignant.signalement.resume,
-            helperText: t.enseignant.signalement.resumeAide,
-            helperMaxLines: 2,
-          ),
+        ZoneSaisie(
+          cleChamp: SignalerBesoin.resumeKey,
+          controleur: _resume,
+          libelle: t.enseignant.signalement.resume,
+          explication: t.enseignant.signalement.resumeAide,
+          minLignes: 2,
+          maxLignes: 4,
         ),
         Ecart.vLg,
         Text(t.enseignant.signalement.notice, style: doux),

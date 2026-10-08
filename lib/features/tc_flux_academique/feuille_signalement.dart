@@ -10,6 +10,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/choice_card_group.dart';
+import '../../core/widgets/zone_saisie.dart';
 
 /// Le signalement structure, depuis la fiche d'un eleve (spec section 12.2).
 ///
@@ -130,15 +131,13 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
         ),
         Ecart.vXl,
 
-        TextField(
-          controller: _interne,
-          maxLines: 3,
+        ZoneSaisie(
+          controleur: _interne,
+          libelle: t.tc.parcours.signalement.interne,
+          minLignes: 3,
           // Le bouton depend de ce champ : sans ce rappel, il resterait inerte
           // alors que la note est saisie.
           onChanged: (String _) => setState(() {}),
-          decoration: InputDecoration(
-            labelText: t.tc.parcours.signalement.interne,
-          ),
         ),
         Ecart.vXs,
         Text(
@@ -149,12 +148,10 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
         ),
         Ecart.vLg,
 
-        TextField(
-          controller: _famille,
-          maxLines: 3,
-          decoration: InputDecoration(
-            labelText: t.tc.parcours.signalement.famille,
-          ),
+        ZoneSaisie(
+          controleur: _famille,
+          libelle: t.tc.parcours.signalement.famille,
+          minLignes: 3,
         ),
         Ecart.vXs,
         Text(

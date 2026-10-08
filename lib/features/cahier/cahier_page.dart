@@ -30,6 +30,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/point_rappel.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/zone_saisie.dart';
 import '../fiche_groupe/preparation_seance.dart'
     show ProjectionEleve, projectionElevesProvider;
 import '../foyer/photo_eleve.dart';
@@ -1104,19 +1105,17 @@ class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
         // repete (K-42 §1) ; a 200 % de texte et 320 de large, ce label se
         // coupait en « Objectif de No… ». Le lecteur d'ecran garde le nom
         // par la semantique du champ.
-        Semantics(
-          label: t.enseignant.cahier.objectif(
+        // Le champ grandit avec son texte : a 200 % et 320 de large, deux
+        // lignes fixes cachaient la fin du devoir (EN-7c-200). Zone de
+        // saisie partagee (SUPERPOS-1) ; le titre au-dessus la nomme deja.
+        ZoneSaisie(
+          cleChamp: const ValueKey<String>('cahier-objectif'),
+          controleur: _objectif,
+          libelle: t.enseignant.cahier.objectif(
             eleve: participant.membre.libelle,
           ),
-          child: TextField(
-            key: const ValueKey<String>('cahier-objectif'),
-            controller: _objectif,
-            // Le champ grandit avec son texte : a 200 % et 320 de large, deux
-            // lignes fixes cachaient la fin du devoir (EN-7c-200).
-            minLines: 2,
-            maxLines: 6,
-            textInputAction: TextInputAction.newline,
-          ),
+          libelleVisible: false,
+          minLignes: 2,
         ),
         Ecart.vXl,
         ExcludeSemantics(
@@ -1147,17 +1146,14 @@ class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
           ),
         ],
         Ecart.vMd,
-        Semantics(
-          label: t.enseignant.cahier.travailMaison(
+        ZoneSaisie(
+          cleChamp: const ValueKey<String>('cahier-devoir'),
+          controleur: _travail,
+          libelle: t.enseignant.cahier.travailMaison(
             eleve: participant.membre.libelle,
           ),
-          child: TextField(
-            key: const ValueKey<String>('cahier-devoir'),
-            controller: _travail,
-            minLines: 2,
-            maxLines: 6,
-            textInputAction: TextInputAction.newline,
-          ),
+          libelleVisible: false,
+          minLignes: 2,
         ),
         Ecart.vSection,
         // Un libelle qui lui est propre, et non « Valider » : la feuille de

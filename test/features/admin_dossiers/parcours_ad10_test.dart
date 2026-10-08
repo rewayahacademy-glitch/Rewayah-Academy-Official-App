@@ -15,6 +15,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
+import 'package:rewayah_academy/core/widgets/zone_saisie.dart';
 import 'package:rewayah_academy/features/admin_dossiers/file_dossiers.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
@@ -208,10 +209,13 @@ void main() {
     await _toucher(tester, t.dossiers.refuser);
     await tester.enterText(
       find
-          .ancestor(
-            of: find.text(t.dossiers.refus.champ),
-            matching: find.byType(TextField),
-          )
+          .descendant(
+      of: find.ancestor(
+        of: find.text(t.dossiers.refus.champ),
+        matching: find.byType(ZoneSaisie),
+      ),
+      matching: find.byType(TextField),
+    )
           .first,
       motif,
     );

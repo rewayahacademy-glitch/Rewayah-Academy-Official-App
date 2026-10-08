@@ -16,6 +16,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
+import '../../core/widgets/zone_saisie.dart';
 import 'decision_dossier.dart';
 import 'file_dossiers.dart' show actualiserDossiers;
 import 'textes_dossier.dart';
@@ -253,38 +254,29 @@ class _CorpsState extends ConsumerState<_Corps> {
             Ecart.vSm,
             Text(t.dossiers.refus.corps, style: textes.bodyMedium),
             Ecart.vLg,
-            TextField(
-              controller: champ,
-              focusNode: _champ,
+            // Zone de saisie partagee (SUPERPOS-1) : l'etiquette passe a la
+            // ligne au-dessus du champ (AD-11, 1.4.4), l'aide et l'erreur ne
+            // sont jamais coupees.
+            ZoneSaisie(
+              controleur: champ,
+              noeud: _champ,
               autofocus: true,
               // HL-A-5 : le motif envoye (ou dont le resultat est inconnu)
               // ne se modifie plus ; etat de rendu seulement.
-              readOnly:
+              lectureSeule:
                   e is DecisionEnvoi ||
                   e is DecisionInconnue ||
                   e is DecisionVerification,
-              minLines: 3,
-              maxLines: null,
-              keyboardType: TextInputType.multiline,
-              textInputAction: TextInputAction.newline,
+              libelle: t.dossiers.refus.champ,
+              explication: t.dossiers.refus.aide,
+              erreur: surface.erreurVide ? t.dossiers.refus.erreurVide : null,
+              minLignes: 3,
+              maxLignes: 10,
               onChanged: (String v) {
                 if (v.trim().isNotEmpty) {
                   surface.erreurVide = false;
                 }
               },
-              decoration: InputDecoration(
-                // AD-11 (1.4.4) : labelText tient sur une ligne en ellipse,
-                // coupe a 390 et 200 % ; le widget Text passe a la ligne.
-                label: Text(t.dossiers.refus.champ),
-                helperText: t.dossiers.refus.aide,
-                // AD-11 (1.4.4) : 3 lignes coupaient l'aide a 200 % (472 de
-                // large a 1440) ; borne large, l'aide n'est jamais coupee.
-                helperMaxLines: 8,
-                errorText: surface.erreurVide
-                    ? t.dossiers.refus.erreurVide
-                    : null,
-                errorMaxLines: 3,
-              ),
             ),
             statut,
           ],

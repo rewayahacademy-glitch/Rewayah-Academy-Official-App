@@ -33,6 +33,7 @@ import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_parcours.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
+import '../../core/widgets/zone_saisie.dart';
 import 'compte_rendu_controle.dart';
 import 'observation_controle.dart';
 
@@ -520,20 +521,16 @@ class _ObservationControlePageState
     );
   }
 
-  Widget _champTexte() => TextField(
-    key: ObservationControlePage.texteKey,
-    controller: _texte,
-    minLines: 4,
-    maxLines: 8,
-    textCapitalization: TextCapitalization.sentences,
-    decoration: InputDecoration(
-      labelText: t.controleur.observation.libelleTexte,
-      hintText: t.controleur.observation.aideTexte,
-      alignLabelWithHint: true,
-      // L'aide du document reste lisible avant la saisie.
-      floatingLabelBehavior: FloatingLabelBehavior.always,
-      errorText: _texteManquant ? t.controleur.observation.texteRequis : null,
-    ),
+  // Zone de saisie partagee (SUPERPOS-1) : l'etiquette au-dessus du champ,
+  // l'aide du document lisible avant la saisie.
+  Widget _champTexte() => ZoneSaisie(
+    cleChamp: ObservationControlePage.texteKey,
+    controleur: _texte,
+    libelle: t.controleur.observation.libelleTexte,
+    aide: t.controleur.observation.aideTexte,
+    erreur: _texteManquant ? t.controleur.observation.texteRequis : null,
+    minLignes: 4,
+    maxLignes: 8,
     // L'erreur disparait des la saisie (BAY-IV) ; aucune validation pendant
     // la frappe.
     onChanged: (String _) {

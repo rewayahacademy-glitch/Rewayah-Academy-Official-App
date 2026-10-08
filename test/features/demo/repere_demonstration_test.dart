@@ -38,7 +38,6 @@ Widget _page({
     ),
     child: MaterialApp(
       debugShowCheckedModeBanner: false,
-      useInheritedMediaQuery: true,
       theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
       builder: (BuildContext context, Widget? child) => Directionality(
         textDirection: sens,
@@ -131,6 +130,49 @@ void main() {
     // L'application commence sous la bande, sans redoubler la zone sure.
     final Rect hors = tester.getRect(find.byType(OfflineBanner));
     expect(hors.top, closeTo(bande.bottom, toleranceGarde));
+  });
+
+  // Contre-epreuve faite : sur la bande toujours posee, la bande reste
+  // trouvee clavier ouvert et l'application commence sous elle.
+  testWidgets('clavier ouvert : la bande se ferme, l application garde sa '
+      'zone sure et son etat', (WidgetTester tester) async {
+    const Size taille = Size(320, 640);
+    tester.view.physicalSize = taille;
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    const Key champ = ValueKey<String>('champ');
+    Widget app({required double clavier}) => MediaQuery(
+      data: MediaQueryData(
+        size: taille,
+        padding: const EdgeInsets.only(top: 24),
+        viewPadding: const EdgeInsets.only(top: 24),
+        viewInsets: EdgeInsets.only(bottom: clavier),
+        textScaler: const TextScaler.linear(2),
+      ),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+        builder: (BuildContext context, Widget? child) =>
+            RepereDemonstration(child: child),
+        home: const Scaffold(
+          body: SafeArea(child: TextField(key: champ)),
+        ),
+      ),
+    );
+    await tester.pumpWidget(app(clavier: 0));
+    await tester.enterText(find.byKey(champ), 'Motif');
+    expect(find.byKey(RepereDemonstration.bandeKey), findsOneWidget);
+
+    await tester.pumpWidget(app(clavier: 300));
+    expect(find.byKey(RepereDemonstration.bandeKey), findsNothing);
+    // Le texte saisi est garde : l'application n'a pas ete reconstruite.
+    expect(find.text('Motif'), findsOneWidget);
+    // Sans bande, l'application recoit la zone sure du haut.
+    expect(tester.getRect(find.byKey(champ)).top, greaterThanOrEqualTo(24));
+
+    await tester.pumpWidget(app(clavier: 0));
+    expect(find.byKey(RepereDemonstration.bandeKey), findsOneWidget);
+    expect(find.text('Motif'), findsOneWidget);
   });
 
   testWidgets('le repere est annonce au lecteur d ecran (P2-10)', (
