@@ -164,7 +164,7 @@ Future<void> _ouvrirFicheA1(WidgetTester tester) async {
     ),
   );
   await stabiliser(tester);
-  await _toucher(tester, find.text('Eleve A1'));
+  await _toucher(tester, find.text('Élève A1'));
 }
 
 /// Depuis la fiche, la ligne d'une sous-page.
@@ -274,7 +274,7 @@ void main() {
 
       await _ouvrirLigne(
         tester,
-        t.ficheEleve.lignes.appareils(prenom: 'Eleve A1'),
+        t.ficheEleve.lignes.appareils(prenom: 'Élève A1'),
       );
       final Uri adresse = Uri.parse(lieu(routeur));
       expect(adresse.path, Routes.ficheEleveSousPage(a1, 'appareils'));
@@ -540,7 +540,7 @@ void main() {
       _offres(tester).parcoursRendu = <ParcoursApprenant>[
         ParcoursApprenant(
           eleveId: a1,
-          prenom: 'Eleve A1',
+          prenom: 'Élève A1',
           diagnostic: StatutDiagnostic.nonRequis,
         ),
       ];
@@ -746,7 +746,7 @@ void main() {
       await _ouvrirLigne(tester, t.ficheEleve.lignes.camera);
 
       expect(
-        find.text(t.ficheEleve.camera.interdite(prenom: 'Eleve A1')),
+        find.text(t.ficheEleve.camera.interdite(prenom: 'Élève A1')),
         findsOneWidget,
       );
       expect(find.text(t.ficheEleve.camera.distincte), findsOneWidget);
@@ -755,7 +755,7 @@ void main() {
       expect(appairage.reglagesEcrits.single.camera, CameraPolicy.allowed);
       expect(appairage.reglagesEcrits.single.mode, isNull);
       expect(
-        find.text(t.ficheEleve.camera.autorisee(prenom: 'Eleve A1')),
+        find.text(t.ficheEleve.camera.autorisee(prenom: 'Élève A1')),
         findsOneWidget,
       );
       expect(
@@ -984,7 +984,7 @@ void main() {
       expect(
         find.descendant(
           of: carte,
-          matching: find.text(t.ficheEleve.acces.ligne(prenom: 'Eleve A1')),
+          matching: find.text(t.ficheEleve.acces.ligne(prenom: 'Élève A1')),
         ),
         findsOneWidget,
       );
@@ -1001,7 +1001,7 @@ void main() {
       );
       expect(find.byKey(NavShell.barreBasseKey), findsNothing);
       await _toucher(tester, find.text(t.nav.tuteur.foyer).first);
-      await _toucher(tester, find.text('Eleve A1'));
+      await _toucher(tester, find.text('Élève A1'));
       expect(lieu(routeur), Routes.ficheElevePour(a1));
 
       final Rect parametres = tester.getRect(

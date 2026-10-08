@@ -56,7 +56,7 @@ FauxMessagesMetier _port() => FauxMessagesMetier(
       autre: _mariam,
       objets: <ObjetLie>[
         _classe(),
-        ObjetLie(type: TypeObjetLie.eleve, id: eleveA1, libelle: 'Eleve A1'),
+        ObjetLie(type: TypeObjetLie.eleve, id: eleveA1, libelle: 'Élève A1'),
       ],
       attention: const IndicateurAttention(nonLus: 1),
       // §25 « piece jointe indisponible » : nommee, jamais ouverte.
@@ -84,7 +84,7 @@ FauxMessagesMetier _port() => FauxMessagesMetier(
         objet: ObjetLie(
           type: TypeObjetLie.eleve,
           id: eleveA1,
-          libelle: 'Eleve A1',
+          libelle: 'Élève A1',
         ),
         filId: 'fil-mariam',
         attention: const IndicateurAttention(nonLus: 1),

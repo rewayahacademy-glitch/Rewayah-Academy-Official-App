@@ -47,14 +47,14 @@ const EdgeInsets _zoneSure = EdgeInsets.only(top: 47, bottom: 34);
 final List<EleveDuFoyer> _eleves = <EleveDuFoyer>[
   const EleveDuFoyer(
     id: 'foyer-a-eleve-1',
-    prenom: 'Eleve A1',
+    prenom: 'Élève A1',
     identifiantImmuable: 'STUD-FA-000001',
     mode: InterfaceMode.enfant,
     camera: CameraPolicy.forbidden,
   ),
   EleveDuFoyer(
     id: 'foyer-a-eleve-2',
-    prenom: 'Eleve A2',
+    prenom: 'Élève A2',
     identifiantImmuable: 'STUD-FA-000002',
     mode: InterfaceMode.standard,
     camera: CameraPolicy.allowed,
@@ -62,7 +62,7 @@ final List<EleveDuFoyer> _eleves = <EleveDuFoyer>[
   ),
   EleveDuFoyer(
     id: 'foyer-a-eleve-3',
-    prenom: 'Eleve A3',
+    prenom: 'Élève A3',
     identifiantImmuable: 'STUD-FA-000003',
     mode: InterfaceMode.standard,
     camera: CameraPolicy.forbidden,

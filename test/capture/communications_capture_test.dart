@@ -40,6 +40,7 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
+import 'package:rewayah_academy/features/classe_tuteur/carte_seance_classe.dart';
 import 'package:rewayah_academy/features/com_annonces/annonces_de_classe.dart';
 import 'package:rewayah_academy/features/com_annonces/port_annonces.dart';
 import 'package:rewayah_academy/features/com_communaute/composer_publication.dart';
@@ -63,6 +64,7 @@ import 'package:rewayah_academy/features/demo/communications/com_vocal_demo.dart
 import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 
+import '../features/classe_tuteur/demo_an_nour.dart';
 import '../features/classe_tuteur/support_classe.dart';
 import '../features/com_messages/support_messages.dart' show FauxMessagesMetier;
 import '../features/com_vocal/support_vocal.dart';
@@ -459,10 +461,15 @@ Future<void> Function(WidgetTester) _vocal(
 Future<void> _vocalRefuse(WidgetTester tester) =>
     _toucher(tester, find.byKey(FilDiscussion.cleMicro));
 
-Future<void> _annonceDeClasse(WidgetTester tester) async {
+/// R-16 : la seance ouverte passe avant les annonces de la Classe. La
+/// capture part de la carte de seance, les annonces suivent dessous ; sans
+/// carte, elle part des annonces.
+Future<void> _seancePuisAnnonces(WidgetTester tester) async {
+  final Finder carte = find.byType(CarteSeanceClasse);
   final Finder annonces = find.byType(AnnoncesDeClasse);
-  if (annonces.evaluate().isNotEmpty) {
-    await tester.ensureVisible(annonces.first);
+  final Finder cible = carte.evaluate().isNotEmpty ? carte : annonces;
+  if (cible.evaluate().isNotEmpty) {
+    await tester.ensureVisible(cible.first);
     await _stabiliser(tester);
   }
 }
@@ -663,11 +670,12 @@ List<_Ecran> _ecrans() {
       'annonce_classe_tuteur',
       Routes.classePour(classeA, eleveId: eleveA1),
       () => <Override>[
-        ...surchargesClasse(portClasses: classesAvecParcours()),
+        // Lot L : la page, la carte et l'annonce disent la Classe An-Nour.
+        ...surchargesClasseAnNour(_maintenant),
         _baseMemoire(),
         ..._annonces(tuteur, classeReelle: classeA),
       ],
-      geste: _annonceDeClasse,
+      geste: _seancePuisAnnonces,
       principal: true,
     ),
     // Administration des communications (COM-W04, COM-ANN-2, COM-MSG-2).

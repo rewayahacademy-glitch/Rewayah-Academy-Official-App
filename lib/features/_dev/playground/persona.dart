@@ -268,12 +268,12 @@ List<Persona> personasDuBench({required DateTime maintenant}) => <Persona>[
   ),
   personne(
     id: 'eleve-standard',
-    libelle: 'Eleve (interface standard)',
+    libelle: 'Élève (interface standard)',
     graine: _graineEleve(InterfaceMode.standard, maintenant),
   ),
   personne(
     id: 'eleve-enfant',
-    libelle: 'Eleve (interface enfant)',
+    libelle: 'Élève (interface enfant)',
     graine: _graineEleve(InterfaceMode.enfant, maintenant),
   ),
   personne(

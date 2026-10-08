@@ -77,6 +77,13 @@ final FutureProviderFamily<ContexteClasse?, CleClasse> contexteClasseProvider =
       return null;
     });
 
+/// Le nom d'une Classe a l'affichage, chaque trait d'union suivi d'un
+/// gluon (U+2060, sans chasse) : « Classe An-Nour » passe a la ligne entre
+/// les mots, jamais dans « An- / Nour » (lecon 8, K-54). Le trait d'union
+/// reste celui de la police : le trait insecable U+2011, absent des polices
+/// du produit, serait dessine par une police de secours.
+String nomClasseInsecable(String libelle) => libelle.replaceAll('-', '-\u2060');
+
 /// La ligne sous le titre d'une sous-page : « Classe An-Nour · Mariam ».
 String sousTitreSousPage(ContexteClasse contexte) => LibellesGroupe.joindre(
   contexte.classe.classe.libelle,
@@ -161,7 +168,11 @@ class CadreClasse extends ConsumerWidget {
     }
 
     return PageShell(
-      titre: titre ?? contexte?.classe.classe.libelle ?? t.classe.titre,
+      titre:
+          titre ??
+          (contexte == null
+              ? t.classe.titre
+              : nomClasseInsecable(contexte.classe.classe.libelle)),
       sousTitre: contexte == null ? null : sousTitre?.call(contexte),
       onRetour: onRetour,
       child: corps,

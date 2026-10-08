@@ -47,7 +47,7 @@ import '../router/support_routeur.dart';
 import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
 
-/// Le premier profil retenu : « Eleve A1 » (tri par prenom, contrat K1).
+/// Le premier profil retenu : « Élève A1 » (tri par prenom, contrat K1).
 const String _a1 = 'foyer-a-eleve-1';
 const String _a2 = 'foyer-a-eleve-2';
 
@@ -106,7 +106,7 @@ const ClasseFoyer _classeAvecParcours = ClasseFoyer(
 AppareilAppaire _appareilA1() => AppareilAppaire(
   id: 'app-1',
   profilId: _a1,
-  prenom: 'Eleve A1',
+  prenom: 'Élève A1',
   plateforme: 'Android',
   appaireA: DateTime.utc(2026, 9, 1),
 );
@@ -284,11 +284,11 @@ void main() {
         tester,
         find.descendant(
           of: find.byType(SelecteurProfils),
-          matching: find.text('Eleve A2'),
+          matching: find.text('Élève A2'),
         ),
       );
       expect(
-        find.text(t.tuteur.accueil.sansClasseTitre(prenom: 'Eleve A2')),
+        find.text(t.tuteur.accueil.sansClasseTitre(prenom: 'Élève A2')),
         findsOneWidget,
       );
       // Aucune valeur de l'eleve precedent ne subsiste.
@@ -326,7 +326,7 @@ void main() {
 
       expect(find.byType(BandeauBlocage), findsOneWidget);
       expect(
-        find.text(t.tuteur.accueil.blocageAppareilTitre(prenom: 'Eleve A1')),
+        find.text(t.tuteur.accueil.blocageAppareilTitre(prenom: 'Élève A1')),
         findsOneWidget,
       );
       await _toucher(tester, find.text(t.tuteur.accueil.connecterAppareil));
@@ -338,7 +338,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final Finder titre = find.text(
-        t.tuteur.accueil.blocageAppareilTitre(prenom: 'Eleve A1'),
+        t.tuteur.accueil.blocageAppareilTitre(prenom: 'Élève A1'),
       );
       final Finder action = find.text(t.tuteur.accueil.connecterAppareil);
 
@@ -369,7 +369,7 @@ void main() {
             child: Scaffold(
               body: SingleChildScrollView(
                 child: BandeauBlocage(
-                  prenom: 'Eleve A1',
+                  prenom: 'Élève A1',
                   compact: true,
                   onConnecter: () {},
                 ),
@@ -748,7 +748,7 @@ void main() {
         final AppareilAppaire revoque = AppareilAppaire(
           id: 'app-2',
           profilId: _a1,
-          prenom: 'Eleve A1',
+          prenom: 'Élève A1',
           plateforme: 'Web',
           appaireA: DateTime.utc(2026, 9, 1),
           revoqueA: DateTime.utc(2026, 9, 2),
@@ -797,7 +797,7 @@ void main() {
               PresenceParticipant(
                 profilId: _a1,
                 role: 'student',
-                prenom: 'Eleve A1',
+                prenom: 'Élève A1',
                 identifiantImmuable: 'STUD-FA-000001',
                 etat: EtatPresence.finalisee,
                 consolide: true,

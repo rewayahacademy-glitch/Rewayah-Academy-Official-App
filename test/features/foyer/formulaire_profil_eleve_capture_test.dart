@@ -141,7 +141,7 @@ Future<void> _monter(
   }
   await tester.enterText(
     find.byKey(FormulaireProfilEleve.prenomKey),
-    'Eleve A3',
+    'Élève A3',
   );
   await tester.enterText(find.byKey(FormulaireProfilEleve.nomKey), 'Fictif');
   await tester.enterText(find.byKey(FormulaireProfilEleve.ageKey), '9');
