@@ -416,19 +416,26 @@ class FilDiscussion extends StatefulWidget {
   /// 390 non).
   static const double largeurReduite = 360;
 
-  /// La largeur d'ecran a partir de laquelle les bulles prennent toute la
+  /// La largeur d'ecran a partir de laquelle les bulles s'elargissent a la
   /// colonne du fil (COM-RC lot K, point 1) : sur tablette et bureau (canal
-  /// du Studio a 768 et 1440, Focus, Messages metier), une bulle a 86 %
-  /// s'arretait avant la rangee d'ecriture et « Envoyer » semblait deborder
-  /// du fil. Les bulles, le champ et « Envoyer » partagent alors les deux
-  /// bords de la colonne ; le message de soi garde son fond propre et son
-  /// auteur (« Vous »). Sur telephone, la bulle garde son retrait de
-  /// conversation (86 %, a la fin pour soi). C'est l'ecran qui decide, pas
-  /// la colonne : a 768, le fil (344) est plus etroit qu'a 390 (358).
+  /// du Studio a 768 et 1440, Focus, Messages metier, echanges du
+  /// controleur), une bulle a 86 % s'arretait avant la rangee d'ecriture et
+  /// « Envoyer » semblait deborder du fil. Un message recu prend alors la
+  /// colonne entiere, aux bords du champ et d'« Envoyer » ; un message de
+  /// soi garde un leger retrait au debut ([partBulleSoiColonne]), pose a la
+  /// fin, au bord d'« Envoyer » : envoyes et recus se distinguent par leur
+  /// place, pas seulement par leur teinte et « Vous ». Sur telephone, la
+  /// bulle garde son retrait de conversation (86 %, a la fin pour soi).
+  /// C'est l'ecran qui decide, pas la colonne : a 768, le fil (344) est plus
+  /// etroit qu'a 390 (358).
   static const double largeurColonne = AppGabarit.seuilTablette;
 
   /// La part de la largeur du fil qu'une bulle prend sur telephone.
   static const double partBulleTelephone = 0.86;
+
+  /// La part de la colonne qu'un message de soi prend sur tablette et
+  /// bureau (lot K, point 1) ; un message recu en prend toute la largeur.
+  static const double partBulleSoiColonne = 0.92;
 
   /// La part de la hauteur de l'ecran que la saisie occupe au plus (R-02).
   static const double partSaisieMax = 0.4;
@@ -575,14 +582,14 @@ class _FilDiscussionState extends State<FilDiscussion> {
 
   void _auFocusChamp() {
     if (!mounted) return;
-    // Lot K, point 4 : l'aide du champ n'apparait qu'au focus, et peut
-    // l'agrandir ; si la fin du fil etait a l'ecran, elle y reste.
+    // Au focus (clavier qui s'ouvre, « Envoyer » qui revient en saisie
+    // reduite), si la fin du fil etait a l'ecran, elle y reste.
     final bool enBas =
         _defilement.hasClients &&
         _defilement.position.pixels >= _defilement.position.maxScrollExtent - 1;
     setState(() {});
     if (enBas && _noeudChamp.hasFocus) {
-      // Une seule fois, a l'image suivante (celle ou l'aide apparait) :
+      // Une seule fois, a l'image suivante (la disposition du focus) :
       // aucune reprise qui viendrait defaire une position restauree ensuite
       // (sortie du Focus, R-COM-10).
       WidgetsBinding.instance.addPostFrameCallback(
@@ -1240,12 +1247,15 @@ class _Bulle extends StatelessWidget {
             ? AlignmentDirectional.centerEnd
             : AlignmentDirectional.centerStart,
         child: FractionallySizedBox(
-          // Lot K, point 1 : sur tablette et bureau, la bulle prend la
-          // colonne entiere, aux memes bords que le champ et « Envoyer ».
+          // Lot K, point 1 : sur tablette et bureau, un message recu prend
+          // la colonne entiere (bords du champ et d'« Envoyer ») ; un message
+          // de soi garde un leger retrait au debut, pose au bord de fin.
           widthFactor:
-              MediaQuery.sizeOf(context).width >= FilDiscussion.largeurColonne
-              ? 1
-              : FilDiscussion.partBulleTelephone,
+              MediaQuery.sizeOf(context).width < FilDiscussion.largeurColonne
+              ? FilDiscussion.partBulleTelephone
+              : deSoi
+              ? FilDiscussion.partBulleSoiColonne
+              : 1,
           alignment: deSoi
               ? AlignmentDirectional.centerEnd
               : AlignmentDirectional.centerStart,
@@ -1340,35 +1350,75 @@ class _Saisie extends StatelessWidget {
     );
   }
 
+  /// Vrai quand l'aide du champ tient entiere sur une ligne, dans
+  /// [largeur] moins les marges interieures du theme (`AppSpacing.lg` de
+  /// part et d'autre), au style et a l'echelle de texte de l'aide.
+  bool _aideTient(BuildContext context, double largeur) {
+    if (!largeur.isFinite) return true;
+    final ThemeData theme = Theme.of(context);
+    final TextPainter mesure = TextPainter(
+      text: TextSpan(
+        text: textes.aideChamp,
+        style: DefaultTextStyle.of(context).style
+            .merge(theme.textTheme.bodyLarge)
+            .merge(theme.inputDecorationTheme.hintStyle),
+      ),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 1,
+    )..layout();
+    final bool tient =
+        !mesure.didExceedMaxLines &&
+        mesure.width <= largeur - 2 * AppSpacing.lg;
+    mesure.dispose();
+    return tient;
+  }
+
   Widget _rangee({required bool empilee}) {
     final Widget saisie = KeyedSubtree(
       key: cleChamp,
       child: raccourciEnvoi(
         onEnvoyer: onEnvoyer,
-        child: TextField(
-          key: FilDiscussion.champKey,
-          controller: champ,
-          focusNode: noeudChamp,
-          minLines: 1,
-          maxLines: reduite ? 1 : 5,
-          keyboardType: TextInputType.multiline,
-          textInputAction: TextInputAction.newline,
-          textCapitalization: TextCapitalization.sentences,
-          decoration: InputDecoration(
-            labelText: textes.libelleChamp,
-            // Lot K, point 4 : l'aide n'est posee qu'au focus. Invisible au
-            // repos, elle comptait pourtant dans la hauteur du champ : a 390,
-            // « Ecrire dans Organisation generale » passait sur deux lignes
-            // et le champ du canal faisait deux hauteurs, a cote d'un micro
-            // et d'un « Envoyer » d'une seule. Au repos, une ligne ; au focus
-            // et a la saisie, le champ grandit avec son texte.
-            hintText: noeudChamp.hasFocus ? textes.aideChamp : null,
-            floatingLabelBehavior: FloatingLabelBehavior.auto,
-            // La raison du bouton inactif, lisible sous le champ ; la
-            // saisie reduite n'a pas de bouton inactif.
-            helperText: vide && !reduite ? textes.champVide : null,
-            helperMaxLines: 3,
-          ),
+        child: LayoutBuilder(
+          builder: (BuildContext contexte, BoxConstraints contraintes) {
+            // Lot K, point 4 : l'aide ne se peint que si elle tient entiere
+            // sur une ligne du champ (« Ecrire dans Organisation generale »
+            // a 1440, pas a 390 a cote du micro et d'« Envoyer », ou elle
+            // passait sur deux ou trois lignes et faisait sauter le champ
+            // au toucher, ou se coupait en « Ecrire dans Organi... »). Le
+            // champ garde une ligne, au repos comme au toucher, et ne
+            // grandit qu'avec le texte saisi.
+            final bool aidePeinte = _aideTient(contexte, contraintes.maxWidth);
+            // Material ne peint l'aide que champ vide et au focus, et la
+            // retire alors de la semantique. Le lecteur d'ecran (dont le
+            // focus n'est pas celui de la saisie) dit donc toujours ou l'on
+            // ecrit, en entier, sans la doubler quand elle est peinte.
+            final bool aideVisible =
+                aidePeinte && noeudChamp.hasFocus && champ.text.isEmpty;
+            return Semantics(
+              hint: aideVisible ? null : textes.aideChamp,
+              child: TextField(
+                key: FilDiscussion.champKey,
+                controller: champ,
+                focusNode: noeudChamp,
+                minLines: 1,
+                maxLines: reduite ? 1 : 5,
+                keyboardType: TextInputType.multiline,
+                textInputAction: TextInputAction.newline,
+                textCapitalization: TextCapitalization.sentences,
+                decoration: InputDecoration(
+                  labelText: textes.libelleChamp,
+                  hintText: aidePeinte ? textes.aideChamp : null,
+                  hintMaxLines: 1,
+                  floatingLabelBehavior: FloatingLabelBehavior.auto,
+                  // La raison du bouton inactif, lisible sous le champ ; la
+                  // saisie reduite n'a pas de bouton inactif.
+                  helperText: vide && !reduite ? textes.champVide : null,
+                  helperMaxLines: 3,
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

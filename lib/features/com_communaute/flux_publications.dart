@@ -41,9 +41,9 @@ String momentCommunaute(DateTime instant, DateTime maintenant) {
   final m = t.com.communaute.moment;
   final Duration ecart = maintenant.difference(instant);
   if (ecart.inMinutes < 1) return m.instant;
-  if (ecart.inHours < 1) return m.minutes(nombre: ecart.inMinutes);
-  if (ecart.inDays < 1) return m.heures(nombre: ecart.inHours);
-  if (ecart.inDays < 7) return m.jours(nombre: ecart.inDays);
+  if (ecart.inHours < 1) return m.minutes(n: ecart.inMinutes);
+  if (ecart.inDays < 1) return m.heures(n: ecart.inHours);
+  if (ecart.inDays < 7) return m.jours(n: ecart.inDays);
   final DateTime local = instant.toLocal();
   return m.date(
     jour: local.day.toString().padLeft(2, '0'),
@@ -67,7 +67,12 @@ String ligneAuteurCommunaute(String? fonction, String moment) {
     fonction: fonction,
     moment: insecable,
   );
-  return ligne.replaceFirst(' $_separateur ', '$_espaceInsecable$_separateur ');
+  // Le DERNIER separateur, celui qui precede le moment : la fonction donnee
+  // par le serveur peut porter son propre « · » (« Enseignante · Classe
+  // An-Nour »), qui reste secable.
+  final int separateur = ligne.lastIndexOf(' $_separateur ');
+  if (separateur < 0) return ligne;
+  return ligne.replaceRange(separateur, separateur + 1, _espaceInsecable);
 }
 
 const String _espaceInsecable = '\u00A0';

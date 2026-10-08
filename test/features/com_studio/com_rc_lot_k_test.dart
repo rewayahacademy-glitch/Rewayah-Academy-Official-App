@@ -16,7 +16,12 @@
 // 5. La ligne de contexte passe a la ligne (deux lignes au plus) au lieu
 //    de se couper a 320 en texte x2, et se lit en entier. Contre-preuve :
 //    « Organisation gene... », « Classe An-Nour · Y... ».
-// 6. Le moment relatif ne se coupe jamais (« Il y a » / « 2 h »).
+// 6. Le moment relatif ne se coupe jamais (« Il y a » / « 2 h »), meme
+//    quand la fonction porte son propre « · » ; en arabe, le nombre
+//    s'accorde (« منذ ساعتين », « منذ 3 ساعات »).
+// Revue du lot K : un message de soi garde 92 % a la fin sur tablette et
+// bureau ; l'aide du champ reste posee (lue par les lecteurs d'ecran), sur
+// une ligne (`hintMaxLines: 1`), et le champ ne grandit pas au toucher.
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -58,6 +63,14 @@ TextesFilDiscussion _textes(String aide) => TextesFilDiscussion(
   reessayer: 'Reessayer',
   auteurSoi: 'Vous',
   annonce: (String a, String texte) => '$a : $texte',
+);
+
+const MessageFil _soi = MessageFil(
+  id: 'k2',
+  auteur: 'Vous',
+  texte: 'Bonne semaine a toutes et a tous.',
+  horodatage: 'Dimanche 4 octobre, 11:45',
+  deSoi: true,
 );
 
 const MessageFil _recu = MessageFil(
@@ -203,6 +216,68 @@ void main() {
     });
   });
 
+  group('lot K, point 1 : ses propres messages gardent leur place', () {
+    for (final Size taille in const <Size>[Size(1440, 900), Size(768, 1024)]) {
+      testWidgets('${taille.width.toInt()} : recu sur toute la colonne, '
+          'message de soi a 92 % pose au bord d « Envoyer »', (
+        WidgetTester tester,
+      ) async {
+        await _monterFil(
+          tester,
+          FilDiscussion(
+            messages: const <MessageFil>[_recu, _soi],
+            textes: _textes('Message'),
+            onEnvoyer: (String _) async {},
+          ),
+          taille: taille,
+        );
+        final Rect recu = _bulle(tester, 'k1');
+        final Rect soi = _bulle(tester, 'k2');
+        final Rect champ = tester.getRect(find.byKey(FilDiscussion.champKey));
+        final Rect envoyer = tester.getRect(
+          find.byKey(FilDiscussion.envoyerKey),
+        );
+        final double colonne = envoyer.right - champ.left;
+        expect(recu.left, moreOrLessEquals(champ.left, epsilon: 1));
+        expect(recu.right, moreOrLessEquals(envoyer.right, epsilon: 1));
+        expect(
+          soi.width,
+          moreOrLessEquals(
+            colonne * FilDiscussion.partBulleSoiColonne,
+            epsilon: 1,
+          ),
+          reason: 'un leger retrait au debut distingue le message de soi',
+        );
+        expect(soi.right, moreOrLessEquals(envoyer.right, epsilon: 1));
+        expect(soi.left, greaterThan(recu.left + 8));
+        expect(tester.takeException(), isNull);
+      });
+    }
+
+    testWidgets('390 : le message de soi a 86 %, a la fin', (
+      WidgetTester tester,
+    ) async {
+      await _monterFil(
+        tester,
+        FilDiscussion(
+          messages: const <MessageFil>[_recu, _soi],
+          textes: _textes('Message'),
+          onEnvoyer: (String _) async {},
+        ),
+      );
+      final Rect fil = tester.getRect(find.byType(FilDiscussion));
+      final Rect soi = _bulle(tester, 'k2');
+      expect(
+        soi.width,
+        moreOrLessEquals(
+          fil.width * FilDiscussion.partBulleTelephone,
+          epsilon: 1,
+        ),
+      );
+      expect(soi.right, moreOrLessEquals(fil.right, epsilon: 1));
+    });
+  });
+
   group('lot K, point 2 : le micro suit l echelle du texte', () {
     Widget filVocal() => FilDiscussion(
       messages: const <MessageFil>[_recu],
@@ -325,37 +400,94 @@ void main() {
       return aide.top - champ.top;
     }
 
-    testWidgets('390 : une aide longue ne grandit pas le champ au repos ; '
-        'au focus, elle se montre', (WidgetTester tester) async {
-      Widget fil(String aide) => FilDiscussion(
-        key: ValueKey<String>(aide),
-        messages: const <MessageFil>[_recu],
-        textes: _textes(aide),
-        onEnvoyer: (String _) async {},
-      );
+    const String longue =
+        'Ecrire dans Organisation generale, puis envoyer a l equipe';
+    Widget fil(String aide) => FilDiscussion(
+      key: ValueKey<String>(aide),
+      messages: const <MessageFil>[_recu],
+      textes: _textes(aide),
+      onEnvoyer: (String _) async {},
+    );
+    InputDecoration deco(WidgetTester tester) => tester
+        .widget<TextField>(find.byKey(FilDiscussion.champKey))
+        .decoration!;
+
+    testWidgets('390 : une aide trop longue pour une ligne ne grandit le '
+        'champ ni au repos ni au toucher, ne se coupe pas, et reste lue', (
+      WidgetTester tester,
+    ) async {
       await _monterFil(tester, fil('Message'));
       final double court = cadre(tester);
-      await _monterFil(
-        tester,
-        fil('Ecrire dans Organisation generale, puis envoyer a l equipe'),
-      );
+      await _monterFil(tester, fil(longue));
       expect(cadre(tester), moreOrLessEquals(court, epsilon: 0.5));
       expect(
-        tester
-            .widget<TextField>(find.byKey(FilDiscussion.champKey))
-            .decoration!
-            .hintText,
+        deco(tester).hintText,
         isNull,
+        reason: 'pas d aide coupee (« Ecrire dans Organi... »)',
+      );
+      final SemanticsHandle sem = tester.ensureSemantics();
+      // Les lecteurs d'ecran lisent l'aide entiere, sans focus de saisie.
+      expect(
+        tester.getSemantics(find.byKey(FilDiscussion.champKey)),
+        matchesSemantics(
+          label: 'Message',
+          hint: longue,
+          isTextField: true,
+          isEnabled: true,
+          hasEnabledState: true,
+          hasTapAction: true,
+          hasFocusAction: true,
+          isFocusable: true,
+          isMultiline: true,
+        ),
+      );
+      // Au toucher, avant toute frappe : meme hauteur, aide toujours dite.
+      await tester.tap(find.byKey(FilDiscussion.champKey));
+      await tester.pumpAndSettle();
+      expect(cadre(tester), moreOrLessEquals(court, epsilon: 0.5));
+      expect(
+        tester.getSemantics(find.byKey(FilDiscussion.champKey)).hint,
+        longue,
+      );
+      // A la saisie, le champ grandit avec son texte.
+      final double avant = tester
+          .getRect(find.byKey(FilDiscussion.champKey))
+          .height;
+      await tester.enterText(
+        find.byKey(FilDiscussion.champKey),
+        'Une ligne\nune deuxieme\nune troisieme',
+      );
+      await tester.pumpAndSettle();
+      expect(
+        tester.getRect(find.byKey(FilDiscussion.champKey)).height,
+        greaterThan(avant),
+      );
+      sem.dispose();
+    });
+
+    testWidgets('1440 : l aide qui tient sur une ligne se peint au toucher, '
+        'sans grandir le champ, et se lit une seule fois', (
+      WidgetTester tester,
+    ) async {
+      await _monterFil(tester, fil('Message'), taille: const Size(1440, 900));
+      final double court = cadre(tester);
+      await _monterFil(tester, fil(longue), taille: const Size(1440, 900));
+      expect(deco(tester).hintText, longue);
+      expect(deco(tester).hintMaxLines, 1);
+      final SemanticsHandle sem = tester.ensureSemantics();
+      expect(
+        tester.getSemantics(find.byKey(FilDiscussion.champKey)).hint,
+        longue,
       );
       await tester.tap(find.byKey(FilDiscussion.champKey));
       await tester.pumpAndSettle();
-      expect(
-        tester
-            .widget<TextField>(find.byKey(FilDiscussion.champKey))
-            .decoration!
-            .hintText,
-        'Ecrire dans Organisation generale, puis envoyer a l equipe',
+      expect(cadre(tester), moreOrLessEquals(court, epsilon: 0.5));
+      final SemanticsNode noeud = tester.getSemantics(
+        find.byKey(FilDiscussion.champKey),
       );
+      expect(noeud.label, 'Message\n$longue');
+      expect(noeud.hint, isEmpty, reason: 'pas lue deux fois');
+      sem.dispose();
     });
 
     testWidgets('Studio a 390 : le champ du canal tient sur une ligne au '
@@ -381,6 +513,18 @@ void main() {
           .height;
       // Le decorateur porte le champ et son aide ecrite dessous.
       expect(canal - aide, moreOrLessEquals(_hauteurUneLigne, epsilon: 8));
+      // Au toucher, avant toute frappe, toujours une ligne.
+      await tester.tap(find.byKey(FilDiscussion.champKey));
+      await tester.pumpAndSettle();
+      final double touche = tester
+          .getSize(
+            find.descendant(
+              of: find.byKey(FilDiscussion.champKey),
+              matching: find.byType(InputDecorator),
+            ),
+          )
+          .height;
+      expect(touche, moreOrLessEquals(canal, epsilon: 0.5));
       expect(tester.takeException(), isNull);
     });
   });
@@ -459,6 +603,40 @@ void main() {
       );
       expect(ligne, 'Enseignante, Classe An-Nour · Il y a 2 h');
       expect(ligneAuteurCommunaute(null, 'Il y a 2 h'), 'Il y a 2 h');
+    });
+
+    test('une fonction qui porte son propre « · » reste secable ; '
+        'l espace insecable precede le dernier separateur', () {
+      final String ligne = ligneAuteurCommunaute(
+        'Enseignante · Classe An-Nour',
+        'Il y a 2 h',
+      );
+      expect(
+        ligne,
+        'Enseignante · Classe An-Nour\u00A0· Il\u00A0y\u00A0a\u00A02\u00A0h',
+      );
+    });
+
+    test('arabe : le nombre s accorde (minutes, heures, jours)', () {
+      LocaleSettings.setLocaleSync(AppLocale.ar);
+      addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+      final DateTime maintenant = DateTime(2026, 10, 8, 12);
+      String il(Duration d) =>
+          momentCommunaute(maintenant.subtract(d), maintenant);
+      expect(il(const Duration(minutes: 1)), 'منذ دقيقة');
+      expect(il(const Duration(minutes: 2)), 'منذ دقيقتين');
+      expect(il(const Duration(minutes: 5)), 'منذ 5 دقائق');
+      expect(il(const Duration(minutes: 12)), 'منذ 12 دقيقة');
+      expect(il(const Duration(hours: 1)), 'منذ ساعة');
+      expect(il(const Duration(hours: 2)), 'منذ ساعتين');
+      expect(il(const Duration(hours: 3)), 'منذ 3 ساعات');
+      expect(il(const Duration(hours: 11)), 'منذ 11 ساعة');
+      expect(il(const Duration(days: 1)), 'منذ يوم');
+      expect(il(const Duration(days: 2)), 'منذ يومين');
+      expect(il(const Duration(days: 3)), 'منذ 3 أيام');
+      LocaleSettings.setLocaleSync(AppLocale.fr);
+      expect(il(const Duration(hours: 2)), 'Il y a 2 h');
+      expect(il(const Duration(minutes: 1)), 'Il y a 1 min');
     });
 
     testWidgets('390 : « Il y a 2 h » sur une seule ligne', (
