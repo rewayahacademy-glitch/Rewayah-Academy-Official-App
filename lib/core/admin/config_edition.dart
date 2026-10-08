@@ -10,117 +10,83 @@ import '../widgets/selecteur_motif.dart';
 import '../widgets/setting_row.dart';
 import 'service_configuration.dart';
 
-/// Les valeurs proposees d'un reglage entier, et les bornes de la saisie libre
-/// (FORM-L13).
+/// Les valeurs proposees d'un reglage entier (FORM-L13).
+///
+/// **Les puces ne sont que des raccourcis** : une valeur saisie par « Autre »
+/// est acceptee des qu'elle est un entier positif ou nul, comme avant FORM-L13
+/// (decide par delegation le 08/10). Seule exception : un plafond [max] qui a
+/// une source ecrite (migration ou `docs/current`), citee en commentaire.
 @immutable
 class ReglageEntierPropose {
   /// Cree une proposition.
-  const ReglageEntierPropose({
-    required this.proposees,
-    required this.min,
-    required this.max,
-  });
+  const ReglageEntierPropose({required this.proposees, this.max});
 
   /// Les valeurs proposees en puces.
   final List<int> proposees;
 
-  /// La plus petite valeur acceptee par la saisie libre.
-  final int min;
-
-  /// La plus grande valeur acceptee par la saisie libre.
-  final int max;
+  /// Le plafond de la saisie libre, seulement s'il a une source ecrite ; nul
+  /// sinon (toute valeur >= 0 est acceptee).
+  final int? max;
 }
 
 /// Les propositions des treize reglages entiers de Configuration, par cle
 /// `app_config` (FORM-L13, decide par delegation le 05/10).
 ///
-/// **Aucune regle metier n'est inventee ici** : chaque valeur vient d'un
-/// defaut de migration, d'une valeur deja proposee ailleurs dans le code ou de
-/// `docs/current` ; sans source, la valeur la plus prudente est retenue. La
-/// source et le raisonnement de chaque ligne sont dans
+/// **Aucune regle metier n'est inventee ici** : chaque valeur proposee vient
+/// d'un defaut de migration, d'une valeur deja proposee ailleurs dans le code
+/// ou de `docs/current`. La source de chaque ligne est dans
 /// `docs/current/FORM-L1-7-13_MOTIFS.md` (section L13). Le serveur n'impose
-/// aucune borne : ces bornes ne protegent que la saisie.
-const Map<String, ReglageEntierPropose> reglagesEntiersProposes =
-    <String, ReglageEntierPropose>{
-      // Defaut 5 (0001_fondations).
-      'absence_threshold_minutes': ReglageEntierPropose(
-        proposees: <int>[5, 10, 15],
-        min: 1,
-        max: 30,
-      ),
-      // Defaut 60 (0005) ; 45 et 90 : doc 07 ; liste de `FeuilleRegle`.
-      'session_duration_minutes': ReglageEntierPropose(
-        proposees: <int>[30, 45, 60, 90],
-        min: 30,
-        max: 90,
-      ),
-      // Defaut 45 (0005) ; liste de `FeuilleRegle`.
-      'session_paid_minimum_minutes': ReglageEntierPropose(
-        proposees: <int>[30, 45, 60],
-        min: 15,
-        max: 90,
-      ),
-      // Defaut 30 (0005) ; liste de `FeuilleRegle`.
-      'break_minutes_between_sessions': ReglageEntierPropose(
-        proposees: <int>[15, 30, 45],
-        min: 15,
-        max: 60,
-      ),
-      // Defaut 5 (0005) ; liste de `FeuilleRegle` ; 6 : doc 07 (adultes).
-      'max_students_per_teacher': ReglageEntierPropose(
-        proposees: <int>[3, 4, 5, 6],
-        min: 1,
-        max: 6,
-      ),
-      // Defaut 4 (0005, 0033).
-      'matching_horizon_weeks': ReglageEntierPropose(
-        proposees: <int>[2, 4, 8],
-        min: 1,
-        max: 12,
-      ),
-      // Defaut 11 (0001) ; 15 et 18 : bornes des tranches d'age (0043).
-      'camera_auto_allow_min_age': ReglageEntierPropose(
-        proposees: <int>[11, 15, 18],
-        min: 5,
-        max: 18,
-      ),
-      // Defaut 8 (0001) ; 7 et 10 : bornes des tranches d'age (0043).
-      'child_ui_mode_max_age': ReglageEntierPropose(
-        proposees: <int>[7, 8, 10],
-        min: 5,
-        max: 10,
-      ),
-      // Defaut 2, regle C11 (0001) : deux appareils actifs au plus.
-      'max_devices_per_student': ReglageEntierPropose(
-        proposees: <int>[1, 2],
-        min: 1,
-        max: 2,
-      ),
-      // Defaut 1 (0001).
-      'max_concurrent_sessions_per_profile': ReglageEntierPropose(
-        proposees: <int>[1, 2],
-        min: 1,
-        max: 2,
-      ),
-      // Defaut 2 (0001), 7 (0017) ; 5 et 6 : doc 07 (capacites + enseignant).
-      'max_participants_per_session': ReglageEntierPropose(
-        proposees: <int>[2, 5, 6, 7],
-        min: 2,
-        max: 7,
-      ),
-      // Defaut 30 (0001, doc 06) ; plus court seulement, par prudence.
-      'recording_retention_days': ReglageEntierPropose(
-        proposees: <int>[7, 15, 30],
-        min: 1,
-        max: 30,
-      ),
-      // Defaut 90 (0004) ; plus court seulement, par prudence.
-      'kyc_retention_days': ReglageEntierPropose(
-        proposees: <int>[30, 60, 90],
-        min: 1,
-        max: 90,
-      ),
-    };
+/// aucune borne ; l'ecran n'en ajoute aucune sans source ecrite (08/10).
+const Map<String, ReglageEntierPropose>
+reglagesEntiersProposes = <String, ReglageEntierPropose>{
+  // Defaut 5 (0001_fondations).
+  'absence_threshold_minutes': ReglageEntierPropose(
+    proposees: <int>[5, 10, 15],
+  ),
+  // Defaut 60 (0005) ; 45 et 90 : doc 07 ; liste de `FeuilleRegle`.
+  'session_duration_minutes': ReglageEntierPropose(
+    proposees: <int>[30, 45, 60, 90],
+  ),
+  // Defaut 45 (0005) ; liste de `FeuilleRegle`.
+  'session_paid_minimum_minutes': ReglageEntierPropose(
+    proposees: <int>[30, 45, 60],
+  ),
+  // Defaut 30 (0005) ; liste de `FeuilleRegle`.
+  'break_minutes_between_sessions': ReglageEntierPropose(
+    proposees: <int>[15, 30, 45],
+  ),
+  // Defaut 5 (0005) ; liste de `FeuilleRegle` ; 6 : doc 07 (adultes).
+  'max_students_per_teacher': ReglageEntierPropose(
+    proposees: <int>[3, 4, 5, 6],
+  ),
+  // Defaut 4 (0005, 0033).
+  'matching_horizon_weeks': ReglageEntierPropose(proposees: <int>[2, 4, 8]),
+  // Defaut 11 (0001) ; 15 et 18 : bornes des tranches d'age (0043).
+  'camera_auto_allow_min_age': ReglageEntierPropose(
+    proposees: <int>[11, 15, 18],
+  ),
+  // Defaut 8 (0001) ; 7 et 10 : bornes des tranches d'age (0043).
+  'child_ui_mode_max_age': ReglageEntierPropose(proposees: <int>[7, 8, 10]),
+  // Defaut 2. Plafond 2 : source ecrite, regle C11 de
+  // `supabase/migrations/0001_fondations.sql` (« deux appareils actifs
+  // max par eleve », garde `guard_devices_max`).
+  'max_devices_per_student': ReglageEntierPropose(
+    proposees: <int>[1, 2],
+    max: 2,
+  ),
+  // Defaut 1 (0001).
+  'max_concurrent_sessions_per_profile': ReglageEntierPropose(
+    proposees: <int>[1, 2],
+  ),
+  // Defaut 2 (0001), 7 (0017) ; 5 et 6 : doc 07 (capacites + enseignant).
+  'max_participants_per_session': ReglageEntierPropose(
+    proposees: <int>[2, 5, 6, 7],
+  ),
+  // Defaut 30 (0001, doc 06).
+  'recording_retention_days': ReglageEntierPropose(proposees: <int>[7, 15, 30]),
+  // Defaut 90 (0004).
+  'kyc_retention_days': ReglageEntierPropose(proposees: <int>[30, 60, 90]),
+};
 
 /// Une ligne Configuration qui edite un entier de `app_config` par une
 /// feuille de saisie -- meme mecanique que `_FeuilleTraitement` de
@@ -259,11 +225,12 @@ class _FeuilleEntiereEtat extends State<_FeuilleEntiere> {
       setState(() => _erreur = widget.valeurInvalide);
       return;
     }
-    if (p != null && (v < p.min || v > p.max)) {
+    // Seul un plafond a source ecrite refuse une valeur (08/10).
+    if (p?.max case final int max when v > max) {
       setState(
         () => _erreur = t.formulaire.entier.horsBornes(
-          min: widget.affichage(p.min),
-          max: widget.affichage(p.max),
+          min: widget.affichage(0),
+          max: widget.affichage(max),
         ),
       );
       return;
@@ -291,7 +258,6 @@ class _FeuilleEntiereEtat extends State<_FeuilleEntiere> {
         if (widget.proposition case final ReglageEntierPropose p)
           SelecteurEntier(
             proposees: p.proposees,
-            min: p.min,
             max: p.max,
             affichage: widget.affichage,
             valeurInitiale: widget.valeurInitiale,

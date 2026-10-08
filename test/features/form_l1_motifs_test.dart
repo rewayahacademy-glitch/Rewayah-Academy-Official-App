@@ -77,6 +77,122 @@ class _Configuration implements ServiceConfiguration {
 
 void main() {
   group('SelecteurMotif, seul', () {
+    // Contre-epreuve du verificateur (08/10) : sur cde41490, une liste qui
+    // devenait vide n'affichait ni puce ni champ.
+    testWidgets('une liste qui devient vide ouvre le champ libre seul', (
+      WidgetTester tester,
+    ) async {
+      final TextEditingController c = TextEditingController();
+      addTearDown(c.dispose);
+      List<String> motifs = MotifsProposes.retraitEleve();
+      late StateSetter changer;
+      await tester.pumpWidget(
+        _hoteTexte(
+          StatefulBuilder(
+            builder: (BuildContext _, StateSetter s) {
+              changer = s;
+              return SelecteurMotif(motifs: motifs, controleur: c);
+            },
+          ),
+        ),
+      );
+      expect(find.byType(TextField), findsNothing);
+      changer(() => motifs = const <String>[]);
+      await tester.pumpAndSettle();
+      expect(find.byKey(SelecteurMotif.cleAutre), findsNothing);
+      expect(find.byType(TextField), findsOneWidget);
+      await tester.enterText(find.byType(TextField), 'Texte libre');
+      await tester.pumpAndSettle();
+      expect(c.text, 'Texte libre');
+      // Et la liste qui revient : le texte libre reste, sous « Autre ».
+      changer(() => motifs = MotifsProposes.retraitEleve());
+      await tester.pumpAndSettle();
+      expect(find.byKey(SelecteurMotif.cleAutre), findsOneWidget);
+      expect(find.byType(TextField), findsOneWidget);
+      expect(c.text, 'Texte libre');
+    });
+
+    testWidgets('une puce retenue se relit dans une nouvelle liste', (
+      WidgetTester tester,
+    ) async {
+      final TextEditingController c = TextEditingController(
+        text: t.motifs.retraitEleve.transfert,
+      );
+      addTearDown(c.dispose);
+      List<String> motifs = MotifsProposes.retraitEleve();
+      late StateSetter changer;
+      await tester.pumpWidget(
+        _hoteTexte(
+          StatefulBuilder(
+            builder: (BuildContext _, StateSetter s) {
+              changer = s;
+              return SelecteurMotif(motifs: motifs, controleur: c);
+            },
+          ),
+        ),
+      );
+      bool retenue(Key cle) => tester
+          .widget<FilterPill>(
+            find.descendant(
+              of: find.byKey(cle),
+              matching: find.byType(FilterPill),
+            ),
+          )
+          .retenue;
+      expect(retenue(SelecteurMotif.clePuce(1)), isTrue);
+      // La meme phrase passe en tete d'une autre liste.
+      changer(
+        () => motifs = <String>[
+          t.motifs.retraitEleve.transfert,
+          t.motifs.retraitEleve.famille,
+        ],
+      );
+      await tester.pumpAndSettle();
+      expect(retenue(SelecteurMotif.clePuce(0)), isTrue);
+      expect(retenue(SelecteurMotif.clePuce(1)), isFalse);
+    });
+
+    testWidgets('focaliser : la premiere puce, ou le champ si « Autre »', (
+      WidgetTester tester,
+    ) async {
+      final TextEditingController c = TextEditingController();
+      addTearDown(c.dispose);
+      final GlobalKey<SelecteurMotifEtat> cle = GlobalKey<SelecteurMotifEtat>();
+      final FocusNode champ = FocusNode(debugLabel: 'champ-test');
+      addTearDown(champ.dispose);
+      await tester.pumpWidget(
+        _hoteTexte(
+          SelecteurMotif(
+            key: cle,
+            motifs: MotifsProposes.retraitEleve(),
+            controleur: c,
+            focusNode: champ,
+            autofocus: true,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        FocusManager.instance.primaryFocus?.debugLabel,
+        SelecteurMotif.focusPremierePuce,
+      );
+      final Rect puce = tester
+          .getRect(find.byKey(SelecteurMotif.clePuce(0)))
+          .inflate(1);
+      final Rect focus = FocusManager.instance.primaryFocus!.rect;
+      expect(
+        puce.contains(focus.topLeft) && puce.contains(focus.bottomRight),
+        isTrue,
+      );
+      await tester.tap(find.byKey(SelecteurMotif.cleAutre));
+      await tester.pumpAndSettle();
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pump();
+      cle.currentState!.focaliser();
+      await tester.pump();
+      expect(FocusManager.instance.primaryFocus, champ);
+    });
+
     testWidgets('la puce choisie est ecrite telle quelle', (
       WidgetTester tester,
     ) async {
@@ -317,14 +433,28 @@ void main() {
       expect(reglagesEntiersProposes, hasLength(13));
       for (final MapEntry<String, ReglageEntierPropose> e
           in reglagesEntiersProposes.entries) {
-        expect(e.value.min, lessThanOrEqualTo(e.value.max), reason: e.key);
+        // Aucune borne inventee (08/10) : seul le plafond a source ecrite
+        // (C11, appareils) reste.
+        expect(
+          e.value.max,
+          e.key == 'max_devices_per_student' ? 2 : isNull,
+          reason: e.key,
+        );
         for (final int v in e.value.proposees) {
-          expect(v, inInclusiveRange(e.value.min, e.value.max), reason: e.key);
+          expect(v, greaterThanOrEqualTo(0), reason: e.key);
+          if (e.value.max case final int max) {
+            expect(v, lessThanOrEqualTo(max), reason: e.key);
+          }
         }
       }
     });
 
-    Future<void> monter(WidgetTester tester, _Configuration config) async {
+    Future<void> monter(
+      WidgetTester tester,
+      _Configuration config, {
+      String cle = 'session_duration_minutes',
+      int valeur = 60,
+    }) async {
       _fenetre(tester, const Size(390, 900));
       await tester.pumpWidget(
         hote(
@@ -332,8 +462,8 @@ void main() {
             body: ConfigLigneEntiere(
               titre: 'Duree de seance',
               description: 'Detail',
-              cle: 'session_duration_minutes',
-              valeur: 60,
+              cle: cle,
+              valeur: valeur,
               affichage: (int n) => '$n min',
               champValeur: 'Valeur',
               envoyer: 'Enregistrer',
@@ -375,24 +505,67 @@ void main() {
       ]);
     });
 
-    testWidgets('« Autre » hors bornes est refuse, dans les bornes ecrit', (
+    testWidgets('« Autre » accepte toute valeur >= 0, comme avant la branche', (
       WidgetTester tester,
     ) async {
       final _Configuration config = _Configuration();
       await monter(tester, config);
       await _presser(tester, find.byKey(SelecteurEntier.cleAutre));
+      // Negatif : refuse, comme avant FORM-L13.
+      await tester.enterText(find.byKey(SelecteurEntier.cleChamp), '-5');
+      await _presser(tester, find.text('Enregistrer').last);
+      expect(find.text('Entrez un nombre valide.'), findsOneWidget);
+      expect(config.ecrits, isEmpty);
+      // 200 min : hors des puces, sans borne ecrite, donc accepte.
       await tester.enterText(find.byKey(SelecteurEntier.cleChamp), '200');
       await _presser(tester, find.text('Enregistrer').last);
+      expect(config.ecrits, <(String, Object)>[
+        ('session_duration_minutes', 200),
+      ]);
+    });
+
+    // Valeurs de production hors des anciennes bornes de la branche (seuil
+    // <= 30, horizon <= 12, duree payee >= 15, pause >= 15) : elles se
+    // relisent dans « Autre » et se reenregistrent telles quelles.
+    for (final (String cle, int valeur) in <(String, int)>[
+      ('absence_threshold_minutes', 45),
+      ('matching_horizon_weeks', 16),
+      ('session_paid_minimum_minutes', 10),
+      ('break_minutes_between_sessions', 0),
+    ]) {
+      testWidgets('$cle = $valeur (production) se reenregistre', (
+        WidgetTester tester,
+      ) async {
+        final _Configuration config = _Configuration();
+        await monter(tester, config, cle: cle, valeur: valeur);
+        expect(
+          tester
+              .widget<TextField>(find.byKey(SelecteurEntier.cleChamp))
+              .controller!
+              .text,
+          '$valeur',
+        );
+        await _presser(tester, find.text('Enregistrer').last);
+        expect(config.ecrits, <(String, Object)>[(cle, valeur)]);
+      });
+    }
+
+    testWidgets('appareils : seul le plafond a source ecrite (C11) refuse', (
+      WidgetTester tester,
+    ) async {
+      final _Configuration config = _Configuration();
+      await monter(tester, config, cle: 'max_devices_per_student', valeur: 2);
+      await _presser(tester, find.byKey(SelecteurEntier.cleAutre));
+      await tester.enterText(find.byKey(SelecteurEntier.cleChamp), '3');
+      await _presser(tester, find.text('Enregistrer').last);
       expect(
-        find.text(t.formulaire.entier.horsBornes(min: '30 min', max: '90 min')),
+        find.text(t.formulaire.entier.horsBornes(min: '0 min', max: '2 min')),
         findsOneWidget,
       );
       expect(config.ecrits, isEmpty);
-      await tester.enterText(find.byKey(SelecteurEntier.cleChamp), '75');
+      await tester.enterText(find.byKey(SelecteurEntier.cleChamp), '0');
       await _presser(tester, find.text('Enregistrer').last);
-      expect(config.ecrits, <(String, Object)>[
-        ('session_duration_minutes', 75),
-      ]);
+      expect(config.ecrits, <(String, Object)>[('max_devices_per_student', 0)]);
     });
   });
 }
