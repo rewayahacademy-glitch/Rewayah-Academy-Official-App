@@ -192,7 +192,7 @@ class AffichageSeance {
     if (restant == null) {
       return e.prevue;
     }
-    final int minutes = restant.inMinutes;
+    final int minutes = LibellesGroupe.minutesAvant(restant);
     if (minutes < Duration.minutesPerHour) {
       return e.dansMinutes(minutes: minutes < 1 ? 1 : minutes);
     }

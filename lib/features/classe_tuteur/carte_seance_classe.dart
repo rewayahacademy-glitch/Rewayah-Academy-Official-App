@@ -453,9 +453,11 @@ class _Heures extends StatelessWidget {
     final String? complement = affichage.ville == null
         ? affichage.fuseau
         : null;
-    final Widget heure = _Colonne(
+    // « 4 octobre » reste sur une ligne quand il y tient : jamais « 4 » seul
+    // en fin de ligne, loin de son mois (COM-RC tour 7, lot L).
+    Widget colonneHeure(String date) => _Colonne(
       icone: AppIcons.journee,
-      libelle: affichage.date,
+      libelle: date,
       valeur: valeurHeure,
       complement: complement,
       compact: compact,
@@ -491,8 +493,14 @@ class _Heures extends StatelessWidget {
         final double texteGauche = demi - _Colonne.retrait;
         final double texteDroite =
             demi - AppSpacing.md * 2 - filet - _Colonne.retrait;
+        final String dateEnColonne = nombresLiesSiTient(
+          context,
+          affichage.date,
+          styles.discret,
+          texteGauche,
+        );
         final bool deuxColonnes =
-            tient(affichage.date, styles.discret, texteGauche) &&
+            tient(dateEnColonne, styles.discret, texteGauche) &&
             tient(valeurHeure, styles.valeur, texteGauche) &&
             tient(complement, styles.discret, texteGauche) &&
             tientSurUneLigne(
@@ -505,9 +513,21 @@ class _Heures extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
-            children: <Widget>[heure, Ecart.vMd, duree],
+            children: <Widget>[
+              colonneHeure(
+                nombresLiesSiTient(
+                  context,
+                  affichage.date,
+                  styles.discret,
+                  c.maxWidth - _Colonne.retrait,
+                ),
+              ),
+              Ecart.vMd,
+              duree,
+            ],
           );
         }
+        final Widget heure = colonneHeure(dateEnColonne);
         return IntrinsicHeight(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,

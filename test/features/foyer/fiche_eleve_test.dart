@@ -793,7 +793,7 @@ void main() {
         ..elevesRendus = <EleveDuFoyer>[
           EleveDuFoyer(
             id: 'foyer-c-eleve-1',
-            prenom: 'Eleve C1',
+            prenom: 'Élève C1',
             identifiantImmuable: 'STUD-FC-000001',
             mode: InterfaceMode.standard,
             camera: CameraPolicy.forbidden,
@@ -808,7 +808,7 @@ void main() {
         ),
       );
       await stabiliser(tester);
-      await _toucher(tester, find.text('Eleve C1'));
+      await _toucher(tester, find.text('Élève C1'));
       await _ouvrirLigne(tester, t.ficheEleve.lignes.acces);
     }
 
@@ -825,7 +825,7 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.text(t.ficheEleve.acces.expirePhrase(prenom: 'Eleve C1')),
+        find.text(t.ficheEleve.acces.expirePhrase(prenom: 'Élève C1')),
         findsOneWidget,
       );
       expect(find.text(t.ficheEleve.acces.detailIndisponible), findsOneWidget);

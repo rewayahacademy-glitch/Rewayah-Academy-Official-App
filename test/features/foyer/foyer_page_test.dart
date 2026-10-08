@@ -515,7 +515,7 @@ void main() {
         ..elevesRendus = <EleveDuFoyer>[
           EleveDuFoyer(
             id: 'foyer-c-eleve-1',
-            prenom: 'Eleve C1',
+            prenom: 'Élève C1',
             identifiantImmuable: 'STUD-FC-000001',
             mode: InterfaceMode.standard,
             camera: CameraPolicy.forbidden,
@@ -523,7 +523,7 @@ void main() {
           ),
           EleveDuFoyer(
             id: 'foyer-c-eleve-2',
-            prenom: 'Eleve C2',
+            prenom: 'Élève C2',
             identifiantImmuable: 'STUD-FC-000002',
             mode: InterfaceMode.standard,
             camera: CameraPolicy.forbidden,

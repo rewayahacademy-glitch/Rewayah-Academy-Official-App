@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
@@ -249,25 +250,39 @@ class _Ligne extends StatelessWidget {
     final Widget? pastille = affichage.widgetPastille;
     final bool annulee = affichage.etatPastille == EtatPastilleSeance.annulee;
     final bool large = classeEnColonnes(context);
+    final TextStyle styleDate = palette.inkStrong.applyTo(
+      (large ? textes.titleMedium : textes.titleSmall) ?? const TextStyle(),
+    );
     return MergeSemantics(
       child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: AppTouchTarget.standard),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: Column(
+          // La date et l'heure d'abord, la pastille au bout de la ligne ;
+          // quand les deux ne tiennent pas (320 px, texte x2), la pastille
+          // passe dessous : a cote, elle reduisait la date a « Di / ma /
+          // nc... » (COM-RC tour 7, lot L).
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints c) => Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.xs,
+              children: <Widget>[
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
+                    // « 4 octobre » sur une ligne quand il y tient (lot L).
                     TexteHeureSeance(
-                      heure: affichage.date,
-                      annulee: annulee,
-                      style: palette.inkStrong.applyTo(
-                        (large ? textes.titleMedium : textes.titleSmall) ??
-                            const TextStyle(),
+                      heure: nombresLiesSiTient(
+                        context,
+                        affichage.date,
+                        styleDate,
+                        c.maxWidth,
                       ),
+                      annulee: annulee,
+                      style: styleDate,
                     ),
                     Ecart.vXs,
                     TexteHeureSeance(
@@ -293,9 +308,9 @@ class _Ligne extends StatelessWidget {
                     ),
                   ],
                 ),
-              ),
-              if (pastille != null) ...<Widget>[Ecart.hSm, pastille],
-            ],
+                ?pastille,
+              ],
+            ),
           ),
         ),
       ),

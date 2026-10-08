@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/foyer/selection_eleve.dart';
@@ -210,7 +211,7 @@ class _Identite extends StatelessWidget {
     );
     return <Widget>[
       Text(
-        c.libelle,
+        traitsDUnionInsecables(c.libelle),
         style: palette.inkStrong.applyTo(
           textes.titleMedium ?? const TextStyle(),
         ),

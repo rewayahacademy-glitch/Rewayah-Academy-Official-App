@@ -46,10 +46,11 @@ const String eleveA1 = 'foyer-a-eleve-1';
 const String classeA = 'classe-a';
 
 /// Une seance a venir, salle ouverte (fenetre fictive de 20 min), dans 10 min
-/// et 30 s par defaut.
+/// par defaut (le compte a rebours arrondit au superieur : les millisecondes
+/// du test ne le font pas changer).
 SeanceFamille seanceSalleOuverte({
   StatutSeance? statut = StatutSeance.planifiee,
-  Duration avant = const Duration(minutes: 10, seconds: 30),
+  Duration avant = const Duration(minutes: 10),
   String seanceId = 's1',
   bool avecHorloge = true,
   String heure = '18:10',

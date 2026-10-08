@@ -38,7 +38,7 @@ Affectation _affectation({
   enseignantPrenom: 'Omar',
   enseignantIdentifiant: 'TEACH-OS-000001',
   eleveId: eleveId,
-  elevePrenom: 'Eleve $eleveId',
+  elevePrenom: 'Élève $eleveId',
   creneau: Creneau(jour: jour, heure: heure, fuseau: 'Europe/Paris'),
   depuis: DateTime.now(),
   closeLe: closeLe,

@@ -16,6 +16,7 @@ import '../../core/priere/service_priere.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_mouvement.dart';
@@ -666,7 +667,7 @@ class _PulsationEtat extends State<_Pulsation>
 /// deux ecrans ne s'adressent pas a la meme personne, et « Dans 25 min » tutoye
 /// ici ce qu'il vouvoie la-bas.
 String _compteARebours(Duration reste) {
-  final int minutes = reste.inMinutes;
+  final int minutes = LibellesGroupe.minutesAvant(reste);
   if (minutes <= 0) {
     return t.eleve.accueil.imminent;
   }

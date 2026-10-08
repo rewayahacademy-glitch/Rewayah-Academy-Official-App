@@ -104,6 +104,7 @@
       "aucune": "لا توجد حصة مقررة",
       "horsLigne": "أنت غير متصل. تحتاج الحصة إلى اتصال.",
       "indisponible": "معلومات الحصة غير متاحة حاليًا.",
+      "accesInverifiable": "لا يمكن التحقق من الدخول إلى القاعة حاليًا.",
       "reessayer": "إعادة المحاولة",
       "chargementSeance": "جارٍ تحميل الحصة القادمة.",
       "progressionValeur": "{chapitre} · {pourcentage} %",
@@ -112,6 +113,132 @@
         "aVenir": "حصة قادمة",
         "fenetreOuverte": "القاعة مفتوحة",
         "attente": "أنت في القاعة"
+      }
+    },
+    "catalogue": "اختيار فصل",
+    "planning": "الجدول",
+    "travail": "قبل الدرس القادم",
+    "ressources": "المكتبة",
+    "progression": "التقدم",
+    "observer": "متابعة الحصة",
+    "titre": "الفصل",
+    "historique": "السجل",
+    "sousTitre": "{prenom} · {enseignant}",
+    "indisponiblePhrase": "تفاصيل الفصل غير متاحة هنا بعد.",
+    "introuvableTitre": "هذا الفصل غير متاح لهذا الملف",
+    "introuvablePhrase": "ربما انتهى، أو يخص طالبًا آخر من الأسرة.",
+    "seance": {
+      "aucune": "لا توجد حصة مجدولة",
+      "aucuneDetail": "ستظهر هنا الحصة القادمة لـ{prenom} بمجرد جدولتها.",
+      "illisible": "تعذّرت قراءة الحصة القادمة.",
+      "presence": "{prenom}: {etat}"
+    },
+    "observation": {
+      "commentCaMarche": "كيف تعمل؟",
+      "uneVisite": "زيارة واحدة متاحة",
+      "visites": "الزيارات المتاحة: {nombre}",
+      "resume": "{visites} · {duree} لكل زيارة",
+      "restanteAucune": "لا زيارات متبقية لهذه الحصة",
+      "restanteUne": "زيارة واحدة متبقية لهذه الحصة",
+      "restantes": "الزيارات المتبقية لهذه الحصة: {nombre}",
+      "minutes": "{minutes} د",
+      "minutesSecondes": "{minutes} د {secondes} ث",
+      "secondes": "{secondes} ث",
+      "motif": {
+        "visitesEpuisees": "استخدمت زياراتك لهذه الحصة.",
+        "tempsEpuise": "انتهى وقت المتابعة المخصص لك في هذه الحصة.",
+        "seanceNonCommencee": "تُفتح المتابعة عند بدء الحصة.",
+        "seanceTerminee": "انتهت الحصة.",
+        "seanceNonTenue": "هذه الحصة لن تُعقد، فلا شيء للمتابعة.",
+        "horsFenetre": "القاعة غير مفتوحة في هذا الوقت.",
+        "observationDesactivee": "المتابعة مغلقة لهذا الفصل.",
+        "lienAbsent": "لا يوجد طالب من أسرتك مرتبط بهذه الحصة.",
+        "enfantAbsent": "تنتظر المتابعة وصول {prenom}.",
+        "presenceEnVerification": "يجري التحقق من حضور {prenom}.",
+        "visiteDejaOuverte": "توجد زيارة مفتوحة بالفعل، على هذا الجهاز أو على جهاز آخر.",
+        "garantieServeurAbsente": "متابعة الحصص غير مفتوحة بعد.",
+        "reseau": "تعذّر التحقق من إتاحة المتابعة.",
+        "capaciteAbsente": "المتابعة غير متاحة حاليًا."
+      }
+    },
+    "pagePlanning": {
+      "prochaines": "الحصص القادمة",
+      "ligne": "{heure} · {duree}",
+      "ligneFuseau": "{heure} ({fuseau}) · {duree}",
+      "aucune": "لا توجد حصص قادمة حاليًا",
+      "aucuneDetail": "ستظهر هنا الحصص القادمة لـ{prenom} بمجرد جدولتها.",
+      "habituelIndisponible": "الأيام المعتادة للفصل لا تظهر هنا بعد: تظهر فقط الحصص المجدولة.",
+      "indisponible": "جدول الفصل غير مربوط بهذه المساحة بعد."
+    },
+    "pageTravail": {
+      "aucun": "لا شيء للتحضير حاليًا",
+      "aucunDetail": "سيظهر هنا العمل الذي يكلّف به المعلم.",
+      "indisponible": "العمل المطلوب تحضيره غير مربوط بهذه المساحة بعد.",
+      "echeance": "الموعد النهائي: {date}",
+      "nonCochable": "لا يمكن بعد تحديد عمل على أنه منجز من هنا.",
+      "statut": {
+        "aFaire": "للإنجاز",
+        "enCours": "بدأ",
+        "fait": "منجز",
+        "expire": "فات الموعد"
+      }
+    },
+    "pageRessources": {
+      "aucune": "لا توجد موارد لهذا الفصل حاليًا",
+      "aucuneDetail": "ستظهر هنا المواد التي يختارها المعلم.",
+      "indisponible": "مكتبة الفصل غير مربوطة بهذه المساحة بعد."
+    },
+    "pageProgression": {
+      "indisponible": "تقدم {prenom} غير مُشارك هنا بعد.",
+      "niveau": "المستوى",
+      "jalons": "المراحل المنجزة",
+      "aucune": "لا توجد مراحل مُشاركة حاليًا",
+      "aucuneDetail": "سيظهر هنا التقدم الذي يشاركه المعلم مع الأسرة."
+    },
+    "pageCatalogue": {
+      "pour": "لـ{prenom}",
+      "proposees": "الفصول المقترحة",
+      "indisponible": "اختيار الفصل عبر الإنترنت غير مفتوح بعد.",
+      "aucune": "لا يوجد فصل مناسب حاليًا",
+      "aucuneDetail": "لا يوجد فصل مفتوح يناسب ملف {prenom} في الوقت الحالي.",
+      "eleveInconnuTitre": "هذا الملف ليس ضمن أسرتك",
+      "eleveInconnuPhrase": "عد إلى الصفحة الرئيسية واختر ملف الطالب المعني.",
+      "horairesAbsents": "أيام هذا الفصل ومواعيده لا تظهر هنا بعد.",
+      "seanceHebdo": "{jour} الساعة {heure} · {duree} د",
+      "fuseauClasse": "مواعيد الفصل ({fuseau})",
+      "placeUne": "مقعد واحد متبقٍّ",
+      "places": "المقاعد المتبقية: {nombre}",
+      "etat": {
+        "ouverte": "مفتوح",
+        "complete": "مكتمل",
+        "listeAttente": "قائمة الانتظار"
+      },
+      "choisir": "اختيار هذا الفصل",
+      "rejoindreAttente": "الانضمام إلى قائمة الانتظار",
+      "precisionsTitre": "قبل الاختيار",
+      "precisionEnseignant": "يحتفظ الفصل بالمعلم نفسه في كل حصصه.",
+      "precisionPlaces": "المقاعد المعروضة هي مقاعد الأكاديمية لحظة القراءة.",
+      "precisionReserve": "لا يُحجز شيء قبل تأكيدك.",
+      "confirmerTitre": "تأكيد الفصل",
+      "confirmerPhrase": "أنت تسجّل {prenom} في هذا الفصل.",
+      "confirmerAttentePhrase": "أنت تسجّل {prenom} في قائمة انتظار هذا الفصل.",
+      "memeEnseignant": "الفصل نفسه والمعلم نفسه في كل حصص الأسبوع: {enseignant}.",
+      "confirmer": "تأكيد التسجيل",
+      "confirmerAttente": "تأكيد قائمة الانتظار",
+      "envoiIncertain": "لم يصل رد الأكاديمية. إعادة المحاولة لا تنشئ تسجيلًا ثانيًا.",
+      "envoiIndisponible": "التسجيل عبر الإنترنت غير مفتوح بعد: لم يُحجز أي مقعد.",
+      "resultat": {
+        "inscritTitre": "تم تأكيد التسجيل",
+        "inscritPhrase": "انضم {prenom} إلى {classe}.",
+        "voirClasse": "عرض الفصل",
+        "validationTitre": "تم إرسال الطلب",
+        "validationPhrase": "ما زال على الأكاديمية اعتماد تسجيل {prenom} في {classe}.",
+        "listeAttenteTitre": "التسجيل في قائمة الانتظار",
+        "listeAttentePhrase": "{prenom} في قائمة انتظار {classe}. لم يُحجز أي مقعد حاليًا.",
+        "refuseTitre": "لم يُقبل التسجيل",
+        "refusePhrase": "لم يُحجز أي مقعد لـ{prenom}. يمكنك اختيار فصل آخر.",
+        "autresClasses": "عرض الفصول الأخرى",
+        "retourAccueil": "العودة إلى الصفحة الرئيسية"
       }
     }
   },
@@ -195,16 +322,183 @@
     "themeSombre": "داكن",
     "themeSombreDetail": "خلفية داكنة مهما كان إعداد جهازك"
   },
+  "tuteur": {
+    "accueil": {
+      "prochaineSeance": "الحصة القادمة",
+      "heureDe": "توقيت {ville}",
+      "heureAppareil": "توقيت هذا الجهاز",
+      "heureClasse": "توقيت الفصل: {heure} {ville}",
+      "seanceEnDirect": "الحصة مباشرة",
+      "seanceTerminee": "انتهت الحصة",
+      "seanceAnnulee": "لن تُعقد هذه الحصة.",
+      "seanceNonTenue": "تعذّر عقد هذه الحصة.",
+      "horaireIncertain": "لم يُؤكَّد فتح القاعة بعد",
+      "pastilleAnnulee": "ملغاة",
+      "pastilleNonTenue": "لم تُعقد",
+      "pastilleTerminee": "منتهية",
+      "etatCourt": {
+        "enDirect": "مباشر",
+        "salleOuverte": "القاعة مفتوحة",
+        "dansMinutes": "بعد {minutes} د",
+        "dansHeures": "بعد {heures} س {minutes} د",
+        "dansJours": "بعد {jours} يوم",
+        "prevue": "حصة مقررة",
+        "annulee": "حصة ملغاة",
+        "nonTenue": "حصة لم تُعقد",
+        "terminee": "حصة منتهية",
+        "aucune": "لا توجد حصة",
+        "illisible": "غير متاح"
+      },
+      "motifAnnuleeTard": "أُلغيت الحصة قبل موعدها بقليل"
+    }
+  },
+  "nav": {
+    "eleve": {
+      "accueil": "الرئيسية",
+      "maClasse": "فصلي",
+      "coran": "القرآن",
+      "monEspace": "مساحتي",
+      "suivi": "المتابعة",
+      "compte": "الحساب"
+    },
+    "tuteur": {
+      "accueil": "الرئيسية",
+      "foyer": "الأسرة",
+      "disponibilites": "الأوقات المتاحة",
+      "reglages": "الإعدادات",
+      "suivi": "المتابعة",
+      "historique": "السجل",
+      "compte": "الحساب"
+    },
+    "enseignant": {
+      "journee": "اليوم",
+      "classes": "الفصول",
+      "creneaux": "الأوقات المتاحة",
+      "profil": "الملف الشخصي"
+    },
+    "controleur": {
+      "planning": "الجدول",
+      "controle": "المراقبة",
+      "historique": "السجل",
+      "echanges": "المراسلات",
+      "compte": "الحساب"
+    },
+    "admin": {
+      "tableauDeBord": "لوحة التحكم",
+      "dossiers": "الملفات",
+      "demandes": "الطلبات",
+      "attribution": "الإسناد",
+      "journal": "السجل",
+      "comptes": "الحسابات",
+      "accesAgents": "صلاحيات الموظفين",
+      "accueil": "الرئيسية",
+      "operations": "العمليات",
+      "personnes": "الأشخاص",
+      "pedagogie": "التعليم",
+      "finance": "المالية",
+      "configuration": "الإعدادات",
+      "securite": "الأمان والتدقيق",
+      "direction": "الإدارة",
+      "recherche": "البحث",
+      "rechercheIndication": "البحث عن شاشة",
+      "notificationsTitre": "الإشعارات",
+      "menu": "القائمة"
+    },
+    "compte": "حسابي",
+    "principale": "التنقل الرئيسي",
+    "motSymbole": "Rewayah",
+    "replier": "طي التنقل",
+    "deplier": "توسيع التنقل"
+  },
   "tc": {
+    "groupe": {
+      "mesGroupes": {
+        "titre": "فصولي",
+        "aucun": "لا يوجد فصل حاليًا",
+        "aucunDetail": "ستضعك الأكاديمية في فصل بمجرد توفر موعد يناسبك."
+      },
+      "commun": {
+        "erreur": "تعذّرت قراءة فصولك",
+        "reessayer": "إعادة المحاولة"
+      },
+      "carte": {
+        "ouvrir": "فتح الفصل {libelle}",
+        "capacite": "{membres} / {seuil}",
+        "capacitePhrase": "{membres} طلاب من أصل {seuil} مقاعد",
+        "complet": "مكتمل",
+        "prochainCours": "الدرس القادم",
+        "aucuneSeance": "لا توجد حصة مجدولة",
+        "aucuneSeanceDetail": "لم يُحدَّد جدول هذا الفصل بعد.",
+        "duree": "المدة {valeur}",
+        "dureeLibelle": "المدة",
+        "rejoindre": "انضمام"
+      },
+      "enseignant": {
+        "sayyid": "سيد",
+        "sayyida": "سيدة",
+        "photoManquante": "الصورة مطلوبة",
+        "photoManquanteDetail": "لم تُسجَّل صورة المعلم بعد."
+      },
+      "cours": {
+        "coursEtNiveau": "{cours} · {niveau}"
+      },
+      "temps": {
+        "dansMinutes": "الدرس بعد {minutes} د",
+        "dansHeures": "الدرس بعد {heures} س {minutes} د",
+        "imminent": "الدرس وشيك",
+        "salleOuverte": "القاعة مفتوحة · {reste}",
+        "salleOuverteCourt": "القاعة مفتوحة",
+        "attente": "أنت في القاعة. لم يبدأ الدرس بعد.",
+        "attenteDetail": "وقت الانتظار هذا لا يُحتسب في حضورك.",
+        "enSalle": "في القاعة",
+        "resteMinutes": "متبقٍّ {minutes} د",
+        "resteHeures": "متبقٍّ {heures} س {minutes} د",
+        "enCours": "الحصة مباشرة · {reste}",
+        "enDirect": "مباشر",
+        "prolongee": "الحصة ما زالت مباشرة",
+        "depassement": "تجاوز الوقت",
+        "terminee": "انتهى الدرس"
+      },
+      "duree": {
+        "minutes": "{minutes} د",
+        "heures": "{heures} س",
+        "heuresMinutes": "{heures} س {minutes} د"
+      },
+      "horloges": {
+        "votreHeure": "توقيتك",
+        "chezEnseignant": "توقيت {nomme}",
+        "heureGroupe": "توقيت الفصل",
+        "heureEtVille": "{heure} {ville}"
+      },
+      "dst": {
+        "j30": "تغيير التوقيت بعد شهر",
+        "j7": "تغيير التوقيت الأسبوع القادم",
+        "j1": "تغيير التوقيت غدًا",
+        "detail": "سينتقل درسك من {avant} إلى {apres}."
+      },
+      "session": {
+        "conseilAppareil": "يُنصح بجهاز لوحي أو حاسوب للدرس. يبقى الهاتف مدعومًا."
+      },
+      "espace": {
+        "retour": "فصولي",
+        "avantProchainCours": "قبل الدرس القادم",
+        "aucuneAction": "لا شيء للتحضير حاليًا",
+        "bibliotheque": "المكتبة",
+        "bibliothequeVoirTout": "عرض الكل",
+        "progression": "التقدم",
+        "roster": "طلاب الفصل",
+        "reprendreLeCours": "استئناف الدرس",
+        "introuvable": "هذا الفصل غير متاح لك",
+        "introuvableDetail": "ربما أُغلق، أو يخص ملفًا آخر."
+      },
+      "emplacement": {
+        "nonBranche": "متاح قريبًا",
+        "nonBrancheDetail": "سيُربط هذا المحتوى بهذه المساحة قريبًا."
+      }
+    },
     "bibliotheque": {
       "sections": {
         "groupe": "المواد المعروضة"
-      }
-    },
-    "groupe": {
-      "enseignant": {
-        "sayyid": "سيد",
-        "sayyida": "سيدة"
       }
     }
   },
@@ -560,7 +854,7 @@
       "videToutes": "لا توجد منشورات حاليًا.",
       "flux": {
         "ouvrir": "فتح المنشور {titre}",
-        "reponseUne": "ردّ واحد",
+        "reponseUne": "رد واحد",
         "reponses": "{nombre} ردود",
         "aucuneReponse": "لا توجد ردود",
         "categorie": "الفئة {categorie}"
@@ -586,7 +880,7 @@
         "signaler": "الإبلاغ عن المنشور",
         "signalee": "تم الإبلاغ عن المحتوى إلى فريق الإشراف.",
         "choisirTitre": "لا يوجد منشور مفتوح",
-        "choisir": "اختر منشورًا من القائمة لقراءته والردّ عليه.",
+        "choisir": "اختر منشورًا من القائمة لقراءته والرد عليه.",
         "introuvableTitre": "المنشور غير متاح",
         "introuvable": "تمت إزالة هذا المنشور أو لم يعد متاحًا لك. عد إلى المنشورات لاختيار منشور آخر.",
         "revenir": "العودة إلى المنشورات"
@@ -595,18 +889,18 @@
         "titre": "الردود ({nombre})",
         "vide": "لا توجد ردود حاليًا.",
         "erreurTitre": "تعذّر تحميل الردود.",
-        "champ": "ردّك",
-        "aide": "اكتب ردًّا",
-        "envoyer": "إرسال الردّ",
-        "champVide": "اكتب ردًّا لإرساله.",
+        "champ": "ردك",
+        "aide": "اكتب ردًا",
+        "envoyer": "إرسال الرد",
+        "champVide": "اكتب ردًا لإرساله.",
         "enCours": "جارٍ الإرسال",
         "nonConfirmee": "لم يُؤكَّد هذا الرد بعد. تحقّق من اتصالك ثم أعد إرساله.",
         "refusee": "رفضته سياسة المجتمع",
-        "reessayer": "إعادة إرسال الردّ",
+        "reessayer": "إعادة إرسال الرد",
         "indisponible": "الردود غير متاحة هنا بعد.",
-        "menu": "إجراءات على ردّ {nom}",
-        "signaler": "الإبلاغ عن الردّ",
-        "signalee": "لقد أبلغت عن هذا الردّ."
+        "menu": "إجراءات على رد {nom}",
+        "signaler": "الإبلاغ عن الرد",
+        "signalee": "لقد أبلغت عن هذا الرد."
       },
       "signalement": {
         "politique": {
@@ -870,7 +1164,7 @@
             "contenu": "اكتب ما يجب أن يعرفه المستلمون. الإعلان في اتجاه واحد: لا أحد يرد عليه.",
             "audience": "اختر من يستلم الإعلان. لا يُعرض إلا المستلمون الذين يمكنك النشر لهم.",
             "audienceFixee": "يُرسل هذا الإعلان إلى {cible}. أنت تنشر لفصلك فقط.",
-            "programmation": "اختر متى يُرسل الإعلان. الإعلان المبرمج ينتظر تاريخه.",
+            "programmation": "اختر متى يُرسل الإعلان. الإعلان المجدول ينتظر تاريخه.",
             "previsualisation": "هذا هو الإعلان كما سيقرؤه المستلمون.",
             "publication": "راجع المستلمين والتاريخ، ثم انشر. لا يُنشر شيء قبل التأكيد."
           },
@@ -885,7 +1179,7 @@
             "maintenant": "فور التأكيد",
             "maintenantDetail": "يُرسل الإعلان فور تأكيد النشر.",
             "creneau": "يوم {date} الساعة {heure}",
-            "creneauDetail": "ينتظر الإعلان هذا التاريخ. ستجده في الإعلانات المبرمجة."
+            "creneauDetail": "ينتظر الإعلان هذا التاريخ. ستجده في الإعلانات المجدولة."
           },
           "apercu": {
             "a": "إلى: {cible}",
@@ -894,14 +1188,14 @@
           },
           "continuer": "متابعة",
           "publier": "نشر الإعلان",
-          "programmer": "برمجة الإعلان",
+          "programmer": "جدولة الإعلان",
           "reessayer": "إعادة محاولة النشر",
           "terminer": "إنهاء",
           "manqueContenu": "اكتب عنوانًا ونصًا للمتابعة.",
           "manqueAudience": "اختر المستلمين للمتابعة.",
           "enCours": "النشر جارٍ. انتظر التأكيد.",
           "publiee": "نُشر الإعلان. يستلمه المستلمون.",
-          "planifiee": "بُرمج الإعلان ليوم {date} الساعة {heure}.",
+          "planifiee": "جُدول الإعلان ليوم {date} الساعة {heure}.",
           "nonConfirmee": "لم يُؤكَّد هذا الإعلان بعد. تحقّق من الاتصال ثم أعد المحاولة؛ لن يُرسل إلا مرة واحدة.",
           "horsLigne": "أنت غير متصل، ولم يُؤكَّد هذا الإعلان بعد. أعد المحاولة عند عودة الاتصال.",
           "indisponible": "نشر الإعلانات غير متاح بعد. عد لاحقًا.",
@@ -918,7 +1212,7 @@
           "indicateurs": {
             "titre": "مؤشرات التواصل",
             "publiees": "الإعلانات المنشورة",
-            "planifiees": "الإعلانات المبرمجة",
+            "planifiees": "الإعلانات المجدولة",
             "moderation": "محتويات قيد الإشراف",
             "regles": "صلاحيات النشر",
             "indisponible": "{libelle}: غير متاح بعد",
@@ -932,9 +1226,9 @@
             "legende": "{cible} · يوم {date} الساعة {heure}"
           },
           "planifiees": {
-            "titre": "الإعلانات المبرمجة",
-            "vide": "لا توجد إعلانات مبرمجة.",
-            "pastille": "مبرمج",
+            "titre": "الإعلانات المجدولة",
+            "vide": "لا توجد إعلانات مجدولة.",
+            "pastille": "مجدول",
             "legende": "{cible} · مقرر يوم {date} الساعة {heure}"
           },
           "matrice": {
@@ -1057,7 +1351,7 @@
           "adminStudioInterne": "إعلان داخلي لفريق الاستوديو: اجتماع الفريق يوم الخميس الساعة 18",
           "adminStudioContexte": "الاستوديو: مادة جاهزة لفصل النور",
           "annonceNourTitre": "تلاوة نهاية الفصل الدراسي أمام الأسر",
-          "annonceNourTexte": "أسرنا الكريمة، سيقدم فصل النور تلاوة نهاية الفصل الدراسي يوم السبت 14 ديسمبر الساعة 10، عبر الاتصال المرئي. سيتلو كل طالب السورة التي عمل عليها هذا الفصل. يرجى تجهيز اتصال مستقر ومكان هادئ. يمكن للطلاب الراغبين التدرب خلال حصة الأربعاء السابقة. يمكن للأسر الحضور بصمت مع كتم الميكروفون. سيُشارك تقرير بعد الحصة.",
+          "annonceNourTexte": "أسرنا الكريمة، سيقدم فصل النور تلاوة نهاية الفصل الدراسي يوم السبت 14 ديسمبر الساعة 10، عبر الاتصال المرئي. سيتلو كل طالب السورة التي عمل عليها خلال هذا الفصل الدراسي. يرجى تجهيز اتصال مستقر ومكان هادئ. يمكن للطلاب الراغبين التدرب خلال حصة الأربعاء السابقة. يمكن للأسر الحضور بصمت مع كتم الميكروفون. سيُشارك تقرير بعد الحصة.",
           "annonceFajrTitre": "مراجعة قبل تقييم يوم الخميس",
           "annonceFajrTexte": "راجعوا الآيات العشر الأخيرة من سورة الملك قبل يوم الخميس.",
           "tuteurUrgent": "حصة هذا المساء ملغاة",

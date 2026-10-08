@@ -18,6 +18,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/accessibilite/sens_du_contenu.dart';
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/communications/modeles_communication.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/theme/app_palette.dart';
@@ -121,7 +122,8 @@ class CarteAnnonceClasse extends StatelessWidget {
       children: <Widget>[
         // Le mot « Annonce » et la Classe, puis le niveau en toutes lettres.
         Text(
-          '${a.annonce} · ${annonce.classe.libelle}',
+          // « An-Nour » ne se coupe pas au trait d'union (lot L).
+          '${a.annonce} · ${traitsDUnionInsecables(annonce.classe.libelle)}',
           style: palette.inkMuted.applyTo(
             textes.labelMedium ?? const TextStyle(),
           ),

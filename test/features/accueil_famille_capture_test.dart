@@ -85,7 +85,7 @@ List<SeanceFamille> _seancesNominales() => <SeanceFamille>[
   seanceFictive(
     seanceId: 's1',
     eleveId: _a1,
-    debutUtc: instantServeurFige.add(const Duration(minutes: 13, seconds: 30)),
+    debutUtc: instantServeurFige.add(const Duration(minutes: 13)),
     duree: const Duration(minutes: 90),
     heureFoyer: heureRendue('Europe/Paris', 'Paris', '18:13'),
   ),

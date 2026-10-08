@@ -616,14 +616,14 @@ void main() {
           camera: true,
         ),
         for (int i = 1; i <= 5; i++)
-          _personne(identite: 'e$i', role: 'student', nom: 'Eleve $i'),
+          _personne(identite: 'e$i', role: 'student', nom: 'Élève $i'),
       ]);
       await tester.pumpAndSettle();
 
       // Aucune exception de rendu : `pumpAndSettle` les leve, un debordement
       // compris. Et les cinq eleves sont tous a l'ecran, aucun rogne.
       for (int i = 1; i <= 5; i++) {
-        expect(find.text('Eleve $i'), findsWidgets, reason: 'Eleve $i');
+        expect(find.text('Élève $i'), findsWidgets, reason: 'Élève $i');
       }
       final Size ecran = tester.view.physicalSize;
       for (final Element cadre in find.byType(AvatarTile).evaluate()) {

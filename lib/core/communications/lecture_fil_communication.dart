@@ -9,6 +9,7 @@
 
 import 'package:flutter/widgets.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../i18n/dates_appareil.dart';
 import '../i18n/strings.g.dart';
 import '../widgets/carte_piece_jointe.dart';
@@ -47,11 +48,13 @@ String texteDuMessage(
   ].join('\n');
 }
 
-/// La date et l'heure d'un message, a l'heure de l'appareil.
+/// La date et l'heure d'un message, a l'heure de l'appareil. Le jour reste
+/// avec son mois : jamais « Dimanche 4 / octobre, 09:54 » dans une bulle a
+/// 320 px en texte x2 (COM-RC tour 7, lot L).
 String horodatageMessage(DateTime instant) {
   final DateTime local = instant.toLocal();
   return t.com.socle.composants.lecture.horodatage(
-    date: dateDeLAppareil(local),
+    date: nombresLiesAuMotSuivant(dateDeLAppareil(local)),
     heure: heureDeLAppareil(local),
   );
 }

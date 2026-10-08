@@ -38,7 +38,7 @@ const String _classe = 'c1';
 Participant _famille(int i) => Participant(
   id: 'p-$i',
   nomAffiche: 'Parent $i',
-  fonction: 'Parent de Eleve $i',
+  fonction: "Parent d'Élève $i",
 );
 
 ConversationPossible _conversation(
@@ -49,7 +49,7 @@ ConversationPossible _conversation(
 }) => ConversationPossible(
   interlocuteur: _famille(i),
   nature: nature,
-  objet: ObjetLie(type: TypeObjetLie.eleve, id: 'e$i', libelle: 'Eleve $i'),
+  objet: ObjetLie(type: TypeObjetLie.eleve, id: 'e$i', libelle: 'Élève $i'),
   filId: filId,
   attention: attention,
 );
@@ -64,7 +64,7 @@ FauxMessagesMetier _port({
       id: 'fil-1',
       autre: _famille(1),
       objets: <ObjetLie>[
-        ObjetLie(type: TypeObjetLie.eleve, id: 'e1', libelle: 'Eleve 1'),
+        ObjetLie(type: TypeObjetLie.eleve, id: 'e1', libelle: 'Élève 1'),
       ],
       attention: const IndicateurAttention(nonLus: 3),
     ),
@@ -255,7 +255,7 @@ void main() {
         _dansGroupe(find.text(t.com.messages.entree.ecrireFamille)),
         findsNWidgets(2),
       );
-      expect(_dansGroupe(find.text('Parent 1, Parent de Eleve 1')), findsOne);
+      expect(_dansGroupe(find.text("Parent 1, Parent d'Élève 1")), findsOne);
       expect(_dansGroupe(find.byType(BadgeNonLu)), findsOneWidget);
       // L'ecart de la page hote est rendu avec le contenu.
       expect(
@@ -362,7 +362,7 @@ void main() {
     ) async {
       final FauxMessagesMetier port = _port();
       final GoRouter routeur = await _monter(tester, port: port);
-      await tester.tap(find.text('Parent 1, Parent de Eleve 1'));
+      await tester.tap(find.text("Parent 1, Parent d'Élève 1"));
       await tester.pumpAndSettle();
       expect(cheminCourant(routeur), Routes.enseignantFilPour('fil-1'));
       expect(port.objetsDemandes, isEmpty);
@@ -373,7 +373,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final GoRouter routeur = await _monter(tester, port: _port());
-      await tester.tap(find.text('Parent 2, Parent de Eleve 2'));
+      await tester.tap(find.text("Parent 2, Parent d'Élève 2"));
       await tester.pumpAndSettle();
       expect(cheminCourant(routeur), '${Routes.enseignantGroupe}/$_classe');
       final Finder echec = find.byKey(EntreeMessagesContexte.cleEchec);
@@ -406,7 +406,7 @@ void main() {
         },
       )..erreurFilPourObjet = Exception('reseau');
       final GoRouter routeur = await _monter(tester, port: port);
-      await tester.tap(find.text('Parent 2, Parent de Eleve 2'));
+      await tester.tap(find.text("Parent 2, Parent d'Élève 2"));
       await tester.pumpAndSettle();
       expect(
         find.text(t.com.messages.entree.erreurOuvertureTitre),
@@ -435,7 +435,7 @@ void main() {
       final FauxMessagesMetier port = _port()
         ..erreurFilPourObjet = Exception('hors ligne');
       await _monter(tester, port: port, horsLigne: true);
-      await tester.tap(find.text('Parent 2, Parent de Eleve 2'));
+      await tester.tap(find.text("Parent 2, Parent d'Élève 2"));
       await tester.pumpAndSettle();
       final Finder echec = find.byKey(EntreeMessagesContexte.cleEchec);
       expect(
@@ -830,12 +830,12 @@ void main() {
       final SemanticsHandle semantique = tester.ensureSemantics();
       await _monter(tester, port: _port());
       final SemanticsNode ligne = tester.getSemantics(
-        find.text('Parent 1, Parent de Eleve 1'),
+        find.text("Parent 1, Parent d'Élève 1"),
       );
       expect(ligne.flagsCollection.isButton, isTrue);
       final String lu = _texteLu(ligne);
       expect(lu, contains(t.com.messages.entree.ecrireFamille));
-      expect(lu, contains('Parent 1, Parent de Eleve 1'));
+      expect(lu, contains("Parent 1, Parent d'Élève 1"));
       expect(
         lu,
         contains(
@@ -856,7 +856,7 @@ void main() {
         },
       )..attenteOuverture = Completer<void>();
       await _monter(tester, port: port);
-      await tester.tap(find.text('Parent 2, Parent de Eleve 2'));
+      await tester.tap(find.text("Parent 2, Parent d'Élève 2"));
       await tester.pump();
       expect(
         _texteLu(
@@ -873,7 +873,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final GoRouter routeur = await _monter(tester, port: _port());
-      final Finder cible = find.text('Parent 1, Parent de Eleve 1');
+      final Finder cible = find.text("Parent 1, Parent d'Élève 1");
       for (int i = 0; i < 10 && !_aLeFocus(tester, cible); i++) {
         await tester.sendKeyEvent(LogicalKeyboardKey.tab);
         await tester.pump();
@@ -892,7 +892,7 @@ void main() {
         },
       )..erreurFilPourObjet = Exception('reseau');
       final GoRouter routeur = await _monter(tester, port: port);
-      await tester.tap(find.text('Parent 2, Parent de Eleve 2'));
+      await tester.tap(find.text("Parent 2, Parent d'Élève 2"));
       await tester.pumpAndSettle();
       port.erreurFilPourObjet = null;
       final Finder reessayer = find.descendant(

@@ -52,10 +52,11 @@ const String _a1 = 'foyer-a-eleve-1';
 const String _a2 = 'foyer-a-eleve-2';
 
 /// Une seance a venir : salle ouverte (fenetre fictive de 20 min), dans
-/// 10 min et 30 s (la demi-minute absorbe les millisecondes du test).
+/// 10 min (le compte a rebours arrondit au superieur : les millisecondes du
+/// test ne le font pas changer).
 SeanceFamille _prochaine({
   StatutSeance? statut = StatutSeance.planifiee,
-  Duration avant = const Duration(minutes: 10, seconds: 30),
+  Duration avant = const Duration(minutes: 10),
   bool avecHorloge = true,
 }) => seanceFictive(
   seanceId: 's1',
@@ -721,7 +722,7 @@ void main() {
       expect(salle.fuseau, t.tuteur.accueil.heureDe(ville: 'Paris'));
 
       final AffichageSeance loin = AffichageSeance.depuis(
-        _prochaine(avant: const Duration(hours: 3, minutes: 28, seconds: 30)),
+        _prochaine(avant: const Duration(hours: 3, minutes: 28)),
         maintenantServeurUtc: instantServeurFige,
       );
       expect(loin.etat, EtatSeanceFamille.aVenir);

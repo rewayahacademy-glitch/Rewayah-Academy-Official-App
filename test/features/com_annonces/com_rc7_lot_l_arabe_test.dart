@@ -155,6 +155,71 @@ void main() {
     expect(fautes, isEmpty);
   });
 
+  // Apres revue du lot L.
+  test('« الرد » sans chadda, partout (une seule graphie)', () {
+    final List<String> fautes = <String>[
+      for (final MapEntry<String, String> e in ar.entries)
+        if (RegExp('رد[\u064B-\u0650\u0652]*\u0651').hasMatch(e.value))
+          '${e.key} : ${e.value}',
+    ];
+    expect(fautes, isEmpty);
+    // Le bloc des reponses de la Communaute, voisin direct du libelle relu.
+    for (final String cle in <String>[
+      'com.communaute.reponses.envoyer',
+      'com.communaute.reponses.nonConfirmee',
+      'com.communaute.reponses.reessayer',
+      'com.communaute.reponses.signaler',
+      'com.communaute.reponses.signalee',
+      'com.communaute.reponses.aide',
+      'com.communaute.reponses.champVide',
+      'com.communaute.publication.choisir',
+    ]) {
+      expect(ar[cle], contains('رد'), reason: cle);
+    }
+  });
+
+  test('« planifiée » se dit « مجدول », jamais « مبرمج »', () {
+    final List<String> fautes = <String>[
+      for (final MapEntry<String, String> e in ar.entries)
+        if (e.value.contains('برمج')) '${e.key} : ${e.value}',
+    ];
+    expect(fautes, isEmpty);
+    expect(ar['notifications.types.annoncePlanifiee'], contains('مجدول'));
+    expect(ar['com.annonces.demo.f.adminPlanifiee'], contains('مجدول'));
+    expect(
+      ar['com.annonces.administration.planifiees.titre'],
+      contains('المجدولة'),
+    );
+  });
+
+  test('« trimestre » : « الفصل الدراسي », jamais « هذا الفصل » seul', () {
+    final String annonce = ar['com.annonces.demo.f.annonceNourTexte']!;
+    expect(annonce, contains('خلال هذا الفصل الدراسي'));
+    expect(annonce, isNot(contains('عليها هذا الفصل.')));
+  });
+
+  test('la carte de seance et la Classe sont traduites, sans francais', () {
+    for (final String prefixe in <String>['tc.groupe.', 'classe.']) {
+      final List<String> cles = <String>[
+        for (final String cle in fr.keys)
+          if (cle.startsWith(prefixe) && !cle.startsWith('classe.entree.demo.'))
+            cle,
+      ];
+      expect(cles, isNotEmpty);
+      for (final String cle in cles) {
+        final String? arabe = ar[cle];
+        expect(arabe, isNotNull, reason: 'cle absente en arabe : $cle');
+        final String sansParametres = arabe!.replaceAll(RegExp(r'\{\w+\}'), '');
+        expect(
+          sansParametres,
+          isNot(matches(RegExp('[A-Za-zÀ-ÿ]'))),
+          reason: cle,
+        );
+        expect(_parametres(arabe), _parametres(fr[cle]!), reason: cle);
+      }
+    }
+  });
+
   group('Rendu de droite a gauche', () {
     setUpAll(() async {
       await LocaleSettings.setLocale(AppLocale.ar);

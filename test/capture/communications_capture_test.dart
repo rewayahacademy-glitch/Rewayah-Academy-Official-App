@@ -40,7 +40,10 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
+import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/classe_tuteur/carte_seance_classe.dart';
+import 'package:rewayah_academy/features/classe_tuteur/contexte_classe.dart'
+    show cheminClasse;
 import 'package:rewayah_academy/features/com_annonces/annonces_de_classe.dart';
 import 'package:rewayah_academy/features/com_annonces/port_annonces.dart';
 import 'package:rewayah_academy/features/com_communaute/composer_publication.dart';
@@ -461,6 +464,16 @@ Future<void> Function(WidgetTester) _vocal(
 Future<void> _vocalRefuse(WidgetTester tester) =>
     _toucher(tester, find.byKey(FilDiscussion.cleMicro));
 
+/// Le planning : la capture descend jusqu'a la pastille de la premiere
+/// seance (salle ouverte), sous la date.
+Future<void> _premiereSeanceDuPlanning(WidgetTester tester) async {
+  final Finder pastille = find.byType(StatusPill);
+  if (pastille.evaluate().isNotEmpty) {
+    await tester.ensureVisible(pastille.first);
+    await _stabiliser(tester);
+  }
+}
+
 /// R-16 : la seance ouverte passe avant les annonces de la Classe. La
 /// capture part de la carte de seance, les annonces suivent dessous ; sans
 /// carte, elle part des annonces.
@@ -677,6 +690,15 @@ List<_Ecran> _ecrans() {
       ],
       geste: _seancePuisAnnonces,
       principal: true,
+    ),
+    // Lot L : le planning de la meme Classe An-Nour (page, annonce,
+    // planning disent la meme Classe ; sous-titre sans « An- / Nour »).
+    _Ecran(
+      'planning_classe_tuteur',
+      cheminClasse(classeA, eleveA1, 'planning'),
+      () => <Override>[...surchargesClasseAnNour(_maintenant), _baseMemoire()],
+      geste: _premiereSeanceDuPlanning,
+      variantes: <_Variante>[_etats.first, ..._accessibilite],
     ),
     // Administration des communications (COM-W04, COM-ANN-2, COM-MSG-2).
     _Ecran(

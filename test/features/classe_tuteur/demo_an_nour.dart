@@ -13,6 +13,7 @@ import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/communications/capacites_communication.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/seance_famille/seance_famille.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/features/com_annonces/port_annonces.dart';
@@ -25,11 +26,39 @@ import '../../fixtures/tuteur/faux_seances_famille.dart';
 import 'support_classe.dart';
 
 /// Le prenom de l'eleve de la demonstration (« Classe An-Nour · Adam » dans
-/// les Messages).
-const String prenomAdam = 'Adam';
+/// les Messages), dans l'alphabet de la langue courante.
+String get prenomAdam =>
+    LocaleSettings.currentLocale == AppLocale.ar ? 'آدم' : 'Adam';
 
-/// Le prenom de l'enseignante de la Classe An-Nour (« Mme Mariam »).
-const String prenomMariam = 'Mariam';
+/// Le prenom de l'enseignante de la Classe An-Nour (« Sayyida Mariam »),
+/// celle de la demonstration des Communications.
+String get prenomMariam => ClassesDemoAnnonces.enseignanteNour.nomAffichage;
+
+/// Ce que le serveur rendrait dans la langue du foyer : les dates des trois
+/// prochaines seances (dimanches 4, 11 et 18 octobre), la ville, le cours et
+/// le niveau. En arabe, aucun mot francais dans la carte.
+({List<String> dates, String ville, String cours, String niveau})
+_rendusServeur() => LocaleSettings.currentLocale == AppLocale.ar
+    ? (
+        dates: const <String>[
+          'الأحد 4 أكتوبر',
+          'الأحد 11 أكتوبر',
+          'الأحد 18 أكتوبر',
+        ],
+        ville: 'باريس',
+        cours: 'القرآن',
+        niveau: 'المستوى 1',
+      )
+    : (
+        dates: const <String>[
+          'Dimanche 4 octobre',
+          'Dimanche 11 octobre',
+          'Dimanche 18 octobre',
+        ],
+        ville: 'Paris',
+        cours: 'Coran',
+        niveau: 'Niveau 1',
+      );
 
 /// Le nom de la Classe An-Nour dans la langue courante, celui que porte
 /// l'annonce de demonstration.
@@ -39,54 +68,58 @@ String libelleAnNour() =>
 /// La Classe du tuteur sur le jeu An-Nour, a l'instant serveur [maintenant] :
 /// une seance dans 10 min (salle ouverte), qui passe avant les annonces
 /// (R-16).
-List<Override> surchargesClasseAnNour(DateTime maintenant) => surchargesClasse(
-  maintenantServeur: maintenant,
-  eleves: const <EleveDuFoyer>[
-    EleveDuFoyer(
-      id: eleveA1,
-      prenom: prenomAdam,
-      identifiantImmuable: 'DEMO-AD1',
-      mode: InterfaceMode.standard,
-      camera: CameraPolicy.forbidden,
-    ),
-  ],
-  seances: <SeanceFamille>[
-    seanceFictive(
-      eleveId: eleveA1,
-      debutUtc: maintenant.add(const Duration(minutes: 10)),
-      prenomEnseignant: prenomMariam,
-      heureFoyer: heureRendue(
-        'Europe/Paris',
-        'Paris',
-        '14:10',
-        date: 'Dimanche 4 octobre',
-      ),
-    ),
-  ],
-  portClasses: FauxClassesFoyer(
-    classes: <ClasseFoyer>[
-      ClasseFoyer(
-        eleveId: eleveA1,
-        classe: GroupSummaryVM(
-          groupeId: classeA,
-          libelle: libelleAnNour(),
-          couleurJeton: const JetonCouleurGroupe(index: 0, codeStable: 'g0'),
-          enseignant: const EnseignantVM(
-            enseignantId: 'demo-enseignante',
-            titre: TitreEnseignant.sayyida,
-            nomAffichage: prenomMariam,
-          ),
-          nombreMembres: 5,
-          seuilMax: 8,
-          typePublic: TypePublicGroupeVM.enfant,
-          actif: true,
-          nomCours: 'Coran',
-          niveauHumain: 'Niveau 1',
-        ),
+List<Override> surchargesClasseAnNour(DateTime maintenant) {
+  final ({List<String> dates, String ville, String cours, String niveau})
+  rendus = _rendusServeur();
+  return surchargesClasse(
+    maintenantServeur: maintenant,
+    eleves: <EleveDuFoyer>[
+      EleveDuFoyer(
+        id: eleveA1,
+        prenom: prenomAdam,
+        identifiantImmuable: 'DEMO-AD1',
+        mode: InterfaceMode.standard,
+        camera: CameraPolicy.forbidden,
       ),
     ],
-  ),
-);
+    // La seance du jour, salle ouverte, puis les deux suivantes (planning
+    // de la Classe : une par semaine, le dimanche a 14:10).
+    seances: <SeanceFamille>[
+      for (int semaine = 0; semaine < rendus.dates.length; semaine++)
+        seanceFictive(
+          seanceId: 'an-nour-${semaine + 1}',
+          eleveId: eleveA1,
+          debutUtc: maintenant.add(Duration(minutes: 10, days: 7 * semaine)),
+          prenomEnseignant: prenomMariam,
+          heureFoyer: heureRendue(
+            'Europe/Paris',
+            rendus.ville,
+            '14:10',
+            date: rendus.dates[semaine],
+          ),
+        ),
+    ],
+    portClasses: FauxClassesFoyer(
+      classes: <ClasseFoyer>[
+        ClasseFoyer(
+          eleveId: eleveA1,
+          classe: GroupSummaryVM(
+            groupeId: classeA,
+            libelle: libelleAnNour(),
+            couleurJeton: const JetonCouleurGroupe(index: 0, codeStable: 'g0'),
+            enseignant: ClassesDemoAnnonces.enseignanteNour,
+            nombreMembres: 5,
+            seuilMax: 8,
+            typePublic: TypePublicGroupeVM.enfant,
+            actif: true,
+            nomCours: rendus.cours,
+            niveauHumain: rendus.niveau,
+          ),
+        ),
+      ],
+    ),
+  );
+}
 
 /// Les annonces de demonstration du tuteur, celles de la Classe An-Nour
 /// rangees aussi sous la Classe montee ([classeA]).

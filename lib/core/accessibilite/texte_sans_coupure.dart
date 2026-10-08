@@ -101,6 +101,52 @@ class TexteSansCoupure extends StatelessWidget {
   }
 }
 
+/// Ce qui separe deux mots qui peuvent passer a la ligne : les espaces
+/// ordinaires, jamais l'espace insecable (U+00A0) ni l'espace fine
+/// insecable (U+202F).
+final RegExp _separateurDeMots = RegExp(r'[ \t\n\r\u2000-\u200A\u3000]+');
+
+/// [texte] dont chaque nombre est lie au mot qui le suit par une espace
+/// insecable : « Dimanche 4 octobre » passe a la ligne apres « Dimanche »,
+/// jamais entre « 4 » et « octobre » (COM-RC tour 7, lot L). Valable en
+/// arabe (« الأحد 4 أكتوبر »).
+String nombresLiesAuMotSuivant(String texte) => texte.replaceAllMapped(
+  RegExp(r'(\d) (?=\S)'),
+  (Match m) => '${m[1]}\u00A0',
+);
+
+/// [texte] avec ses nombres lies au mot suivant ([nombresLiesAuMotSuivant])
+/// quand chaque groupe ainsi lie tient dans [largeur] au [style] et a
+/// l'echelle de [context] ; sinon [texte] tel quel. Un groupe lie plus large
+/// que sa place serait coupe en son milieu par le moteur de texte, pire que
+/// « 4 » seul en fin de ligne.
+String nombresLiesSiTient(
+  BuildContext context,
+  String texte,
+  TextStyle? style,
+  double largeur,
+) {
+  final String lie = nombresLiesAuMotSuivant(texte);
+  if (lie == texte) return texte;
+  return largeurMotLePlusLong(
+            context,
+            lie,
+            style,
+            MediaQuery.textScalerOf(context),
+          ) <=
+          largeur
+      ? lie
+      : texte;
+}
+
+/// [libelle] dont chaque trait d'union est suivi d'un gluon (U+2060, sans
+/// chasse) : « Classe An-Nour » passe a la ligne entre les mots, jamais dans
+/// « An- / Nour » (lecon 8, K-54). Le trait d'union reste celui de la
+/// police : le trait insecable U+2011, absent des polices du produit, serait
+/// dessine par une police de secours.
+String traitsDUnionInsecables(String libelle) =>
+    libelle.replaceAll('-', '-\u2060');
+
 /// La largeur du mot le plus long de [texte], a l'echelle [echelle].
 double largeurMotLePlusLong(
   BuildContext context,
@@ -121,7 +167,9 @@ double _motLePlusLong(
   TextScaler echelle,
 ) {
   double motLong = 0;
-  for (final String mot in texte.split(RegExp(r'\s+'))) {
+  // Un groupe lie par une espace insecable (« 4 octobre ») est un seul
+  // mot : il ne passe jamais a la ligne en son milieu.
+  for (final String mot in texte.split(_separateurDeMots)) {
     if (mot.isEmpty) continue;
     final TextPainter p = TextPainter(
       text: TextSpan(text: mot, style: complet),

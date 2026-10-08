@@ -509,9 +509,7 @@ void main() {
         tester,
         depart: Routes.classePour(_classe, eleveId: _a1),
         seances: <SeanceFamille>[
-          seanceSalleOuverte(
-            avant: const Duration(hours: 3, minutes: 28, seconds: 30),
-          ),
+          seanceSalleOuverte(avant: const Duration(hours: 3, minutes: 28)),
         ],
         observation: true,
       );
