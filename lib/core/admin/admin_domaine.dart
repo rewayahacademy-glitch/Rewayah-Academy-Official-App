@@ -201,6 +201,20 @@ List<({String libelle, String chemin})> ongletsConfiguration({
     ),
 ];
 
+/// Les deux fonctions pairs du domaine Operations (AD-X) : l'Espace de
+/// traitement (`ADM-18`, image ADMIN-SHELL-02), racine du domaine, et les
+/// Classes (`ADM-09`, image ADMIN-SHELL-03). Attribution et Demandes restent
+/// des fonctions secondaires, atteintes depuis l'Accueil et depuis la file.
+/// Consommee par `SousNavigationDomaine` dans l'en-tete des deux ecrans.
+List<({String libelle, String chemin})> ongletsOperations() =>
+    <({String libelle, String chemin})>[
+      (
+        libelle: t.admin.traitement.titre,
+        chemin: Routes.adminOperationsTraitement,
+      ),
+      (libelle: t.admin.groupes.titre, chemin: Routes.adminOperationsGroupes),
+    ];
+
 /// Les deux fonctions pairs du domaine Personnes : Dossiers a valider
 /// (`ADM-02`) et Comptes (`ADM-08`), modification UX n°1. Consommee par
 /// `SousNavigationDomaine` dans l'en-tete des deux ecrans.

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/personnes_proposables.dart';
 import '../../core/admin/service_comptes.dart';
 import '../../core/admin/service_groupes.dart';
@@ -9,18 +10,24 @@ import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
+import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
+import '../../core/widgets/app_card.dart';
+import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/champ_etiquete.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
+import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/menu_actions.dart';
+import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/selecteur_personne.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 import 'feuille_observation_groupe.dart';
 
@@ -42,50 +49,192 @@ class GroupesPage extends ConsumerStatefulWidget {
   /// Cree l'ecran des groupes.
   const GroupesPage({super.key});
 
+  /// Largeur de l'inspecteur (AD-X) : celle de la file du contrat D.
+  static const double largeurInspecteur = 336;
+
+  /// En dessous, le tableau n'aurait plus la place de ses colonnes : la
+  /// ligne s'ouvre en feuille, comme sur telephone.
+  static const double largeurTableauMin = 600;
+
+  /// L'inspecteur de la classe choisie.
+  static const Key cleInspecteur = ValueKey<String>('adm09-inspecteur');
+
   @override
   ConsumerState<GroupesPage> createState() => _GroupesPageEtat();
 }
 
 class _GroupesPageEtat extends ConsumerState<GroupesPage> {
-  /// Le filtre courant. `null` veut dire « tous ».
+  /// Le filtre de public. `null` veut dire « tous ».
   TypePublicGroupe? _type;
+
+  /// Le filtre d'etat (AD-X, onglets de l'image ADMIN-SHELL-03) : `null`
+  /// toutes les classes, vrai les actives, faux les cloturees.
+  bool? _actives;
+
+  /// La classe ouverte dans l'inspecteur (bureau), par son identifiant.
+  String? _choisie;
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
     final AsyncValue<List<GroupeAdmin>> groupes = ref.watch(groupesProvider);
+    final List<GroupeAdmin> tous = groupes.value ?? const <GroupeAdmin>[];
+    final bool bureau = DataCollection.enTableau(context);
+
+    final Widget creer = ActionPrincipale(
+      libelle: t.admin.groupes.creer,
+      pleineLargeur: false,
+      onPress: () => _ouvrirCreation(context, ref),
+    );
+    final Widget statuts = Wrap(
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.sm,
+      children: <Widget>[
+        FilterPill(
+          libelle: t.admin.groupes.filtreToutes,
+          compteur: tous.length,
+          retenue: _actives == null,
+          onPress: () => setState(() => _actives = null),
+        ),
+        FilterPill(
+          libelle: t.admin.groupes.filtreActives,
+          compteur: tous.where((GroupeAdmin g) => g.actif).length,
+          retenue: _actives ?? false,
+          onPress: () => setState(() => _actives = true),
+        ),
+        FilterPill(
+          libelle: t.admin.groupes.filtreCloturees,
+          compteur: tous.where((GroupeAdmin g) => !g.actif).length,
+          retenue: _actives == false,
+          onPress: () => setState(() => _actives = false),
+        ),
+      ],
+    );
 
     return PageShell(
       titre: t.admin.groupes.titre,
+      // AD-X : la sous-navigation Operations, Espace de traitement et
+      // Classes (`ongletsOperations()`).
+      entete: SousNavigationDomaine(
+        onglets: ongletsOperations(),
+        indexActif: 1,
+      ),
       defilante: false,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Text(t.admin.groupes.intro, style: textes.bodyMedium),
           Ecart.vLg,
-          ActionPrincipale(
-            libelle: t.admin.groupes.creer,
-            pleineLargeur: false,
-            onPress: () => _ouvrirCreation(context, ref),
+          // AD-X (ADMIN-SHELL-03) : les onglets d'etat, et « Creer » au bord
+          // de fin de la meme rangee sur bureau ; au-dessus sur telephone.
+          if (bureau)
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(child: statuts),
+                Ecart.hLg,
+                creer,
+              ],
+            )
+          else ...<Widget>[creer, Ecart.vLg, statuts],
+          Ecart.vMd,
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: MenuFiltre<TypePublicGroupe>(
+              libelle: t.admin.groupes.filtrePublic,
+              valeur: _type,
+              entrees: <EntreeFiltre<TypePublicGroupe>>[
+                EntreeFiltre<TypePublicGroupe>(
+                  valeur: null,
+                  libelle: t.admin.groupes.filtreTousTypes,
+                  compteur: tous.length,
+                ),
+                for (final TypePublicGroupe valeur in TypePublicGroupe.values)
+                  EntreeFiltre<TypePublicGroupe>(
+                    valeur: valeur,
+                    libelle: _nomType(valeur),
+                    compteur: tous
+                        .where((GroupeAdmin g) => g.type == valeur)
+                        .length,
+                  ),
+              ],
+              onChoix: (TypePublicGroupe? type) => setState(() => _type = type),
+            ),
           ),
           Ecart.vXl,
           switch (groupes) {
             AsyncValue<List<GroupeAdmin>>(hasValue: true) => Expanded(
-              child: _Corps(
-                groupes: groupes.requireValue,
-                type: _type,
-                onType: (TypePublicGroupe? type) =>
-                    setState(() => _type = type),
-                onSelectionner: (GroupeAdmin groupe) =>
-                    _ouvrirDetail(context, ref, groupe),
-                onAjouter: (GroupeAdmin groupe) =>
-                    _ouvrirAjout(context, ref, groupe),
-                onModifierSeuil: (GroupeAdmin groupe) =>
-                    _ouvrirModifierSeuil(context, ref, groupe),
-                onObservation: (GroupeAdmin groupe) =>
-                    _ouvrirObservation(context, ref, groupe),
-                onCloturer: (GroupeAdmin groupe) =>
-                    _ouvrirCloture(context, ref, groupe),
+              child: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints contraintes) {
+                  // L'inspecteur : bureau, texte sous 200 %, et la place d'un
+                  // tableau a cote des 336 du panneau.
+                  final bool inspecteur =
+                      bureau &&
+                      MediaQuery.textScalerOf(context).scale(1) < 2 &&
+                      contraintes.maxWidth >=
+                          GroupesPage.largeurInspecteur +
+                              AppSpacing.xxl +
+                              GroupesPage.largeurTableauMin;
+                  final GroupeAdmin? choisie = inspecteur
+                      ? groupes.requireValue
+                            .where((GroupeAdmin g) => g.id == _choisie)
+                            .firstOrNull
+                      : null;
+                  final Widget corps = _Corps(
+                    groupes: groupes.requireValue,
+                    type: _type,
+                    actives: _actives,
+                    choisie: choisie?.id,
+                    onSelectionner: (GroupeAdmin groupe) => inspecteur
+                        ? setState(() => _choisie = groupe.id)
+                        : _ouvrirDetail(context, ref, groupe),
+                    onAjouter: (GroupeAdmin groupe) =>
+                        _ouvrirAjout(context, ref, groupe),
+                    onModifierSeuil: (GroupeAdmin groupe) =>
+                        _ouvrirModifierSeuil(context, ref, groupe),
+                    onObservation: (GroupeAdmin groupe) =>
+                        _ouvrirObservation(context, ref, groupe),
+                    onCloturer: (GroupeAdmin groupe) =>
+                        _ouvrirCloture(context, ref, groupe),
+                  );
+                  if (choisie == null) {
+                    return corps;
+                  }
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Expanded(child: corps),
+                      Ecart.hXxl,
+                      SizedBox(
+                        width: GroupesPage.largeurInspecteur,
+                        child: SingleChildScrollView(
+                          key: ValueKey<String>('inspecteur-${choisie.id}'),
+                          child: _Inspecteur(
+                            key: GroupesPage.cleInspecteur,
+                            groupe: choisie,
+                            onFermer: () => setState(() => _choisie = null),
+                            onRetirer: (String studentId, String prenom) =>
+                                _ouvrirRetrait(
+                                  context,
+                                  ref,
+                                  choisie,
+                                  studentId,
+                                  prenom,
+                                ),
+                            onAjouter: () =>
+                                _ouvrirAjout(context, ref, choisie),
+                            onModifierSeuil: () =>
+                                _ouvrirModifierSeuil(context, ref, choisie),
+                            onObservation: () =>
+                                _ouvrirObservation(context, ref, choisie),
+                            onCloturer: () =>
+                                _ouvrirCloture(context, ref, choisie),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
             AsyncValue<List<GroupeAdmin>>(hasError: true) => EmptyState(
@@ -102,12 +251,143 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
   }
 }
 
-/// Les filtres, puis le tableau des groupes.
+/// L'inspecteur d'une classe (AD-X, image ADMIN-SHELL-03), au bord de fin du
+/// tableau sur bureau : nom et etat ; « Informations generales » ; les
+/// eleves (la vraie liste des membres, « Retirer » conserve) ; les actions.
+/// Il ne remplace aucune confirmation : ajout, seuil, observation et cloture
+/// ouvrent leurs feuilles, motif compris.
+class _Inspecteur extends StatelessWidget {
+  const _Inspecteur({
+    required this.groupe,
+    required this.onFermer,
+    required this.onRetirer,
+    required this.onAjouter,
+    required this.onModifierSeuil,
+    required this.onObservation,
+    required this.onCloturer,
+    super.key,
+  });
+
+  final GroupeAdmin groupe;
+  final VoidCallback onFermer;
+  final void Function(String studentId, String prenom) onRetirer;
+  final VoidCallback onAjouter;
+  final VoidCallback onModifierSeuil;
+  final VoidCallback onObservation;
+  final VoidCallback onCloturer;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                child: Semantics(
+                  header: true,
+                  child: Text(groupe.libelle, style: textes.titleLarge),
+                ),
+              ),
+              Ecart.hSm,
+              BoutonIcone(
+                icone: AppIcons.fermer,
+                libelle: t.admin.groupes.inspecteurFermer,
+                onPress: onFermer,
+              ),
+            ],
+          ),
+          Ecart.vSm,
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: StatusPill(
+              libelle: groupe.actif
+                  ? t.admin.groupes.etatActif
+                  : t.admin.groupes.etatCloture,
+              ton: groupe.actif ? TonEtat.succes : TonEtat.neutre,
+            ),
+          ),
+          Ecart.vXxl,
+          Text(t.admin.groupes.inspecteurInfos, style: textes.titleMedium),
+          Ecart.vSm,
+          LigneCleValeur(
+            cle: t.admin.groupes.colonneEnseignant,
+            valeur: groupe.teacherLibelle,
+          ),
+          Ecart.vMd,
+          LigneCleValeur(
+            cle: t.admin.groupes.colonneType,
+            valeur: _nomType(groupe.type),
+          ),
+          Ecart.vMd,
+          LigneCleValeur(
+            cle: t.admin.groupes.colonneCreneau,
+            valeur: _creneau(groupe),
+          ),
+          Ecart.vMd,
+          LigneCleValeur(
+            cle: t.admin.groupes.colonneMembres,
+            valeur: t.admin.groupes.membresSur(
+              actifs: '${groupe.nombreMembres}',
+              seuil: '${groupe.seuilMax}',
+            ),
+            chiffres: true,
+          ),
+          Ecart.vXxl,
+          _FeuilleDetail(groupe: groupe, onRetirer: onRetirer),
+          if (groupe.actif) ...<Widget>[
+            // Les eleves, 16, puis les actions qui agissent sur la classe.
+            Ecart.vLg,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                MenuActions(
+                  tooltip: groupe.libelle,
+                  actions: <EntreeAction>[
+                    EntreeAction(
+                      libelle: t.admin.groupes.actionModifierSeuil,
+                      onChoix: onModifierSeuil,
+                    ),
+                    EntreeAction(
+                      libelle: t.admin.groupes.actionObservation,
+                      onChoix: onObservation,
+                    ),
+                    EntreeAction(
+                      libelle: t.admin.groupes.actionCloturer,
+                      destructif: true,
+                      onChoix: onCloturer,
+                    ),
+                  ],
+                ),
+                Ecart.hSm,
+                Flexible(
+                  child: ActionPrincipale(
+                    libelle: t.admin.groupes.actionAjouter,
+                    niveau: NiveauAction.secondaire,
+                    pleineLargeur: false,
+                    onPress: onAjouter,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Le tableau des classes, filtre par public et par etat.
 class _Corps extends StatelessWidget {
   const _Corps({
     required this.groupes,
     required this.type,
-    required this.onType,
+    required this.actives,
+    required this.choisie,
     required this.onSelectionner,
     required this.onAjouter,
     required this.onModifierSeuil,
@@ -117,7 +397,8 @@ class _Corps extends StatelessWidget {
 
   final List<GroupeAdmin> groupes;
   final TypePublicGroupe? type;
-  final void Function(TypePublicGroupe? type) onType;
+  final bool? actives;
+  final String? choisie;
   final void Function(GroupeAdmin groupe) onSelectionner;
   final void Function(GroupeAdmin groupe) onAjouter;
   final void Function(GroupeAdmin groupe) onModifierSeuil;
@@ -127,144 +408,137 @@ class _Corps extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<GroupeAdmin> visibles = groupes
-        .where((GroupeAdmin g) => type == null || g.type == type)
+        .where(
+          (GroupeAdmin g) =>
+              (type == null || g.type == type) &&
+              (actives == null || g.actif == actives),
+        )
         .toList(growable: false);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: <Widget>[
-            FilterPill(
-              libelle: t.admin.groupes.filtreTousTypes,
-              compteur: groupes.length,
-              retenue: type == null,
-              onPress: () => onType(null),
-            ),
-            for (final TypePublicGroupe valeur in TypePublicGroupe.values)
-              FilterPill(
-                libelle: _nomType(valeur),
-                compteur: groupes
-                    .where((GroupeAdmin g) => g.type == valeur)
-                    .length,
-                retenue: type == valeur,
-                onPress: () => onType(valeur),
-              ),
-          ],
+    if (visibles.isEmpty) {
+      return EmptyState(
+        message: groupes.isEmpty
+            ? t.admin.groupes.aucun
+            : t.admin.groupes.aucunAvecCeFiltre,
+        invitation: groupes.isEmpty
+            ? t.admin.groupes.aucunDetail
+            : t.admin.groupes.aucunAvecCeFiltreDetail,
+        registre: RegistreVide.subi,
+        icone: AppIcons.rienAAfficher,
+      );
+    }
+    return DataCollection<GroupeAdmin>(
+      estSelectionnee: choisie == null
+          ? null
+          : (GroupeAdmin g) => g.id == choisie,
+      lignes: visibles,
+      cle: (GroupeAdmin g) => ValueKey<String>(g.id),
+      onSelectionner: onSelectionner,
+      colonnes: <ColonneDonnees<GroupeAdmin>>[
+        ColonneDonnees<GroupeAdmin>(
+          titre: t.admin.groupes.colonneGroupe,
+          role: RoleColonne.identifiante,
+          // Largeurs en demi-parts : la classe 3, l'etat 3 (« Cloturee »
+          // tient sur une ligne dans sa pastille, inspecteur ouvert a
+          // 1440), les autres 2.
+          flex: 3,
+          texte: (GroupeAdmin g) => g.libelle,
         ),
-        Ecart.vLg,
-        if (visibles.isEmpty)
-          EmptyState(
-            message: groupes.isEmpty
-                ? t.admin.groupes.aucun
-                : t.admin.groupes.aucunAvecCeFiltre,
-            invitation: groupes.isEmpty
-                ? t.admin.groupes.aucunDetail
-                : t.admin.groupes.aucunAvecCeFiltreDetail,
-            registre: RegistreVide.subi,
-            icone: AppIcons.rienAAfficher,
-          )
-        else
-          Expanded(
-            child: DataCollection<GroupeAdmin>(
-              lignes: visibles,
-              cle: (GroupeAdmin g) => ValueKey<String>(g.id),
-              onSelectionner: onSelectionner,
-              colonnes: <ColonneDonnees<GroupeAdmin>>[
-                ColonneDonnees<GroupeAdmin>(
-                  titre: t.admin.groupes.colonneGroupe,
-                  role: RoleColonne.identifiante,
-                  flex: 2,
-                  texte: (GroupeAdmin g) => g.libelle,
-                ),
-                ColonneDonnees<GroupeAdmin>(
-                  titre: t.admin.groupes.colonneEnseignant,
-                  texte: (GroupeAdmin g) => g.teacherLibelle,
-                ),
-                // ENS-PAYS-1 : le pays de l'enseignant, seulement quand une
-                // ligne au moins le porte (pas de colonne vide avant BR-1).
-                if (visibles.any(
-                  (GroupeAdmin g) =>
-                      PaysEnseignant.nomAffichable(g.teacherPays) != null,
-                ))
-                  ColonneDonnees<GroupeAdmin>(
-                    titre: t.admin.groupes.colonnePays,
-                    // Sa propre ligne en carte (sous 1200), avec le drapeau :
-                    // la ligne secondaire jointe ne rendrait que du texte.
-                    role: RoleColonne.aPart,
-                    texte: (GroupeAdmin g) =>
-                        PaysEnseignant.nomAffichable(g.teacherPays) ?? '',
-                    rendu: (BuildContext _, GroupeAdmin g) =>
-                        PaysEnseignant(pays: g.teacherPays),
-                  ),
-                ColonneDonnees<GroupeAdmin>(
-                  titre: t.admin.groupes.colonneType,
-                  texte: (GroupeAdmin g) => _nomType(g.type),
-                ),
-                ColonneDonnees<GroupeAdmin>(
-                  titre: t.admin.groupes.colonneCreneau,
-                  texte: _creneau,
-                ),
-                ColonneDonnees<GroupeAdmin>(
-                  titre: t.admin.groupes.colonneMembres,
-                  tabulaire: true,
-                  texte: (GroupeAdmin g) => t.admin.groupes.membresSur(
-                    actifs: '${g.nombreMembres}',
-                    seuil: '${g.seuilMax}',
-                  ),
-                ),
-                ColonneDonnees<GroupeAdmin>(
-                  titre: t.admin.groupes.colonneEtat,
-                  texte: (GroupeAdmin g) => g.actif
-                      ? t.admin.groupes.etatActif
-                      : t.admin.groupes.etatCloture,
-                  rendu: (BuildContext _, GroupeAdmin g) => StatusPill(
-                    libelle: g.actif
-                        ? t.admin.groupes.etatActif
-                        : t.admin.groupes.etatCloture,
-                    ton: g.actif ? TonEtat.succes : TonEtat.neutre,
-                  ),
-                ),
-                ColonneDonnees<GroupeAdmin>(
-                  titre: '',
-                  role: RoleColonne.aPart,
-                  flex: 0,
-                  // Vide a dessein : un menu d'actions n'a rien a dire en
-                  // texte. `rendreMemeSiTexteVide` fait rendre `rendu` quand
-                  // meme, sans faire disparaitre la cellule comme le ferait
-                  // un texte vide par defaut.
-                  texte: (GroupeAdmin _) => '',
-                  rendreMemeSiTexteVide: true,
-                  rendu: (BuildContext _, GroupeAdmin g) => g.actif
-                      ? MenuActions(
-                          tooltip: g.libelle,
-                          actions: <EntreeAction>[
-                            EntreeAction(
-                              libelle: t.admin.groupes.actionAjouter,
-                              onChoix: () => onAjouter(g),
-                            ),
-                            EntreeAction(
-                              libelle: t.admin.groupes.actionModifierSeuil,
-                              onChoix: () => onModifierSeuil(g),
-                            ),
-                            EntreeAction(
-                              libelle: t.admin.groupes.actionObservation,
-                              onChoix: () => onObservation(g),
-                            ),
-                            EntreeAction(
-                              libelle: t.admin.groupes.actionCloturer,
-                              destructif: true,
-                              onChoix: () => onCloturer(g),
-                            ),
-                          ],
-                        )
-                      : const SizedBox.shrink(),
-                ),
-              ],
-            ),
+        ColonneDonnees<GroupeAdmin>(
+          titre: t.admin.groupes.colonneEnseignant,
+          flex: 2,
+          texte: (GroupeAdmin g) => g.teacherLibelle,
+        ),
+        // ENS-PAYS-1 : le pays de l'enseignant, seulement quand une
+        // ligne au moins le porte (pas de colonne vide avant BR-1).
+        if (visibles.any(
+          (GroupeAdmin g) =>
+              PaysEnseignant.nomAffichable(g.teacherPays) != null,
+        ))
+          ColonneDonnees<GroupeAdmin>(
+            titre: t.admin.groupes.colonnePays,
+            flex: 2,
+            // Sa propre ligne en carte (sous 1200), avec le drapeau :
+            // la ligne secondaire jointe ne rendrait que du texte.
+            role: RoleColonne.aPart,
+            texte: (GroupeAdmin g) =>
+                PaysEnseignant.nomAffichable(g.teacherPays) ?? '',
+            rendu: (BuildContext _, GroupeAdmin g) =>
+                PaysEnseignant(pays: g.teacherPays),
           ),
+        ColonneDonnees<GroupeAdmin>(
+          titre: t.admin.groupes.colonneType,
+          flex: 2,
+          texte: (GroupeAdmin g) => _nomType(g.type),
+        ),
+        ColonneDonnees<GroupeAdmin>(
+          titre: t.admin.groupes.colonneCreneau,
+          flex: 2,
+          texte: _creneau,
+        ),
+        ColonneDonnees<GroupeAdmin>(
+          titre: t.admin.groupes.colonneMembres,
+          flex: 2,
+          tabulaire: true,
+          texte: (GroupeAdmin g) => t.admin.groupes.membresSur(
+            actifs: '${g.nombreMembres}',
+            seuil: '${g.seuilMax}',
+          ),
+        ),
+        ColonneDonnees<GroupeAdmin>(
+          titre: t.admin.groupes.colonneEtat,
+          flex: 3,
+          texte: (GroupeAdmin g) =>
+              g.actif ? t.admin.groupes.etatActif : t.admin.groupes.etatCloture,
+          rendu: (BuildContext _, GroupeAdmin g) => StatusPill(
+            libelle: g.actif
+                ? t.admin.groupes.etatActif
+                : t.admin.groupes.etatCloture,
+            ton: g.actif ? TonEtat.succes : TonEtat.neutre,
+          ),
+        ),
+        ColonneDonnees<GroupeAdmin>(
+          titre: '',
+          role: RoleColonne.aPart,
+          flex: 0,
+          // Vide a dessein : un menu d'actions n'a rien a dire en
+          // texte. `rendreMemeSiTexteVide` fait rendre `rendu` quand
+          // meme, sans faire disparaitre la cellule comme le ferait
+          // un texte vide par defaut.
+          texte: (GroupeAdmin _) => '',
+          rendreMemeSiTexteVide: true,
+          rendu: (BuildContext contexte, GroupeAdmin g) => g.actif
+              ? MenuActions(
+                  tooltip: g.libelle,
+                  actions: <EntreeAction>[
+                    EntreeAction(
+                      libelle: t.admin.groupes.actionAjouter,
+                      onChoix: () => onAjouter(g),
+                    ),
+                    EntreeAction(
+                      libelle: t.admin.groupes.actionModifierSeuil,
+                      onChoix: () => onModifierSeuil(g),
+                    ),
+                    EntreeAction(
+                      libelle: t.admin.groupes.actionObservation,
+                      onChoix: () => onObservation(g),
+                    ),
+                    EntreeAction(
+                      libelle: t.admin.groupes.actionCloturer,
+                      destructif: true,
+                      onChoix: () => onCloturer(g),
+                    ),
+                  ],
+                )
+              // Une classe cloturee n'a plus d'actions. En tableau, sa
+              // cellule garde la largeur du menu (sa cible tactile) : sans
+              // elle, la colonne sans flex retrecit et decale la ligne.
+              : DataCollection.enTableau(contexte)
+              ? SizedBox.square(
+                  dimension: AppMetriques.of(contexte).cibleTactile,
+                )
+              : const SizedBox.shrink(),
+        ),
       ],
     );
   }

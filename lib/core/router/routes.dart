@@ -433,6 +433,12 @@ abstract final class Routes {
   /// pivot du 19 septembre 2026 (migration `0017`).
   static const String adminOperationsGroupes = '/admin/operations/groupes';
 
+  /// `ADM-18` : l'Espace de traitement (AD-X, image ADMIN-SHELL-02), file
+  /// reunie des dossiers et des demandes en attente. Racine du domaine
+  /// Operations.
+  static const String adminOperationsTraitement =
+      '/admin/operations/traitement';
+
   /// Attribution manuelle (`ADM-05`), sous Operations.
   static const String adminOperationsAttributions =
       '/admin/operations/attributions';

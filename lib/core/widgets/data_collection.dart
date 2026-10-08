@@ -103,7 +103,14 @@ class DataCollection<T> extends StatelessWidget {
     this.cle,
     this.onSelectionner,
     this.defileAvecLaPage = false,
+    this.estSelectionnee,
   });
+
+  /// Dit si une ligne est la ligne choisie (inspecteur, AD-X). Nul : aucune
+  /// ligne n'est marquee, comme avant l'ajout de ce parametre. La ligne
+  /// choisie se marque par le fond, un contour et `Semantics(selected)`,
+  /// jamais par la couleur seule ; en cartes, par `AppCard.selectionnee`.
+  final bool Function(T ligne)? estSelectionnee;
 
   /// Vrai quand la collection se rend en tableau (desktop), faux quand elle
   /// se replie en cartes. Le seul endroit qui compare le gabarit : une page
@@ -156,6 +163,7 @@ class DataCollection<T> extends StatelessWidget {
           colonnes: colonnes,
           ligne: ligne,
           onSelectionner: onSelectionner,
+          selectionnee: estSelectionnee?.call(ligne) ?? false,
         ),
       );
     }
@@ -192,6 +200,9 @@ class DataCollection<T> extends StatelessWidget {
                       colonnes: colonnes,
                       ligne: ligne,
                       onSelectionner: onSelectionner,
+                      // Nul sans [estSelectionnee] : un tableau sans selection
+                      // n'annonce aucun etat « non selectionne ».
+                      selectionnee: estSelectionnee?.call(ligne),
                     ),
               ),
             ),
@@ -313,11 +324,16 @@ class _LigneTableau<T> extends StatelessWidget {
     required this.colonnes,
     required this.ligne,
     this.onSelectionner,
+    this.selectionnee,
   });
 
   final List<ColonneDonnees<T>> colonnes;
   final T ligne;
   final void Function(T ligne)? onSelectionner;
+
+  /// Nul quand le tableau n'a pas de selection : la ligne ne porte alors
+  /// aucun etat `selected` (ni vrai ni faux) dans l'arbre semantique.
+  final bool? selectionnee;
 
   @override
   Widget build(BuildContext context) {
@@ -351,17 +367,29 @@ class _LigneTableau<T> extends StatelessWidget {
       ),
     );
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        border: Border(bottom: palette.borderHairline.asBorderSide()),
+    return Semantics(
+      selected: selectionnee,
+      child: DecoratedBox(
+        // La ligne choisie : fond doux et contour d'accent de 2, comme
+        // `AppCard.selectionnee` (jamais la couleur seule).
+        decoration: selectionnee ?? false
+            ? BoxDecoration(
+                color: palette.washAccent.background,
+                border: Border.fromBorderSide(
+                  palette.inkAccent.asBorderSide(width: 2),
+                ),
+              )
+            : BoxDecoration(
+                border: Border(bottom: palette.borderHairline.asBorderSide()),
+              ),
+        child: onSelectionner == null
+            ? contenu
+            : Pressable(
+                onPress: () => onSelectionner!(ligne),
+                respecterCibleTactile: false,
+                child: contenu,
+              ),
       ),
-      child: onSelectionner == null
-          ? contenu
-          : Pressable(
-              onPress: () => onSelectionner!(ligne),
-              respecterCibleTactile: false,
-              child: contenu,
-            ),
     );
   }
 }
@@ -402,11 +430,13 @@ class _Carte<T> extends StatelessWidget {
     required this.colonnes,
     required this.ligne,
     this.onSelectionner,
+    this.selectionnee = false,
   });
 
   final List<ColonneDonnees<T>> colonnes;
   final T ligne;
   final void Function(T ligne)? onSelectionner;
+  final bool selectionnee;
 
   @override
   Widget build(BuildContext context) {
@@ -441,6 +471,7 @@ class _Carte<T> extends StatelessWidget {
     // lecteur d'ecran enoncerait quatre fragments sans lien entre eux.
     return MergeSemantics(
       child: AppCard(
+        selectionnee: selectionnee,
         onPress: onSelectionner == null ? null : () => onSelectionner!(ligne),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

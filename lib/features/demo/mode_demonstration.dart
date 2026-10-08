@@ -17,6 +17,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
 import '../../core/admin/service_admin.dart';
+import '../../core/admin/service_groupes.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_catalogue_classes.dart';
@@ -28,7 +29,6 @@ import '../../core/domain/enums.dart';
 import '../../core/dossier/selecteur_fichier.dart';
 import '../../core/dossier/service_dossier.dart';
 import '../../core/dossier/service_validation.dart';
-import '../../core/matching/service_matching.dart';
 import '../../core/offres/offre_horaire.dart';
 import '../../core/offres/service_offres.dart';
 import '../../core/planning/service_planning.dart';
@@ -46,6 +46,8 @@ import '../../core/tc_observation/activation_observation.dart';
 import '../../core/tc_observation/port_historique_observations.dart';
 import '../../core/tc_observation/port_politique_observation.dart';
 import '../../core/tc_observation/port_visite_observation.dart';
+import '../admin_tableau/activite_recente.dart';
+import 'admin_x_demo.dart';
 import 'catalogue_demo.dart';
 import 'dossiers_demo.dart';
 import 'observation_demo.dart';
@@ -222,10 +224,23 @@ List<Override> surchargesDemoAdmin({
         rapportsManquants: 0,
         incidents24h: 0,
         comptesEchus: 0,
-        demandesEnAttente: 0,
+        // AD-X : les deux demandes fictives de l'Espace de traitement.
+        demandesEnAttente: 2,
       ),
     ),
-    demandesProvider.overrideWith((Ref ref) async => const <Demande>[]),
+    demandesProvider.overrideWith(
+      (Ref ref) async => demandesDemo(e.maintenant.toLocal()),
+    ),
+    // AD-X : les classes fictives (collection et inspecteur, ADM-09), en
+    // lecture seule ; toute ecriture reste « indisponible ».
+    groupesProvider.overrideWith((Ref ref) async => groupesDemo()),
+    membresGroupeProvider.overrideWith(
+      (Ref ref, String groupeId) async => membresDemo(groupeId),
+    ),
+    // AD-X : la colonne « Activite recente » de l'Accueil, fictive.
+    activiteRecenteProvider.overrideWith(
+      (Ref ref) async => activiteRecenteDemo(e.maintenant.toLocal()),
+    ),
     // Tous les autres services admin adosses a Supabase : « indisponible ».
     ...surchargesServicesAdminIndisponibles(),
   ];
