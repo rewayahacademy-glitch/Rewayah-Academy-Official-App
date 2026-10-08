@@ -630,3 +630,53 @@ bloque `verifie`.
 
 - Statut de preuve : `présent dans le code` et `testé localement`. Rien n'est branché, testé sur
   staging ni déployé ; `verifie` ne vaut ni fusion dans `main` ni mise en production.
+
+## 11. Contre-vérification du tour 8 de COM-RC (COM-R-7)
+
+Date : 8 octobre 2026. Session 01HS7t3c, qui n'a écrit aucun code COM. Lecture seule.
+
+Périmètre :
+- code : `ui/communications-v1` @ `8b1240ac`, diff depuis `5c0bffa3` (2 commits, 4 fichiers) ;
+- captures : `pilotage/tuteur-v1` @ `40b6823e`.
+
+### 11.1 Chiffres rejoués (worktree propre à `8b1240ac`)
+
+| Contrôle | Annoncé | Rejoué |
+| :--- | :--- | :--- |
+| `dart analyze --fatal-infos` | 0 | 0 |
+| `flutter test -j 3` | +6518, ~3095, 0 échec | +6518, ~3095, 0 échec (« All tests passed! », 14 min 46 s) |
+| `verifier_jetons` | 39 | 39 |
+| `verifier_revue` | 1627 | 1627 |
+| Captures | 200, une seule change | 200 régénérées, **200 identiques** à `40b6823e` ; face à `0d33c946`, seule `com_admin_moderation_390_rtl_clair.png` diffère |
+
+### 11.2 Constats attendus
+
+| # | État | Preuve |
+| :--- | :--- | :--- |
+| 10.3-1 (traces) | **corrigé** | `f80a4cd2` : `auteurEnseignante` et `moment.minutes`, `heures`, `jours` portent la trace du tour 7. Les pluriels sont justes : en français, `one` et `other` sont identiques, car « min », « h » et « j » sont invariables. En arabe, les formes `one`, `two`, `few` et `many` sont correctes : منذ دقيقة، دقيقتين، 3 دقائق، 11 دقيقة ; ساعة، ساعتين، ساعات ; يوم، يومين، أيام، يومًا. Seul appelant, `flux_publications.dart:44-46`, qui passe bien `n:` (`inMinutes`, `inHours`, `inDays`, avec « à l'instant » sous une minute) |
+| 10.3-2 (guillemets) | **corrigé** | `8b1240ac` : les 6 valeurs sont en ordre logique `«…»`, et `{texte}` est isolé par U+2068 et U+2069. Les tests `com_rc_tour7_m_test.dart:380` et suivants vérifient l'absence d'ordre visuel stocké et mesurent le rendu : 6 chaînes, dont 2 avec 5 saisies latines, arabes et mixtes |
+| 10.3-3 (Accueil) | **non retrouvé dans le dépôt** | aucune occurrence de `COM-IMPACT-ACCUEIL` dans `pilotage/tuteur-v1` ni dans `ui/communications-v1`. La fiche est sans doute dans le tableau de suivi, que je n'ai pas lu |
+
+**Correction de mon §10.** L'auteur a raison, et mon §10.3-2 contenait une erreur.
+- U+00AB et U+00BB sont `Bidi_Mirrored` (vérifié avec `unicodedata.mirrored`). Le moteur les dessine bien en miroir dans une ligne RTL.
+- J'ai relu les pixels de `com_admin_moderation_390_rtl_clair.png` à `5c0bffa3` (PNG décodé, glyphe entre « منشور » et « بطاقات », x 613 à 626, y 762 à 775). Le guillemet ouvrant pointait vers la gauche, donc vers le titre cité : le stockage `»…«` du tour 7 donnait des guillemets **tournés vers l'intérieur**.
+- À `8b1240ac`, le même glyphe pointe vers la droite, vers l'extérieur.
+- Ma phrase « Le rendu est juste à l'image » était donc fausse. Je l'avais tirée d'une lecture à l'œil de la capture réduite, sans mesure. Le défaut était plus grave que je ne l'avais écrit : rendu et texte lu étaient faux tous les deux. Il est corrigé.
+
+Hors COM, AR-COMPLET-1 est confirmé : **3531 clés françaises sans arabe** (4773 clés fr contre 1242 ar, chaque pluriel compté comme une seule clé), dont **0** sous `com.*` et `notifications.*`. Je ne le traite pas ici.
+
+### 11.3 Constats nouveaux
+
+Aucun. Le diff ne touche que `ar.i18n.json`, le code généré, `libelles_sources.json` et un test.
+- aucun test supprimé, aucun `skip` ;
+- aucun code applicatif modifié ;
+- worktree propre après les contrôles.
+
+### 11.4 Verdict de COM-R-7 : COM-RC (tour 8) ACCEPTÉE, COM-RC-8 passe à `verifie`
+
+Les deux mineurs de §10.3 que le tour pouvait traiter (1 et 2) sont corrigés et testés. Le 3
+est reporté hors du dépôt. Les chiffres et les captures se rejouent à l'identique. Mon erreur du
+§10 sur les guillemets est corrigée ci-dessus.
+
+Statut de preuve : `présent dans le code` et `testé localement`. Rien n'est branché, testé sur
+staging ni déployé ; `verifie` ne vaut ni fusion dans `main` ni mise en production.
