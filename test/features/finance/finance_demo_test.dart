@@ -21,6 +21,7 @@ import 'package:rewayah_academy/core/capacites/port_recharge_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_revenus_enseignant.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
 import 'package:rewayah_academy/core/finance/montant.dart';
+import 'package:rewayah_academy/core/finance/mouvements_profil.dart';
 import 'package:rewayah_academy/core/finance/politique_commerciale.dart';
 import 'package:rewayah_academy/core/finance/suivi_paiement.dart';
 import 'package:rewayah_academy/features/demo/finance_demo.dart';
@@ -658,7 +659,9 @@ void main() {
         expect(v.encaisse.devise, 'USD');
         expect(v.paieEnseignants.mineur, lessThan(v.revenuAcademique.mineur));
         expect(v.margeProjeteePourMille, isNotNull);
-        expect(v.essaisEnCours, 1);
+        // Contre-revue FI-DIR-1 : la vue globale lit le foyer ou Ibrahim est
+        // a regulariser ; aucun de ses profils n est en essai.
+        expect(v.essaisEnCours, 0);
         expect(
           (await c.read(portRevenusEnseignantProvider).moisEnCours()).classes,
           isNotEmpty,
@@ -723,6 +726,178 @@ void main() {
       ),
       isEmpty,
     );
+  });
+
+  group('vue globale de demonstration : une seule population (contre-revue '
+      'FI-DIR-1)', () {
+    final VueGlobaleFinance v = DonneesFinanceDemo.vueGlobale();
+    final List<FinancesProfil> foyer = DonneesFinanceDemo.profils(
+      DonneesFinanceDemo.jeuVueGlobale,
+    );
+    int compte(EtatPaiementsProfils e) => v.etatPaiements
+        .firstWhere((CompteEtatPaiements c) => c.etat == e)
+        .profils;
+
+    test('aucune personne n est a la fois en essai et dans un paiement', () {
+      final Set<String> enEssai = <String>{
+        for (final FinancesProfil p in foyer)
+          if (p.etat == EtatFinancier.essai) p.profilId,
+      };
+      final Set<String> payeurs = <String>{
+        for (final MouvementFoyer m in v.dernieresOperations) m.profilId,
+      };
+      expect(v.dernieresOperations, isNotEmpty);
+      expect(enEssai.intersection(payeurs), isEmpty);
+      // Chaque personne d une operation est un profil de la population.
+      expect(
+        payeurs.difference(<String>{
+          for (final FinancesProfil p in foyer) p.profilId,
+        }),
+        isEmpty,
+      );
+    });
+
+    test('les essais de la tuile et de l etat des paiements sont les memes, '
+        'et ceux de la population', () {
+      final int essais = foyer
+          .where((FinancesProfil p) => p.etat == EtatFinancier.essai)
+          .length;
+      expect(v.essaisEnCours, essais);
+      expect(compte(EtatPaiementsProfils.enEssai), v.essaisEnCours);
+    });
+
+    test('l alerte nomme un profil a regulariser de la population, compte '
+        'dans l etat des paiements', () {
+      for (final AlerteFinance a in v.alertes) {
+        final FinancesProfil p = foyer.firstWhere(
+          (FinancesProfil f) => f.prenom == a.prenom,
+        );
+        expect(p.etat, EtatFinancier.aRegulariser);
+        expect(a.montant, p.manque);
+      }
+      expect(
+        compte(EtatPaiementsProfils.aRegulariser),
+        v.alertes
+            .where(
+              (AlerteFinance a) => a.nature == NatureAlerteFinance.aRegulariser,
+            )
+            .length,
+      );
+      expect(v.impayes, _usd(8));
+    });
+
+    test('la classe de chaque personne nommee est dans Top classes', () {
+      final Set<String> classes = <String>{
+        for (final EncaissementClasse c in v.topClasses) c.classe,
+      };
+      for (final MouvementFoyer m in v.dernieresOperations) {
+        final FinancesProfil p = foyer.firstWhere(
+          (FinancesProfil f) => f.profilId == m.profilId,
+        );
+        expect(classes, contains(p.classe), reason: p.prenom);
+      }
+    });
+
+    test('les soldes crediteurs sont ceux de la population', () {
+      expect(
+        v.soldesCrediteurs.mineur,
+        foyer.fold<int>(0, (int s, FinancesProfil p) => s + p.solde.mineur),
+      );
+    });
+  });
+
+  group('etatPaiementsDemo et topClassesDemo (contre-revue FI-DIR-1)', () {
+    final List<CompteEtatPaiements> etat =
+        DonneesFinanceDemo.etatPaiementsDemo();
+    final List<EncaissementClasse> top = DonneesFinanceDemo.topClassesDemo();
+
+    test('les quatre etats, dans l ordre, aux nombres des sieges', () {
+      expect(
+        etat.map((CompteEtatPaiements c) => c.etat).toList(),
+        EtatPaiementsProfils.values,
+      );
+      expect(etat.map((CompteEtatPaiements c) => c.profils).toList(), <int>[
+        13,
+        1,
+        0,
+        0,
+      ]);
+    });
+
+    test('parts en pour mille : 929 et 71, somme exacte de 1000', () {
+      expect(
+        etat.map((CompteEtatPaiements c) => c.partPourMille).toList(),
+        <int?>[929, 71, 0, 0],
+      );
+      expect(
+        etat.fold<int>(
+          0,
+          (int s, CompteEtatPaiements c) => s + (c.partPourMille ?? 0),
+        ),
+        1000,
+      );
+    });
+
+    test('partsPourMille : plus fort reste, somme 1000, total nul sans '
+        'part', () {
+      expect(DonneesFinanceDemo.partsPourMille(<int>[13, 1, 1, 0]), <int>[
+        867,
+        67,
+        66,
+        0,
+      ]);
+      expect(DonneesFinanceDemo.partsPourMille(<int>[1, 1, 1]), <int>[
+        334,
+        333,
+        333,
+      ]);
+      expect(DonneesFinanceDemo.partsPourMille(<int>[0, 0]), isNull);
+      for (final List<int> n in <List<int>>[
+        <int>[13, 1, 1, 0],
+        <int>[7, 3, 2],
+        <int>[1, 1, 1, 1, 1, 1, 1],
+      ]) {
+        expect(
+          DonneesFinanceDemo.partsPourMille(n)!
+              .fold<int>(0, (int s, int p) => s + p),
+          1000,
+          reason: '$n',
+        );
+      }
+    });
+
+    test('Top classes : somme = encaisse, de la plus forte a la plus '
+        'faible', () {
+      final VueGlobaleFinance v = DonneesFinanceDemo.vueGlobale();
+      expect(
+        top.fold<int>(
+          0,
+          (int s, EncaissementClasse c) => s + c.encaisse.mineur,
+        ),
+        v.encaisse.mineur,
+      );
+      expect(
+        v.topClasses.map((EncaissementClasse c) => c.classe).toList(),
+        top.map((EncaissementClasse c) => c.classe).toList(),
+      );
+      for (int i = 1; i < top.length; i++) {
+        expect(
+          top[i - 1].encaisse.mineur,
+          greaterThanOrEqualTo(top[i].encaisse.mineur),
+        );
+      }
+      // An-Nour 5 x 50, As-Salam 4 x 60, Al-Huda 4 x 50.
+      expect(top.map((EncaissementClasse c) => c.classe).toList(), <String>[
+        'An-Nour',
+        'As-Salam',
+        'Al-Huda',
+      ]);
+      expect(top.map((EncaissementClasse c) => c.encaisse).toList(), <Montant>[
+        _usd(250),
+        _usd(240),
+        _usd(200),
+      ]);
+    });
   });
 }
 

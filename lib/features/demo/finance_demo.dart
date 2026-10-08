@@ -1252,8 +1252,14 @@ abstract final class DonneesFinanceDemo {
   /// revenu de ces memes sieges. Le versement partiel d'un siege a
   /// regulariser n'est pas debite (FIN4-09) : il reste dans le solde du
   /// profil, la demonstration ne l'invente pas en encaissement.
+  ///
+  /// Toutes les sections lisent UNE population (contre-revue FI-DIR-1) :
+  /// les sieges de [_classesDemo] et, pour les profils nommes, le foyer
+  /// [jeuVueGlobale], dont chaque profil occupe l'un de ces sieges (Mariam
+  /// et Aicha a An-Nour, Ibrahim a regulariser a Al-Huda). Un profil n'y est
+  /// donc jamais a la fois en essai et dans un paiement.
   static VueGlobaleFinance vueGlobale() {
-    final FinancesFoyer finance = finances(JeuFoyerFinance.tousFinances);
+    final FinancesFoyer finance = finances(jeuVueGlobale);
     final Montant revenu = revenuDemo();
     final Montant paie = revenus().totalEstime;
     final int marge = (revenu.mineur - paie.mineur) * 1000 ~/ revenu.mineur;
@@ -1264,9 +1270,7 @@ abstract final class DonneesFinanceDemo {
       paieEnseignants: paie,
       margeProjeteePourMille: marge,
       impayes: impayesDemo(),
-      essaisEnCours: profils(JeuFoyerFinance.unEnEssai)
-          .where((FinancesProfil p) => p.etat == EtatFinancier.essai)
-          .length,
+      essaisEnCours: _essaisVueGlobale(),
       soldesCrediteurs: finance.synthese.totalSoldes,
       alertes: <AlerteFinance>[
         AlerteFinance(
@@ -1306,10 +1310,7 @@ abstract final class DonneesFinanceDemo {
       topClasses: topClassesDemo(),
       // Les mouvements du foyer de demonstration ou Ibrahim est a
       // regulariser, comme l'alerte : le plus recent d'abord (FI-BR-05).
-      dernieresOperations: derniersMouvements(
-        JeuFoyerFinance.unARegulariser,
-        limite: 5,
-      ),
+      dernieresOperations: derniersMouvements(jeuVueGlobale, limite: 5),
     );
   }
 
@@ -1326,23 +1327,68 @@ abstract final class DonneesFinanceDemo {
       finances += c.eligibles > c.capacite ? c.capacite : c.eligibles;
       aRegulariser += c.manques.length;
     }
-    final int essais = profils(JeuFoyerFinance.unEnEssai)
-        .where((FinancesProfil p) => p.etat == EtatFinancier.essai)
-        .length;
+    final int essais = _essaisVueGlobale();
     const int enConfirmation = 0;
-    final int total = finances + aRegulariser + essais + enConfirmation;
-    CompteEtatPaiements compte(EtatPaiementsProfils etat, int n) =>
-        CompteEtatPaiements(
-          etat: etat,
-          profils: n,
-          partPourMille: total == 0 ? null : n * 1000 ~/ total,
-        );
+    final List<(EtatPaiementsProfils, int)> comptes =
+        <(EtatPaiementsProfils, int)>[
+          (EtatPaiementsProfils.finances, finances),
+          (EtatPaiementsProfils.aRegulariser, aRegulariser),
+          (EtatPaiementsProfils.enEssai, essais),
+          (EtatPaiementsProfils.enConfirmation, enConfirmation),
+        ];
+    final List<int>? parts = partsPourMille(<int>[
+      for (final (EtatPaiementsProfils _, int n) in comptes) n,
+    ]);
     return <CompteEtatPaiements>[
-      compte(EtatPaiementsProfils.finances, finances),
-      compte(EtatPaiementsProfils.aRegulariser, aRegulariser),
-      compte(EtatPaiementsProfils.enEssai, essais),
-      compte(EtatPaiementsProfils.enConfirmation, enConfirmation),
+      for (final (int i, (EtatPaiementsProfils, int) c) in comptes.indexed)
+        CompteEtatPaiements(
+          etat: c.$1,
+          profils: c.$2,
+          partPourMille: parts?[i],
+        ),
     ];
+  }
+
+  /// Le foyer dont la vue globale lit les profils nommes (essais, soldes,
+  /// dernieres operations) : celui ou Ibrahim est a regulariser, comme
+  /// l'alerte et les impayes, et dont chaque profil occupe un siege de
+  /// [_classesDemo]. Aucun profil n'y est en essai.
+  static const JeuFoyerFinance jeuVueGlobale = JeuFoyerFinance.unARegulariser;
+
+  /// Les essais en cours de la vue globale : ceux du foyer [jeuVueGlobale]
+  /// (les sieges de [_classesDemo] sont tous finances ou a regulariser).
+  static int _essaisVueGlobale() =>
+      profils(jeuVueGlobale)
+          .where((FinancesProfil p) => p.etat == EtatFinancier.essai)
+          .length;
+
+  /// Les parts en pour mille de [nombres] sur leur total, dont la somme
+  /// fait exactement 1000 (methode du plus fort reste) : la part entiere
+  /// de chacun, puis les milliemes restants aux plus forts restes, a reste
+  /// egal dans l'ordre rendu. `null` quand le total est nul. Calcul de
+  /// DEMONSTRATION : en production, les parts sont rendues par le serveur
+  /// (FI-BR-12), jamais calculees cote Flutter.
+  static List<int>? partsPourMille(List<int> nombres) {
+    final int total = nombres.fold<int>(0, (int s, int n) => s + n);
+    if (total == 0) return null;
+    final List<int> parts = <int>[
+      for (final int n in nombres) n * 1000 ~/ total,
+    ];
+    final List<int> restes = <int>[
+      for (final int n in nombres) n * 1000 % total,
+    ];
+    int manquants = 1000 - parts.fold<int>(0, (int s, int n) => s + n);
+    final List<int> ordre = List<int>.generate(nombres.length, (int i) => i)
+      ..sort((int a, int b) {
+        final int parReste = restes[b].compareTo(restes[a]);
+        return parReste != 0 ? parReste : a.compareTo(b);
+      });
+    for (final int i in ordre) {
+      if (manquants == 0) break;
+      parts[i]++;
+      manquants--;
+    }
+    return parts;
   }
 
   /// Les classes de la demonstration rangees par encaisse du mois, la
