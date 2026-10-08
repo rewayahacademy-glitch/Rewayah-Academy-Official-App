@@ -306,3 +306,12 @@ localement` ; ni staging ni déploiement.
 - **Motif manquant** : repéré par un drapeau (`motifManquant`), jamais en comparant des textes ;
   l'ajout d'un élève passe `erreur` au sélecteur.
 - **L13** : voir la section ci-dessus (aucune borne sans source écrite).
+
+### Captures du 08/10 (seconde vérification)
+
+`docs/current/captures/FORM-L1-7-13/` : `ad8/` (110 PNG, `ad8_decisions_capture_test`, 70/0),
+`hl_a5/` (96 PNG, `hl_a5_planche_capture_test`, 48/0), `correctifs/` (6 PNG, 320 ×2 clair et
+sombre : refus de dossier, deux signalements L7 en « Autre »). Ces deux tests AD-8 et HL-A-5
+passent désormais par « Autre » avant d'écrire le motif, et vérifient qu'à l'ouverture 02D montre
+les puces, sans champ, focus sur la première. L'aide « Détails internes » de la fiche élève passe
+à la ligne sans ellipse à 320 ×2 (`helperMaxLines: 8`).

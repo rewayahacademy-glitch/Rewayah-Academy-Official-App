@@ -582,7 +582,9 @@ class _SignalerBesoinState extends State<SignalerBesoin> {
           decoration: InputDecoration(
             labelText: t.enseignant.signalement.details,
             helperText: t.enseignant.signalement.detailsAide,
-            helperMaxLines: 2,
+            // 2 lignes coupaient l'aide en ellipse a 320 et texte x2 : borne
+            // large, comme AD-11 (1.4.4), l'aide n'est jamais coupee.
+            helperMaxLines: 8,
             errorText: _erreurDetails,
             errorMaxLines: 3,
           ),

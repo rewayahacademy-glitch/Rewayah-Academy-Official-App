@@ -2,6 +2,7 @@
 // « Cahier a valider » a cote du point de rappel de Mes Classes.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
@@ -224,6 +225,22 @@ void main() {
         );
       },
     );
+
+    testWidgets('320 a texte x2 : l aide des details passe a la ligne, '
+        'jamais en ellipse', (WidgetTester tester) async {
+      _fenetre(tester, const Size(320, 1400));
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await _ouvrirMariam(tester);
+      await tester.ensureVisible(find.byKey(FicheEleveEnseignant.signalerKey));
+      await tester.tap(find.byKey(FicheEleveEnseignant.signalerKey));
+      await tester.pumpAndSettle();
+      final Finder aide = find.text(t.enseignant.signalement.detailsAide);
+      await tester.ensureVisible(aide);
+      await tester.pumpAndSettle();
+      final RenderParagraph rendu = tester.renderObject<RenderParagraph>(aide);
+      expect(rendu.didExceedMaxLines, isFalse);
+    });
 
     testWidgets('un envoi qui echoue ne passe jamais pour un succes', (
       WidgetTester tester,
