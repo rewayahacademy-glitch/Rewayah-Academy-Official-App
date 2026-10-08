@@ -278,14 +278,21 @@ void main() {
     // Q-3 = b (directeur, 05/10/2026) : sous 388 de large, le lien « En
     // savoir plus » n'est pas affiche. Mesures avec le lien (avant) : 31,3 %
     // a 320 x 690 texte x1,5 ; 30,8 % a 360 x 779 texte x2. Sans lien : 27,8 %
-    // et 26,7 %. La limite reste 30 %.
+    // et 26,7 %. Integration du 08/10 avec ETATS-MA-1 (decision du
+    // 05/10/2026, option (a)) : texte au-dela de 130 % en Mode Accessibilite,
+    // les commandes passent sur deux rangees pour garder le mot d'etat et la
+    // borne MA-CMD-1 passe a la moitie de l'ecran (comme le test 390 x 844
+    // ci-dessus). Mesure du 08/10/2026, sans lien : 104 + 216 = 320 pour 690
+    // (46,4 %) ; 120 + 240 = 360 pour 779 (46,2 %).
     for (final (Size taille, double echelle) in <(Size, double)>[
       (const Size(320, 690), 1.5),
       (const Size(360, 779), 2),
     ]) {
       testWidgets('MA-CMD-1 : ${taille.width.toInt()} x '
           '${taille.height.toInt()}, texte x$echelle, en-tete et commandes '
-          'dans 30 %, sans le lien', (WidgetTester tester) async {
+          '(deux rangees, ETATS-MA-1) dans 50 %, sans le lien', (
+        WidgetTester tester,
+      ) async {
         await _monter(tester, echelle: echelle, taille: taille);
         final Finder rejoindre = find.text(LibellesGroupe.rejoindre);
         await tester.ensureVisible(rejoindre);
@@ -299,6 +306,10 @@ void main() {
         await tester.pump(const Duration(milliseconds: 500));
 
         expect(find.text(t.salle.informationControle.lien), findsNothing);
+        expect(
+          find.byKey(const ValueKey<String>('commandes-deux-rangees')),
+          findsOneWidget,
+        );
         final double hauteurEntete = tester
             .getSize(
               find.byKey(const ValueKey<String>('entete-seance-compacte')),
@@ -309,7 +320,7 @@ void main() {
             .height;
         expect(
           hauteurEntete + hauteurCommandes,
-          lessThanOrEqualTo(taille.height * 0.30),
+          lessThanOrEqualTo(taille.height * 0.50),
           reason: 'en-tete $hauteurEntete + commandes $hauteurCommandes',
         );
         expect(tester.takeException(), isNull);
