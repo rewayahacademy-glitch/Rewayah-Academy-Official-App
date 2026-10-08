@@ -15,18 +15,35 @@ name: Flutter Web → Vercel
 # deux gardes ajoutees ici : une AVANT (les secrets) et une APRES (le bundle
 # reellement servi). Un echec doit etre bruyant ; un silence doit vouloir dire
 # que ca marche.
+#
+# DEUX CIBLES, UN SEUL CHEMIN (24 septembre 2026). Le meme workflow deploie :
+#   - en PRODUCTION (`vercel deploy --prod`, alias rewayah-academy.vercel.app)
+#     pour un push sur `main` ou un lancement manuel depuis `main` ;
+#   - en APERCU (`vercel deploy` sans `--prod`, URL unique par deploiement)
+#     pour toute pull request vers `main` et tout lancement manuel depuis une
+#     autre branche. L'URL est ecrite dans le resume du run et en commentaire
+#     de la PR. Un apercu ne touche jamais l'alias de production.
+# Avant cela, voir une branche « en live » supposait de deployer en production
+# a la main depuis un poste : c'est ce qui a produit les ecrasements du 18/09.
 
 on:
   push:
+    branches: [main]
+  pull_request:
     branches: [main]
   workflow_dispatch:
 
 # Deux poussees rapprochees deployaient deux bundles dans un ordre non garanti.
 # `cancel-in-progress: false` : on ne tue pas un deploiement en cours, on
-# attend son tour.
+# attend son tour. Le groupe est par ref : la production (`refs/heads/main`)
+# n'attend jamais derriere un apercu, et chaque PR fait sa propre file.
 concurrency:
-  group: deploiement-web-production
+  group: deploiement-web-${{ github.ref }}
   cancel-in-progress: false
+
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
   deploy:
@@ -39,6 +56,24 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      # Production seulement pour `main` hors pull request. Une PR est toujours
+      # un apercu, meme si sa branche s'appelle autrement ; un `workflow_dispatch`
+      # lance depuis une autre branche aussi. `ENVIRONNEMENT=staging` sur un
+      # apercu : Sentry (env.dart:59-62) ne melange pas ses erreurs a la prod.
+      - name: Determine la cible (production ou apercu)
+        id: cible
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" != "pull_request" ] && [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "production=true" >> "$GITHUB_OUTPUT"
+            echo "environnement=production" >> "$GITHUB_OUTPUT"
+            echo "Cible : PRODUCTION ($SITE)"
+          else
+            echo "production=false" >> "$GITHUB_OUTPUT"
+            echo "environnement=staging" >> "$GITHUB_OUTPUT"
+            echo "Cible : APERCU (aucun effet sur $SITE)"
+          fi
 
       # GARDE AMONT. Un secret absent ne se voyait sinon que bien plus tard,
       # sous la forme d'un bundle compile sans URL Supabase : `Env.configuree`
@@ -82,20 +117,27 @@ jobs:
       # meme fait que la commande dit ce qu'elle produit, au lieu de s'en
       # remettre a un defaut qu'un lot futur pourrait changer.
       #
-      # ENVIRONNEMENT=production : sans lui, `Env.environnement` vaut
-      # `developpement` (env.dart:59-62) et les erreurs de la production
-      # arrivaient dans Sentry melangees a celles des postes.
+      # ENVIRONNEMENT vient de l'etape « cible » : production ou staging. Sans
+      # lui, `Env.environnement` vaut `developpement` (env.dart:59-62) et les
+      # erreurs de la production arrivaient dans Sentry melangees a celles des
+      # postes.
       - name: Build Flutter Web (release)
         run: |
           flutter build web \
             --release \
             --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
             --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }} \
-            --dart-define=ENVIRONNEMENT=production \
+            --dart-define=ENVIRONNEMENT=${{ steps.cible.outputs.environnement }} \
             --dart-define=SENTRY_DSN_FLUTTER=${{ secrets.SENTRY_DSN_FLUTTER }} \
             --dart-define=GALERIE=false \
             --dart-define=PLAYGROUND=false \
             --dart-define=AUTH_PAR_MOT_DE_PASSE=false
+
+      # Pages publiques HTML sous /fr ; la sortie conserve le bundle Flutter
+      # et place ses réécritures explicites avant le repli SPA. La branche
+      # d'aperçu reste noindex tant que le feu vert de publication manque.
+      - name: Build public site preview
+        run: python3 site-public/build_site.py --output build/web
 
       # Le bundle doit porter les fichiers copies depuis `web/`. `sqlite3.wasm`
       # et `drift_worker.js` ont deja manque une fois : sans eux, la base locale
@@ -106,7 +148,7 @@ jobs:
         shell: bash
         run: |
           manquants=""
-          for f in index.html main.dart.js sqlite3.wasm drift_worker.js vercel.json flutter_service_worker.js version.json; do
+          for f in index.html main.dart.js sqlite3.wasm drift_worker.js vercel.json flutter_service_worker.js version.json 404.html fr/index.html fr/assets/site.css fr/assets/logo-horizontal.svg fr/assets/dm-sans-latin.woff2 fr/assets/dm-sans-latin-ext.woff2 fr/assets/plus-jakarta-sans-latin.woff2 fr/assets/plus-jakarta-sans-latin-ext.woff2; do
             if [ ! -f "build/web/$f" ]; then manquants="$manquants $f"; fi
           done
           if [ -n "$manquants" ]; then
@@ -127,51 +169,103 @@ jobs:
         run: npm install --global vercel@latest
 
       - name: Pull Vercel environment info
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=${{ steps.cible.outputs.production == 'true' && 'production' || 'preview' }} --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Deploy to Vercel (production)
+      # La CLI ecrit l'URL du deploiement seule sur stdout (le reste va sur
+      # stderr) : c'est elle qu'on capture. En apercu, cette URL est la SEULE
+      # adresse du bundle ; en production, l'alias `SITE` bascule dessus.
+      - name: Deploy to Vercel
+        id: deploiement
+        shell: bash
         run: |
-          vercel deploy build/web \
-            --prod \
-            --token=${{ secrets.VERCEL_TOKEN }}
+          if [ "${{ steps.cible.outputs.production }}" = "true" ]; then
+            url=$(vercel deploy build/web --prod --yes --token=${{ secrets.VERCEL_TOKEN }})
+          else
+            url=$(vercel deploy build/web --yes --token=${{ secrets.VERCEL_TOKEN }})
+          fi
+          if [ -z "$url" ]; then
+            echo "::error title=Deploiement sans URL::la CLI Vercel n a rendu aucune adresse"
+            exit 1
+          fi
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Deploye : $url"
+          {
+            echo "## Flutter Web deploye"
+            echo ""
+            echo "- Cible : ${{ steps.cible.outputs.production == 'true' && 'PRODUCTION' || 'apercu' }}"
+            echo "- Commit : \`${{ github.sha }}\`"
+            echo "- URL : $url"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       # GARDE AVAL. Le message de la CLI dit qu'elle a televerse, pas que le
       # domaine sert le bon bundle : l'alias peut rester sur l'ancien
       # deploiement, et une reecriture SPA absente ne se voit que sur une route
-      # profonde. On mesure donc ce que le DOMAINE rend, apres coup.
+      # profonde. On mesure donc ce que le DOMAINE rend, apres coup. En apercu,
+      # le domaine mesure est l'URL unique du deploiement.
       - name: Controle du bundle SERVI
         shell: bash
+        env:
+          CIBLE: ${{ steps.cible.outputs.production == 'true' && env.SITE || steps.deploiement.outputs.url }}
         run: |
           echo "Attente de la propagation de l alias..."
           sleep 20
           echecs=""
 
-          code=$(curl -s -o /dev/null -w '%{http_code}' "$SITE/")
+          code=$(curl -s -o /dev/null -w '%{http_code}' "$CIBLE/")
           [ "$code" = "200" ] || echecs="$echecs racine=$code"
 
           # N'IMPORTE QUELLE route profonde fait l'affaire, et c'est le
           # principe : la reecriture `/(.*)` -> `/index.html` doit rendre 200
           # sur un chemin que le serveur ne connait pas. Sans elle, Vercel rend
           # 404 et l'application est injoignable ailleurs que sur sa racine.
-          code=$(curl -s -o /dev/null -w '%{http_code}' "$SITE/controle/reecriture-spa")
+          code=$(curl -s -o /dev/null -w '%{http_code}' "$CIBLE/controle/reecriture-spa")
           [ "$code" = "200" ] || echecs="$echecs reecriture_spa=$code"
 
           # Le wasm DOIT etre servi en application/wasm : en text/plain, le
           # navigateur refuse de l'instancier en streaming.
-          type=$(curl -s -o /dev/null -w '%{content_type}' "$SITE/sqlite3.wasm")
+          type=$(curl -s -o /dev/null -w '%{content_type}' "$CIBLE/sqlite3.wasm")
           case "$type" in application/wasm*) ;; *) echecs="$echecs wasm_mime=$type" ;; esac
 
-          code=$(curl -s -o /dev/null -w '%{http_code}' "$SITE/drift_worker.js")
+          code=$(curl -s -o /dev/null -w '%{http_code}' "$CIBLE/drift_worker.js")
           [ "$code" = "200" ] || echecs="$echecs drift_worker=$code"
 
           # Un bundle Flutter reel pese plusieurs mega-octets. Un build vide en
           # rendrait quelques kilo-octets -- c'est exactement ce qui est arrive
           # le 18 septembre, et rien ne l'avait signale.
-          taille=$(curl -s -o /dev/null -w '%{size_download}' "$SITE/main.dart.js")
+          taille=$(curl -s -o /dev/null -w '%{size_download}' "$CIBLE/main.dart.js")
           [ "$taille" -gt 1000000 ] || echecs="$echecs main_dart_js=${taille}o"
+
+          # Le HTML public doit etre servi sur les URL sans suffixe, y compris
+          # en acces direct. Une route /fr inconnue ne doit pas ouvrir Flutter.
+          code=$(curl -s -o /tmp/rewayah-fr-home.html -w '%{http_code}' "$CIBLE/fr/")
+          [ "$code" = "200" ] || echecs="$echecs fr_home=$code"
+          grep -q '<html lang="fr">' /tmp/rewayah-fr-home.html || echecs="$echecs fr_home_html"
+          grep -q 'noindex,nofollow' /tmp/rewayah-fr-home.html || echecs="$echecs fr_home_noindex"
+
+          code=$(curl -s -o /tmp/rewayah-fr-deep.html -w '%{http_code}' "$CIBLE/fr/familles")
+          [ "$code" = "200" ] || echecs="$echecs fr_familles=$code"
+          grep -q 'Espace familial' /tmp/rewayah-fr-deep.html || echecs="$echecs fr_familles_html"
+
+          code=$(curl -s -o /dev/null -w '%{http_code}' "$CIBLE/fr/assets/logo-horizontal.svg")
+          [ "$code" = "200" ] || echecs="$echecs fr_logo=$code"
+          code=$(curl -s -o /dev/null -w '%{http_code}' "$CIBLE/fr/route-inconnue-rewayah")
+          [ "$code" = "404" ] || echecs="$echecs fr_404=$code"
 
           if [ -n "$echecs" ]; then
             echo "::error title=Le domaine ne sert pas le bundle attendu::$echecs"
             exit 1
           fi
-          echo "Le domaine sert un bundle complet (main.dart.js : $taille octets)."
+          echo "$CIBLE sert un bundle complet (main.dart.js : $taille octets)."
+
+      # L'URL d'apercu arrive la ou l'on relit le code : sur la PR. Un agent
+      # qui livre une branche livre donc une adresse testable, sans qu'un
+      # deploiement de production a la main soit jamais necessaire pour « voir ».
+      - name: Publie l'URL d'apercu sur la PR
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          URL: ${{ steps.deploiement.outputs.url }}
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} \
+            --repo "${{ github.repository }}" \
+            --body "Apercu Flutter Web pour \`${{ github.event.pull_request.head.sha }}\` : $URL (staging, aucun effet sur la production)"
