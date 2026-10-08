@@ -45,6 +45,7 @@ import '../../core/widgets/barre_precedent_suivant.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/marque_page.dart';
 import '../../core/widgets/page_shell.dart';
+import '../demo/racine_demonstrable.dart';
 
 /// Le temps de lecture d'une page avant le passage automatique a la
 /// suivante : six secondes, au milieu de la fourchette de 5 a 7 secondes
@@ -341,6 +342,9 @@ class _BienvenuePageState extends ConsumerState<BienvenuePage>
                           ? () => _aller(_index + 1, parLeVisiteur: true)
                           : null,
                     ),
+                    // Hors production seulement : sans lanceur, l'entree
+                    // ne rend rien.
+                    const EntreeDemonstration(),
                   ],
                 ),
               ),
