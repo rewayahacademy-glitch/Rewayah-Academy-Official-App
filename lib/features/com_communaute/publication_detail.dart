@@ -480,6 +480,7 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
             niveau: NiveauAction.tertiaire,
             pleineLargeur: false,
             compacte: true,
+            affleurant: true,
             onPress: () =>
                 unawaited(_basculerEnregistrement(objet, enregistre)),
           ),

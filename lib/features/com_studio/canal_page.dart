@@ -136,15 +136,21 @@ class EnteteCanal extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     final ResumeCanal r = canal.resume;
     if (compacte) {
+      // Lot K, point 5 (COM-CAPT tour 4, n. 1) : le nom passe a la ligne,
+      // deux lignes au plus (« Organisation generale » se coupait a 320 en
+      // texte x2) ; le lecteur d'ecran l'entend toujours en entier.
       return Semantics(
         key: cle,
         header: true,
-        child: Text(
-          r.nom,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: palette.inkStrong.applyTo(
-            textes.titleSmall ?? const TextStyle(),
+        label: r.nom,
+        child: ExcludeSemantics(
+          child: Text(
+            r.nom,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: palette.inkStrong.applyTo(
+              textes.titleSmall ?? const TextStyle(),
+            ),
           ),
         ),
       );
@@ -417,8 +423,11 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
     // R-12 : « Mode focus » suit le nom, aligne au debut (a droite en
     // arabe), s'il y tient ; sinon dessous (a 390 en texte double, le nom
     // garde toute la largeur). Jamais repousse au bout de la ligne.
+    // Lot K, point 3 : « Mode focus » glisse de sa marge interne vers le
+    // debut (libelle aligne sur le titre quand il passe dessous) ; a cote du
+    // nom, 16 entre les deux gardent son libelle a l'ecart du nom.
     child: Wrap(
-      spacing: AppSpacing.sm,
+      spacing: AppSpacing.lg,
       runSpacing: AppSpacing.xs,
       alignment: WrapAlignment.start,
       crossAxisAlignment: WrapCrossAlignment.center,

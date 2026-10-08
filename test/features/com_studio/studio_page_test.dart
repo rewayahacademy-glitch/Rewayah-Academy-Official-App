@@ -581,6 +581,14 @@ void main() {
         port: portDemo(),
         depart: Routes.canalStudioPour('admissions'),
       );
+      // Lot K, point 4 : l'aide n'est posee qu'au focus (au repos, le
+      // champ tient sur une ligne).
+      expect(
+        find.text(t.com.studio.canal.aide(nom: 'Admissions')),
+        findsNothing,
+      );
+      await tester.showKeyboard(find.byKey(FilDiscussion.champKey));
+      await tester.pumpAndSettle();
       expect(
         find.text(t.com.studio.canal.aide(nom: 'Admissions')),
         findsOneWidget,

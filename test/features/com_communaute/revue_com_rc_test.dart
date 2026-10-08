@@ -292,7 +292,12 @@ void main() {
         ),
       );
       // Contre-preuve : « Enseignante, Classe An-Nour, Il y a 2 h ».
-      expect(ligne, 'Enseignante, Classe An-Nour · Il y a 2 h');
+      // Lot K, point 6 : les espaces du moment, et celle avant « · », sont
+      // insecables ; le texte lu reste le meme.
+      expect(
+        ligne.replaceAll('\u00A0', ' '),
+        'Enseignante, Classe An-Nour · Il y a 2 h',
+      );
       expect(ligne, isNot(contains(', Il y a')));
     });
 

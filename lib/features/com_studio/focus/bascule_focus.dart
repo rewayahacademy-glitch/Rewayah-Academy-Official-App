@@ -190,6 +190,8 @@ class BasculeFocus extends StatelessWidget {
         niveau: NiveauAction.tertiaire,
         pleineLargeur: false,
         compacte: true,
+        // Lot K, point 3 : le libelle s'aligne sur le titre du canal.
+        affleurant: true,
         focusNode: etat.noeudBascule,
       ),
     );

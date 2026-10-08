@@ -404,10 +404,12 @@ void main() {
         echelle: 2,
       );
       _contexteVisible(tester, _petit, textes: <String>['Mme Mariam', 'Adam']);
-      // La ligne reste une ligne : elle ne prend pas le quart de l'ecran.
+      // La ligne ne prend pas le quart de l'ecran. Lot K, point 5 : ses
+      // objets passent a la ligne (deux lignes au plus) au lieu de se
+      // couper ; elle reste sous le sixieme de l'ecran.
       expect(
         tester.getRect(find.byKey(FilDiscussion.cleEnteteCompacte)).height,
-        lessThanOrEqualTo(_petit.height / 8),
+        lessThanOrEqualTo(_petit.height / 6),
       );
     });
 

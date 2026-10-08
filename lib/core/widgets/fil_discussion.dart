@@ -89,6 +89,7 @@ import '../icons/app_icons.dart';
 import '../mouvement/apparition_douce.dart';
 import '../mouvement/mouvement.dart';
 import '../theme/app_color_pair.dart';
+import '../theme/app_gabarit.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
@@ -415,6 +416,20 @@ class FilDiscussion extends StatefulWidget {
   /// 390 non).
   static const double largeurReduite = 360;
 
+  /// La largeur d'ecran a partir de laquelle les bulles prennent toute la
+  /// colonne du fil (COM-RC lot K, point 1) : sur tablette et bureau (canal
+  /// du Studio a 768 et 1440, Focus, Messages metier), une bulle a 86 %
+  /// s'arretait avant la rangee d'ecriture et « Envoyer » semblait deborder
+  /// du fil. Les bulles, le champ et « Envoyer » partagent alors les deux
+  /// bords de la colonne ; le message de soi garde son fond propre et son
+  /// auteur (« Vous »). Sur telephone, la bulle garde son retrait de
+  /// conversation (86 %, a la fin pour soi). C'est l'ecran qui decide, pas
+  /// la colonne : a 768, le fil (344) est plus etroit qu'a 390 (358).
+  static const double largeurColonne = AppGabarit.seuilTablette;
+
+  /// La part de la largeur du fil qu'une bulle prend sur telephone.
+  static const double partBulleTelephone = 0.86;
+
   /// La part de la hauteur de l'ecran que la saisie occupe au plus (R-02).
   static const double partSaisieMax = 0.4;
 
@@ -559,7 +574,21 @@ class _FilDiscussionState extends State<FilDiscussion> {
   }
 
   void _auFocusChamp() {
-    if (mounted) setState(() {});
+    if (!mounted) return;
+    // Lot K, point 4 : l'aide du champ n'apparait qu'au focus, et peut
+    // l'agrandir ; si la fin du fil etait a l'ecran, elle y reste.
+    final bool enBas =
+        _defilement.hasClients &&
+        _defilement.position.pixels >= _defilement.position.maxScrollExtent - 1;
+    setState(() {});
+    if (enBas && _noeudChamp.hasFocus) {
+      // Une seule fois, a l'image suivante (celle ou l'aide apparait) :
+      // aucune reprise qui viendrait defaire une position restauree ensuite
+      // (sortie du Focus, R-COM-10).
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _allerEnBas(false, 0),
+      );
+    }
   }
 
   @override
@@ -1192,6 +1221,9 @@ class _Bulle extends StatelessWidget {
                 onPress: onReessayer,
                 niveau: NiveauAction.tertiaire,
                 pleineLargeur: false,
+                // Lot K : « Reessayer » s'aligne sur le texte de la bulle.
+                compacte: true,
+                affleurant: true,
               ),
             ),
           ],
@@ -1208,7 +1240,12 @@ class _Bulle extends StatelessWidget {
             ? AlignmentDirectional.centerEnd
             : AlignmentDirectional.centerStart,
         child: FractionallySizedBox(
-          widthFactor: 0.86,
+          // Lot K, point 1 : sur tablette et bureau, la bulle prend la
+          // colonne entiere, aux memes bords que le champ et « Envoyer ».
+          widthFactor:
+              MediaQuery.sizeOf(context).width >= FilDiscussion.largeurColonne
+              ? 1
+              : FilDiscussion.partBulleTelephone,
           alignment: deSoi
               ? AlignmentDirectional.centerEnd
               : AlignmentDirectional.centerStart,
@@ -1263,14 +1300,21 @@ class _Saisie extends StatelessWidget {
   /// ligne et laissait au champ 86 points de large (COM-FUS, COM-MSG-1).
   static const double _largeurEmpilee = 480;
 
+  /// En dessous de cette largeur, « Envoyer » passe sous le champ meme en
+  /// texte normal (lot K) : a 320, a cote du micro et d'« Envoyer », le
+  /// champ n'avait plus que 114 points et son aide se coupait (« pour
+  /// l'envoy... »). A 390 (358 points de fil), la rangee reste sur une ligne.
+  static const double _largeurEtroite = 340;
+
   @override
   Widget build(BuildContext context) {
     final Widget? vocal = this.vocal;
     final Widget rangee = LayoutBuilder(
       builder: (BuildContext contexte, BoxConstraints contraintes) => _rangee(
         empilee:
-            contraintes.maxWidth < _largeurEmpilee &&
-            SeuilsTexteAgrandi.texteAgrandi(contexte),
+            contraintes.maxWidth < _largeurEtroite ||
+            (contraintes.maxWidth < _largeurEmpilee &&
+                SeuilsTexteAgrandi.texteAgrandi(contexte)),
       ),
     );
     return Padding(
@@ -1312,7 +1356,13 @@ class _Saisie extends StatelessWidget {
           textCapitalization: TextCapitalization.sentences,
           decoration: InputDecoration(
             labelText: textes.libelleChamp,
-            hintText: textes.aideChamp,
+            // Lot K, point 4 : l'aide n'est posee qu'au focus. Invisible au
+            // repos, elle comptait pourtant dans la hauteur du champ : a 390,
+            // « Ecrire dans Organisation generale » passait sur deux lignes
+            // et le champ du canal faisait deux hauteurs, a cote d'un micro
+            // et d'un « Envoyer » d'une seule. Au repos, une ligne ; au focus
+            // et a la saisie, le champ grandit avec son texte.
+            hintText: noeudChamp.hasFocus ? textes.aideChamp : null,
             floatingLabelBehavior: FloatingLabelBehavior.auto,
             // La raison du bouton inactif, lisible sous le champ ; la
             // saisie reduite n'a pas de bouton inactif.
@@ -1332,6 +1382,9 @@ class _Saisie extends StatelessWidget {
             icone: AppIcons.micro,
             libelle: t.com.socle.composants.composer.enregistrerVocal,
             onPress: onMicro,
+            // Lot K, point 2 : a texte agrandi, le micro grandit avec le
+            // texte d'« Envoyer », a cote duquel il se pose.
+            suitTexte: true,
           );
     if (reduite) {
       // Une ligne : le champ, et le micro s'il y en a un. « Envoyer »

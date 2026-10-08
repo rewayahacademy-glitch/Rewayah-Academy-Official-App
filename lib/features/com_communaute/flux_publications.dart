@@ -55,10 +55,23 @@ String momentCommunaute(DateTime instant, DateTime maintenant) {
 /// separes par « · » (« Enseignante, Classe An-Nour · Il y a 2 h », jamais
 /// une majuscule au milieu d'une phrase, revue COM-R, R-14) ; le moment seul si le
 /// serveur ne donne pas de fonction.
-String ligneAuteurCommunaute(String? fonction, String moment) =>
-    fonction == null || fonction.isEmpty
-    ? moment
-    : t.com.communaute.publication.auteur(fonction: fonction, moment: moment);
+///
+/// Lot K, point 6 (COM-CAPT tour 4, n. 3) : le moment ne se coupe jamais
+/// (« Il y a » puis « 2 h » seul a la ligne, a 390) ; ses espaces sont
+/// insecables, et l'espace avant « · » aussi : la ligne passe a la ligne
+/// apres le separateur, le moment entier au debut de la suivante.
+String ligneAuteurCommunaute(String? fonction, String moment) {
+  final String insecable = moment.replaceAll(' ', _espaceInsecable);
+  if (fonction == null || fonction.isEmpty) return insecable;
+  final String ligne = t.com.communaute.publication.auteur(
+    fonction: fonction,
+    moment: insecable,
+  );
+  return ligne.replaceFirst(' $_separateur ', '$_espaceInsecable$_separateur ');
+}
+
+const String _espaceInsecable = '\u00A0';
+const String _separateur = '\u00B7';
 
 /// Le nombre de reponses, en mots.
 String libelleReponses(int nombre) {

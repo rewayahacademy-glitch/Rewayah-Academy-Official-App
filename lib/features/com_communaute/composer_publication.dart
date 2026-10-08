@@ -524,6 +524,7 @@ class _ComposerPublicationState extends ConsumerState<ComposerPublication> {
                 niveau: NiveauAction.tertiaire,
                 pleineLargeur: false,
                 compacte: true,
+                affleurant: true,
                 enCours: _enCours,
                 onPress: _publier,
               ),
