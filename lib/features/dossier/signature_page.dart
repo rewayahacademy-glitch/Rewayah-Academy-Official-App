@@ -110,10 +110,6 @@ class AccusePage extends ConsumerWidget {
 /// (`t.contrat.intro`, `pointEnregistrement`, `pointControle`,
 /// `pointCoordonnees`), sans la clause ni la case. La demonstration seule
 /// montre la version [VersionsContrat.textesJuridiques].
-///
-/// **Nouvelle signature** (Q-2 = a, 05/10/2026) : quand
-/// [resignatureContratEnseignantProvider] est vrai (politique publiee, contrat
-/// 2026-09 deja signe), une phrase courte dit pourquoi au-dessus du texte.
 class ContratPage extends ConsumerWidget {
   /// Cree la page de contrat.
   const ContratPage({super.key});
@@ -148,6 +144,8 @@ class ContratPage extends ConsumerWidget {
       pour = null;
     }
 
+    // Nouvelle signature (Q-2 = a, 05/10/2026) : politique publiee, contrat
+    // 2026-09 deja signe ; une phrase courte dit pourquoi au-dessus du texte.
     final bool resignature =
         enseignant && ref.watch(resignatureContratEnseignantProvider);
     return _PageASigner(

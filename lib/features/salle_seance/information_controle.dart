@@ -21,6 +21,17 @@ abstract final class InformationControle {
   /// c'est le seul ajout a l'ecran, discret).
   static const bool lienAccepte = true;
 
+  /// Le contact confidentialite que cite le texte E-2
+  /// (`{contact_confidentialite}`). **Pas encore fourni** (referent donnees
+  /// non nomme au 02/10) : tant qu'il manque, le texte E-2 n'est pas affiche,
+  /// plutot qu'affiche avec un trou ou une adresse inventee.
+  static const String? contactConfidentialite = null;
+
+  /// Le bouton « Signaler » de l'eleve n'existe pas encore dans la salle
+  /// (ecart E16) : la phrase de E-1 qui le cite reste cachee (principe 10 : le
+  /// texte suit la realite).
+  static const bool boutonSignalerEleve = false;
+
   /// La largeur de fenetre sous laquelle le lien n'est pas affiche (Q-3 = b,
   /// decision du directeur du 05/10/2026 : « cacher le lien sous 385
   /// environ »). Seuil exact : **388**.
@@ -43,17 +54,6 @@ abstract final class InformationControle {
   /// Sous ce seuil, l'information reste accessible : la mention elle-meme
   /// ouvre la meme lecture ([MentionSeance]), sans hauteur ni ecran nouveaux.
   static const double largeurMinimaleLien = 388;
-
-  /// Le contact confidentialite que cite le texte E-2
-  /// (`{contact_confidentialite}`). **Pas encore fourni** (referent donnees
-  /// non nomme au 02/10) : tant qu'il manque, le texte E-2 n'est pas affiche,
-  /// plutot qu'affiche avec un trou ou une adresse inventee.
-  static const String? contactConfidentialite = null;
-
-  /// Le bouton « Signaler » de l'eleve n'existe pas encore dans la salle
-  /// (ecart E16) : la phrase de E-1 qui le cite reste cachee (principe 10 : le
-  /// texte suit la realite).
-  static const bool boutonSignalerEleve = false;
 
   /// Vrai si un texte existe pour ce role, avec ses valeurs : E-1 pour
   /// l'interface guidee, E-2 pour l'eleve (avec un contact). L'enseignant n'a
