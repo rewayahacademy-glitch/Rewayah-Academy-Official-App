@@ -610,7 +610,8 @@ démonstration). Rien n'est branché, rien n'est testé sur staging, rien n'est 
 Ordre du directeur du 08/10 : tout défaut vu est corrigé par la session, sans lui être soumis.
 Captures régénérées par `communications_capture_test.dart` et `com_rc7_k_capture_test.dart`
 (CAPTURE_DIR = ce dossier) : **200 PNG** (187 + 13 nouvelles : échanges du contrôleur 390/768/1440
-clair et sombre, Planning de la Classe du tuteur), 108 modifiées. Aucun débordement (`com_debordements.txt` absent).
+clair et sombre, Planning de la Classe du tuteur 320×2/390/390 RTL, saisie du canal du Studio
+390/1440 clair et sombre), 108 modifiées. Aucun débordement (`com_debordements.txt` absent).
 
 Corrigés et vus à l'image (36 captures ouvertes par la passe M, plus celles des lots K et L) :
 
