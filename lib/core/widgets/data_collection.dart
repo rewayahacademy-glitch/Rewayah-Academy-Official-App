@@ -200,7 +200,9 @@ class DataCollection<T> extends StatelessWidget {
                       colonnes: colonnes,
                       ligne: ligne,
                       onSelectionner: onSelectionner,
-                      selectionnee: estSelectionnee?.call(ligne) ?? false,
+                      // Nul sans [estSelectionnee] : un tableau sans selection
+                      // n'annonce aucun etat « non selectionne ».
+                      selectionnee: estSelectionnee?.call(ligne),
                     ),
               ),
             ),
@@ -322,13 +324,16 @@ class _LigneTableau<T> extends StatelessWidget {
     required this.colonnes,
     required this.ligne,
     this.onSelectionner,
-    this.selectionnee = false,
+    this.selectionnee,
   });
 
   final List<ColonneDonnees<T>> colonnes;
   final T ligne;
   final void Function(T ligne)? onSelectionner;
-  final bool selectionnee;
+
+  /// Nul quand le tableau n'a pas de selection : la ligne ne porte alors
+  /// aucun etat `selected` (ni vrai ni faux) dans l'arbre semantique.
+  final bool? selectionnee;
 
   @override
   Widget build(BuildContext context) {
@@ -367,7 +372,7 @@ class _LigneTableau<T> extends StatelessWidget {
       child: DecoratedBox(
         // La ligne choisie : fond doux et contour d'accent de 2, comme
         // `AppCard.selectionnee` (jamais la couleur seule).
-        decoration: selectionnee
+        decoration: selectionnee ?? false
             ? BoxDecoration(
                 color: palette.washAccent.background,
                 border: Border.fromBorderSide(
