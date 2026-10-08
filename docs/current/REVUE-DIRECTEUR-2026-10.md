@@ -361,3 +361,60 @@ Cause corrigée dans le composant partagé : `lib/core/enseignant/cta_seance.dar
 Chiffres (avant, après) : états du bouton de la carte « Prochaine séance » de l'enseignant, 4 libellés dont 1 hors des moments demandés, puis 5 états tous nommés ; libellés différents pour la même action « entrer en salle » côté enseignant, 2 (« Préparer l'entrée » en Classe, rien en Journée pendant le cours) puis 1 (« Rejoindre la salle ») ; débordements mesurés à 320 px en texte ×2 sur la carte de séance, 1 (en-tête nom et pastille) puis 0 ; débordements mesurés à 1440 px en texte ×2 (bouton « Remplir le cahier de transmission »), 1 puis 0 ; tests de transitions, 0 puis 20 (unitaires) et 25 (widget).
 
 Recensé, non repris ici (autre lot) : le bouton « Rejoindre » de l'élève hors ligne reste présent et inerte (`accueil_eleve_page.dart`, décision documentée dans le code), compté par `bouton-grise`.
+
+## SUPERPOS-1 : superpositions et zone de saisie (05/10/2026, branche `corrections/c2-superpos`)
+
+**Décisions prises par délégation le 05/10** (règle DIR-REP-1, aucune question au directeur) :
+
+- Écran non identifié par le commentaire : **audit de tous les écrans** de la branche commune où un bandeau, une pastille ou un élément flottant peut recouvrir un contenu à lire, et de tous les champs multilignes. Décidé par délégation le 05/10.
+- Un bandeau prend sa place dans le flux et pousse, ou se ferme ; jamais peint par-dessus. Le repère « Démonstration » devient une bande en tête, dans le flux ; **clavier ouvert, elle se ferme** (la place va au contenu), et revient clavier fermé. Décidé par délégation le 05/10.
+- Une seule zone de saisie multiligne dans le produit : `ZoneSaisie` (`lib/core/widgets/zone_saisie.dart`). Rayon, fond, filet et marges du thème ; étiquette au-dessus du champ (jamais flottante sur le filet) ; aide et erreur jamais coupées ; hauteur qui grandit avec le texte, bornée aux deux cinquièmes de la vue visible ; bouton d'envoi **intégré au champ et centré** en hauteur ; jamais grisé (absent tant que le champ est vide, sa place gardée, la raison écrite sous le champ). Décidé par délégation le 05/10.
+- Cartes côte à côte : quand un mot d'un libellé ne tient pas dans une carte (320 en texte double), les cartes s'empilent, pleine largeur, même anatomie. Décidé par délégation le 05/10.
+
+**Méthode.** Test de non-chevauchement par rectangles (`verifierSansChevauchement`) à 320 ×2 en LTR et RTL, 390 et 1440, clavier ouvert (inset de 300) là où il y a une saisie ; mots entiers vérifiés par les boîtes de sélection de chaque mot ; garde de source : aucun `TextField` multiligne hors de `ZoneSaisie` (`test/core/widgets/zone_saisie_unique_test.dart`, 18 fichiers en défaut sur la base, 0 après).
+
+### Écrans et composants audités, verdict
+
+| Écran ou composant | Élément | Constat (avant) | Verdict après |
+|---|---|---|---|
+| Toutes les pages de l'aperçu (`RepereDemonstration`) | ruban « Démonstration » | ruban d'angle peint par-dessus : couvrait le bouton du compte (coque admin) à 320 ×2 et le début du titre en arabe | **corrigé** : bande en tête, dans le flux ; fermée clavier ouvert (sinon 14 px de débordement sous la feuille de refus à 320 × 640, clavier de 300) |
+| Échanges du contrôleur (`FilDiscussion`) | champ et bouton « Envoyer » | 134 px de débordement à 320 ×2 clavier ouvert ; bouton à côté du champ, grisé à vide ; étiquette flottante coupée | **corrigé** : `ZoneSaisie` avec envoi intégré et centré, `ColonneCorps` ; en-tête de contexte compact (une phrase) à texte agrandi ou vue basse |
+| Refus de dossier (admin, 02D) | motif | étiquette flottante en ellipse à 390 et 200 % | **corrigé** : `ZoneSaisie` |
+| Cahier de séance (enseignant) | position de reprise, objectif, devoir | reprise : texte qui défilait de côté sur une ligne, aide coupée « d'un rempla… » à 320 ×2 | **corrigé** : `ZoneSaisie` (touche « terminé », le texte passe à la ligne), aide entière |
+| Complément et observation du contrôleur | texte du document | étiquette flottante | **corrigé** : `ZoneSaisie` |
+| Signalement de besoin (fiche élève), signalement du Teaching Core, correction de présence, panneau d'après cours | champs multilignes | étiquettes flottantes, aides bornées à 2 lignes | **corrigé** : `ZoneSaisie` |
+| Administration : programmes, attribution, demandes, classes, progression, évaluations, qualité, diagnostics ; réglages de l'enfant | motifs et notes | champs de 2 lignes fixes, étiquette flottante | **corrigé** : `ZoneSaisie` |
+| Inscription, étape Genre (`ChoiceCardGroup` côte à côte) | radio en haut de carte | radio dans un `Stack`, par-dessus le disque de l'icône à 320 ; « hom / me » coupé à 320 ×2 | **corrigé** : radio sur sa ligne ; cartes empilées quand un mot ne tient pas |
+| Bandeau hors ligne, bandeau d'observation, bandeau d'alerte urgente | bandeaux | déjà dans le flux (`PageShell`, `RewayahApp`) | conforme, non modifié |
+| Cloche (point de notifications), sélecteur de profils (point d'état), tuiles vidéo d'observation (nom, micro), résultat de visite (badge) | pastilles | posées sur une icône, un avatar ou une image, jamais sur un texte | conforme |
+| Pastille « En direct », point de rappel | halo animé | halo translucide et bref, coupé en mouvement réduit | conforme (décoratif) |
+| Vignette de ressource (catalogue) | icône de type sur le monogramme | couverture décorative (exclue de la sémantique) | conforme |
+| Lecteur de QR (`scanner_page`) | barres sur le viseur | le viseur n'est pas un contenu à lire | conforme |
+| Anneau de focus (`Pressable`), grille bento | `PositionedDirectional` | hors de la cible, ou disposition sans recouvrement | conforme |
+
+Exception justifiée : le bandeau « Démonstration » disparaît clavier ouvert ; une capture prise clavier ouvert dans l'aperçu ne porte donc pas le repère.
+
+### Chiffres (base `6e2c91c4` → branche)
+
+| Mesure | Avant | Après |
+|---|---|---|
+| Fichiers avec un champ multiligne hors de `ZoneSaisie` (hors voies exclues) | 18 | 0 |
+| Débordement du fil à 320 ×2, clavier ouvert | 134 px | 0 |
+| Recouvrements mesurés (repère sur le bouton du compte ; radio sur l'icône à 320) | 2 | 0 |
+| Mots coupés mesurés (« hom / me », « rempla… ») | 2 | 0 |
+| `verifier_revue` | 1550 | 1550 |
+| `verifier_jetons` | 39 | 37 (les deux littéraux du ruban supprimé) |
+
+Tests ajoutés, tous en contre-épreuve réelle sur l'ancien code : `test/core/widgets/zone_saisie_test.dart`, `zone_saisie_unique_test.dart`, `choix_cote_a_cote_superpos_test.dart`, `test/features/demo/repere_demonstration_test.dart` (bande dans le flux, clavier ouvert), `test/features/controleur/echanges_controleur_test.dart` (contexte compact), `test/features/cahier/cahier_en7c_test.dart` (reprise à 320 ×2).
+
+Captures : `docs/current/captures/SUPERPOS-1/` (`avant` = base, `apres`), repère, fil (clavier fermé et ouvert), cahier, cartes Genre ; 320 ×2 clair, 320 ×2 sombre RTL, 390, 1440 ; script archivé `superpos1_capture_test.dart.txt`. Le clavier n'est pas peint par le moteur de test : sa zone apparaît vide.
+
+### Hors lot, relevé pour les autres voies (non touché)
+
+- **Messages, voie COM** (`origin/ui/com-msg`, `lib/features/com_messages`, `FilContextuel` sur `FilDiscussion`) : la branche garde l'ancienne rangée de saisie de `FilDiscussion` (champ à étiquette flottante + bouton « Envoyer » en toutes lettres à côté, aligné en haut, inerte à vide). C'est vraisemblablement l'écran que visait le directeur. Défaut : bouton hors du champ et non centré, bouton inerte (grisé) à vide, débordement à 320 ×2 clavier ouvert. Correction disponible dans le core de cette branche (`ZoneSaisie`, `FilDiscussion`) ; la fusion demandera de reporter l'enregistrement vocal ajouté par COM dans la nouvelle rangée.
+- **Finance et comptable** (`ui/finance-v1`, `ui/comptable-v1`) : non audités ici.
+- **Salle** (`features/salle`, `salle_seance`, `tc_classe_live`, dock `tc_dock`, voie TB) : le dock flottant et les volets posés en `Stack` sur la scène n'ont pas été mesurés ici.
+- `PageShell` et rangée de filtres (FILTRES-1) : non touchés. En-tête de page (`EntetePage`) à 320 ×2 : le titre seul prend un tiers de l'écran ; l'échelle compacte relève de HIER-1.
+- Aides de champs d'une ligne bornées à 2 ou 3 lignes (`foyer/formulaire_profil_eleve.dart`, `foyer/invitation_conjoint.dart`, `eleve_connexion/saisie_code_page.dart`) : non mesurées à 320 ×2 dans ce lot.
+
+Statut : **présent dans le code, testé localement**. Ni testé sur staging, ni déployé.

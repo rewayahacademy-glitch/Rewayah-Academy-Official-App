@@ -116,9 +116,7 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
         Ecart.vSm,
         ChoiceCardGroup(
           autoriserSaisieLibre: false,
-          valeurInitiale: ReponseChoix(
-            valeurs: <String>{_categorie.valeurSql},
-          ),
+          valeurInitiale: ReponseChoix(valeurs: <String>{_categorie.valeurSql}),
           options: <OptionChoix>[
             for (final CategorieSignalement categorie
                 in CategorieSignalement.values)

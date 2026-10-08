@@ -210,12 +210,12 @@ void main() {
     await tester.enterText(
       find
           .descendant(
-      of: find.ancestor(
-        of: find.text(t.dossiers.refus.champ),
-        matching: find.byType(ZoneSaisie),
-      ),
-      matching: find.byType(TextField),
-    )
+            of: find.ancestor(
+              of: find.text(t.dossiers.refus.champ),
+              matching: find.byType(ZoneSaisie),
+            ),
+            matching: find.byType(TextField),
+          )
           .first,
       motif,
     );
