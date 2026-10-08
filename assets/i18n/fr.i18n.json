@@ -4904,22 +4904,22 @@
       "absences": "Absences répétées"
     },
     "derogation": {
-      "aucunGroupe": "Aucun groupe approprié",
-      "avance": "Progression plus rapide que le groupe",
+      "aucuneClasse": "Aucune classe appropriée",
+      "avance": "Progression plus rapide que la classe",
       "enseignant": "Décision de l'enseignant",
       "direction": "Accord de la direction pédagogique"
     },
     "cloreException": {
       "stables": "Prérequis désormais stables",
-      "groupe": "Élève placé dans un groupe adapté",
-      "inutile": "Exception plus nécessaire",
+      "classe": "Élève placé dans une classe adaptée",
+      "inutile": "L'exception n'est plus nécessaire",
       "parErreur": "Exception posée par erreur"
     },
     "placement": {
       "debutant": "Débutant : parcours de base",
       "lecture": "Niveau constaté à la lecture",
       "declaratif": "Pré-diagnostic déclaratif confirmé",
-      "procheNiveau": "Groupe le plus proche du niveau évalué",
+      "procheNiveau": "Classe la plus proche du niveau évalué",
       "provisoire": "Placement provisoire, à réévaluer"
     },
     "refusDossier": {

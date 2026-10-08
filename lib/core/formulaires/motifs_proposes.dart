@@ -96,7 +96,7 @@ abstract final class MotifsProposes {
 
   /// Poser une derogation.
   static List<String> derogation() => <String>[
-    t.motifs.derogation.aucunGroupe,
+    t.motifs.derogation.aucuneClasse,
     t.motifs.derogation.avance,
     t.motifs.derogation.enseignant,
     t.motifs.derogation.direction,
@@ -105,7 +105,7 @@ abstract final class MotifsProposes {
   /// Clore une exception (blocage ou derogation).
   static List<String> cloreException() => <String>[
     t.motifs.cloreException.stables,
-    t.motifs.cloreException.groupe,
+    t.motifs.cloreException.classe,
     t.motifs.cloreException.inutile,
     t.motifs.cloreException.parErreur,
   ];

@@ -11838,11 +11838,11 @@ class Traductions$motifs$derogation$fr {
 
 	// Translations
 
-	/// fr: 'Aucun groupe approprié'
-	String get aucunGroupe => 'Aucun groupe approprié';
+	/// fr: 'Aucune classe appropriée'
+	String get aucuneClasse => 'Aucune classe appropriée';
 
-	/// fr: 'Progression plus rapide que le groupe'
-	String get avance => 'Progression plus rapide que le groupe';
+	/// fr: 'Progression plus rapide que la classe'
+	String get avance => 'Progression plus rapide que la classe';
 
 	/// fr: 'Décision de l'enseignant'
 	String get enseignant => 'Décision de l\'enseignant';
@@ -11862,11 +11862,11 @@ class Traductions$motifs$cloreException$fr {
 	/// fr: 'Prérequis désormais stables'
 	String get stables => 'Prérequis désormais stables';
 
-	/// fr: 'Élève placé dans un groupe adapté'
-	String get groupe => 'Élève placé dans un groupe adapté';
+	/// fr: 'Élève placé dans une classe adaptée'
+	String get classe => 'Élève placé dans une classe adaptée';
 
-	/// fr: 'Exception plus nécessaire'
-	String get inutile => 'Exception plus nécessaire';
+	/// fr: 'L'exception n'est plus nécessaire'
+	String get inutile => 'L\'exception n\'est plus nécessaire';
 
 	/// fr: 'Exception posée par erreur'
 	String get parErreur => 'Exception posée par erreur';
@@ -11889,8 +11889,8 @@ class Traductions$motifs$placement$fr {
 	/// fr: 'Pré-diagnostic déclaratif confirmé'
 	String get declaratif => 'Pré-diagnostic déclaratif confirmé';
 
-	/// fr: 'Groupe le plus proche du niveau évalué'
-	String get procheNiveau => 'Groupe le plus proche du niveau évalué';
+	/// fr: 'Classe la plus proche du niveau évalué'
+	String get procheNiveau => 'Classe la plus proche du niveau évalué';
 
 	/// fr: 'Placement provisoire, à réévaluer'
 	String get provisoire => 'Placement provisoire, à réévaluer';
@@ -20660,18 +20660,18 @@ extension on Traductions {
 			'motifs.blocage.renforcement' => 'Renforcement nécessaire avant d\'avancer',
 			'motifs.blocage.aRevoir' => 'Évaluation à revoir',
 			'motifs.blocage.absences' => 'Absences répétées',
-			'motifs.derogation.aucunGroupe' => 'Aucun groupe approprié',
-			'motifs.derogation.avance' => 'Progression plus rapide que le groupe',
+			'motifs.derogation.aucuneClasse' => 'Aucune classe appropriée',
+			'motifs.derogation.avance' => 'Progression plus rapide que la classe',
 			'motifs.derogation.enseignant' => 'Décision de l\'enseignant',
 			'motifs.derogation.direction' => 'Accord de la direction pédagogique',
 			'motifs.cloreException.stables' => 'Prérequis désormais stables',
-			'motifs.cloreException.groupe' => 'Élève placé dans un groupe adapté',
-			'motifs.cloreException.inutile' => 'Exception plus nécessaire',
+			'motifs.cloreException.classe' => 'Élève placé dans une classe adaptée',
+			'motifs.cloreException.inutile' => 'L\'exception n\'est plus nécessaire',
 			'motifs.cloreException.parErreur' => 'Exception posée par erreur',
 			'motifs.placement.debutant' => 'Débutant : parcours de base',
 			'motifs.placement.lecture' => 'Niveau constaté à la lecture',
 			'motifs.placement.declaratif' => 'Pré-diagnostic déclaratif confirmé',
-			'motifs.placement.procheNiveau' => 'Groupe le plus proche du niveau évalué',
+			'motifs.placement.procheNiveau' => 'Classe la plus proche du niveau évalué',
 			'motifs.placement.provisoire' => 'Placement provisoire, à réévaluer',
 			'motifs.refusDossier.illisible' => 'Pièce d\'identité illisible',
 			'motifs.refusDossier.expiree' => 'Pièce d\'identité expirée',

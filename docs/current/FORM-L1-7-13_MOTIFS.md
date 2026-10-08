@@ -141,8 +141,8 @@ Dérogation :
 
 | Motif | Source |
 |---|---|
-| Aucun groupe approprié | 01 « exception documentée si aucun groupe approprié » |
-| Progression plus rapide que le groupe | 07 « progression individuelle bornée » |
+| Aucune classe appropriée | 01 « exception documentée si aucun groupe approprié » (à l'écran : « classe », `lib/CLAUDE.md`) |
+| Progression plus rapide que la classe | 07 « progression individuelle bornée » |
 | Décision de l'enseignant | 07 « motive brièvement une exception » |
 | Accord de la direction pédagogique | 07 « approbation académique » |
 
@@ -151,8 +151,8 @@ Clore l'exception :
 | Motif | Source |
 |---|---|
 | Prérequis désormais stables | 07 |
-| Élève placé dans un groupe adapté | 01 « placer au groupe existant » |
-| Exception plus nécessaire | raisonnement |
+| Élève placé dans une classe adaptée | 01 « placer au groupe existant » (à l'écran : « classe ») |
+| L'exception n'est plus nécessaire | raisonnement |
 | Exception posée par erreur | raisonnement : correction administrative |
 
 ### 10. Décider un placement (A11)
@@ -163,7 +163,7 @@ Clore l'exception :
 | Débutant : parcours de base | 01 « Débutant : parcours de base » |
 | Niveau constaté à la lecture | 07 « lecture/récitation réelle » |
 | Pré-diagnostic déclaratif confirmé | 06 « Pré-diagnostic déclaratif » |
-| Groupe le plus proche du niveau évalué | 01 « placer au groupe existant le plus proche du niveau évalué » |
+| Classe la plus proche du niveau évalué | 01 « placer au groupe existant le plus proche du niveau évalué » (à l'écran : « classe ») |
 | Placement provisoire, à réévaluer | 07 « réévaluation » |
 
 ### 11. Refuser un dossier (A12)
@@ -257,26 +257,52 @@ d'office). Une phrase-type de l'ancienne catégorie s'efface quand la catégorie
 
 ## L13 : valeurs proposées des treize réglages entiers
 
-Feuille commune `ConfigLigneEntiere` (`lib/core/admin/config_edition.dart:198`, table
+Feuille commune `ConfigLigneEntiere` (`lib/core/admin/config_edition.dart`, table
 `reglagesEntiersProposes`). Choix dans les puces, valeur courante retenue d'office ; « Autre »
-ouvre une saisie bornée (« Entre min et max ») et disparaît quand les puces couvrent déjà tout
-l'intervalle. Hors bornes : « Choisissez une valeur entre … et …, ou l'une des valeurs
-proposées. ». **Le serveur n'impose aucune borne** : elles ne protègent que la saisie. Une valeur
-courante hors bornes s'affiche sans puce retenue et ne peut pas être réenregistrée telle quelle :
-la changer au-delà demande une décision datée.
+ouvre la saisie libre.
+
+**Correction du 08/10 (décidé par délégation le 08/10, vérification croisée)** : les puces ne
+sont que des raccourcis. Une valeur saisie par « Autre » est acceptée dès qu'elle est un entier
+≥ 0, exactement comme avant la branche. L'écran n'ajoute aucune borne sans source écrite : les
+bornes proposées le 05/10 sans source (seuil d'absence ≤ 30, horizon ≤ 12, durée payée ≥ 15,
+pause ≥ 15, et les autres bornes de raisonnement) sont retirées. Une valeur de production hors
+des puces se relit dans « Autre » et se réenregistre telle quelle. **Seule exception** : le
+plafond de 2 appareils par élève, source écrite (règle C11, `0001_fondations.sql`, garde
+`guard_devices_max`) ; au-delà : « Choisissez une valeur entre … et …, ou l'une des valeurs
+proposées. ». La colonne « Bornes » ci-dessous dit donc « ≥ 0 » partout sauf là.
 
 | Réglage (écran) | Clé | Proposées | Bornes | Source / raisonnement |
 |---|---|---|---|---|
-| Seuil d'absence (Règles) | `absence_threshold_minutes` | 5, 10, 15 | 1 à 30 | Défaut 5 (`0001_fondations`). 10 et 15 : multiples sans source ; max 30 = moitié d'une séance par défaut de 60 min, au-delà l'élève a manqué l'essentiel. |
-| Durée de séance | `session_duration_minutes` | 30, 45, 60, 90 | 30 à 90 | Défaut 60 (`0005`) ; 45, 60, 90 : 07 ; liste déjà proposée par `FeuilleRegle.proposees`. Bornes = valeurs documentées. |
-| Durée minimale payée | `session_paid_minimum_minutes` | 30, 45, 60 | 15 à 90 | Défaut 45 (`0005`) ; liste de `FeuilleRegle`. Max = plus longue durée documentée ; min 15 sans source (prudent : jamais nul). |
-| Pause entre deux séances | `break_minutes_between_sessions` | 15, 30, 45 | 15 à 60 | Défaut 30 (`0005`) ; liste de `FeuilleRegle`. Min 15 = plus petite valeur déjà proposée (prudent pour l'enseignant) ; max 60 = une séance. |
-| Élèves par enseignant | `max_students_per_teacher` | 3, 4, 5, 6 | 1 à 6 | Défaut 5 (`0005`) ; liste de `FeuilleRegle` ; 6 = capacité adultes maximale (07). |
-| Horizon d'affectation | `matching_horizon_weeks` | 2, 4, 8 | 1 à 12 | Défaut 4 (`0005`, `0033`). 2 et 8 : moitié et double, sans source ; max 12 ≈ un trimestre (prudent : génération des séances bornée). |
-| Âge minimum caméra automatique | `camera_auto_allow_min_age` | 11, 15, 18 | 5 à 18 | Défaut 11 (`0001`) ; 15 et 18 : bornes des tranches d'âge `cohortes_age` (`0043`). Min 5 = plus jeune tranche. |
-| Âge maximum interface enfant | `child_ui_mode_max_age` | 7, 8, 10 | 5 à 10 | Défaut 8 (`0001`, « à trancher ») ; 10 relevé le 22/09 (`0043`) ; 7 : fin de la tranche 5-7. Max 10 = dernière tranche en interface `child`. |
-| Appareils par élève | `max_devices_per_student` | 1, 2 | 1 à 2 | Défaut 2, règle C11 (`0001`) « deux appareils actifs max ». Pas de « Autre ». |
-| Séances simultanées par profil | `max_concurrent_sessions_per_profile` | 1, 2 | 1 à 2 | Défaut 1 (`0001`). 2 = plafond d'appareils, sans autre source. Pas de « Autre ». |
-| Participants maximum (Fonctionnalités) | `max_participants_per_session` | 2, 5, 6, 7 | 2 à 7 | Défaut 2 (`0001`), porté à 7 (`0017`) ; 5 et 6 = capacités 4 et 5 de 07 plus l'enseignant. |
-| Enregistrements de séance (Conservation) | `recording_retention_days` | 7, 15, 30 | 1 à 30 | Défaut 30 (`0001`, 06 « rétention 30 jours »). Seulement plus court, par prudence : l'arbitrage enregistrement (06, 07) est ouvert. |
-| Documents d'identité (Conservation) | `kyc_retention_days` | 30, 60, 90 | 1 à 90 | Défaut 90 (`0004`). Seulement plus court, par prudence (données d'identité). |
+| Seuil d'absence (Règles) | `absence_threshold_minutes` | 5, 10, 15 | ≥ 0 | Défaut 5 (`0001_fondations`). 10 et 15 : multiples, simples raccourcis. |
+| Durée de séance | `session_duration_minutes` | 30, 45, 60, 90 | ≥ 0 | Défaut 60 (`0005`) ; 45, 60, 90 : 07 ; liste déjà proposée par `FeuilleRegle.proposees`. |
+| Durée minimale payée | `session_paid_minimum_minutes` | 30, 45, 60 | ≥ 0 | Défaut 45 (`0005`) ; liste de `FeuilleRegle`. |
+| Pause entre deux séances | `break_minutes_between_sessions` | 15, 30, 45 | ≥ 0 | Défaut 30 (`0005`) ; liste de `FeuilleRegle`. |
+| Élèves par enseignant | `max_students_per_teacher` | 3, 4, 5, 6 | ≥ 0 | Défaut 5 (`0005`) ; liste de `FeuilleRegle` ; 6 = capacité adultes maximale (07). |
+| Horizon d'affectation | `matching_horizon_weeks` | 2, 4, 8 | ≥ 0 | Défaut 4 (`0005`, `0033`). 2 et 8 : moitié et double, simples raccourcis. |
+| Âge minimum caméra automatique | `camera_auto_allow_min_age` | 11, 15, 18 | ≥ 0 | Défaut 11 (`0001`) ; 15 et 18 : bornes des tranches d'âge `cohortes_age` (`0043`). |
+| Âge maximum interface enfant | `child_ui_mode_max_age` | 7, 8, 10 | ≥ 0 | Défaut 8 (`0001`, « à trancher ») ; 10 relevé le 22/09 (`0043`) ; 7 : fin de la tranche 5-7. |
+| Appareils par élève | `max_devices_per_student` | 1, 2 | 0 à 2 | Défaut 2, règle C11 (`0001`) « deux appareils actifs max » : seul plafond à source écrite. |
+| Séances simultanées par profil | `max_concurrent_sessions_per_profile` | 1, 2 | ≥ 0 | Défaut 1 (`0001`). 2 = plafond d'appareils, simple raccourci. |
+| Participants maximum (Fonctionnalités) | `max_participants_per_session` | 2, 5, 6, 7 | ≥ 0 | Défaut 2 (`0001`), porté à 7 (`0017`) ; 5 et 6 = capacités 4 et 5 de 07 plus l'enseignant. |
+| Enregistrements de séance (Conservation) | `recording_retention_days` | 7, 15, 30 | ≥ 0 | Défaut 30 (`0001`, 06 « rétention 30 jours »). |
+| Documents d'identité (Conservation) | `kyc_retention_days` | 30, 60, 90 | ≥ 0 | Défaut 90 (`0004`). |
+
+## Corrections du 08/10 (vérification croisée refusée)
+
+Décidé par délégation le 08/10 (règle DIR-REP-1). Statut : `présent dans le code`, `testé
+localement` ; ni staging ni déploiement.
+
+- **Liste de motifs qui change** (catégorie d'un signalement, L7) : `SelecteurMotif` relit la
+  liste à chaque changement. Une liste vide (catégorie « Autre ») ouvre le champ libre seul, avec
+  ou sans phrase choisie avant ; un « Autre » choisi parmi des puces reste ouvert. Vaut pour
+  `FeuilleSignalement` et pour « Résumé partageable » (`fiche_eleve_enseignant.dart`).
+- **Focus du refus de dossier (02D)** : à l'ouverture, après « Refuser » à vide et après
+  « Continuer la saisie », le focus va dans la zone du motif : la première puce, ou le champ si
+  « Autre » est ouvert (`SelecteurMotif.autofocus`, `SelecteurMotifEtat.focaliser`).
+- **« Classe, jamais groupe »** (`lib/CLAUDE.md`) : « Aucune classe appropriée », « Progression
+  plus rapide que la classe », « Élève placé dans une classe adaptée », « Classe la plus proche du
+  niveau évalué » ; « L'exception n'est plus nécessaire ». Clés renommées
+  `motifs.derogation.aucuneClasse` et `motifs.cloreException.classe`.
+- **Motif manquant** : repéré par un drapeau (`motifManquant`), jamais en comparant des textes ;
+  l'ajout d'un élève passe `erreur` au sélecteur.
+- **L13** : voir la section ci-dessus (aucune borne sans source écrite).
