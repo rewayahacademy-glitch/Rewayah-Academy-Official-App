@@ -63,7 +63,8 @@ Future<void> ouvrirDecision(
 class _EtatSurface extends ChangeNotifier {
   bool _erreurVide = false;
 
-  /// Pose par le corps : ramene le focus dans le champ.
+  /// Pose par le corps : ramene le focus dans la zone du motif (la premiere
+  /// puce, ou le champ libre si « Autre » est ouvert).
   VoidCallback? focaliserChamp;
 
   bool get erreurVide => _erreurVide;
@@ -124,6 +125,11 @@ class _Corps extends ConsumerStatefulWidget {
 
 class _CorpsState extends ConsumerState<_Corps> {
   final FocusNode _champ = FocusNode(debugLabel: 'adm02d-motif');
+  final GlobalKey<SelecteurMotifEtat> _selecteur =
+      GlobalKey<SelecteurMotifEtat>();
+
+  /// Le focus dans la zone du motif (clavier, lecteur d'ecran).
+  void _focaliserMotif() => _selecteur.currentState?.focaliser();
 
   DossierPourRevue get dossier => widget.dossier;
   TextEditingController? get motif => widget.motif;
@@ -133,7 +139,7 @@ class _CorpsState extends ConsumerState<_Corps> {
   @override
   void initState() {
     super.initState();
-    surface.focaliserChamp = _champ.requestFocus;
+    surface.focaliserChamp = _focaliserMotif;
   }
 
   @override
@@ -174,7 +180,8 @@ class _CorpsState extends ConsumerState<_Corps> {
         Navigator.of(context).pop();
       }
     } else if (context.mounted) {
-      _champ.requestFocus();
+      // « Continuer la saisie » : retour dans la zone du motif.
+      _focaliserMotif();
     }
   }
 
@@ -259,9 +266,13 @@ class _CorpsState extends ConsumerState<_Corps> {
             Text(t.dossiers.refus.corps, style: textes.bodyMedium),
             Ecart.vLg,
             SelecteurMotif(
+              key: _selecteur,
               motifs: MotifsProposes.refusDossier(),
               controleur: champ,
               focusNode: _champ,
+              // 02D s'ouvre sur la zone du motif : la premiere puce, ou le
+              // champ si « Autre » est deja ouvert (motif conserve).
+              autofocus: true,
               // HL-A-5 : le motif envoye (ou dont le resultat est inconnu)
               // ne se modifie plus ; etat de rendu seulement.
               lectureSeule:

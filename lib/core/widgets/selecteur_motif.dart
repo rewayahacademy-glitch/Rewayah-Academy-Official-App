@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 
 import '../i18n/strings.g.dart';
@@ -27,7 +28,13 @@ import 'filter_pill.dart';
 ///     courante) est reconnue : la puce correspondante est retenue, sinon
 ///     « Autre » s'ouvre avec ce texte.
 ///
-/// Sans motif propose ([motifs] vide), le champ libre s'affiche seul.
+/// Sans motif propose ([motifs] vide), le champ libre s'affiche seul, y
+/// compris quand la liste devient vide en cours de route (categorie « Autre »
+/// d'un signalement).
+///
+/// Le focus : [SelecteurMotifEtat.focaliser] le pose dans la zone du motif,
+/// sur la premiere puce, ou dans le champ libre quand « Autre » est ouvert ;
+/// [autofocus] le fait des la premiere image.
 class SelecteurMotif extends StatefulWidget {
   /// Cree le selecteur.
   const SelecteurMotif({
@@ -40,6 +47,7 @@ class SelecteurMotif extends StatefulWidget {
     this.erreur,
     this.focusNode,
     this.lectureSeule = false,
+    this.autofocus = false,
     this.lignesMin = 1,
     this.lignesMax = 3,
     this.cleChampLibre,
@@ -70,6 +78,10 @@ class SelecteurMotif extends StatefulWidget {
   /// Vrai pendant un envoi : rien ne change, le motif envoye reste lisible.
   final bool lectureSeule;
 
+  /// Vrai pour poser le focus dans la zone du motif a l'ouverture
+  /// ([SelecteurMotifEtat.focaliser]).
+  final bool autofocus;
+
   /// Nombre minimal de lignes du champ libre.
   final int lignesMin;
 
@@ -85,16 +97,23 @@ class SelecteurMotif extends StatefulWidget {
   /// La cle de la puce d'indice [indice].
   static Key clePuce(int indice) => ValueKey<String>('selecteur-motif-$indice');
 
+  /// Le libelle de debogage du noeud de focus de la premiere puce.
+  static const String focusPremierePuce = 'selecteur-motif-premiere-puce';
+
   @override
-  State<SelecteurMotif> createState() => _SelecteurMotifEtat();
+  State<SelecteurMotif> createState() => SelecteurMotifEtat();
 }
 
-class _SelecteurMotifEtat extends State<SelecteurMotif> {
+/// L'etat de [SelecteurMotif], public pour [focaliser].
+class SelecteurMotifEtat extends State<SelecteurMotif> {
   /// L'indice de la puce retenue ; [_autre] pour « Autre », nul sinon.
   int? _retenue;
   static const int _autre = -1;
   final TextEditingController _libre = TextEditingController();
   FocusNode? _focusInterne;
+  final FocusNode _focusPuce = FocusNode(
+    debugLabel: SelecteurMotif.focusPremierePuce,
+  );
   String _ecrit = '';
 
   FocusNode get _focus =>
@@ -107,15 +126,37 @@ class _SelecteurMotifEtat extends State<SelecteurMotif> {
     super.initState();
     _synchroniser();
     widget.controleur.addListener(_surControleur);
+    if (widget.autofocus) {
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        if (mounted) focaliser();
+      });
+    }
+  }
+
+  /// Pose le focus dans la zone du motif : le champ libre si « Autre » est
+  /// ouvert (ou s'il n'y a aucune puce), la premiere puce sinon.
+  void focaliser() {
+    if (_retenue == _autre) {
+      _focus.requestFocus();
+    } else {
+      _focusPuce.requestFocus();
+    }
   }
 
   @override
-  void didUpdateWidget(SelecteurMotif ancien) {
-    super.didUpdateWidget(ancien);
-    if (ancien.controleur != widget.controleur) {
-      ancien.controleur.removeListener(_surControleur);
+  void didUpdateWidget(SelecteurMotif oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controleur != widget.controleur) {
+      oldWidget.controleur.removeListener(_surControleur);
       widget.controleur.addListener(_surControleur);
       _synchroniser();
+    } else if (!listEquals(oldWidget.motifs, widget.motifs)) {
+      // La liste a change (une autre categorie) : la puce retenue se relit
+      // dans la nouvelle liste ; une liste vide ouvre le champ libre seul. Un
+      // « Autre » choisi parmi des puces reste ouvert.
+      final bool autreOuvert = _retenue == _autre && oldWidget.motifs.isNotEmpty;
+      _synchroniser();
+      if (autreOuvert && _retenue == null) _retenue = _autre;
     }
   }
 
@@ -124,6 +165,7 @@ class _SelecteurMotifEtat extends State<SelecteurMotif> {
     widget.controleur.removeListener(_surControleur);
     _libre.dispose();
     _focusInterne?.dispose();
+    _focusPuce.dispose();
     super.dispose();
   }
 
@@ -188,6 +230,7 @@ class _SelecteurMotifEtat extends State<SelecteurMotif> {
                 SelecteurMotif.clePuce(i),
               SelecteurMotif.cleAutre,
             ],
+            focusPremiere: _focusPuce,
             retenue: switch (_retenue) {
               null => null,
               _autre => widget.motifs.length,
@@ -244,21 +287,22 @@ class _SelecteurMotifEtat extends State<SelecteurMotif> {
 }
 
 /// Le choix d'un entier parmi des valeurs proposees, « Autre » ouvrant une
-/// saisie bornee (FORM-L13).
+/// saisie libre (FORM-L13).
 ///
-/// Meme rangee que [SelecteurMotif]. « Autre » disparait quand les valeurs
-/// proposees couvrent deja tout l'intervalle [min]..[max] : il n'y aurait rien
-/// d'autre a saisir.
+/// Meme rangee que [SelecteurMotif]. Les puces ne sont que des raccourcis :
+/// sans [max], « Autre » accepte tout entier a partir de [min]. « Autre »
+/// disparait quand les valeurs proposees couvrent deja tout l'intervalle
+/// [min]..[max] : il n'y aurait rien d'autre a saisir.
 class SelecteurEntier extends StatefulWidget {
   /// Cree le selecteur.
   const SelecteurEntier({
     required this.proposees,
-    required this.min,
-    required this.max,
     required this.affichage,
     required this.valeurInitiale,
     required this.onChange,
     super.key,
+    this.min = 0,
+    this.max,
     this.libelleChamp,
     this.erreur,
   });
@@ -266,11 +310,11 @@ class SelecteurEntier extends StatefulWidget {
   /// Les valeurs proposees, dans l'ordre d'affichage.
   final List<int> proposees;
 
-  /// La plus petite valeur acceptee.
+  /// La plus petite valeur acceptee (0 par defaut).
   final int min;
 
-  /// La plus grande valeur acceptee.
-  final int max;
+  /// La plus grande valeur acceptee ; nul : aucun plafond.
+  final int? max;
 
   /// Formate une valeur (unite comprise).
   final String Function(int valeur) affichage;
@@ -300,6 +344,8 @@ class SelecteurEntier extends StatefulWidget {
 
   /// Vrai quand les valeurs proposees couvrent tout l'intervalle.
   bool get toutPropose {
+    final int? max = this.max;
+    if (max == null) return false;
     for (int v = min; v <= max; v++) {
       if (!proposees.contains(v)) return false;
     }
@@ -381,10 +427,14 @@ class _SelecteurEntierEtat extends State<SelecteurEntier> {
             onChanged: (String v) => widget.onChange(int.tryParse(v.trim())),
             decoration: InputDecoration(
               label: Text(widget.libelleChamp ?? t.choix.autreInvite),
-              helperText: t.formulaire.entier.bornes(
-                min: '${widget.min}',
-                max: '${widget.max}',
-              ),
+              // Le rappel des bornes, seulement quand il y a un plafond.
+              helperText: switch (widget.max) {
+                final int max => t.formulaire.entier.bornes(
+                  min: '${widget.min}',
+                  max: '$max',
+                ),
+                null => null,
+              },
               helperMaxLines: 4,
             ),
           ),
@@ -422,6 +472,7 @@ class RangeePuces extends StatelessWidget {
     required this.onChoix,
     super.key,
     this.cles,
+    this.focusPremiere,
   });
 
   /// Les libelles, dans l'ordre.
@@ -435,6 +486,9 @@ class RangeePuces extends StatelessWidget {
 
   /// Une cle par puce, facultative.
   final List<Key>? cles;
+
+  /// Le noeud de focus de la premiere puce, pour y ramener le clavier.
+  final FocusNode? focusPremiere;
 
   /// L'ecart entre deux puces, en largeur comme en hauteur.
   static const double ecart = AppSpacing.sm;
@@ -512,6 +566,7 @@ class RangeePuces extends StatelessWidget {
             child: FilterPill(
               libelle: libelles[indices[k]],
               retenue: retenue == indices[k],
+              focusNode: indices[k] == 0 ? focusPremiere : null,
               onPress: () => onChoix(indices[k]),
             ),
           ),

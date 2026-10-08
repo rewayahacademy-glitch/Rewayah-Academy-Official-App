@@ -118,6 +118,21 @@ const List<String> _points = <String>[
   "La pièce n'est pas expirée",
 ];
 
+/// Le focus est sur la premiere puce des motifs de 02D.
+void _focusSurPremierePuce(WidgetTester tester) {
+  final FocusNode? focus = FocusManager.instance.primaryFocus;
+  expect(focus?.debugLabel, SelecteurMotif.focusPremierePuce);
+  // Le rectangle du focus est celui de la puce, pas la page entiere.
+  final Rect puce = tester
+      .getRect(find.byKey(SelecteurMotif.clePuce(0)))
+      .inflate(1);
+  expect(
+    puce.contains(focus!.rect.topLeft) && puce.contains(focus.rect.bottomRight),
+    isTrue,
+    reason: '${focus.rect} hors de $puce',
+  );
+}
+
 /// Un Stream qui ne rend jamais rien : le detail reste en chargement.
 Future<DossierPourRevue> _jamais() => Completer<DossierPourRevue>().future;
 
@@ -208,10 +223,46 @@ void main() {
     expect(confirmer.pleineLargeur, isFalse);
     // Un seul bouton destructif dans la surface : l'autre est Annuler.
     expect(find.text(t.commun.annuler), findsOneWidget);
-    // FORM-L1 : 02D s'ouvre sur les motifs proposes ; « Autre » donne le
-    // focus au champ libre.
+    // 02D s'ouvre sur la zone du motif (clavier, lecteur d'ecran) : la
+    // premiere puce, sans geste (FORM-L1, contre-epreuve du 08/10).
+    _focusSurPremierePuce(tester);
+
+    // « Refuser » a vide : l'erreur, et le focus revient dans la zone.
+    FocusManager.instance.primaryFocus?.unfocus();
+    await _stabiliser(tester);
+    await tester.tap(find.text('Refuser le dossier').last);
+    await _stabiliser(tester);
+    expect(find.text(t.dossiers.refus.erreurVide), findsOneWidget);
+    _focusSurPremierePuce(tester);
+
+    // Un motif propose, puis Annuler et « Continuer la saisie » : retour
+    // dans la zone du motif.
+    await tester.tap(find.byKey(SelecteurMotif.clePuce(1)));
+    await _stabiliser(tester);
+    await tester.tap(find.text(t.commun.annuler));
+    await _stabiliser(tester);
+    await tester.tap(find.text(t.dossiers.refus.continuerSaisie));
+    await _stabiliser(tester);
+    _focusSurPremierePuce(tester);
+
+    // « Autre » ouvert : c'est le champ qui recoit le focus, a chaque fois.
     await tester.tap(find.byKey(SelecteurMotif.cleAutre));
-    await tester.pumpAndSettle();
+    await _stabiliser(tester);
+    expect(FocusManager.instance.primaryFocus?.debugLabel, 'adm02d-motif');
+    FocusManager.instance.primaryFocus?.unfocus();
+    await _stabiliser(tester);
+    await tester.tap(find.text('Refuser le dossier').last);
+    await _stabiliser(tester);
+    expect(FocusManager.instance.primaryFocus?.debugLabel, 'adm02d-motif');
+    await tester.enterText(
+      find.widgetWithText(TextField, t.dossiers.refus.champ),
+      'Photo floue.',
+    );
+    await _stabiliser(tester);
+    await tester.tap(find.text(t.commun.annuler));
+    await _stabiliser(tester);
+    await tester.tap(find.text(t.dossiers.refus.continuerSaisie));
+    await _stabiliser(tester);
     expect(FocusManager.instance.primaryFocus?.debugLabel, 'adm02d-motif');
   });
 
