@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/offres/offre_horaire.dart';
 
@@ -266,19 +267,20 @@ String detailEtape(
     prenom: prenom,
   ),
   EtapeParcours.diagnosticRequis => t.parcours.etatDiagnosticRequisDetail(
-    prenom: prenom,
+    dePrenom: deDevant(prenom),
   ),
   EtapeParcours.diagnosticEnAttente => t.parcours.etatDiagnosticEnAttenteDetail(
-    prenom: prenom,
+    dePrenom: deDevant(prenom),
   ),
   // Le minimum vient d'`app_config` par `regles_academie()`, jamais d'une
   // constante ecrite ici : il change par decision d'exploitation. Tant que
   // la regle n'est pas encore chargee, ne rien affirmer sur un chiffre
   // (LA-F, constat honnetete : 0 serait une information fausse).
-  EtapeParcours.groupeEnFormation => minimumLancement == null
-      ? t.parcours.etatClasseEnFormationDetailSansMinimum
-      : t.parcours.etatClasseEnFormationDetail(minimum: minimumLancement),
+  EtapeParcours.groupeEnFormation =>
+    minimumLancement == null
+        ? t.parcours.etatClasseEnFormationDetailSansMinimum
+        : t.parcours.etatClasseEnFormationDetail(minimum: minimumLancement),
   EtapeParcours.groupeConfirme => t.parcours.etatClasseConfirmeeDetail(
-    prenom: prenom,
+    dePrenom: deDevant(prenom),
   ),
 };

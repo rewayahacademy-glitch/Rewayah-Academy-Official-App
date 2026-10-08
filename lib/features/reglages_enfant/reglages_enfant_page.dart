@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/appairage/service_avatar.dart';
 import '../../core/domain/enums.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/matching/service_matching.dart';
@@ -138,7 +139,7 @@ class _CarteEnfant extends StatelessWidget {
                   icone: AppIcons.reglages,
                   libelle: t.reglagesEnfant.renvoi,
                   legende: t.reglagesEnfant.renvoiLegende(
-                    prenom: enfant.prenom,
+                    dePrenom: deDevant(enfant.prenom),
                   ),
                   onPress: () =>
                       GoRouter.of(context).go(Routes.ficheElevePour(enfant.id)),
@@ -440,12 +441,14 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
 
   String _titre() => switch (widget.sorte) {
     SorteDemande.reaffectation => t.tuteur.reglages.demandeTitreReaffectation(
-      prenom: widget.enfant.prenom,
+      dePrenom: deDevant(widget.enfant.prenom),
     ),
     SorteDemande.plafond || SorteDemande.regle =>
       widget.cle == CleRegle.minimumPayable
           ? t.tuteur.reglages.demandeTitreMinimum(prenom: widget.enfant.prenom)
-          : t.tuteur.reglages.demandeTitreDuree(prenom: widget.enfant.prenom),
+          : t.tuteur.reglages.demandeTitreDuree(
+              dePrenom: deDevant(widget.enfant.prenom),
+            ),
   };
 }
 

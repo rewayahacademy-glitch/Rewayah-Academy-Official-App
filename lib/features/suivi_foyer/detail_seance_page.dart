@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/foyer/selection_eleve.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
@@ -205,7 +206,11 @@ class _Contenu extends ConsumerWidget {
           ),
         ], annulee: statut == StatutHistorique.annule),
         Ecart.vXl,
-        titreBloc(t.historique.seance.blocPresence(prenom: seance.elevePrenom)),
+        titreBloc(
+          t.historique.seance.blocPresence(
+            dePrenom: deDevant(seance.elevePrenom),
+          ),
+        ),
         carte(<Widget>[
           LigneCleValeur(
             cle: t.historique.seance.presence,

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/appairage/service_appairage.dart';
 import '../../../core/domain/enums.dart';
 import '../../../core/foyer/selection_eleve.dart';
+import '../../../core/i18n/elision.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/reseau/service_reseau.dart';
@@ -146,7 +147,9 @@ class _ReglageCameraState extends ConsumerState<_ReglageCamera> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          NoteFiche(t.ficheEleve.camera.application(prenom: profil.prenom)),
+          NoteFiche(
+            t.ficheEleve.camera.application(dePrenom: deDevant(profil.prenom)),
+          ),
           NoteFiche(t.ficheEleve.camera.distincte),
         ],
       ),

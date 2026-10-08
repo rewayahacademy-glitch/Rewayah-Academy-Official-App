@@ -10,6 +10,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_delais.dart';
@@ -172,7 +173,7 @@ class _EchangesControleurPageState
               reessayer: e.reessayer,
               auteurSoi: e.auteurVous,
               annonce: (String auteur, String texte) =>
-                  e.nouveauMessage(auteur: auteur, texte: texte),
+                  e.nouveauMessage(deAuteur: deDevant(auteur), texte: texte),
             ),
             // Serveur muet : le message passe « non envoye », avec un
             // nouvel essai, au lieu de rester « en cours » (CTRL-DELAI-1).

@@ -8,6 +8,7 @@ import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/auth/service_auth.dart';
 import '../../core/domain/enums.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/preferences/preferences_locales.dart';
@@ -514,7 +515,7 @@ class ProfilEnfantPage extends ConsumerWidget {
     );
 
     return PageShell(
-      titre: t.compte.profilEnfant(prenom: t.compte.nonDisponible),
+      titre: t.compte.profilEnfant(dePrenom: deDevant(t.compte.nonDisponible)),
       child: profils.when(
         loading: () => const Skeleton.liste(differe: false),
         error: (Object _, StackTrace _) => EmptyState(

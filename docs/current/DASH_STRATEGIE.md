@@ -258,7 +258,7 @@ Liste de cartes, pas un tableau de bord (`BENTO_RECENSEMENT.md:43`). Hors DASH.
 
 ## 4. Questions au directeur
 
-Aucune ne bloque. Chaque recommandation est appliquée dans ce document.
+Aucune ne bloque. Chaque recommandation est appliquée dans ce document. **05/10/2026** : les quatre recommandations sont acceptées par délégation du directeur (décision « tableaux-bord », DASH-LIB).
 
 - **Q1.** Retirer la liste complète « À traiter en premier » du Centre de commande, puisque chaque tuile ouvre sa file ? **Recommandation : oui** ; les 3 plus anciens dossiers restent dans la grande tuile, et chaque nom ouvre toujours son dossier (modification UX n°2 conservée, exception D4 (a)). **Ce qui se perd** : le tri commun des dossiers et des demandes par ancienneté (une seule liste) ; les demandes ne se voient plus que par leur chiffre.
 - **Q2.** Il n'existe pas de page « Planning » pour la direction. **Recommandation : pas de lien tant qu'elle n'existe pas** ; « Groupes » est ajouté aux raccourcis.
@@ -472,6 +472,8 @@ Composition       GrilleBento en hauteur de contenu (BENTO-3, l.364-424) ;
 ## Annexe B : libellés nouveaux
 
 Statut : **proposé par un agent** (leçon 12, K-53.4). Aucune clé i18n n'est créée.
+
+**05/10/2026 (DASH-LIB)** : textes validés par délégation du directeur (décision « tableaux-bord », Q1 à Q4 acceptées) et déclarés dans `tool/libelles_sources.json` : `admin.tableau.outilsGroupesDetail`, `admin.tableau.calme`, `admin.tableau.apercuErreur`, `admin.tableau.incidentsEtAcces`, et `eleve.accueil.erreurCours` (codé au tutoiement par DASH-ELV-ERR : « Tes cours n'ont pas pu être lus : la connexion ou le serveur n'a pas répondu. Réessaie dans un instant. »). Le titre de la ligne des raccourcis, `admin.groupes.titre`, devient « Classes » (décision « classes-groupes », LIB-DIR-1).
 
 | Proposition | Où | Remarque |
 |---|---|---|

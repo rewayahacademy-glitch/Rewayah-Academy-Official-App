@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/foyer/selection_eleve.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
@@ -118,7 +119,9 @@ class _Corps extends ConsumerWidget {
       vide: EtatSysteme(
         nature: NatureEtat.aucunResultat,
         titre: t.historique.observations.videTitre,
-        phrase: t.historique.observations.videPhrase(prenom: retenu.prenom),
+        phrase: t.historique.observations.videPhrase(
+          dePrenom: deDevant(retenu.prenom),
+        ),
       ),
       construire: (List<ObservationsSeance> groupes) => _Liste(
         groupes: groupes,

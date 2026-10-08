@@ -7,6 +7,7 @@ import '../../core/admin/service_comptes.dart';
 import '../../core/admin/service_evaluations.dart';
 import '../../core/admin/service_programme.dart';
 import '../../core/domain/enums.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
@@ -72,17 +73,18 @@ class _EvaluationsPageEtat extends ConsumerState<EvaluationsPage> {
           ),
           Ecart.vXl,
           switch (evaluations) {
-            AsyncValue<List<EvaluationAdmin>>(hasValue: true) => PlaceCollection(
-              child: _Corps(
-                evaluations: evaluations.requireValue,
-                filtre: _filtre,
-                onFiltre: (_Filtre f) => setState(() => _filtre = f),
-                onEnregistrerResultat: (EvaluationAdmin e) =>
-                    _ouvrirResultat(context, ref, e),
-                onAnnuler: (EvaluationAdmin e) =>
-                    _ouvrirAnnulation(context, ref, e),
+            AsyncValue<List<EvaluationAdmin>>(hasValue: true) =>
+              PlaceCollection(
+                child: _Corps(
+                  evaluations: evaluations.requireValue,
+                  filtre: _filtre,
+                  onFiltre: (_Filtre f) => setState(() => _filtre = f),
+                  onEnregistrerResultat: (EvaluationAdmin e) =>
+                      _ouvrirResultat(context, ref, e),
+                  onAnnuler: (EvaluationAdmin e) =>
+                      _ouvrirAnnulation(context, ref, e),
+                ),
               ),
-            ),
             AsyncValue<List<EvaluationAdmin>>(hasError: true) => EmptyState(
               message: t.admin.evaluations.erreur,
               icone: AppIcons.avertissement,
@@ -290,7 +292,9 @@ void _ouvrirResultat(
 ) {
   AppBottomSheet.ouvrir<void>(
     context,
-    titre: t.admin.evaluations.resultatTitre(eleve: evaluation.eleveLibelle),
+    titre: t.admin.evaluations.resultatTitre(
+      deEleve: deDevant(evaluation.eleveLibelle),
+    ),
     constructeur: (BuildContext contexte) => _FeuilleResultat(
       evaluation: evaluation,
       onEnregistre: () => ref.invalidate(evaluationsProvider),
@@ -305,7 +309,9 @@ void _ouvrirAnnulation(
 ) {
   AppBottomSheet.ouvrir<void>(
     context,
-    titre: t.admin.evaluations.annulerTitre(eleve: evaluation.eleveLibelle),
+    titre: t.admin.evaluations.annulerTitre(
+      deEleve: deDevant(evaluation.eleveLibelle),
+    ),
     constructeur: (BuildContext contexte) => _FeuilleMotif(
       libelleEnvoyer: t.admin.evaluations.annulerEnvoyer,
       onEnvoyer: (String motif) => ref

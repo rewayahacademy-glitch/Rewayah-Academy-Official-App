@@ -12,6 +12,7 @@ import '../../core/appairage/service_appairage.dart' show elevesDuFoyerProvider;
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_catalogue_classes.dart';
 import '../../core/foyer/selection_eleve.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
@@ -321,14 +322,16 @@ class _Liste extends ConsumerWidget {
         vide: EtatSysteme(
           nature: NatureEtat.aucunResultat,
           titre: t.classe.pageCatalogue.aucune,
-          phrase: t.classe.pageCatalogue.aucuneDetail(prenom: eleve.prenom),
+          phrase: t.classe.pageCatalogue.aucuneDetail(
+            dePrenom: deDevant(eleve.prenom),
+          ),
         ),
         construire: (List<ClasseOuverte> classes) => classes.isEmpty
             ? EtatSysteme(
                 nature: NatureEtat.aucunResultat,
                 titre: t.classe.pageCatalogue.aucune,
                 phrase: t.classe.pageCatalogue.aucuneDetail(
-                  prenom: eleve.prenom,
+                  dePrenom: deDevant(eleve.prenom),
                 ),
               )
             : Column(
@@ -683,7 +686,7 @@ class _Resultat extends StatelessWidget {
       StatutInscription.enAttenteValidation => EcranResultat(
         icone: AppIcons.attente,
         titre: r.validationTitre,
-        phrase: r.validationPhrase(prenom: prenom, classe: nom),
+        phrase: r.validationPhrase(dePrenom: deDevant(prenom), classe: nom),
         libelleAction: r.retourAccueil,
         onAction: onAccueil,
       ),
@@ -691,7 +694,7 @@ class _Resultat extends StatelessWidget {
         icone: AppIcons.attente,
         ton: TonEtat.avertissement,
         titre: r.listeAttenteTitre,
-        phrase: r.listeAttentePhrase(prenom: prenom, classe: nom),
+        phrase: r.listeAttentePhrase(prenom: prenom, deClasse: deDevant(nom)),
         libelleAction: r.retourAccueil,
         onAction: onAccueil,
       ),

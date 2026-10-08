@@ -1011,8 +1011,8 @@ class Traductions$reglagesEnfant$fr {
 	/// fr: 'Photo, caméra et interface'
 	String get renvoi => 'Photo, caméra et interface';
 
-	/// fr: 'Dans la fiche de {prenom}'
-	String renvoiLegende({required Object prenom}) => 'Dans la fiche de ${prenom}';
+	/// fr: 'Dans la fiche {dePrenom}'
+	String renvoiLegende({required Object dePrenom}) => 'Dans la fiche ${dePrenom}';
 }
 
 // Path: foyer
@@ -1558,8 +1558,8 @@ class Traductions$parcours$fr {
 
 	// Translations
 
-	/// fr: 'Le parcours de {prenom}'
-	String titre({required Object prenom}) => 'Le parcours de ${prenom}';
+	/// fr: 'Le parcours {dePrenom}'
+	String titre({required Object dePrenom}) => 'Le parcours ${dePrenom}';
 
 	/// fr: 'Quelques questions pour personnaliser votre parcours. Vous ne verrez ensuite que les horaires et options adaptés à votre situation.'
 	String get intro => 'Quelques questions pour personnaliser votre parcours. Vous ne verrez ensuite que les horaires et options adaptés à votre situation.';
@@ -1777,14 +1777,14 @@ class Traductions$parcours$fr {
 	/// fr: 'Préférence enregistrée'
 	String get etatDiagnosticRequis => 'Préférence enregistrée';
 
-	/// fr: 'Il reste un échange avec un enseignant pour situer le niveau de {prenom}. L'académie vous proposera un rendez-vous.'
-	String etatDiagnosticRequisDetail({required Object prenom}) => 'Il reste un échange avec un enseignant pour situer le niveau de ${prenom}. L\'académie vous proposera un rendez-vous.';
+	/// fr: 'Il reste un échange avec un enseignant pour situer le niveau {dePrenom}. L'académie vous proposera un rendez-vous.'
+	String etatDiagnosticRequisDetail({required Object dePrenom}) => 'Il reste un échange avec un enseignant pour situer le niveau ${dePrenom}. L\'académie vous proposera un rendez-vous.';
 
 	/// fr: 'Rendez-vous prévu'
 	String get etatDiagnosticEnAttente => 'Rendez-vous prévu';
 
-	/// fr: 'Un échange est prévu pour situer le niveau de {prenom}.'
-	String etatDiagnosticEnAttenteDetail({required Object prenom}) => 'Un échange est prévu pour situer le niveau de ${prenom}.';
+	/// fr: 'Un échange est prévu pour situer le niveau {dePrenom}.'
+	String etatDiagnosticEnAttenteDetail({required Object dePrenom}) => 'Un échange est prévu pour situer le niveau ${dePrenom}.';
 
 	/// fr: 'Classe en cours de constitution'
 	String get etatClasseEnFormation => 'Classe en cours de constitution';
@@ -1798,8 +1798,8 @@ class Traductions$parcours$fr {
 	/// fr: 'Classe confirmée'
 	String get etatClasseConfirmee => 'Classe confirmée';
 
-	/// fr: 'La classe de {prenom} est constituée. Vous retrouverez ses séances dans son espace.'
-	String etatClasseConfirmeeDetail({required Object prenom}) => 'La classe de ${prenom} est constituée. Vous retrouverez ses séances dans son espace.';
+	/// fr: 'La classe {dePrenom} est constituée. Vous retrouverez ses séances dans son espace.'
+	String etatClasseConfirmeeDetail({required Object dePrenom}) => 'La classe ${dePrenom} est constituée. Vous retrouverez ses séances dans son espace.';
 
 	/// fr: 'Votre lieu a changé depuis ce choix'
 	String get fuseauChange => 'Votre lieu a changé depuis ce choix';
@@ -2103,8 +2103,8 @@ class Traductions$compte$fr {
 	/// fr: 'Actif, à titre provisoire'
 	String get statutProvisoire => 'Actif, à titre provisoire';
 
-	/// fr: 'Profil de {prenom}'
-	String profilEnfant({required Object prenom}) => 'Profil de ${prenom}';
+	/// fr: 'Profil {dePrenom}'
+	String profilEnfant({required Object dePrenom}) => 'Profil ${dePrenom}';
 
 	/// fr: 'Identifiant : {identifiant}'
 	String identifiantEnfant({required Object identifiant}) => 'Identifiant : ${identifiant}';
@@ -2935,14 +2935,14 @@ class Traductions$salle$seance$fr {
 	/// fr: 'Ton parent observe la séance.'
 	String get tonParentObserve => 'Ton parent observe la séance.';
 
-	/// fr: 'Tuteur de {prenom} observe.'
-	String tuteurDeObserve({required Object prenom}) => 'Tuteur de ${prenom} observe.';
+	/// fr: 'Tuteur {dePrenom} observe.'
+	String tuteurDeObserve({required Object dePrenom}) => 'Tuteur ${dePrenom} observe.';
 
 	/// fr: 'Un parent observe cette séance'
 	String get unParentObserve => 'Un parent observe cette séance';
 
-	/// fr: 'Le tuteur de {prenom} observe la séance.'
-	String leTuteurDeObserve({required Object prenom}) => 'Le tuteur de ${prenom} observe la séance.';
+	/// fr: 'Le tuteur {dePrenom} observe la séance.'
+	String leTuteurDeObserve({required Object dePrenom}) => 'Le tuteur ${dePrenom} observe la séance.';
 
 	/// fr: '{mention} {notice}'
 	String mentionEtNotice({required Object mention, required Object notice}) => '${mention} ${notice}';
@@ -2956,8 +2956,8 @@ class Traductions$salle$seance$fr {
 	/// fr: 'Réglages'
 	String get reglages => 'Réglages';
 
-	/// fr: 'Compte de {nom}'
-	String compteDe({required Object nom}) => 'Compte de ${nom}';
+	/// fr: 'Compte {deNom}'
+	String compteDe({required Object deNom}) => 'Compte ${deNom}';
 
 	/// fr: 'Quitter la séance'
 	String get sortir => 'Quitter la séance';
@@ -2977,8 +2977,8 @@ class Traductions$salle$seance$fr {
 	/// fr: '{nom} n'a rien partagé pour l'instant.'
 	String rienPartage({required Object nom}) => '${nom} n\'a rien partagé pour l\'instant.';
 
-	/// fr: 'Vidéo de {nom}'
-	String videoDe({required Object nom}) => 'Vidéo de ${nom}';
+	/// fr: 'Vidéo {deNom}'
+	String videoDe({required Object deNom}) => 'Vidéo ${deNom}';
 
 	/// fr: '{page} / {pages}'
 	String page({required Object page, required Object pages}) => '${page} / ${pages}';
@@ -3057,11 +3057,11 @@ class Traductions$salle$seance$fr {
 	/// fr: 'Signaler un besoin'
 	String get signalerBesoin => 'Signaler un besoin';
 
-	/// fr: 'Afficher la fiche de {prenom}'
-	String deplierFiche({required Object prenom}) => 'Afficher la fiche de ${prenom}';
+	/// fr: 'Afficher la fiche {dePrenom}'
+	String deplierFiche({required Object dePrenom}) => 'Afficher la fiche ${dePrenom}';
 
-	/// fr: 'Masquer la fiche de {prenom}'
-	String replierFiche({required Object prenom}) => 'Masquer la fiche de ${prenom}';
+	/// fr: 'Masquer la fiche {dePrenom}'
+	String replierFiche({required Object dePrenom}) => 'Masquer la fiche ${dePrenom}';
 
 	late final Traductions$salle$seance$fiche$fr fiche = Traductions$salle$seance$fiche$fr.internal(_root);
 
@@ -3799,8 +3799,8 @@ class Traductions$appareils$eleve$fr {
 	/// fr: 'Aucun appareil connecté'
 	String get videTitre => 'Aucun appareil connecté';
 
-	/// fr: 'Connectez la tablette, le téléphone ou l'ordinateur de {prenom} avec le code affiché par le bouton ci-dessous.'
-	String vide({required Object prenom}) => 'Connectez la tablette, le téléphone ou l\'ordinateur de ${prenom} avec le code affiché par le bouton ci-dessous.';
+	/// fr: 'Connectez la tablette, le téléphone ou l'ordinateur {dePrenom} avec le code affiché par le bouton ci-dessous.'
+	String vide({required Object dePrenom}) => 'Connectez la tablette, le téléphone ou l\'ordinateur ${dePrenom} avec le code affiché par le bouton ci-dessous.';
 
 	/// fr: 'Profil élève introuvable'
 	String get introuvableTitre => 'Profil élève introuvable';
@@ -3874,8 +3874,8 @@ class Traductions$appareils$retrait$fr {
 	/// fr: 'Retirer cet appareil ?'
 	String get question => 'Retirer cet appareil ?';
 
-	/// fr: '{appareil} ne pourra plus se connecter au profil de {prenom}. S'il est connecté en ce moment, il le reste jusqu'à sa prochaine déconnexion.'
-	String consequence({required Object appareil, required Object prenom}) => '${appareil} ne pourra plus se connecter au profil de ${prenom}. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.';
+	/// fr: '{appareil} ne pourra plus se connecter au profil {dePrenom}. S'il est connecté en ce moment, il le reste jusqu'à sa prochaine déconnexion.'
+	String consequence({required Object appareil, required Object dePrenom}) => '${appareil} ne pourra plus se connecter au profil ${dePrenom}. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.';
 
 	/// fr: 'Retirer l'appareil'
 	String get confirmer => 'Retirer l\'appareil';
@@ -4087,8 +4087,8 @@ class Traductions$ficheEleve$lignes$fr {
 	/// fr: 'Accès Rewayah'
 	String get acces => 'Accès Rewayah';
 
-	/// fr: 'Appareils de {prenom}'
-	String appareils({required Object prenom}) => 'Appareils de ${prenom}';
+	/// fr: 'Appareils {dePrenom}'
+	String appareils({required Object dePrenom}) => 'Appareils ${dePrenom}';
 
 	/// fr: 'Connecter un appareil, voir ceux qui sont reliés, en retirer un'
 	String get appareilsLegende => 'Connecter un appareil, voir ceux qui sont reliés, en retirer un';
@@ -4120,8 +4120,8 @@ class Traductions$ficheEleve$informations$fr {
 	/// fr: 'Photo'
 	String get photo => 'Photo';
 
-	/// fr: 'Une photo du visage de {prenom}. Ce n'est pas une pièce d'identité.'
-	String photoLegende({required Object prenom}) => 'Une photo du visage de ${prenom}. Ce n\'est pas une pièce d\'identité.';
+	/// fr: 'Une photo du visage {dePrenom}. Ce n'est pas une pièce d'identité.'
+	String photoLegende({required Object dePrenom}) => 'Une photo du visage ${dePrenom}. Ce n\'est pas une pièce d\'identité.';
 
 	/// fr: 'Pas encore de photo'
 	String get photoAucune => 'Pas encore de photo';
@@ -4252,8 +4252,8 @@ class Traductions$ficheEleve$interface$fr {
 	/// fr: 'Interface'
 	String get titre => 'Interface';
 
-	/// fr: 'Choisissez comment Rewayah s'affiche sur l'appareil de {prenom}. Vous pourrez changer ce choix à tout moment.'
-	String intro({required Object prenom}) => 'Choisissez comment Rewayah s\'affiche sur l\'appareil de ${prenom}. Vous pourrez changer ce choix à tout moment.';
+	/// fr: 'Choisissez comment Rewayah s'affiche sur l'appareil {dePrenom}. Vous pourrez changer ce choix à tout moment.'
+	String intro({required Object dePrenom}) => 'Choisissez comment Rewayah s\'affiche sur l\'appareil ${dePrenom}. Vous pourrez changer ce choix à tout moment.';
 
 	/// fr: 'Mode Accessibilité'
 	String get guidee => 'Mode Accessibilité';
@@ -4270,8 +4270,8 @@ class Traductions$ficheEleve$interface$fr {
 	/// fr: 'Vous choisissez ce réglage. Aucune raison n'est demandée, et l'enseignant voit seulement le nom du mode.'
 	String get politique => 'Vous choisissez ce réglage. Aucune raison n\'est demandée, et l\'enseignant voit seulement le nom du mode.';
 
-	/// fr: 'Le changement s'applique à la prochaine ouverture de Rewayah sur l'appareil de {prenom}.'
-	String application({required Object prenom}) => 'Le changement s\'applique à la prochaine ouverture de Rewayah sur l\'appareil de ${prenom}.';
+	/// fr: 'Le changement s'applique à la prochaine ouverture de Rewayah sur l'appareil {dePrenom}.'
+	String application({required Object dePrenom}) => 'Le changement s\'applique à la prochaine ouverture de Rewayah sur l\'appareil ${dePrenom}.';
 
 	/// fr: 'La demande de changement par l'élève lui-même n'est pas encore proposée.'
 	String get demandeEleve => 'La demande de changement par l\'élève lui-même n\'est pas encore proposée.';
@@ -4279,8 +4279,8 @@ class Traductions$ficheEleve$interface$fr {
 	/// fr: 'Enregistrement en cours'
 	String get enCours => 'Enregistrement en cours';
 
-	/// fr: 'Le changement n'a pas été enregistré, probablement à cause d'une coupure de connexion avec Rewayah. Vérifiez votre connexion, puis touchez de nouveau votre choix. La présentation actuelle de {prenom} reste inchangée sur son appareil.'
-	String echec({required Object prenom}) => 'Le changement n\'a pas été enregistré, probablement à cause d\'une coupure de connexion avec Rewayah. Vérifiez votre connexion, puis touchez de nouveau votre choix. La présentation actuelle de ${prenom} reste inchangée sur son appareil.';
+	/// fr: 'Le changement n'a pas été enregistré, probablement à cause d'une coupure de connexion avec Rewayah. Vérifiez votre connexion, puis touchez de nouveau votre choix. La présentation actuelle {dePrenom} reste inchangée sur son appareil.'
+	String echec({required Object dePrenom}) => 'Le changement n\'a pas été enregistré, probablement à cause d\'une coupure de connexion avec Rewayah. Vérifiez votre connexion, puis touchez de nouveau votre choix. La présentation actuelle ${dePrenom} reste inchangée sur son appareil.';
 
 	/// fr: 'La présentation pourra être changée quand la connexion reviendra.'
 	String get horsLigne => 'La présentation pourra être changée quand la connexion reviendra.';
@@ -4306,8 +4306,8 @@ class Traductions$ficheEleve$camera$fr {
 	/// fr: 'Le bouton caméra n'apparaîtra pas pour {prenom} pendant les séances.'
 	String interdite({required Object prenom}) => 'Le bouton caméra n\'apparaîtra pas pour ${prenom} pendant les séances.';
 
-	/// fr: 'Le changement compte à la prochaine entrée de {prenom} en séance.'
-	String application({required Object prenom}) => 'Le changement compte à la prochaine entrée de ${prenom} en séance.';
+	/// fr: 'Le changement compte à la prochaine entrée {dePrenom} en séance.'
+	String application({required Object dePrenom}) => 'Le changement compte à la prochaine entrée ${dePrenom} en séance.';
 
 	/// fr: 'Ce réglage ne change pas l'autorisation caméra de l'appareil, celle que le téléphone demande pour lire un QR code.'
 	String get distincte => 'Ce réglage ne change pas l\'autorisation caméra de l\'appareil, celle que le téléphone demande pour lire un QR code.';
@@ -4375,8 +4375,8 @@ class Traductions$eleveConnexion$profils$fr {
 	/// fr: 'Avec le code affiché par le tuteur'
 	String get ajouterLegende => 'Avec le code affiché par le tuteur';
 
-	/// fr: 'Continuer en tant que {prenom}'
-	String profilLibelle({required Object prenom}) => 'Continuer en tant que ${prenom}';
+	/// fr: 'Continuer en tant {quePrenom}'
+	String profilLibelle({required Object quePrenom}) => 'Continuer en tant ${quePrenom}';
 
 	/// fr: 'Aucun profil sur cet appareil'
 	String get videTitre => 'Aucun profil sur cet appareil';
@@ -4390,8 +4390,8 @@ class Traductions$eleveConnexion$profils$fr {
 	/// fr: 'Cet appareil a été retiré pour {prenom}. Demande au tuteur de le reconnecter avec un nouveau code.'
 	String retire({required Object prenom}) => 'Cet appareil a été retiré pour ${prenom}. Demande au tuteur de le reconnecter avec un nouveau code.';
 
-	/// fr: 'Cet appareil ne retrouve plus la connexion de {prenom}. Demande au tuteur d'afficher un nouveau code, puis saisis-le ici.'
-	String jetonAbsent({required Object prenom}) => 'Cet appareil ne retrouve plus la connexion de ${prenom}. Demande au tuteur d\'afficher un nouveau code, puis saisis-le ici.';
+	/// fr: 'Cet appareil ne retrouve plus la connexion {dePrenom}. Demande au tuteur d'afficher un nouveau code, puis saisis-le ici.'
+	String jetonAbsent({required Object dePrenom}) => 'Cet appareil ne retrouve plus la connexion ${dePrenom}. Demande au tuteur d\'afficher un nouveau code, puis saisis-le ici.';
 }
 
 // Path: eleveConnexion.pin
@@ -5007,14 +5007,14 @@ class Traductions$admin$tableau$fr {
 	/// fr: 'Les classes, leurs élèves et leur enseignant.'
 	String get outilsGroupesDetail => 'Les classes, leurs élèves et leur enseignant.';
 
-	/// fr: 'Dossier d'identité de {prenom}'
-	String ligneDossier({required Object prenom}) => 'Dossier d\'identité de ${prenom}';
+	/// fr: 'Dossier d'identité {dePrenom}'
+	String ligneDossier({required Object dePrenom}) => 'Dossier d\'identité ${dePrenom}';
 
 	/// fr: 'Changement d'enseignant pour {prenom}'
 	String ligneReaffectation({required Object prenom}) => 'Changement d\'enseignant pour ${prenom}';
 
-	/// fr: 'Plafond d'élèves de {prenom}'
-	String lignePlafond({required Object prenom}) => 'Plafond d\'élèves de ${prenom}';
+	/// fr: 'Plafond d'élèves {dePrenom}'
+	String lignePlafond({required Object dePrenom}) => 'Plafond d\'élèves ${dePrenom}';
 
 	/// fr: 'Changement de règle pour {prenom}'
 	String ligneRegle({required Object prenom}) => 'Changement de règle pour ${prenom}';
@@ -5076,8 +5076,8 @@ class Traductions$admin$demandes$fr {
 	/// fr: 'Ce qui est demandé'
 	String get reclame => 'Ce qui est demandé';
 
-	/// fr: 'Changer l'enseignant de {prenom}'
-	String reclameReaffectation({required Object prenom}) => 'Changer l\'enseignant de ${prenom}';
+	/// fr: 'Changer l'enseignant {dePrenom}'
+	String reclameReaffectation({required Object dePrenom}) => 'Changer l\'enseignant ${dePrenom}';
 
 	/// fr: 'Porter le plafond à {valeur} élèves'
 	String reclamePlafond({required Object valeur}) => 'Porter le plafond à ${valeur} élèves';
@@ -5112,8 +5112,8 @@ class Traductions$admin$demandes$fr {
 	/// fr: 'Chaque décision et chaque règle posée sont inscrites au journal d'audit, avec votre nom.'
 	String get journalisation => 'Chaque décision et chaque règle posée sont inscrites au journal d\'audit, avec votre nom.';
 
-	/// fr: 'Les règles de {prenom}'
-	String feuille({required Object prenom}) => 'Les règles de ${prenom}';
+	/// fr: 'Les règles {dePrenom}'
+	String feuille({required Object dePrenom}) => 'Les règles ${dePrenom}';
 
 	/// fr: 'La valeur de la plateforme et celle qui s'applique, côte à côte. Une règle se change ici sans qu'une demande existe.'
 	String get feuilleIntro => 'La valeur de la plateforme et celle qui s\'applique, côte à côte. Une règle se change ici sans qu\'une demande existe.';
@@ -5169,8 +5169,8 @@ class Traductions$admin$demandes$fr {
 	/// fr: '{regle}, pour {prenom}'
 	String poserTitre({required Object regle, required Object prenom}) => '${regle}, pour ${prenom}';
 
-	/// fr: 'Clore la surcharge de {prenom}'
-	String cloreTitre({required Object prenom}) => 'Clore la surcharge de ${prenom}';
+	/// fr: 'Clore la surcharge {dePrenom}'
+	String cloreTitre({required Object dePrenom}) => 'Clore la surcharge ${dePrenom}';
 
 	/// fr: 'Pourquoi ce changement ?'
 	String get poserMotif => 'Pourquoi ce changement ?';
@@ -5301,8 +5301,8 @@ class Traductions$admin$groupes$fr {
 
 	// Translations
 
-	/// fr: 'Groupes'
-	String get titre => 'Groupes';
+	/// fr: 'Classes'
+	String get titre => 'Classes';
 
 	/// fr: 'Chaque groupe réunit un enseignant et ses élèves autour d'un créneau commun : c'est là que se donne le cours.'
 	String get intro => 'Chaque groupe réunit un enseignant et ses élèves autour d\'un créneau commun : c\'est là que se donne le cours.';
@@ -5439,8 +5439,8 @@ class Traductions$admin$groupes$fr {
 	/// fr: 'L'ajout n'a pas abouti : {message}'
 	String ajouterErreur({required Object message}) => 'L\'ajout n\'a pas abouti : ${message}';
 
-	/// fr: 'Retirer {prenom} de {libelle}'
-	String retirerTitre({required Object prenom, required Object libelle}) => 'Retirer ${prenom} de ${libelle}';
+	/// fr: 'Retirer {prenom} {deLibelle}'
+	String retirerTitre({required Object prenom, required Object deLibelle}) => 'Retirer ${prenom} ${deLibelle}';
 
 	/// fr: 'Retirer'
 	String get retirerEnvoyer => 'Retirer';
@@ -5448,8 +5448,8 @@ class Traductions$admin$groupes$fr {
 	/// fr: 'Le retrait n'a pas abouti : {message}'
 	String retirerErreur({required Object message}) => 'Le retrait n\'a pas abouti : ${message}';
 
-	/// fr: 'Seuil maximal de {libelle}'
-	String modifierSeuilTitre({required Object libelle}) => 'Seuil maximal de ${libelle}';
+	/// fr: 'Seuil maximal {deLibelle}'
+	String modifierSeuilTitre({required Object deLibelle}) => 'Seuil maximal ${deLibelle}';
 
 	/// fr: 'Enregistrer'
 	String get modifierSeuilEnvoyer => 'Enregistrer';
@@ -5823,11 +5823,11 @@ class Traductions$admin$politiqueRevueKyc$fr {
 
 	// Translations
 
-	/// fr: 'Politique de genre pour la revue KYC'
-	String get titre => 'Politique de genre pour la revue KYC';
+	/// fr: 'Vérification des enseignants selon le genre'
+	String get titre => 'Vérification des enseignants selon le genre';
 
-	/// fr: 'Limiter la revue KYC selon le genre'
-	String get libelle => 'Limiter la revue KYC selon le genre';
+	/// fr: 'Limiter la vérification des enseignants selon le genre'
+	String get libelle => 'Limiter la vérification des enseignants selon le genre';
 
 	/// fr: 'Lorsque cette règle est désactivée, tout membre autorisé à revoir les dossiers peut traiter les dossiers de son périmètre, quel que soit son genre.'
 	String get aide => 'Lorsque cette règle est désactivée, tout membre autorisé à revoir les dossiers peut traiter les dossiers de son périmètre, quel que soit son genre.';
@@ -5964,8 +5964,8 @@ class Traductions$admin$evaluations$fr {
 	/// fr: 'Annuler l'évaluation'
 	String get actionAnnuler => 'Annuler l\'évaluation';
 
-	/// fr: 'Résultat de {eleve}'
-	String resultatTitre({required Object eleve}) => 'Résultat de ${eleve}';
+	/// fr: 'Résultat {deEleve}'
+	String resultatTitre({required Object deEleve}) => 'Résultat ${deEleve}';
 
 	/// fr: 'Notes (optionnelles)'
 	String get champNotes => 'Notes (optionnelles)';
@@ -5976,8 +5976,8 @@ class Traductions$admin$evaluations$fr {
 	/// fr: 'L'enregistrement n'a pas abouti : {message}'
 	String resultatErreur({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}';
 
-	/// fr: 'Annuler l'évaluation de {eleve}'
-	String annulerTitre({required Object eleve}) => 'Annuler l\'évaluation de ${eleve}';
+	/// fr: 'Annuler l'évaluation {deEleve}'
+	String annulerTitre({required Object deEleve}) => 'Annuler l\'évaluation ${deEleve}';
 
 	/// fr: 'Annuler'
 	String get annulerEnvoyer => 'Annuler';
@@ -6078,8 +6078,8 @@ class Traductions$admin$progression$fr {
 	/// fr: 'La pose n'a pas abouti : {message}'
 	String poserExceptionErreur({required Object message}) => 'La pose n\'a pas abouti : ${message}';
 
-	/// fr: 'Clore l'exception de {eleve}'
-	String clorerExceptionTitre({required Object eleve}) => 'Clore l\'exception de ${eleve}';
+	/// fr: 'Clore l'exception {deEleve}'
+	String clorerExceptionTitre({required Object deEleve}) => 'Clore l\'exception ${deEleve}';
 
 	/// fr: 'Clore'
 	String get clorerExceptionEnvoyer => 'Clore';
@@ -6087,8 +6087,8 @@ class Traductions$admin$progression$fr {
 	/// fr: 'La clôture n'a pas abouti : {message}'
 	String clorerExceptionErreur({required Object message}) => 'La clôture n\'a pas abouti : ${message}';
 
-	/// fr: 'Changer le niveau de {eleve}'
-	String promouvoirTitre({required Object eleve}) => 'Changer le niveau de ${eleve}';
+	/// fr: 'Changer le niveau {deEleve}'
+	String promouvoirTitre({required Object deEleve}) => 'Changer le niveau ${deEleve}';
 
 	/// fr: 'Nouveau niveau'
 	String get promouvoirChampNiveau => 'Nouveau niveau';
@@ -6707,6 +6707,9 @@ class Traductions$admin$comptes$fr {
 	/// fr: 'État inconnu'
 	String get etatInconnu => 'État inconnu';
 
+	/// fr: 'Sans décision'
+	String get etatSansDecision => 'Sans décision';
+
 	/// fr: 'Administration'
 	String get roleAdmin => 'Administration';
 
@@ -6782,8 +6785,8 @@ class Traductions$admin$agents$fr {
 	/// fr: 'Relecture du suivi de Maryam'
 	String get libelleExemple => 'Relecture du suivi de Maryam';
 
-	/// fr: 'Observation de {prenom}, le {date}, {duree} h'
-	String libelleAuto({required Object prenom, required Object date, required Object duree}) => 'Observation de ${prenom}, le ${date}, ${duree} h';
+	/// fr: 'Observation {dePrenom}, le {date}, {duree} h'
+	String libelleAuto({required Object dePrenom, required Object date, required Object duree}) => 'Observation ${dePrenom}, le ${date}, ${duree} h';
 
 	/// fr: 'Il manque le nom du jeton : écrivez à quoi il sert.'
 	String get manqueLibelle => 'Il manque le nom du jeton : écrivez à quoi il sert.';
@@ -7350,8 +7353,8 @@ class Traductions$historique$seances$fr {
 	/// fr: 'Aucune séance passée'
 	String get videTitre => 'Aucune séance passée';
 
-	/// fr: 'Les séances passées de {prenom} s'afficheront ici.'
-	String videPhrase({required Object prenom}) => 'Les séances passées de ${prenom} s\'afficheront ici.';
+	/// fr: 'Les séances passées {dePrenom} s'afficheront ici.'
+	String videPhrase({required Object dePrenom}) => 'Les séances passées ${dePrenom} s\'afficheront ici.';
 
 	/// fr: 'Les séances passées des profils élèves s'afficheront ici.'
 	String get videPhraseFoyer => 'Les séances passées des profils élèves s\'afficheront ici.';
@@ -7386,8 +7389,8 @@ class Traductions$historique$observations$fr {
 	/// fr: 'Aucune observation'
 	String get videTitre => 'Aucune observation';
 
-	/// fr: 'Les visites que vous faites pendant les séances de {prenom} s'afficheront ici.'
-	String videPhrase({required Object prenom}) => 'Les visites que vous faites pendant les séances de ${prenom} s\'afficheront ici.';
+	/// fr: 'Les visites que vous faites pendant les séances {dePrenom} s'afficheront ici.'
+	String videPhrase({required Object dePrenom}) => 'Les visites que vous faites pendant les séances ${dePrenom} s\'afficheront ici.';
 
 	/// fr: 'Vos visites pendant les séances s'afficheront ici.'
 	String get videPhraseFoyer => 'Vos visites pendant les séances s\'afficheront ici.';
@@ -7437,8 +7440,8 @@ class Traductions$historique$seance$fr {
 	/// fr: 'La séance'
 	String get blocSeance => 'La séance';
 
-	/// fr: 'Présence de {prenom}'
-	String blocPresence({required Object prenom}) => 'Présence de ${prenom}';
+	/// fr: 'Présence {dePrenom}'
+	String blocPresence({required Object dePrenom}) => 'Présence ${dePrenom}';
 
 	/// fr: 'Date'
 	String get date => 'Date';
@@ -7761,8 +7764,8 @@ class Traductions$tuteur$accueil$fr {
 	/// fr: 'Prochaine séance'
 	String get prochaineSeance => 'Prochaine séance';
 
-	/// fr: 'Heure de {ville}'
-	String heureDe({required Object ville}) => 'Heure de ${ville}';
+	/// fr: 'Heure {deVille}'
+	String heureDe({required Object deVille}) => 'Heure ${deVille}';
 
 	/// fr: 'Heure de cet appareil'
 	String get heureAppareil => 'Heure de cet appareil';
@@ -7800,8 +7803,8 @@ class Traductions$tuteur$accueil$fr {
 	/// fr: 'Aucune séance planifiée'
 	String get aucuneSeance => 'Aucune séance planifiée';
 
-	/// fr: 'La prochaine séance de {prenom} apparaîtra ici dès qu'elle sera programmée.'
-	String aucuneSeanceDetail({required Object prenom}) => 'La prochaine séance de ${prenom} apparaîtra ici dès qu\'elle sera programmée.';
+	/// fr: 'La prochaine séance {dePrenom} apparaîtra ici dès qu'elle sera programmée.'
+	String aucuneSeanceDetail({required Object dePrenom}) => 'La prochaine séance ${dePrenom} apparaîtra ici dès qu\'elle sera programmée.';
 
 	/// fr: 'La prochaine séance n'a pas pu être lue.'
 	String get seanceIllisible => 'La prochaine séance n\'a pas pu être lue.';
@@ -7815,8 +7818,8 @@ class Traductions$tuteur$accueil$fr {
 	/// fr: 'Aucune classe pour {prenom}'
 	String sansClasseTitre({required Object prenom}) => 'Aucune classe pour ${prenom}';
 
-	/// fr: 'Choisissez une classe pour que {prenom} puisse commencer les cours.'
-	String sansClassePhrase({required Object prenom}) => 'Choisissez une classe pour que ${prenom} puisse commencer les cours.';
+	/// fr: 'Choisissez une classe pour {quePrenom} puisse commencer les cours.'
+	String sansClassePhrase({required Object quePrenom}) => 'Choisissez une classe pour ${quePrenom} puisse commencer les cours.';
 
 	/// fr: 'Aucun profil élève pour l'instant'
 	String get foyerVideTitre => 'Aucun profil élève pour l\'instant';
@@ -7958,12 +7961,6 @@ class Traductions$tuteur$accueil$fr {
 	/// fr: 'Accès'
 	String get acces => 'Accès';
 
-	/// fr: 'Accès de {prenom} jusqu'au {date}'
-	String accesJusqua({required Object prenom, required Object date}) => 'Accès de ${prenom} jusqu\'au ${date}';
-
-	/// fr: 'Accès de {prenom} sans date de fin'
-	String accesSansFin({required Object prenom}) => 'Accès de ${prenom} sans date de fin';
-
 	/// fr: 'Aucun enfant dans le foyer'
 	String get aucunEnfant => 'Aucun enfant dans le foyer';
 
@@ -7994,8 +7991,8 @@ class Traductions$tuteur$reglages$fr {
 	/// fr: '{prenom} n'a pas encore de photo. Elle reste visible du seul foyer.'
 	String photoAucune({required Object prenom}) => '${prenom} n\'a pas encore de photo. Elle reste visible du seul foyer.';
 
-	/// fr: 'La photo de {prenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.'
-	String photoPresente({required Object prenom}) => 'La photo de ${prenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.';
+	/// fr: 'La photo {dePrenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.'
+	String photoPresente({required Object dePrenom}) => 'La photo ${dePrenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.';
 
 	/// fr: 'Ajouter une photo'
 	String get photoAjouter => 'Ajouter une photo';
@@ -8015,11 +8012,11 @@ class Traductions$tuteur$reglages$fr {
 	/// fr: 'Le bouton caméra n'apparaîtra pas pour {prenom}.'
 	String cameraInterdite({required Object prenom}) => 'Le bouton caméra n\'apparaîtra pas pour ${prenom}.';
 
-	/// fr: 'Autoriser la caméra de {prenom}'
-	String cameraAutoriser({required Object prenom}) => 'Autoriser la caméra de ${prenom}';
+	/// fr: 'Autoriser la caméra {dePrenom}'
+	String cameraAutoriser({required Object dePrenom}) => 'Autoriser la caméra ${dePrenom}';
 
-	/// fr: 'Retirer la caméra de {prenom}'
-	String cameraRetirer({required Object prenom}) => 'Retirer la caméra de ${prenom}';
+	/// fr: 'Retirer la caméra {dePrenom}'
+	String cameraRetirer({required Object dePrenom}) => 'Retirer la caméra ${dePrenom}';
 
 	/// fr: 'Affichage'
 	String get mode => 'Affichage';
@@ -8051,11 +8048,11 @@ class Traductions$tuteur$reglages$fr {
 	/// fr: '{prenom} n'a pas encore d'enseignant : il n'y a rien à changer.'
 	String demandeSansEnseignant({required Object prenom}) => '${prenom} n\'a pas encore d\'enseignant : il n\'y a rien à changer.';
 
-	/// fr: 'Changer l'enseignant de {prenom}'
-	String demandeTitreReaffectation({required Object prenom}) => 'Changer l\'enseignant de ${prenom}';
+	/// fr: 'Changer l'enseignant {dePrenom}'
+	String demandeTitreReaffectation({required Object dePrenom}) => 'Changer l\'enseignant ${dePrenom}';
 
-	/// fr: 'La durée des cours de {prenom}'
-	String demandeTitreDuree({required Object prenom}) => 'La durée des cours de ${prenom}';
+	/// fr: 'La durée des cours {dePrenom}'
+	String demandeTitreDuree({required Object dePrenom}) => 'La durée des cours ${dePrenom}';
 
 	/// fr: 'La durée minimale payable pour {prenom}'
 	String demandeTitreMinimum({required Object prenom}) => 'La durée minimale payable pour ${prenom}';
@@ -8105,8 +8102,8 @@ class Traductions$classe$entree$fr {
 	/// fr: 'Rejoindre'
 	String get rejoindre => 'Rejoindre';
 
-	/// fr: 'Rejoindre la séance de {classe}'
-	String rejoindreLecteur({required Object classe}) => 'Rejoindre la séance de ${classe}';
+	/// fr: 'Rejoindre la séance {deClasse}'
+	String rejoindreLecteur({required Object deClasse}) => 'Rejoindre la séance ${deClasse}';
 
 	/// fr: 'La salle est ouverte. La séance commence dans {duree}.'
 	String salleOuverte({required Object duree}) => 'La salle est ouverte. La séance commence dans ${duree}.';
@@ -8174,8 +8171,8 @@ class Traductions$classe$seance$fr {
 	/// fr: 'Aucune séance planifiée'
 	String get aucune => 'Aucune séance planifiée';
 
-	/// fr: 'La prochaine séance de {prenom} apparaîtra ici dès qu'elle sera programmée.'
-	String aucuneDetail({required Object prenom}) => 'La prochaine séance de ${prenom} apparaîtra ici dès qu\'elle sera programmée.';
+	/// fr: 'La prochaine séance {dePrenom} apparaîtra ici dès qu'elle sera programmée.'
+	String aucuneDetail({required Object dePrenom}) => 'La prochaine séance ${dePrenom} apparaîtra ici dès qu\'elle sera programmée.';
 
 	/// fr: 'La prochaine séance n'a pas pu être lue.'
 	String get illisible => 'La prochaine séance n\'a pas pu être lue.';
@@ -8245,8 +8242,8 @@ class Traductions$classe$pagePlanning$fr {
 	/// fr: 'Aucune séance à venir pour l'instant'
 	String get aucune => 'Aucune séance à venir pour l\'instant';
 
-	/// fr: 'Les prochaines séances de {prenom} apparaîtront ici dès qu'elles seront programmées.'
-	String aucuneDetail({required Object prenom}) => 'Les prochaines séances de ${prenom} apparaîtront ici dès qu\'elles seront programmées.';
+	/// fr: 'Les prochaines séances {dePrenom} apparaîtront ici dès qu'elles seront programmées.'
+	String aucuneDetail({required Object dePrenom}) => 'Les prochaines séances ${dePrenom} apparaîtront ici dès qu\'elles seront programmées.';
 
 	/// fr: 'Les jours habituels de la classe ne sont pas encore affichés ici : seules les séances déjà programmées apparaissent.'
 	String get habituelIndisponible => 'Les jours habituels de la classe ne sont pas encore affichés ici : seules les séances déjà programmées apparaissent.';
@@ -8307,8 +8304,8 @@ class Traductions$classe$pageProgression$fr {
 
 	// Translations
 
-	/// fr: 'La progression de {prenom} n'est pas encore partagée ici.'
-	String indisponible({required Object prenom}) => 'La progression de ${prenom} n\'est pas encore partagée ici.';
+	/// fr: 'La progression {dePrenom} n'est pas encore partagée ici.'
+	String indisponible({required Object dePrenom}) => 'La progression ${dePrenom} n\'est pas encore partagée ici.';
 
 	/// fr: 'Niveau'
 	String get niveau => 'Niveau';
@@ -8343,8 +8340,8 @@ class Traductions$classe$pageCatalogue$fr {
 	/// fr: 'Aucune classe ne convient pour l'instant'
 	String get aucune => 'Aucune classe ne convient pour l\'instant';
 
-	/// fr: 'Aucune classe ouverte ne correspond au profil de {prenom} en ce moment.'
-	String aucuneDetail({required Object prenom}) => 'Aucune classe ouverte ne correspond au profil de ${prenom} en ce moment.';
+	/// fr: 'Aucune classe ouverte ne correspond au profil {dePrenom} en ce moment.'
+	String aucuneDetail({required Object dePrenom}) => 'Aucune classe ouverte ne correspond au profil ${dePrenom} en ce moment.';
 
 	/// fr: 'Ce profil n'est pas dans votre foyer'
 	String get eleveInconnuTitre => 'Ce profil n\'est pas dans votre foyer';
@@ -8482,8 +8479,8 @@ class Traductions$enseignant$eleve$fr {
 
 	// Translations
 
-	/// fr: 'Fiche de {prenom}'
-	String titre({required Object prenom}) => 'Fiche de ${prenom}';
+	/// fr: 'Fiche {dePrenom}'
+	String titre({required Object dePrenom}) => 'Fiche ${dePrenom}';
 
 	/// fr: 'Élèves'
 	String get retour => 'Élèves';
@@ -8491,8 +8488,8 @@ class Traductions$enseignant$eleve$fr {
 	/// fr: 'Identifiant Académie : {id}'
 	String identifiant({required Object id}) => 'Identifiant Académie : ${id}';
 
-	/// fr: 'Photo de {prenom}'
-	String photo({required Object prenom}) => 'Photo de ${prenom}';
+	/// fr: 'Photo {dePrenom}'
+	String photo({required Object dePrenom}) => 'Photo ${dePrenom}';
 
 	/// fr: 'Niveau'
 	String get niveau => 'Niveau';
@@ -8886,14 +8883,14 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'À terminer'
 	String get aTerminer => 'À terminer';
 
-	/// fr: 'Tous vos cahiers sont terminés.'
-	String get aTerminerVide => 'Tous vos cahiers sont terminés.';
+	/// fr: 'Tous vos cahiers de transmission sont terminés.'
+	String get aTerminerVide => 'Tous vos cahiers de transmission sont terminés.';
 
-	/// fr: 'Les cahiers à terminer n'ont pas pu être lus'
-	String get aTerminerSansDonnees => 'Les cahiers à terminer n\'ont pas pu être lus';
+	/// fr: 'Les cahiers de transmission à terminer n'ont pas pu être lus.'
+	String get aTerminerSansDonnees => 'Les cahiers de transmission à terminer n\'ont pas pu être lus.';
 
-	/// fr: 'Les cahiers à terminer n'ont pas pu être lus. Réessayez dans un instant.'
-	String get aTerminerErreur => 'Les cahiers à terminer n\'ont pas pu être lus. Réessayez dans un instant.';
+	/// fr: 'Les cahiers de transmission à terminer n'ont pas pu être lus. Réessayez dans un instant.'
+	String get aTerminerErreur => 'Les cahiers de transmission à terminer n\'ont pas pu être lus. Réessayez dans un instant.';
 
 	/// fr: 'Le cahier de transmission aide vos élèves et vous permet d'ajuster le prochain cours.'
 	String get aTerminerAide => 'Le cahier de transmission aide vos élèves et vous permet d\'ajuster le prochain cours.';
@@ -9036,8 +9033,8 @@ class Traductions$enseignant$salle$fr {
 	/// fr: 'Choisir une sourate'
 	String get bibliotheque => 'Choisir une sourate';
 
-	/// fr: 'Présenter le début de {sourate}'
-	String presenterSourate({required Object sourate}) => 'Présenter le début de ${sourate}';
+	/// fr: 'Présenter le début {deSourate}'
+	String presenterSourate({required Object deSourate}) => 'Présenter le début ${deSourate}';
 
 	/// fr: 'Sourate {numero} · {versets} versets'
 	String sourateDetail({required Object numero, required Object versets}) => 'Sourate ${numero} · ${versets} versets';
@@ -10383,8 +10380,8 @@ class Traductions$controleur$echanges$fr {
 	/// fr: 'Réessayer'
 	String get reessayer => 'Réessayer';
 
-	/// fr: 'Nouveau message de {auteur} : {texte}'
-	String nouveauMessage({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}';
+	/// fr: 'Nouveau message {deAuteur} : {texte}'
+	String nouveauMessage({required Object deAuteur, required Object texte}) => 'Nouveau message ${deAuteur} : ${texte}';
 }
 
 // Path: controleur.demo
@@ -11166,8 +11163,8 @@ class Traductions$adulte$invitation$fr {
 	/// fr: 'Annuler l'invitation'
 	String get annuler => 'Annuler l\'invitation';
 
-	/// fr: 'Annuler l'invitation de {prenom} ?'
-	String annulerQuestion({required Object prenom}) => 'Annuler l\'invitation de ${prenom} ?';
+	/// fr: 'Annuler l'invitation {dePrenom} ?'
+	String annulerQuestion({required Object dePrenom}) => 'Annuler l\'invitation ${dePrenom} ?';
 
 	/// fr: 'Annuler cette invitation ?'
 	String get annulerQuestionSansPrenom => 'Annuler cette invitation ?';
@@ -11199,8 +11196,8 @@ class Traductions$adulte$acceptation$fr {
 	/// fr: '{prenom} vous invite à rejoindre son forfait famille.'
 	String notification({required Object prenom}) => '${prenom} vous invite à rejoindre son forfait famille.';
 
-	/// fr: 'Rejoindre le forfait famille de {prenom}'
-	String titre({required Object prenom}) => 'Rejoindre le forfait famille de ${prenom}';
+	/// fr: 'Rejoindre le forfait famille {dePrenom}'
+	String titre({required Object dePrenom}) => 'Rejoindre le forfait famille ${dePrenom}';
 
 	/// fr: 'Ce que nous faisons'
 	String get faisonsTitre => 'Ce que nous faisons';
@@ -11217,8 +11214,8 @@ class Traductions$adulte$acceptation$fr {
 	/// fr: '{prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, il doit voir votre solde.'
 	String pourquoiLui({required Object prenom}) => '${prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, il doit voir votre solde.';
 
-	/// fr: 'Ce que {prenom} verra'
-	String verraTitre({required Object prenom}) => 'Ce que ${prenom} verra';
+	/// fr: 'Ce {quePrenom} verra'
+	String verraTitre({required Object quePrenom}) => 'Ce ${quePrenom} verra';
 
 	/// fr: 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L'offre qui vous concerne. L'état de votre accès, s'il empêche de payer. Elle saura aussi si vous quittez le forfait famille.'
 	String get verraElle => 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L\'offre qui vous concerne. L\'état de votre accès, s\'il empêche de payer. Elle saura aussi si vous quittez le forfait famille.';
@@ -11226,8 +11223,8 @@ class Traductions$adulte$acceptation$fr {
 	/// fr: 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L'offre qui vous concerne. L'état de votre accès, s'il empêche de payer. Il saura aussi si vous quittez le forfait famille.'
 	String get verraLui => 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L\'offre qui vous concerne. L\'état de votre accès, s\'il empêche de payer. Il saura aussi si vous quittez le forfait famille.';
 
-	/// fr: 'Ce que {prenom} ne verra pas'
-	String verraPasTitre({required Object prenom}) => 'Ce que ${prenom} ne verra pas';
+	/// fr: 'Ce {quePrenom} ne verra pas'
+	String verraPasTitre({required Object quePrenom}) => 'Ce ${quePrenom} ne verra pas';
 
 	/// fr: 'Votre Classe. Votre niveau. Vos séances et votre présence. Vos progrès. Vos messages. Vos notifications. Vos moyens de paiement personnels. Vos pièces d'identité.'
 	String get verraPas => 'Votre Classe. Votre niveau. Vos séances et votre présence. Vos progrès. Vos messages. Vos notifications. Vos moyens de paiement personnels. Vos pièces d\'identité.';
@@ -11235,8 +11232,8 @@ class Traductions$adulte$acceptation$fr {
 	/// fr: 'Ce que vous ne verrez pas'
 	String get vousTitre => 'Ce que vous ne verrez pas';
 
-	/// fr: 'Les cours, les progrès et les messages de {prenom} et des enfants du foyer. Vous ne pourrez pas ajouter d'enfant, inviter quelqu'un ni modifier le foyer.'
-	String vous({required Object prenom}) => 'Les cours, les progrès et les messages de ${prenom} et des enfants du foyer. Vous ne pourrez pas ajouter d\'enfant, inviter quelqu\'un ni modifier le foyer.';
+	/// fr: 'Les cours, les progrès et les messages {dePrenom} et des enfants du foyer. Vous ne pourrez pas ajouter d'enfant, inviter quelqu'un ni modifier le foyer.'
+	String vous({required Object dePrenom}) => 'Les cours, les progrès et les messages ${dePrenom} et des enfants du foyer. Vous ne pourrez pas ajouter d\'enfant, inviter quelqu\'un ni modifier le foyer.';
 
 	/// fr: 'Qui d'autre voit'
 	String get autresTitre => 'Qui d\'autre voit';
@@ -11247,8 +11244,8 @@ class Traductions$adulte$acceptation$fr {
 	/// fr: 'Combien de temps'
 	String get dureeTitre => 'Combien de temps';
 
-	/// fr: 'Le rattachement dure jusqu'à ce que vous quittiez le forfait famille, ou que {prenom} y mette fin.'
-	String duree({required Object prenom}) => 'Le rattachement dure jusqu\'à ce que vous quittiez le forfait famille, ou que ${prenom} y mette fin.';
+	/// fr: 'Le rattachement dure jusqu'à ce que vous quittiez le forfait famille, ou {quePrenom} y mette fin.'
+	String duree({required Object quePrenom}) => 'Le rattachement dure jusqu\'à ce que vous quittiez le forfait famille, ou ${quePrenom} y mette fin.';
 
 	/// fr: 'Nous gardons la trace du rattachement {duree}.'
 	String conservation({required Object duree}) => 'Nous gardons la trace du rattachement ${duree}.';
@@ -11289,8 +11286,8 @@ class Traductions$adulte$acceptation$fr {
 	/// fr: 'Invitation acceptée'
 	String get accepteeTitre => 'Invitation acceptée';
 
-	/// fr: 'Vous avez rejoint le forfait famille de {prenom}.'
-	String rejoint({required Object prenom}) => 'Vous avez rejoint le forfait famille de ${prenom}.';
+	/// fr: 'Vous avez rejoint le forfait famille {dePrenom}.'
+	String rejoint({required Object dePrenom}) => 'Vous avez rejoint le forfait famille ${dePrenom}.';
 
 	/// fr: 'Invitation refusée'
 	String get refuseeTitre => 'Invitation refusée';
@@ -11358,8 +11355,8 @@ class Traductions$adulte$sortie$fr {
 	/// fr: 'Votre compte, vos cours, votre historique et votre solde restent disponibles. Le rattachement au forfait famille prendra fin.'
 	String get quitterConsequence => 'Votre compte, vos cours, votre historique et votre solde restent disponibles. Le rattachement au forfait famille prendra fin.';
 
-	/// fr: 'Vous faites partie du forfait famille de {prenom}.'
-	String forfaitPhrase({required Object prenom}) => 'Vous faites partie du forfait famille de ${prenom}.';
+	/// fr: 'Vous faites partie du forfait famille {dePrenom}.'
+	String forfaitPhrase({required Object dePrenom}) => 'Vous faites partie du forfait famille ${dePrenom}.';
 
 	/// fr: 'Le rattachement au forfait famille a pris fin'
 	String get resultatTitre => 'Le rattachement au forfait famille a pris fin';
@@ -11388,11 +11385,11 @@ class Traductions$adulte$sortie$fr {
 	/// fr: '{prenom} a quitté votre forfait famille.'
 	String notificationQuitte({required Object prenom}) => '${prenom} a quitté votre forfait famille.';
 
-	/// fr: 'Vous avez été retirée du forfait famille de {prenom}.'
-	String notificationRetiree({required Object prenom}) => 'Vous avez été retirée du forfait famille de ${prenom}.';
+	/// fr: 'Vous avez été retirée du forfait famille {dePrenom}.'
+	String notificationRetiree({required Object dePrenom}) => 'Vous avez été retirée du forfait famille ${dePrenom}.';
 
-	/// fr: 'Vous avez été retiré du forfait famille de {prenom}.'
-	String notificationRetire({required Object prenom}) => 'Vous avez été retiré du forfait famille de ${prenom}.';
+	/// fr: 'Vous avez été retiré du forfait famille {dePrenom}.'
+	String notificationRetire({required Object dePrenom}) => 'Vous avez été retiré du forfait famille ${dePrenom}.';
 
 	/// fr: 'Nouvelle invitation indisponible'
 	String get delaiTitre => 'Nouvelle invitation indisponible';
@@ -12064,8 +12061,8 @@ class Traductions$appareils$emetteur$confirme$fr {
 	/// fr: 'Appareil connecté'
 	String get titre => 'Appareil connecté';
 
-	/// fr: 'L'appareil de {prenom} est prêt. Le code n'est plus affiché et ne peut plus servir.'
-	String phrase({required Object prenom}) => 'L\'appareil de ${prenom} est prêt. Le code n\'est plus affiché et ne peut plus servir.';
+	/// fr: 'L'appareil {dePrenom} est prêt. Le code n'est plus affiché et ne peut plus servir.'
+	String phrase({required Object dePrenom}) => 'L\'appareil ${dePrenom} est prêt. Le code n\'est plus affiché et ne peut plus servir.';
 
 	/// fr: 'L'appareil de l'élève est prêt. Le code n'est plus affiché et ne peut plus servir.'
 	String get phraseSansPrenom => 'L\'appareil de l\'élève est prêt. Le code n\'est plus affiché et ne peut plus servir.';
@@ -12934,11 +12931,11 @@ class Traductions$classe$observation$motif$fr {
 	/// fr: 'Aucun élève de votre foyer n'est rattaché à cette séance.'
 	String get lienAbsent => 'Aucun élève de votre foyer n\'est rattaché à cette séance.';
 
-	/// fr: 'L'observation attend l'arrivée de {prenom}.'
-	String enfantAbsent({required Object prenom}) => 'L\'observation attend l\'arrivée de ${prenom}.';
+	/// fr: 'L'observation attend l'arrivée {dePrenom}.'
+	String enfantAbsent({required Object dePrenom}) => 'L\'observation attend l\'arrivée ${dePrenom}.';
 
-	/// fr: 'La présence de {prenom} est en cours de vérification.'
-	String presenceEnVerification({required Object prenom}) => 'La présence de ${prenom} est en cours de vérification.';
+	/// fr: 'La présence {dePrenom} est en cours de vérification.'
+	String presenceEnVerification({required Object dePrenom}) => 'La présence ${dePrenom} est en cours de vérification.';
 
 	/// fr: 'Une visite est déjà ouverte, sur cet appareil ou sur un autre.'
 	String get visiteDejaOuverte => 'Une visite est déjà ouverte, sur cet appareil ou sur un autre.';
@@ -13012,14 +13009,14 @@ class Traductions$classe$pageCatalogue$resultat$fr {
 	/// fr: 'Demande envoyée'
 	String get validationTitre => 'Demande envoyée';
 
-	/// fr: 'L'académie doit encore valider l'inscription de {prenom} dans {classe}.'
-	String validationPhrase({required Object prenom, required Object classe}) => 'L\'académie doit encore valider l\'inscription de ${prenom} dans ${classe}.';
+	/// fr: 'L'académie doit encore valider l'inscription {dePrenom} dans {classe}.'
+	String validationPhrase({required Object dePrenom, required Object classe}) => 'L\'académie doit encore valider l\'inscription ${dePrenom} dans ${classe}.';
 
 	/// fr: 'Inscription sur liste d'attente'
 	String get listeAttenteTitre => 'Inscription sur liste d\'attente';
 
-	/// fr: '{prenom} est sur la liste d'attente de {classe}. Aucune place n'est réservée pour l'instant.'
-	String listeAttentePhrase({required Object prenom, required Object classe}) => '${prenom} est sur la liste d\'attente de ${classe}. Aucune place n\'est réservée pour l\'instant.';
+	/// fr: '{prenom} est sur la liste d'attente {deClasse}. Aucune place n'est réservée pour l'instant.'
+	String listeAttentePhrase({required Object prenom, required Object deClasse}) => '${prenom} est sur la liste d\'attente ${deClasse}. Aucune place n\'est réservée pour l\'instant.';
 
 	/// fr: 'Inscription non acceptée'
 	String get refuseTitre => 'Inscription non acceptée';
@@ -14022,8 +14019,8 @@ class Traductions$tc$classe$roster$fr {
 	/// fr: 'Cette séance n'a aucun élève inscrit.'
 	String get videDetail => 'Cette séance n\'a aucun élève inscrit.';
 
-	/// fr: 'Ouvrir la fiche de {prenom}'
-	String ouvrirFiche({required Object prenom}) => 'Ouvrir la fiche de ${prenom}';
+	/// fr: 'Ouvrir la fiche {dePrenom}'
+	String ouvrirFiche({required Object dePrenom}) => 'Ouvrir la fiche ${dePrenom}';
 
 	/// fr: '{inscrits} / {plafond} places'
 	String places({required Object inscrits, required Object plafond}) => '${inscrits} / ${plafond} places';
@@ -14331,8 +14328,8 @@ class Traductions$tc$classe$barre$fr {
 	/// fr: 'Séance en direct'
 	String get titre => 'Séance en direct';
 
-	/// fr: 'Revenir au cours de {groupe}'
-	String revenir({required Object groupe}) => 'Revenir au cours de ${groupe}';
+	/// fr: 'Revenir au cours {deGroupe}'
+	String revenir({required Object deGroupe}) => 'Revenir au cours ${deGroupe}';
 }
 
 // Path: tc.classe.prevol
@@ -14862,8 +14859,8 @@ class Traductions$tc$observation$annonce$fr {
 
 	// Translations
 
-	/// fr: 'Tuteur de {prenomEnfant} observe'
-	String tuteurObserve({required Object prenomEnfant}) => 'Tuteur de ${prenomEnfant} observe';
+	/// fr: 'Tuteur {dePrenomEnfant} observe'
+	String tuteurObserve({required Object dePrenomEnfant}) => 'Tuteur ${dePrenomEnfant} observe';
 
 	/// fr: '{secondes} s'
 	String restant({required Object secondes}) => '${secondes} s';
@@ -16153,21 +16150,21 @@ extension on Traductions {
 			'salle.seance.coursEnregistreCourt' => 'Le cours est enregistré.',
 			'salle.seance.votreParentObserve' => 'Votre parent observe la séance.',
 			'salle.seance.tonParentObserve' => 'Ton parent observe la séance.',
-			'salle.seance.tuteurDeObserve' => ({required Object prenom}) => 'Tuteur de ${prenom} observe.',
+			'salle.seance.tuteurDeObserve' => ({required Object dePrenom}) => 'Tuteur ${dePrenom} observe.',
 			'salle.seance.unParentObserve' => 'Un parent observe cette séance',
-			'salle.seance.leTuteurDeObserve' => ({required Object prenom}) => 'Le tuteur de ${prenom} observe la séance.',
+			'salle.seance.leTuteurDeObserve' => ({required Object dePrenom}) => 'Le tuteur ${dePrenom} observe la séance.',
 			'salle.seance.mentionEtNotice' => ({required Object mention, required Object notice}) => '${mention} ${notice}',
 			'salle.seance.retour' => 'Retour',
 			'salle.seance.notifications' => 'Notifications',
 			'salle.seance.reglages' => 'Réglages',
-			'salle.seance.compteDe' => ({required Object nom}) => 'Compte de ${nom}',
+			'salle.seance.compteDe' => ({required Object deNom}) => 'Compte ${deNom}',
 			'salle.seance.sortir' => 'Quitter la séance',
 			'salle.seance.compteurEleves' => ({required Object connectes, required Object inscrits}) => 'Élèves ${connectes}/${inscrits}',
 			'salle.seance.parler' => 'Parler',
 			'salle.seance.agrandir' => 'Agrandir',
 			'salle.seance.reduire' => 'Réduire',
 			'salle.seance.rienPartage' => ({required Object nom}) => '${nom} n\'a rien partagé pour l\'instant.',
-			'salle.seance.videoDe' => ({required Object nom}) => 'Vidéo de ${nom}',
+			'salle.seance.videoDe' => ({required Object deNom}) => 'Vidéo ${deNom}',
 			'salle.seance.page' => ({required Object page, required Object pages}) => '${page} / ${pages}',
 			'salle.seance.pageSemantique' => ({required Object page, required Object pages}) => 'Page ${page} sur ${pages}',
 			'salle.seance.zoomLocal' => 'Zoom local, sans effet sur les autres',
@@ -16211,8 +16208,8 @@ extension on Traductions {
 			'salle.seance.aSuivre' => 'À suivre',
 			'salle.seance.vousAppelle' => ({required Object nom}) => '${nom} vous appelle',
 			'salle.seance.signalerBesoin' => 'Signaler un besoin',
-			'salle.seance.deplierFiche' => ({required Object prenom}) => 'Afficher la fiche de ${prenom}',
-			'salle.seance.replierFiche' => ({required Object prenom}) => 'Masquer la fiche de ${prenom}',
+			'salle.seance.deplierFiche' => ({required Object dePrenom}) => 'Afficher la fiche ${dePrenom}',
+			'salle.seance.replierFiche' => ({required Object dePrenom}) => 'Masquer la fiche ${dePrenom}',
 			'salle.seance.fiche.aucuneSeanceSemaine' => 'Aucune séance cette semaine',
 			'salle.seance.fiche.uneSeanceSemaine' => '1 séance cette semaine',
 			'salle.seance.fiche.seancesSemaine' => ({required Object nombre}) => '${nombre} séances cette semaine',
@@ -16637,7 +16634,7 @@ extension on Traductions {
 			'appareils.eleve.connecter' => 'Connecter un appareil',
 			'appareils.eleve.sansDonnees' => 'Les appareils de ce profil n\'ont pas pu être chargés',
 			'appareils.eleve.videTitre' => 'Aucun appareil connecté',
-			'appareils.eleve.vide' => ({required Object prenom}) => 'Connectez la tablette, le téléphone ou l\'ordinateur de ${prenom} avec le code affiché par le bouton ci-dessous.',
+			'appareils.eleve.vide' => ({required Object dePrenom}) => 'Connectez la tablette, le téléphone ou l\'ordinateur ${dePrenom} avec le code affiché par le bouton ci-dessous.',
 			'appareils.eleve.introuvableTitre' => 'Profil élève introuvable',
 			'appareils.eleve.introuvable' => 'Ce profil élève n\'est pas rattaché à votre foyer.',
 			'appareils.eleve.introuvableAction' => 'Voir les appareils du foyer',
@@ -16656,7 +16653,7 @@ extension on Traductions {
 			'appareils.plateforme.windows' => 'Ordinateur',
 			'appareils.plateforme.inconnue' => 'Appareil',
 			'appareils.retrait.question' => 'Retirer cet appareil ?',
-			'appareils.retrait.consequence' => ({required Object appareil, required Object prenom}) => '${appareil} ne pourra plus se connecter au profil de ${prenom}. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.',
+			'appareils.retrait.consequence' => ({required Object appareil, required Object dePrenom}) => '${appareil} ne pourra plus se connecter au profil ${dePrenom}. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.',
 			'appareils.retrait.confirmer' => 'Retirer l\'appareil',
 			'appareils.retrait.enCours' => 'Retrait en cours',
 			'appareils.retrait.reussi' => 'Appareil retiré. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.',
@@ -16677,7 +16674,7 @@ extension on Traductions {
 			'appareils.emetteur.verification.titre' => 'Vérification du code',
 			'appareils.emetteur.verification.phrase' => 'Le code est masqué le temps de vérifier qu\'il est toujours valable.',
 			'appareils.emetteur.confirme.titre' => 'Appareil connecté',
-			'appareils.emetteur.confirme.phrase' => ({required Object prenom}) => 'L\'appareil de ${prenom} est prêt. Le code n\'est plus affiché et ne peut plus servir.',
+			'appareils.emetteur.confirme.phrase' => ({required Object dePrenom}) => 'L\'appareil ${dePrenom} est prêt. Le code n\'est plus affiché et ne peut plus servir.',
 			'appareils.emetteur.confirme.phraseSansPrenom' => 'L\'appareil de l\'élève est prêt. Le code n\'est plus affiché et ne peut plus servir.',
 			'appareils.emetteur.confirme.action' => 'Terminé',
 			'appareils.emetteur.expire.titre' => 'Ce code a expiré',
@@ -16707,7 +16704,7 @@ extension on Traductions {
 			'reglagesEnfant.titre' => 'Réglages par profil élève',
 			'reglagesEnfant.intro' => 'La photo, la caméra et l\'interface de chaque élève se règlent dans sa fiche, depuis le Foyer. Les demandes à l\'administration restent ici.',
 			'reglagesEnfant.renvoi' => 'Photo, caméra et interface',
-			'reglagesEnfant.renvoiLegende' => ({required Object prenom}) => 'Dans la fiche de ${prenom}',
+			'reglagesEnfant.renvoiLegende' => ({required Object dePrenom}) => 'Dans la fiche ${dePrenom}',
 			'foyer.titre' => 'Foyer',
 			'foyer.ajouterProfil' => 'Ajouter un profil élève',
 			'foyer.sousTitre' => 'Les profils élèves de votre foyer',
@@ -16784,7 +16781,7 @@ extension on Traductions {
 			'ficheEleve.lignes.cameraAutorisee' => 'Autorisée',
 			'ficheEleve.lignes.cameraNonAutorisee' => 'Non autorisée',
 			'ficheEleve.lignes.acces' => 'Accès Rewayah',
-			'ficheEleve.lignes.appareils' => ({required Object prenom}) => 'Appareils de ${prenom}',
+			'ficheEleve.lignes.appareils' => ({required Object dePrenom}) => 'Appareils ${dePrenom}',
 			'ficheEleve.lignes.appareilsLegende' => 'Connecter un appareil, voir ceux qui sont reliés, en retirer un',
 			'ficheEleve.informations.titre' => 'Informations de l\'élève',
 			'ficheEleve.informations.identite' => 'Identité',
@@ -16792,7 +16789,7 @@ extension on Traductions {
 			'ficheEleve.informations.identiteNote' => 'Le prénom ne se modifie pas encore depuis cette page.',
 			'ficheEleve.informations.ageNote' => 'L\'âge et la date de naissance ne sont pas encore enregistrés sur le profil.',
 			'ficheEleve.informations.photo' => 'Photo',
-			'ficheEleve.informations.photoLegende' => ({required Object prenom}) => 'Une photo du visage de ${prenom}. Ce n\'est pas une pièce d\'identité.',
+			'ficheEleve.informations.photoLegende' => ({required Object dePrenom}) => 'Une photo du visage ${dePrenom}. Ce n\'est pas une pièce d\'identité.',
 			'ficheEleve.informations.photoAucune' => 'Pas encore de photo',
 			'ficheEleve.informations.photoPresente' => 'Photo enregistrée',
 			'ficheEleve.informations.choisir' => 'Choisir une photo',
@@ -16830,22 +16827,22 @@ extension on Traductions {
 			'ficheEleve.inscription.classeEchec' => 'La classe n\'a pas pu être lue.',
 			'ficheEleve.inscription.relireClasse' => 'Relire la classe',
 			'ficheEleve.interface.titre' => 'Interface',
-			'ficheEleve.interface.intro' => ({required Object prenom}) => 'Choisissez comment Rewayah s\'affiche sur l\'appareil de ${prenom}. Vous pourrez changer ce choix à tout moment.',
+			'ficheEleve.interface.intro' => ({required Object dePrenom}) => 'Choisissez comment Rewayah s\'affiche sur l\'appareil ${dePrenom}. Vous pourrez changer ce choix à tout moment.',
 			'ficheEleve.interface.guidee' => 'Mode Accessibilité',
 			'ficheEleve.interface.guideeDescription' => ({required Object prenom}) => 'Quand ${prenom} préfère des écrans aérés : textes plus grands, une action à la fois. Mêmes rubriques et mêmes droits.',
 			'ficheEleve.interface.standard' => 'Présentation standard',
 			'ficheEleve.interface.standardDescription' => ({required Object prenom}) => 'Quand ${prenom} est à l\'aise avec des écrans plus denses : plus d\'informations par écran. Mêmes rubriques et mêmes droits.',
 			'ficheEleve.interface.politique' => 'Vous choisissez ce réglage. Aucune raison n\'est demandée, et l\'enseignant voit seulement le nom du mode.',
-			'ficheEleve.interface.application' => ({required Object prenom}) => 'Le changement s\'applique à la prochaine ouverture de Rewayah sur l\'appareil de ${prenom}.',
+			'ficheEleve.interface.application' => ({required Object dePrenom}) => 'Le changement s\'applique à la prochaine ouverture de Rewayah sur l\'appareil ${dePrenom}.',
 			'ficheEleve.interface.demandeEleve' => 'La demande de changement par l\'élève lui-même n\'est pas encore proposée.',
 			'ficheEleve.interface.enCours' => 'Enregistrement en cours',
-			'ficheEleve.interface.echec' => ({required Object prenom}) => 'Le changement n\'a pas été enregistré, probablement à cause d\'une coupure de connexion avec Rewayah. Vérifiez votre connexion, puis touchez de nouveau votre choix. La présentation actuelle de ${prenom} reste inchangée sur son appareil.',
+			'ficheEleve.interface.echec' => ({required Object dePrenom}) => 'Le changement n\'a pas été enregistré, probablement à cause d\'une coupure de connexion avec Rewayah. Vérifiez votre connexion, puis touchez de nouveau votre choix. La présentation actuelle ${dePrenom} reste inchangée sur son appareil.',
 			'ficheEleve.interface.horsLigne' => 'La présentation pourra être changée quand la connexion reviendra.',
 			'ficheEleve.camera.titre' => 'Caméra en cours',
 			'ficheEleve.camera.ligne' => 'Caméra pendant les séances',
 			'ficheEleve.camera.autorisee' => ({required Object prenom}) => '${prenom} peut allumer sa caméra pendant les séances.',
 			'ficheEleve.camera.interdite' => ({required Object prenom}) => 'Le bouton caméra n\'apparaîtra pas pour ${prenom} pendant les séances.',
-			'ficheEleve.camera.application' => ({required Object prenom}) => 'Le changement compte à la prochaine entrée de ${prenom} en séance.',
+			'ficheEleve.camera.application' => ({required Object dePrenom}) => 'Le changement compte à la prochaine entrée ${dePrenom} en séance.',
 			'ficheEleve.camera.distincte' => 'Ce réglage ne change pas l\'autorisation caméra de l\'appareil, celle que le téléphone demande pour lire un QR code.',
 			'ficheEleve.camera.echec' => 'Le changement n\'a pas été enregistré. Réessayez.',
 			'ficheEleve.camera.horsLigne' => 'La caméra pourra être réglée quand la connexion reviendra.',
@@ -16929,12 +16926,12 @@ extension on Traductions {
 			'eleveConnexion.profils.phrase' => 'Touche ton prénom pour continuer.',
 			'eleveConnexion.profils.ajouter' => 'Ajouter un profil sur cet appareil',
 			'eleveConnexion.profils.ajouterLegende' => 'Avec le code affiché par le tuteur',
-			'eleveConnexion.profils.profilLibelle' => ({required Object prenom}) => 'Continuer en tant que ${prenom}',
+			'eleveConnexion.profils.profilLibelle' => ({required Object quePrenom}) => 'Continuer en tant ${quePrenom}',
 			'eleveConnexion.profils.videTitre' => 'Aucun profil sur cet appareil',
 			'eleveConnexion.profils.vide' => 'Pour utiliser cet appareil, le tuteur doit afficher un nouveau code sur son propre appareil.',
 			'eleveConnexion.profils.videAction' => 'Saisir un code',
 			'eleveConnexion.profils.retire' => ({required Object prenom}) => 'Cet appareil a été retiré pour ${prenom}. Demande au tuteur de le reconnecter avec un nouveau code.',
-			'eleveConnexion.profils.jetonAbsent' => ({required Object prenom}) => 'Cet appareil ne retrouve plus la connexion de ${prenom}. Demande au tuteur d\'afficher un nouveau code, puis saisis-le ici.',
+			'eleveConnexion.profils.jetonAbsent' => ({required Object dePrenom}) => 'Cet appareil ne retrouve plus la connexion ${dePrenom}. Demande au tuteur d\'afficher un nouveau code, puis saisis-le ici.',
 			'eleveConnexion.pin.bonjour' => ({required Object prenom}) => 'Bonjour ${prenom}',
 			'eleveConnexion.pin.creer' => 'Choisis ton code personnel',
 			'eleveConnexion.pin.creerPhrase' => 'Quatre chiffres, rien que pour toi. Il reste sur cet appareil.',
@@ -17135,9 +17132,9 @@ extension on Traductions {
 			'admin.tableau.outilsAccesAgents' => 'Accès des agents IA',
 			'admin.tableau.outilsAccesAgentsDetail' => 'Ouvrir un accès en lecture seule, borné dans le temps, sur le parcours d\'une personne.',
 			'admin.tableau.outilsGroupesDetail' => 'Les classes, leurs élèves et leur enseignant.',
-			'admin.tableau.ligneDossier' => ({required Object prenom}) => 'Dossier d\'identité de ${prenom}',
+			'admin.tableau.ligneDossier' => ({required Object dePrenom}) => 'Dossier d\'identité ${dePrenom}',
 			'admin.tableau.ligneReaffectation' => ({required Object prenom}) => 'Changement d\'enseignant pour ${prenom}',
-			'admin.tableau.lignePlafond' => ({required Object prenom}) => 'Plafond d\'élèves de ${prenom}',
+			'admin.tableau.lignePlafond' => ({required Object dePrenom}) => 'Plafond d\'élèves ${dePrenom}',
 			'admin.tableau.ligneRegle' => ({required Object prenom}) => 'Changement de règle pour ${prenom}',
 			'admin.tableau.attenteAujourdhui' => 'Déposé aujourd\'hui',
 			'admin.tableau.attenteUnJour' => 'En attente depuis 1 jour',
@@ -17155,7 +17152,7 @@ extension on Traductions {
 			'admin.demandes.roleController' => 'un contrôleur',
 			'admin.demandes.roleInconnu' => 'une partie au dossier',
 			'admin.demandes.reclame' => 'Ce qui est demandé',
-			'admin.demandes.reclameReaffectation' => ({required Object prenom}) => 'Changer l\'enseignant de ${prenom}',
+			'admin.demandes.reclameReaffectation' => ({required Object dePrenom}) => 'Changer l\'enseignant ${dePrenom}',
 			'admin.demandes.reclamePlafond' => ({required Object valeur}) => 'Porter le plafond à ${valeur} élèves',
 			'admin.demandes.reclameRegle' => ({required Object regle, required Object valeur}) => 'Porter ${regle} à ${valeur} min',
 			'admin.demandes.reclameRegleSansValeur' => ({required Object regle}) => 'Revoir ${regle}',
@@ -17167,7 +17164,7 @@ extension on Traductions {
 			'admin.demandes.motifRequis' => 'Un refus doit dire pourquoi : c\'est la seule phrase que la partie recevra.',
 			'admin.demandes.effet' => 'Accorder applique l\'effet en base : l\'affectation se clôt, ou la règle se pose. Cet écran ne fait que rendre le verdict.',
 			'admin.demandes.journalisation' => 'Chaque décision et chaque règle posée sont inscrites au journal d\'audit, avec votre nom.',
-			'admin.demandes.feuille' => ({required Object prenom}) => 'Les règles de ${prenom}',
+			'admin.demandes.feuille' => ({required Object dePrenom}) => 'Les règles ${dePrenom}',
 			'admin.demandes.feuilleIntro' => 'La valeur de la plateforme et celle qui s\'applique, côte à côte. Une règle se change ici sans qu\'une demande existe.',
 			'admin.demandes.regleDuree' => 'Durée d\'une séance',
 			'admin.demandes.regleMinimum' => 'Durée minimale payable',
@@ -17186,7 +17183,7 @@ extension on Traductions {
 			'admin.demandes.historiqueLigne' => ({required Object valeur, required Object debut, required Object fin}) => '${valeur}, du ${debut} au ${fin}',
 			'admin.demandes.historiqueMotifs' => ({required Object motif, required Object cloture}) => 'Posée : ${motif}. Close : ${cloture}.',
 			'admin.demandes.poserTitre' => ({required Object regle, required Object prenom}) => '${regle}, pour ${prenom}',
-			'admin.demandes.cloreTitre' => ({required Object prenom}) => 'Clore la surcharge de ${prenom}',
+			'admin.demandes.cloreTitre' => ({required Object dePrenom}) => 'Clore la surcharge ${dePrenom}',
 			'admin.demandes.poserMotif' => 'Pourquoi ce changement ?',
 			'admin.demandes.poserMotifRequis' => 'Une règle sans motif ne se relit pas six mois plus tard.',
 			'admin.demandes.poserEnvoyer' => 'Poser la règle',
@@ -17224,7 +17221,7 @@ extension on Traductions {
 			'admin.attribution.journalisation' => 'Chaque attribution est journalisée : qui a décidé, quand, sur quelle heure, et le motif s\'il a fallu passer outre.',
 			'admin.attribution.effet' => 'L\'élève quitte cette file et ses cours sont posés au calendrier tout de suite.',
 			'admin.attribution.erreur' => ({required Object message}) => 'L\'attribution n\'a pas abouti : ${message}',
-			'admin.groupes.titre' => 'Groupes',
+			'admin.groupes.titre' => 'Classes',
 			'admin.groupes.intro' => 'Chaque groupe réunit un enseignant et ses élèves autour d\'un créneau commun : c\'est là que se donne le cours.',
 			'admin.groupes.colonneGroupe' => 'Groupe',
 			'admin.groupes.colonneEnseignant' => 'Enseignant',
@@ -17270,10 +17267,10 @@ extension on Traductions {
 			'admin.groupes.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
 			'admin.groupes.ajouterEnvoyer' => 'Ajouter',
 			'admin.groupes.ajouterErreur' => ({required Object message}) => 'L\'ajout n\'a pas abouti : ${message}',
-			'admin.groupes.retirerTitre' => ({required Object prenom, required Object libelle}) => 'Retirer ${prenom} de ${libelle}',
+			'admin.groupes.retirerTitre' => ({required Object prenom, required Object deLibelle}) => 'Retirer ${prenom} ${deLibelle}',
 			'admin.groupes.retirerEnvoyer' => 'Retirer',
 			'admin.groupes.retirerErreur' => ({required Object message}) => 'Le retrait n\'a pas abouti : ${message}',
-			'admin.groupes.modifierSeuilTitre' => ({required Object libelle}) => 'Seuil maximal de ${libelle}',
+			'admin.groupes.modifierSeuilTitre' => ({required Object deLibelle}) => 'Seuil maximal ${deLibelle}',
 			'admin.groupes.modifierSeuilEnvoyer' => 'Enregistrer',
 			'admin.groupes.modifierSeuilErreur' => ({required Object message}) => 'La modification n\'a pas abouti : ${message}',
 			'admin.groupes.cloturerTitre' => ({required Object libelle}) => 'Clôturer ${libelle}',
@@ -17380,8 +17377,8 @@ extension on Traductions {
 			'admin.conservationDonnees.documentsIdentite' => 'Documents d\'identité',
 			'admin.conservationDonnees.documentsIdentiteDetail' => 'Le nombre de jours pendant lesquels un document d\'identité déposé reste accessible avant sa purge.',
 			'admin.conservationDonnees.uniteJours' => ({required Object n}) => '${n} j',
-			'admin.politiqueRevueKyc.titre' => 'Politique de genre pour la revue KYC',
-			'admin.politiqueRevueKyc.libelle' => 'Limiter la revue KYC selon le genre',
+			'admin.politiqueRevueKyc.titre' => 'Vérification des enseignants selon le genre',
+			'admin.politiqueRevueKyc.libelle' => 'Limiter la vérification des enseignants selon le genre',
 			'admin.politiqueRevueKyc.aide' => 'Lorsque cette règle est désactivée, tout membre autorisé à revoir les dossiers peut traiter les dossiers de son périmètre, quel que soit son genre.',
 			'admin.politiqueRevueKyc.echecEnregistrement' => _root.admin.groupes.observationErreur,
 			'admin.evaluations.titre' => 'Évaluations',
@@ -17424,11 +17421,11 @@ extension on Traductions {
 			'admin.evaluations.planifierErreur' => ({required Object message}) => 'La planification n\'a pas abouti : ${message}',
 			'admin.evaluations.actionEnregistrerResultat' => 'Enregistrer le résultat',
 			'admin.evaluations.actionAnnuler' => 'Annuler l\'évaluation',
-			'admin.evaluations.resultatTitre' => ({required Object eleve}) => 'Résultat de ${eleve}',
+			'admin.evaluations.resultatTitre' => ({required Object deEleve}) => 'Résultat ${deEleve}',
 			'admin.evaluations.champNotes' => 'Notes (optionnelles)',
 			'admin.evaluations.resultatEnvoyer' => 'Enregistrer',
 			'admin.evaluations.resultatErreur' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
-			'admin.evaluations.annulerTitre' => ({required Object eleve}) => 'Annuler l\'évaluation de ${eleve}',
+			'admin.evaluations.annulerTitre' => ({required Object deEleve}) => 'Annuler l\'évaluation ${deEleve}',
 			'admin.evaluations.annulerEnvoyer' => 'Annuler',
 			'admin.evaluations.annulerErreur' => ({required Object message}) => 'L\'annulation n\'a pas abouti : ${message}',
 			'admin.evaluations.champMotif' => 'Motif',
@@ -17459,10 +17456,10 @@ extension on Traductions {
 			'admin.progression.poserExceptionTitre' => ({required Object type, required Object eleve}) => '${type} pour ${eleve}',
 			'admin.progression.poserExceptionEnvoyer' => 'Poser l\'exception',
 			'admin.progression.poserExceptionErreur' => ({required Object message}) => 'La pose n\'a pas abouti : ${message}',
-			'admin.progression.clorerExceptionTitre' => ({required Object eleve}) => 'Clore l\'exception de ${eleve}',
+			'admin.progression.clorerExceptionTitre' => ({required Object deEleve}) => 'Clore l\'exception ${deEleve}',
 			'admin.progression.clorerExceptionEnvoyer' => 'Clore',
 			'admin.progression.clorerExceptionErreur' => ({required Object message}) => 'La clôture n\'a pas abouti : ${message}',
-			'admin.progression.promouvoirTitre' => ({required Object eleve}) => 'Changer le niveau de ${eleve}',
+			'admin.progression.promouvoirTitre' => ({required Object deEleve}) => 'Changer le niveau ${deEleve}',
 			'admin.progression.promouvoirChampNiveau' => 'Nouveau niveau',
 			'admin.progression.promouvoirEnvoyer' => 'Enregistrer',
 			'admin.progression.promouvoirErreur' => ({required Object message}) => 'Le changement n\'a pas abouti : ${message}',
@@ -17661,6 +17658,7 @@ extension on Traductions {
 			'admin.comptes.etatProvisoire' => 'Provisoire',
 			'admin.comptes.etatSuspendu' => 'Suspendu',
 			'admin.comptes.etatInconnu' => 'État inconnu',
+			'admin.comptes.etatSansDecision' => 'Sans décision',
 			'admin.comptes.roleAdmin' => 'Administration',
 			'admin.comptes.roleComptable' => 'Comptable',
 			'admin.comptes.roleControleur' => 'Contrôleur',
@@ -17683,7 +17681,7 @@ extension on Traductions {
 			'admin.agents.libelle' => 'À quoi sert ce jeton',
 			'admin.agents.libelleAide' => 'Obligatoire. Un jeton sans nom est un jeton que personne n\'ose révoquer.',
 			'admin.agents.libelleExemple' => 'Relecture du suivi de Maryam',
-			'admin.agents.libelleAuto' => ({required Object prenom, required Object date, required Object duree}) => 'Observation de ${prenom}, le ${date}, ${duree} h',
+			'admin.agents.libelleAuto' => ({required Object dePrenom, required Object date, required Object duree}) => 'Observation ${dePrenom}, le ${date}, ${duree} h',
 			'admin.agents.manqueLibelle' => 'Il manque le nom du jeton : écrivez à quoi il sert.',
 			'admin.agents.manquePersonne' => 'Il manque la personne observée : choisissez-la dans la liste.',
 			'admin.agents.qui' => 'Qui l\'agent observe',
@@ -17766,7 +17764,7 @@ extension on Traductions {
 			'choix.autre' => 'Autre',
 			'choix.autreInvite' => 'Précisez',
 			'choix.selectionMultiple' => 'Plusieurs réponses possibles',
-			'parcours.titre' => ({required Object prenom}) => 'Le parcours de ${prenom}',
+			'parcours.titre' => ({required Object dePrenom}) => 'Le parcours ${dePrenom}',
 			'parcours.intro' => 'Quelques questions pour personnaliser votre parcours. Vous ne verrez ensuite que les horaires et options adaptés à votre situation.',
 			'parcours.reprendre' => 'Reprendre',
 			'parcours.commencer' => 'Personnaliser le parcours',
@@ -17839,14 +17837,14 @@ extension on Traductions {
 			'parcours.etatOffreIndisponible' => 'Cet horaire n\'est plus proposé',
 			'parcours.etatOffreIndisponibleDetail' => ({required Object prenom}) => 'L\'horaire retenu pour ${prenom} a été retiré avant qu\'une classe soit constituée. Choisissez-en un autre : rien n\'est perdu.',
 			'parcours.etatDiagnosticRequis' => 'Préférence enregistrée',
-			'parcours.etatDiagnosticRequisDetail' => ({required Object prenom}) => 'Il reste un échange avec un enseignant pour situer le niveau de ${prenom}. L\'académie vous proposera un rendez-vous.',
+			'parcours.etatDiagnosticRequisDetail' => ({required Object dePrenom}) => 'Il reste un échange avec un enseignant pour situer le niveau ${dePrenom}. L\'académie vous proposera un rendez-vous.',
 			'parcours.etatDiagnosticEnAttente' => 'Rendez-vous prévu',
-			'parcours.etatDiagnosticEnAttenteDetail' => ({required Object prenom}) => 'Un échange est prévu pour situer le niveau de ${prenom}.',
+			'parcours.etatDiagnosticEnAttenteDetail' => ({required Object dePrenom}) => 'Un échange est prévu pour situer le niveau ${dePrenom}.',
 			'parcours.etatClasseEnFormation' => 'Classe en cours de constitution',
 			'parcours.etatClasseEnFormationDetail' => ({required Object minimum}) => 'Une classe démarre à partir de ${minimum} élèves. Nous vous préviendrons dès qu\'elle est confirmée.',
 			'parcours.etatClasseEnFormationDetailSansMinimum' => 'Une classe démarre à partir d\'un certain nombre d\'élèves. Nous vous préviendrons dès qu\'elle est confirmée.',
 			'parcours.etatClasseConfirmee' => 'Classe confirmée',
-			'parcours.etatClasseConfirmeeDetail' => ({required Object prenom}) => 'La classe de ${prenom} est constituée. Vous retrouverez ses séances dans son espace.',
+			'parcours.etatClasseConfirmeeDetail' => ({required Object dePrenom}) => 'La classe ${dePrenom} est constituée. Vous retrouverez ses séances dans son espace.',
 			'parcours.fuseauChange' => 'Votre lieu a changé depuis ce choix',
 			'parcours.fuseauChangeDetail' => 'L\'horaire est le même pour l\'académie, mais il ne tombe plus à la même heure chez vous. Vérifiez qu\'il vous convient toujours.',
 			'parcours.voirHoraires' => 'Voir les horaires',
@@ -17978,11 +17976,11 @@ extension on Traductions {
 			'compte.accesJusqua' => ({required Object date}) => 'Accès jusqu\'au ${date}',
 			'compte.statutActif' => 'Actif',
 			'compte.statutProvisoire' => 'Actif, à titre provisoire',
-			'compte.profilEnfant' => ({required Object prenom}) => 'Profil de ${prenom}',
+			'compte.profilEnfant' => ({required Object dePrenom}) => 'Profil ${dePrenom}',
 			'compte.identifiantEnfant' => ({required Object identifiant}) => 'Identifiant : ${identifiant}',
-			'compte.roles.admin' => 'Administrateur',
 			_ => null,
 		} ?? switch (path) {
+			'compte.roles.admin' => 'Administrateur',
 			'compte.roles.accountant' => 'Comptable',
 			'compte.roles.controller' => 'Contrôleur',
 			'compte.roles.teacher' => 'Enseignant',
@@ -18142,7 +18140,7 @@ extension on Traductions {
 			'historique.etat.nonTenu' => 'Cours non tenu',
 			'historique.presenceIllisible' => 'La présence n\'a pas pu être lue : les états restent inconnus pour le moment.',
 			'historique.seances.videTitre' => 'Aucune séance passée',
-			'historique.seances.videPhrase' => ({required Object prenom}) => 'Les séances passées de ${prenom} s\'afficheront ici.',
+			'historique.seances.videPhrase' => ({required Object dePrenom}) => 'Les séances passées ${dePrenom} s\'afficheront ici.',
 			'historique.seances.videPhraseFoyer' => 'Les séances passées des profils élèves s\'afficheront ici.',
 			'historique.seances.filtreVideTitre' => 'Aucune séance ne correspond',
 			'historique.seances.filtreVidePhrase' => 'Changez les filtres pour retrouver les autres séances.',
@@ -18151,7 +18149,7 @@ extension on Traductions {
 			'historique.observations.indisponibleTitre' => 'Historique des observations indisponible',
 			'historique.observations.indisponiblePhrase' => 'Les visites enregistrées ne peuvent pas encore être lues dans l\'application.',
 			'historique.observations.videTitre' => 'Aucune observation',
-			'historique.observations.videPhrase' => ({required Object prenom}) => 'Les visites que vous faites pendant les séances de ${prenom} s\'afficheront ici.',
+			'historique.observations.videPhrase' => ({required Object dePrenom}) => 'Les visites que vous faites pendant les séances ${dePrenom} s\'afficheront ici.',
 			'historique.observations.videPhraseFoyer' => 'Vos visites pendant les séances s\'afficheront ici.',
 			'historique.observations.filtreVideTitre' => 'Aucune observation ne correspond',
 			'historique.observations.filtreVidePhrase' => 'Changez les filtres pour retrouver les autres visites.',
@@ -18165,7 +18163,7 @@ extension on Traductions {
 			'historique.observations.ouvrir' => ({required Object date, required Object classe, required Object etat}) => 'Observations du ${date}, ${classe}, ${etat}',
 			'historique.seance.titreSansClasse' => ({required Object date}) => 'Séance du ${date}',
 			'historique.seance.blocSeance' => 'La séance',
-			'historique.seance.blocPresence' => ({required Object prenom}) => 'Présence de ${prenom}',
+			'historique.seance.blocPresence' => ({required Object dePrenom}) => 'Présence ${dePrenom}',
 			'historique.seance.date' => 'Date',
 			'historique.seance.horaire' => 'Horaire',
 			'historique.seance.dureePrevue' => 'Durée prévue',
@@ -18264,7 +18262,7 @@ extension on Traductions {
 			'tuteur.accueil.titre' => 'Accueil',
 			'tuteur.accueil.voirLaClasse' => 'Voir la classe',
 			'tuteur.accueil.prochaineSeance' => 'Prochaine séance',
-			'tuteur.accueil.heureDe' => ({required Object ville}) => 'Heure de ${ville}',
+			'tuteur.accueil.heureDe' => ({required Object deVille}) => 'Heure ${deVille}',
 			'tuteur.accueil.heureAppareil' => 'Heure de cet appareil',
 			'tuteur.accueil.dateEtFuseau' => ({required Object date, required Object fuseau}) => '${date} · ${fuseau}',
 			'tuteur.accueil.heureClasse' => ({required Object heure, required Object ville}) => 'Heure de la classe : ${heure} ${ville}',
@@ -18277,12 +18275,12 @@ extension on Traductions {
 			'tuteur.accueil.pastilleNonTenue' => 'Non tenue',
 			'tuteur.accueil.pastilleTerminee' => 'Terminée',
 			'tuteur.accueil.aucuneSeance' => 'Aucune séance planifiée',
-			'tuteur.accueil.aucuneSeanceDetail' => ({required Object prenom}) => 'La prochaine séance de ${prenom} apparaîtra ici dès qu\'elle sera programmée.',
+			'tuteur.accueil.aucuneSeanceDetail' => ({required Object dePrenom}) => 'La prochaine séance ${dePrenom} apparaîtra ici dès qu\'elle sera programmée.',
 			'tuteur.accueil.seanceIllisible' => 'La prochaine séance n\'a pas pu être lue.',
 			'tuteur.accueil.classeIndisponible' => 'Le détail de la classe n\'est pas encore disponible ici.',
 			'tuteur.accueil.classeIllisible' => 'La classe n\'a pas pu être lue.',
 			'tuteur.accueil.sansClasseTitre' => ({required Object prenom}) => 'Aucune classe pour ${prenom}',
-			'tuteur.accueil.sansClassePhrase' => ({required Object prenom}) => 'Choisissez une classe pour que ${prenom} puisse commencer les cours.',
+			'tuteur.accueil.sansClassePhrase' => ({required Object quePrenom}) => 'Choisissez une classe pour ${quePrenom} puisse commencer les cours.',
 			'tuteur.accueil.foyerVideTitre' => 'Aucun profil élève pour l\'instant',
 			'tuteur.accueil.foyerVidePhrase' => 'Ajoutez un profil élève pour choisir une classe et suivre ses séances.',
 			'tuteur.accueil.ajouterProfil' => 'Ajouter un profil élève',
@@ -18340,8 +18338,6 @@ extension on Traductions {
 			'tuteur.accueil.blocReglagesDetail' => 'Photo, caméra et affichage, enfant par enfant.',
 			'tuteur.accueil.blocGroupesDetail' => 'Le groupe, l\'enseignant et le prochain cours de chaque enfant.',
 			'tuteur.accueil.acces' => 'Accès',
-			'tuteur.accueil.accesJusqua' => ({required Object prenom, required Object date}) => 'Accès de ${prenom} jusqu\'au ${date}',
-			'tuteur.accueil.accesSansFin' => ({required Object prenom}) => 'Accès de ${prenom} sans date de fin',
 			'tuteur.accueil.aucunEnfant' => 'Aucun enfant dans le foyer',
 			'tuteur.accueil.aucunEnfantDetail' => 'Ajoutez votre premier enfant pour commencer.',
 			'tuteur.accueil.erreur' => 'Le foyer n\'a pas pu être lu en entier. Réessayez dans un instant.',
@@ -18349,15 +18345,15 @@ extension on Traductions {
 			'tuteur.reglages.intro' => 'Ces réglages s\'appliquent à la séance suivante, jamais pendant un cours.',
 			'tuteur.reglages.photo' => 'Photo',
 			'tuteur.reglages.photoAucune' => ({required Object prenom}) => '${prenom} n\'a pas encore de photo. Elle reste visible du seul foyer.',
-			'tuteur.reglages.photoPresente' => ({required Object prenom}) => 'La photo de ${prenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.',
+			'tuteur.reglages.photoPresente' => ({required Object dePrenom}) => 'La photo ${dePrenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.',
 			'tuteur.reglages.photoAjouter' => 'Ajouter une photo',
 			'tuteur.reglages.photoChanger' => 'Changer la photo',
 			'tuteur.reglages.photoTropLourde' => ({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.',
 			'tuteur.reglages.camera' => 'Caméra',
 			'tuteur.reglages.cameraAutorisee' => ({required Object prenom}) => '${prenom} peut allumer sa caméra pendant le cours.',
 			'tuteur.reglages.cameraInterdite' => ({required Object prenom}) => 'Le bouton caméra n\'apparaîtra pas pour ${prenom}.',
-			'tuteur.reglages.cameraAutoriser' => ({required Object prenom}) => 'Autoriser la caméra de ${prenom}',
-			'tuteur.reglages.cameraRetirer' => ({required Object prenom}) => 'Retirer la caméra de ${prenom}',
+			'tuteur.reglages.cameraAutoriser' => ({required Object dePrenom}) => 'Autoriser la caméra ${dePrenom}',
+			'tuteur.reglages.cameraRetirer' => ({required Object dePrenom}) => 'Retirer la caméra ${dePrenom}',
 			'tuteur.reglages.mode' => 'Affichage',
 			'tuteur.reglages.modeEnfant' => ({required Object prenom}) => 'Grand affichage, sans lecture : ${prenom} reconnaît des images et écoute.',
 			'tuteur.reglages.modeStandard' => ({required Object prenom}) => 'Affichage courant : ${prenom} lit son écran.',
@@ -18368,8 +18364,8 @@ extension on Traductions {
 			'tuteur.reglages.demandeDuree' => 'Changer la durée des cours',
 			'tuteur.reglages.demandeMinimum' => 'Changer la durée minimale payable',
 			'tuteur.reglages.demandeSansEnseignant' => ({required Object prenom}) => '${prenom} n\'a pas encore d\'enseignant : il n\'y a rien à changer.',
-			'tuteur.reglages.demandeTitreReaffectation' => ({required Object prenom}) => 'Changer l\'enseignant de ${prenom}',
-			'tuteur.reglages.demandeTitreDuree' => ({required Object prenom}) => 'La durée des cours de ${prenom}',
+			'tuteur.reglages.demandeTitreReaffectation' => ({required Object dePrenom}) => 'Changer l\'enseignant ${dePrenom}',
+			'tuteur.reglages.demandeTitreDuree' => ({required Object dePrenom}) => 'La durée des cours ${dePrenom}',
 			'tuteur.reglages.demandeTitreMinimum' => ({required Object prenom}) => 'La durée minimale payable pour ${prenom}',
 			'tuteur.reglages.demandeActuelle' => ({required Object minutes}) => 'Aujourd\'hui : ${minutes} min',
 			'tuteur.reglages.demandeMinutes' => ({required Object minutes}) => '${minutes} min',
@@ -18383,7 +18379,7 @@ extension on Traductions {
 			'classe.entree.coursDans' => ({required Object duree}) => 'Cours dans ${duree}',
 			'classe.entree.coursImminent' => 'Cours dans moins d\'une minute',
 			'classe.entree.rejoindre' => 'Rejoindre',
-			'classe.entree.rejoindreLecteur' => ({required Object classe}) => 'Rejoindre la séance de ${classe}',
+			'classe.entree.rejoindreLecteur' => ({required Object deClasse}) => 'Rejoindre la séance ${deClasse}',
 			'classe.entree.salleOuverte' => ({required Object duree}) => 'La salle est ouverte. La séance commence dans ${duree}.',
 			'classe.entree.salleOuverteImminent' => 'La salle est ouverte. La séance commence dans moins d\'une minute.',
 			'classe.entree.preparation' => 'Préparation en cours',
@@ -18440,7 +18436,7 @@ extension on Traductions {
 			'classe.introuvableTitre' => 'Cette classe n\'est pas ouverte à ce profil',
 			'classe.introuvablePhrase' => 'Elle a peut-être pris fin, ou elle concerne un autre élève du foyer.',
 			'classe.seance.aucune' => 'Aucune séance planifiée',
-			'classe.seance.aucuneDetail' => ({required Object prenom}) => 'La prochaine séance de ${prenom} apparaîtra ici dès qu\'elle sera programmée.',
+			'classe.seance.aucuneDetail' => ({required Object dePrenom}) => 'La prochaine séance ${dePrenom} apparaîtra ici dès qu\'elle sera programmée.',
 			'classe.seance.illisible' => 'La prochaine séance n\'a pas pu être lue.',
 			'classe.seance.presence' => ({required Object prenom, required Object etat}) => '${prenom} : ${etat}',
 			'classe.observation.commentCaMarche' => 'Comment ça marche ?',
@@ -18461,8 +18457,8 @@ extension on Traductions {
 			'classe.observation.motif.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
 			'classe.observation.motif.observationDesactivee' => 'L\'observation est fermée pour cette classe.',
 			'classe.observation.motif.lienAbsent' => 'Aucun élève de votre foyer n\'est rattaché à cette séance.',
-			'classe.observation.motif.enfantAbsent' => ({required Object prenom}) => 'L\'observation attend l\'arrivée de ${prenom}.',
-			'classe.observation.motif.presenceEnVerification' => ({required Object prenom}) => 'La présence de ${prenom} est en cours de vérification.',
+			'classe.observation.motif.enfantAbsent' => ({required Object dePrenom}) => 'L\'observation attend l\'arrivée ${dePrenom}.',
+			'classe.observation.motif.presenceEnVerification' => ({required Object dePrenom}) => 'La présence ${dePrenom} est en cours de vérification.',
 			'classe.observation.motif.visiteDejaOuverte' => 'Une visite est déjà ouverte, sur cet appareil ou sur un autre.',
 			'classe.observation.motif.garantieServeurAbsente' => 'L\'observation des séances n\'est pas encore ouverte.',
 			'classe.observation.motif.reseau' => 'La disponibilité de l\'observation n\'a pas pu être vérifiée.',
@@ -18471,7 +18467,7 @@ extension on Traductions {
 			'classe.pagePlanning.ligne' => ({required Object heure, required Object duree}) => '${heure} · ${duree}',
 			'classe.pagePlanning.ligneFuseau' => ({required Object heure, required Object fuseau, required Object duree}) => '${heure} (${fuseau}) · ${duree}',
 			'classe.pagePlanning.aucune' => 'Aucune séance à venir pour l\'instant',
-			'classe.pagePlanning.aucuneDetail' => ({required Object prenom}) => 'Les prochaines séances de ${prenom} apparaîtront ici dès qu\'elles seront programmées.',
+			'classe.pagePlanning.aucuneDetail' => ({required Object dePrenom}) => 'Les prochaines séances ${dePrenom} apparaîtront ici dès qu\'elles seront programmées.',
 			'classe.pagePlanning.habituelIndisponible' => 'Les jours habituels de la classe ne sont pas encore affichés ici : seules les séances déjà programmées apparaissent.',
 			'classe.pagePlanning.indisponible' => 'Le planning de la classe n\'est pas encore relié à cet espace.',
 			'classe.pageTravail.aucun' => 'Rien à préparer pour l\'instant',
@@ -18486,7 +18482,7 @@ extension on Traductions {
 			'classe.pageRessources.aucune' => 'Aucune ressource pour cette classe pour l\'instant',
 			'classe.pageRessources.aucuneDetail' => 'Les supports choisis par l\'enseignant apparaîtront ici.',
 			'classe.pageRessources.indisponible' => 'La bibliothèque de la classe n\'est pas encore reliée à cet espace.',
-			'classe.pageProgression.indisponible' => ({required Object prenom}) => 'La progression de ${prenom} n\'est pas encore partagée ici.',
+			'classe.pageProgression.indisponible' => ({required Object dePrenom}) => 'La progression ${dePrenom} n\'est pas encore partagée ici.',
 			'classe.pageProgression.niveau' => 'Niveau',
 			'classe.pageProgression.jalons' => 'Étapes franchies',
 			'classe.pageProgression.aucune' => 'Aucune étape partagée pour l\'instant',
@@ -18495,9 +18491,9 @@ extension on Traductions {
 			'classe.pageCatalogue.proposees' => 'Classes proposées',
 			'classe.pageCatalogue.indisponible' => 'Le choix de classe en ligne n\'est pas encore ouvert.',
 			'classe.pageCatalogue.aucune' => 'Aucune classe ne convient pour l\'instant',
+			'classe.pageCatalogue.aucuneDetail' => ({required Object dePrenom}) => 'Aucune classe ouverte ne correspond au profil ${dePrenom} en ce moment.',
 			_ => null,
 		} ?? switch (path) {
-			'classe.pageCatalogue.aucuneDetail' => ({required Object prenom}) => 'Aucune classe ouverte ne correspond au profil de ${prenom} en ce moment.',
 			'classe.pageCatalogue.eleveInconnuTitre' => 'Ce profil n\'est pas dans votre foyer',
 			'classe.pageCatalogue.eleveInconnuPhrase' => 'Revenez à l\'accueil et choisissez le profil élève concerné.',
 			'classe.pageCatalogue.horairesAbsents' => 'Les jours et heures de cette classe ne sont pas encore affichés ici.',
@@ -18526,9 +18522,9 @@ extension on Traductions {
 			'classe.pageCatalogue.resultat.inscritPhrase' => ({required Object prenom, required Object classe}) => '${prenom} rejoint ${classe}.',
 			'classe.pageCatalogue.resultat.voirClasse' => 'Voir la classe',
 			'classe.pageCatalogue.resultat.validationTitre' => 'Demande envoyée',
-			'classe.pageCatalogue.resultat.validationPhrase' => ({required Object prenom, required Object classe}) => 'L\'académie doit encore valider l\'inscription de ${prenom} dans ${classe}.',
+			'classe.pageCatalogue.resultat.validationPhrase' => ({required Object dePrenom, required Object classe}) => 'L\'académie doit encore valider l\'inscription ${dePrenom} dans ${classe}.',
 			'classe.pageCatalogue.resultat.listeAttenteTitre' => 'Inscription sur liste d\'attente',
-			'classe.pageCatalogue.resultat.listeAttentePhrase' => ({required Object prenom, required Object classe}) => '${prenom} est sur la liste d\'attente de ${classe}. Aucune place n\'est réservée pour l\'instant.',
+			'classe.pageCatalogue.resultat.listeAttentePhrase' => ({required Object prenom, required Object deClasse}) => '${prenom} est sur la liste d\'attente ${deClasse}. Aucune place n\'est réservée pour l\'instant.',
 			'classe.pageCatalogue.resultat.refuseTitre' => 'Inscription non acceptée',
 			'classe.pageCatalogue.resultat.refusePhrase' => ({required Object prenom}) => 'Aucune place n\'a été réservée pour ${prenom}. Vous pouvez choisir une autre classe.',
 			'classe.pageCatalogue.resultat.autresClasses' => 'Voir les autres classes',
@@ -18547,10 +18543,10 @@ extension on Traductions {
 			'enseignant.classes.remplacement' => 'Remplacement',
 			'enseignant.classes.rappelCahier' => 'Un cahier de transmission reste à valider',
 			'enseignant.classes.cahierAValider' => 'Cahier de transmission à valider',
-			'enseignant.eleve.titre' => ({required Object prenom}) => 'Fiche de ${prenom}',
+			'enseignant.eleve.titre' => ({required Object dePrenom}) => 'Fiche ${dePrenom}',
 			'enseignant.eleve.retour' => 'Élèves',
 			'enseignant.eleve.identifiant' => ({required Object id}) => 'Identifiant Académie : ${id}',
-			'enseignant.eleve.photo' => ({required Object prenom}) => 'Photo de ${prenom}',
+			'enseignant.eleve.photo' => ({required Object dePrenom}) => 'Photo ${dePrenom}',
 			'enseignant.eleve.niveau' => 'Niveau',
 			'enseignant.eleve.objectif' => 'Objectif',
 			'enseignant.eleve.presence' => 'Présence récente',
@@ -18671,9 +18667,9 @@ extension on Traductions {
 			'enseignant.journee.prochaineSeance' => 'Prochaine séance',
 			'enseignant.journee.maJournee' => 'Ma journée',
 			'enseignant.journee.aTerminer' => 'À terminer',
-			'enseignant.journee.aTerminerVide' => 'Tous vos cahiers sont terminés.',
-			'enseignant.journee.aTerminerSansDonnees' => 'Les cahiers à terminer n\'ont pas pu être lus',
-			'enseignant.journee.aTerminerErreur' => 'Les cahiers à terminer n\'ont pas pu être lus. Réessayez dans un instant.',
+			'enseignant.journee.aTerminerVide' => 'Tous vos cahiers de transmission sont terminés.',
+			'enseignant.journee.aTerminerSansDonnees' => 'Les cahiers de transmission à terminer n\'ont pas pu être lus.',
+			'enseignant.journee.aTerminerErreur' => 'Les cahiers de transmission à terminer n\'ont pas pu être lus. Réessayez dans un instant.',
 			'enseignant.journee.aTerminerAide' => 'Le cahier de transmission aide vos élèves et vous permet d\'ajuster le prochain cours.',
 			'enseignant.journee.rappelCahier' => 'Des cahiers de transmission attendent d\'être terminés',
 			'enseignant.journee.cahierLigne' => ({required Object classe}) => 'Cahier de transmission ${classe}',
@@ -18733,7 +18729,7 @@ extension on Traductions {
 			'enseignant.salle.precedente' => 'Présenter la page précédente',
 			'enseignant.salle.suivante' => 'Présenter la page suivante',
 			'enseignant.salle.bibliotheque' => 'Choisir une sourate',
-			'enseignant.salle.presenterSourate' => ({required Object sourate}) => 'Présenter le début de ${sourate}',
+			'enseignant.salle.presenterSourate' => ({required Object deSourate}) => 'Présenter le début ${deSourate}',
 			'enseignant.salle.sourateDetail' => ({required Object numero, required Object versets}) => 'Sourate ${numero} · ${versets} versets',
 			'enseignant.salle.souratesIndisponibles' => 'La liste des sourates n\'a pas pu être lue',
 			'enseignant.salle.souratesIndisponiblesDetail' => 'Ce que votre Classe voit n\'a pas changé. Réessayez.',
@@ -19009,9 +19005,9 @@ extension on Traductions {
 			'controleur.historique.cleDate' => 'Date',
 			'controleur.historique.cleDuree' => 'Durée observée',
 			'controleur.historique.cleElevesPresents' => 'Présents',
+			'controleur.historique.cleReponse' => 'Réponse',
 			_ => null,
 		} ?? switch (path) {
-			'controleur.historique.cleReponse' => 'Réponse',
 			'controleur.historique.sansComplement' => 'Aucun complément.',
 			'controleur.historique.faitsIndisponibles' => 'Le relevé automatique de cette visite (heures, élèves présents, reconnexions) n\'est pas encore reçu : la séance vient de se terminer ou la connexion a été coupée. Il s\'affichera ici dès sa réception. Le reste du rapport reste fiable.',
 			'controleur.historique.motif' => ({required Object motif}) => 'Motif : ${motif}',
@@ -19154,7 +19150,7 @@ extension on Traductions {
 			'controleur.echanges.envoye' => 'Envoyé.',
 			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.reessayer' => 'Réessayer',
-			'controleur.echanges.nouveauMessage' => ({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}',
+			'controleur.echanges.nouveauMessage' => ({required Object deAuteur, required Object texte}) => 'Nouveau message ${deAuteur} : ${texte}',
 			'controleur.demo.titre' => 'Démonstration contrôleur',
 			'controleur.demo.mention' => 'Données fictives, aucun envoi.',
 			'controleur.demo.intro' => 'Choisissez un écran du contrôle et une situation de visite.',
@@ -19389,7 +19385,7 @@ extension on Traductions {
 			'tc.classe.roster.indisponibleDetail' => 'Les états de vos élèves n\'ont pas pu être lus. Le cours continue.',
 			'tc.classe.roster.vide' => 'Aucun élève inscrit',
 			'tc.classe.roster.videDetail' => 'Cette séance n\'a aucun élève inscrit.',
-			'tc.classe.roster.ouvrirFiche' => ({required Object prenom}) => 'Ouvrir la fiche de ${prenom}',
+			'tc.classe.roster.ouvrirFiche' => ({required Object dePrenom}) => 'Ouvrir la fiche ${dePrenom}',
 			'tc.classe.roster.places' => ({required Object inscrits, required Object plafond}) => '${inscrits} / ${plafond} places',
 			'tc.classe.etat.inconnu' => 'État inconnu',
 			'tc.classe.etat.attendu' => 'Attendu',
@@ -19456,7 +19452,7 @@ extension on Traductions {
 			'tc.classe.lien.echec' => 'Connexion perdue',
 			'tc.classe.lien.retourDeSuspension' => 'Le cours a été mis en pause par le système. Vérification du lien en cours.',
 			'tc.classe.barre.titre' => 'Séance en direct',
-			'tc.classe.barre.revenir' => ({required Object groupe}) => 'Revenir au cours de ${groupe}',
+			'tc.classe.barre.revenir' => ({required Object deGroupe}) => 'Revenir au cours ${deGroupe}',
 			'tc.classe.prevol.titre' => 'Avant d\'ouvrir le cours',
 			'tc.classe.prevol.microOk' => 'Micro détecté',
 			'tc.classe.prevol.microAbsent' => 'Aucun micro utilisable',
@@ -19523,9 +19519,9 @@ extension on Traductions {
 			'tc.observation.disponibilite.fermee' => 'L\'observation des séances par les parents n\'est pas encore ouverte. Elle sera proposée ici dès son ouverture.',
 			'tc.observation.disponibilite.reseauTitre' => 'Vérification impossible',
 			'tc.observation.disponibilite.reseau' => 'La disponibilité de l\'observation n\'a pas pu être vérifiée. Aucune visite n\'a commencé.',
+			'tc.observation.disponibilite.capaciteTitre' => 'Observation indisponible',
 			_ => null,
 		} ?? switch (path) {
-			'tc.observation.disponibilite.capaciteTitre' => 'Observation indisponible',
 			'tc.observation.disponibilite.capacite' => 'L\'observation n\'est pas disponible pour le moment.',
 			'tc.observation.connexion.titre' => 'Connexion et vérification',
 			'tc.observation.connexion.phrase' => 'Vos visites restantes sont vérifiées. La visite commence dès que l\'entrée est acceptée, connexion vidéo comprise.',
@@ -19593,7 +19589,7 @@ extension on Traductions {
 			'tc.observation.resultat.verification' => 'Vérification de vos visites restantes',
 			'tc.observation.resultat.inconnues' => 'Vos visites restantes n\'ont pas pu être vérifiées. Elles le seront de nouveau dans la classe.',
 			'tc.observation.resultat.voirObservations' => 'Voir mes observations',
-			'tc.observation.annonce.tuteurObserve' => ({required Object prenomEnfant}) => 'Tuteur de ${prenomEnfant} observe',
+			'tc.observation.annonce.tuteurObserve' => ({required Object dePrenomEnfant}) => 'Tuteur ${dePrenomEnfant} observe',
 			'tc.observation.annonce.restant' => ({required Object secondes}) => '${secondes} s',
 			'tc.observation.annonce.enfantIndicateur' => 'Ton tuteur regarde le cours',
 			'tc.observation.annonce.tuteursObservent' => ({required Object nombre}) => '${nombre} tuteurs observent',
@@ -19832,7 +19828,7 @@ extension on Traductions {
 			'adulte.invitation.revenirMaFamille' => 'Revenir à Ma famille',
 			'adulte.invitation.detailPhrase' => 'L\'invitation attend sa réponse. Vous pouvez l\'annuler tant qu\'elle n\'a pas été acceptée.',
 			'adulte.invitation.annuler' => 'Annuler l\'invitation',
-			'adulte.invitation.annulerQuestion' => ({required Object prenom}) => 'Annuler l\'invitation de ${prenom} ?',
+			'adulte.invitation.annulerQuestion' => ({required Object dePrenom}) => 'Annuler l\'invitation ${dePrenom} ?',
 			'adulte.invitation.annulerQuestionSansPrenom' => 'Annuler cette invitation ?',
 			'adulte.invitation.annulerHorsLigne' => 'Rien n\'est annulé. Vous pourrez annuler l\'invitation vous-même quand la connexion sera revenue.',
 			'adulte.invitation.annulerConsequence' => 'L\'invitation ne pourra plus être acceptée. Vous pourrez en envoyer une nouvelle quand vous le souhaitez.',
@@ -19840,23 +19836,23 @@ extension on Traductions {
 			'adulte.invitation.annulationEchecTitre' => 'L\'annulation n\'a pas été confirmée.',
 			'adulte.invitation.annulationEchecPhrase' => 'Vérifiez avant de réessayer.',
 			'adulte.acceptation.notification' => ({required Object prenom}) => '${prenom} vous invite à rejoindre son forfait famille.',
-			'adulte.acceptation.titre' => ({required Object prenom}) => 'Rejoindre le forfait famille de ${prenom}',
+			'adulte.acceptation.titre' => ({required Object dePrenom}) => 'Rejoindre le forfait famille ${dePrenom}',
 			'adulte.acceptation.faisonsTitre' => 'Ce que nous faisons',
 			'adulte.acceptation.faisons' => ({required Object prenom}) => '${prenom} vous invite dans son forfait famille. Si vous acceptez, votre compte est rattaché à son foyer. Votre compte reste le vôtre. Rien n\'est fusionné.',
 			'adulte.acceptation.pourquoiTitre' => 'Pourquoi',
 			'adulte.acceptation.pourquoiElle' => ({required Object prenom}) => '${prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, elle doit voir votre solde.',
 			'adulte.acceptation.pourquoiLui' => ({required Object prenom}) => '${prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, il doit voir votre solde.',
-			'adulte.acceptation.verraTitre' => ({required Object prenom}) => 'Ce que ${prenom} verra',
+			'adulte.acceptation.verraTitre' => ({required Object quePrenom}) => 'Ce ${quePrenom} verra',
 			'adulte.acceptation.verraElle' => 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L\'offre qui vous concerne. L\'état de votre accès, s\'il empêche de payer. Elle saura aussi si vous quittez le forfait famille.',
 			'adulte.acceptation.verraLui' => 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L\'offre qui vous concerne. L\'état de votre accès, s\'il empêche de payer. Il saura aussi si vous quittez le forfait famille.',
-			'adulte.acceptation.verraPasTitre' => ({required Object prenom}) => 'Ce que ${prenom} ne verra pas',
+			'adulte.acceptation.verraPasTitre' => ({required Object quePrenom}) => 'Ce ${quePrenom} ne verra pas',
 			'adulte.acceptation.verraPas' => 'Votre Classe. Votre niveau. Vos séances et votre présence. Vos progrès. Vos messages. Vos notifications. Vos moyens de paiement personnels. Vos pièces d\'identité.',
 			'adulte.acceptation.vousTitre' => 'Ce que vous ne verrez pas',
-			'adulte.acceptation.vous' => ({required Object prenom}) => 'Les cours, les progrès et les messages de ${prenom} et des enfants du foyer. Vous ne pourrez pas ajouter d\'enfant, inviter quelqu\'un ni modifier le foyer.',
+			'adulte.acceptation.vous' => ({required Object dePrenom}) => 'Les cours, les progrès et les messages ${dePrenom} et des enfants du foyer. Vous ne pourrez pas ajouter d\'enfant, inviter quelqu\'un ni modifier le foyer.',
 			'adulte.acceptation.autresTitre' => 'Qui d\'autre voit',
 			'adulte.acceptation.autres' => 'Votre enseignant ne voit rien de votre foyer. L\'équipe de l\'académie voit le rattachement, pour le gérer et, si nécessaire, le valider.',
 			'adulte.acceptation.dureeTitre' => 'Combien de temps',
-			'adulte.acceptation.duree' => ({required Object prenom}) => 'Le rattachement dure jusqu\'à ce que vous quittiez le forfait famille, ou que ${prenom} y mette fin.',
+			'adulte.acceptation.duree' => ({required Object quePrenom}) => 'Le rattachement dure jusqu\'à ce que vous quittiez le forfait famille, ou ${quePrenom} y mette fin.',
 			'adulte.acceptation.conservation' => ({required Object duree}) => 'Nous gardons la trace du rattachement ${duree}.',
 			'adulte.acceptation.partirTitre' => 'Comment partir',
 			'adulte.acceptation.partir' => 'Dans Mon espace, Forfait famille, Quitter le forfait famille. Vous n\'avez pas besoin de son accord. Votre compte, vos cours, votre historique et votre solde restent disponibles.',
@@ -19870,7 +19866,7 @@ extension on Traductions {
 			'adulte.acceptation.refusEchecTitre' => 'Le refus n\'a pas été confirmé.',
 			'adulte.acceptation.echecPhrase' => 'Vérifiez avant de réessayer.',
 			'adulte.acceptation.accepteeTitre' => 'Invitation acceptée',
-			'adulte.acceptation.rejoint' => ({required Object prenom}) => 'Vous avez rejoint le forfait famille de ${prenom}.',
+			'adulte.acceptation.rejoint' => ({required Object dePrenom}) => 'Vous avez rejoint le forfait famille ${dePrenom}.',
 			'adulte.acceptation.refuseeTitre' => 'Invitation refusée',
 			'adulte.acceptation.impossible' => 'Ce compte ne peut pas rejoindre ce forfait actuellement.',
 			'adulte.acceptation.perimee' => 'Cette invitation n\'est plus valable.',
@@ -19890,7 +19886,7 @@ extension on Traductions {
 			'adulte.sortie.quitterQuestion' => 'Quitter le forfait famille ?',
 			'adulte.sortie.quitterConfirmer' => 'Quitter le forfait',
 			'adulte.sortie.quitterConsequence' => 'Votre compte, vos cours, votre historique et votre solde restent disponibles. Le rattachement au forfait famille prendra fin.',
-			'adulte.sortie.forfaitPhrase' => ({required Object prenom}) => 'Vous faites partie du forfait famille de ${prenom}.',
+			'adulte.sortie.forfaitPhrase' => ({required Object dePrenom}) => 'Vous faites partie du forfait famille ${dePrenom}.',
 			'adulte.sortie.resultatTitre' => 'Le rattachement au forfait famille a pris fin',
 			'adulte.sortie.resultatTitulaire' => 'Son compte, ses cours, son historique et son solde restent disponibles.',
 			'adulte.sortie.resultatSecondAdulte' => 'Votre compte, vos cours, votre historique et votre solde restent disponibles.',
@@ -19900,8 +19896,8 @@ extension on Traductions {
 			'adulte.sortie.echecPhrase' => 'Vérifiez avant de réessayer.',
 			'adulte.sortie.horsLigne' => 'Rien n\'est envoyé. Vous pourrez réessayer vous-même quand la connexion sera revenue.',
 			'adulte.sortie.notificationQuitte' => ({required Object prenom}) => '${prenom} a quitté votre forfait famille.',
-			'adulte.sortie.notificationRetiree' => ({required Object prenom}) => 'Vous avez été retirée du forfait famille de ${prenom}.',
-			'adulte.sortie.notificationRetire' => ({required Object prenom}) => 'Vous avez été retiré du forfait famille de ${prenom}.',
+			'adulte.sortie.notificationRetiree' => ({required Object dePrenom}) => 'Vous avez été retirée du forfait famille ${dePrenom}.',
+			'adulte.sortie.notificationRetire' => ({required Object dePrenom}) => 'Vous avez été retiré du forfait famille ${dePrenom}.',
 			'adulte.sortie.delaiTitre' => 'Nouvelle invitation indisponible',
 			'adulte.sortie.delaiPhrase' => ({required Object date}) => 'Une nouvelle demande pourra être déposée à partir du ${date}. Elle devra ensuite être validée par l\'administration.',
 			'adulte.sortie.pourquoi' => 'Pourquoi cette attente ?',

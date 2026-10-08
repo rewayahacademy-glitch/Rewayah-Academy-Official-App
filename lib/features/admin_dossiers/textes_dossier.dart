@@ -1,11 +1,11 @@
 import '../../core/domain/enums.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 
-const String _voyelles = 'aeiouàâäéèêëîïôöùûüAEIOUÀÂÄÉÈÊËÎÏÔÖÙÛÜ';
-
-/// Vrai quand « de » s'elide devant [nom] : voyelle, accentuee ou non. Ni Y
-/// ni H (« de Yusuf », « de Hana »).
-bool elide(String nom) => nom.isNotEmpty && _voyelles.contains(nom[0]);
+/// Vrai quand « de » s'elide devant [nom] : la regle unique de
+/// `core/i18n/elision.dart` (voyelle, accentuee ou non ; jamais devant h,
+/// « de Hana » ; « y » devant une voyelle est une consonne, « de Yusuf »).
+bool elide(String nom) => commenceParVoyelle(nom);
 
 /// « Ouvrir le dossier de/d'{nom} ».
 String ouvrirDossier(String nom) => elide(nom)

@@ -17,6 +17,7 @@ import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/port_catalogue_classes.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -389,7 +390,10 @@ void main() {
         catalogue: FauxCatalogueClasses(classes: <ClasseOuverte>[]),
       );
       expect(find.text(_c.aucune), findsOneWidget);
-      expect(find.text(_c.aucuneDetail(prenom: 'Eleve A2')), findsOneWidget);
+      expect(
+        find.text(_c.aucuneDetail(dePrenom: deDevant('Eleve A2'))),
+        findsOneWidget,
+      );
     });
 
     testWidgets('lecture en echec, puis « Reessayer » relit vraiment', (

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_color_pair.dart';
@@ -559,7 +560,9 @@ class _CoinComplet extends StatelessWidget {
         else
           Pressable(
             onPress: menu,
-            libelleSemantique: t.salle.seance.compteDe(nom: compte.nom),
+            libelleSemantique: t.salle.seance.compteDe(
+              deNom: deDevant(compte.nom),
+            ),
             arrondiFocus: AppRadius.arrondiFull,
             child: identite,
           ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/presence/service_presence.dart';
@@ -178,7 +179,9 @@ class CarteSeanceClasse extends ConsumerWidget {
         ),
         Ecart.vXs,
         Text(
-          t.classe.seance.aucuneDetail(prenom: contexte.eleve.prenom),
+          t.classe.seance.aucuneDetail(
+            dePrenom: deDevant(contexte.eleve.prenom),
+          ),
           style: discret,
         ),
       ];

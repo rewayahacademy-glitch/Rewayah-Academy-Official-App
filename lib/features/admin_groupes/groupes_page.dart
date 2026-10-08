@@ -5,6 +5,7 @@ import '../../core/admin/personnes_proposables.dart';
 import '../../core/admin/service_comptes.dart';
 import '../../core/admin/service_groupes.dart';
 import '../../core/domain/enums.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
@@ -336,7 +337,7 @@ void _ouvrirRetrait(
     context,
     titre: t.admin.groupes.retirerTitre(
       prenom: prenom,
-      libelle: groupe.libelle,
+      deLibelle: deDevant(groupe.libelle),
     ),
     constructeur: (BuildContext contexte) => _FeuilleMotif(
       libelleEnvoyer: t.admin.groupes.retirerEnvoyer,
@@ -363,7 +364,9 @@ void _ouvrirModifierSeuil(
 ) {
   AppBottomSheet.ouvrir<void>(
     context,
-    titre: t.admin.groupes.modifierSeuilTitre(libelle: groupe.libelle),
+    titre: t.admin.groupes.modifierSeuilTitre(
+      deLibelle: deDevant(groupe.libelle),
+    ),
     constructeur: (BuildContext contexte) => _FeuilleSeuil(
       groupe: groupe,
       onModifie: () => ref.invalidate(groupesProvider),

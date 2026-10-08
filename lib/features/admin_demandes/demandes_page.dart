@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/admin/service_admin.dart';
 import '../../core/domain/enums.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/matching/service_matching.dart';
@@ -323,7 +324,7 @@ class FeuilleRegles extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Text(
-          t.admin.demandes.feuille(prenom: prenom),
+          t.admin.demandes.feuille(dePrenom: deDevant(prenom)),
           style: textes.titleMedium,
         ),
         Ecart.vXs,
@@ -527,7 +528,7 @@ class FeuilleRegle extends ConsumerStatefulWidget {
   /// Le titre de la feuille, porte par `AppBottomSheet` -- jamais redit dans
   /// le corps, qui commence directement a la valeur effective.
   String get titre => surchargeId != null
-      ? t.admin.demandes.cloreTitre(prenom: prenom)
+      ? t.admin.demandes.cloreTitre(dePrenom: deDevant(prenom))
       : t.admin.demandes.poserTitre(regle: _libelleRegle(cle), prenom: prenom);
 
   /// Les valeurs proposees pour chaque regle, en minutes ou en eleves.
@@ -704,7 +705,7 @@ String _valeur(CleRegle? cle, int valeur) => cle == CleRegle.plafondEleves
 /// Ce que la demande reclame, dit en clair.
 String _reclame(Demande demande) => switch (demande.sorte) {
   SorteDemande.reaffectation => t.admin.demandes.reclameReaffectation(
-    prenom: demande.sujetLibelle,
+    dePrenom: deDevant(demande.sujetLibelle),
   ),
   SorteDemande.plafond =>
     demande.valeurDemandee == null

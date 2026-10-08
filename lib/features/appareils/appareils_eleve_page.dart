@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/appairage/service_appairage.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
@@ -103,7 +104,7 @@ class _AppareilsElevePageState extends ConsumerState<AppareilsElevePage> {
       question: r.question,
       consequence: r.consequence(
         appareil: libellePlateforme(appareil.plateforme),
-        prenom: prenom,
+        dePrenom: deDevant(prenom),
       ),
       libelleConfirmer: r.confirmer,
     );
@@ -239,7 +240,7 @@ class _Contenu extends StatelessWidget {
         EtatSysteme(
           nature: NatureEtat.aucunResultat,
           titre: e.videTitre,
-          phrase: e.vide(prenom: eleve.prenom),
+          phrase: e.vide(dePrenom: deDevant(eleve.prenom)),
         )
       else
         ListeAppareilsEleve(

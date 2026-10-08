@@ -17,6 +17,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
@@ -435,7 +436,9 @@ void main() {
     // Renoncer : rien ne change.
     await taper(tester, InvitationEnvoyeePage.annulerKey);
     expect(
-      find.text(t.adulte.invitation.annulerQuestion(prenom: 'Mariama')),
+      find.text(
+        t.adulte.invitation.annulerQuestion(dePrenom: deDevant('Mariama')),
+      ),
       findsOneWidget,
     );
     await tester.tap(find.text(t.adulte.invitation.garder));

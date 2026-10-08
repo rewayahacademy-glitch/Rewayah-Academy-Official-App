@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/point_rappel.dart';
 import 'package:rewayah_academy/features/demo/classe_demo.dart';
@@ -49,7 +50,7 @@ void main() {
       // Le prenom est le titre de la feuille, sans « Fiche de » ni
       // repetition a cote de la photo (K-42 §5).
       expect(
-        find.text(t.enseignant.eleve.titre(prenom: 'Mariam')),
+        find.text(t.enseignant.eleve.titre(dePrenom: deDevant('Mariam'))),
         findsNothing,
       );
       expect(

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show StreamProviderFamily;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../i18n/elision.dart';
 import '../i18n/strings.g.dart';
 import 'echec_observation.dart';
 import 'port_politique_observation.dart';
@@ -144,7 +145,9 @@ AnnonceObservation annonceDepuisJson(Map<String, dynamic> json) {
   final int? restant = (json['restant_secondes'] as num?)?.toInt();
   final String prenom = json['enfant_prenom'] as String? ?? '';
   return AnnonceObservation(
-    libelle: t.tc.observation.annonce.tuteurObserve(prenomEnfant: prenom),
+    libelle: t.tc.observation.annonce.tuteurObserve(
+      dePrenomEnfant: deDevant(prenom),
+    ),
     tempsRestant: restant == null ? null : Duration(seconds: restant),
     enfantConcerneId: json['enfant_profile_id'] as String?,
     // Le prenom est conserve EN PLUS de la phrase : l'indicateur agrege en a

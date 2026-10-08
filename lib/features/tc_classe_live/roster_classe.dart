@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
@@ -134,7 +135,7 @@ class LigneRoster extends StatelessWidget {
     return Pressable(
       onPress: onOuvrirFiche,
       libelleSemantique: t.tc.classe.roster.ouvrirFiche(
-        prenom: eleve.firstName,
+        dePrenom: deDevant(eleve.firstName),
       ),
       child: corps,
     );

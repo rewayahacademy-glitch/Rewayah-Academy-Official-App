@@ -32,6 +32,7 @@ import 'package:uuid/uuid.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/capacites/port_recharge_foyer.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
@@ -644,7 +645,7 @@ class _InvitationEnvoyeePageState extends ConsumerState<InvitationEnvoyeePage> {
       context,
       question: prenom == null
           ? t.adulte.invitation.annulerQuestionSansPrenom
-          : t.adulte.invitation.annulerQuestion(prenom: prenom),
+          : t.adulte.invitation.annulerQuestion(dePrenom: deDevant(prenom)),
       consequence: t.adulte.invitation.annulerConsequence,
       libelleConfirmer: t.adulte.invitation.annuler,
       libelleAnnuler: t.adulte.invitation.garder,

@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 import 'package:go_router/go_router.dart';
 
 import '../../core/capacites/port_progression_famille.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
@@ -77,7 +78,7 @@ class _Progression extends ConsumerWidget {
     return LectureClasse<ProgressionEleve>(
       valeur: ref.watch(progressionEleveProvider(eleveId)),
       phraseIndisponible: t.classe.pageProgression.indisponible(
-        prenom: contexte.eleve.prenom,
+        dePrenom: deDevant(contexte.eleve.prenom),
       ),
       onReessayer: () => ref.invalidate(progressionEleveProvider(eleveId)),
       construire: (ProgressionEleve progression) => progressionVide(progression)
