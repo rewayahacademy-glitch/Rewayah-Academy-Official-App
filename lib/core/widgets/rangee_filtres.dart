@@ -3,7 +3,10 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
+import 'filter_pill.dart';
+import 'menu_filtre.dart';
 
 /// La rangee de filtres d'un ecran : **une seule rangee** de puces
 /// (`FilterPill`, `MenuFiltre`) qui defile horizontalement quand elle ne tient
@@ -54,17 +57,86 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
   /// defilement s'affiche et la rangee lui laisse sa place.
   bool _deborde = false;
 
+  /// Des puces sont cachees avant le debut (la rangee a defile).
+  bool _avant = false;
+
+  /// Des puces sont cachees apres la fin.
+  bool _apres = false;
+
+  /// Une cle par puce, pour amener la puce retenue dans la vue.
+  final List<GlobalKey> _cles = <GlobalKey>[];
+
+  @override
+  void initState() {
+    super.initState();
+    // A l'ouverture, le filtre retenu se voit, meme s'il est loin dans la
+    // rangee (une page ouverte filtree, un filtre par defaut).
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (!mounted) return;
+      final int i = widget.filtres.indexWhere(_retenu);
+      final RenderObject? cible = i < 0 || i >= _cles.length
+          ? null
+          : _cles[i].currentContext?.findRenderObject();
+      // La seule rangee defile : `Scrollable.ensureVisible` ferait aussi
+      // defiler la page, qui sauterait jusqu'aux filtres.
+      if (cible != null && _defilement.hasClients) {
+        // Centree si elle etait cachee ; rien ne bouge si elle se voit deja.
+        final RenderAbstractViewport vue = RenderAbstractViewport.of(cible);
+        final ScrollPosition position = _defilement.position;
+        final double debut = vue.getOffsetToReveal(cible, 0).offset;
+        final double fin = vue.getOffsetToReveal(cible, 1).offset;
+        if (position.pixels > debut || position.pixels < fin) {
+          position.jumpTo(
+            vue
+                .getOffsetToReveal(cible, 0.5)
+                .offset
+                .clamp(position.minScrollExtent, position.maxScrollExtent),
+          );
+        }
+      }
+    });
+  }
+
+  /// Vrai pour une puce qui porte un filtre en cours.
+  static bool _retenu(Widget w) => switch (w) {
+    final FilterPill p => p.retenue,
+    final MenuFiltre<Object?> m => !m.selecteurDeSection && m.valeur != null,
+    _ => false,
+  };
+
   @override
   void dispose() {
     _defilement.dispose();
     super.dispose();
   }
 
-  bool _mesurer(ScrollMetricsNotification avis) {
-    final bool deborde = avis.metrics.maxScrollExtent > 0;
-    if (deborde != _deborde) {
-      setState(() => _deborde = deborde);
+  void _lire(ScrollMetrics m) {
+    final bool deborde = m.maxScrollExtent > 0;
+    final bool avant = m.pixels > m.minScrollExtent + 0.5;
+    final bool apres = m.pixels < m.maxScrollExtent - 0.5;
+    if (deborde != _deborde || avant != _avant || apres != _apres) {
+      setState(() {
+        _deborde = deborde;
+        _avant = avant;
+        _apres = apres;
+      });
     }
+  }
+
+  GlobalKey _cle(int i) {
+    while (_cles.length <= i) {
+      _cles.add(GlobalKey());
+    }
+    return _cles[i];
+  }
+
+  bool _mesurer(ScrollMetricsNotification avis) {
+    _lire(avis.metrics);
+    return false;
+  }
+
+  bool _suivre(ScrollUpdateNotification avis) {
+    _lire(avis.metrics);
     return false;
   }
 
@@ -73,32 +145,93 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
     return LayoutBuilder(
       builder: (BuildContext _, BoxConstraints contraintes) {
         final double largeurMax = contraintes.maxWidth;
+        final Color opaque = AppPalette.of(context).surfaceRaised.background;
         return NotificationListener<ScrollMetricsNotification>(
           onNotification: _mesurer,
-          child: Scrollbar(
-            controller: _defilement,
-            thumbVisibility: _deborde,
-            child: SingleChildScrollView(
+          child: NotificationListener<ScrollUpdateNotification>(
+            onNotification: _suivre,
+            child: Scrollbar(
               controller: _defilement,
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsetsDirectional.only(
-                bottom: _deborde ? AppSpacing.md : 0,
-              ),
-              // La hauteur de la plus haute puce, donnee a toutes.
-              child: IntrinsicHeight(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  spacing: AppSpacing.sm,
-                  children: <Widget>[
-                    for (final Widget filtre in widget.filtres)
-                      _PuceBornee(largeurMax: largeurMax, child: filtre),
-                  ],
+              thumbVisibility: _deborde,
+              // Le fondu sous la barre : elle reste nette d'un bord a l'autre.
+              child: _FonduBords(
+                couleur: opaque,
+                avant: _avant,
+                apres: _apres,
+                child: SingleChildScrollView(
+                  controller: _defilement,
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsetsDirectional.only(
+                    bottom: _deborde ? AppSpacing.md : 0,
+                  ),
+                  // La hauteur de la plus haute puce, donnee a toutes.
+                  child: IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      spacing: AppSpacing.sm,
+                      children: <Widget>[
+                        for (int i = 0; i < widget.filtres.length; i++)
+                          _PuceBornee(
+                            key: _cle(i),
+                            largeurMax: largeurMax,
+                            child: widget.filtres[i],
+                          ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
         );
       },
+    );
+  }
+}
+
+/// Un fondu sur le bord ou des puces sont cachees : une puce coupee par le
+/// bord de l'ecran s'efface au lieu de s'arreter net, et le fondu dit qu'il y
+/// en a d'autres de ce cote. Bords pris dans le sens de lecture (le debut est
+/// a droite en arabe).
+class _FonduBords extends StatelessWidget {
+  const _FonduBords({
+    required this.couleur,
+    required this.avant,
+    required this.apres,
+    required this.child,
+  });
+
+  /// Une couleur opaque quelconque : seul son canal alpha compte.
+  final Color couleur;
+  final bool avant;
+  final bool apres;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextDirection sens = Directionality.of(context);
+    final Color transparent = couleur.withValues(alpha: 0);
+    // Le masque reste dans l'arbre meme sans fondu (`dst` rend la rangee
+    // telle quelle) : l'en retirer recreerait le defilement, revenu au debut.
+    return ShaderMask(
+      blendMode: avant || apres ? BlendMode.dstIn : BlendMode.dst,
+      shaderCallback: (Rect zone) {
+        final double f = zone.width <= 0
+            ? 0
+            : (AppSpacing.xxl / zone.width).clamp(0, 0.5);
+        return LinearGradient(
+          begin: AlignmentDirectional.centerStart.resolve(sens),
+          end: AlignmentDirectional.centerEnd.resolve(sens),
+          colors: <Color>[
+            if (avant) transparent else couleur,
+            couleur,
+            couleur,
+            if (apres) transparent else couleur,
+          ],
+          stops: <double>[0, f, 1 - f, 1],
+        ).createShader(zone);
+      },
+      child: child,
     );
   }
 }
@@ -114,7 +247,11 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
 /// rangee aurait alors mesure chaque pastille compteur sous le libelle. C'est
 /// ce qui permet de donner a toutes les puces la hauteur de la plus haute.
 class _PuceBornee extends SingleChildRenderObjectWidget {
-  const _PuceBornee({required this.largeurMax, required Widget super.child});
+  const _PuceBornee({
+    required this.largeurMax,
+    required Widget super.child,
+    super.key,
+  });
 
   final double largeurMax;
 

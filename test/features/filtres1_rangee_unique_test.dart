@@ -61,24 +61,27 @@ const double _largeur = 320;
 /// Les puces de filtre a l'ecran : pastilles et menus. Le selecteur de
 /// section (`MenuFiltre` en mode `selecteurDeSection`, ONGLETS-1) n'est pas un
 /// filtre : il dit ou l'on est, sur sa propre ligne.
-final Finder _puces = find.byWidgetPredicate(
+final Finder pucesFiltres1 = find.byWidgetPredicate(
   (Widget w) => w is FilterPill || (w is MenuFiltre && !w.selecteurDeSection),
 );
 
-Widget _hote(Widget ecran, List<Override> surcharges, TextDirection sens) =>
-    ProviderScope(
-      overrides: surcharges,
-      child: TranslationProvider(
-        child: MaterialApp(
-          theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
-          locale: AppLocale.fr.flutterLocale,
-          supportedLocales: AppLocaleUtils.supportedLocales,
-          localizationsDelegates: GlobalMaterialLocalizations.delegates,
-          builder: sensEtEchelle(direction: sens, echelle: 2),
-          home: ecran,
-        ),
-      ),
-    );
+Widget hoteFiltres1(
+  Widget ecran,
+  List<Override> surcharges,
+  TextDirection sens,
+) => ProviderScope(
+  overrides: surcharges,
+  child: TranslationProvider(
+    child: MaterialApp(
+      theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+      locale: AppLocale.fr.flutterLocale,
+      supportedLocales: AppLocaleUtils.supportedLocales,
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      builder: sensEtEchelle(direction: sens, echelle: 2),
+      home: ecran,
+    ),
+  ),
+);
 
 /// Le Scrollable horizontal le plus proche de [puce], ou null.
 ScrollableState? _defilementDe(WidgetTester tester, Finder puce) {
@@ -103,13 +106,13 @@ Future<void> _verifierRangeeUnique(
   int auMoins = 2,
 }) async {
   expect(tester.takeException(), isNull, reason: 'debordement au rendu');
-  final int n = _puces.evaluate().length;
+  final int n = pucesFiltres1.evaluate().length;
   expect(n, greaterThanOrEqualTo(auMoins), reason: 'puces de filtre');
 
   // 1. Une seule rangee : toutes les puces ont le meme haut et la meme
   //    hauteur (contenu de meme hauteur, K-54).
   final List<Rect> boites = <Rect>[
-    for (int i = 0; i < n; i++) tester.getRect(_puces.at(i)),
+    for (int i = 0; i < n; i++) tester.getRect(pucesFiltres1.at(i)),
   ];
   for (final Rect b in boites) {
     expect(
@@ -128,7 +131,7 @@ Future<void> _verifierRangeeUnique(
   //    le bloc de ses textes (libelle, compteur), meme sur deux lignes.
   for (int i = 0; i < n; i++) {
     final Rect bloc = find
-        .descendant(of: _puces.at(i), matching: find.byType(Text))
+        .descendant(of: pucesFiltres1.at(i), matching: find.byType(Text))
         .evaluate()
         .map((Element e) => tester.getRect(find.byWidget(e.widget)))
         .reduce((Rect a, Rect b) => a.expandToInclude(b));
@@ -137,7 +140,7 @@ Future<void> _verifierRangeeUnique(
       moreOrLessEquals(boites[i].center.dy, epsilon: 1),
       reason: 'contenu non centre en hauteur dans sa puce',
     );
-    if (_puces.at(i).evaluate().single.widget is FilterPill) {
+    if (pucesFiltres1.at(i).evaluate().single.widget is FilterPill) {
       expect(
         bloc.center.dx,
         moreOrLessEquals(boites[i].center.dx, epsilon: 1),
@@ -149,7 +152,9 @@ Future<void> _verifierRangeeUnique(
   // 3. Toutes dans le MEME defilement horizontal, borne a l'ecran.
   final Set<ScrollableState> defilements = <ScrollableState>{
     for (int i = 0; i < n; i++)
-      if (_defilementDe(tester, _puces.at(i)) case final ScrollableState s) s,
+      if (_defilementDe(tester, pucesFiltres1.at(i))
+          case final ScrollableState s)
+        s,
   };
   expect(defilements, hasLength(1), reason: 'une seule rangee qui defile');
   final ScrollableState rangee = defilements.single;
@@ -157,27 +162,38 @@ Future<void> _verifierRangeeUnique(
   expect(vue.left, greaterThanOrEqualTo(0));
   expect(vue.right, lessThanOrEqualTo(_largeur));
 
+  // 3 bis. Le filtre retenu se voit entier des l'ouverture.
+  for (int i = 0; i < n; i++) {
+    final Widget w = pucesFiltres1.at(i).evaluate().single.widget;
+    if (w is FilterPill && w.retenue) {
+      expect(boites[i].left, greaterThanOrEqualTo(vue.left - 0.5));
+      expect(boites[i].right, lessThanOrEqualTo(vue.right + 0.5));
+    }
+  }
+
   // 4. Aucun mot coupe ni tronque dans les puces.
-  verifierAucunMotCoupe(tester, _puces);
+  verifierAucunMotCoupe(tester, pucesFiltres1);
 
   // 5. Le debut de la rangee est au debut du sens de lecture ; la derniere
   //    puce s'atteint en defilant.
-  final Rect premiere = boites.first;
+  rangee.position.jumpTo(rangee.position.minScrollExtent);
+  await tester.pump();
+  final Rect premiere = tester.getRect(pucesFiltres1.first);
   if (sens == TextDirection.ltr) {
     expect(premiere.left, moreOrLessEquals(vue.left, epsilon: 0.5));
   } else {
     expect(premiere.right, moreOrLessEquals(vue.right, epsilon: 0.5));
   }
-  await tester.ensureVisible(_puces.last);
+  await tester.ensureVisible(pucesFiltres1.last);
   await tester.pumpAndSettle();
-  final Rect derniere = tester.getRect(_puces.last);
+  final Rect derniere = tester.getRect(pucesFiltres1.last);
   expect(derniere.left, greaterThanOrEqualTo(vue.left - 0.5));
   expect(derniere.right, lessThanOrEqualTo(vue.right + 0.5));
   expect(tester.takeException(), isNull);
 }
 
 /// Un cas d'ecran : son nom, et comment le monter.
-typedef _Cas = ({
+typedef CasFiltres1 = ({
   String nom,
   Widget ecran,
   List<Override> surcharges,
@@ -299,7 +315,7 @@ FauxServiceJournal _journal() =>
 Override _reseau() =>
     serviceReseauProvider.overrideWithValue(FauxServiceReseau());
 
-List<_Cas> _cas() => <_Cas>[
+List<CasFiltres1> casFiltres1() => <CasFiltres1>[
   (
     nom: 'Comptes (ADM-08)',
     ecran: const ComptesPage(),
@@ -441,11 +457,15 @@ List<_Cas> _cas() => <_Cas>[
   ),
   (
     nom: 'Bibliotheque (types et disponibilite)',
+    // La gouttiere de 16 que `PageShell` donne a la vraie page.
     ecran: Scaffold(
-      body: SurfaceBibliotheque(
-        contexte: ContexteDecouverte.horsClasse,
-        groupeId: null,
-        onChoisir: (LibraryResource _, ContentPosition? _) {},
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: SurfaceBibliotheque(
+          contexte: ContexteDecouverte.horsClasse,
+          groupeId: null,
+          onChoisir: (LibraryResource _, ContentPosition? _) {},
+        ),
       ),
     ),
     surcharges: surchargesCatalogue(
@@ -459,9 +479,9 @@ void main() {
   // Les vraies polices : la largeur d'un mot, donc sa coupure, en depend.
   setUpAll(chargerPolicesDuDepot);
 
-  final List<_Cas> cas = _cas();
+  final List<CasFiltres1> cas = casFiltres1();
   for (int i = 0; i < cas.length; i++) {
-    final _Cas c = cas[i];
+    final CasFiltres1 c = cas[i];
     for (final TextDirection sens in TextDirection.values) {
       testWidgets('${c.nom} : une rangee unique qui defile, 320 px texte x2, '
           '${sens.name}', (WidgetTester tester) async {
@@ -470,8 +490,10 @@ void main() {
         addTearDown(tester.view.reset);
 
         // Des doubles neufs a chaque test.
-        final _Cas neuf = _cas()[i];
-        await tester.pumpWidget(_hote(neuf.ecran, neuf.surcharges, sens));
+        final CasFiltres1 neuf = casFiltres1()[i];
+        await tester.pumpWidget(
+          hoteFiltres1(neuf.ecran, neuf.surcharges, sens),
+        );
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 600));
         await tester.pumpAndSettle();

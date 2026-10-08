@@ -17,6 +17,7 @@ import '../../support/sens_et_echelle.dart';
 Future<void> _monter(
   WidgetTester tester,
   List<String> libelles, {
+  int? retenue,
   double largeur = 320,
   double echelle = 2,
   TextDirection sens = TextDirection.ltr,
@@ -37,7 +38,12 @@ Future<void> _monter(
               RangeeFiltres(
                 filtres: <Widget>[
                   for (final String l in libelles)
-                    FilterPill(libelle: l, compteur: 3, onPress: () {}),
+                    FilterPill(
+                      libelle: l,
+                      compteur: 3,
+                      retenue: libelles.indexOf(l) == retenue,
+                      onPress: () {},
+                    ),
                 ],
               ),
             ],
@@ -63,6 +69,18 @@ bool _barreVisible(WidgetTester tester) => tester
     )
     .thumbVisibility!;
 
+/// Vrai quand un bord de la rangee s'efface.
+bool _fondu(WidgetTester tester) =>
+    tester
+        .widget<ShaderMask>(
+          find.descendant(
+            of: find.byType(RangeeFiltres),
+            matching: find.byType(ShaderMask),
+          ),
+        )
+        .blendMode ==
+    BlendMode.dstIn;
+
 void main() {
   setUpAll(chargerPolicesDuDepot);
 
@@ -73,6 +91,8 @@ void main() {
     final List<Rect> b = _boites(tester);
     expect(b[0].top, b[1].top);
     expect(_barreVisible(tester), isFalse);
+    // Rien de cache : aucun fondu de bord.
+    expect(_fondu(tester), isFalse);
     expect(tester.takeException(), isNull);
   });
 
@@ -92,6 +112,8 @@ void main() {
       expect(r.height, b.first.height);
     }
     expect(_barreVisible(tester), isTrue);
+    // Des puces cachees apres la fin : le bord de fin s'efface.
+    expect(_fondu(tester), isTrue);
     expect(tester.takeException(), isNull);
   });
 
@@ -130,6 +152,22 @@ void main() {
     final List<Rect> b = _boites(tester);
     expect(b.first.right, 304);
     expect(b[1].right, lessThan(b.first.left));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('le filtre retenu, loin dans la rangee, se voit a l ouverture', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, <String>[
+      'Tous',
+      'En attente',
+      'Actif',
+      'Provisoire',
+      'Suspendu',
+    ], retenue: 4);
+    final Rect r = _boites(tester).last;
+    expect(r.left, greaterThanOrEqualTo(16));
+    expect(r.right, lessThanOrEqualTo(304));
     expect(tester.takeException(), isNull);
   });
 }
