@@ -5,7 +5,9 @@
 // nombre ; le filtre Public en menu ; a 1440, la ligne choisie s'ouvre dans
 // un inspecteur de 336 au bord de fin (vrais membres, actions), marquee
 // `selected`, fermee par sa croix ; a 390, la feuille comme avant ; un seul
-// bouton plein (« Creer un groupe »).
+// bouton plein (« Nouvelle classe ») ; aucun texte visible ne dit « groupe »
+// (lib/CLAUDE.md : « Classe, jamais groupe ») ; la ligne cloturee, sans menu,
+// reste alignee sur les autres.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -16,6 +18,7 @@ import 'package:rewayah_academy/core/planning/service_planning.dart'
     show Creneau;
 import 'package:rewayah_academy/core/widgets/data_collection.dart';
 import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
+import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/admin_groupes/groupes_page.dart';
 
 import '../../support/garde_interface.dart';
@@ -106,6 +109,11 @@ class _Groupes implements ServiceGroupes {
   }) async {}
 }
 
+class _GroupesVides extends _Groupes {
+  @override
+  Future<List<GroupeAdmin>> groupes() async => const <GroupeAdmin>[];
+}
+
 Future<void> _monter(
   WidgetTester tester,
   Size taille, {
@@ -124,6 +132,12 @@ Future<void> _monter(
   );
   await tester.pumpAndSettle();
 }
+
+/// Tous les textes visibles de l'ecran, en minuscules.
+List<String> _textesVisibles(WidgetTester tester) => <String>[
+  for (final Text w in tester.widgetList<Text>(find.byType(Text)))
+    (w.data ?? w.textSpan?.toPlainText() ?? '').toLowerCase(),
+];
 
 void main() {
   testWidgets('titre « Classes », onglets d etat avec leur nombre', (
@@ -232,5 +246,57 @@ void main() {
       find.text(t.admin.groupes.detailTitre(libelle: 'Classe An-Nour')),
       findsOneWidget,
     );
+  });
+
+  testWidgets('aucun texte visible ne dit « groupe », page et inspecteur', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, const Size(1440, 900));
+    expect(find.text(t.admin.groupes.creer), findsOneWidget);
+    expect(t.admin.groupes.creer, 'Nouvelle classe');
+    await tester.tap(find.text('Classe An-Nour'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(GroupesPage.cleInspecteur), findsOneWidget);
+    expect(
+      _textesVisibles(tester).where((String x) => x.contains('groupe')),
+      isEmpty,
+    );
+
+    // La feuille de creation non plus.
+    await tester.tap(find.text(t.admin.groupes.creer));
+    await tester.pumpAndSettle();
+    expect(find.text(t.admin.groupes.champLibelle), findsWidgets);
+    expect(
+      _textesVisibles(tester).where((String x) => x.contains('groupe')),
+      isEmpty,
+    );
+  });
+
+  testWidgets('vide : « Aucune classe créée »', (WidgetTester tester) async {
+    await _monter(tester, const Size(1440, 900), service: _GroupesVides());
+    expect(find.text(t.admin.groupes.aucun), findsOneWidget);
+    expect(
+      _textesVisibles(tester).where((String x) => x.contains('groupe')),
+      isEmpty,
+    );
+  });
+
+  testWidgets('1440 : la ligne cloturee reste alignee sur les autres', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, const Size(1440, 900));
+    final Finder tableau = find.byType(DataCollection<GroupeAdmin>);
+    // La pastille d'etat de chaque ligne : la cloturee (sans menu) commence
+    // au meme bord que les actives (avec menu). Avant la correction, sa
+    // cellule de menu valait 0 et toute la ligne glissait.
+    final List<double> bords = <double>[
+      for (final Element e
+          in find
+              .descendant(of: tableau, matching: find.byType(StatusPill))
+              .evaluate())
+        tester.getRect(find.byElementPredicate((Element x) => x == e)).left,
+    ];
+    expect(bords, hasLength(3));
+    expect(bords.toSet(), hasLength(1));
   });
 }

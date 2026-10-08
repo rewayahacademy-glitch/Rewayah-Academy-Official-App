@@ -215,6 +215,12 @@ class _TraitementPageEtat extends ConsumerState<TraitementPage> {
                       largeurFileDossiers +
                           ecartFileDetail +
                           largeurDetailDossier;
+              // Une source en echec et l'autre vide : la file n'est pas
+              // connue, la phrase d'erreur au-dessus parle seule (jamais
+              // « Rien a traiter » sur une lecture manquee).
+              if (tous.isEmpty && erreurs.isNotEmpty) {
+                return const SizedBox.shrink();
+              }
               if (tous.isEmpty || visibles.isEmpty) {
                 return SingleChildScrollView(
                   child: EmptyState(

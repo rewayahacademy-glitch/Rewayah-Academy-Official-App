@@ -349,6 +349,39 @@ void main() {
       );
     });
 
+    testWidgets('erreur des dossiers, demandes vides : l erreur seule', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        taille: const Size(1440, 900),
+        validation: FauxServiceValidation()..erreurFile = Exception('muet'),
+        admin: FauxServiceAdmin(),
+      );
+      expect(find.text(t.admin.traitement.erreurDossiers), findsOneWidget);
+      expect(find.text(t.commun.reessayer), findsOneWidget);
+      // La file n'est pas connue : jamais « Rien a traiter ».
+      expect(find.text(t.admin.traitement.vide), findsNothing);
+      expect(find.text(t.admin.traitement.videDetail), findsNothing);
+    });
+
+    testWidgets('erreur des demandes, dossiers vides : l erreur seule', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        taille: const Size(1440, 900),
+        validation: FauxServiceValidation(),
+        plus: <Override>[
+          demandesProvider.overrideWith(
+            (_) => Future<List<Demande>>.error(Exception('muet')),
+          ),
+        ],
+      );
+      expect(find.text(t.admin.traitement.erreurDemandes), findsOneWidget);
+      expect(find.text(t.admin.traitement.vide), findsNothing);
+    });
+
     testWidgets('erreur des deux sources : une phrase et Reessayer', (
       WidgetTester tester,
     ) async {

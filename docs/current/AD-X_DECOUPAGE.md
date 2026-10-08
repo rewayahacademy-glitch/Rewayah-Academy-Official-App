@@ -143,11 +143,15 @@ inspecteur (nom, sous-titre, statut, Informations générales, Progression, Él�
    latérale est gelée (8 domaines) ; l'écran reste sous Opérations, atteint par la
    sous-navigation Opérations et le raccourci de l'Accueil. Écart avec l'image noté.
 2. **Titre « Classes »** (décision « classes-groupes » du 05/10, « Classe, jamais
-   groupe »). Les autres libellés « groupe » de l'écran relèvent du lot de libellés en cours
-   (non touchés ici, pour ne pas croiser la vague Finance qui porte la même décision).
+   groupe »). Tous les textes visibles de l'écran et de son inspecteur disent « classe » :
+   colonne « Classe », bouton « Nouvelle classe » (l'image), intro, états vides, erreur,
+   création, détail, clôture, états « Active » / « Clôturée », feuille d'observation
+   (correction du 08/10 après vérification croisée, décidé par délégation le 08/10). Les
+   clés et la route gardent `groupes` ; `titre`, `retirerTitre` et `modifierSeuilTitre`
+   restent à la main de LIB-DIR-1 (`corrections/lib-dir-1`), pour ne pas croiser ce lot.
 3. **Onglets de statut** en `FilterPill` avec nombre : « Toutes les classes », « Actives »,
    « Clôturées » (le serveur ne connaît que `actif` ; « En pause », « Terminées »,
-   « Archivées » : AD-X-BR-08). « Créer un groupe » reste le seul bouton plein, au bord de
+   « Archivées » : AD-X-BR-08). « Nouvelle classe » reste le seul bouton plein, au bord de
    fin de cette rangée sur bureau.
 4. **Filtre** « Public » en `MenuFiltre` (Tous les publics, Enfants, Adultes) à la place de
    la rangée de puces. Niveau, Enseignant et tri : pas de donnée Niveau (AD-X-BR-06) ;
@@ -243,8 +247,9 @@ Actions secondaires   puces, tri, lignes de la file
                   vide        « Rien à traiter pour le moment. » (+ filtre :
                               « Aucun élément avec ce filtre. »)
                   erreur      par source : l'autre source reste affichée,
-                              phrase K-59 + « Réessayer » ; les deux : état
-                              d'erreur de page
+                              phrase K-59 + « Réessayer » ; si l'autre est
+                              vide, la phrase d'erreur seule (jamais « Rien
+                              à traiter ») ; les deux : état d'erreur de page
                   hors ligne  bandeau de PageShell
                   contenu     file + détail
 Invariants        aucune décision prise ici ; enseignants seulement dans les
@@ -259,17 +264,17 @@ Route             /admin/operations/groupes
 Question          Quelles classes existent, et qu'y a-t-il dans celle-ci ?
 Composition       en-tête (titre « Classes », intro, sous-navigation
                   Opérations) ; rangée statuts (Toutes / Actives / Clôturées,
-                  avec nombre) + « Créer un groupe » au bord de fin ; filtre
+                  avec nombre) + « Nouvelle classe » au bord de fin ; filtre
                   Public ; bureau : tableau dense + inspecteur 336 quand une
                   ligne est choisie ; sinon cartes + feuille
 Priorités         P0  la collection
                   P1  l'inspecteur : informations, élèves, actions
-Action principale     « Créer un groupe » (seul bouton plein)
+Action principale     « Nouvelle classe » (seul bouton plein)
 Actions secondaires   statuts, public, lignes, « Ajouter un élève »
                       (secondaire), menu d'actions, « Retirer »
 États             chargement  squelette de liste ; membres : squelette
-                  vide        « Aucun groupe créé » / « Aucun groupe avec ce
-                              filtre » (inchangés)
+                  vide        « Aucune classe créée » / « Aucune classe avec
+                              ce filtre »
                   erreur      liste : état d'erreur + « Réessayer » ;
                               membres : phrase dans l'inspecteur
                   hors ligne  bandeau de PageShell
@@ -280,8 +285,6 @@ Invariants        sélection jamais par la couleur seule ; l'inspecteur ne
 
 ## 6. Reste connu (hors de ce lot)
 
-- Libellés « groupe » restants de l'écran Classes (lot de libellés ; même décision portée
-  par la vague Finance, FI-VAGUE-CORR).
 - Déplacement des Classes sous Pédagogie comme sur l'image : demande une décision de
   structure (barre latérale gelée, `ongletsPedagogie` à cinq fonctions).
 - Les besoins AD-X-BR-01 à 08.

@@ -9,6 +9,7 @@ import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
+import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
@@ -496,7 +497,7 @@ class _Corps extends StatelessWidget {
           // un texte vide par defaut.
           texte: (GroupeAdmin _) => '',
           rendreMemeSiTexteVide: true,
-          rendu: (BuildContext _, GroupeAdmin g) => g.actif
+          rendu: (BuildContext contexte, GroupeAdmin g) => g.actif
               ? MenuActions(
                   tooltip: g.libelle,
                   actions: <EntreeAction>[
@@ -518,6 +519,13 @@ class _Corps extends StatelessWidget {
                       onChoix: () => onCloturer(g),
                     ),
                   ],
+                )
+              // Une classe cloturee n'a plus d'actions. En tableau, sa
+              // cellule garde la largeur du menu (sa cible tactile) : sans
+              // elle, la colonne sans flex retrecit et decale la ligne.
+              : DataCollection.enTableau(contexte)
+              ? SizedBox.square(
+                  dimension: AppMetriques.of(contexte).cibleTactile,
                 )
               : const SizedBox.shrink(),
         ),

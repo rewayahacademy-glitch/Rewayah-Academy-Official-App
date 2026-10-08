@@ -5049,8 +5049,8 @@ class Traductions$admin$traitement$fr {
 	/// fr: 'Espace de traitement'
 	String get titre => 'Espace de traitement';
 
-	/// fr: 'Traitez, examinez et validez les éléments en attente dans Rewayah.'
-	String get sousTitre => 'Traitez, examinez et validez les éléments en attente dans Rewayah.';
+	/// fr: 'Examinez les éléments en attente dans Rewayah, puis ouvrez chacun là où il se traite.'
+	String get sousTitre => 'Examinez les éléments en attente dans Rewayah, puis ouvrez chacun là où il se traite.';
 
 	/// fr: '1 élément en attente'
 	String get compteurUn => '1 élément en attente';
@@ -5463,11 +5463,11 @@ class Traductions$admin$groupes$fr {
 	/// fr: 'Informations générales'
 	String get inspecteurInfos => 'Informations générales';
 
-	/// fr: 'Chaque groupe réunit un enseignant et ses élèves autour d'un créneau commun : c'est là que se donne le cours.'
-	String get intro => 'Chaque groupe réunit un enseignant et ses élèves autour d\'un créneau commun : c\'est là que se donne le cours.';
+	/// fr: 'Chaque classe réunit un enseignant et ses élèves autour d'un créneau commun : c'est là que se donne le cours.'
+	String get intro => 'Chaque classe réunit un enseignant et ses élèves autour d\'un créneau commun : c\'est là que se donne le cours.';
 
-	/// fr: 'Groupe'
-	String get colonneGroupe => 'Groupe';
+	/// fr: 'Classe'
+	String get colonneGroupe => 'Classe';
 
 	/// fr: 'Enseignant'
 	String get colonneEnseignant => 'Enseignant';
@@ -5496,38 +5496,38 @@ class Traductions$admin$groupes$fr {
 	/// fr: 'Tous les publics'
 	String get filtreTousTypes => 'Tous les publics';
 
-	/// fr: 'Actif'
-	String get etatActif => 'Actif';
+	/// fr: 'Active'
+	String get etatActif => 'Active';
 
-	/// fr: 'Clôturé'
-	String get etatCloture => 'Clôturé';
+	/// fr: 'Clôturée'
+	String get etatCloture => 'Clôturée';
 
 	/// fr: '{actifs} / {seuil}'
 	String membresSur({required Object actifs, required Object seuil}) => '${actifs} / ${seuil}';
 
-	/// fr: 'Aucun groupe créé'
-	String get aucun => 'Aucun groupe créé';
+	/// fr: 'Aucune classe créée'
+	String get aucun => 'Aucune classe créée';
 
-	/// fr: 'Créez un premier groupe pour donner un enseignant et des élèves à un créneau commun.'
-	String get aucunDetail => 'Créez un premier groupe pour donner un enseignant et des élèves à un créneau commun.';
+	/// fr: 'Créez une première classe pour donner un enseignant et des élèves à un créneau commun.'
+	String get aucunDetail => 'Créez une première classe pour donner un enseignant et des élèves à un créneau commun.';
 
-	/// fr: 'Aucun groupe avec ce filtre'
-	String get aucunAvecCeFiltre => 'Aucun groupe avec ce filtre';
+	/// fr: 'Aucune classe avec ce filtre'
+	String get aucunAvecCeFiltre => 'Aucune classe avec ce filtre';
 
-	/// fr: 'Changez de filtre pour voir les autres groupes.'
-	String get aucunAvecCeFiltreDetail => 'Changez de filtre pour voir les autres groupes.';
+	/// fr: 'Changez de filtre pour voir les autres classes.'
+	String get aucunAvecCeFiltreDetail => 'Changez de filtre pour voir les autres classes.';
 
-	/// fr: 'Les groupes n'ont pas pu être lus. Réessayez dans un instant.'
-	String get erreur => 'Les groupes n\'ont pas pu être lus. Réessayez dans un instant.';
+	/// fr: 'Les classes n'ont pas pu être lues. Réessayez dans un instant.'
+	String get erreur => 'Les classes n\'ont pas pu être lues. Réessayez dans un instant.';
 
-	/// fr: 'Créer un groupe'
-	String get creer => 'Créer un groupe';
+	/// fr: 'Nouvelle classe'
+	String get creer => 'Nouvelle classe';
 
-	/// fr: 'Créer un groupe'
-	String get creerTitre => 'Créer un groupe';
+	/// fr: 'Nouvelle classe'
+	String get creerTitre => 'Nouvelle classe';
 
-	/// fr: 'Nom du groupe'
-	String get champLibelle => 'Nom du groupe';
+	/// fr: 'Nom de la classe'
+	String get champLibelle => 'Nom de la classe';
 
 	/// fr: 'Il manque le nom de la classe : écrivez-le dans le premier champ.'
 	String get manqueNom => 'Il manque le nom de la classe : écrivez-le dans le premier champ.';
@@ -5547,20 +5547,20 @@ class Traductions$admin$groupes$fr {
 	/// fr: 'Seuil maximal'
 	String get champSeuil => 'Seuil maximal';
 
-	/// fr: 'Créer le groupe'
-	String get creerEnvoyer => 'Créer le groupe';
+	/// fr: 'Créer la classe'
+	String get creerEnvoyer => 'Créer la classe';
 
 	/// fr: 'La création n'a pas abouti : {message}'
 	String creerErreur({required Object message}) => 'La création n\'a pas abouti : ${message}';
 
-	/// fr: 'Groupe {libelle}'
-	String detailTitre({required Object libelle}) => 'Groupe ${libelle}';
+	/// fr: 'Classe {libelle}'
+	String detailTitre({required Object libelle}) => 'Classe ${libelle}';
 
 	/// fr: 'Membres'
 	String get detailMembres => 'Membres';
 
-	/// fr: 'Aucun élève dans ce groupe pour l'instant.'
-	String get detailAucunMembre => 'Aucun élève dans ce groupe pour l\'instant.';
+	/// fr: 'Aucun élève dans cette classe pour l'instant.'
+	String get detailAucunMembre => 'Aucun élève dans cette classe pour l\'instant.';
 
 	/// fr: 'Ajouter un élève'
 	String get actionAjouter => 'Ajouter un élève';
@@ -5574,8 +5574,8 @@ class Traductions$admin$groupes$fr {
 	/// fr: 'Réglages d'observation'
 	String get actionObservation => 'Réglages d\'observation';
 
-	/// fr: 'Clôturer le groupe'
-	String get actionCloturer => 'Clôturer le groupe';
+	/// fr: 'Clôturer la classe'
+	String get actionCloturer => 'Clôturer la classe';
 
 	/// fr: 'Ajouter un élève à {libelle}'
 	String ajouterTitre({required Object libelle}) => 'Ajouter un élève à ${libelle}';
@@ -5619,8 +5619,8 @@ class Traductions$admin$groupes$fr {
 	/// fr: 'Clôturer {libelle}'
 	String cloturerTitre({required Object libelle}) => 'Clôturer ${libelle}';
 
-	/// fr: 'Tous les membres actifs seront retirés du groupe. Cette action ne peut pas être annulée.'
-	String get cloturerDetail => 'Tous les membres actifs seront retirés du groupe. Cette action ne peut pas être annulée.';
+	/// fr: 'Tous les membres actifs seront retirés de la classe. Cette action ne peut pas être annulée.'
+	String get cloturerDetail => 'Tous les membres actifs seront retirés de la classe. Cette action ne peut pas être annulée.';
 
 	/// fr: 'Clôturer'
 	String get cloturerEnvoyer => 'Clôturer';
@@ -15069,17 +15069,17 @@ class Traductions$tc$observation$reglages$fr {
 	/// fr: 'Observation par les tuteurs'
 	String get titre => 'Observation par les tuteurs';
 
-	/// fr: 'Un tuteur peut regarder un court moment le cours de son enfant, sans micro ni caméra. Ce réglage décide de ce qui s'applique à ce groupe.'
-	String get intro => 'Un tuteur peut regarder un court moment le cours de son enfant, sans micro ni caméra. Ce réglage décide de ce qui s\'applique à ce groupe.';
+	/// fr: 'Un tuteur peut regarder un court moment le cours de son enfant, sans micro ni caméra. Ce réglage décide de ce qui s'applique à cette classe.'
+	String get intro => 'Un tuteur peut regarder un court moment le cours de son enfant, sans micro ni caméra. Ce réglage décide de ce qui s\'applique à cette classe.';
 
 	/// fr: 'Hériter de l'Académie'
 	String get heriter => 'Hériter de l\'Académie';
 
-	/// fr: 'Personnaliser pour ce groupe'
-	String get personnaliser => 'Personnaliser pour ce groupe';
+	/// fr: 'Personnaliser pour cette classe'
+	String get personnaliser => 'Personnaliser pour cette classe';
 
-	/// fr: 'Désactiver pour ce groupe'
-	String get desactiver => 'Désactiver pour ce groupe';
+	/// fr: 'Désactiver pour cette classe'
+	String get desactiver => 'Désactiver pour cette classe';
 
 	/// fr: 'Visites par séance'
 	String get maxVisites => 'Visites par séance';
@@ -17333,7 +17333,7 @@ extension on Traductions {
 			'admin.tableau.outilsTraitement' => 'Espace de traitement',
 			'admin.tableau.outilsTraitementDetail' => 'Les dossiers d\'identité et les demandes en attente, dans une seule file.',
 			'admin.traitement.titre' => 'Espace de traitement',
-			'admin.traitement.sousTitre' => 'Traitez, examinez et validez les éléments en attente dans Rewayah.',
+			'admin.traitement.sousTitre' => 'Examinez les éléments en attente dans Rewayah, puis ouvrez chacun là où il se traite.',
 			'admin.traitement.compteurUn' => '1 élément en attente',
 			'admin.traitement.compteur' => ({required Object n}) => '${n} éléments en attente',
 			'admin.traitement.filtreTous' => 'Tous',
@@ -17462,8 +17462,8 @@ extension on Traductions {
 			'admin.groupes.filtrePublic' => 'Public',
 			'admin.groupes.inspecteurFermer' => 'Fermer l\'inspecteur',
 			'admin.groupes.inspecteurInfos' => 'Informations générales',
-			'admin.groupes.intro' => 'Chaque groupe réunit un enseignant et ses élèves autour d\'un créneau commun : c\'est là que se donne le cours.',
-			'admin.groupes.colonneGroupe' => 'Groupe',
+			'admin.groupes.intro' => 'Chaque classe réunit un enseignant et ses élèves autour d\'un créneau commun : c\'est là que se donne le cours.',
+			'admin.groupes.colonneGroupe' => 'Classe',
 			'admin.groupes.colonneEnseignant' => 'Enseignant',
 			'admin.groupes.colonnePays' => 'Pays de l\'enseignant',
 			'admin.groupes.colonneType' => 'Public',
@@ -17473,33 +17473,33 @@ extension on Traductions {
 			'admin.groupes.typeEnfant' => 'Enfants',
 			'admin.groupes.typeAdulte' => 'Adultes',
 			'admin.groupes.filtreTousTypes' => 'Tous les publics',
-			'admin.groupes.etatActif' => 'Actif',
-			'admin.groupes.etatCloture' => 'Clôturé',
+			'admin.groupes.etatActif' => 'Active',
+			'admin.groupes.etatCloture' => 'Clôturée',
 			'admin.groupes.membresSur' => ({required Object actifs, required Object seuil}) => '${actifs} / ${seuil}',
-			'admin.groupes.aucun' => 'Aucun groupe créé',
-			'admin.groupes.aucunDetail' => 'Créez un premier groupe pour donner un enseignant et des élèves à un créneau commun.',
-			'admin.groupes.aucunAvecCeFiltre' => 'Aucun groupe avec ce filtre',
-			'admin.groupes.aucunAvecCeFiltreDetail' => 'Changez de filtre pour voir les autres groupes.',
-			'admin.groupes.erreur' => 'Les groupes n\'ont pas pu être lus. Réessayez dans un instant.',
-			'admin.groupes.creer' => 'Créer un groupe',
-			'admin.groupes.creerTitre' => 'Créer un groupe',
-			'admin.groupes.champLibelle' => 'Nom du groupe',
+			'admin.groupes.aucun' => 'Aucune classe créée',
+			'admin.groupes.aucunDetail' => 'Créez une première classe pour donner un enseignant et des élèves à un créneau commun.',
+			'admin.groupes.aucunAvecCeFiltre' => 'Aucune classe avec ce filtre',
+			'admin.groupes.aucunAvecCeFiltreDetail' => 'Changez de filtre pour voir les autres classes.',
+			'admin.groupes.erreur' => 'Les classes n\'ont pas pu être lues. Réessayez dans un instant.',
+			'admin.groupes.creer' => 'Nouvelle classe',
+			'admin.groupes.creerTitre' => 'Nouvelle classe',
+			'admin.groupes.champLibelle' => 'Nom de la classe',
 			'admin.groupes.manqueNom' => 'Il manque le nom de la classe : écrivez-le dans le premier champ.',
 			'admin.groupes.manqueEnseignant' => 'Il manque l\'enseignant : choisissez-le dans la liste.',
 			'admin.groupes.champType' => 'Public',
 			'admin.groupes.champJour' => 'Jour',
 			'admin.groupes.champHeure' => 'Heure (0-23)',
 			'admin.groupes.champSeuil' => 'Seuil maximal',
-			'admin.groupes.creerEnvoyer' => 'Créer le groupe',
+			'admin.groupes.creerEnvoyer' => 'Créer la classe',
 			'admin.groupes.creerErreur' => ({required Object message}) => 'La création n\'a pas abouti : ${message}',
-			'admin.groupes.detailTitre' => ({required Object libelle}) => 'Groupe ${libelle}',
+			'admin.groupes.detailTitre' => ({required Object libelle}) => 'Classe ${libelle}',
 			'admin.groupes.detailMembres' => 'Membres',
-			'admin.groupes.detailAucunMembre' => 'Aucun élève dans ce groupe pour l\'instant.',
+			'admin.groupes.detailAucunMembre' => 'Aucun élève dans cette classe pour l\'instant.',
 			'admin.groupes.actionAjouter' => 'Ajouter un élève',
 			'admin.groupes.actionRetirer' => 'Retirer',
 			'admin.groupes.actionModifierSeuil' => 'Modifier le seuil',
 			'admin.groupes.actionObservation' => 'Réglages d\'observation',
-			'admin.groupes.actionCloturer' => 'Clôturer le groupe',
+			'admin.groupes.actionCloturer' => 'Clôturer la classe',
 			'admin.groupes.ajouterTitre' => ({required Object libelle}) => 'Ajouter un élève à ${libelle}',
 			'admin.groupes.manqueEleve' => 'Il manque l\'élève : choisissez-le dans la liste.',
 			'admin.groupes.manqueMotif' => 'Il manque le motif : écrivez-le, il s\'inscrit au journal d\'audit.',
@@ -17514,7 +17514,7 @@ extension on Traductions {
 			'admin.groupes.modifierSeuilEnvoyer' => 'Enregistrer',
 			'admin.groupes.modifierSeuilErreur' => ({required Object message}) => 'La modification n\'a pas abouti : ${message}',
 			'admin.groupes.cloturerTitre' => ({required Object libelle}) => 'Clôturer ${libelle}',
-			'admin.groupes.cloturerDetail' => 'Tous les membres actifs seront retirés du groupe. Cette action ne peut pas être annulée.',
+			'admin.groupes.cloturerDetail' => 'Tous les membres actifs seront retirés de la classe. Cette action ne peut pas être annulée.',
 			'admin.groupes.cloturerEnvoyer' => 'Clôturer',
 			'admin.groupes.cloturerErreur' => ({required Object message}) => 'La clôture n\'a pas abouti : ${message}',
 			'admin.groupes.journalisation' => 'Chaque création, ajout, retrait et clôture est inscrit au journal d\'audit.',
@@ -19835,10 +19835,10 @@ extension on Traductions {
 			'tc.observation.annonce.enfantIndicateur' => 'Ton tuteur regarde le cours',
 			'tc.observation.annonce.tuteursObservent' => ({required Object nombre}) => '${nombre} tuteurs observent',
 			'tc.observation.reglages.titre' => 'Observation par les tuteurs',
-			'tc.observation.reglages.intro' => 'Un tuteur peut regarder un court moment le cours de son enfant, sans micro ni caméra. Ce réglage décide de ce qui s\'applique à ce groupe.',
+			'tc.observation.reglages.intro' => 'Un tuteur peut regarder un court moment le cours de son enfant, sans micro ni caméra. Ce réglage décide de ce qui s\'applique à cette classe.',
 			'tc.observation.reglages.heriter' => 'Hériter de l\'Académie',
-			'tc.observation.reglages.personnaliser' => 'Personnaliser pour ce groupe',
-			'tc.observation.reglages.desactiver' => 'Désactiver pour ce groupe',
+			'tc.observation.reglages.personnaliser' => 'Personnaliser pour cette classe',
+			'tc.observation.reglages.desactiver' => 'Désactiver pour cette classe',
 			'tc.observation.reglages.maxVisites' => 'Visites par séance',
 			'tc.observation.reglages.tempsTotal' => 'Temps total par séance',
 			'tc.observation.reglages.plafondVisite' => 'Durée maximale d\'une visite',
