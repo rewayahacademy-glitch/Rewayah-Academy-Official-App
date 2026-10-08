@@ -41,9 +41,9 @@ String momentCommunaute(DateTime instant, DateTime maintenant) {
   final m = t.com.communaute.moment;
   final Duration ecart = maintenant.difference(instant);
   if (ecart.inMinutes < 1) return m.instant;
-  if (ecart.inHours < 1) return m.minutes(nombre: ecart.inMinutes);
-  if (ecart.inDays < 1) return m.heures(nombre: ecart.inHours);
-  if (ecart.inDays < 7) return m.jours(nombre: ecart.inDays);
+  if (ecart.inHours < 1) return m.minutes(n: ecart.inMinutes);
+  if (ecart.inDays < 1) return m.heures(n: ecart.inHours);
+  if (ecart.inDays < 7) return m.jours(n: ecart.inDays);
   final DateTime local = instant.toLocal();
   return m.date(
     jour: local.day.toString().padLeft(2, '0'),
@@ -55,10 +55,28 @@ String momentCommunaute(DateTime instant, DateTime maintenant) {
 /// separes par « · » (« Enseignante, Classe An-Nour · Il y a 2 h », jamais
 /// une majuscule au milieu d'une phrase, revue COM-R, R-14) ; le moment seul si le
 /// serveur ne donne pas de fonction.
-String ligneAuteurCommunaute(String? fonction, String moment) =>
-    fonction == null || fonction.isEmpty
-    ? moment
-    : t.com.communaute.publication.auteur(fonction: fonction, moment: moment);
+///
+/// Lot K, point 6 (COM-CAPT tour 4, n. 3) : le moment ne se coupe jamais
+/// (« Il y a » puis « 2 h » seul a la ligne, a 390) ; ses espaces sont
+/// insecables, et l'espace avant « · » aussi : la ligne passe a la ligne
+/// apres le separateur, le moment entier au debut de la suivante.
+String ligneAuteurCommunaute(String? fonction, String moment) {
+  final String insecable = moment.replaceAll(' ', _espaceInsecable);
+  if (fonction == null || fonction.isEmpty) return insecable;
+  final String ligne = t.com.communaute.publication.auteur(
+    fonction: fonction,
+    moment: insecable,
+  );
+  // Le DERNIER separateur, celui qui precede le moment : la fonction donnee
+  // par le serveur peut porter son propre « · » (« Enseignante · Classe
+  // An-Nour »), qui reste secable.
+  final int separateur = ligne.lastIndexOf(' $_separateur ');
+  if (separateur < 0) return ligne;
+  return ligne.replaceRange(separateur, separateur + 1, _espaceInsecable);
+}
+
+const String _espaceInsecable = '\u00A0';
+const String _separateur = '\u00B7';
 
 /// Le nombre de reponses, en mots.
 String libelleReponses(int nombre) {

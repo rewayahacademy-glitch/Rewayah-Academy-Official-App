@@ -483,10 +483,26 @@ void main() {
         jsonDecode(File('assets/i18n/$langue.i18n.json').readAsStringSync())
             as Map<String, dynamic>;
 
+    // Un pluriel (`one`, `two`, `few`...) est une seule cle : ses formes
+    // dependent de la langue (l'arabe en a cinq, le francais deux).
+    const Set<String> formesPluriel = <String>{
+      'zero',
+      'one',
+      'two',
+      'few',
+      'many',
+      'other',
+    };
+    bool estPluriel(Object? v) =>
+        v is Map<String, dynamic> &&
+        v.isNotEmpty &&
+        formesPluriel.containsAll(v.keys);
     Map<String, String> aplatir(Map<String, dynamic> m, [String p = '']) =>
         <String, String>{
           for (final MapEntry<String, dynamic> e in m.entries)
-            if (e.value is Map<String, dynamic>)
+            if (estPluriel(e.value))
+              '$p${e.key}': (e.value as Map<String, dynamic>)['other'] as String
+            else if (e.value is Map<String, dynamic>)
               ...aplatir(e.value as Map<String, dynamic>, '$p${e.key}.')
             else
               '$p${e.key}': e.value as String,

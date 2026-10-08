@@ -5066,9 +5066,18 @@
       },
       "moment": {
         "instant": "À l'instant",
-        "minutes": "Il y a {nombre} min",
-        "heures": "Il y a {nombre} h",
-        "jours": "Il y a {nombre} j",
+        "minutes": {
+          "one": "Il y a {n} min",
+          "other": "Il y a {n} min"
+        },
+        "heures": {
+          "one": "Il y a {n} h",
+          "other": "Il y a {n} h"
+        },
+        "jours": {
+          "one": "Il y a {n} j",
+          "other": "Il y a {n} j"
+        },
         "date": "Le {jour}/{mois}"
       },
       "publication": {

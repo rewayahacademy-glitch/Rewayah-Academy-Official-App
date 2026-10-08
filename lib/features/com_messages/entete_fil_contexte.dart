@@ -228,7 +228,11 @@ class EnteteFilContexte extends StatelessWidget {
                 children: <Widget>[
                   AvatarNom.enLigne(
                     prenom: prenom,
-                    nom: noms,
+                    // Lot K : a l'affichage seulement (la phrase lue est
+                    // celle de l'en-tete), le trait d'union insecable
+                    // (U+2011) garde « An-Nour » entier : a 1440, le nom se
+                    // coupait en « An- » puis « Nour ».
+                    nom: noms.replaceAll('-', '\u2011'),
                     role: ligneObjets,
                     styleNom: palette.inkStrong.applyTo(
                       textes.titleMedium ?? const TextStyle(),
@@ -267,9 +271,12 @@ class EnteteFilContexte extends StatelessWidget {
         ),
       ),
       if (interlocuteurs.isNotEmpty && ligneObjets.isNotEmpty)
+        // Lot K, point 5 (COM-CAPT tour 4, n. 1) : les objets passent a la
+        // ligne, deux lignes au plus (« Classe An-Nour · A... » a 320 en
+        // texte x2) ; la phrase entiere reste lue par l'en-tete.
         Text(
           ligneObjets,
-          maxLines: 1,
+          maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: palette.inkMuted.applyTo(
             textes.bodySmall ?? const TextStyle(),

@@ -6,6 +6,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show SemanticsNode;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
@@ -581,10 +582,25 @@ void main() {
         port: portDemo(),
         depart: Routes.canalStudioPour('admissions'),
       );
+      // Lot K, point 4 : l'aide est toujours dite au lecteur d'ecran, au
+      // repos comme au toucher ; elle se peint sur une ligne au plus.
+      final SemanticsHandle sem = tester.ensureSemantics();
+      final String aide = t.com.studio.canal.aide(nom: 'Admissions');
       expect(
-        find.text(t.com.studio.canal.aide(nom: 'Admissions')),
-        findsOneWidget,
+        tester.getSemantics(find.byKey(FilDiscussion.champKey)).hint,
+        aide,
       );
+      await tester.showKeyboard(find.byKey(FilDiscussion.champKey));
+      await tester.pumpAndSettle();
+      final SemanticsNode noeud = tester.getSemantics(
+        find.byKey(FilDiscussion.champKey),
+      );
+      expect('${noeud.label}\n${noeud.hint}', contains(aide));
+      final InputDecoration deco = tester
+          .widget<TextField>(find.byKey(FilDiscussion.champKey))
+          .decoration!;
+      expect(deco.hintMaxLines, 1);
+      sem.dispose();
     });
 
     testWidgets('lecture seule : aucun champ, la limite est dite', (

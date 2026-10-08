@@ -421,6 +421,11 @@ Future<void> _allerAuComposerReponse(WidgetTester tester) async {
   await _stabiliser(tester);
 }
 
+/// Touche le champ du fil (focus de saisie), sans rien y ecrire.
+Future<void> _toucherChamp(WidgetTester tester) async {
+  await _toucher(tester, find.byKey(FilDiscussion.champKey));
+}
+
 /// Entre en Focus. A texte agrandi, l'en-tete du canal defile avec le fil
 /// (COM-RC, R-02) : « Mode focus » se retrouve en remontant le fil, comme
 /// dans `test/features/com_studio/support_focus.dart`.
@@ -622,6 +627,15 @@ List<_Ecran> _ecrans() {
       cheminCanalStudio(canalFocusDemo),
       () => <Override>[..._admin(), ..._studio()],
       principal: true,
+    ),
+    // Lot K (revue) : le champ du canal au toucher, avant toute frappe ;
+    // il garde sa hauteur d'une ligne, l'aide coupee sur une ligne.
+    _Ecran(
+      'studio_canal_saisie',
+      cheminCanalStudio(canalFocusDemo),
+      () => <Override>[..._admin(), ..._studio()],
+      geste: _toucherChamp,
+      variantes: _etats,
     ),
     _Ecran(
       'studio_focus',

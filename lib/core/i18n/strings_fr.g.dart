@@ -16147,14 +16147,23 @@ class Traductions$com$communaute$moment$fr {
 	/// fr: 'À l'instant'
 	String get instant => 'À l\'instant';
 
-	/// fr: 'Il y a {nombre} min'
-	String minutes({required Object nombre}) => 'Il y a ${nombre} min';
+	/// fr: '(one) {Il y a {n} min} (other) {Il y a {n} min}'
+	String minutes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Il y a ${n} min',
+		other: 'Il y a ${n} min',
+	);
 
-	/// fr: 'Il y a {nombre} h'
-	String heures({required Object nombre}) => 'Il y a ${nombre} h';
+	/// fr: '(one) {Il y a {n} h} (other) {Il y a {n} h}'
+	String heures({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Il y a ${n} h',
+		other: 'Il y a ${n} h',
+	);
 
-	/// fr: 'Il y a {nombre} j'
-	String jours({required Object nombre}) => 'Il y a ${nombre} j';
+	/// fr: '(one) {Il y a {n} j} (other) {Il y a {n} j}'
+	String jours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Il y a ${n} j',
+		other: 'Il y a ${n} j',
+	);
 
 	/// fr: 'Le {jour}/{mois}'
 	String date({required Object jour, required Object mois}) => 'Le ${jour}/${mois}';
@@ -22799,9 +22808,9 @@ extension on Traductions {
 			'com.communaute.recherche.champ' => 'Rechercher une publication',
 			'com.communaute.recherche.aide' => 'Un mot du titre ou du texte',
 			'com.communaute.moment.instant' => 'À l\'instant',
-			'com.communaute.moment.minutes' => ({required Object nombre}) => 'Il y a ${nombre} min',
-			'com.communaute.moment.heures' => ({required Object nombre}) => 'Il y a ${nombre} h',
-			'com.communaute.moment.jours' => ({required Object nombre}) => 'Il y a ${nombre} j',
+			'com.communaute.moment.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il y a ${n} min', other: 'Il y a ${n} min', ), 
+			'com.communaute.moment.heures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il y a ${n} h', other: 'Il y a ${n} h', ), 
+			'com.communaute.moment.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il y a ${n} j', other: 'Il y a ${n} j', ), 
 			'com.communaute.moment.date' => ({required Object jour, required Object mois}) => 'Le ${jour}/${mois}',
 			'com.communaute.publication.auteur' => ({required Object fonction, required Object moment}) => '${fonction} · ${moment}',
 			'com.communaute.publication.enregistrer' => 'Enregistrer la publication',

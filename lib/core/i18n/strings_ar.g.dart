@@ -1052,9 +1052,27 @@ class _Traductions$com$communaute$moment$ar extends Traductions$com$communaute$m
 
 	// Translations
 	@override String get instant => 'الآن';
-	@override String minutes({required Object nombre}) => 'منذ ${nombre} دقيقة';
-	@override String heures({required Object nombre}) => 'منذ ${nombre} ساعة';
-	@override String jours({required Object nombre}) => 'منذ ${nombre} يوم';
+	@override String minutes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		one: 'منذ دقيقة',
+		two: 'منذ دقيقتين',
+		few: 'منذ ${n} دقائق',
+		many: 'منذ ${n} دقيقة',
+		other: 'منذ ${n} دقيقة',
+	);
+	@override String heures({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		one: 'منذ ساعة',
+		two: 'منذ ساعتين',
+		few: 'منذ ${n} ساعات',
+		many: 'منذ ${n} ساعة',
+		other: 'منذ ${n} ساعة',
+	);
+	@override String jours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		one: 'منذ يوم',
+		two: 'منذ يومين',
+		few: 'منذ ${n} أيام',
+		many: 'منذ ${n} يومًا',
+		other: 'منذ ${n} يوم',
+	);
 	@override String date({required Object jour, required Object mois}) => 'في ${jour}/${mois}';
 }
 
@@ -2528,9 +2546,9 @@ extension on TraductionsAr {
 			'com.communaute.recherche.champ' => 'البحث عن منشور',
 			'com.communaute.recherche.aide' => 'كلمة من العنوان أو النص',
 			'com.communaute.moment.instant' => 'الآن',
-			'com.communaute.moment.minutes' => ({required Object nombre}) => 'منذ ${nombre} دقيقة',
-			'com.communaute.moment.heures' => ({required Object nombre}) => 'منذ ${nombre} ساعة',
-			'com.communaute.moment.jours' => ({required Object nombre}) => 'منذ ${nombre} يوم',
+			'com.communaute.moment.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, one: 'منذ دقيقة', two: 'منذ دقيقتين', few: 'منذ ${n} دقائق', many: 'منذ ${n} دقيقة', other: 'منذ ${n} دقيقة', ), 
+			'com.communaute.moment.heures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, one: 'منذ ساعة', two: 'منذ ساعتين', few: 'منذ ${n} ساعات', many: 'منذ ${n} ساعة', other: 'منذ ${n} ساعة', ), 
+			'com.communaute.moment.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, one: 'منذ يوم', two: 'منذ يومين', few: 'منذ ${n} أيام', many: 'منذ ${n} يومًا', other: 'منذ ${n} يوم', ), 
 			'com.communaute.moment.date' => ({required Object jour, required Object mois}) => 'في ${jour}/${mois}',
 			'com.communaute.publication.auteur' => ({required Object fonction, required Object moment}) => '${fonction} · ${moment}',
 			'com.communaute.publication.enregistrer' => 'حفظ المنشور',

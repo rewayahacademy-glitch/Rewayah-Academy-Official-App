@@ -66,7 +66,18 @@ class ActionPrincipale extends StatelessWidget {
     this.autofocus = false,
     this.focusNode,
     this.libelleSemantique,
+    this.affleurant = false,
   });
+
+  /// Vrai pour poser le LIBELLE au bord de debut du contenu (lot K, point
+  /// 3) : un bouton texte ([NiveauAction.tertiaire]) seul en debut de ligne
+  /// se lisait en retrait de sa marge interne (12 en format reduit, 20
+  /// sinon), « Mode focus » sous le titre du canal par exemple. Le bouton
+  /// glisse de cette marge vers le debut (vers la droite en arabe) : son
+  /// texte s'aligne sur le titre, sa cible garde ses 48 points et son fond
+  /// de survol deborde dans la gouttiere. La mise en page ne change pas.
+  /// Reserve aux boutons sans fond ni filet au repos, en debut de ligne.
+  final bool affleurant;
 
   /// Ce que lit le lecteur d'ecran quand le verbe visible ne suffit pas :
   /// « Retirer devoir.pdf » sous un « Retirer » (revue COM-F-R, m3). Par
@@ -143,7 +154,7 @@ class ActionPrincipale extends StatelessWidget {
     final bool actif = onPress != null && !enCours;
     final bool reduit = compacte && !metriques.estEnfant;
 
-    return Pressable.selon(
+    final Widget bouton = Pressable.selon(
       onPress: actif ? onPress : null,
       libelleSemantique: libelleSemantique ?? libelle,
       // Le format reduit est plus petit que la cible : `Pressable` l'y porte,
@@ -170,6 +181,13 @@ class ActionPrincipale extends StatelessWidget {
         // debut de ligne, miroir en arabe).
         return reduit ? Center(widthFactor: 1, child: corps) : corps;
       },
+    );
+    if (!affleurant) return bouton;
+    final double marge = reduit ? AppSpacing.md : AppSpacing.xl;
+    final bool rtl = Directionality.of(context) == TextDirection.rtl;
+    return Transform.translate(
+      offset: Offset(rtl ? marge : -marge, 0),
+      child: bouton,
     );
   }
 
