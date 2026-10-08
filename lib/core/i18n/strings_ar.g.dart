@@ -512,7 +512,13 @@ class _Traductions$comptable$commun$ar extends Traductions$comptable$commun$fr {
 	@override String get enTransit => 'قيد التحويل';
 	@override String get tresorerieLibreDetail => 'ما يبقى متاحًا فعلًا بعد الأموال المحمية والالتزامات والمبالغ قيد التحويل.';
 	@override String get objectifFixe => 'الهدف: مبلغ ثابت';
-	@override String objectifMois({required Object n}) => 'الهدف الحالي: ${n} أشهر من المصاريف الأساسية';
+	@override String objectifMois({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		one: 'الهدف الحالي: شهر واحد من المصاريف الأساسية',
+		two: 'الهدف الحالي: شهران من المصاريف الأساسية',
+		few: 'الهدف الحالي: ${n} أشهر من المصاريف الأساسية',
+		many: 'الهدف الحالي: ${n} شهرًا من المصاريف الأساسية',
+		other: 'الهدف الحالي: ${n} شهر من المصاريف الأساسية',
+	);
 	@override String get montantActuel => 'المبلغ الحالي';
 	@override String get manque => 'المتبقي لبلوغ الهدف';
 	@override String atteint({required Object pourcent}) => 'تحقق ${pourcent} %';
@@ -2172,7 +2178,7 @@ extension on TraductionsAr {
 			'comptable.commun.enTransit' => 'قيد التحويل',
 			'comptable.commun.tresorerieLibreDetail' => 'ما يبقى متاحًا فعلًا بعد الأموال المحمية والالتزامات والمبالغ قيد التحويل.',
 			'comptable.commun.objectifFixe' => 'الهدف: مبلغ ثابت',
-			'comptable.commun.objectifMois' => ({required Object n}) => 'الهدف الحالي: ${n} أشهر من المصاريف الأساسية',
+			'comptable.commun.objectifMois' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, one: 'الهدف الحالي: شهر واحد من المصاريف الأساسية', two: 'الهدف الحالي: شهران من المصاريف الأساسية', few: 'الهدف الحالي: ${n} أشهر من المصاريف الأساسية', many: 'الهدف الحالي: ${n} شهرًا من المصاريف الأساسية', other: 'الهدف الحالي: ${n} شهر من المصاريف الأساسية', ), 
 			'comptable.commun.montantActuel' => 'المبلغ الحالي',
 			'comptable.commun.manque' => 'المتبقي لبلوغ الهدف',
 			'comptable.commun.atteint' => ({required Object pourcent}) => 'تحقق ${pourcent} %',

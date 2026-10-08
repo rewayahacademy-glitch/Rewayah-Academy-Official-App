@@ -5231,7 +5231,10 @@
       "enTransit": "En transit",
       "tresorerieLibreDetail": "Ce qui reste réellement disponible après les fonds protégés, les obligations et le transit.",
       "objectifFixe": "Objectif : montant fixe",
-      "objectifMois": "Objectif actuel : {n} mois de charges essentielles",
+      "objectifMois": {
+        "one": "Objectif actuel : 1 mois de charges essentielles",
+        "other": "Objectif actuel : {n} mois de charges essentielles"
+      },
       "montantActuel": "Montant actuel",
       "manque": "Manque à compléter",
       "atteint": "{pourcent} % atteint",

@@ -11979,8 +11979,11 @@ class Traductions$comptable$commun$fr {
 	/// fr: 'Objectif : montant fixe'
 	String get objectifFixe => 'Objectif : montant fixe';
 
-	/// fr: 'Objectif actuel : {n} mois de charges essentielles'
-	String objectifMois({required Object n}) => 'Objectif actuel : ${n} mois de charges essentielles';
+	/// fr: '(one) {Objectif actuel : 1 mois de charges essentielles} (other) {Objectif actuel : {n} mois de charges essentielles}'
+	String objectifMois({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Objectif actuel : 1 mois de charges essentielles',
+		other: 'Objectif actuel : ${n} mois de charges essentielles',
+	);
 
 	/// fr: 'Montant actuel'
 	String get montantActuel => 'Montant actuel';
@@ -24591,7 +24594,7 @@ extension on Traductions {
 			'comptable.commun.enTransit' => 'En transit',
 			'comptable.commun.tresorerieLibreDetail' => 'Ce qui reste réellement disponible après les fonds protégés, les obligations et le transit.',
 			'comptable.commun.objectifFixe' => 'Objectif : montant fixe',
-			'comptable.commun.objectifMois' => ({required Object n}) => 'Objectif actuel : ${n} mois de charges essentielles',
+			'comptable.commun.objectifMois' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Objectif actuel : 1 mois de charges essentielles', other: 'Objectif actuel : ${n} mois de charges essentielles', ), 
 			'comptable.commun.montantActuel' => 'Montant actuel',
 			'comptable.commun.manque' => 'Manque à compléter',
 			'comptable.commun.atteint' => ({required Object pourcent}) => '${pourcent} % atteint',

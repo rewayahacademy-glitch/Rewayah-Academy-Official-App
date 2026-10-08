@@ -30,7 +30,10 @@ Statuts : **présent dans le code et testé localement**, rien n'est déployé.
   l'espace Comptable (`commun.etats.*`, `commun.dates.jours/mois/jourDate`,
   `commun.reessayer`, `commun.annuler`, `commun.choix.indisponible`, `choix.*`,
   `destructif.irreversible`, `reseau.horsLigne`, `nav.principale/replier/deplier`).
-- Pluriels arabes : formes `one`, `two`, `few`, `other` (résolveur arabe de slang).
+- Pluriels arabes : formes `one`, `two`, `few`, `other` (résolveur arabe de slang) ;
+  `comptable.commun.objectifMois` devient un pluriel le 08/10 (français `one`,
+  `other` ; arabe `one`, `two`, `few`, `many`, `other` : شهر واحد، شهران،
+  {n} أشهر، {n} شهرًا).
 - Vocabulaire fixé (aucune traduction arabe de la Finance n'existait avant, il
   devient la référence) : المدفوعات (paiements), الخزينة (trésorerie),
   المقبوضات (encaissements), المطابقة (rapprochement), الصناديق (coffres),
@@ -51,17 +54,15 @@ Statuts : **présent dans le code et testé localement**, rien n'est déployé.
 
 ## 3. Q-11 cpt-registre = (b) : catalogue des écrans
 
-Le catalogue général (`docs/design/08-catalogue-ecrans.md` sur `main`) a été
-déplacé par la remise à plat du 23/09 dans
-`docs/archive/2026-09-pre-remise-a-plat/design/08-catalogue-ecrans.md` sur
-cette lignée ; aucun autre catalogue d'écrans n'existe sous `docs/current/`.
-Décidé par délégation le 05/10 : les entrées sont inscrites **dans ce fichier, à
-son emplacement actuel**, plutôt que de recréer `docs/design/` (ce qui
-défairait la remise à plat). Nouvelle section « Zone Comptable » au format du
-registre : `CPT-01` (code gardé) à `CPT-13`, `ADM-18` (Réserve et délégation),
-`ADM-19` (À valider), chacune avec un renvoi vers sa section de
-`20_comptable/UX_REVIEW_FINANCE_COMPTABLE_L0.md` (branche `pilotage/tuteur-v1`).
-À confirmer par l'orchestrateur si le catalogue doit revenir sous `docs/design/`.
+Le catalogue général (`docs/design/08-catalogue-ecrans.md` sur `main`) est
+archivé sur cette lignée par la remise à plat du 23/09, et `docs/archive/` ne
+se charge pas comme instruction. Décidé par délégation le 08/10 : le registre
+« Zone Comptable » vit dans **`docs/current/CATALOGUE_ECRANS_COMPTABLE.md`**,
+au format du registre général : `CPT-01` (code gardé) à `CPT-13`, `ADM-18`
+(Réserve et délégation), `ADM-19` (À valider), chacun avec un renvoi vers sa
+section de `20_comptable/UX_REVIEW_FINANCE_COMPTABLE_L0.md` (branche
+`pilotage/tuteur-v1`). Le catalogue archivé ne garde qu'une ligne de renvoi
+vers ce fichier (et sa ligne `CPT-01` y renvoie).
 
 ## 4. Libellés
 
