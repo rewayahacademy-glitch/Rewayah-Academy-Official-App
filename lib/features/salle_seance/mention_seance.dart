@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import '../../core/i18n/sens_texte.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_palette.dart';
@@ -95,7 +96,15 @@ class MentionSeance extends StatelessWidget {
             ),
             Ecart.hXs,
           ],
-          Flexible(child: Text(notice, style: style)),
+          Flexible(
+            // DOCK-X2-1 (bidi) : la notice garde le sens de sa langue.
+            child: Text(
+              notice,
+              textDirection: sensDuTexte(notice),
+              textAlign: alignementDebut(context),
+              style: style,
+            ),
+          ),
         ],
       ),
     );

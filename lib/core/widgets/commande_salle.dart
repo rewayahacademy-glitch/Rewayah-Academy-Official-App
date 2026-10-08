@@ -14,6 +14,8 @@
 // Un seul composant pour le dock de la seance et pour la salle : on
 // l'ameliore, on n'en recree pas un (lib/CLAUDE.md).
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../domain/enums.dart';
@@ -80,10 +82,52 @@ double largeurCaseCommande(BuildContext context, {required bool bascule}) {
 /// en Mode Accessibilite au-dela de 130 %, le mot reste aussi dans la
 /// rangee unique du bureau ; la case garde alors deux cibles (le mot passe
 /// sur deux lignes sans se couper). Ailleurs, [largeurCaseCommande].
-double largeurCaseBasculeAvecMot(BuildContext context) =>
-    commandesSurDeuxRangees(context)
-    ? AppMetriques.of(context).cibleTactile * 2
-    : largeurCaseCommande(context, bascule: true);
+///
+/// DOCK-X2-1 (decision du 05/10/2026 : le mot d'etat reste, sans coupure) :
+/// HORS Mode Accessibilite, au-dela de 130 %, la rangee du bureau montre
+/// encore le mot ; la case retombait pourtant a une cible et un ecart, et le
+/// mot s'y coupait (« Camér / a allu… »). Elle garde alors deux cibles, et
+/// au moins la largeur du plus long mot de [libelle] au [style] et a
+/// l'echelle courants : le mot passe a la ligne ENTRE ses mots, jamais
+/// dedans. Jusqu'a 130 %, rien ne change.
+double largeurCaseBasculeAvecMot(
+  BuildContext context, {
+  String? libelle,
+  TextStyle? style,
+}) {
+  final double cible = AppMetriques.of(context).cibleTactile;
+  if (commandesSurDeuxRangees(context)) return cible * 2;
+  if (motEtatVisible(context)) {
+    return largeurCaseCommande(context, bascule: true);
+  }
+  final String? mot = libelle;
+  return math.max(
+    cible * 2,
+    mot == null ? 0 : _largeurPlusLongMot(context, mot, style),
+  );
+}
+
+/// La largeur du plus long mot de [texte] (suite sans espace), au [style] et
+/// a l'echelle de texte courants, arrondie au pixel superieur.
+double _largeurPlusLongMot(
+  BuildContext context,
+  String texte,
+  TextStyle? style,
+) {
+  double plusLarge = 0;
+  for (final String mot in texte.split(RegExp(r'\s+'))) {
+    if (mot.isEmpty) continue;
+    final TextPainter peintre = TextPainter(
+      text: TextSpan(text: mot, style: style),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 1,
+    )..layout();
+    plusLarge = math.max(plusLarge, peintre.width.ceilToDouble());
+    peintre.dispose();
+  }
+  return plusLarge;
+}
 
 /// EN-12 (UX_REVIEW_04 n° 17 d, K-42) : la rangee est trop serree ou le texte
 /// agrandi. Les commandes ordinaires y passent en icone seule (le libelle reste
@@ -379,7 +423,11 @@ class CommandeSalle extends StatelessWidget {
         ? SizedBox(
             width: iconeSeule
                 ? largeurCaseCommande(context, bascule: true)
-                : largeurCaseBasculeAvecMot(context),
+                : largeurCaseBasculeAvecMot(
+                    context,
+                    libelle: libelle,
+                    style: styleLibelle,
+                  ),
             child: pressable,
           )
         : pressable;

@@ -131,12 +131,14 @@ class ZoomLocal extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final ThemeData theme = Theme.of(context);
     final VoidCallback? agrandir = onAgrandir;
-    return Row(
-      key: const ValueKey<String>('zoom-local'),
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        if (avecLibelle) ...<Widget>[
-          Flexible(
+    final String valeur = t.salle.seance.zoomValeur(
+      valeur: (zoom * 100).round(),
+    );
+    final TextStyle styleValeur = palette.inkStrong.applyTo(
+      theme.textTheme.titleSmall ?? const TextStyle(),
+    );
+    final Widget? libelle = avecLibelle
+        ? Flexible(
             child: Text(
               t.salle.seance.zoomLocal,
               maxLines: 1,
@@ -145,51 +147,101 @@ class ZoomLocal extends StatelessWidget {
                 theme.textTheme.labelSmall ?? const TextStyle(),
               ),
             ),
+          )
+        : null;
+    final Widget boite = DecoratedBox(
+      decoration: _cadre(palette),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          _IconeBarre(
+            icone: AppIcons.zoomMoins,
+            libelle: t.salle.seance.zoomMoins,
+            onPress: onMoins,
           ),
-          Ecart.hXl,
+          Text(valeur, style: styleValeur),
+          _IconeBarre(
+            icone: AppIcons.zoomPlus,
+            libelle: t.salle.seance.zoomPlus,
+            onPress: onPlus,
+          ),
         ],
-        DecoratedBox(
-          decoration: _cadre(palette),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              _IconeBarre(
-                icone: AppIcons.zoomMoins,
-                libelle: t.salle.seance.zoomMoins,
-                onPress: onMoins,
-              ),
-              Text(
-                t.salle.seance.zoomValeur(valeur: (zoom * 100).round()),
-                style: palette.inkStrong.applyTo(
-                  theme.textTheme.titleSmall ?? const TextStyle(),
-                ),
-              ),
-              _IconeBarre(
-                icone: AppIcons.zoomPlus,
-                libelle: t.salle.seance.zoomPlus,
-                onPress: onPlus,
-              ),
-            ],
-          ),
-        ),
-        if (agrandir != null) ...<Widget>[
-          Ecart.hMd,
-          // Meme bascule que dans le dock (ETATS-BTN-1) : un seul composant,
-          // donc le meme rendu a trois signaux (disque plein ou contour,
-          // icone reduire / agrandir, mot d'etat).
-          CommandeSalle(
+      ),
+    );
+    final String motAgrandir = agrandi
+        ? t.salle.seance.reduire
+        : t.salle.seance.agrandir;
+    // Meme bascule que dans le dock (ETATS-BTN-1) : un seul composant, donc
+    // le meme rendu a trois signaux (disque plein ou contour, icone reduire
+    // / agrandir, mot d'etat).
+    final Widget? bascule = agrandir == null
+        ? null
+        : CommandeSalle(
             key: const ValueKey<String>('bouton-agrandir-barre'),
             icone: (agrandi ? AppIcons.reduire : AppIcons.agrandir).repos,
-            libelle: agrandi
-                ? t.salle.seance.reduire
-                : t.salle.seance.agrandir,
+            libelle: motAgrandir,
             bascule: agrandi,
             onPress: agrandir,
-          ),
-        ],
+          );
+    final Widget rangee = Row(
+      key: const ValueKey<String>('zoom-local'),
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        if (libelle != null) ...<Widget>[libelle, Ecart.hXl],
+        boite,
+        if (bascule != null) ...<Widget>[Ecart.hMd, bascule],
       ],
     );
+    if (bascule == null) return rangee;
+    // DOCK-X2-1 : le mot d'etat d'Agrandir reste entier (decision du
+    // 05/10), sa case peut donc s'elargir avec le texte. Si la rangee ne
+    // tient plus dans la place donnee, Agrandir passe sous le zoom au lieu
+    // de deborder. Quand elle tient, la rangee est rendue telle quelle.
+    return LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints contraintes) {
+        final double besoin =
+            (libelle != null ? AppSpacing.xl : 0) +
+            2 * AppSpacing.titreEcran +
+            _largeurTexte(contexte, valeur, styleValeur) +
+            AppSpacing.md +
+            largeurCaseBasculeAvecMot(
+              contexte,
+              libelle: motAgrandir,
+              style: theme.textTheme.labelMedium,
+            );
+        if (besoin <= contraintes.maxWidth) return rangee;
+        return Column(
+          key: const ValueKey<String>('zoom-local'),
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          spacing: AppSpacing.sm,
+          children: <Widget>[
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                if (libelle != null) ...<Widget>[libelle, Ecart.hXl],
+                boite,
+              ],
+            ),
+            bascule,
+          ],
+        );
+      },
+    );
   }
+}
+
+/// La largeur d'un texte d'une ligne, au [style] et a l'echelle courants.
+double _largeurTexte(BuildContext context, String texte, TextStyle style) {
+  final TextPainter peintre = TextPainter(
+    text: TextSpan(text: texte, style: style),
+    textDirection: Directionality.of(context),
+    textScaler: MediaQuery.textScalerOf(context),
+    maxLines: 1,
+  )..layout();
+  final double largeur = peintre.width;
+  peintre.dispose();
+  return largeur;
 }
 
 class _IconeBarre extends StatelessWidget {
