@@ -632,3 +632,14 @@ Corrigés et vus à l'image (36 captures ouvertes par la passe M, plus celles de
 Comportements voulus, vus et laissés : Focus 320×2 sans « Envoyer » tant que le champ est vide
 (décision Focus 320) ; fonction de l'auteur abrégée à 320×2 dans la Communauté pour garder le
 moment entier ; extension latine d'un nom de fichier arabe rendue selon l'ordre bidi normal.
+
+## Après COM-R-6 (08/10, code ui/communications-v1 @ 8b1240ac)
+
+Captures régénérées (200 PNG) : 199 identiques à 0d33c946, une seule change,
+`com_admin_moderation_390_rtl_clair.png`. Le tour 7 avait stocké six guillemets arabes en ordre
+visuel (»…«) ; U+00AB/U+00BB étant Bidi_Mirrored, le moteur les dessinait alors **tournés vers
+l'intérieur** (lu sur les pixels ; l'œil, à zoom normal, ne le voit pas). Ils sont revenus en ordre
+logique («…»), le paramètre `{texte}` saisi par l'utilisateur est isolé (U+2068 … U+2069) : rendu
+tourné vers l'extérieur, vérifié sur les pixels en test (six chaînes × cinq saisies) et dans
+l'aperçu web réel (Chromium, interface arabe, écran Modération et recherche des Messages) ; l'arbre
+d'accessibilité web contient les guillemets en ordre logique.
