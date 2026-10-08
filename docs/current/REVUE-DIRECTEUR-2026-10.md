@@ -361,3 +361,22 @@ Cause corrigée dans le composant partagé : `lib/core/enseignant/cta_seance.dar
 Chiffres (avant, après) : états du bouton de la carte « Prochaine séance » de l'enseignant, 4 libellés dont 1 hors des moments demandés, puis 5 états tous nommés ; libellés différents pour la même action « entrer en salle » côté enseignant, 2 (« Préparer l'entrée » en Classe, rien en Journée pendant le cours) puis 1 (« Rejoindre la salle ») ; débordements mesurés à 320 px en texte ×2 sur la carte de séance, 1 (en-tête nom et pastille) puis 0 ; débordements mesurés à 1440 px en texte ×2 (bouton « Remplir le cahier de transmission »), 1 puis 0 ; tests de transitions, 0 puis 20 (unitaires) et 25 (widget).
 
 Recensé, non repris ici (autre lot) : le bouton « Rejoindre » de l'élève hors ligne reste présent et inerte (`accueil_eleve_page.dart`, décision documentée dans le code), compté par `bouton-grise`.
+
+## CORAN-320-1 : la page Coran à 320 px et texte ×2 (08/10/2026)
+
+Constat (`docs/current/captures/PT-B`, route réelle) : à texte ×2, en-tête de sourate, mentions et pagination prenaient la page ; à 320 × 568 la zone des versets avait 0 px (débordement de 69 px), à 390 × 844 elle avait 37 % de l'écran. Décision du 05/10 (déléguée, choix a) : seuls l'en-tête, les mentions et la pagination autour du texte changent ; le texte des versets et son rendu ne sont pas touchés.
+
+Fait, seulement au-delà du seuil du texte agrandi (`AppContour.seuilTexteAgrandi`, 130 %), dans `lib/features/tc_mushaf/mushaf_page.dart` :
+
+- en-tête sur une ligne : nom de la sourate et bouton « Mode de lecture » (icône nommée, état déplié annoncé) qui déplie le choix du rendu et la mention « Pour grossir le texte… » ; la page et le juz ne sont plus redits en tête (position au centre de la pagination, juz au pied de chaque page du mushaf) ;
+- pagination sur une ligne : flèches et position (`BarrePrecedentSuivant`, inchangée), « Aller à une page » en icône nommée à côté ;
+- attribution Tanzil entière, deux lignes au plus, jamais sous la taille de base (`AttributionCoranCompacte`, reprise du lecteur accessible) ;
+- tailles de ces trois zones plafonnées à 130 %, la hiérarchie HIER-1 conservée (même plafond pour tous leurs styles), marges serrées ; les versets gardent l'échelle de l'usager.
+
+Chiffres (avant, après), zone des versets / hauteur de l'écran, barre de navigation comprise : 320 × 568 ×2, 0 % puis 53 % ; 390 × 844 ×2, 37 % puis 67 %. À texte normal et à 1440, rien ne change (captures 1440 identiques au pixel près).
+
+Preuves : `test/features/tc_mushaf/mushaf_texte_agrandi_test.dart` (géométrie ≥ 50 % à 320 × 568 et 390 × 844 ×2, LTR et RTL, aucun mot coupé ; contre-épreuve : les paramètres reçus par le rendu des versets, largeur du cadre, échelle de texte, sens, versets, taille, interligne, police, rosace, sont identiques à ceux relevés sur le code d'avant 6e2c91c4, à 320 ×2, 390 ×2 et 1440) ; captures `docs/current/captures/CORAN-320-1/` (`avant_` = 6e2c91c4, `apres_` ; 320 × 568 ×2 clair, sombre, RTL, options dépliées ; 390 × 844 ×2 clair, sombre RTL ; 1440 clair et sombre ; script `coran_320_1_capture_test.dart.txt`). Statut : présent dans le code, testé localement ; ni staging ni déploiement.
+
+Décidé par délégation le 05/10 (DIR-REP-1), à faire valider par le directeur : le plafond de 130 % pour l'en-tête, les mentions et la pagination ; la mention « Pour grossir le texte… » repliée derrière le bouton « Mode de lecture » à texte agrandi ; le choix du rendu replié lui aussi (le garder visible rendait la majorité inatteignable à 320 × 568) ; aucun libellé nouveau (« Mode de lecture » et « Aller à une page » existaient déjà).
+
+Recensé, non repris ici (hors du périmètre de l'étape) : en sens RTL, la position « 1 / 604 » s'affiche « 604 / 1 » (composant partagé `BarrePrecedentSuivant`, aussi en salle) ; les bandes de reprise (« Reprendre ») restent à leur taille quand elles s'affichent.
