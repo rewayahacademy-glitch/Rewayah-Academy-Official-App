@@ -117,51 +117,55 @@ void main() {
             const ValueKey<String>('vignette-support-pile'),
           );
           if (echelle >= 2) {
-            // MA-CMD-1 (directeur, 02/10/2026, annule M1) : icones seules,
-            // sans libelle visible ; chaque commande garde son nom pour le
-            // lecteur d'ecran et une infobulle.
+            // MA-CMD-1 (directeur, 02/10/2026), amende par ETATS-MA-1
+            // (decision du 05/10/2026, WCAG 1.4.1) : au-dela de 130 %, les
+            // commandes passent sur deux rangees ; les bascules gardent leur
+            // mot d'etat sous le disque, la commande ordinaire (Quitter)
+            // reste en icone seule, nom lu et en infobulle.
             final Finder dock = find.byKey(
               const ValueKey<String>('dock-seance'),
+            );
+            expect(
+              find.descendant(
+                of: dock,
+                matching: find.byKey(
+                  const ValueKey<String>('commandes-deux-rangees'),
+                ),
+              ),
+              findsOneWidget,
             );
             final Finder boutonsDock = find.descendant(
               of: dock,
               matching: find.byType(BoutonAppel),
             );
             expect(boutonsDock, findsWidgets);
-            for (int i = 0; i < boutonsDock.evaluate().length; i++) {
-              expect(
-                find.descendant(
-                  of: boutonsDock.at(i),
-                  matching: find.byType(Text),
-                ),
-                findsNothing,
-              );
-              expect(
-                tester.getSize(boutonsDock.at(i)).height,
-                greaterThanOrEqualTo(48),
-              );
-            }
-            final List<Tooltip> bulles = tester
-                .widgetList<Tooltip>(
-                  find.descendant(of: dock, matching: find.byType(Tooltip)),
-                )
-                .toList();
-            expect(find.byTooltip(t.salle.seance.sortir), findsOneWidget);
-            expect(bulles, hasLength(boutonsDock.evaluate().length));
-            // Une commande : l'infobulle montre le nom lu. Une bascule
-            // (ETATS-BTN-1) : l'infobulle montre son mot d'etat (« Micro
-            // ouvert »), le lecteur d'ecran lit l'acte et l'etat bascule.
             for (final BoutonAppel b in tester.widgetList<BoutonAppel>(
               boutonsDock,
             )) {
-              final String lu = b.libelleSemantique ?? b.libelle;
-              expect(find.bySemanticsLabel(lu), findsWidgets, reason: lu);
+              final Finder bouton = find.byWidget(b);
+              final Finder mot = find.descendant(
+                of: bouton,
+                matching: find.byType(Text),
+              );
+              // Une bascule montre son mot d'etat ; une commande, rien.
               expect(
-                bulles.map((Tooltip x) => x.message),
-                contains(b.bascule == null ? lu : b.libelle),
+                mot,
+                b.bascule == null ? findsNothing : findsOneWidget,
+                reason: b.libelle,
+              );
+              if (b.bascule != null) {
+                expect(tester.widget<Text>(mot).data, b.libelle);
+              }
+              expect(tester.getSize(bouton).height, greaterThanOrEqualTo(48));
+              final String lu = b.libelleSemantique ?? b.libelle;
+              // Le nom lu est l'acte ; le mot d'etat visible s'y ajoute.
+              expect(
+                find.bySemanticsLabel(RegExp('^${RegExp.escape(lu)}')),
+                findsWidgets,
                 reason: lu,
               );
             }
+            expect(find.byTooltip(t.salle.seance.sortir), findsOneWidget);
             expect(pile, findsOneWidget);
             final Finder chapitre = find.textContaining('Chapitre');
             expect(chapitre, findsWidgets);
@@ -213,8 +217,13 @@ void main() {
     setUpAll(chargerPolicesDuDepot);
 
     // MA-CMD-1 (directeur, 02/10/2026) : a 200 % et a 390 px, en-tete et
-    // commandes tiennent dans 30 % de l'ecran ; les commandes se masquent et
-    // une touche sur l'ecran les fait revenir.
+    // commandes tenaient dans 30 % de l'ecran ; les commandes se masquent et
+    // une touche sur l'ecran les fait revenir. ETATS-MA-1 (decision du
+    // 05/10/2026, option (a) : « le support cede un peu de hauteur ») : les
+    // commandes passent sur deux rangees pour garder le mot d'etat ; la
+    // borne passe a la moitie de l'ecran (mesure du 05/10/2026 : en-tete 155
+    // + commandes 240 = 395 pour 422). Le support garde l'autre moitie, et
+    // tout l'ecran quand les commandes se masquent.
     testWidgets('MA-CMD-1 : 390, texte x2, commandes compactes et masquables', (
       WidgetTester tester,
     ) async {
@@ -242,7 +251,7 @@ void main() {
           .height;
       expect(
         hauteurEntete + hauteurCommandes,
-        lessThanOrEqualTo(844 * 0.30),
+        lessThanOrEqualTo(844 * 0.50),
         reason: 'en-tete $hauteurEntete + commandes $hauteurCommandes',
       );
 

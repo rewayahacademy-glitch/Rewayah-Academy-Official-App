@@ -36,6 +36,7 @@ import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_enseignant/panneau_enseignant.dart';
 
 import '../capture/outil_capture.dart';
+import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
 import '../teaching_core/e/faux/faux_classe.dart';
 import '../theme/support/contraste.dart';
@@ -112,6 +113,7 @@ Future<void> _monter(
   double hauteur = 844,
   List<Override> enPlus = const <Override>[],
   bool presenter = true,
+  InterfaceMode interfaceMode = InterfaceMode.standard,
 }) async {
   fixerVueCapture(tester, Size(largeur, hauteur), densite);
   final FauxMoteurSalle moteur = FauxMoteurSalle();
@@ -121,6 +123,7 @@ Future<void> _monter(
       surcharges: <Override>[..._surcharges(role, moteur), ...enPlus],
       echelleTexte: texte,
       themeMode: themeMode,
+      interfaceMode: interfaceMode,
     ),
   );
   await tester.pumpAndSettle();
@@ -951,5 +954,74 @@ void main() {
         await capturer(tester, 'salle200_${nom}_390_x2');
       });
     }
+  });
+
+  // ETATS-MA-1 (decision du 05/10/2026, WCAG 1.4.1) : la salle `/salle`
+  // atteinte en Mode Accessibilite, texte au-dela de 130 % : les bascules
+  // gardent leur mot d'etat, les commandes passent sur deux rangees (deux
+  // par deux). Polices du depot chargees : la coupure des mots se mesure sur
+  // la vraie police. Groupe pose en dernier : le chargement ne touche pas
+  // les autres groupes.
+  group('ETATS-MA-1 : /salle en Mode Accessibilite, texte agrandi', () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final String role in <String>['student', 'teacher']) {
+      for (final double largeur in <double>[320, 390]) {
+        for (final double texte in <double>[1.5, 2]) {
+          testWidgets(
+            '$role, $largeur px, texte x$texte : mot d etat visible',
+            (WidgetTester tester) async {
+              await _monter(
+                tester,
+                role,
+                largeur,
+                texte,
+                interfaceMode: InterfaceMode.enfant,
+              );
+              expect(tester.takeException(), isNull);
+              final Finder grille = find.byKey(
+                const ValueKey<String>('commandes-deux-rangees'),
+              );
+              expect(grille, findsOneWidget);
+              final List<String> mots = tester
+                  .widgetList<Text>(
+                    find.descendant(
+                      of: grille,
+                      matching: find.byKey(
+                        const ValueKey<String>('mot-commande'),
+                      ),
+                    ),
+                  )
+                  .map((Text t) => t.data!)
+                  .toList();
+              expect(
+                mots,
+                contains(anyOf(t.salle.microOuvert, t.salle.microCoupe)),
+              );
+              if (role == 'teacher') {
+                expect(
+                  mots,
+                  contains(anyOf(t.salle.cameraAllumee, t.salle.cameraCoupee)),
+                );
+              }
+              verifierAucunMotCoupe(tester, grille);
+              final Rect zone = tester.getRect(grille);
+              expect(zone.left, greaterThanOrEqualTo(-0.5));
+              expect(zone.right, lessThanOrEqualTo(largeur + 0.5));
+              expect(zone.bottom, lessThanOrEqualTo(844.5));
+            },
+          );
+        }
+      }
+    }
+    testWidgets(
+      'student, 390 px, texte x2, hors Mode Accessibilite : inchange',
+      (WidgetTester tester) async {
+        await _monter(tester, 'student', 390, 2);
+        expect(
+          find.byKey(const ValueKey<String>('commandes-deux-rangees')),
+          findsNothing,
+        );
+      },
+    );
   });
 }
