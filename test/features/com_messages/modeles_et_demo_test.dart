@@ -66,7 +66,7 @@ void main() {
     const Participant a = Participant(id: 'a', nomAffiche: 'Ahmed');
     const Participant b = Participant(
       id: 'b',
-      nomAffiche: 'Mme Mariam',
+      nomAffiche: 'Sayyida Mariam',
       fonction: 'Enseignante',
     );
     const Participant c = Participant(id: 'c', nomAffiche: 'Fatima');
@@ -75,11 +75,11 @@ void main() {
       expect(nomsInterlocuteurs(const <Participant>[]), '');
       expect(
         nomsInterlocuteurs(const <Participant>[b]),
-        'Mme Mariam, Enseignante',
+        'Sayyida Mariam, Enseignante',
       );
       expect(
         nomsInterlocuteurs(const <Participant>[a, b]),
-        'Ahmed et Mme Mariam',
+        'Ahmed et Sayyida Mariam',
       );
       expect(
         nomsInterlocuteurs(const <Participant>[a, b, c]),

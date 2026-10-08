@@ -91,7 +91,7 @@ void main() {
       final MessageFil bulle = messageFilDe(m);
       expect(bulle.texte, texteDuMessage(m, avecVocaux: false));
       expect(bulle.horodatage, horodatageMessage(m.envoyeLe));
-      expect(bulle.auteur, 'Mme Mariam');
+      expect(bulle.auteur, 'Sayyida Mariam');
       expect(bulle.deSoi, isFalse);
     });
 

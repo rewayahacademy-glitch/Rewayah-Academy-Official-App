@@ -188,7 +188,7 @@ void main() {
                 nomParticipant(
                   const Participant(
                     id: 'p1',
-                    nomAffiche: 'Mme Mariam',
+                    nomAffiche: 'Sayyida Mariam',
                     fonction: 'Enseignante de la Classe An-Nour',
                   ),
                 ),
@@ -200,7 +200,7 @@ void main() {
       );
       expect(find.textContaining('،'), findsNothing);
       expect(
-        find.text('Mme Mariam · Enseignante de la Classe An-Nour'),
+        find.text('Sayyida Mariam · Enseignante de la Classe An-Nour'),
         findsOneWidget,
       );
       expect(find.textContaining(' · 09:52'), findsOneWidget);

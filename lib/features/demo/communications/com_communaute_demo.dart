@@ -39,7 +39,9 @@ import '../../../core/communications/port_pieces_jointes.dart';
 import '../../../core/domain/enums.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/router/routes.dart';
-import '../../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
+import '../../../core/tc_groupe/group_summary_vm.dart'
+    show EnseignantVM, TitreEnseignant;
+import '../../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/carte_piece_jointe.dart'
@@ -158,8 +160,13 @@ String libelleSituationDemoCommunaute(SituationDemoCommunaute situation) {
   };
 }
 
-/// Les donnees fictives de la Communaute (spec section 26).
+/// Les donnees fictives de la Communaute (spec section 26). Noms, categories,
+/// publications, reponses et brouillons suivent la langue de l'interface
+/// (COM-RC tour 7 : plus de francais dans l'arabe) ; les adresses et le code
+/// promotionnel restent tels quels.
 abstract final class DonneesCommunauteDemo {
+  static Traductions$com$communaute$demo$f$fr get _f => t.com.communaute.demo.f;
+
   /// Le « maintenant » de la demonstration : lundi 28 septembre 2026, 14 h
   /// UTC (16 h a Paris, comme la demonstration enseignant).
   static final DateTime maintenant = DateTime.utc(2026, 9, 28, 14);
@@ -168,67 +175,69 @@ abstract final class DonneesCommunauteDemo {
   static const String publicationOuverte = 'pub-memorisation';
 
   /// Pedagogie.
-  static const CategorieCommunaute pedagogie = CategorieCommunaute(
-    id: 'pedagogie',
-    libelle: 'Pédagogie',
-  );
+  static CategorieCommunaute get pedagogie =>
+      CategorieCommunaute(id: 'pedagogie', libelle: _f.categoriePedagogie);
 
   /// Ressources.
-  static const CategorieCommunaute ressources = CategorieCommunaute(
-    id: 'ressources',
-    libelle: 'Ressources',
-  );
+  static CategorieCommunaute get ressources =>
+      CategorieCommunaute(id: 'ressources', libelle: _f.categorieRessources);
 
   /// Gestion de Classe.
-  static const CategorieCommunaute gestion = CategorieCommunaute(
-    id: 'gestion',
-    libelle: 'Gestion',
-  );
+  static CategorieCommunaute get gestion =>
+      CategorieCommunaute(id: 'gestion', libelle: _f.categorieGestion);
 
   /// Les categories, dans l'ordre de la maquette.
-  static const List<CategorieCommunaute> categories = <CategorieCommunaute>[
+  static List<CategorieCommunaute> get categories => <CategorieCommunaute>[
     pedagogie,
     ressources,
     gestion,
   ];
 
   /// L'enseignant de la demonstration, auteur de ce qui est publie.
-  static final Participant soi = Participant(
+  static Participant get soi => Participant(
     id: DonneesEnseignantDemo.enseignantId,
-    nomAffiche: DonneesEnseignantDemo.nomAffiche(TitreEnseignant.sayyid),
-    fonction: 'Enseignant, Classe Al-Fatiha',
+    // « Sayyid Ibrahim » en francais, comme la demonstration enseignant ;
+    // le prenom dans l'alphabet de la langue courante.
+    nomAffiche: LibellesGroupe.enseignantNomme(
+      EnseignantVM(
+        enseignantId: DonneesEnseignantDemo.enseignantId,
+        titre: TitreEnseignant.sayyid,
+        nomAffichage: _f.prenomSoi,
+      ),
+    ),
+    fonction: _f.fonctionSoi,
     estSoi: true,
   );
 
-  static const Participant _samira = Participant(
+  static Participant get _samira => Participant(
     id: 'demo-ens-samira',
-    nomAffiche: 'Samira Belkacem',
-    fonction: 'Enseignante, Classe An-Nour',
+    nomAffiche: _f.samira,
+    fonction: _f.fonctionSamira,
   );
-  static const Participant _nour = Participant(
+  static Participant get _nour => Participant(
     id: 'demo-ens-nour',
-    nomAffiche: 'Nour El Idrissi',
-    fonction: 'Enseignante, Classe Al-Fajr',
+    nomAffiche: _f.nour,
+    fonction: _f.fonctionNour,
   );
-  static const Participant _yasmine = Participant(
+  static Participant get _yasmine => Participant(
     id: 'demo-ens-yasmine',
-    nomAffiche: 'Yasmine Haddad',
-    fonction: 'Enseignante, Classe Al-Badr',
+    nomAffiche: _f.yasmine,
+    fonction: _f.fonctionYasmine,
   );
-  static const Participant _youssef = Participant(
+  static Participant get _youssef => Participant(
     id: 'demo-ens-youssef',
-    nomAffiche: 'Youssef Amrani',
-    fonction: 'Enseignant, Classe Al-Kawthar',
+    nomAffiche: _f.youssef,
+    fonction: _f.fonctionYoussef,
   );
-  static const Participant _mariam = Participant(
+  static Participant get _mariam => Participant(
     id: 'demo-ens-mariam',
-    nomAffiche: 'Mariam Benali',
-    fonction: 'Enseignante, Classe An-Nas',
+    nomAffiche: _f.mariam,
+    fonction: _f.fonctionMariam,
   );
-  static const Participant _hamza = Participant(
+  static Participant get _hamza => Participant(
     id: 'demo-ens-hamza',
-    nomAffiche: 'Hamza Ouali',
-    fonction: 'Enseignant, Classe Al-Ikhlas',
+    nomAffiche: _f.hamza,
+    fonction: _f.fonctionHamza,
   );
 
   static DateTime _ilYa({int jours = 0, int heures = 0, int minutes = 0}) =>
@@ -241,29 +250,22 @@ abstract final class DonneesCommunauteDemo {
     PublicationCommunaute(
       id: publicationOuverte,
       auteur: _samira,
-      titre: 'Idées pour la mémorisation ?',
-      texte:
-          'Quels rituels ou activités fonctionnent bien pour aider les '
-          'élèves à mémoriser les sourates ? Je cherche des retours '
-          "d'expérience : jeux, supports visuels, répétition en binôme. "
-          'Merci pour vos idées !',
+      titre: _f.memorisationTitre,
+      texte: _f.memorisationTexte,
       categorie: pedagogie,
       publieeLe: _ilYa(heures: 2),
     ),
     PublicationCommunaute(
       id: 'pub-cartes',
       auteur: _nour,
-      titre: 'Retour sur les cartes de répétition',
-      texte:
-          "J'utilise des cartes de répétition depuis la rentrée et cela "
-          'fonctionne très bien, même avec les plus jeunes. Je joins le '
-          'modèle que je remplis avant chaque séance.',
+      titre: _f.cartesTitre,
+      texte: _f.cartesTexte,
       categorie: ressources,
       publieeLe: _ilYa(jours: 1, heures: 3),
       piecesJointes: <PieceJointe>[
         PieceJointe(
           reference: ReferencePieceJointe('demo-piece-cartes'),
-          nom: 'Cartes_repetition.pdf',
+          nom: _f.cartesFichier,
           nature: NaturePieceJointe.document,
           typeLisible: 'PDF',
           tailleOctets: 250880,
@@ -273,44 +275,32 @@ abstract final class DonneesCommunauteDemo {
     PublicationCommunaute(
       id: 'pub-niveaux',
       auteur: _yasmine,
-      titre: 'Gérer les différents niveaux ?',
-      texte:
-          'Comment gérez-vous une Classe où les niveaux sont très '
-          'différents ? Je crains que les plus avancés décrochent pendant '
-          'que je reprends les bases avec les autres.',
+      titre: _f.niveauxTitre,
+      texte: _f.niveauxTexte,
       categorie: gestion,
       publieeLe: _ilYa(jours: 2),
     ),
     PublicationCommunaute(
       id: 'pub-timides',
       auteur: _youssef,
-      titre: 'Faire réciter les élèves timides',
-      texte:
-          'Une élève refuse de réciter devant les autres. Je lui propose de '
-          'réciter la première, quand la Classe est encore calme. Avez-vous '
-          "d'autres pistes ?",
+      titre: _f.timidesTitre,
+      texte: _f.timidesTexte,
       categorie: pedagogie,
       publieeLe: _ilYa(jours: 3, heures: 5),
     ),
     PublicationCommunaute(
       id: 'pub-fiche-suivi',
       auteur: _mariam,
-      titre: 'Une fiche de suivi des révisions',
-      texte:
-          'Je note chaque semaine les sourates révisées et les points à '
-          'reprendre. La fiche tient sur une page et aide beaucoup pour '
-          'préparer la séance suivante.',
+      titre: _f.ficheTitre,
+      texte: _f.ficheTexte,
       categorie: ressources,
       publieeLe: _ilYa(jours: 4),
     ),
     PublicationCommunaute(
       id: 'pub-heure',
       auteur: _hamza,
-      titre: "Commencer la séance à l'heure",
-      texte:
-          "Les premières minutes partent souvent dans l'installation. Je "
-          'demande maintenant aux élèves de préparer leur page avant '
-          "l'heure. Qu'en pensez-vous ?",
+      titre: _f.heureTitre,
+      texte: _f.heureTexte,
       categorie: gestion,
       publieeLe: _ilYa(jours: 6),
     ),
@@ -324,18 +314,14 @@ abstract final class DonneesCommunauteDemo {
             id: 'rep-mariam',
             publicationId: publicationOuverte,
             auteur: _mariam,
-            texte:
-                "J'utilise beaucoup la répétition en binôme et des cartes "
-                'visuelles. Cela motive vraiment les élèves.',
+            texte: _f.reponseMariam,
             publieeLe: _ilYa(heures: 1),
           ),
           ReponseCommunaute(
             id: 'rep-youssef',
             publicationId: publicationOuverte,
             auteur: _youssef,
-            texte:
-                'Les élèves réécoutent la récitation de la séance à la '
-                'maison : cela aide beaucoup entre deux cours.',
+            texte: _f.reponseYoussef,
             publieeLe: _ilYa(minutes: 45),
           ),
         ],
@@ -344,7 +330,7 @@ abstract final class DonneesCommunauteDemo {
             id: 'rep-samira',
             publicationId: 'pub-cartes',
             auteur: _samira,
-            texte: "Merci pour le modèle, je vais l'essayer cette semaine.",
+            texte: _f.reponseSamira,
             publieeLe: _ilYa(jours: 1),
           ),
         ],
@@ -353,9 +339,7 @@ abstract final class DonneesCommunauteDemo {
             id: 'rep-hamza',
             publicationId: 'pub-timides',
             auteur: _hamza,
-            texte:
-                'Je laisse parfois un élève réciter en tête-à-tête à la fin '
-                'de la séance, puis devant un seul camarade.',
+            texte: _f.reponseHamza,
             publieeLe: _ilYa(jours: 3),
           ),
         ],
@@ -384,12 +368,10 @@ abstract final class DonneesCommunauteDemo {
   };
 
   /// Publication bloquee 1 (spec section 26) : un lien affilie.
-  static const BrouillonMarqueDemo brouillonAffilie = (
-    titre: 'Mon lecteur audio préféré pour réviser',
-    texte:
-        "J'utilise ce lecteur pour faire réécouter les sourates. Il est "
-        'en réduction cette semaine avec mon lien : $lienAffilieDemo',
-    verdict: VerificationPromotion(
+  static BrouillonMarqueDemo get brouillonAffilie => (
+    titre: _f.affilieTitre,
+    texte: _f.affilieTexte(lien: lienAffilieDemo),
+    verdict: const VerificationPromotion(
       verdict: VerdictPromotion.lienAffilie,
       motif: MotifSignalement.lienAffilie,
       liens: <LienAnalyse>[
@@ -402,12 +384,10 @@ abstract final class DonneesCommunauteDemo {
   );
 
   /// Publication bloquee 2 (spec section 26) : une vente.
-  static const BrouillonMarqueDemo brouillonVente = (
-    titre: 'Je vends mes fiches de mémorisation',
-    texte:
-        'Lot de 30 fiches plastifiées, 25 euros, envoi par la poste. '
-        'Écrivez-moi pour commander.',
-    verdict: VerificationPromotion(
+  static BrouillonMarqueDemo get brouillonVente => (
+    titre: _f.venteTitre,
+    texte: _f.venteTexte,
+    verdict: const VerificationPromotion(
       verdict: VerdictPromotion.vente,
       motif: MotifSignalement.venteNonAutorisee,
     ),
@@ -415,13 +395,14 @@ abstract final class DonneesCommunauteDemo {
 
   /// Une publicite retenue par un avertissement (R-COM-05), avec les trois
   /// autres etats de lien.
-  static const BrouillonMarqueDemo brouillonPublicite = (
-    titre: 'Une application pour réviser',
-    texte:
-        'Je recommande cette application de révision, avec le code PROF20 '
-        "pour l'abonnement : $lienNonQualifie. Pour le texte, la ressource "
-        'de la Bibliothèque ($lienInterne) et $lienRessource suffisent.',
-    verdict: VerificationPromotion(
+  static BrouillonMarqueDemo get brouillonPublicite => (
+    titre: _f.publiciteTitre,
+    texte: _f.publiciteTexte(
+      lienOffre: lienNonQualifie,
+      lienInterne: lienInterne,
+      lienRessource: lienRessource,
+    ),
+    verdict: const VerificationPromotion(
       verdict: VerdictPromotion.avertissement,
       motif: MotifSignalement.publicite,
       liens: <LienAnalyse>[
@@ -433,7 +414,7 @@ abstract final class DonneesCommunauteDemo {
   );
 
   /// Les brouillons marques, dans l'ordre de la spec section 26.
-  static const List<BrouillonMarqueDemo> brouillonsMarques =
+  static List<BrouillonMarqueDemo> get brouillonsMarques =>
       <BrouillonMarqueDemo>[
         brouillonAffilie,
         brouillonVente,
@@ -442,9 +423,7 @@ abstract final class DonneesCommunauteDemo {
 
   /// Une reponse marquee (revue COM-R, R-01) : un lien affilie poste en
   /// reponse est retenu comme une publication.
-  static const String reponseAffilie =
-      'Pour la révision, je conseille ce lecteur, en réduction avec mon '
-      'lien : $lienAffilieDemo';
+  static String get reponseAffilie => _f.reponseAffilie(lien: lienAffilieDemo);
 
   /// Le verdict de [reponseAffilie].
   static const VerificationPromotion verdictReponseAffilie =
@@ -466,7 +445,7 @@ abstract final class DonneesCommunauteDemo {
       for (final BrouillonMarqueDemo b in brouillonsMarques)
         (titre: b.titre, texte: b.texte): b.verdict,
     },
-    verdictsReponses: const <String, VerificationPromotion>{
+    verdictsReponses: <String, VerificationPromotion>{
       reponseAffilie: verdictReponseAffilie,
     },
     liens: etatsLiens,
@@ -499,8 +478,8 @@ abstract final class DonneesCommunauteDemo {
   );
 
   /// Le fichier que le choix de la demonstration rend.
-  static const FichierChoisi fichier = FichierChoisi(
-    nom: 'Fiche_seance.pdf',
+  static FichierChoisi get fichier => FichierChoisi(
+    nom: _f.fichierChoisi,
     typeMime: 'application/pdf',
     typeLisible: 'PDF',
     tailleOctets: 184320,

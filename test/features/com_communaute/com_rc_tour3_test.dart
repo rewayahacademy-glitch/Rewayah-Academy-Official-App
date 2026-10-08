@@ -132,9 +132,14 @@ void main() {
       'sens de lecture', (WidgetTester tester) async {
     // Contre-preuve : a e0b9f890, le contenu prenait le sens de l'interface
     // arabe et son point final passait en tete de ligne (« .eleves »).
+    // Le contenu est lu AVANT le passage a l'arabe : depuis COM-RC tour 7,
+    // les donnees de demonstration suivent la langue ; le port monte ici
+    // garde le contenu francais, celui que ce test met en scene.
+    final PublicationCommunaute p = _publication();
+    final List<ReponseCommunaute> reponses =
+        DonneesCommunauteDemo.reponses()[_ouverte]!;
     await monterCommunaute(tester, publicationId: _ouverte, arabe: true);
     expect(tester.takeException(), isNull);
-    final PublicationCommunaute p = _publication();
     RenderParagraph paragraphe(String texte) =>
         tester.renderObject<RenderParagraph>(
           find
@@ -146,8 +151,7 @@ void main() {
         );
     expect(paragraphe(p.titre).textDirection, TextDirection.ltr);
     expect(paragraphe(p.texte).textDirection, TextDirection.ltr);
-    for (final ReponseCommunaute r
-        in DonneesCommunauteDemo.reponses()[_ouverte]!) {
+    for (final ReponseCommunaute r in reponses) {
       expect(
         paragraphe(r.texte).textDirection,
         TextDirection.ltr,

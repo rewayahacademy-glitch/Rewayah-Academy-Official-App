@@ -13,7 +13,7 @@
 // - **sur un objet** (une Classe, un dossier) : les conversations que le
 //   serveur ouvre sur cet objet (`conversationsPourObjet`, paires de la
 //   section 3.2), une ligne par interlocuteur, « Ecrire a la famille »,
-//   « Ecrire a l'Administration » ou « Ecrire a Mme Mariam ». Jamais un bloc
+//   « Ecrire a l'Administration » ou « Ecrire a Sayyida Mariam ». Jamais un bloc
 //   « Messages » general (02_DEC-11) : le titre dit l'objet ;
 // - **sans objet** (Mes classes) : une ligne « Messages metier » qui ouvre la
 //   liste, avec le badge des conversations a lire.

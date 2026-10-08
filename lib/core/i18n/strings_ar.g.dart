@@ -69,7 +69,7 @@ class _Traductions$notifications$ar extends Traductions$notifications$fr {
 	@override String ligne({required Object titre, required Object date, required Object heure}) => '${titre}‏، يوم ${date} الساعة ${heure}';
 	@override late final _Traductions$notifications$filtres$ar filtres = _Traductions$notifications$filtres$ar._(_root);
 	@override String get filtreVideTitre => 'لا توجد إشعارات في هذا التصنيف';
-	@override String get filtreVidePhrase => 'اختر « الكل » لرؤية جميع إشعاراتك من جديد.';
+	@override String get filtreVidePhrase => 'اختر »الكل« لرؤية جميع إشعاراتك من جديد.';
 	@override String get voirToutes => 'عرض كل الإشعارات';
 	@override String get nonLue => 'غير مقروء';
 	@override String get nonLueSemantique => 'غير مقروء';
@@ -1334,7 +1334,7 @@ class _Traductions$com$messages$recherche$ar extends Traductions$com$messages$re
 	@override String get champ => 'البحث عن محادثة';
 	@override String get aide => 'الاسم أو الفصل أو الملف';
 	@override String get aucunTitre => 'لم يتم العثور على أي محادثة';
-	@override String aucun({required Object texte}) => 'لا توجد محادثة تطابق « ${texte} ». جرّب اسمًا آخر أو فصلًا آخر.';
+	@override String aucun({required Object texte}) => 'لا توجد محادثة تطابق »${texte}«. جرّب اسمًا آخر أو فصلًا آخر.';
 	@override String get resultatUn => 'تم العثور على محادثة واحدة';
 	@override String resultats({required Object nombre}) => 'تم العثور على ${nombre} محادثات';
 }
@@ -1432,6 +1432,7 @@ class _Traductions$com$messages$demo$ar extends Traductions$com$messages$demo$fr
 	@override String get horsLigne => 'دون اتصال، من جهة الأسرة';
 	@override String get refuse => 'محادثة أسرة أخرى، مرفوضة';
 	@override String vue({required Object role}) => 'وجهة النظر: ${role}';
+	@override late final _Traductions$com$messages$demo$f$ar f = _Traductions$com$messages$demo$f$ar._(_root);
 }
 
 // Path: com.vocal.composer
@@ -1520,7 +1521,7 @@ class _Traductions$com$vocal$demo$ar extends Traductions$com$vocal$demo$fr {
 	@override String get recu => 'رسالة صوتية واردة';
 	@override String get repondre => 'الرد في المحادثة';
 	@override String get envoyes => 'الرسائل الصوتية المرسلة';
-	@override String get auteurEnseignante => 'الأستاذة مريم، معلمة';
+	@override String get auteurEnseignante => 'سيدة مريم، معلمة';
 	@override String get auteurParent => 'أحمد، ولي أمر آدم';
 	@override String get messageRecu => 'السلام عليكم، هذه ملاحظاتي على تلاوة هذا الأسبوع.';
 	@override String get horodatage => 'اليوم، 10:28';
@@ -1756,6 +1757,7 @@ class _Traductions$com$communaute$demo$ar extends Traductions$com$communaute$dem
 	@override String get envoiNonConfirme => 'إرسال غير مؤكَّد';
 	@override String get moderationIndisponible => 'الإشراف غير متاح';
 	@override String get lecteurSeul => 'قراءة فقط، دون نشر';
+	@override late final _Traductions$com$communaute$demo$f$ar f = _Traductions$com$communaute$demo$f$ar._(_root);
 }
 
 // Path: com.studio.focus
@@ -1938,7 +1940,7 @@ class _Traductions$com$studio$recherche$ar extends Traductions$com$studio$recher
 	@override String get champ => 'البحث في الاستوديو';
 	@override String get aide => 'قناة أو رسالة أو ملف';
 	@override String get aucunTitre => 'لا توجد نتائج';
-	@override String aucun({required Object texte}) => 'لا شيء يطابق «${texte}» في قنواتك. جرّب كلمة أخرى.';
+	@override String aucun({required Object texte}) => 'لا شيء يطابق »${texte}« في قنواتك. جرّب كلمة أخرى.';
 	@override String get aucunDansFiltre => 'لا شيء من هذا النوع يطابق البحث. اختر الكل لرؤية النتائج الأخرى.';
 	@override String get resultatUn => 'نتيجة واحدة';
 	@override String resultats({required Object nombre}) => '${nombre} نتائج';
@@ -1968,6 +1970,7 @@ class _Traductions$com$studio$demo$ar extends Traductions$com$studio$demo$fr {
 	@override String get canalPrive => 'عنوان قناة خاصة غير مفتوحة لك';
 	@override String get sansCanaux => 'لا توجد قناة مفتوحة';
 	@override String vue({required Object situation}) => 'الحالة: ${situation}';
+	@override late final _Traductions$com$studio$demo$f$ar f = _Traductions$com$studio$demo$f$ar._(_root);
 }
 
 // Path: com.annonces.publieur
@@ -2047,11 +2050,11 @@ class _Traductions$com$annonces$demoPublication$ar extends Traductions$com$annon
 	@override String get recitationTexte => 'سيقدم فصل النور تلاوة نهاية الفصل الدراسي يوم السبت الساعة 10، عبر الاتصال المرئي.';
 	@override String get rentreeTitre => 'استئناف الدروس بعد العطلة';
 	@override String get rentreeTexte => 'تُستأنف الحصص يوم الاثنين 6 يناير في المواعيد المعتادة.';
-	@override String get signalementAffilie => 'منشور « بطاقات تجويد للطباعة »';
+	@override String get signalementAffilie => 'منشور »بطاقات تجويد للطباعة«';
 	@override String get extraitAffilie => 'تجدون بطاقاتي عبر هذا الرابط الشريك، خصم 20 % برمزي.';
-	@override String get signalementVente => 'منشور « دروس خصوصية متاحة »';
+	@override String get signalementVente => 'منشور »دروس خصوصية متاحة«';
 	@override String get extraitVente => 'أقدم دروسًا خصوصية مدفوعة في عطلة نهاية الأسبوع، راسلوني.';
-	@override String get signalementHorsSujet => 'رد تحت « تنظيم مراجعة جماعية »';
+	@override String get signalementHorsSujet => 'رد تحت »تنظيم مراجعة جماعية«';
 }
 
 // Path: com.annonces.demo
@@ -2234,6 +2237,48 @@ class _Traductions$com$messages$demo$roles$ar extends Traductions$com$messages$d
 	@override String get controleur => 'المراقب';
 }
 
+// Path: com.messages.demo.f
+class _Traductions$com$messages$demo$f$ar extends Traductions$com$messages$demo$f$fr {
+	_Traductions$com$messages$demo$f$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get ahmed => 'أحمد';
+	@override String get parentAdam => 'ولي أمر آدم';
+	@override String get enseignanteNour => 'معلمة فصل النور';
+	@override String get fatima => 'فاطمة';
+	@override String get parentYasmine => 'ولية أمر ياسمين';
+	@override String get karim => 'كريم';
+	@override String get parentYusuf => 'ولي أمر يوسف';
+	@override String get administration => 'الإدارة';
+	@override String get directionRewayah => 'إدارة رواية';
+	@override String get rachid => 'الأستاذ رشيد';
+	@override String get controleurPedagogique => 'مراقب تربوي';
+	@override String get youssef => 'يوسف';
+	@override String get enseignantFajr => 'معلم فصل الفجر';
+	@override String get khadija => 'خديجة';
+	@override String get eleveFajr => 'طالبة في فصل الفجر';
+	@override String get adam => 'آدم';
+	@override String get yasmine => 'ياسمين';
+	@override String get yusuf => 'يوسف';
+	@override String get dossierAdam => 'ملف تسجيل آدم';
+	@override String get missionNour => 'زيارة مراقبة، فصل النور';
+	@override String get pieceDevoir => 'واجب_الأسبوع_3.pdf';
+	@override String get pieceAttestation => 'الشهادة_القديمة.pdf';
+	@override String get pieceVocal => 'رسالة_صوتية.m4a';
+	@override String get typeAudio => 'صوت';
+	@override String get adamQuestion => 'السلام عليكم، أردت أن أعرف كيف مرّت حصة اليوم بالنسبة إلى آدم. شكرًا جزيلًا.';
+	@override String get adamReponse => 'وعليكم السلام، مرّت الحصة على أحسن وجه. كان آدم منتبهًا وشارك مشاركة جيدة.';
+	@override String get adamDevoir => 'إليكم واجب الأسبوع القادم.';
+	@override String get dossierManque => 'تنقص شهادة مستوى آدم لإتمام تسجيله. هل يمكنكم إيداعها في ملفه؟';
+	@override String get missionRetard => 'بدأت الحصة متأخرة ثماني دقائق. أُودع التقرير.';
+	@override String get missionSuite => 'شكرًا، سنتحدث في الأمر مع المعلمة هذا الأسبوع.';
+	@override String get yasmineMerci => 'شكرًا جزيلًا على هذه التوضيحات.';
+	@override String get affectation => 'ينتقل فصل النور إلى يوم الثلاثاء الساعة 18 ابتداءً من الشهر القادم. يرجى التأكيد.';
+	@override String get khadijaRevision => 'تذكّري مراجعة سورة الملك قبل يوم الخميس.';
+}
+
 // Path: com.communaute.garde.reponse
 class _Traductions$com$communaute$garde$reponse$ar extends Traductions$com$communaute$garde$reponse$fr {
 	_Traductions$com$communaute$garde$reponse$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -2255,6 +2300,57 @@ class _Traductions$com$communaute$signalement$politique$ar extends Traductions$c
 	// Translations
 	@override String get publicite => 'الإعلانات التجارية غير مسموح بها في مجتمع المعلّمين.';
 	@override String get sollicitation => 'الاستدراج التجاري غير مسموح به في هذه المساحة.';
+}
+
+// Path: com.communaute.demo.f
+class _Traductions$com$communaute$demo$f$ar extends Traductions$com$communaute$demo$f$fr {
+	_Traductions$com$communaute$demo$f$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get categoriePedagogie => 'التربية';
+	@override String get categorieRessources => 'الموارد';
+	@override String get categorieGestion => 'التسيير';
+	@override String get fonctionSoi => 'معلم، فصل الفاتحة';
+	@override String get prenomSoi => 'إبراهيم';
+	@override String get samira => 'سميرة بلقاسم';
+	@override String get fonctionSamira => 'معلمة، فصل النور';
+	@override String get nour => 'نور الإدريسي';
+	@override String get fonctionNour => 'معلمة، فصل الفجر';
+	@override String get yasmine => 'ياسمين حداد';
+	@override String get fonctionYasmine => 'معلمة، فصل البدر';
+	@override String get youssef => 'يوسف العمراني';
+	@override String get fonctionYoussef => 'معلم، فصل الكوثر';
+	@override String get mariam => 'مريم بن علي';
+	@override String get fonctionMariam => 'معلمة، فصل الناس';
+	@override String get hamza => 'حمزة والي';
+	@override String get fonctionHamza => 'معلم، فصل الإخلاص';
+	@override String get memorisationTitre => 'أفكار للمساعدة على الحفظ؟';
+	@override String get memorisationTexte => 'ما العادات أو الأنشطة التي تنجح في مساعدة الطلاب على حفظ السور؟ أبحث عن تجارب عملية: ألعاب، ووسائل بصرية، وتكرار ثنائي. شكرًا على أفكاركم!';
+	@override String get cartesTitre => 'تجربتي مع بطاقات التكرار';
+	@override String get cartesTexte => 'أستخدم بطاقات التكرار منذ بداية العام الدراسي وهي تنجح كثيرًا، حتى مع الأصغر سنًّا. أرفقت النموذج الذي أملؤه قبل كل حصة.';
+	@override String get cartesFichier => 'بطاقات_التكرار.pdf';
+	@override String get niveauxTitre => 'كيف ندير المستويات المختلفة؟';
+	@override String get niveauxTexte => 'كيف تديرون فصلًا تتفاوت فيه المستويات كثيرًا؟ أخشى أن يفقد المتقدمون اهتمامهم بينما أعيد الأساسيات مع الآخرين.';
+	@override String get timidesTitre => 'تشجيع الطلاب الخجولين على التلاوة';
+	@override String get timidesTexte => 'طالبة ترفض التلاوة أمام الآخرين. أقترح عليها أن تتلو أولًا، حين يكون الفصل لا يزال هادئًا. هل لديكم أفكار أخرى؟';
+	@override String get ficheTitre => 'بطاقة لمتابعة المراجعات';
+	@override String get ficheTexte => 'أدوّن كل أسبوع السور التي رُوجعت والنقاط التي تحتاج إلى إعادة. تكفي البطاقة صفحة واحدة وتساعد كثيرًا في التحضير للحصة التالية.';
+	@override String get heureTitre => 'بدء الحصة في موعدها';
+	@override String get heureTexte => 'كثيرًا ما تضيع الدقائق الأولى في التجهيز. صرت أطلب من الطلاب تحضير صفحتهم قبل الموعد. ما رأيكم؟';
+	@override String get reponseMariam => 'أستخدم كثيرًا التكرار الثنائي والبطاقات المصوّرة. وهذا يحفّز الطلاب حقًّا.';
+	@override String get reponseYoussef => 'يعيد الطلاب الاستماع إلى تلاوة الحصة في البيت، وهذا يساعد كثيرًا بين درسين.';
+	@override String get reponseSamira => 'شكرًا على النموذج، سأجربه هذا الأسبوع.';
+	@override String get reponseHamza => 'أترك الطالب أحيانًا يتلو على انفراد في نهاية الحصة، ثم أمام زميل واحد.';
+	@override String get affilieTitre => 'مشغّلي الصوتي المفضل للمراجعة';
+	@override String affilieTexte({required Object lien}) => 'أستخدم هذا المشغّل لإعادة الاستماع إلى السور. سعره مخفَّض هذا الأسبوع عبر رابطي: ${lien}';
+	@override String get venteTitre => 'أبيع بطاقات الحفظ الخاصة بي';
+	@override String get venteTexte => 'مجموعة من 30 بطاقة مغلَّفة، بـ 25 يورو، تُرسل بالبريد. راسلوني للطلب.';
+	@override String get publiciteTitre => 'تطبيق للمراجعة';
+	@override String publiciteTexte({required Object lienOffre, required Object lienInterne, required Object lienRessource}) => 'أنصح بتطبيق المراجعة هذا، مع الرمز PROF20 للاشتراك: ${lienOffre}. أما النص، فيكفي مورد المكتبة (${lienInterne}) و${lienRessource}.';
+	@override String reponseAffilie({required Object lien}) => 'للمراجعة، أنصح بهذا المشغّل، بسعر مخفَّض عبر رابطي: ${lien}';
+	@override String get fichierChoisi => 'بطاقة_الحصة.pdf';
 }
 
 // Path: com.studio.aujourdhui.indicateurs
@@ -2348,6 +2444,81 @@ class _Traductions$com$studio$enregistres$types$ar extends Traductions$com$studi
 	@override String get publication => 'منشور';
 	@override String get message => 'رسالة';
 	@override String get element => 'عنصر من الاستوديو';
+}
+
+// Path: com.studio.demo.f
+class _Traductions$com$studio$demo$f$ar extends Traductions$com$studio$demo$f$fr {
+	_Traductions$com$studio$demo$f$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get nadia => 'نادية';
+	@override String get fonctionDirection => 'الإدارة';
+	@override String get mariam => 'مريم';
+	@override String get fonctionCoordination => 'التنسيق العام';
+	@override String get youssef => 'يوسف';
+	@override String get fonctionProduit => 'المنتج والتقنية';
+	@override String get amina => 'أمينة';
+	@override String get fonctionPedagogie => 'الشؤون التربوية';
+	@override String get samira => 'سميرة';
+	@override String get fonctionAdmissions => 'القبول';
+	@override String get ibrahim => 'إبراهيم';
+	@override String get fonctionPlanning => 'الجدولة';
+	@override String get pieceAudio => 'صوت';
+	@override String get fichierPlanning => 'جدول_الفصل_الثالث.pdf';
+	@override String get fichierModeration => 'دليل_الإشراف.pdf';
+	@override String get fichierVocal => 'رسالة_صوتية_يوسف.m4a';
+	@override String get fichierCompteRendu => 'تقرير_الزيارات.pdf';
+	@override String get fichierBudget => 'الميزانية_السرية.pdf';
+	@override String get canalOrganisation => 'التنظيم العام';
+	@override String get canalOrganisationDetail => 'تنسيق عمل الفريق كله';
+	@override String get canalAdmissions => 'القبول';
+	@override String get canalAdmissionsDetail => 'متابعة طلبات التسجيل';
+	@override String get canalQualite => 'متابعة الجودة';
+	@override String get canalQualiteDetail => 'ملاحظات زيارات المراقبة';
+	@override String get canalRemplacements => 'البدلاء';
+	@override String get canalRemplacementsDetail => 'غيابات الأسبوع والمعلمون البدلاء';
+	@override String get canalCloture => 'إقفال الشهر';
+	@override String get canalClotureDetail => 'التحضير للإقفال الشهري';
+	@override String get canalDirection => 'الإدارة الاستراتيجية';
+	@override String get canalDirectionDetail => 'توجهات الإدارة';
+	@override String get messagePlanning => 'السلام عليكم جميعًا. إليكم جدول الفصل الدراسي القادم، أخبروني إن كان فيه ما لا يناسب.';
+	@override String get messageSupports => 'أحدّث مواد المستوى 2 ونراجع الأمر معًا غدًا.';
+	@override String get messageMerci => 'شكرًا للجميع على هذا الأسبوع.';
+	@override String get messageDossiers => 'ثلاثة ملفات تنتظر قرارًا قبل يوم الجمعة. نادية، هل يمكنك الاطلاع على ملف أسرة كريم؟';
+	@override String get messageCompteRendu => 'تقرير زيارات هذا الشهر جاهز.';
+	@override String get messageRemplacement => 'يوم الثلاثاء، يتولى معلم بديل فصل النور. الجدول محدَّث.';
+	@override String get messageJustificatifs => 'جُمعت مستندات شهر سبتمبر.';
+	@override String get messageBudget => 'الميزانية السرية لهذا الفصل الدراسي.';
+	@override String get activiteBudget => 'الميزانية السرية لهذا الفصل الدراسي';
+	@override String get partagePlanning => 'جدول الفصل الدراسي';
+	@override String get partageModeration => 'دليل الإشراف';
+	@override String epinglePar({required Object nom}) => 'ثبّته ${nom}';
+	@override String partagePar({required Object nom}) => 'شاركه ${nom}';
+	@override String get lienRemplacements => 'بدلاء الأسبوع';
+	@override String get lienCharte => 'ميثاق الفريق';
+	@override String get brouillon => 'سميرة، سأطّلع على ملف أسرة كريم هذا المساء وأخبرك صباح الغد';
+	@override String get activitePaiement => 'دفعة سبتمبر غير مؤكدة لأسرة حداد';
+	@override String get objetEcheancier => 'جدول أقساط أسرة حداد';
+	@override String get activiteDossierKarim => 'ملف أسرة كريم جاهز لاتخاذ قرار';
+	@override String get objetDossierKarim => 'ملف أسرة كريم';
+	@override String get activiteMention => 'أشارت إليك سميرة';
+	@override String get activiteReponse => 'ردت أمينة على رسالتك';
+	@override String get activiteRemplacant => 'اختيار المعلم البديل ليوم الثلاثاء لفصل النور';
+	@override String get objetRemplacement => 'البديل ليوم الثلاثاء';
+	@override String get activiteOuverture => 'المصادقة على فتح فصل صباح يوم السبت';
+	@override String get objetClasseSamedi => 'فصل صباح يوم السبت';
+	@override String get activiteCloture => 'إقفال شهر سبتمبر';
+	@override String get objetCloture => 'إقفال سبتمبر';
+	@override String get activiteBilans => 'تقييمات منتصف الفصل للمراجعة';
+	@override String get objetBilans => 'تقييمات منتصف الفصل';
+	@override String get activiteMessages => 'رسالتان جديدتان';
+	@override String get activiteAnnonce => 'نُشر إعلان: الأكاديمية مغلقة يوم 1 نوفمبر';
+	@override String get objetFermeture => 'الإغلاق يوم 1 نوفمبر';
+	@override String activiteFichier({required Object nom, required Object fichier}) => '${nom} شاركت ${fichier}';
+	@override String get activiteInscription => 'وصل طلب تسجيل جديد';
+	@override String get objetDossierBenali => 'ملف أسرة بن علي';
 }
 
 // Path: com.annonces.publieur.etapes
@@ -2624,7 +2795,7 @@ extension on TraductionsAr {
 			'notifications.filtres.mentions' => 'الإشارات',
 			'notifications.filtres.actionRequise' => 'إجراء مطلوب',
 			'notifications.filtreVideTitre' => 'لا توجد إشعارات في هذا التصنيف',
-			'notifications.filtreVidePhrase' => 'اختر « الكل » لرؤية جميع إشعاراتك من جديد.',
+			'notifications.filtreVidePhrase' => 'اختر »الكل« لرؤية جميع إشعاراتك من جديد.',
 			'notifications.voirToutes' => 'عرض كل الإشعارات',
 			'notifications.nonLue' => 'غير مقروء',
 			'notifications.nonLueSemantique' => 'غير مقروء',
@@ -3181,7 +3352,7 @@ extension on TraductionsAr {
 			'com.messages.recherche.champ' => 'البحث عن محادثة',
 			'com.messages.recherche.aide' => 'الاسم أو الفصل أو الملف',
 			'com.messages.recherche.aucunTitre' => 'لم يتم العثور على أي محادثة',
-			'com.messages.recherche.aucun' => ({required Object texte}) => 'لا توجد محادثة تطابق « ${texte} ». جرّب اسمًا آخر أو فصلًا آخر.',
+			'com.messages.recherche.aucun' => ({required Object texte}) => 'لا توجد محادثة تطابق »${texte}«. جرّب اسمًا آخر أو فصلًا آخر.',
 			'com.messages.recherche.resultatUn' => 'تم العثور على محادثة واحدة',
 			'com.messages.recherche.resultats' => ({required Object nombre}) => 'تم العثور على ${nombre} محادثات',
 			'com.messages.ligne.legende' => ({required Object objet, required Object apercu}) => '${objet} · ${apercu}',
@@ -3220,6 +3391,39 @@ extension on TraductionsAr {
 			'com.messages.demo.horsLigne' => 'دون اتصال، من جهة الأسرة',
 			'com.messages.demo.refuse' => 'محادثة أسرة أخرى، مرفوضة',
 			'com.messages.demo.vue' => ({required Object role}) => 'وجهة النظر: ${role}',
+			'com.messages.demo.f.ahmed' => 'أحمد',
+			'com.messages.demo.f.parentAdam' => 'ولي أمر آدم',
+			'com.messages.demo.f.enseignanteNour' => 'معلمة فصل النور',
+			'com.messages.demo.f.fatima' => 'فاطمة',
+			'com.messages.demo.f.parentYasmine' => 'ولية أمر ياسمين',
+			'com.messages.demo.f.karim' => 'كريم',
+			'com.messages.demo.f.parentYusuf' => 'ولي أمر يوسف',
+			'com.messages.demo.f.administration' => 'الإدارة',
+			'com.messages.demo.f.directionRewayah' => 'إدارة رواية',
+			'com.messages.demo.f.rachid' => 'الأستاذ رشيد',
+			'com.messages.demo.f.controleurPedagogique' => 'مراقب تربوي',
+			'com.messages.demo.f.youssef' => 'يوسف',
+			'com.messages.demo.f.enseignantFajr' => 'معلم فصل الفجر',
+			'com.messages.demo.f.khadija' => 'خديجة',
+			'com.messages.demo.f.eleveFajr' => 'طالبة في فصل الفجر',
+			'com.messages.demo.f.adam' => 'آدم',
+			'com.messages.demo.f.yasmine' => 'ياسمين',
+			'com.messages.demo.f.yusuf' => 'يوسف',
+			'com.messages.demo.f.dossierAdam' => 'ملف تسجيل آدم',
+			'com.messages.demo.f.missionNour' => 'زيارة مراقبة، فصل النور',
+			'com.messages.demo.f.pieceDevoir' => 'واجب_الأسبوع_3.pdf',
+			'com.messages.demo.f.pieceAttestation' => 'الشهادة_القديمة.pdf',
+			'com.messages.demo.f.pieceVocal' => 'رسالة_صوتية.m4a',
+			'com.messages.demo.f.typeAudio' => 'صوت',
+			'com.messages.demo.f.adamQuestion' => 'السلام عليكم، أردت أن أعرف كيف مرّت حصة اليوم بالنسبة إلى آدم. شكرًا جزيلًا.',
+			'com.messages.demo.f.adamReponse' => 'وعليكم السلام، مرّت الحصة على أحسن وجه. كان آدم منتبهًا وشارك مشاركة جيدة.',
+			'com.messages.demo.f.adamDevoir' => 'إليكم واجب الأسبوع القادم.',
+			'com.messages.demo.f.dossierManque' => 'تنقص شهادة مستوى آدم لإتمام تسجيله. هل يمكنكم إيداعها في ملفه؟',
+			'com.messages.demo.f.missionRetard' => 'بدأت الحصة متأخرة ثماني دقائق. أُودع التقرير.',
+			'com.messages.demo.f.missionSuite' => 'شكرًا، سنتحدث في الأمر مع المعلمة هذا الأسبوع.',
+			'com.messages.demo.f.yasmineMerci' => 'شكرًا جزيلًا على هذه التوضيحات.',
+			'com.messages.demo.f.affectation' => 'ينتقل فصل النور إلى يوم الثلاثاء الساعة 18 ابتداءً من الشهر القادم. يرجى التأكيد.',
+			'com.messages.demo.f.khadijaRevision' => 'تذكّري مراجعة سورة الملك قبل يوم الخميس.',
 			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
 			'com.messages.vide' => 'لا توجد محادثات حاليًا.',
 			'com.vocal.composer.libelle' => 'رسالة صوتية',
@@ -3283,7 +3487,7 @@ extension on TraductionsAr {
 			'com.vocal.demo.recu' => 'رسالة صوتية واردة',
 			'com.vocal.demo.repondre' => 'الرد في المحادثة',
 			'com.vocal.demo.envoyes' => 'الرسائل الصوتية المرسلة',
-			'com.vocal.demo.auteurEnseignante' => 'الأستاذة مريم، معلمة',
+			'com.vocal.demo.auteurEnseignante' => 'سيدة مريم، معلمة',
 			'com.vocal.demo.auteurParent' => 'أحمد، ولي أمر آدم',
 			'com.vocal.demo.messageRecu' => 'السلام عليكم، هذه ملاحظاتي على تلاوة هذا الأسبوع.',
 			'com.vocal.demo.horodatage' => 'اليوم، 10:28',
@@ -3404,6 +3608,48 @@ extension on TraductionsAr {
 			'com.communaute.demo.envoiNonConfirme' => 'إرسال غير مؤكَّد',
 			'com.communaute.demo.moderationIndisponible' => 'الإشراف غير متاح',
 			'com.communaute.demo.lecteurSeul' => 'قراءة فقط، دون نشر',
+			'com.communaute.demo.f.categoriePedagogie' => 'التربية',
+			'com.communaute.demo.f.categorieRessources' => 'الموارد',
+			'com.communaute.demo.f.categorieGestion' => 'التسيير',
+			'com.communaute.demo.f.fonctionSoi' => 'معلم، فصل الفاتحة',
+			'com.communaute.demo.f.prenomSoi' => 'إبراهيم',
+			'com.communaute.demo.f.samira' => 'سميرة بلقاسم',
+			'com.communaute.demo.f.fonctionSamira' => 'معلمة، فصل النور',
+			'com.communaute.demo.f.nour' => 'نور الإدريسي',
+			'com.communaute.demo.f.fonctionNour' => 'معلمة، فصل الفجر',
+			'com.communaute.demo.f.yasmine' => 'ياسمين حداد',
+			'com.communaute.demo.f.fonctionYasmine' => 'معلمة، فصل البدر',
+			'com.communaute.demo.f.youssef' => 'يوسف العمراني',
+			'com.communaute.demo.f.fonctionYoussef' => 'معلم، فصل الكوثر',
+			'com.communaute.demo.f.mariam' => 'مريم بن علي',
+			'com.communaute.demo.f.fonctionMariam' => 'معلمة، فصل الناس',
+			'com.communaute.demo.f.hamza' => 'حمزة والي',
+			'com.communaute.demo.f.fonctionHamza' => 'معلم، فصل الإخلاص',
+			'com.communaute.demo.f.memorisationTitre' => 'أفكار للمساعدة على الحفظ؟',
+			'com.communaute.demo.f.memorisationTexte' => 'ما العادات أو الأنشطة التي تنجح في مساعدة الطلاب على حفظ السور؟ أبحث عن تجارب عملية: ألعاب، ووسائل بصرية، وتكرار ثنائي. شكرًا على أفكاركم!',
+			'com.communaute.demo.f.cartesTitre' => 'تجربتي مع بطاقات التكرار',
+			'com.communaute.demo.f.cartesTexte' => 'أستخدم بطاقات التكرار منذ بداية العام الدراسي وهي تنجح كثيرًا، حتى مع الأصغر سنًّا. أرفقت النموذج الذي أملؤه قبل كل حصة.',
+			'com.communaute.demo.f.cartesFichier' => 'بطاقات_التكرار.pdf',
+			'com.communaute.demo.f.niveauxTitre' => 'كيف ندير المستويات المختلفة؟',
+			'com.communaute.demo.f.niveauxTexte' => 'كيف تديرون فصلًا تتفاوت فيه المستويات كثيرًا؟ أخشى أن يفقد المتقدمون اهتمامهم بينما أعيد الأساسيات مع الآخرين.',
+			'com.communaute.demo.f.timidesTitre' => 'تشجيع الطلاب الخجولين على التلاوة',
+			'com.communaute.demo.f.timidesTexte' => 'طالبة ترفض التلاوة أمام الآخرين. أقترح عليها أن تتلو أولًا، حين يكون الفصل لا يزال هادئًا. هل لديكم أفكار أخرى؟',
+			'com.communaute.demo.f.ficheTitre' => 'بطاقة لمتابعة المراجعات',
+			'com.communaute.demo.f.ficheTexte' => 'أدوّن كل أسبوع السور التي رُوجعت والنقاط التي تحتاج إلى إعادة. تكفي البطاقة صفحة واحدة وتساعد كثيرًا في التحضير للحصة التالية.',
+			'com.communaute.demo.f.heureTitre' => 'بدء الحصة في موعدها',
+			'com.communaute.demo.f.heureTexte' => 'كثيرًا ما تضيع الدقائق الأولى في التجهيز. صرت أطلب من الطلاب تحضير صفحتهم قبل الموعد. ما رأيكم؟',
+			'com.communaute.demo.f.reponseMariam' => 'أستخدم كثيرًا التكرار الثنائي والبطاقات المصوّرة. وهذا يحفّز الطلاب حقًّا.',
+			'com.communaute.demo.f.reponseYoussef' => 'يعيد الطلاب الاستماع إلى تلاوة الحصة في البيت، وهذا يساعد كثيرًا بين درسين.',
+			'com.communaute.demo.f.reponseSamira' => 'شكرًا على النموذج، سأجربه هذا الأسبوع.',
+			'com.communaute.demo.f.reponseHamza' => 'أترك الطالب أحيانًا يتلو على انفراد في نهاية الحصة، ثم أمام زميل واحد.',
+			'com.communaute.demo.f.affilieTitre' => 'مشغّلي الصوتي المفضل للمراجعة',
+			'com.communaute.demo.f.affilieTexte' => ({required Object lien}) => 'أستخدم هذا المشغّل لإعادة الاستماع إلى السور. سعره مخفَّض هذا الأسبوع عبر رابطي: ${lien}',
+			'com.communaute.demo.f.venteTitre' => 'أبيع بطاقات الحفظ الخاصة بي',
+			'com.communaute.demo.f.venteTexte' => 'مجموعة من 30 بطاقة مغلَّفة، بـ 25 يورو، تُرسل بالبريد. راسلوني للطلب.',
+			'com.communaute.demo.f.publiciteTitre' => 'تطبيق للمراجعة',
+			'com.communaute.demo.f.publiciteTexte' => ({required Object lienOffre, required Object lienInterne, required Object lienRessource}) => 'أنصح بتطبيق المراجعة هذا، مع الرمز PROF20 للاشتراك: ${lienOffre}. أما النص، فيكفي مورد المكتبة (${lienInterne}) و${lienRessource}.',
+			'com.communaute.demo.f.reponseAffilie' => ({required Object lien}) => 'للمراجعة، أنصح بهذا المشغّل، بسعر مخفَّض عبر رابطي: ${lien}',
+			'com.communaute.demo.f.fichierChoisi' => 'بطاقة_الحصة.pdf',
 			'com.communaute.titre' => _root.com.socle.lexique.communaute,
 			'com.communaute.vide' => 'لا توجد منشورات في هذه الفئة.',
 			'com.studio.focus.entrer' => _root.com.socle.lexique.modeFocus,
@@ -3527,7 +3773,7 @@ extension on TraductionsAr {
 			'com.studio.recherche.champ' => 'البحث في الاستوديو',
 			'com.studio.recherche.aide' => 'قناة أو رسالة أو ملف',
 			'com.studio.recherche.aucunTitre' => 'لا توجد نتائج',
-			'com.studio.recherche.aucun' => ({required Object texte}) => 'لا شيء يطابق «${texte}» في قنواتك. جرّب كلمة أخرى.',
+			'com.studio.recherche.aucun' => ({required Object texte}) => 'لا شيء يطابق »${texte}« في قنواتك. جرّب كلمة أخرى.',
 			'com.studio.recherche.aucunDansFiltre' => 'لا شيء من هذا النوع يطابق البحث. اختر الكل لرؤية النتائج الأخرى.',
 			'com.studio.recherche.resultatUn' => 'نتيجة واحدة',
 			'com.studio.recherche.resultats' => ({required Object nombre}) => '${nombre} نتائج',
@@ -3548,6 +3794,74 @@ extension on TraductionsAr {
 			'com.studio.demo.canalPrive' => 'عنوان قناة خاصة غير مفتوحة لك',
 			'com.studio.demo.sansCanaux' => 'لا توجد قناة مفتوحة',
 			'com.studio.demo.vue' => ({required Object situation}) => 'الحالة: ${situation}',
+			'com.studio.demo.f.nadia' => 'نادية',
+			'com.studio.demo.f.fonctionDirection' => 'الإدارة',
+			'com.studio.demo.f.mariam' => 'مريم',
+			'com.studio.demo.f.fonctionCoordination' => 'التنسيق العام',
+			'com.studio.demo.f.youssef' => 'يوسف',
+			'com.studio.demo.f.fonctionProduit' => 'المنتج والتقنية',
+			'com.studio.demo.f.amina' => 'أمينة',
+			'com.studio.demo.f.fonctionPedagogie' => 'الشؤون التربوية',
+			'com.studio.demo.f.samira' => 'سميرة',
+			'com.studio.demo.f.fonctionAdmissions' => 'القبول',
+			'com.studio.demo.f.ibrahim' => 'إبراهيم',
+			'com.studio.demo.f.fonctionPlanning' => 'الجدولة',
+			'com.studio.demo.f.pieceAudio' => 'صوت',
+			'com.studio.demo.f.fichierPlanning' => 'جدول_الفصل_الثالث.pdf',
+			'com.studio.demo.f.fichierModeration' => 'دليل_الإشراف.pdf',
+			_ => null,
+		} ?? switch (path) {
+			'com.studio.demo.f.fichierVocal' => 'رسالة_صوتية_يوسف.m4a',
+			'com.studio.demo.f.fichierCompteRendu' => 'تقرير_الزيارات.pdf',
+			'com.studio.demo.f.fichierBudget' => 'الميزانية_السرية.pdf',
+			'com.studio.demo.f.canalOrganisation' => 'التنظيم العام',
+			'com.studio.demo.f.canalOrganisationDetail' => 'تنسيق عمل الفريق كله',
+			'com.studio.demo.f.canalAdmissions' => 'القبول',
+			'com.studio.demo.f.canalAdmissionsDetail' => 'متابعة طلبات التسجيل',
+			'com.studio.demo.f.canalQualite' => 'متابعة الجودة',
+			'com.studio.demo.f.canalQualiteDetail' => 'ملاحظات زيارات المراقبة',
+			'com.studio.demo.f.canalRemplacements' => 'البدلاء',
+			'com.studio.demo.f.canalRemplacementsDetail' => 'غيابات الأسبوع والمعلمون البدلاء',
+			'com.studio.demo.f.canalCloture' => 'إقفال الشهر',
+			'com.studio.demo.f.canalClotureDetail' => 'التحضير للإقفال الشهري',
+			'com.studio.demo.f.canalDirection' => 'الإدارة الاستراتيجية',
+			'com.studio.demo.f.canalDirectionDetail' => 'توجهات الإدارة',
+			'com.studio.demo.f.messagePlanning' => 'السلام عليكم جميعًا. إليكم جدول الفصل الدراسي القادم، أخبروني إن كان فيه ما لا يناسب.',
+			'com.studio.demo.f.messageSupports' => 'أحدّث مواد المستوى 2 ونراجع الأمر معًا غدًا.',
+			'com.studio.demo.f.messageMerci' => 'شكرًا للجميع على هذا الأسبوع.',
+			'com.studio.demo.f.messageDossiers' => 'ثلاثة ملفات تنتظر قرارًا قبل يوم الجمعة. نادية، هل يمكنك الاطلاع على ملف أسرة كريم؟',
+			'com.studio.demo.f.messageCompteRendu' => 'تقرير زيارات هذا الشهر جاهز.',
+			'com.studio.demo.f.messageRemplacement' => 'يوم الثلاثاء، يتولى معلم بديل فصل النور. الجدول محدَّث.',
+			'com.studio.demo.f.messageJustificatifs' => 'جُمعت مستندات شهر سبتمبر.',
+			'com.studio.demo.f.messageBudget' => 'الميزانية السرية لهذا الفصل الدراسي.',
+			'com.studio.demo.f.activiteBudget' => 'الميزانية السرية لهذا الفصل الدراسي',
+			'com.studio.demo.f.partagePlanning' => 'جدول الفصل الدراسي',
+			'com.studio.demo.f.partageModeration' => 'دليل الإشراف',
+			'com.studio.demo.f.epinglePar' => ({required Object nom}) => 'ثبّته ${nom}',
+			'com.studio.demo.f.partagePar' => ({required Object nom}) => 'شاركه ${nom}',
+			'com.studio.demo.f.lienRemplacements' => 'بدلاء الأسبوع',
+			'com.studio.demo.f.lienCharte' => 'ميثاق الفريق',
+			'com.studio.demo.f.brouillon' => 'سميرة، سأطّلع على ملف أسرة كريم هذا المساء وأخبرك صباح الغد',
+			'com.studio.demo.f.activitePaiement' => 'دفعة سبتمبر غير مؤكدة لأسرة حداد',
+			'com.studio.demo.f.objetEcheancier' => 'جدول أقساط أسرة حداد',
+			'com.studio.demo.f.activiteDossierKarim' => 'ملف أسرة كريم جاهز لاتخاذ قرار',
+			'com.studio.demo.f.objetDossierKarim' => 'ملف أسرة كريم',
+			'com.studio.demo.f.activiteMention' => 'أشارت إليك سميرة',
+			'com.studio.demo.f.activiteReponse' => 'ردت أمينة على رسالتك',
+			'com.studio.demo.f.activiteRemplacant' => 'اختيار المعلم البديل ليوم الثلاثاء لفصل النور',
+			'com.studio.demo.f.objetRemplacement' => 'البديل ليوم الثلاثاء',
+			'com.studio.demo.f.activiteOuverture' => 'المصادقة على فتح فصل صباح يوم السبت',
+			'com.studio.demo.f.objetClasseSamedi' => 'فصل صباح يوم السبت',
+			'com.studio.demo.f.activiteCloture' => 'إقفال شهر سبتمبر',
+			'com.studio.demo.f.objetCloture' => 'إقفال سبتمبر',
+			'com.studio.demo.f.activiteBilans' => 'تقييمات منتصف الفصل للمراجعة',
+			'com.studio.demo.f.objetBilans' => 'تقييمات منتصف الفصل',
+			'com.studio.demo.f.activiteMessages' => 'رسالتان جديدتان',
+			'com.studio.demo.f.activiteAnnonce' => 'نُشر إعلان: الأكاديمية مغلقة يوم 1 نوفمبر',
+			'com.studio.demo.f.objetFermeture' => 'الإغلاق يوم 1 نوفمبر',
+			'com.studio.demo.f.activiteFichier' => ({required Object nom, required Object fichier}) => '${nom} شاركت ${fichier}',
+			'com.studio.demo.f.activiteInscription' => 'وصل طلب تسجيل جديد',
+			'com.studio.demo.f.objetDossierBenali' => 'ملف أسرة بن علي',
 			'com.studio.titre' => _root.com.socle.lexique.studio,
 			'com.studio.vide' => 'لا يوجد نشاط للمعالجة هنا.',
 			'com.annonces.publieur.titre' => 'إعلان جديد',
@@ -3638,8 +3952,6 @@ extension on TraductionsAr {
 			'com.annonces.administration.moderation.restaure' => 'مستعاد',
 			'com.annonces.administration.moderation.enregistree' => 'سُجل القرار.',
 			'com.annonces.administration.moderation.nonConfirmee' => 'لم يُؤكَّد هذا القرار بعد. تحقق من الاتصال ثم أعد المحاولة.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.moderation.horsLigne' => 'أنت غير متصل. لا يمكن تحديث قائمة الإشراف.',
 			'com.annonces.administration.moderation.indisponible' => 'الإشراف غير متاح بعد. عد لاحقًا.',
 			'com.annonces.administration.moderation.videTitre' => 'لا يوجد محتوى للفحص',
@@ -3682,11 +3994,11 @@ extension on TraductionsAr {
 			'com.annonces.demoPublication.recitationTexte' => 'سيقدم فصل النور تلاوة نهاية الفصل الدراسي يوم السبت الساعة 10، عبر الاتصال المرئي.',
 			'com.annonces.demoPublication.rentreeTitre' => 'استئناف الدروس بعد العطلة',
 			'com.annonces.demoPublication.rentreeTexte' => 'تُستأنف الحصص يوم الاثنين 6 يناير في المواعيد المعتادة.',
-			'com.annonces.demoPublication.signalementAffilie' => 'منشور « بطاقات تجويد للطباعة »',
+			'com.annonces.demoPublication.signalementAffilie' => 'منشور »بطاقات تجويد للطباعة«',
 			'com.annonces.demoPublication.extraitAffilie' => 'تجدون بطاقاتي عبر هذا الرابط الشريك، خصم 20 % برمزي.',
-			'com.annonces.demoPublication.signalementVente' => 'منشور « دروس خصوصية متاحة »',
+			'com.annonces.demoPublication.signalementVente' => 'منشور »دروس خصوصية متاحة«',
 			'com.annonces.demoPublication.extraitVente' => 'أقدم دروسًا خصوصية مدفوعة في عطلة نهاية الأسبوع، راسلوني.',
-			'com.annonces.demoPublication.signalementHorsSujet' => 'رد تحت « تنظيم مراجعة جماعية »',
+			'com.annonces.demoPublication.signalementHorsSujet' => 'رد تحت »تنظيم مراجعة جماعية«',
 			'com.annonces.section' => 'إعلانات الفصل',
 			'com.annonces.annonce' => 'إعلان',
 			'com.annonces.publier' => 'نشر إعلان',

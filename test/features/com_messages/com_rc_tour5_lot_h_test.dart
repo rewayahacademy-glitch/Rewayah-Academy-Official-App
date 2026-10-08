@@ -319,7 +319,7 @@ TextEditingController _champ(WidgetTester tester) =>
 /// Un message recu, pour qu'un fil ait une bulle.
 const MessageFil _recu = MessageFil(
   id: 'm1',
-  auteur: 'Mme Mariam',
+  auteur: 'Sayyida Mariam',
   texte: 'Bonjour',
   horodatage: 'Lundi',
   deSoi: false,
@@ -833,7 +833,7 @@ void main() {
     testWidgets('Messages du tuteur : nom entier, retour dans la ligne', (
       WidgetTester tester,
     ) async {
-      // Contre-preuve : a 27689f94, « Mme Mariam, Enseignante de la
+      // Contre-preuve : a 27689f94, « Sayyida Mariam, Enseignante de la
       // Classe » tenait sur une ligne coupee, et le disque retour de la
       // page defilait avec elle hors de l'ecran.
       final GoRouter routeur = await _monterDansLaCoquille(
@@ -850,7 +850,7 @@ void main() {
       final Finder compacte = find.byKey(FilDiscussion.cleEnteteCompacte);
       final Finder nom = find.descendant(
         of: compacte,
-        matching: find.textContaining('Mme Mariam'),
+        matching: find.textContaining('Sayyida Mariam'),
       );
       expect(nom, findsOneWidget);
       expect(
@@ -869,7 +869,7 @@ void main() {
               ),
             )
             .label,
-        contains('Mme Mariam, Enseignante'),
+        contains('Sayyida Mariam, Enseignante'),
       );
       semantique.dispose();
       final Finder retour = find.descendant(

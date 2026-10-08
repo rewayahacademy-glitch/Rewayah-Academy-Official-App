@@ -255,7 +255,11 @@ class _ListeFilsState extends State<ListeFils> {
       ),
       libelle: titreFil(f.interlocuteurs, f.objet.libelle),
       legende: l.legende(
-        objet: f.objet.libelle,
+        // COM-RC tour 7 (capture com_admin_messages_1440) : le trait d'union
+        // insecable (U+2011, comme l'en-tete du fil, lot K) garde le nom
+        // de l'objet entier ; la ligne se coupait en « Classe An- » puis
+        // « Nour ».
+        objet: f.objet.libelle.replaceAll('-', '\u2011'),
         apercu: f.apercu ?? l.sansApercu,
       ),
       valeur: dernier == null ? null : momentCourt(dernier, maintenant),

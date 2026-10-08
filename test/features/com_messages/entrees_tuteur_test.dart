@@ -37,7 +37,7 @@ import 'support_messages.dart';
 
 const Participant _mariam = Participant(
   id: 'p-mariam',
-  nomAffiche: 'Mme Mariam',
+  nomAffiche: 'Sayyida Mariam',
   fonction: 'Enseignante de la Classe',
 );
 const Participant _direction = Participant(
@@ -167,7 +167,7 @@ void main() {
       Size(768, 1024),
       Size(1440, 900),
     ]) {
-      testWidgets('${taille.width.toInt()} : « Ecrire a Mme Mariam » ouvre '
+      testWidgets('${taille.width.toInt()} : « Ecrire a Sayyida Mariam » ouvre '
           'le fil, l Accueil reste allume, quatre destinations', (
         WidgetTester tester,
       ) async {
@@ -182,7 +182,7 @@ void main() {
         await _toucher(
           tester,
           _dansEntree(
-            find.text(t.com.messages.entree.ecrireA(nom: 'Mme Mariam')),
+            find.text(t.com.messages.entree.ecrireA(nom: 'Sayyida Mariam')),
           ),
         );
         expect(_chemin(routeur), Routes.tuteurFilPour('fil-mariam'));
@@ -224,7 +224,7 @@ void main() {
       await _toucher(
         tester,
         _dansEntree(
-          find.text(t.com.messages.entree.ecrireA(nom: 'Mme Mariam')),
+          find.text(t.com.messages.entree.ecrireA(nom: 'Sayyida Mariam')),
         ),
       );
       expect(find.byType(PanneauContexteFil), findsOneWidget);
@@ -268,7 +268,7 @@ void main() {
           notifications: <NotificationTuteur>[
             NotificationTuteur(
               id: 'n1',
-              titre: 'Nouveau message de Mme Mariam',
+              titre: 'Nouveau message de Sayyida Mariam',
               date: maintenantTest,
               destination: Routes.tuteurFilPour('fil-mariam'),
             ),
@@ -280,7 +280,7 @@ void main() {
       );
       await stabiliser(tester);
       expect(find.byType(NotificationsPage), findsOneWidget);
-      await _toucher(tester, find.text('Nouveau message de Mme Mariam'));
+      await _toucher(tester, find.text('Nouveau message de Sayyida Mariam'));
       expect(_chemin(routeur), Routes.tuteurFilPour('fil-mariam'));
       expect(find.byType(FilDiscussion), findsOneWidget);
       expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, 0);

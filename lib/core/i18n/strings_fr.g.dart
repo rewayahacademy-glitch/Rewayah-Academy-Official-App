@@ -15805,6 +15805,8 @@ class Traductions$com$messages$demo$fr {
 
 	/// fr: 'Point de vue : {role}'
 	String vue({required Object role}) => 'Point de vue : ${role}';
+
+	late final Traductions$com$messages$demo$f$fr f = Traductions$com$messages$demo$f$fr.internal(_root);
 }
 
 // Path: com.vocal.composer
@@ -16016,8 +16018,8 @@ class Traductions$com$vocal$demo$fr {
 	/// fr: 'Messages vocaux envoyés'
 	String get envoyes => 'Messages vocaux envoyés';
 
-	/// fr: 'Mme Mariam, enseignante'
-	String get auteurEnseignante => 'Mme Mariam, enseignante';
+	/// fr: 'Sayyida Mariam, enseignante'
+	String get auteurEnseignante => 'Sayyida Mariam, enseignante';
 
 	/// fr: 'Ahmed, parent d'Adam'
 	String get auteurParent => 'Ahmed, parent d\'Adam';
@@ -16459,6 +16461,8 @@ class Traductions$com$communaute$demo$fr {
 
 	/// fr: 'Lecture seule, sans publication'
 	String get lecteurSeul => 'Lecture seule, sans publication';
+
+	late final Traductions$com$communaute$demo$f$fr f = Traductions$com$communaute$demo$f$fr.internal(_root);
 }
 
 // Path: com.studio.focus
@@ -16870,6 +16874,8 @@ class Traductions$com$studio$demo$fr {
 
 	/// fr: 'Situation : {situation}'
 	String vue({required Object situation}) => 'Situation : ${situation}';
+
+	late final Traductions$com$studio$demo$f$fr f = Traductions$com$studio$demo$f$fr.internal(_root);
 }
 
 // Path: com.annonces.publieur
@@ -17822,6 +17828,114 @@ class Traductions$com$messages$demo$roles$fr {
 	String get controleur => 'Contrôleur';
 }
 
+// Path: com.messages.demo.f
+class Traductions$com$messages$demo$f$fr {
+	Traductions$com$messages$demo$f$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ahmed'
+	String get ahmed => 'Ahmed';
+
+	/// fr: 'Parent d'Adam'
+	String get parentAdam => 'Parent d\'Adam';
+
+	/// fr: 'Enseignante de la Classe An-Nour'
+	String get enseignanteNour => 'Enseignante de la Classe An-Nour';
+
+	/// fr: 'Fatima'
+	String get fatima => 'Fatima';
+
+	/// fr: 'Parent de Yasmine'
+	String get parentYasmine => 'Parent de Yasmine';
+
+	/// fr: 'Karim'
+	String get karim => 'Karim';
+
+	/// fr: 'Parent de Yusuf'
+	String get parentYusuf => 'Parent de Yusuf';
+
+	/// fr: 'Administration'
+	String get administration => 'Administration';
+
+	/// fr: 'Direction de Rewayah'
+	String get directionRewayah => 'Direction de Rewayah';
+
+	/// fr: 'M. Rachid'
+	String get rachid => 'M. Rachid';
+
+	/// fr: 'Contrôleur pédagogique'
+	String get controleurPedagogique => 'Contrôleur pédagogique';
+
+	/// fr: 'Youssef'
+	String get youssef => 'Youssef';
+
+	/// fr: 'Enseignant de la Classe Al-Fajr'
+	String get enseignantFajr => 'Enseignant de la Classe Al-Fajr';
+
+	/// fr: 'Khadija'
+	String get khadija => 'Khadija';
+
+	/// fr: 'Élève de la Classe Al-Fajr'
+	String get eleveFajr => 'Élève de la Classe Al-Fajr';
+
+	/// fr: 'Adam'
+	String get adam => 'Adam';
+
+	/// fr: 'Yasmine'
+	String get yasmine => 'Yasmine';
+
+	/// fr: 'Yusuf'
+	String get yusuf => 'Yusuf';
+
+	/// fr: 'Dossier d'inscription d'Adam'
+	String get dossierAdam => 'Dossier d\'inscription d\'Adam';
+
+	/// fr: 'Visite de contrôle, Classe An-Nour'
+	String get missionNour => 'Visite de contrôle, Classe An-Nour';
+
+	/// fr: 'Devoir_semaine_3.pdf'
+	String get pieceDevoir => 'Devoir_semaine_3.pdf';
+
+	/// fr: 'Attestation_ancienne.pdf'
+	String get pieceAttestation => 'Attestation_ancienne.pdf';
+
+	/// fr: 'vocal.m4a'
+	String get pieceVocal => 'vocal.m4a';
+
+	/// fr: 'Audio'
+	String get typeAudio => 'Audio';
+
+	/// fr: 'Bonjour, je voulais savoir comment s'est passée la séance d'aujourd'hui pour Adam. Merci beaucoup.'
+	String get adamQuestion => 'Bonjour, je voulais savoir comment s\'est passée la séance d\'aujourd\'hui pour Adam. Merci beaucoup.';
+
+	/// fr: 'Bonjour, la séance s'est très bien passée. Adam a été attentif et a bien participé.'
+	String get adamReponse => 'Bonjour, la séance s\'est très bien passée. Adam a été attentif et a bien participé.';
+
+	/// fr: 'Voici le devoir de la semaine prochaine.'
+	String get adamDevoir => 'Voici le devoir de la semaine prochaine.';
+
+	/// fr: 'Il manque l'attestation de niveau d'Adam pour finaliser son inscription. Pouvez-vous la déposer dans son dossier ?'
+	String get dossierManque => 'Il manque l\'attestation de niveau d\'Adam pour finaliser son inscription. Pouvez-vous la déposer dans son dossier ?';
+
+	/// fr: 'La séance a commencé avec huit minutes de retard. Le compte rendu est déposé.'
+	String get missionRetard => 'La séance a commencé avec huit minutes de retard. Le compte rendu est déposé.';
+
+	/// fr: 'Merci, nous en parlons avec l'enseignante cette semaine.'
+	String get missionSuite => 'Merci, nous en parlons avec l\'enseignante cette semaine.';
+
+	/// fr: 'Merci beaucoup pour ces explications.'
+	String get yasmineMerci => 'Merci beaucoup pour ces explications.';
+
+	/// fr: 'Votre Classe An-Nour passe au mardi 18 h à partir du mois prochain. Merci de confirmer.'
+	String get affectation => 'Votre Classe An-Nour passe au mardi 18 h à partir du mois prochain. Merci de confirmer.';
+
+	/// fr: 'Pensez à réviser la sourate Al-Mulk pour jeudi.'
+	String get khadijaRevision => 'Pensez à réviser la sourate Al-Mulk pour jeudi.';
+}
+
 // Path: com.communaute.garde.reponse
 class Traductions$com$communaute$garde$reponse$fr {
 	Traductions$com$communaute$garde$reponse$fr.internal(this._root);
@@ -17853,6 +17967,141 @@ class Traductions$com$communaute$signalement$politique$fr {
 
 	/// fr: 'La sollicitation commerciale n'est pas autorisée dans cet espace.'
 	String get sollicitation => 'La sollicitation commerciale n\'est pas autorisée dans cet espace.';
+}
+
+// Path: com.communaute.demo.f
+class Traductions$com$communaute$demo$f$fr {
+	Traductions$com$communaute$demo$f$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pédagogie'
+	String get categoriePedagogie => 'Pédagogie';
+
+	/// fr: 'Ressources'
+	String get categorieRessources => 'Ressources';
+
+	/// fr: 'Gestion'
+	String get categorieGestion => 'Gestion';
+
+	/// fr: 'Enseignant, Classe Al-Fatiha'
+	String get fonctionSoi => 'Enseignant, Classe Al-Fatiha';
+
+	/// fr: 'Ibrahim'
+	String get prenomSoi => 'Ibrahim';
+
+	/// fr: 'Samira Belkacem'
+	String get samira => 'Samira Belkacem';
+
+	/// fr: 'Enseignante, Classe An-Nour'
+	String get fonctionSamira => 'Enseignante, Classe An-Nour';
+
+	/// fr: 'Nour El Idrissi'
+	String get nour => 'Nour El Idrissi';
+
+	/// fr: 'Enseignante, Classe Al-Fajr'
+	String get fonctionNour => 'Enseignante, Classe Al-Fajr';
+
+	/// fr: 'Yasmine Haddad'
+	String get yasmine => 'Yasmine Haddad';
+
+	/// fr: 'Enseignante, Classe Al-Badr'
+	String get fonctionYasmine => 'Enseignante, Classe Al-Badr';
+
+	/// fr: 'Youssef Amrani'
+	String get youssef => 'Youssef Amrani';
+
+	/// fr: 'Enseignant, Classe Al-Kawthar'
+	String get fonctionYoussef => 'Enseignant, Classe Al-Kawthar';
+
+	/// fr: 'Mariam Benali'
+	String get mariam => 'Mariam Benali';
+
+	/// fr: 'Enseignante, Classe An-Nas'
+	String get fonctionMariam => 'Enseignante, Classe An-Nas';
+
+	/// fr: 'Hamza Ouali'
+	String get hamza => 'Hamza Ouali';
+
+	/// fr: 'Enseignant, Classe Al-Ikhlas'
+	String get fonctionHamza => 'Enseignant, Classe Al-Ikhlas';
+
+	/// fr: 'Idées pour la mémorisation ?'
+	String get memorisationTitre => 'Idées pour la mémorisation ?';
+
+	/// fr: 'Quels rituels ou activités fonctionnent bien pour aider les élèves à mémoriser les sourates ? Je cherche des retours d'expérience : jeux, supports visuels, répétition en binôme. Merci pour vos idées !'
+	String get memorisationTexte => 'Quels rituels ou activités fonctionnent bien pour aider les élèves à mémoriser les sourates ? Je cherche des retours d\'expérience : jeux, supports visuels, répétition en binôme. Merci pour vos idées !';
+
+	/// fr: 'Retour sur les cartes de répétition'
+	String get cartesTitre => 'Retour sur les cartes de répétition';
+
+	/// fr: 'J'utilise des cartes de répétition depuis la rentrée et cela fonctionne très bien, même avec les plus jeunes. Je joins le modèle que je remplis avant chaque séance.'
+	String get cartesTexte => 'J\'utilise des cartes de répétition depuis la rentrée et cela fonctionne très bien, même avec les plus jeunes. Je joins le modèle que je remplis avant chaque séance.';
+
+	/// fr: 'Cartes_repetition.pdf'
+	String get cartesFichier => 'Cartes_repetition.pdf';
+
+	/// fr: 'Gérer les différents niveaux ?'
+	String get niveauxTitre => 'Gérer les différents niveaux ?';
+
+	/// fr: 'Comment gérez-vous une Classe où les niveaux sont très différents ? Je crains que les plus avancés décrochent pendant que je reprends les bases avec les autres.'
+	String get niveauxTexte => 'Comment gérez-vous une Classe où les niveaux sont très différents ? Je crains que les plus avancés décrochent pendant que je reprends les bases avec les autres.';
+
+	/// fr: 'Faire réciter les élèves timides'
+	String get timidesTitre => 'Faire réciter les élèves timides';
+
+	/// fr: 'Une élève refuse de réciter devant les autres. Je lui propose de réciter la première, quand la Classe est encore calme. Avez-vous d'autres pistes ?'
+	String get timidesTexte => 'Une élève refuse de réciter devant les autres. Je lui propose de réciter la première, quand la Classe est encore calme. Avez-vous d\'autres pistes ?';
+
+	/// fr: 'Une fiche de suivi des révisions'
+	String get ficheTitre => 'Une fiche de suivi des révisions';
+
+	/// fr: 'Je note chaque semaine les sourates révisées et les points à reprendre. La fiche tient sur une page et aide beaucoup pour préparer la séance suivante.'
+	String get ficheTexte => 'Je note chaque semaine les sourates révisées et les points à reprendre. La fiche tient sur une page et aide beaucoup pour préparer la séance suivante.';
+
+	/// fr: 'Commencer la séance à l'heure'
+	String get heureTitre => 'Commencer la séance à l\'heure';
+
+	/// fr: 'Les premières minutes partent souvent dans l'installation. Je demande maintenant aux élèves de préparer leur page avant l'heure. Qu'en pensez-vous ?'
+	String get heureTexte => 'Les premières minutes partent souvent dans l\'installation. Je demande maintenant aux élèves de préparer leur page avant l\'heure. Qu\'en pensez-vous ?';
+
+	/// fr: 'J'utilise beaucoup la répétition en binôme et des cartes visuelles. Cela motive vraiment les élèves.'
+	String get reponseMariam => 'J\'utilise beaucoup la répétition en binôme et des cartes visuelles. Cela motive vraiment les élèves.';
+
+	/// fr: 'Les élèves réécoutent la récitation de la séance à la maison : cela aide beaucoup entre deux cours.'
+	String get reponseYoussef => 'Les élèves réécoutent la récitation de la séance à la maison : cela aide beaucoup entre deux cours.';
+
+	/// fr: 'Merci pour le modèle, je vais l'essayer cette semaine.'
+	String get reponseSamira => 'Merci pour le modèle, je vais l\'essayer cette semaine.';
+
+	/// fr: 'Je laisse parfois un élève réciter en tête-à-tête à la fin de la séance, puis devant un seul camarade.'
+	String get reponseHamza => 'Je laisse parfois un élève réciter en tête-à-tête à la fin de la séance, puis devant un seul camarade.';
+
+	/// fr: 'Mon lecteur audio préféré pour réviser'
+	String get affilieTitre => 'Mon lecteur audio préféré pour réviser';
+
+	/// fr: 'J'utilise ce lecteur pour faire réécouter les sourates. Il est en réduction cette semaine avec mon lien : {lien}'
+	String affilieTexte({required Object lien}) => 'J\'utilise ce lecteur pour faire réécouter les sourates. Il est en réduction cette semaine avec mon lien : ${lien}';
+
+	/// fr: 'Je vends mes fiches de mémorisation'
+	String get venteTitre => 'Je vends mes fiches de mémorisation';
+
+	/// fr: 'Lot de 30 fiches plastifiées, 25 euros, envoi par la poste. Écrivez-moi pour commander.'
+	String get venteTexte => 'Lot de 30 fiches plastifiées, 25 euros, envoi par la poste. Écrivez-moi pour commander.';
+
+	/// fr: 'Une application pour réviser'
+	String get publiciteTitre => 'Une application pour réviser';
+
+	/// fr: 'Je recommande cette application de révision, avec le code PROF20 pour l'abonnement : {lienOffre}. Pour le texte, la ressource de la Bibliothèque ({lienInterne}) et {lienRessource} suffisent.'
+	String publiciteTexte({required Object lienOffre, required Object lienInterne, required Object lienRessource}) => 'Je recommande cette application de révision, avec le code PROF20 pour l\'abonnement : ${lienOffre}. Pour le texte, la ressource de la Bibliothèque (${lienInterne}) et ${lienRessource} suffisent.';
+
+	/// fr: 'Pour la révision, je conseille ce lecteur, en réduction avec mon lien : {lien}'
+	String reponseAffilie({required Object lien}) => 'Pour la révision, je conseille ce lecteur, en réduction avec mon lien : ${lien}';
+
+	/// fr: 'Fiche_seance.pdf'
+	String get fichierChoisi => 'Fiche_seance.pdf';
 }
 
 // Path: com.studio.aujourdhui.indicateurs
@@ -18024,6 +18273,213 @@ class Traductions$com$studio$enregistres$types$fr {
 
 	/// fr: 'Élément du Studio'
 	String get element => 'Élément du Studio';
+}
+
+// Path: com.studio.demo.f
+class Traductions$com$studio$demo$f$fr {
+	Traductions$com$studio$demo$f$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nadia'
+	String get nadia => 'Nadia';
+
+	/// fr: 'Direction'
+	String get fonctionDirection => 'Direction';
+
+	/// fr: 'Mariam'
+	String get mariam => 'Mariam';
+
+	/// fr: 'Coordination générale'
+	String get fonctionCoordination => 'Coordination générale';
+
+	/// fr: 'Youssef'
+	String get youssef => 'Youssef';
+
+	/// fr: 'Produit et technique'
+	String get fonctionProduit => 'Produit et technique';
+
+	/// fr: 'Amina'
+	String get amina => 'Amina';
+
+	/// fr: 'Pédagogie'
+	String get fonctionPedagogie => 'Pédagogie';
+
+	/// fr: 'Samira'
+	String get samira => 'Samira';
+
+	/// fr: 'Admissions'
+	String get fonctionAdmissions => 'Admissions';
+
+	/// fr: 'Ibrahim'
+	String get ibrahim => 'Ibrahim';
+
+	/// fr: 'Planning'
+	String get fonctionPlanning => 'Planning';
+
+	/// fr: 'Audio'
+	String get pieceAudio => 'Audio';
+
+	/// fr: 'Planning_T3.pdf'
+	String get fichierPlanning => 'Planning_T3.pdf';
+
+	/// fr: 'Guide_de_moderation.pdf'
+	String get fichierModeration => 'Guide_de_moderation.pdf';
+
+	/// fr: 'vocal-youssef.m4a'
+	String get fichierVocal => 'vocal-youssef.m4a';
+
+	/// fr: 'Compte_rendu_visites.pdf'
+	String get fichierCompteRendu => 'Compte_rendu_visites.pdf';
+
+	/// fr: 'Budget_confidentiel.pdf'
+	String get fichierBudget => 'Budget_confidentiel.pdf';
+
+	/// fr: 'Organisation générale'
+	String get canalOrganisation => 'Organisation générale';
+
+	/// fr: 'Coordination de toute l'équipe'
+	String get canalOrganisationDetail => 'Coordination de toute l\'équipe';
+
+	/// fr: 'Admissions'
+	String get canalAdmissions => 'Admissions';
+
+	/// fr: 'Suivi des demandes d'inscription'
+	String get canalAdmissionsDetail => 'Suivi des demandes d\'inscription';
+
+	/// fr: 'Suivi qualité'
+	String get canalQualite => 'Suivi qualité';
+
+	/// fr: 'Retours des visites de contrôle'
+	String get canalQualiteDetail => 'Retours des visites de contrôle';
+
+	/// fr: 'Remplacements'
+	String get canalRemplacements => 'Remplacements';
+
+	/// fr: 'Absences et remplacements de la semaine'
+	String get canalRemplacementsDetail => 'Absences et remplacements de la semaine';
+
+	/// fr: 'Clôture du mois'
+	String get canalCloture => 'Clôture du mois';
+
+	/// fr: 'Préparation de la clôture mensuelle'
+	String get canalClotureDetail => 'Préparation de la clôture mensuelle';
+
+	/// fr: 'Direction stratégique'
+	String get canalDirection => 'Direction stratégique';
+
+	/// fr: 'Orientations de la direction'
+	String get canalDirectionDetail => 'Orientations de la direction';
+
+	/// fr: 'Bonjour à toute l'équipe. Voici le planning du prochain trimestre, dites-moi si quelque chose ne va pas.'
+	String get messagePlanning => 'Bonjour à toute l\'équipe. Voici le planning du prochain trimestre, dites-moi si quelque chose ne va pas.';
+
+	/// fr: 'Je mets à jour les supports du niveau 2 et on fait le point demain.'
+	String get messageSupports => 'Je mets à jour les supports du niveau 2 et on fait le point demain.';
+
+	/// fr: 'Merci à tous pour la semaine.'
+	String get messageMerci => 'Merci à tous pour la semaine.';
+
+	/// fr: 'Trois dossiers attendent une décision avant vendredi. Nadia, peux-tu regarder le dossier de la famille Karim ?'
+	String get messageDossiers => 'Trois dossiers attendent une décision avant vendredi. Nadia, peux-tu regarder le dossier de la famille Karim ?';
+
+	/// fr: 'Le compte rendu des visites du mois est prêt.'
+	String get messageCompteRendu => 'Le compte rendu des visites du mois est prêt.';
+
+	/// fr: 'Mardi, la Classe An-Nour est assurée par un remplaçant. Le planning est à jour.'
+	String get messageRemplacement => 'Mardi, la Classe An-Nour est assurée par un remplaçant. Le planning est à jour.';
+
+	/// fr: 'Les justificatifs de septembre sont rassemblés.'
+	String get messageJustificatifs => 'Les justificatifs de septembre sont rassemblés.';
+
+	/// fr: 'Budget confidentiel du trimestre.'
+	String get messageBudget => 'Budget confidentiel du trimestre.';
+
+	/// fr: 'Budget confidentiel du trimestre'
+	String get activiteBudget => 'Budget confidentiel du trimestre';
+
+	/// fr: 'Planning du trimestre'
+	String get partagePlanning => 'Planning du trimestre';
+
+	/// fr: 'Guide de modération'
+	String get partageModeration => 'Guide de modération';
+
+	/// fr: 'Épinglé par {nom}'
+	String epinglePar({required Object nom}) => 'Épinglé par ${nom}';
+
+	/// fr: 'Partagé par {nom}'
+	String partagePar({required Object nom}) => 'Partagé par ${nom}';
+
+	/// fr: 'Remplacements de la semaine'
+	String get lienRemplacements => 'Remplacements de la semaine';
+
+	/// fr: 'Charte de l'équipe'
+	String get lienCharte => 'Charte de l\'équipe';
+
+	/// fr: 'Samira, je regarde le dossier de la famille Karim ce soir et je te dis demain matin'
+	String get brouillon => 'Samira, je regarde le dossier de la famille Karim ce soir et je te dis demain matin';
+
+	/// fr: 'Paiement de septembre non confirmé pour la famille Haddad'
+	String get activitePaiement => 'Paiement de septembre non confirmé pour la famille Haddad';
+
+	/// fr: 'Échéancier de la famille Haddad'
+	String get objetEcheancier => 'Échéancier de la famille Haddad';
+
+	/// fr: 'Dossier de la famille Karim prêt pour une décision'
+	String get activiteDossierKarim => 'Dossier de la famille Karim prêt pour une décision';
+
+	/// fr: 'Dossier de la famille Karim'
+	String get objetDossierKarim => 'Dossier de la famille Karim';
+
+	/// fr: 'Samira vous a mentionnée'
+	String get activiteMention => 'Samira vous a mentionnée';
+
+	/// fr: 'Amina a répondu à votre message'
+	String get activiteReponse => 'Amina a répondu à votre message';
+
+	/// fr: 'Choisir le remplaçant de mardi pour la Classe An-Nour'
+	String get activiteRemplacant => 'Choisir le remplaçant de mardi pour la Classe An-Nour';
+
+	/// fr: 'Remplacement de mardi'
+	String get objetRemplacement => 'Remplacement de mardi';
+
+	/// fr: 'Valider l'ouverture d'une Classe le samedi matin'
+	String get activiteOuverture => 'Valider l\'ouverture d\'une Classe le samedi matin';
+
+	/// fr: 'Classe du samedi matin'
+	String get objetClasseSamedi => 'Classe du samedi matin';
+
+	/// fr: 'Clôture du mois de septembre'
+	String get activiteCloture => 'Clôture du mois de septembre';
+
+	/// fr: 'Clôture de septembre'
+	String get objetCloture => 'Clôture de septembre';
+
+	/// fr: 'Bilans de mi-parcours à relire'
+	String get activiteBilans => 'Bilans de mi-parcours à relire';
+
+	/// fr: 'Bilans de mi-parcours'
+	String get objetBilans => 'Bilans de mi-parcours';
+
+	/// fr: '2 nouveaux messages'
+	String get activiteMessages => '2 nouveaux messages';
+
+	/// fr: 'Annonce publiée : l'académie ferme le 1er novembre'
+	String get activiteAnnonce => 'Annonce publiée : l\'académie ferme le 1er novembre';
+
+	/// fr: 'Fermeture du 1er novembre'
+	String get objetFermeture => 'Fermeture du 1er novembre';
+
+	/// fr: '{nom} a partagé {fichier}'
+	String activiteFichier({required Object nom, required Object fichier}) => '${nom} a partagé ${fichier}';
+
+	/// fr: 'Nouvelle demande d'inscription reçue'
+	String get activiteInscription => 'Nouvelle demande d\'inscription reçue';
+
+	/// fr: 'Dossier de la famille Benali'
+	String get objetDossierBenali => 'Dossier de la famille Benali';
 }
 
 // Path: com.annonces.publieur.etapes
@@ -22706,6 +23162,39 @@ extension on Traductions {
 			'com.messages.demo.horsLigne' => 'Hors ligne, vu par la famille',
 			'com.messages.demo.refuse' => 'Conversation d\'une autre famille, refusée',
 			'com.messages.demo.vue' => ({required Object role}) => 'Point de vue : ${role}',
+			'com.messages.demo.f.ahmed' => 'Ahmed',
+			'com.messages.demo.f.parentAdam' => 'Parent d\'Adam',
+			'com.messages.demo.f.enseignanteNour' => 'Enseignante de la Classe An-Nour',
+			'com.messages.demo.f.fatima' => 'Fatima',
+			'com.messages.demo.f.parentYasmine' => 'Parent de Yasmine',
+			'com.messages.demo.f.karim' => 'Karim',
+			'com.messages.demo.f.parentYusuf' => 'Parent de Yusuf',
+			'com.messages.demo.f.administration' => 'Administration',
+			'com.messages.demo.f.directionRewayah' => 'Direction de Rewayah',
+			'com.messages.demo.f.rachid' => 'M. Rachid',
+			'com.messages.demo.f.controleurPedagogique' => 'Contrôleur pédagogique',
+			'com.messages.demo.f.youssef' => 'Youssef',
+			'com.messages.demo.f.enseignantFajr' => 'Enseignant de la Classe Al-Fajr',
+			'com.messages.demo.f.khadija' => 'Khadija',
+			'com.messages.demo.f.eleveFajr' => 'Élève de la Classe Al-Fajr',
+			'com.messages.demo.f.adam' => 'Adam',
+			'com.messages.demo.f.yasmine' => 'Yasmine',
+			'com.messages.demo.f.yusuf' => 'Yusuf',
+			'com.messages.demo.f.dossierAdam' => 'Dossier d\'inscription d\'Adam',
+			'com.messages.demo.f.missionNour' => 'Visite de contrôle, Classe An-Nour',
+			'com.messages.demo.f.pieceDevoir' => 'Devoir_semaine_3.pdf',
+			'com.messages.demo.f.pieceAttestation' => 'Attestation_ancienne.pdf',
+			'com.messages.demo.f.pieceVocal' => 'vocal.m4a',
+			'com.messages.demo.f.typeAudio' => 'Audio',
+			'com.messages.demo.f.adamQuestion' => 'Bonjour, je voulais savoir comment s\'est passée la séance d\'aujourd\'hui pour Adam. Merci beaucoup.',
+			'com.messages.demo.f.adamReponse' => 'Bonjour, la séance s\'est très bien passée. Adam a été attentif et a bien participé.',
+			'com.messages.demo.f.adamDevoir' => 'Voici le devoir de la semaine prochaine.',
+			'com.messages.demo.f.dossierManque' => 'Il manque l\'attestation de niveau d\'Adam pour finaliser son inscription. Pouvez-vous la déposer dans son dossier ?',
+			'com.messages.demo.f.missionRetard' => 'La séance a commencé avec huit minutes de retard. Le compte rendu est déposé.',
+			'com.messages.demo.f.missionSuite' => 'Merci, nous en parlons avec l\'enseignante cette semaine.',
+			'com.messages.demo.f.yasmineMerci' => 'Merci beaucoup pour ces explications.',
+			'com.messages.demo.f.affectation' => 'Votre Classe An-Nour passe au mardi 18 h à partir du mois prochain. Merci de confirmer.',
+			'com.messages.demo.f.khadijaRevision' => 'Pensez à réviser la sourate Al-Mulk pour jeudi.',
 			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
 			'com.messages.vide' => 'Aucune conversation pour le moment.',
 			'com.vocal.composer.libelle' => 'Message vocal',
@@ -22769,7 +23258,7 @@ extension on Traductions {
 			'com.vocal.demo.recu' => 'Message vocal reçu',
 			'com.vocal.demo.repondre' => 'Répondre dans la conversation',
 			'com.vocal.demo.envoyes' => 'Messages vocaux envoyés',
-			'com.vocal.demo.auteurEnseignante' => 'Mme Mariam, enseignante',
+			'com.vocal.demo.auteurEnseignante' => 'Sayyida Mariam, enseignante',
 			'com.vocal.demo.auteurParent' => 'Ahmed, parent d\'Adam',
 			'com.vocal.demo.messageRecu' => 'Bonjour, voici mes remarques sur la récitation de cette semaine.',
 			'com.vocal.demo.horodatage' => 'Aujourd\'hui, 10:28',
@@ -22890,6 +23379,48 @@ extension on Traductions {
 			'com.communaute.demo.envoiNonConfirme' => 'Envoi non confirmé',
 			'com.communaute.demo.moderationIndisponible' => 'Modération indisponible',
 			'com.communaute.demo.lecteurSeul' => 'Lecture seule, sans publication',
+			'com.communaute.demo.f.categoriePedagogie' => 'Pédagogie',
+			'com.communaute.demo.f.categorieRessources' => 'Ressources',
+			'com.communaute.demo.f.categorieGestion' => 'Gestion',
+			'com.communaute.demo.f.fonctionSoi' => 'Enseignant, Classe Al-Fatiha',
+			'com.communaute.demo.f.prenomSoi' => 'Ibrahim',
+			'com.communaute.demo.f.samira' => 'Samira Belkacem',
+			'com.communaute.demo.f.fonctionSamira' => 'Enseignante, Classe An-Nour',
+			'com.communaute.demo.f.nour' => 'Nour El Idrissi',
+			'com.communaute.demo.f.fonctionNour' => 'Enseignante, Classe Al-Fajr',
+			'com.communaute.demo.f.yasmine' => 'Yasmine Haddad',
+			'com.communaute.demo.f.fonctionYasmine' => 'Enseignante, Classe Al-Badr',
+			'com.communaute.demo.f.youssef' => 'Youssef Amrani',
+			'com.communaute.demo.f.fonctionYoussef' => 'Enseignant, Classe Al-Kawthar',
+			'com.communaute.demo.f.mariam' => 'Mariam Benali',
+			'com.communaute.demo.f.fonctionMariam' => 'Enseignante, Classe An-Nas',
+			'com.communaute.demo.f.hamza' => 'Hamza Ouali',
+			'com.communaute.demo.f.fonctionHamza' => 'Enseignant, Classe Al-Ikhlas',
+			'com.communaute.demo.f.memorisationTitre' => 'Idées pour la mémorisation ?',
+			'com.communaute.demo.f.memorisationTexte' => 'Quels rituels ou activités fonctionnent bien pour aider les élèves à mémoriser les sourates ? Je cherche des retours d\'expérience : jeux, supports visuels, répétition en binôme. Merci pour vos idées !',
+			'com.communaute.demo.f.cartesTitre' => 'Retour sur les cartes de répétition',
+			'com.communaute.demo.f.cartesTexte' => 'J\'utilise des cartes de répétition depuis la rentrée et cela fonctionne très bien, même avec les plus jeunes. Je joins le modèle que je remplis avant chaque séance.',
+			'com.communaute.demo.f.cartesFichier' => 'Cartes_repetition.pdf',
+			'com.communaute.demo.f.niveauxTitre' => 'Gérer les différents niveaux ?',
+			'com.communaute.demo.f.niveauxTexte' => 'Comment gérez-vous une Classe où les niveaux sont très différents ? Je crains que les plus avancés décrochent pendant que je reprends les bases avec les autres.',
+			'com.communaute.demo.f.timidesTitre' => 'Faire réciter les élèves timides',
+			'com.communaute.demo.f.timidesTexte' => 'Une élève refuse de réciter devant les autres. Je lui propose de réciter la première, quand la Classe est encore calme. Avez-vous d\'autres pistes ?',
+			'com.communaute.demo.f.ficheTitre' => 'Une fiche de suivi des révisions',
+			'com.communaute.demo.f.ficheTexte' => 'Je note chaque semaine les sourates révisées et les points à reprendre. La fiche tient sur une page et aide beaucoup pour préparer la séance suivante.',
+			'com.communaute.demo.f.heureTitre' => 'Commencer la séance à l\'heure',
+			'com.communaute.demo.f.heureTexte' => 'Les premières minutes partent souvent dans l\'installation. Je demande maintenant aux élèves de préparer leur page avant l\'heure. Qu\'en pensez-vous ?',
+			'com.communaute.demo.f.reponseMariam' => 'J\'utilise beaucoup la répétition en binôme et des cartes visuelles. Cela motive vraiment les élèves.',
+			'com.communaute.demo.f.reponseYoussef' => 'Les élèves réécoutent la récitation de la séance à la maison : cela aide beaucoup entre deux cours.',
+			'com.communaute.demo.f.reponseSamira' => 'Merci pour le modèle, je vais l\'essayer cette semaine.',
+			'com.communaute.demo.f.reponseHamza' => 'Je laisse parfois un élève réciter en tête-à-tête à la fin de la séance, puis devant un seul camarade.',
+			'com.communaute.demo.f.affilieTitre' => 'Mon lecteur audio préféré pour réviser',
+			'com.communaute.demo.f.affilieTexte' => ({required Object lien}) => 'J\'utilise ce lecteur pour faire réécouter les sourates. Il est en réduction cette semaine avec mon lien : ${lien}',
+			'com.communaute.demo.f.venteTitre' => 'Je vends mes fiches de mémorisation',
+			'com.communaute.demo.f.venteTexte' => 'Lot de 30 fiches plastifiées, 25 euros, envoi par la poste. Écrivez-moi pour commander.',
+			'com.communaute.demo.f.publiciteTitre' => 'Une application pour réviser',
+			'com.communaute.demo.f.publiciteTexte' => ({required Object lienOffre, required Object lienInterne, required Object lienRessource}) => 'Je recommande cette application de révision, avec le code PROF20 pour l\'abonnement : ${lienOffre}. Pour le texte, la ressource de la Bibliothèque (${lienInterne}) et ${lienRessource} suffisent.',
+			'com.communaute.demo.f.reponseAffilie' => ({required Object lien}) => 'Pour la révision, je conseille ce lecteur, en réduction avec mon lien : ${lien}',
+			'com.communaute.demo.f.fichierChoisi' => 'Fiche_seance.pdf',
 			'com.communaute.titre' => _root.com.socle.lexique.communaute,
 			'com.communaute.vide' => 'Aucune publication dans cette catégorie.',
 			'com.studio.focus.entrer' => _root.com.socle.lexique.modeFocus,
@@ -23034,6 +23565,74 @@ extension on Traductions {
 			'com.studio.demo.canalPrive' => 'Adresse d\'un canal privé qui ne vous est pas ouvert',
 			'com.studio.demo.sansCanaux' => 'Aucun canal ouvert',
 			'com.studio.demo.vue' => ({required Object situation}) => 'Situation : ${situation}',
+			'com.studio.demo.f.nadia' => 'Nadia',
+			'com.studio.demo.f.fonctionDirection' => 'Direction',
+			'com.studio.demo.f.mariam' => 'Mariam',
+			'com.studio.demo.f.fonctionCoordination' => 'Coordination générale',
+			'com.studio.demo.f.youssef' => 'Youssef',
+			'com.studio.demo.f.fonctionProduit' => 'Produit et technique',
+			'com.studio.demo.f.amina' => 'Amina',
+			'com.studio.demo.f.fonctionPedagogie' => 'Pédagogie',
+			'com.studio.demo.f.samira' => 'Samira',
+			'com.studio.demo.f.fonctionAdmissions' => 'Admissions',
+			'com.studio.demo.f.ibrahim' => 'Ibrahim',
+			'com.studio.demo.f.fonctionPlanning' => 'Planning',
+			'com.studio.demo.f.pieceAudio' => 'Audio',
+			'com.studio.demo.f.fichierPlanning' => 'Planning_T3.pdf',
+			'com.studio.demo.f.fichierModeration' => 'Guide_de_moderation.pdf',
+			'com.studio.demo.f.fichierVocal' => 'vocal-youssef.m4a',
+			'com.studio.demo.f.fichierCompteRendu' => 'Compte_rendu_visites.pdf',
+			'com.studio.demo.f.fichierBudget' => 'Budget_confidentiel.pdf',
+			'com.studio.demo.f.canalOrganisation' => 'Organisation générale',
+			'com.studio.demo.f.canalOrganisationDetail' => 'Coordination de toute l\'équipe',
+			'com.studio.demo.f.canalAdmissions' => 'Admissions',
+			'com.studio.demo.f.canalAdmissionsDetail' => 'Suivi des demandes d\'inscription',
+			'com.studio.demo.f.canalQualite' => 'Suivi qualité',
+			'com.studio.demo.f.canalQualiteDetail' => 'Retours des visites de contrôle',
+			'com.studio.demo.f.canalRemplacements' => 'Remplacements',
+			'com.studio.demo.f.canalRemplacementsDetail' => 'Absences et remplacements de la semaine',
+			'com.studio.demo.f.canalCloture' => 'Clôture du mois',
+			'com.studio.demo.f.canalClotureDetail' => 'Préparation de la clôture mensuelle',
+			'com.studio.demo.f.canalDirection' => 'Direction stratégique',
+			'com.studio.demo.f.canalDirectionDetail' => 'Orientations de la direction',
+			'com.studio.demo.f.messagePlanning' => 'Bonjour à toute l\'équipe. Voici le planning du prochain trimestre, dites-moi si quelque chose ne va pas.',
+			'com.studio.demo.f.messageSupports' => 'Je mets à jour les supports du niveau 2 et on fait le point demain.',
+			'com.studio.demo.f.messageMerci' => 'Merci à tous pour la semaine.',
+			'com.studio.demo.f.messageDossiers' => 'Trois dossiers attendent une décision avant vendredi. Nadia, peux-tu regarder le dossier de la famille Karim ?',
+			'com.studio.demo.f.messageCompteRendu' => 'Le compte rendu des visites du mois est prêt.',
+			'com.studio.demo.f.messageRemplacement' => 'Mardi, la Classe An-Nour est assurée par un remplaçant. Le planning est à jour.',
+			'com.studio.demo.f.messageJustificatifs' => 'Les justificatifs de septembre sont rassemblés.',
+			'com.studio.demo.f.messageBudget' => 'Budget confidentiel du trimestre.',
+			'com.studio.demo.f.activiteBudget' => 'Budget confidentiel du trimestre',
+			'com.studio.demo.f.partagePlanning' => 'Planning du trimestre',
+			'com.studio.demo.f.partageModeration' => 'Guide de modération',
+			'com.studio.demo.f.epinglePar' => ({required Object nom}) => 'Épinglé par ${nom}',
+			'com.studio.demo.f.partagePar' => ({required Object nom}) => 'Partagé par ${nom}',
+			'com.studio.demo.f.lienRemplacements' => 'Remplacements de la semaine',
+			'com.studio.demo.f.lienCharte' => 'Charte de l\'équipe',
+			'com.studio.demo.f.brouillon' => 'Samira, je regarde le dossier de la famille Karim ce soir et je te dis demain matin',
+			'com.studio.demo.f.activitePaiement' => 'Paiement de septembre non confirmé pour la famille Haddad',
+			'com.studio.demo.f.objetEcheancier' => 'Échéancier de la famille Haddad',
+			'com.studio.demo.f.activiteDossierKarim' => 'Dossier de la famille Karim prêt pour une décision',
+			'com.studio.demo.f.objetDossierKarim' => 'Dossier de la famille Karim',
+			'com.studio.demo.f.activiteMention' => 'Samira vous a mentionnée',
+			'com.studio.demo.f.activiteReponse' => 'Amina a répondu à votre message',
+			'com.studio.demo.f.activiteRemplacant' => 'Choisir le remplaçant de mardi pour la Classe An-Nour',
+			'com.studio.demo.f.objetRemplacement' => 'Remplacement de mardi',
+			'com.studio.demo.f.activiteOuverture' => 'Valider l\'ouverture d\'une Classe le samedi matin',
+			'com.studio.demo.f.objetClasseSamedi' => 'Classe du samedi matin',
+			_ => null,
+		} ?? switch (path) {
+			'com.studio.demo.f.activiteCloture' => 'Clôture du mois de septembre',
+			'com.studio.demo.f.objetCloture' => 'Clôture de septembre',
+			'com.studio.demo.f.activiteBilans' => 'Bilans de mi-parcours à relire',
+			'com.studio.demo.f.objetBilans' => 'Bilans de mi-parcours',
+			'com.studio.demo.f.activiteMessages' => '2 nouveaux messages',
+			'com.studio.demo.f.activiteAnnonce' => 'Annonce publiée : l\'académie ferme le 1er novembre',
+			'com.studio.demo.f.objetFermeture' => 'Fermeture du 1er novembre',
+			'com.studio.demo.f.activiteFichier' => ({required Object nom, required Object fichier}) => '${nom} a partagé ${fichier}',
+			'com.studio.demo.f.activiteInscription' => 'Nouvelle demande d\'inscription reçue',
+			'com.studio.demo.f.objetDossierBenali' => 'Dossier de la famille Benali',
 			'com.studio.titre' => _root.com.socle.lexique.studio,
 			'com.studio.vide' => 'Aucune activité à traiter ici.',
 			'com.annonces.publieur.titre' => 'Nouvelle annonce',
@@ -23165,8 +23764,6 @@ extension on Traductions {
 			'com.annonces.demoPublication.recitationTitre' => 'Récitation de fin de trimestre',
 			'com.annonces.demoPublication.recitationTexte' => 'La Classe An-Nour présentera sa récitation de fin de trimestre samedi à 10 h, en visio.',
 			'com.annonces.demoPublication.rentreeTitre' => 'Reprise des cours après les vacances',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demoPublication.rentreeTexte' => 'Les séances reprennent le lundi 6 janvier aux horaires habituels.',
 			'com.annonces.demoPublication.signalementAffilie' => 'Publication « Fiches de tajwid à imprimer »',
 			'com.annonces.demoPublication.extraitAffilie' => 'Retrouvez mes fiches avec ce lien partenaire, remise de 20 % avec mon code.',

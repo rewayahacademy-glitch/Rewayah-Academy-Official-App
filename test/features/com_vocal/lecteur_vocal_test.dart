@@ -89,7 +89,7 @@ Future<void> _monter(
   Future<LectureVocale> Function() ouvrir, {
   Size taille = vueMobile,
   double echelle = 1,
-  String? auteur = 'Mme Mariam',
+  String? auteur = 'Sayyida Mariam',
 }) async {
   fixerVue(tester, taille);
   await tester.pumpWidget(
@@ -190,7 +190,7 @@ void main() {
     expect(
       find.bySemanticsLabel(
         RegExp(
-          RegExp.escape(l.libelleAuteur(auteur: 'Mme Mariam', duree: '0:28')),
+          RegExp.escape(l.libelleAuteur(auteur: 'Sayyida Mariam', duree: '0:28')),
         ),
       ),
       findsWidgets,
@@ -284,7 +284,7 @@ void main() {
       fixerVue(tester, vueMobile);
       await tester.pumpWidget(
         hoteTheme(
-          LecteurVocalRecu(vocal: vocal, auteur: 'Mme Mariam'),
+          LecteurVocalRecu(vocal: vocal, auteur: 'Sayyida Mariam'),
           surcharges: <Override>[
             if (port != null) portLectureVocaleProvider.overrideWithValue(port),
           ],

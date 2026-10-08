@@ -286,9 +286,9 @@ void main() {
       expect(titreFil(const <Participant>[], ''), n.sansObjet);
       expect(
         titreFil(const <Participant>[
-          Participant(id: 'b', nomAffiche: 'Mme Mariam'),
+          Participant(id: 'b', nomAffiche: 'Sayyida Mariam'),
         ], 'Classe An-Nour'),
-        'Mme Mariam',
+        'Sayyida Mariam',
       );
     });
 

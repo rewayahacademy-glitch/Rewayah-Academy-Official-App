@@ -35,7 +35,7 @@ void main() {
           ComposerPublication.cleCategorie(DonneesCommunauteDemo.pedagogie.id),
         ),
       );
-      const BrouillonMarqueDemo marque = DonneesCommunauteDemo.brouillonAffilie;
+      final BrouillonMarqueDemo marque = DonneesCommunauteDemo.brouillonAffilie;
       await tester.enterText(
         find.byKey(ComposerPublication.cleTitre),
         marque.titre,

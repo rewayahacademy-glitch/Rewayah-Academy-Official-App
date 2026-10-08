@@ -683,7 +683,7 @@ void main() {
     );
     const Participant enseignante = Participant(
       id: 'p-mariam',
-      nomAffiche: 'Mme Mariam',
+      nomAffiche: 'Sayyida Mariam',
       fonction: 'Enseignante de la Classe',
     );
     const Participant administration = Participant(
@@ -737,7 +737,7 @@ void main() {
       routeur.go('${Routes.enseignantGroupe}/$_classe');
       await tester.pumpAndSettle();
       await tester.tap(
-        find.text(t.com.messages.entree.ecrireA(nom: 'Mme Mariam')),
+        find.text(t.com.messages.entree.ecrireA(nom: 'Sayyida Mariam')),
       );
       await tester.pumpAndSettle();
       expect(cheminCourant(routeur), Routes.enseignantFilPour('fil-ens'));
@@ -764,7 +764,7 @@ void main() {
       // Le groupe est occupe : la ligne de l'enseignante n'offre plus
       // d'action au lecteur d'ecran, et un second toucher ne demande rien.
       final Finder autre = find.text(
-        t.com.messages.entree.ecrireA(nom: 'Mme Mariam'),
+        t.com.messages.entree.ecrireA(nom: 'Sayyida Mariam'),
       );
       expect(
         tester

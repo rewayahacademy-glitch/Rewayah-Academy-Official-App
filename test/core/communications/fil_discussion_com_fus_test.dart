@@ -138,7 +138,7 @@ void main() {
         messages: const <MessageFil>[
           MessageFil(
             id: 'm1',
-            auteur: 'Mme Mariam',
+            auteur: 'Sayyida Mariam',
             texte: 'Voici le vocal.',
             horodatage: '09:12',
             deSoi: false,
@@ -146,7 +146,7 @@ void main() {
           ),
           MessageFil(
             id: 'm2',
-            auteur: 'Mme Mariam',
+            auteur: 'Sayyida Mariam',
             texte: '',
             horodatage: '09:13',
             deSoi: false,

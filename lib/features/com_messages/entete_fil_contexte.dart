@@ -20,7 +20,7 @@ import '../../core/widgets/badge_non_lu.dart';
 import 'port_messages_metier.dart';
 
 /// Le nom d'un participant, avec sa fonction quand le port la donne :
-/// « Mme Mariam, Enseignante de la Classe ».
+/// « Sayyida Mariam, Enseignante de la Classe ».
 String nomParticipant(Participant p) {
   final String? fonction = p.fonction;
   return fonction == null || fonction.isEmpty
@@ -250,38 +250,93 @@ class EnteteFilContexte extends StatelessWidget {
     );
   }
 
+  /// La cle de la ligne compacte quand noms et objets s'y suivent dans un
+  /// seul paragraphe (nom trop long pour une ligne), pour les tests.
+  static const ValueKey<String> cleLigneCompacteFluide = ValueKey<String>(
+    'entete-fil-compacte-fluide',
+  );
+
   /// La ligne compacte : les noms (sans fonction, deux lignes au plus),
   /// puis les objets s'ils ne sont pas deja le titre (fil sans
   /// interlocuteur nomme).
+  ///
+  /// COM-RC tour 7 : quand les noms ne tiennent pas sur une ligne
+  /// (« Sayyida Mariam » a 320 en texte x2), noms et objets se suivent dans
+  /// UN paragraphe (« Sayyida / Mariam · Classe / An-Nour · Adam ») au lieu
+  /// de deux blocs de deux lignes chacun : la ligne garde tout son texte,
+  /// sans ellipse, et reste sous le sixieme de l'ecran. Le trait d'union
+  /// insecable (U+2011, comme l'en-tete complet) garde « An-Nour » entier.
   Widget _ligneCompacte(
     AppPalette palette,
     TextTheme textes,
     String noms,
     String ligneObjets,
-  ) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    mainAxisSize: MainAxisSize.min,
-    children: <Widget>[
-      Text(
-        noms,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-        style: palette.inkStrong.applyTo(
-          textes.titleSmall ?? const TextStyle(),
-        ),
-      ),
-      if (interlocuteurs.isNotEmpty && ligneObjets.isNotEmpty)
-        // Lot K, point 5 (COM-CAPT tour 4, n. 1) : les objets passent a la
-        // ligne, deux lignes au plus (« Classe An-Nour · A... » a 320 en
-        // texte x2) ; la phrase entiere reste lue par l'en-tete.
+  ) {
+    final TextStyle styleNoms = palette.inkStrong.applyTo(
+      textes.titleSmall ?? const TextStyle(),
+    );
+    final TextStyle styleObjets = palette.inkMuted.applyTo(
+      textes.bodySmall ?? const TextStyle(),
+    );
+    final bool avecObjets = interlocuteurs.isNotEmpty && ligneObjets.isNotEmpty;
+    final Widget blocs = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
         Text(
-          ligneObjets,
+          noms,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: palette.inkMuted.applyTo(
-            textes.bodySmall ?? const TextStyle(),
-          ),
+          style: styleNoms,
         ),
-    ],
-  );
+        if (avecObjets)
+          // Lot K, point 5 (COM-CAPT tour 4, n. 1) : les objets passent a la
+          // ligne, deux lignes au plus (« Classe An-Nour · A... » a 320 en
+          // texte x2) ; la phrase entiere reste lue par l'en-tete.
+          Text(
+            ligneObjets,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: styleObjets,
+          ),
+      ],
+    );
+    if (!avecObjets) return blocs;
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) {
+        final TextPainter mesure = TextPainter(
+          text: TextSpan(text: noms, style: styleNoms),
+          textDirection: Directionality.of(context),
+          textScaler: MediaQuery.textScalerOf(context),
+          maxLines: 1,
+        )..layout(maxWidth: contraintes.maxWidth);
+        final bool tient = !mesure.didExceedMaxLines;
+        mesure.dispose();
+        if (tient) return blocs;
+        // Le separateur vient de la traduction (« {premier} · {second} ») :
+        // les noms en gras, la suite (separateur et objets) en sourdine.
+        final String phrase = t.com.messages.entete
+            .deuxObjets(premier: noms, second: ligneObjets)
+            .replaceAll('-', '\u2011');
+        final String nomsAffiches = noms.replaceAll('-', '\u2011');
+        final bool nomsEnTete = phrase.startsWith(nomsAffiches);
+        return Text.rich(
+          key: cleLigneCompacteFluide,
+          TextSpan(
+            children: <InlineSpan>[
+              TextSpan(text: nomsEnTete ? nomsAffiches : '', style: styleNoms),
+              TextSpan(
+                text: nomsEnTete
+                    ? phrase.substring(nomsAffiches.length)
+                    : phrase,
+                style: styleObjets,
+              ),
+            ],
+          ),
+          maxLines: 4,
+          overflow: TextOverflow.ellipsis,
+        );
+      },
+    );
+  }
 }

@@ -369,12 +369,13 @@ void main() {
   group('rendu', () {
     testWidgets('arabe (RTL) a 390 : le blocage se lit, l adresse reste de '
         'gauche a droite', (WidgetTester tester) async {
-      await monterCommunaute(
-        tester,
-        arabe: true,
-        autres: _avecGarde(DonneesCommunauteDemo.garde()),
-      );
-      await _publierMarque(tester, DonneesCommunauteDemo.brouillonAffilie);
+      // Le garde et le brouillon marque sont lus ensemble, avant le passage
+      // a l'arabe (COM-RC tour 7 : les fixtures suivent la langue) : le
+      // contenu francais, son adresse comprise, dans l'interface arabe.
+      final GardePromotionFixtures garde = DonneesCommunauteDemo.garde();
+      final BrouillonMarqueDemo marque = DonneesCommunauteDemo.brouillonAffilie;
+      await monterCommunaute(tester, arabe: true, autres: _avecGarde(garde));
+      await _publierMarque(tester, marque);
       final Finder blocage = find.byKey(GardePromotion.cleBlocage);
       expect(blocage, findsOneWidget);
       expect(Directionality.of(tester.element(blocage)), TextDirection.rtl);
@@ -410,7 +411,7 @@ void main() {
   group('demonstration', () {
     test('fixtures (spec section 26) : 2 publications bloquees, dont 1 lien '
         'affilie et 1 vente ; 1 publicite ; les 4 etats de lien', () {
-      const List<BrouillonMarqueDemo> marques =
+      final List<BrouillonMarqueDemo> marques =
           DonneesCommunauteDemo.brouillonsMarques;
       final List<VerdictPromotion> verdicts = <VerdictPromotion>[
         for (final BrouillonMarqueDemo m in marques) m.verdict.verdict,

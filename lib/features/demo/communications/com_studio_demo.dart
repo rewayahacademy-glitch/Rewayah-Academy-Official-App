@@ -353,38 +353,39 @@ class _CanalDemo {
   final PartagesCanal partages;
 }
 
-/// Les membres de l'equipe de la demonstration (noms fictifs).
+/// Les membres de l'equipe de la demonstration (noms fictifs), dans la
+/// langue de l'interface (COM-RC tour 7).
 abstract final class _Equipe {
-  static const Participant soi = Participant(
+  static Participant get soi => Participant(
     id: 'p-soi',
-    nomAffiche: 'Nadia',
-    fonction: 'Direction',
+    nomAffiche: t.com.studio.demo.f.nadia,
+    fonction: t.com.studio.demo.f.fonctionDirection,
     estSoi: true,
   );
-  static const Participant mariam = Participant(
+  static Participant get mariam => Participant(
     id: 'p-mariam',
-    nomAffiche: 'Mariam',
-    fonction: 'Coordination générale',
+    nomAffiche: t.com.studio.demo.f.mariam,
+    fonction: t.com.studio.demo.f.fonctionCoordination,
   );
-  static const Participant youssef = Participant(
+  static Participant get youssef => Participant(
     id: 'p-youssef',
-    nomAffiche: 'Youssef',
-    fonction: 'Produit et technique',
+    nomAffiche: t.com.studio.demo.f.youssef,
+    fonction: t.com.studio.demo.f.fonctionProduit,
   );
-  static const Participant amina = Participant(
+  static Participant get amina => Participant(
     id: 'p-amina',
-    nomAffiche: 'Amina',
-    fonction: 'Pédagogie',
+    nomAffiche: t.com.studio.demo.f.amina,
+    fonction: t.com.studio.demo.f.fonctionPedagogie,
   );
-  static const Participant samira = Participant(
+  static Participant get samira => Participant(
     id: 'p-samira',
-    nomAffiche: 'Samira',
-    fonction: 'Admissions',
+    nomAffiche: t.com.studio.demo.f.samira,
+    fonction: t.com.studio.demo.f.fonctionAdmissions,
   );
-  static const Participant ibrahim = Participant(
+  static Participant get ibrahim => Participant(
     id: 'p-ibrahim',
-    nomAffiche: 'Ibrahim',
-    fonction: 'Planning',
+    nomAffiche: t.com.studio.demo.f.ibrahim,
+    fonction: t.com.studio.demo.f.fonctionPlanning,
   );
 }
 
@@ -396,29 +397,33 @@ PieceJointe _pdf(String id, String nom, int octets) => PieceJointe(
   tailleOctets: octets,
 );
 
+/// Les noms, canaux et textes de la demonstration, dans la langue de
+/// l'interface (COM-RC tour 7 : plus de francais dans l'arabe).
+Traductions$com$studio$demo$f$fr get _f => t.com.studio.demo.f;
+
 /// Les canaux de la demonstration (spec section 9.1 et section 26), le canal
 /// prive absent compris : c'est le port qui le retire, jamais l'ecran seul.
 List<(Canal, PartagesCanal)> fixturesStudioDemo(DateTime maintenant) {
   final DateTime m = maintenant.toUtc();
   DateTime il(int minutes) => m.subtract(Duration(minutes: minutes));
-  final PieceJointe planning = _pdf('pj-planning', 'Planning_T3.pdf', 1153434);
+  final PieceJointe planning = _pdf('pj-planning', _f.fichierPlanning, 1153434);
   final PieceJointe moderation = _pdf(
     'pj-moderation',
-    'Guide_de_moderation.pdf',
+    _f.fichierModeration,
     819200,
   );
   final PieceJointe vocal = PieceJointe(
     reference: ReferencePieceJointe('pj-vocal-youssef'),
-    nom: 'vocal-youssef.m4a',
+    nom: _f.fichierVocal,
     nature: NaturePieceJointe.vocal,
-    typeLisible: 'Audio',
+    typeLisible: _f.pieceAudio,
     duree: const Duration(seconds: 42),
     // R-04 : le vocal recu de la demonstration se lit (lecture simulee).
     peutOuvrir: true,
   );
   final PieceJointe compteRendu = _pdf(
     'pj-compte-rendu',
-    'Compte_rendu_visites.pdf',
+    _f.fichierCompteRendu,
     245760,
   );
   return <(Canal, PartagesCanal)>[
@@ -426,17 +431,17 @@ List<(Canal, PartagesCanal)> fixturesStudioDemo(DateTime maintenant) {
       Canal(
         resume: ResumeCanal(
           id: 'organisation',
-          nom: 'Organisation générale',
+          nom: _f.canalOrganisation,
           section: SectionStudio.organisation,
           visibilite: VisibiliteCanal.visible,
-          description: "Coordination de toute l'équipe",
+          description: _f.canalOrganisationDetail,
           attention: const IndicateurAttention(
             nonLus: 2,
             niveau: NiveauAttention.aLire,
           ),
           dernierMessageLe: il(20),
         ),
-        membres: const <Participant>[
+        membres: <Participant>[
           _Equipe.soi,
           _Equipe.mariam,
           _Equipe.youssef,
@@ -448,9 +453,7 @@ List<(Canal, PartagesCanal)> fixturesStudioDemo(DateTime maintenant) {
           MessageCommunication(
             id: 'm-org-1',
             auteur: _Equipe.mariam,
-            texte:
-                "Bonjour à toute l'équipe. Voici le planning du prochain "
-                'trimestre, dites-moi si quelque chose ne va pas.',
+            texte: _f.messagePlanning,
             envoyeLe: il(95),
             piecesJointes: <PieceJointe>[planning],
           ),
@@ -464,15 +467,13 @@ List<(Canal, PartagesCanal)> fixturesStudioDemo(DateTime maintenant) {
           MessageCommunication(
             id: 'm-org-3',
             auteur: _Equipe.amina,
-            texte:
-                'Je mets à jour les supports du niveau 2 et on fait le '
-                'point demain.',
+            texte: _f.messageSupports,
             envoyeLe: il(40),
           ),
           MessageCommunication(
             id: 'm-org-4',
             auteur: _Equipe.samira,
-            texte: 'Merci à tous pour la semaine.',
+            texte: _f.messageMerci,
             envoyeLe: il(20),
             mentionneSoi: true,
           ),
@@ -486,38 +487,38 @@ List<(Canal, PartagesCanal)> fixturesStudioDemo(DateTime maintenant) {
         epingles: <ElementPartage>[
           ElementPartage(
             id: 'ep-planning',
-            titre: 'Planning du trimestre',
+            titre: _f.partagePlanning,
             nature: NaturePartage.epingle,
             piece: planning,
-            detail: 'Épinglé par Mariam',
+            detail: _f.epinglePar(nom: _Equipe.mariam.nomAffiche),
           ),
           ElementPartage(
             id: 'ep-moderation',
-            titre: 'Guide de modération',
+            titre: _f.partageModeration,
             nature: NaturePartage.epingle,
             piece: moderation,
-            detail: 'Épinglé par Youssef',
+            detail: _f.epinglePar(nom: _Equipe.youssef.nomAffiche),
           ),
         ],
         fichiers: <ElementPartage>[
           ElementPartage(
             id: 'fi-planning',
-            titre: 'Planning_T3.pdf',
+            titre: _f.fichierPlanning,
             nature: NaturePartage.fichier,
             piece: planning,
-            detail: 'Partagé par Mariam',
+            detail: _f.partagePar(nom: _Equipe.mariam.nomAffiche),
           ),
         ],
         liens: <ElementPartage>[
           ElementPartage(
             id: 'li-remplacements',
-            titre: 'Remplacements de la semaine',
+            titre: _f.lienRemplacements,
             nature: NaturePartage.lien,
             destination: Routes.canalStudioPour('remplacements'),
           ),
           ElementPartage(
             id: 'li-charte',
-            titre: "Charte de l'équipe",
+            titre: _f.lienCharte,
             nature: NaturePartage.lien,
             hote: 'rewayah.org',
           ),
@@ -528,10 +529,10 @@ List<(Canal, PartagesCanal)> fixturesStudioDemo(DateTime maintenant) {
       Canal(
         resume: ResumeCanal(
           id: 'admissions',
-          nom: 'Admissions',
+          nom: _f.canalAdmissions,
           section: SectionStudio.admissionsFamilles,
           visibilite: VisibiliteCanal.visible,
-          description: "Suivi des demandes d'inscription",
+          description: _f.canalAdmissionsDetail,
           attention: const IndicateurAttention(
             nonLus: 1,
             niveau: NiveauAttention.actionRequise,
@@ -539,18 +540,12 @@ List<(Canal, PartagesCanal)> fixturesStudioDemo(DateTime maintenant) {
           ),
           dernierMessageLe: il(55),
         ),
-        membres: const <Participant>[
-          _Equipe.soi,
-          _Equipe.samira,
-          _Equipe.mariam,
-        ],
+        membres: <Participant>[_Equipe.soi, _Equipe.samira, _Equipe.mariam],
         messages: <MessageCommunication>[
           MessageCommunication(
             id: 'm-adm-1',
             auteur: _Equipe.samira,
-            texte:
-                'Trois dossiers attendent une décision avant vendredi. '
-                'Nadia, peux-tu regarder le dossier de la famille Karim ?',
+            texte: _f.messageDossiers,
             envoyeLe: il(55),
             mentionneSoi: true,
           ),
@@ -563,22 +558,18 @@ List<(Canal, PartagesCanal)> fixturesStudioDemo(DateTime maintenant) {
       Canal(
         resume: ResumeCanal(
           id: 'qualite',
-          nom: 'Suivi qualité',
+          nom: _f.canalQualite,
           section: SectionStudio.pedagogieQualite,
           visibilite: VisibiliteCanal.restreint,
-          description: 'Retours des visites de contrôle',
+          description: _f.canalQualiteDetail,
           dernierMessageLe: il(60 * 26),
         ),
-        membres: const <Participant>[
-          _Equipe.soi,
-          _Equipe.amina,
-          _Equipe.mariam,
-        ],
+        membres: <Participant>[_Equipe.soi, _Equipe.amina, _Equipe.mariam],
         messages: <MessageCommunication>[
           MessageCommunication(
             id: 'm-qua-1',
             auteur: _Equipe.amina,
-            texte: 'Le compte rendu des visites du mois est prêt.',
+            texte: _f.messageCompteRendu,
             envoyeLe: il(60 * 26),
             piecesJointes: <PieceJointe>[compteRendu],
           ),
@@ -589,10 +580,10 @@ List<(Canal, PartagesCanal)> fixturesStudioDemo(DateTime maintenant) {
         fichiers: <ElementPartage>[
           ElementPartage(
             id: 'fi-compte-rendu',
-            titre: 'Compte_rendu_visites.pdf',
+            titre: _f.fichierCompteRendu,
             nature: NaturePartage.fichier,
             piece: compteRendu,
-            detail: 'Partagé par Amina',
+            detail: _f.partagePar(nom: _Equipe.amina.nomAffiche),
           ),
         ],
       ),
@@ -601,20 +592,18 @@ List<(Canal, PartagesCanal)> fixturesStudioDemo(DateTime maintenant) {
       Canal(
         resume: ResumeCanal(
           id: 'remplacements',
-          nom: 'Remplacements',
+          nom: _f.canalRemplacements,
           section: SectionStudio.planningRemplacements,
           visibilite: VisibiliteCanal.visible,
-          description: 'Absences et remplacements de la semaine',
+          description: _f.canalRemplacementsDetail,
           dernierMessageLe: il(60 * 3),
         ),
-        membres: const <Participant>[_Equipe.soi, _Equipe.ibrahim],
+        membres: <Participant>[_Equipe.soi, _Equipe.ibrahim],
         messages: <MessageCommunication>[
           MessageCommunication(
             id: 'm-rem-1',
             auteur: _Equipe.ibrahim,
-            texte:
-                'Mardi, la Classe An-Nour est assurée par un remplaçant. '
-                'Le planning est à jour.',
+            texte: _f.messageRemplacement,
             envoyeLe: il(60 * 3),
           ),
         ],
@@ -625,18 +614,18 @@ List<(Canal, PartagesCanal)> fixturesStudioDemo(DateTime maintenant) {
       Canal(
         resume: ResumeCanal(
           id: 'cloture',
-          nom: 'Clôture du mois',
+          nom: _f.canalCloture,
           section: SectionStudio.finance,
           visibilite: VisibiliteCanal.priveAutorise,
-          description: 'Préparation de la clôture mensuelle',
+          description: _f.canalClotureDetail,
           dernierMessageLe: il(60 * 50),
         ),
-        membres: const <Participant>[_Equipe.soi, _Equipe.mariam],
+        membres: <Participant>[_Equipe.soi, _Equipe.mariam],
         messages: <MessageCommunication>[
           MessageCommunication(
             id: 'm-clo-1',
             auteur: _Equipe.mariam,
-            texte: 'Les justificatifs de septembre sont rassemblés.',
+            texte: _f.messageJustificatifs,
             envoyeLe: il(60 * 50),
           ),
         ],
@@ -651,18 +640,18 @@ List<(Canal, PartagesCanal)> fixturesStudioDemo(DateTime maintenant) {
       Canal(
         resume: ResumeCanal(
           id: canalPriveAbsentDemo,
-          nom: 'Direction stratégique',
+          nom: _f.canalDirection,
           section: SectionStudio.direction,
           visibilite: VisibiliteCanal.absent,
-          description: 'Orientations de la direction',
+          description: _f.canalDirectionDetail,
           dernierMessageLe: il(10),
         ),
-        membres: const <Participant>[_Equipe.mariam],
+        membres: <Participant>[_Equipe.mariam],
         messages: <MessageCommunication>[
           MessageCommunication(
             id: 'm-dir-1',
             auteur: _Equipe.mariam,
-            texte: 'Budget confidentiel du trimestre.',
+            texte: _f.messageBudget,
             envoyeLe: il(10),
           ),
         ],
@@ -672,9 +661,9 @@ List<(Canal, PartagesCanal)> fixturesStudioDemo(DateTime maintenant) {
         fichiers: <ElementPartage>[
           ElementPartage(
             id: 'fi-budget',
-            titre: 'Budget_confidentiel.pdf',
+            titre: _f.fichierBudget,
             nature: NaturePartage.fichier,
-            piece: _pdf('pj-budget', 'Budget_confidentiel.pdf', 40960),
+            piece: _pdf('pj-budget', _f.fichierBudget, 40960),
           ),
         ],
       ),
@@ -851,10 +840,9 @@ class StudioDemo implements PortStudio {
 }
 
 /// Le texte du brouillon de la demonstration, garde dans le canal
-/// Admissions (spec section 26, « 1 brouillon »).
-const String texteBrouillonDemo =
-    'Samira, je regarde le dossier de la famille Karim ce soir et je te '
-    'dis demain matin';
+/// Admissions (spec section 26, « 1 brouillon »), dans la langue de
+/// l'interface.
+String get texteBrouillonDemo => _f.brouillon;
 
 /// Les brouillons de la demonstration : en memoire, comme en production
 /// (spec section 8.2), avec le brouillon du canal Admissions, sauf quand
@@ -894,12 +882,12 @@ List<ActiviteStudio> fixturesActiviteStudioDemo(DateTime maintenant) {
       id: 'act-paiement',
       type: TypeActivite.changementModule,
       module: ModuleCanonique.finance,
-      libelle: 'Paiement de septembre non confirmé pour la famille Haddad',
+      libelle: _f.activitePaiement,
       survenueLe: il(35),
       objet: ObjetLie(
         type: TypeObjetLie.autre,
         id: 'echeancier-haddad',
-        libelle: 'Échéancier de la famille Haddad',
+        libelle: _f.objetEcheancier,
       ),
       niveau: NiveauAttention.urgent,
       actionRequise: true,
@@ -908,12 +896,12 @@ List<ActiviteStudio> fixturesActiviteStudioDemo(DateTime maintenant) {
       id: 'act-dossier-karim',
       type: TypeActivite.changementModule,
       module: ModuleCanonique.dossiers,
-      libelle: 'Dossier de la famille Karim prêt pour une décision',
+      libelle: _f.activiteDossierKarim,
       survenueLe: il(80),
       objet: ObjetLie(
         type: TypeObjetLie.dossier,
         id: 'profil-karim',
-        libelle: 'Dossier de la famille Karim',
+        libelle: _f.objetDossierKarim,
         destination: Routes.adminPersonnesDossiers,
       ),
       niveau: NiveauAttention.actionRequise,
@@ -924,20 +912,20 @@ List<ActiviteStudio> fixturesActiviteStudioDemo(DateTime maintenant) {
       id: 'act-mention-admissions',
       type: TypeActivite.mention,
       module: ModuleCanonique.studio,
-      libelle: 'Samira vous a mentionnée',
+      libelle: _f.activiteMention,
       survenueLe: il(55),
-      objet: canal('admissions', 'Admissions'),
-      auteur: const Participant(id: 'p-samira', nomAffiche: 'Samira'),
+      objet: canal('admissions', _f.canalAdmissions),
+      auteur: Participant(id: 'p-samira', nomAffiche: _f.samira),
       niveau: NiveauAttention.aLire,
     ),
     ActiviteStudio(
       id: 'act-reponse-organisation',
       type: TypeActivite.reponse,
       module: ModuleCanonique.studio,
-      libelle: 'Amina a répondu à votre message',
+      libelle: _f.activiteReponse,
       survenueLe: il(40),
-      objet: canal('organisation', 'Organisation générale'),
-      auteur: const Participant(id: 'p-amina', nomAffiche: 'Amina'),
+      objet: canal('organisation', _f.canalOrganisation),
+      auteur: Participant(id: 'p-amina', nomAffiche: _f.amina),
       niveau: NiveauAttention.aLire,
     ),
     // Decisions en attente : Planning (sans page), puis une Classe.
@@ -945,14 +933,14 @@ List<ActiviteStudio> fixturesActiviteStudioDemo(DateTime maintenant) {
       id: 'act-decision-remplacement',
       type: TypeActivite.decisionDemandee,
       module: ModuleCanonique.planning,
-      libelle: 'Choisir le remplaçant de mardi pour la Classe An-Nour',
+      libelle: _f.activiteRemplacant,
       survenueLe: il(150),
       objet: ObjetLie(
         type: TypeObjetLie.remplacement,
         id: 'remplacement-mardi',
-        libelle: 'Remplacement de mardi',
+        libelle: _f.objetRemplacement,
       ),
-      auteur: const Participant(id: 'p-ibrahim', nomAffiche: 'Ibrahim'),
+      auteur: Participant(id: 'p-ibrahim', nomAffiche: _f.ibrahim),
       niveau: NiveauAttention.actionRequise,
       actionRequise: true,
     ),
@@ -960,15 +948,15 @@ List<ActiviteStudio> fixturesActiviteStudioDemo(DateTime maintenant) {
       id: 'act-decision-classe',
       type: TypeActivite.decisionDemandee,
       module: ModuleCanonique.classes,
-      libelle: "Valider l'ouverture d'une Classe le samedi matin",
+      libelle: _f.activiteOuverture,
       survenueLe: il(60 * 5),
       objet: ObjetLie(
         type: TypeObjetLie.classe,
         id: 'classe-samedi',
-        libelle: 'Classe du samedi matin',
+        libelle: _f.objetClasseSamedi,
         destination: Routes.adminOperationsGroupes,
       ),
-      auteur: const Participant(id: 'p-mariam', nomAffiche: 'Mariam'),
+      auteur: Participant(id: 'p-mariam', nomAffiche: _f.mariam),
       lu: true,
       actionRequise: true,
     ),
@@ -977,12 +965,12 @@ List<ActiviteStudio> fixturesActiviteStudioDemo(DateTime maintenant) {
       id: 'act-echeance-cloture',
       type: TypeActivite.changementModule,
       module: ModuleCanonique.finance,
-      libelle: 'Clôture du mois de septembre',
+      libelle: _f.activiteCloture,
       survenueLe: il(60 * 24),
       objet: ObjetLie(
         type: TypeObjetLie.autre,
         id: 'cloture-septembre',
-        libelle: 'Clôture de septembre',
+        libelle: _f.objetCloture,
       ),
       lu: true,
       echeance: dans(2),
@@ -991,12 +979,12 @@ List<ActiviteStudio> fixturesActiviteStudioDemo(DateTime maintenant) {
       id: 'act-echeance-bilans',
       type: TypeActivite.changementModule,
       module: ModuleCanonique.classes,
-      libelle: 'Bilans de mi-parcours à relire',
+      libelle: _f.activiteBilans,
       survenueLe: il(60 * 30),
       objet: ObjetLie(
         type: TypeObjetLie.classe,
         id: 'bilans-mi-parcours',
-        libelle: 'Bilans de mi-parcours',
+        libelle: _f.objetBilans,
         destination: Routes.adminOperationsGroupes,
       ),
       lu: true,
@@ -1007,21 +995,21 @@ List<ActiviteStudio> fixturesActiviteStudioDemo(DateTime maintenant) {
       id: 'act-messages-organisation',
       type: TypeActivite.messageNonLu,
       module: ModuleCanonique.studio,
-      libelle: '2 nouveaux messages',
+      libelle: _f.activiteMessages,
       survenueLe: il(20),
-      objet: canal('organisation', 'Organisation générale'),
+      objet: canal('organisation', _f.canalOrganisation),
       niveau: NiveauAttention.aLire,
     ),
     ActiviteStudio(
       id: 'act-annonce',
       type: TypeActivite.annonceImportante,
       module: ModuleCanonique.communications,
-      libelle: "Annonce publiée : l'académie ferme le 1er novembre",
+      libelle: _f.activiteAnnonce,
       survenueLe: il(60 * 3),
       objet: ObjetLie(
         type: TypeObjetLie.annonce,
         id: 'annonce-fermeture',
-        libelle: 'Fermeture du 1er novembre',
+        libelle: _f.objetFermeture,
         destination: Routes.adminCommunicationsAnnonces,
       ),
       lu: true,
@@ -1030,22 +1018,22 @@ List<ActiviteStudio> fixturesActiviteStudioDemo(DateTime maintenant) {
       id: 'act-fichier-planning',
       type: TypeActivite.fichierPartage,
       module: ModuleCanonique.studio,
-      libelle: 'Mariam a partagé Planning_T3.pdf',
+      libelle: _f.activiteFichier(nom: _f.mariam, fichier: _f.fichierPlanning),
       survenueLe: il(95),
-      objet: canal('organisation', 'Organisation générale'),
-      auteur: const Participant(id: 'p-mariam', nomAffiche: 'Mariam'),
+      objet: canal('organisation', _f.canalOrganisation),
+      auteur: Participant(id: 'p-mariam', nomAffiche: _f.mariam),
       lu: true,
     ),
     ActiviteStudio(
       id: 'act-inscription',
       type: TypeActivite.changementModule,
       module: ModuleCanonique.admissions,
-      libelle: "Nouvelle demande d'inscription reçue",
+      libelle: _f.activiteInscription,
       survenueLe: il(60 * 6),
       objet: ObjetLie(
         type: TypeObjetLie.dossier,
         id: 'profil-benali',
-        libelle: 'Dossier de la famille Benali',
+        libelle: _f.objetDossierBenali,
         destination: Routes.adminPersonnesDossiers,
       ),
       lu: true,
@@ -1056,9 +1044,9 @@ List<ActiviteStudio> fixturesActiviteStudioDemo(DateTime maintenant) {
       id: 'act-prive',
       type: TypeActivite.mention,
       module: ModuleCanonique.studio,
-      libelle: 'Budget confidentiel du trimestre',
+      libelle: _f.activiteBudget,
       survenueLe: il(10),
-      objet: canal(canalPriveAbsentDemo, 'Direction stratégique'),
+      objet: canal(canalPriveAbsentDemo, _f.canalDirection),
       niveau: NiveauAttention.urgent,
     ),
   ];

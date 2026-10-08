@@ -320,7 +320,7 @@ FilMetier filSimple({
   );
   const Participant autre = Participant(
     id: 'autre',
-    nomAffiche: 'Mme Mariam',
+    nomAffiche: 'Sayyida Mariam',
     fonction: 'Enseignante de la Classe An-Nour',
   );
   return FilMetier(

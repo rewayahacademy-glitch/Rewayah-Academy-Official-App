@@ -674,7 +674,7 @@ void main() {
     ) async {
       const Participant mariam = Participant(
         id: 'p-mariam',
-        nomAffiche: 'Mme Mariam',
+        nomAffiche: 'Sayyida Mariam',
         fonction: 'Enseignante de la Classe An-Nour',
       );
       // Toutes les largeurs de la colonne du nom, de 300 a 520 : a l'une
@@ -702,7 +702,7 @@ void main() {
           taille: const Size(1440, 900),
         );
         final RenderParagraph p = tester.renderObject<RenderParagraph>(
-          find.textContaining('Mme Mariam,'),
+          find.textContaining('Sayyida Mariam,'),
         );
         final String texte = p.text.toPlainText();
         final int debut = texte.indexOf('Nour') - 3;

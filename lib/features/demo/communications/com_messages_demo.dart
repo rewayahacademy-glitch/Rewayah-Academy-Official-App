@@ -23,12 +23,15 @@ import '../../../core/communications/lecture_fil_communication.dart'
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/router/routes.dart';
+import '../../../core/tc_groupe/group_summary_vm.dart';
+import '../../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/page_shell.dart';
 import '../../com_messages/messages_page.dart';
 import '../../com_messages/port_messages_metier.dart';
+import 'com_annonces_demo.dart' show ClassesDemoAnnonces;
 import 'com_vocal_demo.dart';
 import 'demo_communications_page.dart';
 
@@ -490,46 +493,49 @@ NatureInterlocuteur natureInterlocuteurDemo(Participant p) => switch (p.id) {
 /// pour l'enseignante, l'Administration sur la Classe pour la famille.
 Map<String, List<ConversationPossible>> conversationsAOuvrirDemo(
   RoleDemoCommunications role,
-) => switch (role) {
-  RoleDemoCommunications.enseignant => <String, List<ConversationPossible>>{
-    'classe:classe-an-nour': <ConversationPossible>[
-      ConversationPossible(
-        interlocuteur: const Participant(
-          id: 'p-karim',
-          nomAffiche: 'Karim',
-          fonction: 'Parent de Yusuf',
+) {
+  final f = t.com.messages.demo.f;
+  return switch (role) {
+    RoleDemoCommunications.enseignant => <String, List<ConversationPossible>>{
+      'classe:classe-an-nour': <ConversationPossible>[
+        ConversationPossible(
+          interlocuteur: Participant(
+            id: 'p-karim',
+            nomAffiche: f.karim,
+            fonction: f.parentYusuf,
+          ),
+          nature: NatureInterlocuteur.famille,
+          objet: ObjetLie(
+            type: TypeObjetLie.eleve,
+            id: 'eleve-yusuf',
+            libelle: f.yusuf,
+          ),
         ),
-        nature: NatureInterlocuteur.famille,
-        objet: ObjetLie(
-          type: TypeObjetLie.eleve,
-          id: 'eleve-yusuf',
-          libelle: 'Yusuf',
+      ],
+    },
+    RoleDemoCommunications.tuteur => <String, List<ConversationPossible>>{
+      'classe:classe-an-nour': <ConversationPossible>[
+        ConversationPossible(
+          interlocuteur: Participant(
+            id: 'p-direction',
+            nomAffiche: f.administration,
+            fonction: f.directionRewayah,
+          ),
+          nature: NatureInterlocuteur.administration,
+          objet: ObjetLie(
+            type: TypeObjetLie.classe,
+            id: 'classe-an-nour',
+            libelle: t.com.annonces.demo.classeNour,
+          ),
         ),
-      ),
-    ],
-  },
-  RoleDemoCommunications.tuteur => <String, List<ConversationPossible>>{
-    'classe:classe-an-nour': <ConversationPossible>[
-      ConversationPossible(
-        interlocuteur: const Participant(
-          id: 'p-direction',
-          nomAffiche: 'Administration',
-          fonction: 'Direction de Rewayah',
-        ),
-        nature: NatureInterlocuteur.administration,
-        objet: ObjetLie(
-          type: TypeObjetLie.classe,
-          id: 'classe-an-nour',
-          libelle: 'Classe An-Nour',
-        ),
-      ),
-    ],
-  },
-  RoleDemoCommunications.adulte ||
-  RoleDemoCommunications.admin ||
-  RoleDemoCommunications.controleur =>
-    const <String, List<ConversationPossible>>{},
-};
+      ],
+    },
+    RoleDemoCommunications.adulte ||
+    RoleDemoCommunications.admin ||
+    RoleDemoCommunications.controleur =>
+      const <String, List<ConversationPossible>>{},
+  };
+}
 
 /// Les fils de demonstration vus par [role] (spec section 26), dates par
 /// rapport a [maintenant].
@@ -539,82 +545,94 @@ List<FilMetier> fixturesMessagesDemo(
 ) {
   final DateTime ici = maintenant.toUtc();
   DateTime il(Duration d) => ici.subtract(d);
+  // Les noms, fonctions, objets et textes suivent la langue de l'interface
+  // (COM-RC tour 7) : en arabe, aucun texte francais ni ponctuation
+  // retournee (« .semaine prochaine »).
+  final f = t.com.messages.demo.f;
 
   Participant ahmed({bool soi = false}) => Participant(
     id: 'p-ahmed',
-    nomAffiche: 'Ahmed',
-    fonction: "Parent d'Adam",
+    nomAffiche: f.ahmed,
+    fonction: f.parentAdam,
     estSoi: soi,
   );
   Participant mariam({bool soi = false}) => Participant(
     id: 'p-mariam',
-    nomAffiche: 'Mme Mariam',
-    fonction: 'Enseignante de la Classe An-Nour',
+    // Le nom que la page de la Classe et l'annonce donnent a l'enseignante
+    // de la Classe An-Nour (« Sayyida Mariam »).
+    nomAffiche: ClassesDemoAnnonces.enseignanteNourNommee,
+    fonction: f.enseignanteNour,
     estSoi: soi,
   );
-  Participant fatima() => const Participant(
+  Participant fatima() => Participant(
     id: 'p-fatima',
-    nomAffiche: 'Fatima',
-    fonction: 'Parent de Yasmine',
+    nomAffiche: f.fatima,
+    fonction: f.parentYasmine,
   );
   Participant direction({bool soi = false}) => Participant(
     id: 'p-direction',
-    nomAffiche: 'Administration',
-    fonction: 'Direction de Rewayah',
+    nomAffiche: f.administration,
+    fonction: f.directionRewayah,
     estSoi: soi,
   );
   Participant rachid({bool soi = false}) => Participant(
     id: 'p-rachid',
-    nomAffiche: 'M. Rachid',
-    fonction: 'Contrôleur pédagogique',
+    nomAffiche: f.rachid,
+    fonction: f.controleurPedagogique,
     estSoi: soi,
   );
-  Participant youssef() => const Participant(
+  Participant youssef() => Participant(
     id: 'p-youssef',
-    nomAffiche: 'Sayyid Youssef',
-    fonction: 'Enseignant de la Classe Al-Fajr',
+    nomAffiche: LibellesGroupe.enseignantNomme(
+      EnseignantVM(
+        enseignantId: 'p-youssef',
+        titre: TitreEnseignant.sayyid,
+        nomAffichage: f.youssef,
+      ),
+    ),
+    fonction: f.enseignantFajr,
   );
   Participant khadija({bool soi = false}) => Participant(
     id: 'p-khadija',
-    nomAffiche: 'Khadija',
-    fonction: 'Élève de la Classe Al-Fajr',
+    nomAffiche: f.khadija,
+    fonction: f.eleveFajr,
     estSoi: soi,
   );
 
   final ObjetLie anNour = ObjetLie(
     type: TypeObjetLie.classe,
     id: 'classe-an-nour',
-    libelle: 'Classe An-Nour',
+    libelle: t.com.annonces.demo.classeNour,
   );
   final ObjetLie adam = ObjetLie(
     type: TypeObjetLie.eleve,
     id: 'eleve-adam',
-    libelle: 'Adam',
+    libelle: f.adam,
   );
   final ObjetLie yasmine = ObjetLie(
     type: TypeObjetLie.eleve,
     id: 'eleve-yasmine',
-    libelle: 'Yasmine',
+    libelle: f.yasmine,
   );
   final ObjetLie dossierAdam = ObjetLie(
     type: TypeObjetLie.dossier,
     id: 'dossier-adam',
-    libelle: "Dossier d'inscription d'Adam",
+    libelle: f.dossierAdam,
   );
   final ObjetLie mission = ObjetLie(
     type: TypeObjetLie.mission,
     id: 'mission-12-11',
-    libelle: 'Visite de contrôle, Classe An-Nour',
+    libelle: f.missionNour,
   );
   final ObjetLie alFajr = ObjetLie(
     type: TypeObjetLie.classe,
     id: 'classe-al-fajr',
-    libelle: 'Classe Al-Fajr',
+    libelle: t.com.annonces.demo.classeFajr,
   );
 
   final PieceJointe devoir = PieceJointe(
     reference: ReferencePieceJointe('pj-devoir-3'),
-    nom: 'Devoir_semaine_3.pdf',
+    nom: f.pieceDevoir,
     nature: NaturePieceJointe.document,
     typeLisible: 'PDF',
     tailleOctets: 2516582,
@@ -622,16 +640,16 @@ List<FilMetier> fixturesMessagesDemo(
   );
   final PieceJointe vocal = PieceJointe(
     reference: ReferencePieceJointe('pj-vocal-28'),
-    nom: 'vocal.m4a',
+    nom: f.pieceVocal,
     nature: NaturePieceJointe.vocal,
-    typeLisible: 'Audio',
+    typeLisible: f.typeAudio,
     duree: const Duration(seconds: 28),
     // R-04 : le vocal recu de la demonstration se lit (lecture simulee).
     peutOuvrir: true,
   );
   final PieceJointe attestation = PieceJointe(
     reference: ReferencePieceJointe('pj-attestation'),
-    nom: 'Attestation_ancienne.pdf',
+    nom: f.pieceAttestation,
     nature: NaturePieceJointe.document,
     typeLisible: 'PDF',
     etat: EtatPieceJointe.indisponible,
@@ -652,17 +670,13 @@ List<FilMetier> fixturesMessagesDemo(
         MessageCommunication(
           id: 'adam-1',
           auteur: parent,
-          texte:
-              "Bonjour, je voulais savoir comment s'est passée la séance "
-              "d'aujourd'hui pour Adam. Merci beaucoup.",
+          texte: f.adamQuestion,
           envoyeLe: il(const Duration(hours: 2, minutes: 12)),
         ),
         MessageCommunication(
           id: 'adam-2',
           auteur: enseignante,
-          texte:
-              "Bonjour, la séance s'est très bien passée. Adam a été attentif "
-              'et a bien participé.',
+          texte: f.adamReponse,
           envoyeLe: il(const Duration(hours: 2, minutes: 10)),
         ),
         MessageCommunication(
@@ -675,7 +689,7 @@ List<FilMetier> fixturesMessagesDemo(
         MessageCommunication(
           id: 'adam-4',
           auteur: enseignante,
-          texte: 'Voici le devoir de la semaine prochaine.',
+          texte: f.adamDevoir,
           envoyeLe: il(const Duration(hours: 2, minutes: 6)),
           piecesJointes: <PieceJointe>[devoir],
         ),
@@ -699,9 +713,7 @@ List<FilMetier> fixturesMessagesDemo(
         MessageCommunication(
           id: 'dossier-1',
           auteur: admin,
-          texte:
-              "Il manque l'attestation de niveau d'Adam pour finaliser son "
-              'inscription. Pouvez-vous la déposer dans son dossier ?',
+          texte: f.dossierManque,
           envoyeLe: il(const Duration(days: 1, hours: 3)),
           piecesJointes: <PieceJointe>[attestation],
         ),
@@ -728,15 +740,13 @@ List<FilMetier> fixturesMessagesDemo(
         MessageCommunication(
           id: 'mission-1',
           auteur: controleur,
-          texte:
-              'La séance a commencé avec huit minutes de retard. Le compte '
-              'rendu est déposé.',
+          texte: f.missionRetard,
           envoyeLe: il(const Duration(days: 3)),
         ),
         MessageCommunication(
           id: 'mission-2',
           auteur: admin,
-          texte: "Merci, nous en parlons avec l'enseignante cette semaine.",
+          texte: f.missionSuite,
           envoyeLe: il(const Duration(days: 2, hours: 20)),
         ),
       ],
@@ -763,7 +773,7 @@ List<FilMetier> fixturesMessagesDemo(
           MessageCommunication(
             id: 'yasmine-1',
             auteur: fatima(),
-            texte: 'Merci beaucoup pour ces explications.',
+            texte: f.yasmineMerci,
             envoyeLe: il(const Duration(days: 4)),
           ),
         ],
@@ -778,9 +788,7 @@ List<FilMetier> fixturesMessagesDemo(
           MessageCommunication(
             id: 'affectation-1',
             auteur: direction(),
-            texte:
-                'Votre Classe An-Nour passe au mardi 18 h a partir du mois '
-                'prochain. Merci de confirmer.',
+            texte: f.affectation,
             envoyeLe: il(const Duration(days: 6)),
           ),
         ],
@@ -799,7 +807,7 @@ List<FilMetier> fixturesMessagesDemo(
           MessageCommunication(
             id: 'khadija-1',
             auteur: youssef(),
-            texte: 'Pensez à réviser la sourate Al-Mulk pour jeudi.',
+            texte: f.khadijaRevision,
             envoyeLe: il(const Duration(hours: 5)),
           ),
         ],

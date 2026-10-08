@@ -271,7 +271,7 @@ void main() {
         '« Message vocal de 0:28 »', (WidgetTester tester) async {
       final FilMetier fil = msg.filAvec(
         id: 'fil-vocal',
-        autre: const Participant(id: 'autre', nomAffiche: 'Mme Mariam'),
+        autre: const Participant(id: 'autre', nomAffiche: 'Sayyida Mariam'),
         objets: <ObjetLie>[
           ObjetLie(
             type: TypeObjetLie.classe,

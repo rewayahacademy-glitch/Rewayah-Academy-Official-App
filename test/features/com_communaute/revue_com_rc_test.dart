@@ -197,6 +197,9 @@ void main() {
         '320 x 844, texte x2 (${luminosite.name}${arabe ? ', arabe' : ''})'
         ' : le blocage d une reponse se lit sans debordement',
         (WidgetTester tester) async {
+          // Garde et reponse marquee lus ensemble, avant le passage a
+          // l'arabe (COM-RC tour 7 : les fixtures suivent la langue).
+          final String reponse = DonneesCommunauteDemo.reponseAffilie;
           await monterCommunaute(
             tester,
             taille: const Size(320, 844),
@@ -208,10 +211,7 @@ void main() {
             autres: _avecGarde(DonneesCommunauteDemo.garde()),
           );
           expect(tester.takeException(), isNull);
-          await tester.enterText(
-            find.byKey(ComposerReponse.cleChamp),
-            DonneesCommunauteDemo.reponseAffilie,
-          );
+          await tester.enterText(find.byKey(ComposerReponse.cleChamp), reponse);
           await taper(tester, find.byKey(ComposerReponse.cleEnvoyer));
           expect(
             _dansGarde(find.byKey(GardePromotion.cleBlocage)),
