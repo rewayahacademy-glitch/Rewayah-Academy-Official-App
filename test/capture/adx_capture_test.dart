@@ -29,21 +29,33 @@ import 'outil_capture.dart';
 /// Le dossier des images du directeur, ou nul (planches sautees).
 final String? _images = Platform.environment['CAPTURE_IMAGES'];
 
-/// Un ecran du lot : son nom de fichier, sa route, l'image du directeur.
-typedef _Ecran = ({String code, String route, String image, String? choisir});
+/// Un ecran du lot : son nom de fichier, sa route, l'image du directeur, la
+/// ligne a choisir au bureau, et le texte a amener en haut de la vue a 320 px
+/// au texte x2 (K-61.1 : la capture montre l'endroit que la recette verifie).
+typedef _Ecran = ({
+  String code,
+  String route,
+  String image,
+  String? choisir,
+  String? defilerA320,
+});
 
-const List<_Ecran> _ecrans = <_Ecran>[
+final List<_Ecran> _ecrans = <_Ecran>[
+  // A 320 px et texte double, « Activite recente » passe sous les tuiles,
+  // hors de la premiere vue : la capture defile jusqu'a elle.
   (
     code: 'adm01',
     route: Routes.admin,
     image: 'ADMIN-SHELL-01_accueil.png',
     choisir: null,
+    defilerA320: t.admin.tableau.activite.titre,
   ),
   (
     code: 'adm18',
     route: Routes.adminOperationsTraitement,
     image: 'ADMIN-SHELL-02_liste-detail.png',
     choisir: null,
+    defilerA320: null,
   ),
   // A partir du bureau, la premiere classe s'ouvre dans l'inspecteur, comme
   // sur l'image ; ailleurs, la collection seule.
@@ -52,6 +64,7 @@ const List<_Ecran> _ecrans = <_Ecran>[
     route: Routes.adminOperationsGroupes,
     image: 'ADMIN-SHELL-03_collection-inspecteur.png',
     choisir: 'Classe An-Nour',
+    defilerA320: null,
   ),
 ];
 
@@ -137,6 +150,15 @@ void main() {
               echelle: f.$4,
               choisir: ecran.choisir,
             );
+            final String? cible = ecran.defilerA320;
+            if (cible != null && f.$1 == '320x2') {
+              await tester.ensureVisible(find.text(cible).first);
+              await stabiliser(tester);
+              expect(
+                tester.getRect(find.text(cible).first).top,
+                lessThan(f.$2.height),
+              );
+            }
             sorties[nom] = await capturer(tester, nom);
             debugPrint('PNG ${sorties[nom]}');
           });

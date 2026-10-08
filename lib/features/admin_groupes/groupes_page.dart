@@ -437,11 +437,15 @@ class _Corps extends StatelessWidget {
         ColonneDonnees<GroupeAdmin>(
           titre: t.admin.groupes.colonneGroupe,
           role: RoleColonne.identifiante,
-          flex: 2,
+          // Largeurs en demi-parts : la classe 3, l'etat 3 (« Cloturee »
+          // tient sur une ligne dans sa pastille, inspecteur ouvert a
+          // 1440), les autres 2.
+          flex: 3,
           texte: (GroupeAdmin g) => g.libelle,
         ),
         ColonneDonnees<GroupeAdmin>(
           titre: t.admin.groupes.colonneEnseignant,
+          flex: 2,
           texte: (GroupeAdmin g) => g.teacherLibelle,
         ),
         // ENS-PAYS-1 : le pays de l'enseignant, seulement quand une
@@ -452,6 +456,7 @@ class _Corps extends StatelessWidget {
         ))
           ColonneDonnees<GroupeAdmin>(
             titre: t.admin.groupes.colonnePays,
+            flex: 2,
             // Sa propre ligne en carte (sous 1200), avec le drapeau :
             // la ligne secondaire jointe ne rendrait que du texte.
             role: RoleColonne.aPart,
@@ -462,14 +467,17 @@ class _Corps extends StatelessWidget {
           ),
         ColonneDonnees<GroupeAdmin>(
           titre: t.admin.groupes.colonneType,
+          flex: 2,
           texte: (GroupeAdmin g) => _nomType(g.type),
         ),
         ColonneDonnees<GroupeAdmin>(
           titre: t.admin.groupes.colonneCreneau,
+          flex: 2,
           texte: _creneau,
         ),
         ColonneDonnees<GroupeAdmin>(
           titre: t.admin.groupes.colonneMembres,
+          flex: 2,
           tabulaire: true,
           texte: (GroupeAdmin g) => t.admin.groupes.membresSur(
             actifs: '${g.nombreMembres}',
@@ -478,6 +486,7 @@ class _Corps extends StatelessWidget {
         ),
         ColonneDonnees<GroupeAdmin>(
           titre: t.admin.groupes.colonneEtat,
+          flex: 3,
           texte: (GroupeAdmin g) =>
               g.actif ? t.admin.groupes.etatActif : t.admin.groupes.etatCloture,
           rendu: (BuildContext _, GroupeAdmin g) => StatusPill(
