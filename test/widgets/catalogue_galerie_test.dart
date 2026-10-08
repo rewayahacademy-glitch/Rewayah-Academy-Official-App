@@ -122,6 +122,8 @@ const List<String> composantsDuCatalogue = <String>[
   'AdminShell',
   'MenuActions',
   'MenuFiltre',
+  // FI-DIR-1 (FI-Q18 (a), 05/10) : le choix du mois des vues chiffrees.
+  'SelecteurMois',
   'SelecteurNiveauProgramme',
   'SousNavigationDomaine',
   // ONGLETS-1 (revue du directeur, 01/10/2026) : le selecteur de section

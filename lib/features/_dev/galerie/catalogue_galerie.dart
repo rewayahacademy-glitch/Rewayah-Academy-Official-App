@@ -81,6 +81,7 @@ import '../../../core/widgets/rosace_verset.dart';
 import '../../../core/widgets/schedule_option.dart';
 import '../../../core/widgets/section_header.dart';
 import '../../../core/widgets/selecteur_couleur_profil.dart';
+import '../../../core/widgets/selecteur_mois.dart';
 import '../../../core/widgets/selecteur_niveau_programme.dart';
 import '../../../core/widgets/selecteur_section.dart';
 import '../../../core/widgets/selecteur_theme.dart';
@@ -2401,6 +2402,45 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       ),
     ],
   ),
+  // FI-Q18 (a) : le choix du mois d'une vue chiffree. Il ne propose que les
+  // mois rendus par la source ; le bouton dit toujours le mois retenu.
+  EntreeGalerie(
+    nom: 'SelecteurMois',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      // La demonstration ne rend qu'un mois : le menu n'en offre qu'un.
+      EtatGalerie(
+        'un seul mois rendu',
+        (BuildContext _) => _SousMaterial(
+          child: SelecteurMois(
+            mois: <DateTime>[DateTime(2026, 10)],
+            choisi: null,
+            onChoix: _moisIgnore,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'plusieurs mois, le plus recent par defaut',
+        (BuildContext _) => _SousMaterial(
+          child: SelecteurMois(
+            mois: <DateTime>[DateTime(2026, 10), DateTime(2026, 9)],
+            choisi: null,
+            onChoix: _moisIgnore,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'un mois plus ancien choisi',
+        (BuildContext _) => _SousMaterial(
+          child: SelecteurMois(
+            mois: <DateTime>[DateTime(2026, 10), DateTime(2026, 9)],
+            choisi: DateTime(2026, 9),
+            onChoix: _moisIgnore,
+          ),
+        ),
+      ),
+    ],
+  ),
   EntreeGalerie(
     nom: 'SelecteurNiveauProgramme',
     famille: FamilleComposant.composantEtat,
@@ -3100,6 +3140,8 @@ void _allerNullePart(String chemin) {}
 void _acteurIgnore(String? acteur) {}
 
 void _niveauIgnore(String niveauId) {}
+
+void _moisIgnore(DateTime mois) {}
 
 void _codeIgnore(String code) {}
 
