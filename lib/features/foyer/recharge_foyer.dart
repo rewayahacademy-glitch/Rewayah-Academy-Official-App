@@ -22,14 +22,13 @@
 //   Play), puis « Payer {total} » : le total que la source vient de rendre.
 //   Si elle le change apres un choix, le bouton dit le nouveau total ; tant
 //   qu'elle ne l'a pas rendu, il attend, avec une phrase qui dit pourquoi.
-// - Sur bureau (classe large, maquette 07, sa composition seulement,
-//   K-63) : les profils a gauche, assez larges pour que solde et montant
-//   suggere restent sur une ligne chacun a cote du montant ; a droite le
-//   recapitulatif (l'explication du paiement unique sous son total, la
-//   ou elle se rapporte, comme sur telephone), le moyen et « Payer ».
-//   La colonne du milieu de la maquette porte quatre lignes d'aide que
-//   la recharge n'a pas : une seule phrase y flottait seule, a cote d'une
-//   colonne de profils trop etroite (FI-VAGUE-CORR). Dessous, le bandeau
+// - Sur bureau (classe large, a partir de 1200, maquette 07, K-63) : trois
+//   colonnes, comme la maquette. A gauche les profils ; au milieu l'aide
+//   (l'explication du paiement unique, puis les trois faits deja dits au
+//   bas de la fiche Finances : pas de consommation par seance, acces lie a
+//   la periode financee, absences ordinaires ; aucun texte neuf) ; a droite
+//   le recapitulatif, le moyen et « Payer » (revue FI-VAGUE-CORR-R R3-02,
+//   decide par delegation le 08/10 : la maquette). Dessous, le bandeau
 //   « Acces a regulariser » sans croix (Q-FI-6), dont le lien « Ajouter
 //   {prenom} a la recharge » coche le profil avec le montant suggere (revue
 //   ligne 7 d). Plus etroit : une seule colonne, le bandeau en tete.
@@ -100,6 +99,9 @@ class RechargeFoyerPage extends ConsumerStatefulWidget {
 
   /// La carte des profils a recharger.
   static const Key profilsKey = Key('recharge.profils');
+
+  /// La colonne d'aide du milieu, sur bureau (maquette 07, R3-02).
+  static const Key aideKey = Key('recharge.aide');
 
   /// L'explication de la repartition (« pas de solde commun »).
   static const Key repartitionKey = Key('recharge.repartition');
@@ -494,11 +496,12 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
             attenuee: true,
           );
     final Widget? bandeau = _bandeau(liste);
+    // Sur bureau, l'explication passe dans la colonne d'aide du milieu.
     final Widget paiement = _paiement(
       context,
       liste,
       horsLigne,
-      repartition: repartition,
+      repartition: large ? null : repartition,
     );
     if (!large) {
       return _Colonne(
@@ -517,26 +520,81 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        // La moitie de la page aux profils, bornee a la colonne de dialogue
-        // (la liste ne s'etire jamais a la page) ; le paiement prend le
-        // reste.
-        LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints contraintes) => Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(
-                width: math.min(
-                  AppPage.largeurDialogue,
-                  (contraintes.maxWidth - AppSpacing.xl) / 2,
-                ),
-                child: profils,
+        // Les trois colonnes de la maquette 07 : profils, aide, paiement.
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Expanded(flex: 5, child: profils),
+            Ecart.hXl,
+            // La carte d'aide n'a pas de titre (aucun texte neuf) : une
+            // reserve de la hauteur d'un titre de groupe, muette et
+            // invisible, aligne son haut sur les cartes voisines.
+            Expanded(
+              flex: 3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  ExcludeSemantics(
+                    child: Opacity(
+                      opacity: 0,
+                      child: _titreGroupe(
+                        context,
+                        t.adulte.recharge.recapitulatif,
+                      ),
+                    ),
+                  ),
+                  Ecart.vSm,
+                  _aide(context, repartition),
+                ],
               ),
-              Ecart.hXl,
-              Expanded(child: paiement),
-            ],
-          ),
+            ),
+            Ecart.hXl,
+            Expanded(flex: 4, child: paiement),
+          ],
         ),
         if (bandeau != null) ...<Widget>[Ecart.vXxl, bandeau],
+      ],
+    );
+  }
+
+  /// La colonne d'aide du milieu (maquette 07) : l'explication du paiement
+  /// unique quand plusieurs profils sont rechargeables, puis les trois
+  /// faits du bas de la fiche Finances, avec leurs icones (textes existants,
+  /// aucun texte neuf ; R3-02, decide par delegation le 08/10).
+  Widget _aide(BuildContext context, Widget? repartition) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextStyle style = palette.inkMuted.applyTo(
+      Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+    );
+    final finances = t.ficheEleve.finances;
+    final List<({AppIcon icone, String texte})> faits =
+        <({AppIcon icone, String texte})>[
+          (icone: AppIcons.creneaux, texte: finances.faitSeance),
+          (icone: AppIcons.horloge, texte: finances.faitPeriode),
+          (icone: AppIcons.historique, texte: finances.noteAbsences),
+        ];
+    return _Carte(
+      key: RechargeFoyerPage.aideKey,
+      lignes: <Widget>[
+        if (repartition != null) ...<Widget>[repartition, Ecart.vLg],
+        for (final (int i, ({AppIcon icone, String texte}) f)
+            in faits.indexed) ...<Widget>[
+          if (i > 0) Ecart.vMd,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              ExcludeSemantics(
+                child: IconTheme(
+                  data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
+                  child: Icon(f.icone.repos),
+                ),
+              ),
+              Ecart.hSm,
+              Expanded(child: Text(f.texte, style: style)),
+            ],
+          ),
+        ],
       ],
     );
   }

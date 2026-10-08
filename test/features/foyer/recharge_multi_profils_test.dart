@@ -758,10 +758,10 @@ void main() {
   // pas seulement a 1440 : a 1200 et 1280 le solde tenait sur trois lignes
   // (contre-revue FI-VAGUE-CORR).
   for (final double largeur in <double>[1200, 1280, 1440]) {
-    testWidgets('${largeur.toInt()} : les profils et le paiement cote a '
-        'cote, l\'explication sous le total, le bandeau « Acces a '
-        'regulariser » dessous, sans croix, qui ajoute Ibrahim a la recharge '
-        '(R3-02)', (WidgetTester tester) async {
+    testWidgets('${largeur.toInt()} : trois colonnes (profils, aide, '
+        'paiement) comme la maquette 07, l\'explication dans l\'aide, le '
+        'bandeau « Acces a regulariser » dessous, sans croix, qui ajoute '
+        'Ibrahim a la recharge (R3-02)', (WidgetTester tester) async {
       await _monter(
         tester,
         jeu: JeuFoyerFinance.unARegulariser,
@@ -775,30 +775,51 @@ void main() {
       );
       final Rect total = tester.getRect(find.byKey(RechargeFoyerPage.totalKey));
       final Rect payer = tester.getRect(find.byKey(RechargeFoyerPage.payerKey));
-      // Les profils et le paiement cote a cote, en haut de la page : jamais
-      // une colonne de telephone centree (contrat D).
-      expect(profils.right, lessThan(total.left));
+      final Finder aideF = find.byKey(RechargeFoyerPage.aideKey);
+      expect(aideF, findsOneWidget);
+      final Rect aide = tester.getRect(aideF);
+      // Trois colonnes cote a cote, en haut de la page (maquette 07, revue
+      // FI-VAGUE-CORR-R R3-02) : profils, aide, paiement ; jamais une
+      // colonne de telephone centree (contrat D).
+      expect(profils.right, lessThan(aide.left));
+      expect(aide.right, lessThan(total.left));
+      expect(aide.top, lessThan(profils.bottom));
       expect(total.top, lessThan(profils.bottom));
+      expect(aide.top, lessThan(total.bottom));
       expect(total.right - profils.left, greaterThan(AppPage.largeurDialogue));
-      // L'explication du paiement unique sous le total qu'elle explique,
-      // dans la meme colonne : jamais seule dans une colonne vide
-      // (FI-VAGUE-CORR).
+      // L'explication du paiement unique dans la colonne d'aide, avec les
+      // trois faits deja dits au bas de la fiche Finances (aucun texte neuf).
+      expect(
+        _dans(
+          RechargeFoyerPage.aideKey,
+          find.byKey(RechargeFoyerPage.repartitionKey),
+        ),
+        findsOneWidget,
+      );
       expect(
         _dans(
           RechargeFoyerPage.totalKey,
           find.byKey(RechargeFoyerPage.repartitionKey),
         ),
-        findsOneWidget,
+        findsNothing,
       );
-      expect(explication.left, greaterThanOrEqualTo(total.left));
-      expect(explication.right, lessThanOrEqualTo(total.right));
-      // La colonne des profils a la moitie de la page, bornee a la colonne
-      // de dialogue, et le solde comme le montant suggere tiennent sur une ou
-      // deux lignes (l'ancienne composition les coupait en quatre lignes
-      // chacun dans la police de test, six a l'ecran ; trois a 1200 et 1280
-      // tant que le montant restait a cote dans une colonne de 430 ou 470).
-      expect(profils.width, greaterThanOrEqualTo(total.width - 0.5));
-      expect(profils.width, lessThanOrEqualTo(AppPage.largeurDialogue + 0.5));
+      expect(explication.left, greaterThanOrEqualTo(aide.left));
+      expect(explication.right, lessThanOrEqualTo(aide.right));
+      for (final String fait in <String>[
+        t.ficheEleve.finances.faitSeance,
+        t.ficheEleve.finances.faitPeriode,
+        t.ficheEleve.finances.noteAbsences,
+      ]) {
+        expect(
+          _dans(RechargeFoyerPage.aideKey, find.text(fait)),
+          findsOneWidget,
+          reason: fait,
+        );
+      }
+      // La colonne des profils est la plus large (5/12), et le solde comme
+      // le montant suggere tiennent sur une ou deux lignes.
+      expect(profils.width, greaterThan(total.width));
+      expect(profils.width, greaterThan(aide.width));
       int mesures = 0;
       for (final String id in <String>[_mariam, _ibrahim, _aicha]) {
         final Finder textes = find.descendant(

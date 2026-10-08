@@ -386,9 +386,12 @@ final List<_EcranComposition> _ecransComposition = <_EcranComposition>[
   (
     nom: 'Recharge',
     monter: _tuteur(Routes.tuteurFoyerRecharge),
+    // Les trois colonnes de la maquette 07 (revue FI-VAGUE-CORR-R R3-02) :
+    // profils, aide (bureau seulement), recapitulatif.
     blocs: () => <Finder>[
-      find.byKey(RechargeFoyerPage.caseDe(_mariam)),
-      find.byKey(RechargeFoyerPage.montantDe(_mariam)),
+      find.byKey(RechargeFoyerPage.profilsKey),
+      find.byKey(RechargeFoyerPage.aideKey),
+      find.byKey(RechargeFoyerPage.totalKey),
     ],
     tacheFocalisee: false,
   ),
