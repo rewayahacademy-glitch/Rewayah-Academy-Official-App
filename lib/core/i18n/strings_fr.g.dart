@@ -4460,8 +4460,8 @@ class Traductions$ficheEleve$finances$fr {
 	/// fr: 'Voir tout'
 	String get voirTout => 'Voir tout';
 
-	/// fr: 'Voir tous les mouvements {dePrenom}'
-	String voirToutSemantique({required Object dePrenom}) => 'Voir tous les mouvements ${dePrenom}';
+	/// fr: 'Voir tout : mouvements {dePrenom}'
+	String voirToutSemantique({required Object dePrenom}) => 'Voir tout : mouvements ${dePrenom}';
 
 	/// fr: 'Voir les mouvements {dePrenom}'
 	String voirMouvementsSemantique({required Object dePrenom}) => 'Voir les mouvements ${dePrenom}';
@@ -9619,6 +9619,9 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: 'Une estimation de votre rémunération du mois choisi, Classe par Classe.'
 	String get intro => 'Une estimation de votre rémunération du mois choisi, Classe par Classe.';
 
+	/// fr: 'Une estimation de votre rémunération du mois en cours, Classe par Classe.'
+	String get introSansChoix => 'Une estimation de votre rémunération du mois en cours, Classe par Classe.';
+
 	/// fr: 'Estimation'
 	String get estimation => 'Estimation';
 
@@ -11013,7 +11016,7 @@ class Traductions$adulte$recharge$fr {
 	String augmenter({required Object prenom}) => 'Augmenter le montant pour ${prenom}';
 
 	/// fr: 'Un seul paiement sera effectué. Chaque montant va au solde de son profil : il n'y a pas de solde commun.'
-	String get repartition => 'Un seul paiement sera effectué. Chaque montant va au solde de son profil : il n\'y a pas de solde commun.';
+	String get repartition => 'Un seul paiement sera effectué. Chaque montant va au solde de son profil : il n\'y a pas de solde commun.';
 
 	/// fr: 'Moyen de paiement'
 	String get moyen => 'Moyen de paiement';
@@ -18164,7 +18167,7 @@ extension on Traductions {
 			'ficheEleve.finances.faitPeriode' => 'Accès lié à la période financée',
 			'ficheEleve.finances.historiqueTitre' => 'Historique des transactions',
 			'ficheEleve.finances.voirTout' => 'Voir tout',
-			'ficheEleve.finances.voirToutSemantique' => ({required Object dePrenom}) => 'Voir tous les mouvements ${dePrenom}',
+			'ficheEleve.finances.voirToutSemantique' => ({required Object dePrenom}) => 'Voir tout : mouvements ${dePrenom}',
 			'ficheEleve.finances.voirMouvementsSemantique' => ({required Object dePrenom}) => 'Voir les mouvements ${dePrenom}',
 			'ficheEleve.finances.telechargerRecu' => 'Télécharger le reçu',
 			'ficheEleve.finances.recuIndisponibleTitre' => 'Le reçu n\'est pas encore disponible',
@@ -20452,6 +20455,7 @@ extension on Traductions {
 			'enseignant.profil.editionErreur' => 'La modification n\'a pas abouti. Réessayez dans un instant.',
 			'enseignant.revenus.titre' => 'Revenus estimés',
 			'enseignant.revenus.intro' => 'Une estimation de votre rémunération du mois choisi, Classe par Classe.',
+			'enseignant.revenus.introSansChoix' => 'Une estimation de votre rémunération du mois en cours, Classe par Classe.',
 			'enseignant.revenus.estimation' => 'Estimation',
 			'enseignant.revenus.periode' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
 			'enseignant.revenus.totalEstime' => 'Revenu estimé du mois',
@@ -20820,9 +20824,9 @@ extension on Traductions {
 			'tc.groupe.duree.minutes' => ({required Object minutes}) => '${minutes} min',
 			'tc.groupe.duree.heures' => ({required Object heures}) => '${heures} h',
 			'tc.groupe.duree.heuresMinutes' => ({required Object heures, required Object minutes}) => '${heures} h ${minutes}',
-			'tc.groupe.horloges.votreHeure' => 'Votre heure',
 			_ => null,
 		} ?? switch (path) {
+			'tc.groupe.horloges.votreHeure' => 'Votre heure',
 			'tc.groupe.horloges.chezEnseignant' => ({required Object nomme}) => 'Chez ${nomme}',
 			'tc.groupe.horloges.heureGroupe' => 'Heure de la classe',
 			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '${heure} ${ville}',
@@ -21308,7 +21312,7 @@ extension on Traductions {
 			'adulte.recharge.montantPour' => ({required Object prenom}) => 'Montant pour ${prenom}',
 			'adulte.recharge.diminuer' => ({required Object prenom}) => 'Diminuer le montant pour ${prenom}',
 			'adulte.recharge.augmenter' => ({required Object prenom}) => 'Augmenter le montant pour ${prenom}',
-			'adulte.recharge.repartition' => 'Un seul paiement sera effectué. Chaque montant va au solde de son profil : il n\'y a pas de solde commun.',
+			'adulte.recharge.repartition' => 'Un seul paiement sera effectué. Chaque montant va au solde de son profil : il n\'y a pas de solde commun.',
 			'adulte.recharge.moyen' => 'Moyen de paiement',
 			'adulte.recharge.verifier' => 'Vérifier la recharge',
 			'adulte.recharge.raisonAucun' => 'Sélectionnez au moins un profil pour continuer.',
@@ -21334,9 +21338,9 @@ extension on Traductions {
 			'adulte.recharge.revenirPaiements' => 'Revenir aux paiements du foyer',
 			'adulte.recharge.commandeRendue' => 'Le paiement est envoyé. Ne payez pas une seconde fois : suivez son état.',
 			'adulte.recharge.suivrePaiement' => 'Suivre le paiement',
-			'adulte.recharge.resultat.preparationTitre' => 'Paiement en préparation',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.recharge.resultat.preparationTitre' => 'Paiement en préparation',
 			'adulte.recharge.resultat.preparationPhrase' => 'Vérifiez la répartition avant de payer.',
 			'adulte.recharge.resultat.attenteTitre' => 'Paiement en cours de confirmation',
 			'adulte.recharge.resultat.attentePhrase' => 'Le prestataire de paiement n\'a pas encore confirmé. Les soldes ne changent qu\'après sa confirmation.',
