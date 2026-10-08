@@ -19,6 +19,7 @@ import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/zone_saisie.dart';
 
 /// `ADM-06` : les demandes des quatre parties, et les regles d'un eleve.
 ///
@@ -224,13 +225,13 @@ class _Demande extends StatelessWidget {
         Text(t.admin.demandes.verdict, style: textes.titleMedium),
         Ecart.vMd,
         if (refusEnCours) ...<Widget>[
-          TextField(
-            controller: motif,
+          ZoneSaisie(
+            controleur: motif,
             // Le bouton de refus depend de ce champ : sans ce rappel, il
             // resterait inerte alors que le motif est saisi.
             onChanged: onMotifChange,
-            maxLines: 2,
-            decoration: InputDecoration(labelText: t.admin.demandes.motif),
+            minLignes: 2,
+            libelle: t.admin.demandes.motif,
           ),
           Ecart.vSm,
           Text(t.admin.demandes.motifRequis, style: textes.bodySmall),
@@ -652,13 +653,13 @@ class _FeuilleRegleEtat extends ConsumerState<FeuilleRegle> {
           ),
           Ecart.vMd,
         ],
-        TextField(
-          controller: _motif,
-          decoration: InputDecoration(labelText: t.admin.demandes.poserMotif),
+        ZoneSaisie(
+          controleur: _motif,
+          libelle: t.admin.demandes.poserMotif,
           // Sans ceci, le bouton ne se reconstruit pas a la frappe et reste
           // inerte alors que le motif est saisi (piege de l'etape 3).
           onChanged: (String _) => setState(() {}),
-          maxLines: 2,
+          minLignes: 2,
         ),
         if (_motif.text.trim().isEmpty) ...<Widget>[
           Ecart.vSm,

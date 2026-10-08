@@ -17,6 +17,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/zone_saisie.dart';
 
 /// `ADM-14` : Pedagogie > Qualite, dernier ecran du domaine.
 ///
@@ -336,10 +337,10 @@ class _FeuilleTraitementEtat extends State<_FeuilleTraitement> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        TextField(
-          controller: _note,
-          maxLines: 2,
-          decoration: InputDecoration(labelText: t.admin.qualite.champNote),
+        ZoneSaisie(
+          controleur: _note,
+          minLignes: 2,
+          libelle: t.admin.qualite.champNote,
         ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,

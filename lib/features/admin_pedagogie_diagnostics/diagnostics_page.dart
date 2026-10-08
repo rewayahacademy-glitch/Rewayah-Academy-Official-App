@@ -17,6 +17,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/selecteur_niveau_programme.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
+import '../../core/widgets/zone_saisie.dart';
 
 /// `ADM-10` : Pedagogie > Diagnostics, fonction primaire du domaine.
 ///
@@ -264,13 +265,11 @@ class _Decision extends StatelessWidget {
         Ecart.vSm,
         Text(t.admin.diagnostics.motifRequis, style: textes.bodySmall),
         Ecart.vSm,
-        TextField(
-          controller: motif,
-          maxLines: 2,
+        ZoneSaisie(
+          controleur: motif,
+          minLignes: 2,
           onChanged: onMotifChange,
-          decoration: InputDecoration(
-            labelText: t.admin.diagnostics.champMotif,
-          ),
+          libelle: t.admin.diagnostics.champMotif,
         ),
         if (erreur != null) ...<Widget>[
           Ecart.vMd,

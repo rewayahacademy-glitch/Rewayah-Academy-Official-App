@@ -16,6 +16,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/zone_saisie.dart';
 
 /// `ADM-13` : Pedagogie > Programmes.
 ///
@@ -81,8 +82,7 @@ class _ProgrammesPageEtat extends ConsumerState<ProgrammesPage> {
                   : Expanded(
                       child: _Corps(
                         versions: versions.requireValue,
-                        versionId:
-                            _versionId ?? versions.requireValue.first.id,
+                        versionId: _versionId ?? versions.requireValue.first.id,
                         onSelectionner: (String id) =>
                             setState(() => _versionId = id),
                         onCreerDepuis: (VersionProgramme source) =>
@@ -94,21 +94,25 @@ class _ProgrammesPageEtat extends ConsumerState<ProgrammesPage> {
                         onAjouterNiveau: (VersionProgramme version) =>
                             _ouvrirAjoutNiveau(context, ref, version),
                         onModifierNiveau:
-                            (VersionProgramme version, NiveauProgramme niveau) =>
-                                _ouvrirModifierNiveau(
-                                  context,
-                                  ref,
-                                  version,
-                                  niveau,
-                                ),
+                            (
+                              VersionProgramme version,
+                              NiveauProgramme niveau,
+                            ) => _ouvrirModifierNiveau(
+                              context,
+                              ref,
+                              version,
+                              niveau,
+                            ),
                         onSupprimerNiveau:
-                            (VersionProgramme version, NiveauProgramme niveau) =>
-                                _ouvrirSupprimerNiveau(
-                                  context,
-                                  ref,
-                                  version,
-                                  niveau,
-                                ),
+                            (
+                              VersionProgramme version,
+                              NiveauProgramme niveau,
+                            ) => _ouvrirSupprimerNiveau(
+                              context,
+                              ref,
+                              version,
+                              niveau,
+                            ),
                         onPublier: (VersionProgramme version) =>
                             _ouvrirPublication(context, ref, version),
                       ),
@@ -181,7 +185,10 @@ class _Corps extends StatelessWidget {
         Row(
           children: <Widget>[
             Expanded(
-              child: Text(t.admin.programmes.niveauxTitre, style: textes.titleMedium),
+              child: Text(
+                t.admin.programmes.niveauxTitre,
+                style: textes.titleMedium,
+              ),
             ),
             StatusPill(
               libelle: _libelleStatut(selectionnee.statut),
@@ -277,9 +284,14 @@ class _Niveaux extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Text(n.nomHumain, style: Theme.of(context).textTheme.titleSmall),
                         Text(
-                          t.admin.programmes.codeTechnique(code: n.codeTechnique),
+                          n.nomHumain,
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                        Text(
+                          t.admin.programmes.codeTechnique(
+                            code: n.codeTechnique,
+                          ),
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
@@ -361,7 +373,9 @@ void _ouvrirCreationVersion(
         ? t.admin.programmes.creerVersionVide
         : t.admin.programmes.creerVersionDepuisPubliee,
     constructeur: (BuildContext contexte) => _FeuilleAction(
-      detail: source == null ? null : t.admin.programmes.versionNumero(numero: '${source.numeroVersion}'),
+      detail: source == null
+          ? null
+          : t.admin.programmes.versionNumero(numero: '${source.numeroVersion}'),
       libelleEnvoyer: t.admin.programmes.enregistrerVersion,
       onEnvoyer: () => ref
           .read(serviceProgrammeProvider)
@@ -380,7 +394,9 @@ void _ouvrirAjoutNiveau(
   AppBottomSheet.ouvrir<void>(
     context,
     titre: t.admin.programmes.ajouterNiveauTitre(
-      version: t.admin.programmes.versionNumero(numero: '${version.numeroVersion}'),
+      version: t.admin.programmes.versionNumero(
+        numero: '${version.numeroVersion}',
+      ),
     ),
     constructeur: (BuildContext contexte) => _FeuilleNiveau(
       libelleEnvoyer: t.admin.programmes.ajouterNiveauEnvoyer,
@@ -480,7 +496,9 @@ void _ouvrirPublication(
   AppBottomSheet.ouvrir<void>(
     context,
     titre: t.admin.programmes.publierVersionTitre(
-      version: t.admin.programmes.versionNumero(numero: '${version.numeroVersion}'),
+      version: t.admin.programmes.versionNumero(
+        numero: '${version.numeroVersion}',
+      ),
     ),
     constructeur: (BuildContext contexte) => _FeuilleMotif(
       libelleEnvoyer: t.admin.programmes.publierVersionEnvoyer,
@@ -581,9 +599,7 @@ class _FeuilleNiveauEtat extends State<_FeuilleNiveau> {
       widget.onSucces();
       if (mounted) Navigator.of(context).pop();
     } catch (erreur) {
-      setState(
-        () => _erreur = widget.messageErreur(message: _message(erreur)),
-      );
+      setState(() => _erreur = widget.messageErreur(message: _message(erreur)));
     } finally {
       if (mounted) setState(() => _envoi = false);
     }
@@ -607,7 +623,9 @@ class _FeuilleNiveauEtat extends State<_FeuilleNiveau> {
         TextField(
           controller: _nomHumain,
           onChanged: (String _) => setState(() {}),
-          decoration: InputDecoration(labelText: t.admin.programmes.champNomHumain),
+          decoration: InputDecoration(
+            labelText: t.admin.programmes.champNomHumain,
+          ),
         ),
         Ecart.vMd,
         TextField(
@@ -623,14 +641,17 @@ class _FeuilleNiveauEtat extends State<_FeuilleNiveau> {
           decoration: InputDecoration(labelText: t.admin.programmes.champOrdre),
         ),
         Ecart.vMd,
-        TextField(
-          controller: _description,
-          maxLines: 2,
-          decoration: InputDecoration(labelText: t.admin.programmes.champDescription),
+        ZoneSaisie(
+          controleur: _description,
+          minLignes: 2,
+          libelle: t.admin.programmes.champDescription,
         ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,
-          Text(_erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          Text(
+            _erreur!,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
         ],
         Ecart.vLg,
         ActionPrincipale(
@@ -687,9 +708,7 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
       widget.onSucces();
       if (mounted) Navigator.of(context).pop();
     } catch (erreur) {
-      setState(
-        () => _erreur = widget.messageErreur(message: _message(erreur)),
-      );
+      setState(() => _erreur = widget.messageErreur(message: _message(erreur)));
     } finally {
       if (mounted) setState(() => _envoi = false);
     }
@@ -704,17 +723,23 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
           Text(widget.detail!, style: Theme.of(context).textTheme.bodyMedium),
           Ecart.vMd,
         ],
-        Text(t.admin.programmes.motifRequis, style: Theme.of(context).textTheme.bodySmall),
+        Text(
+          t.admin.programmes.motifRequis,
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
         Ecart.vSm,
-        TextField(
-          controller: _motif,
-          maxLines: 2,
-          decoration: InputDecoration(labelText: t.admin.programmes.champMotif),
+        ZoneSaisie(
+          controleur: _motif,
+          minLignes: 2,
+          libelle: t.admin.programmes.champMotif,
           onChanged: (String _) => setState(() {}),
         ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,
-          Text(_erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          Text(
+            _erreur!,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
         ],
         Ecart.vLg,
         ActionPrincipale(
@@ -761,9 +786,7 @@ class _FeuilleActionEtat extends State<_FeuilleAction> {
       widget.onSucces();
       if (mounted) Navigator.of(context).pop();
     } catch (erreur) {
-      setState(
-        () => _erreur = widget.messageErreur(message: _message(erreur)),
-      );
+      setState(() => _erreur = widget.messageErreur(message: _message(erreur)));
     } finally {
       if (mounted) setState(() => _envoi = false);
     }
@@ -779,7 +802,10 @@ class _FeuilleActionEtat extends State<_FeuilleAction> {
           Ecart.vLg,
         ],
         if (_erreur != null) ...<Widget>[
-          Text(_erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          Text(
+            _erreur!,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
           Ecart.vMd,
         ],
         ActionPrincipale(
