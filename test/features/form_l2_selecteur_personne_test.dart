@@ -268,6 +268,18 @@ void main() {
         expect(find.text(t.admin.groupes.manqueEleve), findsOneWidget);
 
         await _presser(tester, _carte('e-ines'));
+        // Eleve choisi, sans motif : le manque se dit sous les puces (le
+        // selecteur recoit `erreur`), rien ne part.
+        await _presser(tester, find.text(t.admin.groupes.ajouterEnvoyer));
+        expect(find.text(t.admin.groupes.manqueEleve), findsNothing);
+        expect(
+          find.descendant(
+            of: find.byType(SelecteurMotif),
+            matching: find.text(t.formulaire.motif.manque),
+          ),
+          findsOneWidget,
+        );
+        expect(groupes.ajouts, isEmpty);
         // FORM-L1 : le motif libre s'ecrit apres « Autre ».
         await _presser(tester, find.byKey(SelecteurMotif.cleAutre));
         await tester.enterText(

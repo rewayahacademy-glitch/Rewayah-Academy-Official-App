@@ -48,6 +48,10 @@ class _DemandesPageEtat extends ConsumerState<DemandesPage> {
   bool _envoi = false;
   String? _erreur;
 
+  /// Vrai quand le motif du refus manque : il se dit sous les puces (drapeau,
+  /// jamais une comparaison de textes).
+  bool _motifManquant = false;
+
   @override
   void dispose() {
     _motif.dispose();
@@ -58,12 +62,14 @@ class _DemandesPageEtat extends ConsumerState<DemandesPage> {
     _motif.clear();
     _refusEnCours = false;
     _erreur = null;
+    _motifManquant = false;
   });
 
   Future<void> _decider(Demande demande, {required bool accepte}) async {
     setState(() {
       _envoi = true;
       _erreur = null;
+      _motifManquant = false;
     });
     try {
       await ref
@@ -121,15 +127,22 @@ class _DemandesPageEtat extends ConsumerState<DemandesPage> {
                   refusEnCours: _refusEnCours,
                   envoi: _envoi,
                   erreur: _erreur,
+                  motifManquant: _motifManquant,
                   onOuvrirRefus: () => setState(() => _refusEnCours = true),
-                  onMotifChange: (String _) => setState(() => _erreur = null),
+                  onMotifChange: (String _) => setState(() {
+                    _erreur = null;
+                    _motifManquant = false;
+                  }),
                   onAccorder: () => unawaited(
                     _decider(file.requireValue.first, accepte: true),
                   ),
                   // Bouton jamais grise (K-56) : sans motif, il dit ce qui
                   // manque au lieu de partir.
                   onRefuser: () => _motif.text.trim().isEmpty
-                      ? setState(() => _erreur = t.formulaire.motif.manque)
+                      ? setState(() {
+                          _erreur = null;
+                          _motifManquant = true;
+                        })
                       : unawaited(
                           _decider(file.requireValue.first, accepte: false),
                         ),
@@ -155,6 +168,7 @@ class _Demande extends StatelessWidget {
     required this.refusEnCours,
     required this.envoi,
     required this.erreur,
+    required this.motifManquant,
     required this.onOuvrirRefus,
     required this.onAccorder,
     required this.onRefuser,
@@ -167,6 +181,9 @@ class _Demande extends StatelessWidget {
   final bool refusEnCours;
   final bool envoi;
   final String? erreur;
+
+  /// Vrai quand le motif du refus manque : il se dit sous les puces.
+  final bool motifManquant;
   final VoidCallback onOuvrirRefus;
   final VoidCallback onAccorder;
   final VoidCallback onRefuser;
@@ -176,8 +193,6 @@ class _Demande extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    // Le motif manquant se dit sous les puces, pas sous les boutons.
-    final bool motifManquant = erreur == t.formulaire.motif.manque;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -237,7 +252,8 @@ class _Demande extends StatelessWidget {
             motifs: MotifsProposes.refusDemande(),
             controleur: motif,
             libelleChamp: t.admin.demandes.motif,
-            erreur: motifManquant ? erreur : null,
+            // Le motif manquant se dit sous les puces, pas sous les boutons.
+            erreur: motifManquant ? t.formulaire.motif.manque : null,
             onChange: onMotifChange,
           ),
           Ecart.vMd,
@@ -260,7 +276,7 @@ class _Demande extends StatelessWidget {
             niveau: NiveauAction.secondaire,
           ),
         ],
-        if (erreur != null && !motifManquant) ...<Widget>[
+        if (erreur != null) ...<Widget>[
           Ecart.vMd,
           Text(
             erreur!,

@@ -43,6 +43,10 @@ class _DiagnosticsPageEtat extends ConsumerState<DiagnosticsPage> {
   bool _envoi = false;
   String? _erreur;
 
+  /// Vrai quand le motif manque : il se dit sous les puces (drapeau, jamais
+  /// une comparaison de textes).
+  bool _motifManquant = false;
+
   @override
   void dispose() {
     _motif.dispose();
@@ -53,22 +57,30 @@ class _DiagnosticsPageEtat extends ConsumerState<DiagnosticsPage> {
     _niveauId = null;
     _motif.clear();
     _erreur = null;
+    _motifManquant = false;
   });
 
   Future<void> _decider(String studentId) async {
     final String? niveauId = _niveauId;
     // Bouton jamais grise (K-56) : presse trop tot, il dit ce qui manque.
     if (niveauId == null) {
-      setState(() => _erreur = t.admin.diagnostics.manqueNiveau);
+      setState(() {
+        _erreur = t.admin.diagnostics.manqueNiveau;
+        _motifManquant = false;
+      });
       return;
     }
     if (_motif.text.trim().isEmpty) {
-      setState(() => _erreur = t.formulaire.motif.manque);
+      setState(() {
+        _erreur = null;
+        _motifManquant = true;
+      });
       return;
     }
     setState(() {
       _envoi = true;
       _erreur = null;
+      _motifManquant = false;
     });
     try {
       await ref
@@ -117,11 +129,15 @@ class _DiagnosticsPageEtat extends ConsumerState<DiagnosticsPage> {
                   motif: _motif,
                   envoi: _envoi,
                   erreur: _erreur,
+                  motifManquant: _motifManquant,
                   onNiveau: (String id) => setState(() {
                     _niveauId = id;
                     _erreur = null;
                   }),
-                  onMotifChange: (String _) => setState(() => _erreur = null),
+                  onMotifChange: (String _) => setState(() {
+                    _erreur = null;
+                    _motifManquant = false;
+                  }),
                   onDecider: (String studentId) =>
                       unawaited(_decider(studentId)),
                 ),
@@ -144,6 +160,7 @@ class _Corps extends ConsumerWidget {
     required this.motif,
     required this.envoi,
     required this.erreur,
+    required this.motifManquant,
     required this.onNiveau,
     required this.onMotifChange,
     required this.onDecider,
@@ -154,6 +171,9 @@ class _Corps extends ConsumerWidget {
   final TextEditingController motif;
   final bool envoi;
   final String? erreur;
+
+  /// Vrai quand le motif manque : il se dit sous les puces.
+  final bool motifManquant;
   final void Function(String niveauId) onNiveau;
   final void Function(String motif) onMotifChange;
   final void Function(String studentId) onDecider;
@@ -186,6 +206,7 @@ class _Corps extends ConsumerWidget {
                 motif: motif,
                 envoi: envoi,
                 erreur: erreur,
+                motifManquant: motifManquant,
                 onNiveau: onNiveau,
                 onMotifChange: onMotifChange,
                 onDecider: () => onDecider(file.requireValue.first.studentId),
@@ -210,6 +231,7 @@ class _Decision extends StatelessWidget {
     required this.motif,
     required this.envoi,
     required this.erreur,
+    required this.motifManquant,
     required this.onNiveau,
     required this.onMotifChange,
     required this.onDecider,
@@ -222,6 +244,9 @@ class _Decision extends StatelessWidget {
   final TextEditingController motif;
   final bool envoi;
   final String? erreur;
+
+  /// Vrai quand le motif manque : il se dit sous les puces.
+  final bool motifManquant;
   final void Function(String niveauId) onNiveau;
   final void Function(String motif) onMotifChange;
   final VoidCallback onDecider;
@@ -246,16 +271,11 @@ class _Decision extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(eleve.libelle, style: textes.titleLarge),
-              Text(
-                switch (jours) {
-                  <= 0 => t.admin.diagnostics.inscritAujourdhui,
-                  1 => t.admin.diagnostics.inscritDepuisUnJour,
-                  final int j => t.admin.diagnostics.inscritDepuis(
-                    jours: '$j',
-                  ),
-                },
-                style: textes.bodySmall,
-              ),
+              Text(switch (jours) {
+                <= 0 => t.admin.diagnostics.inscritAujourdhui,
+                1 => t.admin.diagnostics.inscritDepuisUnJour,
+                final int j => t.admin.diagnostics.inscritDepuis(jours: '$j'),
+              }, style: textes.bodySmall),
             ],
           ),
         ),
@@ -284,12 +304,15 @@ class _Decision extends StatelessWidget {
           controleur: motif,
           libelleChamp: t.admin.diagnostics.champMotif,
           // Le motif manquant se dit sous les puces.
-          erreur: erreur == t.formulaire.motif.manque ? erreur : null,
+          erreur: motifManquant ? t.formulaire.motif.manque : null,
           onChange: onMotifChange,
         ),
-        if (erreur != null && erreur != t.formulaire.motif.manque) ...<Widget>[
+        if (erreur != null) ...<Widget>[
           Ecart.vMd,
-          Text(erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          Text(
+            erreur!,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
         ],
         Ecart.vLg,
         ActionPrincipale(

@@ -648,28 +648,31 @@ class _FeuilleAjoutEtat extends State<_FeuilleAjout> {
   bool _envoi = false;
   String? _erreur;
 
+  /// Vrai quand le motif manque : il se dit sous les puces.
+  bool _motifManquant = false;
+
   @override
   void dispose() {
     _motif.dispose();
     super.dispose();
   }
 
-  /// Ce qui manque encore, nul quand tout est la (bouton jamais grise, K-56).
-  String? get _manque => _eleveId == null
-      ? t.admin.groupes.manqueEleve
-      : _motif.text.trim().isEmpty
-      ? t.formulaire.motif.manque
-      : null;
-
   Future<void> _ajouter(WidgetRef ref) async {
     final String? eleveId = _eleveId;
-    if (_manque != null || eleveId == null) {
-      setState(() => _erreur = _manque);
+    final bool sansMotif = _motif.text.trim().isEmpty;
+    // Bouton jamais grise (K-56) : il dit ce qui manque, chaque chose a sa
+    // place (l'eleve sous la liste, le motif sous les puces).
+    if (eleveId == null || sansMotif) {
+      setState(() {
+        _erreur = eleveId == null ? t.admin.groupes.manqueEleve : null;
+        _motifManquant = sansMotif;
+      });
       return;
     }
     setState(() {
       _envoi = true;
       _erreur = null;
+      _motifManquant = false;
     });
     try {
       await ref
@@ -717,7 +720,8 @@ class _FeuilleAjoutEtat extends State<_FeuilleAjout> {
             motifs: MotifsProposes.ajoutEleve(),
             controleur: _motif,
             libelleChamp: t.admin.groupes.champMotif,
-            onChange: (String _) => setState(() => _erreur = null),
+            erreur: _motifManquant ? t.formulaire.motif.manque : null,
+            onChange: (String _) => setState(() => _motifManquant = false),
           ),
           if (_erreur != null) ...<Widget>[
             Ecart.vMd,
