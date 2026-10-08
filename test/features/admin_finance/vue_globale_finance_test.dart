@@ -829,15 +829,17 @@ void main() {
       // Le classement dans l'ordre rendu : Al-Huda premier.
       final Finder huda = dans(
         VueGlobaleFinanceContenu.topClassesKey,
-        find.text(vue.topClasse(rang: '1', classe: 'Al-Huda')),
+        find.text(vue.topClasse(rang: '1', classe: nomSansCoupure('Al-Huda'))),
       );
       final Finder nour = dans(
         VueGlobaleFinanceContenu.topClassesKey,
-        find.text(vue.topClasse(rang: '2', classe: 'An-Nour')),
+        find.text(vue.topClasse(rang: '2', classe: nomSansCoupure('An-Nour'))),
       );
       expect(huda, findsOneWidget);
       expect(nour, findsOneWidget);
       expect(tester.getTopLeft(huda).dy, lessThan(tester.getTopLeft(nour).dy));
+      // « As-Salam » ne se coupe jamais au trait d union (320, texte x2).
+      expect(nomSansCoupure('As-Salam'), isNot(contains('-')));
       expect(
         dans(
           VueGlobaleFinanceContenu.topClassesKey,

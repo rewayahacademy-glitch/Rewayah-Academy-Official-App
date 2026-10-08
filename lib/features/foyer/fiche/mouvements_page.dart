@@ -123,10 +123,22 @@ AppIcon iconeMouvement(NatureMouvement nature) => switch (nature) {
 String _deuxChiffres(int n) => n.toString().padLeft(2, '0');
 
 /// La date d'un mouvement avec son heure locale : « 1er octobre 2026 à
-/// 09:30 » (guide §5.2, revue 5 b). Jamais le jour seul : deux recharges du
-/// meme jour se distinguent.
+/// 09:30 » (guide §5.2, revue 5 b) : deux recharges du meme jour se
+/// distinguent.
+///
+/// Sauf quand l'heure n'est pas reelle (contre-revue FI-DIR-1) : un
+/// horodatage a minuit pile, a la milliseconde pres, est la date d'une
+/// periode (le debit d'un mois date de son premier jour), pas une heure
+/// lue ; « à 00:00 » serait une heure inventee. Seule la date s'affiche.
 String dateHeureMouvement(DateTime date) {
   final DateTime locale = date.toLocal();
+  if (locale.hour == 0 &&
+      locale.minute == 0 &&
+      locale.second == 0 &&
+      locale.millisecond == 0 &&
+      locale.microsecond == 0) {
+    return dateEcheance(locale);
+  }
   return t.ficheEleve.mouvements.dateHeure(
     date: dateEcheance(locale),
     heure: t.ficheEleve.mouvements.heureChiffres(

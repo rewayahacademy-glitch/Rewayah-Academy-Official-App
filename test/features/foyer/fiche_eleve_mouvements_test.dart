@@ -613,9 +613,24 @@ void main() {
       for (final (int i, MouvementProfil m) in attendus.indexed) {
         expect(lignes[i].icone, iconeMouvement(m.nature));
         expect(lignes[i].date, dateHeureMouvement(m.date));
-        expect(lignes[i].date, isNot(dateEcheance(m.date)));
+        // L'heure s'affiche quand elle est reelle ; minuit pile est la date
+        // d'une periode, sans heure (contre-revue FI-DIR-1).
+        final bool minuit = m.date.hour == 0 && m.date.minute == 0;
+        expect(
+          lignes[i].date,
+          minuit ? dateEcheance(m.date) : isNot(dateEcheance(m.date)),
+        );
         expect(find.text(lignes[i].date), findsWidgets);
       }
+      // Minuit pile : la date seule, jamais « à 00:00 ».
+      final DateTime periode = DateTime(2026, 10);
+      expect(dateHeureMouvement(periode), dateEcheance(periode));
+      expect(dateHeureMouvement(periode), isNot(contains('00:00')));
+      // Une minute apres minuit est une heure reelle.
+      expect(
+        dateHeureMouvement(DateTime(2026, 10, 1, 0, 1)),
+        contains('00:01'),
+      );
       expect(iconeMouvement(NatureMouvement.recharge), AppIcons.ajouter);
       // L'heure locale, au format de la langue : « 1er octobre 2026 à 09:30 ».
       final DateTime d = DateTime(2026, 10, 1, 9, 30);

@@ -893,6 +893,12 @@ class _EtatPaiements extends StatelessWidget {
 
 /// « Top classes » (maquette 09, revue 12 h) : les classes dans l'ordre
 /// rendu, le rang est la position ; chaque encaisse est celui de la source.
+/// Un nom compose (« As-Salam ») garde ses mots ensemble : le trait d'union
+/// insecable (U+2011) remplace le trait d'union, qui laisserait la ligne se
+/// couper en « As- / Salam » a 320 px et texte x2 (contre-revue FI-DIR-1 ;
+/// meme ecriture que l'espace d'un groupe, `espace_groupe_page.dart`).
+String nomSansCoupure(String nom) => nom.replaceAll('-', '\u2011');
+
 class _TopClasses extends StatelessWidget {
   const _TopClasses({required this.classes, required this.mois});
 
@@ -921,7 +927,7 @@ class _TopClasses extends StatelessWidget {
               LigneFinance(
                 libelle: vueT.topClasse(
                   rang: '${i + 1}',
-                  classe: classes[i].classe,
+                  classe: nomSansCoupure(classes[i].classe),
                 ),
                 montant: classes[i].encaisse,
               ),

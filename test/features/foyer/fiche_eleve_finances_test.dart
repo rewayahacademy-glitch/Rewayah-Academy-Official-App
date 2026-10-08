@@ -17,6 +17,7 @@ import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_politiques_commerciales.dart';
 import 'package:rewayah_academy/core/capacites/port_recharge_foyer.dart';
+import 'package:rewayah_academy/core/capacites/port_recus.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
@@ -175,6 +176,7 @@ Future<GoRouter> _monter(
   WidgetTester tester, {
   JeuFoyerFinance jeu = JeuFoyerFinance.unARegulariser,
   PortPaiementsFoyer? port,
+  PortRecus? recus,
   bool avecFinances = true,
   bool horsLigne = false,
   String? depart,
@@ -195,6 +197,7 @@ Future<GoRouter> _monter(
           appairage: _foyer(DonneesFinanceDemo.profils(jeu)),
         ),
         horlogeFoyerProvider.overrideWithValue(() => _maintenant),
+        if (recus != null) portRecusProvider.overrideWithValue(recus),
         if (horsLigne)
           horsLigneProvider.overrideWith((Ref ref) => Stream<bool>.value(true)),
         if (avecFinances) ...<Override>[
@@ -880,6 +883,40 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('FI-Q7 : un echec du reçu (hors capacite absente) dit '
+        '« réessayez », le bouton reste', (WidgetTester tester) async {
+      final _RecusEnEchec recus = _RecusEnEchec();
+      await _monter(tester, depart: _chemin(_mariam), recus: recus);
+      final Finder recu = find.byKey(FinancesElevePage.recuKey);
+      await _toucher(tester, recu);
+      expect(recus.demandes, <String>[_mariam]);
+      final Finder etat = find.byKey(FinancesElevePage.recuEtatKey);
+      expect(etat, findsOneWidget);
+      final finances = t.ficheEleve.finances;
+      for (final String texte in <String>[
+        finances.recuEchecTitre,
+        finances.recuEchecPhrase,
+      ]) {
+        expect(
+          find.descendant(of: etat, matching: find.text(texte)),
+          findsOneWidget,
+          reason: texte,
+        );
+      }
+      expect(
+        find.descendant(
+          of: etat,
+          matching: find.text(finances.recuIndisponibleTitre),
+        ),
+        findsNothing,
+      );
+      // Le bouton reste : un nouvel appui relance la demande.
+      expect(recu, findsOneWidget);
+      await _toucher(tester, recu);
+      expect(recus.demandes, <String>[_mariam, _mariam]);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('FI-Q7 : 1440, le reçu sous « Recharger », dans la colonne '
         'de la vue financiere', (WidgetTester tester) async {
       await _monter(
@@ -1105,4 +1142,16 @@ void main() {
       }
     }
   });
+}
+
+/// Un port de recus qui echoue (reseau, serveur), jamais par capacite
+/// absente : le chemin « échec » du bouton (contre-revue FI-DIR-1).
+class _RecusEnEchec implements PortRecus {
+  final List<String> demandes = <String>[];
+
+  @override
+  Future<void> telechargerDernierRecu(String profilId) async {
+    demandes.add(profilId);
+    throw StateError('reseau');
+  }
 }

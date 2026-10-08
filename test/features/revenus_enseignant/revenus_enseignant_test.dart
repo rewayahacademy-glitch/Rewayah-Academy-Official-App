@@ -542,6 +542,8 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(t.enseignant.revenus.estimation), findsOneWidget);
+      expect(find.text(t.enseignant.revenus.intro), findsOneWidget);
+      expect(find.text(t.enseignant.revenus.introSansChoix), findsNothing);
       await tester.tap(selecteur);
       await tester.pumpAndSettle();
       expect(find.text('septembre 2026'), findsOneWidget);
@@ -564,6 +566,10 @@ void main() {
       await monterPage(tester, const RevenusEnseignantIndisponibles());
       await _attendre(tester);
       expect(find.byKey(RevenusEnseignantPage.selecteurMoisKey), findsNothing);
+      // Sans choix, l'intro ne parle pas d'un « mois choisi » (contre-revue
+      // FI-DIR-1).
+      expect(find.text(t.enseignant.revenus.introSansChoix), findsOneWidget);
+      expect(find.text(t.enseignant.revenus.intro), findsNothing);
     });
 
     testWidgets('chargement : le squelette, aucun chiffre', (

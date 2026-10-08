@@ -141,7 +141,13 @@ class RevenusEnseignantPage extends ConsumerWidget {
         ref.watch(moisRevenusDisponiblesProvider).value ?? const <DateTime>[];
     return PageShell(
       titre: t.enseignant.revenus.titre,
-      entete: Text(t.enseignant.revenus.intro),
+      // « du mois choisi » seulement quand un choix existe : sans mois rendus
+      // (production), l'estimation est celle du mois en cours.
+      entete: Text(
+        mois.isEmpty
+            ? t.enseignant.revenus.introSansChoix
+            : t.enseignant.revenus.intro,
+      ),
       onRetour: onRetour ?? () => _retour(context),
       child: echecHorsLigne
           ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire)
