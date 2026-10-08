@@ -164,7 +164,7 @@ void main() {
       expect(
         find.text(
           t.classe.sousTitre(
-            prenom: 'Eleve A1',
+            prenom: 'Élève A1',
             enseignant: '${t.tc.groupe.enseignant.sayyid} Enseignant X',
           ),
         ),
@@ -495,7 +495,7 @@ void main() {
       );
       expect(
         find.text(
-          t.classe.observation.motif.presenceEnVerification(prenom: 'Eleve A1'),
+          t.classe.observation.motif.presenceEnVerification(prenom: 'Élève A1'),
         ),
         findsOneWidget,
       );
@@ -509,9 +509,7 @@ void main() {
         tester,
         depart: Routes.classePour(_classe, eleveId: _a1),
         seances: <SeanceFamille>[
-          seanceSalleOuverte(
-            avant: const Duration(hours: 3, minutes: 28, seconds: 30),
-          ),
+          seanceSalleOuverte(avant: const Duration(hours: 3, minutes: 28)),
         ],
         observation: true,
       );
@@ -714,7 +712,7 @@ void main() {
         depart: '${Routes.classeSousPage(_classe, 'progression')}?eleve=$_a1',
       );
       expect(
-        find.text(t.classe.pageProgression.indisponible(prenom: 'Eleve A1')),
+        find.text(t.classe.pageProgression.indisponible(prenom: 'Élève A1')),
         findsOneWidget,
       );
     });
@@ -784,7 +782,7 @@ void main() {
         'retrouve', (WidgetTester tester) async {
       await _monter(tester, depart: Routes.classeSousPage(_classe, 'planning'));
       expect(
-        find.text(LibellesGroupe.joindre('Classe fictive A', 'Eleve A1')),
+        find.text(LibellesGroupe.joindre('Classe fictive A', 'Élève A1')),
         findsOneWidget,
       );
     });
@@ -816,7 +814,7 @@ void main() {
 
     test('chaque motif a sa phrase, aucun code', () {
       for (final MotifIndisponibilite motif in MotifIndisponibilite.values) {
-        final String texte = texteMotif(motif, prenom: 'Eleve A1');
+        final String texte = texteMotif(motif, prenom: 'Élève A1');
         expect(texte, isNotEmpty, reason: motif.name);
         expect(texte.contains('_'), isFalse, reason: motif.name);
       }

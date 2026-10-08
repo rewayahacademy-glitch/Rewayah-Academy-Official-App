@@ -32,6 +32,8 @@ import '../../../core/communications/modeles_communication.dart';
 import '../../../core/communications/moderation.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/router/routes.dart';
+import '../../../core/tc_groupe/group_summary_vm.dart';
+import '../../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/admin_shell.dart';
@@ -93,6 +95,23 @@ abstract final class ClassesDemoAnnonces {
   /// La Classe Al-Fajr (eleve adulte).
   static const String fajr = 'demo-classe-fajr';
 
+  /// L'enseignante de la Classe An-Nour, la meme partout ou la
+  /// demonstration de la Classe la montre : page et carte de la Classe,
+  /// annonce (« Sayyida Mariam », COM-RC tour 7, lot L).
+  /// Son prenom s'ecrit dans l'alphabet de la langue courante (« مريم » en
+  /// arabe, comme le message vocal de demonstration).
+  static EnseignantVM get enseignanteNour => EnseignantVM(
+    enseignantId: 'demo-enseignante',
+    titre: TitreEnseignant.sayyida,
+    nomAffichage: LocaleSettings.currentLocale == AppLocale.ar
+        ? 'مريم'
+        : 'Mariam',
+  );
+
+  /// « Sayyida Mariam » dans la langue courante.
+  static String get enseignanteNourNommee =>
+      LibellesGroupe.enseignantNomme(enseignanteNour);
+
   /// Le libelle d'une Classe de demonstration, ou `null`.
   static String? libelle(String id) => switch (id) {
     nour => t.com.annonces.demo.classeNour,
@@ -107,11 +126,19 @@ Map<String, List<AnnonceClasse>> annoncesDemo(
   DateTime maintenant,
 ) {
   final f = t.com.annonces.demo.f;
-  final Participant enseignante = Participant(
-    id: 'demo-enseignante',
-    nomAffiche: t.com.annonces.demo.enseignante,
-    fonction: t.com.annonces.demo.enseignante,
-  );
+  // L'annonce de la Classe An-Nour est signee du nom de son enseignante,
+  // celui que la page de la Classe affiche ; une autre Classe garde la
+  // fonction seule.
+  Participant auteurDe(String classeId) => classeId == ClassesDemoAnnonces.nour
+      ? Participant(
+          id: ClassesDemoAnnonces.enseignanteNour.enseignantId,
+          nomAffiche: ClassesDemoAnnonces.enseignanteNourNommee,
+        )
+      : Participant(
+          id: 'demo-enseignante-fajr',
+          nomAffiche: t.com.annonces.demo.enseignante,
+          fonction: t.com.annonces.demo.enseignante,
+        );
   AnnonceClasse annonce({
     required String id,
     required String classeId,
@@ -123,7 +150,7 @@ Map<String, List<AnnonceClasse>> annoncesDemo(
     titre: titre,
     texte: texte,
     publieeLe: maintenant.subtract(il),
-    auteur: enseignante,
+    auteur: auteurDe(classeId),
     classe: ObjetLie(
       type: TypeObjetLie.classe,
       id: classeId,

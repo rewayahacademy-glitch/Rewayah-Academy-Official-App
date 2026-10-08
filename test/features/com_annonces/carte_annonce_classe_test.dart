@@ -66,7 +66,8 @@ void main() {
       await _poser(tester, CarteAnnonceClasse(annonce: annonceDeTest()));
       expect(find.byType(CarteGroupee), findsOneWidget);
       expect(
-        find.text('${t.com.annonces.annonce} · Classe An-Nour'),
+        // « An-Nour » insecable au trait d'union (lot L).
+        find.text('${t.com.annonces.annonce} · Classe An-\u2060Nour'),
         findsOneWidget,
       );
       expect(find.text(t.com.socle.composants.badge.aLire), findsOneWidget);

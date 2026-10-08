@@ -31,7 +31,8 @@ void main() {
       expect(dateMoyenne(_le), 'dimanche 4 oct. 2026');
       expect(dateDeLAppareil(_le), 'Dimanche 4 octobre');
       expect(momentCourt(_le, _maintenant), '4 octobre');
-      expect(horodatageMessage(_le), 'Dimanche 4 octobre, 09:05');
+      // Le jour lie a son mois par une espace insecable (lot L).
+      expect(horodatageMessage(_le), 'Dimanche 4\u00A0octobre, 09:05');
     });
 
     test('arabe : mois et jours arabes, aucun mot francais', () async {
@@ -43,7 +44,7 @@ void main() {
       expect(dateDeLAppareil(_le), 'الأحد 4 أكتوبر');
       expect(momentCourt(_le, _maintenant), isNot(contains('oct')));
       final String horodatage = horodatageMessage(_le);
-      expect(horodatage, 'الأحد 4 أكتوبر · 09:05');
+      expect(horodatage, 'الأحد 4\u00A0أكتوبر · 09:05');
       for (final String texte in <String>[
         dateCourte(_le),
         dateCompacte(_le, _maintenant),

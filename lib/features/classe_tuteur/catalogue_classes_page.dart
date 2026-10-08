@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/appairage/service_appairage.dart' show elevesDuFoyerProvider;
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_catalogue_classes.dart';
@@ -406,7 +407,7 @@ class CarteClasseOuverte extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text(
-                  classe.libelle,
+                  traitsDUnionInsecables(classe.libelle),
                   style: palette.inkStrong.applyTo(
                     (large ? textes.titleLarge : textes.titleMedium) ??
                         const TextStyle(),
@@ -667,7 +668,7 @@ class _Resultat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final r = t.classe.pageCatalogue.resultat;
-    final String nom = classe.libelle;
+    final String nom = traitsDUnionInsecables(classe.libelle);
     return switch (resultat.statut) {
       StatutInscription.inscrit => EcranResultat(
         icone: AppIcons.succes,

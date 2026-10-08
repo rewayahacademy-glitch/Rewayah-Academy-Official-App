@@ -39,17 +39,18 @@ import '../../fixtures/tuteur/foyers.dart';
 import '../../router/support_routeur.dart' hide stabiliser;
 import '../../support/harnais.dart';
 
-/// Le premier profil retenu : « Eleve A1 » (tri par prenom, contrat K1).
+/// Le premier profil retenu : « Élève A1 » (tri par prenom, contrat K1).
 const String eleveA1 = 'foyer-a-eleve-1';
 
 /// La classe fictive du foyer A.
 const String classeA = 'classe-a';
 
 /// Une seance a venir, salle ouverte (fenetre fictive de 20 min), dans 10 min
-/// et 30 s par defaut.
+/// par defaut (le compte a rebours arrondit au superieur : les millisecondes
+/// du test ne le font pas changer).
 SeanceFamille seanceSalleOuverte({
   StatutSeance? statut = StatutSeance.planifiee,
-  Duration avant = const Duration(minutes: 10, seconds: 30),
+  Duration avant = const Duration(minutes: 10),
   String seanceId = 's1',
   bool avecHorloge = true,
   String heure = '18:10',
@@ -74,11 +75,11 @@ SeanceFamille seanceEnDirect({Duration duree = const Duration(minutes: 45)}) =>
       heureFoyer: heureRendue('Europe/Paris', 'Paris', '17:50'),
     );
 
-/// La presence d'Eleve A1 : en salle.
+/// La presence d'Élève A1 : en salle.
 const PresenceParticipant presenceA1 = PresenceParticipant(
   profilId: eleveA1,
   role: 'student',
-  prenom: 'Eleve A1',
+  prenom: 'Élève A1',
   identifiantImmuable: 'STUD-FA-000001',
   etat: EtatPresence.presente,
   consolide: false,
@@ -406,7 +407,9 @@ class FauxCatalogueClasses implements PortCatalogueClasses {
 /// Les surcharges d'un montage du vrai routeur pour la Classe : tuteur actif,
 /// foyer fictif A (un appareil pret pour A1), seances, classe fictive A,
 /// observation (interrupteur, politique, budget, presence), travail,
-/// bibliotheque et progression.
+/// bibliotheque et progression. [maintenantServeur] remplace l'instant
+/// serveur fige ; [eleves] remplace le foyer fictif A (un jeu de
+/// demonstration coherent avec les Communications, par exemple).
 List<Override> surchargesClasse({
   List<SeanceFamille>? seances,
   PortClassesFoyer? portClasses,
@@ -421,9 +424,16 @@ List<Override> surchargesClasse({
   bool seancesIndisponibles = false,
   PortCatalogueClasses? catalogueClasses,
   String? fuseauCatalogue = 'Europe/Paris',
+  DateTime? maintenantServeur,
+  List<EleveDuFoyer> eleves = FoyersFictifs.foyerA,
 }) {
   final FauxSeancesFamille faux = FauxSeancesFamille(
     seances: seances ?? <SeanceFamille>[seanceSalleOuverte()],
+    maintenant: maintenantServeur,
+  );
+  final EleveDuFoyer appareille = eleves.firstWhere(
+    (EleveDuFoyer e) => e.id == eleveA1,
+    orElse: () => FoyersFictifs.a1,
   );
   if (horlogeAbsente) {
     faux.maintenant = null;
@@ -435,12 +445,12 @@ List<Override> surchargesClasse({
     ...surchargesRouteur(
       FausseSourceSession(sessionActive(AppRole.guardian)),
       appairage: FauxServiceAppairage()
-        ..elevesRendus = FoyersFictifs.foyerA
+        ..elevesRendus = eleves
         ..appareilsRendus = <AppareilAppaire>[
           AppareilAppaire(
             id: 'app-1',
             profilId: eleveA1,
-            prenom: 'Eleve A1',
+            prenom: appareille.prenom,
             plateforme: 'Android',
             appaireA: DateTime.utc(2026, 9, 1),
           ),
