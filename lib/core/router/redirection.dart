@@ -43,6 +43,7 @@ String? deciderRedirection({
   String? cheminComplet,
   String? retour,
   String environnement = Env.environnement,
+  bool resignatureContrat = false,
 }) {
   // La salle de demonstration passe sans session hors production : donnees
   // fictives, aucun appel serveur (K-28). En production, la route n'existe
@@ -140,6 +141,14 @@ String? deciderRedirection({
           _dansLeSousArbre(cheminDemande, Routes.attentePiece)) {
         return Routes.attente;
       }
+      // Q-2 = a : l'enseignant en attente qui a signe le contrat 2026-09
+      // signe d'abord la nouvelle version.
+      if (_resignature(session, resignatureContrat) &&
+          session.porte == PorteAcces.attente &&
+          routeConnue &&
+          cheminDemande != Routes.attenteContrat) {
+        return Routes.attenteContrat;
+      }
       return _dansLeSousArbre(cheminDemande, Routes.attente) || !routeConnue
           ? null
           : Routes.attente;
@@ -150,6 +159,18 @@ String? deciderRedirection({
         return Routes.connexion;
       }
       final String racine = Routes.racinePour(role);
+
+      // Q-2 = a (05/10/2026) : l'enseignant qui a signe le contrat 2026-09
+      // signe la nouvelle version a sa prochaine entree, avant tout le reste.
+      // La page n'est ouverte que dans ce cas.
+      if (_resignature(session, resignatureContrat)) {
+        return cheminDemande == Routes.enseignantContrat
+            ? null
+            : Routes.enseignantContrat;
+      }
+      if (cheminDemande == Routes.enseignantContrat) {
+        return racine;
+      }
 
       // Un compte actif n'a plus rien a faire sur la racine, la connexion,
       // l'inscription, le portail d'attente ou la page hors ligne,
@@ -229,6 +250,11 @@ String? deciderRedirection({
       return role == AppRole.guardian ? Routes.accesRefuse : racine;
   }
 }
+
+/// Vrai quand l'enseignant doit signer de nouveau son contrat (Q-2 = a) ;
+/// jamais pour un autre role.
+bool _resignature(SessionState session, bool resignatureContrat) =>
+    resignatureContrat && session.role == AppRole.teacher;
 
 /// La destination gardee en `retour`, si elle est un chemin interne valide et
 /// **ouverte a cette session** ; sinon `null` (la racine du role).

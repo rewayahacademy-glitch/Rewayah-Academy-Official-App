@@ -254,16 +254,41 @@ void main() {
       expect(widget.style?.decoration, TextDecoration.underline);
     });
 
-    testWidgets('320 : le lien passe sous le texte, avec la seule hauteur de '
-        'son texte', (WidgetTester tester) async {
+    // Q-3 = b (05/10/2026) : sous 388 de large, pas de lien ; le cours ne
+    // descend pas (avant : le lien passait sous la mention, +16).
+    testWidgets('320 : pas de lien, le cours ne bouge pas, la mention ouvre '
+        'E-1', (WidgetTester tester) async {
       await salle(tester, const Size(320, 690), 2);
       expect(tester.takeException(), isNull);
-      final Rect texte = tester.getRect(mention());
-      final Rect lien = tester.getRect(_lien);
-      expect(lien.left, closeTo(texte.left, 0.5));
-      expect(lien.top, closeTo(texte.bottom, 0.5));
-      expect(hautCours(tester), hautSansLien + lien.height);
+      expect(_lien, findsNothing);
+      expect(hautCours(tester), hautSansLien);
+      // Le lecteur d'ecran annonce la mention comme le lien « En savoir plus ».
+      expect(
+        find.bySemanticsLabel(RegExp(t.salle.informationControle.lien)),
+        findsOneWidget,
+      );
+      await tester.tap(mention());
+      await stabiliser(tester);
+      expect(find.text(t.salle.informationControle.e1.titre), findsOneWidget);
     });
+
+    // Le seuil exact : 387 sans lien, 388 avec ; jamais le cours ne
+    // descend (a 387, avant : le lien passait dessous, +16).
+    test('le seuil du lien', () {
+      expect(InformationControle.largeurMinimaleLien, 388);
+    });
+    for (final (double largeur, bool lien) in <(double, bool)>[
+      (387, false),
+      (388, true),
+    ]) {
+      testWidgets('${largeur.toInt()} : lien ${lien ? 'present' : 'absent'}, '
+          'le cours ne bouge pas', (WidgetTester tester) async {
+        await salle(tester, Size(largeur, 832), 2);
+        expect(tester.takeException(), isNull);
+        expect(_lien, lien ? findsOneWidget : findsNothing);
+        expect(hautCours(tester), hautSansLien);
+      });
+    }
 
     for (final double y in <double>[-30, -12, 0, 6]) {
       testWidgets('la cible tactile deborde sans prendre de hauteur '
@@ -287,10 +312,10 @@ void main() {
       expect(find.text(t.salle.informationControle.e1.titre), findsNothing);
     });
 
-    // Revue croisee du 05/10 : a 320 le lien passe sous la mention, sans
-    // retrait, et sa cible agrandie monte jusque sous le chevron Retour. Le
-    // chevron garde toujours ses touches ; la cible ne prend que les touches
-    // qui ne tombent sur aucune autre commande.
+    // Revue croisee du 05/10 : a 320 la cible agrandie (celle de la mention
+    // depuis Q-3 = b, avant celle du lien passe dessous) monte jusque sous le
+    // chevron Retour. Le chevron garde toujours ses touches ; la cible ne
+    // prend que les touches qui ne tombent sur aucune autre commande.
     Finder chevron() => find.bySemanticsLabel(t.salle.seance.retour);
     Finder e1Titre() => find.text(t.salle.informationControle.e1.titre);
 
@@ -334,15 +359,16 @@ void main() {
       });
     }
 
-    testWidgets('320 : la touche a -30 du lien, hors de toute autre commande, '
-        'ouvre toujours E-1', (WidgetTester tester) async {
+    testWidgets('320 : la touche a -30 de la mention, hors de toute autre '
+        'commande, ouvre toujours E-1', (WidgetTester tester) async {
       int sorties = 0;
       await salle(tester, const Size(320, 690), 2, onSortir: () => sorties++);
-      final Offset p = tester.getCenter(_lien) + const Offset(0, -30);
-      // Le point est bien au-dessus du lien, hors du chevron et de toute
-      // autre commande de l'en-tete.
+      expect(_lien, findsNothing);
+      final Offset p = tester.getCenter(mention()) + const Offset(0, -30);
+      // Le point est bien au-dessus de la mention, hors du chevron et de
+      // toute autre commande de l'en-tete.
       expect(tester.getRect(chevron()).contains(p), isFalse);
-      expect(tester.getRect(_lien).contains(p), isFalse);
+      expect(tester.getRect(mention()).contains(p), isFalse);
       await tester.tapAt(p);
       await stabiliser(tester);
       expect(e1Titre(), findsOneWidget);
@@ -368,8 +394,9 @@ void main() {
               echelle: echelle,
             );
             expect(tester.takeException(), isNull);
-            expect(_lien, findsOneWidget);
-            await tester.tap(_lien);
+            // Sous 388, pas de lien : la mention ouvre la lecture (Q-3 = b).
+            expect(_lien, findsNothing);
+            await tester.tap(mention());
             await stabiliser(tester);
             expect(tester.takeException(), isNull);
             final Finder fin = find.text(t.salle.informationControle.e1.p5);

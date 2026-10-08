@@ -5,10 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/domain/enums.dart';
+import '../../core/dossier/resignature_contrat.dart';
 import '../../core/dossier/service_dossier.dart';
 import '../../core/dossier/versions_contrat.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/profil/service_acceptations.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -119,6 +121,7 @@ class ContratPage extends ConsumerWidget {
     final String version = VersionsContrat.pour(
       sorte,
       demonstration: ref.watch(serviceDossierProvider).demonstration,
+      politiquePubliee: ref.watch(politiqueControlePublieeProvider),
     );
     if (enseignant && version == VersionsContrat.courante) {
       return _PageASigner(
@@ -141,8 +144,14 @@ class ContratPage extends ConsumerWidget {
       pour = null;
     }
 
+    // Nouvelle signature (Q-2 = a, 05/10/2026) : politique publiee, contrat
+    // 2026-09 deja signe ; une phrase courte dit pourquoi au-dessus du texte.
+    final bool resignature =
+        enseignant && ref.watch(resignatureContratEnseignantProvider);
     return _PageASigner(
       titre: t.contrat.titre,
+      introduction: resignature ? t.contrat.resignature : null,
+      resignature: resignature,
       libelleAction: t.contrat.accepter,
       sorte: sorte,
       version: version,
@@ -180,6 +189,7 @@ class _PageASigner extends ConsumerStatefulWidget {
     this.clause,
     this.caseReligion = false,
     this.observation,
+    this.resignature = false,
   });
 
   final String titre;
@@ -202,6 +212,11 @@ class _PageASigner extends ConsumerStatefulWidget {
 
   /// Avec une variante, le paragraphe des visites d'observation et sa case.
   final VarianteObservation? observation;
+
+  /// Vrai : nouvelle signature du contrat enseignant (Q-2 = a). Apres la
+  /// signature, les acceptations sont relues avant de partir, pour que la
+  /// redirection ne ramene pas ici.
+  final bool resignature;
 
   @override
   ConsumerState<_PageASigner> createState() => _PageASignerState();
@@ -227,6 +242,16 @@ class _PageASignerState extends ConsumerState<_PageASigner> {
           .read(serviceDossierProvider)
           .accepterContrat(widget.sorte, widget.version);
       ref.invalidate(etatDossierProvider);
+      if (widget.resignature) {
+        // Une relecture en echec n'annule pas la signature, deja enregistree :
+        // la redirection se reposera la question a la lecture suivante.
+        try {
+          ref.invalidate(acceptationsProvider);
+          await ref.read(acceptationsProvider.future);
+        } on Object {
+          // Rien : voir ci-dessus.
+        }
+      }
       if (mounted) {
         GoRouter.of(context).go(Routes.attente);
       }
