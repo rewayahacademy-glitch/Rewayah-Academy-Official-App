@@ -69,7 +69,7 @@ class _Traductions$notifications$ar extends Traductions$notifications$fr {
 	@override String ligne({required Object titre, required Object date, required Object heure}) => '${titre}‏، يوم ${date} الساعة ${heure}';
 	@override late final _Traductions$notifications$filtres$ar filtres = _Traductions$notifications$filtres$ar._(_root);
 	@override String get filtreVideTitre => 'لا توجد إشعارات في هذا التصنيف';
-	@override String get filtreVidePhrase => 'اختر »الكل« لرؤية جميع إشعاراتك من جديد.';
+	@override String get filtreVidePhrase => 'اختر «الكل» لرؤية جميع إشعاراتك من جديد.';
 	@override String get voirToutes => 'عرض كل الإشعارات';
 	@override String get nonLue => 'غير مقروء';
 	@override String get nonLueSemantique => 'غير مقروء';
@@ -1334,7 +1334,7 @@ class _Traductions$com$messages$recherche$ar extends Traductions$com$messages$re
 	@override String get champ => 'البحث عن محادثة';
 	@override String get aide => 'الاسم أو الفصل أو الملف';
 	@override String get aucunTitre => 'لم يتم العثور على أي محادثة';
-	@override String aucun({required Object texte}) => 'لا توجد محادثة تطابق »${texte}«. جرّب اسمًا آخر أو فصلًا آخر.';
+	@override String aucun({required Object texte}) => 'لا توجد محادثة تطابق «⁨${texte}⁩». جرّب اسمًا آخر أو فصلًا آخر.';
 	@override String get resultatUn => 'تم العثور على محادثة واحدة';
 	@override String resultats({required Object nombre}) => 'تم العثور على ${nombre} محادثات';
 }
@@ -1940,7 +1940,7 @@ class _Traductions$com$studio$recherche$ar extends Traductions$com$studio$recher
 	@override String get champ => 'البحث في الاستوديو';
 	@override String get aide => 'قناة أو رسالة أو ملف';
 	@override String get aucunTitre => 'لا توجد نتائج';
-	@override String aucun({required Object texte}) => 'لا شيء يطابق »${texte}« في قنواتك. جرّب كلمة أخرى.';
+	@override String aucun({required Object texte}) => 'لا شيء يطابق «⁨${texte}⁩» في قنواتك. جرّب كلمة أخرى.';
 	@override String get aucunDansFiltre => 'لا شيء من هذا النوع يطابق البحث. اختر الكل لرؤية النتائج الأخرى.';
 	@override String get resultatUn => 'نتيجة واحدة';
 	@override String resultats({required Object nombre}) => '${nombre} نتائج';
@@ -2050,11 +2050,11 @@ class _Traductions$com$annonces$demoPublication$ar extends Traductions$com$annon
 	@override String get recitationTexte => 'سيقدم فصل النور تلاوة نهاية الفصل الدراسي يوم السبت الساعة 10، عبر الاتصال المرئي.';
 	@override String get rentreeTitre => 'استئناف الدروس بعد العطلة';
 	@override String get rentreeTexte => 'تُستأنف الحصص يوم الاثنين 6 يناير في المواعيد المعتادة.';
-	@override String get signalementAffilie => 'منشور »بطاقات تجويد للطباعة«';
+	@override String get signalementAffilie => 'منشور «بطاقات تجويد للطباعة»';
 	@override String get extraitAffilie => 'تجدون بطاقاتي عبر هذا الرابط الشريك، خصم 20 % برمزي.';
-	@override String get signalementVente => 'منشور »دروس خصوصية متاحة«';
+	@override String get signalementVente => 'منشور «دروس خصوصية متاحة»';
 	@override String get extraitVente => 'أقدم دروسًا خصوصية مدفوعة في عطلة نهاية الأسبوع، راسلوني.';
-	@override String get signalementHorsSujet => 'رد تحت »تنظيم مراجعة جماعية«';
+	@override String get signalementHorsSujet => 'رد تحت «تنظيم مراجعة جماعية»';
 }
 
 // Path: com.annonces.demo
@@ -2795,7 +2795,7 @@ extension on TraductionsAr {
 			'notifications.filtres.mentions' => 'الإشارات',
 			'notifications.filtres.actionRequise' => 'إجراء مطلوب',
 			'notifications.filtreVideTitre' => 'لا توجد إشعارات في هذا التصنيف',
-			'notifications.filtreVidePhrase' => 'اختر »الكل« لرؤية جميع إشعاراتك من جديد.',
+			'notifications.filtreVidePhrase' => 'اختر «الكل» لرؤية جميع إشعاراتك من جديد.',
 			'notifications.voirToutes' => 'عرض كل الإشعارات',
 			'notifications.nonLue' => 'غير مقروء',
 			'notifications.nonLueSemantique' => 'غير مقروء',
@@ -3352,7 +3352,7 @@ extension on TraductionsAr {
 			'com.messages.recherche.champ' => 'البحث عن محادثة',
 			'com.messages.recherche.aide' => 'الاسم أو الفصل أو الملف',
 			'com.messages.recherche.aucunTitre' => 'لم يتم العثور على أي محادثة',
-			'com.messages.recherche.aucun' => ({required Object texte}) => 'لا توجد محادثة تطابق »${texte}«. جرّب اسمًا آخر أو فصلًا آخر.',
+			'com.messages.recherche.aucun' => ({required Object texte}) => 'لا توجد محادثة تطابق «⁨${texte}⁩». جرّب اسمًا آخر أو فصلًا آخر.',
 			'com.messages.recherche.resultatUn' => 'تم العثور على محادثة واحدة',
 			'com.messages.recherche.resultats' => ({required Object nombre}) => 'تم العثور على ${nombre} محادثات',
 			'com.messages.ligne.legende' => ({required Object objet, required Object apercu}) => '${objet} · ${apercu}',
@@ -3773,7 +3773,7 @@ extension on TraductionsAr {
 			'com.studio.recherche.champ' => 'البحث في الاستوديو',
 			'com.studio.recherche.aide' => 'قناة أو رسالة أو ملف',
 			'com.studio.recherche.aucunTitre' => 'لا توجد نتائج',
-			'com.studio.recherche.aucun' => ({required Object texte}) => 'لا شيء يطابق »${texte}« في قنواتك. جرّب كلمة أخرى.',
+			'com.studio.recherche.aucun' => ({required Object texte}) => 'لا شيء يطابق «⁨${texte}⁩» في قنواتك. جرّب كلمة أخرى.',
 			'com.studio.recherche.aucunDansFiltre' => 'لا شيء من هذا النوع يطابق البحث. اختر الكل لرؤية النتائج الأخرى.',
 			'com.studio.recherche.resultatUn' => 'نتيجة واحدة',
 			'com.studio.recherche.resultats' => ({required Object nombre}) => '${nombre} نتائج',
@@ -3994,11 +3994,11 @@ extension on TraductionsAr {
 			'com.annonces.demoPublication.recitationTexte' => 'سيقدم فصل النور تلاوة نهاية الفصل الدراسي يوم السبت الساعة 10، عبر الاتصال المرئي.',
 			'com.annonces.demoPublication.rentreeTitre' => 'استئناف الدروس بعد العطلة',
 			'com.annonces.demoPublication.rentreeTexte' => 'تُستأنف الحصص يوم الاثنين 6 يناير في المواعيد المعتادة.',
-			'com.annonces.demoPublication.signalementAffilie' => 'منشور »بطاقات تجويد للطباعة«',
+			'com.annonces.demoPublication.signalementAffilie' => 'منشور «بطاقات تجويد للطباعة»',
 			'com.annonces.demoPublication.extraitAffilie' => 'تجدون بطاقاتي عبر هذا الرابط الشريك، خصم 20 % برمزي.',
-			'com.annonces.demoPublication.signalementVente' => 'منشور »دروس خصوصية متاحة«',
+			'com.annonces.demoPublication.signalementVente' => 'منشور «دروس خصوصية متاحة»',
 			'com.annonces.demoPublication.extraitVente' => 'أقدم دروسًا خصوصية مدفوعة في عطلة نهاية الأسبوع، راسلوني.',
-			'com.annonces.demoPublication.signalementHorsSujet' => 'رد تحت »تنظيم مراجعة جماعية«',
+			'com.annonces.demoPublication.signalementHorsSujet' => 'رد تحت «تنظيم مراجعة جماعية»',
 			'com.annonces.section' => 'إعلانات الفصل',
 			'com.annonces.annonce' => 'إعلان',
 			'com.annonces.publier' => 'نشر إعلان',

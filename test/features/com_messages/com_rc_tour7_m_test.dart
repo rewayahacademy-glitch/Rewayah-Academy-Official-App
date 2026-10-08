@@ -16,6 +16,8 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -375,27 +377,130 @@ void main() {
     });
   });
 
-  test('ar : les guillemets se lisent tournes vers l exterieur', () {
-    // Le moteur de texte ne retourne pas « et » dans une ligne arabe : les
-    // chaines arabes les ecrivent dans l'ordre visuel (»texte«), sans
-    // espace interieure. Contre-preuve : com_admin_moderation_390_rtl_clair
-    // montrait « منشور « بطاقات تجويد للطباعة » », guillemets tournes vers
-    // le texte.
-    final String ar = File('assets/i18n/ar.i18n.json').readAsStringSync();
-    final Map<String, dynamic> racine = jsonDecode(ar) as Map<String, dynamic>;
-    final List<String> fautifs = <String>[];
-    void parcourir(Object? v) {
-      if (v is Map<String, dynamic>) {
-        v.values.forEach(parcourir);
-      } else if (v is String &&
-          (RegExp('«[^«»]*»').hasMatch(v) || RegExp(r'»\s|\s«').hasMatch(v))) {
-        fautifs.add(v);
+  group('ar : les guillemets se lisent tournes vers l exterieur', () {
+    // Les chaines arabes stockent les guillemets dans l'ORDRE LOGIQUE
+    // (« ouvre, » ferme), comme tout texte Unicode : c'est ce que recoivent
+    // le lecteur d'ecran, le copier-coller et la recherche. Au rendu, dans
+    // une ligne droite-a-gauche, U+00AB et U+00BB (Bidi_Mirrored) prennent
+    // le niveau du texte arabe qui les entoure et le moteur (HarfBuzz) les
+    // dessine en miroir : l'ouvrant, a droite du titre, pointe a droite,
+    // le fermant, a gauche, pointe a gauche.
+    //
+    // Contre-preuve : a 5c0bffa3, les chaines etaient stockees dans l'ordre
+    // VISUEL (»titre«). Mesure faite sur com_admin_moderation_390_rtl_clair
+    // de 5c0bffa3, pixels lus : le glyphe a droite de « بطاقات » pointait a
+    // gauche, vers le titre ; le contournement inversait le rendu qu'il
+    // pretendait corriger, et le texte lu etait faux.
+    //
+    // Le parametre {texte} (saisie de l'utilisateur, latine ou arabe) est
+    // isole (U+2068 FSI ... U+2069 PDI) : vu de dehors, il compte comme un
+    // seul neutre, donc les guillemets prennent toujours le sens de la
+    // phrase arabe, quel que soit ce qu'on cherche. Les marques sont des
+    // caracteres de format, sans glyphe, que les lecteurs d'ecran taisent.
+
+    Map<String, Object?> lireAr() =>
+        jsonDecode(File('assets/i18n/ar.i18n.json').readAsStringSync())
+            as Map<String, Object?>;
+
+    test('ordre logique stocke, aucun ordre visuel', () {
+      final List<String> visuels = <String>[];
+      final List<String> cites = <String>[];
+      void parcourir(Object? v) {
+        if (v is Map<String, Object?>) {
+          v.values.forEach(parcourir);
+        } else if (v is String) {
+          if (RegExp('»[^«»]*«').hasMatch(v)) visuels.add(v);
+          if (RegExp('«[^«»]+»').hasMatch(v)) cites.add(v);
+        }
       }
+
+      parcourir(lireAr());
+      expect(visuels, isEmpty);
+      expect(cites, hasLength(6));
+      // Pas d'espace a l'interieur des guillemets arabes.
+      expect(
+        cites.where((String c) => RegExp(r'«\s|\s»').hasMatch(c)),
+        isEmpty,
+      );
+      LocaleSettings.setLocaleSync(AppLocale.ar);
+      expect(
+        t.com.annonces.demoPublication.signalementAffilie,
+        'منشور «بطاقات تجويد للطباعة»',
+      );
+      expect(
+        t.com.studio.recherche.aucun(texte: 'abc'),
+        'لا شيء يطابق «\u2068abc\u2069» في قنواتك. جرّب كلمة أخرى.',
+      );
+    });
+
+    // Chaque chaine citante, avec des parametres latins, arabes et mixtes.
+    List<String> citations() {
+      LocaleSettings.setLocaleSync(AppLocale.ar);
+      final List<String> saisies = <String>[
+        'فاطمة',
+        'Fatima',
+        'An-Nour 3',
+        '(abc',
+        '12',
+      ];
+      return <String>[
+        t.notifications.filtreVidePhrase,
+        t.com.annonces.demoPublication.signalementAffilie,
+        t.com.annonces.demoPublication.signalementVente,
+        t.com.annonces.demoPublication.signalementHorsSujet,
+        for (final String s in saisies) ...<String>[
+          t.com.messages.recherche.aucun(texte: s),
+          t.com.studio.recherche.aucun(texte: s),
+        ],
+      ];
     }
 
-    parcourir(racine);
-    expect(fautifs, isEmpty);
-    expect(ar, contains('منشور »بطاقات تجويد للطباعة«'));
+    testWidgets('rendu mesure : l ouvrant a droite pointe a droite, le '
+        'fermant a gauche pointe a gauche', (WidgetTester tester) async {
+      final List<String> textes = citations();
+      tester.view.physicalSize = const Size(1600, 200);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      for (final String texte in textes) {
+        final ((Rect, bool) ouvrant, (Rect, bool) fermant) =
+            await _mesurerGuillemets(tester, texte);
+        expect(
+          ouvrant.$1.left,
+          greaterThan(fermant.$1.right),
+          reason: '« doit etre a droite de » dans une ligne arabe : $texte',
+        );
+        expect(
+          ouvrant.$2,
+          isFalse,
+          reason: '« a droite du titre doit pointer a droite : $texte',
+        );
+        expect(
+          fermant.$2,
+          isTrue,
+          reason: '» a gauche du titre doit pointer a gauche : $texte',
+        );
+      }
+    });
+
+    testWidgets('contre-preuve : l ordre visuel est dessine vers l interieur', (
+      WidgetTester tester,
+    ) async {
+      tester.view.physicalSize = const Size(1600, 200);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final (
+        (Rect, bool) droite,
+        (Rect, bool) gauche,
+      ) = await _mesurerGuillemets(
+        tester,
+        'منشور »بطاقات تجويد للطباعة«',
+        ouvrant: '»',
+        fermant: '«',
+      );
+      expect(droite.$1.left, greaterThan(gauche.$1.right));
+      expect(droite.$2, isTrue, reason: 'vers l interieur, a droite');
+      expect(gauche.$2, isFalse, reason: 'vers l interieur, a gauche');
+    });
   });
 
   testWidgets('liste des fils : « Classe An-Nour » ne se coupe plus au '
@@ -442,4 +547,104 @@ void main() {
     );
     expect(texte, contains('An\u2011Nour'));
   });
+}
+
+/// Rend [texte] dans une ligne droite-a-gauche, avec la vraie police
+/// arabe de l'interface, et rend pour [ouvrant] puis [fermant] sa boite et
+/// le sens de sa pointe, lu sur les pixels (`true` : pointe a gauche).
+///
+/// Seuls les guillemets sont peints (le reste du texte est transparent,
+/// meme police et meme mise en page) : l'encre d'une lettre voisine ne
+/// fausse pas la lecture. Un chevron pointe a gauche quand, a mi-hauteur,
+/// son encre va plus a gauche qu'en haut de son dessin.
+Future<((Rect, bool), (Rect, bool))> _mesurerGuillemets(
+  WidgetTester tester,
+  String texte, {
+  String ouvrant = '«',
+  String fermant = '»',
+}) async {
+  const Key cadre = ValueKey<String>('guillemets');
+  final List<TextSpan> morceaux = <TextSpan>[
+    for (final Match m in RegExp('[«»]|[^«»]+').allMatches(texte))
+      TextSpan(
+        text: m[0],
+        style: TextStyle(
+          color: '«»'.contains(m[0]!) ? Colors.black : Colors.transparent,
+        ),
+      ),
+  ];
+  await tester.pumpWidget(
+    MaterialApp(
+      theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+      home: Directionality(
+        textDirection: TextDirection.rtl,
+        child: Material(
+          child: Align(
+            alignment: AlignmentDirectional.topStart,
+            child: RepaintBoundary(
+              key: cadre,
+              child: ColoredBox(
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text.rich(
+                    TextSpan(children: morceaux),
+                    style: const TextStyle(fontSize: 40),
+                    softWrap: false,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+  final RenderParagraph p = tester.renderObject(
+    find.descendant(of: find.byKey(cadre), matching: find.byType(RichText)),
+  );
+  final RenderRepaintBoundary boite = tester.renderObject(find.byKey(cadre));
+  // La largeur en pixels de l'image (arrondie au-dessus), pas celle du
+  // cadre : c'est le pas d'une ligne d'octets.
+  final (ByteData, int) image = (await tester.runAsync<(ByteData, int)>(
+    () async {
+      final ui.Image image = await boite.toImage();
+      final ByteData brut = (await image.toByteData())!;
+      final int largeur = image.width;
+      image.dispose();
+      return (brut, largeur);
+    },
+  ))!;
+  final (ByteData octets, int largeur) = image;
+  bool encre(int x, int y) => octets.getUint8((y * largeur + x) * 4) < 128;
+
+  (Rect, bool) lire(String guillemet) {
+    final int i = texte.indexOf(guillemet);
+    expect(i, isNot(-1), reason: '$guillemet absent de $texte');
+    final TextBox b = p
+        .getBoxesForSelection(TextSelection(baseOffset: i, extentOffset: i + 1))
+        .single;
+    final Rect r = Rect.fromPoints(
+      p.localToGlobal(Offset(b.left, b.top)) - boite.localToGlobal(Offset.zero),
+      p.localToGlobal(Offset(b.right, b.bottom)) -
+          boite.localToGlobal(Offset.zero),
+    );
+    final List<(int, int)> lignes = <(int, int)>[];
+    for (int y = r.top.floor(); y < r.bottom.ceil(); y++) {
+      int? gauche;
+      for (int x = r.left.floor(); x < r.right.ceil(); x++) {
+        if (encre(x, y)) {
+          gauche = x;
+          break;
+        }
+      }
+      if (gauche != null) lignes.add((y, gauche));
+    }
+    expect(lignes.length, greaterThan(6), reason: '$guillemet sans encre');
+    final int haut = lignes.first.$2;
+    final (int, int) milieu = lignes[lignes.length ~/ 2];
+    return (r, milieu.$2 < haut);
+  }
+
+  return (lire(ouvrant), lire(fermant));
 }
