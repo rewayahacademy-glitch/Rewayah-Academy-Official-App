@@ -1854,6 +1854,70 @@ void main() {
     }
   });
 
+  // Contre-revue de FI-DIR-1 (08/10, K-61) : pleine hauteur, pour lire
+  // jusqu'en bas l'Etat des paiements, Top classes, les Dernieres operations
+  // (Vue globale) et la marge en trois champs (Politiques), a 390 et a 320
+  // texte 200 %, clair et sombre.
+  group('Capture : FI-DIR-1 contre-revue', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+
+    for (final _Cas cas in <_Cas>[
+      for (final _Cas c in _cas)
+        if (c.nom == 'admin_vue_globale' || c.nom == 'admin_politiques') c,
+    ]) {
+      for (final (String l, Size taille, double echelle)
+          in <(String, Size, double)>[
+            ('390_haut', const Size(390, 6000), 1),
+            (
+              '320_200pc_haut',
+              Size(320, cas.nom == 'admin_politiques' ? 22000 : 13000),
+              2,
+            ),
+          ]) {
+        for (final ThemeMode mode in <ThemeMode>[
+          ThemeMode.light,
+          ThemeMode.dark,
+        ]) {
+          final String fichier = 'fidir1cr_${cas.nom}_${l}_${mode.name}';
+          testWidgets(fichier, (WidgetTester tester) async {
+            await _capturer(
+              tester,
+              fichier,
+              cas,
+              taille,
+              mode: mode,
+              echelle: echelle,
+            );
+          });
+        }
+      }
+    }
+
+    // Revue FI-VAGUE-CORR-R, R3-02 : la recharge en trois colonnes a 1200,
+    // 1280 et 1440 (maquette 07), deux profils choisis.
+    final _Cas recharge = _cas.firstWhere(
+      (_Cas c) => c.nom == 'recharge_etape2',
+    );
+    for (final double largeur in <double>[1200, 1280, 1440]) {
+      for (final ThemeMode mode in <ThemeMode>[
+        ThemeMode.light,
+        ThemeMode.dark,
+      ]) {
+        final String fichier =
+            'fidir1cr_recharge_${largeur.toInt()}_${mode.name}';
+        testWidgets(fichier, (WidgetTester tester) async {
+          await _capturer(
+            tester,
+            fichier,
+            recharge,
+            Size(largeur, 1100),
+            mode: mode,
+          );
+        });
+      }
+    }
+  });
+
   group(
     'Capture : FI-12 planches maquette | capture',
     skip: sautSansCapture == false && _dossierMaquettes != null
