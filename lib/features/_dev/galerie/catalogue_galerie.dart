@@ -2256,7 +2256,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
     famille: FamilleComposant.composantEtat,
     etats: <EtatGalerie>[
       EtatGalerie(
-        'pays de la liste (drapeau si dessinable)',
+        'pays de la liste (avec son drapeau)',
         (BuildContext _) =>
             _surfaceMaterielle(const PaysEnseignant(pays: 'Guinée')),
       ),
