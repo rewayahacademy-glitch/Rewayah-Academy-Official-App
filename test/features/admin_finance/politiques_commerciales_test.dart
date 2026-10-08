@@ -1635,6 +1635,49 @@ void main() {
   });
 
   group('FI-DIR-1 : FI-Q21 et R6-08', () {
+    testWidgets('Q21.1 : les trois reperes forment le groupe « Marge de '
+        'reference », visible et annonce comme titre', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(390, 4000));
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      await tester.pumpWidget(_hote(surcharges: _avec(_avecBrouillon())));
+      await tester.pumpAndSettle();
+      final Finder groupe = find.byKey(PolitiquesCommercialesContenu.margeKey);
+      expect(groupe, findsOneWidget);
+      final Finder titre = find.descendant(
+        of: groupe,
+        matching: find.text(pol.marge),
+      );
+      expect(titre, findsOneWidget);
+      await tester.ensureVisible(titre);
+      await tester.pumpAndSettle();
+      expect(
+        tester.getSemantics(titre),
+        matchesSemantics(label: pol.marge, isHeader: true),
+      );
+      for (final String id in <String>[
+        'margeObjectif',
+        'margeForte',
+        'margeStretch',
+      ]) {
+        expect(
+          find.descendant(
+            of: groupe,
+            matching: find.byKey(PolitiquesCommercialesContenu.champKey(id)),
+          ),
+          findsOneWidget,
+          reason: id,
+        );
+      }
+      // Le titre precede les trois champs.
+      expect(
+        tester.getTopLeft(titre).dy,
+        lessThan(tester.getTopLeft(_champ('margeObjectif')).dy),
+      );
+      semantique.dispose();
+    });
+
     testWidgets('Q21.1 : la marge de reference se regle en brouillon, '
         'repere par repere, et part au port en pour mille', (
       WidgetTester tester,
@@ -1759,19 +1802,130 @@ void main() {
       await tester.pumpWidget(_hote(surcharges: _avec(port)));
       await tester.pumpAndSettle();
       expect(find.text(pol.dateEffetReglable), findsOneWidget);
+      // Le calendrier s'ouvre sur la date du brouillon, ou sur le lendemain
+      // quand elle est passee : la cible se calcule depuis l'horloge, jamais
+      // en dur (contre-revue FI-DIR-1).
+      final DateTime maintenant = DateTime.now();
+      final DateTime demain = DateTime(
+        maintenant.year,
+        maintenant.month,
+        maintenant.day + 1,
+      );
+      final DateTime duBrouillon =
+          DonneesFinanceDemo.politiqueBrouillon.dateEffet;
+      final DateTime ouverture = duBrouillon.isBefore(demain)
+          ? demain
+          : duBrouillon;
+      final DateTime cible = DateTime(
+        ouverture.year,
+        ouverture.month,
+        ouverture.day + 1,
+      );
       await _toucher(tester, find.text(pol.changerDate));
       expect(find.byType(DatePickerDialog), findsOneWidget);
-      // Le calendrier s'ouvre sur janvier 2027 (date du brouillon).
-      await tester.tap(find.text('15'));
+      if (cible.month != ouverture.month) {
+        await tester.tap(find.byTooltip('Next month'));
+        await tester.pumpAndSettle();
+      }
+      await tester.tap(
+        find.descendant(
+          of: find.byType(DatePickerDialog),
+          matching: find.text('${cible.day}'),
+        ),
+      );
       await tester.pumpAndSettle();
       await tester.tap(find.text('OK'));
       await tester.pumpAndSettle();
-      final String attendue = pol.dateEffet(
-        date: dateEffetEnTexte(DateTime(2027, 1, 15)),
-      );
+      final String attendue = pol.dateEffet(date: dateEffetEnTexte(cible));
       expect(_dansEntete(find.text(attendue)), findsOneWidget);
       await _publier(tester);
-      expect(port.publies.single.dateEffet, DateTime(2027, 1, 15));
+      expect(port.publies.single.dateEffet, cible);
+    });
+
+    testWidgets('Q21.4 : une date d effet changee compte dans les '
+        'differences', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 2600));
+      await tester.pumpWidget(_hote(surcharges: _avec(_avecBrouillon())));
+      await tester.pumpAndSettle();
+      expect(find.text(pol.aucuneDifference), findsOneWidget);
+      await _toucher(tester, find.text(pol.changerDate));
+      // Le calendrier s'ouvre sur un jour permis ; le jour suivant l'est
+      // aussi (meme mois ou mois suivant).
+      final DatePickerDialog dialogue = tester.widget<DatePickerDialog>(
+        find.byType(DatePickerDialog),
+      );
+      final DateTime ouverture = dialogue.initialDate!;
+      final DateTime cible = DateTime(
+        ouverture.year,
+        ouverture.month,
+        ouverture.day + 1,
+      );
+      if (cible.month != ouverture.month) {
+        await tester.tap(find.byTooltip('Next month'));
+        await tester.pumpAndSettle();
+      }
+      await tester.tap(
+        find.descendant(
+          of: find.byType(DatePickerDialog),
+          matching: find.text('${cible.day}'),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+      expect(find.text(pol.aucuneDifference), findsNothing);
+      expect(find.text(pol.differences(n: 1)), findsOneWidget);
+    });
+
+    testWidgets('Q21.4 : une date d effet au-dela de la borne technique '
+        'ouvre le calendrier sans assertion', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 2600));
+      final PolitiqueCommerciale b = DonneesFinanceDemo.politiqueBrouillon;
+      final DateTime lointaine = DateTime(DateTime.now().year + 9, 6, 15);
+      final PolitiqueCommerciale loin = PolitiqueCommerciale(
+        version: b.version,
+        statut: b.statut,
+        dateEffet: lointaine,
+        tarifEnfant: b.tarifEnfant,
+        tarifAdulte: b.tarifAdulte,
+        essaisMax: b.essaisMax,
+        essaiActif: b.essaiActif,
+        remisesParRang: b.remisesParRang,
+        baseHoraire: b.baseHoraire,
+        plafondHoraire: b.plafondHoraire,
+        capaciteEnfant: b.capaciteEnfant,
+        capaciteAdulte: b.capaciteAdulte,
+        capaciteDebutant: b.capaciteDebutant,
+        minimumOuverture: b.minimumOuverture,
+        classesObjectif: b.classesObjectif,
+        classesMax: b.classesMax,
+        joursConservationPlace: b.joursConservationPlace,
+        margeReferencePourMille: b.margeReferencePourMille,
+        railsActifs: b.railsActifs,
+        allocationInternet: b.allocationInternet,
+        joursRelance: b.joursRelance,
+        budgets: b.budgets,
+      );
+      await tester.pumpWidget(
+        _hote(
+          surcharges: _avec(
+            _Port(
+              versionsRendues: <PolitiqueCommerciale>[
+                loin,
+                DonneesFinanceDemo.politiqueLancement,
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await _toucher(tester, find.text(pol.changerDate));
+      expect(tester.takeException(), isNull);
+      final DatePickerDialog dialogue = tester.widget<DatePickerDialog>(
+        find.byType(DatePickerDialog),
+      );
+      expect(dialogue.initialDate, lointaine);
+      expect(dialogue.lastDate.isBefore(lointaine), isFalse);
     });
 
     testWidgets('Q21.4 : sans brouillon, aucune date a regler', (

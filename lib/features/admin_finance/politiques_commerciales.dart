@@ -271,6 +271,9 @@ class PolitiquesCommercialesContenu extends ConsumerStatefulWidget {
   /// La cle de la valeur active rappelee sous le champ [id].
   static Key comparaisonKey(String id) => ValueKey<String>('fi-pol-cmp-$id');
 
+  /// La cle du groupe « Marge de reference » (ses trois reperes).
+  static const Key margeKey = ValueKey<String>('fi-pol-marge');
+
   /// La cle de la carte d'historique des versions.
   static const Key historiqueKey = ValueKey<String>('fi-pol-historique');
 
@@ -746,6 +749,7 @@ class _PolitiquesCommercialesContenuState
         ? _tousLesChamps().where(_differe).length +
               (_essaiDiffere ? 1 : 0) +
               (_railsDifferent ? 1 : 0) +
+              (_dateModifiee ? 1 : 0) +
               (_relancesDifferent ? 1 : 0) +
               (_budgetsDifferent ? 1 : 0)
         : 0;
@@ -797,13 +801,7 @@ class _PolitiquesCommercialesContenuState
         ..._lignesRelance(),
       ]),
       _section(pol.pilotage, pol.pilotageDetail, <Widget>[
-        Text(
-          pol.margeDetail,
-          style: palette.inkMuted.applyTo(
-            textes.bodySmall ?? const TextStyle(),
-          ),
-        ),
-        for (final _Champ c in _marge()) _ligne(c),
+        _groupeMarge(),
         ..._lignesBudgets(),
       ]),
       _invariants(),
@@ -888,8 +886,54 @@ class _PolitiquesCommercialesContenuState
     );
   }
 
+  /// Vrai quand la date d'effet du brouillon a ete changee a l'ecran : elle
+  /// compte alors parmi les differences (contre-revue FI-DIR-1). Sa date
+  /// lue n'y compte pas : un brouillon a toujours une date posterieure a
+  /// celle de la version active, ce ne serait jamais « aucune difference ».
+  bool get _dateModifiee => _estBrouillon && _dateEffet != _lue.dateEffet;
+
+  /// Le groupe « Marge de reference » : son titre, lu et visible, sa phrase,
+  /// puis ses trois reperes (FI-Q21.1).
+  Widget _groupeMarge() {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final pol = t.admin.finance.pol;
+    final List<_Champ> champs = _marge();
+    return Semantics(
+      key: PolitiquesCommercialesContenu.margeKey,
+      container: true,
+      explicitChildNodes: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Semantics(
+            header: true,
+            child: Text(pol.marge, style: textes.titleSmall),
+          ),
+          Ecart.vXs,
+          Text(
+            pol.margeDetail,
+            style: palette.inkMuted.applyTo(
+              textes.bodySmall ?? const TextStyle(),
+            ),
+          ),
+          for (final _Champ c in champs) ...<Widget>[
+            Ecart.vSm,
+            const FiletCarte(),
+            Ecart.vSm,
+            _ligne(c),
+          ],
+        ],
+      ),
+    );
+  }
+
   /// Ouvre le calendrier et regle la date d'effet du brouillon (FI-Q21.4) :
-  /// a partir du lendemain, jamais retroactive (guide §1.3).
+  /// a partir du lendemain, jamais retroactive (guide §1.3). Les bornes
+  /// tiennent toujours la date de depart : une date d'effet deja posee
+  /// au-dela de la borne technique l'etend, une date passee part du
+  /// lendemain ; le calendrier ne peut donc jamais lever d'assertion.
   Future<void> _changerDate() async {
     final DateTime maintenant = DateTime.now();
     final DateTime premier = DateTime(
@@ -897,11 +941,15 @@ class _PolitiquesCommercialesContenuState
       maintenant.month,
       maintenant.day + 1,
     );
-    final DateTime dernier = DateTime(maintenant.year + 5, 12, 31);
+    final DateTime initiale = _dateEffet.isBefore(premier)
+        ? premier
+        : _dateEffet;
+    final DateTime borne = DateTime(maintenant.year + 5, 12, 31);
+    final DateTime dernier = initiale.isAfter(borne) ? initiale : borne;
     final DateTime choisie =
         await showDatePicker(
           context: context,
-          initialDate: _dateEffet.isBefore(premier) ? premier : _dateEffet,
+          initialDate: initiale,
           firstDate: premier,
           lastDate: dernier,
           helpText: t.admin.finance.pol.changerDate,
