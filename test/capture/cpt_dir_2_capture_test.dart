@@ -37,7 +37,8 @@ Future<void> _comptable(
   bool arabe = false,
 }) async {
   if (arabe) {
-    LocaleSettings.setLocaleSync(AppLocale.ar);
+    // La locale arabe est chargee en differe par slang.
+    await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
     addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
   }
   final GoRouter routeur = GoRouter(
@@ -63,9 +64,8 @@ Future<void> _comptable(
             supportedLocales: AppLocaleUtils.supportedLocales,
             localizationsDelegates: GlobalMaterialLocalizations.delegates,
             builder: (BuildContext c, Widget? app) => MediaQuery(
-              data: MediaQuery.of(
-                c,
-              ).copyWith(textScaler: TextScaler.linear(texte)),
+              data: MediaQuery.of(c)
+                  .copyWith(textScaler: TextScaler.linear(texte)),
               child: app!,
             ),
             routerConfig: routeur,
@@ -78,11 +78,17 @@ Future<void> _comptable(
 }
 
 /// Defile jusqu'au premier [cible] pour le montrer en haut de la vue.
+/// Une liste paresseuse ne construit pas ce qui est loin : on defile d'abord
+/// jusqu'a ce que [cible] existe.
 Future<void> _defilerJusqua(WidgetTester tester, Finder cible) async {
-  await Scrollable.ensureVisible(
-    tester.element(cible.first),
-    alignment: 0.15,
-  );
+  if (cible.evaluate().isEmpty) {
+    await tester.scrollUntilVisible(
+      cible.first,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+  }
+  await Scrollable.ensureVisible(tester.element(cible.first), alignment: 0.15);
   await stabiliser(tester);
 }
 
@@ -171,26 +177,46 @@ void main() {
       );
     });
 
-    for (final (EcranDemoComptable e, Type cible) p
-        in <(EcranDemoComptable, Type)>[
-          (EcranDemoComptable.aujourdhui, CarteReserveStrategique),
-          (EcranDemoComptable.tresorerie, CarteCoffre),
+    // Sur telephone, Aujourd'hui ne porte pas la carte de la Reserve (une
+    // tache dominante, M01) : la jauge s'y voit a 1440, et a 390 dans la
+    // Tresorerie.
+    for (final (EcranDemoComptable e, Type cible, String nom, bool mobile) p
+        in <(EcranDemoComptable, Type, String, bool)>[
+          (
+            EcranDemoComptable.aujourdhui,
+            CarteReserveStrategique,
+            'aujourdhui_fr_reserve',
+            false,
+          ),
+          (
+            EcranDemoComptable.tresorerie,
+            CarteReserveStrategique,
+            'tresorerie_fr_reserve',
+            true,
+          ),
+          (
+            EcranDemoComptable.tresorerie,
+            CarteCoffre,
+            'tresorerie_fr_coffres',
+            true,
+          ),
         ]) {
       for (final ThemeMode mode in <ThemeMode>[
         ThemeMode.light,
         ThemeMode.dark,
       ]) {
-        final String n = '${p.$1.name}_fr_pourcentage';
-        testWidgets('390x844 @3, $n, ${mode.name}', (
-          WidgetTester tester,
-        ) async {
-          fixerVueCapture(tester, _mobile, 3, zoneSure: _zone);
-          await _comptable(tester, p.$1, mode: mode);
-          await _defilerJusqua(tester, find.byType(p.$2));
-          debugPrint(
-            'PNG ${await capturer(tester, '${n}_390x844@3_${mode.name}_masques')}',
-          );
-        });
+        final String n = p.$3;
+        if (p.$4)
+          testWidgets('390x844 @3, $n, ${mode.name}', (
+            WidgetTester tester,
+          ) async {
+            fixerVueCapture(tester, _mobile, 3, zoneSure: _zone);
+            await _comptable(tester, p.$1, mode: mode);
+            await _defilerJusqua(tester, find.byType(p.$2));
+            debugPrint(
+              'PNG ${await capturer(tester, '${n}_390x844@3_${mode.name}_masques')}',
+            );
+          });
         testWidgets('1440x900 @1, $n, ${mode.name}', (
           WidgetTester tester,
         ) async {

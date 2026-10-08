@@ -68,10 +68,11 @@ Map<String, Object> feuilles(Map<String, dynamic> arbre, [String chemin = '']) {
 }
 
 /// Les parametres `{x}` d'une valeur (chaine, liste ou pluriel).
-Set<String> parametres(Object valeur) => RegExp(r'\{(\w+)\}')
-    .allMatches(jsonEncode(valeur))
-    .map((RegExpMatch m) => m.group(1)!)
-    .toSet();
+Set<String> parametres(Object valeur) =>
+    RegExp(r'\{(\w+)\}')
+        .allMatches(jsonEncode(valeur))
+        .map((RegExpMatch m) => m.group(1)!)
+        .toSet();
 
 /// Les ecarts entre le francais et l'arabe, une ligne par cle fautive.
 List<String> ecarts(Map<String, Object> fr, Map<String, Object> ar) {
@@ -88,14 +89,14 @@ List<String> ecarts(Map<String, Object> fr, Map<String, Object> ar) {
       continue;
     }
     final Object source = e.value;
-    if (source is List && (traduit is! List || traduit.length != source.length)) {
+    if (source is List &&
+        (traduit is! List || traduit.length != source.length)) {
       fautes.add('liste de taille differente : ${e.key}');
       continue;
     }
     // Un pluriel peut ajouter ou retirer {n} d'une forme a l'autre.
     final bool pluriel = source is Map;
-    Set<String> sans(Set<String> s) =>
-        pluriel ? (s..remove('n')) : s;
+    Set<String> sans(Set<String> s) => pluriel ? (s..remove('n')) : s;
     final Set<String> attendus = sans(parametres(source));
     final Set<String> trouves = sans(parametres(traduit));
     if (attendus.length != trouves.length || !attendus.containsAll(trouves)) {

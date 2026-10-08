@@ -76,12 +76,14 @@ void main() {
       findsOneWidget,
     );
     // Le meme point que le masque des montants.
-    expect(PourcentageSensible.masque, '${MontantSensible.point}' * 2);
+    expect(PourcentageSensible.masque, MontantSensible.point * 2);
     expect(_jauge(tester), 0);
     // Lecteur d'ecran : « Montant masque », comme pour un montant, jamais 82.
     expect(find.bySemanticsLabel(RegExp('82')), findsNothing);
     expect(
-      find.bySemanticsLabel(c.montantMasque),
+      // Les deux montants « actuel » et « manque » sont fusionnes avec leur
+      // libelle (MergeSemantics) : on cherche le mot dans le libelle.
+      find.bySemanticsLabel(RegExp(RegExp.escape(c.montantMasque))),
       findsAtLeastNWidgets(2 + 3), // jauge, pourcentage, trois montants
     );
     semantique.dispose();
