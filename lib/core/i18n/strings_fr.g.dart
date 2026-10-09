@@ -3233,6 +3233,9 @@ class Traductions$salle$seance$fr {
 	/// fr: 'Quitter la séance'
 	String get sortir => 'Quitter la séance';
 
+	/// fr: 'Commandes de l'appel'
+	String get commandesAppel => 'Commandes de l\'appel';
+
 	/// fr: 'Élèves {connectes}/{inscrits}'
 	String compteurEleves({required Object connectes, required Object inscrits}) => 'Élèves ${connectes}/${inscrits}';
 
@@ -3339,6 +3342,9 @@ class Traductions$salle$seance$fr {
 	/// fr: 'Options du panneau {titre}'
 	String optionsPanneau({required Object titre}) => 'Options du panneau ${titre}';
 
+	late final Traductions$salle$seance$commandes$fr commandes = Traductions$salle$seance$commandes$fr.internal(_root);
+	late final Traductions$salle$seance$capsule$fr capsule = Traductions$salle$seance$capsule$fr.internal(_root);
+	late final Traductions$salle$seance$contexte$fr contexte = Traductions$salle$seance$contexte$fr.internal(_root);
 	late final Traductions$salle$seance$demo$fr demo = Traductions$salle$seance$demo$fr.internal(_root);
 	late final Traductions$salle$seance$statut$fr statut = Traductions$salle$seance$statut$fr.internal(_root);
 }
@@ -15506,6 +15512,132 @@ class Traductions$salle$seance$fiche$fr {
 	String seancesSemaine({required Object nombre}) => '${nombre} séances cette semaine';
 }
 
+// Path: salle.seance.commandes
+class Traductions$salle$seance$commandes$fr {
+	Traductions$salle$seance$commandes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Commandes'
+	String get declencheur => 'Commandes';
+
+	/// fr: 'Ouvrir les commandes du support et du tableau'
+	String get declencheurSemantique => 'Ouvrir les commandes du support et du tableau';
+
+	/// fr: 'Commandes'
+	String get titre => 'Commandes';
+
+	/// fr: 'Réduire'
+	String get reduire => 'Réduire';
+
+	/// fr: 'Réduire les commandes'
+	String get reduireSemantique => 'Réduire les commandes';
+
+	/// fr: 'Support'
+	String get ongletSupport => 'Support';
+
+	/// fr: 'Outils'
+	String get ongletOutils => 'Outils';
+
+	/// fr: 'Bibliothèque'
+	String get bibliotheque => 'Bibliothèque';
+
+	/// fr: 'Support'
+	String get affichageSupport => 'Support';
+
+	/// fr: 'Avec notes'
+	String get affichageAvecNotes => 'Avec notes';
+
+	/// fr: 'Tableau'
+	String get affichageTableau => 'Tableau';
+
+	/// fr: 'Lecture'
+	String get lecture => 'Lecture';
+
+	/// fr: 'Ajuster à l'écran'
+	String get ajuster => 'Ajuster à l\'écran';
+
+	/// fr: 'Affichage'
+	String get affichage => 'Affichage';
+
+	/// fr: 'Focus'
+	String get focus => 'Focus';
+
+	/// fr: 'Focus, agrandir le contenu et réduire les panneaux'
+	String get focusSemantique => 'Focus, agrandir le contenu et réduire les panneaux';
+
+	/// fr: 'Quitter le focus'
+	String get quitterFocus => 'Quitter le focus';
+}
+
+// Path: salle.seance.capsule
+class Traductions$salle$seance$capsule$fr {
+	Traductions$salle$seance$capsule$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Afficher les informations {deNom}'
+	String avatar({required Object deNom}) => 'Afficher les informations ${deNom}';
+
+	/// fr: 'Contrôle possible. Afficher les informations'
+	String get controlePossible => 'Contrôle possible. Afficher les informations';
+
+	/// fr: 'Contrôle actif. Afficher les informations'
+	String get controleActif => 'Contrôle actif. Afficher les informations';
+
+	/// fr: 'Enregistrement actif'
+	String get enregistrementActif => 'Enregistrement actif';
+}
+
+// Path: salle.seance.contexte
+class Traductions$salle$seance$contexte$fr {
+	Traductions$salle$seance$contexte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Informations de la séance'
+	String get titre => 'Informations de la séance';
+
+	/// fr: 'Réseau'
+	String get reseau => 'Réseau';
+
+	/// fr: 'Détail du réseau'
+	String get detailReseau => 'Détail du réseau';
+
+	/// fr: 'Enregistrement actif'
+	String get enregistrementActif => 'Enregistrement actif';
+
+	/// fr: 'Contrôle'
+	String get controle => 'Contrôle';
+
+	/// fr: 'Contrôle possible'
+	String get controlePossible => 'Contrôle possible';
+
+	/// fr: 'Contrôle actif'
+	String get controleActif => 'Contrôle actif';
+
+	/// fr: 'Une visite de contrôle peut avoir lieu. Cela ne veut pas dire que quelqu'un observe maintenant.'
+	String get controlePossibleDetail => 'Une visite de contrôle peut avoir lieu. Cela ne veut pas dire que quelqu\'un observe maintenant.';
+
+	/// fr: 'Une visite de contrôle a lieu en ce moment.'
+	String get controleActifDetail => 'Une visite de contrôle a lieu en ce moment.';
+
+	/// fr: 'Réduire'
+	String get reduire => 'Réduire';
+
+	/// fr: 'Réduire les participants'
+	String get reduireParticipants => 'Réduire les participants';
+
+	/// fr: 'Réduire les informations'
+	String get reduireInformations => 'Réduire les informations';
+}
+
 // Path: salle.seance.demo
 class Traductions$salle$seance$demo$fr {
 	Traductions$salle$seance$demo$fr.internal(this._root);
@@ -15523,6 +15655,7 @@ class Traductions$salle$seance$demo$fr {
 	late final Traductions$salle$seance$demo$groupes$fr groupes = Traductions$salle$seance$demo$groupes$fr.internal(_root);
 	late final Traductions$salle$seance$demo$roles$fr roles = Traductions$salle$seance$demo$roles$fr.internal(_root);
 	late final Traductions$salle$seance$demo$etats$fr etats = Traductions$salle$seance$demo$etats$fr.internal(_root);
+	late final Traductions$salle$seance$demo$tb$fr tb = Traductions$salle$seance$demo$tb$fr.internal(_root);
 }
 
 // Path: salle.seance.statut
@@ -23720,6 +23853,9 @@ class Traductions$salle$seance$demo$groupes$fr {
 
 	/// fr: 'Situations de secours'
 	String get secours => 'Situations de secours';
+
+	/// fr: 'Supports et tableau'
+	String get tableau => 'Supports et tableau';
 }
 
 // Path: salle.seance.demo.roles
@@ -23795,6 +23931,102 @@ class Traductions$salle$seance$demo$etats$fr {
 
 	/// fr: 'Accès retiré'
 	String get accesRetire => 'Accès retiré';
+}
+
+// Path: salle.seance.demo.tb
+class Traductions$salle$seance$demo$tb$fr {
+	Traductions$salle$seance$demo$tb$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'SAL-00 Salle et personnes'
+	String get sal00 => 'SAL-00 Salle et personnes';
+
+	/// fr: 'PED-01 Tableau libre, sans support'
+	String get ped01 => 'PED-01 Tableau libre, sans support';
+
+	/// fr: 'PED-02 Support seul'
+	String get ped02 => 'PED-02 Support seul';
+
+	/// fr: 'PED-03 Support avec notes'
+	String get ped03 => 'PED-03 Support avec notes';
+
+	/// fr: 'PED-04 Tableau, support masqué'
+	String get ped04 => 'PED-04 Tableau, support masqué';
+
+	/// fr: 'UI-01 Présentation compacte'
+	String get ui01 => 'UI-01 Présentation compacte';
+
+	/// fr: 'UI-02 Salle développée'
+	String get ui02 => 'UI-02 Salle développée';
+
+	/// fr: 'UI-03 Focus local'
+	String get ui03 => 'UI-03 Focus local';
+
+	/// fr: 'VIS-01 Barre de visio révélée'
+	String get vis01 => 'VIS-01 Barre de visio révélée';
+
+	/// fr: 'CTX-01 Contexte de la séance'
+	String get ctx01 => 'CTX-01 Contexte de la séance';
+
+	/// fr: 'CTX-02 Informations de contrôle'
+	String get ctx02 => 'CTX-02 Informations de contrôle';
+
+	/// fr: 'CMD-01 Commandes'
+	String get cmd01 => 'CMD-01 Commandes';
+
+	/// fr: 'CMD-02 Couleur et épaisseur'
+	String get cmd02 => 'CMD-02 Couleur et épaisseur';
+
+	/// fr: 'CMD-03 Écriture active'
+	String get cmd03 => 'CMD-03 Écriture active';
+
+	/// fr: 'LIB-01 Bibliothèque'
+	String get lib01 => 'LIB-01 Bibliothèque';
+
+	/// fr: 'LIB-02 Aperçu personnel'
+	String get lib02 => 'LIB-02 Aperçu personnel';
+
+	/// fr: 'LIB-03 Ouverture du support'
+	String get lib03 => 'LIB-03 Ouverture du support';
+
+	/// fr: 'LIB-04 Recherche sans résultat'
+	String get lib04 => 'LIB-04 Recherche sans résultat';
+
+	/// fr: 'PER-01 Participants et autorisations'
+	String get per01 => 'PER-01 Participants et autorisations';
+
+	/// fr: 'DLG-01 Effacer les notes de la page'
+	String get dlg01 => 'DLG-01 Effacer les notes de la page';
+
+	/// fr: 'ERR-01 Synchronisation interrompue'
+	String get err01 => 'ERR-01 Synchronisation interrompue';
+
+	/// fr: 'ERR-02 Reprise du tableau'
+	String get err02 => 'ERR-02 Reprise du tableau';
+
+	/// fr: 'ERR-03 Sauvegarde en échec'
+	String get err03 => 'ERR-03 Sauvegarde en échec';
+
+	/// fr: 'END-01 Quitter la séance'
+	String get end01 => 'END-01 Quitter la séance';
+
+	/// fr: 'Le support arrive'
+	String get supportArrive => 'Le support arrive';
+
+	/// fr: 'Ressource indisponible'
+	String get ressourceIndisponible => 'Ressource indisponible';
+
+	/// fr: 'Autorisation d'écrire'
+	String get autorisationEcrire => 'Autorisation d\'écrire';
+
+	/// fr: 'Droit retiré'
+	String get droitRetire => 'Droit retiré';
+
+	/// fr: 'Effacer les notes du tableau'
+	String get effacementTableau => 'Effacer les notes du tableau';
 }
 
 // Path: admin.finance.vue.alerte
@@ -25959,6 +26191,7 @@ extension on Traductions {
 			'salle.seance.reglages' => 'Réglages',
 			'salle.seance.compteDe' => ({required Object deNom}) => 'Compte ${deNom}',
 			'salle.seance.sortir' => 'Quitter la séance',
+			'salle.seance.commandesAppel' => 'Commandes de l\'appel',
 			'salle.seance.compteurEleves' => ({required Object connectes, required Object inscrits}) => 'Élèves ${connectes}/${inscrits}',
 			'salle.seance.parler' => 'Parler',
 			'salle.seance.agrandir' => 'Agrandir',
@@ -26014,10 +26247,44 @@ extension on Traductions {
 			'salle.seance.fiche.uneSeanceSemaine' => '1 séance cette semaine',
 			'salle.seance.fiche.seancesSemaine' => ({required Object nombre}) => '${nombre} séances cette semaine',
 			'salle.seance.optionsPanneau' => ({required Object titre}) => 'Options du panneau ${titre}',
+			'salle.seance.commandes.declencheur' => 'Commandes',
+			'salle.seance.commandes.declencheurSemantique' => 'Ouvrir les commandes du support et du tableau',
+			'salle.seance.commandes.titre' => 'Commandes',
+			'salle.seance.commandes.reduire' => 'Réduire',
+			'salle.seance.commandes.reduireSemantique' => 'Réduire les commandes',
+			'salle.seance.commandes.ongletSupport' => 'Support',
+			'salle.seance.commandes.ongletOutils' => 'Outils',
+			'salle.seance.commandes.bibliotheque' => 'Bibliothèque',
+			'salle.seance.commandes.affichageSupport' => 'Support',
+			'salle.seance.commandes.affichageAvecNotes' => 'Avec notes',
+			'salle.seance.commandes.affichageTableau' => 'Tableau',
+			'salle.seance.commandes.lecture' => 'Lecture',
+			'salle.seance.commandes.ajuster' => 'Ajuster à l\'écran',
+			'salle.seance.commandes.affichage' => 'Affichage',
+			'salle.seance.commandes.focus' => 'Focus',
+			'salle.seance.commandes.focusSemantique' => 'Focus, agrandir le contenu et réduire les panneaux',
+			'salle.seance.commandes.quitterFocus' => 'Quitter le focus',
+			'salle.seance.capsule.avatar' => ({required Object deNom}) => 'Afficher les informations ${deNom}',
+			'salle.seance.capsule.controlePossible' => 'Contrôle possible. Afficher les informations',
+			'salle.seance.capsule.controleActif' => 'Contrôle actif. Afficher les informations',
+			'salle.seance.capsule.enregistrementActif' => 'Enregistrement actif',
+			'salle.seance.contexte.titre' => 'Informations de la séance',
+			'salle.seance.contexte.reseau' => 'Réseau',
+			'salle.seance.contexte.detailReseau' => 'Détail du réseau',
+			'salle.seance.contexte.enregistrementActif' => 'Enregistrement actif',
+			'salle.seance.contexte.controle' => 'Contrôle',
+			'salle.seance.contexte.controlePossible' => 'Contrôle possible',
+			'salle.seance.contexte.controleActif' => 'Contrôle actif',
+			'salle.seance.contexte.controlePossibleDetail' => 'Une visite de contrôle peut avoir lieu. Cela ne veut pas dire que quelqu\'un observe maintenant.',
+			'salle.seance.contexte.controleActifDetail' => 'Une visite de contrôle a lieu en ce moment.',
+			'salle.seance.contexte.reduire' => 'Réduire',
+			'salle.seance.contexte.reduireParticipants' => 'Réduire les participants',
+			'salle.seance.contexte.reduireInformations' => 'Réduire les informations',
 			'salle.seance.demo.titre' => 'Salle de démonstration',
 			'salle.seance.demo.intro' => 'Données fictives, aucun serveur. Choisissez un rôle et un état.',
 			'salle.seance.demo.groupes.seance' => 'Déroulé de la séance',
 			'salle.seance.demo.groupes.secours' => 'Situations de secours',
+			'salle.seance.demo.groupes.tableau' => 'Supports et tableau',
 			'salle.seance.demo.roles.eleve' => 'Élève standard',
 			'salle.seance.demo.roles.guidee' => 'Mode Accessibilité',
 			'salle.seance.demo.roles.enseignant' => 'Enseignant',
@@ -26037,6 +26304,35 @@ extension on Traductions {
 			'salle.seance.demo.etats.cameraInterdite' => 'Caméra interdite',
 			'salle.seance.demo.etats.prolongee' => 'Séance prolongée',
 			'salle.seance.demo.etats.accesRetire' => 'Accès retiré',
+			'salle.seance.demo.tb.sal00' => 'SAL-00 Salle et personnes',
+			'salle.seance.demo.tb.ped01' => 'PED-01 Tableau libre, sans support',
+			'salle.seance.demo.tb.ped02' => 'PED-02 Support seul',
+			'salle.seance.demo.tb.ped03' => 'PED-03 Support avec notes',
+			'salle.seance.demo.tb.ped04' => 'PED-04 Tableau, support masqué',
+			'salle.seance.demo.tb.ui01' => 'UI-01 Présentation compacte',
+			'salle.seance.demo.tb.ui02' => 'UI-02 Salle développée',
+			'salle.seance.demo.tb.ui03' => 'UI-03 Focus local',
+			'salle.seance.demo.tb.vis01' => 'VIS-01 Barre de visio révélée',
+			'salle.seance.demo.tb.ctx01' => 'CTX-01 Contexte de la séance',
+			'salle.seance.demo.tb.ctx02' => 'CTX-02 Informations de contrôle',
+			'salle.seance.demo.tb.cmd01' => 'CMD-01 Commandes',
+			'salle.seance.demo.tb.cmd02' => 'CMD-02 Couleur et épaisseur',
+			'salle.seance.demo.tb.cmd03' => 'CMD-03 Écriture active',
+			'salle.seance.demo.tb.lib01' => 'LIB-01 Bibliothèque',
+			'salle.seance.demo.tb.lib02' => 'LIB-02 Aperçu personnel',
+			'salle.seance.demo.tb.lib03' => 'LIB-03 Ouverture du support',
+			'salle.seance.demo.tb.lib04' => 'LIB-04 Recherche sans résultat',
+			'salle.seance.demo.tb.per01' => 'PER-01 Participants et autorisations',
+			'salle.seance.demo.tb.dlg01' => 'DLG-01 Effacer les notes de la page',
+			'salle.seance.demo.tb.err01' => 'ERR-01 Synchronisation interrompue',
+			'salle.seance.demo.tb.err02' => 'ERR-02 Reprise du tableau',
+			'salle.seance.demo.tb.err03' => 'ERR-03 Sauvegarde en échec',
+			'salle.seance.demo.tb.end01' => 'END-01 Quitter la séance',
+			'salle.seance.demo.tb.supportArrive' => 'Le support arrive',
+			'salle.seance.demo.tb.ressourceIndisponible' => 'Ressource indisponible',
+			'salle.seance.demo.tb.autorisationEcrire' => 'Autorisation d\'écrire',
+			'salle.seance.demo.tb.droitRetire' => 'Droit retiré',
+			'salle.seance.demo.tb.effacementTableau' => 'Effacer les notes du tableau',
 			'salle.seance.statut.connecte' => 'Connecté',
 			'salle.seance.statut.pasEncoreConnecte' => 'Pas encore connecté',
 			'salle.seance.statut.connexionInterrompue' => 'Connexion interrompue',
@@ -26167,6 +26463,8 @@ extension on Traductions {
 			'attente.refuse' => 'Dossier refusé',
 			'attente.suspendu' => 'Votre compte est suspendu.',
 			'attente.contacterAcademie' => 'Contacter l\'académie',
+			_ => null,
+		} ?? switch (path) {
 			'attente.deposeLe' => ({required Object date}) => 'Déposé le ${date}',
 			'attente.delai' => 'La vérification prend en général moins de 48 heures.',
 			'attente.aFournir' => 'À fournir',
@@ -26231,8 +26529,6 @@ extension on Traductions {
 			'connexion.recuperation.autreAdresse' => 'Utiliser une autre adresse',
 			'connexion.recuperation.revenirConnexion' => 'Revenir à la connexion',
 			'connexion.feuilleAppareil.pourQui' => 'Réservé aux tuteurs déjà inscrits. Cet écran donne à un élève de votre foyer son propre accès, sur sa tablette ou son téléphone, sans lui confier votre compte.',
-			_ => null,
-		} ?? switch (path) {
 			'connexion.feuilleAppareil.etapesTitre' => 'Où trouver le code',
 			'connexion.feuilleAppareil.etape1' => 'Sur votre propre appareil, ouvrez Foyer, puis Appareils du foyer.',
 			'connexion.feuilleAppareil.etape2' => 'Touchez le profil de l\'élève, puis Connecter un appareil.',
@@ -26681,6 +26977,8 @@ extension on Traductions {
 			'ficheEleve.camera.echec' => 'Le changement n\'a pas été enregistré. Réessayez.',
 			'ficheEleve.camera.horsLigne' => 'La caméra pourra être réglée quand la connexion reviendra.',
 			'ficheEleve.acces.titre' => 'Accès Rewayah',
+			_ => null,
+		} ?? switch (path) {
 			'ficheEleve.acces.ligne' => ({required Object dePrenom}) => 'Accès ${dePrenom}',
 			'ficheEleve.acces.pastilleSansEcheance' => 'Sans échéance',
 			'ficheEleve.acces.pastilleEnCours' => 'En cours',
@@ -26745,8 +27043,6 @@ extension on Traductions {
 			'ficheEleve.finances.noteAbsences' => 'Les absences ordinaires n\'entraînent pas de réduction sur le mois une fois celui-ci financé.',
 			'ficheEleve.finances.faitSeance' => 'Pas de consommation par séance',
 			'ficheEleve.finances.faitPeriode' => 'Accès lié à la période financée',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.finances.historiqueTitre' => 'Historique des transactions',
 			'ficheEleve.finances.voirTout' => 'Voir tout',
 			'ficheEleve.finances.voirToutSemantique' => ({required Object dePrenom}) => 'Voir tout : mouvements ${dePrenom}',
@@ -27195,6 +27491,8 @@ extension on Traductions {
 			'admin.attribution.sansHeureCommune' => 'Aucune heure commune',
 			'admin.attribution.quelleHeure' => 'Sur quelle heure ?',
 			'admin.attribution.manqueHeure' => 'Il manque l\'heure : choisissez-la sous « Sur quelle heure ? ».',
+			_ => null,
+		} ?? switch (path) {
 			'admin.attribution.creneau' => ({required Object jour, required Object heure}) => '${jour} à ${heure} h',
 			'admin.attribution.motif' => 'Pourquoi passer outre ?',
 			'admin.attribution.motifRequis' => ({required Object prenom}) => '${prenom} n\'a pas posé cette heure. L\'attribuer quand même peut se justifier, et cela s\'inscrit au journal.',
@@ -27259,8 +27557,6 @@ extension on Traductions {
 			'admin.groupes.modifierSeuilTitre' => ({required Object deLibelle}) => 'Seuil maximal ${deLibelle}',
 			'admin.groupes.modifierSeuilEnvoyer' => 'Enregistrer',
 			'admin.groupes.modifierSeuilErreur' => ({required Object message}) => 'La modification n\'a pas abouti : ${message}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.cloturerTitre' => ({required Object libelle}) => 'Clôturer ${libelle}',
 			'admin.groupes.cloturerDetail' => 'Tous les membres actifs seront retirés de la classe. Cette action ne peut pas être annulée.',
 			'admin.groupes.cloturerEnvoyer' => 'Clôturer',
@@ -27709,6 +28005,8 @@ extension on Traductions {
 			'admin.agents.parcoursAdmin' => 'Administration',
 			'admin.agents.parcoursComptable' => 'Comptable',
 			'admin.agents.parcoursInconnu' => 'Parcours inconnu',
+			_ => null,
+		} ?? switch (path) {
 			'admin.agents.etatActif' => 'Actif',
 			'admin.agents.etatRevoque' => 'Révoqué',
 			'admin.agents.etatExpire' => 'Expiré',
@@ -27773,8 +28071,6 @@ extension on Traductions {
 			'admin.finance.vue.etatVide' => 'Aucun état de paiement rendu pour ce mois.',
 			'admin.finance.vue.topClasses' => 'Top classes',
 			'admin.finance.vue.topClassesDetail' => ({required Object deMois}) => 'Les classes qui ont le plus encaissé ${deMois}.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.vue.topClasse' => ({required Object rang, required Object classe}) => '${rang}. Classe ${classe}',
 			'admin.finance.vue.topClassesVide' => 'Aucune classe n\'a encaissé ce mois.',
 			'admin.finance.vue.dernieresOperations' => 'Dernières opérations',
@@ -28223,6 +28519,8 @@ extension on Traductions {
 			'compte.roles.controller' => 'Contrôleur',
 			'compte.roles.teacher' => 'Enseignant',
 			'compte.roles.guardian' => 'Tuteur',
+			_ => null,
+		} ?? switch (path) {
 			'compte.roles.student' => 'Élève',
 			'compte.roleDetail.admin' => 'Gère les dossiers, l\'attribution et le journal de l\'académie',
 			'compte.roleDetail.accountant' => 'Gère les paiements et les factures',
@@ -28287,8 +28585,6 @@ extension on Traductions {
 			'compte.tuteur.pageAcces.expire' => ({required Object date}) => 'Terminé le ${date}',
 			'compte.tuteur.pageAcces.pastilleActif' => 'Actif',
 			'compte.tuteur.pageAcces.pastilleExpire' => 'Terminé',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageAcces.aucunTitre' => 'Aucun profil élève',
 			'compte.tuteur.pageAcces.aucunePhrase' => 'L\'accès de chaque profil élève s\'affichera ici.',
 			'compte.tuteur.pageAcces.titulaire' => 'Votre compte de titulaire n\'a pas d\'échéance propre : l\'accès se règle profil par profil.',
@@ -28737,6 +29033,8 @@ extension on Traductions {
 			'classe.observation.secondes' => ({required Object secondes}) => '${secondes} s',
 			'classe.observation.motif.visitesEpuisees' => 'Vous avez utilisé vos visites pour cette séance.',
 			'classe.observation.motif.tempsEpuise' => 'Votre temps d\'observation est épuisé pour cette séance.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.observation.motif.seanceNonCommencee' => 'L\'observation ouvre quand la séance commence.',
 			'classe.observation.motif.seanceTerminee' => 'La séance est terminée.',
 			'classe.observation.motif.seanceNonTenue' => 'Cette séance n\'a pas lieu : il n\'y a rien à observer.',
@@ -28801,8 +29099,6 @@ extension on Traductions {
 			'classe.pageCatalogue.confirmer' => 'Confirmer l\'inscription',
 			'classe.pageCatalogue.confirmerAttente' => 'Confirmer la liste d\'attente',
 			'classe.pageCatalogue.envoiIncertain' => 'La réponse de l\'académie n\'est pas arrivée. Réessayer ne crée pas de seconde inscription.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageCatalogue.envoiIndisponible' => 'L\'inscription en ligne n\'est pas encore ouverte : aucune place n\'a été réservée.',
 			'classe.pageCatalogue.resultat.inscritTitre' => 'Inscription confirmée',
 			'classe.pageCatalogue.resultat.inscritPhrase' => ({required Object prenom, required Object classe}) => '${prenom} rejoint ${classe}.',
@@ -29251,6 +29547,8 @@ extension on Traductions {
 			'enseignant.profil.enregistre' => 'Modification enregistrée',
 			'enseignant.profil.editionErreur' => 'La modification n\'a pas abouti. Réessayez dans un instant.',
 			'enseignant.profil.remuneration' => 'Rémunération',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.revenus' => 'Revenus estimés',
 			'enseignant.profil.revenusDetail' => 'Estimation du mois en cours, Classe par Classe',
 			'enseignant.creneaux.heureLibelle' => ({required Object jour, required Object heure}) => '${jour} ${heure} h',
@@ -29315,8 +29613,6 @@ extension on Traductions {
 			'enseignant.creneaux.menuA' => 'Heure de fin',
 			'enseignant.creneaux.manqueJour' => 'Aucun jour choisi. Touchez au moins un jour pour enregistrer la plage.',
 			'enseignant.creneaux.fusion' => ({required Object jour, required Object de, required Object a}) => '${jour} : cette plage chevauche ou touche une plage déjà posée. Elles seront réunies en une seule, ${de} ${a}.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.dejaPosee' => ({required Object jour, required Object de, required Object a}) => '${jour} : ces heures sont déjà posées, dans la plage ${de} ${a}. Rien ne change pour ce jour.',
 			'enseignant.creneaux.enregistrerPlage' => 'Enregistrer la plage',
 			'enseignant.creneaux.supprimerPlage' => 'Supprimer cette plage',
@@ -29765,6 +30061,8 @@ extension on Traductions {
 			'tc.outils.dock.deplacer' => 'Déplacer les outils',
 			'tc.outils.dock.position.bas' => 'En bas',
 			'tc.outils.dock.position.gauche' => 'À gauche',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.dock.position.droite' => 'À droite',
 			'tc.outils.dock.bibliotheque' => 'Bibliothèque',
 			'tc.outils.dock.focus' => 'Focus',
@@ -29829,8 +30127,6 @@ extension on Traductions {
 			'tc.classe.etat.sorti' => 'Sorti',
 			'tc.classe.etat.absent' => 'Absent',
 			'tc.classe.fiche.niveau' => 'Niveau',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.fiche.objectif' => 'Objectif actuel',
 			'tc.classe.fiche.derniereSeance' => 'Dernière séance',
 			'tc.classe.fiche.page' => ({required Object page}) => 'Page ${page}',
@@ -30279,6 +30575,8 @@ extension on Traductions {
 			'adulte.invitation.titreElle' => 'Inviter ma conjointe',
 			'adulte.invitation.titreLui' => 'Inviter mon conjoint',
 			'adulte.invitation.enteteElle' => 'Un compte personnel pour elle',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.invitation.enteteLui' => 'Un compte personnel pour lui',
 			'adulte.invitation.phraseElle' => 'Votre conjointe utilisera son propre compte. Elle ne pourra pas gérer votre foyer ni les profils élèves que vous avez créés.',
 			'adulte.invitation.phraseLui' => 'Votre conjoint utilisera son propre compte. Il ne pourra pas gérer votre foyer ni les profils élèves que vous avez créés.',
@@ -30343,8 +30641,6 @@ extension on Traductions {
 			'adulte.acceptation.accepter' => 'Accepter l\'invitation',
 			'adulte.acceptation.horsLigne' => 'Rien n\'est envoyé. Vous pourrez répondre vous-même quand la connexion sera revenue.',
 			'adulte.acceptation.acceptationEchecTitre' => 'L\'acceptation n\'a pas été confirmée.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.acceptation.refusEchecTitre' => 'Le refus n\'a pas été confirmé.',
 			'adulte.acceptation.echecPhrase' => 'Vérifiez avant de réessayer.',
 			'adulte.acceptation.accepteeTitre' => 'Invitation acceptée',
@@ -30793,6 +31089,8 @@ extension on Traductions {
 			'com.socle.navigation.provisoire.administrationDetail' => 'Les annonces, la modération et les messages se géreront bientôt ici.',
 			'com.socle.navigation.provisoire.publierAnnonceTitre' => 'Publier une annonce',
 			'com.socle.navigation.provisoire.publierAnnonceDetail' => 'La publication d\'une annonce pour une Classe arrivera bientôt ici.',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.navigation.demo.titre' => 'Démonstration des communications',
 			'com.socle.navigation.demo.detail' => 'Données fictives, absentes des versions de production.',
 			'com.socle.navigation.demo.choisir' => 'Choisissez un espace à essayer.',
@@ -30857,8 +31155,6 @@ extension on Traductions {
 			'com.messages.demo.horsLigne' => 'Hors ligne, vu par la famille',
 			'com.messages.demo.refuse' => 'Conversation d\'une autre famille, refusée',
 			'com.messages.demo.vue' => ({required Object role}) => 'Point de vue : ${role}',
-			_ => null,
-		} ?? switch (path) {
 			'com.messages.demo.f.ahmed' => 'Ahmed',
 			'com.messages.demo.f.parentAdam' => 'Parent d\'Adam',
 			'com.messages.demo.f.enseignanteNour' => 'Enseignante de la Classe An-Nour',
@@ -31307,6 +31603,8 @@ extension on Traductions {
 			'com.studio.demo.f.partagePar' => ({required Object nom}) => 'Partagé par ${nom}',
 			'com.studio.demo.f.lienRemplacements' => 'Remplacements de la semaine',
 			'com.studio.demo.f.lienCharte' => 'Charte de l\'équipe',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.f.brouillon' => 'Samira, je regarde le dossier de la famille Karim ce soir et je te dis demain matin',
 			'com.studio.demo.f.activitePaiement' => 'Paiement de septembre non confirmé pour la famille Haddad',
 			'com.studio.demo.f.objetEcheancier' => 'Échéancier de la famille Haddad',
@@ -31371,8 +31669,6 @@ extension on Traductions {
 			'com.annonces.publieur.aucuneCible' => 'Vous ne pouvez publier pour aucun destinataire pour le moment. Demandez l\'accès à la direction.',
 			'com.annonces.publieur.classeRefuseeTitre' => 'Publication réservée',
 			'com.annonces.publieur.classeRefusee' => 'Vous ne pouvez pas publier d\'annonce pour cette Classe. Demandez l\'accès à la direction.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.nouvelle' => 'Nouvelle annonce',
 			'com.annonces.administration.demo' => 'Démonstration',
 			'com.annonces.administration.demoDetail' => 'Données de démonstration : aucun chiffre réel.',
@@ -31821,6 +32117,8 @@ extension on Traductions {
 			'comptable.paiements.detail.alerteLieeOperateur' => 'Bénéficiaire lié à l\'opérateur : une validation supplémentaire est requise avant tout paiement.',
 			'comptable.paiements.detail.alerteEchec' => 'Le dernier envoi a échoué chez le prestataire. Vérifiez la méthode de paiement avant une nouvelle tentative.',
 			'comptable.paiements.detail.alerteInfos' => 'Le bénéficiaire n\'a pas encore de méthode de paiement complète. Relancez-le depuis son profil de paiement.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.detail.alerteTitre' => 'À savoir avant de payer',
 			'comptable.paiements.detail.autoPaiementPhrase' => 'Ce paiement vous concerne : une autre personne habilitée le traitera. Personne ne peut exécuter son propre paiement.',
 			'comptable.paiements.detail.introuvableTitre' => 'Ce paiement est introuvable.',
@@ -31885,8 +32183,6 @@ extension on Traductions {
 			'comptable.tresorerie.mouvementsHorsLigne' => 'Les mouvements entre coffres reprendront dès que l\'envoi est de nouveau possible.',
 			'comptable.tresorerie.interdits' => 'Fonds clients engagés et Taxes & obligations ne financent jamais une dépense ordinaire ; une allocation passée ne se modifie pas.',
 			'comptable.tresorerie.previsionTitre' => 'Prévision',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.previsionPhrase' => 'Entrées et sorties attendues, par date.',
 			'comptable.tresorerie.previsionVide' => 'Aucune entrée ni sortie attendue pour l\'instant.',
 			'comptable.tresorerie.entree' => 'Entrée',
@@ -32335,6 +32631,8 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.plafondPeriode' => 'Plafond cumulé par période',
 			'comptable.direction.delegationPanneau.plafondPeriodeDetail' => 'Le total maximal sur la période ; il empêche de contourner un plafond en fractionnant.',
 			'comptable.direction.delegationPanneau.plafondIndice' => 'Aucun plafond',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.validationsTitre' => 'Quand une seconde validation est exigée',
 			'comptable.direction.delegationPanneau.retraitReserve' => 'Retrait de la Réserve stratégique',
 			'comptable.direction.delegationPanneau.retraitReserveDetail' => 'Interdit au Comptable sans validation.',

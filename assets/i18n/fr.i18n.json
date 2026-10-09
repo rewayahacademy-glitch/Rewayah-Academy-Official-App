@@ -323,6 +323,7 @@
       "reglages": "Réglages",
       "compteDe": "Compte {deNom}",
       "sortir": "Quitter la séance",
+      "commandesAppel": "Commandes de l'appel",
       "compteurEleves": "Élèves {connectes}/{inscrits}",
       "parler": "Parler",
       "agrandir": "Agrandir",
@@ -386,12 +387,52 @@
         "seancesSemaine": "{nombre} séances cette semaine"
       },
       "optionsPanneau": "Options du panneau {titre}",
+      "commandes": {
+        "declencheur": "Commandes",
+        "declencheurSemantique": "Ouvrir les commandes du support et du tableau",
+        "titre": "Commandes",
+        "reduire": "Réduire",
+        "reduireSemantique": "Réduire les commandes",
+        "ongletSupport": "Support",
+        "ongletOutils": "Outils",
+        "bibliotheque": "Bibliothèque",
+        "affichageSupport": "Support",
+        "affichageAvecNotes": "Avec notes",
+        "affichageTableau": "Tableau",
+        "lecture": "Lecture",
+        "ajuster": "Ajuster à l'écran",
+        "affichage": "Affichage",
+        "focus": "Focus",
+        "focusSemantique": "Focus, agrandir le contenu et réduire les panneaux",
+        "quitterFocus": "Quitter le focus"
+      },
+      "capsule": {
+        "avatar": "Afficher les informations {deNom}",
+        "controlePossible": "Contrôle possible. Afficher les informations",
+        "controleActif": "Contrôle actif. Afficher les informations",
+        "enregistrementActif": "Enregistrement actif"
+      },
+      "contexte": {
+        "titre": "Informations de la séance",
+        "reseau": "Réseau",
+        "detailReseau": "Détail du réseau",
+        "enregistrementActif": "Enregistrement actif",
+        "controle": "Contrôle",
+        "controlePossible": "Contrôle possible",
+        "controleActif": "Contrôle actif",
+        "controlePossibleDetail": "Une visite de contrôle peut avoir lieu. Cela ne veut pas dire que quelqu'un observe maintenant.",
+        "controleActifDetail": "Une visite de contrôle a lieu en ce moment.",
+        "reduire": "Réduire",
+        "reduireParticipants": "Réduire les participants",
+        "reduireInformations": "Réduire les informations"
+      },
       "demo": {
         "titre": "Salle de démonstration",
         "intro": "Données fictives, aucun serveur. Choisissez un rôle et un état.",
         "groupes": {
           "seance": "Déroulé de la séance",
-          "secours": "Situations de secours"
+          "secours": "Situations de secours",
+          "tableau": "Supports et tableau"
         },
         "roles": {
           "eleve": "Élève standard",
@@ -415,6 +456,37 @@
           "cameraInterdite": "Caméra interdite",
           "prolongee": "Séance prolongée",
           "accesRetire": "Accès retiré"
+        },
+        "tb": {
+          "sal00": "SAL-00 Salle et personnes",
+          "ped01": "PED-01 Tableau libre, sans support",
+          "ped02": "PED-02 Support seul",
+          "ped03": "PED-03 Support avec notes",
+          "ped04": "PED-04 Tableau, support masqué",
+          "ui01": "UI-01 Présentation compacte",
+          "ui02": "UI-02 Salle développée",
+          "ui03": "UI-03 Focus local",
+          "vis01": "VIS-01 Barre de visio révélée",
+          "ctx01": "CTX-01 Contexte de la séance",
+          "ctx02": "CTX-02 Informations de contrôle",
+          "cmd01": "CMD-01 Commandes",
+          "cmd02": "CMD-02 Couleur et épaisseur",
+          "cmd03": "CMD-03 Écriture active",
+          "lib01": "LIB-01 Bibliothèque",
+          "lib02": "LIB-02 Aperçu personnel",
+          "lib03": "LIB-03 Ouverture du support",
+          "lib04": "LIB-04 Recherche sans résultat",
+          "per01": "PER-01 Participants et autorisations",
+          "dlg01": "DLG-01 Effacer les notes de la page",
+          "err01": "ERR-01 Synchronisation interrompue",
+          "err02": "ERR-02 Reprise du tableau",
+          "err03": "ERR-03 Sauvegarde en échec",
+          "end01": "END-01 Quitter la séance",
+          "supportArrive": "Le support arrive",
+          "ressourceIndisponible": "Ressource indisponible",
+          "autorisationEcrire": "Autorisation d'écrire",
+          "droitRetire": "Droit retiré",
+          "effacementTableau": "Effacer les notes du tableau"
         }
       },
       "statut": {

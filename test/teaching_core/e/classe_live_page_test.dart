@@ -467,7 +467,10 @@ void main() {
         ecran: LargeurEcran.desktop,
       );
 
-      await tester.tap(find.textContaining(t.salle.seance.supports).first);
+      // TB-4 : la Bibliotheque est la premiere entree des Commandes.
+      await tester.tap(find.text(t.salle.seance.commandes.declencheur));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.salle.seance.commandes.bibliotheque));
       await tester.pumpAndSettle();
 
       expect(find.text('catalogue'), findsOneWidget);

@@ -220,8 +220,16 @@ class CommandeSalle extends StatelessWidget {
     this.focusNode,
     this.selectionne,
     this.encreLibelle,
+    this.motGarde = false,
     super.key,
   });
+
+  /// TB-2 (fiche TB-2, defaut TB-F « Quitter sans libelle ») : vrai, la
+  /// commande garde son mot dans une rangee compacte, comme une bascule
+  /// (Quitter, la sortie de l'appel). Il ne cede, comme le mot d'etat, que
+  /// devant un texte tres agrandi ([motEtatVisible]) : il passe alors en
+  /// infobulle et dans la voix du lecteur d'ecran.
+  final bool motGarde;
 
   /// L'icone : pour une bascule, celle de l'etat courant (micro / micro
   /// barre).
@@ -274,7 +282,8 @@ class CommandeSalle extends StatelessWidget {
     final bool garderMot = compacte?.garderMotEtat ?? false;
     final bool iconeSeule =
         compacte != null &&
-        (!estBascule || (!garderMot && !motEtatVisible(context)));
+        (!(estBascule || motGarde) ||
+            (!garderMot && !motEtatVisible(context)));
     final double diametre =
         compacte?.diametre ?? diametreCommandeSalle(context);
     final double tailleIcone =
@@ -418,8 +427,12 @@ class CommandeSalle extends StatelessWidget {
     // Une bascule tient une case de largeur fixe : son mot d'etat change de
     // longueur (« Micro ouvert », « Micro coupe ») sans deplacer ses voisines.
     // Sur deux rangees (ETATS-MA-1), elle remplit la moitie de rangee que sa
-    // case lui donne : son mot y passe a la ligne sans se couper.
-    final Widget case_ = estBascule && !garderMot
+    // case lui donne : son mot y passe a la ligne sans se couper. TB-2 :
+    // texte tres agrandi hors rangee compacte (bureau), le mot reste visible :
+    // la case suit sa largeur, jamais un mot coupe dans une case pensee pour
+    // l'icone seule.
+    final Widget case_ =
+        estBascule && !garderMot && (iconeSeule || motEtatVisible(context))
         ? SizedBox(
             width: iconeSeule
                 ? largeurCaseCommande(context, bascule: true)

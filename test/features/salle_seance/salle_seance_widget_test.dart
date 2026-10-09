@@ -105,16 +105,14 @@ void main() {
           // camera allumee par defaut.
           expect(find.text('Micro ouvert'), findsOneWidget);
           expect(find.text('Caméra allumée'), findsOneWidget);
-          // Sans support, rien a agrandir. Sur bureau, la barre du support
-          // (zoom local) porte la meme bascule que le dock : meme rendu, donc
-          // le mot d'etat parait deux fois (ETATS-BTN-1).
+          // TB-2 (VIS-01) : Agrandir a quitte la barre de l'appel (Micro,
+          // Camera, Quitter). Sur bureau, seule la barre du support (zoom
+          // local) le porte encore ; sans support, rien a agrandir.
           expect(
             find.text('Agrandir'),
-            etat == EtatDemoSalle.rienPartage
-                ? findsNothing
-                : taille.value.width >= 1200
-                ? findsNWidgets(2)
-                : findsOneWidget,
+            etat != EtatDemoSalle.rienPartage && taille.value.width >= 1200
+                ? findsOneWidget
+                : findsNothing,
           );
           expect(find.text('Quitter'), findsOneWidget);
         });

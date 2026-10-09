@@ -111,8 +111,8 @@ void main() {
           );
           expect(find.text(t.salle.seance.votreParentObserve), findsNothing);
           // La carte du support : a 200 %, la vignette de l'enseignant passe
-          // au-dessus du texte, qui prend toute la largeur (aucun mot coupe) ;
-          // a 100 %, elle reste posee en coin.
+          // apres le texte (A6 = a), qui prend toute la largeur (aucun mot
+          // coupe) ; a 100 %, elle reste posee en coin.
           final Finder pile = find.byKey(
             const ValueKey<String>('vignette-support-pile'),
           );
@@ -169,9 +169,11 @@ void main() {
             expect(pile, findsOneWidget);
             final Finder chapitre = find.textContaining('Chapitre');
             expect(chapitre, findsWidgets);
+            // A6 = a (directeur, 27/09 ; TB-3) : le support reste en haut,
+            // la vignette le suit, elle ne le precede plus.
             expect(
               tester.getTopLeft(chapitre.first).dy,
-              greaterThanOrEqualTo(tester.getBottomLeft(pile).dy),
+              lessThan(tester.getTopLeft(pile).dy),
             );
           } else {
             expect(pile, findsNothing);

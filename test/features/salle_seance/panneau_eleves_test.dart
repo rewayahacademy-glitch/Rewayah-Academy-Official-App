@@ -218,13 +218,10 @@ void main() {
         find.text(t.salle.seance.statut.connexionInterrompue),
         findsOneWidget,
       );
-      // EN-9 : deux volets. Les outils en rangee au-dessus du support, le
-      // panneau a droite du support, jamais par-dessus.
+      // EN-9 : deux volets, le panneau a droite du support, jamais
+      // par-dessus. TB-4 : plus d'outils permanents (dans les Commandes).
       expect(find.byKey(const ValueKey<String>('outils-carte')), findsNothing);
-      expect(
-        find.byKey(const ValueKey<String>('outils-rangee')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const ValueKey<String>('outils-rangee')), findsNothing);
       final Rect panneau = tester.getRect(
         find.byKey(const ValueKey<String>('panneau-seance-colonne')),
       );

@@ -47,7 +47,6 @@ Widget _barre({required bool agrandi}) => Center(
 void main() {
   final Map<String, (Widget Function({required bool agrandi}), Key)> sites =
       <String, (Widget Function({required bool agrandi}), Key)>{
-        'dock de la seance': (_dock, _dockCle),
         'barre du support': (_barre, _barreCle),
       };
   sites.forEach((
@@ -106,4 +105,40 @@ void main() {
       });
     }
   });
+
+  // TB-2 (VIS-01) : Agrandir a quitte la barre de l'appel ; seule sa sortie
+  // « Reduire » y reste tant que le focus local est actif, avec les trois
+  // signaux de la bascule active.
+  for (final ThemeMode luminosite in const <ThemeMode>[
+    ThemeMode.light,
+    ThemeMode.dark,
+  ]) {
+    testWidgets('dock de la seance, ${luminosite.name} : Reduire seulement '
+        'quand le support occupe l\'ecran', (WidgetTester tester) async {
+      fixerVueCapture(tester, const Size(1440, 900), 1);
+      await tester.pumpWidget(
+        hoteCapture(_dock(agrandi: false), themeMode: luminosite),
+      );
+      await tester.pump();
+      expect(find.byKey(_dockCle), findsNothing);
+      await tester.pumpWidget(
+        hoteCapture(_dock(agrandi: true), themeMode: luminosite),
+      );
+      await tester.pump();
+      final AppPalette palette = AppPalette.of(
+        tester.element(find.byKey(_dockCle)),
+      );
+      final BoxDecoration plein = _decoration(tester, _dockCle);
+      expect(plein.color, palette.surfaceInverse.background);
+      expect(plein.border, isNull);
+      expect(_icone(tester, _dockCle), AppIcons.reduire.repos);
+      expect(
+        find.descendant(
+          of: find.byKey(_dockCle),
+          matching: find.text(t.salle.seance.reduire),
+        ),
+        findsOneWidget,
+      );
+    });
+  }
 }
