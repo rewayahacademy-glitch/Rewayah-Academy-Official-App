@@ -48,7 +48,8 @@ begin
       using errcode = '42501';
   end if;
 
-  if p_type not in ('courriel', 'lien')
+  if p_type is null
+     or p_type not in ('courriel', 'lien')
      or v_adresse is null
      or pg_catalog.length(v_adresse) > 320
      or v_adresse ~ '[[:cntrl:]]'
