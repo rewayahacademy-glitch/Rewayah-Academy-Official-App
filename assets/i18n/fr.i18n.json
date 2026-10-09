@@ -3593,6 +3593,7 @@
       "enAttente": "En attente",
       "vide": "Aucun échange avec l'administration pour le moment.",
       "contexte": "Contexte de la visite, joint automatiquement",
+      "contexteCompact": "Contexte joint à vos messages : séance de {heure}",
       "cleClasse": "Classe",
       "cleDate": "Date",
       "cleHeure": "Heure",

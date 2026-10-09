@@ -16,6 +16,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/entete_page.dart' show EnteteCompact;
 import '../../core/widgets/fil_discussion.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
@@ -214,12 +215,6 @@ class _ContexteEpingle extends StatelessWidget {
 
   final FilEchange fil;
 
-  /// Au-dela de cette echelle de texte, le contexte tient en une phrase.
-  static const double echelleCompacte = 1.3;
-
-  /// Sous cette hauteur de vue, aussi (telephone en paysage).
-  static const double hauteurCompacte = 600;
-
   @override
   Widget build(BuildContext context) {
     final e = t.controleur.echanges;
@@ -229,34 +224,21 @@ class _ContexteEpingle extends StatelessWidget {
       e.contexte,
       style: palette.inkMuted.applyTo(textes.labelLarge ?? const TextStyle()),
     );
-    // SUPERPOS-1 : en-tete compact. A texte agrandi ou sur une vue basse,
-    // les trois lignes cle / valeur poussaient le fil et sa saisie hors de
-    // l'ecran (320 en texte double : la page entiere n'etait qu'en-tete) ;
-    // le contexte tient alors en une phrase, sans rien retirer.
-    final double echelle = MediaQuery.textScalerOf(context).scale(1);
-    final bool compact =
-        echelle > _ContexteEpingle.echelleCompacte ||
-        MediaQuery.sizeOf(context).height < _ContexteEpingle.hauteurCompacte;
-    if (compact) {
+    // SUPERPOS-1 : en-tete compact (`EnteteCompact`, meme seuil que le
+    // titre). A texte agrandi ou sur une vue basse, les trois lignes cle /
+    // valeur poussaient le fil et sa saisie hors de l'ecran (320 en texte
+    // double : la page entiere n'etait qu'en-tete). Le titre du fil dit deja
+    // la Classe et la date : le contexte ne les redit pas, il tient en une
+    // phrase qui dit ce qu'il ajoute (l'heure) et qu'il est joint.
+    if (EnteteCompact.actif(context)) {
       return Semantics(
         key: EchangesControleurPage.contexteCompactKey,
         container: true,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            titre,
-            Ecart.vXs,
-            Text(
-              <String>[
-                fil.classe,
-                dateDeLAppareil(fil.debutMission),
-                heureDeLAppareil(fil.debutMission),
-              ].join(' · '),
-              style: palette.inkStrong.applyTo(
-                textes.bodyMedium ?? const TextStyle(),
-              ),
-            ),
-          ],
+        child: Text(
+          e.contexteCompact(heure: heureDeLAppareil(fil.debutMission)),
+          style: palette.inkMuted.applyTo(
+            textes.bodyMedium ?? const TextStyle(),
+          ),
         ),
       );
     }

@@ -10033,6 +10033,9 @@ class Traductions$controleur$echanges$fr {
 	/// fr: 'Contexte de la visite, joint automatiquement'
 	String get contexte => 'Contexte de la visite, joint automatiquement';
 
+	/// fr: 'Contexte joint à vos messages : séance de {heure}'
+	String contexteCompact({required Object heure}) => 'Contexte joint à vos messages : séance de ${heure}';
+
 	/// fr: 'Classe'
 	String get cleClasse => 'Classe';
 
@@ -18683,6 +18686,7 @@ extension on Traductions {
 			'controleur.echanges.enAttente' => 'En attente',
 			'controleur.echanges.vide' => 'Aucun échange avec l\'administration pour le moment.',
 			'controleur.echanges.contexte' => 'Contexte de la visite, joint automatiquement',
+			'controleur.echanges.contexteCompact' => ({required Object heure}) => 'Contexte joint à vos messages : séance de ${heure}',
 			'controleur.echanges.cleClasse' => 'Classe',
 			'controleur.echanges.cleDate' => 'Date',
 			'controleur.echanges.cleHeure' => 'Heure',
@@ -19160,9 +19164,9 @@ extension on Traductions {
 			'tc.parcours.avant.rienDetail' => 'Votre enseignant proposera le travail à la fin de la prochaine séance.',
 			'tc.parcours.avant.nonBranche' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			'tc.parcours.avant.nonBrancheDetail' => 'Cela ne veut pas dire qu\'il n\'y a rien à préparer : cet écran ne sait pas encore le lire.',
-			'tc.parcours.avant.reprendre' => 'Reprendre le cours',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.avant.reprendre' => 'Reprendre le cours',
 			'tc.parcours.avant.reprendreDepuis' => ({required Object position}) => 'Reprendre le cours à ${position}',
 			'tc.parcours.intention.apprendre' => 'À apprendre',
 			'tc.parcours.intention.revoir' => 'À revoir',
