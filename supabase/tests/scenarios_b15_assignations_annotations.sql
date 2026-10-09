@@ -117,6 +117,64 @@ begin
      'b15fffff-0000-0000-0000-000000000005',
      'b1500000-0000-0000-0000-000000000001', 'seance');
 
+  if pg_catalog.has_table_privilege('authenticated', 'public.annotation_marqueur', 'INSERT')
+     or pg_catalog.has_table_privilege('authenticated', 'public.annotation_marqueur', 'UPDATE') then
+    raise exception 'B-15: marker mutations must use the atomic RPC';
+  end if;
+
+  insert into public.annotation_trait (layer_id, ancrage, points, outil, cree_le)
+  values
+    ('b15fffff-0000-0000-0000-000000000010',
+     '{"resource_id":"b15fffff-0000-0000-0000-000000000007","resource_version_id":null,"type_ancrage":"page","page":2}',
+     '[{"x":0.2,"y":0.3}]', 'stylet', now() - interval '1 second');
+
+  perform public.tc_poser_annotation_marqueur(
+    'b15fffff-0000-0000-0000-000000000010',
+    'b15fffff-0000-0000-0000-000000000011',
+    '{"resource_id":"b15fffff-0000-0000-0000-000000000007","resource_version_id":null,"debut":{"resource_id":"b15fffff-0000-0000-0000-000000000007","resource_version_id":null,"type_ancrage":"page","page":1},"fin":{"resource_id":"b15fffff-0000-0000-0000-000000000007","resource_version_id":null,"type_ancrage":"page","page":2}}',
+    'learn', 'remplace');
+  perform public.tc_poser_annotation_marqueur(
+    'b15fffff-0000-0000-0000-000000000010',
+    'b15fffff-0000-0000-0000-000000000012',
+    '{"resource_id":"b15fffff-0000-0000-0000-000000000007","resource_version_id":null,"debut":{"resource_id":"b15fffff-0000-0000-0000-000000000007","resource_version_id":null,"type_ancrage":"page","page":1},"fin":{"resource_id":"b15fffff-0000-0000-0000-000000000007","resource_version_id":null,"type_ancrage":"page","page":2}}',
+    'reinforce', 'dernier');
+
+  do $b15_marker_replace$
+  declare
+    v_count integer;
+    v_id uuid;
+  begin
+    select count(*), max(id) into v_count, v_id
+      from public.annotation_marqueur
+     where layer_id = 'b15fffff-0000-0000-0000-000000000010';
+    if v_count <> 1 or v_id <> 'b15fffff-0000-0000-0000-000000000012' then
+      raise exception 'B-15: a marker on the same range must replace its predecessor';
+    end if;
+  end
+  $b15_marker_replace$;
+
+  update public.annotation_marqueur
+     set cree_le = now() - interval '2 seconds'
+   where id = 'b15fffff-0000-0000-0000-000000000012';
+  perform public.tc_annuler_derniere_annotation(
+    'b15fffff-0000-0000-0000-000000000010'
+  );
+
+  do $b15_undo_order$
+  declare
+    v_traits integer;
+    v_markers integer;
+  begin
+    select count(*) into v_traits from public.annotation_trait
+     where layer_id = 'b15fffff-0000-0000-0000-000000000010';
+    select count(*) into v_markers from public.annotation_marqueur
+     where layer_id = 'b15fffff-0000-0000-0000-000000000010';
+    if v_traits <> 0 or v_markers <> 1 then
+      raise exception 'B-15: undo must remove the latest gesture across both tables';
+    end if;
+  end
+  $b15_undo_order$;
+
   begin
     insert into public.annotation_layer
       (resource_id, session_id, auteur_profile_id, portee)
