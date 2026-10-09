@@ -60,8 +60,22 @@ Le dépôt n'a pas de catalogue d'écrans dans `docs/current/` : la fiche tient 
   (retrait partiel puis reprise : seules les heures encore posées repartent ; tous les
   retraits confirmés : plan vide). Contre-épreuve : sans l'intersection, les deux échouent.
 - **Phrase de fusion pour une plage identique ou contenue** : remplacée par « déjà posées »
-  (`PlanPlage.dejaPosees`) ; la vraie fusion (chevauche, touche ou absorbe) garde sa phrase.
-- **Filets à 1440 en colonnes** : corrigés dans `plages_disponibilite.dart`, sans toucher
-  `GroupeReglages`.
+  (`PlanPlage.dejaPosees`), **seulement si rien ne change ce jour-là** (aucune heure de ce
+  jour retirée). Reprise après vérification croisée : une plage touchée déplacée, le même
+  jour, dans une plage posée (lundi 9-11 vers 17-20, avec 17-23 posé) perd ses anciennes
+  heures ; la feuille dit alors la fusion (« réunies en une seule, de 17 h à 23 h »), plus
+  « rien ne change ». La vraie fusion (chevauche, touche, absorbe ou déplace) garde sa phrase.
+- **Rien à envoyer** : « Enregistrer » ferme la feuille sur « Rien à enregistrer : lundi, de
+  17 h à 23 h, déjà dans vos disponibilités. » (clé `plageInchangee`, décidé par délégation
+  le 09/10) au lieu de « Plage enregistrée ». Après un échec, un plan devenu vide veut dire
+  que tout est passé : le message reste « Plage enregistrée ».
+- **Filets à 1440 en colonnes** : corrigés dans `plages_disponibilite.dart`, sans changer le
+  rendu de `GroupeReglages`. « de | à » passe par `LigneRubrique.pastille` (seul emplacement
+  qui accepte un widget dans le corps de la ligne) : usage détourné, commenté là où il sert ;
+  la doc de `LigneRubrique` (icône ou meneur facultatifs) est précisée, commentaire seul.
+- **Droite à gauche** : captures `dispo1_liste_rtl_1440_x1_light.png` et
+  `dispo1_liste_rtl_320_x2_light.png` : colonnes en miroir et alignées, filet depuis le bord
+  du jour, chevron au bord de fin. Les libellés `enseignant.creneaux` n'ont pas de traduction
+  arabe (repli sur le français, comme avant DISPO-1b) : non inventée ici.
 - **Reste** : `FilterPill` marque l'état choisi par le fond et le contour (WCAG 1.4.1) :
   étape FILTERPILL-ETAT-1, en parallèle, non touchée ici.
