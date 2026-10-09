@@ -449,6 +449,11 @@ abstract final class Routes {
   /// Demandes et regles (`ADM-06`), sous Operations.
   static const String adminOperationsDemandes = '/admin/operations/demandes';
 
+  /// OFFRES-ADM-1 : « Classes a ouvrir », les demandes semblables reunies et
+  /// la creation de leur classe, sous Operations.
+  static const String adminOperationsRegroupements =
+      '/admin/operations/regroupements';
+
   /// Domaine Personnes.
   static const String adminPersonnes = '/admin/personnes';
 
