@@ -7876,6 +7876,9 @@ class Traductions$tuteur$reglages$fr {
 	/// fr: 'Un motif est nécessaire : c'est lui qui permet de trancher.'
 	String get demandeMotifRequis => 'Un motif est nécessaire : c\'est lui qui permet de trancher.';
 
+	/// fr: 'Choisissez une durée, ou écrivez-en une autre en minutes.'
+	String get demandeValeurRequise => 'Choisissez une durée, ou écrivez-en une autre en minutes.';
+
 	/// fr: 'Envoyer la demande'
 	String get demandeEnvoyer => 'Envoyer la demande';
 
@@ -18215,6 +18218,7 @@ extension on Traductions {
 			'tuteur.reglages.demandeMinutes' => ({required Object minutes}) => '${minutes} min',
 			'tuteur.reglages.demandeMotif' => 'Pourquoi ce changement ?',
 			'tuteur.reglages.demandeMotifRequis' => 'Un motif est nécessaire : c\'est lui qui permet de trancher.',
+			'tuteur.reglages.demandeValeurRequise' => 'Choisissez une durée, ou écrivez-en une autre en minutes.',
 			'tuteur.reglages.demandeEnvoyer' => 'Envoyer la demande',
 			'tuteur.reglages.demandeEnvoyee' => 'Demande envoyée. L\'administration la tranchera.',
 			'tuteur.reglages.aucunEnfant' => 'Aucun enfant dans le foyer',
@@ -18395,9 +18399,9 @@ extension on Traductions {
 			'classe.pageCatalogue.eleveInconnuPhrase' => 'Revenez à l\'accueil et choisissez le profil élève concerné.',
 			'classe.pageCatalogue.horairesAbsents' => 'Les jours et heures de cette classe ne sont pas encore affichés ici.',
 			'classe.pageCatalogue.seanceHebdo' => ({required Object jour, required Object heure, required Object duree}) => '${jour} à ${heure} · ${duree} min',
-			'classe.pageCatalogue.fuseauClasse' => ({required Object fuseau}) => 'Heures de la classe (${fuseau})',
 			_ => null,
 		} ?? switch (path) {
+			'classe.pageCatalogue.fuseauClasse' => ({required Object fuseau}) => 'Heures de la classe (${fuseau})',
 			'classe.pageCatalogue.placeUne' => '1 place restante',
 			'classe.pageCatalogue.places' => ({required Object nombre}) => '${nombre} places restantes',
 			'classe.pageCatalogue.etat.ouverte' => 'Ouverte',
@@ -18909,9 +18913,9 @@ extension on Traductions {
 			'controleur.complement.envoyer' => 'Envoyer le complément',
 			'controleur.complement.echec' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici, réessayez dans un instant. Le rapport d\'origine reste intact.',
 			'controleur.complement.envoyeTitre' => 'Complément ajouté',
-			'controleur.complement.envoyePhrase' => 'Il s\'affiche sous le rapport d\'origine, qui reste inchangé.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.complement.envoyePhrase' => 'Il s\'affiche sous le rapport d\'origine, qui reste inchangé.',
 			'controleur.complement.revenir' => 'Revenir au rapport',
 			'controleur.compteRendu.titre' => 'Compte rendu',
 			'controleur.compteRendu.provisoire' => 'Cet écran est en préparation.',
@@ -19423,9 +19427,9 @@ extension on Traductions {
 			'tc.observation.visite.monEnfant' => 'Votre enfant',
 			'tc.observation.visite.budgetIncertain' => 'Temps restant non confirmé par le serveur.',
 			'tc.observation.visite.videoIndisponible' => 'La vidéo de la séance n\'a pas pu s\'ouvrir. Votre temps d\'observation continue de s\'écouler.',
-			'tc.observation.visite.sortieNonConfirmee' => 'La fin de votre visite n\'a pas pu être confirmée. Elle sera fermée par le serveur.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.visite.sortieNonConfirmee' => 'La fin de votre visite n\'a pas pu être confirmée. Elle sera fermée par le serveur.',
 			'tc.observation.visite.restantes' => 'restantes',
 			'tc.observation.visite.decompteLu' => ({required Object duree}) => 'Temps restant : ${duree}',
 			'tc.observation.visite.enDirect' => 'En direct',

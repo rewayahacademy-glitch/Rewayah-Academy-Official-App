@@ -2784,6 +2784,7 @@
       "demandeMinutes": "{minutes} min",
       "demandeMotif": "Pourquoi ce changement ?",
       "demandeMotifRequis": "Un motif est nécessaire : c'est lui qui permet de trancher.",
+      "demandeValeurRequise": "Choisissez une durée, ou écrivez-en une autre en minutes.",
       "demandeEnvoyer": "Envoyer la demande",
       "demandeEnvoyee": "Demande envoyée. L'administration la tranchera.",
       "aucunEnfant": "Aucun enfant dans le foyer",

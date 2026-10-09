@@ -451,6 +451,42 @@ Captures : `docs/current/captures/SUPERPOS-1/` (`avant` = base, `apres`), repèr
 - `PageShell` et rangée de filtres (FILTRES-1) : non touchés. Le titre simple de `PageShell` (sans retour, sans action, `headlineLarge`) n'est pas passé par `EntetePage` : il reste à 36 ×2 à 320 ×2 ; à relayer au porteur de `page_shell.dart` (appeler `EnteteCompact.echelleTitre`).
 
 Statut : **présent dans le code, testé localement**. Ni testé sur staging, ni déployé.
+## SUPERPOS-1b : réserves de la relecture SUPERPOS-1-R2 (09/10/2026, branche `corrections/c2-superpos-b`)
+
+Branche issue de `corrections/revue-directeur-2026-10` (tête commune `5a52ff30`). Réserves traitées : 1, 2 et les deux points relayés par l'ordre de l'étape (bouton grisé des réglages, aides des champs d'une ligne). Réserves 3 (« ? » orphelin du titre du motif, ponctuation de `fr.i18n.json`, voie COUPE-MOTS-4), 4 (barre du bas en guidée, `nav_shell.dart`) et 5 (titre passé au-dessus à l'arrivée dans le fil, limite assumée) : non touchées, hors périmètre.
+
+**Décisions prises par délégation le 09/10** (règle DIR-REP-1, aucune question au directeur) :
+
+- Demande des réglages de l'enfant (`lib/features/reglages_enfant/reglages_enfant_page.dart`) : le bouton « Envoyer la demande » n'est plus inerte quand le motif manque. Motif des formulaires du produit (cahier de séance, connexion, cartes de la classe) : le bouton reste actif ; tant que le motif est vide, la phrase calme « Un motif est nécessaire : c'est lui qui permet de trancher. » est l'explication sous le champ (`ZoneSaisie.explication`) ; un appui sans motif la passe en erreur (`ZoneSaisie.erreur`, encre d'alerte du thème, annoncée par le lecteur d'écran) et ramène le focus au champ ; un appui sans durée choisie (demande de durée ou de minimum payable) écrit sous les choix « Choisissez une durée, ou écrivez-en une autre en minutes. ». Rien ne part tant qu'il manque quelque chose. Décidé par délégation le 09/10.
+- Nouveau libellé `tuteur.reglages.demandeValeurRequise` (sans guillemets ni ponctuation à risque, pour ne rien laisser orphelin à 320 ×2), déclaré dans `tool/libelles_sources.json` : rédigé par l'agent, validé par délégation le 09/10 (DIR-REP-1). Les deux libellés de SUPERPOS-1 qui portaient encore « à faire valider par le directeur » sont passés à la même mention. Décidé par délégation le 09/10.
+- Erreur sous un champ d'une ligne (saisie du code de l'appareil élève) : un mot composé ne se coupe plus après son trait d'union (« Demandez- / lui » du refus « appareil retiré »). Le texte n'est retouché (un gluon invisible U+2060 après le trait) que si la ligne s'y couperait à la largeur réelle de l'erreur ; sinon c'est le texte donné, tel quel (même règle que le titre compact de SUPERPOS-1, `sansCoupureAuTrait`). Le fichier de traductions n'est pas touché (COUPE-MOTS-4). Décidé par délégation le 09/10.
+
+| Réserve | Constat | Fait | Preuve |
+|---|---|---|---|
+| 1. Hauteur minimale de la liste du fil | aucun test : remettre l'ancien minimum fixe (96) laissait la suite verte (mutation M3) | test ajouté | `test/core/widgets/fil_discussion_minimum_test.dart` : `FilDiscussion.minimumListe` couvre une bulle de deux lignes rendue (texte ×1 et ×2), suit l'échelle du texte (plus de 1,5 fois entre ×1 et ×2), et la liste montre la bulle entière à 320 ×2 clavier ouvert (300). Contre-épreuve : avec `return 96`, les 3 tests échouent (bulle de 206 à ×2, liste de 108) |
+| 2. Un seul point d'attention | règle « lue dans le code et sur les captures, pas de test dédié » | test ajouté | `test/core/widgets/point_attention_unique_test.dart` : zones pleines mesurées sur le rendu (surface d'au moins 24 × 24 peinte d'un aplat du thème : `surfacePrimary`, `surfaceActionDouce`, `surfaceSuccess`, `surfaceWarning`, `surfaceAlert`, `surfaceInverse`, couleurs vives du `ColorScheme`). Aperçu avec repère, bandeau hors ligne, bandeau d'observation, bandeau d'alerte urgente et action principale : une seule zone pleine, dans l'action principale ; fil de discussion texte saisi : aucune ; formulaire à `ZoneSaisie` : une seule, l'action. À 320 ×2 LTR clair standard, 320 ×2 RTL sombre guidée, 390 clair guidée, 1440 sombre standard (12 tests). Contre-épreuve : l'ancien repère (ruban `Banner` en `colorScheme.tertiary`, tête `6e2c91c4`) fait échouer les 12 tests ; le bandeau hors ligne ou celui d'observation repeint en `surfaceWarning`, ou l'alerte urgente en `surfaceAlert` : 4 échecs chacun |
+| Bouton grisé des réglages (ordre de l'étape) | « Envoyer la demande » inerte (`onPress` nul) tant que le motif est vide | **corrigé** (voir décision) | `test/features/reglages_enfant_test.dart` étendu : bouton actif champ vide, appui sans motif → rien n'est envoyé, l'erreur du champ dit ce qui manque, le focus est dans le champ ; demande de durée, appui sans durée → rien n'est envoyé, la phrase dit ce qui manque, puis disparaît quand une durée est choisie. Contre-épreuve : sur l'ancienne page, les 2 tests échouent (`onPress` nul ; phrase absente) |
+| Aides des champs d'une ligne (ordre de l'étape) | bornes déjà portées à 8 lignes par SUPERPOS-1 (`ZoneSaisie.lignesAideMax`) ; mesure manquante pour la saisie du code | mesuré à 320 ×2, français (LTR) et arabe (RTL) : invitation du conjoint et identité d'un profil élève entières (test existant `aides_champs_320_superpos_test.dart`, aides, erreurs, elle et lui) ; saisie du code : aucune ellipse, mais le refus « appareil retiré » se coupait après un trait d'union → **corrigé** | `test/features/eleve_connexion/saisie_code_320_superpos_test.dart` : l'aide et les 9 refus de `MotifRefusAppairage`, l'un après l'autre, sur le vrai routeur et avec les vraies polices, aucun mot coupé ni tronqué. Contre-épreuve : sur la tête d'avant (`5a52ff30`), les 2 tests échouent (« revoque ») |
+
+### Chiffres (base `5a52ff30` → branche)
+
+| Mesure | Avant | Après |
+|---|---|---|
+| Boutons inertes (grisés) dans la feuille de demande des réglages | 1 | 0 |
+| Mots coupés mesurés dans les refus de la saisie du code à 320 ×2 (fr, ar) | 1 (« Demandez- / lui ») | 0 |
+| Tests qui protègent `minimumListe` / le point d'attention unique | 0 / 0 | 3 / 12 |
+| `verifier_revue` | 1533 | 1533 |
+| `verifier_jetons` | 37 | 37 |
+
+Captures : `docs/current/captures/SUPERPOS-1b/` (`superpos1b_avant_*` = tête `5a52ff30`, `superpos1b_apres_*`) : demande des réglages, feuille vide puis appui sans motif, à 320 ×2 clair, 320 ×2 Interface guidée sombre RTL et 390 ; demande de durée, appui sans durée, 320 ×2 ; saisie du code, refus « appareil retiré », 320 ×2 en français et en arabe ; aperçu avec repère et bandeaux, 320 ×2 clair et sombre RTL. Script archivé `superpos1b_capture_test.dart.txt`. Avant : bouton à filet, inerte, champ vide ; « Demandez- / lui » coupé. Après : bouton plein actif, erreur sous le champ après l'appui ; « Demandez-lui » entier. Les captures RTL posent le français en sens arabe : la ponctuation passe en tête de ligne, effet du forçage.
+
+### Hors lot, relevé (non touché)
+
+- **Saisie du code de l'appareil élève** (`lib/features/eleve_connexion/saisie_code_page.dart`) : « Connecter l'appareil » est inerte (`onPress` nul) tant que le code n'a pas ses 6 caractères ou que l'appareil est hors ligne, et un test l'exige (`test/features/appareils/scanner_saisie_test.dart`, « vide : action inactive »). C'est un bouton grisé au sens de la règle. Non corrigé ici (l'ordre de l'étape ne portait que les aides de cet écran) : même motif de correction que les réglages (bouton actif, l'appui dit ce qui manque sous le champ). À relayer.
+- **Réserve 3** : le « ? » du titre du motif (« Pourquoi ce changement ? ») reste orphelin en Interface guidée à 320 ×2 (capture `superpos1b_apres_reglages_appui_320x2_guidee_sombre_rtl.png`) : espace insécable à poser dans `fr.i18n.json`, voie COUPE-MOTS-4.
+
+Statut : **présent dans le code, testé localement**. Ni testé sur staging, ni déployé.
+
 ## CORAN-320-1 : la page Coran à 320 px et texte ×2 (08/10/2026)
 Constat (`docs/current/captures/PT-B`, route réelle) : à texte ×2, en-tête de sourate, mentions et pagination prenaient la page ; à 320 × 568 la zone des versets avait 0 px (débordement de 69 px), à 390 × 844 elle avait 37 % de l'écran. Décision du 05/10 (déléguée, choix a) : seuls l'en-tête, les mentions et la pagination autour du texte changent ; le texte des versets et son rendu ne sont pas touchés.
 Fait, seulement au-delà du seuil du texte agrandi (`AppContour.seuilTexteAgrandi`, 130 %), dans `lib/features/tc_mushaf/mushaf_page.dart` :
