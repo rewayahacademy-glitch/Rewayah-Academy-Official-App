@@ -3,6 +3,7 @@
 // la connexion), hors ligne. 320 texte x2 en LTR et RTL, 390, 1440 ; clair et
 // sombre. Jamais sans `CAPTURE_DIR`.
 
+import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -74,6 +75,28 @@ void main() {
         });
       }
     }
+
+    // Reprise PUB-1 : la souris posee au milieu de la page, sur ordinateur,
+    // ne gele plus le defilement ; apres 3 s, la ligne est a mi-course.
+    testWidgets('1440 souris posee', (WidgetTester tester) async {
+      fixerVueCapture(tester, const Size(1440, 900), 1);
+      await tester.pumpWidget(
+        hoteCapture(const BienvenuePage(), surcharges: _surcharges()),
+      );
+      await stabiliser(tester);
+      final TestGesture souris = await tester.createGesture(
+        kind: PointerDeviceKind.mouse,
+      );
+      await souris.addPointer(location: Offset.zero);
+      addTearDown(souris.removePointer);
+      await souris.moveTo(const Offset(720, 600));
+      for (int i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      debugPrint(
+        'PNG ${await capturer(tester, 'pub1_p1_1440_souris_3s_clair')}',
+      );
+    });
 
     testWidgets('hors ligne 390', (WidgetTester tester) async {
       fixerVueCapture(tester, const Size(390, 844), 1);

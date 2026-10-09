@@ -47,8 +47,9 @@ Actions secondaires   croix (BoutonIcone, en haut, bord de fin) ; flèches
                       « 2 / 5 » au centre, flèche absente aux bornes)
 Défilement        6 s par page (rythmePresentation) ; ligne d'état : un
                   segment par page, la page courante se charge ; pause tant
-                  qu'un doigt touche, que la souris survole ou que le focus
-                  clavier est dans la page ; aucun défilement si « réduire
+                  qu'un doigt touche ou que le focus clavier est dans la
+                  page (le survol de la souris ne met pas en pause, D10) ;
+                  aucun défilement si « réduire
                   les animations » ou lecteur d'écran ; un geste du visiteur
                   (glissement, flèche, touche) arrête le défilement pour la
                   visite ; arrêt à la dernière page, sans boucle
@@ -68,6 +69,8 @@ Clavier           Tab : croix, flèches, sorties ; flèches gauche / droite
 Interface guidée  sans objet (avant connexion, aucun profil)
 Vue une fois      préférence locale `presentation.vue` : localStorage sur le
                   web (PWA), base locale Drift ailleurs ; rien n'est envoyé
+Débordement       à 320 px texte ×2, une page dont la fin passe sous le bord
+                  garde sa barre de défilement affichée (D12)
 Invariants        aucun prix, aucun chiffre, aucune promesse hors
                   01_PRODUIT_ET_PARCOURS ; aucun bouton grisé ; aucun mot
                   coupé à 320 px texte ×2, LTR et RTL
@@ -86,39 +89,80 @@ Fichiers : `lib/features/bienvenue/bienvenue_page.dart`,
 | D1 | 5 pages | Les quatre notions exigées (classes stables en visio, enseignant attitré, horaire récurrent, suivi des familles) + le programme demandé (« l'app et le programme ») ; limite haute de la demande. |
 | D2 | La présentation remplace l'accueil public sur `/bienvenue` | Le directeur juge l'accueil trop chargé et demande d'en découper la description ; garder les deux doublerait l'entrée. Le lien « Découvrir Rewayah Academy » de la connexion y mène toujours. |
 | D3 | Rythme 6 s | Milieu de la fourchette 5 à 7 s. |
-| D4 | Un geste du visiteur arrête le défilement pour la visite ; pas de boucle | WCAG 2.2.2 (le mouvement s'arrête) ; Nielsen, contrôle de l'utilisateur. Le toucher immobile, le survol et le focus mettent en pause, puis reprennent. |
+| D4 | Un geste du visiteur arrête le défilement pour la visite ; pas de boucle | WCAG 2.2.2 (le mouvement s'arrête) ; Nielsen, contrôle de l'utilisateur. Le toucher immobile et le focus mettent en pause, puis reprennent (le survol non, D10). |
 | D5 | Pas de défilement sous lecteur d'écran | Un changement de page imposé couperait la lecture en cours. |
 | D6 | La visite est notée à la sortie (croix ou boutons), pas à l'affichage | Une présentation interrompue (application fermée) revient une fois ; jamais de connexion sans avoir pu la passer. |
 | D7 | Libellés FR seulement | `ar.i18n.json` ne couvre pas l'accueil public (aucune clé `bienvenue`) ; l'arabe retombe sur le français (base_locale), en RTL. |
-| D8 | Persistance web par `localStorage` (dart:js_interop, sans dépendance) | Le stockage commun des préférences est en mémoire sur le web : la PWA reverrait la présentation à chaque visite. Limité à cette seule clé : le thème garde son comportement. |
+| D8 | Persistance web par `localStorage` (dart:js_interop, sans dépendance) | Le stockage commun des préférences est en mémoire sur le web : la PWA reverrait la présentation à chaque visite. Limité à cette seule clé : le thème garde son comportement. Reprise : la logique (secours en mémoire, pannes absorbées) vit dans `stockage_cle_valeur.dart`, testée hors navigateur ; le fichier web ne fait que brancher `localStorage` (voir « Statut de preuve »). |
+| D10 | Le survol de la souris ne met **pas** en pause (reprise après revue adverse, décidé par délégation le 05/10) | La demande nomme toucher, focus et mouvement réduit, pas le survol ; la page occupant tout l'écran, une pause au survol empêchait tout défilement sur ordinateur. La pause reste offerte à la souris : un clic maintenu (toucher), une flèche ou Tab (focus), et tout geste arrête le défilement (D4). Test « 1440 : la souris posée sur la page ne bloque pas le défilement » ; capture `pub1_p1_1440_souris_3s_clair.png`. |
+| D11 | Titres et textes isolés dans leur propre sens (`isolerSens`, FSI…PDI) | Sans clé arabe (D7), le français s'affiche en RTL et son point final passait en tête de ligne. Même outil que COUPE-MOTS-2. Test « RTL : la ponctuation finale reste en fin de phrase ». |
+| D12 | Barre de défilement toujours affichée quand une page déborde | À 320 px texte ×2, la fin du texte et les sorties de la dernière page passent sous le bord ; la barre dit qu'une suite existe dans une page qui se glisse de côté. Elle ne se dessine pas quand tout tient. La croix, toujours visible en haut, mène aussi à la connexion. Test « 320 px, texte x2 : la barre de défilement dit la suite ». |
+| D13 | La position « 1 / 5 » est isolée elle aussi | Trouvé en ouvrant les captures RTL de la reprise : sans caractère fort, « 1 / 5 » s'affichait « 5 / 1 » dans la barre en sens arabe. Test « RTL : la position se lit 1 / 5, pas 5 / 1 ». La barre partagée `BarrePrecedentSuivant` n'est pas modifiée (correction locale, autres écrans hors périmètre). |
 | D9 | `MarquePage` passe par `TexteSansCoupure` | À 320 px texte ×2, « Rewayah Academy » se coupait dans le mot à côté de la croix ; correction dans le composant partagé (lib/CLAUDE.md), sans effet à l'échelle 1. |
 
 ## Revue UX (DESIGN-GOV §4)
 
-Date : 08/10/2026. **Limite de preuve** : les pages officielles n'ont pas pu être relues en
-ligne pendant cette session (`www.w3.org` refusé par le proxy réseau ; la page Apple HIG
-« Onboarding » est rendue sans son texte). Les règles ci-dessous sont citées de mémoire de
-leur texte publié ; chaque conclusion dit sa conséquence concrète, vérifiée par un test.
+Date : 08/10/2026, sources relues le 09/10/2026 (reprise après revue adverse).
+
+Sources relues dans leur texte publié :
+
+- **WCAG 2.2** : `www.w3.org` reste refusé par le proxy réseau ; le texte normatif de chaque
+  critère cité a été relu dans la source officielle du W3C, dépôt `w3c/wcag`, branche `main`,
+  `guidelines/sc/<version>/<critère>.html` (pause-stop-hide, dragging-movements, reflow,
+  resize-text, keyboard, name-role-value, use-of-color, animation-from-interactions).
+  Correction issue de la relecture : 2.2.2 est de niveau **A** (et non AA) ; 2.3.3 porte sur
+  le mouvement **déclenché par une interaction** (ici, le passage de page par flèche ou
+  glissement), pas sur le défilement automatique, qui relève de 2.2.2.
+- **Apple HIG, Onboarding** : relue par le flux de données de la page
+  (`developer.apple.com/tutorials/data/design/human-interface-guidelines/onboarding.json`).
+  Règles utiles : un parcours d'accueil « fast, fun, and optional » ; « If you let people skip
+  the tutorial when they first launch your app or game, don't present it again on subsequent
+  launches, but make sure it's easy for people to find if they want to view it later » ;
+  « design a brief, enjoyable experience that doesn't require people to memorize a lot of
+  information ».
+- **Nielsen, dix heuristiques** : **non relues** pendant cette session (`www.nngroup.com`
+  refusé par le proxy) ; citées de mémoire, à titre d'appui seulement : aucune conclusion ne
+  repose sur elles seules.
 
 | Proposition contrôlée | Source | Règle utile | Conclusion | Modification / preuve |
 |---|---|---|---|---|
-| Défilement automatique | WCAG 2.2, SC 2.2.2 Pause, Stop, Hide (AA) | Un contenu qui bouge ou se met à jour seul plus de 5 s, en parallèle d'autre contenu, doit pouvoir être mis en pause, arrêté ou masqué | ajustée | Pause au toucher, survol, focus ; arrêt définitif au premier geste ; arrêt en fin de cycle (30 s au plus) ; tests « en pause tant qu'un doigt touche », « … focus clavier », « s'arrête à la dernière page » |
-| Mouvement réduit | WCAG 2.2, SC 2.3.3 (AAA, appliqué par prudence) ; `AppMouvement.mouvementReduit` | Une animation non essentielle se désactive | conforme | Aucun défilement, ligne d'état fixe, passage de page sans glissement (durée 0) ; test « jamais quand réduire les animations est actif » |
-| Glissement manuel | WCAG 2.2, SC 2.5.7 Dragging Movements (AA) | Une action par glissement a une alternative à un seul pointeur | conforme | Flèches précédent / suivant (`BarrePrecedentSuivant`, cible 48) ; test « les flèches et le clavier changent de page » |
-| Croix pour tout passer | WCAG 2.2, SC 2.1.1 Clavier, 4.1.2 Nom, rôle, valeur ; Apple HIG Onboarding (passer l'accueil) ; Nielsen n°3 | Atteignable au clavier, nommée ; l'accueil se passe | conforme | `BoutonIcone` nommé « Passer la présentation », premier arrêt de tabulation ; tests « la croix … clavier … Entrée » |
-| Une idée par page, 5 pages | Hick ; Apple HIG Onboarding (bref) ; Nielsen n°8 (minimalisme) | Peu de choix et peu de texte par écran | conforme | Un titre, une phrase, un pictogramme ; une seule action pleine en fin |
-| Position et ligne d'état | Nielsen n°1 (visibilité de l'état) ; WCAG 1.4.1 (pas la couleur seule) | L'état se lit autrement que par la couleur | conforme | Ligne d'état décorative + position écrite « 2 / 5 », annoncée « Présentation, page 2 sur 5 » |
+| Défilement automatique | WCAG 2.2, SC 2.2.2 Pause, Stop, Hide (A) | « For any moving, blinking or scrolling information that (1) starts automatically, (2) lasts more than five seconds, and (3) is presented in parallel with other content, there is a mechanism for the user to pause, stop, or hide it » | ajustée | Pause au toucher et au focus ; arrêt définitif au premier geste (glissement, flèche, touche) ; arrêt en fin de cycle (30 s au plus) ; le survol ne gèle plus le défilement (D10) ; tests « en pause tant qu'un doigt touche », « … focus clavier », « s'arrête à la dernière page », « 1440 : la souris posée… » |
+| Mouvement réduit | `AppMouvement.mouvementReduit` (contrat du dépôt) ; WCAG 2.2, SC 2.3.3 Animation from Interactions (AAA, appliqué par prudence au passage de page) | 2.3.3 : « Motion animation triggered by interaction can be disabled » | conforme | Aucun défilement automatique, ligne d'état fixe, passage de page sans glissement (durée 0) ; test « jamais quand réduire les animations est actif » |
+| Glissement manuel | WCAG 2.2, SC 2.5.7 Dragging Movements (AA) | « All functionality that uses a dragging movement for operation can be achieved by a single pointer without dragging » | conforme | Flèches précédent / suivant (`BarrePrecedentSuivant`, cible 48) ; test « les flèches et le clavier changent de page » |
+| Croix pour tout passer | WCAG 2.2, SC 2.1.1 Keyboard (A), 4.1.2 Name, Role, Value (A) ; Apple HIG Onboarding | 2.1.1 : « All functionality of the content is operable through a keyboard interface » ; HIG : accueil « optional », non reproposé une fois passé, retrouvable ensuite | conforme | `BoutonIcone` nommé « Passer la présentation », premier arrêt de tabulation ; vue une fois par appareil ; lien « Découvrir Rewayah Academy » de la connexion pour la revoir ; tests « la croix … clavier … Entrée », « routeur réel : déjà vue… » |
+| Une idée par page, 5 pages | Apple HIG Onboarding (« brief », sans « memorize a lot of information ») ; Nielsen n°8 (non relue) | Peu de texte par écran | conforme | Un titre, une phrase, un pictogramme ; une seule action pleine en fin |
+| Position et ligne d'état | WCAG 2.2, SC 1.4.1 Use of Color (A) ; Nielsen n°1 (non relue) | « Color is not used as the only visual means of conveying information » | conforme | Ligne d'état décorative + position écrite « 2 / 5 », annoncée « Présentation, page 2 sur 5 » |
 | Sorties en fin | DESIGN-GOV Contrat B ; K-56 | Un seul CTA plein ; trailing ; pas pleine largeur sur bureau ; objet vers CTA : 16 | conforme | `Ecart.vLg` sous le texte ; bureau : tertiaire puis principal au bord de fin, largeur du libellé ; test 1440 et `verifierUnSeulBoutonPlein` |
-| Reflow 320 px, texte ×2 | WCAG 2.2, SC 1.4.10 et 1.4.4 | Pas de perte de contenu, pas de défilement horizontal | ajustée | Chaque page défile verticalement si besoin ; `TexteSansCoupure` ; marque corrigée (D9) ; test 320 ×2 LTR et RTL |
-| RTL | Material 3, bidirectionnalité | Le sens du glissement et des flèches suit la langue | conforme | `PageView` et `BarrePrecedentSuivant` en `Directionality` ; test « en arabe, le glissement vers la droite avance » |
+| Reflow 320 px, texte ×2 | WCAG 2.2, SC 1.4.10 Reflow (AA), 1.4.4 Resize Text (AA) | 1.4.10 : « without loss of information or functionality, and without requiring scrolling in two dimensions » à 320 px ; 1.4.4 : texte à 200 % « without loss of content or functionality » | ajustée | Chaque page défile verticalement si besoin, barre de défilement affichée quand elle déborde (D12) ; `TexteSansCoupure` ; marque corrigée (D9) ; tests 320 ×2 LTR et RTL, « … la barre de défilement dit la suite » |
+| RTL | Bidirectionnalité (UAX #9, isolats FSI/PDI, outil `isolerSens` du dépôt) | Le sens du glissement et des flèches suit la langue ; un texte d'une autre écriture garde sa ponctuation à sa place | ajustée | `PageView` et `BarrePrecedentSuivant` en `Directionality` ; textes isolés (D11) ; tests « en arabe, le glissement vers la droite avance », « RTL : la ponctuation finale reste en fin de phrase » |
 
 ## Besoin serveur
 
 Aucun. La présentation ne lit ni n'écrit rien côté serveur.
 
+## Reprise après revue adverse (09/10/2026)
+
+| Point levé | Correction | Preuve |
+|---|---|---|
+| Majeur : le survol de la souris gelait le défilement sur ordinateur | Pause au survol retirée (D10) | Test « 1440 : la souris posée sur la page ne bloque pas le défilement » (échoue sur l'ancien code : « 5 / 5 » introuvable) ; capture `pub1_p1_1440_souris_3s_clair.png` |
+| Mention des libellés | Formule exacte « rédigé par l'agent, validé par délégation le 05/10 » sur les 13 clés `bienvenue.*` | `tool/libelles_sources.json` |
+| Point final en tête de ligne en RTL | Isolats de sens (D11) ; position aussi (D13) | Tests « RTL : la ponctuation finale… » et « RTL : la position… » (échouent sur l'ancien code) ; captures `*_rtl.png` |
+| Fin de page invisible à 320 ×2 | Barre de défilement affichée quand la page déborde (D12) | Test « 320 px, texte x2 : la barre de défilement dit la suite » (échoue sur l'ancien code) ; captures `*_320x2_*.png` |
+| Persistance web non prouvée ; sources citées de mémoire | Logique séparée et testée (D8) ; compilation web faite ; sources relues (section Revue UX) | Voir ci-dessous |
+
 ## Statut de preuve
 
 - spécifié : oui (cette fiche) ;
 - présent dans le code : oui ;
-- testé localement : oui (`flutter test`, voir le bilan de l'étape) ;
+- testé localement : oui (`flutter test`, voir le bilan de l'étape). La persistance « vue une
+  fois » de la PWA est testée sur la logique réelle du web (`StockagePreferencesCleValeur`,
+  dont hérite `StockagePreferencesNavigateur`) avec un `localStorage` simulé qui survit au
+  rechargement, bloqué ou absent (`test/core/preferences/stockage_cle_valeur_test.dart`) ;
+- compilé pour le web : oui, `flutter build web --release` réussi le 09/10 (hors dépôt) ; le
+  JavaScript produit contient bien `v.G.localStorage` → `getItem("presentation.vue")` et
+  `setItem`, sous garde `try`, avec le secours en mémoire ;
+- **non exécuté dans un navigateur** : aucun navigateur n'est installable sur la machine de
+  l'agent (téléchargements Chromium refusés par le proxy). La lecture et l'écriture réelles du
+  `localStorage` restent à constater sur l'aperçu Vercel (recette : ouvrir la racine, passer la
+  présentation par la croix, recharger : la connexion s'affiche directement) ;
 - testé sur staging, déployé : non.
