@@ -42,6 +42,11 @@ VALUES
   ('b0800000-0000-0000-0000-000000000003', 'minor', 'lecture_lente'),
   ('b0800000-0000-0000-0000-000000000005', 'minor', 'debut_lettres');
 
+INSERT INTO public.teacher_profiles (profile_id, country)
+VALUES
+  ('b0800000-0000-0000-0000-000000000001', 'FR'),
+  ('b0800000-0000-0000-0000-000000000006', 'SA');
+
 INSERT INTO public.groupes
   (id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana)
 VALUES
