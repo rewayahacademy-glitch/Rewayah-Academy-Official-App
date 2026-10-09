@@ -121,24 +121,16 @@ BEGIN
     RAISE EXCEPTION 'B-08: la projection famille publiée est incomplète';
   END IF;
 
-  EXECUTE 'SET LOCAL ROLE authenticated';
-  SELECT count(*) INTO v_count FROM public.seance_resumes r
-  WHERE r.session_id = v_session AND r.student_id = v_student;
-  IF v_count <> 1 THEN
-    RAISE EXCEPTION 'B-08: le foyer ne lit pas le résumé publié de son élève';
+  v_denied := false;
+  BEGIN
+    PERFORM public.progression_famille(v_other_student);
+  EXCEPTION WHEN OTHERS THEN
+    v_denied := true;
+  END;
+  IF NOT v_denied THEN
+    RAISE EXCEPTION 'B-08: la RPC famille a divulgué un autre foyer';
   END IF;
 
-  PERFORM set_config('test.uid', v_other_guardian::text, true);
-  PERFORM set_config('test.jwt',
-    jsonb_build_object('app_metadata', jsonb_build_object('role', 'guardian',
-      'household_id', 'b0800000-0000-0000-0000-000000000102'))::text, true);
-  SELECT count(*) INTO v_count FROM public.seance_resumes r
-  WHERE r.session_id = v_session AND r.student_id = v_student;
-  IF v_count <> 0 THEN
-    RAISE EXCEPTION 'B-08: un autre foyer lit le résumé';
-  END IF;
-
-  RESET ROLE;
   PERFORM set_config('test.uid', v_other_teacher::text, true);
   PERFORM set_config('test.jwt',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'teacher'))::text, true);
@@ -157,3 +149,37 @@ END
 $scenario$;
 
 ROLLBACK;
+
+SET LOCAL ROLE authenticated;
+SELECT set_config('test.uid', 'b0800000-0000-0000-0000-000000000002', true);
+SELECT set_config('test.jwt',
+  '{"app_metadata":{"role":"guardian","household_id":"b0800000-0000-0000-0000-000000000101"}}',
+  true);
+DO $rls_foyer$
+DECLARE v_count integer;
+BEGIN
+  SELECT count(*) INTO v_count FROM public.seance_resumes r
+  WHERE r.session_id = 'b0800000-0000-0000-0000-000000000301'
+    AND r.student_id = 'b0800000-0000-0000-0000-000000000003';
+  IF v_count <> 1 THEN
+    RAISE EXCEPTION 'B-08: le foyer ne lit pas le résumé publié de son élève';
+  END IF;
+END
+$rls_foyer$;
+
+SELECT set_config('test.uid', 'b0800000-0000-0000-0000-000000000004', true);
+SELECT set_config('test.jwt',
+  '{"app_metadata":{"role":"guardian","household_id":"b0800000-0000-0000-0000-000000000102"}}',
+  true);
+DO $rls_autre_foyer$
+DECLARE v_count integer;
+BEGIN
+  SELECT count(*) INTO v_count FROM public.seance_resumes r
+  WHERE r.session_id = 'b0800000-0000-0000-0000-000000000301'
+    AND r.student_id = 'b0800000-0000-0000-0000-000000000003';
+  IF v_count <> 0 THEN
+    RAISE EXCEPTION 'B-08: RLS divulgue le résumé à un autre foyer';
+  END IF;
+END
+$rls_autre_foyer$;
+RESET ROLE;
