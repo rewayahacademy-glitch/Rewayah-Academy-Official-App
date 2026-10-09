@@ -1403,30 +1403,83 @@ class _Saisie extends StatelessWidget {
       key: cleChamp,
       child: raccourciEnvoi(
         onEnvoyer: onEnvoyer,
-        child: ZoneSaisie(
-          cleChamp: FilDiscussion.champKey,
-          controleur: champ,
-          noeud: noeudChamp,
-          libelle: textes.libelleChamp,
-          // Un champ d'envoi ne montre pas son etiquette : l'invite la dit,
-          // le lecteur d'ecran la lit (SUPERPOS-1), saisie reduite comprise.
-          libelleVisible: false,
-          aide: textes.aideChamp,
-          // La raison de l'envoi absent ; la saisie reduite n'a pas d'envoi.
-          explication: vide && !reduite ? textes.champVide : null,
-          maxLignes: reduite ? 1 : 5,
-          envoi: reduite
-              ? null
-              : EnvoiZoneSaisie(
-                  cle: FilDiscussion.envoyerKey,
-                  libelle: textes.envoyer,
-                  onEnvoyer: onEnvoyer,
-                ),
+        child: LayoutBuilder(
+          builder: (BuildContext contexte, BoxConstraints contraintes) {
+            // Lot K, point 4 (COM-RC) : l'aide ne se peint que si elle tient
+            // entiere sur une ligne du champ, place de l'envoi deduite ; le
+            // champ garde une ligne au repos comme au toucher et ne grandit
+            // qu'avec le texte saisi. Peinte ou non, le lecteur d'ecran la
+            // dit toujours, une seule fois.
+            final double placeEnvoi = reduite
+                ? 0
+                : AppTouchTarget.standard + AppSpacing.xs;
+            final bool aidePeinte = _aideTient(
+              contexte,
+              contraintes.maxWidth - placeEnvoi,
+            );
+            // Material ne peint l'aide que champ vide et au focus, et la
+            // retire alors de la semantique : hors de ce cas, le fil la dit.
+            final bool aideVisible =
+                aidePeinte && noeudChamp.hasFocus && champ.text.isEmpty;
+            return Semantics(
+              hint: aideVisible ? null : textes.aideChamp,
+              child: _zone(aidePeinte: aidePeinte),
+            );
+          },
         ),
       ),
     );
-    // Decision R-28 : le micro, une icone nommee (cible de 48), a cote du
-    // champ ; il ouvre l'enregistrement du composer vocal.
+    return _avecMicro(saisie);
+  }
+
+  /// Vrai quand l'aide du champ tient entiere sur une ligne, dans
+  /// [largeur] moins les marges interieures du theme (`AppSpacing.lg` de
+  /// part et d'autre), au style et a l'echelle de texte de l'aide.
+  bool _aideTient(BuildContext context, double largeur) {
+    if (!largeur.isFinite) return true;
+    final ThemeData theme = Theme.of(context);
+    final TextPainter mesure = TextPainter(
+      text: TextSpan(
+        text: textes.aideChamp,
+        style: DefaultTextStyle.of(context).style
+            .merge(theme.textTheme.bodyLarge)
+            .merge(theme.inputDecorationTheme.hintStyle),
+      ),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 1,
+    )..layout();
+    final bool tient =
+        !mesure.didExceedMaxLines &&
+        mesure.width <= largeur - 2 * AppSpacing.lg;
+    mesure.dispose();
+    return tient;
+  }
+
+  Widget _zone({required bool aidePeinte}) => ZoneSaisie(
+    cleChamp: FilDiscussion.champKey,
+    controleur: champ,
+    noeud: noeudChamp,
+    libelle: textes.libelleChamp,
+    // Un champ d'envoi ne montre pas son etiquette : l'invite la dit,
+    // le lecteur d'ecran la lit (SUPERPOS-1), saisie reduite comprise.
+    libelleVisible: false,
+    aide: aidePeinte ? textes.aideChamp : null,
+    // La raison de l'envoi absent ; la saisie reduite n'a pas d'envoi.
+    explication: vide && !reduite ? textes.champVide : null,
+    maxLignes: reduite ? 1 : 5,
+    envoi: reduite
+        ? null
+        : EnvoiZoneSaisie(
+            cle: FilDiscussion.envoyerKey,
+            libelle: textes.envoyer,
+            onEnvoyer: onEnvoyer,
+          ),
+  );
+
+  /// Decision R-28 : le micro, une icone nommee (cible de 48), a cote du
+  /// champ ; il ouvre l'enregistrement du composer vocal.
+  Widget _avecMicro(Widget saisie) {
     final VoidCallback? onMicro = this.onMicro;
     if (onMicro == null) return saisie;
     return Row(

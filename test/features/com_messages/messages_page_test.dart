@@ -27,6 +27,7 @@ import 'package:rewayah_academy/features/com_vocal/lecteur_vocal.dart';
 import 'package:rewayah_academy/features/demo/communications/com_messages_demo.dart';
 import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
 
+import '../../support/envoi_fil.dart';
 import '../../support/garde_interface.dart';
 import 'support_messages.dart';
 
@@ -438,7 +439,7 @@ void main() {
       final x = t.com.socle.composants.composer;
       await tester.enterText(find.byKey(FilDiscussion.champKey), 'Merci !');
       await tester.pump();
-      await tester.tap(find.byKey(FilDiscussion.envoyerKey));
+      await tester.tap(envoiDuFil());
       await tester.pumpAndSettle();
       expect(_dansFil(find.text(x.nonConfirme)), findsOneWidget);
       expect(_etatDeBulle(x.envoye), findsNothing);
@@ -467,7 +468,7 @@ void main() {
       expect(find.byType(FilDiscussion), findsOneWidget);
       await tester.enterText(find.byKey(FilDiscussion.champKey), 'Bonjour');
       await tester.pump();
-      await tester.tap(find.byKey(FilDiscussion.envoyerKey));
+      await tester.tap(envoiDuFil());
       await tester.pumpAndSettle();
       expect(
         _dansFil(find.text(t.com.socle.composants.composer.nonConfirme)),
@@ -496,7 +497,7 @@ void main() {
       const double hautVisible = 844 - 300;
       final Rect champ = tester.getRect(find.byKey(FilDiscussion.champKey));
       expect(champ.bottom, lessThanOrEqualTo(hautVisible));
-      final Rect envoyer = tester.getRect(find.byKey(FilDiscussion.envoyerKey));
+      final Rect envoyer = tester.getRect(envoiDuFil());
       expect(envoyer.bottom, lessThanOrEqualTo(hautVisible));
       // Le dernier message reste lisible au-dessus du champ.
       final Rect dernier = tester.getRect(
@@ -595,7 +596,7 @@ void main() {
         // R-07 : le mode lecture seule du fil partage, sans champ.
         expect(find.byKey(FilDiscussion.champKey), findsNothing);
         expect(find.byKey(FilContextuel.cleLectureSeule), findsOneWidget);
-        expect(find.byKey(FilDiscussion.envoyerKey), findsNothing);
+        expect(envoiDuFil(), findsNothing);
         expect(
           _dansPrincipal(find.textContaining('Bonjour, voici une question')),
           findsOneWidget,
@@ -631,7 +632,7 @@ void main() {
       await monterMessages(tester, port: port, depart: cheminFilTest('fil-1'));
       await tester.enterText(find.byKey(FilDiscussion.champKey), 'Merci');
       await tester.pump();
-      await tester.tap(find.byKey(FilDiscussion.envoyerKey));
+      await tester.tap(envoiDuFil());
       await tester.pumpAndSettle();
       expect(
         _etatDeBulle(t.com.socle.composants.composer.envoye),

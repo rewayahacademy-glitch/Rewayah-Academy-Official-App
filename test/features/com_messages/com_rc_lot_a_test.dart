@@ -51,6 +51,7 @@ import 'package:rewayah_academy/features/com_vocal/port_enregistreur_vocal.dart'
 import 'package:rewayah_academy/features/demo/communications/com_vocal_demo.dart';
 import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
 
+import '../../support/envoi_fil.dart';
 import '../../support/harnais.dart' show FauxServiceReseau;
 import '../com_studio/support_studio.dart' as studio;
 import '../com_vocal/support_vocal.dart';
@@ -109,14 +110,20 @@ Future<void> _filLisible(
   // COM-RC tour 3 : « Envoyer » est entier au premier ecran, et rien ne le
   // couvre ni ne le coupe (le defilement initial va jusqu'au bas de la
   // saisie, pas seulement jusqu'au dernier message).
-  final Finder envoyer = find.byKey(FilDiscussion.envoyerKey);
+  final Finder envoyer = envoiDuFil();
   final Rect bouton = tester.getRect(envoyer);
   expect(
     bouton.top >= 0 && bouton.bottom <= taille.height,
     isTrue,
     reason: '« Envoyer » ($bouton) est entier au premier ecran',
   );
-  expect(bouton.top, greaterThanOrEqualTo(champ.bottom));
+  // SUPERPOS-1 (repris par JONCTION-LIGNES-1) : l'envoi est DANS le champ ;
+  // champ vide, sa place y est reservee et le toucher atteint le champ.
+  expect(bouton.top, greaterThanOrEqualTo(champ.top - 0.5));
+  expect(bouton.bottom, lessThanOrEqualTo(champ.bottom + 0.5));
+  final Finder cible = find.byKey(FilDiscussion.envoyerKey).evaluate().isEmpty
+      ? find.byKey(FilDiscussion.champKey)
+      : envoyer;
   for (final Offset coin in <Offset>[
     bouton.topLeft + const Offset(2, 2),
     bouton.bottomRight - const Offset(2, 2),
@@ -128,7 +135,7 @@ Future<void> _filLisible(
           .any(
             (HitTestEntry e) =>
                 e.target is RenderObject &&
-                _sous(e.target as RenderObject, tester.renderObject(envoyer)),
+                _sous(e.target as RenderObject, tester.renderObject(cible)),
           ),
       isTrue,
       reason: 'le toucher en $coin atteint « Envoyer »',
@@ -345,12 +352,12 @@ void main() {
       await _toucher(tester, FilDiscussion.cleMicro);
       // Enregistrement : le panneau seul.
       expect(find.byKey(FilDiscussion.champKey), findsNothing);
-      expect(find.byKey(FilDiscussion.envoyerKey), findsNothing);
+      expect(envoiDuFil(), findsNothing);
       await avancer(tester, horloge, const Duration(seconds: 5));
       await _toucher(tester, ComposerVocal.cleArreter);
       // Pre-ecoute : un seul « Envoyer », celui du vocal.
       expect(find.byKey(ComposerVocal.cleEnvoyer), findsOneWidget);
-      expect(find.byKey(FilDiscussion.envoyerKey), findsNothing);
+      expect(envoiDuFil(), findsNothing);
       expect(find.byKey(FilDiscussion.champKey), findsNothing);
       // Le vocal supprime, la rangee texte revient, son texte garde.
       await _toucher(tester, ComposerVocal.cleSupprimer);

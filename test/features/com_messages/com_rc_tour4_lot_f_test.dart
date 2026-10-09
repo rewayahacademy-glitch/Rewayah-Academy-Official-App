@@ -57,6 +57,7 @@ import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import '../../capture/outil_capture.dart'
     show chargerPolicesDuDepot, fixerVueCapture;
 import '../../router/support_routeur.dart' hide stabiliser;
+import '../../support/envoi_fil.dart';
 import '../../support/harnais.dart';
 
 /// L'heure des donnees de demonstration (celle des captures).
@@ -266,19 +267,21 @@ void _contexteVisible(
     matching: find.byKey(EspaceTravailAdaptatif.cleOuvrirContexte),
   );
   _entierALEcran(tester, info, taille, '(i)');
-  // R-02 tenu : « Envoyer » entier, sous le champ.
+  // R-02 tenu : l'envoi entier a l'ecran, dans le champ (SUPERPOS-1) ;
+  // champ vide, sa place reservee, que le toucher du champ atteint.
   _entierALEcran(
     tester,
-    find.byKey(FilDiscussion.envoyerKey),
+    envoiDuFil(),
     taille,
     '« Envoyer »',
+    toucher: find.byKey(FilDiscussion.envoyerKey).evaluate().isNotEmpty,
   );
-  final Rect envoyer = tester.getRect(find.byKey(FilDiscussion.envoyerKey));
+  final Rect envoyer = tester.getRect(envoiDuFil());
   for (final Offset p in <Offset>[
     envoyer.topLeft + const Offset(2, 2),
     envoyer.bottomRight - const Offset(2, 2),
   ]) {
-    expect(_atteint(tester, find.byKey(FilDiscussion.envoyerKey), p), isTrue);
+    expect(_atteint(tester, cibleEnvoiDuFil(), p), isTrue);
   }
 }
 
@@ -484,7 +487,7 @@ void main() {
       );
       await tester.pump();
       expect((await brouillons.lire(cle))?.texte, 'Bonjour, a demain');
-      await tester.tap(find.byKey(FilDiscussion.envoyerKey));
+      await tester.tap(envoiDuFil());
       await tester.pump();
       // Le champ est vide, la bulle attend : le brouillon est garde.
       expect(
@@ -524,7 +527,7 @@ void main() {
       );
       await tester.enterText(find.byKey(FilDiscussion.champKey), 'A garder');
       await tester.pump();
-      await tester.tap(find.byKey(FilDiscussion.envoyerKey));
+      await tester.tap(envoiDuFil());
       await _attendre(tester);
       expect(find.text('Non confirme'), findsOneWidget);
       expect((await brouillons.lire(cle))?.texte, 'A garder');

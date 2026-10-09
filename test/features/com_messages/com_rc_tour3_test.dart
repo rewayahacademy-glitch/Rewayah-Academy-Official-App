@@ -51,6 +51,7 @@ import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart' hide stabiliser;
+import '../../support/envoi_fil.dart';
 import '../../support/harnais.dart';
 
 /// L'heure des donnees de demonstration (celle des captures).
@@ -169,11 +170,12 @@ bool _atteint(WidgetTester tester, Finder cible, Offset point) {
   });
 }
 
-/// « Envoyer » entier au premier ecran, sous aucun element de la coquille,
+/// L'envoi (dans le champ, SUPERPOS-1) entier au premier ecran, sous aucun
+/// element de la coquille,
 /// au-dessus de la barre basse ; le champ et un message aussi.
 void _envoyerEntier(WidgetTester tester) {
   expect(tester.takeException(), isNull);
-  final Finder envoyer = find.byKey(FilDiscussion.envoyerKey);
+  final Finder envoyer = envoiDuFil();
   expect(envoyer, findsOneWidget);
   final Rect r = tester.getRect(envoyer);
   final Rect ecran = Offset.zero & _petit;
@@ -191,7 +193,12 @@ void _envoyerEntier(WidgetTester tester) {
     );
   }
   // Rien ne le couvre ni ne le coupe : chaque coin (a 2 points du bord) et
-  // le centre atteignent le bouton.
+  // le centre atteignent l'envoi, pose DANS le champ (SUPERPOS-1, repris par
+  // JONCTION-LIGNES-1) : le bouton, ou, champ vide, le champ qui porte sa
+  // place reservee.
+  final Finder cible = find.byKey(FilDiscussion.envoyerKey).evaluate().isEmpty
+      ? find.byKey(FilDiscussion.champKey)
+      : envoyer;
   for (final Offset p in <Offset>[
     r.center,
     r.topLeft + const Offset(2, 2),
@@ -200,15 +207,16 @@ void _envoyerEntier(WidgetTester tester) {
     r.bottomRight + const Offset(-2, -2),
   ]) {
     expect(
-      _atteint(tester, envoyer, p),
+      _atteint(tester, cible, p),
       isTrue,
       reason: 'le toucher en $p atteint « Envoyer »',
     );
   }
-  // Le champ, au-dessus, est entier lui aussi.
+  // Le champ, qui le porte, est entier lui aussi.
   final Rect champ = tester.getRect(find.byKey(FilDiscussion.champKey));
   expect(champ.top, greaterThanOrEqualTo(0));
-  expect(champ.bottom, lessThanOrEqualTo(r.top));
+  expect(champ.top, lessThanOrEqualTo(r.top + 0.5));
+  expect(champ.bottom, greaterThanOrEqualTo(r.bottom - 0.5));
   expect(
     _atteint(tester, find.byKey(FilDiscussion.champKey), champ.center),
     isTrue,
@@ -232,7 +240,7 @@ void _envoyerEntier(WidgetTester tester) {
   expect(unMessage, isTrue, reason: 'un message au premier ecran');
 }
 
-/// Un fil minimal, ecrit.
+/// Un fil minimal, ecrit, avec son en-tete.
 FilDiscussion _fil(String id) => FilDiscussion(
   key: ValueKey<String>(id),
   messages: <MessageFil>[
@@ -246,6 +254,9 @@ FilDiscussion _fil(String id) => FilDiscussion(
   ],
   textes: textesFilTest,
   onEnvoyer: (String _) async {},
+  // Un fil qui porte son en-tete prend la tete de la page (JONCTION-LIGNES-1 :
+  // le fil sans en-tete du Controleur la laisse a la page, SUPERPOS-1).
+  entete: Text('Contexte $id'),
 );
 
 /// Les textes d'un fil de test.

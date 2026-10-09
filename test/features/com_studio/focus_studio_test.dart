@@ -39,6 +39,7 @@ import 'package:rewayah_academy/features/com_studio/studio_page.dart';
 import 'package:rewayah_academy/features/demo/communications/com_studio_demo.dart';
 import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
 
+import '../../support/envoi_fil.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 import 'support_focus.dart';
@@ -137,7 +138,7 @@ void main() {
       expect(find.byType(EnteteCanal), findsOneWidget);
       expect(find.text('Coordination'), findsOneWidget);
       expect(find.byKey(FilDiscussion.champKey), findsOneWidget);
-      expect(find.byKey(FilDiscussion.envoyerKey), findsOneWidget);
+      expect(envoiDuFil(), findsOneWidget);
       expect(find.textContaining('Message 29'), findsOneWidget);
 
       // Contenu centre a la largeur de lecture (section 23).
@@ -482,7 +483,7 @@ void main() {
         'Envoye pendant le Focus',
       );
       await tester.pump();
-      await tester.tap(find.byKey(FilDiscussion.envoyerKey));
+      await tester.tap(envoiDuFil());
       await tester.pumpAndSettle();
       expect(port.envois.single.$2, 'Envoye pendant le Focus');
 

@@ -29,6 +29,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/accessibilite/texte_sans_coupure.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
@@ -43,6 +44,7 @@ import 'package:rewayah_academy/features/com_vocal/composer_vocal.dart';
 import 'package:rewayah_academy/features/demo/communications/com_vocal_demo.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../../support/envoi_fil.dart';
 import '../../support/harnais.dart';
 import 'support_focus.dart';
 import 'support_studio.dart';
@@ -162,9 +164,7 @@ void main() {
           taille: taille,
         );
         if (focus) await entrer(tester);
-        final Rect envoyer = tester.getRect(
-          find.byKey(FilDiscussion.envoyerKey),
-        );
+        final Rect envoyer = tester.getRect(envoiDuFil());
         final Rect champ = tester.getRect(find.byKey(FilDiscussion.champKey));
         // La derniere bulle recue (Samira), toujours a l'ecran au-dessus du
         // champ.
@@ -183,10 +183,12 @@ void main() {
           lessThanOrEqualTo(bulle.right + 1),
           reason: '« Envoyer » ne depasse pas la colonne des bulles',
         );
+        // SUPERPOS-1 (JONCTION-LIGNES-1) : l'envoi est dans le champ, a son
+        // bord de fin ; les bulles partagent ce bord avec le champ.
         expect(
           bulle.right,
-          moreOrLessEquals(envoyer.right, epsilon: 1),
-          reason: 'les bulles et « Envoyer » partagent le bord de fin',
+          moreOrLessEquals(champ.right, epsilon: 1),
+          reason: 'les bulles et le champ de l envoi partagent le bord de fin',
         );
         expect(
           bulle.left,
@@ -234,12 +236,13 @@ void main() {
         final Rect recu = _bulle(tester, 'k1');
         final Rect soi = _bulle(tester, 'k2');
         final Rect champ = tester.getRect(find.byKey(FilDiscussion.champKey));
-        final Rect envoyer = tester.getRect(
-          find.byKey(FilDiscussion.envoyerKey),
-        );
-        final double colonne = envoyer.right - champ.left;
+        final Rect envoyer = tester.getRect(envoiDuFil());
+        // L'envoi est dans le champ (SUPERPOS-1) : la colonne est celle du
+        // champ, l'envoi n'en depasse pas.
+        expect(envoyer.right, lessThanOrEqualTo(champ.right + 0.5));
+        final double colonne = champ.right - champ.left;
         expect(recu.left, moreOrLessEquals(champ.left, epsilon: 1));
-        expect(recu.right, moreOrLessEquals(envoyer.right, epsilon: 1));
+        expect(recu.right, moreOrLessEquals(champ.right, epsilon: 1));
         expect(
           soi.width,
           moreOrLessEquals(
@@ -248,7 +251,7 @@ void main() {
           ),
           reason: 'un leger retrait au debut distingue le message de soi',
         );
-        expect(soi.right, moreOrLessEquals(envoyer.right, epsilon: 1));
+        expect(soi.right, moreOrLessEquals(champ.right, epsilon: 1));
         expect(soi.left, greaterThan(recu.left + 8));
         expect(tester.takeException(), isNull);
       });
@@ -306,7 +309,7 @@ void main() {
       final Size micro = tester.getSize(find.byKey(FilDiscussion.cleMicro));
       expect(micro.width, 64);
       expect(micro.height, 64);
-      final Size envoyer = tester.getSize(find.byKey(FilDiscussion.envoyerKey));
+      final Size envoyer = tester.getSize(envoiDuFil());
       expect(
         (micro.height - envoyer.height).abs(),
         lessThanOrEqualTo(16),
@@ -421,7 +424,7 @@ void main() {
       await _monterFil(tester, fil(longue));
       expect(cadre(tester), moreOrLessEquals(court, epsilon: 0.5));
       expect(
-        deco(tester).hintText,
+        deco(tester).hint,
         isNull,
         reason: 'pas d aide coupee (« Ecrire dans Organi... »)',
       );
@@ -472,8 +475,9 @@ void main() {
       await _monterFil(tester, fil('Message'), taille: const Size(1440, 900));
       final double court = cadre(tester);
       await _monterFil(tester, fil(longue), taille: const Size(1440, 900));
-      expect(deco(tester).hintText, longue);
-      expect(deco(tester).hintMaxLines, 1);
+      // L'aide de ZoneSaisie (SUPERPOS-1) : un TexteSansCoupure, peint
+      // seulement quand il tient sur une ligne.
+      expect((deco(tester).hint! as TexteSansCoupure).texte, longue);
       final SemanticsHandle sem = tester.ensureSemantics();
       expect(
         tester.getSemantics(find.byKey(FilDiscussion.champKey)).hint,

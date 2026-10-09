@@ -60,6 +60,7 @@ import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import '../../capture/outil_capture.dart'
     show chargerPolicesDuDepot, fixerVueCapture;
 import '../../router/support_routeur.dart' hide stabiliser;
+import '../../support/envoi_fil.dart';
 import '../../support/harnais.dart';
 import '../com_vocal/support_vocal.dart';
 
@@ -376,7 +377,7 @@ void main() {
       );
       await tester.enterText(find.byKey(FilDiscussion.champKey), 'Premier');
       await tester.pump();
-      await tester.tap(find.byKey(FilDiscussion.envoyerKey));
+      await tester.tap(envoiDuFil());
       await _attendre(tester);
       expect(find.text('Non confirme'), findsOneWidget);
       // L'echec garde son texte en brouillon (N-3).
@@ -384,7 +385,7 @@ void main() {
       await tester.enterText(find.byKey(FilDiscussion.champKey), 'Second');
       await tester.pump();
       expect((await brouillons.lire(_cle))?.texte, 'Second');
-      await tester.tap(find.byKey(FilDiscussion.envoyerKey));
+      await tester.tap(envoiDuFil());
       await _attendre(tester);
       expect(find.text('Envoye'), findsOneWidget);
       expect(await brouillons.lire(_cle), isNull);
@@ -411,7 +412,7 @@ void main() {
       await _monterNu(tester, fil(), surcharges: surcharges);
       await tester.enterText(find.byKey(FilDiscussion.champKey), 'Parti');
       await tester.pump();
-      await tester.tap(find.byKey(FilDiscussion.envoyerKey));
+      await tester.tap(envoiDuFil());
       await tester.pump();
       expect((await brouillons.lire(_cle))?.texte, 'Parti');
       // La personne quitte le fil avant l'accuse.
@@ -446,7 +447,7 @@ void main() {
       );
       await tester.enterText(find.byKey(FilDiscussion.champKey), 'A');
       await tester.pump();
-      await tester.tap(find.byKey(FilDiscussion.envoyerKey));
+      await tester.tap(envoiDuFil());
       await tester.pump();
       await tester.enterText(find.byKey(FilDiscussion.champKey), 'C en cours');
       await tester.pump();
@@ -479,7 +480,7 @@ void main() {
       await _monterNu(tester, fil(), surcharges: surcharges);
       await tester.enterText(find.byKey(FilDiscussion.champKey), 'Parti');
       await tester.pump();
-      await tester.tap(find.byKey(FilDiscussion.envoyerKey));
+      await tester.tap(envoiDuFil());
       await tester.pump();
       // Le fil est quitte, puis rouvert avant l'accuse.
       await _monterNu(tester, const SizedBox(), surcharges: surcharges);
@@ -514,7 +515,7 @@ void main() {
       await _monterNu(tester, fil(), surcharges: surcharges);
       await tester.enterText(find.byKey(FilDiscussion.champKey), 'A');
       await tester.pump();
-      await tester.tap(find.byKey(FilDiscussion.envoyerKey));
+      await tester.tap(envoiDuFil());
       await tester.pump();
       await _monterNu(tester, const SizedBox(), surcharges: surcharges);
       await _monterNu(tester, fil(), surcharges: surcharges);
@@ -563,7 +564,7 @@ void main() {
           tester.widget<TextField>(champs.at(i)).controller!;
       expect(champ(0).text, 'Parti');
       expect(champ(1).text, 'Parti');
-      await tester.tap(find.byKey(FilDiscussion.envoyerKey).first);
+      await tester.tap(envoiDuFil().first);
       await tester.pump();
       expect(champ(0).text, isEmpty);
       expect(champ(1).text, 'Parti');
@@ -953,7 +954,7 @@ void main() {
       final Finder champ = find.byKey(FilDiscussion.champKey);
       _entierALEcran(tester, champ, _petit, 'le champ');
       expect(tester.widget<TextField>(champ).maxLines, 1);
-      expect(find.byKey(FilDiscussion.envoyerKey), findsNothing);
+      expect(envoiDuFil(), findsNothing);
       // Le micro reste a cote du champ (R-28).
       _entierALEcran(
         tester,
@@ -964,8 +965,10 @@ void main() {
       // Le focus rend la saisie entiere.
       await tester.showKeyboard(champ);
       await _attendre(tester);
-      expect(tester.widget<TextField>(champ).maxLines, 5);
-      expect(find.byKey(FilDiscussion.envoyerKey), findsOneWidget);
+      // Entiere : plusieurs lignes, bornees par ZoneSaisie aux deux
+      // cinquiemes de la vue (SUPERPOS-1).
+      expect(tester.widget<TextField>(champ).maxLines, greaterThan(1));
+      expect(envoiDuFil(), findsOneWidget);
       expect(
         tester.widget<TextField>(champ).focusNode!.hasFocus,
         isTrue,
@@ -976,7 +979,7 @@ void main() {
       FocusManager.instance.primaryFocus?.unfocus();
       await _attendre(tester);
       // Du texte : la saisie reste entiere, « Envoyer » actif.
-      expect(find.byKey(FilDiscussion.envoyerKey), findsOneWidget);
+      expect(envoiDuFil(), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 
@@ -991,7 +994,7 @@ void main() {
         echelle: 2,
       );
       // Hors Focus.
-      expect(find.byKey(FilDiscussion.envoyerKey), findsOneWidget);
+      expect(envoiDuFil(), findsOneWidget);
       await _monterDansLaCoquille(
         tester,
         cheminCanalStudio(canalFocusDemo),
@@ -1000,7 +1003,7 @@ void main() {
         echelle: 2,
       );
       await _entrerFocus(tester);
-      expect(find.byKey(FilDiscussion.envoyerKey), findsOneWidget);
+      expect(envoiDuFil(), findsOneWidget);
     });
   });
 
@@ -1012,7 +1015,7 @@ void main() {
       emplacementVocal: ComposerVocal(onEnvoyer: (_) async {}),
     );
 
-    testWidgets('390 : une icone nommee de 48, a cote d « Envoyer », qui '
+    testWidgets('390 : une icone nommee de 48, a cote du champ (et de l envoi), qui '
         'ouvre l enregistrement ; plus de lien sous le champ', (
       WidgetTester tester,
     ) async {
@@ -1030,11 +1033,15 @@ void main() {
       final Size taille = tester.getSize(micro);
       expect(taille.width, greaterThanOrEqualTo(48));
       expect(taille.height, greaterThanOrEqualTo(48));
+      // SUPERPOS-1 (repris par JONCTION-LIGNES-1) : l'envoi est dans le
+      // champ, a son bord de fin ; le micro suit le champ, sur sa ligne,
+      // apres un palier.
       final Rect m = tester.getRect(micro);
-      final Rect envoyer = tester.getRect(find.byKey(FilDiscussion.envoyerKey));
-      expect(m.top, envoyer.top, reason: 'sur la ligne d « Envoyer »');
-      expect(m.right, lessThanOrEqualTo(envoyer.left));
-      expect(envoyer.left - m.right, AppSpacing.sm);
+      final Rect champ = tester.getRect(find.byKey(FilDiscussion.champKey));
+      final Rect envoyer = tester.getRect(envoiDuFil());
+      expect(m.top, champ.top, reason: 'sur la ligne du champ');
+      expect(envoyer.right, lessThanOrEqualTo(champ.right + 0.5));
+      expect(m.left - champ.right, AppSpacing.sm);
       final SemanticsHandle semantique = tester.ensureSemantics();
       expect(
         find.bySemanticsLabel(t.com.socle.composants.composer.enregistrerVocal),
@@ -1051,7 +1058,7 @@ void main() {
       // L'enregistrement s'ouvre, sa rangee remplace la rangee texte.
       expect(find.byKey(ComposerVocal.cleArreter), findsOneWidget);
       expect(micro, findsNothing);
-      expect(find.byKey(FilDiscussion.envoyerKey), findsNothing);
+      expect(envoiDuFil(), findsNothing);
       await avancer(tester, h, const Duration(seconds: 3));
       await tester.tap(find.byKey(ComposerVocal.cleArreter));
       await _attendre(tester);
@@ -1075,10 +1082,13 @@ void main() {
       final SemanticsHandle semantique = tester.ensureSemantics();
       expect(find.bySemanticsLabel(ar), findsOneWidget);
       semantique.dispose();
-      // En arabe, le micro est apres « Envoyer » vers la gauche.
+      // En arabe, le micro suit le champ (et l'envoi, a son bord de fin)
+      // vers la gauche.
       final Rect m = tester.getRect(find.byKey(FilDiscussion.cleMicro));
-      final Rect envoyer = tester.getRect(find.byKey(FilDiscussion.envoyerKey));
-      expect(m.left, greaterThanOrEqualTo(envoyer.right));
+      final Rect champ = tester.getRect(find.byKey(FilDiscussion.champKey));
+      final Rect envoyer = tester.getRect(envoiDuFil());
+      expect(m.right, lessThanOrEqualTo(champ.left));
+      expect(envoyer.left, greaterThanOrEqualTo(champ.left - 0.5));
       expect(tester.takeException(), isNull);
     });
 

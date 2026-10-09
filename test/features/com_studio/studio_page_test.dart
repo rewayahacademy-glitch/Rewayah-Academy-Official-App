@@ -35,6 +35,7 @@ import 'package:rewayah_academy/features/com_studio/visibilite_canal.dart';
 import 'package:rewayah_academy/features/com_vocal/lecteur_vocal.dart';
 import 'package:rewayah_academy/features/demo/communications/com_studio_demo.dart';
 
+import '../../support/envoi_fil.dart';
 import '../../support/garde_interface.dart';
 import 'support_studio.dart';
 
@@ -515,7 +516,7 @@ void main() {
       final x = t.com.socle.composants.composer;
       await tester.enterText(find.byKey(FilDiscussion.champKey), 'Merci !');
       await tester.pump();
-      await tester.tap(find.byKey(FilDiscussion.envoyerKey));
+      await tester.tap(envoiDuFil());
       await tester.pumpAndSettle();
       expect(_dansFil(find.text(x.nonConfirme)), findsOneWidget);
       expect(_dansFil(find.text(x.envoye)), findsNothing);
@@ -540,7 +541,7 @@ void main() {
       for (int i = 0; i < 2; i++) {
         await tester.enterText(find.byKey(FilDiscussion.champKey), "D'accord");
         await tester.pump();
-        await tester.tap(find.byKey(FilDiscussion.envoyerKey));
+        await tester.tap(envoiDuFil());
         await tester.pump();
       }
       expect(port.envois, hasLength(2));
@@ -564,7 +565,7 @@ void main() {
       );
       await tester.enterText(find.byKey(FilDiscussion.champKey), 'Bien reçu');
       await tester.pump();
-      await tester.tap(find.byKey(FilDiscussion.envoyerKey));
+      await tester.tap(envoiDuFil());
       await tester.pumpAndSettle();
       expect(
         _dansFil(find.text(t.com.socle.composants.composer.envoye)),
@@ -613,7 +614,7 @@ void main() {
       );
       expect(find.byKey(CanalStudio.cleLectureSeule), findsOneWidget);
       expect(find.byKey(FilDiscussion.champKey), findsNothing);
-      expect(find.byKey(FilDiscussion.envoyerKey), findsNothing);
+      expect(envoiDuFil(), findsNothing);
       expect(find.textContaining('Classe An-Nour'), findsOneWidget);
     });
 
@@ -649,7 +650,7 @@ void main() {
       expect(find.byType(FilDiscussion), findsOneWidget);
       await tester.enterText(find.byKey(FilDiscussion.champKey), 'Bonjour');
       await tester.pump();
-      await tester.tap(find.byKey(FilDiscussion.envoyerKey));
+      await tester.tap(envoiDuFil());
       await tester.pumpAndSettle();
       expect(
         _dansFil(find.text(t.com.socle.composants.composer.nonConfirme)),
@@ -676,7 +677,7 @@ void main() {
       const double hautVisible = 844 - 300;
       final Rect champ = tester.getRect(find.byKey(FilDiscussion.champKey));
       expect(champ.bottom, lessThanOrEqualTo(hautVisible));
-      final Rect envoyer = tester.getRect(find.byKey(FilDiscussion.envoyerKey));
+      final Rect envoyer = tester.getRect(envoiDuFil());
       expect(envoyer.bottom, lessThanOrEqualTo(hautVisible));
       final Rect dernier = tester.getRect(
         find.byKey(const ValueKey<String>('message-m-org-4')),
