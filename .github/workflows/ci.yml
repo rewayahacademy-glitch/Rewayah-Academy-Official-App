@@ -52,6 +52,22 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b11_student_concern.sql
 
+      - name: Scénarios B-13 (admin suspendu)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b13_admin_suspended.sql
+
+      - name: Scénarios B-14 (état partagé)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b14_shared_state.sql
+
+      - name: Scénarios B-15 (assignations et annotations)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b15_assignations_annotations.sql
+
+      - name: Scénarios B-10 (canal de support)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b10_support.sql
+
 
       # Inscription bornee a deux roles, depot KYC de l'enseignant, cloisonnement
       # de genre, appareil partage, plafond d'appareils, codes d'appairage,
@@ -198,22 +214,6 @@ jobs:
       - name: Scenarios négatifs B-18 (SECURITY DEFINER)
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b18_security_definer.sql
-
-      - name: Scénarios B-13 (admin suspendu)
-        shell: bash
-        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b13_admin_suspended.sql
-
-      - name: Scénarios B-14 (état partagé)
-        shell: bash
-        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b14_shared_state.sql
-
-      - name: Scénarios B-15 (assignations et annotations)
-        shell: bash
-        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b15_assignations_annotations.sql
-
-      - name: Scénarios B-10 (canal de support)
-        shell: bash
-        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b10_support.sql
 
   edge-r2:
     name: Fonctions Edge -- stockage R2 (Deno)
