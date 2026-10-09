@@ -5,6 +5,8 @@ on:
   # leur branche `ui/*` n'etaient jamais controlees. GitHub lit ce fichier sur
   # la branche de BASE : il ne sert a une branche `ui/*` qu'une fois present
   # dans cette branche.
+  push:
+    branches: [codex/backend-staging-deploy]
   pull_request:
     branches: [main, 'ui/**']
   workflow_dispatch:
@@ -41,10 +43,17 @@ jobs:
           # ont besoin de pouvoir se faire passer pour un appelant donne, et un
           # stub qui differe entre la CI et le poste ne prouve rien.
           psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/stub_auth.sql
+          # Les migrations de buckets/policies supposent les objets Storage fournis par Supabase.
+          # Ce stub ne vaut que pour le Postgres nu de la CI; il ne crée aucune donnée applicative.
+          psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/stub_storage.sql
           for f in supabase/migrations/*.sql; do
             echo "--- $f"
             psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f "$f"
           done
+
+      - name: Scenarios négatifs B-18 — RPC admin/KYC et claims absents
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b18_security_definer.sql
 
       # Inscription bornee a deux roles, depot KYC de l'enseignant, cloisonnement
       # de genre, appareil partage, plafond d'appareils, codes d'appairage,
