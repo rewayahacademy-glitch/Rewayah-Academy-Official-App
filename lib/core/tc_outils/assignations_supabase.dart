@@ -33,7 +33,7 @@ class AssignationsSupabase implements PortAssignations {
     String? studentId,
     int limite = 3,
   }) async {
-    final int maximum = limite.clamp(0, 3);
+    final int maximum = limite.clamp(0, 3).toInt();
     if (maximum == 0) return const <LearningAssignment>[];
 
     final List<Map<String, dynamic>> rows = await _rowsVisibles(
