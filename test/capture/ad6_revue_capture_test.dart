@@ -136,6 +136,19 @@ const List<String> _points = <String>[
   "La pièce n'est pas expirée",
 ];
 
+/// HL-A-5 : « Valider le dossier » n'est rendu qu'une fois les trois
+/// verifications cochees (sa place porte sinon le lien « Terminez les
+/// verifications requises. »). On le constate, on coche par des tap reels,
+/// puis le bouton existe.
+Future<void> _cocherPourValider(WidgetTester tester) async {
+  expect(find.text('Valider le dossier'), findsNothing);
+  expect(find.text('Terminez les vérifications requises.'), findsOneWidget);
+  for (final String p in _points) {
+    await _taperTexte(tester, p);
+  }
+  expect(find.text('Valider le dossier'), findsOneWidget);
+}
+
 const List<(Size, String)> _tailles = <(Size, String)>[
   (Size(390, 844), '390x844@3'),
   (Size(768, 1024), '768x1024@1'),
@@ -164,6 +177,7 @@ void main() {
             'PNG ${await capturer(tester, 'ad6_nominal_${nom}_${mode.name}')}',
           );
           if (nom.startsWith('390')) {
+            await _cocherPourValider(tester);
             await tester.dragUntilVisible(
               find.text('Valider le dossier'),
               find.byType(Scrollable).first,
@@ -334,6 +348,7 @@ void main() {
         tester.platformDispatcher.textScaleFactorTestValue = 2;
         addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
         await _stabiliser(tester);
+        await _cocherPourValider(tester);
         await tester.dragUntilVisible(
           find.text('Valider le dossier'),
           find.byType(Scrollable).first,
