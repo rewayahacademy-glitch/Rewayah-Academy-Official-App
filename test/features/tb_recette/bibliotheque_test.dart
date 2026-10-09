@@ -6,14 +6,27 @@
 // « Presenter » (UX-17) ; Presenter verifie le chargement ; un fichier non
 // charge ne remplace jamais le support (LIB-03) ; recherche sans resultat
 // et retour (LIB-04).
+//
+// Revue du 09/10 : « Revenir aux supports » pendant l'ouverture n'active
+// rien ; « Presenter » est dans la vue de la feuille sans la faire defiler
+// (390 x1 et x2, 320 x2) ; apres un echec, le titre du message et
+// « Reessayer » sont visibles ensemble, au texte x2 aussi. Mesure : les
+// rectangles rendus et le toucher (hit test) aux coins, jamais le code.
 
+import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/donnees_catalogue.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/bibliotheque_seance.dart';
@@ -24,6 +37,7 @@ import 'package:rewayah_academy/features/tc_catalogue/surface_bibliotheque.dart'
 
 import '../../capture/outil_capture.dart' hide stabiliser;
 import '../../router/support_routeur.dart';
+import '../../support/garde_interface.dart';
 
 const Size _telephone = Size(390, 844);
 const Size _bureau = Size(1440, 900);
@@ -34,6 +48,10 @@ final Finder _apercu = find.byKey(BibliothequeSeance.cleApercu);
 final Finder _presenter = find.byKey(BibliothequeSeance.clePresenter);
 final Finder _revenir = find.byKey(BibliothequeSeance.cleRevenir);
 final Finder _echec = find.byKey(BibliothequeSeance.cleEchec);
+final Finder _titreEchec = find.byKey(BibliothequeSeance.cleTitreEchec);
+final Finder _feuille = find.byKey(
+  const ValueKey<String>('panneau-seance-feuille'),
+);
 
 Future<void> _monter(
   WidgetTester tester, {
@@ -47,6 +65,59 @@ Future<void> _monter(
     hoteCapture(DemoSallePage(role: role, situation: situation)),
   );
   await tester.pumpAndSettle();
+}
+
+/// Monte la salle au cadrage des captures (zone sure du telephone a 390,
+/// texte agrandi), comme `captures_tb_test` (tb8_).
+Future<void> _monterCadre(
+  WidgetTester tester, {
+  required Size taille,
+  required double texte,
+}) async {
+  fixerVueCapture(
+    tester,
+    taille,
+    2,
+    zoneSure: taille.width == 390
+        ? const EdgeInsets.only(top: 47, bottom: 34)
+        : EdgeInsets.zero,
+  );
+  addTearDown(tester.view.reset);
+  await tester.pumpWidget(
+    hoteCapture(
+      const DemoSallePage(
+        role: RoleSeance.enseignant,
+        situation: SituationTb.lib01,
+      ),
+      echelleTexte: texte,
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
+/// [cible] est dans la vue et sous le doigt : ses quatre coins (a 2 px du
+/// bord) et son centre touchent [cible] elle-meme, rien ne la couvre ni ne
+/// la rogne (bord de la feuille, defilement, barre de l'appel, ecran).
+void _attendreDansLaVue(WidgetTester tester, Finder cible, String quoi) {
+  final Rect r = tester.getRect(cible);
+  final RenderObject objet = tester.renderObject(cible);
+  final Rect ecran =
+      Offset.zero & tester.view.physicalSize / tester.view.devicePixelRatio;
+  for (final Offset point in <Offset>[
+    r.topLeft + const Offset(2, 2),
+    r.topRight + const Offset(-2, 2),
+    r.bottomLeft + const Offset(2, -2),
+    r.bottomRight + const Offset(-2, -2),
+    r.center,
+  ]) {
+    expect(ecran.contains(point), isTrue, reason: '$quoi hors ecran ($r)');
+    final HitTestResult touche = tester.hitTestOnBinding(point);
+    expect(
+      touche.path.any((HitTestEntry e) => identical(e.target, objet)),
+      isTrue,
+      reason: '$quoi : le point $point de $r ne la touche pas (hors vue)',
+    );
+  }
 }
 
 Future<void> _taper(WidgetTester tester, Finder cible) async {
@@ -147,17 +218,19 @@ void main() {
         find.text(t.salle.seance.bibliotheque.echecDetail),
         findsOneWidget,
       );
-      // Le message et « Reessayer » sont visibles ensemble, au-dessus de la
-      // barre de l'appel.
-      final Rect bouton = tester.getRect(_presenter);
-      // Le cadre visible de l'apercu (sa zone de defilement).
-      final Rect cadre = tester.getRect(_apercu);
-      expect(bouton.bottom, lessThanOrEqualTo(cadre.bottom + 0.5));
-      expect(tester.getRect(_echec).top, greaterThanOrEqualTo(cadre.top - 0.5));
+      // Le titre du message et « Reessayer » sont visibles ensemble, au
+      // pied de la feuille, au-dessus de la barre de l'appel.
+      _attendreDansLaVue(tester, _titreEchec, 'le titre du message');
+      _attendreDansLaVue(tester, _presenter, 'Reessayer');
+      verifierUnSeulBoutonPlein(tester);
+      verifierSansChevauchement(tester, <Finder>[_titreEchec, _presenter]);
       // La classe garde le support d'avant ; Reessayer, et le retour.
       expect(_pageAvecTitre(_titreInitial), findsOneWidget);
       expect(
-        find.descendant(of: _presenter, matching: find.text('Réessayer')),
+        find.descendant(
+          of: _presenter,
+          matching: find.text(t.commun.reessayer),
+        ),
         findsOneWidget,
       );
       await _taper(tester, _presenter);
@@ -183,6 +256,109 @@ void main() {
     expect(_pageAvecTitre(_titreInitial), findsOneWidget);
     await tester.pumpAndSettle();
     expect(_pageAvecTitre(_autre), findsOneWidget);
+  });
+
+  testWidgets('Revenir aux supports pendant l\'ouverture : rien n\'est '
+      'presente, meme quand le chargement aboutit ensuite', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester);
+    await _taper(tester, await _versCarte(tester, _autre));
+    await tester.tap(_presenter);
+    // Un seul cadre : « Ouverture du support... », le chargement court.
+    await tester.pump();
+    expect(find.text(t.salle.seance.bibliotheque.ouverture), findsOneWidget);
+    await tester.tap(_revenir);
+    // Le chargement se termine apres le retour.
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(_catalogue, findsOneWidget);
+    expect(_bibliotheque, findsOneWidget);
+    // La classe garde son support : le futur termine n'a rien active.
+    expect(_pageAvecTitre(_titreInitial), findsOneWidget);
+    expect(_pageAvecTitre(_autre), findsNothing);
+  });
+
+  testWidgets('Revenir pendant une ouverture qui echoue : le catalogue, '
+      'aucun echec d\'un support abandonne', (WidgetTester tester) async {
+    await _monter(tester);
+    await _taper(tester, await _versCarte(tester, _indisponible));
+    await tester.tap(_presenter);
+    await tester.pump();
+    await tester.tap(_revenir);
+    await tester.pumpAndSettle();
+    expect(_catalogue, findsOneWidget);
+    expect(_echec, findsNothing);
+    expect(_pageAvecTitre(_titreInitial), findsOneWidget);
+  });
+
+  testWidgets('un chargement termine apres le retour n\'active rien, ni ne '
+      'montre d\'echec sur le support choisi ensuite', (
+    WidgetTester tester,
+  ) async {
+    // La Bibliotheque seule, avec un chargement que le test tient : la
+    // demonstration se charge en un tour de boucle, trop vite pour revenir
+    // ET choisir une autre carte avant la fin.
+    final List<Completer<VoidCallback>> chargements =
+        <Completer<VoidCallback>>[];
+    int activations = 0;
+    fixerVueCapture(tester, _bureau, 1);
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      hoteCapture(
+        Scaffold(
+          body: BibliothequeSeance(
+            groupeId: DonneesSeanceDemo.groupeDemo,
+            onPresenter: (LibraryResource r, ContentPosition? p) {
+              final Completer<VoidCallback> c = Completer<VoidCallback>();
+              chargements.add(c);
+              return c.future;
+            },
+          ),
+        ),
+        surcharges: <Override>[
+          donneesCatalogueProvider(DonneesSeanceDemo.groupeDemo).overrideWith(
+            (Ref _) => lireDonneesCatalogue(
+              catalogue: DonneesSeanceDemo.catalogueTb,
+              offline: DonneesSeanceDemo.etatOfflineTb,
+              groupeId: DonneesSeanceDemo.groupeDemo,
+            ),
+          ),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+    // 1. Presenter, revenir, puis le chargement aboutit : rien n'est active.
+    await _taper(tester, await _versCarte(tester, _autre));
+    await _taper(tester, _presenter);
+    expect(find.text(t.salle.seance.bibliotheque.ouverture), findsOneWidget);
+    await _taper(tester, _revenir);
+    chargements.last.complete(() => activations++);
+    await tester.pumpAndSettle();
+    expect(activations, 0);
+    expect(_catalogue, findsOneWidget);
+    // 2. Presenter un support qui echouera, revenir, choisir un autre
+    // support, puis l'ancien chargement echoue : aucun echec sur le nouveau.
+    await _taper(tester, await _versCarte(tester, _indisponible));
+    await _taper(tester, _presenter);
+    await _taper(tester, _revenir);
+    await _taper(tester, await _versCarte(tester, _autre));
+    chargements.last.completeError(StateError('fichier absent'));
+    await tester.pumpAndSettle();
+    expect(_echec, findsNothing);
+    expect(
+      find.descendant(
+        of: _presenter,
+        matching: find.text(t.salle.seance.bibliotheque.presenter),
+      ),
+      findsOneWidget,
+    );
+    // 3. Le chargement en cours, lui, active bien.
+    await _taper(tester, _presenter);
+    chargements.last.complete(() => activations++);
+    await tester.pumpAndSettle();
+    expect(activations, 1);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('LIB-04 : recherche sans resultat, puis tout afficher', (
@@ -253,5 +429,78 @@ void main() {
     await _taper(tester, _presenter);
     expect(_pageAvecTitre(_autre), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  // Revue du 09/10 : a la largeur du telephone, l'action est dans la vue de
+  // la feuille sans defiler, et apres un echec le titre du message et
+  // « Reessayer » se voient ensemble. Polices du depot : les memes lignes
+  // que les captures tb8_.
+  group('TB-8 : l\'action et l\'echec dans la vue du telephone', () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (Size taille, double texte) in <(Size, double)>[
+      (const Size(390, 844), 1),
+      (const Size(390, 844), 2),
+      (const Size(320, 700), 2),
+    ]) {
+      final String cas = '${taille.width.toInt()} x${texte.toInt()}';
+
+      testWidgets('LIB-02 : Presenter est dans la vue de la feuille, sans '
+          'defiler ($cas)', (WidgetTester tester) async {
+        await _monterCadre(tester, taille: taille, texte: texte);
+        await tester.tap(await _versCarte(tester, _autre));
+        await tester.pumpAndSettle();
+        expect(_apercu, findsOneWidget);
+        expect(_feuille, findsOneWidget);
+        // Aucun ensureVisible : la feuille telle qu'elle s'ouvre.
+        final Rect feuille = tester.getRect(_feuille);
+        final Rect bouton = tester.getRect(_presenter);
+        expect(bouton.top, greaterThanOrEqualTo(feuille.top - 0.5));
+        expect(bouton.bottom, lessThanOrEqualTo(feuille.bottom + 0.5));
+        _attendreDansLaVue(tester, _presenter, 'Presenter');
+        verifierUnSeulBoutonPlein(tester);
+        // Le retour part du bord du contenu, comme « Apercu personnel »
+        // (revue : 4 px de decalage), sa fleche en tete.
+        expect(
+          tester
+              .getRect(
+                find.descendant(of: _revenir, matching: find.byType(Icon)),
+              )
+              .left,
+          closeTo(
+            tester.getRect(find.text(t.salle.seance.bibliotheque.apercu)).left,
+            0.5,
+          ),
+        );
+        // Le doigt l'atteint tel quel : le support est presente.
+        await tester.tap(_presenter);
+        await tester.pumpAndSettle();
+        expect(_pageAvecTitre(_autre), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+
+      testWidgets('LIB-03 : apres un echec, le titre du message et '
+          'Reessayer sont visibles ensemble ($cas)', (
+        WidgetTester tester,
+      ) async {
+        await _monterCadre(tester, taille: taille, texte: texte);
+        await tester.tap(await _versCarte(tester, _indisponible));
+        await tester.pumpAndSettle();
+        await tester.tap(_presenter);
+        await tester.pumpAndSettle();
+        expect(_echec, findsOneWidget);
+        _attendreDansLaVue(tester, _titreEchec, 'le titre du message');
+        _attendreDansLaVue(tester, _presenter, 'Reessayer');
+        verifierSansChevauchement(tester, <Finder>[_titreEchec, _presenter]);
+        expect(
+          find.descendant(
+            of: _presenter,
+            matching: find.text(t.commun.reessayer),
+          ),
+          findsOneWidget,
+        );
+        expect(_pageAvecTitre(_titreInitial), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+    }
   });
 }

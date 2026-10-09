@@ -782,8 +782,8 @@ class _Traductions$salle$seance$bibliotheque$ar extends Traductions$salle$seance
 	@override String get presenter => 'عرض';
 	@override String get revenir => 'العودة إلى المواد';
 	@override String get ouverture => 'جارٍ فتح المادة…';
-	@override String get echec => 'تعذّر فتح هذه المادة.';
-	@override String get echecDetail => 'تعذّر تحميل الملف. يبقى الفصل على المادة الحالية. أعد المحاولة، أو عد إلى المواد لاختيار مادة أخرى.';
+	@override String get echec => 'تعذّر فتح الملف.';
+	@override String get echecDetail => 'تعذّر تحميل ملف هذه المادة. أعد المحاولة، أو عد إلى المواد لاختيار مادة أخرى.';
 }
 
 // Path: salle.seance.surface
@@ -2462,8 +2462,8 @@ extension on TraductionsAr {
 			'salle.seance.bibliotheque.presenter' => 'عرض',
 			'salle.seance.bibliotheque.revenir' => 'العودة إلى المواد',
 			'salle.seance.bibliotheque.ouverture' => 'جارٍ فتح المادة…',
-			'salle.seance.bibliotheque.echec' => 'تعذّر فتح هذه المادة.',
-			'salle.seance.bibliotheque.echecDetail' => 'تعذّر تحميل الملف. يبقى الفصل على المادة الحالية. أعد المحاولة، أو عد إلى المواد لاختيار مادة أخرى.',
+			'salle.seance.bibliotheque.echec' => 'تعذّر فتح الملف.',
+			'salle.seance.bibliotheque.echecDetail' => 'تعذّر تحميل ملف هذه المادة. أعد المحاولة، أو عد إلى المواد لاختيار مادة أخرى.',
 			'salle.seance.surface.aucunSupport' => 'اختر مادة أو اكتب على السبورة.',
 			'salle.seance.surface.page' => ({required Object titre, required Object page, required Object pages}) => '⁨${titre}⁩، الصفحة ⁨${page}⁩ من ⁨${pages}⁩',
 			'salle.seance.surface.supportMasque' => 'السبورة، المادة مخفية',

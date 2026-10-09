@@ -416,7 +416,7 @@ abstract final class DonneesSeanceDemo {
   // --- Bibliotheque en seance (TB-8) ---
 
   /// Le support de la demonstration dont l'ouverture echoue : montre LIB-03
-  /// (« Ce support ne peut pas etre ouvert. »), jamais une page vide.
+  /// (« Fichier non ouvert. »), jamais une page vide.
   static const String idSupportIndisponible = 'demo-cahier-ecriture';
 
   /// Les supports de la Bibliotheque unique en demonstration : ceux du
@@ -475,9 +475,10 @@ abstract final class DonneesSeanceDemo {
   /// local (K-28), donc « hors ligne indisponible » pour tous.
   static const PortEtatOffline etatOfflineTb = _EtatOfflineDemo();
 
-  /// Le support a page fixe presente apres « Presenter » : page 1, meme
+  /// Le support a page fixe presente apres « Presenter » : la [page] de sa
+  /// position (bornee a son nombre de pages), sinon la premiere ; meme
   /// repere que la page de demonstration, nombre de pages de son contenu.
-  static SupportPageFixe pagePresentee(LibraryResource r) {
+  static SupportPageFixe pagePresentee(LibraryResource r, {int? page}) {
     int total = 1;
     for (final SupportDisponible s in supports) {
       if (s.id == r.id) total = s.contenu?.pages ?? 1;
@@ -486,7 +487,7 @@ abstract final class DonneesSeanceDemo {
       id: r.id,
       version: r.currentVersionId ?? 'v1.0',
       titre: r.title,
-      page: 1,
+      page: (page ?? 1).clamp(1, total),
       total: total,
       largeurCanonique: largeurPage,
       hauteurCanonique: hauteurPage,

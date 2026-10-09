@@ -149,6 +149,6 @@
   "salle.seance.bibliotheque.presenter": "etape TB-8 (Supports et tableau, Bibliotheque en seance) : texte exact du plan V2 §20 (Catalogue)",
   "salle.seance.bibliotheque.revenir": "etape TB-8 (Supports et tableau, Bibliotheque en seance) : texte exact du plan V2 §20 (Catalogue) et §12",
   "salle.seance.bibliotheque.ouverture": "etape TB-8 (Supports et tableau, Bibliotheque en seance) : texte exact du plan V2 §12 (« Chargement avant presentation »)",
-  "salle.seance.bibliotheque.echec": "etape TB-8 (Supports et tableau, Bibliotheque en seance) : texte exact du plan V2 §20 (« Echec ouverture ») et §12",
-  "salle.seance.bibliotheque.echecDetail": "etape TB-8 (Supports et tableau, Bibliotheque en seance) : suite du message d'echec (K-59 : ce qui manque, la cause, quoi faire), plan V2 §3 « un fichier non charge ne remplace jamais le support existant », a valider par le directeur"
+  "salle.seance.bibliotheque.echec": "etape TB-8 (Supports et tableau, Bibliotheque en seance) : plan V2 §20 (« Echec ouverture ») et §12, raccourci par la revue du 09/10 (« Ce support ne peut pas etre ouvert. » tient sur deux lignes au texte x2 : a 320 x2, le titre et « Reessayer » ne tiennent pas ensemble dans la feuille ; une ligne a 320 x2), a valider par le directeur",
+  "salle.seance.bibliotheque.echecDetail": "etape TB-8 (Supports et tableau, Bibliotheque en seance) : suite du message d'echec (K-59 : ce qui manque, la cause, quoi faire), plan V2 §3 « un fichier non charge ne remplace jamais le support existant » ; revue du 09/10 : « la classe garde le support actuel » n'y est plus repete (dit une fois par l'apercu, apercuClasse), a valider par le directeur"
 }
