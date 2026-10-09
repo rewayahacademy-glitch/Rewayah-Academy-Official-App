@@ -27,15 +27,18 @@ import 'package:rewayah_academy/core/presence/vue_presence.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/tc_classe/port_rappel_discret.dart';
 import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
+import 'package:rewayah_academy/core/tc_groupe/group_home_vm.dart';
+import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
+import 'package:rewayah_academy/core/tc_horloge/session_clock_vm.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
-import 'package:rewayah_academy/core/widgets/local_feedback.dart';
 import 'package:rewayah_academy/features/admin_comptes/comptes_page.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_progression/progression_page.dart';
 import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
+import 'package:rewayah_academy/features/demo/classe_demo.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_support.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
@@ -207,6 +210,62 @@ String resume(List<Col<int>> cs, int l) =>
     enchainer(cs.map((Col<int> c) => c.texte(l)), ' · ');
 ''');
       expect(lignes(), isEmpty);
+    });
+
+    test('la garde suit une valeur ancree rangee dans un champ d objet '
+        '(reprise 2)', () {
+      final Directory dossier = Directory.systemTemp.createTempSync('champs');
+      addTearDown(() => dossier.deleteSync(recursive: true));
+      // Le cas releve par la relecture : `AffichageSeance.depuis` range
+      // `dureeSeule(...)` dans le champ `duree`, que la page Planning relit
+      // pour l'inserer dans « {heure} · {duree} ».
+      File('${dossier.path}/affichage.dart').writeAsStringSync(r'''
+class Affichage {
+  const Affichage._({required this.duree, required this.seule});
+  factory Affichage.depuis(int n) => Affichage._(
+    duree: LibellesGroupe.dureeSeule(Duration(minutes: n)),
+    seule: LibellesGroupe.dureeSeule(Duration(minutes: n)),
+  );
+  final String duree;
+  final String seule;
+  String get phrase => 'Duree $duree';
+}
+''');
+      File('${dossier.path}/page.dart').writeAsStringSync(r'''
+class Ligne extends StatelessWidget {
+  const Ligne({required this.affichage});
+  final Affichage affichage;
+  Widget build(BuildContext context) => Column(children: <Widget>[
+    Text(t.planning.ligne(heure: '18:10', duree: affichage.duree)),
+    Text(affichage.seule),
+  ]);
+}
+class Etat extends State<Carte> {
+  Widget build(BuildContext context) =>
+      Text(t.carte.valeur(v: widget.valeur));
+}
+class Carte extends StatefulWidget {
+  const Carte({required this.valeur});
+  final String valeur;
+}
+Widget carte(int n) => Carte(valeur: LibellesGroupe.dureeSeule(Duration(minutes: n)));
+String lu(String libelle, String? d) => <String>[libelle, ?d].join('. ');
+String premier(int n) => lu(LibellesGroupe.dureeSeule(Duration(minutes: n)), null);
+''');
+      List<String> fautes() => <String>[
+        for (final AncreGlissee a in ancresGlissees(
+          dossier.listSync().whereType<File>(),
+        ))
+          '${a.fichier.split('/').last}:${a.ligne}',
+      ]..sort();
+      // Le champ interpole dans le getter de la classe, le champ relu dans
+      // un libelle, et `widget.valeur` d'un `State<Carte>`. Le champ affiche
+      // seul (`seule`) et la valeur en tete d'une liste jointe sont permis.
+      expect(fautes(), <String>[
+        'affichage.dart:9',
+        'page.dart:11',
+        'page.dart:5',
+      ]);
     });
 
     test('enchainer ne garde l ancre qu en tete de ligne', () {
@@ -440,22 +499,121 @@ String resume(List<Col<int>> cs, int l) =>
       expect(ponctues, greaterThan(0));
     });
 
-    testWidgets('RTL : le message du rappel garde son point a sa place', (
-      WidgetTester tester,
-    ) async {
-      final String message = LibellesGroupe.insecable(
-        t.tc.classe.rappel.cooldown(secondes: 30),
+    testWidgets('RTL : sur la fiche reelle, le message du rappel garde son '
+        'point a sa place', (WidgetTester tester) async {
+      const TeacherStudentProjection eleve = TeacherStudentProjection(
+        firstName: 'Amina',
+        academyId: 'RA-AB0012',
+        liveStatus: EtatPresenceProjete.present,
+        interfaceGuidee: false,
       );
       await tester.pumpWidget(
-        _hote(LocalFeedback(message: message), sens: TextDirection.rtl),
+        hoteClasse(
+          const Directionality(
+            textDirection: TextDirection.rtl,
+            child: FicheSeance(eleve: eleve, sessionId: 's1'),
+          ),
+          surcharges: surchargesClasse(
+            moteur: FauxMoteurClasse(),
+            video: FauxServiceVideoClasse(),
+            preVol: FauxPreVolClasse(),
+            rappel: FauxRappelDiscret(
+              echec: const EchecRappel(MotifEchecRappel.cooldown),
+              restant: const Duration(seconds: 30),
+            ),
+          ),
+        ),
       );
       await tester.pump();
-      expect(
-        find.text(isolerDansInterface(message, TextDirection.rtl)),
-        findsOneWidget,
+      await tester.tap(find.text(t.tc.classe.action.rappel));
+      await tester.pump();
+      await tester.pump();
+
+      final List<String> textes = _textes(tester, find.byType(FicheSeance));
+      final String message = textes.firstWhere(
+        (String s) => s.contains('30'),
+        orElse: () => fail('aucun message de rappel rendu : $textes'),
       );
-      expect(isolerDansInterface(message, TextDirection.rtl), startsWith(_fsi));
+      // Isole dans son sens : le point final reste apres « 30 s ».
+      expect(message, allOf(startsWith(_fsi), endsWith(_pdi)));
+      expect(message, contains('30${_nbsp}s'));
+      expect(message, isNot(contains('30 s')));
       await tester.pump(const Duration(seconds: 5));
+    });
+
+    testWidgets('RTL : attente, changement d heure, conseil d appareil et '
+        'intitules des heures sont isoles (reprise 2)', (
+      WidgetTester tester,
+    ) async {
+      const HorlogeAffichee contrepartie = HorlogeAffichee(
+        fuseauIana: 'Africa/Conakry',
+        libelleVille: 'Conakry',
+        heureLocaleRendue: '16:00',
+        dateLocaleRendue: 'Lundi 28 septembre',
+      );
+      final GroupSummaryVM identite = DonneesClasseDemo.groupe(
+        EtatDemoClasse.attente,
+      );
+      final GroupHomeVM espace = GroupHomeVM(
+        identite: identite,
+        role: RoleEspaceGroupe.eleve,
+        // Entre avant l'heure, avec un changement d'heure annonce.
+        horloge: SessionClockVM.depuisFenetre(
+          fenetre: DonneesClasseDemo.fenetre,
+          maintenantServeurUtc: DonneesClasseDemo.instant(
+            EtatDemoClasse.attente,
+          ),
+          horlogeUtilisateur: DonneesClasseDemo.horlogeUtilisateur,
+          horlogeContrepartie: contrepartie,
+          connecte: true,
+          noticeDst: DonneesClasseDemo.noticeDst,
+        ),
+        avantProchainCours: DonneesClasseDemo.actions,
+        bibliotheque: SlotBibliotheque(groupeId: identite.groupeId),
+      );
+      expect(espace.horloge!.phase, PhaseSeance.attenteAvantT0);
+      for (final bool tutoiement in <bool>[false, true]) {
+        await tester.pumpWidget(
+          _hote(
+            CarteSession(
+              key: ValueKey<bool>(tutoiement),
+              espace: espace,
+              tutoiement: tutoiement,
+              onRejoindre: () {},
+            ),
+            sens: TextDirection.rtl,
+          ),
+        );
+        await tester.pump();
+        final List<String> textes = _textes(tester, find.byType(CarteSession));
+        final List<String> attendus = <String>[
+          // `attenteDetail`
+          if (tutoiement)
+            t.accessibilite.tutoiement.attenteDetail
+          else
+            LibellesGroupe.attenteAvantDebutDetail,
+          // NoticeChangementHeure
+          t.classe.entree.dst(avant: '18:00', apres: '17:00'),
+          // Le conseil d'appareil
+          LibellesGroupe.conseilAppareil,
+          // Les intitules de _LigneValeur
+          if (tutoiement)
+            t.accessibilite.tutoiement.tonHeure
+          else
+            LibellesGroupe.votreHeure,
+          LibellesGroupe.dureeLibelle,
+        ];
+        for (final String libelle in attendus) {
+          expect(
+            textes,
+            contains('$_fsi$libelle$_pdi'),
+            reason:
+                '« $libelle » non isole (tutoiement : $tutoiement) : '
+                '$textes',
+          );
+          expect(textes, isNot(contains(libelle)));
+        }
+      }
     });
 
     testWidgets('1440 px : la carte ne depasse pas la largeur de lecture', (

@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../i18n/isolat_bidi.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../seance_famille/seance_famille.dart';
@@ -331,7 +332,9 @@ class TexteHeureSeance extends StatelessWidget {
     );
     if (!annoncer) return texte;
     return Semantics(
-      label: t.etat.annuleeValeur(valeur: heure),
+      // La valeur suit « Annulée : » : son ancre de sens (valeur affichee
+      // seule) n'a rien a faire au milieu de l'annonce.
+      label: t.etat.annuleeValeur(valeur: sansAncre(heure)),
       excludeSemantics: true,
       child: texte,
     );

@@ -49,12 +49,15 @@ String enchainer(Iterable<String> morceaux, String separateur) {
     } else {
       ligne
         ..write(separateur)
-        ..write(
-          morceau.startsWith(_ancreDeSens)
-              ? morceau.substring(_ancreDeSens.length)
-              : morceau,
-        );
+        ..write(sansAncre(morceau));
     }
   }
   return ligne.toString();
 }
+
+/// DUREE-INSECABLE-4 (reprise 2) : [texte] sans l'ancre de sens (U+200E)
+/// qu'il porte en tete pour s'afficher seul, quand on l'insere derriere un
+/// autre mot (« Annulée : 45 min » dans une annonce).
+String sansAncre(String texte) => texte.startsWith(_ancreDeSens)
+    ? texte.substring(_ancreDeSens.length)
+    : texte;

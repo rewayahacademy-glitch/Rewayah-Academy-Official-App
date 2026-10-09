@@ -96,7 +96,9 @@ class AffichageSeance {
   /// droite a gauche ([LibellesGroupe.dureeSeule]).
   final String duree;
 
-  /// La meme duree, sans ancre : elle suit la date dans [dateEtDuree].
+  /// La meme duree, sans ancre : elle suit la date dans [dateEtDuree], ou
+  /// l'heure dans la ligne du planning de la classe (« 18:10 · 45 min »).
+  /// Jamais [duree] au milieu d'un libelle (DUREE-INSECABLE-4, reprise 2).
   final String dureeEnPhrase;
 
   /// « Lundi 21 septembre · 45 min » : la duree suit la date, l'ancre de sens

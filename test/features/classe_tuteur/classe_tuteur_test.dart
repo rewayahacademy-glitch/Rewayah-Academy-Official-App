@@ -718,6 +718,32 @@ void main() {
       );
     });
 
+    testWidgets('planning : « 18:10 · 45 min », la duree suit l heure sans '
+        'ancre de sens au milieu (DUREE-INSECABLE-4, reprise 2)', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        depart: '${Routes.classeSousPage(_classe, 'planning')}?eleve=$_a1',
+      );
+      final List<String> textes = <String>[
+        for (final Element e in find.byType(Text).evaluate())
+          if ((e.widget as Text).data case final String d) d,
+      ];
+      final List<String> lignes = <String>[
+        for (final String d in textes)
+          if (d.contains(' · ') && d.contains('\u00A0min')) d,
+      ];
+      expect(lignes, isNotEmpty, reason: '$textes');
+      for (final String d in textes) {
+        expect(
+          d.lastIndexOf('\u200E'),
+          lessThanOrEqualTo(0),
+          reason: 'ancre de sens au milieu de « $d »',
+        );
+      }
+    });
+
     testWidgets('planning vide : aucune seance a venir', (
       WidgetTester tester,
     ) async {

@@ -275,11 +275,11 @@ class _Ligne extends StatelessWidget {
                           ? t.classe.pagePlanning.ligneFuseau(
                               heure: affichage.heure,
                               fuseau: affichage.fuseau,
-                              duree: affichage.duree,
+                              duree: affichage.dureeEnPhrase,
                             )
                           : t.classe.pagePlanning.ligne(
                               heure: affichage.heure,
-                              duree: affichage.duree,
+                              duree: affichage.dureeEnPhrase,
                             ),
                       annulee: annulee,
                       // Une seule annonce « Annulee » par carte : la date.

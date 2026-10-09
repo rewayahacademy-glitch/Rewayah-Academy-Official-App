@@ -328,6 +328,22 @@ class _Fonction extends _Destination {
   final int declaration;
 }
 
+/// Un champ d'objet ou la valeur est rangee : `classe.champ`.
+class _Champ extends _Destination {
+  const _Champ(this.classe, this.champ);
+  final String classe;
+  final String champ;
+}
+
+/// La classe construite par l'appel [nom] (`AffichageSeance._`,
+/// `Col`, `_Colonne`), ou null pour un appel de fonction ou de methode.
+String? _classeConstruite(String nom) {
+  for (final String segment in nom.split('.')) {
+    if (RegExp(r'^_?[A-Z]').hasMatch(segment)) return segment;
+  }
+  return null;
+}
+
 final RegExp _affectation = RegExp(r'(?<![=!<>])\b(\w+)\s*(?:\?\?)?=(?![=>])');
 final RegExp _flecheFonction = RegExp(
   r'(?:\bget\s+(\w+)|(\w+)\s*(?:<[^>]*>)?\s*\([^]*\))\s*(?:async\s*)?=>\s*$',
@@ -373,11 +389,24 @@ _Destination _classer(_Source s, int p, Set<ChampJoint> joints) {
     if (_transparents.contains(nom.split('.').last)) {
       return _classer(s, app.debut, joints);
     }
+    // Argument nomme d'un constructeur (`AffichageSeance._(duree: ...)`,
+    // `_Colonne(valeur: ...)`) : la valeur est rangee dans un champ, qu'il
+    // faut suivre jusqu'a ses lectures (`affichage.duree`).
+    if (nomme != null) {
+      final String? classe = _classeConstruite(_constructeur(s, o));
+      if (classe != null) return _Champ(classe, nomme[1]!);
+    }
     return const _Affichee();
   }
   if (c == '[') {
     final int? fin = s.paire[o];
-    if (fin != null && s.m.startsWith('.join(', fin + 1)) {
+    // Le premier element commence la ligne jointe : son ancre y est en tete.
+    final bool enTete = s.m
+        .substring(o + 1, p)
+        .trim()
+        .replaceAll('?', '')
+        .isEmpty;
+    if (fin != null && s.m.startsWith('.join(', fin + 1) && !enTete) {
       return const _Faute('element d\'une liste jointe');
     }
     return const _Affichee();
@@ -471,6 +500,100 @@ String _constructeur(_Source s, int o) {
   return j < 0 ? '' : s.appelant(j).nom;
 }
 
+/// Suit le champ [champ] de [classe] (constructeur `this.champ`) jusqu'a
+/// ses lectures : dans le corps de la classe (`champ`, `'$champ'`) et, dans
+/// tout fichier qui nomme la classe, par un acces `x.champ` (`affichage.duree`,
+/// `widget.valeur`). Chaque lecture est classee comme la valeur elle-meme.
+void _suivreChamp(
+  List<_Source> fichiers,
+  String classe,
+  String champ,
+  String chemin,
+  List<({_Source s, int p, String chemin})> aSuivre,
+  List<AncreGlissee> fautes,
+) {
+  final RegExp declaration = RegExp('\\bclass\\s+${RegExp.escape(classe)}\\b');
+  final RegExp nommee = RegExp('(?<![\\w\$])${RegExp.escape(classe)}\\b');
+  final RegExp nu = RegExp('(?<![\\w.])${RegExp.escape(champ)}(?![\\w:])');
+  final String suite = '$chemin > $classe.$champ';
+  bool champDeclare = false;
+  for (final _Source s in fichiers) {
+    final RegExpMatch? c = declaration.firstMatch(s.m);
+    if (c == null) continue;
+    final int ouvre = s.m.indexOf('{', c.end);
+    final int? ferme = ouvre < 0 ? null : s.paire[ouvre];
+    if (ferme == null) continue;
+    final String corps = s.m.substring(ouvre, ferme);
+    if (!RegExp('this\\.${RegExp.escape(champ)}\\b').hasMatch(corps)) continue;
+    champDeclare = true;
+    for (final RegExpMatch u in nu.allMatches(s.m.substring(0, ferme), ouvre)) {
+      if (_affectee(s, u.end)) continue;
+      if (u.start > 0 && s.m[u.start - 1] == r'$') {
+        final int q = u.start - 2;
+        if (q >= 0 && (s.m[q] == "'" || s.m[q] == '"')) {
+          aSuivre.add((s: s, p: q, chemin: suite));
+        } else {
+          fautes.add((
+            fichier: s.fichier,
+            ligne: s.ligne(u.start),
+            raison: '$suite : interpolee au milieu',
+          ));
+        }
+        continue;
+      }
+      aSuivre.add((s: s, p: u.start, chemin: suite));
+    }
+  }
+  if (!champDeclare) return;
+  final bool privee = classe.startsWith('_');
+  final String c = RegExp.escape(classe);
+  // Les noms qui designent un objet de la classe : variables, parametres et
+  // champs types (`final AffichageSeance affichage`, `(AffichageSeance a)`),
+  // objets construits (`final a = AffichageSeance.depuis(`), et `widget`
+  // dans un `State<Classe>`.
+  final RegExp type = RegExp('(?<![\\w\$.])$c\\??\\s+(\\w+)\\b');
+  final RegExp construit = RegExp(
+    '\\b(?:final|var)\\s+(\\w+)\\s*=\\s*$c\\b(?:\\.\\w+)?\\s*[(<]',
+  );
+  for (final _Source s in fichiers) {
+    if (!nommee.hasMatch(s.m)) continue;
+    if (privee && !declaration.hasMatch(s.m)) continue;
+    final Set<String> objets = <String>{
+      for (final RegExpMatch x in type.allMatches(s.m))
+        if (!_motsReserves.contains(x[1])) x[1]!,
+      for (final RegExpMatch x in construit.allMatches(s.m)) x[1]!,
+      if (RegExp('\\bState<$c>').hasMatch(s.m)) 'widget',
+    };
+    if (objets.isEmpty) continue;
+    final RegExp acces = RegExp(
+      '(?<![\\w\$])(?:${objets.map(RegExp.escape).join('|')})'
+      '[?!]?\\.${RegExp.escape(champ)}(?![\\w:])',
+    );
+    for (final RegExpMatch u in acces.allMatches(s.m)) {
+      if (_affectee(s, u.end)) continue;
+      final ({String nom, int debut}) lecture = s.appelant(u.end);
+      if (lecture.nom.startsWith('this.')) continue;
+      aSuivre.add((s: s, p: lecture.debut, chemin: suite));
+    }
+  }
+}
+
+/// Des mots qui suivent un nom de type sans etre une variable.
+const Set<String> _motsReserves = <String>{
+  'get',
+  'set',
+  'operator',
+  'extends',
+  'implements',
+  'with',
+  'on',
+  'Function',
+};
+
+/// Vrai si la position [fin] est suivie d'une affectation (`= ...`).
+bool _affectee(_Source s, int fin) =>
+    RegExp(r'^\s*(?:\?\?)?=(?![=>])').hasMatch(s.m.substring(fin));
+
 /// Toutes les valeurs ancrees de [sources] qui finissent au milieu d'un
 /// libelle.
 List<AncreGlissee> ancresGlissees([Iterable<File>? sources]) {
@@ -500,6 +623,7 @@ List<AncreGlissee> ancresGlissees([Iterable<File>? sources]) {
   }
 
   final Set<String> fonctionsSuivies = <String>{};
+  final Set<String> champsSuivis = <String>{};
   while (aSuivre.isNotEmpty) {
     final ({_Source s, int p, String chemin}) x = aSuivre.removeLast();
     final String cle = '${x.s.fichier}:${x.p}';
@@ -547,6 +671,10 @@ List<AncreGlissee> ancresGlissees([Iterable<File>? sources]) {
           }
           aSuivre.add((s: x.s, p: u.start, chemin: '${x.chemin} > $nom'));
         }
+      case _Champ(:final String classe, :final String champ):
+        final String id = '$classe.$champ';
+        if (!champsSuivis.add(id)) break;
+        _suivreChamp(fichiers, classe, champ, x.chemin, aSuivre, fautes);
       case _Fonction(
         :final String nom,
         :final bool statique,
