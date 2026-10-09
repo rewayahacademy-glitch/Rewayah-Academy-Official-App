@@ -156,12 +156,15 @@ class AdminShell extends StatelessWidget {
     // ALERTE-1b : le bandeau n'est plus rendu par `PageShell` (il etait dans
     // la tete, qui defile avec le corps, et sortait de la vue) ; il est pose
     // ici, au-dessus de la page, par [_ZoneBandeau], et reste en vue.
-    // `PageShell` recoit a sa place un bandeau vide : sa regle « un bandeau
-    // pose, la tete defile » reste vraie, et c'est elle qui protege la page
-    // du debordement quand le bandeau fige lui prend de la hauteur (tete
-    // d'Interface guidee a 390x844 : 164 de debordement en tete fixe).
-    // Decide par delegation le 05/10 : le titre defile avec la page tant
-    // qu'une alerte urgente est ouverte ; l'alerte, elle, ne bouge pas.
+    // PAGESHELL-200-1e (decide par delegation le 09/10) : la tete de la page
+    // (titre, onglets et, des 600, Recherche, theme, cloche, compte) reste
+    // fixe sous le bandeau, qui la pousse sans la recouvrir. `PageShell` le
+    // sait ([ActionsEnteteCoquille.sousBandeau]) et ne fait defiler sa tete
+    // que si elle prend plus de la moitie de la place restante (Interface
+    // guidee a 390x844 sur le Journal), sous 360 de haut, ou a texte agrandi
+    // (au-dela de 130 % sur une page defilante, 200 % sur telephone : la
+    // page defile pour le reste, PAGESHELL-200-1d). Le bandeau, lui, ne
+    // bouge jamais.
     Widget contenu({required bool avecActions}) {
       final Widget page = ActionsEnteteCoquille(
         actions: <Widget>[
@@ -173,7 +176,7 @@ class AdminShell extends StatelessWidget {
           ],
         ],
         onRetour: onRetour,
-        bandeau: bandeau == null ? null : const SizedBox.shrink(),
+        sousBandeau: bandeau != null,
         child: child,
       );
       return switch (bandeau) {

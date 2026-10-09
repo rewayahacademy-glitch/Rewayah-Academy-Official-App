@@ -9,6 +9,7 @@ import '../accessibilite/texte_sans_coupure.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
+import '../theme/app_mouvement.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
 import 'entete_page.dart';
@@ -98,6 +99,10 @@ class PageShell extends StatelessWidget {
   /// paresseuse ou une grille de semaine defilante horizontalement.
   final bool defilante;
 
+  /// Le titre simple (sans retour, sous-titre ni action), pour les tests et
+  /// les captures.
+  static const Key titreSimpleKey = ValueKey<String>('page-shell-titre-simple');
+
   /// Faux pour une tache focalisee (ajout de profil, admission par etapes) :
   /// ni cloche ni bascule de theme de la coquille, la page ne garde que ses
   /// propres [actionsEntete] (demande B-3 ; planche V6, la rangee d'etape est
@@ -123,21 +128,28 @@ class PageShell extends StatelessWidget {
     // selecteur d'enfant de `TUT-01`, une ligne de contexte). C'est une zone
     // distincte de la zone defilante, au meme titre que la zone d'action
     // collee en bas (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 2).
-    // Le bandeau de la coquille (l'alerte urgente de la direction,
-    // ALERTE-1) : en tete de la page, au-dessus du titre. Dans la tete et non
-    // au-dessus du `Scaffold`, et la tete defile alors avec le corps : un
-    // bandeau fige sur une vue basse (320x640, texte a 400 %) ne laisserait
-    // plus de place au corps (WCAG 1.4.10).
-    final Widget? bandeau = ActionsEnteteCoquille.bandeauDe(context);
+    //
+    // PAGESHELL-200-1e : le bandeau de la coquille (l'alerte urgente de la
+    // direction, ALERTE-1b) est pose AU-DESSUS de la page, fige, par la
+    // coquille ; la page le sait ([ActionsEnteteCoquille.sousBandeauDe]) et
+    // sa tete reste fixe dessous, tant qu'elle laisse au corps au moins la
+    // moitie de la place restante (voir [_Bascule]).
+    final bool sousBandeau = ActionsEnteteCoquille.sousBandeauDe(context);
+    final bool compact = EnteteCompact.actif(context);
+    final TextStyle styleTitreSimple =
+        textes.headlineLarge ?? const TextStyle();
     final List<Widget> tete = <Widget>[
-      ?bandeau,
       if (titre != null) ...<Widget>[
         // 48 au dessus d'un titre d'ecran, c'est le rythme de page
         // (`01-systeme-visuel.md` section 6). En mode enfant, la marge de
         // respiration prend le relais. Un en-tete a actions (cloche, disque
         // retour) porte deja sa cible de 48 : il ne prend que 24.
+        // PAGESHELL-200-1e (decide par delegation le 09/10) : sous un
+        // bandeau fige, la respiration de l'Interface guidee (64, plus les 8
+        // du bandeau : environ 70 de vide) cede le pas au rythme de
+        // l'interface standard ; le bandeau tient deja le haut de l'ecran.
         SizedBox(
-          height: metriques.estEnfant
+          height: metriques.estEnfant && !sousBandeau
               ? AppSpacing.respiration
               : enteteRiche
               ? AppSpacing.xxl
@@ -154,11 +166,24 @@ class PageShell extends StatelessWidget {
         else
           // COUPE-MOTS-1 : un titre de page passe a la ligne entre ses mots,
           // jamais dans un mot (« Aujourd'hu / i » a 320 px, 200 %).
+          // PAGESHELL-200-1e : a texte agrandi (ou vue basse), le titre
+          // simple suit l'echelle compacte HIER-1 de `EntetePage`
+          // ([EnteteCompact.echelleTitre]) : un palier au-dessus d'un titre
+          // de section agrandi, jamais sous la taille du theme.
           titreFocalisable(
             focusTitre,
-            TexteSansCoupure(
-              titre!,
-              style: textes.headlineLarge ?? const TextStyle(),
+            MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                textScaler: compact
+                    ? EnteteCompact.echelleTitre(context, styleTitreSimple)
+                    : MediaQuery.textScalerOf(context),
+              ),
+              child: TexteSansCoupure(
+                titre!,
+                key: PageShell.titreSimpleKey,
+                style: styleTitreSimple,
+                nomsComposesEntiers: compact,
+              ),
             ),
           ),
         Ecart.vXxl,
@@ -247,10 +272,13 @@ class PageShell extends StatelessWidget {
                 // de son corps.
                 // MA-RC B1 : une page defilante a texte agrandi (au-dela de
                 // 130 %) fait aussi defiler sa tete, sur tout gabarit.
+                // PAGESHELL-200-1e : un bandeau fige au-dessus de la page ne
+                // fait plus defiler la tete ; la hauteur lue ici est celle
+                // qui reste sous lui, et [_Bascule] mesure la tete.
                 child: _Bascule(
+                  sousBandeau: sousBandeau,
                   teteDefilante: (double hauteur) =>
                       teteDefile ||
-                      bandeau != null ||
                       hauteur +
                               View.of(context).viewInsets.bottom /
                                   View.of(context).devicePixelRatio <
@@ -286,17 +314,19 @@ class ActionsEnteteCoquille extends InheritedWidget {
     required super.child,
     super.key,
     this.onRetour,
-    this.bandeau,
+    this.sousBandeau = false,
   });
 
   /// Les actions, dans l'ordre de lecture (la cloche en dernier).
   final List<Widget> actions;
 
-  /// Ce que la coquille pose en tete de chacune de ses pages, au-dessus du
-  /// titre : le bandeau d'alerte urgente de la direction (ALERTE-1). Nul par
-  /// defaut. Le widget porte ses propres marges et ne rend rien quand il n'a
-  /// rien a dire.
-  final Widget? bandeau;
+  /// Vrai quand la coquille pose, au-dessus de chacune de ses pages et hors
+  /// de leur zone qui defile, un bandeau fige : l'alerte urgente de la
+  /// direction (ALERTE-1b). La page ne le rend pas ; elle en tient compte
+  /// (PAGESHELL-200-1e) : sa tete reste fixe sous lui tant qu'elle laisse au
+  /// corps au moins la moitie de la place restante, et l'Interface guidee
+  /// n'y ajoute pas sa respiration de haut d'ecran.
+  final bool sousBandeau;
 
   /// Le retour que la coquille pose sur chacune de ses pages quand la page
   /// n'en donne pas (l'admin : retour vers l'Accueil, spec section 26 ter).
@@ -315,16 +345,18 @@ class ActionsEnteteCoquille extends InheritedWidget {
       .dependOnInheritedWidgetOfExactType<ActionsEnteteCoquille>()
       ?.onRetour;
 
-  /// Le bandeau pose au-dessus de [context], ou nul.
-  static Widget? bandeauDe(BuildContext context) => context
-      .dependOnInheritedWidgetOfExactType<ActionsEnteteCoquille>()
-      ?.bandeau;
+  /// Vrai quand un bandeau fige est pose au-dessus de la page de [context].
+  static bool sousBandeauDe(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<ActionsEnteteCoquille>()
+          ?.sousBandeau ??
+      false;
 
   @override
   bool updateShouldNotify(ActionsEnteteCoquille ancien) =>
       !listEquals(actions, ancien.actions) ||
       onRetour != ancien.onRetour ||
-      bandeau != ancien.bandeau;
+      sousBandeau != ancien.sousBandeau;
 }
 
 /// La bascule entre la tete fixe (`Column(tete, Expanded(corps))`) et le
@@ -342,7 +374,12 @@ class _Bascule extends StatefulWidget {
     required this.tete,
     required this.corps,
     required this.defilante,
+    required this.sousBandeau,
   });
+
+  /// Vrai sous un bandeau fige de la coquille (PAGESHELL-200-1e) : la tete
+  /// fixe doit laisser au corps au moins la moitie de la place restante.
+  final bool sousBandeau;
 
   /// Vrai quand, pour la hauteur disponible, la tete doit defiler avec le
   /// corps.
@@ -382,6 +419,68 @@ class _BasculeState extends State<_Bascule> {
   /// La vue du dernier rendu.
   (BoxConstraints, double)? _vueCourante;
 
+  /// PAGESHELL-200-1e : la hauteur de la tete a sa derniere mise en page,
+  /// nulle avant la premiere. La meme dans les deux branches : la tete y
+  /// recoit la meme largeur et une hauteur libre.
+  double? _hauteurTete;
+
+  /// La hauteur de la vue du dernier rendu.
+  double _hauteurVue = 0;
+
+  /// La decision « tete trop haute pour rester fixe » du dernier rendu.
+  bool _teteHauteAuRendu = false;
+
+  /// Vrai quand une reevaluation est deja demandee pour cette image.
+  bool _reevaluationDemandee = false;
+
+  /// Le debut du report en cours du retour a la tete fixe
+  /// (PAGESHELL-200-1e, reserve 2 de la revue PAGESHELL-200-1d).
+  Duration? _debutReport;
+
+  /// PAGESHELL-200-1e : vrai quand la tete, fixe, ne laisserait pas assez de
+  /// place au corps dans une vue de [hauteur] ; la tete defile alors avec le
+  /// corps.
+  ///
+  /// - **Sous un bandeau fige** (l'alerte urgente de la direction) : la tete
+  ///   reste fixe sous lui tant qu'elle laisse au corps au moins la moitie de
+  ///   la place restante (la regle du bandeau lui-meme, borne a la moitie de
+  ///   la vue, et celle de `_hauteurCorps`). Au-dela (Interface guidee a
+  ///   390x844 sur le Journal, vue basse), elle defile, le bandeau non.
+  /// - **Ailleurs** : la tete reste fixe tant qu'elle laisse au corps au
+  ///   moins une cible tactile ; avant, une tete plus haute que la vue
+  ///   debordait (Journal en Interface guidee a 390x684 : 22 de
+  ///   debordement en bas).
+  ///
+  /// Decide par delegation le 09/10.
+  bool _teteHaute(double hauteur) {
+    final double? tete = _hauteurTete;
+    if (tete == null || !hauteur.isFinite) {
+      return false;
+    }
+    final double limite = widget.sousBandeau
+        ? hauteur / 2
+        : hauteur - AppTouchTarget.standard;
+    return tete > limite + _ManqueCorps.tolerance;
+  }
+
+  /// La tete vient d'etre mise en page a [hauteur] : si la decision du
+  /// dernier rendu n'est plus la bonne, la bascule est reevaluee a la fin
+  /// de l'image (la tete et le corps ne changent pas de parent pendant une
+  /// mise en page).
+  void _surHauteurTete(double hauteur) {
+    _hauteurTete = hauteur;
+    if (_reevaluationDemandee || _teteHaute(_hauteurVue) == _teteHauteAuRendu) {
+      return;
+    }
+    _reevaluationDemandee = true;
+    SchedulerBinding.instance.addPostFrameCallback((Duration _) {
+      _reevaluationDemandee = false;
+      if (mounted && _teteHaute(_hauteurVue) != _teteHauteAuRendu) {
+        setState(() {});
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -397,22 +496,35 @@ class _BasculeState extends State<_Bascule> {
   /// fin de l'image suivante : deplacer la tete et le corps (cles globales)
   /// pendant la fermeture d'une boite de dialogue casse l'arbre semantique
   /// de Flutter. D'ici la, la page garde la geometrie de la tete fixe.
+  ///
+  /// PAGESHELL-200-1e (reserve 2 de la revue PAGESHELL-200-1d) : le report
+  /// est borne. Une animation qui tourne sans fin (une pulsation, un
+  /// indicateur indetermine) le prolongeait indefiniment ; la bascule se fait
+  /// au plus tard [AppMouvement.plafond] apres la premiere demande, le
+  /// plafond de toute animation du produit (une boite de dialogue s'est
+  /// refermee bien avant).
   void _revenirTeteFixe() {
     if (!mounted || _vueForcee == null || _vueCourante != _vueForcee) {
+      _debutReport = null;
       return;
     }
     if (_manque.valeur() > _ManqueCorps.tolerance) {
       // Une source remise en page apres la verification (deplacee avec le
       // corps) dit qu'il lui manque encore de la hauteur.
+      _debutReport = null;
       return;
     }
-    if (SchedulerBinding.instance.transientCallbackCount > 0) {
-      // Aucune image demandee ici : les animations en cours en produisent.
-      SchedulerBinding.instance.addPostFrameCallback(
-        (Duration _) => _revenirTeteFixe(),
-      );
-      return;
+    final SchedulerBinding planificateur = SchedulerBinding.instance;
+    if (planificateur.transientCallbackCount > 0) {
+      final Duration maintenant = planificateur.currentFrameTimeStamp;
+      final Duration debut = _debutReport ??= maintenant;
+      if (maintenant - debut < AppMouvement.plafond) {
+        // Aucune image demandee ici : les animations en cours en produisent.
+        planificateur.addPostFrameCallback((Duration _) => _revenirTeteFixe());
+        return;
+      }
     }
+    _debutReport = null;
     setState(() => _vueForcee = null);
   }
 
@@ -471,10 +583,13 @@ class _BasculeState extends State<_Bascule> {
     // exterieure.
     final Widget tete = KeyedSubtree(
       key: _cleTete,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: widget.tete,
+      child: _MesureTete(
+        surHauteur: _surHauteurTete,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: widget.tete,
+        ),
       ),
     );
     final Widget corps = KeyedSubtree(
@@ -487,7 +602,11 @@ class _BasculeState extends State<_Bascule> {
       builder: (BuildContext _, BoxConstraints contraintes) {
         final (BoxConstraints, double) vue = (contraintes, echelle);
         _vueCourante = vue;
-        final bool teteDefilante = widget.teteDefilante(contraintes.maxHeight);
+        _hauteurVue = contraintes.maxHeight;
+        final bool teteHaute = _teteHaute(contraintes.maxHeight);
+        _teteHauteAuRendu = teteHaute;
+        final bool teteDefilante =
+            widget.teteDefilante(contraintes.maxHeight) || teteHaute;
         final bool forcee = !widget.defilante && vue == _vueForcee;
         // Force seulement : une page dont la tete defile de toute facon
         // garde la regle de `_hauteurCorps`.
@@ -521,22 +640,154 @@ class _BasculeState extends State<_Bascule> {
                         children: <Widget>[tete, corps],
                       ),
               )
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+            // PAGESHELL-200-1e : la tete, puis le corps dans la hauteur qui
+            // reste. Comme `Column(tete, Expanded(corps))`, sans le
+            // debordement de l'image ou la tete s'avere trop haute (la
+            // bascule passe alors en defilement global a la fin de l'image).
+            : _TeteFixe(
                 children: <Widget>[
                   tete,
-                  Expanded(
-                    child: widget.defilante
-                        ? SingleChildScrollView(
-                            controller: defileur,
-                            child: corps,
-                          )
-                        : corps,
-                  ),
+                  if (widget.defilante)
+                    SingleChildScrollView(controller: defileur, child: corps)
+                  else
+                    corps,
                 ],
               );
       },
     );
+  }
+}
+
+/// Mesure la tete de la page et la signale a [_Bascule] (PAGESHELL-200-1e).
+class _MesureTete extends SingleChildRenderObjectWidget {
+  const _MesureTete({required this.surHauteur, required super.child});
+
+  final ValueChanged<double> surHauteur;
+
+  @override
+  _RenduMesureTete createRenderObject(BuildContext context) =>
+      _RenduMesureTete(surHauteur);
+
+  @override
+  void updateRenderObject(BuildContext context, _RenduMesureTete renderObject) {
+    renderObject.surHauteur = surHauteur;
+  }
+}
+
+class _RenduMesureTete extends RenderProxyBox {
+  _RenduMesureTete(this.surHauteur);
+
+  ValueChanged<double> surHauteur;
+
+  @override
+  void performLayout() {
+    super.performLayout();
+    surHauteur(size.height);
+  }
+}
+
+/// La tete fixe, puis le corps dans la hauteur qui reste (PAGESHELL-200-1e).
+///
+/// La geometrie de `Column(tete, Expanded(corps))` (tete a sa hauteur
+/// naturelle sur toute la largeur, corps dans le reste), sans son
+/// avertissement de debordement : quand la tete s'avere plus haute que la
+/// place qu'elle doit laisser au corps, [_Bascule] passe en defilement
+/// global a la fin de l'image ; d'ici la, ce qui depasse est coupe.
+class _TeteFixe extends MultiChildRenderObjectWidget {
+  const _TeteFixe({required super.children})
+    : assert(children.length == 2, 'une tete et un corps');
+
+  @override
+  _RenduTeteFixe createRenderObject(BuildContext context) => _RenduTeteFixe();
+}
+
+class _RenduTeteFixe extends RenderBox
+    with
+        ContainerRenderObjectMixin<RenderBox, _ParentDataTeteEtCorps>,
+        RenderBoxContainerDefaultsMixin<RenderBox, _ParentDataTeteEtCorps> {
+  RenderBox get _tete => firstChild!;
+  RenderBox get _corps => lastChild!;
+
+  final LayerHandle<ClipRectLayer> _coupe = LayerHandle<ClipRectLayer>();
+
+  @override
+  void setupParentData(RenderBox child) {
+    if (child.parentData is! _ParentDataTeteEtCorps) {
+      child.parentData = _ParentDataTeteEtCorps();
+    }
+  }
+
+  @override
+  double computeMinIntrinsicWidth(double height) => math.max(
+    _tete.getMinIntrinsicWidth(double.infinity),
+    _corps.getMinIntrinsicWidth(double.infinity),
+  );
+
+  @override
+  double computeMaxIntrinsicWidth(double height) => math.max(
+    _tete.getMaxIntrinsicWidth(double.infinity),
+    _corps.getMaxIntrinsicWidth(double.infinity),
+  );
+
+  @override
+  double computeMinIntrinsicHeight(double width) =>
+      _tete.getMinIntrinsicHeight(width) + _corps.getMinIntrinsicHeight(width);
+
+  @override
+  double computeMaxIntrinsicHeight(double width) =>
+      _tete.getMaxIntrinsicHeight(width) + _corps.getMaxIntrinsicHeight(width);
+
+  @override
+  Size computeDryLayout(covariant BoxConstraints constraints) =>
+      constraints.biggest;
+
+  /// Vrai quand la tete depasse la vue a la derniere mise en page.
+  bool _deborde = false;
+
+  @override
+  void performLayout() {
+    final Size vue = constraints.biggest;
+    _tete.layout(
+      BoxConstraints.tightFor(width: vue.width),
+      parentUsesSize: true,
+    );
+    final double tete = _tete.size.height;
+    _corps.layout(
+      BoxConstraints.tight(Size(vue.width, math.max(0, vue.height - tete))),
+    );
+    _deborde = tete > vue.height;
+    (_tete.parentData! as _ParentDataTeteEtCorps).offset = Offset.zero;
+    (_corps.parentData! as _ParentDataTeteEtCorps).offset = Offset(
+      0,
+      math.min(tete, vue.height),
+    );
+    size = vue;
+  }
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) =>
+      defaultHitTestChildren(result, position: position);
+
+  @override
+  void paint(PaintingContext context, Offset offset) {
+    if (!_deborde) {
+      _coupe.layer = null;
+      defaultPaint(context, offset);
+      return;
+    }
+    _coupe.layer = context.pushClipRect(
+      needsCompositing,
+      offset,
+      Offset.zero & size,
+      defaultPaint,
+      oldLayer: _coupe.layer,
+    );
+  }
+
+  @override
+  void dispose() {
+    _coupe.layer = null;
+    super.dispose();
   }
 }
 

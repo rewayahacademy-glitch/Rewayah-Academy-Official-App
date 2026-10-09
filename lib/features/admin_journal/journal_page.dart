@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -246,7 +247,7 @@ class _Entete extends ConsumerWidget {
         // Securite et audit (`ongletsSecurite()`), une route chacune.
         SousNavigationDomaine(onglets: ongletsSecurite(), indexActif: 0),
         Ecart.vLg,
-        const _BandeauChaine(),
+        const BandeauChaineJournal(),
         Ecart.vLg,
         // FILTRES-1 : la periode et les deux menus sur UNE rangee qui defile
         // (`RangeeFiltres`). La periode ne depend d'aucune lecture : elle
@@ -324,8 +325,9 @@ class _Entete extends ConsumerWidget {
 }
 
 /// Ce que la chaine de hachage dit de l'integrite du journal.
-class _BandeauChaine extends ConsumerWidget {
-  const _BandeauChaine();
+class BandeauChaineJournal extends ConsumerWidget {
+  /// Cree le bandeau.
+  const BandeauChaineJournal({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -347,20 +349,74 @@ class _BandeauChaine extends ConsumerWidget {
           ),
         };
 
+    final TextStyle stylePhrase = textes.bodySmall ?? const TextStyle();
+    final Widget pastille = StatusPill(libelle: contenu.$1, ton: contenu.$2);
+    // COUPE-MOTS-1 : la phrase passe a la ligne entre ses mots, jamais dans
+    // un mot.
+    final Widget phrase = TexteSansCoupure(contenu.$3, style: stylePhrase);
     return AppCard(
-      child: Row(
-        children: <Widget>[
-          StatusPill(libelle: contenu.$1, ton: contenu.$2),
-          Ecart.hMd,
-          Expanded(
-            child: Text(
-              contenu.$3,
-              style: textes.bodySmall ?? const TextStyle(),
-            ),
-          ),
-        ],
+      // PAGESHELL-200-1e : a 320 px en texte x2, la pastille (« Integrite
+      // inconnue ») et la phrase cote a cote debordaient de 17 px. Quand la
+      // pastille sur une ligne et le mot le plus long de la phrase ne tiennent
+      // pas cote a cote, la pastille passe au-dessus de la phrase, au debut
+      // de la ligne (decide par delegation le 09/10).
+      child: LayoutBuilder(
+        builder: (BuildContext contexte, BoxConstraints contraintes) {
+          final double besoin =
+              _largeurPastille(contexte, contenu.$1) +
+              AppSpacing.md +
+              largeurMotLePlusLong(
+                contexte,
+                contenu.$3,
+                stylePhrase,
+                MediaQuery.textScalerOf(contexte),
+              );
+          if (besoin <= contraintes.maxWidth) {
+            return Row(
+              key: cleRangee,
+              children: <Widget>[
+                pastille,
+                Ecart.hMd,
+                Expanded(child: phrase),
+              ],
+            );
+          }
+          return Column(
+            key: clePile,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[pastille, Ecart.vSm, phrase],
+          );
+        },
       ),
     );
+  }
+
+  /// La forme cote a cote (tests).
+  static const Key cleRangee = ValueKey<String>('journal-chaine-rangee');
+
+  /// La forme empilee, pastille au-dessus de la phrase (tests).
+  static const Key clePile = ValueKey<String>('journal-chaine-pile');
+
+  /// La largeur de la pastille quand son libelle tient sur une ligne : le
+  /// libelle, le point et le retrait de `StatusPill`.
+  static double _largeurPastille(BuildContext context, String libelle) {
+    final TextPainter mesure = TextPainter(
+      text: TextSpan(
+        text: libelle,
+        style: DefaultTextStyle.of(context).style
+            .merge(Theme.of(context).textTheme.labelMedium),
+      ),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 1,
+    )..layout();
+    final double largeur = mesure.width;
+    mesure.dispose();
+    return largeur +
+        StatusPill.diametrePastille +
+        AppSpacing.sm +
+        2 * AppSpacing.md;
   }
 
   (String, TonEtat, String) _lire(EtatChaine etat) => etat.intacte
