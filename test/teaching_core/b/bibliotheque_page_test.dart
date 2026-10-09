@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/port_catalogue.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/resource_version.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/vue_catalogue.dart';
 import 'package:rewayah_academy/core/tc_telechargement/download_asset.dart';
+import 'package:rewayah_academy/features/tc_catalogue/bibliotheque_page.dart';
 import 'package:rewayah_academy/features/tc_catalogue/carte_ressource.dart';
 import 'package:rewayah_academy/features/tc_catalogue/detail_ressource_page.dart';
 import 'package:rewayah_academy/features/tc_catalogue/surface_bibliotheque.dart';
 import 'package:rewayah_academy/features/tc_catalogue/vignette_ressource.dart';
 
+import '../../capture/outil_capture.dart';
+import '../../support/aucun_mot_coupe.dart';
 import '../../support/garde_interface.dart';
+import '../../support/harnais.dart' show hoteRoutant;
 import '../../support/hors_ligne_une_fois.dart';
 
 import 'faux/faux_ports_b.dart';
@@ -522,5 +530,125 @@ void main() {
 
       expect(yContinuer, lessThan(yGroupe));
     });
+  });
+
+  // EA-HL-DOUBLE-1f : l'indication du champ de recherche etait tronquee a
+  // 320 px en texte x2 ; elle passe a la ligne.
+  group('320 texte x2 (polices du depot)', () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final TextDirection sens in TextDirection.values) {
+      testWidgets('320 texte x2, ${sens.name} : aucun mot coupe ni tronque', (
+        WidgetTester tester,
+      ) async {
+        tester.view.physicalSize = const Size(320, 1400);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(
+          hoteRoutant(
+            depart: '/',
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/',
+                builder: (BuildContext _, GoRouterState _) =>
+                    const BibliothequePage(),
+              ),
+            ],
+            surcharges: surchargesCatalogue(catalogue: CatalogueEnEchec()),
+            direction: sens,
+            echelle: 2,
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(
+          find.text(t.tc.bibliotheque.rechercheIndication),
+          findsOneWidget,
+        );
+        verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+      });
+    }
+  });
+
+  // EA-HL-DOUBLE-1f : captures de preuve de la panne de la bibliotheque,
+  // page entiere sous le bandeau, hors ligne (390 clair et sombre, 320
+  // texte x2 en LTR et RTL) et en ligne. Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1f', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String, Size, ThemeMode, double, TextDirection, bool) cas
+        in <(String, Size, ThemeMode, double, TextDirection, bool)>[
+          (
+            '390_clair',
+            const Size(390, 844),
+            ThemeMode.light,
+            1,
+            TextDirection.ltr,
+            true,
+          ),
+          (
+            '390_sombre',
+            const Size(390, 844),
+            ThemeMode.dark,
+            1,
+            TextDirection.ltr,
+            true,
+          ),
+          (
+            '320x2_clair',
+            const Size(320, 1200),
+            ThemeMode.light,
+            2,
+            TextDirection.ltr,
+            true,
+          ),
+          (
+            '320x2_rtl_clair',
+            const Size(320, 1200),
+            ThemeMode.light,
+            2,
+            TextDirection.rtl,
+            true,
+          ),
+          (
+            '390_en_ligne_clair',
+            const Size(390, 844),
+            ThemeMode.light,
+            1,
+            TextDirection.ltr,
+            false,
+          ),
+        ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        fixerVueCapture(tester, cas.$2, 1);
+        await tester.pumpWidget(
+          hoteCapture(
+            Directionality(
+              textDirection: cas.$5,
+              child: const BibliothequePage(),
+            ),
+            surcharges: <Override>[
+              ...surchargesCatalogue(catalogue: CatalogueEnEchec()),
+              horsLigneProvider.overrideWith(
+                (Ref _) => Stream<bool>.value(cas.$6),
+              ),
+            ],
+            themeMode: cas.$3,
+            echelleTexte: cas.$4,
+          ),
+        );
+        await stabiliser(tester);
+        expect(tester.takeException(), isNull);
+        expect(
+          find.text(t.tc.bibliotheque.indisponible.invitation),
+          findsOneWidget,
+        );
+        expect(causesAffirmees(), findsNothing);
+        if (cas.$6) {
+          expectHorsLigneUneFois();
+        }
+        verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+        debugPrint(
+          'PNG ${await capturer(tester, 'ea_hl_double1f_bibliotheque_echec_${cas.$1}')}',
+        );
+      });
+    }
   });
 }

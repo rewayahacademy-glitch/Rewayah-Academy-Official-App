@@ -2099,6 +2099,13 @@ class _Impasse extends StatelessWidget {
       CauseImpasse.reseau => (t.salle.refusReseau, t.salle.refusReseauDetail),
     };
 
+    // EA-HL-DOUBLE-1f : le titre et le detail prennent l'encre du fond de la
+    // salle (`PageImmersive`, qui la pose dans `DefaultTextStyle`). Le style
+    // du theme portait celle du fond creme : sombre sur le fond sombre en
+    // clair, clair sur le fond clair en sombre (captures de 1f).
+    final Color? encreFond = DefaultTextStyle.of(context).style.color;
+    TextStyle? surFond(TextStyle? style) => style?.copyWith(color: encreFond);
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xxl),
@@ -2112,7 +2119,7 @@ class _Impasse extends StatelessWidget {
               textAlign: TextAlign.center,
               style: _encreSalle(
                 context,
-                textes.titleMedium,
+                surFond(textes.titleMedium),
                 active: encreAccessible,
               ),
             ),
@@ -2122,7 +2129,7 @@ class _Impasse extends StatelessWidget {
               textAlign: TextAlign.center,
               style: _encreSalle(
                 context,
-                textes.bodyMedium,
+                surFond(textes.bodyMedium),
                 active: encreAccessible,
               ),
             ),

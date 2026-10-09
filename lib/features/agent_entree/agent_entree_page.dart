@@ -60,19 +60,24 @@ class _AgentEntreePageEtat extends ConsumerState<AgentEntreePage> {
           Text(t.agent.intro, style: textes.bodyMedium),
           Ecart.vXxl,
 
-          if (echec != null) ...<Widget>[
-            _Refus(echec: echec),
-            Ecart.vXxl,
-          ],
+          if (echec != null) ...<Widget>[_Refus(echec: echec), Ecart.vXxl],
 
-          TextField(
-            controller: _jeton,
-            onChanged: (String _) => setState(() {}),
-            autocorrect: false,
-            enableSuggestions: false,
-            decoration: InputDecoration(
-              labelText: t.agent.jeton,
-              hintText: t.agent.jetonExemple,
+          // EA-HL-DOUBLE-1f : le libelle est pose au-dessus du champ, et non
+          // dans le champ, ou il etait tronque a 320 px en texte x2 (K-54).
+          // Il n'est lu qu'une fois : par le champ.
+          ExcludeSemantics(
+            child: Text(t.agent.jeton, style: textes.titleSmall),
+          ),
+          Ecart.vSm,
+          Semantics(
+            label: t.agent.jeton,
+            textField: true,
+            child: TextField(
+              controller: _jeton,
+              onChanged: (String _) => setState(() {}),
+              autocorrect: false,
+              enableSuggestions: false,
+              decoration: InputDecoration(hintText: t.agent.jetonExemple),
             ),
           ),
           Ecart.vLg,
@@ -88,12 +93,14 @@ class _AgentEntreePageEtat extends ConsumerState<AgentEntreePage> {
                   Text(t.agent.entrer, style: textes.titleSmall),
                   Ecart.vSm,
                   SelectableText(
-                    Uri.base.replace(
-                      path: Routes.agentEntree,
-                      queryParameters: <String, String>{
-                        parametreJetonAgent: saisi,
-                      },
-                    ).toString(),
+                    Uri.base
+                        .replace(
+                          path: Routes.agentEntree,
+                          queryParameters: <String, String>{
+                            parametreJetonAgent: saisi,
+                          },
+                        )
+                        .toString(),
                     style: textes.bodySmall,
                   ),
                 ],
@@ -121,8 +128,7 @@ class _Refus extends StatelessWidget {
     // client ne va pas etre plus bavard qu'elle.
     final (String titre, String detail) = switch (echec) {
       EchecAgent.jetonRefuse => (t.agent.refus, t.agent.refusDetail),
-      EchecAgent.serviceIndisponible ||
-      EchecAgent.reponseIllisible => (
+      EchecAgent.serviceIndisponible || EchecAgent.reponseIllisible => (
         t.agent.indisponible,
         t.agent.indisponibleDetail,
       ),
