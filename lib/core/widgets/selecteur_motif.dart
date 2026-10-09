@@ -502,8 +502,9 @@ class RangeePuces extends StatelessWidget {
     final TextScaler echelle = MediaQuery.textScalerOf(context);
     final TextDirection sens = Directionality.of(context);
     final double cible = AppMetriques.of(context).cibleTactile;
-    // Le retrait interieur de `FilterPill`.
-    const double retraitLargeur = AppSpacing.lg * 2;
+    // Le retrait interieur de `FilterPill`, lu sur la pilule elle-meme
+    // (FILTERPILL-ETAT-1 : il compte la place reservee a la coche).
+    const double retraitLargeur = FilterPill.retraitLargeur;
     const double retraitHauteur = AppSpacing.sm * 2;
 
     return LayoutBuilder(
