@@ -64,6 +64,15 @@ la colonne Reste. Claude ne rétablit pas son ancienne liste.
   (`flutter-deploy.yml`). Pas de PR vers `main` sans GO du directeur.
 - Écrire une migration dans le dépôt est libre. **L'appliquer au projet Supabase distant
   demande un GO du directeur**, noté dans l'onglet Journal distant.
+- **STAGING (`xldmmlrnxyabdtvxqbyy`) est l'étape obligatoire avant PROD**
+  (`gggmtelinlpseweouyav`). Le directeur l'a créé avec ChatGPT ; il était vide au 09/10.
+  - Y appliquer des migrations et y déployer des fonctions est libre, sans GO, et se note
+    dans le Journal distant.
+  - Toute migration destinée à PROD passe d'abord par STAGING, avec les scénarios
+    négatifs joués par l'API réelle (clé anon, utilisateur connecté). Un Postgres nu ne
+    teste pas l'exposition PostgREST.
+  - Le GO demandé au directeur cite le résultat obtenu sur STAGING.
+  - Pas de donnée réelle sur STAGING : seulement `seed.sql` et des comptes de test.
 - Tout ce qui a déjà été appliqué ou réglé à la main sur le projet distant est inscrit
   dans le Journal distant, avec le fichier du dépôt correspondant. C'est la ligne B-00
   (inventaire). Une différence entre la base distante et `supabase/migrations` est un écart
