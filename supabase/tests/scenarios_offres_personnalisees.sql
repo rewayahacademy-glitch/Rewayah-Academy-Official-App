@@ -271,13 +271,17 @@ BEGIN
        'anon', 'public.demander_creneau_personnalise(uuid,text,smallint[],smallint)', 'EXECUTE')
      OR pg_catalog.has_function_privilege(
        'anon', 'public.regroupements_demandes_horaires_admin()', 'EXECUTE') THEN
-    RAISE EXCEPTION 'F1 ACL: table_select=%, demande_anon=%, admin_group_anon=%',
+    RAISE EXCEPTION 'F1 ACL: table_select=%, demande_anon=%, admin_group_anon=%, owner=%, acl=%',
       pg_catalog.has_table_privilege(
         'authenticated', 'public.demandes_horaires_famille', 'SELECT'),
       pg_catalog.has_function_privilege(
         'anon', 'public.demander_creneau_personnalise(uuid,text,smallint[],smallint)', 'EXECUTE'),
       pg_catalog.has_function_privilege(
-        'anon', 'public.regroupements_demandes_horaires_admin()', 'EXECUTE');
+        'anon', 'public.regroupements_demandes_horaires_admin()', 'EXECUTE'),
+      (SELECT pg_catalog.pg_get_userbyid(relowner)
+         FROM pg_catalog.pg_class WHERE oid = 'public.demandes_horaires_famille'::regclass),
+      (SELECT relacl::text
+         FROM pg_catalog.pg_class WHERE oid = 'public.demandes_horaires_famille'::regclass);
   END IF;
 
   -- La carte publiée par l'administration crée aussi une demande privée,
