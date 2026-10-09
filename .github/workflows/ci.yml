@@ -46,6 +46,13 @@ jobs:
             psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f "$f"
           done
 
+      # B-11 mesure les ACL exactes laissées par les migrations; il doit précéder
+      # les scénarios historiques, qui accordent des droits larges à leur jeu de test.
+      - name: Scénarios B-11 (signalement)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b11_student_concern.sql
+
+
       # Inscription bornee a deux roles, depot KYC de l'enseignant, cloisonnement
       # de genre, appareil partage, plafond d'appareils, codes d'appairage,
       # immuabilite des signatures, etancheite du journal d'audit, RLS partout,
@@ -191,12 +198,6 @@ jobs:
       - name: Scenarios négatifs B-18 (SECURITY DEFINER)
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b18_security_definer.sql
-
-      # Scénarios F2 ajoutés sur cette branche. Chaque fichier encadre ses fixtures
-      # dans une transaction puis rollback; ils partagent donc la base rejouée.
-      - name: Scénarios B-11 (signalement)
-        shell: bash
-        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b11_student_concern.sql
 
       - name: Scénarios B-13 (admin suspendu)
         shell: bash
