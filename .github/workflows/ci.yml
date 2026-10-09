@@ -16,10 +16,10 @@ jobs:
     # branches `ui/*` ne touchent pas `supabase/`.
     if: github.event_name != 'pull_request' || github.base_ref == 'main' || github.base_ref == 'ccr-1b1bfa0b-m1kvkk'
     runs-on: ubuntu-latest
-    container: postgres:17-alpine
+    container: public.ecr.aws/docker/library/postgres:17-alpine
     services:
       postgres:
-        image: postgres:17-alpine
+        image: public.ecr.aws/docker/library/postgres:17-alpine
         env:
           POSTGRES_HOST_AUTH_METHOD: trust
         options: >-
