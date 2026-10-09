@@ -21,14 +21,28 @@ import 'effacement_barre_basse.dart';
 ///
 /// Avec [effacerBarreBasse] (lecteur du Coran, finition de MA-CMD-1), la
 /// barre du bas de `NavShell` s'efface et revient avec elles.
+///
+/// **SUPERPOS-1** (05/10/2026, decide par delegation : un element flottant
+/// ne reste jamais par-dessus un contenu a lire ; il prend sa place dans le
+/// flux, ou se ferme). Avec [placeReservee] (lecteur du Coran), quand les
+/// commandes sont toujours visibles (lecteur d'ecran, clavier), elles ne se
+/// ferment jamais : elles passent alors SOUS le contenu, dans le flux, et
+/// ne recouvrent plus le bas du Mushaf. Au toucher, MA-CMD-1 reste tel quel :
+/// les commandes passent par-dessus quelques secondes puis se ferment. La
+/// salle (voie TB) ne le demande pas encore.
 class CommandesMasquables extends StatefulWidget {
   const CommandesMasquables({
     required this.contenu,
     required this.commandes,
     this.delai = delaiParDefaut,
     this.effacerBarreBasse = false,
+    this.placeReservee = false,
     super.key,
   });
+
+  /// Vrai : quand les commandes sont toujours visibles (lecteur d'ecran,
+  /// clavier), elles se posent sous le contenu au lieu de le recouvrir.
+  final bool placeReservee;
 
   /// Vrai : la barre du bas de `NavShell` suit les commandes (effacee quand
   /// elles se masquent, revenue a la meme touche, toujours visible avec
@@ -57,6 +71,9 @@ class CommandesMasquables extends StatefulWidget {
 class _CommandesMasquablesState extends State<CommandesMasquables> {
   bool _visibles = true;
   Timer? _minuteur;
+
+  /// Garde l'etat du contenu quand il passe du recouvrement au flux.
+  final GlobalKey _cleContenu = GlobalKey();
 
   /// Le controleur de la barre du bas, s'il est pilote.
   ControleurBarreBasse? _barre;
@@ -147,13 +164,31 @@ class _CommandesMasquablesState extends State<CommandesMasquables> {
 
   @override
   Widget build(BuildContext context) {
-    final bool visibles = _visibles || _toujoursVisibles(context);
+    final bool toujours = _toujoursVisibles(context);
+    final bool visibles = _visibles || toujours;
+    if (widget.placeReservee && toujours) {
+      // Jamais fermees : dans le flux, sous le contenu (SUPERPOS-1).
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Expanded(
+            child: KeyedSubtree(key: _cleContenu, child: widget.contenu),
+          ),
+          KeyedSubtree(
+            key: CommandesMasquables.commandesKey,
+            child: widget.commandes,
+          ),
+        ],
+      );
+    }
     return Listener(
       behavior: HitTestBehavior.translucent,
       onPointerDown: (PointerDownEvent _) => _montrer(),
       child: Stack(
         children: <Widget>[
-          Positioned.fill(child: widget.contenu),
+          Positioned.fill(
+            child: KeyedSubtree(key: _cleContenu, child: widget.contenu),
+          ),
           PositionedDirectional(
             start: 0,
             end: 0,
