@@ -14,7 +14,7 @@ VALUES
 INSERT INTO public.households (id, timezone, status)
 VALUES
   ('b0800000-0000-0000-0000-000000000101', 'Europe/Paris', 'active'),
-  ('b0800000-0000-0000-0000-000000000102', 'Europe/Riyadh', 'active');
+  ('b0800000-0000-0000-0000-000000000102', 'Europe/Paris', 'active');
 
 INSERT INTO public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
@@ -48,7 +48,7 @@ VALUES
   ('b0800000-0000-0000-0000-000000000201',
    'b0800000-0000-0000-0000-000000000001', 'enfant', 5, 'B08 classe A', 1, 18, 'Europe/Paris'),
   ('b0800000-0000-0000-0000-000000000202',
-   'b0800000-0000-0000-0000-000000000006', 'enfant', 5, 'B08 classe B', 2, 18, 'Europe/Riyadh');
+   'b0800000-0000-0000-0000-000000000006', 'enfant', 5, 'B08 classe B', 2, 18, 'Europe/Paris');
 
 INSERT INTO public.groupe_membres (groupe_id, student_id)
 VALUES
