@@ -477,3 +477,56 @@ Jonctions relues (aucun code de production modifié) :
 - `5a52ff30` (exception de `coupe_mots_3_test`) : sans l'exception, les quatre cas « Espace Classe enseignant : aucun mot coupé » échouent sur la seule adresse `https://rewayah.academy/demo/recitation`, aucun autre texte ; l'exception compare le paragraphe entier (`test/support/aucun_mot_coupe.dart`, ligne 40), elle n'en couvre aucun autre.
 
 Relevé, hors jonction (déjà présent avant `282bc950`) : les champs titre et texte de la feuille n'ont pas de nom pour le lecteur d'écran (le libellé visible `_Libelle` est un texte à part ; `ZoneSaisie` accepte `libelle`). Statut : présent dans le code, testé localement ; ni staging ni déploiement.
+
+## PAGESHELL-200-1e : réserves de PAGESHELL-200-1d et d'ALERTE-1b (09/10/2026)
+
+Branche `corrections/c2-pageshell-e`, issue de `corrections/revue-directeur-2026-10` (5a52ff30). Statut : **testé localement** seulement ; ni staging, ni déploiement.
+
+**Décisions prises par délégation le 09/10** (règle DIR-REP-1, aucune question au directeur ; écrites aussi dans `03_DESIGN_SYSTEM_ET_UX.md`, « Coquille de page sous le bandeau d'alerte figé ») :
+
+- (Reprise après refus, remplace la règle « moitié de la place restante ».) La tête de page admin (titre, onglets et, dès 600 px, Recherche, thème, cloche, compte) reste fixe sous le bandeau d'alerte figé tant qu'elle laisse au corps une cible tactile, sur tous les gabarits. Sinon son complément (`PageShell.enteteSecondaire` ; sur le Journal, la chaîne et les filtres) défile avec le corps, le titre, les actions et les onglets restant fixes. Toute la tête ne défile que si ce noyau ne laisse lui-même plus de cible tactile au corps : seul cas mesuré, les Dossiers en Interface guidée à 320x640 (tête de 316 pour 294 de place). C'est l'option la plus prudente : la lettre de la réserve (tête fixe) partout où c'est physiquement possible, aucun débordement ailleurs.
+- À 200 % de texte sur téléphone, la règle « la page défile pour le reste » de PAGESHELL-200-1d s'applique (exception déléguée par le directeur) : la tête défile, le bandeau non. La règle MA-RC B1 (au-delà de 130 % sur une page défilante, la tête défile) reste celle de la page sans alerte ; l'alerte ne la déclenche pas. Le seuil de vue très basse (360, AD-11) se lit sous le bandeau sur la fenêtre entière : 1440x500 garde sa tête fixe.
+- Barre mobile admin (Interface guidée, 320 px, cloche présente) : les écarts de 8 entre les cibles de 72 tombent quand ils ne tiennent plus ; 24 px de débordement supprimés.
+- En Interface guidée, sous un bandeau figé, l'espacement est celui de l'interface standard (8 + 24). La respiration de 64 donnait environ 70 px de vide ; elle est gardée sans bandeau.
+- Le retour à la tête fixe attend les animations, mais au plus `AppMouvement.plafond` (400 ms).
+- Bandeau de la chaîne du Journal : quand la pastille et le mot le plus long de la phrase ne tiennent pas côte à côte, la pastille passe au-dessus de la phrase, au début de la ligne. La pastille est mesurée par sa largeur intrinsèque réelle (style de `StatusPill` compris), et la phrase garde « ci-dessous » entier (`nomsComposesEntiers`).
+
+| Réserve | Ce qui est fait | Preuve |
+| :--- | :--- | :--- |
+| 1. (Moyen) Tête de page admin qui défilait sous une alerte ouverte | `ActionsEnteteCoquille.sousBandeau` remplace le bandeau vide. `PageShell` mesure sa tête (`_MesureTete`) et la garde fixe sous le bandeau tant qu'elle laisse une cible tactile au corps (première livraison : la moitié de la place restante, règle retirée à la reprise). La tête fixe est posée par `_TeteFixe`, sans débordement à l'image de bascule. | `test/widgets/page_shell_200_1e_test.dart`, groupe (1) : 20 cas (compact 390x844, rail 800x600 et 1024x768, large 1440x700 et 1440x900 ; LTR et RTL ; standard et Interface guidée). Titre, onglets, actions et bandeau ne bougent pas après défilement, et le bas de la liste est atteint. Les 20 cas échouent sur la base. |
+| 2. Écart d'environ 70 px en Interface guidée | Sous bandeau, rythme standard. | Groupe (2) : 4 cas (390x844 et 1440x900, LTR et RTL), écart bandeau-ligne de tête égal à 32. Ils échouent sur la base (72). |
+| 3. Report sans fin de `_revenirTeteFixe` | Report borné à `AppMouvement.plafond`. | Groupe (3) : une tête qui porte un indicateur infini. Le test échoue sur la base et quand la borne est retirée. |
+| 4. Titre simple hors HIER-1 | Le titre simple passe par `EnteteCompact.echelleTitre` et garde les noms composés entiers. | Groupe (4) : 8 cas (390x844, 320x640 et 1440x900 à x2, 390x844 à x1,5 ; LTR et RTL). Ils échouent sur la base (72 au lieu de 46 à x2). |
+| 5. Journal : `Row` de la chaîne (+17 px à 320 x2) ; Interface guidée à 390x684 (+22 px en bas, mesuré sur la vraie coque sans alerte) | `BandeauChaineJournal` empile la pastille au-dessus de la phrase, qui passe par `TexteSansCoupure`. La tête trop haute défile (réserve 1). | Groupe (5) : 320 px x2 LTR et RTL, sans débordement ni mot coupé. Sur la coque réelle à 390x684 en Interface guidée : défilement jusqu'au bout, « Réessayer » touchable, aucun mot coupé. Tous ces cas échouent sur la base. |
+| 6. Régression large | Suites rejouées par dossier (`--concurrency=2`), 0 échec : test/features 3037 réussis (2166 ignorés, captures et cas marqués), test/core 736, test/router 300 (7 ignorés), test/widgets 337, test/accessibilite 362, autres dossiers hors capture, fixtures, support 1881 (192 ignorés). | `dart analyze --fatal-infos` : 0 ; `verifier_revue` : 1533, égal à la base 5a52ff30 ; `verifier_jetons` : 37, égal à la base ; `dart format` : 0 fichier modifié. Aucun libellé nouveau ni modifié, donc rien à déclarer dans `tool/libelles_sources.json`. |
+
+Contre-épreuves :
+- Les 38 cas du fichier ont été rejoués sur le code de la base (5a52ff30), avec seulement les deux symboles de test ajoutés en bouchon : les 38 échouent.
+- Mutations sur le nouveau code :
+  - sous bandeau, la tête défile toujours : 20 échecs ;
+  - respiration rétablie : 4 échecs ;
+  - borne retirée : 1 échec ;
+  - échelle compacte retirée : 8 échecs ;
+  - mesure de la tête neutralisée : 3 échecs dans le fichier (dont la coque réelle à 390x684) ;
+  - `Row` de la chaîne rétablie : 2 échecs.
+- Les cas qui passaient déjà sur la base ont été retirés du fichier : tête trop haute sous le bandeau, téléphone à 200 %. Ils restent couverts par `alerte1b_test.dart`.
+
+Captures : `docs/current/captures/PAGESHELL-200-1e/`, 16 PNG `avant` (base) et 16 PNG `apres`, script archivé `pageshell200_1e_capture_test.dart.txt`. Elles couvrent 390x844, 800x600 (rail) et 1440x500 défilés, en clair et en sombre, en LTR et en RTL. S'y ajoutent l'Interface guidée à 390x844, 1440x900 et 390x684 (avec et sans alerte), le Journal à 320x640 x2 et l'Accueil à 390x844 et 320x640 x2.
+
+(Remplacé par la reprise ci-dessous.) Première livraison : à 1440x500 avec alerte, la tête défilait, le seuil de 360 étant calculé sur la place restante. Depuis la reprise, ce seuil se lit sur la fenêtre entière sous le bandeau, et la tête reste fixe à 1440x500.
+
+### Reprise après refus de la relecture adverse (09/10/2026)
+
+| Objection | Ce qui est fait | Preuve |
+| :--- | :--- | :--- |
+| MAJEUR : Journal, tête qui défile sous l'alerte à taille normale (800x600, 1024x768, 1440x700, 1440x500, 1440x900 guidée), et Règles, Dossiers à 800x600 guidée | Règle « moitié » retirée ; tête fixe tant qu'elle laisse une cible tactile ; trois modes dans `_Bascule` (tête fixe, noyau fixe, défilement global) ; Journal : onglets en `entete`, chaîne et filtres en `enteteSecondaire` ; vue très basse lue sur la fenêtre sous bandeau. | `page_shell_200_1e_test.dart`, groupe (1 bis), sur la vraie coque (démonstration, alerte ouverte) : Journal, Règles, Dossiers ; 390x844, 320x640, 800x600, 1024x768, 1440x700, 1440x500, 1440x900 ; standard et guidée ; LTR et RTL (82 cas). Bandeau, `EntetePage`, onglets et `BasculeTheme` identiques avant et après défilement jusqu'au bout. Contre-épreuve sur le code refusé (6f9a9616) : 44 échecs. |
+| MOYEN : barre mobile admin, 24 px de débordement à 320x640 x2 guidée avec cloche | Écarts supprimés quand les cibles ne tiennent plus. | Groupe (1 ter) : Journal, Règles, Dossiers, LTR et RTL ; 6 échecs sur le code refusé. |
+| MINEUR : « ci-dessous » coupé au trait d'union | `nomsComposesEntiers: true` sur la phrase. | Groupe (5 bis) : `verifierEcranSansMotCoupe` sur le Journal entier, 390x844, 390x684, 320x640 à x1, 390x844 et 320x640 à x2, LTR et RTL ; 8 échecs sur le code refusé. |
+| MINEUR : `_largeurPastille` recopiait la géométrie de `StatusPill` | Rendu `_PastilleEtPhrase` : la pastille est mesurée par `getMaxIntrinsicWidth`, plus de copie. | Groupe (5) : pile à 320 x2, LTR et RTL, pastille au début de la ligne. |
+
+Le test du Journal à 390x684 guidée sans alerte vérifie aussi que les onglets restent fixes pendant qu'on atteint « Réessayer » (noyau fixe).
+
+Captures ajoutées (`avant` = base 5a52ff30, `apres`) : Journal 1440x700 clair, 1024x768 sombre RTL, 800x600 clair et sombre RTL guidée, 1440x500, 1440x900 guidée, 390x844, défilés ; Règles et Dossiers 800x600 guidée défilés ; Journal 320x640 x2 guidée (barre mobile). Toutes ouvertes et relues. Les captures RTL gardent la locale française : la ponctuation y suit l'algorithme bidirectionnel (« .instant »), artefact de capture et non du produit.
+
+
+Régression après reprise (`--concurrency=2`, 0 échec) : test/features 3037 réussis (2166 ignorés) ; test/core 736 ; test/router 300 (7 ignorés) ; test/widgets 435 ; test/accessibilite 362 ; autres dossiers hors capture, fixtures, support 1881 (192 ignorés). `dart analyze --fatal-infos` : 0 ; `verifier_revue` : 1533 (égal à la base) ; `verifier_jetons` : 37 (égal à la base) ; `dart format` : 0 fichier modifié. Aucun libellé nouveau ni modifié. Aucun besoin serveur. Statut : testé localement ; ni staging, ni déploiement.
