@@ -327,6 +327,8 @@ DECLARE
   v_has_children boolean;
   v_old_found boolean;
   v_titulaire text;
+  v_original_claims jsonb;
+  v_household_updated boolean;
 BEGIN
   IF p_decision IS NULL OR p_decision NOT IN ('accepter', 'refuser') OR p_cle IS NULL THEN
     RAISE EXCEPTION 'réponse invalide';
@@ -433,11 +435,30 @@ BEGIN
     END IF;
   END IF;
 
+  -- Le trigger commun protège household_id aux appels directs. Après les
+  -- contrôles ci-dessus, cette RPC autorise uniquement cette liaison d'invitation.
+  -- Relever l'acteur interne le temps de l'UPDATE, puis restaurer les claims.
+  v_original_claims := auth.jwt();
+  PERFORM pg_catalog.set_config(
+    'request.jwt.claims',
+    pg_catalog.jsonb_set(
+      coalesce(v_original_claims, '{}'::jsonb),
+      '{app_metadata}',
+      coalesce(v_original_claims->'app_metadata', '{}'::jsonb)
+        || pg_catalog.jsonb_build_object('role', 'admin'),
+      true
+    )::text,
+    true
+  );
   UPDATE public.profiles
   SET household_id = v_invitation.foyer_id, updated_at = now()
   WHERE id = v_user AND role = 'guardian';
+  v_household_updated := FOUND;
+  PERFORM pg_catalog.set_config(
+    'request.jwt.claims', coalesce(v_original_claims, '{}'::jsonb)::text, true
+  );
 
-  IF NOT FOUND THEN
+  IF NOT v_household_updated THEN
     RETURN jsonb_build_object('etat', 'non_acceptable');
   END IF;
 
