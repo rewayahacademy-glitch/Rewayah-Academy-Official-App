@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../i18n/strings.g.dart';
 import '../theme/app_palette.dart';
 
@@ -25,9 +26,13 @@ class MarquePage extends StatelessWidget {
     // Coran... » etaient a la meme taille) : le titre d'ecran prend un
     // `headline*`, la marque un cran en dessous. `display*` porte les valeurs
     // chiffrees en Jakarta tabulaire (revue phase 0, jetons D6).
+    //
+    // Aucun mot coupe a 320 px, texte x2 (PUB-1 : la marque partage sa ligne
+    // avec la croix de la presentation) : le mot le plus long se reduit juste
+    // assez pour tenir ; a l'echelle 1, rien ne change.
     return Semantics(
       header: true,
-      child: Text(
+      child: TexteSansCoupure(
         t.commun.marque,
         textAlign: TextAlign.center,
         style: palette.inkAccent.applyTo(

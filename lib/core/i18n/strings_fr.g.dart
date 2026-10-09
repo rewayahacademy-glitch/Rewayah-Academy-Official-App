@@ -266,9 +266,6 @@ class Traductions$salle$fr {
 	/// fr: 'Connexion au cours'
 	String get connexion => 'Connexion au cours';
 
-	/// fr: 'Connexion instable, reconnexion en cours'
-	String get reconnexion => 'Connexion instable, reconnexion en cours';
-
 	/// fr: 'Reconnexion'
 	String get reconnexionCourt => 'Reconnexion';
 
@@ -472,20 +469,17 @@ class Traductions$bienvenue$fr {
 	/// fr: 'Bienvenue'
 	String get titre => 'Bienvenue';
 
-	/// fr: 'Apprendre le Coran en classe, avec un enseignant attitré'
-	String get accroche => 'Apprendre le Coran en classe, avec un enseignant attitré';
+	/// fr: 'Apprendre le Coran en classe, en visio'
+	String get accroche => 'Apprendre le Coran en classe, en visio';
 
-	/// fr: 'Des séances en visio, à horaire fixe, pour vous ou pour les élèves de votre foyer.'
-	String get phrase => 'Des séances en visio, à horaire fixe, pour vous ou pour les élèves de votre foyer.';
+	/// fr: 'Rewayah Academy propose des cours de Coran en direct, en vidéo, pour vous ou pour les élèves de votre foyer.'
+	String get phrase => 'Rewayah Academy propose des cours de Coran en direct, en vidéo, pour vous ou pour les élèves de votre foyer.';
 
-	/// fr: 'Comment ça se passe'
-	String get pointsTitre => 'Comment ça se passe';
+	/// fr: 'Une classe stable, à horaire fixe'
+	String get pointClasseTitre => 'Une classe stable, à horaire fixe';
 
-	/// fr: 'Une classe stable'
-	String get pointClasseTitre => 'Une classe stable';
-
-	/// fr: 'Les mêmes camarades et le même horaire, chaque semaine.'
-	String get pointClasse => 'Les mêmes camarades et le même horaire, chaque semaine.';
+	/// fr: 'Les mêmes camarades et le même horaire, chaque semaine. Vous choisissez une classe dont l'horaire vous convient.'
+	String get pointClasse => 'Les mêmes camarades et le même horaire, chaque semaine. Vous choisissez une classe dont l\'horaire vous convient.';
 
 	/// fr: 'Un enseignant attitré'
 	String get pointEnseignantTitre => 'Un enseignant attitré';
@@ -493,17 +487,38 @@ class Traductions$bienvenue$fr {
 	/// fr: 'Un Sayyid ou une Sayyida qui suit chaque élève d'une séance à l'autre.'
 	String get pointEnseignant => 'Un Sayyid ou une Sayyida qui suit chaque élève d\'une séance à l\'autre.';
 
-	/// fr: 'Un seul compte pour le foyer'
-	String get pointFoyerTitre => 'Un seul compte pour le foyer';
+	/// fr: 'Un parcours selon le niveau'
+	String get pointParcoursTitre => 'Un parcours selon le niveau';
 
-	/// fr: 'Les séances de chaque élève du foyer se suivent depuis votre compte.'
-	String get pointFoyer => 'Les séances de chaque élève du foyer se suivent depuis votre compte.';
+	/// fr: 'Le débutant commence par la lecture de l'arabe et du Coran. L'élève déjà avancé rejoint la classe la plus proche de son niveau.'
+	String get pointParcours => 'Le débutant commence par la lecture de l\'arabe et du Coran. L\'élève déjà avancé rejoint la classe la plus proche de son niveau.';
+
+	/// fr: 'Le suivi de la famille'
+	String get pointFoyerTitre => 'Le suivi de la famille';
+
+	/// fr: 'Un seul compte pour le foyer : les séances de chaque élève se suivent depuis votre compte.'
+	String get pointFoyer => 'Un seul compte pour le foyer : les séances de chaque élève se suivent depuis votre compte.';
 
 	/// fr: 'Commencer'
 	String get commencer => 'Commencer';
 
 	/// fr: 'J'ai déjà un compte'
 	String get dejaCompte => 'J\'ai déjà un compte';
+
+	/// fr: 'Passer la présentation'
+	String get passer => 'Passer la présentation';
+
+	/// fr: '{numero} / {total}'
+	String position({required Object numero, required Object total}) => '${numero} / ${total}';
+
+	/// fr: 'Présentation, page {numero} sur {total}'
+	String positionLecteur({required Object numero, required Object total}) => 'Présentation, page ${numero} sur ${total}';
+
+	/// fr: 'Page précédente de la présentation'
+	String get precedente => 'Page précédente de la présentation';
+
+	/// fr: 'Page suivante de la présentation'
+	String get suivante => 'Page suivante de la présentation';
 }
 
 // Path: attente
@@ -2215,6 +2230,12 @@ class Traductions$alertes$fr {
 	/// fr: '{nombre} alertes urgentes. La plus récente : {titre}'
 	String bandeauPlusieurs({required Object nombre, required Object titre}) => '${nombre} alertes urgentes. La plus récente : ${titre}';
 
+	/// fr: 'Alerte urgente à traiter'
+	String get bandeauCourtUne => 'Alerte urgente à traiter';
+
+	/// fr: '{nombre} alertes urgentes à traiter'
+	String bandeauCourtPlusieurs({required Object nombre}) => '${nombre} alertes urgentes à traiter';
+
 	/// fr: 'Voir toutes les alertes'
 	String get voirTout => 'Voir toutes les alertes';
 
@@ -2279,6 +2300,7 @@ class Traductions$classe$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$classe$cartes$fr cartes = Traductions$classe$cartes$fr.internal(_root);
 	late final Traductions$classe$entree$fr entree = Traductions$classe$entree$fr.internal(_root);
 
 	/// fr: 'Choisir une classe'
@@ -4106,8 +4128,8 @@ class Traductions$ficheEleve$interface$fr {
 	/// fr: 'Enregistrement en cours'
 	String get enCours => 'Enregistrement en cours';
 
-	/// fr: 'Le changement n'a pas été enregistré : Rewayah n'a pas répondu. Touchez de nouveau votre choix. La présentation actuelle de {prenom} reste inchangée sur son appareil.'
-	String echec({required Object prenom}) => 'Le changement n\'a pas été enregistré : Rewayah n\'a pas répondu. Touchez de nouveau votre choix. La présentation actuelle de ${prenom} reste inchangée sur son appareil.';
+	/// fr: 'Le changement n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Touchez de nouveau votre choix. S'il n'est pas arrivé, la présentation de {prenom} reste celle d'avant sur son appareil.'
+	String echec({required Object prenom}) => 'Le changement n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Touchez de nouveau votre choix. S\'il n\'est pas arrivé, la présentation de ${prenom} reste celle d\'avant sur son appareil.';
 
 	/// fr: 'La présentation pourra être changée quand la connexion reviendra.'
 	String get horsLigne => 'La présentation pourra être changée quand la connexion reviendra.';
@@ -7870,6 +7892,77 @@ class Traductions$tuteur$reglages$fr {
 	String erreur({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}';
 }
 
+// Path: classe.cartes
+class Traductions$classe$cartes$fr {
+	Traductions$classe$cartes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Cartes de la classe'
+	String get titre => 'Cartes de la classe';
+
+	/// fr: 'Touchez une carte pour la modifier. Les élèves et leurs familles la voient aussitôt.'
+	String get contexteEnseignant => 'Touchez une carte pour la modifier. Les élèves et leurs familles la voient aussitôt.';
+
+	/// fr: 'Les cartes pourront être modifiées quand la connexion reviendra.'
+	String get modificationPlusTard => 'Les cartes pourront être modifiées quand la connexion reviendra.';
+
+	/// fr: 'Aucune carte pour l'instant'
+	String get aucune => 'Aucune carte pour l\'instant';
+
+	/// fr: 'L'enseignant de la classe y posera les informations utiles.'
+	String get aucuneDetail => 'L\'enseignant de la classe y posera les informations utiles.';
+
+	/// fr: 'Aucune carte pour l'instant. Ajoutez-en une : la classe la verra aussitôt.'
+	String get aucuneEnseignant => 'Aucune carte pour l\'instant. Ajoutez-en une : la classe la verra aussitôt.';
+
+	/// fr: 'Ajouter une carte'
+	String get ajouter => 'Ajouter une carte';
+
+	/// fr: '{max} cartes au plus : retirez-en une pour en ajouter une autre.'
+	String limite({required Object max}) => '${max} cartes au plus : retirez-en une pour en ajouter une autre.';
+
+	/// fr: 'Modifier la carte « {titre} »'
+	String modifierLecteur({required Object titre}) => 'Modifier la carte « ${titre} »';
+
+	/// fr: 'Échéance : {date}'
+	String echeance({required Object date}) => 'Échéance : ${date}';
+
+	/// fr: 'Copier le lien de « {titre} »'
+	String copierLien({required Object titre}) => 'Copier le lien de « ${titre} »';
+
+	/// fr: 'Copier le lien'
+	String get copierLienCourt => 'Copier le lien';
+
+	/// fr: 'Lien copié. Collez-le dans votre navigateur pour l'ouvrir.'
+	String get lienCopie => 'Lien copié. Collez-le dans votre navigateur pour l\'ouvrir.';
+
+	/// fr: 'Les cartes de la classe ne sont pas encore ouvertes'
+	String get indisponibleTitre => 'Les cartes de la classe ne sont pas encore ouvertes';
+
+	/// fr: 'Elles apparaîtront ici dès leur ouverture. Rien à faire de votre côté.'
+	String get indisponiblePhrase => 'Elles apparaîtront ici dès leur ouverture. Rien à faire de votre côté.';
+
+	/// fr: 'Les cartes de la classe n'ont pas pu être lues. Réessayez dans un instant.'
+	String get erreurLecture => 'Les cartes de la classe n\'ont pas pu être lues. Réessayez dans un instant.';
+
+	/// fr: 'Les cartes de la classe n'ont pas pu être chargées'
+	String get sansDonnees => 'Les cartes de la classe n\'ont pas pu être chargées';
+
+	/// fr: 'Carte enregistrée. La classe la voit maintenant.'
+	String get enregistree => 'Carte enregistrée. La classe la voit maintenant.';
+
+	/// fr: 'Carte retirée. La classe ne la voit plus.'
+	String get retiree => 'Carte retirée. La classe ne la voit plus.';
+
+	late final Traductions$classe$cartes$types$fr types = Traductions$classe$cartes$types$fr.internal(_root);
+	late final Traductions$classe$cartes$typesDetail$fr typesDetail = Traductions$classe$cartes$typesDetail$fr.internal(_root);
+	late final Traductions$classe$cartes$modeles$fr modeles = Traductions$classe$cartes$modeles$fr.internal(_root);
+	late final Traductions$classe$cartes$feuille$fr feuille = Traductions$classe$cartes$feuille$fr.internal(_root);
+}
+
 // Path: classe.entree
 class Traductions$classe$entree$fr {
 	Traductions$classe$entree$fr.internal(this._root);
@@ -8608,8 +8701,14 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Le cours pourra être lancé quand la connexion reviendra.'
 	String get lancerHorsLigne => 'Le cours pourra être lancé quand la connexion reviendra.';
 
-	/// fr: 'Les horaires de prière et vos pauses n'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.'
-	String get erreurPartielle => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.';
+	/// fr: 'Les horaires de prière et vos pauses n'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour : elles n'en dépendent pas. Réessayez dans un instant.'
+	String get erreurPartielle => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.';
+
+	/// fr: 'Vos cahiers de transmission à terminer n'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour : elles n'en dépendent pas. Réessayez dans un instant.'
+	String get erreurPartielleCahiers => 'Vos cahiers de transmission à terminer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.';
+
+	/// fr: 'Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour : elles n'en dépendent pas. Réessayez dans un instant.'
+	String get erreurPartielleTout => 'Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.';
 
 	/// fr: '{eleve} n'est pas entré en salle.'
 	String absenceDetectee({required Object eleve}) => '${eleve} n\'est pas entré en salle.';
@@ -9703,8 +9802,8 @@ class Traductions$controleur$complement$fr {
 	/// fr: 'Envoyer le complément'
 	String get envoyer => 'Envoyer le complément';
 
-	/// fr: 'L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre texte est gardé ici, réessayez dans un instant. Le rapport d'origine reste intact.'
-	String get echec => 'L\'envoi n\'est pas confirmé : Rewayah n\'a pas répondu. Votre texte est gardé ici, réessayez dans un instant. Le rapport d\'origine reste intact.';
+	/// fr: 'L'envoi n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Votre texte est gardé ici, réessayez dans un instant. Le rapport d'origine reste intact.'
+	String get echec => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici, réessayez dans un instant. Le rapport d\'origine reste intact.';
 
 	/// fr: 'Complément ajouté'
 	String get envoyeTitre => 'Complément ajouté';
@@ -9814,11 +9913,11 @@ class Traductions$controleur$compteRendu$fr {
 	/// fr: 'Ce compte rendu est transmis automatiquement à l'administration.'
 	String get notice => 'Ce compte rendu est transmis automatiquement à l\'administration.';
 
-	/// fr: 'L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.'
-	String get echec => 'L\'envoi n\'est pas confirmé : Rewayah n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.';
+	/// fr: 'L'envoi n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.'
+	String get echec => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.';
 
-	/// fr: 'L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.'
-	String get echecRien => 'L\'envoi n\'est pas confirmé : Rewayah n\'a pas répondu. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.';
+	/// fr: 'L'envoi n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.'
+	String get echecRien => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.';
 
 	/// fr: 'Compte rendu envoyé'
 	String get envoyeTitre => 'Compte rendu envoyé';
@@ -9835,8 +9934,8 @@ class Traductions$controleur$compteRendu$fr {
 	/// fr: 'La visite et son relevé automatique sont transmis à l'administration.'
 	String get visiteTransmise => 'La visite et son relevé automatique sont transmis à l\'administration.';
 
-	/// fr: 'La transmission de la visite n'est pas confirmée : Rewayah n'a pas répondu. Réessayez ; le relevé de la visite reste enregistré sur le serveur.'
-	String get visiteEchec => 'La transmission de la visite n\'est pas confirmée : Rewayah n\'a pas répondu. Réessayez ; le relevé de la visite reste enregistré sur le serveur.';
+	/// fr: 'La transmission de la visite n'est pas confirmée : il est possible qu'elle ne soit pas parvenue jusqu'à Rewayah. Réessayez ; le relevé de la visite reste enregistré sur le serveur.'
+	String get visiteEchec => 'La transmission de la visite n\'est pas confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez ; le relevé de la visite reste enregistré sur le serveur.';
 
 	/// fr: 'Compte rendu à terminer'
 	String get aTerminer => 'Compte rendu à terminer';
@@ -10000,8 +10099,8 @@ class Traductions$controleur$observation$fr {
 	/// fr: 'Aucun texte'
 	String get sansTexte => 'Aucun texte';
 
-	/// fr: 'L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.'
-	String get echec => 'L\'envoi n\'est pas confirmé : Rewayah n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.';
+	/// fr: 'L'envoi n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.'
+	String get echec => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.';
 }
 
 // Path: controleur.echanges
@@ -10032,6 +10131,9 @@ class Traductions$controleur$echanges$fr {
 
 	/// fr: 'Contexte de la visite, joint automatiquement'
 	String get contexte => 'Contexte de la visite, joint automatiquement';
+
+	/// fr: 'Contexte joint à vos messages : séance de {heure}'
+	String contexteCompact({required Object heure}) => 'Contexte joint à vos messages : séance de ${heure}';
 
 	/// fr: 'Classe'
 	String get cleClasse => 'Classe';
@@ -10066,8 +10168,8 @@ class Traductions$controleur$echanges$fr {
 	/// fr: 'Envoyé.'
 	String get envoye => 'Envoyé.';
 
-	/// fr: 'L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.'
-	String get echec => 'L\'envoi n\'est pas confirmé : Rewayah n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.';
+	/// fr: 'L'envoi n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.'
+	String get echec => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.';
 
 	/// fr: 'Réessayer'
 	String get reessayer => 'Réessayer';
@@ -10430,8 +10532,8 @@ class Traductions$adulte$accueil$fr {
 	/// fr: 'Votre prochaine séance et vos dernières séances n'ont pas pu être chargées'
 	String get sansDonnees => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées';
 
-	/// fr: 'Votre prochaine séance et vos dernières séances n'ont pas pu être chargées : le serveur n'a pas répondu. Réessayez dans un instant.'
-	String get echec => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées : le serveur n\'a pas répondu. Réessayez dans un instant.';
+	/// fr: 'Votre prochaine séance et vos dernières séances n'ont pas pu être chargées : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get echec => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 }
 
 // Path: adulte.historique
@@ -10448,8 +10550,8 @@ class Traductions$adulte$historique$fr {
 	/// fr: 'Vos séances passées n'ont pas pu être chargées'
 	String get sansDonnees => 'Vos séances passées n\'ont pas pu être chargées';
 
-	/// fr: 'Vos séances passées n'ont pas pu être chargées : le serveur n'a pas répondu. Réessayez dans un instant.'
-	String get echec => 'Vos séances passées n\'ont pas pu être chargées : le serveur n\'a pas répondu. Réessayez dans un instant.';
+	/// fr: 'Vos séances passées n'ont pas pu être chargées : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get echec => 'Vos séances passées n\'ont pas pu être chargées : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 
 	/// fr: 'Aucune séance passée pour le moment.'
 	String get vide => 'Aucune séance passée pour le moment.';
@@ -10801,8 +10903,8 @@ class Traductions$adulte$invitation$fr {
 	/// fr: 'Indiquez son adresse e-mail.'
 	String get courrielRequis => 'Indiquez son adresse e-mail.';
 
-	/// fr: 'Vérifiez l'adresse e-mail : elle doit ressembler à nom@exemple.com.'
-	String get courrielInvalide => 'Vérifiez l\'adresse e-mail : elle doit ressembler à nom@exemple.com.';
+	/// fr: 'Vérifiez l'adresse e‑mail : elle doit ressembler à nom@exemple.com.'
+	String get courrielInvalide => 'Vérifiez l\'adresse e‑mail : elle doit ressembler à nom@exemple.com.';
 
 	/// fr: 'Continuer'
 	String get verifier => 'Continuer';
@@ -12481,6 +12583,137 @@ class Traductions$tuteur$accueil$etatCourt$fr {
 
 	/// fr: 'Non disponible'
 	String get illisible => 'Non disponible';
+}
+
+// Path: classe.cartes.types
+class Traductions$classe$cartes$types$fr {
+	Traductions$classe$cartes$types$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Annonce'
+	String get annonce => 'Annonce';
+
+	/// fr: 'Devoir'
+	String get devoir => 'Devoir';
+
+	/// fr: 'Lien utile'
+	String get lien => 'Lien utile';
+
+	/// fr: 'Rappel'
+	String get rappel => 'Rappel';
+}
+
+// Path: classe.cartes.typesDetail
+class Traductions$classe$cartes$typesDetail$fr {
+	Traductions$classe$cartes$typesDetail$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pour une information à toute la classe.'
+	String get annonce => 'Pour une information à toute la classe.';
+
+	/// fr: 'Pour un travail à préparer : l'échéance proposée est la prochaine séance.'
+	String get devoir => 'Pour un travail à préparer : l\'échéance proposée est la prochaine séance.';
+
+	/// fr: 'Pour partager une page ou un support : collez son adresse.'
+	String get lien => 'Pour partager une page ou un support : collez son adresse.';
+
+	/// fr: 'Pour une date à ne pas oublier : sortie, examen, changement d'horaire.'
+	String get rappel => 'Pour une date à ne pas oublier : sortie, examen, changement d\'horaire.';
+}
+
+// Path: classe.cartes.modeles
+class Traductions$classe$cartes$modeles$fr {
+	Traductions$classe$cartes$modeles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Information pour la classe'
+	String get annonce => 'Information pour la classe';
+
+	/// fr: 'À préparer pour la prochaine séance'
+	String get devoir => 'À préparer pour la prochaine séance';
+
+	/// fr: 'Support à consulter'
+	String get lien => 'Support à consulter';
+
+	/// fr: 'À ne pas oublier'
+	String get rappel => 'À ne pas oublier';
+}
+
+// Path: classe.cartes.feuille
+class Traductions$classe$cartes$feuille$fr {
+	Traductions$classe$cartes$feuille$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nouvelle carte de la classe'
+	String get titreNouvelle => 'Nouvelle carte de la classe';
+
+	/// fr: 'Modifier la carte « {titre} »'
+	String titreModifier({required Object titre}) => 'Modifier la carte « ${titre} »';
+
+	/// fr: 'Choisissez un modèle : il préremplit la carte. Elle est visible aussitôt par les élèves de la classe et leurs familles.'
+	String get contexte => 'Choisissez un modèle : il préremplit la carte. Elle est visible aussitôt par les élèves de la classe et leurs familles.';
+
+	/// fr: 'Modèle de la carte'
+	String get modele => 'Modèle de la carte';
+
+	/// fr: 'Titre de la carte'
+	String get champTitre => 'Titre de la carte';
+
+	/// fr: 'Texte de la carte (facultatif)'
+	String get champTexte => 'Texte de la carte (facultatif)';
+
+	/// fr: 'Lien de la carte (facultatif)'
+	String get champLien => 'Lien de la carte (facultatif)';
+
+	/// fr: '{max} caractères au plus'
+	String aideLongueur({required Object max}) => '${max} caractères au plus';
+
+	/// fr: 'Une adresse complète, qui commence par https://'
+	String get aideLien => 'Une adresse complète, qui commence par https://';
+
+	/// fr: 'Aucune échéance'
+	String get echeanceAucune => 'Aucune échéance';
+
+	/// fr: 'Choisir la date d'échéance'
+	String get choisirEcheance => 'Choisir la date d\'échéance';
+
+	/// fr: 'Retirer l'échéance'
+	String get retirerEcheance => 'Retirer l\'échéance';
+
+	/// fr: 'Enregistrer la carte'
+	String get enregistrer => 'Enregistrer la carte';
+
+	/// fr: 'Retirer cette carte'
+	String get retirer => 'Retirer cette carte';
+
+	/// fr: 'Retirer la carte « {titre} » ?'
+	String retirerQuestion({required Object titre}) => 'Retirer la carte « ${titre} » ?';
+
+	/// fr: 'Elle disparaît aussitôt pour les élèves de la classe et leurs familles.'
+	String get retirerConsequence => 'Elle disparaît aussitôt pour les élèves de la classe et leurs familles.';
+
+	/// fr: 'Retirer la carte'
+	String get retirerConfirmer => 'Retirer la carte';
+
+	/// fr: 'La carte n'est pas confirmée : la réponse n'est pas arrivée. Enregistrez de nouveau dans un instant.'
+	String get envoiNonConfirme => 'La carte n\'est pas confirmée : la réponse n\'est pas arrivée. Enregistrez de nouveau dans un instant.';
+
+	/// fr: 'Le retrait n'est pas confirmé : la réponse n'est pas arrivée. Réessayez dans un instant.'
+	String get retraitNonConfirme => 'Le retrait n\'est pas confirmé : la réponse n\'est pas arrivée. Réessayez dans un instant.';
+
+	late final Traductions$classe$cartes$feuille$defauts$fr defauts = Traductions$classe$cartes$feuille$defauts$fr.internal(_root);
 }
 
 // Path: classe.entree.annonce
@@ -15290,6 +15523,30 @@ class Traductions$salle$seance$demo$etats$fr {
 	String get accesRetire => 'Accès retiré';
 }
 
+// Path: classe.cartes.feuille.defauts
+class Traductions$classe$cartes$feuille$defauts$fr {
+	Traductions$classe$cartes$feuille$defauts$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le titre manque. Écrivez quelques mots, par exemple « Sourate à réviser ».'
+	String get titreVide => 'Le titre manque. Écrivez quelques mots, par exemple « Sourate à réviser ».';
+
+	/// fr: 'Le titre dépasse {max} caractères. Raccourcissez-le.'
+	String titreLong({required Object max}) => 'Le titre dépasse ${max} caractères. Raccourcissez-le.';
+
+	/// fr: 'Le texte dépasse {max} caractères. Raccourcissez-le ou partagez un lien.'
+	String texteLong({required Object max}) => 'Le texte dépasse ${max} caractères. Raccourcissez-le ou partagez un lien.';
+
+	/// fr: 'Ce lien n'est pas une adresse complète. Collez une adresse qui commence par https://.'
+	String get lienInvalide => 'Ce lien n\'est pas une adresse complète. Collez une adresse qui commence par https://.';
+
+	/// fr: 'Un devoir a besoin d'une échéance. Choisissez la date d'échéance.'
+	String get echeanceManquante => 'Un devoir a besoin d\'une échéance. Choisissez la date d\'échéance.';
+}
+
 // Path: classe.entree.demo.roles
 class Traductions$classe$entree$demo$roles$fr {
 	Traductions$classe$entree$demo$roles$fr.internal(this._root);
@@ -15876,7 +16133,6 @@ extension on Traductions {
 			'salle.ouverture' => 'Ouverture de la salle',
 			'salle.verificationMateriel' => 'Vérification de votre micro',
 			'salle.connexion' => 'Connexion au cours',
-			'salle.reconnexion' => 'Connexion instable, reconnexion en cours',
 			'salle.reconnexionCourt' => 'Reconnexion',
 			'salle.perdue' => 'La connexion au cours est perdue',
 			'salle.seulEnseignant' => 'Votre professeur n\'est pas encore arrivé',
@@ -15945,17 +16201,23 @@ extension on Traductions {
 			'presence.attenteInstant' => 'le cours vient de commencer',
 			'presence.attenteMinutes' => ({required Object minutes}) => 'le cours a commencé il y a ${minutes} min',
 			'bienvenue.titre' => 'Bienvenue',
-			'bienvenue.accroche' => 'Apprendre le Coran en classe, avec un enseignant attitré',
-			'bienvenue.phrase' => 'Des séances en visio, à horaire fixe, pour vous ou pour les élèves de votre foyer.',
-			'bienvenue.pointsTitre' => 'Comment ça se passe',
-			'bienvenue.pointClasseTitre' => 'Une classe stable',
-			'bienvenue.pointClasse' => 'Les mêmes camarades et le même horaire, chaque semaine.',
+			'bienvenue.accroche' => 'Apprendre le Coran en classe, en visio',
+			'bienvenue.phrase' => 'Rewayah Academy propose des cours de Coran en direct, en vidéo, pour vous ou pour les élèves de votre foyer.',
+			'bienvenue.pointClasseTitre' => 'Une classe stable, à horaire fixe',
+			'bienvenue.pointClasse' => 'Les mêmes camarades et le même horaire, chaque semaine. Vous choisissez une classe dont l\'horaire vous convient.',
 			'bienvenue.pointEnseignantTitre' => 'Un enseignant attitré',
 			'bienvenue.pointEnseignant' => 'Un Sayyid ou une Sayyida qui suit chaque élève d\'une séance à l\'autre.',
-			'bienvenue.pointFoyerTitre' => 'Un seul compte pour le foyer',
-			'bienvenue.pointFoyer' => 'Les séances de chaque élève du foyer se suivent depuis votre compte.',
+			'bienvenue.pointParcoursTitre' => 'Un parcours selon le niveau',
+			'bienvenue.pointParcours' => 'Le débutant commence par la lecture de l\'arabe et du Coran. L\'élève déjà avancé rejoint la classe la plus proche de son niveau.',
+			'bienvenue.pointFoyerTitre' => 'Le suivi de la famille',
+			'bienvenue.pointFoyer' => 'Un seul compte pour le foyer : les séances de chaque élève se suivent depuis votre compte.',
 			'bienvenue.commencer' => 'Commencer',
 			'bienvenue.dejaCompte' => 'J\'ai déjà un compte',
+			'bienvenue.passer' => 'Passer la présentation',
+			'bienvenue.position' => ({required Object numero, required Object total}) => '${numero} / ${total}',
+			'bienvenue.positionLecteur' => ({required Object numero, required Object total}) => 'Présentation, page ${numero} sur ${total}',
+			'bienvenue.precedente' => 'Page précédente de la présentation',
+			'bienvenue.suivante' => 'Page suivante de la présentation',
 			'attente.titre' => 'Votre dossier est en cours de vérification',
 			'attente.dossierIncomplet' => 'Il manque encore des pièces à votre dossier.',
 			'attente.enVerification' => 'Nous vérifions votre dossier.',
@@ -16072,13 +16334,13 @@ extension on Traductions {
 			'inscription.recap.enseignant' => 'Enseignant',
 			'contrat.titre' => 'Ce que vous signez',
 			'contrat.intro' => 'Deux points comptent plus que les autres. Ils sont écrits ici en clair plutôt qu\'au milieu d\'un texte long.',
+			_ => null,
+		} ?? switch (path) {
 			'contrat.pointEnregistrement' => 'Chaque cours est enregistré en audio, conservé trente jours, puis effacé. Chaque écoute est inscrite au journal, avec le nom de qui écoute.',
 			'contrat.pointControle' => 'Un contrôleur qualité peut assister à un cours sans être vu. La salle le rappelle en permanence, que la visite ait lieu ou non.',
 			'contrat.pointCoordonnees' => 'Vous ne voyez jamais les coordonnées d\'une famille : ni nom complet, ni courriel, ni téléphone.',
 			'contrat.lireTexte' => 'Lire le texte complet',
 			'contrat.accepter' => 'J\'ai lu et j\'accepte',
-			_ => null,
-		} ?? switch (path) {
 			'contrat.accepteLe' => ({required Object date}) => 'Accepté le ${date}',
 			'contrat.erreur' => 'La signature n\'a pas abouti. Réessayez dans un instant.',
 			'contrat.horsLigne' => 'Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.',
@@ -16410,7 +16672,7 @@ extension on Traductions {
 			'ficheEleve.interface.application' => ({required Object prenom}) => 'Le changement s\'applique à la prochaine ouverture de Rewayah sur l\'appareil de ${prenom}.',
 			'ficheEleve.interface.demandeEleve' => 'La demande de changement par l\'élève lui-même n\'est pas encore proposée.',
 			'ficheEleve.interface.enCours' => 'Enregistrement en cours',
-			'ficheEleve.interface.echec' => ({required Object prenom}) => 'Le changement n\'a pas été enregistré : Rewayah n\'a pas répondu. Touchez de nouveau votre choix. La présentation actuelle de ${prenom} reste inchangée sur son appareil.',
+			'ficheEleve.interface.echec' => ({required Object prenom}) => 'Le changement n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Touchez de nouveau votre choix. S\'il n\'est pas arrivé, la présentation de ${prenom} reste celle d\'avant sur son appareil.',
 			'ficheEleve.interface.horsLigne' => 'La présentation pourra être changée quand la connexion reviendra.',
 			'ficheEleve.camera.titre' => 'Caméra en cours',
 			'ficheEleve.camera.ligne' => 'Caméra pendant les séances',
@@ -16586,13 +16848,13 @@ extension on Traductions {
 			'dossiers.file.ouvrirDe' => ({required Object nom}) => 'Ouvrir le dossier de ${nom}',
 			'dossiers.file.ouvrirElide' => ({required Object nom}) => 'Ouvrir le dossier d\'${nom}',
 			'dossiers.file.enVerification' => 'En cours de vérification',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.file.sansNom' => 'Dossier sans nom disponible',
 			'dossiers.file.legende' => ({required Object type, required Object date}) => '${type} · ${date}',
 			'dossiers.file.dateHeure' => ({required Object date, required Object heure, required Object zone}) => '${date} à ${heure} (${zone})',
 			'dossiers.file.dateChiffres' => ({required Object jour, required Object mois, required Object annee}) => '${jour}/${mois}/${annee}',
 			'dossiers.file.heureChiffres' => ({required Object heures, required Object minutes}) => '${heures}:${minutes}',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.file.zoneUtc' => 'UTC',
 			'dossiers.file.suivantAnnonce' => ({required Object nom}) => 'Dossier suivant : ${nom}',
 			'dossiers.detail.titreDe' => ({required Object nom}) => 'Dossier de ${nom}',
@@ -17100,13 +17362,13 @@ extension on Traductions {
 			'admin.journal.colonneQui' => 'Qui',
 			'admin.journal.colonneRole' => 'À quel titre',
 			'admin.journal.colonneQuoi' => 'Ce qui a été fait',
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.colonneCible' => 'Sur quoi',
 			'admin.journal.colonneDetail' => 'Détail',
 			'admin.journal.horodatage' => ({required Object date, required Object heure}) => '${date} à ${heure}',
 			'admin.journal.acteurSysteme' => 'Le système',
 			'admin.journal.acteurInconnu' => 'Compte supprimé',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.roleAdmin' => 'Administration',
 			'admin.journal.roleEnseignant' => 'Enseignant',
 			'admin.journal.roleTuteur' => 'Tuteur',
@@ -17614,13 +17876,13 @@ extension on Traductions {
 			'compte.tuteur.pagePreferences.sousTitre' => 'Personnalisez votre expérience sur cet appareil.',
 			'compte.tuteur.pagePreferences.apparence' => 'Apparence',
 			'compte.tuteur.pagePreferences.apparenceDetail' => 'Thème et confort visuel',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pagePreferences.langue' => 'Langue et région',
 			'compte.tuteur.pagePreferences.notifications' => 'Notifications',
 			'compte.tuteur.pagePreferences.notificationsDetail' => 'Pas encore disponibles dans l\'application',
 			'compte.tuteur.pageApparence.titre' => 'Apparence',
 			'compte.tuteur.pageApparence.sousTitre' => 'Appliqué sur cet appareil.',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageApparence.theme' => 'Thème de l\'application',
 			'compte.tuteur.pageApparence.themeDetail' => 'Personnalisez l\'apparence de Rewayah.',
 			'compte.tuteur.pageApparence.confort' => 'Confort visuel',
@@ -17757,6 +18019,8 @@ extension on Traductions {
 			'alertes.ligne' => ({required Object gravite, required Object titre, required Object date, required Object heure}) => '${gravite}, ${titre}, le ${date} à ${heure}',
 			'alertes.bandeauUne' => ({required Object titre}) => 'Alerte urgente : ${titre}',
 			'alertes.bandeauPlusieurs' => ({required Object nombre, required Object titre}) => '${nombre} alertes urgentes. La plus récente : ${titre}',
+			'alertes.bandeauCourtUne' => 'Alerte urgente à traiter',
+			'alertes.bandeauCourtPlusieurs' => ({required Object nombre}) => '${nombre} alertes urgentes à traiter',
 			'alertes.voirTout' => 'Voir toutes les alertes',
 			'alertes.vide' => 'Aucune alerte en cours.',
 			'alertes.videTitre' => 'Aucune alerte en cours',
@@ -17950,6 +18214,61 @@ extension on Traductions {
 			'tuteur.reglages.aucunEnfant' => 'Aucun enfant dans le foyer',
 			'tuteur.reglages.aucunEnfantDetail' => 'Ajoutez un enfant pour pouvoir régler son affichage et sa caméra.',
 			'tuteur.reglages.erreur' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
+			'classe.cartes.titre' => 'Cartes de la classe',
+			'classe.cartes.contexteEnseignant' => 'Touchez une carte pour la modifier. Les élèves et leurs familles la voient aussitôt.',
+			'classe.cartes.modificationPlusTard' => 'Les cartes pourront être modifiées quand la connexion reviendra.',
+			'classe.cartes.aucune' => 'Aucune carte pour l\'instant',
+			'classe.cartes.aucuneDetail' => 'L\'enseignant de la classe y posera les informations utiles.',
+			'classe.cartes.aucuneEnseignant' => 'Aucune carte pour l\'instant. Ajoutez-en une : la classe la verra aussitôt.',
+			'classe.cartes.ajouter' => 'Ajouter une carte',
+			'classe.cartes.limite' => ({required Object max}) => '${max} cartes au plus : retirez-en une pour en ajouter une autre.',
+			'classe.cartes.modifierLecteur' => ({required Object titre}) => 'Modifier la carte « ${titre} »',
+			'classe.cartes.echeance' => ({required Object date}) => 'Échéance : ${date}',
+			'classe.cartes.copierLien' => ({required Object titre}) => 'Copier le lien de « ${titre} »',
+			'classe.cartes.copierLienCourt' => 'Copier le lien',
+			'classe.cartes.lienCopie' => 'Lien copié. Collez-le dans votre navigateur pour l\'ouvrir.',
+			'classe.cartes.indisponibleTitre' => 'Les cartes de la classe ne sont pas encore ouvertes',
+			'classe.cartes.indisponiblePhrase' => 'Elles apparaîtront ici dès leur ouverture. Rien à faire de votre côté.',
+			'classe.cartes.erreurLecture' => 'Les cartes de la classe n\'ont pas pu être lues. Réessayez dans un instant.',
+			'classe.cartes.sansDonnees' => 'Les cartes de la classe n\'ont pas pu être chargées',
+			'classe.cartes.enregistree' => 'Carte enregistrée. La classe la voit maintenant.',
+			'classe.cartes.retiree' => 'Carte retirée. La classe ne la voit plus.',
+			'classe.cartes.types.annonce' => 'Annonce',
+			'classe.cartes.types.devoir' => 'Devoir',
+			'classe.cartes.types.lien' => 'Lien utile',
+			'classe.cartes.types.rappel' => 'Rappel',
+			'classe.cartes.typesDetail.annonce' => 'Pour une information à toute la classe.',
+			'classe.cartes.typesDetail.devoir' => 'Pour un travail à préparer : l\'échéance proposée est la prochaine séance.',
+			'classe.cartes.typesDetail.lien' => 'Pour partager une page ou un support : collez son adresse.',
+			'classe.cartes.typesDetail.rappel' => 'Pour une date à ne pas oublier : sortie, examen, changement d\'horaire.',
+			'classe.cartes.modeles.annonce' => 'Information pour la classe',
+			'classe.cartes.modeles.devoir' => 'À préparer pour la prochaine séance',
+			'classe.cartes.modeles.lien' => 'Support à consulter',
+			'classe.cartes.modeles.rappel' => 'À ne pas oublier',
+			'classe.cartes.feuille.titreNouvelle' => 'Nouvelle carte de la classe',
+			'classe.cartes.feuille.titreModifier' => ({required Object titre}) => 'Modifier la carte « ${titre} »',
+			'classe.cartes.feuille.contexte' => 'Choisissez un modèle : il préremplit la carte. Elle est visible aussitôt par les élèves de la classe et leurs familles.',
+			'classe.cartes.feuille.modele' => 'Modèle de la carte',
+			'classe.cartes.feuille.champTitre' => 'Titre de la carte',
+			'classe.cartes.feuille.champTexte' => 'Texte de la carte (facultatif)',
+			'classe.cartes.feuille.champLien' => 'Lien de la carte (facultatif)',
+			'classe.cartes.feuille.aideLongueur' => ({required Object max}) => '${max} caractères au plus',
+			'classe.cartes.feuille.aideLien' => 'Une adresse complète, qui commence par https://',
+			'classe.cartes.feuille.echeanceAucune' => 'Aucune échéance',
+			'classe.cartes.feuille.choisirEcheance' => 'Choisir la date d\'échéance',
+			'classe.cartes.feuille.retirerEcheance' => 'Retirer l\'échéance',
+			'classe.cartes.feuille.enregistrer' => 'Enregistrer la carte',
+			'classe.cartes.feuille.retirer' => 'Retirer cette carte',
+			'classe.cartes.feuille.retirerQuestion' => ({required Object titre}) => 'Retirer la carte « ${titre} » ?',
+			'classe.cartes.feuille.retirerConsequence' => 'Elle disparaît aussitôt pour les élèves de la classe et leurs familles.',
+			'classe.cartes.feuille.retirerConfirmer' => 'Retirer la carte',
+			'classe.cartes.feuille.envoiNonConfirme' => 'La carte n\'est pas confirmée : la réponse n\'est pas arrivée. Enregistrez de nouveau dans un instant.',
+			'classe.cartes.feuille.retraitNonConfirme' => 'Le retrait n\'est pas confirmé : la réponse n\'est pas arrivée. Réessayez dans un instant.',
+			'classe.cartes.feuille.defauts.titreVide' => 'Le titre manque. Écrivez quelques mots, par exemple « Sourate à réviser ».',
+			'classe.cartes.feuille.defauts.titreLong' => ({required Object max}) => 'Le titre dépasse ${max} caractères. Raccourcissez-le.',
+			'classe.cartes.feuille.defauts.texteLong' => ({required Object max}) => 'Le texte dépasse ${max} caractères. Raccourcissez-le ou partagez un lien.',
+			'classe.cartes.feuille.defauts.lienInvalide' => 'Ce lien n\'est pas une adresse complète. Collez une adresse qui commence par https://.',
+			'classe.cartes.feuille.defauts.echeanceManquante' => 'Un devoir a besoin d\'une échéance. Choisissez la date d\'échéance.',
 			'classe.entree.coursDans' => ({required Object duree}) => 'Cours dans ${duree}',
 			'classe.entree.coursImminent' => 'Cours dans moins d\'une minute',
 			'classe.entree.rejoindre' => 'Rejoindre',
@@ -18071,6 +18390,8 @@ extension on Traductions {
 			'classe.pageCatalogue.horairesAbsents' => 'Les jours et heures de cette classe ne sont pas encore affichés ici.',
 			'classe.pageCatalogue.seanceHebdo' => ({required Object jour, required Object heure, required Object duree}) => '${jour} à ${heure} · ${duree} min',
 			'classe.pageCatalogue.fuseauClasse' => ({required Object fuseau}) => 'Heures de la classe (${fuseau})',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pageCatalogue.placeUne' => '1 place restante',
 			'classe.pageCatalogue.places' => ({required Object nombre}) => '${nombre} places restantes',
 			'classe.pageCatalogue.etat.ouverte' => 'Ouverte',
@@ -18133,8 +18454,6 @@ extension on Traductions {
 			'enseignant.signalement.categories.pedagogique' => 'Problème pédagogique',
 			'enseignant.signalement.categories.presence' => 'Présence',
 			'enseignant.signalement.categories.technique' => 'Technique',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.signalement.categories.changement' => 'Changement',
 			'enseignant.signalement.categories.autre' => 'Autre',
 			'enseignant.signalement.details' => 'Détails internes',
@@ -18224,7 +18543,9 @@ extension on Traductions {
 			'enseignant.journee.preflightSansMicro' => 'Aucun micro n\'est détecté. Branchez-en un pour lancer le cours.',
 			'enseignant.journee.preflightIndisponible' => 'La vérification du matériel n\'a pas abouti. Réessayez avant de lancer le cours.',
 			'enseignant.journee.lancerHorsLigne' => 'Le cours pourra être lancé quand la connexion reviendra.',
-			'enseignant.journee.erreurPartielle' => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.',
+			'enseignant.journee.erreurPartielle' => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.',
+			'enseignant.journee.erreurPartielleCahiers' => 'Vos cahiers de transmission à terminer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.',
+			'enseignant.journee.erreurPartielleTout' => 'Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.',
 			'enseignant.journee.absenceDetectee' => ({required Object eleve}) => '${eleve} n\'est pas entré en salle.',
 			'enseignant.journee.coupureDetectee' => ({required Object eleve}) => '${eleve} a perdu la connexion.',
 			'enseignant.journee.coursAnnule' => ({required Object heure}) => 'Le cours de ${heure} est annulé.',
@@ -18580,9 +18901,11 @@ extension on Traductions {
 			'controleur.complement.sansMotif' => 'Aucun motif',
 			'controleur.complement.cleTexte' => 'Complément',
 			'controleur.complement.envoyer' => 'Envoyer le complément',
-			'controleur.complement.echec' => 'L\'envoi n\'est pas confirmé : Rewayah n\'a pas répondu. Votre texte est gardé ici, réessayez dans un instant. Le rapport d\'origine reste intact.',
+			'controleur.complement.echec' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici, réessayez dans un instant. Le rapport d\'origine reste intact.',
 			'controleur.complement.envoyeTitre' => 'Complément ajouté',
 			'controleur.complement.envoyePhrase' => 'Il s\'affiche sous le rapport d\'origine, qui reste inchangé.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.complement.revenir' => 'Revenir au rapport',
 			'controleur.compteRendu.titre' => 'Compte rendu',
 			'controleur.compteRendu.provisoire' => 'Cet écran est en préparation.',
@@ -18614,14 +18937,14 @@ extension on Traductions {
 			'controleur.compteRendu.envoyer' => 'Envoyer le compte rendu',
 			'controleur.compteRendu.plusTard' => 'Plus tard',
 			'controleur.compteRendu.notice' => 'Ce compte rendu est transmis automatiquement à l\'administration.',
-			'controleur.compteRendu.echec' => 'L\'envoi n\'est pas confirmé : Rewayah n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
-			'controleur.compteRendu.echecRien' => 'L\'envoi n\'est pas confirmé : Rewayah n\'a pas répondu. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
+			'controleur.compteRendu.echec' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
+			'controleur.compteRendu.echecRien' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.compteRendu.envoyeTitre' => 'Compte rendu envoyé',
 			'controleur.compteRendu.envoyePhrase' => 'Il est transmis à l\'administration. Pour y revenir, ouvrez-le dans l\'Historique et choisissez « Ajouter un complément ».',
 			'controleur.compteRendu.ecrireAdmin' => 'Écrire à l\'administration',
 			'controleur.compteRendu.visiteEnCours' => 'Transmission de la visite à l\'administration en cours.',
 			'controleur.compteRendu.visiteTransmise' => 'La visite et son relevé automatique sont transmis à l\'administration.',
-			'controleur.compteRendu.visiteEchec' => 'La transmission de la visite n\'est pas confirmée : Rewayah n\'a pas répondu. Réessayez ; le relevé de la visite reste enregistré sur le serveur.',
+			'controleur.compteRendu.visiteEchec' => 'La transmission de la visite n\'est pas confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez ; le relevé de la visite reste enregistré sur le serveur.',
 			'controleur.compteRendu.aTerminer' => 'Compte rendu à terminer',
 			'controleur.compteRendu.reprendre' => 'Reprendre le compte rendu',
 			'controleur.observation.important' => 'Vous signalez un point important : votre texte sera demandé.',
@@ -18647,8 +18970,6 @@ extension on Traductions {
 			'controleur.observation.climatAide' => 'Quand il s\'agit du comportement ou de l\'ambiance de la classe',
 			'controleur.observation.autre' => 'Autre',
 			'controleur.observation.autreAide' => 'Quand aucun autre domaine ne convient · précisez-le dans votre texte',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.questionPersonne' => 'Qui est concerné ?',
 			'controleur.observation.contextePersonne' => 'Indiquez qui l\'observation concerne. Un élève se choisit dans la liste de la Classe, par son prénom et l\'initiale de son nom.',
 			'controleur.observation.enseignant' => 'Enseignant',
@@ -18675,7 +18996,7 @@ extension on Traductions {
 			'controleur.observation.clePersonne' => 'Personne concernée',
 			'controleur.observation.cleTexte' => 'Remarque',
 			'controleur.observation.sansTexte' => 'Aucun texte',
-			'controleur.observation.echec' => 'L\'envoi n\'est pas confirmé : Rewayah n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
+			'controleur.observation.echec' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.titre' => 'Échanges',
 			'controleur.echanges.titreFil' => ({required Object classe, required Object date}) => '${classe} · ${date}',
 			'controleur.echanges.derniereActivite' => ({required Object date}) => 'Dernière activité : ${date}',
@@ -18683,6 +19004,7 @@ extension on Traductions {
 			'controleur.echanges.enAttente' => 'En attente',
 			'controleur.echanges.vide' => 'Aucun échange avec l\'administration pour le moment.',
 			'controleur.echanges.contexte' => 'Contexte de la visite, joint automatiquement',
+			'controleur.echanges.contexteCompact' => ({required Object heure}) => 'Contexte joint à vos messages : séance de ${heure}',
 			'controleur.echanges.cleClasse' => 'Classe',
 			'controleur.echanges.cleDate' => 'Date',
 			'controleur.echanges.cleHeure' => 'Heure',
@@ -18694,7 +19016,7 @@ extension on Traductions {
 			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
 			'controleur.echanges.enCours' => 'Envoi en cours.',
 			'controleur.echanges.envoye' => 'Envoyé.',
-			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : Rewayah n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
+			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.reessayer' => 'Réessayer',
 			'controleur.echanges.nouveauMessage' => ({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}',
 			'controleur.demo.titre' => 'Démonstration contrôleur',
@@ -19096,6 +19418,8 @@ extension on Traductions {
 			'tc.observation.visite.sortieNonConfirmee' => 'La fin de votre visite n\'a pas pu être confirmée. Elle sera fermée par le serveur.',
 			'tc.observation.visite.restantes' => 'restantes',
 			'tc.observation.visite.decompteLu' => ({required Object duree}) => 'Temps restant : ${duree}',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.visite.enDirect' => 'En direct',
 			'tc.observation.visite.connexion' => 'Connexion',
 			'tc.observation.visite.reconnexion' => 'Reconnexion',
@@ -19161,8 +19485,6 @@ extension on Traductions {
 			'tc.parcours.avant.nonBranche' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			'tc.parcours.avant.nonBrancheDetail' => 'Cela ne veut pas dire qu\'il n\'y a rien à préparer : cet écran ne sait pas encore le lire.',
 			'tc.parcours.avant.reprendre' => 'Reprendre le cours',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.avant.reprendreDepuis' => ({required Object position}) => 'Reprendre le cours à ${position}',
 			'tc.parcours.intention.apprendre' => 'À apprendre',
 			'tc.parcours.intention.revoir' => 'À revoir',
@@ -19240,10 +19562,10 @@ extension on Traductions {
 			'adulte.accueil.aucuneClasse' => 'Aucune classe pour le moment.',
 			'adulte.accueil.aucuneClasseDetail' => 'Votre prochaine séance s\'affichera ici dès que votre classe sera ouverte.',
 			'adulte.accueil.sansDonnees' => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées',
-			'adulte.accueil.echec' => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées : le serveur n\'a pas répondu. Réessayez dans un instant.',
+			'adulte.accueil.echec' => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'adulte.historique.titre' => 'Mes séances passées',
 			'adulte.historique.sansDonnees' => 'Vos séances passées n\'ont pas pu être chargées',
-			'adulte.historique.echec' => 'Vos séances passées n\'ont pas pu être chargées : le serveur n\'a pas répondu. Réessayez dans un instant.',
+			'adulte.historique.echec' => 'Vos séances passées n\'ont pas pu être chargées : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'adulte.historique.vide' => 'Aucune séance passée pour le moment.',
 			'adulte.historique.videDetail' => 'Vos séances s\'afficheront ici après votre premier cours.',
 			'adulte.maClasse.aPropos' => 'À propos de cette classe',
@@ -19356,7 +19678,7 @@ extension on Traductions {
 			'adulte.invitation.courrielAideLui' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjoint l\'invitation à rejoindre Rewayah.',
 			'adulte.invitation.prenomRequis' => 'Indiquez son prénom.',
 			'adulte.invitation.courrielRequis' => 'Indiquez son adresse e-mail.',
-			'adulte.invitation.courrielInvalide' => 'Vérifiez l\'adresse e-mail : elle doit ressembler à nom@exemple.com.',
+			'adulte.invitation.courrielInvalide' => 'Vérifiez l\'adresse e‑mail : elle doit ressembler à nom@exemple.com.',
 			'adulte.invitation.verifier' => 'Continuer',
 			'adulte.invitation.verifierTitre' => 'Vérifier et envoyer',
 			'adulte.invitation.verifierPhrase' => 'Relisez ces informations. L\'invitation partira à cette adresse.',

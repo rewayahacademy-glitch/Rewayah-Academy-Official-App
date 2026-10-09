@@ -26,6 +26,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/setting_row.dart';
+import '../../core/widgets/zone_saisie.dart';
 
 /// `TUT-05` : les demandes du tuteur, profil eleve par profil eleve.
 ///
@@ -350,7 +351,10 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
             valeurRegleProvider((profilId: widget.enfant.id, cle: cle)),
           );
 
-    return Padding(
+    // SUPERPOS-1 : la feuille defile. En Interface guidee a 320 en texte
+    // double, titre, choix, motif et bouton depassaient la hauteur de
+    // l'ecran de 268 px : le bas (le bouton d'envoi) etait hors d'atteinte.
+    return SingleChildScrollView(
       padding: EdgeInsetsDirectional.only(
         start: metriques.marge,
         end: metriques.marge,
@@ -398,15 +402,13 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
               ),
               Ecart.vMd,
             ],
-            TextField(
-              controller: _motif,
-              decoration: InputDecoration(
-                labelText: t.tuteur.reglages.demandeMotif,
-              ),
+            ZoneSaisie(
+              controleur: _motif,
+              libelle: t.tuteur.reglages.demandeMotif,
               // Sans ceci, le bouton ne se reconstruit pas a la frappe et reste
               // inerte alors que le motif est saisi (piege de l'etape 3).
               onChanged: (String _) => setState(() {}),
-              maxLines: 2,
+              minLignes: 2,
             ),
             if (_erreur != null) ...<Widget>[
               Ecart.vSm,

@@ -684,8 +684,13 @@ class _ConseilAppareil extends StatelessWidget {
           ),
           Ecart.hSm,
           Expanded(
-            child: _TexteIsole(
-              LibellesGroupe.conseilAppareil,
+            // COUPE-MOTS-3b : « ... pris en charge. », jamais « .Tablette »
+            // dans l'interface arabe (libelle encore sans traduction).
+            child: Text(
+              isolerSiAutreSens(
+                LibellesGroupe.conseilAppareil,
+                Directionality.of(context),
+              ),
               style: palette.inkMuted.applyTo(
                 textes.bodySmall ?? const TextStyle(),
               ),

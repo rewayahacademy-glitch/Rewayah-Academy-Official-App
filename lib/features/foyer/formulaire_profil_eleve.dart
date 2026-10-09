@@ -22,6 +22,7 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_etape.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/zone_saisie.dart' show ZoneSaisie;
 
 /// La porte d'acces du titulaire, qui decide de ce qui est creable (K3).
 ///
@@ -502,6 +503,7 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
             errorText: erreurs[ChampProfilEleve.prenom] == null
                 ? null
                 : t.foyer.ajout.erreurs.prenomRequis,
+            errorMaxLines: ZoneSaisie.lignesAideMax,
           ),
         ),
         Ecart.vMd,
@@ -516,11 +518,11 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
           decoration: InputDecoration(
             labelText: t.foyer.ajout.identite.nom,
             helperText: t.foyer.ajout.identite.nomAide,
-            helperMaxLines: 3,
+            helperMaxLines: ZoneSaisie.lignesAideMax,
             errorText: erreurs[ChampProfilEleve.nom] == null
                 ? null
                 : t.foyer.ajout.erreurs.nomRequis,
-            errorMaxLines: 3,
+            errorMaxLines: ZoneSaisie.lignesAideMax,
           ),
         ),
         Ecart.vMd,
@@ -544,9 +546,9 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
             labelText: t.foyer.ajout.identite.age,
             suffixText: t.foyer.ajout.identite.ageSuffixe,
             helperText: t.foyer.ajout.identite.ageAide,
-            helperMaxLines: 3,
+            helperMaxLines: ZoneSaisie.lignesAideMax,
             errorText: erreurAge,
-            errorMaxLines: 3,
+            errorMaxLines: ZoneSaisie.lignesAideMax,
           ),
         ),
       ],

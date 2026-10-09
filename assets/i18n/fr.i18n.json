@@ -405,7 +405,6 @@
     "ouverture": "Ouverture de la salle",
     "verificationMateriel": "Vérification de votre micro",
     "connexion": "Connexion au cours",
-    "reconnexion": "Connexion instable, reconnexion en cours",
     "reconnexionCourt": "Reconnexion",
     "perdue": "La connexion au cours est perdue",
     "seulEnseignant": "Votre professeur n'est pas encore arrivé",
@@ -480,17 +479,23 @@
   },
   "bienvenue": {
     "titre": "Bienvenue",
-    "accroche": "Apprendre le Coran en classe, avec un enseignant attitré",
-    "phrase": "Des séances en visio, à horaire fixe, pour vous ou pour les élèves de votre foyer.",
-    "pointsTitre": "Comment ça se passe",
-    "pointClasseTitre": "Une classe stable",
-    "pointClasse": "Les mêmes camarades et le même horaire, chaque semaine.",
+    "accroche": "Apprendre le Coran en classe, en visio",
+    "phrase": "Rewayah Academy propose des cours de Coran en direct, en vidéo, pour vous ou pour les élèves de votre foyer.",
+    "pointClasseTitre": "Une classe stable, à horaire fixe",
+    "pointClasse": "Les mêmes camarades et le même horaire, chaque semaine. Vous choisissez une classe dont l'horaire vous convient.",
     "pointEnseignantTitre": "Un enseignant attitré",
     "pointEnseignant": "Un Sayyid ou une Sayyida qui suit chaque élève d'une séance à l'autre.",
-    "pointFoyerTitre": "Un seul compte pour le foyer",
-    "pointFoyer": "Les séances de chaque élève du foyer se suivent depuis votre compte.",
+    "pointParcoursTitre": "Un parcours selon le niveau",
+    "pointParcours": "Le débutant commence par la lecture de l'arabe et du Coran. L'élève déjà avancé rejoint la classe la plus proche de son niveau.",
+    "pointFoyerTitre": "Le suivi de la famille",
+    "pointFoyer": "Un seul compte pour le foyer : les séances de chaque élève se suivent depuis votre compte.",
     "commencer": "Commencer",
-    "dejaCompte": "J'ai déjà un compte"
+    "dejaCompte": "J'ai déjà un compte",
+    "passer": "Passer la présentation",
+    "position": "{numero} / {total}",
+    "positionLecteur": "Présentation, page {numero} sur {total}",
+    "precedente": "Page précédente de la présentation",
+    "suivante": "Page suivante de la présentation"
   },
   "attente": {
     "titre": "Votre dossier est en cours de vérification",
@@ -1059,7 +1064,7 @@
       "application": "Le changement s'applique à la prochaine ouverture de Rewayah sur l'appareil de {prenom}.",
       "demandeEleve": "La demande de changement par l'élève lui-même n'est pas encore proposée.",
       "enCours": "Enregistrement en cours",
-      "echec": "Le changement n'a pas été enregistré : Rewayah n'a pas répondu. Touchez de nouveau votre choix. La présentation actuelle de {prenom} reste inchangée sur son appareil.",
+      "echec": "Le changement n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Touchez de nouveau votre choix. S'il n'est pas arrivé, la présentation de {prenom} reste celle d'avant sur son appareil.",
       "horsLigne": "La présentation pourra être changée quand la connexion reviendra."
     },
     "camera": {
@@ -2574,6 +2579,8 @@
     "ligne": "{gravite}, {titre}, le {date} à {heure}",
     "bandeauUne": "Alerte urgente : {titre}",
     "bandeauPlusieurs": "{nombre} alertes urgentes. La plus récente : {titre}",
+    "bandeauCourtUne": "Alerte urgente à traiter",
+    "bandeauCourtPlusieurs": "{nombre} alertes urgentes à traiter",
     "voirTout": "Voir toutes les alertes",
     "vide": "Aucune alerte en cours.",
     "videTitre": "Aucune alerte en cours",
@@ -2785,6 +2792,73 @@
     }
   },
   "classe": {
+    "cartes": {
+      "titre": "Cartes de la classe",
+      "contexteEnseignant": "Touchez une carte pour la modifier. Les élèves et leurs familles la voient aussitôt.",
+      "modificationPlusTard": "Les cartes pourront être modifiées quand la connexion reviendra.",
+      "aucune": "Aucune carte pour l'instant",
+      "aucuneDetail": "L'enseignant de la classe y posera les informations utiles.",
+      "aucuneEnseignant": "Aucune carte pour l'instant. Ajoutez-en une : la classe la verra aussitôt.",
+      "ajouter": "Ajouter une carte",
+      "limite": "{max} cartes au plus : retirez-en une pour en ajouter une autre.",
+      "modifierLecteur": "Modifier la carte « {titre} »",
+      "echeance": "Échéance : {date}",
+      "copierLien": "Copier le lien de « {titre} »",
+      "copierLienCourt": "Copier le lien",
+      "lienCopie": "Lien copié. Collez-le dans votre navigateur pour l'ouvrir.",
+      "indisponibleTitre": "Les cartes de la classe ne sont pas encore ouvertes",
+      "indisponiblePhrase": "Elles apparaîtront ici dès leur ouverture. Rien à faire de votre côté.",
+      "erreurLecture": "Les cartes de la classe n'ont pas pu être lues. Réessayez dans un instant.",
+      "sansDonnees": "Les cartes de la classe n'ont pas pu être chargées",
+      "enregistree": "Carte enregistrée. La classe la voit maintenant.",
+      "retiree": "Carte retirée. La classe ne la voit plus.",
+      "types": {
+        "annonce": "Annonce",
+        "devoir": "Devoir",
+        "lien": "Lien utile",
+        "rappel": "Rappel"
+      },
+      "typesDetail": {
+        "annonce": "Pour une information à toute la classe.",
+        "devoir": "Pour un travail à préparer : l'échéance proposée est la prochaine séance.",
+        "lien": "Pour partager une page ou un support : collez son adresse.",
+        "rappel": "Pour une date à ne pas oublier : sortie, examen, changement d'horaire."
+      },
+      "modeles": {
+        "annonce": "Information pour la classe",
+        "devoir": "À préparer pour la prochaine séance",
+        "lien": "Support à consulter",
+        "rappel": "À ne pas oublier"
+      },
+      "feuille": {
+        "titreNouvelle": "Nouvelle carte de la classe",
+        "titreModifier": "Modifier la carte « {titre} »",
+        "contexte": "Choisissez un modèle : il préremplit la carte. Elle est visible aussitôt par les élèves de la classe et leurs familles.",
+        "modele": "Modèle de la carte",
+        "champTitre": "Titre de la carte",
+        "champTexte": "Texte de la carte (facultatif)",
+        "champLien": "Lien de la carte (facultatif)",
+        "aideLongueur": "{max} caractères au plus",
+        "aideLien": "Une adresse complète, qui commence par https://",
+        "echeanceAucune": "Aucune échéance",
+        "choisirEcheance": "Choisir la date d'échéance",
+        "retirerEcheance": "Retirer l'échéance",
+        "enregistrer": "Enregistrer la carte",
+        "retirer": "Retirer cette carte",
+        "retirerQuestion": "Retirer la carte « {titre} » ?",
+        "retirerConsequence": "Elle disparaît aussitôt pour les élèves de la classe et leurs familles.",
+        "retirerConfirmer": "Retirer la carte",
+        "envoiNonConfirme": "La carte n'est pas confirmée : la réponse n'est pas arrivée. Enregistrez de nouveau dans un instant.",
+        "retraitNonConfirme": "Le retrait n'est pas confirmé : la réponse n'est pas arrivée. Réessayez dans un instant.",
+        "defauts": {
+          "titreVide": "Le titre manque. Écrivez quelques mots, par exemple « Sourate à réviser ».",
+          "titreLong": "Le titre dépasse {max} caractères. Raccourcissez-le.",
+          "texteLong": "Le texte dépasse {max} caractères. Raccourcissez-le ou partagez un lien.",
+          "lienInvalide": "Ce lien n'est pas une adresse complète. Collez une adresse qui commence par https://.",
+          "echeanceManquante": "Un devoir a besoin d'une échéance. Choisissez la date d'échéance."
+        }
+      }
+    },
     "entree": {
       "coursDans": "Cours dans {duree}",
       "coursImminent": "Cours dans moins d'une minute",
@@ -3106,7 +3180,9 @@
       "preflightSansMicro": "Aucun micro n'est détecté. Branchez-en un pour lancer le cours.",
       "preflightIndisponible": "La vérification du matériel n'a pas abouti. Réessayez avant de lancer le cours.",
       "lancerHorsLigne": "Le cours pourra être lancé quand la connexion reviendra.",
-      "erreurPartielle": "Les horaires de prière et vos pauses n'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.",
+      "erreurPartielle": "Les horaires de prière et vos pauses n'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour : elles n'en dépendent pas. Réessayez dans un instant.",
+      "erreurPartielleCahiers": "Vos cahiers de transmission à terminer n'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour : elles n'en dépendent pas. Réessayez dans un instant.",
+      "erreurPartielleTout": "Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour : elles n'en dépendent pas. Réessayez dans un instant.",
       "absenceDetectee": "{eleve} n'est pas entré en salle.",
       "coupureDetectee": "{eleve} a perdu la connexion.",
       "coursAnnule": "Le cours de {heure} est annulé.",
@@ -3486,7 +3562,7 @@
       "sansMotif": "Aucun motif",
       "cleTexte": "Complément",
       "envoyer": "Envoyer le complément",
-      "echec": "L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre texte est gardé ici, réessayez dans un instant. Le rapport d'origine reste intact.",
+      "echec": "L'envoi n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Votre texte est gardé ici, réessayez dans un instant. Le rapport d'origine reste intact.",
       "envoyeTitre": "Complément ajouté",
       "envoyePhrase": "Il s'affiche sous le rapport d'origine, qui reste inchangé.",
       "revenir": "Revenir au rapport"
@@ -3522,14 +3598,14 @@
       "envoyer": "Envoyer le compte rendu",
       "plusTard": "Plus tard",
       "notice": "Ce compte rendu est transmis automatiquement à l'administration.",
-      "echec": "L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.",
-      "echecRien": "L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.",
+      "echec": "L'envoi n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.",
+      "echecRien": "L'envoi n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.",
       "envoyeTitre": "Compte rendu envoyé",
       "envoyePhrase": "Il est transmis à l'administration. Pour y revenir, ouvrez-le dans l'Historique et choisissez « Ajouter un complément ».",
       "ecrireAdmin": "Écrire à l'administration",
       "visiteEnCours": "Transmission de la visite à l'administration en cours.",
       "visiteTransmise": "La visite et son relevé automatique sont transmis à l'administration.",
-      "visiteEchec": "La transmission de la visite n'est pas confirmée : Rewayah n'a pas répondu. Réessayez ; le relevé de la visite reste enregistré sur le serveur.",
+      "visiteEchec": "La transmission de la visite n'est pas confirmée : il est possible qu'elle ne soit pas parvenue jusqu'à Rewayah. Réessayez ; le relevé de la visite reste enregistré sur le serveur.",
       "aTerminer": "Compte rendu à terminer",
       "reprendre": "Reprendre le compte rendu"
     },
@@ -3583,7 +3659,7 @@
       "clePersonne": "Personne concernée",
       "cleTexte": "Remarque",
       "sansTexte": "Aucun texte",
-      "echec": "L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration."
+      "echec": "L'envoi n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration."
     },
     "echanges": {
       "titre": "Échanges",
@@ -3593,6 +3669,7 @@
       "enAttente": "En attente",
       "vide": "Aucun échange avec l'administration pour le moment.",
       "contexte": "Contexte de la visite, joint automatiquement",
+      "contexteCompact": "Contexte joint à vos messages : séance de {heure}",
       "cleClasse": "Classe",
       "cleDate": "Date",
       "cleHeure": "Heure",
@@ -3604,7 +3681,7 @@
       "champVide": "Écrivez un message pour pouvoir l'envoyer.",
       "enCours": "Envoi en cours.",
       "envoye": "Envoyé.",
-      "echec": "L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.",
+      "echec": "L'envoi n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.",
       "reessayer": "Réessayer",
       "nouveauMessage": "Nouveau message de {auteur} : {texte}"
     },
@@ -4353,12 +4430,12 @@
       "aucuneClasse": "Aucune classe pour le moment.",
       "aucuneClasseDetail": "Votre prochaine séance s'affichera ici dès que votre classe sera ouverte.",
       "sansDonnees": "Votre prochaine séance et vos dernières séances n'ont pas pu être chargées",
-      "echec": "Votre prochaine séance et vos dernières séances n'ont pas pu être chargées : le serveur n'a pas répondu. Réessayez dans un instant."
+      "echec": "Votre prochaine séance et vos dernières séances n'ont pas pu être chargées : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
     },
     "historique": {
       "titre": "Mes séances passées",
       "sansDonnees": "Vos séances passées n'ont pas pu être chargées",
-      "echec": "Vos séances passées n'ont pas pu être chargées : le serveur n'a pas répondu. Réessayez dans un instant.",
+      "echec": "Vos séances passées n'ont pas pu être chargées : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
       "vide": "Aucune séance passée pour le moment.",
       "videDetail": "Vos séances s'afficheront ici après votre premier cours."
     },
@@ -4491,7 +4568,7 @@
         "courrielAideLui": "L'adresse e-mail sera utilisée pour envoyer à votre conjoint l'invitation à rejoindre Rewayah.",
         "prenomRequis": "Indiquez son prénom.",
         "courrielRequis": "Indiquez son adresse e-mail.",
-        "courrielInvalide": "Vérifiez l'adresse e-mail : elle doit ressembler à nom@exemple.com.",
+        "courrielInvalide": "Vérifiez l'adresse e‑mail : elle doit ressembler à nom@exemple.com.",
         "verifier": "Continuer",
         "verifierTitre": "Vérifier et envoyer",
         "verifierPhrase": "Relisez ces informations. L'invitation partira à cette adresse.",

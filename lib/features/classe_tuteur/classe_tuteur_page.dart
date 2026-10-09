@@ -12,6 +12,7 @@ import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../accueil_famille/ancre_horloge_serveur.dart';
+import '../tc_espace_groupe/bloc_cartes_classe.dart';
 import 'carte_seance_classe.dart';
 import 'contexte_classe.dart';
 
@@ -143,11 +144,15 @@ class _Contenu extends ConsumerWidget {
       ],
     );
 
+    // CARTES-PERSO-1 : les cartes que l'enseignant de la Classe compose, en
+    // lecture pour le tuteur (la capacite de modifier vient de leur lecture).
+    final Widget cartes = BlocCartesClasse(groupeId: classeId);
+
     if (!large) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
-        children: <Widget>[carte, Ecart.vLg, rubriques],
+        children: <Widget>[carte, Ecart.vLg, rubriques, Ecart.vSection, cartes],
       );
     }
     // Tablette large et bureau : deux colonnes, environ 62 / 38, comme
@@ -155,7 +160,14 @@ class _Contenu extends ConsumerWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Expanded(flex: 62, child: carte),
+        Expanded(
+          flex: 62,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[carte, Ecart.vSection, cartes],
+          ),
+        ),
         Ecart.hLg,
         Expanded(flex: 38, child: rubriques),
       ],

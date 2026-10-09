@@ -17,7 +17,9 @@ import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 /// « connexion » et « reseau » qui redisent le bandeau sans ses mots,
 /// « Verifiez votre connexion », « Connexion impossible », « sans doute a
 /// cause de la connexion », « la connexion ou le serveur n'a pas repondu »,
-/// « a besoin d'Internet »). Partage avec la garde du catalogue
+/// « a besoin d'Internet » ; EA-HL-DOUBLE-1e : « connexion instable »,
+/// « réseau faible », « problème de connexion », « connexion ou service »,
+/// sans exception, entre parenthèses comme en tête de phrase). Partage avec la garde du catalogue
 /// (`test/core/reseau/etat_sans_donnees_test.dart`).
 ///
 /// Reste permise la forme que `03` donne en exemple : ce qui ne peut pas se
@@ -33,7 +35,10 @@ final RegExp motifHorsLigne = RegExp(
   r'(connexion|réseau) ne (marche|fonctionne|revient) (pas|plus)|'
   r'(à cause|en raison) (de la connexion|du réseau|d.une coupure)|'
   r'coupure (de|du) (la )?(connexion|réseau)|'
-  r'(connexion|réseau) ou (le serveur|d.un service)|'
+  r'(connexion|réseau) ou (le |un |du |d.un )?(serveur|service)|'
+  r'(connexion|réseau) (est |semble )?(instable|faible|lente?|mauvaise|'
+  r'fragile|perturbée|défaillante)|(mauvaise|faible) (connexion|réseau)|'
+  r'(problème|souci|incident|panne) (de connexion|de réseau|du réseau)|'
   r'besoin d.(internet|une connexion|un réseau)|reconnectez cet appareil',
   caseSensitive: false,
 );

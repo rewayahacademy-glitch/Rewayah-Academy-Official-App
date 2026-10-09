@@ -14,6 +14,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
@@ -252,11 +253,8 @@ class _Corps extends StatelessWidget {
         // que c'est l'axe secondaire. Colles l'un a l'autre et non pousses aux
         // deux bords : deux filtres separes par la largeur de l'ecran ne se
         // lisent plus comme deux filtres, mais comme deux fonctions.
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: <Widget>[
+        RangeeFiltres(
+          filtres: <Widget>[
             FilterPill(
               libelle: t.admin.comptes.filtreTousEtats,
               compteur: comptes.length,

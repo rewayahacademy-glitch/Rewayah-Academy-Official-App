@@ -18,6 +18,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/zone_saisie.dart';
 
 /// Le panneau d'apres-cours (spec section 9.5).
 ///
@@ -117,12 +118,10 @@ class _PanneauPostCoursState extends ConsumerState<PanneauPostCours> {
         Ecart.vXl,
 
         // 3. CE QUE L'ENSEIGNANT AJOUTE, en dernier, et facultatif.
-        TextField(
-          controller: _notes,
-          maxLines: 2,
-          decoration: InputDecoration(
-            labelText: t.tc.parcours.postCours.exceptions,
-          ),
+        ZoneSaisie(
+          controleur: _notes,
+          minLignes: 2,
+          libelle: t.tc.parcours.postCours.exceptions,
         ),
         Ecart.vLg,
 

@@ -27,7 +27,14 @@ class TexteSansCoupure extends StatelessWidget {
     this.maxLignes,
     this.voisins = const <String>[],
     this.plancher = 1,
+    this.nomsComposesEntiers = false,
   });
+
+  /// Vrai : un nom compose (« Al-Badr ») ne passe pas a la ligne apres son
+  /// trait d'union (titre d'ecran, SUPERPOS-1). Faux par defaut : ailleurs,
+  /// la coupure au trait d'union reste celle de la typographie francaise
+  /// (« es- / tu »), et le texte rendu reste exactement le texte donne.
+  final bool nomsComposesEntiers;
 
   /// Les libelles voisins de MEME largeur (segments d'un `ControleSegmente`) :
   /// l'echelle est bornee par le mot le plus long de tous, pour que les
@@ -81,15 +88,64 @@ class TexteSansCoupure extends StatelessWidget {
       ),
       echellePour: pour,
       child: LayoutBuilder(
-        builder: (BuildContext _, BoxConstraints c) => Text(
-          texte,
-          style: style,
-          textAlign: textAlign,
-          textScaler: pour(c.maxWidth),
-        ),
+        builder: (BuildContext _, BoxConstraints c) {
+          final TextScaler retenue = pour(c.maxWidth);
+          // SUPERPOS-1 : un nom compose (« Al-Badr ») passait a la ligne
+          // apres son trait d'union (« Classe Al- / Badr ») : il est lu
+          // comme un mot, il reste entier. Le texte n'est retouche (un
+          // gluon invisible apres le trait) que si la ligne s'y coupait
+          // vraiment ; le lecteur d'ecran lit le texte d'origine.
+          final String rendu = nomsComposesEntiers
+              ? sansCoupureAuTrait(texte, complet, sens, retenue, c.maxWidth)
+              : texte;
+          return Text(
+            rendu,
+            style: style,
+            textAlign: textAlign,
+            textScaler: retenue,
+            semanticsLabel: identical(rendu, texte) ? null : texte,
+          );
+        },
       ),
     );
   }
+}
+
+/// Un trait d'union entre deux lettres : « Al-Badr », « Saint-Denis ».
+final RegExp _traitEntreLettres = RegExp(
+  r'(?<=\p{L})-(?=\p{L})',
+  unicode: true,
+);
+
+/// Le gluon invisible (WORD JOINER, U+2060) : aucune coupure de ligne a cote.
+const String _gluon = '\u2060';
+
+/// [texte] tel qu'il se rend sans couper un nom compose : si, a [echelle] et
+/// dans [largeur], une ligne se termine juste apres un trait d'union entre
+/// deux lettres, un gluon invisible est pose apres chaque tel trait (le nom
+/// passe alors entier a la ligne). Sinon, [texte] lui-meme (le meme objet).
+String sansCoupureAuTrait(
+  String texte,
+  TextStyle complet,
+  TextDirection sens,
+  TextScaler echelle,
+  double largeur,
+) {
+  if (!largeur.isFinite || !texte.contains('-')) return texte;
+  final List<int> traits = <int>[
+    for (final RegExpMatch m in _traitEntreLettres.allMatches(texte)) m.start,
+  ];
+  if (traits.isEmpty) return texte;
+  final TextPainter p = TextPainter(
+    text: TextSpan(text: texte, style: complet),
+    textDirection: sens,
+    textScaler: echelle,
+  )..layout(maxWidth: largeur);
+  final bool coupe = traits.any(
+    (int i) => p.getLineBoundary(TextPosition(offset: i)).end == i + 1,
+  );
+  p.dispose();
+  return coupe ? texte.replaceAll(_traitEntreLettres, '-$_gluon') : texte;
 }
 
 /// La largeur du mot le plus long de [texte], a l'echelle [echelle].

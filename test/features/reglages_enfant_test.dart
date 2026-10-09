@@ -189,6 +189,55 @@ void main() {
   );
 
   group('TUT-05 : les demandes du tuteur', () {
+    // SUPERPOS-1, reprise du relecteur : la feuille de demande, en
+    // Interface guidee (activable aussi par un adulte) et a 320 en texte
+    // double, depassait l'ecran de 268 px : le bouton d'envoi etait hors
+    // d'atteinte. Elle defile. Contre-epreuve faite : sur l'ancien code, la
+    // colonne de la feuille deborde.
+    for (final InterfaceMode mode in InterfaceMode.values) {
+      testWidgets('feuille de demande a 320 x2 (${mode.name}) : rien ne '
+          'deborde, l envoi s atteint', (WidgetTester tester) async {
+        tester.view.physicalSize = const Size(320, 640);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        tester.platformDispatcher.textScaleFactorTestValue = 2;
+        addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+        await tester.pumpWidget(
+          hote(
+            const ReglagesEnfantPage(),
+            mode: mode,
+            surcharges: _surcharges(
+              appairage: FauxServiceAppairage()
+                ..elevesRendus = <EleveDuFoyer>[_enfant()],
+              planning: FauxServicePlanning()
+                ..affectationsRendues = <Affectation>[_affectation()],
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        final Finder demande = find.text(
+          t.tuteur.reglages.demandeReaffectation,
+        );
+        await tester.ensureVisible(demande);
+        await tester.pumpAndSettle();
+        await tester.tap(demande);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        await tester.enterText(find.byType(TextField), 'Horaire impossible');
+        await tester.pumpAndSettle();
+        final Finder envoyer = find.widgetWithText(
+          ActionPrincipale,
+          t.tuteur.reglages.demandeEnvoyer,
+        );
+        await tester.ensureVisible(envoyer);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        final Rect r = tester.getRect(envoyer);
+        expect(r.top, greaterThanOrEqualTo(0));
+        expect(r.bottom, lessThanOrEqualTo(640));
+      });
+    }
+
     testWidgets('sans enseignant, la reaffectation n est pas proposee', (
       WidgetTester tester,
     ) async {

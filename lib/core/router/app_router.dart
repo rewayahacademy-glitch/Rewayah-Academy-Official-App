@@ -116,6 +116,7 @@ import '../config/env.dart';
 import '../domain/enums.dart';
 import '../i18n/strings.g.dart';
 import '../mouvement/transitions.dart';
+import '../preferences/presentation_vue.dart';
 import '../session/session_controleur.dart';
 import '../session/session_state.dart';
 import '../tc_groupe/group_home_vm.dart' show RoleEspaceGroupe;
@@ -155,6 +156,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
   });
   // --- fin du bloc DASH-EA-PROD ---------------------------------------------
 
+  // PUB-1 : la racine d'un visiteur sans session depend de la presentation
+  // deja vue sur cet appareil, lue apres le demarrage.
+  ref.listen<EtatPresentation>(presentationProvider, (
+    EtatPresentation? _,
+    EtatPresentation _,
+  ) {
+    rafraichisseur.declencher();
+  });
+
   // Lu une fois, a la construction du routeur : un role ne change pas sans
   // reconnexion, qui recree ce provider. `routesTcA` n'en a besoin que pour
   // distinguer l'affichage eleve/tuteur au sein de l'Espace Groupe -- la
@@ -167,8 +177,16 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
     initialLocation: Routes.racine,
     refreshListenable: rafraichisseur,
     redirect: (BuildContext _, GoRouterState etat) {
+      final SessionState session = ref.read(sessionProvider);
+      // La preference n'est lue que pour la racine d'un visiteur sans
+      // session : un compte connecte ne touche jamais ce stockage.
+      if (session.porte == PorteAcces.deconnecte &&
+          etat.matchedLocation == Routes.racine) {
+        ref.read(presentationProvider.notifier).charger();
+      }
       return deciderRedirection(
-        session: ref.read(sessionProvider),
+        session: session,
+        presentation: ref.read(presentationProvider),
         cheminDemande: etat.matchedLocation,
         billet: etat.extra is BilletSalle ? etat.extra! as BilletSalle : null,
         maintenant: DateTime.now(),
@@ -1592,8 +1610,8 @@ class _CoquilleAdmin extends ConsumerWidget {
       // Le bandeau d'alerte urgente, en tete de toute page ouverte, sauf
       // sous l'Accueil : le Centre de commande et la page des alertes
       // montrent deja l'alerte en tete (D7, une information une fois).
-      // Pose seulement quand une alerte urgente est ouverte : sans elle, la
-      // page garde sa tete fixe.
+      // Pose seulement quand une alerte urgente est ouverte ; fige en haut
+      // par la coquille, hors de la zone qui defile (ALERTE-1b).
       bandeau: domaine == AdminDomaine.accueil || (urgentes ?? 0) == 0
           ? null
           : BandeauAlerteUrgente(onOuvrir: () => aller(Routes.adminAlertes)),
