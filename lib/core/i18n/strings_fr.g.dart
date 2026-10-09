@@ -302,11 +302,11 @@ class Traductions$salle$fr {
 	/// fr: 'Ce n'est pas votre appareil : le service de visioconférence n'est pas branché. L'équipe le sait.'
 	String get refusConfigurationDetail => 'Ce n\'est pas votre appareil : le service de visioconférence n\'est pas branché. L\'équipe le sait.';
 
-	/// fr: 'La salle n'a pas répondu'
-	String get refusReseau => 'La salle n\'a pas répondu';
+	/// fr: 'La salle n'a pas pu s'ouvrir'
+	String get refusReseau => 'La salle n\'a pas pu s\'ouvrir';
 
-	/// fr: 'Vérifiez votre connexion, puis réessayez.'
-	String get refusReseauDetail => 'Vérifiez votre connexion, puis réessayez.';
+	/// fr: 'Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vérifiez votre connexion, puis réessayez.'
+	String get refusReseauDetail => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vérifiez votre connexion, puis réessayez.';
 
 	/// fr: 'Aucun micro utilisable sur cet appareil'
 	String get refusMateriel => 'Aucun micro utilisable sur cet appareil';
@@ -1468,11 +1468,11 @@ class Traductions$agent$fr {
 	/// fr: 'Ce jeton est inconnu, révoqué ou expiré. Demandez-en un nouveau à l'académie.'
 	String get refusDetail => 'Ce jeton est inconnu, révoqué ou expiré. Demandez-en un nouveau à l\'académie.';
 
-	/// fr: 'Service indisponible'
-	String get indisponible => 'Service indisponible';
+	/// fr: 'L'ouverture n'a pas abouti'
+	String get indisponible => 'L\'ouverture n\'a pas abouti';
 
-	/// fr: 'L'ouverture de session n'a pas répondu. Réessayez dans un instant.'
-	String get indisponibleDetail => 'L\'ouverture de session n\'a pas répondu. Réessayez dans un instant.';
+	/// fr: 'Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get indisponibleDetail => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 
 	/// fr: 'Réessayer'
 	String get reessayer => 'Réessayer';
@@ -13344,8 +13344,11 @@ class Traductions$tc$bibliotheque$indisponible$fr {
 
 	// Translations
 
-	/// fr: 'La bibliothèque est momentanément indisponible'
-	String get message => 'La bibliothèque est momentanément indisponible';
+	/// fr: 'La bibliothèque n'a pas pu être chargée'
+	String get message => 'La bibliothèque n\'a pas pu être chargée';
+
+	/// fr: 'Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get invitation => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 
 	/// fr: 'Réessayer'
 	String get action => 'Réessayer';
@@ -16145,8 +16148,8 @@ extension on Traductions {
 			'salle.refusAccesDetail' => 'La salle s\'ouvre dix minutes avant l\'heure du cours, et se ferme un quart d\'heure après sa fin.',
 			'salle.refusConfiguration' => 'La salle n\'est pas encore disponible',
 			'salle.refusConfigurationDetail' => 'Ce n\'est pas votre appareil : le service de visioconférence n\'est pas branché. L\'équipe le sait.',
-			'salle.refusReseau' => 'La salle n\'a pas répondu',
-			'salle.refusReseauDetail' => 'Vérifiez votre connexion, puis réessayez.',
+			'salle.refusReseau' => 'La salle n\'a pas pu s\'ouvrir',
+			'salle.refusReseauDetail' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vérifiez votre connexion, puis réessayez.',
 			'salle.refusMateriel' => 'Aucun micro utilisable sur cet appareil',
 			'salle.refusMaterielDetail' => 'Un cours de Coran se fait à la voix. Autorisez l\'accès au micro, ou branchez un casque, puis réessayez.',
 			'salle.retourAccueil' => 'Revenir à mon accueil',
@@ -17562,8 +17565,8 @@ extension on Traductions {
 			'agent.ouverture' => 'Ouverture',
 			'agent.refus' => 'Jeton refusé',
 			'agent.refusDetail' => 'Ce jeton est inconnu, révoqué ou expiré. Demandez-en un nouveau à l\'académie.',
-			'agent.indisponible' => 'Service indisponible',
-			'agent.indisponibleDetail' => 'L\'ouverture de session n\'a pas répondu. Réessayez dans un instant.',
+			'agent.indisponible' => 'L\'ouverture n\'a pas abouti',
+			'agent.indisponibleDetail' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'agent.reessayer' => 'Réessayer',
 			'agent.bandeau' => 'Observation, lecture seule',
 			'agent.bandeauMasque' => 'Prénoms masqués',
@@ -19141,7 +19144,8 @@ extension on Traductions {
 			'tc.bibliotheque.vide.invitation' => 'Vos enseignants déposeront ici les supports de vos cours.',
 			'tc.bibliotheque.aucunResultat.message' => 'Aucun support ne correspond',
 			'tc.bibliotheque.aucunResultat.invitation' => 'Essayez un autre mot, ou relâchez les filtres.',
-			'tc.bibliotheque.indisponible.message' => 'La bibliothèque est momentanément indisponible',
+			'tc.bibliotheque.indisponible.message' => 'La bibliothèque n\'a pas pu être chargée',
+			'tc.bibliotheque.indisponible.invitation' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'tc.bibliotheque.indisponible.action' => 'Réessayer',
 			'tc.bibliotheque.introuvable.message' => 'Ce support ne vous est pas ouvert',
 			'tc.bibliotheque.introuvable.invitation' => 'Il a peut-être été retiré, ou il est réservé à un autre groupe. Votre enseignant peut vous le rouvrir.',
@@ -19417,9 +19421,9 @@ extension on Traductions {
 			'tc.observation.visite.videoIndisponible' => 'La vidéo de la séance n\'a pas pu s\'ouvrir. Votre temps d\'observation continue de s\'écouler.',
 			'tc.observation.visite.sortieNonConfirmee' => 'La fin de votre visite n\'a pas pu être confirmée. Elle sera fermée par le serveur.',
 			'tc.observation.visite.restantes' => 'restantes',
-			'tc.observation.visite.decompteLu' => ({required Object duree}) => 'Temps restant : ${duree}',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.visite.decompteLu' => ({required Object duree}) => 'Temps restant : ${duree}',
 			'tc.observation.visite.enDirect' => 'En direct',
 			'tc.observation.visite.connexion' => 'Connexion',
 			'tc.observation.visite.reconnexion' => 'Reconnexion',

@@ -20,6 +20,7 @@ import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/indicateur_observation.dart';
 
 import '../support/harnais.dart';
+import '../support/hors_ligne_une_fois.dart';
 import '../teaching_core/e/faux/faux_classe.dart';
 
 const String _seance = 's1';
@@ -804,6 +805,10 @@ void main() {
 
       expect(find.text(t.salle.refusReseau), findsOneWidget);
       expect(preVol.verifications, 1);
+      // EA-HL-DOUBLE-1f (K-59) : « La salle n'a pas repondu » affirmait une
+      // cause ; la cause probable est dite sans l'affirmer.
+      expect(causesAffirmees(), findsNothing);
+      expect(find.textContaining(formulationCauseProbable), findsOneWidget);
 
       moteur.erreurEntree = null;
       await tester.tap(find.text(t.commun.reessayer));

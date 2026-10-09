@@ -45,6 +45,42 @@ final RegExp motifHorsLigne = RegExp(
 
 bool _ditHorsLigne(String texte) => motifHorsLigne.hasMatch(texte);
 
+/// Ce qui affirme une cause cote service sur une lecture ou un envoi reste
+/// sans reponse (EA-HL-DOUBLE-1f, K-59, decide par delegation le 09/10,
+/// DIR-REP-1) : « le serveur n'a pas repondu », « la salle n'a pas
+/// repondu », « Service indisponible », « momentanement indisponible ».
+/// Hors ligne, c'est l'appareil qui n'a rien envoye : la cause affirmee est
+/// inexacte. Le texte dit ce qui n'a pas abouti et la cause probable sans
+/// l'affirmer, en une seule formulation (« il est possible que la demande
+/// ne soit pas parvenue jusqu'a Rewayah »).
+///
+/// Ne sont pas des causes affirmees : l'effet dit tel quel (« Roster
+/// indisponible », « Information indisponible ») et une fonction fermee par
+/// le serveur, fait connu (« La validation est indisponible pour le
+/// moment », `CapaciteIndisponible`).
+final RegExp motifCauseAffirmee = RegExp(
+  r'n.a pas répondu|n.a pas pu répondre|ne répond (pas|plus)|'
+  r'(service|serveur|bibliothèque|plateforme|salle) (est |semble )?'
+  r'(momentanément |temporairement )?indisponible|'
+  r'(momentanément|temporairement) indisponible',
+  caseSensitive: false,
+);
+
+/// La formulation unique de la cause probable (EA-HL-DOUBLE-1e et 1f).
+final RegExp formulationCauseProbable = RegExp(
+  r'il est possible qu(.il|.elle|e la demande) ne soit pas parvenue? '
+  r'jusqu.à Rewayah',
+  caseSensitive: false,
+);
+
+/// Les textes affiches qui affirment une cause cote service.
+Finder causesAffirmees() => find.byWidgetPredicate(
+  (Widget w) =>
+      w is Text &&
+      motifCauseAffirmee.hasMatch(w.data ?? w.textSpan?.toPlainText() ?? ''),
+  description: 'texte qui affirme une cause cote service',
+);
+
 /// Les textes affiches qui disent l'absence de reseau, bandeau compris.
 Finder signauxHorsLigne() => find.byWidgetPredicate(
   (Widget w) =>

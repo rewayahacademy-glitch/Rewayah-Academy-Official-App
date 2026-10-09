@@ -208,6 +208,7 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
           SliverToBoxAdapter(
             child: EmptyState(
               message: t.tc.bibliotheque.indisponible.message,
+              invitation: t.tc.bibliotheque.indisponible.invitation,
               icone: AppIcons.avertissement,
               libelleAction: t.tc.bibliotheque.indisponible.action,
               onAction: () =>

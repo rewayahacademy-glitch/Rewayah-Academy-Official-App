@@ -13,6 +13,7 @@ import 'package:rewayah_academy/features/tc_catalogue/surface_bibliotheque.dart'
 import 'package:rewayah_academy/features/tc_catalogue/vignette_ressource.dart';
 
 import '../../support/garde_interface.dart';
+import '../../support/hors_ligne_une_fois.dart';
 
 import 'faux/faux_ports_b.dart';
 import 'support/hote_b.dart';
@@ -120,6 +121,13 @@ void main() {
 
       expect(find.text(t.tc.bibliotheque.indisponible.message), findsOneWidget);
       expect(find.text(t.tc.bibliotheque.vide.message), findsNothing);
+      // EA-HL-DOUBLE-1f (K-59) : la cause probable est dite sans etre
+      // affirmee, et « momentanement indisponible » n'est plus dit.
+      expect(
+        find.text(t.tc.bibliotheque.indisponible.invitation),
+        findsOneWidget,
+      );
+      expect(causesAffirmees(), findsNothing);
     });
   });
 
