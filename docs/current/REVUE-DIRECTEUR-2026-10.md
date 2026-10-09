@@ -417,7 +417,7 @@ Exception justifiée : le bandeau « Démonstration » disparaît clavier ouvert
 | Commandes du Coran sur le Mushaf, lecteur d'écran, 390 ×2 (reprise) | 80 px | 0 |
 | Feuille de demande des réglages de l'enfant, 320 ×2 (reprise) | 256 px (standard), 710 px (guidée) de débordement | 0 |
 | Textes tronqués ou mots coupés mesurés (reprise : aide du courriel, aide de l'âge, « e- / mail », « administratio / n… », « Al- / Badr ») | 5 | 0 |
-| `verifier_revue` | 1550 | 1550 ; reprise : 1548 avant, mesuré de nouveau après (voir le bilan de la reprise) |
+| `verifier_revue` | 1550 | 1550 ; reprise : 1548 avant, 1546 après |
 | `verifier_jetons` | 39 | 37 (les deux littéraux du ruban supprimé) |
 
 Tests ajoutés, tous en contre-épreuve réelle sur l'ancien code : `test/core/widgets/zone_saisie_test.dart`, `zone_saisie_unique_test.dart`, `choix_cote_a_cote_superpos_test.dart`, `test/features/demo/repere_demonstration_test.dart` (bande dans le flux, clavier ouvert), `test/features/controleur/echanges_controleur_test.dart` (contexte compact), `test/features/cahier/cahier_en7c_test.dart` (reprise à 320 ×2). Reprise du relecteur, chacun en contre-épreuve réelle sur la tête d'avant la reprise (`2b42d97d`) : `test/core/widgets/entete_compact_test.dart`, `test/features/controleur/echanges_compact_superpos_test.dart`, `test/core/accessibilite/coran_commandes_flux_superpos_test.dart` (3 cas sur 4 échouent avant ; le 4e garde MA-CMD-1 au toucher), `test/features/foyer/aides_champs_320_superpos_test.dart`, `test/features/reglages_enfant_test.dart` (feuille de demande, standard et guidée), `test/core/widgets/zone_saisie_test.dart` (aide du champ vide).
