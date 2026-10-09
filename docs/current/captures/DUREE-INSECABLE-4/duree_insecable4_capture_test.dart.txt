@@ -2,7 +2,7 @@
 //
 // - CarteSession aux quatre moments (avant, fenetre, pendant, apres), 320 px texte x2,
 //   LTR et RTL : la ponctuation d'un libelle francais reste a sa place en
-//   RTL (isolement dans le sens du contenu) ;
+//   RTL (isolat partage FSI ... PDI, isolerDansInterface) ;
 // - CarteSession a 1440 px (texte x1 clair, texte x2 sombre) : la carte
 //   garde la largeur de lecture (AppPage.largeurLecture), au bord de debut ;
 // - fiche de seance, rappel discret en attente, 320 px texte x2, LTR et
