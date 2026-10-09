@@ -289,6 +289,24 @@ void main() {
     });
   }
 
+  // Reprise : a 1440 px et texte x2, le tableau coupait ses mots
+  // (« Enseigna / nt ») et tronquait ses en-tetes : il se replie en cartes.
+  testWidgets('Comptes, 1440 px, texte x2 : repliee en cartes, sans en-tete '
+      'de tableau', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(1440, 900);
+    tester.view.devicePixelRatio = 1;
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.view.reset);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await tester.pumpWidget(
+      _hote(const ComptesPage(), _comptes, sens: TextDirection.rtl),
+    );
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text(t.admin.comptes.colonneIdentifiant), findsNothing);
+    expect(find.textContaining('TEACHER-AS-000001'), findsOneWidget);
+  });
+
   testWidgets('Qualite, 390 px : la collection repliee en cartes dans le '
       'defilement de la page s affiche (plus de hauteur non bornee)', (
     WidgetTester tester,

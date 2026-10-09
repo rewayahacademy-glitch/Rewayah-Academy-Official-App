@@ -10,6 +10,11 @@
 // - Qualite, repliee en cartes dans le defilement de la page : 390 clair LTR
 //   et 320 texte x2 sombre RTL. Avant DUREE-INSECABLE-5, la page levait
 //   « Vertical viewport was given unbounded height » et ne montrait rien.
+// - Reprise : Comptes a 1440, l'identifiant « TEACHER-AS-000001 » tient sur
+//   une ligne (colonne de deux parts, pas de coupure a ses traits d'union
+//   tant qu'il tient). A 1440 texte x2 sombre RTL, la collection se replie
+//   en cartes : en tableau, « Enseigna / nt » se coupait et les en-tetes se
+//   tronquaient.
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -243,6 +248,28 @@ void main() {
             await capturer(tester, nom);
           });
         }
+      }
+
+      {
+        final _Vue v = _vue(1440, 900, 2, ThemeMode.dark, TextDirection.rtl);
+        final String nom = _nom('comptes_texte_agrandi', v);
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(tester, Size(v.largeur, v.hauteur), 1);
+          await tester.pumpWidget(
+            _hote(
+              v,
+              ecran: const ComptesPage(),
+              surcharges: <Override>[
+                ..._comptes,
+                serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+              ],
+            ),
+          );
+          await stabiliser(tester);
+          expect(find.textContaining('TEACHER'), findsWidgets);
+          expect(tester.takeException(), isNull);
+          await capturer(tester, nom);
+        });
       }
 
       for (final _Vue v in <_Vue>[

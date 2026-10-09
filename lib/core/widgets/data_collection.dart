@@ -146,7 +146,15 @@ class DataCollection<T> extends StatelessWidget {
   }
 
   Widget _construire(BuildContext context, {required bool integree}) {
-    final bool tableau = AppGabarit.de(context) == Gabarit.desktop;
+    // DUREE-INSECABLE-5 (reprise) : a texte agrandi (150 % et plus, le
+    // seuil des choix en colonnes), un tableau de sept colonnes coupait ses
+    // mots (« Enseigna / nt ») et tronquait ses en-tetes ; la collection se
+    // replie alors en cartes, comme sous le seuil desktop (decide par
+    // delegation le 09/10).
+    final bool tableau =
+        AppGabarit.de(context) == Gabarit.desktop &&
+        MediaQuery.textScalerOf(context).scale(16) / 16 <
+            AppGabarit.seuilTexteColonne;
 
     if (!tableau) {
       return _Defilement<T>(
