@@ -148,8 +148,6 @@ BEGIN
 END
 $scenario$;
 
-ROLLBACK;
-
 SET LOCAL ROLE authenticated;
 SELECT set_config('test.uid', 'b0800000-0000-0000-0000-000000000002', true);
 SELECT set_config('test.jwt',
@@ -183,3 +181,4 @@ BEGIN
 END
 $rls_autre_foyer$;
 RESET ROLE;
+ROLLBACK;
