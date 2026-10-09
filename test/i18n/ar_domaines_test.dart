@@ -1,10 +1,10 @@
 // AR-COMPLET-1, par tranches : les domaines traduits en arabe le restent.
 //
-// AR-SALLE-1 (`salle.*`) et AR-TC-1 (`tc.*`) : chaque cle du francais a sa
-// traduction arabe, avec exactement les memes parametres ; chaque parametre
-// ajoute par ces tranches est isole (U+2068 ... U+2069), pour qu'un nom latin
-// ne renverse pas la phrase. Une tranche suivante ajoute son domaine a
-// [_domaines].
+// AR-SALLE-1 (`salle.*`), AR-TC-1 (`tc.*`) et AR-ENS-1 (`enseignant.*`) :
+// chaque cle du francais a sa traduction arabe, avec exactement les memes
+// parametres ; chaque parametre ajoute par ces tranches est isole (U+2068 ...
+// U+2069), pour qu'un nom latin ne renverse pas la phrase. Une tranche
+// suivante ajoute son domaine a [_domaines].
 
 import 'dart:convert';
 import 'dart:io';
@@ -13,7 +13,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 
 /// Les domaines entierement traduits, et leur nombre minimal de cles.
-const Map<String, int> _domaines = <String, int>{'salle': 300, 'tc': 450};
+const Map<String, int> _domaines = <String, int>{
+  'salle': 300,
+  'tc': 450,
+  'enseignant': 400,
+};
 
 Map<String, String> _aplatir(
   Map<String, dynamic> carte, [
@@ -38,7 +42,16 @@ Map<String, String> _domaine(String langue, String domaine) => _aplatir(
 );
 
 /// Les cles traduites avant ces tranches, sans isolation.
-const Set<String> _anciennes = <String>{'salle.secours.indisponible'};
+const Set<String> _anciennes = <String>{
+  'salle.secours.indisponible',
+  'enseignant.journee.rejoindreSalleLecteur',
+  'enseignant.journee.remplirCahierLecteur',
+  'enseignant.journee.cahierObligatoire',
+  'enseignant.journee.voirCahier',
+  'enseignant.journee.voirCahierLecteur',
+  'enseignant.ficheGroupe.repriseEleve',
+  'enseignant.ficheGroupe.dernierPoint',
+};
 
 /// Les textes gardes en latin (marque, format de fichier).
 const Set<String> _latins = <String>{

@@ -169,6 +169,17 @@ class _Traductions$enseignant$ar extends Traductions$enseignant$fr {
 	// Translations
 	@override late final _Traductions$enseignant$journee$ar journee = _Traductions$enseignant$journee$ar._(_root);
 	@override late final _Traductions$enseignant$ficheGroupe$ar ficheGroupe = _Traductions$enseignant$ficheGroupe$ar._(_root);
+	@override late final _Traductions$enseignant$classes$ar classes = _Traductions$enseignant$classes$ar._(_root);
+	@override late final _Traductions$enseignant$eleve$ar eleve = _Traductions$enseignant$eleve$ar._(_root);
+	@override late final _Traductions$enseignant$signalement$ar signalement = _Traductions$enseignant$signalement$ar._(_root);
+	@override late final _Traductions$enseignant$demo$ar demo = _Traductions$enseignant$demo$ar._(_root);
+	@override late final _Traductions$enseignant$bienvenue$ar bienvenue = _Traductions$enseignant$bienvenue$ar._(_root);
+	@override late final _Traductions$enseignant$photo$ar photo = _Traductions$enseignant$photo$ar._(_root);
+	@override late final _Traductions$enseignant$salle$ar salle = _Traductions$enseignant$salle$ar._(_root);
+	@override late final _Traductions$enseignant$cahier$ar cahier = _Traductions$enseignant$cahier$ar._(_root);
+	@override late final _Traductions$enseignant$profil$ar profil = _Traductions$enseignant$profil$ar._(_root);
+	@override late final _Traductions$enseignant$creneaux$ar creneaux = _Traductions$enseignant$creneaux$ar._(_root);
+	@override late final _Traductions$enseignant$revue$ar revue = _Traductions$enseignant$revue$ar._(_root);
 }
 
 // Path: compte
@@ -466,6 +477,79 @@ class _Traductions$enseignant$journee$ar extends Traductions$enseignant$journee$
 	@override String cahierObligatoire({required Object classe}) => 'إلزامي: يُعبَّأ دفتر ${classe} في نهاية كل حصة.';
 	@override String voirCahier({required Object classe}) => 'عرض دفتر ${classe}';
 	@override String voirCahierLecteur({required Object classe}) => 'عرض دفتر المتابعة للفصل ${classe}';
+	@override String get lancer => 'بدء الدرس';
+	@override String get preflight => 'التحقق قبل الدرس';
+	@override String get titre => 'اليوم';
+	@override String get prochainCours => 'الدرس القادم';
+	@override String get coursEnCours => 'حصة مباشرة';
+	@override String minuteurHeures({required Object heures, required Object minutes}) => 'بعد ⁨${heures}⁩ س ⁨${minutes}⁩ د';
+	@override String minuteurMinutes({required Object minutes}) => 'بعد ⁨${minutes}⁩ دقيقة';
+	@override String get minuteurImminent => 'يبدأ الآن';
+	@override String jusqua({required Object heure}) => 'حتى ⁨${heure}⁩';
+	@override String unAutreJour({required Object jour, required Object heure}) => '⁨${jour}⁩، الساعة ⁨${heure}⁩';
+	@override String get lancementPlusTard => 'يُتاح البدء قبل موعد الدرس بعشر دقائق.';
+	@override String get aucunCours => 'لا دروس قادمة';
+	@override String get aucunCoursDetail => 'اقبل طالبًا في الانتظار: هذا ما يملأ يومك.';
+	@override String get colonne => 'اليوم';
+	@override String ligneCours({required Object prenom}) => 'درس مع ⁨${prenom}⁩';
+	@override String get lignePause => 'استراحة';
+	@override String plage({required Object debut, required Object fin}) => '⁨${debut}⁩ إلى ⁨${fin}⁩';
+	@override String duree({required Object minutes}) => '⁨${minutes}⁩ دقيقة';
+	@override String get rienAujourdhui => 'لا شيء مقرر اليوم';
+	@override String rienAujourdhuiDetail({required Object jour, required Object heure}) => 'درسك القادم ⁨${jour}⁩ الساعة ⁨${heure}⁩.';
+	@override String journeeTerminee({required Object nombre}) => '⁨${nombre}⁩ دروس قُدِّمت اليوم.';
+	@override String get journeeTermineeUn => 'درس واحد قُدِّم اليوم.';
+	@override String get voirCreneaux => 'عرض مواعيدي';
+	@override String get erreur => 'تعذّرت قراءة اليوم كاملًا. أعد المحاولة بعد لحظة.';
+	@override String get coursIndividuel => 'درس فردي';
+	@override String effectif({required Object nombre}) => '⁨${nombre}⁩ طلاب';
+	@override String get effectifUn => 'طالب واحد';
+	@override String get preflightOk => 'الميكروفون جاهز';
+	@override String get preflightBloque => 'متصفحك يحظر الميكروفون. اسمح به لبدء الدرس.';
+	@override String get preflightSansMicro => 'لم يُعثر على ميكروفون. وصّل واحدًا لبدء الدرس.';
+	@override String get preflightIndisponible => 'لم يكتمل التحقق من الأجهزة. أعد المحاولة قبل بدء الدرس.';
+	@override String get lancerHorsLigne => 'دون شبكة، لا يمكن فتح القاعة. أعد الاتصال لبدء الدرس.';
+	@override String get erreurPartielle => 'تعذّر تحميل أوقات الصلاة واستراحاتك (اتصال غير مستقر أو خدمة غير متاحة مؤقتًا). الحصص المعروضة محدَّثة: يمكنك بدؤها بشكل عادي.';
+	@override String absenceDetectee({required Object eleve}) => 'لم يدخل ⁨${eleve}⁩ القاعة.';
+	@override String coupureDetectee({required Object eleve}) => 'انقطع اتصال ⁨${eleve}⁩.';
+	@override String coursAnnule({required Object heure}) => 'أُلغي درس الساعة ⁨${heure}⁩.';
+	@override String get rapportsTitre => 'تقارير بانتظار الإيداع';
+	@override String rapportLigne({required Object jour, required Object heure}) => 'درس ⁨${jour}⁩ الساعة ⁨${heure}⁩';
+	@override String rapportAttente({required Object heures}) => 'للإيداع منذ ⁨${heures}⁩ س';
+	@override String rapportRetard({required Object heures}) => 'متأخر ⁨${heures}⁩ س';
+	@override String get enAttenteTitre => 'طلاب في الانتظار';
+	@override String get enAttenteLibelle => 'طلاب في الانتظار في ساعاتك';
+	@override String get enAttenteLibelleUn => 'طالب في الانتظار في ساعاتك';
+	@override String get prochaineSeance => 'الحصة القادمة';
+	@override String get maJournee => 'يومي';
+	@override String get aTerminer => 'للإنهاء';
+	@override String get aTerminerVide => 'كل دفاترك منتهية.';
+	@override String get aTerminerErreur => 'تعذّرت قراءة الدفاتر المطلوب إنهاؤها. أعد المحاولة بعد لحظة.';
+	@override String get aTerminerAide => 'دفتر المتابعة يساعد طلابك ويتيح لك تعديل الدرس القادم.';
+	@override String get rappelCahier => 'دفاتر متابعة تنتظر الإنهاء';
+	@override String cahierLigne({required Object classe}) => 'دفتر متابعة ⁨${classe}⁩';
+	@override String cahierDetail({required Object jour, required Object numero, required Object mois, required Object heure}) => 'حصة ⁨${jour}⁩ ⁨${numero}⁩ ⁨${mois}⁩ الساعة ⁨${heure}⁩';
+	@override String get alertesUtiles => 'تنبيهات مفيدة';
+	@override String get alertesVide => 'لا تنبيهات مفيدة الآن.';
+	@override String get alertesErreur => 'تعذّرت قراءة تنبيهات الحضور: لم يستجب الاتصال أو الخادم. أعد المحاولة بعد لحظة.';
+	@override String get voirAutreAlerte => 'عرض التنبيه الآخر';
+	@override String voirAutresAlertes({required Object nombre}) => 'عرض التنبيهات الأخرى (⁨${nombre}⁩)';
+	@override String get remplacementsTitre => 'الاستخلافات المؤكَّدة';
+	@override String get remplacementsVide => 'لا درس لزميل تتولاه الآن.';
+	@override String voirTousRemplacements({required Object nombre}) => 'عرض الكل: الاستخلافات المؤكَّدة (⁨${nombre}⁩)';
+	@override String get heure => 'الساعة';
+	@override String get eleves => 'الطلاب';
+	@override String get classe => 'الفصل';
+	@override String classeNommee({required Object classe}) => 'الفصل ⁨${classe}⁩';
+	@override String get preparerSeance => 'تحضير الحصة';
+	@override String preparerSeanceLecteur({required Object classe}) => 'تحضير حصة ⁨${classe}⁩';
+	@override String get voirClasse => 'عرض الفصل';
+	@override String voirClasseLecteur({required Object classe}) => 'عرض الفصل ⁨${classe}⁩';
+	@override String get aucuneSeance => 'لا حصص قادمة';
+	@override String get aucuneSeanceDetail => 'ستظهر هنا حصصك القادمة.';
+	@override String date({required Object jour, required Object numero, required Object mois}) => '⁨${jour}⁩ ⁨${numero}⁩ ⁨${mois}⁩';
+	@override late final _Traductions$enseignant$journee$absence$ar absence = _Traductions$enseignant$journee$absence$ar._(_root);
+	@override late final _Traductions$enseignant$journee$remplacement$ar remplacement = _Traductions$enseignant$journee$remplacement$ar._(_root);
 }
 
 // Path: enseignant.ficheGroupe
@@ -485,6 +569,420 @@ class _Traductions$enseignant$ficheGroupe$ar extends Traductions$enseignant$fich
 	@override String repriseEleve({required Object page}) => 'الاستئناف: ${page}';
 	@override String dernierPoint({required Object texte}) => 'آخر ملاحظة: ${texte}';
 	@override String get chargementClasse => 'جارٍ تحميل الفصل.';
+	@override String creneauHebdo({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩، كل أسبوع';
+	@override String get aucunMembre => 'لا طالب في هذا الفصل';
+	@override String get aucunMembreDetail => 'الإدارة تكوّن الفصول: هذا الفصل ليس فيه طالب بعد.';
+	@override String get erreur => 'تعذّرت قراءة هذا الفصل. أعد المحاولة بعد لحظة.';
+	@override String get introuvable => 'هذا الفصل ليس من فصولك';
+	@override String get introuvableDetail => 'ربما أُغلق، أو هو لمعلم آخر.';
+	@override String get revue => 'فتح مراجعة الفصل';
+	@override String get ressourcesTitre => 'الموارد الأخيرة';
+	@override String get progressionTitre => 'تقدم الفصل';
+}
+
+// Path: enseignant.classes
+class _Traductions$enseignant$classes$ar extends Traductions$enseignant$classes$fr {
+	_Traductions$enseignant$classes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الفصول';
+	@override String get vide => 'لا فصل مسند إليك';
+	@override String get videDetail => 'ستظهر هنا الفصول المؤكَّدة.';
+	@override String get erreur => 'تعذّرت قراءة فصولك. أعد المحاولة بعد لحظة.';
+	@override String get chargement => 'جارٍ تحميل فصولك.';
+	@override String niveau({required Object niveau}) => 'المستوى ⁨${niveau}⁩';
+	@override String get eleveUn => 'طالب واحد';
+	@override String eleves({required Object nombre}) => '⁨${nombre}⁩ طلاب';
+	@override String prochaine({required Object jour, required Object heure}) => 'الحصة القادمة: ⁨${jour}⁩ الساعة ⁨${heure}⁩';
+	@override String get sansProchaine => 'لا حصة مقررة';
+	@override String get remplacement => 'استخلاف';
+	@override String get rappelCahier => 'دفتر متابعة ينتظر التأكيد';
+	@override String get cahierAValider => 'دفتر المتابعة بانتظار التأكيد';
+}
+
+// Path: enseignant.eleve
+class _Traductions$enseignant$eleve$ar extends Traductions$enseignant$eleve$fr {
+	_Traductions$enseignant$eleve$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String titre({required Object prenom}) => 'بطاقة ⁨${prenom}⁩';
+	@override String get retour => 'الطلاب';
+	@override String identifiant({required Object id}) => 'معرّف الأكاديمية: ⁨${id}⁩';
+	@override String photo({required Object prenom}) => 'صورة ⁨${prenom}⁩';
+	@override String get niveau => 'المستوى';
+	@override String get objectif => 'الهدف';
+	@override String get presence => 'الحضور الأخير';
+	@override String get travail => 'العمل';
+	@override String travailReprise({required Object page}) => 'الاستئناف من ⁨${page}⁩';
+	@override String get derniereSeance => 'آخر حصة';
+	@override String get nonRenseigne => 'غير محدد';
+	@override String get signaler => 'الإشارة إلى حاجة';
+	@override String get signalerAide => 'حاجة تُرفع إلى الأكاديمية، دون إعادة كتابة السياق.';
+}
+
+// Path: enseignant.signalement
+class _Traductions$enseignant$signalement$ar extends Traductions$enseignant$signalement$fr {
+	_Traductions$enseignant$signalement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الإشارة إلى حاجة';
+	@override String contexte({required Object prenom, required Object classe}) => 'لـ⁨${prenom}⁩ · ⁨${classe}⁩';
+	@override String get categorieTitre => 'الفئة';
+	@override late final _Traductions$enseignant$signalement$categories$ar categories = _Traductions$enseignant$signalement$categories$ar._(_root);
+	@override String get details => 'تفاصيل داخلية';
+	@override String get detailsAide => 'يقرؤها فريق الأكاديمية فقط.';
+	@override String get resume => 'ملخص قابل للمشاركة';
+	@override String get resumeAide => 'يمكن للأكاديمية مشاركته مع الأسرة.';
+	@override String get notice => 'لا تُرسل التفاصيل الداخلية تلقائيًا إلى الأسرة.';
+	@override String get choisirCategorie => 'اختر فئة للمتابعة.';
+	@override String get detailsRequis => 'في «أخرى»، قل في كلمات قليلة بماذا يتعلق الأمر.';
+	@override String get envoyer => 'إرسال الإشارة';
+	@override String get demoSucces => 'عرض تجريبي: هذه الإشارة جاهزة، لكن لم يُرسل شيء.';
+	@override String get demoSuccesDetail => 'في التطبيق الموصول، ستُرسل إلى فريق الأكاديمية.';
+	@override String get fermer => 'إغلاق';
+}
+
+// Path: enseignant.demo
+class _Traductions$enseignant$demo$ar extends Traductions$enseignant$demo$fr {
+	_Traductions$enseignant$demo$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'عرض تجريبي للمعلم';
+	@override String get mention => 'بيانات وهمية، لا إرسال.';
+	@override String get intro => 'اختر شاشة من شاشات السيد إبراهيم.';
+	@override String get ecrans => 'الشاشات';
+	@override String get etats => 'الحالات';
+	@override String get etatNominal => 'يوم عادي';
+	@override String get etatVide => 'لا حصة';
+	@override String get etatHorsLigne => 'غير متصل';
+}
+
+// Path: enseignant.bienvenue
+class _Traductions$enseignant$bienvenue$ar extends Traductions$enseignant$bienvenue$fr {
+	_Traductions$enseignant$bienvenue$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الخطوات الأولى';
+	@override String salutation({required Object prenom}) => 'مرحبًا، ⁨${prenom}⁩.';
+	@override String get salutationSansNom => 'مرحبًا.';
+	@override String get dossierValide => 'تم اعتماد ملفك.';
+	@override String get sousTitre => 'جهّز مساحتك قبل فصلك الأول.';
+	@override String get aCompleter => 'للإكمال';
+	@override String compteur({required Object fait, required Object total}) => '⁨${fait}⁩ من ⁨${total}⁩';
+	@override String get prerequisPhoto => 'إضافة صورتي المهنية';
+	@override String get prerequisLangues => 'التحقق من لغات تدريسي';
+	@override String get prerequisFuseau => 'التحقق من منطقتي الزمنية';
+	@override String get ctaPhoto => 'إضافة صورتي';
+	@override String get ctaInformations => 'التحقق من معلوماتي';
+	@override String get ctaJournee => 'عرض يومي';
+	@override String get rappels => 'أمران لا ينبغي اكتشافهما في منتصف الطريق';
+	@override String get declarer => 'التصريح بأوقات توفري';
+	@override String get versJournee => 'الذهاب إلى يومي';
+	@override String get horsLigne => 'دون شبكة، لا يمكن حفظ مواعيدك.';
+	@override String get dossierIncomplet => 'لم يُعتمد ملفك بعد.';
+	@override String get dossierIncompletDetail => 'بوابة الانتظار تخبرك بما بقي عليك تقديمه.';
+	@override String get versAttente => 'عرض ملفي';
+	@override String get erreur => 'تعذّرت قراءة ملفك الشخصي. أعد المحاولة بعد لحظة.';
+}
+
+// Path: enseignant.photo
+class _Traductions$enseignant$photo$ar extends Traductions$enseignant$photo$fr {
+	_Traductions$enseignant$photo$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الصورة المهنية';
+	@override String get aide => 'صورتك إلزامية: الأسر لا تأتمن أطفالها لشخص مجهول على الإنترنت. تراها أسر طلابك.';
+	@override String get obligatoireLecteur => 'الصورة إلزامية';
+	@override String get voile => 'إن كنتِ ترتدين النقاب، يمكن أن تظهركِ صورة الملف منتقبة.';
+	@override String get notice => 'لا تستخدم بطاقة هويتك.';
+	@override String get choisir => 'اختيار صورة';
+	@override String get utiliser => 'استخدام هذه الصورة';
+	@override String get remplacer => 'استبدال الصورة';
+	@override String get autre => 'اختيار صورة أخرى';
+	@override String get changer => 'تغيير الصورة';
+	@override String get alternatif => 'صورتك العامة';
+	@override String get succes => 'حُفظت الصورة.';
+	@override String get echec => 'تعذّر إرسال الصورة. لم يتغير شيء في الملف.';
+	@override String get selectionEchec => 'تعذّر فتح الصورة. تحقّق من إذن الوصول إلى صور الجهاز، ثم أعد المحاولة.';
+	@override String get horsLigne => 'أنت غير متصل. يمكن إرسال الصورة عند عودة الاتصال.';
+}
+
+// Path: enseignant.salle
+class _Traductions$enseignant$salle$ar extends Traductions$enseignant$salle$fr {
+	_Traductions$enseignant$salle$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String reference({required Object page, required Object total, required Object reference}) => 'المعروض: الصفحة ⁨${page}⁩ من ⁨${total}⁩ · ⁨${reference}⁩';
+	@override String get rien => 'لا شيء معروض';
+	@override String get rienInvitation => 'افتح القرآن لتعرض صفحة على فصلك.';
+	@override String get attenteSalle => 'لست في القاعة بعد';
+	@override String get attenteSalleDetail => 'تُفتح أوامر العرض بمجرد اتصال الدرس.';
+	@override String get lienFaibleDetail => 'قد يصل تقليب الصفحة متأخرًا إلى فصلك';
+	@override String get presentationConservee => 'الصفحة المعروضة محفوظة، وستُرسل عند عودة الاتصال';
+	@override String get presentationSuspendue => 'العرض موقوف';
+	@override String get precedente => 'عرض الصفحة السابقة';
+	@override String get suivante => 'عرض الصفحة التالية';
+	@override String get bibliotheque => 'اختيار سورة';
+	@override String presenterSourate({required Object sourate}) => 'عرض بداية ⁨${sourate}⁩';
+	@override String sourateDetail({required Object numero, required Object versets}) => 'السورة ⁨${numero}⁩ · ⁨${versets}⁩ آية';
+	@override String get souratesIndisponibles => 'تعذّرت قراءة قائمة السور';
+	@override String get souratesIndisponiblesDetail => 'لم يتغير ما يراه فصلك. أعد المحاولة.';
+	@override String get pageIndisponible => 'تعذّرت قراءة هذه الصفحة';
+	@override String get pageIndisponibleDetail => 'لم يصل النص إلى هنا. ما زال فصلك يرى الصفحة المعروضة.';
+	@override String get corpusAbsent => 'نص القرآن غير مثبَّت';
+	@override String get corpusAbsentDetail => 'لا شيء للعرض.';
+	@override String get echecPresentation => 'تعذّر تحديد موضع هذه الآية في المصحف. لم يُرسل شيء إلى فصلك.';
+	@override String get sansDroitPresentation => 'دخولك إلى هذه الحصة لا يسمح بعرض محتوى.';
+}
+
+// Path: enseignant.cahier
+class _Traductions$enseignant$cahier$ar extends Traductions$enseignant$cahier$fr {
+	_Traductions$enseignant$cahier$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'دفتر المتابعة';
+	@override String get obligatoire => 'إلزامي';
+	@override String get sousTitre => 'إلزامي بعد كل حصة';
+	@override String get description => 'دوّن أين وصل كل طالب (السورة، الآية، القاعدة التي عُمل عليها). إن استخلفك معلم آخر، يستأنف تمامًا من حيث توقفت الحصة.';
+	@override String duree({required Object minutes}) => '⁨${minutes}⁩ دقيقة من الدرس';
+	@override String dureeEtInterruption({required Object minutes, required Object interruption}) => '⁨${minutes}⁩ دقيقة من الدرس، منها ⁨${interruption}⁩ دقيقة انقطاع';
+	@override String get unEleve => 'طالب واحد';
+	@override String eleves({required Object nombre}) => '⁨${nombre}⁩ طلاب';
+	@override String get toutEstNominal => 'جرى كل شيء كما هو متوقع.';
+	@override String get toutEstNominalDetail => 'أكّد، ويستمر يومك.';
+	@override String get exceptions => 'للنظر';
+	@override String get uneException => 'طالب واحد يحتاج إلى نظرة.';
+	@override String plusieursExceptions({required Object nombre}) => '⁨${nombre}⁩ طلاب يحتاجون إلى نظرة.';
+	@override String get nominaux => 'لا شيء يُذكر';
+	@override String get curriculumFige => 'المستوى والمنهج من الأكاديمية: لا يُعدَّلان من دفتر المتابعة.';
+	@override String get valider => 'تأكيد دفتر المتابعة';
+	@override String get validerTout => 'كل شيء مطابق، تأكيد';
+	@override String get validerSansConstat => 'الإيداع دون المعاينة';
+	@override String get retourJournee => 'العودة إلى يومي';
+	@override String get vide => 'تعذّر استنتاج المعاينة';
+	@override String get videDetail => 'لم يُسجَّل حضور ولا حدث لهذه الحصة. يمكنك مع ذلك إيداع دفتر المتابعة.';
+	@override String get erreur => 'تعذّرت قراءة المعاينة.';
+	@override String get erreurDetail => 'أعد المحاولة، أو أودع دفتر المتابعة دون المعاينة.';
+	@override String get echecEnvoi => 'لم يُؤكَّد الإرسال. تحقّق قبل إعادة المحاولة.';
+	@override String get dejaDepose => 'دفتر متابعة هذه الحصة مودَع بالفعل.';
+	@override String get dejaDeposeDetail => 'يُودَع دفتر المتابعة مرة واحدة، ولا يُحذف من هنا.';
+	@override String get depose => 'حُفظ دفتر المتابعة';
+	@override String get deposeDetail => 'استلمته الأكاديمية.';
+	@override String get enFileTitre => 'بانتظار الإرسال';
+	@override String get enFile => 'سيُرسل دفتر المتابعة عند عودة الاتصال.';
+	@override String get enFileDetail => 'سيُرسل دفتر المتابعة عند عودة الاتصال.';
+	@override String get enFileDetailHorsLigne => 'دون شبكة، يبقى دفتر المتابعة على هذا الجهاز ويُرسل بمجرد عودة الشبكة. يمكنك الانتقال إلى درسك التالي.';
+	@override String ajusterPour({required Object eleve}) => 'تعديل · ⁨${eleve}⁩';
+	@override String get ajusterValider => 'حفظ لهذا الطالب';
+	@override String get exceptionConsignee => 'استثناء مُبلَغ عنه';
+	@override String get pointPhonetique => 'ملاحظة في النطق';
+	@override String get pointPhonetiqueDetail => 'زوج من الحروف، لا تقييم. اتركه فارغًا إن لم يكن هناك ما يُقال.';
+	@override String get pointPhonetiqueNote => 'دُوِّنت ملاحظة النطق';
+	@override String objectif({required Object eleve}) => 'هدف ⁨${eleve}⁩';
+	@override String objectifDetail({required Object eleve}) => 'ما يجب أن يبلغه ⁨${eleve}⁩، في إطار منهج الأكاديمية.';
+	@override String travailMaison({required Object eleve}) => 'واجب ⁨${eleve}⁩';
+	@override String get travailMaisonDetail => 'عدّل الاقتراح، أو اتركه كما هو.';
+	@override String get travailMaisonSaisi => 'دوّنت هذا الواجب بالفعل. عدّله أو اتركه كما هو.';
+	@override String suite({required Object eleve}) => 'ما بعد ذلك لـ⁨${eleve}⁩';
+	@override String get suiteContinuer => 'المتابعة';
+	@override String get suiteRenforcer => 'التثبيت';
+	@override String get suspendreNouveau => 'إيقاف الجديد';
+	@override String devoirPrecedent({required Object devoir}) => 'الواجب السابق: ⁨${devoir}⁩';
+	@override String devoirPlage({required Object sourate, required Object debut, required Object fin}) => 'مراجعة سورة ⁨${sourate}⁩، الآيات ⁨${debut}⁩ إلى ⁨${fin}⁩.';
+	@override String get suspendreNouveauDetail => 'تستمر المراجعة، ولا يُضاف شيء جديد لهذا الطالب.';
+	@override String position({required Object sourate, required Object verset}) => 'القراءة: سورة ⁨${sourate}⁩، الآية ⁨${verset}⁩';
+	@override String get makhrajSinSad => 'السين / الصاد (س / ص)';
+	@override String get makhrajTaTah => 'التاء / الطاء (ت / ط)';
+	@override String get makhrajDhalZay => 'الذال / الزاي (ذ / ز)';
+	@override String get makhrajHaHah => 'الهاء / الحاء (ه / ح)';
+	@override String get exceptionTitre => 'الإبلاغ عن استثناء';
+	@override String get exceptionCorriger => 'تصحيح الحضور';
+	@override String get exceptionExcuser => 'تبرير الغياب';
+	@override String get exceptionConfirmation => 'تأكيد الاستثناء';
+	@override String get exceptionMotif => 'السبب';
+	@override String get exceptionMotifRequis => 'السبب إلزامي.';
+	@override String get exceptionEnCours => 'جارٍ الحفظ…';
+	@override String get exceptionSucces => 'دُوِّن الاستثناء. سيُرسل مع دفتر المتابعة.';
+	@override String get exceptionErreur => 'تعذّر تدوين الاستثناء.';
+	@override String get exceptionHorsLigne => 'دون شبكة، لا يمكن تأكيد استثناء. أما دفتر المتابعة فيُرسل على كل حال.';
+	@override String get aValider => 'للتأكيد';
+	@override String statutPresents({required Object nombre}) => 'الحاضرون ⁨${nombre}⁩';
+	@override String statutAbsents({required Object nombre}) => 'الغائبون ⁨${nombre}⁩';
+	@override String statutEnRetard({required Object nombre}) => 'المتأخرون ⁨${nombre}⁩';
+	@override String get performance => 'الأداء';
+	@override String get faiblesses => 'نقاط الضعف';
+	@override String get niveauARevoir => 'للمراجعة';
+	@override String get niveauEnProgres => 'في تقدم';
+	@override String get niveauAcquis => 'مكتسَب';
+	@override String get niveauMaitrise => 'متقَن';
+	@override String get faiblesseMakharij => 'المخارج';
+	@override String get faiblesseMadd => 'المد';
+	@override String get faiblesseGhunna => 'الغنة';
+	@override String get faiblesseWaqf => 'الوقف';
+	@override String get faiblesseFluidite => 'الطلاقة';
+	@override String get faiblesseMemorisation => 'الحفظ';
+	@override String get niveauARevoirDetail => 'يُعاد الدرس في الحصة القادمة.';
+	@override String get niveauEnProgresDetail => 'الطالب يتقدم، وبقيت بعض الأخطاء.';
+	@override String get niveauAcquisDetail => 'الدرس محفوظ، بأخطاء قليلة.';
+	@override String get niveauMaitriseDetail => 'الدرس محفوظ دون خطأ، ويمكن للطالب أن يتقدم.';
+	@override String get faiblesseMakharijDetail => 'نطق الحروف.';
+	@override String get faiblesseMaddDetail => 'المدود.';
+	@override String get faiblesseGhunnaDetail => 'الصوت الأنفي.';
+	@override String get faiblesseWaqfDetail => 'مواضع الوقف.';
+	@override String get faiblesseFluiditeDetail => 'القراءة دون تردد.';
+	@override String get faiblesseMemorisationDetail => 'التلاوة من الحفظ.';
+	@override String get reprise => 'أين توقف الفصل';
+	@override String get repriseDetail => 'هذا موضع الاستئناف للمعلم البديل.';
+	@override String repriseProposee({required Object sourate, required Object verset}) => 'سورة ⁨${sourate}⁩، الآية ⁨${verset}⁩';
+	@override String get repriseRequise => 'حدّد أين توقف الفصل: سيستأنف البديل من هنا.';
+	@override String get integrite => 'ما تكتبه هنا أمانة. قد لا يتحقق منه الناس، لكن الله يرى كل شيء.';
+	@override String get corriger => 'تصحيح دفتر المتابعة';
+	@override String corrigeLe({required Object date}) => 'صُحِّح في ⁨${date}⁩';
+}
+
+// Path: enseignant.profil
+class _Traductions$enseignant$profil$ar extends Traductions$enseignant$profil$fr {
+	_Traductions$enseignant$profil$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الملف الشخصي';
+	@override String get compteValide => 'حساب معلم موثَّق';
+	@override String get intro => 'ما تعرفه الأكاديمية عنك، وما يمكنك تغييره فيه.';
+	@override String get identite => 'الهوية المهنية';
+	@override String get pays => 'البلد';
+	@override String get langues => 'اللغات';
+	@override String get fuseau => 'المنطقة الزمنية لدروسي';
+	@override String get fuseauDetail => 'هي التي تحدد توقيت مواعيدك، لا توقيت هذا الجهاز.';
+	@override String get plafond => 'الحد الأسبوعي';
+	@override String plafondValeur({required Object nombre}) => '⁨${nombre}⁩ ساعة في الأسبوع';
+	@override String get plafondDetail => 'تحدده الأكاديمية.';
+	@override String get nonRenseigne => 'غير محدد';
+	@override String get statutSection => 'حالة الحساب';
+	@override String get statutValideDetail => 'يمكنك التدريس والتصريح بساعاتك.';
+	@override String get statutEnAttente => 'الملف قيد التحقق';
+	@override String get statutEnAttenteDetail => 'تتحقق الأكاديمية من وثائقك. لا شيء آخر عليك فعله.';
+	@override String get statutProvisoire => 'دخول مؤقت';
+	@override String get statutProvisoireDetail => 'أنت تدرّس بالفعل. يبقى ملفك للإكمال، دون انقطاع تلقائي.';
+	@override String get statutSuspendu => 'الحساب موقوف';
+	@override String get statutSuspenduDetail => 'يمكنك التواصل مع الأكاديمية لمعرفة الخطوات المطلوبة.';
+	@override String get statutInconnu => 'الحالة غير متاحة';
+	@override String get statutInconnuDetail => 'تعذّرت قراءة حالتك.';
+	@override String get statutDivergent => 'تغيّرت هذه الحالة للتو. أعد فتح التطبيق ليتبعها دخولك.';
+	@override String get verification => 'التحقق من الملف';
+	@override String get verificationEnAttente => 'قيد الانتظار';
+	@override String get verificationValidee => 'معتمَد';
+	@override String get verificationRefusee => 'يحتاج إلى مراجعة';
+	@override String get contratSection => 'العقد والإقرارات';
+	@override String get contratEnseignant => 'عقد المعلم';
+	@override String get contratConditions => 'شروط الاستخدام';
+	@override String get contratAccuse => 'التسجيل الصوتي وزيارة المراقبة';
+	@override String contratDetail({required Object version, required Object date}) => 'الإصدار ⁨${version}⁩، مقبول في ⁨${date}⁩';
+	@override String get contratAucun => 'لا عقد مسجَّل';
+	@override String get contratAucunDetail => 'لم يمر ملفك بالتوقيع بعد.';
+	@override String get contratErreur => 'تعذّرت قراءة عقودك.';
+	@override String get contratLectureSeule => 'هذه الوثائق للقراءة فقط.';
+	@override String get personnel => 'إعداداتي';
+	@override String get deconnexionQuestion => 'تسجيل الخروج من هذا الجهاز؟';
+	@override String get deconnexionConfirmer => 'تسجيل خروجي الآن';
+	@override String get deconnexionConsequence => 'يبقى يومك ومواعيدك ودفاترك محفوظة. ستحتاج إلى رابط دخول جديد للعودة.';
+	@override String get erreur => 'تعذّرت قراءة ملفك الشخصي. أعد المحاولة بعد لحظة.';
+	@override String get vide => 'لا ملف معلم';
+	@override String get videDetail => 'ليس لهذا الحساب ملف معلم. الأكاديمية وحدها يمكنها إنشاؤه.';
+	@override String get horsLigne => 'لا شبكة: لا يمكن تعديل شيء هنا الآن.';
+	@override String get modifierPays => 'تعديل البلد';
+	@override String get modifierLangues => 'تعديل اللغات';
+	@override String get languesIndice => 'افصل بين اللغات بفاصلة';
+	@override String get enregistrer => 'حفظ';
+	@override String get enregistre => 'حُفظ التعديل';
+	@override String get editionErreur => 'لم يتم التعديل. أعد المحاولة بعد لحظة.';
+}
+
+// Path: enseignant.creneaux
+class _Traductions$enseignant$creneaux$ar extends Traductions$enseignant$creneaux$fr {
+	_Traductions$enseignant$creneaux$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String heureLibelle({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩';
+	@override String get aucuneHeure => 'لم تقترح أي ساعة. دون موعد، لا يمكن أن يُقترح عليك أي فصل.';
+	@override String heureEnregistree({required Object heure}) => 'حُفظت ⁨${heure}⁩';
+	@override String heureRetiree({required Object heure}) => 'أُزيلت ⁨${heure}⁩';
+	@override String retraitEngage({required Object heure}) => 'أُزيلت ⁨${heure}⁩. الحصة المسندة في هذه الساعة مستمرة: اطلب إعادة إسناد لإيقافها.';
+	@override String get grilleErreur => 'تعذّرت قراءة ساعاتك';
+	@override String get grilleErreurDetail => 'الساعات التي حددتها لم تضِع.';
+	@override String get horsLigneGrille => 'دون شبكة، تبقى ساعاتك قابلة للعرض لكن لا يمكن تعديلها.';
+	@override String heureEngagee({required Object heures}) => 'لديك فصل بالفعل في ⁨${heures}⁩. إزالة هذه الساعة لا تنهي الحصة: يلزم إعادة إسناد.';
+	@override String heuresEngagees({required Object heures}) => 'لديك فصل بالفعل في ⁨${heures}⁩. إزالة هذه الساعات لا تنهي الحصص: يلزم إعادة إسناد.';
+	@override String get feedErreur => 'تعذّرت قراءة الأسر المنتظرة';
+	@override String get feedErreurDetail => 'لم يضِع شيء: لم يُؤخذ أحد، وساعاتك باقية.';
+	@override String get horsLignePrise => 'دون شبكة، لا يمكنك قبول طالب. تبقى الطلبات أدناه قابلة للعرض.';
+	@override String get horsLigneDemande => 'دون شبكة، لن يُرسل هذا الطلب. أعد المحاولة عند عودة الاتصال.';
+	@override String get refusDejaPris => 'قبِل معلم آخر هذا الطالب للتو. القائمة أدناه محدَّثة.';
+	@override String get refusDejaSuivi => 'لهذا الطالب معلم بالفعل. القائمة أدناه محدَّثة.';
+	@override String get refusCreneauRetire => 'لم تعد هذه الأسرة تقترح هذا الموعد. القائمة أدناه محدَّثة.';
+	@override String get refusHorsMesHeures => 'لم يعد هذا الموعد ضمن ساعاتك. أعد إضافته في «ساعاتي» لتتمكن من قبوله.';
+	@override String get refusPlafond => 'بلغت الحد الأقصى لطلابك. اطلب زيادة لتتابع طالبًا آخر.';
+	@override String get mesDisponibilites => 'أوقات توفري';
+	@override String get ajouterCreneau => 'إضافة موعد';
+	@override String heure({required Object heure}) => 'الساعة ⁨${heure}⁩';
+	@override String get classesDisponibles => 'الفصول المتاحة';
+	@override String get etatDisponible => 'متاح';
+	@override String get etatEnAttente => 'بانتظار الاعتماد';
+	@override String get etatLimite => 'بلغت الحد الأقصى للعبء';
+	@override String get limiteDetail => 'عبؤك الحالي لا يسمح بحجز فصل إضافي.';
+	@override String get aucuneClasse => 'لا فصل متوافق الآن';
+	@override String get aucuneClasseDetail => 'عدّل أوقات توفرك إن تغيّر جدولك.';
+	@override String get reserver => 'حجز هذا الفصل';
+	@override String get demandeTransmise => 'أُرسل طلبك.';
+	@override String get demandeTransmiseDetail => 'سيظهر في فصولك بعد التأكيد.';
+	@override String get confirmerTitre => 'تأكيد هذا الفصل؟';
+	@override String get confirmer => 'تأكيد هذا الفصل';
+	@override String get revenir => 'رجوع';
+	@override String get cleNiveau => 'المستوى';
+	@override String get cleLangue => 'اللغة';
+	@override String get cleRecurrence => 'التكرار';
+	@override String get cleFuseau => 'المنطقة الزمنية المرجعية';
+	@override String get cleHeureLocale => 'التوقيت المحلي';
+	@override String get cleDuree => 'المدة';
+	@override String duree({required Object minutes}) => '⁨${minutes}⁩ دقيقة';
+}
+
+// Path: enseignant.revue
+class _Traductions$enseignant$revue$ar extends Traductions$enseignant$revue$fr {
+	_Traductions$enseignant$revue$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'مراجعة الفصل';
+	@override String titreClasse({required Object classe}) => 'مراجعة الفصل ⁨${classe}⁩';
+	@override String get aucuneAnomalie => 'لا شيء يتطلب انتباهك.';
+	@override String get erreur => 'تعذّرت قراءة المراجعة.';
+	@override String get erreurDetail => 'ربما ليس هذا الفصل فصلك، أو فشلت القراءة.';
+	@override String get pasDeDecision => 'أنت تُبلغ، والأكاديمية تقرر: النقل وإعادة التوجيه لا يُقرَّران من هنا.';
+	@override String get typeGate => 'مرحلة قادمة';
+	@override String get typeCorridor => 'طالب خارج المسار المتوقع';
+	@override String get typeTransfert => 'اقتراح نقل';
+	@override String get typeReorientation => 'اقتراح إعادة توجيه';
 }
 
 // Path: tc.bibliotheque
@@ -879,6 +1377,49 @@ class _Traductions$salle$fin$enseignant$ar extends Traductions$salle$fin$enseign
 	@override String get ouvrirCahier => 'فتح دفتر المتابعة';
 	@override String get revenirJournee => 'العودة إلى يومي';
 	@override String get erreurCahier => 'تعذّر فتح دفتر المتابعة الآن. أعد المحاولة بعد لحظة.';
+}
+
+// Path: enseignant.journee.absence
+class _Traductions$enseignant$journee$absence$ar extends Traductions$enseignant$journee$absence$fr {
+	_Traductions$enseignant$journee$absence$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get ouvrir => 'الإبلاغ عن غيابي في هذه الحصة';
+	@override String get ouvrirContexte => 'سيُبحث عن بديل لطلابك.';
+	@override String get titre => 'لن تستطيع تولي هذه الحصة؟';
+	@override String get cleDate => 'التاريخ';
+	@override String get notice => 'يبقى إسنادك إلى الفصل كما هو.';
+	@override String get declarer => 'التصريح بغيابي';
+	@override String get echec => 'لم يكتمل الطلب. أعد المحاولة بعد لحظة.';
+	@override late final _Traductions$enseignant$journee$absence$etats$ar etats = _Traductions$enseignant$journee$absence$etats$ar._(_root);
+}
+
+// Path: enseignant.journee.remplacement
+class _Traductions$enseignant$journee$remplacement$ar extends Traductions$enseignant$journee$remplacement$fr {
+	_Traductions$enseignant$journee$remplacement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'تولي هذا الاستخلاف؟';
+	@override String get assurer => 'تولي هذا الاستخلاف';
+	@override String get pasCetteFois => 'ليس هذه المرة';
+}
+
+// Path: enseignant.signalement.categories
+class _Traductions$enseignant$signalement$categories$ar extends Traductions$enseignant$signalement$categories$fr {
+	_Traductions$enseignant$signalement$categories$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get pedagogique => 'مشكلة تعليمية';
+	@override String get presence => 'الحضور';
+	@override String get technique => 'تقنية';
+	@override String get changement => 'تغيير';
+	@override String get autre => 'أخرى';
 }
 
 // Path: tc.bibliotheque.sections
@@ -2126,6 +2667,21 @@ class _Traductions$salle$seance$demo$tb$ar extends Traductions$salle$seance$demo
 	@override String get effacementTableau => 'مسح ملاحظات السبورة';
 }
 
+// Path: enseignant.journee.absence.etats
+class _Traductions$enseignant$journee$absence$etats$ar extends Traductions$enseignant$journee$absence$etats$fr {
+	_Traductions$enseignant$journee$absence$etats$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get enregistree => 'سُجِّل الغياب';
+	@override String get recherche => 'جارٍ البحث عن بديل';
+	@override String get remplacantConfirme => 'البديل مؤكَّد';
+	@override String get aucunRemplacant => 'لا بديل مؤكَّد';
+	@override String get seanceAnnulee => 'أُلغيت الحصة';
+	@override String get demandeAnnulee => 'أُلغي الطلب';
+}
+
 // Path: tc.outils.dock.position
 class _Traductions$tc$outils$dock$position$ar extends Traductions$tc$outils$dock$position$fr {
 	_Traductions$tc$outils$dock$position$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -2639,6 +3195,93 @@ extension on TraductionsAr {
 			'enseignant.journee.cahierObligatoire' => ({required Object classe}) => 'إلزامي: يُعبَّأ دفتر ${classe} في نهاية كل حصة.',
 			'enseignant.journee.voirCahier' => ({required Object classe}) => 'عرض دفتر ${classe}',
 			'enseignant.journee.voirCahierLecteur' => ({required Object classe}) => 'عرض دفتر المتابعة للفصل ${classe}',
+			'enseignant.journee.lancer' => 'بدء الدرس',
+			'enseignant.journee.preflight' => 'التحقق قبل الدرس',
+			'enseignant.journee.titre' => 'اليوم',
+			'enseignant.journee.prochainCours' => 'الدرس القادم',
+			'enseignant.journee.coursEnCours' => 'حصة مباشرة',
+			'enseignant.journee.minuteurHeures' => ({required Object heures, required Object minutes}) => 'بعد ⁨${heures}⁩ س ⁨${minutes}⁩ د',
+			'enseignant.journee.minuteurMinutes' => ({required Object minutes}) => 'بعد ⁨${minutes}⁩ دقيقة',
+			'enseignant.journee.minuteurImminent' => 'يبدأ الآن',
+			'enseignant.journee.jusqua' => ({required Object heure}) => 'حتى ⁨${heure}⁩',
+			'enseignant.journee.unAutreJour' => ({required Object jour, required Object heure}) => '⁨${jour}⁩، الساعة ⁨${heure}⁩',
+			'enseignant.journee.lancementPlusTard' => 'يُتاح البدء قبل موعد الدرس بعشر دقائق.',
+			'enseignant.journee.aucunCours' => 'لا دروس قادمة',
+			'enseignant.journee.aucunCoursDetail' => 'اقبل طالبًا في الانتظار: هذا ما يملأ يومك.',
+			'enseignant.journee.colonne' => 'اليوم',
+			'enseignant.journee.ligneCours' => ({required Object prenom}) => 'درس مع ⁨${prenom}⁩',
+			'enseignant.journee.lignePause' => 'استراحة',
+			'enseignant.journee.plage' => ({required Object debut, required Object fin}) => '⁨${debut}⁩ إلى ⁨${fin}⁩',
+			'enseignant.journee.duree' => ({required Object minutes}) => '⁨${minutes}⁩ دقيقة',
+			'enseignant.journee.rienAujourdhui' => 'لا شيء مقرر اليوم',
+			'enseignant.journee.rienAujourdhuiDetail' => ({required Object jour, required Object heure}) => 'درسك القادم ⁨${jour}⁩ الساعة ⁨${heure}⁩.',
+			'enseignant.journee.journeeTerminee' => ({required Object nombre}) => '⁨${nombre}⁩ دروس قُدِّمت اليوم.',
+			'enseignant.journee.journeeTermineeUn' => 'درس واحد قُدِّم اليوم.',
+			'enseignant.journee.voirCreneaux' => 'عرض مواعيدي',
+			'enseignant.journee.erreur' => 'تعذّرت قراءة اليوم كاملًا. أعد المحاولة بعد لحظة.',
+			'enseignant.journee.coursIndividuel' => 'درس فردي',
+			'enseignant.journee.effectif' => ({required Object nombre}) => '⁨${nombre}⁩ طلاب',
+			'enseignant.journee.effectifUn' => 'طالب واحد',
+			'enseignant.journee.preflightOk' => 'الميكروفون جاهز',
+			'enseignant.journee.preflightBloque' => 'متصفحك يحظر الميكروفون. اسمح به لبدء الدرس.',
+			'enseignant.journee.preflightSansMicro' => 'لم يُعثر على ميكروفون. وصّل واحدًا لبدء الدرس.',
+			'enseignant.journee.preflightIndisponible' => 'لم يكتمل التحقق من الأجهزة. أعد المحاولة قبل بدء الدرس.',
+			'enseignant.journee.lancerHorsLigne' => 'دون شبكة، لا يمكن فتح القاعة. أعد الاتصال لبدء الدرس.',
+			'enseignant.journee.erreurPartielle' => 'تعذّر تحميل أوقات الصلاة واستراحاتك (اتصال غير مستقر أو خدمة غير متاحة مؤقتًا). الحصص المعروضة محدَّثة: يمكنك بدؤها بشكل عادي.',
+			'enseignant.journee.absenceDetectee' => ({required Object eleve}) => 'لم يدخل ⁨${eleve}⁩ القاعة.',
+			'enseignant.journee.coupureDetectee' => ({required Object eleve}) => 'انقطع اتصال ⁨${eleve}⁩.',
+			'enseignant.journee.coursAnnule' => ({required Object heure}) => 'أُلغي درس الساعة ⁨${heure}⁩.',
+			'enseignant.journee.rapportsTitre' => 'تقارير بانتظار الإيداع',
+			'enseignant.journee.rapportLigne' => ({required Object jour, required Object heure}) => 'درس ⁨${jour}⁩ الساعة ⁨${heure}⁩',
+			'enseignant.journee.rapportAttente' => ({required Object heures}) => 'للإيداع منذ ⁨${heures}⁩ س',
+			'enseignant.journee.rapportRetard' => ({required Object heures}) => 'متأخر ⁨${heures}⁩ س',
+			'enseignant.journee.enAttenteTitre' => 'طلاب في الانتظار',
+			'enseignant.journee.enAttenteLibelle' => 'طلاب في الانتظار في ساعاتك',
+			'enseignant.journee.enAttenteLibelleUn' => 'طالب في الانتظار في ساعاتك',
+			'enseignant.journee.prochaineSeance' => 'الحصة القادمة',
+			'enseignant.journee.maJournee' => 'يومي',
+			'enseignant.journee.aTerminer' => 'للإنهاء',
+			'enseignant.journee.aTerminerVide' => 'كل دفاترك منتهية.',
+			'enseignant.journee.aTerminerErreur' => 'تعذّرت قراءة الدفاتر المطلوب إنهاؤها. أعد المحاولة بعد لحظة.',
+			'enseignant.journee.aTerminerAide' => 'دفتر المتابعة يساعد طلابك ويتيح لك تعديل الدرس القادم.',
+			'enseignant.journee.rappelCahier' => 'دفاتر متابعة تنتظر الإنهاء',
+			'enseignant.journee.cahierLigne' => ({required Object classe}) => 'دفتر متابعة ⁨${classe}⁩',
+			'enseignant.journee.cahierDetail' => ({required Object jour, required Object numero, required Object mois, required Object heure}) => 'حصة ⁨${jour}⁩ ⁨${numero}⁩ ⁨${mois}⁩ الساعة ⁨${heure}⁩',
+			'enseignant.journee.alertesUtiles' => 'تنبيهات مفيدة',
+			'enseignant.journee.alertesVide' => 'لا تنبيهات مفيدة الآن.',
+			'enseignant.journee.alertesErreur' => 'تعذّرت قراءة تنبيهات الحضور: لم يستجب الاتصال أو الخادم. أعد المحاولة بعد لحظة.',
+			'enseignant.journee.voirAutreAlerte' => 'عرض التنبيه الآخر',
+			'enseignant.journee.voirAutresAlertes' => ({required Object nombre}) => 'عرض التنبيهات الأخرى (⁨${nombre}⁩)',
+			'enseignant.journee.remplacementsTitre' => 'الاستخلافات المؤكَّدة',
+			'enseignant.journee.remplacementsVide' => 'لا درس لزميل تتولاه الآن.',
+			'enseignant.journee.voirTousRemplacements' => ({required Object nombre}) => 'عرض الكل: الاستخلافات المؤكَّدة (⁨${nombre}⁩)',
+			'enseignant.journee.heure' => 'الساعة',
+			'enseignant.journee.eleves' => 'الطلاب',
+			'enseignant.journee.classe' => 'الفصل',
+			'enseignant.journee.classeNommee' => ({required Object classe}) => 'الفصل ⁨${classe}⁩',
+			'enseignant.journee.preparerSeance' => 'تحضير الحصة',
+			'enseignant.journee.preparerSeanceLecteur' => ({required Object classe}) => 'تحضير حصة ⁨${classe}⁩',
+			'enseignant.journee.voirClasse' => 'عرض الفصل',
+			'enseignant.journee.voirClasseLecteur' => ({required Object classe}) => 'عرض الفصل ⁨${classe}⁩',
+			'enseignant.journee.aucuneSeance' => 'لا حصص قادمة',
+			'enseignant.journee.aucuneSeanceDetail' => 'ستظهر هنا حصصك القادمة.',
+			'enseignant.journee.date' => ({required Object jour, required Object numero, required Object mois}) => '⁨${jour}⁩ ⁨${numero}⁩ ⁨${mois}⁩',
+			'enseignant.journee.absence.ouvrir' => 'الإبلاغ عن غيابي في هذه الحصة',
+			'enseignant.journee.absence.ouvrirContexte' => 'سيُبحث عن بديل لطلابك.',
+			'enseignant.journee.absence.titre' => 'لن تستطيع تولي هذه الحصة؟',
+			'enseignant.journee.absence.cleDate' => 'التاريخ',
+			'enseignant.journee.absence.notice' => 'يبقى إسنادك إلى الفصل كما هو.',
+			'enseignant.journee.absence.declarer' => 'التصريح بغيابي',
+			'enseignant.journee.absence.echec' => 'لم يكتمل الطلب. أعد المحاولة بعد لحظة.',
+			'enseignant.journee.absence.etats.enregistree' => 'سُجِّل الغياب',
+			'enseignant.journee.absence.etats.recherche' => 'جارٍ البحث عن بديل',
+			'enseignant.journee.absence.etats.remplacantConfirme' => 'البديل مؤكَّد',
+			'enseignant.journee.absence.etats.aucunRemplacant' => 'لا بديل مؤكَّد',
+			'enseignant.journee.absence.etats.seanceAnnulee' => 'أُلغيت الحصة',
+			'enseignant.journee.absence.etats.demandeAnnulee' => 'أُلغي الطلب',
+			'enseignant.journee.remplacement.titre' => 'تولي هذا الاستخلاف؟',
+			'enseignant.journee.remplacement.assurer' => 'تولي هذا الاستخلاف',
+			'enseignant.journee.remplacement.pasCetteFois' => 'ليس هذه المرة',
 			'enseignant.ficheGroupe.elevesTitre' => 'الطلاب',
 			'enseignant.ficheGroupe.preparationTitre' => 'للتحضير',
 			'enseignant.ficheGroupe.supportPrevu' => 'المادة المقررة',
@@ -2649,6 +3292,327 @@ extension on TraductionsAr {
 			'enseignant.ficheGroupe.repriseEleve' => ({required Object page}) => 'الاستئناف: ${page}',
 			'enseignant.ficheGroupe.dernierPoint' => ({required Object texte}) => 'آخر ملاحظة: ${texte}',
 			'enseignant.ficheGroupe.chargementClasse' => 'جارٍ تحميل الفصل.',
+			'enseignant.ficheGroupe.creneauHebdo' => ({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩، كل أسبوع',
+			'enseignant.ficheGroupe.aucunMembre' => 'لا طالب في هذا الفصل',
+			'enseignant.ficheGroupe.aucunMembreDetail' => 'الإدارة تكوّن الفصول: هذا الفصل ليس فيه طالب بعد.',
+			'enseignant.ficheGroupe.erreur' => 'تعذّرت قراءة هذا الفصل. أعد المحاولة بعد لحظة.',
+			'enseignant.ficheGroupe.introuvable' => 'هذا الفصل ليس من فصولك',
+			'enseignant.ficheGroupe.introuvableDetail' => 'ربما أُغلق، أو هو لمعلم آخر.',
+			'enseignant.ficheGroupe.revue' => 'فتح مراجعة الفصل',
+			'enseignant.ficheGroupe.ressourcesTitre' => 'الموارد الأخيرة',
+			'enseignant.ficheGroupe.progressionTitre' => 'تقدم الفصل',
+			'enseignant.classes.titre' => 'الفصول',
+			'enseignant.classes.vide' => 'لا فصل مسند إليك',
+			'enseignant.classes.videDetail' => 'ستظهر هنا الفصول المؤكَّدة.',
+			'enseignant.classes.erreur' => 'تعذّرت قراءة فصولك. أعد المحاولة بعد لحظة.',
+			'enseignant.classes.chargement' => 'جارٍ تحميل فصولك.',
+			'enseignant.classes.niveau' => ({required Object niveau}) => 'المستوى ⁨${niveau}⁩',
+			'enseignant.classes.eleveUn' => 'طالب واحد',
+			'enseignant.classes.eleves' => ({required Object nombre}) => '⁨${nombre}⁩ طلاب',
+			'enseignant.classes.prochaine' => ({required Object jour, required Object heure}) => 'الحصة القادمة: ⁨${jour}⁩ الساعة ⁨${heure}⁩',
+			'enseignant.classes.sansProchaine' => 'لا حصة مقررة',
+			'enseignant.classes.remplacement' => 'استخلاف',
+			'enseignant.classes.rappelCahier' => 'دفتر متابعة ينتظر التأكيد',
+			'enseignant.classes.cahierAValider' => 'دفتر المتابعة بانتظار التأكيد',
+			'enseignant.eleve.titre' => ({required Object prenom}) => 'بطاقة ⁨${prenom}⁩',
+			'enseignant.eleve.retour' => 'الطلاب',
+			_ => null,
+		} ?? switch (path) {
+			'enseignant.eleve.identifiant' => ({required Object id}) => 'معرّف الأكاديمية: ⁨${id}⁩',
+			'enseignant.eleve.photo' => ({required Object prenom}) => 'صورة ⁨${prenom}⁩',
+			'enseignant.eleve.niveau' => 'المستوى',
+			'enseignant.eleve.objectif' => 'الهدف',
+			'enseignant.eleve.presence' => 'الحضور الأخير',
+			'enseignant.eleve.travail' => 'العمل',
+			'enseignant.eleve.travailReprise' => ({required Object page}) => 'الاستئناف من ⁨${page}⁩',
+			'enseignant.eleve.derniereSeance' => 'آخر حصة',
+			'enseignant.eleve.nonRenseigne' => 'غير محدد',
+			'enseignant.eleve.signaler' => 'الإشارة إلى حاجة',
+			'enseignant.eleve.signalerAide' => 'حاجة تُرفع إلى الأكاديمية، دون إعادة كتابة السياق.',
+			'enseignant.signalement.titre' => 'الإشارة إلى حاجة',
+			'enseignant.signalement.contexte' => ({required Object prenom, required Object classe}) => 'لـ⁨${prenom}⁩ · ⁨${classe}⁩',
+			'enseignant.signalement.categorieTitre' => 'الفئة',
+			'enseignant.signalement.categories.pedagogique' => 'مشكلة تعليمية',
+			'enseignant.signalement.categories.presence' => 'الحضور',
+			'enseignant.signalement.categories.technique' => 'تقنية',
+			'enseignant.signalement.categories.changement' => 'تغيير',
+			'enseignant.signalement.categories.autre' => 'أخرى',
+			'enseignant.signalement.details' => 'تفاصيل داخلية',
+			'enseignant.signalement.detailsAide' => 'يقرؤها فريق الأكاديمية فقط.',
+			'enseignant.signalement.resume' => 'ملخص قابل للمشاركة',
+			'enseignant.signalement.resumeAide' => 'يمكن للأكاديمية مشاركته مع الأسرة.',
+			'enseignant.signalement.notice' => 'لا تُرسل التفاصيل الداخلية تلقائيًا إلى الأسرة.',
+			'enseignant.signalement.choisirCategorie' => 'اختر فئة للمتابعة.',
+			'enseignant.signalement.detailsRequis' => 'في «أخرى»، قل في كلمات قليلة بماذا يتعلق الأمر.',
+			'enseignant.signalement.envoyer' => 'إرسال الإشارة',
+			'enseignant.signalement.demoSucces' => 'عرض تجريبي: هذه الإشارة جاهزة، لكن لم يُرسل شيء.',
+			'enseignant.signalement.demoSuccesDetail' => 'في التطبيق الموصول، ستُرسل إلى فريق الأكاديمية.',
+			'enseignant.signalement.fermer' => 'إغلاق',
+			'enseignant.demo.titre' => 'عرض تجريبي للمعلم',
+			'enseignant.demo.mention' => 'بيانات وهمية، لا إرسال.',
+			'enseignant.demo.intro' => 'اختر شاشة من شاشات السيد إبراهيم.',
+			'enseignant.demo.ecrans' => 'الشاشات',
+			'enseignant.demo.etats' => 'الحالات',
+			'enseignant.demo.etatNominal' => 'يوم عادي',
+			'enseignant.demo.etatVide' => 'لا حصة',
+			'enseignant.demo.etatHorsLigne' => 'غير متصل',
+			'enseignant.bienvenue.titre' => 'الخطوات الأولى',
+			'enseignant.bienvenue.salutation' => ({required Object prenom}) => 'مرحبًا، ⁨${prenom}⁩.',
+			'enseignant.bienvenue.salutationSansNom' => 'مرحبًا.',
+			'enseignant.bienvenue.dossierValide' => 'تم اعتماد ملفك.',
+			'enseignant.bienvenue.sousTitre' => 'جهّز مساحتك قبل فصلك الأول.',
+			'enseignant.bienvenue.aCompleter' => 'للإكمال',
+			'enseignant.bienvenue.compteur' => ({required Object fait, required Object total}) => '⁨${fait}⁩ من ⁨${total}⁩',
+			'enseignant.bienvenue.prerequisPhoto' => 'إضافة صورتي المهنية',
+			'enseignant.bienvenue.prerequisLangues' => 'التحقق من لغات تدريسي',
+			'enseignant.bienvenue.prerequisFuseau' => 'التحقق من منطقتي الزمنية',
+			'enseignant.bienvenue.ctaPhoto' => 'إضافة صورتي',
+			'enseignant.bienvenue.ctaInformations' => 'التحقق من معلوماتي',
+			'enseignant.bienvenue.ctaJournee' => 'عرض يومي',
+			'enseignant.bienvenue.rappels' => 'أمران لا ينبغي اكتشافهما في منتصف الطريق',
+			'enseignant.bienvenue.declarer' => 'التصريح بأوقات توفري',
+			'enseignant.bienvenue.versJournee' => 'الذهاب إلى يومي',
+			'enseignant.bienvenue.horsLigne' => 'دون شبكة، لا يمكن حفظ مواعيدك.',
+			'enseignant.bienvenue.dossierIncomplet' => 'لم يُعتمد ملفك بعد.',
+			'enseignant.bienvenue.dossierIncompletDetail' => 'بوابة الانتظار تخبرك بما بقي عليك تقديمه.',
+			'enseignant.bienvenue.versAttente' => 'عرض ملفي',
+			'enseignant.bienvenue.erreur' => 'تعذّرت قراءة ملفك الشخصي. أعد المحاولة بعد لحظة.',
+			'enseignant.photo.titre' => 'الصورة المهنية',
+			'enseignant.photo.aide' => 'صورتك إلزامية: الأسر لا تأتمن أطفالها لشخص مجهول على الإنترنت. تراها أسر طلابك.',
+			'enseignant.photo.obligatoireLecteur' => 'الصورة إلزامية',
+			'enseignant.photo.voile' => 'إن كنتِ ترتدين النقاب، يمكن أن تظهركِ صورة الملف منتقبة.',
+			'enseignant.photo.notice' => 'لا تستخدم بطاقة هويتك.',
+			'enseignant.photo.choisir' => 'اختيار صورة',
+			'enseignant.photo.utiliser' => 'استخدام هذه الصورة',
+			'enseignant.photo.remplacer' => 'استبدال الصورة',
+			'enseignant.photo.autre' => 'اختيار صورة أخرى',
+			'enseignant.photo.changer' => 'تغيير الصورة',
+			'enseignant.photo.alternatif' => 'صورتك العامة',
+			'enseignant.photo.succes' => 'حُفظت الصورة.',
+			'enseignant.photo.echec' => 'تعذّر إرسال الصورة. لم يتغير شيء في الملف.',
+			'enseignant.photo.selectionEchec' => 'تعذّر فتح الصورة. تحقّق من إذن الوصول إلى صور الجهاز، ثم أعد المحاولة.',
+			'enseignant.photo.horsLigne' => 'أنت غير متصل. يمكن إرسال الصورة عند عودة الاتصال.',
+			'enseignant.salle.reference' => ({required Object page, required Object total, required Object reference}) => 'المعروض: الصفحة ⁨${page}⁩ من ⁨${total}⁩ · ⁨${reference}⁩',
+			'enseignant.salle.rien' => 'لا شيء معروض',
+			'enseignant.salle.rienInvitation' => 'افتح القرآن لتعرض صفحة على فصلك.',
+			'enseignant.salle.attenteSalle' => 'لست في القاعة بعد',
+			'enseignant.salle.attenteSalleDetail' => 'تُفتح أوامر العرض بمجرد اتصال الدرس.',
+			'enseignant.salle.lienFaibleDetail' => 'قد يصل تقليب الصفحة متأخرًا إلى فصلك',
+			'enseignant.salle.presentationConservee' => 'الصفحة المعروضة محفوظة، وستُرسل عند عودة الاتصال',
+			'enseignant.salle.presentationSuspendue' => 'العرض موقوف',
+			'enseignant.salle.precedente' => 'عرض الصفحة السابقة',
+			'enseignant.salle.suivante' => 'عرض الصفحة التالية',
+			'enseignant.salle.bibliotheque' => 'اختيار سورة',
+			'enseignant.salle.presenterSourate' => ({required Object sourate}) => 'عرض بداية ⁨${sourate}⁩',
+			'enseignant.salle.sourateDetail' => ({required Object numero, required Object versets}) => 'السورة ⁨${numero}⁩ · ⁨${versets}⁩ آية',
+			'enseignant.salle.souratesIndisponibles' => 'تعذّرت قراءة قائمة السور',
+			'enseignant.salle.souratesIndisponiblesDetail' => 'لم يتغير ما يراه فصلك. أعد المحاولة.',
+			'enseignant.salle.pageIndisponible' => 'تعذّرت قراءة هذه الصفحة',
+			'enseignant.salle.pageIndisponibleDetail' => 'لم يصل النص إلى هنا. ما زال فصلك يرى الصفحة المعروضة.',
+			'enseignant.salle.corpusAbsent' => 'نص القرآن غير مثبَّت',
+			'enseignant.salle.corpusAbsentDetail' => 'لا شيء للعرض.',
+			'enseignant.salle.echecPresentation' => 'تعذّر تحديد موضع هذه الآية في المصحف. لم يُرسل شيء إلى فصلك.',
+			'enseignant.salle.sansDroitPresentation' => 'دخولك إلى هذه الحصة لا يسمح بعرض محتوى.',
+			'enseignant.cahier.titre' => 'دفتر المتابعة',
+			'enseignant.cahier.obligatoire' => 'إلزامي',
+			'enseignant.cahier.sousTitre' => 'إلزامي بعد كل حصة',
+			'enseignant.cahier.description' => 'دوّن أين وصل كل طالب (السورة، الآية، القاعدة التي عُمل عليها). إن استخلفك معلم آخر، يستأنف تمامًا من حيث توقفت الحصة.',
+			'enseignant.cahier.duree' => ({required Object minutes}) => '⁨${minutes}⁩ دقيقة من الدرس',
+			'enseignant.cahier.dureeEtInterruption' => ({required Object minutes, required Object interruption}) => '⁨${minutes}⁩ دقيقة من الدرس، منها ⁨${interruption}⁩ دقيقة انقطاع',
+			'enseignant.cahier.unEleve' => 'طالب واحد',
+			'enseignant.cahier.eleves' => ({required Object nombre}) => '⁨${nombre}⁩ طلاب',
+			'enseignant.cahier.toutEstNominal' => 'جرى كل شيء كما هو متوقع.',
+			'enseignant.cahier.toutEstNominalDetail' => 'أكّد، ويستمر يومك.',
+			'enseignant.cahier.exceptions' => 'للنظر',
+			'enseignant.cahier.uneException' => 'طالب واحد يحتاج إلى نظرة.',
+			'enseignant.cahier.plusieursExceptions' => ({required Object nombre}) => '⁨${nombre}⁩ طلاب يحتاجون إلى نظرة.',
+			'enseignant.cahier.nominaux' => 'لا شيء يُذكر',
+			'enseignant.cahier.curriculumFige' => 'المستوى والمنهج من الأكاديمية: لا يُعدَّلان من دفتر المتابعة.',
+			'enseignant.cahier.valider' => 'تأكيد دفتر المتابعة',
+			'enseignant.cahier.validerTout' => 'كل شيء مطابق، تأكيد',
+			'enseignant.cahier.validerSansConstat' => 'الإيداع دون المعاينة',
+			'enseignant.cahier.retourJournee' => 'العودة إلى يومي',
+			'enseignant.cahier.vide' => 'تعذّر استنتاج المعاينة',
+			'enseignant.cahier.videDetail' => 'لم يُسجَّل حضور ولا حدث لهذه الحصة. يمكنك مع ذلك إيداع دفتر المتابعة.',
+			'enseignant.cahier.erreur' => 'تعذّرت قراءة المعاينة.',
+			'enseignant.cahier.erreurDetail' => 'أعد المحاولة، أو أودع دفتر المتابعة دون المعاينة.',
+			'enseignant.cahier.echecEnvoi' => 'لم يُؤكَّد الإرسال. تحقّق قبل إعادة المحاولة.',
+			'enseignant.cahier.dejaDepose' => 'دفتر متابعة هذه الحصة مودَع بالفعل.',
+			'enseignant.cahier.dejaDeposeDetail' => 'يُودَع دفتر المتابعة مرة واحدة، ولا يُحذف من هنا.',
+			'enseignant.cahier.depose' => 'حُفظ دفتر المتابعة',
+			'enseignant.cahier.deposeDetail' => 'استلمته الأكاديمية.',
+			'enseignant.cahier.enFileTitre' => 'بانتظار الإرسال',
+			'enseignant.cahier.enFile' => 'سيُرسل دفتر المتابعة عند عودة الاتصال.',
+			'enseignant.cahier.enFileDetail' => 'سيُرسل دفتر المتابعة عند عودة الاتصال.',
+			'enseignant.cahier.enFileDetailHorsLigne' => 'دون شبكة، يبقى دفتر المتابعة على هذا الجهاز ويُرسل بمجرد عودة الشبكة. يمكنك الانتقال إلى درسك التالي.',
+			'enseignant.cahier.ajusterPour' => ({required Object eleve}) => 'تعديل · ⁨${eleve}⁩',
+			'enseignant.cahier.ajusterValider' => 'حفظ لهذا الطالب',
+			'enseignant.cahier.exceptionConsignee' => 'استثناء مُبلَغ عنه',
+			'enseignant.cahier.pointPhonetique' => 'ملاحظة في النطق',
+			'enseignant.cahier.pointPhonetiqueDetail' => 'زوج من الحروف، لا تقييم. اتركه فارغًا إن لم يكن هناك ما يُقال.',
+			'enseignant.cahier.pointPhonetiqueNote' => 'دُوِّنت ملاحظة النطق',
+			'enseignant.cahier.objectif' => ({required Object eleve}) => 'هدف ⁨${eleve}⁩',
+			'enseignant.cahier.objectifDetail' => ({required Object eleve}) => 'ما يجب أن يبلغه ⁨${eleve}⁩، في إطار منهج الأكاديمية.',
+			'enseignant.cahier.travailMaison' => ({required Object eleve}) => 'واجب ⁨${eleve}⁩',
+			'enseignant.cahier.travailMaisonDetail' => 'عدّل الاقتراح، أو اتركه كما هو.',
+			'enseignant.cahier.travailMaisonSaisi' => 'دوّنت هذا الواجب بالفعل. عدّله أو اتركه كما هو.',
+			'enseignant.cahier.suite' => ({required Object eleve}) => 'ما بعد ذلك لـ⁨${eleve}⁩',
+			'enseignant.cahier.suiteContinuer' => 'المتابعة',
+			'enseignant.cahier.suiteRenforcer' => 'التثبيت',
+			'enseignant.cahier.suspendreNouveau' => 'إيقاف الجديد',
+			'enseignant.cahier.devoirPrecedent' => ({required Object devoir}) => 'الواجب السابق: ⁨${devoir}⁩',
+			'enseignant.cahier.devoirPlage' => ({required Object sourate, required Object debut, required Object fin}) => 'مراجعة سورة ⁨${sourate}⁩، الآيات ⁨${debut}⁩ إلى ⁨${fin}⁩.',
+			'enseignant.cahier.suspendreNouveauDetail' => 'تستمر المراجعة، ولا يُضاف شيء جديد لهذا الطالب.',
+			'enseignant.cahier.position' => ({required Object sourate, required Object verset}) => 'القراءة: سورة ⁨${sourate}⁩، الآية ⁨${verset}⁩',
+			'enseignant.cahier.makhrajSinSad' => 'السين / الصاد (س / ص)',
+			'enseignant.cahier.makhrajTaTah' => 'التاء / الطاء (ت / ط)',
+			'enseignant.cahier.makhrajDhalZay' => 'الذال / الزاي (ذ / ز)',
+			'enseignant.cahier.makhrajHaHah' => 'الهاء / الحاء (ه / ح)',
+			'enseignant.cahier.exceptionTitre' => 'الإبلاغ عن استثناء',
+			'enseignant.cahier.exceptionCorriger' => 'تصحيح الحضور',
+			'enseignant.cahier.exceptionExcuser' => 'تبرير الغياب',
+			'enseignant.cahier.exceptionConfirmation' => 'تأكيد الاستثناء',
+			'enseignant.cahier.exceptionMotif' => 'السبب',
+			'enseignant.cahier.exceptionMotifRequis' => 'السبب إلزامي.',
+			'enseignant.cahier.exceptionEnCours' => 'جارٍ الحفظ…',
+			'enseignant.cahier.exceptionSucces' => 'دُوِّن الاستثناء. سيُرسل مع دفتر المتابعة.',
+			'enseignant.cahier.exceptionErreur' => 'تعذّر تدوين الاستثناء.',
+			'enseignant.cahier.exceptionHorsLigne' => 'دون شبكة، لا يمكن تأكيد استثناء. أما دفتر المتابعة فيُرسل على كل حال.',
+			'enseignant.cahier.aValider' => 'للتأكيد',
+			'enseignant.cahier.statutPresents' => ({required Object nombre}) => 'الحاضرون ⁨${nombre}⁩',
+			'enseignant.cahier.statutAbsents' => ({required Object nombre}) => 'الغائبون ⁨${nombre}⁩',
+			'enseignant.cahier.statutEnRetard' => ({required Object nombre}) => 'المتأخرون ⁨${nombre}⁩',
+			'enseignant.cahier.performance' => 'الأداء',
+			'enseignant.cahier.faiblesses' => 'نقاط الضعف',
+			'enseignant.cahier.niveauARevoir' => 'للمراجعة',
+			'enseignant.cahier.niveauEnProgres' => 'في تقدم',
+			'enseignant.cahier.niveauAcquis' => 'مكتسَب',
+			'enseignant.cahier.niveauMaitrise' => 'متقَن',
+			'enseignant.cahier.faiblesseMakharij' => 'المخارج',
+			'enseignant.cahier.faiblesseMadd' => 'المد',
+			'enseignant.cahier.faiblesseGhunna' => 'الغنة',
+			'enseignant.cahier.faiblesseWaqf' => 'الوقف',
+			'enseignant.cahier.faiblesseFluidite' => 'الطلاقة',
+			'enseignant.cahier.faiblesseMemorisation' => 'الحفظ',
+			'enseignant.cahier.niveauARevoirDetail' => 'يُعاد الدرس في الحصة القادمة.',
+			'enseignant.cahier.niveauEnProgresDetail' => 'الطالب يتقدم، وبقيت بعض الأخطاء.',
+			'enseignant.cahier.niveauAcquisDetail' => 'الدرس محفوظ، بأخطاء قليلة.',
+			'enseignant.cahier.niveauMaitriseDetail' => 'الدرس محفوظ دون خطأ، ويمكن للطالب أن يتقدم.',
+			'enseignant.cahier.faiblesseMakharijDetail' => 'نطق الحروف.',
+			'enseignant.cahier.faiblesseMaddDetail' => 'المدود.',
+			'enseignant.cahier.faiblesseGhunnaDetail' => 'الصوت الأنفي.',
+			'enseignant.cahier.faiblesseWaqfDetail' => 'مواضع الوقف.',
+			'enseignant.cahier.faiblesseFluiditeDetail' => 'القراءة دون تردد.',
+			'enseignant.cahier.faiblesseMemorisationDetail' => 'التلاوة من الحفظ.',
+			'enseignant.cahier.reprise' => 'أين توقف الفصل',
+			'enseignant.cahier.repriseDetail' => 'هذا موضع الاستئناف للمعلم البديل.',
+			'enseignant.cahier.repriseProposee' => ({required Object sourate, required Object verset}) => 'سورة ⁨${sourate}⁩، الآية ⁨${verset}⁩',
+			'enseignant.cahier.repriseRequise' => 'حدّد أين توقف الفصل: سيستأنف البديل من هنا.',
+			'enseignant.cahier.integrite' => 'ما تكتبه هنا أمانة. قد لا يتحقق منه الناس، لكن الله يرى كل شيء.',
+			'enseignant.cahier.corriger' => 'تصحيح دفتر المتابعة',
+			'enseignant.cahier.corrigeLe' => ({required Object date}) => 'صُحِّح في ⁨${date}⁩',
+			'enseignant.profil.titre' => 'الملف الشخصي',
+			'enseignant.profil.compteValide' => 'حساب معلم موثَّق',
+			'enseignant.profil.intro' => 'ما تعرفه الأكاديمية عنك، وما يمكنك تغييره فيه.',
+			'enseignant.profil.identite' => 'الهوية المهنية',
+			'enseignant.profil.pays' => 'البلد',
+			'enseignant.profil.langues' => 'اللغات',
+			'enseignant.profil.fuseau' => 'المنطقة الزمنية لدروسي',
+			'enseignant.profil.fuseauDetail' => 'هي التي تحدد توقيت مواعيدك، لا توقيت هذا الجهاز.',
+			'enseignant.profil.plafond' => 'الحد الأسبوعي',
+			'enseignant.profil.plafondValeur' => ({required Object nombre}) => '⁨${nombre}⁩ ساعة في الأسبوع',
+			'enseignant.profil.plafondDetail' => 'تحدده الأكاديمية.',
+			'enseignant.profil.nonRenseigne' => 'غير محدد',
+			'enseignant.profil.statutSection' => 'حالة الحساب',
+			'enseignant.profil.statutValideDetail' => 'يمكنك التدريس والتصريح بساعاتك.',
+			'enseignant.profil.statutEnAttente' => 'الملف قيد التحقق',
+			'enseignant.profil.statutEnAttenteDetail' => 'تتحقق الأكاديمية من وثائقك. لا شيء آخر عليك فعله.',
+			'enseignant.profil.statutProvisoire' => 'دخول مؤقت',
+			'enseignant.profil.statutProvisoireDetail' => 'أنت تدرّس بالفعل. يبقى ملفك للإكمال، دون انقطاع تلقائي.',
+			'enseignant.profil.statutSuspendu' => 'الحساب موقوف',
+			'enseignant.profil.statutSuspenduDetail' => 'يمكنك التواصل مع الأكاديمية لمعرفة الخطوات المطلوبة.',
+			'enseignant.profil.statutInconnu' => 'الحالة غير متاحة',
+			'enseignant.profil.statutInconnuDetail' => 'تعذّرت قراءة حالتك.',
+			'enseignant.profil.statutDivergent' => 'تغيّرت هذه الحالة للتو. أعد فتح التطبيق ليتبعها دخولك.',
+			'enseignant.profil.verification' => 'التحقق من الملف',
+			'enseignant.profil.verificationEnAttente' => 'قيد الانتظار',
+			'enseignant.profil.verificationValidee' => 'معتمَد',
+			'enseignant.profil.verificationRefusee' => 'يحتاج إلى مراجعة',
+			'enseignant.profil.contratSection' => 'العقد والإقرارات',
+			'enseignant.profil.contratEnseignant' => 'عقد المعلم',
+			'enseignant.profil.contratConditions' => 'شروط الاستخدام',
+			'enseignant.profil.contratAccuse' => 'التسجيل الصوتي وزيارة المراقبة',
+			'enseignant.profil.contratDetail' => ({required Object version, required Object date}) => 'الإصدار ⁨${version}⁩، مقبول في ⁨${date}⁩',
+			'enseignant.profil.contratAucun' => 'لا عقد مسجَّل',
+			'enseignant.profil.contratAucunDetail' => 'لم يمر ملفك بالتوقيع بعد.',
+			'enseignant.profil.contratErreur' => 'تعذّرت قراءة عقودك.',
+			'enseignant.profil.contratLectureSeule' => 'هذه الوثائق للقراءة فقط.',
+			'enseignant.profil.personnel' => 'إعداداتي',
+			'enseignant.profil.deconnexionQuestion' => 'تسجيل الخروج من هذا الجهاز؟',
+			'enseignant.profil.deconnexionConfirmer' => 'تسجيل خروجي الآن',
+			'enseignant.profil.deconnexionConsequence' => 'يبقى يومك ومواعيدك ودفاترك محفوظة. ستحتاج إلى رابط دخول جديد للعودة.',
+			'enseignant.profil.erreur' => 'تعذّرت قراءة ملفك الشخصي. أعد المحاولة بعد لحظة.',
+			'enseignant.profil.vide' => 'لا ملف معلم',
+			'enseignant.profil.videDetail' => 'ليس لهذا الحساب ملف معلم. الأكاديمية وحدها يمكنها إنشاؤه.',
+			'enseignant.profil.horsLigne' => 'لا شبكة: لا يمكن تعديل شيء هنا الآن.',
+			'enseignant.profil.modifierPays' => 'تعديل البلد',
+			'enseignant.profil.modifierLangues' => 'تعديل اللغات',
+			'enseignant.profil.languesIndice' => 'افصل بين اللغات بفاصلة',
+			'enseignant.profil.enregistrer' => 'حفظ',
+			'enseignant.profil.enregistre' => 'حُفظ التعديل',
+			'enseignant.profil.editionErreur' => 'لم يتم التعديل. أعد المحاولة بعد لحظة.',
+			'enseignant.creneaux.heureLibelle' => ({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩',
+			'enseignant.creneaux.aucuneHeure' => 'لم تقترح أي ساعة. دون موعد، لا يمكن أن يُقترح عليك أي فصل.',
+			'enseignant.creneaux.heureEnregistree' => ({required Object heure}) => 'حُفظت ⁨${heure}⁩',
+			'enseignant.creneaux.heureRetiree' => ({required Object heure}) => 'أُزيلت ⁨${heure}⁩',
+			'enseignant.creneaux.retraitEngage' => ({required Object heure}) => 'أُزيلت ⁨${heure}⁩. الحصة المسندة في هذه الساعة مستمرة: اطلب إعادة إسناد لإيقافها.',
+			'enseignant.creneaux.grilleErreur' => 'تعذّرت قراءة ساعاتك',
+			'enseignant.creneaux.grilleErreurDetail' => 'الساعات التي حددتها لم تضِع.',
+			'enseignant.creneaux.horsLigneGrille' => 'دون شبكة، تبقى ساعاتك قابلة للعرض لكن لا يمكن تعديلها.',
+			'enseignant.creneaux.heureEngagee' => ({required Object heures}) => 'لديك فصل بالفعل في ⁨${heures}⁩. إزالة هذه الساعة لا تنهي الحصة: يلزم إعادة إسناد.',
+			'enseignant.creneaux.heuresEngagees' => ({required Object heures}) => 'لديك فصل بالفعل في ⁨${heures}⁩. إزالة هذه الساعات لا تنهي الحصص: يلزم إعادة إسناد.',
+			'enseignant.creneaux.feedErreur' => 'تعذّرت قراءة الأسر المنتظرة',
+			'enseignant.creneaux.feedErreurDetail' => 'لم يضِع شيء: لم يُؤخذ أحد، وساعاتك باقية.',
+			'enseignant.creneaux.horsLignePrise' => 'دون شبكة، لا يمكنك قبول طالب. تبقى الطلبات أدناه قابلة للعرض.',
+			'enseignant.creneaux.horsLigneDemande' => 'دون شبكة، لن يُرسل هذا الطلب. أعد المحاولة عند عودة الاتصال.',
+			'enseignant.creneaux.refusDejaPris' => 'قبِل معلم آخر هذا الطالب للتو. القائمة أدناه محدَّثة.',
+			'enseignant.creneaux.refusDejaSuivi' => 'لهذا الطالب معلم بالفعل. القائمة أدناه محدَّثة.',
+			'enseignant.creneaux.refusCreneauRetire' => 'لم تعد هذه الأسرة تقترح هذا الموعد. القائمة أدناه محدَّثة.',
+			'enseignant.creneaux.refusHorsMesHeures' => 'لم يعد هذا الموعد ضمن ساعاتك. أعد إضافته في «ساعاتي» لتتمكن من قبوله.',
+			'enseignant.creneaux.refusPlafond' => 'بلغت الحد الأقصى لطلابك. اطلب زيادة لتتابع طالبًا آخر.',
+			'enseignant.creneaux.mesDisponibilites' => 'أوقات توفري',
+			'enseignant.creneaux.ajouterCreneau' => 'إضافة موعد',
+			'enseignant.creneaux.heure' => ({required Object heure}) => 'الساعة ⁨${heure}⁩',
+			'enseignant.creneaux.classesDisponibles' => 'الفصول المتاحة',
+			'enseignant.creneaux.etatDisponible' => 'متاح',
+			'enseignant.creneaux.etatEnAttente' => 'بانتظار الاعتماد',
+			'enseignant.creneaux.etatLimite' => 'بلغت الحد الأقصى للعبء',
+			'enseignant.creneaux.limiteDetail' => 'عبؤك الحالي لا يسمح بحجز فصل إضافي.',
+			'enseignant.creneaux.aucuneClasse' => 'لا فصل متوافق الآن',
+			'enseignant.creneaux.aucuneClasseDetail' => 'عدّل أوقات توفرك إن تغيّر جدولك.',
+			'enseignant.creneaux.reserver' => 'حجز هذا الفصل',
+			'enseignant.creneaux.demandeTransmise' => 'أُرسل طلبك.',
+			'enseignant.creneaux.demandeTransmiseDetail' => 'سيظهر في فصولك بعد التأكيد.',
+			'enseignant.creneaux.confirmerTitre' => 'تأكيد هذا الفصل؟',
+			'enseignant.creneaux.confirmer' => 'تأكيد هذا الفصل',
+			'enseignant.creneaux.revenir' => 'رجوع',
+			'enseignant.creneaux.cleNiveau' => 'المستوى',
+			'enseignant.creneaux.cleLangue' => 'اللغة',
+			'enseignant.creneaux.cleRecurrence' => 'التكرار',
+			'enseignant.creneaux.cleFuseau' => 'المنطقة الزمنية المرجعية',
+			'enseignant.creneaux.cleHeureLocale' => 'التوقيت المحلي',
+			'enseignant.creneaux.cleDuree' => 'المدة',
+			'enseignant.creneaux.duree' => ({required Object minutes}) => '⁨${minutes}⁩ دقيقة',
+			'enseignant.revue.titre' => 'مراجعة الفصل',
+			'enseignant.revue.titreClasse' => ({required Object classe}) => 'مراجعة الفصل ⁨${classe}⁩',
+			'enseignant.revue.aucuneAnomalie' => 'لا شيء يتطلب انتباهك.',
+			'enseignant.revue.erreur' => 'تعذّرت قراءة المراجعة.',
+			'enseignant.revue.erreurDetail' => 'ربما ليس هذا الفصل فصلك، أو فشلت القراءة.',
+			'enseignant.revue.pasDeDecision' => 'أنت تُبلغ، والأكاديمية تقرر: النقل وإعادة التوجيه لا يُقرَّران من هنا.',
+			'enseignant.revue.typeGate' => 'مرحلة قادمة',
+			'enseignant.revue.typeCorridor' => 'طالب خارج المسار المتوقع',
+			'enseignant.revue.typeTransfert' => 'اقتراح نقل',
+			'enseignant.revue.typeReorientation' => 'اقتراح إعادة توجيه',
 			'compte.themeContexte' => 'اختر مظهر التطبيق. يتم التغيير فورًا ويبقى على هذا الجهاز، ويمكنك تعديله في أي وقت.',
 			'compte.themeSysteme' => 'النظام',
 			'compte.themeSystemeDetail' => 'يتبع إعداد جهازك',
@@ -2760,8 +3724,6 @@ extension on TraductionsAr {
 			'tc.groupe.espace.introuvable' => 'هذا الفصل غير مفتوح لك',
 			'tc.groupe.espace.introuvableDetail' => 'ربما أُغلق، أو يخص ملفًا آخر.',
 			'tc.groupe.emplacement.nonBranche' => 'قريبًا',
-			_ => null,
-		} ?? switch (path) {
 			'tc.groupe.emplacement.nonBrancheDetail' => 'سيُربط هذا المحتوى بهذه المساحة قريبًا.',
 			'tc.coran.modes.mushaf' => 'صفحة المصحف',
 			'tc.coran.modes.verset' => 'قراءة مكبَّرة',
@@ -2868,6 +3830,8 @@ extension on TraductionsAr {
 			'tc.classe.fiche.interfaceGuidee' => 'وضع إمكانية الوصول',
 			'tc.classe.fiche.sansPedagogie' => 'المتابعة التعليمية غير متاحة',
 			'tc.classe.fiche.sansPedagogieDetail' => 'المسار والأهداف والعمل الجاري غير مفتوحة للمعلم بعد.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.action.rappel' => 'نداء هادئ',
 			'tc.classe.action.reciter' => 'اختيار للتلاوة',
 			'tc.classe.action.noter' => 'تدوين ملاحظة',

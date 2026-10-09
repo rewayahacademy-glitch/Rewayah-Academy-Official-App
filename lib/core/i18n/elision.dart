@@ -4,11 +4,17 @@
 // « Al- » ou « An- » (`enseignant_demo.dart`) : « de Al-Badr » se lit mal, la
 // grammaire francaise demande « d'Al-Badr ». Cette fonction ne connait aucun
 // nom par coeur : elle regarde seulement la premiere lettre, pour rester
-// correcte devant n'importe quel nom, present ou futur.
+// correcte devant n'importe quel nom, present ou futur. Hors du francais
+// (AR-ENS-1), le nom est rendu seul : la langue cible porte sa propre
+// construction dans sa phrase.
+
+import 'strings.g.dart';
 
 /// Compose « de {nom} » ou « d'{nom} » selon que [nom] commence par un son
-/// de voyelle (a, e, i, o, u, y, leurs formes accentuees, et h).
+/// de voyelle (a, e, i, o, u, y, leurs formes accentuees, et h) ; [nom]
+/// seul dans une autre langue que le francais.
 String deDevant(String nom) {
+  if (LocaleSettings.currentLocale != AppLocale.fr) return nom;
   if (nom.isEmpty) {
     return 'de $nom';
   }
