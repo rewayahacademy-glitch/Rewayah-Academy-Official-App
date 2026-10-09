@@ -32,7 +32,7 @@ begin
   end if;
 
   if p_timezone_iana is not null then
-    perform 1 from pg_timezone_names where name = p_timezone_iana;
+    perform 1 from pg_catalog.pg_timezone_names where name = p_timezone_iana;
     if not found then
       raise exception 'fuseau IANA inconnu : %', p_timezone_iana;
     end if;
@@ -84,7 +84,7 @@ begin
   end if;
 
   if p_timezone_iana is not null then
-    perform 1 from pg_timezone_names where name = p_timezone_iana;
+    perform 1 from pg_catalog.pg_timezone_names where name = p_timezone_iana;
     if not found then
       raise exception 'fuseau IANA inconnu : %', p_timezone_iana;
     end if;
