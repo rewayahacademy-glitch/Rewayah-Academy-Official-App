@@ -133,6 +133,12 @@ insert into public.session_events (session_id, profile_id, event_type, server_ts
   ('5e000000-0000-0000-0000-000000000007', '50000000-0000-0000-0000-000000000002',
    'joined', now() - interval '3 hours 59 minutes', 'livekit_webhook');
 
+-- Depuis 0042, l'appel de etat_presence exige un compte actif.
+select set_config('test.uid', '50000000-0000-0000-0000-000000000002', false);
+select set_config('test.jwt',
+  '{"app_metadata":{"role":"student","household_id":"5fffffff-0000-0000-0000-00000000000a"}}',
+  false);
+
 -- ============================================================
 -- Scenario 1 : la machine a etats derive les dix etats calculables
 -- ============================================================
