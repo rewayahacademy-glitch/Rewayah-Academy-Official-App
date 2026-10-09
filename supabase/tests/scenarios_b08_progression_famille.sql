@@ -91,6 +91,18 @@ BEGIN
     RAISE EXCEPTION 'B-08: le brouillon a été publié sans geste explicite';
   END IF;
 
+  PERFORM set_config('test.uid', v_guardian::text, true);
+  PERFORM set_config('test.jwt',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'guardian',
+      'household_id', 'b0800000-0000-0000-0000-000000000101'))::text, true);
+  v_result := public.progression_famille(v_student);
+  IF jsonb_array_length(v_result->'seances') <> 0 THEN
+    RAISE EXCEPTION 'B-08: un brouillon est visible au foyer avant publication';
+  END IF;
+
+  PERFORM set_config('test.uid', v_teacher::text, true);
+  PERFORM set_config('test.jwt',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'teacher'))::text, true);
   v_denied := false;
   BEGIN
     PERFORM public.enregistrer_resume_seance(
