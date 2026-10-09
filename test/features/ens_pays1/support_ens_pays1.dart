@@ -337,14 +337,9 @@ List<EcranPays> ecransPays() => <EcranPays>[
     surcharges: surchargesDemoTuteur(environnement: 'staging'),
     pays: const <String>['Maroc', 'France'],
   ),
-  classeLiveTuteur(),
-  EcranPays(
-    role: 'controleur',
-    nom: 'controleur_classe_live',
-    construire: () => ClasseLivePage(contexte: _contexteLive()),
-    surcharges: _surchargesLive('controller'),
-    pays: const <String>['Guinée'],
-  ),
+  // ENS-PAYS-SALLE-1 (Q-4 = b) : la classe en direct n'affiche plus le pays
+  // de l'enseignant. Ses deux en-tetes sont sortis de ce recensement et
+  // verifies a part (`ecransClasseLive`).
   EcranPays(
     role: 'eleve',
     nom: 'eleve_espace_groupe',
@@ -411,17 +406,36 @@ ContexteClasseLive _contexteLive({
 
 /// La Classe Live vue par le tuteur observateur, avec ou sans photo de
 /// l'enseignant (les deux branches de `EnteteClasse`), et un prenom vide
-/// pour l'identite masquee.
+/// pour l'identite masquee. Le pays est declare (Guinée) dans le contexte,
+/// mais la salle ne l'affiche pas (ENS-PAYS-SALLE-1, Q-4 = b) : `pays` vide.
 EcranPays classeLiveTuteur({bool photo = true, String prenom = 'Youssouf'}) =>
     EcranPays(
       role: 'tuteur',
-      nom: 'tuteur_classe_live',
+      nom: photo ? 'tuteur_classe_live' : 'tuteur_classe_live_sans_photo',
       construire: () => ClasseLivePage(
         contexte: _contexteLive(photo: photo, prenom: prenom),
       ),
       surcharges: _surchargesLive('guardian'),
-      pays: <String>[if (prenom.isNotEmpty) 'Guinée'],
+      pays: const <String>[],
     );
+
+/// La Classe Live vue par le controleur : meme en-tete `EnteteClasse`.
+EcranPays classeLiveControleur({bool photo = true}) => EcranPays(
+  role: 'controleur',
+  nom: photo ? 'controleur_classe_live' : 'controleur_classe_live_sans_photo',
+  construire: () => ClasseLivePage(contexte: _contexteLive(photo: photo)),
+  surcharges: _surchargesLive('controller'),
+  pays: const <String>[],
+);
+
+/// Les en-tetes de la classe en direct, avec et sans photo, pour les deux
+/// roles qui les voient. Le pays declare de l'enseignant n'y apparait pas.
+List<EcranPays> ecransClasseLive() => <EcranPays>[
+  for (final bool photo in <bool>[true, false]) ...<EcranPays>[
+    classeLiveTuteur(photo: photo),
+    classeLiveControleur(photo: photo),
+  ],
+];
 
 /// Les faux de la Classe Live pour un role du jeton qui n'a pas de salle de
 /// seance (tuteur observateur, controleur) : l'en-tete `EnteteClasse` est
