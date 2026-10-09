@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/domain/enums.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
 import '../../core/seance_famille/port_seances_famille.dart';
@@ -226,8 +227,13 @@ class _Liste extends StatelessWidget {
           ),
         ],
       ),
+      // En interface de droite a gauche, la phrase francaise garde son point
+      // final a sa place (isolat partage, DUREE-INSECABLE-4).
       precisions: Text(
-        t.classe.pagePlanning.habituelIndisponible,
+        isolerDansInterface(
+          t.classe.pagePlanning.habituelIndisponible,
+          Directionality.of(context),
+        ),
         style: discret,
       ),
     );
@@ -254,24 +260,38 @@ class _Ligne extends StatelessWidget {
         constraints: const BoxConstraints(minHeight: AppTouchTarget.standard),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-          child: Row(
+          // Un `Wrap` et non une `Row` : a 320 px et texte x2, la pastille
+          // passe sous le jour au lieu de l'ecraser en une colonne etroite
+          // (« Lu/ndi », « sep/te/mbre », DUREE-INSECABLE-4, reprise 2).
+          child: Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
             children: <Widget>[
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    TexteHeureSeance(
-                      heure: affichage.date,
-                      annulee: annulee,
-                      style: palette.inkStrong.applyTo(
-                        (large ? textes.titleMedium : textes.titleSmall) ??
-                            const TextStyle(),
-                      ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  TexteHeureSeance(
+                    // Le jour, francais, isole dans son sens en RTL.
+                    heure: isolerDansInterface(
+                      affichage.date,
+                      Directionality.of(context),
                     ),
-                    Ecart.vXs,
-                    TexteHeureSeance(
-                      heure: avecFuseau
+                    annulee: annulee,
+                    style: palette.inkStrong.applyTo(
+                      (large ? textes.titleMedium : textes.titleSmall) ??
+                          const TextStyle(),
+                    ),
+                  ),
+                  Ecart.vXs,
+                  TexteHeureSeance(
+                    // « 18:10 · 45 min » commence par un chiffre : isole,
+                    // il garde son ordre en interface de droite a gauche
+                    // (et non « 18: · 10 45 min »).
+                    heure: isolerDansInterface(
+                      avecFuseau
                           ? t.classe.pagePlanning.ligneFuseau(
                               heure: affichage.heure,
                               fuseau: affichage.fuseau,
@@ -281,20 +301,21 @@ class _Ligne extends StatelessWidget {
                               heure: affichage.heure,
                               duree: affichage.dureeEnPhrase,
                             ),
-                      annulee: annulee,
-                      // Une seule annonce « Annulee » par carte : la date.
-                      annoncer: false,
-                      style: AppTypography.tabulaire(
-                        palette.inkMuted.applyTo(
-                          (large ? textes.bodyLarge : textes.bodyMedium) ??
-                              const TextStyle(),
-                        ),
+                      Directionality.of(context),
+                    ),
+                    annulee: annulee,
+                    // Une seule annonce « Annulee » par carte : la date.
+                    annoncer: false,
+                    style: AppTypography.tabulaire(
+                      palette.inkMuted.applyTo(
+                        (large ? textes.bodyLarge : textes.bodyMedium) ??
+                            const TextStyle(),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              if (pastille != null) ...<Widget>[Ecart.hSm, pastille],
+              ?pastille,
             ],
           ),
         ),
