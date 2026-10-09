@@ -4,9 +4,11 @@
 // le panneau Eleves et le recapitulatif de fin (I-6). Les contenus (noms,
 // support) sont des contenus de demonstration, pas des libelles d'interface.
 
+import '../../core/tc_bibliotheque/catalogue_local.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
+import '../../core/tc_telechargement/port_etat_offline.dart';
 import '../salle_seance/depuis_salle.dart';
 import '../salle_seance/resultat_seance.dart';
 import '../salle_seance/vue_seance.dart';
@@ -411,6 +413,96 @@ abstract final class DonneesSeanceDemo {
     mention: 'Support illustratif',
   );
 
+  // --- Bibliotheque en seance (TB-8) ---
+
+  /// Le support de la demonstration dont l'ouverture echoue : montre LIB-03
+  /// (« Ce support ne peut pas etre ouvert. »), jamais une page vide.
+  static const String idSupportIndisponible = 'demo-cahier-ecriture';
+
+  /// Les supports de la Bibliotheque unique en demonstration : ceux du
+  /// panneau Supports qui ont un contenu (memes identifiants, memes titres)
+  /// et un cahier dont le fichier manque. Aucun Coran (TB27).
+  static List<LibraryResource> get ressourcesTb => <LibraryResource>[
+    for (final SupportDisponible s in supports)
+      if (s.contenu != null)
+        LibraryResource(
+          id: s.id,
+          title: s.titre,
+          shortTitle: s.titre,
+          resourceType: s.type,
+          language: 'fr',
+          category: 'Bonnes manières',
+          accessPolicy: PolitiqueAcces.inscrits,
+          offlinePolicy: PolitiqueOffline.surDemande,
+          currentVersionId: s.id == chapitre1.id ? _versionChapitre1 : 'v1.0',
+          capabilities: const <CapaciteRessource>{
+            CapaciteRessource.searchable,
+            CapaciteRessource.pageable,
+            CapaciteRessource.presentableInClass,
+          },
+        ),
+    const LibraryResource(
+      id: idSupportIndisponible,
+      title: "Cahier d'écriture",
+      shortTitle: "Cahier d'écriture",
+      resourceType: TypeRessource.pdf,
+      language: 'fr',
+      category: 'Bonnes manières',
+      accessPolicy: PolitiqueAcces.inscrits,
+      offlinePolicy: PolitiqueOffline.surDemande,
+      currentVersionId: 'v1.0',
+      capabilities: <CapaciteRessource>{
+        CapaciteRessource.searchable,
+        CapaciteRessource.presentableInClass,
+      },
+    ),
+  ];
+
+  /// Le catalogue de la demonstration : toute la Bibliotheque assignee a la
+  /// Classe, les deux Recents du panneau Supports.
+  static CatalogueLocal get catalogueTb => CatalogueLocal(
+    ressources: ressourcesTb,
+    assignationsParGroupe: <String, List<String>>{
+      groupeDemo: <String>[for (final LibraryResource r in ressourcesTb) r.id],
+    },
+    ordreRecents: <String>[
+      for (final SupportDisponible s in supports)
+        if (s.rubrique == RubriqueSupport.recent) s.id,
+    ],
+  );
+
+  /// L'etat hors ligne des supports en demonstration : aucun stockage
+  /// local (K-28), donc « hors ligne indisponible » pour tous.
+  static const PortEtatOffline etatOfflineTb = _EtatOfflineDemo();
+
+  /// Le support a page fixe presente apres « Presenter » : page 1, meme
+  /// repere que la page de demonstration, nombre de pages de son contenu.
+  static SupportPageFixe pagePresentee(LibraryResource r) {
+    int total = 1;
+    for (final SupportDisponible s in supports) {
+      if (s.id == r.id) total = s.contenu?.pages ?? 1;
+    }
+    return SupportPageFixe(
+      id: r.id,
+      version: r.currentVersionId ?? 'v1.0',
+      titre: r.title,
+      page: 1,
+      total: total,
+      largeurCanonique: largeurPage,
+      hauteurCanonique: hauteurPage,
+      mention: 'Support illustratif',
+    );
+  }
+
+  /// La diapositive d'un support presente, s'il en a une (la capsule de
+  /// l'en-tete suit le support partage).
+  static SupportSeance? diapositiveDe(String id) {
+    for (final SupportDisponible s in supports) {
+      if (s.id == id) return s.contenu;
+    }
+    return null;
+  }
+
   /// Le tableau libre : choix provisoire, meme repere que la page de
   /// demonstration (UX_REVIEW_TB n. 15, une seule valeur, TB-BR-14).
   static const TableauLibre tableauLibre = TableauLibre(
@@ -495,10 +587,13 @@ abstract final class DonneesSeanceDemo {
       panneau: !enseignant
           ? PanneauOuvert.aucun
           : switch (situation) {
+              // TB-8 : LIB-01 a LIB-04 partent du catalogue de la
+              // Bibliotheque unique ; apercu, ouverture et echec se
+              // rejoignent en touchant une carte puis « Presenter ».
               SituationTb.lib01 ||
               SituationTb.lib02 ||
               SituationTb.lib03 ||
-              SituationTb.lib04 => PanneauOuvert.supports,
+              SituationTb.lib04 => PanneauOuvert.ressources,
               SituationTb.per01 ||
               SituationTb.autorisationEcrire ||
               SituationTb.droitRetire => PanneauOuvert.eleves,
@@ -606,4 +701,23 @@ abstract final class DonneesSeanceDemo {
     EtatDemoSalle.accesRetire => IssueSeance.accesRetire,
     _ => null,
   };
+}
+
+/// TB-8 : l'etat hors ligne de la demonstration, sans aucun stockage.
+class _EtatOfflineDemo implements PortEtatOffline {
+  const _EtatOfflineDemo();
+
+  @override
+  Future<EtatOffline> etatDe(String resourceId) async =>
+      EtatOffline.indisponible;
+
+  @override
+  Stream<EtatOffline> suivre(String resourceId) =>
+      Stream<EtatOffline>.value(EtatOffline.indisponible);
+
+  @override
+  Future<void> demanderTelechargement(String resourceId) async {}
+
+  @override
+  Future<void> libererCache(String resourceId) async {}
 }

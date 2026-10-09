@@ -18,6 +18,9 @@ import '../../core/appairage/service_avatar.dart' show avatarUrlProvider;
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_bibliotheque/content_position.dart';
+import '../../core/tc_bibliotheque/donnees_catalogue.dart';
+import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
 import '../../core/theme/app_palette.dart';
@@ -475,6 +478,30 @@ class _SalleDemoState extends State<SalleDemo> {
   /// Le support ouvert depuis le panneau Supports ; `null` : celui de l'etat.
   SupportSeance? _support;
 
+  /// TB-8 : le support presente depuis la Bibliotheque ; `null` : celui de
+  /// la situation.
+  SupportPageFixe? _presente;
+
+  /// TB-8 (LIB-02, LIB-03) : « Presenter ». Le chargement se verifie avant
+  /// tout changement ; en demonstration, le cahier sans fichier echoue et la
+  /// classe garde le support d'avant. Rien n'est diffuse (BR-1).
+  Future<void> _presenter(LibraryResource ressource, ContentPosition? _) async {
+    // Le chargement : un tour de boucle, le temps que « Ouverture du
+    // support... » se montre.
+    await Future<void>(() {});
+    if (ressource.id == DonneesSeanceDemo.idSupportIndisponible) {
+      throw StateError('demonstration : fichier absent');
+    }
+    if (!mounted) return;
+    setState(() {
+      _presente = DonneesSeanceDemo.pagePresentee(ressource);
+      _support = DonneesSeanceDemo.diapositiveDe(ressource.id) ?? _support;
+      _page = null;
+      _affichage = AffichagePartage.avecNotes;
+      _panneau = PanneauOuvert.aucun;
+    });
+  }
+
   /// « Ouvrir » (CLV-08) : le support affiche change, le panneau se ferme.
   void _ouvrirSupport(SupportDisponible choisi) => setState(() {
     _support = choisi.contenu ?? _support;
@@ -505,11 +532,12 @@ class _SalleDemoState extends State<SalleDemo> {
       tutoiement: widget.tutoiement,
       contexte: _contexte,
       affichage: _affichage,
-      supportPresente: page == null
-          ? null
-          : etat.supportPresente?.aLaPage(
-              page.clamp(1, etat.supportPresente!.total),
-            ),
+      supportPresente: switch (_presente ?? etat.supportPresente) {
+        final SupportPageFixe fixe when page != null => fixe.aLaPage(
+          page.clamp(1, fixe.total),
+        ),
+        _ => _presente,
+      },
     );
     final bool enseignant = widget.role == RoleSeance.enseignant;
     // Fin de seance de l'enseignant : CLV-10 (le cahier n'existe pas en
@@ -613,6 +641,9 @@ class _SalleDemoState extends State<SalleDemo> {
       onBibliotheque: enseignant
           ? () => _basculerPanneau(PanneauOuvert.ressources)
           : null,
+      // TB-8 : la Bibliotheque unique dans les situations Supports et
+      // tableau (catalogue de demonstration par le port, ci-dessous).
+      onPresenter: enseignant && widget.situation != null ? _presenter : null,
       // Secours (CL-7), sans serveur : « Reessayer » simule le retour de la
       // connexion (« Connexion retablie. ») ; « Continuer sans micro »
       // laisse le micro coupe. Ouvrir les reglages : BR-1 (non rendu).
@@ -646,6 +677,15 @@ class _SalleDemoState extends State<SalleDemo> {
     // (K-28) : les initiales en repli (E5).
     return ProviderScope(
       overrides: <Override>[
+        // TB-8 : la Bibliotheque unique, alimentee par le port du catalogue
+        // avec les supports de la demonstration (aucun serveur, K-28).
+        donneesCatalogueProvider(DonneesSeanceDemo.groupeDemo).overrideWith(
+          (Ref _) => lireDonneesCatalogue(
+            catalogue: DonneesSeanceDemo.catalogueTb,
+            offline: DonneesSeanceDemo.etatOfflineTb,
+            groupeId: DonneesSeanceDemo.groupeDemo,
+          ),
+        ),
         avatarUrlProvider.overrideWith(
           (Ref _, String cle) =>
               Future<String>.error(StateError('demonstration : $cle')),

@@ -142,5 +142,13 @@
   "salle.seance.contexte.reduireInformations": "etape TB-3 (capsule et contexte, UI-01, CTX-01, CTX-02) : texte du contexte deplie, plan V2 §4.3 et §19.6 (« un controle possible ne signifie pas qu'une personne observe maintenant »), a valider par le directeur",
   "salle.seance.surface.aucunSupport": "etape TB-6 (Supports et tableau) : texte exact du plan V2 §12, etat « Aucun support » cote enseignant (pilotage 18_supports_tableau)",
   "salle.seance.surface.page": "etape TB-6 (Supports et tableau) : nom lu de la page fixe presentee (titre et position, plan V2 §20 « Page {numero} sur {total} »), a valider par le directeur",
-  "salle.seance.surface.supportMasque": "etape TB-6 (Supports et tableau) : nom lu de la feuille claire quand le support est masque (plan V2 §3 et §12 « Tableau seul avec support retenu »), a valider par le directeur"
+  "salle.seance.surface.supportMasque": "etape TB-6 (Supports et tableau) : nom lu de la feuille claire quand le support est masque (plan V2 §3 et §12 « Tableau seul avec support retenu »), a valider par le directeur",
+  "salle.seance.bibliotheque.intro": "etape TB-8 (Supports et tableau, Bibliotheque en seance) : phrase d'entree du catalogue en seance, plan V2 §3 « Remplacer un support » (la classe garde le support actuel jusqu'a Presenter), a valider par le directeur",
+  "salle.seance.bibliotheque.apercu": "etape TB-8 (Supports et tableau, Bibliotheque en seance) : titre de la previsualisation personnelle, plan V2 §3 et §17 LIB-02, a valider par le directeur",
+  "salle.seance.bibliotheque.apercuClasse": "etape TB-8 (Supports et tableau, Bibliotheque en seance) : rappel de la previsualisation, plan V2 §19.1 point 3 et UX-17, a valider par le directeur",
+  "salle.seance.bibliotheque.presenter": "etape TB-8 (Supports et tableau, Bibliotheque en seance) : texte exact du plan V2 §20 (Catalogue)",
+  "salle.seance.bibliotheque.revenir": "etape TB-8 (Supports et tableau, Bibliotheque en seance) : texte exact du plan V2 §20 (Catalogue) et §12",
+  "salle.seance.bibliotheque.ouverture": "etape TB-8 (Supports et tableau, Bibliotheque en seance) : texte exact du plan V2 §12 (« Chargement avant presentation »)",
+  "salle.seance.bibliotheque.echec": "etape TB-8 (Supports et tableau, Bibliotheque en seance) : texte exact du plan V2 §20 (« Echec ouverture ») et §12",
+  "salle.seance.bibliotheque.echecDetail": "etape TB-8 (Supports et tableau, Bibliotheque en seance) : suite du message d'echec (K-59 : ce qui manque, la cause, quoi faire), plan V2 §3 « un fichier non charge ne remplace jamais le support existant », a valider par le directeur"
 }

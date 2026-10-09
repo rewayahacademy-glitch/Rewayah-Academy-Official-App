@@ -16,6 +16,8 @@ import '../../core/accessibilite/commandes_masquables.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/preferences/preferences_locales.dart';
+import '../../core/tc_bibliotheque/content_position.dart';
+import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
@@ -27,6 +29,7 @@ import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/offline_banner.dart';
 import 'actions_seance.dart';
 import 'barre_support.dart';
+import 'bibliotheque_seance.dart';
 import 'capsule_seance.dart';
 import 'chrome_seance.dart';
 import 'commandes_pedagogiques.dart';
@@ -1105,12 +1108,28 @@ class _SalleEnseignant extends StatelessWidget {
     ),
     // EN-10 : le selecteur de ressources (04 §19), ouvert par « Voir toute
     // la bibliotheque ». La salle reste ouverte.
-    PanneauOuvert.ressources => PanneauSeance(
-      titre: t.salle.seance.supports,
-      onFermer: actions.onBibliotheque,
-      forme: forme,
-      enfant: SelecteurRessources(supports: vue.supports, actions: actions),
-    ),
+    // TB-8 (LIB-01 a LIB-04) : la Bibliotheque unique (R14), apercu
+    // personnel puis « Presenter » ; sans rappel Presenter, l'ancien
+    // selecteur (Classe Live jusqu'a BR-1).
+    PanneauOuvert.ressources => switch (actions.onPresenter) {
+      final Future<void> Function(LibraryResource, ContentPosition?)
+      presenter =>
+        PanneauSeance(
+          titre: t.salle.seance.commandes.bibliotheque,
+          onFermer: actions.onBibliotheque,
+          forme: forme,
+          enfant: BibliothequeSeance(
+            onPresenter: presenter,
+            groupeId: vue.groupeId,
+          ),
+        ),
+      null => PanneauSeance(
+        titre: t.salle.seance.supports,
+        onFermer: actions.onBibliotheque,
+        forme: forme,
+        enfant: SelecteurRessources(supports: vue.supports, actions: actions),
+      ),
+    },
     // TB-4 (CMD-01) : « Commandes », ferme par « Reduire » (plan V2 §20).
     PanneauOuvert.commandes => PanneauSeance(
       titre: t.salle.seance.commandes.titre,

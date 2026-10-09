@@ -17,6 +17,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
+import 'package:rewayah_academy/features/salle_seance/bibliotheque_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/dock_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/zone_support.dart';
@@ -469,9 +470,8 @@ void main() {
   testWidgets('panneau ouvert : la barre reste, Quitter au-dessus de la '
       'feuille et activable (UX-07, telephone)', (WidgetTester tester) async {
     await _ouvrir(tester, RoleSeance.enseignant, situation: SituationTb.lib01);
-    final Finder panneau = find.byKey(
-      const ValueKey<String>('panneau-supports'),
-    );
+    // TB-8 : LIB-01 ouvre la Bibliotheque en seance.
+    final Finder panneau = find.byType(BibliothequeSeance);
     expect(panneau, findsOneWidget);
     await _attendreDelai(tester);
     await _attendreDelai(tester);

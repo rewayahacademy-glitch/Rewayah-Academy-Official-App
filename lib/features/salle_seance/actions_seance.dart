@@ -7,6 +7,8 @@
 
 import 'package:flutter/foundation.dart';
 
+import '../../core/tc_bibliotheque/content_position.dart';
+import '../../core/tc_bibliotheque/library_resource.dart';
 import 'vue_seance.dart';
 
 /// Les outils d'enseignement (CLV-06), enseignant seulement.
@@ -46,7 +48,18 @@ class ActionsSeance {
     this.onContinuerSansMicro,
     this.onOuvrirReglages,
     this.onContexte,
+    this.onPresenter,
   });
+
+  /// TB-8 (LIB-02, LIB-03) : « Presenter » l'apercu choisi dans la
+  /// Bibliotheque en seance. Le futur se termine quand le support est
+  /// charge et active pour la classe ; il echoue sinon, et la classe garde
+  /// le support d'avant. `null` : l'ancien selecteur (SelecteurRessources).
+  final Future<void> Function(
+    LibraryResource ressource,
+    ContentPosition? position,
+  )?
+  onPresenter;
 
   /// TB-3 (CTX-01, CTX-02) : l'avatar de la capsule deplie le contexte de
   /// l'enseignant, l'oeil le meme contexte a la section du controle ;
@@ -158,5 +171,6 @@ class ActionsSeance {
     onContinuerSansMicro: onContinuerSansMicro,
     onOuvrirReglages: onOuvrirReglages,
     onContexte: onContexte,
+    onPresenter: onPresenter,
   );
 }

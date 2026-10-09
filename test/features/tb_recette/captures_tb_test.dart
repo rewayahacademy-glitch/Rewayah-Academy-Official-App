@@ -46,12 +46,19 @@
 // docs/current/captures/TB-6/ :
 //   CAPTURE_DIR=docs/current/captures/TB-6 flutter test \
 //     test/features/tb_recette/captures_tb_test.dart --name tb6_
+//
+// TB-8 (LIB-01 a LIB-04) : catalogue, apercu personnel, ouverture et echec,
+// 390 et 1440 clair et sombre, 390 x2, 320 x2. Rangees dans
+// docs/current/captures/TB-8/ :
+//   CAPTURE_DIR=docs/current/captures/TB-8 flutter test \
+//     test/features/tb_recette/captures_tb_test.dart --name tb8_
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/accessibilite/commandes_masquables.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
+import 'package:rewayah_academy/features/salle_seance/bibliotheque_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/capsule_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
 import 'package:rewayah_academy/features/salle_seance/composition_salle.dart';
@@ -59,6 +66,7 @@ import 'package:rewayah_academy/features/salle_seance/panneau_eleves.dart';
 import 'package:rewayah_academy/features/salle_seance/surface_page_fixe.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/zone_support.dart';
+import 'package:rewayah_academy/features/tc_catalogue/surface_bibliotheque.dart';
 
 import '../../capture/outil_capture.dart';
 
@@ -565,6 +573,92 @@ void main() {
             debugPrint('PNG ${await capturer(tester, nom)}');
           });
         }
+      }
+    }
+  });
+
+  // TB-8 (LIB-01 a LIB-04) : catalogue, apercu personnel, ouverture et
+  // echec, dans le panneau droit (bureau) ou la feuille (telephone).
+  group('TB-8 : Bibliotheque en seance', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    Future<void> versCarte(WidgetTester tester, String titre) async {
+      final Finder catalogue = find.byType(SurfaceBibliotheque);
+      await tester.scrollUntilVisible(
+        find.descendant(of: catalogue, matching: find.text(titre)),
+        120,
+        scrollable: find
+            .descendant(of: catalogue, matching: find.byType(Scrollable))
+            .first,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.descendant(of: catalogue, matching: find.text(titre)).first,
+      );
+      await tester.pumpAndSettle();
+    }
+
+    for (final String etat in <String>[
+      'catalogue',
+      'apercu',
+      'ouverture',
+      'echec',
+    ]) {
+      for (final _Cadrage cas in <_Cadrage>[
+        for (final _Cadrage c in _cadragesTb)
+          if (<String>[
+            '390_x1_clair',
+            '390_x1_sombre',
+            '390_x2_clair',
+            '1440_x1_clair',
+            '1440_x1_sombre',
+            '320_x2_clair',
+          ].contains(c.$1))
+            c,
+      ]) {
+        final String nom = 'tb8_enseignant_${etat}_${cas.$1}';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+          await tester.pumpWidget(
+            hoteCapture(
+              const DemoSallePage(
+                role: RoleSeance.enseignant,
+                situation: SituationTb.lib01,
+              ),
+              themeMode: cas.$6,
+              echelleTexte: cas.$5,
+            ),
+          );
+          await tester.pumpAndSettle();
+          if (etat != 'catalogue') {
+            await versCarte(
+              tester,
+              etat == 'echec' ? "Cahier d'écriture" : 'Fiche de mémorisation',
+            );
+          }
+          if (etat == 'ouverture' || etat == 'echec') {
+            final Finder presenter = find.byKey(
+              BibliothequeSeance.clePresenter,
+            );
+            await tester.ensureVisible(presenter);
+            await tester.pumpAndSettle();
+            await tester.tap(presenter);
+            await tester.pump();
+            if (etat == 'echec') await tester.pumpAndSettle();
+          }
+          // La capture prouve ce qu'elle nomme.
+          expect(
+            find.byType(SurfaceBibliotheque),
+            etat == 'catalogue' ? findsOneWidget : findsNothing,
+          );
+          expect(
+            find.byKey(BibliothequeSeance.cleEchec),
+            etat == 'echec' ? findsOneWidget : findsNothing,
+          );
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+          // L'ouverture capturee, le chargement se termine.
+          await tester.pumpAndSettle();
+        });
       }
     }
   });

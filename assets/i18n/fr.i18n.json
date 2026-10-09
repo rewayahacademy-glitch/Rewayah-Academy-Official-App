@@ -349,6 +349,16 @@
         "focusSemantique": "Focus, agrandir le contenu et réduire les panneaux",
         "quitterFocus": "Quitter le focus"
       },
+      "bibliotheque": {
+        "intro": "Un support choisi s'ouvre pour vous seul. La classe garde le support actuel jusqu'à « Présenter ».",
+        "apercu": "Aperçu personnel",
+        "apercuClasse": "Les élèves voient toujours le support actuel.",
+        "presenter": "Présenter",
+        "revenir": "Revenir aux supports",
+        "ouverture": "Ouverture du support…",
+        "echec": "Ce support ne peut pas être ouvert.",
+        "echecDetail": "Le fichier n'a pas pu être chargé. La classe garde le support actuel. Réessayez, ou revenez aux supports pour en choisir un autre."
+      },
       "surface": {
         "aucunSupport": "Choisissez un support ou écrivez au tableau.",
         "page": "{titre}, page {page} sur {pages}",
