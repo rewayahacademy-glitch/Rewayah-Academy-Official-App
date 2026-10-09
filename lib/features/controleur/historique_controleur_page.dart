@@ -35,6 +35,7 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
@@ -250,10 +251,8 @@ class _HistoriqueControleurPageState
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: <Widget>[
+        RangeeFiltres(
+          filtres: <Widget>[
             MenuFiltre<PeriodeHistorique>(
               libelle: t.historique.filtres.periode,
               valeur: _filtres.periode == PeriodeHistorique.toute

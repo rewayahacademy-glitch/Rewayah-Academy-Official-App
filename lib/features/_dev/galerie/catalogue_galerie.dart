@@ -62,6 +62,7 @@ import '../../../core/widgets/pin_pad.dart';
 import '../../../core/widgets/point_rappel.dart';
 import '../../../core/widgets/pressable.dart';
 import '../../../core/widgets/raccourci_tactile.dart';
+import '../../../core/widgets/rangee_filtres.dart';
 import '../../../core/widgets/rosace_verset.dart';
 import '../../../core/widgets/schedule_option.dart';
 import '../../../core/widgets/section_header.dart';
@@ -1661,6 +1662,40 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           libelle: t.galerie.composants,
           compteur: 0,
           onPress: _rien,
+        ),
+      ),
+    ],
+  ),
+  // FILTRES-1 : une seule rangee de puces, qui defile quand elle ne tient pas.
+  EntreeGalerie(
+    nom: 'RangeeFiltres',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'tout tient',
+        (BuildContext _) => RangeeFiltres(
+          filtres: <Widget>[
+            FilterPill(
+              libelle: t.galerie.composants,
+              retenue: true,
+              onPress: _rien,
+            ),
+            FilterPill(libelle: t.galerie.composants, onPress: _rien),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'deborde et defile',
+        (BuildContext _) => RangeeFiltres(
+          filtres: <Widget>[
+            for (int i = 0; i < 8; i++)
+              FilterPill(
+                libelle: t.galerie.composants,
+                compteur: i,
+                retenue: i == 5,
+                onPress: _rien,
+              ),
+          ],
         ),
       ),
     ],

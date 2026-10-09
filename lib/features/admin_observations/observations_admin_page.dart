@@ -22,6 +22,7 @@ import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
+import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
@@ -491,19 +492,15 @@ class _BarreRecherche extends ConsumerWidget {
             else ...<Widget>[
               recherche,
               Ecart.vMd,
-              Wrap(
-                spacing: AppSpacing.sm,
-                runSpacing: AppSpacing.sm,
-                children: filtres,
-              ),
+              // FILTRES-1 : sous 600, les menus et les personnes retenues sur
+              // UNE rangee qui defile.
+              RangeeFiltres(filtres: <Widget>[...filtres, ...personnes]),
             ],
-            if (personnes.isNotEmpty) ...<Widget>[
+            // Au-dela, les menus sont a cote de la recherche ; les personnes
+            // retenues sur une rangee dessous.
+            if (enLigne && personnes.isNotEmpty) ...<Widget>[
               Ecart.vMd,
-              Wrap(
-                spacing: AppSpacing.sm,
-                runSpacing: AppSpacing.sm,
-                children: personnes,
-              ),
+              RangeeFiltres(filtres: personnes),
             ],
           ],
         );

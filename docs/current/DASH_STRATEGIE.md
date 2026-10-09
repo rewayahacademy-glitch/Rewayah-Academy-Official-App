@@ -671,6 +671,76 @@ Invariants        capacité lue, jamais un rôle ; aucun bouton grisé ; aucun
                   production ; aucun mot coupé à 320 px, texte ×2, LTR et RTL
 ```
 
+## Annexe A bis : FILTRES-1, écrans à filtres (05/10/2026)
+
+**Décidé par délégation le 05/10** (DIR-REP-1) : l'écran exact visé par la remarque du
+directeur n'est pas identifié, donc **audit de tous les écrans à filtres** de la branche commune
+et **même modèle partout**. Fiche au format de l'annexe A, faute de catalogue actif.
+
+```
+CODE              FILTRES-1 (composant partagé, tous rôles)
+Composant         RangeeFiltres (lib/core/widgets/rangee_filtres.dart), créé :
+                  aucun composant de rangée n'existait, chaque écran posait un
+                  Wrap de FilterPill / MenuFiltre (2 à 6 lignes à 320 px x2)
+Modèle            UNE rangée de puces, qui défile horizontalement si elle ne
+                  tient pas ; puces de même hauteur (la plus haute), contenu
+                  centré (K-54) ; une puce n'est jamais plus large que la
+                  rangée, un libellé plus long passe à la ligne ENTRE ses mots ;
+                  aucun mot coupé ni tronqué à 320 px texte x2, LTR et RTL ;
+                  barre de défilement visible dès que la rangée déborde, fondu
+                  du bord où des puces sont cachées (sens de lecture) ; le
+                  filtre retenu se voit à l'ouverture (rangée centrée sur lui,
+                  sans faire défiler la page)
+Saisie            choisir plutôt que saisir : axe fermé en puces, axe ouvert en
+                  MenuFiltre dont les entrées viennent des données de l'écran
+                  (classes, rôles, types d'événement, acteurs) ; les compteurs
+                  des puces viennent des données chargées. Les champs de
+                  recherche existants (Observations, Bibliothèque) restent,
+                  hors rangée ; aucun nouveau champ de saisie
+Pas un filtre     le sélecteur de section (MenuFiltre selecteurDeSection,
+                  ONGLETS-1) reste sur sa propre ligne
+États             le composant n'apparaît que dans l'état contenu (et l'état
+                  vide filtré, qui garde la rangée pour défaire le filtre) ;
+                  chargement, erreur, hors ligne, vide sont ceux de chaque
+                  écran, inchangés par FILTRES-1
+Libellés          aucun libellé nouveau ni modifié
+Serveur           aucun besoin
+```
+
+| Écran | Fichier:ligne | Puces | Avant | Après |
+| :--- | :--- | :--- | :--- | :--- |
+| Comptes (ADM-08) | `admin_comptes/comptes_page.dart:256` | états, Rôle (menu) | Wrap | RangeeFiltres |
+| Groupes / Classes | `admin_groupes/groupes_page.dart:130` | public | Wrap | RangeeFiltres |
+| Journal (ADM-04) | `admin_journal/journal_page.dart:262` | période, Événement, Acteur | Wrap | RangeeFiltres |
+| Observations (admin) | `admin_observations/observations_admin_page.dart:497` | Classe, Période, Statut, personnes | Wrap | RangeeFiltres |
+| Progression | `admin_pedagogie_progression/progression_page.dart:131` | cycles | Wrap | RangeeFiltres |
+| Évaluations | `admin_pedagogie_evaluations/evaluations_page.dart:132` | statuts, certifications | Wrap | RangeeFiltres |
+| Qualité | `admin_pedagogie_qualite/qualite_page.dart:139` | Toutes, Ouvertes, Traitées | Wrap | RangeeFiltres |
+| Programmes (versions) | `admin_pedagogie_programmes/programmes_page.dart:169` | versions | Wrap | RangeeFiltres |
+| Historique du contrôleur | `controleur/historique_controleur_page.dart:254` | Période, Classe, État | Wrap | RangeeFiltres |
+| Historique du foyer (séances, observations) | `suivi_foyer/composants_historique.dart:180` | Classe, Période, Statut | Wrap | RangeeFiltres |
+| Bibliothèque | `tc_catalogue/surface_bibliotheque.dart:165` | types, Disponibilité | Wrap | RangeeFiltres |
+
+**Hors modèle, vérifiés** : `admin_acces_agents/acces_agents_page.dart` (durée, identité,
+personne) emploie des `FilterPill` comme **choix de formulaire**, pas comme filtres de liste :
+inchangé. Notifications, Mes classes, Créneaux, Disponibilités, Suivi élève, Classe tuteur,
+Parcours : le mot « filtre » n'y désigne pas de rangée de puces. **Exclus (autres voies)** :
+`lib/features/communications/**`, Finance / Comptable (`finance`, `foyer`, `comptable`,
+`revenus`), `salle`, `tc_classe_live` ; aucune rangée de filtres n'y figure sur la branche
+commune au 05/10, à relayer si leurs voies en ajoutent.
+
+**Preuves** : `test/core/widgets/rangee_filtres_test.dart` (6 cas) et
+`test/features/filtres1_rangee_unique_test.dart` (11 écrans x LTR/RTL, 320 px texte x2,
+vraies polices) ; contre-épreuve faite (l'ancien `Wrap` échoue sur les 22 cas d'écran ; le
+composant sans fondu ni rappel du filtre retenu échoue sur 7 cas). Captures avant / après :
+`docs/current/captures/FILTRES-1/` (script `filtres1_capture_test.dart.txt`). Statut :
+présent dans le code, testé localement ; ni staging ni déploiement.
+
+**Écarts vus, hors FILTRES-1, à relayer** : Qualité, la liste lève « Vertical viewport was
+given unbounded height » à 320 px texte x2 ; Observations (admin), la date des lignes
+(« 23/09/2026 ») se coupe à 320 px texte x2 ; Groupes, la page s'intitule encore
+« Groupes » (lot 3, « groupe » devient « classe »).
+
 ## Annexe B : libellés nouveaux
 
 Statut : **proposé par un agent** (leçon 12, K-53.4). Aucune clé i18n n'est créée.
