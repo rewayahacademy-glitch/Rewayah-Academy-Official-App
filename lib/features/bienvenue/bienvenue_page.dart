@@ -8,9 +8,12 @@
 // sachant a quel service il s'inscrit.
 //
 // Defilement automatique toutes les six secondes, avec une ligne d'etat qui
-// se charge ; en pause tant qu'un doigt touche la page, que la souris la
-// survole ou que le focus clavier y est ; jamais quand « reduire les
-// animations » est actif ou qu'un lecteur d'ecran est ouvert. Un geste du
+// se charge ; en pause tant qu'un doigt touche la page ou que le focus
+// clavier y est ; jamais quand « reduire les animations » est actif ou qu'un
+// lecteur d'ecran est ouvert. Le simple survol de la souris ne met pas en
+// pause (reprise PUB-1, revue adverse) : la page occupe tout l'ecran, et sur
+// ordinateur le curseur y reste presque toujours ; le defilement ne partirait
+// jamais. Un geste du
 // visiteur (glissement, fleche, touche) lui rend la main : le defilement
 // automatique s'arrete pour de bon. Il s'arrete aussi a la derniere page,
 // sans boucler. Une croix, en haut, passe tout et mene a la connexion.
@@ -31,6 +34,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/preferences/presentation_vue.dart';
@@ -138,7 +142,6 @@ class _BienvenuePageState extends ConsumerState<BienvenuePage>
   bool _main = false;
 
   bool _touche = false;
-  bool _survol = false;
   bool _focus = false;
 
   /// Le contexte interdit le defilement automatique (mouvement reduit,
@@ -167,7 +170,7 @@ class _BienvenuePageState extends ConsumerState<BienvenuePage>
 
   /// Lance ou arrete le minuteur selon l'etat de la page.
   void _actualiser() {
-    final bool enPause = _touche || _survol || _focus;
+    final bool enPause = _touche || _focus;
     if (_automatique && !enPause && !_minuteur.isCompleted) {
       unawaited(_minuteur.forward());
     } else {
@@ -220,9 +223,8 @@ class _BienvenuePageState extends ConsumerState<BienvenuePage>
     return false;
   }
 
-  void _pause({bool? touche, bool? survol, bool? focus}) {
+  void _pause({bool? touche, bool? focus}) {
     _touche = touche ?? _touche;
-    _survol = survol ?? _survol;
     _focus = focus ?? _focus;
     _actualiser();
   }
@@ -264,90 +266,87 @@ class _BienvenuePageState extends ConsumerState<BienvenuePage>
         skipTraversal: true,
         onFocusChange: (bool focus) => _pause(focus: focus),
         onKeyEvent: _touches,
-        child: MouseRegion(
-          onEnter: (PointerEnterEvent _) => _pause(survol: true),
-          onExit: (PointerExitEvent _) => _pause(survol: false),
-          child: Listener(
-            onPointerDown: (PointerDownEvent _) => _pause(touche: true),
-            onPointerUp: (PointerUpEvent _) => _pause(touche: false),
-            onPointerCancel: (PointerCancelEvent _) => _pause(touche: false),
-            child: Center(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: bureau ? _largeurBureau : _largeurColonne,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        const Expanded(
-                          child: Align(
-                            alignment: AlignmentDirectional.centerStart,
-                            child: MarquePage(),
-                          ),
+        child: Listener(
+          onPointerDown: (PointerDownEvent _) => _pause(touche: true),
+          onPointerUp: (PointerUpEvent _) => _pause(touche: false),
+          onPointerCancel: (PointerCancelEvent _) => _pause(touche: false),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: bureau ? _largeurBureau : _largeurColonne,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      const Expanded(
+                        child: Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: MarquePage(),
                         ),
-                        Ecart.hSm,
-                        BoutonIcone(
-                          key: const ValueKey<String>('bienvenue-passer'),
-                          icone: AppIcons.fermer,
-                          libelle: t.bienvenue.passer,
-                          onPress: _terminer,
-                        ),
-                      ],
-                    ),
-                    Ecart.vMd,
-                    AnimatedBuilder(
-                      animation: _minuteur,
-                      builder: (BuildContext _, Widget? _) => _LigneEtat(
-                        total: total,
-                        index: _index,
-                        avancee: _automatique ? _minuteur.value : 1,
                       ),
+                      Ecart.hSm,
+                      BoutonIcone(
+                        key: const ValueKey<String>('bienvenue-passer'),
+                        icone: AppIcons.fermer,
+                        libelle: t.bienvenue.passer,
+                        onPress: _terminer,
+                      ),
+                    ],
+                  ),
+                  Ecart.vMd,
+                  AnimatedBuilder(
+                    animation: _minuteur,
+                    builder: (BuildContext _, Widget? _) => _LigneEtat(
+                      total: total,
+                      index: _index,
+                      avancee: _automatique ? _minuteur.value : 1,
                     ),
-                    Ecart.vLg,
-                    Expanded(
-                      child: NotificationListener<UserScrollNotification>(
-                        onNotification: _glissement,
-                        child: PageView.builder(
-                          key: const ValueKey<String>('bienvenue-pages'),
-                          controller: _pages,
-                          itemCount: total,
-                          onPageChanged: _pageChangee,
-                          itemBuilder: (BuildContext _, int i) => _Page(
-                            page: _pagesPresentation[i],
-                            bureau: bureau,
-                            derniere: i == _derniere,
-                            onTerminer: _terminer,
-                          ),
+                  ),
+                  Ecart.vLg,
+                  Expanded(
+                    child: NotificationListener<UserScrollNotification>(
+                      onNotification: _glissement,
+                      child: PageView.builder(
+                        key: const ValueKey<String>('bienvenue-pages'),
+                        controller: _pages,
+                        itemCount: total,
+                        onPageChanged: _pageChangee,
+                        itemBuilder: (BuildContext _, int i) => _Page(
+                          page: _pagesPresentation[i],
+                          bureau: bureau,
+                          derniere: i == _derniere,
+                          onTerminer: _terminer,
                         ),
                       ),
                     ),
-                    Ecart.vMd,
-                    BarrePrecedentSuivant(
-                      position: t.bienvenue.position(
-                        numero: numero,
-                        total: total,
-                      ),
-                      positionSemantique: t.bienvenue.positionLecteur(
-                        numero: numero,
-                        total: total,
-                      ),
-                      libellePrecedent: t.bienvenue.precedente,
-                      libelleSuivant: t.bienvenue.suivante,
-                      onPrecedent: _index > 0
-                          ? () => _aller(_index - 1, parLeVisiteur: true)
-                          : null,
-                      onSuivant: _index < _derniere
-                          ? () => _aller(_index + 1, parLeVisiteur: true)
-                          : null,
+                  ),
+                  Ecart.vMd,
+                  BarrePrecedentSuivant(
+                    // Isolee : sans caractere fort, « 1 / 5 » se lirait
+                    // « 5 / 1 » dans une interface RTL (reprise PUB-1).
+                    position: isolerSens(
+                      t.bienvenue.position(numero: numero, total: total),
                     ),
-                    // Hors production seulement : sans lanceur, l'entree
-                    // ne rend rien.
-                    const EntreeDemonstration(),
-                    Ecart.vLg,
-                  ],
-                ),
+                    positionSemantique: t.bienvenue.positionLecteur(
+                      numero: numero,
+                      total: total,
+                    ),
+                    libellePrecedent: t.bienvenue.precedente,
+                    libelleSuivant: t.bienvenue.suivante,
+                    onPrecedent: _index > 0
+                        ? () => _aller(_index - 1, parLeVisiteur: true)
+                        : null,
+                    onSuivant: _index < _derniere
+                        ? () => _aller(_index + 1, parLeVisiteur: true)
+                        : null,
+                  ),
+                  // Hors production seulement : sans lanceur, l'entree
+                  // ne rend rien.
+                  const EntreeDemonstration(),
+                  Ecart.vLg,
+                ],
               ),
             ),
           ),
@@ -394,7 +393,7 @@ class _LigneEtat extends StatelessWidget {
 
 /// Une page : le pictogramme, l'idee, son explication ; sur la derniere, les
 /// deux sorties vers la connexion, 16 sous le texte qu'elles concluent.
-class _Page extends StatelessWidget {
+class _Page extends StatefulWidget {
   const _Page({
     required this.page,
     required this.bureau,
@@ -408,9 +407,26 @@ class _Page extends StatelessWidget {
   final VoidCallback onTerminer;
 
   @override
+  State<_Page> createState() => _PageState();
+}
+
+class _PageState extends State<_Page> {
+  /// Le defilement vertical de la page, pour afficher sa barre de
+  /// defilement en permanence quand le contenu depasse.
+  final ScrollController _defilement = ScrollController();
+
+  @override
+  void dispose() {
+    _defilement.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final _PagePresentation page = widget.page;
+    final bool bureau = widget.bureau;
 
     final Widget texte = Column(
       crossAxisAlignment: bureau
@@ -419,8 +435,11 @@ class _Page extends StatelessWidget {
       children: <Widget>[
         Semantics(
           header: true,
+          // Isole dans son propre sens : sans cle arabe, le texte francais
+          // s'affiche dans une interface RTL, et son point final passerait
+          // en tete de ligne (reprise PUB-1).
           child: TexteSansCoupure(
-            page.titre(),
+            isolerSens(page.titre()),
             key: ValueKey<String>(
               page.cle == 'service'
                   ? 'bienvenue-accroche'
@@ -434,15 +453,15 @@ class _Page extends StatelessWidget {
         ),
         Ecart.vSm,
         TexteSansCoupure(
-          page.texte(),
+          isolerSens(page.texte()),
           textAlign: bureau ? TextAlign.start : TextAlign.center,
           style: palette.inkMuted.applyTo(
             textes.bodyLarge ?? const TextStyle(),
           ),
         ),
-        if (derniere) ...<Widget>[
+        if (widget.derniere) ...<Widget>[
           Ecart.vLg,
-          _Sorties(bureau: bureau, onTerminer: onTerminer),
+          _Sorties(bureau: bureau, onTerminer: widget.onTerminer),
         ],
       ],
     );
@@ -471,13 +490,32 @@ class _Page extends StatelessWidget {
 
     // Une page ne deborde jamais : centree quand la place suffit, defilante
     // sinon (320 px, texte x2). Peu de hauteur : le pictogramme se reduit
-    // pour laisser le texte en vue.
+    // pour laisser le texte en vue. Quand le contenu depasse, la barre de
+    // defilement reste affichee : le visiteur voit qu'il y a une suite plus
+    // bas dans une page qui, elle, se glisse de cote (reprise PUB-1). Elle
+    // ne se dessine pas quand tout tient.
     return LayoutBuilder(
-      builder: (BuildContext _, BoxConstraints c) => SingleChildScrollView(
-        key: ValueKey<String>('bienvenue-page-${page.cle}'),
-        child: ConstrainedBox(
-          constraints: BoxConstraints(minHeight: c.maxHeight),
-          child: Center(child: contenu(reduit: c.maxHeight < _hauteurReduite)),
+      builder: (BuildContext _, BoxConstraints c) => Scrollbar(
+        key: ValueKey<String>('bienvenue-barre-${page.cle}'),
+        controller: _defilement,
+        thumbVisibility: true,
+        child: SingleChildScrollView(
+          key: ValueKey<String>('bienvenue-page-${page.cle}'),
+          controller: _defilement,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: c.maxHeight),
+            // Sur telephone, une marge egale des deux cotes, pour que la
+            // barre ne recouvre pas le bord du texte, sans decentrer la
+            // colonne ; sur bureau, le pictogramme reste aligne sur la marque.
+            child: Padding(
+              padding: bureau
+                  ? EdgeInsets.zero
+                  : const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+              child: Center(
+                child: contenu(reduit: c.maxHeight < _hauteurReduite),
+              ),
+            ),
+          ),
         ),
       ),
     );

@@ -3,11 +3,14 @@
 // derniere page, vue une seule fois par appareil, 320 texte x2 en LTR et RTL,
 // 1440.
 
+import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/i18n/isolat_bidi.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/preferences/presentation_vue.dart';
@@ -22,14 +25,15 @@ import '../../support/aucun_mot_coupe.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 
-/// Les titres des cinq pages, dans l'ordre.
+/// Les titres des cinq pages, dans l'ordre, tels qu'affiches (isoles dans
+/// leur propre sens de lecture).
 List<String> get _titres => <String>[
   t.bienvenue.accroche,
   t.bienvenue.pointClasseTitre,
   t.bienvenue.pointEnseignantTitre,
   t.bienvenue.pointParcoursTitre,
   t.bienvenue.pointFoyerTitre,
-];
+].map(isolerSens).toList();
 
 /// Un pas de defilement automatique : le temps de lecture, puis le passage.
 const Duration _pas = Duration(milliseconds: 6400);
@@ -92,9 +96,9 @@ Future<void> _attendre(WidgetTester tester, int secondes) async {
   }
 }
 
-/// La position annoncee par la barre du bas (« 1 / 5 »).
+/// La position annoncee par la barre du bas (« 1 / 5 »), isolee.
 Finder _position(int numero) =>
-    find.text(t.bienvenue.position(numero: numero, total: 5));
+    find.text(isolerSens(t.bienvenue.position(numero: numero, total: 5)));
 
 double _valeurSegment(WidgetTester tester, int i) => tester
     .widget<LinearProgressIndicator>(
@@ -128,7 +132,7 @@ void main() {
       await tester.pump(AppMouvement.navigation);
       expect(find.text(_titres[1]), findsOneWidget);
       expect(_valeurSegment(tester, 0), 1);
-      expect(find.text(t.bienvenue.position(numero: 2, total: 5)), findsOne);
+      expect(_position(2), findsOne);
     });
 
     testWidgets('s arrete a la derniere page, sans boucler', (
@@ -183,6 +187,27 @@ void main() {
       expect(find.text(_titres[0]), findsOneWidget);
     });
 
+    // Reprise PUB-1 (revue adverse) : la page occupe tout l'ecran ; si le
+    // survol mettait en pause, la presentation ne defilerait jamais seule
+    // sur ordinateur.
+    testWidgets(
+      '1440 : la souris posee sur la page ne bloque pas le defilement',
+      (WidgetTester tester) async {
+        await _monter(tester, taille: const Size(1440, 900));
+        final TestGesture souris = await tester.createGesture(
+          kind: PointerDeviceKind.mouse,
+        );
+        await souris.addPointer(location: Offset.zero);
+        addTearDown(souris.removePointer);
+        await souris.moveTo(const Offset(720, 600));
+        await tester.pump();
+        await _attendre(tester, 30);
+        expect(_position(5), findsOneWidget);
+        expect(find.text(_titres[4]), findsOneWidget);
+        expect(_valeurSegment(tester, 0), 1);
+      },
+    );
+
     testWidgets('jamais quand reduire les animations est actif', (
       WidgetTester tester,
     ) async {
@@ -205,7 +230,7 @@ void main() {
       expect(_position(1), findsOneWidget);
       expect(find.text(_titres[0]), findsOneWidget);
       expect(_valeurSegment(tester, 0), 1);
-      expect(find.text(t.bienvenue.position(numero: 1, total: 5)), findsOne);
+      expect(_position(1), findsOne);
     });
   });
 
@@ -362,6 +387,80 @@ void main() {
   });
 
   group('mise en page', () {
+    // Reprise PUB-1 (revue adverse) : sans cle arabe, le texte francais
+    // s'affiche dans l'interface RTL ; son point final doit rester a la fin
+    // de la phrase, a droite du dernier mot, pas en tete de ligne.
+    testWidgets('RTL : la ponctuation finale reste en fin de phrase', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, direction: TextDirection.rtl);
+      final String phrase = t.bienvenue.phrase;
+      expect(phrase.endsWith('.'), isTrue);
+      final RenderParagraph rendu = tester
+          .renderObjectList<RenderParagraph>(find.byType(RichText))
+          .firstWhere(
+            (RenderParagraph p) => p.text.toPlainText().contains(phrase),
+          );
+      final String affiche = rendu.text.toPlainText();
+      final int point = affiche.lastIndexOf('.');
+      TextBox boite(int i) => rendu
+          .getBoxesForSelection(
+            TextSelection(baseOffset: i, extentOffset: i + 1),
+          )
+          .single;
+      final TextBox boitePoint = boite(point);
+      final TextBox boiteLettre = boite(point - 1);
+      // Meme ligne que la derniere lettre, et a sa droite (sens francais).
+      expect(boitePoint.top, closeTo(boiteLettre.top, 1));
+      expect(boitePoint.left, greaterThanOrEqualTo(boiteLettre.right - 1));
+    });
+
+    // Reprise PUB-1 : en RTL, « 1 / 5 » s'affichait « 5 / 1 » (les chiffres
+    // n'ont pas de sens fort, la barre est en sens arabe).
+    testWidgets('RTL : la position se lit 1 / 5, pas 5 / 1', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, direction: TextDirection.rtl);
+      final RenderParagraph rendu = tester
+          .renderObjectList<RenderParagraph>(find.byType(RichText))
+          .firstWhere(
+            (RenderParagraph p) => p.text.toPlainText().contains(' / 5'),
+          );
+      final String affiche = rendu.text.toPlainText();
+      double gauche(int i) => rendu
+          .getBoxesForSelection(
+            TextSelection(baseOffset: i, extentOffset: i + 1),
+          )
+          .single
+          .left;
+      expect(
+        gauche(affiche.indexOf('1')),
+        lessThan(gauche(affiche.lastIndexOf('5'))),
+      );
+    });
+
+    // Reprise PUB-1 (revue adverse) : a 320 px texte x2, la fin d'une page
+    // est sous le bord ; la barre de defilement reste affichee pour le dire.
+    testWidgets('320 px, texte x2 : la barre de defilement dit la suite', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, taille: const Size(320, 640), echelle: 2);
+      final Finder barre = find.byKey(
+        const ValueKey<String>('bienvenue-barre-service'),
+      );
+      expect(barre, findsOneWidget);
+      final Scrollbar scrollbar = tester.widget<Scrollbar>(barre);
+      expect(scrollbar.thumbVisibility, isTrue);
+      final ScrollableState defilable = tester.state<ScrollableState>(
+        find.descendant(
+          of: find.byKey(const ValueKey<String>('bienvenue-page-service')),
+          matching: find.byType(Scrollable),
+        ),
+      );
+      expect(defilable.position.maxScrollExtent, greaterThan(0));
+      expect(barre, paints..rrect());
+    });
+
     for (final TextDirection sens in TextDirection.values) {
       testWidgets('320 px, texte x2, ${sens.name} : chaque page lisible', (
         WidgetTester tester,
