@@ -53,9 +53,10 @@ class CarteSession extends StatefulWidget {
   /// Accessibilite, MA-3) ; nulle dans l'Espace Classe, qui la porte deja.
   final Widget? identite;
 
-  /// Le seul bouton de la carte quand l'emplacement d'entree n'en est pas
-  /// un (ligne d'etat sans « Reessayer ») : jamais a cote de « Rejoindre »
-  /// (R4). Accueil du Mode Accessibilite : « Voir ma classe » (MA-3).
+  /// Le bouton plein de la carte quand l'emplacement d'entree n'en est pas
+  /// un (ligne d'etat, avec ou sans « Reessayer » secondaire) : jamais a
+  /// cote de « Rejoindre » (R4). Accueil du Mode Accessibilite : « Voir ma
+  /// classe » (MA-3), qui reste hors ligne (MA-HORSLIGNE-CLASSE-1).
   final Widget? actionHorsEntree;
 
   /// L'Espace Groupe auquel elle appartient.
@@ -207,9 +208,11 @@ class _CarteSessionState extends State<CarteSession> {
             onReessayer: widget.onReessayer,
             focusRetour: _focusTitre,
           ),
+          // Hors ligne aussi : « Reessayer » relit le reseau, mais Ma classe
+          // reste consultable (bandeau « ce qui est deja affiche reste
+          // consultable ») ; son chemin ne disparait pas (MA-HORSLIGNE-CLASSE-1).
           if (widget.actionHorsEntree != null &&
-              !emplacement.estBouton &&
-              !emplacement.reessayer) ...<Widget>[
+              !emplacement.estBouton) ...<Widget>[
             Ecart.vLg,
             widget.actionHorsEntree!,
           ],

@@ -293,7 +293,7 @@ class _DeuxColonnes extends StatelessWidget {
 /// (lecon 8, precedent MA-4 de `espace_groupe_page.dart`). Rendu a 100 %
 /// inchange.
 String _insecable(BuildContext context, String texte) =>
-    MediaQuery.textScalerOf(context).scale(1) > 1.3
+    MediaQuery.textScalerOf(context).scale(1) > seuilTexteEmpile
     ? texte.replaceAll('-', '-\u2060')
     : texte;
 

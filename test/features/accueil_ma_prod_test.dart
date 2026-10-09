@@ -38,6 +38,7 @@ import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
 import 'package:rewayah_academy/features/compte/aide_page.dart';
 import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
+import 'package:rewayah_academy/features/suivi_eleve/suivi_eleve_page.dart';
 
 import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../router/support_routeur.dart';
@@ -338,7 +339,7 @@ void main() {
 
   group('DASH-MA-PROD-b : hors ligne, aucun bouton grise (D9)', () {
     testWidgets('chaque ActionPrincipale agit ; « Reessayer » relit le '
-        'reseau, puis « Voir ma classe » revient', (WidgetTester tester) async {
+        'reseau ; « Voir ma classe » reste', (WidgetTester tester) async {
       // Hors ligne a la premiere lecture du reseau, en ligne a la suivante.
       int lecturesReseau = 0;
       await _monter(
@@ -379,6 +380,39 @@ void main() {
       expect(reessayer, findsNothing);
       expect(find.byKey(AccueilAccessibilite.cleVoirClasse), findsOneWidget);
       _coranEtAideRestent();
+    });
+  });
+
+  group('MA-HORSLIGNE-CLASSE-1 : hors ligne, Ma classe reste atteignable', () {
+    // Contre-epreuve : sur l'ancien code, `CarteSession` masquait
+    // « Voir ma classe » des que l'emplacement proposait « Reessayer ».
+    testWidgets('« Voir ma classe » reste, a cote de « Reessayer », et mene '
+        'a Ma classe, bandeau hors ligne compris', (WidgetTester tester) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        horsLigne: true,
+        port: const PortAccueilAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.mariam,
+        ),
+      );
+      expect(find.text(t.reseau.horsLigne), findsOneWidget);
+      expect(
+        find.widgetWithText(ActionPrincipale, t.classe.entree.reessayer),
+        findsOneWidget,
+      );
+      final Finder voir = find.byKey(AccueilAccessibilite.cleVoirClasse);
+      expect(voir, findsOneWidget);
+      expect(tester.widget<ActionPrincipale>(voir).onPress, isNotNull);
+      verifierUnSeulBoutonPlein(tester);
+      await tester.ensureVisible(voir);
+      await tester.pumpAndSettle();
+      await tester.tap(voir);
+      await stabiliser(tester);
+      expect(lieu(routeur), Routes.eleveSuivi);
+      // Ma classe s'affiche hors ligne, sous le bandeau.
+      expect(find.byType(SuiviElevePage), findsOneWidget);
+      expect(find.byType(OfflineBanner), findsOneWidget);
+      expect(tester.takeException(), isNull);
     });
   });
 

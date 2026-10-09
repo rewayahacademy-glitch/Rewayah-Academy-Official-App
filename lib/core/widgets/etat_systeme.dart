@@ -324,7 +324,7 @@ class _Bloc extends StatelessWidget {
           // DASH-MA-PROD (lecon 8) : a texte agrandi (au-dela de 130 %), le
           // medaillon passe AU-DESSUS du texte, qui garde toute la largeur
           // de la carte (« connexi / on » a 320 px x2 sinon).
-          empile: MediaQuery.textScalerOf(context).scale(1) > 1.3,
+          empile: MediaQuery.textScalerOf(context).scale(1) > seuilTexteEmpile,
         ),
       ),
     );
