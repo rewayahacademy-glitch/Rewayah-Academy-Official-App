@@ -111,7 +111,7 @@ List<_ChampRegle> _champs() => <_ChampRegle>[
     titre: t.admin.regles.horizonAffectation,
     description: t.admin.regles.horizonAffectationDetail,
     cle: 'matching_horizon_weeks',
-    affichage: (int n) => t.admin.regles.uniteSemaines(n: '$n'),
+    affichage: (int n) => t.admin.regles.uniteSemaines(n: n),
   ),
   (
     titre: t.admin.regles.ageCameraAuto,

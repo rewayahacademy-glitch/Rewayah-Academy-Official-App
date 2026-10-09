@@ -698,7 +698,7 @@ String _libelleRegle(CleRegle? cle) => switch (cle) {
 /// trois autres regles comptent des minutes** : une valeur nue laisserait
 /// lire « 5 » pour cinq minutes de cours.
 String _valeur(CleRegle? cle, int valeur) => cle == CleRegle.plafondEleves
-    ? t.admin.demandes.eleves(valeur: '$valeur')
+    ? t.admin.demandes.eleves(valeur: valeur)
     : t.admin.demandes.minutes(valeur: '$valeur');
 
 /// Ce que la demande reclame, dit en clair.
@@ -706,12 +706,12 @@ String _reclame(Demande demande) => switch (demande.sorte) {
   SorteDemande.reaffectation => t.admin.demandes.reclameReaffectation(
     prenom: demande.sujetLibelle,
   ),
-  SorteDemande.plafond =>
-    demande.valeurDemandee == null
-        ? t.admin.demandes.reclameRegleSansValeur(
-            regle: t.admin.demandes.reglePlafond,
-          )
-        : t.admin.demandes.reclamePlafond(valeur: '${demande.valeurDemandee}'),
+  SorteDemande.plafond => switch (demande.valeurDemandee) {
+    null => t.admin.demandes.reclameRegleSansValeur(
+      regle: t.admin.demandes.reglePlafond,
+    ),
+    final int valeur => t.admin.demandes.reclamePlafond(valeur: valeur),
+  },
   _ =>
     demande.valeurDemandee == null
         ? t.admin.demandes.reclameRegleSansValeur(

@@ -224,7 +224,7 @@ class _Decision extends StatelessWidget {
         Text(
           restants == 1
               ? t.admin.diagnostics.restantUn
-              : t.admin.diagnostics.restants(n: '$restants'),
+              : t.admin.diagnostics.restants(n: restants),
           style: textes.bodySmall,
         ),
         Ecart.vXl,
@@ -238,7 +238,7 @@ class _Decision extends StatelessWidget {
                   <= 0 => t.admin.diagnostics.inscritAujourdhui,
                   1 => t.admin.diagnostics.inscritDepuisUnJour,
                   final int j => t.admin.diagnostics.inscritDepuis(
-                    jours: '$j',
+                    jours: j,
                   ),
                 },
                 style: textes.bodySmall,

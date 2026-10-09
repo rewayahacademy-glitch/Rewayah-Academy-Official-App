@@ -872,7 +872,10 @@
       "groupeProfils": "Profils élèves",
       "aucunAppareil": "Aucun appareil connecté",
       "unAppareil": "1 appareil connecté : {nom}",
-      "plusieursAppareils": "{nombre} appareils connectés : {noms}",
+      "plusieursAppareils(param=nombre)": {
+        "one": "{nombre} appareil connecté : {noms}",
+        "other": "{nombre} appareils connectés : {noms}"
+      },
       "partageTitre": "Appareil partagé",
       "partage": "Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel. Cet appareil apparaît alors sous chaque profil qui l'utilise.",
       "videTitre": "Aucun profil élève",
@@ -1176,7 +1179,10 @@
     "fuseau": "Heures affichées en {fuseau}",
     "aucune": "Aucune heure proposée pour {prenom}",
     "aucuneDetail": "Sans créneau, aucun enseignant ne peut prendre {prenom} en charge.",
-    "posees": "{nombre} heures proposées",
+    "posees(param=nombre)": {
+      "one": "{nombre} heure proposée",
+      "other": "{nombre} heures proposées"
+    },
     "poseeUne": "1 heure proposée",
     "cellulePosee": "{jour} {heure} heures, proposé. Toucher pour retirer",
     "celluleLibre": "{jour} {heure} heures, libre. Toucher pour proposer",
@@ -1204,23 +1210,35 @@
     "titre": "Créneaux",
     "ongletHeures": "Mes heures",
     "ongletEleves": "Élèves en attente",
-    "mesEleves": "Vous suivez {nombre} élèves sur {plafond} possibles.",
+    "mesEleves(param=nombre)": {
+      "one": "Vous suivez {nombre} élève sur {plafond} possibles.",
+      "other": "Vous suivez {nombre} élèves sur {plafond} possibles."
+    },
     "aucunEleve": "Aucun élève en attente sur vos heures",
     "aucunEleveDetail": "Proposez d'autres heures pour voir plus de familles.",
-    "attendDepuis": "Attend depuis {jours} jours",
+    "attendDepuis(param=jours)": {
+      "one": "Attend depuis {jours} jour",
+      "other": "Attend depuis {jours} jours"
+    },
     "attendUnJour": "Attend depuis 1 jour",
     "attendAujourdhui": "Demande déposée aujourd'hui",
     "niveau": "Niveau {niveau}",
     "prendre": "Prendre {jour} à {heure} h",
     "priseEnCours": "Enregistrement",
-    "plafondAtteint": "Vous suivez déjà {nombre} élèves, votre maximum. Un élève pris est un engagement durable, pas une réservation.",
+    "plafondAtteint(param=nombre)": {
+      "one": "Vous suivez déjà {nombre} élève, votre maximum. Un élève pris est un engagement durable, pas une réservation.",
+      "other": "Vous suivez déjà {nombre} élèves, votre maximum. Un élève pris est un engagement durable, pas une réservation."
+    },
     "plafondDemander": "Demander à suivre plus d'élèves",
     "demandeTitre": "Combien d'élèves pouvez-vous suivre ?",
     "demandeMotif": "Pourquoi ce changement ?",
     "demandeMotifRequis": "Un motif est nécessaire : c'est lui qui permet de trancher.",
     "demandeEnvoyer": "Envoyer la demande",
     "demandeEnvoyee": "Demande envoyée. L'administration la tranchera.",
-    "eleves": "{nombre} élèves",
+    "eleves(param=nombre)": {
+      "one": "{nombre} élève",
+      "other": "{nombre} élèves"
+    },
     "erreur": "L'opération n'a pas abouti : {message}"
   },
   "priere": {
@@ -1403,11 +1421,17 @@
       }
     },
     "restantUn": "1 dossier en attente",
-    "restants": "{n} dossiers en attente",
+    "restants": {
+      "one": "{n} dossier en attente",
+      "other": "{n} dossiers en attente"
+    },
     "deposeLe": "Déposé le {date}",
     "inscritAujourdhui": "Inscrit aujourd'hui",
     "inscritDepuisUnJour": "Inscrit depuis 1 jour",
-    "inscritDepuis": "Inscrit depuis {jours} jours",
+    "inscritDepuis(param=jours)": {
+      "one": "Inscrit depuis {jours} jour",
+      "other": "Inscrit depuis {jours} jours"
+    },
     "sansPiece": "Aucune pièce déposée",
     "sansPieceDetail": "Cette personne a créé son compte et accepté les contrats, mais n'a pas encore envoyé sa pièce d'identité. Il n'y a donc rien à vérifier : le geste est chez elle.",
     "pieceNonVisible": "Pièce hors de votre portée",
@@ -1492,12 +1516,18 @@
       "ligneRegle": "Changement de règle pour {prenom}",
       "attenteAujourdhui": "Déposé aujourd'hui",
       "attenteUnJour": "En attente depuis 1 jour",
-      "attenteJours": "En attente depuis {jours} jours"
+      "attenteJours(param=jours)": {
+        "one": "En attente depuis {jours} jour",
+        "other": "En attente depuis {jours} jours"
+      }
     },
     "demandes": {
       "titre": "Demandes et règles",
       "restanteUne": "1 demande en attente",
-      "restantes": "{n} demandes en attente",
+      "restantes": {
+        "one": "{n} demande en attente",
+        "other": "{n} demandes en attente"
+      },
       "aucune": "Aucune demande en attente",
       "aucuneDetail": "Les demandes des familles, des élèves autonomes et des enseignants arrivent ici, la plus ancienne en premier.",
       "faitePar": "Demandée le {date}, par {role}",
@@ -1509,7 +1539,10 @@
       "roleInconnu": "une partie au dossier",
       "reclame": "Ce qui est demandé",
       "reclameReaffectation": "Changer l'enseignant de {prenom}",
-      "reclamePlafond": "Porter le plafond à {valeur} élèves",
+      "reclamePlafond(param=valeur)": {
+        "one": "Porter le plafond à {valeur} élève",
+        "other": "Porter le plafond à {valeur} élèves"
+      },
       "reclameRegle": "Porter {regle} à {valeur} min",
       "reclameRegleSansValeur": "Revoir {regle}",
       "motifDemande": "Motif invoqué",
@@ -1530,7 +1563,10 @@
       "plateforme": "Plateforme : {valeur}",
       "effective": "Appliquée : {valeur}",
       "minutes": "{valeur} min",
-      "eleves": "{valeur} élèves",
+      "eleves(param=valeur)": {
+        "one": "{valeur} élève",
+        "other": "{valeur} élèves"
+      },
       "surchargeDepuis": "Posée le {date} : {motif}",
       "sansSurcharge": "Cet élève suit la règle de la plateforme.",
       "changer": "Changer",
@@ -1557,16 +1593,25 @@
       "erreurEnseignants": "Les enseignants n'ont pas pu être lus. Réessayez dans un instant.",
       "attendAujourdhui": "Inscrit aujourd'hui",
       "attendUnJour": "Attend depuis 1 jour",
-      "attendJours": "Attend depuis {jours} jours",
+      "attendJours(param=jours)": {
+        "one": "Attend depuis {jours} jour",
+        "other": "Attend depuis {jours} jours"
+      },
       "niveau": "Niveau {niveau}",
-      "heuresProposees": "{nombre} heures proposées",
+      "heuresProposees(param=nombre)": {
+        "one": "{nombre} heure proposée",
+        "other": "{nombre} heures proposées"
+      },
       "heureProposee": "1 heure proposée",
       "sansHeure": "Aucune heure proposée",
       "sansHeureDetail": "Tant que la famille n'a posé aucun créneau, personne ne peut lui donner d'enseignant, pas même vous. Le geste est chez elle, sur ses disponibilités.",
       "changerEleve": "Choisir un autre élève",
       "choisirEleve": "Choisissez un élève",
       "choisirEleveDetail": "Les enseignants s'afficheront ici, ceux qui partagent une heure avec lui en premier.",
-      "charge": "{actifs} élèves sur {plafond}",
+      "charge(param=actifs)": {
+        "one": "{actifs} élève sur {plafond}",
+        "other": "{actifs} élèves sur {plafond}"
+      },
       "complet": "Plafond atteint",
       "libreSur": "Libre {jour} à {heure} h",
       "libreSurPlusieurs": "Libre sur {nombre} des heures proposées",
@@ -1645,11 +1690,17 @@
       "aucunProgramme": "Aucun programme publié",
       "aucunProgrammeDetail": "Publiez une première version du programme (Pédagogie > Programmes) avant de pouvoir décider un placement.",
       "erreur": "La file n'a pas pu être lue. Réessayez dans un instant.",
-      "restants": "{n} élèves restants",
+      "restants": {
+        "one": "{n} élève restant",
+        "other": "{n} élèves restants"
+      },
       "restantUn": "1 élève restant",
       "inscritAujourdhui": "Inscrit aujourd'hui",
       "inscritDepuisUnJour": "Inscrit depuis 1 jour",
-      "inscritDepuis": "Inscrit depuis {jours} jours",
+      "inscritDepuis(param=jours)": {
+        "one": "Inscrit depuis {jours} jour",
+        "other": "Inscrit depuis {jours} jours"
+      },
       "aucun": "Aucun élève à diagnostiquer",
       "aucunDetail": "Tous les élèves inscrits ont déjà un niveau décidé.",
       "champNiveau": "Niveau de placement",
@@ -1678,7 +1729,10 @@
       "statutTraite": "Traitée",
       "depuisAujourdhui": "Aujourd'hui",
       "depuisUnJour": "1 jour",
-      "depuisJours": "{jours} jours",
+      "depuisJours(param=jours)": {
+        "one": "{jours} jour",
+        "other": "{jours} jours"
+      },
       "actionTraiter": "Marquer traité",
       "traiterTitre": "Marquer traité : {personne}",
       "champNote": "Note (optionnelle)",
@@ -1714,7 +1768,10 @@
       "seancesSimultanees": "Séances simultanées par profil",
       "seancesSimultaneesDetail": "Le nombre de séances qu'un même profil peut suivre en même temps.",
       "uniteMinutes": "{n} min",
-      "uniteSemaines": "{n} sem.",
+      "uniteSemaines": {
+        "one": "{n} sem.",
+        "other": "{n} sem."
+      },
       "uniteNombre": "{n}"
     },
     "fonctionnalites": {
@@ -1743,7 +1800,10 @@
       "enregistrementsDetail": "Le nombre de jours pendant lesquels un enregistrement de séance reste accessible.",
       "documentsIdentite": "Documents d'identité",
       "documentsIdentiteDetail": "Le nombre de jours pendant lesquels un document d'identité déposé reste accessible avant sa purge.",
-      "uniteJours": "{n} j"
+      "uniteJours": {
+        "one": "{n} j",
+        "other": "{n} j"
+      }
     },
     "politiqueRevueKyc": {
       "titre": "Politique de genre pour la revue KYC",
@@ -1817,7 +1877,10 @@
       "filtreTousCycles": "Tous les cycles",
       "depuisAujourdhui": "Aujourd'hui",
       "depuisUnJour": "1 jour",
-      "depuisJours": "{jours} jours",
+      "depuisJours(param=jours)": {
+        "one": "{jours} jour",
+        "other": "{jours} jours"
+      },
       "typeBlocage": "Blocage",
       "typeDerogation": "Dérogation",
       "actionPoserBlocage": "Poser un blocage",
@@ -1848,7 +1911,10 @@
       "statutPubliee": "Publiée",
       "statutArchivee": "Archivée",
       "versionNumero": "Version {numero}",
-      "niveauxSur": "{nombre} niveaux",
+      "niveauxSur(param=nombre)": {
+        "one": "{nombre} niveau",
+        "other": "{nombre} niveaux"
+      },
       "creerVersion": "Créer une version",
       "creerVersionVide": "Créer une version vide",
       "enregistrerVersion": "Enregistrer la version",
@@ -1887,10 +1953,16 @@
     "journal": {
       "titre": "Journal",
       "chaineIntacte": "Journal intact",
-      "chaineIntacteDetail": "{nombre} entrées relues une à une : aucune n'a été modifiée ni retirée depuis son écriture.",
+      "chaineIntacteDetail(param=nombre)": {
+        "one": "{nombre} entrée relue : elle n'a été ni modifiée ni retirée depuis son écriture.",
+        "other": "{nombre} entrées relues une à une : aucune n'a été modifiée ni retirée depuis son écriture."
+      },
       "chaineRompue": "Journal altéré",
       "chaineRompueUne": "Une entrée ne correspond plus à son empreinte, la n° {entree}. Quelque chose a touché la base en dehors de l'application.",
-      "chaineRompueDetail": "{nombre} entrées ne correspondent plus à leur empreinte, à partir de la n° {entree}. Quelque chose a touché la base en dehors de l'application.",
+      "chaineRompueDetail(param=nombre)": {
+        "one": "{nombre} entrée ne correspond plus à son empreinte, à partir de la n° {entree}. Quelque chose a touché la base en dehors de l'application.",
+        "other": "{nombre} entrées ne correspondent plus à leur empreinte, à partir de la n° {entree}. Quelque chose a touché la base en dehors de l'application."
+      },
       "chaineInconnue": "Intégrité inconnue",
       "chaineInconnueDetail": "La vérification n'a pas abouti. Les entrées ci-dessous restent lisibles, mais rien ne garantit pour l'instant qu'elles sont complètes.",
       "chaineEnCours": "Vérification",
@@ -2003,8 +2075,14 @@
       "intro": "Toutes les personnes inscrites, celles qui attendent une décision en premier. Un enseignant sans pièce d'identité déposée reste visible ici : c'est le seul endroit qui le montre.",
       "attenteUneAujourdhui": "Une personne attend une décision, inscrite aujourd'hui.",
       "attenteUneUnJour": "Une personne attend une décision depuis 1 jour.",
-      "attenteUne": "Une personne attend une décision depuis {jours} jours.",
-      "attentePlusieurs": "{nombre} personnes attendent une décision.",
+      "attenteUne(param=jours)": {
+        "one": "Une personne attend une décision depuis {jours} jour.",
+        "other": "Une personne attend une décision depuis {jours} jours."
+      },
+      "attentePlusieurs(param=nombre)": {
+        "one": "{nombre} personne attend une décision.",
+        "other": "{nombre} personnes attendent une décision."
+      },
       "filtreTousEtats": "Tous",
       "filtreTousRoles": "Tous les rôles",
       "filtreRole": "Rôle",
@@ -2038,7 +2116,10 @@
       "pieceSansObjet": "Sans objet",
       "attendAujourdhui": "Aujourd'hui",
       "attendUnJour": "1 jour",
-      "attendJours": "{jours} jours"
+      "attendJours(param=jours)": {
+        "one": "{jours} jour",
+        "other": "{jours} jours"
+      }
     },
     "agents": {
       "titre": "Accès des agents IA",
@@ -2088,7 +2169,10 @@
       "etatRevoque": "Révoqué",
       "etatExpire": "Expiré",
       "jamaisServi": "Jamais utilisé",
-      "usage": "{nombre} fois, la dernière {quand}",
+      "usage(param=nombre)": {
+        "one": "{nombre} fois, la dernière {quand}",
+        "other": "{nombre} fois, la dernière {quand}"
+      },
       "revoquer": "Révoquer",
       "revoquerTitre": "Révoquer ce jeton ?",
       "revoquerDetail": "L'agent perdra l'accès à sa requête suivante. C'est définitif : un jeton révoqué ne se réactive pas.",
@@ -2199,8 +2283,14 @@
     "offresRaison": "Ces horaires sont affichés à votre heure locale. Choisir un horaire enregistre votre préférence : cela ne réserve pas de place et ne constitue pas encore une classe.",
     "offreRecommandee": "Le plus proche de vos réponses",
     "offresAutres": "Autres horaires possibles",
-    "offreRecurrence": "{seances} séances par semaine, {duree} min",
-    "offreRecurrencePause": "{seances} séances par semaine, {duree} min dont {pause} min de pause",
+    "offreRecurrence(param=seances)": {
+      "one": "{seances} séance par semaine, {duree} min",
+      "other": "{seances} séances par semaine, {duree} min"
+    },
+    "offreRecurrencePause(param=seances)": {
+      "one": "{seances} séance par semaine, {duree} min dont {pause} min de pause",
+      "other": "{seances} séances par semaine, {duree} min dont {pause} min de pause"
+    },
     "offreLangue": "Cours en {langue}",
     "offreFuseau": "Heure affichée pour {fuseau}",
     "offreTraduite": "Affiché à votre heure locale",
@@ -2226,7 +2316,10 @@
     "etatDiagnosticEnAttente": "Rendez-vous prévu",
     "etatDiagnosticEnAttenteDetail": "Un échange est prévu pour situer le niveau de {prenom}.",
     "etatClasseEnFormation": "Classe en cours de constitution",
-    "etatClasseEnFormationDetail": "Une classe démarre à partir de {minimum} élèves. Nous vous préviendrons dès qu'elle est confirmée.",
+    "etatClasseEnFormationDetail(param=minimum)": {
+      "one": "Une classe démarre à partir de {minimum} élève. Nous vous préviendrons dès qu'elle est confirmée.",
+      "other": "Une classe démarre à partir de {minimum} élèves. Nous vous préviendrons dès qu'elle est confirmée."
+    },
     "etatClasseEnFormationDetailSansMinimum": "Une classe démarre à partir d'un certain nombre d'élèves. Nous vous préviendrons dès qu'elle est confirmée.",
     "etatClasseConfirmee": "Classe confirmée",
     "etatClasseConfirmeeDetail": "La classe de {prenom} est constituée. Vous retrouverez ses séances dans son espace.",
@@ -2432,7 +2525,10 @@
         "titre": "Mon foyer",
         "aucun": "Aucun profil élève pour le moment",
         "un": "1 profil élève",
-        "plusieurs": "{nombre} profils élèves",
+        "plusieurs(param=nombre)": {
+          "one": "{nombre} profil élève",
+          "other": "{nombre} profils élèves"
+        },
         "legende": "Profils élèves et appareils du foyer",
         "creerMonProfil": "Créer mon profil élève"
       },
@@ -2553,7 +2649,10 @@
     "selecteur": {
       "aucune": "Aucune séance",
       "une": "1 séance",
-      "plusieurs": "{n} séances"
+      "plusieurs": {
+        "one": "{n} séance",
+        "other": "{n} séances"
+      }
     },
     "filtres": {
       "classe": "Classe",
@@ -2594,7 +2693,10 @@
       "filtreVideTitre": "Aucune observation ne correspond",
       "filtreVidePhrase": "Changez les filtres pour retrouver les autres visites.",
       "visiteUne": "1 visite",
-      "visites": "{n} visites",
+      "visites": {
+        "one": "{n} visite",
+        "other": "{n} visites"
+      },
       "dureeNonConfirmee": "Durée non confirmée",
       "terminee": "Terminée",
       "nonRefermee": "Sortie non enregistrée",
@@ -2661,7 +2763,10 @@
       "erreurCours": "Tes cours n'ont pas pu être lus. Réessaie dans un instant.",
       "prochainAujourdhui": "Ton prochain cours est plus tard aujourd'hui.",
       "prochainDemain": "Ton prochain cours est demain.",
-      "prochainDansJours": "Ton prochain cours est dans {jours} jours.",
+      "prochainDansJours(param=jours)": {
+        "one": "Ton prochain cours est dans {jours} jour.",
+        "other": "Ton prochain cours est dans {jours} jours."
+      },
       "annulee": "Ce cours n'aura pas lieu",
       "horsLigne": "Pas de réseau",
       "horsLigneDetail": "Tu pourras entrer dès que le réseau revient.",
@@ -2920,7 +3025,10 @@
     "observation": {
       "commentCaMarche": "Comment ça marche ?",
       "uneVisite": "1 visite disponible",
-      "visites": "{nombre} visites disponibles",
+      "visites(param=nombre)": {
+        "one": "{nombre} visite disponible",
+        "other": "{nombre} visites disponibles"
+      },
       "resume": "{visites} · {duree} par visite",
       "restanteAucune": "Aucune visite restante pour cette séance",
       "restanteUne": "1 visite restante pour cette séance",
@@ -3035,7 +3143,10 @@
       "chargement": "Chargement de vos Classes.",
       "niveau": "Niveau {niveau}",
       "eleveUn": "1 élève",
-      "eleves": "{nombre} élèves",
+      "eleves(param=nombre)": {
+        "one": "{nombre} élève",
+        "other": "{nombre} élèves"
+      },
       "prochaine": "Prochaine séance : {jour} à {heure}",
       "sansProchaine": "Aucune séance prévue",
       "remplacement": "Remplacement",
@@ -3156,7 +3267,10 @@
       "voirCreneaux": "Voir mes créneaux",
       "erreur": "La journée n'a pas pu être lue en entier. Réessayez dans un instant.",
       "coursIndividuel": "Cours individuel",
-      "effectif": "{nombre} élèves",
+      "effectif(param=nombre)": {
+        "one": "{nombre} élève",
+        "other": "{nombre} élèves"
+      },
       "effectifUn": "1 élève",
       "preflightOk": "Micro prêt",
       "preflightBloque": "Le micro est bloqué par votre navigateur. Autorisez-le pour lancer le cours.",
@@ -3264,12 +3378,18 @@
       "duree": "{minutes} min de cours",
       "dureeEtInterruption": "{minutes} min de cours, dont {interruption} min d'interruption",
       "unEleve": "1 élève",
-      "eleves": "{nombre} élèves",
+      "eleves(param=nombre)": {
+        "one": "{nombre} élève",
+        "other": "{nombre} élèves"
+      },
       "toutEstNominal": "Tout s'est passé comme prévu.",
       "toutEstNominalDetail": "Validez, et votre journée continue.",
       "exceptions": "À regarder",
       "uneException": "1 élève demande un regard.",
-      "plusieursExceptions": "{nombre} élèves demandent un regard.",
+      "plusieursExceptions(param=nombre)": {
+        "one": "{nombre} élève demande un regard.",
+        "other": "{nombre} élèves demandent un regard."
+      },
       "nominaux": "Rien à signaler",
       "curriculumFige": "Le niveau et le programme sont ceux de l'académie : ils ne se modifient pas depuis le cahier de transmission.",
       "valider": "Valider le cahier de transmission",
@@ -3738,7 +3858,10 @@
       "carte": {
         "ouvrir": "Ouvrir la classe {libelle}",
         "capacite": "{membres} / {seuil}",
-        "capacitePhrase": "{membres} élèves sur {seuil} places",
+        "capacitePhrase(param=membres)": {
+          "one": "{membres} élève sur {seuil} places",
+          "other": "{membres} élèves sur {seuil} places"
+        },
         "complet": "Complet",
         "prochainCours": "Prochain cours",
         "aucuneSeance": "Aucune séance planifiée",
@@ -4141,7 +4264,10 @@
       "explication": {
         "titre": "Un aperçu de son apprentissage",
         "regleUne": "{n} visite de {duree}",
-        "regle": "{n} visites de {duree}",
+        "regle": {
+          "one": "{n} visite de {duree}",
+          "other": "{n} visites de {duree}"
+        },
         "regleDetail": "Par séance et par parent, même si plusieurs de vos enfants sont dans la classe.",
         "ecoute": "Écoutez l'enseignant et les élèves",
         "ecouteDetail": "Vous entendez l'enseignant et les élèves qui prennent la parole, y compris votre enfant.",
@@ -4199,7 +4325,10 @@
         "secondeUne": "{n} seconde",
         "secondes": "{n} secondes",
         "minuteUne": "{n} minute",
-        "minutes": "{n} minutes",
+        "minutes": {
+          "one": "{n} minute",
+          "other": "{n} minutes"
+        },
         "minutesSecondes": "{m} min {s} s"
       },
       "refus": {
@@ -4256,9 +4385,15 @@
         "continuePour": "La séance continue pour {prenom}.",
         "continueSansPrenom": "La séance continue.",
         "resteUne": "Il vous reste une visite de {duree}. Revenez plus tard pour l'écouter.",
-        "restent": "Il vous reste {n} visites de {duree}. Revenez plus tard pour l'écouter.",
+        "restent": {
+          "one": "Il vous reste {n} visite de {duree}. Revenez plus tard pour l'écouter.",
+          "other": "Il vous reste {n} visites de {duree}. Revenez plus tard pour l'écouter."
+        },
         "resteUneSansDuree": "Il vous reste une visite. Revenez plus tard pour l'écouter.",
-        "restentSansDuree": "Il vous reste {n} visites. Revenez plus tard pour l'écouter.",
+        "restentSansDuree": {
+          "one": "Il vous reste {n} visite. Revenez plus tard pour l'écouter.",
+          "other": "Il vous reste {n} visites. Revenez plus tard pour l'écouter."
+        },
         "aucune": "Vous avez utilisé vos visites pour cette séance. Vous pourrez observer la prochaine séance.",
         "prochaineSeance": "Vous pourrez observer la prochaine séance.",
         "verification": "Vérification de vos visites restantes",
@@ -4287,7 +4422,10 @@
         "invalideTemps": "Au moins trente secondes par séance.",
         "valeurHeritee": "Académie : {valeur}",
         "uniteVisiteUne": "{n} visite",
-        "uniteVisites": "{n} visites",
+        "uniteVisites": {
+          "one": "{n} visite",
+          "other": "{n} visites"
+        },
         "uniteSecondes": "{n} s",
         "versionPolitique": "Version {version}"
       }

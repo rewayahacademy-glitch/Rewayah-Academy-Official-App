@@ -506,7 +506,7 @@ class _Constat extends StatelessWidget {
                 sousTitre: vue.exceptions.length == 1
                     ? t.enseignant.cahier.uneException
                     : t.enseignant.cahier.plusieursExceptions(
-                        nombre: '${vue.exceptions.length}',
+                        nombre: vue.exceptions.length,
                       ),
                 eleves: <LigneRubrique>[
                   for (final ParticipantBrouillon p in vue.exceptions)
@@ -690,7 +690,7 @@ class _Resume extends StatelessWidget {
           brouillon.participants.length == 1
               ? t.enseignant.cahier.unEleve
               : t.enseignant.cahier.eleves(
-                  nombre: '${brouillon.participants.length}',
+                  nombre: brouillon.participants.length,
                 ),
           style: palette.inkMuted.applyTo(
             textes.bodySmall ?? const TextStyle(),

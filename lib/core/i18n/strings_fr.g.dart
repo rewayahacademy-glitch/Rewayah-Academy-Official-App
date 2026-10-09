@@ -1114,8 +1114,11 @@ class Traductions$disponibilites$fr {
 	/// fr: 'Sans créneau, aucun enseignant ne peut prendre {prenom} en charge.'
 	String aucuneDetail({required Object prenom}) => 'Sans créneau, aucun enseignant ne peut prendre ${prenom} en charge.';
 
-	/// fr: '{nombre} heures proposées'
-	String posees({required Object nombre}) => '${nombre} heures proposées';
+	/// fr: '(one) {{nombre} heure proposée} (other) {{nombre} heures proposées}'
+	String posees({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: '${nombre} heure proposée',
+		other: '${nombre} heures proposées',
+	);
 
 	/// fr: '1 heure proposée'
 	String get poseeUne => '1 heure proposée';
@@ -1166,8 +1169,11 @@ class Traductions$creneaux$fr {
 	/// fr: 'Élèves en attente'
 	String get ongletEleves => 'Élèves en attente';
 
-	/// fr: 'Vous suivez {nombre} élèves sur {plafond} possibles.'
-	String mesEleves({required Object nombre, required Object plafond}) => 'Vous suivez ${nombre} élèves sur ${plafond} possibles.';
+	/// fr: '(one) {Vous suivez {nombre} élève sur {plafond} possibles.} (other) {Vous suivez {nombre} élèves sur {plafond} possibles.}'
+	String mesEleves({required num nombre, required Object plafond}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: 'Vous suivez ${nombre} élève sur ${plafond} possibles.',
+		other: 'Vous suivez ${nombre} élèves sur ${plafond} possibles.',
+	);
 
 	/// fr: 'Aucun élève en attente sur vos heures'
 	String get aucunEleve => 'Aucun élève en attente sur vos heures';
@@ -1175,8 +1181,11 @@ class Traductions$creneaux$fr {
 	/// fr: 'Proposez d'autres heures pour voir plus de familles.'
 	String get aucunEleveDetail => 'Proposez d\'autres heures pour voir plus de familles.';
 
-	/// fr: 'Attend depuis {jours} jours'
-	String attendDepuis({required Object jours}) => 'Attend depuis ${jours} jours';
+	/// fr: '(one) {Attend depuis {jours} jour} (other) {Attend depuis {jours} jours}'
+	String attendDepuis({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours,
+		one: 'Attend depuis ${jours} jour',
+		other: 'Attend depuis ${jours} jours',
+	);
 
 	/// fr: 'Attend depuis 1 jour'
 	String get attendUnJour => 'Attend depuis 1 jour';
@@ -1193,8 +1202,11 @@ class Traductions$creneaux$fr {
 	/// fr: 'Enregistrement'
 	String get priseEnCours => 'Enregistrement';
 
-	/// fr: 'Vous suivez déjà {nombre} élèves, votre maximum. Un élève pris est un engagement durable, pas une réservation.'
-	String plafondAtteint({required Object nombre}) => 'Vous suivez déjà ${nombre} élèves, votre maximum. Un élève pris est un engagement durable, pas une réservation.';
+	/// fr: '(one) {Vous suivez déjà {nombre} élève, votre maximum. Un élève pris est un engagement durable, pas une réservation.} (other) {Vous suivez déjà {nombre} élèves, votre maximum. Un élève pris est un engagement durable, pas une réservation.}'
+	String plafondAtteint({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: 'Vous suivez déjà ${nombre} élève, votre maximum. Un élève pris est un engagement durable, pas une réservation.',
+		other: 'Vous suivez déjà ${nombre} élèves, votre maximum. Un élève pris est un engagement durable, pas une réservation.',
+	);
 
 	/// fr: 'Demander à suivre plus d'élèves'
 	String get plafondDemander => 'Demander à suivre plus d\'élèves';
@@ -1214,8 +1226,11 @@ class Traductions$creneaux$fr {
 	/// fr: 'Demande envoyée. L'administration la tranchera.'
 	String get demandeEnvoyee => 'Demande envoyée. L\'administration la tranchera.';
 
-	/// fr: '{nombre} élèves'
-	String eleves({required Object nombre}) => '${nombre} élèves';
+	/// fr: '(one) {{nombre} élève} (other) {{nombre} élèves}'
+	String eleves({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: '${nombre} élève',
+		other: '${nombre} élèves',
+	);
 
 	/// fr: 'L'opération n'a pas abouti : {message}'
 	String erreur({required Object message}) => 'L\'opération n\'a pas abouti : ${message}';
@@ -1327,8 +1342,11 @@ class Traductions$dossiers$fr {
 	/// fr: '1 dossier en attente'
 	String get restantUn => '1 dossier en attente';
 
-	/// fr: '{n} dossiers en attente'
-	String restants({required Object n}) => '${n} dossiers en attente';
+	/// fr: '(one) {{n} dossier en attente} (other) {{n} dossiers en attente}'
+	String restants({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} dossier en attente',
+		other: '${n} dossiers en attente',
+	);
 
 	/// fr: 'Déposé le {date}'
 	String deposeLe({required Object date}) => 'Déposé le ${date}';
@@ -1339,8 +1357,11 @@ class Traductions$dossiers$fr {
 	/// fr: 'Inscrit depuis 1 jour'
 	String get inscritDepuisUnJour => 'Inscrit depuis 1 jour';
 
-	/// fr: 'Inscrit depuis {jours} jours'
-	String inscritDepuis({required Object jours}) => 'Inscrit depuis ${jours} jours';
+	/// fr: '(one) {Inscrit depuis {jours} jour} (other) {Inscrit depuis {jours} jours}'
+	String inscritDepuis({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours,
+		one: 'Inscrit depuis ${jours} jour',
+		other: 'Inscrit depuis ${jours} jours',
+	);
 
 	/// fr: 'Aucune pièce déposée'
 	String get sansPiece => 'Aucune pièce déposée';
@@ -1692,11 +1713,17 @@ class Traductions$parcours$fr {
 	/// fr: 'Autres horaires possibles'
 	String get offresAutres => 'Autres horaires possibles';
 
-	/// fr: '{seances} séances par semaine, {duree} min'
-	String offreRecurrence({required Object seances, required Object duree}) => '${seances} séances par semaine, ${duree} min';
+	/// fr: '(one) {{seances} séance par semaine, {duree} min} (other) {{seances} séances par semaine, {duree} min}'
+	String offreRecurrence({required num seances, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(seances,
+		one: '${seances} séance par semaine, ${duree} min',
+		other: '${seances} séances par semaine, ${duree} min',
+	);
 
-	/// fr: '{seances} séances par semaine, {duree} min dont {pause} min de pause'
-	String offreRecurrencePause({required Object seances, required Object duree, required Object pause}) => '${seances} séances par semaine, ${duree} min dont ${pause} min de pause';
+	/// fr: '(one) {{seances} séance par semaine, {duree} min dont {pause} min de pause} (other) {{seances} séances par semaine, {duree} min dont {pause} min de pause}'
+	String offreRecurrencePause({required num seances, required Object duree, required Object pause}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(seances,
+		one: '${seances} séance par semaine, ${duree} min dont ${pause} min de pause',
+		other: '${seances} séances par semaine, ${duree} min dont ${pause} min de pause',
+	);
 
 	/// fr: 'Cours en {langue}'
 	String offreLangue({required Object langue}) => 'Cours en ${langue}';
@@ -1767,8 +1794,11 @@ class Traductions$parcours$fr {
 	/// fr: 'Classe en cours de constitution'
 	String get etatClasseEnFormation => 'Classe en cours de constitution';
 
-	/// fr: 'Une classe démarre à partir de {minimum} élèves. Nous vous préviendrons dès qu'elle est confirmée.'
-	String etatClasseEnFormationDetail({required Object minimum}) => 'Une classe démarre à partir de ${minimum} élèves. Nous vous préviendrons dès qu\'elle est confirmée.';
+	/// fr: '(one) {Une classe démarre à partir de {minimum} élève. Nous vous préviendrons dès qu'elle est confirmée.} (other) {Une classe démarre à partir de {minimum} élèves. Nous vous préviendrons dès qu'elle est confirmée.}'
+	String etatClasseEnFormationDetail({required num minimum}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(minimum,
+		one: 'Une classe démarre à partir de ${minimum} élève. Nous vous préviendrons dès qu\'elle est confirmée.',
+		other: 'Une classe démarre à partir de ${minimum} élèves. Nous vous préviendrons dès qu\'elle est confirmée.',
+	);
 
 	/// fr: 'Une classe démarre à partir d'un certain nombre d'élèves. Nous vous préviendrons dès qu'elle est confirmée.'
 	String get etatClasseEnFormationDetailSansMinimum => 'Une classe démarre à partir d\'un certain nombre d\'élèves. Nous vous préviendrons dès qu\'elle est confirmée.';
@@ -3523,8 +3553,11 @@ class Traductions$appareils$foyer$fr {
 	/// fr: '1 appareil connecté : {nom}'
 	String unAppareil({required Object nom}) => '1 appareil connecté : ${nom}';
 
-	/// fr: '{nombre} appareils connectés : {noms}'
-	String plusieursAppareils({required Object nombre, required Object noms}) => '${nombre} appareils connectés : ${noms}';
+	/// fr: '(one) {{nombre} appareil connecté : {noms}} (other) {{nombre} appareils connectés : {noms}}'
+	String plusieursAppareils({required num nombre, required Object noms}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: '${nombre} appareil connecté : ${noms}',
+		other: '${nombre} appareils connectés : ${noms}',
+	);
 
 	/// fr: 'Appareil partagé'
 	String get partageTitre => 'Appareil partagé';
@@ -4791,8 +4824,11 @@ class Traductions$admin$tableau$fr {
 	/// fr: 'En attente depuis 1 jour'
 	String get attenteUnJour => 'En attente depuis 1 jour';
 
-	/// fr: 'En attente depuis {jours} jours'
-	String attenteJours({required Object jours}) => 'En attente depuis ${jours} jours';
+	/// fr: '(one) {En attente depuis {jours} jour} (other) {En attente depuis {jours} jours}'
+	String attenteJours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours,
+		one: 'En attente depuis ${jours} jour',
+		other: 'En attente depuis ${jours} jours',
+	);
 }
 
 // Path: admin.demandes
@@ -4809,8 +4845,11 @@ class Traductions$admin$demandes$fr {
 	/// fr: '1 demande en attente'
 	String get restanteUne => '1 demande en attente';
 
-	/// fr: '{n} demandes en attente'
-	String restantes({required Object n}) => '${n} demandes en attente';
+	/// fr: '(one) {{n} demande en attente} (other) {{n} demandes en attente}'
+	String restantes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} demande en attente',
+		other: '${n} demandes en attente',
+	);
 
 	/// fr: 'Aucune demande en attente'
 	String get aucune => 'Aucune demande en attente';
@@ -4845,8 +4884,11 @@ class Traductions$admin$demandes$fr {
 	/// fr: 'Changer l'enseignant de {prenom}'
 	String reclameReaffectation({required Object prenom}) => 'Changer l\'enseignant de ${prenom}';
 
-	/// fr: 'Porter le plafond à {valeur} élèves'
-	String reclamePlafond({required Object valeur}) => 'Porter le plafond à ${valeur} élèves';
+	/// fr: '(one) {Porter le plafond à {valeur} élève} (other) {Porter le plafond à {valeur} élèves}'
+	String reclamePlafond({required num valeur}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(valeur,
+		one: 'Porter le plafond à ${valeur} élève',
+		other: 'Porter le plafond à ${valeur} élèves',
+	);
 
 	/// fr: 'Porter {regle} à {valeur} min'
 	String reclameRegle({required Object regle, required Object valeur}) => 'Porter ${regle} à ${valeur} min';
@@ -4908,8 +4950,11 @@ class Traductions$admin$demandes$fr {
 	/// fr: '{valeur} min'
 	String minutes({required Object valeur}) => '${valeur} min';
 
-	/// fr: '{valeur} élèves'
-	String eleves({required Object valeur}) => '${valeur} élèves';
+	/// fr: '(one) {{valeur} élève} (other) {{valeur} élèves}'
+	String eleves({required num valeur}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(valeur,
+		one: '${valeur} élève',
+		other: '${valeur} élèves',
+	);
 
 	/// fr: 'Posée le {date} : {motif}'
 	String surchargeDepuis({required Object date, required Object motif}) => 'Posée le ${date} : ${motif}';
@@ -4992,14 +5037,20 @@ class Traductions$admin$attribution$fr {
 	/// fr: 'Attend depuis 1 jour'
 	String get attendUnJour => 'Attend depuis 1 jour';
 
-	/// fr: 'Attend depuis {jours} jours'
-	String attendJours({required Object jours}) => 'Attend depuis ${jours} jours';
+	/// fr: '(one) {Attend depuis {jours} jour} (other) {Attend depuis {jours} jours}'
+	String attendJours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours,
+		one: 'Attend depuis ${jours} jour',
+		other: 'Attend depuis ${jours} jours',
+	);
 
 	/// fr: 'Niveau {niveau}'
 	String niveau({required Object niveau}) => 'Niveau ${niveau}';
 
-	/// fr: '{nombre} heures proposées'
-	String heuresProposees({required Object nombre}) => '${nombre} heures proposées';
+	/// fr: '(one) {{nombre} heure proposée} (other) {{nombre} heures proposées}'
+	String heuresProposees({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: '${nombre} heure proposée',
+		other: '${nombre} heures proposées',
+	);
 
 	/// fr: '1 heure proposée'
 	String get heureProposee => '1 heure proposée';
@@ -5019,8 +5070,11 @@ class Traductions$admin$attribution$fr {
 	/// fr: 'Les enseignants s'afficheront ici, ceux qui partagent une heure avec lui en premier.'
 	String get choisirEleveDetail => 'Les enseignants s\'afficheront ici, ceux qui partagent une heure avec lui en premier.';
 
-	/// fr: '{actifs} élèves sur {plafond}'
-	String charge({required Object actifs, required Object plafond}) => '${actifs} élèves sur ${plafond}';
+	/// fr: '(one) {{actifs} élève sur {plafond}} (other) {{actifs} élèves sur {plafond}}'
+	String charge({required num actifs, required Object plafond}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(actifs,
+		one: '${actifs} élève sur ${plafond}',
+		other: '${actifs} élèves sur ${plafond}',
+	);
 
 	/// fr: 'Plafond atteint'
 	String get complet => 'Plafond atteint';
@@ -5262,8 +5316,11 @@ class Traductions$admin$diagnostics$fr {
 	/// fr: 'La file n'a pas pu être lue. Réessayez dans un instant.'
 	String get erreur => 'La file n\'a pas pu être lue. Réessayez dans un instant.';
 
-	/// fr: '{n} élèves restants'
-	String restants({required Object n}) => '${n} élèves restants';
+	/// fr: '(one) {{n} élève restant} (other) {{n} élèves restants}'
+	String restants({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} élève restant',
+		other: '${n} élèves restants',
+	);
 
 	/// fr: '1 élève restant'
 	String get restantUn => '1 élève restant';
@@ -5274,8 +5331,11 @@ class Traductions$admin$diagnostics$fr {
 	/// fr: 'Inscrit depuis 1 jour'
 	String get inscritDepuisUnJour => 'Inscrit depuis 1 jour';
 
-	/// fr: 'Inscrit depuis {jours} jours'
-	String inscritDepuis({required Object jours}) => 'Inscrit depuis ${jours} jours';
+	/// fr: '(one) {Inscrit depuis {jours} jour} (other) {Inscrit depuis {jours} jours}'
+	String inscritDepuis({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours,
+		one: 'Inscrit depuis ${jours} jour',
+		other: 'Inscrit depuis ${jours} jours',
+	);
 
 	/// fr: 'Aucun élève à diagnostiquer'
 	String get aucun => 'Aucun élève à diagnostiquer';
@@ -5364,8 +5424,11 @@ class Traductions$admin$qualite$fr {
 	/// fr: '1 jour'
 	String get depuisUnJour => '1 jour';
 
-	/// fr: '{jours} jours'
-	String depuisJours({required Object jours}) => '${jours} jours';
+	/// fr: '(one) {{jours} jour} (other) {{jours} jours}'
+	String depuisJours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours,
+		one: '${jours} jour',
+		other: '${jours} jours',
+	);
 
 	/// fr: 'Marquer traité'
 	String get actionTraiter => 'Marquer traité';
@@ -5475,8 +5538,11 @@ class Traductions$admin$regles$fr {
 	/// fr: '{n} min'
 	String uniteMinutes({required Object n}) => '${n} min';
 
-	/// fr: '{n} sem.'
-	String uniteSemaines({required Object n}) => '${n} sem.';
+	/// fr: '(one) {{n} sem.} (other) {{n} sem.}'
+	String uniteSemaines({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} sem.',
+		other: '${n} sem.',
+	);
 
 	/// fr: '{n}'
 	String uniteNombre({required Object n}) => '${n}';
@@ -5568,8 +5634,11 @@ class Traductions$admin$conservationDonnees$fr {
 	/// fr: 'Le nombre de jours pendant lesquels un document d'identité déposé reste accessible avant sa purge.'
 	String get documentsIdentiteDetail => 'Le nombre de jours pendant lesquels un document d\'identité déposé reste accessible avant sa purge.';
 
-	/// fr: '{n} j'
-	String uniteJours({required Object n}) => '${n} j';
+	/// fr: '(one) {{n} j} (other) {{n} j}'
+	String uniteJours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} j',
+		other: '${n} j',
+	);
 }
 
 // Path: admin.politiqueRevueKyc
@@ -5799,8 +5868,11 @@ class Traductions$admin$progression$fr {
 	/// fr: '1 jour'
 	String get depuisUnJour => '1 jour';
 
-	/// fr: '{jours} jours'
-	String depuisJours({required Object jours}) => '${jours} jours';
+	/// fr: '(one) {{jours} jour} (other) {{jours} jours}'
+	String depuisJours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours,
+		one: '${jours} jour',
+		other: '${jours} jours',
+	);
 
 	/// fr: 'Blocage'
 	String get typeBlocage => 'Blocage';
@@ -5895,8 +5967,11 @@ class Traductions$admin$programmes$fr {
 	/// fr: 'Version {numero}'
 	String versionNumero({required Object numero}) => 'Version ${numero}';
 
-	/// fr: '{nombre} niveaux'
-	String niveauxSur({required Object nombre}) => '${nombre} niveaux';
+	/// fr: '(one) {{nombre} niveau} (other) {{nombre} niveaux}'
+	String niveauxSur({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: '${nombre} niveau',
+		other: '${nombre} niveaux',
+	);
 
 	/// fr: 'Créer une version'
 	String get creerVersion => 'Créer une version';
@@ -6015,8 +6090,11 @@ class Traductions$admin$journal$fr {
 	/// fr: 'Journal intact'
 	String get chaineIntacte => 'Journal intact';
 
-	/// fr: '{nombre} entrées relues une à une : aucune n'a été modifiée ni retirée depuis son écriture.'
-	String chaineIntacteDetail({required Object nombre}) => '${nombre} entrées relues une à une : aucune n\'a été modifiée ni retirée depuis son écriture.';
+	/// fr: '(one) {{nombre} entrée relue : elle n'a été ni modifiée ni retirée depuis son écriture.} (other) {{nombre} entrées relues une à une : aucune n'a été modifiée ni retirée depuis son écriture.}'
+	String chaineIntacteDetail({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: '${nombre} entrée relue : elle n\'a été ni modifiée ni retirée depuis son écriture.',
+		other: '${nombre} entrées relues une à une : aucune n\'a été modifiée ni retirée depuis son écriture.',
+	);
 
 	/// fr: 'Journal altéré'
 	String get chaineRompue => 'Journal altéré';
@@ -6024,8 +6102,11 @@ class Traductions$admin$journal$fr {
 	/// fr: 'Une entrée ne correspond plus à son empreinte, la n° {entree}. Quelque chose a touché la base en dehors de l'application.'
 	String chaineRompueUne({required Object entree}) => 'Une entrée ne correspond plus à son empreinte, la n° ${entree}. Quelque chose a touché la base en dehors de l\'application.';
 
-	/// fr: '{nombre} entrées ne correspondent plus à leur empreinte, à partir de la n° {entree}. Quelque chose a touché la base en dehors de l'application.'
-	String chaineRompueDetail({required Object nombre, required Object entree}) => '${nombre} entrées ne correspondent plus à leur empreinte, à partir de la n° ${entree}. Quelque chose a touché la base en dehors de l\'application.';
+	/// fr: '(one) {{nombre} entrée ne correspond plus à son empreinte, à partir de la n° {entree}. Quelque chose a touché la base en dehors de l'application.} (other) {{nombre} entrées ne correspondent plus à leur empreinte, à partir de la n° {entree}. Quelque chose a touché la base en dehors de l'application.}'
+	String chaineRompueDetail({required num nombre, required Object entree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: '${nombre} entrée ne correspond plus à son empreinte, à partir de la n° ${entree}. Quelque chose a touché la base en dehors de l\'application.',
+		other: '${nombre} entrées ne correspondent plus à leur empreinte, à partir de la n° ${entree}. Quelque chose a touché la base en dehors de l\'application.',
+	);
 
 	/// fr: 'Intégrité inconnue'
 	String get chaineInconnue => 'Intégrité inconnue';
@@ -6356,11 +6437,17 @@ class Traductions$admin$comptes$fr {
 	/// fr: 'Une personne attend une décision depuis 1 jour.'
 	String get attenteUneUnJour => 'Une personne attend une décision depuis 1 jour.';
 
-	/// fr: 'Une personne attend une décision depuis {jours} jours.'
-	String attenteUne({required Object jours}) => 'Une personne attend une décision depuis ${jours} jours.';
+	/// fr: '(one) {Une personne attend une décision depuis {jours} jour.} (other) {Une personne attend une décision depuis {jours} jours.}'
+	String attenteUne({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours,
+		one: 'Une personne attend une décision depuis ${jours} jour.',
+		other: 'Une personne attend une décision depuis ${jours} jours.',
+	);
 
-	/// fr: '{nombre} personnes attendent une décision.'
-	String attentePlusieurs({required Object nombre}) => '${nombre} personnes attendent une décision.';
+	/// fr: '(one) {{nombre} personne attend une décision.} (other) {{nombre} personnes attendent une décision.}'
+	String attentePlusieurs({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: '${nombre} personne attend une décision.',
+		other: '${nombre} personnes attendent une décision.',
+	);
 
 	/// fr: 'Tous'
 	String get filtreTousEtats => 'Tous';
@@ -6461,8 +6548,11 @@ class Traductions$admin$comptes$fr {
 	/// fr: '1 jour'
 	String get attendUnJour => '1 jour';
 
-	/// fr: '{jours} jours'
-	String attendJours({required Object jours}) => '${jours} jours';
+	/// fr: '(one) {{jours} jour} (other) {{jours} jours}'
+	String attendJours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours,
+		one: '${jours} jour',
+		other: '${jours} jours',
+	);
 }
 
 // Path: admin.agents
@@ -6614,8 +6704,11 @@ class Traductions$admin$agents$fr {
 	/// fr: 'Jamais utilisé'
 	String get jamaisServi => 'Jamais utilisé';
 
-	/// fr: '{nombre} fois, la dernière {quand}'
-	String usage({required Object nombre, required Object quand}) => '${nombre} fois, la dernière ${quand}';
+	/// fr: '(one) {{nombre} fois, la dernière {quand}} (other) {{nombre} fois, la dernière {quand}}'
+	String usage({required num nombre, required Object quand}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: '${nombre} fois, la dernière ${quand}',
+		other: '${nombre} fois, la dernière ${quand}',
+	);
 
 	/// fr: 'Révoquer'
 	String get revoquer => 'Révoquer';
@@ -6972,8 +7065,11 @@ class Traductions$historique$selecteur$fr {
 	/// fr: '1 séance'
 	String get une => '1 séance';
 
-	/// fr: '{n} séances'
-	String plusieurs({required Object n}) => '${n} séances';
+	/// fr: '(one) {{n} séance} (other) {{n} séances}'
+	String plusieurs({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} séance',
+		other: '${n} séances',
+	);
 }
 
 // Path: historique.filtres
@@ -7101,8 +7197,11 @@ class Traductions$historique$observations$fr {
 	/// fr: '1 visite'
 	String get visiteUne => '1 visite';
 
-	/// fr: '{n} visites'
-	String visites({required Object n}) => '${n} visites';
+	/// fr: '(one) {{n} visite} (other) {{n} visites}'
+	String visites({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} visite',
+		other: '${n} visites',
+	);
 
 	/// fr: 'Durée non confirmée'
 	String get dureeNonConfirmee => 'Durée non confirmée';
@@ -7281,8 +7380,11 @@ class Traductions$eleve$accueil$fr {
 	/// fr: 'Ton prochain cours est demain.'
 	String get prochainDemain => 'Ton prochain cours est demain.';
 
-	/// fr: 'Ton prochain cours est dans {jours} jours.'
-	String prochainDansJours({required Object jours}) => 'Ton prochain cours est dans ${jours} jours.';
+	/// fr: '(one) {Ton prochain cours est dans {jours} jour.} (other) {Ton prochain cours est dans {jours} jours.}'
+	String prochainDansJours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours,
+		one: 'Ton prochain cours est dans ${jours} jour.',
+		other: 'Ton prochain cours est dans ${jours} jours.',
+	);
 
 	/// fr: 'Ce cours n'aura pas lieu'
 	String get annulee => 'Ce cours n\'aura pas lieu';
@@ -7895,8 +7997,11 @@ class Traductions$classe$observation$fr {
 	/// fr: '1 visite disponible'
 	String get uneVisite => '1 visite disponible';
 
-	/// fr: '{nombre} visites disponibles'
-	String visites({required Object nombre}) => '${nombre} visites disponibles';
+	/// fr: '(one) {{nombre} visite disponible} (other) {{nombre} visites disponibles}'
+	String visites({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: '${nombre} visite disponible',
+		other: '${nombre} visites disponibles',
+	);
 
 	/// fr: '{visites} · {duree} par visite'
 	String resume({required Object visites, required Object duree}) => '${visites} · ${duree} par visite';
@@ -8140,8 +8245,11 @@ class Traductions$enseignant$classes$fr {
 	/// fr: '1 élève'
 	String get eleveUn => '1 élève';
 
-	/// fr: '{nombre} élèves'
-	String eleves({required Object nombre}) => '${nombre} élèves';
+	/// fr: '(one) {{nombre} élève} (other) {{nombre} élèves}'
+	String eleves({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: '${nombre} élève',
+		other: '${nombre} élèves',
+	);
 
 	/// fr: 'Prochaine séance : {jour} à {heure}'
 	String prochaine({required Object jour, required Object heure}) => 'Prochaine séance : ${jour} à ${heure}';
@@ -8502,8 +8610,11 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Cours individuel'
 	String get coursIndividuel => 'Cours individuel';
 
-	/// fr: '{nombre} élèves'
-	String effectif({required Object nombre}) => '${nombre} élèves';
+	/// fr: '(one) {{nombre} élève} (other) {{nombre} élèves}'
+	String effectif({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: '${nombre} élève',
+		other: '${nombre} élèves',
+	);
 
 	/// fr: '1 élève'
 	String get effectifUn => '1 élève';
@@ -8769,8 +8880,11 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: '1 élève'
 	String get unEleve => '1 élève';
 
-	/// fr: '{nombre} élèves'
-	String eleves({required Object nombre}) => '${nombre} élèves';
+	/// fr: '(one) {{nombre} élève} (other) {{nombre} élèves}'
+	String eleves({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: '${nombre} élève',
+		other: '${nombre} élèves',
+	);
 
 	/// fr: 'Tout s'est passé comme prévu.'
 	String get toutEstNominal => 'Tout s\'est passé comme prévu.';
@@ -8784,8 +8898,11 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: '1 élève demande un regard.'
 	String get uneException => '1 élève demande un regard.';
 
-	/// fr: '{nombre} élèves demandent un regard.'
-	String plusieursExceptions({required Object nombre}) => '${nombre} élèves demandent un regard.';
+	/// fr: '(one) {{nombre} élève demande un regard.} (other) {{nombre} élèves demandent un regard.}'
+	String plusieursExceptions({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: '${nombre} élève demande un regard.',
+		other: '${nombre} élèves demandent un regard.',
+	);
 
 	/// fr: 'Rien à signaler'
 	String get nominaux => 'Rien à signaler';
@@ -12188,8 +12305,11 @@ class Traductions$compte$tuteur$foyer$fr {
 	/// fr: '1 profil élève'
 	String get un => '1 profil élève';
 
-	/// fr: '{nombre} profils élèves'
-	String plusieurs({required Object nombre}) => '${nombre} profils élèves';
+	/// fr: '(one) {{nombre} profil élève} (other) {{nombre} profils élèves}'
+	String plusieurs({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: '${nombre} profil élève',
+		other: '${nombre} profils élèves',
+	);
 
 	/// fr: 'Profils élèves et appareils du foyer'
 	String get legende => 'Profils élèves et appareils du foyer';
@@ -12853,8 +12973,11 @@ class Traductions$tc$groupe$carte$fr {
 	/// fr: '{membres} / {seuil}'
 	String capacite({required Object membres, required Object seuil}) => '${membres} / ${seuil}';
 
-	/// fr: '{membres} élèves sur {seuil} places'
-	String capacitePhrase({required Object membres, required Object seuil}) => '${membres} élèves sur ${seuil} places';
+	/// fr: '(one) {{membres} élève sur {seuil} places} (other) {{membres} élèves sur {seuil} places}'
+	String capacitePhrase({required num membres, required Object seuil}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(membres,
+		one: '${membres} élève sur ${seuil} places',
+		other: '${membres} élèves sur ${seuil} places',
+	);
 
 	/// fr: 'Complet'
 	String get complet => 'Complet';
@@ -14161,8 +14284,11 @@ class Traductions$tc$observation$explication$fr {
 	/// fr: '{n} visite de {duree}'
 	String regleUne({required Object n, required Object duree}) => '${n} visite de ${duree}';
 
-	/// fr: '{n} visites de {duree}'
-	String regle({required Object n, required Object duree}) => '${n} visites de ${duree}';
+	/// fr: '(one) {{n} visite de {duree}} (other) {{n} visites de {duree}}'
+	String regle({required num n, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} visite de ${duree}',
+		other: '${n} visites de ${duree}',
+	);
 
 	/// fr: 'Par séance et par parent, même si plusieurs de vos enfants sont dans la classe.'
 	String get regleDetail => 'Par séance et par parent, même si plusieurs de vos enfants sont dans la classe.';
@@ -14344,8 +14470,11 @@ class Traductions$tc$observation$duree$fr {
 	/// fr: '{n} minute'
 	String minuteUne({required Object n}) => '${n} minute';
 
-	/// fr: '{n} minutes'
-	String minutes({required Object n}) => '${n} minutes';
+	/// fr: '(one) {{n} minute} (other) {{n} minutes}'
+	String minutes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} minute',
+		other: '${n} minutes',
+	);
 
 	/// fr: '{m} min {s} s'
 	String minutesSecondes({required Object m, required Object s}) => '${m} min ${s} s';
@@ -14527,14 +14656,20 @@ class Traductions$tc$observation$resultat$fr {
 	/// fr: 'Il vous reste une visite de {duree}. Revenez plus tard pour l'écouter.'
 	String resteUne({required Object duree}) => 'Il vous reste une visite de ${duree}. Revenez plus tard pour l\'écouter.';
 
-	/// fr: 'Il vous reste {n} visites de {duree}. Revenez plus tard pour l'écouter.'
-	String restent({required Object n, required Object duree}) => 'Il vous reste ${n} visites de ${duree}. Revenez plus tard pour l\'écouter.';
+	/// fr: '(one) {Il vous reste {n} visite de {duree}. Revenez plus tard pour l'écouter.} (other) {Il vous reste {n} visites de {duree}. Revenez plus tard pour l'écouter.}'
+	String restent({required num n, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Il vous reste ${n} visite de ${duree}. Revenez plus tard pour l\'écouter.',
+		other: 'Il vous reste ${n} visites de ${duree}. Revenez plus tard pour l\'écouter.',
+	);
 
 	/// fr: 'Il vous reste une visite. Revenez plus tard pour l'écouter.'
 	String get resteUneSansDuree => 'Il vous reste une visite. Revenez plus tard pour l\'écouter.';
 
-	/// fr: 'Il vous reste {n} visites. Revenez plus tard pour l'écouter.'
-	String restentSansDuree({required Object n}) => 'Il vous reste ${n} visites. Revenez plus tard pour l\'écouter.';
+	/// fr: '(one) {Il vous reste {n} visite. Revenez plus tard pour l'écouter.} (other) {Il vous reste {n} visites. Revenez plus tard pour l'écouter.}'
+	String restentSansDuree({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Il vous reste ${n} visite. Revenez plus tard pour l\'écouter.',
+		other: 'Il vous reste ${n} visites. Revenez plus tard pour l\'écouter.',
+	);
 
 	/// fr: 'Vous avez utilisé vos visites pour cette séance. Vous pourrez observer la prochaine séance.'
 	String get aucune => 'Vous avez utilisé vos visites pour cette séance. Vous pourrez observer la prochaine séance.';
@@ -14626,8 +14761,11 @@ class Traductions$tc$observation$reglages$fr {
 	/// fr: '{n} visite'
 	String uniteVisiteUne({required Object n}) => '${n} visite';
 
-	/// fr: '{n} visites'
-	String uniteVisites({required Object n}) => '${n} visites';
+	/// fr: '(one) {{n} visite} (other) {{n} visites}'
+	String uniteVisites({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} visite',
+		other: '${n} visites',
+	);
 
 	/// fr: '{n} s'
 	String uniteSecondes({required Object n}) => '${n} s';
@@ -16430,7 +16568,7 @@ extension on Traductions {
 			'appareils.foyer.groupeProfils' => 'Profils élèves',
 			'appareils.foyer.aucunAppareil' => 'Aucun appareil connecté',
 			'appareils.foyer.unAppareil' => ({required Object nom}) => '1 appareil connecté : ${nom}',
-			'appareils.foyer.plusieursAppareils' => ({required Object nombre, required Object noms}) => '${nombre} appareils connectés : ${noms}',
+			'appareils.foyer.plusieursAppareils' => ({required num nombre, required Object noms}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} appareil connecté : ${noms}', other: '${nombre} appareils connectés : ${noms}', ), 
 			'appareils.foyer.partageTitre' => 'Appareil partagé',
 			'appareils.foyer.partage' => 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel. Cet appareil apparaît alors sous chaque profil qui l\'utilise.',
 			'appareils.foyer.videTitre' => 'Aucun profil élève',
@@ -16667,7 +16805,7 @@ extension on Traductions {
 			'disponibilites.fuseau' => ({required Object fuseau}) => 'Heures affichées en ${fuseau}',
 			'disponibilites.aucune' => ({required Object prenom}) => 'Aucune heure proposée pour ${prenom}',
 			'disponibilites.aucuneDetail' => ({required Object prenom}) => 'Sans créneau, aucun enseignant ne peut prendre ${prenom} en charge.',
-			'disponibilites.posees' => ({required Object nombre}) => '${nombre} heures proposées',
+			'disponibilites.posees' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} heure proposée', other: '${nombre} heures proposées', ), 
 			'disponibilites.poseeUne' => '1 heure proposée',
 			'disponibilites.cellulePosee' => ({required Object jour, required Object heure}) => '${jour} ${heure} heures, proposé. Toucher pour retirer',
 			'disponibilites.celluleLibre' => ({required Object jour, required Object heure}) => '${jour} ${heure} heures, libre. Toucher pour proposer',
@@ -16689,23 +16827,23 @@ extension on Traductions {
 			'creneaux.titre' => 'Créneaux',
 			'creneaux.ongletHeures' => 'Mes heures',
 			'creneaux.ongletEleves' => 'Élèves en attente',
-			'creneaux.mesEleves' => ({required Object nombre, required Object plafond}) => 'Vous suivez ${nombre} élèves sur ${plafond} possibles.',
+			'creneaux.mesEleves' => ({required num nombre, required Object plafond}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: 'Vous suivez ${nombre} élève sur ${plafond} possibles.', other: 'Vous suivez ${nombre} élèves sur ${plafond} possibles.', ), 
 			'creneaux.aucunEleve' => 'Aucun élève en attente sur vos heures',
 			'creneaux.aucunEleveDetail' => 'Proposez d\'autres heures pour voir plus de familles.',
-			'creneaux.attendDepuis' => ({required Object jours}) => 'Attend depuis ${jours} jours',
+			'creneaux.attendDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Attend depuis ${jours} jour', other: 'Attend depuis ${jours} jours', ), 
 			'creneaux.attendUnJour' => 'Attend depuis 1 jour',
 			'creneaux.attendAujourdhui' => 'Demande déposée aujourd\'hui',
 			'creneaux.niveau' => ({required Object niveau}) => 'Niveau ${niveau}',
 			'creneaux.prendre' => ({required Object jour, required Object heure}) => 'Prendre ${jour} à ${heure} h',
 			'creneaux.priseEnCours' => 'Enregistrement',
-			'creneaux.plafondAtteint' => ({required Object nombre}) => 'Vous suivez déjà ${nombre} élèves, votre maximum. Un élève pris est un engagement durable, pas une réservation.',
+			'creneaux.plafondAtteint' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: 'Vous suivez déjà ${nombre} élève, votre maximum. Un élève pris est un engagement durable, pas une réservation.', other: 'Vous suivez déjà ${nombre} élèves, votre maximum. Un élève pris est un engagement durable, pas une réservation.', ), 
 			'creneaux.plafondDemander' => 'Demander à suivre plus d\'élèves',
 			'creneaux.demandeTitre' => 'Combien d\'élèves pouvez-vous suivre ?',
 			'creneaux.demandeMotif' => 'Pourquoi ce changement ?',
 			'creneaux.demandeMotifRequis' => 'Un motif est nécessaire : c\'est lui qui permet de trancher.',
 			'creneaux.demandeEnvoyer' => 'Envoyer la demande',
 			'creneaux.demandeEnvoyee' => 'Demande envoyée. L\'administration la tranchera.',
-			'creneaux.eleves' => ({required Object nombre}) => '${nombre} élèves',
+			'creneaux.eleves' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} élève', other: '${nombre} élèves', ), 
 			'creneaux.erreur' => ({required Object message}) => 'L\'opération n\'a pas abouti : ${message}',
 			'priere.fajr' => 'Fajr',
 			'priere.dhuhr' => 'Dhuhr',
@@ -16864,11 +17002,11 @@ extension on Traductions {
 			'dossiers.revue.etats.actualiserDossier' => 'Actualiser le dossier',
 			'dossiers.revue.etats.refusNonAutorise' => 'Ce dossier ne peut pas être refusé dans son état actuel.',
 			'dossiers.restantUn' => '1 dossier en attente',
-			'dossiers.restants' => ({required Object n}) => '${n} dossiers en attente',
+			'dossiers.restants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} dossier en attente', other: '${n} dossiers en attente', ), 
 			'dossiers.deposeLe' => ({required Object date}) => 'Déposé le ${date}',
 			'dossiers.inscritAujourdhui' => 'Inscrit aujourd\'hui',
 			'dossiers.inscritDepuisUnJour' => 'Inscrit depuis 1 jour',
-			'dossiers.inscritDepuis' => ({required Object jours}) => 'Inscrit depuis ${jours} jours',
+			'dossiers.inscritDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Inscrit depuis ${jours} jour', other: 'Inscrit depuis ${jours} jours', ), 
 			'dossiers.sansPiece' => 'Aucune pièce déposée',
 			'dossiers.sansPieceDetail' => 'Cette personne a créé son compte et accepté les contrats, mais n\'a pas encore envoyé sa pièce d\'identité. Il n\'y a donc rien à vérifier : le geste est chez elle.',
 			'dossiers.pieceNonVisible' => 'Pièce hors de votre portée',
@@ -16942,10 +17080,10 @@ extension on Traductions {
 			'admin.tableau.ligneRegle' => ({required Object prenom}) => 'Changement de règle pour ${prenom}',
 			'admin.tableau.attenteAujourdhui' => 'Déposé aujourd\'hui',
 			'admin.tableau.attenteUnJour' => 'En attente depuis 1 jour',
-			'admin.tableau.attenteJours' => ({required Object jours}) => 'En attente depuis ${jours} jours',
+			'admin.tableau.attenteJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'En attente depuis ${jours} jour', other: 'En attente depuis ${jours} jours', ), 
 			'admin.demandes.titre' => 'Demandes et règles',
 			'admin.demandes.restanteUne' => '1 demande en attente',
-			'admin.demandes.restantes' => ({required Object n}) => '${n} demandes en attente',
+			'admin.demandes.restantes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} demande en attente', other: '${n} demandes en attente', ), 
 			'admin.demandes.aucune' => 'Aucune demande en attente',
 			'admin.demandes.aucuneDetail' => 'Les demandes des familles, des élèves autonomes et des enseignants arrivent ici, la plus ancienne en premier.',
 			'admin.demandes.faitePar' => ({required Object date, required Object role}) => 'Demandée le ${date}, par ${role}',
@@ -16957,7 +17095,7 @@ extension on Traductions {
 			'admin.demandes.roleInconnu' => 'une partie au dossier',
 			'admin.demandes.reclame' => 'Ce qui est demandé',
 			'admin.demandes.reclameReaffectation' => ({required Object prenom}) => 'Changer l\'enseignant de ${prenom}',
-			'admin.demandes.reclamePlafond' => ({required Object valeur}) => 'Porter le plafond à ${valeur} élèves',
+			'admin.demandes.reclamePlafond' => ({required num valeur}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(valeur, one: 'Porter le plafond à ${valeur} élève', other: 'Porter le plafond à ${valeur} élèves', ), 
 			'admin.demandes.reclameRegle' => ({required Object regle, required Object valeur}) => 'Porter ${regle} à ${valeur} min',
 			'admin.demandes.reclameRegleSansValeur' => ({required Object regle}) => 'Revoir ${regle}',
 			'admin.demandes.motifDemande' => 'Motif invoqué',
@@ -16978,7 +17116,7 @@ extension on Traductions {
 			'admin.demandes.plateforme' => ({required Object valeur}) => 'Plateforme : ${valeur}',
 			'admin.demandes.effective' => ({required Object valeur}) => 'Appliquée : ${valeur}',
 			'admin.demandes.minutes' => ({required Object valeur}) => '${valeur} min',
-			'admin.demandes.eleves' => ({required Object valeur}) => '${valeur} élèves',
+			'admin.demandes.eleves' => ({required num valeur}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(valeur, one: '${valeur} élève', other: '${valeur} élèves', ), 
 			'admin.demandes.surchargeDepuis' => ({required Object date, required Object motif}) => 'Posée le ${date} : ${motif}',
 			'admin.demandes.sansSurcharge' => 'Cet élève suit la règle de la plateforme.',
 			'admin.demandes.changer' => 'Changer',
@@ -17003,16 +17141,16 @@ extension on Traductions {
 			'admin.attribution.erreurEnseignants' => 'Les enseignants n\'ont pas pu être lus. Réessayez dans un instant.',
 			'admin.attribution.attendAujourdhui' => 'Inscrit aujourd\'hui',
 			'admin.attribution.attendUnJour' => 'Attend depuis 1 jour',
-			'admin.attribution.attendJours' => ({required Object jours}) => 'Attend depuis ${jours} jours',
+			'admin.attribution.attendJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Attend depuis ${jours} jour', other: 'Attend depuis ${jours} jours', ), 
 			'admin.attribution.niveau' => ({required Object niveau}) => 'Niveau ${niveau}',
-			'admin.attribution.heuresProposees' => ({required Object nombre}) => '${nombre} heures proposées',
+			'admin.attribution.heuresProposees' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} heure proposée', other: '${nombre} heures proposées', ), 
 			'admin.attribution.heureProposee' => '1 heure proposée',
 			'admin.attribution.sansHeure' => 'Aucune heure proposée',
 			'admin.attribution.sansHeureDetail' => 'Tant que la famille n\'a posé aucun créneau, personne ne peut lui donner d\'enseignant, pas même vous. Le geste est chez elle, sur ses disponibilités.',
 			'admin.attribution.changerEleve' => 'Choisir un autre élève',
 			'admin.attribution.choisirEleve' => 'Choisissez un élève',
 			'admin.attribution.choisirEleveDetail' => 'Les enseignants s\'afficheront ici, ceux qui partagent une heure avec lui en premier.',
-			'admin.attribution.charge' => ({required Object actifs, required Object plafond}) => '${actifs} élèves sur ${plafond}',
+			'admin.attribution.charge' => ({required num actifs, required Object plafond}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(actifs, one: '${actifs} élève sur ${plafond}', other: '${actifs} élèves sur ${plafond}', ), 
 			'admin.attribution.complet' => 'Plafond atteint',
 			'admin.attribution.libreSur' => ({required Object jour, required Object heure}) => 'Libre ${jour} à ${heure} h',
 			'admin.attribution.libreSurPlusieurs' => ({required Object nombre}) => 'Libre sur ${nombre} des heures proposées',
@@ -17087,11 +17225,11 @@ extension on Traductions {
 			'admin.diagnostics.aucunProgramme' => 'Aucun programme publié',
 			'admin.diagnostics.aucunProgrammeDetail' => 'Publiez une première version du programme (Pédagogie > Programmes) avant de pouvoir décider un placement.',
 			'admin.diagnostics.erreur' => 'La file n\'a pas pu être lue. Réessayez dans un instant.',
-			'admin.diagnostics.restants' => ({required Object n}) => '${n} élèves restants',
+			'admin.diagnostics.restants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève restant', other: '${n} élèves restants', ), 
 			'admin.diagnostics.restantUn' => '1 élève restant',
 			'admin.diagnostics.inscritAujourdhui' => 'Inscrit aujourd\'hui',
 			'admin.diagnostics.inscritDepuisUnJour' => 'Inscrit depuis 1 jour',
-			'admin.diagnostics.inscritDepuis' => ({required Object jours}) => 'Inscrit depuis ${jours} jours',
+			'admin.diagnostics.inscritDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Inscrit depuis ${jours} jour', other: 'Inscrit depuis ${jours} jours', ), 
 			'admin.diagnostics.aucun' => 'Aucun élève à diagnostiquer',
 			'admin.diagnostics.aucunDetail' => 'Tous les élèves inscrits ont déjà un niveau décidé.',
 			'admin.diagnostics.champNiveau' => 'Niveau de placement',
@@ -17118,7 +17256,7 @@ extension on Traductions {
 			'admin.qualite.statutTraite' => 'Traitée',
 			'admin.qualite.depuisAujourdhui' => 'Aujourd\'hui',
 			'admin.qualite.depuisUnJour' => '1 jour',
-			'admin.qualite.depuisJours' => ({required Object jours}) => '${jours} jours',
+			'admin.qualite.depuisJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: '${jours} jour', other: '${jours} jours', ), 
 			'admin.qualite.actionTraiter' => 'Marquer traité',
 			'admin.qualite.traiterTitre' => ({required Object personne}) => 'Marquer traité : ${personne}',
 			'admin.qualite.champNote' => 'Note (optionnelle)',
@@ -17152,7 +17290,7 @@ extension on Traductions {
 			'admin.regles.seancesSimultanees' => 'Séances simultanées par profil',
 			'admin.regles.seancesSimultaneesDetail' => 'Le nombre de séances qu\'un même profil peut suivre en même temps.',
 			'admin.regles.uniteMinutes' => ({required Object n}) => '${n} min',
-			'admin.regles.uniteSemaines' => ({required Object n}) => '${n} sem.',
+			'admin.regles.uniteSemaines' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} sem.', other: '${n} sem.', ), 
 			'admin.regles.uniteNombre' => ({required Object n}) => '${n}',
 			'admin.fonctionnalites.titre' => 'Fonctionnalités',
 			'admin.fonctionnalites.intro' => 'Les fonctionnalités qui changent le comportement de toute la plateforme.',
@@ -17177,7 +17315,7 @@ extension on Traductions {
 			'admin.conservationDonnees.enregistrementsDetail' => 'Le nombre de jours pendant lesquels un enregistrement de séance reste accessible.',
 			'admin.conservationDonnees.documentsIdentite' => 'Documents d\'identité',
 			'admin.conservationDonnees.documentsIdentiteDetail' => 'Le nombre de jours pendant lesquels un document d\'identité déposé reste accessible avant sa purge.',
-			'admin.conservationDonnees.uniteJours' => ({required Object n}) => '${n} j',
+			'admin.conservationDonnees.uniteJours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} j', other: '${n} j', ), 
 			'admin.politiqueRevueKyc.titre' => 'Politique de genre pour la revue KYC',
 			'admin.politiqueRevueKyc.libelle' => 'Limiter la revue KYC selon le genre',
 			'admin.politiqueRevueKyc.aide' => 'Lorsque cette règle est désactivée, tout membre autorisé à revoir les dossiers peut traiter les dossiers de son périmètre, quel que soit son genre.',
@@ -17245,7 +17383,7 @@ extension on Traductions {
 			'admin.progression.filtreTousCycles' => 'Tous les cycles',
 			'admin.progression.depuisAujourdhui' => 'Aujourd\'hui',
 			'admin.progression.depuisUnJour' => '1 jour',
-			'admin.progression.depuisJours' => ({required Object jours}) => '${jours} jours',
+			'admin.progression.depuisJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: '${jours} jour', other: '${jours} jours', ), 
 			'admin.progression.typeBlocage' => 'Blocage',
 			'admin.progression.typeDerogation' => 'Dérogation',
 			'admin.progression.actionPoserBlocage' => 'Poser un blocage',
@@ -17276,7 +17414,7 @@ extension on Traductions {
 			'admin.programmes.statutPubliee' => 'Publiée',
 			'admin.programmes.statutArchivee' => 'Archivée',
 			'admin.programmes.versionNumero' => ({required Object numero}) => 'Version ${numero}',
-			'admin.programmes.niveauxSur' => ({required Object nombre}) => '${nombre} niveaux',
+			'admin.programmes.niveauxSur' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} niveau', other: '${nombre} niveaux', ), 
 			'admin.programmes.creerVersion' => 'Créer une version',
 			'admin.programmes.creerVersionVide' => 'Créer une version vide',
 			'admin.programmes.enregistrerVersion' => 'Enregistrer la version',
@@ -17313,10 +17451,10 @@ extension on Traductions {
 			'admin.programmes.journalisation' => 'Chaque création, modification, suppression et publication est inscrite au journal d\'audit.',
 			'admin.journal.titre' => 'Journal',
 			'admin.journal.chaineIntacte' => 'Journal intact',
-			'admin.journal.chaineIntacteDetail' => ({required Object nombre}) => '${nombre} entrées relues une à une : aucune n\'a été modifiée ni retirée depuis son écriture.',
+			'admin.journal.chaineIntacteDetail' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} entrée relue : elle n\'a été ni modifiée ni retirée depuis son écriture.', other: '${nombre} entrées relues une à une : aucune n\'a été modifiée ni retirée depuis son écriture.', ), 
 			'admin.journal.chaineRompue' => 'Journal altéré',
 			'admin.journal.chaineRompueUne' => ({required Object entree}) => 'Une entrée ne correspond plus à son empreinte, la n° ${entree}. Quelque chose a touché la base en dehors de l\'application.',
-			'admin.journal.chaineRompueDetail' => ({required Object nombre, required Object entree}) => '${nombre} entrées ne correspondent plus à leur empreinte, à partir de la n° ${entree}. Quelque chose a touché la base en dehors de l\'application.',
+			'admin.journal.chaineRompueDetail' => ({required num nombre, required Object entree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} entrée ne correspond plus à son empreinte, à partir de la n° ${entree}. Quelque chose a touché la base en dehors de l\'application.', other: '${nombre} entrées ne correspondent plus à leur empreinte, à partir de la n° ${entree}. Quelque chose a touché la base en dehors de l\'application.', ), 
 			'admin.journal.chaineInconnue' => 'Intégrité inconnue',
 			'admin.journal.chaineInconnueDetail' => 'La vérification n\'a pas abouti. Les entrées ci-dessous restent lisibles, mais rien ne garantit pour l\'instant qu\'elles sont complètes.',
 			'admin.journal.chaineEnCours' => 'Vérification',
@@ -17423,8 +17561,8 @@ extension on Traductions {
 			'admin.comptes.intro' => 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Un enseignant sans pièce d\'identité déposée reste visible ici : c\'est le seul endroit qui le montre.',
 			'admin.comptes.attenteUneAujourdhui' => 'Une personne attend une décision, inscrite aujourd\'hui.',
 			'admin.comptes.attenteUneUnJour' => 'Une personne attend une décision depuis 1 jour.',
-			'admin.comptes.attenteUne' => ({required Object jours}) => 'Une personne attend une décision depuis ${jours} jours.',
-			'admin.comptes.attentePlusieurs' => ({required Object nombre}) => '${nombre} personnes attendent une décision.',
+			'admin.comptes.attenteUne' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Une personne attend une décision depuis ${jours} jour.', other: 'Une personne attend une décision depuis ${jours} jours.', ), 
+			'admin.comptes.attentePlusieurs' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} personne attend une décision.', other: '${nombre} personnes attendent une décision.', ), 
 			'admin.comptes.filtreTousEtats' => 'Tous',
 			'admin.comptes.filtreTousRoles' => 'Tous les rôles',
 			'admin.comptes.filtreRole' => 'Rôle',
@@ -17458,7 +17596,7 @@ extension on Traductions {
 			'admin.comptes.pieceSansObjet' => 'Sans objet',
 			'admin.comptes.attendAujourdhui' => 'Aujourd\'hui',
 			'admin.comptes.attendUnJour' => '1 jour',
-			'admin.comptes.attendJours' => ({required Object jours}) => '${jours} jours',
+			'admin.comptes.attendJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: '${jours} jour', other: '${jours} jours', ), 
 			'admin.agents.titre' => 'Accès des agents IA',
 			'admin.agents.intro' => 'Un jeton laisse un agent IA ouvrir l\'application et lire ce qu\'une personne y lit. Il ne peut rien écrire, rien annuler, rien modifier : la base le lui refuse, pas l\'interface.',
 			'admin.agents.emettre' => 'Émettre un jeton',
@@ -17506,7 +17644,7 @@ extension on Traductions {
 			'admin.agents.etatRevoque' => 'Révoqué',
 			'admin.agents.etatExpire' => 'Expiré',
 			'admin.agents.jamaisServi' => 'Jamais utilisé',
-			'admin.agents.usage' => ({required Object nombre, required Object quand}) => '${nombre} fois, la dernière ${quand}',
+			'admin.agents.usage' => ({required num nombre, required Object quand}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} fois, la dernière ${quand}', other: '${nombre} fois, la dernière ${quand}', ), 
 			'admin.agents.revoquer' => 'Révoquer',
 			'admin.agents.revoquerTitre' => 'Révoquer ce jeton ?',
 			'admin.agents.revoquerDetail' => 'L\'agent perdra l\'accès à sa requête suivante. C\'est définitif : un jeton révoqué ne se réactive pas.',
@@ -17597,8 +17735,8 @@ extension on Traductions {
 			'parcours.offresRaison' => 'Ces horaires sont affichés à votre heure locale. Choisir un horaire enregistre votre préférence : cela ne réserve pas de place et ne constitue pas encore une classe.',
 			'parcours.offreRecommandee' => 'Le plus proche de vos réponses',
 			'parcours.offresAutres' => 'Autres horaires possibles',
-			'parcours.offreRecurrence' => ({required Object seances, required Object duree}) => '${seances} séances par semaine, ${duree} min',
-			'parcours.offreRecurrencePause' => ({required Object seances, required Object duree, required Object pause}) => '${seances} séances par semaine, ${duree} min dont ${pause} min de pause',
+			'parcours.offreRecurrence' => ({required num seances, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(seances, one: '${seances} séance par semaine, ${duree} min', other: '${seances} séances par semaine, ${duree} min', ), 
+			'parcours.offreRecurrencePause' => ({required num seances, required Object duree, required Object pause}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(seances, one: '${seances} séance par semaine, ${duree} min dont ${pause} min de pause', other: '${seances} séances par semaine, ${duree} min dont ${pause} min de pause', ), 
 			'parcours.offreLangue' => ({required Object langue}) => 'Cours en ${langue}',
 			'parcours.offreFuseau' => ({required Object fuseau}) => 'Heure affichée pour ${fuseau}',
 			'parcours.offreTraduite' => 'Affiché à votre heure locale',
@@ -17622,7 +17760,7 @@ extension on Traductions {
 			'parcours.etatDiagnosticEnAttente' => 'Rendez-vous prévu',
 			'parcours.etatDiagnosticEnAttenteDetail' => ({required Object prenom}) => 'Un échange est prévu pour situer le niveau de ${prenom}.',
 			'parcours.etatClasseEnFormation' => 'Classe en cours de constitution',
-			'parcours.etatClasseEnFormationDetail' => ({required Object minimum}) => 'Une classe démarre à partir de ${minimum} élèves. Nous vous préviendrons dès qu\'elle est confirmée.',
+			'parcours.etatClasseEnFormationDetail' => ({required num minimum}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(minimum, one: 'Une classe démarre à partir de ${minimum} élève. Nous vous préviendrons dès qu\'elle est confirmée.', other: 'Une classe démarre à partir de ${minimum} élèves. Nous vous préviendrons dès qu\'elle est confirmée.', ), 
 			'parcours.etatClasseEnFormationDetailSansMinimum' => 'Une classe démarre à partir d\'un certain nombre d\'élèves. Nous vous préviendrons dès qu\'elle est confirmée.',
 			'parcours.etatClasseConfirmee' => 'Classe confirmée',
 			'parcours.etatClasseConfirmeeDetail' => ({required Object prenom}) => 'La classe de ${prenom} est constituée. Vous retrouverez ses séances dans son espace.',
@@ -17799,7 +17937,7 @@ extension on Traductions {
 			'compte.tuteur.foyer.titre' => 'Mon foyer',
 			'compte.tuteur.foyer.aucun' => 'Aucun profil élève pour le moment',
 			'compte.tuteur.foyer.un' => '1 profil élève',
-			'compte.tuteur.foyer.plusieurs' => ({required Object nombre}) => '${nombre} profils élèves',
+			'compte.tuteur.foyer.plusieurs' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} profil élève', other: '${nombre} profils élèves', ), 
 			'compte.tuteur.foyer.legende' => 'Profils élèves et appareils du foyer',
 			'compte.tuteur.foyer.creerMonProfil' => 'Créer mon profil élève',
 			'compte.tuteur.aide.titre' => 'Aide et support',
@@ -17902,7 +18040,7 @@ extension on Traductions {
 			'historique.classeInconnue' => 'Classe non disponible',
 			'historique.selecteur.aucune' => 'Aucune séance',
 			'historique.selecteur.une' => '1 séance',
-			'historique.selecteur.plusieurs' => ({required Object n}) => '${n} séances',
+			'historique.selecteur.plusieurs' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} séance', other: '${n} séances', ), 
 			'historique.filtres.classe' => 'Classe',
 			'historique.filtres.toutesClasses' => 'Toutes les classes',
 			'historique.filtres.periode' => 'Période',
@@ -17935,7 +18073,7 @@ extension on Traductions {
 			'historique.observations.filtreVideTitre' => 'Aucune observation ne correspond',
 			'historique.observations.filtreVidePhrase' => 'Changez les filtres pour retrouver les autres visites.',
 			'historique.observations.visiteUne' => '1 visite',
-			'historique.observations.visites' => ({required Object n}) => '${n} visites',
+			'historique.observations.visites' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} visite', other: '${n} visites', ), 
 			'historique.observations.dureeNonConfirmee' => 'Durée non confirmée',
 			'historique.observations.terminee' => 'Terminée',
 			'historique.observations.nonRefermee' => 'Sortie non enregistrée',
@@ -17992,7 +18130,7 @@ extension on Traductions {
 			'eleve.accueil.erreurCours' => 'Tes cours n\'ont pas pu être lus. Réessaie dans un instant.',
 			'eleve.accueil.prochainAujourdhui' => 'Ton prochain cours est plus tard aujourd\'hui.',
 			'eleve.accueil.prochainDemain' => 'Ton prochain cours est demain.',
-			'eleve.accueil.prochainDansJours' => ({required Object jours}) => 'Ton prochain cours est dans ${jours} jours.',
+			'eleve.accueil.prochainDansJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Ton prochain cours est dans ${jours} jour.', other: 'Ton prochain cours est dans ${jours} jours.', ), 
 			'eleve.accueil.annulee' => 'Ce cours n\'aura pas lieu',
 			'eleve.accueil.horsLigne' => 'Pas de réseau',
 			'eleve.accueil.horsLigneDetail' => 'Tu pourras entrer dès que le réseau revient.',
@@ -18223,7 +18361,7 @@ extension on Traductions {
 			'classe.seance.presence' => ({required Object prenom, required Object etat}) => '${prenom} : ${etat}',
 			'classe.observation.commentCaMarche' => 'Comment ça marche ?',
 			'classe.observation.uneVisite' => '1 visite disponible',
-			'classe.observation.visites' => ({required Object nombre}) => '${nombre} visites disponibles',
+			'classe.observation.visites' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} visite disponible', other: '${nombre} visites disponibles', ), 
 			'classe.observation.resume' => ({required Object visites, required Object duree}) => '${visites} · ${duree} par visite',
 			'classe.observation.restanteAucune' => 'Aucune visite restante pour cette séance',
 			'classe.observation.restanteUne' => '1 visite restante pour cette séance',
@@ -18318,7 +18456,7 @@ extension on Traductions {
 			'enseignant.classes.chargement' => 'Chargement de vos Classes.',
 			'enseignant.classes.niveau' => ({required Object niveau}) => 'Niveau ${niveau}',
 			'enseignant.classes.eleveUn' => '1 élève',
-			'enseignant.classes.eleves' => ({required Object nombre}) => '${nombre} élèves',
+			'enseignant.classes.eleves' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} élève', other: '${nombre} élèves', ), 
 			'enseignant.classes.prochaine' => ({required Object jour, required Object heure}) => 'Prochaine séance : ${jour} à ${heure}',
 			'enseignant.classes.sansProchaine' => 'Aucune séance prévue',
 			'enseignant.classes.remplacement' => 'Remplacement',
@@ -18425,7 +18563,7 @@ extension on Traductions {
 			'enseignant.journee.voirCreneaux' => 'Voir mes créneaux',
 			'enseignant.journee.erreur' => 'La journée n\'a pas pu être lue en entier. Réessayez dans un instant.',
 			'enseignant.journee.coursIndividuel' => 'Cours individuel',
-			'enseignant.journee.effectif' => ({required Object nombre}) => '${nombre} élèves',
+			'enseignant.journee.effectif' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} élève', other: '${nombre} élèves', ), 
 			'enseignant.journee.effectifUn' => '1 élève',
 			'enseignant.journee.preflightOk' => 'Micro prêt',
 			'enseignant.journee.preflightBloque' => 'Le micro est bloqué par votre navigateur. Autorisez-le pour lancer le cours.',
@@ -18523,12 +18661,12 @@ extension on Traductions {
 			'enseignant.cahier.duree' => ({required Object minutes}) => '${minutes} min de cours',
 			'enseignant.cahier.dureeEtInterruption' => ({required Object minutes, required Object interruption}) => '${minutes} min de cours, dont ${interruption} min d\'interruption',
 			'enseignant.cahier.unEleve' => '1 élève',
-			'enseignant.cahier.eleves' => ({required Object nombre}) => '${nombre} élèves',
+			'enseignant.cahier.eleves' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} élève', other: '${nombre} élèves', ), 
 			'enseignant.cahier.toutEstNominal' => 'Tout s\'est passé comme prévu.',
 			'enseignant.cahier.toutEstNominalDetail' => 'Validez, et votre journée continue.',
 			'enseignant.cahier.exceptions' => 'À regarder',
 			'enseignant.cahier.uneException' => '1 élève demande un regard.',
-			'enseignant.cahier.plusieursExceptions' => ({required Object nombre}) => '${nombre} élèves demandent un regard.',
+			'enseignant.cahier.plusieursExceptions' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} élève demande un regard.', other: '${nombre} élèves demandent un regard.', ), 
 			'enseignant.cahier.nominaux' => 'Rien à signaler',
 			'enseignant.cahier.curriculumFige' => 'Le niveau et le programme sont ceux de l\'académie : ils ne se modifient pas depuis le cahier de transmission.',
 			'enseignant.cahier.valider' => 'Valider le cahier de transmission',
@@ -18957,7 +19095,7 @@ extension on Traductions {
 			'tc.groupe.commun.reessayer' => 'Réessayer',
 			'tc.groupe.carte.ouvrir' => ({required Object libelle}) => 'Ouvrir la classe ${libelle}',
 			'tc.groupe.carte.capacite' => ({required Object membres, required Object seuil}) => '${membres} / ${seuil}',
-			'tc.groupe.carte.capacitePhrase' => ({required Object membres, required Object seuil}) => '${membres} élèves sur ${seuil} places',
+			'tc.groupe.carte.capacitePhrase' => ({required num membres, required Object seuil}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(membres, one: '${membres} élève sur ${seuil} places', other: '${membres} élèves sur ${seuil} places', ), 
 			'tc.groupe.carte.complet' => 'Complet',
 			'tc.groupe.carte.prochainCours' => 'Prochain cours',
 			'tc.groupe.carte.aucuneSeance' => 'Aucune séance planifiée',
@@ -19230,7 +19368,7 @@ extension on Traductions {
 			'tc.observation.entree.retourClasse' => 'Retour à la classe',
 			'tc.observation.explication.titre' => 'Un aperçu de son apprentissage',
 			'tc.observation.explication.regleUne' => ({required Object n, required Object duree}) => '${n} visite de ${duree}',
-			'tc.observation.explication.regle' => ({required Object n, required Object duree}) => '${n} visites de ${duree}',
+			'tc.observation.explication.regle' => ({required num n, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} visite de ${duree}', other: '${n} visites de ${duree}', ), 
 			'tc.observation.explication.regleDetail' => 'Par séance et par parent, même si plusieurs de vos enfants sont dans la classe.',
 			'tc.observation.explication.ecoute' => 'Écoutez l\'enseignant et les élèves',
 			'tc.observation.explication.ecouteDetail' => 'Vous entendez l\'enseignant et les élèves qui prennent la parole, y compris votre enfant.',
@@ -19282,7 +19420,7 @@ extension on Traductions {
 			'tc.observation.duree.secondeUne' => ({required Object n}) => '${n} seconde',
 			'tc.observation.duree.secondes' => ({required Object n}) => '${n} secondes',
 			'tc.observation.duree.minuteUne' => ({required Object n}) => '${n} minute',
-			'tc.observation.duree.minutes' => ({required Object n}) => '${n} minutes',
+			'tc.observation.duree.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} minute', other: '${n} minutes', ), 
 			'tc.observation.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
 			'tc.observation.refus.politiqueDesactivee' => 'L\'observation est désactivée pour cette classe.',
 			'tc.observation.refus.quotaVisites' => 'Vous avez déjà utilisé vos visites pour cette séance.',
@@ -19333,9 +19471,9 @@ extension on Traductions {
 			'tc.observation.resultat.continuePour' => ({required Object prenom}) => 'La séance continue pour ${prenom}.',
 			'tc.observation.resultat.continueSansPrenom' => 'La séance continue.',
 			'tc.observation.resultat.resteUne' => ({required Object duree}) => 'Il vous reste une visite de ${duree}. Revenez plus tard pour l\'écouter.',
-			'tc.observation.resultat.restent' => ({required Object n, required Object duree}) => 'Il vous reste ${n} visites de ${duree}. Revenez plus tard pour l\'écouter.',
+			'tc.observation.resultat.restent' => ({required num n, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il vous reste ${n} visite de ${duree}. Revenez plus tard pour l\'écouter.', other: 'Il vous reste ${n} visites de ${duree}. Revenez plus tard pour l\'écouter.', ), 
 			'tc.observation.resultat.resteUneSansDuree' => 'Il vous reste une visite. Revenez plus tard pour l\'écouter.',
-			'tc.observation.resultat.restentSansDuree' => ({required Object n}) => 'Il vous reste ${n} visites. Revenez plus tard pour l\'écouter.',
+			'tc.observation.resultat.restentSansDuree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il vous reste ${n} visite. Revenez plus tard pour l\'écouter.', other: 'Il vous reste ${n} visites. Revenez plus tard pour l\'écouter.', ), 
 			'tc.observation.resultat.aucune' => 'Vous avez utilisé vos visites pour cette séance. Vous pourrez observer la prochaine séance.',
 			'tc.observation.resultat.prochaineSeance' => 'Vous pourrez observer la prochaine séance.',
 			'tc.observation.resultat.verification' => 'Vérification de vos visites restantes',
@@ -19360,7 +19498,7 @@ extension on Traductions {
 			'tc.observation.reglages.invalideTemps' => 'Au moins trente secondes par séance.',
 			'tc.observation.reglages.valeurHeritee' => ({required Object valeur}) => 'Académie : ${valeur}',
 			'tc.observation.reglages.uniteVisiteUne' => ({required Object n}) => '${n} visite',
-			'tc.observation.reglages.uniteVisites' => ({required Object n}) => '${n} visites',
+			'tc.observation.reglages.uniteVisites' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} visite', other: '${n} visites', ), 
 			'tc.observation.reglages.uniteSecondes' => ({required Object n}) => '${n} s',
 			'tc.observation.reglages.versionPolitique' => ({required Object version}) => 'Version ${version}',
 			'tc.parcours.avant.titre' => 'Avant le prochain cours',

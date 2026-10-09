@@ -234,13 +234,9 @@ class _Corps extends StatelessWidget {
                 ? switch (attendent.first.joursDAttente(maintenant)) {
                     <= 0 => t.admin.comptes.attenteUneAujourdhui,
                     1 => t.admin.comptes.attenteUneUnJour,
-                    final int jours => t.admin.comptes.attenteUne(
-                      jours: '$jours',
-                    ),
+                    final int jours => t.admin.comptes.attenteUne(jours: jours),
                   }
-                : t.admin.comptes.attentePlusieurs(
-                    nombre: '${attendent.length}',
-                  ),
+                : t.admin.comptes.attentePlusieurs(nombre: attendent.length),
             style: Theme.of(context).textTheme.titleMedium,
           ),
           Ecart.vLg,
@@ -385,7 +381,7 @@ class _Corps extends StatelessWidget {
   static String _attente(int jours) => switch (jours) {
     0 => t.admin.comptes.attendAujourdhui,
     1 => t.admin.comptes.attendUnJour,
-    _ => t.admin.comptes.attendJours(jours: '$jours'),
+    _ => t.admin.comptes.attendJours(jours: jours),
   };
 }
 

@@ -636,8 +636,22 @@ class _Traductions$parcours$ar extends Traductions$parcours$fr {
 	@override String get offresRaison => 'تُعرض هذه المواعيد بتوقيتك المحلي. اختيار موعد يحفظ تفضيلك: لا يحجز مقعدًا ولا يكوّن فصلًا بعد.';
 	@override String get offreRecommandee => 'الأقرب إلى إجاباتك';
 	@override String get offresAutres => 'مواعيد ممكنة أخرى';
-	@override String offreRecurrence({required Object seances, required Object duree}) => '⁨${seances}⁩ حصص في الأسبوع، ⁨${duree}⁩ دقيقة';
-	@override String offreRecurrencePause({required Object seances, required Object duree, required Object pause}) => '⁨${seances}⁩ حصص في الأسبوع، ⁨${duree}⁩ دقيقة منها ⁨${pause}⁩ دقيقة استراحة';
+	@override String offreRecurrence({required num seances, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(seances,
+		zero: 'لا حصص في الأسبوع',
+		one: 'حصة واحدة في الأسبوع، ⁨${duree}⁩ د',
+		two: 'حصتان في الأسبوع، ⁨${duree}⁩ د',
+		few: '⁨${seances}⁩ حصص في الأسبوع، ⁨${duree}⁩ د',
+		many: '⁨${seances}⁩ حصةً في الأسبوع، ⁨${duree}⁩ د',
+		other: '⁨${seances}⁩ حصة في الأسبوع، ⁨${duree}⁩ د',
+	);
+	@override String offreRecurrencePause({required num seances, required Object duree, required Object pause}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(seances,
+		zero: 'لا حصص في الأسبوع',
+		one: 'حصة واحدة في الأسبوع، ⁨${duree}⁩ د منها ⁨${pause}⁩ د استراحة',
+		two: 'حصتان في الأسبوع، ⁨${duree}⁩ د منها ⁨${pause}⁩ د استراحة',
+		few: '⁨${seances}⁩ حصص في الأسبوع، ⁨${duree}⁩ د منها ⁨${pause}⁩ د استراحة',
+		many: '⁨${seances}⁩ حصةً في الأسبوع، ⁨${duree}⁩ د منها ⁨${pause}⁩ د استراحة',
+		other: '⁨${seances}⁩ حصة في الأسبوع، ⁨${duree}⁩ د منها ⁨${pause}⁩ د استراحة',
+	);
 	@override String offreLangue({required Object langue}) => 'الدرس بـ⁨${langue}⁩';
 	@override String offreFuseau({required Object fuseau}) => 'التوقيت المعروض لـ⁨${fuseau}⁩';
 	@override String get offreTraduite => 'معروض بتوقيتك المحلي';
@@ -658,10 +672,17 @@ class _Traductions$parcours$ar extends Traductions$parcours$fr {
 	@override String etatOffreIndisponibleDetail({required Object prenom}) => 'سُحب الموعد المختار لـ⁨${prenom}⁩ قبل تكوين فصل. اختر موعدًا آخر: لم يضِع شيء.';
 	@override String get etatDiagnosticRequis => 'التفضيل محفوظ';
 	@override String etatDiagnosticRequisDetail({required Object prenom}) => 'بقي لقاء مع معلم لتحديد مستوى ⁨${prenom}⁩. ستقترح عليك الأكاديمية موعدًا.';
-	@override String get etatDiagnosticEnAttente => 'الموعد مبرمج';
-	@override String etatDiagnosticEnAttenteDetail({required Object prenom}) => 'لقاء مبرمج لتحديد مستوى ⁨${prenom}⁩.';
+	@override String get etatDiagnosticEnAttente => 'الموعد مجدول';
+	@override String etatDiagnosticEnAttenteDetail({required Object prenom}) => 'لقاء مجدول لتحديد مستوى ⁨${prenom}⁩.';
 	@override String get etatClasseEnFormation => 'الفصل قيد التكوين';
-	@override String etatClasseEnFormationDetail({required Object minimum}) => 'يبدأ الفصل ابتداءً من ⁨${minimum}⁩ طلاب. سنعلمك بمجرد تأكيده.';
+	@override String etatClasseEnFormationDetail({required num minimum}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(minimum,
+		zero: 'يبدأ الفصل دون حد أدنى من الطلاب. سنعلمك بمجرد تأكيده.',
+		one: 'يبدأ الفصل ابتداءً من طالب واحد. سنعلمك بمجرد تأكيده.',
+		two: 'يبدأ الفصل ابتداءً من طالبين. سنعلمك بمجرد تأكيده.',
+		few: 'يبدأ الفصل ابتداءً من ⁨${minimum}⁩ طلاب. سنعلمك بمجرد تأكيده.',
+		many: 'يبدأ الفصل ابتداءً من ⁨${minimum}⁩ طالبًا. سنعلمك بمجرد تأكيده.',
+		other: 'يبدأ الفصل ابتداءً من ⁨${minimum}⁩ طالب. سنعلمك بمجرد تأكيده.',
+	);
 	@override String get etatClasseEnFormationDetailSansMinimum => 'يبدأ الفصل ابتداءً من عدد معين من الطلاب. سنعلمك بمجرد تأكيده.';
 	@override String get etatClasseConfirmee => 'الفصل مؤكَّد';
 	@override String etatClasseConfirmeeDetail({required Object prenom}) => 'تكوّن فصل ⁨${prenom}⁩. ستجد حصصه في مساحته.';
@@ -1017,11 +1038,25 @@ class _Traductions$dossiers$ar extends Traductions$dossiers$fr {
 	@override late final _Traductions$dossiers$visionneuse$ar visionneuse = _Traductions$dossiers$visionneuse$ar._(_root);
 	@override late final _Traductions$dossiers$revue$ar revue = _Traductions$dossiers$revue$ar._(_root);
 	@override String get restantUn => 'ملف واحد قيد الانتظار';
-	@override String restants({required Object n}) => '⁨${n}⁩ ملفات قيد الانتظار';
+	@override String restants({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا ملف قيد الانتظار',
+		one: 'ملف واحد قيد الانتظار',
+		two: 'ملفان قيد الانتظار',
+		few: '⁨${n}⁩ ملفات قيد الانتظار',
+		many: '⁨${n}⁩ ملفًا قيد الانتظار',
+		other: '⁨${n}⁩ ملف قيد الانتظار',
+	);
 	@override String deposeLe({required Object date}) => 'أُودع في ⁨${date}⁩';
 	@override String get inscritAujourdhui => 'مسجَّل اليوم';
 	@override String get inscritDepuisUnJour => 'مسجَّل منذ يوم';
-	@override String inscritDepuis({required Object jours}) => 'مسجَّل منذ ⁨${jours}⁩ أيام';
+	@override String inscritDepuis({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours,
+		zero: 'مسجَّل منذ اليوم',
+		one: 'مسجَّل منذ يوم واحد',
+		two: 'مسجَّل منذ يومين',
+		few: 'مسجَّل منذ ⁨${jours}⁩ أيام',
+		many: 'مسجَّل منذ ⁨${jours}⁩ يومًا',
+		other: 'مسجَّل منذ ⁨${jours}⁩ يوم',
+	);
 	@override String get sansPiece => 'لا وثيقة مودَعة';
 	@override String get sansPieceDetail => 'أنشأ هذا الشخص حسابه وقبل العقود، لكنه لم يرسل وثيقة هويته بعد. لا شيء للتحقق إذن: الخطوة عنده.';
 	@override String get pieceNonVisible => 'وثيقة خارج صلاحيتك';
@@ -1062,7 +1097,7 @@ class _Traductions$kyc$ar extends Traductions$kyc$fr {
 	@override String get envoiEnCours => 'جارٍ الإرسال';
 	@override String get deposee => 'استُلمت الوثيقة';
 	@override String get erreur => 'لم يكتمل الإرسال. أعد المحاولة بعد لحظة.';
-	@override String tropVolumineux({required Object taille}) => 'هذه الصورة تتجاوز ⁨${taille}⁩ م.ب. التقطها بجودة أقل.';
+	@override String tropVolumineux({required Object taille}) => 'هذه الصورة تتجاوز ⁨${taille}⁩ ميغابايت. التقطها بجودة أقل.';
 }
 
 // Path: contrat
@@ -1079,7 +1114,7 @@ class _Traductions$contrat$ar extends Traductions$contrat$fr {
 	@override String get pointCoordonnees => 'لا ترى أبدًا بيانات اتصال أسرة: لا الاسم الكامل، ولا البريد الإلكتروني، ولا الهاتف.';
 	@override String get lireTexte => 'قراءة النص كاملًا';
 	@override String get accepter => 'قرأت وأوافق';
-	@override String accepteLe({required Object date}) => 'مقبول في ⁨${date}⁩';
+	@override String accepteLe({required Object date}) => 'تمت الموافقة في ⁨${date}⁩';
 	@override String get erreur => 'لم يكتمل التوقيع. أعد المحاولة بعد لحظة.';
 	@override String get horsLigne => 'أنت غير متصل. ستُحفظ موافقتك بمجرد عودة الشبكة، بالضغط من جديد.';
 	@override String get caseRequise => 'حدّد المربع للمتابعة.';
@@ -1099,7 +1134,7 @@ class _Traductions$bienvenue$ar extends Traductions$bienvenue$fr {
 	@override String get pointClasseTitre => 'فصل ثابت';
 	@override String get pointClasse => 'الزملاء أنفسهم والموعد نفسه، كل أسبوع.';
 	@override String get pointEnseignantTitre => 'معلم ثابت';
-	@override String get pointEnseignant => 'سيد أو سيدة يتابع كل طالب من حصة إلى أخرى.';
+	@override String get pointEnseignant => 'معلّم أو معلّمة، يُنادى «السيد» أو «السيدة»، يتابع كل طالب من حصة إلى أخرى.';
 	@override String get pointFoyerTitre => 'حساب واحد للأسرة';
 	@override String get pointFoyer => 'تُتابَع حصص كل طالب في الأسرة من حسابك.';
 	@override String get commencer => 'ابدأ';
@@ -1116,23 +1151,51 @@ class _Traductions$creneaux$ar extends Traductions$creneaux$fr {
 	@override String get titre => 'المواعيد';
 	@override String get ongletHeures => 'ساعاتي';
 	@override String get ongletEleves => 'طلاب في الانتظار';
-	@override String mesEleves({required Object nombre, required Object plafond}) => 'تتابع ⁨${nombre}⁩ طلاب من ⁨${plafond}⁩ ممكنين.';
+	@override String mesEleves({required num nombre, required Object plafond}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'لا تتابع أي طالب، والحد الأقصى ⁨${plafond}⁩.',
+		one: 'تتابع طالبًا واحدًا، والحد الأقصى ⁨${plafond}⁩.',
+		two: 'تتابع طالبين، والحد الأقصى ⁨${plafond}⁩.',
+		few: 'تتابع ⁨${nombre}⁩ طلاب، والحد الأقصى ⁨${plafond}⁩.',
+		many: 'تتابع ⁨${nombre}⁩ طالبًا، والحد الأقصى ⁨${plafond}⁩.',
+		other: 'تتابع ⁨${nombre}⁩ طالب، والحد الأقصى ⁨${plafond}⁩.',
+	);
 	@override String get aucunEleve => 'لا طالب في الانتظار في ساعاتك';
 	@override String get aucunEleveDetail => 'اقترح ساعات أخرى لترى أسرًا أكثر.';
-	@override String attendDepuis({required Object jours}) => 'ينتظر منذ ⁨${jours}⁩ أيام';
+	@override String attendDepuis({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours,
+		zero: 'ينتظر منذ اليوم',
+		one: 'ينتظر منذ يوم واحد',
+		two: 'ينتظر منذ يومين',
+		few: 'ينتظر منذ ⁨${jours}⁩ أيام',
+		many: 'ينتظر منذ ⁨${jours}⁩ يومًا',
+		other: 'ينتظر منذ ⁨${jours}⁩ يوم',
+	);
 	@override String get attendUnJour => 'ينتظر منذ يوم';
 	@override String get attendAujourdhui => 'قُدِّم الطلب اليوم';
 	@override String niveau({required Object niveau}) => 'المستوى ⁨${niveau}⁩';
 	@override String prendre({required Object jour, required Object heure}) => 'قبول ⁨${jour}⁩ الساعة ⁨${heure}⁩';
 	@override String get priseEnCours => 'جارٍ الحفظ';
-	@override String plafondAtteint({required Object nombre}) => 'تتابع بالفعل ⁨${nombre}⁩ طلاب، وهو حدك الأقصى. قبول طالب التزام دائم، لا حجز.';
+	@override String plafondAtteint({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'لا يمكنك متابعة أي طالب الآن: حدك الأقصى صفر.',
+		one: 'تتابع بالفعل طالبًا واحدًا، وهو حدك الأقصى. قبول طالب التزام دائم، لا حجز.',
+		two: 'تتابع بالفعل طالبين، وهو حدك الأقصى. قبول طالب التزام دائم، لا حجز.',
+		few: 'تتابع بالفعل ⁨${nombre}⁩ طلاب، وهو حدك الأقصى. قبول طالب التزام دائم، لا حجز.',
+		many: 'تتابع بالفعل ⁨${nombre}⁩ طالبًا، وهو حدك الأقصى. قبول طالب التزام دائم، لا حجز.',
+		other: 'تتابع بالفعل ⁨${nombre}⁩ طالب، وهو حدك الأقصى. قبول طالب التزام دائم، لا حجز.',
+	);
 	@override String get plafondDemander => 'طلب متابعة طلاب أكثر';
 	@override String get demandeTitre => 'كم طالبًا يمكنك أن تتابع؟';
 	@override String get demandeMotif => 'لماذا هذا التغيير؟';
 	@override String get demandeMotifRequis => 'السبب ضروري: هو الذي يسمح بالحسم.';
 	@override String get demandeEnvoyer => 'إرسال الطلب';
 	@override String get demandeEnvoyee => 'أُرسل الطلب. ستحسم فيه الإدارة.';
-	@override String eleves({required Object nombre}) => '⁨${nombre}⁩ طلاب';
+	@override String eleves({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'لا طالب',
+		one: 'طالب واحد',
+		two: 'طالبان',
+		few: '⁨${nombre}⁩ طلاب',
+		many: '⁨${nombre}⁩ طالبًا',
+		other: '⁨${nombre}⁩ طالب',
+	);
 	@override String erreur({required Object message}) => 'لم تكتمل العملية: ⁨${message}⁩';
 }
 
@@ -1152,7 +1215,14 @@ class _Traductions$disponibilites$ar extends Traductions$disponibilites$fr {
 	@override String fuseau({required Object fuseau}) => 'الساعات معروضة بتوقيت ⁨${fuseau}⁩';
 	@override String aucune({required Object prenom}) => 'لا ساعة مقترحة لـ⁨${prenom}⁩';
 	@override String aucuneDetail({required Object prenom}) => 'دون موعد، لا يستطيع أي معلم تولي ⁨${prenom}⁩.';
-	@override String posees({required Object nombre}) => '⁨${nombre}⁩ ساعات مقترحة';
+	@override String posees({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'لا ساعة مقترحة',
+		one: 'ساعة واحدة مقترحة',
+		two: 'ساعتان مقترحتان',
+		few: '⁨${nombre}⁩ ساعات مقترحة',
+		many: '⁨${nombre}⁩ ساعةً مقترحة',
+		other: '⁨${nombre}⁩ ساعة مقترحة',
+	);
 	@override String get poseeUne => 'ساعة واحدة مقترحة';
 	@override String cellulePosee({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩، مقترحة. المس للإزالة';
 	@override String celluleLibre({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩، شاغرة. المس للاقتراح';
@@ -1444,7 +1514,14 @@ class _Traductions$classe$observation$ar extends Traductions$classe$observation$
 	// Translations
 	@override String get commentCaMarche => 'كيف يعمل ذلك؟';
 	@override String get uneVisite => 'زيارة واحدة متاحة';
-	@override String visites({required Object nombre}) => '⁨${nombre}⁩ زيارات متاحة';
+	@override String visites({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'لا زيارة متاحة',
+		one: 'زيارة واحدة متاحة',
+		two: 'زيارتان متاحتان',
+		few: '⁨${nombre}⁩ زيارات متاحة',
+		many: '⁨${nombre}⁩ زيارةً متاحة',
+		other: '⁨${nombre}⁩ زيارة متاحة',
+	);
 	@override String resume({required Object visites, required Object duree}) => '⁨${visites}⁩ · ⁨${duree}⁩ لكل زيارة';
 	@override String get restanteAucune => 'لا زيارة متبقية لهذه الحصة';
 	@override String get restanteUne => 'زيارة واحدة متبقية لهذه الحصة';
@@ -1778,7 +1855,14 @@ class _Traductions$eleve$accueil$ar extends Traductions$eleve$accueil$fr {
 	@override String get erreurCours => 'تعذّرت قراءة دروسك. أعد المحاولة بعد لحظة.';
 	@override String get prochainAujourdhui => 'درسك القادم لاحقًا اليوم.';
 	@override String get prochainDemain => 'درسك القادم غدًا.';
-	@override String prochainDansJours({required Object jours}) => 'درسك القادم بعد ⁨${jours}⁩ أيام.';
+	@override String prochainDansJours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours,
+		zero: 'درسك القادم اليوم.',
+		one: 'درسك القادم بعد يوم واحد.',
+		two: 'درسك القادم بعد يومين.',
+		few: 'درسك القادم بعد ⁨${jours}⁩ أيام.',
+		many: 'درسك القادم بعد ⁨${jours}⁩ يومًا.',
+		other: 'درسك القادم بعد ⁨${jours}⁩ يوم.',
+	);
 	@override String get annulee => 'لن يُعقد هذا الدرس';
 	@override String get horsLigne => 'لا شبكة';
 	@override String get horsLigneDetail => 'يمكنك الدخول بمجرد عودة الشبكة.';
@@ -1858,7 +1942,14 @@ class _Traductions$enseignant$journee$ar extends Traductions$enseignant$journee$
 	@override String get voirCreneaux => 'عرض مواعيدي';
 	@override String get erreur => 'تعذّرت قراءة اليوم كاملًا. أعد المحاولة بعد لحظة.';
 	@override String get coursIndividuel => 'درس فردي';
-	@override String effectif({required Object nombre}) => '⁨${nombre}⁩ طلاب';
+	@override String effectif({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'لا طالب',
+		one: 'طالب واحد',
+		two: 'طالبان',
+		few: '⁨${nombre}⁩ طلاب',
+		many: '⁨${nombre}⁩ طالبًا',
+		other: '⁨${nombre}⁩ طالب',
+	);
 	@override String get effectifUn => 'طالب واحد';
 	@override String get preflightOk => 'الميكروفون جاهز';
 	@override String get preflightBloque => 'متصفحك يحظر الميكروفون. اسمح به لبدء الدرس.';
@@ -1950,7 +2041,14 @@ class _Traductions$enseignant$classes$ar extends Traductions$enseignant$classes$
 	@override String get chargement => 'جارٍ تحميل فصولك.';
 	@override String niveau({required Object niveau}) => 'المستوى ⁨${niveau}⁩';
 	@override String get eleveUn => 'طالب واحد';
-	@override String eleves({required Object nombre}) => '⁨${nombre}⁩ طلاب';
+	@override String eleves({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'لا طالب',
+		one: 'طالب واحد',
+		two: 'طالبان',
+		few: '⁨${nombre}⁩ طلاب',
+		many: '⁨${nombre}⁩ طالبًا',
+		other: '⁨${nombre}⁩ طالب',
+	);
 	@override String prochaine({required Object jour, required Object heure}) => 'الحصة القادمة: ⁨${jour}⁩ الساعة ⁨${heure}⁩';
 	@override String get sansProchaine => 'لا حصة مقررة';
 	@override String get remplacement => 'استخلاف';
@@ -2119,12 +2217,26 @@ class _Traductions$enseignant$cahier$ar extends Traductions$enseignant$cahier$fr
 	@override String duree({required Object minutes}) => '⁨${minutes}⁩ دقيقة من الدرس';
 	@override String dureeEtInterruption({required Object minutes, required Object interruption}) => '⁨${minutes}⁩ دقيقة من الدرس، منها ⁨${interruption}⁩ دقيقة انقطاع';
 	@override String get unEleve => 'طالب واحد';
-	@override String eleves({required Object nombre}) => '⁨${nombre}⁩ طلاب';
+	@override String eleves({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'لا طالب',
+		one: 'طالب واحد',
+		two: 'طالبان',
+		few: '⁨${nombre}⁩ طلاب',
+		many: '⁨${nombre}⁩ طالبًا',
+		other: '⁨${nombre}⁩ طالب',
+	);
 	@override String get toutEstNominal => 'جرى كل شيء كما هو متوقع.';
 	@override String get toutEstNominalDetail => 'أكّد، ويستمر يومك.';
 	@override String get exceptions => 'للنظر';
 	@override String get uneException => 'طالب واحد يحتاج إلى نظرة.';
-	@override String plusieursExceptions({required Object nombre}) => '⁨${nombre}⁩ طلاب يحتاجون إلى نظرة.';
+	@override String plusieursExceptions({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'لا طالب يحتاج إلى نظرة.',
+		one: 'طالب واحد يحتاج إلى نظرة.',
+		two: 'طالبان يحتاجان إلى نظرة.',
+		few: '⁨${nombre}⁩ طلاب يحتاجون إلى نظرة.',
+		many: '⁨${nombre}⁩ طالبًا يحتاجون إلى نظرة.',
+		other: '⁨${nombre}⁩ طالب يحتاجون إلى نظرة.',
+	);
 	@override String get nominaux => 'لا شيء يُذكر';
 	@override String get curriculumFige => 'المستوى والمنهج من الأكاديمية: لا يُعدَّلان من دفتر المتابعة.';
 	@override String get valider => 'تأكيد دفتر المتابعة';
@@ -2838,8 +2950,8 @@ class _Traductions$ficheEleve$inscription$ar extends Traductions$ficheEleve$insc
 	@override String get aRemplir => 'للتعبئة';
 	@override String get horaireAChoisir => 'مُعبّأ، الموعد للاختيار';
 	@override String get horaireRetire => 'سُحب الموعد، يجب اختياره من جديد';
-	@override String get echangeAPrevoir => 'التفضيل محفوظ، لقاء تحديد المستوى للبرمجة';
-	@override String get echangePrevu => 'لقاء تحديد المستوى مبرمج';
+	@override String get echangeAPrevoir => 'التفضيل محفوظ، لقاء تحديد المستوى للجدولة';
+	@override String get echangePrevu => 'لقاء تحديد المستوى مجدول';
 	@override String get classeEnConstitution => 'الفصل قيد التكوين';
 	@override String get classeConfirmee => 'الفصل مؤكَّد';
 	@override String get classeAucune => 'لا فصل بعد. اختيار فصل';
@@ -3181,7 +3293,14 @@ class _Traductions$historique$selecteur$ar extends Traductions$historique$select
 	// Translations
 	@override String get aucune => 'لا حصة';
 	@override String get une => 'حصة واحدة';
-	@override String plusieurs({required Object n}) => '⁨${n}⁩ حصص';
+	@override String plusieurs({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا حصة',
+		one: 'حصة واحدة',
+		two: 'حصتان',
+		few: '⁨${n}⁩ حصص',
+		many: '⁨${n}⁩ حصةً',
+		other: '⁨${n}⁩ حصة',
+	);
 }
 
 // Path: historique.filtres
@@ -3248,7 +3367,14 @@ class _Traductions$historique$observations$ar extends Traductions$historique$obs
 	@override String get filtreVideTitre => 'لا متابعة مطابقة';
 	@override String get filtreVidePhrase => 'غيّر عوامل التصفية لتجد الزيارات الأخرى.';
 	@override String get visiteUne => 'زيارة واحدة';
-	@override String visites({required Object n}) => '⁨${n}⁩ زيارات';
+	@override String visites({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا زيارة',
+		one: 'زيارة واحدة',
+		two: 'زيارتان',
+		few: '⁨${n}⁩ زيارات',
+		many: '⁨${n}⁩ زيارةً',
+		other: '⁨${n}⁩ زيارة',
+	);
 	@override String get dureeNonConfirmee => 'المدة غير مؤكَّدة';
 	@override String get terminee => 'منتهية';
 	@override String get nonRefermee => 'الخروج غير مسجَّل';
@@ -3316,7 +3442,14 @@ class _Traductions$appareils$foyer$ar extends Traductions$appareils$foyer$fr {
 	@override String get groupeProfils => 'ملفات الطلاب';
 	@override String get aucunAppareil => 'لا جهاز مربوط';
 	@override String unAppareil({required Object nom}) => 'جهاز واحد مربوط: ⁨${nom}⁩';
-	@override String plusieursAppareils({required Object nombre, required Object noms}) => '⁨${nombre}⁩ أجهزة مربوطة: ⁨${noms}⁩';
+	@override String plusieursAppareils({required num nombre, required Object noms}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'لا جهاز مربوط',
+		one: 'جهاز واحد مربوط: ⁨${noms}⁩',
+		two: 'جهازان مربوطان: ⁨${noms}⁩',
+		few: '⁨${nombre}⁩ أجهزة مربوطة: ⁨${noms}⁩',
+		many: '⁨${nombre}⁩ جهازًا مربوطًا: ⁨${noms}⁩',
+		other: '⁨${nombre}⁩ جهاز مربوط: ⁨${noms}⁩',
+	);
 	@override String get partageTitre => 'جهاز مشترك';
 	@override String get partage => 'على جهاز مشترك، يختار كل طالب ملفه ثم يدخل رمزه الشخصي. يظهر هذا الجهاز حينها تحت كل ملف يستخدمه.';
 	@override String get videTitre => 'لا ملف طالب';
@@ -3919,9 +4052,9 @@ class _Traductions$adulte$reprise$ar extends Traductions$adulte$reprise$fr {
 	// Translations
 	@override String get titre => 'طلب استلام الأسرة';
 	@override String get explication => 'استخدم هذا الإجراء إن توفي صاحب حساب الأسرة. سيُبلَّغ الحساب المعني بالطلب وستدرسه الإدارة.';
-	@override String get reprisTitre => 'ما سيُستلم';
+	@override String get reprisTitre => 'ما سيُنقل';
 	@override late final _Traductions$adulte$reprise$repris$ar repris = _Traductions$adulte$reprise$repris$ar._(_root);
-	@override String get jamaisTitre => 'ما لا يُستلم أبدًا';
+	@override String get jamaisTitre => 'ما لا يُنقل أبدًا';
 	@override late final _Traductions$adulte$reprise$jamais$ar jamais = _Traductions$adulte$reprise$jamais$ar._(_root);
 	@override String get succession => 'الأمر انتقال لصفة صاحب حساب الأسرة، لا استيلاء على الحساب الشخصي.';
 	@override String get deposer => 'تقديم الطلب';
@@ -4137,7 +4270,7 @@ class _Traductions$controleur$historique$ar extends Traductions$controleur$histo
 	@override String get aTerminer => 'للإنهاء';
 	@override String get filtreEtat => 'الحالة';
 	@override String get tousEtats => 'كل الحالات';
-	@override String duree({required Object minutes}) => '⁨${minutes}⁩ دقيقة من المتابعة';
+	@override String duree({required Object minutes}) => '⁨${minutes}⁩ د من المتابعة';
 	@override String meta({required Object heure, required Object duree}) => '⁨${heure}⁩ · ⁨${duree}⁩';
 	@override String dateHeure({required Object date, required Object heure}) => '⁨${date}⁩، ⁨${heure}⁩';
 	@override String dateHeureAuteur({required Object date, required Object heure, required Object auteur}) => '⁨${date}⁩، ⁨${heure}⁩ · ⁨${auteur}⁩';
@@ -4215,7 +4348,7 @@ class _Traductions$controleur$compteRendu$ar extends Traductions$controleur$comp
 	@override String get cleHoraire => 'الموعد المقرر';
 	@override String horaire({required Object debut, required Object fin}) => '⁨${debut}⁩ إلى ⁨${fin}⁩';
 	@override String get cleDebutReel => 'البداية الفعلية';
-	@override String debutRetard({required Object heure, required Object minutes}) => '⁨${heure}⁩، تأخر ⁨${minutes}⁩ دقيقة';
+	@override String debutRetard({required Object heure, required Object minutes}) => '⁨${heure}⁩، تأخر ⁨${minutes}⁩ د';
 	@override String debutALHeure({required Object heure}) => '⁨${heure}⁩، في الموعد';
 	@override String get cleFin => 'النهاية';
 	@override String get enCours => 'جارية';
@@ -4391,7 +4524,7 @@ class _Traductions$controleur$controle$ar extends Traductions$controleur$control
 	@override String get dejaEnCoursAide => 'مراقبة واحدة في كل مرة لكل فصل. اختر حصة أخرى، أو عد لاحقًا: يمكنك البدء حين تنتهي هذه المراقبة.';
 	@override String get incognito => 'لا يُعلَن عن حضورك في الوقت الفعلي.';
 	@override String horaire({required Object debut, required Object fin}) => '⁨${debut}⁩ إلى ⁨${fin}⁩';
-	@override String duree({required Object minutes}) => '⁨${minutes}⁩ دقيقة مقررة';
+	@override String duree({required Object minutes}) => '⁨${minutes}⁩ د مقررة';
 	@override String eleves({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
 		zero: 'لا طالب',
 		one: 'طالب واحد',
@@ -4416,7 +4549,7 @@ class _Traductions$admin$tableau$ar extends Traductions$admin$tableau$fr {
 	@override String get dossiersDetail => 'فتح القائمة، الأقدم أولًا.';
 	@override String get demandesDetail => 'أسر ومعلمون ينتظرون ردًا.';
 	@override String get foyers => 'طلاب دون معلم';
-	@override String get rapports => 'دفاتر ناقصة';
+	@override String get rapports => 'دفاتر متابعة ناقصة';
 	@override String get incidents => 'حوادث (24 س)';
 	@override String get comptes => 'وصول منتهٍ';
 	@override String get incidentsEtAcces => 'الحوادث والوصول';
@@ -4431,12 +4564,19 @@ class _Traductions$admin$tableau$ar extends Traductions$admin$tableau$fr {
 	@override String get outilsAccesAgentsDetail => 'فتح وصول للقراءة فقط، محدود زمنيًا، على مسار شخص.';
 	@override String get outilsGroupesDetail => 'الفصول وطلابها ومعلمها.';
 	@override String ligneDossier({required Object prenom}) => 'ملف هوية ⁨${prenom}⁩';
-	@override String ligneReaffectation({required Object prenom}) => 'تغيير معلم ⁨${prenom}⁩';
+	@override String ligneReaffectation({required Object prenom}) => 'تغيير المعلم لـ⁨${prenom}⁩';
 	@override String lignePlafond({required Object prenom}) => 'الحد الأقصى لطلاب ⁨${prenom}⁩';
 	@override String ligneRegle({required Object prenom}) => 'تغيير قاعدة لـ⁨${prenom}⁩';
 	@override String get attenteAujourdhui => 'أُودع اليوم';
 	@override String get attenteUnJour => 'ينتظر منذ يوم';
-	@override String attenteJours({required Object jours}) => 'ينتظر منذ ⁨${jours}⁩ أيام';
+	@override String attenteJours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours,
+		zero: 'ينتظر منذ اليوم',
+		one: 'ينتظر منذ يوم واحد',
+		two: 'ينتظر منذ يومين',
+		few: 'ينتظر منذ ⁨${jours}⁩ أيام',
+		many: 'ينتظر منذ ⁨${jours}⁩ يومًا',
+		other: 'ينتظر منذ ⁨${jours}⁩ يوم',
+	);
 }
 
 // Path: admin.demandes
@@ -4448,7 +4588,14 @@ class _Traductions$admin$demandes$ar extends Traductions$admin$demandes$fr {
 	// Translations
 	@override String get titre => 'الطلبات والقواعد';
 	@override String get restanteUne => 'طلب واحد قيد الانتظار';
-	@override String restantes({required Object n}) => '⁨${n}⁩ طلبات قيد الانتظار';
+	@override String restantes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا طلب قيد الانتظار',
+		one: 'طلب واحد قيد الانتظار',
+		two: 'طلبان قيد الانتظار',
+		few: '⁨${n}⁩ طلبات قيد الانتظار',
+		many: '⁨${n}⁩ طلبًا قيد الانتظار',
+		other: '⁨${n}⁩ طلب قيد الانتظار',
+	);
 	@override String get aucune => 'لا طلب قيد الانتظار';
 	@override String get aucuneDetail => 'تصل هنا طلبات الأسر والطلاب المستقلين والمعلمين، الأقدم أولًا.';
 	@override String faitePar({required Object date, required Object role}) => 'طُلب في ⁨${date}⁩، من ⁨${role}⁩';
@@ -4460,7 +4607,14 @@ class _Traductions$admin$demandes$ar extends Traductions$admin$demandes$fr {
 	@override String get roleInconnu => 'طرف في الملف';
 	@override String get reclame => 'المطلوب';
 	@override String reclameReaffectation({required Object prenom}) => 'تغيير معلم ⁨${prenom}⁩';
-	@override String reclamePlafond({required Object valeur}) => 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طلاب';
+	@override String reclamePlafond({required num valeur}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(valeur,
+		zero: 'رفع الحد الأقصى إلى صفر',
+		one: 'رفع الحد الأقصى إلى طالب واحد',
+		two: 'رفع الحد الأقصى إلى طالبين',
+		few: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طلاب',
+		many: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طالبًا',
+		other: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طالب',
+	);
 	@override String reclameRegle({required Object regle, required Object valeur}) => 'جعل ⁨${regle}⁩ ⁨${valeur}⁩ دقيقة';
 	@override String reclameRegleSansValeur({required Object regle}) => 'مراجعة ⁨${regle}⁩';
 	@override String get motifDemande => 'السبب المذكور';
@@ -4481,7 +4635,14 @@ class _Traductions$admin$demandes$ar extends Traductions$admin$demandes$fr {
 	@override String plateforme({required Object valeur}) => 'المنصة: ⁨${valeur}⁩';
 	@override String effective({required Object valeur}) => 'المطبقة: ⁨${valeur}⁩';
 	@override String minutes({required Object valeur}) => '⁨${valeur}⁩ دقيقة';
-	@override String eleves({required Object valeur}) => '⁨${valeur}⁩ طلاب';
+	@override String eleves({required num valeur}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(valeur,
+		zero: 'لا طالب',
+		one: 'طالب واحد',
+		two: 'طالبان',
+		few: '⁨${valeur}⁩ طلاب',
+		many: '⁨${valeur}⁩ طالبًا',
+		other: '⁨${valeur}⁩ طالب',
+	);
 	@override String surchargeDepuis({required Object date, required Object motif}) => 'وُضعت في ⁨${date}⁩: ⁨${motif}⁩';
 	@override String get sansSurcharge => 'يتبع هذا الطالب قاعدة المنصة.';
 	@override String get changer => 'تغيير';
@@ -4515,16 +4676,37 @@ class _Traductions$admin$attribution$ar extends Traductions$admin$attribution$fr
 	@override String get erreurEnseignants => 'تعذّرت قراءة المعلمين. أعد المحاولة بعد لحظة.';
 	@override String get attendAujourdhui => 'مسجَّل اليوم';
 	@override String get attendUnJour => 'ينتظر منذ يوم';
-	@override String attendJours({required Object jours}) => 'ينتظر منذ ⁨${jours}⁩ أيام';
+	@override String attendJours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours,
+		zero: 'ينتظر منذ اليوم',
+		one: 'ينتظر منذ يوم واحد',
+		two: 'ينتظر منذ يومين',
+		few: 'ينتظر منذ ⁨${jours}⁩ أيام',
+		many: 'ينتظر منذ ⁨${jours}⁩ يومًا',
+		other: 'ينتظر منذ ⁨${jours}⁩ يوم',
+	);
 	@override String niveau({required Object niveau}) => 'المستوى ⁨${niveau}⁩';
-	@override String heuresProposees({required Object nombre}) => '⁨${nombre}⁩ ساعات مقترحة';
+	@override String heuresProposees({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'لا ساعة مقترحة',
+		one: 'ساعة واحدة مقترحة',
+		two: 'ساعتان مقترحتان',
+		few: '⁨${nombre}⁩ ساعات مقترحة',
+		many: '⁨${nombre}⁩ ساعةً مقترحة',
+		other: '⁨${nombre}⁩ ساعة مقترحة',
+	);
 	@override String get heureProposee => 'ساعة واحدة مقترحة';
 	@override String get sansHeure => 'لا ساعة مقترحة';
 	@override String get sansHeureDetail => 'ما دامت الأسرة لم تحدد أي موعد، لا يستطيع أحد أن يسند إليها معلمًا، ولا أنت. الخطوة عندها، في أوقات توفرها.';
 	@override String get changerEleve => 'اختيار طالب آخر';
 	@override String get choisirEleve => 'اختر طالبًا';
 	@override String get choisirEleveDetail => 'سيظهر المعلمون هنا، والذين يشاركونه ساعة أولًا.';
-	@override String charge({required Object actifs, required Object plafond}) => '⁨${actifs}⁩ طلاب من ⁨${plafond}⁩';
+	@override String charge({required num actifs, required Object plafond}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(actifs,
+		zero: 'لا طالب من ⁨${plafond}⁩',
+		one: 'طالب واحد من ⁨${plafond}⁩',
+		two: 'طالبان من ⁨${plafond}⁩',
+		few: '⁨${actifs}⁩ طلاب من ⁨${plafond}⁩',
+		many: '⁨${actifs}⁩ طالبًا من ⁨${plafond}⁩',
+		other: '⁨${actifs}⁩ طالب من ⁨${plafond}⁩',
+	);
 	@override String get complet => 'بلغ الحد الأقصى';
 	@override String libreSur({required Object jour, required Object heure}) => 'متاح ⁨${jour}⁩ الساعة ⁨${heure}⁩';
 	@override String libreSurPlusieurs({required Object nombre}) => 'متاح في ⁨${nombre}⁩ من الساعات المقترحة';
@@ -4617,11 +4799,25 @@ class _Traductions$admin$diagnostics$ar extends Traductions$admin$diagnostics$fr
 	@override String get aucunProgramme => 'لا منهج منشور';
 	@override String get aucunProgrammeDetail => 'انشر إصدارًا أول من المنهج («التعليم» > «المناهج») قبل أن تتمكن من تقرير توجيه.';
 	@override String get erreur => 'تعذّرت قراءة القائمة. أعد المحاولة بعد لحظة.';
-	@override String restants({required Object n}) => '⁨${n}⁩ طلاب متبقون';
+	@override String restants({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا طالب متبقٍّ',
+		one: 'طالب واحد متبقٍّ',
+		two: 'طالبان متبقيان',
+		few: '⁨${n}⁩ طلاب متبقون',
+		many: '⁨${n}⁩ طالبًا متبقيًا',
+		other: '⁨${n}⁩ طالب متبقٍّ',
+	);
 	@override String get restantUn => 'طالب واحد متبقٍ';
 	@override String get inscritAujourdhui => 'مسجَّل اليوم';
 	@override String get inscritDepuisUnJour => 'مسجَّل منذ يوم';
-	@override String inscritDepuis({required Object jours}) => 'مسجَّل منذ ⁨${jours}⁩ أيام';
+	@override String inscritDepuis({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours,
+		zero: 'مسجَّل منذ اليوم',
+		one: 'مسجَّل منذ يوم واحد',
+		two: 'مسجَّل منذ يومين',
+		few: 'مسجَّل منذ ⁨${jours}⁩ أيام',
+		many: 'مسجَّل منذ ⁨${jours}⁩ يومًا',
+		other: 'مسجَّل منذ ⁨${jours}⁩ يوم',
+	);
 	@override String get aucun => 'لا طالب لتحديد مستواه';
 	@override String get aucunDetail => 'لكل الطلاب المسجلين مستوى مقرر بالفعل.';
 	@override String get champNiveau => 'مستوى التوجيه';
@@ -4657,7 +4853,14 @@ class _Traductions$admin$qualite$ar extends Traductions$admin$qualite$fr {
 	@override String get statutTraite => 'معالَجة';
 	@override String get depuisAujourdhui => 'اليوم';
 	@override String get depuisUnJour => 'يوم واحد';
-	@override String depuisJours({required Object jours}) => '⁨${jours}⁩ أيام';
+	@override String depuisJours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours,
+		zero: 'اليوم',
+		one: 'يوم واحد',
+		two: 'يومان',
+		few: '⁨${jours}⁩ أيام',
+		many: '⁨${jours}⁩ يومًا',
+		other: '⁨${jours}⁩ يوم',
+	);
 	@override String get actionTraiter => 'تعليم كمعالَج';
 	@override String traiterTitre({required Object personne}) => 'تعليم كمعالَج: ⁨${personne}⁩';
 	@override String get champNote => 'ملاحظة (اختيارية)';
@@ -4700,7 +4903,14 @@ class _Traductions$admin$regles$ar extends Traductions$admin$regles$fr {
 	@override String get seancesSimultanees => 'الحصص المتزامنة لكل ملف';
 	@override String get seancesSimultaneesDetail => 'عدد الحصص التي يمكن لملف واحد متابعتها في الوقت نفسه.';
 	@override String uniteMinutes({required Object n}) => '⁨${n}⁩ دقيقة';
-	@override String uniteSemaines({required Object n}) => '⁨${n}⁩ أسبوع';
+	@override String uniteSemaines({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: '⁨${n}⁩ أسبوع',
+		one: 'أسبوع واحد',
+		two: 'أسبوعان',
+		few: '⁨${n}⁩ أسابيع',
+		many: '⁨${n}⁩ أسبوعًا',
+		other: '⁨${n}⁩ أسبوع',
+	);
 	@override String uniteNombre({required Object n}) => '⁨${n}⁩';
 }
 
@@ -4743,7 +4953,14 @@ class _Traductions$admin$conservationDonnees$ar extends Traductions$admin$conser
 	@override String get enregistrementsDetail => 'عدد الأيام التي يبقى فيها تسجيل الحصة متاحًا.';
 	@override String get documentsIdentite => 'وثائق الهوية';
 	@override String get documentsIdentiteDetail => 'عدد الأيام التي تبقى فيها وثيقة الهوية المودعة متاحة قبل حذفها.';
-	@override String uniteJours({required Object n}) => '⁨${n}⁩ ي';
+	@override String uniteJours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: '⁨${n}⁩ يوم',
+		one: 'يوم واحد',
+		two: 'يومان',
+		few: '⁨${n}⁩ أيام',
+		many: '⁨${n}⁩ يومًا',
+		other: '⁨${n}⁩ يوم',
+	);
 }
 
 // Path: admin.politiqueRevueKyc
@@ -4753,8 +4970,8 @@ class _Traductions$admin$politiqueRevueKyc$ar extends Traductions$admin$politiqu
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get titre => 'سياسة الجنس في مراجعة الهوية';
-	@override String get libelle => 'حصر مراجعة الهوية حسب الجنس';
+	@override String get titre => 'اشتراط تطابق الجنس في مراجعة الهوية';
+	@override String get libelle => 'حصر مراجعة الهوية بموظف من الجنس نفسه';
 	@override String get aide => 'حين تُعطَّل هذه القاعدة، يمكن لكل عضو مخوَّل بمراجعة الملفات معالجة ملفات نطاقه، أيًا كان جنسه.';
 	@override String get echecEnregistrement => _root.admin.groupes.observationErreur;
 }
@@ -4770,11 +4987,11 @@ class _Traductions$admin$evaluations$ar extends Traductions$admin$evaluations$fr
 	@override String get intro => 'ما هو مقرر، وما أُجري، والشهادات المحصَّلة.';
 	@override String get erreur => 'تعذّرت قراءة التقييمات. أعد المحاولة بعد لحظة.';
 	@override String get aucune => 'لا تقييم';
-	@override String get aucuneDetail => 'برمج تقييمًا أول لطالب حُدِّد مستواه بالفعل.';
+	@override String get aucuneDetail => 'جدوِل تقييمًا أول لطالب حُدِّد مستواه بالفعل.';
 	@override String get aucuneAvecCeFiltre => 'لا تقييم بهذا المعيار';
 	@override String get aucuneAvecCeFiltreDetail => 'غيّر المعيار لترى التقييمات الأخرى.';
 	@override String get filtreToutes => 'الكل';
-	@override String get filtrePlanifiees => 'مبرمجة';
+	@override String get filtrePlanifiees => 'مجدولة';
 	@override String get filtreRealisees => 'منجزة';
 	@override String get filtreAnnulees => 'ملغاة';
 	@override String get filtreCertifications => 'الشهادات';
@@ -4788,20 +5005,20 @@ class _Traductions$admin$evaluations$ar extends Traductions$admin$evaluations$fr
 	@override String get typePeriodique => 'دوري';
 	@override String get typeReevaluation => 'إعادة تقييم';
 	@override String get typeCertification => 'شهادة';
-	@override String get statutPlanifiee => 'مبرمج';
+	@override String get statutPlanifiee => 'مجدول';
 	@override String get statutRealisee => 'منجز';
 	@override String get statutAnnulee => 'ملغى';
 	@override String get resultatReussi => 'ناجح';
 	@override String get resultatEchec => 'راسب';
 	@override String get resultatARevoir => 'للمراجعة';
-	@override String get planifier => 'برمجة تقييم';
-	@override String get planifierTitre => 'برمجة تقييم';
+	@override String get planifier => 'جدولة تقييم';
+	@override String get planifierTitre => 'جدولة تقييم';
 	@override String get champEleveId => 'معرّف الطالب';
 	@override String get champNiveau => 'المستوى المقيَّم';
 	@override String get champType => 'النوع';
 	@override String get champDatePrevue => 'التاريخ المقرر (يوم/شهر/سنة)';
-	@override String get planifierEnvoyer => 'برمجة';
-	@override String planifierErreur({required Object message}) => 'لم تكتمل البرمجة: ⁨${message}⁩';
+	@override String get planifierEnvoyer => 'جدولة';
+	@override String planifierErreur({required Object message}) => 'لم تكتمل الجدولة: ⁨${message}⁩';
 	@override String get actionEnregistrerResultat => 'حفظ النتيجة';
 	@override String get actionAnnuler => 'إلغاء التقييم';
 	@override String resultatTitre({required Object eleve}) => 'نتيجة ⁨${eleve}⁩';
@@ -4813,7 +5030,7 @@ class _Traductions$admin$evaluations$ar extends Traductions$admin$evaluations$fr
 	@override String annulerErreur({required Object message}) => 'لم يكتمل الإلغاء: ⁨${message}⁩';
 	@override String get champMotif => 'السبب';
 	@override String get motifRequis => 'السبب مطلوب، ويُدوَّن في سجل التدقيق.';
-	@override String get journalisation => 'تُدوَّن كل برمجة ونتيجة وإلغاء في سجل التدقيق.';
+	@override String get journalisation => 'تُدوَّن كل جدولة ونتيجة وإلغاء في سجل التدقيق.';
 }
 
 // Path: admin.progression
@@ -4838,7 +5055,14 @@ class _Traductions$admin$progression$ar extends Traductions$admin$progression$fr
 	@override String get filtreTousCycles => 'كل المراحل';
 	@override String get depuisAujourdhui => 'اليوم';
 	@override String get depuisUnJour => 'يوم واحد';
-	@override String depuisJours({required Object jours}) => '⁨${jours}⁩ أيام';
+	@override String depuisJours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours,
+		zero: 'اليوم',
+		one: 'يوم واحد',
+		two: 'يومان',
+		few: '⁨${jours}⁩ أيام',
+		many: '⁨${jours}⁩ يومًا',
+		other: '⁨${jours}⁩ يوم',
+	);
 	@override String get typeBlocage => 'عائق';
 	@override String get typeDerogation => 'استثناء';
 	@override String get actionPoserBlocage => 'وضع عائق';
@@ -4876,7 +5100,14 @@ class _Traductions$admin$programmes$ar extends Traductions$admin$programmes$fr {
 	@override String get statutPubliee => 'منشور';
 	@override String get statutArchivee => 'مؤرشف';
 	@override String versionNumero({required Object numero}) => 'الإصدار ⁨${numero}⁩';
-	@override String niveauxSur({required Object nombre}) => '⁨${nombre}⁩ مستويات';
+	@override String niveauxSur({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'لا مستوى',
+		one: 'مستوى واحد',
+		two: 'مستويان',
+		few: '⁨${nombre}⁩ مستويات',
+		many: '⁨${nombre}⁩ مستوًى',
+		other: '⁨${nombre}⁩ مستوى',
+	);
 	@override String get creerVersion => 'إنشاء إصدار';
 	@override String get creerVersionVide => 'إنشاء إصدار فارغ';
 	@override String get enregistrerVersion => 'حفظ الإصدار';
@@ -4922,10 +5153,24 @@ class _Traductions$admin$journal$ar extends Traductions$admin$journal$fr {
 	// Translations
 	@override String get titre => 'السجل';
 	@override String get chaineIntacte => 'السجل سليم';
-	@override String chaineIntacteDetail({required Object nombre}) => 'أُعيدت قراءة ⁨${nombre}⁩ مدخلًا واحدًا واحدًا: لم يُعدَّل أي منها ولم يُحذف منذ كتابته.';
-	@override String get chaineRompue => 'السجل معدَّل';
+	@override String chaineIntacteDetail({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'لا مدخل للتحقق منه بعد.',
+		one: 'أُعيدت قراءة مدخل واحد: لم يُعدَّل ولم يُحذف منذ كتابته.',
+		two: 'أُعيدت قراءة مدخلين واحدًا واحدًا: لم يُعدَّل أي منهما ولم يُحذف منذ كتابته.',
+		few: 'أُعيدت قراءة ⁨${nombre}⁩ مدخلات واحدًا واحدًا: لم يُعدَّل أي منها ولم يُحذف منذ كتابته.',
+		many: 'أُعيدت قراءة ⁨${nombre}⁩ مدخلًا واحدًا واحدًا: لم يُعدَّل أي منها ولم يُحذف منذ كتابته.',
+		other: 'أُعيدت قراءة ⁨${nombre}⁩ مدخل واحدًا واحدًا: لم يُعدَّل أي منها ولم يُحذف منذ كتابته.',
+	);
+	@override String get chaineRompue => 'السجل مُحرَّف';
 	@override String chaineRompueUne({required Object entree}) => 'مدخل لم يعد يطابق بصمته، رقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.';
-	@override String chaineRompueDetail({required Object nombre, required Object entree}) => '⁨${nombre}⁩ مدخلات لم تعد تطابق بصمتها، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.';
+	@override String chaineRompueDetail({required num nombre, required Object entree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'لا مدخل يخالف بصمته.',
+		one: 'مدخل واحد لم يعد يطابق بصمته، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.',
+		two: 'مدخلان لم يعودا يطابقان بصمتهما، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.',
+		few: '⁨${nombre}⁩ مدخلات لم تعد تطابق بصمتها، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.',
+		many: '⁨${nombre}⁩ مدخلًا لم تعد تطابق بصمتها، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.',
+		other: '⁨${nombre}⁩ مدخل لم تعد تطابق بصمتها، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.',
+	);
 	@override String get chaineInconnue => 'السلامة غير معروفة';
 	@override String get chaineInconnueDetail => 'لم يكتمل التحقق. تبقى المدخلات أدناه مقروءة، لكن لا شيء يضمن الآن أنها كاملة.';
 	@override String get chaineEnCours => 'جارٍ التحقق';
@@ -5048,8 +5293,22 @@ class _Traductions$admin$comptes$ar extends Traductions$admin$comptes$fr {
 	@override String get intro => 'كل الأشخاص المسجلين، والذين ينتظرون قرارًا أولًا. المعلم الذي لم يودع وثيقة هويته يبقى ظاهرًا هنا: إنه المكان الوحيد الذي يُظهره.';
 	@override String get attenteUneAujourdhui => 'شخص واحد ينتظر قرارًا، مسجَّل اليوم.';
 	@override String get attenteUneUnJour => 'شخص واحد ينتظر قرارًا منذ يوم.';
-	@override String attenteUne({required Object jours}) => 'شخص واحد ينتظر قرارًا منذ ⁨${jours}⁩ أيام.';
-	@override String attentePlusieurs({required Object nombre}) => '⁨${nombre}⁩ أشخاص ينتظرون قرارًا.';
+	@override String attenteUne({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours,
+		zero: 'شخص واحد ينتظر قرارًا منذ اليوم.',
+		one: 'شخص واحد ينتظر قرارًا منذ يوم واحد.',
+		two: 'شخص واحد ينتظر قرارًا منذ يومين.',
+		few: 'شخص واحد ينتظر قرارًا منذ ⁨${jours}⁩ أيام.',
+		many: 'شخص واحد ينتظر قرارًا منذ ⁨${jours}⁩ يومًا.',
+		other: 'شخص واحد ينتظر قرارًا منذ ⁨${jours}⁩ يوم.',
+	);
+	@override String attentePlusieurs({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'لا أحد ينتظر قرارًا.',
+		one: 'شخص واحد ينتظر قرارًا.',
+		two: 'شخصان ينتظران قرارًا.',
+		few: '⁨${nombre}⁩ أشخاص ينتظرون قرارًا.',
+		many: '⁨${nombre}⁩ شخصًا ينتظرون قرارًا.',
+		other: '⁨${nombre}⁩ شخص ينتظرون قرارًا.',
+	);
 	@override String get filtreTousEtats => 'الكل';
 	@override String get filtreTousRoles => 'كل الأدوار';
 	@override String get filtreRole => 'الدور';
@@ -5083,7 +5342,14 @@ class _Traductions$admin$comptes$ar extends Traductions$admin$comptes$fr {
 	@override String get pieceSansObjet => 'لا ينطبق';
 	@override String get attendAujourdhui => 'اليوم';
 	@override String get attendUnJour => 'يوم واحد';
-	@override String attendJours({required Object jours}) => '⁨${jours}⁩ أيام';
+	@override String attendJours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours,
+		zero: 'اليوم',
+		one: 'يوم واحد',
+		two: 'يومان',
+		few: '⁨${jours}⁩ أيام',
+		many: '⁨${jours}⁩ يومًا',
+		other: '⁨${jours}⁩ يوم',
+	);
 }
 
 // Path: admin.agents
@@ -5140,7 +5406,14 @@ class _Traductions$admin$agents$ar extends Traductions$admin$agents$fr {
 	@override String get etatRevoque => 'ملغى';
 	@override String get etatExpire => 'منتهي الصلاحية';
 	@override String get jamaisServi => 'لم يُستخدم قط';
-	@override String usage({required Object nombre, required Object quand}) => '⁨${nombre}⁩ مرات، آخرها ⁨${quand}⁩';
+	@override String usage({required num nombre, required Object quand}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'لم يُستخدم بعد',
+		one: 'مرة واحدة، آخرها ⁨${quand}⁩',
+		two: 'مرتان، آخرهما ⁨${quand}⁩',
+		few: '⁨${nombre}⁩ مرات، آخرها ⁨${quand}⁩',
+		many: '⁨${nombre}⁩ مرةً، آخرها ⁨${quand}⁩',
+		other: '⁨${nombre}⁩ مرة، آخرها ⁨${quand}⁩',
+	);
 	@override String get revoquer => 'إلغاء';
 	@override String get revoquerTitre => 'إلغاء هذا الرمز؟';
 	@override String get revoquerDetail => 'سيفقد الوكيل الوصول عند طلبه التالي. هذا نهائي: الرمز الملغى لا يُعاد تفعيله.';
@@ -5754,7 +6027,14 @@ class _Traductions$compte$tuteur$foyer$ar extends Traductions$compte$tuteur$foye
 	@override String get titre => 'أسرتي';
 	@override String get aucun => 'لا ملف طالب حتى الآن';
 	@override String get un => 'ملف طالب واحد';
-	@override String plusieurs({required Object nombre}) => '⁨${nombre}⁩ ملفات طلاب';
+	@override String plusieurs({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'لا ملف طالب',
+		one: 'ملف طالب واحد',
+		two: 'ملفا طالبين',
+		few: '⁨${nombre}⁩ ملفات طلاب',
+		many: '⁨${nombre}⁩ ملفًا لطلاب',
+		other: '⁨${nombre}⁩ ملف طالب',
+	);
 	@override String get legende => 'ملفات الطلاب وأجهزة الأسرة';
 	@override String get creerMonProfil => 'إنشاء ملفي كطالب';
 }
@@ -6115,7 +6395,14 @@ class _Traductions$tc$groupe$carte$ar extends Traductions$tc$groupe$carte$fr {
 	// Translations
 	@override String ouvrir({required Object libelle}) => 'فتح الفصل ⁨${libelle}⁩';
 	@override String capacite({required Object membres, required Object seuil}) => '⁨${membres}⁩ من ⁨${seuil}⁩';
-	@override String capacitePhrase({required Object membres, required Object seuil}) => '⁨${membres}⁩ طلاب من ⁨${seuil}⁩ مقاعد';
+	@override String capacitePhrase({required num membres, required Object seuil}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(membres,
+		zero: 'لا طالب من أصل ⁨${seuil}⁩',
+		one: 'طالب واحد من أصل ⁨${seuil}⁩',
+		two: 'طالبان من أصل ⁨${seuil}⁩',
+		few: '⁨${membres}⁩ طلاب من أصل ⁨${seuil}⁩',
+		many: '⁨${membres}⁩ طالبًا من أصل ⁨${seuil}⁩',
+		other: '⁨${membres}⁩ طالب من أصل ⁨${seuil}⁩',
+	);
 	@override String get complet => 'مكتمل';
 	@override String get prochainCours => 'الدرس القادم';
 	@override String get aucuneSeance => 'لا حصة مقررة';
@@ -6731,7 +7018,14 @@ class _Traductions$tc$observation$explication$ar extends Traductions$tc$observat
 	// Translations
 	@override String get titre => 'لمحة عن تعلّمه';
 	@override String regleUne({required Object n, required Object duree}) => '⁨${n}⁩ زيارة مدتها ⁨${duree}⁩';
-	@override String regle({required Object n, required Object duree}) => '⁨${n}⁩ زيارات مدة كل منها ⁨${duree}⁩';
+	@override String regle({required num n, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا زيارة',
+		one: 'زيارة واحدة مدتها ⁨${duree}⁩',
+		two: 'زيارتان مدة كل منهما ⁨${duree}⁩',
+		few: '⁨${n}⁩ زيارات مدة كل منها ⁨${duree}⁩',
+		many: '⁨${n}⁩ زيارةً مدة كل منها ⁨${duree}⁩',
+		other: '⁨${n}⁩ زيارة مدة كل منها ⁨${duree}⁩',
+	);
 	@override String get regleDetail => 'لكل حصة ولكل وليّ أمر، حتى لو كان أكثر من طفل من أطفالك في الفصل.';
 	@override String get ecoute => 'استمع إلى المعلم والطلاب';
 	@override String get ecouteDetail => 'تسمع المعلم والطلاب الذين يتكلمون، ومنهم طفلك.';
@@ -6810,7 +7104,14 @@ class _Traductions$tc$observation$duree$ar extends Traductions$tc$observation$du
 	@override String secondeUne({required Object n}) => '⁨${n}⁩ ثانية';
 	@override String secondes({required Object n}) => '⁨${n}⁩ ثوانٍ';
 	@override String minuteUne({required Object n}) => '⁨${n}⁩ دقيقة';
-	@override String minutes({required Object n}) => '⁨${n}⁩ دقائق';
+	@override String minutes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: '⁨${n}⁩ دقيقة',
+		one: 'دقيقة واحدة',
+		two: 'دقيقتان',
+		few: '⁨${n}⁩ دقائق',
+		many: '⁨${n}⁩ دقيقةً',
+		other: '⁨${n}⁩ دقيقة',
+	);
 	@override String minutesSecondes({required Object m, required Object s}) => '⁨${m}⁩ د ⁨${s}⁩ ث';
 }
 
@@ -6895,9 +7196,23 @@ class _Traductions$tc$observation$resultat$ar extends Traductions$tc$observation
 	@override String continuePour({required Object prenom}) => 'تستمر الحصة لـ⁨${prenom}⁩.';
 	@override String get continueSansPrenom => 'تستمر الحصة.';
 	@override String resteUne({required Object duree}) => 'بقيت لك زيارة واحدة مدتها ⁨${duree}⁩. عد لاحقًا للاستماع إلى طفلك.';
-	@override String restent({required Object n, required Object duree}) => 'بقيت لك ⁨${n}⁩ زيارات مدة كل منها ⁨${duree}⁩. عد لاحقًا للاستماع إلى طفلك.';
+	@override String restent({required num n, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لم تبق لك أي زيارة لهذه الحصة.',
+		one: 'بقيت لك زيارة واحدة مدتها ⁨${duree}⁩. عد لاحقًا للاستماع إلى طفلك.',
+		two: 'بقيت لك زيارتان مدة كل منهما ⁨${duree}⁩. عد لاحقًا للاستماع إلى طفلك.',
+		few: 'بقيت لك ⁨${n}⁩ زيارات مدة كل منها ⁨${duree}⁩. عد لاحقًا للاستماع إلى طفلك.',
+		many: 'بقيت لك ⁨${n}⁩ زيارةً مدة كل منها ⁨${duree}⁩. عد لاحقًا للاستماع إلى طفلك.',
+		other: 'بقيت لك ⁨${n}⁩ زيارة مدة كل منها ⁨${duree}⁩. عد لاحقًا للاستماع إلى طفلك.',
+	);
 	@override String get resteUneSansDuree => 'بقيت لك زيارة واحدة. عد لاحقًا للاستماع إلى طفلك.';
-	@override String restentSansDuree({required Object n}) => 'بقيت لك ⁨${n}⁩ زيارات. عد لاحقًا للاستماع إلى طفلك.';
+	@override String restentSansDuree({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لم تبق لك أي زيارة لهذه الحصة.',
+		one: 'بقيت لك زيارة واحدة. عد لاحقًا للاستماع إلى طفلك.',
+		two: 'بقيت لك زيارتان. عد لاحقًا للاستماع إلى طفلك.',
+		few: 'بقيت لك ⁨${n}⁩ زيارات. عد لاحقًا للاستماع إلى طفلك.',
+		many: 'بقيت لك ⁨${n}⁩ زيارةً. عد لاحقًا للاستماع إلى طفلك.',
+		other: 'بقيت لك ⁨${n}⁩ زيارة. عد لاحقًا للاستماع إلى طفلك.',
+	);
 	@override String get aucune => 'استخدمت زياراتك لهذه الحصة. يمكنك متابعة الحصة القادمة.';
 	@override String get prochaineSeance => 'يمكنك متابعة الحصة القادمة.';
 	@override String get verification => 'جارٍ التحقق من زياراتك المتبقية';
@@ -6940,7 +7255,14 @@ class _Traductions$tc$observation$reglages$ar extends Traductions$tc$observation
 	@override String get invalideTemps => 'ثلاثون ثانية على الأقل لكل حصة.';
 	@override String valeurHeritee({required Object valeur}) => 'الأكاديمية: ⁨${valeur}⁩';
 	@override String uniteVisiteUne({required Object n}) => '⁨${n}⁩ زيارة';
-	@override String uniteVisites({required Object n}) => '⁨${n}⁩ زيارات';
+	@override String uniteVisites({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا زيارة',
+		one: 'زيارة واحدة',
+		two: 'زيارتان',
+		few: '⁨${n}⁩ زيارات',
+		many: '⁨${n}⁩ زيارةً',
+		other: '⁨${n}⁩ زيارة',
+	);
 	@override String uniteSecondes({required Object n}) => '⁨${n}⁩ ث';
 	@override String versionPolitique({required Object version}) => 'الإصدار ⁨${version}⁩';
 }
@@ -7904,7 +8226,7 @@ extension on TraductionsAr {
 			'classe.seance.presence' => ({required Object prenom, required Object etat}) => '⁨${prenom}⁩: ⁨${etat}⁩',
 			'classe.observation.commentCaMarche' => 'كيف يعمل ذلك؟',
 			'classe.observation.uneVisite' => 'زيارة واحدة متاحة',
-			'classe.observation.visites' => ({required Object nombre}) => '⁨${nombre}⁩ زيارات متاحة',
+			'classe.observation.visites' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا زيارة متاحة', one: 'زيارة واحدة متاحة', two: 'زيارتان متاحتان', few: '⁨${nombre}⁩ زيارات متاحة', many: '⁨${nombre}⁩ زيارةً متاحة', other: '⁨${nombre}⁩ زيارة متاحة', ), 
 			'classe.observation.resume' => ({required Object visites, required Object duree}) => '⁨${visites}⁩ · ⁨${duree}⁩ لكل زيارة',
 			'classe.observation.restanteAucune' => 'لا زيارة متبقية لهذه الحصة',
 			'classe.observation.restanteUne' => 'زيارة واحدة متبقية لهذه الحصة',
@@ -8359,7 +8681,7 @@ extension on TraductionsAr {
 			'eleve.accueil.erreurCours' => 'تعذّرت قراءة دروسك. أعد المحاولة بعد لحظة.',
 			'eleve.accueil.prochainAujourdhui' => 'درسك القادم لاحقًا اليوم.',
 			'eleve.accueil.prochainDemain' => 'درسك القادم غدًا.',
-			'eleve.accueil.prochainDansJours' => ({required Object jours}) => 'درسك القادم بعد ⁨${jours}⁩ أيام.',
+			'eleve.accueil.prochainDansJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'درسك القادم اليوم.', one: 'درسك القادم بعد يوم واحد.', two: 'درسك القادم بعد يومين.', few: 'درسك القادم بعد ⁨${jours}⁩ أيام.', many: 'درسك القادم بعد ⁨${jours}⁩ يومًا.', other: 'درسك القادم بعد ⁨${jours}⁩ يوم.', ), 
 			'eleve.accueil.annulee' => 'لن يُعقد هذا الدرس',
 			'eleve.accueil.horsLigne' => 'لا شبكة',
 			'eleve.accueil.horsLigneDetail' => 'يمكنك الدخول بمجرد عودة الشبكة.',
@@ -8421,7 +8743,7 @@ extension on TraductionsAr {
 			'enseignant.journee.voirCreneaux' => 'عرض مواعيدي',
 			'enseignant.journee.erreur' => 'تعذّرت قراءة اليوم كاملًا. أعد المحاولة بعد لحظة.',
 			'enseignant.journee.coursIndividuel' => 'درس فردي',
-			'enseignant.journee.effectif' => ({required Object nombre}) => '⁨${nombre}⁩ طلاب',
+			'enseignant.journee.effectif' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا طالب', one: 'طالب واحد', two: 'طالبان', few: '⁨${nombre}⁩ طلاب', many: '⁨${nombre}⁩ طالبًا', other: '⁨${nombre}⁩ طالب', ), 
 			'enseignant.journee.effectifUn' => 'طالب واحد',
 			'enseignant.journee.preflightOk' => 'الميكروفون جاهز',
 			'enseignant.journee.preflightBloque' => 'متصفحك يحظر الميكروفون. اسمح به لبدء الدرس.',
@@ -8509,7 +8831,7 @@ extension on TraductionsAr {
 			'enseignant.classes.chargement' => 'جارٍ تحميل فصولك.',
 			'enseignant.classes.niveau' => ({required Object niveau}) => 'المستوى ⁨${niveau}⁩',
 			'enseignant.classes.eleveUn' => 'طالب واحد',
-			'enseignant.classes.eleves' => ({required Object nombre}) => '⁨${nombre}⁩ طلاب',
+			'enseignant.classes.eleves' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا طالب', one: 'طالب واحد', two: 'طالبان', few: '⁨${nombre}⁩ طلاب', many: '⁨${nombre}⁩ طالبًا', other: '⁨${nombre}⁩ طالب', ), 
 			'enseignant.classes.prochaine' => ({required Object jour, required Object heure}) => 'الحصة القادمة: ⁨${jour}⁩ الساعة ⁨${heure}⁩',
 			'enseignant.classes.sansProchaine' => 'لا حصة مقررة',
 			'enseignant.classes.remplacement' => 'استخلاف',
@@ -8619,12 +8941,12 @@ extension on TraductionsAr {
 			'enseignant.cahier.duree' => ({required Object minutes}) => '⁨${minutes}⁩ دقيقة من الدرس',
 			'enseignant.cahier.dureeEtInterruption' => ({required Object minutes, required Object interruption}) => '⁨${minutes}⁩ دقيقة من الدرس، منها ⁨${interruption}⁩ دقيقة انقطاع',
 			'enseignant.cahier.unEleve' => 'طالب واحد',
-			'enseignant.cahier.eleves' => ({required Object nombre}) => '⁨${nombre}⁩ طلاب',
+			'enseignant.cahier.eleves' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا طالب', one: 'طالب واحد', two: 'طالبان', few: '⁨${nombre}⁩ طلاب', many: '⁨${nombre}⁩ طالبًا', other: '⁨${nombre}⁩ طالب', ), 
 			'enseignant.cahier.toutEstNominal' => 'جرى كل شيء كما هو متوقع.',
 			'enseignant.cahier.toutEstNominalDetail' => 'أكّد، ويستمر يومك.',
 			'enseignant.cahier.exceptions' => 'للنظر',
 			'enseignant.cahier.uneException' => 'طالب واحد يحتاج إلى نظرة.',
-			'enseignant.cahier.plusieursExceptions' => ({required Object nombre}) => '⁨${nombre}⁩ طلاب يحتاجون إلى نظرة.',
+			'enseignant.cahier.plusieursExceptions' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا طالب يحتاج إلى نظرة.', one: 'طالب واحد يحتاج إلى نظرة.', two: 'طالبان يحتاجان إلى نظرة.', few: '⁨${nombre}⁩ طلاب يحتاجون إلى نظرة.', many: '⁨${nombre}⁩ طالبًا يحتاجون إلى نظرة.', other: '⁨${nombre}⁩ طالب يحتاجون إلى نظرة.', ), 
 			'enseignant.cahier.nominaux' => 'لا شيء يُذكر',
 			'enseignant.cahier.curriculumFige' => 'المستوى والمنهج من الأكاديمية: لا يُعدَّلان من دفتر المتابعة.',
 			'enseignant.cahier.valider' => 'تأكيد دفتر المتابعة',
@@ -8933,7 +9255,7 @@ extension on TraductionsAr {
 			'compte.tuteur.foyer.titre' => 'أسرتي',
 			'compte.tuteur.foyer.aucun' => 'لا ملف طالب حتى الآن',
 			'compte.tuteur.foyer.un' => 'ملف طالب واحد',
-			'compte.tuteur.foyer.plusieurs' => ({required Object nombre}) => '⁨${nombre}⁩ ملفات طلاب',
+			'compte.tuteur.foyer.plusieurs' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا ملف طالب', one: 'ملف طالب واحد', two: 'ملفا طالبين', few: '⁨${nombre}⁩ ملفات طلاب', many: '⁨${nombre}⁩ ملفًا لطلاب', other: '⁨${nombre}⁩ ملف طالب', ), 
 			'compte.tuteur.foyer.legende' => 'ملفات الطلاب وأجهزة الأسرة',
 			'compte.tuteur.foyer.creerMonProfil' => 'إنشاء ملفي كطالب',
 			'compte.tuteur.aide.titre' => 'المساعدة والدعم',
@@ -9064,7 +9386,7 @@ extension on TraductionsAr {
 			'tc.groupe.commun.reessayer' => 'إعادة المحاولة',
 			'tc.groupe.carte.ouvrir' => ({required Object libelle}) => 'فتح الفصل ⁨${libelle}⁩',
 			'tc.groupe.carte.capacite' => ({required Object membres, required Object seuil}) => '⁨${membres}⁩ من ⁨${seuil}⁩',
-			'tc.groupe.carte.capacitePhrase' => ({required Object membres, required Object seuil}) => '⁨${membres}⁩ طلاب من ⁨${seuil}⁩ مقاعد',
+			'tc.groupe.carte.capacitePhrase' => ({required num membres, required Object seuil}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(membres, zero: 'لا طالب من أصل ⁨${seuil}⁩', one: 'طالب واحد من أصل ⁨${seuil}⁩', two: 'طالبان من أصل ⁨${seuil}⁩', few: '⁨${membres}⁩ طلاب من أصل ⁨${seuil}⁩', many: '⁨${membres}⁩ طالبًا من أصل ⁨${seuil}⁩', other: '⁨${membres}⁩ طالب من أصل ⁨${seuil}⁩', ), 
 			'tc.groupe.carte.complet' => 'مكتمل',
 			'tc.groupe.carte.prochainCours' => 'الدرس القادم',
 			'tc.groupe.carte.aucuneSeance' => 'لا حصة مقررة',
@@ -9287,7 +9609,7 @@ extension on TraductionsAr {
 			'tc.observation.entree.retourClasse' => 'العودة إلى الفصل',
 			'tc.observation.explication.titre' => 'لمحة عن تعلّمه',
 			'tc.observation.explication.regleUne' => ({required Object n, required Object duree}) => '⁨${n}⁩ زيارة مدتها ⁨${duree}⁩',
-			'tc.observation.explication.regle' => ({required Object n, required Object duree}) => '⁨${n}⁩ زيارات مدة كل منها ⁨${duree}⁩',
+			'tc.observation.explication.regle' => ({required num n, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا زيارة', one: 'زيارة واحدة مدتها ⁨${duree}⁩', two: 'زيارتان مدة كل منهما ⁨${duree}⁩', few: '⁨${n}⁩ زيارات مدة كل منها ⁨${duree}⁩', many: '⁨${n}⁩ زيارةً مدة كل منها ⁨${duree}⁩', other: '⁨${n}⁩ زيارة مدة كل منها ⁨${duree}⁩', ), 
 			'tc.observation.explication.regleDetail' => 'لكل حصة ولكل وليّ أمر، حتى لو كان أكثر من طفل من أطفالك في الفصل.',
 			_ => null,
 		} ?? switch (path) {
@@ -9341,7 +9663,7 @@ extension on TraductionsAr {
 			'tc.observation.duree.secondeUne' => ({required Object n}) => '⁨${n}⁩ ثانية',
 			'tc.observation.duree.secondes' => ({required Object n}) => '⁨${n}⁩ ثوانٍ',
 			'tc.observation.duree.minuteUne' => ({required Object n}) => '⁨${n}⁩ دقيقة',
-			'tc.observation.duree.minutes' => ({required Object n}) => '⁨${n}⁩ دقائق',
+			'tc.observation.duree.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ دقيقة', one: 'دقيقة واحدة', two: 'دقيقتان', few: '⁨${n}⁩ دقائق', many: '⁨${n}⁩ دقيقةً', other: '⁨${n}⁩ دقيقة', ), 
 			'tc.observation.duree.minutesSecondes' => ({required Object m, required Object s}) => '⁨${m}⁩ د ⁨${s}⁩ ث',
 			'tc.observation.refus.politiqueDesactivee' => 'المتابعة معطَّلة لهذا الفصل.',
 			'tc.observation.refus.quotaVisites' => 'استخدمت زياراتك لهذه الحصة بالفعل.',
@@ -9390,9 +9712,9 @@ extension on TraductionsAr {
 			'tc.observation.resultat.continuePour' => ({required Object prenom}) => 'تستمر الحصة لـ⁨${prenom}⁩.',
 			'tc.observation.resultat.continueSansPrenom' => 'تستمر الحصة.',
 			'tc.observation.resultat.resteUne' => ({required Object duree}) => 'بقيت لك زيارة واحدة مدتها ⁨${duree}⁩. عد لاحقًا للاستماع إلى طفلك.',
-			'tc.observation.resultat.restent' => ({required Object n, required Object duree}) => 'بقيت لك ⁨${n}⁩ زيارات مدة كل منها ⁨${duree}⁩. عد لاحقًا للاستماع إلى طفلك.',
+			'tc.observation.resultat.restent' => ({required num n, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم تبق لك أي زيارة لهذه الحصة.', one: 'بقيت لك زيارة واحدة مدتها ⁨${duree}⁩. عد لاحقًا للاستماع إلى طفلك.', two: 'بقيت لك زيارتان مدة كل منهما ⁨${duree}⁩. عد لاحقًا للاستماع إلى طفلك.', few: 'بقيت لك ⁨${n}⁩ زيارات مدة كل منها ⁨${duree}⁩. عد لاحقًا للاستماع إلى طفلك.', many: 'بقيت لك ⁨${n}⁩ زيارةً مدة كل منها ⁨${duree}⁩. عد لاحقًا للاستماع إلى طفلك.', other: 'بقيت لك ⁨${n}⁩ زيارة مدة كل منها ⁨${duree}⁩. عد لاحقًا للاستماع إلى طفلك.', ), 
 			'tc.observation.resultat.resteUneSansDuree' => 'بقيت لك زيارة واحدة. عد لاحقًا للاستماع إلى طفلك.',
-			'tc.observation.resultat.restentSansDuree' => ({required Object n}) => 'بقيت لك ⁨${n}⁩ زيارات. عد لاحقًا للاستماع إلى طفلك.',
+			'tc.observation.resultat.restentSansDuree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم تبق لك أي زيارة لهذه الحصة.', one: 'بقيت لك زيارة واحدة. عد لاحقًا للاستماع إلى طفلك.', two: 'بقيت لك زيارتان. عد لاحقًا للاستماع إلى طفلك.', few: 'بقيت لك ⁨${n}⁩ زيارات. عد لاحقًا للاستماع إلى طفلك.', many: 'بقيت لك ⁨${n}⁩ زيارةً. عد لاحقًا للاستماع إلى طفلك.', other: 'بقيت لك ⁨${n}⁩ زيارة. عد لاحقًا للاستماع إلى طفلك.', ), 
 			'tc.observation.resultat.aucune' => 'استخدمت زياراتك لهذه الحصة. يمكنك متابعة الحصة القادمة.',
 			'tc.observation.resultat.prochaineSeance' => 'يمكنك متابعة الحصة القادمة.',
 			'tc.observation.resultat.verification' => 'جارٍ التحقق من زياراتك المتبقية',
@@ -9417,7 +9739,7 @@ extension on TraductionsAr {
 			'tc.observation.reglages.invalideTemps' => 'ثلاثون ثانية على الأقل لكل حصة.',
 			'tc.observation.reglages.valeurHeritee' => ({required Object valeur}) => 'الأكاديمية: ⁨${valeur}⁩',
 			'tc.observation.reglages.uniteVisiteUne' => ({required Object n}) => '⁨${n}⁩ زيارة',
-			'tc.observation.reglages.uniteVisites' => ({required Object n}) => '⁨${n}⁩ زيارات',
+			'tc.observation.reglages.uniteVisites' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا زيارة', one: 'زيارة واحدة', two: 'زيارتان', few: '⁨${n}⁩ زيارات', many: '⁨${n}⁩ زيارةً', other: '⁨${n}⁩ زيارة', ), 
 			'tc.observation.reglages.uniteSecondes' => ({required Object n}) => '⁨${n}⁩ ث',
 			'tc.observation.reglages.versionPolitique' => ({required Object version}) => 'الإصدار ⁨${version}⁩',
 			'tc.parcours.avant.titre' => 'قبل الدرس القادم',
@@ -9689,8 +10011,8 @@ extension on TraductionsAr {
 			'ficheEleve.inscription.aRemplir' => 'للتعبئة',
 			'ficheEleve.inscription.horaireAChoisir' => 'مُعبّأ، الموعد للاختيار',
 			'ficheEleve.inscription.horaireRetire' => 'سُحب الموعد، يجب اختياره من جديد',
-			'ficheEleve.inscription.echangeAPrevoir' => 'التفضيل محفوظ، لقاء تحديد المستوى للبرمجة',
-			'ficheEleve.inscription.echangePrevu' => 'لقاء تحديد المستوى مبرمج',
+			'ficheEleve.inscription.echangeAPrevoir' => 'التفضيل محفوظ، لقاء تحديد المستوى للجدولة',
+			'ficheEleve.inscription.echangePrevu' => 'لقاء تحديد المستوى مجدول',
 			'ficheEleve.inscription.classeEnConstitution' => 'الفصل قيد التكوين',
 			'ficheEleve.inscription.classeConfirmee' => 'الفصل مؤكَّد',
 			'ficheEleve.inscription.classeAucune' => 'لا فصل بعد. اختيار فصل',
@@ -9779,8 +10101,8 @@ extension on TraductionsAr {
 			'parcours.offresRaison' => 'تُعرض هذه المواعيد بتوقيتك المحلي. اختيار موعد يحفظ تفضيلك: لا يحجز مقعدًا ولا يكوّن فصلًا بعد.',
 			'parcours.offreRecommandee' => 'الأقرب إلى إجاباتك',
 			'parcours.offresAutres' => 'مواعيد ممكنة أخرى',
-			'parcours.offreRecurrence' => ({required Object seances, required Object duree}) => '⁨${seances}⁩ حصص في الأسبوع، ⁨${duree}⁩ دقيقة',
-			'parcours.offreRecurrencePause' => ({required Object seances, required Object duree, required Object pause}) => '⁨${seances}⁩ حصص في الأسبوع، ⁨${duree}⁩ دقيقة منها ⁨${pause}⁩ دقيقة استراحة',
+			'parcours.offreRecurrence' => ({required num seances, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(seances, zero: 'لا حصص في الأسبوع', one: 'حصة واحدة في الأسبوع، ⁨${duree}⁩ د', two: 'حصتان في الأسبوع، ⁨${duree}⁩ د', few: '⁨${seances}⁩ حصص في الأسبوع، ⁨${duree}⁩ د', many: '⁨${seances}⁩ حصةً في الأسبوع، ⁨${duree}⁩ د', other: '⁨${seances}⁩ حصة في الأسبوع، ⁨${duree}⁩ د', ), 
+			'parcours.offreRecurrencePause' => ({required num seances, required Object duree, required Object pause}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(seances, zero: 'لا حصص في الأسبوع', one: 'حصة واحدة في الأسبوع، ⁨${duree}⁩ د منها ⁨${pause}⁩ د استراحة', two: 'حصتان في الأسبوع، ⁨${duree}⁩ د منها ⁨${pause}⁩ د استراحة', few: '⁨${seances}⁩ حصص في الأسبوع، ⁨${duree}⁩ د منها ⁨${pause}⁩ د استراحة', many: '⁨${seances}⁩ حصةً في الأسبوع، ⁨${duree}⁩ د منها ⁨${pause}⁩ د استراحة', other: '⁨${seances}⁩ حصة في الأسبوع، ⁨${duree}⁩ د منها ⁨${pause}⁩ د استراحة', ), 
 			'parcours.offreLangue' => ({required Object langue}) => 'الدرس بـ⁨${langue}⁩',
 			'parcours.offreFuseau' => ({required Object fuseau}) => 'التوقيت المعروض لـ⁨${fuseau}⁩',
 			'parcours.offreTraduite' => 'معروض بتوقيتك المحلي',
@@ -9801,12 +10123,12 @@ extension on TraductionsAr {
 			'parcours.etatOffreIndisponibleDetail' => ({required Object prenom}) => 'سُحب الموعد المختار لـ⁨${prenom}⁩ قبل تكوين فصل. اختر موعدًا آخر: لم يضِع شيء.',
 			'parcours.etatDiagnosticRequis' => 'التفضيل محفوظ',
 			'parcours.etatDiagnosticRequisDetail' => ({required Object prenom}) => 'بقي لقاء مع معلم لتحديد مستوى ⁨${prenom}⁩. ستقترح عليك الأكاديمية موعدًا.',
-			'parcours.etatDiagnosticEnAttente' => 'الموعد مبرمج',
-			'parcours.etatDiagnosticEnAttenteDetail' => ({required Object prenom}) => 'لقاء مبرمج لتحديد مستوى ⁨${prenom}⁩.',
+			'parcours.etatDiagnosticEnAttente' => 'الموعد مجدول',
+			'parcours.etatDiagnosticEnAttenteDetail' => ({required Object prenom}) => 'لقاء مجدول لتحديد مستوى ⁨${prenom}⁩.',
 			_ => null,
 		} ?? switch (path) {
 			'parcours.etatClasseEnFormation' => 'الفصل قيد التكوين',
-			'parcours.etatClasseEnFormationDetail' => ({required Object minimum}) => 'يبدأ الفصل ابتداءً من ⁨${minimum}⁩ طلاب. سنعلمك بمجرد تأكيده.',
+			'parcours.etatClasseEnFormationDetail' => ({required num minimum}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(minimum, zero: 'يبدأ الفصل دون حد أدنى من الطلاب. سنعلمك بمجرد تأكيده.', one: 'يبدأ الفصل ابتداءً من طالب واحد. سنعلمك بمجرد تأكيده.', two: 'يبدأ الفصل ابتداءً من طالبين. سنعلمك بمجرد تأكيده.', few: 'يبدأ الفصل ابتداءً من ⁨${minimum}⁩ طلاب. سنعلمك بمجرد تأكيده.', many: 'يبدأ الفصل ابتداءً من ⁨${minimum}⁩ طالبًا. سنعلمك بمجرد تأكيده.', other: 'يبدأ الفصل ابتداءً من ⁨${minimum}⁩ طالب. سنعلمك بمجرد تأكيده.', ), 
 			'parcours.etatClasseEnFormationDetailSansMinimum' => 'يبدأ الفصل ابتداءً من عدد معين من الطلاب. سنعلمك بمجرد تأكيده.',
 			'parcours.etatClasseConfirmee' => 'الفصل مؤكَّد',
 			'parcours.etatClasseConfirmeeDetail' => ({required Object prenom}) => 'تكوّن فصل ⁨${prenom}⁩. ستجد حصصه في مساحته.',
@@ -10077,7 +10399,7 @@ extension on TraductionsAr {
 			'historique.classeInconnue' => 'الفصل غير متاح',
 			'historique.selecteur.aucune' => 'لا حصة',
 			'historique.selecteur.une' => 'حصة واحدة',
-			'historique.selecteur.plusieurs' => ({required Object n}) => '⁨${n}⁩ حصص',
+			'historique.selecteur.plusieurs' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا حصة', one: 'حصة واحدة', two: 'حصتان', few: '⁨${n}⁩ حصص', many: '⁨${n}⁩ حصةً', other: '⁨${n}⁩ حصة', ), 
 			'historique.filtres.classe' => 'الفصل',
 			'historique.filtres.toutesClasses' => 'كل الفصول',
 			'historique.filtres.periode' => 'الفترة',
@@ -10110,7 +10432,7 @@ extension on TraductionsAr {
 			'historique.observations.filtreVideTitre' => 'لا متابعة مطابقة',
 			'historique.observations.filtreVidePhrase' => 'غيّر عوامل التصفية لتجد الزيارات الأخرى.',
 			'historique.observations.visiteUne' => 'زيارة واحدة',
-			'historique.observations.visites' => ({required Object n}) => '⁨${n}⁩ زيارات',
+			'historique.observations.visites' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا زيارة', one: 'زيارة واحدة', two: 'زيارتان', few: '⁨${n}⁩ زيارات', many: '⁨${n}⁩ زيارةً', other: '⁨${n}⁩ زيارة', ), 
 			'historique.observations.dureeNonConfirmee' => 'المدة غير مؤكَّدة',
 			'historique.observations.terminee' => 'منتهية',
 			'historique.observations.nonRefermee' => 'الخروج غير مسجَّل',
@@ -10152,7 +10474,7 @@ extension on TraductionsAr {
 			'appareils.foyer.groupeProfils' => 'ملفات الطلاب',
 			'appareils.foyer.aucunAppareil' => 'لا جهاز مربوط',
 			'appareils.foyer.unAppareil' => ({required Object nom}) => 'جهاز واحد مربوط: ⁨${nom}⁩',
-			'appareils.foyer.plusieursAppareils' => ({required Object nombre, required Object noms}) => '⁨${nombre}⁩ أجهزة مربوطة: ⁨${noms}⁩',
+			'appareils.foyer.plusieursAppareils' => ({required num nombre, required Object noms}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا جهاز مربوط', one: 'جهاز واحد مربوط: ⁨${noms}⁩', two: 'جهازان مربوطان: ⁨${noms}⁩', few: '⁨${nombre}⁩ أجهزة مربوطة: ⁨${noms}⁩', many: '⁨${nombre}⁩ جهازًا مربوطًا: ⁨${noms}⁩', other: '⁨${nombre}⁩ جهاز مربوط: ⁨${noms}⁩', ), 
 			'appareils.foyer.partageTitre' => 'جهاز مشترك',
 			'appareils.foyer.partage' => 'على جهاز مشترك، يختار كل طالب ملفه ثم يدخل رمزه الشخصي. يظهر هذا الجهاز حينها تحت كل ملف يستخدمه.',
 			'appareils.foyer.videTitre' => 'لا ملف طالب',
@@ -10646,12 +10968,12 @@ extension on TraductionsAr {
 			'adulte.sortie.pourquoiPhrase' => 'يضمن هذا الإجراء أمان الأسر وحسن إدارة وصول الأطفال.',
 			'adulte.reprise.titre' => 'طلب استلام الأسرة',
 			'adulte.reprise.explication' => 'استخدم هذا الإجراء إن توفي صاحب حساب الأسرة. سيُبلَّغ الحساب المعني بالطلب وستدرسه الإدارة.',
-			'adulte.reprise.reprisTitre' => 'ما سيُستلم',
+			'adulte.reprise.reprisTitre' => 'ما سيُنقل',
 			'adulte.reprise.repris.profils' => 'ملفات القاصرين الموجودة',
 			'adulte.reprise.repris.composition' => 'تكوين الأسرة مستقبلًا وفق القواعد السارية',
 			'adulte.reprise.repris.paiements' => 'مدفوعات الأسرة المستقبلية',
 			'adulte.reprise.repris.parcours' => 'مسارات وليّ الأمر المرتبطة بالقاصرين',
-			'adulte.reprise.jamaisTitre' => 'ما لا يُستلم أبدًا',
+			'adulte.reprise.jamaisTitre' => 'ما لا يُنقل أبدًا',
 			'adulte.reprise.jamais.identifiants' => 'بيانات دخول صاحب الحساب',
 			'adulte.reprise.jamais.messages' => 'رسائله الخاصة',
 			'adulte.reprise.jamais.conversations' => 'محادثاته',
@@ -10815,11 +11137,11 @@ extension on TraductionsAr {
 			'dossiers.revue.etats.actualiserDossier' => 'تحديث الملف',
 			'dossiers.revue.etats.refusNonAutorise' => 'لا يمكن رفض هذا الملف في حالته الحالية.',
 			'dossiers.restantUn' => 'ملف واحد قيد الانتظار',
-			'dossiers.restants' => ({required Object n}) => '⁨${n}⁩ ملفات قيد الانتظار',
+			'dossiers.restants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا ملف قيد الانتظار', one: 'ملف واحد قيد الانتظار', two: 'ملفان قيد الانتظار', few: '⁨${n}⁩ ملفات قيد الانتظار', many: '⁨${n}⁩ ملفًا قيد الانتظار', other: '⁨${n}⁩ ملف قيد الانتظار', ), 
 			'dossiers.deposeLe' => ({required Object date}) => 'أُودع في ⁨${date}⁩',
 			'dossiers.inscritAujourdhui' => 'مسجَّل اليوم',
 			'dossiers.inscritDepuisUnJour' => 'مسجَّل منذ يوم',
-			'dossiers.inscritDepuis' => ({required Object jours}) => 'مسجَّل منذ ⁨${jours}⁩ أيام',
+			'dossiers.inscritDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'مسجَّل منذ اليوم', one: 'مسجَّل منذ يوم واحد', two: 'مسجَّل منذ يومين', few: 'مسجَّل منذ ⁨${jours}⁩ أيام', many: 'مسجَّل منذ ⁨${jours}⁩ يومًا', other: 'مسجَّل منذ ⁨${jours}⁩ يوم', ), 
 			'dossiers.sansPiece' => 'لا وثيقة مودَعة',
 			'dossiers.sansPieceDetail' => 'أنشأ هذا الشخص حسابه وقبل العقود، لكنه لم يرسل وثيقة هويته بعد. لا شيء للتحقق إذن: الخطوة عنده.',
 			'dossiers.pieceNonVisible' => 'وثيقة خارج صلاحيتك',
@@ -10883,7 +11205,7 @@ extension on TraductionsAr {
 			'kyc.envoiEnCours' => 'جارٍ الإرسال',
 			'kyc.deposee' => 'استُلمت الوثيقة',
 			'kyc.erreur' => 'لم يكتمل الإرسال. أعد المحاولة بعد لحظة.',
-			'kyc.tropVolumineux' => ({required Object taille}) => 'هذه الصورة تتجاوز ⁨${taille}⁩ م.ب. التقطها بجودة أقل.',
+			'kyc.tropVolumineux' => ({required Object taille}) => 'هذه الصورة تتجاوز ⁨${taille}⁩ ميغابايت. التقطها بجودة أقل.',
 			'contrat.titre' => 'ما توقّع عليه',
 			'contrat.intro' => 'نقطتان أهم من غيرهما. هما مكتوبتان هنا بوضوح بدل أن تكونا وسط نص طويل.',
 			'contrat.pointEnregistrement' => 'يُسجَّل كل درس صوتيًا، ويُحفظ ثلاثين يومًا، ثم يُحذف. كل استماع يُدوَّن في السجل، مع اسم المستمع.',
@@ -10891,7 +11213,7 @@ extension on TraductionsAr {
 			'contrat.pointCoordonnees' => 'لا ترى أبدًا بيانات اتصال أسرة: لا الاسم الكامل، ولا البريد الإلكتروني، ولا الهاتف.',
 			'contrat.lireTexte' => 'قراءة النص كاملًا',
 			'contrat.accepter' => 'قرأت وأوافق',
-			'contrat.accepteLe' => ({required Object date}) => 'مقبول في ⁨${date}⁩',
+			'contrat.accepteLe' => ({required Object date}) => 'تمت الموافقة في ⁨${date}⁩',
 			'contrat.erreur' => 'لم يكتمل التوقيع. أعد المحاولة بعد لحظة.',
 			'contrat.horsLigne' => 'أنت غير متصل. ستُحفظ موافقتك بمجرد عودة الشبكة، بالضغط من جديد.',
 			'contrat.caseRequise' => 'حدّد المربع للمتابعة.',
@@ -10902,7 +11224,7 @@ extension on TraductionsAr {
 			'bienvenue.pointClasseTitre' => 'فصل ثابت',
 			'bienvenue.pointClasse' => 'الزملاء أنفسهم والموعد نفسه، كل أسبوع.',
 			'bienvenue.pointEnseignantTitre' => 'معلم ثابت',
-			'bienvenue.pointEnseignant' => 'سيد أو سيدة يتابع كل طالب من حصة إلى أخرى.',
+			'bienvenue.pointEnseignant' => 'معلّم أو معلّمة، يُنادى «السيد» أو «السيدة»، يتابع كل طالب من حصة إلى أخرى.',
 			'bienvenue.pointFoyerTitre' => 'حساب واحد للأسرة',
 			'bienvenue.pointFoyer' => 'تُتابَع حصص كل طالب في الأسرة من حسابك.',
 			'bienvenue.commencer' => 'ابدأ',
@@ -10910,23 +11232,23 @@ extension on TraductionsAr {
 			'creneaux.titre' => 'المواعيد',
 			'creneaux.ongletHeures' => 'ساعاتي',
 			'creneaux.ongletEleves' => 'طلاب في الانتظار',
-			'creneaux.mesEleves' => ({required Object nombre, required Object plafond}) => 'تتابع ⁨${nombre}⁩ طلاب من ⁨${plafond}⁩ ممكنين.',
+			'creneaux.mesEleves' => ({required num nombre, required Object plafond}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا تتابع أي طالب، والحد الأقصى ⁨${plafond}⁩.', one: 'تتابع طالبًا واحدًا، والحد الأقصى ⁨${plafond}⁩.', two: 'تتابع طالبين، والحد الأقصى ⁨${plafond}⁩.', few: 'تتابع ⁨${nombre}⁩ طلاب، والحد الأقصى ⁨${plafond}⁩.', many: 'تتابع ⁨${nombre}⁩ طالبًا، والحد الأقصى ⁨${plafond}⁩.', other: 'تتابع ⁨${nombre}⁩ طالب، والحد الأقصى ⁨${plafond}⁩.', ), 
 			'creneaux.aucunEleve' => 'لا طالب في الانتظار في ساعاتك',
 			'creneaux.aucunEleveDetail' => 'اقترح ساعات أخرى لترى أسرًا أكثر.',
-			'creneaux.attendDepuis' => ({required Object jours}) => 'ينتظر منذ ⁨${jours}⁩ أيام',
+			'creneaux.attendDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'ينتظر منذ اليوم', one: 'ينتظر منذ يوم واحد', two: 'ينتظر منذ يومين', few: 'ينتظر منذ ⁨${jours}⁩ أيام', many: 'ينتظر منذ ⁨${jours}⁩ يومًا', other: 'ينتظر منذ ⁨${jours}⁩ يوم', ), 
 			'creneaux.attendUnJour' => 'ينتظر منذ يوم',
 			'creneaux.attendAujourdhui' => 'قُدِّم الطلب اليوم',
 			'creneaux.niveau' => ({required Object niveau}) => 'المستوى ⁨${niveau}⁩',
 			'creneaux.prendre' => ({required Object jour, required Object heure}) => 'قبول ⁨${jour}⁩ الساعة ⁨${heure}⁩',
 			'creneaux.priseEnCours' => 'جارٍ الحفظ',
-			'creneaux.plafondAtteint' => ({required Object nombre}) => 'تتابع بالفعل ⁨${nombre}⁩ طلاب، وهو حدك الأقصى. قبول طالب التزام دائم، لا حجز.',
+			'creneaux.plafondAtteint' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا يمكنك متابعة أي طالب الآن: حدك الأقصى صفر.', one: 'تتابع بالفعل طالبًا واحدًا، وهو حدك الأقصى. قبول طالب التزام دائم، لا حجز.', two: 'تتابع بالفعل طالبين، وهو حدك الأقصى. قبول طالب التزام دائم، لا حجز.', few: 'تتابع بالفعل ⁨${nombre}⁩ طلاب، وهو حدك الأقصى. قبول طالب التزام دائم، لا حجز.', many: 'تتابع بالفعل ⁨${nombre}⁩ طالبًا، وهو حدك الأقصى. قبول طالب التزام دائم، لا حجز.', other: 'تتابع بالفعل ⁨${nombre}⁩ طالب، وهو حدك الأقصى. قبول طالب التزام دائم، لا حجز.', ), 
 			'creneaux.plafondDemander' => 'طلب متابعة طلاب أكثر',
 			'creneaux.demandeTitre' => 'كم طالبًا يمكنك أن تتابع؟',
 			'creneaux.demandeMotif' => 'لماذا هذا التغيير؟',
 			'creneaux.demandeMotifRequis' => 'السبب ضروري: هو الذي يسمح بالحسم.',
 			'creneaux.demandeEnvoyer' => 'إرسال الطلب',
 			'creneaux.demandeEnvoyee' => 'أُرسل الطلب. ستحسم فيه الإدارة.',
-			'creneaux.eleves' => ({required Object nombre}) => '⁨${nombre}⁩ طلاب',
+			'creneaux.eleves' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا طالب', one: 'طالب واحد', two: 'طالبان', few: '⁨${nombre}⁩ طلاب', many: '⁨${nombre}⁩ طالبًا', other: '⁨${nombre}⁩ طالب', ), 
 			'creneaux.erreur' => ({required Object message}) => 'لم تكتمل العملية: ⁨${message}⁩',
 			'disponibilites.titre' => 'متى يستطيع أطفالك متابعة درس؟',
 			'disponibilites.titreEnseignant' => 'متى تستطيع التدريس؟',
@@ -10937,7 +11259,7 @@ extension on TraductionsAr {
 			'disponibilites.fuseau' => ({required Object fuseau}) => 'الساعات معروضة بتوقيت ⁨${fuseau}⁩',
 			'disponibilites.aucune' => ({required Object prenom}) => 'لا ساعة مقترحة لـ⁨${prenom}⁩',
 			'disponibilites.aucuneDetail' => ({required Object prenom}) => 'دون موعد، لا يستطيع أي معلم تولي ⁨${prenom}⁩.',
-			'disponibilites.posees' => ({required Object nombre}) => '⁨${nombre}⁩ ساعات مقترحة',
+			'disponibilites.posees' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا ساعة مقترحة', one: 'ساعة واحدة مقترحة', two: 'ساعتان مقترحتان', few: '⁨${nombre}⁩ ساعات مقترحة', many: '⁨${nombre}⁩ ساعةً مقترحة', other: '⁨${nombre}⁩ ساعة مقترحة', ), 
 			'disponibilites.poseeUne' => 'ساعة واحدة مقترحة',
 			'disponibilites.cellulePosee' => ({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩، مقترحة. المس للإزالة',
 			'disponibilites.celluleLibre' => ({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩، شاغرة. المس للاقتراح',
@@ -10963,7 +11285,7 @@ extension on TraductionsAr {
 			'controleur.historique.aTerminer' => 'للإنهاء',
 			'controleur.historique.filtreEtat' => 'الحالة',
 			'controleur.historique.tousEtats' => 'كل الحالات',
-			'controleur.historique.duree' => ({required Object minutes}) => '⁨${minutes}⁩ دقيقة من المتابعة',
+			'controleur.historique.duree' => ({required Object minutes}) => '⁨${minutes}⁩ د من المتابعة',
 			'controleur.historique.meta' => ({required Object heure, required Object duree}) => '⁨${heure}⁩ · ⁨${duree}⁩',
 			'controleur.historique.dateHeure' => ({required Object date, required Object heure}) => '⁨${date}⁩، ⁨${heure}⁩',
 			'controleur.historique.dateHeureAuteur' => ({required Object date, required Object heure, required Object auteur}) => '⁨${date}⁩، ⁨${heure}⁩ · ⁨${auteur}⁩',
@@ -11023,7 +11345,7 @@ extension on TraductionsAr {
 			'controleur.compteRendu.cleHoraire' => 'الموعد المقرر',
 			'controleur.compteRendu.horaire' => ({required Object debut, required Object fin}) => '⁨${debut}⁩ إلى ⁨${fin}⁩',
 			'controleur.compteRendu.cleDebutReel' => 'البداية الفعلية',
-			'controleur.compteRendu.debutRetard' => ({required Object heure, required Object minutes}) => '⁨${heure}⁩، تأخر ⁨${minutes}⁩ دقيقة',
+			'controleur.compteRendu.debutRetard' => ({required Object heure, required Object minutes}) => '⁨${heure}⁩، تأخر ⁨${minutes}⁩ د',
 			'controleur.compteRendu.debutALHeure' => ({required Object heure}) => '⁨${heure}⁩، في الموعد',
 			'controleur.compteRendu.cleFin' => 'النهاية',
 			'controleur.compteRendu.enCours' => 'جارية',
@@ -11154,7 +11476,7 @@ extension on TraductionsAr {
 			'controleur.controle.dejaEnCoursAide' => 'مراقبة واحدة في كل مرة لكل فصل. اختر حصة أخرى، أو عد لاحقًا: يمكنك البدء حين تنتهي هذه المراقبة.',
 			'controleur.controle.incognito' => 'لا يُعلَن عن حضورك في الوقت الفعلي.',
 			'controleur.controle.horaire' => ({required Object debut, required Object fin}) => '⁨${debut}⁩ إلى ⁨${fin}⁩',
-			'controleur.controle.duree' => ({required Object minutes}) => '⁨${minutes}⁩ دقيقة مقررة',
+			'controleur.controle.duree' => ({required Object minutes}) => '⁨${minutes}⁩ د مقررة',
 			'controleur.controle.eleves' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا طالب', one: 'طالب واحد', two: 'طالبان', few: '⁨${n}⁩ طلاب', many: '⁨${n}⁩ طالبًا', other: '⁨${n}⁩ طالب', ), 
 			'controleur.controle.chargement' => 'جارٍ قراءة زيارتك القادمة.',
 			'controleur.controle.erreur' => 'تعذّرت قراءة زيارتك القادمة، غالبًا بسبب الاتصال أو خدمة غير متاحة مؤقتًا. أعد المحاولة بعد لحظة.',
@@ -11177,7 +11499,7 @@ extension on TraductionsAr {
 			'admin.tableau.dossiersDetail' => 'فتح القائمة، الأقدم أولًا.',
 			'admin.tableau.demandesDetail' => 'أسر ومعلمون ينتظرون ردًا.',
 			'admin.tableau.foyers' => 'طلاب دون معلم',
-			'admin.tableau.rapports' => 'دفاتر ناقصة',
+			'admin.tableau.rapports' => 'دفاتر متابعة ناقصة',
 			'admin.tableau.incidents' => 'حوادث (24 س)',
 			'admin.tableau.comptes' => 'وصول منتهٍ',
 			'admin.tableau.incidentsEtAcces' => 'الحوادث والوصول',
@@ -11192,15 +11514,15 @@ extension on TraductionsAr {
 			'admin.tableau.outilsAccesAgentsDetail' => 'فتح وصول للقراءة فقط، محدود زمنيًا، على مسار شخص.',
 			'admin.tableau.outilsGroupesDetail' => 'الفصول وطلابها ومعلمها.',
 			'admin.tableau.ligneDossier' => ({required Object prenom}) => 'ملف هوية ⁨${prenom}⁩',
-			'admin.tableau.ligneReaffectation' => ({required Object prenom}) => 'تغيير معلم ⁨${prenom}⁩',
+			'admin.tableau.ligneReaffectation' => ({required Object prenom}) => 'تغيير المعلم لـ⁨${prenom}⁩',
 			'admin.tableau.lignePlafond' => ({required Object prenom}) => 'الحد الأقصى لطلاب ⁨${prenom}⁩',
 			'admin.tableau.ligneRegle' => ({required Object prenom}) => 'تغيير قاعدة لـ⁨${prenom}⁩',
 			'admin.tableau.attenteAujourdhui' => 'أُودع اليوم',
 			'admin.tableau.attenteUnJour' => 'ينتظر منذ يوم',
-			'admin.tableau.attenteJours' => ({required Object jours}) => 'ينتظر منذ ⁨${jours}⁩ أيام',
+			'admin.tableau.attenteJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'ينتظر منذ اليوم', one: 'ينتظر منذ يوم واحد', two: 'ينتظر منذ يومين', few: 'ينتظر منذ ⁨${jours}⁩ أيام', many: 'ينتظر منذ ⁨${jours}⁩ يومًا', other: 'ينتظر منذ ⁨${jours}⁩ يوم', ), 
 			'admin.demandes.titre' => 'الطلبات والقواعد',
 			'admin.demandes.restanteUne' => 'طلب واحد قيد الانتظار',
-			'admin.demandes.restantes' => ({required Object n}) => '⁨${n}⁩ طلبات قيد الانتظار',
+			'admin.demandes.restantes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا طلب قيد الانتظار', one: 'طلب واحد قيد الانتظار', two: 'طلبان قيد الانتظار', few: '⁨${n}⁩ طلبات قيد الانتظار', many: '⁨${n}⁩ طلبًا قيد الانتظار', other: '⁨${n}⁩ طلب قيد الانتظار', ), 
 			'admin.demandes.aucune' => 'لا طلب قيد الانتظار',
 			'admin.demandes.aucuneDetail' => 'تصل هنا طلبات الأسر والطلاب المستقلين والمعلمين، الأقدم أولًا.',
 			'admin.demandes.faitePar' => ({required Object date, required Object role}) => 'طُلب في ⁨${date}⁩، من ⁨${role}⁩',
@@ -11212,7 +11534,7 @@ extension on TraductionsAr {
 			'admin.demandes.roleInconnu' => 'طرف في الملف',
 			'admin.demandes.reclame' => 'المطلوب',
 			'admin.demandes.reclameReaffectation' => ({required Object prenom}) => 'تغيير معلم ⁨${prenom}⁩',
-			'admin.demandes.reclamePlafond' => ({required Object valeur}) => 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طلاب',
+			'admin.demandes.reclamePlafond' => ({required num valeur}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(valeur, zero: 'رفع الحد الأقصى إلى صفر', one: 'رفع الحد الأقصى إلى طالب واحد', two: 'رفع الحد الأقصى إلى طالبين', few: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طلاب', many: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طالبًا', other: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طالب', ), 
 			'admin.demandes.reclameRegle' => ({required Object regle, required Object valeur}) => 'جعل ⁨${regle}⁩ ⁨${valeur}⁩ دقيقة',
 			'admin.demandes.reclameRegleSansValeur' => ({required Object regle}) => 'مراجعة ⁨${regle}⁩',
 			'admin.demandes.motifDemande' => 'السبب المذكور',
@@ -11233,7 +11555,7 @@ extension on TraductionsAr {
 			'admin.demandes.plateforme' => ({required Object valeur}) => 'المنصة: ⁨${valeur}⁩',
 			'admin.demandes.effective' => ({required Object valeur}) => 'المطبقة: ⁨${valeur}⁩',
 			'admin.demandes.minutes' => ({required Object valeur}) => '⁨${valeur}⁩ دقيقة',
-			'admin.demandes.eleves' => ({required Object valeur}) => '⁨${valeur}⁩ طلاب',
+			'admin.demandes.eleves' => ({required num valeur}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(valeur, zero: 'لا طالب', one: 'طالب واحد', two: 'طالبان', few: '⁨${valeur}⁩ طلاب', many: '⁨${valeur}⁩ طالبًا', other: '⁨${valeur}⁩ طالب', ), 
 			'admin.demandes.surchargeDepuis' => ({required Object date, required Object motif}) => 'وُضعت في ⁨${date}⁩: ⁨${motif}⁩',
 			'admin.demandes.sansSurcharge' => 'يتبع هذا الطالب قاعدة المنصة.',
 			'admin.demandes.changer' => 'تغيير',
@@ -11258,16 +11580,16 @@ extension on TraductionsAr {
 			'admin.attribution.erreurEnseignants' => 'تعذّرت قراءة المعلمين. أعد المحاولة بعد لحظة.',
 			'admin.attribution.attendAujourdhui' => 'مسجَّل اليوم',
 			'admin.attribution.attendUnJour' => 'ينتظر منذ يوم',
-			'admin.attribution.attendJours' => ({required Object jours}) => 'ينتظر منذ ⁨${jours}⁩ أيام',
+			'admin.attribution.attendJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'ينتظر منذ اليوم', one: 'ينتظر منذ يوم واحد', two: 'ينتظر منذ يومين', few: 'ينتظر منذ ⁨${jours}⁩ أيام', many: 'ينتظر منذ ⁨${jours}⁩ يومًا', other: 'ينتظر منذ ⁨${jours}⁩ يوم', ), 
 			'admin.attribution.niveau' => ({required Object niveau}) => 'المستوى ⁨${niveau}⁩',
-			'admin.attribution.heuresProposees' => ({required Object nombre}) => '⁨${nombre}⁩ ساعات مقترحة',
+			'admin.attribution.heuresProposees' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا ساعة مقترحة', one: 'ساعة واحدة مقترحة', two: 'ساعتان مقترحتان', few: '⁨${nombre}⁩ ساعات مقترحة', many: '⁨${nombre}⁩ ساعةً مقترحة', other: '⁨${nombre}⁩ ساعة مقترحة', ), 
 			'admin.attribution.heureProposee' => 'ساعة واحدة مقترحة',
 			'admin.attribution.sansHeure' => 'لا ساعة مقترحة',
 			'admin.attribution.sansHeureDetail' => 'ما دامت الأسرة لم تحدد أي موعد، لا يستطيع أحد أن يسند إليها معلمًا، ولا أنت. الخطوة عندها، في أوقات توفرها.',
 			'admin.attribution.changerEleve' => 'اختيار طالب آخر',
 			'admin.attribution.choisirEleve' => 'اختر طالبًا',
 			'admin.attribution.choisirEleveDetail' => 'سيظهر المعلمون هنا، والذين يشاركونه ساعة أولًا.',
-			'admin.attribution.charge' => ({required Object actifs, required Object plafond}) => '⁨${actifs}⁩ طلاب من ⁨${plafond}⁩',
+			'admin.attribution.charge' => ({required num actifs, required Object plafond}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(actifs, zero: 'لا طالب من ⁨${plafond}⁩', one: 'طالب واحد من ⁨${plafond}⁩', two: 'طالبان من ⁨${plafond}⁩', few: '⁨${actifs}⁩ طلاب من ⁨${plafond}⁩', many: '⁨${actifs}⁩ طالبًا من ⁨${plafond}⁩', other: '⁨${actifs}⁩ طالب من ⁨${plafond}⁩', ), 
 			'admin.attribution.complet' => 'بلغ الحد الأقصى',
 			'admin.attribution.libreSur' => ({required Object jour, required Object heure}) => 'متاح ⁨${jour}⁩ الساعة ⁨${heure}⁩',
 			'admin.attribution.libreSurPlusieurs' => ({required Object nombre}) => 'متاح في ⁨${nombre}⁩ من الساعات المقترحة',
@@ -11342,13 +11664,13 @@ extension on TraductionsAr {
 			'admin.diagnostics.aucunProgramme' => 'لا منهج منشور',
 			'admin.diagnostics.aucunProgrammeDetail' => 'انشر إصدارًا أول من المنهج («التعليم» > «المناهج») قبل أن تتمكن من تقرير توجيه.',
 			'admin.diagnostics.erreur' => 'تعذّرت قراءة القائمة. أعد المحاولة بعد لحظة.',
-			'admin.diagnostics.restants' => ({required Object n}) => '⁨${n}⁩ طلاب متبقون',
+			'admin.diagnostics.restants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا طالب متبقٍّ', one: 'طالب واحد متبقٍّ', two: 'طالبان متبقيان', few: '⁨${n}⁩ طلاب متبقون', many: '⁨${n}⁩ طالبًا متبقيًا', other: '⁨${n}⁩ طالب متبقٍّ', ), 
 			'admin.diagnostics.restantUn' => 'طالب واحد متبقٍ',
 			'admin.diagnostics.inscritAujourdhui' => 'مسجَّل اليوم',
 			_ => null,
 		} ?? switch (path) {
 			'admin.diagnostics.inscritDepuisUnJour' => 'مسجَّل منذ يوم',
-			'admin.diagnostics.inscritDepuis' => ({required Object jours}) => 'مسجَّل منذ ⁨${jours}⁩ أيام',
+			'admin.diagnostics.inscritDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'مسجَّل منذ اليوم', one: 'مسجَّل منذ يوم واحد', two: 'مسجَّل منذ يومين', few: 'مسجَّل منذ ⁨${jours}⁩ أيام', many: 'مسجَّل منذ ⁨${jours}⁩ يومًا', other: 'مسجَّل منذ ⁨${jours}⁩ يوم', ), 
 			'admin.diagnostics.aucun' => 'لا طالب لتحديد مستواه',
 			'admin.diagnostics.aucunDetail' => 'لكل الطلاب المسجلين مستوى مقرر بالفعل.',
 			'admin.diagnostics.champNiveau' => 'مستوى التوجيه',
@@ -11375,7 +11697,7 @@ extension on TraductionsAr {
 			'admin.qualite.statutTraite' => 'معالَجة',
 			'admin.qualite.depuisAujourdhui' => 'اليوم',
 			'admin.qualite.depuisUnJour' => 'يوم واحد',
-			'admin.qualite.depuisJours' => ({required Object jours}) => '⁨${jours}⁩ أيام',
+			'admin.qualite.depuisJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'اليوم', one: 'يوم واحد', two: 'يومان', few: '⁨${jours}⁩ أيام', many: '⁨${jours}⁩ يومًا', other: '⁨${jours}⁩ يوم', ), 
 			'admin.qualite.actionTraiter' => 'تعليم كمعالَج',
 			'admin.qualite.traiterTitre' => ({required Object personne}) => 'تعليم كمعالَج: ⁨${personne}⁩',
 			'admin.qualite.champNote' => 'ملاحظة (اختيارية)',
@@ -11409,7 +11731,7 @@ extension on TraductionsAr {
 			'admin.regles.seancesSimultanees' => 'الحصص المتزامنة لكل ملف',
 			'admin.regles.seancesSimultaneesDetail' => 'عدد الحصص التي يمكن لملف واحد متابعتها في الوقت نفسه.',
 			'admin.regles.uniteMinutes' => ({required Object n}) => '⁨${n}⁩ دقيقة',
-			'admin.regles.uniteSemaines' => ({required Object n}) => '⁨${n}⁩ أسبوع',
+			'admin.regles.uniteSemaines' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ أسبوع', one: 'أسبوع واحد', two: 'أسبوعان', few: '⁨${n}⁩ أسابيع', many: '⁨${n}⁩ أسبوعًا', other: '⁨${n}⁩ أسبوع', ), 
 			'admin.regles.uniteNombre' => ({required Object n}) => '⁨${n}⁩',
 			'admin.fonctionnalites.titre' => 'الوظائف',
 			'admin.fonctionnalites.intro' => 'الوظائف التي تغيّر سلوك المنصة كلها.',
@@ -11434,20 +11756,20 @@ extension on TraductionsAr {
 			'admin.conservationDonnees.enregistrementsDetail' => 'عدد الأيام التي يبقى فيها تسجيل الحصة متاحًا.',
 			'admin.conservationDonnees.documentsIdentite' => 'وثائق الهوية',
 			'admin.conservationDonnees.documentsIdentiteDetail' => 'عدد الأيام التي تبقى فيها وثيقة الهوية المودعة متاحة قبل حذفها.',
-			'admin.conservationDonnees.uniteJours' => ({required Object n}) => '⁨${n}⁩ ي',
-			'admin.politiqueRevueKyc.titre' => 'سياسة الجنس في مراجعة الهوية',
-			'admin.politiqueRevueKyc.libelle' => 'حصر مراجعة الهوية حسب الجنس',
+			'admin.conservationDonnees.uniteJours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ يوم', one: 'يوم واحد', two: 'يومان', few: '⁨${n}⁩ أيام', many: '⁨${n}⁩ يومًا', other: '⁨${n}⁩ يوم', ), 
+			'admin.politiqueRevueKyc.titre' => 'اشتراط تطابق الجنس في مراجعة الهوية',
+			'admin.politiqueRevueKyc.libelle' => 'حصر مراجعة الهوية بموظف من الجنس نفسه',
 			'admin.politiqueRevueKyc.aide' => 'حين تُعطَّل هذه القاعدة، يمكن لكل عضو مخوَّل بمراجعة الملفات معالجة ملفات نطاقه، أيًا كان جنسه.',
 			'admin.politiqueRevueKyc.echecEnregistrement' => _root.admin.groupes.observationErreur,
 			'admin.evaluations.titre' => 'التقييمات',
 			'admin.evaluations.intro' => 'ما هو مقرر، وما أُجري، والشهادات المحصَّلة.',
 			'admin.evaluations.erreur' => 'تعذّرت قراءة التقييمات. أعد المحاولة بعد لحظة.',
 			'admin.evaluations.aucune' => 'لا تقييم',
-			'admin.evaluations.aucuneDetail' => 'برمج تقييمًا أول لطالب حُدِّد مستواه بالفعل.',
+			'admin.evaluations.aucuneDetail' => 'جدوِل تقييمًا أول لطالب حُدِّد مستواه بالفعل.',
 			'admin.evaluations.aucuneAvecCeFiltre' => 'لا تقييم بهذا المعيار',
 			'admin.evaluations.aucuneAvecCeFiltreDetail' => 'غيّر المعيار لترى التقييمات الأخرى.',
 			'admin.evaluations.filtreToutes' => 'الكل',
-			'admin.evaluations.filtrePlanifiees' => 'مبرمجة',
+			'admin.evaluations.filtrePlanifiees' => 'مجدولة',
 			'admin.evaluations.filtreRealisees' => 'منجزة',
 			'admin.evaluations.filtreAnnulees' => 'ملغاة',
 			'admin.evaluations.filtreCertifications' => 'الشهادات',
@@ -11461,20 +11783,20 @@ extension on TraductionsAr {
 			'admin.evaluations.typePeriodique' => 'دوري',
 			'admin.evaluations.typeReevaluation' => 'إعادة تقييم',
 			'admin.evaluations.typeCertification' => 'شهادة',
-			'admin.evaluations.statutPlanifiee' => 'مبرمج',
+			'admin.evaluations.statutPlanifiee' => 'مجدول',
 			'admin.evaluations.statutRealisee' => 'منجز',
 			'admin.evaluations.statutAnnulee' => 'ملغى',
 			'admin.evaluations.resultatReussi' => 'ناجح',
 			'admin.evaluations.resultatEchec' => 'راسب',
 			'admin.evaluations.resultatARevoir' => 'للمراجعة',
-			'admin.evaluations.planifier' => 'برمجة تقييم',
-			'admin.evaluations.planifierTitre' => 'برمجة تقييم',
+			'admin.evaluations.planifier' => 'جدولة تقييم',
+			'admin.evaluations.planifierTitre' => 'جدولة تقييم',
 			'admin.evaluations.champEleveId' => 'معرّف الطالب',
 			'admin.evaluations.champNiveau' => 'المستوى المقيَّم',
 			'admin.evaluations.champType' => 'النوع',
 			'admin.evaluations.champDatePrevue' => 'التاريخ المقرر (يوم/شهر/سنة)',
-			'admin.evaluations.planifierEnvoyer' => 'برمجة',
-			'admin.evaluations.planifierErreur' => ({required Object message}) => 'لم تكتمل البرمجة: ⁨${message}⁩',
+			'admin.evaluations.planifierEnvoyer' => 'جدولة',
+			'admin.evaluations.planifierErreur' => ({required Object message}) => 'لم تكتمل الجدولة: ⁨${message}⁩',
 			'admin.evaluations.actionEnregistrerResultat' => 'حفظ النتيجة',
 			'admin.evaluations.actionAnnuler' => 'إلغاء التقييم',
 			'admin.evaluations.resultatTitre' => ({required Object eleve}) => 'نتيجة ⁨${eleve}⁩',
@@ -11486,7 +11808,7 @@ extension on TraductionsAr {
 			'admin.evaluations.annulerErreur' => ({required Object message}) => 'لم يكتمل الإلغاء: ⁨${message}⁩',
 			'admin.evaluations.champMotif' => 'السبب',
 			'admin.evaluations.motifRequis' => 'السبب مطلوب، ويُدوَّن في سجل التدقيق.',
-			'admin.evaluations.journalisation' => 'تُدوَّن كل برمجة ونتيجة وإلغاء في سجل التدقيق.',
+			'admin.evaluations.journalisation' => 'تُدوَّن كل جدولة ونتيجة وإلغاء في سجل التدقيق.',
 			'admin.progression.titre' => 'التقدم',
 			'admin.progression.intro' => 'المستوى الحالي لكل طالب، وفصله، والعوائق أو الاستثناءات الجارية.',
 			'admin.progression.erreur' => 'تعذّرت قراءة التقدم. أعد المحاولة بعد لحظة.',
@@ -11502,7 +11824,7 @@ extension on TraductionsAr {
 			'admin.progression.filtreTousCycles' => 'كل المراحل',
 			'admin.progression.depuisAujourdhui' => 'اليوم',
 			'admin.progression.depuisUnJour' => 'يوم واحد',
-			'admin.progression.depuisJours' => ({required Object jours}) => '⁨${jours}⁩ أيام',
+			'admin.progression.depuisJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'اليوم', one: 'يوم واحد', two: 'يومان', few: '⁨${jours}⁩ أيام', many: '⁨${jours}⁩ يومًا', other: '⁨${jours}⁩ يوم', ), 
 			'admin.progression.typeBlocage' => 'عائق',
 			'admin.progression.typeDerogation' => 'استثناء',
 			'admin.progression.actionPoserBlocage' => 'وضع عائق',
@@ -11531,7 +11853,7 @@ extension on TraductionsAr {
 			'admin.programmes.statutPubliee' => 'منشور',
 			'admin.programmes.statutArchivee' => 'مؤرشف',
 			'admin.programmes.versionNumero' => ({required Object numero}) => 'الإصدار ⁨${numero}⁩',
-			'admin.programmes.niveauxSur' => ({required Object nombre}) => '⁨${nombre}⁩ مستويات',
+			'admin.programmes.niveauxSur' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا مستوى', one: 'مستوى واحد', two: 'مستويان', few: '⁨${nombre}⁩ مستويات', many: '⁨${nombre}⁩ مستوًى', other: '⁨${nombre}⁩ مستوى', ), 
 			'admin.programmes.creerVersion' => 'إنشاء إصدار',
 			'admin.programmes.creerVersionVide' => 'إنشاء إصدار فارغ',
 			'admin.programmes.enregistrerVersion' => 'حفظ الإصدار',
@@ -11568,10 +11890,10 @@ extension on TraductionsAr {
 			'admin.programmes.journalisation' => 'يُدوَّن كل إنشاء وتعديل وحذف ونشر في سجل التدقيق.',
 			'admin.journal.titre' => 'السجل',
 			'admin.journal.chaineIntacte' => 'السجل سليم',
-			'admin.journal.chaineIntacteDetail' => ({required Object nombre}) => 'أُعيدت قراءة ⁨${nombre}⁩ مدخلًا واحدًا واحدًا: لم يُعدَّل أي منها ولم يُحذف منذ كتابته.',
-			'admin.journal.chaineRompue' => 'السجل معدَّل',
+			'admin.journal.chaineIntacteDetail' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا مدخل للتحقق منه بعد.', one: 'أُعيدت قراءة مدخل واحد: لم يُعدَّل ولم يُحذف منذ كتابته.', two: 'أُعيدت قراءة مدخلين واحدًا واحدًا: لم يُعدَّل أي منهما ولم يُحذف منذ كتابته.', few: 'أُعيدت قراءة ⁨${nombre}⁩ مدخلات واحدًا واحدًا: لم يُعدَّل أي منها ولم يُحذف منذ كتابته.', many: 'أُعيدت قراءة ⁨${nombre}⁩ مدخلًا واحدًا واحدًا: لم يُعدَّل أي منها ولم يُحذف منذ كتابته.', other: 'أُعيدت قراءة ⁨${nombre}⁩ مدخل واحدًا واحدًا: لم يُعدَّل أي منها ولم يُحذف منذ كتابته.', ), 
+			'admin.journal.chaineRompue' => 'السجل مُحرَّف',
 			'admin.journal.chaineRompueUne' => ({required Object entree}) => 'مدخل لم يعد يطابق بصمته، رقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.',
-			'admin.journal.chaineRompueDetail' => ({required Object nombre, required Object entree}) => '⁨${nombre}⁩ مدخلات لم تعد تطابق بصمتها، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.',
+			'admin.journal.chaineRompueDetail' => ({required num nombre, required Object entree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا مدخل يخالف بصمته.', one: 'مدخل واحد لم يعد يطابق بصمته، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.', two: 'مدخلان لم يعودا يطابقان بصمتهما، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.', few: '⁨${nombre}⁩ مدخلات لم تعد تطابق بصمتها، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.', many: '⁨${nombre}⁩ مدخلًا لم تعد تطابق بصمتها، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.', other: '⁨${nombre}⁩ مدخل لم تعد تطابق بصمتها، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.', ), 
 			'admin.journal.chaineInconnue' => 'السلامة غير معروفة',
 			'admin.journal.chaineInconnueDetail' => 'لم يكتمل التحقق. تبقى المدخلات أدناه مقروءة، لكن لا شيء يضمن الآن أنها كاملة.',
 			'admin.journal.chaineEnCours' => 'جارٍ التحقق',
@@ -11678,8 +12000,8 @@ extension on TraductionsAr {
 			'admin.comptes.intro' => 'كل الأشخاص المسجلين، والذين ينتظرون قرارًا أولًا. المعلم الذي لم يودع وثيقة هويته يبقى ظاهرًا هنا: إنه المكان الوحيد الذي يُظهره.',
 			'admin.comptes.attenteUneAujourdhui' => 'شخص واحد ينتظر قرارًا، مسجَّل اليوم.',
 			'admin.comptes.attenteUneUnJour' => 'شخص واحد ينتظر قرارًا منذ يوم.',
-			'admin.comptes.attenteUne' => ({required Object jours}) => 'شخص واحد ينتظر قرارًا منذ ⁨${jours}⁩ أيام.',
-			'admin.comptes.attentePlusieurs' => ({required Object nombre}) => '⁨${nombre}⁩ أشخاص ينتظرون قرارًا.',
+			'admin.comptes.attenteUne' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'شخص واحد ينتظر قرارًا منذ اليوم.', one: 'شخص واحد ينتظر قرارًا منذ يوم واحد.', two: 'شخص واحد ينتظر قرارًا منذ يومين.', few: 'شخص واحد ينتظر قرارًا منذ ⁨${jours}⁩ أيام.', many: 'شخص واحد ينتظر قرارًا منذ ⁨${jours}⁩ يومًا.', other: 'شخص واحد ينتظر قرارًا منذ ⁨${jours}⁩ يوم.', ), 
+			'admin.comptes.attentePlusieurs' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا أحد ينتظر قرارًا.', one: 'شخص واحد ينتظر قرارًا.', two: 'شخصان ينتظران قرارًا.', few: '⁨${nombre}⁩ أشخاص ينتظرون قرارًا.', many: '⁨${nombre}⁩ شخصًا ينتظرون قرارًا.', other: '⁨${nombre}⁩ شخص ينتظرون قرارًا.', ), 
 			'admin.comptes.filtreTousEtats' => 'الكل',
 			'admin.comptes.filtreTousRoles' => 'كل الأدوار',
 			'admin.comptes.filtreRole' => 'الدور',
@@ -11713,7 +12035,7 @@ extension on TraductionsAr {
 			'admin.comptes.pieceSansObjet' => 'لا ينطبق',
 			'admin.comptes.attendAujourdhui' => 'اليوم',
 			'admin.comptes.attendUnJour' => 'يوم واحد',
-			'admin.comptes.attendJours' => ({required Object jours}) => '⁨${jours}⁩ أيام',
+			'admin.comptes.attendJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'اليوم', one: 'يوم واحد', two: 'يومان', few: '⁨${jours}⁩ أيام', many: '⁨${jours}⁩ يومًا', other: '⁨${jours}⁩ يوم', ), 
 			'admin.agents.titre' => 'وصول الوكلاء الآليين',
 			'admin.agents.intro' => 'يسمح الرمز لوكيل آلي بفتح التطبيق وقراءة ما يقرؤه شخص فيه. لا يستطيع كتابة شيء ولا إلغاء شيء ولا تعديل شيء: قاعدة البيانات تمنعه، لا الواجهة.',
 			'admin.agents.emettre' => 'إصدار رمز',
@@ -11761,7 +12083,7 @@ extension on TraductionsAr {
 			'admin.agents.etatRevoque' => 'ملغى',
 			'admin.agents.etatExpire' => 'منتهي الصلاحية',
 			'admin.agents.jamaisServi' => 'لم يُستخدم قط',
-			'admin.agents.usage' => ({required Object nombre, required Object quand}) => '⁨${nombre}⁩ مرات، آخرها ⁨${quand}⁩',
+			'admin.agents.usage' => ({required num nombre, required Object quand}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لم يُستخدم بعد', one: 'مرة واحدة، آخرها ⁨${quand}⁩', two: 'مرتان، آخرهما ⁨${quand}⁩', few: '⁨${nombre}⁩ مرات، آخرها ⁨${quand}⁩', many: '⁨${nombre}⁩ مرةً، آخرها ⁨${quand}⁩', other: '⁨${nombre}⁩ مرة، آخرها ⁨${quand}⁩', ), 
 			'admin.agents.revoquer' => 'إلغاء',
 			'admin.agents.revoquerTitre' => 'إلغاء هذا الرمز؟',
 			'admin.agents.revoquerDetail' => 'سيفقد الوكيل الوصول عند طلبه التالي. هذا نهائي: الرمز الملغى لا يُعاد تفعيله.',

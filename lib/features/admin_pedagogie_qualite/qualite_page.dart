@@ -250,7 +250,7 @@ class _GroupeAnomalies extends StatelessWidget {
 String _depuis(int jours) => switch (jours) {
   <= 0 => t.admin.qualite.depuisAujourdhui,
   1 => t.admin.qualite.depuisUnJour,
-  final int j => t.admin.qualite.depuisJours(jours: '$j'),
+  final int j => t.admin.qualite.depuisJours(jours: j),
 };
 
 String _message(Object erreur) {

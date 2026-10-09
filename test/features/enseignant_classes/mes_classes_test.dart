@@ -358,7 +358,7 @@ void main() {
         await tester.pumpAndSettle();
 
         final String effectif = t.enseignant.classes.eleves(
-          nombre: '${nour.nbMembres}',
+          nombre: nour.nbMembres,
         );
         final RenderParagraph p = tester
             .renderObjectList<RenderParagraph>(find.byType(RichText))

@@ -222,7 +222,14 @@
     "observation": {
       "commentCaMarche": "كيف يعمل ذلك؟",
       "uneVisite": "زيارة واحدة متاحة",
-      "visites": "\u2068{nombre}\u2069 زيارات متاحة",
+      "visites(param=nombre)": {
+        "zero": "لا زيارة متاحة",
+        "one": "زيارة واحدة متاحة",
+        "two": "زيارتان متاحتان",
+        "few": "\u2068{nombre}\u2069 زيارات متاحة",
+        "many": "\u2068{nombre}\u2069 زيارةً متاحة",
+        "other": "\u2068{nombre}\u2069 زيارة متاحة"
+      },
       "resume": "\u2068{visites}\u2069 · \u2068{duree}\u2069 لكل زيارة",
       "restanteAucune": "لا زيارة متبقية لهذه الحصة",
       "restanteUne": "زيارة واحدة متبقية لهذه الحصة",
@@ -751,7 +758,14 @@
       "erreurCours": "تعذّرت قراءة دروسك. أعد المحاولة بعد لحظة.",
       "prochainAujourdhui": "درسك القادم لاحقًا اليوم.",
       "prochainDemain": "درسك القادم غدًا.",
-      "prochainDansJours": "درسك القادم بعد \u2068{jours}\u2069 أيام.",
+      "prochainDansJours(param=jours)": {
+        "zero": "درسك القادم اليوم.",
+        "one": "درسك القادم بعد يوم واحد.",
+        "two": "درسك القادم بعد يومين.",
+        "few": "درسك القادم بعد \u2068{jours}\u2069 أيام.",
+        "many": "درسك القادم بعد \u2068{jours}\u2069 يومًا.",
+        "other": "درسك القادم بعد \u2068{jours}\u2069 يوم."
+      },
       "annulee": "لن يُعقد هذا الدرس",
       "horsLigne": "لا شبكة",
       "horsLigneDetail": "يمكنك الدخول بمجرد عودة الشبكة.",
@@ -819,7 +833,14 @@
       "voirCreneaux": "عرض مواعيدي",
       "erreur": "تعذّرت قراءة اليوم كاملًا. أعد المحاولة بعد لحظة.",
       "coursIndividuel": "درس فردي",
-      "effectif": "\u2068{nombre}\u2069 طلاب",
+      "effectif(param=nombre)": {
+        "zero": "لا طالب",
+        "one": "طالب واحد",
+        "two": "طالبان",
+        "few": "\u2068{nombre}\u2069 طلاب",
+        "many": "\u2068{nombre}\u2069 طالبًا",
+        "other": "\u2068{nombre}\u2069 طالب"
+      },
       "effectifUn": "طالب واحد",
       "preflightOk": "الميكروفون جاهز",
       "preflightBloque": "متصفحك يحظر الميكروفون. اسمح به لبدء الدرس.",
@@ -917,7 +938,14 @@
       "chargement": "جارٍ تحميل فصولك.",
       "niveau": "المستوى \u2068{niveau}\u2069",
       "eleveUn": "طالب واحد",
-      "eleves": "\u2068{nombre}\u2069 طلاب",
+      "eleves(param=nombre)": {
+        "zero": "لا طالب",
+        "one": "طالب واحد",
+        "two": "طالبان",
+        "few": "\u2068{nombre}\u2069 طلاب",
+        "many": "\u2068{nombre}\u2069 طالبًا",
+        "other": "\u2068{nombre}\u2069 طالب"
+      },
       "prochaine": "الحصة القادمة: \u2068{jour}\u2069 الساعة \u2068{heure}\u2069",
       "sansProchaine": "لا حصة مقررة",
       "remplacement": "استخلاف",
@@ -1043,12 +1071,26 @@
       "duree": "\u2068{minutes}\u2069 دقيقة من الدرس",
       "dureeEtInterruption": "\u2068{minutes}\u2069 دقيقة من الدرس، منها \u2068{interruption}\u2069 دقيقة انقطاع",
       "unEleve": "طالب واحد",
-      "eleves": "\u2068{nombre}\u2069 طلاب",
+      "eleves(param=nombre)": {
+        "zero": "لا طالب",
+        "one": "طالب واحد",
+        "two": "طالبان",
+        "few": "\u2068{nombre}\u2069 طلاب",
+        "many": "\u2068{nombre}\u2069 طالبًا",
+        "other": "\u2068{nombre}\u2069 طالب"
+      },
       "toutEstNominal": "جرى كل شيء كما هو متوقع.",
       "toutEstNominalDetail": "أكّد، ويستمر يومك.",
       "exceptions": "للنظر",
       "uneException": "طالب واحد يحتاج إلى نظرة.",
-      "plusieursExceptions": "\u2068{nombre}\u2069 طلاب يحتاجون إلى نظرة.",
+      "plusieursExceptions(param=nombre)": {
+        "zero": "لا طالب يحتاج إلى نظرة.",
+        "one": "طالب واحد يحتاج إلى نظرة.",
+        "two": "طالبان يحتاجان إلى نظرة.",
+        "few": "\u2068{nombre}\u2069 طلاب يحتاجون إلى نظرة.",
+        "many": "\u2068{nombre}\u2069 طالبًا يحتاجون إلى نظرة.",
+        "other": "\u2068{nombre}\u2069 طالب يحتاجون إلى نظرة."
+      },
       "nominaux": "لا شيء يُذكر",
       "curriculumFige": "المستوى والمنهج من الأكاديمية: لا يُعدَّلان من دفتر المتابعة.",
       "valider": "تأكيد دفتر المتابعة",
@@ -1378,7 +1420,14 @@
         "titre": "أسرتي",
         "aucun": "لا ملف طالب حتى الآن",
         "un": "ملف طالب واحد",
-        "plusieurs": "\u2068{nombre}\u2069 ملفات طلاب",
+        "plusieurs(param=nombre)": {
+          "zero": "لا ملف طالب",
+          "one": "ملف طالب واحد",
+          "two": "ملفا طالبين",
+          "few": "\u2068{nombre}\u2069 ملفات طلاب",
+          "many": "\u2068{nombre}\u2069 ملفًا لطلاب",
+          "other": "\u2068{nombre}\u2069 ملف طالب"
+        },
         "legende": "ملفات الطلاب وأجهزة الأسرة",
         "creerMonProfil": "إنشاء ملفي كطالب"
       },
@@ -1567,7 +1616,14 @@
       "carte": {
         "ouvrir": "فتح الفصل \u2068{libelle}\u2069",
         "capacite": "\u2068{membres}\u2069 من \u2068{seuil}\u2069",
-        "capacitePhrase": "\u2068{membres}\u2069 طلاب من \u2068{seuil}\u2069 مقاعد",
+        "capacitePhrase(param=membres)": {
+          "zero": "لا طالب من أصل \u2068{seuil}\u2069",
+          "one": "طالب واحد من أصل \u2068{seuil}\u2069",
+          "two": "طالبان من أصل \u2068{seuil}\u2069",
+          "few": "\u2068{membres}\u2069 طلاب من أصل \u2068{seuil}\u2069",
+          "many": "\u2068{membres}\u2069 طالبًا من أصل \u2068{seuil}\u2069",
+          "other": "\u2068{membres}\u2069 طالب من أصل \u2068{seuil}\u2069"
+        },
         "complet": "مكتمل",
         "prochainCours": "الدرس القادم",
         "aucuneSeance": "لا حصة مقررة",
@@ -1892,7 +1948,14 @@
       "explication": {
         "titre": "لمحة عن تعلّمه",
         "regleUne": "\u2068{n}\u2069 زيارة مدتها \u2068{duree}\u2069",
-        "regle": "\u2068{n}\u2069 زيارات مدة كل منها \u2068{duree}\u2069",
+        "regle": {
+          "zero": "لا زيارة",
+          "one": "زيارة واحدة مدتها \u2068{duree}\u2069",
+          "two": "زيارتان مدة كل منهما \u2068{duree}\u2069",
+          "few": "\u2068{n}\u2069 زيارات مدة كل منها \u2068{duree}\u2069",
+          "many": "\u2068{n}\u2069 زيارةً مدة كل منها \u2068{duree}\u2069",
+          "other": "\u2068{n}\u2069 زيارة مدة كل منها \u2068{duree}\u2069"
+        },
         "regleDetail": "لكل حصة ولكل وليّ أمر، حتى لو كان أكثر من طفل من أطفالك في الفصل.",
         "ecoute": "استمع إلى المعلم والطلاب",
         "ecouteDetail": "تسمع المعلم والطلاب الذين يتكلمون، ومنهم طفلك.",
@@ -1950,7 +2013,14 @@
         "secondeUne": "\u2068{n}\u2069 ثانية",
         "secondes": "\u2068{n}\u2069 ثوانٍ",
         "minuteUne": "\u2068{n}\u2069 دقيقة",
-        "minutes": "\u2068{n}\u2069 دقائق",
+        "minutes": {
+          "zero": "\u2068{n}\u2069 دقيقة",
+          "one": "دقيقة واحدة",
+          "two": "دقيقتان",
+          "few": "\u2068{n}\u2069 دقائق",
+          "many": "\u2068{n}\u2069 دقيقةً",
+          "other": "\u2068{n}\u2069 دقيقة"
+        },
         "minutesSecondes": "\u2068{m}\u2069 د \u2068{s}\u2069 ث"
       },
       "refus": {
@@ -2007,9 +2077,23 @@
         "continuePour": "تستمر الحصة لـ\u2068{prenom}\u2069.",
         "continueSansPrenom": "تستمر الحصة.",
         "resteUne": "بقيت لك زيارة واحدة مدتها \u2068{duree}\u2069. عد لاحقًا للاستماع إلى طفلك.",
-        "restent": "بقيت لك \u2068{n}\u2069 زيارات مدة كل منها \u2068{duree}\u2069. عد لاحقًا للاستماع إلى طفلك.",
+        "restent": {
+          "zero": "لم تبق لك أي زيارة لهذه الحصة.",
+          "one": "بقيت لك زيارة واحدة مدتها \u2068{duree}\u2069. عد لاحقًا للاستماع إلى طفلك.",
+          "two": "بقيت لك زيارتان مدة كل منهما \u2068{duree}\u2069. عد لاحقًا للاستماع إلى طفلك.",
+          "few": "بقيت لك \u2068{n}\u2069 زيارات مدة كل منها \u2068{duree}\u2069. عد لاحقًا للاستماع إلى طفلك.",
+          "many": "بقيت لك \u2068{n}\u2069 زيارةً مدة كل منها \u2068{duree}\u2069. عد لاحقًا للاستماع إلى طفلك.",
+          "other": "بقيت لك \u2068{n}\u2069 زيارة مدة كل منها \u2068{duree}\u2069. عد لاحقًا للاستماع إلى طفلك."
+        },
         "resteUneSansDuree": "بقيت لك زيارة واحدة. عد لاحقًا للاستماع إلى طفلك.",
-        "restentSansDuree": "بقيت لك \u2068{n}\u2069 زيارات. عد لاحقًا للاستماع إلى طفلك.",
+        "restentSansDuree": {
+          "zero": "لم تبق لك أي زيارة لهذه الحصة.",
+          "one": "بقيت لك زيارة واحدة. عد لاحقًا للاستماع إلى طفلك.",
+          "two": "بقيت لك زيارتان. عد لاحقًا للاستماع إلى طفلك.",
+          "few": "بقيت لك \u2068{n}\u2069 زيارات. عد لاحقًا للاستماع إلى طفلك.",
+          "many": "بقيت لك \u2068{n}\u2069 زيارةً. عد لاحقًا للاستماع إلى طفلك.",
+          "other": "بقيت لك \u2068{n}\u2069 زيارة. عد لاحقًا للاستماع إلى طفلك."
+        },
         "aucune": "استخدمت زياراتك لهذه الحصة. يمكنك متابعة الحصة القادمة.",
         "prochaineSeance": "يمكنك متابعة الحصة القادمة.",
         "verification": "جارٍ التحقق من زياراتك المتبقية",
@@ -2038,7 +2122,14 @@
         "invalideTemps": "ثلاثون ثانية على الأقل لكل حصة.",
         "valeurHeritee": "الأكاديمية: \u2068{valeur}\u2069",
         "uniteVisiteUne": "\u2068{n}\u2069 زيارة",
-        "uniteVisites": "\u2068{n}\u2069 زيارات",
+        "uniteVisites": {
+          "zero": "لا زيارة",
+          "one": "زيارة واحدة",
+          "two": "زيارتان",
+          "few": "\u2068{n}\u2069 زيارات",
+          "many": "\u2068{n}\u2069 زيارةً",
+          "other": "\u2068{n}\u2069 زيارة"
+        },
         "uniteSecondes": "\u2068{n}\u2069 ث",
         "versionPolitique": "الإصدار \u2068{version}\u2069"
       }
@@ -2401,8 +2492,8 @@
       "aRemplir": "للتعبئة",
       "horaireAChoisir": "مُعبّأ، الموعد للاختيار",
       "horaireRetire": "سُحب الموعد، يجب اختياره من جديد",
-      "echangeAPrevoir": "التفضيل محفوظ، لقاء تحديد المستوى للبرمجة",
-      "echangePrevu": "لقاء تحديد المستوى مبرمج",
+      "echangeAPrevoir": "التفضيل محفوظ، لقاء تحديد المستوى للجدولة",
+      "echangePrevu": "لقاء تحديد المستوى مجدول",
       "classeEnConstitution": "الفصل قيد التكوين",
       "classeConfirmee": "الفصل مؤكَّد",
       "classeAucune": "لا فصل بعد. اختيار فصل",
@@ -2500,8 +2591,22 @@
     "offresRaison": "تُعرض هذه المواعيد بتوقيتك المحلي. اختيار موعد يحفظ تفضيلك: لا يحجز مقعدًا ولا يكوّن فصلًا بعد.",
     "offreRecommandee": "الأقرب إلى إجاباتك",
     "offresAutres": "مواعيد ممكنة أخرى",
-    "offreRecurrence": "\u2068{seances}\u2069 حصص في الأسبوع، \u2068{duree}\u2069 دقيقة",
-    "offreRecurrencePause": "\u2068{seances}\u2069 حصص في الأسبوع، \u2068{duree}\u2069 دقيقة منها \u2068{pause}\u2069 دقيقة استراحة",
+    "offreRecurrence(param=seances)": {
+      "zero": "لا حصص في الأسبوع",
+      "one": "حصة واحدة في الأسبوع، \u2068{duree}\u2069 د",
+      "two": "حصتان في الأسبوع، \u2068{duree}\u2069 د",
+      "few": "\u2068{seances}\u2069 حصص في الأسبوع، \u2068{duree}\u2069 د",
+      "many": "\u2068{seances}\u2069 حصةً في الأسبوع، \u2068{duree}\u2069 د",
+      "other": "\u2068{seances}\u2069 حصة في الأسبوع، \u2068{duree}\u2069 د"
+    },
+    "offreRecurrencePause(param=seances)": {
+      "zero": "لا حصص في الأسبوع",
+      "one": "حصة واحدة في الأسبوع، \u2068{duree}\u2069 د منها \u2068{pause}\u2069 د استراحة",
+      "two": "حصتان في الأسبوع، \u2068{duree}\u2069 د منها \u2068{pause}\u2069 د استراحة",
+      "few": "\u2068{seances}\u2069 حصص في الأسبوع، \u2068{duree}\u2069 د منها \u2068{pause}\u2069 د استراحة",
+      "many": "\u2068{seances}\u2069 حصةً في الأسبوع، \u2068{duree}\u2069 د منها \u2068{pause}\u2069 د استراحة",
+      "other": "\u2068{seances}\u2069 حصة في الأسبوع، \u2068{duree}\u2069 د منها \u2068{pause}\u2069 د استراحة"
+    },
     "offreLangue": "الدرس بـ\u2068{langue}\u2069",
     "offreFuseau": "التوقيت المعروض لـ\u2068{fuseau}\u2069",
     "offreTraduite": "معروض بتوقيتك المحلي",
@@ -2522,10 +2627,17 @@
     "etatOffreIndisponibleDetail": "سُحب الموعد المختار لـ\u2068{prenom}\u2069 قبل تكوين فصل. اختر موعدًا آخر: لم يضِع شيء.",
     "etatDiagnosticRequis": "التفضيل محفوظ",
     "etatDiagnosticRequisDetail": "بقي لقاء مع معلم لتحديد مستوى \u2068{prenom}\u2069. ستقترح عليك الأكاديمية موعدًا.",
-    "etatDiagnosticEnAttente": "الموعد مبرمج",
-    "etatDiagnosticEnAttenteDetail": "لقاء مبرمج لتحديد مستوى \u2068{prenom}\u2069.",
+    "etatDiagnosticEnAttente": "الموعد مجدول",
+    "etatDiagnosticEnAttenteDetail": "لقاء مجدول لتحديد مستوى \u2068{prenom}\u2069.",
     "etatClasseEnFormation": "الفصل قيد التكوين",
-    "etatClasseEnFormationDetail": "يبدأ الفصل ابتداءً من \u2068{minimum}\u2069 طلاب. سنعلمك بمجرد تأكيده.",
+    "etatClasseEnFormationDetail(param=minimum)": {
+      "zero": "يبدأ الفصل دون حد أدنى من الطلاب. سنعلمك بمجرد تأكيده.",
+      "one": "يبدأ الفصل ابتداءً من طالب واحد. سنعلمك بمجرد تأكيده.",
+      "two": "يبدأ الفصل ابتداءً من طالبين. سنعلمك بمجرد تأكيده.",
+      "few": "يبدأ الفصل ابتداءً من \u2068{minimum}\u2069 طلاب. سنعلمك بمجرد تأكيده.",
+      "many": "يبدأ الفصل ابتداءً من \u2068{minimum}\u2069 طالبًا. سنعلمك بمجرد تأكيده.",
+      "other": "يبدأ الفصل ابتداءً من \u2068{minimum}\u2069 طالب. سنعلمك بمجرد تأكيده."
+    },
     "etatClasseEnFormationDetailSansMinimum": "يبدأ الفصل ابتداءً من عدد معين من الطلاب. سنعلمك بمجرد تأكيده.",
     "etatClasseConfirmee": "الفصل مؤكَّد",
     "etatClasseConfirmeeDetail": "تكوّن فصل \u2068{prenom}\u2069. ستجد حصصه في مساحته.",
@@ -2829,7 +2941,14 @@
     "selecteur": {
       "aucune": "لا حصة",
       "une": "حصة واحدة",
-      "plusieurs": "\u2068{n}\u2069 حصص"
+      "plusieurs": {
+        "zero": "لا حصة",
+        "one": "حصة واحدة",
+        "two": "حصتان",
+        "few": "\u2068{n}\u2069 حصص",
+        "many": "\u2068{n}\u2069 حصةً",
+        "other": "\u2068{n}\u2069 حصة"
+      }
     },
     "filtres": {
       "classe": "الفصل",
@@ -2870,7 +2989,14 @@
       "filtreVideTitre": "لا متابعة مطابقة",
       "filtreVidePhrase": "غيّر عوامل التصفية لتجد الزيارات الأخرى.",
       "visiteUne": "زيارة واحدة",
-      "visites": "\u2068{n}\u2069 زيارات",
+      "visites": {
+        "zero": "لا زيارة",
+        "one": "زيارة واحدة",
+        "two": "زيارتان",
+        "few": "\u2068{n}\u2069 زيارات",
+        "many": "\u2068{n}\u2069 زيارةً",
+        "other": "\u2068{n}\u2069 زيارة"
+      },
       "dureeNonConfirmee": "المدة غير مؤكَّدة",
       "terminee": "منتهية",
       "nonRefermee": "الخروج غير مسجَّل",
@@ -2920,7 +3046,14 @@
       "groupeProfils": "ملفات الطلاب",
       "aucunAppareil": "لا جهاز مربوط",
       "unAppareil": "جهاز واحد مربوط: \u2068{nom}\u2069",
-      "plusieursAppareils": "\u2068{nombre}\u2069 أجهزة مربوطة: \u2068{noms}\u2069",
+      "plusieursAppareils(param=nombre)": {
+        "zero": "لا جهاز مربوط",
+        "one": "جهاز واحد مربوط: \u2068{noms}\u2069",
+        "two": "جهازان مربوطان: \u2068{noms}\u2069",
+        "few": "\u2068{nombre}\u2069 أجهزة مربوطة: \u2068{noms}\u2069",
+        "many": "\u2068{nombre}\u2069 جهازًا مربوطًا: \u2068{noms}\u2069",
+        "other": "\u2068{nombre}\u2069 جهاز مربوط: \u2068{noms}\u2069"
+      },
       "partageTitre": "جهاز مشترك",
       "partage": "على جهاز مشترك، يختار كل طالب ملفه ثم يدخل رمزه الشخصي. يظهر هذا الجهاز حينها تحت كل ملف يستخدمه.",
       "videTitre": "لا ملف طالب",
@@ -3533,14 +3666,14 @@
     "reprise": {
       "titre": "طلب استلام الأسرة",
       "explication": "استخدم هذا الإجراء إن توفي صاحب حساب الأسرة. سيُبلَّغ الحساب المعني بالطلب وستدرسه الإدارة.",
-      "reprisTitre": "ما سيُستلم",
+      "reprisTitre": "ما سيُنقل",
       "repris": {
         "profils": "ملفات القاصرين الموجودة",
         "composition": "تكوين الأسرة مستقبلًا وفق القواعد السارية",
         "paiements": "مدفوعات الأسرة المستقبلية",
         "parcours": "مسارات وليّ الأمر المرتبطة بالقاصرين"
       },
-      "jamaisTitre": "ما لا يُستلم أبدًا",
+      "jamaisTitre": "ما لا يُنقل أبدًا",
       "jamais": {
         "identifiants": "بيانات دخول صاحب الحساب",
         "messages": "رسائله الخاصة",
@@ -3733,11 +3866,25 @@
       }
     },
     "restantUn": "ملف واحد قيد الانتظار",
-    "restants": "\u2068{n}\u2069 ملفات قيد الانتظار",
+    "restants": {
+      "zero": "لا ملف قيد الانتظار",
+      "one": "ملف واحد قيد الانتظار",
+      "two": "ملفان قيد الانتظار",
+      "few": "\u2068{n}\u2069 ملفات قيد الانتظار",
+      "many": "\u2068{n}\u2069 ملفًا قيد الانتظار",
+      "other": "\u2068{n}\u2069 ملف قيد الانتظار"
+    },
     "deposeLe": "أُودع في \u2068{date}\u2069",
     "inscritAujourdhui": "مسجَّل اليوم",
     "inscritDepuisUnJour": "مسجَّل منذ يوم",
-    "inscritDepuis": "مسجَّل منذ \u2068{jours}\u2069 أيام",
+    "inscritDepuis(param=jours)": {
+      "zero": "مسجَّل منذ اليوم",
+      "one": "مسجَّل منذ يوم واحد",
+      "two": "مسجَّل منذ يومين",
+      "few": "مسجَّل منذ \u2068{jours}\u2069 أيام",
+      "many": "مسجَّل منذ \u2068{jours}\u2069 يومًا",
+      "other": "مسجَّل منذ \u2068{jours}\u2069 يوم"
+    },
     "sansPiece": "لا وثيقة مودَعة",
     "sansPieceDetail": "أنشأ هذا الشخص حسابه وقبل العقود، لكنه لم يرسل وثيقة هويته بعد. لا شيء للتحقق إذن: الخطوة عنده.",
     "pieceNonVisible": "وثيقة خارج صلاحيتك",
@@ -3809,7 +3956,7 @@
     "envoiEnCours": "جارٍ الإرسال",
     "deposee": "استُلمت الوثيقة",
     "erreur": "لم يكتمل الإرسال. أعد المحاولة بعد لحظة.",
-    "tropVolumineux": "هذه الصورة تتجاوز \u2068{taille}\u2069 م.ب. التقطها بجودة أقل."
+    "tropVolumineux": "هذه الصورة تتجاوز \u2068{taille}\u2069 ميغابايت. التقطها بجودة أقل."
   },
   "contrat": {
     "titre": "ما توقّع عليه",
@@ -3819,7 +3966,7 @@
     "pointCoordonnees": "لا ترى أبدًا بيانات اتصال أسرة: لا الاسم الكامل، ولا البريد الإلكتروني، ولا الهاتف.",
     "lireTexte": "قراءة النص كاملًا",
     "accepter": "قرأت وأوافق",
-    "accepteLe": "مقبول في \u2068{date}\u2069",
+    "accepteLe": "تمت الموافقة في \u2068{date}\u2069",
     "erreur": "لم يكتمل التوقيع. أعد المحاولة بعد لحظة.",
     "horsLigne": "أنت غير متصل. ستُحفظ موافقتك بمجرد عودة الشبكة، بالضغط من جديد.",
     "caseRequise": "حدّد المربع للمتابعة."
@@ -3832,7 +3979,7 @@
     "pointClasseTitre": "فصل ثابت",
     "pointClasse": "الزملاء أنفسهم والموعد نفسه، كل أسبوع.",
     "pointEnseignantTitre": "معلم ثابت",
-    "pointEnseignant": "سيد أو سيدة يتابع كل طالب من حصة إلى أخرى.",
+    "pointEnseignant": "معلّم أو معلّمة، يُنادى «السيد» أو «السيدة»، يتابع كل طالب من حصة إلى أخرى.",
     "pointFoyerTitre": "حساب واحد للأسرة",
     "pointFoyer": "تُتابَع حصص كل طالب في الأسرة من حسابك.",
     "commencer": "ابدأ",
@@ -3842,23 +3989,51 @@
     "titre": "المواعيد",
     "ongletHeures": "ساعاتي",
     "ongletEleves": "طلاب في الانتظار",
-    "mesEleves": "تتابع \u2068{nombre}\u2069 طلاب من \u2068{plafond}\u2069 ممكنين.",
+    "mesEleves(param=nombre)": {
+      "zero": "لا تتابع أي طالب، والحد الأقصى \u2068{plafond}\u2069.",
+      "one": "تتابع طالبًا واحدًا، والحد الأقصى \u2068{plafond}\u2069.",
+      "two": "تتابع طالبين، والحد الأقصى \u2068{plafond}\u2069.",
+      "few": "تتابع \u2068{nombre}\u2069 طلاب، والحد الأقصى \u2068{plafond}\u2069.",
+      "many": "تتابع \u2068{nombre}\u2069 طالبًا، والحد الأقصى \u2068{plafond}\u2069.",
+      "other": "تتابع \u2068{nombre}\u2069 طالب، والحد الأقصى \u2068{plafond}\u2069."
+    },
     "aucunEleve": "لا طالب في الانتظار في ساعاتك",
     "aucunEleveDetail": "اقترح ساعات أخرى لترى أسرًا أكثر.",
-    "attendDepuis": "ينتظر منذ \u2068{jours}\u2069 أيام",
+    "attendDepuis(param=jours)": {
+      "zero": "ينتظر منذ اليوم",
+      "one": "ينتظر منذ يوم واحد",
+      "two": "ينتظر منذ يومين",
+      "few": "ينتظر منذ \u2068{jours}\u2069 أيام",
+      "many": "ينتظر منذ \u2068{jours}\u2069 يومًا",
+      "other": "ينتظر منذ \u2068{jours}\u2069 يوم"
+    },
     "attendUnJour": "ينتظر منذ يوم",
     "attendAujourdhui": "قُدِّم الطلب اليوم",
     "niveau": "المستوى \u2068{niveau}\u2069",
     "prendre": "قبول \u2068{jour}\u2069 الساعة \u2068{heure}\u2069",
     "priseEnCours": "جارٍ الحفظ",
-    "plafondAtteint": "تتابع بالفعل \u2068{nombre}\u2069 طلاب، وهو حدك الأقصى. قبول طالب التزام دائم، لا حجز.",
+    "plafondAtteint(param=nombre)": {
+      "zero": "لا يمكنك متابعة أي طالب الآن: حدك الأقصى صفر.",
+      "one": "تتابع بالفعل طالبًا واحدًا، وهو حدك الأقصى. قبول طالب التزام دائم، لا حجز.",
+      "two": "تتابع بالفعل طالبين، وهو حدك الأقصى. قبول طالب التزام دائم، لا حجز.",
+      "few": "تتابع بالفعل \u2068{nombre}\u2069 طلاب، وهو حدك الأقصى. قبول طالب التزام دائم، لا حجز.",
+      "many": "تتابع بالفعل \u2068{nombre}\u2069 طالبًا، وهو حدك الأقصى. قبول طالب التزام دائم، لا حجز.",
+      "other": "تتابع بالفعل \u2068{nombre}\u2069 طالب، وهو حدك الأقصى. قبول طالب التزام دائم، لا حجز."
+    },
     "plafondDemander": "طلب متابعة طلاب أكثر",
     "demandeTitre": "كم طالبًا يمكنك أن تتابع؟",
     "demandeMotif": "لماذا هذا التغيير؟",
     "demandeMotifRequis": "السبب ضروري: هو الذي يسمح بالحسم.",
     "demandeEnvoyer": "إرسال الطلب",
     "demandeEnvoyee": "أُرسل الطلب. ستحسم فيه الإدارة.",
-    "eleves": "\u2068{nombre}\u2069 طلاب",
+    "eleves(param=nombre)": {
+      "zero": "لا طالب",
+      "one": "طالب واحد",
+      "two": "طالبان",
+      "few": "\u2068{nombre}\u2069 طلاب",
+      "many": "\u2068{nombre}\u2069 طالبًا",
+      "other": "\u2068{nombre}\u2069 طالب"
+    },
     "erreur": "لم تكتمل العملية: \u2068{message}\u2069"
   },
   "disponibilites": {
@@ -3871,7 +4046,14 @@
     "fuseau": "الساعات معروضة بتوقيت \u2068{fuseau}\u2069",
     "aucune": "لا ساعة مقترحة لـ\u2068{prenom}\u2069",
     "aucuneDetail": "دون موعد، لا يستطيع أي معلم تولي \u2068{prenom}\u2069.",
-    "posees": "\u2068{nombre}\u2069 ساعات مقترحة",
+    "posees(param=nombre)": {
+      "zero": "لا ساعة مقترحة",
+      "one": "ساعة واحدة مقترحة",
+      "two": "ساعتان مقترحتان",
+      "few": "\u2068{nombre}\u2069 ساعات مقترحة",
+      "many": "\u2068{nombre}\u2069 ساعةً مقترحة",
+      "other": "\u2068{nombre}\u2069 ساعة مقترحة"
+    },
     "poseeUne": "ساعة واحدة مقترحة",
     "cellulePosee": "\u2068{jour}\u2069 الساعة \u2068{heure}\u2069، مقترحة. المس للإزالة",
     "celluleLibre": "\u2068{jour}\u2069 الساعة \u2068{heure}\u2069، شاغرة. المس للاقتراح",
@@ -3904,7 +4086,7 @@
       "aTerminer": "للإنهاء",
       "filtreEtat": "الحالة",
       "tousEtats": "كل الحالات",
-      "duree": "\u2068{minutes}\u2069 دقيقة من المتابعة",
+      "duree": "\u2068{minutes}\u2069 د من المتابعة",
       "meta": "\u2068{heure}\u2069 · \u2068{duree}\u2069",
       "dateHeure": "\u2068{date}\u2069، \u2068{heure}\u2069",
       "dateHeureAuteur": "\u2068{date}\u2069، \u2068{heure}\u2069 · \u2068{auteur}\u2069",
@@ -3968,7 +4150,7 @@
       "cleHoraire": "الموعد المقرر",
       "horaire": "\u2068{debut}\u2069 إلى \u2068{fin}\u2069",
       "cleDebutReel": "البداية الفعلية",
-      "debutRetard": "\u2068{heure}\u2069، تأخر \u2068{minutes}\u2069 دقيقة",
+      "debutRetard": "\u2068{heure}\u2069، تأخر \u2068{minutes}\u2069 د",
       "debutALHeure": "\u2068{heure}\u2069، في الموعد",
       "cleFin": "النهاية",
       "enCours": "جارية",
@@ -4109,7 +4291,7 @@
       "dejaEnCoursAide": "مراقبة واحدة في كل مرة لكل فصل. اختر حصة أخرى، أو عد لاحقًا: يمكنك البدء حين تنتهي هذه المراقبة.",
       "incognito": "لا يُعلَن عن حضورك في الوقت الفعلي.",
       "horaire": "\u2068{debut}\u2069 إلى \u2068{fin}\u2069",
-      "duree": "\u2068{minutes}\u2069 دقيقة مقررة",
+      "duree": "\u2068{minutes}\u2069 د مقررة",
       "eleves": {
         "zero": "لا طالب",
         "one": "طالب واحد",
@@ -4145,7 +4327,7 @@
       "dossiersDetail": "فتح القائمة، الأقدم أولًا.",
       "demandesDetail": "أسر ومعلمون ينتظرون ردًا.",
       "foyers": "طلاب دون معلم",
-      "rapports": "دفاتر ناقصة",
+      "rapports": "دفاتر متابعة ناقصة",
       "incidents": "حوادث (24 س)",
       "comptes": "وصول منتهٍ",
       "incidentsEtAcces": "الحوادث والوصول",
@@ -4160,17 +4342,31 @@
       "outilsAccesAgentsDetail": "فتح وصول للقراءة فقط، محدود زمنيًا، على مسار شخص.",
       "outilsGroupesDetail": "الفصول وطلابها ومعلمها.",
       "ligneDossier": "ملف هوية \u2068{prenom}\u2069",
-      "ligneReaffectation": "تغيير معلم \u2068{prenom}\u2069",
+      "ligneReaffectation": "تغيير المعلم لـ\u2068{prenom}\u2069",
       "lignePlafond": "الحد الأقصى لطلاب \u2068{prenom}\u2069",
       "ligneRegle": "تغيير قاعدة لـ\u2068{prenom}\u2069",
       "attenteAujourdhui": "أُودع اليوم",
       "attenteUnJour": "ينتظر منذ يوم",
-      "attenteJours": "ينتظر منذ \u2068{jours}\u2069 أيام"
+      "attenteJours(param=jours)": {
+        "zero": "ينتظر منذ اليوم",
+        "one": "ينتظر منذ يوم واحد",
+        "two": "ينتظر منذ يومين",
+        "few": "ينتظر منذ \u2068{jours}\u2069 أيام",
+        "many": "ينتظر منذ \u2068{jours}\u2069 يومًا",
+        "other": "ينتظر منذ \u2068{jours}\u2069 يوم"
+      }
     },
     "demandes": {
       "titre": "الطلبات والقواعد",
       "restanteUne": "طلب واحد قيد الانتظار",
-      "restantes": "\u2068{n}\u2069 طلبات قيد الانتظار",
+      "restantes": {
+        "zero": "لا طلب قيد الانتظار",
+        "one": "طلب واحد قيد الانتظار",
+        "two": "طلبان قيد الانتظار",
+        "few": "\u2068{n}\u2069 طلبات قيد الانتظار",
+        "many": "\u2068{n}\u2069 طلبًا قيد الانتظار",
+        "other": "\u2068{n}\u2069 طلب قيد الانتظار"
+      },
       "aucune": "لا طلب قيد الانتظار",
       "aucuneDetail": "تصل هنا طلبات الأسر والطلاب المستقلين والمعلمين، الأقدم أولًا.",
       "faitePar": "طُلب في \u2068{date}\u2069، من \u2068{role}\u2069",
@@ -4182,7 +4378,14 @@
       "roleInconnu": "طرف في الملف",
       "reclame": "المطلوب",
       "reclameReaffectation": "تغيير معلم \u2068{prenom}\u2069",
-      "reclamePlafond": "رفع الحد الأقصى إلى \u2068{valeur}\u2069 طلاب",
+      "reclamePlafond(param=valeur)": {
+        "zero": "رفع الحد الأقصى إلى صفر",
+        "one": "رفع الحد الأقصى إلى طالب واحد",
+        "two": "رفع الحد الأقصى إلى طالبين",
+        "few": "رفع الحد الأقصى إلى \u2068{valeur}\u2069 طلاب",
+        "many": "رفع الحد الأقصى إلى \u2068{valeur}\u2069 طالبًا",
+        "other": "رفع الحد الأقصى إلى \u2068{valeur}\u2069 طالب"
+      },
       "reclameRegle": "جعل \u2068{regle}\u2069 \u2068{valeur}\u2069 دقيقة",
       "reclameRegleSansValeur": "مراجعة \u2068{regle}\u2069",
       "motifDemande": "السبب المذكور",
@@ -4203,7 +4406,14 @@
       "plateforme": "المنصة: \u2068{valeur}\u2069",
       "effective": "المطبقة: \u2068{valeur}\u2069",
       "minutes": "\u2068{valeur}\u2069 دقيقة",
-      "eleves": "\u2068{valeur}\u2069 طلاب",
+      "eleves(param=valeur)": {
+        "zero": "لا طالب",
+        "one": "طالب واحد",
+        "two": "طالبان",
+        "few": "\u2068{valeur}\u2069 طلاب",
+        "many": "\u2068{valeur}\u2069 طالبًا",
+        "other": "\u2068{valeur}\u2069 طالب"
+      },
       "surchargeDepuis": "وُضعت في \u2068{date}\u2069: \u2068{motif}\u2069",
       "sansSurcharge": "يتبع هذا الطالب قاعدة المنصة.",
       "changer": "تغيير",
@@ -4230,16 +4440,37 @@
       "erreurEnseignants": "تعذّرت قراءة المعلمين. أعد المحاولة بعد لحظة.",
       "attendAujourdhui": "مسجَّل اليوم",
       "attendUnJour": "ينتظر منذ يوم",
-      "attendJours": "ينتظر منذ \u2068{jours}\u2069 أيام",
+      "attendJours(param=jours)": {
+        "zero": "ينتظر منذ اليوم",
+        "one": "ينتظر منذ يوم واحد",
+        "two": "ينتظر منذ يومين",
+        "few": "ينتظر منذ \u2068{jours}\u2069 أيام",
+        "many": "ينتظر منذ \u2068{jours}\u2069 يومًا",
+        "other": "ينتظر منذ \u2068{jours}\u2069 يوم"
+      },
       "niveau": "المستوى \u2068{niveau}\u2069",
-      "heuresProposees": "\u2068{nombre}\u2069 ساعات مقترحة",
+      "heuresProposees(param=nombre)": {
+        "zero": "لا ساعة مقترحة",
+        "one": "ساعة واحدة مقترحة",
+        "two": "ساعتان مقترحتان",
+        "few": "\u2068{nombre}\u2069 ساعات مقترحة",
+        "many": "\u2068{nombre}\u2069 ساعةً مقترحة",
+        "other": "\u2068{nombre}\u2069 ساعة مقترحة"
+      },
       "heureProposee": "ساعة واحدة مقترحة",
       "sansHeure": "لا ساعة مقترحة",
       "sansHeureDetail": "ما دامت الأسرة لم تحدد أي موعد، لا يستطيع أحد أن يسند إليها معلمًا، ولا أنت. الخطوة عندها، في أوقات توفرها.",
       "changerEleve": "اختيار طالب آخر",
       "choisirEleve": "اختر طالبًا",
       "choisirEleveDetail": "سيظهر المعلمون هنا، والذين يشاركونه ساعة أولًا.",
-      "charge": "\u2068{actifs}\u2069 طلاب من \u2068{plafond}\u2069",
+      "charge(param=actifs)": {
+        "zero": "لا طالب من \u2068{plafond}\u2069",
+        "one": "طالب واحد من \u2068{plafond}\u2069",
+        "two": "طالبان من \u2068{plafond}\u2069",
+        "few": "\u2068{actifs}\u2069 طلاب من \u2068{plafond}\u2069",
+        "many": "\u2068{actifs}\u2069 طالبًا من \u2068{plafond}\u2069",
+        "other": "\u2068{actifs}\u2069 طالب من \u2068{plafond}\u2069"
+      },
       "complet": "بلغ الحد الأقصى",
       "libreSur": "متاح \u2068{jour}\u2069 الساعة \u2068{heure}\u2069",
       "libreSurPlusieurs": "متاح في \u2068{nombre}\u2069 من الساعات المقترحة",
@@ -4318,11 +4549,25 @@
       "aucunProgramme": "لا منهج منشور",
       "aucunProgrammeDetail": "انشر إصدارًا أول من المنهج («التعليم» > «المناهج») قبل أن تتمكن من تقرير توجيه.",
       "erreur": "تعذّرت قراءة القائمة. أعد المحاولة بعد لحظة.",
-      "restants": "\u2068{n}\u2069 طلاب متبقون",
+      "restants": {
+        "zero": "لا طالب متبقٍّ",
+        "one": "طالب واحد متبقٍّ",
+        "two": "طالبان متبقيان",
+        "few": "\u2068{n}\u2069 طلاب متبقون",
+        "many": "\u2068{n}\u2069 طالبًا متبقيًا",
+        "other": "\u2068{n}\u2069 طالب متبقٍّ"
+      },
       "restantUn": "طالب واحد متبقٍ",
       "inscritAujourdhui": "مسجَّل اليوم",
       "inscritDepuisUnJour": "مسجَّل منذ يوم",
-      "inscritDepuis": "مسجَّل منذ \u2068{jours}\u2069 أيام",
+      "inscritDepuis(param=jours)": {
+        "zero": "مسجَّل منذ اليوم",
+        "one": "مسجَّل منذ يوم واحد",
+        "two": "مسجَّل منذ يومين",
+        "few": "مسجَّل منذ \u2068{jours}\u2069 أيام",
+        "many": "مسجَّل منذ \u2068{jours}\u2069 يومًا",
+        "other": "مسجَّل منذ \u2068{jours}\u2069 يوم"
+      },
       "aucun": "لا طالب لتحديد مستواه",
       "aucunDetail": "لكل الطلاب المسجلين مستوى مقرر بالفعل.",
       "champNiveau": "مستوى التوجيه",
@@ -4351,7 +4596,14 @@
       "statutTraite": "معالَجة",
       "depuisAujourdhui": "اليوم",
       "depuisUnJour": "يوم واحد",
-      "depuisJours": "\u2068{jours}\u2069 أيام",
+      "depuisJours(param=jours)": {
+        "zero": "اليوم",
+        "one": "يوم واحد",
+        "two": "يومان",
+        "few": "\u2068{jours}\u2069 أيام",
+        "many": "\u2068{jours}\u2069 يومًا",
+        "other": "\u2068{jours}\u2069 يوم"
+      },
       "actionTraiter": "تعليم كمعالَج",
       "traiterTitre": "تعليم كمعالَج: \u2068{personne}\u2069",
       "champNote": "ملاحظة (اختيارية)",
@@ -4387,7 +4639,14 @@
       "seancesSimultanees": "الحصص المتزامنة لكل ملف",
       "seancesSimultaneesDetail": "عدد الحصص التي يمكن لملف واحد متابعتها في الوقت نفسه.",
       "uniteMinutes": "\u2068{n}\u2069 دقيقة",
-      "uniteSemaines": "\u2068{n}\u2069 أسبوع",
+      "uniteSemaines": {
+        "zero": "\u2068{n}\u2069 أسبوع",
+        "one": "أسبوع واحد",
+        "two": "أسبوعان",
+        "few": "\u2068{n}\u2069 أسابيع",
+        "many": "\u2068{n}\u2069 أسبوعًا",
+        "other": "\u2068{n}\u2069 أسبوع"
+      },
       "uniteNombre": "\u2068{n}\u2069"
     },
     "fonctionnalites": {
@@ -4416,11 +4675,18 @@
       "enregistrementsDetail": "عدد الأيام التي يبقى فيها تسجيل الحصة متاحًا.",
       "documentsIdentite": "وثائق الهوية",
       "documentsIdentiteDetail": "عدد الأيام التي تبقى فيها وثيقة الهوية المودعة متاحة قبل حذفها.",
-      "uniteJours": "\u2068{n}\u2069 ي"
+      "uniteJours": {
+        "zero": "\u2068{n}\u2069 يوم",
+        "one": "يوم واحد",
+        "two": "يومان",
+        "few": "\u2068{n}\u2069 أيام",
+        "many": "\u2068{n}\u2069 يومًا",
+        "other": "\u2068{n}\u2069 يوم"
+      }
     },
     "politiqueRevueKyc": {
-      "titre": "سياسة الجنس في مراجعة الهوية",
-      "libelle": "حصر مراجعة الهوية حسب الجنس",
+      "titre": "اشتراط تطابق الجنس في مراجعة الهوية",
+      "libelle": "حصر مراجعة الهوية بموظف من الجنس نفسه",
       "aide": "حين تُعطَّل هذه القاعدة، يمكن لكل عضو مخوَّل بمراجعة الملفات معالجة ملفات نطاقه، أيًا كان جنسه.",
       "echecEnregistrement": "@:admin.groupes.observationErreur"
     },
@@ -4429,11 +4695,11 @@
       "intro": "ما هو مقرر، وما أُجري، والشهادات المحصَّلة.",
       "erreur": "تعذّرت قراءة التقييمات. أعد المحاولة بعد لحظة.",
       "aucune": "لا تقييم",
-      "aucuneDetail": "برمج تقييمًا أول لطالب حُدِّد مستواه بالفعل.",
+      "aucuneDetail": "جدوِل تقييمًا أول لطالب حُدِّد مستواه بالفعل.",
       "aucuneAvecCeFiltre": "لا تقييم بهذا المعيار",
       "aucuneAvecCeFiltreDetail": "غيّر المعيار لترى التقييمات الأخرى.",
       "filtreToutes": "الكل",
-      "filtrePlanifiees": "مبرمجة",
+      "filtrePlanifiees": "مجدولة",
       "filtreRealisees": "منجزة",
       "filtreAnnulees": "ملغاة",
       "filtreCertifications": "الشهادات",
@@ -4447,20 +4713,20 @@
       "typePeriodique": "دوري",
       "typeReevaluation": "إعادة تقييم",
       "typeCertification": "شهادة",
-      "statutPlanifiee": "مبرمج",
+      "statutPlanifiee": "مجدول",
       "statutRealisee": "منجز",
       "statutAnnulee": "ملغى",
       "resultatReussi": "ناجح",
       "resultatEchec": "راسب",
       "resultatARevoir": "للمراجعة",
-      "planifier": "برمجة تقييم",
-      "planifierTitre": "برمجة تقييم",
+      "planifier": "جدولة تقييم",
+      "planifierTitre": "جدولة تقييم",
       "champEleveId": "معرّف الطالب",
       "champNiveau": "المستوى المقيَّم",
       "champType": "النوع",
       "champDatePrevue": "التاريخ المقرر (يوم/شهر/سنة)",
-      "planifierEnvoyer": "برمجة",
-      "planifierErreur": "لم تكتمل البرمجة: \u2068{message}\u2069",
+      "planifierEnvoyer": "جدولة",
+      "planifierErreur": "لم تكتمل الجدولة: \u2068{message}\u2069",
       "actionEnregistrerResultat": "حفظ النتيجة",
       "actionAnnuler": "إلغاء التقييم",
       "resultatTitre": "نتيجة \u2068{eleve}\u2069",
@@ -4472,7 +4738,7 @@
       "annulerErreur": "لم يكتمل الإلغاء: \u2068{message}\u2069",
       "champMotif": "السبب",
       "motifRequis": "السبب مطلوب، ويُدوَّن في سجل التدقيق.",
-      "journalisation": "تُدوَّن كل برمجة ونتيجة وإلغاء في سجل التدقيق."
+      "journalisation": "تُدوَّن كل جدولة ونتيجة وإلغاء في سجل التدقيق."
     },
     "progression": {
       "titre": "التقدم",
@@ -4490,7 +4756,14 @@
       "filtreTousCycles": "كل المراحل",
       "depuisAujourdhui": "اليوم",
       "depuisUnJour": "يوم واحد",
-      "depuisJours": "\u2068{jours}\u2069 أيام",
+      "depuisJours(param=jours)": {
+        "zero": "اليوم",
+        "one": "يوم واحد",
+        "two": "يومان",
+        "few": "\u2068{jours}\u2069 أيام",
+        "many": "\u2068{jours}\u2069 يومًا",
+        "other": "\u2068{jours}\u2069 يوم"
+      },
       "typeBlocage": "عائق",
       "typeDerogation": "استثناء",
       "actionPoserBlocage": "وضع عائق",
@@ -4521,7 +4794,14 @@
       "statutPubliee": "منشور",
       "statutArchivee": "مؤرشف",
       "versionNumero": "الإصدار \u2068{numero}\u2069",
-      "niveauxSur": "\u2068{nombre}\u2069 مستويات",
+      "niveauxSur(param=nombre)": {
+        "zero": "لا مستوى",
+        "one": "مستوى واحد",
+        "two": "مستويان",
+        "few": "\u2068{nombre}\u2069 مستويات",
+        "many": "\u2068{nombre}\u2069 مستوًى",
+        "other": "\u2068{nombre}\u2069 مستوى"
+      },
       "creerVersion": "إنشاء إصدار",
       "creerVersionVide": "إنشاء إصدار فارغ",
       "enregistrerVersion": "حفظ الإصدار",
@@ -4560,10 +4840,24 @@
     "journal": {
       "titre": "السجل",
       "chaineIntacte": "السجل سليم",
-      "chaineIntacteDetail": "أُعيدت قراءة \u2068{nombre}\u2069 مدخلًا واحدًا واحدًا: لم يُعدَّل أي منها ولم يُحذف منذ كتابته.",
-      "chaineRompue": "السجل معدَّل",
+      "chaineIntacteDetail(param=nombre)": {
+        "zero": "لا مدخل للتحقق منه بعد.",
+        "one": "أُعيدت قراءة مدخل واحد: لم يُعدَّل ولم يُحذف منذ كتابته.",
+        "two": "أُعيدت قراءة مدخلين واحدًا واحدًا: لم يُعدَّل أي منهما ولم يُحذف منذ كتابته.",
+        "few": "أُعيدت قراءة \u2068{nombre}\u2069 مدخلات واحدًا واحدًا: لم يُعدَّل أي منها ولم يُحذف منذ كتابته.",
+        "many": "أُعيدت قراءة \u2068{nombre}\u2069 مدخلًا واحدًا واحدًا: لم يُعدَّل أي منها ولم يُحذف منذ كتابته.",
+        "other": "أُعيدت قراءة \u2068{nombre}\u2069 مدخل واحدًا واحدًا: لم يُعدَّل أي منها ولم يُحذف منذ كتابته."
+      },
+      "chaineRompue": "السجل مُحرَّف",
       "chaineRompueUne": "مدخل لم يعد يطابق بصمته، رقم \u2068{entree}\u2069. شيء ما مسّ قاعدة البيانات من خارج التطبيق.",
-      "chaineRompueDetail": "\u2068{nombre}\u2069 مدخلات لم تعد تطابق بصمتها، ابتداءً من الرقم \u2068{entree}\u2069. شيء ما مسّ قاعدة البيانات من خارج التطبيق.",
+      "chaineRompueDetail(param=nombre)": {
+        "zero": "لا مدخل يخالف بصمته.",
+        "one": "مدخل واحد لم يعد يطابق بصمته، ابتداءً من الرقم \u2068{entree}\u2069. شيء ما مسّ قاعدة البيانات من خارج التطبيق.",
+        "two": "مدخلان لم يعودا يطابقان بصمتهما، ابتداءً من الرقم \u2068{entree}\u2069. شيء ما مسّ قاعدة البيانات من خارج التطبيق.",
+        "few": "\u2068{nombre}\u2069 مدخلات لم تعد تطابق بصمتها، ابتداءً من الرقم \u2068{entree}\u2069. شيء ما مسّ قاعدة البيانات من خارج التطبيق.",
+        "many": "\u2068{nombre}\u2069 مدخلًا لم تعد تطابق بصمتها، ابتداءً من الرقم \u2068{entree}\u2069. شيء ما مسّ قاعدة البيانات من خارج التطبيق.",
+        "other": "\u2068{nombre}\u2069 مدخل لم تعد تطابق بصمتها، ابتداءً من الرقم \u2068{entree}\u2069. شيء ما مسّ قاعدة البيانات من خارج التطبيق."
+      },
       "chaineInconnue": "السلامة غير معروفة",
       "chaineInconnueDetail": "لم يكتمل التحقق. تبقى المدخلات أدناه مقروءة، لكن لا شيء يضمن الآن أنها كاملة.",
       "chaineEnCours": "جارٍ التحقق",
@@ -4676,8 +4970,22 @@
       "intro": "كل الأشخاص المسجلين، والذين ينتظرون قرارًا أولًا. المعلم الذي لم يودع وثيقة هويته يبقى ظاهرًا هنا: إنه المكان الوحيد الذي يُظهره.",
       "attenteUneAujourdhui": "شخص واحد ينتظر قرارًا، مسجَّل اليوم.",
       "attenteUneUnJour": "شخص واحد ينتظر قرارًا منذ يوم.",
-      "attenteUne": "شخص واحد ينتظر قرارًا منذ \u2068{jours}\u2069 أيام.",
-      "attentePlusieurs": "\u2068{nombre}\u2069 أشخاص ينتظرون قرارًا.",
+      "attenteUne(param=jours)": {
+        "zero": "شخص واحد ينتظر قرارًا منذ اليوم.",
+        "one": "شخص واحد ينتظر قرارًا منذ يوم واحد.",
+        "two": "شخص واحد ينتظر قرارًا منذ يومين.",
+        "few": "شخص واحد ينتظر قرارًا منذ \u2068{jours}\u2069 أيام.",
+        "many": "شخص واحد ينتظر قرارًا منذ \u2068{jours}\u2069 يومًا.",
+        "other": "شخص واحد ينتظر قرارًا منذ \u2068{jours}\u2069 يوم."
+      },
+      "attentePlusieurs(param=nombre)": {
+        "zero": "لا أحد ينتظر قرارًا.",
+        "one": "شخص واحد ينتظر قرارًا.",
+        "two": "شخصان ينتظران قرارًا.",
+        "few": "\u2068{nombre}\u2069 أشخاص ينتظرون قرارًا.",
+        "many": "\u2068{nombre}\u2069 شخصًا ينتظرون قرارًا.",
+        "other": "\u2068{nombre}\u2069 شخص ينتظرون قرارًا."
+      },
       "filtreTousEtats": "الكل",
       "filtreTousRoles": "كل الأدوار",
       "filtreRole": "الدور",
@@ -4711,7 +5019,14 @@
       "pieceSansObjet": "لا ينطبق",
       "attendAujourdhui": "اليوم",
       "attendUnJour": "يوم واحد",
-      "attendJours": "\u2068{jours}\u2069 أيام"
+      "attendJours(param=jours)": {
+        "zero": "اليوم",
+        "one": "يوم واحد",
+        "two": "يومان",
+        "few": "\u2068{jours}\u2069 أيام",
+        "many": "\u2068{jours}\u2069 يومًا",
+        "other": "\u2068{jours}\u2069 يوم"
+      }
     },
     "agents": {
       "titre": "وصول الوكلاء الآليين",
@@ -4761,7 +5076,14 @@
       "etatRevoque": "ملغى",
       "etatExpire": "منتهي الصلاحية",
       "jamaisServi": "لم يُستخدم قط",
-      "usage": "\u2068{nombre}\u2069 مرات، آخرها \u2068{quand}\u2069",
+      "usage(param=nombre)": {
+        "zero": "لم يُستخدم بعد",
+        "one": "مرة واحدة، آخرها \u2068{quand}\u2069",
+        "two": "مرتان، آخرهما \u2068{quand}\u2069",
+        "few": "\u2068{nombre}\u2069 مرات، آخرها \u2068{quand}\u2069",
+        "many": "\u2068{nombre}\u2069 مرةً، آخرها \u2068{quand}\u2069",
+        "other": "\u2068{nombre}\u2069 مرة، آخرها \u2068{quand}\u2069"
+      },
       "revoquer": "إلغاء",
       "revoquerTitre": "إلغاء هذا الرمز؟",
       "revoquerDetail": "سيفقد الوكيل الوصول عند طلبه التالي. هذا نهائي: الرمز الملغى لا يُعاد تفعيله.",

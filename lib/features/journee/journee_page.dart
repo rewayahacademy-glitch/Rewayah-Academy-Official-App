@@ -1584,7 +1584,7 @@ String _nomClasse(String? libelle) =>
 /// Combien d'eleves, au singulier ou au pluriel.
 String _effectif(int nombre) => nombre == 1
     ? t.enseignant.journee.effectifUn
-    : t.enseignant.journee.effectif(nombre: '$nombre');
+    : t.enseignant.journee.effectif(nombre: nombre);
 
 /// Comment nommer un eleve dans une alerte : son prenom, sinon son identifiant
 /// immuable. **Jamais un nom de famille.**

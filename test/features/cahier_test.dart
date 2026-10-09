@@ -571,7 +571,7 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(find.text(t.enseignant.cahier.valider), findsOneWidget);
       expect(
-        find.text(t.enseignant.cahier.plusieursExceptions(nombre: '2')),
+        find.text(t.enseignant.cahier.plusieursExceptions(nombre: 2)),
         findsOneWidget,
       );
     });

@@ -243,7 +243,7 @@ String _depuis(DateTime? quand) {
   return switch (jours) {
     <= 0 => t.admin.progression.depuisAujourdhui,
     1 => t.admin.progression.depuisUnJour,
-    final int j => t.admin.progression.depuisJours(jours: '$j'),
+    final int j => t.admin.progression.depuisJours(jours: j),
   };
 }
 

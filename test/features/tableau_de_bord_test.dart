@@ -232,8 +232,8 @@ void main() {
       ];
       // Du plus ancien au plus recent ; le quatrieme reste dans la file.
       expect(lus, <String>[
-        'Ancien · ${t.admin.tableau.attenteJours(jours: '7')}',
-        'Milieu · ${t.admin.tableau.attenteJours(jours: '3')}',
+        'Ancien · ${t.admin.tableau.attenteJours(jours: 7)}',
+        'Milieu · ${t.admin.tableau.attenteJours(jours: 3)}',
         'Hier · ${t.admin.tableau.attenteUnJour}',
       ]);
       expect(find.textContaining('Recent'), findsNothing);

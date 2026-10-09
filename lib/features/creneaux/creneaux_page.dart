@@ -299,7 +299,7 @@ class _OngletHeuresEtat extends ConsumerState<_OngletHeures> {
         Text(switch (poses.length) {
           0 => t.enseignant.creneaux.aucuneHeure,
           1 => t.disponibilites.poseeUne,
-          _ => t.disponibilites.posees(nombre: '${poses.length}'),
+          _ => t.disponibilites.posees(nombre: poses.length),
         }, style: textes.bodySmall),
         if (horsLigne) ...<Widget>[
           Ecart.vSm,

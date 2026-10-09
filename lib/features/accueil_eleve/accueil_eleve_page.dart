@@ -514,7 +514,7 @@ class _SansCoursAujourdhui extends StatelessWidget {
         (null, _) => t.eleve.accueil.aucunCoursDetail,
         (_, <= 0) => t.eleve.accueil.prochainAujourdhui,
         (_, 1) => t.eleve.accueil.prochainDemain,
-        (_, _) => t.eleve.accueil.prochainDansJours(jours: '$jours'),
+        (_, _) => t.eleve.accueil.prochainDansJours(jours: jours),
       },
     );
   }

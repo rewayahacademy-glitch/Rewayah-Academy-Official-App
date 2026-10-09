@@ -189,6 +189,14 @@ String? _autreFrancais(String cle, Map<String, String> fr) {
   return fr['${cle.substring(0, point)}.other'];
 }
 
+/// Un nombre suivi d'un pluriel de 3 a 10 (« {n} أيام », parametre isole) hors d'un pluriel
+/// slang : faux pour 2 (duel) et pour 11 et plus (singulier). Une telle phrase
+/// passe en pluriel (zero, one, two, few, many, other).
+final RegExp _nombrePluriel = RegExp(
+  '\u2069 (أيام|طلاب|ساعات|ملفات|طلبات|مرات|مستويات|أشخاص|مدخلات|دقائق|'
+  'أسابيع|زيارات|عناصر|دروس|حصص|فصول|آيات|صفحات|رسائل|أسئلة|أجهزة|سور)',
+);
+
 bool _sansMots(String texte) => texte
     .replaceAll(_parametre, '')
     .replaceAll(RegExp('[\u2066\u2068\u2069 ·/%٪،,:()-]'), '')
@@ -274,6 +282,14 @@ void main() {
         }
       });
 
+      test('un nombre variable passe par un pluriel slang', () {
+        for (final MapEntry<String, String> e in ar.entries) {
+          final String forme = e.key.substring(e.key.lastIndexOf('.') + 1);
+          if (forme == 'other' || _formesArabes.contains(forme)) continue;
+          expect(_nombrePluriel.hasMatch(e.value), isFalse, reason: e.key);
+        }
+      });
+
       test('du texte arabe, jamais le francais recopie', () {
         final RegExp arabe = RegExp('[؀-ۿ]');
         for (final MapEntry<String, String> e in ar.entries) {
@@ -317,6 +333,11 @@ void main() {
       '\u2068X\u2069، الصفحة \u20681\u2069 من \u20682\u2069',
     );
     expect(traductions.tc.bibliotheque.titre, 'المكتبة');
+    // Un pluriel garde le nom de son parametre (param=jours), en arabe
+    // comme en francais.
+    expect(traductions.admin.tableau.attenteJours(jours: 2), 'ينتظر منذ يومين');
+    expect(t.admin.tableau.attenteJours(jours: 1), 'En attente depuis 1 jour');
+    expect(t.admin.tableau.attenteJours(jours: 4), 'En attente depuis 4 jours');
     // Les six formes du pluriel arabe sont choisies a l'execution.
     expect(traductions.controleur.controle.eleves(n: 2), 'طالبان');
     expect(traductions.controleur.controle.eleves(n: 5), '\u20685\u2069 طلاب');

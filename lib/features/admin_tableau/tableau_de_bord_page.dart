@@ -297,5 +297,5 @@ String _anciennete(DateTime maintenant, DateTime depuis) =>
     switch (maintenant.difference(depuis).inDays) {
       <= 0 => t.admin.tableau.attenteAujourdhui,
       1 => t.admin.tableau.attenteUnJour,
-      final int jours => t.admin.tableau.attenteJours(jours: '$jours'),
+      final int jours => t.admin.tableau.attenteJours(jours: jours),
     };

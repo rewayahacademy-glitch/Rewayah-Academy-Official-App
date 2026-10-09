@@ -315,7 +315,7 @@ void main() {
 
       expect(find.text(t.eleve.accueil.aucunCours), findsOneWidget);
       expect(
-        find.text(t.eleve.accueil.prochainDansJours(jours: '3')),
+        find.text(t.eleve.accueil.prochainDansJours(jours: 3)),
         findsOneWidget,
       );
       // En jours, jamais en date : ni le jour de la semaine, ni l'heure.

@@ -423,10 +423,7 @@ void main() {
         find.text(t.enseignant.journee.plage(debut: '17:30', fin: '18:15')),
         findsWidgets,
       );
-      expect(
-        find.text(t.enseignant.journee.effectif(nombre: '4')),
-        findsWidgets,
-      );
+      expect(find.text(t.enseignant.journee.effectif(nombre: 4)), findsWidgets);
     });
 
     testWidgets('avant la fenetre : le contexte, puis Preparer la seance', (

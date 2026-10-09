@@ -136,7 +136,7 @@ class _BlocEnfantEtat extends ConsumerState<_BlocEnfant> {
             Text(
               poses.length == 1
                   ? t.disponibilites.poseeUne
-                  : t.disponibilites.posees(nombre: '${poses.length}'),
+                  : t.disponibilites.posees(nombre: poses.length),
               style: textes.bodySmall,
             ),
           if (_erreur || creneaux.hasError) ...<Widget>[
