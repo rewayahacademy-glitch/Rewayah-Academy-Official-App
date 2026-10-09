@@ -24,8 +24,7 @@ SELECT
        THEN 'f1480000-0000-0000-0000-000000000002'::uuid
        ELSE 'f1480000-0000-0000-0000-000000000003'::uuid END,
   'Adulte', g.n::text,
-  CASE WHEN g.n = 1 THEN 'disabled'::public.account_status
-       ELSE 'active'::public.account_status END,
+  'active'::public.account_status,
   'male'
 FROM generate_series(1, public.app_config_int('groupe.capacite_adulte', 6) + 4) AS g(n);
 
@@ -86,7 +85,18 @@ BEGIN
   END;
   IF NOT v_ok THEN RAISE EXCEPTION 'F1: une heure absente a été acceptée'; END IF;
 
-  -- Compte désactivé et foyer suspendu exclus par la même garde positive.
+  -- Les demandes entrent dans la file, puis leur compte/foyer peut être
+  -- désactivé avant le calcul du regroupement. Le quota doit les exclure.
+  FOREACH v_id IN ARRAY ARRAY[
+    'f1490000-0000-0000-0000-000000000001'::uuid,
+    'f1490000-0000-0000-0000-000000000002'::uuid
+  ] LOOP
+    PERFORM set_config('test.uid', v_id::text, true);
+    PERFORM set_config('test.jwt',
+      jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text, true);
+    PERFORM public.demander_creneau_personnalise(v_id, 'Europe/Paris',
+      ARRAY[2,4,6]::smallint[], 18::smallint);
+  END LOOP;
   UPDATE public.profiles SET account_status = 'disabled'
    WHERE id = 'f1490000-0000-0000-0000-000000000001';
   UPDATE public.households SET status = 'suspended'
@@ -96,8 +106,6 @@ BEGIN
     'f1490000-0000-0000-0000-000000000002'::uuid
   ] LOOP
     PERFORM set_config('test.uid', v_id::text, true);
-    PERFORM set_config('test.jwt',
-      jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text, true);
     v_ok := false;
     BEGIN
       PERFORM public.demander_creneau_personnalise(v_id, 'Europe/Paris',
