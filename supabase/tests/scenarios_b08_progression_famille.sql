@@ -96,7 +96,8 @@ BEGIN
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'guardian',
       'household_id', 'b0800000-0000-0000-0000-000000000101'))::text, true);
   v_result := public.progression_famille(v_student);
-  IF jsonb_array_length(v_result->'seances') <> 0 THEN
+  IF jsonb_array_length(v_result->'seances') <> 0
+     OR public.resume_seance_famille(v_session, v_student) IS NOT NULL THEN
     RAISE EXCEPTION 'B-08: un brouillon est visible au foyer avant publication';
   END IF;
 
@@ -125,11 +126,15 @@ BEGIN
       'household_id', 'b0800000-0000-0000-0000-000000000101'))::text, true);
 
   v_result := public.progression_famille(v_student);
-  IF v_result->>'niveau_officiel' <> 'lecture_lente'
+  IF NOT (v_result ? 'niveau_humain')
+     OR jsonb_typeof(v_result->'jalons') <> 'array'
+     OR v_result->>'niveau_humain' = 'lecture_lente'
      OR jsonb_array_length(v_result->'seances') <> 1
      OR v_result->'seances'->0->>'texte_famille'
         <> 'Lecture régulière; revoir les liaisons.'
-     OR v_result->'seances'->0->>'publie_le' IS NULL THEN
+     OR v_result->'seances'->0->>'publie_le' IS NULL
+     OR public.resume_seance_famille(v_session, v_student)
+        <> 'Lecture régulière; revoir les liaisons.' THEN
     RAISE EXCEPTION 'B-08: la projection famille publiée est incomplète';
   END IF;
 
@@ -141,6 +146,15 @@ BEGIN
   END;
   IF NOT v_denied THEN
     RAISE EXCEPTION 'B-08: la RPC famille a divulgué un autre foyer';
+  END IF;
+  v_denied := false;
+  BEGIN
+    PERFORM public.resume_seance_famille(v_session, v_student);
+  EXCEPTION WHEN OTHERS THEN
+    v_denied := true;
+  END;
+  IF NOT v_denied THEN
+    RAISE EXCEPTION 'B-08: la RPC de résumé a divulgué un autre foyer';
   END IF;
 
   PERFORM set_config('test.uid', v_other_teacher::text, true);
