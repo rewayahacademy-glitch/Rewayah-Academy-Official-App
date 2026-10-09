@@ -181,39 +181,51 @@ void main() {
     expect(textesM2.where((Text w) => w.data == ''), isEmpty);
   });
 
+  // SUPERPOS-1 (decide par delegation le 05/10), repris dans le fil des
+  // Communications par JONCTION-LIGNES-1 : l'envoi est une icone DANS le
+  // champ, rendue des qu'il y a un texte ; le champ prend toute la largeur
+  // a toute taille de texte (plus d'« Envoyer » sous le champ).
   group('saisie a texte agrandi', () {
-    testWidgets('390, texte x2 : « Envoyer » sous le champ, champ pleine '
-        'largeur', (WidgetTester tester) async {
-      await _monter(tester, fil: _fil(_Envois()), echelle: 2);
-      final Rect champ = tester.getRect(find.byKey(FilDiscussion.champKey));
-      final Rect envoyer = tester.getRect(find.byKey(FilDiscussion.envoyerKey));
-      expect(envoyer.top, greaterThanOrEqualTo(champ.bottom));
-      expect(champ.width, greaterThan(300));
-      expect(tester.takeException(), isNull);
-    });
-
-    testWidgets('1440, texte x2 : sur la meme ligne', (
-      WidgetTester tester,
-    ) async {
+    Future<void> verifier(
+      WidgetTester tester, {
+      required Size taille,
+      required double echelle,
+    }) async {
       await _monter(
         tester,
         fil: _fil(_Envois()),
-        taille: const Size(1440, 900),
-        echelle: 2,
+        taille: taille,
+        echelle: echelle,
       );
+      expect(find.byKey(FilDiscussion.envoyerKey), findsNothing);
+      await tester.enterText(find.byKey(FilDiscussion.champKey), 'Bonjour');
+      await tester.pumpAndSettle();
       final Rect champ = tester.getRect(find.byKey(FilDiscussion.champKey));
       final Rect envoyer = tester.getRect(find.byKey(FilDiscussion.envoyerKey));
-      expect(envoyer.top, lessThan(champ.bottom));
-      expect(envoyer.left, greaterThan(champ.right));
-    });
+      expect(envoyer.top, greaterThanOrEqualTo(champ.top - 0.5));
+      expect(envoyer.bottom, lessThanOrEqualTo(champ.bottom + 0.5));
+      expect(envoyer.left, greaterThanOrEqualTo(champ.left - 0.5));
+      expect(envoyer.right, lessThanOrEqualTo(champ.right + 0.5));
+      expect(champ.width, greaterThan(taille.width - 2 * 48));
+      expect(tester.takeException(), isNull);
+    }
 
-    testWidgets('390, texte x1 : sur la meme ligne', (
-      WidgetTester tester,
-    ) async {
-      await _monter(tester, fil: _fil(_Envois()));
-      final Rect champ = tester.getRect(find.byKey(FilDiscussion.champKey));
-      final Rect envoyer = tester.getRect(find.byKey(FilDiscussion.envoyerKey));
-      expect(envoyer.top, lessThan(champ.bottom));
-    });
+    testWidgets(
+      '390, texte x2 : envoi dans le champ, champ pleine largeur',
+      (WidgetTester tester) =>
+          verifier(tester, taille: const Size(390, 844), echelle: 2),
+    );
+
+    testWidgets(
+      '1440, texte x2 : envoi dans le champ',
+      (WidgetTester tester) =>
+          verifier(tester, taille: const Size(1440, 900), echelle: 2),
+    );
+
+    testWidgets(
+      '390, texte x1 : envoi dans le champ',
+      (WidgetTester tester) =>
+          verifier(tester, taille: const Size(390, 844), echelle: 1),
+    );
   });
 }

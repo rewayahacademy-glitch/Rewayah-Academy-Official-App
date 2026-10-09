@@ -601,7 +601,26 @@ class _FilDiscussionState extends State<FilDiscussion> {
     if (widget.controleur == null) _proprio = TextEditingController();
     _champ.addListener(_auChangement);
     _noeudChamp.addListener(_auFocusChamp);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _allerEnBas(false));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _allerEnBas(false);
+      _montrerSaisie();
+    });
+  }
+
+  /// SUPERPOS-1 (repris par JONCTION-LIGNES-1) : quand la page entiere
+  /// defile (texte double, vue basse) et que le fil n'a pas pris sa tete (le
+  /// Controleur), l'arrivee dans le fil montre la saisie et le dernier
+  /// message, l'en-tete de la page passant au-dessus, comme dans toute
+  /// messagerie. Sans effet quand tout tient deja dans l'ecran, ni pour un
+  /// fil qui porte son en-tete (sa saisie est dans la liste, deja au bas).
+  void _montrerSaisie() {
+    if (widget.entete != null || widget.enteteCompacte != null) return;
+    final BuildContext? saisie = _cleZoneSaisie.currentContext;
+    if (!mounted || saisie == null) return;
+    Scrollable.ensureVisible(
+      saisie,
+      alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+    );
   }
 
   void _auFocusChamp() {
@@ -629,7 +648,13 @@ class _FilDiscussionState extends State<FilDiscussion> {
     // tete de la page. Quand la page la lui confie (texte agrandi sur
     // telephone, vue basse), elle defile avec les messages, avant l'en-tete
     // du fil ; le premier ecran montre la fin du fil et son champ.
-    final TetePageConfiee? page = TetePageConfiee.de(context);
+    // JONCTION-LIGNES-1 : seul un fil qui porte son propre en-tete
+    // (Messages, Studio : [FilDiscussion.entete] ou
+    // [FilDiscussion.enteteCompacte]) prend la tete de la page. Le fil du
+    // Controleur n'en a pas : la page garde sa tete, compacte et fixe
+    // (SUPERPOS-1), au-dessus du fil et de sa saisie.
+    final bool preneur = widget.entete != null || widget.enteteCompacte != null;
+    final TetePageConfiee? page = preneur ? TetePageConfiee.de(context) : null;
     final RelaisTetePage? relais = page?.relais;
     if (!identical(relais, _relaisTete)) {
       _relaisTete?.rendre(this);
@@ -1066,7 +1091,13 @@ class _FilDiscussionState extends State<FilDiscussion> {
         // message, le champ et « Envoyer » entier au premier ecran. Elle est
         // une tranche a part de la liste : un message ajoute ne la
         // reconstruit pas (le champ garde son focus).
-        final bool saisieDansListe = limite == null && enteteDefilante;
+        // JONCTION-LIGNES-1 : un fil sans en-tete (le Controleur) garde sa
+        // saisie sous la liste, dans la colonne de corps de SUPERPOS-1, et
+        // la page garde sa tete compacte au-dessus.
+        final bool saisieDansListe =
+            limite == null &&
+            enteteDefilante &&
+            (widget.entete != null || widget.enteteCompacte != null);
         _saisieDansListe = saisieDansListe;
         // Decision « Focus a 320 » : en Focus, a texte agrandi sur un
         // telephone etroit, la saisie dans la liste se reduit a une ligne

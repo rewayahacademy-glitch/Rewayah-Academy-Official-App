@@ -955,25 +955,31 @@ class _BarreMobileState extends State<_BarreMobile> {
     }
   }
 
-  /// La largeur sous laquelle le champ de recherche couperait un mot de son
-  /// indication : le mot le plus long, a l'echelle du texte, plus l'icone de
-  /// tete (une cible de 48) et la marge de fin du champ.
+  /// La largeur sous laquelle le champ de recherche ne montre plus son
+  /// indication entiere sur UNE ligne. ALERTE-1b (lecon 8) mesurait le mot
+  /// le plus long (« Rec / her… ») ; COM-F-Q5 exige la ligne entiere (une
+  /// bande de 6 px la passait a la ligne et doublait la barre). JONCTION-
+  /// LIGNES-1 garde la regle la plus stricte, qui contient l'autre : ce que
+  /// l'`InputDecorator` Material 3 reserve autour de l'indication (icone de
+  /// tete, son ecart au texte, la marge de fin et l'ecart du contour).
   double _largeurChampUtile(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final TextStyle style = (theme.textTheme.bodyLarge ?? const TextStyle())
-        .merge(theme.inputDecorationTheme.hintStyle);
-    double mot = 0;
-    for (final String m in t.nav.admin.rechercheIndication.split(' ')) {
-      final TextPainter peintre = TextPainter(
-        text: TextSpan(text: m, style: style),
-        textDirection: Directionality.of(context),
-        textScaler: MediaQuery.textScalerOf(context),
-        maxLines: 1,
-      )..layout();
-      mot = math.max(mot, peintre.width);
-      peintre.dispose();
-    }
-    return mot + kMinInteractiveDimension + AppSpacing.lg + AppSpacing.xs;
+    final TextPainter indication = TextPainter(
+      text: TextSpan(
+        text: t.nav.admin.rechercheIndication,
+        style: Theme.of(context).inputDecorationTheme.hintStyle,
+      ),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 1,
+    )..layout();
+    final double largeur =
+        indication.width +
+        AppTouchTarget.standard +
+        AppSpacing.xs +
+        AppSpacing.lg +
+        AppSpacing.xs;
+    indication.dispose();
+    return largeur;
   }
 
   @override

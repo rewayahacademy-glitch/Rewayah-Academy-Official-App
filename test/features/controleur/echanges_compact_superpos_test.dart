@@ -126,12 +126,9 @@ void main() {
         lessThanOrEqualTo(bas),
         reason: 'saisie $saisie, barre du bas a $bas',
       );
-      final Rect liste = tester.getRect(
-        find.descendant(
-          of: find.byType(FilDiscussion),
-          matching: find.byType(ListView),
-        ),
-      );
+      // La zone des messages (le fil des Communications n'est plus une
+      // ListView, JONCTION-LIGNES-1).
+      final Rect liste = tester.getRect(find.byKey(FilDiscussion.cleMessages));
       // Une bulle en texte double mesure environ 200 : la liste en montre
       // au moins autant, et le dernier message y est lisible jusqu'a son
       // pied (un message plus long que la liste en montre 200 au moins).

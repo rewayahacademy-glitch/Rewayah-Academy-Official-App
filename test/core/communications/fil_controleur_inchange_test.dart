@@ -70,7 +70,8 @@ void main() {
       find
           .descendant(
             of: find.byType(FilDiscussion),
-            matching: find.byType(Column),
+            // La racine est une ColonneCorps (SUPERPOS-1), une Column.
+            matching: find.byWidgetPredicate((Widget w) => w is Column),
           )
           .first,
     );

@@ -59,7 +59,11 @@ Future<void> _monter(
 /// La colonne racine du fil.
 Column _racine(WidgetTester tester) => tester.widget<Column>(
   find
-      .descendant(of: find.byType(FilDiscussion), matching: find.byType(Column))
+      .descendant(
+        of: find.byType(FilDiscussion),
+        // La racine est une ColonneCorps (SUPERPOS-1), une Column.
+        matching: find.byWidgetPredicate((Widget w) => w is Column),
+      )
       .first,
 );
 
@@ -73,7 +77,12 @@ void main() {
     expect(_racine(tester).children, hasLength(2));
     expect(find.byKey(_vocal), findsNothing);
     expect(find.text(c.vocal), findsNothing);
-    expect(find.text(c.message), findsOneWidget);
+    // SUPERPOS-1 (JONCTION-LIGNES-1) : un champ d'envoi ne montre pas son
+    // etiquette, son invite la dit ; le lecteur d'ecran la lit.
+    expect(
+      find.bySemanticsLabel(RegExp(RegExp.escape(c.message))),
+      findsWidgets,
+    );
     expect(find.text(c.champVide), findsOneWidget);
   });
 
