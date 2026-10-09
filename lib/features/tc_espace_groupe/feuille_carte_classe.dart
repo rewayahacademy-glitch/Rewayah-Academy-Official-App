@@ -375,10 +375,16 @@ class _FeuilleCarteClasseEtat extends ConsumerState<FeuilleCarteClasse> {
           ),
         ),
         Ecart.vLg,
+        // CARTES-PERSO-1c : la ligne d'echeance isolee dans son sens de
+        // lecture, comme les aides et les erreurs (revue CARTES-PERSO-1b,
+        // reserve 1) : un libelle termine par un point le garderait a la fin
+        // en RTL.
         Text(
-          echeance == null
-              ? t.classe.cartes.feuille.echeanceAucune
-              : t.classe.cartes.echeance(date: echeanceRendue(echeance)),
+          isolerSens(
+            echeance == null
+                ? t.classe.cartes.feuille.echeanceAucune
+                : t.classe.cartes.echeance(date: echeanceRendue(echeance)),
+          ),
           style: textes.bodyLarge,
         ),
         if (erreurEcheance != null) ...<Widget>[

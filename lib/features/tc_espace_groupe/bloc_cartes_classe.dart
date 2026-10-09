@@ -359,8 +359,12 @@ class VueCarteClasse extends StatelessWidget {
         ],
         if (echeance != null) ...<Widget>[
           Ecart.vSm,
+          // CARTES-PERSO-1c : isolee dans son sens de lecture (revue
+          // CARTES-PERSO-1b, reserve 1).
           Text(
-            t.classe.cartes.echeance(date: echeanceRendue(echeance)),
+            isolerSens(
+              t.classe.cartes.echeance(date: echeanceRendue(echeance)),
+            ),
             style: guidee ? textes.bodyMedium : discret,
           ),
         ],

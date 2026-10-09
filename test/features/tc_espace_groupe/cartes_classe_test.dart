@@ -9,6 +9,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -396,7 +397,9 @@ void main() {
       ];
       expect(hauts, List<double>.of(hauts)..sort());
       expect(
-        find.text(t.classe.cartes.echeance(date: echeanceRendue(_lundi))),
+        find.text(
+          isolerSens(t.classe.cartes.echeance(date: echeanceRendue(_lundi))),
+        ),
         findsOneWidget,
       );
       // K-55 : des cartes detachees, separees de 16 au moins.
@@ -778,7 +781,10 @@ void main() {
       );
       await tester.pumpAndSettle();
       // Sans prochaine seance connue, aucune echeance n'est deduite.
-      expect(find.text(t.classe.cartes.feuille.echeanceAucune), findsOneWidget);
+      expect(
+        find.text(isolerSens(t.classe.cartes.feuille.echeanceAucune)),
+        findsOneWidget,
+      );
       await tester.ensureVisible(find.byKey(FeuilleCarteClasse.enregistrerKey));
       await tester.tap(find.byKey(FeuilleCarteClasse.enregistrerKey));
       await tester.pumpAndSettle();
@@ -809,7 +815,9 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(
-        find.text(t.classe.cartes.echeance(date: echeanceRendue(_lundi))),
+        find.text(
+          isolerSens(t.classe.cartes.echeance(date: echeanceRendue(_lundi))),
+        ),
         findsOneWidget,
       );
       expect(
@@ -1060,6 +1068,111 @@ void main() {
         expect(find.text(isolerSens(erreur)), findsOneWidget, reason: erreur);
         expect(find.text(erreur), findsNothing, reason: erreur);
       }
+    });
+
+    // Revue CARTES-PERSO-1b, reserve 1 : les lignes « Echeance : {date} »
+    // et « Aucune echeance » n'etaient pas isolees. Sans ponctuation finale
+    // aujourd'hui, rien ne se voyait ; la contre-epreuve ajoute un point a
+    // la fin du libelle, comme le ferait une traduction, et mesure qu'il
+    // reste a la fin de la lecture (a droite d'un texte francais), et non
+    // projete a gauche par l'interface arabe.
+    group('echeance, rtl', () {
+      String echeanceLundi() =>
+          t.classe.cartes.echeance(date: echeanceRendue(_lundi));
+
+      /// Le texte tel que l'ecran l'affiche ([Text.data]), sans supposer
+      /// qu'il est isole.
+      String affiche(WidgetTester tester, String nu) => tester
+          .widgetList<Text>(find.byType(Text))
+          .map((Text w) => w.data ?? '')
+          .singleWhere((String d) => d.contains(nu));
+
+      /// Le meme texte, son libelle termine par un point : le point entre
+      /// dans l'isolat quand il y en a un, comme dans `isolerSens('….')`.
+      String avecPoint(String rendu) => rendu.endsWith('\u2069')
+          ? '${rendu.substring(0, rendu.length - 1)}.\u2069'
+          : '$rendu.';
+
+      /// En RTL, le point final s'affiche a droite de la premiere lettre du
+      /// libelle francais (fin de sa lecture), jamais a sa gauche. Sur une
+      /// seule ligne, pour comparer des boites de la meme ligne.
+      Future<void> pointALaFin(WidgetTester tester, String rendu) async {
+        final String texte = avecPoint(rendu);
+        const Key cle = Key('contre-epreuve-point');
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.rtl,
+            child: Center(child: Text(texte, key: cle, softWrap: false)),
+          ),
+        );
+        final RenderParagraph p = tester.renderObject<RenderParagraph>(
+          find.descendant(of: find.byKey(cle), matching: find.byType(RichText)),
+        );
+        TextBox boite(int i) => p
+            .getBoxesForSelection(
+              TextSelection(baseOffset: i, extentOffset: i + 1),
+            )
+            .single;
+        final int premiere = texte.indexOf(RegExp(r'\p{L}', unicode: true));
+        final int point = texte.lastIndexOf('.');
+        expect(
+          boite(point).left,
+          greaterThan(boite(premiere).left),
+          reason: 'le point de « $texte » doit rester a la fin',
+        );
+      }
+
+      testWidgets('bloc : « Echeance : {date} » isolee, point a la fin', (
+        WidgetTester tester,
+      ) async {
+        _taille(tester, const Size(390, 2400));
+        await tester.pumpWidget(
+          _hote(
+            const BlocCartesClasse(groupeId: _id),
+            surcharges: _demo(peutModifier: false),
+            sens: TextDirection.rtl,
+          ),
+        );
+        await tester.pumpAndSettle();
+        final String rendu = affiche(tester, echeanceLundi());
+        expect(rendu, isolerSens(echeanceLundi()));
+        await pointALaFin(tester, rendu);
+      });
+
+      testWidgets('feuille : « Aucune echeance » isolee, point a la fin', (
+        WidgetTester tester,
+      ) async {
+        _taille(tester, const Size(390, 3200));
+        await tester.pumpWidget(
+          _hote(
+            const FeuilleCarteClasse(groupeId: _id),
+            surcharges: _demo(peutModifier: true),
+            sens: TextDirection.rtl,
+          ),
+        );
+        await tester.pumpAndSettle();
+        final String nu = t.classe.cartes.feuille.echeanceAucune;
+        final String rendu = affiche(tester, nu);
+        expect(rendu, isolerSens(nu));
+        await pointALaFin(tester, rendu);
+      });
+
+      testWidgets('feuille : « Echeance : {date} » isolee, point a la fin', (
+        WidgetTester tester,
+      ) async {
+        _taille(tester, const Size(390, 3200));
+        await tester.pumpWidget(
+          _hote(
+            FeuilleCarteClasse(groupeId: _id, carte: _troisCartes()[1]),
+            surcharges: _demo(peutModifier: true),
+            sens: TextDirection.rtl,
+          ),
+        );
+        await tester.pumpAndSettle();
+        final String rendu = affiche(tester, echeanceLundi());
+        expect(rendu, isolerSens(echeanceLundi()));
+        await pointALaFin(tester, rendu);
+      });
     });
 
     test('sensDeLaSaisie : la premiere lettre decide, sans lettre rien', () {
