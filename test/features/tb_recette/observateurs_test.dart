@@ -16,6 +16,9 @@
 //    le tuteur garde la sienne et son rappel.
 // 4. SALLE-200-1/2 avec presentation : 320 et 390, texte x1 et x2, la
 //    salle tient, « Quitter » reste a l'ecran, le titre n'est pas coupe.
+// 5. CT-3 sur tablette (900 et 1100 px) : la liste de presence du controleur
+//    se lit (contraste de chaque texte sur le fond REELLEMENT peint sous lui)
+//    et tient dans l'ecran sans defiler, avec ou sans presentation.
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show RenderParagraph;
@@ -25,9 +28,11 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/barre_precedent_suivant.dart';
+import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
 import 'package:rewayah_academy/core/widgets/page_immersive.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
+import 'package:rewayah_academy/core/widgets/section_header.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/salle_controleur_demo.dart';
 import 'package:rewayah_academy/features/demo/salle_observateur_demo.dart';
@@ -49,6 +54,7 @@ import 'package:rewayah_academy/features/tc_dock/couche_annotation.dart';
 import '../../capture/outil_capture.dart' hide stabiliser;
 import '../../router/support_routeur.dart';
 import '../../support/garde_interface.dart';
+import '../../theme/support/contraste.dart';
 
 const Key _presentation = ValueKey<String>('presentation-lue');
 
@@ -89,6 +95,43 @@ int _touchables() => find.byType(Pressable).evaluate().length;
 Finder _quitter(ObservateurDemo o) => o == ObservateurDemo.controleur
     ? find.bySemanticsLabel(RegExp(t.salle.quitter))
     : find.bySemanticsLabel(RegExp(t.salle.quitterLeCours));
+
+/// La couleur peinte sous [e] : la premiere surface opaque de ses ancetres.
+Color _fondSous(Element e) {
+  Color? fond;
+  e.visitAncestorElements((Element a) {
+    final Widget w = a.widget;
+    final Color? c = switch (w) {
+      DecoratedBox(decoration: final BoxDecoration d) => d.color,
+      ColoredBox(:final Color color) => color,
+      Material(:final Color? color, :final MaterialType type)
+          when type != MaterialType.transparency =>
+        color,
+      Scaffold(:final Color? backgroundColor) => backgroundColor,
+      _ => null,
+    };
+    if (c != null && c.a == 1) {
+      fond = c;
+      return false;
+    }
+    return true;
+  });
+  return fond!;
+}
+
+/// L'encre reellement posee sur un paragraphe rendu.
+Color _encre(RenderParagraph p) {
+  Color? encre;
+  p.text.visitChildren((InlineSpan s) {
+    final Color? c = s.style?.color;
+    if (c != null) {
+      encre = c;
+      return false;
+    }
+    return true;
+  });
+  return encre!;
+}
 
 void main() {
   group('K-07 : chaque lien observateur s\'ouvre par le vrai routeur', () {
@@ -347,6 +390,83 @@ void main() {
               find.byType(IndicateurPage),
               find.byType(ZoneSupport),
             ]);
+          });
+        }
+      }
+    }
+  });
+
+  group('CT-3 sur tablette : la presence du controleur se lit', () {
+    for (final Size taille in <Size>[
+      const Size(900, 1200),
+      const Size(1100, 700),
+    ]) {
+      for (final SituationTb s in <SituationTb>[
+        SituationTb.sal00,
+        SituationTb.ped01,
+        SituationTb.ped03,
+      ]) {
+        for (final ThemeMode mode in <ThemeMode>[
+          ThemeMode.light,
+          ThemeMode.dark,
+        ]) {
+          testWidgets('controleur ${s.name}, ${taille.width.toInt()} px, '
+              '${mode.name}', (WidgetTester tester) async {
+            await _monter(
+              tester,
+              ObservateurDemo.controleur,
+              s,
+              taille: taille,
+              mode: mode,
+            );
+            expect(tester.takeException(), isNull);
+            expect(
+              find.byKey(_presentation),
+              s == SituationTb.sal00 ? findsNothing : findsOneWidget,
+            );
+            final Finder entete = find.byWidgetPredicate(
+              (Widget w) => w is SectionHeader && w.titre == t.presence.titre,
+            );
+            expect(entete, findsOneWidget);
+            final Finder lignes = find.byType(LignePresence);
+            expect(lignes, findsWidgets);
+            // Chaque texte de la liste, au rendu : son encre sur le fond peint
+            // sous lui, au seuil AA.
+            final Finder textes = find.descendant(
+              of: find
+                  .ancestor(of: entete, matching: find.byType(Column))
+                  .first,
+              matching: find.byType(RichText),
+            );
+            expect(textes.evaluate().length, greaterThanOrEqualTo(3));
+            for (final Element e in textes.evaluate()) {
+              final RenderParagraph p = e.renderObject! as RenderParagraph;
+              final double r = contraste(_encre(p), _fondSous(e));
+              expect(
+                r,
+                greaterThanOrEqualTo(seuilTexte),
+                reason: '« ${p.text.toPlainText()} » a $r:1',
+              );
+            }
+            // La liste tient dans l'ecran sans un geste : l'en-tete et la
+            // derniere ligne sont dans la fenetre.
+            for (final Rect r in <Rect>[
+              tester.getRect(entete),
+              tester.getRect(lignes.last),
+            ]) {
+              expect(r.top, greaterThanOrEqualTo(-0.5));
+              expect(r.bottom, lessThanOrEqualTo(taille.height + 0.5));
+              expect(r.left, greaterThanOrEqualTo(-0.5));
+              expect(r.right, lessThanOrEqualTo(taille.width + 0.5));
+            }
+            if (s != SituationTb.sal00) {
+              final Rect zone = tester.getRect(find.byType(ZoneSupport));
+              expect(
+                tester.getRect(entete).left,
+                greaterThanOrEqualTo(zone.right - 0.5),
+                reason: 'colonne laterale, pas sous la scene',
+              );
+            }
           });
         }
       }

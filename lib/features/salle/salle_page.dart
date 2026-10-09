@@ -1331,7 +1331,8 @@ class _CorpsDocument extends StatelessWidget {
       child: document,
     );
 
-    if (AppGabarit.de(context) == Gabarit.desktop) {
+    final Gabarit gabarit = AppGabarit.de(context);
+    if (gabarit == Gabarit.desktop) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -1342,6 +1343,39 @@ class _CorpsDocument extends StatelessWidget {
         ],
       );
     }
+    // TB-11a (CT-3, tablette) : la presentation lue garde sur tablette la
+    // colonne de presence LATERALE de la salle sans presentation (`_Corps`) :
+    // la meme liste, au meme endroit, sur la meme surface (`surfaceSunken`
+    // chez le controleur). Posee sous la scene, elle n'etait atteignable
+    // qu'en defilant. Le panneau de l'enseignant garde sa composition.
+    final bool presenceLaterale =
+        gabarit.estLarge &&
+        !_panneauEnseignant(vue) &&
+        _colonneDePresence(context, vue);
+    final Widget empile = _empiler(
+      context,
+      panneau,
+      presenceSous: !presenceLaterale,
+    );
+    if (!presenceLaterale) {
+      return empile;
+    }
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Expanded(child: empile),
+        _ColonnePresence(vue: vue, lignes: lignes),
+      ],
+    );
+  }
+
+  /// Le document, puis la scene dessous, puis (si [presenceSous]) la
+  /// presence, dans une colonne qui defile.
+  Widget _empiler(
+    BuildContext context,
+    Widget panneau, {
+    required bool presenceSous,
+  }) {
     return LayoutBuilder(
       builder: (BuildContext _, BoxConstraints contraintes) {
         // Le document prend tout ce qui reste sous la bande de la scene, sans
@@ -1372,11 +1406,9 @@ class _CorpsDocument extends StatelessWidget {
               // deja, elle a donc la place que `_Corps` n'a pas en largeur.
               // `_ListePresence` est une colonne de taille minimale, elle vit
               // sans hauteur bornee.
-              if (_colonneDePresence(context, vue))
-                Padding(
-                  padding: const EdgeInsets.all(AppSpacing.lg),
-                  child: _ListePresence(lignes: lignes, entete: true),
-                ),
+              // CT-3 : la meme surface que la colonne laterale.
+              if (presenceSous && _colonneDePresence(context, vue))
+                _FondPresence(vue: vue, lignes: lignes),
             ],
           ),
         );
@@ -1434,24 +1466,36 @@ class _ColonnePresence extends StatelessWidget {
     // Une largeur de chrome, deja posee pour la barre laterale : la
     // reutiliser evite d'en inventer une seconde.
     width: AppGabarit.largeurBarreLaterale,
-    child: DecoratedBox(
-      // CT-3 : chez le controleur, la colonne se pose sur la surface des
-      // vignettes (`surfaceSunken`) : `SectionHeader` et `LignePresence`
-      // portent l'encre des surfaces claires, illisible sur le fond de la
-      // salle. Les autres roles gardent leur rendu (HU-1).
-      decoration: vue.role == RoleSalle.controleur
-          ? AppPalette.of(context).surfaceSunken.decoration()
-          : const BoxDecoration(),
-      child: IconTheme.merge(
-        data: vue.role == RoleSalle.controleur
-            ? IconThemeData(
-                color: AppPalette.of(context).surfaceSunken.onBackground,
-              )
-            : const IconThemeData(),
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: _ListePresence(lignes: lignes, entete: true),
-        ),
+    child: _FondPresence(vue: vue, lignes: lignes),
+  );
+}
+
+/// La liste de presence sur sa surface : une seule decoration pour la
+/// colonne laterale et la liste posee sous la scene (CT-3).
+class _FondPresence extends StatelessWidget {
+  const _FondPresence({required this.vue, required this.lignes});
+
+  final VueSalle vue;
+  final List<_Presence> lignes;
+
+  @override
+  Widget build(BuildContext context) => DecoratedBox(
+    // CT-3 : chez le controleur, la colonne se pose sur la surface des
+    // vignettes (`surfaceSunken`) : `SectionHeader` et `LignePresence`
+    // portent l'encre des surfaces claires, illisible sur le fond de la
+    // salle. Les autres roles gardent leur rendu (HU-1).
+    decoration: vue.role == RoleSalle.controleur
+        ? AppPalette.of(context).surfaceSunken.decoration()
+        : const BoxDecoration(),
+    child: IconTheme.merge(
+      data: vue.role == RoleSalle.controleur
+          ? IconThemeData(
+              color: AppPalette.of(context).surfaceSunken.onBackground,
+            )
+          : const IconThemeData(),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: _ListePresence(lignes: lignes, entete: true),
       ),
     ),
   );

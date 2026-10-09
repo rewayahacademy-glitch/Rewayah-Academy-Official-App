@@ -697,14 +697,56 @@ void main() {
         SituationTb.ped03,
         SituationTb.ped04,
       ]) {
-        for (final _Cadrage cas in <_Cadrage>[
+        for (final (_Cadrage cas, bool defile) in <(_Cadrage, bool)>[
           for (final _Cadrage c in _cadragesTb)
             if (situation == SituationTb.ped03
                 ? tous.contains(c.$1)
                 : c.$1 == '390_x1_clair' || c.$1 == '1440_x1_clair')
-              c,
+              (c, false),
+          // Tour 2 (CT-3 tablette) : la colonne de presence du controleur
+          // reste laterale et lisible a 900 et 1100 avec une presentation.
+          if (situation == SituationTb.ped03) ...<(_Cadrage, bool)>[
+            (
+              (
+                '900_x1_clair',
+                const Size(900, 1200),
+                2,
+                EdgeInsets.zero,
+                1,
+                ThemeMode.light,
+              ),
+              false,
+            ),
+            (
+              (
+                '1100_x1_clair',
+                const Size(1100, 700),
+                2,
+                EdgeInsets.zero,
+                1,
+                ThemeMode.light,
+              ),
+              false,
+            ),
+            (
+              (
+                '1100_x1_sombre',
+                const Size(1100, 700),
+                2,
+                EdgeInsets.zero,
+                1,
+                ThemeMode.dark,
+              ),
+              false,
+            ),
+            // 320 x2 apres defilement : la scene sous la presentation.
+            for (final _Cadrage c in _cadragesTb)
+              if (c.$1 == '320_x2_clair') (c, true),
+          ],
         ]) {
-          final String nom = 'tb11a_${o.name}_${situation.name}_${cas.$1}';
+          final String nom =
+              'tb11a_${o.name}_${situation.name}_${cas.$1}'
+              '${defile ? '_defile' : ''}';
           testWidgets(nom, (WidgetTester tester) async {
             fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
             await tester.pumpWidget(
@@ -716,6 +758,12 @@ void main() {
             );
             await stabiliser(tester);
             await tester.pump(const Duration(milliseconds: 1400));
+            if (defile) {
+              await tester.ensureVisible(
+                find.byKey(const ValueKey<String>('demo-enseignant')),
+              );
+              await tester.pumpAndSettle();
+            }
             // La capture prouve ce qu'elle nomme : la presentation lue.
             expect(
               find.byKey(const ValueKey<String>('presentation-lue')),
