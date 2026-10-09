@@ -486,13 +486,667 @@
   "tc": {
     "bibliotheque": {
       "sections": {
-        "groupe": "المواد المعروضة"
+        "groupe": "المواد المعروضة",
+        "continuer": "متابعة",
+        "pourCeGroupe": "لهذا الفصل",
+        "recents": "الأحدث",
+        "tousLesSupports": "كل المواد",
+        "resultats": "النتائج"
+      },
+      "titre": "المكتبة",
+      "rechercheIndication": "العنوان أو المستوى أو السورة أو الصفحة",
+      "rechercheLibelle": "البحث عن مادة",
+      "effacerRecherche": "عرض الكل",
+      "filtre": {
+        "type": "النوع",
+        "disponibilite": "التوفر"
+      },
+      "vide": {
+        "message": "لا مادة منشورة حتى الآن",
+        "invitation": "سيضع معلموك هنا مواد دروسك."
+      },
+      "aucunResultat": {
+        "message": "لا مادة مطابقة",
+        "invitation": "جرّب كلمة أخرى، أو خفّف عوامل التصفية."
+      },
+      "indisponible": {
+        "message": "المكتبة غير متاحة مؤقتًا",
+        "action": "إعادة المحاولة"
+      },
+      "introuvable": {
+        "message": "هذه المادة غير مفتوحة لك",
+        "invitation": "ربما سُحبت، أو هي مخصصة لفصل آخر. يمكن لمعلمك أن يعيد فتحها لك."
+      },
+      "offline": {
+        "aTelecharger": "للتنزيل",
+        "enCours": "جارٍ التنزيل",
+        "enCache": "في الذاكرة المؤقتة",
+        "telecharge": "تم التنزيل",
+        "indisponible": "غير متاحة دون اتصال"
+      },
+      "type": {
+        "quran": "القرآن",
+        "texteStructure": "نص",
+        "pdf": "PDF",
+        "image": "صورة",
+        "lecon": "درس"
+      },
+      "detail": {
+        "titre": "المادة",
+        "capacites": "ما تتيحه هذه المادة",
+        "niveaux": "المستويات",
+        "sansVersion": "لا نسخة منشورة: لا شيء للفتح الآن.",
+        "apercuIndisponible": "معاينة هذا التنسيق غير متاحة بعد في التطبيق. يمكنك حفظ نسخة منه.",
+        "renduCoran": "يُفتح القرآن في القارئ المخصص له."
+      },
+      "action": {
+        "telecharger": "إتاحتها دون اتصال",
+        "liberer": "تحرير المساحة",
+        "enregistrerCopie": "حفظ نسخة"
+      },
+      "message": {
+        "copieEnregistree": "حُفظت النسخة",
+        "copieImpossible": "هذه النسخة غير متاحة الآن",
+        "telechargementImpossible": "هذه المادة غير متاحة دون اتصال بعد",
+        "horsLigneNonTelecharge": "تتاح بعد تنزيلها أو عند عودة الاتصال",
+        "aucunTelechargement": "لا ملف للتنزيل في هذه النسخة."
+      },
+      "classe": {
+        "titre": "اختيار مادة",
+        "sousTitre": "المادة المختارة تحل محل المعروضة. يستمر الدرس."
       }
     },
     "groupe": {
       "enseignant": {
         "sayyid": "سيد",
-        "sayyida": "سيدة"
+        "sayyida": "سيدة",
+        "photoManquante": "الصورة مطلوبة",
+        "photoManquanteDetail": "لم تُسجَّل صورة المعلم بعد."
+      },
+      "mesGroupes": {
+        "titre": "فصولي",
+        "aucun": "لا فصل حتى الآن",
+        "aucunDetail": "ستضعك الأكاديمية في فصل حين يتوفر موعد يناسبك."
+      },
+      "commun": {
+        "erreur": "تعذّرت قراءة فصولك",
+        "reessayer": "إعادة المحاولة"
+      },
+      "carte": {
+        "ouvrir": "فتح الفصل \u2068{libelle}\u2069",
+        "capacite": "\u2068{membres}\u2069 / \u2068{seuil}\u2069",
+        "capacitePhrase": "\u2068{membres}\u2069 طلاب من \u2068{seuil}\u2069 مقاعد",
+        "complet": "مكتمل",
+        "prochainCours": "الدرس القادم",
+        "aucuneSeance": "لا حصة مقررة",
+        "aucuneSeanceDetail": "لم يُحدَّد جدول هذا الفصل بعد.",
+        "duree": "المدة \u2068{valeur}\u2069",
+        "dureeLibelle": "المدة",
+        "rejoindre": "انضمام"
+      },
+      "cours": {
+        "coursEtNiveau": "\u2068{cours}\u2069 · \u2068{niveau}\u2069"
+      },
+      "temps": {
+        "dansMinutes": "الدرس بعد \u2068{minutes}\u2069 دقيقة",
+        "dansHeures": "الدرس بعد \u2068{heures}\u2069 س \u2068{minutes}\u2069 د",
+        "imminent": "الدرس وشيك",
+        "salleOuverte": "القاعة مفتوحة · \u2068{reste}\u2069",
+        "salleOuverteCourt": "القاعة مفتوحة",
+        "attente": "أنت في القاعة. لم يبدأ الدرس بعد.",
+        "attenteDetail": "وقت الانتظار هذا لا يُحتسب في حضورك.",
+        "enSalle": "في القاعة",
+        "resteMinutes": "بقيت \u2068{minutes}\u2069 دقيقة",
+        "resteHeures": "بقي \u2068{heures}\u2069 س \u2068{minutes}\u2069 د",
+        "enCours": "حصة مباشرة · \u2068{reste}\u2069",
+        "enDirect": "مباشر",
+        "prolongee": "الحصة ما زالت مباشرة",
+        "depassement": "تجاوز الوقت",
+        "terminee": "انتهى الدرس"
+      },
+      "duree": {
+        "minutes": "\u2068{minutes}\u2069 د",
+        "heures": "\u2068{heures}\u2069 س",
+        "heuresMinutes": "\u2068{heures}\u2069 س \u2068{minutes}\u2069 د"
+      },
+      "horloges": {
+        "votreHeure": "توقيتك",
+        "chezEnseignant": "عند \u2068{nomme}\u2069",
+        "heureGroupe": "توقيت الفصل",
+        "heureEtVille": "\u2068{heure}\u2069 \u2068{ville}\u2069"
+      },
+      "dst": {
+        "j30": "تغيير التوقيت بعد شهر",
+        "j7": "تغيير التوقيت الأسبوع القادم",
+        "j1": "تغيير التوقيت غدًا",
+        "detail": "سينتقل درسك من \u2068{avant}\u2069 إلى \u2068{apres}\u2069."
+      },
+      "session": {
+        "conseilAppareil": "يُنصح بجهاز لوحي أو حاسوب للدرس. الهاتف مدعوم أيضًا."
+      },
+      "espace": {
+        "retour": "فصولي",
+        "avantProchainCours": "قبل الدرس القادم",
+        "aucuneAction": "لا شيء للتحضير الآن",
+        "bibliotheque": "المكتبة",
+        "bibliothequeVoirTout": "عرض الكل",
+        "progression": "التقدم",
+        "roster": "طلاب الفصل",
+        "reprendreLeCours": "استئناف الدرس",
+        "introuvable": "هذا الفصل غير مفتوح لك",
+        "introuvableDetail": "ربما أُغلق، أو يخص ملفًا آخر."
+      },
+      "emplacement": {
+        "nonBranche": "قريبًا",
+        "nonBrancheDetail": "سيُربط هذا المحتوى بهذه المساحة قريبًا."
+      }
+    },
+    "coran": {
+      "modes": {
+        "mushaf": "صفحة المصحف",
+        "verset": "قراءة مكبَّرة",
+        "focus": "التركيز",
+        "choisir": "طريقة القراءة"
+      },
+      "mushaf": {
+        "coteDroite": "الصفحة اليمنى",
+        "coteGauche": "الصفحة اليسرى",
+        "ouverture": "الصفحتان المفتوحتان \u2068{droite}\u2069 و\u2068{gauche}\u2069"
+      },
+      "fidelite": {
+        "approchee": "تنسيق تقريبي",
+        "approcheeDetail": "آيات هذه الصفحة هي بالضبط آيات صفحة مصحف المدينة. أما توزيعها على الأسطر فهو توزيع هذه الشاشة: لم يُستورد بعد تقسيم الأسطر في الطبعة.",
+        "fidele": "تنسيق الطبعة"
+      },
+      "zoom": {
+        "bride": "التكبير محدود بالعرض: بعده ستنقسم كلمة.",
+        "valeur": "\u2068{pourcent}\u2069 %",
+        "renvoiLectureAgrandie": "لتكبير النص، انتقل إلى القراءة المكبَّرة: صفحة المصحف تحافظ على هيئتها."
+      },
+      "navigation": {
+        "titre": "الانتقال إلى",
+        "ouvrir": "الانتقال إلى صفحة",
+        "champ": "صفحة أو سورة أو جزء أو مرجع",
+        "indice": "مثلًا 18، الكهف، الجزء 15، 2:255",
+        "limite": "يشمل البحث أرقام الصفحات والمراجع وأسماء السور. البحث في نص القرآن غير متاح بعد.",
+        "aucunResultat": "لم يُعثر على مرجع",
+        "aucunResultatDetail": "جرّب رقم صفحة، أو اسم سورة، أو مرجعًا مثل 2:255.",
+        "pageNumero": "الصفحة \u2068{page}\u2069"
+      },
+      "reprise": {
+        "groupe": "استئناف الدرس",
+        "groupeDetail": "كان الفصل في الصفحة \u2068{page}\u2069"
+      },
+      "focus": {
+        "aucunePlage": "لا مقطع مُبرَز",
+        "aucunePlageDetail": "يتبع التركيز المقطع الذي يحدده المعلم. خارج الفصل، يتوسط الصفحة المفتوحة.",
+        "quitter": "الخروج من التركيز"
+      }
+    },
+    "outils": {
+      "dock": {
+        "titre": "الأدوات",
+        "deplacer": "نقل الأدوات",
+        "position": {
+          "bas": "في الأسفل",
+          "gauche": "على اليسار",
+          "droite": "على اليمين"
+        },
+        "bibliotheque": "المكتبة",
+        "focus": "التركيز",
+        "marquer": "تعليم",
+        "masquer": "إخفاء",
+        "stylet": "القلم",
+        "pointeur": "المؤشر",
+        "revision": "المراجعة"
+      },
+      "intention": {
+        "aApprendre": "للحفظ",
+        "aRevoir": "للمراجعة",
+        "aRenforcer": "للتثبيت",
+        "aEntretenir": "للتعاهد",
+        "pourEvaluation": "للتقييم"
+      },
+      "trait": {
+        "stylet": "القلم",
+        "surligneur": "تظليل",
+        "gomme": "الممحاة",
+        "annuler": "تراجع",
+        "plus": "المزيد",
+        "ardoise": "لوح الملاحظات، اختياري: يبقى الدرس مقروءًا دونه",
+        "effacerDernier": "مسح آخر خط لي"
+      },
+      "portee": {
+        "temporaire": "وقت الشرح",
+        "seance": "حتى نهاية الدرس",
+        "enregistree": "حفظ",
+        "aide": "إلى متى نحتفظ بهذه الملاحظات؟"
+      },
+      "marquer": {
+        "titre": "تعليم هذا المقطع",
+        "aide": "اختر ما يحتاجه هذا المقطع.",
+        "retirer": "إزالة العلامة"
+      },
+      "revision": {
+        "titre": "للتحضير",
+        "aide": "يصبح المقطع المحدد عملًا للتحضير.",
+        "groupeEntier": "الفصل كله",
+        "consigne": "تعليمة قصيرة (اختياري)",
+        "creer": "تكليف بالعمل",
+        "posee": "تم التكليف بعمل للتحضير"
+      },
+      "masquer": {
+        "reveler": "إظهار",
+        "refermer": "إخفاء من جديد",
+        "tout": "إظهار الكل"
+      },
+      "focus": {
+        "quitter": "الخروج من التركيز"
+      },
+      "annotation": {
+        "ancrageDegrade": "لا مرجع نصيًا لهذا المقطع: ستتبع الملاحظة الصفحة لا الكلمات.",
+        "horsPage": "الملاحظات مخفية: مقطعها ليس على الشاشة.",
+        "aucuneSelection": "حدّد مقطعًا أولًا."
+      }
+    },
+    "classe": {
+      "entete": {
+        "titreEnseignant": {
+          "sayyid": "سيد",
+          "sayyida": "سيدة"
+        },
+        "resteMinutes": "بقيت \u2068{minutes}\u2069 دقيقة",
+        "resteHeuresMinutes": "بقي \u2068{heures}\u2069 س \u2068{minutes}\u2069 د",
+        "coursEnCours": "الحصة ما زالت مباشرة",
+        "photoManquante": "صورة المعلم غير موجودة"
+      },
+      "roster": {
+        "titre": "الطلاب",
+        "compteur": "الطلاب: \u2068{presents}\u2069 حاضرون من \u2068{attendus}\u2069 منتظَرين",
+        "indisponible": "قائمة الطلاب غير متاحة",
+        "indisponibleDetail": "تعذّرت قراءة حالات طلابك. يستمر الدرس.",
+        "vide": "لا طالب مسجَّل",
+        "videDetail": "لا طالب مسجَّل في هذه الحصة.",
+        "ouvrirFiche": "فتح بطاقة \u2068{prenom}\u2069",
+        "places": "\u2068{inscrits}\u2069 / \u2068{plafond}\u2069 مقاعد"
+      },
+      "etat": {
+        "inconnu": "حالة غير معروفة",
+        "attendu": "منتظَر",
+        "enConnexion": "جارٍ الاتصال",
+        "present": "حاضر",
+        "enRetard": "متأخر",
+        "deconnecte": "غير متصل",
+        "enReconnexion": "جارٍ إعادة الاتصال",
+        "sorti": "خرج",
+        "absent": "غائب"
+      },
+      "fiche": {
+        "niveau": "المستوى",
+        "objectif": "الهدف الحالي",
+        "derniereSeance": "آخر حصة",
+        "page": "الصفحة \u2068{page}\u2069",
+        "travailEnCours": "\u2068{nombre}\u2069 عنصر",
+        "aReprendre": "للاستئناف",
+        "presenceRecente": "الحضور الأخير",
+        "assiduite": "\u2068{presences}\u2069 / \u2068{total}\u2069 دروس",
+        "travailActuel": "العمل الحالي",
+        "interfaceGuidee": "وضع إمكانية الوصول",
+        "sansPedagogie": "المتابعة التعليمية غير متاحة",
+        "sansPedagogieDetail": "المسار والأهداف والعمل الجاري غير مفتوحة للمعلم بعد."
+      },
+      "action": {
+        "rappel": "نداء هادئ",
+        "reciter": "اختيار للتلاوة",
+        "noter": "تدوين ملاحظة",
+        "signaler": "الإشارة إلى حاجة",
+        "contexte": "فتح السياق"
+      },
+      "rappel": {
+        "recu": "المعلم يناديك",
+        "echec": "تعذّر إرسال النداء",
+        "echecDroit": "دخولك إلى هذه الحصة لا يسمح بنداء طالب",
+        "cooldown": "تم النداء. مجددًا بعد \u2068{secondes}\u2069 ث"
+      },
+      "recitation": {
+        "titre": "التلاوة",
+        "actif": "\u2068{prenom}\u2069 يتلو",
+        "pastille": "يتلو",
+        "suivants": "بعد ذلك",
+        "personne": "لا أحد يتلو",
+        "arreter": "إيقاف التلاوة"
+      },
+      "support": {
+        "aucun": "لا مادة معروضة",
+        "aucunDetail": "افتح المكتبة لعرض مادة على الفصل.",
+        "bibliotheque": "المكتبة",
+        "bibliothequeAbsente": "المكتبة غير موصولة",
+        "bibliothequeAbsenteDetail": "سيتاح اختيار المادة بمجرد دمج الفهرس."
+      },
+      "commandes": {
+        "micro": "فتح الميكروفون",
+        "microFermer": "إغلاق الميكروفون",
+        "camera": "فتح الكاميرا",
+        "cameraFermer": "إغلاق الكاميرا",
+        "microCoupe": "الميكروفون مغلق",
+        "quitter": "مغادرة",
+        "quitterQuestion": "مغادرة الدرس؟",
+        "quitterConsequence": "سيُسجَّل خروجك. يمكنك العودة ما دامت الحصة مفتوحة.",
+        "fermerBibliotheque": "إغلاق المكتبة"
+      },
+      "scene": {
+        "vide": "أنت وحدك في القاعة الآن",
+        "sansImage": "دون صورة"
+      },
+      "reseau": {
+        "bon": "الشبكة جيدة",
+        "mediocre": "الشبكة غير مستقرة",
+        "perdu": "انقطعت الشبكة"
+      },
+      "attente": {
+        "materiel": "جارٍ التحقق من الميكروفون",
+        "ouverture": "جارٍ فتح الدرس",
+        "connexion": "جارٍ الاتصال بالدرس",
+        "refus": "الدرس غير متاح الآن"
+      },
+      "lien": {
+        "instable": "الاتصال غير مستقر",
+        "reconnexion": "جارٍ إعادة الاتصال",
+        "retabli": "عاد الاتصال",
+        "echec": "انقطع الاتصال",
+        "retourDeSuspension": "أوقف النظام الدرس مؤقتًا. جارٍ التحقق من الاتصال."
+      },
+      "barre": {
+        "titre": "حصة مباشرة",
+        "revenir": "العودة إلى درس \u2068{groupe}\u2069"
+      },
+      "prevol": {
+        "titre": "قبل فتح الدرس",
+        "microOk": "تم العثور على ميكروفون",
+        "microAbsent": "لا ميكروفون صالح",
+        "cameraOk": "تم العثور على كاميرا",
+        "cameraAbsente": "لا كاميرا. يبقى الدرس ممكنًا.",
+        "permissionRefusee": "رُفض الوصول إلى الميكروفون. اسمح به لفتح الدرس.",
+        "reessayer": "التحقق من جديد"
+      },
+      "observation": {
+        "restant": "بقيت \u2068{secondes}\u2069 ث"
+      }
+    },
+    "realtime": {
+      "transport": {
+        "partage_indisponible": "مشاركة المادة غير متاحة على هذا الخادم. يستمر الدرس، لكن الأجهزة الأخرى لن تتبع الصفحة."
+      },
+      "etat": {
+        "restauration_impossible": "تعذّر استرجاع المادة الجارية. اطلب من المعلم أن يعرضها من جديد."
+      }
+    },
+    "observation": {
+      "entree": {
+        "titre": "متابعة الحصة",
+        "tuteurIntro": "يمكنك مشاهدة درس طفلك لوقت قصير. يبقى الميكروفون والكاميرا مغلقين.",
+        "adminIntro": "اختر طريقتك قبل الدخول. لن تتغير بعد ذلك.",
+        "controleurIntro": "تدخل في متابعة غير مرئية. لا ميكروفون ولا كاميرا.",
+        "entrer": "دخول",
+        "modeDiscret": "المتابعة بهدوء",
+        "modeDiscretDetail": "غير مرئي للمشاركين. دون ميكروفون ولا كاميرا، ودون إعلان.",
+        "modeVisible": "الانضمام إلى الفصل",
+        "modeVisibleDetail": "مرئي للجميع باسم إدارة Rewayah. الميكروفون والكاميرا مسموحان، ويُعلَن عن الدخول.",
+        "nomInstitutionnel": "إدارة Rewayah",
+        "visiteJournalisee": "زيارة مسجَّلة في السجل: الهوية، والحصة، والدخول، والخروج، والمدة.",
+        "roleSansObservation": "حسابك لا يتابع الحصص.",
+        "retourClasse": "العودة إلى الفصل"
+      },
+      "explication": {
+        "titre": "لمحة عن تعلّمه",
+        "regleUne": "\u2068{n}\u2069 زيارة مدتها \u2068{duree}\u2069",
+        "regle": "\u2068{n}\u2069 زيارات مدة كل منها \u2068{duree}\u2069",
+        "regleDetail": "لكل حصة ولكل وليّ أمر، حتى لو كان عدة من أطفالك في الفصل.",
+        "ecoute": "استمع إلى المعلم والطلاب",
+        "ecouteDetail": "تسمع المعلم والطلاب الذين يتكلمون، ومنهم طفلك.",
+        "sansMedia": "دون ميكروفون ولا كاميرا",
+        "sansMediaDetail": "يبقى الميكروفون والكاميرا معطَّلين حتى لا يُقاطَع الفصل.",
+        "revenir": "إن كان طالب آخر يتلو في زيارتك الأولى، يمكنك العودة لاحقًا للاستماع إلى طفلك.",
+        "ecourtee": "الزيارة التي تُغادَر قبل نهايتها تُحتسب زيارة كاملة: الوقت غير المستخدم لا يُرحَّل.",
+        "sansIntervenir": "حفاظًا على التركيز، تتابع دون أن تتدخل.",
+        "informes": "طفلك ومعلمه على علم.",
+        "observer": "المتابعة الآن",
+        "pasMaintenant": "ليس الآن",
+        "restanteUne": "\u2068{restantes}\u2069/\u2068{max}\u2069 زيارة متبقية لهذه الحصة",
+        "restantes": "\u2068{restantes}\u2069/\u2068{max}\u2069 زيارات متبقية لهذه الحصة",
+        "aucuneRestante": "لا زيارة متبقية لهذه الحصة"
+      },
+      "disponibilite": {
+        "visitesEpuiseesTitre": "لا زيارة متبقية لهذه الحصة",
+        "visitesEpuisees": "استخدمت زياراتك. يمكنك متابعة الحصة القادمة.",
+        "tempsEpuiseTitre": "انتهى وقت المتابعة",
+        "tempsEpuise": "استُخدم وقت متابعتك لهذه الحصة. يمكنك متابعة الحصة القادمة.",
+        "seanceNonCommenceeTitre": "لم تبدأ الحصة بعد",
+        "seanceNonCommencee": "تُفتح المتابعة أثناء الحصة.",
+        "seanceTermineeTitre": "انتهت الحصة",
+        "seanceTerminee": "يمكنك متابعة الحصة القادمة.",
+        "seanceNonTenueTitre": "هذه الحصة لا تُعقد",
+        "seanceNonTenue": "أُلغيت أو أُجّلت أو لم تُعقد.",
+        "horsFenetreTitre": "الحصة غير مفتوحة الآن",
+        "horsFenetre": "المتابعة ممكنة أثناء الحصة فقط.",
+        "desactiveeTitre": "المتابعة مغلقة لهذا الفصل",
+        "desactivee": "أغلقت الإدارة متابعة هذا الفصل.",
+        "lienAbsentTitre": "لا أحد من أطفالك في هذه الحصة",
+        "lienAbsent": "المتابعة مخصصة لأولياء أمور طلاب الحصة.",
+        "enfantAbsentTitre": "طفلك ليس في الحصة",
+        "enfantAbsent": "تُفتح المتابعة حين يكون طفلك حاضرًا.",
+        "presenceTitre": "جارٍ التحقق من الحضور",
+        "presence": "تُفتح المتابعة بمجرد تأكيد حضور طفلك.",
+        "visiteOuverteTitre": "زيارة مفتوحة بالفعل",
+        "visiteOuverte": "إحدى زياراتك ما زالت مفتوحة لهذه الحصة، على هذا الجهاز أو على غيره. وهي تُحتسب من زياراتك.",
+        "fermeeTitre": "المتابعة غير مفتوحة بعد",
+        "fermee": "متابعة أولياء الأمور للحصص غير مفتوحة بعد. ستُقترح هنا بمجرد فتحها.",
+        "reseauTitre": "تعذّر التحقق",
+        "reseau": "تعذّر التحقق من توفر المتابعة. لم تبدأ أي زيارة.",
+        "capaciteTitre": "المتابعة غير متاحة",
+        "capacite": "المتابعة غير متاحة الآن."
+      },
+      "connexion": {
+        "titre": "الاتصال والتحقق",
+        "phrase": "يجري التحقق من زياراتك المتبقية. تبدأ الزيارة بمجرد قبول الدخول، بما في ذلك اتصال الفيديو.",
+        "enCours": "جارٍ الاتصال والتحقق",
+        "prolongee": "ابقَ على هذه الصفحة: التحقق مستمر.",
+        "impossibleTitre": "تعذّر الاتصال",
+        "impossible": "لم يتم الدخول إلى الحصة. تحقّق من اتصالك ثم أعد المحاولة: سيُعاد التحقق من زياراتك المتبقية."
+      },
+      "duree": {
+        "secondeUne": "\u2068{n}\u2069 ثانية",
+        "secondes": "\u2068{n}\u2069 ثوانٍ",
+        "minuteUne": "\u2068{n}\u2069 دقيقة",
+        "minutes": "\u2068{n}\u2069 دقائق",
+        "minutesSecondes": "\u2068{m}\u2069 د \u2068{s}\u2069 ث"
+      },
+      "refus": {
+        "politiqueDesactivee": "المتابعة معطَّلة لهذا الفصل.",
+        "quotaVisites": "استخدمت زياراتك لهذه الحصة بالفعل.",
+        "tempsEpuise": "نفد وقت متابعتك لهذه الحصة.",
+        "lienTuteur": "لست مرتبطًا بأي طالب في هذه الحصة.",
+        "seanceNonActive": "الحصة ليست جارية.",
+        "horsFenetre": "القاعة غير مفتوحة في هذا الوقت.",
+        "indisponible": "المتابعة غير متاحة الآن.",
+        "capaciteAbsente": "المتابعة غير مفعَّلة بعد في هذا التثبيت."
+      },
+      "visite": {
+        "titre": "المتابعة جارية",
+        "quitter": "مغادرة",
+        "supportIndisponible": "تظهر هنا المادة التي يشاركها المعلم.",
+        "enseignant": "المعلم",
+        "monEnfant": "طفلك",
+        "budgetIncertain": "الوقت المتبقي غير مؤكَّد من الخادم.",
+        "videoIndisponible": "تعذّر فتح فيديو الحصة. يستمر احتساب وقت متابعتك.",
+        "sortieNonConfirmee": "تعذّر تأكيد نهاية زيارتك. سيغلقها الخادم.",
+        "restantes": "متبقية",
+        "decompteLu": "الوقت المتبقي: \u2068{duree}\u2069",
+        "enDirect": "مباشر",
+        "connexion": "الاتصال",
+        "reconnexion": "إعادة الاتصال",
+        "videoCoupee": "الفيديو غير متاح",
+        "reconnexionDetail": "انقطع الاتصال، جارٍ إعادة الاتصال. يستمر احتساب وقت متابعتك.",
+        "sonRecu": "الصوت واصل",
+        "sonInterrompu": "الصوت منقطع",
+        "agrandir": "تكبير",
+        "reduire": "تصغير",
+        "cameraFermee": "الكاميرا مغلقة",
+        "pasEncoreLa": "ليس في القاعة بعد",
+        "parle": "\u2068{nom}\u2069 يتكلم",
+        "quitterQuestion": "مغادرة الزيارة؟",
+        "quitterConsequence": "بقي لك \u2068{duree}\u2069. الزيارة التي تُغادَر قبل نهايتها تُحتسب زيارة كاملة: الوقت غير المستخدم لا يُرحَّل.",
+        "quitterConsequenceSansTemps": "الزيارة التي تُغادَر قبل نهايتها تُحتسب زيارة كاملة: الوقت غير المستخدم لا يُرحَّل.",
+        "quitterConfirmer": "مغادرة الزيارة"
+      },
+      "fin": {
+        "sortieVolontaire": "غادرت المتابعة.",
+        "quotaAtteint": "انتهى وقت متابعتك.",
+        "seanceTerminee": "انتهت الحصة.",
+        "revocationServeur": "قُطعت متابعتك.",
+        "deconnexion": "انقطع الاتصال."
+      },
+      "resultat": {
+        "premiereTerminee": "انتهت زيارتك الأولى",
+        "derniereTerminee": "انتهت زيارتك الأخيرة",
+        "terminee": "انتهت زيارتك",
+        "dureeAtteinte": "بلغت الزيارة مدتها",
+        "interrompue": "قُطعت المتابعة",
+        "continuePour": "تستمر الحصة لـ\u2068{prenom}\u2069.",
+        "continueSansPrenom": "تستمر الحصة.",
+        "resteUne": "بقيت لك زيارة واحدة مدتها \u2068{duree}\u2069. عد لاحقًا للاستماع إليه.",
+        "restent": "بقيت لك \u2068{n}\u2069 زيارات مدة كل منها \u2068{duree}\u2069. عد لاحقًا للاستماع إليه.",
+        "resteUneSansDuree": "بقيت لك زيارة واحدة. عد لاحقًا للاستماع إليه.",
+        "restentSansDuree": "بقيت لك \u2068{n}\u2069 زيارات. عد لاحقًا للاستماع إليه.",
+        "aucune": "استخدمت زياراتك لهذه الحصة. يمكنك متابعة الحصة القادمة.",
+        "prochaineSeance": "يمكنك متابعة الحصة القادمة.",
+        "verification": "جارٍ التحقق من زياراتك المتبقية",
+        "inconnues": "تعذّر التحقق من زياراتك المتبقية. سيُعاد التحقق منها في الفصل.",
+        "voirObservations": "عرض متابعاتي"
+      },
+      "annonce": {
+        "tuteurObserve": "وليّ أمر \u2068{prenomEnfant}\u2069 يتابع",
+        "restant": "\u2068{secondes}\u2069 ث",
+        "enfantIndicateur": "وليّ أمرك يشاهد الدرس",
+        "tuteursObservent": "\u2068{nombre}\u2069 من أولياء الأمور يتابعون"
+      },
+      "reglages": {
+        "titre": "متابعة أولياء الأمور",
+        "intro": "يمكن لوليّ الأمر مشاهدة درس طفله لوقت قصير، دون ميكروفون ولا كاميرا. يحدد هذا الإعداد ما ينطبق على هذا الفصل.",
+        "heriter": "اتباع إعداد الأكاديمية",
+        "personnaliser": "تخصيص لهذا الفصل",
+        "desactiver": "تعطيل لهذا الفصل",
+        "maxVisites": "الزيارات لكل حصة",
+        "tempsTotal": "الوقت الكلي لكل حصة",
+        "plafondVisite": "أقصى مدة للزيارة",
+        "diminuer": "إنقاص",
+        "augmenter": "زيادة",
+        "enregistrer": "حفظ",
+        "invalideVisites": "زيارة واحدة على الأقل لكل حصة.",
+        "invalideTemps": "ثلاثون ثانية على الأقل لكل حصة.",
+        "valeurHeritee": "الأكاديمية: \u2068{valeur}\u2069",
+        "uniteVisiteUne": "\u2068{n}\u2069 زيارة",
+        "uniteVisites": "\u2068{n}\u2069 زيارات",
+        "uniteSecondes": "\u2068{n}\u2069 ث",
+        "versionPolitique": "الإصدار \u2068{version}\u2069"
+      }
+    },
+    "parcours": {
+      "avant": {
+        "titre": "قبل الدرس القادم",
+        "rien": "لا شيء للتحضير للدرس القادم.",
+        "rienDetail": "سيقترح معلمك العمل في نهاية الحصة القادمة.",
+        "nonBranche": "العمل المطلوب تحضيره غير مربوط بهذه المساحة بعد.",
+        "nonBrancheDetail": "هذا لا يعني أنه لا شيء للتحضير: هذه الشاشة لا تعرف قراءته بعد.",
+        "reprendre": "استئناف الدرس",
+        "reprendreDepuis": "استئناف الدرس من \u2068{position}\u2069"
+      },
+      "intention": {
+        "apprendre": "للحفظ",
+        "revoir": "للمراجعة",
+        "renforcer": "للتثبيت",
+        "entretenir": "للتعاهد",
+        "evaluation": "للتقييم"
+      },
+      "plage": {
+        "versets": "سورة \u2068{sourate}\u2069، الآيات \u2068{premier}\u2069 إلى \u2068{dernier}\u2069",
+        "versetUnique": "سورة \u2068{sourate}\u2069، الآية \u2068{premier}\u2069",
+        "versetsCroisee": "سورة \u2068{sourateDebut}\u2069، الآية \u2068{versetDebut}\u2069 إلى سورة \u2068{sourateFin}\u2069، الآية \u2068{versetFin}\u2069",
+        "pages": "الصفحات \u2068{premiere}\u2069 إلى \u2068{derniere}\u2069",
+        "pageUnique": "الصفحة \u2068{premiere}\u2069",
+        "section": "القسم \u2068{section}\u2069",
+        "ressource": "المادة كلها"
+      },
+      "feedback": {
+        "cours": {
+          "intitule": "كيف كان الدرس اليوم؟",
+          "difficile": "صعب",
+          "bien": "جيد",
+          "tresBien": "جيد جدًا"
+        },
+        "comprehension": {
+          "intitule": "هل فهمت ما تم العمل عليه؟",
+          "difficile": "ليس تمامًا",
+          "bien": "نعم تقريبًا",
+          "tresBien": "تمامًا"
+        },
+        "rythme": {
+          "intitule": "هل ناسبك إيقاع الدرس؟",
+          "difficile": "سريع جدًا",
+          "bien": "مناسب",
+          "tresBien": "مريح جدًا"
+        },
+        "technique": {
+          "intitule": "هل كان الصوت والصورة مريحين؟",
+          "difficile": "مزعجان",
+          "bien": "مقبولان",
+          "tresBien": "جيدان جدًا"
+        },
+        "confiance": {
+          "intitule": "هل تشعر أنك مستعد للدرس القادم؟",
+          "difficile": "ليس بعد",
+          "bien": "تقريبًا",
+          "tresBien": "تمامًا"
+        },
+        "merci": "شكرًا.",
+        "tendance": {
+          "titre": "آراء الطلاب",
+          "sousSeuil": "لا تكفي الآراء بعد لاستخلاص اتجاه.",
+          "anonyme": "الآراء مجهولة الهوية ومجمَّعة. لا تكفي وحدها أبدًا لاتخاذ قرار."
+        }
+      },
+      "signalement": {
+        "titre": "الإشارة إلى حاجة",
+        "categorie": "بماذا يتعلق الأمر؟",
+        "categorieValeur": {
+          "pedagogique": "تعليمي",
+          "presence": "الحضور",
+          "technique": "تقني",
+          "changement": "تغيير",
+          "autre": "آخر"
+        },
+        "interne": "ملاحظة داخلية",
+        "interneAide": "تقرؤها الإدارة وحدها. لا تُرسل أبدًا تلقائيًا إلى الأسرة.",
+        "famille": "رسالة إلى الأسرة",
+        "familleAide": "اختيارية. الإدارة وحدها تقرر إرسالها بنقرة واحدة.",
+        "contexte": "الطالب \u2068{eleve}\u2069. الحصة والفصل واسمك مرفقة بالفعل.",
+        "envoyer": "إرسال الإشارة",
+        "envoye": "أُرسلت الإشارة إلى الإدارة.",
+        "interneRequis": "اكتب على الأقل ما يجب أن تعرفه الإدارة.",
+        "echec": "تعذّر إرسال الإشارة. أعد المحاولة."
+      },
+      "postCours": {
+        "titre": "بعد الدرس",
+        "duree": "المدة الفعلية \u2068{minutes}\u2069 دقيقة",
+        "exceptions": "للتأكيد",
+        "toutEstNominal": "لا شيء يتطلب انتباهك.",
+        "reprise": "الاستئناف المقترح",
+        "repriseInconnue": "لا موضع استئناف معروف لهذه الحصة.",
+        "travail": "العمل المقترح",
+        "travailAucun": "لا عمل مقترح حتى الآن.",
+        "valider": "تأكيد",
+        "enFile": "تم الحفظ. سيُرسل بمجرد عودة الشبكة.",
+        "envoye": "أُغلق الدرس."
       }
     }
   }
