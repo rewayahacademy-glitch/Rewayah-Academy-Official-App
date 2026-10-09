@@ -56,7 +56,7 @@ L'audit a été fait en lecture seule sur cb50a32f, puis complété par 29196608
 | 18 | R2-06 | Fait | fef « R2-06 : période financée une seule fois » |
 | 19 | R2-07 | Fait | fef, cas 2 et 3 du lot F3 (`rang`) |
 | 20 | R3-01 | Fait | rmp : une seule page, pas de « Tout sélectionner », réponse dépassée ignorée. « Payer {total rendu par le port} » est prouvé par `_PortRemise` (29196608). |
-| 21 | R3-02 | Fait | rmp « 1200, 1280 et 1440 : colonnes, note dans le récapitulatif, bandeau sans croix » (7971c4e4, 728c34c5) |
+| 21 | R3-02 | Rouvert par la revue FI-VAGUE-CORR-R (majeur), puis corrigé dans `ui/fi-dir-1` @ 65cf51d2 (commit 307e9695) : la recharge reprend les trois colonnes de la maquette 07 dès 1200 px (profils 5, aide 3, paiement 4), colonne d'aide aux textes existants. Vérifié par un vérificateur non auteur (bilan du 08-09/10), intégré dans `ui/finance-v1` le 09/10 (728c34c5 → 65cf51d2). | rmp exige trois colonnes à 1200, 1280 et 1440 (contre-épreuve : les 3 tests échouent sur l'ancienne composition à deux colonnes) ; `recette_fi_test` mesure les trois colonnes ; captures `fidir1cr_recharge_{1200,1280,1440}_{light,dark}.png`. Source : `docs/current/FI-DIR-1.md` (§ « Revue FI-VAGUE-CORR-R ») sur `ui/finance-v1`. Avant : rmp « 1200, 1280 et 1440 : colonnes, note dans le récapitulatif, bandeau sans croix » (7971c4e4, 728c34c5). |
 | 22 | R3-03 | Fait | rr « les huit états » (marges) |
 | 23 | R3-04 | Fait | rr : coche « Crédité » et « + » à `termine` seulement |
 | 24 | R3-05 | Fait | fr « Paiement par le web. Aucun débit avant votre confirmation. » |
