@@ -51,7 +51,7 @@ BEGIN
     );
 
     v_reponse := public.demander_creneau_personnalise(
-      v_id, 'Europe/Paris', ARRAY[2, 4, 6]::smallint[], 3
+      v_id, 'Europe/Paris', ARRAY[2, 4, 6]::smallint[], 3::smallint
     );
 
     IF v_i < 6 AND v_reponse->>'etat' <> 'en_attente_quota' THEN
@@ -92,7 +92,7 @@ BEGIN
   );
   v_reponse := public.demander_creneau_personnalise(
     'f1490000-0000-0000-0000-000000000006',
-    'Europe/Paris', ARRAY[2, 4, 6]::smallint[], 3
+    'Europe/Paris', ARRAY[2, 4, 6]::smallint[], 3::smallint
   );
   IF v_reponse->>'offre_id' IS DISTINCT FROM v_offre::text THEN
     RAISE EXCEPTION 'F1 idempotence: la répétition a changé d''offre: %', v_reponse;
@@ -107,7 +107,7 @@ BEGIN
   BEGIN
     PERFORM public.demander_creneau_personnalise(
       'f1490000-0000-0000-0000-000000000001',
-      'Europe/Paris', ARRAY[2, 4, 6]::smallint[], 3
+      'Europe/Paris', ARRAY[2, 4, 6]::smallint[], 3::smallint
     );
     RAISE EXCEPTION 'F1 relation: un autre compte a créé la demande';
   EXCEPTION WHEN SQLSTATE 'P0001' THEN
