@@ -16,9 +16,12 @@
 //    le tuteur garde la sienne et son rappel.
 // 4. SALLE-200-1/2 avec presentation : 320 et 390, texte x1 et x2, la
 //    salle tient, « Quitter » reste a l'ecran, le titre n'est pas coupe.
-// 5. CT-3 sur tablette (900 et 1100 px) : la liste de presence du controleur
-//    se lit (contraste de chaque texte sur le fond REELLEMENT peint sous lui)
-//    et tient dans l'ecran sans defiler, avec ou sans presentation.
+// 5. CT-3 sur tablette (900x1200, 1100x700, 1024x768), texte x1 et x2 : la
+//    liste de presence du controleur se lit (contraste de chaque texte sur
+//    le fond REELLEMENT peint sous lui), dans sa colonne laterale, sans
+//    debordement ; a x1 elle tient sans defiler, a x2 sa colonne defile
+//    jusqu'a la derniere ligne, avec ou sans presentation. Le tuteur tient
+//    aussi a x2 sur ces trois tablettes.
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show RenderParagraph;
@@ -57,6 +60,24 @@ import '../../support/garde_interface.dart';
 import '../../theme/support/contraste.dart';
 
 const Key _presentation = ValueKey<String>('presentation-lue');
+
+/// Le defilement de la colonne laterale de presence (`_FondPresence`).
+const Key _defilePresence = ValueKey<String>('presence-defile');
+
+/// CT-3 : tablette en portrait, en paysage, et l'iPad en paysage.
+const List<Size> _tablettes = <Size>[
+  Size(900, 1200),
+  Size(1100, 700),
+  Size(1024, 768),
+];
+
+/// [r] est entier dans la fenetre [taille].
+void _dansLaFenetre(Rect r, Size taille) {
+  expect(r.top, greaterThanOrEqualTo(-0.5), reason: '$r');
+  expect(r.bottom, lessThanOrEqualTo(taille.height + 0.5), reason: '$r');
+  expect(r.left, greaterThanOrEqualTo(-0.5), reason: '$r');
+  expect(r.right, lessThanOrEqualTo(taille.width + 0.5), reason: '$r');
+}
 
 const List<SituationTb> _avecPresentation = <SituationTb>[
   SituationTb.ped01,
@@ -366,7 +387,50 @@ void main() {
             final RenderParagraph p = tester.renderObject(titre);
             expect(p.didExceedMaxLines, isFalse);
             // SUPERPOS-1 : a texte x1, la scene tient sous la presentation,
-            // aucune tuile ne passe sous le rappel du role (le bandeau).
+            // aucune tuile ne passe sous le rappel du role (le bandeau). A
+            // texte x2, la colonne (presentation puis scene) defile : la
+            // tuile est rognee au bord de la colonne, au-dessus du bandeau,
+            // et se lit entiere une fois la colonne defilee jusqu'au bout.
+            if (texte == 2) {
+              final Finder colonne = find
+                  .ancestor(
+                    of: find.byKey(_presentation),
+                    matching: find.byType(Scrollable),
+                  )
+                  .first;
+              final ScrollPosition position = tester
+                  .state<ScrollableState>(colonne)
+                  .position;
+              expect(position.maxScrollExtent, greaterThan(0));
+              final Rect vue = tester.getRect(colonne);
+              // A x2, le rappel se replie sur son titre court.
+              final Rect rappel = tester.getRect(
+                find
+                    .textContaining(
+                      o == ObservateurDemo.controleur
+                          ? t.salle.bandeauControleTitre
+                          : t.salle.observationMuetteTitre,
+                    )
+                    .first,
+              );
+              expect(
+                vue.bottom,
+                lessThanOrEqualTo(rappel.top + 0.5),
+                reason: 'colonne $vue sous le rappel $rappel',
+              );
+              position.jumpTo(position.maxScrollExtent);
+              await tester.pump();
+              final Rect tuile = tester.getRect(
+                find.byKey(const ValueKey<String>('demo-enseignant')),
+              );
+              expect(
+                tuile.bottom,
+                lessThanOrEqualTo(vue.bottom + 0.5),
+                reason: 'tuile $tuile hors de la colonne $vue',
+              );
+              position.jumpTo(0);
+              await tester.pump();
+            }
             if (texte == 1) {
               final Rect tuile = tester.getRect(
                 find.byKey(const ValueKey<String>('demo-enseignant')),
@@ -397,78 +461,130 @@ void main() {
   });
 
   group('CT-3 sur tablette : la presence du controleur se lit', () {
-    for (final Size taille in <Size>[
-      const Size(900, 1200),
-      const Size(1100, 700),
-    ]) {
+    for (final Size taille in _tablettes) {
+      for (final double texte in <double>[1, 2]) {
+        for (final SituationTb s in <SituationTb>[
+          SituationTb.sal00,
+          SituationTb.ped01,
+          SituationTb.ped03,
+          SituationTb.ped04,
+        ]) {
+          for (final ThemeMode mode in <ThemeMode>[
+            ThemeMode.light,
+            ThemeMode.dark,
+          ]) {
+            testWidgets('controleur ${s.name}, ${taille.width.toInt()}x'
+                '${taille.height.toInt()}, texte x$texte, ${mode.name}', (
+              WidgetTester tester,
+            ) async {
+              await _monter(
+                tester,
+                ObservateurDemo.controleur,
+                s,
+                taille: taille,
+                texte: texte,
+                mode: mode,
+              );
+              // Aucun debordement (« A RenderFlex overflowed ») : la colonne
+              // laterale defile au lieu de deborder.
+              expect(tester.takeException(), isNull);
+              expect(
+                find.byKey(_presentation),
+                s == SituationTb.sal00 ? findsNothing : findsOneWidget,
+              );
+              final Finder entete = find.byWidgetPredicate(
+                (Widget w) => w is SectionHeader && w.titre == t.presence.titre,
+              );
+              expect(entete, findsOneWidget);
+              final Finder lignes = find.byType(LignePresence);
+              expect(lignes, findsWidgets);
+              // Chaque texte de la liste, au rendu : son encre sur le fond
+              // peint sous lui, au seuil AA.
+              final Finder textes = find.descendant(
+                of: find
+                    .ancestor(of: entete, matching: find.byType(Column))
+                    .first,
+                matching: find.byType(RichText),
+              );
+              expect(textes.evaluate().length, greaterThanOrEqualTo(3));
+              for (final Element e in textes.evaluate()) {
+                final RenderParagraph p = e.renderObject! as RenderParagraph;
+                final double r = contraste(_encre(p), _fondSous(e));
+                expect(
+                  r,
+                  greaterThanOrEqualTo(seuilTexte),
+                  reason: '« ${p.text.toPlainText()} » a $r:1',
+                );
+              }
+              // La colonne laterale, a cote de la presentation.
+              final Finder colonne = find.byKey(_defilePresence);
+              expect(colonne, findsOneWidget);
+              final Rect rc = tester.getRect(colonne);
+              expect(rc.top, greaterThanOrEqualTo(-0.5));
+              expect(rc.bottom, lessThanOrEqualTo(taille.height + 0.5));
+              if (s != SituationTb.sal00) {
+                final Rect zone = tester.getRect(find.byType(ZoneSupport));
+                expect(
+                  tester.getRect(entete).left,
+                  greaterThanOrEqualTo(zone.right - 0.5),
+                  reason: 'colonne laterale, pas sous la scene',
+                );
+              }
+              // L'en-tete se lit sans un geste.
+              _dansLaFenetre(tester.getRect(entete), taille);
+              final ScrollPosition position = tester
+                  .state<ScrollableState>(
+                    find.descendant(
+                      of: colonne,
+                      matching: find.byType(Scrollable),
+                    ),
+                  )
+                  .position;
+              if (texte == 1) {
+                // Texte x1 : la liste tient entiere, rien ne defile.
+                expect(position.maxScrollExtent, 0);
+              } else {
+                // Texte x2 : la colonne defile jusqu'a la derniere ligne,
+                // qui se lit alors entiere, dans la colonne et la fenetre.
+                await tester.drag(
+                  colonne,
+                  Offset(0, -taille.height),
+                  warnIfMissed: false,
+                );
+                await tester.pumpAndSettle();
+                expect(position.pixels, position.maxScrollExtent);
+              }
+              final Rect derniere = tester.getRect(lignes.last);
+              _dansLaFenetre(derniere, taille);
+              expect(derniere.bottom, lessThanOrEqualTo(rc.bottom + 0.5));
+              expect(tester.takeException(), isNull);
+            });
+          }
+        }
+      }
+    }
+  });
+
+  group('Tablette, texte x2 : la salle du tuteur tient aussi', () {
+    for (final Size taille in _tablettes) {
       for (final SituationTb s in <SituationTb>[
         SituationTb.sal00,
-        SituationTb.ped01,
         SituationTb.ped03,
       ]) {
-        for (final ThemeMode mode in <ThemeMode>[
-          ThemeMode.light,
-          ThemeMode.dark,
-        ]) {
-          testWidgets('controleur ${s.name}, ${taille.width.toInt()} px, '
-              '${mode.name}', (WidgetTester tester) async {
-            await _monter(
-              tester,
-              ObservateurDemo.controleur,
-              s,
-              taille: taille,
-              mode: mode,
-            );
-            expect(tester.takeException(), isNull);
-            expect(
-              find.byKey(_presentation),
-              s == SituationTb.sal00 ? findsNothing : findsOneWidget,
-            );
-            final Finder entete = find.byWidgetPredicate(
-              (Widget w) => w is SectionHeader && w.titre == t.presence.titre,
-            );
-            expect(entete, findsOneWidget);
-            final Finder lignes = find.byType(LignePresence);
-            expect(lignes, findsWidgets);
-            // Chaque texte de la liste, au rendu : son encre sur le fond peint
-            // sous lui, au seuil AA.
-            final Finder textes = find.descendant(
-              of: find
-                  .ancestor(of: entete, matching: find.byType(Column))
-                  .first,
-              matching: find.byType(RichText),
-            );
-            expect(textes.evaluate().length, greaterThanOrEqualTo(3));
-            for (final Element e in textes.evaluate()) {
-              final RenderParagraph p = e.renderObject! as RenderParagraph;
-              final double r = contraste(_encre(p), _fondSous(e));
-              expect(
-                r,
-                greaterThanOrEqualTo(seuilTexte),
-                reason: '« ${p.text.toPlainText()} » a $r:1',
-              );
-            }
-            // La liste tient dans l'ecran sans un geste : l'en-tete et la
-            // derniere ligne sont dans la fenetre.
-            for (final Rect r in <Rect>[
-              tester.getRect(entete),
-              tester.getRect(lignes.last),
-            ]) {
-              expect(r.top, greaterThanOrEqualTo(-0.5));
-              expect(r.bottom, lessThanOrEqualTo(taille.height + 0.5));
-              expect(r.left, greaterThanOrEqualTo(-0.5));
-              expect(r.right, lessThanOrEqualTo(taille.width + 0.5));
-            }
-            if (s != SituationTb.sal00) {
-              final Rect zone = tester.getRect(find.byType(ZoneSupport));
-              expect(
-                tester.getRect(entete).left,
-                greaterThanOrEqualTo(zone.right - 0.5),
-                reason: 'colonne laterale, pas sous la scene',
-              );
-            }
-          });
-        }
+        testWidgets('tuteur ${s.name}, ${taille.width.toInt()}x'
+            '${taille.height.toInt()}, texte x2', (WidgetTester tester) async {
+          await _monter(
+            tester,
+            ObservateurDemo.tuteur,
+            s,
+            taille: taille,
+            texte: 2,
+          );
+          expect(tester.takeException(), isNull);
+          final Finder quitter = _quitter(ObservateurDemo.tuteur);
+          expect(quitter, findsWidgets);
+          _dansLaFenetre(tester.getRect(quitter.first), taille);
+        });
       }
     }
   });

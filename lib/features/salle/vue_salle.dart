@@ -353,6 +353,14 @@ class VueSalle {
   bool get suitLaPresentationEnLecture =>
       role == RoleSalle.tuteurObservateur || role == RoleSalle.controleur;
 
+  /// CT-3 : la liste de presence de ce role se pose sur la surface des
+  /// vignettes (`surfaceSunken`) et non sur le fond de la salle : le
+  /// fond de la salle du controleur rendrait illisible l'encre des surfaces
+  /// claires que portent `SectionHeader` et `LignePresence`.
+  /// Les autres roles gardent leur rendu jusqu'a l'harmonisation (HU-1).
+  bool get litLaPresenceSurLaSurfaceDesVignettes =>
+      role == RoleSalle.controleur;
+
   /// La liste des participants, dans l'ordre ou elle se lit.
   ///
   /// **Soi-meme en premier quand on est visible, et absent sinon.** C'est ce qui

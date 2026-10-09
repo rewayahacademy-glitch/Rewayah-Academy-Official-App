@@ -1466,39 +1466,61 @@ class _ColonnePresence extends StatelessWidget {
     // Une largeur de chrome, deja posee pour la barre laterale : la
     // reutiliser evite d'en inventer une seconde.
     width: AppGabarit.largeurBarreLaterale,
-    child: _FondPresence(vue: vue, lignes: lignes),
+    child: _FondPresence(vue: vue, lignes: lignes, defile: true),
   );
 }
 
 /// La liste de presence sur sa surface : une seule decoration pour la
 /// colonne laterale et la liste posee sous la scene (CT-3).
 class _FondPresence extends StatelessWidget {
-  const _FondPresence({required this.vue, required this.lignes});
+  const _FondPresence({
+    required this.vue,
+    required this.lignes,
+    this.defile = false,
+  });
 
   final VueSalle vue;
   final List<_Presence> lignes;
 
+  /// TB-11a (CT-3, texte x2) : la colonne laterale a la hauteur de l'ecran,
+  /// pas celle de sa liste. Sur une tablette en paysage (700 ou 768 de
+  /// haut) et le texte agrandi, la liste depasse de 184 a 252 points : elle
+  /// defile alors dans sa colonne, sous un fond qui garde toute la hauteur.
+  /// Posee sous la scene, la liste vit deja dans une colonne qui defile.
+  final bool defile;
+
   @override
-  Widget build(BuildContext context) => DecoratedBox(
-    // CT-3 : chez le controleur, la colonne se pose sur la surface des
-    // vignettes (`surfaceSunken`) : `SectionHeader` et `LignePresence`
-    // portent l'encre des surfaces claires, illisible sur le fond de la
-    // salle. Les autres roles gardent leur rendu (HU-1).
-    decoration: vue.role == RoleSalle.controleur
-        ? AppPalette.of(context).surfaceSunken.decoration()
-        : const BoxDecoration(),
-    child: IconTheme.merge(
-      data: vue.role == RoleSalle.controleur
-          ? IconThemeData(
-              color: AppPalette.of(context).surfaceSunken.onBackground,
-            )
-          : const IconThemeData(),
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: _ListePresence(lignes: lignes, entete: true),
+  Widget build(BuildContext context) {
+    final Widget liste = Padding(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      child: _ListePresence(lignes: lignes, entete: true),
+    );
+    // CT-3 : la liste se pose, selon le role, sur la surface des vignettes
+    // (`surfaceSunken`) : `SectionHeader` et `LignePresence` portent l'encre
+    // des surfaces claires, illisible sur le fond de la salle. La capacite
+    // est lue sur la vue, jamais le role (HU-1 pour les autres rendus).
+    final bool surface = vue.litLaPresenceSurLaSurfaceDesVignettes;
+    return DecoratedBox(
+      decoration: surface
+          ? AppPalette.of(context).surfaceSunken.decoration()
+          : const BoxDecoration(),
+      child: IconTheme.merge(
+        data: surface
+            ? IconThemeData(
+                color: AppPalette.of(context).surfaceSunken.onBackground,
+              )
+            : const IconThemeData(),
+        child: defile
+            ? SingleChildScrollView(
+                // Lue par les tests CT-3 a texte x2.
+                key: const ValueKey<String>('presence-defile'),
+                primary: false,
+                child: liste,
+              )
+            : liste,
       ),
-    ),
-  );
+    );
+  }
 }
 
 /// TB-11a (plan V2 §5, UX-21) : la presentation de l'enseignant, lue par le

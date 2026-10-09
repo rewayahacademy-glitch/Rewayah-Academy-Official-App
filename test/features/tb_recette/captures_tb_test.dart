@@ -742,6 +742,14 @@ void main() {
             // 320 x2 apres defilement : la scene sous la presentation.
             for (final _Cadrage c in _cadragesTb)
               if (c.$1 == '320_x2_clair') (c, true),
+            // Tour 3 (CT-3, texte x2) : tablette en paysage et iPad en
+            // paysage ; puis la colonne de presence defilee jusqu'au bout.
+            for (final (String n, Size taille) in <(String, Size)>[
+              ('1100_x2_clair', const Size(1100, 700)),
+              ('1024_x2_clair', const Size(1024, 768)),
+            ])
+              for (final bool d in <bool>[false, true])
+                ((n, taille, 2, EdgeInsets.zero, 2, ThemeMode.light), d),
           ],
         ]) {
           final String nom =
@@ -759,9 +767,22 @@ void main() {
             await stabiliser(tester);
             await tester.pump(const Duration(milliseconds: 1400));
             if (defile) {
-              await tester.ensureVisible(
-                find.byKey(const ValueKey<String>('demo-enseignant')),
+              // Sur tablette, la colonne de presence laterale defile ; au
+              // telephone, la colonne de la presentation et de la scene.
+              final Finder presence = find.byKey(
+                const ValueKey<String>('presence-defile'),
               );
+              if (presence.evaluate().isNotEmpty) {
+                await tester.drag(
+                  presence,
+                  Offset(0, -cas.$2.height),
+                  warnIfMissed: false,
+                );
+              } else {
+                await tester.ensureVisible(
+                  find.byKey(const ValueKey<String>('demo-enseignant')),
+                );
+              }
               await tester.pumpAndSettle();
             }
             // La capture prouve ce qu'elle nomme : la presentation lue.
