@@ -90,10 +90,9 @@ create policy annotation_layer_auteur on public.annotation_layer
       )
       and (
         resource_version_id is null
-        or exists (
-          select 1 from public.resource_version rv
-           where rv.id = annotation_layer.resource_version_id
-             and rv.resource_id = annotation_layer.resource_id
+        or private.tc_assignment_resource_version_matches(
+          annotation_layer.resource_version_id,
+          annotation_layer.resource_id
         )
       ),
       false
