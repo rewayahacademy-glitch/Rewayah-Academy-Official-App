@@ -7,6 +7,7 @@ import '../icons/app_icons.dart';
 import '../tc_bibliotheque/recherche_catalogue.dart';
 import '../theme/app_spacing.dart';
 import 'bloc_asynchrone.dart';
+import 'champ_etiquete.dart';
 import 'choice_card_group.dart';
 import 'etat_systeme.dart';
 import 'point_rappel.dart';
@@ -188,18 +189,11 @@ class _SelecteurPersonneEtat extends State<SelecteurPersonne> {
       children: <Widget>[
         // Sans coupure : un titre ou une phrase dont un mot ne tient pas se
         // reduit juste assez (320 en texte x2, CLASSE-FORM-1).
-        if (widget.obligatoire)
-          Row(
-            children: <Widget>[
-              PointRappel(libelle: t.formulaire.obligatoire, battements: 0),
-              Ecart.hSm,
-              Expanded(
-                child: TexteSansCoupure(mots.titre, style: textes.titleMedium),
-              ),
-            ],
-          )
-        else
-          TexteSansCoupure(mots.titre, style: textes.titleMedium),
+        TitreChamp(
+          mots.titre,
+          style: textes.titleMedium,
+          obligatoire: widget.obligatoire,
+        ),
         Ecart.vXs,
         TexteSansCoupure(mots.contexte, style: textes.bodySmall),
         if (widget.aide case final String aide) ...<Widget>[

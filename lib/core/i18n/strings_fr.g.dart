@@ -13237,17 +13237,32 @@ class Traductions$admin$groupes$formulaire$fr {
 	/// fr: 'À choisir quand le genre n'est pas encore connu : tous les enseignants pourront la prendre.'
 	String get genreIndetermineDetail => 'À choisir quand le genre n\'est pas encore connu : tous les enseignants pourront la prendre.';
 
+	/// fr: 'À choisir pour une classe d'hommes. Le genre des enseignants n'est pas encore lisible ici : vérifiez vous-même que l'enseignant choisi est un homme.'
+	String get genreHommesDetailSansSource => 'À choisir pour une classe d\'hommes. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que l\'enseignant choisi est un homme.';
+
+	/// fr: 'À choisir pour une classe de femmes. Le genre des enseignants n'est pas encore lisible ici : vérifiez vous-même que vous choisissez une enseignante.'
+	String get genreFemmesDetailSansSource => 'À choisir pour une classe de femmes. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que vous choisissez une enseignante.';
+
+	/// fr: 'À choisir pour une classe de garçons. Le genre des enseignants n'est pas encore lisible ici : vérifiez vous-même que l'enseignant choisi est un homme.'
+	String get genreGarconsDetailSansSource => 'À choisir pour une classe de garçons. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que l\'enseignant choisi est un homme.';
+
+	/// fr: 'À choisir pour une classe de filles. Le genre des enseignants n'est pas encore lisible ici : vérifiez vous-même que vous choisissez une enseignante.'
+	String get genreFillesDetailSansSource => 'À choisir pour une classe de filles. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que vous choisissez une enseignante.';
+
 	/// fr: 'Le genre guide le choix de l'enseignant. Il sera enregistré avec la classe dès que le serveur l'acceptera : pour l'instant, il ne l'est pas.'
 	String get genreNonEnregistre => 'Le genre guide le choix de l\'enseignant. Il sera enregistré avec la classe dès que le serveur l\'acceptera : pour l\'instant, il ne l\'est pas.';
 
-	/// fr: 'Classés du plus adapté au moins adapté : genre de la classe, créneau libre, puis le moins de classes en cours.'
-	String get aideEnseignant => 'Classés du plus adapté au moins adapté : genre de la classe, créneau libre, puis le moins de classes en cours.';
+	/// fr: 'Les enseignants sont classés du plus adapté au moins adapté : genre de la classe, créneau libre, puis le moins de classes en cours.'
+	String get aideEnseignant => 'Les enseignants sont classés du plus adapté au moins adapté : genre de la classe, créneau libre, puis le moins de classes en cours.';
 
-	/// fr: 'Le plus adapté : libre à ce créneau, {charge}.'
-	String plusAdapteCreneau({required Object charge}) => 'Le plus adapté : libre à ce créneau, ${charge}.';
+	/// fr: 'Les enseignants sont classés du moins chargé au plus chargé, et un enseignant déjà en classe à ce créneau ne se choisit pas. Leur genre et leurs disponibilités ne sont pas encore lisibles ici : vérifiez-les vous-même.'
+	String get aideEnseignantSansSource => 'Les enseignants sont classés du moins chargé au plus chargé, et un enseignant déjà en classe à ce créneau ne se choisit pas. Leur genre et leurs disponibilités ne sont pas encore lisibles ici : vérifiez-les vous-même.';
 
-	/// fr: 'Le plus adapté : {libres}, {charge}.'
-	String plusAdapteSansCreneau({required Object libres, required Object charge}) => 'Le plus adapté : ${libres}, ${charge}.';
+	/// fr: 'Premier choix : libre à ce créneau, {charge}.'
+	String plusAdapteCreneau({required Object charge}) => 'Premier choix : libre à ce créneau, ${charge}.';
+
+	/// fr: 'Premier choix : {libres}, {charge}.'
+	String plusAdapteSansCreneau({required Object libres, required Object charge}) => 'Premier choix : ${libres}, ${charge}.';
 
 	/// fr: '(one) {{n} classe en cours} (other) {{n} classes en cours}'
 	String classesEnCours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
@@ -13264,8 +13279,8 @@ class Traductions$admin$groupes$formulaire$fr {
 		other: '${n} créneaux libres',
 	);
 
-	/// fr: 'Pas libre à ce créneau d'après ses disponibilités.'
-	String get pasLibre => 'Pas libre à ce créneau d\'après ses disponibilités.';
+	/// fr: 'Ce créneau n'est pas dans ses disponibilités déclarées : vous pouvez quand même faire ce choix.'
+	String get pasLibre => 'Ce créneau n\'est pas dans ses disponibilités déclarées : vous pouvez quand même faire ce choix.';
 
 	/// fr: 'Classe d'hommes : seul un enseignant homme peut la prendre.'
 	String get raisonHommes => 'Classe d\'hommes : seul un enseignant homme peut la prendre.';
@@ -13318,8 +13333,8 @@ class Traductions$admin$groupes$formulaire$fr {
 	/// fr: 'Seuil maximal'
 	String get titreSeuil => 'Seuil maximal';
 
-	/// fr: 'Au-delà de ce nombre d'élèves, la classe est complète. Proposé : 5 pour des enfants, 6 pour des adultes ; 6 au plus.'
-	String get seuilDetail => 'Au-delà de ce nombre d\'élèves, la classe est complète. Proposé : 5 pour des enfants, 6 pour des adultes ; 6 au plus.';
+	/// fr: 'La classe est complète dès qu'elle atteint ce nombre d'élèves. Proposé : 5 pour des enfants, 6 pour des adultes ; 6 au plus.'
+	String get seuilDetail => 'La classe est complète dès qu\'elle atteint ce nombre d\'élèves. Proposé : 5 pour des enfants, 6 pour des adultes ; 6 au plus.';
 
 	/// fr: '(one) {{n} élève} (other) {{n} élèves}'
 	String seuilValeur({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
@@ -13330,8 +13345,8 @@ class Traductions$admin$groupes$formulaire$fr {
 	/// fr: 'Nom de la classe'
 	String get titreNom => 'Nom de la classe';
 
-	/// fr: 'Déduit du genre, du public et du créneau : vous pouvez le changer.'
-	String get nomDetail => 'Déduit du genre, du public et du créneau : vous pouvez le changer.';
+	/// fr: 'Ce nom est déduit du genre, du public et du créneau : vous pouvez le changer.'
+	String get nomDetail => 'Ce nom est déduit du genre, du public et du créneau : vous pouvez le changer.';
 
 	/// fr: '{base}, {creneau}'
 	String nomPropose({required Object base, required Object creneau}) => '${base}, ${creneau}';
@@ -13348,8 +13363,23 @@ class Traductions$admin$groupes$formulaire$fr {
 	/// fr: 'Il manque le nom de la classe : écrivez-le dans le dernier champ.'
 	String get manqueNom => 'Il manque le nom de la classe : écrivez-le dans le dernier champ.';
 
-	/// fr: 'L'enseignant choisi ne peut pas prendre cette classe : {raison} Choisissez-en un autre dans la liste.'
-	String enseignantNonChoisissable({required Object raison}) => 'L\'enseignant choisi ne peut pas prendre cette classe : ${raison} Choisissez-en un autre dans la liste.';
+	/// fr: '{nom} ne peut pas prendre une classe d'hommes : choisissez un enseignant homme dans la liste.'
+	String manqueEnseignantHommes({required Object nom}) => '${nom} ne peut pas prendre une classe d\'hommes : choisissez un enseignant homme dans la liste.';
+
+	/// fr: '{nom} ne peut pas prendre une classe de garçons : choisissez un enseignant homme dans la liste.'
+	String manqueEnseignantGarcons({required Object nom}) => '${nom} ne peut pas prendre une classe de garçons : choisissez un enseignant homme dans la liste.';
+
+	/// fr: '{nom} ne peut pas prendre une classe de femmes : choisissez une enseignante dans la liste.'
+	String manqueEnseignantFemmes({required Object nom}) => '${nom} ne peut pas prendre une classe de femmes : choisissez une enseignante dans la liste.';
+
+	/// fr: '{nom} ne peut pas prendre une classe de filles : choisissez une enseignante dans la liste.'
+	String manqueEnseignantFilles({required Object nom}) => '${nom} ne peut pas prendre une classe de filles : choisissez une enseignante dans la liste.';
+
+	/// fr: '{nom} est déjà en classe à ce créneau : changez de créneau ou choisissez une autre personne dans la liste.'
+	String manqueEnseignantPris({required Object nom}) => '${nom} est déjà en classe à ce créneau : changez de créneau ou choisissez une autre personne dans la liste.';
+
+	/// fr: 'La liste des enseignants n'est pas encore à jour, donc l'enseignant choisi n'a pas pu être vérifié : attendez qu'elle s'affiche, puis pressez de nouveau.'
+	String get manqueListeEnseignants => 'La liste des enseignants n\'est pas encore à jour, donc l\'enseignant choisi n\'a pas pu être vérifié : attendez qu\'elle s\'affiche, puis pressez de nouveau.';
 
 	/// fr: 'Sans réseau, la classe ne peut pas être créée. Vos choix restent affichés : revenez quand la connexion est rétablie.'
 	String get horsLigne => 'Sans réseau, la classe ne peut pas être créée. Vos choix restent affichés : revenez quand la connexion est rétablie.';
@@ -18432,14 +18462,19 @@ extension on Traductions {
 			'admin.groupes.formulaire.genreGarconsDetail' => 'À choisir pour une classe de garçons : seuls les enseignants hommes pourront la prendre.',
 			'admin.groupes.formulaire.genreFillesDetail' => 'À choisir pour une classe de filles : seules les enseignantes pourront la prendre.',
 			'admin.groupes.formulaire.genreIndetermineDetail' => 'À choisir quand le genre n\'est pas encore connu : tous les enseignants pourront la prendre.',
+			'admin.groupes.formulaire.genreHommesDetailSansSource' => 'À choisir pour une classe d\'hommes. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que l\'enseignant choisi est un homme.',
+			'admin.groupes.formulaire.genreFemmesDetailSansSource' => 'À choisir pour une classe de femmes. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que vous choisissez une enseignante.',
+			'admin.groupes.formulaire.genreGarconsDetailSansSource' => 'À choisir pour une classe de garçons. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que l\'enseignant choisi est un homme.',
+			'admin.groupes.formulaire.genreFillesDetailSansSource' => 'À choisir pour une classe de filles. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que vous choisissez une enseignante.',
 			'admin.groupes.formulaire.genreNonEnregistre' => 'Le genre guide le choix de l\'enseignant. Il sera enregistré avec la classe dès que le serveur l\'acceptera : pour l\'instant, il ne l\'est pas.',
-			'admin.groupes.formulaire.aideEnseignant' => 'Classés du plus adapté au moins adapté : genre de la classe, créneau libre, puis le moins de classes en cours.',
-			'admin.groupes.formulaire.plusAdapteCreneau' => ({required Object charge}) => 'Le plus adapté : libre à ce créneau, ${charge}.',
-			'admin.groupes.formulaire.plusAdapteSansCreneau' => ({required Object libres, required Object charge}) => 'Le plus adapté : ${libres}, ${charge}.',
+			'admin.groupes.formulaire.aideEnseignant' => 'Les enseignants sont classés du plus adapté au moins adapté : genre de la classe, créneau libre, puis le moins de classes en cours.',
+			'admin.groupes.formulaire.aideEnseignantSansSource' => 'Les enseignants sont classés du moins chargé au plus chargé, et un enseignant déjà en classe à ce créneau ne se choisit pas. Leur genre et leurs disponibilités ne sont pas encore lisibles ici : vérifiez-les vous-même.',
+			'admin.groupes.formulaire.plusAdapteCreneau' => ({required Object charge}) => 'Premier choix : libre à ce créneau, ${charge}.',
+			'admin.groupes.formulaire.plusAdapteSansCreneau' => ({required Object libres, required Object charge}) => 'Premier choix : ${libres}, ${charge}.',
 			'admin.groupes.formulaire.classesEnCours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} classe en cours', other: '${n} classes en cours', ), 
 			'admin.groupes.formulaire.aucuneClasse' => 'aucune classe en cours',
 			'admin.groupes.formulaire.creneauxLibres' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} créneau libre', other: '${n} créneaux libres', ), 
-			'admin.groupes.formulaire.pasLibre' => 'Pas libre à ce créneau d\'après ses disponibilités.',
+			'admin.groupes.formulaire.pasLibre' => 'Ce créneau n\'est pas dans ses disponibilités déclarées : vous pouvez quand même faire ce choix.',
 			'admin.groupes.formulaire.raisonHommes' => 'Classe d\'hommes : seul un enseignant homme peut la prendre.',
 			'admin.groupes.formulaire.raisonGarcons' => 'Classe de garçons : seul un enseignant homme peut la prendre.',
 			'admin.groupes.formulaire.raisonFemmes' => 'Classe de femmes : seule une enseignante peut la prendre.',
@@ -18457,16 +18492,21 @@ extension on Traductions {
 			'admin.groupes.formulaire.fuseauDefaut' => ({required Object fuseau}) => 'Heures lues dans le fuseau ${fuseau}, retenu par défaut.',
 			'admin.groupes.formulaire.fuseauNonTransmis' => ({required Object fuseau}) => 'Heures lues dans le fuseau ${fuseau}, celui que le serveur retient pour l\'instant. Le fuseau de l\'enseignant sera pris en compte dès que le serveur l\'acceptera.',
 			'admin.groupes.formulaire.titreSeuil' => 'Seuil maximal',
-			'admin.groupes.formulaire.seuilDetail' => 'Au-delà de ce nombre d\'élèves, la classe est complète. Proposé : 5 pour des enfants, 6 pour des adultes ; 6 au plus.',
+			'admin.groupes.formulaire.seuilDetail' => 'La classe est complète dès qu\'elle atteint ce nombre d\'élèves. Proposé : 5 pour des enfants, 6 pour des adultes ; 6 au plus.',
 			'admin.groupes.formulaire.seuilValeur' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève', other: '${n} élèves', ), 
 			'admin.groupes.formulaire.titreNom' => 'Nom de la classe',
-			'admin.groupes.formulaire.nomDetail' => 'Déduit du genre, du public et du créneau : vous pouvez le changer.',
+			'admin.groupes.formulaire.nomDetail' => 'Ce nom est déduit du genre, du public et du créneau : vous pouvez le changer.',
 			'admin.groupes.formulaire.nomPropose' => ({required Object base, required Object creneau}) => '${base}, ${creneau}',
 			'admin.groupes.formulaire.manqueGenre' => 'Il manque le genre de la classe : choisissez l\'une des trois cartes.',
 			'admin.groupes.formulaire.manqueCreneau' => 'Il manque le créneau : choisissez le jour et l\'heure de la classe.',
 			'admin.groupes.formulaire.manqueSeuil' => 'Il manque le seuil maximal : choisissez un nombre d\'élèves entre 1 et 6.',
 			'admin.groupes.formulaire.manqueNom' => 'Il manque le nom de la classe : écrivez-le dans le dernier champ.',
-			'admin.groupes.formulaire.enseignantNonChoisissable' => ({required Object raison}) => 'L\'enseignant choisi ne peut pas prendre cette classe : ${raison} Choisissez-en un autre dans la liste.',
+			'admin.groupes.formulaire.manqueEnseignantHommes' => ({required Object nom}) => '${nom} ne peut pas prendre une classe d\'hommes : choisissez un enseignant homme dans la liste.',
+			'admin.groupes.formulaire.manqueEnseignantGarcons' => ({required Object nom}) => '${nom} ne peut pas prendre une classe de garçons : choisissez un enseignant homme dans la liste.',
+			'admin.groupes.formulaire.manqueEnseignantFemmes' => ({required Object nom}) => '${nom} ne peut pas prendre une classe de femmes : choisissez une enseignante dans la liste.',
+			'admin.groupes.formulaire.manqueEnseignantFilles' => ({required Object nom}) => '${nom} ne peut pas prendre une classe de filles : choisissez une enseignante dans la liste.',
+			'admin.groupes.formulaire.manqueEnseignantPris' => ({required Object nom}) => '${nom} est déjà en classe à ce créneau : changez de créneau ou choisissez une autre personne dans la liste.',
+			'admin.groupes.formulaire.manqueListeEnseignants' => 'La liste des enseignants n\'est pas encore à jour, donc l\'enseignant choisi n\'a pas pu être vérifié : attendez qu\'elle s\'affiche, puis pressez de nouveau.',
 			'admin.groupes.formulaire.horsLigne' => 'Sans réseau, la classe ne peut pas être créée. Vos choix restent affichés : revenez quand la connexion est rétablie.',
 			'admin.groupes.formulaire.seuilHorsLigne' => 'Sans réseau, le seuil ne peut pas être enregistré. Votre choix reste affiché : revenez quand la connexion est rétablie.',
 			'admin.diagnostics.titre' => 'Diagnostics',
@@ -18534,6 +18574,8 @@ extension on Traductions {
 			'admin.regles.ageCameraAuto' => 'Âge minimum caméra automatique',
 			'admin.regles.ageCameraAutoDetail' => 'En dessous de cet âge, l\'activation de la caméra reste soumise à l\'accord du tuteur.',
 			'admin.regles.ageInterfaceEnfant' => 'Âge maximum interface enfant',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regles.ageInterfaceEnfantDetail' => 'En dessous de cet âge, un profil bascule sur l\'interface simplifiée à sa création.',
 			'admin.regles.appareilsParEleve' => 'Appareils par élève',
 			'admin.regles.appareilsParEleveDetail' => 'Le nombre d\'appareils qu\'un élève peut avoir actifs en même temps.',
@@ -18544,8 +18586,6 @@ extension on Traductions {
 			'admin.regles.uniteNombre' => ({required Object n}) => '${n}',
 			'admin.fonctionnalites.titre' => 'Fonctionnalités',
 			'admin.fonctionnalites.intro' => 'Les fonctionnalités qui changent le comportement de toute la plateforme.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.fonctionnalites.erreur' => 'Les fonctionnalités n\'ont pas pu être lues. Réessayez dans un instant.',
 			'admin.fonctionnalites.erreurEcriture' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
 			'admin.fonctionnalites.valeurInvalide' => 'Entrez un nombre valide.',
@@ -19048,6 +19088,8 @@ extension on Traductions {
 			'nav.eleve.suivi' => 'Suivi',
 			'nav.eleve.compte' => 'Compte',
 			'nav.tuteur.accueil' => 'Accueil',
+			_ => null,
+		} ?? switch (path) {
 			'nav.tuteur.foyer' => 'Foyer',
 			'nav.tuteur.disponibilites' => 'Disponibilités',
 			'nav.tuteur.reglages' => 'Réglages',
@@ -19058,8 +19100,6 @@ extension on Traductions {
 			'nav.enseignant.classes' => 'Classes',
 			'nav.enseignant.creneaux' => 'Disponibilités',
 			'nav.enseignant.profil' => 'Profil',
-			_ => null,
-		} ?? switch (path) {
 			'nav.controleur.planning' => 'Planning',
 			'nav.controleur.controle' => 'Contrôle',
 			'nav.controleur.historique' => 'Historique',
@@ -19562,6 +19602,8 @@ extension on Traductions {
 			'tuteur.reglages.demandeMotif' => 'Pourquoi ce changement ?',
 			'tuteur.reglages.demandeMotifRequis' => 'Un motif est nécessaire : c\'est lui qui permet de trancher.',
 			'tuteur.reglages.demandeManqueValeur' => 'Il manque la durée demandée : choisissez-la dans la liste, ou touchez « Autre » et écrivez-la.',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.reglages.demandeEnvoyer' => 'Envoyer la demande',
 			'tuteur.reglages.demandeEnvoyee' => 'Demande envoyée. L\'administration la tranchera.',
 			'tuteur.reglages.aucunEnfant' => 'Aucun enfant dans le foyer',
@@ -19572,8 +19614,6 @@ extension on Traductions {
 			'classe.entree.rejoindre' => 'Rejoindre',
 			'classe.entree.rejoindreLecteur' => ({required Object deClasse}) => 'Rejoindre la séance ${deClasse}',
 			'classe.entree.salleOuverte' => ({required Object duree}) => 'La salle est ouverte. La séance commence dans ${duree}.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.entree.salleOuverteImminent' => 'La salle est ouverte. La séance commence dans moins d\'une minute.',
 			'classe.entree.preparation' => 'Préparation en cours',
 			'classe.entree.attente' => ({required Object duree}) => 'Vous êtes dans la salle. La séance commence dans ${duree}.',
@@ -20076,6 +20116,8 @@ extension on Traductions {
 			'enseignant.profil.contratAccuse' => 'Enregistrement audio et visite de contrôle',
 			'enseignant.profil.contratDetail' => ({required Object version, required Object date}) => 'Version ${version}, accepté le ${date}',
 			'enseignant.profil.contratAucun' => 'Aucun contrat enregistré',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.contratAucunDetail' => 'Votre dossier n\'est pas encore passé par la signature.',
 			'enseignant.profil.contratErreur' => 'Vos contrats n\'ont pas pu être lus.',
 			'enseignant.profil.contratLectureSeule' => 'Ces pièces sont en lecture seule.',
@@ -20086,8 +20128,6 @@ extension on Traductions {
 			'enseignant.profil.erreur' => 'Votre profil n\'a pas pu être lu. Réessayez dans un instant.',
 			'enseignant.profil.vide' => 'Aucun profil enseignant',
 			'enseignant.profil.videDetail' => 'Ce compte n\'a pas de profil enseignant. Seule l\'académie peut en créer un.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.profil.horsLigne' => 'Rien ne peut être modifié ici pour l\'instant.',
 			'enseignant.profil.modifierPays' => 'Modifier le pays',
 			'enseignant.profil.modifierLangues' => 'Modifier les langues',
@@ -20590,6 +20630,8 @@ extension on Traductions {
 			'tc.outils.marquer.retirer' => 'Retirer le marqueur',
 			'tc.outils.revision.titre' => 'À préparer',
 			'tc.outils.revision.aide' => 'Le passage sélectionné devient un travail à préparer.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.revision.groupeEntier' => 'Toute la classe',
 			'tc.outils.revision.consigne' => 'Consigne courte (facultatif)',
 			'tc.outils.revision.creer' => 'Poser le travail',
@@ -20600,8 +20642,6 @@ extension on Traductions {
 			'tc.outils.focus.quitter' => 'Quitter le focus',
 			'tc.outils.annotation.ancrageDegrade' => 'Ce passage n\'a pas de repère de texte : l\'annotation suivra la page, pas les mots.',
 			'tc.outils.annotation.horsPage' => 'Annotations masquées : leur passage n\'est pas à l\'écran.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.annotation.aucuneSelection' => 'Sélectionnez d\'abord un passage.',
 			'tc.classe.entete.titreEnseignant.sayyid' => 'Sayyid',
 			'tc.classe.entete.titreEnseignant.sayyida' => 'Sayyida',
@@ -21104,6 +21144,8 @@ extension on Traductions {
 			'adulte.acceptation.sansCompteTitre' => 'Invitation au forfait famille',
 			'adulte.acceptation.sansCompte' => 'Pour répondre, connectez-vous à votre compte, ou créez-en un. Vous lirez alors ce que la personne qui vous invite verra et ne verra pas avant de décider.',
 			'adulte.acceptation.sansCompteAction' => 'Me connecter ou créer mon compte',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.sortie.retirerElle' => 'Retirer ma conjointe',
 			'adulte.sortie.retirerLui' => 'Retirer mon conjoint',
 			'adulte.sortie.retirerQuestionElle' => 'Retirer ma conjointe ?',
@@ -21114,8 +21156,6 @@ extension on Traductions {
 			'adulte.sortie.quitterQuestion' => 'Quitter le forfait famille ?',
 			'adulte.sortie.quitterConfirmer' => 'Quitter le forfait',
 			'adulte.sortie.quitterConsequence' => 'Votre compte, vos cours, votre historique et votre solde restent disponibles. Le rattachement au forfait famille prendra fin.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.sortie.forfaitPhrase' => ({required Object dePrenom}) => 'Vous faites partie du forfait famille ${dePrenom}.',
 			'adulte.sortie.resultatTitre' => 'Le rattachement au forfait famille a pris fin',
 			'adulte.sortie.resultatTitulaire' => 'Son compte, ses cours, son historique et son solde restent disponibles.',

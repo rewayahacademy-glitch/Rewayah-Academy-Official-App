@@ -5,12 +5,15 @@
 // les services et les ports sont des doubles (`support_form_l2.dart`). Les
 // valeurs envoyees au port se mesurent champ par champ.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/enseignants_classe.dart';
+import 'package:rewayah_academy/core/admin/service_comptes.dart';
 import 'package:rewayah_academy/core/admin/service_groupes.dart';
 import 'package:rewayah_academy/core/capacites/port_creation_classe.dart';
 import 'package:rewayah_academy/core/capacites/port_enseignants_classe.dart';
@@ -24,7 +27,10 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_bottom_sheet.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_personne.dart';
+import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_groupes/groupes_page.dart';
+import 'package:rewayah_academy/features/demo/classe_form_demo.dart';
 
 import '../support/aucun_mot_coupe.dart';
 import '../support/garde_interface.dart';
@@ -76,6 +82,28 @@ final List<EnseignantPropose> _enseignants = <EnseignantPropose>[
   ),
 ];
 
+/// Une source qui repond pour les enfants et jamais pour les adultes : la
+/// liste se recharge sans fin apres un changement de public.
+class _PortParPublic implements PortEnseignantsClasse {
+  final Completer<List<EnseignantPropose>> _jamais =
+      Completer<List<EnseignantPropose>>();
+
+  @override
+  Future<List<EnseignantPropose>> pourClasse({
+    required TypePublicGroupe public,
+  }) => public == TypePublicGroupe.enfant
+      ? Future<List<EnseignantPropose>>.value(_enseignants)
+      : _jamais.future;
+}
+
+/// Une source en echec, autre que « indisponible » : aucun repli.
+class _PortEnEchec implements PortEnseignantsClasse {
+  @override
+  Future<List<EnseignantPropose>> pourClasse({
+    required TypePublicGroupe public,
+  }) => Future<List<EnseignantPropose>>.error(Exception('reseau coupe'));
+}
+
 List<String> _ids(List<EnseignantClasse> l) => <String>[
   for (final EnseignantClasse e in l) e.enseignant.id,
 ];
@@ -111,6 +139,7 @@ Widget _hote(
 List<Override> _surcharges({
   FauxGroupesFormL2? groupes,
   FauxCreationClasse? creation,
+  PortEnseignantsClasse? port,
   bool horsLigne = false,
 }) => <Override>[
   ...surchargesFormL2(
@@ -118,7 +147,7 @@ List<Override> _surcharges({
     groupes: groupes,
   ),
   portEnseignantsClasseProvider.overrideWithValue(
-    FauxEnseignantsClasse(_enseignants),
+    port ?? FauxEnseignantsClasse(_enseignants),
   ),
   portCreationClasseProvider.overrideWithValue(
     creation ?? FauxCreationClasse(),
@@ -495,6 +524,223 @@ void main() {
       expect(_nom(tester), t.admin.groupes.formulaire.genreFilles);
     });
   });
+
+  group('Revue CLASSE-FORM-1 : choix gardes, collision, liste a jour', () {
+    testWidgets('un nom tape n\'est jamais ecrase par un changement de '
+        'genre, de public ou de creneau ; c\'est lui qui part', (
+      WidgetTester tester,
+    ) async {
+      final FauxCreationClasse creation = FauxCreationClasse();
+      await _ouvrir(tester, _surcharges(creation: creation));
+      await tester.enterText(_champNom, 'Al-Fajr');
+      await tester.pumpAndSettle();
+      await _presser(tester, _cle('classe-genre-femmes'));
+      await _presser(tester, _cle('classe-public-adulte'));
+      await _presser(tester, _cle('personne-f1'));
+      await _presser(tester, _cle('classe-libre-5-10'));
+      expect(_nom(tester), 'Al-Fajr');
+      await _presser(tester, _envoyer);
+      expect(creation.creations.single.libelle, 'Al-Fajr');
+    });
+
+    testWidgets('un seuil choisi n\'est jamais ecrase par un changement de '
+        'public ; c\'est lui qui part', (WidgetTester tester) async {
+      final FauxCreationClasse creation = FauxCreationClasse();
+      await _ouvrir(tester, _surcharges(creation: creation));
+      await _presser(tester, find.byKey(SelecteurEntier.clePuce(3)));
+      await _presser(tester, _cle('classe-public-adulte'));
+      await _presser(tester, _cle('classe-genre-femmes'));
+      await _presser(tester, _cle('personne-f1'));
+      await _presser(tester, _cle('classe-libre-2-17'));
+      await _presser(tester, _envoyer);
+      expect(creation.creations.single.seuilMax, 3);
+    });
+
+    testWidgets('collision : un enseignant choisi puis deja en classe au '
+        'creneau porte sa raison, et l\'envoi le dit par son nom', (
+      WidgetTester tester,
+    ) async {
+      final FauxCreationClasse creation = FauxCreationClasse();
+      final f = t.admin.groupes.formulaire;
+      await _ouvrir(tester, _surcharges(creation: creation));
+      await _presser(tester, _cle('classe-genre-hommes'));
+      await _presser(tester, _cle('personne-h2'));
+      await _presser(tester, _cle('classe-jour-3'));
+      await _heure(tester, 18);
+      expect(
+        find.descendant(
+          of: _cle('personne-h2'),
+          matching: find.text(f.raisonPris),
+        ),
+        findsOneWidget,
+      );
+      await _presser(tester, _envoyer);
+      expect(
+        find.text(f.manqueEnseignantPris(nom: 'Hamza Sow')),
+        findsOneWidget,
+      );
+      expect(creation.creations, isEmpty);
+    });
+
+    testWidgets('genre change apres le choix : l\'envoi dit, par son nom, '
+        'que l\'enseignante ne peut pas prendre une classe de garcons', (
+      WidgetTester tester,
+    ) async {
+      final FauxCreationClasse creation = FauxCreationClasse();
+      await _ouvrir(tester, _surcharges(creation: creation));
+      await _presser(tester, _cle('classe-genre-femmes'));
+      await _presser(tester, _cle('personne-f1'));
+      await _presser(tester, _cle('classe-libre-2-17'));
+      await _presser(tester, _cle('classe-genre-hommes'));
+      await _presser(tester, _envoyer);
+      expect(
+        find.text(
+          t.admin.groupes.formulaire.manqueEnseignantGarcons(
+            nom: 'Fatima Diallo',
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(creation.creations, isEmpty);
+    });
+
+    testWidgets('liste qui se recharge apres un changement de public : '
+        'rien ne part, le message le dit', (WidgetTester tester) async {
+      final FauxCreationClasse creation = FauxCreationClasse();
+      final _PortParPublic port = _PortParPublic();
+      await _ouvrir(tester, _surcharges(creation: creation, port: port));
+      await _presser(tester, _cle('classe-genre-femmes'));
+      await _presser(tester, _cle('personne-f1'));
+      await _presser(tester, _cle('classe-libre-2-17'));
+      // La source des adultes ne repond pas encore.
+      await _presser(tester, _cle('classe-public-adulte'));
+      await _presser(tester, _envoyer);
+      expect(
+        find.text(t.admin.groupes.formulaire.manqueListeEnseignants),
+        findsOneWidget,
+      );
+      expect(creation.creations, isEmpty);
+    });
+
+    testWidgets('demonstration : la classe creee rend l\'enseignante prise '
+        'a ce creneau a la reouverture, et le genre est retenu', (
+      WidgetTester tester,
+    ) async {
+      final ClassesCreeesDemo creees = ClassesCreeesDemo();
+      final EnseignantsClasseDemo port = EnseignantsClasseDemo(creees);
+      int charge(List<EnseignantPropose> l) => l
+          .firstWhere((EnseignantPropose e) => e.id == 'demo-ens-1')
+          .classesActives;
+      final int avant = charge(
+        await port.pourClasse(public: TypePublicGroupe.enfant),
+      );
+      final f = t.admin.groupes.formulaire;
+      await _ouvrir(tester, <Override>[
+        ...surchargesFormL2(comptes: FauxComptesFormL2(comptesFormL2)),
+        groupesProvider.overrideWith((Ref ref) async => creees.toutes()),
+        portEnseignantsClasseProvider.overrideWithValue(port),
+        portCreationClasseProvider.overrideWithValue(
+          CreationClasseDemo(creees),
+        ),
+        serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+      ]);
+      await _presser(tester, _cle('classe-genre-femmes'));
+      await _presser(tester, _cle('personne-demo-ens-1'));
+      await _presser(tester, _cle('classe-libre-1-17'));
+      await _presser(tester, _envoyer);
+      expect(_envoyer, findsNothing);
+      final String id = creees.groupes.single.id;
+      expect(creees.genreDe(id), GenreClasse.femmes);
+
+      // Reouverture : meme creneau, l'enseignante est prise.
+      await _presser(tester, find.text(t.admin.groupes.creer).first);
+      await _presser(tester, _cle('classe-genre-femmes'));
+      await _presser(tester, _cle('classe-jour-1'));
+      await _heure(tester, 17);
+      expect(
+        find.descendant(
+          of: _cle('personne-demo-ens-1'),
+          matching: find.text(f.raisonPris),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        charge(await port.pourClasse(public: TypePublicGroupe.enfant)),
+        avant + 1,
+      );
+    });
+  });
+
+  group(
+    'Chemin de production : source indisponible, repli sur les comptes',
+    () {
+      List<Override> production(FauxComptesFormL2 comptes) => <Override>[
+        ...surchargesFormL2(comptes: comptes),
+        serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+      ];
+
+      testWidgets('repli : les enseignants actifs, sans « premier choix », et '
+          'des textes qui ne promettent ni filtre de genre ni classement par '
+          'creneau', (WidgetTester tester) async {
+        final f = t.admin.groupes.formulaire;
+        await _ouvrir(tester, production(FauxComptesFormL2(comptesFormL2)));
+        expect(_cle('personne-t-amina'), findsOneWidget);
+        expect(_cle('personne-t-yacine'), findsOneWidget);
+        final String premierChoix = f
+            .plusAdapteSansCreneau(libres: '\u0000', charge: '')
+            .split('\u0000')
+            .first;
+        expect(find.textContaining(premierChoix), findsNothing);
+        expect(find.text(f.aideEnseignantSansSource), findsOneWidget);
+        expect(find.text(f.aideEnseignant), findsNothing);
+        expect(find.text(f.genreFillesDetailSansSource), findsOneWidget);
+        expect(find.text(f.genreFillesDetail), findsNothing);
+      });
+
+      testWidgets('aucun enseignant actif : etat vide', (
+        WidgetTester tester,
+      ) async {
+        await _ouvrir(
+          tester,
+          production(FauxComptesFormL2(const <CompteAdmin>[])),
+        );
+        expect(
+          find.text(t.commun.selecteurPersonne.videEnseignant),
+          findsOneWidget,
+        );
+      });
+
+      testWidgets('source qui ne repond pas encore : squelette', (
+        WidgetTester tester,
+      ) async {
+        await _ouvrir(tester, <Override>[
+          ...production(FauxComptesFormL2(comptesFormL2)),
+          portEnseignantsClasseProvider.overrideWithValue(_PortParPublic()),
+        ]);
+        await _presser(tester, _cle('classe-public-adulte'));
+        expect(
+          find.descendant(
+            of: find.byType(SelecteurPersonne),
+            matching: find.byType(Skeleton),
+          ),
+          findsWidgets,
+        );
+      });
+
+      testWidgets('echec de la source (autre que « indisponible ») : l\'echec '
+          'se voit, sans repli silencieux', (WidgetTester tester) async {
+        await _ouvrir(tester, <Override>[
+          ...production(FauxComptesFormL2(comptesFormL2)),
+          portEnseignantsClasseProvider.overrideWithValue(_PortEnEchec()),
+        ]);
+        expect(
+          find.text(t.commun.selecteurPersonne.erreurEnseignantTitre),
+          findsOneWidget,
+        );
+        expect(_cle('personne-t-amina'), findsNothing);
+      });
+    },
+  );
 
   group('La feuille « Seuil maximal » (D7, K-56)', () {
     testWidgets('meme selecteur 1 a 6, valeur actuelle retenue, bouton actif', (

@@ -26,15 +26,15 @@
 | Une phrase de contexte ouvre la feuille, puis la légende de la marque d'obligation | K-58 ; Nielsen n°1 (visibilité de l'état) ; Baymard (signaler les champs obligatoires) | L'écran commence par dire à quoi il sert, et ce qui est requis se voit avant l'envoi | Conforme | `admin.groupes.formulaire.contexte` ; légende `formulaire.legendeObligatoire` ; le point fixe de `PointRappel` devant chaque titre, que le lecteur d'écran annonce « Champ obligatoire » | Les six champs sont tous obligatoires : la marque est répétée sur chacun plutôt qu'une seule phrase « tout est obligatoire », pour que l'œil la retrouve au moment de la décision |
 | Ordre des champs : Public, Genre, Enseignant, Créneau, Seuil, Nom | K-57 (déduit > choisi > saisi) ; Hick | Ce qui filtre vient avant ce qui est filtré | Conforme | Le public et le genre classent la liste des enseignants. L'enseignant met ses créneaux libres en avant. Le public préremplit le seuil. Tout le reste préremplit le nom | Aucune |
 | Public en deux cartes | K-58 ; `lib/CLAUDE.md` (tout choix passe par `ChoiceCardGroup`) | Chaque option dit quand la choisir et ce qu'elle change | Conforme | Enfants : « À choisir pour une classe d'enfants. Seuil proposé : 5 élèves. » Adultes : « … Seuil proposé : 6 élèves. » | Pas de carte « Autre » : le domaine SQL n'a que deux valeurs (`type_public`) |
-| Genre en trois cartes, aucune présélection | Demande du directeur ; K-58 ; Nielsen n°5 (prévention des erreurs) | Une valeur sensible n'est jamais choisie à la place de l'admin | Conforme | Libellés accordés au public : Garçons / Filles chez les enfants, Hommes / Femmes chez les adultes, et Non déterminé. Chaque carte dit qui pourra prendre la classe | Cartes en liste et non côte à côte (`coteACote`) : à 320 px, trois colonnes de 90 px ne tiennent pas une phrase de conséquence. Pas de carte « Autre » (D2 : trois valeurs fermées) |
+| Genre en trois cartes, aucune présélection | Demande du directeur ; K-58 ; Nielsen n°5 (prévention des erreurs) | Une valeur sensible n'est jamais choisie à la place de l'admin | Conforme | Libellés accordés au public : Garçons / Filles chez les enfants, Hommes / Femmes chez les adultes, et Non déterminé. Chaque carte dit qui pourra prendre la classe **quand la source dit le genre des enseignants** ; sinon (repli sur les comptes, production aujourd'hui), elle dit que ce genre n'est pas encore lisible et qu'il faut le vérifier soi-même (`genre…DetailSansSource`) : la conséquence annoncée est celle qui se produit (revue du lot) | Cartes en liste et non côte à côte (`coteACote`) : à 320 px, trois colonnes de 90 px ne tiennent pas une phrase de conséquence. Pas de carte « Autre » (D2 : trois valeurs fermées) |
 | Ligne honnête sous le genre (D1) | §1 (aucune donnée inventée) ; D5 (« non confirmé », jamais un faux succès) | Ne pas laisser croire qu'une valeur est enregistrée | Conforme | Rendue seulement quand l'adaptateur ne retient pas le genre (`PortCreationClasse.retientGenre` faux, c'est le cas de l'adaptateur réel) : « Le genre guide le choix de l'enseignant. Il sera enregistré avec la classe dès que le serveur l'acceptera : pour l'instant, il ne l'est pas. » | Aucune |
-| Enseignant : liste classée, « le plus adapté » en tête avec sa raison | K-57 (meilleure option justifiée) ; K-58 ; Nielsen n°6 | Proposer, puis dire pourquoi | Conforme | `SelecteurPersonne` étendu (`mention`, `raisonIndisponible`, `obligatoire`, `aide`), sans composant nouveau. Ordre décrit par une phrase. Mention « Le plus adapté : libre à ce créneau, 2 classes en cours. » ou, sans créneau, « Le plus adapté : 3 créneaux libres, 1 classe en cours. » | Sans disponibilités rendues par la source (adaptateur réel, repli), personne n'est « le plus adapté » : la mention ne s'invente pas |
-| Enseignant incompatible ou déjà en classe au créneau : visible, non choisissable, avec sa raison (D4) | K-58 ; `OptionChoix.disponible` (K3, option visible mais indisponible) | Jamais masqué en silence | Conforme | « Classe de filles : seule une enseignante peut la prendre. » ; « Déjà en classe à ce créneau : changez de créneau pour le choisir. » Un enseignant seulement « pas libre d'après ses disponibilités » reste choisissable, avec la mention « Pas libre à ce créneau d'après ses disponibilités. » | L'admin peut savoir mieux que la source : seul un conflit certain (genre, collision avec une classe active) bloque |
+| Enseignant : liste classée, « le plus adapté » en tête avec sa raison | K-57 (meilleure option justifiée) ; K-58 ; Nielsen n°6 | Proposer, puis dire pourquoi | Conforme | `SelecteurPersonne` étendu (`mention`, `raisonIndisponible`, `obligatoire`, `aide`), sans composant nouveau. Ordre décrit par une phrase, **celle qui correspond à ce que la source sait** : `aideEnseignant` quand genre et disponibilités sont rendus, sinon `aideEnseignantSansSource` (« classés du moins chargé au plus chargé, un enseignant déjà en classe à ce créneau ne se choisit pas… vérifiez-les vous-même »). Mention « Premier choix : libre à ce créneau, 2 classes en cours. » ou, sans créneau, « Premier choix : 3 créneaux libres, 1 classe en cours. » (sans accord à deviner, K-41) | Sans disponibilités rendues par la source (adaptateur réel, repli), personne n'est « le plus adapté » : la mention ne s'invente pas |
+| Enseignant incompatible ou déjà en classe au créneau : visible, non choisissable, avec sa raison (D4) | K-58 ; `OptionChoix.disponible` (K3, option visible mais indisponible) | Jamais masqué en silence | Conforme | « Classe de filles : seule une enseignante peut la prendre. » ; « Déjà en classe à ce créneau : changez de créneau pour le choisir. » Un enseignant seulement « pas libre d'après ses disponibilités » reste choisissable, avec la mention « Ce créneau n'est pas dans ses disponibilités déclarées : vous pouvez quand même faire ce choix. » | L'admin peut savoir mieux que la source : seul un conflit certain (genre, collision avec une classe active) bloque |
 | Créneau : jours en puces, heures dans une liste, créneaux libres en tête (D6) | K-57 ; `UX_REVIEW_DISPO-1.md` (la grille jugée trop compliquée) ; Hick | Choisi, jamais tapé | Conforme | `FilterPill` pour les 7 jours ; `MenuFiltre<int>` de 6 h à 21 h (bornes de `GrilleSemaine`) ; enseignant choisi : « Créneaux libres de … » en puces, chacune règle le jour et l'heure. Sans disponibilités lisibles, une phrase le dit | Aucune |
 | Fuseau déduit, affiché, jamais saisi (D6) | §1 ; Nielsen n°1 | Dire dans quel fuseau l'heure se lit | Conforme | Adaptateur qui transmet le fuseau : celui de l'enseignant, sinon celui par défaut. Adaptateur réel (qui ne le transmet pas) : « Heures lues dans le fuseau Europe/Paris, celui que le serveur retient pour l'instant… » (`coalesce(p_timezone_iana, 'Europe/Paris')`, `0033`) | Aucune |
 | Seuil : `SelecteurEntier` 1 à 6, présélection 5 ou 6 (D7) | K-57 ; contrainte SQL `seuil_max between 1 and 6` (`0017:28`), défauts `0033` | Proposer tout le domaine, présélectionner le défaut du serveur | Conforme | La présélection suit le public tant que l'admin n'a pas choisi lui-même. Pas de saisie libre : 1 à 6 couvre tout | Aucune |
 | Nom déduit, modifiable : le seul champ saisi (D8) | K-57 (justifier chaque « saisi ») | Préremplir ce qui se déduit | Ajusté | `ChampEtiquete` (marque obligatoire ajoutée au composant). « Filles, mardi 17 h ». Il cesse de suivre les choix dès que l'admin l'écrit, et les suit de nouveau s'il le vide | **Justification du champ saisi** : un nom de classe est un nom propre (« Classe An-Nour ») que rien dans les données ne permet de déduire ; la proposition suffit pour créer, l'écriture reste possible |
-| Bouton « Créer la classe » toujours actif ; le premier manque se dit (K-56) | K-56 ; K-59 ; Nielsen n°9 | Un bouton qui ne peut pas aboutir n'est pas grisé | Conforme | Ordre du message : genre, enseignant, créneau, enseignant non choisissable, seuil, nom. Bouton au bord de fin (`AlignmentDirectional.centerEnd`), pleine largeur sauf sur bureau (contrat B) | Aucune |
+| Bouton « Créer la classe » toujours actif ; le premier manque se dit (K-56) | K-56 ; K-59 ; Nielsen n°9 | Un bouton qui ne peut pas aboutir n'est pas grisé | Conforme | Ordre du message : genre, enseignant, créneau, liste pas encore à jour (`manqueListeEnseignants` : l'enseignant choisi n'a pas pu être vérifié, rien ne part), enseignant non choisissable (une phrase complète par cause, avec son nom : `manqueEnseignantHommes/Garcons/Femmes/Filles/Pris`), seuil, nom. Bouton au bord de fin (`AlignmentDirectional.centerEnd`), pleine largeur sauf sur bureau (contrat B) | Aucune |
 | Échec de création | K-59 ; D5 | Dire quoi, la cause, quoi faire | Ajusté | `creerErreur` (« La création n'a pas abouti : {message} ») à l'encre `inkAlert`, lu dès qu'il paraît. La feuille garde tous les choix ; presser de nouveau renvoie les mêmes valeurs | Texte `creerErreur` inchangé (socle), à reprendre si la règle `erreur-sans-action` le vise |
 | Hors ligne | `lib/CLAUDE.md` (bouton qui ne peut pas aboutir non rendu) ; `03_DESIGN_SYSTEM_ET_UX.md:26-31` | Le dire une fois, ne pas griser | Conforme | Le bouton n'est pas rendu : « Sans réseau, la classe ne peut pas être créée. Vos choix restent affichés : revenez quand la connexion est rétablie. » Même règle dans « Seuil maximal » | Aucune |
 | « Seuil maximal » (modification) : même sélecteur, bouton jamais grisé (D7, K-56) | K-56 ; recensement FORM-AUTO-1 A3 | Même geste à la création et à la modification | Conforme | `TextField` et `onPress: … ? null :` retirés. Une valeur ancienne hors 1..6 n'est pas retenue en silence : presser dit « Il manque le seuil maximal… » | Aucune |
@@ -95,17 +95,20 @@ rien taper.
 - **Enfants** : « À choisir pour une classe d'enfants. Seuil proposé : 5 élèves. »
 - **Adultes** : « À choisir pour une classe d'adultes. Seuil proposé : 6 élèves. »
 - **Hommes / Garçons** : « À choisir pour une classe d'hommes (de garçons) : seuls les
-  enseignants hommes pourront la prendre. »
+  enseignants hommes pourront la prendre. » Quand la source ne dit le genre d'aucun
+  enseignant : « À choisir pour une classe d'hommes. Le genre des enseignants n'est pas
+  encore lisible ici : vérifiez vous-même que l'enseignant choisi est un homme. »
 - **Femmes / Filles** : « À choisir pour une classe de femmes (de filles) : seules les
-  enseignantes pourront la prendre. »
+  enseignantes pourront la prendre. » Sans source : « … vérifiez vous-même que vous
+  choisissez une enseignante. »
 - **Non déterminé** : « À choisir quand le genre n'est pas encore connu : tous les
   enseignants pourront la prendre. »
-- **Enseignant** : la mention « Le plus adapté : … » dit pourquoi. La raison
+- **Enseignant** : la mention « Premier choix : … » dit pourquoi. La raison
   d'indisponibilité dit pourquoi il ne se choisit pas et quoi faire.
 - **Créneau libre** : la phrase « Créneaux libres de … : toucher un créneau règle le jour
   et l'heure. »
-- **Seuil** : « Au-delà de ce nombre d'élèves, la classe est complète. Proposé : 5 pour des
-  enfants, 6 pour des adultes ; 6 au plus. »
+- **Seuil** : « La classe est complète dès qu'elle atteint ce nombre d'élèves. Proposé : 5
+  pour des enfants, 6 pour des adultes ; 6 au plus. »
 
 ## Décisions D1 à D10 (décidées par délégation le 09/10)
 
@@ -156,8 +159,12 @@ rien taper.
 3. **Repli de la liste des enseignants.**
    - Tant que `enseignants_pour_classe` n'existe pas, la liste vient des comptes actifs
      (FORM-L2), avec la charge et les créneaux pris lus dans les classes déjà chargées.
-   - Ni genre ni disponibilités : aucune mention « le plus adapté » en production avant la
-     ligne serveur. Seule la collision avec une classe active est signalée.
+   - Ni genre ni disponibilités : aucune mention « premier choix » en production avant la
+     ligne serveur. Seule la collision avec une classe active est signalée, et sur le seul
+     créneau principal de la classe (`groupes.weekday`, `hour_local`) : les créneaux de
+     `groupe_creneaux` ne sont pas lus par le client (CF1-B6).
+   - Les cartes de genre et l'aide de la liste le disent (variantes `…SansSource`) au lieu
+     de promettre un filtre ou un classement qui n'a pas lieu.
 4. **Cartes du genre et du public en liste**, et non côte à côte : à 320 px, les phrases de
    conséquence ne tiennent pas en trois colonnes.
 5. **Garde de rendu à 320 × 2400 pour le texte ×2.**
@@ -188,16 +195,18 @@ rien taper.
 - `groupes_page.dart` : création et seuil.
 - `selecteur_personne.dart` : `mention`, `raisonIndisponible`, `obligatoire`, `aide`, et
   `TexteSansCoupure`.
-- `champ_etiquete.dart` : `obligatoire`.
+- `champ_etiquete.dart` : `obligatoire`, et `TitreChamp` (revue du lot) : le titre d'un
+  champ avec sa marque d'obligation, seul point d'entrée de ce motif, lu par
+  `ChampEtiquete`, `SelecteurPersonne` et les sections Public, Genre, Créneau, Seuil.
 - `choice_card_group.dart` : raison d'indisponibilité en `TexteSansCoupure`.
 - `catalogue_galerie.dart` : état « mention, indisponible, obligatoire ».
 - `mode_demonstration.dart` et `admin_x_demo.dart` : en `?demo=admin`, la création aboutit
   et la classe paraît dans la liste.
-- `assets/i18n/fr.i18n.json` : 55 nouvelles clés (58 chaînes).
-  - 52 sous `admin.groupes.formulaire`, dont 3 pluriels (`one` et `other`).
+- `assets/i18n/fr.i18n.json` : 65 nouvelles clés (68 chaînes) après la revue (55 avant : 11 ajoutées, `enseignantNonChoisissable` retirée).
+  - 62 sous `admin.groupes.formulaire`, dont 3 pluriels (`one` et `other`).
   - 3 sous `formulaire`.
   - `ar.i18n.json` n'est pas touché.
-- `tool/libelles_sources.json` : 45 clés déclarées. Ce sont celles que la règle
+- `tool/libelles_sources.json` : après la revue, `git diff c89bb655` compte 56 lignes de clé ajoutées (46 au commit `4ee2789e` ; la revue en ajoute 11 et retire `enseignantNonChoisissable`). Ce sont celles que la règle
   `libelle-sans-source` signalait ; les autres se lisent déjà dans `docs/`.
 - `test/features/support_form_l2.dart` et `test/features/form_l2_selecteur_personne_test.dart`.
 
@@ -217,6 +226,43 @@ sauvegarde, `cmp` identique).
 | Classement sans priorité aux choisissables | `flutter test test/features/classe_form_1_test.dart` | +21 -3 : échouent « classe de femmes », « classe d'hommes », « collision » |
 | Après restauration | `flutter test test/features/classe_form_1_test.dart` | +24, All tests passed |
 
+Après la revue du lot (gardes ajoutées, même méthode, `cmp` identique après chaque
+restauration) :
+
+| Défaut remis | Commande | Résultat |
+|---|---|---|
+| `ref.invalidate(enseignantsDuPortProvider)` retiré de `onCree` | `flutter test test/features/classe_form_1_test.dart` | +33 -1 : échoue « demonstration : la classe creee rend l'enseignante prise a ce creneau a la reouverture » |
+| Garde « liste pas à jour » retirée (`choisi == null` laisse passer) | idem | +33 -1 : échoue « liste qui se recharge apres un changement de public » |
+| `if (!_nomSaisi)` retiré de `_maj` | idem | +33 -1 : échoue « un nom tape n'est jamais ecrase » |
+| `if (!_seuilChoisi)` retiré du choix du public | idem | +33 -1 : échoue « un seuil choisi n'est jamais ecrase » |
+| Garde « enseignant non choisissable » retirée de `_manque` | idem | +32 -2 : échouent « collision » et « genre change apres le choix » |
+| `genreConnu` forcé à vrai | idem | +33 -1 : échoue « repli : … des textes qui ne promettent ni filtre de genre ni classement par creneau » |
+| Après restauration | idem | +34, All tests passed |
+
+## Revue du lot (trois angles : correction, règles, zones), 09/10
+
+Chaque constat a été vérifié dans le code. Les mineurs sont corrigés dans la branche
+(K-66.4).
+
+| # | Constat | Gravité | Suite |
+|---|---|---|---|
+| R1 | Après une création, `enseignantsDuPortProvider` (famille sans `autoDispose`) gardait la charge, les créneaux pris et libres d'avant : la collision D4 ne se voyait plus à la réouverture (deux constats identiques) | majeur | **Corrigé** : `onCree` invalide toute la famille. Test de démonstration (créer, rouvrir, l'enseignante est « prise » au même créneau, sa charge vaut +1) |
+| R2 | Conséquences des cartes de genre et aide de la liste fausses quand la source ne dit pas le genre (production : repli sur les comptes) (deux constats identiques) | majeur | **Corrigé** : `genreConnu` / `disposConnues` lus dans la source ; variantes `genre…DetailSansSource` et `aideEnseignantSansSource`. Test du repli |
+| R3 | Le chemin de production (source indisponible puis repli) sans test dans ce fichier | majeur | **Corrigé en partie, constat en partie inexact** : le repli (contenu, échec des comptes avec Réessayer) est déjà joué par `form_l2_selecteur_personne_test.dart` sans surcharge du port. Ajoutés ici : repli et textes honnêtes, vide (aucun enseignant actif), chargement (squelette), échec de la source autre que « indisponible » (l'échec se voit, sans repli) |
+| R4 | Pendant un rechargement de la liste, `choisi` nul : ni contrôle de genre ni de collision, fuseau deviné (deux constats identiques) | mineur | **Corrigé** : `manqueListeEnseignants`, rien ne part. Test avec une source qui ne répond pas pour les adultes |
+| R5 | Nom tapé et seuil choisi non gardés par un test | mineur | **Corrigé** : deux tests, contre-épreuve faite |
+| R6 | Collision non testée au rendu | mineur | **Corrigé** : test (raison sur la carte, message à l'envoi, aucune création) |
+| R7 | `enseignantNonChoisissable` : deux deux-points, masculin fixe, repli `''` | mineur | **Corrigé** : une phrase complète par cause, avec le nom (`manqueEnseignantHommes/Garcons/Femmes/Filles/Pris`) ; clé retirée |
+| R8 | « Le plus adapté » au masculin fixe | mineur | **Corrigé** : « Premier choix : … », sans accord |
+| R9 | Fragments sans verbe (`aideEnseignant`, `pasLibre`, `nomDetail`) | mineur | **Corrigé** : phrases complètes ; `pasLibre` dit aussi la conséquence (« vous pouvez quand même faire ce choix ») sans accord |
+| R10 | `seuilDetail` énonçait mal la conséquence | mineur | **Corrigé** : « La classe est complète dès qu'elle atteint ce nombre d'élèves. » |
+| R11 | Heures de la liste par interpolation, incohérentes avec le nom proposé | mineur | **Écarté** : les deux passent par la même forme slang avec une espace insécable (`heureValeur` « {heure}\u00a0h », `heureLibelle` « {jour} {heure}\u00a0h ») ; c'est la convention de toutes les heures du dépôt (`plages.dart` : `libelleDe`, `libelleA`, `nommerHeure`) ; l'arabe relève d'`ar.i18n.json`, hors lot |
+| R12 | `_TitreObligatoire` : troisième copie locale du motif titre + marque | mineur | **Corrigé** : `TitreChamp` dans `champ_etiquete.dart` (fichier du core existant, pas de nouvelle entrée de catalogue), lu par `ChampEtiquete`, `SelecteurPersonne` et la feuille |
+| R13 | `_raisonGenre(indetermine)` rendait une phrase hors sujet | mineur | **Corrigé** : `StateError` (branche inatteignable par D2) |
+| R14 | CF1-B5 inexacte : `groupes_admin()` rend déjà `timezone_iana` | mineur | **Corrigé** dans la table des lignes serveur (vérifié : `0033:694-729`) |
+| R15 | CF1-B6 ignorait `groupe_creneaux` ; plage `564-630` ; accès admin « non vérifié » | mineur | **Corrigé** : `groupe_creneaux` (`0043:452`) dans CF1-B6, `564-631`, politique `weekly_availability_admin_all` (`0005:456`) citée ; la limite du repli client est écrite dans les écarts voulus (n° 3) |
+| R16 | `ClassesCreeesDemo.genreDe` sans lecteur | mineur | **Corrigé** : lu par le test de démonstration (le genre choisi est retenu). Aucun écran ne l'affiche : la liste et l'inspecteur lisent `GroupeAdmin`, qui n'a pas de genre tant que CF1-B1 n'existe pas |
+
 ## Lignes serveur à ouvrir (feuille de liaison, onglets Backend et Contrats)
 
 À copier telles quelles. Zone ChatGPT : rien de cela n'a été écrit par ce lot.
@@ -224,11 +270,11 @@ sauvegarde, `cmp` identique).
 | Réf. | Onglet | Besoin | Aujourd'hui | Côté client, prêt |
 |---|---|---|---|---|
 | CF1-B1 | Backend | **Colonne `genre_public`** sur `public.groupes` : enum `hommes`, `femmes`, `indetermine` (nouveau type ; `public.gender` n'a pas de troisième valeur). Paramètre `p_genre_public` sur `creer_groupe` et `modifier_groupe`. Colonne rendue par `groupes_admin()` | absente (`0017:22-43`) | `GenreClasse`, `PortCreationClasse.creer(genre:)` |
-| CF1-B2 | Backend | **RPC `enseignants_pour_classe(p_genre_public, p_type_public, p_weekday default null, p_hour_local default null, p_timezone_iana)`**, admin seulement, `SECURITY DEFINER` et `search_path = ''`. Rend `teacher_id`, `first_name`, `last_name`, `immutable_id`, `country`, `genre` (dérivé du titre public, voir CF1-B3), `timezone_iana`, `classes_actives`, `creneaux_pris jsonb`, `creneaux_libres jsonb` (= `weekly_availability` − affectations actives − créneaux des classes actives, `groupe_creneaux` compris) | absente ; aujourd'hui une lecture `disponibilites` par profil, accès admin non vérifié | `PortEnseignantsClasse.pourClasse`, `EnseignantPropose` |
+| CF1-B2 | Backend | **RPC `enseignants_pour_classe(p_genre_public, p_type_public, p_weekday default null, p_hour_local default null, p_timezone_iana)`**, admin seulement, `SECURITY DEFINER` et `search_path = ''`. Rend `teacher_id`, `first_name`, `last_name`, `immutable_id`, `country`, `genre` (dérivé du titre public, voir CF1-B3), `timezone_iana`, `classes_actives`, `creneaux_pris jsonb`, `creneaux_libres jsonb` (= `weekly_availability` − affectations actives − créneaux des classes actives, `groupe_creneaux` compris) | absente ; aujourd'hui une lecture `disponibilites` par profil ; l'admin lit `weekly_availability` par la politique `weekly_availability_admin_all` (`0005:456`) | `PortEnseignantsClasse.pourClasse`, `EnseignantPropose` |
 | CF1-B3 | Contrats | **Genre de l'enseignant exposé via son titre public** (`teacher_profiles.titre` : sayyid → homme, sayyida → femme, nul → inconnu). **Jamais `profiles.gender`**, réservé au cloisonnement KYC (`0004:26`, `enums.dart` `Genre`) | non exposé | `GenreEnseignant` nullable, D3 |
 | CF1-B4 | Backend | **Transmettre `p_timezone_iana` et `p_couleur_jeton`** dans `ServiceGroupesSupabase.creer` (`service_groupes.dart:253-269`). La RPC les accepte déjà (`0033:571-572`). Couleur déduite côté serveur ou par une règle écrite (D9) | non transmis : le fuseau vaut `Europe/Paris` côté serveur | `PortCreationClasse.retientFuseau` passera à vrai |
-| CF1-B5 | Backend | **Relire `timezone_iana`** dans `GroupeAdmin.depuisJson` (`service_groupes.dart:69`) au lieu de `'Europe/Paris'` codé en dur ; `groupes_admin()` doit le rendre | codé en dur | aucun changement d'écran |
-| CF1-B6 | Backend | **Contrôle de collision** dans `creer_groupe` et `modifier_groupe` : refuser une classe d'un enseignant déjà en classe active au même `weekday`, `hour_local` et fuseau, avec un message métier lisible | absent (`0033:564-630`) | le client signale déjà la collision qu'il voit (D4) ; l'échec serveur s'afficherait par `creerErreur` |
+| CF1-B5 | Client (zone service) | **Relire `timezone_iana`** dans `GroupeAdmin.depuisJson` (`service_groupes.dart:69`) au lieu de `'Europe/Paris'` codé en dur. `groupes_admin()` rend **déjà** `timezone_iana` (redéfinie en dernier dans `0033:694-729`) : aucune migration à écrire | lecture client codée en dur | aucun changement d'écran |
+| CF1-B6 | Backend | **Contrôle de collision** dans `creer_groupe` et `modifier_groupe` : refuser une classe d'un enseignant déjà en classe active à la même heure de la semaine (`weekday`, `hour_local`, fuseau), en comparant **tous** les créneaux de ses classes actives : le créneau principal de `groupes` **et** ceux de `public.groupe_creneaux` (`0043:452`), avec un message métier lisible | absent (`0033:564-631`) | le client signale déjà la collision qu'il voit (D4) ; l'échec serveur s'afficherait par `creerErreur` |
 | CF1-C1 | Contrats | **Champs à venir (D9)**, sans champ à l'écran : durée de séance, date de début, langue, niveau ou programme, plusieurs séances par semaine, couleur | absents ou non pris par `creer_groupe` | aucun |
 | CF1-C2 | Contrats | **Nouveaux ports** `port_enseignants_classe.dart` et `port_creation_classe.dart`, contrat commun (`COHABITATION.md:36-39`), à faire valider | créés par ce lot | adaptateurs par défaut : indisponible + repli, délégation à `ServiceGroupes` |
 
@@ -312,3 +358,19 @@ lignes recalées sur la branche courante. Recopié tel quel, puis l'état après
 | `flutter test` (suite complète) | +6908 ~3642, All tests passed |
 | `dart run tool/verifier_revue.dart` | 1420 violations, code 1 : le même total qu'à la base `c89bb655` (libelle-sans-source 1356, bouton-grise 34, plein-multiple 17, affirmation-reseau 5, avatar-taille 4, avatar-recompose 3, bouton-recompose 1) ; `--regle=mot-interne` : aucune violation |
 | `dart run tool/verifier_jetons.dart` | 31 violations, code 1 : sortie identique à celle d'avant le lot (`diff` vide) |
+
+## Vérifications jouées après la revue (09/10)
+
+| Commande | Résultat |
+|---|---|
+| `dart run slang` | réussi (« Translations generated successfully ») |
+| `flutter analyze --fatal-infos` | No issues found! |
+| `flutter test test/features/classe_form_1_test.dart` | +34, All tests passed (24 avant la revue, 10 ajoutés) |
+| `flutter test` sur les 14 fichiers `_test.dart` de `git diff --name-only 5336598a..HEAD -- test` | +274, All tests passed |
+| `flutter test test/widgets` | +298, All tests passed |
+| `flutter test test/core` | +718, All tests passed |
+| `dart run tool/verifier_revue.dart` | 1420 violations, code 1 : même total et même détail qu'avant la revue (libelle-sans-source 1356, bouton-grise 34, plein-multiple 17, affirmation-reseau 5, avatar-taille 4, avatar-recompose 3, bouton-recompose 1) ; aucune ne vise `groupes_page.dart`, `champ_etiquete.dart`, `selecteur_personne.dart` ni `classe_form_1_test.dart` ; `--regle=mot-interne` : aucune violation |
+| `dart run tool/verifier_jetons.dart` | 31 violations, code 1 : liste identique à celle de l'état d'avant la revue (`diff` vide, état remis par `git stash`) |
+
+La suite complète (`flutter test`) n'a pas été rejouée après la revue ; aucune capture
+(`CAPTURE_DIR`) n'a tourné.

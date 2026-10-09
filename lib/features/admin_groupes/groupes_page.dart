@@ -34,7 +34,6 @@ import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pays_enseignant.dart';
-import '../../core/widgets/point_rappel.dart';
 import '../../core/widgets/selecteur_motif.dart';
 import '../../core/widgets/selecteur_personne.dart';
 import '../../core/widgets/skeleton.dart';
@@ -581,8 +580,16 @@ void _ouvrirCreation(BuildContext context, WidgetRef ref) {
   AppBottomSheet.ouvrir<void>(
     context,
     titre: t.admin.groupes.creerTitre,
-    constructeur: (BuildContext contexte) =>
-        _FeuilleCreation(onCree: () => ref.invalidate(groupesProvider)),
+    constructeur: (BuildContext contexte) => _FeuilleCreation(
+      onCree: () {
+        ref.invalidate(groupesProvider);
+        // Toute la famille : la charge, les creneaux pris et les
+        // creneaux libres de l'enseignant changent avec la classe creee
+        // (sans cela, la collision D4 ne se verrait plus a la
+        // reouverture de la feuille).
+        ref.invalidate(enseignantsDuPortProvider);
+      },
+    ),
   );
 }
 
@@ -726,13 +733,28 @@ String _libelleGenre(GenreClasse genre, TypePublicGroupe type) {
 }
 
 /// Quand choisir ce genre, et ce qu'il change (K-58).
-String _detailGenre(GenreClasse genre, TypePublicGroupe type) {
+///
+/// La consequence annoncee est celle qui se produit : quand la source ne dit
+/// le genre d'aucun enseignant ([genreConnu] faux, repli sur les comptes),
+/// la liste n'ecarte personne, et la phrase le dit au lieu de promettre un
+/// filtre qui n'a pas lieu (D1 : ne rien pretendre).
+String _detailGenre(
+  GenreClasse genre,
+  TypePublicGroupe type, {
+  required bool genreConnu,
+}) {
   final f = t.admin.groupes.formulaire;
   final bool enfants = type == TypePublicGroupe.enfant;
-  return switch (genre) {
-    GenreClasse.hommes => enfants ? f.genreGarconsDetail : f.genreHommesDetail,
-    GenreClasse.femmes => enfants ? f.genreFillesDetail : f.genreFemmesDetail,
-    GenreClasse.indetermine => f.genreIndetermineDetail,
+  return switch ((genre, genreConnu)) {
+    (GenreClasse.hommes, true) =>
+      enfants ? f.genreGarconsDetail : f.genreHommesDetail,
+    (GenreClasse.hommes, false) =>
+      enfants ? f.genreGarconsDetailSansSource : f.genreHommesDetailSansSource,
+    (GenreClasse.femmes, true) =>
+      enfants ? f.genreFillesDetail : f.genreFemmesDetail,
+    (GenreClasse.femmes, false) =>
+      enfants ? f.genreFillesDetailSansSource : f.genreFemmesDetailSansSource,
+    (GenreClasse.indetermine, _) => f.genreIndetermineDetail,
   };
 }
 
@@ -743,37 +765,47 @@ String _raisonGenre(GenreClasse genre, TypePublicGroupe type) {
   return switch (genre) {
     GenreClasse.hommes => enfants ? f.raisonGarcons : f.raisonHommes,
     GenreClasse.femmes => enfants ? f.raisonFilles : f.raisonFemmes,
-    // Jamais atteint : un genre non determine accepte tout le monde.
-    GenreClasse.indetermine => f.genreIndetermineDetail,
+    // Un genre non determine accepte tout le monde (D2) : aucune raison
+    // d'indisponibilite n'existe, et aucune phrase hors sujet ne s'affiche.
+    GenreClasse.indetermine => throw StateError(
+      'Aucun enseignant n est incompatible avec une classe sans genre (D2).',
+    ),
   };
+}
+
+/// Le message qui dit pourquoi l'enseignant choisi ne peut pas prendre la
+/// classe, et quoi faire : une phrase complete par cause, avec son nom (pas
+/// d'accord a deviner, K-41).
+String _manqueEnseignant(
+  EnseignantClasse choisi,
+  GenreClasse genre,
+  TypePublicGroupe type,
+) {
+  final f = t.admin.groupes.formulaire;
+  final String nom = choisi.enseignant.libelle;
+  final bool enfants = type == TypePublicGroupe.enfant;
+  if (choisi.genreCompatible == false) {
+    return switch (genre) {
+      GenreClasse.hommes =>
+        enfants
+            ? f.manqueEnseignantGarcons(nom: nom)
+            : f.manqueEnseignantHommes(nom: nom),
+      GenreClasse.femmes =>
+        enfants
+            ? f.manqueEnseignantFilles(nom: nom)
+            : f.manqueEnseignantFemmes(nom: nom),
+      GenreClasse.indetermine => throw StateError(
+        'Aucun enseignant n est incompatible avec une classe sans genre (D2).',
+      ),
+    };
+  }
+  return f.manqueEnseignantPris(nom: nom);
 }
 
 /// « 2 classes en cours », « aucune classe en cours ».
 String _charge(int classes) => classes == 0
     ? t.admin.groupes.formulaire.aucuneClasse
     : t.admin.groupes.formulaire.classesEnCours(n: classes);
-
-/// Le titre d'un champ obligatoire : la marque partagee des champs requis
-/// ([PointRappel], fixe), au bord de debut, puis le nom du champ.
-class _TitreObligatoire extends StatelessWidget {
-  const _TitreObligatoire(this.titre);
-
-  final String titre;
-
-  @override
-  Widget build(BuildContext context) => Row(
-    children: <Widget>[
-      PointRappel(libelle: t.formulaire.obligatoire, battements: 0),
-      Ecart.hSm,
-      Expanded(
-        child: TexteSansCoupure(
-          titre,
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-      ),
-    ],
-  );
-}
 
 /// Le message d'un echec ou d'un champ manquant, a l'encre d'alerte, lu des
 /// qu'il parait.
@@ -949,14 +981,19 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
 
   /// Le premier champ qui manque, dans l'ordre de la feuille ; nul quand
   /// tout est la.
+  ///
+  /// Un enseignant choisi mais absent de la liste classee (elle se recharge
+  /// apres un changement de public, ou sa lecture a echoue) n'a pas pu etre
+  /// verifie (genre, collision) : rien ne part, et le fuseau n'est pas
+  /// devine.
   String? _manque(EnseignantClasse? choisi) {
     final f = t.admin.groupes.formulaire;
-    if (_genre == null) return f.manqueGenre;
+    final GenreClasse? genre = _genre;
+    if (genre == null) return f.manqueGenre;
     if (_enseignantId == null) return t.admin.groupes.manqueEnseignant;
     if (_jour == null || _heure == null) return f.manqueCreneau;
-    if (choisi != null && !choisi.choisissable) {
-      return f.enseignantNonChoisissable(raison: _raison(choisi) ?? '');
-    }
+    if (choisi == null) return f.manqueListeEnseignants;
+    if (!choisi.choisissable) return _manqueEnseignant(choisi, genre, _type);
     if (_seuil == null) return f.manqueSeuil;
     if (_nom.text.trim().isEmpty) return f.manqueNom;
     return null;
@@ -1043,6 +1080,15 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
       creation,
       choisi?.enseignant,
     );
+    // Ce que la source sait vraiment : les phrases qui promettent un filtre
+    // par genre ou un classement par creneau libre n'apparaissent que si
+    // elle le dit (repli sur les comptes : ni l'un ni l'autre).
+    final List<EnseignantPropose> lus =
+        source.value ?? const <EnseignantPropose>[];
+    final bool genreConnu = lus.any((EnseignantPropose e) => e.genre != null);
+    final bool disposConnues = lus.any(
+      (EnseignantPropose e) => e.creneauxLibres != null,
+    );
 
     final AsyncValue<List<PersonneProposee>> personnes = classes.hasValue
         ? AsyncData<List<PersonneProposee>>(<PersonneProposee>[
@@ -1075,7 +1121,7 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
         Ecart.vXxl,
 
         // 1. Public : choisi, deux cartes qui disent leur consequence.
-        _TitreObligatoire(f.titrePublic),
+        TitreChamp(f.titrePublic, style: textes.titleMedium, obligatoire: true),
         Ecart.vMd,
         ChoiceCardGroup(
           autoriserSaisieLibre: false,
@@ -1108,7 +1154,7 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
         Ecart.vXs,
 
         // 2. Genre : choisi, obligatoire, aucune presélection (D1).
-        _TitreObligatoire(f.titreGenre),
+        TitreChamp(f.titreGenre, style: textes.titleMedium, obligatoire: true),
         Ecart.vMd,
         ChoiceCardGroup(
           autoriserSaisieLibre: false,
@@ -1118,7 +1164,7 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
                 cle: ValueKey<String>('classe-genre-${g.name}'),
                 valeur: g.name,
                 libelle: _libelleGenre(g, _type),
-                description: _detailGenre(g, _type),
+                description: _detailGenre(g, _type, genreConnu: genreConnu),
               ),
           ],
           onChange: (ReponseChoix r) {
@@ -1140,7 +1186,9 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
           personnes: personnes,
           choisie: _enseignantId,
           obligatoire: true,
-          aide: f.aideEnseignant,
+          aide: genreConnu && disposConnues
+              ? f.aideEnseignant
+              : f.aideEnseignantSansSource,
           onChoix: (PersonneProposee p) => _maj(() => _enseignantId = p.id),
           onReessayer: () {
             ref.invalidate(enseignantsDuPortProvider(_type));
@@ -1150,7 +1198,11 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
         Ecart.vXl,
 
         // 4. Creneau : choisi, jamais tape (D6).
-        _TitreObligatoire(f.titreCreneau),
+        TitreChamp(
+          f.titreCreneau,
+          style: textes.titleMedium,
+          obligatoire: true,
+        ),
         Ecart.vXs,
         TexteSansCoupure(f.creneauContexte, style: textes.bodySmall),
         Ecart.vMd,
@@ -1199,7 +1251,7 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
         Ecart.vXl,
 
         // 5. Seuil : deduit puis choisi, 1 a 6 (D7).
-        _TitreObligatoire(f.titreSeuil),
+        TitreChamp(f.titreSeuil, style: textes.titleMedium, obligatoire: true),
         Ecart.vXs,
         TexteSansCoupure(f.seuilDetail, style: textes.bodySmall),
         Ecart.vMd,
