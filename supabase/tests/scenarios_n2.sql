@@ -205,7 +205,9 @@ begin
       v_avant, v_apres;
   end if;
 
-  -- Restaurer la configuration exacte capturee avant N2.
+  -- Restaurer la configuration exacte capturee avant N2 sous le role du
+  -- runner : service_role n'a pas acces a la table temporaire de snapshot.
+  reset role;
   update public.video_config current_config
      set active_provider = snapshot.active_provider,
          ws_url_override = snapshot.ws_url_override
@@ -275,6 +277,8 @@ begin
    where teacher_id = 'b2000000-0000-0000-0000-000000000001'
      and started_at > now() + interval '7 days';
 
+  -- Restaurer la configuration temporaire depuis le rôle du runner.
+  reset role;
   update public.video_config current_config
      set canary_provider = snapshot.canary_provider,
          canary_percentage = snapshot.canary_percentage
