@@ -41,6 +41,7 @@ jobs:
           # ont besoin de pouvoir se faire passer pour un appelant donne, et un
           # stub qui differe entre la CI et le poste ne prouve rien.
           psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/stub_auth.sql
+          psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/stub_storage.sql
           for f in supabase/migrations/*.sql; do
             echo "--- $f"
             psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f "$f"
