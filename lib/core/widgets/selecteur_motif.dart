@@ -502,8 +502,9 @@ class RangeePuces extends StatelessWidget {
     final TextScaler echelle = MediaQuery.textScalerOf(context);
     final TextDirection sens = Directionality.of(context);
     final double cible = AppMetriques.of(context).cibleTactile;
-    // Le retrait interieur de `FilterPill`.
-    const double retraitLargeur = AppSpacing.lg * 2;
+    // Le retrait interieur de `FilterPill`, lu sur la pilule elle-meme
+    // (FILTERPILL-ETAT-1 : il compte la place reservee a la coche).
+    const double retraitLargeur = FilterPill.retraitLargeur;
     const double retraitHauteur = AppSpacing.sm * 2;
 
     return LayoutBuilder(
@@ -512,9 +513,10 @@ class RangeePuces extends StatelessWidget {
             ? contraintes.maxWidth
             : 600;
         final List<Size> tailles = <Size>[
-          for (final String libelle in libelles)
+          for (int i = 0; i < libelles.length; i++)
             _mesurer(
-              libelle,
+              libelles[i],
+              retenue: i == retenue,
               style: style,
               echelle: echelle,
               sens: sens,
@@ -595,6 +597,7 @@ class RangeePuces extends StatelessWidget {
 
   static Size _mesurer(
     String libelle, {
+    required bool retenue,
     required TextStyle style,
     required TextScaler echelle,
     required TextDirection sens,
@@ -610,11 +613,16 @@ class RangeePuces extends StatelessWidget {
     )..layout(maxWidth: math.max(0, largeurMax - retraitLargeur));
     // Un pixel de marge : l'arrondi du rendu ne doit pas faire passer a la
     // ligne un libelle mesure sur une seule.
-    final double largeur = math.min(
-      largeurMax,
-      peintre.width.ceilToDouble() + retraitLargeur + 1,
-    );
-    final double hauteur = peintre.height.ceilToDouble() + retraitHauteur;
+    final double naturelle = peintre.width.ceilToDouble() + retraitLargeur + 1;
+    final double largeur = math.min(largeurMax, naturelle);
+    // FILTERPILL-ETAT-1 : sans la place de sa coche sur la ligne du libelle,
+    // une puce retenue la pose au-dessus de lui.
+    final double hauteur =
+        peintre.height.ceilToDouble() +
+        retraitHauteur +
+        (retenue && naturelle > largeurMax
+            ? FilterPill.hauteurCocheEmpilee
+            : 0);
     peintre.dispose();
     return Size(largeur, hauteur);
   }
