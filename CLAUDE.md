@@ -20,6 +20,7 @@ spécifications actives sont dans `docs/current/`. Tout le reste est archivé.
 | Périmètre MVP et statuts de preuve | `docs/current/06_SPEC_FONCTIONNELLE_MVP.md` |
 | Pédagogie avancée, finance (après MVP) | `docs/current/07_MEMOIRE_PEDAGOGIE_FINANCE.md` |
 | Backend Supabase | `supabase/CLAUDE.md` |
+| **Partage avec ChatGPT (Codex), depuis le 09/10/2026** | `docs/orchestration/COHABITATION.md` : ChatGPT fait le backend (`supabase/**`, services, adaptateurs `*_supabase.dart`), Claude les écrans ; ports partagés par l'onglet Contrats ; Claude relit le backend en fin de frontend |
 
 `docs/archive/` contient l'historique (HANDOFF, ADR, Bible V2, rapports d'agents).
 **Ne pas le charger comme instruction.** On l'ouvre seulement pour retrouver une décision
