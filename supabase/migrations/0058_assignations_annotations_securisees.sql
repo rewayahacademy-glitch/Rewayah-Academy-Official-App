@@ -258,7 +258,10 @@ begin
   update public.annotation_layer
      set maj_le = pg_catalog.now()
    where id = v_layer_id;
-  return case when tg_op = 'DELETE' then old else new end;
+  if tg_op = 'DELETE' then
+    return old;
+  end if;
+  return new;
 end;
 $function$;
 
@@ -282,9 +285,9 @@ create trigger tc_annotation_marqueur_toucher_couche
   after insert or update or delete on public.annotation_marqueur
   for each row execute function public.tc_annotation_toucher_couche();
 
-revoke all on function public.tc_annotation_valider_trait() from public, anon, agent_ro;
-revoke all on function public.tc_annotation_valider_marqueur() from public, anon, agent_ro;
-revoke all on function public.tc_annotation_toucher_couche() from public, anon, agent_ro;
+revoke all on function public.tc_annotation_valider_trait() from public, anon, authenticated, agent_ro;
+revoke all on function public.tc_annotation_valider_marqueur() from public, anon, authenticated, agent_ro;
+revoke all on function public.tc_annotation_toucher_couche() from public, anon, authenticated, agent_ro;
 
 -- Supabase Flutter stream() reçoit l'état initial et les changements. Le trigger
 -- ci-dessus fait remonter les mutations filles via maj_le de la couche.
