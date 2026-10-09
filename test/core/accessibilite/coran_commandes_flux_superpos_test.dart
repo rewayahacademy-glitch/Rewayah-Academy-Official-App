@@ -8,6 +8,7 @@
 // l'ancien code, le bas du contenu passe sous les commandes.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -135,6 +136,10 @@ void main() {
     );
     await ouvrirLecteur(tester, const Size(390, 844));
     expect(tester.takeException(), isNull);
+    // TB-2 (UX-06) : le parcours clavier ne compte qu'apres une touche
+    // pressee dans la zone ; la souris seule laisse la barre se masquer.
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pump();
     final Rect c = contenu(tester);
     final Rect k = commandes(tester);
     expect(

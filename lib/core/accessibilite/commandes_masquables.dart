@@ -274,7 +274,10 @@ class _CommandesMasquablesState extends State<CommandesMasquables> {
   bool _surTouche(KeyEvent evenement) {
     if (!mounted || evenement is! KeyDownEvent) return false;
     if (_pointeur) {
-      _pointeur = false;
+      // Reconstruit meme si les commandes sont deja visibles : avec
+      // [CommandesMasquables.placeReservee], le parcours clavier les fait
+      // passer sous le contenu (SUPERPOS-1, JONCTION-LIGNES-1).
+      setState(() => _pointeur = false);
       _montrer();
     }
     return false;

@@ -1,8 +1,8 @@
 // ETATS-MA-1 (decision du 05/10/2026, par delegation du directeur ; regle du
 // 02/10, DECISIONS_DELEGUEES_2026-10-02.md : « le mot d'etat reste »,
 // WCAG 1.4.1). Salle en Mode Accessibilite, texte au-dela de 130 % : les
-// commandes passent sur deux rangees (micro et camera, puis agrandir et
-// quitter) et les bascules gardent leur mot d'etat sous le disque.
+// commandes passent sur deux rangees (micro et camera, puis quitter ;
+// Agrandir a quitte la barre de l'appel avec TB-2) et les bascules gardent leur mot d'etat sous le disque.
 //
 // - A 320 et 390 px, texte x1,5 et x2, clair et sombre, LTR et RTL : le mot
 //   de chaque bascule est a l'ecran, entier (aucun mot coupe ni tronque),
@@ -120,12 +120,12 @@ void main() {
                 hasLength(1),
                 reason: 'mot de la camera absent : $mots',
               );
-              expect(
-                mots,
-                contains(
-                  anyOf(t.salle.seance.agrandir, t.salle.seance.reduire),
-                ),
-              );
+              // TB-2 (ui/supports-tableau-v1, repris par JONCTION-LIGNES-1) :
+              // Agrandir a quitte la barre de l'appel (il n'y revient, en
+              // « Reduire », que pendant le focus local) ; Quitter garde
+              // son mot.
+              expect(mots, isNot(contains(t.salle.seance.agrandir)));
+              expect(mots, contains(t.salle.quitter));
 
               // Entier : aucun mot coupe ni tronque dans le dock.
               verifierAucunMotCoupe(tester, _dock);
@@ -202,7 +202,12 @@ void main() {
       expect(find.byKey(_grille), findsNothing);
       final Rect micro = tester.getRect(_bouton(_motsMicro));
       final Rect camera = tester.getRect(_bouton(_motsCamera));
-      expect(micro.top, moreOrLessEquals(camera.top, epsilon: 0.5));
+      // Meme rangee : centres a la meme hauteur (depuis TB-2, Quitter garde
+      // sa largeur et un mot peut passer sur deux lignes dans sa part).
+      expect(
+        micro.center.dy,
+        moreOrLessEquals(camera.center.dy, epsilon: 0.5),
+      );
       // Jusqu'a 130 %, le mot se montrait deja : il reste.
       expect(_motsAffiches(tester).where(_motsMicro.contains), hasLength(1));
     });

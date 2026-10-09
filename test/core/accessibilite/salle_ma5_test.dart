@@ -120,8 +120,8 @@ void main() {
             // MA-CMD-1 (directeur, 02/10/2026), amende par ETATS-MA-1
             // (decision du 05/10/2026, WCAG 1.4.1) : au-dela de 130 %, les
             // commandes passent sur deux rangees ; les bascules gardent leur
-            // mot d'etat sous le disque, la commande ordinaire (Quitter)
-            // reste en icone seule, nom lu et en infobulle.
+            // mot d'etat sous le disque ; Quitter garde son nom sous le
+            // disque depuis TB-2 (ui/supports-tableau-v1).
             final Finder dock = find.byKey(
               const ValueKey<String>('dock-seance'),
             );
@@ -147,13 +147,15 @@ void main() {
                 of: bouton,
                 matching: find.byType(Text),
               );
-              // Une bascule montre son mot d'etat ; une commande, rien.
+              // Une bascule montre son mot d'etat, Quitter son nom (TB-2,
+              // motGarde) ; une autre commande, rien.
+              final bool motVisible = b.bascule != null || b.motGarde;
               expect(
                 mot,
-                b.bascule == null ? findsNothing : findsOneWidget,
+                motVisible ? findsOneWidget : findsNothing,
                 reason: b.libelle,
               );
-              if (b.bascule != null) {
+              if (motVisible) {
                 expect(tester.widget<Text>(mot).data, b.libelle);
               }
               expect(tester.getSize(bouton).height, greaterThanOrEqualTo(48));
@@ -165,7 +167,7 @@ void main() {
                 reason: lu,
               );
             }
-            expect(find.byTooltip(t.salle.seance.sortir), findsOneWidget);
+            // Quitter garde son mot (TB-2), verifie dans la boucle.
             expect(pile, findsOneWidget);
             final Finder chapitre = find.textContaining('Chapitre');
             expect(chapitre, findsWidgets);
@@ -273,7 +275,13 @@ void main() {
       await tester.tapAt(const Offset(195, 400));
       await tester.pump(const Duration(milliseconds: 500));
       expect(opacite(), 1);
-      expect(find.byTooltip(t.salle.seance.sortir), findsOneWidget);
+      // Quitter garde son mot (TB-2) : plus d'infobulle, le bouton est la.
+      expect(
+        find.byWidgetPredicate(
+          (Widget w) => w is BoutonAppel && w.libelle == t.salle.quitter,
+        ),
+        findsOneWidget,
+      );
       expect(tester.takeException(), isNull);
     });
 
