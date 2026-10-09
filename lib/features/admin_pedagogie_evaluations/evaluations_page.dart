@@ -401,6 +401,7 @@ class _FeuillePlanificationEtat extends ConsumerState<_FeuillePlanification> {
           style: Theme.of(context).textTheme.titleMedium,
         ),
         Ecart.vSm,
+        // Choix de formulaire, pas un filtre : le type de l'evaluation a planifier.
         Wrap(
           spacing: AppSpacing.sm,
           children: <Widget>[
@@ -555,6 +556,7 @@ class _FeuilleResultatEtat extends State<_FeuilleResultat> {
       builder: (BuildContext context, WidgetRef ref, Widget? _) => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          // Choix de formulaire, pas un filtre : le resultat a enregistrer.
           Wrap(
             spacing: AppSpacing.sm,
             children: <Widget>[

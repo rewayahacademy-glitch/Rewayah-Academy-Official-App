@@ -43,6 +43,7 @@ class SelecteurNiveauProgramme extends StatelessWidget {
             in parCycle.entries) ...<Widget>[
           Text(entree.key, style: Theme.of(context).textTheme.bodySmall),
           Ecart.vSm,
+          // Choix de formulaire, pas un filtre : le niveau a retenir.
           Wrap(
             spacing: AppSpacing.sm,
             runSpacing: AppSpacing.sm,

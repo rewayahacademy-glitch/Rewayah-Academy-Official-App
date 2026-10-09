@@ -469,6 +469,7 @@ class _FeuilleCreationEtat extends State<_FeuilleCreation> {
             ),
           ),
           Ecart.vMd,
+          // Choix de formulaire, pas un filtre : le public de la classe a creer.
           Wrap(
             spacing: AppSpacing.sm,
             children: <Widget>[
