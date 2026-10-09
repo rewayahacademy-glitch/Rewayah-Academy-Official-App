@@ -52,10 +52,16 @@
 // docs/current/captures/TB-8/ :
 //   CAPTURE_DIR=docs/current/captures/TB-8 flutter test \
 //     test/features/tb_recette/captures_tb_test.dart --name tb8_
+//
+// AR-SALLE-1 : la salle en arabe (RTL), enseignant et eleve, 390 et 1440
+// clair et sombre, 320 x2. Rangees dans docs/current/captures/AR-SALLE-1/ :
+//   CAPTURE_DIR=docs/current/captures/AR-SALLE-1 flutter test \
+//     test/features/tb_recette/captures_tb_test.dart --name ar_salle_
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/accessibilite/commandes_masquables.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/bibliotheque_seance.dart';
@@ -688,5 +694,53 @@ void main() {
         }
       }
     });
+  });
+
+  // AR-SALLE-1 : la salle en arabe, de droite a gauche.
+  group('AR-SALLE-1 : la salle en arabe', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(() => LocaleSettings.setLocale(AppLocale.ar));
+    tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+
+    for (final (RoleSeance role, SituationTb situation)
+        in <(RoleSeance, SituationTb)>[
+          (RoleSeance.enseignant, SituationTb.sal00),
+          (RoleSeance.enseignant, SituationTb.cmd01),
+          (RoleSeance.enseignant, SituationTb.lib01),
+          (RoleSeance.enseignant, SituationTb.ped01),
+          (RoleSeance.eleve, SituationTb.ped03),
+        ]) {
+      for (final _Cadrage cas in <_Cadrage>[
+        for (final _Cadrage c in _cadragesTb)
+          if (<String>[
+            '390_x1_clair',
+            '390_x1_sombre',
+            '1440_x1_clair',
+            '1440_x1_sombre',
+            '320_x2_clair',
+          ].contains(c.$1))
+            c,
+      ]) {
+        final String nom = 'ar_salle_${role.name}_${situation.name}_${cas.$1}';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+          await tester.pumpWidget(
+            hoteCapture(
+              DemoSallePage(role: role, situation: situation),
+              themeMode: cas.$6,
+              echelleTexte: cas.$5,
+            ),
+          );
+          await tester.pumpAndSettle();
+          // La capture prouve ce qu'elle nomme.
+          expect(
+            Directionality.of(tester.element(find.byType(DemoSallePage))),
+            TextDirection.rtl,
+          );
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
+      }
+    }
   });
 }

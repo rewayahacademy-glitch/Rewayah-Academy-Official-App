@@ -61,15 +61,19 @@ void main() {
       expect(codes, isNot(contains('fuf')));
     });
 
-    test('l arabe se replie sur le francais tant qu il est vide', () async {
-      // fallback_strategy: base_locale dans slang.yaml. La construction est
-      // asynchrone parce que slang charge les langues non basiques en
-      // differe : sur le Web, l arabe est un morceau separe qui ne pese pas
-      // sur le demarrage a froid.
-      final Traductions ar = await AppLocale.ar.build();
-      expect(ar.salle.bandeauPermanent, t.salle.bandeauPermanent);
-      expect(ar.commun.valider, t.commun.valider);
-    });
+    test(
+      'l arabe se replie sur le francais pour une cle non traduite',
+      () async {
+        // fallback_strategy: base_locale dans slang.yaml. La construction est
+        // asynchrone parce que slang charge les langues non basiques en
+        // differe : sur le Web, l arabe est un morceau separe qui ne pese pas
+        // sur le demarrage a froid.
+        final Traductions ar = await AppLocale.ar.build();
+        // La salle est traduite (AR-SALLE-1) ; le reseau ne l est pas encore.
+        expect(ar.reseau.horsLigne, t.reseau.horsLigne);
+        expect(ar.commun.valider, t.commun.valider);
+      },
+    );
   });
 
   group('Regles de copywriting', () {
