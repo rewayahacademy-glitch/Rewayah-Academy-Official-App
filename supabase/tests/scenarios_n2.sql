@@ -69,13 +69,14 @@ values
   ('b2000000-0000-0000-0000-000000000002', 'minor', 'standard', 'allowed'),
   ('b2000000-0000-0000-0000-000000000003', 'minor', 'standard', 'forbidden');
 
--- Le MVP-0 plafonne une seance a deux participants (`guard_session_participant_cap`,
+-- Le MVP-0 plafonne une seance a deux participants (guard_session_participant_cap,
 -- 0001). La salle de N2 doit pourtant savoir accueillir un enseignant, deux
--- eleves et un controleur invisible -- c'est le cas du groupe prevu par
--- l'ADR-001, et c'est CTR-02 qui l'impose de toute facon. On leve donc le
--- plafond comme l'administration le ferait, et on le repose en fin de fichier :
--- les scenarios partagent une base, en laisser un ouvert changerait le sens
--- des fichiers suivants.
+-- eleves et un controleur invisible. On memorise la configuration exacte
+-- pour restaurer l'etat partage, y compris une cle absente.
+create temporary table n2_allow_multi_snapshot as
+select value from public.app_config
+where key = 'allow_multi_participant_sessions';
+
 update public.app_config set value = 'true'::jsonb
  where key = 'allow_multi_participant_sessions';
 insert into public.app_config (key, value)
@@ -626,11 +627,20 @@ begin
   end if;
 end $$;
 
--- Le plafond de participants est repose tel qu'il etait : les fichiers de
--- scenarios partagent une base, et en laisser un ouvert changerait
--- silencieusement le sens de ceux qui suivent.
-update public.app_config set value = 'false'::jsonb
- where key = 'allow_multi_participant_sessions';
+-- Restaurer exactement la valeur precedente. Si la cle n'existait pas,
+-- retirer la ligne de fixture ajoutee au debut du fichier.
+do $$
+begin
+  if exists (select 1 from pg_temp.n2_allow_multi_snapshot) then
+    update public.app_config
+       set value = (select value from pg_temp.n2_allow_multi_snapshot)
+     where key = 'allow_multi_participant_sessions';
+  else
+    delete from public.app_config
+     where key = 'allow_multi_participant_sessions';
+  end if;
+end $$;
+drop table pg_temp.n2_allow_multi_snapshot;
 
 do $$
 begin
