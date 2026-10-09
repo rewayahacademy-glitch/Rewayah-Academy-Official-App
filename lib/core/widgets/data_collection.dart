@@ -125,6 +125,18 @@ class DataCollection<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // DUREE-INSECABLE-5 : une page qui empile plusieurs collections dans son
+    // propre defilement (Qualite, une collection par type d'anomalie) leur
+    // donne une hauteur non bornee. La collection s'y deploie alors a sa
+    // hauteur naturelle, sans defiler elle-meme ; avant, « Vertical viewport
+    // was given unbounded height » vidait l'ecran a toute largeur.
+    return LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints contraintes) =>
+          _construire(contexte, integree: !contraintes.hasBoundedHeight),
+    );
+  }
+
+  Widget _construire(BuildContext context, {required bool integree}) {
     final bool tableau = AppGabarit.de(context) == Gabarit.desktop;
 
     if (!tableau) {
@@ -132,6 +144,7 @@ class DataCollection<T> extends StatelessWidget {
         lignes: lignes,
         piedDePage: piedDePage,
         cle: cle,
+        integree: integree,
         espacement: AppSpacing.md,
         constructeur: (BuildContext contexte, T ligne) => _Carte<T>(
           colonnes: colonnes,
@@ -156,14 +169,17 @@ class DataCollection<T> extends StatelessWidget {
       child: ClipRRect(
         borderRadius: metriques.arrondi,
         child: Column(
+          mainAxisSize: integree ? MainAxisSize.min : MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             _EnTeteTableau<T>(colonnes: colonnes),
-            Expanded(
+            Flexible(
+              fit: integree ? FlexFit.loose : FlexFit.tight,
               child: _Defilement<T>(
                 lignes: lignes,
                 piedDePage: piedDePage,
                 cle: cle,
+                integree: integree,
                 espacement: 0,
                 constructeur: (BuildContext contexte, T ligne) =>
                     _LigneTableau<T>(
@@ -186,6 +202,7 @@ class _Defilement<T> extends StatelessWidget {
     required this.lignes,
     required this.constructeur,
     required this.espacement,
+    required this.integree,
     this.piedDePage,
     this.cle,
   });
@@ -193,6 +210,10 @@ class _Defilement<T> extends StatelessWidget {
   final List<T> lignes;
   final Widget Function(BuildContext context, T ligne) constructeur;
   final double espacement;
+
+  /// Vrai dans le defilement d'une page (hauteur non bornee) : la liste prend
+  /// sa hauteur naturelle et laisse la page defiler.
+  final bool integree;
   final Widget? piedDePage;
   final Key Function(T ligne)? cle;
 
@@ -201,6 +222,8 @@ class _Defilement<T> extends StatelessWidget {
     final int total = lignes.length + (piedDePage == null ? 0 : 1);
 
     return ListView.builder(
+      shrinkWrap: integree,
+      physics: integree ? const NeverScrollableScrollPhysics() : null,
       itemCount: total,
       itemBuilder: (BuildContext contexte, int index) {
         if (index >= lignes.length) {
@@ -357,8 +380,13 @@ class _Cellule<T> extends StatelessWidget {
     if (rendu != null) {
       return rendu(context, ligne);
     }
+    // DUREE-INSECABLE-5 : la valeur suit le titre de la colonne dans le
+    // libelle parle ; une valeur ancree pour s'afficher seule (« 12 jours »,
+    // marque U+200E en tete) y perd son ancre ([sansAncre]), qui n'a pas a
+    // se trouver au milieu d'un libelle. Le texte affiche, seul dans sa
+    // cellule, la garde.
     return Semantics(
-      label: '${colonne.titre} : ${colonne.texte(ligne)}',
+      label: '${colonne.titre} : ${sansAncre(colonne.texte(ligne))}',
       excludeSemantics: true,
       child: Text(colonne.texte(ligne), style: style),
     );
