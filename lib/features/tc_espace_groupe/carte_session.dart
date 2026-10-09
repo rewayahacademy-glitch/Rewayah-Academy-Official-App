@@ -56,7 +56,8 @@ class CarteSession extends StatefulWidget {
   /// Le bouton plein de la carte quand l'emplacement d'entree n'en est pas
   /// un (ligne d'etat, avec ou sans « Reessayer » secondaire) : jamais a
   /// cote de « Rejoindre » (R4). Accueil du Mode Accessibilite : « Voir ma
-  /// classe » (MA-3), qui reste hors ligne (MA-HORSLIGNE-CLASSE-1).
+  /// classe » (MA-3), qui reste hors ligne (MA-HORSLIGNE-CLASSE-1) : il
+  /// mene aux seances deja lues, ou a l'erreur honnete avec « Reessayer ».
   final Widget? actionHorsEntree;
 
   /// L'Espace Groupe auquel elle appartient.
@@ -208,9 +209,10 @@ class _CarteSessionState extends State<CarteSession> {
             onReessayer: widget.onReessayer,
             focusRetour: _focusTitre,
           ),
-          // Hors ligne aussi : « Reessayer » relit le reseau, mais Ma classe
-          // reste consultable (bandeau « ce qui est deja affiche reste
-          // consultable ») ; son chemin ne disparait pas (MA-HORSLIGNE-CLASSE-1).
+          // Hors ligne aussi, sous « Reessayer » (qui relit le reseau) : Ma
+          // classe montre les seances deja lues pendant la session, ou, sans
+          // lecture prealable, son etat d'erreur avec « Reessayer ». Jamais
+          // une impasse ; aucun cache neuf ici (MA-HORSLIGNE-CLASSE-1).
           if (widget.actionHorsEntree != null &&
               !emplacement.estBouton) ...<Widget>[
             Ecart.vLg,

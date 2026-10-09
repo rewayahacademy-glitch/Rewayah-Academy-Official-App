@@ -92,6 +92,7 @@ class SourcePilotee implements SourceSession {
 List<Override> surchargesRouteur(
   SourceSession source, {
   ServiceAppairage? appairage,
+  ServiceSuivi? suivi,
 }) => <Override>[
   sourceSessionProvider.overrideWithValue(source),
   serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
@@ -100,7 +101,7 @@ List<Override> surchargesRouteur(
     appairage ?? FauxServiceAppairage(),
   ),
   serviceAvatarProvider.overrideWithValue(FauxServiceAvatar()),
-  serviceSuiviProvider.overrideWithValue(FauxServiceSuivi()),
+  serviceSuiviProvider.overrideWithValue(suivi ?? FauxServiceSuivi()),
   serviceMatchingProvider.overrideWithValue(FauxServiceMatching()),
   serviceReglesProvider.overrideWithValue(FauxServiceRegles()),
   servicePriereProvider.overrideWithValue(FauxServicePriere()),

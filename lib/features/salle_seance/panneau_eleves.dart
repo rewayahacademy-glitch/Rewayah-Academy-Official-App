@@ -9,6 +9,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -396,7 +397,8 @@ class _GrilleFiche extends StatelessWidget {
       ),
       // 390 a texte agrandi : une seule colonne, pour que les mots ne se
       // coupent pas (W-144, W-1410 ; meme seuil que groupe_reglages).
-      child: serre && MediaQuery.textScalerOf(context).scale(1) > 1.3
+      child:
+          serre && MediaQuery.textScalerOf(context).scale(1) > seuilTexteEmpile
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
