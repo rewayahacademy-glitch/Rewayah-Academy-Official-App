@@ -45,6 +45,7 @@ class ColonneDonnees<T> {
     this.tabulaire = false,
     this.rendu,
     this.rendreMemeSiTexteVide = false,
+    this.insecable = false,
   });
 
   /// L'en-tete de colonne, en rendu tableau. Il sert aussi de libelle parle en
@@ -77,6 +78,14 @@ class ColonneDonnees<T> {
   /// l'est pas. `true` rend [rendu] meme si [texte] est vide : c'est le cas
   /// d'un menu d'actions, qui n'a rien a dire en texte.
   final bool rendreMemeSiTexteVide;
+
+  /// Vrai pour une valeur qui se lit d'un bloc, un identifiant
+  /// (« TEACHER-AS-000001 ») : en rendu tableau, elle ne passe pas a la ligne
+  /// a ses traits d'union tant qu'elle tient entiere dans sa cellule (un
+  /// gluon invisible, U+2060, suit chaque trait a l'affichage ; le libelle
+  /// parle garde la valeur telle quelle). Trop longue pour sa cellule, elle
+  /// se coupe a ses traits, jamais au milieu d'un mot.
+  final bool insecable;
 }
 
 /// Un tableau dense sur desktop, une liste de cartes ailleurs.
@@ -388,7 +397,45 @@ class _Cellule<T> extends StatelessWidget {
     return Semantics(
       label: '${colonne.titre} : ${sansAncre(colonne.texte(ligne))}',
       excludeSemantics: true,
-      child: Text(colonne.texte(ligne), style: style),
+      child: colonne.insecable
+          ? _TexteInsecable(colonne.texte(ligne), style: style)
+          : Text(colonne.texte(ligne), style: style),
+    );
+  }
+}
+
+/// Le gluon invisible (WORD JOINER, U+2060) : aucune coupure a cote.
+const String _gluon = '\u2060';
+
+/// Un texte qui ne passe pas a la ligne a ses traits d'union quand il tient
+/// entier dans la largeur offerte ([ColonneDonnees.insecable]).
+class _TexteInsecable extends StatelessWidget {
+  const _TexteInsecable(this.texte, {required this.style});
+
+  final String texte;
+  final TextStyle style;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!texte.contains('-')) return Text(texte, style: style);
+    final TextStyle complet = DefaultTextStyle.of(context).style.merge(style);
+    final TextDirection sens = Directionality.of(context);
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    return LayoutBuilder(
+      builder: (BuildContext _, BoxConstraints c) {
+        final TextPainter p = TextPainter(
+          text: TextSpan(text: texte, style: complet),
+          textDirection: sens,
+          textScaler: echelle,
+          maxLines: 1,
+        )..layout();
+        final bool tient = p.width <= c.maxWidth;
+        p.dispose();
+        return Text(
+          tient ? texte.replaceAll('-', '-$_gluon') : texte,
+          style: style,
+        );
+      },
     );
   }
 }

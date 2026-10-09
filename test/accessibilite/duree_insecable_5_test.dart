@@ -12,6 +12,13 @@
 //    jusqu'a son insertion au milieu d'un libelle. Contre-epreuve : le
 //    defaut de `data_collection.dart` reintroduit la fait echouer, pour
 //    chacun des trois ecrans.
+// 3. Reprise (relecture adverse) : la garde trouve le meme defaut quand
+//    l'objet qui porte la colonne a un type infere (`final col = colonne;`,
+//    `final c = colonnes().first;`), est le parametre d'une lambda ou la
+//    variable d'une boucle non typees, quel que soit son nom, et une valeur
+//    rangee par affectation (`s.duree = ...`) ; un autre objet au type ecrit
+//    dont le champ porte le meme nom n'est pas suivi. A 1440 px, LTR et
+//    RTL, l'identifiant « TEACHER-AS-000001 » tient sur une ligne.
 
 import 'dart:io';
 
@@ -247,6 +254,41 @@ void main() {
     },
   );
 
+  // Reprise (relecture adverse) : a 1440 px en RTL, l'identifiant passait
+  // a la ligne a son trait d'union (« TEACHER- / AS-000001 »).
+  for (final TextDirection sens in TextDirection.values) {
+    testWidgets('Comptes, 1440 px, ${sens.name} : l\'identifiant tient sur '
+        'une ligne', (WidgetTester tester) async {
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      tester.view.physicalSize = const Size(1440, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(_hote(const ComptesPage(), _comptes, sens: sens));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      final Finder identifiant = find.byWidgetPredicate(
+        (Widget w) => w is Text && (w.data ?? '').startsWith('TEACHER'),
+      );
+      expect(identifiant, findsOneWidget);
+      // Une ligne : la hauteur de la cellule voisine, « Aicha Sow ».
+      expect(
+        tester.getSize(identifiant).height,
+        tester.getSize(find.text('Aicha Sow')).height,
+      );
+      // Le libelle parle garde l'identifiant tel quel.
+      expect(
+        _libelles(tester).any(
+          (String l) => l.contains(
+            '${t.admin.comptes.colonneIdentifiant} : TEACHER-AS-000001',
+          ),
+        ),
+        isTrue,
+        reason: '${_libelles(tester)}',
+      );
+      semantique.dispose();
+    });
+  }
+
   testWidgets('Qualite, 390 px : la collection repliee en cartes dans le '
       'defilement de la page s affiche (plus de hauteur non bornee)', (
     WidgetTester tester,
@@ -405,6 +447,156 @@ Widget seule(Seance s) => Text(s.duree);
       // positionnelle (40) et nommee (42), constructeur positionnel (47),
       // tampon (52), remplacement (55), ajout (59), liste jointe (63).
       expect(lignes, <int>[18, 26, 34, 38, 40, 42, 47, 52, 55, 59, 63]);
+    });
+  });
+
+  // Reprise (relecture adverse) : la garde ne doit dependre ni du type ecrit
+  // de l'objet qui porte la colonne, ni du nom choisi pour lui.
+  group('3. Garde de source : objet au type infere, lambda, boucle, '
+      'affectation de champ', () {
+    final String source = File('lib/core/widgets/data_collection.dart')
+        .readAsStringSync();
+
+    /// Une copie de data_collection.dart ou [avant] est remplace par
+    /// [apres] ; la garde lancee sur lib/ avec cette copie.
+    List<AncreGlissee> garde(String avant, String apres) {
+      expect(source, contains(avant));
+      final Directory dossier = Directory.systemTemp.createTempSync('dc5b');
+      addTearDown(() => dossier.deleteSync(recursive: true));
+      final File fautif = File('${dossier.path}/data_collection.dart')
+        ..writeAsStringSync(source.replaceFirst(avant, apres));
+      return ancresGlissees(_libAvec(fautif))
+          .where((AncreGlissee a) => a.fichier == fautif.path)
+          .toList();
+    }
+
+    const String cellule =
+        '    return Semantics(\n'
+        r"      label: '${colonne.titre} : ${sansAncre(colonne.texte(ligne))}',";
+    const String resume =
+        '    final String resume = enchainer(\n'
+        '      secondaires.map((ColonneDonnees<T> c) => c.texte(ligne)),\n'
+        "      ' · ',\n"
+        '    );';
+
+    // Des noms qui ne sont declares nulle part ailleurs : la detection ne
+    // tient pas a une declaration `ColonneDonnees<T> c` voisine.
+    for (final String nom in <String>['col', 'qz7']) {
+      test('$nom : variable au type infere (`final $nom = colonne;`)', () {
+        final List<AncreGlissee> f = garde(
+          cellule,
+          '    final $nom = colonne;\n'
+          '    return Semantics(\n'
+          "      label: '\${$nom.titre} : \${$nom.texte(ligne)}',",
+        );
+        expect(f, hasLength(1));
+        expect(f.single.raison, contains('ColonneDonnees.texte'));
+      });
+
+      test('$nom : boucle for-in non typee', () {
+        final List<AncreGlissee> f = garde(
+          cellule,
+          "    String l = '';\n"
+          '    for (final $nom in <ColonneDonnees<T>>[colonne]) {\n'
+          "      l = '\${$nom.titre} : \${$nom.texte(ligne)}';\n"
+          '    }\n'
+          '    return Semantics(\n'
+          '      label: l,',
+        );
+        expect(f, hasLength(1));
+        expect(f.single.raison, contains('ColonneDonnees.texte'));
+      });
+
+      test('$nom : lambda non typee, carte jointe par « · »', () {
+        final List<AncreGlissee> f = garde(
+          resume,
+          '    final String resume = secondaires\n'
+          '        .map(($nom) => $nom.texte(ligne))\n'
+          '        .where((String s) => s.isNotEmpty)\n'
+          "        .join(' · ');",
+        );
+        expect(f, hasLength(1));
+        expect(f.single.raison, contains('jointe'));
+      });
+    }
+
+    test("fixtures : champ affecte, resultat d'appel, lambda, boucle, "
+        "autre fichier ; un autre champ du meme nom n'est pas suivi", () {
+      final Directory dossier = Directory.systemTemp.createTempSync('anc5b');
+      addTearDown(() => dossier.deleteSync(recursive: true));
+      final File a = File('${dossier.path}/a.dart')
+        ..writeAsStringSync(r'''
+class Colonne<T> {
+  const Colonne({required this.titre, required this.texte});
+  final String titre;
+  final String Function(T ligne) texte;
+}
+String _attente(int j) =>
+    LibellesGroupe.valeurSeule(t.a.attendJours(jours: '$j'));
+List<Colonne<int>> colonnes() => <Colonne<int>>[
+  Colonne<int>(titre: 'Attente', texte: (int j) => _attente(j)),
+];
+class Seance {
+  String duree = '';
+}
+String r(Seance s, int n) {
+  s.duree = LibellesGroupe.dureeSeule(Duration(minutes: n));
+  return 'Duree : ${s.duree}'; // FAUTE
+}
+String r2(int n) {
+  final s = Seance();
+  s.duree = LibellesGroupe.dureeSeule(Duration(minutes: n));
+  return 'Duree : ${s.duree}'; // FAUTE
+}
+String e(int l) {
+  final c = colonnes().first;
+  return 'Attente : ${c.texte(l)}'; // FAUTE
+}
+Iterable<String> l1(int l) {
+  final cs = colonnes();
+  return cs.map((c) => '${c.titre} : ${c.texte(l)}'); // FAUTE
+}
+String l2(int l, StringBuffer b) {
+  for (final c in colonnes()) {
+    b.write('${c.titre} : ${c.texte(l)}'); // FAUTE
+  }
+  return b.toString();
+}
+// Permis : la valeur seule, ou sans son ancre.
+Widget seule(Seance s) => Text(s.duree);
+String sain(int l) {
+  final c = colonnes().first;
+  return 'Attente : ${sansAncre(c.texte(l))}';
+}
+// Un autre objet, au type ecrit, dont le champ porte le meme nom.
+class Autre {
+  const Autre(this.texte, this.duree);
+  final String texte;
+  final String duree;
+}
+String autre(Autre x) => 'Texte : ${x.texte}, duree ${x.duree}';
+''');
+      final File b = File('${dossier.path}/b.dart')
+        ..writeAsStringSync(r'''
+String ailleurs(int l) {
+  final premiere = colonnes().first;
+  return 'Attente : ${premiere.texte(l)}'; // FAUTE
+}
+''');
+      List<int> attendues(File f) {
+        final List<String> l = f.readAsLinesSync();
+        return <int>[
+          for (int i = 0; i < l.length; i++)
+            if (l[i].contains('// FAUTE')) i + 1,
+        ];
+      }
+
+      final List<AncreGlissee> fautes = ancresGlissees(<File>[a, b]);
+      String ou(AncreGlissee x) => '${x.fichier.split('/').last}:${x.ligne}';
+      expect(fautes.map(ou).toList(), <String>[
+        for (final int n in attendues(a)) 'a.dart:$n',
+        for (final int n in attendues(b)) 'b.dart:$n',
+      ], reason: fautes.map((AncreGlissee x) => x.raison).join('\n'));
     });
   });
 }

@@ -31,6 +31,16 @@
 // qui finit dans l'argument `champ:` d'un constructeur `C(` est une faute.
 // Un composant qui joint par `enchainer` (lib/core/i18n/isolat_bidi.dart),
 // qui ne garde l'ancre qu'en tete de ligne, n'est pas releve.
+//
+// Reprise 2 (DUREE-INSECABLE-5) : un champ est suivi a ses lectures
+// `objet.champ` quel que soit le NOM de l'objet. Son type est cherche :
+// ecrit, ou deduit de ce qui donne l'objet (initialisation, collection
+// parcourue par `for`, recepteur d'un `.map(` qui recoit une lambda, type
+// rendu d'une fonction, champ d'un autre objet). Un type deduit qui ne nomme
+// pas la classe ecarte la lecture ; un type introuvable la garde si le
+// fichier nomme la classe. Une valeur rangee par affectation
+// (`s.duree = valeur`, `this.duree = valeur`, `duree = valeur` dans la
+// classe) est suivie de meme.
 
 import 'dart:io';
 
@@ -331,6 +341,8 @@ class _Source {
           if (m[j] == '>' && --profondeur == 0) break;
           j++;
         }
+        // Un `<` de comparaison, sans `>` : fin du source.
+        if (j >= m.length) return noms;
         j++;
         while (j < m.length && m[j].trim().isEmpty) {
           j++;
@@ -396,11 +408,18 @@ class _Fonction extends _Destination {
   final int declaration;
 }
 
-/// Un champ d'objet ou la valeur est rangee : `classe.champ`.
+/// Un champ d'objet ou la valeur est rangee par affectation :
+/// `objet.champ = valeur`, `this.champ = valeur`, ou `champ = valeur` dans
+/// une classe qui declare ce champ. [classe] est null quand l'objet n'est
+/// pas `this` : son type n'est pas lisible dans le source.
 class _Champ extends _Destination {
-  const _Champ(this.classe, this.champ);
-  final String classe;
+  const _Champ(this.classe, this.champ, {this.recepteur});
+  final String? classe;
   final String champ;
+
+  /// La fin de l'objet qui recoit la valeur (`s` dans `s.duree = `), dont
+  /// le type est cherche quand [classe] est null.
+  final int? recepteur;
 }
 
 /// DUREE-INSECABLE-5 : la valeur est un argument de l'appel [nom], nomme
@@ -758,11 +777,81 @@ _Destination _instruction(_Source s, int o, int p, {bool collection = false}) {
     // La table existe deja : on la suit dans tout le bloc.
     return _Variable(indexee[1]!, o < 0 ? 0 : o, fin, collection: true);
   }
+  // DUREE-INSECABLE-5 (reprise) : `objet.champ = valeur` range la valeur
+  // dans un champ d'objet, relu ensuite par `autre.champ` n'importe ou.
+  final RegExpMatch? membre = _affectationMembre.firstMatch(segment);
+  if (membre != null) {
+    final String recepteur = membre[1]!;
+    return _Champ(
+      recepteur == 'this' ? s.classeAutour(p) : null,
+      membre[2]!,
+      recepteur: d + membre.start + recepteur.length,
+    );
+  }
   final RegExpMatch? aff = _affectation.firstMatch(segment);
   if (aff != null) {
-    return _Variable(aff[1]!, d + aff.start, fin, collection: collection);
+    final String nom = aff[1]!;
+    // `champ = valeur` sans declaration locale, dans une classe qui declare
+    // ce champ : la valeur est rangee dans l'objet.
+    final String? classe = s.classeAutour(p);
+    if (classe != null &&
+        segment.substring(0, aff.start).trim().isEmpty &&
+        !_declareeLocalement(s, nom, p) &&
+        _champDeclare(s, classe, nom)) {
+      return _Champ(classe, nom);
+    }
+    return _Variable(nom, d + aff.start, fin, collection: collection);
   }
   return const _Affichee();
+}
+
+/// `objet.champ = `, `objet?.champ ??= `, `liste[0].champ = ` : le
+/// recepteur (dernier maillon avant le point) et le champ.
+final RegExp _affectationMembre = RegExp(
+  r'(\w+|\)|\])\s*[?!]?\.(\w+)\s*(?:\?\?)?=(?![=>])\s*$',
+);
+
+/// Vrai si [nom] est declare (variable ou parametre) dans le membre de
+/// classe qui contient [p], avant [p].
+bool _declareeLocalement(_Source s, String nom, int p) {
+  int bloc = s.ouvrant(p);
+  int membre = -1;
+  while (bloc >= 0) {
+    final int o = s.ouvrant(bloc);
+    if (o >= 0 && _corpsDeClasse(s, o)) {
+      membre = bloc;
+      break;
+    }
+    bloc = o;
+  }
+  if (membre < 0) return true;
+  final int debut = s.debutSegment(s.ouvrant(membre), membre, virgule: false);
+  return RegExp(
+    '(?:[\\w>?]\\s+|\\bfor\\s*\\(\\s*)${RegExp.escape(nom)}\\s*[=;,)]',
+  ).hasMatch(s.m.substring(debut, p));
+}
+
+/// Vrai si une classe [classe] des sources declare le champ [champ].
+bool _champDeclareDans(List<_Source> fichiers, String classe, String champ) =>
+    fichiers.any((_Source s) => _champDeclare(s, classe, champ));
+
+/// Vrai si la classe [classe] du source [s] declare le champ [champ].
+bool _champDeclare(_Source s, String classe, String champ) {
+  final RegExpMatch? c = RegExp(
+    '\\b(?:class|mixin)\\s+${RegExp.escape(classe)}\\b',
+  ).firstMatch(s.m);
+  if (c == null) return false;
+  final int ouvre = s.m.indexOf('{', c.end);
+  final int? ferme = ouvre < 0 ? null : s.paire[ouvre];
+  if (ferme == null) return false;
+  return _declarationDeChamp(champ).hasMatch(s.m.substring(ouvre, ferme));
+}
+
+/// Une declaration de champ `Type champ;`, `Type champ = ...;`, ou un
+/// parametre `this.champ`.
+RegExp _declarationDeChamp(String champ) {
+  final String c = RegExp.escape(champ);
+  return RegExp('(?:[\\w>?]\\s+$c\\s*[;=](?!=)|\\bthis\\.$c\\b)');
 }
 
 /// Un champ d'objet que du code joint a d'autres textes : `(classe, champ)`.
@@ -1113,104 +1202,309 @@ List<_Declaration> _declarations(
   return _cacheDeclarations[cle] = trouvees;
 }
 
-/// Suit le champ [champ] de [classe] (constructeur `this.champ`) jusqu'a
-/// ses lectures : dans le corps de la classe (`champ`, `'$champ'`) et, dans
-/// tout fichier qui nomme la classe, par un acces `x.champ` (`affichage.duree`,
-/// `widget.valeur`, `colonne.texte(ligne)`). Chaque lecture est classee comme
-/// la valeur elle-meme.
+/// Suit le champ [champ] jusqu'a ses lectures. [classe] est la classe qui le
+/// porte quand elle est connue (constructeur `this.champ`, `this.champ =`),
+/// sinon toute classe qui declare un champ de ce nom.
+///
+/// DUREE-INSECABLE-5 (reprise) : les lectures `objet.champ` sont relevees
+/// par le NOM DU CHAMP, quel que soit l'objet, dans tous les fichiers. Le
+/// type de l'objet n'est pas lisible dans le source quand il est infere
+/// (`final col = colonne;`, `final c = colonnes().first;`), parametre d'une
+/// lambda non typee (`.map((col) => col.texte(ligne))`) ou variable d'une
+/// boucle (`for (final col in colonnes)`) : la garde ne doit pas dependre du
+/// nom choisi. Une lecture d'un autre objet qui porte un champ du meme nom
+/// est suivie aussi ; c'est le prix d'une garde qui ne laisse rien passer.
+/// Les libelles (`t.a.champ`, alias de `t`) ne sont pas des lectures.
+///
+/// Dans le corps d'une classe qui declare le champ, les lectures nues
+/// (`champ`, `'$champ'`) sont suivies aussi.
 void _suivreChamp(
   List<_Source> fichiers,
-  String classe,
+  String? classe,
   String champ,
   String chemin,
   bool collection,
   List<_ASuivre> aSuivre,
   List<AncreGlissee> fautes,
 ) {
-  final RegExp declaration = RegExp('\\bclass\\s+${RegExp.escape(classe)}\\b');
-  final RegExp nommee = RegExp('(?<![\\w\$])${RegExp.escape(classe)}\\b');
+  final RegExp declaration = RegExp(
+    classe == null
+        ? '\\b(?:class|mixin)\\s+(\\w+)\\b'
+        : '\\b(?:class|mixin)\\s+${RegExp.escape(classe)}\\b',
+  );
   final RegExp nu = RegExp('(?<![\\w.])${RegExp.escape(champ)}(?![\\w:])');
-  final String suite = '$chemin > $classe.$champ';
+  final RegExp declare = _declarationDeChamp(champ);
+  final String suite = '$chemin > ${classe ?? '*'}.$champ';
   bool champDeclare = false;
   for (final _Source s in fichiers) {
-    final RegExpMatch? c = declaration.firstMatch(s.m);
-    if (c == null) continue;
-    final int ouvre = s.m.indexOf('{', c.end);
-    final int? ferme = ouvre < 0 ? null : s.paire[ouvre];
-    if (ferme == null) continue;
-    final String corps = s.m.substring(ouvre, ferme);
-    if (!RegExp('this\\.${RegExp.escape(champ)}\\b').hasMatch(corps)) continue;
-    champDeclare = true;
-    for (final RegExpMatch u in nu.allMatches(s.m.substring(0, ferme), ouvre)) {
-      if (_affectee(s, u.end)) continue;
-      if (u.start > 0 && s.m[u.start - 1] == r'$') {
-        final int q = u.start - 2;
-        if (q >= 0 && (s.m[q] == "'" || s.m[q] == '"')) {
-          aSuivre.add((s: s, p: q, chemin: suite, collection: collection));
-        } else {
-          fautes.add((
-            fichier: s.fichier,
-            ligne: s.ligne(u.start),
-            raison: '$suite : interpolee au milieu',
-          ));
+    if (!s.m.contains(champ)) continue;
+    for (final RegExpMatch c in declaration.allMatches(s.m)) {
+      final int ouvre = s.m.indexOf('{', c.end);
+      final int? ferme = ouvre < 0 ? null : s.paire[ouvre];
+      if (ferme == null) continue;
+      if (!declare.hasMatch(s.m.substring(ouvre, ferme))) continue;
+      champDeclare = true;
+      for (final RegExpMatch u in nu.allMatches(
+        s.m.substring(0, ferme),
+        ouvre,
+      )) {
+        if (_affectee(s, u.end)) continue;
+        // `final String champ;`, `this.champ` (parametre) : pas une lecture.
+        final int a = s.avant(u.start);
+        final bool interpolee = u.start > 0 && s.m[u.start - 1] == r'$';
+        if (!interpolee && a >= 0 && RegExp(r'[\w>?]').hasMatch(s.m[a])) {
+          final String mot = _motFinissantEn(s, a);
+          if (!_motsExpression.contains(mot)) continue;
         }
-        continue;
+        _lecture(s, u.start, suite, collection, aSuivre, fautes);
       }
-      aSuivre.add((s: s, p: u.start, chemin: suite, collection: collection));
     }
   }
-  if (!champDeclare) return;
-  final bool privee = classe.startsWith('_');
-  final String c = RegExp.escape(classe);
-  // Les noms qui designent un objet de la classe : variables, parametres et
-  // champs types (`final AffichageSeance affichage`, `(AffichageSeance a)`,
-  // `ColonneDonnees<T> colonne`), objets construits (`final a =
-  // AffichageSeance.depuis(`), et `widget` dans un `State<Classe>`.
-  final RegExp type = RegExp(
-    '(?<![\\w\$.])$c(?:<[^;{}()=]*?>)?\\??\\s+(\\w+)\\b',
-  );
-  final RegExp construit = RegExp(
-    '\\b(?:final|var)\\s+(\\w+)\\s*=\\s*$c\\b(?:\\.\\w+)?\\s*[(<]',
+  // Un argument nomme d'une classe hors des sources (un widget de Flutter)
+  // n'est pas un champ que le code relit : seul un champ declare, ou range
+  // par affectation sur un objet de type inconnu, est suivi.
+  if (classe != null && !champDeclare) return;
+  // `..champ` (cascade) ne correspond pas : le point y suit un point.
+  final RegExp acces = RegExp(
+    '(?<=[\\w)\\]!?])\\s*[?!]?\\.${RegExp.escape(champ)}(?![\\w:])',
   );
   for (final _Source s in fichiers) {
-    if (!nommee.hasMatch(s.m)) continue;
-    if (privee && !declaration.hasMatch(s.m)) continue;
-    final Set<String> objets = <String>{
-      for (final RegExpMatch x in type.allMatches(s.m))
-        if (!_motsReserves.contains(x[1])) x[1]!,
-      for (final RegExpMatch x in construit.allMatches(s.m)) x[1]!,
-      if (RegExp('\\bState<$c>').hasMatch(s.m)) 'widget',
-    };
-    if (objets.isEmpty) continue;
-    final RegExp acces = RegExp(
-      '(?<![\\w\$])(?:${objets.map(RegExp.escape).join('|')})'
-      '[?!]?\\.${RegExp.escape(champ)}(?![\\w:])',
-    );
+    if (!s.m.contains(champ)) continue;
     for (final RegExpMatch u in acces.allMatches(s.m)) {
       if (_affectee(s, u.end)) continue;
       final ({String nom, int debut}) lecture = s.appelant(u.end);
-      if (lecture.nom.startsWith('this.')) continue;
-      aSuivre.add((
-        s: s,
-        p: lecture.debut,
-        chemin: suite,
-        collection: collection,
-      ));
+      final String tete = lecture.nom.split('.').first;
+      if (tete == 'this' || tete == 'super') continue;
+      if (lecture.nom.startsWith('t.') || s.alias.contains(tete)) continue;
+      if (classe != null && !_peutEtre(fichiers, s, u.start, classe)) {
+        continue;
+      }
+      _lecture(s, lecture.debut, suite, collection, aSuivre, fautes);
     }
   }
 }
 
-/// Des mots qui suivent un nom de type sans etre une variable.
-const Set<String> _motsReserves = <String>{
-  'get',
-  'set',
-  'operator',
-  'extends',
-  'implements',
-  'with',
-  'on',
-  'Function',
-};
+/// Les types qui ne disent rien de l'objet.
+const Set<String> _typesOuverts = <String>{'dynamic', 'Object', 'T'};
+
+/// Vrai si l'objet lu juste avant [point] (`objet.champ`) peut etre de la
+/// classe [classe].
+///
+/// Son type est cherche dans le source : type ecrit (variable, parametre,
+/// champ), sinon deduit de ce qui le donne (`final col = colonne;`,
+/// `final c = colonnes().first;`, `for (final col in colonnes)`,
+/// `colonnes.map((col) => ...)`, `final s = Seance();`), en remontant
+/// jusqu'a une declaration typee, dans ce fichier ou une fonction d'un autre.
+/// Le type trouve doit nommer [classe] (`ColonneDonnees<T>`,
+/// `List<ColonneDonnees<T>>`), ou etre ouvert (`dynamic`, `Object`, `T`).
+/// Un type introuvable est accepte quand le fichier nomme [classe] : un
+/// objet de la classe y est vraisemblable, quel que soit le nom choisi.
+bool _peutEtre(List<_Source> fichiers, _Source s, int point, String classe) {
+  final RegExp nommee = RegExp('(?<![\\w\$])${RegExp.escape(classe)}\\b');
+  final String? type = _typeAvant(fichiers, s, point);
+  if (type == null) return nommee.hasMatch(s.m);
+  final String base = type.replaceAll(RegExp(r'<.*$|\?'), '').trim();
+  return _typesOuverts.contains(base) || nommee.hasMatch(type);
+}
+
+/// Le type (texte) de l'objet qui finit juste avant [point], ou null.
+String? _typeAvant(List<_Source> fichiers, _Source s, int point) {
+  int j = point - 1;
+  while (j >= 0 && s.m[j].trim().isEmpty) {
+    j--;
+  }
+  if (j >= 0 && (s.m[j] == '?' || s.m[j] == '!')) j--;
+  if (j < 0 || !RegExp(r'\w').hasMatch(s.m[j])) return null;
+  final String nom = _motFinissantEn(s, j);
+  if (nom.isEmpty || RegExp(r'^\d').hasMatch(nom)) return null;
+  return _typeDeNom(fichiers, s, nom, j - nom.length + 1, 0);
+}
+
+final Map<String, String?> _cacheTypes = <String, String?>{};
+
+/// Le type du nom [nom] lu en [position] de [s] : sa declaration la plus
+/// proche avant [position], sinon la premiere du fichier (champ declare plus
+/// bas), sinon une fonction ou un accesseur de ce nom dans les sources.
+String? _typeDeNom(
+  List<_Source> fichiers,
+  _Source s,
+  String nom,
+  int position,
+  int profondeur,
+) {
+  if (profondeur > 4) return null;
+  if (nom == 'widget') {
+    return RegExp(r'\bState<(\w+)>').firstMatch(s.m)?[1];
+  }
+  if (RegExp(r'^_?[A-Z]').hasMatch(nom)) return nom;
+  if (_motsExpression.contains(nom) || nom == 'this') return null;
+  final _Decl? d = _declarationProche(s, nom, position);
+  if (d == null) {
+    return _typeRendu(fichiers, nom) ?? _typeDeChamp(fichiers, nom);
+  }
+  final String cle = '${s.fichier}:${d.p}:$nom';
+  if (_cacheTypes.containsKey(cle)) return _cacheTypes[cle];
+  _cacheTypes[cle] = null; // garde contre les cycles
+  final String? type = switch (d) {
+    _Decl(:final String type) when type.isNotEmpty => type,
+    _Decl(:final int? source) when source != null => _typeExpression(
+      fichiers,
+      s,
+      source,
+      profondeur + 1,
+    ),
+    _ => null,
+  };
+  return _cacheTypes[cle] = type;
+}
+
+/// Une declaration de nom : son [type] ecrit (vide sinon), ou la position
+/// [source] de l'expression qui en donne la valeur (initialisation,
+/// collection parcourue, recepteur d'un `.map(`).
+typedef _Decl = ({int p, String type, int? source});
+
+final Map<String, List<_Decl>> _cacheDecl = <String, List<_Decl>>{};
+
+List<_Decl> _declarationsDe(_Source s, String nom) {
+  final String cle = '${s.fichier}|$nom';
+  final List<_Decl>? connues = _cacheDecl[cle];
+  if (connues != null) return connues;
+  final String n = RegExp.escape(nom);
+  final List<_Decl> liste = <_Decl>[];
+  // `Type nom` suivi de `;`, `=`, `,`, `)`, `}` ou `in`.
+  for (final RegExpMatch x in RegExp(
+    '(?<![\\w.\$])((?:[A-Z_]\\w*|int|double|num|bool|dynamic)'
+    '(?:<[^;{}()=]*?>)?\\??)\\s+$n\\s*(?=[;=,)}]|\\bin\\b)',
+  ).allMatches(s.m)) {
+    if (_motsExpression.contains(x[1])) continue;
+    liste.add((p: x.start, type: x[1]!, source: null));
+  }
+  // `final nom = expr`, `var nom = expr`.
+  for (final RegExpMatch x in RegExp(
+    '\\b(?:final|var|const)\\s+$n\\s*=(?![=>])',
+  ).allMatches(s.m)) {
+    liste.add((p: x.start, type: '', source: x.end));
+  }
+  // `for (final nom in expr)`.
+  for (final RegExpMatch x in RegExp(
+    '\\b(?:final|var)\\s+$n\\s+in\\b',
+  ).allMatches(s.m)) {
+    liste.add((p: x.start, type: '', source: x.end));
+  }
+  // `(nom) =>`, `(a, nom) {` : parametre de lambda non type ; la valeur
+  // vient du recepteur de l'appel qui recoit la lambda (`xs.map(`).
+  for (final RegExpMatch x in RegExp(
+    '\\((\\s*(?:\\w+\\s*,\\s*)*$n\\s*(?:,\\s*\\w+\\s*)*)\\)\\s*(?:=>|\\{|async)',
+  ).allMatches(s.m)) {
+    final int o = s.ouvrant(x.start);
+    int? source;
+    if (o >= 0 && s.m[o] == '(') {
+      final ({String nom, int debut}) appel = s.appelant(o);
+      if (appel.nom.contains('.')) source = appel.debut;
+    }
+    liste.add((p: x.start, type: '', source: source));
+  }
+  return _cacheDecl[cle] = liste;
+}
+
+_Decl? _declarationProche(_Source s, String nom, int position) {
+  _Decl? proche;
+  _Decl? premiere;
+  for (final _Decl d in _declarationsDe(s, nom)) {
+    if (d.p < position && (proche == null || d.p > proche.p)) proche = d;
+    if (premiere == null || d.p < premiere.p) premiere = d;
+  }
+  return proche ?? premiere;
+}
+
+/// Le type de l'expression qui commence en [i] : une collection litterale
+/// typee (`<C>[...]`), un constructeur (`C(`, `C.x(`), sinon le type de son
+/// premier nom (`colonnes` dans `colonnes().first`, `secondaires.map`).
+String? _typeExpression(
+  List<_Source> fichiers,
+  _Source s,
+  int i,
+  int profondeur,
+) {
+  int j = i;
+  while (j < s.m.length && s.m[j].trim().isEmpty) {
+    j++;
+  }
+  final String reste = s.m.substring(j, (j + 200).clamp(j, s.m.length));
+  final RegExpMatch? litteral = RegExp(r'^(?:const\s+)?<([^\[{;]*)>\s*[\[{]')
+      .firstMatch(reste);
+  if (litteral != null) return litteral[1];
+  final RegExpMatch? construit = RegExp(
+    r'^(?:const\s+|new\s+|await\s+)?(_?[A-Z]\w*)',
+  ).firstMatch(reste);
+  if (construit != null) return construit[1];
+  final RegExpMatch? tete = RegExp(r'^(?:await\s+)?(\w+)').firstMatch(reste);
+  if (tete == null) return null;
+  return _typeDeNom(fichiers, s, tete[1]!, j, profondeur);
+}
+
+final Map<String, String?> _cacheChamps = <String, String?>{};
+
+/// Les types ecrits des declarations [nom] des autres sources (un champ
+/// `final Membre membre;` lu par `participant.membre`), joints par `|` :
+/// l'objet peut etre de l'un d'eux.
+String? _typeDeChamp(List<_Source> fichiers, String nom) {
+  if (_cacheChamps.containsKey(nom)) return _cacheChamps[nom];
+  final Set<String> types = <String>{
+    for (final _Source s in fichiers)
+      if (s.m.contains(nom))
+        for (final _Decl d in _declarationsDe(s, nom))
+          if (d.type.isNotEmpty) d.type,
+  };
+  return _cacheChamps[nom] = types.isEmpty ? null : types.join('|');
+}
+
+final Map<String, String?> _cacheRendus = <String, String?>{};
+
+/// Le type rendu par une fonction, une methode ou un accesseur [nom]
+/// declare dans les sources (`List<Colonne<int>> colonnes() =>`).
+String? _typeRendu(List<_Source> fichiers, String nom) {
+  if (_cacheRendus.containsKey(nom)) return _cacheRendus[nom];
+  final RegExp re = RegExp(
+    '(?<![\\w.\$])((?:[A-Z_]\\w*|int|double|num|bool)'
+    '(?:<[^;{}()=]*?>)?\\??)\\s+(?:get\\s+)?${RegExp.escape(nom)}'
+    '\\s*(?:<[^>]*>)?\\s*(?:\\(|=>|\\{)',
+  );
+  for (final _Source s in fichiers) {
+    if (!s.m.contains(nom)) continue;
+    final RegExpMatch? x = re.firstMatch(s.m);
+    if (x != null && !_motsExpression.contains(x[1])) {
+      return _cacheRendus[nom] = x[1];
+    }
+  }
+  return _cacheRendus[nom] = null;
+}
+
+/// Une lecture du champ en [p] : `$champ` dans une chaine, ou une
+/// expression classee comme la valeur elle-meme.
+void _lecture(
+  _Source s,
+  int p,
+  String suite,
+  bool collection,
+  List<_ASuivre> aSuivre,
+  List<AncreGlissee> fautes,
+) {
+  if (p > 0 && s.m[p - 1] == r'$') {
+    final int q = p - 2;
+    if (q >= 0 && (s.m[q] == "'" || s.m[q] == '"')) {
+      aSuivre.add((s: s, p: q, chemin: suite, collection: collection));
+    } else {
+      fautes.add((
+        fichier: s.fichier,
+        ligne: s.ligne(p),
+        raison: '$suite : interpolee au milieu',
+      ));
+    }
+    return;
+  }
+  aSuivre.add((s: s, p: p, chemin: suite, collection: collection));
+}
 
 /// Vrai si la position [fin] est suivie d'une affectation (`= ...`).
 bool _affectee(_Source s, int fin) =>
@@ -1275,6 +1569,10 @@ void _suivreVariable(
 /// libelle.
 List<AncreGlissee> ancresGlissees([Iterable<File>? sources]) {
   _cacheDeclarations.clear();
+  _cacheTypes.clear();
+  _cacheDecl.clear();
+  _cacheRendus.clear();
+  _cacheChamps.clear();
   final List<_Source> fichiers = <_Source>[
     for (final File f in sources ?? sourcesDart())
       _Source(f.path, f.readAsStringSync()),
@@ -1302,7 +1600,7 @@ List<AncreGlissee> ancresGlissees([Iterable<File>? sources]) {
   final Set<String> fonctionsSuivies = <String>{};
   final Set<String> champsSuivis = <String>{};
   final Set<String> appelsSuivis = <String>{};
-  void champ(String classe, String nom, String chemin, bool collection) {
+  void champ(String? classe, String nom, String chemin, bool collection) {
     if (!champsSuivis.add('$classe.$nom/$collection')) return;
     _suivreChamp(fichiers, classe, nom, chemin, collection, aSuivre, fautes);
   }
@@ -1336,8 +1634,35 @@ List<AncreGlissee> ancresGlissees([Iterable<File>? sources]) {
           aSuivre,
           fautes,
         );
-      case _Champ(:final String classe, champ: final String nom):
-        champ(classe, nom, x.chemin, x.collection);
+      case _Champ(
+        :final String? classe,
+        champ: final String nom,
+        :final int? recepteur,
+      ):
+        String? c = classe;
+        if (c == null && recepteur != null) {
+          // `s.duree = ` : la classe de `s`, si son type se lit.
+          final String? type = _typeAvant(fichiers, x.s, recepteur);
+          c = type == null
+              ? null
+              : RegExp(r'^\s*(_?[A-Z]\w*)').firstMatch(type)?[1];
+          if (c != null && !_champDeclareDans(fichiers, c, nom)) c = null;
+        }
+        if (c == null) {
+          // Type illisible : le champ est suivi dans ce fichier, quel que
+          // soit l'objet lu.
+          _suivreChamp(
+            <_Source>[x.s],
+            null,
+            nom,
+            x.chemin,
+            x.collection,
+            aSuivre,
+            fautes,
+          );
+        } else {
+          champ(c, nom, x.chemin, x.collection);
+        }
       case _AjouteeA(:final String recepteur):
         // La collection qui recoit la valeur, a chacune de ses lectures dans
         // le fichier.
@@ -1459,5 +1784,10 @@ List<AncreGlissee> ancresGlissees([Iterable<File>? sources]) {
           '${b.fichier}:${b.ligne.toString().padLeft(5)}',
         ),
   );
-  return fautes;
+  // Une meme ligne atteinte par deux chemins n'est qu'une faute.
+  final Set<String> lignes = <String>{};
+  return <AncreGlissee>[
+    for (final AncreGlissee f in fautes)
+      if (lignes.add('${f.fichier}:${f.ligne}')) f,
+  ];
 }

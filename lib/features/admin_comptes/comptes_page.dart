@@ -332,8 +332,15 @@ class _Corps extends StatelessWidget {
                 // Sous masquage, `libelle` **est** l'identifiant : la colonne
                 // dediee afficherait deux fois la meme valeur cote a cote.
                 if (identitesConnues)
+                  // DUREE-INSECABLE-5 (reprise) : l'identifiant se lit d'un
+                  // bloc ; a 1440 px, « TEACHER-AS-000001 » passait a la
+                  // ligne a son trait d'union dans une colonne d'une part.
+                  // Deux parts, et pas de coupure aux traits tant qu'il
+                  // tient (decide par delegation le 09/10).
                   ColonneDonnees<CompteAdmin>(
                     titre: t.admin.comptes.colonneIdentifiant,
+                    flex: 2,
+                    insecable: true,
                     texte: (CompteAdmin c) => c.identifiant,
                   ),
                 ColonneDonnees<CompteAdmin>(
