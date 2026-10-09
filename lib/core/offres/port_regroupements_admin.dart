@@ -1,0 +1,249 @@
+/// OFFRES-ADM-1 : les demandes semblables, reunies cote administration, et la
+/// creation d'une classe depuis l'une d'elles.
+///
+/// Decision du directeur du 09/10/2026 (`DECISION-OFFRES-GROUPES-2026-10-09.md`
+/// §3) : le systeme regroupe les demandes qui se ressemblent (memes jours,
+/// meme heure locale, meme fuseau, meme public, meme langue ; jours tries et
+/// dedoublonnes) ; a la creation, les eleves du regroupement sont integres a
+/// la classe ; un enseignant est aussitot propose, que l'administration
+/// confirme.
+///
+/// Ce que le serveur porte, et que Flutter ne decide jamais :
+///
+/// - **le regroupement lui-meme** : [PortRegroupementsAdmin.regroupements]
+///   rend des regroupements deja formes. L'ecran ne compare aucune demande ;
+/// - **le quota** ([RegroupementDemandes.quota]) : lu dans `app_config` par le
+///   serveur (5 enfants, 6 adultes au 09/10), jamais ecrit dans le client ;
+/// - **les heures dans les autres fuseaux**
+///   ([RegroupementDemandes.autresFuseaux]) : calculees par le serveur, qui a
+///   la base des fuseaux ; le client n'en convertit aucune ;
+/// - **la creation atomique** : [PortRegroupementsAdmin.creerClasse] cree la
+///   classe et y integre les eleves en une seule transaction, et rend
+///   [CreationDejaFaite] a tout appel qui arrive apres la premiere creation
+///   (deux membres de la direction sur le meme regroupement). La meme
+///   `cleEnvoi` rejouee rend le meme resultat (idempotence) ;
+/// - **les capacites** : [RegroupementDemandes.peutCreerClasse] et
+///   [ClasseSansEnseignant.peutAffecterEnseignant] disent ce que la personne
+///   connectee peut faire. L'ecran lit ces capacites, jamais un role ;
+/// - **les notifications aux familles**, a chaque transition (§4).
+///
+/// Aucun branchement serveur ici : en production le port est absent
+/// ([portRegroupementsAdminProvider] vaut `null`) et l'ecran le dit
+/// (« disponible au branchement serveur »), sans rien inventer. La
+/// demonstration le surcharge.
+library;
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../capacites/capacite_indisponible.dart';
+import '../capacites/port_enseignants_classe.dart' show GenreClasse;
+import 'offre_horaire.dart' show PublicOffre;
+
+/// Une heure de la semaine lue dans un fuseau.
+@immutable
+class HeureDansFuseau {
+  /// Cree une heure.
+  const HeureDansFuseau({
+    required this.fuseau,
+    required this.heure,
+    this.minute = 0,
+    this.decalageJour = 0,
+  });
+
+  /// Le fuseau IANA (`Europe/Paris`).
+  final String fuseau;
+
+  /// L'heure pleine, de 0 a 23.
+  final int heure;
+
+  /// Les minutes, de 0 a 59.
+  final int minute;
+
+  /// Le jour par rapport a l'heure de reference : -1 la veille, +1 le
+  /// lendemain, 0 le meme jour.
+  final int decalageJour;
+}
+
+/// Une classe deja creee depuis un regroupement, a qui il manque encore son
+/// enseignant (l'administration a ferme la feuille avant de le confirmer).
+@immutable
+class ClasseSansEnseignant {
+  /// Cree la classe.
+  const ClasseSansEnseignant({
+    required this.classeId,
+    required this.libelle,
+    this.genre,
+    this.peutAffecterEnseignant = false,
+  });
+
+  /// L'identifiant de la classe.
+  final String classeId;
+
+  /// Son nom.
+  final String libelle;
+
+  /// Son genre, tel qu'enregistre a la creation. Nul : non rendu, et la
+  /// proposition d'enseignant ne filtre alors pas par genre.
+  final GenreClasse? genre;
+
+  /// Capacite rendue par le serveur : la personne connectee peut confirmer
+  /// l'enseignant de cette classe.
+  final bool peutAffecterEnseignant;
+}
+
+/// Un regroupement de demandes semblables.
+@immutable
+class RegroupementDemandes {
+  /// Cree un regroupement.
+  const RegroupementDemandes({
+    required this.id,
+    required this.public,
+    required this.langueCode,
+    required this.langueNom,
+    required this.jours,
+    required this.reference,
+    required this.nombreEleves,
+    required this.quota,
+    this.autresFuseaux = const <HeureDansFuseau>[],
+    this.peutCreerClasse = false,
+    this.classe,
+  });
+
+  /// L'identifiant du regroupement (cle de ressemblance cote serveur).
+  final String id;
+
+  /// Enfants ou adultes.
+  final PublicOffre public;
+
+  /// Le code de la langue d'enseignement.
+  final String langueCode;
+
+  /// Le nom affichable de la langue d'enseignement.
+  final String langueNom;
+
+  /// Les jours ISO (1 = lundi), tries et dedoublonnes par le serveur.
+  final List<int> jours;
+
+  /// L'heure demandee, dans le fuseau des demandes : l'heure de reference.
+  final HeureDansFuseau reference;
+
+  /// La meme heure dans les autres fuseaux utiles (ceux des familles et des
+  /// enseignants concernes), calculee par le serveur. Vide : non rendue.
+  final List<HeureDansFuseau> autresFuseaux;
+
+  /// Le nombre d'eleves du regroupement. **Jamais leurs noms** : l'ecran
+  /// n'en a pas besoin pour decider.
+  final int nombreEleves;
+
+  /// Le quota de la classe pour ce public, lu dans `app_config` par le
+  /// serveur.
+  final int quota;
+
+  /// Capacite rendue par le serveur : la personne connectee peut creer la
+  /// classe de ce regroupement.
+  final bool peutCreerClasse;
+
+  /// La classe deja creee depuis ce regroupement, qui attend son
+  /// enseignant. Nul : aucune classe encore.
+  final ClasseSansEnseignant? classe;
+
+  /// Vrai quand le quota est atteint : la classe peut ouvrir complete.
+  bool get pret => nombreEleves >= quota;
+
+  /// Le nombre d'eleves qui manquent pour atteindre le quota (0 si pret).
+  int get manquants => pret ? 0 : quota - nombreEleves;
+}
+
+/// La reponse du serveur a une creation de classe.
+@immutable
+sealed class ResultatCreationClasse {
+  const ResultatCreationClasse();
+}
+
+/// La classe est creee et les eleves du regroupement y sont integres.
+final class ClasseCreee extends ResultatCreationClasse {
+  /// Cree le resultat.
+  const ClasseCreee({required this.classe, required this.elevesIntegres});
+
+  /// La classe creee, qui attend maintenant son enseignant.
+  final ClasseSansEnseignant classe;
+
+  /// Le nombre d'eleves integres.
+  final int elevesIntegres;
+}
+
+/// Un autre membre de la direction a cree cette classe juste avant : rien
+/// n'a ete cree en double.
+final class CreationDejaFaite extends ResultatCreationClasse {
+  /// Cree le resultat.
+  const CreationDejaFaite();
+}
+
+/// Le serveur a refuse la creation, avec son motif en clair.
+final class CreationRefusee extends ResultatCreationClasse {
+  /// Cree le resultat.
+  const CreationRefusee(this.motif);
+
+  /// Le motif, deja mis en mots par le serveur.
+  final String motif;
+}
+
+/// La reponse du serveur a la confirmation d'un enseignant.
+enum ResultatAffectation {
+  /// L'enseignant est affecte ; les familles sont prevenues.
+  affecte,
+
+  /// Un autre membre de la direction a deja confirme un enseignant pour
+  /// cette classe : rien n'a change.
+  dejaAffecte,
+}
+
+/// Le port des regroupements de demandes (OFFRES-ADM-1).
+abstract interface class PortRegroupementsAdmin {
+  /// Les regroupements ouverts : ceux qui attendent leur classe, et ceux
+  /// dont la classe attend son enseignant.
+  Future<List<RegroupementDemandes>> regroupements();
+
+  /// Cree la classe du regroupement [regroupementId] et y integre ses
+  /// eleves. [cleEnvoi] est la meme pour toutes les pressions d'une meme
+  /// feuille : le serveur ne cree jamais deux fois. Leve une exception quand
+  /// la reponse n'arrive pas : l'ecran ne suppose alors aucun etat.
+  Future<ResultatCreationClasse> creerClasse({
+    required String regroupementId,
+    required GenreClasse genre,
+    required String libelle,
+    required String cleEnvoi,
+  });
+
+  /// Confirme l'enseignant [enseignantId] pour la classe [classeId] et
+  /// previent les familles.
+  Future<ResultatAffectation> affecterEnseignant({
+    required String classeId,
+    required String enseignantId,
+  });
+}
+
+/// Le port : absent avant le branchement serveur.
+final Provider<PortRegroupementsAdmin?> portRegroupementsAdminProvider =
+    Provider<PortRegroupementsAdmin?>((Ref _) => null);
+
+/// L'identifiant de la dependance serveur, pour la trace et les tests
+/// (jamais affiche).
+const String dependanceRegroupements = 'DB-OFFRES-ADM-1';
+
+/// Les regroupements ouverts. Sans port : [CapaciteIndisponible], que
+/// l'ecran dit en clair. Aucune retentative automatique : une source
+/// indisponible le reste, et un echec se relit par « Reessayer ».
+final FutureProvider<List<RegroupementDemandes>> regroupementsAdminProvider =
+    FutureProvider<List<RegroupementDemandes>>((Ref ref) {
+      final PortRegroupementsAdmin? port = ref.watch(
+        portRegroupementsAdminProvider,
+      );
+      if (port == null) {
+        return Future<List<RegroupementDemandes>>.error(
+          const CapaciteIndisponible(dependanceRegroupements),
+        );
+      }
+      return port.regroupements();
+    }, retry: (int _, Object _) => null);

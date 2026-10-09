@@ -32,6 +32,7 @@ import '../../core/dossier/selecteur_fichier.dart';
 import '../../core/dossier/service_dossier.dart';
 import '../../core/dossier/service_validation.dart';
 import '../../core/offres/offre_horaire.dart';
+import '../../core/offres/port_regroupements_admin.dart';
 import '../../core/offres/service_offres.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
@@ -55,7 +56,9 @@ import 'classe_form_demo.dart';
 import 'dossiers_demo.dart';
 import 'observation_demo.dart';
 import 'presence_demo.dart';
+import 'regroupements_demo.dart';
 import 'services_admin_demo.dart';
+import 'suivi_demandes_demo.dart';
 
 /// Parametre d'adresse qui demande la demonstration tuteur.
 const String parametreDemo = 'demo';
@@ -162,6 +165,9 @@ List<Override> surchargesDemoTuteur({
       (Ref ref) async => const <ParcoursApprenant>[],
     ),
     monFuseauProvider.overrideWith((Ref ref) async => 'Europe/Paris'),
+    // OFFRES-FAM-1 : le suivi des demandes du foyer de demonstration, et les
+    // notifications de ses transitions (foyer de demonstration seulement).
+    if (!avecDossier && eleves == null) ...surchargesSuiviDemandesDemo(),
     seancesDuSuiviProvider.overrideWith((Ref ref) async => const <Seance>[]),
     mesGroupesProvider.overrideWith(
       (Ref ref) async => avecDossier
@@ -245,6 +251,8 @@ List<Override> surchargesDemoAdmin({
       EnseignantsClasseDemo(creees),
     ),
     portCreationClasseProvider.overrideWithValue(CreationClasseDemo(creees)),
+    // OFFRES-ADM-1 : les demandes semblables reunies, en memoire.
+    portRegroupementsAdminProvider.overrideWithValue(RegroupementsDemo()),
     membresGroupeProvider.overrideWith(
       (Ref ref, String groupeId) async => membresDemo(groupeId),
     ),

@@ -1502,7 +1502,9 @@
         "ligne": "{qui} · {quand}"
       },
       "outilsTraitement": "Espace de traitement",
-      "outilsTraitementDetail": "Les dossiers d'identité et les demandes en attente, dans une seule file."
+      "outilsTraitementDetail": "Les dossiers d'identité et les demandes en attente, dans une seule file.",
+      "outilsRegroupements": "Classes à ouvrir",
+      "outilsRegroupementsDetail": "Les demandes des familles réunies quand elles se ressemblent, et la création de leur classe."
     },
     "traitement": {
       "titre": "Espace de traitement",
@@ -1774,6 +1776,73 @@
         "horsLigne": "Sans réseau, la classe ne peut pas être créée. Vos choix restent affichés : revenez quand la connexion est rétablie.",
         "seuilHorsLigne": "Sans réseau, le seuil ne peut pas être enregistré. Votre choix reste affiché : revenez quand la connexion est rétablie."
       }
+    },
+    "regroupements": {
+      "titre": "Classes à ouvrir",
+      "sousTitre": "Les demandes des familles qui se ressemblent sont réunies : mêmes jours, même heure, même fuseau, même public, même langue.",
+      "tri": "Les demandes prêtes à ouvrir une classe d'abord, puis les plus nombreuses.",
+      "indisponibleTitre": "Disponible au branchement serveur",
+      "indisponiblePhrase": "Les demandes réunies s'afficheront ici dès le branchement serveur. D'ici là, rien n'est affiché : aucune demande n'est inventée.",
+      "erreur": "Les demandes réunies n'ont pas pu être lues : le serveur n'a pas répondu. Réessayez dans un instant.",
+      "sansDonnees": "Les demandes réunies n'ont pas pu être chargées",
+      "vide": "Aucune demande en attente",
+      "videDetail": "Les nouvelles demandes des familles apparaîtront ici, réunies quand elles se ressemblent.",
+      "sectionAFinir": "Enseignant à confirmer",
+      "sectionDemandes": "Demandes réunies",
+      "cleJours": "Jours",
+      "cleHeure": "Heure de référence",
+      "cleAilleurs": "Ailleurs",
+      "clePublic": "Public",
+      "cleLangue": "Langue",
+      "cleEleves": "Élèves",
+      "heure": "{heure}\u00a0h",
+      "heureMinutes": "{heure}\u00a0h\u00a0{minutes}",
+      "heureFuseau": "{heure}, heure {deVille}",
+      "ailleursMemeJour": "{heure} à {ville}",
+      "ailleursVeille": "{heure} la veille à {ville}",
+      "ailleursLendemain": "{heure} le lendemain à {ville}",
+      "eleves": {
+        "one": "{n} élève sur {quota}",
+        "other": "{n} élèves sur {quota}"
+      },
+      "pret": "Prête",
+      "incomplete": "Incomplète",
+      "pretDetail": "Le quota est atteint : la classe peut ouvrir complète.",
+      "manquent": {
+        "one": "Il manque {n} élève pour atteindre le quota. Vous pouvez quand même créer la classe.",
+        "other": "Il manque {n} élèves pour atteindre le quota. Vous pouvez quand même créer la classe."
+      },
+      "nonOuvert": "La création de cette classe ne vous est pas ouverte : un membre de la direction qui en a le droit peut la faire.",
+      "affectationNonOuverte": "La confirmation de l'enseignant ne vous est pas ouverte : un membre de la direction qui en a le droit peut la faire.",
+      "classeAttend": "Classe {libelle} créée : son enseignant reste à confirmer.",
+      "creer": "Créer la classe",
+      "creerIncomplete": "Créer la classe incomplète",
+      "choisirEnseignant": "Choisir l'enseignant",
+      "contexte": {
+        "one": "L'élève de ces demandes sera intégré à la classe dès sa création. Vous confirmerez ensuite l'enseignant proposé.",
+        "other": "Les {n} élèves de ces demandes seront intégrés à la classe dès sa création. Vous confirmerez ensuite l'enseignant proposé."
+      },
+      "incompletePhrase": {
+        "one": "Cette classe sera incomplète : {n} élève sur {quota}. Elle ouvrira quand même, et d'autres élèves pourront la rejoindre.",
+        "other": "Cette classe sera incomplète : {n} élèves sur {quota}. Elle ouvrira quand même, et d'autres élèves pourront la rejoindre."
+      },
+      "nomDetail": "Déduit du genre, du public, des jours et de l'heure.",
+      "dejaCreee": "Un autre membre de la direction vient de créer cette classe : rien n'a été créé en double. Fermez cette feuille pour retrouver la liste à jour.",
+      "refusee": "La classe n'a pas été créée : {motif}. Vérifiez les demandes, puis pressez de nouveau.",
+      "nonConfirmee": "La création n'est pas confirmée : la réponse du serveur n'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans classe en double.",
+      "creee": {
+        "one": "Classe {libelle} créée : {n} élève intégré.",
+        "other": "Classe {libelle} créée : {n} élèves intégrés."
+      },
+      "enseignantTitre": "Enseignant proposé",
+      "enseignantContexte": "Le premier choix tient compte du genre de la classe, de ses créneaux libres aux mêmes jours et à la même heure, puis du nombre de ses classes. Ces heures sont comparées telles quelles, sans conversion de fuseau : si l'enseignant vit dans un autre fuseau, vérifiez avec lui avant de confirmer. Confirmez-le ou choisissez une autre personne.",
+      "confirmerEnseignant": "Confirmer l'enseignant",
+      "enseignantHorsLigne": "Sans réseau, l'enseignant ne peut pas être confirmé. Votre choix reste affiché : revenez quand la connexion est rétablie.",
+      "affectationNonConfirmee": "L'enseignant n'est pas confirmé : la réponse du serveur n'est pas arrivée. Pressez de nouveau.",
+      "dejaAffecte": "Un autre membre de la direction a déjà confirmé l'enseignant de cette classe : votre choix ne remplace pas le sien.",
+      "famillesPrevenues": "Les familles ont été prévenues.",
+      "famillesClasseValidee": "Les familles ont été prévenues que leur classe est validée.",
+      "termineDetail": "Classe {libelle} : {enseignant} en est l'enseignant."
     },
     "diagnostics": {
       "titre": "Diagnostics",
@@ -5167,6 +5236,68 @@
         "niveau": "Le niveau de la classe ne semble plus adapté.",
         "suite": "L'académie reviendra vers vous pour en parler."
       }
+    }
+  },
+  "suiviDemandes": {
+    "titre": "Suivi des demandes de créneau",
+    "contexte": "Chaque demande avance en trois étapes. Vous êtes prévenu à chaque passage.",
+    "carteTitre": "Demande de créneau {dePrenom}",
+    "joursChoisis": "Jours choisis",
+    "heureChoisie": "Heure choisie",
+    "joursEt": "{debut} et {dernier}",
+    "heureFuseau": "{heure}, heure {deVille}",
+    "etapes": {
+      "envoyee": "Demande envoyée",
+      "classeValidee": "Classe validée",
+      "enseignantAffecte": "Enseignant affecté"
+    },
+    "etats": {
+      "fait": "Fait",
+      "prochaine": "Prochaine étape",
+      "aVenir": "À venir"
+    },
+    "situation": {
+      "envoyee": "Votre demande est arrivée à l'administration",
+      "classeValidee": "Votre classe a été validée",
+      "enseignantAffecte": "Classe validée · enseignant affecté"
+    },
+    "prochaine": {
+      "envoyee": "Prochaine étape : constitution de la classe",
+      "classeValidee": "Prochaine étape : affectation de l'enseignant"
+    },
+    "debutCours": "Début des cours",
+    "debutValeur": "{date} à {heure}, heure {deVille}",
+    "debutAFixer": "La date du premier cours s'affichera ici dès qu'elle sera fixée.",
+    "enseignant": "Enseignant",
+    "personnaliseNotice": "Ce créneau ne s'ouvrira que si d'autres élèves le choisissent et remplissent la classe.",
+    "close": {
+      "retiree": "Demande retirée",
+      "nonRetenue": "Demande non retenue",
+      "close": "Demande close",
+      "motif": {
+        "retraitFamille": "Vous avez retiré cette demande.",
+        "offreRetiree": "L'académie a retiré ce créneau de ses offres.",
+        "classeNonConstituee": "La classe de ce créneau n'a pas pu être constituée.",
+        "refusDirection": "La direction n'a pas pu retenir cette demande.",
+        "inconnu": "Cette demande est close."
+      },
+      "suite": "Vous pouvez choisir un autre créneau parmi ceux proposés.",
+      "suiteSansChoix": "Aucun autre créneau n'est proposé pour le moment. Revenez sur cette page plus tard.",
+      "choisirAutre": "Choisir un autre créneau pour {prenom}"
+    },
+    "vide": "Aucune demande de créneau en cours.",
+    "erreur": "Le suivi des demandes n'a pas pu être chargé : le serveur n'a pas répondu. Réessayez dans un instant.",
+    "sansDonnees": "Le suivi des demandes n'a pas pu être chargé",
+    "accueil": {
+      "titre": "Vos demandes de créneau",
+      "ligne": "{prenom} : {etat}",
+      "voir": "Voir le suivi des demandes"
+    },
+    "notification": {
+      "envoyee": "Demande de créneau {dePrenom} : votre demande est arrivée à l'administration",
+      "classeValidee": "Demande de créneau {dePrenom} : votre classe a été validée",
+      "enseignantAffecte": "Demande de créneau {dePrenom} : classe validée · enseignant affecté",
+      "close": "Demande de créneau {dePrenom} : {motif}"
     }
   }
 }
