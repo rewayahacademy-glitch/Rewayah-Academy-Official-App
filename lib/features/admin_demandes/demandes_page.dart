@@ -408,6 +408,9 @@ class _LigneRegle extends StatelessWidget {
           Wrap(
             spacing: AppSpacing.sm,
             runSpacing: AppSpacing.xs,
+            // Meme ligne lue quand elles tiennent : centres alignes, la
+            // valeur surchargee etant ecrite plus gros.
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: <Widget>[
               TexteSansCoupure(
                 t.admin.demandes.plateforme(
