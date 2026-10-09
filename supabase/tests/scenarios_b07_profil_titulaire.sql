@@ -29,6 +29,10 @@ BEGIN
     true
   );
 
+  IF public.profil_eleve_titulaire_existe() THEN
+    RAISE EXCEPTION 'B-07: une fiche titulaire est annoncée avant création';
+  END IF;
+
   v_profile := public.creer_profil_eleve_titulaire();
   IF v_profile IS DISTINCT FROM v_id THEN
     RAISE EXCEPTION 'B-07: la fiche ne réutilise pas le profil du titulaire';
@@ -36,6 +40,9 @@ BEGIN
 
   IF public.creer_profil_eleve_titulaire() IS DISTINCT FROM v_id THEN
     RAISE EXCEPTION 'B-07: une répétition idempotente a renvoyé un autre profil';
+  END IF;
+  IF NOT public.profil_eleve_titulaire_existe() THEN
+    RAISE EXCEPTION 'B-07: la lecture serveur n''a pas détecté la fiche créée';
   END IF;
 
   SELECT count(*) INTO v_count
@@ -73,6 +80,15 @@ BEGIN
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text,
     true
   );
+  BEGIN
+    PERFORM public.profil_eleve_titulaire_existe();
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_denied := true;
+  END;
+  IF NOT v_denied THEN
+    RAISE EXCEPTION 'B-07: un rôle student a lu la capacité du titulaire';
+  END IF;
+  v_denied := false;
   BEGIN
     PERFORM public.creer_profil_eleve_titulaire();
   EXCEPTION WHEN raise_exception THEN
