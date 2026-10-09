@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show SemanticsNode;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/accessibilite/texte_sans_coupure.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/communications/port_elements_enregistres.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -600,7 +601,12 @@ void main() {
       final InputDecoration deco = tester
           .widget<TextField>(find.byKey(FilDiscussion.champKey))
           .decoration!;
-      expect(deco.hintMaxLines, 1);
+      // L'aide de ZoneSaisie (SUPERPOS-1, JONCTION-LIGNES-1) : un
+      // TexteSansCoupure, peint seulement quand il tient sur une ligne.
+      expect(deco.hintText, isNull);
+      if (deco.hint case final Widget peinte) {
+        expect((peinte as TexteSansCoupure).texte, aide);
+      }
       sem.dispose();
     });
 

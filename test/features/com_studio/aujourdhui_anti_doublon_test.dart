@@ -55,15 +55,17 @@ void main() {
       'Paiement de septembre non confirmé pour la famille Haddad';
   const String dossier = 'Dossier de la famille Karim prêt pour une décision';
 
-  testWidgets('R-COM-11 : une ligne Finance ne s execute pas dans Le Studio '
+  testWidgets('R-COM-11 : une ligne Finance ne s execute pas dans Le Studio '
       'et ne mene nulle part tant que Finance n a pas de page', (
     WidgetTester tester,
   ) async {
     final (GoRouter routeur, ActiviteStudioDemo activite) = await _monter(
       tester,
     );
-    // Finance n'a pas de page (`admin_domaine.dart:99`).
-    expect(AdminDomaine.finance.chemin, isNull);
+    // Finance a sa page depuis FI-DIR-1 (ui/fi-dir-1, reunie par
+    // JONCTION-LIGNES-1) ; l'echeancier de la famille Haddad, objet de la
+    // ligne, n'en a pas : la ligne reste nommee, sans chevron ni geste.
+    expect(AdminDomaine.finance.chemin, Routes.adminFinance);
     expect(find.text(paiement), findsOneWidget);
     expect(_pressable(paiement), isFalse);
     expect(_pressable('Clôture du mois de septembre'), isFalse);
@@ -124,12 +126,12 @@ void main() {
     final (GoRouter routeur, _) = await _monter(tester);
     await _toucher(
       tester,
-      "Annonce publiée : l'académie ferme le 1er novembre",
+      "Annonce publiée\u00A0: l'académie ferme le 1er novembre",
     );
     expect(cheminCourant(routeur), Routes.adminCommunicationsAnnonces);
   });
 
-  testWidgets('390 : une mention ouvre son canal, dans Le Studio', (
+  testWidgets('390 : une mention ouvre son canal, dans Le Studio', (
     WidgetTester tester,
   ) async {
     final (GoRouter routeur, _) = await _monter(

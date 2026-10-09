@@ -249,11 +249,13 @@ void main() {
           // le champ restait hors ecran, et le test l'acceptait
           // (`skipOffstage: false`).
           final Rect ecran = Offset.zero & taille;
-          for (final Key cle in <Key>[
-            FilDiscussion.champKey,
-            FilDiscussion.envoyerKey,
-          ]) {
-            final Finder f = find.byKey(cle);
+          // L'envoi est dans le champ (SUPERPOS-1, JONCTION-LIGNES-1) :
+          // champ vide, sa place y est reservee ; le champ se touche.
+          for (final (String cle, Finder f, bool touche)
+              in <(String, Finder, bool)>[
+                ('champ', find.byKey(FilDiscussion.champKey), true),
+                ('envoi', envoiDuFil(), false),
+              ]) {
             expect(f, findsOneWidget, reason: '$cle est rendu');
             final Rect r = tester.getRect(f);
             expect(
@@ -261,7 +263,9 @@ void main() {
               isTrue,
               reason: '$cle ($r) est entier a l ecran a l entree du Focus',
             );
-            expect(f.hitTestable(), findsOneWidget, reason: '$cle se touche');
+            if (touche) {
+              expect(f.hitTestable(), findsOneWidget, reason: '$cle se touche');
+            }
           }
           expect(tester.takeException(), isNull);
         });
