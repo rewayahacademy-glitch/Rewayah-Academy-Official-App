@@ -40,4 +40,4 @@ end;
 $agent_pre_request$;
 
 comment on function public.agent_pre_request() is
-  'Valide la session agent a chaque requete et substitue transaction-locale '  'auth.uid() par le profil observe. Le JWT conserve sub = agent_token_id.';
+  'Valide la session agent a chaque requete et substitue auth.uid() par le profil observe apres validation. Le JWT conserve sub = agent_token_id.';
