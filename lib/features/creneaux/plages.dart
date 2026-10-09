@@ -134,7 +134,11 @@ PlanPlage planifier({
     for (final int j in jours)
       for (int h = de; h < a; h++) (jour: j, heure: h),
   };
-  final Set<HeureSemaine> origine = modifiee?.heures ?? <HeureSemaine>{};
+  // Seules les heures de la plage touchee ENCORE posees sont a retirer :
+  // apres un echec partiel, les retraits deja confirmes ne repartent pas, et
+  // ceux qui ne le sont pas repartent tous.
+  final Set<HeureSemaine> origine = (modifiee?.heures ?? <HeureSemaine>{})
+      .intersection(existantes);
   final List<HeureSemaine> retraits = origine.difference(cible).toList()
     ..sort(_ordre);
   final List<HeureSemaine> ajouts = cible.difference(existantes).toList()

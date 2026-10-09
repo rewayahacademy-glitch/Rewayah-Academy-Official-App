@@ -61,6 +61,7 @@ class _PlagesDisponibiliteEtat extends ConsumerState<PlagesDisponibilite> {
     required String fuseau,
     required Set<HeureSemaine> existantes,
     required Set<HeureSemaine> engagees,
+    required bool engagementsConfirmes,
     Plage? plage,
   }) async {
     final String? message = await AppBottomSheet.ouvrir<String>(
@@ -75,6 +76,7 @@ class _PlagesDisponibiliteEtat extends ConsumerState<PlagesDisponibilite> {
         fuseau: fuseau,
         existantes: existantes,
         engagees: engagees,
+        engagementsConfirmes: engagementsConfirmes,
         modifiee: plage,
         // Chaque ecriture partielle relit la liste : ce qui est passe se voit
         // derriere la feuille, meme si l'enseignant la ferme sur un echec.
@@ -137,12 +139,11 @@ class _PlagesDisponibiliteEtat extends ConsumerState<PlagesDisponibilite> {
       affectations.value ?? const <Affectation>[],
       monId,
     );
-    final List<HeureSemaine> engageesTriees = engagees.toList()
-      ..sort(
-        (HeureSemaine x, HeureSemaine y) => x.jour != y.jour
-            ? x.jour.compareTo(y.jour)
-            : x.heure.compareTo(y.heure),
-      );
+    // Les engagements non lus ne sont pas « aucun engagement » : sans eux,
+    // un conflit ne peut pas etre signale, et l'ecran le dit.
+    final bool engagementsConfirmes = affectations.hasValue;
+    final bool engagementsEnEchec =
+        !affectations.hasValue && affectations.hasError;
     final bool bureau = AppGabarit.de(context) == Gabarit.desktop;
 
     void ouvrir([Plage? plage]) => _ouvrir(
@@ -150,6 +151,7 @@ class _PlagesDisponibiliteEtat extends ConsumerState<PlagesDisponibilite> {
       fuseau: fuseau.requireValue,
       existantes: existantes,
       engagees: engagees,
+      engagementsConfirmes: engagementsConfirmes,
       plage: plage,
     );
 
@@ -192,19 +194,22 @@ class _PlagesDisponibiliteEtat extends ConsumerState<PlagesDisponibilite> {
             ),
           ),
         ],
-        if (engageesTriees.isNotEmpty) ...<Widget>[
+        // Le conflit avec une Classe est ecrit UNE fois, sur la plage.
+        if (engagementsEnEchec) ...<Widget>[
           Ecart.vSm,
           TexteSansCoupure(
-            // Le conflit se VOIT, ecrit, avant tout geste.
-            engageesTriees.length == 1
-                ? t.enseignant.creneaux.heureEngagee(
-                    heures: nommerHeure(engageesTriees.single),
-                  )
-                : t.enseignant.creneaux.heuresEngagees(
-                    heures: engageesTriees.map(nommerHeure).join(', '),
-                  ),
+            t.enseignant.creneaux.engagementsNonConfirmes,
             style: palette.inkWarning.applyTo(
               textes.bodySmall ?? const TextStyle(),
+            ),
+          ),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: ActionPrincipale(
+              libelle: t.commun.reessayer,
+              niveau: NiveauAction.tertiaire,
+              pleineLargeur: false,
+              onPress: () => ref.invalidate(affectationsProvider),
             ),
           ),
         ],
@@ -298,7 +303,13 @@ class _ListePlages extends StatelessWidget {
         return GroupeReglages(
           lignes: <LigneRubrique>[
             for (final Plage plage in plages)
-              _ligne(plage, colonnes: colonnes, jour: jour, de: de, style: style),
+              _ligne(
+                plage,
+                colonnes: colonnes,
+                jour: jour,
+                de: de,
+                style: style,
+              ),
           ],
         );
       },

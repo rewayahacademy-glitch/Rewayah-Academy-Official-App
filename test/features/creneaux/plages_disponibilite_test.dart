@@ -104,9 +104,8 @@ Widget _hote(
       themeMode: theme,
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       builder: (BuildContext context, Widget? app) => MediaQuery(
-        data: MediaQuery.of(
-          context,
-        ).copyWith(textScaler: TextScaler.linear(echelle)),
+        data: MediaQuery.of(context)
+            .copyWith(textScaler: TextScaler.linear(echelle)),
         child: app!,
       ),
       home: const CreneauxPage(),
@@ -247,12 +246,21 @@ void main() {
       await _monter(tester, planning);
 
       expect(
-        find.text(t.enseignant.creneaux.plageEngagee(heures: nommerHeure((jour: 4, heure: 9)))),
+        find.text(
+          t.enseignant.creneaux.plageEngagee(
+            heures: nommerHeure((jour: 4, heure: 9)),
+          ),
+        ),
         findsOneWidget,
       );
+      // Une seule fois : pas de seconde phrase sous la carte.
       expect(
-        find.text(t.enseignant.creneaux.heureEngagee(heures: nommerHeure((jour: 4, heure: 9)))),
-        findsOneWidget,
+        find.text(
+          t.enseignant.creneaux.heureEngagee(
+            heures: nommerHeure((jour: 4, heure: 9)),
+          ),
+        ),
+        findsNothing,
       );
     });
 
@@ -302,15 +310,14 @@ void main() {
       expect(find.text(_a(19)), findsWidgets);
       await _toucher(tester, find.text(_a(21)).last);
 
-      await _toucher(
-        tester,
-        find.text(t.enseignant.creneaux.enregistrerPlage),
-      );
+      await _toucher(tester, find.text(t.enseignant.creneaux.enregistrerPlage));
 
       expect(
         planning.poses
-            .map((({String profilId, Creneau creneau}) p) =>
-                (p.creneau.jour, p.creneau.heure))
+            .map(
+              (({String profilId, Creneau creneau}) p) =>
+                  (p.creneau.jour, p.creneau.heure),
+            )
             .toList(),
         <(int, int)>[(1, 18), (1, 19), (1, 20), (3, 18), (3, 19), (3, 20)],
       );
@@ -349,10 +356,7 @@ void main() {
       // Les listes suivent le raccourci.
       expect(_dansFeuille(_de(8)), findsOneWidget);
       expect(_dansFeuille(_a(12)), findsOneWidget);
-      await _toucher(
-        tester,
-        find.text(t.enseignant.creneaux.enregistrerPlage),
-      );
+      await _toucher(tester, find.text(t.enseignant.creneaux.enregistrerPlage));
 
       expect(planning.poses.length, 8);
       expect(
@@ -376,10 +380,7 @@ void main() {
       await _monter(tester, planning);
 
       await _toucher(tester, find.text(t.enseignant.creneaux.ajouterPlage));
-      await _toucher(
-        tester,
-        find.text(t.enseignant.creneaux.enregistrerPlage),
-      );
+      await _toucher(tester, find.text(t.enseignant.creneaux.enregistrerPlage));
 
       expect(planning.poses, isEmpty);
       expect(find.text(t.enseignant.creneaux.manqueJour), findsOneWidget);
@@ -405,10 +406,7 @@ void main() {
       expect(find.text(fusion), findsOneWidget);
       expect(planning.poses, isEmpty);
 
-      await _toucher(
-        tester,
-        find.text(t.enseignant.creneaux.enregistrerPlage),
-      );
+      await _toucher(tester, find.text(t.enseignant.creneaux.enregistrerPlage));
 
       expect(
         planning.poses
@@ -429,24 +427,22 @@ void main() {
 
       await _toucher(tester, find.text(t.enseignant.creneaux.ajouterPlage));
       await _toucher(tester, _dansFeuille('Lundi'));
-      await _toucher(
-        tester,
-        find.text(t.enseignant.creneaux.enregistrerPlage),
-      );
+      await _toucher(tester, find.text(t.enseignant.creneaux.enregistrerPlage));
 
       expect(planning.poses.length, 5);
       expect(
-        find.text(t.enseignant.creneaux.echecPartiel(heures: nommerHeure((jour: 1, heure: 21)))),
+        find.textContaining(
+          t.enseignant.creneaux.ajoutNonConfirme(
+            heures: nommerHeure((jour: 1, heure: 21)),
+          ),
+        ),
         findsOneWidget,
       );
       // La feuille reste ouverte ; la liste derriere montre ce qui est passe.
       expect(_feuille, findsOneWidget);
 
       planning.refusees.clear();
-      await _toucher(
-        tester,
-        find.text(t.enseignant.creneaux.enregistrerPlage),
-      );
+      await _toucher(tester, find.text(t.enseignant.creneaux.enregistrerPlage));
       expect(planning.poses.length, 6);
       expect(planning.poses.last.creneau.heure, 21);
       expect(_feuille, findsNothing);
@@ -462,12 +458,29 @@ void main() {
 
       await _toucher(tester, find.text(t.enseignant.creneaux.ajouterPlage));
       await _toucher(tester, _dansFeuille('Mardi'));
-      await _toucher(
-        tester,
-        find.text(t.enseignant.creneaux.enregistrerPlage),
-      );
+      await _toucher(tester, find.text(t.enseignant.creneaux.enregistrerPlage));
 
-      expect(find.text(t.enseignant.creneaux.echecTotal), findsOneWidget);
+      final String message = tester
+          .widgetList<Text>(
+            find.descendant(of: _feuille, matching: find.byType(Text)),
+          )
+          .map((Text w) => w.data ?? w.textSpan?.toPlainText() ?? '')
+          .firstWhere(
+            (String m) => m.contains(t.enseignant.creneaux.echecCause),
+          );
+      // Non confirme, les heures nommees, la cause, quoi faire ; jamais ce
+      // que le serveur aurait fait.
+      expect(message, contains('non confirmé'));
+      expect(message, contains(nommerHeure((jour: 2, heure: 17))));
+      expect(
+        message,
+        contains(
+          t.enseignant.creneaux.echecQuoiFaire(
+            action: t.enseignant.creneaux.enregistrerPlage,
+          ),
+        ),
+      );
+      expect(message, isNot(contains('enregistrée')));
       expect(_feuille, findsOneWidget);
     });
   });
@@ -488,10 +501,7 @@ void main() {
       expect(_dansFeuille(_a(23)), findsOneWidget);
 
       await _choisir(tester, courant: _a(23), voulu: _a(21));
-      await _toucher(
-        tester,
-        find.text(t.enseignant.creneaux.enregistrerPlage),
-      );
+      await _toucher(tester, find.text(t.enseignant.creneaux.enregistrerPlage));
 
       expect(planning.poses, isEmpty);
       expect(
@@ -540,7 +550,9 @@ void main() {
       // La confirmation dit la consequence ; renoncer ne retire rien.
       expect(
         find.text(
-          t.enseignant.creneaux.confirmerRetraitConsequence(heures: nommerHeure((jour: 4, heure: 9))),
+          t.enseignant.creneaux.confirmerRetraitConsequence(
+            heures: nommerHeure((jour: 4, heure: 9)),
+          ),
         ),
         findsOneWidget,
       );
@@ -556,7 +568,9 @@ void main() {
       expect(planning.retires.length, 1);
       expect(
         find.textContaining(
-          t.enseignant.creneaux.seanceContinue(heures: nommerHeure((jour: 4, heure: 9))),
+          t.enseignant.creneaux.seanceContinue(
+            heures: nommerHeure((jour: 4, heure: 9)),
+          ),
         ),
         findsOneWidget,
       );

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/planning/service_planning.dart';
+import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -55,6 +56,7 @@ class FeuillePlage extends ConsumerStatefulWidget {
     required this.engagees,
     required this.onEcrit,
     super.key,
+    this.engagementsConfirmes = true,
     this.modifiee,
   });
 
@@ -69,6 +71,11 @@ class FeuillePlage extends ConsumerStatefulWidget {
 
   /// Les heures qui portent deja une Classe.
   final Set<HeureSemaine> engagees;
+
+  /// Faux quand les Classes engagees n'ont pas pu etre lues : tout retrait
+  /// est alors confirme, prudemment, puisqu'un conflit ne peut pas etre
+  /// exclu.
+  final bool engagementsConfirmes;
 
   /// La plage touchee pour la modifier ; nulle pour un ajout.
   final Plage? modifiee;
@@ -89,8 +96,16 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
   /// echec partiel, un second envoi ne renvoie que ce qui manque.
   late Set<HeureSemaine> _existantes;
 
-  /// La plage modifiee, telle qu'elle est encore posee.
+  /// La plage touchee a l'ouverture. Elle ne change pas pendant la vie de
+  /// la feuille : ce qui en reste a retirer se lit toujours contre
+  /// [_existantes] (`planifier`), jamais contre une plage recalculee qui
+  /// perdrait des morceaux apres un echec partiel.
   Plage? _modifiee;
+
+  /// Vrai apres un envoi dont une operation n'est pas confirmee : le
+  /// prochain envoi relit d'abord les heures posees (une ecriture non
+  /// confirmee a pu passer quand meme).
+  bool _aRelire = false;
 
   bool _envoi = false;
   bool _manqueJour = false;
@@ -138,36 +153,80 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
   List<HeureSemaine> _engageesParmi(List<HeureSemaine> retraits) =>
       retraits.where(widget.engagees.contains).toList();
 
-  /// Demande confirmation quand un retrait touche une heure engagee. Retirer
-  /// n'annule aucun cours : la confirmation le dit.
-  Future<bool> _confirmerRetrait(List<HeureSemaine> engagees) {
-    if (engagees.isEmpty) {
+  /// Demande confirmation quand un retrait touche une heure engagee, ou
+  /// quand les engagements ne sont pas confirmes. Retirer n'annule aucun
+  /// cours : la confirmation le dit.
+  Future<bool> _confirmerRetrait(
+    List<HeureSemaine> retraits,
+    List<HeureSemaine> engagees,
+  ) {
+    if (retraits.isEmpty || (engagees.isEmpty && widget.engagementsConfirmes)) {
       return Future<bool>.value(true);
     }
-    final String heures = engagees.map(nommerHeure).join(', ');
+    final List<HeureSemaine> visees = engagees.isEmpty ? retraits : engagees;
+    final String heures = visees.map(nommerHeure).join(', ');
     return ConfirmDestructive.demander(
       context,
       question: t.enseignant.creneaux.confirmerRetraitQuestion(heures: heures),
-      consequence: t.enseignant.creneaux.confirmerRetraitConsequence(
-        heures: heures,
-      ),
+      consequence: engagees.isEmpty
+          ? t.enseignant.creneaux.retraitSansEngagements(heures: heures)
+          : t.enseignant.creneaux.confirmerRetraitConsequence(heures: heures),
       libelleConfirmer: t.enseignant.creneaux.confirmerRetraitAction,
     );
   }
 
-  /// Pose puis retire, heure par heure ; rend les heures non confirmees.
-  Future<List<HeureSemaine>> _ecrire({
+  /// Relit les heures posees apres un echec ; garde ce que la feuille sait
+  /// si la relecture echoue elle aussi.
+  Future<void> _relire() async {
+    if (!_aRelire) {
+      return;
+    }
+    try {
+      final List<Creneau> lues = await ref
+          .read(servicePlanningProvider)
+          .disponibilites(widget.profilId);
+      _existantes = heuresDe(lues);
+    } on Object {
+      // La feuille garde son etat : ajouts et retraits non confirmes y sont
+      // toujours a faire.
+    }
+  }
+
+  /// Le message d'un envoi dont des operations ne sont pas confirmees :
+  /// chaque sens nomme ses heures, puis la cause probable, puis quoi faire.
+  /// Jamais ce que le serveur a ou n'a pas fait (D5).
+  String _messageEchec(
+    List<HeureSemaine> ajouts,
+    List<HeureSemaine> retraits,
+    String action,
+  ) => <String>[
+    if (ajouts.isNotEmpty)
+      t.enseignant.creneaux.ajoutNonConfirme(
+        heures: ajouts.map(nommerHeure).join(', '),
+      ),
+    if (retraits.isNotEmpty)
+      t.enseignant.creneaux.retraitNonConfirme(
+        heures: retraits.map(nommerHeure).join(', '),
+      ),
+    t.enseignant.creneaux.echecCause,
+    t.enseignant.creneaux.echecQuoiFaire(action: action),
+  ].join(' ');
+
+  /// Pose puis retire, heure par heure ; rend les operations non confirmees,
+  /// par sens.
+  Future<({List<HeureSemaine> ajouts, List<HeureSemaine> retraits})> _ecrire({
     required List<HeureSemaine> ajouts,
     required List<HeureSemaine> retraits,
   }) async {
     final ServicePlanning service = ref.read(servicePlanningProvider);
-    final List<HeureSemaine> echecs = <HeureSemaine>[];
+    final List<HeureSemaine> ajoutsEchoues = <HeureSemaine>[];
+    final List<HeureSemaine> retraitsEchoues = <HeureSemaine>[];
     for (final HeureSemaine h in ajouts) {
       try {
         await service.poser(profilId: widget.profilId, creneau: _creneau(h));
         _existantes.add(h);
       } on Object {
-        echecs.add(h);
+        ajoutsEchoues.add(h);
       }
     }
     for (final HeureSemaine h in retraits) {
@@ -175,11 +234,12 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
         await service.retirer(profilId: widget.profilId, creneau: _creneau(h));
         _existantes.remove(h);
       } on Object {
-        echecs.add(h);
+        retraitsEchoues.add(h);
       }
     }
+    _aRelire = ajoutsEchoues.isNotEmpty || retraitsEchoues.isNotEmpty;
     widget.onEcrit();
-    return echecs;
+    return (ajouts: ajoutsEchoues, retraits: retraitsEchoues);
   }
 
   Future<void> _enregistrer() async {
@@ -187,6 +247,16 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
       setState(() => _manqueJour = true);
       return;
     }
+    if (_envoi) {
+      return;
+    }
+    await _relire();
+    if (!mounted) {
+      return;
+    }
+    // Le plan se recalcule a chaque envoi contre les heures posees : apres un
+    // echec, il contient exactement les poses ET les retraits encore non
+    // confirmes, tous renvoyes.
     final PlanPlage plan = _plan;
     final List<int> jours = _jours.toList()..sort();
     final String jourLus = jours
@@ -202,21 +272,20 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
       return;
     }
     final List<HeureSemaine> engagees = _engageesParmi(plan.retraits);
-    if (!await _confirmerRetrait(engagees) || !mounted) {
+    if (!await _confirmerRetrait(plan.retraits, engagees) || !mounted) {
       return;
     }
     setState(() {
       _envoi = true;
       _echec = null;
     });
-    final List<HeureSemaine> echecs = await _ecrire(
-      ajouts: plan.ajouts,
-      retraits: plan.retraits,
-    );
+    final ({List<HeureSemaine> ajouts, List<HeureSemaine> retraits}) echecs =
+        await _ecrire(ajouts: plan.ajouts, retraits: plan.retraits);
     if (!mounted) {
       return;
     }
-    if (echecs.isEmpty) {
+    // Succes seulement quand TOUTES les operations sont confirmees.
+    if (echecs.ajouts.isEmpty && echecs.retraits.isEmpty) {
       Navigator.of(context).pop(
         engagees.isEmpty
             ? reussite
@@ -224,25 +293,13 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
       );
       return;
     }
-    // La plage modifiee n'est plus celle de l'ouverture : ses heures
-    // retirees avec succes ne sont plus a retirer.
-    final Plage? avant = _modifiee;
-    if (avant != null) {
-      final Set<HeureSemaine> restantes = avant.heures.intersection(
-        _existantes,
-      );
-      _modifiee = restantes.isEmpty
-          ? null
-          : deduirePlages(restantes).firstOrNull;
-    }
-    final int total = plan.ajouts.length + plan.retraits.length;
     setState(() {
       _envoi = false;
-      _echec = echecs.length == total
-          ? t.enseignant.creneaux.echecTotal
-          : t.enseignant.creneaux.echecPartiel(
-              heures: echecs.map(nommerHeure).join(', '),
-            );
+      _echec = _messageEchec(
+        echecs.ajouts,
+        echecs.retraits,
+        t.enseignant.creneaux.enregistrerPlage,
+      );
     });
   }
 
@@ -252,26 +309,28 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
     if (plage == null || _envoi) {
       return;
     }
+    await _relire();
+    if (!mounted) {
+      return;
+    }
     final List<HeureSemaine> retraits =
         plage.heures.intersection(_existantes).toList()..sort(
           (HeureSemaine x, HeureSemaine y) => x.heure.compareTo(y.heure),
         );
     final List<HeureSemaine> engagees = _engageesParmi(retraits);
-    if (!await _confirmerRetrait(engagees) || !mounted) {
+    if (!await _confirmerRetrait(retraits, engagees) || !mounted) {
       return;
     }
     setState(() {
       _envoi = true;
       _echec = null;
     });
-    final List<HeureSemaine> echecs = await _ecrire(
-      ajouts: const <HeureSemaine>[],
-      retraits: retraits,
-    );
+    final ({List<HeureSemaine> ajouts, List<HeureSemaine> retraits}) echecs =
+        await _ecrire(ajouts: const <HeureSemaine>[], retraits: retraits);
     if (!mounted) {
       return;
     }
-    if (echecs.isEmpty) {
+    if (echecs.retraits.isEmpty) {
       final String supprimee = t.enseignant.creneaux.plageSupprimee(
         jour: t.disponibilites.joursLongs[plage.jour - 1],
         de: libelleDe(plage.de),
@@ -286,8 +345,10 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
     }
     setState(() {
       _envoi = false;
-      _echec = t.enseignant.creneaux.echecRetrait(
-        heures: echecs.map(nommerHeure).join(', '),
+      _echec = _messageEchec(
+        const <HeureSemaine>[],
+        echecs.retraits,
+        t.enseignant.creneaux.supprimerPlage,
       );
     });
   }
@@ -297,6 +358,9 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
     final bool bureau = AppGabarit.de(context) == Gabarit.desktop;
+    // Reseau perdu feuille ouverte : les actions ne sont plus rendues (jamais
+    // grisees), une phrase dit pourquoi, comme sous la liste.
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final PlanPlage plan = _plan;
     final Plage? modifiee = _modifiee;
     final List<HeureSemaine> engageesModifiee = modifiee == null
@@ -355,10 +419,7 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
           ],
         ),
         Ecart.vSm,
-        TexteSansCoupure(
-          t.enseignant.creneaux.raccourcisDetail,
-          style: detail,
-        ),
+        TexteSansCoupure(t.enseignant.creneaux.raccourcisDetail, style: detail),
         Ecart.vLg,
         TexteSansCoupure(t.enseignant.creneaux.jours, style: etiquette),
         Ecart.vSm,
@@ -452,29 +513,37 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
             ),
           ),
         ],
-        Ecart.vXxl,
-        // K-56 : le seul bouton plein de la feuille, en bas, au bord de fin.
-        // La suppression, destructive, vient avant lui et n'est jamais pleine.
-        Wrap(
-          alignment: WrapAlignment.end,
-          spacing: AppSpacing.md,
-          runSpacing: AppSpacing.sm,
-          children: <Widget>[
-            if (modifiee != null)
+        if (horsLigne) ...<Widget>[
+          Ecart.vXxl,
+          TexteSansCoupure(
+            t.enseignant.creneaux.horsLigneFeuille,
+            style: palette.inkWarning.applyTo(textes.bodyMedium ?? detail),
+          ),
+        ] else ...<Widget>[
+          Ecart.vXxl,
+          // K-56 : le seul bouton plein de la feuille, en bas, au bord de fin.
+          // La suppression, destructive, vient avant lui et n'est jamais pleine.
+          Wrap(
+            alignment: WrapAlignment.end,
+            spacing: AppSpacing.md,
+            runSpacing: AppSpacing.sm,
+            children: <Widget>[
+              if (modifiee != null)
+                ActionPrincipale(
+                  libelle: t.enseignant.creneaux.supprimerPlage,
+                  niveau: NiveauAction.destructive,
+                  pleineLargeur: false,
+                  onPress: _supprimer,
+                ),
               ActionPrincipale(
-                libelle: t.enseignant.creneaux.supprimerPlage,
-                niveau: NiveauAction.destructive,
-                pleineLargeur: false,
-                onPress: _supprimer,
+                libelle: t.enseignant.creneaux.enregistrerPlage,
+                pleineLargeur: !bureau,
+                enCours: _envoi,
+                onPress: _enregistrer,
               ),
-            ActionPrincipale(
-              libelle: t.enseignant.creneaux.enregistrerPlage,
-              pleineLargeur: !bureau,
-              enCours: _envoi,
-              onPress: _enregistrer,
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ],
     );
   }

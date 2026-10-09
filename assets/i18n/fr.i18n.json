@@ -3593,9 +3593,13 @@
       "confirmerRetraitQuestion": "Retirer {heures} de vos disponibilités ?",
       "confirmerRetraitConsequence": "Une Classe a lieu sur {heures}. Retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu'à une réaffectation.",
       "confirmerRetraitAction": "Retirer ces heures",
-      "echecPartiel": "Non confirmé : {heures}. La connexion a pu se couper ou le serveur n'a pas répondu ; les autres heures sont bien enregistrées. Touchez « Enregistrer la plage » pour réessayer ces heures.",
-      "echecTotal": "Plage non confirmée : aucune heure n'est enregistrée. La connexion a pu se couper ou le serveur n'a pas répondu. Vérifiez votre connexion, puis touchez « Enregistrer la plage » pour réessayer.",
-      "echecRetrait": "Non confirmé : le retrait de {heures}. La connexion a pu se couper ou le serveur n'a pas répondu. Touchez « Supprimer cette plage » pour réessayer."
+      "ajoutNonConfirme": "Ajout non confirmé : {heures}.",
+      "retraitNonConfirme": "Retrait non confirmé : {heures}.",
+      "echecCause": "La connexion a pu se couper ou le serveur n'a pas répondu.",
+      "echecQuoiFaire": "Touchez « {action} » pour réessayer : seules ces heures seront renvoyées, après relecture de vos plages.",
+      "engagementsNonConfirmes": "Vos Classes déjà engagées ne sont pas confirmées : un conflit avec une plage ne peut pas être signalé. Vérifiez votre connexion, puis touchez « Réessayer ».",
+      "retraitSansEngagements": "Vos Classes déjà engagées ne sont pas confirmées. Si une Classe a lieu sur {heures}, retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu'à une réaffectation.",
+      "horsLigneFeuille": "Sans réseau, cette plage ne peut pas être enregistrée. Vos choix restent affichés : revenez quand la connexion est rétablie."
     },
     "ficheGroupe": {
       "creneauHebdo": "{jour} à {heure}, chaque semaine",

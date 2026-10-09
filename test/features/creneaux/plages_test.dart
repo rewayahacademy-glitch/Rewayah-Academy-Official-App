@@ -18,7 +18,11 @@ void main() {
 
     test('un trou coupe la plage ; tri par jour puis par debut', () {
       expect(
-        deduirePlages(<HeureSemaine>{..._h(2, 9, 11), ..._h(1, 18, 20), ..._h(1, 8, 9)}),
+        deduirePlages(<HeureSemaine>{
+          ..._h(2, 9, 11),
+          ..._h(1, 18, 20),
+          ..._h(1, 8, 9),
+        }),
         <Plage>[
           const Plage(jour: 1, de: 8, a: 9),
           const Plage(jour: 1, de: 18, a: 20),
@@ -85,16 +89,19 @@ void main() {
       expect(plan.fusions, isEmpty);
     });
 
-    test('saisie contenue dans une plage posee : rien a poser, fusion dite', () {
-      final PlanPlage plan = planifier(
-        existantes: _h(1, 17, 23),
-        jours: <int>{1},
-        de: 18,
-        a: 20,
-      );
-      expect(plan.vide, isTrue);
-      expect(plan.fusions, <Plage>[const Plage(jour: 1, de: 17, a: 23)]);
-    });
+    test(
+      'saisie contenue dans une plage posee : rien a poser, fusion dite',
+      () {
+        final PlanPlage plan = planifier(
+          existantes: _h(1, 17, 23),
+          jours: <int>{1},
+          de: 18,
+          a: 20,
+        );
+        expect(plan.vide, isTrue);
+        expect(plan.fusions, <Plage>[const Plage(jour: 1, de: 17, a: 23)]);
+      },
+    );
 
     test('modifier : on ne retire que les heures de la plage touchee', () {
       final Set<HeureSemaine> existantes = <HeureSemaine>{
@@ -118,16 +125,19 @@ void main() {
       expect(plan.fusions, isEmpty);
     });
 
-    test('modifier en deplacant le jour : retire l ancien, pose le nouveau', () {
-      final PlanPlage plan = planifier(
-        existantes: _h(1, 17, 19),
-        jours: <int>{2},
-        de: 17,
-        a: 19,
-        modifiee: const Plage(jour: 1, de: 17, a: 19),
-      );
-      expect(plan.retraits.map((HeureSemaine h) => h.jour).toSet(), <int>{1});
-      expect(plan.ajouts.map((HeureSemaine h) => h.jour).toSet(), <int>{2});
-    });
+    test(
+      'modifier en deplacant le jour : retire l ancien, pose le nouveau',
+      () {
+        final PlanPlage plan = planifier(
+          existantes: _h(1, 17, 19),
+          jours: <int>{2},
+          de: 17,
+          a: 19,
+          modifiee: const Plage(jour: 1, de: 17, a: 19),
+        );
+        expect(plan.retraits.map((HeureSemaine h) => h.jour).toSet(), <int>{1});
+        expect(plan.ajouts.map((HeureSemaine h) => h.jour).toSet(), <int>{2});
+      },
+    );
   });
 }

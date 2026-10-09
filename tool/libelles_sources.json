@@ -510,7 +510,11 @@
   "enseignant.creneaux.confirmerRetraitQuestion": "Directeur, commentaire du 01/10 23:16 (DISPO-1) ; formulation decidee par delegation le 09/10 (orchestrateur)",
   "enseignant.creneaux.confirmerRetraitConsequence": "Directeur, commentaire du 01/10 23:16 (DISPO-1) ; formulation decidee par delegation le 09/10 (orchestrateur)",
   "enseignant.creneaux.confirmerRetraitAction": "Directeur, commentaire du 01/10 23:16 (DISPO-1) ; formulation decidee par delegation le 09/10 (orchestrateur)",
-  "enseignant.creneaux.echecPartiel": "Directeur, commentaire du 01/10 23:16 (DISPO-1) ; formulation decidee par delegation le 09/10 (orchestrateur)",
-  "enseignant.creneaux.echecTotal": "Directeur, commentaire du 01/10 23:16 (DISPO-1) ; formulation decidee par delegation le 09/10 (orchestrateur)",
-  "enseignant.creneaux.echecRetrait": "Directeur, commentaire du 01/10 23:16 (DISPO-1) ; formulation decidee par delegation le 09/10 (orchestrateur)"
+  "enseignant.creneaux.ajoutNonConfirme": "Directeur, commentaire du 01/10 23:16 (DISPO-1) ; formulation decidee par delegation le 09/10 (orchestrateur)",
+  "enseignant.creneaux.retraitNonConfirme": "Directeur, commentaire du 01/10 23:16 (DISPO-1) ; formulation decidee par delegation le 09/10 (orchestrateur)",
+  "enseignant.creneaux.echecCause": "Directeur, commentaire du 01/10 23:16 (DISPO-1) ; formulation decidee par delegation le 09/10 (orchestrateur)",
+  "enseignant.creneaux.echecQuoiFaire": "Directeur, commentaire du 01/10 23:16 (DISPO-1) ; formulation decidee par delegation le 09/10 (orchestrateur)",
+  "enseignant.creneaux.engagementsNonConfirmes": "Directeur, commentaire du 01/10 23:16 (DISPO-1) ; formulation decidee par delegation le 09/10 (orchestrateur)",
+  "enseignant.creneaux.retraitSansEngagements": "Directeur, commentaire du 01/10 23:16 (DISPO-1) ; formulation decidee par delegation le 09/10 (orchestrateur)",
+  "enseignant.creneaux.horsLigneFeuille": "Directeur, commentaire du 01/10 23:16 (DISPO-1) ; formulation decidee par delegation le 09/10 (orchestrateur)"
 }

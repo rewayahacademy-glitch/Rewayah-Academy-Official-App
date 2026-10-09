@@ -10026,14 +10026,26 @@ class Traductions$enseignant$creneaux$fr {
 	/// fr: 'Retirer ces heures'
 	String get confirmerRetraitAction => 'Retirer ces heures';
 
-	/// fr: 'Non confirmé : {heures}. La connexion a pu se couper ou le serveur n'a pas répondu ; les autres heures sont bien enregistrées. Touchez « Enregistrer la plage » pour réessayer ces heures.'
-	String echecPartiel({required Object heures}) => 'Non confirmé : ${heures}. La connexion a pu se couper ou le serveur n\'a pas répondu ; les autres heures sont bien enregistrées. Touchez « Enregistrer la plage » pour réessayer ces heures.';
+	/// fr: 'Ajout non confirmé : {heures}.'
+	String ajoutNonConfirme({required Object heures}) => 'Ajout non confirmé : ${heures}.';
 
-	/// fr: 'Plage non confirmée : aucune heure n'est enregistrée. La connexion a pu se couper ou le serveur n'a pas répondu. Vérifiez votre connexion, puis touchez « Enregistrer la plage » pour réessayer.'
-	String get echecTotal => 'Plage non confirmée : aucune heure n\'est enregistrée. La connexion a pu se couper ou le serveur n\'a pas répondu. Vérifiez votre connexion, puis touchez « Enregistrer la plage » pour réessayer.';
+	/// fr: 'Retrait non confirmé : {heures}.'
+	String retraitNonConfirme({required Object heures}) => 'Retrait non confirmé : ${heures}.';
 
-	/// fr: 'Non confirmé : le retrait de {heures}. La connexion a pu se couper ou le serveur n'a pas répondu. Touchez « Supprimer cette plage » pour réessayer.'
-	String echecRetrait({required Object heures}) => 'Non confirmé : le retrait de ${heures}. La connexion a pu se couper ou le serveur n\'a pas répondu. Touchez « Supprimer cette plage » pour réessayer.';
+	/// fr: 'La connexion a pu se couper ou le serveur n'a pas répondu.'
+	String get echecCause => 'La connexion a pu se couper ou le serveur n\'a pas répondu.';
+
+	/// fr: 'Touchez « {action} » pour réessayer : seules ces heures seront renvoyées, après relecture de vos plages.'
+	String echecQuoiFaire({required Object action}) => 'Touchez « ${action} » pour réessayer : seules ces heures seront renvoyées, après relecture de vos plages.';
+
+	/// fr: 'Vos Classes déjà engagées ne sont pas confirmées : un conflit avec une plage ne peut pas être signalé. Vérifiez votre connexion, puis touchez « Réessayer ».'
+	String get engagementsNonConfirmes => 'Vos Classes déjà engagées ne sont pas confirmées : un conflit avec une plage ne peut pas être signalé. Vérifiez votre connexion, puis touchez « Réessayer ».';
+
+	/// fr: 'Vos Classes déjà engagées ne sont pas confirmées. Si une Classe a lieu sur {heures}, retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu'à une réaffectation.'
+	String retraitSansEngagements({required Object heures}) => 'Vos Classes déjà engagées ne sont pas confirmées. Si une Classe a lieu sur ${heures}, retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu\'à une réaffectation.';
+
+	/// fr: 'Sans réseau, cette plage ne peut pas être enregistrée. Vos choix restent affichés : revenez quand la connexion est rétablie.'
+	String get horsLigneFeuille => 'Sans réseau, cette plage ne peut pas être enregistrée. Vos choix restent affichés : revenez quand la connexion est rétablie.';
 }
 
 // Path: enseignant.ficheGroupe
@@ -19917,9 +19929,13 @@ extension on Traductions {
 			'enseignant.creneaux.confirmerRetraitQuestion' => ({required Object heures}) => 'Retirer ${heures} de vos disponibilités ?',
 			'enseignant.creneaux.confirmerRetraitConsequence' => ({required Object heures}) => 'Une Classe a lieu sur ${heures}. Retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu\'à une réaffectation.',
 			'enseignant.creneaux.confirmerRetraitAction' => 'Retirer ces heures',
-			'enseignant.creneaux.echecPartiel' => ({required Object heures}) => 'Non confirmé : ${heures}. La connexion a pu se couper ou le serveur n\'a pas répondu ; les autres heures sont bien enregistrées. Touchez « Enregistrer la plage » pour réessayer ces heures.',
-			'enseignant.creneaux.echecTotal' => 'Plage non confirmée : aucune heure n\'est enregistrée. La connexion a pu se couper ou le serveur n\'a pas répondu. Vérifiez votre connexion, puis touchez « Enregistrer la plage » pour réessayer.',
-			'enseignant.creneaux.echecRetrait' => ({required Object heures}) => 'Non confirmé : le retrait de ${heures}. La connexion a pu se couper ou le serveur n\'a pas répondu. Touchez « Supprimer cette plage » pour réessayer.',
+			'enseignant.creneaux.ajoutNonConfirme' => ({required Object heures}) => 'Ajout non confirmé : ${heures}.',
+			'enseignant.creneaux.retraitNonConfirme' => ({required Object heures}) => 'Retrait non confirmé : ${heures}.',
+			'enseignant.creneaux.echecCause' => 'La connexion a pu se couper ou le serveur n\'a pas répondu.',
+			'enseignant.creneaux.echecQuoiFaire' => ({required Object action}) => 'Touchez « ${action} » pour réessayer : seules ces heures seront renvoyées, après relecture de vos plages.',
+			'enseignant.creneaux.engagementsNonConfirmes' => 'Vos Classes déjà engagées ne sont pas confirmées : un conflit avec une plage ne peut pas être signalé. Vérifiez votre connexion, puis touchez « Réessayer ».',
+			'enseignant.creneaux.retraitSansEngagements' => ({required Object heures}) => 'Vos Classes déjà engagées ne sont pas confirmées. Si une Classe a lieu sur ${heures}, retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu\'à une réaffectation.',
+			'enseignant.creneaux.horsLigneFeuille' => 'Sans réseau, cette plage ne peut pas être enregistrée. Vos choix restent affichés : revenez quand la connexion est rétablie.',
 			'enseignant.ficheGroupe.creneauHebdo' => ({required Object jour, required Object heure}) => '${jour} à ${heure}, chaque semaine',
 			'enseignant.ficheGroupe.aucunMembre' => 'Aucun élève dans cette Classe',
 			'enseignant.ficheGroupe.aucunMembreDetail' => 'L\'administration compose les Classes : celle-ci n\'a pas encore d\'élève.',
@@ -20393,12 +20409,12 @@ extension on Traductions {
 			'tc.classe.support.aucun' => 'Aucun support présenté',
 			'tc.classe.support.aucunDetail' => 'Ouvrez la Bibliothèque pour présenter un support à la Classe.',
 			'tc.classe.support.bibliotheque' => 'Bibliothèque',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.support.bibliothequeAbsente' => 'Bibliothèque non branchée',
 			'tc.classe.support.bibliothequeAbsenteDetail' => 'Le choix de support sera disponible dès l\'intégration du catalogue.',
 			'tc.classe.commandes.micro' => 'Ouvrir le micro',
 			'tc.classe.commandes.microFermer' => 'Fermer le micro',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.commandes.camera' => 'Ouvrir la caméra',
 			'tc.classe.commandes.cameraFermer' => 'Fermer la caméra',
 			'tc.classe.commandes.microCoupe' => 'Micro fermé',
@@ -20907,12 +20923,12 @@ extension on Traductions {
 			'adulte.reprise.phrases.validee' => 'L\'administration a validé la demande. Vous êtes désormais titulaire du foyer.',
 			'adulte.reprise.phrases.refusee' => 'L\'administration a refusé la demande. Aucune permission du foyer n\'est transférée.',
 			'adulte.reprise.titulaire.notification' => 'Une demande de reprise de votre foyer a été déposée en indiquant votre décès.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.reprise.titulaire.consigne' => 'Si cette demande est erronée, refusez-la.',
 			'adulte.reprise.titulaire.refuser' => 'Refuser la demande',
 			'adulte.reprise.titulaire.ligne' => 'Une demande de reprise de votre foyer a été déposée.',
 			'adulte.reprise.titulaire.refusEchecTitre' => 'Le refus n\'a pas été confirmé.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.reprise.titulaire.horsLigne' => 'Rien n\'est envoyé. Vous pourrez refuser la demande vous-même quand la connexion sera revenue.',
 			'adulte.reprise.titulaire.refusee' => 'Vous avez refusé cette demande. L\'administration en est informée. Aucune permission de votre foyer n\'est transférée.',
 			'adulte.reprise.notifications.refuseeParTitulaire' => 'Le titulaire du foyer a refusé votre demande de reprise du foyer.',

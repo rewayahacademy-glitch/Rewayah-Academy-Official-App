@@ -354,7 +354,11 @@ void main() {
 
       // 1. Le conflit est visible AVANT le geste.
       expect(
-        find.text(t.enseignant.creneaux.heureEngagee(heures: nommerHeure((jour: 4, heure: 9)))),
+        find.textContaining(
+          t.enseignant.creneaux.plageEngagee(
+            heures: nommerHeure((jour: 4, heure: 9)),
+          ),
+        ),
         findsOneWidget,
       );
 
@@ -370,7 +374,9 @@ void main() {
       expect(planning.retires.single.creneau.heure, 9);
       expect(
         find.textContaining(
-          t.enseignant.creneaux.seanceContinue(heures: nommerHeure((jour: 4, heure: 9))),
+          t.enseignant.creneaux.seanceContinue(
+            heures: nommerHeure((jour: 4, heure: 9)),
+          ),
         ),
         findsOneWidget,
       );
