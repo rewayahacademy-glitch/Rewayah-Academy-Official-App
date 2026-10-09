@@ -237,4 +237,3 @@ Consultées le 7 octobre 2026. Les choix RA/EV, longueurs, badges et parcours pr
 ## 11. Instruction prête à transmettre à Claude
 
 > Lire ce complément avec BR0B canonique sans modifier ce dernier. Vérifier le dépôt et Supabase, puis proposer les migrations additives et les adaptations frontend conformes à IMM-01 à IMM-14. Préserver les UUID, les relations, les anciens identifiants nécessaires et les décisions de confidentialité internes du cockpit. Implémenter un matricule permanent RA aléatoire pour toutes les personnes, avec classification séparée ; utiliser par défaut un code participant EV propre à chaque évaluation publique et permettre à l'administration de choisir ID, nom réel ou les deux dans le cadre des règles serveur de diffusion. Garder la connexion actuelle en V1. Aucun changement de production avant vérification en staging et respect des gates de déploiement du projet.
-
