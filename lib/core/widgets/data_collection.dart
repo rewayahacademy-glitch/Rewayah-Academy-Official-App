@@ -102,7 +102,33 @@ class DataCollection<T> extends StatelessWidget {
     this.piedDePage,
     this.cle,
     this.onSelectionner,
+    this.defileSeule = true,
   });
+
+  /// Faux quand la collection est **une section** d'une liste qui defile
+  /// deja (Pedagogie > Qualite : une collection par type d'anomalie, toutes
+  /// dans le meme defilement) : elle pose alors toutes ses lignes a leur
+  /// hauteur, sans defileur propre, et l'en-tete de colonnes ouvre la
+  /// section. Une liste dans une liste qui defile n'a pas de hauteur
+  /// (« Vertical viewport was given unbounded height », FILTRES-1b) ; vrai
+  /// par defaut, le comportement d'avant.
+  final bool defileSeule;
+
+  /// La hauteur sous laquelle une collection ne se lit plus : un titre et
+  /// deux lignes de texte, a l'echelle du texte de [context]. C'est le
+  /// `minimumEtire` d'une `ColonneCorps` qui la porte (FILTRES-1b) : a 320 px
+  /// texte x2, l'intro et la rangee de filtres ne laissent plus de place a
+  /// la liste, et la page defile au lieu de deborder.
+  static double minimumLisible(BuildContext context) {
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    double ligne(TextStyle? style) =>
+        echelle.scale(style?.fontSize ?? 14) * (style?.height ?? 1.2);
+    return ligne(textes.titleMedium) +
+        AppSpacing.sm +
+        ligne(textes.bodyLarge) * 2 +
+        AppSpacing.lg * 2;
+  }
 
   /// Les colonnes, dans l'ordre d'affichage.
   final List<ColonneDonnees<T>> colonnes;
@@ -131,6 +157,7 @@ class DataCollection<T> extends StatelessWidget {
         lignes: lignes,
         piedDePage: piedDePage,
         cle: cle,
+        defile: defileSeule,
         espacement: AppSpacing.md,
         constructeur: (BuildContext contexte, T ligne) => _Carte<T>(
           colonnes: colonnes,
@@ -142,6 +169,18 @@ class DataCollection<T> extends StatelessWidget {
 
     final AppPalette palette = AppPalette.of(context);
     final AppMetriques metriques = AppMetriques.of(context);
+    final Widget corps = _Defilement<T>(
+      lignes: lignes,
+      piedDePage: piedDePage,
+      cle: cle,
+      defile: defileSeule,
+      espacement: 0,
+      constructeur: (BuildContext contexte, T ligne) => _LigneTableau<T>(
+        colonnes: colonnes,
+        ligne: ligne,
+        onSelectionner: onSelectionner,
+      ),
+    );
 
     // Le filet et l'arrondi sont portes par le bloc entier, et le decoupage par
     // un seul `ClipRRect` : arrondir separement les deux coins hauts de
@@ -156,22 +195,10 @@ class DataCollection<T> extends StatelessWidget {
         borderRadius: metriques.arrondi,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: defileSeule ? MainAxisSize.max : MainAxisSize.min,
           children: <Widget>[
             _EnTeteTableau<T>(colonnes: colonnes),
-            Expanded(
-              child: _Defilement<T>(
-                lignes: lignes,
-                piedDePage: piedDePage,
-                cle: cle,
-                espacement: 0,
-                constructeur: (BuildContext contexte, T ligne) =>
-                    _LigneTableau<T>(
-                      colonnes: colonnes,
-                      ligne: ligne,
-                      onSelectionner: onSelectionner,
-                    ),
-              ),
-            ),
+            if (defileSeule) Expanded(child: corps) else corps,
           ],
         ),
       ),
@@ -185,10 +212,14 @@ class _Defilement<T> extends StatelessWidget {
     required this.lignes,
     required this.constructeur,
     required this.espacement,
+    required this.defile,
     this.piedDePage,
     this.cle,
   });
 
+  /// Faux : toutes les lignes posees a leur hauteur, sans defileur
+  /// ([DataCollection.defileSeule]).
+  final bool defile;
   final List<T> lignes;
   final Widget Function(BuildContext context, T ligne) constructeur;
   final double espacement;
@@ -199,24 +230,32 @@ class _Defilement<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final int total = lignes.length + (piedDePage == null ? 0 : 1);
 
-    return ListView.builder(
-      itemCount: total,
-      itemBuilder: (BuildContext contexte, int index) {
-        if (index >= lignes.length) {
-          return Padding(
-            padding: const EdgeInsets.only(top: AppSpacing.xl),
-            child: piedDePage,
-          );
-        }
-        final T ligne = lignes[index];
-        return Padding(
-          key: cle?.call(ligne),
-          padding: EdgeInsets.only(
-            bottom: index == lignes.length - 1 ? 0 : espacement,
-          ),
-          child: constructeur(contexte, ligne),
-        );
-      },
+    if (!defile) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          for (int i = 0; i < total; i++) _element(context, i),
+        ],
+      );
+    }
+    return ListView.builder(itemCount: total, itemBuilder: _element);
+  }
+
+  Widget _element(BuildContext contexte, int index) {
+    if (index >= lignes.length) {
+      return Padding(
+        padding: const EdgeInsets.only(top: AppSpacing.xl),
+        child: piedDePage,
+      );
+    }
+    final T ligne = lignes[index];
+    return Padding(
+      key: cle?.call(ligne),
+      padding: EdgeInsets.only(
+        bottom: index == lignes.length - 1 ? 0 : espacement,
+      ),
+      child: constructeur(contexte, ligne),
     );
   }
 }

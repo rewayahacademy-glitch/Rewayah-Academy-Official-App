@@ -52,8 +52,10 @@ class _EvaluationsPageEtat extends ConsumerState<EvaluationsPage> {
       titre: t.admin.evaluations.titre,
       entete: SousNavigationDomaine(onglets: ongletsPedagogie(), indexActif: 2),
       defilante: false,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      // FILTRES-1b : des colonnes de corps (ici et dans le corps) qui disent
+      // a `PageShell` la hauteur qui leur manque : a 320 px texte x2, la page
+      // defile au lieu de deborder sous la liste.
+      child: ColonneCorps(
         children: <Widget>[
           Text(t.admin.evaluations.intro, style: textes.bodyMedium),
           Ecart.vLg,
@@ -127,8 +129,8 @@ class _Corps extends StatelessWidget {
         .where((EvaluationAdmin e) => _correspond(e, filtre))
         .toList(growable: false);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return ColonneCorps(
+      minimumEtire: DataCollection.minimumLisible(context),
       children: <Widget>[
         RangeeFiltres(
           filtres: <Widget>[
@@ -401,6 +403,7 @@ class _FeuillePlanificationEtat extends ConsumerState<_FeuillePlanification> {
           style: Theme.of(context).textTheme.titleMedium,
         ),
         Ecart.vSm,
+        // Choix de formulaire, pas un filtre : le type de l'evaluation a planifier.
         Wrap(
           spacing: AppSpacing.sm,
           children: <Widget>[
@@ -555,6 +558,7 @@ class _FeuilleResultatEtat extends State<_FeuilleResultat> {
       builder: (BuildContext context, WidgetRef ref, Widget? _) => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          // Choix de formulaire, pas un filtre : le resultat a enregistrer.
           Wrap(
             spacing: AppSpacing.sm,
             children: <Widget>[

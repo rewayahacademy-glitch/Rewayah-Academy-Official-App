@@ -53,8 +53,10 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
     return PageShell(
       titre: t.admin.groupes.titre,
       defilante: false,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      // FILTRES-1b : des colonnes de corps (ici et dans le corps) qui disent
+      // a `PageShell` la hauteur qui leur manque : a 320 px texte x2, la page
+      // defile au lieu de deborder sous la liste.
+      child: ColonneCorps(
         children: <Widget>[
           Text(t.admin.groupes.intro, style: textes.bodyMedium),
           Ecart.vLg,
@@ -125,8 +127,8 @@ class _Corps extends StatelessWidget {
         .where((GroupeAdmin g) => type == null || g.type == type)
         .toList(growable: false);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return ColonneCorps(
+      minimumEtire: DataCollection.minimumLisible(context),
       children: <Widget>[
         RangeeFiltres(
           filtres: <Widget>[
@@ -469,6 +471,7 @@ class _FeuilleCreationEtat extends State<_FeuilleCreation> {
             ),
           ),
           Ecart.vMd,
+          // Choix de formulaire, pas un filtre : le public de la classe a creer.
           Wrap(
             spacing: AppSpacing.sm,
             children: <Widget>[

@@ -123,8 +123,10 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
       // `DataCollection` porte son propre `ListView` : il exige une hauteur
       // bornee, donc l'ecran gere son defilement, comme `ADM-04`.
       defilante: false,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      // FILTRES-1b : des colonnes de corps (ici et dans le corps) qui disent
+      // a `PageShell` la hauteur qui leur manque : a 320 px texte x2, la page
+      // defile au lieu de deborder sous la liste.
+      child: ColonneCorps(
         children: <Widget>[
           Text(t.admin.comptes.intro, style: textes.bodyMedium),
           Ecart.vXl,
@@ -225,8 +227,8 @@ class _Corps extends StatelessWidget {
       (CompteAdmin c) => c.prenom != null,
     );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return ColonneCorps(
+      minimumEtire: DataCollection.minimumLisible(context),
       children: <Widget>[
         // Le fait d'abord, en une phrase et sans cadre. Une carte bordee pour
         // une seule ligne de texte est du poids visuel sans information.

@@ -292,6 +292,7 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
 
           Text(t.admin.agents.duree, style: textes.titleSmall),
           Ecart.vMd,
+          // Choix de formulaire, pas un filtre : la duree du jeton.
           Wrap(
             spacing: AppSpacing.sm,
             runSpacing: AppSpacing.sm,
@@ -312,6 +313,7 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
 
           Text(t.admin.agents.identite, style: textes.titleSmall),
           Ecart.vMd,
+          // Choix de formulaire, pas un filtre : l'identite du jeton.
           Wrap(
             spacing: AppSpacing.sm,
             runSpacing: AppSpacing.sm,
@@ -521,6 +523,7 @@ class _ChoixPersonne extends StatelessWidget {
         icone: AppIcons.rienAAfficher,
       );
     }
+    // Choix de formulaire, pas un filtre : la personne observable.
     return Wrap(
       spacing: AppSpacing.sm,
       runSpacing: AppSpacing.sm,
