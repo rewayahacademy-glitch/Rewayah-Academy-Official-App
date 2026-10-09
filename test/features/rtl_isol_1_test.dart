@@ -35,12 +35,15 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
 import 'package:rewayah_academy/core/tc_horloge/emplacement_entree.dart';
+import 'package:rewayah_academy/core/tc_horloge/session_clock_vm.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/features/accueil_famille/bloc_seance.dart';
 import 'package:rewayah_academy/features/admin_comptes/comptes_page.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
 import 'package:rewayah_academy/features/controleur/observation_controle.dart';
 import 'package:rewayah_academy/features/controleur/observation_controle_page.dart';
+import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 import 'package:rewayah_academy/features/demo/classe_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
@@ -273,6 +276,115 @@ void main() {
   for (final AppLocale langue in AppLocale.values) {
     final String cas = '320 px x2, ${langue.languageCode}';
     final bool arabe = langue == AppLocale.ar;
+
+    // Reprise de la relecture : les variantes « salle ouverte » et
+    // « attente » (vouvoiement et tutoiement) passent aussi par
+    // phraseAvecValeur.
+    EmplacementEntree entree(
+      Duration avantT0, {
+      bool connecte = false,
+      bool tutoiement = false,
+    }) {
+      LocaleSettings.setLocaleSync(langue);
+      addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+      return EmplacementEntree.pour(
+        role: RoleEntree.eleve,
+        horloge: SessionClockVM.depuisFenetre(
+          fenetre: DonneesClasseDemo.fenetre,
+          maintenantServeurUtc: DonneesClasseDemo.debutUtc.subtract(avantT0),
+          horlogeUtilisateur: DonneesClasseDemo.horlogeUtilisateur,
+          connecte: connecte,
+        ),
+        nomClasse: DonneesClasseDemo.classe,
+        tutoiement: tutoiement,
+      );
+    }
+
+    /// La duree « 8 min » de [detail] : isolee dans une phrase arabe, nue
+    /// dans une phrase francaise.
+    void dureeIsoleeSiArabe(String detail, {required bool phraseArabe}) {
+      final RegExp isolee = RegExp('$_fsi\\d+\\s*min$_pdi');
+      if (phraseArabe) {
+        expect(detail, matches(isolee), reason: detail);
+      } else {
+        expect(detail, isNot(contains(_fsi)), reason: detail);
+        expect(detail, matches(RegExp(r'\d+\s*min')), reason: detail);
+      }
+    }
+
+    test('Salle ouverte : la duree est isolee dans la phrase arabe ($cas)', () {
+      final EmplacementEntree e = entree(const Duration(minutes: 8));
+      expect(e.etat, EtatEntree.fenetreOuverte);
+      dureeIsoleeSiArabe(e.detail!, phraseArabe: arabe);
+    });
+
+    test('Attente (vouvoiement puis tutoiement) : la duree est isolee dans '
+        'une phrase arabe, nue dans une phrase francaise ($cas)', () {
+      final EmplacementEntree vous = entree(
+        const Duration(minutes: 8),
+        connecte: true,
+      );
+      expect(vous.etat, EtatEntree.attente);
+      dureeIsoleeSiArabe(vous.detail!, phraseArabe: arabe);
+      // Le tutoiement n'a pas encore de traduction arabe : sa phrase reste
+      // francaise, la duree francaise s'y lit sans isolat, dans les deux
+      // interfaces.
+      final EmplacementEntree tu = entree(
+        const Duration(minutes: 8),
+        connecte: true,
+        tutoiement: true,
+      );
+      expect(tu.etat, EtatEntree.attente);
+      final bool tuArabe = sensDuTexte(tu.detail!) == TextDirection.rtl;
+      dureeIsoleeSiArabe(tu.detail!, phraseArabe: tuArabe);
+    });
+
+    testWidgets('EmptyState : le constat et l invitation gardent leur point, '
+        'leur texte reste nu ($cas)', (WidgetTester tester) async {
+      const String constat = 'Aucun support pour cette séance.';
+      const String invitation = "Les supports s'ouvrent à l'enseignant.";
+      await _monter(
+        tester,
+        langue,
+        () => const Scaffold(
+          body: EmptyState(
+            message: constat,
+            invitation: invitation,
+            registre: RegistreVide.subi,
+          ),
+        ),
+      );
+      // Le texte n'est pas modifie : il se retrouve tel quel.
+      expect(find.text(constat), findsOneWidget);
+      expect(find.text(invitation), findsOneWidget);
+      _aDroiteDe(tester, marque: 'Aucun', precedent: 'séance', suivant: '.');
+      _aDroiteDe(
+        tester,
+        marque: 'ouvrent',
+        precedent: 'enseignant',
+        suivant: '.',
+      );
+    });
+
+    testWidgets('Ma classe : la ligne de progression est isolee en arabe '
+        '($cas)', (WidgetTester tester) async {
+      await _monterRoutes(
+        tester,
+        langue,
+        adresseDemoAdulte(EcranDemoAdulte.maClasse),
+        routesDemoAdulte('dev'),
+      );
+      final String ligne = DonneesAdulteDemo.ligneProgressionClasse;
+      expect(ligne, 'Chapitre 1 · Page 24');
+      final RenderParagraph p = _paragraphe(tester, ligne);
+      // L'ordre visuel d'une ligne toute latine ne change pas : le texte
+      // rendu porte l'isolat en arabe, et reste nu en francais.
+      expect(p.text.toPlainText(), arabe ? isolerSens(ligne) : ligne);
+      _suit(p, precedent: 'Chapitre', suivant: '1');
+      _suit(p, precedent: '1', suivant: '·');
+      _suit(p, precedent: '·', suivant: 'Page');
+      _suit(p, precedent: 'Page', suivant: '24');
+    });
 
     testWidgets('Espace Classe eleve : la duree avant le cours se lit dans '
         'l ordre ($cas)', (WidgetTester tester) async {
