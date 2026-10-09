@@ -6,7 +6,7 @@ on:
   # la branche de BASE : il ne sert a une branche `ui/*` qu'une fois present
   # dans cette branche.
   pull_request:
-    branches: [main, 'ui/**']
+    branches: [main, 'ccr-1b1bfa0b-m1kvkk', 'ui/**']
   workflow_dispatch:
 
 jobs:
@@ -14,7 +14,7 @@ jobs:
     name: Migrations applicables (Postgres 17)
     # Le SQL et les fonctions Edge ne sont controles que vers `main` : les
     # branches `ui/*` ne touchent pas `supabase/`.
-    if: github.event_name != 'pull_request' || github.base_ref == 'main'
+    if: github.event_name != 'pull_request' || github.base_ref == 'main' || github.base_ref == 'ccr-1b1bfa0b-m1kvkk'
     runs-on: ubuntu-latest
     container: postgres:17-alpine
     services:
@@ -188,7 +188,7 @@ jobs:
 
   edge-r2:
     name: Fonctions Edge -- stockage R2 (Deno)
-    if: github.event_name != 'pull_request' || github.base_ref == 'main'
+    if: github.event_name != 'pull_request' || github.base_ref == 'main' || github.base_ref == 'ccr-1b1bfa0b-m1kvkk'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
