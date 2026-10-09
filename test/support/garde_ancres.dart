@@ -41,6 +41,13 @@
 // fichier nomme la classe. Une valeur rangee par affectation
 // (`s.duree = valeur`, `this.duree = valeur`, `duree = valeur` dans la
 // classe) est suivie de meme.
+//
+// Reprise 3 (DUREE-INSECABLE-5, seconde relecture adverse) : un litteral
+// colle derriere un autre (`'Duree : ' '${valeur}'`, sur une ou plusieurs
+// lignes) n'est pas une tete de libelle, Dart concatene les deux : la valeur
+// interpolee au debut du second est au milieu. Un champ lu par `this.champ`
+// (dans une classe qui le porte) ou `this.objet.champ` est suivi comme
+// `champ` et `objet.champ`.
 
 import 'dart:io';
 
@@ -532,8 +539,14 @@ _Destination _classer(
   if (collection && s.chaineApres(s.finTerme(p)).contains('join')) {
     return const _Faute('element d\'une collection jointe');
   }
-  // Concatenation derriere autre chose.
+  // Reprise 2 (DUREE-INSECABLE-5) : un litteral colle a un litteral qui le
+  // precede (`'Duree : ' '$valeur'`, la forme que `dart format` donne a une
+  // ligne longue) n'est pas la tete du libelle : Dart les concatene.
   final int a = s.avant(p);
+  if (_guillemet(s, p) && a >= 0 && _guillemet(s, a)) {
+    return const _Faute('litteral colle derriere un autre litteral');
+  }
+  // Concatenation derriere autre chose.
   if (a >= 0 && s.m[a] == '+' && (a == 0 || s.m[a - 1] != '+')) {
     return const _Faute('concatenee derriere un texte');
   }
@@ -562,12 +575,8 @@ _Destination _classer(
   // `{`
   if (o > 0 && s.m[o - 1] == r'$') {
     final int q = o - 2;
-    if (q >= 0 && (s.m[q] == "'" || s.m[q] == '"')) {
-      int debut = q;
-      while (debut > 0 && s.m[debut - 1] == s.m[q]) {
-        debut--;
-      }
-      return _classer(s, debut, joints, collection: collection);
+    if (q >= 0 && _guillemet(s, q)) {
+      return _classer(s, _debutLitteral(s, q), joints, collection: collection);
     }
     return const _Faute('interpolee au milieu d\'une chaine');
   }
@@ -587,6 +596,21 @@ _Destination _classer(
   // la valeur y est rangee ; la table est suivie comme une collection.
   if (_litteral(s, o)) return _classer(s, o, joints, collection: true);
   return _instruction(s, o, p, collection: collection);
+}
+
+/// Vrai si le caractere [i] du source masque est un guillemet.
+bool _guillemet(_Source s, int i) => s.m[i] == "'" || s.m[i] == '"';
+
+/// Le debut du litteral ouvert par le guillemet [q] (juste avant une
+/// interpolation en tete). Trois guillemets ouvrent un litteral long ; deux,
+/// ou quatre et plus, ferment un litteral et en ouvrent un autre, colle : le
+/// guillemet qui precede le debut rendu signale alors le litteral adjacent.
+int _debutLitteral(_Source s, int q) {
+  int n = 1;
+  while (q - n >= 0 && s.m[q - n] == s.m[q]) {
+    n++;
+  }
+  return n >= 3 ? q - 2 : q;
 }
 
 /// Vrai si [p] est le premier element de la liste [o] : rien avant lui,
@@ -1273,8 +1297,25 @@ void _suivreChamp(
     for (final RegExpMatch u in acces.allMatches(s.m)) {
       if (_affectee(s, u.end)) continue;
       final ({String nom, int debut}) lecture = s.appelant(u.end);
-      final String tete = lecture.nom.split('.').first;
-      if (tete == 'this' || tete == 'super') continue;
+      final List<String> maillons = lecture.nom.split('.');
+      final String tete = maillons.first;
+      if (tete == 'this' || tete == 'super') {
+        // Reprise 2 (DUREE-INSECABLE-5) : `this.champ` (ou `super.champ`)
+        // lu dans une classe qui porte le champ ; `this.objet.champ` est lu
+        // comme `objet.champ`, plus bas. Un parametre `this.champ` de
+        // constructeur n'est pas une lecture.
+        if (maillons.length == 2) {
+          if (_parametreDeclare(s, lecture.debut)) continue;
+          final String? ici = s.classeAutour(u.start);
+          if (ici == null) continue;
+          final bool porte = classe == null
+              ? _champDeclare(s, ici, champ)
+              : ici == classe || tete == 'super';
+          if (!porte) continue;
+          _lecture(s, lecture.debut, suite, collection, aSuivre, fautes);
+          continue;
+        }
+      }
       if (lecture.nom.startsWith('t.') || s.alias.contains(tete)) continue;
       if (classe != null && !_peutEtre(fichiers, s, u.start, classe)) {
         continue;
@@ -1282,6 +1323,17 @@ void _suivreChamp(
       _lecture(s, lecture.debut, suite, collection, aSuivre, fautes);
     }
   }
+}
+
+/// Vrai si [p] est dans la liste des parametres d'une declaration
+/// (`Seance(this.duree)`, `Seance({required this.duree})`).
+bool _parametreDeclare(_Source s, int p) {
+  int o = s.ouvrant(p);
+  if (o >= 0 && (s.m[o] == '{' || s.m[o] == '[')) o = s.ouvrant(o);
+  if (o < 0 || s.m[o] != '(') return false;
+  final ({String nom, int debut}) app = _constructeur(s, o);
+  if (app.nom.isEmpty) return false;
+  return _estDeclaration(s, app.debut, o, s.classeAutour(o));
 }
 
 /// Les types qui ne disent rien de l'objet.
@@ -1492,8 +1544,13 @@ void _lecture(
 ) {
   if (p > 0 && s.m[p - 1] == r'$') {
     final int q = p - 2;
-    if (q >= 0 && (s.m[q] == "'" || s.m[q] == '"')) {
-      aSuivre.add((s: s, p: q, chemin: suite, collection: collection));
+    if (q >= 0 && _guillemet(s, q)) {
+      aSuivre.add((
+        s: s,
+        p: _debutLitteral(s, q),
+        chemin: suite,
+        collection: collection,
+      ));
     } else {
       fautes.add((
         fichier: s.fichier,
@@ -1540,10 +1597,10 @@ void _suivreVariable(
     if (debut != u.start) {
       // `$nom` dans une chaine.
       final int q = debut - 1;
-      if (q >= 0 && (s.m[q] == "'" || s.m[q] == '"')) {
+      if (q >= 0 && _guillemet(s, q)) {
         aSuivre.add((
           s: s,
-          p: q,
+          p: _debutLitteral(s, q),
           chemin: '$chemin > $nom',
           collection: collection,
         ));

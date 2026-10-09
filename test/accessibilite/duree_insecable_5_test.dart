@@ -19,6 +19,10 @@
 //    rangee par affectation (`s.duree = ...`) ; un autre objet au type ecrit
 //    dont le champ porte le meme nom n'est pas suivi. A 1440 px, LTR et
 //    RTL, l'identifiant « TEACHER-AS-000001 » tient sur une ligne.
+// 4. Reprise 2 (relecture adverse) : la garde trouve la valeur inseree
+//    derriere un litteral adjacent (`'Duree : ' '${valeur}'`, sur une ou
+//    deux lignes, forme que `dart format` donne a une ligne longue) et le
+//    champ lu par `this.champ` ou `this.objet.champ`.
 
 import 'dart:io';
 
@@ -615,6 +619,103 @@ String ailleurs(int l) {
         for (final int n in attendues(a)) 'a.dart:$n',
         for (final int n in attendues(b)) 'b.dart:$n',
       ], reason: fautes.map((AncreGlissee x) => x.raison).join('\n'));
+    });
+  });
+
+  // Reprise 2 (relecture adverse) : litteraux adjacents (la forme que
+  // produit `dart format` pour une ligne longue) et lectures `this.champ`.
+  group('4. Garde de source : litteraux adjacents et lectures `this.`', () {
+    final String source = File('lib/core/widgets/data_collection.dart')
+        .readAsStringSync();
+
+    List<AncreGlissee> garde(String apres) {
+      expect(source, contains(_libelleCorrige));
+      final Directory dossier = Directory.systemTemp.createTempSync('dc5c');
+      addTearDown(() => dossier.deleteSync(recursive: true));
+      final File fautif = File('${dossier.path}/data_collection.dart')
+        ..writeAsStringSync(source.replaceFirst(_libelleCorrige, apres));
+      return ancresGlissees(_libAvec(fautif))
+          .where((AncreGlissee a) => a.fichier == fautif.path)
+          .toList();
+    }
+
+    final Map<String, String> mutations = <String, String>{
+      'deux litteraux sur deux lignes (dart format)':
+          "label:\n          '\${colonne.titre} : '\n"
+          "          '\${colonne.texte(ligne)}',",
+      'deux litteraux sur une ligne':
+          "label: '\${colonne.titre} : ' '\${colonne.texte(ligne)}',",
+      'titre fixe puis litteral adjacent':
+          "label: 'Valeur : ' '\${colonne.texte(ligne)}',",
+      'litteral brut puis litteral adjacent':
+          "label: r'Valeur : ' '\${colonne.texte(ligne)}',",
+      'lecture this.colonne':
+          "label: '\${this.colonne.titre} : \${this.colonne.texte(ligne)}',",
+      'lecture this.colonne, litteraux adjacents':
+          "label: '\${this.colonne.titre} : '\n"
+          "          '\${this.colonne.texte(ligne)}',",
+    };
+    mutations.forEach((String nom, String apres) {
+      test('data_collection fautif, $nom : une faute', () {
+        final List<AncreGlissee> f = garde(apres);
+        expect(
+          f,
+          hasLength(1),
+          reason: f.map((AncreGlissee a) => '${a.ligne} ${a.raison}').join(),
+        );
+        expect(f.single.raison, contains('ColonneDonnees.texte'));
+      });
+    });
+
+    test('fixtures : valeur directe derriere un litteral adjacent, champ '
+        'lu par `this.` ; la valeur en tete reste permise', () {
+      final Directory dossier = Directory.systemTemp.createTempSync('anc5c');
+      addTearDown(() => dossier.deleteSync(recursive: true));
+      final File f = File('${dossier.path}/x.dart')
+        ..writeAsStringSync(r"""
+String a(Duration d) => 'Duree : ' '${LibellesGroupe.dureeSeule(d)}'; // FAUTE
+String b(Duration d) =>
+    'Duree : '
+    '${LibellesGroupe.dureeSeule(d)}'; // FAUTE
+String c(Duration d) => 'Duree : ''${LibellesGroupe.dureeSeule(d)}'; // FAUTE
+String c2(Duration d) => 'Duree : ' '''${LibellesGroupe.dureeSeule(d)}'''; // FAUTE
+String v(Duration d) {
+  final String x = LibellesGroupe.dureeSeule(d);
+  return 'Duree : '
+      '$x'; // FAUTE
+}
+class Seance {
+  const Seance(this.duree);
+  final String duree;
+  String get m => 'Duree : ${this.duree}'; // FAUTE
+  String get m2 => 'Duree : '
+      '${this.duree}'; // FAUTE
+  String get m3 => 'Duree : $duree'; // FAUTE
+}
+Seance s(Duration d) => Seance(LibellesGroupe.dureeSeule(d));
+class Autre {
+  const Autre(this.duree);
+  final String duree;
+  String get m => 'Duree : ${this.duree}';
+}
+// Permis : la valeur en tete, suivie d'un litteral adjacent.
+String tete(Duration d) => '${LibellesGroupe.dureeSeule(d)}' ' de cours';
+String tete2(Duration d) => '''${LibellesGroupe.dureeSeule(d)} de cours''';
+String tete3(Duration d) => '${LibellesGroupe.dureeSeule(d)}'
+    ' de cours';
+""");
+      final List<String> l = f.readAsLinesSync();
+      final List<AncreGlissee> fautes = ancresGlissees(<File>[f]);
+      expect(
+        fautes.map((AncreGlissee a) => a.ligne).toList(),
+        <int>[
+          for (int i = 0; i < l.length; i++)
+            if (l[i].contains('// FAUTE')) i + 1,
+        ],
+        reason: fautes
+            .map((AncreGlissee a) => '${a.ligne} ${a.raison}')
+            .join('\n'),
+      );
     });
   });
 }
