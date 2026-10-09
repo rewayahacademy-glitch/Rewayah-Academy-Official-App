@@ -7,14 +7,6 @@ revoke all on public.student_concern
   from public, anon, authenticated, agent_ro;
 grant select on public.student_concern to authenticated;
 
--- Diagnostic temporaire pour localiser un grant réintroduit par la chaîne de migrations.
-do $b11_acl_checkpoint$
-begin
-  raise notice 'B-11 ACL après 0056: %',
-    (select c.relacl::text from pg_catalog.pg_class c
-      where c.oid = 'public.student_concern'::regclass);
-end;
-$b11_acl_checkpoint$;
 
 -- Les policies de lecture suivent aussi l'etat du compte; sinon un role JWT
 -- ancien permettrait encore de lire des notes internes apres suspension.
