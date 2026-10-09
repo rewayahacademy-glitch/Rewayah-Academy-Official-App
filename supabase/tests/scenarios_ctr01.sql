@@ -191,22 +191,50 @@ end $$;
 -- 1-to-1 (ADR-004), il dit seulement ce que le plafond compte. Un troisieme
 -- ELEVE reste refuse, y compris apres une visite de controle.
 
+create temporary table ctr01_config_snapshot as
+select key, value
+from public.app_config
+where key in ('allow_multi_participant_sessions', 'max_participants_per_session');
+
+-- C2 mesure bien le contrat 1-to-1, quelles que soient les mutations des
+-- scénarios précédents sur la base partagée.
+insert into public.app_config (key, value)
+values ('allow_multi_participant_sessions', 'false'::jsonb),
+       ('max_participants_per_session', '2'::jsonb)
+on conflict (key) do update set value = excluded.value;
+
 do $$
 declare
   v_refuse boolean := false;
+  v_message text;
 begin
   begin
     insert into public.session_participants (session_id, profile_id, role)
     values ('c1aaaaaa-0000-0000-0000-00000000000a',
             'c1000000-0000-0000-0000-00000000000b', 'student');
   exception when others then
-    v_refuse := (sqlerrm like '%plafond de participants%');
+    v_message := sqlerrm;
+    v_refuse := (v_message like '%plafond de participants%');
   end;
 
   if not v_refuse then
-    raise exception 'C2 : un troisieme eleve a ete accepte dans un cours 1-to-1';
+    raise exception 'C2 : le troisieme eleve n''a pas ete refuse par le plafond attendu (erreur: %)', v_message;
   end if;
 end $$;
+
+-- Restaurer exactement les deux valeurs, et retirer toute cle ajoutée.
+update public.app_config current_config
+   set value = snapshot.value
+  from pg_temp.ctr01_config_snapshot snapshot
+ where current_config.key = snapshot.key;
+
+delete from public.app_config current_config
+ where current_config.key in ('allow_multi_participant_sessions', 'max_participants_per_session')
+   and not exists (
+     select 1 from pg_temp.ctr01_config_snapshot snapshot
+     where snapshot.key = current_config.key
+   );
+drop table pg_temp.ctr01_config_snapshot;
 
 -- ============================================================
 -- C3 : deux visites qui se recoupent sont permises, un double
