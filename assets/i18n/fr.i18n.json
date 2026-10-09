@@ -2607,7 +2607,7 @@
         "apercuIndisponibleDetail": "Le calcul de l'aperçu n'est pas encore branché : aucun montant n'est estimé ici. Le brouillon reste modifiable.",
         "apercuErreur": "Aperçu non calculé",
         "apercuErreurDetail": "Le calcul n'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos saisies sont gardées : relancez le calcul.",
-        "apercuHorsLigne": "Aperçu non calculé",
+        "apercuHorsLigne": "Aperçu en attente",
         "apercuHorsLigneDetail": "L'aperçu ne peut pas être calculé maintenant. Vos saisies sont gardées ; relancez le calcul dès que l'envoi est de nouveau possible.",
         "apercuRecalculer": "Relancer le calcul",
         "apercuRecalcul": "Recalcul en cours",
@@ -5753,7 +5753,7 @@
       "paiements": "Paiements du mois"
     },
     "acces": {
-      "enfantTitre": "Accès à cette classe fermé pour le moment",
+      "enfantTitre": "Accès à cette classe temporairement indisponible",
       "enfantMessage": "Votre tuteur peut gérer l'accès.",
       "regulariserTitre": "Accès à régulariser",
       "regulariserManque": "Il manque {montant} pour financer {mois}.",

@@ -1,4 +1,7 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import '../accessibilite/texte_sans_coupure.dart';
 import '../theme/app_gabarit.dart';
@@ -132,36 +135,24 @@ class LigneCleValeur extends StatelessWidget {
         MediaQuery.textScalerOf(context).scale(AppSpacing.lg) / AppSpacing.lg >=
         AppGabarit.seuilTexteColonne;
 
-    Widget corps(bool empiler) => empiler
-        ? Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              texteCle,
-              Ecart.vXs,
-              // Empilee, la valeur garde son bord : celui de fin pour un
-              // montant, celui de la colonne des autres montants.
-              if (valeurEnFin)
-                Align(
-                  alignment: AlignmentDirectional.centerEnd,
-                  child: blocValeur,
-                )
-              else
-                blocValeur,
-            ],
-          )
-        : Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Expanded(flex: 2, child: texteCle),
-              Ecart.hLg,
-              Expanded(flex: 3, child: blocValeur),
-            ],
-          );
-    final Widget mesure = LayoutBuilder(
-      builder: (BuildContext contexte, BoxConstraints c) => corps(
-        grandTexte || !_cleTientEnColonne(contexte, styleCle, c.maxWidth),
-      ),
+    // Le mot le plus long de la cle, mesure une fois : la disposition se
+    // choisit a la mise en page, sans `LayoutBuilder` (une ligne posee sous
+    // un `IntrinsicHeight`, Vue globale de la Finance, doit donner sa
+    // hauteur intrinseque). Cote a cote : la cle sur deux cinquiemes, la
+    // valeur sur trois ; empilee : la cle au-dessus, la valeur dessous, a
+    // son bord (celui de fin pour un montant).
+    final double motLong = largeurMotLePlusLong(
+      context,
+      cle,
+      styleCle,
+      MediaQuery.textScalerOf(context),
+    );
+    final Widget mesure = _Disposition(
+      empilee: (double largeur) =>
+          grandTexte || !_cleTientEnColonne(motLong, largeur),
+      valeurEnFin: valeurEnFin,
+      sens: Directionality.of(context),
+      children: <Widget>[texteCle, blocValeur],
     );
     final Widget? tete = meneur;
     return MergeSemantics(
@@ -181,17 +172,173 @@ class LigneCleValeur extends StatelessWidget {
     );
   }
 
-  /// Vrai quand chaque mot de la cle tient, a l'echelle de l'appareil, dans
-  /// sa colonne (deux cinquiemes de la ligne, ecart retire).
-  bool _cleTientEnColonne(BuildContext context, TextStyle style, double w) {
+  /// Vrai quand le mot le plus long de la cle ([motLong], a l'echelle de
+  /// l'appareil) tient dans sa colonne (deux cinquiemes de la ligne, ecart
+  /// retire).
+  static bool _cleTientEnColonne(double motLong, double w) {
     if (!w.isFinite) return true;
     final double colonne = (w - AppSpacing.lg) * 2 / 5;
-    return largeurMotLePlusLong(
-          context,
-          cle,
-          style,
-          MediaQuery.textScalerOf(context),
-        ) <=
-        colonne - 2;
+    return motLong <= colonne - 2;
   }
+}
+
+/// Pose la cle (premier enfant) et la valeur (second) cote a cote, la cle
+/// sur deux cinquiemes et la valeur sur trois, separees de `AppSpacing.lg` ;
+/// ou empilees quand [empilee] le dit pour la largeur recue : la cle, puis
+/// `AppSpacing.xs`, puis la valeur, au bord de debut, ou de fin avec
+/// [valeurEnFin]. Contrairement a un `LayoutBuilder`, il rend ses dimensions
+/// intrinseques.
+class _Disposition extends MultiChildRenderObjectWidget {
+  const _Disposition({
+    required this.empilee,
+    required this.valeurEnFin,
+    required this.sens,
+    required super.children,
+  });
+
+  final bool Function(double largeur) empilee;
+  final bool valeurEnFin;
+  final TextDirection sens;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) =>
+      _RenduDisposition(empilee, valeurEnFin, sens);
+
+  @override
+  void updateRenderObject(BuildContext context, _RenduDisposition rendu) {
+    rendu
+      ..empilee = empilee
+      ..valeurEnFin = valeurEnFin
+      ..sens = sens;
+  }
+}
+
+class _DonneesDisposition extends ContainerBoxParentData<RenderBox> {}
+
+class _RenduDisposition extends RenderBox
+    with
+        ContainerRenderObjectMixin<RenderBox, _DonneesDisposition>,
+        RenderBoxContainerDefaultsMixin<RenderBox, _DonneesDisposition> {
+  _RenduDisposition(this._empilee, this._valeurEnFin, this._sens);
+
+  static const double _ecartLigne = AppSpacing.lg;
+  static const double _ecartPile = AppSpacing.xs;
+
+  bool Function(double largeur) _empilee;
+  set empilee(bool Function(double largeur) valeur) {
+    _empilee = valeur;
+    markNeedsLayout();
+  }
+
+  bool _valeurEnFin;
+  set valeurEnFin(bool valeur) {
+    if (valeur == _valeurEnFin) return;
+    _valeurEnFin = valeur;
+    markNeedsLayout();
+  }
+
+  TextDirection _sens;
+  set sens(TextDirection valeur) {
+    if (valeur == _sens) return;
+    _sens = valeur;
+    markNeedsLayout();
+  }
+
+  RenderBox get _cle => firstChild!;
+  RenderBox get _valeur => lastChild!;
+
+  double _largeurCle(double w) => (w - _ecartLigne) * 2 / 5;
+  double _largeurValeur(double w) => (w - _ecartLigne) * 3 / 5;
+
+  @override
+  void setupParentData(RenderBox child) {
+    if (child.parentData is! _DonneesDisposition) {
+      child.parentData = _DonneesDisposition();
+    }
+  }
+
+  @override
+  double computeMinIntrinsicWidth(double height) => math.max(
+    _cle.getMinIntrinsicWidth(double.infinity),
+    _valeur.getMinIntrinsicWidth(double.infinity),
+  );
+
+  @override
+  double computeMaxIntrinsicWidth(double height) =>
+      _cle.getMaxIntrinsicWidth(double.infinity) +
+      _ecartLigne +
+      _valeur.getMaxIntrinsicWidth(double.infinity);
+
+  double _hauteur(double w) => _empilee(w)
+      ? _cle.getMaxIntrinsicHeight(w) +
+            _ecartPile +
+            _valeur.getMaxIntrinsicHeight(w)
+      : math.max(
+          _cle.getMaxIntrinsicHeight(_largeurCle(w)),
+          _valeur.getMaxIntrinsicHeight(_largeurValeur(w)),
+        );
+
+  @override
+  double computeMinIntrinsicHeight(double width) => _hauteur(width);
+
+  @override
+  double computeMaxIntrinsicHeight(double width) => _hauteur(width);
+
+  @override
+  Size computeDryLayout(BoxConstraints constraints) {
+    final double w = constraints.maxWidth;
+    if (_empilee(w)) {
+      final BoxConstraints libre = BoxConstraints(maxWidth: w);
+      final Size c = _cle.getDryLayout(libre);
+      final Size v = _valeur.getDryLayout(libre);
+      return constraints.constrain(Size(w, c.height + _ecartPile + v.height));
+    }
+    final Size c = _cle.getDryLayout(
+      BoxConstraints.tightFor(width: _largeurCle(w)),
+    );
+    final Size v = _valeur.getDryLayout(
+      BoxConstraints.tightFor(width: _largeurValeur(w)),
+    );
+    return constraints.constrain(Size(w, math.max(c.height, v.height)));
+  }
+
+  @override
+  void performLayout() {
+    final double w = constraints.maxWidth;
+    final _DonneesDisposition dCle = _cle.parentData! as _DonneesDisposition;
+    final _DonneesDisposition dValeur =
+        _valeur.parentData! as _DonneesDisposition;
+    final bool rtl = _sens == TextDirection.rtl;
+    if (_empilee(w)) {
+      final BoxConstraints libre = BoxConstraints(maxWidth: w);
+      _cle.layout(libre, parentUsesSize: true);
+      _valeur.layout(libre, parentUsesSize: true);
+      final double xCle = rtl ? w - _cle.size.width : 0;
+      final bool auBordDeFin = _valeurEnFin;
+      final double xValeur = (rtl != auBordDeFin) ? w - _valeur.size.width : 0;
+      dCle.offset = Offset(xCle, 0);
+      dValeur.offset = Offset(xValeur, _cle.size.height + _ecartPile);
+      size = constraints.constrain(
+        Size(w, _cle.size.height + _ecartPile + _valeur.size.height),
+      );
+      return;
+    }
+    final double lc = _largeurCle(w);
+    final double lv = _largeurValeur(w);
+    _cle.layout(BoxConstraints.tightFor(width: lc), parentUsesSize: true);
+    _valeur.layout(BoxConstraints.tightFor(width: lv), parentUsesSize: true);
+    dCle.offset = Offset(rtl ? w - lc : 0, 0);
+    dValeur.offset = Offset(rtl ? 0 : w - lv, 0);
+    size = constraints.constrain(
+      Size(w, math.max(_cle.size.height, _valeur.size.height)),
+    );
+  }
+
+  @override
+  void paint(PaintingContext context, Offset offset) =>
+      defaultPaint(context, offset);
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) =>
+      defaultHitTestChildren(result, position: position);
 }

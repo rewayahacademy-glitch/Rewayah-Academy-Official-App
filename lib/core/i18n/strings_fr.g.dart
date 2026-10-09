@@ -13294,8 +13294,8 @@ class Traductions$argent$acces$fr {
 
 	// Translations
 
-	/// fr: 'Accès à cette classe fermé pour le moment'
-	String get enfantTitre => 'Accès à cette classe fermé pour le moment';
+	/// fr: 'Accès à cette classe temporairement indisponible'
+	String get enfantTitre => 'Accès à cette classe temporairement indisponible';
 
 	/// fr: 'Votre tuteur peut gérer l'accès.'
 	String get enfantMessage => 'Votre tuteur peut gérer l\'accès.';
@@ -15043,8 +15043,8 @@ class Traductions$admin$finance$pol$fr {
 	/// fr: 'Le calcul n'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos saisies sont gardées : relancez le calcul.'
 	String get apercuErreurDetail => 'Le calcul n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos saisies sont gardées : relancez le calcul.';
 
-	/// fr: 'Aperçu non calculé'
-	String get apercuHorsLigne => 'Aperçu non calculé';
+	/// fr: 'Aperçu en attente'
+	String get apercuHorsLigne => 'Aperçu en attente';
 
 	/// fr: 'L'aperçu ne peut pas être calculé maintenant. Vos saisies sont gardées ; relancez le calcul dès que l'envoi est de nouveau possible.'
 	String get apercuHorsLigneDetail => 'L\'aperçu ne peut pas être calculé maintenant. Vos saisies sont gardées ; relancez le calcul dès que l\'envoi est de nouveau possible.';
@@ -21280,7 +21280,7 @@ extension on Traductions {
 			'admin.finance.pol.apercuIndisponibleDetail' => 'Le calcul de l\'aperçu n\'est pas encore branché : aucun montant n\'est estimé ici. Le brouillon reste modifiable.',
 			'admin.finance.pol.apercuErreur' => 'Aperçu non calculé',
 			'admin.finance.pol.apercuErreurDetail' => 'Le calcul n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos saisies sont gardées : relancez le calcul.',
-			'admin.finance.pol.apercuHorsLigne' => 'Aperçu non calculé',
+			'admin.finance.pol.apercuHorsLigne' => 'Aperçu en attente',
 			'admin.finance.pol.apercuHorsLigneDetail' => 'L\'aperçu ne peut pas être calculé maintenant. Vos saisies sont gardées ; relancez le calcul dès que l\'envoi est de nouveau possible.',
 			'admin.finance.pol.apercuRecalculer' => 'Relancer le calcul',
 			'admin.finance.pol.apercuRecalcul' => 'Recalcul en cours',
@@ -23906,7 +23906,7 @@ extension on Traductions {
 			'argent.soldes.profilsFinances' => 'Profils financés',
 			'argent.soldes.profilsFinancesValeur' => ({required Object n, required Object total}) => '${n} sur ${total}',
 			'argent.soldes.paiements' => 'Paiements du mois',
-			'argent.acces.enfantTitre' => 'Accès à cette classe fermé pour le moment',
+			'argent.acces.enfantTitre' => 'Accès à cette classe temporairement indisponible',
 			'argent.acces.enfantMessage' => 'Votre tuteur peut gérer l\'accès.',
 			'argent.acces.regulariserTitre' => 'Accès à régulariser',
 			'argent.acces.regulariserManque' => ({required Object montant, required Object mois}) => 'Il manque ${montant} pour financer ${mois}.',

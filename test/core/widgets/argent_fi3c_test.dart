@@ -281,8 +281,8 @@ void main() {
     });
   });
 
-  group('M2 : la pastille d essai dit « Essai : n/max »', () {
-    testWidgets('les deux compteurs rendus : « Essai : 1/2 »', (
+  group('M2 : la pastille d essai dit « Essai\u00A0: n/max »', () {
+    testWidgets('les deux compteurs rendus : « Essai\u00A0: 1/2 »', (
       WidgetTester tester,
     ) async {
       await _monter(
@@ -293,10 +293,10 @@ void main() {
           essaisMax: 2,
         ),
       );
-      expect(find.text('Essai : 1/2'), findsOneWidget);
+      expect(find.text('Essai\u00A0: 1/2'), findsOneWidget);
       expect(
         PastilleFinanciere.libelleEssai(utilises: 2, max: 2),
-        'Essai : 2/2',
+        'Essai\u00A0: 2/2',
       );
     });
 

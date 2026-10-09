@@ -143,8 +143,10 @@ void main() {
         );
         await tester.pump();
         await tester.pump();
-        await _toucher(tester, find.byKey(RechargeFoyerPage.caseDe('b1')));
-        verifierCartesDeChoixEntieres(tester);
+        // JONCTION-LIGNES-1 : la recharge de FI-DIR-1 rend des montants, plus
+        // des offres a cocher, et un seul beneficiaire n'a rien a repartir
+        // (pas de case). Le point du test reste : aucun mot coupe a 320 x2.
+        verifierEcranEntierCoupeMots4(tester);
       });
     }
   }
