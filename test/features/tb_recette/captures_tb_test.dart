@@ -69,6 +69,12 @@
 //   CAPTURE_DIR=docs/current/captures/TB-9 flutter test \
 //     test/features/tb_recette/captures_tb_test.dart --name tb9_
 //
+// TB-11a : le tuteur observateur et le controleur, presentation en
+// lecture seule (PED-01 a PED-04), 390 et 1440 clair et sombre, x2, 320 x2.
+// Rangees dans docs/current/captures/TB-11a/ :
+//   CAPTURE_DIR=docs/current/captures/TB-11a flutter test \
+//     test/features/tb_recette/captures_tb_test.dart --name tb11a_
+//
 // AR-SALLE-1 : la salle en arabe (RTL), enseignant et eleve, 390 et 1440
 // clair et sombre, 320 x2. Rangees dans docs/current/captures/AR-SALLE-1/ :
 //   CAPTURE_DIR=docs/current/captures/AR-SALLE-1 flutter test \
@@ -88,6 +94,7 @@ import 'package:rewayah_academy/core/tc_outils/port_dock_hote.dart'
     show OutilDock;
 import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
+import 'package:rewayah_academy/features/demo/salle_observateur_demo.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/bibliotheque_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/capsule_seance.dart';
@@ -993,6 +1000,126 @@ void main() {
           expect(tester.takeException(), isNull);
           debugPrint('PNG ${await capturer(tester, nom)}');
         });
+      }
+    }
+  });
+
+  group('TB-11a : observateurs en lecture seule', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    const List<String> tous = <String>[
+      '390_x1_clair',
+      '390_x1_sombre',
+      '390_x2_clair',
+      '1440_x1_clair',
+      '1440_x1_sombre',
+      '1440_x2_clair',
+      '320_x2_clair',
+    ];
+    for (final ObservateurDemo o in ObservateurDemo.values) {
+      for (final SituationTb situation in <SituationTb>[
+        SituationTb.ped01,
+        SituationTb.ped02,
+        SituationTb.ped03,
+        SituationTb.ped04,
+      ]) {
+        for (final (_Cadrage cas, bool defile) in <(_Cadrage, bool)>[
+          for (final _Cadrage c in _cadragesTb)
+            if (situation == SituationTb.ped03
+                ? tous.contains(c.$1)
+                : c.$1 == '390_x1_clair' || c.$1 == '1440_x1_clair')
+              (c, false),
+          // Tour 2 (CT-3 tablette) : la colonne de presence du controleur
+          // reste laterale et lisible a 900 et 1100 avec une presentation.
+          if (situation == SituationTb.ped03) ...<(_Cadrage, bool)>[
+            (
+              (
+                '900_x1_clair',
+                const Size(900, 1200),
+                2,
+                EdgeInsets.zero,
+                1,
+                ThemeMode.light,
+              ),
+              false,
+            ),
+            (
+              (
+                '1100_x1_clair',
+                const Size(1100, 700),
+                2,
+                EdgeInsets.zero,
+                1,
+                ThemeMode.light,
+              ),
+              false,
+            ),
+            (
+              (
+                '1100_x1_sombre',
+                const Size(1100, 700),
+                2,
+                EdgeInsets.zero,
+                1,
+                ThemeMode.dark,
+              ),
+              false,
+            ),
+            // 320 x2 apres defilement : la scene sous la presentation.
+            for (final _Cadrage c in _cadragesTb)
+              if (c.$1 == '320_x2_clair') (c, true),
+            // Tour 3 (CT-3, texte x2) : tablette en paysage et iPad en
+            // paysage ; puis la colonne de presence defilee jusqu'au bout.
+            for (final (String n, Size taille) in <(String, Size)>[
+              ('1100_x2_clair', const Size(1100, 700)),
+              ('1024_x2_clair', const Size(1024, 768)),
+            ])
+              for (final bool d in <bool>[false, true])
+                ((n, taille, 2, EdgeInsets.zero, 2, ThemeMode.light), d),
+          ],
+        ]) {
+          final String nom =
+              'tb11a_${o.name}_${situation.name}_${cas.$1}'
+              '${defile ? '_defile' : ''}';
+          testWidgets(nom, (WidgetTester tester) async {
+            fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+            await tester.pumpWidget(
+              hoteCapture(
+                DemoSallePage(observateur: o, situation: situation),
+                themeMode: cas.$6,
+                echelleTexte: cas.$5,
+              ),
+            );
+            await stabiliser(tester);
+            await tester.pump(const Duration(milliseconds: 1400));
+            if (defile) {
+              // Sur tablette, la colonne de presence laterale defile ; au
+              // telephone, la colonne de la presentation et de la scene.
+              final Finder presence = find.byKey(
+                const ValueKey<String>('presence-defile'),
+              );
+              if (presence.evaluate().isNotEmpty) {
+                await tester.drag(
+                  presence,
+                  Offset(0, -cas.$2.height),
+                  warnIfMissed: false,
+                );
+              } else {
+                await tester.ensureVisible(
+                  find.byKey(const ValueKey<String>('demo-enseignant')),
+                );
+              }
+              await tester.pumpAndSettle();
+            }
+            // La capture prouve ce qu'elle nomme : la presentation lue.
+            expect(
+              find.byKey(const ValueKey<String>('presentation-lue')),
+              findsOneWidget,
+            );
+            expect(find.byType(SurfacePageFixe), findsOneWidget);
+            expect(tester.takeException(), isNull);
+            debugPrint('PNG ${await capturer(tester, nom)}');
+          });
+        }
       }
     }
   });

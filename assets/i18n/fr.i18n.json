@@ -411,7 +411,9 @@
         "roles": {
           "eleve": "Élève standard",
           "guidee": "Mode Accessibilité",
-          "enseignant": "Enseignant"
+          "enseignant": "Enseignant",
+          "tuteur": "Tuteur observateur",
+          "controleur": "Contrôleur"
         },
         "etats": {
           "repos": "Repos",

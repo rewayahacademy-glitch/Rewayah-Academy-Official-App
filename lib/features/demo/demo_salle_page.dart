@@ -38,6 +38,7 @@ import '../salle_seance/salle_seance.dart';
 import '../salle_seance/signalement_seance.dart';
 import '../salle_seance/vue_seance.dart';
 import 'mode_demonstration.dart';
+import 'salle_observateur_demo.dart';
 import 'seance_demo.dart';
 
 /// Les routes de la demonstration : AUCUNE quand l'environnement ne
@@ -52,6 +53,11 @@ List<RouteBase> routesDemoSalle(String environnement) {
         etat: _lire(EtatDemoSalle.values, etat.uri.queryParameters['etat']),
         // TB-1b : une situation Supports et tableau (`&tb=ped03`).
         situation: _lire(SituationTb.values, etat.uri.queryParameters['tb']),
+        // TB-11a : la salle d'un observateur (`&obs=tuteur`).
+        observateur: _lire(
+          ObservateurDemo.values,
+          etat.uri.queryParameters['obs'],
+        ),
         // Le titre de demonstration, comme l'Espace Classe (`&titre=sayyida`).
         titre: etat.uri.queryParameters['titre'] == 'sayyida'
             ? TitreEnseignant.sayyida
@@ -84,13 +90,29 @@ String adresseDemoSalleTb(RoleSeance role, SituationTb situation) => Uri(
   queryParameters: <String, String>{'role': role.name, 'tb': situation.name},
 ).toString();
 
+/// TB-11a : l'adresse de la salle d'un observateur dans une situation.
+String adresseDemoSalleObservateur(
+  ObservateurDemo observateur,
+  SituationTb situation,
+) => Uri(
+  path: Routes.demoSalle,
+  queryParameters: <String, String>{
+    'obs': observateur.name,
+    'tb': situation.name,
+  },
+).toString();
+
+/// L'identifiant fictif de la seance observee.
+const String _seanceObservee = 'demo-seance';
+
 /// La page : la liste, ou la salle si [role] et [etat] (ou [situation])
-/// sont donnes.
+/// sont donnes, ou celle d'un [observateur].
 class DemoSallePage extends StatelessWidget {
   const DemoSallePage({
     this.role,
     this.etat,
     this.situation,
+    this.observateur,
     this.titre = TitreEnseignant.sayyid,
     this.enregistrement = EtatEnregistrement.actif,
     super.key,
@@ -112,8 +134,24 @@ class DemoSallePage extends StatelessWidget {
   /// Le titre de l'enseignant de la demonstration (E16).
   final TitreEnseignant titre;
 
+  /// TB-11a : l'observateur (tuteur, controleur) ; il prime sur [role]. Sa
+  /// salle est la VRAIE `SallePage`, la presentation lue celle de
+  /// [situation] (une situation sans objet pour lui ramene a la liste).
+  final ObservateurDemo? observateur;
+
   @override
   Widget build(BuildContext context) {
+    final ObservateurDemo? o = observateur;
+    if (o != null) {
+      final SituationTb s = situation ?? SituationTb.sal00;
+      if (!situationsObservateur.contains(s)) return const _ListeDemo();
+      return SalleObservateurDemo(
+        key: ValueKey<String>('obs-${o.name}-tb-${s.name}'),
+        observateur: o,
+        seanceId: _seanceObservee,
+        presentation: presentationObserveeDemo(s),
+      );
+    }
     final RoleSeance? r = role;
     final SituationTb? s = situation;
     if (r != null && s != null) {
@@ -158,6 +196,11 @@ String _libelleRole(RoleSeance role) => switch (role) {
   RoleSeance.eleve => t.salle.seance.demo.roles.eleve,
   RoleSeance.guidee => t.salle.seance.demo.roles.guidee,
   RoleSeance.enseignant => t.salle.seance.demo.roles.enseignant,
+};
+
+String _libelleObservateur(ObservateurDemo o) => switch (o) {
+  ObservateurDemo.tuteur => t.salle.seance.demo.roles.tuteur,
+  ObservateurDemo.controleur => t.salle.seance.demo.roles.controleur,
 };
 
 String _libelleEtat(EtatDemoSalle etat) => switch (etat) {
@@ -319,6 +362,35 @@ class _ListeDemo extends StatelessWidget {
             ),
             Ecart.vLg,
             groupeTb(role),
+          ],
+          // TB-11a : les observateurs, la presentation en lecture seule.
+          for (final ObservateurDemo o in ObservateurDemo.values) ...<Widget>[
+            Ecart.vXxl,
+            Semantics(
+              header: true,
+              child: Text(
+                _libelleObservateur(o),
+                style: palette.inkStrong.applyTo(
+                  theme.textTheme.titleMedium ?? const TextStyle(),
+                ),
+              ),
+            ),
+            Ecart.vMd,
+            titreGroupe(t.salle.seance.demo.groupes.tableau),
+            Ecart.vSm,
+            Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.sm,
+              children: <Widget>[
+                for (final SituationTb s in situationsObservateur)
+                  _Lien(
+                    key: ValueKey<String>('lien-obs-${o.name}-tb-${s.name}'),
+                    libelle: _libelleSituation(s),
+                    onPress: () =>
+                        context.go(adresseDemoSalleObservateur(o, s)),
+                  ),
+              ],
+            ),
           ],
         ],
       ),
