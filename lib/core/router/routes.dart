@@ -309,8 +309,8 @@ abstract final class Routes {
   /// adresse, que le rechargement Web garde.
   static const String enseignantATerminer = '$enseignantJournee/a-terminer';
 
-  /// La liste complete des remplacements confirmes de la Journee
-  /// (DASH-ENS-LISTES, ligne DASH-ENS-REMPL) : la Journee en montre trois.
+  /// L'ecran commun des remplacements (REMPL-1) : offres urgentes, vos
+  /// remplacements confirmes (la Journee en montre trois), offres prises.
   static const String enseignantRemplacements =
       '$enseignantJournee/remplacements';
 

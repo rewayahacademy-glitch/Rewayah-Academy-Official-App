@@ -96,6 +96,7 @@ import '../../features/journee/journee_page.dart';
 import '../../features/notifications/notifications_page.dart';
 import '../../features/parcours_offres/parcours_offres_page.dart';
 import '../../features/profil_enseignant/profil_enseignant_page.dart';
+import '../../features/remplacements/remplacements_page.dart';
 import '../../features/revue_groupe/revue_groupe_page.dart';
 import '../../features/salle/salle_page.dart';
 import '../../features/suivi_eleve/suivi_eleve_page.dart';
@@ -791,11 +792,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     builder: (BuildContext _, GoRouterState _) =>
                         const ListeATerminerPage(),
                   ),
-                  // DASH-ENS-LISTES : les remplacements au-dela de trois.
+                  // REMPL-1 : l'ecran commun des remplacements, ou mene
+                  // « Voir tout » des remplacements de la Journee.
                   GoRoute(
                     path: 'remplacements',
                     builder: (BuildContext _, GoRouterState _) =>
-                        const ListeRemplacementsPage(),
+                        const RemplacementsPage(),
                   ),
                   // DASH-ENS-LISTES : toutes les « Alertes utiles ».
                   GoRoute(

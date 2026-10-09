@@ -33,6 +33,7 @@ import 'package:rewayah_academy/features/fiche_groupe/fiche_groupe_page.dart';
 import 'package:rewayah_academy/features/journee/absence_remplacement_vue.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
 import 'package:rewayah_academy/features/profil_enseignant/profil_enseignant_page.dart';
+import 'package:rewayah_academy/features/remplacements/remplacements_page.dart';
 import 'package:rewayah_academy/features/revue_groupe/revue_groupe_page.dart';
 
 import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
@@ -586,7 +587,8 @@ void main() {
         find.byKey(const ValueKey<String>('journee-remplacements-voir-tout')),
       );
       expect(routeur.state.matchedLocation, Routes.enseignantRemplacements);
-      expect(find.byType(ListeRemplacementsPage), findsOneWidget);
+      // REMPL-1 : « Voir tout » mene a l'ecran commun des remplacements.
+      expect(find.byType(RemplacementsPage), findsOneWidget);
       expect(find.byType(CarteRemplacement), findsNWidgets(5));
       // Les plus proches d'abord.
       final List<double> ordre = <String>[
