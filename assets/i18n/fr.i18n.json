@@ -349,6 +349,11 @@
         "focusSemantique": "Focus, agrandir le contenu et réduire les panneaux",
         "quitterFocus": "Quitter le focus"
       },
+      "surface": {
+        "aucunSupport": "Choisissez un support ou écrivez au tableau.",
+        "page": "{titre}, page {page} sur {pages}",
+        "supportMasque": "Tableau, le support est masqué"
+      },
       "capsule": {
         "avatar": "Afficher les informations de {nom}",
         "controlePossible": "Contrôle possible. Afficher les informations",

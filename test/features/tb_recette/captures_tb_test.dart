@@ -40,6 +40,12 @@
 // docs/current/captures/TB-5/ :
 //   CAPTURE_DIR=docs/current/captures/TB-5 flutter test \
 //     test/features/tb_recette/captures_tb_test.dart --name tb5_
+//
+// TB-6 (PED-01 a PED-04) : tableau libre, Support, Avec notes, Tableau,
+// enseignant et eleve, 390 et 1440 clair et sombre, 390 x2, 320 x2. Rangees dans
+// docs/current/captures/TB-6/ :
+//   CAPTURE_DIR=docs/current/captures/TB-6 flutter test \
+//     test/features/tb_recette/captures_tb_test.dart --name tb6_
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -50,6 +56,7 @@ import 'package:rewayah_academy/features/salle_seance/capsule_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
 import 'package:rewayah_academy/features/salle_seance/composition_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_eleves.dart';
+import 'package:rewayah_academy/features/salle_seance/surface_page_fixe.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/zone_support.dart';
 
@@ -501,6 +508,64 @@ void main() {
         expect(tester.takeException(), isNull);
         debugPrint('PNG ${await capturer(tester, nom)}');
       });
+    }
+  });
+
+  // TB-6 (PED-01 a PED-04) : les trois affichages et le tableau libre, chez
+  // l'enseignant et l'eleve ; clair et sombre (la page reste claire).
+  group('TB-6 : surface a page fixe', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final RoleSeance role in <RoleSeance>[
+      RoleSeance.enseignant,
+      RoleSeance.eleve,
+    ]) {
+      for (final SituationTb situation in <SituationTb>[
+        SituationTb.ped01,
+        SituationTb.ped02,
+        SituationTb.ped03,
+        SituationTb.ped04,
+      ]) {
+        for (final _Cadrage cas in <_Cadrage>[
+          for (final _Cadrage c in _cadragesTb)
+            if (<String>[
+              '390_x1_clair',
+              '390_x1_sombre',
+              '390_x2_clair',
+              '1440_x1_clair',
+              '1440_x1_sombre',
+              '320_x2_clair',
+            ].contains(c.$1))
+              c,
+        ]) {
+          final String nom = 'tb6_${role.name}_${situation.name}_${cas.$1}';
+          testWidgets(nom, (WidgetTester tester) async {
+            fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+            await tester.pumpWidget(
+              hoteCapture(
+                DemoSallePage(role: role, situation: situation),
+                themeMode: cas.$6,
+                echelleTexte: cas.$5,
+              ),
+            );
+            await stabiliser(tester);
+            await tester.pump(const Duration(milliseconds: 1400));
+            // La capture prouve ce qu'elle nomme.
+            final bool page =
+                situation == SituationTb.ped02 ||
+                situation == SituationTb.ped03;
+            expect(
+              find.byKey(SurfacePageFixe.clePage),
+              page ? findsOneWidget : findsNothing,
+            );
+            expect(
+              find.byKey(SurfacePageFixe.cleFeuille),
+              page ? findsNothing : findsOneWidget,
+            );
+            expect(tester.takeException(), isNull);
+            debugPrint('PNG ${await capturer(tester, nom)}');
+          });
+        }
+      }
     }
   });
 

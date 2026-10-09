@@ -1,0 +1,240 @@
+// TB-6 (PED-01 a PED-04 ; plan V2 §2, §3, §9, §12) : la surface
+// pedagogique a page fixe.
+//
+// Une page (ou la feuille du tableau) a ratio fixe, posee en
+// `BoxFit.contain` dans la place laissee : jamais etiree, jamais inversee en
+// sombre (document lu comme sur papier). Trois affichages partages :
+// Support (notes cachees, jamais effacees), Avec notes, Tableau (le fond du
+// support masque, feuille claire au meme ratio, notes visibles). Sans
+// support presente : le tableau libre. Le calque des notes reste monte
+// d'un affichage a l'autre : masquer puis reafficher ne perd rien. Les
+// traits eux-memes arrivent avec TB-7a (CoucheAnnotation) ; ici, la place
+// et la geometrie.
+
+import 'package:flutter/material.dart';
+
+import '../../core/i18n/strings.g.dart';
+import '../../core/theme/app_elevation.dart';
+import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_radius.dart';
+import '../../core/theme/app_spacing.dart';
+import 'vue_seance.dart';
+
+/// Le rectangle de la page dans sa boite : `BoxFit.contain`, centre (plan
+/// V2 §9.1). Le repere des notes (TB-7a) est ce rectangle, jamais la boite.
+Rect rectanglePage({required double ratio, required Size boite}) {
+  final FittedSizes tailles = applyBoxFit(
+    BoxFit.contain,
+    Size(ratio, 1),
+    boite,
+  );
+  return Alignment.center.inscribe(tailles.destination, Offset.zero & boite);
+}
+
+/// La surface a page fixe : [VueSeance.vueSurface] dit quoi montrer.
+class SurfacePageFixe extends StatelessWidget {
+  const SurfacePageFixe({
+    required this.vue,
+    required this.surface,
+    this.zoom = 1,
+    super.key,
+  });
+
+  final VueSeance vue;
+
+  /// Ce que montre la surface (derive de la vue, jamais calcule ici).
+  final VueSurface surface;
+
+  /// Le zoom local (1 = 100 %), autour du centre de la page ; rien n'est
+  /// diffuse.
+  final double zoom;
+
+  /// La cle de la page du support (Support, Avec notes).
+  static const Key clePage = ValueKey<String>('surface-page');
+
+  /// La cle de la feuille claire (Tableau, tableau libre).
+  static const Key cleFeuille = ValueKey<String>('surface-feuille');
+
+  /// La cle du calque des notes, monte dans les trois affichages.
+  static const Key cleCalque = ValueKey<String>('surface-calque');
+
+  /// La cle de la phrase du tableau libre (enseignant).
+  static const Key cleConsigne = ValueKey<String>('surface-consigne');
+
+  @override
+  Widget build(BuildContext context) {
+    final SupportPageFixe? page = vue.supportPresente;
+    final TableauLibre? tableau = vue.tableauLibre;
+    final bool libre = surface == VueSurface.tableauLibre;
+    final double ratio = libre || page == null
+        ? (tableau?.ratio ?? _ratioParDefaut)
+        : page.ratio;
+    final bool fondSupport =
+        surface == VueSurface.supportSeul ||
+        surface == VueSurface.supportAvecNotes;
+    final bool notesVisibles = surface != VueSurface.supportSeul;
+    final bool consigne = libre && vue.role == RoleSeance.enseignant;
+    return LayoutBuilder(
+      builder: (BuildContext _, BoxConstraints c) {
+        final Rect rect = rectanglePage(ratio: ratio, boite: c.biggest);
+        final Widget feuille = SizedBox.fromSize(
+          size: rect.size,
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              // Le fond : la page du support, ou la feuille claire.
+              if (fondSupport && page != null)
+                _Page(key: clePage, page: page)
+              else
+                _Feuille(
+                  key: cleFeuille,
+                  libelle: libre
+                      ? t.salle.seance.commandes.affichageTableau
+                      : t.salle.seance.surface.supportMasque,
+                ),
+              // Le calque des notes : cache en Support, jamais demonte.
+              Visibility(
+                key: cleCalque,
+                visible: notesVisibles,
+                maintainState: true,
+                maintainAnimation: true,
+                maintainSize: true,
+                child: const SizedBox.expand(),
+              ),
+            ],
+          ),
+        );
+        return ClipRect(
+          child: Stack(
+            children: <Widget>[
+              Positioned.fromRect(
+                rect: rect,
+                child: Transform.scale(scale: zoom, child: feuille),
+              ),
+              // La phrase du §12 se pose sur toute la surface, pas dans la
+              // seule feuille : vide, celle-ci ne cache rien, et la phrase
+              // garde la largeur de l'ecran a texte agrandi (elle defile si
+              // la hauteur manque).
+              if (consigne)
+                Positioned.fill(
+                  child: Center(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(AppSpacing.lg),
+                      child: Text(
+                        t.salle.seance.surface.aucunSupport,
+                        key: cleConsigne,
+                        textAlign: TextAlign.center,
+                        style: AppPalette.of(context).inkMuted.applyTo(
+                          Theme.of(context).textTheme.bodyLarge ??
+                              const TextStyle(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Sans donnee de ratio : celui d'une page A4 en portrait.
+const double _ratioParDefaut = 1240 / 1754;
+
+/// La page du support. Aucune image n'est livree en demonstration
+/// (`cleImage` nulle, fournisseur des pages a BR-1) : une page neutre qui
+/// porte son titre et sa mention, jamais un faux contenu. Sa position est
+/// dite au lecteur d'ecran ; ecrite, elle doublerait la pagination des
+/// Commandes de l'enseignant (TB14).
+class _Page extends StatelessWidget {
+  const _Page({required this.page, super.key});
+
+  final SupportPageFixe page;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final String? mention = page.mention;
+    return Semantics(
+      image: true,
+      label: t.salle.seance.surface.page(
+        titre: page.titre,
+        page: page.page,
+        pages: page.total,
+      ),
+      child: ExcludeSemantics(
+        child: _Cadre(
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            // Le texte de la page est celui du document : il suit la taille
+            // de la page, jamais le texte de l'interface.
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: AlignmentDirectional.topStart,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  if (mention != null) ...<Widget>[
+                    Text(
+                      mention,
+                      style: palette.inkMuted.applyTo(
+                        textes.labelMedium ?? const TextStyle(),
+                      ),
+                    ),
+                    Ecart.vSm,
+                  ],
+                  Text(
+                    page.titre,
+                    style: palette.inkStrong.applyTo(
+                      textes.titleLarge ?? const TextStyle(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// La feuille claire du tableau : meme ratio que la page, notes au-dessus.
+class _Feuille extends StatelessWidget {
+  const _Feuille({required this.libelle, super.key});
+
+  final String libelle;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    label: libelle,
+    container: true,
+    child: const _Cadre(child: SizedBox.expand()),
+  );
+}
+
+/// Le bord d'une page ou d'une feuille : surface claire, filet, ombre de
+/// niveau 1. Toujours en theme clair (pose par [ZoneSupport]).
+class _Cadre extends StatelessWidget {
+  const _Cadre({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    return DecoratedBox(
+      decoration: palette.surfaceRaised
+          .decoration(
+            borderRadius: AppRadius.arrondiSm,
+            side: palette.borderHairline.asBorderSide(),
+          )
+          .copyWith(boxShadow: AppElevation.niveau1(palette.ombre)),
+      child: child,
+    );
+  }
+}

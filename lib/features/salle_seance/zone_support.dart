@@ -18,6 +18,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
+import 'surface_page_fixe.dart';
 import 'vignette_video.dart';
 import 'vue_seance.dart';
 
@@ -49,6 +50,11 @@ class ZoneSupport extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // TB-6 : un support a page fixe presente, ou le tableau libre connu de
+    // la vue, prend la surface ; la diapositive et le rendu fourni (Classe
+    // Live, Coran) restent ce qu'ils etaient.
+    final VueSurface? surface = contenu == null ? surfaceAMontrer(vue) : null;
+    if (surface != null) return _carteSurface(context, surface);
     final SupportSeance? support = vue.support;
     if (support == null) return _RienPartage(vue: vue);
     final Gabarit gabarit = AppGabarit.de(context);
@@ -219,6 +225,89 @@ class ZoneSupport extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+/// TB-6 : ce que la surface a page fixe montre, ou `null` (diapositive,
+/// rendu fourni, rien de partage sans tableau connu).
+VueSurface? surfaceAMontrer(VueSeance vue) {
+  if (vue.supportPresente != null) return vue.vueSurface;
+  if (vue.support == null && vue.tableauLibre != null) {
+    return VueSurface.tableauLibre;
+  }
+  return null;
+}
+
+extension on ZoneSupport {
+  /// TB-6 : la carte claire de la surface a page fixe (meme carte, meme
+  /// serti que la diapositive), la page posee dedans en `BoxFit.contain`.
+  Widget _carteSurface(BuildContext context, VueSurface surface) {
+    final Gabarit gabarit = AppGabarit.de(context);
+    // Tableau libre de l'enseignant, texte agrandi hors bureau : sa propre
+    // vignette couvrirait la phrase du §12 (rien ne recouvre un texte a
+    // lire) ; elle ne se pose pas sur la feuille. Les eleves gardent la
+    // vignette de l'enseignant.
+    final bool consigneSerree =
+        surface == VueSurface.tableauLibre &&
+        vue.role == RoleSeance.enseignant &&
+        gabarit != Gabarit.desktop &&
+        MediaQuery.textScalerOf(context).scale(1) >= _seuilPile;
+    final bool video = vue.voitVignetteSurSupport && !consigneSerree;
+    final double largeurVignette = MesuresVignette.largeur(
+      gabarit,
+      guidee: vue.vignetteAgrandie,
+      enseignant: vue.role == RoleSeance.enseignant,
+      panneau: vue.panneau != PanneauOuvert.aucun,
+    );
+    final Widget carte = Theme(
+      // La page et la feuille restent claires : jamais inversees en sombre.
+      data: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+      child: Builder(
+        builder: (BuildContext contexte) {
+          final AppPalette palette = AppPalette.of(contexte);
+          return DecoratedBox(
+            key: const ValueKey<String>('zone-support'),
+            decoration: palette.surfaceSunken
+                .decoration(borderRadius: AppRadius.arrondiLg)
+                .copyWith(boxShadow: AppElevation.niveau1(palette.ombre)),
+            child: ClipRRect(
+              borderRadius: AppRadius.arrondiLg,
+              child: Stack(
+                children: <Widget>[
+                  Positioned.fill(
+                    child: Padding(
+                      padding: EdgeInsets.all(
+                        serre ? AppSpacing.sm : AppSpacing.md,
+                      ),
+                      child: SurfacePageFixe(
+                        vue: vue,
+                        surface: surface,
+                        zoom: zoom,
+                      ),
+                    ),
+                  ),
+                  if (video)
+                    PositionedDirectional(
+                      top: AppSpacing.md,
+                      end: AppSpacing.md,
+                      // La video garde le theme de l'ecran.
+                      child: Theme(
+                        data: Theme.of(context),
+                        child: VignetteVideo(
+                          vue: vue,
+                          largeur: largeurVignette,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+    if (gabarit != Gabarit.desktop) return carte;
+    return _Serti(key: const ValueKey<String>('cadre-support'), child: carte);
   }
 }
 

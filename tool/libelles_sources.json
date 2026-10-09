@@ -139,5 +139,8 @@
   "salle.seance.contexte.controle": "etape TB-3 (capsule et contexte, UI-01, CTX-01, CTX-02) : texte du contexte deplie, plan V2 §4.3 et §19.6 (« un controle possible ne signifie pas qu'une personne observe maintenant »), a valider par le directeur",
   "salle.seance.contexte.controlePossibleDetail": "etape TB-3 (capsule et contexte, UI-01, CTX-01, CTX-02) : texte du contexte deplie, plan V2 §4.3 et §19.6 (« un controle possible ne signifie pas qu'une personne observe maintenant »), a valider par le directeur",
   "salle.seance.contexte.controleActifDetail": "etape TB-3 (capsule et contexte, UI-01, CTX-01, CTX-02) : texte du contexte deplie, plan V2 §4.3 et §19.6 (« un controle possible ne signifie pas qu'une personne observe maintenant »), a valider par le directeur",
-  "salle.seance.contexte.reduireInformations": "etape TB-3 (capsule et contexte, UI-01, CTX-01, CTX-02) : texte du contexte deplie, plan V2 §4.3 et §19.6 (« un controle possible ne signifie pas qu'une personne observe maintenant »), a valider par le directeur"
+  "salle.seance.contexte.reduireInformations": "etape TB-3 (capsule et contexte, UI-01, CTX-01, CTX-02) : texte du contexte deplie, plan V2 §4.3 et §19.6 (« un controle possible ne signifie pas qu'une personne observe maintenant »), a valider par le directeur",
+  "salle.seance.surface.aucunSupport": "etape TB-6 (Supports et tableau) : texte exact du plan V2 §12, etat « Aucun support » cote enseignant (pilotage 18_supports_tableau)",
+  "salle.seance.surface.page": "etape TB-6 (Supports et tableau) : nom lu de la page fixe presentee (titre et position, plan V2 §20 « Page {numero} sur {total} »), a valider par le directeur",
+  "salle.seance.surface.supportMasque": "etape TB-6 (Supports et tableau) : nom lu de la feuille claire quand le support est masque (plan V2 §3 et §12 « Tableau seul avec support retenu »), a valider par le directeur"
 }
