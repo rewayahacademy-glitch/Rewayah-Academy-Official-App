@@ -1388,6 +1388,20 @@ void main() {
             2,
             TextDirection.rtl,
           ),
+          (
+            '320x2_rtl_sombre',
+            const Size(320, 1000),
+            ThemeMode.dark,
+            2,
+            TextDirection.rtl,
+          ),
+          (
+            '1440_clair',
+            const Size(1440, 900),
+            ThemeMode.light,
+            1,
+            TextDirection.ltr,
+          ),
         ]) {
       testWidgets(cas.$1, (WidgetTester tester) async {
         fixerVueCapture(tester, cas.$2, 1);

@@ -7,6 +7,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/page_shell.dart';
 
@@ -60,7 +61,13 @@ class _AgentEntreePageEtat extends ConsumerState<AgentEntreePage> {
           Text(t.agent.intro, style: textes.bodyMedium),
           Ecart.vXxl,
 
-          if (echec != null) ...<Widget>[_Refus(echec: echec), Ecart.vXxl],
+          if (echec != null) ...<Widget>[
+            _Refus(
+              echec: echec,
+              onReessayer: () => ref.read(relancerOuvertureAgentProvider)(),
+            ),
+            Ecart.vXxl,
+          ],
 
           // EA-HL-DOUBLE-1f : le libelle est pose au-dessus du champ, et non
           // dans le champ, ou il etait tronque a 320 px en texte x2 (K-54).
@@ -115,9 +122,12 @@ class _AgentEntreePageEtat extends ConsumerState<AgentEntreePage> {
 
 /// Ce qui n'a pas marche, dit en clair.
 class _Refus extends StatelessWidget {
-  const _Refus({required this.echec});
+  const _Refus({required this.echec, required this.onReessayer});
 
   final EchecAgent echec;
+
+  /// Relance l'ouverture (rechargement de l'adresse, jeton compris).
+  final VoidCallback onReessayer;
 
   @override
   Widget build(BuildContext context) {
@@ -133,6 +143,9 @@ class _Refus extends StatelessWidget {
         t.agent.indisponibleDetail,
       ),
     };
+    // EA-HL-DOUBLE-1f : « Reessayez dans un instant » a son action. Un jeton
+    // refuse ne se reessaye pas : il se redemande a l'academie.
+    final bool reessayable = echec != EchecAgent.jetonRefuse;
 
     return AppCard(
       contourFort: true,
@@ -148,6 +161,15 @@ class _Refus extends StatelessWidget {
                 Text(titre, style: textes.titleSmall),
                 Ecart.vXs,
                 Text(detail, style: textes.bodySmall),
+                if (reessayable) ...<Widget>[
+                  Ecart.vMd,
+                  ActionPrincipale(
+                    libelle: t.agent.reessayer,
+                    niveau: NiveauAction.secondaire,
+                    pleineLargeur: false,
+                    onPress: onReessayer,
+                  ),
+                ],
               ],
             ),
           ),

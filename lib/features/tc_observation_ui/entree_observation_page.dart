@@ -269,10 +269,15 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
           options,
           etat.requireValue,
         ),
+        // EA-HL-DOUBLE-1f : le flux d'etats du moteur a echoue. Ce qui n'a
+        // pas abouti est dit (« L'observation n'a pas pu s'ouvrir »), jamais
+        // une indisponibilite cote service ; la relecture est offerte.
         AsyncValue<EtatVisiteObservation>(hasError: true) => EmptyState(
           message: t.tc.observation.refus.indisponible,
           icone: AppIcons.avertissement,
-          registre: RegistreVide.subi,
+          libelleAction: t.commun.reessayer,
+          onAction: () =>
+              ref.invalidate(etatVisiteObservationProvider(widget.seanceId)),
         ),
         _ => const Skeleton.liste(lignes: 2),
       },
@@ -1099,10 +1104,16 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     EchecObservation? echec,
   ) {
     final bool reessayable = echec?.seReessaye ?? false;
+    // EA-HL-DOUBLE-1f (K-59) : une panne qui se reessaye (reseau) dit sa
+    // cause probable dans la formulation unique, sans l'affirmer ni redire
+    // le reseau sous le bandeau de `PageShell`.
     return EmptyState(
       message: echec?.motif == MotifEchecObservation.capaciteAbsente
           ? t.tc.observation.refus.capaciteAbsente
           : t.tc.observation.refus.indisponible,
+      invitation: reessayable
+          ? t.tc.observation.refus.indisponibleInvitation
+          : null,
       icone: AppIcons.avertissement,
       registre: reessayable ? RegistreVide.actionnable : RegistreVide.subi,
       libelleAction: reessayable ? t.tc.observation.entree.entrer : null,

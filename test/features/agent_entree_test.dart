@@ -45,6 +45,55 @@ void main() {
     });
   }
 
+  // Reprise de EA-HL-DOUBLE-1f : « Reessayez dans un instant » a son action.
+  // Le bouton relance l'ouverture (rechargement de l'adresse, jeton compris) ;
+  // un jeton refuse ne se reessaye pas, il se redemande.
+  for (final EchecAgent echec in <EchecAgent>[
+    EchecAgent.serviceIndisponible,
+    EchecAgent.reponseIllisible,
+  ]) {
+    testWidgets('$echec : Reessayer relance l ouverture', (
+      WidgetTester tester,
+    ) async {
+      int relances = 0;
+      await tester.pumpWidget(
+        hote(
+          const AgentEntreePage(),
+          surcharges: <Override>[
+            echecAgentProvider.overrideWithValue(echec),
+            relancerOuvertureAgentProvider.overrideWithValue(() => relances++),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final Finder bouton = find.text(t.agent.reessayer);
+      expect(bouton, findsOneWidget);
+      await tester.ensureVisible(bouton);
+      await tester.tap(bouton);
+      await tester.pumpAndSettle();
+      expect(relances, 1);
+    });
+  }
+
+  testWidgets('jeton refuse : aucun bouton Reessayer', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      hote(
+        const AgentEntreePage(),
+        surcharges: <Override>[
+          echecAgentProvider.overrideWithValue(EchecAgent.jetonRefuse),
+          relancerOuvertureAgentProvider.overrideWithValue(() {}),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(t.agent.refusDetail), findsOneWidget);
+    expect(find.text(t.agent.reessayer), findsNothing);
+  });
+
   // EA-HL-DOUBLE-1f : le libelle du champ du jeton etait tronque a 320 px
   // en texte x2 ; il est pose au-dessus du champ et passe a la ligne.
   group('320 texte x2 (polices du depot)', () {
@@ -122,6 +171,22 @@ void main() {
             true,
           ),
           (
+            '320x2_rtl_sombre',
+            const Size(320, 1700),
+            ThemeMode.dark,
+            2,
+            TextDirection.rtl,
+            true,
+          ),
+          (
+            '1440_clair',
+            const Size(1440, 900),
+            ThemeMode.light,
+            1,
+            TextDirection.ltr,
+            true,
+          ),
+          (
             '390_en_ligne_clair',
             const Size(390, 844),
             ThemeMode.light,
@@ -153,6 +218,7 @@ void main() {
         await stabiliser(tester);
         expect(tester.takeException(), isNull);
         expect(find.text(t.agent.indisponibleDetail), findsOneWidget);
+        expect(find.text(t.agent.reessayer), findsOneWidget);
         expect(causesAffirmees(), findsNothing);
         if (cas.$6) {
           expectHorsLigneUneFois();

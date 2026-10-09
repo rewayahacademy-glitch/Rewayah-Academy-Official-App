@@ -608,6 +608,22 @@ void main() {
             true,
           ),
           (
+            '320x2_rtl_sombre',
+            const Size(320, 1200),
+            ThemeMode.dark,
+            2,
+            TextDirection.rtl,
+            true,
+          ),
+          (
+            '1440_clair',
+            const Size(1440, 900),
+            ThemeMode.light,
+            1,
+            TextDirection.ltr,
+            true,
+          ),
+          (
             '390_en_ligne_clair',
             const Size(390, 844),
             ThemeMode.light,

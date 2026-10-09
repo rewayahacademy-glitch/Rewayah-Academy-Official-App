@@ -489,7 +489,11 @@ class _Seance extends ConsumerWidget {
               ? t.classe.entree.indisponible
               : t.classe.entree.aucune,
           icone: AppIcons.cours,
-          registre: RegistreVide.subi,
+          // EA-HL-DOUBLE-1f : un registre subi taisait le bouton, et
+          // « Reessayez dans un instant » restait sans action.
+          registre: lecture.hasError
+              ? RegistreVide.actionnable
+              : RegistreVide.subi,
           libelleAction: lecture.hasError ? t.classe.entree.reessayer : null,
           onAction: lecture.hasError
               ? () => ref.invalidate(groupeProvider(groupeId))

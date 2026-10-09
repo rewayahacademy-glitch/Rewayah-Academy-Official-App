@@ -54,15 +54,21 @@ bool _ditHorsLigne(String texte) => motifHorsLigne.hasMatch(texte);
 /// l'affirmer, en une seule formulation (« il est possible que la demande
 /// ne soit pas parvenue jusqu'a Rewayah »).
 ///
+/// Les synonymes de l'indisponibilite temporaire en sont aussi (reprise de
+/// EA-HL-DOUBLE-1f) : « … n'est pas disponible pour le moment », « … est
+/// indisponible pour l'instant », « Non disponible pour le moment ».
+///
 /// Ne sont pas des causes affirmees : l'effet dit tel quel (« Roster
-/// indisponible », « Information indisponible ») et une fonction fermee par
+/// indisponible », « Information indisponible »). Une fonction fermee par
 /// le serveur, fait connu (« La validation est indisponible pour le
-/// moment », `CapaciteIndisponible`).
+/// moment », `CapaciteIndisponible`), est permise nommement par la garde du
+/// catalogue, cle par cle, jamais par le motif.
 final RegExp motifCauseAffirmee = RegExp(
   r'n.a pas répondu|n.a pas pu répondre|ne répond (pas|plus)|'
   r'(service|serveur|bibliothèque|plateforme|salle) (est |semble )?'
   r'(momentanément |temporairement )?indisponible|'
-  r'(momentanément|temporairement) indisponible',
+  r'(momentanément|temporairement) indisponible|'
+  r'(indisponible|(pas|non) disponible)s? pour (le moment|l.instant)',
   caseSensitive: false,
 );
 

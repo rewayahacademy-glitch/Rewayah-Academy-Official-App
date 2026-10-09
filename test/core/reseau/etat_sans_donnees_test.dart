@@ -290,8 +290,18 @@ void main() {
     );
     // Une personne qui n'a pas repondu dans un delai, fait enregistre par
     // le serveur : ce n'est pas une cause supposee d'un echec de l'appareil.
+    //
+    // Une fonction que le serveur dit fermee (`CapaciteIndisponible`, ou le
+    // code `indisponibleTemporairement` de la revue des dossiers), hors
+    // ligne traite a part avant l'appel : fait annonce par le serveur, pas
+    // cause supposee. Chacune est nommee ; aucune autre ne passe.
     const Set<String> faits = <String>{
       'adulte.reprise.phrases.attenteAdministration',
+      'dossiers.file.indisponible',
+      'dossiers.revue.pieceIndisponible',
+      'dossiers.revue.etats.decisionIndisponible',
+      'dossiers.refus.indisponible',
+      'dossiers.validation.indisponible',
     };
     expect(<String>[
       for (final MapEntry<String, String> e in textes.entries)
@@ -302,6 +312,8 @@ void main() {
       'agent.indisponibleDetail',
       'salle.refusReseauDetail',
       'tc.bibliotheque.indisponible.invitation',
+      'tc.observation.refus.indisponibleInvitation',
+      'classe.entree.indisponible',
       'adulte.accueil.echec',
       'adulte.historique.echec',
     ]) {
@@ -314,6 +326,11 @@ void main() {
       'agent.indisponibleDetail',
       'tc.bibliotheque.indisponible.message',
       'tc.bibliotheque.indisponible.invitation',
+      'tc.observation.refus.indisponible',
+      'tc.observation.refus.indisponibleInvitation',
+      'classe.entree.indisponible',
+      'tc.bibliotheque.message.copieImpossible',
+      'compte.tuteur.pageInformations.fuseauIndisponible',
     ]) {
       expect(
         RegExp('connexion|réseau', caseSensitive: false).hasMatch(textes[cle]!),
