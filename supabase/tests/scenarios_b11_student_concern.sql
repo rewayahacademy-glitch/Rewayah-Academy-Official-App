@@ -74,7 +74,15 @@ declare
 begin
   if pg_catalog.has_table_privilege('authenticated', 'public.student_concern', 'INSERT')
      or pg_catalog.has_table_privilege('authenticated', 'public.student_concern', 'UPDATE') then
-    raise exception 'B-11: clients must not bypass the bounded signalement RPCs';
+    raise exception 'B-11: direct write grants remain (relation ACL: %; role memberships: %)',
+      (select c.relacl::text from pg_catalog.pg_class c
+        where c.oid = 'public.student_concern'::regclass),
+      (select pg_catalog.string_agg(
+         member_role.rolname || '->' || granted_role.rolname, ', ')
+       from pg_catalog.pg_auth_members m
+       join pg_catalog.pg_roles member_role on member_role.oid = m.member
+       join pg_catalog.pg_roles granted_role on granted_role.oid = m.roleid
+       where member_role.rolname = 'authenticated');
   end if;
 
   v_private_id := (public.deposer_student_concern(
