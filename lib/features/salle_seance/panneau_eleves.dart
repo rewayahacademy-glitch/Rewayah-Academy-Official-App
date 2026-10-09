@@ -9,6 +9,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../core/i18n/isolation_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
@@ -464,15 +465,18 @@ class _Champ extends StatelessWidget {
         ? corps
         : Theme.of(context).textTheme.bodySmall ?? const TextStyle();
     final int coupure = objectif ? valeur.indexOf(' (') : -1;
+    // Donnee venue de la fiche : isolee en arabe, pour que ses chiffres et
+    // ses parentheses restent a leur place (revue du 09/10).
+    String isole(String texte) => donneeDansLeSens(context, texte);
     final Widget texteValeur = coupure > 0
         ? Text.rich(
             TextSpan(
               children: <InlineSpan>[
                 TextSpan(
-                  text: valeur.substring(0, coupure),
+                  text: isole(valeur.substring(0, coupure)),
                   style: AppTypography.graisse(corps, FontWeight.w700),
                 ),
-                TextSpan(text: '\n${valeur.substring(coupure + 1)}'),
+                TextSpan(text: '\n${isole(valeur.substring(coupure + 1))}'),
               ],
             ),
             style: palette.inkStrong.applyTo(corps),
@@ -488,12 +492,12 @@ class _Champ extends StatelessWidget {
             fit: BoxFit.scaleDown,
             alignment: AlignmentDirectional.centerStart,
             child: Text(
-              valeur,
+              isole(valeur),
               maxLines: 1,
               style: palette.inkStrong.applyTo(corps),
             ),
           )
-        : Text(valeur, style: palette.inkStrong.applyTo(corps));
+        : Text(isole(valeur), style: palette.inkStrong.applyTo(corps));
     // Un fait = une annonce : intitule et valeur lus ensemble.
     return MergeSemantics(
       child: Column(

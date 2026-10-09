@@ -98,7 +98,7 @@ class _Traductions$salle$ar extends Traductions$salle$fr {
 	@override String get cameraCoupee => 'الكاميرا مطفأة';
 	@override late final _Traductions$salle$secours$ar secours = _Traductions$salle$secours$ar._(_root);
 	@override late final _Traductions$salle$preparation$ar preparation = _Traductions$salle$preparation$ar._(_root);
-	@override String get bandeauPermanent => 'الدرس مسجَّل، وزيارة مراقبة ممكنة.';
+	@override String get bandeauPermanent => 'يُسجَّل الدرس، وقد تجري زيارة مراقبة.';
 	@override late final _Traductions$salle$seance$ar seance = _Traductions$salle$seance$ar._(_root);
 	@override late final _Traductions$salle$fin$ar fin = _Traductions$salle$fin$ar._(_root);
 	@override String get micro => 'الميكروفون';
@@ -261,7 +261,7 @@ class _Traductions$salle$secours$ar extends Traductions$salle$secours$fr {
 	@override String get echecGuidee => 'الاتصال لا يعود.';
 	@override String get horsLigne => 'أنت غير متصل. تحتاج الحصة إلى اتصال.';
 	@override String get reessayer => 'إعادة المحاولة';
-	@override String get quitter => 'خروج';
+	@override String get quitter => 'مغادرة';
 	@override String indisponible({required Object commande}) => '${commande}. غير متاح أثناء إعادة الاتصال.';
 	@override String get cameraInterdite => 'الكاميرا معطّلة لهذا الملف.';
 	@override String get microBloque => 'الميكروفون محظور في إعدادات هذا الجهاز.';
@@ -327,7 +327,7 @@ class _Traductions$salle$seance$ar extends Traductions$salle$seance$fr {
 	@override String get titre => 'حصة مباشرة';
 	@override String get titreGuidee => 'حصتي';
 	@override String ligne({required Object debut, required Object fin}) => '⁨${debut}⁩ · ⁨${fin}⁩';
-	@override String minutesRestantes({required Object minutes}) => 'بقيت ⁨${minutes}⁩ دقيقة';
+	@override String minutesRestantes({required Object minutes}) => 'الوقت المتبقي: ⁨${minutes}⁩ د';
 	@override String get sePoursuit => 'الحصة مستمرة.';
 	@override String get enLigne => 'متصل';
 	@override String get reconnexion => 'إعادة الاتصال';
@@ -343,17 +343,17 @@ class _Traductions$salle$seance$ar extends Traductions$salle$seance$fr {
 	@override String get reglages => 'الإعدادات';
 	@override String compteDe({required Object nom}) => 'حساب ⁨${nom}⁩';
 	@override String get sortir => 'مغادرة الحصة';
-	@override String get commandesAppel => 'أزرار المكالمة';
-	@override String compteurEleves({required Object connectes, required Object inscrits}) => 'الطلاب ⁨${connectes}⁩/⁨${inscrits}⁩';
+	@override String get commandesAppel => 'عناصر التحكم في المكالمة';
+	@override String compteurEleves({required Object connectes, required Object inscrits}) => 'الطلاب ⁦⁨${connectes}⁩/⁨${inscrits}⁩⁩';
 	@override String get parler => 'تحدّث';
 	@override String get agrandir => 'تكبير';
 	@override String get reduire => 'تصغير';
-	@override String rienPartage({required Object nom}) => 'لم يشارك ⁨${nom}⁩ شيئًا بعد.';
+	@override String rienPartage({required Object nom}) => 'لم تصل أي مشاركة من ⁨${nom}⁩ بعد.';
 	@override String videoDe({required Object nom}) => 'فيديو ⁨${nom}⁩';
 	@override String page({required Object page, required Object pages}) => '⁨${page}⁩ / ⁨${pages}⁩';
 	@override String pageSemantique({required Object page, required Object pages}) => 'الصفحة ⁨${page}⁩ من ⁨${pages}⁩';
 	@override String get zoomLocal => 'تكبير محلي، لا يؤثر في الآخرين';
-	@override String zoomValeur({required Object valeur}) => '⁨${valeur}⁩ %';
+	@override String zoomValeur({required Object valeur}) => '⁨${valeur}⁩ ٪';
 	@override String get zoomMoins => 'تقليل التكبير';
 	@override String get zoomPlus => 'زيادة التكبير';
 	@override String get quitterQuestion => 'مغادرة الحصة؟';
@@ -371,12 +371,12 @@ class _Traductions$salle$seance$ar extends Traductions$salle$seance$fr {
 	@override String get fermerPanneau => 'إغلاق اللوحة';
 	@override late final _Traductions$salle$seance$panneauSupports$ar panneauSupports = _Traductions$salle$seance$panneauSupports$ar._(_root);
 	@override String get eleves => 'الطلاب';
-	@override String get rappeler => 'النداء بهدوء';
+	@override String get rappeler => 'نداء خاص';
 	@override String get faireReciter => 'طلب التلاوة';
-	@override String get fileRecitation => 'دور التلاوة';
+	@override String get fileRecitation => 'ترتيب التلاوة';
 	@override String get aSuivre => 'التالي';
-	@override String vousAppelle({required Object nom}) => '⁨${nom}⁩ يناديك';
-	@override String get signalerBesoin => 'الإشارة إلى حاجة';
+	@override String vousAppelle({required Object nom}) => 'نداء من ⁨${nom}⁩';
+	@override String get signalerBesoin => 'الإبلاغ عن حاجة';
 	@override String deplierFiche({required Object prenom}) => 'عرض بطاقة ⁨${prenom}⁩';
 	@override String replierFiche({required Object prenom}) => 'إخفاء بطاقة ⁨${prenom}⁩';
 	@override late final _Traductions$salle$seance$fiche$ar fiche = _Traductions$salle$seance$fiche$ar._(_root);
@@ -694,7 +694,7 @@ class _Traductions$salle$seance$outils$ar extends Traductions$salle$seance$outil
 	// Translations
 	@override String get titre => 'أدوات التدريس';
 	@override String get pointeur => 'المؤشر';
-	@override String get marquer => 'تعليم';
+	@override String get marquer => 'وضع علامة';
 	@override String get masquer => 'إخفاء';
 	@override String get annoter => 'كتابة ملاحظات';
 }
@@ -709,7 +709,7 @@ class _Traductions$salle$seance$rail$ar extends Traductions$salle$seance$rail$fr
 	@override String get navigation => 'التنقل';
 	@override String get marque => 'Rewayah';
 	@override String get sousMarque => 'Academy';
-	@override String get journee => 'اليوم';
+	@override String get journee => 'يومي';
 	@override String get classes => 'الفصول';
 	@override String get ressources => 'الموارد';
 	@override String get profil => 'الملف الشخصي';
@@ -723,7 +723,7 @@ class _Traductions$salle$seance$panneauSupports$ar extends Traductions$salle$sea
 
 	// Translations
 	@override String get reprendre => 'استئناف';
-	@override String get recents => 'الأحدث';
+	@override String get recents => 'المستخدمة مؤخرًا';
 	@override String get ressourcesClasse => 'موارد الفصل';
 	@override String get voirTout => 'عرض الكل';
 	@override String get ouvrir => 'فتح';
@@ -740,7 +740,7 @@ class _Traductions$salle$seance$fiche$ar extends Traductions$salle$seance$fiche$
 	// Translations
 	@override String get aucuneSeanceSemaine => 'لا حصص هذا الأسبوع';
 	@override String get uneSeanceSemaine => 'حصة واحدة هذا الأسبوع';
-	@override String seancesSemaine({required Object nombre}) => '⁨${nombre}⁩ حصص هذا الأسبوع';
+	@override String seancesSemaine({required Object nombre}) => 'عدد الحصص هذا الأسبوع: ⁨${nombre}⁩';
 }
 
 // Path: salle.seance.commandes
@@ -750,11 +750,11 @@ class _Traductions$salle$seance$commandes$ar extends Traductions$salle$seance$co
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get declencheur => 'الأوامر';
-	@override String get declencheurSemantique => 'فتح أوامر المادة والسبورة';
-	@override String get titre => 'الأوامر';
+	@override String get declencheur => 'التحكم';
+	@override String get declencheurSemantique => 'فتح عناصر التحكم في المادة والسبورة';
+	@override String get titre => 'عناصر التحكم';
 	@override String get reduire => 'تصغير';
-	@override String get reduireSemantique => 'تصغير الأوامر';
+	@override String get reduireSemantique => 'تصغير عناصر التحكم';
 	@override String get ongletSupport => 'المادة';
 	@override String get ongletOutils => 'الأدوات';
 	@override String get bibliotheque => 'المكتبة';
@@ -776,10 +776,10 @@ class _Traductions$salle$seance$bibliotheque$ar extends Traductions$salle$seance
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get intro => 'المادة التي تختارها تُفتح لك وحدك. يبقى الفصل على المادة الحالية حتى «عرض».';
+	@override String get intro => 'المادة التي تختارها تُفتح لك وحدك. يبقى الفصل على المادة الحالية حتى «عرض على الفصل».';
 	@override String get apercu => 'معاينة خاصة';
 	@override String get apercuClasse => 'ما زال الطلاب يرون المادة الحالية.';
-	@override String get presenter => 'عرض';
+	@override String get presenter => 'عرض على الفصل';
 	@override String get revenir => 'العودة إلى المواد';
 	@override String get ouverture => 'جارٍ فتح المادة…';
 	@override String get echec => 'تعذّر فتح هذه المادة.';
@@ -870,9 +870,9 @@ class _Traductions$salle$fin$enseignant$ar extends Traductions$salle$fin$enseign
 	@override String get phrase => 'دفتر المتابعة جاهز بمعلومات الحصة.';
 	@override String get recapitulatif => 'ملخص الحصة';
 	@override String get fin => 'النهاية';
-	@override String connectes({required Object n}) => '⁨${n}⁩ طلاب متصلون';
-	@override String unConnecte({required Object n}) => '⁨${n}⁩ طالب متصل';
-	@override String inscrits({required Object n}) => 'من ⁨${n}⁩ مسجَّلين';
+	@override String connectes({required Object n}) => 'الطلاب المتصلون: ⁨${n}⁩';
+	@override String unConnecte({required Object n}) => 'الطلاب المتصلون: ⁨${n}⁩';
+	@override String inscrits({required Object n}) => 'من أصل ⁨${n}⁩';
 	@override String unInscrit({required Object n}) => 'من ⁨${n}⁩ مسجَّل';
 	@override String get cahierSeance => 'دفتر المتابعة';
 	@override String get cahierACompleter => 'دفتر المتابعة بانتظار الإكمال';
@@ -891,7 +891,7 @@ class _Traductions$tc$bibliotheque$sections$ar extends Traductions$tc$bibliotheq
 	@override String get groupe => 'المواد المعروضة';
 	@override String get continuer => 'متابعة';
 	@override String get pourCeGroupe => 'لهذا الفصل';
-	@override String get recents => 'الأحدث';
+	@override String get recents => 'المستخدمة مؤخرًا';
 	@override String get tousLesSupports => 'كل المواد';
 	@override String get resultats => 'النتائج';
 }
@@ -1075,7 +1075,7 @@ class _Traductions$tc$groupe$carte$ar extends Traductions$tc$groupe$carte$fr {
 
 	// Translations
 	@override String ouvrir({required Object libelle}) => 'فتح الفصل ⁨${libelle}⁩';
-	@override String capacite({required Object membres, required Object seuil}) => '⁨${membres}⁩ / ⁨${seuil}⁩';
+	@override String capacite({required Object membres, required Object seuil}) => '⁨${membres}⁩ من ⁨${seuil}⁩';
 	@override String capacitePhrase({required Object membres, required Object seuil}) => '⁨${membres}⁩ طلاب من ⁨${seuil}⁩ مقاعد';
 	@override String get complet => 'مكتمل';
 	@override String get prochainCours => 'الدرس القادم';
@@ -1111,8 +1111,8 @@ class _Traductions$tc$groupe$temps$ar extends Traductions$tc$groupe$temps$fr {
 	@override String get attente => 'أنت في القاعة. لم يبدأ الدرس بعد.';
 	@override String get attenteDetail => 'وقت الانتظار هذا لا يُحتسب في حضورك.';
 	@override String get enSalle => 'في القاعة';
-	@override String resteMinutes({required Object minutes}) => 'بقيت ⁨${minutes}⁩ دقيقة';
-	@override String resteHeures({required Object heures, required Object minutes}) => 'بقي ⁨${heures}⁩ س ⁨${minutes}⁩ د';
+	@override String resteMinutes({required Object minutes}) => 'المتبقي ⁨${minutes}⁩ د';
+	@override String resteHeures({required Object heures, required Object minutes}) => 'المتبقي ⁨${heures}⁩ س ⁨${minutes}⁩ د';
 	@override String enCours({required Object reste}) => 'حصة مباشرة · ⁨${reste}⁩';
 	@override String get enDirect => 'مباشر';
 	@override String get prolongee => 'الحصة ما زالت مباشرة';
@@ -1242,8 +1242,8 @@ class _Traductions$tc$coran$zoom$ar extends Traductions$tc$coran$zoom$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get bride => 'التكبير محدود بالعرض: بعده ستنقسم كلمة.';
-	@override String valeur({required Object pourcent}) => '⁨${pourcent}⁩ %';
+	@override String get bride => 'التكبير محدود بالعرض: ما زاد عليه يقطع الكلمات.';
+	@override String valeur({required Object pourcent}) => '⁨${pourcent}⁩ ٪';
 	@override String get renvoiLectureAgrandie => 'لتكبير النص، انتقل إلى القراءة المكبَّرة: صفحة المصحف تحافظ على هيئتها.';
 }
 
@@ -1283,7 +1283,7 @@ class _Traductions$tc$coran$focus$ar extends Traductions$tc$coran$focus$fr {
 
 	// Translations
 	@override String get aucunePlage => 'لا مقطع مُبرَز';
-	@override String get aucunePlageDetail => 'يتبع التركيز المقطع الذي يحدده المعلم. خارج الفصل، يتوسط الصفحة المفتوحة.';
+	@override String get aucunePlageDetail => 'يتبع التركيز المقطع الذي يحدده المعلم. خارج الفصل، يتمركز على الصفحة المفتوحة.';
 	@override String get quitter => 'الخروج من التركيز';
 }
 
@@ -1299,7 +1299,7 @@ class _Traductions$tc$outils$dock$ar extends Traductions$tc$outils$dock$fr {
 	@override late final _Traductions$tc$outils$dock$position$ar position = _Traductions$tc$outils$dock$position$ar._(_root);
 	@override String get bibliotheque => 'المكتبة';
 	@override String get focus => 'التركيز';
-	@override String get marquer => 'تعليم';
+	@override String get marquer => 'وضع علامة';
 	@override String get masquer => 'إخفاء';
 	@override String get stylet => 'القلم';
 	@override String get pointeur => 'المؤشر';
@@ -1345,7 +1345,7 @@ class _Traductions$tc$outils$portee$ar extends Traductions$tc$outils$portee$fr {
 	// Translations
 	@override String get temporaire => 'وقت الشرح';
 	@override String get seance => 'حتى نهاية الدرس';
-	@override String get enregistree => 'حفظ';
+	@override String get enregistree => 'الاحتفاظ بها دائمًا';
 	@override String get aide => 'إلى متى نحتفظ بهذه الملاحظات؟';
 }
 
@@ -1356,7 +1356,7 @@ class _Traductions$tc$outils$marquer$ar extends Traductions$tc$outils$marquer$fr
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get titre => 'تعليم هذا المقطع';
+	@override String get titre => 'وضع علامة على هذا المقطع';
 	@override String get aide => 'اختر ما يحتاجه هذا المقطع.';
 	@override String get retirer => 'إزالة العلامة';
 }
@@ -1418,8 +1418,8 @@ class _Traductions$tc$classe$entete$ar extends Traductions$tc$classe$entete$fr {
 
 	// Translations
 	@override late final _Traductions$tc$classe$entete$titreEnseignant$ar titreEnseignant = _Traductions$tc$classe$entete$titreEnseignant$ar._(_root);
-	@override String resteMinutes({required Object minutes}) => 'بقيت ⁨${minutes}⁩ دقيقة';
-	@override String resteHeuresMinutes({required Object heures, required Object minutes}) => 'بقي ⁨${heures}⁩ س ⁨${minutes}⁩ د';
+	@override String resteMinutes({required Object minutes}) => 'المتبقي ⁨${minutes}⁩ د';
+	@override String resteHeuresMinutes({required Object heures, required Object minutes}) => 'المتبقي ⁨${heures}⁩ س ⁨${minutes}⁩ د';
 	@override String get coursEnCours => 'الحصة ما زالت مباشرة';
 	@override String get photoManquante => 'صورة المعلم غير موجودة';
 }
@@ -1432,13 +1432,13 @@ class _Traductions$tc$classe$roster$ar extends Traductions$tc$classe$roster$fr {
 
 	// Translations
 	@override String get titre => 'الطلاب';
-	@override String compteur({required Object presents, required Object attendus}) => 'الطلاب: ⁨${presents}⁩ حاضرون من ⁨${attendus}⁩ منتظَرين';
+	@override String compteur({required Object presents, required Object attendus}) => 'الحاضرون: ⁨${presents}⁩ من أصل ⁨${attendus}⁩';
 	@override String get indisponible => 'قائمة الطلاب غير متاحة';
 	@override String get indisponibleDetail => 'تعذّرت قراءة حالات طلابك. يستمر الدرس.';
 	@override String get vide => 'لا طالب مسجَّل';
 	@override String get videDetail => 'لا طالب مسجَّل في هذه الحصة.';
 	@override String ouvrirFiche({required Object prenom}) => 'فتح بطاقة ⁨${prenom}⁩';
-	@override String places({required Object inscrits, required Object plafond}) => '⁨${inscrits}⁩ / ⁨${plafond}⁩ مقاعد';
+	@override String places({required Object inscrits, required Object plafond}) => 'المقاعد: ⁨${inscrits}⁩ من ⁨${plafond}⁩';
 }
 
 // Path: tc.classe.etat
@@ -1470,10 +1470,10 @@ class _Traductions$tc$classe$fiche$ar extends Traductions$tc$classe$fiche$fr {
 	@override String get objectif => 'الهدف الحالي';
 	@override String get derniereSeance => 'آخر حصة';
 	@override String page({required Object page}) => 'الصفحة ⁨${page}⁩';
-	@override String travailEnCours({required Object nombre}) => '⁨${nombre}⁩ عنصر';
+	@override String travailEnCours({required Object nombre}) => 'العناصر: ⁨${nombre}⁩';
 	@override String get aReprendre => 'للاستئناف';
 	@override String get presenceRecente => 'الحضور الأخير';
-	@override String assiduite({required Object presences, required Object total}) => '⁨${presences}⁩ / ⁨${total}⁩ دروس';
+	@override String assiduite({required Object presences, required Object total}) => 'الدروس: ⁨${presences}⁩ من ⁨${total}⁩';
 	@override String get travailActuel => 'العمل الحالي';
 	@override String get interfaceGuidee => 'وضع إمكانية الوصول';
 	@override String get sansPedagogie => 'المتابعة التعليمية غير متاحة';
@@ -1490,7 +1490,7 @@ class _Traductions$tc$classe$action$ar extends Traductions$tc$classe$action$fr {
 	@override String get rappel => 'نداء هادئ';
 	@override String get reciter => 'اختيار للتلاوة';
 	@override String get noter => 'تدوين ملاحظة';
-	@override String get signaler => 'الإشارة إلى حاجة';
+	@override String get signaler => 'الإبلاغ عن حاجة';
 	@override String get contexte => 'فتح السياق';
 }
 
@@ -1515,8 +1515,8 @@ class _Traductions$tc$classe$recitation$ar extends Traductions$tc$classe$recitat
 
 	// Translations
 	@override String get titre => 'التلاوة';
-	@override String actif({required Object prenom}) => '⁨${prenom}⁩ يتلو';
-	@override String get pastille => 'يتلو';
+	@override String actif({required Object prenom}) => 'التلاوة: ⁨${prenom}⁩';
+	@override String get pastille => 'في التلاوة';
 	@override String get suivants => 'بعد ذلك';
 	@override String get personne => 'لا أحد يتلو';
 	@override String get arreter => 'إيقاف التلاوة';
@@ -1671,14 +1671,14 @@ class _Traductions$tc$observation$entree$ar extends Traductions$tc$observation$e
 	@override String get titre => 'متابعة الحصة';
 	@override String get tuteurIntro => 'يمكنك مشاهدة درس طفلك لوقت قصير. يبقى الميكروفون والكاميرا مغلقين.';
 	@override String get adminIntro => 'اختر طريقتك قبل الدخول. لن تتغير بعد ذلك.';
-	@override String get controleurIntro => 'تدخل في متابعة غير مرئية. لا ميكروفون ولا كاميرا.';
+	@override String get controleurIntro => 'تدخل في مراقبة غير مرئية. لا ميكروفون ولا كاميرا.';
 	@override String get entrer => 'دخول';
-	@override String get modeDiscret => 'المتابعة بهدوء';
+	@override String get modeDiscret => 'المتابعة دون ظهور';
 	@override String get modeDiscretDetail => 'غير مرئي للمشاركين. دون ميكروفون ولا كاميرا، ودون إعلان.';
 	@override String get modeVisible => 'الانضمام إلى الفصل';
 	@override String get modeVisibleDetail => 'مرئي للجميع باسم إدارة Rewayah. الميكروفون والكاميرا مسموحان، ويُعلَن عن الدخول.';
 	@override String get nomInstitutionnel => 'إدارة Rewayah';
-	@override String get visiteJournalisee => 'زيارة مسجَّلة في السجل: الهوية، والحصة، والدخول، والخروج، والمدة.';
+	@override String get visiteJournalisee => 'زيارة مقيَّدة في السجل: الهوية، والحصة، والدخول، والخروج، والمدة.';
 	@override String get roleSansObservation => 'حسابك لا يتابع الحصص.';
 	@override String get retourClasse => 'العودة إلى الفصل';
 }
@@ -1693,7 +1693,7 @@ class _Traductions$tc$observation$explication$ar extends Traductions$tc$observat
 	@override String get titre => 'لمحة عن تعلّمه';
 	@override String regleUne({required Object n, required Object duree}) => '⁨${n}⁩ زيارة مدتها ⁨${duree}⁩';
 	@override String regle({required Object n, required Object duree}) => '⁨${n}⁩ زيارات مدة كل منها ⁨${duree}⁩';
-	@override String get regleDetail => 'لكل حصة ولكل وليّ أمر، حتى لو كان عدة من أطفالك في الفصل.';
+	@override String get regleDetail => 'لكل حصة ولكل وليّ أمر، حتى لو كان أكثر من طفل من أطفالك في الفصل.';
 	@override String get ecoute => 'استمع إلى المعلم والطلاب';
 	@override String get ecouteDetail => 'تسمع المعلم والطلاب الذين يتكلمون، ومنهم طفلك.';
 	@override String get sansMedia => 'دون ميكروفون ولا كاميرا';
@@ -1704,8 +1704,8 @@ class _Traductions$tc$observation$explication$ar extends Traductions$tc$observat
 	@override String get informes => 'طفلك ومعلمه على علم.';
 	@override String get observer => 'المتابعة الآن';
 	@override String get pasMaintenant => 'ليس الآن';
-	@override String restanteUne({required Object restantes, required Object max}) => '⁨${restantes}⁩/⁨${max}⁩ زيارة متبقية لهذه الحصة';
-	@override String restantes({required Object restantes, required Object max}) => '⁨${restantes}⁩/⁨${max}⁩ زيارات متبقية لهذه الحصة';
+	@override String restanteUne({required Object restantes, required Object max}) => 'الزيارات المتبقية لهذه الحصة: ⁨${restantes}⁩ من ⁨${max}⁩';
+	@override String restantes({required Object restantes, required Object max}) => 'الزيارات المتبقية لهذه الحصة: ⁨${restantes}⁩ من ⁨${max}⁩';
 	@override String get aucuneRestante => 'لا زيارة متبقية لهذه الحصة';
 }
 
@@ -1814,13 +1814,13 @@ class _Traductions$tc$observation$visite$ar extends Traductions$tc$observation$v
 	@override String get reconnexion => 'إعادة الاتصال';
 	@override String get videoCoupee => 'الفيديو غير متاح';
 	@override String get reconnexionDetail => 'انقطع الاتصال، جارٍ إعادة الاتصال. يستمر احتساب وقت متابعتك.';
-	@override String get sonRecu => 'الصوت واصل';
+	@override String get sonRecu => 'الصوت يصل';
 	@override String get sonInterrompu => 'الصوت منقطع';
 	@override String get agrandir => 'تكبير';
 	@override String get reduire => 'تصغير';
 	@override String get cameraFermee => 'الكاميرا مغلقة';
 	@override String get pasEncoreLa => 'ليس في القاعة بعد';
-	@override String parle({required Object nom}) => '⁨${nom}⁩ يتكلم';
+	@override String parle({required Object nom}) => 'الكلمة الآن لـ⁨${nom}⁩';
 	@override String get quitterQuestion => 'مغادرة الزيارة؟';
 	@override String quitterConsequence({required Object duree}) => 'بقي لك ⁨${duree}⁩. الزيارة التي تُغادَر قبل نهايتها تُحتسب زيارة كاملة: الوقت غير المستخدم لا يُرحَّل.';
 	@override String get quitterConsequenceSansTemps => 'الزيارة التي تُغادَر قبل نهايتها تُحتسب زيارة كاملة: الوقت غير المستخدم لا يُرحَّل.';
@@ -1855,10 +1855,10 @@ class _Traductions$tc$observation$resultat$ar extends Traductions$tc$observation
 	@override String get interrompue => 'قُطعت المتابعة';
 	@override String continuePour({required Object prenom}) => 'تستمر الحصة لـ⁨${prenom}⁩.';
 	@override String get continueSansPrenom => 'تستمر الحصة.';
-	@override String resteUne({required Object duree}) => 'بقيت لك زيارة واحدة مدتها ⁨${duree}⁩. عد لاحقًا للاستماع إليه.';
-	@override String restent({required Object n, required Object duree}) => 'بقيت لك ⁨${n}⁩ زيارات مدة كل منها ⁨${duree}⁩. عد لاحقًا للاستماع إليه.';
-	@override String get resteUneSansDuree => 'بقيت لك زيارة واحدة. عد لاحقًا للاستماع إليه.';
-	@override String restentSansDuree({required Object n}) => 'بقيت لك ⁨${n}⁩ زيارات. عد لاحقًا للاستماع إليه.';
+	@override String resteUne({required Object duree}) => 'بقيت لك زيارة واحدة مدتها ⁨${duree}⁩. عد لاحقًا للاستماع إلى طفلك.';
+	@override String restent({required Object n, required Object duree}) => 'بقيت لك ⁨${n}⁩ زيارات مدة كل منها ⁨${duree}⁩. عد لاحقًا للاستماع إلى طفلك.';
+	@override String get resteUneSansDuree => 'بقيت لك زيارة واحدة. عد لاحقًا للاستماع إلى طفلك.';
+	@override String restentSansDuree({required Object n}) => 'بقيت لك ⁨${n}⁩ زيارات. عد لاحقًا للاستماع إلى طفلك.';
 	@override String get aucune => 'استخدمت زياراتك لهذه الحصة. يمكنك متابعة الحصة القادمة.';
 	@override String get prochaineSeance => 'يمكنك متابعة الحصة القادمة.';
 	@override String get verification => 'جارٍ التحقق من زياراتك المتبقية';
@@ -1975,18 +1975,18 @@ class _Traductions$tc$parcours$signalement$ar extends Traductions$tc$parcours$si
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get titre => 'الإشارة إلى حاجة';
+	@override String get titre => 'الإبلاغ عن حاجة';
 	@override String get categorie => 'بماذا يتعلق الأمر؟';
 	@override late final _Traductions$tc$parcours$signalement$categorieValeur$ar categorieValeur = _Traductions$tc$parcours$signalement$categorieValeur$ar._(_root);
 	@override String get interne => 'ملاحظة داخلية';
 	@override String get interneAide => 'تقرؤها الإدارة وحدها. لا تُرسل أبدًا تلقائيًا إلى الأسرة.';
 	@override String get famille => 'رسالة إلى الأسرة';
 	@override String get familleAide => 'اختيارية. الإدارة وحدها تقرر إرسالها بنقرة واحدة.';
-	@override String contexte({required Object eleve}) => 'الطالب ⁨${eleve}⁩. الحصة والفصل واسمك مرفقة بالفعل.';
-	@override String get envoyer => 'إرسال الإشارة';
-	@override String get envoye => 'أُرسلت الإشارة إلى الإدارة.';
+	@override String contexte({required Object eleve}) => 'بخصوص ⁨${eleve}⁩. الحصة والفصل واسمك مرفقة بالفعل.';
+	@override String get envoyer => 'إرسال البلاغ';
+	@override String get envoye => 'أُرسل البلاغ إلى الإدارة.';
 	@override String get interneRequis => 'اكتب على الأقل ما يجب أن تعرفه الإدارة.';
-	@override String get echec => 'تعذّر إرسال الإشارة. أعد المحاولة.';
+	@override String get echec => 'تعذّر إرسال البلاغ. أعد المحاولة.';
 }
 
 // Path: tc.parcours.postCours
@@ -2070,10 +2070,10 @@ class _Traductions$salle$seance$demo$etats$ar extends Traductions$salle$seance$d
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get repos => 'سكون';
+	@override String get repos => 'وضع عادي';
 	@override String get visite => 'زيارة';
 	@override String get rienPartage => 'لا شيء مُشارَك';
-	@override String get appel => 'النداء بهدوء';
+	@override String get appel => 'نداء خاص';
 	@override String get eleves => 'لوحة الطلاب';
 	@override String get supports => 'لوحة المواد';
 	@override String get fin => 'نهاية الحصة';
@@ -2106,7 +2106,7 @@ class _Traductions$salle$seance$demo$tb$ar extends Traductions$salle$seance$demo
 	@override String get vis01 => 'VIS-01 شريط الفيديو ظاهر';
 	@override String get ctx01 => 'CTX-01 سياق الحصة';
 	@override String get ctx02 => 'CTX-02 معلومات المراقبة';
-	@override String get cmd01 => 'CMD-01 الأوامر';
+	@override String get cmd01 => 'CMD-01 عناصر التحكم';
 	@override String get cmd02 => 'CMD-02 اللون والسُّمك';
 	@override String get cmd03 => 'CMD-03 الكتابة جارية';
 	@override String get lib01 => 'LIB-01 المكتبة';
@@ -2134,8 +2134,8 @@ class _Traductions$tc$outils$dock$position$ar extends Traductions$tc$outils$dock
 
 	// Translations
 	@override String get bas => 'في الأسفل';
-	@override String get gauche => 'على اليسار';
-	@override String get droite => 'على اليمين';
+	@override String get gauche => 'في جهة البداية';
+	@override String get droite => 'في جهة النهاية';
 }
 
 // Path: tc.classe.entete.titreEnseignant
@@ -2171,7 +2171,7 @@ class _Traductions$tc$parcours$feedback$comprehension$ar extends Traductions$tc$
 	// Translations
 	@override String get intitule => 'هل فهمت ما تم العمل عليه؟';
 	@override String get difficile => 'ليس تمامًا';
-	@override String get bien => 'نعم تقريبًا';
+	@override String get bien => 'نعم، إلى حدٍّ ما';
 	@override String get tresBien => 'تمامًا';
 }
 
@@ -2210,7 +2210,7 @@ class _Traductions$tc$parcours$feedback$confiance$ar extends Traductions$tc$parc
 	// Translations
 	@override String get intitule => 'هل تشعر أنك مستعد للدرس القادم؟';
 	@override String get difficile => 'ليس بعد';
-	@override String get bien => 'تقريبًا';
+	@override String get bien => 'إلى حدٍّ ما';
 	@override String get tresBien => 'تمامًا';
 }
 
@@ -2293,7 +2293,7 @@ extension on TraductionsAr {
 			'salle.secours.echecGuidee' => 'الاتصال لا يعود.',
 			'salle.secours.horsLigne' => 'أنت غير متصل. تحتاج الحصة إلى اتصال.',
 			'salle.secours.reessayer' => 'إعادة المحاولة',
-			'salle.secours.quitter' => 'خروج',
+			'salle.secours.quitter' => 'مغادرة',
 			'salle.secours.indisponible' => ({required Object commande}) => '${commande}. غير متاح أثناء إعادة الاتصال.',
 			'salle.secours.cameraInterdite' => 'الكاميرا معطّلة لهذا الملف.',
 			'salle.secours.microBloque' => 'الميكروفون محظور في إعدادات هذا الجهاز.',
@@ -2363,11 +2363,11 @@ extension on TraductionsAr {
 			'salle.preparation.eleve.demo.pret' => 'جاهز',
 			'salle.preparation.eleve.demo.microBloque' => 'الميكروفون محظور',
 			'salle.preparation.eleve.demo.horsLigne' => 'غير متصل',
-			'salle.bandeauPermanent' => 'الدرس مسجَّل، وزيارة مراقبة ممكنة.',
+			'salle.bandeauPermanent' => 'يُسجَّل الدرس، وقد تجري زيارة مراقبة.',
 			'salle.seance.titre' => 'حصة مباشرة',
 			'salle.seance.titreGuidee' => 'حصتي',
 			'salle.seance.ligne' => ({required Object debut, required Object fin}) => '⁨${debut}⁩ · ⁨${fin}⁩',
-			'salle.seance.minutesRestantes' => ({required Object minutes}) => 'بقيت ⁨${minutes}⁩ دقيقة',
+			'salle.seance.minutesRestantes' => ({required Object minutes}) => 'الوقت المتبقي: ⁨${minutes}⁩ د',
 			'salle.seance.sePoursuit' => 'الحصة مستمرة.',
 			'salle.seance.enLigne' => 'متصل',
 			'salle.seance.reconnexion' => 'إعادة الاتصال',
@@ -2383,17 +2383,17 @@ extension on TraductionsAr {
 			'salle.seance.reglages' => 'الإعدادات',
 			'salle.seance.compteDe' => ({required Object nom}) => 'حساب ⁨${nom}⁩',
 			'salle.seance.sortir' => 'مغادرة الحصة',
-			'salle.seance.commandesAppel' => 'أزرار المكالمة',
-			'salle.seance.compteurEleves' => ({required Object connectes, required Object inscrits}) => 'الطلاب ⁨${connectes}⁩/⁨${inscrits}⁩',
+			'salle.seance.commandesAppel' => 'عناصر التحكم في المكالمة',
+			'salle.seance.compteurEleves' => ({required Object connectes, required Object inscrits}) => 'الطلاب ⁦⁨${connectes}⁩/⁨${inscrits}⁩⁩',
 			'salle.seance.parler' => 'تحدّث',
 			'salle.seance.agrandir' => 'تكبير',
 			'salle.seance.reduire' => 'تصغير',
-			'salle.seance.rienPartage' => ({required Object nom}) => 'لم يشارك ⁨${nom}⁩ شيئًا بعد.',
+			'salle.seance.rienPartage' => ({required Object nom}) => 'لم تصل أي مشاركة من ⁨${nom}⁩ بعد.',
 			'salle.seance.videoDe' => ({required Object nom}) => 'فيديو ⁨${nom}⁩',
 			'salle.seance.page' => ({required Object page, required Object pages}) => '⁨${page}⁩ / ⁨${pages}⁩',
 			'salle.seance.pageSemantique' => ({required Object page, required Object pages}) => 'الصفحة ⁨${page}⁩ من ⁨${pages}⁩',
 			'salle.seance.zoomLocal' => 'تكبير محلي، لا يؤثر في الآخرين',
-			'salle.seance.zoomValeur' => ({required Object valeur}) => '⁨${valeur}⁩ %',
+			'salle.seance.zoomValeur' => ({required Object valeur}) => '⁨${valeur}⁩ ٪',
 			'salle.seance.zoomMoins' => 'تقليل التكبير',
 			'salle.seance.zoomPlus' => 'زيادة التكبير',
 			'salle.seance.quitterQuestion' => 'مغادرة الحصة؟',
@@ -2408,42 +2408,42 @@ extension on TraductionsAr {
 			'salle.seance.pageSuivante' => 'الصفحة التالية',
 			'salle.seance.outils.titre' => 'أدوات التدريس',
 			'salle.seance.outils.pointeur' => 'المؤشر',
-			'salle.seance.outils.marquer' => 'تعليم',
+			'salle.seance.outils.marquer' => 'وضع علامة',
 			'salle.seance.outils.masquer' => 'إخفاء',
 			'salle.seance.outils.annoter' => 'كتابة ملاحظات',
 			'salle.seance.rail.navigation' => 'التنقل',
 			'salle.seance.rail.marque' => 'Rewayah',
 			'salle.seance.rail.sousMarque' => 'Academy',
-			'salle.seance.rail.journee' => 'اليوم',
+			'salle.seance.rail.journee' => 'يومي',
 			'salle.seance.rail.classes' => 'الفصول',
 			'salle.seance.rail.ressources' => 'الموارد',
 			'salle.seance.rail.profil' => 'الملف الشخصي',
 			'salle.seance.fermerPanneau' => 'إغلاق اللوحة',
 			'salle.seance.panneauSupports.reprendre' => 'استئناف',
-			'salle.seance.panneauSupports.recents' => 'الأحدث',
+			'salle.seance.panneauSupports.recents' => 'المستخدمة مؤخرًا',
 			'salle.seance.panneauSupports.ressourcesClasse' => 'موارد الفصل',
 			'salle.seance.panneauSupports.voirTout' => 'عرض الكل',
 			'salle.seance.panneauSupports.ouvrir' => 'فتح',
 			'salle.seance.panneauSupports.ouvrirSupport' => ({required Object titre}) => 'فتح ⁨${titre}⁩',
 			'salle.seance.panneauSupports.voirBibliotheque' => 'عرض المكتبة كاملة',
 			'salle.seance.eleves' => 'الطلاب',
-			'salle.seance.rappeler' => 'النداء بهدوء',
+			'salle.seance.rappeler' => 'نداء خاص',
 			'salle.seance.faireReciter' => 'طلب التلاوة',
-			'salle.seance.fileRecitation' => 'دور التلاوة',
+			'salle.seance.fileRecitation' => 'ترتيب التلاوة',
 			'salle.seance.aSuivre' => 'التالي',
-			'salle.seance.vousAppelle' => ({required Object nom}) => '⁨${nom}⁩ يناديك',
-			'salle.seance.signalerBesoin' => 'الإشارة إلى حاجة',
+			'salle.seance.vousAppelle' => ({required Object nom}) => 'نداء من ⁨${nom}⁩',
+			'salle.seance.signalerBesoin' => 'الإبلاغ عن حاجة',
 			'salle.seance.deplierFiche' => ({required Object prenom}) => 'عرض بطاقة ⁨${prenom}⁩',
 			'salle.seance.replierFiche' => ({required Object prenom}) => 'إخفاء بطاقة ⁨${prenom}⁩',
 			'salle.seance.fiche.aucuneSeanceSemaine' => 'لا حصص هذا الأسبوع',
 			'salle.seance.fiche.uneSeanceSemaine' => 'حصة واحدة هذا الأسبوع',
-			'salle.seance.fiche.seancesSemaine' => ({required Object nombre}) => '⁨${nombre}⁩ حصص هذا الأسبوع',
+			'salle.seance.fiche.seancesSemaine' => ({required Object nombre}) => 'عدد الحصص هذا الأسبوع: ⁨${nombre}⁩',
 			'salle.seance.optionsPanneau' => ({required Object titre}) => 'خيارات لوحة ⁨${titre}⁩',
-			'salle.seance.commandes.declencheur' => 'الأوامر',
-			'salle.seance.commandes.declencheurSemantique' => 'فتح أوامر المادة والسبورة',
-			'salle.seance.commandes.titre' => 'الأوامر',
+			'salle.seance.commandes.declencheur' => 'التحكم',
+			'salle.seance.commandes.declencheurSemantique' => 'فتح عناصر التحكم في المادة والسبورة',
+			'salle.seance.commandes.titre' => 'عناصر التحكم',
 			'salle.seance.commandes.reduire' => 'تصغير',
-			'salle.seance.commandes.reduireSemantique' => 'تصغير الأوامر',
+			'salle.seance.commandes.reduireSemantique' => 'تصغير عناصر التحكم',
 			'salle.seance.commandes.ongletSupport' => 'المادة',
 			'salle.seance.commandes.ongletOutils' => 'الأدوات',
 			'salle.seance.commandes.bibliotheque' => 'المكتبة',
@@ -2456,10 +2456,10 @@ extension on TraductionsAr {
 			'salle.seance.commandes.focus' => 'التركيز',
 			'salle.seance.commandes.focusSemantique' => 'التركيز، تكبير المحتوى وتصغير اللوحات',
 			'salle.seance.commandes.quitterFocus' => 'الخروج من التركيز',
-			'salle.seance.bibliotheque.intro' => 'المادة التي تختارها تُفتح لك وحدك. يبقى الفصل على المادة الحالية حتى «عرض».',
+			'salle.seance.bibliotheque.intro' => 'المادة التي تختارها تُفتح لك وحدك. يبقى الفصل على المادة الحالية حتى «عرض على الفصل».',
 			'salle.seance.bibliotheque.apercu' => 'معاينة خاصة',
 			'salle.seance.bibliotheque.apercuClasse' => 'ما زال الطلاب يرون المادة الحالية.',
-			'salle.seance.bibliotheque.presenter' => 'عرض',
+			'salle.seance.bibliotheque.presenter' => 'عرض على الفصل',
 			'salle.seance.bibliotheque.revenir' => 'العودة إلى المواد',
 			'salle.seance.bibliotheque.ouverture' => 'جارٍ فتح المادة…',
 			'salle.seance.bibliotheque.echec' => 'تعذّر فتح هذه المادة.',
@@ -2491,10 +2491,10 @@ extension on TraductionsAr {
 			'salle.seance.demo.roles.eleve' => 'طالب عادي',
 			'salle.seance.demo.roles.guidee' => 'وضع إمكانية الوصول',
 			'salle.seance.demo.roles.enseignant' => 'المعلم',
-			'salle.seance.demo.etats.repos' => 'سكون',
+			'salle.seance.demo.etats.repos' => 'وضع عادي',
 			'salle.seance.demo.etats.visite' => 'زيارة',
 			'salle.seance.demo.etats.rienPartage' => 'لا شيء مُشارَك',
-			'salle.seance.demo.etats.appel' => 'النداء بهدوء',
+			'salle.seance.demo.etats.appel' => 'نداء خاص',
 			'salle.seance.demo.etats.eleves' => 'لوحة الطلاب',
 			'salle.seance.demo.etats.supports' => 'لوحة المواد',
 			'salle.seance.demo.etats.fin' => 'نهاية الحصة',
@@ -2518,7 +2518,7 @@ extension on TraductionsAr {
 			'salle.seance.demo.tb.vis01' => 'VIS-01 شريط الفيديو ظاهر',
 			'salle.seance.demo.tb.ctx01' => 'CTX-01 سياق الحصة',
 			'salle.seance.demo.tb.ctx02' => 'CTX-02 معلومات المراقبة',
-			'salle.seance.demo.tb.cmd01' => 'CMD-01 الأوامر',
+			'salle.seance.demo.tb.cmd01' => 'CMD-01 عناصر التحكم',
 			'salle.seance.demo.tb.cmd02' => 'CMD-02 اللون والسُّمك',
 			'salle.seance.demo.tb.cmd03' => 'CMD-03 الكتابة جارية',
 			'salle.seance.demo.tb.lib01' => 'LIB-01 المكتبة',
@@ -2551,9 +2551,9 @@ extension on TraductionsAr {
 			'salle.fin.enseignant.phrase' => 'دفتر المتابعة جاهز بمعلومات الحصة.',
 			'salle.fin.enseignant.recapitulatif' => 'ملخص الحصة',
 			'salle.fin.enseignant.fin' => 'النهاية',
-			'salle.fin.enseignant.connectes' => ({required Object n}) => '⁨${n}⁩ طلاب متصلون',
-			'salle.fin.enseignant.unConnecte' => ({required Object n}) => '⁨${n}⁩ طالب متصل',
-			'salle.fin.enseignant.inscrits' => ({required Object n}) => 'من ⁨${n}⁩ مسجَّلين',
+			'salle.fin.enseignant.connectes' => ({required Object n}) => 'الطلاب المتصلون: ⁨${n}⁩',
+			'salle.fin.enseignant.unConnecte' => ({required Object n}) => 'الطلاب المتصلون: ⁨${n}⁩',
+			'salle.fin.enseignant.inscrits' => ({required Object n}) => 'من أصل ⁨${n}⁩',
 			'salle.fin.enseignant.unInscrit' => ({required Object n}) => 'من ⁨${n}⁩ مسجَّل',
 			'salle.fin.enseignant.cahierSeance' => 'دفتر المتابعة',
 			'salle.fin.enseignant.cahierACompleter' => 'دفتر المتابعة بانتظار الإكمال',
@@ -2659,7 +2659,7 @@ extension on TraductionsAr {
 			'tc.bibliotheque.sections.groupe' => 'المواد المعروضة',
 			'tc.bibliotheque.sections.continuer' => 'متابعة',
 			'tc.bibliotheque.sections.pourCeGroupe' => 'لهذا الفصل',
-			'tc.bibliotheque.sections.recents' => 'الأحدث',
+			'tc.bibliotheque.sections.recents' => 'المستخدمة مؤخرًا',
 			'tc.bibliotheque.sections.tousLesSupports' => 'كل المواد',
 			'tc.bibliotheque.sections.resultats' => 'النتائج',
 			'tc.bibliotheque.titre' => 'المكتبة',
@@ -2712,7 +2712,7 @@ extension on TraductionsAr {
 			'tc.groupe.commun.erreur' => 'تعذّرت قراءة فصولك',
 			'tc.groupe.commun.reessayer' => 'إعادة المحاولة',
 			'tc.groupe.carte.ouvrir' => ({required Object libelle}) => 'فتح الفصل ⁨${libelle}⁩',
-			'tc.groupe.carte.capacite' => ({required Object membres, required Object seuil}) => '⁨${membres}⁩ / ⁨${seuil}⁩',
+			'tc.groupe.carte.capacite' => ({required Object membres, required Object seuil}) => '⁨${membres}⁩ من ⁨${seuil}⁩',
 			'tc.groupe.carte.capacitePhrase' => ({required Object membres, required Object seuil}) => '⁨${membres}⁩ طلاب من ⁨${seuil}⁩ مقاعد',
 			'tc.groupe.carte.complet' => 'مكتمل',
 			'tc.groupe.carte.prochainCours' => 'الدرس القادم',
@@ -2730,8 +2730,8 @@ extension on TraductionsAr {
 			'tc.groupe.temps.attente' => 'أنت في القاعة. لم يبدأ الدرس بعد.',
 			'tc.groupe.temps.attenteDetail' => 'وقت الانتظار هذا لا يُحتسب في حضورك.',
 			'tc.groupe.temps.enSalle' => 'في القاعة',
-			'tc.groupe.temps.resteMinutes' => ({required Object minutes}) => 'بقيت ⁨${minutes}⁩ دقيقة',
-			'tc.groupe.temps.resteHeures' => ({required Object heures, required Object minutes}) => 'بقي ⁨${heures}⁩ س ⁨${minutes}⁩ د',
+			'tc.groupe.temps.resteMinutes' => ({required Object minutes}) => 'المتبقي ⁨${minutes}⁩ د',
+			'tc.groupe.temps.resteHeures' => ({required Object heures, required Object minutes}) => 'المتبقي ⁨${heures}⁩ س ⁨${minutes}⁩ د',
 			'tc.groupe.temps.enCours' => ({required Object reste}) => 'حصة مباشرة · ⁨${reste}⁩',
 			'tc.groupe.temps.enDirect' => 'مباشر',
 			'tc.groupe.temps.prolongee' => 'الحصة ما زالت مباشرة',
@@ -2773,8 +2773,8 @@ extension on TraductionsAr {
 			'tc.coran.fidelite.approchee' => 'تنسيق تقريبي',
 			'tc.coran.fidelite.approcheeDetail' => 'آيات هذه الصفحة هي بالضبط آيات صفحة مصحف المدينة. أما توزيعها على الأسطر فهو توزيع هذه الشاشة: لم يُستورد بعد تقسيم الأسطر في الطبعة.',
 			'tc.coran.fidelite.fidele' => 'تنسيق الطبعة',
-			'tc.coran.zoom.bride' => 'التكبير محدود بالعرض: بعده ستنقسم كلمة.',
-			'tc.coran.zoom.valeur' => ({required Object pourcent}) => '⁨${pourcent}⁩ %',
+			'tc.coran.zoom.bride' => 'التكبير محدود بالعرض: ما زاد عليه يقطع الكلمات.',
+			'tc.coran.zoom.valeur' => ({required Object pourcent}) => '⁨${pourcent}⁩ ٪',
 			'tc.coran.zoom.renvoiLectureAgrandie' => 'لتكبير النص، انتقل إلى القراءة المكبَّرة: صفحة المصحف تحافظ على هيئتها.',
 			'tc.coran.navigation.titre' => 'الانتقال إلى',
 			'tc.coran.navigation.ouvrir' => 'الانتقال إلى صفحة',
@@ -2787,16 +2787,16 @@ extension on TraductionsAr {
 			'tc.coran.reprise.groupe' => 'استئناف الدرس',
 			'tc.coran.reprise.groupeDetail' => ({required Object page}) => 'كان الفصل في الصفحة ⁨${page}⁩',
 			'tc.coran.focus.aucunePlage' => 'لا مقطع مُبرَز',
-			'tc.coran.focus.aucunePlageDetail' => 'يتبع التركيز المقطع الذي يحدده المعلم. خارج الفصل، يتوسط الصفحة المفتوحة.',
+			'tc.coran.focus.aucunePlageDetail' => 'يتبع التركيز المقطع الذي يحدده المعلم. خارج الفصل، يتمركز على الصفحة المفتوحة.',
 			'tc.coran.focus.quitter' => 'الخروج من التركيز',
 			'tc.outils.dock.titre' => 'الأدوات',
 			'tc.outils.dock.deplacer' => 'نقل الأدوات',
 			'tc.outils.dock.position.bas' => 'في الأسفل',
-			'tc.outils.dock.position.gauche' => 'على اليسار',
-			'tc.outils.dock.position.droite' => 'على اليمين',
+			'tc.outils.dock.position.gauche' => 'في جهة البداية',
+			'tc.outils.dock.position.droite' => 'في جهة النهاية',
 			'tc.outils.dock.bibliotheque' => 'المكتبة',
 			'tc.outils.dock.focus' => 'التركيز',
-			'tc.outils.dock.marquer' => 'تعليم',
+			'tc.outils.dock.marquer' => 'وضع علامة',
 			'tc.outils.dock.masquer' => 'إخفاء',
 			'tc.outils.dock.stylet' => 'القلم',
 			'tc.outils.dock.pointeur' => 'المؤشر',
@@ -2815,9 +2815,9 @@ extension on TraductionsAr {
 			'tc.outils.trait.effacerDernier' => 'مسح آخر خط لي',
 			'tc.outils.portee.temporaire' => 'وقت الشرح',
 			'tc.outils.portee.seance' => 'حتى نهاية الدرس',
-			'tc.outils.portee.enregistree' => 'حفظ',
+			'tc.outils.portee.enregistree' => 'الاحتفاظ بها دائمًا',
 			'tc.outils.portee.aide' => 'إلى متى نحتفظ بهذه الملاحظات؟',
-			'tc.outils.marquer.titre' => 'تعليم هذا المقطع',
+			'tc.outils.marquer.titre' => 'وضع علامة على هذا المقطع',
 			'tc.outils.marquer.aide' => 'اختر ما يحتاجه هذا المقطع.',
 			'tc.outils.marquer.retirer' => 'إزالة العلامة',
 			'tc.outils.revision.titre' => 'للتحضير',
@@ -2835,18 +2835,18 @@ extension on TraductionsAr {
 			'tc.outils.annotation.aucuneSelection' => 'حدّد مقطعًا أولًا.',
 			'tc.classe.entete.titreEnseignant.sayyid' => 'سيد',
 			'tc.classe.entete.titreEnseignant.sayyida' => 'سيدة',
-			'tc.classe.entete.resteMinutes' => ({required Object minutes}) => 'بقيت ⁨${minutes}⁩ دقيقة',
-			'tc.classe.entete.resteHeuresMinutes' => ({required Object heures, required Object minutes}) => 'بقي ⁨${heures}⁩ س ⁨${minutes}⁩ د',
+			'tc.classe.entete.resteMinutes' => ({required Object minutes}) => 'المتبقي ⁨${minutes}⁩ د',
+			'tc.classe.entete.resteHeuresMinutes' => ({required Object heures, required Object minutes}) => 'المتبقي ⁨${heures}⁩ س ⁨${minutes}⁩ د',
 			'tc.classe.entete.coursEnCours' => 'الحصة ما زالت مباشرة',
 			'tc.classe.entete.photoManquante' => 'صورة المعلم غير موجودة',
 			'tc.classe.roster.titre' => 'الطلاب',
-			'tc.classe.roster.compteur' => ({required Object presents, required Object attendus}) => 'الطلاب: ⁨${presents}⁩ حاضرون من ⁨${attendus}⁩ منتظَرين',
+			'tc.classe.roster.compteur' => ({required Object presents, required Object attendus}) => 'الحاضرون: ⁨${presents}⁩ من أصل ⁨${attendus}⁩',
 			'tc.classe.roster.indisponible' => 'قائمة الطلاب غير متاحة',
 			'tc.classe.roster.indisponibleDetail' => 'تعذّرت قراءة حالات طلابك. يستمر الدرس.',
 			'tc.classe.roster.vide' => 'لا طالب مسجَّل',
 			'tc.classe.roster.videDetail' => 'لا طالب مسجَّل في هذه الحصة.',
 			'tc.classe.roster.ouvrirFiche' => ({required Object prenom}) => 'فتح بطاقة ⁨${prenom}⁩',
-			'tc.classe.roster.places' => ({required Object inscrits, required Object plafond}) => '⁨${inscrits}⁩ / ⁨${plafond}⁩ مقاعد',
+			'tc.classe.roster.places' => ({required Object inscrits, required Object plafond}) => 'المقاعد: ⁨${inscrits}⁩ من ⁨${plafond}⁩',
 			'tc.classe.etat.inconnu' => 'حالة غير معروفة',
 			'tc.classe.etat.attendu' => 'منتظَر',
 			'tc.classe.etat.enConnexion' => 'جارٍ الاتصال',
@@ -2860,10 +2860,10 @@ extension on TraductionsAr {
 			'tc.classe.fiche.objectif' => 'الهدف الحالي',
 			'tc.classe.fiche.derniereSeance' => 'آخر حصة',
 			'tc.classe.fiche.page' => ({required Object page}) => 'الصفحة ⁨${page}⁩',
-			'tc.classe.fiche.travailEnCours' => ({required Object nombre}) => '⁨${nombre}⁩ عنصر',
+			'tc.classe.fiche.travailEnCours' => ({required Object nombre}) => 'العناصر: ⁨${nombre}⁩',
 			'tc.classe.fiche.aReprendre' => 'للاستئناف',
 			'tc.classe.fiche.presenceRecente' => 'الحضور الأخير',
-			'tc.classe.fiche.assiduite' => ({required Object presences, required Object total}) => '⁨${presences}⁩ / ⁨${total}⁩ دروس',
+			'tc.classe.fiche.assiduite' => ({required Object presences, required Object total}) => 'الدروس: ⁨${presences}⁩ من ⁨${total}⁩',
 			'tc.classe.fiche.travailActuel' => 'العمل الحالي',
 			'tc.classe.fiche.interfaceGuidee' => 'وضع إمكانية الوصول',
 			'tc.classe.fiche.sansPedagogie' => 'المتابعة التعليمية غير متاحة',
@@ -2871,15 +2871,15 @@ extension on TraductionsAr {
 			'tc.classe.action.rappel' => 'نداء هادئ',
 			'tc.classe.action.reciter' => 'اختيار للتلاوة',
 			'tc.classe.action.noter' => 'تدوين ملاحظة',
-			'tc.classe.action.signaler' => 'الإشارة إلى حاجة',
+			'tc.classe.action.signaler' => 'الإبلاغ عن حاجة',
 			'tc.classe.action.contexte' => 'فتح السياق',
 			'tc.classe.rappel.recu' => 'المعلم يناديك',
 			'tc.classe.rappel.echec' => 'تعذّر إرسال النداء',
 			'tc.classe.rappel.echecDroit' => 'دخولك إلى هذه الحصة لا يسمح بنداء طالب',
 			'tc.classe.rappel.cooldown' => ({required Object secondes}) => 'تم النداء. مجددًا بعد ⁨${secondes}⁩ ث',
 			'tc.classe.recitation.titre' => 'التلاوة',
-			'tc.classe.recitation.actif' => ({required Object prenom}) => '⁨${prenom}⁩ يتلو',
-			'tc.classe.recitation.pastille' => 'يتلو',
+			'tc.classe.recitation.actif' => ({required Object prenom}) => 'التلاوة: ⁨${prenom}⁩',
+			'tc.classe.recitation.pastille' => 'في التلاوة',
 			'tc.classe.recitation.suivants' => 'بعد ذلك',
 			'tc.classe.recitation.personne' => 'لا أحد يتلو',
 			'tc.classe.recitation.arreter' => 'إيقاف التلاوة',
@@ -2926,20 +2926,20 @@ extension on TraductionsAr {
 			'tc.observation.entree.titre' => 'متابعة الحصة',
 			'tc.observation.entree.tuteurIntro' => 'يمكنك مشاهدة درس طفلك لوقت قصير. يبقى الميكروفون والكاميرا مغلقين.',
 			'tc.observation.entree.adminIntro' => 'اختر طريقتك قبل الدخول. لن تتغير بعد ذلك.',
-			'tc.observation.entree.controleurIntro' => 'تدخل في متابعة غير مرئية. لا ميكروفون ولا كاميرا.',
+			'tc.observation.entree.controleurIntro' => 'تدخل في مراقبة غير مرئية. لا ميكروفون ولا كاميرا.',
 			'tc.observation.entree.entrer' => 'دخول',
-			'tc.observation.entree.modeDiscret' => 'المتابعة بهدوء',
+			'tc.observation.entree.modeDiscret' => 'المتابعة دون ظهور',
 			'tc.observation.entree.modeDiscretDetail' => 'غير مرئي للمشاركين. دون ميكروفون ولا كاميرا، ودون إعلان.',
 			'tc.observation.entree.modeVisible' => 'الانضمام إلى الفصل',
 			'tc.observation.entree.modeVisibleDetail' => 'مرئي للجميع باسم إدارة Rewayah. الميكروفون والكاميرا مسموحان، ويُعلَن عن الدخول.',
 			'tc.observation.entree.nomInstitutionnel' => 'إدارة Rewayah',
-			'tc.observation.entree.visiteJournalisee' => 'زيارة مسجَّلة في السجل: الهوية، والحصة، والدخول، والخروج، والمدة.',
+			'tc.observation.entree.visiteJournalisee' => 'زيارة مقيَّدة في السجل: الهوية، والحصة، والدخول، والخروج، والمدة.',
 			'tc.observation.entree.roleSansObservation' => 'حسابك لا يتابع الحصص.',
 			'tc.observation.entree.retourClasse' => 'العودة إلى الفصل',
 			'tc.observation.explication.titre' => 'لمحة عن تعلّمه',
 			'tc.observation.explication.regleUne' => ({required Object n, required Object duree}) => '⁨${n}⁩ زيارة مدتها ⁨${duree}⁩',
 			'tc.observation.explication.regle' => ({required Object n, required Object duree}) => '⁨${n}⁩ زيارات مدة كل منها ⁨${duree}⁩',
-			'tc.observation.explication.regleDetail' => 'لكل حصة ولكل وليّ أمر، حتى لو كان عدة من أطفالك في الفصل.',
+			'tc.observation.explication.regleDetail' => 'لكل حصة ولكل وليّ أمر، حتى لو كان أكثر من طفل من أطفالك في الفصل.',
 			'tc.observation.explication.ecoute' => 'استمع إلى المعلم والطلاب',
 			'tc.observation.explication.ecouteDetail' => 'تسمع المعلم والطلاب الذين يتكلمون، ومنهم طفلك.',
 			'tc.observation.explication.sansMedia' => 'دون ميكروفون ولا كاميرا',
@@ -2950,8 +2950,8 @@ extension on TraductionsAr {
 			'tc.observation.explication.informes' => 'طفلك ومعلمه على علم.',
 			'tc.observation.explication.observer' => 'المتابعة الآن',
 			'tc.observation.explication.pasMaintenant' => 'ليس الآن',
-			'tc.observation.explication.restanteUne' => ({required Object restantes, required Object max}) => '⁨${restantes}⁩/⁨${max}⁩ زيارة متبقية لهذه الحصة',
-			'tc.observation.explication.restantes' => ({required Object restantes, required Object max}) => '⁨${restantes}⁩/⁨${max}⁩ زيارات متبقية لهذه الحصة',
+			'tc.observation.explication.restanteUne' => ({required Object restantes, required Object max}) => 'الزيارات المتبقية لهذه الحصة: ⁨${restantes}⁩ من ⁨${max}⁩',
+			'tc.observation.explication.restantes' => ({required Object restantes, required Object max}) => 'الزيارات المتبقية لهذه الحصة: ⁨${restantes}⁩ من ⁨${max}⁩',
 			'tc.observation.explication.aucuneRestante' => 'لا زيارة متبقية لهذه الحصة',
 			'tc.observation.disponibilite.visitesEpuiseesTitre' => 'لا زيارة متبقية لهذه الحصة',
 			'tc.observation.disponibilite.visitesEpuisees' => 'استخدمت زياراتك. يمكنك متابعة الحصة القادمة.',
@@ -3015,13 +3015,13 @@ extension on TraductionsAr {
 			'tc.observation.visite.reconnexion' => 'إعادة الاتصال',
 			'tc.observation.visite.videoCoupee' => 'الفيديو غير متاح',
 			'tc.observation.visite.reconnexionDetail' => 'انقطع الاتصال، جارٍ إعادة الاتصال. يستمر احتساب وقت متابعتك.',
-			'tc.observation.visite.sonRecu' => 'الصوت واصل',
+			'tc.observation.visite.sonRecu' => 'الصوت يصل',
 			'tc.observation.visite.sonInterrompu' => 'الصوت منقطع',
 			'tc.observation.visite.agrandir' => 'تكبير',
 			'tc.observation.visite.reduire' => 'تصغير',
 			'tc.observation.visite.cameraFermee' => 'الكاميرا مغلقة',
 			'tc.observation.visite.pasEncoreLa' => 'ليس في القاعة بعد',
-			'tc.observation.visite.parle' => ({required Object nom}) => '⁨${nom}⁩ يتكلم',
+			'tc.observation.visite.parle' => ({required Object nom}) => 'الكلمة الآن لـ⁨${nom}⁩',
 			'tc.observation.visite.quitterQuestion' => 'مغادرة الزيارة؟',
 			'tc.observation.visite.quitterConsequence' => ({required Object duree}) => 'بقي لك ⁨${duree}⁩. الزيارة التي تُغادَر قبل نهايتها تُحتسب زيارة كاملة: الوقت غير المستخدم لا يُرحَّل.',
 			'tc.observation.visite.quitterConsequenceSansTemps' => 'الزيارة التي تُغادَر قبل نهايتها تُحتسب زيارة كاملة: الوقت غير المستخدم لا يُرحَّل.',
@@ -3038,10 +3038,10 @@ extension on TraductionsAr {
 			'tc.observation.resultat.interrompue' => 'قُطعت المتابعة',
 			'tc.observation.resultat.continuePour' => ({required Object prenom}) => 'تستمر الحصة لـ⁨${prenom}⁩.',
 			'tc.observation.resultat.continueSansPrenom' => 'تستمر الحصة.',
-			'tc.observation.resultat.resteUne' => ({required Object duree}) => 'بقيت لك زيارة واحدة مدتها ⁨${duree}⁩. عد لاحقًا للاستماع إليه.',
-			'tc.observation.resultat.restent' => ({required Object n, required Object duree}) => 'بقيت لك ⁨${n}⁩ زيارات مدة كل منها ⁨${duree}⁩. عد لاحقًا للاستماع إليه.',
-			'tc.observation.resultat.resteUneSansDuree' => 'بقيت لك زيارة واحدة. عد لاحقًا للاستماع إليه.',
-			'tc.observation.resultat.restentSansDuree' => ({required Object n}) => 'بقيت لك ⁨${n}⁩ زيارات. عد لاحقًا للاستماع إليه.',
+			'tc.observation.resultat.resteUne' => ({required Object duree}) => 'بقيت لك زيارة واحدة مدتها ⁨${duree}⁩. عد لاحقًا للاستماع إلى طفلك.',
+			'tc.observation.resultat.restent' => ({required Object n, required Object duree}) => 'بقيت لك ⁨${n}⁩ زيارات مدة كل منها ⁨${duree}⁩. عد لاحقًا للاستماع إلى طفلك.',
+			'tc.observation.resultat.resteUneSansDuree' => 'بقيت لك زيارة واحدة. عد لاحقًا للاستماع إلى طفلك.',
+			'tc.observation.resultat.restentSansDuree' => ({required Object n}) => 'بقيت لك ⁨${n}⁩ زيارات. عد لاحقًا للاستماع إلى طفلك.',
 			'tc.observation.resultat.aucune' => 'استخدمت زياراتك لهذه الحصة. يمكنك متابعة الحصة القادمة.',
 			'tc.observation.resultat.prochaineSeance' => 'يمكنك متابعة الحصة القادمة.',
 			'tc.observation.resultat.verification' => 'جارٍ التحقق من زياراتك المتبقية',
@@ -3094,7 +3094,7 @@ extension on TraductionsAr {
 			'tc.parcours.feedback.cours.tresBien' => 'جيد جدًا',
 			'tc.parcours.feedback.comprehension.intitule' => 'هل فهمت ما تم العمل عليه؟',
 			'tc.parcours.feedback.comprehension.difficile' => 'ليس تمامًا',
-			'tc.parcours.feedback.comprehension.bien' => 'نعم تقريبًا',
+			'tc.parcours.feedback.comprehension.bien' => 'نعم، إلى حدٍّ ما',
 			'tc.parcours.feedback.comprehension.tresBien' => 'تمامًا',
 			'tc.parcours.feedback.rythme.intitule' => 'هل ناسبك إيقاع الدرس؟',
 			'tc.parcours.feedback.rythme.difficile' => 'سريع جدًا',
@@ -3106,13 +3106,13 @@ extension on TraductionsAr {
 			'tc.parcours.feedback.technique.tresBien' => 'جيدان جدًا',
 			'tc.parcours.feedback.confiance.intitule' => 'هل تشعر أنك مستعد للدرس القادم؟',
 			'tc.parcours.feedback.confiance.difficile' => 'ليس بعد',
-			'tc.parcours.feedback.confiance.bien' => 'تقريبًا',
+			'tc.parcours.feedback.confiance.bien' => 'إلى حدٍّ ما',
 			'tc.parcours.feedback.confiance.tresBien' => 'تمامًا',
 			'tc.parcours.feedback.merci' => 'شكرًا.',
 			'tc.parcours.feedback.tendance.titre' => 'آراء الطلاب',
 			'tc.parcours.feedback.tendance.sousSeuil' => 'لا تكفي الآراء بعد لاستخلاص اتجاه.',
 			'tc.parcours.feedback.tendance.anonyme' => 'الآراء مجهولة الهوية ومجمَّعة. لا تكفي وحدها أبدًا لاتخاذ قرار.',
-			'tc.parcours.signalement.titre' => 'الإشارة إلى حاجة',
+			'tc.parcours.signalement.titre' => 'الإبلاغ عن حاجة',
 			'tc.parcours.signalement.categorie' => 'بماذا يتعلق الأمر؟',
 			'tc.parcours.signalement.categorieValeur.pedagogique' => 'تعليمي',
 			'tc.parcours.signalement.categorieValeur.presence' => 'الحضور',
@@ -3123,11 +3123,11 @@ extension on TraductionsAr {
 			'tc.parcours.signalement.interneAide' => 'تقرؤها الإدارة وحدها. لا تُرسل أبدًا تلقائيًا إلى الأسرة.',
 			'tc.parcours.signalement.famille' => 'رسالة إلى الأسرة',
 			'tc.parcours.signalement.familleAide' => 'اختيارية. الإدارة وحدها تقرر إرسالها بنقرة واحدة.',
-			'tc.parcours.signalement.contexte' => ({required Object eleve}) => 'الطالب ⁨${eleve}⁩. الحصة والفصل واسمك مرفقة بالفعل.',
-			'tc.parcours.signalement.envoyer' => 'إرسال الإشارة',
-			'tc.parcours.signalement.envoye' => 'أُرسلت الإشارة إلى الإدارة.',
+			'tc.parcours.signalement.contexte' => ({required Object eleve}) => 'بخصوص ⁨${eleve}⁩. الحصة والفصل واسمك مرفقة بالفعل.',
+			'tc.parcours.signalement.envoyer' => 'إرسال البلاغ',
+			'tc.parcours.signalement.envoye' => 'أُرسل البلاغ إلى الإدارة.',
 			'tc.parcours.signalement.interneRequis' => 'اكتب على الأقل ما يجب أن تعرفه الإدارة.',
-			'tc.parcours.signalement.echec' => 'تعذّر إرسال الإشارة. أعد المحاولة.',
+			'tc.parcours.signalement.echec' => 'تعذّر إرسال البلاغ. أعد المحاولة.',
 			'tc.parcours.postCours.titre' => 'بعد الدرس',
 			'tc.parcours.postCours.duree' => ({required Object minutes}) => 'المدة الفعلية ⁨${minutes}⁩ دقيقة',
 			'tc.parcours.postCours.exceptions' => 'للتأكيد',
