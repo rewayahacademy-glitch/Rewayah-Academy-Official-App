@@ -81,6 +81,29 @@ as $function$
   );
 $function$;
 
+create or replace function private.tc_assignment_resource_version_matches(
+  p_version_id uuid,
+  p_resource_id uuid
+) returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $function$
+  select coalesce(
+    public.app_account_valid()
+    and p_version_id is not null
+    and p_resource_id is not null
+    and exists (
+      select 1
+        from public.resource_version rv
+       where rv.id = p_version_id
+         and rv.resource_id = p_resource_id
+    ),
+    false
+  );
+$function$;
+
 revoke all on function private.tc_assignment_teacher_owns_group(uuid)
   from public, anon, agent_ro;
 grant execute on function private.tc_assignment_teacher_owns_group(uuid)
@@ -92,6 +115,10 @@ grant execute on function private.tc_assignment_teacher_owns_member(uuid, uuid)
 revoke all on function private.tc_assignment_member_visible(uuid, uuid)
   from public, anon, agent_ro;
 grant execute on function private.tc_assignment_member_visible(uuid, uuid)
+  to authenticated;
+revoke all on function private.tc_assignment_resource_version_matches(uuid, uuid)
+  from public, anon, agent_ro;
+grant execute on function private.tc_assignment_resource_version_matches(uuid, uuid)
   to authenticated;
 
 -- Une assignation de groupe garde un statut partagé. Seul l'enseignant actif
@@ -120,11 +147,7 @@ create policy learning_assignment_enseignant on public.learning_assignment
       )
       and (
         resource_version_id is null
-        or exists (
-          select 1 from public.resource_version rv
-           where rv.id = learning_assignment.resource_version_id
-             and rv.resource_id = learning_assignment.resource_id
-        )
+        or private.tc_assignment_resource_version_matches(learning_assignment.resource_version_id, learning_assignment.resource_id)
       )
       and (
         content_range is null
