@@ -191,22 +191,52 @@ end $$;
 -- 1-to-1 (ADR-004), il dit seulement ce que le plafond compte. Un troisieme
 -- ELEVE reste refuse, y compris apres une visite de controle.
 
+create temporary table ctr01_config_snapshot as
+select key, value
+from public.app_config
+where key in ('allow_multi_participant_sessions', 'max_participants_per_session');
+
+-- C2 mesure bien le contrat 1-to-1, quelles que soient les mutations des
+-- scénarios précédents sur la base partagée.
+begin;
+insert into public.app_config (key, value)
+values ('allow_multi_participant_sessions', 'false'::jsonb),
+       ('max_participants_per_session', '2'::jsonb)
+on conflict (key) do update set value = excluded.value;
+
 do $$
 declare
   v_refuse boolean := false;
+  v_message text;
 begin
   begin
     insert into public.session_participants (session_id, profile_id, role)
     values ('c1aaaaaa-0000-0000-0000-00000000000a',
             'c1000000-0000-0000-0000-00000000000b', 'student');
   exception when others then
-    v_refuse := (sqlerrm like '%plafond de participants%');
+    v_message := sqlerrm;
+    v_refuse := (v_message like '%plafond de participants%');
   end;
 
   if not v_refuse then
-    raise exception 'C2 : un troisieme eleve a ete accepte dans un cours 1-to-1';
+    raise exception 'C2 : le troisieme eleve n''a pas ete refuse par le plafond attendu (erreur: %)', v_message;
   end if;
 end $$;
+
+-- Restaurer exactement les deux valeurs, et retirer toute cle ajoutée.
+update public.app_config current_config
+   set value = snapshot.value
+  from pg_temp.ctr01_config_snapshot snapshot
+ where current_config.key = snapshot.key;
+
+delete from public.app_config current_config
+ where current_config.key in ('allow_multi_participant_sessions', 'max_participants_per_session')
+   and not exists (
+     select 1 from pg_temp.ctr01_config_snapshot snapshot
+     where snapshot.key = current_config.key
+   );
+drop table pg_temp.ctr01_config_snapshot;
+commit;
 
 -- ============================================================
 -- C3 : deux visites qui se recoupent sont permises, un double
@@ -492,21 +522,19 @@ begin
 end $$;
 
 -- ============================================================
--- C10 : le tuteur peut enfin assister, et seulement chez lui
+-- C10 : l'ancienne porte tuteur est fermee, le flux courant verifie le lien
 -- ============================================================
 --
--- Le bouton « Assister » de `TUT-01` est en production depuis l'etape 4 et
--- echouait silencieusement : sans inscription, `autoriser_jeton_video()` rendait
--- « non inscrit a cette seance », et le plafond aurait de toute facon refuse la
--- ligne. Il entre **visible**, contrairement au controleur : sa ligne se lit,
--- et c'est normal -- l'enseignant doit savoir qu'un parent regarde.
+-- Depuis 0041, assister_seance est retiree car elle contourne quota et trace.
+-- Le flux courant entrer_observation exige un groupe et un enfant du foyer :
+-- cette seance legacy sans groupe doit donc etre refusee sans inscription.
 
 do $$
 declare
-  v_role      public.participant_role;
-  v_hors      boolean := false;
-  v_enseignant boolean := false;
-  v_vue_par_ens int;
+  v_result jsonb;
+  v_refus_ancienne_porte boolean := false;
+  v_refus_enseignant boolean := false;
+  v_role public.participant_role;
 begin
   set local role authenticated;
   perform set_config('test.uid', 'c1000000-0000-0000-0000-000000000005', true);
@@ -514,39 +542,40 @@ begin
     '{"app_metadata":{"role":"guardian","household_id":"c1ffffff-0000-0000-0000-00000000000a"}}',
     true);
 
-  perform public.assister_seance('c1aaaaaa-0000-0000-0000-00000000000a');
-
-  -- La seance D n'est pas celle d'un enfant de ce foyer.
   begin
-    perform public.assister_seance('c1aaaaaa-0000-0000-0000-00000000000d');
-  exception when others then
-    v_hors := (sqlerrm like '%enfant du foyer%');
+    perform public.assister_seance('c1aaaaaa-0000-0000-0000-00000000000a');
+  exception when insufficient_privilege then
+    v_refus_ancienne_porte := true;
   end;
+
+  v_result := public.entrer_observation(
+    'c1aaaaaa-0000-0000-0000-00000000000a', 'guardian_observer');
+  if (v_result->>'autorise')::boolean is distinct from false
+     or v_result->>'motif_refus' is distinct from 'lien_tuteur_absent' then
+    raise exception 'C10 : une seance sans groupe/enfant lie n''a pas ete refusee, retour %', v_result;
+  end if;
 
   perform set_config('test.uid', 'c1000000-0000-0000-0000-000000000001', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
   begin
-    perform public.assister_seance('c1aaaaaa-0000-0000-0000-00000000000a');
-  exception when others then
-    v_enseignant := (sqlerrm like '%tuteur du foyer%');
+    perform public.entrer_observation(
+      'c1aaaaaa-0000-0000-0000-00000000000a', 'guardian_observer');
+  exception when insufficient_privilege then
+    v_refus_enseignant := (sqlerrm like '%observation reservee au tuteur%');
   end;
-
-  select count(*) into v_vue_par_ens from public.session_participants
-   where session_id = 'c1aaaaaa-0000-0000-0000-00000000000a'
-     and role = 'guardian_observer';
 
   reset role;
   select sp.role into v_role from public.session_participants sp
    where sp.session_id = 'c1aaaaaa-0000-0000-0000-00000000000a'
      and sp.profile_id = 'c1000000-0000-0000-0000-000000000005';
 
-  if v_role is distinct from 'guardian_observer' then
-    raise exception 'C10 : le tuteur est inscrit comme %, attendu guardian_observer', v_role;
+  if not v_refus_ancienne_porte then
+    raise exception 'C10 : l''ancienne porte assister_seance reste appelable';
   end if;
-  if not (v_hors and v_enseignant) then
-    raise exception 'C10 : refus manquants -- hors foyer %, enseignant %', v_hors, v_enseignant;
+  if not v_refus_enseignant then
+    raise exception 'C10 : un enseignant peut demander une observation tuteur';
   end if;
-  if v_vue_par_ens <> 1 then
-    raise exception 'C10 : l''enseignant lit % tuteur(s) observateur(s), attendu 1', v_vue_par_ens;
+  if v_role is not null then
+    raise exception 'C10 : refus attendu, mais le tuteur a ete inscrit comme %', v_role;
   end if;
 end $$;

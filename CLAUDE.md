@@ -20,6 +20,7 @@ spécifications actives sont dans `docs/current/`. Tout le reste est archivé.
 | Périmètre MVP et statuts de preuve | `docs/current/06_SPEC_FONCTIONNELLE_MVP.md` |
 | Pédagogie avancée, finance (après MVP) | `docs/current/07_MEMOIRE_PEDAGOGIE_FINANCE.md` |
 | Backend Supabase | `supabase/CLAUDE.md` |
+| **Offres, demandes, création des classes (directeur, 09/10/2026)** | `docs/current/DECISION-OFFRES-GROUPES-2026-10-09.md` : seule l'administration publie ; vitrine sans enseignant ; aucune demande sans jour ni heure ; regroupement automatique et « Créer la classe » ; suivi et notifications de la famille à chaque étape |
 | **Partage avec ChatGPT (Codex), depuis le 09/10/2026** | `docs/orchestration/COHABITATION.md` : ChatGPT fait le backend (`supabase/**`, services, adaptateurs `*_supabase.dart`), Claude les écrans ; ports partagés par l'onglet Contrats ; Claude relit le backend en fin de frontend |
 
 `docs/archive/` contient l'historique (HANDOFF, ADR, Bible V2, rapports d'agents).

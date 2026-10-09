@@ -18,6 +18,7 @@ import '../../core/domain/enums.dart';
 import '../../core/enseignant/absence_remplacement.dart';
 import '../../core/enseignant/depot_cahiers.dart';
 import '../../core/enseignant/modeles_enseignant.dart';
+import '../../core/enseignant/port_remplacements.dart';
 import '../../core/enseignant/service_enseignant.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/matching/service_matching.dart';
@@ -55,6 +56,7 @@ import 'demo_classe_page.dart' show adresseDemoClasse;
 import 'enseignant_demo.dart';
 import 'finance_demo.dart' show RevenusEnseignantDemo;
 import 'mode_demonstration.dart';
+import 'remplacements_demo.dart';
 import 'repere_demonstration.dart';
 
 /// Les routes de la demonstration enseignant : AUCUNE en production.
@@ -162,6 +164,21 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
       vide
           ? const <OffreRemplacement>[]
           : <OffreRemplacement>[DonneesEnseignantDemo.offreRemplacement()],
+    ),
+    // REMPL-1 : le tableau commun des remplacements, filtre par genre et
+    // premier arrive, premier servi, simule sur l'appareil (K-28). Le genre
+    // est un parametre de la demonstration (Sayyid : un enseignant).
+    portRemplacementsProvider.overrideWithValue(
+      PortRemplacementsDemo(
+        tableau: vide
+            ? TableauRemplacementsDemo(
+                const <(OffreRemplacement, PublicClasseDemo, String?)>[],
+              )
+            : TableauRemplacementsDemo.demonstration(),
+        enseignantId: id,
+        genre: GenreEnseignantDemo.homme,
+        horsLigne: etat == EtatDemoEnseignant.horsLigne,
+      ),
     ),
     // Classes (ENS-09) : les quatre Classes, leur niveau, leur langue et le
     // remplacement d'Al-Fatiha. Le cahier non valide d'Al-Badr vient de

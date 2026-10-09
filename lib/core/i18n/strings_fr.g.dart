@@ -2359,6 +2359,7 @@ class Traductions$enseignant$fr {
 	late final Traductions$enseignant$bienvenue$fr bienvenue = Traductions$enseignant$bienvenue$fr.internal(_root);
 	late final Traductions$enseignant$photo$fr photo = Traductions$enseignant$photo$fr.internal(_root);
 	late final Traductions$enseignant$journee$fr journee = Traductions$enseignant$journee$fr.internal(_root);
+	late final Traductions$enseignant$remplacements$fr remplacements = Traductions$enseignant$remplacements$fr.internal(_root);
 	late final Traductions$enseignant$salle$fr salle = Traductions$enseignant$salle$fr.internal(_root);
 	late final Traductions$enseignant$cahier$fr cahier = Traductions$enseignant$cahier$fr.internal(_root);
 	late final Traductions$enseignant$profil$fr profil = Traductions$enseignant$profil$fr.internal(_root);
@@ -10098,6 +10099,48 @@ class Traductions$enseignant$journee$fr {
 
 	/// fr: 'Vos cahiers de transmission à terminer n'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour : elles n'en dépendent pas. Réessayez dans un instant.'
 	String get erreurPartielleCahiers => 'Vos cahiers de transmission à terminer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.';
+}
+
+// Path: enseignant.remplacements
+class Traductions$enseignant$remplacements$fr {
+	Traductions$enseignant$remplacements$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Remplacements'
+	String get titre => 'Remplacements';
+
+	/// fr: 'Ouverts à tous les enseignants : le premier qui accepte assure la séance.'
+	String get contexte => 'Ouverts à tous les enseignants : le premier qui accepte assure la séance.';
+
+	/// fr: 'Remplacement urgent : {jour} {heure}'
+	String urgentTitre({required Object jour, required Object heure}) => 'Remplacement urgent : ${jour} ${heure}';
+
+	/// fr: 'Un enseignant est absent. Assurez cette séance à sa place : elle vous sera payée après validation en fin de mois.'
+	String get urgentPhrase => 'Un enseignant est absent. Assurez cette séance à sa place : elle vous sera payée après validation en fin de mois.';
+
+	/// fr: 'Vos remplacements'
+	String get vosRemplacements => 'Vos remplacements';
+
+	/// fr: 'Déjà pris par un collègue'
+	String get prisTitre => 'Déjà pris par un collègue';
+
+	/// fr: 'Pris par un collègue'
+	String get prisPastille => 'Pris par un collègue';
+
+	/// fr: 'Un collègue a accepté cette séance juste avant vous. Rien n'a changé dans votre planning.'
+	String get prisAvantVous => 'Un collègue a accepté cette séance juste avant vous. Rien n\'a changé dans votre planning.';
+
+	/// fr: 'C'est confirmé : vous assurez cette séance. Elle s'ajoute à vos remplacements.'
+	String get acceptee => 'C\'est confirmé : vous assurez cette séance. Elle s\'ajoute à vos remplacements.';
+
+	/// fr: 'Les remplacements à assurer n'ont pas pu être chargés : le serveur n'a pas répondu. Réessayez dans un instant.'
+	String get erreur => 'Les remplacements à assurer n\'ont pas pu être chargés : le serveur n\'a pas répondu. Réessayez dans un instant.';
+
+	/// fr: 'Les remplacements à assurer n'ont pas pu être chargés'
+	String get sansDonnees => 'Les remplacements à assurer n\'ont pas pu être chargés';
 }
 
 // Path: enseignant.salle
@@ -29896,6 +29939,17 @@ extension on Traductions {
 			'enseignant.journee.remplacement.assurer' => 'Assurer ce remplacement',
 			'enseignant.journee.remplacement.pasCetteFois' => 'Pas cette fois',
 			'enseignant.journee.erreurPartielleCahiers' => 'Vos cahiers de transmission à terminer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.',
+			'enseignant.remplacements.titre' => 'Remplacements',
+			'enseignant.remplacements.contexte' => 'Ouverts à tous les enseignants : le premier qui accepte assure la séance.',
+			'enseignant.remplacements.urgentTitre' => ({required Object jour, required Object heure}) => 'Remplacement urgent : ${jour} ${heure}',
+			'enseignant.remplacements.urgentPhrase' => 'Un enseignant est absent. Assurez cette séance à sa place : elle vous sera payée après validation en fin de mois.',
+			'enseignant.remplacements.vosRemplacements' => 'Vos remplacements',
+			'enseignant.remplacements.prisTitre' => 'Déjà pris par un collègue',
+			'enseignant.remplacements.prisPastille' => 'Pris par un collègue',
+			'enseignant.remplacements.prisAvantVous' => 'Un collègue a accepté cette séance juste avant vous. Rien n\'a changé dans votre planning.',
+			'enseignant.remplacements.acceptee' => 'C\'est confirmé : vous assurez cette séance. Elle s\'ajoute à vos remplacements.',
+			'enseignant.remplacements.erreur' => 'Les remplacements à assurer n\'ont pas pu être chargés : le serveur n\'a pas répondu. Réessayez dans un instant.',
+			'enseignant.remplacements.sansDonnees' => 'Les remplacements à assurer n\'ont pas pu être chargés',
 			'enseignant.salle.reference' => ({required Object page, required Object total, required Object reference}) => 'Présenté : page ${page} sur ${total} · ${reference}',
 			'enseignant.salle.rien' => 'Rien n\'est présenté',
 			'enseignant.salle.rienInvitation' => 'Ouvrez le Coran pour montrer une page à votre Classe.',
@@ -29966,6 +30020,8 @@ extension on Traductions {
 			'enseignant.cahier.suspendreNouveau' => 'Suspendre le nouveau',
 			'enseignant.cahier.devoirPrecedent' => ({required Object devoir}) => 'Devoir précédent : ${devoir}',
 			'enseignant.cahier.devoirPlage' => ({required Object sourate, required Object debut, required Object fin}) => 'Réviser la sourate ${sourate}, versets ${debut} à ${fin}.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.suspendreNouveauDetail' => 'La révision continue, rien de nouveau n\'est ajouté pour cet élève.',
 			'enseignant.cahier.position' => ({required Object sourate, required Object verset}) => 'Lecture : sourate ${sourate}, verset ${verset}',
 			'enseignant.cahier.makhrajSinSad' => 'Sîn / Sâd (س / ص)',
@@ -29977,8 +30033,6 @@ extension on Traductions {
 			'enseignant.cahier.exceptionExcuser' => 'Excuser l\'absence',
 			'enseignant.cahier.exceptionConfirmation' => 'Confirmer l\'exception',
 			'enseignant.cahier.exceptionMotif' => 'Motif',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.exceptionMotifRequis' => 'Le motif est obligatoire.',
 			'enseignant.cahier.exceptionEnCours' => 'Enregistrement…',
 			'enseignant.cahier.exceptionSucces' => 'Exception consignée. Elle partira avec le cahier de transmission.',
@@ -30480,6 +30534,8 @@ extension on Traductions {
 			'tc.groupe.carte.aucuneSeanceDetail' => 'Le planning de cette classe n\'est pas encore posé.',
 			'tc.groupe.carte.duree' => ({required Object valeur}) => 'Durée ${valeur}',
 			'tc.groupe.carte.dureeLibelle' => 'Durée',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.carte.rejoindre' => 'Rejoindre',
 			'tc.groupe.enseignant.sayyid' => 'Sayyid',
 			'tc.groupe.enseignant.sayyida' => 'Sayyida',
@@ -30491,8 +30547,6 @@ extension on Traductions {
 			'tc.groupe.temps.imminent' => 'Cours imminent',
 			'tc.groupe.temps.salleOuverte' => ({required Object reste}) => 'Salle ouverte · ${reste}',
 			'tc.groupe.temps.salleOuverteCourt' => 'Salle ouverte',
-			_ => null,
-		} ?? switch (path) {
 			'tc.groupe.temps.attente' => 'Vous êtes dans la salle. Le cours n\'a pas encore commencé.',
 			'tc.groupe.temps.attenteDetail' => 'Ce temps d\'attente ne compte pas dans votre présence.',
 			'tc.groupe.temps.enSalle' => 'En salle',
@@ -30994,6 +31048,8 @@ extension on Traductions {
 			'adulte.monEspace.pageCoursAcces.indisponiblePhrase' => 'Le détail de vos cours, de vos séances et de votre accès n\'est pas encore disponible dans l\'application.',
 			'adulte.monEspace.paiementsLegendeAutonome' => 'Solde, période et recharge',
 			'adulte.coranDemo.titre' => 'Disponible après connexion',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.coranDemo.phrase' => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte du Coran. Après connexion à votre espace élève, il s\'ouvre ici.',
 			'adulte.recharge.titre' => 'Recharge',
 			'adulte.recharge.phrase' => 'Choisissez les profils et les montants.',
@@ -31005,8 +31061,6 @@ extension on Traductions {
 			'adulte.recharge.verificationEchecTitre' => 'La vérification n\'a pas abouti.',
 			'adulte.recharge.verificationEchecPhrase' => 'Vos choix sont conservés. Vous pouvez réessayer.',
 			'adulte.recharge.recapitulatif' => 'Récapitulatif par profil',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.recharge.montantPaye' => 'Montant payé',
 			'adulte.recharge.soldeAttribue' => 'Solde attribué',
 			'adulte.recharge.statut' => 'Statut de l\'attribution',
@@ -31508,6 +31562,8 @@ extension on Traductions {
 			'identiteProfil.lecteurEnfant' => ({required Object prenom}) => '${prenom}, profil enfant',
 			'identiteProfil.lecteurAdulte' => ({required Object prenom}) => '${prenom}, profil adulte',
 			'identiteProfil.lecteurAvecClasse' => ({required Object profil, required Object classe}) => '${profil}, ${classe}',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.composants.lecture.pieceJointe' => ({required Object nom}) => 'Pièce jointe : ${nom}',
 			'com.socle.composants.lecture.vocal' => ({required Object duree}) => 'Message vocal de ${duree}',
 			'com.socle.composants.lecture.vocalSansDuree' => 'Message vocal',
@@ -31519,8 +31575,6 @@ extension on Traductions {
 			'com.socle.composants.badge.information' => 'Information',
 			'com.socle.composants.badge.aLire' => 'À lire',
 			'com.socle.composants.badge.actionRequise' => _root.com.socle.lexique.actionRequise,
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.composants.badge.urgent' => 'Urgent',
 			'com.socle.composants.badge.mention' => 'Mention',
 			'com.socle.composants.badge.mentionSemantique' => 'Une mention vous concerne',
@@ -32022,6 +32076,8 @@ extension on Traductions {
 			'com.studio.navigation.aujourdhui' => _root.com.socle.lexique.aujourdhui,
 			'com.studio.navigation.brouillons' => 'Brouillons',
 			'com.studio.navigation.canaux' => 'Canaux',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.navigation.enregistres' => 'Éléments enregistrés',
 			'com.studio.choisirTitre' => 'Choisissez un canal',
 			'com.studio.choisir' => 'Choisissez un canal dans la liste pour lire la discussion et y écrire.',
@@ -32033,8 +32089,6 @@ extension on Traductions {
 			'com.studio.sections.planningRemplacements' => 'Planning & remplacements',
 			'com.studio.sections.finance' => 'Finance',
 			'com.studio.sections.support' => 'Support',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.sections.produitTechnique' => 'Produit & technique',
 			'com.studio.sections.direction' => 'Direction',
 			'com.studio.visibilite.restreint' => 'Restreint',
@@ -32536,6 +32590,8 @@ extension on Traductions {
 			'comptable.aujourdhui.accesRapides' => 'Accès rapides',
 			'comptable.aujourdhui.encaissementsRecents' => 'Encaissements récents',
 			'comptable.aujourdhui.voirTout' => 'Voir tout',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.titreUn' => 'Confirmer le paiement',
 			'comptable.paiements.confirmation.titreLot' => 'Confirmer le lot',
 			'comptable.paiements.confirmation.titreValidation' => 'Demander une validation',
@@ -32547,8 +32603,6 @@ extension on Traductions {
 			'comptable.paiements.confirmation.beneficiaire' => 'Bénéficiaire',
 			'comptable.paiements.confirmation.devise' => 'Devise',
 			'comptable.paiements.confirmation.type' => 'Type',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.confirmation.periode' => 'Période / objet',
 			'comptable.paiements.confirmation.prestataire' => 'Prestataire prévu',
 			'comptable.paiements.confirmation.prestataireAucun' => 'Non rendu par la source',
@@ -33050,6 +33104,8 @@ extension on Traductions {
 			'comptable.validation.natures.retraitReserve' => 'Retrait de la Réserve stratégique',
 			'comptable.validation.natures.obligationAApprouver' => 'Obligation ponctuelle',
 			'comptable.validation.natures.payoutDuComptable' => 'Paie du Comptable',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.validation.natures.sortieCoffreProtege' => 'Sortie d\'un coffre protégé',
 			'comptable.validation.demandePar' => ({required Object demandeur, required Object date}) => 'Demandée par ${demandeur} le ${date}',
 			'comptable.validation.valideePar' => ({required Object decideur, required Object date}) => 'Validée par ${decideur} le ${date}',
@@ -33061,8 +33117,6 @@ extension on Traductions {
 			'comptable.validation.detail.titre' => 'Demande de validation',
 			'comptable.validation.detail.nature' => 'Nature',
 			'comptable.validation.detail.objet' => 'Objet',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.validation.detail.demandeur' => 'Demandée par',
 			'comptable.validation.detail.date' => 'Date de la demande',
 			'comptable.validation.detail.raison' => 'Raison',
