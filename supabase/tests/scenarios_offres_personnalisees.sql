@@ -97,6 +97,9 @@ BEGIN
     PERFORM public.demander_creneau_personnalise(v_id, 'Europe/Paris',
       ARRAY[2,4,6]::smallint[], 18::smallint);
   END LOOP;
+  PERFORM set_config('test.uid', 'f1490000-0000-0000-0000-000000000999', true);
+  PERFORM set_config('test.jwt',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text, true);
   UPDATE public.profiles SET account_status = 'disabled'
    WHERE id = 'f1490000-0000-0000-0000-000000000001';
   UPDATE public.households SET status = 'suspended'
