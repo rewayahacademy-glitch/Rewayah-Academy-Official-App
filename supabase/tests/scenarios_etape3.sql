@@ -271,9 +271,14 @@ end $$;
 do $$
 declare v_doc uuid; v_n int;
 begin
-  select count(*) into v_n from public.dossiers_en_attente();
+  -- La RPC inclut aussi les profils pending_kyc sans pièce visible
+  -- (document_id NULL / etat_piece = aucune ou non_visible). ADM-02 mesure
+  -- ici les pièces que cet administrateur peut réellement traiter.
+  select count(*) into v_n
+  from public.dossiers_en_attente()
+  where document_id is not null;
   if v_n <> 2 then
-    raise exception 'ADM-02 ECHEC : % dossiers en attente au lieu de 2', v_n;
+    raise exception 'ADM-02 ECHEC : % pièces visibles au lieu de 2', v_n;
   end if;
 
   begin
