@@ -142,13 +142,17 @@ BEGIN
     RAISE EXCEPTION 'creation de classe reservee a l''administration';
   END IF;
 
-  SELECT regroupement_id, type_public, langue_code, fuseau_iana, jours,
-         heures_locales, nombre_eleves, quota
+  RAISE NOTICE 'C-12 RPC: arg %, ready match %',
+    p_regroupement_id,
+    (SELECT count(*) FROM public.regroupements_demandes_horaires_admin() r
+      WHERE r.regroupement_id = p_regroupement_id AND r.pret IS TRUE);
+  SELECT r.regroupement_id, r.type_public, r.langue_code, r.fuseau_iana, r.jours,
+         r.heures_locales, r.nombre_eleves, r.quota
     INTO v_cle, v_type, v_langue, v_fuseau, v_jours, v_heures, v_nombre, v_quota
-  FROM public.regroupements_demandes_horaires_admin() r
-  WHERE r.regroupement_id = p_regroupement_id AND r.pret;
+  FROM public.regroupements_demandes_horaires_admin() AS r
+  WHERE r.regroupement_id::text = p_regroupement_id::text AND r.pret IS TRUE;
   IF NOT FOUND THEN
-    RAISE EXCEPTION 'regroupement absent ou quota non atteint';
+    RAISE EXCEPTION 'regroupement absent ou quota non atteint: %', p_regroupement_id;
   END IF;
 
   PERFORM pg_catalog.pg_advisory_xact_lock(
