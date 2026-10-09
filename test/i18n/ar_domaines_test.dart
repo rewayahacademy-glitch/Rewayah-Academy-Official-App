@@ -1,10 +1,11 @@
 // AR-COMPLET-1, par tranches : les domaines traduits en arabe le restent.
 //
-// AR-SALLE-1 (`salle.*`), AR-TC-1 (`tc.*`) et AR-ENS-1 (`enseignant.*`) :
-// chaque cle du francais a sa traduction arabe, avec exactement les memes
-// parametres ; chaque parametre ajoute par ces tranches est isole (U+2068 ...
-// U+2069), pour qu'un nom latin ne renverse pas la phrase. Une tranche
-// suivante ajoute son domaine a [_domaines].
+// AR-SALLE-1 (`salle.*`), AR-TC-1 (`tc.*`), AR-ENS-1 (`enseignant.*`) et
+// AR-TRANSVERSE-1 (nav, commun, accessibilite...) : chaque cle du francais a
+// sa traduction arabe, avec exactement les memes parametres ; chaque
+// parametre ajoute par ces tranches est isole (U+2068 ... U+2069), pour
+// qu'un nom latin ne renverse pas la phrase. Une tranche suivante ajoute son
+// domaine a [_domaines].
 
 import 'dart:convert';
 import 'dart:io';
@@ -17,6 +18,23 @@ const Map<String, int> _domaines = <String, int>{
   'salle': 300,
   'tc': 450,
   'enseignant': 400,
+  // AR-TRANSVERSE-1.
+  'nav': 40,
+  'commun': 70,
+  'accessibilite': 50,
+  'reseau': 3,
+  'etat': 10,
+  'vide': 4,
+  'notifications': 5,
+  'choix': 2,
+  'accuse': 1,
+  'aConstruire': 1,
+  'destructif': 0,
+  'avatar': 0,
+  'pin': 2,
+  'enfant': 2,
+  'reglagesEnfant': 3,
+  'galerie': 8,
 };
 
 Map<String, String> _aplatir(
@@ -27,6 +45,10 @@ Map<String, String> _aplatir(
   carte.forEach((String cle, dynamic valeur) {
     if (valeur is Map<String, dynamic>) {
       sortie.addAll(_aplatir(valeur, '$prefixe$cle.'));
+    } else if (valeur is List<dynamic>) {
+      for (int i = 0; i < valeur.length; i++) {
+        sortie['$prefixe$cle.$i'] = valeur[i] as String;
+      }
     } else {
       sortie['$prefixe$cle'] = valeur as String;
     }
@@ -51,6 +73,8 @@ const Set<String> _anciennes = <String>{
   'enseignant.journee.voirCahierLecteur',
   'enseignant.ficheGroupe.repriseEleve',
   'enseignant.ficheGroupe.dernierPoint',
+  'etat.annuleeValeur',
+  'etat.raisonEtSuite',
 };
 
 /// Les textes gardes en latin (marque, format de fichier).
@@ -58,6 +82,8 @@ const Set<String> _latins = <String>{
   'salle.seance.rail.marque',
   'salle.seance.rail.sousMarque',
   'tc.bibliotheque.type.pdf',
+  'nav.motSymbole',
+  'commun.marque',
 };
 
 final RegExp _parametre = RegExp(r'\{\w+\}');

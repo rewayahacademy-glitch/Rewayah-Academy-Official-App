@@ -47,6 +47,20 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$enseignant$ar enseignant = _Traductions$enseignant$ar._(_root);
 	@override late final _Traductions$compte$ar compte = _Traductions$compte$ar._(_root);
 	@override late final _Traductions$tc$ar tc = _Traductions$tc$ar._(_root);
+	@override late final _Traductions$nav$ar nav = _Traductions$nav$ar._(_root);
+	@override late final _Traductions$accessibilite$ar accessibilite = _Traductions$accessibilite$ar._(_root);
+	@override late final _Traductions$reseau$ar reseau = _Traductions$reseau$ar._(_root);
+	@override late final _Traductions$vide$ar vide = _Traductions$vide$ar._(_root);
+	@override late final _Traductions$notifications$ar notifications = _Traductions$notifications$ar._(_root);
+	@override late final _Traductions$choix$ar choix = _Traductions$choix$ar._(_root);
+	@override late final _Traductions$accuse$ar accuse = _Traductions$accuse$ar._(_root);
+	@override late final _Traductions$aConstruire$ar aConstruire = _Traductions$aConstruire$ar._(_root);
+	@override late final _Traductions$destructif$ar destructif = _Traductions$destructif$ar._(_root);
+	@override late final _Traductions$avatar$ar avatar = _Traductions$avatar$ar._(_root);
+	@override late final _Traductions$pin$ar pin = _Traductions$pin$ar._(_root);
+	@override late final _Traductions$enfant$ar enfant = _Traductions$enfant$ar._(_root);
+	@override late final _Traductions$reglagesEnfant$ar reglagesEnfant = _Traductions$reglagesEnfant$ar._(_root);
+	@override late final _Traductions$galerie$ar galerie = _Traductions$galerie$ar._(_root);
 }
 
 // Path: commun
@@ -57,6 +71,23 @@ class _Traductions$commun$ar extends Traductions$commun$fr {
 
 	// Translations
 	@override late final _Traductions$commun$sections$ar sections = _Traductions$commun$sections$ar._(_root);
+	@override String get marque => 'Rewayah Academy';
+	@override String get continuer => 'متابعة';
+	@override String get retour => 'رجوع';
+	@override String get valider => 'تأكيد';
+	@override String get annuler => 'إلغاء';
+	@override String get fermer => 'إغلاق';
+	@override String get reessayer => 'إعادة المحاولة';
+	@override String get chargement => 'جارٍ التحميل';
+	@override late final _Traductions$commun$demonstration$ar demonstration = _Traductions$commun$demonstration$ar._(_root);
+	@override late final _Traductions$commun$etape$ar etape = _Traductions$commun$etape$ar._(_root);
+	@override late final _Traductions$commun$choix$ar choix = _Traductions$commun$choix$ar._(_root);
+	@override late final _Traductions$commun$etats$ar etats = _Traductions$commun$etats$ar._(_root);
+	@override late final _Traductions$commun$entete$ar entete = _Traductions$commun$entete$ar._(_root);
+	@override late final _Traductions$commun$selecteurProfils$ar selecteurProfils = _Traductions$commun$selecteurProfils$ar._(_root);
+	@override late final _Traductions$commun$theme$ar theme = _Traductions$commun$theme$ar._(_root);
+	@override late final _Traductions$commun$demarrage$ar demarrage = _Traductions$commun$demarrage$ar._(_root);
+	@override late final _Traductions$commun$dates$ar dates = _Traductions$commun$dates$ar._(_root);
 }
 
 // Path: etat
@@ -73,6 +104,11 @@ class _Traductions$etat$ar extends Traductions$etat$fr {
 	@override String get aucunRemplacantTrouve => 'لم يُعثر على بديل';
 	@override String get seanceNonFacturee => 'الحصة غير مفوترة';
 	@override String raisonEtSuite({required Object raison, required Object suite}) => '${raison} · ${suite}';
+	@override String get imminent => 'قريبًا جدًا';
+	@override String get annule => 'ملغى';
+	@override String get enAttente => 'قيد الانتظار';
+	@override String get enRetard => 'متأخر';
+	@override String get termine => 'منتهٍ';
 }
 
 // Path: classe
@@ -215,6 +251,192 @@ class _Traductions$tc$ar extends Traductions$tc$fr {
 	@override late final _Traductions$tc$parcours$ar parcours = _Traductions$tc$parcours$ar._(_root);
 }
 
+// Path: nav
+class _Traductions$nav$ar extends Traductions$nav$fr {
+	_Traductions$nav$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$nav$eleve$ar eleve = _Traductions$nav$eleve$ar._(_root);
+	@override late final _Traductions$nav$tuteur$ar tuteur = _Traductions$nav$tuteur$ar._(_root);
+	@override late final _Traductions$nav$enseignant$ar enseignant = _Traductions$nav$enseignant$ar._(_root);
+	@override late final _Traductions$nav$controleur$ar controleur = _Traductions$nav$controleur$ar._(_root);
+	@override late final _Traductions$nav$admin$ar admin = _Traductions$nav$admin$ar._(_root);
+	@override String get compte => 'حسابي';
+	@override String get principale => 'التنقل الرئيسي';
+	@override String get motSymbole => 'Rewayah';
+	@override String get replier => 'طي شريط التنقل';
+	@override String get deplier => 'فتح شريط التنقل';
+}
+
+// Path: accessibilite
+class _Traductions$accessibilite$ar extends Traductions$accessibilite$fr {
+	_Traductions$accessibilite$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$accessibilite$demo$ar demo = _Traductions$accessibilite$demo$ar._(_root);
+	@override late final _Traductions$accessibilite$accueil$ar accueil = _Traductions$accessibilite$accueil$ar._(_root);
+	@override late final _Traductions$accessibilite$coran$ar coran = _Traductions$accessibilite$coran$ar._(_root);
+	@override late final _Traductions$accessibilite$maClasse$ar maClasse = _Traductions$accessibilite$maClasse$ar._(_root);
+	@override late final _Traductions$accessibilite$tutoiement$ar tutoiement = _Traductions$accessibilite$tutoiement$ar._(_root);
+	@override late final _Traductions$accessibilite$apres$ar apres = _Traductions$accessibilite$apres$ar._(_root);
+	@override late final _Traductions$accessibilite$monEspace$ar monEspace = _Traductions$accessibilite$monEspace$ar._(_root);
+}
+
+// Path: reseau
+class _Traductions$reseau$ar extends Traductions$reseau$fr {
+	_Traductions$reseau$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get horsLigne => 'لا شبكة. ما هو معروض يبقى قابلًا للاطلاع.';
+	@override String get enAttenteEnvoi => 'سيُرسل بمجرد عودة الشبكة';
+	@override String get retabli => 'عادت الشبكة';
+	@override String get syncImpossible => 'تعذّرت المزامنة';
+}
+
+// Path: vide
+class _Traductions$vide$ar extends Traductions$vide$fr {
+	_Traductions$vide$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get aucunCours => 'لا دروس اليوم';
+	@override String get aucunCoursDetail => 'سيظهر درسك القادم هنا.';
+	@override String get aucunCreneau => 'لا موعد متاح الآن';
+	@override String get aucunRapport => 'لا دفتر متابعة حتى الآن';
+	@override String get aucunAppareil => 'لا جهاز مقترن';
+}
+
+// Path: notifications
+class _Traductions$notifications$ar extends Traductions$notifications$fr {
+	_Traductions$notifications$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الإشعارات';
+	@override String get indisponibleTitre => 'الإشعارات غير متاحة بعد';
+	@override String get indisponiblePhrase => 'ستظهر هنا تذكيرات الحصص ورسائل الأكاديمية بمجرد فتحها.';
+	@override String get videTitre => 'لا إشعارات';
+	@override String get videPhrase => 'ستظهر هنا تذكيرات الحصص ورسائل الأكاديمية.';
+	@override String ligne({required Object titre, required Object date, required Object heure}) => '⁨${titre}⁩، في ⁨${date}⁩ الساعة ⁨${heure}⁩';
+}
+
+// Path: choix
+class _Traductions$choix$ar extends Traductions$choix$fr {
+	_Traductions$choix$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get autre => 'أخرى';
+	@override String get autreInvite => 'حدّد';
+	@override String get selectionMultiple => 'يمكن اختيار عدة إجابات';
+}
+
+// Path: accuse
+class _Traductions$accuse$ar extends Traductions$accuse$fr {
+	_Traductions$accuse$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'ما يجب معرفته قبل البدء';
+	@override String get compris => 'فهمت';
+}
+
+// Path: aConstruire
+class _Traductions$aConstruire$ar extends Traductions$aConstruire$fr {
+	_Traductions$aConstruire$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'شاشة قيد الإنشاء';
+	@override String get detail => 'تأتي هذه الشاشة في المرحلة 3.';
+}
+
+// Path: destructif
+class _Traductions$destructif$ar extends Traductions$destructif$fr {
+	_Traductions$destructif$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get irreversible => 'لا يمكن التراجع عن هذا الإجراء.';
+}
+
+// Path: avatar
+class _Traductions$avatar$ar extends Traductions$avatar$fr {
+	_Traductions$avatar$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get sansPhoto => 'لا صورة بعد';
+}
+
+// Path: pin
+class _Traductions$pin$ar extends Traductions$pin$fr {
+	_Traductions$pin$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'أدخل رمزك';
+	@override String get erreur => 'هذا الرمز غير مطابق';
+	@override String get effacer => 'مسح';
+}
+
+// Path: enfant
+class _Traductions$enfant$ar extends Traductions$enfant$fr {
+	_Traductions$enfant$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'إضافة ملف طالب';
+	@override String get aucun => 'لا ملف طالب في الأسرة';
+	@override String get aucunDetail => 'أضف أولًا ملف طالب من «الأسرة».';
+}
+
+// Path: reglagesEnfant
+class _Traductions$reglagesEnfant$ar extends Traductions$reglagesEnfant$fr {
+	_Traductions$reglagesEnfant$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الإعدادات حسب ملف الطالب';
+	@override String get intro => 'تُضبط صورة كل طالب وكاميرته وواجهته في بطاقته، من «الأسرة». أما الطلبات إلى الإدارة فتبقى هنا.';
+	@override String get renvoi => 'الصورة والكاميرا والواجهة';
+	@override String renvoiLegende({required Object prenom}) => 'في بطاقة ⁨${prenom}⁩';
+}
+
+// Path: galerie
+class _Traductions$galerie$ar extends Traductions$galerie$fr {
+	_Traductions$galerie$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'معرض المكونات';
+	@override String get avertissement => 'منصة اختبار للتطوير. غير موجودة في إصدارات الإنتاج.';
+	@override String get paires => 'أزواج الألوان';
+	@override String get elevation => 'الارتفاع والزوايا';
+	@override String get typographie => 'سلالم الخطوط';
+	@override String get polices => 'الخطوط';
+	@override String get composants => 'المكونات المشتركة';
+	@override String get modeEnfant => 'وضع إمكانية الوصول';
+	@override String get modeStandard => 'الوضع العادي';
+}
+
 // Path: commun.sections
 class _Traductions$commun$sections$ar extends Traductions$commun$sections$fr {
 	_Traductions$commun$sections$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -223,6 +445,142 @@ class _Traductions$commun$sections$ar extends Traductions$commun$sections$fr {
 
 	// Translations
 	@override String get page => 'أقسام الصفحة';
+}
+
+// Path: commun.demonstration
+class _Traductions$commun$demonstration$ar extends Traductions$commun$demonstration$fr {
+	_Traductions$commun$demonstration$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get repere => 'عرض تجريبي';
+	@override String get repereLu => 'وضع العرض التجريبي';
+}
+
+// Path: commun.etape
+class _Traductions$commun$etape$ar extends Traductions$commun$etape$fr {
+	_Traductions$commun$etape$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String sur({required Object n, required Object total}) => '⁨${n}⁩ من ⁨${total}⁩';
+	@override String surLue({required Object n, required Object total}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩';
+}
+
+// Path: commun.choix
+class _Traductions$commun$choix$ar extends Traductions$commun$choix$fr {
+	_Traductions$commun$choix$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get indisponible => 'غير متاح';
+}
+
+// Path: commun.etats
+class _Traductions$commun$etats$ar extends Traductions$commun$etats$fr {
+	_Traductions$commun$etats$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$commun$etats$chargementProlonge$ar chargementProlonge = _Traductions$commun$etats$chargementProlonge$ar._(_root);
+	@override late final _Traductions$commun$etats$horsLigne$ar horsLigne = _Traductions$commun$etats$horsLigne$ar._(_root);
+	@override late final _Traductions$commun$etats$reconnexion$ar reconnexion = _Traductions$commun$etats$reconnexion$ar._(_root);
+	@override late final _Traductions$commun$etats$echecServeur$ar echecServeur = _Traductions$commun$etats$echecServeur$ar._(_root);
+	@override late final _Traductions$commun$etats$introuvable$ar introuvable = _Traductions$commun$etats$introuvable$ar._(_root);
+	@override late final _Traductions$commun$etats$accesRefuse$ar accesRefuse = _Traductions$commun$etats$accesRefuse$ar._(_root);
+	@override late final _Traductions$commun$etats$sessionExpiree$ar sessionExpiree = _Traductions$commun$etats$sessionExpiree$ar._(_root);
+	@override late final _Traductions$commun$etats$dossierEnAttente$ar dossierEnAttente = _Traductions$commun$etats$dossierEnAttente$ar._(_root);
+	@override late final _Traductions$commun$etats$aucunResultat$ar aucunResultat = _Traductions$commun$etats$aucunResultat$ar._(_root);
+	@override late final _Traductions$commun$etats$permissionRefusee$ar permissionRefusee = _Traductions$commun$etats$permissionRefusee$ar._(_root);
+	@override late final _Traductions$commun$etats$ressourceExpiree$ar ressourceExpiree = _Traductions$commun$etats$ressourceExpiree$ar._(_root);
+	@override late final _Traductions$commun$etats$indisponible$ar indisponible = _Traductions$commun$etats$indisponible$ar._(_root);
+	@override String get reessaisEpuises => 'ما زال لا رد. أعد المحاولة لاحقًا.';
+	@override String get horsLigneDemarrage => 'يحتاج Rewayah إلى الإنترنت للتحقق من حسابك. أعد توصيل هذا الجهاز، ثم أعد المحاولة.';
+	@override late final _Traductions$commun$etats$actions$ar actions = _Traductions$commun$etats$actions$ar._(_root);
+}
+
+// Path: commun.entete
+class _Traductions$commun$entete$ar extends Traductions$commun$entete$fr {
+	_Traductions$commun$entete$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get retour => 'رجوع';
+	@override String get notifications => 'الإشعارات';
+	@override String get notificationsUneNonLue => 'الإشعارات، واحد غير مقروء';
+	@override String notificationsNonLues({required Object nombre}) => 'الإشعارات، ⁨${nombre}⁩ غير مقروءة';
+}
+
+// Path: commun.selecteurProfils
+class _Traductions$commun$selecteurProfils$ar extends Traductions$commun$selecteurProfils$fr {
+	_Traductions$commun$selecteurProfils$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String etiquette({required Object prenom, required Object etat}) => '⁨${prenom}⁩، ⁨${etat}⁩';
+	@override String get ajouter => 'إضافة';
+	@override String get ajouterSemantique => 'إضافة ملف طالب';
+}
+
+// Path: commun.theme
+class _Traductions$commun$theme$ar extends Traductions$commun$theme$fr {
+	_Traductions$commun$theme$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get groupe => 'المظهر';
+	@override String get clair => 'المظهر الفاتح';
+	@override String get sombre => 'المظهر الداكن';
+}
+
+// Path: commun.demarrage
+class _Traductions$commun$demarrage$ar extends Traductions$commun$demarrage$fr {
+	_Traductions$commun$demarrage$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get ouverture => 'جارٍ فتح Rewayah';
+}
+
+// Path: commun.dates
+class _Traductions$commun$dates$ar extends Traductions$commun$dates$fr {
+	_Traductions$commun$dates$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override List<String> get jours => [
+		'الاثنين',
+		'الثلاثاء',
+		'الأربعاء',
+		'الخميس',
+		'الجمعة',
+		'السبت',
+		'الأحد',
+	];
+	@override List<String> get mois => [
+		'يناير',
+		'فبراير',
+		'مارس',
+		'أبريل',
+		'مايو',
+		'يونيو',
+		'يوليو',
+		'أغسطس',
+		'سبتمبر',
+		'أكتوبر',
+		'نوفمبر',
+		'ديسمبر',
+	];
+	@override String jourDate({required Object jour, required Object numero, required Object mois}) => '⁨${jour}⁩ ⁨${numero}⁩ ⁨${mois}⁩';
 }
 
 // Path: classe.entree
@@ -1134,6 +1492,361 @@ class _Traductions$tc$parcours$ar extends Traductions$tc$parcours$fr {
 	@override late final _Traductions$tc$parcours$feedback$ar feedback = _Traductions$tc$parcours$feedback$ar._(_root);
 	@override late final _Traductions$tc$parcours$signalement$ar signalement = _Traductions$tc$parcours$signalement$ar._(_root);
 	@override late final _Traductions$tc$parcours$postCours$ar postCours = _Traductions$tc$parcours$postCours$ar._(_root);
+}
+
+// Path: nav.eleve
+class _Traductions$nav$eleve$ar extends Traductions$nav$eleve$fr {
+	_Traductions$nav$eleve$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get accueil => 'الرئيسية';
+	@override String get maClasse => 'فصلي';
+	@override String get coran => 'القرآن';
+	@override String get monEspace => 'مساحتي';
+	@override String get suivi => 'المتابعة';
+	@override String get compte => 'الحساب';
+}
+
+// Path: nav.tuteur
+class _Traductions$nav$tuteur$ar extends Traductions$nav$tuteur$fr {
+	_Traductions$nav$tuteur$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get accueil => 'الرئيسية';
+	@override String get foyer => 'الأسرة';
+	@override String get disponibilites => 'أوقات التوفر';
+	@override String get reglages => 'الإعدادات';
+	@override String get suivi => 'المتابعة';
+	@override String get historique => 'السجل';
+	@override String get compte => 'الحساب';
+}
+
+// Path: nav.enseignant
+class _Traductions$nav$enseignant$ar extends Traductions$nav$enseignant$fr {
+	_Traductions$nav$enseignant$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get journee => 'اليوم';
+	@override String get classes => 'الفصول';
+	@override String get creneaux => 'أوقات التوفر';
+	@override String get profil => 'الملف الشخصي';
+}
+
+// Path: nav.controleur
+class _Traductions$nav$controleur$ar extends Traductions$nav$controleur$fr {
+	_Traductions$nav$controleur$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get planning => 'الجدول';
+	@override String get controle => 'المراقبة';
+	@override String get historique => 'السجل';
+	@override String get echanges => 'المراسلات';
+	@override String get compte => 'الحساب';
+}
+
+// Path: nav.admin
+class _Traductions$nav$admin$ar extends Traductions$nav$admin$fr {
+	_Traductions$nav$admin$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get tableauDeBord => 'لوحة التحكم';
+	@override String get dossiers => 'الملفات';
+	@override String get demandes => 'الطلبات';
+	@override String get attribution => 'الإسناد';
+	@override String get journal => 'السجل';
+	@override String get comptes => 'الحسابات';
+	@override String get accesAgents => 'صلاحيات الموظفين';
+	@override String get accueil => 'الرئيسية';
+	@override String get operations => 'العمليات';
+	@override String get personnes => 'الأشخاص';
+	@override String get pedagogie => 'التعليم';
+	@override String get finance => 'المالية';
+	@override String get configuration => 'الإعدادات العامة';
+	@override String get securite => 'الأمان والتدقيق';
+	@override String get direction => 'الإدارة';
+	@override String get recherche => 'البحث';
+	@override String get rechercheIndication => 'البحث عن شاشة';
+	@override String get notificationsTitre => 'الإشعارات';
+	@override String get menu => 'القائمة';
+}
+
+// Path: accessibilite.demo
+class _Traductions$accessibilite$demo$ar extends Traductions$accessibilite$demo$fr {
+	_Traductions$accessibilite$demo$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'عرض تجريبي لوضع إمكانية الوصول';
+	@override String get mention => 'بيانات وهمية، لا إرسال.';
+	@override String get intro => 'اختر طالبًا ولحظة من الحصة.';
+	@override String get eleveMineure => 'مريم، طالبة قاصر';
+	@override String get eleveAdulte => 'إدريس، طالب بالغ';
+	@override String get etatAvant => 'قبل الحصة';
+	@override String get etatFenetre => 'قبيل الحصة، الدخول مفتوح';
+	@override String get etatPendant => 'أثناء الحصة';
+	@override String get etatApres => 'بعد الحصة';
+}
+
+// Path: accessibilite.accueil
+class _Traductions$accessibilite$accueil$ar extends Traductions$accessibilite$accueil$fr {
+	_Traductions$accessibilite$accueil$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String salutation({required Object prenom}) => 'السلام عليكم، ⁨${prenom}⁩.';
+	@override String get prochaineSeance => 'الحصة القادمة';
+	@override String avec({required Object nomme}) => 'مع ⁨${nomme}⁩';
+	@override String get voirMaClasse => 'عرض فصلي';
+	@override String get lireCoran => 'قراءة القرآن';
+	@override String get lireCoranDetail => 'فتح المصحف';
+	@override String get aide => 'تحتاج إلى مساعدة؟';
+	@override String get erreurTitre => 'لم تُحمَّل الحصة القادمة';
+	@override String get erreurPhrase => 'تعذّرت قراءة الحصة والعمل المطلوب، غالبًا بسبب الاتصال. يكفي أن تعيد المحاولة بعد لحظة.';
+	@override String get indisponibleTitre => 'الحصة القادمة لا تظهر هنا بعد';
+	@override String get indisponiblePhrase => 'الصفحة الرئيسية لا تستقبل حصة الفصل بعد. تجدها في «فصلي».';
+	@override String get videTitre => 'لا فصل بعد';
+	@override String get videPhrase => 'لم يُسند أي فصل بعد. يُختار الفصل مع الأكاديمية. وإلى ذلك الحين، يبقى القرآن والمساعدة متاحين أدناه.';
+}
+
+// Path: accessibilite.coran
+class _Traductions$accessibilite$coran$ar extends Traductions$accessibilite$coran$fr {
+	_Traductions$accessibilite$coran$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get ouvrir => 'فتح القرآن';
+	@override String get reprendre => 'المتابعة من آخر صفحة';
+	@override String get reprendreVous => 'المتابعة من آخر صفحة';
+	@override String reprendreDetail({required Object page}) => 'كنت في الصفحة ⁨${page}⁩.';
+	@override String reprendreDetailVous({required Object page}) => 'كنت في الصفحة ⁨${page}⁩.';
+	@override String get repriseRecherche => 'جارٍ البحث عن آخر صفحة…';
+	@override String get repriseRechercheVous => 'جارٍ البحث عن آخر صفحة…';
+	@override String get repriseErreur => 'تعذّر العثور على آخر صفحة، غالبًا بسبب الاتصال. افتح القرآن واختر صفحتك في القارئ. إعدادات القراءة تبقى محفوظة.';
+	@override String get repriseErreurVous => 'تعذّر العثور على آخر صفحة، غالبًا بسبب الاتصال. افتح القرآن واختر صفحتك في القارئ. إعدادات القراءة تبقى محفوظة.';
+	@override String get lectureGrande => 'يُفتح القرآن في قراءة مكبَّرة، آية آية.';
+	@override String get retour => 'العودة إلى مدخل القرآن';
+	@override String get demoSansTexte => 'نص القرآن غير محمَّل في العرض التجريبي';
+	@override String get demoSansTexteDetail => 'ليس هذا عطلًا: العرض التجريبي لا يحتوي على النص. لا شيء عليك فعله. في التطبيق، يُفتح القرآن هنا على صفحتك، وتبقى إعدادات القراءة محفوظة.';
+	@override String get demoSansTexteDetailVous => 'ليس هذا عطلًا: العرض التجريبي لا يحتوي على النص. لا شيء عليك فعله. في التطبيق، يُفتح القرآن هنا على صفحتك، وتبقى إعدادات القراءة محفوظة.';
+}
+
+// Path: accessibilite.maClasse
+class _Traductions$accessibilite$maClasse$ar extends Traductions$accessibilite$maClasse$fr {
+	_Traductions$accessibilite$maClasse$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'فصلي';
+	@override String get suivi => 'متابعتي';
+	@override String get suiviDetail => 'الحصص الماضية والحضور';
+}
+
+// Path: accessibilite.tutoiement
+class _Traductions$accessibilite$tutoiement$ar extends Traductions$accessibilite$tutoiement$fr {
+	_Traductions$accessibilite$tutoiement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get tonHeure => 'توقيتك';
+	@override String get attenteDetail => 'وقت الانتظار هذا لا يُحتسب في حضورك.';
+	@override String attente({required Object duree}) => 'أنت في القاعة. تبدأ الحصة بعد ⁨${duree}⁩.';
+	@override String get attenteImminent => 'أنت في القاعة. تبدأ الحصة بعد أقل من دقيقة.';
+	@override String get annonceAttente => 'أنت في القاعة';
+	@override String get horsLigne => 'أنت غير متصل. تحتاج الحصة إلى اتصال.';
+	@override String get finPhrase => 'تجد عملك في فصلك.';
+}
+
+// Path: accessibilite.apres
+class _Traductions$accessibilite$apres$ar extends Traductions$accessibilite$apres$fr {
+	_Traductions$accessibilite$apres$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get revoirSupport => 'مراجعة مادة الدرس';
+	@override String get revoirSupportDetail => 'تبقى المادة في فصلك.';
+	@override String get revoirSupportDetailVous => 'تبقى المادة في فصلك.';
+}
+
+// Path: accessibilite.monEspace
+class _Traductions$accessibilite$monEspace$ar extends Traductions$accessibilite$monEspace$fr {
+	_Traductions$accessibilite$monEspace$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'مساحتي';
+	@override String get mode => 'وضع إمكانية الوصول';
+	@override String get modeDetail => 'واجهة مبسطة ومكيَّفة لتعلم أكثر طمأنينة.';
+	@override String get modeActif => 'مفعَّل';
+	@override String get presentationStandard => 'العرض العادي';
+	@override String get demanderDetail => 'اطلب من وليّ أمرك الانتقال إلى العرض العادي.';
+	@override String get demandeEnCours => 'جارٍ إرسال طلبك.';
+	@override String get demandeEnvoyee => 'أُرسل طلبك إلى وليّ أمرك.';
+	@override String get demandeNonConfirmee => 'لم يُؤكَّد الإرسال، غالبًا بسبب الاتصال. تحقّق من اتصالك، ثم المس السطر لإعادة المحاولة. لم يتغير شيء في الأثناء: يبقى العرض كما هو.';
+}
+
+// Path: commun.etats.chargementProlonge
+class _Traductions$commun$etats$chargementProlonge$ar extends Traductions$commun$etats$chargementProlonge$fr {
+	_Traductions$commun$etats$chargementProlonge$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الاتصال يستغرق وقتًا أطول من المتوقع';
+	@override String get phrase => 'يمكنك الانتظار قليلًا أو إعادة المحاولة.';
+}
+
+// Path: commun.etats.horsLigne
+class _Traductions$commun$etats$horsLigne$ar extends Traductions$commun$etats$horsLigne$fr {
+	_Traductions$commun$etats$horsLigne$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'أنت غير متصل';
+	@override String get phrase => 'تحقّق من اتصالك. ما هو معروض يبقى قابلًا للاطلاع.';
+}
+
+// Path: commun.etats.reconnexion
+class _Traductions$commun$etats$reconnexion$ar extends Traductions$commun$etats$reconnexion$fr {
+	_Traductions$commun$etats$reconnexion$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'جارٍ إعادة الاتصال';
+	@override String get phrase => 'محاولة اتصال جديدة جارية.';
+}
+
+// Path: commun.etats.echecServeur
+class _Traductions$commun$etats$echecServeur$ar extends Traductions$commun$etats$echecServeur$fr {
+	_Traductions$commun$etats$echecServeur$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'تعذّر تحميل هذه المعلومات';
+	@override String get phrase => 'لم يكتمل التحميل. أعد المحاولة بعد لحظة.';
+}
+
+// Path: commun.etats.introuvable
+class _Traductions$commun$etats$introuvable$ar extends Traductions$commun$etats$introuvable$fr {
+	_Traductions$commun$etats$introuvable$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'هذه الصفحة غير موجودة';
+	@override String get phrase => 'ربما الرابط ناقص، أو لم تعد الصفحة موجودة.';
+}
+
+// Path: commun.etats.accesRefuse
+class _Traductions$commun$etats$accesRefuse$ar extends Traductions$commun$etats$accesRefuse$fr {
+	_Traductions$commun$etats$accesRefuse$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'ليس لديك إذن بالوصول إلى هذه الصفحة';
+	@override String get phrase => 'هذا المحتوى غير مفتوح لحسابك.';
+}
+
+// Path: commun.etats.sessionExpiree
+class _Traductions$commun$etats$sessionExpiree$ar extends Traductions$commun$etats$sessionExpiree$fr {
+	_Traductions$commun$etats$sessionExpiree$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'انتهت جلستك';
+	@override String get phrase => 'سجّل الدخول من جديد للمتابعة.';
+}
+
+// Path: commun.etats.dossierEnAttente
+class _Traductions$commun$etats$dossierEnAttente$ar extends Traductions$commun$etats$dossierEnAttente$fr {
+	_Traductions$commun$etats$dossierEnAttente$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'ملفك قيد الانتظار';
+	@override String get phrase => 'بقيت خطوة قبل فتح هذه المساحة.';
+}
+
+// Path: commun.etats.aucunResultat
+class _Traductions$commun$etats$aucunResultat$ar extends Traductions$commun$etats$aucunResultat$fr {
+	_Traductions$commun$etats$aucunResultat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'لا نتائج';
+	@override String get phrase => 'لا شيء مطابق الآن.';
+}
+
+// Path: commun.etats.permissionRefusee
+class _Traductions$commun$etats$permissionRefusee$ar extends Traductions$commun$etats$permissionRefusee$fr {
+	_Traductions$commun$etats$permissionRefusee$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الإذن مرفوض';
+	@override String get phrase => 'دون هذا الإذن، لا يمكن فتح هذه الوظيفة. يمكنك تغييره في إعدادات جهازك.';
+}
+
+// Path: commun.etats.ressourceExpiree
+class _Traductions$commun$etats$ressourceExpiree$ar extends Traductions$commun$etats$ressourceExpiree$fr {
+	_Traductions$commun$etats$ressourceExpiree$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'هذا المحتوى لم يعد متاحًا';
+	@override String get phrase => 'سُحب، أو انتهى الوصول إليه.';
+}
+
+// Path: commun.etats.indisponible
+class _Traductions$commun$etats$indisponible$ar extends Traductions$commun$etats$indisponible$fr {
+	_Traductions$commun$etats$indisponible$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'غير متاح بعد';
+	@override String get phrase => 'هذه الوظيفة غير مفتوحة بعد.';
+}
+
+// Path: commun.etats.actions
+class _Traductions$commun$etats$actions$ar extends Traductions$commun$etats$actions$fr {
+	_Traductions$commun$etats$actions$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get reessayer => 'إعادة المحاولة';
+	@override String get retourAccueil => 'العودة إلى الرئيسية';
+	@override String get seConnecter => 'تسجيل الدخول';
+	@override String get seReconnecter => 'تسجيل الدخول من جديد';
+	@override String get voirDossier => 'عرض ملفي';
+	@override String get reinitialiserFiltres => 'إعادة ضبط عوامل التصفية';
+	@override String get revenir => 'الرجوع';
 }
 
 // Path: classe.entree.annonce
@@ -2805,6 +3518,83 @@ extension on TraductionsAr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
 			'commun.sections.page' => 'أقسام الصفحة',
+			'commun.marque' => 'Rewayah Academy',
+			'commun.continuer' => 'متابعة',
+			'commun.retour' => 'رجوع',
+			'commun.valider' => 'تأكيد',
+			'commun.annuler' => 'إلغاء',
+			'commun.fermer' => 'إغلاق',
+			'commun.reessayer' => 'إعادة المحاولة',
+			'commun.chargement' => 'جارٍ التحميل',
+			'commun.demonstration.repere' => 'عرض تجريبي',
+			'commun.demonstration.repereLu' => 'وضع العرض التجريبي',
+			'commun.etape.sur' => ({required Object n, required Object total}) => '⁨${n}⁩ من ⁨${total}⁩',
+			'commun.etape.surLue' => ({required Object n, required Object total}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩',
+			'commun.choix.indisponible' => 'غير متاح',
+			'commun.etats.chargementProlonge.titre' => 'الاتصال يستغرق وقتًا أطول من المتوقع',
+			'commun.etats.chargementProlonge.phrase' => 'يمكنك الانتظار قليلًا أو إعادة المحاولة.',
+			'commun.etats.horsLigne.titre' => 'أنت غير متصل',
+			'commun.etats.horsLigne.phrase' => 'تحقّق من اتصالك. ما هو معروض يبقى قابلًا للاطلاع.',
+			'commun.etats.reconnexion.titre' => 'جارٍ إعادة الاتصال',
+			'commun.etats.reconnexion.phrase' => 'محاولة اتصال جديدة جارية.',
+			'commun.etats.echecServeur.titre' => 'تعذّر تحميل هذه المعلومات',
+			'commun.etats.echecServeur.phrase' => 'لم يكتمل التحميل. أعد المحاولة بعد لحظة.',
+			'commun.etats.introuvable.titre' => 'هذه الصفحة غير موجودة',
+			'commun.etats.introuvable.phrase' => 'ربما الرابط ناقص، أو لم تعد الصفحة موجودة.',
+			'commun.etats.accesRefuse.titre' => 'ليس لديك إذن بالوصول إلى هذه الصفحة',
+			'commun.etats.accesRefuse.phrase' => 'هذا المحتوى غير مفتوح لحسابك.',
+			'commun.etats.sessionExpiree.titre' => 'انتهت جلستك',
+			'commun.etats.sessionExpiree.phrase' => 'سجّل الدخول من جديد للمتابعة.',
+			'commun.etats.dossierEnAttente.titre' => 'ملفك قيد الانتظار',
+			'commun.etats.dossierEnAttente.phrase' => 'بقيت خطوة قبل فتح هذه المساحة.',
+			'commun.etats.aucunResultat.titre' => 'لا نتائج',
+			'commun.etats.aucunResultat.phrase' => 'لا شيء مطابق الآن.',
+			'commun.etats.permissionRefusee.titre' => 'الإذن مرفوض',
+			'commun.etats.permissionRefusee.phrase' => 'دون هذا الإذن، لا يمكن فتح هذه الوظيفة. يمكنك تغييره في إعدادات جهازك.',
+			'commun.etats.ressourceExpiree.titre' => 'هذا المحتوى لم يعد متاحًا',
+			'commun.etats.ressourceExpiree.phrase' => 'سُحب، أو انتهى الوصول إليه.',
+			'commun.etats.indisponible.titre' => 'غير متاح بعد',
+			'commun.etats.indisponible.phrase' => 'هذه الوظيفة غير مفتوحة بعد.',
+			'commun.etats.reessaisEpuises' => 'ما زال لا رد. أعد المحاولة لاحقًا.',
+			'commun.etats.horsLigneDemarrage' => 'يحتاج Rewayah إلى الإنترنت للتحقق من حسابك. أعد توصيل هذا الجهاز، ثم أعد المحاولة.',
+			'commun.etats.actions.reessayer' => 'إعادة المحاولة',
+			'commun.etats.actions.retourAccueil' => 'العودة إلى الرئيسية',
+			'commun.etats.actions.seConnecter' => 'تسجيل الدخول',
+			'commun.etats.actions.seReconnecter' => 'تسجيل الدخول من جديد',
+			'commun.etats.actions.voirDossier' => 'عرض ملفي',
+			'commun.etats.actions.reinitialiserFiltres' => 'إعادة ضبط عوامل التصفية',
+			'commun.etats.actions.revenir' => 'الرجوع',
+			'commun.entete.retour' => 'رجوع',
+			'commun.entete.notifications' => 'الإشعارات',
+			'commun.entete.notificationsUneNonLue' => 'الإشعارات، واحد غير مقروء',
+			'commun.entete.notificationsNonLues' => ({required Object nombre}) => 'الإشعارات، ⁨${nombre}⁩ غير مقروءة',
+			'commun.selecteurProfils.etiquette' => ({required Object prenom, required Object etat}) => '⁨${prenom}⁩، ⁨${etat}⁩',
+			'commun.selecteurProfils.ajouter' => 'إضافة',
+			'commun.selecteurProfils.ajouterSemantique' => 'إضافة ملف طالب',
+			'commun.theme.groupe' => 'المظهر',
+			'commun.theme.clair' => 'المظهر الفاتح',
+			'commun.theme.sombre' => 'المظهر الداكن',
+			'commun.demarrage.ouverture' => 'جارٍ فتح Rewayah',
+			'commun.dates.jours.0' => 'الاثنين',
+			'commun.dates.jours.1' => 'الثلاثاء',
+			'commun.dates.jours.2' => 'الأربعاء',
+			'commun.dates.jours.3' => 'الخميس',
+			'commun.dates.jours.4' => 'الجمعة',
+			'commun.dates.jours.5' => 'السبت',
+			'commun.dates.jours.6' => 'الأحد',
+			'commun.dates.mois.0' => 'يناير',
+			'commun.dates.mois.1' => 'فبراير',
+			'commun.dates.mois.2' => 'مارس',
+			'commun.dates.mois.3' => 'أبريل',
+			'commun.dates.mois.4' => 'مايو',
+			'commun.dates.mois.5' => 'يونيو',
+			'commun.dates.mois.6' => 'يوليو',
+			'commun.dates.mois.7' => 'أغسطس',
+			'commun.dates.mois.8' => 'سبتمبر',
+			'commun.dates.mois.9' => 'أكتوبر',
+			'commun.dates.mois.10' => 'نوفمبر',
+			'commun.dates.mois.11' => 'ديسمبر',
+			'commun.dates.jourDate' => ({required Object jour, required Object numero, required Object mois}) => '⁨${jour}⁩ ⁨${numero}⁩ ⁨${mois}⁩',
 			'etat.enDirect' => 'مباشر',
 			'etat.seanceAnnulee' => 'ملغاة',
 			'etat.annuleeValeur' => ({required Object valeur}) => 'ملغاة : ${valeur}',
@@ -2812,6 +3602,11 @@ extension on TraductionsAr {
 			'etat.aucunRemplacantTrouve' => 'لم يُعثر على بديل',
 			'etat.seanceNonFacturee' => 'الحصة غير مفوترة',
 			'etat.raisonEtSuite' => ({required Object raison, required Object suite}) => '${raison} · ${suite}',
+			'etat.imminent' => 'قريبًا جدًا',
+			'etat.annule' => 'ملغى',
+			'etat.enAttente' => 'قيد الانتظار',
+			'etat.enRetard' => 'متأخر',
+			'etat.termine' => 'منتهٍ',
 			'classe.entree.coursDans' => ({required Object duree}) => 'الدرس بعد ${duree}',
 			'classe.entree.coursImminent' => 'الدرس بعد أقل من دقيقة',
 			'classe.entree.rejoindre' => 'انضمام',
@@ -3234,6 +4029,8 @@ extension on TraductionsAr {
 			'enseignant.journee.rapportsTitre' => 'تقارير بانتظار الإيداع',
 			'enseignant.journee.rapportLigne' => ({required Object jour, required Object heure}) => 'درس ⁨${jour}⁩ الساعة ⁨${heure}⁩',
 			'enseignant.journee.rapportAttente' => ({required Object heures}) => 'للإيداع منذ ⁨${heures}⁩ س',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.journee.rapportRetard' => ({required Object heures}) => 'متأخر ⁨${heures}⁩ س',
 			'enseignant.journee.enAttenteTitre' => 'طلاب في الانتظار',
 			'enseignant.journee.enAttenteLibelle' => 'طلاب في الانتظار في ساعاتك',
@@ -3316,8 +4113,6 @@ extension on TraductionsAr {
 			'enseignant.classes.cahierAValider' => 'دفتر المتابعة بانتظار التأكيد',
 			'enseignant.eleve.titre' => ({required Object prenom}) => 'بطاقة ⁨${prenom}⁩',
 			'enseignant.eleve.retour' => 'الطلاب',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.eleve.identifiant' => ({required Object id}) => 'معرّف الأكاديمية: ⁨${id}⁩',
 			'enseignant.eleve.photo' => ({required Object prenom}) => 'صورة ⁨${prenom}⁩',
 			'enseignant.eleve.niveau' => 'المستوى',
@@ -3748,6 +4543,8 @@ extension on TraductionsAr {
 			'tc.coran.navigation.pageNumero' => ({required Object page}) => 'الصفحة ⁨${page}⁩',
 			'tc.coran.reprise.groupe' => 'استئناف الدرس',
 			'tc.coran.reprise.groupeDetail' => ({required Object page}) => 'كان الفصل في الصفحة ⁨${page}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'tc.coran.focus.aucunePlage' => 'لا مقطع مُبرَز',
 			'tc.coran.focus.aucunePlageDetail' => 'يتبع التركيز المقطع الذي يحدده المعلم. خارج الفصل، يتوسط الصفحة المفتوحة.',
 			'tc.coran.focus.quitter' => 'الخروج من التركيز',
@@ -3830,8 +4627,6 @@ extension on TraductionsAr {
 			'tc.classe.fiche.interfaceGuidee' => 'وضع إمكانية الوصول',
 			'tc.classe.fiche.sansPedagogie' => 'المتابعة التعليمية غير متاحة',
 			'tc.classe.fiche.sansPedagogieDetail' => 'المسار والأهداف والعمل الجاري غير مفتوحة للمعلم بعد.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.action.rappel' => 'نداء هادئ',
 			'tc.classe.action.reciter' => 'اختيار للتلاوة',
 			'tc.classe.action.noter' => 'تدوين ملاحظة',
@@ -4103,6 +4898,153 @@ extension on TraductionsAr {
 			'tc.parcours.postCours.valider' => 'تأكيد',
 			'tc.parcours.postCours.enFile' => 'تم الحفظ. سيُرسل بمجرد عودة الشبكة.',
 			'tc.parcours.postCours.envoye' => 'أُغلق الدرس.',
+			'nav.eleve.accueil' => 'الرئيسية',
+			'nav.eleve.maClasse' => 'فصلي',
+			'nav.eleve.coran' => 'القرآن',
+			'nav.eleve.monEspace' => 'مساحتي',
+			'nav.eleve.suivi' => 'المتابعة',
+			'nav.eleve.compte' => 'الحساب',
+			'nav.tuteur.accueil' => 'الرئيسية',
+			'nav.tuteur.foyer' => 'الأسرة',
+			'nav.tuteur.disponibilites' => 'أوقات التوفر',
+			'nav.tuteur.reglages' => 'الإعدادات',
+			'nav.tuteur.suivi' => 'المتابعة',
+			'nav.tuteur.historique' => 'السجل',
+			'nav.tuteur.compte' => 'الحساب',
+			'nav.enseignant.journee' => 'اليوم',
+			'nav.enseignant.classes' => 'الفصول',
+			'nav.enseignant.creneaux' => 'أوقات التوفر',
+			'nav.enseignant.profil' => 'الملف الشخصي',
+			'nav.controleur.planning' => 'الجدول',
+			'nav.controleur.controle' => 'المراقبة',
+			'nav.controleur.historique' => 'السجل',
+			'nav.controleur.echanges' => 'المراسلات',
+			'nav.controleur.compte' => 'الحساب',
+			'nav.admin.tableauDeBord' => 'لوحة التحكم',
+			'nav.admin.dossiers' => 'الملفات',
+			'nav.admin.demandes' => 'الطلبات',
+			'nav.admin.attribution' => 'الإسناد',
+			'nav.admin.journal' => 'السجل',
+			'nav.admin.comptes' => 'الحسابات',
+			'nav.admin.accesAgents' => 'صلاحيات الموظفين',
+			'nav.admin.accueil' => 'الرئيسية',
+			'nav.admin.operations' => 'العمليات',
+			'nav.admin.personnes' => 'الأشخاص',
+			'nav.admin.pedagogie' => 'التعليم',
+			'nav.admin.finance' => 'المالية',
+			'nav.admin.configuration' => 'الإعدادات العامة',
+			'nav.admin.securite' => 'الأمان والتدقيق',
+			'nav.admin.direction' => 'الإدارة',
+			'nav.admin.recherche' => 'البحث',
+			'nav.admin.rechercheIndication' => 'البحث عن شاشة',
+			'nav.admin.notificationsTitre' => 'الإشعارات',
+			'nav.admin.menu' => 'القائمة',
+			'nav.compte' => 'حسابي',
+			'nav.principale' => 'التنقل الرئيسي',
+			'nav.motSymbole' => 'Rewayah',
+			'nav.replier' => 'طي شريط التنقل',
+			'nav.deplier' => 'فتح شريط التنقل',
+			'accessibilite.demo.titre' => 'عرض تجريبي لوضع إمكانية الوصول',
+			'accessibilite.demo.mention' => 'بيانات وهمية، لا إرسال.',
+			'accessibilite.demo.intro' => 'اختر طالبًا ولحظة من الحصة.',
+			'accessibilite.demo.eleveMineure' => 'مريم، طالبة قاصر',
+			'accessibilite.demo.eleveAdulte' => 'إدريس، طالب بالغ',
+			'accessibilite.demo.etatAvant' => 'قبل الحصة',
+			'accessibilite.demo.etatFenetre' => 'قبيل الحصة، الدخول مفتوح',
+			'accessibilite.demo.etatPendant' => 'أثناء الحصة',
+			'accessibilite.demo.etatApres' => 'بعد الحصة',
+			'accessibilite.accueil.salutation' => ({required Object prenom}) => 'السلام عليكم، ⁨${prenom}⁩.',
+			'accessibilite.accueil.prochaineSeance' => 'الحصة القادمة',
+			'accessibilite.accueil.avec' => ({required Object nomme}) => 'مع ⁨${nomme}⁩',
+			'accessibilite.accueil.voirMaClasse' => 'عرض فصلي',
+			'accessibilite.accueil.lireCoran' => 'قراءة القرآن',
+			'accessibilite.accueil.lireCoranDetail' => 'فتح المصحف',
+			'accessibilite.accueil.aide' => 'تحتاج إلى مساعدة؟',
+			'accessibilite.accueil.erreurTitre' => 'لم تُحمَّل الحصة القادمة',
+			'accessibilite.accueil.erreurPhrase' => 'تعذّرت قراءة الحصة والعمل المطلوب، غالبًا بسبب الاتصال. يكفي أن تعيد المحاولة بعد لحظة.',
+			'accessibilite.accueil.indisponibleTitre' => 'الحصة القادمة لا تظهر هنا بعد',
+			'accessibilite.accueil.indisponiblePhrase' => 'الصفحة الرئيسية لا تستقبل حصة الفصل بعد. تجدها في «فصلي».',
+			'accessibilite.accueil.videTitre' => 'لا فصل بعد',
+			'accessibilite.accueil.videPhrase' => 'لم يُسند أي فصل بعد. يُختار الفصل مع الأكاديمية. وإلى ذلك الحين، يبقى القرآن والمساعدة متاحين أدناه.',
+			'accessibilite.coran.ouvrir' => 'فتح القرآن',
+			'accessibilite.coran.reprendre' => 'المتابعة من آخر صفحة',
+			'accessibilite.coran.reprendreVous' => 'المتابعة من آخر صفحة',
+			'accessibilite.coran.reprendreDetail' => ({required Object page}) => 'كنت في الصفحة ⁨${page}⁩.',
+			'accessibilite.coran.reprendreDetailVous' => ({required Object page}) => 'كنت في الصفحة ⁨${page}⁩.',
+			'accessibilite.coran.repriseRecherche' => 'جارٍ البحث عن آخر صفحة…',
+			'accessibilite.coran.repriseRechercheVous' => 'جارٍ البحث عن آخر صفحة…',
+			'accessibilite.coran.repriseErreur' => 'تعذّر العثور على آخر صفحة، غالبًا بسبب الاتصال. افتح القرآن واختر صفحتك في القارئ. إعدادات القراءة تبقى محفوظة.',
+			'accessibilite.coran.repriseErreurVous' => 'تعذّر العثور على آخر صفحة، غالبًا بسبب الاتصال. افتح القرآن واختر صفحتك في القارئ. إعدادات القراءة تبقى محفوظة.',
+			'accessibilite.coran.lectureGrande' => 'يُفتح القرآن في قراءة مكبَّرة، آية آية.',
+			'accessibilite.coran.retour' => 'العودة إلى مدخل القرآن',
+			'accessibilite.coran.demoSansTexte' => 'نص القرآن غير محمَّل في العرض التجريبي',
+			'accessibilite.coran.demoSansTexteDetail' => 'ليس هذا عطلًا: العرض التجريبي لا يحتوي على النص. لا شيء عليك فعله. في التطبيق، يُفتح القرآن هنا على صفحتك، وتبقى إعدادات القراءة محفوظة.',
+			'accessibilite.coran.demoSansTexteDetailVous' => 'ليس هذا عطلًا: العرض التجريبي لا يحتوي على النص. لا شيء عليك فعله. في التطبيق، يُفتح القرآن هنا على صفحتك، وتبقى إعدادات القراءة محفوظة.',
+			'accessibilite.maClasse.titre' => 'فصلي',
+			'accessibilite.maClasse.suivi' => 'متابعتي',
+			'accessibilite.maClasse.suiviDetail' => 'الحصص الماضية والحضور',
+			'accessibilite.tutoiement.tonHeure' => 'توقيتك',
+			'accessibilite.tutoiement.attenteDetail' => 'وقت الانتظار هذا لا يُحتسب في حضورك.',
+			'accessibilite.tutoiement.attente' => ({required Object duree}) => 'أنت في القاعة. تبدأ الحصة بعد ⁨${duree}⁩.',
+			'accessibilite.tutoiement.attenteImminent' => 'أنت في القاعة. تبدأ الحصة بعد أقل من دقيقة.',
+			'accessibilite.tutoiement.annonceAttente' => 'أنت في القاعة',
+			'accessibilite.tutoiement.horsLigne' => 'أنت غير متصل. تحتاج الحصة إلى اتصال.',
+			'accessibilite.tutoiement.finPhrase' => 'تجد عملك في فصلك.',
+			'accessibilite.apres.revoirSupport' => 'مراجعة مادة الدرس',
+			'accessibilite.apres.revoirSupportDetail' => 'تبقى المادة في فصلك.',
+			'accessibilite.apres.revoirSupportDetailVous' => 'تبقى المادة في فصلك.',
+			'accessibilite.monEspace.titre' => 'مساحتي',
+			'accessibilite.monEspace.mode' => 'وضع إمكانية الوصول',
+			'accessibilite.monEspace.modeDetail' => 'واجهة مبسطة ومكيَّفة لتعلم أكثر طمأنينة.',
+			'accessibilite.monEspace.modeActif' => 'مفعَّل',
+			'accessibilite.monEspace.presentationStandard' => 'العرض العادي',
+			'accessibilite.monEspace.demanderDetail' => 'اطلب من وليّ أمرك الانتقال إلى العرض العادي.',
+			'accessibilite.monEspace.demandeEnCours' => 'جارٍ إرسال طلبك.',
+			'accessibilite.monEspace.demandeEnvoyee' => 'أُرسل طلبك إلى وليّ أمرك.',
+			'accessibilite.monEspace.demandeNonConfirmee' => 'لم يُؤكَّد الإرسال، غالبًا بسبب الاتصال. تحقّق من اتصالك، ثم المس السطر لإعادة المحاولة. لم يتغير شيء في الأثناء: يبقى العرض كما هو.',
+			'reseau.horsLigne' => 'لا شبكة. ما هو معروض يبقى قابلًا للاطلاع.',
+			'reseau.enAttenteEnvoi' => 'سيُرسل بمجرد عودة الشبكة',
+			'reseau.retabli' => 'عادت الشبكة',
+			'reseau.syncImpossible' => 'تعذّرت المزامنة',
+			'vide.aucunCours' => 'لا دروس اليوم',
+			'vide.aucunCoursDetail' => 'سيظهر درسك القادم هنا.',
+			'vide.aucunCreneau' => 'لا موعد متاح الآن',
+			'vide.aucunRapport' => 'لا دفتر متابعة حتى الآن',
+			'vide.aucunAppareil' => 'لا جهاز مقترن',
+			'notifications.titre' => 'الإشعارات',
+			'notifications.indisponibleTitre' => 'الإشعارات غير متاحة بعد',
+			'notifications.indisponiblePhrase' => 'ستظهر هنا تذكيرات الحصص ورسائل الأكاديمية بمجرد فتحها.',
+			'notifications.videTitre' => 'لا إشعارات',
+			'notifications.videPhrase' => 'ستظهر هنا تذكيرات الحصص ورسائل الأكاديمية.',
+			'notifications.ligne' => ({required Object titre, required Object date, required Object heure}) => '⁨${titre}⁩، في ⁨${date}⁩ الساعة ⁨${heure}⁩',
+			'choix.autre' => 'أخرى',
+			'choix.autreInvite' => 'حدّد',
+			'choix.selectionMultiple' => 'يمكن اختيار عدة إجابات',
+			'accuse.titre' => 'ما يجب معرفته قبل البدء',
+			'accuse.compris' => 'فهمت',
+			'aConstruire.titre' => 'شاشة قيد الإنشاء',
+			'aConstruire.detail' => 'تأتي هذه الشاشة في المرحلة 3.',
+			'destructif.irreversible' => 'لا يمكن التراجع عن هذا الإجراء.',
+			'avatar.sansPhoto' => 'لا صورة بعد',
+			'pin.titre' => 'أدخل رمزك',
+			'pin.erreur' => 'هذا الرمز غير مطابق',
+			'pin.effacer' => 'مسح',
+			'enfant.titre' => 'إضافة ملف طالب',
+			'enfant.aucun' => 'لا ملف طالب في الأسرة',
+			'enfant.aucunDetail' => 'أضف أولًا ملف طالب من «الأسرة».',
+			'reglagesEnfant.titre' => 'الإعدادات حسب ملف الطالب',
+			'reglagesEnfant.intro' => 'تُضبط صورة كل طالب وكاميرته وواجهته في بطاقته، من «الأسرة». أما الطلبات إلى الإدارة فتبقى هنا.',
+			'reglagesEnfant.renvoi' => 'الصورة والكاميرا والواجهة',
+			'reglagesEnfant.renvoiLegende' => ({required Object prenom}) => 'في بطاقة ⁨${prenom}⁩',
+			'galerie.titre' => 'معرض المكونات',
+			'galerie.avertissement' => 'منصة اختبار للتطوير. غير موجودة في إصدارات الإنتاج.',
+			'galerie.paires' => 'أزواج الألوان',
+			'galerie.elevation' => 'الارتفاع والزوايا',
+			'galerie.typographie' => 'سلالم الخطوط',
+			'galerie.polices' => 'الخطوط',
+			'galerie.composants' => 'المكونات المشتركة',
+			'galerie.modeEnfant' => 'وضع إمكانية الوصول',
+			'galerie.modeStandard' => 'الوضع العادي',
 			_ => null,
 		};
 	}

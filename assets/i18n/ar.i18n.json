@@ -2,6 +2,131 @@
   "commun": {
     "sections": {
       "page": "أقسام الصفحة"
+    },
+    "marque": "Rewayah Academy",
+    "continuer": "متابعة",
+    "retour": "رجوع",
+    "valider": "تأكيد",
+    "annuler": "إلغاء",
+    "fermer": "إغلاق",
+    "reessayer": "إعادة المحاولة",
+    "chargement": "جارٍ التحميل",
+    "demonstration": {
+      "repere": "عرض تجريبي",
+      "repereLu": "وضع العرض التجريبي"
+    },
+    "etape": {
+      "sur": "\u2068{n}\u2069 من \u2068{total}\u2069",
+      "surLue": "الخطوة \u2068{n}\u2069 من \u2068{total}\u2069"
+    },
+    "choix": {
+      "indisponible": "غير متاح"
+    },
+    "etats": {
+      "chargementProlonge": {
+        "titre": "الاتصال يستغرق وقتًا أطول من المتوقع",
+        "phrase": "يمكنك الانتظار قليلًا أو إعادة المحاولة."
+      },
+      "horsLigne": {
+        "titre": "أنت غير متصل",
+        "phrase": "تحقّق من اتصالك. ما هو معروض يبقى قابلًا للاطلاع."
+      },
+      "reconnexion": {
+        "titre": "جارٍ إعادة الاتصال",
+        "phrase": "محاولة اتصال جديدة جارية."
+      },
+      "echecServeur": {
+        "titre": "تعذّر تحميل هذه المعلومات",
+        "phrase": "لم يكتمل التحميل. أعد المحاولة بعد لحظة."
+      },
+      "introuvable": {
+        "titre": "هذه الصفحة غير موجودة",
+        "phrase": "ربما الرابط ناقص، أو لم تعد الصفحة موجودة."
+      },
+      "accesRefuse": {
+        "titre": "ليس لديك إذن بالوصول إلى هذه الصفحة",
+        "phrase": "هذا المحتوى غير مفتوح لحسابك."
+      },
+      "sessionExpiree": {
+        "titre": "انتهت جلستك",
+        "phrase": "سجّل الدخول من جديد للمتابعة."
+      },
+      "dossierEnAttente": {
+        "titre": "ملفك قيد الانتظار",
+        "phrase": "بقيت خطوة قبل فتح هذه المساحة."
+      },
+      "aucunResultat": {
+        "titre": "لا نتائج",
+        "phrase": "لا شيء مطابق الآن."
+      },
+      "permissionRefusee": {
+        "titre": "الإذن مرفوض",
+        "phrase": "دون هذا الإذن، لا يمكن فتح هذه الوظيفة. يمكنك تغييره في إعدادات جهازك."
+      },
+      "ressourceExpiree": {
+        "titre": "هذا المحتوى لم يعد متاحًا",
+        "phrase": "سُحب، أو انتهى الوصول إليه."
+      },
+      "indisponible": {
+        "titre": "غير متاح بعد",
+        "phrase": "هذه الوظيفة غير مفتوحة بعد."
+      },
+      "reessaisEpuises": "ما زال لا رد. أعد المحاولة لاحقًا.",
+      "horsLigneDemarrage": "يحتاج Rewayah إلى الإنترنت للتحقق من حسابك. أعد توصيل هذا الجهاز، ثم أعد المحاولة.",
+      "actions": {
+        "reessayer": "إعادة المحاولة",
+        "retourAccueil": "العودة إلى الرئيسية",
+        "seConnecter": "تسجيل الدخول",
+        "seReconnecter": "تسجيل الدخول من جديد",
+        "voirDossier": "عرض ملفي",
+        "reinitialiserFiltres": "إعادة ضبط عوامل التصفية",
+        "revenir": "الرجوع"
+      }
+    },
+    "entete": {
+      "retour": "رجوع",
+      "notifications": "الإشعارات",
+      "notificationsUneNonLue": "الإشعارات، واحد غير مقروء",
+      "notificationsNonLues": "الإشعارات، \u2068{nombre}\u2069 غير مقروءة"
+    },
+    "selecteurProfils": {
+      "etiquette": "\u2068{prenom}\u2069، \u2068{etat}\u2069",
+      "ajouter": "إضافة",
+      "ajouterSemantique": "إضافة ملف طالب"
+    },
+    "theme": {
+      "groupe": "المظهر",
+      "clair": "المظهر الفاتح",
+      "sombre": "المظهر الداكن"
+    },
+    "demarrage": {
+      "ouverture": "جارٍ فتح Rewayah"
+    },
+    "dates": {
+      "jours": [
+        "الاثنين",
+        "الثلاثاء",
+        "الأربعاء",
+        "الخميس",
+        "الجمعة",
+        "السبت",
+        "الأحد"
+      ],
+      "mois": [
+        "يناير",
+        "فبراير",
+        "مارس",
+        "أبريل",
+        "مايو",
+        "يونيو",
+        "يوليو",
+        "أغسطس",
+        "سبتمبر",
+        "أكتوبر",
+        "نوفمبر",
+        "ديسمبر"
+      ],
+      "jourDate": "\u2068{jour}\u2069 \u2068{numero}\u2069 \u2068{mois}\u2069"
     }
   },
   "etat": {
@@ -11,7 +136,12 @@
     "motifNonCommunique": "السبب غير متوفر",
     "aucunRemplacantTrouve": "لم يُعثر على بديل",
     "seanceNonFacturee": "الحصة غير مفوترة",
-    "raisonEtSuite": "{raison} · {suite}"
+    "raisonEtSuite": "{raison} · {suite}",
+    "imminent": "قريبًا جدًا",
+    "annule": "ملغى",
+    "enAttente": "قيد الانتظار",
+    "enRetard": "متأخر",
+    "termine": "منتهٍ"
   },
   "classe": {
     "entree": {
@@ -1585,5 +1715,204 @@
         "envoye": "أُغلق الدرس."
       }
     }
+  },
+  "nav": {
+    "eleve": {
+      "accueil": "الرئيسية",
+      "maClasse": "فصلي",
+      "coran": "القرآن",
+      "monEspace": "مساحتي",
+      "suivi": "المتابعة",
+      "compte": "الحساب"
+    },
+    "tuteur": {
+      "accueil": "الرئيسية",
+      "foyer": "الأسرة",
+      "disponibilites": "أوقات التوفر",
+      "reglages": "الإعدادات",
+      "suivi": "المتابعة",
+      "historique": "السجل",
+      "compte": "الحساب"
+    },
+    "enseignant": {
+      "journee": "اليوم",
+      "classes": "الفصول",
+      "creneaux": "أوقات التوفر",
+      "profil": "الملف الشخصي"
+    },
+    "controleur": {
+      "planning": "الجدول",
+      "controle": "المراقبة",
+      "historique": "السجل",
+      "echanges": "المراسلات",
+      "compte": "الحساب"
+    },
+    "admin": {
+      "tableauDeBord": "لوحة التحكم",
+      "dossiers": "الملفات",
+      "demandes": "الطلبات",
+      "attribution": "الإسناد",
+      "journal": "السجل",
+      "comptes": "الحسابات",
+      "accesAgents": "صلاحيات الموظفين",
+      "accueil": "الرئيسية",
+      "operations": "العمليات",
+      "personnes": "الأشخاص",
+      "pedagogie": "التعليم",
+      "finance": "المالية",
+      "configuration": "الإعدادات العامة",
+      "securite": "الأمان والتدقيق",
+      "direction": "الإدارة",
+      "recherche": "البحث",
+      "rechercheIndication": "البحث عن شاشة",
+      "notificationsTitre": "الإشعارات",
+      "menu": "القائمة"
+    },
+    "compte": "حسابي",
+    "principale": "التنقل الرئيسي",
+    "motSymbole": "Rewayah",
+    "replier": "طي شريط التنقل",
+    "deplier": "فتح شريط التنقل"
+  },
+  "accessibilite": {
+    "demo": {
+      "titre": "عرض تجريبي لوضع إمكانية الوصول",
+      "mention": "بيانات وهمية، لا إرسال.",
+      "intro": "اختر طالبًا ولحظة من الحصة.",
+      "eleveMineure": "مريم، طالبة قاصر",
+      "eleveAdulte": "إدريس، طالب بالغ",
+      "etatAvant": "قبل الحصة",
+      "etatFenetre": "قبيل الحصة، الدخول مفتوح",
+      "etatPendant": "أثناء الحصة",
+      "etatApres": "بعد الحصة"
+    },
+    "accueil": {
+      "salutation": "السلام عليكم، \u2068{prenom}\u2069.",
+      "prochaineSeance": "الحصة القادمة",
+      "avec": "مع \u2068{nomme}\u2069",
+      "voirMaClasse": "عرض فصلي",
+      "lireCoran": "قراءة القرآن",
+      "lireCoranDetail": "فتح المصحف",
+      "aide": "تحتاج إلى مساعدة؟",
+      "erreurTitre": "لم تُحمَّل الحصة القادمة",
+      "erreurPhrase": "تعذّرت قراءة الحصة والعمل المطلوب، غالبًا بسبب الاتصال. يكفي أن تعيد المحاولة بعد لحظة.",
+      "indisponibleTitre": "الحصة القادمة لا تظهر هنا بعد",
+      "indisponiblePhrase": "الصفحة الرئيسية لا تستقبل حصة الفصل بعد. تجدها في «فصلي».",
+      "videTitre": "لا فصل بعد",
+      "videPhrase": "لم يُسند أي فصل بعد. يُختار الفصل مع الأكاديمية. وإلى ذلك الحين، يبقى القرآن والمساعدة متاحين أدناه."
+    },
+    "coran": {
+      "ouvrir": "فتح القرآن",
+      "reprendre": "المتابعة من آخر صفحة",
+      "reprendreVous": "المتابعة من آخر صفحة",
+      "reprendreDetail": "كنت في الصفحة \u2068{page}\u2069.",
+      "reprendreDetailVous": "كنت في الصفحة \u2068{page}\u2069.",
+      "repriseRecherche": "جارٍ البحث عن آخر صفحة…",
+      "repriseRechercheVous": "جارٍ البحث عن آخر صفحة…",
+      "repriseErreur": "تعذّر العثور على آخر صفحة، غالبًا بسبب الاتصال. افتح القرآن واختر صفحتك في القارئ. إعدادات القراءة تبقى محفوظة.",
+      "repriseErreurVous": "تعذّر العثور على آخر صفحة، غالبًا بسبب الاتصال. افتح القرآن واختر صفحتك في القارئ. إعدادات القراءة تبقى محفوظة.",
+      "lectureGrande": "يُفتح القرآن في قراءة مكبَّرة، آية آية.",
+      "retour": "العودة إلى مدخل القرآن",
+      "demoSansTexte": "نص القرآن غير محمَّل في العرض التجريبي",
+      "demoSansTexteDetail": "ليس هذا عطلًا: العرض التجريبي لا يحتوي على النص. لا شيء عليك فعله. في التطبيق، يُفتح القرآن هنا على صفحتك، وتبقى إعدادات القراءة محفوظة.",
+      "demoSansTexteDetailVous": "ليس هذا عطلًا: العرض التجريبي لا يحتوي على النص. لا شيء عليك فعله. في التطبيق، يُفتح القرآن هنا على صفحتك، وتبقى إعدادات القراءة محفوظة."
+    },
+    "maClasse": {
+      "titre": "فصلي",
+      "suivi": "متابعتي",
+      "suiviDetail": "الحصص الماضية والحضور"
+    },
+    "tutoiement": {
+      "tonHeure": "توقيتك",
+      "attenteDetail": "وقت الانتظار هذا لا يُحتسب في حضورك.",
+      "attente": "أنت في القاعة. تبدأ الحصة بعد \u2068{duree}\u2069.",
+      "attenteImminent": "أنت في القاعة. تبدأ الحصة بعد أقل من دقيقة.",
+      "annonceAttente": "أنت في القاعة",
+      "horsLigne": "أنت غير متصل. تحتاج الحصة إلى اتصال.",
+      "finPhrase": "تجد عملك في فصلك."
+    },
+    "apres": {
+      "revoirSupport": "مراجعة مادة الدرس",
+      "revoirSupportDetail": "تبقى المادة في فصلك.",
+      "revoirSupportDetailVous": "تبقى المادة في فصلك."
+    },
+    "monEspace": {
+      "titre": "مساحتي",
+      "mode": "وضع إمكانية الوصول",
+      "modeDetail": "واجهة مبسطة ومكيَّفة لتعلم أكثر طمأنينة.",
+      "modeActif": "مفعَّل",
+      "presentationStandard": "العرض العادي",
+      "demanderDetail": "اطلب من وليّ أمرك الانتقال إلى العرض العادي.",
+      "demandeEnCours": "جارٍ إرسال طلبك.",
+      "demandeEnvoyee": "أُرسل طلبك إلى وليّ أمرك.",
+      "demandeNonConfirmee": "لم يُؤكَّد الإرسال، غالبًا بسبب الاتصال. تحقّق من اتصالك، ثم المس السطر لإعادة المحاولة. لم يتغير شيء في الأثناء: يبقى العرض كما هو."
+    }
+  },
+  "reseau": {
+    "horsLigne": "لا شبكة. ما هو معروض يبقى قابلًا للاطلاع.",
+    "enAttenteEnvoi": "سيُرسل بمجرد عودة الشبكة",
+    "retabli": "عادت الشبكة",
+    "syncImpossible": "تعذّرت المزامنة"
+  },
+  "vide": {
+    "aucunCours": "لا دروس اليوم",
+    "aucunCoursDetail": "سيظهر درسك القادم هنا.",
+    "aucunCreneau": "لا موعد متاح الآن",
+    "aucunRapport": "لا دفتر متابعة حتى الآن",
+    "aucunAppareil": "لا جهاز مقترن"
+  },
+  "notifications": {
+    "titre": "الإشعارات",
+    "indisponibleTitre": "الإشعارات غير متاحة بعد",
+    "indisponiblePhrase": "ستظهر هنا تذكيرات الحصص ورسائل الأكاديمية بمجرد فتحها.",
+    "videTitre": "لا إشعارات",
+    "videPhrase": "ستظهر هنا تذكيرات الحصص ورسائل الأكاديمية.",
+    "ligne": "\u2068{titre}\u2069، في \u2068{date}\u2069 الساعة \u2068{heure}\u2069"
+  },
+  "choix": {
+    "autre": "أخرى",
+    "autreInvite": "حدّد",
+    "selectionMultiple": "يمكن اختيار عدة إجابات"
+  },
+  "accuse": {
+    "titre": "ما يجب معرفته قبل البدء",
+    "compris": "فهمت"
+  },
+  "aConstruire": {
+    "titre": "شاشة قيد الإنشاء",
+    "detail": "تأتي هذه الشاشة في المرحلة 3."
+  },
+  "destructif": {
+    "irreversible": "لا يمكن التراجع عن هذا الإجراء."
+  },
+  "avatar": {
+    "sansPhoto": "لا صورة بعد"
+  },
+  "pin": {
+    "titre": "أدخل رمزك",
+    "erreur": "هذا الرمز غير مطابق",
+    "effacer": "مسح"
+  },
+  "enfant": {
+    "titre": "إضافة ملف طالب",
+    "aucun": "لا ملف طالب في الأسرة",
+    "aucunDetail": "أضف أولًا ملف طالب من «الأسرة»."
+  },
+  "reglagesEnfant": {
+    "titre": "الإعدادات حسب ملف الطالب",
+    "intro": "تُضبط صورة كل طالب وكاميرته وواجهته في بطاقته، من «الأسرة». أما الطلبات إلى الإدارة فتبقى هنا.",
+    "renvoi": "الصورة والكاميرا والواجهة",
+    "renvoiLegende": "في بطاقة \u2068{prenom}\u2069"
+  },
+  "galerie": {
+    "titre": "معرض المكونات",
+    "avertissement": "منصة اختبار للتطوير. غير موجودة في إصدارات الإنتاج.",
+    "paires": "أزواج الألوان",
+    "elevation": "الارتفاع والزوايا",
+    "typographie": "سلالم الخطوط",
+    "polices": "الخطوط",
+    "composants": "المكونات المشتركة",
+    "modeEnfant": "وضع إمكانية الوصول",
+    "modeStandard": "الوضع العادي"
   }
 }
