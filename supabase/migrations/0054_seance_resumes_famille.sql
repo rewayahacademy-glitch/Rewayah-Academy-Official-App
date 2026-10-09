@@ -114,7 +114,14 @@ BEGIN
         AND m.student_id = p_student_id
         AND m.joined_at <= v_session.ended_at
         AND (m.left_at IS NULL OR m.left_at >= v_session.started_at)
-        AND p.role = 'student'
+        AND (
+          p.role = 'student'
+          OR (
+            p.role = 'guardian'
+            AND sp.titulaire_profile_id = p.id
+            AND sp.student_type = 'autonomous'
+          )
+        )
         AND p.deleted_at IS NULL
         AND sp.deleted_at IS NULL
     ) INTO v_est_membre;
