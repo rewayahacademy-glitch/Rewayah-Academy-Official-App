@@ -266,9 +266,10 @@ void main() {
         Size(390, 700),
         route: Routes.adminConfigurationRegles,
       ),
-      // La tete d'Interface guidee du Journal est haute : sans la regle de
-      // `PageShell` (la tete defile tant qu'un bandeau est pose), elle
-      // deborde de 164 sous le bandeau fige.
+      // La tete d'Interface guidee du Journal est haute : elle prend plus de
+      // la moitie de la place laissee sous le bandeau fige, et defile donc
+      // avec la page (PAGESHELL-200-1e ; avant ALERTE-1b, elle debordait
+      // de 164 en tete fixe).
       _Cas(
         '390x844 Interface guidee, Journal',
         Size(390, 844),

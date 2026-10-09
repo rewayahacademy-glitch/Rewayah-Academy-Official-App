@@ -462,3 +462,39 @@ Chiffres (avant, après), zone des versets / hauteur de l'écran, barre de navig
 Preuves : `test/features/tc_mushaf/mushaf_texte_agrandi_test.dart` (géométrie ≥ 50 % à 320 × 568 et 390 × 844 ×2, LTR et RTL, aucun mot coupé ; contre-épreuve : les paramètres reçus par le rendu des versets, largeur du cadre, échelle de texte, sens, versets, taille, interligne, police, rosace, sont identiques à ceux relevés sur le code d'avant 6e2c91c4, à 320 ×2, 390 ×2 et 1440) ; captures `docs/current/captures/CORAN-320-1/` (`avant_` = 6e2c91c4, `apres_` ; 320 × 568 ×2 clair, sombre, RTL, options dépliées ; 390 × 844 ×2 clair, sombre RTL ; 1440 clair et sombre ; script `coran_320_1_capture_test.dart.txt`). Statut : présent dans le code, testé localement ; ni staging ni déploiement.
 Décidé par délégation le 05/10 (DIR-REP-1), à faire valider par le directeur : le plafond de 130 % pour l'en-tête, les mentions et la pagination ; la mention « Pour grossir le texte… » repliée derrière le bouton « Mode de lecture » à texte agrandi ; le choix du rendu replié lui aussi (le garder visible rendait la majorité inatteignable à 320 × 568) ; aucun libellé nouveau (« Mode de lecture » et « Aller à une page » existaient déjà).
 Recensé, non repris ici (hors du périmètre de l'étape) : en sens RTL, la position « 1 / 604 » s'affiche « 604 / 1 » (composant partagé `BarrePrecedentSuivant`, aussi en salle) ; les bandes de reprise (« Reprendre ») restent à leur taille quand elles s'affichent.
+
+## PAGESHELL-200-1e : réserves de PAGESHELL-200-1d et d'ALERTE-1b (09/10/2026)
+
+Branche `corrections/c2-pageshell-e`, issue de `corrections/revue-directeur-2026-10` (5a52ff30). Statut : **testé localement** seulement ; ni staging, ni déploiement.
+
+**Décisions prises par délégation le 09/10** (règle DIR-REP-1, aucune question au directeur ; écrites aussi dans `03_DESIGN_SYSTEM_ET_UX.md`, « Coquille de page sous le bandeau d'alerte figé ») :
+
+- La tête de page admin (titre, onglets et, dès 600 px, Recherche, thème, cloche, compte) reste fixe sous le bandeau d'alerte figé, tant qu'elle laisse au corps au moins la moitié de la place restante. Sinon elle défile avec la page, et le bandeau reste en place. C'est l'option la plus prudente : aucun débordement, et le corps garde une hauteur lisible. Sans bandeau, une tête plus haute que la vue moins une cible tactile défile au lieu de déborder.
+- À 200 % de texte sur téléphone, la règle « la page défile pour le reste » de PAGESHELL-200-1d s'applique, comme sous 360 px de place restante et au-delà de 130 % sur une page défilante : la tête défile, le bandeau non.
+- En Interface guidée, sous un bandeau figé, l'espacement est celui de l'interface standard (8 + 24). La respiration de 64 donnait environ 70 px de vide ; elle est gardée sans bandeau.
+- Le retour à la tête fixe attend les animations, mais au plus `AppMouvement.plafond` (400 ms).
+- Bandeau de la chaîne du Journal : quand la pastille sur une ligne et le mot le plus long de la phrase ne tiennent pas côte à côte, la pastille passe au-dessus de la phrase, au début de la ligne.
+
+| Réserve | Ce qui est fait | Preuve |
+| :--- | :--- | :--- |
+| 1. (Moyen) Tête de page admin qui défilait sous une alerte ouverte | `ActionsEnteteCoquille.sousBandeau` remplace le bandeau vide. `PageShell` mesure sa tête (`_MesureTete`) et la garde fixe sous le bandeau tant qu'elle laisse la moitié de la place restante. La tête fixe est posée par `_TeteFixe`, sans débordement à l'image de bascule. | `test/widgets/page_shell_200_1e_test.dart`, groupe (1) : 20 cas (compact 390x844, rail 800x600 et 1024x768, large 1440x700 et 1440x900 ; LTR et RTL ; standard et Interface guidée). Titre, onglets, actions et bandeau ne bougent pas après défilement, et le bas de la liste est atteint. Les 20 cas échouent sur la base. |
+| 2. Écart d'environ 70 px en Interface guidée | Sous bandeau, rythme standard. | Groupe (2) : 4 cas (390x844 et 1440x900, LTR et RTL), écart bandeau-ligne de tête égal à 32. Ils échouent sur la base (72). |
+| 3. Report sans fin de `_revenirTeteFixe` | Report borné à `AppMouvement.plafond`. | Groupe (3) : une tête qui porte un indicateur infini. Le test échoue sur la base et quand la borne est retirée. |
+| 4. Titre simple hors HIER-1 | Le titre simple passe par `EnteteCompact.echelleTitre` et garde les noms composés entiers. | Groupe (4) : 8 cas (390x844, 320x640 et 1440x900 à x2, 390x844 à x1,5 ; LTR et RTL). Ils échouent sur la base (72 au lieu de 46 à x2). |
+| 5. Journal : `Row` de la chaîne (+17 px à 320 x2) ; Interface guidée à 390x684 (+22 px en bas, mesuré sur la vraie coque sans alerte) | `BandeauChaineJournal` empile la pastille au-dessus de la phrase, qui passe par `TexteSansCoupure`. La tête trop haute défile (réserve 1). | Groupe (5) : 320 px x2 LTR et RTL, sans débordement ni mot coupé. Sur la coque réelle à 390x684 en Interface guidée : défilement jusqu'au bout, « Réessayer » touchable, aucun mot coupé. Tous ces cas échouent sur la base. |
+| 6. Régression large | Voir les contrôles ci-dessous. | |
+
+Contre-épreuves :
+- Les 38 cas du fichier ont été rejoués sur le code de la base (5a52ff30), avec seulement les deux symboles de test ajoutés en bouchon : les 38 échouent.
+- Mutations sur le nouveau code :
+  - sous bandeau, la tête défile toujours : 20 échecs ;
+  - respiration rétablie : 4 échecs ;
+  - borne retirée : 1 échec ;
+  - échelle compacte retirée : 8 échecs ;
+  - mesure de la tête neutralisée : 3 échecs dans le fichier (dont la coque réelle à 390x684) ;
+  - `Row` de la chaîne rétablie : 2 échecs.
+- Les cas qui passaient déjà sur la base ont été retirés du fichier : tête trop haute sous le bandeau, téléphone à 200 %. Ils restent couverts par `alerte1b_test.dart`.
+
+Captures : `docs/current/captures/PAGESHELL-200-1e/`, 16 PNG `avant` (base) et 16 PNG `apres`, script archivé `pageshell200_1e_capture_test.dart.txt`. Elles couvrent 390x844, 800x600 (rail) et 1440x500 défilés, en clair et en sombre, en LTR et en RTL. S'y ajoutent l'Interface guidée à 390x844, 1440x900 et 390x684 (avec et sans alerte), le Journal à 320x640 x2 et l'Accueil à 390x844 et 320x640 x2.
+
+À 1440x500 avec alerte, la tête défile encore, et c'est voulu : il reste 358 px sous le bandeau, moins que le seuil de 360 (AD-11). Le seuil est calculé sur la place restante, comme le recommandait la revue ALERTE-1b.
