@@ -395,7 +395,19 @@ void main() {
         cas.$3 ? findsOneWidget : findsNothing,
       );
       // Rien n'est retire : classe, date et heure restent ecrites.
-      expect(find.textContaining('Classe Al-Badr'), findsWidgets);
+      // Le titre peut porter un gluon invisible apres le trait d'union
+      // (« Al-Badr » reste entier, SUPERPOS-1) : lu sans lui.
+      expect(
+        find.byWidgetPredicate(
+          (Widget w) =>
+              w is RichText &&
+              w.text
+                  .toPlainText()
+                  .replaceAll('\u2060', '')
+                  .contains('Classe Al-Badr'),
+        ),
+        findsWidgets,
+      );
       expect(find.textContaining('17:00'), findsOneWidget);
     });
   }

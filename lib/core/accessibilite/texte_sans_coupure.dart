@@ -27,7 +27,14 @@ class TexteSansCoupure extends StatelessWidget {
     this.maxLignes,
     this.voisins = const <String>[],
     this.plancher = 1,
+    this.nomsComposesEntiers = false,
   });
+
+  /// Vrai : un nom compose (« Al-Badr ») ne passe pas a la ligne apres son
+  /// trait d'union (titre d'ecran, SUPERPOS-1). Faux par defaut : ailleurs,
+  /// la coupure au trait d'union reste celle de la typographie francaise
+  /// (« es- / tu »), et le texte rendu reste exactement le texte donne.
+  final bool nomsComposesEntiers;
 
   /// Les libelles voisins de MEME largeur (segments d'un `ControleSegmente`) :
   /// l'echelle est bornee par le mot le plus long de tous, pour que les
@@ -88,13 +95,9 @@ class TexteSansCoupure extends StatelessWidget {
           // comme un mot, il reste entier. Le texte n'est retouche (un
           // gluon invisible apres le trait) que si la ligne s'y coupait
           // vraiment ; le lecteur d'ecran lit le texte d'origine.
-          final String rendu = sansCoupureAuTrait(
-            texte,
-            complet,
-            sens,
-            retenue,
-            c.maxWidth,
-          );
+          final String rendu = nomsComposesEntiers
+              ? sansCoupureAuTrait(texte, complet, sens, retenue, c.maxWidth)
+              : texte;
           return Text(
             rendu,
             style: style,

@@ -96,7 +96,10 @@ void main() {
               matching: find.byWidgetPredicate(
                 (Widget w) =>
                     w is RichText &&
-                    w.text.toPlainText().startsWith('Classe Al-Badr'),
+                    w.text
+                        .toPlainText()
+                        .replaceAll('\u2060', '')
+                        .startsWith('Classe Al-Badr'),
               ),
             ),
           )

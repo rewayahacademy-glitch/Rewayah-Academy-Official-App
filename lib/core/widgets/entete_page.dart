@@ -81,6 +81,9 @@ class EntetePage extends StatelessWidget {
             titre,
             key: EnteteCompact.titreKey,
             style: titreComplet,
+            // SUPERPOS-1 : « Classe Al- / Badr » a 320 en texte double ;
+            // en mode compact seulement (texte agrandi, vue basse).
+            nomsComposesEntiers: compact,
           ),
         ),
       ),
@@ -200,7 +203,9 @@ class EntetePage extends StatelessWidget {
 /// - quand le mot le plus long du titre ne tient pas a cote du disque retour
 ///   et des actions, ceux-ci passent sur une rangee au-dessus et le titre
 ///   prend toute la largeur (sinon le mot se reduirait sous un titre de
-///   section agrandi).
+///   section agrandi) ;
+/// - un nom compose du titre (« Al-Badr ») ne passe pas a la ligne apres son
+///   trait d'union (`TexteSansCoupure.nomsComposesEntiers`).
 ///
 /// Le clavier ne compte pas : la structure ne bascule pas a son ouverture
 /// (meme regle que `PageShell`).
