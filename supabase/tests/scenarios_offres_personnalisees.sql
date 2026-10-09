@@ -147,6 +147,14 @@ BEGIN
     RAISE EXCEPTION 'F1: une demande familiale a publié une offre vitrine';
   END IF;
 
+  INSERT INTO auth.users (id, email)
+  VALUES ('f1490000-0000-0000-0000-000000000999', 'f1-admin@example.test');
+  INSERT INTO public.profiles
+    (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
+  VALUES
+    ('f1490000-0000-0000-0000-000000000999', 'F1-ADMIN', 'admin', NULL,
+     'Admin', 'Test', 'active', 'male');
+
   PERFORM set_config('test.uid', 'f1490000-0000-0000-0000-000000000999', true);
   PERFORM set_config('test.jwt',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text, true);
