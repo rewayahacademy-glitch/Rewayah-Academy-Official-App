@@ -30,12 +30,16 @@ name: Deploy Supabase
 
 on:
   push:
-    branches: [main, codex/backend-staging-deploy]
+    branches: [main]
     tags: ["v*"]
   workflow_dispatch:
     inputs:
       appliquer_les_migrations:
-        description: "Appliquer les migrations (supabase db push) -- a n'activer que si la numerotation locale et l'historique distant concordent"
+        description: "Appliquer les migrations PROD uniquement après concordance du ledger et autorisation journalisée"
+        type: boolean
+        default: false
+      deployer_fonctions_staging:
+        description: "Déployer manuellement les Edge Functions STAGING depuis la branche sélectionnée"
         type: boolean
         default: false
 
@@ -94,7 +98,7 @@ jobs:
 
   fonctions-staging:
     name: Edge Functions STAGING
-    if: github.event_name == 'push' && github.ref == 'refs/heads/codex/backend-staging-deploy'
+    if: github.event_name == 'workflow_dispatch' && inputs.deployer_fonctions_staging
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -107,7 +111,7 @@ jobs:
         shell: bash
         run: |
           if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
-            echo "::error title=SUPABASE_STAGING_ACCESS_TOKEN absent::configurer un jeton limité au projet xldmmlrnxyabdtvxqbyy"
+            echo "::error title=SUPABASE_STAGING_ACCESS_TOKEN absent::configurer un jeton Supabase dédié dans Settings > Secrets and variables > Actions. Un jeton personnel n'est pas limité à un projet."
             exit 1
           fi
       - name: Deploy Edge Functions to STAGING

@@ -54,8 +54,8 @@ jobs:
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       SITE: https://rewayah-academy.vercel.app
       # Les aperçus de PR utilisent l'API STAGING, jamais le backend de PROD.
-      SUPABASE_URL: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && secrets.SUPABASE_URL || 'https://xldmmlrnxyabdtvxqbyy.supabase.co' }}
-      SUPABASE_ANON_KEY: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && secrets.SUPABASE_ANON_KEY || secrets.SUPABASE_STAGING_ANON_KEY }}
+      SUPABASE_URL: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && secrets.SUPABASE_URL || secrets.STAGING_SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && secrets.SUPABASE_ANON_KEY || secrets.STAGING_SUPABASE_ANON_KEY }}
 
     steps:
       - uses: actions/checkout@v4
