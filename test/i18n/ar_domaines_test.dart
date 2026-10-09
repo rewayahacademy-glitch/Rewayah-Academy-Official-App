@@ -1,11 +1,11 @@
 // AR-COMPLET-1, par tranches : les domaines traduits en arabe le restent.
 //
-// AR-SALLE-1 (`salle.*`), AR-TC-1 (`tc.*`), AR-ENS-1 (`enseignant.*`) et
-// AR-TRANSVERSE-1 (nav, commun, accessibilite...) : chaque cle du francais a
-// sa traduction arabe, avec exactement les memes parametres ; chaque
-// parametre ajoute par ces tranches est isole (U+2068 ... U+2069), pour
-// qu'un nom latin ne renverse pas la phrase. Une tranche suivante ajoute son
-// domaine a [_domaines].
+// AR-SALLE-1 (`salle.*`), AR-TC-1 (`tc.*`), AR-ENS-1 (`enseignant.*`),
+// AR-TRANSVERSE-1 (nav, commun, accessibilite...) et AR-ELEVE-1 (classe,
+// ficheEleve, parcours...) : chaque cle du francais a sa traduction arabe,
+// avec exactement les memes parametres ; chaque parametre ajoute par ces
+// tranches est isole (U+2068 ... U+2069), pour qu'un nom latin ne renverse
+// pas la phrase. Une tranche suivante ajoute son domaine a [_domaines].
 
 import 'dart:convert';
 import 'dart:io';
@@ -35,6 +35,14 @@ const Map<String, int> _domaines = <String, int>{
   'enfant': 2,
   'reglagesEnfant': 3,
   'galerie': 8,
+  // AR-ELEVE-1.
+  'classe': 140,
+  'ficheEleve': 80,
+  'parcours': 80,
+  'eleveConnexion': 70,
+  'eleve': 55,
+  'presence': 20,
+  'priere': 10,
 };
 
 Map<String, String> _aplatir(
@@ -75,6 +83,17 @@ const Set<String> _anciennes = <String>{
   'enseignant.ficheGroupe.dernierPoint',
   'etat.annuleeValeur',
   'etat.raisonEtSuite',
+  'classe.entree.coursDans',
+  'classe.entree.rejoindreLecteur',
+  'classe.entree.salleOuverte',
+  'classe.entree.attente',
+  'classe.entree.progressionValeur',
+  'classe.entree.dst',
+  'eleve.suivi.aujourdhui',
+  'eleve.suivi.hier',
+  'eleve.suivi.date',
+  'eleve.suivi.tronquee',
+  'eleve.suivi.fin',
 };
 
 /// Les textes gardes en latin (marque, format de fichier).
@@ -84,6 +103,7 @@ const Set<String> _latins = <String>{
   'tc.bibliotheque.type.pdf',
   'nav.motSymbole',
   'commun.marque',
+  'eleve.coran.sourceLien',
 };
 
 final RegExp _parametre = RegExp(r'\{\w+\}');
@@ -94,7 +114,7 @@ List<String> _parametres(String texte) =>
 /// Rien que des parametres et de la ponctuation : rien a traduire.
 bool _sansMots(String texte) => texte
     .replaceAll(_parametre, '')
-    .replaceAll(RegExp('[\u2068\u2069 ·/%،,]'), '')
+    .replaceAll(RegExp('[\u2068\u2069 ·/%،,:()]'), '')
     .isEmpty;
 
 void main() {
