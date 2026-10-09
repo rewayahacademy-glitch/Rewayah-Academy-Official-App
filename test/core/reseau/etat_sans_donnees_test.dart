@@ -38,6 +38,11 @@ const Set<String> _permises = <String>{
   'com.messages.demo.horsLigne',
   'com.communaute.demo.horsLigne',
   'com.studio.demo.horsLigne',
+  // Le bandeau hors ligne des Communications (D-FUS-3), le bandeau lui-meme :
+  // son message, generique ou propre a la page (JONCTION-LIGNES-1).
+  'com.socle.composants.etats.horsLigne',
+  'com.annonces.administration.horsLigne',
+  'com.annonces.administration.moderation.horsLigne',
   'tc.bibliotheque.offline.indisponible',
   'tc.bibliotheque.action.telecharger',
   'tc.bibliotheque.message.telechargementImpossible',

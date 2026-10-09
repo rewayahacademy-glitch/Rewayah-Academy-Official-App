@@ -497,7 +497,8 @@ class _Traductions$commun$etats$ar extends Traductions$commun$etats$fr {
 	@override late final _Traductions$commun$etats$ressourceExpiree$ar ressourceExpiree = _Traductions$commun$etats$ressourceExpiree$ar._(_root);
 	@override late final _Traductions$commun$etats$indisponible$ar indisponible = _Traductions$commun$etats$indisponible$ar._(_root);
 	@override String get reessaisEpuises => 'لا يزال دون رد. أعد المحاولة لاحقًا.';
-	@override String get horsLigneDemarrage => 'تحتاج Rewayah إلى الإنترنت للتحقق من حسابك. أعد توصيل هذا الجهاز، ثم أعد المحاولة.';
+	@override String get horsLigneDemarrageTitre => 'تعذّر التحقق من حسابك';
+	@override String get horsLigneDemarrage => 'يمكن التحقق منه عند عودة الاتصال. أعد المحاولة حينها.';
 	@override late final _Traductions$commun$etats$actions$ar actions = _Traductions$commun$etats$actions$ar._(_root);
 }
 
@@ -4555,7 +4556,8 @@ extension on TraductionsAr {
 			'commun.etats.indisponible.titre' => 'غير متاح بعد',
 			'commun.etats.indisponible.phrase' => 'هذه الوظيفة غير مفتوحة بعد.',
 			'commun.etats.reessaisEpuises' => 'لا يزال دون رد. أعد المحاولة لاحقًا.',
-			'commun.etats.horsLigneDemarrage' => 'تحتاج Rewayah إلى الإنترنت للتحقق من حسابك. أعد توصيل هذا الجهاز، ثم أعد المحاولة.',
+			'commun.etats.horsLigneDemarrageTitre' => 'تعذّر التحقق من حسابك',
+			'commun.etats.horsLigneDemarrage' => 'يمكن التحقق منه عند عودة الاتصال. أعد المحاولة حينها.',
 			'commun.etats.actions.reessayer' => 'إعادة المحاولة',
 			'commun.etats.actions.retourAccueil' => 'العودة إلى الرئيسية',
 			'commun.etats.actions.seConnecter' => 'تسجيل الدخول',
@@ -4949,9 +4951,9 @@ extension on TraductionsAr {
 			'com.socle.composants.composer.aide' => 'اكتب رسالة',
 			'com.socle.composants.composer.envoyer' => 'إرسال',
 			'com.socle.composants.composer.champVide' => 'اكتب رسالة لإرسالها.',
-			'com.socle.composants.composer.vocal' => 'رسالة صوتية',
 			_ => null,
 		} ?? switch (path) {
+			'com.socle.composants.composer.vocal' => 'رسالة صوتية',
 			'com.socle.composants.composer.vocalAVenir' => 'الرسالة الصوتية متاحة قريبًا',
 			'com.socle.composants.composer.enCours' => 'جارٍ الإرسال',
 			'com.socle.composants.composer.envoye' => 'أُرسلت',
@@ -5463,9 +5465,9 @@ extension on TraductionsAr {
 			'com.studio.panneau.parametresDetail' => 'سيتاح تعديل الإعدادات مع خدمة الاستوديو.',
 			'com.studio.panneau.ouvrir' => ({required Object titre}) => 'فتح ${titre}',
 			'com.studio.panneau.lienExterne' => ({required Object hote}) => 'موقع خارجي: ${hote}',
-			'com.studio.panneau.aucunPartageTitre' => 'لا شيء مشترك حاليًا',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.panneau.aucunPartageTitre' => 'لا شيء مشترك حاليًا',
 			'com.studio.panneau.aucunPartage' => 'ستظهر هنا العناصر المثبتة والملفات والروابط الخاصة بهذه القناة.',
 			'com.studio.enregistrer.enregistrer' => _root.com.socle.lexique.enregistrer,
 			'com.studio.enregistrer.retirer' => 'إزالة',
@@ -5977,9 +5979,9 @@ extension on TraductionsAr {
 			'comptable.paiements.confirmation.prestataires' => 'مزوّدو الدفع',
 			'comptable.paiements.confirmation.plafond' => 'التفويض المتبقي',
 			'comptable.paiements.confirmation.exclusTitre' => 'مستبعدة من هذه الدفعة المجمّعة: لن تُرسَل',
-			'comptable.paiements.confirmation.aucunPretTitre' => 'لا توجد دفعة جاهزة',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.paiements.confirmation.aucunPretTitre' => 'لا توجد دفعة جاهزة',
 			'comptable.paiements.confirmation.aucunPret' => 'لن يُرسَل أي شيء. افتح كل دفعة مستبعدة لإزالة سببها، ثم أعد تشغيل الفحص.',
 			'comptable.paiements.confirmation.erreursTitre' => 'أخطاء أرجعها الفحص',
 			'comptable.paiements.confirmation.confirmerUn' => ({required Object montant}) => 'تأكيد دفع ${montant}',
@@ -6491,9 +6493,9 @@ extension on TraductionsAr {
 			'comptable.validation.motifs.reporter' => 'يؤجَّل إلى الدورة القادمة',
 			'comptable.validation.motifs.autre' => 'آخر',
 			'comptable.validation.motifAutreChamp' => 'حدّد السبب',
-			'comptable.validation.erreurMotif' => 'اختر سببًا للرفض.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.validation.erreurMotif' => 'اختر سببًا للرفض.',
 			'comptable.validation.erreurMotifAutre' => 'حدّد السبب للرفض.',
 			'comptable.validation.decisionValidee' => 'سُجّل قرارك: تمت المصادقة على الطلب.',
 			'comptable.validation.decisionRefusee' => 'سُجّل قرارك: رُفض الطلب، مع سببه.',

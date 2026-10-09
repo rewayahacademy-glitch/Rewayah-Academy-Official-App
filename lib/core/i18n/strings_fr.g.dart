@@ -22223,8 +22223,8 @@ class Traductions$com$annonces$administration$fr {
 	/// fr: 'Données de démonstration : aucun chiffre réel.'
 	String get demoDetail => 'Données de démonstration : aucun chiffre réel.';
 
-	/// fr: 'Les annonces ne peuvent pas être actualisées maintenant.'
-	String get horsLigne => 'Les annonces ne peuvent pas être actualisées maintenant.';
+	/// fr: 'Vous êtes hors ligne. Les annonces ne peuvent pas être actualisées.'
+	String get horsLigne => 'Vous êtes hors ligne. Les annonces ne peuvent pas être actualisées.';
 
 	late final Traductions$com$annonces$administration$indicateurs$fr indicateurs = Traductions$com$annonces$administration$indicateurs$fr.internal(_root);
 	late final Traductions$com$annonces$administration$publiees$fr publiees = Traductions$com$annonces$administration$publiees$fr.internal(_root);
@@ -24795,8 +24795,8 @@ class Traductions$com$socle$composants$etats$fr {
 	/// fr: 'Réessayer'
 	String get reessayer => 'Réessayer';
 
-	/// fr: 'Les nouveaux messages ne peuvent pas être actualisés maintenant.'
-	String get horsLigne => 'Les nouveaux messages ne peuvent pas être actualisés maintenant.';
+	/// fr: 'Vous êtes hors ligne. Les nouveaux messages ne peuvent pas être actualisés.'
+	String get horsLigne => 'Vous êtes hors ligne. Les nouveaux messages ne peuvent pas être actualisés.';
 
 	/// fr: 'Réessayez quand la connexion revient.'
 	String get horsLigneBloc => 'Réessayez quand la connexion revient.';
@@ -25848,8 +25848,8 @@ class Traductions$com$annonces$administration$moderation$fr {
 	/// fr: 'Cette décision n'est pas encore confirmée : il est possible qu'elle ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
 	String get nonConfirmee => 'Cette décision n\'est pas encore confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 
-	/// fr: 'La file de modération ne peut pas être actualisée maintenant.'
-	String get horsLigne => 'La file de modération ne peut pas être actualisée maintenant.';
+	/// fr: 'Vous êtes hors ligne. La file de modération ne peut pas être actualisée.'
+	String get horsLigne => 'Vous êtes hors ligne. La file de modération ne peut pas être actualisée.';
 
 	/// fr: 'La modération n'est pas encore disponible. Revenez plus tard.'
 	String get indisponible => 'La modération n\'est pas encore disponible. Revenez plus tard.';
@@ -31284,7 +31284,7 @@ extension on Traductions {
 			'com.socle.composants.etats.erreurTitre' => 'Impossible de charger ce contenu.',
 			'com.socle.composants.etats.erreur' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'com.socle.composants.etats.reessayer' => 'Réessayer',
-			'com.socle.composants.etats.horsLigne' => 'Les nouveaux messages ne peuvent pas être actualisés maintenant.',
+			'com.socle.composants.etats.horsLigne' => 'Vous êtes hors ligne. Les nouveaux messages ne peuvent pas être actualisés.',
 			'com.socle.composants.etats.horsLigneBloc' => 'Réessayez quand la connexion revient.',
 			'com.socle.composants.etats.indisponibleTitre' => 'Pas encore disponible',
 			'com.socle.composants.etats.indisponible' => 'Cette fonction n\'est pas encore disponible ici. Elle s\'ouvrira dès que le service sera prêt.',
@@ -31936,7 +31936,7 @@ extension on Traductions {
 			'com.annonces.administration.nouvelle' => 'Nouvelle annonce',
 			'com.annonces.administration.demo' => 'Démonstration',
 			'com.annonces.administration.demoDetail' => 'Données de démonstration : aucun chiffre réel.',
-			'com.annonces.administration.horsLigne' => 'Les annonces ne peuvent pas être actualisées maintenant.',
+			'com.annonces.administration.horsLigne' => 'Vous êtes hors ligne. Les annonces ne peuvent pas être actualisées.',
 			'com.annonces.administration.indicateurs.titre' => 'Indicateurs des communications',
 			'com.annonces.administration.indicateurs.publiees' => 'Annonces publiées',
 			'com.annonces.administration.indicateurs.planifiees' => 'Annonces planifiées',
@@ -31980,7 +31980,7 @@ extension on Traductions {
 			'com.annonces.administration.moderation.restaure' => 'Restauré',
 			'com.annonces.administration.moderation.enregistree' => 'Décision enregistrée.',
 			'com.annonces.administration.moderation.nonConfirmee' => 'Cette décision n\'est pas encore confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
-			'com.annonces.administration.moderation.horsLigne' => 'La file de modération ne peut pas être actualisée maintenant.',
+			'com.annonces.administration.moderation.horsLigne' => 'Vous êtes hors ligne. La file de modération ne peut pas être actualisée.',
 			'com.annonces.administration.moderation.indisponible' => 'La modération n\'est pas encore disponible. Revenez plus tard.',
 			'com.annonces.administration.moderation.videTitre' => 'Aucun contenu à examiner',
 			'com.annonces.administration.moderation.vide' => 'Les signalements de la Communauté enseignants arrivent ici.',
