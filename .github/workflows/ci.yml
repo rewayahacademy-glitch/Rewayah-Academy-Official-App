@@ -6,7 +6,7 @@ on:
   # la branche de BASE : il ne sert a une branche `ui/*` qu'une fois present
   # dans cette branche.
   pull_request:
-    branches: [main, 'ui/**']
+    branches: [main, 'ccr-1b1bfa0b-m1kvkk', 'ui/**']
   workflow_dispatch:
 
 jobs:
@@ -14,7 +14,7 @@ jobs:
     name: Migrations applicables (Postgres 17)
     # Le SQL et les fonctions Edge ne sont controles que vers `main` : les
     # branches `ui/*` ne touchent pas `supabase/`.
-    if: github.event_name != 'pull_request' || github.base_ref == 'main'
+    if: github.event_name != 'pull_request' || github.base_ref == 'main' || github.base_ref == 'ccr-1b1bfa0b-m1kvkk'
     runs-on: ubuntu-latest
     container: postgres:17-alpine
     services:
@@ -41,10 +41,17 @@ jobs:
           # ont besoin de pouvoir se faire passer pour un appelant donne, et un
           # stub qui differe entre la CI et le poste ne prouve rien.
           psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/stub_auth.sql
+          psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/stub_storage.sql
           for f in supabase/migrations/*.sql; do
             echo "--- $f"
             psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f "$f"
           done
+
+      # SEC-01 : le JWT garde l'identite propre de l'agent; le sujet effectif
+      # ne devient le profil observe qu'apres validation de la portee en base.
+      - name: Scenario SEC-01 (identite agent / sujet observe)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_agent_identity.sql
 
       # Inscription bornee a deux roles, depot KYC de l'enseignant, cloisonnement
       # de genre, appareil partage, plafond d'appareils, codes d'appairage,
@@ -188,7 +195,7 @@ jobs:
 
   edge-r2:
     name: Fonctions Edge -- stockage R2 (Deno)
-    if: github.event_name != 'pull_request' || github.base_ref == 'main'
+    if: github.event_name != 'pull_request' || github.base_ref == 'main' || github.base_ref == 'ccr-1b1bfa0b-m1kvkk'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -217,6 +224,7 @@ jobs:
         run: |
           deno check \
             supabase/functions/_shared/r2/ \
+            supabase/functions/agent-session/index.ts \
             supabase/functions/piece-identite-acces/index.ts \
             supabase/functions/piece-identite-depot/index.ts \
             supabase/functions/piece-identite-confirme/index.ts \
@@ -258,6 +266,7 @@ jobs:
           fi
 
   flutter:
+    if: github.event_name != 'pull_request' || github.base_ref == 'main'
     name: Flutter (${{ matrix.target }})
     strategy:
       fail-fast: false

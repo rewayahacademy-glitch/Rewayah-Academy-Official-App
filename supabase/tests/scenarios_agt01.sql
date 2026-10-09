@@ -389,6 +389,40 @@ begin
 end $$;
 
 -- ============================================================
+-- A7b : l'identite de l'agent est distincte du profil observe
+-- ============================================================
+--
+-- Le JWT identifie le jeton d'agent dans `sub`. Le garde central ne substitue
+-- le sujet effectif qu'apres avoir relu et valide la portee en base.
+do $agt_identity$
+declare
+  v_jeton uuid := (select valeur::uuid from agt_fixture where cle = 'id_masque');
+  v_observe uuid := 'a7000000-0000-0000-0000-000000000002';
+begin
+  set local role postgres;
+  perform set_config('test.uid', v_jeton::text, true);
+  perform set_config('request.jwt.claim.sub', v_jeton::text, true);
+  perform set_config('test.jwt', format(
+    '{"sub":"%s","app_metadata":{"role":"student","household_id":"a7ffffff-0000-0000-0000-00000000000a","agent_token_id":"%s"}}',
+    v_jeton, v_jeton
+  ), true);
+
+  if auth.uid() is distinct from v_jeton then
+    raise exception 'A7b : le JWT doit commencer avec l''identite propre du jeton agent';
+  end if;
+
+  perform public.agent_pre_request();
+
+  if auth.uid() is distinct from v_observe then
+    raise exception 'A7b : apres validation, le sujet effectif doit etre le profil observe';
+  end if;
+  if auth.jwt() ->> 'sub' is distinct from v_jeton::text
+     or auth.jwt() -> 'app_metadata' ->> 'agent_token_id' is distinct from v_jeton::text then
+    raise exception 'A7b : le JWT doit conserver l''identite propre de l''agent';
+  end if;
+end $agt_identity$;
+
+-- ============================================================
 -- A8 : LE MASQUAGE EST DUR -- le prenom ne quitte pas la base
 -- ============================================================
 --
