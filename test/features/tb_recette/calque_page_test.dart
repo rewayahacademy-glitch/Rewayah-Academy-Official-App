@@ -608,12 +608,24 @@ void main() {
         }
         final Finder micro = find.byKey(const ValueKey<String>('bouton-micro'));
         final Rect rMicro = tester.getRect(micro);
+        // A 200 % sur telephone, la page deborde jusque sous la barre : la
+        // couche n'y recoit rien, la barre garde son toucher.
+        final bool sousLaPage = tester.getRect(_page).overlaps(rMicro);
+        expect(sousLaPage, clics > 0, reason: 'cas mesure : page sous Micro');
         final bool ouvert = find
             .descendant(of: micro, matching: find.text(t.salle.microOuvert))
             .evaluate()
             .isNotEmpty;
+        // Un doigt pose sur Micro qui glisse jusque dans la page.
+        await _tracer(
+          tester,
+          rMicro.center,
+          _surEcran(tester, const PointNormalise(0.5, 0.5)),
+        );
+        expect(_traits(depot), isEmpty, reason: 'glisser depuis Micro');
         await tester.tap(micro);
         await _attendre(tester);
+        expect(_traits(depot), isEmpty, reason: 'toucher Micro');
         expect(
           find.descendant(
             of: micro,
@@ -624,13 +636,6 @@ void main() {
           findsOneWidget,
           reason: 'le toucher a bascule le micro',
         );
-        // Un doigt pose sur Micro qui glisse jusque dans la page.
-        await _tracer(
-          tester,
-          rMicro.center,
-          _surEcran(tester, const PointNormalise(0.5, 0.5)),
-        );
-        expect(_traits(depot), isEmpty);
         expect(tester.takeException(), isNull);
       });
     }
