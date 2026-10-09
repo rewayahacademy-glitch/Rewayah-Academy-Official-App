@@ -67,8 +67,8 @@ DECLARE
   v_state jsonb;
   v_count integer;
 BEGIN
-  PERFORM set_config('test.uid', v_inviter::text, true);
-  PERFORM set_config('test.jwt',
+  PERFORM set_config('request.jwt.claim.sub', v_inviter::text, true);
+  PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'guardian',
       'household_id', 'b0300000-0000-0000-0000-000000000101'))::text, true);
 
@@ -99,8 +99,8 @@ BEGIN
     RAISE EXCEPTION 'B-03: attendu un seul courriel en outbox, reçu %', v_count;
   END IF;
 
-  PERFORM set_config('test.uid', v_invitee::text, true);
-  PERFORM set_config('test.jwt',
+  PERFORM set_config('request.jwt.claim.sub', v_invitee::text, true);
+  PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'guardian',
       'household_id', 'b0300000-0000-0000-0000-000000000102'))::text, true);
   v_state := public.mon_invitation_en_cours();
@@ -134,16 +134,16 @@ BEGIN
   END IF;
 
   -- Une adresse Auth non vérifiée ne peut pas consommer l'invitation.
-  PERFORM set_config('test.uid', v_inviter::text, true);
-  PERFORM set_config('test.jwt',
+  PERFORM set_config('request.jwt.claim.sub', v_inviter::text, true);
+  PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'guardian',
       'household_id', 'b0300000-0000-0000-0000-000000000101'))::text, true);
   PERFORM public.inviter_conjoint(
     'b03-unverified@example.test',
     'b0300000-0000-0000-0000-000000000205'
   );
-  PERFORM set_config('test.uid', 'b0300000-0000-0000-0000-000000000003', true);
-  PERFORM set_config('test.jwt',
+  PERFORM set_config('request.jwt.claim.sub', 'b0300000-0000-0000-0000-000000000003', true);
+  PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'guardian',
       'household_id', 'b0300000-0000-0000-0000-000000000103'))::text, true);
   v_state := public.mon_invitation_en_cours();
@@ -151,8 +151,8 @@ BEGIN
     RAISE EXCEPTION 'B-03: une adresse non vérifiée a vu ou accepté l''invitation';
   END IF;
 
-  PERFORM set_config('test.uid', v_inviter::text, true);
-  PERFORM set_config('test.jwt',
+  PERFORM set_config('request.jwt.claim.sub', v_inviter::text, true);
+  PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'guardian',
       'household_id', 'b0300000-0000-0000-0000-000000000101'))::text, true);
   PERFORM public.annuler_invitation_conjoint();
@@ -163,8 +163,8 @@ BEGIN
   UPDATE public.invitations_foyer
   SET expire_le = now() - interval '1 second'
   WHERE email_invite = 'b03-expired@example.test' AND statut = 'en_attente';
-  PERFORM set_config('test.uid', 'b0300000-0000-0000-0000-000000000007', true);
-  PERFORM set_config('test.jwt',
+  PERFORM set_config('request.jwt.claim.sub', 'b0300000-0000-0000-0000-000000000007', true);
+  PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'guardian',
       'household_id', 'b0300000-0000-0000-0000-000000000105'))::text, true);
   v_state := public.mon_invitation_en_cours();
@@ -173,16 +173,16 @@ BEGIN
   END IF;
 
   -- Un compte déjà titulaire d'un foyer avec un enfant reste dans son foyer.
-  PERFORM set_config('test.uid', v_inviter::text, true);
-  PERFORM set_config('test.jwt',
+  PERFORM set_config('request.jwt.claim.sub', v_inviter::text, true);
+  PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'guardian',
       'household_id', 'b0300000-0000-0000-0000-000000000101'))::text, true);
   v_first := public.inviter_conjoint(
     'b03-parent-with-child@example.test',
     'b0300000-0000-0000-0000-000000000203'
   );
-  PERFORM set_config('test.uid', v_child_parent::text, true);
-  PERFORM set_config('test.jwt',
+  PERFORM set_config('request.jwt.claim.sub', v_child_parent::text, true);
+  PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'guardian',
       'household_id', 'b0300000-0000-0000-0000-000000000104'))::text, true);
   v_state := public.repondre_invitation_conjoint(
