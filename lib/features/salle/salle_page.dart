@@ -44,9 +44,12 @@ import '../controleur/compte_rendu_controle.dart' show adresseCompteRendu;
 import '../fiche_groupe/preparation_seance.dart';
 import '../salle_enseignant/panneau_enseignant.dart';
 import '../salle_seance/actions_seance.dart';
+import '../salle_seance/barre_support.dart' show IndicateurPage;
 import '../salle_seance/depuis_salle.dart';
+import '../salle_seance/presentation_observee.dart';
 import '../salle_seance/resultat_seance.dart';
 import '../salle_seance/vue_seance.dart';
+import '../salle_seance/zone_support.dart';
 import '../tc_mes_groupes/chemins_tc_a.dart';
 import '../tc_observation_ui/indicateur_observation.dart';
 import 'preparation_eleve.dart';
@@ -77,6 +80,13 @@ import 'vue_salle.dart';
 ///   qui l'emploie est celle de l'enseignant (`lib/features/salle_enseignant/`),
 ///   posee par-dessus cet ecran en un seul point. Le bouton « Ouvrir le Coran »
 ///   n'existe donc toujours pas ici, plutot que d'etre grise.
+///
+/// TB-11a (plan V2 §5, UX-21) : le tuteur observateur et le controleur
+/// **lisent** la presentation de l'enseignant (support, page, affichage,
+/// notes) par la surface partagee de la salle de seance (`ZoneSupport`), sans
+/// aucune commande d'ecriture, de page ou de rangement. La donnee vient de
+/// `presentationObserveeProvider` (non branchee avant TB-BR : la salle garde
+/// alors sa scene).
 class SallePage extends ConsumerStatefulWidget {
   /// Cree la salle pour une seance.
   const SallePage({
@@ -606,6 +616,19 @@ class _SallePageEtat extends ConsumerState<SallePage> {
               const <AnnonceObservation>[]
         : const <AnnonceObservation>[];
 
+    // TB-11a : la presentation lue par l'observateur (tuteur, controleur), ou
+    // `null` (role qui ne la suit pas, rien de presente, source absente). La
+    // condition evite de lire la source sur l'appareil des participants.
+    final VueSeance? presentation =
+        vue.suitLaPresentationEnLecture && !enImpasse
+        ? DepuisSalle.presentationObservee(
+            salle: vue,
+            presentation: ref.watch(
+              presentationObserveeProvider(widget.seanceId),
+            ),
+          )
+        : null;
+
     // CTR-02 : la salle du controleur, la MEME salle (R-salle unique), avec
     // sa zone haute (« Quitter » y vit). Aucune commande en bas : « Son reçu »
     // attend BR-1 (CTRL-SON-1), « Agrandir le support » attend le rendu d'un
@@ -619,7 +642,14 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           onQuitter: () => unawaited(_quitter(vue)),
         ),
         bandeau: _Bandeaux(vue: vue),
-        child: _Corps(vue: vue, lignes: lignes),
+        child: presentation != null
+            ? _CorpsDocument(
+                vue: vue,
+                lignes: lignes,
+                document: _PresentationLue(vue: presentation),
+                plancherDocument: _CorpsDocument.plancherPresentation(context),
+              )
+            : _Corps(vue: vue, lignes: lignes),
       );
     }
 
@@ -672,10 +702,19 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           // moteur refuserait en silence -- `presenterContenu` refuse sans rien
           // dire quand `can_publish_data` est absent.
           : _panneauEnseignant(vue)
-          ? _CorpsEnseignant(
+          ? _CorpsDocument(
               vue: vue,
               lignes: lignes,
-              seanceId: widget.seanceId,
+              document: PanneauEnseignantSalle(seanceId: widget.seanceId),
+            )
+          // TB-11a : le tuteur observateur lit la presentation, meme
+          // composition (le document d'abord, la scene ensuite).
+          : presentation != null
+          ? _CorpsDocument(
+              vue: vue,
+              lignes: lignes,
+              document: _PresentationLue(vue: presentation),
+              plancherDocument: _CorpsDocument.plancherPresentation(context),
             )
           : _Corps(vue: vue, lignes: lignes, encreAccessible: encreAccessible),
     );
@@ -1204,12 +1243,13 @@ bool _colonneDePresence(BuildContext context, VueSalle vue) {
   return _panneauEnseignant(vue) || AppGabarit.de(context).estLarge;
 }
 
-/// La salle de l'enseignant : le document d'abord, la scene ensuite.
+/// Le document d'abord, la scene ensuite : la salle de l'enseignant (son
+/// panneau de presentation), et celle de l'observateur qui lit la
+/// presentation (TB-11a, [_PresentationLue]).
 ///
 /// **La hierarchie de `ENS-03` en une classe.** Le contenu pedagogique est le
-/// premier niveau, le media le deuxieme : c'est l'ordre du protocole, et il ne
-/// se lit nulle part ailleurs dans ce fichier parce que les trois autres roles
-/// n'ont pas de document a presenter.
+/// premier niveau, le media le deuxieme : c'est l'ordre du protocole. Une
+/// seule composition pour les deux, jamais une copie (K-10).
 ///
 /// `[RESPONSIVE]` Sur telephone ET sur tablette, le document prend la plus
 /// grande part et la scene garde la sienne DESSOUS -- jamais par-dessus : aucune
@@ -1220,16 +1260,41 @@ bool _colonneDePresence(BuildContext context, VueSalle vue) {
 /// Elle compose `_Scene` et `_ListePresence` directement plutot que `_Corps` :
 /// `_Corps` reserve 256 px fixes a la presence, et les lui laisser prendre sur
 /// une demi-largeur est exactement ce qui etranglait la scene.
-class _CorpsEnseignant extends StatelessWidget {
-  const _CorpsEnseignant({
+class _CorpsDocument extends StatelessWidget {
+  const _CorpsDocument({
     required this.vue,
     required this.lignes,
-    required this.seanceId,
+    required this.document,
+    this.plancherDocument = _CorpsDocument._hauteurPlancherDocument,
   });
 
   final VueSalle vue;
   final List<_Presence> lignes;
-  final String seanceId;
+
+  /// Le premier niveau : le panneau de l'enseignant, ou la presentation lue.
+  final Widget document;
+
+  /// La hauteur sous laquelle le document ne descend pas (la colonne defile
+  /// alors) : [_hauteurPlancherDocument] pour le panneau de l'enseignant,
+  /// [plancherPresentationLue] pour la presentation lue.
+  final double plancherDocument;
+
+  /// TB-11a : le plancher de la presentation lue. La page se pose en
+  /// `BoxFit.contain` dans toute hauteur : elle n'exige pas le plancher des
+  /// `EmptyState` du panneau, et la scene de l'observateur doit tenir sous
+  /// elle au telephone (aucune tuile sous le bandeau, SUPERPOS-1) : cinq
+  /// respirations : la ligne du titre et de la page (deux lignes a 320 et
+  /// texte x2) et la page entiere sous elle.
+  static const double plancherPresentationLue = AppSpacing.respiration * 5;
+
+  /// Le plancher de la presentation lue selon le texte : au-dela du seuil
+  /// de texte agrandi ([motEtatVisible] faux), la ligne du titre grandit et
+  /// la page passerait sous la taille d'une vignette ; elle reprend alors le
+  /// plancher du panneau et la colonne defile, la scene sous elle.
+  static double plancherPresentation(BuildContext context) =>
+      motEtatVisible(context)
+      ? plancherPresentationLue
+      : _hauteurPlancherDocument;
 
   /// La hauteur minimale du document, en dessous de laquelle la colonne defile.
   ///
@@ -1263,7 +1328,7 @@ class _CorpsEnseignant extends StatelessWidget {
   Widget build(BuildContext context) {
     final Widget panneau = Padding(
       padding: const EdgeInsets.all(AppSpacing.lg),
-      child: PanneauEnseignantSalle(seanceId: seanceId),
+      child: document,
     );
 
     if (AppGabarit.de(context) == Gabarit.desktop) {
@@ -1273,15 +1338,7 @@ class _CorpsEnseignant extends StatelessWidget {
           Expanded(flex: 3, child: panneau),
           Expanded(flex: 2, child: _Scene(vue: vue)),
           if (_colonneDePresence(context, vue))
-            SizedBox(
-              // La meme largeur que `_Corps` : une seule mesure de colonne de
-              // presence dans ce fichier.
-              width: AppGabarit.largeurBarreLaterale,
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child: _ListePresence(lignes: lignes, entete: true),
-              ),
-            ),
+            _ColonnePresence(vue: vue, lignes: lignes),
         ],
       );
     }
@@ -1294,9 +1351,9 @@ class _CorpsEnseignant extends StatelessWidget {
         // sous la ligne de flottaison, et non le Coran qui se rogne.
         final double reste = contraintes.hasBoundedHeight
             ? contraintes.maxHeight - _hauteurScene
-            : _hauteurPlancherDocument;
-        final double document = reste < _hauteurPlancherDocument
-            ? _hauteurPlancherDocument
+            : plancherDocument;
+        final double document = reste < plancherDocument
+            ? plancherDocument
             : reste;
         // Le defilement est toujours pose, et ne defile que s'il le faut : quand
         // la place suffit, la colonne fait exactement la hauteur offerte et rien
@@ -1358,31 +1415,98 @@ class _Corps extends StatelessWidget {
         Expanded(
           child: _Scene(vue: vue, encreAccessible: encreAccessible),
         ),
-        SizedBox(
-          // Une largeur de chrome, deja posee pour la barre laterale : la
-          // reutiliser evite d'en inventer une seconde.
-          width: AppGabarit.largeurBarreLaterale,
-          child: DecoratedBox(
-            // CT-3 : chez le controleur, la colonne se pose sur la surface des
-            // vignettes (`surfaceSunken`) : `SectionHeader` et `LignePresence`
-            // portent l'encre des surfaces claires, illisible sur le fond de la
-            // salle. Les autres roles gardent leur rendu (HU-1).
-            decoration: vue.role == RoleSalle.controleur
-                ? AppPalette.of(context).surfaceSunken.decoration()
-                : const BoxDecoration(),
-            child: IconTheme.merge(
-              data: vue.role == RoleSalle.controleur
-                  ? IconThemeData(
-                      color: AppPalette.of(context).surfaceSunken.onBackground,
-                    )
-                  : const IconThemeData(),
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child: _ListePresence(lignes: lignes, entete: true),
-              ),
-            ),
-          ),
+        _ColonnePresence(vue: vue, lignes: lignes),
+      ],
+    );
+  }
+}
+
+/// La colonne de presence posee a cote du contenu, la meme pour `_Corps` et
+/// `_CorpsDocument` : une seule mesure de colonne dans ce fichier.
+class _ColonnePresence extends StatelessWidget {
+  const _ColonnePresence({required this.vue, required this.lignes});
+
+  final VueSalle vue;
+  final List<_Presence> lignes;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    // Une largeur de chrome, deja posee pour la barre laterale : la
+    // reutiliser evite d'en inventer une seconde.
+    width: AppGabarit.largeurBarreLaterale,
+    child: DecoratedBox(
+      // CT-3 : chez le controleur, la colonne se pose sur la surface des
+      // vignettes (`surfaceSunken`) : `SectionHeader` et `LignePresence`
+      // portent l'encre des surfaces claires, illisible sur le fond de la
+      // salle. Les autres roles gardent leur rendu (HU-1).
+      decoration: vue.role == RoleSalle.controleur
+          ? AppPalette.of(context).surfaceSunken.decoration()
+          : const BoxDecoration(),
+      child: IconTheme.merge(
+        data: vue.role == RoleSalle.controleur
+            ? IconThemeData(
+                color: AppPalette.of(context).surfaceSunken.onBackground,
+              )
+            : const IconThemeData(),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: _ListePresence(lignes: lignes, entete: true),
         ),
+      ),
+    ),
+  );
+}
+
+/// TB-11a (plan V2 §5, UX-21) : la presentation de l'enseignant, lue par le
+/// tuteur observateur et le controleur.
+///
+/// **Reutilisation, aucune copie (K-10)** : la surface est celle de la salle
+/// de seance (`ZoneSupport`, qui pose `SurfacePageFixe` : la page dans son
+/// ratio, l'affichage partage, le calque des notes), et la page se lit par
+/// `IndicateurPage` (« 3 / 12 », lecture seule). Au-dessus, le titre du
+/// support. **Aucune commande** : ni pagination, ni zoom, ni affichage, ni
+/// outil d'ecriture, ni rangement ; les commandes de l'observateur restent
+/// celles de son role, en bas ou dans sa zone haute.
+class _PresentationLue extends StatelessWidget {
+  const _PresentationLue({required this.vue});
+
+  /// La vue de lecture (`DepuisSalle.presentationObservee`).
+  final VueSeance vue;
+
+  /// La cle de la presentation lue (tests et captures).
+  static const Key cle = ValueKey<String>('presentation-lue');
+
+  @override
+  Widget build(BuildContext context) {
+    final SupportPageFixe? page = vue.supportPresente;
+    // L'encre du registre `salle` (fond de `PageImmersive`), comme la zone
+    // haute du controleur : un style du theme porterait l'encre des surfaces
+    // claires, illisible sur le fond de la salle.
+    final AppColorPair salle = AppPalette.of(context).surfaceInverse;
+    return Column(
+      key: cle,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        if (page != null) ...<Widget>[
+          // Un `Wrap` : a texte agrandi et a 320, la page passe sous le
+          // titre plutot que de l'etrangler (SALLE-200-1).
+          Wrap(
+            spacing: AppSpacing.md,
+            runSpacing: AppSpacing.sm,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: <Widget>[
+              Text(
+                page.titre,
+                style: salle.applyTo(
+                  Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
+                ),
+              ),
+              IndicateurPage(page: page.page, pages: page.total),
+            ],
+          ),
+          Ecart.vMd,
+        ],
+        Expanded(child: ZoneSupport(vue: vue)),
       ],
     );
   }

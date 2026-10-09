@@ -19,36 +19,47 @@ import 'classe_demo.dart' show DonneesClasseDemo, EleveProjectionDemo;
 const String identiteControleurDemo = 'demo-controleur';
 
 /// L'acces tel que `create-room-token` le rendrait a un controleur : muet,
-/// sans camera, sans donnees, invisible (ADR-011).
-AccesSalle accesControleurDemo() => AccesSalle(
-  urlServeur: 'wss://demo.invalid',
-  jeton: 'demo',
-  nomSalle: 'demo-controle',
-  fournisseur: FournisseurVideo.cloud,
-  role: 'masked_controller',
-  capacites: const CapacitesSalle(
-    peutPublier: false,
-    peutPublierVideo: false,
-    peutPublierDonnees: false,
-    peutRecevoir: true,
-    invisible: true,
-  ),
-  expireLe: DateTime.now().add(const Duration(hours: 1)),
-);
+/// sans camera, sans donnees, invisible (ADR-011). TB-11a : [role]
+/// `guardian_observer` donne l'acces du tuteur observateur, muet lui aussi,
+/// mais visible de l'enseignant.
+AccesSalle accesControleurDemo({String role = roleJetonControleurDemo}) =>
+    AccesSalle(
+      urlServeur: 'wss://demo.invalid',
+      jeton: 'demo',
+      nomSalle: 'demo-controle',
+      fournisseur: FournisseurVideo.cloud,
+      role: role,
+      capacites: CapacitesSalle(
+        peutPublier: false,
+        peutPublierVideo: false,
+        peutPublierDonnees: false,
+        peutRecevoir: true,
+        invisible: role == roleJetonControleurDemo,
+      ),
+      expireLe: DateTime.now().add(const Duration(hours: 1)),
+    );
+
+/// Le role du jeton du controleur.
+const String roleJetonControleurDemo = 'masked_controller';
+
+/// TB-11a : le role du jeton du tuteur observateur.
+const String roleJetonTuteurDemo = 'guardian_observer';
 
 /// Les personnes de la seance observee : l'enseignant, puis les eleves, tous
 /// sans image (aucune piste en demonstration) : le cadre montre prenom et
 /// initiales, jamais une photo (question 11 de UX_REVIEW_08).
-List<ParticipantSalle> participantsControleurDemo() {
+List<ParticipantSalle> participantsControleurDemo({
+  String role = roleJetonControleurDemo,
+}) {
   final String titre = switch (DonneesClasseDemo.enseignant.titre) {
     TitreEnseignant.sayyid => LibellesGroupe.sayyid,
     TitreEnseignant.sayyida => LibellesGroupe.sayyida,
   };
   return <ParticipantSalle>[
-    const ParticipantSalle(
+    ParticipantSalle(
       identite: identiteControleurDemo,
       nom: '',
-      role: 'masked_controller',
+      role: role,
       estLocal: true,
       micro: false,
       camera: false,
@@ -98,7 +109,7 @@ class MoteurSalleControleurDemo implements VideoSessionProvider {
     _poser(EtatSalle.connexion);
     _poser(EtatSalle.connecte);
     _qualite.add(QualiteLien.bonne);
-    _participants.add(participantsControleurDemo());
+    _participants.add(participantsControleurDemo(role: acces.role));
   }
 
   void _poser(EtatSalle etat) {
@@ -165,13 +176,18 @@ class MoteurSalleControleurDemo implements VideoSessionProvider {
   AccesSalle? get accesCourant => _acces;
 }
 
-/// Le service video de demonstration : l'acces du controleur, rien d'autre.
+/// Le service video de demonstration : l'acces du controleur (ou du tuteur
+/// observateur, TB-11a), rien d'autre.
 class ServiceVideoControleurDemo implements ServiceVideo {
   /// Cree le service.
-  const ServiceVideoControleurDemo();
+  const ServiceVideoControleurDemo({this.role = roleJetonControleurDemo});
+
+  /// Le role du jeton rendu.
+  final String role;
 
   @override
-  Future<AccesSalle> acces(String seanceId) async => accesControleurDemo();
+  Future<AccesSalle> acces(String seanceId) async =>
+      accesControleurDemo(role: role);
 
   @override
   Future<void> observerEnControle(String seanceId) async {}

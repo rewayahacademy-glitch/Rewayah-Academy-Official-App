@@ -2061,6 +2061,8 @@ class _Traductions$salle$seance$demo$roles$ar extends Traductions$salle$seance$d
 	@override String get eleve => 'طالب عادي';
 	@override String get guidee => 'وضع إمكانية الوصول';
 	@override String get enseignant => 'المعلم';
+	@override String get tuteur => 'وليّ الأمر المتابِع';
+	@override String get controleur => 'المراقِب';
 }
 
 // Path: salle.seance.demo.etats
@@ -2491,6 +2493,8 @@ extension on TraductionsAr {
 			'salle.seance.demo.roles.eleve' => 'طالب عادي',
 			'salle.seance.demo.roles.guidee' => 'وضع إمكانية الوصول',
 			'salle.seance.demo.roles.enseignant' => 'المعلم',
+			'salle.seance.demo.roles.tuteur' => 'وليّ الأمر المتابِع',
+			'salle.seance.demo.roles.controleur' => 'المراقِب',
 			'salle.seance.demo.etats.repos' => 'وضع عادي',
 			'salle.seance.demo.etats.visite' => 'زيارة',
 			'salle.seance.demo.etats.rienPartage' => 'لا شيء مُشارَك',
@@ -2758,10 +2762,10 @@ extension on TraductionsAr {
 			'tc.groupe.espace.roster' => 'طلاب الفصل',
 			'tc.groupe.espace.reprendreLeCours' => 'استئناف الدرس',
 			'tc.groupe.espace.introuvable' => 'هذا الفصل غير مفتوح لك',
-			'tc.groupe.espace.introuvableDetail' => 'ربما أُغلق، أو يخص ملفًا آخر.',
-			'tc.groupe.emplacement.nonBranche' => 'قريبًا',
 			_ => null,
 		} ?? switch (path) {
+			'tc.groupe.espace.introuvableDetail' => 'ربما أُغلق، أو يخص ملفًا آخر.',
+			'tc.groupe.emplacement.nonBranche' => 'قريبًا',
 			'tc.groupe.emplacement.nonBrancheDetail' => 'سيُربط هذا المحتوى بهذه المساحة قريبًا.',
 			'tc.coran.modes.mushaf' => 'صفحة المصحف',
 			'tc.coran.modes.verset' => 'قراءة مكبَّرة',

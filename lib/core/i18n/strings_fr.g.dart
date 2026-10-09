@@ -15294,6 +15294,12 @@ class Traductions$salle$seance$demo$roles$fr {
 
 	/// fr: 'Enseignant'
 	String get enseignant => 'Enseignant';
+
+	/// fr: 'Tuteur observateur'
+	String get tuteur => 'Tuteur observateur';
+
+	/// fr: 'Contrôleur'
+	String get controleur => 'Contrôleur';
 }
 
 // Path: salle.seance.demo.etats
@@ -16027,6 +16033,8 @@ extension on Traductions {
 			'salle.seance.demo.roles.eleve' => 'Élève standard',
 			'salle.seance.demo.roles.guidee' => 'Mode Accessibilité',
 			'salle.seance.demo.roles.enseignant' => 'Enseignant',
+			'salle.seance.demo.roles.tuteur' => 'Tuteur observateur',
+			'salle.seance.demo.roles.controleur' => 'Contrôleur',
 			'salle.seance.demo.etats.repos' => 'Repos',
 			'salle.seance.demo.etats.visite' => 'Visite',
 			'salle.seance.demo.etats.rienPartage' => 'Rien partagé',
@@ -16234,10 +16242,10 @@ extension on Traductions {
 			'connexion.motDePasseDemo' => 'Mot de passe de démonstration',
 			'connexion.envoyerLien' => 'Recevoir le lien',
 			'connexion.avecGoogle' => 'Continuer avec Google',
-			'connexion.ou' => 'ou',
-			'connexion.lienEnvoye' => 'Lien envoyé',
 			_ => null,
 		} ?? switch (path) {
+			'connexion.ou' => 'ou',
+			'connexion.lienEnvoye' => 'Lien envoyé',
 			'connexion.lienEnvoyeDetail' => ({required Object courriel}) => 'Ouvrez le message envoyé à ${courriel}, puis suivez le lien. Vous pouvez laisser cette page ouverte.',
 			'connexion.changerAdresse' => 'Utiliser une autre adresse',
 			'connexion.erreurCourriel' => 'Cette adresse ne semble pas valide.',
@@ -16748,10 +16756,10 @@ extension on Traductions {
 			'eleveConnexion.pin.oubliePhrase' => 'Demande au tuteur d\'afficher un nouveau code sur son appareil, puis saisis-le ici. Tu choisiras alors un nouveau code personnel.',
 			'eleveConnexion.pin.oublieAction' => 'Saisir un nouveau code',
 			'eleveConnexion.saisie.titre' => 'Connecter cet appareil',
-			'eleveConnexion.saisie.phrase' => 'Saisissez le code de six caractères affiché sous le QR code, sur l\'appareil du tuteur.',
-			'eleveConnexion.saisie.champ' => 'Code',
 			_ => null,
 		} ?? switch (path) {
+			'eleveConnexion.saisie.phrase' => 'Saisissez le code de six caractères affiché sous le QR code, sur l\'appareil du tuteur.',
+			'eleveConnexion.saisie.champ' => 'Code',
 			'eleveConnexion.saisie.aide' => 'Chiffres de 2 à 9 et lettres, sans I ni O.',
 			'eleveConnexion.saisie.valider' => 'Connecter l\'appareil',
 			'eleveConnexion.saisie.scanner' => 'Scanner le QR code',
@@ -17262,10 +17270,10 @@ extension on Traductions {
 			'admin.progression.promouvoirChampNiveau' => 'Nouveau niveau',
 			'admin.progression.promouvoirEnvoyer' => 'Enregistrer',
 			'admin.progression.promouvoirErreur' => ({required Object message}) => 'Le changement n\'a pas abouti : ${message}',
-			'admin.progression.champMotif' => 'Motif',
-			'admin.progression.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.progression.champMotif' => 'Motif',
+			'admin.progression.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
 			'admin.progression.journalisation' => 'Chaque exception posée, close, et chaque changement de niveau est inscrit au journal d\'audit.',
 			'admin.programmes.titre' => 'Programmes',
 			'admin.programmes.intro' => 'Le curriculum Rewayah, versionné : une version publiée ne peut plus être modifiée, toute évolution académique en crée une nouvelle.',
@@ -17776,10 +17784,10 @@ extension on Traductions {
 			'compte.tuteur.identite.statutValide' => 'Compte validé',
 			'compte.tuteur.identite.statutProvisoire' => 'Profil à compléter',
 			'compte.tuteur.identite.nomInconnu' => 'Titulaire du compte',
-			'compte.tuteur.identite.courrielAbsent' => 'Adresse de connexion non communiquée',
-			'compte.tuteur.identite.connexionLien' => 'Connexion par lien reçu par courriel',
 			_ => null,
 		} ?? switch (path) {
+			'compte.tuteur.identite.courrielAbsent' => 'Adresse de connexion non communiquée',
+			'compte.tuteur.identite.connexionLien' => 'Connexion par lien reçu par courriel',
 			'compte.tuteur.identite.connexionGoogle' => 'Connexion avec Google',
 			'compte.tuteur.identite.connexionInconnue' => 'Méthode de connexion non précisée',
 			'compte.tuteur.acces.titre' => 'Accès et paiements',
@@ -18290,10 +18298,10 @@ extension on Traductions {
 			'classe.pageCatalogue.precisionEnseignant' => 'Une classe garde le même enseignant pour toutes ses séances.',
 			'classe.pageCatalogue.precisionPlaces' => 'Les places affichées sont celles de l\'académie au moment de la lecture.',
 			'classe.pageCatalogue.precisionReserve' => 'Rien n\'est réservé avant votre confirmation.',
-			'classe.pageCatalogue.confirmerTitre' => 'Confirmer la classe',
-			'classe.pageCatalogue.confirmerPhrase' => ({required Object prenom}) => 'Vous inscrivez ${prenom} dans cette classe.',
 			_ => null,
 		} ?? switch (path) {
+			'classe.pageCatalogue.confirmerTitre' => 'Confirmer la classe',
+			'classe.pageCatalogue.confirmerPhrase' => ({required Object prenom}) => 'Vous inscrivez ${prenom} dans cette classe.',
 			'classe.pageCatalogue.confirmerAttentePhrase' => ({required Object prenom}) => 'Vous inscrivez ${prenom} sur la liste d\'attente de cette classe.',
 			'classe.pageCatalogue.memeEnseignant' => ({required Object enseignant}) => 'Même classe et même enseignant pour toutes les séances de la semaine : ${enseignant}.',
 			'classe.pageCatalogue.confirmer' => 'Confirmer l\'inscription',
@@ -18804,10 +18812,10 @@ extension on Traductions {
 			'controleur.compteRendu.cleDebutReel' => 'Début réel',
 			'controleur.compteRendu.debutRetard' => ({required Object heure, required Object minutes}) => '${heure}, ${minutes} min de retard',
 			'controleur.compteRendu.debutALHeure' => ({required Object heure}) => '${heure}, à l\'heure',
-			'controleur.compteRendu.cleFin' => 'Fin',
-			'controleur.compteRendu.enCours' => 'En cours',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.compteRendu.cleFin' => 'Fin',
+			'controleur.compteRendu.enCours' => 'En cours',
 			'controleur.compteRendu.clePresents' => 'Élèves présents',
 			'controleur.compteRendu.presents' => ({required Object presents, required Object attendus}) => '${presents} sur ${attendus}',
 			'controleur.compteRendu.cleReconnexions' => 'Reconnexions',
@@ -19318,10 +19326,10 @@ extension on Traductions {
 			'tc.observation.visite.quitterConsequence' => ({required Object duree}) => 'Il vous reste ${duree}. Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.',
 			'tc.observation.visite.quitterConsequenceSansTemps' => 'Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.',
 			'tc.observation.visite.quitterConfirmer' => 'Quitter la visite',
-			'tc.observation.fin.sortieVolontaire' => 'Vous avez quitté l\'observation.',
-			'tc.observation.fin.quotaAtteint' => 'Votre temps d\'observation est écoulé.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.fin.sortieVolontaire' => 'Vous avez quitté l\'observation.',
+			'tc.observation.fin.quotaAtteint' => 'Votre temps d\'observation est écoulé.',
 			'tc.observation.fin.seanceTerminee' => 'La séance est terminée.',
 			'tc.observation.fin.revocationServeur' => 'Votre observation a été interrompue.',
 			'tc.observation.fin.deconnexion' => 'La connexion a été perdue.',
