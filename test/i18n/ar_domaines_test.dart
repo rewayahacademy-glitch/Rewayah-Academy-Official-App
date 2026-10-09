@@ -1,13 +1,11 @@
-// AR-COMPLET-1, par tranches : les domaines traduits en arabe le restent.
+// AR-COMPLET-1 : l'interface est entierement traduite en arabe, et le reste.
 //
-// AR-SALLE-1 (`salle.*`), AR-TC-1 (`tc.*`), AR-ENS-1 (`enseignant.*`),
-// AR-TRANSVERSE-1 (nav, commun, accessibilite...), AR-ELEVE-1 (classe,
-// ficheEleve, parcours...), AR-FAMILLE-1 (compte, tuteur, foyer...),
-// AR-ADULTE-1 (adulte, dossiers...) et AR-CONTROLE-1 (controleur, agent) :
-// chaque cle du francais a sa traduction arabe, avec exactement les memes
-// parametres ; chaque parametre ajoute par ces tranches est isole (U+2068 ...
-// U+2069), pour qu'un nom latin ne renverse pas la phrase. Une tranche
-// suivante ajoute son domaine a [_domaines].
+// Tranches AR-SALLE-1, AR-TC-1, AR-ENS-1, AR-TRANSVERSE-1, AR-ELEVE-1,
+// AR-FAMILLE-1, AR-ADULTE-1, AR-CONTROLE-1 et AR-ADMIN-1 : chaque cle du
+// francais a sa traduction arabe, avec exactement les memes parametres ;
+// chaque parametre ajoute par ces tranches est isole (U+2068 ... U+2069),
+// pour qu'un nom latin ne renverse pas la phrase. Un nouveau domaine
+// francais doit etre ajoute a [_domaines] (le test global le verifie).
 
 import 'dart:convert';
 import 'dart:io';
@@ -66,6 +64,8 @@ const Map<String, int> _domaines = <String, int>{
   // AR-CONTROLE-1.
   'controleur': 190,
   'agent': 12,
+  // AR-ADMIN-1.
+  'admin': 590,
 };
 
 Map<String, String> _aplatir(
@@ -131,6 +131,7 @@ const Set<String> _latins = <String>{
   'compte.tuteur.securite.methodeGoogle',
   'dossiers.file.zoneUtc',
   'agent.jetonExemple',
+  'admin.politiqueRevueKyc.echecEnregistrement',
 };
 
 final RegExp _parametre = RegExp(r'\{\w+\}');
@@ -184,6 +185,21 @@ void main() {
         }
       });
     });
+  });
+
+  test('AR-COMPLET-1 : aucune cle francaise sans traduction arabe', () {
+    Map<String, String> tout(String langue) => _aplatir(
+      jsonDecode(File('assets/i18n/$langue.i18n.json').readAsStringSync())
+          as Map<String, dynamic>,
+    );
+    final Map<String, String> fr = tout('fr');
+    final Map<String, String> ar = tout('ar');
+    expect(fr.keys.where((String cle) => !ar.containsKey(cle)), isEmpty);
+    // Chaque domaine du francais est garde par la boucle ci-dessus.
+    final Set<String> domaines = fr.keys
+        .map((String cle) => cle.split('.').first)
+        .toSet();
+    expect(domaines.difference(_domaines.keys.toSet()), isEmpty);
   });
 
   test('slang rend l\'arabe a l\'execution', () async {

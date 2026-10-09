@@ -83,6 +83,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$disponibilites$ar disponibilites = _Traductions$disponibilites$ar._(_root);
 	@override late final _Traductions$controleur$ar controleur = _Traductions$controleur$ar._(_root);
 	@override late final _Traductions$agent$ar agent = _Traductions$agent$ar._(_root);
+	@override late final _Traductions$admin$ar admin = _Traductions$admin$ar._(_root);
 }
 
 // Path: commun
@@ -1210,6 +1211,33 @@ class _Traductions$agent$ar extends Traductions$agent$fr {
 	@override String get bandeau => 'متابعة، للقراءة فقط';
 	@override String get bandeauMasque => 'الأسماء مخفية';
 	@override String bandeauExpire({required Object heure}) => 'حتى ⁨${heure}⁩';
+}
+
+// Path: admin
+class _Traductions$admin$ar extends Traductions$admin$fr {
+	_Traductions$admin$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$admin$tableau$ar tableau = _Traductions$admin$tableau$ar._(_root);
+	@override late final _Traductions$admin$demandes$ar demandes = _Traductions$admin$demandes$ar._(_root);
+	@override late final _Traductions$admin$attribution$ar attribution = _Traductions$admin$attribution$ar._(_root);
+	@override late final _Traductions$admin$groupes$ar groupes = _Traductions$admin$groupes$ar._(_root);
+	@override late final _Traductions$admin$diagnostics$ar diagnostics = _Traductions$admin$diagnostics$ar._(_root);
+	@override late final _Traductions$admin$qualite$ar qualite = _Traductions$admin$qualite$ar._(_root);
+	@override late final _Traductions$admin$regles$ar regles = _Traductions$admin$regles$ar._(_root);
+	@override late final _Traductions$admin$fonctionnalites$ar fonctionnalites = _Traductions$admin$fonctionnalites$ar._(_root);
+	@override late final _Traductions$admin$conservationDonnees$ar conservationDonnees = _Traductions$admin$conservationDonnees$ar._(_root);
+	@override late final _Traductions$admin$politiqueRevueKyc$ar politiqueRevueKyc = _Traductions$admin$politiqueRevueKyc$ar._(_root);
+	@override late final _Traductions$admin$evaluations$ar evaluations = _Traductions$admin$evaluations$ar._(_root);
+	@override late final _Traductions$admin$progression$ar progression = _Traductions$admin$progression$ar._(_root);
+	@override late final _Traductions$admin$programmes$ar programmes = _Traductions$admin$programmes$ar._(_root);
+	@override late final _Traductions$admin$journal$ar journal = _Traductions$admin$journal$ar._(_root);
+	@override late final _Traductions$admin$observations$ar observations = _Traductions$admin$observations$ar._(_root);
+	@override late final _Traductions$admin$comptes$ar comptes = _Traductions$admin$comptes$ar._(_root);
+	@override late final _Traductions$admin$agents$ar agents = _Traductions$admin$agents$ar._(_root);
+	@override late final _Traductions$admin$notifications$ar notifications = _Traductions$admin$notifications$ar._(_root);
 }
 
 // Path: commun.sections
@@ -4360,6 +4388,767 @@ class _Traductions$controleur$controle$ar extends Traductions$controleur$control
 	@override String get erreur => 'تعذّرت قراءة زيارتك القادمة، غالبًا بسبب الاتصال أو خدمة غير متاحة مؤقتًا. أعد المحاولة بعد لحظة.';
 }
 
+// Path: admin.tableau
+class _Traductions$admin$tableau$ar extends Traductions$admin$tableau$fr {
+	_Traductions$admin$tableau$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'مركز القيادة';
+	@override String get dossiers => 'ملفات للاعتماد';
+	@override String get dossiersDetail => 'فتح القائمة، الأقدم أولًا.';
+	@override String get demandesDetail => 'أسر ومعلمون ينتظرون ردًا.';
+	@override String get foyers => 'طلاب دون معلم';
+	@override String get rapports => 'دفاتر ناقصة';
+	@override String get incidents => 'حوادث (24 س)';
+	@override String get comptes => 'وصول منتهٍ';
+	@override String get incidentsEtAcces => 'الحوادث والوصول';
+	@override String get demandes => 'طلبات للحسم';
+	@override String get compteursErreur => 'تعذّرت قراءة العدادات. أعد المحاولة بعد لحظة.';
+	@override String get calme => 'لا شيء ينتظر قرارًا اليوم.';
+	@override String get apercuErreur => 'تعذّرت قراءة القائمة.';
+	@override String get outils => 'الأدوات';
+	@override String get outilsComptes => 'الحسابات';
+	@override String get outilsComptesDetail => 'كل الأشخاص المسجلين، والذين ينتظرون قرارًا أولًا. بمن فيهم من لم يودع وثيقته بعد.';
+	@override String get outilsAccesAgents => 'وصول الوكلاء الآليين';
+	@override String get outilsAccesAgentsDetail => 'فتح وصول للقراءة فقط، محدود زمنيًا، على مسار شخص.';
+	@override String get outilsGroupesDetail => 'الفصول وطلابها ومعلمها.';
+	@override String ligneDossier({required Object prenom}) => 'ملف هوية ⁨${prenom}⁩';
+	@override String ligneReaffectation({required Object prenom}) => 'تغيير معلم ⁨${prenom}⁩';
+	@override String lignePlafond({required Object prenom}) => 'الحد الأقصى لطلاب ⁨${prenom}⁩';
+	@override String ligneRegle({required Object prenom}) => 'تغيير قاعدة لـ⁨${prenom}⁩';
+	@override String get attenteAujourdhui => 'أُودع اليوم';
+	@override String get attenteUnJour => 'ينتظر منذ يوم';
+	@override String attenteJours({required Object jours}) => 'ينتظر منذ ⁨${jours}⁩ أيام';
+}
+
+// Path: admin.demandes
+class _Traductions$admin$demandes$ar extends Traductions$admin$demandes$fr {
+	_Traductions$admin$demandes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الطلبات والقواعد';
+	@override String get restanteUne => 'طلب واحد قيد الانتظار';
+	@override String restantes({required Object n}) => '⁨${n}⁩ طلبات قيد الانتظار';
+	@override String get aucune => 'لا طلب قيد الانتظار';
+	@override String get aucuneDetail => 'تصل هنا طلبات الأسر والطلاب المستقلين والمعلمين، الأقدم أولًا.';
+	@override String faitePar({required Object date, required Object role}) => 'طُلب في ⁨${date}⁩، من ⁨${role}⁩';
+	@override String get roleGuardian => 'وليّ أمر';
+	@override String get roleTeacher => 'معلم';
+	@override String get roleStudent => 'طالب مستقل';
+	@override String get roleAdmin => 'الإدارة';
+	@override String get roleController => 'مراقب';
+	@override String get roleInconnu => 'طرف في الملف';
+	@override String get reclame => 'المطلوب';
+	@override String reclameReaffectation({required Object prenom}) => 'تغيير معلم ⁨${prenom}⁩';
+	@override String reclamePlafond({required Object valeur}) => 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طلاب';
+	@override String reclameRegle({required Object regle, required Object valeur}) => 'جعل ⁨${regle}⁩ ⁨${valeur}⁩ دقيقة';
+	@override String reclameRegleSansValeur({required Object regle}) => 'مراجعة ⁨${regle}⁩';
+	@override String get motifDemande => 'السبب المذكور';
+	@override String get verdict => 'القرار';
+	@override String get accorder => 'قبول';
+	@override String get refuser => 'رفض';
+	@override String get motif => 'ما يبرر هذا الرفض، في جملة واحدة';
+	@override String get motifRequis => 'يجب أن يقول الرفض السبب: إنها الجملة الوحيدة التي سيتلقاها الطرف.';
+	@override String get effet => 'القبول يطبّق الأثر في قاعدة البيانات: يُغلق الإسناد، أو تُوضع القاعدة. هذه الشاشة تصدر الحكم فقط.';
+	@override String get journalisation => 'يُدوَّن كل قرار وكل قاعدة موضوعة في سجل التدقيق، مع اسمك.';
+	@override String feuille({required Object prenom}) => 'قواعد ⁨${prenom}⁩';
+	@override String get feuilleIntro => 'قيمة المنصة والقيمة المطبقة، جنبًا إلى جنب. تُغيَّر القاعدة هنا دون حاجة إلى طلب.';
+	@override String get regleDuree => 'مدة الحصة';
+	@override String get regleMinimum => 'المدة الدنيا المدفوعة';
+	@override String get reglePause => 'الاستراحة بين درسين';
+	@override String get reglePlafond => 'الحد الأقصى للطلاب';
+	@override String get regleInconnue => 'قاعدة غير معروفة';
+	@override String plateforme({required Object valeur}) => 'المنصة: ⁨${valeur}⁩';
+	@override String effective({required Object valeur}) => 'المطبقة: ⁨${valeur}⁩';
+	@override String minutes({required Object valeur}) => '⁨${valeur}⁩ دقيقة';
+	@override String eleves({required Object valeur}) => '⁨${valeur}⁩ طلاب';
+	@override String surchargeDepuis({required Object date, required Object motif}) => 'وُضعت في ⁨${date}⁩: ⁨${motif}⁩';
+	@override String get sansSurcharge => 'يتبع هذا الطالب قاعدة المنصة.';
+	@override String get changer => 'تغيير';
+	@override String get clore => 'العودة إلى قاعدة المنصة';
+	@override String get historique => 'الاستثناءات المغلقة';
+	@override String historiqueLigne({required Object valeur, required Object debut, required Object fin}) => '⁨${valeur}⁩، من ⁨${debut}⁩ إلى ⁨${fin}⁩';
+	@override String historiqueMotifs({required Object motif, required Object cloture}) => 'وُضعت: ⁨${motif}⁩. أُغلقت: ⁨${cloture}⁩.';
+	@override String poserTitre({required Object regle, required Object prenom}) => '⁨${regle}⁩، لـ⁨${prenom}⁩';
+	@override String cloreTitre({required Object prenom}) => 'إغلاق استثناء ⁨${prenom}⁩';
+	@override String get poserMotif => 'لماذا هذا التغيير؟';
+	@override String get poserMotifRequis => 'قاعدة دون سبب لا تُفهم بعد ستة أشهر.';
+	@override String get poserEnvoyer => 'وضع القاعدة';
+	@override String get cloreEnvoyer => 'إغلاق الاستثناء';
+	@override String get erreurFile => 'تعذّر تحميل قائمة الطلبات. أعد المحاولة بعد لحظة.';
+}
+
+// Path: admin.attribution
+class _Traductions$admin$attribution$ar extends Traductions$admin$attribution$fr {
+	_Traductions$admin$attribution$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الإسناد';
+	@override String get intro => 'حين لا يأخذ أي معلم طفلًا، هنا يُسند إليه معلم.';
+	@override String get colonneEleves => 'طلاب دون معلم';
+	@override String get colonneEnseignants => 'المعلمون';
+	@override String get aucunEleve => 'لكل طالب معلمه';
+	@override String get aucunEleveDetail => 'سيظهر هنا الأطفال الذين لم يأخذهم أحد بعد، الأطول انتظارًا أولًا.';
+	@override String get erreurEleves => 'تعذّرت قراءة القائمة. أعد المحاولة بعد لحظة.';
+	@override String get erreurEnseignants => 'تعذّرت قراءة المعلمين. أعد المحاولة بعد لحظة.';
+	@override String get attendAujourdhui => 'مسجَّل اليوم';
+	@override String get attendUnJour => 'ينتظر منذ يوم';
+	@override String attendJours({required Object jours}) => 'ينتظر منذ ⁨${jours}⁩ أيام';
+	@override String niveau({required Object niveau}) => 'المستوى ⁨${niveau}⁩';
+	@override String heuresProposees({required Object nombre}) => '⁨${nombre}⁩ ساعات مقترحة';
+	@override String get heureProposee => 'ساعة واحدة مقترحة';
+	@override String get sansHeure => 'لا ساعة مقترحة';
+	@override String get sansHeureDetail => 'ما دامت الأسرة لم تحدد أي موعد، لا يستطيع أحد أن يسند إليها معلمًا، ولا أنت. الخطوة عندها، في أوقات توفرها.';
+	@override String get changerEleve => 'اختيار طالب آخر';
+	@override String get choisirEleve => 'اختر طالبًا';
+	@override String get choisirEleveDetail => 'سيظهر المعلمون هنا، والذين يشاركونه ساعة أولًا.';
+	@override String charge({required Object actifs, required Object plafond}) => '⁨${actifs}⁩ طلاب من ⁨${plafond}⁩';
+	@override String get complet => 'بلغ الحد الأقصى';
+	@override String libreSur({required Object jour, required Object heure}) => 'متاح ⁨${jour}⁩ الساعة ⁨${heure}⁩';
+	@override String libreSurPlusieurs({required Object nombre}) => 'متاح في ⁨${nombre}⁩ من الساعات المقترحة';
+	@override String get sansHeureCommune => 'لا ساعة مشتركة';
+	@override String get quelleHeure => 'في أي ساعة؟';
+	@override String creneau({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩';
+	@override String get motif => 'لماذا التجاوز؟';
+	@override String motifRequis({required Object prenom}) => 'لم يحدد ⁨${prenom}⁩ هذه الساعة. قد يُبرَّر إسنادها مع ذلك، ويُدوَّن ذلك في السجل.';
+	@override String attribuer({required Object eleve, required Object enseignant}) => 'إسناد ⁨${eleve}⁩ إلى ⁨${enseignant}⁩';
+	@override String get journalisation => 'يُدوَّن كل إسناد: من قرر، ومتى، وفي أي ساعة، والسبب إن لزم التجاوز.';
+	@override String get effet => 'يغادر الطالب هذه القائمة وتُوضع دروسه في الجدول فورًا.';
+	@override String erreur({required Object message}) => 'لم يكتمل الإسناد: ⁨${message}⁩';
+}
+
+// Path: admin.groupes
+class _Traductions$admin$groupes$ar extends Traductions$admin$groupes$fr {
+	_Traductions$admin$groupes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الفصول';
+	@override String get intro => 'يجمع كل فصل معلمًا وطلابه حول موعد مشترك: هناك يُقدَّم الدرس.';
+	@override String get colonneGroupe => 'الفصل';
+	@override String get colonneEnseignant => 'المعلم';
+	@override String get colonneType => 'الفئة';
+	@override String get colonneMembres => 'الأعضاء';
+	@override String get colonneCreneau => 'الموعد';
+	@override String get colonneEtat => 'الحالة';
+	@override String get typeEnfant => 'أطفال';
+	@override String get typeAdulte => 'بالغون';
+	@override String get filtreTousTypes => 'كل الفئات';
+	@override String get etatActif => 'نشط';
+	@override String get etatCloture => 'مغلق';
+	@override String membresSur({required Object actifs, required Object seuil}) => '⁨${actifs}⁩ / ⁨${seuil}⁩';
+	@override String get aucun => 'لا فصل منشأ';
+	@override String get aucunDetail => 'أنشئ فصلًا أول لتمنح موعدًا مشتركًا معلمًا وطلابًا.';
+	@override String get aucunAvecCeFiltre => 'لا فصل بهذا المعيار';
+	@override String get aucunAvecCeFiltreDetail => 'غيّر المعيار لترى الفصول الأخرى.';
+	@override String get erreur => 'تعذّرت قراءة الفصول. أعد المحاولة بعد لحظة.';
+	@override String get creer => 'إنشاء فصل';
+	@override String get creerTitre => 'إنشاء فصل';
+	@override String get champLibelle => 'اسم الفصل';
+	@override String get champEnseignantId => 'معرّف المعلم';
+	@override String get champType => 'الفئة';
+	@override String get champJour => 'اليوم';
+	@override String get champHeure => 'الساعة (0-23)';
+	@override String get champSeuil => 'الحد الأقصى';
+	@override String get creerEnvoyer => 'إنشاء الفصل';
+	@override String creerErreur({required Object message}) => 'لم يكتمل الإنشاء: ⁨${message}⁩';
+	@override String detailTitre({required Object libelle}) => 'الفصل ⁨${libelle}⁩';
+	@override String get detailMembres => 'الأعضاء';
+	@override String get detailAucunMembre => 'لا طالب في هذا الفصل حتى الآن.';
+	@override String get actionAjouter => 'إضافة طالب';
+	@override String get actionRetirer => 'إزالة';
+	@override String get actionModifierSeuil => 'تعديل الحد';
+	@override String get actionObservation => 'إعدادات المتابعة';
+	@override String get actionCloturer => 'إغلاق الفصل';
+	@override String ajouterTitre({required Object libelle}) => 'إضافة طالب إلى ⁨${libelle}⁩';
+	@override String get champEleveId => 'معرّف الطالب';
+	@override String get champMotif => 'السبب';
+	@override String get motifRequis => 'السبب مطلوب، ويُدوَّن في سجل التدقيق.';
+	@override String get ajouterEnvoyer => 'إضافة';
+	@override String ajouterErreur({required Object message}) => 'لم تكتمل الإضافة: ⁨${message}⁩';
+	@override String retirerTitre({required Object prenom, required Object libelle}) => 'إزالة ⁨${prenom}⁩ من ⁨${libelle}⁩';
+	@override String get retirerEnvoyer => 'إزالة';
+	@override String retirerErreur({required Object message}) => 'لم تكتمل الإزالة: ⁨${message}⁩';
+	@override String modifierSeuilTitre({required Object libelle}) => 'الحد الأقصى لـ⁨${libelle}⁩';
+	@override String get modifierSeuilEnvoyer => 'حفظ';
+	@override String modifierSeuilErreur({required Object message}) => 'لم يكتمل التعديل: ⁨${message}⁩';
+	@override String cloturerTitre({required Object libelle}) => 'إغلاق ⁨${libelle}⁩';
+	@override String get cloturerDetail => 'سيُزال كل الأعضاء النشطين من الفصل. لا يمكن التراجع عن هذا الإجراء.';
+	@override String get cloturerEnvoyer => 'إغلاق';
+	@override String cloturerErreur({required Object message}) => 'لم يكتمل الإغلاق: ⁨${message}⁩';
+	@override String get journalisation => 'يُدوَّن كل إنشاء وإضافة وإزالة وإغلاق في سجل التدقيق.';
+	@override String observationTitre({required Object libelle}) => 'المتابعة: ⁨${libelle}⁩';
+	@override String get observationErreur => 'تعذّر حفظ الإعداد.';
+	@override String get observationCapaciteAbsente => 'هذا التثبيت لا يملك بعد تحديث الخادم الذي يتطلبه هذا الإعداد (الترحيل 0036). إعادة المحاولة لن تغيّر شيئًا: يجب تطبيقه أولًا على قاعدة البيانات.';
+}
+
+// Path: admin.diagnostics
+class _Traductions$admin$diagnostics$ar extends Traductions$admin$diagnostics$fr {
+	_Traductions$admin$diagnostics$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'تحديد المستوى';
+	@override String get intro => 'ينتظر كل طالب مسجَّل مستوى أول قبل الانضمام إلى فصل: هنا يُقرَّر هذا التوجيه.';
+	@override String get aucunProgramme => 'لا منهج منشور';
+	@override String get aucunProgrammeDetail => 'انشر إصدارًا أول من المنهج («التعليم» > «المناهج») قبل أن تتمكن من تقرير توجيه.';
+	@override String get erreur => 'تعذّرت قراءة القائمة. أعد المحاولة بعد لحظة.';
+	@override String restants({required Object n}) => '⁨${n}⁩ طلاب متبقون';
+	@override String get restantUn => 'طالب واحد متبقٍ';
+	@override String get inscritAujourdhui => 'مسجَّل اليوم';
+	@override String get inscritDepuisUnJour => 'مسجَّل منذ يوم';
+	@override String inscritDepuis({required Object jours}) => 'مسجَّل منذ ⁨${jours}⁩ أيام';
+	@override String get aucun => 'لا طالب لتحديد مستواه';
+	@override String get aucunDetail => 'لكل الطلاب المسجلين مستوى مقرر بالفعل.';
+	@override String get champNiveau => 'مستوى التوجيه';
+	@override String get champMotif => 'السبب';
+	@override String get motifRequis => 'السبب مطلوب، ويُدوَّن في سجل التدقيق.';
+	@override String get decider => 'تقرير التوجيه';
+	@override String deciderErreur({required Object message}) => 'لم يكتمل القرار: ⁨${message}⁩';
+	@override String get journalisation => 'يُدوَّن كل توجيه مقرر في سجل التدقيق.';
+}
+
+// Path: admin.qualite
+class _Traductions$admin$qualite$ar extends Traductions$admin$qualite$fr {
+	_Traductions$admin$qualite$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الجودة';
+	@override String get intro => 'الخلل التعليمي المكتشف: تقارير ناقصة، عوائق دون متابعة، تقييمات متأخرة.';
+	@override String get erreur => 'تعذّرت قراءة حالات الخلل. أعد المحاولة بعد لحظة.';
+	@override String get aucune => 'لا خلل مكتشف';
+	@override String get aucuneDetail => 'كل شيء محدَّث: التقارير محررة، والعوائق متابَعة، والتقييمات في موعدها.';
+	@override String get filtreToutes => 'الكل';
+	@override String get filtreOuvertes => 'مفتوحة';
+	@override String get filtreTraitees => 'معالَجة';
+	@override String get groupeRapportManquant => 'تقارير حصص ناقصة';
+	@override String get groupeBlocageSansSuivi => 'عوائق دون متابعة';
+	@override String get groupeEvaluationEnRetard => 'تقييمات متأخرة';
+	@override String get colonnePersonne => 'يخص';
+	@override String get colonneDepuis => 'منذ';
+	@override String get colonneStatut => 'الحالة';
+	@override String get statutOuvert => 'مفتوحة';
+	@override String get statutTraite => 'معالَجة';
+	@override String get depuisAujourdhui => 'اليوم';
+	@override String get depuisUnJour => 'يوم واحد';
+	@override String depuisJours({required Object jours}) => '⁨${jours}⁩ أيام';
+	@override String get actionTraiter => 'تعليم كمعالَج';
+	@override String traiterTitre({required Object personne}) => 'تعليم كمعالَج: ⁨${personne}⁩';
+	@override String get champNote => 'ملاحظة (اختيارية)';
+	@override String get traiterEnvoyer => 'تعليم كمعالَج';
+	@override String traiterErreur({required Object message}) => 'لم تكتمل المعالجة: ⁨${message}⁩';
+}
+
+// Path: admin.regles
+class _Traductions$admin$regles$ar extends Traductions$admin$regles$fr {
+	_Traductions$admin$regles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'القواعد';
+	@override String get intro => 'القيم الافتراضية للمنصة كلها. يُوضع الاستثناء لملف محدد من «العمليات» > «القواعد الفردية»، وأبدًا من هنا.';
+	@override String get erreur => 'تعذّرت قراءة القواعد. أعد المحاولة بعد لحظة.';
+	@override String erreurEcriture({required Object message}) => 'لم يكتمل الحفظ: ⁨${message}⁩';
+	@override String get valeurInvalide => 'أدخل رقمًا صالحًا.';
+	@override String get envoyer => 'حفظ';
+	@override String get champValeur => 'القيمة';
+	@override String get absenceSeuil => 'حد الغياب';
+	@override String get absenceSeuilDetail => 'بعد هذا العدد من الدقائق دون الانضمام إلى الحصة، يُسجَّل الطالب غائبًا.';
+	@override String get dureeSeance => 'مدة الحصة';
+	@override String get dureeSeanceDetail => 'المدة الافتراضية للحصة، قبل أي استثناء فردي.';
+	@override String get dureeMinimalePayee => 'المدة الدنيا المدفوعة';
+	@override String get dureeMinimalePayeeDetail => 'دون هذه المدة، تبقى الحصة المختصرة مدفوعة كاملة.';
+	@override String get pauseEntreSeances => 'الاستراحة بين حصتين';
+	@override String get pauseEntreSeancesDetail => 'الوقت الأدنى المتروك للمعلم بين حصتين متتاليتين.';
+	@override String get elevesParEnseignant => 'الطلاب لكل معلم';
+	@override String get elevesParEnseignantDetail => 'العدد الأقصى للطلاب الذين يمكن لمعلم متابعتهم في آن واحد.';
+	@override String get horizonAffectation => 'أفق الإسناد';
+	@override String get horizonAffectationDetail => 'عدد الأسابيع مسبقًا التي يبحث فيها الإسناد عن معلم متاح.';
+	@override String get ageCameraAuto => 'العمر الأدنى للكاميرا التلقائية';
+	@override String get ageCameraAutoDetail => 'دون هذا العمر، يبقى تشغيل الكاميرا خاضعًا لموافقة وليّ الأمر.';
+	@override String get ageInterfaceEnfant => 'العمر الأقصى لواجهة الطفل';
+	@override String get ageInterfaceEnfantDetail => 'دون هذا العمر، ينتقل الملف إلى الواجهة المبسطة عند إنشائه.';
+	@override String get appareilsParEleve => 'الأجهزة لكل طالب';
+	@override String get appareilsParEleveDetail => 'عدد الأجهزة التي يمكن أن تكون نشطة لطالب في الوقت نفسه.';
+	@override String get seancesSimultanees => 'الحصص المتزامنة لكل ملف';
+	@override String get seancesSimultaneesDetail => 'عدد الحصص التي يمكن لملف واحد متابعتها في الوقت نفسه.';
+	@override String uniteMinutes({required Object n}) => '⁨${n}⁩ دقيقة';
+	@override String uniteSemaines({required Object n}) => '⁨${n}⁩ أسبوع';
+	@override String uniteNombre({required Object n}) => '⁨${n}⁩';
+}
+
+// Path: admin.fonctionnalites
+class _Traductions$admin$fonctionnalites$ar extends Traductions$admin$fonctionnalites$fr {
+	_Traductions$admin$fonctionnalites$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الوظائف';
+	@override String get intro => 'الوظائف التي تغيّر سلوك المنصة كلها.';
+	@override String get erreur => 'تعذّرت قراءة الوظائف. أعد المحاولة بعد لحظة.';
+	@override String erreurEcriture({required Object message}) => 'لم يكتمل الحفظ: ⁨${message}⁩';
+	@override String get valeurInvalide => 'أدخل رقمًا صالحًا.';
+	@override String get envoyer => 'حفظ';
+	@override String get champValeur => 'القيمة';
+	@override String get multiParticipants => 'حصص متعددة المشاركين';
+	@override String get multiParticipantsDetail => 'يسمح بعدة طلاب في حصة الفيديو نفسها.';
+	@override String get participantsMax => 'الحد الأقصى للمشاركين';
+	@override String get participantsMaxDetail => 'عدد المشاركين المسموح به حين تكون الحصص متعددة المشاركين مفعَّلة.';
+	@override String uniteNombre({required Object n}) => '⁨${n}⁩';
+}
+
+// Path: admin.conservationDonnees
+class _Traductions$admin$conservationDonnees$ar extends Traductions$admin$conservationDonnees$fr {
+	_Traductions$admin$conservationDonnees$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الاحتفاظ بالبيانات';
+	@override String get intro => 'المدة التي تبقى فيها هذه العناصر متاحة قبل حذفها التلقائي.';
+	@override String get erreur => 'تعذّرت قراءة مدد الاحتفاظ. أعد المحاولة بعد لحظة.';
+	@override String erreurEcriture({required Object message}) => 'لم يكتمل الحفظ: ⁨${message}⁩';
+	@override String get valeurInvalide => 'أدخل رقمًا صالحًا.';
+	@override String get envoyer => 'حفظ';
+	@override String get champValeur => 'القيمة';
+	@override String get enregistrements => 'تسجيلات الحصص';
+	@override String get enregistrementsDetail => 'عدد الأيام التي يبقى فيها تسجيل الحصة متاحًا.';
+	@override String get documentsIdentite => 'وثائق الهوية';
+	@override String get documentsIdentiteDetail => 'عدد الأيام التي تبقى فيها وثيقة الهوية المودعة متاحة قبل حذفها.';
+	@override String uniteJours({required Object n}) => '⁨${n}⁩ ي';
+}
+
+// Path: admin.politiqueRevueKyc
+class _Traductions$admin$politiqueRevueKyc$ar extends Traductions$admin$politiqueRevueKyc$fr {
+	_Traductions$admin$politiqueRevueKyc$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'سياسة الجنس في مراجعة الهوية';
+	@override String get libelle => 'حصر مراجعة الهوية حسب الجنس';
+	@override String get aide => 'حين تُعطَّل هذه القاعدة، يمكن لكل عضو مخوَّل بمراجعة الملفات معالجة ملفات نطاقه، أيًا كان جنسه.';
+	@override String get echecEnregistrement => _root.admin.groupes.observationErreur;
+}
+
+// Path: admin.evaluations
+class _Traductions$admin$evaluations$ar extends Traductions$admin$evaluations$fr {
+	_Traductions$admin$evaluations$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'التقييمات';
+	@override String get intro => 'ما هو مقرر، وما أُجري، والشهادات المحصَّلة.';
+	@override String get erreur => 'تعذّرت قراءة التقييمات. أعد المحاولة بعد لحظة.';
+	@override String get aucune => 'لا تقييم';
+	@override String get aucuneDetail => 'برمج تقييمًا أول لطالب حُدِّد مستواه بالفعل.';
+	@override String get aucuneAvecCeFiltre => 'لا تقييم بهذا المعيار';
+	@override String get aucuneAvecCeFiltreDetail => 'غيّر المعيار لترى التقييمات الأخرى.';
+	@override String get filtreToutes => 'الكل';
+	@override String get filtrePlanifiees => 'مبرمجة';
+	@override String get filtreRealisees => 'منجزة';
+	@override String get filtreAnnulees => 'ملغاة';
+	@override String get filtreCertifications => 'الشهادات';
+	@override String get colonneEleve => 'الطالب';
+	@override String get colonneNiveau => 'المستوى';
+	@override String get colonneType => 'النوع';
+	@override String get colonneDatePrevue => 'مقرر في';
+	@override String get colonneStatut => 'الحالة';
+	@override String get colonneResultat => 'النتيجة';
+	@override String get typeInitiale => 'أولي';
+	@override String get typePeriodique => 'دوري';
+	@override String get typeReevaluation => 'إعادة تقييم';
+	@override String get typeCertification => 'شهادة';
+	@override String get statutPlanifiee => 'مبرمج';
+	@override String get statutRealisee => 'منجز';
+	@override String get statutAnnulee => 'ملغى';
+	@override String get resultatReussi => 'ناجح';
+	@override String get resultatEchec => 'راسب';
+	@override String get resultatARevoir => 'للمراجعة';
+	@override String get planifier => 'برمجة تقييم';
+	@override String get planifierTitre => 'برمجة تقييم';
+	@override String get champEleveId => 'معرّف الطالب';
+	@override String get champNiveau => 'المستوى المقيَّم';
+	@override String get champType => 'النوع';
+	@override String get champDatePrevue => 'التاريخ المقرر (يوم/شهر/سنة)';
+	@override String get planifierEnvoyer => 'برمجة';
+	@override String planifierErreur({required Object message}) => 'لم تكتمل البرمجة: ⁨${message}⁩';
+	@override String get actionEnregistrerResultat => 'حفظ النتيجة';
+	@override String get actionAnnuler => 'إلغاء التقييم';
+	@override String resultatTitre({required Object eleve}) => 'نتيجة ⁨${eleve}⁩';
+	@override String get champNotes => 'ملاحظات (اختيارية)';
+	@override String get resultatEnvoyer => 'حفظ';
+	@override String resultatErreur({required Object message}) => 'لم يكتمل الحفظ: ⁨${message}⁩';
+	@override String annulerTitre({required Object eleve}) => 'إلغاء تقييم ⁨${eleve}⁩';
+	@override String get annulerEnvoyer => 'إلغاء';
+	@override String annulerErreur({required Object message}) => 'لم يكتمل الإلغاء: ⁨${message}⁩';
+	@override String get champMotif => 'السبب';
+	@override String get motifRequis => 'السبب مطلوب، ويُدوَّن في سجل التدقيق.';
+	@override String get journalisation => 'تُدوَّن كل برمجة ونتيجة وإلغاء في سجل التدقيق.';
+}
+
+// Path: admin.progression
+class _Traductions$admin$progression$ar extends Traductions$admin$progression$fr {
+	_Traductions$admin$progression$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'التقدم';
+	@override String get intro => 'المستوى الحالي لكل طالب، وفصله، والعوائق أو الاستثناءات الجارية.';
+	@override String get erreur => 'تعذّرت قراءة التقدم. أعد المحاولة بعد لحظة.';
+	@override String get aucun => 'لا طالب نشط';
+	@override String get aucunDetail => 'سيظهر الطلاب هنا بمجرد أول تحديد لمستواهم.';
+	@override String get colonneEleve => 'الطالب';
+	@override String get colonneGroupe => 'الفصل';
+	@override String get colonneNiveau => 'المستوى';
+	@override String get colonneDepuis => 'منذ';
+	@override String get colonneException => 'الاستثناء';
+	@override String get sansGroupe => 'دون فصل';
+	@override String get sansNiveau => 'لم يُحدَّد مستواه';
+	@override String get filtreTousCycles => 'كل المراحل';
+	@override String get depuisAujourdhui => 'اليوم';
+	@override String get depuisUnJour => 'يوم واحد';
+	@override String depuisJours({required Object jours}) => '⁨${jours}⁩ أيام';
+	@override String get typeBlocage => 'عائق';
+	@override String get typeDerogation => 'استثناء';
+	@override String get actionPoserBlocage => 'وضع عائق';
+	@override String get actionPoserDerogation => 'وضع استثناء';
+	@override String get actionCloreException => 'إغلاق الاستثناء';
+	@override String get actionPromouvoir => 'تغيير المستوى';
+	@override String poserExceptionTitre({required Object type, required Object eleve}) => '⁨${type}⁩ لـ⁨${eleve}⁩';
+	@override String get poserExceptionEnvoyer => 'وضع الاستثناء';
+	@override String poserExceptionErreur({required Object message}) => 'لم يكتمل الوضع: ⁨${message}⁩';
+	@override String clorerExceptionTitre({required Object eleve}) => 'إغلاق استثناء ⁨${eleve}⁩';
+	@override String get clorerExceptionEnvoyer => 'إغلاق';
+	@override String clorerExceptionErreur({required Object message}) => 'لم يكتمل الإغلاق: ⁨${message}⁩';
+	@override String promouvoirTitre({required Object eleve}) => 'تغيير مستوى ⁨${eleve}⁩';
+	@override String get promouvoirChampNiveau => 'المستوى الجديد';
+	@override String get promouvoirEnvoyer => 'حفظ';
+	@override String promouvoirErreur({required Object message}) => 'لم يكتمل التغيير: ⁨${message}⁩';
+	@override String get champMotif => 'السبب';
+	@override String get motifRequis => 'السبب مطلوب، ويُدوَّن في سجل التدقيق.';
+	@override String get journalisation => 'يُدوَّن كل استثناء موضوع ومغلق، وكل تغيير مستوى، في سجل التدقيق.';
+}
+
+// Path: admin.programmes
+class _Traductions$admin$programmes$ar extends Traductions$admin$programmes$fr {
+	_Traductions$admin$programmes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'المناهج';
+	@override String get intro => 'منهج Rewayah، بإصدارات: الإصدار المنشور لا يُعدَّل، وكل تطور أكاديمي ينشئ إصدارًا جديدًا.';
+	@override String get aucuneVersion => 'لا إصدار من المنهج';
+	@override String get aucuneVersionDetail => 'أنشئ الإصدار الأول، كمسودة، لتبدأ بإضافة المستويات إليه.';
+	@override String get erreur => 'تعذّرت قراءة المنهج. أعد المحاولة بعد لحظة.';
+	@override String get statutBrouillon => 'مسودة';
+	@override String get statutPubliee => 'منشور';
+	@override String get statutArchivee => 'مؤرشف';
+	@override String versionNumero({required Object numero}) => 'الإصدار ⁨${numero}⁩';
+	@override String niveauxSur({required Object nombre}) => '⁨${nombre}⁩ مستويات';
+	@override String get creerVersion => 'إنشاء إصدار';
+	@override String get creerVersionVide => 'إنشاء إصدار فارغ';
+	@override String get enregistrerVersion => 'حفظ الإصدار';
+	@override String get creerVersionDepuisPubliee => 'إنشاء إصدار جديد انطلاقًا من هذا';
+	@override String creerVersionErreur({required Object message}) => 'لم يكتمل الإنشاء: ⁨${message}⁩';
+	@override String get niveauxTitre => 'المستويات';
+	@override String get niveauAucun => 'لا مستوى في هذا الإصدار';
+	@override String get niveauAucunDetail => 'أضف مستوى أول لتبدأ بتكوين هذا الإصدار.';
+	@override String codeTechnique({required Object code}) => 'الرمز: ⁨${code}⁩';
+	@override String get ajouterNiveau => 'إضافة مستوى';
+	@override String ajouterNiveauTitre({required Object version}) => 'إضافة مستوى إلى ⁨${version}⁩';
+	@override String get ajouterNiveauEnvoyer => 'إضافة';
+	@override String ajouterNiveauErreur({required Object message}) => 'لم تكتمل الإضافة: ⁨${message}⁩';
+	@override String get modifierNiveau => 'تعديل';
+	@override String modifierNiveauTitre({required Object nom}) => 'تعديل ⁨${nom}⁩';
+	@override String get modifierNiveauEnvoyer => 'حفظ';
+	@override String modifierNiveauErreur({required Object message}) => 'لم يكتمل التعديل: ⁨${message}⁩';
+	@override String get supprimerNiveau => 'حذف';
+	@override String supprimerNiveauTitre({required Object nom}) => 'حذف ⁨${nom}⁩';
+	@override String get supprimerNiveauEnvoyer => 'حذف';
+	@override String supprimerNiveauErreur({required Object message}) => 'لم يكتمل الحذف: ⁨${message}⁩';
+	@override String get publierVersion => 'نشر الإصدار';
+	@override String publierVersionTitre({required Object version}) => 'نشر ⁨${version}⁩';
+	@override String get publierVersionDetail => 'بعد نشره، لا يمكن تعديل هذا الإصدار. كل تطور أكاديمي سينشئ إصدارًا جديدًا.';
+	@override String get publierVersionEnvoyer => 'نشر';
+	@override String publierVersionErreur({required Object message}) => 'لم يكتمل النشر: ⁨${message}⁩';
+	@override String get champCodeTechnique => 'الرمز التقني (استخدام داخلي، لا يُعرض للطالب أبدًا)';
+	@override String get champNomHumain => 'الاسم المعروض';
+	@override String get champCycle => 'المرحلة';
+	@override String get champOrdre => 'الترتيب';
+	@override String get champDescription => 'الوصف (اختياري)';
+	@override String get champMotif => 'السبب';
+	@override String get motifRequis => 'السبب مطلوب، ويُدوَّن في سجل التدقيق.';
+	@override String get journalisation => 'يُدوَّن كل إنشاء وتعديل وحذف ونشر في سجل التدقيق.';
+}
+
+// Path: admin.journal
+class _Traductions$admin$journal$ar extends Traductions$admin$journal$fr {
+	_Traductions$admin$journal$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'السجل';
+	@override String get chaineIntacte => 'السجل سليم';
+	@override String chaineIntacteDetail({required Object nombre}) => 'أُعيدت قراءة ⁨${nombre}⁩ مدخلًا واحدًا واحدًا: لم يُعدَّل أي منها ولم يُحذف منذ كتابته.';
+	@override String get chaineRompue => 'السجل معدَّل';
+	@override String chaineRompueUne({required Object entree}) => 'مدخل لم يعد يطابق بصمته، رقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.';
+	@override String chaineRompueDetail({required Object nombre, required Object entree}) => '⁨${nombre}⁩ مدخلات لم تعد تطابق بصمتها، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.';
+	@override String get chaineInconnue => 'السلامة غير معروفة';
+	@override String get chaineInconnueDetail => 'لم يكتمل التحقق. تبقى المدخلات أدناه مقروءة، لكن لا شيء يضمن الآن أنها كاملة.';
+	@override String get chaineEnCours => 'جارٍ التحقق';
+	@override String get chaineEnCoursDetail => 'إعادة قراءة بصمة كل مدخل.';
+	@override String get periodeSemaine => 'آخر 7 أيام';
+	@override String get periodeMois => 'آخر 30 يومًا';
+	@override String get periodeTout => 'منذ البداية';
+	@override String get tousTypes => 'كل الأحداث';
+	@override String get tousActeurs => 'الجميع';
+	@override String get colonneQuand => 'متى';
+	@override String get colonneQui => 'من';
+	@override String get colonneRole => 'بأي صفة';
+	@override String get colonneQuoi => 'ما الذي فُعل';
+	@override String get colonneCible => 'على ماذا';
+	@override String get colonneDetail => 'التفاصيل';
+	@override String horodatage({required Object date, required Object heure}) => '⁨${date}⁩ الساعة ⁨${heure}⁩';
+	@override String get acteurSysteme => 'النظام';
+	@override String get acteurInconnu => 'حساب محذوف';
+	@override String get roleAdmin => 'الإدارة';
+	@override String get roleEnseignant => 'معلم';
+	@override String get roleTuteur => 'وليّ أمر';
+	@override String get roleEleve => 'طالب';
+	@override String get roleControleur => 'مراقب';
+	@override String get roleComptable => 'محاسب';
+	@override String get roleAucun => 'خارج الجلسة';
+	@override String get evtKycLu => 'اطُّلع على ملف الهوية';
+	@override String get evtKycTranche => 'حُسم ملف الهوية';
+	@override String get evtProfilCree => 'أُنشئ ملف';
+	@override String get evtProfilEnfantCree => 'أُنشئ ملف طفل';
+	@override String get evtCodeCree => 'أُنشئ رمز ربط';
+	@override String get evtAppareilAppaire => 'رُبط جهاز';
+	@override String get evtAppareilRevoque => 'أُلغي جهاز';
+	@override String get evtPedagogie => 'عُدِّلت الإعدادات التعليمية';
+	@override String get evtAffectationPrise => 'قبل معلم طالبًا';
+	@override String get evtAffectationAttribuee => 'أسندت الإدارة طالبًا';
+	@override String get evtDemandeCreee => 'قُدِّم طلب';
+	@override String get evtDemandeTranchee => 'حُسم طلب';
+	@override String get evtReglePosee => 'وُضعت قاعدة';
+	@override String get evtRegleClose => 'أُغلقت قاعدة';
+	@override String get filtreEvenement => 'الحدث';
+	@override String get filtreActeur => 'الفاعل';
+	@override String get evtAgentJetonEmis => 'صدر وصول وكيل آلي';
+	@override String get evtAgentJetonRevoque => 'أُلغي وصول وكيل آلي';
+	@override String get evtAgentSessionOuverte => 'فُتحت جلسة وكيل آلي';
+	@override String get evtObservationControleur => 'بدأت زيارة مراقبة';
+	@override String get evtJetonVideo => 'سُمح بالدخول إلى القاعة';
+	@override String get vide => 'لا حدث مسجَّل';
+	@override String get videDetail => 'ستُدوَّن هنا كل قراءة لملف، وكل قرار، وكل إسناد.';
+	@override String get videFiltre => 'لا حدث مطابق';
+	@override String get videFiltreDetail => 'وسّع الفترة، أو خفّف أحد المعايير.';
+	@override String get effacerFiltres => 'مسح المعايير';
+	@override String get erreur => 'تعذّرت قراءة السجل. أعد المحاولة بعد لحظة.';
+	@override String get erreurSuite => 'تعذّرت قراءة المدخلات الأقدم.';
+	@override String get chargerSuite => 'تحميل المدخلات الأقدم';
+	@override String get fin => 'وصلت إلى أول مدخل في السجل.';
+	@override late final _Traductions$admin$journal$evenements$ar evenements = _Traductions$admin$journal$evenements$ar._(_root);
+}
+
+// Path: admin.observations
+class _Traductions$admin$observations$ar extends Traductions$admin$observations$fr {
+	_Traductions$admin$observations$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'المتابعات';
+	@override String get titrePage => 'سجل المتابعات';
+	@override String get sousTitre => 'الإدارة';
+	@override String get recherche => 'البحث عن وليّ أمر أو طالب';
+	@override String get rechercheCourte => 'أدخل حرفين على الأقل.';
+	@override String get rechercheAucune => 'لا وليّ أمر ولا طالب بهذا الاسم.';
+	@override String get rechercheErreur => 'لم يكتمل البحث. أعد المحاولة.';
+	@override String get roleTuteur => 'وليّ أمر';
+	@override String get roleEleve => 'طالب';
+	@override String filtreTuteur({required Object nom}) => 'وليّ الأمر: ⁨${nom}⁩';
+	@override String filtreEleve({required Object nom}) => 'الطالب: ⁨${nom}⁩';
+	@override String retirerFiltre({required Object filtre}) => 'إزالة المعيار ⁨${filtre}⁩';
+	@override String get classe => 'الفصل';
+	@override String get toutesClasses => 'كل الفصول';
+	@override String get periode => 'الفترة';
+	@override String get statut => 'الحالة';
+	@override String get tousStatuts => 'كل الحالات';
+	@override String get colonneDate => 'التاريخ';
+	@override String get colonneTuteur => 'وليّ الأمر';
+	@override String get colonneEleve => 'الطالب';
+	@override String get colonneClasse => 'الفصل';
+	@override String get colonneEntree => 'الدخول';
+	@override String get colonneSortie => 'الخروج';
+	@override String get colonneDuree => 'المدة';
+	@override String get colonneStatut => 'الحالة';
+	@override String get terminee => 'منتهية';
+	@override String get ouverte => 'الخروج غير مسجَّل';
+	@override String get sortieAbsente => 'غير مسجَّل';
+	@override String get dureeNonConfirmee => 'غير مؤكَّدة';
+	@override String get nomInconnu => 'الاسم غير متاح';
+	@override String get classeInconnue => 'الفصل غير متاح';
+	@override String plage({required Object entree, required Object sortie}) => '⁨${entree}⁩ - ⁨${sortie}⁩';
+	@override String ligne({required Object rang, required Object date, required Object tuteur, required Object eleve, required Object classe, required Object entree, required Object sortie, required Object duree, required Object statut}) => 'الزيارة ⁨${rang}⁩ في ⁨${date}⁩، ⁨${tuteur}⁩ لـ⁨${eleve}⁩، ⁨${classe}⁩، الدخول ⁨${entree}⁩، الخروج ⁨${sortie}⁩، المدة ⁨${duree}⁩، ⁨${statut}⁩';
+	@override String fuseau({required Object decalage}) => 'الساعات معروضة بتوقيت هذا الجهاز (UTC⁨${decalage}⁩).';
+	@override String get indisponibleTitre => 'سجل المتابعات غير متاح';
+	@override String get indisponiblePhrase => 'قراءة زيارات المتابعة غير مفتوحة في التطبيق بعد.';
+	@override String get videTitre => 'لا زيارة مسجَّلة';
+	@override String get videPhrase => 'ستظهر هنا زيارات متابعة أولياء الأمور.';
+	@override String get videFiltreTitre => 'لا زيارة مطابقة';
+	@override String get videFiltrePhrase => 'وسّع الفترة أو أزل أحد المعايير.';
+	@override String get effacerFiltres => 'مسح المعايير';
+	@override String get chargerSuite => 'تحميل الزيارات الأقدم';
+	@override String get erreurSuite => 'تعذّرت قراءة الزيارات الأقدم.';
+	@override String get fin => 'كل الزيارات معروضة.';
+}
+
+// Path: admin.comptes
+class _Traductions$admin$comptes$ar extends Traductions$admin$comptes$fr {
+	_Traductions$admin$comptes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الحسابات';
+	@override String get intro => 'كل الأشخاص المسجلين، والذين ينتظرون قرارًا أولًا. المعلم الذي لم يودع وثيقة هويته يبقى ظاهرًا هنا: إنه المكان الوحيد الذي يُظهره.';
+	@override String get attenteUneAujourdhui => 'شخص واحد ينتظر قرارًا، مسجَّل اليوم.';
+	@override String get attenteUneUnJour => 'شخص واحد ينتظر قرارًا منذ يوم.';
+	@override String attenteUne({required Object jours}) => 'شخص واحد ينتظر قرارًا منذ ⁨${jours}⁩ أيام.';
+	@override String attentePlusieurs({required Object nombre}) => '⁨${nombre}⁩ أشخاص ينتظرون قرارًا.';
+	@override String get filtreTousEtats => 'الكل';
+	@override String get filtreTousRoles => 'كل الأدوار';
+	@override String get filtreRole => 'الدور';
+	@override String get aucunAvecCeFiltre => 'لا حساب بهذا المعيار';
+	@override String get aucunAvecCeFiltreDetail => 'أزل أحد المعايير لتوسيع القائمة.';
+	@override String get erreur => 'تعذّرت قراءة الحسابات. أعد المحاولة بعد لحظة.';
+	@override String get colonnePersonne => 'الشخص';
+	@override String get colonneIdentifiant => 'المعرّف';
+	@override String get colonneRole => 'الدور';
+	@override String get colonneEtat => 'الحالة';
+	@override String get colonnePiece => 'وثيقة الهوية';
+	@override String get colonneAttente => 'مسجَّل منذ';
+	@override String get colonneContrats => 'العقود';
+	@override String get etatEnAttente => 'قيد الانتظار';
+	@override String get etatActif => 'نشط';
+	@override String get etatProvisoire => 'مؤقت';
+	@override String get etatSuspendu => 'موقوف';
+	@override String get etatInconnu => 'حالة غير معروفة';
+	@override String get roleAdmin => 'الإدارة';
+	@override String get roleComptable => 'محاسب';
+	@override String get roleControleur => 'مراقب';
+	@override String get roleEnseignant => 'معلم';
+	@override String get roleTuteur => 'وليّ أمر';
+	@override String get roleEleve => 'طالب';
+	@override String get roleInconnu => 'دور غير معروف';
+	@override String get pieceAucune => 'لا وثيقة مودَعة';
+	@override String get pieceAVerifier => 'للتحقق';
+	@override String get pieceValidee => 'معتمَدة';
+	@override String get pieceRefusee => 'مرفوضة';
+	@override String get pieceNonVisible => 'خارج صلاحيتك';
+	@override String get pieceSansObjet => 'لا ينطبق';
+	@override String get attendAujourdhui => 'اليوم';
+	@override String get attendUnJour => 'يوم واحد';
+	@override String attendJours({required Object jours}) => '⁨${jours}⁩ أيام';
+}
+
+// Path: admin.agents
+class _Traductions$admin$agents$ar extends Traductions$admin$agents$fr {
+	_Traductions$admin$agents$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'وصول الوكلاء الآليين';
+	@override String get intro => 'يسمح الرمز لوكيل آلي بفتح التطبيق وقراءة ما يقرؤه شخص فيه. لا يستطيع كتابة شيء ولا إلغاء شيء ولا تعديل شيء: قاعدة البيانات تمنعه، لا الواجهة.';
+	@override String get emettre => 'إصدار رمز';
+	@override String get libelle => 'الغرض من هذا الرمز';
+	@override String get libelleAide => 'إلزامي. الرمز دون اسم رمز لا يجرؤ أحد على إلغائه.';
+	@override String get libelleExemple => 'مراجعة متابعة مريم';
+	@override String get qui => 'من يتابعه الوكيل';
+	@override String get quiAide => 'سيرى الوكيل شاشة هذا الشخص تمامًا، وسيكون مساره مساره.';
+	@override String get quiVide => 'اختيار شخص';
+	@override String get chercher => 'البحث عن اسم أو معرّف';
+	@override String get duree => 'لكم من الوقت';
+	@override String dureeHeure({required Object nombre}) => '⁨${nombre}⁩ س';
+	@override String get dureePlafond => 'أربع وعشرون ساعة على الأكثر، وقاعدة البيانات تتحقق من ذلك بنفسها.';
+	@override String get identite => 'الأسماء';
+	@override String get identiteMasquee => 'مخفية';
+	@override String get identiteMasqueeDetail => 'يقرأ الوكيل المعرّفات (ELV-0042) بدل الأسماء. قاعدة البيانات هي التي تستبدلها: الاسم لا يخرج.';
+	@override String get identiteVisible => 'ظاهرة';
+	@override String get identiteVisibleDetail => 'يقرأ الوكيل الأسماء، كما يراها الشخص المتابَع.';
+	@override String get pourra => 'سيستطيع';
+	@override String get pourraDetail => 'فتح التطبيق والتنقل فيه وقراءة كل ما يقرؤه هذا الشخص.';
+	@override String get nePourraPas => 'لن يستطيع';
+	@override String get nePourraPasDetail => 'كتابة أي شيء، ولا رؤية وثيقة هوية، ولا جهاز، ولا سجل التدقيق، ولا الخروج من نطاق هذا الشخص.';
+	@override String get emissionEnCours => 'جارٍ الإصدار';
+	@override String get emis => 'صدر الرمز';
+	@override String get emisDetail => 'سلّم هذا الرابط للوكيل. لن يظهر بعد ذلك: لا هذه الشاشة ولا قاعدة البيانات تستطيعان استعادته.';
+	@override String get copier => 'نسخ الرابط';
+	@override String get copie => 'نُسخ الرابط';
+	@override String get termine => 'نسخت الرابط';
+	@override String get erreurEmission => 'تعذّر إصدار الرمز. أعد المحاولة بعد لحظة.';
+	@override String get colonneLibelle => 'الرمز';
+	@override String get colonneQui => 'يتابع';
+	@override String get colonneParcours => 'المسار';
+	@override String get colonneIdentite => 'الأسماء';
+	@override String get colonneExpire => 'حتى';
+	@override String get colonneUsage => 'مرات الفتح';
+	@override String get colonneEtat => 'الحالة';
+	@override String get parcoursEleve => 'طالب';
+	@override String get parcoursTuteur => 'وليّ أمر';
+	@override String get parcoursEnseignant => 'معلم';
+	@override String get parcoursControleur => 'مراقبة الجودة';
+	@override String get parcoursAdmin => 'الإدارة';
+	@override String get parcoursComptable => 'محاسب';
+	@override String get parcoursInconnu => 'مسار غير معروف';
+	@override String get etatActif => 'نشط';
+	@override String get etatRevoque => 'ملغى';
+	@override String get etatExpire => 'منتهي الصلاحية';
+	@override String get jamaisServi => 'لم يُستخدم قط';
+	@override String usage({required Object nombre, required Object quand}) => '⁨${nombre}⁩ مرات، آخرها ⁨${quand}⁩';
+	@override String get revoquer => 'إلغاء';
+	@override String get revoquerTitre => 'إلغاء هذا الرمز؟';
+	@override String get revoquerDetail => 'سيفقد الوكيل الوصول عند طلبه التالي. هذا نهائي: الرمز الملغى لا يُعاد تفعيله.';
+	@override String get revoquerConfirmer => 'إلغاء';
+	@override String get annuler => 'تراجع';
+	@override String get revoque => 'أُلغي الرمز';
+	@override String get erreurRevocation => 'لم يكتمل الإلغاء. أعد المحاولة.';
+	@override String get vide => 'لا رمز متابعة';
+	@override String get videDetail => 'لا وكيل آلي لديه وصول إلى التطبيق الآن.';
+	@override String get erreur => 'تعذّرت قراءة قائمة الرموز.';
+}
+
+// Path: admin.notifications
+class _Traductions$admin$notifications$ar extends Traductions$admin$notifications$fr {
+	_Traductions$admin$notifications$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الإشعارات';
+	@override String get vide => 'لا إشعارات';
+	@override String get videDetail => 'لا شيء يُذكر الآن.';
+}
+
 // Path: commun.etats.chargementProlonge
 class _Traductions$commun$etats$chargementProlonge$ar extends Traductions$commun$etats$chargementProlonge$fr {
 	_Traductions$commun$etats$chargementProlonge$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -6644,6 +7433,18 @@ class _Traductions$dossiers$revue$etats$ar extends Traductions$dossiers$revue$et
 	@override String get modifie => 'تغيّر هذا الملف منذ فتحه.';
 	@override String get actualiserDossier => 'تحديث الملف';
 	@override String get refusNonAutorise => 'لا يمكن رفض هذا الملف في حالته الحالية.';
+}
+
+// Path: admin.journal.evenements
+class _Traductions$admin$journal$evenements$ar extends Traductions$admin$journal$evenements$fr {
+	_Traductions$admin$journal$evenements$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get observationEntree => 'بدأت زيارة متابعة';
+	@override String get observationSortie => 'انتهت زيارة متابعة';
+	@override String get observationPolitiqueGroupeModifiee => 'عُدِّلت قواعد متابعة الفصل';
 }
 
 // Path: classe.entree.demo.roles
@@ -10355,6 +11156,609 @@ extension on TraductionsAr {
 			'agent.bandeau' => 'متابعة، للقراءة فقط',
 			'agent.bandeauMasque' => 'الأسماء مخفية',
 			'agent.bandeauExpire' => ({required Object heure}) => 'حتى ⁨${heure}⁩',
+			'admin.tableau.titre' => 'مركز القيادة',
+			'admin.tableau.dossiers' => 'ملفات للاعتماد',
+			'admin.tableau.dossiersDetail' => 'فتح القائمة، الأقدم أولًا.',
+			'admin.tableau.demandesDetail' => 'أسر ومعلمون ينتظرون ردًا.',
+			'admin.tableau.foyers' => 'طلاب دون معلم',
+			'admin.tableau.rapports' => 'دفاتر ناقصة',
+			'admin.tableau.incidents' => 'حوادث (24 س)',
+			'admin.tableau.comptes' => 'وصول منتهٍ',
+			'admin.tableau.incidentsEtAcces' => 'الحوادث والوصول',
+			'admin.tableau.demandes' => 'طلبات للحسم',
+			'admin.tableau.compteursErreur' => 'تعذّرت قراءة العدادات. أعد المحاولة بعد لحظة.',
+			'admin.tableau.calme' => 'لا شيء ينتظر قرارًا اليوم.',
+			'admin.tableau.apercuErreur' => 'تعذّرت قراءة القائمة.',
+			'admin.tableau.outils' => 'الأدوات',
+			'admin.tableau.outilsComptes' => 'الحسابات',
+			'admin.tableau.outilsComptesDetail' => 'كل الأشخاص المسجلين، والذين ينتظرون قرارًا أولًا. بمن فيهم من لم يودع وثيقته بعد.',
+			'admin.tableau.outilsAccesAgents' => 'وصول الوكلاء الآليين',
+			'admin.tableau.outilsAccesAgentsDetail' => 'فتح وصول للقراءة فقط، محدود زمنيًا، على مسار شخص.',
+			'admin.tableau.outilsGroupesDetail' => 'الفصول وطلابها ومعلمها.',
+			'admin.tableau.ligneDossier' => ({required Object prenom}) => 'ملف هوية ⁨${prenom}⁩',
+			'admin.tableau.ligneReaffectation' => ({required Object prenom}) => 'تغيير معلم ⁨${prenom}⁩',
+			'admin.tableau.lignePlafond' => ({required Object prenom}) => 'الحد الأقصى لطلاب ⁨${prenom}⁩',
+			'admin.tableau.ligneRegle' => ({required Object prenom}) => 'تغيير قاعدة لـ⁨${prenom}⁩',
+			'admin.tableau.attenteAujourdhui' => 'أُودع اليوم',
+			'admin.tableau.attenteUnJour' => 'ينتظر منذ يوم',
+			'admin.tableau.attenteJours' => ({required Object jours}) => 'ينتظر منذ ⁨${jours}⁩ أيام',
+			'admin.demandes.titre' => 'الطلبات والقواعد',
+			'admin.demandes.restanteUne' => 'طلب واحد قيد الانتظار',
+			'admin.demandes.restantes' => ({required Object n}) => '⁨${n}⁩ طلبات قيد الانتظار',
+			'admin.demandes.aucune' => 'لا طلب قيد الانتظار',
+			'admin.demandes.aucuneDetail' => 'تصل هنا طلبات الأسر والطلاب المستقلين والمعلمين، الأقدم أولًا.',
+			'admin.demandes.faitePar' => ({required Object date, required Object role}) => 'طُلب في ⁨${date}⁩، من ⁨${role}⁩',
+			'admin.demandes.roleGuardian' => 'وليّ أمر',
+			'admin.demandes.roleTeacher' => 'معلم',
+			'admin.demandes.roleStudent' => 'طالب مستقل',
+			'admin.demandes.roleAdmin' => 'الإدارة',
+			'admin.demandes.roleController' => 'مراقب',
+			'admin.demandes.roleInconnu' => 'طرف في الملف',
+			'admin.demandes.reclame' => 'المطلوب',
+			'admin.demandes.reclameReaffectation' => ({required Object prenom}) => 'تغيير معلم ⁨${prenom}⁩',
+			'admin.demandes.reclamePlafond' => ({required Object valeur}) => 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طلاب',
+			'admin.demandes.reclameRegle' => ({required Object regle, required Object valeur}) => 'جعل ⁨${regle}⁩ ⁨${valeur}⁩ دقيقة',
+			'admin.demandes.reclameRegleSansValeur' => ({required Object regle}) => 'مراجعة ⁨${regle}⁩',
+			'admin.demandes.motifDemande' => 'السبب المذكور',
+			'admin.demandes.verdict' => 'القرار',
+			'admin.demandes.accorder' => 'قبول',
+			'admin.demandes.refuser' => 'رفض',
+			'admin.demandes.motif' => 'ما يبرر هذا الرفض، في جملة واحدة',
+			'admin.demandes.motifRequis' => 'يجب أن يقول الرفض السبب: إنها الجملة الوحيدة التي سيتلقاها الطرف.',
+			'admin.demandes.effet' => 'القبول يطبّق الأثر في قاعدة البيانات: يُغلق الإسناد، أو تُوضع القاعدة. هذه الشاشة تصدر الحكم فقط.',
+			'admin.demandes.journalisation' => 'يُدوَّن كل قرار وكل قاعدة موضوعة في سجل التدقيق، مع اسمك.',
+			'admin.demandes.feuille' => ({required Object prenom}) => 'قواعد ⁨${prenom}⁩',
+			'admin.demandes.feuilleIntro' => 'قيمة المنصة والقيمة المطبقة، جنبًا إلى جنب. تُغيَّر القاعدة هنا دون حاجة إلى طلب.',
+			'admin.demandes.regleDuree' => 'مدة الحصة',
+			'admin.demandes.regleMinimum' => 'المدة الدنيا المدفوعة',
+			'admin.demandes.reglePause' => 'الاستراحة بين درسين',
+			'admin.demandes.reglePlafond' => 'الحد الأقصى للطلاب',
+			'admin.demandes.regleInconnue' => 'قاعدة غير معروفة',
+			'admin.demandes.plateforme' => ({required Object valeur}) => 'المنصة: ⁨${valeur}⁩',
+			'admin.demandes.effective' => ({required Object valeur}) => 'المطبقة: ⁨${valeur}⁩',
+			'admin.demandes.minutes' => ({required Object valeur}) => '⁨${valeur}⁩ دقيقة',
+			'admin.demandes.eleves' => ({required Object valeur}) => '⁨${valeur}⁩ طلاب',
+			'admin.demandes.surchargeDepuis' => ({required Object date, required Object motif}) => 'وُضعت في ⁨${date}⁩: ⁨${motif}⁩',
+			'admin.demandes.sansSurcharge' => 'يتبع هذا الطالب قاعدة المنصة.',
+			'admin.demandes.changer' => 'تغيير',
+			'admin.demandes.clore' => 'العودة إلى قاعدة المنصة',
+			'admin.demandes.historique' => 'الاستثناءات المغلقة',
+			'admin.demandes.historiqueLigne' => ({required Object valeur, required Object debut, required Object fin}) => '⁨${valeur}⁩، من ⁨${debut}⁩ إلى ⁨${fin}⁩',
+			'admin.demandes.historiqueMotifs' => ({required Object motif, required Object cloture}) => 'وُضعت: ⁨${motif}⁩. أُغلقت: ⁨${cloture}⁩.',
+			'admin.demandes.poserTitre' => ({required Object regle, required Object prenom}) => '⁨${regle}⁩، لـ⁨${prenom}⁩',
+			'admin.demandes.cloreTitre' => ({required Object prenom}) => 'إغلاق استثناء ⁨${prenom}⁩',
+			'admin.demandes.poserMotif' => 'لماذا هذا التغيير؟',
+			'admin.demandes.poserMotifRequis' => 'قاعدة دون سبب لا تُفهم بعد ستة أشهر.',
+			'admin.demandes.poserEnvoyer' => 'وضع القاعدة',
+			'admin.demandes.cloreEnvoyer' => 'إغلاق الاستثناء',
+			'admin.demandes.erreurFile' => 'تعذّر تحميل قائمة الطلبات. أعد المحاولة بعد لحظة.',
+			'admin.attribution.titre' => 'الإسناد',
+			'admin.attribution.intro' => 'حين لا يأخذ أي معلم طفلًا، هنا يُسند إليه معلم.',
+			'admin.attribution.colonneEleves' => 'طلاب دون معلم',
+			'admin.attribution.colonneEnseignants' => 'المعلمون',
+			'admin.attribution.aucunEleve' => 'لكل طالب معلمه',
+			'admin.attribution.aucunEleveDetail' => 'سيظهر هنا الأطفال الذين لم يأخذهم أحد بعد، الأطول انتظارًا أولًا.',
+			'admin.attribution.erreurEleves' => 'تعذّرت قراءة القائمة. أعد المحاولة بعد لحظة.',
+			'admin.attribution.erreurEnseignants' => 'تعذّرت قراءة المعلمين. أعد المحاولة بعد لحظة.',
+			'admin.attribution.attendAujourdhui' => 'مسجَّل اليوم',
+			'admin.attribution.attendUnJour' => 'ينتظر منذ يوم',
+			'admin.attribution.attendJours' => ({required Object jours}) => 'ينتظر منذ ⁨${jours}⁩ أيام',
+			'admin.attribution.niveau' => ({required Object niveau}) => 'المستوى ⁨${niveau}⁩',
+			'admin.attribution.heuresProposees' => ({required Object nombre}) => '⁨${nombre}⁩ ساعات مقترحة',
+			'admin.attribution.heureProposee' => 'ساعة واحدة مقترحة',
+			'admin.attribution.sansHeure' => 'لا ساعة مقترحة',
+			'admin.attribution.sansHeureDetail' => 'ما دامت الأسرة لم تحدد أي موعد، لا يستطيع أحد أن يسند إليها معلمًا، ولا أنت. الخطوة عندها، في أوقات توفرها.',
+			'admin.attribution.changerEleve' => 'اختيار طالب آخر',
+			'admin.attribution.choisirEleve' => 'اختر طالبًا',
+			'admin.attribution.choisirEleveDetail' => 'سيظهر المعلمون هنا، والذين يشاركونه ساعة أولًا.',
+			'admin.attribution.charge' => ({required Object actifs, required Object plafond}) => '⁨${actifs}⁩ طلاب من ⁨${plafond}⁩',
+			'admin.attribution.complet' => 'بلغ الحد الأقصى',
+			'admin.attribution.libreSur' => ({required Object jour, required Object heure}) => 'متاح ⁨${jour}⁩ الساعة ⁨${heure}⁩',
+			'admin.attribution.libreSurPlusieurs' => ({required Object nombre}) => 'متاح في ⁨${nombre}⁩ من الساعات المقترحة',
+			'admin.attribution.sansHeureCommune' => 'لا ساعة مشتركة',
+			'admin.attribution.quelleHeure' => 'في أي ساعة؟',
+			'admin.attribution.creneau' => ({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩',
+			'admin.attribution.motif' => 'لماذا التجاوز؟',
+			'admin.attribution.motifRequis' => ({required Object prenom}) => 'لم يحدد ⁨${prenom}⁩ هذه الساعة. قد يُبرَّر إسنادها مع ذلك، ويُدوَّن ذلك في السجل.',
+			'admin.attribution.attribuer' => ({required Object eleve, required Object enseignant}) => 'إسناد ⁨${eleve}⁩ إلى ⁨${enseignant}⁩',
+			'admin.attribution.journalisation' => 'يُدوَّن كل إسناد: من قرر، ومتى، وفي أي ساعة، والسبب إن لزم التجاوز.',
+			'admin.attribution.effet' => 'يغادر الطالب هذه القائمة وتُوضع دروسه في الجدول فورًا.',
+			'admin.attribution.erreur' => ({required Object message}) => 'لم يكتمل الإسناد: ⁨${message}⁩',
+			'admin.groupes.titre' => 'الفصول',
+			'admin.groupes.intro' => 'يجمع كل فصل معلمًا وطلابه حول موعد مشترك: هناك يُقدَّم الدرس.',
+			'admin.groupes.colonneGroupe' => 'الفصل',
+			'admin.groupes.colonneEnseignant' => 'المعلم',
+			'admin.groupes.colonneType' => 'الفئة',
+			'admin.groupes.colonneMembres' => 'الأعضاء',
+			'admin.groupes.colonneCreneau' => 'الموعد',
+			'admin.groupes.colonneEtat' => 'الحالة',
+			'admin.groupes.typeEnfant' => 'أطفال',
+			'admin.groupes.typeAdulte' => 'بالغون',
+			'admin.groupes.filtreTousTypes' => 'كل الفئات',
+			'admin.groupes.etatActif' => 'نشط',
+			'admin.groupes.etatCloture' => 'مغلق',
+			'admin.groupes.membresSur' => ({required Object actifs, required Object seuil}) => '⁨${actifs}⁩ / ⁨${seuil}⁩',
+			'admin.groupes.aucun' => 'لا فصل منشأ',
+			'admin.groupes.aucunDetail' => 'أنشئ فصلًا أول لتمنح موعدًا مشتركًا معلمًا وطلابًا.',
+			'admin.groupes.aucunAvecCeFiltre' => 'لا فصل بهذا المعيار',
+			'admin.groupes.aucunAvecCeFiltreDetail' => 'غيّر المعيار لترى الفصول الأخرى.',
+			'admin.groupes.erreur' => 'تعذّرت قراءة الفصول. أعد المحاولة بعد لحظة.',
+			'admin.groupes.creer' => 'إنشاء فصل',
+			'admin.groupes.creerTitre' => 'إنشاء فصل',
+			'admin.groupes.champLibelle' => 'اسم الفصل',
+			'admin.groupes.champEnseignantId' => 'معرّف المعلم',
+			'admin.groupes.champType' => 'الفئة',
+			'admin.groupes.champJour' => 'اليوم',
+			'admin.groupes.champHeure' => 'الساعة (0-23)',
+			'admin.groupes.champSeuil' => 'الحد الأقصى',
+			'admin.groupes.creerEnvoyer' => 'إنشاء الفصل',
+			'admin.groupes.creerErreur' => ({required Object message}) => 'لم يكتمل الإنشاء: ⁨${message}⁩',
+			'admin.groupes.detailTitre' => ({required Object libelle}) => 'الفصل ⁨${libelle}⁩',
+			'admin.groupes.detailMembres' => 'الأعضاء',
+			'admin.groupes.detailAucunMembre' => 'لا طالب في هذا الفصل حتى الآن.',
+			'admin.groupes.actionAjouter' => 'إضافة طالب',
+			'admin.groupes.actionRetirer' => 'إزالة',
+			'admin.groupes.actionModifierSeuil' => 'تعديل الحد',
+			'admin.groupes.actionObservation' => 'إعدادات المتابعة',
+			'admin.groupes.actionCloturer' => 'إغلاق الفصل',
+			'admin.groupes.ajouterTitre' => ({required Object libelle}) => 'إضافة طالب إلى ⁨${libelle}⁩',
+			'admin.groupes.champEleveId' => 'معرّف الطالب',
+			'admin.groupes.champMotif' => 'السبب',
+			'admin.groupes.motifRequis' => 'السبب مطلوب، ويُدوَّن في سجل التدقيق.',
+			'admin.groupes.ajouterEnvoyer' => 'إضافة',
+			'admin.groupes.ajouterErreur' => ({required Object message}) => 'لم تكتمل الإضافة: ⁨${message}⁩',
+			'admin.groupes.retirerTitre' => ({required Object prenom, required Object libelle}) => 'إزالة ⁨${prenom}⁩ من ⁨${libelle}⁩',
+			'admin.groupes.retirerEnvoyer' => 'إزالة',
+			'admin.groupes.retirerErreur' => ({required Object message}) => 'لم تكتمل الإزالة: ⁨${message}⁩',
+			'admin.groupes.modifierSeuilTitre' => ({required Object libelle}) => 'الحد الأقصى لـ⁨${libelle}⁩',
+			'admin.groupes.modifierSeuilEnvoyer' => 'حفظ',
+			'admin.groupes.modifierSeuilErreur' => ({required Object message}) => 'لم يكتمل التعديل: ⁨${message}⁩',
+			'admin.groupes.cloturerTitre' => ({required Object libelle}) => 'إغلاق ⁨${libelle}⁩',
+			'admin.groupes.cloturerDetail' => 'سيُزال كل الأعضاء النشطين من الفصل. لا يمكن التراجع عن هذا الإجراء.',
+			'admin.groupes.cloturerEnvoyer' => 'إغلاق',
+			'admin.groupes.cloturerErreur' => ({required Object message}) => 'لم يكتمل الإغلاق: ⁨${message}⁩',
+			'admin.groupes.journalisation' => 'يُدوَّن كل إنشاء وإضافة وإزالة وإغلاق في سجل التدقيق.',
+			'admin.groupes.observationTitre' => ({required Object libelle}) => 'المتابعة: ⁨${libelle}⁩',
+			'admin.groupes.observationErreur' => 'تعذّر حفظ الإعداد.',
+			'admin.groupes.observationCapaciteAbsente' => 'هذا التثبيت لا يملك بعد تحديث الخادم الذي يتطلبه هذا الإعداد (الترحيل 0036). إعادة المحاولة لن تغيّر شيئًا: يجب تطبيقه أولًا على قاعدة البيانات.',
+			'admin.diagnostics.titre' => 'تحديد المستوى',
+			'admin.diagnostics.intro' => 'ينتظر كل طالب مسجَّل مستوى أول قبل الانضمام إلى فصل: هنا يُقرَّر هذا التوجيه.',
+			'admin.diagnostics.aucunProgramme' => 'لا منهج منشور',
+			'admin.diagnostics.aucunProgrammeDetail' => 'انشر إصدارًا أول من المنهج («التعليم» > «المناهج») قبل أن تتمكن من تقرير توجيه.',
+			'admin.diagnostics.erreur' => 'تعذّرت قراءة القائمة. أعد المحاولة بعد لحظة.',
+			'admin.diagnostics.restants' => ({required Object n}) => '⁨${n}⁩ طلاب متبقون',
+			'admin.diagnostics.restantUn' => 'طالب واحد متبقٍ',
+			'admin.diagnostics.inscritAujourdhui' => 'مسجَّل اليوم',
+			_ => null,
+		} ?? switch (path) {
+			'admin.diagnostics.inscritDepuisUnJour' => 'مسجَّل منذ يوم',
+			'admin.diagnostics.inscritDepuis' => ({required Object jours}) => 'مسجَّل منذ ⁨${jours}⁩ أيام',
+			'admin.diagnostics.aucun' => 'لا طالب لتحديد مستواه',
+			'admin.diagnostics.aucunDetail' => 'لكل الطلاب المسجلين مستوى مقرر بالفعل.',
+			'admin.diagnostics.champNiveau' => 'مستوى التوجيه',
+			'admin.diagnostics.champMotif' => 'السبب',
+			'admin.diagnostics.motifRequis' => 'السبب مطلوب، ويُدوَّن في سجل التدقيق.',
+			'admin.diagnostics.decider' => 'تقرير التوجيه',
+			'admin.diagnostics.deciderErreur' => ({required Object message}) => 'لم يكتمل القرار: ⁨${message}⁩',
+			'admin.diagnostics.journalisation' => 'يُدوَّن كل توجيه مقرر في سجل التدقيق.',
+			'admin.qualite.titre' => 'الجودة',
+			'admin.qualite.intro' => 'الخلل التعليمي المكتشف: تقارير ناقصة، عوائق دون متابعة، تقييمات متأخرة.',
+			'admin.qualite.erreur' => 'تعذّرت قراءة حالات الخلل. أعد المحاولة بعد لحظة.',
+			'admin.qualite.aucune' => 'لا خلل مكتشف',
+			'admin.qualite.aucuneDetail' => 'كل شيء محدَّث: التقارير محررة، والعوائق متابَعة، والتقييمات في موعدها.',
+			'admin.qualite.filtreToutes' => 'الكل',
+			'admin.qualite.filtreOuvertes' => 'مفتوحة',
+			'admin.qualite.filtreTraitees' => 'معالَجة',
+			'admin.qualite.groupeRapportManquant' => 'تقارير حصص ناقصة',
+			'admin.qualite.groupeBlocageSansSuivi' => 'عوائق دون متابعة',
+			'admin.qualite.groupeEvaluationEnRetard' => 'تقييمات متأخرة',
+			'admin.qualite.colonnePersonne' => 'يخص',
+			'admin.qualite.colonneDepuis' => 'منذ',
+			'admin.qualite.colonneStatut' => 'الحالة',
+			'admin.qualite.statutOuvert' => 'مفتوحة',
+			'admin.qualite.statutTraite' => 'معالَجة',
+			'admin.qualite.depuisAujourdhui' => 'اليوم',
+			'admin.qualite.depuisUnJour' => 'يوم واحد',
+			'admin.qualite.depuisJours' => ({required Object jours}) => '⁨${jours}⁩ أيام',
+			'admin.qualite.actionTraiter' => 'تعليم كمعالَج',
+			'admin.qualite.traiterTitre' => ({required Object personne}) => 'تعليم كمعالَج: ⁨${personne}⁩',
+			'admin.qualite.champNote' => 'ملاحظة (اختيارية)',
+			'admin.qualite.traiterEnvoyer' => 'تعليم كمعالَج',
+			'admin.qualite.traiterErreur' => ({required Object message}) => 'لم تكتمل المعالجة: ⁨${message}⁩',
+			'admin.regles.titre' => 'القواعد',
+			'admin.regles.intro' => 'القيم الافتراضية للمنصة كلها. يُوضع الاستثناء لملف محدد من «العمليات» > «القواعد الفردية»، وأبدًا من هنا.',
+			'admin.regles.erreur' => 'تعذّرت قراءة القواعد. أعد المحاولة بعد لحظة.',
+			'admin.regles.erreurEcriture' => ({required Object message}) => 'لم يكتمل الحفظ: ⁨${message}⁩',
+			'admin.regles.valeurInvalide' => 'أدخل رقمًا صالحًا.',
+			'admin.regles.envoyer' => 'حفظ',
+			'admin.regles.champValeur' => 'القيمة',
+			'admin.regles.absenceSeuil' => 'حد الغياب',
+			'admin.regles.absenceSeuilDetail' => 'بعد هذا العدد من الدقائق دون الانضمام إلى الحصة، يُسجَّل الطالب غائبًا.',
+			'admin.regles.dureeSeance' => 'مدة الحصة',
+			'admin.regles.dureeSeanceDetail' => 'المدة الافتراضية للحصة، قبل أي استثناء فردي.',
+			'admin.regles.dureeMinimalePayee' => 'المدة الدنيا المدفوعة',
+			'admin.regles.dureeMinimalePayeeDetail' => 'دون هذه المدة، تبقى الحصة المختصرة مدفوعة كاملة.',
+			'admin.regles.pauseEntreSeances' => 'الاستراحة بين حصتين',
+			'admin.regles.pauseEntreSeancesDetail' => 'الوقت الأدنى المتروك للمعلم بين حصتين متتاليتين.',
+			'admin.regles.elevesParEnseignant' => 'الطلاب لكل معلم',
+			'admin.regles.elevesParEnseignantDetail' => 'العدد الأقصى للطلاب الذين يمكن لمعلم متابعتهم في آن واحد.',
+			'admin.regles.horizonAffectation' => 'أفق الإسناد',
+			'admin.regles.horizonAffectationDetail' => 'عدد الأسابيع مسبقًا التي يبحث فيها الإسناد عن معلم متاح.',
+			'admin.regles.ageCameraAuto' => 'العمر الأدنى للكاميرا التلقائية',
+			'admin.regles.ageCameraAutoDetail' => 'دون هذا العمر، يبقى تشغيل الكاميرا خاضعًا لموافقة وليّ الأمر.',
+			'admin.regles.ageInterfaceEnfant' => 'العمر الأقصى لواجهة الطفل',
+			'admin.regles.ageInterfaceEnfantDetail' => 'دون هذا العمر، ينتقل الملف إلى الواجهة المبسطة عند إنشائه.',
+			'admin.regles.appareilsParEleve' => 'الأجهزة لكل طالب',
+			'admin.regles.appareilsParEleveDetail' => 'عدد الأجهزة التي يمكن أن تكون نشطة لطالب في الوقت نفسه.',
+			'admin.regles.seancesSimultanees' => 'الحصص المتزامنة لكل ملف',
+			'admin.regles.seancesSimultaneesDetail' => 'عدد الحصص التي يمكن لملف واحد متابعتها في الوقت نفسه.',
+			'admin.regles.uniteMinutes' => ({required Object n}) => '⁨${n}⁩ دقيقة',
+			'admin.regles.uniteSemaines' => ({required Object n}) => '⁨${n}⁩ أسبوع',
+			'admin.regles.uniteNombre' => ({required Object n}) => '⁨${n}⁩',
+			'admin.fonctionnalites.titre' => 'الوظائف',
+			'admin.fonctionnalites.intro' => 'الوظائف التي تغيّر سلوك المنصة كلها.',
+			'admin.fonctionnalites.erreur' => 'تعذّرت قراءة الوظائف. أعد المحاولة بعد لحظة.',
+			'admin.fonctionnalites.erreurEcriture' => ({required Object message}) => 'لم يكتمل الحفظ: ⁨${message}⁩',
+			'admin.fonctionnalites.valeurInvalide' => 'أدخل رقمًا صالحًا.',
+			'admin.fonctionnalites.envoyer' => 'حفظ',
+			'admin.fonctionnalites.champValeur' => 'القيمة',
+			'admin.fonctionnalites.multiParticipants' => 'حصص متعددة المشاركين',
+			'admin.fonctionnalites.multiParticipantsDetail' => 'يسمح بعدة طلاب في حصة الفيديو نفسها.',
+			'admin.fonctionnalites.participantsMax' => 'الحد الأقصى للمشاركين',
+			'admin.fonctionnalites.participantsMaxDetail' => 'عدد المشاركين المسموح به حين تكون الحصص متعددة المشاركين مفعَّلة.',
+			'admin.fonctionnalites.uniteNombre' => ({required Object n}) => '⁨${n}⁩',
+			'admin.conservationDonnees.titre' => 'الاحتفاظ بالبيانات',
+			'admin.conservationDonnees.intro' => 'المدة التي تبقى فيها هذه العناصر متاحة قبل حذفها التلقائي.',
+			'admin.conservationDonnees.erreur' => 'تعذّرت قراءة مدد الاحتفاظ. أعد المحاولة بعد لحظة.',
+			'admin.conservationDonnees.erreurEcriture' => ({required Object message}) => 'لم يكتمل الحفظ: ⁨${message}⁩',
+			'admin.conservationDonnees.valeurInvalide' => 'أدخل رقمًا صالحًا.',
+			'admin.conservationDonnees.envoyer' => 'حفظ',
+			'admin.conservationDonnees.champValeur' => 'القيمة',
+			'admin.conservationDonnees.enregistrements' => 'تسجيلات الحصص',
+			'admin.conservationDonnees.enregistrementsDetail' => 'عدد الأيام التي يبقى فيها تسجيل الحصة متاحًا.',
+			'admin.conservationDonnees.documentsIdentite' => 'وثائق الهوية',
+			'admin.conservationDonnees.documentsIdentiteDetail' => 'عدد الأيام التي تبقى فيها وثيقة الهوية المودعة متاحة قبل حذفها.',
+			'admin.conservationDonnees.uniteJours' => ({required Object n}) => '⁨${n}⁩ ي',
+			'admin.politiqueRevueKyc.titre' => 'سياسة الجنس في مراجعة الهوية',
+			'admin.politiqueRevueKyc.libelle' => 'حصر مراجعة الهوية حسب الجنس',
+			'admin.politiqueRevueKyc.aide' => 'حين تُعطَّل هذه القاعدة، يمكن لكل عضو مخوَّل بمراجعة الملفات معالجة ملفات نطاقه، أيًا كان جنسه.',
+			'admin.politiqueRevueKyc.echecEnregistrement' => _root.admin.groupes.observationErreur,
+			'admin.evaluations.titre' => 'التقييمات',
+			'admin.evaluations.intro' => 'ما هو مقرر، وما أُجري، والشهادات المحصَّلة.',
+			'admin.evaluations.erreur' => 'تعذّرت قراءة التقييمات. أعد المحاولة بعد لحظة.',
+			'admin.evaluations.aucune' => 'لا تقييم',
+			'admin.evaluations.aucuneDetail' => 'برمج تقييمًا أول لطالب حُدِّد مستواه بالفعل.',
+			'admin.evaluations.aucuneAvecCeFiltre' => 'لا تقييم بهذا المعيار',
+			'admin.evaluations.aucuneAvecCeFiltreDetail' => 'غيّر المعيار لترى التقييمات الأخرى.',
+			'admin.evaluations.filtreToutes' => 'الكل',
+			'admin.evaluations.filtrePlanifiees' => 'مبرمجة',
+			'admin.evaluations.filtreRealisees' => 'منجزة',
+			'admin.evaluations.filtreAnnulees' => 'ملغاة',
+			'admin.evaluations.filtreCertifications' => 'الشهادات',
+			'admin.evaluations.colonneEleve' => 'الطالب',
+			'admin.evaluations.colonneNiveau' => 'المستوى',
+			'admin.evaluations.colonneType' => 'النوع',
+			'admin.evaluations.colonneDatePrevue' => 'مقرر في',
+			'admin.evaluations.colonneStatut' => 'الحالة',
+			'admin.evaluations.colonneResultat' => 'النتيجة',
+			'admin.evaluations.typeInitiale' => 'أولي',
+			'admin.evaluations.typePeriodique' => 'دوري',
+			'admin.evaluations.typeReevaluation' => 'إعادة تقييم',
+			'admin.evaluations.typeCertification' => 'شهادة',
+			'admin.evaluations.statutPlanifiee' => 'مبرمج',
+			'admin.evaluations.statutRealisee' => 'منجز',
+			'admin.evaluations.statutAnnulee' => 'ملغى',
+			'admin.evaluations.resultatReussi' => 'ناجح',
+			'admin.evaluations.resultatEchec' => 'راسب',
+			'admin.evaluations.resultatARevoir' => 'للمراجعة',
+			'admin.evaluations.planifier' => 'برمجة تقييم',
+			'admin.evaluations.planifierTitre' => 'برمجة تقييم',
+			'admin.evaluations.champEleveId' => 'معرّف الطالب',
+			'admin.evaluations.champNiveau' => 'المستوى المقيَّم',
+			'admin.evaluations.champType' => 'النوع',
+			'admin.evaluations.champDatePrevue' => 'التاريخ المقرر (يوم/شهر/سنة)',
+			'admin.evaluations.planifierEnvoyer' => 'برمجة',
+			'admin.evaluations.planifierErreur' => ({required Object message}) => 'لم تكتمل البرمجة: ⁨${message}⁩',
+			'admin.evaluations.actionEnregistrerResultat' => 'حفظ النتيجة',
+			'admin.evaluations.actionAnnuler' => 'إلغاء التقييم',
+			'admin.evaluations.resultatTitre' => ({required Object eleve}) => 'نتيجة ⁨${eleve}⁩',
+			'admin.evaluations.champNotes' => 'ملاحظات (اختيارية)',
+			'admin.evaluations.resultatEnvoyer' => 'حفظ',
+			'admin.evaluations.resultatErreur' => ({required Object message}) => 'لم يكتمل الحفظ: ⁨${message}⁩',
+			'admin.evaluations.annulerTitre' => ({required Object eleve}) => 'إلغاء تقييم ⁨${eleve}⁩',
+			'admin.evaluations.annulerEnvoyer' => 'إلغاء',
+			'admin.evaluations.annulerErreur' => ({required Object message}) => 'لم يكتمل الإلغاء: ⁨${message}⁩',
+			'admin.evaluations.champMotif' => 'السبب',
+			'admin.evaluations.motifRequis' => 'السبب مطلوب، ويُدوَّن في سجل التدقيق.',
+			'admin.evaluations.journalisation' => 'تُدوَّن كل برمجة ونتيجة وإلغاء في سجل التدقيق.',
+			'admin.progression.titre' => 'التقدم',
+			'admin.progression.intro' => 'المستوى الحالي لكل طالب، وفصله، والعوائق أو الاستثناءات الجارية.',
+			'admin.progression.erreur' => 'تعذّرت قراءة التقدم. أعد المحاولة بعد لحظة.',
+			'admin.progression.aucun' => 'لا طالب نشط',
+			'admin.progression.aucunDetail' => 'سيظهر الطلاب هنا بمجرد أول تحديد لمستواهم.',
+			'admin.progression.colonneEleve' => 'الطالب',
+			'admin.progression.colonneGroupe' => 'الفصل',
+			'admin.progression.colonneNiveau' => 'المستوى',
+			'admin.progression.colonneDepuis' => 'منذ',
+			'admin.progression.colonneException' => 'الاستثناء',
+			'admin.progression.sansGroupe' => 'دون فصل',
+			'admin.progression.sansNiveau' => 'لم يُحدَّد مستواه',
+			'admin.progression.filtreTousCycles' => 'كل المراحل',
+			'admin.progression.depuisAujourdhui' => 'اليوم',
+			'admin.progression.depuisUnJour' => 'يوم واحد',
+			'admin.progression.depuisJours' => ({required Object jours}) => '⁨${jours}⁩ أيام',
+			'admin.progression.typeBlocage' => 'عائق',
+			'admin.progression.typeDerogation' => 'استثناء',
+			'admin.progression.actionPoserBlocage' => 'وضع عائق',
+			'admin.progression.actionPoserDerogation' => 'وضع استثناء',
+			'admin.progression.actionCloreException' => 'إغلاق الاستثناء',
+			'admin.progression.actionPromouvoir' => 'تغيير المستوى',
+			'admin.progression.poserExceptionTitre' => ({required Object type, required Object eleve}) => '⁨${type}⁩ لـ⁨${eleve}⁩',
+			'admin.progression.poserExceptionEnvoyer' => 'وضع الاستثناء',
+			'admin.progression.poserExceptionErreur' => ({required Object message}) => 'لم يكتمل الوضع: ⁨${message}⁩',
+			'admin.progression.clorerExceptionTitre' => ({required Object eleve}) => 'إغلاق استثناء ⁨${eleve}⁩',
+			'admin.progression.clorerExceptionEnvoyer' => 'إغلاق',
+			'admin.progression.clorerExceptionErreur' => ({required Object message}) => 'لم يكتمل الإغلاق: ⁨${message}⁩',
+			'admin.progression.promouvoirTitre' => ({required Object eleve}) => 'تغيير مستوى ⁨${eleve}⁩',
+			'admin.progression.promouvoirChampNiveau' => 'المستوى الجديد',
+			'admin.progression.promouvoirEnvoyer' => 'حفظ',
+			'admin.progression.promouvoirErreur' => ({required Object message}) => 'لم يكتمل التغيير: ⁨${message}⁩',
+			'admin.progression.champMotif' => 'السبب',
+			'admin.progression.motifRequis' => 'السبب مطلوب، ويُدوَّن في سجل التدقيق.',
+			'admin.progression.journalisation' => 'يُدوَّن كل استثناء موضوع ومغلق، وكل تغيير مستوى، في سجل التدقيق.',
+			'admin.programmes.titre' => 'المناهج',
+			'admin.programmes.intro' => 'منهج Rewayah، بإصدارات: الإصدار المنشور لا يُعدَّل، وكل تطور أكاديمي ينشئ إصدارًا جديدًا.',
+			'admin.programmes.aucuneVersion' => 'لا إصدار من المنهج',
+			'admin.programmes.aucuneVersionDetail' => 'أنشئ الإصدار الأول، كمسودة، لتبدأ بإضافة المستويات إليه.',
+			'admin.programmes.erreur' => 'تعذّرت قراءة المنهج. أعد المحاولة بعد لحظة.',
+			'admin.programmes.statutBrouillon' => 'مسودة',
+			'admin.programmes.statutPubliee' => 'منشور',
+			'admin.programmes.statutArchivee' => 'مؤرشف',
+			'admin.programmes.versionNumero' => ({required Object numero}) => 'الإصدار ⁨${numero}⁩',
+			'admin.programmes.niveauxSur' => ({required Object nombre}) => '⁨${nombre}⁩ مستويات',
+			'admin.programmes.creerVersion' => 'إنشاء إصدار',
+			'admin.programmes.creerVersionVide' => 'إنشاء إصدار فارغ',
+			'admin.programmes.enregistrerVersion' => 'حفظ الإصدار',
+			'admin.programmes.creerVersionDepuisPubliee' => 'إنشاء إصدار جديد انطلاقًا من هذا',
+			'admin.programmes.creerVersionErreur' => ({required Object message}) => 'لم يكتمل الإنشاء: ⁨${message}⁩',
+			'admin.programmes.niveauxTitre' => 'المستويات',
+			'admin.programmes.niveauAucun' => 'لا مستوى في هذا الإصدار',
+			'admin.programmes.niveauAucunDetail' => 'أضف مستوى أول لتبدأ بتكوين هذا الإصدار.',
+			'admin.programmes.codeTechnique' => ({required Object code}) => 'الرمز: ⁨${code}⁩',
+			'admin.programmes.ajouterNiveau' => 'إضافة مستوى',
+			'admin.programmes.ajouterNiveauTitre' => ({required Object version}) => 'إضافة مستوى إلى ⁨${version}⁩',
+			'admin.programmes.ajouterNiveauEnvoyer' => 'إضافة',
+			'admin.programmes.ajouterNiveauErreur' => ({required Object message}) => 'لم تكتمل الإضافة: ⁨${message}⁩',
+			'admin.programmes.modifierNiveau' => 'تعديل',
+			'admin.programmes.modifierNiveauTitre' => ({required Object nom}) => 'تعديل ⁨${nom}⁩',
+			'admin.programmes.modifierNiveauEnvoyer' => 'حفظ',
+			'admin.programmes.modifierNiveauErreur' => ({required Object message}) => 'لم يكتمل التعديل: ⁨${message}⁩',
+			'admin.programmes.supprimerNiveau' => 'حذف',
+			'admin.programmes.supprimerNiveauTitre' => ({required Object nom}) => 'حذف ⁨${nom}⁩',
+			'admin.programmes.supprimerNiveauEnvoyer' => 'حذف',
+			'admin.programmes.supprimerNiveauErreur' => ({required Object message}) => 'لم يكتمل الحذف: ⁨${message}⁩',
+			'admin.programmes.publierVersion' => 'نشر الإصدار',
+			'admin.programmes.publierVersionTitre' => ({required Object version}) => 'نشر ⁨${version}⁩',
+			'admin.programmes.publierVersionDetail' => 'بعد نشره، لا يمكن تعديل هذا الإصدار. كل تطور أكاديمي سينشئ إصدارًا جديدًا.',
+			'admin.programmes.publierVersionEnvoyer' => 'نشر',
+			'admin.programmes.publierVersionErreur' => ({required Object message}) => 'لم يكتمل النشر: ⁨${message}⁩',
+			'admin.programmes.champCodeTechnique' => 'الرمز التقني (استخدام داخلي، لا يُعرض للطالب أبدًا)',
+			'admin.programmes.champNomHumain' => 'الاسم المعروض',
+			'admin.programmes.champCycle' => 'المرحلة',
+			'admin.programmes.champOrdre' => 'الترتيب',
+			'admin.programmes.champDescription' => 'الوصف (اختياري)',
+			'admin.programmes.champMotif' => 'السبب',
+			'admin.programmes.motifRequis' => 'السبب مطلوب، ويُدوَّن في سجل التدقيق.',
+			'admin.programmes.journalisation' => 'يُدوَّن كل إنشاء وتعديل وحذف ونشر في سجل التدقيق.',
+			'admin.journal.titre' => 'السجل',
+			'admin.journal.chaineIntacte' => 'السجل سليم',
+			'admin.journal.chaineIntacteDetail' => ({required Object nombre}) => 'أُعيدت قراءة ⁨${nombre}⁩ مدخلًا واحدًا واحدًا: لم يُعدَّل أي منها ولم يُحذف منذ كتابته.',
+			'admin.journal.chaineRompue' => 'السجل معدَّل',
+			'admin.journal.chaineRompueUne' => ({required Object entree}) => 'مدخل لم يعد يطابق بصمته، رقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.',
+			'admin.journal.chaineRompueDetail' => ({required Object nombre, required Object entree}) => '⁨${nombre}⁩ مدخلات لم تعد تطابق بصمتها، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.',
+			'admin.journal.chaineInconnue' => 'السلامة غير معروفة',
+			'admin.journal.chaineInconnueDetail' => 'لم يكتمل التحقق. تبقى المدخلات أدناه مقروءة، لكن لا شيء يضمن الآن أنها كاملة.',
+			'admin.journal.chaineEnCours' => 'جارٍ التحقق',
+			'admin.journal.chaineEnCoursDetail' => 'إعادة قراءة بصمة كل مدخل.',
+			'admin.journal.periodeSemaine' => 'آخر 7 أيام',
+			'admin.journal.periodeMois' => 'آخر 30 يومًا',
+			'admin.journal.periodeTout' => 'منذ البداية',
+			'admin.journal.tousTypes' => 'كل الأحداث',
+			'admin.journal.tousActeurs' => 'الجميع',
+			'admin.journal.colonneQuand' => 'متى',
+			'admin.journal.colonneQui' => 'من',
+			'admin.journal.colonneRole' => 'بأي صفة',
+			'admin.journal.colonneQuoi' => 'ما الذي فُعل',
+			'admin.journal.colonneCible' => 'على ماذا',
+			'admin.journal.colonneDetail' => 'التفاصيل',
+			'admin.journal.horodatage' => ({required Object date, required Object heure}) => '⁨${date}⁩ الساعة ⁨${heure}⁩',
+			'admin.journal.acteurSysteme' => 'النظام',
+			'admin.journal.acteurInconnu' => 'حساب محذوف',
+			'admin.journal.roleAdmin' => 'الإدارة',
+			'admin.journal.roleEnseignant' => 'معلم',
+			'admin.journal.roleTuteur' => 'وليّ أمر',
+			'admin.journal.roleEleve' => 'طالب',
+			'admin.journal.roleControleur' => 'مراقب',
+			'admin.journal.roleComptable' => 'محاسب',
+			'admin.journal.roleAucun' => 'خارج الجلسة',
+			'admin.journal.evtKycLu' => 'اطُّلع على ملف الهوية',
+			'admin.journal.evtKycTranche' => 'حُسم ملف الهوية',
+			'admin.journal.evtProfilCree' => 'أُنشئ ملف',
+			'admin.journal.evtProfilEnfantCree' => 'أُنشئ ملف طفل',
+			'admin.journal.evtCodeCree' => 'أُنشئ رمز ربط',
+			'admin.journal.evtAppareilAppaire' => 'رُبط جهاز',
+			'admin.journal.evtAppareilRevoque' => 'أُلغي جهاز',
+			'admin.journal.evtPedagogie' => 'عُدِّلت الإعدادات التعليمية',
+			'admin.journal.evtAffectationPrise' => 'قبل معلم طالبًا',
+			'admin.journal.evtAffectationAttribuee' => 'أسندت الإدارة طالبًا',
+			'admin.journal.evtDemandeCreee' => 'قُدِّم طلب',
+			'admin.journal.evtDemandeTranchee' => 'حُسم طلب',
+			'admin.journal.evtReglePosee' => 'وُضعت قاعدة',
+			'admin.journal.evtRegleClose' => 'أُغلقت قاعدة',
+			'admin.journal.filtreEvenement' => 'الحدث',
+			'admin.journal.filtreActeur' => 'الفاعل',
+			'admin.journal.evtAgentJetonEmis' => 'صدر وصول وكيل آلي',
+			'admin.journal.evtAgentJetonRevoque' => 'أُلغي وصول وكيل آلي',
+			'admin.journal.evtAgentSessionOuverte' => 'فُتحت جلسة وكيل آلي',
+			'admin.journal.evtObservationControleur' => 'بدأت زيارة مراقبة',
+			'admin.journal.evtJetonVideo' => 'سُمح بالدخول إلى القاعة',
+			'admin.journal.vide' => 'لا حدث مسجَّل',
+			'admin.journal.videDetail' => 'ستُدوَّن هنا كل قراءة لملف، وكل قرار، وكل إسناد.',
+			'admin.journal.videFiltre' => 'لا حدث مطابق',
+			'admin.journal.videFiltreDetail' => 'وسّع الفترة، أو خفّف أحد المعايير.',
+			'admin.journal.effacerFiltres' => 'مسح المعايير',
+			'admin.journal.erreur' => 'تعذّرت قراءة السجل. أعد المحاولة بعد لحظة.',
+			'admin.journal.erreurSuite' => 'تعذّرت قراءة المدخلات الأقدم.',
+			'admin.journal.chargerSuite' => 'تحميل المدخلات الأقدم',
+			'admin.journal.fin' => 'وصلت إلى أول مدخل في السجل.',
+			'admin.journal.evenements.observationEntree' => 'بدأت زيارة متابعة',
+			'admin.journal.evenements.observationSortie' => 'انتهت زيارة متابعة',
+			'admin.journal.evenements.observationPolitiqueGroupeModifiee' => 'عُدِّلت قواعد متابعة الفصل',
+			'admin.observations.titre' => 'المتابعات',
+			'admin.observations.titrePage' => 'سجل المتابعات',
+			'admin.observations.sousTitre' => 'الإدارة',
+			'admin.observations.recherche' => 'البحث عن وليّ أمر أو طالب',
+			'admin.observations.rechercheCourte' => 'أدخل حرفين على الأقل.',
+			'admin.observations.rechercheAucune' => 'لا وليّ أمر ولا طالب بهذا الاسم.',
+			'admin.observations.rechercheErreur' => 'لم يكتمل البحث. أعد المحاولة.',
+			'admin.observations.roleTuteur' => 'وليّ أمر',
+			'admin.observations.roleEleve' => 'طالب',
+			'admin.observations.filtreTuteur' => ({required Object nom}) => 'وليّ الأمر: ⁨${nom}⁩',
+			'admin.observations.filtreEleve' => ({required Object nom}) => 'الطالب: ⁨${nom}⁩',
+			'admin.observations.retirerFiltre' => ({required Object filtre}) => 'إزالة المعيار ⁨${filtre}⁩',
+			'admin.observations.classe' => 'الفصل',
+			'admin.observations.toutesClasses' => 'كل الفصول',
+			'admin.observations.periode' => 'الفترة',
+			'admin.observations.statut' => 'الحالة',
+			'admin.observations.tousStatuts' => 'كل الحالات',
+			'admin.observations.colonneDate' => 'التاريخ',
+			'admin.observations.colonneTuteur' => 'وليّ الأمر',
+			'admin.observations.colonneEleve' => 'الطالب',
+			'admin.observations.colonneClasse' => 'الفصل',
+			'admin.observations.colonneEntree' => 'الدخول',
+			'admin.observations.colonneSortie' => 'الخروج',
+			'admin.observations.colonneDuree' => 'المدة',
+			'admin.observations.colonneStatut' => 'الحالة',
+			'admin.observations.terminee' => 'منتهية',
+			'admin.observations.ouverte' => 'الخروج غير مسجَّل',
+			'admin.observations.sortieAbsente' => 'غير مسجَّل',
+			'admin.observations.dureeNonConfirmee' => 'غير مؤكَّدة',
+			'admin.observations.nomInconnu' => 'الاسم غير متاح',
+			'admin.observations.classeInconnue' => 'الفصل غير متاح',
+			'admin.observations.plage' => ({required Object entree, required Object sortie}) => '⁨${entree}⁩ - ⁨${sortie}⁩',
+			'admin.observations.ligne' => ({required Object rang, required Object date, required Object tuteur, required Object eleve, required Object classe, required Object entree, required Object sortie, required Object duree, required Object statut}) => 'الزيارة ⁨${rang}⁩ في ⁨${date}⁩، ⁨${tuteur}⁩ لـ⁨${eleve}⁩، ⁨${classe}⁩، الدخول ⁨${entree}⁩، الخروج ⁨${sortie}⁩، المدة ⁨${duree}⁩، ⁨${statut}⁩',
+			'admin.observations.fuseau' => ({required Object decalage}) => 'الساعات معروضة بتوقيت هذا الجهاز (UTC⁨${decalage}⁩).',
+			'admin.observations.indisponibleTitre' => 'سجل المتابعات غير متاح',
+			'admin.observations.indisponiblePhrase' => 'قراءة زيارات المتابعة غير مفتوحة في التطبيق بعد.',
+			'admin.observations.videTitre' => 'لا زيارة مسجَّلة',
+			'admin.observations.videPhrase' => 'ستظهر هنا زيارات متابعة أولياء الأمور.',
+			'admin.observations.videFiltreTitre' => 'لا زيارة مطابقة',
+			'admin.observations.videFiltrePhrase' => 'وسّع الفترة أو أزل أحد المعايير.',
+			'admin.observations.effacerFiltres' => 'مسح المعايير',
+			'admin.observations.chargerSuite' => 'تحميل الزيارات الأقدم',
+			'admin.observations.erreurSuite' => 'تعذّرت قراءة الزيارات الأقدم.',
+			'admin.observations.fin' => 'كل الزيارات معروضة.',
+			'admin.comptes.titre' => 'الحسابات',
+			'admin.comptes.intro' => 'كل الأشخاص المسجلين، والذين ينتظرون قرارًا أولًا. المعلم الذي لم يودع وثيقة هويته يبقى ظاهرًا هنا: إنه المكان الوحيد الذي يُظهره.',
+			'admin.comptes.attenteUneAujourdhui' => 'شخص واحد ينتظر قرارًا، مسجَّل اليوم.',
+			'admin.comptes.attenteUneUnJour' => 'شخص واحد ينتظر قرارًا منذ يوم.',
+			'admin.comptes.attenteUne' => ({required Object jours}) => 'شخص واحد ينتظر قرارًا منذ ⁨${jours}⁩ أيام.',
+			'admin.comptes.attentePlusieurs' => ({required Object nombre}) => '⁨${nombre}⁩ أشخاص ينتظرون قرارًا.',
+			'admin.comptes.filtreTousEtats' => 'الكل',
+			'admin.comptes.filtreTousRoles' => 'كل الأدوار',
+			'admin.comptes.filtreRole' => 'الدور',
+			'admin.comptes.aucunAvecCeFiltre' => 'لا حساب بهذا المعيار',
+			'admin.comptes.aucunAvecCeFiltreDetail' => 'أزل أحد المعايير لتوسيع القائمة.',
+			'admin.comptes.erreur' => 'تعذّرت قراءة الحسابات. أعد المحاولة بعد لحظة.',
+			'admin.comptes.colonnePersonne' => 'الشخص',
+			'admin.comptes.colonneIdentifiant' => 'المعرّف',
+			'admin.comptes.colonneRole' => 'الدور',
+			'admin.comptes.colonneEtat' => 'الحالة',
+			'admin.comptes.colonnePiece' => 'وثيقة الهوية',
+			'admin.comptes.colonneAttente' => 'مسجَّل منذ',
+			'admin.comptes.colonneContrats' => 'العقود',
+			'admin.comptes.etatEnAttente' => 'قيد الانتظار',
+			'admin.comptes.etatActif' => 'نشط',
+			'admin.comptes.etatProvisoire' => 'مؤقت',
+			'admin.comptes.etatSuspendu' => 'موقوف',
+			'admin.comptes.etatInconnu' => 'حالة غير معروفة',
+			'admin.comptes.roleAdmin' => 'الإدارة',
+			'admin.comptes.roleComptable' => 'محاسب',
+			'admin.comptes.roleControleur' => 'مراقب',
+			'admin.comptes.roleEnseignant' => 'معلم',
+			'admin.comptes.roleTuteur' => 'وليّ أمر',
+			'admin.comptes.roleEleve' => 'طالب',
+			'admin.comptes.roleInconnu' => 'دور غير معروف',
+			'admin.comptes.pieceAucune' => 'لا وثيقة مودَعة',
+			'admin.comptes.pieceAVerifier' => 'للتحقق',
+			'admin.comptes.pieceValidee' => 'معتمَدة',
+			'admin.comptes.pieceRefusee' => 'مرفوضة',
+			'admin.comptes.pieceNonVisible' => 'خارج صلاحيتك',
+			'admin.comptes.pieceSansObjet' => 'لا ينطبق',
+			'admin.comptes.attendAujourdhui' => 'اليوم',
+			'admin.comptes.attendUnJour' => 'يوم واحد',
+			'admin.comptes.attendJours' => ({required Object jours}) => '⁨${jours}⁩ أيام',
+			'admin.agents.titre' => 'وصول الوكلاء الآليين',
+			'admin.agents.intro' => 'يسمح الرمز لوكيل آلي بفتح التطبيق وقراءة ما يقرؤه شخص فيه. لا يستطيع كتابة شيء ولا إلغاء شيء ولا تعديل شيء: قاعدة البيانات تمنعه، لا الواجهة.',
+			'admin.agents.emettre' => 'إصدار رمز',
+			'admin.agents.libelle' => 'الغرض من هذا الرمز',
+			'admin.agents.libelleAide' => 'إلزامي. الرمز دون اسم رمز لا يجرؤ أحد على إلغائه.',
+			'admin.agents.libelleExemple' => 'مراجعة متابعة مريم',
+			'admin.agents.qui' => 'من يتابعه الوكيل',
+			'admin.agents.quiAide' => 'سيرى الوكيل شاشة هذا الشخص تمامًا، وسيكون مساره مساره.',
+			'admin.agents.quiVide' => 'اختيار شخص',
+			'admin.agents.chercher' => 'البحث عن اسم أو معرّف',
+			'admin.agents.duree' => 'لكم من الوقت',
+			'admin.agents.dureeHeure' => ({required Object nombre}) => '⁨${nombre}⁩ س',
+			'admin.agents.dureePlafond' => 'أربع وعشرون ساعة على الأكثر، وقاعدة البيانات تتحقق من ذلك بنفسها.',
+			'admin.agents.identite' => 'الأسماء',
+			'admin.agents.identiteMasquee' => 'مخفية',
+			'admin.agents.identiteMasqueeDetail' => 'يقرأ الوكيل المعرّفات (ELV-0042) بدل الأسماء. قاعدة البيانات هي التي تستبدلها: الاسم لا يخرج.',
+			'admin.agents.identiteVisible' => 'ظاهرة',
+			'admin.agents.identiteVisibleDetail' => 'يقرأ الوكيل الأسماء، كما يراها الشخص المتابَع.',
+			'admin.agents.pourra' => 'سيستطيع',
+			'admin.agents.pourraDetail' => 'فتح التطبيق والتنقل فيه وقراءة كل ما يقرؤه هذا الشخص.',
+			'admin.agents.nePourraPas' => 'لن يستطيع',
+			'admin.agents.nePourraPasDetail' => 'كتابة أي شيء، ولا رؤية وثيقة هوية، ولا جهاز، ولا سجل التدقيق، ولا الخروج من نطاق هذا الشخص.',
+			'admin.agents.emissionEnCours' => 'جارٍ الإصدار',
+			'admin.agents.emis' => 'صدر الرمز',
+			'admin.agents.emisDetail' => 'سلّم هذا الرابط للوكيل. لن يظهر بعد ذلك: لا هذه الشاشة ولا قاعدة البيانات تستطيعان استعادته.',
+			'admin.agents.copier' => 'نسخ الرابط',
+			'admin.agents.copie' => 'نُسخ الرابط',
+			'admin.agents.termine' => 'نسخت الرابط',
+			'admin.agents.erreurEmission' => 'تعذّر إصدار الرمز. أعد المحاولة بعد لحظة.',
+			'admin.agents.colonneLibelle' => 'الرمز',
+			'admin.agents.colonneQui' => 'يتابع',
+			'admin.agents.colonneParcours' => 'المسار',
+			'admin.agents.colonneIdentite' => 'الأسماء',
+			'admin.agents.colonneExpire' => 'حتى',
+			'admin.agents.colonneUsage' => 'مرات الفتح',
+			'admin.agents.colonneEtat' => 'الحالة',
+			'admin.agents.parcoursEleve' => 'طالب',
+			'admin.agents.parcoursTuteur' => 'وليّ أمر',
+			'admin.agents.parcoursEnseignant' => 'معلم',
+			'admin.agents.parcoursControleur' => 'مراقبة الجودة',
+			'admin.agents.parcoursAdmin' => 'الإدارة',
+			'admin.agents.parcoursComptable' => 'محاسب',
+			'admin.agents.parcoursInconnu' => 'مسار غير معروف',
+			'admin.agents.etatActif' => 'نشط',
+			'admin.agents.etatRevoque' => 'ملغى',
+			'admin.agents.etatExpire' => 'منتهي الصلاحية',
+			'admin.agents.jamaisServi' => 'لم يُستخدم قط',
+			'admin.agents.usage' => ({required Object nombre, required Object quand}) => '⁨${nombre}⁩ مرات، آخرها ⁨${quand}⁩',
+			'admin.agents.revoquer' => 'إلغاء',
+			'admin.agents.revoquerTitre' => 'إلغاء هذا الرمز؟',
+			'admin.agents.revoquerDetail' => 'سيفقد الوكيل الوصول عند طلبه التالي. هذا نهائي: الرمز الملغى لا يُعاد تفعيله.',
+			'admin.agents.revoquerConfirmer' => 'إلغاء',
+			'admin.agents.annuler' => 'تراجع',
+			'admin.agents.revoque' => 'أُلغي الرمز',
+			'admin.agents.erreurRevocation' => 'لم يكتمل الإلغاء. أعد المحاولة.',
+			'admin.agents.vide' => 'لا رمز متابعة',
+			'admin.agents.videDetail' => 'لا وكيل آلي لديه وصول إلى التطبيق الآن.',
+			'admin.agents.erreur' => 'تعذّرت قراءة قائمة الرموز.',
+			'admin.notifications.titre' => 'الإشعارات',
+			'admin.notifications.vide' => 'لا إشعارات',
+			'admin.notifications.videDetail' => 'لا شيء يُذكر الآن.',
 			_ => null,
 		};
 	}
