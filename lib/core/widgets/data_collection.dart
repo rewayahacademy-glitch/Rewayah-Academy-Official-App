@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
@@ -398,7 +399,9 @@ class _Cellule<T> extends StatelessWidget {
     return Semantics(
       label: '${colonne.titre} : ${colonne.texte(ligne)}',
       excludeSemantics: true,
-      child: Text(colonne.texte(ligne), style: style),
+      // COUPE-MOTS-4 : un mot plus long que sa colonne (un identifiant)
+      // reduit son echelle au lieu d'etre coupe.
+      child: TexteSansCoupure(colonne.texte(ligne), style: style),
     );
   }
 }
@@ -454,14 +457,14 @@ class _Carte<T> extends StatelessWidget {
           children: <Widget>[
             if (titre != null) ...<Widget>[
               titre.rendu?.call(context, ligne) ??
-                  Text(
+                  TexteSansCoupure(
                     titre.texte(ligne),
                     style: textes.titleMedium ?? const TextStyle(),
                   ),
               Ecart.vSm,
             ],
             if (resume.isNotEmpty)
-              Text(
+              TexteSansCoupure(
                 resume,
                 style: palette.inkMuted.applyTo(
                   textes.bodySmall ?? const TextStyle(),
@@ -472,7 +475,7 @@ class _Carte<T> extends StatelessWidget {
                   colonne.texte(ligne).isNotEmpty) ...<Widget>[
                 Ecart.vSm,
                 colonne.rendu?.call(context, ligne) ??
-                    Text(
+                    TexteSansCoupure(
                       colonne.texte(ligne),
                       style: palette.inkMuted.applyTo(
                         AppTypography.tabulaire(

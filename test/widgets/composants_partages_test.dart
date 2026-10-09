@@ -679,7 +679,7 @@ void main() {
       unawaited(
         ConfirmDestructive.demander(
           ctx,
-          question: 'Retirer cet appareil ?',
+          question: 'Retirer cet appareil\u00A0?',
           consequence: 'Il devra etre associe de nouveau.',
           libelleConfirmer: 'Retirer l appareil',
         ).then((bool r) => reponse = r),

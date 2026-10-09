@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../mouvement/mouvement.dart';
@@ -183,22 +184,25 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
     final double carte = (largeur - (n - 1) * AppSpacing.lg) / n;
     // Le filet de la carte (1 de chaque cote) compte aussi.
     final double contenu = carte - 2 * AppSpacing.xl - 2;
-    final TextStyle style =
-        Theme.of(context).textTheme.titleMedium ?? const TextStyle();
+    final TextTheme textes = Theme.of(context).textTheme;
     final TextScaler echelle = MediaQuery.textScalerOf(context);
-    final TextDirection sens = Directionality.of(context);
+    // COUPE-MOTS-4 : la description et la raison d'indisponibilite comptent
+    // aussi (« obser / vation » dans une description).
     for (final OptionChoix option in widget.options) {
-      for (final String mot in option.libelle.split(RegExp(r'\s+'))) {
-        if (mot.isEmpty) continue;
-        final TextPainter mesure = TextPainter(
-          text: TextSpan(text: mot, style: style),
-          textDirection: sens,
-          textScaler: echelle,
-          maxLines: 1,
-        )..layout();
-        final double l = mesure.width;
-        mesure.dispose();
-        if (l > contenu) return false;
+      for (final (String?, TextStyle?) e in <(String?, TextStyle?)>[
+        (option.libelle, textes.titleMedium),
+        (option.description, textes.bodyMedium),
+        (
+          option.disponible
+              ? null
+              : option.raisonIndisponible ?? t.commun.choix.indisponible,
+          textes.labelMedium,
+        ),
+      ]) {
+        if (e.$1 == null) continue;
+        if (largeurMotLePlusLong(context, e.$1!, e.$2, echelle) > contenu) {
+          return false;
+        }
       }
     }
     return true;
@@ -249,7 +253,7 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         if (widget.selectionMultiple) ...<Widget>[
-          Text(
+          TexteSansCoupure(
             t.choix.selectionMultiple,
             style: Theme.of(context).textTheme.bodySmall,
           ),
@@ -385,76 +389,7 @@ class _Carte extends StatelessWidget {
               child: ExcludeSemantics(
                 child: verticale
                     ? _contenuVertical(palette, paire, textes, styleSecondaire)
-                    : Row(
-                        children: <Widget>[
-                          if (icone != null) ...<Widget>[
-                            IconTheme(
-                              data: _disponible
-                                  ? IconThemeData(
-                                      color: paire.onBackground,
-                                      size: AppSpacing.xxl,
-                                    )
-                                  : palette.inkMuted.asIconTheme(
-                                      size: AppSpacing.xxl,
-                                    ),
-                              child: Icon(
-                                icone!.resoudre(selectionne: retenue),
-                              ),
-                            ),
-                            Ecart.hMd,
-                          ],
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Text(
-                                  libelle,
-                                  style: _disponible
-                                      ? paire.applyTo(
-                                          textes.titleMedium ??
-                                              const TextStyle(),
-                                        )
-                                      : palette.inkMuted.applyTo(
-                                          textes.titleMedium ??
-                                              const TextStyle(),
-                                        ),
-                                ),
-                                if (description != null) ...<Widget>[
-                                  Ecart.vXs,
-                                  Text(description!, style: styleSecondaire),
-                                ],
-                                if (raisonIndisponible != null) ...<Widget>[
-                                  Ecart.vSm,
-                                  Text(
-                                    raisonIndisponible!,
-                                    style: palette.inkMuted.applyTo(
-                                      textes.labelMedium ?? const TextStyle(),
-                                    ),
-                                  ),
-                                ],
-                              ],
-                            ),
-                          ),
-                          // Le radio ou la coche doublent la couleur : une selection qui
-                          // ne se lirait qu'a la teinte n'existerait pas pour un
-                          // daltonien.
-                          if (radio) ...<Widget>[
-                            Ecart.hMd,
-                            RadioChoix(
-                              retenue: retenue,
-                              disponible: _disponible,
-                            ),
-                          ] else if (retenue)
-                            IconTheme(
-                              data: IconThemeData(
-                                color: paire.onBackground,
-                                size: AppSpacing.xxl,
-                              ),
-                              child: Icon(AppIcons.succes.actif),
-                            ),
-                        ],
-                      ),
+                    : _contenuListe(palette, paire, textes, styleSecondaire),
               ),
             ),
       ),
@@ -463,6 +398,131 @@ class _Carte extends StatelessWidget {
 }
 
 extension on _Carte {
+  /// Le style du titre : celui de la paire, ou le ton doux si l'option est
+  /// indisponible.
+  TextStyle _styleTitre(AppPalette palette, AppColorPair paire, TextTheme t) =>
+      _disponible
+      ? paire.applyTo(t.titleMedium ?? const TextStyle())
+      : palette.inkMuted.applyTo(t.titleMedium ?? const TextStyle());
+
+  /// Les textes de la carte et leur style : titre, description, raison.
+  List<(String, TextStyle)> _textesStyles(
+    AppPalette palette,
+    AppColorPair paire,
+    TextTheme textes,
+    TextStyle styleSecondaire,
+  ) => <(String, TextStyle)>[
+    (libelle, _styleTitre(palette, paire, textes)),
+    if (description != null) (description!, styleSecondaire),
+    if (raisonIndisponible != null)
+      (
+        raisonIndisponible!,
+        palette.inkMuted.applyTo(textes.labelMedium ?? const TextStyle()),
+      ),
+  ];
+
+  /// Le contenu de la carte en liste : icone, textes, radio (ou coche).
+  ///
+  /// COUPE-MOTS-4 (decide par delegation le 09/10) : a 320 en texte double,
+  /// l'icone et le radio laissaient trop peu de place aux textes, et des
+  /// mots s'y coupaient (« nor / malement », « administ / ration »,
+  /// « Acc / essibilité »). Quand un mot d'un texte ne tient pas a cote
+  /// d'eux, a l'echelle de l'appareil, l'icone et le radio passent sur une
+  /// rangee au-dessus et les textes prennent toute la largeur de la carte.
+  /// Chaque texte passe par [TexteSansCoupure] : un mot qui ne tiendrait
+  /// toujours pas se reduit (echelle bornee) au lieu d'etre coupe.
+  Widget _contenuListe(
+    AppPalette palette,
+    AppColorPair paire,
+    TextTheme textes,
+    TextStyle styleSecondaire,
+  ) {
+    final List<(String, TextStyle)> aEcrire = _textesStyles(
+      palette,
+      paire,
+      textes,
+      styleSecondaire,
+    );
+    final Widget? symbole = icone == null
+        ? null
+        : IconTheme(
+            data: _disponible
+                ? IconThemeData(color: paire.onBackground, size: AppSpacing.xxl)
+                : palette.inkMuted.asIconTheme(size: AppSpacing.xxl),
+            child: Icon(icone!.resoudre(selectionne: retenue)),
+          );
+    // Le radio ou la coche doublent la couleur : une selection qui ne se
+    // lirait qu'a la teinte n'existerait pas pour un daltonien.
+    final Widget? indicateur = radio
+        ? RadioChoix(retenue: retenue, disponible: _disponible)
+        : retenue
+        ? IconTheme(
+            data: IconThemeData(
+              color: paire.onBackground,
+              size: AppSpacing.xxl,
+            ),
+            child: Icon(AppIcons.succes.actif),
+          )
+        : null;
+    final Widget colonne = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        for (final (int i, (String texte, TextStyle style))
+            in aEcrire.indexed) ...<Widget>[
+          if (i > 0) texte == raisonIndisponible ? Ecart.vSm : Ecart.vXs,
+          // Le titre garde un nom compose entier (« Abd al-Rahman B. ») :
+          // il ne passe pas a la ligne apres son trait d'union.
+          TexteSansCoupure(texte, style: style, nomsComposesEntiers: i == 0),
+        ],
+      ],
+    );
+    return LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints contraintes) {
+        // La place prise a cote des textes : l'icone et le radio, chacun
+        // avec son ecart. En selection multiple, la place de la coche est
+        // gardee meme decochee : la carte ne change pas de disposition
+        // quand on la coche.
+        final double cote =
+            (symbole == null ? 0 : AppSpacing.xxl + AppSpacing.md) +
+            AppSpacing.md +
+            AppSpacing.xxl;
+        final TextScaler echelle = MediaQuery.textScalerOf(contexte);
+        final double place = contraintes.maxWidth - cote;
+        final bool empile =
+            contraintes.maxWidth.isFinite &&
+            aEcrire.any(
+              ((String, TextStyle) e) =>
+                  largeurMotLePlusLong(contexte, e.$1, e.$2, echelle) > place,
+            );
+        if (!empile) {
+          return Row(
+            children: <Widget>[
+              if (symbole != null) ...<Widget>[symbole, Ecart.hMd],
+              Expanded(child: colonne),
+              if (indicateur != null) ...<Widget>[Ecart.hMd, indicateur],
+            ],
+          );
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                ?symbole,
+                const Spacer(),
+                indicateur ?? const SizedBox.square(dimension: AppSpacing.xxl),
+              ],
+            ),
+            Ecart.vSm,
+            colonne,
+          ],
+        );
+      },
+    );
+  }
+
   /// Le contenu de la carte cote a cote : radio ou coche en haut a droite,
   /// icone dans un disque puis titre, centres.
   ///
@@ -527,31 +587,20 @@ extension on _Carte {
                   ),
                   Ecart.vLg,
                 ],
-                Text(
-                  libelle,
-                  textAlign: TextAlign.center,
-                  style: _disponible
-                      ? paire.applyTo(textes.titleMedium ?? const TextStyle())
-                      : palette.inkMuted.applyTo(
-                          textes.titleMedium ?? const TextStyle(),
-                        ),
-                ),
-                if (description != null) ...<Widget>[
-                  Ecart.vXs,
-                  Text(
-                    description!,
+                for (final (int i, (String texte, TextStyle style))
+                    in _textesStyles(
+                      palette,
+                      paire,
+                      textes,
+                      styleSecondaire,
+                    ).indexed) ...<Widget>[
+                  if (i > 0)
+                    texte == raisonIndisponible ? Ecart.vSm : Ecart.vXs,
+                  TexteSansCoupure(
+                    texte,
+                    style: style,
                     textAlign: TextAlign.center,
-                    style: styleSecondaire,
-                  ),
-                ],
-                if (raisonIndisponible != null) ...<Widget>[
-                  Ecart.vSm,
-                  Text(
-                    raisonIndisponible!,
-                    textAlign: TextAlign.center,
-                    style: palette.inkMuted.applyTo(
-                      textes.labelMedium ?? const TextStyle(),
-                    ),
+                    nomsComposesEntiers: i == 0,
                   ),
                 ],
               ],

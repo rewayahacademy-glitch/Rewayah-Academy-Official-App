@@ -171,6 +171,51 @@ final RegExp motifTaille = RegExp(
   return (mesurees: mesurees, coupees: coupees);
 }
 
+/// COUPE-MOTS-4 : les ponctuations hautes (« ? ! : ; ») et les guillemets
+/// fermants rendus seuls en debut de ligne, et les guillemets ouvrants
+/// laisses seuls en fin de ligne, dans les paragraphes trouves sous [ou],
+/// sous la forme « texte : signe ». La typographie francaise les lie au mot
+/// voisin par une espace insecable ; une espace ordinaire les laisse partir
+/// a la ligne (« Pourquoi ce changement / ? »).
+List<String> ponctuationsIsolees(WidgetTester tester, Finder ou) {
+  final List<String> fautes = <String>[];
+  final Set<RenderParagraph> paragraphes = <RenderParagraph>{
+    ...tester.renderObjectList<RenderObject>(ou).expand(_paragraphesSous),
+  };
+  final RegExp blanc = RegExp(r'\s');
+  for (final RenderParagraph p in paragraphes) {
+    if (!p.hasSize || !p.attached) continue;
+    final String texte = p.text.toPlainText();
+    for (int i = 0; i < texte.length; i++) {
+      final String c = texte[i];
+      final bool avant = '?!:;»'.contains(c);
+      final bool apres = c == '«';
+      if (!avant && !apres) continue;
+      // Le voisin lie : le dernier caractere visible avant le signe, ou le
+      // premier apres le guillemet ouvrant.
+      int j = avant ? i - 1 : i + 1;
+      while (j >= 0 && j < texte.length && blanc.hasMatch(texte[j])) {
+        j += avant ? -1 : 1;
+      }
+      if (j < 0 || j >= texte.length || j == (avant ? i - 1 : i + 1)) {
+        continue;
+      }
+      final List<TextBox> boites = <TextBox>[
+        ...p.getBoxesForSelection(
+          TextSelection(baseOffset: i, extentOffset: i + 1),
+        ),
+        ...p.getBoxesForSelection(
+          TextSelection(baseOffset: j, extentOffset: j + 1),
+        ),
+      ];
+      if (_lignesDistinctes(boites) > 1) {
+        fautes.add('$texte : $c');
+      }
+    }
+  }
+  return fautes;
+}
+
 /// Le nombre de lignes occupees par [boites] : une boite appartient a une
 /// ligne deja vue quand son milieu vertical tombe dans la hauteur d'une
 /// boite de cette ligne ; sinon elle ouvre une nouvelle ligne.

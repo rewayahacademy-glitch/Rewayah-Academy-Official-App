@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/service_comptes.dart';
 import '../../core/domain/enums.dart';
+import '../../core/i18n/identifiant_insecable.dart';
 import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -338,14 +339,21 @@ class _Corps extends StatelessWidget {
                   titre: t.admin.comptes.colonnePersonne,
                   role: RoleColonne.identifiante,
                   flex: 2,
-                  texte: (CompteAdmin c) => c.libelle,
+                  // COUPE-MOTS-4 : sous masquage, le libelle est
+                  // l'identifiant, tenu sur une ligne comme dans sa colonne.
+                  texte: (CompteAdmin c) => c.libelle == c.identifiant
+                      ? identifiantInsecable(c.identifiant)
+                      : c.libelle,
                 ),
                 // Sous masquage, `libelle` **est** l'identifiant : la colonne
                 // dediee afficherait deux fois la meme valeur cote a cote.
                 if (identitesConnues)
                   ColonneDonnees<CompteAdmin>(
                     titre: t.admin.comptes.colonneIdentifiant,
-                    texte: (CompteAdmin c) => c.identifiant,
+                    // COUPE-MOTS-4 : « TEACHER-AS-000001 » ne se coupe plus
+                    // a son trait d'union.
+                    texte: (CompteAdmin c) =>
+                        identifiantInsecable(c.identifiant),
                   ),
                 ColonneDonnees<CompteAdmin>(
                   titre: t.admin.comptes.colonneRole,
