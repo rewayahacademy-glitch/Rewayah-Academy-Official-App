@@ -198,6 +198,11 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_offres_personnalisees.sql
 
+      # B-07 : profil autonome adulte du titulaire, idempotence et rôle guardian conservé.
+      - name: Scenarios du profil adulte titulaire (B-07)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b07_profil_titulaire.sql
+
   edge-r2:
     name: Fonctions Edge -- stockage R2 (Deno)
     if: github.event_name != 'pull_request' || github.base_ref == 'main' || github.base_ref == 'ccr-1b1bfa0b-m1kvkk'
