@@ -3,12 +3,19 @@
 -- Rejoué après toutes les migrations sur une base jetable.
 BEGIN;
 
+INSERT INTO public.households (id, timezone)
+SELECT ('f1480000-0000-0000-0000-' || lpad(g.n::text, 12, '0'))::uuid,
+       'Europe/Paris'
+FROM generate_series(1, 7) AS g(n);
+
 INSERT INTO public.profiles
-  (id, immutable_id, role, first_name, last_name, account_status, gender)
+  (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 SELECT
   ('f1490000-0000-0000-0000-' || lpad(g.n::text, 12, '0'))::uuid,
   'F1-ADULTE-' || g.n::text,
-  'student', 'Adulte', g.n::text, 'pending_kyc', 'male'
+  'student',
+  ('f1480000-0000-0000-0000-' || lpad(g.n::text, 12, '0'))::uuid,
+  'Adulte', g.n::text, 'pending_kyc', 'male'
 FROM generate_series(1, 7) AS g(n);
 
 INSERT INTO public.student_profiles
