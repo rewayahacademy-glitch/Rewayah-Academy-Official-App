@@ -96,8 +96,9 @@ begin
     raise exception 'B-11: teacher must read only concerns they deposited';
   end if;
 
-  select set_config('test.uid', 'b1100000-0000-0000-0000-000000000003', true);
-  select set_config('test.jwt',
+  perform set_config('test.uid', 'b1100000-0000-0000-0000-000000000003', true);
+
+  perform set_config('test.jwt',
     '{"app_metadata":{"role":"teacher","household_id":"b11fffff-0000-0000-0000-000000000001"}}',
     true);
   begin
@@ -110,8 +111,9 @@ begin
     if sqlerrm <> 'eleve ou groupe introuvable dans votre classe' then raise; end if;
   end;
 
-  select set_config('test.uid', 'b1100000-0000-0000-0000-000000000003', true);
-  select set_config('test.jwt',
+  perform set_config('test.uid', 'b1100000-0000-0000-0000-000000000003', true);
+
+  perform set_config('test.jwt',
     '{"app_metadata":{"role":"teacher","household_id":"b11fffff-0000-0000-0000-000000000001"}}',
     true);
   select count(*) into v_count from public.mes_student_concerns(null);
@@ -119,8 +121,9 @@ begin
     raise exception 'B-11: a teacher must not read another teacher concerns';
   end if;
 
-  select set_config('test.uid', 'b1100000-0000-0000-0000-000000000006', true);
-  select set_config('test.jwt',
+  perform set_config('test.uid', 'b1100000-0000-0000-0000-000000000006', true);
+
+  perform set_config('test.jwt',
     '{"app_metadata":{"role":"teacher","household_id":"b11fffff-0000-0000-0000-000000000001"}}',
     true);
   select count(*) into v_count from public.student_concern;
