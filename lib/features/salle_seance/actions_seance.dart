@@ -124,4 +124,39 @@ class ActionsSeance {
   /// Une entree du rail enseignant (desktop) : la route cible, apres la
   /// confirmation de Quitter. `null` : le rail n'est pas rendu.
   final ValueChanged<String>? onNaviguer;
+
+  /// TB-5 : les memes rappels, Focus et sa sortie passes par la salle, qui
+  /// replie puis restaure ses panneaux (plan V2 §18.1, UX-14 a UX-16).
+  ActionsSeance avecAgrandir(VoidCallback? onAgrandir) => ActionsSeance(
+    onRetour: onRetour,
+    onQuitter: onQuitter,
+    onMicro: onMicro,
+    onCamera: onCamera,
+    onAgrandir: onAgrandir,
+    onReseau: onReseau,
+    onEleves: onEleves,
+    onSupports: onSupports,
+    onCommandes: onCommandes,
+    onAffichage: onAffichage,
+    onAjusterEcran: onAjusterEcran,
+    onOutil: onOutil,
+    onPagePrecedente: onPagePrecedente,
+    onPageSuivante: onPageSuivante,
+    onZoomMoins: onZoomMoins,
+    onZoomPlus: onZoomPlus,
+    onNotifications: onNotifications,
+    onReglages: onReglages,
+    onCompte: onCompte,
+    onNaviguer: onNaviguer,
+    onRappeler: onRappeler,
+    onChoisirPourReciter: onChoisirPourReciter,
+    onNoter: onNoter,
+    onSignaler: onSignaler,
+    onOuvrirSupport: onOuvrirSupport,
+    onBibliotheque: onBibliotheque,
+    onReessayerConnexion: onReessayerConnexion,
+    onContinuerSansMicro: onContinuerSansMicro,
+    onOuvrirReglages: onOuvrirReglages,
+    onContexte: onContexte,
+  );
 }

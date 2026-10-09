@@ -345,6 +345,11 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
   /// Le zoom local, qui n'agit que sur cet ecran.
   double _zoom = 1;
 
+  /// TB-5 (UI-03) : le focus local de l'enseignant (Commandes > Focus).
+  /// Etat local d'interface, jamais diffuse ; la connexion n'en depend pas
+  /// (UX-24).
+  bool _agrandi = false;
+
   /// Le seul retour d'un rappel discret : son echec (spec 10.2).
   String? _echecRappel;
 
@@ -418,6 +423,7 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
         microOuvert: microOuvert,
         cameraAllumee: cameraOuverte,
         zoom: _zoom,
+        agrandi: _agrandi,
       ),
       contenuSupport: rendSupport ? SurfaceSupport(slot: support) : null,
       actions: ActionsSeance(
@@ -472,6 +478,11 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
             ? () => _basculerPanneau(PanneauOuvert.commandes)
             : null,
         onAjusterEcran: enseignant ? () => setState(() => _zoom = 1) : null,
+        // TB-5 (UI-03) : Focus et « Quitter le focus » ; la salle replie et
+        // restaure ses panneaux.
+        onAgrandir: enseignant
+            ? () => setState(() => _agrandi = !_agrandi)
+            : null,
         onEleves: enseignant && salle.voitLesParticipants && vue.elevesConnus
             ? () => _basculerPanneau(PanneauOuvert.eleves)
             : null,

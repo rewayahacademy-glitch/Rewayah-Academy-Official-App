@@ -30,6 +30,7 @@ import 'barre_support.dart';
 import 'capsule_seance.dart';
 import 'chrome_seance.dart';
 import 'commandes_pedagogiques.dart';
+import 'composition_salle.dart';
 import 'dock_seance.dart';
 import 'panneau_eleves.dart';
 import 'panneau_seance.dart';
@@ -493,6 +494,113 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
   /// lecteur d'ecran, que le geste vienne du dock ou de la touche M.
   String? _retourMicro;
 
+  /// TB-5 (n. 12) : l'enseignant a replie la colonne des Participants. Etat
+  /// local, jamais diffuse ; il survit au focus et au redimensionnement.
+  bool _participantsReplies = false;
+
+  /// TB-5 (UX-16) : le panneau droit ouvert avant le focus, a retrouver en
+  /// le quittant si la largeur le permet.
+  PanneauOuvert _avantFocus = PanneauOuvert.aucun;
+
+  /// La largeur, le facteur de texte et le gabarit du dernier rendu : la
+  /// composition des rappels (R, Echap, Focus) est celle qu'on voit.
+  double _largeur = 0;
+  double _facteurTexte = 1;
+
+  bool get _telephone => widget.gabarit == Gabarit.mobile;
+
+  /// La colonne des Participants tient a la largeur actuelle.
+  bool get _gaucheTient => CompositionSalle.gaucheTient(
+    largeur: _largeur,
+    facteurTexte: _facteurTexte,
+    telephone: _telephone,
+  );
+
+  CompositionSalle _composition({PanneauOuvert? panneau, bool? agrandi}) =>
+      CompositionSalle.pour(
+        largeur: _largeur,
+        facteurTexte: _facteurTexte,
+        telephone: _telephone,
+        panneau: panneau ?? widget.vue.panneau,
+        participantsReplies: _participantsReplies,
+        agrandi: agrandi ?? _agrandi,
+        contexteOuvert: widget.vue.contexteOuvert,
+        participantsDisponibles: _participantsDisponibles,
+      );
+
+  /// La salle de l'enseignant a des Participants. En colonne, ils se
+  /// replient et se deplient localement ; en panneau temporaire, il faut le
+  /// rappel de la page (`onEleves`), comme avant TB-5.
+  bool get _participantsDisponibles => widget.vue.voitBoutonsPanneaux;
+
+  /// Le rappel du bouton « Eleves » et de R, ou `null`.
+  VoidCallback? get _rappelParticipants =>
+      _gaucheTient ? _basculerParticipants : widget.actions.onEleves;
+
+  /// Le bouton « Eleves », R et la « Reduire » de la colonne. La colonne
+  /// tient : la replier ou la deplier (etat local) ; sinon le panneau
+  /// temporaire de la page, comme avant.
+  void _basculerParticipants() {
+    if (!_gaucheTient) {
+      widget.actions.onEleves?.call();
+      return;
+    }
+    final bool replier = _composition().gauche == PlacePanneau.colonne;
+    setState(() => _participantsReplies = replier);
+    // Ouverte avant le redimensionnement (panneau temporaire de la page) :
+    // la page la ferme aussi, sinon elle reviendrait.
+    if (replier && widget.vue.panneau == PanneauOuvert.eleves) {
+      widget.actions.onEleves?.call();
+    }
+    if (replier) {
+      // Le focus revient au bouton qui la rouvre (pose au cadre suivant).
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        if (mounted && _focusEleves.context != null) {
+          _focusEleves.requestFocus();
+        }
+      });
+    }
+  }
+
+  /// Le rappel de la page qui bascule un panneau droit.
+  VoidCallback? _basculeDroite(PanneauOuvert panneau) => switch (panneau) {
+    PanneauOuvert.commandes => widget.actions.onCommandes,
+    PanneauOuvert.supports => widget.actions.onSupports,
+    PanneauOuvert.ressources => widget.actions.onBibliotheque,
+    PanneauOuvert.eleves || PanneauOuvert.aucun => null,
+  };
+
+  /// TB-5 (UX-14 a UX-16, plan V2 §18.1) : Focus replie les deux cotes
+  /// (le panneau droit se ferme, les Participants se retirent) ; Quitter le
+  /// focus restaure la composition d'avant si elle tient en colonnes a la
+  /// largeur actuelle. Etat local seulement.
+  void _basculerFocus() {
+    final VoidCallback? agrandir = widget.actions.onAgrandir;
+    if (agrandir == null) return;
+    final PanneauOuvert panneau = widget.vue.panneau;
+    if (!widget.local.agrandi) {
+      _avantFocus = estPanneauDroit(panneau) ? panneau : PanneauOuvert.aucun;
+      if (estPanneauDroit(panneau)) _basculeDroite(panneau)?.call();
+      agrandir();
+      return;
+    }
+    agrandir();
+    final PanneauOuvert? aBasculer = panneauABasculerEnSortie(
+      avantFocus: _avantFocus,
+      actuel: panneau,
+      droiteTient:
+          _composition(panneau: _avantFocus, agrandi: false).droite ==
+          PlacePanneau.colonne,
+    );
+    _avantFocus = PanneauOuvert.aucun;
+    if (aBasculer != null) _basculeDroite(aBasculer)?.call();
+  }
+
+  /// Les rappels de la page, Focus et sa sortie passes par [_basculerFocus].
+  ActionsSeance get _actions => widget.actions.onAgrandir == null
+      ? widget.actions
+      : widget.actions.avecAgrandir(_basculerFocus);
+
   @override
   void didUpdateWidget(_FocusPanneaux ancien) {
     super.didUpdateWidget(ancien);
@@ -553,6 +661,12 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
       widget.actions.onContexte?.call(ContexteOuvert.aucun);
       return;
     }
+    if (widget.vue.panneau == PanneauOuvert.aucun) {
+      // TB-5 (§18.3) : aucun panneau ouvert, Echap quitte le focus ; il ne
+      // coupe jamais l'appel.
+      if (_agrandi) _basculerFocus();
+      return;
+    }
     switch (widget.vue.panneau) {
       case PanneauOuvert.eleves:
         widget.actions.onEleves?.call();
@@ -599,14 +713,10 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
         actions.onCamera != null &&
             vue.commandesPublicationActives &&
             widget.local.cameraAllumee,
-      // Sur bureau, le panneau Eleves est deja la quand rien d'autre n'est
-      // ouvert : R le ramene depuis Supports ou le selecteur.
+      // TB-5 : R replie ou deplie la colonne des Participants, a cote du
+      // panneau droit ouvert ; jamais en focus (elle y est repliee).
       RaccourciSalle.eleves =>
-        vue.voitBoutonsPanneaux &&
-            actions.onEleves != null &&
-            (panneau == PanneauOuvert.supports ||
-                panneau == PanneauOuvert.ressources ||
-                panneau == PanneauOuvert.commandes),
+        _participantsDisponibles && !_agrandi && _rappelParticipants != null,
       RaccourciSalle.bibliotheque =>
         vue.voitBoutonsPanneaux &&
             actions.onBibliotheque != null &&
@@ -625,7 +735,7 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
         actions.onCamera?.call();
         _annoncer(t.salle.cameraCoupee);
       case RaccourciSalle.eleves:
-        actions.onEleves?.call();
+        _basculerParticipants();
       case RaccourciSalle.bibliotheque:
         actions.onBibliotheque?.call();
     }
@@ -648,7 +758,7 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
     const double gouttiere = AppPage.gouttiereMobile;
     final Widget dock = DockSeance(
       vue: vue,
-      actions: widget.actions,
+      actions: _actions,
       microOuvert: widget.local.microOuvert,
       cameraAllumee: widget.local.cameraAllumee,
       // TB-4 : en focus, « Reduire » reste dans la barre (TB18), en plus de
@@ -695,23 +805,21 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
   bool get _agrandi => widget.local.agrandi && widget.vue.support != null;
 
   @override
-  Widget build(BuildContext context) {
-    // EN-9 : sur bureau, le panneau Eleves est ouvert d'office (a droite du
-    // support), jamais derriere le bouton « Eleves ». TB-4 : le focus local
-    // replie ce panneau pose d'office (plan V2 §18.3).
-    // TB-3 (CTX-01, CTX-02) : le contexte deplie depuis la capsule s'ouvre
-    // dans le panneau de personnes existant (Eleves), a tous les gabarits.
-    final VueSeance base =
-        widget.vue.contexteOuvert && widget.vue.voitBoutonsPanneaux
-        ? widget.vue.copyWith(panneau: PanneauOuvert.eleves)
-        : widget.vue;
-    final VueSeance vue =
-        widget.gabarit == Gabarit.desktop &&
-            !_agrandi &&
-            base.voitBoutonsPanneaux &&
-            base.panneau == PanneauOuvert.aucun
-        ? base.copyWith(panneau: PanneauOuvert.eleves)
-        : base;
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (BuildContext _, BoxConstraints c) {
+      _largeur = c.maxWidth;
+      _facteurTexte = MediaQuery.textScalerOf(context).scale(1);
+      return _salle(context);
+    },
+  );
+
+  Widget _salle(BuildContext context) {
+    // TB-5 (n. 12, remplace EN-9 « ouvert d'office a droite ») : la
+    // composition dit ou se posent les Participants et le panneau droit ;
+    // le contexte deplie depuis la capsule s'ouvre dans les Participants
+    // (TB-3, CTX-01, CTX-02).
+    final CompositionSalle composition = _composition();
+    final VueSeance vue = widget.vue;
     final bool ouvert =
         widget.vue.voitBoutonsPanneaux &&
         (widget.vue.panneau != PanneauOuvert.aucun ||
@@ -743,7 +851,7 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
         },
         child: CallbackShortcuts(
           bindings: <ShortcutActivator, VoidCallback>{
-            if (ouvert)
+            if (ouvert || _agrandi)
               const SingleActivator(LogicalKeyboardKey.escape): _fermer,
           },
           child: Stack(
@@ -757,9 +865,12 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
                   vue: widget.vue,
                   contenu: _SalleEnseignant(
                     vue: vue,
-                    actions: widget.actions,
+                    actions: _actions,
                     local: widget.local,
                     gabarit: widget.gabarit,
+                    composition: composition,
+                    gaucheTient: _gaucheTient,
+                    onParticipants: _rappelParticipants,
                     contenuSupport: widget.contenuSupport,
                     focusEleves: _focusEleves,
                     focusCommandes: _focusCommandes,
@@ -839,20 +950,28 @@ class _ActionRaccourciSalle extends Action<IntentRaccourciSalle> {
   }
 }
 
-/// La salle de l'enseignant (CLV-06) : support dominant, bouton Eleves,
+/// La salle de l'enseignant (CLV-06) : support dominant, Participants,
 /// declencheur « Commandes » (TB-4) ; la barre de l'appel Micro, Camera,
 /// Quitter est posee par-dessus (TB-2). Plus d'outils permanents ni de
 /// pagination sous le support : ils vivent dans les Commandes (plan V2 §4.2,
 /// UX_REVIEW_TB n. 10, n. 11).
+///
+/// TB-5 (UI-02, UI-03 ; plan V2 §6, §19.4) : hors telephone, Participants a
+/// gauche, surface au centre, panneau pedagogique a droite seulement s'il est
+/// ouvert ; la [composition] dit pour chaque cote colonne, panneau
+/// temporaire ou rien. Au telephone, un seul panneau secondaire, en feuille.
 class _SalleEnseignant extends StatelessWidget {
   const _SalleEnseignant({
     required this.vue,
     required this.actions,
     required this.local,
     required this.gabarit,
+    required this.composition,
+    required this.gaucheTient,
     required this.focusEleves,
     required this.focusCommandes,
     required this.focusSupport,
+    this.onParticipants,
     this.focusCapsule,
     this.contenuSupport,
     this.agrandi = false,
@@ -864,8 +983,19 @@ class _SalleEnseignant extends StatelessWidget {
   final Gabarit gabarit;
   final Widget? contenuSupport;
 
-  /// TB-4 : le focus local (Commandes > Focus) replie le bouton Eleves et
-  /// le panneau pose d'office ; capsule, Commandes et barre restent.
+  /// TB-5 : ou se posent les Participants et le panneau droit.
+  final CompositionSalle composition;
+
+  /// TB-5 : la colonne des Participants tient a cette largeur ; repliee, son
+  /// bouton se pose au bord de debut, au-dessus de la surface.
+  final bool gaucheTient;
+
+  /// TB-5 : le bouton « Eleves » et la « Reduire » de la colonne (replier,
+  /// deplier) ; `null` : pas de liste, pas de bouton.
+  final VoidCallback? onParticipants;
+
+  /// TB-4 : le focus local (Commandes > Focus) replie les Participants ;
+  /// capsule, Commandes et barre restent.
   final bool agrandi;
 
   /// TB-3 : le noeud de l'avatar de la capsule (retour du focus).
@@ -881,9 +1011,8 @@ class _SalleEnseignant extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double gouttiere = AppPage.gouttiereMobile;
-    // Telephone et desktop : le support partage la hauteur avec les boutons,
-    // il se resserre pour montrer la diapositive entiere.
+    // Le support partage la hauteur avec les boutons, il se resserre pour
+    // montrer la diapositive entiere.
     final Widget support = Focus(
       focusNode: focusSupport,
       child: ZoneSupport(
@@ -893,107 +1022,9 @@ class _SalleEnseignant extends StatelessWidget {
         contenu: contenuSupport,
       ),
     );
-    final Widget? boutons = agrandi
-        ? null
-        : _BoutonsPanneaux.ou(vue, actions, gabarit, focusEleves: focusEleves);
-    final Widget? declencheur = _declencheur();
-    final Widget? panneau = _panneau();
-    if (panneau != null) {
-      return gabarit == Gabarit.desktop
-          ? _desktopAvecPanneau(
-              panneau: panneau,
-              support: support,
-              declencheur: declencheur,
-            )
-          : _etroitAvecPanneau(panneau: panneau, support: support);
-    }
-    switch (gabarit) {
-      case Gabarit.desktop:
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            ChromeSeance(
-              vue: vue,
-              actions: actions,
-              focusCapsule: focusCapsule,
-            ),
-            BandeauSecours(
-              vue: vue,
-              actions: actions,
-              espaceApres: AppSpacing.md,
-            ),
-            if (boutons != null)
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(
-                  gouttiere,
-                  0,
-                  gouttiere,
-                  AppSpacing.md,
-                ),
-                child: Align(
-                  alignment: AlignmentDirectional.centerEnd,
-                  child: boutons,
-                ),
-              ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: gouttiere),
-                child: _sousSupport(support, declencheur),
-              ),
-            ),
-          ],
-        );
-      case Gabarit.tablette:
-      case Gabarit.mobile:
-        final bool mobile = gabarit == Gabarit.mobile;
-        // Telephone : les ecarts entre les rangees se resserrent d'un
-        // palier, la place revient au support (image mobile, enseignant).
-        final Widget ecart = mobile ? Ecart.vSm : Ecart.vMd;
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            TeteSalleBornee(
-              children: <Widget>[
-                ChromeSeance(
-                  vue: vue,
-                  actions: actions,
-                  focusCapsule: focusCapsule,
-                ),
-                BandeauSecours(vue: vue, actions: actions),
-              ],
-            ),
-            ecart,
-            if (boutons != null) ...<Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: gouttiere),
-                child: boutons,
-              ),
-              ecart,
-            ],
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: gouttiere),
-                child: support,
-              ),
-            ),
-            // TB-4 : le declencheur, pres du bas, au-dessus de la zone de la
-            // barre de l'appel (posee par-dessus, TB-2) ; centre au
-            // telephone (planche 1), au bord de fin sur tablette (§4.2).
-            if (declencheur != null) ...<Widget>[
-              ecart,
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: gouttiere),
-                child: Align(
-                  alignment: mobile
-                      ? Alignment.center
-                      : AlignmentDirectional.centerEnd,
-                  child: declencheur,
-                ),
-              ),
-            ],
-          ],
-        );
-    }
+    return gabarit == Gabarit.mobile
+        ? _telephone(support)
+        : _large(context, support);
   }
 
   /// TB-4 : le declencheur « Commandes », rendu seulement si une entree du
@@ -1010,134 +1041,157 @@ class _SalleEnseignant extends StatelessWidget {
     );
   }
 
-  /// Le panneau ouvert, ou `null`. Enseignant seulement : ce widget n'est
-  /// construit que pour `RoleSeance.enseignant`, et la vue le confirme.
-  Widget? _panneau() {
-    if (!vue.voitBoutonsPanneaux) return null;
-    final FormePanneau forme = FormePanneau.pour(gabarit);
-    final Widget? panneau = switch (vue.panneau) {
-      PanneauOuvert.aucun => null,
-      PanneauOuvert.eleves => PanneauSeance(
-        // Sur bureau, le bouton « Eleves 1/3 » s'efface devant le panneau
-        // ouvert (K-42, style 3) : le compteur passe dans son en-tete.
-        titre: forme == FormePanneau.colonne
-            ? vue.compteurEleves ?? t.salle.seance.eleves
-            : t.salle.seance.eleves,
-        // EN-9 : sur bureau, le panneau Eleves reste ouvert a droite du
-        // support ; il ne se ferme pas. TB-3 : ouvert par la capsule, la
-        // croix reduit le contexte (la capsule revient).
-        onFermer: forme == FormePanneau.colonne
-            ? null
-            : vue.contexteOuvert
-            ? () => actions.onContexte?.call(ContexteOuvert.aucun)
-            : actions.onEleves,
-        forme: forme,
-        enMenu: forme != FormePanneau.colonne,
-        ajusteAuContenu: true,
-        enfant: PanneauEleves(
-          eleves: vue.eleves,
-          actions: actions,
-          // Sur bureau, le panneau droit montre toujours « File de
-          // recitation » (maquettes enseignant, EN-9) ; ailleurs, file au
-          // repos : pas de bloc, le panneau reste celui de CLV-07.
-          recitation:
-              forme == FormePanneau.colonne ||
-                  vue.recitation.enCours ||
-                  vue.recitation.suivants.isNotEmpty
-              ? vue.recitation
-              : null,
-          large: forme == FormePanneau.colonne,
-          serre: forme == FormePanneau.feuille,
-          entete: vue.contexteOuvert
-              ? SectionContexte(vue: vue, actions: actions)
-              : null,
-        ),
+  /// Le panneau des Participants (Eleves), avec le contexte deplie de la
+  /// capsule en tete (TB-3). Colonne : « Reduire » la replie (TB-5, n. 12,
+  /// remplace EN-9 « ouvert d'office ») ; volet et feuille : la croix.
+  Widget _panneauEleves(FormePanneau forme) {
+    final bool colonne = forme == FormePanneau.colonne;
+    // Contexte deplie : sa propre « Reduire » (TB-3) le replie ; la colonne
+    // n'en ajoute pas une seconde.
+    final VoidCallback? reduire = vue.contexteOuvert
+        ? (colonne
+              ? null
+              : () => actions.onContexte?.call(ContexteOuvert.aucun))
+        : colonne
+        ? onParticipants
+        : actions.onEleves;
+    return PanneauSeance(
+      // Colonne : le bouton « Eleves 1/3 » s'efface devant elle (K-42,
+      // style 3) ; le compteur passe dans son en-tete.
+      titre: colonne
+          ? vue.compteurEleves ?? t.salle.seance.eleves
+          : t.salle.seance.eleves,
+      onFermer: reduire,
+      libelleFermer: colonne ? t.salle.seance.contexte.reduire : null,
+      semantiqueFermer: colonne ? vue.libelleReduireContexte : null,
+      cleFermer: PanneauSeance.cleReduireParticipants,
+      forme: forme,
+      enMenu: !colonne,
+      ajusteAuContenu: true,
+      enfant: PanneauEleves(
+        eleves: vue.eleves,
+        actions: actions,
+        // En colonne, le panneau montre toujours « File de recitation »
+        // (maquettes enseignant, EN-9) ; ailleurs, file au repos : pas de
+        // bloc, le panneau reste celui de CLV-07.
+        recitation:
+            colonne ||
+                vue.recitation.enCours ||
+                vue.recitation.suivants.isNotEmpty
+            ? vue.recitation
+            : null,
+        large: colonne,
+        serre: forme == FormePanneau.feuille,
+        entete: vue.contexteOuvert
+            ? SectionContexte(vue: vue, actions: actions)
+            : null,
       ),
-      PanneauOuvert.supports => PanneauSeance(
-        titre: t.salle.seance.supports,
-        onFermer: actions.onSupports,
-        forme: forme,
-        enfant: PanneauSupports(
-          supports: vue.supports,
-          actions: actions,
-          forme: forme,
-        ),
-      ),
-      // EN-10 : le selecteur de ressources (04 §19), ouvert par « Voir toute
-      // la bibliotheque » ; feuille sur mobile, panneau sur bureau. La salle
-      // reste ouverte.
-      PanneauOuvert.ressources => PanneauSeance(
-        titre: t.salle.seance.supports,
-        onFermer: actions.onBibliotheque,
-        forme: forme,
-        enfant: SelecteurRessources(supports: vue.supports, actions: actions),
-      ),
-      // TB-4 (CMD-01) : « Commandes », ferme par « Reduire » (plan V2 §20).
-      PanneauOuvert.commandes => PanneauSeance(
-        titre: t.salle.seance.commandes.titre,
-        onFermer: actions.onCommandes,
-        libelleFermer: t.salle.seance.commandes.reduire,
-        semantiqueFermer: t.salle.seance.commandes.reduireSemantique,
-        forme: forme,
-        enfant: CommandesPedagogiques(
-          vue: vue,
-          actions: actions,
-          zoom: local.zoom,
-          agrandi: agrandi,
-        ),
-      ),
-    };
-    if (panneau == null) return null;
-    // A l'ouverture, le focus entre dans le panneau (si rien d'autre ne le
-    // tient) : Echap le ferme alors depuis le clavier.
-    return Focus(autofocus: true, skipTraversal: true, child: panneau);
+    );
   }
 
-  /// Desktop, panneau ouvert. Supports (CLV-08) : panneau a gauche, support
-  /// au centre, bouton Eleves a droite. Eleves (EN-9) et Commandes (TB-4) :
-  /// support a gauche, panneau a droite (« bord droit », plan V2 §4.2).
-  Widget _desktopAvecPanneau({
-    required Widget panneau,
-    required Widget support,
-    required Widget? declencheur,
-  }) {
+  /// Le panneau pedagogique (Commandes), Supports ou la Bibliotheque : le
+  /// cote droit (TB-5, n. 13 : Supports y passe), ou `null`.
+  Widget? _panneauDroit(FormePanneau forme) => switch (vue.panneau) {
+    PanneauOuvert.aucun || PanneauOuvert.eleves => null,
+    PanneauOuvert.supports => PanneauSeance(
+      titre: t.salle.seance.supports,
+      onFermer: actions.onSupports,
+      forme: forme,
+      enfant: PanneauSupports(
+        supports: vue.supports,
+        actions: actions,
+        forme: forme,
+      ),
+    ),
+    // EN-10 : le selecteur de ressources (04 §19), ouvert par « Voir toute
+    // la bibliotheque ». La salle reste ouverte.
+    PanneauOuvert.ressources => PanneauSeance(
+      titre: t.salle.seance.supports,
+      onFermer: actions.onBibliotheque,
+      forme: forme,
+      enfant: SelecteurRessources(supports: vue.supports, actions: actions),
+    ),
+    // TB-4 (CMD-01) : « Commandes », ferme par « Reduire » (plan V2 §20).
+    PanneauOuvert.commandes => PanneauSeance(
+      titre: t.salle.seance.commandes.titre,
+      onFermer: actions.onCommandes,
+      libelleFermer: t.salle.seance.commandes.reduire,
+      semantiqueFermer: t.salle.seance.commandes.reduireSemantique,
+      forme: forme,
+      enfant: CommandesPedagogiques(
+        vue: vue,
+        actions: actions,
+        zoom: local.zoom,
+        agrandi: agrandi,
+      ),
+    ),
+  };
+
+  /// A l'ouverture, le focus entre dans le panneau (si rien d'autre ne le
+  /// tient) : Echap le ferme alors depuis le clavier.
+  static Widget _focusDedans(Widget panneau) =>
+      Focus(autofocus: true, skipTraversal: true, child: panneau);
+
+  /// Le bouton « Eleves 1/3 › », ou `null` (focus, colonne deja posee, pas
+  /// de liste).
+  Widget? _bouton({required bool etire}) {
+    if (agrandi || composition.gauche == PlacePanneau.colonne) return null;
+    return _BoutonsPanneaux.ou(
+      vue,
+      onParticipants,
+      etire: etire,
+      focusEleves: focusEleves,
+    );
+  }
+
+  /// Telephone : un seul panneau secondaire, feuille du bas qui laisse voir
+  /// le haut du support (images CLV-07-08-10). Le contexte deplie s'ouvre
+  /// dans le panneau des Participants (TB-3).
+  Widget _telephone(Widget support) {
     const double gouttiere = AppPage.gouttiereMobile;
-    final bool supports = vue.panneau == PanneauOuvert.supports;
-    final Widget? boutons = agrandi
-        ? null
-        : _BoutonsPanneaux.ou(
-            vue,
-            actions,
-            gabarit,
-            etire: true,
-            serre: true,
-            enColonne: supports,
-            focusEleves: focusEleves,
-          );
-    final Widget centre = _sousSupport(support, declencheur);
-    if (supports) {
+    final Widget tete = TeteSalleBornee(
+      children: <Widget>[
+        ChromeSeance(vue: vue, actions: actions, focusCapsule: focusCapsule),
+        BandeauSecours(vue: vue, actions: actions),
+      ],
+    );
+    final Widget? panneau = composition.gauche != PlacePanneau.aucune
+        ? _panneauEleves(FormePanneau.feuille)
+        : _panneauDroit(FormePanneau.feuille);
+    if (panneau != null) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          ChromeSeance(vue: vue, actions: actions, focusCapsule: focusCapsule),
-          BandeauSecours(vue: vue, actions: actions),
+          tete,
           Ecart.vSm,
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: gouttiere),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+            child: LayoutBuilder(
+              builder: (BuildContext contexte, BoxConstraints c) => Stack(
                 children: <Widget>[
-                  SizedBox(width: largeurColonneSupportsSeance, child: panneau),
-                  Ecart.hMd,
-                  Expanded(child: centre),
-                  if (boutons != null) ...<Widget>[
-                    Ecart.hMd,
-                    SizedBox(
-                      width: largeurColonneDroiteSeance,
-                      child: Column(children: <Widget>[boutons]),
+                  Positioned.fill(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: gouttiere,
+                      ),
+                      child: support,
                     ),
-                  ],
+                  ),
+                  Positioned.fill(
+                    // COUPE-MOTS-1 : sous un en-tete haut (titre a 200 %),
+                    // le support visible cede sa place a la feuille.
+                    // TB-2 : la feuille s'arrete au-dessus de la barre de
+                    // l'appel (UX-07) ; elle garde sa hauteur d'avant, le
+                    // support visible au-dessus cede la hauteur de la barre.
+                    top: math.max(
+                      0,
+                      supportVisiblePour(
+                            contexte,
+                            c.maxHeight + CommandesMasquables.margeDe(contexte),
+                          ) -
+                          CommandesMasquables.margeDe(contexte),
+                    ),
+                    child: _focusDedans(panneau),
+                  ),
                 ],
               ),
             ),
@@ -1145,41 +1199,182 @@ class _SalleEnseignant extends StatelessWidget {
         ],
       );
     }
+    // TB-5 (plan V2 §6, « mobile immersif : aucun panneau permanent ») :
+    // pendant le partage, l'avatar de la capsule ouvre deja les
+    // Participants (TB-3) ; la rangee « Eleves » rendrait au support la
+    // place qui lui manque a 320 x2 (reste de TB-4).
+    final Widget? boutons = vue.voitCapsule ? null : _bouton(etire: true);
+    final Widget? declencheur = _declencheur();
+    // Les ecarts entre les rangees se resserrent d'un palier, la place
+    // revient au support (image mobile, enseignant).
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        ChromeSeance(vue: vue, actions: actions, focusCapsule: focusCapsule),
-        BandeauSecours(vue: vue, actions: actions),
+        tete,
         Ecart.vSm,
+        if (boutons != null) ...<Widget>[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: gouttiere),
+            child: boutons,
+          ),
+          Ecart.vSm,
+        ],
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: gouttiere),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Expanded(child: centre),
-                Ecart.hMd,
-                SizedBox(
-                  width: largeurColonneSeance,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      if (boutons != null) ...<Widget>[boutons, Ecart.vMd],
-                      Expanded(child: panneau),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+            child: support,
           ),
         ),
+        // TB-4 : le declencheur, pres du bas, au-dessus de la zone de la
+        // barre de l'appel (posee par-dessus, TB-2) ; centre (planche 1).
+        if (declencheur != null) ...<Widget>[
+          Ecart.vSm,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: gouttiere),
+            child: Align(child: declencheur),
+          ),
+        ],
       ],
     );
   }
 
-  /// Bureau : le declencheur « Commandes » sous le support, au bord de fin
-  /// (plan V2 §4.2 : « bord droit de la surface ») ; la barre de l'appel est
-  /// posee par-dessus, plus bas (TB-2).
+  /// Tablette et bureau (TB-5, plan V2 §6, §19.4) : Participants a gauche
+  /// (colonne si la largeur divisee par le texte le permet), surface au
+  /// centre, panneau droit seulement s'il est ouvert. Un panneau qui ne
+  /// tient pas en colonne passe par-dessus la surface (volet), sans la
+  /// comprimer ; aucune colonne vide.
+  Widget _large(BuildContext context, Widget support) {
+    const double gouttiere = AppPage.gouttiereMobile;
+    final bool desktop = gabarit == Gabarit.desktop;
+    final PlacePanneau gauche = composition.gauche;
+    final PlacePanneau droite = composition.droite;
+    final Widget? panneauGauche = gauche == PlacePanneau.aucune
+        ? null
+        : _panneauEleves(
+            gauche == PlacePanneau.colonne
+                ? FormePanneau.colonne
+                : FormePanneau.volet,
+          );
+    final Widget? panneauDroit = _panneauDroit(
+      droite == PlacePanneau.colonne
+          ? FormePanneau.colonne
+          : FormePanneau.volet,
+    );
+    // Un panneau temporaire remplace le bouton « Eleves » et le declencheur
+    // (images CLV-07-08-10) ; repliee, la colonne laisse son bouton au bord
+    // de debut, a sa place.
+    final bool recouvre = composition.recouvre;
+    final Widget? boutons = recouvre ? null : _bouton(etire: !gaucheTient);
+    final Widget? declencheur = recouvre ? null : _declencheur();
+    final Widget centre = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        if (boutons != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.md),
+            child: gaucheTient
+                ? Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: boutons,
+                  )
+                : boutons,
+          ),
+        Expanded(child: _sousSupport(support, declencheur)),
+      ],
+    );
+    // Les colonnes, puis les volets par-dessus toute la largeur utile : un
+    // panneau temporaire garde sa largeur (image : ≈ 313) et la colonne des
+    // Participants reste visible a cote de lui.
+    final Widget colonnes = Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        if (gauche == PlacePanneau.colonne &&
+            panneauGauche != null) ...<Widget>[
+          SizedBox(
+            width: largeurColonneSeance,
+            child: _focusDedans(panneauGauche),
+          ),
+          Ecart.hMd,
+        ],
+        Expanded(child: centre),
+        if (droite == PlacePanneau.colonne && panneauDroit != null) ...<Widget>[
+          Ecart.hMd,
+          SizedBox(
+            width: largeurColonneSeance,
+            child: _focusDedans(panneauDroit),
+          ),
+        ],
+      ],
+    );
+    final Widget enMarge = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: gouttiere),
+      child: colonnes,
+    );
+    final Widget corps = !recouvre
+        ? enMarge
+        : LayoutBuilder(
+            builder: (BuildContext _, BoxConstraints c) {
+              // Volet : au plus la moitie de la largeur, moins un palier.
+              final double largeurVolet = math.min(
+                largeurPanneauSeance,
+                c.maxWidth / 2 - AppSpacing.lg,
+              );
+              return Stack(
+                children: <Widget>[
+                  Positioned.fill(child: enMarge),
+                  // Le volet descend jusqu'au bas de l'ecran (image).
+                  if (gauche == PlacePanneau.temporaire &&
+                      panneauGauche != null)
+                    PositionedDirectional(
+                      start: AppSpacing.sm,
+                      top: 0,
+                      bottom: 0,
+                      width: largeurVolet,
+                      child: _focusDedans(panneauGauche),
+                    ),
+                  if (droite == PlacePanneau.temporaire && panneauDroit != null)
+                    PositionedDirectional(
+                      end: AppSpacing.sm,
+                      top: 0,
+                      bottom: 0,
+                      width: largeurVolet,
+                      child: _focusDedans(panneauDroit),
+                    ),
+                ],
+              );
+            },
+          );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        if (desktop) ...<Widget>[
+          ChromeSeance(vue: vue, actions: actions, focusCapsule: focusCapsule),
+          BandeauSecours(
+            vue: vue,
+            actions: actions,
+            espaceApres: AppSpacing.md,
+          ),
+        ] else ...<Widget>[
+          TeteSalleBornee(
+            children: <Widget>[
+              ChromeSeance(
+                vue: vue,
+                actions: actions,
+                focusCapsule: focusCapsule,
+              ),
+              BandeauSecours(vue: vue, actions: actions),
+            ],
+          ),
+          Ecart.vMd,
+        ],
+        Expanded(child: corps),
+      ],
+    );
+  }
+
+  /// Le declencheur « Commandes » sous le support, au bord de fin (plan V2
+  /// §4.2 : « bord droit de la surface ») ; la barre de l'appel est posee
+  /// par-dessus, plus bas (TB-2).
   Widget _sousSupport(Widget support, Widget? declencheur) {
     if (declencheur == null) return support;
     return Column(
@@ -1196,91 +1391,12 @@ class _SalleEnseignant extends StatelessWidget {
       ],
     );
   }
-
-  /// Web etroit et telephone, panneau ouvert : le panneau recouvre le
-  /// support (volet, ou feuille du bas qui laisse voir le haut du support et
-  /// la vignette). Les boutons et le declencheur se retirent : le panneau
-  /// les remplace (images CLV-07-08-10). TB-4 : le volet des Commandes est
-  /// au bord de fin (« panneau droit », plan V2 §6), les autres au debut.
-  Widget _etroitAvecPanneau({
-    required Widget panneau,
-    required Widget support,
-  }) {
-    const double gouttiere = AppPage.gouttiereMobile;
-    final bool mobile = gabarit == Gabarit.mobile;
-    final bool aLaFin = vue.panneau == PanneauOuvert.commandes;
-    // TB-2 : le dock est dans la barre de l'appel, sous le panneau.
-    final Widget dessous = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: gouttiere),
-      child: support,
-    );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        TeteSalleBornee(
-          children: <Widget>[
-            ChromeSeance(
-              vue: vue,
-              actions: actions,
-              focusCapsule: focusCapsule,
-            ),
-            BandeauSecours(vue: vue, actions: actions),
-          ],
-        ),
-        mobile ? Ecart.vSm : Ecart.vMd,
-        Expanded(
-          child: LayoutBuilder(
-            builder: (BuildContext contexte, BoxConstraints c) {
-              // Volet : au plus la moitie de la largeur, moins un palier, pour
-              // laisser au dock toute sa place a droite (image : ≈ 313).
-              final double largeurVolet = math.min(
-                largeurPanneauSeance,
-                c.maxWidth / 2 - AppSpacing.lg,
-              );
-              return Stack(
-                children: <Widget>[
-                  Positioned.fill(child: dessous),
-                  if (mobile)
-                    Positioned.fill(
-                      // COUPE-MOTS-1 : sous un en-tete haut (titre a 200 %),
-                      // le support visible cede sa place a la feuille.
-                      // TB-2 : la feuille s'arrete au-dessus de la barre de
-                      // l'appel (UX-07) ; elle garde sa hauteur d'avant, le
-                      // support visible au-dessus cede la hauteur de la barre.
-                      top: math.max(
-                        0,
-                        supportVisiblePour(
-                              contexte,
-                              c.maxHeight +
-                                  CommandesMasquables.margeDe(contexte),
-                            ) -
-                            CommandesMasquables.margeDe(contexte),
-                      ),
-                      child: panneau,
-                    )
-                  else
-                    // Le volet descend jusqu'au bas de l'ecran (image).
-                    PositionedDirectional(
-                      start: aLaFin ? null : AppSpacing.sm,
-                      end: aLaFin ? AppSpacing.sm : null,
-                      top: 0,
-                      bottom: 0,
-                      width: largeurVolet,
-                      child: panneau,
-                    ),
-                ],
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
 }
 
-/// « Eleves 1/3 › » : enseignant seulement. Desktop : a droite au-dessus du
-/// support ; ailleurs, sur toute la largeur au-dessus du support. La
-/// Bibliotheque est dans les Commandes (TB-4).
+/// « Eleves 1/3 › » : enseignant seulement. TB-5 : colonne des Participants
+/// repliee, au bord de debut au-dessus de la surface ; ailleurs, sur toute la
+/// largeur au-dessus du support. La Bibliotheque est dans les Commandes
+/// (TB-4).
 class _BoutonsPanneaux extends StatelessWidget {
   const _BoutonsPanneaux({
     required this.compteur,
@@ -1288,37 +1404,24 @@ class _BoutonsPanneaux extends StatelessWidget {
     required this.etire,
     this.panneau = PanneauOuvert.aucun,
     this.focusEleves,
-    this.serre = false,
-    this.enColonne = false,
   });
 
   static Widget? ou(
     VueSeance vue,
-    ActionsSeance actions,
-    Gabarit gabarit, {
-    bool? etire,
-    bool serre = false,
-    bool enColonne = false,
+    VoidCallback? onEleves, {
+    required bool etire,
     FocusNode? focusEleves,
   }) {
     final String? compteur = vue.compteurEleves;
-    if (!vue.voitBoutonsPanneaux || compteur == null) return null;
-    final VoidCallback? eleves = actions.onEleves;
-    if (eleves == null) return null;
-    // Bureau, panneau Eleves ouvert : il dit deja l'etat et le compteur (son
-    // en-tete), le bouton ne le repete pas (K-42, style 3). R et Echap
-    // restent.
-    if (gabarit == Gabarit.desktop && vue.panneau == PanneauOuvert.eleves) {
+    if (!vue.voitBoutonsPanneaux || compteur == null || onEleves == null) {
       return null;
     }
     return _BoutonsPanneaux(
       compteur: compteur,
-      onEleves: eleves,
-      etire: etire ?? gabarit != Gabarit.desktop,
+      onEleves: onEleves,
+      etire: etire,
       panneau: vue.panneau,
       focusEleves: focusEleves,
-      serre: serre,
-      enColonne: enColonne,
     );
   }
 
@@ -1330,12 +1433,6 @@ class _BoutonsPanneaux extends StatelessWidget {
   final VoidCallback onEleves;
   final bool etire;
 
-  /// Desktop, panneau ouvert : colonne droite etroite (CLV-07).
-  final bool serre;
-
-  /// Desktop, panneau Supports : pleine largeur de la colonne (CLV-08).
-  final bool enColonne;
-
   @override
   Widget build(BuildContext context) {
     final Widget bouton = BoutonPanneau(
@@ -1346,14 +1443,7 @@ class _BoutonsPanneaux extends StatelessWidget {
       ouvert: panneau == PanneauOuvert.eleves,
       focusNode: focusEleves,
       etire: etire,
-      serre: serre,
     );
-    if (enColonne) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[bouton],
-      );
-    }
     return Row(
       mainAxisSize: etire ? MainAxisSize.max : MainAxisSize.min,
       children: <Widget>[if (etire) Expanded(child: bouton) else bouton],

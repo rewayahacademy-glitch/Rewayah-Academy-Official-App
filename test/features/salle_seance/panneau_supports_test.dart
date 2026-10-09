@@ -12,6 +12,7 @@ import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/dock_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/panneau_eleves.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_supports.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
@@ -132,8 +133,13 @@ void main() {
             'web etroit' => 'volet',
             _ => 'feuille',
           };
+          // TB-5 : sur bureau, la colonne des Participants est aussi la (a
+          // gauche) ; le panneau Supports est celui qui contient la liste.
           expect(
-            find.byKey(ValueKey<String>('panneau-seance-$forme')),
+            find.ancestor(
+              of: find.byType(PanneauSupports),
+              matching: find.byKey(ValueKey<String>('panneau-seance-$forme')),
+            ),
             findsOneWidget,
           );
           Finder dansPanneau(Finder f) =>
@@ -210,7 +216,10 @@ void main() {
           // Aucun chevauchement : le panneau ne couvre ni le dock ; en
           // desktop, ni le support ; le panneau tient dans l'ecran.
           final Rect panneau = tester.getRect(
-            find.byKey(ValueKey<String>('panneau-seance-$forme')),
+            find.ancestor(
+              of: find.byType(PanneauSupports),
+              matching: find.byKey(ValueKey<String>('panneau-seance-$forme')),
+            ),
           );
           final Rect ecran = Offset.zero & taille.value;
           expect(ecran.contains(panneau.topLeft), isTrue);
@@ -228,16 +237,14 @@ void main() {
               isFalse,
             );
             // TB-4 : plus de carte d'outils permanente (dans les
-            // Commandes) ; la colonne droite garde le bouton Eleves, a droite
-            // du support.
+            // Commandes). TB-5 (n. 12, n. 13) : Supports a droite du
+            // support, les Participants en colonne a gauche.
             expect(find.text(t.salle.seance.outils.titre), findsNothing);
+            final Rect zone = tester.getRect(find.byType(ZoneSupport));
+            expect(panneau.left, greaterThan(zone.right));
             expect(
-              tester
-                  .getTopLeft(
-                    find.byKey(const ValueKey<String>('bouton-eleves')),
-                  )
-                  .dx,
-              greaterThan(tester.getRect(find.byType(ZoneSupport)).right),
+              tester.getRect(find.byType(PanneauEleves)).right,
+              lessThan(zone.left),
             );
           }
         });

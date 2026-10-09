@@ -72,6 +72,7 @@ class PanneauSeance extends StatelessWidget {
     this.ajusteAuContenu = false,
     this.libelleFermer,
     this.semantiqueFermer,
+    this.cleFermer = cleReduire,
     super.key,
   });
 
@@ -86,6 +87,15 @@ class PanneauSeance extends StatelessWidget {
 
   /// La cle de « Reduire » quand [libelleFermer] remplace la croix.
   static const Key cleReduire = ValueKey<String>('panneau-seance-reduire');
+
+  /// TB-5 : la « Reduire » de la colonne des Participants, distincte de
+  /// celle des Commandes (les deux colonnes coexistent sur bureau).
+  static const Key cleReduireParticipants = ValueKey<String>(
+    'panneau-participants-reduire',
+  );
+
+  /// La cle de « Reduire » de ce panneau.
+  final Key cleFermer;
 
   /// Image CLV-07 desktop : un menu « … » (Fermer le panneau) a la place de
   /// la croix. Colonne seulement.
@@ -168,6 +178,7 @@ class PanneauSeance extends StatelessWidget {
                   enMenu: colonne && enMenu,
                   libelleFermer: libelleFermer,
                   semantiqueFermer: semantiqueFermer,
+                  cleFermer: cleFermer,
                 ),
                 Ecart.vSm,
                 if (ajuste)
@@ -290,8 +301,10 @@ class _EnTete extends StatelessWidget {
     required this.enMenu,
     this.libelleFermer,
     this.semantiqueFermer,
+    this.cleFermer = PanneauSeance.cleReduire,
   });
 
+  final Key cleFermer;
   final String titre;
   final VoidCallback? onFermer;
   final bool enMenu;
@@ -323,7 +336,7 @@ class _EnTete extends StatelessWidget {
           children: <Widget>[
             Expanded(child: _Titre(titre: titre)),
             Pressable(
-              key: PanneauSeance.cleReduire,
+              key: cleFermer,
               onPress: fermer,
               libelleSemantique: semantiqueFermer ?? mot,
               arrondiFocus: AppRadius.arrondiMd,

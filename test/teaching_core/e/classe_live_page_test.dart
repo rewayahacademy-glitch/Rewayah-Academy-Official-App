@@ -12,6 +12,7 @@ import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dar
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
+import 'package:rewayah_academy/features/salle_seance/panneau_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/tc_classe_live/classe_live_page.dart';
 import 'package:rewayah_academy/features/tc_classe_live/roster_classe.dart';
@@ -164,6 +165,38 @@ void main() {
       // du support, sans passer par le bouton.
       expect(find.text('Amina'), findsOneWidget);
       expect(tester.takeException(), isNull);
+    });
+
+    // TB-5 (UX-24) : changer d'orientation ou de largeur ne reconnecte
+    // pas et ne perd pas l'etat local (Participants replies).
+    testWidgets('orientation : ni reconnexion ni perte d etat (UX-24)', (
+      WidgetTester tester,
+    ) async {
+      final banc0 = banc(presence: troisEleves());
+      await monterClasse(
+        tester,
+        contexte: contexte(support: 'r1', seuilMax: 5),
+        surcharges: banc0.surcharges,
+        ecran: LargeurEcran.desktop,
+      );
+      final int entrees = banc0.moteur.entrees.length;
+      expect(entrees, 1);
+      expect(find.text('Amina'), findsOneWidget);
+      await tester.tap(find.byKey(PanneauSeance.cleReduireParticipants));
+      await tester.pumpAndSettle();
+      expect(find.text('Amina'), findsNothing);
+      for (final Size taille in <Size>[
+        const Size(900, 1400),
+        const Size(1400, 900),
+      ]) {
+        tester.view.physicalSize = taille;
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(banc0.moteur.entrees.length, entrees);
+        expect(banc0.moteur.departs, 0);
+        // Toujours repliee : l'etat local a survecu.
+        expect(find.text('Amina'), findsNothing);
+      }
     });
 
     testWidgets('telephone, support actif : roster en feuille', (

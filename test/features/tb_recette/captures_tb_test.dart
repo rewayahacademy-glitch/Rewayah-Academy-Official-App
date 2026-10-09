@@ -33,6 +33,13 @@
 // docs/current/captures/TB-4/ :
 //   CAPTURE_DIR=docs/current/captures/TB-4 flutter test \
 //     test/features/tb_recette/captures_tb_test.dart --name tb4_
+//
+// TB-5 (UI-02, UI-03) : la salle de l'enseignant developpee (Participants a
+// gauche, Commandes ouvertes a droite) et en focus, 768, 1024 et 1440, texte
+// x1 et x2, clair (et sombre a x1), plus RTL a 1440. Rangees dans
+// docs/current/captures/TB-5/ :
+//   CAPTURE_DIR=docs/current/captures/TB-5 flutter test \
+//     test/features/tb_recette/captures_tb_test.dart --name tb5_
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -41,6 +48,8 @@ import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/capsule_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
+import 'package:rewayah_academy/features/salle_seance/composition_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/panneau_eleves.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/zone_support.dart';
 
@@ -318,9 +327,15 @@ void main() {
             find.byKey(CommandesPedagogiques.cle),
             ouvert ? findsOneWidget : findsNothing,
           );
+          // TB-5 : ouvertes, les Commandes sont en colonne (declencheur
+          // visible) seulement si la largeur divisee par le texte tient les
+          // Participants et elles ; sinon en volet ou en feuille.
+          final bool enColonne =
+              cas.$2.width / cas.$5 >=
+              CompositionSalle.seuilColonne + CompositionSalle.coutColonne;
           expect(
             find.byKey(DeclencheurCommandes.cle),
-            role == RoleSeance.enseignant && !(ouvert && cas.$2.width < 1200)
+            role == RoleSeance.enseignant && !(ouvert && !enColonne)
                 ? findsOneWidget
                 : findsNothing,
           );
@@ -334,6 +349,158 @@ void main() {
           debugPrint('PNG ${await capturer(tester, nom)}');
         });
       }
+    }
+  });
+
+  group('TB-5 : bureau equilibre et focus', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+
+    final List<(String, Size, double, ThemeMode, TextDirection)> cadrages =
+        <(String, Size, double, ThemeMode, TextDirection)>[
+          for (final (String, Size) taille in <(String, Size)>[
+            ('768', const Size(768, 1024)),
+            ('1024', const Size(1024, 768)),
+            ('1440', const Size(1440, 900)),
+          ]) ...<(String, Size, double, ThemeMode, TextDirection)>[
+            (
+              '${taille.$1}_x1_clair',
+              taille.$2,
+              1,
+              ThemeMode.light,
+              TextDirection.ltr,
+            ),
+            (
+              '${taille.$1}_x1_sombre',
+              taille.$2,
+              1,
+              ThemeMode.dark,
+              TextDirection.ltr,
+            ),
+            (
+              '${taille.$1}_x2_clair',
+              taille.$2,
+              2,
+              ThemeMode.light,
+              TextDirection.ltr,
+            ),
+          ],
+          (
+            '1440_x1_clair_rtl',
+            const Size(1440, 900),
+            1,
+            ThemeMode.light,
+            TextDirection.rtl,
+          ),
+        ];
+    for (final String etat in <String>['developpe', 'focus']) {
+      for (final (String, Size, double, ThemeMode, TextDirection) cas
+          in cadrages) {
+        final String nom = 'tb5_enseignant_${etat}_${cas.$1}';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(tester, cas.$2, cas.$2.width < 1200 ? 2 : 1);
+          await tester.pumpWidget(
+            hoteCapture(
+              Directionality(
+                textDirection: cas.$5,
+                child: const DemoSallePage(
+                  role: RoleSeance.enseignant,
+                  situation: SituationTb.cmd01,
+                ),
+              ),
+              themeMode: cas.$4,
+              echelleTexte: cas.$3,
+            ),
+          );
+          await stabiliser(tester);
+          if (etat == 'focus') {
+            final Finder focus = find.byKey(CommandesPedagogiques.cleFocus);
+            await tester.ensureVisible(focus);
+            await tester.pump();
+            await tester.tap(focus);
+            await stabiliser(tester);
+          }
+          await tester.pump(const Duration(milliseconds: 1400));
+          // La capture prouve ce qu'elle nomme.
+          final bool colonne =
+              cas.$2.width / cas.$3 >= CompositionSalle.seuilColonne;
+          expect(
+            find.byType(PanneauEleves),
+            etat == 'developpe' && colonne ? findsOneWidget : findsNothing,
+          );
+          expect(
+            find.byKey(CommandesPedagogiques.cle),
+            etat == 'developpe' ? findsOneWidget : findsNothing,
+          );
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
+      }
+    }
+  });
+
+  // TB-5 : au telephone, pendant le partage, pas de rangee « Eleves »
+  // (l'avatar de la capsule ouvre les Participants) ; le support reprend la
+  // place qui lui manquait a 320 x2 (reste de TB-4).
+  group('TB-5 : telephone pendant le partage', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String, Size, double, EdgeInsets, double, ThemeMode) cas
+        in <(String, Size, double, EdgeInsets, double, ThemeMode)>[
+          (
+            '390_x1_clair',
+            const Size(390, 844),
+            3,
+            _zoneTelephone,
+            1,
+            ThemeMode.light,
+          ),
+          (
+            '390_x2_clair',
+            const Size(390, 844),
+            3,
+            _zoneTelephone,
+            2,
+            ThemeMode.light,
+          ),
+          (
+            '320_x2_clair',
+            const Size(320, 700),
+            2,
+            EdgeInsets.zero,
+            2,
+            ThemeMode.light,
+          ),
+          (
+            '320_x2_sombre',
+            const Size(320, 700),
+            2,
+            EdgeInsets.zero,
+            2,
+            ThemeMode.dark,
+          ),
+        ]) {
+      final String nom = 'tb5_enseignant_telephone_${cas.$1}';
+      testWidgets(nom, (WidgetTester tester) async {
+        fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+        await tester.pumpWidget(
+          hoteCapture(
+            const DemoSallePage(
+              role: RoleSeance.enseignant,
+              situation: SituationTb.ped03,
+            ),
+            themeMode: cas.$6,
+            echelleTexte: cas.$5,
+          ),
+        );
+        await stabiliser(tester);
+        await tester.pump(const Duration(milliseconds: 1400));
+        expect(
+          find.byKey(const ValueKey<String>('bouton-eleves')),
+          findsNothing,
+        );
+        expect(find.byType(ZoneSupport), findsOneWidget);
+        expect(tester.takeException(), isNull);
+        debugPrint('PNG ${await capturer(tester, nom)}');
+      });
     }
   });
 
