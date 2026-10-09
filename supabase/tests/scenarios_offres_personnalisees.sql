@@ -39,6 +39,7 @@ FROM generate_series(1, public.app_config_int('groupe.capacite_adulte', 6) + 4) 
 
 INSERT INTO auth.users (id, email)
 VALUES
+  ('f1490000-0000-0000-0000-000000000996', 'f1-controller@example.test'),
   ('f1490000-0000-0000-0000-000000000997', 'f1-teacher@example.test'),
   ('f1490000-0000-0000-0000-000000000998', 'f1-guardian@example.test'),
   ('f1490000-0000-0000-0000-000000000999', 'f1-admin@example.test');
@@ -46,6 +47,8 @@ VALUES
 INSERT INTO public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 VALUES
+  ('f1490000-0000-0000-0000-000000000996', 'F1-CONTROLLER', 'controller', NULL,
+   'Controleur', 'Test', 'active', 'male'),
   ('f1490000-0000-0000-0000-000000000997', 'F1-TEACHER', 'teacher', NULL,
    'Enseignant', 'Test', 'active', 'male'),
   ('f1490000-0000-0000-0000-000000000998', 'F1-GUARDIAN', 'guardian',
@@ -262,10 +265,6 @@ BEGIN
     RAISE EXCEPTION 'F1 heures de regroupement incorrectes: %', v_heures;
   END IF;
 
-  RAISE NOTICE 'C-12 fixture: selected %, live groups %',
-    v_regroupement,
-    (SELECT coalesce(string_agg(r.regroupement_id || ':' || r.pret::text, ','), 'none')
-       FROM public.regroupements_demandes_horaires_admin() r);
   v_groupe := public.creer_classe_depuis_regroupement(
     v_regroupement, 'c1200000-0000-0000-0000-000000000001', 'Classe F1 C-12'
   );
@@ -286,6 +285,38 @@ BEGIN
   IF v_sessions <> 0 THEN
     RAISE EXCEPTION 'C-12: séances matérialisées avant affectation: %', v_sessions;
   END IF;
+
+  PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000997', true);
+  PERFORM set_config('request.jwt.claims',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'teacher'))::text, true);
+  IF EXISTS (SELECT 1 FROM public.mes_groupes_v WHERE groupe_id = v_groupe) THEN
+    RAISE EXCEPTION 'C-12: mes_groupes_v expose une classe sans enseignant';
+  END IF;
+  v_ok := false;
+  BEGIN
+    PERFORM public.autoriser_jeton_video(
+      'c1200000-0000-0000-0000-000000000099',
+      'f1490000-0000-0000-0000-000000000003',
+      'wss://cloud.example.test', 'wss://self.example.test'
+    );
+  EXCEPTION WHEN OTHERS THEN
+    v_ok := SQLERRM = 'seance introuvable';
+  END;
+  IF NOT v_ok THEN RAISE EXCEPTION 'C-12: jeton vidéo accordé sans séance'; END IF;
+  IF public.brouillon_cahier('c1200000-0000-0000-0000-000000000099') IS NOT NULL THEN
+    RAISE EXCEPTION 'C-12: cahier de séance rendu sans séance';
+  END IF;
+
+  PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000996', true);
+  PERFORM set_config('request.jwt.claims',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'controller'))::text, true);
+  v_ok := false;
+  BEGIN
+    PERFORM public.rejoindre_observation('c1200000-0000-0000-0000-000000000099');
+  EXCEPTION WHEN OTHERS THEN
+    v_ok := SQLERRM = 'seance introuvable';
+  END;
+  IF NOT v_ok THEN RAISE EXCEPTION 'C-12: observation possible sans séance affectée'; END IF;
 
   PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000998', true);
   PERFORM set_config('request.jwt.claims',
