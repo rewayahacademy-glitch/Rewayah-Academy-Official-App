@@ -308,6 +308,50 @@ void main() {
       expect(emis.last.canal, CanalFiabilite.fiable);
     });
 
+    // TB-7a, revue du tour 2 : le trait que la couche vient de poser reste
+    // peint (et effacable) apres le lever du doigt, avant que l'hote ne le
+    // rende ; des que l'hote le rend, l'hote fait foi : une annulation
+    // venue d'ailleurs le retire bien de l'ecran.
+    testWidgets('le trait pose reste a l ecran, puis l hote fait foi', (
+      WidgetTester tester,
+    ) async {
+      final ProviderContainer conteneur = ProviderContainer(
+        overrides: surcharges(),
+      );
+      addTearDown(conteneur.dispose);
+      conteneur
+          .read(etatOutilsProvider.notifier)
+          .choisirOutil(OutilDock.stylet);
+      Future<void> monter(List<TraitVectoriel> traits) => tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: conteneur,
+          child: hoteSansScope(couche(traits: traits)),
+        ),
+      );
+      final int effacer = CustomSemanticsAction.getIdentifier(
+        CustomSemanticsAction(label: t.tc.outils.trait.effacerDernier),
+      );
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      bool effacable() => tester
+          .getSemantics(find.bySemanticsLabel(t.tc.outils.trait.ardoise))
+          .getSemanticsData()
+          .customSemanticsActionIds!
+          .contains(effacer);
+
+      await monter(const <TraitVectoriel>[]);
+      await tracer(tester, PointerDeviceKind.stylus);
+      final TraitVectoriel pose = annotations.couches.single.traits.single;
+      expect(effacable(), isTrue, reason: 'peint avant que l hote le rende');
+
+      await monter(<TraitVectoriel>[pose]);
+      expect(effacable(), isTrue);
+
+      // Annule ailleurs (dock) : l'hote ne le rend plus.
+      await monter(const <TraitVectoriel>[]);
+      expect(effacable(), isFalse, reason: 'l hote fait foi');
+      semantique.dispose();
+    });
+
     testWidgets('sans geste : Suppr et l action semantique effacent', (
       WidgetTester tester,
     ) async {

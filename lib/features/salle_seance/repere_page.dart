@@ -1,14 +1,21 @@
 // TB-7a (plan V2 §9, §13 ; TB19) : le repere des notes est la page, jamais
 // la boite de la surface ni la fenetre.
 //
-// Une seule geometrie, lue par le rendu ET par la saisie :
+// La geometrie de la page dans sa surface :
 //   1. le rectangle reel de la page apres `BoxFit.contain` ([rectanglePage]) ;
-//   2. la transformation locale de lecture (zoom, deplacement), commune a
-//      l'image et a l'encre : une matrice de `TransformationController` ;
-//   3. un point de la surface -> `toScene` (inverse du zoom et du
-//      deplacement) -> retrait de l'offset du placement -> normalisation
-//      dans la page ; un point hors page est REJETE (jamais rabattu sur le
-//      bord, §9.4).
+//   2. la transformation locale de lecture (zoom ; le deplacement est prevu
+//      pour TB-7b, la surface ne le passe pas encore), commune a l'image et
+//      a l'encre : `SurfacePageFixe` pose [ReperePage.lecture] dans UN
+//      `Transform` qui porte la page ET la couche d'annotation.
+//
+// La saisie n'appelle pas [ReperePage.versPage] : le test de toucher du
+// `Transform` applique deja l'inverse de [ReperePage.lecture] (meme
+// matrice), puis la couche normalise dans le cadre de la page
+// (`normaliserDans`). [ReperePage.versPage] et [ReperePage.versSurface]
+// sont l'ecriture explicite de ce chemin (toScene, retrait de l'offset du
+// placement, normalisation ; hors page : rejete, jamais rabattu, §9.4) :
+// un utilitaire de reference, employe par les tests, que la preuve du
+// geste reel (calque_page_test, « geste reel ») confronte au rendu.
 // Rien n'est stocke en pixels : seul le `PointNormalise` sort d'ici.
 
 import 'package:flutter/widgets.dart';
@@ -87,6 +94,15 @@ class ReperePage {
     lecture,
     page.topLeft + Offset(point.x * page.width, point.y * page.height),
   );
+
+  /// La part de la page qui se voit dans la [boite] de la surface (qui
+  /// rogne la page zoomee), dans le repere de la page avant la lecture
+  /// (coin haut de la page = origine). Toute la page a 100 %.
+  Rect partVisible(Size boite) {
+    final Matrix4 inverse = Matrix4.tryInvert(lecture) ?? Matrix4.identity();
+    final Rect scene = MatrixUtils.transformRect(inverse, Offset.zero & boite);
+    return scene.shift(-page.topLeft).intersect(Offset.zero & page.size);
+  }
 
   /// Le rectangle de la page tel qu'il se voit a l'ecran (lecture comprise).
   Rect get pageALEcran => MatrixUtils.transformRect(lecture, page);

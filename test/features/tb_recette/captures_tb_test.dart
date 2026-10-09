@@ -53,6 +53,8 @@
 // dans docs/current/captures/TB-7a/ :
 //   CAPTURE_DIR=docs/current/captures/TB-7a flutter test \
 //     test/features/tb_recette/captures_tb_test.dart --name tb7a_
+// (tb7a_trait_pose_* : un trait trace au doigt, outil arme et depot en
+// memoire, capture apres le lever du doigt, puis a 200 %.)
 //
 // TB-8 (LIB-01 a LIB-04) : catalogue, apercu personnel, ouverture et echec,
 // 390 et 1440 clair et sombre, 390 x2, 320 x2. Rangees dans
@@ -67,9 +69,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show LogicalKeyboardKey;
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/accessibilite/commandes_masquables.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart'
+    show PointNormalise;
+import 'package:rewayah_academy/core/tc_outils/etat_outils.dart';
+import 'package:rewayah_academy/core/tc_outils/port_annotations.dart';
+import 'package:rewayah_academy/core/tc_outils/port_dock_hote.dart'
+    show OutilDock;
 import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
@@ -84,6 +93,12 @@ import 'package:rewayah_academy/features/salle_seance/zone_support.dart';
 import 'package:rewayah_academy/features/tc_catalogue/surface_bibliotheque.dart';
 
 import '../../capture/outil_capture.dart';
+
+/// L'outil d'ecriture arme (TB-7b le donnera par « Ecrire »).
+class _ControleurArme extends ControleurOutils {
+  @override
+  EtatOutils build() => const EtatOutils(outilActif: OutilDock.stylet);
+}
 
 typedef _Cadrage = (
   String nom,
@@ -693,6 +708,87 @@ void main() {
         expect(tester.takeException(), isNull);
         debugPrint('PNG ${await capturer(tester, nom)}');
       });
+    }
+  });
+
+  // TB-7a, revue du tour 2 : l'encre tracee par la personne reste peinte
+  // apres le lever du doigt, puis suit la page au zoom 200 %. L'outil est
+  // arme et le depot est en memoire (TB-7b et TB-BR les brancheront).
+  group('TB-7a : trait pose', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final _Cadrage cas in <_Cadrage>[
+      for (final _Cadrage c in _cadragesTb)
+        if (<String>[
+          '390_x1_clair',
+          '1440_x1_sombre',
+          '320_x2_clair',
+        ].contains(c.$1))
+          c,
+    ]) {
+      for (final bool zoom in <bool>[false, true]) {
+        final String nom = 'tb7a_trait_pose_${zoom ? 'zoom200_' : ''}${cas.$1}';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+          final AnnotationsMemoire depot = AnnotationsMemoire('demo');
+          addTearDown(depot.liberer);
+          await tester.pumpWidget(
+            hoteCapture(
+              const DemoSallePage(
+                role: RoleSeance.enseignant,
+                situation: SituationTb.ped03,
+              ),
+              themeMode: cas.$6,
+              echelleTexte: cas.$5,
+              surcharges: <Override>[
+                portAnnotationsProvider.overrideWithValue(depot),
+                etatOutilsProvider.overrideWith(_ControleurArme.new),
+              ],
+            ),
+          );
+          await stabiliser(tester);
+          await tester.pump(const Duration(milliseconds: 1400));
+          final Finder page = find.byKey(SurfacePageFixe.clePage);
+          Offset sur(PointNormalise p) {
+            final Rect r = tester.getRect(page);
+            return r.topLeft + Offset(p.x * r.width, p.y * r.height);
+          }
+
+          // Un trait sous le titre, au doigt, de 25 % a 75 % de la largeur.
+          final TestPointer doigt = TestPointer(21);
+          final Offset a = sur(const PointNormalise(0.25, 0.30));
+          final Offset b = sur(const PointNormalise(0.75, 0.34));
+          await tester.sendEventToBinding(doigt.down(a));
+          for (int i = 1; i <= 8; i++) {
+            await tester.sendEventToBinding(
+              doigt.move(Offset.lerp(a, b, i / 8)!),
+            );
+            await tester.pump();
+          }
+          await tester.sendEventToBinding(doigt.up());
+          await stabiliser(tester);
+          expect(depot.couches.single.traits, hasLength(1));
+          if (zoom) {
+            await tester.tap(find.byKey(DeclencheurCommandes.cle));
+            await stabiliser(tester);
+            final Finder plus = find.byWidgetPredicate(
+              (Widget w) =>
+                  w is Pressable &&
+                  w.libelleSemantique == t.salle.seance.zoomPlus,
+            );
+            await tester.ensureVisible(plus.first);
+            await tester.pump();
+            for (int i = 0; i < 10; i++) {
+              await tester.tap(plus.first);
+              await tester.pump();
+            }
+            await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+            await stabiliser(tester);
+            await tester.pump(const Duration(milliseconds: 1400));
+          }
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
+      }
     }
   });
 

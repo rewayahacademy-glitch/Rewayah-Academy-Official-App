@@ -26,6 +26,7 @@ import '../../core/tc_bibliotheque/library_resource.dart'
 import '../../core/tc_etat_partage/shared_content_state.dart'
     show ModeAffichagePartage;
 import '../../core/tc_outils/ancrage_annotation.dart' show CarteDesBlocs;
+import '../../core/tc_outils/annotation_layer.dart' show TraitVectoriel;
 import '../../core/tc_outils/etat_outils.dart';
 import '../../core/tc_outils/port_dock_hote.dart';
 import '../../core/theme/app_elevation.dart';
@@ -34,6 +35,7 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
 import '../tc_dock/couche_annotation.dart';
+import 'notes_deposees.dart';
 import 'repere_page.dart';
 import 'vue_seance.dart';
 
@@ -131,6 +133,9 @@ class SurfacePageFixe extends StatelessWidget {
           zoom: zoom,
         );
         final Rect rect = repere.page;
+        // La part de la page qui se voit (la surface rogne la page zoomee),
+        // dans le repere du calque : on n'ecrit pas la ou l'on ne voit pas.
+        final Rect visible = repere.partVisible(c.biggest);
         final Widget feuille = SizedBox.fromSize(
           size: rect.size,
           child: Stack(
@@ -154,7 +159,11 @@ class SurfacePageFixe extends StatelessWidget {
                 maintainState: true,
                 maintainAnimation: true,
                 maintainSize: true,
-                child: _CalqueNotes(vue: vue, taille: rect.size),
+                child: _CalqueNotes(
+                  vue: vue,
+                  taille: rect.size,
+                  visible: visible,
+                ),
               ),
             ],
           ),
@@ -205,16 +214,24 @@ class SurfacePageFixe extends StatelessWidget {
 /// (tc_dock) y est montee sur un seul bloc qui couvre la page : son cadre
 /// est la page elle-meme, l'ancrage celui de la page montree
 /// ([VueSeance.ancrageSurface]). Elle peint les notes de cette page
-/// seulement ; elle ne recoit un geste que si la personne peut ecrire
+/// seulement, celles de la vue et celles que le depot a prises
+/// ([notesDeposeesProvider]) ; elle ne recoit un geste que si la personne peut ecrire
 /// ([VueSeance.peutEcrire]) ET que l'outil d'ecriture est arme : sinon le
 /// calque se lit, sans focus ni geste.
 class _CalqueNotes extends ConsumerWidget {
-  const _CalqueNotes({required this.vue, required this.taille});
+  const _CalqueNotes({
+    required this.vue,
+    required this.taille,
+    required this.visible,
+  });
 
   final VueSeance vue;
 
   /// La taille de la page avant la lecture locale.
   final Size taille;
+
+  /// La part visible de la page, dans le repere de la page.
+  final Rect visible;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -224,6 +241,19 @@ class _CalqueNotes extends ConsumerWidget {
       etatOutilsProvider.select((EtatOutils e) => e.styletArme),
     );
     final bool saisie = vue.peutEcrire && arme;
+    // Les notes de la vue, puis celles que le depot a prises pour cette
+    // page (l'encre posee reste peinte, meme quand la surface se remonte).
+    final List<TraitVectoriel> notes = vue.notesAffichees;
+    final Set<String> connus = <String>{
+      for (final TraitVectoriel trait in notes) trait.id,
+    };
+    final List<TraitVectoriel> traits = <TraitVectoriel>[
+      ...notes,
+      for (final TraitVectoriel trait in ref.watch(
+        notesDeposeesProvider(ancrage.resourceId),
+      ))
+        if (trait.ancrage == ancrage && !connus.contains(trait.id)) trait,
+    ];
     return ExcludeFocus(
       excluding: !saisie,
       child: ExcludeSemantics(
@@ -243,8 +273,9 @@ class _CalqueNotes extends ConsumerWidget {
               ancrageCadre: ancrage,
             ),
             contexte: ContexteDock(groupeId: vue.groupeId),
-            traits: vue.notesAffichees,
+            traits: traits,
             repereDePage: true,
+            zoneVisible: visible,
           ),
         ),
       ),

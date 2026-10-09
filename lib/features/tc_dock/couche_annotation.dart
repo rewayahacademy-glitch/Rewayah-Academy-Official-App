@@ -81,6 +81,7 @@ class CoucheAnnotation extends ConsumerStatefulWidget {
     this.onAncrageDegrade,
     this.generateur = const Uuid(),
     this.repereDePage = false,
+    this.zoneVisible,
   });
 
   /// Le support annote, avec la geometrie courante de ses blocs.
@@ -113,9 +114,16 @@ class CoucheAnnotation extends ConsumerStatefulWidget {
   /// [SupportPresente.blocs] porte le cadre. Un geste qui commence hors du
   /// cadre est rejete ; un geste qui en sort termine le trait sur son
   /// dernier point dans la page (jamais rabattu sur le bord, §9.4), et un
-  /// retour dans la page sans lever le doigt n'ecrit rien ; l'epaisseur du trait suit la largeur de la page
-  /// (§9 : « l'epaisseur de l'annotation suit la page »).
+  /// retour dans la page sans lever le doigt n'ecrit rien. L'epaisseur du
+  /// trait suit la largeur de la page (§9 : « l'epaisseur de l'annotation
+  /// suit la page »).
   final bool repereDePage;
+
+  /// TB-7a : la part de la page qui se voit, dans le repere de la couche
+  /// (page zoomee rognee par sa surface), ou `null` (toute la page). Un
+  /// point hors de cette part est traite comme hors de la page : on
+  /// n'ecrit pas la ou l'on ne voit pas.
+  final Rect? zoneVisible;
 
   @override
   ConsumerState<CoucheAnnotation> createState() => _CoucheAnnotationState();
@@ -131,6 +139,46 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
   String? _idEnCours;
   List<PointNormalise> _apercu = const <PointNormalise>[];
   final Set<String> _effaces = <String>{};
+
+  /// Les traits que cette couche vient de terminer, tant que [widget.traits]
+  /// ne les rend pas encore : l'encre posee reste peinte des que le doigt
+  /// se leve (TB-7a, revue du tour 2). Un trait que le depot refuse en est
+  /// retire ; un trait que l'hote rend dans [CoucheAnnotation.traits] n'y
+  /// est plus garde, l'hote fait foi des lors (une annulation du dock le
+  /// retire donc bien de l'ecran).
+  final List<TraitVectoriel> _poses = <TraitVectoriel>[];
+
+  @override
+  void didUpdateWidget(CoucheAnnotation ancien) {
+    super.didUpdateWidget(ancien);
+    if (_poses.isEmpty) return;
+    final Set<String> rendus = <String>{
+      for (final TraitVectoriel trait in widget.traits) trait.id,
+    };
+    _poses.removeWhere((TraitVectoriel trait) => rendus.contains(trait.id));
+  }
+
+  /// Les traits a peindre et a gommer : ceux de l'hote, puis ceux que la
+  /// couche vient de poser, moins ceux qui ont ete effaces. Sur une page
+  /// fixe, seuls ceux de la page montree (un trait d'une autre page se
+  /// resoudrait sur ce cadre, a tort).
+  List<TraitVectoriel> get _visibles {
+    final Set<String> rendus = <String>{
+      for (final TraitVectoriel trait in widget.traits) trait.id,
+    };
+    final ContentPosition? page = widget.repereDePage
+        ? widget.support.ancrageCadre
+        : null;
+    return <TraitVectoriel>[
+      for (final TraitVectoriel trait in widget.traits)
+        if (!_effaces.contains(trait.id)) trait,
+      for (final TraitVectoriel trait in _poses)
+        if (!rendus.contains(trait.id) &&
+            !_effaces.contains(trait.id) &&
+            (page == null || trait.ancrage == page))
+          trait,
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -167,12 +215,8 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
 
   /// Le dernier trait encore visible, ou `null`.
   TraitVectoriel? _dernierTrait() {
-    for (final TraitVectoriel trait in widget.traits.reversed) {
-      if (!_effaces.contains(trait.id)) {
-        return trait;
-      }
-    }
-    return null;
+    final List<TraitVectoriel> visibles = _visibles;
+    return visibles.isEmpty ? null : visibles.last;
   }
 
   /// Retire le dernier trait visible, sans geste : la voie du clavier et du
@@ -212,10 +256,7 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
           painter: _PeintreAnnotations(
             palette: palette,
             support: widget.support,
-            traits: <TraitVectoriel>[
-              for (final TraitVectoriel trait in widget.traits)
-                if (!_effaces.contains(trait.id)) trait,
-            ],
+            traits: _visibles,
             marqueurs: widget.marqueurs,
             apercu: _apercu,
             blocApercu: _blocEnCours,
@@ -235,6 +276,14 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
   bool _dansLaPage(Offset point) {
     final Rect? page = widget.support.blocs.cadre;
     if (page == null) {
+      return false;
+    }
+    final Rect? visible = widget.zoneVisible;
+    if (visible != null &&
+        (point.dx < visible.left ||
+            point.dy < visible.top ||
+            point.dx > visible.right ||
+            point.dy > visible.bottom)) {
       return false;
     }
     return point.dx >= page.left &&
@@ -350,22 +399,35 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
       return;
     }
 
-    // A la fin du trait : version compacte et stable, canal fiable.
+    // A la fin du trait : version compacte et stable, canal fiable. L'encre
+    // reste peinte pendant l'ecriture au depot.
     final TraitVectoriel trait = enCours.terminer(id: id);
+    setState(() => _poses.add(trait));
     unawaited(_enregistrer(trait, etat));
   }
 
   Future<void> _enregistrer(TraitVectoriel trait, EtatOutils etat) async {
-    final PortAnnotations annotations = ref.read(portAnnotationsProvider);
-    final AnnotationLayer? couche = await annotations.couche(
-      resourceId: widget.support.resourceId,
-      sessionId: widget.contexte.sessionId,
-      portee: etat.portee,
-    );
-    if (couche == null) {
+    final AnnotationLayer? couche;
+    try {
+      final PortAnnotations annotations = ref.read(portAnnotationsProvider);
+      couche = await annotations.couche(
+        resourceId: widget.support.resourceId,
+        sessionId: widget.contexte.sessionId,
+        portee: etat.portee,
+      );
+      if (couche != null) {
+        await annotations.ajouterTrait(couche.id, trait);
+      }
+    } on Object {
+      _oublier(trait);
       return;
     }
-    await annotations.ajouterTrait(couche.id, trait);
+    if (couche == null) {
+      // Aucun faux succes : un trait que le depot n'a pas pris ne reste pas
+      // peint comme s'il l'avait ete.
+      _oublier(trait);
+      return;
+    }
     widget.onEvenement?.call(
       EvenementTraitTermine(
         coucheId: couche.id,
@@ -375,16 +437,19 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
     );
   }
 
+  /// Retire de l'ecran un trait que le depot n'a pas pris.
+  void _oublier(TraitVectoriel trait) {
+    if (!mounted) return;
+    setState(() => _poses.remove(trait));
+  }
+
   /// Retire les traits que la gomme traverse.
   ///
   /// La gomme ne laisse aucune trace propre : elle n'est pas un trait blanc,
   /// elle retire des traits. Un trait blanc serait une modification du support
   /// vue de loin.
   void _gommer(Offset point) {
-    for (final TraitVectoriel trait in widget.traits) {
-      if (_effaces.contains(trait.id)) {
-        continue;
-      }
+    for (final TraitVectoriel trait in _visibles) {
       final List<Offset>? points = resoudreTrait(trait, widget.support.blocs);
       if (points == null) {
         continue;

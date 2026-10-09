@@ -224,7 +224,8 @@ Future<(double, double)> _bordDroitCercle(WidgetTester tester) async {
 }
 
 void main() {
-  group('ReperePage : toScene, offset de BoxFit.contain, normalisation', () {
+  group('ReperePage (utilitaire de reference) : toScene, offset de '
+      'BoxFit.contain, normalisation', () {
     for (final (String nom, Size boite) in _ecrans) {
       for (final double zoom in <double>[1, 2]) {
         test('$nom, zoom $zoom : aller-retour exact', () {
@@ -732,6 +733,258 @@ void main() {
         reason: 'telephone $telephone, bureau $bureau',
       );
     });
+  });
+
+  // Revue du tour 2 (TB-7a) : l'encre posee par la personne doit rester
+  // peinte apres le lever du doigt, et suivre la page au zoom. Mesure sur
+  // l'image : l'encre est cherchee sur l'horizontale du milieu du trait,
+  // la ou la page affichee le place.
+  group('l encre posee reste peinte', () {
+    const PointNormalise milieu = PointNormalise(
+      (0.40 + 0.55) / 2,
+      (0.45 + 0.52) / 2,
+    );
+
+    Future<(double?, double)> encreAuMilieu(WidgetTester tester) async {
+      final Rect page = tester.getRect(_page);
+      final Offset attendu = _surEcran(tester, milieu);
+      final _Photo photo = await _Photo.prendre(tester);
+      return (
+        photo.milieuEncre(
+          attendu.dy,
+          attendu.dx - 0.03 * page.width,
+          attendu.dx + 0.03 * page.width,
+        ),
+        attendu.dx,
+      );
+    }
+
+    testWidgets('surface : le trait reste peint apres le lever du doigt', (
+      WidgetTester tester,
+    ) async {
+      final AnnotationsMemoire depot = await _monterSurface(
+        tester,
+        const Size(1440, 900),
+      );
+      final (double? avant, _) = await encreAuMilieu(tester);
+      expect(avant, isNull, reason: 'rien n est peint la avant le geste');
+      await _tracer(
+        tester,
+        _surEcran(tester, _depart),
+        _surEcran(tester, _arrivee),
+      );
+      await _attendre(tester);
+      expect(_traits(depot), hasLength(1));
+      final (double? lu, double attendu) = await encreAuMilieu(tester);
+      expect(lu, isNotNull, reason: 'l encre reste apres le lever');
+      expect(lu, moreOrLessEquals(attendu, epsilon: 2));
+    });
+
+    testWidgets('surface : un trait qui sort de la page reste peint', (
+      WidgetTester tester,
+    ) async {
+      final AnnotationsMemoire depot = await _monterSurface(
+        tester,
+        const Size(1440, 900),
+      );
+      final Rect r = tester.getRect(_page);
+      final double y = r.top + r.height / 2;
+      final _Photo avant = await _Photo.prendre(tester);
+      final TestPointer doigt = TestPointer(12);
+      await tester.sendEventToBinding(doigt.down(Offset(r.right - 160, y)));
+      for (final double dx in <double>[120, 80, 40, -30, -60]) {
+        await tester.sendEventToBinding(doigt.move(Offset(r.right - dx, y)));
+        await tester.pump();
+      }
+      await tester.sendEventToBinding(doigt.up());
+      await _attendre(tester);
+      expect(_traits(depot), hasLength(1));
+      final _Photo apres = await _Photo.prendre(tester);
+      expect(
+        apres.ecartMax(
+          avant,
+          Rect.fromLTRB(r.right - 150, y - 3, r.right - 50, y + 3),
+        ),
+        greaterThan(200),
+        reason: 'le trait arrete a la sortie reste peint',
+      );
+    });
+
+    testWidgets('vraie salle : le trait reste peint, et suit la page au '
+        'zoom 200 %', (WidgetTester tester) async {
+      await _monterSalle(tester, const Size(1440, 900), RoleSeance.enseignant);
+      await _tracer(
+        tester,
+        _surEcran(tester, _depart),
+        _surEcran(tester, _arrivee),
+      );
+      await _attendre(tester);
+      final (double? luPose, double attenduPose) = await encreAuMilieu(tester);
+      expect(luPose, isNotNull, reason: 'peint apres le lever');
+      expect(luPose, moreOrLessEquals(attenduPose, epsilon: 2));
+
+      // Les Commandes ouvertes ensuite : la surface change de place et se
+      // remonte ; l'encre posee reste peinte (relue du depot).
+      await tester.tap(find.byKey(DeclencheurCommandes.cle));
+      await _attendre(tester);
+      final (double? luAvant, double attenduAvant) = await encreAuMilieu(
+        tester,
+      );
+      expect(luAvant, isNotNull, reason: 'peint apres l ouverture');
+      expect(luAvant, moreOrLessEquals(attenduAvant, epsilon: 2));
+
+      final Finder plus = find.byWidgetPredicate(
+        (Widget w) =>
+            w is Pressable && w.libelleSemantique == t.salle.seance.zoomPlus,
+      );
+      for (int i = 0; i < 10; i++) {
+        await tester.tap(plus);
+        await tester.pump();
+      }
+      await _attendre(tester);
+      expect(find.text(t.salle.seance.zoomValeur(valeur: 200)), findsWidgets);
+      final (double? luApres, double attenduApres) = await encreAuMilieu(
+        tester,
+      );
+      expect(luApres, isNotNull, reason: 'peint apres le zoom');
+      expect(luApres, moreOrLessEquals(attenduApres, epsilon: 3));
+      expect(
+        (luApres! - luAvant!).abs(),
+        greaterThan(10),
+        reason: 'le trait a bouge avec la page',
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('le trait pose ne se peint pas sur une autre page', (
+      WidgetTester tester,
+    ) async {
+      final AnnotationsMemoire depot = await _monterSurface(
+        tester,
+        const Size(1440, 900),
+      );
+      await _tracer(
+        tester,
+        _surEcran(tester, _depart),
+        _surEcran(tester, _arrivee),
+      );
+      await _attendre(tester);
+      expect((await encreAuMilieu(tester)).$1, isNotNull);
+      final VueSeance vue = DonneesSeanceDemo.vueTb(
+        RoleSeance.enseignant,
+        SituationTb.ped03,
+      );
+      final VueSeance page2 = vue.copyWith(
+        supportPresente: vue.supportPresente!.aLaPage(2),
+      );
+      await tester.pumpWidget(
+        hoteCapture(
+          SurfacePageFixe(vue: page2, surface: page2.vueSurface),
+          surcharges: <Override>[
+            portAnnotationsProvider.overrideWithValue(depot),
+            etatOutilsProvider.overrideWith(_ControleurArme.new),
+          ],
+        ),
+      );
+      await _attendre(tester);
+      expect(_traits(depot), hasLength(1), reason: 'le depot le garde');
+      expect(
+        (await encreAuMilieu(tester)).$1,
+        isNull,
+        reason: 'un trait de la page 1 ne se peint pas sur la page 2',
+      );
+    });
+
+    testWidgets('sans depot : aucune erreur, aucune encre restee comme si '
+        'le trait etait garde', (WidgetTester tester) async {
+      fixerVueCapture(tester, const Size(1440, 900), 1);
+      addTearDown(tester.view.reset);
+      final VueSeance vue = DonneesSeanceDemo.vueTb(
+        RoleSeance.enseignant,
+        SituationTb.ped03,
+      );
+      await tester.pumpWidget(
+        hoteCapture(
+          SurfacePageFixe(vue: vue, surface: vue.vueSurface),
+          surcharges: <Override>[
+            etatOutilsProvider.overrideWith(_ControleurArme.new),
+          ],
+        ),
+      );
+      await _attendre(tester);
+      await _tracer(
+        tester,
+        _surEcran(tester, _depart),
+        _surEcran(tester, _arrivee),
+      );
+      await _attendre(tester);
+      expect(tester.takeException(), isNull);
+      final (double? lu, _) = await encreAuMilieu(tester);
+      expect(lu, isNull, reason: 'le depot n a rien pris : rien ne reste');
+    });
+  });
+
+  // Revue du tour 2, mineur : a 200 %, la page deborde de sa surface, qui
+  // la rogne. Un trait s'arrete au bord de la part visible, pas au bord de
+  // la page cachee.
+  testWidgets('zoom 200 % : le trait s arrete au bord de la part visible', (
+    WidgetTester tester,
+  ) async {
+    fixerVueCapture(tester, const Size(1440, 900), 1);
+    addTearDown(tester.view.reset);
+    final AnnotationsMemoire depot = AnnotationsMemoire('prof-demo');
+    addTearDown(depot.liberer);
+    final VueSeance vue = DonneesSeanceDemo.vueTb(
+      RoleSeance.enseignant,
+      SituationTb.ped03,
+    );
+    const Key boiteCle = ValueKey<String>('boite');
+    await tester.pumpWidget(
+      hoteCapture(
+        Center(
+          child: SizedBox(
+            key: boiteCle,
+            width: 600,
+            height: 500,
+            child: SurfacePageFixe(vue: vue, surface: vue.vueSurface, zoom: 2),
+          ),
+        ),
+        surcharges: <Override>[
+          portAnnotationsProvider.overrideWithValue(depot),
+          etatOutilsProvider.overrideWith(_ControleurArme.new),
+        ],
+      ),
+    );
+    await _attendre(tester);
+    final Rect boite = tester.getRect(find.byKey(boiteCle));
+    final Rect page = tester.getRect(_page);
+    expect(page.right, greaterThan(boite.right + 40), reason: 'page rognee');
+    final double y = boite.center.dy;
+    final TestPointer doigt = TestPointer(13);
+    await tester.sendEventToBinding(doigt.down(Offset(boite.right - 100, y)));
+    for (final double dx in <double>[70, 40, 10, -20, -40]) {
+      await tester.sendEventToBinding(doigt.move(Offset(boite.right - dx, y)));
+      await tester.pump();
+    }
+    await tester.sendEventToBinding(doigt.up());
+    await _attendre(tester);
+    final TraitVectoriel trait = _traits(depot).single;
+    final double limite = (boite.right - page.left) / page.width;
+    for (final PointNormalise p in trait.points) {
+      expect(
+        p.x,
+        lessThanOrEqualTo(limite + 1e-6),
+        reason: 'aucun point dans la page cachee : $p',
+      );
+    }
+    _memePoint(
+      trait.points.last,
+      PointNormalise(
+        (boite.right - 10 - page.left) / page.width,
+        (y - page.top) / page.height,
+      ),
+      'le trait finit au dernier point visible',
+    );
   });
 
   group('notes de la page montree seulement', () {
