@@ -7,6 +7,8 @@ import 'package:rewayah_academy/core/admin/service_comptes.dart';
 import 'package:rewayah_academy/core/admin/service_evaluations.dart';
 import 'package:rewayah_academy/core/admin/service_groupes.dart';
 import 'package:rewayah_academy/core/admin/service_programme.dart';
+import 'package:rewayah_academy/core/capacites/port_creation_classe.dart';
+import 'package:rewayah_academy/core/capacites/port_enseignants_classe.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart'
     show Creneau;
@@ -115,10 +117,28 @@ GroupeAdmin groupeFormL2() => const GroupeAdmin(
   actif: true,
 );
 
+/// Ce qu'une creation a recu, champ par champ (CLASSE-FORM-1 : les valeurs
+/// envoyees se mesurent, elles ne se supposent pas).
+typedef CreationRecue = ({
+  String teacherId,
+  TypePublicGroupe type,
+  GenreClasse? genre,
+  String libelle,
+  Creneau creneau,
+  int? seuilMax,
+});
+
 /// Un service de classes qui retient ce qu'on lui demande.
 class FauxGroupesFormL2 implements ServiceGroupes {
   /// Les enseignants pour qui une classe a ete creee.
   final List<String> creesPour = <String>[];
+
+  /// Chaque creation, avec tout ce que le service a recu (pas de genre :
+  /// `ServiceGroupes.creer` ne le prend pas).
+  final List<CreationRecue> creations = <CreationRecue>[];
+
+  /// Les seuils envoyes par la feuille « Seuil maximal ».
+  final List<int> seuilsModifies = <int>[];
 
   /// Les ajouts : eleve et motif.
   final List<(String, String)> ajouts = <(String, String)>[];
@@ -139,6 +159,14 @@ class FauxGroupesFormL2 implements ServiceGroupes {
     int? seuilMax,
   }) async {
     creesPour.add(teacherId);
+    creations.add((
+      teacherId: teacherId,
+      type: type,
+      genre: null,
+      libelle: libelle,
+      creneau: creneau,
+      seuilMax: seuilMax,
+    ));
     return 'g2';
   }
 
@@ -148,7 +176,7 @@ class FauxGroupesFormL2 implements ServiceGroupes {
     required String libelle,
     required int seuilMax,
     required Creneau creneau,
-  }) async {}
+  }) async => seuilsModifies.add(seuilMax);
 
   @override
   Future<void> ajouterEleve({
@@ -169,6 +197,67 @@ class FauxGroupesFormL2 implements ServiceGroupes {
     required String groupeId,
     required String motif,
   }) async {}
+}
+
+/// Une creation de classe qui retient tout, genre et fuseau compris
+/// (CLASSE-FORM-1), et qui peut echouer [echecs] fois.
+class FauxCreationClasse implements PortCreationClasse {
+  /// Cree le double.
+  FauxCreationClasse({
+    this.retientGenre = true,
+    this.retientFuseau = true,
+    this.echecs = 0,
+  });
+
+  @override
+  final bool retientGenre;
+
+  @override
+  final bool retientFuseau;
+
+  /// Le nombre d'envois qui echouent avant le premier qui aboutit.
+  int echecs;
+
+  /// Chaque creation recue.
+  final List<CreationRecue> creations = <CreationRecue>[];
+
+  @override
+  Future<String> creer({
+    required String teacherId,
+    required TypePublicGroupe type,
+    required GenreClasse genre,
+    required String libelle,
+    required Creneau creneau,
+    required int seuilMax,
+  }) async {
+    if (echecs > 0) {
+      echecs--;
+      throw Exception('enseignant deja pris a ce creneau');
+    }
+    creations.add((
+      teacherId: teacherId,
+      type: type,
+      genre: genre,
+      libelle: libelle,
+      creneau: creneau,
+      seuilMax: seuilMax,
+    ));
+    return 'c1';
+  }
+}
+
+/// Une source d'enseignants en memoire (CLASSE-FORM-1).
+class FauxEnseignantsClasse implements PortEnseignantsClasse {
+  /// Cree le double.
+  FauxEnseignantsClasse(this.rendus);
+
+  /// Les enseignants rendus.
+  final List<EnseignantPropose> rendus;
+
+  @override
+  Future<List<EnseignantPropose>> pourClasse({
+    required TypePublicGroupe public,
+  }) async => rendus;
 }
 
 /// Un service d'evaluations qui retient les planifications.

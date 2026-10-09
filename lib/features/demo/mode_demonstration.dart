@@ -24,6 +24,8 @@ import '../../core/capacites/port_accents_profils.dart';
 import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_catalogue_classes.dart';
 import '../../core/capacites/port_classes_foyer.dart';
+import '../../core/capacites/port_creation_classe.dart';
+import '../../core/capacites/port_enseignants_classe.dart';
 import '../../core/capacites/port_finance_direction.dart';
 import '../../core/capacites/port_paiements_foyer.dart';
 import '../../core/capacites/port_politique_revue_kyc.dart';
@@ -60,6 +62,7 @@ import 'admin_x_demo.dart';
 import 'alertes_demo.dart';
 import 'cartes_classe_demo.dart';
 import 'catalogue_demo.dart';
+import 'classe_form_demo.dart';
 import 'dossiers_demo.dart';
 import 'finance_demo.dart';
 import 'observation_demo.dart';
@@ -298,6 +301,9 @@ List<Override> surchargesDemoAdmin({
     throw StateError('Demonstration interdite en production.');
   }
   final EtatRevueDemo e = etat ?? EtatRevueDemo.initial();
+  // CLASSE-FORM-1 : une classe creee en demonstration se voit dans la liste
+  // et compte dans la charge de son enseignant.
+  final ClassesCreeesDemo creees = ClassesCreeesDemo();
   return <Override>[
     sourceSessionProvider.overrideWithValue(const SourceSessionDemoAdmin()),
     portRevueDossiersProvider.overrideWithValue(RevueDossiersDemo(e)),
@@ -318,9 +324,14 @@ List<Override> surchargesDemoAdmin({
     demandesProvider.overrideWith(
       (Ref ref) async => demandesDemo(e.maintenant.toLocal()),
     ),
-    // AD-X : les classes fictives (collection et inspecteur, ADM-09), en
-    // lecture seule ; toute ecriture reste « indisponible ».
-    groupesProvider.overrideWith((Ref ref) async => groupesDemo()),
+    // AD-X : les classes fictives (collection et inspecteur, ADM-09). Seule
+    // la creation ecrit (CLASSE-FORM-1, en memoire) ; ajouter, retirer et
+    // cloturer restent « indisponibles ».
+    groupesProvider.overrideWith((Ref ref) async => creees.toutes()),
+    portEnseignantsClasseProvider.overrideWithValue(
+      EnseignantsClasseDemo(creees),
+    ),
+    portCreationClasseProvider.overrideWithValue(CreationClasseDemo(creees)),
     membresGroupeProvider.overrideWith(
       (Ref ref, String groupeId) async => membresDemo(groupeId),
     ),

@@ -52,6 +52,17 @@ Future<void> _ouvrirCreation(WidgetTester tester, List<Override> s) async {
 
 Finder _carte(String id) => find.byKey(ValueKey<String>('personne-$id'));
 
+/// CLASSE-FORM-1 : le genre de la classe est obligatoire et vient avant
+/// l'enseignant.
+Future<void> _choisirGenre(WidgetTester tester) =>
+    _presser(tester, find.byKey(const ValueKey<String>('classe-genre-femmes')));
+
+/// Le champ du nom, seul champ tape (CLASSE-FORM-1).
+Finder get _champNom => find.descendant(
+  of: find.byKey(const ValueKey<String>('classe-nom')),
+  matching: find.byType(TextField),
+);
+
 void main() {
   group('Le filtre des personnes proposables', () {
     test(
@@ -116,14 +127,22 @@ void main() {
           ),
         );
 
-        await tester.enterText(
-          find.widgetWithText(TextField, t.admin.groupes.champLibelle),
-          'Al-Fajr',
-        );
+        await _choisirGenre(tester);
         await _presser(tester, _carte('t-yacine'));
+        await _presser(
+          tester,
+          find.byKey(const ValueKey<String>('classe-jour-2')),
+        );
+        await _presser(
+          tester,
+          find.byKey(const ValueKey<String>('classe-heure')),
+        );
+        await _presser(tester, find.text('17\u00a0h').last);
+        await tester.enterText(_champNom, 'Al-Fajr');
         await _presser(tester, find.text(t.admin.groupes.creerEnvoyer));
 
         expect(groupes.creesPour, <String>['t-yacine']);
+        expect(groupes.creations.single.libelle, 'Al-Fajr');
       },
     );
 
@@ -138,10 +157,7 @@ void main() {
           groupes: groupes,
         ),
       );
-      await tester.enterText(
-        find.widgetWithText(TextField, t.admin.groupes.champLibelle),
-        'Al-Fajr',
-      );
+      await _choisirGenre(tester);
       await _presser(tester, find.text(t.admin.groupes.creerEnvoyer));
 
       expect(find.text(t.admin.groupes.manqueEnseignant), findsOneWidget);
