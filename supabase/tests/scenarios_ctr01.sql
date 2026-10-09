@@ -198,6 +198,7 @@ where key in ('allow_multi_participant_sessions', 'max_participants_per_session'
 
 -- C2 mesure bien le contrat 1-to-1, quelles que soient les mutations des
 -- scénarios précédents sur la base partagée.
+begin;
 insert into public.app_config (key, value)
 values ('allow_multi_participant_sessions', 'false'::jsonb),
        ('max_participants_per_session', '2'::jsonb)
@@ -235,6 +236,7 @@ delete from public.app_config current_config
      where snapshot.key = current_config.key
    );
 drop table pg_temp.ctr01_config_snapshot;
+commit;
 
 -- ============================================================
 -- C3 : deux visites qui se recoupent sont permises, un double
