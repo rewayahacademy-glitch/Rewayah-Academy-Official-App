@@ -316,6 +316,10 @@ begin
   end if;
 
   -- Le controleur : invisible et muet, decide en base et non par une case.
+  perform set_config('test.uid', 'b2000000-0000-0000-0000-000000000004', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"controller","household_id":"b2ffffff-0000-0000-0000-00000000000a"}}',
+    true);
   v_ctrl := public.autoriser_jeton_video(
     'b2aaaaaa-0000-0000-0000-00000000000a',
     'b2000000-0000-0000-0000-000000000004',
@@ -338,7 +342,11 @@ declare
 begin
   set local role service_role;
 
-  -- Non inscrit.
+  -- Non inscrit : compte actif, mais absent de la seance.
+  perform set_config('test.uid', 'b2000000-0000-0000-0000-000000000005', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"student","household_id":"b2ffffff-0000-0000-0000-00000000000a"}}',
+    true);
   v_ok := false;
   begin
     perform public.autoriser_jeton_video(
@@ -351,7 +359,11 @@ begin
     raise exception 'N5 ECHEC : un non-inscrit a obtenu un jeton pour la salle';
   end if;
 
-  -- Trop tot : la seance commence dans trois heures, la fenetre ouvre a T-10.
+  -- Trop tot : compte inscrit actif, mais avant l'ouverture T-10.
+  perform set_config('test.uid', 'b2000000-0000-0000-0000-000000000002', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"student","household_id":"b2ffffff-0000-0000-0000-00000000000a"}}',
+    true);
   v_ok := false;
   begin
     perform public.autoriser_jeton_video(
@@ -364,7 +376,11 @@ begin
     raise exception 'N5 ECHEC : jeton emis trois heures avant le debut';
   end if;
 
-  -- Seance close : elle ne rouvre pas.
+  -- Seance close : le meme compte inscrit est toujours valide.
+  perform set_config('test.uid', 'b2000000-0000-0000-0000-000000000002', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"student","household_id":"b2ffffff-0000-0000-0000-00000000000a"}}',
+    true);
   v_ok := false;
   begin
     perform public.autoriser_jeton_video(
