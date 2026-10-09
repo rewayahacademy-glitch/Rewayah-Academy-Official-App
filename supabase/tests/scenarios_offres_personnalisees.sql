@@ -56,7 +56,7 @@ BEGIN
     ('f1490000-0000-0000-0000-' || lpad((v_capacite + 4)::text, 12, '0'))::uuid;
 
   UPDATE public.profiles
-     SET account_status = 'suspended'
+     SET account_status = 'disabled'
    WHERE id = 'f1490000-0000-0000-0000-000000000001';
   UPDATE public.households
      SET status = 'suspended'
