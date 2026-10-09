@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/coran/service_coran.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_coran/etat_lecture_coran.dart';
@@ -66,11 +67,16 @@ class MushafPage extends ConsumerStatefulWidget {
   /// La cle du bouton qui deplie le choix du rendu, a texte agrandi.
   static const Key optionsKey = ValueKey<String>('mushaf-options');
 
-  /// Vrai quand le texte est agrandi au-dela du seuil des rangees compactes
+  /// Vrai quand le texte est agrandi jusqu'au seuil des rangees compactes
   /// (CORAN-320-1) : en-tete, mentions et pagination se resserrent alors pour
   /// laisser la hauteur aux versets.
+  ///
+  /// CORAN-320-1b : le seuil est atteint **a 130 % exactement** (`>=`, et non
+  /// plus `>`). A 130 %, le chrome n'est pas plafonne (il l'est a 130 %
+  /// justement) : l'ancien saut laissait 9 % de la hauteur aux versets en page
+  /// du mushaf et 0 % en lecture agrandie, contre 54 % un centieme plus haut.
   static bool texteAgrandi(BuildContext context) =>
-      MediaQuery.textScalerOf(context).scale(1) > AppContour.seuilTexteAgrandi;
+      MediaQuery.textScalerOf(context).scale(1) >= AppContour.seuilTexteAgrandi;
 
   /// Plafonne l'echelle du texte de [enfant] au seuil du texte agrandi.
   ///
@@ -221,6 +227,13 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
               key: MushafPage.enteteKey,
               vue: vue,
               mode: etat.mode,
+              reglageTaille: _ReglageTaille(
+                zoom: etat.zoomLocal,
+                onZoom: (double delta) {
+                  ref.read(lectureCoranProvider.notifier).zoomer(delta);
+                  _planifierEnregistrement();
+                },
+              ),
             ),
           _Reprises(
             personnelle: _positionPersonnelle,
@@ -308,15 +321,26 @@ class _Entete extends ConsumerWidget {
 /// L'en-tete a texte agrandi (CORAN-320-1) : une ligne.
 ///
 /// Le nom de la sourate, et un bouton qui deplie le choix du rendu (et, en
-/// page du mushaf, la mention qui renvoie a la lecture agrandie). La page et
-/// le juz ne sont pas redits ici : la position est au centre de la pagination,
-/// et le juz au pied de chaque page du mushaf. Taille plafonnee
+/// page du mushaf, la mention qui renvoie a la lecture agrandie ; en lecture
+/// agrandie et en focus, le reglage de taille). La page n'est pas redite ici :
+/// elle est au centre de la pagination. Le juz est au pied de chaque page du
+/// mushaf ; en lecture agrandie et en focus, qui n'ont pas ce pied, il suit le
+/// nom de la sourate (CORAN-320-1b). Taille plafonnee
 /// ([MushafPage.plafonner]).
 class _EnteteCompact extends StatefulWidget {
-  const _EnteteCompact({required this.vue, required this.mode, super.key});
+  const _EnteteCompact({
+    required this.vue,
+    required this.mode,
+    required this.reglageTaille,
+    super.key,
+  });
 
   final PageMushafVM? vue;
   final ModeRenduCoran mode;
+
+  /// Le reglage de taille du texte (lecture agrandie et focus), deplie avec
+  /// le choix du rendu (CORAN-320-1b).
+  final Widget reglageTaille;
 
   @override
   State<_EnteteCompact> createState() => _EnteteCompactEtat();
@@ -347,8 +371,27 @@ class _EnteteCompactEtat extends State<_EnteteCompact> {
             Row(
               children: <Widget>[
                 Expanded(
-                  child: Text(
-                    sourate?.nomTranslittere ?? t.eleve.coran.titre,
+                  child: Text.rich(
+                    TextSpan(
+                      text: sourate?.nomTranslittere ?? t.eleve.coran.titre,
+                      children: <InlineSpan>[
+                        // CORAN-320-1b : le juz, que ces deux rendus n'ont
+                        // nulle part ailleurs, dans le style de la ligne de
+                        // contexte de l'en-tete large.
+                        if (widget.mode != ModeRenduCoran.mushaf &&
+                            vue?.juzNumero != null)
+                          TextSpan(
+                            text:
+                                ' . '
+                                '${t.eleve.coran.juz(juz: '${vue!.juzNumero}')}',
+                            style: palette.inkMuted.applyTo(
+                              AppTypography.tabulaire(
+                                textes.bodySmall ?? const TextStyle(),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                     style: palette.inkStrong.applyTo(
                       textes.titleMedium ?? const TextStyle(),
                     ),
@@ -371,16 +414,20 @@ class _EnteteCompactEtat extends State<_EnteteCompact> {
             if (_deplie) ...<Widget>[
               const SizedBox(height: AppSpacing.xs),
               _ChoixMode(mode: widget.mode),
-              if (widget.mode == ModeRenduCoran.mushaf) ...<Widget>[
-                const SizedBox(height: AppSpacing.xs),
+              const SizedBox(height: AppSpacing.xs),
+              if (widget.mode == ModeRenduCoran.mushaf)
                 Text(
                   t.tc.coran.zoom.renvoiLectureAgrandie,
                   textAlign: TextAlign.center,
                   style: palette.inkFaint.applyTo(
                     textes.labelSmall ?? const TextStyle(),
                   ),
-                ),
-              ],
+                )
+              else
+                // CORAN-320-1b (decide par delegation le 09/10) : le reglage
+                // de taille quitte la pagination, ou il prenait deux rangees
+                // a 320 points, et rejoint le reglage du rendu.
+                widget.reglageTaille,
             ],
           ],
         ),
@@ -602,38 +649,7 @@ class _Commandes extends StatelessWidget {
     final int? suivante = vue?.pageSuivante;
     final Widget reglageTaille = Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-      // `Wrap` et non `Row` : les trois libelles de la commande de
-      // taille ne tiennent pas sur une ligne de 320 points, et un
-      // `Row` y deborderait au lieu de passer a la ligne.
-      child: Wrap(
-        alignment: WrapAlignment.center,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        spacing: AppSpacing.sm,
-        runSpacing: AppSpacing.sm,
-        children: <Widget>[
-          // Deux libelles plutot que deux icones : le catalogue n'a ni
-          // « plus » ni « moins », et inventer un point de code Phosphor
-          // au juge poserait un carre vide sur l'ecran de lecture.
-          ActionPrincipale(
-            libelle: t.eleve.coran.reduire,
-            niveau: NiveauAction.tertiaire,
-            pleineLargeur: false,
-            onPress: () => onZoom(-0.2),
-          ),
-          Text(
-            t.tc.coran.zoom.valeur(pourcent: (zoom * 100).round()),
-            style: palette.inkMuted.applyTo(
-              AppTypography.tabulaire(textes.labelMedium ?? const TextStyle()),
-            ),
-          ),
-          ActionPrincipale(
-            libelle: t.eleve.coran.agrandir,
-            niveau: NiveauAction.tertiaire,
-            pleineLargeur: false,
-            onPress: () => onZoom(0.2),
-          ),
-        ],
-      ),
+      child: _ReglageTaille(zoom: zoom, onZoom: onZoom),
     );
     // NAV-FLECHES-1 : fleche, position, fleche ; aux bornes la fleche
     // disparait. Le choix d'une page ou d'une sourate reste dessous, un lien
@@ -656,23 +672,19 @@ class _Commandes extends StatelessWidget {
     if (compact) {
       // CORAN-320-1 : une seule rangee, la pagination et l'acces a « Aller a
       // une page » en icone (nom lu et en infobulle). La mention du mushaf
-      // est repliee dans l'en-tete ; le reglage de taille du verset agrandi
-      // reste au-dessus. Taille plafonnee ([MushafPage.plafonner]).
+      // est repliee dans l'en-tete ; CORAN-320-1b : le reglage de taille de
+      // la lecture agrandie et du focus aussi, dans tous les rendus la
+      // pagination tient sur une rangee. Taille plafonnee
+      // ([MushafPage.plafonner]).
       return MushafPage.plafonner(
-        Column(
-          mainAxisSize: MainAxisSize.min,
+        Row(
           children: <Widget>[
-            if (mode != ModeRenduCoran.mushaf) reglageTaille,
-            Row(
-              children: <Widget>[
-                Expanded(child: barre),
-                const SizedBox(width: AppSpacing.sm),
-                BoutonIcone(
-                  icone: AppIcons.menu,
-                  libelle: t.tc.coran.navigation.ouvrir,
-                  onPress: onNavigation,
-                ),
-              ],
+            Expanded(child: barre),
+            const SizedBox(width: AppSpacing.sm),
+            BoutonIcone(
+              icone: AppIcons.menu,
+              libelle: t.tc.coran.navigation.ouvrir,
+              onPress: onNavigation,
             ),
           ],
         ),
@@ -701,6 +713,57 @@ class _Commandes extends StatelessWidget {
           libelle: t.tc.coran.navigation.ouvrir,
           niveau: NiveauAction.tertiaire,
           onPress: onNavigation,
+        ),
+      ],
+    );
+  }
+}
+
+/// Le reglage de taille du texte : Reduire, la valeur, Agrandir.
+///
+/// Un seul composant pour ses deux places (CORAN-320-1b) : sous les versets a
+/// texte de base, dans le panneau « Mode de lecture » a texte agrandi.
+class _ReglageTaille extends StatelessWidget {
+  const _ReglageTaille({required this.zoom, required this.onZoom});
+
+  final double zoom;
+  final void Function(double delta) onZoom;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+
+    // `Wrap` et non `Row` : les trois libelles de la commande de taille ne
+    // tiennent pas sur une ligne de 320 points, et un `Row` y deborderait au
+    // lieu de passer a la ligne.
+    return Wrap(
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.sm,
+      children: <Widget>[
+        // Deux libelles plutot que deux icones : ils disent ce qui grossit
+        // (le texte), la ou une loupe ne dit pas quoi.
+        ActionPrincipale(
+          libelle: t.eleve.coran.reduire,
+          niveau: NiveauAction.tertiaire,
+          pleineLargeur: false,
+          onPress: () => onZoom(-0.2),
+        ),
+        // Isolee : sans lettre, « 100 % » se lisait « % 100 » en arabe
+        // (CORAN-320-1b).
+        Text(
+          isolerSens(t.tc.coran.zoom.valeur(pourcent: (zoom * 100).round())),
+          style: palette.inkMuted.applyTo(
+            AppTypography.tabulaire(textes.labelMedium ?? const TextStyle()),
+          ),
+        ),
+        ActionPrincipale(
+          libelle: t.eleve.coran.agrandir,
+          niveau: NiveauAction.tertiaire,
+          pleineLargeur: false,
+          onPress: () => onZoom(0.2),
         ),
       ],
     );

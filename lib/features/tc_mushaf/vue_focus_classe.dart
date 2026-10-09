@@ -3,11 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/coran/service_coran.dart';
 import '../../core/coran/vue_lecteur.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_coran/etat_lecture_coran.dart';
 import '../../core/tc_coran/moteur_mushaf.dart';
 import '../../core/tc_coran/page_mushaf_vm.dart';
+import '../../core/theme/app_contour.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/empty_state.dart';
@@ -64,28 +66,51 @@ class VueFocusClasse extends ConsumerWidget {
       etat.plageFocus,
     );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        if (etat.plageFocus == null) const _SansPlage(),
-        Expanded(
-          // Le passage retenu occupe le centre de l'ecran : c'est la seule
-          // difference visible entre focus et lecture agrandie, et c'est celle
-          // qui compte quand un enseignant dit « regardez ici ».
-          child: Center(
-            child: ColonneVersetsReflow(
-              versets: retenus,
-              zoom: etat.zoomLocal,
-              sections: vue.sections,
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) {
+        // [RESPONSIVE]
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            if (etat.plageFocus == null)
+              // CORAN-320-1b : le mot d'explication ne prend jamais plus
+              // d'un tiers de la zone. Au-dela il defile dans sa bande, il
+              // ne deborde plus sous l'attribution (29 px a 320 x 568).
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: contraintes.maxHeight * _partMaximaleSansPlage,
+                ),
+                child: const SingleChildScrollView(child: _SansPlage()),
+              ),
+            Expanded(
+              // Le passage retenu occupe le centre de l'ecran : c'est la
+              // seule difference visible entre focus et lecture agrandie, et
+              // c'est celle qui compte quand un enseignant dit « regardez
+              // ici ».
+              child: Center(
+                child: ColonneVersetsReflow(
+                  versets: retenus,
+                  zoom: etat.zoomLocal,
+                  sections: vue.sections,
+                ),
+              ),
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 }
 
+/// La part maximale de la zone du focus que prend le mot d'explication
+/// (CORAN-320-1b, decide par delegation le 09/10) : le reste va aux versets.
+const double _partMaximaleSansPlage = 1 / 3;
+
 /// Le mot discret qui explique un focus sans plage designee.
+///
+/// CORAN-320-1b : sa taille est plafonnee au seuil du texte agrandi, comme
+/// l'en-tete et la pagination de l'ecran ; le texte des versets, lui, garde
+/// l'echelle de l'usager.
 class _SansPlage extends StatelessWidget {
   const _SansPlage();
 
@@ -99,12 +124,20 @@ class _SansPlage extends StatelessWidget {
         horizontal: AppSpacing.lg,
         vertical: AppSpacing.sm,
       ),
-      child: Text(
-        '${t.tc.coran.focus.aucunePlage}. '
-        '${t.tc.coran.focus.aucunePlageDetail}',
-        textAlign: TextAlign.center,
-        style: palette.inkMuted.applyTo(
-          textes.labelSmall ?? const TextStyle(),
+      child: MediaQuery.withClampedTextScaling(
+        maxScaleFactor: AppContour.seuilTexteAgrandi,
+        // Isole quand la phrase n'a pas le sens de l'interface (libelle
+        // encore sans traduction) : le point final ne passe plus en tete.
+        child: Text(
+          isolerSiAutreSens(
+            '${t.tc.coran.focus.aucunePlage}. '
+            '${t.tc.coran.focus.aucunePlageDetail}',
+            Directionality.of(context),
+          ),
+          textAlign: TextAlign.center,
+          style: palette.inkMuted.applyTo(
+            textes.labelSmall ?? const TextStyle(),
+          ),
         ),
       ),
     );
