@@ -385,4 +385,3 @@ Une fonctionnalite critique n'est "prete" que si:
 - deployee.
 
 Un ecran high-fi termine ou un contrat frontend termine n'est pas une preuve de disponibilite backend.
-
