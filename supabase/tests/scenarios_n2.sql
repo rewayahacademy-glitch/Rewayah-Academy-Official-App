@@ -371,6 +371,12 @@ do $$
 declare
   v_etat public.presence_state;
 begin
+  -- etat_presence revalide l'appelant depuis 0042, même pour ce test
+  -- exécuté sous service_role : on représente ici le compte actif de l'élève.
+  perform set_config('test.uid', 'b2000000-0000-0000-0000-000000000002', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"student","household_id":"b2ffffff-0000-0000-0000-00000000000a"}}',
+    true);
   set local role service_role;
 
   -- Un jeton vient d'etre emis pour Nour, et aucun `joined` n'est arrive.
@@ -407,6 +413,11 @@ declare
   v_etat    public.presence_state;
   v_room    text;
 begin
+  -- Le webhook et le calcul d'état sont évalués pour le compte actif concerné.
+  perform set_config('test.uid', 'b2000000-0000-0000-0000-000000000002', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"student","household_id":"b2ffffff-0000-0000-0000-00000000000a"}}',
+    true);
   set local role service_role;
 
   select room_name into v_room from public.session_video_route
