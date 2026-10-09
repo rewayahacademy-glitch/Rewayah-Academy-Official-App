@@ -365,4 +365,3 @@ Fournir dans cet ordre :
 - Galerie de démonstration, nouvelle navigation d'inscription, seconde route de bienvenue.
 
 **Fin de la spécification CAP-55 / PUB-1.**
-
