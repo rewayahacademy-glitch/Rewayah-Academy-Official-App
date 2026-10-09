@@ -6,9 +6,11 @@ import '../../../core/comptable/modeles_comptable.dart';
 import '../../../core/comptable/statuts_comptable.dart';
 import '../../../core/comptable/visibilite_montants.dart';
 import '../../../core/finance/montant.dart';
+import '../../../core/i18n/strings.g.dart';
 import '../../../core/widgets/bascule_montants.dart';
 import '../../../core/widgets/comptable/carte_reserve_strategique.dart';
 import '../../../core/widgets/comptable/ligne_activite.dart';
+import '../../../core/widgets/comptable/pourcentage_sensible.dart';
 import '../../../core/widgets/comptable/resume_tresorerie.dart';
 import '../../../core/widgets/ligne_destination_masquee.dart';
 import '../../../core/widgets/montant_argent.dart';
@@ -210,6 +212,32 @@ List<EntreeGalerie> entreesEtatsComptable() => <EntreeGalerie>[
         'sans montant',
         (BuildContext _) =>
             _visibilite(affiches: false, LigneActivite(_journalProfil)),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'PourcentageSensible',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'masque avec les montants (par defaut)',
+        (BuildContext _) => _visibilite(
+          affiches: false,
+          PourcentageSensible(
+            valeur: '82',
+            gabarit: (String v) => t.comptable.commun.atteint(pourcent: v),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'revele',
+        (BuildContext _) => _visibilite(
+          affiches: true,
+          PourcentageSensible(
+            valeur: '82',
+            gabarit: (String v) => t.comptable.commun.atteint(pourcent: v),
+          ),
+        ),
       ),
     ],
   ),

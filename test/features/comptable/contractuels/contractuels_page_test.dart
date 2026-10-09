@@ -22,6 +22,14 @@ final String _masque = MontantSensible.masquePour('USD');
 Finder _pilule(String parametre) =>
     find.byKey(ValueKey<String>('onglet-$parametre'));
 
+/// Touche l'onglet [parametre] apres l'avoir amene a l'ecran : la rangee
+/// des zones defile (RangeeFiltres, FILTRES-1, JONCTION-LIGNES-1).
+Future<void> _toucherOnglet(WidgetTester tester, String parametre) async {
+  await tester.ensureVisible(_pilule(parametre));
+  await tester.pumpAndSettle();
+  await tester.tap(_pilule(parametre));
+}
+
 int _compteur(WidgetTester tester, String parametre) =>
     tester.widget<FilterPill>(_pilule(parametre)).compteur!;
 
@@ -59,7 +67,7 @@ void main() {
 
     testWidgets('changer de zone filtre la liste', (WidgetTester tester) async {
       await monterContractuels(tester);
-      await tester.tap(_pilule('a-approuver'));
+      await _toucherOnglet(tester, 'a-approuver');
       await tester.pumpAndSettle();
       expect(find.text('Atelier Noor'), findsOneWidget);
       expect(find.text('Traduction Hikma'), findsOneWidget);
@@ -169,10 +177,10 @@ void main() {
       await monterContractuels(tester, port: PortVide());
       expect(find.byType(EmptyState), findsOneWidget);
       expect(find.text(c.videObligations), findsOneWidget);
-      await tester.tap(_pilule('a-payer'));
+      await _toucherOnglet(tester, 'a-payer');
       await tester.pumpAndSettle();
       expect(find.text(c.videAPayer), findsOneWidget);
-      await tester.tap(_pilule('historique'));
+      await _toucherOnglet(tester, 'historique');
       await tester.pumpAndSettle();
       expect(find.text(c.videHistorique), findsOneWidget);
       expect(_actionsDeZone, findsNothing);

@@ -1298,7 +1298,7 @@ void main() {
 
       // Phrase de contexte (K-58), apercu sans bandeau, Rose deja prise.
       expect(
-        find.text(t.ficheEleve.couleur.contexte(prenom: 'Eleve A1')),
+        find.text(t.ficheEleve.couleur.contexte(prenom: 'Élève A1')),
         findsOneWidget,
       );
       expect(bandeauApercu(), findsNothing);
@@ -1306,7 +1306,7 @@ void main() {
         find.text(
           t.ficheEleve.couleur.priseLigne(
             couleur: t.ficheEleve.couleur.rose,
-            prenom: 'Eleve A2',
+            prenom: 'Élève A2',
           ),
         ),
         findsOneWidget,
@@ -1484,7 +1484,7 @@ void main() {
       expect(find.byType(CouleurElevePage), findsOneWidget);
       final String tous = t.ficheEleve.couleur.priseLigne(
         couleur: t.ficheEleve.couleur.rose,
-        prenom: 'Eleve A2 et Eleve A3',
+        prenom: 'Élève A2 et Eleve A3',
       );
       expect(find.text(tous), findsOneWidget);
       // Jamais le premier seul, et jamais le profil ouvert lui-meme.
@@ -1492,7 +1492,7 @@ void main() {
         find.text(
           t.ficheEleve.couleur.priseLigne(
             couleur: t.ficheEleve.couleur.rose,
-            prenom: 'Eleve A2',
+            prenom: 'Élève A2',
           ),
         ),
         findsNothing,
@@ -1501,7 +1501,7 @@ void main() {
         find.textContaining(
           t.ficheEleve.couleur.priseLigne(
             couleur: t.ficheEleve.couleur.ciel,
-            prenom: 'Eleve A1',
+            prenom: 'Élève A1',
           ),
         ),
         findsNothing,
@@ -1510,7 +1510,7 @@ void main() {
       // l'exclusion du profil ouvert, c'est la phrase « Deja choisie pour
       // Eleve A1 » qui l'avouerait, et le libelle du rond Ciel.
       final String priseParLui = t.ficheEleve.couleur.dejaPrise(
-        prenom: 'Eleve A1',
+        prenom: 'Élève A1',
       );
       expect(find.textContaining(priseParLui), findsNothing);
       expect(
@@ -1521,7 +1521,7 @@ void main() {
         find.bySemanticsLabel(
           RegExp(
             RegExp.escape(
-              t.ficheEleve.couleur.dejaPrise(prenom: 'Eleve A2 et Eleve A3'),
+              t.ficheEleve.couleur.dejaPrise(prenom: 'Élève A2 et Eleve A3'),
             ),
           ),
         ),

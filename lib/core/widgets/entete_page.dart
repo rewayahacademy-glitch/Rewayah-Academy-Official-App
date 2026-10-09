@@ -118,18 +118,59 @@ class EntetePage extends StatelessWidget {
         : DisqueRetour(onPress: onRetour!);
 
     if (!compact) {
-      return Row(
-        children: <Widget>[
-          if (retour != null) ...<Widget>[retour, Ecart.hMd],
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      // CPT-RC (revue CPT-R M3, ligne ui/comptable-v1), repris par
+      // JONCTION-LIGNES-1 : quand retour et actions laissent au titre moins
+      // de [partMinTitre] de la largeur (six actions de la coquille admin a
+      // 800, Interface guidee), ils passent sur une rangee au-dessus et le
+      // titre et son sous-titre prennent toute la largeur ; sinon, titre et
+      // sous-titre etaient composes un mot par ligne.
+      return LayoutBuilder(
+        builder: (BuildContext contexte, BoxConstraints c) {
+          final double aCote =
+              c.maxWidth -
+              (retour == null ? 0 : AppTouchTarget.standard + AppSpacing.md) -
+              actions.length * (AppTouchTarget.standard + AppSpacing.xs);
+          final bool auDessus =
+              (retour != null || actions.isNotEmpty) &&
+              c.maxWidth.isFinite &&
+              aCote < c.maxWidth * partMinTitre;
+          final Widget bloc = Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[titreW, ...sousTitreW],
+          );
+          if (auDessus) {
+            return Column(
+              key: EnteteCompact.rangeeAuDessusKey,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
-              children: <Widget>[titreW, ...sousTitreW],
-            ),
-          ),
-          for (final Widget action in actions) ...<Widget>[Ecart.hXs, action],
-        ],
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    ?retour,
+                    const Spacer(),
+                    for (final Widget action in actions) ...<Widget>[
+                      Ecart.hXs,
+                      action,
+                    ],
+                  ],
+                ),
+                Ecart.vSm,
+                bloc,
+              ],
+            );
+          }
+          return Row(
+            children: <Widget>[
+              if (retour != null) ...<Widget>[retour, Ecart.hMd],
+              Expanded(child: bloc),
+              for (final Widget action in actions) ...<Widget>[
+                Ecart.hXs,
+                action,
+              ],
+            ],
+          );
+        },
       );
     }
 

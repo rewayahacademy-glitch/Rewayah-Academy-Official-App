@@ -199,6 +199,9 @@ const List<String> composantsDuCatalogue = <String>[
   'CarteReserveStrategique',
   'LigneActivite',
   'ResumeTresorerie',
+  // CPT-DIR-2 (Q-9 = a) : le pourcentage derive d'un montant, masque avec
+  // les montants ; inscrit au catalogue par JONCTION-LIGNES-1.
+  'PourcentageSensible',
 ];
 
 /// Les trois largeurs de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 8.
@@ -337,6 +340,14 @@ void main() {
               .where(
                 (String chemin) =>
                     chemin.substring('lib/core/widgets/'.length).contains('/'),
+              )
+              // Seule exception, decidee par CPT-RC (revue CPT-R, m1) sur la
+              // ligne ui/comptable-v1 et gardee par JONCTION-LIGNES-1 : le
+              // sous-dossier comptable/, que le test precedent lit (recursif)
+              // et confronte au catalogue.
+              .where(
+                (String chemin) =>
+                    !chemin.startsWith('lib/core/widgets/comptable/'),
               )
               .toList()
             ..sort();

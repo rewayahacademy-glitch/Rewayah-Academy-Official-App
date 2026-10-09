@@ -218,6 +218,10 @@ void main() {
       await tester.tap(find.text(p.filtres.enseignants));
       await tester.pumpAndSettle();
       expect(find.text(p.compteur(n: 15)), findsOneWidget);
+      // FILTRES-1 : une seule RangeeFiltres qui defile ; « Effacer les
+      // filtres » est en bout de rangee, amene a l'ecran avant le toucher.
+      await tester.ensureVisible(find.text(p.filtres.effacer));
+      await tester.pumpAndSettle();
       await tester.tap(find.text(p.filtres.effacer));
       await tester.pumpAndSettle();
       expect(find.text(p.compteur(n: 21)), findsOneWidget);

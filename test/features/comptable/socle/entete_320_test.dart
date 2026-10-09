@@ -66,9 +66,26 @@ void main() {
       final RenderParagraph paragraphe = tester.renderObject<RenderParagraph>(
         find.descendant(of: titre, matching: find.byType(RichText)).first,
       );
+      // JONCTION-LIGNES-1 : l'en-tete compact de SUPERPOS-1 (texte agrandi)
+      // garde le titre, reduit a l'echelle HIER-1, a cote du retour quand
+      // son plus long mot y tient, et pose le sous-titre sur toute la
+      // largeur, sous la rangee : ce qui corrige le defaut M3 (titre et
+      // sous-titre un mot par ligne). Le titre recoit alors au moins
+      // [EntetePage.partMinTitre] de la largeur ; sinon, toute la largeur.
+      final bool aCote = find
+          .descendant(
+            of: entete,
+            matching: find.byKey(EnteteCompact.rangeeAuDessusKey),
+          )
+          .evaluate()
+          .isEmpty;
       expect(
         paragraphe.constraints.maxWidth,
-        greaterThanOrEqualTo(boiteEntete.width - 1),
+        greaterThanOrEqualTo(
+          aCote
+              ? boiteEntete.width * EntetePage.partMinTitre
+              : boiteEntete.width - 1,
+        ),
         reason:
             'Le titre est compose dans '
             '${paragraphe.constraints.maxWidth.toStringAsFixed(0)} px sur '
