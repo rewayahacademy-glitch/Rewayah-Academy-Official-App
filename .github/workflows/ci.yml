@@ -224,6 +224,7 @@ jobs:
         run: |
           deno check \
             supabase/functions/_shared/r2/ \
+            supabase/functions/agent-session/index.ts \
             supabase/functions/piece-identite-acces/index.ts \
             supabase/functions/piece-identite-depot/index.ts \
             supabase/functions/piece-identite-confirme/index.ts \
