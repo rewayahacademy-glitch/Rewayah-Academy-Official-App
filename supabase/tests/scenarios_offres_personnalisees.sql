@@ -200,7 +200,13 @@ BEGIN
        'anon', 'public.demander_creneau_personnalise(uuid,text,smallint[],smallint)', 'EXECUTE')
      OR pg_catalog.has_function_privilege(
        'anon', 'public.regroupements_demandes_horaires_admin()', 'EXECUTE') THEN
-    RAISE EXCEPTION 'F1 ACL: accès direct ou anon autorisé';
+    RAISE EXCEPTION 'F1 ACL: table_select=%, demande_anon=%, admin_group_anon=%',
+      pg_catalog.has_table_privilege(
+        'authenticated', 'public.demandes_horaires_famille', 'SELECT'),
+      pg_catalog.has_function_privilege(
+        'anon', 'public.demander_creneau_personnalise(uuid,text,smallint[],smallint)', 'EXECUTE'),
+      pg_catalog.has_function_privilege(
+        'anon', 'public.regroupements_demandes_horaires_admin()', 'EXECUTE');
   END IF;
 
   -- La carte publiée par l'administration crée aussi une demande privée,
