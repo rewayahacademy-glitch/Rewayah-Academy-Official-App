@@ -22,9 +22,9 @@ DECLARE
   v_profile uuid;
   v_count integer;
 BEGIN
-  PERFORM set_config('test.uid', v_id::text, true);
+  PERFORM set_config('request.jwt.claim.sub', v_id::text, true);
   PERFORM set_config(
-    'test.jwt',
+    'request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'guardian'))::text,
     true
   );
@@ -58,21 +58,34 @@ BEGIN
     RAISE EXCEPTION 'B-07: le titulaire ne peut pas décrire sa propre fiche';
   END IF;
 
-  -- Une autre identité applicative ne peut pas créer la fiche du titulaire.
+END
+$scenario$;
+
+DO $negative_student$
+DECLARE
+  v_denied boolean := false;
+BEGIN
   PERFORM set_config(
-    'test.jwt',
+    'request.jwt.claim.sub', 'b0700000-0000-0000-0000-000000000001', true
+  );
+  PERFORM set_config(
+    'request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text,
     true
   );
   BEGIN
     PERFORM public.creer_profil_eleve_titulaire();
-    RAISE EXCEPTION 'B-07: un rôle student a pu appeler la création titulaire';
   EXCEPTION WHEN raise_exception THEN
-    IF SQLERRM = 'B-07: un rôle student a pu appeler la création titulaire' THEN
+    IF SQLERRM = 'création réservée au titulaire connecté' THEN
+      v_denied := true;
+    ELSE
       RAISE;
     END IF;
   END;
+  IF NOT v_denied THEN
+    RAISE EXCEPTION 'B-07: un rôle student a pu appeler la création titulaire';
+  END IF;
 END
-$scenario$;
+$negative_student$;
 
 ROLLBACK;
