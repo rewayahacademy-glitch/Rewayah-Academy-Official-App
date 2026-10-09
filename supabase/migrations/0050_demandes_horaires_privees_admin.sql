@@ -342,29 +342,35 @@ BEGIN
   SELECT md5(concat_ws('|', d.type_public, d.langue_code, d.fuseau_iana,
                        array_to_string(d.jours, ','), array_to_string(d.heures_locales, ','))),
          d.type_public, d.langue_code, d.fuseau_iana, d.jours, d.heures_locales,
-         count(*)::integer,
+         count(*) FILTER (
+           WHERE p.deleted_at IS NULL
+             AND p.account_status IN ('active', 'provisional_active')
+             AND (p.access_until IS NULL OR p.access_until > now())
+             AND h.status = 'active' AND h.deleted_at IS NULL
+             AND sp.deleted_at IS NULL AND c.actif AND l.actif
+         )::integer,
          CASE d.type_public
            WHEN 'adulte' THEN public.app_config_int('groupe.capacite_adulte', 6)
            ELSE public.app_config_int('groupe.capacite_enfant', 5)
          END,
-         count(*) >= CASE d.type_public
+         count(*) FILTER (
+           WHERE p.deleted_at IS NULL
+             AND p.account_status IN ('active', 'provisional_active')
+             AND (p.access_until IS NULL OR p.access_until > now())
+             AND h.status = 'active' AND h.deleted_at IS NULL
+             AND sp.deleted_at IS NULL AND c.actif AND l.actif
+         ) >= CASE d.type_public
            WHEN 'adulte' THEN public.app_config_int('groupe.capacite_adulte', 6)
            ELSE public.app_config_int('groupe.capacite_enfant', 5)
          END
   FROM public.demandes_horaires_famille d
   JOIN public.profiles p ON p.id = d.eleve_id
-    AND p.deleted_at IS NULL
-    AND p.account_status IN ('pending_kyc', 'active', 'provisional_active')
-    AND (p.access_until IS NULL OR p.access_until > now())
-  JOIN public.households h ON h.id = p.household_id
-    AND h.status = 'active'
-    AND h.deleted_at IS NULL
-  JOIN public.student_profiles sp ON sp.profile_id = d.eleve_id
-    AND sp.deleted_at IS NULL
-  JOIN public.cohortes_age c ON c.code = sp.cohorte
-    AND c.type_public = d.type_public AND c.actif
-  JOIN public.langues_cours l ON l.code = sp.langue_cours
-    AND l.code = d.langue_code AND l.actif
+  LEFT JOIN public.households h ON h.id = p.household_id
+  LEFT JOIN public.student_profiles sp ON sp.profile_id = d.eleve_id
+  LEFT JOIN public.cohortes_age c ON c.code = sp.cohorte
+    AND c.type_public = d.type_public
+  LEFT JOIN public.langues_cours l ON l.code = sp.langue_cours
+    AND l.code = d.langue_code
   WHERE d.etat = 'envoyee'
   GROUP BY d.type_public, d.langue_code, d.fuseau_iana, d.jours, d.heures_locales
   ORDER BY d.type_public, d.langue_code, d.fuseau_iana, d.jours, d.heures_locales;
