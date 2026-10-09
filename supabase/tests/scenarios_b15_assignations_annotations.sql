@@ -82,6 +82,11 @@ values
    'b1500000-0000-0000-0000-000000000001', 'a_faire');
 
 do $b15_teacher_guards$
+declare
+  v_count integer;
+  v_id uuid;
+  v_traits integer;
+  v_markers integer;
 begin
   begin
     insert into public.learning_assignment
@@ -139,19 +144,12 @@ begin
     '{"resource_id":"b15fffff-0000-0000-0000-000000000007","resource_version_id":null,"debut":{"resource_id":"b15fffff-0000-0000-0000-000000000007","resource_version_id":null,"type_ancrage":"page","page":1},"fin":{"resource_id":"b15fffff-0000-0000-0000-000000000007","resource_version_id":null,"type_ancrage":"page","page":2}}',
     'reinforce', 'dernier');
 
-  do $b15_marker_replace$
-  declare
-    v_count integer;
-    v_id uuid;
-  begin
-    select count(*), max(id) into v_count, v_id
-      from public.annotation_marqueur
-     where layer_id = 'b15fffff-0000-0000-0000-000000000010';
-    if v_count <> 1 or v_id <> 'b15fffff-0000-0000-0000-000000000012' then
-      raise exception 'B-15: a marker on the same range must replace its predecessor';
-    end if;
-  end
-  $b15_marker_replace$;
+  select count(*), max(id) into v_count, v_id
+    from public.annotation_marqueur
+   where layer_id = 'b15fffff-0000-0000-0000-000000000010';
+  if v_count <> 1 or v_id <> 'b15fffff-0000-0000-0000-000000000012' then
+    raise exception 'B-15: a marker on the same range must replace its predecessor';
+  end if;
 
   update public.annotation_marqueur
      set cree_le = now() - interval '2 seconds'
@@ -160,20 +158,13 @@ begin
     'b15fffff-0000-0000-0000-000000000010'
   );
 
-  do $b15_undo_order$
-  declare
-    v_traits integer;
-    v_markers integer;
-  begin
-    select count(*) into v_traits from public.annotation_trait
-     where layer_id = 'b15fffff-0000-0000-0000-000000000010';
-    select count(*) into v_markers from public.annotation_marqueur
-     where layer_id = 'b15fffff-0000-0000-0000-000000000010';
-    if v_traits <> 0 or v_markers <> 1 then
-      raise exception 'B-15: undo must remove the latest gesture across both tables';
-    end if;
-  end
-  $b15_undo_order$;
+  select count(*) into v_traits from public.annotation_trait
+   where layer_id = 'b15fffff-0000-0000-0000-000000000010';
+  select count(*) into v_markers from public.annotation_marqueur
+   where layer_id = 'b15fffff-0000-0000-0000-000000000010';
+  if v_traits <> 0 or v_markers <> 1 then
+    raise exception 'B-15: undo must remove the latest gesture across both tables';
+  end if;
 
   begin
     insert into public.annotation_layer
