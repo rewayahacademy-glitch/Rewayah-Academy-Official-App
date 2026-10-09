@@ -114,6 +114,22 @@ class DataCollection<T> extends StatelessWidget {
   /// par defaut, le comportement d'avant.
   final bool defileSeule;
 
+  /// La hauteur sous laquelle une collection ne se lit plus : un titre et
+  /// deux lignes de texte, a l'echelle du texte de [context]. C'est le
+  /// `minimumEtire` d'une `ColonneCorps` qui la porte (FILTRES-1b) : a 320 px
+  /// texte x2, l'intro et la rangee de filtres ne laissent plus de place a
+  /// la liste, et la page defile au lieu de deborder.
+  static double minimumLisible(BuildContext context) {
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    double ligne(TextStyle? style) =>
+        echelle.scale(style?.fontSize ?? 14) * (style?.height ?? 1.2);
+    return ligne(textes.titleMedium) +
+        AppSpacing.sm +
+        ligne(textes.bodyLarge) * 2 +
+        AppSpacing.lg * 2;
+  }
+
   /// Les colonnes, dans l'ordre d'affichage.
   final List<ColonneDonnees<T>> colonnes;
 

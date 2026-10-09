@@ -52,8 +52,10 @@ class _ProgressionPageEtat extends ConsumerState<ProgressionPage> {
       titre: t.admin.progression.titre,
       entete: SousNavigationDomaine(onglets: ongletsPedagogie(), indexActif: 1),
       defilante: false,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      // FILTRES-1b : des colonnes de corps (ici et dans le corps) qui disent
+      // a `PageShell` la hauteur qui leur manque : a 320 px texte x2, la page
+      // defile au lieu de deborder sous la liste.
+      child: ColonneCorps(
         children: <Widget>[
           Text(t.admin.progression.intro, style: textes.bodyMedium),
           Ecart.vXl,
@@ -126,8 +128,8 @@ class _Corps extends StatelessWidget {
         .where((EleveProgression e) => cycle == null || e.niveauCycle == cycle)
         .toList(growable: false);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return ColonneCorps(
+      minimumEtire: DataCollection.minimumLisible(context),
       children: <Widget>[
         RangeeFiltres(
           filtres: <Widget>[

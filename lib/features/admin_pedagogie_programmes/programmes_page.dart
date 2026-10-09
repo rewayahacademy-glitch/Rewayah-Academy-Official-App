@@ -59,8 +59,10 @@ class _ProgrammesPageEtat extends ConsumerState<ProgrammesPage> {
       titre: t.admin.programmes.titre,
       entete: SousNavigationDomaine(onglets: ongletsPedagogie(), indexActif: 3),
       defilante: false,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      // FILTRES-1b : des colonnes de corps (ici et dans le corps) qui disent
+      // a `PageShell` la hauteur qui leur manque : a 320 px texte x2, la page
+      // defile au lieu de deborder sous la liste.
+      child: ColonneCorps(
         children: <Widget>[
           Text(t.admin.programmes.intro, style: textes.bodyMedium),
           Ecart.vLg,
@@ -164,8 +166,8 @@ class _Corps extends StatelessWidget {
       orElse: () => versions.first,
     );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return ColonneCorps(
+      minimumEtire: DataCollection.minimumLisible(context),
       children: <Widget>[
         RangeeFiltres(
           filtres: <Widget>[

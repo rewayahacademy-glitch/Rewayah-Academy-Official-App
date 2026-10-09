@@ -63,7 +63,7 @@ class _QualitePageEtat extends ConsumerState<QualitePage> {
       // liste, la page defile alors au lieu de deborder, et la liste garde
       // au moins un titre de groupe et une ligne lisibles.
       child: ColonneCorps(
-        minimumEtire: _minimumListe(context),
+        minimumEtire: DataCollection.minimumLisible(context),
         children: <Widget>[
           Text(t.admin.qualite.intro, style: textes.bodyMedium),
           Ecart.vXl,
@@ -100,19 +100,6 @@ class _QualitePageEtat extends ConsumerState<QualitePage> {
       ),
     );
   }
-}
-
-/// La hauteur sous laquelle la liste n'est plus lisible : un titre de
-/// groupe et deux lignes de carte, a l'echelle du texte.
-double _minimumListe(BuildContext context) {
-  final TextScaler echelle = MediaQuery.textScalerOf(context);
-  final TextTheme textes = Theme.of(context).textTheme;
-  double ligne(TextStyle? style) =>
-      echelle.scale(style?.fontSize ?? 14) * (style?.height ?? 1.2);
-  return ligne(textes.titleMedium) +
-      AppSpacing.sm +
-      ligne(textes.bodyLarge) * 2 +
-      AppSpacing.lg * 2;
 }
 
 bool _correspond(AnomalieQualite a, _Filtre f) => switch (f) {
