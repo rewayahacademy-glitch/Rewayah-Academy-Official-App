@@ -394,7 +394,7 @@ end $$;
 --
 -- Le JWT identifie le jeton d'agent dans `sub`. Le garde central ne substitue
 -- le sujet effectif qu'apres avoir relu et valide la portee en base.
-do $
+do $agt_identity$
 declare
   v_jeton uuid := (select valeur::uuid from agt_fixture where cle = 'id_masque');
   v_observe uuid := 'a7000000-0000-0000-0000-000000000002';
@@ -420,7 +420,7 @@ begin
      or auth.jwt() -> 'app_metadata' ->> 'agent_token_id' is distinct from v_jeton::text then
     raise exception 'A7b : le JWT doit conserver l''identite propre de l''agent';
   end if;
-end $;
+end $agt_identity$;
 
 -- ============================================================
 -- A8 : LE MASQUAGE EST DUR -- le prenom ne quitte pas la base
