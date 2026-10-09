@@ -71,28 +71,6 @@ select set_config('test.jwt',
   '{"app_metadata":{"role":"teacher","household_id":"b15fffff-0000-0000-0000-000000000001"}}',
   true);
 
-do $b15_private_helper_probe$
-declare
-  v_group_owner text;
-  v_is_definer boolean;
-  v_bypass_rls boolean;
-  v_member boolean;
-begin
-  select pg_catalog.pg_get_userbyid(p.proowner), p.prosecdef, r.rolbypassrls
-    into v_group_owner, v_is_definer, v_bypass_rls
-    from pg_catalog.pg_proc p
-    join pg_catalog.pg_roles r on r.oid = p.proowner
-   where p.oid = 'private.tc_assignment_teacher_owns_member(uuid,uuid)'::regprocedure;
-  raise notice 'B-15 helper owner=%, security_definer=%, bypassrls=%',
-    v_group_owner, v_is_definer, v_bypass_rls;
-  select private.tc_assignment_teacher_owns_member(
-    'b15fffff-0000-0000-0000-000000000002',
-    'b1500000-0000-0000-0000-000000000004'
-  ) into v_member;
-  raise notice 'B-15 helper membership=%', v_member;
-end
-$b15_private_helper_probe$;
-
 insert into public.learning_assignment
   (group_id, student_id, resource_id, purpose, instructions, starts_at,
    due_at, created_by, status)
