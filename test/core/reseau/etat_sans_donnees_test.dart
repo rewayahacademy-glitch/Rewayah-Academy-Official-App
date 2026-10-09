@@ -56,7 +56,6 @@ const Set<String> _permises = <String>{
   'salle.preparation.reseauFaible',
   'salle.secours.reseauFaible',
   'salle.secours.reseauFaibleGuidee',
-  'salle.reconnexion',
   'salle.lienMediocre',
   'tc.classe.reseau.mediocre',
   'tc.classe.lien.instable',
@@ -233,13 +232,15 @@ void main() {
     expect(<String>[
       for (final MapEntry<String, String> e in textes.entries)
         if (RegExp(
-          r'Rewayah n.a pas répondu|Rewayah ne répond pas',
+          r'(Rewayah|le serveur) n.a pas répondu|'
+          r'(Rewayah|le serveur) ne répond pas',
           caseSensitive: false,
         ).hasMatch(e.value))
           '${e.key} = ${e.value}',
     ], isEmpty);
     final RegExp formulation = RegExp(
-      r'n.est peut-être pas parvenue? jusqu.à Rewayah',
+      r'il est possible qu(.il|.elle|e la demande) ne soit pas parvenue? '
+      r'jusqu.à Rewayah',
     );
     for (final String cle in <String>[
       'ficheEleve.interface.echec',
@@ -250,9 +251,27 @@ void main() {
       'controleur.observation.echec',
       'controleur.echanges.echec',
       'enseignant.journee.erreurPartielle',
+      'enseignant.journee.erreurPartielleCahiers',
+      'enseignant.journee.erreurPartielleTout',
+      'adulte.accueil.echec',
+      'adulte.historique.echec',
     ]) {
       expect(textes[cle], matches(formulation), reason: cle);
       expect(motifHorsLigne.hasMatch(textes[cle]!), isFalse, reason: cle);
+    }
+    // Les trois echecs partiels de la Journee, poses sous le bandeau, ne
+    // nomment ni la connexion ni le reseau, sous aucune forme (pas meme
+    // « connexion instable »).
+    for (final String cle in <String>[
+      'enseignant.journee.erreurPartielle',
+      'enseignant.journee.erreurPartielleCahiers',
+      'enseignant.journee.erreurPartielleTout',
+    ]) {
+      expect(
+        RegExp('connexion|réseau', caseSensitive: false).hasMatch(textes[cle]!),
+        isFalse,
+        reason: cle,
+      );
     }
   });
 }

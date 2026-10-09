@@ -1162,44 +1162,66 @@ void main() {
     }
   });
 
-  // EA-HL-DOUBLE-1e : l'echec partiel (horaires de priere, pauses) ne redit
-  // pas le reseau sous le bandeau, ni « connexion instable », ni « service
-  // indisponible » ; il dit ce qui manque, une cause probable sans
-  // l'affirmer, et que les seances affichees sont a jour.
-  group('Echec partiel : sans redire le reseau (EA-HL-DOUBLE-1e)', () {
-    for (final bool horsLigne in <bool>[true, false]) {
-      testWidgets(horsLigne ? 'hors ligne' : 'en ligne', (
-        WidgetTester tester,
-      ) async {
-        await _ouvrir(
-          tester,
-          priere: _PriereEnPanne(),
-          reseau: FauxServiceReseau(horsLigneRendu: horsLigne),
-          enseignant: FauxServiceEnseignant()
-            ..seancesRendues = <SeanceEnseignant>[_anNour()],
-        );
-        final Finder phrase = find.byKey(
-          const ValueKey<String>('journee-erreur-partielle'),
-        );
-        expect(phrase, findsOneWidget);
-        final String texte = tester.widget<Text>(phrase).data!;
-        expect(texte, t.enseignant.journee.erreurPartielle);
-        expect(
-          RegExp(
-            'connexion|réseau|internet',
-            caseSensitive: false,
-          ).hasMatch(texte),
-          isFalse,
-          reason: texte,
-        );
-        expect(motifHorsLigne.hasMatch(texte), isFalse, reason: texte);
-        expect(texte, contains('peut-être'));
-        if (horsLigne) {
-          expectHorsLigneUneFois();
-        } else {
-          expect(signauxHorsLigne(), findsNothing);
-        }
-      });
+  // EA-HL-DOUBLE-1e : l'echec partiel ne redit pas le reseau sous le
+  // bandeau (ni « connexion », ni « reseau », sans exception pour
+  // « connexion instable »), dit une cause probable sans l'affirmer, que les
+  // seances affichees sont a jour, et EXACTEMENT ce qui a echoue : les
+  // cahiers seuls, les prieres et pauses seules, ou tout (repris de
+  // LIB-LOT3-2, revue adverse du 1e).
+  group('Echec partiel : exact et sans redire le reseau (EA-HL-DOUBLE-1e)', () {
+    for (final (String, bool, bool, String Function()) cas
+        in <(String, bool, bool, String Function())>[
+          (
+            'prieres et pauses',
+            true,
+            false,
+            () => t.enseignant.journee.erreurPartielle,
+          ),
+          (
+            'cahiers seuls',
+            false,
+            true,
+            () => t.enseignant.journee.erreurPartielleCahiers,
+          ),
+          ('tout', true, true, () => t.enseignant.journee.erreurPartielleTout),
+        ]) {
+      for (final bool horsLigne in <bool>[true, false]) {
+        testWidgets('${cas.$1}, ${horsLigne ? 'hors ligne' : 'en ligne'}', (
+          WidgetTester tester,
+        ) async {
+          await _ouvrir(
+            tester,
+            priere: cas.$2 ? _PriereEnPanne() : null,
+            reseau: FauxServiceReseau(horsLigneRendu: horsLigne),
+            enseignant: (cas.$3 ? _CahiersEnPanne() : FauxServiceEnseignant())
+              ..seancesRendues = <SeanceEnseignant>[_anNour()],
+          );
+          final Finder phrase = find.byKey(
+            const ValueKey<String>('journee-erreur-partielle'),
+          );
+          expect(phrase, findsOneWidget);
+          final String texte = tester.widget<Text>(phrase).data!;
+          expect(texte, cas.$4());
+          // Ce qui n'a pas echoue n'est pas nomme.
+          expect(texte.contains('prière'), cas.$2, reason: texte);
+          expect(texte.contains('cahiers'), cas.$3, reason: texte);
+          expect(
+            RegExp(
+              'connexion|réseau|internet|service',
+              caseSensitive: false,
+            ).hasMatch(texte),
+            isFalse,
+            reason: texte,
+          );
+          expect(motifHorsLigne.hasMatch(texte), isFalse, reason: texte);
+          expect(texte, contains('il est possible que la demande'));
+          if (horsLigne) {
+            expectHorsLigneUneFois();
+          } else {
+            expect(signauxHorsLigne(), findsNothing);
+          }
+        });
+      }
     }
   });
 
@@ -1289,6 +1311,54 @@ void main() {
         );
       });
     }
+
+    // Les cas « cahiers seuls » et « tout » (revue adverse du 1e), hors
+    // ligne sous le bandeau, a 390 et a 320 texte x2 en LTR et RTL.
+    for (final (String, bool) panne in <(String, bool)>[
+      ('cahiers', false),
+      ('tout', true),
+    ]) {
+      for (final (String, Size, double, TextDirection) cas
+          in <(String, Size, double, TextDirection)>[
+            ('390_clair', const Size(390, 1400), 1, TextDirection.ltr),
+            ('320x2_clair', const Size(320, 2600), 2, TextDirection.ltr),
+            ('320x2_rtl_clair', const Size(320, 2600), 2, TextDirection.rtl),
+          ]) {
+        testWidgets('${panne.$1} ${cas.$1}', (WidgetTester tester) async {
+          _fenetre(tester, cas.$2);
+          await tester.pumpWidget(
+            _hoteCarte(
+              luminosite: Brightness.light,
+              echelleTexte: cas.$3,
+              direction: cas.$4,
+              surcharges: _surcharges(
+                priere: panne.$2 ? _PriereEnPanne() : null,
+                reseau: FauxServiceReseau(horsLigneRendu: true),
+                enseignant: _CahiersEnPanne()
+                  ..seancesRendues = <SeanceEnseignant>[_anNour()],
+              ),
+            ),
+          );
+          for (int i = 0; i < 10; i++) {
+            await tester.pump(const Duration(milliseconds: 100));
+          }
+          expect(tester.takeException(), isNull);
+          expect(
+            find.text(
+              panne.$2
+                  ? t.enseignant.journee.erreurPartielleTout
+                  : t.enseignant.journee.erreurPartielleCahiers,
+            ),
+            findsOneWidget,
+          );
+          expectHorsLigneUneFois();
+          verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'ea_hl_double1e_journee_partielle_${panne.$1}_${cas.$1}')}',
+          );
+        });
+      }
+    }
   });
 }
 
@@ -1297,4 +1367,12 @@ class _PriereEnPanne extends FauxServicePriere {
   @override
   Future<ReglagesPriere?> reglages(String enseignantId) async =>
       throw StateError('lecture des reglages impossible');
+}
+
+/// Les cahiers de transmission en retard ne se lisent pas : l'echec
+/// partiel « cahiers » de la Journee.
+class _CahiersEnPanne extends FauxServiceEnseignant {
+  @override
+  Future<List<CahierEnRetard>> cahiersEnRetard() async =>
+      throw StateError('lecture des cahiers en retard impossible');
 }

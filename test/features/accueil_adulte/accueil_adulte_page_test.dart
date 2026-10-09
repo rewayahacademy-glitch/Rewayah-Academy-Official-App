@@ -1002,4 +1002,93 @@ void main() {
       });
     }
   });
+
+  // EA-HL-DOUBLE-1e (K-59, decide par delegation le 05/10, DIR-REP-1) :
+  // l'echec de lecture de l'Accueil et de l'Historique dit la cause probable
+  // sans l'affirmer ; « le serveur n'a pas repondu » est inexact quand c'est
+  // l'appareil qui est hors ligne.
+  group('Echec en ligne : cause probable non affirmee (EA-HL-DOUBLE-1e)', () {
+    final List<(String, Widget, Override, String Function())> pages =
+        <(String, Widget, Override, String Function())>[
+          (
+            'accueil',
+            const AccueilAdultePage(),
+            accueilAdulteProvider.overrideWith(
+              (Ref _) => Future<AccueilAdulteVM>.error(StateError('lecture')),
+            ),
+            () => t.adulte.accueil.echec,
+          ),
+          (
+            'historique',
+            HistoriqueSeancesAdultePage(onRetour: () {}),
+            historiqueSeancesAdulteProvider.overrideWith(
+              (Ref _) =>
+                  Future<List<SeancePasseeAdulte>>.error(StateError('lecture')),
+            ),
+            () => t.adulte.historique.echec,
+          ),
+        ];
+    for (final (String, Widget, Override, String Function()) cas in pages) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        await tester.pumpWidget(
+          app(
+            overrides: <Override>[
+              horsLigneProvider.overrideWith(
+                (Ref _) => Stream<bool>.value(false),
+              ),
+              cas.$3,
+            ],
+            child: cas.$2,
+          ),
+        );
+        await tester.pumpAndSettle();
+        final String texte = cas.$4();
+        expect(find.text(texte), findsOneWidget);
+        expect(texte, isNot(contains('serveur')));
+        expect(texte, isNot(contains('pas répondu')));
+        expect(
+          texte,
+          contains(
+            "il est possible que la demande ne soit pas parvenue jusqu'à Rewayah",
+          ),
+        );
+        expect(find.text(t.commun.reessayer), findsWidgets);
+      });
+    }
+
+    group('Capture EA-HL-DOUBLE-1e', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      for (final (String, Widget, Override, String Function()) page in pages) {
+        for (final (String, Size, double, TextDirection) cas
+            in <(String, Size, double, TextDirection)>[
+              ('390_clair', const Size(390, 844), 1, TextDirection.ltr),
+              ('320x2_clair', const Size(320, 900), 2, TextDirection.ltr),
+              ('320x2_rtl_clair', const Size(320, 900), 2, TextDirection.rtl),
+            ]) {
+          testWidgets('${page.$1} ${cas.$1}', (WidgetTester tester) async {
+            fixerVueCapture(tester, cas.$2, 1);
+            await tester.pumpWidget(
+              hoteCapture(
+                Directionality(textDirection: cas.$4, child: page.$2),
+                surcharges: <Override>[
+                  horsLigneProvider.overrideWith(
+                    (Ref _) => Stream<bool>.value(false),
+                  ),
+                  page.$3,
+                ],
+                echelleTexte: cas.$3,
+              ),
+            );
+            await stabiliser(tester);
+            expect(tester.takeException(), isNull);
+            expect(find.text(page.$4()), findsOneWidget);
+            verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+            debugPrint(
+              'PNG ${await capturer(tester, 'ea_hl_double1e_adulte_${page.$1}_echec_${cas.$1}')}',
+            );
+          });
+        }
+      }
+    });
+  });
 }

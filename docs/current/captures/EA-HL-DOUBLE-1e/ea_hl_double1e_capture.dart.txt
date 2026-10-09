@@ -3,6 +3,7 @@
 // CAPTURE_DIR=$PWD/docs/current/captures/EA-HL-DOUBLE-1e flutter test --concurrency=2 \
 //   test/features/journee_test.dart test/features/foyer/fiche_eleve_test.dart \
 //   test/features/controleur/compte_rendu_controleur_test.dart \
+//   test/features/accueil_adulte/accueil_adulte_page_test.dart \
 //   --plain-name "Capture EA-HL-DOUBLE-1e"
 
 // ===== test/features/journee_test.dart =====
@@ -92,12 +93,70 @@
         );
       });
     }
+
+    // Les cas « cahiers seuls » et « tout » (revue adverse du 1e), hors
+    // ligne sous le bandeau, a 390 et a 320 texte x2 en LTR et RTL.
+    for (final (String, bool) panne in <(String, bool)>[
+      ('cahiers', false),
+      ('tout', true),
+    ]) {
+      for (final (String, Size, double, TextDirection) cas
+          in <(String, Size, double, TextDirection)>[
+            ('390_clair', const Size(390, 1400), 1, TextDirection.ltr),
+            ('320x2_clair', const Size(320, 2600), 2, TextDirection.ltr),
+            ('320x2_rtl_clair', const Size(320, 2600), 2, TextDirection.rtl),
+          ]) {
+        testWidgets('${panne.$1} ${cas.$1}', (WidgetTester tester) async {
+          _fenetre(tester, cas.$2);
+          await tester.pumpWidget(
+            _hoteCarte(
+              luminosite: Brightness.light,
+              echelleTexte: cas.$3,
+              direction: cas.$4,
+              surcharges: _surcharges(
+                priere: panne.$2 ? _PriereEnPanne() : null,
+                reseau: FauxServiceReseau(horsLigneRendu: true),
+                enseignant: _CahiersEnPanne()
+                  ..seancesRendues = <SeanceEnseignant>[_anNour()],
+              ),
+            ),
+          );
+          for (int i = 0; i < 10; i++) {
+            await tester.pump(const Duration(milliseconds: 100));
+          }
+          expect(tester.takeException(), isNull);
+          expect(
+            find.text(
+              panne.$2
+                  ? t.enseignant.journee.erreurPartielleTout
+                  : t.enseignant.journee.erreurPartielleCahiers,
+            ),
+            findsOneWidget,
+          );
+          expectHorsLigneUneFois();
+          verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'ea_hl_double1e_journee_partielle_${panne.$1}_${cas.$1}')}',
+          );
+        });
+      }
+    }
   });
+}
+
 /// Les horaires de priere ne se lisent pas : l'echec partiel de la Journee.
 class _PriereEnPanne extends FauxServicePriere {
   @override
   Future<ReglagesPriere?> reglages(String enseignantId) async =>
       throw StateError('lecture des reglages impossible');
+}
+
+/// Les cahiers de transmission en retard ne se lisent pas : l'echec
+/// partiel « cahiers » de la Journee.
+class _CahiersEnPanne extends FauxServiceEnseignant {
+  @override
+  Future<List<CahierEnRetard>> cahiersEnRetard() async =>
+      throw StateError('lecture des cahiers en retard impossible');
 }
 
 // ===== test/features/foyer/fiche_eleve_test.dart =====
@@ -204,3 +263,94 @@ class _PriereEnPanne extends FauxServicePriere {
       });
     }
   });
+
+// ===== test/features/accueil_adulte/accueil_adulte_page_test.dart =====
+  // EA-HL-DOUBLE-1e (K-59, decide par delegation le 05/10, DIR-REP-1) :
+  // l'echec de lecture de l'Accueil et de l'Historique dit la cause probable
+  // sans l'affirmer ; « le serveur n'a pas repondu » est inexact quand c'est
+  // l'appareil qui est hors ligne.
+  group('Echec en ligne : cause probable non affirmee (EA-HL-DOUBLE-1e)', () {
+    final List<(String, Widget, Override, String Function())> pages =
+        <(String, Widget, Override, String Function())>[
+          (
+            'accueil',
+            const AccueilAdultePage(),
+            accueilAdulteProvider.overrideWith(
+              (Ref _) => Future<AccueilAdulteVM>.error(StateError('lecture')),
+            ),
+            () => t.adulte.accueil.echec,
+          ),
+          (
+            'historique',
+            HistoriqueSeancesAdultePage(onRetour: () {}),
+            historiqueSeancesAdulteProvider.overrideWith(
+              (Ref _) =>
+                  Future<List<SeancePasseeAdulte>>.error(StateError('lecture')),
+            ),
+            () => t.adulte.historique.echec,
+          ),
+        ];
+    for (final (String, Widget, Override, String Function()) cas in pages) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        await tester.pumpWidget(
+          app(
+            overrides: <Override>[
+              horsLigneProvider.overrideWith(
+                (Ref _) => Stream<bool>.value(false),
+              ),
+              cas.$3,
+            ],
+            child: cas.$2,
+          ),
+        );
+        await tester.pumpAndSettle();
+        final String texte = cas.$4();
+        expect(find.text(texte), findsOneWidget);
+        expect(texte, isNot(contains('serveur')));
+        expect(texte, isNot(contains('pas répondu')));
+        expect(
+          texte,
+          contains(
+            "il est possible que la demande ne soit pas parvenue jusqu'à Rewayah",
+          ),
+        );
+        expect(find.text(t.commun.reessayer), findsWidgets);
+      });
+    }
+
+    group('Capture EA-HL-DOUBLE-1e', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      for (final (String, Widget, Override, String Function()) page in pages) {
+        for (final (String, Size, double, TextDirection) cas
+            in <(String, Size, double, TextDirection)>[
+              ('390_clair', const Size(390, 844), 1, TextDirection.ltr),
+              ('320x2_clair', const Size(320, 900), 2, TextDirection.ltr),
+              ('320x2_rtl_clair', const Size(320, 900), 2, TextDirection.rtl),
+            ]) {
+          testWidgets('${page.$1} ${cas.$1}', (WidgetTester tester) async {
+            fixerVueCapture(tester, cas.$2, 1);
+            await tester.pumpWidget(
+              hoteCapture(
+                Directionality(textDirection: cas.$4, child: page.$2),
+                surcharges: <Override>[
+                  horsLigneProvider.overrideWith(
+                    (Ref _) => Stream<bool>.value(false),
+                  ),
+                  page.$3,
+                ],
+                echelleTexte: cas.$3,
+              ),
+            );
+            await stabiliser(tester);
+            expect(tester.takeException(), isNull);
+            expect(find.text(page.$4()), findsOneWidget);
+            verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+            debugPrint(
+              'PNG ${await capturer(tester, 'ea_hl_double1e_adulte_${page.$1}_echec_${cas.$1}')}',
+            );
+          });
+        }
+      }
+    });
+  });
+}
