@@ -1,9 +1,9 @@
 // Le panneau ouvert a cote du support (enseignant) : Eleves ou Supports.
 //
-// Trois formes, selon le gabarit (plan de code T5, I-8) :
-// - desktop : colonne a gauche du support, entre le rail et le support,
-//   jamais par-dessus ;
-// - web etroit : volet a gauche, par-dessus le support, avec la croix ;
+// Trois formes (plan de code T5, I-8 ; TB-5 : `CompositionSalle` choisit) :
+// - colonne a cote du support, jamais par-dessus (Participants a gauche,
+//   panneau pedagogique a droite) ;
+// - volet par-dessus le support quand la colonne ne tient pas, avec la croix ;
 // - telephone : feuille du bas (grammaire d'`AppBottomSheet` : poignee,
 //   arrondi de feuille, filet et ombre de niveau 3) avec la croix, le haut du
 //   support restant visible au-dessus.
@@ -28,14 +28,6 @@ const double largeurPanneauSeance = AppSpacing.respiration * 5;
 /// La largeur de la colonne en desktop (image CLV-07 : ≈ 328 a 1440 de large,
 /// le support gardant son titre sur deux lignes).
 const double largeurColonneSeance = AppSpacing.respiration * 5 + AppSpacing.sm;
-
-/// La colonne Supports en desktop (image CLV-08 : ≈ 328 a 1440 de large,
-/// comme la colonne Eleves ; le titre du support garde ses deux lignes).
-const double largeurColonneSupportsSeance = largeurColonneSeance;
-
-/// La largeur de la colonne droite en desktop (Eleves, Supports, outils).
-const double largeurColonneDroiteSeance =
-    AppSpacing.respiration * 5 - AppSpacing.lg;
 
 /// La hauteur de support laissee visible au-dessus de la feuille du
 /// telephone : le haut de la diapositive et la vignette entiere (image).
