@@ -171,7 +171,11 @@ BEGIN
        AND v_demande.fuseau_iana = p_fuseau_iana
        AND v_demande.jours = v_jours
        AND v_demande.heures_locales = v_heures THEN
-      RETURN jsonb_build_object('etat', v_demande.etat);
+      RETURN jsonb_build_object(
+        'id', v_demande.id, 'etat', v_demande.etat,
+        'prochaine_etape', 'constitution_classe',
+        'updated_at', v_demande.updated_at
+      );
     END IF;
     RAISE EXCEPTION 'retirez votre demande actuelle avant d''en choisir une autre';
   END IF;
@@ -185,7 +189,11 @@ BEGIN
     'demande_horaire_personnalisee_envoyee', 'demandes_horaires_famille',
     v_demande.id::text, jsonb_build_object('eleve_id', p_membre_id)
   );
-  RETURN jsonb_build_object('etat', v_demande.etat, 'prochaine_etape', 'constitution_classe');
+  RETURN jsonb_build_object(
+    'id', v_demande.id, 'etat', v_demande.etat,
+    'prochaine_etape', 'constitution_classe',
+    'updated_at', v_demande.updated_at
+  );
 END;
 $function$;
 
