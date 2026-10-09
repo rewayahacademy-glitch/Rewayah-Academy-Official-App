@@ -3589,6 +3589,7 @@
       "enregistrerPlage": "Enregistrer la plage",
       "supprimerPlage": "Supprimer cette plage",
       "plageEnregistree": "Plage enregistrée : {jours}, {de} {a}.",
+      "plageInchangee": "Rien à enregistrer : {jours}, {de} {a}, déjà dans vos disponibilités.",
       "plageSupprimee": "Plage supprimée : {jour}, {de} {a}.",
       "seanceContinue": "La séance déjà attribuée sur {heures} continue : demandez une réaffectation pour l'arrêter.",
       "confirmerRetraitQuestion": "Retirer {heures} de vos disponibilités ?",

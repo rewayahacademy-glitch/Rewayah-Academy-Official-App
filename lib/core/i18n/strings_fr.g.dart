@@ -10014,6 +10014,9 @@ class Traductions$enseignant$creneaux$fr {
 	/// fr: 'Plage enregistrée : {jours}, {de} {a}.'
 	String plageEnregistree({required Object jours, required Object de, required Object a}) => 'Plage enregistrée : ${jours}, ${de} ${a}.';
 
+	/// fr: 'Rien à enregistrer : {jours}, {de} {a}, déjà dans vos disponibilités.'
+	String plageInchangee({required Object jours, required Object de, required Object a}) => 'Rien à enregistrer : ${jours}, ${de} ${a}, déjà dans vos disponibilités.';
+
 	/// fr: 'Plage supprimée : {jour}, {de} {a}.'
 	String plageSupprimee({required Object jour, required Object de, required Object a}) => 'Plage supprimée : ${jour}, ${de} ${a}.';
 
@@ -19928,6 +19931,7 @@ extension on Traductions {
 			'enseignant.creneaux.enregistrerPlage' => 'Enregistrer la plage',
 			'enseignant.creneaux.supprimerPlage' => 'Supprimer cette plage',
 			'enseignant.creneaux.plageEnregistree' => ({required Object jours, required Object de, required Object a}) => 'Plage enregistrée : ${jours}, ${de} ${a}.',
+			'enseignant.creneaux.plageInchangee' => ({required Object jours, required Object de, required Object a}) => 'Rien à enregistrer : ${jours}, ${de} ${a}, déjà dans vos disponibilités.',
 			'enseignant.creneaux.plageSupprimee' => ({required Object jour, required Object de, required Object a}) => 'Plage supprimée : ${jour}, ${de} ${a}.',
 			'enseignant.creneaux.seanceContinue' => ({required Object heures}) => 'La séance déjà attribuée sur ${heures} continue : demandez une réaffectation pour l\'arrêter.',
 			'enseignant.creneaux.confirmerRetraitQuestion' => ({required Object heures}) => 'Retirer ${heures} de vos disponibilités ?',
@@ -20411,9 +20415,9 @@ extension on Traductions {
 			'tc.classe.recitation.personne' => 'Personne ne récite',
 			'tc.classe.recitation.arreter' => 'Arrêter la récitation',
 			'tc.classe.support.aucun' => 'Aucun support présenté',
-			'tc.classe.support.aucunDetail' => 'Ouvrez la Bibliothèque pour présenter un support à la Classe.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.classe.support.aucunDetail' => 'Ouvrez la Bibliothèque pour présenter un support à la Classe.',
 			'tc.classe.support.bibliotheque' => 'Bibliothèque',
 			'tc.classe.support.bibliothequeAbsente' => 'Bibliothèque non branchée',
 			'tc.classe.support.bibliothequeAbsenteDetail' => 'Le choix de support sera disponible dès l\'intégration du catalogue.',
@@ -20925,9 +20929,9 @@ extension on Traductions {
 			'adulte.reprise.phrases.refuseeParTitulaire' => 'Le titulaire du foyer a refusé cette demande. L\'administration en est informée. Aucune permission du foyer n\'est transférée.',
 			'adulte.reprise.phrases.attenteAdministration' => 'Le titulaire n\'a pas répondu. Rien n\'est transféré automatiquement : l\'administration doit encore examiner la demande.',
 			'adulte.reprise.phrases.validee' => 'L\'administration a validé la demande. Vous êtes désormais titulaire du foyer.',
-			'adulte.reprise.phrases.refusee' => 'L\'administration a refusé la demande. Aucune permission du foyer n\'est transférée.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.reprise.phrases.refusee' => 'L\'administration a refusé la demande. Aucune permission du foyer n\'est transférée.',
 			'adulte.reprise.titulaire.notification' => 'Une demande de reprise de votre foyer a été déposée en indiquant votre décès.',
 			'adulte.reprise.titulaire.consigne' => 'Si cette demande est erronée, refusez-la.',
 			'adulte.reprise.titulaire.refuser' => 'Refuser la demande',

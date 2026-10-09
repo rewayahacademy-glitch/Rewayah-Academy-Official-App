@@ -130,6 +130,39 @@ void main() {
       expect(plan.ajouts.map((HeureSemaine h) => h.jour).toSet(), <int>{2});
     });
 
+    // Verification croisee DISPO-1b : deplacer une plage dans une autre du
+    // meme jour retire ses anciennes heures ; ce n'est pas « rien ne change ».
+    test('plage deplacee dans une plage posee du meme jour : fusion', () {
+      final PlanPlage plan = planifier(
+        existantes: <HeureSemaine>{..._h(1, 9, 11), ..._h(1, 17, 23)},
+        jours: <int>{1},
+        de: 17,
+        a: 20,
+        modifiee: const Plage(jour: 1, de: 9, a: 11),
+      );
+      expect(plan.retraits, <HeureSemaine>[
+        (jour: 1, heure: 9),
+        (jour: 1, heure: 10),
+      ]);
+      expect(plan.ajouts, isEmpty);
+      expect(plan.dejaPosees, isEmpty);
+      expect(plan.fusions, <Plage>[const Plage(jour: 1, de: 17, a: 23)]);
+    });
+
+    test('plage d un autre jour deplacee dans une plage posee : ce jour-la '
+        'reste deja pose', () {
+      final PlanPlage plan = planifier(
+        existantes: <HeureSemaine>{..._h(2, 9, 11), ..._h(1, 17, 23)},
+        jours: <int>{1},
+        de: 17,
+        a: 20,
+        modifiee: const Plage(jour: 2, de: 9, a: 11),
+      );
+      expect(plan.retraits.map((HeureSemaine h) => h.jour).toSet(), <int>{2});
+      expect(plan.dejaPosees, <Plage>[const Plage(jour: 1, de: 17, a: 23)]);
+      expect(plan.fusions, isEmpty);
+    });
+
     test('plage posee absorbee par une saisie plus large : fusion dite', () {
       final PlanPlage plan = planifier(
         existantes: _h(1, 18, 19),

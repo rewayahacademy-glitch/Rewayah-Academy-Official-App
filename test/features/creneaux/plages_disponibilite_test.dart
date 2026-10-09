@@ -476,6 +476,72 @@ void main() {
       await _toucher(tester, find.text(t.enseignant.creneaux.enregistrerPlage));
       expect(planning.poses, isEmpty);
       expect(_ligne('Lundi', 17, 23), findsOneWidget);
+      // Rien n'est parti : la feuille ne dit pas « Plage enregistree ».
+      expect(
+        find.text(
+          t.enseignant.creneaux.plageInchangee(
+            jours: 'lundi',
+            de: _de(17),
+            a: _a(23),
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          t.enseignant.creneaux.plageEnregistree(
+            jours: 'lundi',
+            de: _de(17),
+            a: _a(23),
+          ),
+        ),
+        findsNothing,
+      );
+    });
+
+    // Verification croisee DISPO-1b : une plage touchee deplacee, le meme
+    // jour, dans une plage posee perd ses anciennes heures. Ce n'est pas
+    // « deja posee, rien ne change » : c'est une fusion, et elle se dit.
+    testWidgets('plage deplacee dans une plage posee du meme jour : fusion '
+        'dite, anciennes heures retirees', (WidgetTester tester) async {
+      final FauxServicePlanning planning = FauxServicePlanning()
+        ..creneaux[_monId] = <Creneau>[
+          ..._plage(1, 9, 11),
+          ..._plage(1, 17, 23),
+        ];
+      await _monter(tester, planning);
+
+      await _toucher(tester, _ligne('Lundi', 9, 11));
+      await _choisir(tester, courant: _a(11), voulu: _a(20));
+      await _choisir(tester, courant: _de(9), voulu: _de(17));
+
+      expect(
+        find.text(
+          t.enseignant.creneaux.fusion(jour: 'Lundi', de: _de(17), a: _a(23)),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          t.enseignant.creneaux.dejaPosee(
+            jour: 'Lundi',
+            de: _de(17),
+            a: _a(23),
+          ),
+        ),
+        findsNothing,
+      );
+
+      await _toucher(tester, find.text(t.enseignant.creneaux.enregistrerPlage));
+      expect(
+        planning.retires
+            .map((({String profilId, Creneau creneau}) r) => r.creneau.heure)
+            .toList(),
+        <int>[9, 10],
+      );
+      expect(planning.poses, isEmpty);
+      expect(_ligne('Lundi', 9, 11), findsNothing);
+      expect(_ligne('Lundi', 17, 23), findsOneWidget);
     });
 
     testWidgets('chevauchement : fusion dite AVANT, seules les heures '

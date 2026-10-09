@@ -110,10 +110,11 @@ class PlanPlage {
   /// d'enregistrer.
   final List<Plage> fusions;
 
-  /// Pour chaque jour choisi dont TOUTES les heures saisies sont deja
-  /// posees (plage identique, ou entierement contenue dans une plage posee) :
-  /// la plage posee qui les contient. Rien ne change pour ce jour, et la
-  /// feuille le dit au lieu d'annoncer une fusion (DISPO-1b).
+  /// Pour chaque jour choisi ou RIEN ne change : toutes les heures saisies
+  /// sont deja posees (plage identique, ou entierement contenue dans une
+  /// plage posee) et aucune heure de ce jour n'est retiree. La plage posee
+  /// qui les contient ; la feuille le dit au lieu d'annoncer une fusion
+  /// (DISPO-1b).
   final List<Plage> dejaPosees;
 
   /// Vrai quand rien ne change.
@@ -169,10 +170,12 @@ PlanPlage planifier({
       apres.where((HeureSemaine h) => h.jour == j),
     ).firstWhere((Plage p) => p.contient((jour: j, heure: de)));
     // Une saisie identique a une plage posee, ou entierement contenue dans
-    // elle, ne reunit rien : rien ne change pour ce jour. Elle se dit quand
-    // meme (l'enseignant croit ajouter), mais comme deja posee, pas comme
-    // une fusion (DISPO-1b).
-    if (autres.containsAll(saisie.heures)) {
+    // elle, ne reunit rien : elle se dit deja posee, pas comme une fusion
+    // (DISPO-1b). Seulement si RIEN ne change ce jour-la : une plage touchee
+    // du meme jour deplacee dans une plage posee perd ses anciennes heures
+    // (retraits), c'est alors bien une fusion, et elle se dit comme telle.
+    final bool retraitCeJour = retraits.any((HeureSemaine h) => h.jour == j);
+    if (!retraitCeJour && autres.containsAll(saisie.heures)) {
       dejaPosees.add(resultat);
     } else {
       fusions.add(resultat);

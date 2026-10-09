@@ -353,6 +353,15 @@ class _ListePlages extends StatelessWidget {
       // bord sur chaque ligne.
       return LigneRubrique(
         libelle: nom,
+        // USAGE DETOURNE ASSUME : `pastille` est prevu pour une pastille
+        // d'etat. C'est le seul emplacement de `LigneRubrique` qui accepte
+        // un widget DANS le corps de la ligne (au-dessus du filet), a cote
+        // du libelle ; y poser « de | a » evite de modifier ou de forker
+        // `GroupeReglages`. `pastilleSousLibelle: false` le garde sur la
+        // ligne du jour ; `_SuiteColonnes` prend toute la largeur restante,
+        // si bien que le `Wrap` (spaceBetween) le cale au bord du jour + la
+        // gouttiere. Pas de semantique d'etat : la ligne est lue par ses
+        // textes, « Lundi, de 17 h, a 23 h ».
         pastille: _SuiteColonnes(
           jour: jour,
           de: de,
