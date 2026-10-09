@@ -137,18 +137,17 @@ class ZoomLocal extends StatelessWidget {
     final TextStyle styleValeur = palette.inkStrong.applyTo(
       theme.textTheme.titleSmall ?? const TextStyle(),
     );
-    final Widget? libelle = avecLibelle
-        ? Flexible(
-            child: Text(
-              t.salle.seance.zoomLocal,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: palette.inkMuted.applyTo(
-                theme.textTheme.labelSmall ?? const TextStyle(),
-              ),
-            ),
-          )
-        : null;
+    final TextStyle styleLibelle = palette.inkMuted.applyTo(
+      theme.textTheme.labelSmall ?? const TextStyle(),
+    );
+    // ZOOM-LIB-1 (n1) : le libelle n'est jamais tronque. Il passe a la ligne
+    // entre ses mots (jamais d'ellipse) quand la place manque.
+    Widget libelle({TextAlign alignement = TextAlign.start}) => Text(
+      t.salle.seance.zoomLocal,
+      key: const ValueKey<String>('zoom-local-libelle'),
+      textAlign: alignement,
+      style: styleLibelle,
+    );
     final Widget boite = DecoratedBox(
       decoration: _cadre(palette),
       child: Row(
@@ -183,47 +182,95 @@ class ZoomLocal extends StatelessWidget {
             bascule: agrandi,
             onPress: agrandir,
           );
-    final Widget rangee = Row(
-      key: const ValueKey<String>('zoom-local'),
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        if (libelle != null) ...<Widget>[libelle, Ecart.hXl],
-        boite,
-        if (bascule != null) ...<Widget>[Ecart.hMd, bascule],
-      ],
-    );
-    if (bascule == null) return rangee;
-    // DOCK-X2-1 : le mot d'etat d'Agrandir reste entier (decision du
-    // 05/10), sa case peut donc s'elargir avec le texte. Si la rangee ne
-    // tient plus dans la place donnee, Agrandir passe sous le zoom au lieu
-    // de deborder. Quand elle tient, la rangee est rendue telle quelle.
+    if (!avecLibelle && bascule == null) {
+      return Row(
+        key: const ValueKey<String>('zoom-local'),
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[boite],
+      );
+    }
+    // DOCK-X2-1 et ZOOM-LIB-1 : le mot d'etat d'Agrandir et le libelle du
+    // zoom restent entiers (decision du 05/10), leur place est donc mesuree.
+    // Selon la largeur donnee, du plus large au plus etroit :
+    // 1. une rangee : libelle, zoom, Agrandir (rendu inchange quand il tient) ;
+    // 2. libelle et zoom, Agrandir dessous ;
+    // 3. le libelle seul sur sa ligne (deux lignes s'il le faut, coupees
+    //    entre les mots), puis zoom et Agrandir ;
+    // 4. le libelle, le zoom, puis Agrandir, chacun sur sa ligne.
     return LayoutBuilder(
       builder: (BuildContext contexte, BoxConstraints contraintes) {
-        final double besoin =
-            (libelle != null ? AppSpacing.xl : 0) +
+        final double place = contraintes.maxWidth;
+        final double largeurLibelle = avecLibelle
+            ? _largeurTexte(contexte, t.salle.seance.zoomLocal, styleLibelle)
+            : 0;
+        final double largeurBoite =
             2 * AppSpacing.titreEcran +
-            _largeurTexte(contexte, valeur, styleValeur) +
-            AppSpacing.md +
-            largeurCaseBasculeAvecMot(
-              contexte,
-              libelle: motAgrandir,
-              style: theme.textTheme.labelMedium,
-            );
-        if (besoin <= contraintes.maxWidth) return rangee;
+            _largeurTexte(contexte, valeur, styleValeur);
+        final double largeurBascule = bascule == null
+            ? 0
+            : AppSpacing.md +
+                  largeurCaseBasculeAvecMot(
+                    contexte,
+                    libelle: motAgrandir,
+                    style: theme.textTheme.labelMedium,
+                  );
+        final double avantBoite = avecLibelle
+            ? largeurLibelle + AppSpacing.xl
+            : 0;
+        // Le libelle reste Flexible : si la mesure differe d'un pixel, il
+        // passe sur deux lignes au lieu de deborder, sans ellipse.
+        Widget rangee({required bool avecBascule}) => Row(
+          key: const ValueKey<String>('zoom-local'),
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            if (avecLibelle) ...<Widget>[
+              if (place.isFinite) Flexible(child: libelle()) else libelle(),
+              Ecart.hXl,
+            ],
+            boite,
+            if (avecBascule && bascule != null) ...<Widget>[Ecart.hMd, bascule],
+          ],
+        );
+        if (!place.isFinite ||
+            avantBoite + largeurBoite + largeurBascule <= place) {
+          return rangee(avecBascule: true);
+        }
+        if (bascule != null && avantBoite + largeurBoite <= place) {
+          return Column(
+            key: const ValueKey<String>('zoom-local'),
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            spacing: AppSpacing.sm,
+            children: <Widget>[
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Flexible(child: libelle()),
+                  Ecart.hXl,
+                  boite,
+                ],
+              ),
+              bascule,
+            ],
+          );
+        }
+        final bool commandesEnRangee = largeurBoite + largeurBascule <= place;
         return Column(
           key: const ValueKey<String>('zoom-local'),
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,
           spacing: AppSpacing.sm,
           children: <Widget>[
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                if (libelle != null) ...<Widget>[libelle, Ecart.hXl],
-                boite,
-              ],
-            ),
-            bascule,
+            if (avecLibelle) libelle(alignement: TextAlign.end),
+            if (commandesEnRangee || bascule == null)
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  boite,
+                  if (bascule != null) ...<Widget>[Ecart.hMd, bascule],
+                ],
+              )
+            else ...<Widget>[boite, bascule],
           ],
         );
       },
@@ -264,9 +311,8 @@ class _IconeBarre extends StatelessWidget {
       child: Center(
         child: IconTheme(
           // Un bouton sans rappel (fin de pagination, etc.) : estompe, inactif.
-          data:
-              (action == null ? palette.inkFaint : palette.inkStrong)
-                  .asIconTheme(size: AppSpacing.xxl),
+          data: (action == null ? palette.inkFaint : palette.inkStrong)
+              .asIconTheme(size: AppSpacing.xxl),
           child: Icon(icone.repos),
         ),
       ),
