@@ -35,6 +35,12 @@ values
   ('b14fffff-0000-0000-0000-000000000005',
    'b1400000-0000-0000-0000-000000000002', now(), now() + interval '1 hour');
 
+insert into public.sessions (id, teacher_id, started_at, ended_at, status)
+values
+  ('b14fffff-0000-0000-0000-000000000009',
+   'b1400000-0000-0000-0000-000000000001',
+   now() - interval '1 hour', now(), 'ended');
+
 insert into public.session_participants (session_id, profile_id, role)
 values
   ('b14fffff-0000-0000-0000-000000000004',
@@ -136,15 +142,15 @@ end
 $b14_isolation$;
 
 reset role;
-update public.sessions set status = 'ended'
- where id = 'b14fffff-0000-0000-0000-000000000004';
+-- La fixture déjà clôturée évite de contourner le garde de transitions métier.
+
 
 set local role authenticated;
 select set_config('test.uid', 'b1400000-0000-0000-0000-000000000001', true);
 select set_config('test.jwt',
   '{"app_metadata":{"role":"teacher","household_id":"b14fffff-0000-0000-0000-000000000001"}}',
   true);
-select public.effacer_etat_partage('b14fffff-0000-0000-0000-000000000004');
+select public.effacer_etat_partage('b14fffff-0000-0000-0000-000000000009');
 
 reset role;
 rollback;
