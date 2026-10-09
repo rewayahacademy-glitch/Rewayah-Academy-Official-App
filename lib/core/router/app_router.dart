@@ -26,6 +26,7 @@ import '../../features/admin_pedagogie_evaluations/evaluations_page.dart';
 import '../../features/admin_pedagogie_programmes/programmes_page.dart';
 import '../../features/admin_pedagogie_progression/progression_page.dart';
 import '../../features/admin_pedagogie_qualite/qualite_page.dart';
+import '../../features/admin_regroupements/regroupements_page.dart';
 import '../../features/admin_tableau/tableau_de_bord_page.dart';
 import '../../features/admin_traitement/traitement_page.dart';
 import '../../features/agent_entree/agent_entree_page.dart';
@@ -988,6 +989,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.operations,
           child: DemandesPage(),
+        ),
+      ),
+      // OFFRES-ADM-1 : atteinte depuis l'Accueil (raccourci « Classes a
+      // ouvrir »), comme les Demandes.
+      GoRoute(
+        path: Routes.adminOperationsRegroupements,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: RegroupementsPage(),
         ),
       ),
       GoRoute(
