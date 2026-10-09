@@ -74,6 +74,7 @@ class ZoneSaisie extends StatelessWidget {
     this.onChanged,
     this.actionClavier = TextInputAction.newline,
     this.onSubmitted,
+    this.sens,
   }) : assert(minLignes >= 1 && maxLignes >= minLignes);
 
   /// Le texte saisi.
@@ -133,6 +134,11 @@ class ZoneSaisie extends StatelessWidget {
   /// La validation au clavier (avec [actionClavier] autre que `newline`).
   final ValueChanged<String>? onSubmitted;
 
+  /// Le sens d'ecriture du champ, ou `null` : celui de l'ecran. Un texte
+  /// libre (les mots d'un enseignant) prend le sens de sa premiere lettre
+  /// (CARTES-PERSO-1b, `sensDeLaSaisie`).
+  final TextDirection? sens;
+
   /// La place reservee du bouton d'envoi tant que le champ est vide (tests).
   static const Key placeEnvoiKey = ValueKey<String>('zone-saisie-place-envoi');
 
@@ -187,6 +193,7 @@ class ZoneSaisie extends StatelessWidget {
       focusNode: noeud,
       autofocus: autofocus,
       readOnly: lectureSeule,
+      textDirection: sens,
       minLines: min,
       maxLines: max,
       keyboardType: actionClavier == TextInputAction.newline

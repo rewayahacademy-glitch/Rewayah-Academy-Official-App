@@ -2848,8 +2848,8 @@
         "retirerQuestion": "Retirer la carte « {titre} » ?",
         "retirerConsequence": "Elle disparaît aussitôt pour les élèves de la classe et leurs familles.",
         "retirerConfirmer": "Retirer la carte",
-        "envoiNonConfirme": "La carte n'est pas confirmée : la réponse n'est pas arrivée. Vérifiez la connexion, puis enregistrez de nouveau.",
-        "retraitNonConfirme": "Le retrait n'est pas confirmé : la réponse n'est pas arrivée. Vérifiez la connexion, puis réessayez.",
+        "envoiNonConfirme": "La carte n'est pas confirmée : la réponse n'est pas arrivée. Enregistrez de nouveau dans un instant.",
+        "retraitNonConfirme": "Le retrait n'est pas confirmé : la réponse n'est pas arrivée. Réessayez dans un instant.",
         "defauts": {
           "titreVide": "Le titre manque. Écrivez quelques mots, par exemple « Sourate à réviser ».",
           "titreLong": "Le titre dépasse {max} caractères. Raccourcissez-le.",

@@ -23,6 +23,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/zone_saisie.dart';
 import 'bloc_cartes_classe.dart'
     show echeanceRendue, iconeTypeCarte, libelleTypeCarte;
 
@@ -330,41 +331,31 @@ class _FeuilleCarteClasseEtat extends ConsumerState<FeuilleCarteClasse> {
         ),
         _Libelle(t.classe.cartes.feuille.champTitre),
         Ecart.vXs,
-        TextField(
-          key: FeuilleCarteClasse.titreKey,
-          controller: _titre,
-          textDirection: sensDeLaSaisie(_titre.text),
+        ZoneSaisie(
+          cleChamp: FeuilleCarteClasse.titreKey,
+          controleur: _titre,
+          sens: sensDeLaSaisie(_titre.text),
           onChanged: (String _) => _revalider(),
-          textInputAction: TextInputAction.next,
+          actionClavier: TextInputAction.next,
           // Le titre se relit en entier, meme a 320 px et texte x2.
-          minLines: 1,
-          maxLines: 3,
-          decoration: InputDecoration(
-            helperText: aideLongueurTitre,
-            helperMaxLines: 6,
-            errorMaxLines: 8,
-            errorText: _erreur(const <DefautCarte>[
-              DefautCarte.titreVide,
-              DefautCarte.titreLong,
-            ]),
-          ),
+          maxLignes: 3,
+          explication: aideLongueurTitre,
+          erreur: _erreur(const <DefautCarte>[
+            DefautCarte.titreVide,
+            DefautCarte.titreLong,
+          ]),
         ),
         Ecart.vLg,
         _Libelle(t.classe.cartes.feuille.champTexte),
         Ecart.vXs,
-        TextField(
-          key: FeuilleCarteClasse.texteKey,
-          controller: _texte,
-          textDirection: sensDeLaSaisie(_texte.text),
+        ZoneSaisie(
+          cleChamp: FeuilleCarteClasse.texteKey,
+          controleur: _texte,
+          sens: sensDeLaSaisie(_texte.text),
           onChanged: (String _) => _revalider(),
-          minLines: 3,
-          maxLines: 6,
-          decoration: InputDecoration(
-            helperText: aideLongueurTexte,
-            helperMaxLines: 6,
-            errorMaxLines: 8,
-            errorText: _erreur(const <DefautCarte>[DefautCarte.texteLong]),
-          ),
+          minLignes: 3,
+          explication: aideLongueurTexte,
+          erreur: _erreur(const <DefautCarte>[DefautCarte.texteLong]),
         ),
         Ecart.vLg,
         _Libelle(t.classe.cartes.feuille.champLien),

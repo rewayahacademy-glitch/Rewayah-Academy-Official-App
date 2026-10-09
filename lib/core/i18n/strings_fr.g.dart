@@ -12707,11 +12707,11 @@ class Traductions$classe$cartes$feuille$fr {
 	/// fr: 'Retirer la carte'
 	String get retirerConfirmer => 'Retirer la carte';
 
-	/// fr: 'La carte n'est pas confirmée : la réponse n'est pas arrivée. Vérifiez la connexion, puis enregistrez de nouveau.'
-	String get envoiNonConfirme => 'La carte n\'est pas confirmée : la réponse n\'est pas arrivée. Vérifiez la connexion, puis enregistrez de nouveau.';
+	/// fr: 'La carte n'est pas confirmée : la réponse n'est pas arrivée. Enregistrez de nouveau dans un instant.'
+	String get envoiNonConfirme => 'La carte n\'est pas confirmée : la réponse n\'est pas arrivée. Enregistrez de nouveau dans un instant.';
 
-	/// fr: 'Le retrait n'est pas confirmé : la réponse n'est pas arrivée. Vérifiez la connexion, puis réessayez.'
-	String get retraitNonConfirme => 'Le retrait n\'est pas confirmé : la réponse n\'est pas arrivée. Vérifiez la connexion, puis réessayez.';
+	/// fr: 'Le retrait n'est pas confirmé : la réponse n'est pas arrivée. Réessayez dans un instant.'
+	String get retraitNonConfirme => 'Le retrait n\'est pas confirmé : la réponse n\'est pas arrivée. Réessayez dans un instant.';
 
 	late final Traductions$classe$cartes$feuille$defauts$fr defauts = Traductions$classe$cartes$feuille$defauts$fr.internal(_root);
 }
@@ -18262,8 +18262,8 @@ extension on Traductions {
 			'classe.cartes.feuille.retirerQuestion' => ({required Object titre}) => 'Retirer la carte « ${titre} » ?',
 			'classe.cartes.feuille.retirerConsequence' => 'Elle disparaît aussitôt pour les élèves de la classe et leurs familles.',
 			'classe.cartes.feuille.retirerConfirmer' => 'Retirer la carte',
-			'classe.cartes.feuille.envoiNonConfirme' => 'La carte n\'est pas confirmée : la réponse n\'est pas arrivée. Vérifiez la connexion, puis enregistrez de nouveau.',
-			'classe.cartes.feuille.retraitNonConfirme' => 'Le retrait n\'est pas confirmé : la réponse n\'est pas arrivée. Vérifiez la connexion, puis réessayez.',
+			'classe.cartes.feuille.envoiNonConfirme' => 'La carte n\'est pas confirmée : la réponse n\'est pas arrivée. Enregistrez de nouveau dans un instant.',
+			'classe.cartes.feuille.retraitNonConfirme' => 'Le retrait n\'est pas confirmé : la réponse n\'est pas arrivée. Réessayez dans un instant.',
 			'classe.cartes.feuille.defauts.titreVide' => 'Le titre manque. Écrivez quelques mots, par exemple « Sourate à réviser ».',
 			'classe.cartes.feuille.defauts.titreLong' => ({required Object max}) => 'Le titre dépasse ${max} caractères. Raccourcissez-le.',
 			'classe.cartes.feuille.defauts.texteLong' => ({required Object max}) => 'Le texte dépasse ${max} caractères. Raccourcissez-le ou partagez un lien.',
