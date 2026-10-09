@@ -67,7 +67,20 @@ enum MotifCloture {
 
   /// La direction n'a pas retenu la demande.
   refusDirection,
+
+  /// Motif absent ou non reconnu : repli neutre du client (« Cette demande
+  /// est close. »). Jamais un motif choisi a la place du serveur : un refus
+  /// suppose serait faux pour un retrait de la famille, et l'inverse.
+  inconnu,
 }
+
+/// Le debut des cours tel que le contrat le porte : une heure murale du
+/// fuseau du foyer, donc **jamais** un instant UTC. Un `DateTime` UTC serait
+/// affiche comme s'il etait l'heure du foyer (18:00 UTC lu « 18:00, heure de
+/// Paris ») : il est refuse, et aucune heure n'est affichee plutot qu'une
+/// heure fausse.
+DateTime? heureMuraleDuFoyer(DateTime? debut) =>
+    debut == null || debut.isUtc ? null : debut;
 
 /// Les jours et l'heure choisis, en heure murale du fuseau du foyer.
 @immutable
@@ -95,7 +108,13 @@ class SuiviDemande {
   /// Cree le suivi. [enseignant] n'est garde qu'a l'etape
   /// [EtapeDemande.enseignantAffecte], [motif] qu'a l'etape
   /// [EtapeDemande.close], [debutCours] qu'a l'etape 3.
-  const SuiviDemande({
+  ///
+  /// [debutCours] est une heure murale du fuseau du foyer : un `DateTime`
+  /// UTC est une erreur de l'adaptateur (assertion en mise au point) ; en
+  /// production il est ecarte ([heureMuraleDuFoyer]) et l'ecran dit que la
+  /// date reste a fixer, plutot qu'une heure fausse. Une demande close sans
+  /// motif rendu prend [MotifCloture.inconnu], jamais un refus suppose.
+  SuiviDemande({
     required this.demandeId,
     required this.eleveId,
     required this.prenom,
@@ -107,10 +126,16 @@ class SuiviDemande {
     DateTime? debutCours,
     MotifCloture? motif,
     this.peutChoisirAutreCreneau = false,
-  }) : enseignant = etape == EtapeDemande.enseignantAffecte ? enseignant : null,
-       debutCours = etape == EtapeDemande.enseignantAffecte ? debutCours : null,
+  }) : assert(
+         debutCours == null || !debutCours.isUtc,
+         'debutCours est une heure murale du fuseau du foyer, jamais UTC',
+       ),
+       enseignant = etape == EtapeDemande.enseignantAffecte ? enseignant : null,
+       debutCours = etape == EtapeDemande.enseignantAffecte
+           ? heureMuraleDuFoyer(debutCours)
+           : null,
        motif = etape == EtapeDemande.close
-           ? motif ?? MotifCloture.refusDirection
+           ? motif ?? MotifCloture.inconnu
            : null;
 
   /// L'identifiant de la demande.

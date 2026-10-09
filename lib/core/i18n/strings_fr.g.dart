@@ -5922,8 +5922,8 @@ class Traductions$admin$regroupements$fr {
 	/// fr: 'Enseignant proposé'
 	String get enseignantTitre => 'Enseignant proposé';
 
-	/// fr: 'Le premier choix tient compte du genre de la classe, de ses créneaux libres à ces jours et à cette heure, puis du nombre de ses classes. Confirmez-le ou choisissez une autre personne.'
-	String get enseignantContexte => 'Le premier choix tient compte du genre de la classe, de ses créneaux libres à ces jours et à cette heure, puis du nombre de ses classes. Confirmez-le ou choisissez une autre personne.';
+	/// fr: 'Le premier choix tient compte du genre de la classe, de ses créneaux libres aux mêmes jours et à la même heure, puis du nombre de ses classes. Ces heures sont comparées telles quelles, sans conversion de fuseau : si l'enseignant vit dans un autre fuseau, vérifiez avec lui avant de confirmer. Confirmez-le ou choisissez une autre personne.'
+	String get enseignantContexte => 'Le premier choix tient compte du genre de la classe, de ses créneaux libres aux mêmes jours et à la même heure, puis du nombre de ses classes. Ces heures sont comparées telles quelles, sans conversion de fuseau : si l\'enseignant vit dans un autre fuseau, vérifiez avec lui avant de confirmer. Confirmez-le ou choisissez une autre personne.';
 
 	/// fr: 'Confirmer l'enseignant'
 	String get confirmerEnseignant => 'Confirmer l\'enseignant';
@@ -5934,11 +5934,14 @@ class Traductions$admin$regroupements$fr {
 	/// fr: 'L'enseignant n'est pas confirmé : la réponse du serveur n'est pas arrivée. Pressez de nouveau.'
 	String get affectationNonConfirmee => 'L\'enseignant n\'est pas confirmé : la réponse du serveur n\'est pas arrivée. Pressez de nouveau.';
 
-	/// fr: 'Un autre membre de la direction a déjà confirmé un enseignant pour cette classe : rien n'a changé.'
-	String get dejaAffecte => 'Un autre membre de la direction a déjà confirmé un enseignant pour cette classe : rien n\'a changé.';
+	/// fr: 'Un autre membre de la direction a déjà confirmé l'enseignant de cette classe : votre choix ne remplace pas le sien.'
+	String get dejaAffecte => 'Un autre membre de la direction a déjà confirmé l\'enseignant de cette classe : votre choix ne remplace pas le sien.';
 
 	/// fr: 'Les familles ont été prévenues.'
 	String get famillesPrevenues => 'Les familles ont été prévenues.';
+
+	/// fr: 'Les familles ont été prévenues que leur classe est validée.'
+	String get famillesClasseValidee => 'Les familles ont été prévenues que leur classe est validée.';
 
 	/// fr: 'Classe {libelle} : {enseignant} en est l'enseignant.'
 	String termineDetail({required Object libelle, required Object enseignant}) => 'Classe ${libelle} : ${enseignant} en est l\'enseignant.';
@@ -12694,6 +12697,9 @@ class Traductions$suiviDemandes$close$fr {
 	/// fr: 'Demande non retenue'
 	String get nonRetenue => 'Demande non retenue';
 
+	/// fr: 'Demande close'
+	String get close => 'Demande close';
+
 	late final Traductions$suiviDemandes$close$motif$fr motif = Traductions$suiviDemandes$close$motif$fr.internal(_root);
 
 	/// fr: 'Vous pouvez choisir un autre créneau parmi ceux proposés.'
@@ -17054,6 +17060,9 @@ class Traductions$suiviDemandes$close$motif$fr {
 
 	/// fr: 'La direction n'a pas pu retenir cette demande.'
 	String get refusDirection => 'La direction n\'a pas pu retenir cette demande.';
+
+	/// fr: 'Cette demande est close.'
+	String get inconnu => 'Cette demande est close.';
 }
 
 // Path: salle.preparation.eleve.guidee
@@ -18994,12 +19003,13 @@ extension on Traductions {
 			'admin.regroupements.nonConfirmee' => 'La création n\'est pas confirmée : la réponse du serveur n\'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans classe en double.',
 			'admin.regroupements.creee' => ({required num n, required Object libelle}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Classe ${libelle} créée : ${n} élève intégré.', other: 'Classe ${libelle} créée : ${n} élèves intégrés.', ), 
 			'admin.regroupements.enseignantTitre' => 'Enseignant proposé',
-			'admin.regroupements.enseignantContexte' => 'Le premier choix tient compte du genre de la classe, de ses créneaux libres à ces jours et à cette heure, puis du nombre de ses classes. Confirmez-le ou choisissez une autre personne.',
+			'admin.regroupements.enseignantContexte' => 'Le premier choix tient compte du genre de la classe, de ses créneaux libres aux mêmes jours et à la même heure, puis du nombre de ses classes. Ces heures sont comparées telles quelles, sans conversion de fuseau : si l\'enseignant vit dans un autre fuseau, vérifiez avec lui avant de confirmer. Confirmez-le ou choisissez une autre personne.',
 			'admin.regroupements.confirmerEnseignant' => 'Confirmer l\'enseignant',
 			'admin.regroupements.enseignantHorsLigne' => 'Sans réseau, l\'enseignant ne peut pas être confirmé. Votre choix reste affiché : revenez quand la connexion est rétablie.',
 			'admin.regroupements.affectationNonConfirmee' => 'L\'enseignant n\'est pas confirmé : la réponse du serveur n\'est pas arrivée. Pressez de nouveau.',
-			'admin.regroupements.dejaAffecte' => 'Un autre membre de la direction a déjà confirmé un enseignant pour cette classe : rien n\'a changé.',
+			'admin.regroupements.dejaAffecte' => 'Un autre membre de la direction a déjà confirmé l\'enseignant de cette classe : votre choix ne remplace pas le sien.',
 			'admin.regroupements.famillesPrevenues' => 'Les familles ont été prévenues.',
+			'admin.regroupements.famillesClasseValidee' => 'Les familles ont été prévenues que leur classe est validée.',
 			'admin.regroupements.termineDetail' => ({required Object libelle, required Object enseignant}) => 'Classe ${libelle} : ${enseignant} en est l\'enseignant.',
 			'admin.diagnostics.titre' => 'Diagnostics',
 			'admin.diagnostics.intro' => 'Chaque élève inscrit attend un premier niveau avant de rejoindre une classe : c\'est ici que ce placement se décide.',
@@ -19014,9 +19024,9 @@ extension on Traductions {
 			'admin.diagnostics.aucun' => 'Aucun élève à diagnostiquer',
 			'admin.diagnostics.aucunDetail' => 'Tous les élèves inscrits ont déjà un niveau décidé.',
 			'admin.diagnostics.champNiveau' => 'Niveau de placement',
-			'admin.diagnostics.manqueNiveau' => 'Il manque le niveau de placement : choisissez-le dans la liste des niveaux.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.diagnostics.manqueNiveau' => 'Il manque le niveau de placement : choisissez-le dans la liste des niveaux.',
 			'admin.diagnostics.champMotif' => 'Motif',
 			'admin.diagnostics.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
 			'admin.diagnostics.decider' => 'Décider le placement',
@@ -19528,9 +19538,9 @@ extension on Traductions {
 			'parcours.objectifApprendreALire' => 'Apprendre à lire',
 			'parcours.objectifDevenirFluide' => 'Lire plus couramment',
 			'parcours.objectifMemoriser' => 'Mémoriser',
-			'parcours.objectifIndecis' => 'Je ne sais pas encore',
 			_ => null,
 		} ?? switch (path) {
+			'parcours.objectifIndecis' => 'Je ne sais pas encore',
 			'parcours.momentsQuestion' => 'Quels moments de la journée vous conviennent le mieux ?',
 			'parcours.momentsRaison' => 'Cette réponse ne crée aucun horaire et ne réserve rien. Elle sert seulement à mettre en avant, parmi les horaires que l\'académie propose déjà, ceux qui tombent le mieux pour vous. Vous verrez tous les autres juste en dessous.',
 			'parcours.momentMatin' => 'Le matin',
@@ -20042,9 +20052,9 @@ extension on Traductions {
 			'tuteur.accueil.rienAujourdhui' => 'Rien aujourd\'hui',
 			'tuteur.accueil.aucunCoursPrevu' => 'Aucun cours programmé pour l\'instant',
 			'tuteur.accueil.aucunCoursPrevuDetail' => 'Les cours de la semaine sont préparés à l\'avance. Celui-ci apparaîtra ici.',
-			'tuteur.accueil.enRecherche' => 'En recherche d\'un enseignant',
 			_ => null,
 		} ?? switch (path) {
+			'tuteur.accueil.enRecherche' => 'En recherche d\'un enseignant',
 			'tuteur.accueil.enRechercheDepuis' => ({required Object date}) => 'Demande déposée le ${date}',
 			'tuteur.accueil.enRechercheSansDate' => ({required Object prenom}) => 'Un enseignant prendra ${prenom} en charge parmi les heures proposées.',
 			'tuteur.accueil.sansCreneau' => ({required Object prenom}) => 'Aucune heure proposée pour ${prenom}',
@@ -20556,9 +20566,9 @@ extension on Traductions {
 			'enseignant.cahier.faiblesseMemorisation' => 'Mémorisation',
 			'enseignant.cahier.niveauARevoirDetail' => 'La leçon est à reprendre à la prochaine séance.',
 			'enseignant.cahier.niveauEnProgresDetail' => 'L\'élève avance, quelques erreurs restent.',
-			'enseignant.cahier.niveauAcquisDetail' => 'La leçon est sue, avec peu d\'erreurs.',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.cahier.niveauAcquisDetail' => 'La leçon est sue, avec peu d\'erreurs.',
 			'enseignant.cahier.niveauMaitriseDetail' => 'La leçon est sue sans erreur, l\'élève peut avancer.',
 			'enseignant.cahier.faiblesseMakharijDetail' => 'La prononciation des lettres.',
 			'enseignant.cahier.faiblesseMaddDetail' => 'Les allongements.',
@@ -21070,9 +21080,9 @@ extension on Traductions {
 			'tc.bibliotheque.message.copieEnregistree' => 'Copie enregistrée',
 			'tc.bibliotheque.message.copieImpossible' => 'Cette copie n’est pas disponible pour le moment',
 			'tc.bibliotheque.message.telechargementImpossible' => 'Ce support n’est pas encore disponible hors ligne',
-			'tc.bibliotheque.message.horsLigneNonTelecharge' => 'Disponible une fois téléchargé ou de retour en ligne',
 			_ => null,
 		} ?? switch (path) {
+			'tc.bibliotheque.message.horsLigneNonTelecharge' => 'Disponible une fois téléchargé ou de retour en ligne',
 			'tc.bibliotheque.message.aucunTelechargement' => 'Aucun fichier à télécharger pour cette version.',
 			'tc.bibliotheque.classe.titre' => 'Choisir un support',
 			'tc.bibliotheque.classe.sousTitre' => 'Le support choisi remplace celui affiché. Le cours continue.',
@@ -21584,9 +21594,9 @@ extension on Traductions {
 			'adulte.invitation.courrielRequis' => 'Indiquez son adresse e-mail.',
 			'adulte.invitation.courrielInvalide' => 'Vérifiez l\'adresse e-mail : elle doit ressembler à nom@exemple.com.',
 			'adulte.invitation.verifier' => 'Continuer',
-			'adulte.invitation.verifierTitre' => 'Vérifier et envoyer',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.invitation.verifierTitre' => 'Vérifier et envoyer',
 			'adulte.invitation.verifierPhrase' => 'Relisez ces informations. L\'invitation partira à cette adresse.',
 			'adulte.invitation.nonRenseigne' => 'Non renseigné',
 			'adulte.invitation.modifier' => 'Modifier',
@@ -21909,10 +21919,12 @@ extension on Traductions {
 			'suiviDemandes.personnaliseNotice' => 'Ce créneau ne s\'ouvrira que si d\'autres élèves le choisissent et remplissent la classe.',
 			'suiviDemandes.close.retiree' => 'Demande retirée',
 			'suiviDemandes.close.nonRetenue' => 'Demande non retenue',
+			'suiviDemandes.close.close' => 'Demande close',
 			'suiviDemandes.close.motif.retraitFamille' => 'Vous avez retiré cette demande.',
 			'suiviDemandes.close.motif.offreRetiree' => 'L\'académie a retiré ce créneau de ses offres.',
 			'suiviDemandes.close.motif.classeNonConstituee' => 'La classe de ce créneau n\'a pas pu être constituée.',
 			'suiviDemandes.close.motif.refusDirection' => 'La direction n\'a pas pu retenir cette demande.',
+			'suiviDemandes.close.motif.inconnu' => 'Cette demande est close.',
 			'suiviDemandes.close.suite' => 'Vous pouvez choisir un autre créneau parmi ceux proposés.',
 			'suiviDemandes.close.suiteSansChoix' => 'Aucun autre créneau n\'est proposé pour le moment. Revenez sur cette page plus tard.',
 			'suiviDemandes.close.choisirAutre' => ({required Object prenom}) => 'Choisir un autre créneau pour ${prenom}',

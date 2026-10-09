@@ -21,6 +21,29 @@ String villeDuFuseau(String fuseauIana) {
   return dernier.replaceAll('_', ' ');
 }
 
+/// Les identifiants IANA qui designent le temps universel lui-meme : ils
+/// n'ont pas de ville. On dit « heure UTC », jamais « heure d'UTC ».
+const Set<String> _fuseauxUniversels = <String>{
+  'UTC',
+  'UCT',
+  'Universal',
+  'Zulu',
+  'Etc/UTC',
+  'Etc/UCT',
+  'Etc/Universal',
+  'Etc/Zulu',
+};
+
+/// Ce qui suit « heure » : « de Paris », « d'Amman », ou « UTC » pour le
+/// temps universel (sans ville, donc sans « de »).
+String deFuseau(String fuseauIana) {
+  final String nu = fuseauIana.trim();
+  if (_fuseauxUniversels.contains(nu)) {
+    return 'UTC';
+  }
+  return deDevant(villeDuFuseau(nu));
+}
+
 /// « Lundi, mardi et jeudi » : jours tries et dedoublonnes, le premier avec
 /// sa majuscule.
 String joursDemande(List<int> joursIso) {
@@ -43,12 +66,16 @@ String joursDemande(List<int> joursIso) {
 /// « 18:00, heure de Paris ».
 String heureDemande(SuiviDemande d) => t.suiviDemandes.heureFuseau(
   heure: hhmmDemande(d.creneau.heure, d.creneau.minute),
-  deVille: deDevant(villeDuFuseau(d.fuseauIana)),
+  deVille: deFuseau(d.fuseauIana),
 );
 
 /// « Lundi 19 octobre a 18:00, heure de Paris », ou `null` sans date.
+///
+/// Les champs du `DateTime` sont lus tels quels (heure murale du foyer) : un
+/// instant UTC, que le modele refuse deja, n'est jamais affiche comme une
+/// heure du foyer ([heureMuraleDuFoyer]).
 String? debutCoursDemande(SuiviDemande d) {
-  final DateTime? debut = d.debutCours;
+  final DateTime? debut = heureMuraleDuFoyer(d.debutCours);
   if (debut == null) {
     return null;
   }
@@ -59,25 +86,30 @@ String? debutCoursDemande(SuiviDemande d) {
       mois: t.commun.dates.mois[debut.month - 1],
     ),
     heure: hhmmDemande(debut.hour, debut.minute),
-    deVille: deDevant(villeDuFuseau(d.fuseauIana)),
+    deVille: deFuseau(d.fuseauIana),
   );
 }
 
 /// Vrai pour une demande retiree (par la famille ou avec l'offre), faux pour
-/// une demande non retenue.
+/// une demande non retenue ou dont le motif n'est pas connu.
 bool estRetiree(MotifCloture motif) => switch (motif) {
   MotifCloture.retraitFamille || MotifCloture.offreRetiree => true,
-  MotifCloture.classeNonConstituee || MotifCloture.refusDirection => false,
+  MotifCloture.classeNonConstituee ||
+  MotifCloture.refusDirection ||
+  MotifCloture.inconnu => false,
 };
 
 /// L'etat court d'une demande : « Demande envoyee », « Classe validee »,
-/// « Enseignant affecte », « Demande retiree », « Demande non retenue ».
+/// « Enseignant affecte », « Demande retiree », « Demande non retenue »,
+/// « Demande close » (motif inconnu : ni retrait ni refus suppose).
 String etatCourtDemande(SuiviDemande d) => switch (d.etape) {
   EtapeDemande.envoyee => t.suiviDemandes.etapes.envoyee,
   EtapeDemande.classeValidee => t.suiviDemandes.etapes.classeValidee,
   EtapeDemande.enseignantAffecte => t.suiviDemandes.etapes.enseignantAffecte,
   EtapeDemande.close =>
-    estRetiree(d.motif!)
+    d.motif == MotifCloture.inconnu
+        ? t.suiviDemandes.close.close
+        : estRetiree(d.motif!)
         ? t.suiviDemandes.close.retiree
         : t.suiviDemandes.close.nonRetenue,
 };
@@ -89,6 +121,7 @@ String motifDemande(MotifCloture motif) => switch (motif) {
   MotifCloture.classeNonConstituee =>
     t.suiviDemandes.close.motif.classeNonConstituee,
   MotifCloture.refusDirection => t.suiviDemandes.close.motif.refusDirection,
+  MotifCloture.inconnu => t.suiviDemandes.close.motif.inconnu,
 };
 
 /// La phrase de situation (decision du 09/10, §4), `null` pour une demande

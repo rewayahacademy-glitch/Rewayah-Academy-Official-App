@@ -708,6 +708,102 @@ void main() {
     });
   });
 
+  group('Reserves de la verification (OFFRES-1B)', () {
+    SuiviDemande demande({
+      EtapeDemande etape = EtapeDemande.enseignantAffecte,
+      String fuseau = 'Europe/Paris',
+      DateTime? debut,
+      MotifCloture? motif,
+    }) => SuiviDemande(
+      demandeId: 'd',
+      eleveId: 'e',
+      prenom: 'Bilal',
+      etape: etape,
+      creneau: const CreneauDemande(joursIso: <int>[1], heure: 18, minute: 0),
+      fuseauIana: fuseau,
+      debutCours: debut,
+      motif: motif,
+    );
+
+    test('FAM 1 : un debut des cours en UTC est refuse au constructeur', () {
+      expect(
+        () => demande(debut: DateTime.utc(2026, 10, 19, 17, 30)),
+        throwsA(isA<AssertionError>()),
+      );
+      // L'heure murale du foyer passe telle quelle.
+      expect(
+        demande(debut: DateTime(2026, 10, 19, 17, 30)).debutCours,
+        DateTime(2026, 10, 19, 17, 30),
+      );
+    });
+
+    test('FAM 1 : en production, un instant UTC n affiche aucune heure', () {
+      // Les assertions sont coupees en production : le repli ecarte
+      // l'instant UTC plutot que de l'afficher comme heure du foyer.
+      expect(heureMuraleDuFoyer(DateTime.utc(2026, 10, 19, 17, 30)), isNull);
+      expect(heureMuraleDuFoyer(null), isNull);
+      expect(
+        heureMuraleDuFoyer(DateTime(2026, 10, 19, 17, 30)),
+        DateTime(2026, 10, 19, 17, 30),
+      );
+    });
+
+    testWidgets('FAM 2 : motif absent, phrase neutre et suite selon la '
+        'capacite', (WidgetTester tester) async {
+      for (final bool peut in <bool>[true, false]) {
+        final SuiviDemandesDemo demo = _seule(_bilal);
+        demo.demandes.first
+          ..motif = null
+          ..peutChoisirAutreCreneau = peut;
+        await _monter(tester, port: demo);
+        expect(find.text('Cette demande est close.'), findsOneWidget);
+        // Ni refus ni retrait suppose.
+        expect(
+          find.text('La direction n\'a pas pu retenir cette demande.'),
+          findsNothing,
+        );
+        expect(find.text('Vous avez retiré cette demande.'), findsNothing);
+        expect(
+          tester.widget<StatusPill>(find.byType(StatusPill)).libelle,
+          'Demande close',
+        );
+        expect(
+          find.text(
+            peut
+                ? t.suiviDemandes.close.suite
+                : t.suiviDemandes.close.suiteSansChoix,
+          ),
+          findsOneWidget,
+        );
+        expect(find.byType(LienFleche), peut ? findsOneWidget : findsNothing);
+        await _demonter(tester);
+      }
+    });
+
+    test('FAM 2 : le modele et la notification restent neutres', () {
+      final SuiviDemande d = demande(etape: EtapeDemande.close);
+      expect(d.motif, MotifCloture.inconnu);
+      expect(etatCourtDemande(d), 'Demande close');
+      expect(
+        titreNotificationDemande(d),
+        'Demande de créneau de Bilal : cette demande est close.',
+      );
+    });
+
+    test('FAM 3 : fuseau universel, « heure UTC », jamais « heure d UTC »', () {
+      for (final String fuseau in <String>['Etc/UTC', 'UTC']) {
+        final SuiviDemande d = demande(
+          fuseau: fuseau,
+          debut: DateTime(2026, 10, 19, 17, 30),
+        );
+        expect(heureDemande(d), '18:00, heure UTC');
+        expect(debutCoursDemande(d), 'Lundi 19 octobre à 17:30, heure UTC');
+      }
+      // Une ville garde son « de ».
+      expect(heureDemande(demande()), '18:00, heure de Paris');
+    });
+  });
+
   group('320 px, texte a 200 %', () {
     setUpAll(chargerPolicesDuDepot);
     for (final TextDirection direction in TextDirection.values) {

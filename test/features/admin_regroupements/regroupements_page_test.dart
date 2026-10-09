@@ -625,6 +625,92 @@ void main() {
     });
   });
 
+  group('Reserves de la verification (OFFRES-1B)', () {
+    setUpAll(chargerPolicesDuDepot);
+
+    testWidgets('ADM 2 : a la creation, les familles sont prevenues que leur '
+        'classe est validee ; apres l affectation, prevenues', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, port: RegroupementsDemo());
+      await _ouvrir(tester, _pret);
+      await _choisirGenre(tester, GenreClasse.femmes);
+      await _presser(tester, 'regroupement-creer');
+      await _laisser(tester);
+      expect(_parCle('regroupement-feuille-enseignant'), findsOneWidget);
+      expect(
+        find.text(
+          'Les familles ont été prévenues que leur classe est validée.',
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(t.admin.regroupements.famillesPrevenues), findsNothing);
+      await _presser(tester, 'regroupement-confirmer');
+      await _laisser(tester);
+      expect(find.text('Les familles ont été prévenues.'), findsOneWidget);
+      await _demonter(tester);
+    });
+
+    for (final TextDirection direction in TextDirection.values) {
+      testWidgets('ADM 3 : deja affecte par un autre, une seule phrase claire '
+          '(320 px, texte a 200 %, ${direction.name})', (
+        WidgetTester tester,
+      ) async {
+        final RegroupementsDemo port = RegroupementsDemo();
+        await _monter(
+          tester,
+          port: port,
+          largeur: 320,
+          hauteur: 2400,
+          echelle: 2,
+          direction: direction,
+        );
+        await _ouvrir(tester, _pret);
+        await _choisirGenre(tester, GenreClasse.femmes);
+        await _presser(tester, 'regroupement-creer');
+        await _laisser(tester);
+        await port.affecterEnseignant(
+          classeId: 'demo-classe-regroupee-1',
+          enseignantId: 'ens-salma',
+        );
+        await _presser(tester, 'regroupement-confirmer');
+        await _laisser(tester);
+        expect(
+          find.text(
+            'Un autre membre de la direction a déjà confirmé l\'enseignant '
+            'de cette classe : votre choix ne remplace pas le sien.',
+          ),
+          findsOneWidget,
+        );
+        // Pas de « Les familles ont ete prevenues » a cote de « rien n'a
+        // change » : ce choix-ci n'a rien provoque.
+        expect(_parCle('regroupement-familles-prevenues'), findsNothing);
+        expect(
+          find.textContaining('prévenues', findRichText: true),
+          findsNothing,
+        );
+        expect(tester.takeException(), isNull);
+        verifierEcranSansMotCoupe(tester);
+        verifierUnSeulBoutonPlein(tester, maximum: 2);
+        await _demonter(tester);
+      });
+    }
+
+    testWidgets('ADM 1 : le texte de proposition ne promet pas une '
+        'comparaison dans le meme fuseau', (WidgetTester tester) async {
+      await _monter(tester, port: RegroupementsDemo());
+      await _ouvrir(tester, _pret);
+      await _choisirGenre(tester, GenreClasse.femmes);
+      await _presser(tester, 'regroupement-creer');
+      await _laisser(tester);
+      final String contexte = t.admin.regroupements.enseignantContexte;
+      expect(find.text(contexte), findsOneWidget);
+      expect(contexte, contains('sans conversion de fuseau'));
+      expect(contexte, isNot(contains('à ces jours et à cette heure')));
+      await _demonter(tester);
+    });
+  });
+
   group('320 px, texte a 200 %', () {
     setUpAll(chargerPolicesDuDepot);
     for (final TextDirection direction in TextDirection.values) {

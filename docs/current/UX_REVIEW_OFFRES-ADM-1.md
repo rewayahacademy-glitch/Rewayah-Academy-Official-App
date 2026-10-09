@@ -207,12 +207,28 @@ Déclarés aussi dans `tool/libelles_sources.json` (source : décision du direct
 | `admin.regroupements.creee.one` | Classe {libelle} créée : {n} élève intégré. |
 | `admin.regroupements.creee.other` | Classe {libelle} créée : {n} élèves intégrés. |
 | `admin.regroupements.enseignantTitre` | Enseignant proposé |
-| `admin.regroupements.enseignantContexte` | Le premier choix tient compte du genre de la classe, de ses créneaux libres à ces jours et à cette heure, puis du nombre de ses classes. Confirmez-le ou choisissez une autre personne. |
+| `admin.regroupements.enseignantContexte` | Le premier choix tient compte du genre de la classe, de ses créneaux libres aux mêmes jours et à la même heure, puis du nombre de ses classes. Ces heures sont comparées telles quelles, sans conversion de fuseau : si l'enseignant vit dans un autre fuseau, vérifiez avec lui avant de confirmer. Confirmez-le ou choisissez une autre personne. (texte revu par OFFRES-1B, réserve ADM 1) |
 | `admin.regroupements.confirmerEnseignant` | Confirmer l'enseignant |
 | `admin.regroupements.enseignantHorsLigne` | Sans réseau, l'enseignant ne peut pas être confirmé. Votre choix reste affiché : revenez quand la connexion est rétablie. |
 | `admin.regroupements.affectationNonConfirmee` | L'enseignant n'est pas confirmé : la réponse du serveur n'est pas arrivée. Pressez de nouveau. |
-| `admin.regroupements.dejaAffecte` | Un autre membre de la direction a déjà confirmé un enseignant pour cette classe : rien n'a changé. |
+| `admin.regroupements.dejaAffecte` | Un autre membre de la direction a déjà confirmé l'enseignant de cette classe : votre choix ne remplace pas le sien. (texte revu par OFFRES-1B, réserve ADM 3) |
 | `admin.regroupements.famillesPrevenues` | Les familles ont été prévenues. |
+| `admin.regroupements.famillesClasseValidee` | Les familles ont été prévenues que leur classe est validée. (OFFRES-1B, réserve ADM 2) |
 | `admin.regroupements.termineDetail` | Classe {libelle} : {enseignant} en est l'enseignant. |
 | `admin.tableau.outilsRegroupements` | Classes à ouvrir |
 | `admin.tableau.outilsRegroupementsDetail` | Les demandes des familles réunies quand elles se ressemblent, et la création de leur classe. |
+
+## Réserves de la vérification corrigées (OFFRES-1B, 09/10/2026)
+
+Statut : `présent dans le code` et `testé localement` (groupe « Reserves de la
+verification (OFFRES-1B) » de `test/features/admin_regroupements/regroupements_page_test.dart`,
+chaque test rouge avant la correction et rouge de nouveau quand le défaut est remis).
+Aucun port ni aucune logique de classement modifiés.
+
+| Réserve | Correction | Preuve |
+| :--- | :--- | :--- |
+| ADM 1 : « créneaux libres à ces jours et à cette heure » promettait une comparaison que `memeHeure` (`lib/core/admin/enseignants_classe.dart`) fait sans fuseau | Texte nuancé, logique inchangée : « Ces heures sont comparées telles quelles, sans conversion de fuseau : si l'enseignant vit dans un autre fuseau, vérifiez avec lui avant de confirmer. » Comparer dans le même fuseau demanderait une base de fuseaux que le dépôt n'embarque pas (écart voulu n° 4) : ni simple ni sûr ici ; le serveur pourra rendre des créneaux libres déjà convertis | « ADM 1 : le texte de proposition ne promet pas une comparaison dans le meme fuseau » |
+| ADM 2 : rien ne disait, à la création, que les familles sont prévenues de la validation de leur classe (décision §4) | Sous « Classe … créée », la feuille dit « Les familles ont été prévenues que leur classe est validée. » ; après l'affectation, « Les familles ont été prévenues. » comme avant | « ADM 2 : a la creation, les familles sont prevenues que leur classe est validee ; apres l affectation, prevenues » |
+| ADM 3 : « déjà affecté par un autre » affichait « Un autre membre de la direction a déjà confirmé un enseignant pour cette classe : rien n'a changé. » puis « Les familles ont été prévenues » | Une seule phrase, en `liveRegion` : « Un autre membre de la direction a déjà confirmé l'enseignant de cette classe : votre choix ne remplace pas le sien. » ; « Les familles ont été prévenues » n'est plus affiché dans ce cas | « ADM 3 : deja affecte par un autre, une seule phrase claire » (320 px, texte ×2, LTR et RTL) |
+
+Aucun bouton grisé ajouté ; un seul bouton plein (« Fermer ») sur l'étape de fin.

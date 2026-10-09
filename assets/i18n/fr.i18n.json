@@ -1835,12 +1835,13 @@
         "other": "Classe {libelle} créée : {n} élèves intégrés."
       },
       "enseignantTitre": "Enseignant proposé",
-      "enseignantContexte": "Le premier choix tient compte du genre de la classe, de ses créneaux libres à ces jours et à cette heure, puis du nombre de ses classes. Confirmez-le ou choisissez une autre personne.",
+      "enseignantContexte": "Le premier choix tient compte du genre de la classe, de ses créneaux libres aux mêmes jours et à la même heure, puis du nombre de ses classes. Ces heures sont comparées telles quelles, sans conversion de fuseau : si l'enseignant vit dans un autre fuseau, vérifiez avec lui avant de confirmer. Confirmez-le ou choisissez une autre personne.",
       "confirmerEnseignant": "Confirmer l'enseignant",
       "enseignantHorsLigne": "Sans réseau, l'enseignant ne peut pas être confirmé. Votre choix reste affiché : revenez quand la connexion est rétablie.",
       "affectationNonConfirmee": "L'enseignant n'est pas confirmé : la réponse du serveur n'est pas arrivée. Pressez de nouveau.",
-      "dejaAffecte": "Un autre membre de la direction a déjà confirmé un enseignant pour cette classe : rien n'a changé.",
+      "dejaAffecte": "Un autre membre de la direction a déjà confirmé l'enseignant de cette classe : votre choix ne remplace pas le sien.",
       "famillesPrevenues": "Les familles ont été prévenues.",
+      "famillesClasseValidee": "Les familles ont été prévenues que leur classe est validée.",
       "termineDetail": "Classe {libelle} : {enseignant} en est l'enseignant."
     },
     "diagnostics": {
@@ -5272,11 +5273,13 @@
     "close": {
       "retiree": "Demande retirée",
       "nonRetenue": "Demande non retenue",
+      "close": "Demande close",
       "motif": {
         "retraitFamille": "Vous avez retiré cette demande.",
         "offreRetiree": "L'académie a retiré ce créneau de ses offres.",
         "classeNonConstituee": "La classe de ce créneau n'a pas pu être constituée.",
-        "refusDirection": "La direction n'a pas pu retenir cette demande."
+        "refusDirection": "La direction n'a pas pu retenir cette demande.",
+        "inconnu": "Cette demande est close."
       },
       "suite": "Vous pouvez choisir un autre créneau parmi ceux proposés.",
       "suiteSansChoix": "Aucun autre créneau n'est proposé pour le moment. Revenez sur cette page plus tard.",

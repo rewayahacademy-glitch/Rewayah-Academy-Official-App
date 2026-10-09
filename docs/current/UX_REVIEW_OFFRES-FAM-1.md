@@ -74,3 +74,30 @@ nom d'affichage de l'enseignant et le début des cours (heure murale du foyer). 
 nombre de demandeurs, d'identité d'autrui ni d'enseignant proposé non confirmé. RLS : le
 foyer ne lit que ses demandes. Notification à chaque transition, titre et destination
 `/tuteur/demandes` (le port des notifications existant suffit, sans modification).
+
+## Réserves de la vérification corrigées (OFFRES-1B, 09/10/2026)
+
+Statut : `présent dans le code` et `testé localement` (groupe « Reserves de la
+verification (OFFRES-1B) » de `test/features/suivi_demandes/suivi_demandes_page_test.dart`,
+chaque test rouge avant la correction et rouge de nouveau quand le défaut est remis).
+
+| Réserve | Correction | Preuve |
+| :--- | :--- | :--- |
+| FAM 1 : `debutCours` lu par ses champs (`debut.hour`) sans vérifier `isUtc` ; un instant UTC aurait été affiché comme heure du foyer | Le contrat reste « heure murale du foyer ». `SuiviDemande` refuse un `DateTime` UTC (assertion en mise au point) ; en production, `heureMuraleDuFoyer` l'écarte et la carte dit « La date du premier cours s'affichera ici dès qu'elle sera fixée. » plutôt qu'une heure fausse. `debutCoursDemande` repasse par le même garde. Le constructeur n'est plus `const` (aucun appel `const` dans le dépôt) | « FAM 1 : un debut des cours en UTC est refuse au constructeur », « FAM 1 : en production, un instant UTC n affiche aucune heure » |
+| FAM 2 : motif absent remplacé par `refusDirection`, faux pour un retrait de la famille | Nouvelle valeur `MotifCloture.inconnu`, repli neutre : « Cette demande est close. », pastille « Demande close », puis la suite selon la capacité (lien « Choisir un autre créneau pour … » ou « Aucun autre créneau n'est proposé pour le moment… ») | « FAM 2 : motif absent, phrase neutre et suite selon la capacite », « FAM 2 : le modele et la notification restent neutres » |
+| FAM 3 : fuseau `Etc/UTC` rendu « heure d'UTC » | `deFuseau` : un identifiant du temps universel (`UTC`, `Etc/UTC`, `UCT`, `Universal`, `Zulu` et leurs formes `Etc/`) se dit « heure UTC », sans « de » ; une ville garde son « de » (« heure de Paris ») | « FAM 3 : fuseau universel, « heure UTC », jamais « heure d UTC » » |
+
+**Port étendu.** `PortSuiviDemandes` est nouveau (créé le 09/10, aucun adaptateur serveur
+ne l'emploie encore) : la valeur `inconnu` lui est ajoutée sans casser aucun appel. Ce
+n'est pas un motif que le serveur doit écrire : c'est le repli du client quand le motif
+est absent ou non reconnu. Ligne Contrats à relire par ChatGPT avant son adaptateur : un
+motif de clôture inconnu se traduit par `inconnu`, jamais par un motif choisi à sa place ;
+`debut_cours` arrive en heure murale du fuseau du foyer, jamais en instant UTC.
+
+**Libellés ajoutés** (délégation du 02/10, rédigés par l'agent, à faire valider par le
+directeur) :
+
+- Pastille d'une demande close sans motif connu : « Demande close »
+- Motif inconnu : « Cette demande est close. »
+- Notification correspondante (composée, aucune clé nouvelle) : « Demande de créneau de Bilal : cette demande est close. »
+- « heure UTC » : composé à partir de la clé existante `heureFuseau` (« {heure}, heure {deVille} ») ; aucune clé nouvelle.

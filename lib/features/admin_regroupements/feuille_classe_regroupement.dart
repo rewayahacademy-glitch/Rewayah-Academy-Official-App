@@ -9,11 +9,15 @@
 ///    la classe (les cartes de CLASSE-FORM-1), le nom deduit. Le bouton dit
 ///    ce qu'il fait (« Creer la classe », « Creer la classe incomplete ») :
 ///    c'est la confirmation de l'administration. Il ne se grise jamais ;
-/// 2. **Enseignant** : la classe est creee et ses eleves integres ; le
-///    premier choix est preselectionne, avec sa raison (genre compatible,
-///    creneaux libres a ces jours et a cette heure, charge), et
+/// 2. **Enseignant** : la classe est creee et ses eleves integres ; la
+///    feuille dit que les familles sont prevenues que leur classe est
+///    validee (decision §4). Le premier choix est preselectionne, avec sa
+///    raison (genre compatible, creneaux libres aux memes jours et a la meme
+///    heure, compares sans conversion de fuseau, charge), et
 ///    l'administration le confirme ou en choisit un autre ;
-/// 3. **Fin** : « Les familles ont ete prevenues. »
+/// 3. **Fin** : « Les familles ont ete prevenues. » (enseignant affecte) ;
+///    si un autre membre de la direction a confirme avant, une seule phrase
+///    le dit.
 ///
 /// Double appui : un seul envoi (drapeau d'envoi, et la meme `cleEnvoi` pour
 /// toute la feuille, que le serveur rend idempotente). Creation concurrente
@@ -390,6 +394,14 @@ class _FeuilleClasseRegroupementEtat
             style: textes.titleSmall,
           ),
         ),
+        Ecart.vXs,
+        // Decision du 09/10, §4 : la creation vaut « Classe validee » pour
+        // les familles ; le serveur les en previent a la creation.
+        TexteSansCoupure(
+          r.famillesClasseValidee,
+          key: const ValueKey<String>('regroupement-familles-classe-validee'),
+          style: textes.bodyMedium,
+        ),
         Ecart.vLg,
         ...espacer(lignesRegroupement(_r)),
         Ecart.vXxl,
@@ -449,28 +461,35 @@ class _FeuilleClasseRegroupementEtat
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        if (_dejaAffecte) ...<Widget>[
-          TexteSansCoupure(
-            r.dejaAffecte,
-            key: const ValueKey<String>('regroupement-deja-affecte'),
-            style: textes.bodyMedium,
+        // Un autre membre de la direction a confirme avant : une seule
+        // phrase, sans « Les familles ont ete prevenues », que ce choix-ci
+        // n'a pas provoque.
+        if (_dejaAffecte)
+          Semantics(
+            liveRegion: true,
+            child: TexteSansCoupure(
+              r.dejaAffecte,
+              key: const ValueKey<String>('regroupement-deja-affecte'),
+              style: textes.titleMedium,
+            ),
+          )
+        else ...<Widget>[
+          if (nom != null) ...<Widget>[
+            TexteSansCoupure(
+              r.termineDetail(libelle: classe.libelle, enseignant: nom),
+              style: textes.bodyMedium,
+            ),
+            Ecart.vLg,
+          ],
+          Semantics(
+            liveRegion: true,
+            child: TexteSansCoupure(
+              r.famillesPrevenues,
+              key: const ValueKey<String>('regroupement-familles-prevenues'),
+              style: textes.titleMedium,
+            ),
           ),
-          Ecart.vLg,
-        ] else if (nom != null) ...<Widget>[
-          TexteSansCoupure(
-            r.termineDetail(libelle: classe.libelle, enseignant: nom),
-            style: textes.bodyMedium,
-          ),
-          Ecart.vLg,
         ],
-        Semantics(
-          liveRegion: true,
-          child: TexteSansCoupure(
-            r.famillesPrevenues,
-            key: const ValueKey<String>('regroupement-familles-prevenues'),
-            style: textes.titleMedium,
-          ),
-        ),
         Ecart.vXxl,
         // Fermer marche aussi sans reseau : pas de repli hors ligne ici.
         Align(
