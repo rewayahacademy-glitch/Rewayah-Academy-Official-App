@@ -103,7 +103,7 @@ final List<Override> _listesRemplies = <Override>[
           prenom: 'Maryam',
           nom: 'Benali',
           groupeId: 'g1',
-          groupeLibelle: 'Groupe Al-Fajr',
+          groupeLibelle: 'Classe Al-Fajr',
           niveauId: 'n1',
           niveauNomHumain: 'Lecture courante',
           niveauCycle: i.isEven ? 'Fondations' : 'Consolidation',

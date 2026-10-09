@@ -17,7 +17,7 @@ Map<String, dynamic> _ligne({
   String? photo = 'teachers/amina.jpg',
 }) => <String, dynamic>{
   'groupe_id': '4f2c1b9e-0000-4000-8000-000000000001',
-  'libelle': 'Groupe An-Nour',
+  'libelle': 'Classe An-Nour',
   'type_public': 'adulte',
   'seuil_max': seuil,
   'weekday': 2,
@@ -60,7 +60,7 @@ void main() {
       final GroupSummaryVM g = groupeDepuisLigne(_ligne());
 
       expect(g.groupeId, '4f2c1b9e-0000-4000-8000-000000000001');
-      expect(g.libelle, 'Groupe An-Nour');
+      expect(g.libelle, 'Classe An-Nour');
       expect(g.typePublic, TypePublicGroupeVM.adulte);
       expect(g.seuilMax, 4);
       expect(g.nombreMembres, 3);

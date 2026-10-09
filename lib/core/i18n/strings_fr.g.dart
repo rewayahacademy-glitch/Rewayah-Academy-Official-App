@@ -5700,8 +5700,8 @@ class Traductions$admin$diagnostics$fr {
 	/// fr: 'Diagnostics'
 	String get titre => 'Diagnostics';
 
-	/// fr: 'Chaque élève inscrit attend un premier niveau avant de rejoindre un groupe : c'est ici que ce placement se décide.'
-	String get intro => 'Chaque élève inscrit attend un premier niveau avant de rejoindre un groupe : c\'est ici que ce placement se décide.';
+	/// fr: 'Chaque élève inscrit attend un premier niveau avant de rejoindre une classe : c'est ici que ce placement se décide.'
+	String get intro => 'Chaque élève inscrit attend un premier niveau avant de rejoindre une classe : c\'est ici que ce placement se décide.';
 
 	/// fr: 'Aucun programme publié'
 	String get aucunProgramme => 'Aucun programme publié';
@@ -6216,8 +6216,8 @@ class Traductions$admin$progression$fr {
 	/// fr: 'Progression'
 	String get titre => 'Progression';
 
-	/// fr: 'Le niveau courant de chaque élève, son groupe, et les blocages ou dérogations en cours.'
-	String get intro => 'Le niveau courant de chaque élève, son groupe, et les blocages ou dérogations en cours.';
+	/// fr: 'Le niveau courant de chaque élève, sa classe, et les blocages ou dérogations en cours.'
+	String get intro => 'Le niveau courant de chaque élève, sa classe, et les blocages ou dérogations en cours.';
 
 	/// fr: 'La progression n'a pas pu être lue. Réessayez dans un instant.'
 	String get erreur => 'La progression n\'a pas pu être lue. Réessayez dans un instant.';
@@ -6231,8 +6231,8 @@ class Traductions$admin$progression$fr {
 	/// fr: 'Élève'
 	String get colonneEleve => 'Élève';
 
-	/// fr: 'Groupe'
-	String get colonneGroupe => 'Groupe';
+	/// fr: 'Classe'
+	String get colonneGroupe => 'Classe';
 
 	/// fr: 'Niveau'
 	String get colonneNiveau => 'Niveau';
@@ -6243,8 +6243,8 @@ class Traductions$admin$progression$fr {
 	/// fr: 'Exception'
 	String get colonneException => 'Exception';
 
-	/// fr: 'Sans groupe'
-	String get sansGroupe => 'Sans groupe';
+	/// fr: 'Sans classe'
+	String get sansGroupe => 'Sans classe';
 
 	/// fr: 'Non diagnostiqué'
 	String get sansNiveau => 'Non diagnostiqué';
@@ -8168,8 +8168,8 @@ class Traductions$tuteur$accueil$fr {
 	/// fr: 'Photo, caméra et affichage, enfant par enfant.'
 	String get blocReglagesDetail => 'Photo, caméra et affichage, enfant par enfant.';
 
-	/// fr: 'Le groupe, l'enseignant et le prochain cours de chaque enfant.'
-	String get blocGroupesDetail => 'Le groupe, l\'enseignant et le prochain cours de chaque enfant.';
+	/// fr: 'La classe, l'enseignant et le prochain cours de chaque enfant.'
+	String get blocGroupesDetail => 'La classe, l\'enseignant et le prochain cours de chaque enfant.';
 
 	/// fr: 'Accès'
 	String get acces => 'Accès';
@@ -14308,8 +14308,8 @@ class Traductions$tc$bibliotheque$introuvable$fr {
 	/// fr: 'Ce support ne vous est pas ouvert'
 	String get message => 'Ce support ne vous est pas ouvert';
 
-	/// fr: 'Il a peut-être été retiré, ou il est réservé à un autre groupe. Votre enseignant peut vous le rouvrir.'
-	String get invitation => 'Il a peut-être été retiré, ou il est réservé à un autre groupe. Votre enseignant peut vous le rouvrir.';
+	/// fr: 'Il a peut-être été retiré, ou il est réservé à une autre classe. Votre enseignant peut vous le rouvrir.'
+	String get invitation => 'Il a peut-être été retiré, ou il est réservé à une autre classe. Votre enseignant peut vous le rouvrir.';
 }
 
 // Path: tc.bibliotheque.offline
@@ -14730,8 +14730,8 @@ class Traductions$tc$outils$revision$fr {
 	/// fr: 'Le passage sélectionné devient un travail à préparer.'
 	String get aide => 'Le passage sélectionné devient un travail à préparer.';
 
-	/// fr: 'Tout le groupe'
-	String get groupeEntier => 'Tout le groupe';
+	/// fr: 'Toute la classe'
+	String get groupeEntier => 'Toute la classe';
 
 	/// fr: 'Consigne courte (facultatif)'
 	String get consigne => 'Consigne courte (facultatif)';
@@ -15886,8 +15886,8 @@ class Traductions$tc$parcours$signalement$fr {
 	/// fr: 'Facultatif. L'administration décide seule de le transmettre, en un clic.'
 	String get familleAide => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.';
 
-	/// fr: 'Élève {eleve}. La séance, le groupe et votre nom sont déjà joints.'
-	String contexte({required Object eleve}) => 'Élève ${eleve}. La séance, le groupe et votre nom sont déjà joints.';
+	/// fr: 'Élève {eleve}. La séance, la classe et votre nom sont déjà joints.'
+	String contexte({required Object eleve}) => 'Élève ${eleve}. La séance, la classe et votre nom sont déjà joints.';
 
 	/// fr: 'Envoyer le signalement'
 	String get envoyer => 'Envoyer le signalement';
@@ -18233,7 +18233,7 @@ extension on Traductions {
 			'admin.groupes.observationErreur' => 'Le réglage n\'a pas pu être enregistré.',
 			'admin.groupes.observationCapaciteAbsente' => 'Cette installation n\'a pas encore la mise à jour serveur que ce réglage demande (migration 0036). Réessayer n\'y changera rien : elle doit d\'abord être appliquée à la base.',
 			'admin.diagnostics.titre' => 'Diagnostics',
-			'admin.diagnostics.intro' => 'Chaque élève inscrit attend un premier niveau avant de rejoindre un groupe : c\'est ici que ce placement se décide.',
+			'admin.diagnostics.intro' => 'Chaque élève inscrit attend un premier niveau avant de rejoindre une classe : c\'est ici que ce placement se décide.',
 			'admin.diagnostics.aucunProgramme' => 'Aucun programme publié',
 			'admin.diagnostics.aucunProgrammeDetail' => 'Publiez une première version du programme (Pédagogie > Programmes) avant de pouvoir décider un placement.',
 			'admin.diagnostics.erreur' => 'La file n\'a pas pu être lue. Réessayez dans un instant.',
@@ -18386,16 +18386,16 @@ extension on Traductions {
 			'admin.evaluations.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
 			'admin.evaluations.journalisation' => 'Chaque planification, résultat et annulation est inscrit au journal d\'audit.',
 			'admin.progression.titre' => 'Progression',
-			'admin.progression.intro' => 'Le niveau courant de chaque élève, son groupe, et les blocages ou dérogations en cours.',
+			'admin.progression.intro' => 'Le niveau courant de chaque élève, sa classe, et les blocages ou dérogations en cours.',
 			'admin.progression.erreur' => 'La progression n\'a pas pu être lue. Réessayez dans un instant.',
 			'admin.progression.aucun' => 'Aucun élève actif',
 			'admin.progression.aucunDetail' => 'Les élèves apparaîtront ici dès leur premier diagnostic de placement.',
 			'admin.progression.colonneEleve' => 'Élève',
-			'admin.progression.colonneGroupe' => 'Groupe',
+			'admin.progression.colonneGroupe' => 'Classe',
 			'admin.progression.colonneNiveau' => 'Niveau',
 			'admin.progression.colonneDepuis' => 'Depuis',
 			'admin.progression.colonneException' => 'Exception',
-			'admin.progression.sansGroupe' => 'Sans groupe',
+			'admin.progression.sansGroupe' => 'Sans classe',
 			'admin.progression.sansNiveau' => 'Non diagnostiqué',
 			'admin.progression.filtreTousCycles' => 'Tous les cycles',
 			'admin.progression.depuisAujourdhui' => 'Aujourd\'hui',
@@ -19289,7 +19289,7 @@ extension on Traductions {
 			'tuteur.accueil.blocAppareilsDetail' => 'Ajouter un appareil, ou en retirer un.',
 			'tuteur.accueil.blocReglages' => 'Réglages par enfant',
 			'tuteur.accueil.blocReglagesDetail' => 'Photo, caméra et affichage, enfant par enfant.',
-			'tuteur.accueil.blocGroupesDetail' => 'Le groupe, l\'enseignant et le prochain cours de chaque enfant.',
+			'tuteur.accueil.blocGroupesDetail' => 'La classe, l\'enseignant et le prochain cours de chaque enfant.',
 			'tuteur.accueil.acces' => 'Accès',
 			'tuteur.accueil.aucunEnfant' => 'Aucun enfant dans le foyer',
 			'tuteur.accueil.aucunEnfantDetail' => 'Ajoutez votre premier enfant pour commencer.',
@@ -20267,7 +20267,7 @@ extension on Traductions {
 			'tc.bibliotheque.indisponible.message' => 'La bibliothèque est momentanément indisponible',
 			'tc.bibliotheque.indisponible.action' => 'Réessayer',
 			'tc.bibliotheque.introuvable.message' => 'Ce support ne vous est pas ouvert',
-			'tc.bibliotheque.introuvable.invitation' => 'Il a peut-être été retiré, ou il est réservé à un autre groupe. Votre enseignant peut vous le rouvrir.',
+			'tc.bibliotheque.introuvable.invitation' => 'Il a peut-être été retiré, ou il est réservé à une autre classe. Votre enseignant peut vous le rouvrir.',
 			'tc.bibliotheque.offline.aTelecharger' => 'À télécharger',
 			'tc.bibliotheque.offline.enCours' => 'Téléchargement',
 			'tc.bibliotheque.offline.enCache' => 'En cache',
@@ -20353,7 +20353,7 @@ extension on Traductions {
 			'tc.outils.marquer.retirer' => 'Retirer le marqueur',
 			'tc.outils.revision.titre' => 'À préparer',
 			'tc.outils.revision.aide' => 'Le passage sélectionné devient un travail à préparer.',
-			'tc.outils.revision.groupeEntier' => 'Tout le groupe',
+			'tc.outils.revision.groupeEntier' => 'Toute la classe',
 			'tc.outils.revision.consigne' => 'Consigne courte (facultatif)',
 			'tc.outils.revision.creer' => 'Poser le travail',
 			'tc.outils.revision.posee' => 'Travail à préparer posé',
@@ -20656,7 +20656,7 @@ extension on Traductions {
 			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
 			'tc.parcours.signalement.famille' => 'Message pour la famille',
 			'tc.parcours.signalement.familleAide' => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.',
-			'tc.parcours.signalement.contexte' => ({required Object eleve}) => 'Élève ${eleve}. La séance, le groupe et votre nom sont déjà joints.',
+			'tc.parcours.signalement.contexte' => ({required Object eleve}) => 'Élève ${eleve}. La séance, la classe et votre nom sont déjà joints.',
 			'tc.parcours.signalement.envoyer' => 'Envoyer le signalement',
 			'tc.parcours.signalement.envoye' => 'Signalement transmis à l\'administration.',
 			'tc.parcours.signalement.interneRequis' => 'Écrivez au moins ce que l\'administration doit savoir.',

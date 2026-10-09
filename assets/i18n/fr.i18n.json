@@ -1704,7 +1704,7 @@
     },
     "diagnostics": {
       "titre": "Diagnostics",
-      "intro": "Chaque élève inscrit attend un premier niveau avant de rejoindre un groupe : c'est ici que ce placement se décide.",
+      "intro": "Chaque élève inscrit attend un premier niveau avant de rejoindre une classe : c'est ici que ce placement se décide.",
       "aucunProgramme": "Aucun programme publié",
       "aucunProgrammeDetail": "Publiez une première version du programme (Pédagogie > Programmes) avant de pouvoir décider un placement.",
       "erreur": "La file n'a pas pu être lue. Réessayez dans un instant.",
@@ -1869,16 +1869,16 @@
     },
     "progression": {
       "titre": "Progression",
-      "intro": "Le niveau courant de chaque élève, son groupe, et les blocages ou dérogations en cours.",
+      "intro": "Le niveau courant de chaque élève, sa classe, et les blocages ou dérogations en cours.",
       "erreur": "La progression n'a pas pu être lue. Réessayez dans un instant.",
       "aucun": "Aucun élève actif",
       "aucunDetail": "Les élèves apparaîtront ici dès leur premier diagnostic de placement.",
       "colonneEleve": "Élève",
-      "colonneGroupe": "Groupe",
+      "colonneGroupe": "Classe",
       "colonneNiveau": "Niveau",
       "colonneDepuis": "Depuis",
       "colonneException": "Exception",
-      "sansGroupe": "Sans groupe",
+      "sansGroupe": "Sans classe",
       "sansNiveau": "Non diagnostiqué",
       "filtreTousCycles": "Tous les cycles",
       "depuisAujourdhui": "Aujourd'hui",
@@ -2881,7 +2881,7 @@
       "blocAppareilsDetail": "Ajouter un appareil, ou en retirer un.",
       "blocReglages": "Réglages par enfant",
       "blocReglagesDetail": "Photo, caméra et affichage, enfant par enfant.",
-      "blocGroupesDetail": "Le groupe, l'enseignant et le prochain cours de chaque enfant.",
+      "blocGroupesDetail": "La classe, l'enseignant et le prochain cours de chaque enfant.",
       "acces": "Accès",
       "aucunEnfant": "Aucun enfant dans le foyer",
       "aucunEnfantDetail": "Ajoutez votre premier enfant pour commencer.",
@@ -3995,7 +3995,7 @@
       },
       "introuvable": {
         "message": "Ce support ne vous est pas ouvert",
-        "invitation": "Il a peut-être été retiré, ou il est réservé à un autre groupe. Votre enseignant peut vous le rouvrir."
+        "invitation": "Il a peut-être été retiré, ou il est réservé à une autre classe. Votre enseignant peut vous le rouvrir."
       },
       "offline": {
         "aTelecharger": "À télécharger",
@@ -4125,7 +4125,7 @@
       "revision": {
         "titre": "À préparer",
         "aide": "Le passage sélectionné devient un travail à préparer.",
-        "groupeEntier": "Tout le groupe",
+        "groupeEntier": "Toute la classe",
         "consigne": "Consigne courte (facultatif)",
         "creer": "Poser le travail",
         "posee": "Travail à préparer posé"
@@ -4524,7 +4524,7 @@
         "interneAide": "Lue par l'administration seulement. Elle ne part jamais automatiquement à la famille.",
         "famille": "Message pour la famille",
         "familleAide": "Facultatif. L'administration décide seule de le transmettre, en un clic.",
-        "contexte": "Élève {eleve}. La séance, le groupe et votre nom sont déjà joints.",
+        "contexte": "Élève {eleve}. La séance, la classe et votre nom sont déjà joints.",
         "envoyer": "Envoyer le signalement",
         "envoye": "Signalement transmis à l'administration.",
         "interneRequis": "Écrivez au moins ce que l'administration doit savoir.",

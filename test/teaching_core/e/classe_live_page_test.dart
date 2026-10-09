@@ -56,7 +56,7 @@ void main() {
   }) => ContexteClasseLive(
     sessionId: seance,
     groupeId: 'g1',
-    libelleGroupe: 'Groupe Al-Fatiha',
+    libelleGroupe: 'Classe Al-Fatiha',
     enseignant: const EnseignantDeClasse(
       nomAffichage: 'Youssouf',
       titre: TitreEnseignant.sayyid,
@@ -223,7 +223,7 @@ void main() {
         contexte: const ContexteClasseLive(
           sessionId: seance,
           groupeId: 'g1',
-          libelleGroupe: 'Groupe Al-Fatiha',
+          libelleGroupe: 'Classe Al-Fatiha',
           enseignant: EnseignantDeClasse(nomAffichage: 'Youssouf'),
           // Une ressource est designee, mais personne ne la rend encore.
           supportActifId: 'r1',
@@ -246,7 +246,7 @@ void main() {
         contexte: const ContexteClasseLive(
           sessionId: seance,
           groupeId: 'g1',
-          libelleGroupe: 'Groupe Al-Fatiha',
+          libelleGroupe: 'Classe Al-Fatiha',
           enseignant: EnseignantDeClasse(
             nomAffichage: 'Youssouf',
             titre: TitreEnseignant.sayyida,
@@ -332,7 +332,7 @@ void main() {
           contexte: ContexteClasseLive(
             sessionId: seance,
             groupeId: 'g1',
-            libelleGroupe: 'Groupe Al-Fatiha',
+            libelleGroupe: 'Classe Al-Fatiha',
             enseignant: const EnseignantDeClasse(
               nomAffichage: 'Youssouf',
               titre: TitreEnseignant.sayyid,

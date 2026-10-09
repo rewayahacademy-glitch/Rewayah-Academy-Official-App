@@ -86,9 +86,14 @@ const Set<String> _libellesAmbigus = <String>{
 };
 
 /// Un mot interne qu'un client ne doit jamais voir (« admin » : on dit la
-/// direction, K-50 / decisions du 27/09). « foyer » chez la direction se
-/// controle a la revue : le mot est legitime cote famille.
-final RegExp _motInterne = RegExp(r'\badmin\b', caseSensitive: false);
+/// direction, K-50 / decisions du 27/09 ; « groupe » : on dit la classe,
+/// lib/CLAUDE.md:96, CLASSE-FORM-1 D10). « foyer » chez la direction se
+/// controle a la revue : le mot est legitime cote famille. Un parametre
+/// (`{deGroupe}`) n'est pas du texte visible.
+final RegExp _motInterne = RegExp(
+  r'\b(?:admin|groupes?)\b',
+  caseSensitive: false,
+);
 
 /// Une cle de message d'erreur : un segment commence par `erreur`.
 final RegExp _cleErreur = RegExp(r'(?:^|\.)erreur\w*(?:\.|$)');
@@ -214,7 +219,11 @@ void main(List<String> arguments) {
   if (regles.contains('mot-interne')) {
     for (final MapEntry<String, String> e in fr.entries) {
       // Un renvoi slang `@:admin.x` n'est pas du texte visible.
-      if (_motInterne.hasMatch(e.value.replaceAll(RegExp(r'@:[\w.]+'), ''))) {
+      if (_motInterne.hasMatch(
+        e.value
+            .replaceAll(RegExp(r'@:[\w.]+'), '')
+            .replaceAll(RegExp(r'\{[^}]*\}'), ''),
+      )) {
         violations.add(
           Violation(_fichierFr, 1, 'mot-interne', '${e.key} : ${e.value}'),
         );

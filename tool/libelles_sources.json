@@ -518,5 +518,10 @@
   "enseignant.creneaux.echecQuoiFaire": "Directeur, commentaire du 01/10 23:16 (DISPO-1) ; formulation decidee par delegation le 09/10 (orchestrateur)",
   "enseignant.creneaux.engagementsNonConfirmes": "Directeur, commentaire du 01/10 23:16 (DISPO-1) ; formulation decidee par delegation le 09/10 (orchestrateur)",
   "enseignant.creneaux.retraitSansEngagements": "Directeur, commentaire du 01/10 23:16 (DISPO-1) ; formulation decidee par delegation le 09/10 (orchestrateur)",
-  "enseignant.creneaux.horsLigneFeuille": "Directeur, commentaire du 01/10 23:16 (DISPO-1) ; formulation decidee par delegation le 09/10 (orchestrateur)"
+  "enseignant.creneaux.horsLigneFeuille": "Directeur, commentaire du 01/10 23:16 (DISPO-1) ; formulation decidee par delegation le 09/10 (orchestrateur)",
+  "admin.diagnostics.intro": "etape CLASSE-FORM-1 (09/10), decision D10 decidee par delegation du directeur le 09/10 (K-65) : « Classe », jamais « groupe » dans un texte visible (lib/CLAUDE.md:96) ; seul le mot change (accords au feminin), la phrase reste celle du libelle precedent",
+  "admin.progression.intro": "etape CLASSE-FORM-1 (09/10), decision D10 decidee par delegation du directeur le 09/10 (K-65) : « Classe », jamais « groupe » dans un texte visible (lib/CLAUDE.md:96) ; seul le mot change (accords au feminin), la phrase reste celle du libelle precedent",
+  "tc.bibliotheque.introuvable.invitation": "etape CLASSE-FORM-1 (09/10), decision D10 decidee par delegation du directeur le 09/10 (K-65) : « Classe », jamais « groupe » dans un texte visible (lib/CLAUDE.md:96) ; seul le mot change (accords au feminin), la phrase reste celle du libelle precedent",
+  "tc.parcours.signalement.contexte": "etape CLASSE-FORM-1 (09/10), decision D10 decidee par delegation du directeur le 09/10 (K-65) : « Classe », jamais « groupe » dans un texte visible (lib/CLAUDE.md:96) ; seul le mot change (accords au feminin), la phrase reste celle du libelle precedent",
+  "tuteur.accueil.blocGroupesDetail": "etape CLASSE-FORM-1 (09/10), decision D10 decidee par delegation du directeur le 09/10 (K-65) : « Classe », jamais « groupe » dans un texte visible (lib/CLAUDE.md:96) ; seul le mot change (accords au feminin), la phrase reste celle du libelle precedent"
 }
