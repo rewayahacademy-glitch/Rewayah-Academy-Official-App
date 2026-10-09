@@ -483,6 +483,19 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
             style: textes.bodyMedium,
           ),
         ],
+        // Une plage identique ou contenue ne reunit rien : elle se dit deja
+        // posee, jamais comme une fusion (DISPO-1b).
+        for (final Plage posee in plan.dejaPosees) ...<Widget>[
+          Ecart.vMd,
+          TexteSansCoupure(
+            t.enseignant.creneaux.dejaPosee(
+              jour: jourCapitalise(posee.jour),
+              de: libelleDe(posee.de),
+              a: libelleA(posee.a),
+            ),
+            style: textes.bodyMedium,
+          ),
+        ],
         if (engageesModifiee.isNotEmpty) ...<Widget>[
           Ecart.vMd,
           TexteSansCoupure(

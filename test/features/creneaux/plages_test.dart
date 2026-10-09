@@ -89,8 +89,10 @@ void main() {
       expect(plan.fusions, isEmpty);
     });
 
+    // DISPO-1b : une saisie qui ne reunit rien ne s'annonce pas comme une
+    // fusion ; elle se dit deja posee, dans la plage qui la contient.
     test(
-      'saisie contenue dans une plage posee : rien a poser, fusion dite',
+      'saisie contenue dans une plage posee : rien a poser, dite deja posee',
       () {
         final PlanPlage plan = planifier(
           existantes: _h(1, 17, 23),
@@ -99,9 +101,45 @@ void main() {
           a: 20,
         );
         expect(plan.vide, isTrue);
-        expect(plan.fusions, <Plage>[const Plage(jour: 1, de: 17, a: 23)]);
+        expect(plan.fusions, isEmpty);
+        expect(plan.dejaPosees, <Plage>[const Plage(jour: 1, de: 17, a: 23)]);
       },
     );
+
+    test('saisie identique a une plage posee : aucune fusion annoncee', () {
+      final PlanPlage plan = planifier(
+        existantes: _h(1, 17, 23),
+        jours: <int>{1},
+        de: 17,
+        a: 23,
+      );
+      expect(plan.vide, isTrue);
+      expect(plan.fusions, isEmpty);
+      expect(plan.dejaPosees, <Plage>[const Plage(jour: 1, de: 17, a: 23)]);
+    });
+
+    test('deux jours : l un deja pose, l autre reuni, chacun dit a part', () {
+      final PlanPlage plan = planifier(
+        existantes: <HeureSemaine>{..._h(1, 17, 23), ..._h(2, 17, 19)},
+        jours: <int>{1, 2},
+        de: 17,
+        a: 23,
+      );
+      expect(plan.dejaPosees, <Plage>[const Plage(jour: 1, de: 17, a: 23)]);
+      expect(plan.fusions, <Plage>[const Plage(jour: 2, de: 17, a: 23)]);
+      expect(plan.ajouts.map((HeureSemaine h) => h.jour).toSet(), <int>{2});
+    });
+
+    test('plage posee absorbee par une saisie plus large : fusion dite', () {
+      final PlanPlage plan = planifier(
+        existantes: _h(1, 18, 19),
+        jours: <int>{1},
+        de: 17,
+        a: 20,
+      );
+      expect(plan.dejaPosees, isEmpty);
+      expect(plan.fusions, <Plage>[const Plage(jour: 1, de: 17, a: 20)]);
+    });
 
     test('modifier : on ne retire que les heures de la plage touchee', () {
       final Set<HeureSemaine> existantes = <HeureSemaine>{
@@ -139,5 +177,41 @@ void main() {
         expect(plan.ajouts.map((HeureSemaine h) => h.jour).toSet(), <int>{2});
       },
     );
+
+    // DISPO-1b : apres un echec partiel, la plage touchee n'est plus posee en
+    // entier. Seules ses heures ENCORE posees repartent en retrait ; celles
+    // dont le retrait est deja confirme ne se renvoient pas (intersection
+    // avec `existantes` dans `planifier`).
+    test('modifier apres un retrait partiel : seules les heures encore posees '
+        'repartent', () {
+      // Plage touchee : lundi 17 h-23 h, reduite a 17 h-19 h. Le premier
+      // envoi a confirme le retrait de 21 h et 22 h, pas celui de 19 h et
+      // 20 h : la relecture ne voit plus que 17 h a 20 h.
+      final PlanPlage plan = planifier(
+        existantes: _h(1, 17, 21),
+        jours: <int>{1},
+        de: 17,
+        a: 19,
+        modifiee: const Plage(jour: 1, de: 17, a: 23),
+      );
+      expect(plan.retraits, <HeureSemaine>[
+        (jour: 1, heure: 19),
+        (jour: 1, heure: 20),
+      ]);
+      expect(plan.ajouts, isEmpty);
+      expect(plan.fusions, isEmpty);
+      expect(plan.dejaPosees, isEmpty);
+    });
+
+    test('modifier quand tous les retraits sont confirmes : plan vide', () {
+      final PlanPlage plan = planifier(
+        existantes: _h(1, 17, 19),
+        jours: <int>{1},
+        de: 17,
+        a: 19,
+        modifiee: const Plage(jour: 1, de: 17, a: 23),
+      );
+      expect(plan.vide, isTrue);
+    });
   });
 }

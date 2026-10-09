@@ -387,6 +387,39 @@ void main() {
       expect(_feuille, findsOneWidget);
     });
 
+    // DISPO-1b : une plage identique a une plage posee ne s'annonce plus
+    // comme une fusion ; la feuille dit qu'elle est deja posee.
+    testWidgets('plage identique : dite deja posee, aucune fusion annoncee, '
+        'rien ne part', (WidgetTester tester) async {
+      final FauxServicePlanning planning = FauxServicePlanning()
+        ..creneaux[_monId] = _plage(1, 17, 23);
+      await _monter(tester, planning);
+
+      await _toucher(tester, find.text(t.enseignant.creneaux.ajouterPlage));
+      await _toucher(tester, _dansFeuille('Lundi'));
+
+      expect(
+        find.text(
+          t.enseignant.creneaux.dejaPosee(
+            jour: 'Lundi',
+            de: _de(17),
+            a: _a(23),
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          t.enseignant.creneaux.fusion(jour: 'Lundi', de: _de(17), a: _a(23)),
+        ),
+        findsNothing,
+      );
+
+      await _toucher(tester, find.text(t.enseignant.creneaux.enregistrerPlage));
+      expect(planning.poses, isEmpty);
+      expect(_ligne('Lundi', 17, 23), findsOneWidget);
+    });
+
     testWidgets('chevauchement : fusion dite AVANT, seules les heures '
         'manquantes partent', (WidgetTester tester) async {
       final FauxServicePlanning planning = FauxServicePlanning()
