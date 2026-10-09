@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -323,7 +325,7 @@ void main() {
   // PAGESHELL-200-1c (reserves de la revue PAGESHELL-200-1b).
   group('PAGESHELL-200-1c', () {
     const ValueKey<String> cleSupport = ValueKey<String>('support');
-    final GlobalKey repere = GlobalKey(debugLabel: 'repere');
+    const ValueKey<String> cleVignettes = ValueKey<String>('vignettes');
 
     Future<void> monter(
       WidgetTester tester,
@@ -346,7 +348,7 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    /// Une salle : un bandeau, une zone qui defile (en-tete, support, repere,
+    /// Une salle : un bandeau, une zone qui defile (en-tete, support,
     /// vignettes), une barre.
     Widget salle({required double bandeau}) => ColonneCorps(
       key: cleCorps,
@@ -355,21 +357,23 @@ void main() {
         SizedBox(height: bandeau, child: const Text('bandeau')),
         Expanded(
           child: DefileurCorps(
-            repere: repere,
             builder: (BuildContext _, ScrollController defileur) =>
                 SingleChildScrollView(
                   controller: defileur,
-                  child: Column(
+                  child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      const SizedBox(height: 150, child: Text('en-tete')),
-                      const SizedBox(
+                      SizedBox(height: 150, child: Text('en-tete')),
+                      SizedBox(
                         key: cleSupport,
                         height: 200,
                         child: Text('support'),
                       ),
-                      SizedBox(key: repere),
-                      const SizedBox(height: 300, child: Text('vignettes')),
+                      SizedBox(
+                        key: cleVignettes,
+                        height: 300,
+                        child: Text('vignettes'),
+                      ),
                     ],
                   ),
                 ),
@@ -384,27 +388,40 @@ void main() {
         .ancestor(of: find.byKey(cleSupport), matching: find.byType(Scrollable))
         .first;
 
+    // PAGESHELL-200-1d (reserve 1 de la revue PAGESHELL-200-1c-R2) : un
+    // repere arretait le minimum utile apres le support ; les vignettes
+    // restaient cachees dans le defileur imbrique (zone de 350, 300 caches),
+    // et la page defilee jusqu'au bout montrait le support puis la barre,
+    // sans camera. Tout le contenu de la zone est maintenant le minimum : la
+    // page defile pour le reste, vignettes comprises.
     for (final TextDirection sens in TextDirection.values) {
       testWidgets('page qui defile de toute facon, ${sens.name} : la zone '
-          'montre l\'en-tete et le support entiers', (
+          'montre l\'en-tete, le support et les vignettes entiers', (
         WidgetTester tester,
       ) async {
-        await monter(tester, salle(bandeau: 300), const Size(320, 568));
+        await monter(
+          tester,
+          salle(bandeau: 300),
+          const Size(320, 568),
+          sens: sens,
+        );
         expect(tester.takeException(), isNull);
         expect(defileurPage(tester).maxScrollExtent, greaterThan(0));
-        // En-tete et support : 350 ; les vignettes restent dans la zone.
-        expect(tester.getSize(zone()).height, closeTo(350, 0.5));
+        // En-tete, support et vignettes : 650, rien de cache dans la zone.
+        expect(tester.getSize(zone()).height, closeTo(650, 0.5));
         expect(
           tester.state<ScrollableState>(zone()).position.maxScrollExtent,
-          closeTo(300, 0.5),
+          closeTo(0, 0.5),
         );
         final ScrollPosition page = defileurPage(tester);
         page.jumpTo(page.maxScrollExtent);
         await tester.pump();
-        expect(
-          tester.getRect(find.byKey(cleBarre)).bottom,
-          lessThanOrEqualTo(568 - zoneSure.bottom + 0.5),
-        );
+        // Au bout : les vignettes puis la barre, dans la zone sure.
+        final Rect vignettes = tester.getRect(find.byKey(cleVignettes));
+        final Rect barre = tester.getRect(find.byKey(cleBarre));
+        expect(vignettes.top, greaterThanOrEqualTo(zoneSure.top - 0.5));
+        expect(vignettes.bottom, lessThanOrEqualTo(barre.top + 0.5));
+        expect(barre.bottom, lessThanOrEqualTo(568 - zoneSure.bottom + 0.5));
       });
     }
 
@@ -424,7 +441,7 @@ void main() {
           sens: sens,
         );
         expect(tester.takeException(), isNull);
-        expect(tester.getSize(zone()).height, closeTo(350, 0.5));
+        expect(tester.getSize(zone()).height, closeTo(650, 0.5));
         expect(defileurPage(tester).maxScrollExtent, greaterThan(0));
         final ScrollPosition page = defileurPage(tester);
         page.jumpTo(page.maxScrollExtent);
@@ -451,7 +468,7 @@ void main() {
       expect(tester.takeException(), isNull);
       final ScrollPosition page = defileurPage(tester);
       expect(page.maxScrollExtent, greaterThan(0));
-      expect(tester.getSize(zone()).height, closeTo(350, 0.5));
+      expect(tester.getSize(zone()).height, closeTo(650, 0.5));
       page.jumpTo(page.maxScrollExtent);
       await tester.pump();
       expect(
@@ -503,11 +520,86 @@ void main() {
       expect(tester.takeException(), isNull);
       // Le corps tient sous la tete : la page ne defile plus, et le corps
       // descend jusqu'au bas de la vue, comme sous une tete fixe.
-      expect(defileurPage(tester).maxScrollExtent, 0);
       expect(
         tester.getRect(find.byKey(cleCorps)).bottom,
         closeTo(600 - zoneSure.bottom, 0.5),
       );
+      // PAGESHELL-200-1d (mineur 4 de la revue PAGESHELL-200-1c) : la
+      // bascule est reevaluee a vue egale, la page reprend la tete fixe
+      // (plus aucun defileur au-dessus du corps).
+      expect(
+        find.ancestor(
+          of: find.byKey(cleCorps),
+          matching: find.byType(Scrollable),
+        ),
+        findsNothing,
+      );
+
+      // Et si le corps regrandit, la page repasse en defilement global.
+      hauteur.value = 500;
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(defileurPage(tester).maxScrollExtent, greaterThan(0));
+    });
+
+    // PAGESHELL-200-1d : le corps rapetisse pendant qu'une boite de dialogue
+    // se referme (la salle remplacee par le resultat de la visite apres
+    // « Quitter ») : la bascule attend la fin de l'animation, sans casser
+    // l'arbre semantique, puis la page reprend la tete fixe.
+    testWidgets('a vue egale, sous une boite de dialogue qui se referme : '
+        'retour a la tete fixe apres l\'animation', (
+      WidgetTester tester,
+    ) async {
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      final ValueNotifier<double> hauteur = ValueNotifier<double>(500);
+      addTearDown(hauteur.dispose);
+      vue(tester, const Size(800, 600), zoneSure);
+      await tester.pumpWidget(
+        hotePage(
+          PageShell(
+            titre: 'Salle',
+            defilante: false,
+            entete: const SizedBox(height: 300, child: Text('en-tete')),
+            child: ColonneCorps(
+              key: cleCorps,
+              children: <Widget>[
+                ValueListenableBuilder<double>(
+                  valueListenable: hauteur,
+                  builder: (BuildContext _, double h, Widget? _) =>
+                      SizedBox(key: cleBarre, height: h),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(defileurPage(tester).maxScrollExtent, greaterThan(0));
+      final BuildContext contexte = tester.element(find.byKey(cleCorps));
+      unawaited(
+        showDialog<void>(
+          context: contexte,
+          builder: (BuildContext _) =>
+              const AlertDialog(content: Text('Quitter ?')),
+        ),
+      );
+      await tester.pumpAndSettle();
+      Navigator.of(contexte).pop();
+      hauteur.value = 50;
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 20));
+      expect(tester.takeException(), isNull);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Quitter ?'), findsNothing);
+      expect(
+        find.ancestor(
+          of: find.byKey(cleCorps),
+          matching: find.byType(Scrollable),
+        ),
+        findsNothing,
+      );
+      semantique.dispose();
     });
 
     testWidgets('tete fixe et colonne qui deborde : la page passe en '

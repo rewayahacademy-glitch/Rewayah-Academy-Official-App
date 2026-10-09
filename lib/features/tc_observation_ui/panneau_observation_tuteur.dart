@@ -107,10 +107,6 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
   /// Vrai quand le support occupe toute la salle. Etat d'ecran seulement.
   bool _agrandi = false;
 
-  /// PAGESHELL-200-1c : la fin du minimum utile de la salle du telephone :
-  /// l'en-tete et le support a sa hauteur lisible.
-  final GlobalKey _repereSupport = GlobalKey(debugLabel: 'salle.repere');
-
   bool get _lienVivant => switch (widget.etatSalle) {
     EtatSalle.connecte || EtatSalle.retabli || EtatSalle.instable => true,
     _ => false,
@@ -144,8 +140,12 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
       // une cible tactile (une fenetre de 48 px ou l'on ne voyait que le
       // haut de l'en-tete). Le support ne descend jamais sous sa hauteur
       // lisible ; son defileur ([DefileurCorps]) dit a la page ce qu'il
-      // cache de l'en-tete et du support, et la page, tete fixe ou non, lui
-      // donne cette hauteur et defile pour le reste.
+      // cache, et la page, tete fixe ou non, lui donne cette hauteur et
+      // defile pour le reste. PAGESHELL-200-1d (decide par delegation le
+      // 05/10) : sur telephone, le reste comprend les vignettes ; la page
+      // defilee jusqu'au bout montre le support, les deux cameras et la
+      // barre. `minimumEtire` garde le support lisible quand « Agrandir »
+      // retire le defileur (le support seul, sans en-tete ni vignettes).
       if (!large) {
         return ColonneCorps(
           minimumEtire: _hauteurMinSupport,
@@ -193,15 +193,16 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
   /// Telephone (M4) : en-tete, support, deux vignettes cote a cote. Le support
   /// remplit la hauteur restante, jamais moins que [_hauteurMinSupport] :
   /// quand la hauteur manque (telephone en paysage, texte agrandi, Interface
-  /// guidee), la salle defile et la page lui donne de quoi montrer l'en-tete
-  /// et le support entiers (PAGESHELL-200-1c) ; jamais un debordement.
+  /// guidee), la page lui donne de quoi montrer l'en-tete, le support et les
+  /// vignettes entiers, et c'est la page qui defile (PAGESHELL-200-1c,
+  /// PAGESHELL-200-1d) ; jamais un debordement, jamais une camera cachee
+  /// dans un defileur imbrique.
   Widget _corpsTelephone() => LayoutBuilder(
     builder: (BuildContext context, BoxConstraints cadre) {
       if (_agrandi) {
         return _support();
       }
       return DefileurCorps(
-        repere: _repereSupport,
         builder: (BuildContext context, ScrollController defileur) =>
             SingleChildScrollView(
               controller: defileur,
@@ -216,9 +217,6 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
                 children: <Widget>[
                   _entete(),
                   _support(),
-                  // Le bas du minimum utile : l'en-tete et le support.
-                  // Les vignettes peuvent defiler.
-                  SizedBox(key: _repereSupport),
                   Row(
                     children: <Widget>[
                       Expanded(child: _vignetteEnseignant()),
@@ -674,7 +672,7 @@ class _Etiquette extends StatelessWidget {
 }
 
 /// La salle du telephone dans son defileur (PAGESHELL-200-1c) : l'en-tete,
-/// le support, le repere du minimum utile, les vignettes.
+/// le support, les vignettes.
 ///
 /// L'en-tete et les vignettes gardent leur hauteur naturelle ; le support
 /// prend ce qu'ils laissent de [hauteur] (celle du defileur), jamais moins
@@ -686,7 +684,7 @@ class _PileTelephone extends MultiChildRenderObjectWidget {
     required this.hauteur,
     required this.supportExtensible,
     required super.children,
-  }) : assert(children.length == 4, 'en-tete, support, repere, vignettes');
+  }) : assert(children.length == 3, 'en-tete, support, vignettes');
 
   /// La hauteur du defileur.
   final double hauteur;
@@ -764,7 +762,7 @@ class _RenduPileTelephone extends RenderBox
         ? b.getMaxIntrinsicHeight(largeur)
         : b.getMinIntrinsicHeight(largeur);
     final double entete = h(e[0]);
-    final double vignettes = h(e[3]);
+    final double vignettes = h(e[2]);
     return entete + _support(entete, vignettes) + vignettes + 2 * _ecart;
   }
 
@@ -795,7 +793,7 @@ class _RenduPileTelephone extends RenderBox
       width: constraints.maxWidth,
     );
     final double entete = e[0].getDryLayout(largeur).height;
-    final double vignettes = e[3].getDryLayout(largeur).height;
+    final double vignettes = e[2].getDryLayout(largeur).height;
     return constraints.constrain(
       Size(
         constraints.maxWidth,
@@ -810,9 +808,9 @@ class _RenduPileTelephone extends RenderBox
     final double largeur = constraints.maxWidth;
     final BoxConstraints pleine = BoxConstraints.tightFor(width: largeur);
     e[0].layout(pleine, parentUsesSize: true);
-    e[3].layout(pleine, parentUsesSize: true);
+    e[2].layout(pleine, parentUsesSize: true);
     final double entete = e[0].size.height;
-    final double vignettes = e[3].size.height;
+    final double vignettes = e[2].size.height;
     final double hauteurSupport = _support(entete, vignettes);
     e[1].layout(
       _supportExtensible
@@ -824,15 +822,12 @@ class _RenduPileTelephone extends RenderBox
           : BoxConstraints.tight(Size(largeur, hauteurSupport)),
       parentUsesSize: true,
     );
-    e[2].layout(BoxConstraints.tight(Size(largeur, 0)));
     double y = 0;
     (e[0].parentData! as _DonneesPile).offset = Offset.zero;
     y += entete + _ecart;
     (e[1].parentData! as _DonneesPile).offset = Offset(0, y);
-    y += e[1].size.height;
+    y += e[1].size.height + _ecart;
     (e[2].parentData! as _DonneesPile).offset = Offset(0, y);
-    y += _ecart;
-    (e[3].parentData! as _DonneesPile).offset = Offset(0, y);
     y += vignettes;
     size = constraints.constrain(Size(largeur, y));
   }
