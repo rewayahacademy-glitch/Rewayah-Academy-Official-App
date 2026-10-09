@@ -120,6 +120,12 @@ declare
   v_b jsonb;
   v_routes int;
 begin
+  -- autoriser_jeton_video (0042) valide le compte de l'appelant avant
+  -- d'émettre le jeton. Le scénario représente successivement chaque profil.
+  perform set_config('test.uid', 'b2000000-0000-0000-0000-000000000001', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"teacher","household_id":"b2ffffff-0000-0000-0000-00000000000a"}}',
+    true);
   set local role service_role;
 
   v_a := public.autoriser_jeton_video(
@@ -127,6 +133,10 @@ begin
     'b2000000-0000-0000-0000-000000000001',
     'wss://cloud.example', 'wss://self.example');
 
+  perform set_config('test.uid', 'b2000000-0000-0000-0000-000000000002', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"student","household_id":"b2ffffff-0000-0000-0000-00000000000a"}}',
+    true);
   v_b := public.autoriser_jeton_video(
     'b2aaaaaa-0000-0000-0000-00000000000a',
     'b2000000-0000-0000-0000-000000000002',
