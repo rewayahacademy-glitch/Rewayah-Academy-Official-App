@@ -74,6 +74,13 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$inscription$ar inscription = _Traductions$inscription$ar._(_root);
 	@override late final _Traductions$consentement$ar consentement = _Traductions$consentement$ar._(_root);
 	@override late final _Traductions$foyer$ar foyer = _Traductions$foyer$ar._(_root);
+	@override late final _Traductions$adulte$ar adulte = _Traductions$adulte$ar._(_root);
+	@override late final _Traductions$dossiers$ar dossiers = _Traductions$dossiers$ar._(_root);
+	@override late final _Traductions$kyc$ar kyc = _Traductions$kyc$ar._(_root);
+	@override late final _Traductions$contrat$ar contrat = _Traductions$contrat$ar._(_root);
+	@override late final _Traductions$bienvenue$ar bienvenue = _Traductions$bienvenue$ar._(_root);
+	@override late final _Traductions$creneaux$ar creneaux = _Traductions$creneaux$ar._(_root);
+	@override late final _Traductions$disponibilites$ar disponibilites = _Traductions$disponibilites$ar._(_root);
 }
 
 // Path: commun
@@ -962,6 +969,205 @@ class _Traductions$foyer$ar extends Traductions$foyer$fr {
 	@override String get creerMonProfil => 'إنشاء ملفي كطالب';
 	@override late final _Traductions$foyer$monProfil$ar monProfil = _Traductions$foyer$monProfil$ar._(_root);
 	@override late final _Traductions$foyer$ajout$ar ajout = _Traductions$foyer$ajout$ar._(_root);
+}
+
+// Path: adulte
+class _Traductions$adulte$ar extends Traductions$adulte$fr {
+	_Traductions$adulte$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$adulte$nav$ar nav = _Traductions$adulte$nav$ar._(_root);
+	@override late final _Traductions$adulte$accueil$ar accueil = _Traductions$adulte$accueil$ar._(_root);
+	@override late final _Traductions$adulte$historique$ar historique = _Traductions$adulte$historique$ar._(_root);
+	@override late final _Traductions$adulte$maClasse$ar maClasse = _Traductions$adulte$maClasse$ar._(_root);
+	@override late final _Traductions$adulte$monEspace$ar monEspace = _Traductions$adulte$monEspace$ar._(_root);
+	@override late final _Traductions$adulte$coranDemo$ar coranDemo = _Traductions$adulte$coranDemo$ar._(_root);
+	@override late final _Traductions$adulte$recharge$ar recharge = _Traductions$adulte$recharge$ar._(_root);
+	@override late final _Traductions$adulte$paiements$ar paiements = _Traductions$adulte$paiements$ar._(_root);
+	@override late final _Traductions$adulte$famille$ar famille = _Traductions$adulte$famille$ar._(_root);
+	@override late final _Traductions$adulte$invitation$ar invitation = _Traductions$adulte$invitation$ar._(_root);
+	@override late final _Traductions$adulte$acceptation$ar acceptation = _Traductions$adulte$acceptation$ar._(_root);
+	@override late final _Traductions$adulte$sortie$ar sortie = _Traductions$adulte$sortie$ar._(_root);
+	@override late final _Traductions$adulte$reprise$ar reprise = _Traductions$adulte$reprise$ar._(_root);
+	@override late final _Traductions$adulte$demo$ar demo = _Traductions$adulte$demo$ar._(_root);
+}
+
+// Path: dossiers
+class _Traductions$dossiers$ar extends Traductions$dossiers$fr {
+	_Traductions$dossiers$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'ملفات للاعتماد';
+	@override String get sousTitre => 'ادرس الملفات الجاهزة لاتخاذ قرار.';
+	@override String get aucun => 'لا ملف ينتظر الاعتماد.';
+	@override String get aucunDetail => 'ستظهر الملفات الجديدة هنا حين تصبح جاهزة.';
+	@override late final _Traductions$dossiers$file$ar file = _Traductions$dossiers$file$ar._(_root);
+	@override late final _Traductions$dossiers$detail$ar detail = _Traductions$dossiers$detail$ar._(_root);
+	@override late final _Traductions$dossiers$visionneuse$ar visionneuse = _Traductions$dossiers$visionneuse$ar._(_root);
+	@override late final _Traductions$dossiers$revue$ar revue = _Traductions$dossiers$revue$ar._(_root);
+	@override String get restantUn => 'ملف واحد قيد الانتظار';
+	@override String restants({required Object n}) => '⁨${n}⁩ ملفات قيد الانتظار';
+	@override String deposeLe({required Object date}) => 'أُودع في ⁨${date}⁩';
+	@override String get inscritAujourdhui => 'مسجَّل اليوم';
+	@override String get inscritDepuisUnJour => 'مسجَّل منذ يوم';
+	@override String inscritDepuis({required Object jours}) => 'مسجَّل منذ ⁨${jours}⁩ أيام';
+	@override String get sansPiece => 'لا وثيقة مودَعة';
+	@override String get sansPieceDetail => 'أنشأ هذا الشخص حسابه وقبل العقود، لكنه لم يرسل وثيقة هويته بعد. لا شيء للتحقق إذن: الخطوة عنده.';
+	@override String get pieceNonVisible => 'وثيقة خارج صلاحيتك';
+	@override String get pieceNonVisibleDetail => 'أُودعت وثيقة بالفعل، لكن قاعدة الجنس تمنعك من الاطلاع عليها. يجب أن يتحقق منها موظف من جنس هذا الشخص.';
+	@override String get rienATrancher => 'لا شيء للحسم الآن';
+	@override String get apercu => 'الوثيقة المودَعة';
+	@override String get apercuIndisponible => 'المعاينة غير متاحة';
+	@override String get verifications => 'عمليات التحقق';
+	@override String get pointLisible => 'الوثيقة مقروءة';
+	@override String get pointNom => 'الاسم يطابق اسم الحساب';
+	@override String get pointValidite => 'الوثيقة غير منتهية الصلاحية';
+	@override String get verdict => 'القرار';
+	@override String get approuver => 'اعتماد الملف';
+	@override String get refuser => 'رفض الملف';
+	@override late final _Traductions$dossiers$profilACompleter$ar profilACompleter = _Traductions$dossiers$profilACompleter$ar._(_root);
+	@override late final _Traductions$dossiers$refus$ar refus = _Traductions$dossiers$refus$ar._(_root);
+	@override late final _Traductions$dossiers$validation$ar validation = _Traductions$dossiers$validation$ar._(_root);
+	@override late final _Traductions$dossiers$decision$ar decision = _Traductions$dossiers$decision$ar._(_root);
+}
+
+// Path: kyc
+class _Traductions$kyc$ar extends Traductions$kyc$fr {
+	_Traductions$kyc$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'وثيقة هويتك';
+	@override String get intro => 'تكفي صورة مقروءة. تُحفظ مدة التحقق، ثم تُحذف.';
+	@override String get confidentialite => 'تُودَع وثيقة هويتك كما هي: ليست عامة أبدًا، ولا يطلع عليها إلا الإدارة، وتشترطها قوانين حماية الطفولة.';
+	@override String get typeQuestion => 'أي وثيقة تودع؟';
+	@override String get carteIdentite => 'بطاقة هوية';
+	@override String get passeport => 'جواز سفر';
+	@override String get titreSejour => 'بطاقة إقامة';
+	@override String get choisirFichier => 'اختيار الصورة';
+	@override String get fichierChoisi => 'الصورة جاهزة للإرسال';
+	@override String get envoyer => 'إرسال وثيقتي';
+	@override String get envoiEnCours => 'جارٍ الإرسال';
+	@override String get deposee => 'استُلمت الوثيقة';
+	@override String get erreur => 'لم يكتمل الإرسال. أعد المحاولة بعد لحظة.';
+	@override String tropVolumineux({required Object taille}) => 'هذه الصورة تتجاوز ⁨${taille}⁩ م.ب. التقطها بجودة أقل.';
+}
+
+// Path: contrat
+class _Traductions$contrat$ar extends Traductions$contrat$fr {
+	_Traductions$contrat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'ما توقّع عليه';
+	@override String get intro => 'نقطتان أهم من غيرهما. هما مكتوبتان هنا بوضوح بدل أن تكونا وسط نص طويل.';
+	@override String get pointEnregistrement => 'يُسجَّل كل درس صوتيًا، ويُحفظ ثلاثين يومًا، ثم يُحذف. كل استماع يُدوَّن في السجل، مع اسم المستمع.';
+	@override String get pointControle => 'يمكن لمراقب جودة أن يحضر درسًا دون أن يُرى. تذكّر القاعة بذلك باستمرار، سواء جرت الزيارة أم لا.';
+	@override String get pointCoordonnees => 'لا ترى أبدًا بيانات اتصال أسرة: لا الاسم الكامل، ولا البريد الإلكتروني، ولا الهاتف.';
+	@override String get lireTexte => 'قراءة النص كاملًا';
+	@override String get accepter => 'قرأت وأوافق';
+	@override String accepteLe({required Object date}) => 'مقبول في ⁨${date}⁩';
+	@override String get erreur => 'لم يكتمل التوقيع. أعد المحاولة بعد لحظة.';
+	@override String get horsLigne => 'أنت غير متصل. ستُحفظ موافقتك بمجرد عودة الشبكة، بالضغط من جديد.';
+	@override String get caseRequise => 'حدّد المربع للمتابعة.';
+}
+
+// Path: bienvenue
+class _Traductions$bienvenue$ar extends Traductions$bienvenue$fr {
+	_Traductions$bienvenue$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'مرحبًا';
+	@override String get accroche => 'تعلّم القرآن في فصل، مع معلم ثابت';
+	@override String get phrase => 'حصص عبر الفيديو، في موعد ثابت، لك أو لطلاب أسرتك.';
+	@override String get pointsTitre => 'كيف تجري الأمور';
+	@override String get pointClasseTitre => 'فصل ثابت';
+	@override String get pointClasse => 'الزملاء أنفسهم والموعد نفسه، كل أسبوع.';
+	@override String get pointEnseignantTitre => 'معلم ثابت';
+	@override String get pointEnseignant => 'سيد أو سيدة يتابع كل طالب من حصة إلى أخرى.';
+	@override String get pointFoyerTitre => 'حساب واحد للأسرة';
+	@override String get pointFoyer => 'تُتابَع حصص كل طالب في الأسرة من حسابك.';
+	@override String get commencer => 'ابدأ';
+	@override String get dejaCompte => 'لدي حساب بالفعل';
+}
+
+// Path: creneaux
+class _Traductions$creneaux$ar extends Traductions$creneaux$fr {
+	_Traductions$creneaux$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'المواعيد';
+	@override String get ongletHeures => 'ساعاتي';
+	@override String get ongletEleves => 'طلاب في الانتظار';
+	@override String mesEleves({required Object nombre, required Object plafond}) => 'تتابع ⁨${nombre}⁩ طلاب من ⁨${plafond}⁩ ممكنين.';
+	@override String get aucunEleve => 'لا طالب في الانتظار في ساعاتك';
+	@override String get aucunEleveDetail => 'اقترح ساعات أخرى لترى أسرًا أكثر.';
+	@override String attendDepuis({required Object jours}) => 'ينتظر منذ ⁨${jours}⁩ أيام';
+	@override String get attendUnJour => 'ينتظر منذ يوم';
+	@override String get attendAujourdhui => 'قُدِّم الطلب اليوم';
+	@override String niveau({required Object niveau}) => 'المستوى ⁨${niveau}⁩';
+	@override String prendre({required Object jour, required Object heure}) => 'قبول ⁨${jour}⁩ الساعة ⁨${heure}⁩';
+	@override String get priseEnCours => 'جارٍ الحفظ';
+	@override String plafondAtteint({required Object nombre}) => 'تتابع بالفعل ⁨${nombre}⁩ طلاب، وهو حدك الأقصى. قبول طالب التزام دائم، لا حجز.';
+	@override String get plafondDemander => 'طلب متابعة طلاب أكثر';
+	@override String get demandeTitre => 'كم طالبًا يمكنك أن تتابع؟';
+	@override String get demandeMotif => 'لماذا هذا التغيير؟';
+	@override String get demandeMotifRequis => 'السبب ضروري: هو الذي يسمح بالحسم.';
+	@override String get demandeEnvoyer => 'إرسال الطلب';
+	@override String get demandeEnvoyee => 'أُرسل الطلب. ستحسم فيه الإدارة.';
+	@override String eleves({required Object nombre}) => '⁨${nombre}⁩ طلاب';
+	@override String erreur({required Object message}) => 'لم تكتمل العملية: ⁨${message}⁩';
+}
+
+// Path: disponibilites
+class _Traductions$disponibilites$ar extends Traductions$disponibilites$fr {
+	_Traductions$disponibilites$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'متى يستطيع أطفالك متابعة درس؟';
+	@override String get titreEnseignant => 'متى تستطيع التدريس؟';
+	@override String consigne({required Object prenom}) => 'المس الساعات الممكنة لـ⁨${prenom}⁩.';
+	@override String get consigneEnseignant => 'المس الساعات التي تكون فيها متاحًا.';
+	@override String get effet => 'سيختار معلم من بين هذه الساعات. كلما اقترحت أكثر، بدأ الدرس أسرع.';
+	@override String get effetEnseignant => 'لن ترى إلا الطلاب الذين تتقاطع ساعاتهم مع ساعاتك.';
+	@override String fuseau({required Object fuseau}) => 'الساعات معروضة بتوقيت ⁨${fuseau}⁩';
+	@override String aucune({required Object prenom}) => 'لا ساعة مقترحة لـ⁨${prenom}⁩';
+	@override String aucuneDetail({required Object prenom}) => 'دون موعد، لا يستطيع أي معلم تولي ⁨${prenom}⁩.';
+	@override String posees({required Object nombre}) => '⁨${nombre}⁩ ساعات مقترحة';
+	@override String get poseeUne => 'ساعة واحدة مقترحة';
+	@override String cellulePosee({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩، مقترحة. المس للإزالة';
+	@override String celluleLibre({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩، شاغرة. المس للاقتراح';
+	@override String get erreur => 'تعذّر حفظ هذا الموعد. أعد المحاولة.';
+	@override List<String> get joursCourts => [
+		'اثن',
+		'ثلا',
+		'أرب',
+		'خمي',
+		'جمع',
+		'سبت',
+		'أحد',
+	];
+	@override List<String> get joursLongs => [
+		'الاثنين',
+		'الثلاثاء',
+		'الأربعاء',
+		'الخميس',
+		'الجمعة',
+		'السبت',
+		'الأحد',
+	];
 }
 
 // Path: commun.sections
@@ -3316,6 +3522,525 @@ class _Traductions$foyer$ajout$ar extends Traductions$foyer$ajout$fr {
 	@override String get horsLigne => 'أنت غير متصل. يمكن إنشاء الملف عند عودة الاتصال.';
 }
 
+// Path: adulte.nav
+class _Traductions$adulte$nav$ar extends Traductions$adulte$nav$fr {
+	_Traductions$adulte$nav$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get accueil => 'الرئيسية';
+	@override String get maClasse => 'فصلي';
+	@override String get coran => 'القرآن';
+	@override String get monEspace => 'مساحتي';
+}
+
+// Path: adulte.accueil
+class _Traductions$adulte$accueil$ar extends Traductions$adulte$accueil$fr {
+	_Traductions$adulte$accueil$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String salutation({required Object prenom}) => 'مرحبًا ⁨${prenom}⁩';
+	@override String get prochaineSeance => 'الحصة القادمة';
+	@override String get parcours => 'مساري';
+	@override String get dernieresSeances => 'آخر الحصص';
+	@override String get ressources => 'موارد الفصل';
+	@override String get absence => 'الغياب';
+	@override String get aucuneClasse => 'لا فصل حتى الآن.';
+	@override String get aucuneClasseDetail => 'ستظهر حصتك القادمة هنا بمجرد فتح فصلك.';
+	@override String get echec => 'تعذّر تحميل حصتك القادمة وآخر حصصك: لم يستجب الخادم. أعد المحاولة بعد لحظة.';
+}
+
+// Path: adulte.historique
+class _Traductions$adulte$historique$ar extends Traductions$adulte$historique$fr {
+	_Traductions$adulte$historique$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'حصصي الماضية';
+	@override String get echec => 'تعذّر تحميل حصصك الماضية: لم يستجب الخادم. أعد المحاولة بعد لحظة.';
+	@override String get vide => 'لا حصة ماضية حتى الآن.';
+	@override String get videDetail => 'ستظهر حصصك هنا بعد درسك الأول.';
+}
+
+// Path: adulte.maClasse
+class _Traductions$adulte$maClasse$ar extends Traductions$adulte$maClasse$fr {
+	_Traductions$adulte$maClasse$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get aPropos => 'عن هذا الفصل';
+	@override String get participants => 'المشاركون';
+	@override String vous({required Object prenom}) => '⁨${prenom}⁩ (أنت)';
+	@override String get progression => 'تقدمي في هذا الفصل';
+	@override String get aucuneClasseDetail => 'سيظهر فصلك ومشاركوه وموارده هنا بمجرد فتحه.';
+}
+
+// Path: adulte.monEspace
+class _Traductions$adulte$monEspace$ar extends Traductions$adulte$monEspace$fr {
+	_Traductions$adulte$monEspace$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get role => 'طالب بالغ';
+	@override String get monCompte => 'حسابي';
+	@override String get informations => 'معلوماتي';
+	@override String get coursAcces => 'الدروس والوصول';
+	@override String get coursAccesLegende => 'الفصل والحصص والوصول';
+	@override String get paiements => 'المدفوعات';
+	@override String get paiementsLegende => 'السجل والإيصالات';
+	@override String get accords => 'موافقاتي';
+	@override String get accordsLegende => 'الموافقات الممنوحة للأكاديمية';
+	@override String get securiteLegende => 'طريقة الدخول وعنوانه';
+	@override late final _Traductions$adulte$monEspace$pageAccords$ar pageAccords = _Traductions$adulte$monEspace$pageAccords$ar._(_root);
+	@override late final _Traductions$adulte$monEspace$pageCoursAcces$ar pageCoursAcces = _Traductions$adulte$monEspace$pageCoursAcces$ar._(_root);
+}
+
+// Path: adulte.coranDemo
+class _Traductions$adulte$coranDemo$ar extends Traductions$adulte$coranDemo$fr {
+	_Traductions$adulte$coranDemo$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'متاح بعد تسجيل الدخول';
+	@override String get phrase => 'ليس هذا عطلًا: العرض التجريبي لا يحتوي على نص القرآن. بعد الدخول إلى مساحتك كطالب، يُفتح هنا.';
+}
+
+// Path: adulte.recharge
+class _Traductions$adulte$recharge$ar extends Traductions$adulte$recharge$fr {
+	_Traductions$adulte$recharge$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'شحن جديد';
+	@override String get phrase => 'اختر مستفيدًا أو أكثر، ثم اختر عرضًا لكل واحد.';
+	@override String get toutSelectionner => 'تحديد الكل';
+	@override String get toutDeselectionner => 'إلغاء تحديد الكل';
+	@override String offrePour({required Object prenom}) => 'عرض لـ⁨${prenom}⁩';
+	@override String get verifier => 'مراجعة الشحن';
+	@override String get raisonAucun => 'اختر مستفيدًا واحدًا على الأقل للمتابعة.';
+	@override String get raisonOffre => 'اختر عرضًا لكل مستفيد محدد.';
+	@override String get horsLigneVerifier => 'أنت غير متصل. يمكنك مراجعة الشحن عند عودة الاتصال.';
+	@override String get indisponibleTitre => 'الشحن غير متاح بعد';
+	@override String get indisponiblePhrase => 'عروض الشحن غير متاحة في التطبيق بعد. لا دفع ممكن هنا الآن.';
+	@override String get verificationEchecTitre => 'لم تكتمل المراجعة.';
+	@override String get verificationEchecPhrase => 'اختياراتك محفوظة. يمكنك إعادة المحاولة.';
+	@override String get verifierTitre => 'مراجعة الشحن';
+	@override String get verifierPhrase => 'راجع التفاصيل قبل الدفع.';
+	@override String get recapitulatif => 'الملخص حسب المستفيد';
+	@override String get montantPaye => 'المبلغ المدفوع';
+	@override String get soldeAttribue => 'الرصيد المخصص';
+	@override String get statut => 'حالة التخصيص';
+	@override String get modifier => 'تعديل';
+	@override String get total => 'المجموع المستحق';
+	@override String payer({required Object montant}) => 'دفع ⁨${montant}⁩';
+	@override String get horsLignePayer => 'أنت غير متصل. يمكنك الدفع عند عودة الاتصال.';
+	@override String get paiementEchecTitre => 'لم يُؤكَّد الدفع.';
+	@override String get paiementEchecPhrase => 'تحقّق قبل إعادة المحاولة.';
+	@override String get paiementIndisponibleTitre => 'الدفع غير متاح بعد';
+	@override String get paiementIndisponiblePhrase => 'لم يُجرَ أي دفع. الدفع عبر الإنترنت غير مفتوح في التطبيق بعد.';
+	@override String get revenirPaiements => 'العودة إلى مدفوعات الأسرة';
+}
+
+// Path: adulte.paiements
+class _Traductions$adulte$paiements$ar extends Traductions$adulte$paiements$fr {
+	_Traductions$adulte$paiements$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get beneficiaires => 'المستفيدون';
+	@override String get recharger => 'شحن';
+	@override String recapitulatif({required Object valeur}) => 'ملخص الأسرة: ⁨${valeur}⁩. يبقى كل رصيد خاصًا بمستفيده.';
+	@override String get bientotEpuise => 'على وشك النفاد';
+	@override String get inactif => 'غير نشط';
+	@override String get historique => 'سجل المدفوعات';
+	@override String get soldesIndisponiblesTitre => 'الأرصدة غير قابلة للاطلاع بعد';
+	@override String get soldesIndisponiblesPhrase => 'رصيد كل مستفيد غير متاح في التطبيق بعد. لا شحن ممكن هنا الآن.';
+	@override String get aucunBeneficiaireTitre => 'لا مستفيد';
+	@override String get aucunBeneficiairePhrase => 'لا ملف طالب في أسرتك له رصيد للشحن الآن.';
+}
+
+// Path: adulte.famille
+class _Traductions$adulte$famille$ar extends Traductions$adulte$famille$fr {
+	_Traductions$adulte$famille$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get ajouter => 'إضافة أسرتي';
+	@override String get ajouterLegende => 'سجّل أطفالك وادعُ زوجك أو زوجتك للانضمام إلى باقة الأسرة.';
+	@override String get ajouterPhrase => 'يمكنك إضافة أطفالك ودعوة زوجك أو زوجتك للانضمام إلى باقة الأسرة. تبقى مساحتك كطالب كما هي.';
+	@override String get inscrireEnfant => 'تسجيل طفل';
+	@override String get maFamille => 'أسرتي';
+	@override String get forfaitFamille => 'باقة الأسرة';
+	@override String get retourMonEspace => 'العودة إلى مساحتي';
+	@override String get titulaire => 'أنت صاحب حساب الأسرة';
+	@override String get paiementsFoyer => 'مدفوعات الأسرة';
+	@override String get aProposForfait => 'عن باقة الأسرة';
+	@override String get aProposForfaitPhrase => 'تضم باقة الأسرة صاحب الحساب، وزوجًا أو زوجة بالغًا، والأطفال أو المراهقين الذين في رعاية صاحب الحساب. يحتفظ كل بالغ بحسابه الخاص.';
+	@override String get profilNonCreeTitre => 'عرض تجريبي: لم يُنشأ أي ملف';
+	@override String get profilNonCreePhrase => 'في العرض التجريبي، لا يُرسل شيء. تبقى «أسرتي» كما كانت.';
+	@override String get profilNonCreePhraseSeul => 'في العرض التجريبي، لا يُرسل شيء. تبقى مساحتك كطالب كما كانت.';
+	@override String get monProfilIndisponibleTitre => 'غير متاح بعد';
+	@override String get monProfilIndisponiblePhrase => 'إنشاء ملف طالب منفصل غير متاح بعد. تبقى دروسك و«أسرتي» كما هي.';
+	@override String get indisponibleTitre => 'قسم الأسرة غير متاح بعد';
+	@override String get indisponiblePhrase => 'ستظهر أسرتك أو باقة أسرتك هنا بمجرد إتاحتها.';
+	@override late final _Traductions$adulte$famille$place$ar place = _Traductions$adulte$famille$place$ar._(_root);
+}
+
+// Path: adulte.invitation
+class _Traductions$adulte$invitation$ar extends Traductions$adulte$invitation$fr {
+	_Traductions$adulte$invitation$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titreElle => 'دعوة زوجتي';
+	@override String get titreLui => 'دعوة زوجي';
+	@override String get enteteElle => 'حساب شخصي لها';
+	@override String get enteteLui => 'حساب شخصي له';
+	@override String get phraseElle => 'ستستخدم زوجتك حسابها الخاص. لن تستطيع إدارة أسرتك ولا ملفات الطلاب التي أنشأتها.';
+	@override String get phraseLui => 'سيستخدم زوجك حسابه الخاص. لن يستطيع إدارة أسرتك ولا ملفات الطلاب التي أنشأتها.';
+	@override String get prenom => 'الاسم';
+	@override String get nom => 'اللقب';
+	@override String get nomAide => 'اختياري.';
+	@override String get courriel => 'البريد الإلكتروني';
+	@override String get courrielAideElle => 'سيُستخدم البريد الإلكتروني لإرسال دعوة الانضمام إلى Rewayah إلى زوجتك.';
+	@override String get courrielAideLui => 'سيُستخدم البريد الإلكتروني لإرسال دعوة الانضمام إلى Rewayah إلى زوجك.';
+	@override String get prenomRequis => 'أدخل الاسم.';
+	@override String get courrielRequis => 'أدخل البريد الإلكتروني.';
+	@override String get courrielInvalide => 'تحقّق من البريد الإلكتروني: يجب أن يشبه nom@exemple.com.';
+	@override String get verifier => 'متابعة';
+	@override String get verifierTitre => 'المراجعة والإرسال';
+	@override String get verifierPhrase => 'أعد قراءة هذه المعلومات. ستُرسل الدعوة إلى هذا العنوان.';
+	@override String get nonRenseigne => 'غير محدد';
+	@override String get modifier => 'تعديل';
+	@override String get envoyer => 'إرسال الدعوة';
+	@override String get horsLigne => 'أنت غير متصل. لم يُرسل شيء. يمكنك إرسال الدعوة بنفسك عند عودة الاتصال.';
+	@override String get echecTitre => 'لم يُؤكَّد الإرسال.';
+	@override String get echecPhrase => 'تحقّق قبل إعادة المحاولة. معلوماتك محفوظة.';
+	@override String get refusTitre => 'لا يمكن إرسال هذه الدعوة';
+	@override String get refusPhrase => 'تعرض «أسرتي» الحالة الحالية للمقعد.';
+	@override String get envoyeeTitre => 'أُرسلت الدعوة';
+	@override String envoyeePhrase({required Object courriel}) => 'أُرسلت الدعوة إلى ⁨${courriel}⁩.';
+	@override String get revenirMaFamille => 'العودة إلى أسرتي';
+	@override String get detailPhrase => 'الدعوة بانتظار الرد. يمكنك إلغاؤها ما لم تُقبل.';
+	@override String get annuler => 'إلغاء الدعوة';
+	@override String annulerQuestion({required Object prenom}) => 'إلغاء دعوة ⁨${prenom}⁩؟';
+	@override String get annulerQuestionSansPrenom => 'إلغاء هذه الدعوة؟';
+	@override String get annulerHorsLigne => 'أنت غير متصل. لم يُلغَ شيء. يمكنك إلغاء الدعوة بنفسك عند عودة الاتصال.';
+	@override String get annulerConsequence => 'لن يعود ممكنًا قبول الدعوة. يمكنك إرسال دعوة جديدة متى شئت.';
+	@override String get garder => 'الإبقاء على الدعوة';
+	@override String get annulationEchecTitre => 'لم يُؤكَّد الإلغاء.';
+	@override String get annulationEchecPhrase => 'تحقّق قبل إعادة المحاولة.';
+}
+
+// Path: adulte.acceptation
+class _Traductions$adulte$acceptation$ar extends Traductions$adulte$acceptation$fr {
+	_Traductions$adulte$acceptation$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String notification({required Object prenom}) => 'يدعوك ⁨${prenom}⁩ للانضمام إلى باقة أسرته.';
+	@override String titre({required Object prenom}) => 'الانضمام إلى باقة أسرة ⁨${prenom}⁩';
+	@override String get faisonsTitre => 'ما نفعله';
+	@override String faisons({required Object prenom}) => 'يدعوك ⁨${prenom}⁩ إلى باقة أسرته. إن قبلت، يُربط حسابك بأسرته. يبقى حسابك ملكك. لا يُدمج شيء.';
+	@override String get pourquoiTitre => 'لماذا';
+	@override String pourquoiElle({required Object prenom}) => 'تدير ⁨${prenom}⁩ الأسرة وتدفع عن أفرادها. لتدفع عن دروسك، يجب أن ترى رصيدك.';
+	@override String pourquoiLui({required Object prenom}) => 'يدير ⁨${prenom}⁩ الأسرة ويدفع عن أفرادها. ليدفع عن دروسك، يجب أن يرى رصيدك.';
+	@override String verraTitre({required Object prenom}) => 'ما سيراه ⁨${prenom}⁩';
+	@override String get verraElle => 'اسمك ولقبك. رصيدك، أو الحاجة إلى شحنه. العرض الذي يخصك. حالة وصولك، إن كانت تمنع الدفع. وستعرف أيضًا إن غادرت باقة الأسرة.';
+	@override String get verraLui => 'اسمك ولقبك. رصيدك، أو الحاجة إلى شحنه. العرض الذي يخصك. حالة وصولك، إن كانت تمنع الدفع. وسيعرف أيضًا إن غادرت باقة الأسرة.';
+	@override String verraPasTitre({required Object prenom}) => 'ما لن يراه ⁨${prenom}⁩';
+	@override String get verraPas => 'فصلك. مستواك. حصصك وحضورك. تقدمك. رسائلك. إشعاراتك. وسائل دفعك الشخصية. وثائق هويتك.';
+	@override String get vousTitre => 'ما لن تراه أنت';
+	@override String vous({required Object prenom}) => 'دروس ⁨${prenom}⁩ وتقدمه ورسائله، وكذلك أطفال الأسرة. لن تستطيع إضافة طفل، ولا دعوة أحد، ولا تعديل الأسرة.';
+	@override String get autresTitre => 'من يرى أيضًا';
+	@override String get autres => 'معلمك لا يرى شيئًا من أسرتك. يرى فريق الأكاديمية الربط، لإدارته واعتماده عند الحاجة.';
+	@override String get dureeTitre => 'إلى متى';
+	@override String duree({required Object prenom}) => 'يستمر الربط حتى تغادر باقة الأسرة، أو ينهيه ⁨${prenom}⁩.';
+	@override String conservation({required Object duree}) => 'نحتفظ بأثر الربط ⁨${duree}⁩.';
+	@override String get partirTitre => 'كيف تغادر';
+	@override String get partir => 'في «مساحتي»، «باقة الأسرة»، «مغادرة باقة الأسرة». لا تحتاج إلى موافقته. يبقى حسابك ودروسك وسجلك ورصيدك متاحة.';
+	@override String get refusTitre => 'إن رفضت';
+	@override String get refus => 'لا يتغير شيء في حسابك ولا دروسك ولا رصيدك.';
+	@override String get validation => 'يجب أن تعتمد إدارة الأكاديمية هذا الربط. وإلى ذلك الحين، يعمل حسابك ودروسك بشكل عادي.';
+	@override String get refuser => 'رفض الدعوة';
+	@override String get accepter => 'قبول الدعوة';
+	@override String get horsLigne => 'أنت غير متصل. لم يُرسل شيء. يمكنك الرد بنفسك عند عودة الاتصال.';
+	@override String get acceptationEchecTitre => 'لم يُؤكَّد القبول.';
+	@override String get refusEchecTitre => 'لم يُؤكَّد الرفض.';
+	@override String get echecPhrase => 'تحقّق قبل إعادة المحاولة.';
+	@override String get accepteeTitre => 'قُبلت الدعوة';
+	@override String rejoint({required Object prenom}) => 'انضممت إلى باقة أسرة ⁨${prenom}⁩.';
+	@override String get refuseeTitre => 'رُفضت الدعوة';
+	@override String get impossible => 'لا يمكن لهذا الحساب الانضمام إلى هذه الباقة حاليًا.';
+	@override String get perimee => 'هذه الدعوة لم تعد صالحة.';
+	@override String get monEspace => 'الذهاب إلى مساحتي';
+	@override String recu({required Object date}) => 'سُجِّل الرد في ⁨${date}⁩.';
+	@override String get titreNeutre => 'دعوة إلى باقة الأسرة';
+	@override String get sansCompteTitre => 'دعوة إلى باقة الأسرة';
+	@override String get sansCompte => 'للرد، سجّل الدخول إلى حسابك، أو أنشئ حسابًا. ستقرأ حينها ما سيراه الشخص الذي يدعوك وما لن يراه قبل أن تقرر.';
+	@override String get sansCompteAction => 'تسجيل الدخول أو إنشاء حسابي';
+}
+
+// Path: adulte.sortie
+class _Traductions$adulte$sortie$ar extends Traductions$adulte$sortie$fr {
+	_Traductions$adulte$sortie$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get retirerElle => 'إزالة زوجتي';
+	@override String get retirerLui => 'إزالة زوجي';
+	@override String get retirerQuestionElle => 'إزالة زوجتي؟';
+	@override String get retirerQuestionLui => 'إزالة زوجي؟';
+	@override String get retirerConsequence => 'لن يُحذف حسابه ولا دروسه ولا سجله ولا رصيده.';
+	@override String placePhrase({required Object prenom}) => '⁨${prenom}⁩ جزء من باقة أسرتك، بحسابه الخاص.';
+	@override String get quitter => 'مغادرة باقة الأسرة';
+	@override String get quitterQuestion => 'مغادرة باقة الأسرة؟';
+	@override String get quitterConfirmer => 'مغادرة الباقة';
+	@override String get quitterConsequence => 'يبقى حسابك ودروسك وسجلك ورصيدك متاحة. ينتهي الربط بباقة الأسرة.';
+	@override String forfaitPhrase({required Object prenom}) => 'أنت جزء من باقة أسرة ⁨${prenom}⁩.';
+	@override String get resultatTitre => 'انتهى الربط بباقة الأسرة';
+	@override String get resultatTitulaire => 'يبقى حسابه ودروسه وسجله ورصيده متاحة.';
+	@override String get resultatSecondAdulte => 'يبقى حسابك ودروسك وسجلك ورصيدك متاحة.';
+	@override String get compris => 'فهمت';
+	@override String get retraitEchecTitre => 'لم تُؤكَّد الإزالة.';
+	@override String get departEchecTitre => 'لم تُؤكَّد المغادرة.';
+	@override String get echecPhrase => 'تحقّق قبل إعادة المحاولة.';
+	@override String get horsLigne => 'أنت غير متصل. لم يُرسل شيء. يمكنك إعادة المحاولة بنفسك عند عودة الاتصال.';
+	@override String notificationQuitte({required Object prenom}) => 'غادر ⁨${prenom}⁩ باقة أسرتك.';
+	@override String notificationRetiree({required Object prenom}) => 'أُزلتِ من باقة أسرة ⁨${prenom}⁩.';
+	@override String notificationRetire({required Object prenom}) => 'أُزلتَ من باقة أسرة ⁨${prenom}⁩.';
+	@override String get delaiTitre => 'دعوة جديدة غير متاحة';
+	@override String delaiPhrase({required Object date}) => 'يمكن تقديم طلب جديد ابتداءً من ⁨${date}⁩. ثم يجب أن تعتمده الإدارة.';
+	@override String get pourquoi => 'لماذا هذا الانتظار؟';
+	@override String get pourquoiPhrase => 'يضمن هذا الإجراء أمان الأسر وحسن إدارة وصول الأطفال.';
+}
+
+// Path: adulte.reprise
+class _Traductions$adulte$reprise$ar extends Traductions$adulte$reprise$fr {
+	_Traductions$adulte$reprise$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'طلب استلام الأسرة';
+	@override String get explication => 'استخدم هذا الإجراء إن توفي صاحب حساب الأسرة. سيُبلَّغ الحساب المعني بالطلب وستدرسه الإدارة.';
+	@override String get reprisTitre => 'ما سيُستلم';
+	@override late final _Traductions$adulte$reprise$repris$ar repris = _Traductions$adulte$reprise$repris$ar._(_root);
+	@override String get jamaisTitre => 'ما لا يُستلم أبدًا';
+	@override late final _Traductions$adulte$reprise$jamais$ar jamais = _Traductions$adulte$reprise$jamais$ar._(_root);
+	@override String get succession => 'الأمر انتقال لصفة صاحب حساب الأسرة، لا استيلاء على الحساب الشخصي.';
+	@override String get deposer => 'تقديم الطلب';
+	@override String get deposerQuestion => 'تقديم هذا الطلب؟';
+	@override String get deposerConsequence => 'سيُبلَّغ صاحب حساب الأسرة ويمكنه رفضه. ثم تدرس الإدارة الطلب وتقرر.';
+	@override String get horsLigne => 'أنت غير متصل. لم يُرسل شيء. يمكنك تقديم الطلب بنفسك عند عودة الاتصال.';
+	@override String get depotEchecTitre => 'لم يُؤكَّد الطلب.';
+	@override String get echecPhrase => 'تحقّق قبل إعادة المحاولة.';
+	@override String get motif => 'السبب';
+	@override String get motifDeces => 'وفاة صاحب الحساب المصرَّح بها';
+	@override String get deposeeLe => 'قُدِّم في';
+	@override String get etat => 'الحالة';
+	@override late final _Traductions$adulte$reprise$etats$ar etats = _Traductions$adulte$reprise$etats$ar._(_root);
+	@override late final _Traductions$adulte$reprise$phrases$ar phrases = _Traductions$adulte$reprise$phrases$ar._(_root);
+	@override late final _Traductions$adulte$reprise$titulaire$ar titulaire = _Traductions$adulte$reprise$titulaire$ar._(_root);
+	@override late final _Traductions$adulte$reprise$notifications$ar notifications = _Traductions$adulte$reprise$notifications$ar._(_root);
+}
+
+// Path: adulte.demo
+class _Traductions$adulte$demo$ar extends Traductions$adulte$demo$fr {
+	_Traductions$adulte$demo$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'عرض تجريبي للطالب البالغ';
+	@override String get mention => 'البيانات وهمية ولا يُرسل شيء.';
+	@override String get intro => 'اختر شاشة، ثم حالة من حالات أسرة ديالو.';
+	@override String get ecrans => 'الشاشات';
+	@override String get situations => 'حالات الأسرة';
+	@override String get variantes => 'المتغيرات';
+	@override String get titulaireFemme => 'صاحبة الحساب امرأة، وزوجها هو البالغ الثاني.';
+	@override String get vueConjointe => '«مساحتي» كما تراها الزوجة، البالغة الثانية في الأسرة.';
+	@override String get vueConjoint => '«مساحتي» كما يراها الزوج، البالغ الثاني في الأسرة.';
+	@override String get invitationRecueConjointe => 'الدعوة كما تستلمها الزوجة، في حسابها الخاص.';
+	@override String get invitationRecueConjoint => 'الدعوة كما يستلمها الزوج، في حسابه الخاص.';
+	@override String get invitationSansCompte => 'الدعوة مفتوحة دون حساب.';
+	@override String get reseauCoupe => 'الشبكة مقطوعة: الرئيسية و«فصلي» دون اتصال.';
+	@override late final _Traductions$adulte$demo$donnees$ar donnees = _Traductions$adulte$demo$donnees$ar._(_root);
+	@override late final _Traductions$adulte$demo$etats$ar etats = _Traductions$adulte$demo$etats$ar._(_root);
+}
+
+// Path: dossiers.file
+class _Traductions$dossiers$file$ar extends Traductions$dossiers$file$fr {
+	_Traductions$dossiers$file$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get chargement => 'جارٍ تحميل الملفات…';
+	@override String get erreur => 'تعذّر تحميل الملفات.';
+	@override String get horsLigne => 'أنت غير متصل. لا يمكن تحديث الملفات.';
+	@override String get accesRefuse => 'ليس لديك إذن بالوصول إلى الملفات المطلوب اعتمادها.';
+	@override String get actualisation => 'جارٍ تحديث الملفات…';
+	@override String get chargementProlonge => 'التحميل يستغرق وقتًا أطول من المتوقع.';
+	@override String get suivantsErreur => 'تعذّر تحميل الملفات التالية.';
+	@override String get indisponible => 'الاطلاع على الملفات غير متاح الآن.';
+	@override String get selectionRetiree => 'هذا الملف لم يعد متاحًا في القائمة.';
+	@override String get actualiser => 'تحديث الملفات';
+	@override String get aucuneSelection => 'اختر ملفًا لدراسته.';
+	@override String get suivants => 'تحميل الملفات التالية';
+	@override String ouvrirDe({required Object nom}) => 'فتح ملف ⁨${nom}⁩';
+	@override String ouvrirElide({required Object nom}) => 'فتح ملف ⁨${nom}⁩';
+	@override String get enVerification => 'قيد التحقق';
+	@override String get sansNom => 'ملف دون اسم متاح';
+	@override String legende({required Object type, required Object date}) => '⁨${type}⁩ · ⁨${date}⁩';
+	@override String dateHeure({required Object date, required Object heure, required Object zone}) => '⁨${date}⁩ الساعة ⁨${heure}⁩ (⁨${zone}⁩)';
+	@override String dateChiffres({required Object jour, required Object mois, required Object annee}) => '⁨${jour}⁩/⁨${mois}⁩/⁨${annee}⁩';
+	@override String heureChiffres({required Object heures, required Object minutes}) => '⁨${heures}⁩:⁨${minutes}⁩';
+	@override String get zoneUtc => 'UTC';
+	@override String suivantAnnonce({required Object nom}) => 'الملف التالي: ⁨${nom}⁩';
+}
+
+// Path: dossiers.detail
+class _Traductions$dossiers$detail$ar extends Traductions$dossiers$detail$fr {
+	_Traductions$dossiers$detail$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String titreDe({required Object nom}) => 'ملف ⁨${nom}⁩';
+	@override String titreElide({required Object nom}) => 'ملف ⁨${nom}⁩';
+}
+
+// Path: dossiers.visionneuse
+class _Traductions$dossiers$visionneuse$ar extends Traductions$dossiers$visionneuse$fr {
+	_Traductions$dossiers$visionneuse$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get chargement => 'جارٍ تحميل الوثيقة…';
+	@override String get erreur => 'لا يمكن عرض الوثيقة.';
+	@override String get expire => 'انتهى الوصول إلى هذه الوثيقة.';
+	@override String get recharger => 'إعادة تحميل الوثيقة';
+	@override String get formatNonPrisEnCharge => 'لا يمكن عرض تنسيق هذه الوثيقة.';
+	@override String get accesRetire => 'لم يعد لديك وصول إلى هذه الوثيقة.';
+	@override String get horsLigne => 'أنت غير متصل. لا يمكن تحميل الوثيقة.';
+	@override String get aucune => 'لا وثيقة متاحة.';
+	@override String get fermerPiece => 'إغلاق الوثيقة';
+	@override String get agrandir => 'تكبير';
+	@override String get reduire => 'تصغير';
+	@override String get ajuster => 'ملاءمة الشاشة';
+	@override String infoBulle({required Object action, required Object touche}) => '⁨${action}⁩ (المفتاح ⁨${touche}⁩)';
+	@override String get documentFictif => 'وثيقة وهمية';
+}
+
+// Path: dossiers.revue
+class _Traductions$dossiers$revue$ar extends Traductions$dossiers$revue$fr {
+	_Traductions$dossiers$revue$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get identite => 'الهوية والملف';
+	@override String get pieceNonTransmise => 'لم تُرسل الوثيقة المطلوبة.';
+	@override String get piece => 'وثيقة الهوية';
+	@override String get voirPiece => 'عرض الوثيقة';
+	@override String get accords => 'الموافقات والعناصر المقدَّمة';
+	@override String get nom => 'اللقب';
+	@override String get prenom => 'الاسم';
+	@override String get typeDossier => 'نوع الملف';
+	@override String get dateDepot => 'تاريخ الإيداع';
+	@override String get etatDossier => 'حالة الملف';
+	@override String get dateIndisponible => 'تاريخ الإيداع غير متاح';
+	@override String get pasPret => 'هذا الملف ليس جاهزًا للاعتماد بعد.';
+	@override String get erreurChargement => 'تعذّر تحميل هذا الملف.';
+	@override String get pieceIndisponible => 'الاطلاع على الوثيقة غير متاح الآن.';
+	@override late final _Traductions$dossiers$revue$etats$ar etats = _Traductions$dossiers$revue$etats$ar._(_root);
+}
+
+// Path: dossiers.profilACompleter
+class _Traductions$dossiers$profilACompleter$ar extends Traductions$dossiers$profilACompleter$fr {
+	_Traductions$dossiers$profilACompleter$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الملف الشخصي للإكمال';
+	@override String get texte => 'يجب إكمال ملفك الشخصي قبل الاطلاع على الملفات التي تسمح بها هذه القاعدة.';
+}
+
+// Path: dossiers.refus
+class _Traductions$dossiers$refus$ar extends Traductions$dossiers$refus$fr {
+	_Traductions$dossiers$refus$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'رفض الملف';
+	@override String nomType({required Object nom, required Object type}) => '⁨${nom}⁩ · ⁨${type}⁩';
+	@override String get corps => 'حدّد السبب الذي سيُعرض على الشخص المعني.';
+	@override String get champ => 'سبب الرفض';
+	@override String get aide => 'اشرح ما يجب تصحيحه، دون بيانات داخلية ولا تعليق شخصي.';
+	@override String get erreurVide => 'حدّد سبب الرفض.';
+	@override String get tropLong => 'السبب يتجاوز الطول المسموح.';
+	@override String get envoi => 'جارٍ الرفض…';
+	@override String get erreur => 'تعذّر رفض الملف.';
+	@override String get horsLigne => 'أنت غير متصل. لم يُرسل الرفض.';
+	@override String get inconnu => 'نتيجة الرفض غير مؤكَّدة بعد.';
+	@override String get interdit => 'لم يعد بإمكانك رفض هذا الملف.';
+	@override String get indisponible => 'الرفض غير متاح الآن.';
+	@override String get succes => 'رُفض الملف.';
+	@override String get abandonQuestion => 'التخلي عن السبب المكتوب؟';
+	@override String get continuerSaisie => 'متابعة الكتابة';
+	@override String get abandonner => 'تخلٍّ';
+}
+
+// Path: dossiers.validation
+class _Traductions$dossiers$validation$ar extends Traductions$dossiers$validation$fr {
+	_Traductions$dossiers$validation$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'اعتماد هذا الملف؟';
+	@override String corpsActivation({required Object nom}) => 'سيُعتمد ملف ⁨${nom}⁩. سيتمكن حسابه من الوصول إلى مساحته.';
+	@override String corpsDocumentaire({required Object nom}) => 'سيُعتمد ملف ⁨${nom}⁩. تبقى شروط الوصول الأخرى سارية.';
+	@override String get indisponible => 'الاعتماد غير متاح الآن.';
+	@override String get envoi => 'جارٍ الاعتماد…';
+	@override String get erreur => 'تعذّر اعتماد الملف.';
+	@override String get horsLigne => 'أنت غير متصل. لم يُرسل الاعتماد.';
+	@override String get inconnu => 'نتيجة الاعتماد غير مؤكَّدة بعد.';
+	@override String get plusPret => 'هذا الملف لم يعد جاهزًا للاعتماد.';
+	@override String get interdit => 'لم يعد بإمكانك اعتماد هذا الملف.';
+	@override String get succes => 'اعتُمد الملف.';
+}
+
+// Path: dossiers.decision
+class _Traductions$dossiers$decision$ar extends Traductions$dossiers$decision$fr {
+	_Traductions$dossiers$decision$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get verifierResultat => 'التحقق من النتيجة';
+	@override String get dejaTraite => 'عولج هذا الملف من قبل.';
+	@override String get conflit => 'عالج هذا الملف عضو آخر في الفريق.';
+	@override String nomComplet({required Object prenom, required Object nom}) => '⁨${prenom}⁩ ⁨${nom}⁩';
+}
+
 // Path: commun.etats.chargementProlonge
 class _Traductions$commun$etats$chargementProlonge$ar extends Traductions$commun$etats$chargementProlonge$fr {
 	_Traductions$commun$etats$chargementProlonge$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -5388,6 +6113,218 @@ class _Traductions$foyer$ajout$incertaine$ar extends Traductions$foyer$ajout$inc
 	@override String get phrase => 'لم يصلنا الرد. تحقّق من الأسرة قبل إعادة المحاولة، كي لا يُنشأ الملف مرتين.';
 	@override String get voirFoyer => 'عرض الأسرة';
 	@override String get reessayer => 'إعادة المحاولة على أي حال';
+}
+
+// Path: adulte.monEspace.pageAccords
+class _Traductions$adulte$monEspace$pageAccords$ar extends Traductions$adulte$monEspace$pageAccords$fr {
+	_Traductions$adulte$monEspace$pageAccords$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get indisponibleTitre => 'موافقاتك غير قابلة للاطلاع بعد';
+	@override String get indisponiblePhrase => 'قبول كل موافقة أو رفضها أو سحبها غير ممكن في التطبيق بعد. لا تُطلب منك أي موافقة هنا.';
+}
+
+// Path: adulte.monEspace.pageCoursAcces
+class _Traductions$adulte$monEspace$pageCoursAcces$ar extends Traductions$adulte$monEspace$pageCoursAcces$fr {
+	_Traductions$adulte$monEspace$pageCoursAcces$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get indisponibleTitre => 'الدروس والوصول غير قابلة للاطلاع بعد';
+	@override String get indisponiblePhrase => 'تفاصيل دروسك وحصصك ووصولك غير متاحة في التطبيق بعد.';
+}
+
+// Path: adulte.famille.place
+class _Traductions$adulte$famille$place$ar extends Traductions$adulte$famille$place$fr {
+	_Traductions$adulte$famille$place$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get ajouterConjointe => 'إضافة زوجة';
+	@override String get ajouterConjoint => 'إضافة زوج';
+	@override String get inviterConjointe => 'ادعُ زوجتك للانضمام إلى Rewayah بحسابها الخاص.';
+	@override String get inviterConjoint => 'ادعُ زوجك للانضمام إلى Rewayah بحسابه الخاص.';
+	@override String get invitationEnvoyee => 'أُرسلت الدعوة';
+	@override String maConjointe({required Object prenom}) => '⁨${prenom}⁩، زوجتك';
+	@override String monConjoint({required Object prenom}) => '⁨${prenom}⁩، زوجك';
+	@override String get validationEnAttente => 'بانتظار الاعتماد الإداري';
+	@override String get validationRefusee => 'رفضت الإدارة الاعتماد';
+	@override String get nouvelleDemande => 'تقديم طلب جديد';
+	@override String nouvelleInvitation({required Object date}) => 'دعوة جديدة ممكنة ابتداءً من ⁨${date}⁩';
+	@override String envoyeeA({required Object courriel}) => 'أُرسلت إلى ⁨${courriel}⁩';
+	@override String get expiree => 'انتهت صلاحية الدعوة السابقة. يمكنك إرسال دعوة جديدة.';
+	@override String get annulee => 'أُلغيت الدعوة ولم يعد ممكنًا قبولها. يمكنك إرسال دعوة جديدة.';
+}
+
+// Path: adulte.reprise.repris
+class _Traductions$adulte$reprise$repris$ar extends Traductions$adulte$reprise$repris$fr {
+	_Traductions$adulte$reprise$repris$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get profils => 'ملفات القاصرين الموجودة';
+	@override String get composition => 'تكوين الأسرة مستقبلًا وفق القواعد السارية';
+	@override String get paiements => 'مدفوعات الأسرة المستقبلية';
+	@override String get parcours => 'مسارات وليّ الأمر المرتبطة بالقاصرين';
+}
+
+// Path: adulte.reprise.jamais
+class _Traductions$adulte$reprise$jamais$ar extends Traductions$adulte$reprise$jamais$fr {
+	_Traductions$adulte$reprise$jamais$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get identifiants => 'بيانات دخول صاحب الحساب';
+	@override String get messages => 'رسائله الخاصة';
+	@override String get conversations => 'محادثاته';
+	@override String get historique => 'سجله التعليمي الشخصي';
+	@override String get moyensPaiement => 'وسائل الدفع المسجلة لديه';
+	@override String get pieces => 'وثائق هويته';
+	@override String get donnees => 'بياناته الخاصة التي لا علاقة لها بإدارة الأسرة';
+}
+
+// Path: adulte.reprise.etats
+class _Traductions$adulte$reprise$etats$ar extends Traductions$adulte$reprise$etats$fr {
+	_Traductions$adulte$reprise$etats$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get deposee => 'مقدَّم';
+	@override String get refuseeParTitulaire => 'رفضه صاحب الحساب';
+	@override String get attenteAdministration => 'بانتظار الإدارة';
+	@override String get validee => 'معتمَد';
+	@override String get refusee => 'مرفوض';
+}
+
+// Path: adulte.reprise.phrases
+class _Traductions$adulte$reprise$phrases$ar extends Traductions$adulte$reprise$phrases$fr {
+	_Traductions$adulte$reprise$phrases$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get deposee => 'أُبلغ صاحب حساب الأسرة. ستدرس الإدارة الطلب.';
+	@override String examenLe({required Object date}) => 'دون رد من صاحب الحساب، يمكن للإدارة دراسته ابتداءً من ⁨${date}⁩.';
+	@override String get refuseeParTitulaire => 'رفض صاحب حساب الأسرة هذا الطلب. الإدارة على علم. لا تُنقل أي صلاحية من صلاحيات الأسرة.';
+	@override String get attenteAdministration => 'لم يرد صاحب الحساب. لا يُنقل شيء تلقائيًا: ما زال على الإدارة دراسة الطلب.';
+	@override String get validee => 'اعتمدت الإدارة الطلب. أصبحت الآن صاحب حساب الأسرة.';
+	@override String get refusee => 'رفضت الإدارة الطلب. لا تُنقل أي صلاحية من صلاحيات الأسرة.';
+}
+
+// Path: adulte.reprise.titulaire
+class _Traductions$adulte$reprise$titulaire$ar extends Traductions$adulte$reprise$titulaire$fr {
+	_Traductions$adulte$reprise$titulaire$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get notification => 'قُدِّم طلب لاستلام أسرتك بدعوى وفاتك.';
+	@override String get consigne => 'إن كان هذا الطلب خاطئًا، فارفضه.';
+	@override String get refuser => 'رفض الطلب';
+	@override String get ligne => 'قُدِّم طلب لاستلام أسرتك.';
+	@override String get refusEchecTitre => 'لم يُؤكَّد الرفض.';
+	@override String get horsLigne => 'أنت غير متصل. لم يُرسل شيء. يمكنك رفض الطلب بنفسك عند عودة الاتصال.';
+	@override String get refusee => 'رفضت هذا الطلب. الإدارة على علم. لا تُنقل أي صلاحية من صلاحيات أسرتك.';
+}
+
+// Path: adulte.reprise.notifications
+class _Traductions$adulte$reprise$notifications$ar extends Traductions$adulte$reprise$notifications$fr {
+	_Traductions$adulte$reprise$notifications$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get refuseeParTitulaire => 'رفض صاحب حساب الأسرة طلبك لاستلام الأسرة.';
+	@override String get attenteAdministration => 'طلبك لاستلام الأسرة بانتظار الإدارة.';
+	@override String get validee => 'اعتُمد طلبك لاستلام الأسرة.';
+	@override String get refusee => 'رُفض طلبك لاستلام الأسرة.';
+}
+
+// Path: adulte.demo.donnees
+class _Traductions$adulte$demo$donnees$ar extends Traductions$adulte$demo$donnees$fr {
+	_Traductions$adulte$demo$donnees$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get soldeTitulaire => 'رصيد تجريبي 1';
+	@override String get soldeSecondAdulte => 'رصيد تجريبي 2';
+	@override String get soldeAicha => 'رصيد تجريبي 3';
+	@override String get soldeOumar => 'رصيد تجريبي 4';
+	@override String get totalAvecSecondAdulte => 'مجموع تجريبي A';
+	@override String get totalSansSecondAdulte => 'مجموع تجريبي B';
+	@override String get prixOffreA => '5,00 € (عرض تجريبي)';
+	@override String get prixOffreB => '10,00 € (عرض تجريبي)';
+	@override String get detailOffreA => 'رصيد تجريبي A';
+	@override String get detailOffreB => 'رصيد تجريبي B';
+	@override String get totalRecharge5 => '5,00 € (عرض تجريبي)';
+	@override String get totalRecharge10 => '10,00 € (عرض تجريبي)';
+	@override String get totalRecharge15 => '15,00 € (عرض تجريبي)';
+	@override String get totalRecharge20 => '20,00 € (عرض تجريبي)';
+	@override String get totalRecharge25 => '25,00 € (عرض تجريبي)';
+	@override String get totalRecharge30 => '30,00 € (عرض تجريبي)';
+	@override String get totalRecharge35 => '35,00 € (عرض تجريبي)';
+	@override String get totalRecharge40 => '40,00 € (عرض تجريبي)';
+}
+
+// Path: adulte.demo.etats
+class _Traductions$adulte$demo$etats$ar extends Traductions$adulte$demo$etats$fr {
+	_Traductions$adulte$demo$etats$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get adulteSeul => 'البالغ وحده، دون أسرة.';
+	@override String get titulaireSansConjoint => 'ليس في الأسرة بالغ ثانٍ.';
+	@override String get invitationEnAttente => 'دعوة البالغ الثاني بانتظار الرد.';
+	@override String get invitationExpiree => 'انتهت صلاحية دعوة البالغ الثاني.';
+	@override String get invitationAnnulee => 'أُلغيت دعوة البالغ الثاني.';
+	@override String get conjointActif => 'البالغ الثاني جزء من الأسرة.';
+	@override String get conjointQuitte => 'غادر البالغ الثاني الأسرة.';
+	@override String get conjointRetire => 'أُزيل البالغ الثاني من الأسرة.';
+	@override String get delai60 => 'مهلة أولى جارية.';
+	@override String get nouvelleDemande => 'دعوة جديدة ممكنة بعد المهلة الأولى.';
+	@override String get validationEnAttente => 'الاعتماد الإداري بانتظار القرار.';
+	@override String get validationRefusee => 'رُفض الاعتماد الإداري.';
+	@override String get secondDepart => 'غادر البالغ الثاني للمرة الثانية.';
+	@override String get delai120 => 'مهلة تالية، أطول، جارية.';
+	@override String get departsSuivants => 'بعد المغادرة الثالثة، تنطبق المهلة التالية دائمًا.';
+	@override String get repriseDemandee => 'قُدِّم طلب لاستلام الأسرة.';
+	@override String get repriseRefuseeParTitulaire => 'رفض صاحب الحساب طلب الاستلام.';
+	@override String get repriseSansReponse => 'دون رد في المهلة، ينتظر الطلب الإدارة.';
+	@override String get repriseValidee => 'اعتُمد استلام الأسرة.';
+	@override String get repriseRefusee => 'رُفض استلام الأسرة.';
+	@override String get dejaDansUnAutreFoyer => 'البالغ المدعو جزء من أسرة أخرى بالفعل.';
+	@override String get erreurReseau => 'انقطعت الشبكة أثناء إجراء.';
+	@override String get doubleSoumission => 'أُرسل الإجراء نفسه مرتين.';
+	@override String get notificationDansLApplication => 'تعذّر إرسال الإشعار إلى الهاتف، ويبقى ظاهرًا في التطبيق.';
+	@override String get emancipation => 'استقلال طالب بلغ سن الرشد: غير مبني في هذه المرحلة.';
+}
+
+// Path: dossiers.revue.etats
+class _Traductions$dossiers$revue$etats$ar extends Traductions$dossiers$revue$etats$fr {
+	_Traductions$dossiers$revue$etats$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get chargement => 'جارٍ تحميل الملف…';
+	@override String get horsLigne => 'أنت غير متصل. لا يمكن إرسال أي قرار.';
+	@override String get accesPerdu => 'لم يعد لديك وصول إلى هذا الملف.';
+	@override String get retourDossiers => 'العودة إلى الملفات';
+	@override String get verificationsIncompletes => 'أكمل عمليات التحقق المطلوبة.';
+	@override String get accordManquant => 'تنقص هذا الملف موافقة مطلوبة.';
+	@override String get decisionIndisponible => 'القرار غير متاح الآن.';
+	@override String get modifie => 'تغيّر هذا الملف منذ فتحه.';
+	@override String get actualiserDossier => 'تحديث الملف';
+	@override String get refusNonAutorise => 'لا يمكن رفض هذا الملف في حالته الحالية.';
 }
 
 // Path: classe.entree.demo.roles
@@ -8358,6 +9295,531 @@ extension on TraductionsAr {
 			'foyer.ajout.incertaine.voirFoyer' => 'عرض الأسرة',
 			'foyer.ajout.incertaine.reessayer' => 'إعادة المحاولة على أي حال',
 			'foyer.ajout.horsLigne' => 'أنت غير متصل. يمكن إنشاء الملف عند عودة الاتصال.',
+			'adulte.nav.accueil' => 'الرئيسية',
+			'adulte.nav.maClasse' => 'فصلي',
+			'adulte.nav.coran' => 'القرآن',
+			'adulte.nav.monEspace' => 'مساحتي',
+			'adulte.accueil.salutation' => ({required Object prenom}) => 'مرحبًا ⁨${prenom}⁩',
+			'adulte.accueil.prochaineSeance' => 'الحصة القادمة',
+			'adulte.accueil.parcours' => 'مساري',
+			'adulte.accueil.dernieresSeances' => 'آخر الحصص',
+			'adulte.accueil.ressources' => 'موارد الفصل',
+			'adulte.accueil.absence' => 'الغياب',
+			'adulte.accueil.aucuneClasse' => 'لا فصل حتى الآن.',
+			'adulte.accueil.aucuneClasseDetail' => 'ستظهر حصتك القادمة هنا بمجرد فتح فصلك.',
+			'adulte.accueil.echec' => 'تعذّر تحميل حصتك القادمة وآخر حصصك: لم يستجب الخادم. أعد المحاولة بعد لحظة.',
+			'adulte.historique.titre' => 'حصصي الماضية',
+			'adulte.historique.echec' => 'تعذّر تحميل حصصك الماضية: لم يستجب الخادم. أعد المحاولة بعد لحظة.',
+			'adulte.historique.vide' => 'لا حصة ماضية حتى الآن.',
+			'adulte.historique.videDetail' => 'ستظهر حصصك هنا بعد درسك الأول.',
+			'adulte.maClasse.aPropos' => 'عن هذا الفصل',
+			'adulte.maClasse.participants' => 'المشاركون',
+			'adulte.maClasse.vous' => ({required Object prenom}) => '⁨${prenom}⁩ (أنت)',
+			'adulte.maClasse.progression' => 'تقدمي في هذا الفصل',
+			'adulte.maClasse.aucuneClasseDetail' => 'سيظهر فصلك ومشاركوه وموارده هنا بمجرد فتحه.',
+			'adulte.monEspace.role' => 'طالب بالغ',
+			'adulte.monEspace.monCompte' => 'حسابي',
+			'adulte.monEspace.informations' => 'معلوماتي',
+			'adulte.monEspace.coursAcces' => 'الدروس والوصول',
+			'adulte.monEspace.coursAccesLegende' => 'الفصل والحصص والوصول',
+			'adulte.monEspace.paiements' => 'المدفوعات',
+			'adulte.monEspace.paiementsLegende' => 'السجل والإيصالات',
+			'adulte.monEspace.accords' => 'موافقاتي',
+			'adulte.monEspace.accordsLegende' => 'الموافقات الممنوحة للأكاديمية',
+			'adulte.monEspace.securiteLegende' => 'طريقة الدخول وعنوانه',
+			'adulte.monEspace.pageAccords.indisponibleTitre' => 'موافقاتك غير قابلة للاطلاع بعد',
+			'adulte.monEspace.pageAccords.indisponiblePhrase' => 'قبول كل موافقة أو رفضها أو سحبها غير ممكن في التطبيق بعد. لا تُطلب منك أي موافقة هنا.',
+			'adulte.monEspace.pageCoursAcces.indisponibleTitre' => 'الدروس والوصول غير قابلة للاطلاع بعد',
+			'adulte.monEspace.pageCoursAcces.indisponiblePhrase' => 'تفاصيل دروسك وحصصك ووصولك غير متاحة في التطبيق بعد.',
+			'adulte.coranDemo.titre' => 'متاح بعد تسجيل الدخول',
+			'adulte.coranDemo.phrase' => 'ليس هذا عطلًا: العرض التجريبي لا يحتوي على نص القرآن. بعد الدخول إلى مساحتك كطالب، يُفتح هنا.',
+			'adulte.recharge.titre' => 'شحن جديد',
+			'adulte.recharge.phrase' => 'اختر مستفيدًا أو أكثر، ثم اختر عرضًا لكل واحد.',
+			'adulte.recharge.toutSelectionner' => 'تحديد الكل',
+			'adulte.recharge.toutDeselectionner' => 'إلغاء تحديد الكل',
+			'adulte.recharge.offrePour' => ({required Object prenom}) => 'عرض لـ⁨${prenom}⁩',
+			'adulte.recharge.verifier' => 'مراجعة الشحن',
+			'adulte.recharge.raisonAucun' => 'اختر مستفيدًا واحدًا على الأقل للمتابعة.',
+			'adulte.recharge.raisonOffre' => 'اختر عرضًا لكل مستفيد محدد.',
+			'adulte.recharge.horsLigneVerifier' => 'أنت غير متصل. يمكنك مراجعة الشحن عند عودة الاتصال.',
+			'adulte.recharge.indisponibleTitre' => 'الشحن غير متاح بعد',
+			'adulte.recharge.indisponiblePhrase' => 'عروض الشحن غير متاحة في التطبيق بعد. لا دفع ممكن هنا الآن.',
+			'adulte.recharge.verificationEchecTitre' => 'لم تكتمل المراجعة.',
+			'adulte.recharge.verificationEchecPhrase' => 'اختياراتك محفوظة. يمكنك إعادة المحاولة.',
+			'adulte.recharge.verifierTitre' => 'مراجعة الشحن',
+			'adulte.recharge.verifierPhrase' => 'راجع التفاصيل قبل الدفع.',
+			'adulte.recharge.recapitulatif' => 'الملخص حسب المستفيد',
+			'adulte.recharge.montantPaye' => 'المبلغ المدفوع',
+			'adulte.recharge.soldeAttribue' => 'الرصيد المخصص',
+			'adulte.recharge.statut' => 'حالة التخصيص',
+			'adulte.recharge.modifier' => 'تعديل',
+			'adulte.recharge.total' => 'المجموع المستحق',
+			'adulte.recharge.payer' => ({required Object montant}) => 'دفع ⁨${montant}⁩',
+			'adulte.recharge.horsLignePayer' => 'أنت غير متصل. يمكنك الدفع عند عودة الاتصال.',
+			'adulte.recharge.paiementEchecTitre' => 'لم يُؤكَّد الدفع.',
+			'adulte.recharge.paiementEchecPhrase' => 'تحقّق قبل إعادة المحاولة.',
+			'adulte.recharge.paiementIndisponibleTitre' => 'الدفع غير متاح بعد',
+			'adulte.recharge.paiementIndisponiblePhrase' => 'لم يُجرَ أي دفع. الدفع عبر الإنترنت غير مفتوح في التطبيق بعد.',
+			'adulte.recharge.revenirPaiements' => 'العودة إلى مدفوعات الأسرة',
+			'adulte.paiements.beneficiaires' => 'المستفيدون',
+			'adulte.paiements.recharger' => 'شحن',
+			'adulte.paiements.recapitulatif' => ({required Object valeur}) => 'ملخص الأسرة: ⁨${valeur}⁩. يبقى كل رصيد خاصًا بمستفيده.',
+			'adulte.paiements.bientotEpuise' => 'على وشك النفاد',
+			'adulte.paiements.inactif' => 'غير نشط',
+			'adulte.paiements.historique' => 'سجل المدفوعات',
+			'adulte.paiements.soldesIndisponiblesTitre' => 'الأرصدة غير قابلة للاطلاع بعد',
+			'adulte.paiements.soldesIndisponiblesPhrase' => 'رصيد كل مستفيد غير متاح في التطبيق بعد. لا شحن ممكن هنا الآن.',
+			'adulte.paiements.aucunBeneficiaireTitre' => 'لا مستفيد',
+			'adulte.paiements.aucunBeneficiairePhrase' => 'لا ملف طالب في أسرتك له رصيد للشحن الآن.',
+			'adulte.famille.ajouter' => 'إضافة أسرتي',
+			'adulte.famille.ajouterLegende' => 'سجّل أطفالك وادعُ زوجك أو زوجتك للانضمام إلى باقة الأسرة.',
+			'adulte.famille.ajouterPhrase' => 'يمكنك إضافة أطفالك ودعوة زوجك أو زوجتك للانضمام إلى باقة الأسرة. تبقى مساحتك كطالب كما هي.',
+			'adulte.famille.inscrireEnfant' => 'تسجيل طفل',
+			'adulte.famille.maFamille' => 'أسرتي',
+			'adulte.famille.forfaitFamille' => 'باقة الأسرة',
+			'adulte.famille.retourMonEspace' => 'العودة إلى مساحتي',
+			'adulte.famille.titulaire' => 'أنت صاحب حساب الأسرة',
+			'adulte.famille.paiementsFoyer' => 'مدفوعات الأسرة',
+			'adulte.famille.aProposForfait' => 'عن باقة الأسرة',
+			'adulte.famille.aProposForfaitPhrase' => 'تضم باقة الأسرة صاحب الحساب، وزوجًا أو زوجة بالغًا، والأطفال أو المراهقين الذين في رعاية صاحب الحساب. يحتفظ كل بالغ بحسابه الخاص.',
+			'adulte.famille.profilNonCreeTitre' => 'عرض تجريبي: لم يُنشأ أي ملف',
+			'adulte.famille.profilNonCreePhrase' => 'في العرض التجريبي، لا يُرسل شيء. تبقى «أسرتي» كما كانت.',
+			'adulte.famille.profilNonCreePhraseSeul' => 'في العرض التجريبي، لا يُرسل شيء. تبقى مساحتك كطالب كما كانت.',
+			'adulte.famille.monProfilIndisponibleTitre' => 'غير متاح بعد',
+			'adulte.famille.monProfilIndisponiblePhrase' => 'إنشاء ملف طالب منفصل غير متاح بعد. تبقى دروسك و«أسرتي» كما هي.',
+			'adulte.famille.indisponibleTitre' => 'قسم الأسرة غير متاح بعد',
+			'adulte.famille.indisponiblePhrase' => 'ستظهر أسرتك أو باقة أسرتك هنا بمجرد إتاحتها.',
+			'adulte.famille.place.ajouterConjointe' => 'إضافة زوجة',
+			'adulte.famille.place.ajouterConjoint' => 'إضافة زوج',
+			'adulte.famille.place.inviterConjointe' => 'ادعُ زوجتك للانضمام إلى Rewayah بحسابها الخاص.',
+			'adulte.famille.place.inviterConjoint' => 'ادعُ زوجك للانضمام إلى Rewayah بحسابه الخاص.',
+			'adulte.famille.place.invitationEnvoyee' => 'أُرسلت الدعوة',
+			'adulte.famille.place.maConjointe' => ({required Object prenom}) => '⁨${prenom}⁩، زوجتك',
+			'adulte.famille.place.monConjoint' => ({required Object prenom}) => '⁨${prenom}⁩، زوجك',
+			'adulte.famille.place.validationEnAttente' => 'بانتظار الاعتماد الإداري',
+			'adulte.famille.place.validationRefusee' => 'رفضت الإدارة الاعتماد',
+			'adulte.famille.place.nouvelleDemande' => 'تقديم طلب جديد',
+			'adulte.famille.place.nouvelleInvitation' => ({required Object date}) => 'دعوة جديدة ممكنة ابتداءً من ⁨${date}⁩',
+			'adulte.famille.place.envoyeeA' => ({required Object courriel}) => 'أُرسلت إلى ⁨${courriel}⁩',
+			'adulte.famille.place.expiree' => 'انتهت صلاحية الدعوة السابقة. يمكنك إرسال دعوة جديدة.',
+			'adulte.famille.place.annulee' => 'أُلغيت الدعوة ولم يعد ممكنًا قبولها. يمكنك إرسال دعوة جديدة.',
+			'adulte.invitation.titreElle' => 'دعوة زوجتي',
+			'adulte.invitation.titreLui' => 'دعوة زوجي',
+			'adulte.invitation.enteteElle' => 'حساب شخصي لها',
+			'adulte.invitation.enteteLui' => 'حساب شخصي له',
+			'adulte.invitation.phraseElle' => 'ستستخدم زوجتك حسابها الخاص. لن تستطيع إدارة أسرتك ولا ملفات الطلاب التي أنشأتها.',
+			'adulte.invitation.phraseLui' => 'سيستخدم زوجك حسابه الخاص. لن يستطيع إدارة أسرتك ولا ملفات الطلاب التي أنشأتها.',
+			'adulte.invitation.prenom' => 'الاسم',
+			'adulte.invitation.nom' => 'اللقب',
+			'adulte.invitation.nomAide' => 'اختياري.',
+			'adulte.invitation.courriel' => 'البريد الإلكتروني',
+			'adulte.invitation.courrielAideElle' => 'سيُستخدم البريد الإلكتروني لإرسال دعوة الانضمام إلى Rewayah إلى زوجتك.',
+			'adulte.invitation.courrielAideLui' => 'سيُستخدم البريد الإلكتروني لإرسال دعوة الانضمام إلى Rewayah إلى زوجك.',
+			'adulte.invitation.prenomRequis' => 'أدخل الاسم.',
+			'adulte.invitation.courrielRequis' => 'أدخل البريد الإلكتروني.',
+			'adulte.invitation.courrielInvalide' => 'تحقّق من البريد الإلكتروني: يجب أن يشبه nom@exemple.com.',
+			'adulte.invitation.verifier' => 'متابعة',
+			'adulte.invitation.verifierTitre' => 'المراجعة والإرسال',
+			'adulte.invitation.verifierPhrase' => 'أعد قراءة هذه المعلومات. ستُرسل الدعوة إلى هذا العنوان.',
+			'adulte.invitation.nonRenseigne' => 'غير محدد',
+			'adulte.invitation.modifier' => 'تعديل',
+			'adulte.invitation.envoyer' => 'إرسال الدعوة',
+			'adulte.invitation.horsLigne' => 'أنت غير متصل. لم يُرسل شيء. يمكنك إرسال الدعوة بنفسك عند عودة الاتصال.',
+			'adulte.invitation.echecTitre' => 'لم يُؤكَّد الإرسال.',
+			'adulte.invitation.echecPhrase' => 'تحقّق قبل إعادة المحاولة. معلوماتك محفوظة.',
+			'adulte.invitation.refusTitre' => 'لا يمكن إرسال هذه الدعوة',
+			'adulte.invitation.refusPhrase' => 'تعرض «أسرتي» الحالة الحالية للمقعد.',
+			'adulte.invitation.envoyeeTitre' => 'أُرسلت الدعوة',
+			'adulte.invitation.envoyeePhrase' => ({required Object courriel}) => 'أُرسلت الدعوة إلى ⁨${courriel}⁩.',
+			'adulte.invitation.revenirMaFamille' => 'العودة إلى أسرتي',
+			'adulte.invitation.detailPhrase' => 'الدعوة بانتظار الرد. يمكنك إلغاؤها ما لم تُقبل.',
+			'adulte.invitation.annuler' => 'إلغاء الدعوة',
+			'adulte.invitation.annulerQuestion' => ({required Object prenom}) => 'إلغاء دعوة ⁨${prenom}⁩؟',
+			'adulte.invitation.annulerQuestionSansPrenom' => 'إلغاء هذه الدعوة؟',
+			'adulte.invitation.annulerHorsLigne' => 'أنت غير متصل. لم يُلغَ شيء. يمكنك إلغاء الدعوة بنفسك عند عودة الاتصال.',
+			'adulte.invitation.annulerConsequence' => 'لن يعود ممكنًا قبول الدعوة. يمكنك إرسال دعوة جديدة متى شئت.',
+			'adulte.invitation.garder' => 'الإبقاء على الدعوة',
+			'adulte.invitation.annulationEchecTitre' => 'لم يُؤكَّد الإلغاء.',
+			'adulte.invitation.annulationEchecPhrase' => 'تحقّق قبل إعادة المحاولة.',
+			'adulte.acceptation.notification' => ({required Object prenom}) => 'يدعوك ⁨${prenom}⁩ للانضمام إلى باقة أسرته.',
+			'adulte.acceptation.titre' => ({required Object prenom}) => 'الانضمام إلى باقة أسرة ⁨${prenom}⁩',
+			'adulte.acceptation.faisonsTitre' => 'ما نفعله',
+			'adulte.acceptation.faisons' => ({required Object prenom}) => 'يدعوك ⁨${prenom}⁩ إلى باقة أسرته. إن قبلت، يُربط حسابك بأسرته. يبقى حسابك ملكك. لا يُدمج شيء.',
+			'adulte.acceptation.pourquoiTitre' => 'لماذا',
+			'adulte.acceptation.pourquoiElle' => ({required Object prenom}) => 'تدير ⁨${prenom}⁩ الأسرة وتدفع عن أفرادها. لتدفع عن دروسك، يجب أن ترى رصيدك.',
+			'adulte.acceptation.pourquoiLui' => ({required Object prenom}) => 'يدير ⁨${prenom}⁩ الأسرة ويدفع عن أفرادها. ليدفع عن دروسك، يجب أن يرى رصيدك.',
+			'adulte.acceptation.verraTitre' => ({required Object prenom}) => 'ما سيراه ⁨${prenom}⁩',
+			'adulte.acceptation.verraElle' => 'اسمك ولقبك. رصيدك، أو الحاجة إلى شحنه. العرض الذي يخصك. حالة وصولك، إن كانت تمنع الدفع. وستعرف أيضًا إن غادرت باقة الأسرة.',
+			'adulte.acceptation.verraLui' => 'اسمك ولقبك. رصيدك، أو الحاجة إلى شحنه. العرض الذي يخصك. حالة وصولك، إن كانت تمنع الدفع. وسيعرف أيضًا إن غادرت باقة الأسرة.',
+			'adulte.acceptation.verraPasTitre' => ({required Object prenom}) => 'ما لن يراه ⁨${prenom}⁩',
+			'adulte.acceptation.verraPas' => 'فصلك. مستواك. حصصك وحضورك. تقدمك. رسائلك. إشعاراتك. وسائل دفعك الشخصية. وثائق هويتك.',
+			'adulte.acceptation.vousTitre' => 'ما لن تراه أنت',
+			'adulte.acceptation.vous' => ({required Object prenom}) => 'دروس ⁨${prenom}⁩ وتقدمه ورسائله، وكذلك أطفال الأسرة. لن تستطيع إضافة طفل، ولا دعوة أحد، ولا تعديل الأسرة.',
+			'adulte.acceptation.autresTitre' => 'من يرى أيضًا',
+			'adulte.acceptation.autres' => 'معلمك لا يرى شيئًا من أسرتك. يرى فريق الأكاديمية الربط، لإدارته واعتماده عند الحاجة.',
+			'adulte.acceptation.dureeTitre' => 'إلى متى',
+			'adulte.acceptation.duree' => ({required Object prenom}) => 'يستمر الربط حتى تغادر باقة الأسرة، أو ينهيه ⁨${prenom}⁩.',
+			'adulte.acceptation.conservation' => ({required Object duree}) => 'نحتفظ بأثر الربط ⁨${duree}⁩.',
+			'adulte.acceptation.partirTitre' => 'كيف تغادر',
+			'adulte.acceptation.partir' => 'في «مساحتي»، «باقة الأسرة»، «مغادرة باقة الأسرة». لا تحتاج إلى موافقته. يبقى حسابك ودروسك وسجلك ورصيدك متاحة.',
+			'adulte.acceptation.refusTitre' => 'إن رفضت',
+			'adulte.acceptation.refus' => 'لا يتغير شيء في حسابك ولا دروسك ولا رصيدك.',
+			'adulte.acceptation.validation' => 'يجب أن تعتمد إدارة الأكاديمية هذا الربط. وإلى ذلك الحين، يعمل حسابك ودروسك بشكل عادي.',
+			'adulte.acceptation.refuser' => 'رفض الدعوة',
+			'adulte.acceptation.accepter' => 'قبول الدعوة',
+			'adulte.acceptation.horsLigne' => 'أنت غير متصل. لم يُرسل شيء. يمكنك الرد بنفسك عند عودة الاتصال.',
+			'adulte.acceptation.acceptationEchecTitre' => 'لم يُؤكَّد القبول.',
+			'adulte.acceptation.refusEchecTitre' => 'لم يُؤكَّد الرفض.',
+			'adulte.acceptation.echecPhrase' => 'تحقّق قبل إعادة المحاولة.',
+			'adulte.acceptation.accepteeTitre' => 'قُبلت الدعوة',
+			'adulte.acceptation.rejoint' => ({required Object prenom}) => 'انضممت إلى باقة أسرة ⁨${prenom}⁩.',
+			'adulte.acceptation.refuseeTitre' => 'رُفضت الدعوة',
+			'adulte.acceptation.impossible' => 'لا يمكن لهذا الحساب الانضمام إلى هذه الباقة حاليًا.',
+			'adulte.acceptation.perimee' => 'هذه الدعوة لم تعد صالحة.',
+			'adulte.acceptation.monEspace' => 'الذهاب إلى مساحتي',
+			'adulte.acceptation.recu' => ({required Object date}) => 'سُجِّل الرد في ⁨${date}⁩.',
+			'adulte.acceptation.titreNeutre' => 'دعوة إلى باقة الأسرة',
+			'adulte.acceptation.sansCompteTitre' => 'دعوة إلى باقة الأسرة',
+			'adulte.acceptation.sansCompte' => 'للرد، سجّل الدخول إلى حسابك، أو أنشئ حسابًا. ستقرأ حينها ما سيراه الشخص الذي يدعوك وما لن يراه قبل أن تقرر.',
+			'adulte.acceptation.sansCompteAction' => 'تسجيل الدخول أو إنشاء حسابي',
+			'adulte.sortie.retirerElle' => 'إزالة زوجتي',
+			'adulte.sortie.retirerLui' => 'إزالة زوجي',
+			'adulte.sortie.retirerQuestionElle' => 'إزالة زوجتي؟',
+			'adulte.sortie.retirerQuestionLui' => 'إزالة زوجي؟',
+			'adulte.sortie.retirerConsequence' => 'لن يُحذف حسابه ولا دروسه ولا سجله ولا رصيده.',
+			'adulte.sortie.placePhrase' => ({required Object prenom}) => '⁨${prenom}⁩ جزء من باقة أسرتك، بحسابه الخاص.',
+			'adulte.sortie.quitter' => 'مغادرة باقة الأسرة',
+			'adulte.sortie.quitterQuestion' => 'مغادرة باقة الأسرة؟',
+			'adulte.sortie.quitterConfirmer' => 'مغادرة الباقة',
+			'adulte.sortie.quitterConsequence' => 'يبقى حسابك ودروسك وسجلك ورصيدك متاحة. ينتهي الربط بباقة الأسرة.',
+			'adulte.sortie.forfaitPhrase' => ({required Object prenom}) => 'أنت جزء من باقة أسرة ⁨${prenom}⁩.',
+			'adulte.sortie.resultatTitre' => 'انتهى الربط بباقة الأسرة',
+			'adulte.sortie.resultatTitulaire' => 'يبقى حسابه ودروسه وسجله ورصيده متاحة.',
+			'adulte.sortie.resultatSecondAdulte' => 'يبقى حسابك ودروسك وسجلك ورصيدك متاحة.',
+			'adulte.sortie.compris' => 'فهمت',
+			'adulte.sortie.retraitEchecTitre' => 'لم تُؤكَّد الإزالة.',
+			'adulte.sortie.departEchecTitre' => 'لم تُؤكَّد المغادرة.',
+			'adulte.sortie.echecPhrase' => 'تحقّق قبل إعادة المحاولة.',
+			'adulte.sortie.horsLigne' => 'أنت غير متصل. لم يُرسل شيء. يمكنك إعادة المحاولة بنفسك عند عودة الاتصال.',
+			'adulte.sortie.notificationQuitte' => ({required Object prenom}) => 'غادر ⁨${prenom}⁩ باقة أسرتك.',
+			'adulte.sortie.notificationRetiree' => ({required Object prenom}) => 'أُزلتِ من باقة أسرة ⁨${prenom}⁩.',
+			'adulte.sortie.notificationRetire' => ({required Object prenom}) => 'أُزلتَ من باقة أسرة ⁨${prenom}⁩.',
+			'adulte.sortie.delaiTitre' => 'دعوة جديدة غير متاحة',
+			'adulte.sortie.delaiPhrase' => ({required Object date}) => 'يمكن تقديم طلب جديد ابتداءً من ⁨${date}⁩. ثم يجب أن تعتمده الإدارة.',
+			'adulte.sortie.pourquoi' => 'لماذا هذا الانتظار؟',
+			'adulte.sortie.pourquoiPhrase' => 'يضمن هذا الإجراء أمان الأسر وحسن إدارة وصول الأطفال.',
+			'adulte.reprise.titre' => 'طلب استلام الأسرة',
+			'adulte.reprise.explication' => 'استخدم هذا الإجراء إن توفي صاحب حساب الأسرة. سيُبلَّغ الحساب المعني بالطلب وستدرسه الإدارة.',
+			'adulte.reprise.reprisTitre' => 'ما سيُستلم',
+			'adulte.reprise.repris.profils' => 'ملفات القاصرين الموجودة',
+			'adulte.reprise.repris.composition' => 'تكوين الأسرة مستقبلًا وفق القواعد السارية',
+			'adulte.reprise.repris.paiements' => 'مدفوعات الأسرة المستقبلية',
+			'adulte.reprise.repris.parcours' => 'مسارات وليّ الأمر المرتبطة بالقاصرين',
+			'adulte.reprise.jamaisTitre' => 'ما لا يُستلم أبدًا',
+			'adulte.reprise.jamais.identifiants' => 'بيانات دخول صاحب الحساب',
+			'adulte.reprise.jamais.messages' => 'رسائله الخاصة',
+			'adulte.reprise.jamais.conversations' => 'محادثاته',
+			'adulte.reprise.jamais.historique' => 'سجله التعليمي الشخصي',
+			'adulte.reprise.jamais.moyensPaiement' => 'وسائل الدفع المسجلة لديه',
+			'adulte.reprise.jamais.pieces' => 'وثائق هويته',
+			'adulte.reprise.jamais.donnees' => 'بياناته الخاصة التي لا علاقة لها بإدارة الأسرة',
+			'adulte.reprise.succession' => 'الأمر انتقال لصفة صاحب حساب الأسرة، لا استيلاء على الحساب الشخصي.',
+			'adulte.reprise.deposer' => 'تقديم الطلب',
+			'adulte.reprise.deposerQuestion' => 'تقديم هذا الطلب؟',
+			'adulte.reprise.deposerConsequence' => 'سيُبلَّغ صاحب حساب الأسرة ويمكنه رفضه. ثم تدرس الإدارة الطلب وتقرر.',
+			'adulte.reprise.horsLigne' => 'أنت غير متصل. لم يُرسل شيء. يمكنك تقديم الطلب بنفسك عند عودة الاتصال.',
+			'adulte.reprise.depotEchecTitre' => 'لم يُؤكَّد الطلب.',
+			'adulte.reprise.echecPhrase' => 'تحقّق قبل إعادة المحاولة.',
+			'adulte.reprise.motif' => 'السبب',
+			'adulte.reprise.motifDeces' => 'وفاة صاحب الحساب المصرَّح بها',
+			'adulte.reprise.deposeeLe' => 'قُدِّم في',
+			'adulte.reprise.etat' => 'الحالة',
+			'adulte.reprise.etats.deposee' => 'مقدَّم',
+			'adulte.reprise.etats.refuseeParTitulaire' => 'رفضه صاحب الحساب',
+			'adulte.reprise.etats.attenteAdministration' => 'بانتظار الإدارة',
+			'adulte.reprise.etats.validee' => 'معتمَد',
+			'adulte.reprise.etats.refusee' => 'مرفوض',
+			'adulte.reprise.phrases.deposee' => 'أُبلغ صاحب حساب الأسرة. ستدرس الإدارة الطلب.',
+			'adulte.reprise.phrases.examenLe' => ({required Object date}) => 'دون رد من صاحب الحساب، يمكن للإدارة دراسته ابتداءً من ⁨${date}⁩.',
+			'adulte.reprise.phrases.refuseeParTitulaire' => 'رفض صاحب حساب الأسرة هذا الطلب. الإدارة على علم. لا تُنقل أي صلاحية من صلاحيات الأسرة.',
+			'adulte.reprise.phrases.attenteAdministration' => 'لم يرد صاحب الحساب. لا يُنقل شيء تلقائيًا: ما زال على الإدارة دراسة الطلب.',
+			'adulte.reprise.phrases.validee' => 'اعتمدت الإدارة الطلب. أصبحت الآن صاحب حساب الأسرة.',
+			'adulte.reprise.phrases.refusee' => 'رفضت الإدارة الطلب. لا تُنقل أي صلاحية من صلاحيات الأسرة.',
+			'adulte.reprise.titulaire.notification' => 'قُدِّم طلب لاستلام أسرتك بدعوى وفاتك.',
+			'adulte.reprise.titulaire.consigne' => 'إن كان هذا الطلب خاطئًا، فارفضه.',
+			'adulte.reprise.titulaire.refuser' => 'رفض الطلب',
+			'adulte.reprise.titulaire.ligne' => 'قُدِّم طلب لاستلام أسرتك.',
+			'adulte.reprise.titulaire.refusEchecTitre' => 'لم يُؤكَّد الرفض.',
+			'adulte.reprise.titulaire.horsLigne' => 'أنت غير متصل. لم يُرسل شيء. يمكنك رفض الطلب بنفسك عند عودة الاتصال.',
+			'adulte.reprise.titulaire.refusee' => 'رفضت هذا الطلب. الإدارة على علم. لا تُنقل أي صلاحية من صلاحيات أسرتك.',
+			'adulte.reprise.notifications.refuseeParTitulaire' => 'رفض صاحب حساب الأسرة طلبك لاستلام الأسرة.',
+			'adulte.reprise.notifications.attenteAdministration' => 'طلبك لاستلام الأسرة بانتظار الإدارة.',
+			'adulte.reprise.notifications.validee' => 'اعتُمد طلبك لاستلام الأسرة.',
+			'adulte.reprise.notifications.refusee' => 'رُفض طلبك لاستلام الأسرة.',
+			'adulte.demo.titre' => 'عرض تجريبي للطالب البالغ',
+			'adulte.demo.mention' => 'البيانات وهمية ولا يُرسل شيء.',
+			'adulte.demo.intro' => 'اختر شاشة، ثم حالة من حالات أسرة ديالو.',
+			'adulte.demo.ecrans' => 'الشاشات',
+			'adulte.demo.situations' => 'حالات الأسرة',
+			'adulte.demo.variantes' => 'المتغيرات',
+			'adulte.demo.titulaireFemme' => 'صاحبة الحساب امرأة، وزوجها هو البالغ الثاني.',
+			'adulte.demo.vueConjointe' => '«مساحتي» كما تراها الزوجة، البالغة الثانية في الأسرة.',
+			'adulte.demo.vueConjoint' => '«مساحتي» كما يراها الزوج، البالغ الثاني في الأسرة.',
+			'adulte.demo.invitationRecueConjointe' => 'الدعوة كما تستلمها الزوجة، في حسابها الخاص.',
+			'adulte.demo.invitationRecueConjoint' => 'الدعوة كما يستلمها الزوج، في حسابه الخاص.',
+			'adulte.demo.invitationSansCompte' => 'الدعوة مفتوحة دون حساب.',
+			'adulte.demo.reseauCoupe' => 'الشبكة مقطوعة: الرئيسية و«فصلي» دون اتصال.',
+			'adulte.demo.donnees.soldeTitulaire' => 'رصيد تجريبي 1',
+			'adulte.demo.donnees.soldeSecondAdulte' => 'رصيد تجريبي 2',
+			'adulte.demo.donnees.soldeAicha' => 'رصيد تجريبي 3',
+			'adulte.demo.donnees.soldeOumar' => 'رصيد تجريبي 4',
+			'adulte.demo.donnees.totalAvecSecondAdulte' => 'مجموع تجريبي A',
+			'adulte.demo.donnees.totalSansSecondAdulte' => 'مجموع تجريبي B',
+			'adulte.demo.donnees.prixOffreA' => '5,00 € (عرض تجريبي)',
+			'adulte.demo.donnees.prixOffreB' => '10,00 € (عرض تجريبي)',
+			'adulte.demo.donnees.detailOffreA' => 'رصيد تجريبي A',
+			'adulte.demo.donnees.detailOffreB' => 'رصيد تجريبي B',
+			'adulte.demo.donnees.totalRecharge5' => '5,00 € (عرض تجريبي)',
+			'adulte.demo.donnees.totalRecharge10' => '10,00 € (عرض تجريبي)',
+			'adulte.demo.donnees.totalRecharge15' => '15,00 € (عرض تجريبي)',
+			'adulte.demo.donnees.totalRecharge20' => '20,00 € (عرض تجريبي)',
+			'adulte.demo.donnees.totalRecharge25' => '25,00 € (عرض تجريبي)',
+			'adulte.demo.donnees.totalRecharge30' => '30,00 € (عرض تجريبي)',
+			'adulte.demo.donnees.totalRecharge35' => '35,00 € (عرض تجريبي)',
+			'adulte.demo.donnees.totalRecharge40' => '40,00 € (عرض تجريبي)',
+			'adulte.demo.etats.adulteSeul' => 'البالغ وحده، دون أسرة.',
+			'adulte.demo.etats.titulaireSansConjoint' => 'ليس في الأسرة بالغ ثانٍ.',
+			'adulte.demo.etats.invitationEnAttente' => 'دعوة البالغ الثاني بانتظار الرد.',
+			'adulte.demo.etats.invitationExpiree' => 'انتهت صلاحية دعوة البالغ الثاني.',
+			'adulte.demo.etats.invitationAnnulee' => 'أُلغيت دعوة البالغ الثاني.',
+			'adulte.demo.etats.conjointActif' => 'البالغ الثاني جزء من الأسرة.',
+			'adulte.demo.etats.conjointQuitte' => 'غادر البالغ الثاني الأسرة.',
+			'adulte.demo.etats.conjointRetire' => 'أُزيل البالغ الثاني من الأسرة.',
+			'adulte.demo.etats.delai60' => 'مهلة أولى جارية.',
+			'adulte.demo.etats.nouvelleDemande' => 'دعوة جديدة ممكنة بعد المهلة الأولى.',
+			'adulte.demo.etats.validationEnAttente' => 'الاعتماد الإداري بانتظار القرار.',
+			'adulte.demo.etats.validationRefusee' => 'رُفض الاعتماد الإداري.',
+			'adulte.demo.etats.secondDepart' => 'غادر البالغ الثاني للمرة الثانية.',
+			'adulte.demo.etats.delai120' => 'مهلة تالية، أطول، جارية.',
+			'adulte.demo.etats.departsSuivants' => 'بعد المغادرة الثالثة، تنطبق المهلة التالية دائمًا.',
+			'adulte.demo.etats.repriseDemandee' => 'قُدِّم طلب لاستلام الأسرة.',
+			'adulte.demo.etats.repriseRefuseeParTitulaire' => 'رفض صاحب الحساب طلب الاستلام.',
+			'adulte.demo.etats.repriseSansReponse' => 'دون رد في المهلة، ينتظر الطلب الإدارة.',
+			'adulte.demo.etats.repriseValidee' => 'اعتُمد استلام الأسرة.',
+			'adulte.demo.etats.repriseRefusee' => 'رُفض استلام الأسرة.',
+			'adulte.demo.etats.dejaDansUnAutreFoyer' => 'البالغ المدعو جزء من أسرة أخرى بالفعل.',
+			'adulte.demo.etats.erreurReseau' => 'انقطعت الشبكة أثناء إجراء.',
+			'adulte.demo.etats.doubleSoumission' => 'أُرسل الإجراء نفسه مرتين.',
+			'adulte.demo.etats.notificationDansLApplication' => 'تعذّر إرسال الإشعار إلى الهاتف، ويبقى ظاهرًا في التطبيق.',
+			'adulte.demo.etats.emancipation' => 'استقلال طالب بلغ سن الرشد: غير مبني في هذه المرحلة.',
+			'dossiers.titre' => 'ملفات للاعتماد',
+			'dossiers.sousTitre' => 'ادرس الملفات الجاهزة لاتخاذ قرار.',
+			'dossiers.aucun' => 'لا ملف ينتظر الاعتماد.',
+			'dossiers.aucunDetail' => 'ستظهر الملفات الجديدة هنا حين تصبح جاهزة.',
+			'dossiers.file.chargement' => 'جارٍ تحميل الملفات…',
+			'dossiers.file.erreur' => 'تعذّر تحميل الملفات.',
+			'dossiers.file.horsLigne' => 'أنت غير متصل. لا يمكن تحديث الملفات.',
+			'dossiers.file.accesRefuse' => 'ليس لديك إذن بالوصول إلى الملفات المطلوب اعتمادها.',
+			'dossiers.file.actualisation' => 'جارٍ تحديث الملفات…',
+			'dossiers.file.chargementProlonge' => 'التحميل يستغرق وقتًا أطول من المتوقع.',
+			'dossiers.file.suivantsErreur' => 'تعذّر تحميل الملفات التالية.',
+			'dossiers.file.indisponible' => 'الاطلاع على الملفات غير متاح الآن.',
+			'dossiers.file.selectionRetiree' => 'هذا الملف لم يعد متاحًا في القائمة.',
+			'dossiers.file.actualiser' => 'تحديث الملفات',
+			'dossiers.file.aucuneSelection' => 'اختر ملفًا لدراسته.',
+			'dossiers.file.suivants' => 'تحميل الملفات التالية',
+			'dossiers.file.ouvrirDe' => ({required Object nom}) => 'فتح ملف ⁨${nom}⁩',
+			'dossiers.file.ouvrirElide' => ({required Object nom}) => 'فتح ملف ⁨${nom}⁩',
+			'dossiers.file.enVerification' => 'قيد التحقق',
+			'dossiers.file.sansNom' => 'ملف دون اسم متاح',
+			'dossiers.file.legende' => ({required Object type, required Object date}) => '⁨${type}⁩ · ⁨${date}⁩',
+			'dossiers.file.dateHeure' => ({required Object date, required Object heure, required Object zone}) => '⁨${date}⁩ الساعة ⁨${heure}⁩ (⁨${zone}⁩)',
+			'dossiers.file.dateChiffres' => ({required Object jour, required Object mois, required Object annee}) => '⁨${jour}⁩/⁨${mois}⁩/⁨${annee}⁩',
+			'dossiers.file.heureChiffres' => ({required Object heures, required Object minutes}) => '⁨${heures}⁩:⁨${minutes}⁩',
+			'dossiers.file.zoneUtc' => 'UTC',
+			'dossiers.file.suivantAnnonce' => ({required Object nom}) => 'الملف التالي: ⁨${nom}⁩',
+			'dossiers.detail.titreDe' => ({required Object nom}) => 'ملف ⁨${nom}⁩',
+			'dossiers.detail.titreElide' => ({required Object nom}) => 'ملف ⁨${nom}⁩',
+			'dossiers.visionneuse.chargement' => 'جارٍ تحميل الوثيقة…',
+			'dossiers.visionneuse.erreur' => 'لا يمكن عرض الوثيقة.',
+			'dossiers.visionneuse.expire' => 'انتهى الوصول إلى هذه الوثيقة.',
+			'dossiers.visionneuse.recharger' => 'إعادة تحميل الوثيقة',
+			'dossiers.visionneuse.formatNonPrisEnCharge' => 'لا يمكن عرض تنسيق هذه الوثيقة.',
+			'dossiers.visionneuse.accesRetire' => 'لم يعد لديك وصول إلى هذه الوثيقة.',
+			'dossiers.visionneuse.horsLigne' => 'أنت غير متصل. لا يمكن تحميل الوثيقة.',
+			'dossiers.visionneuse.aucune' => 'لا وثيقة متاحة.',
+			'dossiers.visionneuse.fermerPiece' => 'إغلاق الوثيقة',
+			'dossiers.visionneuse.agrandir' => 'تكبير',
+			'dossiers.visionneuse.reduire' => 'تصغير',
+			'dossiers.visionneuse.ajuster' => 'ملاءمة الشاشة',
+			'dossiers.visionneuse.infoBulle' => ({required Object action, required Object touche}) => '⁨${action}⁩ (المفتاح ⁨${touche}⁩)',
+			'dossiers.visionneuse.documentFictif' => 'وثيقة وهمية',
+			'dossiers.revue.identite' => 'الهوية والملف',
+			'dossiers.revue.pieceNonTransmise' => 'لم تُرسل الوثيقة المطلوبة.',
+			'dossiers.revue.piece' => 'وثيقة الهوية',
+			'dossiers.revue.voirPiece' => 'عرض الوثيقة',
+			'dossiers.revue.accords' => 'الموافقات والعناصر المقدَّمة',
+			'dossiers.revue.nom' => 'اللقب',
+			'dossiers.revue.prenom' => 'الاسم',
+			'dossiers.revue.typeDossier' => 'نوع الملف',
+			'dossiers.revue.dateDepot' => 'تاريخ الإيداع',
+			'dossiers.revue.etatDossier' => 'حالة الملف',
+			'dossiers.revue.dateIndisponible' => 'تاريخ الإيداع غير متاح',
+			'dossiers.revue.pasPret' => 'هذا الملف ليس جاهزًا للاعتماد بعد.',
+			'dossiers.revue.erreurChargement' => 'تعذّر تحميل هذا الملف.',
+			'dossiers.revue.pieceIndisponible' => 'الاطلاع على الوثيقة غير متاح الآن.',
+			'dossiers.revue.etats.chargement' => 'جارٍ تحميل الملف…',
+			'dossiers.revue.etats.horsLigne' => 'أنت غير متصل. لا يمكن إرسال أي قرار.',
+			'dossiers.revue.etats.accesPerdu' => 'لم يعد لديك وصول إلى هذا الملف.',
+			'dossiers.revue.etats.retourDossiers' => 'العودة إلى الملفات',
+			'dossiers.revue.etats.verificationsIncompletes' => 'أكمل عمليات التحقق المطلوبة.',
+			'dossiers.revue.etats.accordManquant' => 'تنقص هذا الملف موافقة مطلوبة.',
+			'dossiers.revue.etats.decisionIndisponible' => 'القرار غير متاح الآن.',
+			'dossiers.revue.etats.modifie' => 'تغيّر هذا الملف منذ فتحه.',
+			'dossiers.revue.etats.actualiserDossier' => 'تحديث الملف',
+			'dossiers.revue.etats.refusNonAutorise' => 'لا يمكن رفض هذا الملف في حالته الحالية.',
+			'dossiers.restantUn' => 'ملف واحد قيد الانتظار',
+			'dossiers.restants' => ({required Object n}) => '⁨${n}⁩ ملفات قيد الانتظار',
+			'dossiers.deposeLe' => ({required Object date}) => 'أُودع في ⁨${date}⁩',
+			'dossiers.inscritAujourdhui' => 'مسجَّل اليوم',
+			'dossiers.inscritDepuisUnJour' => 'مسجَّل منذ يوم',
+			'dossiers.inscritDepuis' => ({required Object jours}) => 'مسجَّل منذ ⁨${jours}⁩ أيام',
+			'dossiers.sansPiece' => 'لا وثيقة مودَعة',
+			'dossiers.sansPieceDetail' => 'أنشأ هذا الشخص حسابه وقبل العقود، لكنه لم يرسل وثيقة هويته بعد. لا شيء للتحقق إذن: الخطوة عنده.',
+			'dossiers.pieceNonVisible' => 'وثيقة خارج صلاحيتك',
+			'dossiers.pieceNonVisibleDetail' => 'أُودعت وثيقة بالفعل، لكن قاعدة الجنس تمنعك من الاطلاع عليها. يجب أن يتحقق منها موظف من جنس هذا الشخص.',
+			'dossiers.rienATrancher' => 'لا شيء للحسم الآن',
+			'dossiers.apercu' => 'الوثيقة المودَعة',
+			'dossiers.apercuIndisponible' => 'المعاينة غير متاحة',
+			'dossiers.verifications' => 'عمليات التحقق',
+			'dossiers.pointLisible' => 'الوثيقة مقروءة',
+			'dossiers.pointNom' => 'الاسم يطابق اسم الحساب',
+			'dossiers.pointValidite' => 'الوثيقة غير منتهية الصلاحية',
+			_ => null,
+		} ?? switch (path) {
+			'dossiers.verdict' => 'القرار',
+			'dossiers.approuver' => 'اعتماد الملف',
+			'dossiers.refuser' => 'رفض الملف',
+			'dossiers.profilACompleter.titre' => 'الملف الشخصي للإكمال',
+			'dossiers.profilACompleter.texte' => 'يجب إكمال ملفك الشخصي قبل الاطلاع على الملفات التي تسمح بها هذه القاعدة.',
+			'dossiers.refus.titre' => 'رفض الملف',
+			'dossiers.refus.nomType' => ({required Object nom, required Object type}) => '⁨${nom}⁩ · ⁨${type}⁩',
+			'dossiers.refus.corps' => 'حدّد السبب الذي سيُعرض على الشخص المعني.',
+			'dossiers.refus.champ' => 'سبب الرفض',
+			'dossiers.refus.aide' => 'اشرح ما يجب تصحيحه، دون بيانات داخلية ولا تعليق شخصي.',
+			'dossiers.refus.erreurVide' => 'حدّد سبب الرفض.',
+			'dossiers.refus.tropLong' => 'السبب يتجاوز الطول المسموح.',
+			'dossiers.refus.envoi' => 'جارٍ الرفض…',
+			'dossiers.refus.erreur' => 'تعذّر رفض الملف.',
+			'dossiers.refus.horsLigne' => 'أنت غير متصل. لم يُرسل الرفض.',
+			'dossiers.refus.inconnu' => 'نتيجة الرفض غير مؤكَّدة بعد.',
+			'dossiers.refus.interdit' => 'لم يعد بإمكانك رفض هذا الملف.',
+			'dossiers.refus.indisponible' => 'الرفض غير متاح الآن.',
+			'dossiers.refus.succes' => 'رُفض الملف.',
+			'dossiers.refus.abandonQuestion' => 'التخلي عن السبب المكتوب؟',
+			'dossiers.refus.continuerSaisie' => 'متابعة الكتابة',
+			'dossiers.refus.abandonner' => 'تخلٍّ',
+			'dossiers.validation.titre' => 'اعتماد هذا الملف؟',
+			'dossiers.validation.corpsActivation' => ({required Object nom}) => 'سيُعتمد ملف ⁨${nom}⁩. سيتمكن حسابه من الوصول إلى مساحته.',
+			'dossiers.validation.corpsDocumentaire' => ({required Object nom}) => 'سيُعتمد ملف ⁨${nom}⁩. تبقى شروط الوصول الأخرى سارية.',
+			'dossiers.validation.indisponible' => 'الاعتماد غير متاح الآن.',
+			'dossiers.validation.envoi' => 'جارٍ الاعتماد…',
+			'dossiers.validation.erreur' => 'تعذّر اعتماد الملف.',
+			'dossiers.validation.horsLigne' => 'أنت غير متصل. لم يُرسل الاعتماد.',
+			'dossiers.validation.inconnu' => 'نتيجة الاعتماد غير مؤكَّدة بعد.',
+			'dossiers.validation.plusPret' => 'هذا الملف لم يعد جاهزًا للاعتماد.',
+			'dossiers.validation.interdit' => 'لم يعد بإمكانك اعتماد هذا الملف.',
+			'dossiers.validation.succes' => 'اعتُمد الملف.',
+			'dossiers.decision.verifierResultat' => 'التحقق من النتيجة',
+			'dossiers.decision.dejaTraite' => 'عولج هذا الملف من قبل.',
+			'dossiers.decision.conflit' => 'عالج هذا الملف عضو آخر في الفريق.',
+			'dossiers.decision.nomComplet' => ({required Object prenom, required Object nom}) => '⁨${prenom}⁩ ⁨${nom}⁩',
+			'kyc.titre' => 'وثيقة هويتك',
+			'kyc.intro' => 'تكفي صورة مقروءة. تُحفظ مدة التحقق، ثم تُحذف.',
+			'kyc.confidentialite' => 'تُودَع وثيقة هويتك كما هي: ليست عامة أبدًا، ولا يطلع عليها إلا الإدارة، وتشترطها قوانين حماية الطفولة.',
+			'kyc.typeQuestion' => 'أي وثيقة تودع؟',
+			'kyc.carteIdentite' => 'بطاقة هوية',
+			'kyc.passeport' => 'جواز سفر',
+			'kyc.titreSejour' => 'بطاقة إقامة',
+			'kyc.choisirFichier' => 'اختيار الصورة',
+			'kyc.fichierChoisi' => 'الصورة جاهزة للإرسال',
+			'kyc.envoyer' => 'إرسال وثيقتي',
+			'kyc.envoiEnCours' => 'جارٍ الإرسال',
+			'kyc.deposee' => 'استُلمت الوثيقة',
+			'kyc.erreur' => 'لم يكتمل الإرسال. أعد المحاولة بعد لحظة.',
+			'kyc.tropVolumineux' => ({required Object taille}) => 'هذه الصورة تتجاوز ⁨${taille}⁩ م.ب. التقطها بجودة أقل.',
+			'contrat.titre' => 'ما توقّع عليه',
+			'contrat.intro' => 'نقطتان أهم من غيرهما. هما مكتوبتان هنا بوضوح بدل أن تكونا وسط نص طويل.',
+			'contrat.pointEnregistrement' => 'يُسجَّل كل درس صوتيًا، ويُحفظ ثلاثين يومًا، ثم يُحذف. كل استماع يُدوَّن في السجل، مع اسم المستمع.',
+			'contrat.pointControle' => 'يمكن لمراقب جودة أن يحضر درسًا دون أن يُرى. تذكّر القاعة بذلك باستمرار، سواء جرت الزيارة أم لا.',
+			'contrat.pointCoordonnees' => 'لا ترى أبدًا بيانات اتصال أسرة: لا الاسم الكامل، ولا البريد الإلكتروني، ولا الهاتف.',
+			'contrat.lireTexte' => 'قراءة النص كاملًا',
+			'contrat.accepter' => 'قرأت وأوافق',
+			'contrat.accepteLe' => ({required Object date}) => 'مقبول في ⁨${date}⁩',
+			'contrat.erreur' => 'لم يكتمل التوقيع. أعد المحاولة بعد لحظة.',
+			'contrat.horsLigne' => 'أنت غير متصل. ستُحفظ موافقتك بمجرد عودة الشبكة، بالضغط من جديد.',
+			'contrat.caseRequise' => 'حدّد المربع للمتابعة.',
+			'bienvenue.titre' => 'مرحبًا',
+			'bienvenue.accroche' => 'تعلّم القرآن في فصل، مع معلم ثابت',
+			'bienvenue.phrase' => 'حصص عبر الفيديو، في موعد ثابت، لك أو لطلاب أسرتك.',
+			'bienvenue.pointsTitre' => 'كيف تجري الأمور',
+			'bienvenue.pointClasseTitre' => 'فصل ثابت',
+			'bienvenue.pointClasse' => 'الزملاء أنفسهم والموعد نفسه، كل أسبوع.',
+			'bienvenue.pointEnseignantTitre' => 'معلم ثابت',
+			'bienvenue.pointEnseignant' => 'سيد أو سيدة يتابع كل طالب من حصة إلى أخرى.',
+			'bienvenue.pointFoyerTitre' => 'حساب واحد للأسرة',
+			'bienvenue.pointFoyer' => 'تُتابَع حصص كل طالب في الأسرة من حسابك.',
+			'bienvenue.commencer' => 'ابدأ',
+			'bienvenue.dejaCompte' => 'لدي حساب بالفعل',
+			'creneaux.titre' => 'المواعيد',
+			'creneaux.ongletHeures' => 'ساعاتي',
+			'creneaux.ongletEleves' => 'طلاب في الانتظار',
+			'creneaux.mesEleves' => ({required Object nombre, required Object plafond}) => 'تتابع ⁨${nombre}⁩ طلاب من ⁨${plafond}⁩ ممكنين.',
+			'creneaux.aucunEleve' => 'لا طالب في الانتظار في ساعاتك',
+			'creneaux.aucunEleveDetail' => 'اقترح ساعات أخرى لترى أسرًا أكثر.',
+			'creneaux.attendDepuis' => ({required Object jours}) => 'ينتظر منذ ⁨${jours}⁩ أيام',
+			'creneaux.attendUnJour' => 'ينتظر منذ يوم',
+			'creneaux.attendAujourdhui' => 'قُدِّم الطلب اليوم',
+			'creneaux.niveau' => ({required Object niveau}) => 'المستوى ⁨${niveau}⁩',
+			'creneaux.prendre' => ({required Object jour, required Object heure}) => 'قبول ⁨${jour}⁩ الساعة ⁨${heure}⁩',
+			'creneaux.priseEnCours' => 'جارٍ الحفظ',
+			'creneaux.plafondAtteint' => ({required Object nombre}) => 'تتابع بالفعل ⁨${nombre}⁩ طلاب، وهو حدك الأقصى. قبول طالب التزام دائم، لا حجز.',
+			'creneaux.plafondDemander' => 'طلب متابعة طلاب أكثر',
+			'creneaux.demandeTitre' => 'كم طالبًا يمكنك أن تتابع؟',
+			'creneaux.demandeMotif' => 'لماذا هذا التغيير؟',
+			'creneaux.demandeMotifRequis' => 'السبب ضروري: هو الذي يسمح بالحسم.',
+			'creneaux.demandeEnvoyer' => 'إرسال الطلب',
+			'creneaux.demandeEnvoyee' => 'أُرسل الطلب. ستحسم فيه الإدارة.',
+			'creneaux.eleves' => ({required Object nombre}) => '⁨${nombre}⁩ طلاب',
+			'creneaux.erreur' => ({required Object message}) => 'لم تكتمل العملية: ⁨${message}⁩',
+			'disponibilites.titre' => 'متى يستطيع أطفالك متابعة درس؟',
+			'disponibilites.titreEnseignant' => 'متى تستطيع التدريس؟',
+			'disponibilites.consigne' => ({required Object prenom}) => 'المس الساعات الممكنة لـ⁨${prenom}⁩.',
+			'disponibilites.consigneEnseignant' => 'المس الساعات التي تكون فيها متاحًا.',
+			'disponibilites.effet' => 'سيختار معلم من بين هذه الساعات. كلما اقترحت أكثر، بدأ الدرس أسرع.',
+			'disponibilites.effetEnseignant' => 'لن ترى إلا الطلاب الذين تتقاطع ساعاتهم مع ساعاتك.',
+			'disponibilites.fuseau' => ({required Object fuseau}) => 'الساعات معروضة بتوقيت ⁨${fuseau}⁩',
+			'disponibilites.aucune' => ({required Object prenom}) => 'لا ساعة مقترحة لـ⁨${prenom}⁩',
+			'disponibilites.aucuneDetail' => ({required Object prenom}) => 'دون موعد، لا يستطيع أي معلم تولي ⁨${prenom}⁩.',
+			'disponibilites.posees' => ({required Object nombre}) => '⁨${nombre}⁩ ساعات مقترحة',
+			'disponibilites.poseeUne' => 'ساعة واحدة مقترحة',
+			'disponibilites.cellulePosee' => ({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩، مقترحة. المس للإزالة',
+			'disponibilites.celluleLibre' => ({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩، شاغرة. المس للاقتراح',
+			'disponibilites.erreur' => 'تعذّر حفظ هذا الموعد. أعد المحاولة.',
+			'disponibilites.joursCourts.0' => 'اثن',
+			'disponibilites.joursCourts.1' => 'ثلا',
+			'disponibilites.joursCourts.2' => 'أرب',
+			'disponibilites.joursCourts.3' => 'خمي',
+			'disponibilites.joursCourts.4' => 'جمع',
+			'disponibilites.joursCourts.5' => 'سبت',
+			'disponibilites.joursCourts.6' => 'أحد',
+			'disponibilites.joursLongs.0' => 'الاثنين',
+			'disponibilites.joursLongs.1' => 'الثلاثاء',
+			'disponibilites.joursLongs.2' => 'الأربعاء',
+			'disponibilites.joursLongs.3' => 'الخميس',
+			'disponibilites.joursLongs.4' => 'الجمعة',
+			'disponibilites.joursLongs.5' => 'السبت',
+			'disponibilites.joursLongs.6' => 'الأحد',
 			_ => null,
 		};
 	}

@@ -2,11 +2,12 @@
 //
 // AR-SALLE-1 (`salle.*`), AR-TC-1 (`tc.*`), AR-ENS-1 (`enseignant.*`),
 // AR-TRANSVERSE-1 (nav, commun, accessibilite...), AR-ELEVE-1 (classe,
-// ficheEleve, parcours...) et AR-FAMILLE-1 (compte, tuteur, foyer...) :
-// chaque cle du francais a sa traduction arabe, avec exactement les memes
-// parametres ; chaque parametre ajoute par ces tranches est isole (U+2068 ...
-// U+2069), pour qu'un nom latin ne renverse pas la phrase. Une tranche
-// suivante ajoute son domaine a [_domaines].
+// ficheEleve, parcours...), AR-FAMILLE-1 (compte, tuteur, foyer...) et
+// AR-ADULTE-1 (adulte, dossiers...) : chaque cle du francais a sa traduction
+// arabe, avec exactement les memes parametres ; chaque parametre ajoute par
+// ces tranches est isole (U+2068 ... U+2069), pour qu'un nom latin ne
+// renverse pas la phrase. Une tranche suivante ajoute son domaine a
+// [_domaines].
 
 import 'dart:convert';
 import 'dart:io';
@@ -54,6 +55,14 @@ const Map<String, int> _domaines = <String, int>{
   'inscription': 30,
   'consentement': 30,
   'foyer': 50,
+  // AR-ADULTE-1.
+  'adulte': 300,
+  'dossiers': 110,
+  'kyc': 12,
+  'contrat': 10,
+  'bienvenue': 10,
+  'creneaux': 20,
+  'disponibilites': 25,
 };
 
 Map<String, String> _aplatir(
@@ -117,6 +126,7 @@ const Set<String> _latins = <String>{
   'eleve.coran.sourceLien',
   'connexion.courrielIndice',
   'compte.tuteur.securite.methodeGoogle',
+  'dossiers.file.zoneUtc',
 };
 
 final RegExp _parametre = RegExp(r'\{\w+\}');
