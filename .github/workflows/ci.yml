@@ -186,6 +186,12 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_adm04.sql
 
+      # Revue B-18 (VALID-I7 / Q3) : droits ACL et refus des RPC protégées
+      # sous anon, authenticated sans claims et agent_ro. Vérifié sur base jetable.
+      - name: Scenarios négatifs B-18 (SECURITY DEFINER)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b18_security_definer.sql
+
   edge-r2:
     name: Fonctions Edge -- stockage R2 (Deno)
     if: github.event_name != 'pull_request' || github.base_ref == 'main' || github.base_ref == 'ccr-1b1bfa0b-m1kvkk'
