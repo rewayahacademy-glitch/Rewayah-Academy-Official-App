@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../accessibilite/texte_sans_coupure.dart';
+import '../i18n/isolat_bidi.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_metriques.dart';
@@ -80,6 +81,17 @@ class EmptyState extends StatelessWidget {
     final AppMetriques metriques = AppMetriques.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final AppColorPair fond = palette.surfaceCanvas;
+    // RTL-ISOL-1 : un constat ou une invitation ecrits dans l'autre sens que
+    // l'interface (phrase francaise encore sans traduction arabe) se posent
+    // dans leur propre sens : la ponctuation reste a sa place, jamais
+    // « .l'enseignant ». Le texte lui-meme n'est pas modifie (aucun
+    // caractere d'isolat) : le centrage ne change pas, les lecteurs d'ecran
+    // et les recherches par texte lisent la phrase telle quelle.
+    final TextDirection sens = Directionality.of(context);
+    Widget dansSonSens(String texte, Widget enfant) => Directionality(
+      textDirection: sensDuTexte(texte) ?? sens,
+      child: enfant,
+    );
     // Un vide subi ne propose rien, meme si l'appelant a passe un bouton :
     // c'est le registre qui tranche, pas l'oubli de l'appelant.
     final bool avecAction =
@@ -121,18 +133,24 @@ class EmptyState extends StatelessWidget {
             // constat et l'invitation passent a la ligne entre les mots ; le
             // mot le plus long se reduit juste assez pour tenir. A l'echelle
             // 1, rien ne change.
-            TexteSansCoupure(
+            dansSonSens(
               message,
-              textAlign: TextAlign.center,
-              style: fond.applyTo(textes.titleLarge ?? const TextStyle()),
+              TexteSansCoupure(
+                message,
+                textAlign: TextAlign.center,
+                style: fond.applyTo(textes.titleLarge ?? const TextStyle()),
+              ),
             ),
             if (invitation != null) ...<Widget>[
               Ecart.vSm,
-              TexteSansCoupure(
+              dansSonSens(
                 invitation!,
-                textAlign: TextAlign.center,
-                style: palette.inkMuted.applyTo(
-                  textes.bodyMedium ?? const TextStyle(),
+                TexteSansCoupure(
+                  invitation!,
+                  textAlign: TextAlign.center,
+                  style: palette.inkMuted.applyTo(
+                    textes.bodyMedium ?? const TextStyle(),
+                  ),
                 ),
               ),
             ],

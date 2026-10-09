@@ -758,6 +758,7 @@ class _Membres extends StatelessWidget {
                   projections[membre.studentId],
                   onOuvrirEleve,
                   noeud?.call(membre.studentId),
+                  Directionality.of(context),
                 ),
             ],
           ),
@@ -784,15 +785,28 @@ LigneRubrique _ligneMembre(
   ProjectionEleve? projection,
   void Function(String studentId)? onOuvrirEleve,
   FocusNode? focusNode,
+  TextDirection sens,
 ) {
   final String? niveau = membre.niveau?.trim();
   final String? page = projection?.pageReprise?.trim();
   // Une seule ligne secondaire (K-42 style §4) : le dernier point reste dans
   // la fiche eleve (ENS-11), qu'une pression sur la ligne ouvre.
+  // RTL-ISOL-1 : chaque segment ecrit dans l'autre sens que l'interface
+  // (« Niveau 1 » en arabe), et la page dans l'autre sens que sa phrase
+  // (« الاستئناف: Page 24 »), est isole : le separateur suit le sens de
+  // l'interface et rien ne se melange. Ordre des segments : celui de
+  // l'interface, niveau d'abord (option la plus prudente, decide par
+  // delegation le 09/10, regle DIR-REP-1).
   final String legende = <String>[
-    if (niveau != null && niveau.isNotEmpty) niveau,
+    if (niveau != null && niveau.isNotEmpty) isolerSiAutreSens(niveau, sens),
     if (page != null && page.isNotEmpty)
-      t.enseignant.ficheGroupe.repriseEleve(page: page),
+      isolerSiAutreSens(
+        phraseAvecValeur(
+          (String p) => t.enseignant.ficheGroupe.repriseEleve(page: p),
+          page,
+        ),
+        sens,
+      ),
   ].join(' · ');
 
   return LigneRubrique(

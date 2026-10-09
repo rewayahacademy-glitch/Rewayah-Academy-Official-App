@@ -26,6 +26,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
@@ -220,8 +221,11 @@ class _Sections extends StatelessWidget {
           SectionHeader(titre: titre),
           Ecart.vMd,
           AppCard(
+            // RTL-ISOL-1 : une ligne rendue dans l'autre sens que l'interface
+            // (« ... règles de tajwid. », « Chapitre 1 · Page 24 » en arabe)
+            // est isolee : son point et son separateur restent a leur place.
             child: Text(
-              texte,
+              isolerSiAutreSens(texte, Directionality.of(context)),
               key: ValueKey<String>(cle),
               style: Theme.of(context).textTheme.bodyLarge,
             ),
