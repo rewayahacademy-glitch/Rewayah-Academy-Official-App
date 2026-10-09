@@ -129,9 +129,12 @@ void main() {
           expect(_feuille, findsOneWidget);
           expect(_calqueVisible(tester), isTrue);
           // Meme repere : la feuille occupe exactement le rectangle de la page.
+          // Position comprise (revue du 09/10) : les quatre bords.
           final Rect feuille = tester.getRect(_feuille);
-          expect(feuille.width, moreOrLessEquals(page.width, epsilon: 0.5));
-          expect(feuille.height, moreOrLessEquals(page.height, epsilon: 0.5));
+          expect(feuille.left, moreOrLessEquals(page.left, epsilon: 0.5));
+          expect(feuille.top, moreOrLessEquals(page.top, epsilon: 0.5));
+          expect(feuille.right, moreOrLessEquals(page.right, epsilon: 0.5));
+          expect(feuille.bottom, moreOrLessEquals(page.bottom, epsilon: 0.5));
         });
       }
     }
@@ -204,6 +207,8 @@ void main() {
         taille: _telephone,
       );
       final Rect consigne = tester.getRect(_consigne);
+      // Le test mesure quelque chose : la vignette est bien posee.
+      expect(find.byType(VignetteVideo), findsWidgets);
       for (final Element e in find.byType(VignetteVideo).evaluate()) {
         final Rect r = tester.getRect(find.byWidget(e.widget));
         expect(r.overlaps(consigne), isFalse);

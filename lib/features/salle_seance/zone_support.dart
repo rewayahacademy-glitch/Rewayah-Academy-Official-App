@@ -228,6 +228,25 @@ class ZoneSupport extends StatelessWidget {
   }
 }
 
+/// TB-6 (revue du 09/10) : la hauteur sous laquelle la carte de la surface
+/// rognerait la phrase du §12 a la largeur [largeur] de la carte (serti
+/// [serre] de la salle enseignant), ou 0 sans phrase. La salle du telephone
+/// la reserve a la surface avant de borner sa tete.
+double hauteurMinimaleSurface(
+  BuildContext context,
+  VueSeance vue, {
+  required double largeur,
+  bool serre = true,
+}) {
+  if (surfaceAMontrer(vue) != VueSurface.tableauLibre ||
+      !vue.voitConsigneTableauLibre) {
+    return 0;
+  }
+  final double serti = serre ? AppSpacing.sm : AppSpacing.md;
+  return SurfacePageFixe.hauteurConsigne(context, largeur - 2 * serti) +
+      2 * serti;
+}
+
 /// TB-6 : ce que la surface a page fixe montre, ou `null` (diapositive,
 /// rendu fourni, rien de partage sans tableau connu).
 VueSurface? surfaceAMontrer(VueSeance vue) {
@@ -249,7 +268,7 @@ extension on ZoneSupport {
     // vignette de l'enseignant.
     final bool consigneSerree =
         surface == VueSurface.tableauLibre &&
-        vue.role == RoleSeance.enseignant &&
+        vue.voitConsigneTableauLibre &&
         gabarit != Gabarit.desktop &&
         MediaQuery.textScalerOf(context).scale(1) >= _seuilPile;
     final bool video = vue.voitVignetteSurSupport && !consigneSerree;

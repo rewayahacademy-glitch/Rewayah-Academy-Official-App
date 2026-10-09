@@ -182,22 +182,59 @@ String cheminSortie(String nom) {
 /// asynchrones : hors de `runAsync`, le `FakeAsync` de `testWidgets` les
 /// laisse pendre.
 Future<String> capturer(WidgetTester tester, String nom) async {
-  final RenderRepaintBoundary boite = tester.renderObject(
-    find.byKey(cadreCapture),
-  );
   final double densite = tester.view.devicePixelRatio;
   final String chemin = cheminSortie(nom);
-  await tester.runAsync(() async {
-    final ui.Image image = await boite.toImage(pixelRatio: densite);
-    final ByteData? png = await image.toByteData(
-      format: ui.ImageByteFormat.png,
+  // `flutter_test` peint les ombres sans flou (`debugDisableShadows`) : une
+  // ombre de niveau 3 devient une bande grise nette sous la surface (revue du
+  // 09/10, volet des Commandes). La capture peint les vraies ombres, puis
+  // rend le reglage du test.
+  await _avecOmbres(tester, () async {
+    final RenderRepaintBoundary boite = tester.renderObject(
+      find.byKey(cadreCapture),
     );
-    image.dispose();
-    final File fichier = File(chemin);
-    await fichier.parent.create(recursive: true);
-    await fichier.writeAsBytes(png!.buffer.asUint8List());
+    await tester.runAsync(() async {
+      final ui.Image image = await boite.toImage(pixelRatio: densite);
+      final ByteData? png = await image.toByteData(
+        format: ui.ImageByteFormat.png,
+      );
+      image.dispose();
+      final File fichier = File(chemin);
+      await fichier.parent.create(recursive: true);
+      await fichier.writeAsBytes(png!.buffer.asUint8List());
+    });
   });
   return chemin;
+}
+
+/// Peint les ombres floues le temps de [corps], comme a l'execution, puis
+/// rend `debugDisableShadows` a sa valeur (le test la verifie a la fin).
+Future<void> _avecOmbres(
+  WidgetTester tester,
+  Future<void> Function() corps,
+) async {
+  final bool avant = debugDisableShadows;
+  void repeindre() {
+    void marquer(RenderObject objet) {
+      objet
+        ..markNeedsPaint()
+        ..visitChildren(marquer);
+    }
+
+    for (final RenderView vue in tester.binding.renderViews) {
+      marquer(vue);
+    }
+  }
+
+  debugDisableShadows = false;
+  try {
+    repeindre();
+    await tester.pump();
+    await corps();
+  } finally {
+    debugDisableShadows = avant;
+    repeindre();
+    await tester.pump();
+  }
 }
 
 /// Capture le cadre, puis compose la planche **maquette | capture**, cote a
