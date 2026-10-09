@@ -73,8 +73,9 @@ List<Demande> demandesDemo(DateTime maintenant) => <Demande>[
 ];
 
 /// Quatre classes fictives (ADMIN-SHELL-03) : trois actives, une cloturee.
-/// Lecture seule : creer, ajouter, retirer et cloturer passent par le service
-/// de la demonstration, qui repond « indisponible ».
+/// Ajouter, retirer et cloturer passent par le service de la demonstration,
+/// qui repond « indisponible » ; la creation passe par `CreationClasseDemo`
+/// (CLASSE-FORM-1), en memoire.
 List<GroupeAdmin> groupesDemo() => const <GroupeAdmin>[
   GroupeAdmin(
     id: 'demo-classe-1',
