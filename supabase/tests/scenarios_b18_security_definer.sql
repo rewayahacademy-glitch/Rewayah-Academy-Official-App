@@ -49,12 +49,16 @@ begin
   exception when raise_exception then
     if sqlerrm <> 'modification de groupe reservee a l''administration' then raise; end if;
   end;
-  begin
-    perform public.modifier_groupe(null::uuid, null::text, null::smallint, null::smallint, null::smallint);
-    raise exception 'B-18: short modifier_groupe overload accepted missing claims';
-  exception when raise_exception then
-    if sqlerrm <> 'modification de groupe reservee a l''administration' then raise; end if;
-  end;
+  -- Même ambiguïté entre la surcharge courte et les paramètres DEFAULT
+  -- de la surcharge longue; contrôle la signature exacte dans pg_proc.
+  if position(
+       'if not coalesce(public.app_role() = ''admin'' and public.app_account_valid(), false)'
+       in pg_catalog.pg_get_functiondef(
+         'public.modifier_groupe(uuid,text,smallint,smallint,smallint)'::regprocedure
+       )
+     ) = 0 then
+    raise exception 'B-18: short modifier_groupe overload lacks the admin guard';
+  end if;
   begin
     perform 1 from public.read_kyc_documents();
     raise exception 'B-18: read_kyc_documents accepted missing claims';
