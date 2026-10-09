@@ -54,6 +54,18 @@ BEGIN
      OR auth.jwt() -> 'app_metadata' ->> 'agent_token_id' IS DISTINCT FROM v_agent::text THEN
     RAISE EXCEPTION 'SEC-01: original agent identity claims must remain intact';
   END IF;
+  UPDATE public.jetons_agent
+     SET revoque_le = now()
+   WHERE id = v_agent;
+  PERFORM set_config('request.jwt.claim.sub', v_agent::text, true);
+  BEGIN
+    PERFORM public.agent_pre_request();
+    RAISE EXCEPTION 'SEC-01: a revoked token must not resolve an observed subject';
+  EXCEPTION WHEN insufficient_privilege THEN
+    IF auth.uid() IS DISTINCT FROM v_agent THEN
+      RAISE EXCEPTION 'SEC-01: a rejected token changed the effective subject';
+    END IF;
+  END;
 END
 $sec01$;
 
