@@ -94,6 +94,11 @@ BEGIN
     PERFORM set_config('test.uid', v_id::text, true);
     PERFORM set_config('test.jwt',
       jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text, true);
+    RAISE NOTICE 'F1 preflight uid=% id=% role=% active=% student_type=% household=% can_describe=%',
+      auth.uid(), v_id, public.app_role(), public.compte_en_parcours(),
+      (SELECT sp.student_type FROM public.student_profiles sp WHERE sp.profile_id = v_id),
+      (SELECT p.household_id FROM public.profiles p WHERE p.id = v_id),
+      public.peut_decrire_apprenant(v_id);
     PERFORM public.demander_creneau_personnalise(v_id, 'Europe/Paris',
       ARRAY[2,4,6]::smallint[], 18::smallint);
   END LOOP;
