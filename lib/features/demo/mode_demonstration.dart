@@ -20,16 +20,22 @@ import '../../core/admin/service_admin.dart';
 import '../../core/admin/service_groupes.dart';
 import '../../core/alertes/port_alertes.dart';
 import '../../core/appairage/service_appairage.dart';
+import '../../core/capacites/port_accents_profils.dart';
 import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_catalogue_classes.dart';
 import '../../core/capacites/port_classes_foyer.dart';
+import '../../core/capacites/port_finance_direction.dart';
+import '../../core/capacites/port_paiements_foyer.dart';
 import '../../core/capacites/port_politique_revue_kyc.dart';
+import '../../core/capacites/port_politiques_commerciales.dart';
+import '../../core/capacites/port_recharge_foyer.dart';
 import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/config/env.dart';
 import '../../core/domain/enums.dart';
 import '../../core/dossier/selecteur_fichier.dart';
 import '../../core/dossier/service_dossier.dart';
 import '../../core/dossier/service_validation.dart';
+import '../../core/finance/finances_profil.dart';
 import '../../core/offres/offre_horaire.dart';
 import '../../core/offres/service_offres.dart';
 import '../../core/planning/service_planning.dart';
@@ -48,12 +54,14 @@ import '../../core/tc_observation/activation_observation.dart';
 import '../../core/tc_observation/port_historique_observations.dart';
 import '../../core/tc_observation/port_politique_observation.dart';
 import '../../core/tc_observation/port_visite_observation.dart';
+import '../../core/theme/accent_profil.dart';
 import '../admin_tableau/activite_recente.dart';
 import 'admin_x_demo.dart';
 import 'alertes_demo.dart';
 import 'cartes_classe_demo.dart';
 import 'catalogue_demo.dart';
 import 'dossiers_demo.dart';
+import 'finance_demo.dart';
 import 'observation_demo.dart';
 import 'presence_demo.dart';
 import 'services_admin_demo.dart';
@@ -125,11 +133,18 @@ List<Override> surchargesDemoTuteur({
   List<EleveDuFoyer>? eleves,
   EtatRevueDemo? dossiers,
   String? titulaire,
+  JeuFoyerFinance? finances,
 }) {
   if (!environnementAutoriseDemo(environnement ?? Env.environnement)) {
     throw StateError('Demonstration interdite en production.');
   }
   final bool avecDossier = dossiers != null && titulaire != null;
+  // FI-4 : avec un jeu Finance, le foyer est celui du jeu (memes
+  // identifiants que ses finances), avec ses couleurs de profil.
+  final JeuFoyerFinance? jeu = finances;
+  final List<FinancesProfil> profilsFinance = jeu == null
+      ? const <FinancesProfil>[]
+      : DonneesFinanceDemo.profils(jeu);
   return <Override>[
     if (avecDossier) ...<Override>[
       sourceSessionProvider.overrideWithValue(
@@ -145,10 +160,54 @@ List<Override> surchargesDemoTuteur({
     // de foyer, donc ni eleve ni classe ; le foyer vide est sa vraie valeur
     // (et evite tout appel serveur). Sans dossier, le foyer de demonstration.
     elevesDuFoyerProvider.overrideWith(
-      (Ref ref) async =>
-          avecDossier ? const <EleveDuFoyer>[] : eleves ?? DonneesDemo.eleves,
+      (Ref ref) async => avecDossier
+          ? const <EleveDuFoyer>[]
+          : eleves ??
+                (jeu == null
+                    ? DonneesDemo.eleves
+                    : <EleveDuFoyer>[
+                        for (final FinancesProfil p in profilsFinance)
+                          EleveDuFoyer(
+                            id: p.profilId,
+                            prenom: p.prenom,
+                            identifiantImmuable: 'STUD-FI-${p.profilId}',
+                            mode: InterfaceMode.standard,
+                            camera: CameraPolicy.allowed,
+                            // L'echeance d'acces du meme jeu (FI-1c-CORR) :
+                            // jamais « sans echeance » pour un payant.
+                            finAcces: _finAccesDemo(jeu, p.profilId),
+                          ),
+                      ]),
     ),
+    if (jeu != null) ...<Override>[
+      portPaiementsFoyerProvider.overrideWithValue(
+        PaiementsFoyerFinanceDemo(jeu),
+      ),
+      portPolitiquesCommercialesProvider.overrideWithValue(
+        const PolitiquesCommercialesDemo(),
+      ),
+      portRechargeFoyerProvider.overrideWithValue(
+        RechargeFoyerFinanceDemo(jeu),
+      ),
+    ],
     portAccesFoyerProvider.overrideWithValue(const AccesFoyerDemo()),
+    // La couleur de profil choisie par le tuteur (K-62) : gardee en memoire,
+    // rien n'est envoye (FI-BR-19).
+    portAccentsProfilsProvider.overrideWithValue(
+      AccentsProfilsEnMemoire(<String, AccentProfil>{
+        DonneesDemo.aichaId: AccentProfil.menthe,
+        DonneesDemo.yusufId: AccentProfil.rose,
+        // Les couleurs de la maquette 03 (choix du tuteur de la demo).
+        if (jeu != null) ...<String, AccentProfil>{
+          DonneesFinanceDemo.mariamId: AccentProfil.rose,
+          DonneesFinanceDemo.ibrahimId: AccentProfil.ciel,
+          DonneesFinanceDemo.aichaId: AccentProfil.lavande,
+          // Le jeu a cinq profils : aucun profil sans couleur.
+          DonneesFinanceDemo.youssefId: AccentProfil.peche,
+          DonneesFinanceDemo.khadijaId: AccentProfil.sable,
+        },
+      }),
+    ),
     portClassesFoyerProvider.overrideWithValue(const ClassesFoyerDemo()),
     portSeancesFamilleProvider.overrideWithValue(SeancesFamilleDemo()),
     portCatalogueClassesProvider.overrideWithValue(
@@ -282,6 +341,16 @@ List<Override> surchargesDemoAdmin({
       portAlertesProvider.overrideWithValue(
         AlertesDemo(arrivee: arriveeAlerte),
       ),
+    // La Vue globale de la Finance (FI-11a) : les chiffres de la
+    // demonstration, jamais en production (K-09).
+    portFinanceDirectionProvider.overrideWithValue(
+      const FinanceDirectionDemo(),
+    ),
+    // Les Politiques commerciales (FI-11b) : la version de lancement et un
+    // brouillon ; la publication reste indisponible, ici aussi.
+    portPolitiquesCommercialesProvider.overrideWithValue(
+      const PolitiquesCommercialesDemo(),
+    ),
     // Tous les autres services admin adosses a Supabase : « indisponible ».
     ...surchargesServicesAdminIndisponibles(),
   ];
@@ -623,4 +692,12 @@ class SeancesFamilleDemo implements PortSeancesFamille {
     }
     yield s;
   }
+}
+
+/// L'echeance d'acces de [profilId] dans le jeu Finance [jeu].
+DateTime? _finAccesDemo(JeuFoyerFinance jeu, String profilId) {
+  for (final AccesBeneficiaire a in DonneesFinanceDemo.acces(jeu)) {
+    if (a.eleveId == profilId) return a.finAcces;
+  }
+  return null;
 }

@@ -6,6 +6,7 @@ import '../../core/capacites/port_paiements_foyer.dart';
 import '../../core/capacites/port_profil_eleve_titulaire.dart';
 import '../../core/capacites/port_support.dart';
 import '../../core/domain/enums.dart';
+import '../../core/i18n/jour_du_mois.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
@@ -25,25 +26,33 @@ final FutureProvider<IdentiteTitulaire> identiteTitulaireProvider =
       return ref.watch(portIdentiteTitulaireProvider).lire();
     });
 
+// Les trois lectures d'argent et d'acces ci-dessous suivent la personne
+// connectee (revue FI-VAGUE-CORR-R, R7-04) : sur un appareil partage, la
+// personne suivante declenche une nouvelle lecture, jamais la valeur gardee
+// de la precedente (meme precedent que `monAccesProvider`).
+
 /// L'acces de chaque profil eleve du foyer.
 final FutureProvider<List<AccesBeneficiaire>> accesFoyerProvider =
-    FutureProvider<List<AccesBeneficiaire>>(
-      (Ref ref) => ref.watch(portAccesFoyerProvider).acces(),
-    );
+    FutureProvider<List<AccesBeneficiaire>>((Ref ref) {
+      surveillerPersonneConnectee(ref);
+      return ref.watch(portAccesFoyerProvider).acces();
+    });
 
 /// L'historique des paiements du foyer (indisponible tant que DB-CPT-03
 /// manque).
 final FutureProvider<List<PaiementFoyer>> paiementsFoyerProvider =
-    FutureProvider<List<PaiementFoyer>>(
-      (Ref ref) => ref.watch(portPaiementsFoyerProvider).historique(),
-    );
+    FutureProvider<List<PaiementFoyer>>((Ref ref) {
+      surveillerPersonneConnectee(ref);
+      return ref.watch(portPaiementsFoyerProvider).historique();
+    });
 
 /// Les soldes des beneficiaires du foyer, pour le titulaire (EA-9 ;
-/// indisponibles tant qu'EA-BR-23 manque).
+/// indisponibles tant que FI-BR-03, qui remplace EA-BR-23, manque).
 final FutureProvider<SoldesFoyer> soldesFoyerProvider =
-    FutureProvider<SoldesFoyer>(
-      (Ref ref) => ref.watch(portPaiementsFoyerProvider).soldes(),
-    );
+    FutureProvider<SoldesFoyer>((Ref ref) {
+      surveillerPersonneConnectee(ref);
+      return ref.watch(portPaiementsFoyerProvider).soldes();
+    });
 
 /// Le canal d'aide de l'academie (indisponible tant que DB-CPT-07 manque).
 final FutureProvider<CanalSupport?> canalSupportProvider =
@@ -72,11 +81,12 @@ String villeDuFuseau(String iana) {
   return ville.isEmpty ? iana.trim() : ville;
 }
 
-/// Une date en toutes lettres : « 30 octobre 2026 », en heure locale.
+/// Une date en toutes lettres : « 30 octobre 2026 », « 1er novembre 2026 »
+/// (R8-05), en heure locale.
 String dateLongue(DateTime date) {
   final DateTime locale = date.toLocal();
   return t.compte.tuteur.dateLongue(
-    jour: locale.day,
+    jour: jourDuMois(locale.day),
     mois: t.commun.dates.mois[locale.month - 1],
     annee: locale.year,
   );

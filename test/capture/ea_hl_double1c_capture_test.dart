@@ -171,11 +171,7 @@ void main() {
             tester,
             'soldes_${etat}_${cas.$1}',
             cas,
-            page: PaiementsComptePage(
-              soldes: true,
-              onRetour: () {},
-              onRecharger: () {},
-            ),
+            page: PaiementsComptePage(onRetour: () {}, onRecharger: () {}),
             lectures: <Override>[
               soldesFoyerProvider.overrideWith((Ref _) => lireSoldes()),
               paiementsFoyerProvider.overrideWith((Ref _) async => historique),
@@ -195,7 +191,11 @@ void main() {
             tester,
             'recharge_${etat}_${cas.$1}',
             cas,
-            page: RechargeFoyerPage(onAbandon: () {}, onTerminee: () {}),
+            page: RechargeFoyerPage(
+              onAbandon: () {},
+              onTerminee: () {},
+              onPaye: (String _) {},
+            ),
             lectures: <Override>[
               beneficiairesRechargeProvider.overrideWith((Ref _) => lire()),
             ],

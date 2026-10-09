@@ -11,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/port_recharge_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/finance/suivi_paiement.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -57,6 +58,15 @@ class _PortRecharge implements PortRechargeFoyer {
     required String recapitulatifId,
     required String cle,
   }) => throw UnimplementedError();
+
+  // FI-DIR-1 (reuni par JONCTION-LIGNES-1) : la recharge par montants et le
+  // suivi du paiement, hors du champ de ce test.
+  @override
+  Future<RecapitulatifRecharge> verifierMontants(List<MontantRecharge> choix) =>
+      throw UnimplementedError();
+
+  @override
+  Future<SuiviPaiement> suivre(String commandeId) => throw UnimplementedError();
 }
 
 List<Override> _horsLigneFaux() => <Override>[
@@ -119,7 +129,11 @@ void main() {
       ) async {
         await monterCoupeMots4(
           tester,
-          () => RechargeFoyerPage(onAbandon: () {}, onTerminee: () {}),
+          () => RechargeFoyerPage(
+            onAbandon: () {},
+            onTerminee: () {},
+            onPaye: (String _) {},
+          ),
           langue: langue,
           interface: interface,
           surcharges: <Override>[

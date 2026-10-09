@@ -38,6 +38,23 @@ const List<String> composantsDuCatalogue = <String>[
   'BentoTile',
   'AvatarTile',
   'AvatarNom',
+  // FI-2 (decision du directeur du 04/10, K-62) : l'identite d'un profil,
+  // son bandeau de couleur choisi par le tuteur derriere l'avatar.
+  'IdentiteProfil',
+  // Revue du directeur du 04/10 : le choix de la couleur est un simple
+  // selecteur de pastilles, jamais des cartes empilees.
+  'SelecteurCouleurProfil',
+  // FI-3a (guide Finance V4 §7) : les composants d'argent.
+  'MontantArgent',
+  'LigneFinance',
+  'LigneTransaction',
+  'LigneAllocation',
+  // FI-3b : statuts, bandeau, moyen de paiement, synthese.
+  'PastilleFinanciere',
+  'BadgePeriodeFinancee',
+  'BandeauAttention',
+  'LigneMoyenPaiement',
+  'ResumeSoldes',
   'AudioLabel',
   'PermanentNotice',
   'PinPad',
@@ -105,6 +122,8 @@ const List<String> composantsDuCatalogue = <String>[
   'AdminShell',
   'MenuActions',
   'MenuFiltre',
+  // FI-DIR-1 (FI-Q18 (a), 05/10) : le choix du mois des vues chiffrees.
+  'SelecteurMois',
   'SelecteurNiveauProgramme',
   'SousNavigationDomaine',
   // ONGLETS-1 (revue du directeur, 01/10/2026) : le selecteur de section

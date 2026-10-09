@@ -89,6 +89,8 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$formulaire$fr formulaire = Traductions$formulaire$fr.internal(_root);
 	late final Traductions$motifs$fr motifs = Traductions$motifs$fr.internal(_root);
 	late final Traductions$alertes$fr alertes = Traductions$alertes$fr.internal(_root);
+	late final Traductions$argent$fr argent = Traductions$argent$fr.internal(_root);
+	late final Traductions$identiteProfil$fr identiteProfil = Traductions$identiteProfil$fr.internal(_root);
 }
 
 // Path: commun
@@ -1088,6 +1090,8 @@ class Traductions$foyer$fr {
 
 	late final Traductions$foyer$monProfil$fr monProfil = Traductions$foyer$monProfil$fr.internal(_root);
 	late final Traductions$foyer$ajout$fr ajout = Traductions$foyer$ajout$fr.internal(_root);
+	late final Traductions$foyer$finances$fr finances = Traductions$foyer$finances$fr.internal(_root);
+	late final Traductions$foyer$transactions$fr transactions = Traductions$foyer$transactions$fr.internal(_root);
 }
 
 // Path: ficheEleve
@@ -1117,6 +1121,11 @@ class Traductions$ficheEleve$fr {
 	late final Traductions$ficheEleve$interface$fr interface = Traductions$ficheEleve$interface$fr.internal(_root);
 	late final Traductions$ficheEleve$camera$fr camera = Traductions$ficheEleve$camera$fr.internal(_root);
 	late final Traductions$ficheEleve$acces$fr acces = Traductions$ficheEleve$acces$fr.internal(_root);
+	late final Traductions$ficheEleve$couleur$fr couleur = Traductions$ficheEleve$couleur$fr.internal(_root);
+	late final Traductions$ficheEleve$filAriane$fr filAriane = Traductions$ficheEleve$filAriane$fr.internal(_root);
+	late final Traductions$ficheEleve$onglets$fr onglets = Traductions$ficheEleve$onglets$fr.internal(_root);
+	late final Traductions$ficheEleve$finances$fr finances = Traductions$ficheEleve$finances$fr.internal(_root);
+	late final Traductions$ficheEleve$mouvements$fr mouvements = Traductions$ficheEleve$mouvements$fr.internal(_root);
 }
 
 // Path: disponibilites
@@ -1456,6 +1465,7 @@ class Traductions$admin$fr {
 	late final Traductions$admin$comptes$fr comptes = Traductions$admin$comptes$fr.internal(_root);
 	late final Traductions$admin$agents$fr agents = Traductions$admin$agents$fr.internal(_root);
 	late final Traductions$admin$notifications$fr notifications = Traductions$admin$notifications$fr.internal(_root);
+	late final Traductions$admin$finance$fr finance = Traductions$admin$finance$fr.internal(_root);
 }
 
 // Path: agent
@@ -2326,6 +2336,7 @@ class Traductions$enseignant$fr {
 	late final Traductions$enseignant$creneaux$fr creneaux = Traductions$enseignant$creneaux$fr.internal(_root);
 	late final Traductions$enseignant$ficheGroupe$fr ficheGroupe = Traductions$enseignant$ficheGroupe$fr.internal(_root);
 	late final Traductions$enseignant$revue$fr revue = Traductions$enseignant$revue$fr.internal(_root);
+	late final Traductions$enseignant$revenus$fr revenus = Traductions$enseignant$revenus$fr.internal(_root);
 }
 
 // Path: controleur
@@ -2434,6 +2445,7 @@ class Traductions$adulte$fr {
 	late final Traductions$adulte$sortie$fr sortie = Traductions$adulte$sortie$fr.internal(_root);
 	late final Traductions$adulte$reprise$fr reprise = Traductions$adulte$reprise$fr.internal(_root);
 	late final Traductions$adulte$demo$fr demo = Traductions$adulte$demo$fr.internal(_root);
+	late final Traductions$adulte$finances$fr finances = Traductions$adulte$finances$fr.internal(_root);
 }
 
 // Path: formulaire
@@ -2539,6 +2551,48 @@ class Traductions$alertes$fr {
 
 	/// fr: 'Alertes, {nombre} urgentes'
 	String clocheUrgentes({required Object nombre}) => 'Alertes, ${nombre} urgentes';
+}
+
+// Path: argent
+class Traductions$argent$fr {
+	Traductions$argent$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$argent$etat$fr etat = Traductions$argent$etat$fr.internal(_root);
+	late final Traductions$argent$periode$fr periode = Traductions$argent$periode$fr.internal(_root);
+	late final Traductions$argent$allocation$fr allocation = Traductions$argent$allocation$fr.internal(_root);
+	late final Traductions$argent$moyen$fr moyen = Traductions$argent$moyen$fr.internal(_root);
+	late final Traductions$argent$soldes$fr soldes = Traductions$argent$soldes$fr.internal(_root);
+	late final Traductions$argent$acces$fr acces = Traductions$argent$acces$fr.internal(_root);
+}
+
+// Path: identiteProfil
+class Traductions$identiteProfil$fr {
+	Traductions$identiteProfil$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{n} ans'
+	String age({required Object n}) => '${n} ans';
+
+	/// fr: 'Classe {classe}'
+	String classe({required Object classe}) => 'Classe ${classe}';
+
+	/// fr: '{age} · {classe}'
+	String ageEtClasse({required Object age, required Object classe}) => '${age} · ${classe}';
+
+	/// fr: '{prenom}, profil enfant'
+	String lecteurEnfant({required Object prenom}) => '${prenom}, profil enfant';
+
+	/// fr: '{prenom}, profil adulte'
+	String lecteurAdulte({required Object prenom}) => '${prenom}, profil adulte';
+
+	/// fr: '{profil}, {classe}'
+	String lecteurAvecClasse({required Object profil, required Object classe}) => '${profil}, ${classe}';
 }
 
 // Path: commun.demonstration
@@ -2787,6 +2841,13 @@ class Traductions$commun$dates$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+
+	/// fr: '{mois} {annee}'
+	String moisAnnee({required Object mois, required Object annee}) => '${mois} ${annee}';
+
+	/// fr: 'Mois'
+	String get choixMois => 'Mois';
+
 	List<String> get jours => [
 		'Lundi',
 		'Mardi',
@@ -2813,6 +2874,9 @@ class Traductions$commun$dates$fr {
 
 	/// fr: '{jour} {numero} {mois}'
 	String jourDate({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}';
+
+	/// fr: '1er'
+	String get premierJour => '1er';
 }
 
 // Path: commun.sections
@@ -4159,6 +4223,93 @@ class Traductions$foyer$ajout$fr {
 	String get horsLigne => 'Le profil pourra être créé quand la connexion reviendra.';
 }
 
+// Path: foyer.finances
+class Traductions$foyer$finances$fr {
+	Traductions$foyer$finances$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Soldes et paiements'
+	String get titre => 'Soldes et paiements';
+
+	/// fr: 'Recharger plusieurs profils'
+	String get rechargerPlusieurs => 'Recharger plusieurs profils';
+
+	/// fr: 'Recharger {prenom}'
+	String rechargerPour({required Object prenom}) => 'Recharger ${prenom}';
+
+	/// fr: 'Recharger'
+	String get recharger => 'Recharger';
+
+	/// fr: 'Voir le détail'
+	String get voirDetail => 'Voir le détail';
+
+	/// fr: 'Voir le détail des finances {dePrenom}'
+	String voirDetailSemantique({required Object dePrenom}) => 'Voir le détail des finances ${dePrenom}';
+
+	/// fr: 'Chaque enfant a un solde et une période financée individuels. Les accès sont liés à la période financée, pas simplement au solde.'
+	String get noteSoldes => 'Chaque enfant a un solde et une période financée individuels. Les accès sont liés à la période financée, pas simplement au solde.';
+
+	/// fr: 'Vue financière du foyer'
+	String get vueFinanciere => 'Vue financière du foyer';
+
+	/// fr: 'Ce mois-ci'
+	String get vueFinancierePeriode => 'Ce mois-ci';
+
+	/// fr: 'Solde actuel'
+	String get soldeActuel => 'Solde actuel';
+
+	/// fr: 'Prochain débit'
+	String get prochainDebit => 'Prochain débit';
+
+	/// fr: '{date} · {montant}'
+	String prochainDebitValeur({required Object date, required Object montant}) => '${date} · ${montant}';
+
+	/// fr: 'Aucun débit prévu'
+	String get aucunDebit => 'Aucun débit prévu';
+
+	/// fr: 'Essai : {n} séance(s) utilisée(s)'
+	String essaiSansMax({required Object n}) => 'Essai : ${n} séance(s) utilisée(s)';
+
+	/// fr: 'Il manque {montant} pour la prochaine période.'
+	String manque({required Object montant}) => 'Il manque ${montant} pour la prochaine période.';
+
+	/// fr: 'Les soldes ne peuvent pas être lus'
+	String get indisponibleTitre => 'Les soldes ne peuvent pas être lus';
+}
+
+// Path: foyer.transactions
+class Traductions$foyer$transactions$fr {
+	Traductions$foyer$transactions$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Dernières transactions'
+	String get titre => 'Dernières transactions';
+
+	/// fr: '{libelle} · {prenom}'
+	String ligne({required Object libelle, required Object prenom}) => '${libelle} · ${prenom}';
+
+	/// fr: 'Voir tout'
+	String get voirTout => 'Voir tout';
+
+	/// fr: 'Voir tout : historique des paiements du foyer'
+	String get voirToutSemantique => 'Voir tout : historique des paiements du foyer';
+
+	/// fr: 'Aucune transaction pour l'instant'
+	String get videTitre => 'Aucune transaction pour l\'instant';
+
+	/// fr: 'Les recharges et les mensualités des profils apparaîtront ici.'
+	String get videPhrase => 'Les recharges et les mensualités des profils apparaîtront ici.';
+
+	/// fr: 'Les dernières transactions ne peuvent pas être lues'
+	String get erreurTitre => 'Les dernières transactions ne peuvent pas être lues';
+}
+
 // Path: ficheEleve.introuvable
 class Traductions$ficheEleve$introuvable$fr {
 	Traductions$ficheEleve$introuvable$fr.internal(this._root);
@@ -4217,6 +4368,21 @@ class Traductions$ficheEleve$lignes$fr {
 
 	/// fr: 'Connecter un appareil, voir ceux qui sont reliés, en retirer un'
 	String get appareilsLegende => 'Connecter un appareil, voir ceux qui sont reliés, en retirer un';
+
+	/// fr: 'Couleur du profil'
+	String get couleur => 'Couleur du profil';
+
+	/// fr: 'Sans couleur'
+	String get couleurAucune => 'Sans couleur';
+
+	/// fr: 'Pas encore disponible'
+	String get couleurIndisponible => 'Pas encore disponible';
+
+	/// fr: 'Couleur non lue'
+	String get couleurEchec => 'Couleur non lue';
+
+	/// fr: 'Finances'
+	String get finances => 'Finances';
 }
 
 // Path: ficheEleve.informations
@@ -4455,8 +4621,8 @@ class Traductions$ficheEleve$acces$fr {
 	/// fr: 'Accès Rewayah'
 	String get titre => 'Accès Rewayah';
 
-	/// fr: 'Accès de {prenom}'
-	String ligne({required Object prenom}) => 'Accès de ${prenom}';
+	/// fr: 'Accès {dePrenom}'
+	String ligne({required Object dePrenom}) => 'Accès ${dePrenom}';
 
 	/// fr: 'Sans échéance'
 	String get pastilleSansEcheance => 'Sans échéance';
@@ -4481,6 +4647,285 @@ class Traductions$ficheEleve$acces$fr {
 
 	/// fr: 'Le début de l'accès et son motif ne s'affichent pas encore.'
 	String get detailIndisponible => 'Le début de l\'accès et son motif ne s\'affichent pas encore.';
+}
+
+// Path: ficheEleve.couleur
+class Traductions$ficheEleve$couleur$fr {
+	Traductions$ficheEleve$couleur$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Couleur du profil'
+	String get titre => 'Couleur du profil';
+
+	/// fr: 'Choisissez la couleur qui distingue {prenom} des autres profils du foyer. Elle s'affiche derrière sa photo sur les écrans du foyer. Ce n'est ni un statut, ni une classe.'
+	String contexte({required Object prenom}) => 'Choisissez la couleur qui distingue ${prenom} des autres profils du foyer. Elle s\'affiche derrière sa photo sur les écrans du foyer. Ce n\'est ni un statut, ni une classe.';
+
+	/// fr: 'Menthe'
+	String get menthe => 'Menthe';
+
+	/// fr: 'Ciel'
+	String get ciel => 'Ciel';
+
+	/// fr: 'Lavande'
+	String get lavande => 'Lavande';
+
+	/// fr: 'Rose'
+	String get rose => 'Rose';
+
+	/// fr: 'Pêche'
+	String get peche => 'Pêche';
+
+	/// fr: 'Sable'
+	String get sable => 'Sable';
+
+	/// fr: 'Déjà choisie pour {prenom} : la couleur ne distinguerait plus ces profils.'
+	String dejaPrise({required Object prenom}) => 'Déjà choisie pour ${prenom} : la couleur ne distinguerait plus ces profils.';
+
+	/// fr: '{premiers} et {dernier}'
+	String prenomsEt({required Object premiers, required Object dernier}) => '${premiers} et ${dernier}';
+
+	/// fr: 'Sans couleur'
+	String get aucune => 'Sans couleur';
+
+	/// fr: 'Couleur choisie : {couleur}.'
+	String choisie({required Object couleur}) => 'Couleur choisie : ${couleur}.';
+
+	/// fr: '{couleur} : déjà choisie pour {prenom}.'
+	String priseLigne({required Object couleur, required Object prenom}) => '${couleur} : déjà choisie pour ${prenom}.';
+
+	/// fr: 'Seuls la photo et le prénom distinguent {prenom}.'
+	String aucuneDetail({required Object prenom}) => 'Seuls la photo et le prénom distinguent ${prenom}.';
+
+	/// fr: 'Le changement de couleur n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Choisissez la couleur de nouveau.'
+	String get echec => 'Le changement de couleur n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Choisissez la couleur de nouveau.';
+
+	/// fr: 'La couleur ne peut pas être changée maintenant. Elle se choisit de nouveau dès que l'envoi est possible.'
+	String get horsLigne => 'La couleur ne peut pas être changée maintenant. Elle se choisit de nouveau dès que l\'envoi est possible.';
+}
+
+// Path: ficheEleve.filAriane
+class Traductions$ficheEleve$filAriane$fr {
+	Traductions$ficheEleve$filAriane$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Foyer'
+	String get foyer => 'Foyer';
+
+	/// fr: '› {prenom}'
+	String suite({required Object prenom}) => '› ${prenom}';
+}
+
+// Path: ficheEleve.onglets
+class Traductions$ficheEleve$onglets$fr {
+	Traductions$ficheEleve$onglets$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Général'
+	String get general => 'Général';
+
+	/// fr: 'Finances'
+	String get finances => 'Finances';
+}
+
+// Path: ficheEleve.finances
+class Traductions$ficheEleve$finances$fr {
+	Traductions$ficheEleve$finances$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Finances'
+	String get titre => 'Finances';
+
+	/// fr: '{prenom} · Finances'
+	String titreBureau({required Object prenom}) => '${prenom} · Finances';
+
+	/// fr: 'Vue financière'
+	String get vueTitre => 'Vue financière';
+
+	/// fr: 'Mensualité'
+	String get mensualite => 'Mensualité';
+
+	/// fr: '{montant} / mois'
+	String mensualiteValeur({required Object montant}) => '${montant} / mois';
+
+	/// fr: 'Détail de la mensualité'
+	String get detailTitre => 'Détail de la mensualité';
+
+	/// fr: 'Tarif enfant'
+	String get tarifEnfant => 'Tarif enfant';
+
+	/// fr: 'Tarif adulte'
+	String get tarifAdulte => 'Tarif adulte';
+
+	/// fr: 'Remise familiale'
+	String get remiseRang => 'Remise familiale';
+
+	/// fr: 'Remise familiale {rang}e membre'
+	String remiseRangDe({required Object rang}) => 'Remise familiale ${rang}e membre';
+
+	/// fr: 'Réduction calendrier'
+	String get prorata => 'Réduction calendrier';
+
+	/// fr: 'Avoir'
+	String get avoir => 'Avoir';
+
+	/// fr: 'Taxe applicable'
+	String get taxe => 'Taxe applicable';
+
+	/// fr: 'Total à financer'
+	String get total => 'Total à financer';
+
+	/// fr: 'Accès à régulariser'
+	String get regulariserTitre => 'Accès à régulariser';
+
+	/// fr: 'Prochaine période à financer'
+	String get aFinancerTitre => 'Prochaine période à financer';
+
+	/// fr: 'Accès expiré'
+	String get expireTitre => 'Accès expiré';
+
+	/// fr: 'Il manque {montant} pour la prochaine période. La place est conservée jusqu'au {date}.'
+	String manqueEtConservation({required Object montant, required Object date}) => 'Il manque ${montant} pour la prochaine période. La place est conservée jusqu\'au ${date}.';
+
+	/// fr: 'La prochaine période n'est pas encore financée.'
+	String get sansManque => 'La prochaine période n\'est pas encore financée.';
+
+	/// fr: 'Il manque {montant} pour financer {mois}.'
+	String manquePourMois({required Object montant, required Object mois}) => 'Il manque ${montant} pour financer ${mois}.';
+
+	/// fr: 'Il manque {montant} pour financer {mois}. La place est conservée jusqu'au {date}.'
+	String manquePourMoisEtConservation({required Object montant, required Object mois, required Object date}) => 'Il manque ${montant} pour financer ${mois}. La place est conservée jusqu\'au ${date}.';
+
+	/// fr: 'La période {deMois} n'est pas encore financée.'
+	String moisNonFinance({required Object deMois}) => 'La période ${deMois} n\'est pas encore financée.';
+
+	/// fr: 'Période à financer'
+	String get periodeAFinancer => 'Période à financer';
+
+	/// fr: '{mois} {annee} · {montant}'
+	String periodeAFinancerValeur({required Object mois, required Object annee, required Object montant}) => '${mois} ${annee} · ${montant}';
+
+	/// fr: 'Paiement en cours de confirmation'
+	String get confirmationTitre => 'Paiement en cours de confirmation';
+
+	/// fr: 'Ne payez pas une seconde fois : la période se met à jour dès la confirmation.'
+	String get confirmationPhrase => 'Ne payez pas une seconde fois : la période se met à jour dès la confirmation.';
+
+	/// fr: 'Les finances ne sont pas encore disponibles'
+	String get indisponibleTitre => 'Les finances ne sont pas encore disponibles';
+
+	/// fr: 'Le solde et la mensualité {dePrenom} s'afficheront ici dès leur mise en service.'
+	String indisponiblePhrase({required Object dePrenom}) => 'Le solde et la mensualité ${dePrenom} s\'afficheront ici dès leur mise en service.';
+
+	/// fr: 'Les finances {dePrenom} ne peuvent pas être lues'
+	String erreurTitre({required Object dePrenom}) => 'Les finances ${dePrenom} ne peuvent pas être lues';
+
+	/// fr: 'Aucune finance enregistrée pour {prenom}'
+	String videTitre({required Object prenom}) => 'Aucune finance enregistrée pour ${prenom}';
+
+	/// fr: 'Aucun solde ni aucune mensualité n'est encore rendu pour ce profil. Ils apparaîtront ici après son inscription à une classe.'
+	String get videPhrase => 'Aucun solde ni aucune mensualité n\'est encore rendu pour ce profil. Ils apparaîtront ici après son inscription à une classe.';
+
+	/// fr: 'Voir les mouvements'
+	String get voirMouvements => 'Voir les mouvements';
+
+	/// fr: 'Les absences ordinaires n'entraînent pas de réduction sur le mois une fois celui-ci financé.'
+	String get noteAbsences => 'Les absences ordinaires n\'entraînent pas de réduction sur le mois une fois celui-ci financé.';
+
+	/// fr: 'Pas de consommation par séance'
+	String get faitSeance => 'Pas de consommation par séance';
+
+	/// fr: 'Accès lié à la période financée'
+	String get faitPeriode => 'Accès lié à la période financée';
+
+	/// fr: 'Historique des transactions'
+	String get historiqueTitre => 'Historique des transactions';
+
+	/// fr: 'Voir tout'
+	String get voirTout => 'Voir tout';
+
+	/// fr: 'Voir tout : mouvements {dePrenom}'
+	String voirToutSemantique({required Object dePrenom}) => 'Voir tout : mouvements ${dePrenom}';
+
+	/// fr: 'Voir les mouvements {dePrenom}'
+	String voirMouvementsSemantique({required Object dePrenom}) => 'Voir les mouvements ${dePrenom}';
+
+	/// fr: 'Télécharger le reçu'
+	String get telechargerRecu => 'Télécharger le reçu';
+
+	/// fr: 'Le reçu n'est pas encore disponible'
+	String get recuIndisponibleTitre => 'Le reçu n\'est pas encore disponible';
+
+	/// fr: 'Le téléchargement des reçus arrive avec la mise en service des paiements. Chaque paiement reste visible dans les mouvements.'
+	String get recuIndisponiblePhrase => 'Le téléchargement des reçus arrive avec la mise en service des paiements. Chaque paiement reste visible dans les mouvements.';
+
+	/// fr: 'Le reçu n'a pas pu être préparé'
+	String get recuEchecTitre => 'Le reçu n\'a pas pu être préparé';
+
+	/// fr: 'Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get recuEchecPhrase => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+}
+
+// Path: ficheEleve.mouvements
+class Traductions$ficheEleve$mouvements$fr {
+	Traductions$ficheEleve$mouvements$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mouvements'
+	String get titre => 'Mouvements';
+
+	/// fr: '{date} à {heure}'
+	String dateHeure({required Object date, required Object heure}) => '${date} à ${heure}';
+
+	/// fr: '{heures}:{minutes}'
+	String heureChiffres({required Object heures, required Object minutes}) => '${heures}:${minutes}';
+
+	/// fr: 'Les recharges, mensualités, remises et avoirs {dePrenom}, du plus récent au plus ancien. Rien ne s'efface : une correction s'ajoute comme un nouveau mouvement.'
+	String contexte({required Object dePrenom}) => 'Les recharges, mensualités, remises et avoirs ${dePrenom}, du plus récent au plus ancien. Rien ne s\'efface : une correction s\'ajoute comme un nouveau mouvement.';
+
+	/// fr: 'Personne'
+	String get personne => 'Personne';
+
+	late final Traductions$ficheEleve$mouvements$colonne$fr colonne = Traductions$ficheEleve$mouvements$colonne$fr.internal(_root);
+	late final Traductions$ficheEleve$mouvements$nature$fr nature = Traductions$ficheEleve$mouvements$nature$fr.internal(_root);
+	late final Traductions$ficheEleve$mouvements$statut$fr statut = Traductions$ficheEleve$mouvements$statut$fr.internal(_root);
+
+	/// fr: 'Voir le reçu'
+	String get voirRecu => 'Voir le reçu';
+
+	/// fr: 'Voir le reçu {reference}'
+	String voirRecuSemantique({required Object reference}) => 'Voir le reçu ${reference}';
+
+	late final Traductions$ficheEleve$mouvements$recu$fr recu = Traductions$ficheEleve$mouvements$recu$fr.internal(_root);
+
+	/// fr: 'Aucun mouvement'
+	String get videTitre => 'Aucun mouvement';
+
+	/// fr: 'Aucune recharge ni aucune mensualité n'est encore enregistrée pour {prenom}. Les mouvements apparaîtront ici après le premier paiement.'
+	String videPhrase({required Object prenom}) => 'Aucune recharge ni aucune mensualité n\'est encore enregistrée pour ${prenom}. Les mouvements apparaîtront ici après le premier paiement.';
+
+	/// fr: 'Les mouvements {dePrenom} ne peuvent pas être lus'
+	String erreurTitre({required Object dePrenom}) => 'Les mouvements ${dePrenom} ne peuvent pas être lus';
+
+	/// fr: 'Les mouvements ne sont pas encore disponibles'
+	String get indisponibleTitre => 'Les mouvements ne sont pas encore disponibles';
+
+	/// fr: 'Les recharges et mensualités {dePrenom} s'afficheront ici dès leur mise en service.'
+	String indisponiblePhrase({required Object dePrenom}) => 'Les recharges et mensualités ${dePrenom} s\'afficheront ici dès leur mise en service.';
 }
 
 // Path: eleveConnexion.profils
@@ -7264,6 +7709,24 @@ class Traductions$admin$notifications$fr {
 	String get videDetail => 'Rien à signaler pour l\'instant.';
 }
 
+// Path: admin.finance
+class Traductions$admin$finance$fr {
+	Traductions$admin$finance$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vue globale'
+	String get vueGlobale => 'Vue globale';
+
+	/// fr: 'Politiques commerciales'
+	String get politiques => 'Politiques commerciales';
+
+	late final Traductions$admin$finance$vue$fr vue = Traductions$admin$finance$vue$fr.internal(_root);
+	late final Traductions$admin$finance$pol$fr pol = Traductions$admin$finance$pol$fr.internal(_root);
+}
+
 // Path: nav.eleve
 class Traductions$nav$eleve$fr {
 	Traductions$nav$eleve$fr.internal(this._root);
@@ -9959,6 +10422,15 @@ class Traductions$enseignant$profil$fr {
 
 	/// fr: 'La modification n'a pas abouti. Réessayez dans un instant.'
 	String get editionErreur => 'La modification n\'a pas abouti. Réessayez dans un instant.';
+
+	/// fr: 'Rémunération'
+	String get remuneration => 'Rémunération';
+
+	/// fr: 'Revenus estimés'
+	String get revenus => 'Revenus estimés';
+
+	/// fr: 'Estimation du mois en cours, Classe par Classe'
+	String get revenusDetail => 'Estimation du mois en cours, Classe par Classe';
 }
 
 // Path: enseignant.creneaux
@@ -10310,6 +10782,162 @@ class Traductions$enseignant$revue$fr {
 
 	/// fr: 'Proposition de réorientation'
 	String get typeReorientation => 'Proposition de réorientation';
+}
+
+// Path: enseignant.revenus
+class Traductions$enseignant$revenus$fr {
+	Traductions$enseignant$revenus$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Revenus estimés'
+	String get titre => 'Revenus estimés';
+
+	/// fr: 'Une estimation de votre rémunération du mois choisi, Classe par Classe.'
+	String get intro => 'Une estimation de votre rémunération du mois choisi, Classe par Classe.';
+
+	/// fr: 'Une estimation de votre rémunération du mois en cours, Classe par Classe.'
+	String get introSansChoix => 'Une estimation de votre rémunération du mois en cours, Classe par Classe.';
+
+	/// fr: 'Estimation'
+	String get estimation => 'Estimation';
+
+	/// fr: '{mois} {annee}'
+	String periode({required Object mois, required Object annee}) => '${mois} ${annee}';
+
+	/// fr: 'Revenu estimé du mois'
+	String get totalEstime => 'Revenu estimé du mois';
+
+	/// fr: 'Rémunération pédagogique, hors aide Internet.'
+	String get totalDetail => 'Rémunération pédagogique, hors aide Internet.';
+
+	/// fr: 'Heures assurées'
+	String get heuresAssurees => 'Heures assurées';
+
+	/// fr: 'Classes'
+	String get classesActives => 'Classes';
+
+	/// fr: '{heures} h'
+	String heures({required Object heures}) => '${heures} h';
+
+	/// fr: '{heures} h {minutes}'
+	String heuresMinutes({required Object heures, required Object minutes}) => '${heures} h ${minutes}';
+
+	/// fr: 'Détail par Classe'
+	String get detailSection => 'Détail par Classe';
+
+	/// fr: 'Classe {nom}'
+	String classe({required Object nom}) => 'Classe ${nom}';
+
+	/// fr: 'Capacité'
+	String get capacite => 'Capacité';
+
+	/// fr: '{nombre} places'
+	String capaciteValeur({required Object nombre}) => '${nombre} places';
+
+	/// fr: 'Sièges éligibles'
+	String get sieges => 'Sièges éligibles';
+
+	/// fr: '{nombre} sur {capacite}'
+	String siegesValeur({required Object nombre, required Object capacite}) => '${nombre} sur ${capacite}';
+
+	/// fr: 'Élèves financés, présents ou absents, et élèves en essai présents. Nombre retenu pour le mois, tel que l'académie le transmet.'
+	String get siegesDetail => 'Élèves financés, présents ou absents, et élèves en essai présents. Nombre retenu pour le mois, tel que l\'académie le transmet.';
+
+	/// fr: 'Taux horaire effectif'
+	String get taux => 'Taux horaire effectif';
+
+	/// fr: '{montant} par heure'
+	String tauxValeur({required Object montant}) => '${montant} par heure';
+
+	/// fr: 'Montant estimé'
+	String get montantClasse => 'Montant estimé';
+
+	/// fr: 'Classe'
+	String get classeColonne => 'Classe';
+
+	/// fr: 'Type'
+	String get type => 'Type';
+
+	/// fr: 'Enfants'
+	String get typeEnfants => 'Enfants';
+
+	/// fr: 'Enfants débutants'
+	String get typeDebutants => 'Enfants débutants';
+
+	/// fr: 'Adultes'
+	String get typeAdultes => 'Adultes';
+
+	/// fr: 'Remplacement'
+	String get remplacement => 'Remplacement';
+
+	/// fr: 'Taux par heure'
+	String get tauxColonne => 'Taux par heure';
+
+	/// fr: 'Taux horaire moyen'
+	String get tauxMoyen => 'Taux horaire moyen';
+
+	/// fr: 'Total'
+	String get total => 'Total';
+
+	/// fr: 'Comment l'estimation se calcule'
+	String get calculSection => 'Comment l\'estimation se calcule';
+
+	/// fr: '1. Base garantie'
+	String get base => '1. Base garantie';
+
+	/// fr: '{base} par heure assurée, quelle que soit l'occupation de la Classe.'
+	String baseDetail({required Object base}) => '${base} par heure assurée, quelle que soit l\'occupation de la Classe.';
+
+	/// fr: '2. Composante d'occupation'
+	String get occupation => '2. Composante d\'occupation';
+
+	/// fr: 'Chaque siège éligible ajoute une part au taux. Un élève financé absent compte : une absence ne vous fait rien perdre.'
+	String get occupationDetail => 'Chaque siège éligible ajoute une part au taux. Un élève financé absent compte : une absence ne vous fait rien perdre.';
+
+	/// fr: '3. Plafond horaire'
+	String get plafond => '3. Plafond horaire';
+
+	/// fr: 'Le taux ne dépasse jamais {plafond} par heure, même au-delà de la capacité.'
+	String plafondDetail({required Object plafond}) => 'Le taux ne dépasse jamais ${plafond} par heure, même au-delà de la capacité.';
+
+	/// fr: 'Aide Internet'
+	String get internetSection => 'Aide Internet';
+
+	/// fr: 'Aide Internet du mois'
+	String get internet => 'Aide Internet du mois';
+
+	/// fr: 'Une seule aide par mois, versée à part de la rémunération pédagogique.'
+	String get internetDetail => 'Une seule aide par mois, versée à part de la rémunération pédagogique.';
+
+	/// fr: 'Aucune aide Internet n'est prévue ce mois-ci.'
+	String get internetAucune => 'Aucune aide Internet n\'est prévue ce mois-ci.';
+
+	/// fr: 'Relevé'
+	String get releveSection => 'Relevé';
+
+	/// fr: 'Le relevé n'est pas encore disponible'
+	String get releveIndisponibleTitre => 'Le relevé n\'est pas encore disponible';
+
+	/// fr: 'Les mois arrêtés par l'académie s'afficheront ici dès que le relevé sera en service. D'ici là, seule l'estimation du mois en cours est montrée.'
+	String get releveIndisponiblePhrase => 'Les mois arrêtés par l\'académie s\'afficheront ici dès que le relevé sera en service. D\'ici là, seule l\'estimation du mois en cours est montrée.';
+
+	/// fr: 'Aucun mois arrêté pour l'instant'
+	String get releveVide => 'Aucun mois arrêté pour l\'instant';
+
+	/// fr: 'Chaque mois apparaîtra ici une fois arrêté par l'académie.'
+	String get releveVideDetail => 'Chaque mois apparaîtra ici une fois arrêté par l\'académie.';
+
+	/// fr: 'Ce montant est une estimation, pas une paie définitive. Le relevé arrêté par l'académie fait foi.'
+	String get mention => 'Ce montant est une estimation, pas une paie définitive. Le relevé arrêté par l\'académie fait foi.';
+
+	/// fr: 'Aucune heure assurée ce mois-ci'
+	String get vide => 'Aucune heure assurée ce mois-ci';
+
+	/// fr: 'L'estimation apparaîtra après votre première séance assurée du mois.'
+	String get videDetail => 'L\'estimation apparaîtra après votre première séance assurée du mois.';
 }
 
 // Path: controleur.historique
@@ -11322,6 +11950,9 @@ class Traductions$adulte$monEspace$fr {
 
 	late final Traductions$adulte$monEspace$pageAccords$fr pageAccords = Traductions$adulte$monEspace$pageAccords$fr.internal(_root);
 	late final Traductions$adulte$monEspace$pageCoursAcces$fr pageCoursAcces = Traductions$adulte$monEspace$pageCoursAcces$fr.internal(_root);
+
+	/// fr: 'Solde, période et recharge'
+	String get paiementsLegendeAutonome => 'Solde, période et recharge';
 }
 
 // Path: adulte.coranDemo
@@ -11347,32 +11978,17 @@ class Traductions$adulte$recharge$fr {
 
 	// Translations
 
-	/// fr: 'Nouvelle recharge'
-	String get titre => 'Nouvelle recharge';
+	/// fr: 'Recharge'
+	String get titre => 'Recharge';
 
-	/// fr: 'Sélectionnez un ou plusieurs bénéficiaires, puis choisissez une offre pour chacun.'
-	String get phrase => 'Sélectionnez un ou plusieurs bénéficiaires, puis choisissez une offre pour chacun.';
-
-	/// fr: 'Tout sélectionner'
-	String get toutSelectionner => 'Tout sélectionner';
-
-	/// fr: 'Tout désélectionner'
-	String get toutDeselectionner => 'Tout désélectionner';
-
-	/// fr: 'Offre pour {prenom}'
-	String offrePour({required Object prenom}) => 'Offre pour ${prenom}';
+	/// fr: 'Choisissez les profils et les montants.'
+	String get phrase => 'Choisissez les profils et les montants.';
 
 	/// fr: 'Vérifier la recharge'
 	String get verifier => 'Vérifier la recharge';
 
-	/// fr: 'Sélectionnez au moins un bénéficiaire pour continuer.'
-	String get raisonAucun => 'Sélectionnez au moins un bénéficiaire pour continuer.';
-
-	/// fr: 'Choisissez une offre pour chaque bénéficiaire sélectionné.'
-	String get raisonOffre => 'Choisissez une offre pour chaque bénéficiaire sélectionné.';
-
-	/// fr: 'Vous pourrez vérifier la recharge quand la connexion sera revenue.'
-	String get horsLigneVerifier => 'Vous pourrez vérifier la recharge quand la connexion sera revenue.';
+	/// fr: 'Sélectionnez au moins un profil pour continuer.'
+	String get raisonAucun => 'Sélectionnez au moins un profil pour continuer.';
 
 	/// fr: 'Les bénéficiaires à recharger n'ont pas pu être chargés'
 	String get sansDonnees => 'Les bénéficiaires à recharger n\'ont pas pu être chargés';
@@ -11380,8 +11996,8 @@ class Traductions$adulte$recharge$fr {
 	/// fr: 'Recharge pas encore disponible'
 	String get indisponibleTitre => 'Recharge pas encore disponible';
 
-	/// fr: 'Les offres de recharge ne sont pas encore disponibles dans l'application. Aucun paiement n'est possible ici pour l'instant.'
-	String get indisponiblePhrase => 'Les offres de recharge ne sont pas encore disponibles dans l\'application. Aucun paiement n\'est possible ici pour l\'instant.';
+	/// fr: 'La recharge n'est pas encore disponible dans l'application. Aucun paiement n'est possible ici pour l'instant.'
+	String get indisponiblePhrase => 'La recharge n\'est pas encore disponible dans l\'application. Aucun paiement n\'est possible ici pour l\'instant.';
 
 	/// fr: 'La vérification n'a pas abouti.'
 	String get verificationEchecTitre => 'La vérification n\'a pas abouti.';
@@ -11389,14 +12005,8 @@ class Traductions$adulte$recharge$fr {
 	/// fr: 'Vos choix sont conservés. Vous pouvez réessayer.'
 	String get verificationEchecPhrase => 'Vos choix sont conservés. Vous pouvez réessayer.';
 
-	/// fr: 'Vérifier la recharge'
-	String get verifierTitre => 'Vérifier la recharge';
-
-	/// fr: 'Vérifiez les détails avant de procéder au paiement.'
-	String get verifierPhrase => 'Vérifiez les détails avant de procéder au paiement.';
-
-	/// fr: 'Récapitulatif par bénéficiaire'
-	String get recapitulatif => 'Récapitulatif par bénéficiaire';
+	/// fr: 'Récapitulatif par profil'
+	String get recapitulatif => 'Récapitulatif par profil';
 
 	/// fr: 'Montant payé'
 	String get montantPaye => 'Montant payé';
@@ -11406,9 +12016,6 @@ class Traductions$adulte$recharge$fr {
 
 	/// fr: 'Statut de l'attribution'
 	String get statut => 'Statut de l\'attribution';
-
-	/// fr: 'Modifier'
-	String get modifier => 'Modifier';
 
 	/// fr: 'Total à payer'
 	String get total => 'Total à payer';
@@ -11433,6 +12040,56 @@ class Traductions$adulte$recharge$fr {
 
 	/// fr: 'Revenir aux paiements du foyer'
 	String get revenirPaiements => 'Revenir aux paiements du foyer';
+
+	/// fr: 'Cochez le profil, puis choisissez le montant.'
+	String get phraseUnique => 'Cochez le profil, puis choisissez le montant.';
+
+	/// fr: 'Profils à recharger'
+	String get profils => 'Profils à recharger';
+
+	/// fr: 'Profil à recharger'
+	String get profilUnique => 'Profil à recharger';
+
+	/// fr: 'Solde actuel : {montant}'
+	String soldeActuel({required Object montant}) => 'Solde actuel : ${montant}';
+
+	/// fr: 'Montant suggéré : {montant}'
+	String montantSuggere({required Object montant}) => 'Montant suggéré : ${montant}';
+
+	/// fr: 'Montant pour {prenom}'
+	String montantPour({required Object prenom}) => 'Montant pour ${prenom}';
+
+	/// fr: 'Diminuer le montant pour {prenom}'
+	String diminuer({required Object prenom}) => 'Diminuer le montant pour ${prenom}';
+
+	/// fr: 'Augmenter le montant pour {prenom}'
+	String augmenter({required Object prenom}) => 'Augmenter le montant pour ${prenom}';
+
+	/// fr: 'Un seul paiement sera effectué. Chaque montant va au solde de son profil : il n'y a pas de solde commun.'
+	String get repartition => 'Un seul paiement sera effectué. Chaque montant va au solde de son profil : il n\'y a pas de solde commun.';
+
+	/// fr: 'Moyen de paiement'
+	String get moyen => 'Moyen de paiement';
+
+	/// fr: 'Choisissez un montant pour chaque profil sélectionné.'
+	String get raisonMontant => 'Choisissez un montant pour chaque profil sélectionné.';
+
+	/// fr: 'Payer'
+	String get payerSeul => 'Payer';
+
+	/// fr: 'Ajouter {prenom} à la recharge'
+	String ajouter({required Object prenom}) => 'Ajouter ${prenom} à la recharge';
+
+	/// fr: '{prenom} : {message}'
+	String regularisationDe({required Object prenom, required Object message}) => '${prenom} : ${message}';
+
+	/// fr: 'Le paiement est envoyé. Ne payez pas une seconde fois : suivez son état.'
+	String get commandeRendue => 'Le paiement est envoyé. Ne payez pas une seconde fois : suivez son état.';
+
+	/// fr: 'Suivre le paiement'
+	String get suivrePaiement => 'Suivre le paiement';
+
+	late final Traductions$adulte$recharge$resultat$fr resultat = Traductions$adulte$recharge$resultat$fr.internal(_root);
 }
 
 // Path: adulte.paiements
@@ -12001,6 +12658,45 @@ class Traductions$adulte$demo$fr {
 	late final Traductions$adulte$demo$etats$fr etats = Traductions$adulte$demo$etats$fr.internal(_root);
 }
 
+// Path: adulte.finances
+class Traductions$adulte$finances$fr {
+	Traductions$adulte$finances$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vos finances ne sont pas encore disponibles'
+	String get indisponibleTitre => 'Vos finances ne sont pas encore disponibles';
+
+	/// fr: 'Votre solde, votre période financée et votre mensualité s'afficheront ici dès leur mise en service.'
+	String get indisponiblePhrase => 'Votre solde, votre période financée et votre mensualité s\'afficheront ici dès leur mise en service.';
+
+	/// fr: 'Vos finances ne peuvent pas être lues'
+	String get erreurTitre => 'Vos finances ne peuvent pas être lues';
+
+	/// fr: 'Aucune finance enregistrée'
+	String get videTitre => 'Aucune finance enregistrée';
+
+	/// fr: 'Aucun solde ni aucune mensualité n'est encore rendu pour votre profil. Ils apparaîtront ici après votre inscription à une classe.'
+	String get videPhrase => 'Aucun solde ni aucune mensualité n\'est encore rendu pour votre profil. Ils apparaîtront ici après votre inscription à une classe.';
+
+	/// fr: 'Voir vos mouvements'
+	String get voirMouvementsSemantique => 'Voir vos mouvements';
+
+	/// fr: 'Vos recharges, mensualités, remises et avoirs, du plus récent au plus ancien. Rien ne s'efface : une correction s'ajoute comme un nouveau mouvement.'
+	String get mouvementsContexte => 'Vos recharges, mensualités, remises et avoirs, du plus récent au plus ancien. Rien ne s\'efface : une correction s\'ajoute comme un nouveau mouvement.';
+
+	/// fr: 'Vos mouvements ne peuvent pas être lus'
+	String get mouvementsErreurTitre => 'Vos mouvements ne peuvent pas être lus';
+
+	/// fr: 'Vos recharges et vos mensualités s'afficheront ici dès leur mise en service.'
+	String get mouvementsIndisponiblePhrase => 'Vos recharges et vos mensualités s\'afficheront ici dès leur mise en service.';
+
+	/// fr: 'Aucune recharge ni aucune mensualité n'est encore enregistrée pour votre profil. Les mouvements apparaîtront ici après le premier paiement.'
+	String get mouvementsVidePhrase => 'Aucune recharge ni aucune mensualité n\'est encore enregistrée pour votre profil. Les mouvements apparaîtront ici après le premier paiement.';
+}
+
 // Path: formulaire.motif
 class Traductions$formulaire$motif$fr {
 	Traductions$formulaire$motif$fr.internal(this._root);
@@ -12486,6 +13182,183 @@ class Traductions$alertes$gravite$fr {
 
 	/// fr: 'Pour information'
 	String get info => 'Pour information';
+}
+
+// Path: argent.etat
+class Traductions$argent$etat$fr {
+	Traductions$argent$etat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Financé'
+	String get finance => 'Financé';
+
+	/// fr: 'Essai'
+	String get essai => 'Essai';
+
+	/// fr: 'Essai : {n}/{max}'
+	String essaiCompte({required Object n, required Object max}) => 'Essai : ${n}/${max}';
+
+	/// fr: 'À financer'
+	String get manque => 'À financer';
+
+	/// fr: 'En confirmation'
+	String get enConfirmation => 'En confirmation';
+
+	/// fr: 'Accès expiré'
+	String get expire => 'Accès expiré';
+
+	/// fr: 'En pause'
+	String get pause => 'En pause';
+
+	/// fr: 'À régulariser'
+	String get aRegulariser => 'À régulariser';
+}
+
+// Path: argent.periode
+class Traductions$argent$periode$fr {
+	Traductions$argent$periode$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Financé jusqu'au {date}'
+	String jusquau({required Object date}) => 'Financé jusqu\'au ${date}';
+
+	/// fr: 'Aucune période financée'
+	String get aucune => 'Aucune période financée';
+}
+
+// Path: argent.allocation
+class Traductions$argent$allocation$fr {
+	Traductions$argent$allocation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Crédité'
+	String get credite => 'Crédité';
+}
+
+// Path: argent.moyen
+class Traductions$argent$moyen$fr {
+	Traductions$argent$moyen$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Carte bancaire'
+	String get webStripe => 'Carte bancaire';
+
+	/// fr: 'Paiement par le web. Aucun débit avant votre confirmation.'
+	String get webStripeDetail => 'Paiement par le web. Aucun débit avant votre confirmation.';
+}
+
+// Path: argent.soldes
+class Traductions$argent$soldes$fr {
+	Traductions$argent$soldes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Total des soldes (lecture)'
+	String get total => 'Total des soldes (lecture)';
+
+	/// fr: 'Une lecture : chaque solde reste celui de son profil.'
+	String get totalDetail => 'Une lecture : chaque solde reste celui de son profil.';
+
+	/// fr: 'À payer ce mois'
+	String get aPayer => 'À payer ce mois';
+
+	/// fr: 'Profils financés'
+	String get profilsFinances => 'Profils financés';
+
+	/// fr: '{n} sur {total}'
+	String profilsFinancesValeur({required Object n, required Object total}) => '${n} sur ${total}';
+
+	/// fr: 'Paiements du mois'
+	String get paiements => 'Paiements du mois';
+}
+
+// Path: argent.acces
+class Traductions$argent$acces$fr {
+	Traductions$argent$acces$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Accès à cette classe fermé pour le moment'
+	String get enfantTitre => 'Accès à cette classe fermé pour le moment';
+
+	/// fr: 'Votre tuteur peut gérer l'accès.'
+	String get enfantMessage => 'Votre tuteur peut gérer l\'accès.';
+
+	/// fr: 'Accès à régulariser'
+	String get regulariserTitre => 'Accès à régulariser';
+
+	/// fr: 'Il manque {montant} pour financer {mois}.'
+	String regulariserManque({required Object montant, required Object mois}) => 'Il manque ${montant} pour financer ${mois}.';
+
+	/// fr: 'Il manque {montant} pour financer la nouvelle période.'
+	String regulariserManqueNouvellePeriode({required Object montant}) => 'Il manque ${montant} pour financer la nouvelle période.';
+
+	/// fr: 'La nouvelle période n'est pas encore financée.'
+	String get regulariserSansManque => 'La nouvelle période n\'est pas encore financée.';
+
+	/// fr: 'Place conservée jusqu'au {date}.'
+	String placeConservee({required Object date}) => 'Place conservée jusqu\'au ${date}.';
+
+	/// fr: 'Nouvelles séances indisponibles'
+	String get seancesFermeesTitre => 'Nouvelles séances indisponibles';
+
+	/// fr: '{prenom} ne peut pas rejoindre de nouvelle séance pour le moment. Son compte et ses contenus restent accessibles.'
+	String seancesFermees({required Object prenom}) => '${prenom} ne peut pas rejoindre de nouvelle séance pour le moment. Son compte et ses contenus restent accessibles.';
+
+	/// fr: 'Vous ne pouvez pas rejoindre de nouvelle séance pour le moment. Votre compte et vos contenus restent accessibles.'
+	String get adulteSeancesFermees => 'Vous ne pouvez pas rejoindre de nouvelle séance pour le moment. Votre compte et vos contenus restent accessibles.';
+
+	/// fr: 'Accès suspendu'
+	String get suspenduTitre => 'Accès suspendu';
+
+	/// fr: 'La place réservée à {prenom} a été libérée le {date}. Son compte et ses contenus restent accessibles.'
+	String suspenduTuteur({required Object prenom, required Object date}) => 'La place réservée à ${prenom} a été libérée le ${date}. Son compte et ses contenus restent accessibles.';
+
+	/// fr: 'La place réservée à {prenom} a été libérée. Son compte et ses contenus restent accessibles.'
+	String suspenduTuteurSansDate({required Object prenom}) => 'La place réservée à ${prenom} a été libérée. Son compte et ses contenus restent accessibles.';
+
+	/// fr: 'Votre place a été libérée le {date}. Votre compte et vos contenus restent accessibles.'
+	String suspenduAdulte({required Object date}) => 'Votre place a été libérée le ${date}. Votre compte et vos contenus restent accessibles.';
+
+	/// fr: 'Votre place a été libérée. Votre compte et vos contenus restent accessibles.'
+	String get suspenduAdulteSansDate => 'Votre place a été libérée. Votre compte et vos contenus restent accessibles.';
+
+	/// fr: 'Accès réactivé'
+	String get reactiveTitre => 'Accès réactivé';
+
+	/// fr: '{prenom} peut de nouveau rejoindre ses séances depuis le {date}.'
+	String reactiveTuteur({required Object prenom, required Object date}) => '${prenom} peut de nouveau rejoindre ses séances depuis le ${date}.';
+
+	/// fr: '{prenom} peut de nouveau rejoindre ses séances.'
+	String reactiveTuteurSansDate({required Object prenom}) => '${prenom} peut de nouveau rejoindre ses séances.';
+
+	/// fr: 'Vous pouvez de nouveau rejoindre vos séances depuis le {date}.'
+	String reactiveAdulte({required Object date}) => 'Vous pouvez de nouveau rejoindre vos séances depuis le ${date}.';
+
+	/// fr: 'Vous pouvez de nouveau rejoindre vos séances.'
+	String get reactiveAdulteSansDate => 'Vous pouvez de nouveau rejoindre vos séances.';
+
+	/// fr: 'Suspendu'
+	String get pastilleSuspendu => 'Suspendu';
+
+	/// fr: 'Réactivé'
+	String get pastilleReactive => 'Réactivé';
 }
 
 // Path: commun.etats.chargementProlonge
@@ -13290,6 +14163,102 @@ class Traductions$foyer$ajout$incertaine$fr {
 	String get reessayer => 'Réessayer quand même';
 }
 
+// Path: ficheEleve.mouvements.colonne
+class Traductions$ficheEleve$mouvements$colonne$fr {
+	Traductions$ficheEleve$mouvements$colonne$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Date'
+	String get date => 'Date';
+
+	/// fr: 'Libellé'
+	String get libelle => 'Libellé';
+
+	/// fr: 'Montant'
+	String get montant => 'Montant';
+
+	/// fr: 'Statut'
+	String get statut => 'Statut';
+
+	/// fr: 'Reçu'
+	String get recu => 'Reçu';
+}
+
+// Path: ficheEleve.mouvements.nature
+class Traductions$ficheEleve$mouvements$nature$fr {
+	Traductions$ficheEleve$mouvements$nature$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Recharge'
+	String get recharge => 'Recharge';
+
+	/// fr: 'Mensualité'
+	String get mensualite => 'Mensualité';
+
+	/// fr: 'Mensualité {mois} {annee}'
+	String mensualiteDe({required Object mois, required Object annee}) => 'Mensualité ${mois} ${annee}';
+
+	/// fr: 'Avoir'
+	String get avoir => 'Avoir';
+
+	/// fr: 'Remise'
+	String get remise => 'Remise';
+
+	/// fr: 'Taxe applicable'
+	String get taxe => 'Taxe applicable';
+}
+
+// Path: ficheEleve.mouvements.statut
+class Traductions$ficheEleve$mouvements$statut$fr {
+	Traductions$ficheEleve$mouvements$statut$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Enregistré'
+	String get enregistre => 'Enregistré';
+
+	/// fr: 'En confirmation'
+	String get enConfirmation => 'En confirmation';
+}
+
+// Path: ficheEleve.mouvements.recu
+class Traductions$ficheEleve$mouvements$recu$fr {
+	Traductions$ficheEleve$mouvements$recu$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Reçu'
+	String get titre => 'Reçu';
+
+	/// fr: 'Fermer le reçu'
+	String get fermer => 'Fermer le reçu';
+
+	/// fr: 'Date'
+	String get date => 'Date';
+
+	/// fr: 'Référence'
+	String get reference => 'Référence';
+
+	/// fr: 'Moyen de paiement'
+	String get moyen => 'Moyen de paiement';
+
+	/// fr: 'Montant payé'
+	String get montant => 'Montant payé';
+
+	/// fr: 'Répartition'
+	String get repartition => 'Répartition';
+}
+
 // Path: dossiers.revue.etats
 class Traductions$dossiers$revue$etats$fr {
 	Traductions$dossiers$revue$etats$fr.internal(this._root);
@@ -13366,6 +14335,743 @@ class Traductions$admin$journal$evenements$fr {
 
 	/// fr: 'Règles d'observation de la classe modifiées'
 	String get observationPolitiqueGroupeModifiee => 'Règles d\'observation de la classe modifiées';
+}
+
+// Path: admin.finance.vue
+class Traductions$admin$finance$vue$fr {
+	Traductions$admin$finance$vue$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{mois} {annee}'
+	String moisAnnee({required Object mois, required Object annee}) => '${mois} ${annee}';
+
+	/// fr: 'Les chiffres {deMois}, chacun à part : ce qui est encaissé, ce qui est reconnu comme revenu, ce qui est dû aux enseignants et ce qui reste sur les profils des familles.'
+	String contexte({required Object deMois}) => 'Les chiffres ${deMois}, chacun à part : ce qui est encaissé, ce qui est reconnu comme revenu, ce qui est dû aux enseignants et ce qui reste sur les profils des familles.';
+
+	/// fr: 'Indicateurs du mois'
+	String get indicateurs => 'Indicateurs du mois';
+
+	/// fr: 'Chiffre encaissé'
+	String get encaisse => 'Chiffre encaissé';
+
+	/// fr: 'Paiements reçus ce mois. Un encaissement n'est pas encore un revenu.'
+	String get encaisseDetail => 'Paiements reçus ce mois. Un encaissement n\'est pas encore un revenu.';
+
+	/// fr: 'Revenu académique'
+	String get revenu => 'Revenu académique';
+
+	/// fr: 'Revenu reconnu ce mois, hors taxes collectées.'
+	String get revenuDetail => 'Revenu reconnu ce mois, hors taxes collectées.';
+
+	/// fr: 'Paie enseignants'
+	String get paie => 'Paie enseignants';
+
+	/// fr: 'Estimée pour le mois : une charge à venir, pas un paiement fait.'
+	String get paieDetail => 'Estimée pour le mois : une charge à venir, pas un paiement fait.';
+
+	/// fr: 'Marge projetée'
+	String get marge => 'Marge projetée';
+
+	/// fr: '{valeur} %'
+	String margeValeur({required Object valeur}) => '${valeur} %';
+
+	/// fr: 'Calculée sur la seule paie des enseignants, sans les autres charges : elle ne se compare pas à une marge nette.'
+	String get margeDetail => 'Calculée sur la seule paie des enseignants, sans les autres charges : elle ne se compare pas à une marge nette.';
+
+	/// fr: 'Aucune activité'
+	String get margeSansActivite => 'Aucune activité';
+
+	/// fr: 'Non calculable'
+	String get margeNonCalculable => 'Non calculable';
+
+	/// fr: 'Impayés'
+	String get impayes => 'Impayés';
+
+	/// fr: 'Reste à financer sur les périodes du mois.'
+	String get impayesDetail => 'Reste à financer sur les périodes du mois.';
+
+	/// fr: 'Essais en cours'
+	String get essais => 'Essais en cours';
+
+	/// fr: 'Élèves en essai, jamais comptés comme payants.'
+	String get essaisDetail => 'Élèves en essai, jamais comptés comme payants.';
+
+	/// fr: 'Soldes créditeurs'
+	String get soldes => 'Soldes créditeurs';
+
+	/// fr: 'Argent disponible sur les profils des familles : ni un revenu, ni une marge.'
+	String get soldesDetail => 'Argent disponible sur les profils des familles : ni un revenu, ni une marge.';
+
+	/// fr: 'Aucune activité financière en {mois} : les indicateurs sont à zéro.'
+	String sansActivite({required Object mois}) => 'Aucune activité financière en ${mois} : les indicateurs sont à zéro.';
+
+	/// fr: 'Aucun revenu reconnu en {mois} : la marge n'est pas calculable.'
+	String sansRevenu({required Object mois}) => 'Aucun revenu reconnu en ${mois} : la marge n\'est pas calculable.';
+
+	/// fr: 'Évolution'
+	String get evolution => 'Évolution';
+
+	/// fr: 'Un graphique par notion, chacun avec ses nombres exacts : l'encaissement, la charge et la marge ne se mélangent jamais.'
+	String get evolutionDetail => 'Un graphique par notion, chacun avec ses nombres exacts : l\'encaissement, la charge et la marge ne se mélangent jamais.';
+
+	/// fr: 'Chiffre encaissé par mois'
+	String get graphiqueEncaisse => 'Chiffre encaissé par mois';
+
+	/// fr: 'Paie enseignants par mois'
+	String get graphiquePaie => 'Paie enseignants par mois';
+
+	/// fr: 'Marge projetée par mois'
+	String get graphiqueMarge => 'Marge projetée par mois';
+
+	/// fr: 'Répartition du revenu académique'
+	String get graphiqueRepartition => 'Répartition du revenu académique';
+
+	/// fr: 'Revenu reconnu {deMois}, par type d'élève.'
+	String graphiqueRepartitionDetail({required Object deMois}) => 'Revenu reconnu ${deMois}, par type d\'élève.';
+
+	/// fr: 'Élèves enfants'
+	String get repartitionEnfants => 'Élèves enfants';
+
+	/// fr: 'Élèves adultes'
+	String get repartitionAdultes => 'Élèves adultes';
+
+	/// fr: 'Aucun mois rendu pour l'instant.'
+	String get sansHistorique => 'Aucun mois rendu pour l\'instant.';
+
+	/// fr: 'Alertes'
+	String get alertes => 'Alertes';
+
+	/// fr: 'Aucune alerte ce mois.'
+	String get aucuneAlerte => 'Aucune alerte ce mois.';
+
+	/// fr: 'État des paiements'
+	String get etatPaiements => 'État des paiements';
+
+	/// fr: 'Les profils du mois selon l'état de leur période. Un essai n'est jamais compté comme payant.'
+	String get etatPaiementsDetail => 'Les profils du mois selon l\'état de leur période. Un essai n\'est jamais compté comme payant.';
+
+	/// fr: 'Financés'
+	String get etatFinances => 'Financés';
+
+	/// fr: 'À régulariser'
+	String get etatARegulariser => 'À régulariser';
+
+	/// fr: 'En essai'
+	String get etatEnEssai => 'En essai';
+
+	/// fr: 'En confirmation'
+	String get etatEnConfirmation => 'En confirmation';
+
+	/// fr: '{valeur} % des profils du mois'
+	String etatPart({required Object valeur}) => '${valeur} % des profils du mois';
+
+	/// fr: 'Aucun état de paiement rendu pour ce mois.'
+	String get etatVide => 'Aucun état de paiement rendu pour ce mois.';
+
+	/// fr: 'Top classes'
+	String get topClasses => 'Top classes';
+
+	/// fr: 'Les classes qui ont le plus encaissé {deMois}.'
+	String topClassesDetail({required Object deMois}) => 'Les classes qui ont le plus encaissé ${deMois}.';
+
+	/// fr: '{rang}. Classe {classe}'
+	String topClasse({required Object rang, required Object classe}) => '${rang}. Classe ${classe}';
+
+	/// fr: 'Aucune classe n'a encaissé ce mois.'
+	String get topClassesVide => 'Aucune classe n\'a encaissé ce mois.';
+
+	/// fr: 'Dernières opérations'
+	String get dernieresOperations => 'Dernières opérations';
+
+	/// fr: 'Les derniers mouvements sur les profils des familles, le plus récent d'abord.'
+	String get dernieresOperationsDetail => 'Les derniers mouvements sur les profils des familles, le plus récent d\'abord.';
+
+	/// fr: '{libelle} · {prenom}'
+	String operation({required Object libelle, required Object prenom}) => '${libelle} · ${prenom}';
+
+	/// fr: 'Aucun mouvement pour l'instant.'
+	String get dernieresOperationsVide => 'Aucun mouvement pour l\'instant.';
+
+	late final Traductions$admin$finance$vue$alerte$fr alerte = Traductions$admin$finance$vue$alerte$fr.internal(_root);
+}
+
+// Path: admin.finance.pol
+class Traductions$admin$finance$pol$fr {
+	Traductions$admin$finance$pol$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les règles commerciales de l'académie, versionnées et datées. Un brouillon se prépare ici et ne s'applique qu'une fois publié, à partir de sa date d'effet. Ce qui protège l'argent des familles ne se règle pas ici.'
+	String get contexte => 'Les règles commerciales de l\'académie, versionnées et datées. Un brouillon se prépare ici et ne s\'applique qu\'une fois publié, à partir de sa date d\'effet. Ce qui protège l\'argent des familles ne se règle pas ici.';
+
+	/// fr: 'Brouillon'
+	String get statutBrouillon => 'Brouillon';
+
+	/// fr: 'Publiée'
+	String get statutPubliee => 'Publiée';
+
+	/// fr: 'Version brouillon {version}'
+	String versionBrouillon({required Object version}) => 'Version brouillon ${version}';
+
+	/// fr: 'Version active {version}'
+	String versionActive({required Object version}) => 'Version active ${version}';
+
+	/// fr: 'En vigueur depuis le {date}'
+	String enVigueur({required Object date}) => 'En vigueur depuis le ${date}';
+
+	/// fr: 'Date d'effet : {date}'
+	String dateEffet({required Object date}) => 'Date d\'effet : ${date}';
+
+	/// fr: 'Le brouillon s'appliquera à partir de cette date, jamais à une facture déjà payée.'
+	String get dateEffetDetail => 'Le brouillon s\'appliquera à partir de cette date, jamais à une facture déjà payée.';
+
+	/// fr: 'Réglable dans le brouillon : elle sera appliquée à la publication, une fois le serveur branché.'
+	String get dateEffetReglable => 'Réglable dans le brouillon : elle sera appliquée à la publication, une fois le serveur branché.';
+
+	/// fr: 'Changer la date d'effet'
+	String get changerDate => 'Changer la date d\'effet';
+
+	/// fr: '{jour} {mois} {annee}'
+	String date({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}';
+
+	/// fr: '(one) {Une valeur diffère de la version active : elle est rappelée sous son champ.} (other) {{n} valeurs diffèrent de la version active : chacune est rappelée sous son champ.}'
+	String differences({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Une valeur diffère de la version active : elle est rappelée sous son champ.',
+		other: '${n} valeurs diffèrent de la version active : chacune est rappelée sous son champ.',
+	);
+
+	/// fr: 'Aucune différence avec la version active pour l'instant : modifiez un champ pour préparer la prochaine version.'
+	String get aucuneDifference => 'Aucune différence avec la version active pour l\'instant : modifiez un champ pour préparer la prochaine version.';
+
+	/// fr: 'Vos modifications restent sur cet écran tant que vous ne le quittez pas : l'enregistrement d'un brouillon n'est pas encore disponible.'
+	String get nonEnregistre => 'Vos modifications restent sur cet écran tant que vous ne le quittez pas : l\'enregistrement d\'un brouillon n\'est pas encore disponible.';
+
+	/// fr: 'Aucun brouillon en cours : les valeurs ci-dessous sont celles qui s'appliquent aujourd'hui. Elles ne se modifient que dans un brouillon.'
+	String get sansBrouillon => 'Aucun brouillon en cours : les valeurs ci-dessous sont celles qui s\'appliquent aujourd\'hui. Elles ne se modifient que dans un brouillon.';
+
+	/// fr: 'Version active : {valeur}'
+	String versionActiveValeur({required Object valeur}) => 'Version active : ${valeur}';
+
+	/// fr: 'Ce champ est vide ou mal saisi : saisissez un nombre entier, sans virgule ni signe.'
+	String get erreurChamp => 'Ce champ est vide ou mal saisi : saisissez un nombre entier, sans virgule ni signe.';
+
+	/// fr: 'Une classe compte au moins une place : saisissez 1 ou plus.'
+	String get erreurCapacite => 'Une classe compte au moins une place : saisissez 1 ou plus.';
+
+	/// fr: 'Un tarif nul rendrait le cours gratuit : saisissez un montant supérieur à 0.'
+	String get erreurTarif => 'Un tarif nul rendrait le cours gratuit : saisissez un montant supérieur à 0.';
+
+	/// fr: 'Le plafond est sous la base garantie ({base}) : le taux baisserait quand la classe se remplit. Saisissez au moins la base.'
+	String erreurPlafond({required Object base}) => 'Le plafond est sous la base garantie (${base}) : le taux baisserait quand la classe se remplit. Saisissez au moins la base.';
+
+	/// fr: 'Le maximum est sous l'objectif ({objectif}) : saisissez au moins l'objectif.'
+	String erreurClassesMax({required Object objectif}) => 'Le maximum est sous l\'objectif (${objectif}) : saisissez au moins l\'objectif.';
+
+	/// fr: 'Le minimum dépasse la plus petite classe ({capacite}) : elle ne pourrait jamais ouvrir. Saisissez au plus cette capacité.'
+	String erreurMinimum({required Object capacite}) => 'Le minimum dépasse la plus petite classe (${capacite}) : elle ne pourrait jamais ouvrir. Saisissez au plus cette capacité.';
+
+	/// fr: 'La remise dépasse le tarif ({tarif}) : la mensualité deviendrait négative. Saisissez au plus ce montant.'
+	String erreurRemise({required Object tarif}) => 'La remise dépasse le tarif (${tarif}) : la mensualité deviendrait négative. Saisissez au plus ce montant.';
+
+	/// fr: '{montant} / h'
+	String parHeure({required Object montant}) => '${montant} / h';
+
+	/// fr: '{symbole} / h'
+	String suffixeParHeure({required Object symbole}) => '${symbole} / h';
+
+	/// fr: '{symbole} de remise'
+	String suffixeRemise({required Object symbole}) => '${symbole} de remise';
+
+	/// fr: '(one) {{n} élève} (other) {{n} élèves}'
+	String eleves({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} élève',
+		other: '${n} élèves',
+	);
+
+	/// fr: '(one) {{n} séance} (other) {{n} séances}'
+	String seances({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} séance',
+		other: '${n} séances',
+	);
+
+	/// fr: '(one) {{n} classe} (other) {{n} classes}'
+	String classes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} classe',
+		other: '${n} classes',
+	);
+
+	/// fr: '(one) {{n} jour} (other) {{n} jours}'
+	String jours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} jour',
+		other: '${n} jours',
+	);
+
+	/// fr: 'élèves'
+	String get uniteEleves => 'élèves';
+
+	/// fr: 'séances'
+	String get uniteSeances => 'séances';
+
+	/// fr: 'classes'
+	String get uniteClasses => 'classes';
+
+	/// fr: 'jours'
+	String get uniteJours => 'jours';
+
+	/// fr: 'Tarifs'
+	String get tarifs => 'Tarifs';
+
+	/// fr: 'Le prix mensuel d'accès à une classe, hors taxes.'
+	String get tarifsDetail => 'Le prix mensuel d\'accès à une classe, hors taxes.';
+
+	/// fr: 'Enfant'
+	String get tarifEnfant => 'Enfant';
+
+	/// fr: 'Le prix mensuel d'un enfant pour une classe ; il vaut pour les périodes qui commencent après la date d'effet.'
+	String get tarifEnfantDetail => 'Le prix mensuel d\'un enfant pour une classe ; il vaut pour les périodes qui commencent après la date d\'effet.';
+
+	/// fr: 'Adulte'
+	String get tarifAdulte => 'Adulte';
+
+	/// fr: 'Le prix mensuel d'un adulte pour une classe ; il vaut pour les périodes qui commencent après la date d'effet.'
+	String get tarifAdulteDetail => 'Le prix mensuel d\'un adulte pour une classe ; il vaut pour les périodes qui commencent après la date d\'effet.';
+
+	/// fr: 'Essai'
+	String get essai => 'Essai';
+
+	/// fr: 'Les séances gratuites d'un nouveau profil, avant sa première période payante.'
+	String get essaiDetail => 'Les séances gratuites d\'un nouveau profil, avant sa première période payante.';
+
+	/// fr: 'Séances d'essai par nouveau profil'
+	String get essais => 'Séances d\'essai par nouveau profil';
+
+	/// fr: 'Gratuites pour la famille ; après la dernière, l'accès attend le financement de la première période.'
+	String get essaisDetail => 'Gratuites pour la famille ; après la dernière, l\'accès attend le financement de la première période.';
+
+	/// fr: 'Activation de l'essai'
+	String get essaiActivation => 'Activation de l\'essai';
+
+	/// fr: 'Désactivé, un nouveau profil commence directement par sa première période payante.'
+	String get essaiActivationDetail => 'Désactivé, un nouveau profil commence directement par sa première période payante.';
+
+	/// fr: 'Activé'
+	String get essaiActive => 'Activé';
+
+	/// fr: 'Désactivé'
+	String get essaiDesactive => 'Désactivé';
+
+	/// fr: 'Remises familiales'
+	String get remises => 'Remises familiales';
+
+	/// fr: 'Par rang de membre payant du foyer, sans jamais réécrire une facture déjà payée.'
+	String get remisesDetail => 'Par rang de membre payant du foyer, sans jamais réécrire une facture déjà payée.';
+
+	/// fr: 'Jusqu'au {rang}e membre payant'
+	String remiseAucune({required Object rang}) => 'Jusqu\'au ${rang}e membre payant';
+
+	/// fr: 'Prix normal'
+	String get remiseAucuneValeur => 'Prix normal';
+
+	/// fr: 'Aucune remise : les premiers membres payants paient le tarif plein.'
+	String get remiseAucuneDetail => 'Aucune remise : les premiers membres payants paient le tarif plein.';
+
+	/// fr: '{rang}e membre payant'
+	String remiseRang({required Object rang}) => '${rang}e membre payant';
+
+	/// fr: 'Ce membre reçoit cette remise sur son prix mensuel ; les membres déjà facturés ne changent pas.'
+	String get remiseRangDetail => 'Ce membre reçoit cette remise sur son prix mensuel ; les membres déjà facturés ne changent pas.';
+
+	/// fr: '{rang}e membre payant et suivants'
+	String remiseRangSuivants({required Object rang}) => '${rang}e membre payant et suivants';
+
+	/// fr: 'Chaque membre payant à partir de ce rang reçoit cette remise sur son prix mensuel.'
+	String get remiseRangSuivantsDetail => 'Chaque membre payant à partir de ce rang reçoit cette remise sur son prix mensuel.';
+
+	/// fr: 'Rémunération des enseignants'
+	String get enseignants => 'Rémunération des enseignants';
+
+	/// fr: 'Par heure réellement assurée, entre une base garantie et un plafond.'
+	String get enseignantsDetail => 'Par heure réellement assurée, entre une base garantie et un plafond.';
+
+	/// fr: 'Base horaire garantie'
+	String get baseHoraire => 'Base horaire garantie';
+
+	/// fr: 'Le minimum payé par heure assurée, même quand la classe n'est pas pleine.'
+	String get baseHoraireDetail => 'Le minimum payé par heure assurée, même quand la classe n\'est pas pleine.';
+
+	/// fr: 'Plafond horaire'
+	String get plafondHoraire => 'Plafond horaire';
+
+	/// fr: 'Le maximum payé par heure, atteint quand tous les sièges prévus sont occupés.'
+	String get plafondHoraireDetail => 'Le maximum payé par heure, atteint quand tous les sièges prévus sont occupés.';
+
+	/// fr: 'Composante d'occupation'
+	String get occupation => 'Composante d\'occupation';
+
+	/// fr: 'Selon les sièges occupés'
+	String get occupationValeur => 'Selon les sièges occupés';
+
+	/// fr: 'Entre la base et le plafond, le taux monte avec les sièges occupés ; un élève financé absent compte toujours.'
+	String get occupationDetail => 'Entre la base et le plafond, le taux monte avec les sièges occupés ; un élève financé absent compte toujours.';
+
+	/// fr: 'Objectif de classes par enseignant'
+	String get classesObjectif => 'Objectif de classes par enseignant';
+
+	/// fr: 'Le nombre de classes actives recommandé : un repère, pas une limite.'
+	String get classesObjectifDetail => 'Le nombre de classes actives recommandé : un repère, pas une limite.';
+
+	/// fr: 'Maximum normal de classes'
+	String get classesMax => 'Maximum normal de classes';
+
+	/// fr: 'La charge maximale conseillée pour un enseignant.'
+	String get classesMaxDetail => 'La charge maximale conseillée pour un enseignant.';
+
+	/// fr: 'Aide Internet'
+	String get internet => 'Aide Internet';
+
+	/// fr: 'Une seule aide par enseignant éligible, jamais multipliée par classe ni par élève.'
+	String get internetDetail => 'Une seule aide par enseignant éligible, jamais multipliée par classe ni par élève.';
+
+	/// fr: 'Pas encore fixée'
+	String get internetNonFixee => 'Pas encore fixée';
+
+	/// fr: 'Classes'
+	String get sectionClasses => 'Classes';
+
+	/// fr: 'La taille des classes et le seuil pour en ouvrir une.'
+	String get sectionClassesDetail => 'La taille des classes et le seuil pour en ouvrir une.';
+
+	/// fr: 'Capacité d'une classe d'enfants'
+	String get capaciteEnfant => 'Capacité d\'une classe d\'enfants';
+
+	/// fr: 'Le nombre de sièges prévus ; il sert aussi au taux horaire de l'enseignant.'
+	String get capaciteEnfantDetail => 'Le nombre de sièges prévus ; il sert aussi au taux horaire de l\'enseignant.';
+
+	/// fr: 'Capacité d'une classe d'adultes'
+	String get capaciteAdulte => 'Capacité d\'une classe d\'adultes';
+
+	/// fr: 'Le nombre de sièges prévus dans une classe d'adultes.'
+	String get capaciteAdulteDetail => 'Le nombre de sièges prévus dans une classe d\'adultes.';
+
+	/// fr: 'Capacité d'une classe de débutants'
+	String get capaciteDebutant => 'Capacité d\'une classe de débutants';
+
+	/// fr: 'Plus petite, pour suivre chaque débutant de près.'
+	String get capaciteDebutantDetail => 'Plus petite, pour suivre chaque débutant de près.';
+
+	/// fr: 'Minimum d'ouverture'
+	String get minimum => 'Minimum d\'ouverture';
+
+	/// fr: 'En dessous, une classe ne s'ouvre pas et la direction en est alertée.'
+	String get minimumDetail => 'En dessous, une classe ne s\'ouvre pas et la direction en est alertée.';
+
+	/// fr: 'Paiement'
+	String get paiement => 'Paiement';
+
+	/// fr: 'Le moyen de paiement et le délai de conservation d'une place.'
+	String get paiementDetail => 'Le moyen de paiement et le délai de conservation d\'une place.';
+
+	/// fr: 'Paiement web (Stripe)'
+	String get railWeb => 'Paiement web (Stripe)';
+
+	/// fr: 'Actif'
+	String get railActif => 'Actif';
+
+	/// fr: 'Inactif'
+	String get railInactif => 'Inactif';
+
+	/// fr: 'Le seul moyen de paiement proposé aux familles au lancement.'
+	String get railWebDetail => 'Le seul moyen de paiement proposé aux familles au lancement.';
+
+	/// fr: 'Achat intégré iOS'
+	String get railIos => 'Achat intégré iOS';
+
+	/// fr: 'Facturation Google Play'
+	String get railAndroid => 'Facturation Google Play';
+
+	/// fr: 'Préparé (inactif)'
+	String get railPrepare => 'Préparé (inactif)';
+
+	/// fr: 'Prévu pour plus tard : aucun bouton de paiement mobile n'est montré aux familles au lancement.'
+	String get railMobileDetail => 'Prévu pour plus tard : aucun bouton de paiement mobile n\'est montré aux familles au lancement.';
+
+	/// fr: 'Conservation de la place'
+	String get conservation => 'Conservation de la place';
+
+	/// fr: 'Le délai pendant lequel la place d'un élève reste réservée quand sa nouvelle période n'est pas financée.'
+	String get conservationDetail => 'Le délai pendant lequel la place d\'un élève reste réservée quand sa nouvelle période n\'est pas financée.';
+
+	/// fr: 'Règles de relance'
+	String get relances => 'Règles de relance';
+
+	/// fr: 'Les rappels d'une période non financée, envoyés au tuteur ou à l'adulte autonome dans l'application ; jamais à l'enfant.'
+	String get relancesDetail => 'Les rappels d\'une période non financée, envoyés au tuteur ou à l\'adulte autonome dans l\'application ; jamais à l\'enfant.';
+
+	/// fr: 'Pas encore fixées'
+	String get relancesNonFixees => 'Pas encore fixées';
+
+	/// fr: 'Relance {rang}'
+	String relanceRang({required Object rang}) => 'Relance ${rang}';
+
+	/// fr: '{jours} après le début de la période'
+	String relanceApres({required Object jours}) => '${jours} après le début de la période';
+
+	/// fr: '{rang} : {apres}'
+	String relanceComparaison({required Object rang, required Object apres}) => '${rang} : ${apres}';
+
+	/// fr: 'Pilotage'
+	String get pilotage => 'Pilotage';
+
+	/// fr: 'Des repères pour lire les chiffres, jamais des règles qui bloquent.'
+	String get pilotageDetail => 'Des repères pour lire les chiffres, jamais des règles qui bloquent.';
+
+	/// fr: 'Marge de référence'
+	String get marge => 'Marge de référence';
+
+	/// fr: 'Un repère pour lire la vue globale, jamais une sanction, un refus ni un blocage.'
+	String get margeDetail => 'Un repère pour lire la vue globale, jamais une sanction, un refus ni un blocage.';
+
+	/// fr: 'Marge objectif'
+	String get margeObjectif => 'Marge objectif';
+
+	/// fr: 'Marge nette visée, toutes charges comprises : un repère de pilotage, jamais une sanction ni un blocage.'
+	String get margeObjectifDetail => 'Marge nette visée, toutes charges comprises : un repère de pilotage, jamais une sanction ni un blocage.';
+
+	/// fr: 'Performance forte'
+	String get margeForte => 'Performance forte';
+
+	/// fr: 'Le repère d'un mois très bon ; il ne descend pas sous l'objectif.'
+	String get margeForteDetail => 'Le repère d\'un mois très bon ; il ne descend pas sous l\'objectif.';
+
+	/// fr: 'Scénario stretch'
+	String get margeStretch => 'Scénario stretch';
+
+	/// fr: 'Le repère ambitieux ; il ne descend pas sous la performance forte.'
+	String get margeStretchDetail => 'Le repère ambitieux ; il ne descend pas sous la performance forte.';
+
+	/// fr: '{valeur} %'
+	String pourcentValeur({required Object valeur}) => '${valeur} %';
+
+	/// fr: '%'
+	String get unitePourcent => '%';
+
+	/// fr: 'Saisissez une marge de 100 % au plus.'
+	String get erreurMargeMax => 'Saisissez une marge de 100 % au plus.';
+
+	/// fr: 'La performance forte ne descend pas sous l'objectif ({objectif}) : saisissez une valeur au moins égale.'
+	String erreurMargeForte({required Object objectif}) => 'La performance forte ne descend pas sous l\'objectif (${objectif}) : saisissez une valeur au moins égale.';
+
+	/// fr: 'Le scénario stretch ne descend pas sous la performance forte ({forte}) : saisissez une valeur au moins égale.'
+	String erreurMargeStretch({required Object forte}) => 'Le scénario stretch ne descend pas sous la performance forte (${forte}) : saisissez une valeur au moins égale.';
+
+	/// fr: 'Budgets'
+	String get budgets => 'Budgets';
+
+	/// fr: 'Non contraignants : des repères de dépense, jamais un blocage ni une sanction.'
+	String get budgetsDetail => 'Non contraignants : des repères de dépense, jamais un blocage ni une sanction.';
+
+	/// fr: 'Pas encore fixés'
+	String get budgetsNonFixes => 'Pas encore fixés';
+
+	/// fr: 'Budget marketing'
+	String get budgetMarketing => 'Budget marketing';
+
+	/// fr: 'Budget opérationnel'
+	String get budgetOperationnel => 'Budget opérationnel';
+
+	/// fr: '{valeur} %, non contraignant'
+	String budgetValeur({required Object valeur}) => '${valeur} %, non contraignant';
+
+	/// fr: '{libelle} : {valeur}'
+	String budgetComparaison({required Object libelle, required Object valeur}) => '${libelle} : ${valeur}';
+
+	/// fr: ' ; '
+	String get separateurComparaison => ' ; ';
+
+	/// fr: 'Règles fixes'
+	String get invariants => 'Règles fixes';
+
+	/// fr: 'Elles protègent l'argent des familles : ce ne sont pas des réglages, aucune version ne les change.'
+	String get invariantsDetail => 'Elles protègent l\'argent des familles : ce ne sont pas des réglages, aucune version ne les change.';
+
+	/// fr: 'Un paiement est confirmé avant tout crédit sur un profil.'
+	String get invariantConfirmation => 'Un paiement est confirmé avant tout crédit sur un profil.';
+
+	/// fr: 'Un même paiement n'est jamais débité deux fois.'
+	String get invariantDoubleDebit => 'Un même paiement n\'est jamais débité deux fois.';
+
+	/// fr: 'L'accès au cours dépend de la période financée, jamais du solde.'
+	String get invariantPeriode => 'L\'accès au cours dépend de la période financée, jamais du solde.';
+
+	/// fr: 'Chaque profil a son propre solde ; le total du foyer n'est qu'une lecture.'
+	String get invariantSoldes => 'Chaque profil a son propre solde ; le total du foyer n\'est qu\'une lecture.';
+
+	/// fr: 'Un même paiement reçu deux fois n'est enregistré qu'une fois.'
+	String get invariantIdempotence => 'Un même paiement reçu deux fois n\'est enregistré qu\'une fois.';
+
+	/// fr: 'L'historique des paiements ne s'efface ni ne se réécrit : on y ajoute seulement.'
+	String get invariantHistorique => 'L\'historique des paiements ne s\'efface ni ne se réécrit : on y ajoute seulement.';
+
+	/// fr: 'Publier la version'
+	String get publier => 'Publier la version';
+
+	/// fr: 'Publier rend ce brouillon applicable à partir de sa date d'effet ; aucune facture déjà payée n'est modifiée.'
+	String get publierConsequence => 'Publier rend ce brouillon applicable à partir de sa date d\'effet ; aucune facture déjà payée n\'est modifiée.';
+
+	/// fr: 'La publication n'est pas encore disponible'
+	String get publicationIndisponible => 'La publication n\'est pas encore disponible';
+
+	/// fr: 'Rien n'a été publié : le service de publication n'est pas encore branché. La version active continue de s'appliquer. Gardez cet écran ouvert pour conserver vos modifications, ou revenez quand la publication sera ouverte.'
+	String get publicationIndisponibleDetail => 'Rien n\'a été publié : le service de publication n\'est pas encore branché. La version active continue de s\'appliquer. Gardez cet écran ouvert pour conserver vos modifications, ou revenez quand la publication sera ouverte.';
+
+	/// fr: 'Publication non confirmée'
+	String get publicationNonConfirmee => 'Publication non confirmée';
+
+	/// fr: 'La réponse n'est pas arrivée : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vérifiez la version active avant de réessayer.'
+	String get publicationNonConfirmeeDetail => 'La réponse n\'est pas arrivée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vérifiez la version active avant de réessayer.';
+
+	/// fr: 'Corrigez d'abord les champs signalés'
+	String get champsACorriger => 'Corrigez d\'abord les champs signalés';
+
+	/// fr: 'Un champ vide, mal saisi ou incohérent empêche de préparer la publication : corrigez chaque champ signalé comme sa phrase l'indique, puis publiez.'
+	String get champsACorrigerDetail => 'Un champ vide, mal saisi ou incohérent empêche de préparer la publication : corrigez chaque champ signalé comme sa phrase l\'indique, puis publiez.';
+
+	/// fr: 'Aperçu avant publication'
+	String get apercu => 'Aperçu avant publication';
+
+	/// fr: 'Ce que donnerait le brouillon à l'écran, recalculé à chaque modification valide. Ce sont des exemples : rien n'est facturé ni payé.'
+	String get apercuDetail => 'Ce que donnerait le brouillon à l\'écran, recalculé à chaque modification valide. Ce sont des exemples : rien n\'est facturé ni payé.';
+
+	/// fr: 'Exemple de foyer'
+	String get apercuFamille => 'Exemple de foyer';
+
+	/// fr: 'La mensualité de chaque enfant payant, dans l'ordre des rangs, puis le total du foyer.'
+	String get apercuFamilleDetail => 'La mensualité de chaque enfant payant, dans l\'ordre des rangs, puis le total du foyer.';
+
+	/// fr: 'Nombre d'enfants payants'
+	String get apercuEnfantsChoix => 'Nombre d\'enfants payants';
+
+	/// fr: '(one) {{n} enfant} (other) {{n} enfants}'
+	String apercuEnfants({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} enfant',
+		other: '${n} enfants',
+	);
+
+	/// fr: 'Enfant {rang}'
+	String apercuEnfant({required Object rang}) => 'Enfant ${rang}';
+
+	/// fr: 'Prix normal, aucune remise'
+	String get apercuPrixNormal => 'Prix normal, aucune remise';
+
+	/// fr: 'Remise de rang : {montant}'
+	String apercuRemise({required Object montant}) => 'Remise de rang : ${montant}';
+
+	/// fr: 'Total du foyer par mois'
+	String get apercuTotalFamille => 'Total du foyer par mois';
+
+	/// fr: 'Exemple d'enseignant'
+	String get apercuEnseignant => 'Exemple d\'enseignant';
+
+	/// fr: 'Le taux horaire d'une classe selon ses sièges éligibles : la base garantie, plus la part d'occupation, jamais au-dessus du plafond.'
+	String get apercuEnseignantDetail => 'Le taux horaire d\'une classe selon ses sièges éligibles : la base garantie, plus la part d\'occupation, jamais au-dessus du plafond.';
+
+	/// fr: 'Type de classe'
+	String get apercuTypeClasse => 'Type de classe';
+
+	/// fr: 'Enfants'
+	String get apercuClasseEnfants => 'Enfants';
+
+	/// fr: 'Adultes'
+	String get apercuClasseAdultes => 'Adultes';
+
+	/// fr: 'Débutants'
+	String get apercuClasseDebutants => 'Débutants';
+
+	/// fr: 'Sièges éligibles'
+	String get apercuEligiblesChoix => 'Sièges éligibles';
+
+	/// fr: 'Un siège compte quand sa période est financée, même si l'élève est absent.'
+	String get apercuEligiblesDetail => 'Un siège compte quand sa période est financée, même si l\'élève est absent.';
+
+	/// fr: '{eligibles} sur {capacite}'
+	String apercuEligibles({required Object eligibles, required Object capacite}) => '${eligibles} sur ${capacite}';
+
+	/// fr: 'Un siège éligible de moins'
+	String get apercuEligiblesMoins => 'Un siège éligible de moins';
+
+	/// fr: 'Un siège éligible de plus'
+	String get apercuEligiblesPlus => 'Un siège éligible de plus';
+
+	/// fr: 'Base garantie'
+	String get apercuBase => 'Base garantie';
+
+	/// fr: 'Part d'occupation'
+	String get apercuOccupation => 'Part d\'occupation';
+
+	/// fr: '{eligibles} sièges éligibles sur {capacite}'
+	String apercuOccupationDetail({required Object eligibles, required Object capacite}) => '${eligibles} sièges éligibles sur ${capacite}';
+
+	/// fr: 'Taux horaire effectif'
+	String get apercuTaux => 'Taux horaire effectif';
+
+	/// fr: 'Jamais au-dessus du plafond de {plafond}.'
+	String apercuTauxDetail({required Object plafond}) => 'Jamais au-dessus du plafond de ${plafond}.';
+
+	/// fr: 'L'aperçu attend une saisie valide'
+	String get apercuAttente => 'L\'aperçu attend une saisie valide';
+
+	/// fr: 'Un champ du brouillon est vide, mal saisi ou incohérent : corrigez le champ signalé, l'aperçu se recalcule aussitôt.'
+	String get apercuAttenteDetail => 'Un champ du brouillon est vide, mal saisi ou incohérent : corrigez le champ signalé, l\'aperçu se recalcule aussitôt.';
+
+	/// fr: 'Cette classe n'a aucun siège : saisissez une capacité d'au moins 1 élève pour voir le taux.'
+	String get apercuCapaciteAttente => 'Cette classe n\'a aucun siège : saisissez une capacité d\'au moins 1 élève pour voir le taux.';
+
+	/// fr: 'L'aperçu n'est pas encore disponible'
+	String get apercuIndisponible => 'L\'aperçu n\'est pas encore disponible';
+
+	/// fr: 'Le calcul de l'aperçu n'est pas encore branché : aucun montant n'est estimé ici. Le brouillon reste modifiable.'
+	String get apercuIndisponibleDetail => 'Le calcul de l\'aperçu n\'est pas encore branché : aucun montant n\'est estimé ici. Le brouillon reste modifiable.';
+
+	/// fr: 'Aperçu non calculé'
+	String get apercuErreur => 'Aperçu non calculé';
+
+	/// fr: 'Le calcul n'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos saisies sont gardées : relancez le calcul.'
+	String get apercuErreurDetail => 'Le calcul n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos saisies sont gardées : relancez le calcul.';
+
+	/// fr: 'Aperçu non calculé'
+	String get apercuHorsLigne => 'Aperçu non calculé';
+
+	/// fr: 'L'aperçu ne peut pas être calculé maintenant. Vos saisies sont gardées ; relancez le calcul dès que l'envoi est de nouveau possible.'
+	String get apercuHorsLigneDetail => 'L\'aperçu ne peut pas être calculé maintenant. Vos saisies sont gardées ; relancez le calcul dès que l\'envoi est de nouveau possible.';
+
+	/// fr: 'Relancer le calcul'
+	String get apercuRecalculer => 'Relancer le calcul';
+
+	/// fr: 'Recalcul en cours'
+	String get apercuRecalcul => 'Recalcul en cours';
+
+	/// fr: 'Les montants ci-dessous correspondent au choix précédent : ils se mettent à jour dès que le calcul aboutit.'
+	String get apercuRecalculDetail => 'Les montants ci-dessous correspondent au choix précédent : ils se mettent à jour dès que le calcul aboutit.';
+
+	/// fr: 'Historique des versions'
+	String get historique => 'Historique des versions';
+
+	/// fr: 'Toutes les versions, la plus récente d'abord. Rien ne s'y modifie : une version publiée reste telle quelle.'
+	String get historiqueDetail => 'Toutes les versions, la plus récente d\'abord. Rien ne s\'y modifie : une version publiée reste telle quelle.';
+
+	/// fr: 'Version {version}'
+	String historiqueVersion({required Object version}) => 'Version ${version}';
+
+	/// fr: 'Version active'
+	String get historiqueActive => 'Version active';
+
+	/// fr: 'Aucune autre version pour l'instant : seule la version active existe.'
+	String get historiqueVide => 'Aucune autre version pour l\'instant : seule la version active existe.';
 }
 
 // Path: compte.tuteur.identite
@@ -16288,6 +17994,129 @@ class Traductions$adulte$monEspace$pageCoursAcces$fr {
 	String get indisponiblePhrase => 'Le détail de vos cours, de vos séances et de votre accès n\'est pas encore disponible dans l\'application.';
 }
 
+// Path: adulte.recharge.resultat
+class Traductions$adulte$recharge$resultat$fr {
+	Traductions$adulte$recharge$resultat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Paiement en préparation'
+	String get preparationTitre => 'Paiement en préparation';
+
+	/// fr: 'Vérifiez la répartition avant de payer.'
+	String get preparationPhrase => 'Vérifiez la répartition avant de payer.';
+
+	/// fr: 'Paiement en cours de confirmation'
+	String get attenteTitre => 'Paiement en cours de confirmation';
+
+	/// fr: 'Le prestataire de paiement n'a pas encore confirmé. Les soldes ne changent qu'après sa confirmation.'
+	String get attentePhrase => 'Le prestataire de paiement n\'a pas encore confirmé. Les soldes ne changent qu\'après sa confirmation.';
+
+	/// fr: 'Ne payez pas une seconde fois.'
+	String get attenteBandeauTitre => 'Ne payez pas une seconde fois.';
+
+	/// fr: 'Ce paiement est peut-être déjà passé. Actualisez dans quelques instants pour voir son état.'
+	String get attenteBandeauPhrase => 'Ce paiement est peut-être déjà passé. Actualisez dans quelques instants pour voir son état.';
+
+	/// fr: 'Paiement confirmé'
+	String get confirmeTitre => 'Paiement confirmé';
+
+	/// fr: 'Le paiement est confirmé. Les soldes vont être mis à jour.'
+	String get confirmePhrase => 'Le paiement est confirmé. Les soldes vont être mis à jour.';
+
+	/// fr: 'Mise à jour des soldes...'
+	String get allocationPhrase => 'Mise à jour des soldes...';
+
+	/// fr: 'Votre paiement de {montant} a bien été effectué et réparti entre les profils sélectionnés.'
+	String terminePhrase({required Object montant}) => 'Votre paiement de ${montant} a bien été effectué et réparti entre les profils sélectionnés.';
+
+	/// fr: 'Détails du paiement'
+	String get details => 'Détails du paiement';
+
+	/// fr: 'Référence'
+	String get reference => 'Référence';
+
+	/// fr: 'Date'
+	String get date => 'Date';
+
+	/// fr: 'Moyen de paiement'
+	String get moyen => 'Moyen de paiement';
+
+	/// fr: 'Montant total'
+	String get total => 'Montant total';
+
+	/// fr: 'Répartition par profil'
+	String get repartition => 'Répartition par profil';
+
+	/// fr: 'Nouveau solde : {montant}'
+	String nouveauSolde({required Object montant}) => 'Nouveau solde : ${montant}';
+
+	/// fr: 'Soldes mis à jour'
+	String get soldesTitre => 'Soldes mis à jour';
+
+	/// fr: 'Les nouveaux soldes sont disponibles pour chaque profil concerné.'
+	String get soldesPhrase => 'Les nouveaux soldes sont disponibles pour chaque profil concerné.';
+
+	/// fr: 'Retour aux soldes'
+	String get retourSoldes => 'Retour aux soldes';
+
+	/// fr: 'Le paiement a échoué'
+	String get echecTitre => 'Le paiement a échoué';
+
+	/// fr: 'Aucun solde n'a été crédité. Votre sélection est conservée : vous pouvez réessayer ou changer de moyen de paiement.'
+	String get echecPhrase => 'Aucun solde n\'a été crédité. Votre sélection est conservée : vous pouvez réessayer ou changer de moyen de paiement.';
+
+	/// fr: 'Motif'
+	String get echecMotif => 'Motif';
+
+	/// fr: 'Réessayer'
+	String get reessayer => 'Réessayer';
+
+	/// fr: 'Changer de moyen de paiement'
+	String get changerMoyen => 'Changer de moyen de paiement';
+
+	/// fr: 'Paiement annulé'
+	String get annuleTitre => 'Paiement annulé';
+
+	/// fr: 'Le paiement a été annulé avant sa confirmation. Aucun solde n'a été crédité. Vous pouvez recommencer avec la même sélection.'
+	String get annulePhrase => 'Le paiement a été annulé avant sa confirmation. Aucun solde n\'a été crédité. Vous pouvez recommencer avec la même sélection.';
+
+	/// fr: 'Commande expirée'
+	String get perimeTitre => 'Commande expirée';
+
+	/// fr: 'Le délai de paiement de cette commande est dépassé. Aucun solde n'a été crédité. Recommencez la recharge pour obtenir une nouvelle commande.'
+	String get perimePhrase => 'Le délai de paiement de cette commande est dépassé. Aucun solde n\'a été crédité. Recommencez la recharge pour obtenir une nouvelle commande.';
+
+	/// fr: 'Recommencer la recharge'
+	String get recommencer => 'Recommencer la recharge';
+
+	/// fr: 'Actualiser'
+	String get actualiser => 'Actualiser';
+
+	/// fr: 'L'état affiché peut avoir changé depuis : actualisez dès que la lecture est de nouveau possible.'
+	String get horsLigne => 'L\'état affiché peut avoir changé depuis : actualisez dès que la lecture est de nouveau possible.';
+
+	/// fr: 'Aucun paiement à suivre'
+	String get videTitre => 'Aucun paiement à suivre';
+
+	/// fr: 'Cette adresse ne désigne aucune commande. Revenez aux paiements du foyer pour retrouver vos recharges.'
+	String get videPhrase => 'Cette adresse ne désigne aucune commande. Revenez aux paiements du foyer pour retrouver vos recharges.';
+
+	/// fr: 'Suivi du paiement pas encore disponible'
+	String get indisponibleTitre => 'Suivi du paiement pas encore disponible';
+
+	/// fr: 'L'état des paiements n'est pas encore disponible dans l'application. Aucun paiement n'a été effectué ici.'
+	String get indisponiblePhrase => 'L\'état des paiements n\'est pas encore disponible dans l\'application. Aucun paiement n\'a été effectué ici.';
+
+	/// fr: 'L'état du paiement n'a pas pu être lu.'
+	String get lectureEchecTitre => 'L\'état du paiement n\'a pas pu être lu.';
+
+	/// fr: 'Le paiement n'est pas annulé pour autant. Ne payez pas une seconde fois : réessayez la lecture.'
+	String get lectureEchecPhrase => 'Le paiement n\'est pas annulé pour autant. Ne payez pas une seconde fois : réessayez la lecture.';
+}
+
 // Path: adulte.famille.place
 class Traductions$adulte$famille$place$fr {
 	Traductions$adulte$famille$place$fr.internal(this._root);
@@ -16858,6 +18687,54 @@ class Traductions$salle$seance$demo$etats$fr {
 	String get accesRetire => 'Accès retiré';
 }
 
+// Path: admin.finance.vue.alerte
+class Traductions$admin$finance$vue$alerte$fr {
+	Traductions$admin$finance$vue$alerte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Période à régulariser'
+	String get aRegulariser => 'Période à régulariser';
+
+	/// fr: '{qui} : il manque {montant} pour financer la période en cours.'
+	String aRegulariserMontant({required Object qui, required Object montant}) => '${qui} : il manque ${montant} pour financer la période en cours.';
+
+	/// fr: '{qui} : la période en cours n'est pas financée.'
+	String aRegulariserSansMontant({required Object qui}) => '${qui} : la période en cours n\'est pas financée.';
+
+	/// fr: 'Paiement en attente de confirmation'
+	String get confirmation => 'Paiement en attente de confirmation';
+
+	/// fr: '{qui} : un paiement de {montant} attend sa confirmation.'
+	String confirmationMontant({required Object qui, required Object montant}) => '${qui} : un paiement de ${montant} attend sa confirmation.';
+
+	/// fr: '{qui} : un paiement attend sa confirmation.'
+	String confirmationSansMontant({required Object qui}) => '${qui} : un paiement attend sa confirmation.';
+
+	/// fr: 'Classe sous le minimum d'ouverture'
+	String get sousMinimum => 'Classe sous le minimum d\'ouverture';
+
+	/// fr: '{qui} : moins d'élèves inscrits que le minimum d'ouverture.'
+	String sousMinimumDetail({required Object qui}) => '${qui} : moins d\'élèves inscrits que le minimum d\'ouverture.';
+
+	/// fr: '{prenom}, classe {classe}'
+	String quiPrenomClasse({required Object prenom, required Object classe}) => '${prenom}, classe ${classe}';
+
+	/// fr: 'Classe {classe}'
+	String quiClasse({required Object classe}) => 'Classe ${classe}';
+
+	/// fr: 'Un profil'
+	String get quiInconnu => 'Un profil';
+
+	/// fr: 'Ouvrir les comptes'
+	String get ouvrirComptes => 'Ouvrir les comptes';
+
+	/// fr: 'Ouvrir les classes'
+	String get ouvrirClasses => 'Ouvrir les classes';
+}
+
 // Path: classe.entree.demo.roles
 class Traductions$classe$entree$demo$roles$fr {
 	Traductions$classe$entree$demo$roles$fr.internal(this._root);
@@ -17241,6 +19118,8 @@ extension on Traductions {
 			'commun.theme.clair' => 'Thème clair',
 			'commun.theme.sombre' => 'Thème sombre',
 			'commun.demarrage.ouverture' => 'Ouverture de Rewayah',
+			'commun.dates.moisAnnee' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
+			'commun.dates.choixMois' => 'Mois',
 			'commun.dates.jours.0' => 'Lundi',
 			'commun.dates.jours.1' => 'Mardi',
 			'commun.dates.jours.2' => 'Mercredi',
@@ -17261,6 +19140,7 @@ extension on Traductions {
 			'commun.dates.mois.10' => 'novembre',
 			'commun.dates.mois.11' => 'décembre',
 			'commun.dates.jourDate' => ({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}',
+			'commun.dates.premierJour' => '1er',
 			'commun.sections.page' => 'Sections de la page',
 			'reseau.horsLigne' => 'Pas de réseau. Ce qui est déjà affiché reste consultable.',
 			'reseau.enAttenteEnvoi' => 'Sera envoyé dès le retour du réseau',
@@ -17666,11 +19546,11 @@ extension on Traductions {
 			'connexion.feuilleAppareil.pourQui' => 'Réservé aux tuteurs déjà inscrits. Cet écran donne à un élève de votre foyer son propre accès, sur sa tablette ou son téléphone, sans lui confier votre compte.',
 			'connexion.feuilleAppareil.etapesTitre' => 'Où trouver le code',
 			'connexion.feuilleAppareil.etape1' => 'Sur votre propre appareil, ouvrez Foyer, puis Appareils du foyer.',
+			_ => null,
+		} ?? switch (path) {
 			'connexion.feuilleAppareil.etape2' => 'Touchez le profil de l\'élève, puis Connecter un appareil.',
 			'connexion.feuilleAppareil.etape3' => 'Un QR code et un code de six caractères s\'affichent, avec leur heure de fin.',
 			'connexion.feuilleAppareil.etape4' => 'Sur l\'appareil de l\'élève, scannez le QR code ou saisissez le code.',
-			_ => null,
-		} ?? switch (path) {
 			'connexion.feuilleAppareil.plafond' => 'Le nombre d\'appareils par élève est limité. Si la limite est atteinte, retirez-en un depuis Foyer, Appareils du foyer.',
 			'connexion.feuilleAppareil.saisir' => 'Saisir le code',
 			'connexion.feuilleAppareil.fermer' => 'Fermer',
@@ -18004,6 +19884,29 @@ extension on Traductions {
 			'foyer.ajout.incertaine.voirFoyer' => 'Voir le foyer',
 			'foyer.ajout.incertaine.reessayer' => 'Réessayer quand même',
 			'foyer.ajout.horsLigne' => 'Le profil pourra être créé quand la connexion reviendra.',
+			'foyer.finances.titre' => 'Soldes et paiements',
+			'foyer.finances.rechargerPlusieurs' => 'Recharger plusieurs profils',
+			'foyer.finances.rechargerPour' => ({required Object prenom}) => 'Recharger ${prenom}',
+			'foyer.finances.recharger' => 'Recharger',
+			'foyer.finances.voirDetail' => 'Voir le détail',
+			'foyer.finances.voirDetailSemantique' => ({required Object dePrenom}) => 'Voir le détail des finances ${dePrenom}',
+			'foyer.finances.noteSoldes' => 'Chaque enfant a un solde et une période financée individuels. Les accès sont liés à la période financée, pas simplement au solde.',
+			'foyer.finances.vueFinanciere' => 'Vue financière du foyer',
+			'foyer.finances.vueFinancierePeriode' => 'Ce mois-ci',
+			'foyer.finances.soldeActuel' => 'Solde actuel',
+			'foyer.finances.prochainDebit' => 'Prochain débit',
+			'foyer.finances.prochainDebitValeur' => ({required Object date, required Object montant}) => '${date} · ${montant}',
+			'foyer.finances.aucunDebit' => 'Aucun débit prévu',
+			'foyer.finances.essaiSansMax' => ({required Object n}) => 'Essai : ${n} séance(s) utilisée(s)',
+			'foyer.finances.manque' => ({required Object montant}) => 'Il manque ${montant} pour la prochaine période.',
+			'foyer.finances.indisponibleTitre' => 'Les soldes ne peuvent pas être lus',
+			'foyer.transactions.titre' => 'Dernières transactions',
+			'foyer.transactions.ligne' => ({required Object libelle, required Object prenom}) => '${libelle} · ${prenom}',
+			'foyer.transactions.voirTout' => 'Voir tout',
+			'foyer.transactions.voirToutSemantique' => 'Voir tout : historique des paiements du foyer',
+			'foyer.transactions.videTitre' => 'Aucune transaction pour l\'instant',
+			'foyer.transactions.videPhrase' => 'Les recharges et les mensualités des profils apparaîtront ici.',
+			'foyer.transactions.erreurTitre' => 'Les dernières transactions ne peuvent pas être lues',
 			'ficheEleve.sansDonnees' => 'Le profil de cet élève n\'a pas pu être chargé',
 			'ficheEleve.titreRepli' => 'Profil élève',
 			'ficheEleve.parametres' => 'Paramètres de l\'élève',
@@ -18022,6 +19925,11 @@ extension on Traductions {
 			'ficheEleve.lignes.acces' => 'Accès Rewayah',
 			'ficheEleve.lignes.appareils' => ({required Object dePrenom}) => 'Appareils ${dePrenom}',
 			'ficheEleve.lignes.appareilsLegende' => 'Connecter un appareil, voir ceux qui sont reliés, en retirer un',
+			'ficheEleve.lignes.couleur' => 'Couleur du profil',
+			'ficheEleve.lignes.couleurAucune' => 'Sans couleur',
+			'ficheEleve.lignes.couleurIndisponible' => 'Pas encore disponible',
+			'ficheEleve.lignes.couleurEchec' => 'Couleur non lue',
+			'ficheEleve.lignes.finances' => 'Finances',
 			'ficheEleve.informations.titre' => 'Informations de l\'élève',
 			'ficheEleve.informations.identite' => 'Identité',
 			'ficheEleve.informations.prenom' => 'Prénom',
@@ -18086,7 +19994,7 @@ extension on Traductions {
 			'ficheEleve.camera.echec' => 'Le changement n\'a pas été enregistré. Réessayez.',
 			'ficheEleve.camera.horsLigne' => 'La caméra pourra être réglée quand la connexion reviendra.',
 			'ficheEleve.acces.titre' => 'Accès Rewayah',
-			'ficheEleve.acces.ligne' => ({required Object prenom}) => 'Accès de ${prenom}',
+			'ficheEleve.acces.ligne' => ({required Object dePrenom}) => 'Accès ${dePrenom}',
 			'ficheEleve.acces.pastilleSansEcheance' => 'Sans échéance',
 			'ficheEleve.acces.pastilleEnCours' => 'En cours',
 			'ficheEleve.acces.pastilleExpire' => 'Expiré',
@@ -18095,6 +20003,104 @@ extension on Traductions {
 			'ficheEleve.acces.expireDepuis' => ({required Object date}) => 'Expiré depuis le ${date}',
 			'ficheEleve.acces.expirePhrase' => ({required Object prenom}) => 'Depuis cette date, ${prenom} ne peut plus entrer dans Rewayah.',
 			'ficheEleve.acces.detailIndisponible' => 'Le début de l\'accès et son motif ne s\'affichent pas encore.',
+			'ficheEleve.couleur.titre' => 'Couleur du profil',
+			'ficheEleve.couleur.contexte' => ({required Object prenom}) => 'Choisissez la couleur qui distingue ${prenom} des autres profils du foyer. Elle s\'affiche derrière sa photo sur les écrans du foyer. Ce n\'est ni un statut, ni une classe.',
+			'ficheEleve.couleur.menthe' => 'Menthe',
+			'ficheEleve.couleur.ciel' => 'Ciel',
+			'ficheEleve.couleur.lavande' => 'Lavande',
+			'ficheEleve.couleur.rose' => 'Rose',
+			'ficheEleve.couleur.peche' => 'Pêche',
+			'ficheEleve.couleur.sable' => 'Sable',
+			'ficheEleve.couleur.dejaPrise' => ({required Object prenom}) => 'Déjà choisie pour ${prenom} : la couleur ne distinguerait plus ces profils.',
+			'ficheEleve.couleur.prenomsEt' => ({required Object premiers, required Object dernier}) => '${premiers} et ${dernier}',
+			'ficheEleve.couleur.aucune' => 'Sans couleur',
+			'ficheEleve.couleur.choisie' => ({required Object couleur}) => 'Couleur choisie : ${couleur}.',
+			'ficheEleve.couleur.priseLigne' => ({required Object couleur, required Object prenom}) => '${couleur} : déjà choisie pour ${prenom}.',
+			'ficheEleve.couleur.aucuneDetail' => ({required Object prenom}) => 'Seuls la photo et le prénom distinguent ${prenom}.',
+			'ficheEleve.couleur.echec' => 'Le changement de couleur n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Choisissez la couleur de nouveau.',
+			'ficheEleve.couleur.horsLigne' => 'La couleur ne peut pas être changée maintenant. Elle se choisit de nouveau dès que l\'envoi est possible.',
+			'ficheEleve.filAriane.foyer' => 'Foyer',
+			'ficheEleve.filAriane.suite' => ({required Object prenom}) => '› ${prenom}',
+			'ficheEleve.onglets.general' => 'Général',
+			'ficheEleve.onglets.finances' => 'Finances',
+			'ficheEleve.finances.titre' => 'Finances',
+			'ficheEleve.finances.titreBureau' => ({required Object prenom}) => '${prenom} · Finances',
+			'ficheEleve.finances.vueTitre' => 'Vue financière',
+			'ficheEleve.finances.mensualite' => 'Mensualité',
+			'ficheEleve.finances.mensualiteValeur' => ({required Object montant}) => '${montant} / mois',
+			'ficheEleve.finances.detailTitre' => 'Détail de la mensualité',
+			'ficheEleve.finances.tarifEnfant' => 'Tarif enfant',
+			'ficheEleve.finances.tarifAdulte' => 'Tarif adulte',
+			'ficheEleve.finances.remiseRang' => 'Remise familiale',
+			'ficheEleve.finances.remiseRangDe' => ({required Object rang}) => 'Remise familiale ${rang}e membre',
+			'ficheEleve.finances.prorata' => 'Réduction calendrier',
+			'ficheEleve.finances.avoir' => 'Avoir',
+			'ficheEleve.finances.taxe' => 'Taxe applicable',
+			'ficheEleve.finances.total' => 'Total à financer',
+			'ficheEleve.finances.regulariserTitre' => 'Accès à régulariser',
+			'ficheEleve.finances.aFinancerTitre' => 'Prochaine période à financer',
+			'ficheEleve.finances.expireTitre' => 'Accès expiré',
+			'ficheEleve.finances.manqueEtConservation' => ({required Object montant, required Object date}) => 'Il manque ${montant} pour la prochaine période. La place est conservée jusqu\'au ${date}.',
+			'ficheEleve.finances.sansManque' => 'La prochaine période n\'est pas encore financée.',
+			'ficheEleve.finances.manquePourMois' => ({required Object montant, required Object mois}) => 'Il manque ${montant} pour financer ${mois}.',
+			'ficheEleve.finances.manquePourMoisEtConservation' => ({required Object montant, required Object mois, required Object date}) => 'Il manque ${montant} pour financer ${mois}. La place est conservée jusqu\'au ${date}.',
+			'ficheEleve.finances.moisNonFinance' => ({required Object deMois}) => 'La période ${deMois} n\'est pas encore financée.',
+			'ficheEleve.finances.periodeAFinancer' => 'Période à financer',
+			'ficheEleve.finances.periodeAFinancerValeur' => ({required Object mois, required Object annee, required Object montant}) => '${mois} ${annee} · ${montant}',
+			'ficheEleve.finances.confirmationTitre' => 'Paiement en cours de confirmation',
+			'ficheEleve.finances.confirmationPhrase' => 'Ne payez pas une seconde fois : la période se met à jour dès la confirmation.',
+			'ficheEleve.finances.indisponibleTitre' => 'Les finances ne sont pas encore disponibles',
+			'ficheEleve.finances.indisponiblePhrase' => ({required Object dePrenom}) => 'Le solde et la mensualité ${dePrenom} s\'afficheront ici dès leur mise en service.',
+			'ficheEleve.finances.erreurTitre' => ({required Object dePrenom}) => 'Les finances ${dePrenom} ne peuvent pas être lues',
+			'ficheEleve.finances.videTitre' => ({required Object prenom}) => 'Aucune finance enregistrée pour ${prenom}',
+			'ficheEleve.finances.videPhrase' => 'Aucun solde ni aucune mensualité n\'est encore rendu pour ce profil. Ils apparaîtront ici après son inscription à une classe.',
+			'ficheEleve.finances.voirMouvements' => 'Voir les mouvements',
+			'ficheEleve.finances.noteAbsences' => 'Les absences ordinaires n\'entraînent pas de réduction sur le mois une fois celui-ci financé.',
+			'ficheEleve.finances.faitSeance' => 'Pas de consommation par séance',
+			'ficheEleve.finances.faitPeriode' => 'Accès lié à la période financée',
+			'ficheEleve.finances.historiqueTitre' => 'Historique des transactions',
+			'ficheEleve.finances.voirTout' => 'Voir tout',
+			_ => null,
+		} ?? switch (path) {
+			'ficheEleve.finances.voirToutSemantique' => ({required Object dePrenom}) => 'Voir tout : mouvements ${dePrenom}',
+			'ficheEleve.finances.voirMouvementsSemantique' => ({required Object dePrenom}) => 'Voir les mouvements ${dePrenom}',
+			'ficheEleve.finances.telechargerRecu' => 'Télécharger le reçu',
+			'ficheEleve.finances.recuIndisponibleTitre' => 'Le reçu n\'est pas encore disponible',
+			'ficheEleve.finances.recuIndisponiblePhrase' => 'Le téléchargement des reçus arrive avec la mise en service des paiements. Chaque paiement reste visible dans les mouvements.',
+			'ficheEleve.finances.recuEchecTitre' => 'Le reçu n\'a pas pu être préparé',
+			'ficheEleve.finances.recuEchecPhrase' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'ficheEleve.mouvements.titre' => 'Mouvements',
+			'ficheEleve.mouvements.dateHeure' => ({required Object date, required Object heure}) => '${date} à ${heure}',
+			'ficheEleve.mouvements.heureChiffres' => ({required Object heures, required Object minutes}) => '${heures}:${minutes}',
+			'ficheEleve.mouvements.contexte' => ({required Object dePrenom}) => 'Les recharges, mensualités, remises et avoirs ${dePrenom}, du plus récent au plus ancien. Rien ne s\'efface : une correction s\'ajoute comme un nouveau mouvement.',
+			'ficheEleve.mouvements.personne' => 'Personne',
+			'ficheEleve.mouvements.colonne.date' => 'Date',
+			'ficheEleve.mouvements.colonne.libelle' => 'Libellé',
+			'ficheEleve.mouvements.colonne.montant' => 'Montant',
+			'ficheEleve.mouvements.colonne.statut' => 'Statut',
+			'ficheEleve.mouvements.colonne.recu' => 'Reçu',
+			'ficheEleve.mouvements.nature.recharge' => 'Recharge',
+			'ficheEleve.mouvements.nature.mensualite' => 'Mensualité',
+			'ficheEleve.mouvements.nature.mensualiteDe' => ({required Object mois, required Object annee}) => 'Mensualité ${mois} ${annee}',
+			'ficheEleve.mouvements.nature.avoir' => 'Avoir',
+			'ficheEleve.mouvements.nature.remise' => 'Remise',
+			'ficheEleve.mouvements.nature.taxe' => 'Taxe applicable',
+			'ficheEleve.mouvements.statut.enregistre' => 'Enregistré',
+			'ficheEleve.mouvements.statut.enConfirmation' => 'En confirmation',
+			'ficheEleve.mouvements.voirRecu' => 'Voir le reçu',
+			'ficheEleve.mouvements.voirRecuSemantique' => ({required Object reference}) => 'Voir le reçu ${reference}',
+			'ficheEleve.mouvements.recu.titre' => 'Reçu',
+			'ficheEleve.mouvements.recu.fermer' => 'Fermer le reçu',
+			'ficheEleve.mouvements.recu.date' => 'Date',
+			'ficheEleve.mouvements.recu.reference' => 'Référence',
+			'ficheEleve.mouvements.recu.moyen' => 'Moyen de paiement',
+			'ficheEleve.mouvements.recu.montant' => 'Montant payé',
+			'ficheEleve.mouvements.recu.repartition' => 'Répartition',
+			'ficheEleve.mouvements.videTitre' => 'Aucun mouvement',
+			'ficheEleve.mouvements.videPhrase' => ({required Object prenom}) => 'Aucune recharge ni aucune mensualité n\'est encore enregistrée pour ${prenom}. Les mouvements apparaîtront ici après le premier paiement.',
+			'ficheEleve.mouvements.erreurTitre' => ({required Object dePrenom}) => 'Les mouvements ${dePrenom} ne peuvent pas être lus',
+			'ficheEleve.mouvements.indisponibleTitre' => 'Les mouvements ne sont pas encore disponibles',
+			'ficheEleve.mouvements.indisponiblePhrase' => ({required Object dePrenom}) => 'Les recharges et mensualités ${dePrenom} s\'afficheront ici dès leur mise en service.',
 			'disponibilites.titre' => 'Quand vos enfants peuvent-ils suivre un cours ?',
 			'disponibilites.titreEnseignant' => 'Quand pouvez-vous donner cours ?',
 			'disponibilites.consigne' => ({required Object prenom}) => 'Touchez les heures possibles pour ${prenom}.',
@@ -18183,8 +20189,6 @@ extension on Traductions {
 			'eleveConnexion.pin.changerProfil' => 'Changer de profil',
 			'eleveConnexion.pin.oublie' => 'Code oublié ?',
 			'eleveConnexion.pin.oubliePhrase' => 'Demande au tuteur d\'afficher un nouveau code sur son appareil, puis saisis-le ici. Tu choisiras alors un nouveau code personnel.',
-			_ => null,
-		} ?? switch (path) {
 			'eleveConnexion.pin.oublieAction' => 'Saisir un nouveau code',
 			'eleveConnexion.saisie.titre' => 'Connecter cet appareil',
 			'eleveConnexion.saisie.phrase' => 'Saisissez le code de six caractères affiché sous le QR code, sur l\'appareil du tuteur.',
@@ -18570,6 +20574,8 @@ extension on Traductions {
 			'admin.groupes.modifierSeuilErreur' => ({required Object message}) => 'La modification n\'a pas abouti : ${message}',
 			'admin.groupes.cloturerTitre' => ({required Object libelle}) => 'Clôturer ${libelle}',
 			'admin.groupes.cloturerDetail' => 'Tous les membres actifs seront retirés de la classe. Cette action ne peut pas être annulée.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.cloturerEnvoyer' => 'Clôturer',
 			'admin.groupes.cloturerErreur' => ({required Object message}) => 'La clôture n\'a pas abouti : ${message}',
 			'admin.groupes.journalisation' => 'Chaque création, ajout, retrait et clôture est inscrit au journal d\'audit.',
@@ -18697,8 +20703,6 @@ extension on Traductions {
 			'admin.evaluations.colonneResultat' => 'Résultat',
 			'admin.evaluations.typeInitiale' => 'Initiale',
 			'admin.evaluations.typePeriodique' => 'Périodique',
-			_ => null,
-		} ?? switch (path) {
 			'admin.evaluations.typeReevaluation' => 'Réévaluation',
 			'admin.evaluations.typeCertification' => 'Certification',
 			'admin.evaluations.statutPlanifiee' => 'Planifiée',
@@ -19036,6 +21040,256 @@ extension on Traductions {
 			'admin.notifications.titre' => 'Notifications',
 			'admin.notifications.vide' => 'Aucune notification',
 			'admin.notifications.videDetail' => 'Rien à signaler pour l\'instant.',
+			'admin.finance.vueGlobale' => 'Vue globale',
+			'admin.finance.politiques' => 'Politiques commerciales',
+			'admin.finance.vue.moisAnnee' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
+			'admin.finance.vue.contexte' => ({required Object deMois}) => 'Les chiffres ${deMois}, chacun à part : ce qui est encaissé, ce qui est reconnu comme revenu, ce qui est dû aux enseignants et ce qui reste sur les profils des familles.',
+			'admin.finance.vue.indicateurs' => 'Indicateurs du mois',
+			'admin.finance.vue.encaisse' => 'Chiffre encaissé',
+			'admin.finance.vue.encaisseDetail' => 'Paiements reçus ce mois. Un encaissement n\'est pas encore un revenu.',
+			'admin.finance.vue.revenu' => 'Revenu académique',
+			'admin.finance.vue.revenuDetail' => 'Revenu reconnu ce mois, hors taxes collectées.',
+			'admin.finance.vue.paie' => 'Paie enseignants',
+			'admin.finance.vue.paieDetail' => 'Estimée pour le mois : une charge à venir, pas un paiement fait.',
+			'admin.finance.vue.marge' => 'Marge projetée',
+			'admin.finance.vue.margeValeur' => ({required Object valeur}) => '${valeur} %',
+			'admin.finance.vue.margeDetail' => 'Calculée sur la seule paie des enseignants, sans les autres charges : elle ne se compare pas à une marge nette.',
+			'admin.finance.vue.margeSansActivite' => 'Aucune activité',
+			'admin.finance.vue.margeNonCalculable' => 'Non calculable',
+			'admin.finance.vue.impayes' => 'Impayés',
+			'admin.finance.vue.impayesDetail' => 'Reste à financer sur les périodes du mois.',
+			'admin.finance.vue.essais' => 'Essais en cours',
+			'admin.finance.vue.essaisDetail' => 'Élèves en essai, jamais comptés comme payants.',
+			'admin.finance.vue.soldes' => 'Soldes créditeurs',
+			'admin.finance.vue.soldesDetail' => 'Argent disponible sur les profils des familles : ni un revenu, ni une marge.',
+			'admin.finance.vue.sansActivite' => ({required Object mois}) => 'Aucune activité financière en ${mois} : les indicateurs sont à zéro.',
+			'admin.finance.vue.sansRevenu' => ({required Object mois}) => 'Aucun revenu reconnu en ${mois} : la marge n\'est pas calculable.',
+			'admin.finance.vue.evolution' => 'Évolution',
+			'admin.finance.vue.evolutionDetail' => 'Un graphique par notion, chacun avec ses nombres exacts : l\'encaissement, la charge et la marge ne se mélangent jamais.',
+			'admin.finance.vue.graphiqueEncaisse' => 'Chiffre encaissé par mois',
+			'admin.finance.vue.graphiquePaie' => 'Paie enseignants par mois',
+			'admin.finance.vue.graphiqueMarge' => 'Marge projetée par mois',
+			'admin.finance.vue.graphiqueRepartition' => 'Répartition du revenu académique',
+			'admin.finance.vue.graphiqueRepartitionDetail' => ({required Object deMois}) => 'Revenu reconnu ${deMois}, par type d\'élève.',
+			'admin.finance.vue.repartitionEnfants' => 'Élèves enfants',
+			'admin.finance.vue.repartitionAdultes' => 'Élèves adultes',
+			'admin.finance.vue.sansHistorique' => 'Aucun mois rendu pour l\'instant.',
+			'admin.finance.vue.alertes' => 'Alertes',
+			'admin.finance.vue.aucuneAlerte' => 'Aucune alerte ce mois.',
+			'admin.finance.vue.etatPaiements' => 'État des paiements',
+			'admin.finance.vue.etatPaiementsDetail' => 'Les profils du mois selon l\'état de leur période. Un essai n\'est jamais compté comme payant.',
+			'admin.finance.vue.etatFinances' => 'Financés',
+			'admin.finance.vue.etatARegulariser' => 'À régulariser',
+			'admin.finance.vue.etatEnEssai' => 'En essai',
+			'admin.finance.vue.etatEnConfirmation' => 'En confirmation',
+			'admin.finance.vue.etatPart' => ({required Object valeur}) => '${valeur} % des profils du mois',
+			'admin.finance.vue.etatVide' => 'Aucun état de paiement rendu pour ce mois.',
+			'admin.finance.vue.topClasses' => 'Top classes',
+			'admin.finance.vue.topClassesDetail' => ({required Object deMois}) => 'Les classes qui ont le plus encaissé ${deMois}.',
+			'admin.finance.vue.topClasse' => ({required Object rang, required Object classe}) => '${rang}. Classe ${classe}',
+			'admin.finance.vue.topClassesVide' => 'Aucune classe n\'a encaissé ce mois.',
+			_ => null,
+		} ?? switch (path) {
+			'admin.finance.vue.dernieresOperations' => 'Dernières opérations',
+			'admin.finance.vue.dernieresOperationsDetail' => 'Les derniers mouvements sur les profils des familles, le plus récent d\'abord.',
+			'admin.finance.vue.operation' => ({required Object libelle, required Object prenom}) => '${libelle} · ${prenom}',
+			'admin.finance.vue.dernieresOperationsVide' => 'Aucun mouvement pour l\'instant.',
+			'admin.finance.vue.alerte.aRegulariser' => 'Période à régulariser',
+			'admin.finance.vue.alerte.aRegulariserMontant' => ({required Object qui, required Object montant}) => '${qui} : il manque ${montant} pour financer la période en cours.',
+			'admin.finance.vue.alerte.aRegulariserSansMontant' => ({required Object qui}) => '${qui} : la période en cours n\'est pas financée.',
+			'admin.finance.vue.alerte.confirmation' => 'Paiement en attente de confirmation',
+			'admin.finance.vue.alerte.confirmationMontant' => ({required Object qui, required Object montant}) => '${qui} : un paiement de ${montant} attend sa confirmation.',
+			'admin.finance.vue.alerte.confirmationSansMontant' => ({required Object qui}) => '${qui} : un paiement attend sa confirmation.',
+			'admin.finance.vue.alerte.sousMinimum' => 'Classe sous le minimum d\'ouverture',
+			'admin.finance.vue.alerte.sousMinimumDetail' => ({required Object qui}) => '${qui} : moins d\'élèves inscrits que le minimum d\'ouverture.',
+			'admin.finance.vue.alerte.quiPrenomClasse' => ({required Object prenom, required Object classe}) => '${prenom}, classe ${classe}',
+			'admin.finance.vue.alerte.quiClasse' => ({required Object classe}) => 'Classe ${classe}',
+			'admin.finance.vue.alerte.quiInconnu' => 'Un profil',
+			'admin.finance.vue.alerte.ouvrirComptes' => 'Ouvrir les comptes',
+			'admin.finance.vue.alerte.ouvrirClasses' => 'Ouvrir les classes',
+			'admin.finance.pol.contexte' => 'Les règles commerciales de l\'académie, versionnées et datées. Un brouillon se prépare ici et ne s\'applique qu\'une fois publié, à partir de sa date d\'effet. Ce qui protège l\'argent des familles ne se règle pas ici.',
+			'admin.finance.pol.statutBrouillon' => 'Brouillon',
+			'admin.finance.pol.statutPubliee' => 'Publiée',
+			'admin.finance.pol.versionBrouillon' => ({required Object version}) => 'Version brouillon ${version}',
+			'admin.finance.pol.versionActive' => ({required Object version}) => 'Version active ${version}',
+			'admin.finance.pol.enVigueur' => ({required Object date}) => 'En vigueur depuis le ${date}',
+			'admin.finance.pol.dateEffet' => ({required Object date}) => 'Date d\'effet : ${date}',
+			'admin.finance.pol.dateEffetDetail' => 'Le brouillon s\'appliquera à partir de cette date, jamais à une facture déjà payée.',
+			'admin.finance.pol.dateEffetReglable' => 'Réglable dans le brouillon : elle sera appliquée à la publication, une fois le serveur branché.',
+			'admin.finance.pol.changerDate' => 'Changer la date d\'effet',
+			'admin.finance.pol.date' => ({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}',
+			'admin.finance.pol.differences' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Une valeur diffère de la version active : elle est rappelée sous son champ.', other: '${n} valeurs diffèrent de la version active : chacune est rappelée sous son champ.', ), 
+			'admin.finance.pol.aucuneDifference' => 'Aucune différence avec la version active pour l\'instant : modifiez un champ pour préparer la prochaine version.',
+			'admin.finance.pol.nonEnregistre' => 'Vos modifications restent sur cet écran tant que vous ne le quittez pas : l\'enregistrement d\'un brouillon n\'est pas encore disponible.',
+			'admin.finance.pol.sansBrouillon' => 'Aucun brouillon en cours : les valeurs ci-dessous sont celles qui s\'appliquent aujourd\'hui. Elles ne se modifient que dans un brouillon.',
+			'admin.finance.pol.versionActiveValeur' => ({required Object valeur}) => 'Version active : ${valeur}',
+			'admin.finance.pol.erreurChamp' => 'Ce champ est vide ou mal saisi : saisissez un nombre entier, sans virgule ni signe.',
+			'admin.finance.pol.erreurCapacite' => 'Une classe compte au moins une place : saisissez 1 ou plus.',
+			'admin.finance.pol.erreurTarif' => 'Un tarif nul rendrait le cours gratuit : saisissez un montant supérieur à 0.',
+			'admin.finance.pol.erreurPlafond' => ({required Object base}) => 'Le plafond est sous la base garantie (${base}) : le taux baisserait quand la classe se remplit. Saisissez au moins la base.',
+			'admin.finance.pol.erreurClassesMax' => ({required Object objectif}) => 'Le maximum est sous l\'objectif (${objectif}) : saisissez au moins l\'objectif.',
+			'admin.finance.pol.erreurMinimum' => ({required Object capacite}) => 'Le minimum dépasse la plus petite classe (${capacite}) : elle ne pourrait jamais ouvrir. Saisissez au plus cette capacité.',
+			'admin.finance.pol.erreurRemise' => ({required Object tarif}) => 'La remise dépasse le tarif (${tarif}) : la mensualité deviendrait négative. Saisissez au plus ce montant.',
+			'admin.finance.pol.parHeure' => ({required Object montant}) => '${montant} / h',
+			'admin.finance.pol.suffixeParHeure' => ({required Object symbole}) => '${symbole} / h',
+			'admin.finance.pol.suffixeRemise' => ({required Object symbole}) => '${symbole} de remise',
+			'admin.finance.pol.eleves' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève', other: '${n} élèves', ), 
+			'admin.finance.pol.seances' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} séance', other: '${n} séances', ), 
+			'admin.finance.pol.classes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} classe', other: '${n} classes', ), 
+			'admin.finance.pol.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} jour', other: '${n} jours', ), 
+			'admin.finance.pol.uniteEleves' => 'élèves',
+			'admin.finance.pol.uniteSeances' => 'séances',
+			'admin.finance.pol.uniteClasses' => 'classes',
+			'admin.finance.pol.uniteJours' => 'jours',
+			'admin.finance.pol.tarifs' => 'Tarifs',
+			'admin.finance.pol.tarifsDetail' => 'Le prix mensuel d\'accès à une classe, hors taxes.',
+			'admin.finance.pol.tarifEnfant' => 'Enfant',
+			'admin.finance.pol.tarifEnfantDetail' => 'Le prix mensuel d\'un enfant pour une classe ; il vaut pour les périodes qui commencent après la date d\'effet.',
+			'admin.finance.pol.tarifAdulte' => 'Adulte',
+			'admin.finance.pol.tarifAdulteDetail' => 'Le prix mensuel d\'un adulte pour une classe ; il vaut pour les périodes qui commencent après la date d\'effet.',
+			'admin.finance.pol.essai' => 'Essai',
+			'admin.finance.pol.essaiDetail' => 'Les séances gratuites d\'un nouveau profil, avant sa première période payante.',
+			'admin.finance.pol.essais' => 'Séances d\'essai par nouveau profil',
+			'admin.finance.pol.essaisDetail' => 'Gratuites pour la famille ; après la dernière, l\'accès attend le financement de la première période.',
+			'admin.finance.pol.essaiActivation' => 'Activation de l\'essai',
+			'admin.finance.pol.essaiActivationDetail' => 'Désactivé, un nouveau profil commence directement par sa première période payante.',
+			'admin.finance.pol.essaiActive' => 'Activé',
+			'admin.finance.pol.essaiDesactive' => 'Désactivé',
+			'admin.finance.pol.remises' => 'Remises familiales',
+			'admin.finance.pol.remisesDetail' => 'Par rang de membre payant du foyer, sans jamais réécrire une facture déjà payée.',
+			'admin.finance.pol.remiseAucune' => ({required Object rang}) => 'Jusqu\'au ${rang}e membre payant',
+			'admin.finance.pol.remiseAucuneValeur' => 'Prix normal',
+			'admin.finance.pol.remiseAucuneDetail' => 'Aucune remise : les premiers membres payants paient le tarif plein.',
+			'admin.finance.pol.remiseRang' => ({required Object rang}) => '${rang}e membre payant',
+			'admin.finance.pol.remiseRangDetail' => 'Ce membre reçoit cette remise sur son prix mensuel ; les membres déjà facturés ne changent pas.',
+			'admin.finance.pol.remiseRangSuivants' => ({required Object rang}) => '${rang}e membre payant et suivants',
+			'admin.finance.pol.remiseRangSuivantsDetail' => 'Chaque membre payant à partir de ce rang reçoit cette remise sur son prix mensuel.',
+			'admin.finance.pol.enseignants' => 'Rémunération des enseignants',
+			'admin.finance.pol.enseignantsDetail' => 'Par heure réellement assurée, entre une base garantie et un plafond.',
+			'admin.finance.pol.baseHoraire' => 'Base horaire garantie',
+			'admin.finance.pol.baseHoraireDetail' => 'Le minimum payé par heure assurée, même quand la classe n\'est pas pleine.',
+			'admin.finance.pol.plafondHoraire' => 'Plafond horaire',
+			'admin.finance.pol.plafondHoraireDetail' => 'Le maximum payé par heure, atteint quand tous les sièges prévus sont occupés.',
+			'admin.finance.pol.occupation' => 'Composante d\'occupation',
+			'admin.finance.pol.occupationValeur' => 'Selon les sièges occupés',
+			'admin.finance.pol.occupationDetail' => 'Entre la base et le plafond, le taux monte avec les sièges occupés ; un élève financé absent compte toujours.',
+			'admin.finance.pol.classesObjectif' => 'Objectif de classes par enseignant',
+			'admin.finance.pol.classesObjectifDetail' => 'Le nombre de classes actives recommandé : un repère, pas une limite.',
+			'admin.finance.pol.classesMax' => 'Maximum normal de classes',
+			'admin.finance.pol.classesMaxDetail' => 'La charge maximale conseillée pour un enseignant.',
+			'admin.finance.pol.internet' => 'Aide Internet',
+			'admin.finance.pol.internetDetail' => 'Une seule aide par enseignant éligible, jamais multipliée par classe ni par élève.',
+			'admin.finance.pol.internetNonFixee' => 'Pas encore fixée',
+			'admin.finance.pol.sectionClasses' => 'Classes',
+			'admin.finance.pol.sectionClassesDetail' => 'La taille des classes et le seuil pour en ouvrir une.',
+			'admin.finance.pol.capaciteEnfant' => 'Capacité d\'une classe d\'enfants',
+			'admin.finance.pol.capaciteEnfantDetail' => 'Le nombre de sièges prévus ; il sert aussi au taux horaire de l\'enseignant.',
+			'admin.finance.pol.capaciteAdulte' => 'Capacité d\'une classe d\'adultes',
+			'admin.finance.pol.capaciteAdulteDetail' => 'Le nombre de sièges prévus dans une classe d\'adultes.',
+			'admin.finance.pol.capaciteDebutant' => 'Capacité d\'une classe de débutants',
+			'admin.finance.pol.capaciteDebutantDetail' => 'Plus petite, pour suivre chaque débutant de près.',
+			'admin.finance.pol.minimum' => 'Minimum d\'ouverture',
+			'admin.finance.pol.minimumDetail' => 'En dessous, une classe ne s\'ouvre pas et la direction en est alertée.',
+			'admin.finance.pol.paiement' => 'Paiement',
+			'admin.finance.pol.paiementDetail' => 'Le moyen de paiement et le délai de conservation d\'une place.',
+			'admin.finance.pol.railWeb' => 'Paiement web (Stripe)',
+			'admin.finance.pol.railActif' => 'Actif',
+			'admin.finance.pol.railInactif' => 'Inactif',
+			'admin.finance.pol.railWebDetail' => 'Le seul moyen de paiement proposé aux familles au lancement.',
+			'admin.finance.pol.railIos' => 'Achat intégré iOS',
+			'admin.finance.pol.railAndroid' => 'Facturation Google Play',
+			'admin.finance.pol.railPrepare' => 'Préparé (inactif)',
+			'admin.finance.pol.railMobileDetail' => 'Prévu pour plus tard : aucun bouton de paiement mobile n\'est montré aux familles au lancement.',
+			'admin.finance.pol.conservation' => 'Conservation de la place',
+			'admin.finance.pol.conservationDetail' => 'Le délai pendant lequel la place d\'un élève reste réservée quand sa nouvelle période n\'est pas financée.',
+			'admin.finance.pol.relances' => 'Règles de relance',
+			'admin.finance.pol.relancesDetail' => 'Les rappels d\'une période non financée, envoyés au tuteur ou à l\'adulte autonome dans l\'application ; jamais à l\'enfant.',
+			'admin.finance.pol.relancesNonFixees' => 'Pas encore fixées',
+			'admin.finance.pol.relanceRang' => ({required Object rang}) => 'Relance ${rang}',
+			'admin.finance.pol.relanceApres' => ({required Object jours}) => '${jours} après le début de la période',
+			'admin.finance.pol.relanceComparaison' => ({required Object rang, required Object apres}) => '${rang} : ${apres}',
+			'admin.finance.pol.pilotage' => 'Pilotage',
+			'admin.finance.pol.pilotageDetail' => 'Des repères pour lire les chiffres, jamais des règles qui bloquent.',
+			'admin.finance.pol.marge' => 'Marge de référence',
+			'admin.finance.pol.margeDetail' => 'Un repère pour lire la vue globale, jamais une sanction, un refus ni un blocage.',
+			'admin.finance.pol.margeObjectif' => 'Marge objectif',
+			'admin.finance.pol.margeObjectifDetail' => 'Marge nette visée, toutes charges comprises : un repère de pilotage, jamais une sanction ni un blocage.',
+			'admin.finance.pol.margeForte' => 'Performance forte',
+			'admin.finance.pol.margeForteDetail' => 'Le repère d\'un mois très bon ; il ne descend pas sous l\'objectif.',
+			'admin.finance.pol.margeStretch' => 'Scénario stretch',
+			'admin.finance.pol.margeStretchDetail' => 'Le repère ambitieux ; il ne descend pas sous la performance forte.',
+			'admin.finance.pol.pourcentValeur' => ({required Object valeur}) => '${valeur} %',
+			'admin.finance.pol.unitePourcent' => '%',
+			'admin.finance.pol.erreurMargeMax' => 'Saisissez une marge de 100 % au plus.',
+			'admin.finance.pol.erreurMargeForte' => ({required Object objectif}) => 'La performance forte ne descend pas sous l\'objectif (${objectif}) : saisissez une valeur au moins égale.',
+			'admin.finance.pol.erreurMargeStretch' => ({required Object forte}) => 'Le scénario stretch ne descend pas sous la performance forte (${forte}) : saisissez une valeur au moins égale.',
+			'admin.finance.pol.budgets' => 'Budgets',
+			'admin.finance.pol.budgetsDetail' => 'Non contraignants : des repères de dépense, jamais un blocage ni une sanction.',
+			'admin.finance.pol.budgetsNonFixes' => 'Pas encore fixés',
+			'admin.finance.pol.budgetMarketing' => 'Budget marketing',
+			'admin.finance.pol.budgetOperationnel' => 'Budget opérationnel',
+			'admin.finance.pol.budgetValeur' => ({required Object valeur}) => '${valeur} %, non contraignant',
+			'admin.finance.pol.budgetComparaison' => ({required Object libelle, required Object valeur}) => '${libelle} : ${valeur}',
+			'admin.finance.pol.separateurComparaison' => ' ; ',
+			'admin.finance.pol.invariants' => 'Règles fixes',
+			'admin.finance.pol.invariantsDetail' => 'Elles protègent l\'argent des familles : ce ne sont pas des réglages, aucune version ne les change.',
+			'admin.finance.pol.invariantConfirmation' => 'Un paiement est confirmé avant tout crédit sur un profil.',
+			'admin.finance.pol.invariantDoubleDebit' => 'Un même paiement n\'est jamais débité deux fois.',
+			'admin.finance.pol.invariantPeriode' => 'L\'accès au cours dépend de la période financée, jamais du solde.',
+			'admin.finance.pol.invariantSoldes' => 'Chaque profil a son propre solde ; le total du foyer n\'est qu\'une lecture.',
+			'admin.finance.pol.invariantIdempotence' => 'Un même paiement reçu deux fois n\'est enregistré qu\'une fois.',
+			'admin.finance.pol.invariantHistorique' => 'L\'historique des paiements ne s\'efface ni ne se réécrit : on y ajoute seulement.',
+			'admin.finance.pol.publier' => 'Publier la version',
+			'admin.finance.pol.publierConsequence' => 'Publier rend ce brouillon applicable à partir de sa date d\'effet ; aucune facture déjà payée n\'est modifiée.',
+			'admin.finance.pol.publicationIndisponible' => 'La publication n\'est pas encore disponible',
+			'admin.finance.pol.publicationIndisponibleDetail' => 'Rien n\'a été publié : le service de publication n\'est pas encore branché. La version active continue de s\'appliquer. Gardez cet écran ouvert pour conserver vos modifications, ou revenez quand la publication sera ouverte.',
+			'admin.finance.pol.publicationNonConfirmee' => 'Publication non confirmée',
+			'admin.finance.pol.publicationNonConfirmeeDetail' => 'La réponse n\'est pas arrivée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vérifiez la version active avant de réessayer.',
+			'admin.finance.pol.champsACorriger' => 'Corrigez d\'abord les champs signalés',
+			'admin.finance.pol.champsACorrigerDetail' => 'Un champ vide, mal saisi ou incohérent empêche de préparer la publication : corrigez chaque champ signalé comme sa phrase l\'indique, puis publiez.',
+			'admin.finance.pol.apercu' => 'Aperçu avant publication',
+			'admin.finance.pol.apercuDetail' => 'Ce que donnerait le brouillon à l\'écran, recalculé à chaque modification valide. Ce sont des exemples : rien n\'est facturé ni payé.',
+			'admin.finance.pol.apercuFamille' => 'Exemple de foyer',
+			'admin.finance.pol.apercuFamilleDetail' => 'La mensualité de chaque enfant payant, dans l\'ordre des rangs, puis le total du foyer.',
+			'admin.finance.pol.apercuEnfantsChoix' => 'Nombre d\'enfants payants',
+			'admin.finance.pol.apercuEnfants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} enfant', other: '${n} enfants', ), 
+			'admin.finance.pol.apercuEnfant' => ({required Object rang}) => 'Enfant ${rang}',
+			'admin.finance.pol.apercuPrixNormal' => 'Prix normal, aucune remise',
+			'admin.finance.pol.apercuRemise' => ({required Object montant}) => 'Remise de rang : ${montant}',
+			'admin.finance.pol.apercuTotalFamille' => 'Total du foyer par mois',
+			'admin.finance.pol.apercuEnseignant' => 'Exemple d\'enseignant',
+			'admin.finance.pol.apercuEnseignantDetail' => 'Le taux horaire d\'une classe selon ses sièges éligibles : la base garantie, plus la part d\'occupation, jamais au-dessus du plafond.',
+			'admin.finance.pol.apercuTypeClasse' => 'Type de classe',
+			'admin.finance.pol.apercuClasseEnfants' => 'Enfants',
+			'admin.finance.pol.apercuClasseAdultes' => 'Adultes',
+			'admin.finance.pol.apercuClasseDebutants' => 'Débutants',
+			'admin.finance.pol.apercuEligiblesChoix' => 'Sièges éligibles',
+			'admin.finance.pol.apercuEligiblesDetail' => 'Un siège compte quand sa période est financée, même si l\'élève est absent.',
+			'admin.finance.pol.apercuEligibles' => ({required Object eligibles, required Object capacite}) => '${eligibles} sur ${capacite}',
+			'admin.finance.pol.apercuEligiblesMoins' => 'Un siège éligible de moins',
+			'admin.finance.pol.apercuEligiblesPlus' => 'Un siège éligible de plus',
+			'admin.finance.pol.apercuBase' => 'Base garantie',
+			'admin.finance.pol.apercuOccupation' => 'Part d\'occupation',
+			'admin.finance.pol.apercuOccupationDetail' => ({required Object eligibles, required Object capacite}) => '${eligibles} sièges éligibles sur ${capacite}',
+			'admin.finance.pol.apercuTaux' => 'Taux horaire effectif',
+			'admin.finance.pol.apercuTauxDetail' => ({required Object plafond}) => 'Jamais au-dessus du plafond de ${plafond}.',
+			'admin.finance.pol.apercuAttente' => 'L\'aperçu attend une saisie valide',
+			'admin.finance.pol.apercuAttenteDetail' => 'Un champ du brouillon est vide, mal saisi ou incohérent : corrigez le champ signalé, l\'aperçu se recalcule aussitôt.',
+			'admin.finance.pol.apercuCapaciteAttente' => 'Cette classe n\'a aucun siège : saisissez une capacité d\'au moins 1 élève pour voir le taux.',
+			'admin.finance.pol.apercuIndisponible' => 'L\'aperçu n\'est pas encore disponible',
+			'admin.finance.pol.apercuIndisponibleDetail' => 'Le calcul de l\'aperçu n\'est pas encore branché : aucun montant n\'est estimé ici. Le brouillon reste modifiable.',
+			'admin.finance.pol.apercuErreur' => 'Aperçu non calculé',
+			'admin.finance.pol.apercuErreurDetail' => 'Le calcul n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos saisies sont gardées : relancez le calcul.',
+			'admin.finance.pol.apercuHorsLigne' => 'Aperçu non calculé',
+			'admin.finance.pol.apercuHorsLigneDetail' => 'L\'aperçu ne peut pas être calculé maintenant. Vos saisies sont gardées ; relancez le calcul dès que l\'envoi est de nouveau possible.',
+			'admin.finance.pol.apercuRecalculer' => 'Relancer le calcul',
+			'admin.finance.pol.apercuRecalcul' => 'Recalcul en cours',
+			'admin.finance.pol.apercuRecalculDetail' => 'Les montants ci-dessous correspondent au choix précédent : ils se mettent à jour dès que le calcul aboutit.',
+			'admin.finance.pol.historique' => 'Historique des versions',
+			'admin.finance.pol.historiqueDetail' => 'Toutes les versions, la plus récente d\'abord. Rien ne s\'y modifie : une version publiée reste telle quelle.',
+			'admin.finance.pol.historiqueVersion' => ({required Object version}) => 'Version ${version}',
+			'admin.finance.pol.historiqueActive' => 'Version active',
+			'admin.finance.pol.historiqueVide' => 'Aucune autre version pour l\'instant : seule la version active existe.',
 			'agent.titre' => 'Entrée d\'un agent',
 			'agent.intro' => 'Cette page ouvre l\'application en lecture seule, avec le jeton remis par l\'académie.',
 			'agent.jeton' => 'Jeton d\'observation',
@@ -19211,8 +21465,6 @@ extension on Traductions {
 			'compte.espacesDetail' => 'Les espaces auxquels votre compte donne accès',
 			'compte.espacesMissionEnCours' => 'Pour revenir à votre espace principal, quittez d\'abord la visite en cours.',
 			'compte.habilitation' => 'Habilité',
-			_ => null,
-		} ?? switch (path) {
 			'compte.deconnexion' => 'Se déconnecter',
 			'compte.deconnexionDetail' => 'Mettre fin à la session sur cet appareil',
 			'compte.identifiant' => 'Identifiant',
@@ -19350,6 +21602,8 @@ extension on Traductions {
 			'compte.tuteur.pageAcces.aucunePhrase' => 'L\'accès de chaque profil élève s\'affichera ici.',
 			'compte.tuteur.pageAcces.titulaire' => 'Votre compte de titulaire n\'a pas d\'échéance propre : l\'accès se règle profil par profil.',
 			'compte.tuteur.pagePaiements.titre' => 'Paiements et reçus',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pagePaiements.indisponibleTitre' => 'Paiements pas encore consultables',
 			'compte.tuteur.pagePaiements.indisponiblePhrase' => 'L\'historique des paiements, les reçus et les moyens de paiement ne sont pas encore disponibles dans l\'application. Aucun paiement ne vous est demandé ici.',
 			'compte.tuteur.pagePaiements.aucunTitre' => 'Aucun paiement enregistré',
@@ -19725,8 +21979,6 @@ extension on Traductions {
 			'classe.planning' => 'Planning',
 			'classe.travail' => 'Avant le prochain cours',
 			'classe.ressources' => 'Bibliothèque',
-			_ => null,
-		} ?? switch (path) {
 			'classe.progression' => 'Progression',
 			'classe.observer' => 'Observer la séance',
 			'classe.titre' => 'Classe',
@@ -19864,6 +22116,8 @@ extension on Traductions {
 			'classe.cartes.feuille.modele' => 'Modèle de la carte',
 			'classe.cartes.feuille.champTitre' => 'Titre de la carte',
 			'classe.cartes.feuille.champTexte' => 'Texte de la carte (facultatif)',
+			_ => null,
+		} ?? switch (path) {
 			'classe.cartes.feuille.champLien' => 'Lien de la carte (facultatif)',
 			'classe.cartes.feuille.aideLongueur' => ({required Object max}) => '${max} caractères au plus',
 			'classe.cartes.feuille.aideLien' => 'Une adresse complète, qui commence par https://',
@@ -20239,8 +22493,6 @@ extension on Traductions {
 			'enseignant.profil.contratDetail' => ({required Object version, required Object date}) => 'Version ${version}, accepté le ${date}',
 			'enseignant.profil.contratAucun' => 'Aucun contrat enregistré',
 			'enseignant.profil.contratAucunDetail' => 'Votre dossier n\'est pas encore passé par la signature.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.profil.contratErreur' => 'Vos contrats n\'ont pas pu être lus.',
 			'enseignant.profil.contratLectureSeule' => 'Ces pièces sont en lecture seule.',
 			'enseignant.profil.personnel' => 'Mes réglages',
@@ -20264,6 +22516,9 @@ extension on Traductions {
 			'enseignant.profil.enregistrer' => 'Enregistrer',
 			'enseignant.profil.enregistre' => 'Modification enregistrée',
 			'enseignant.profil.editionErreur' => 'La modification n\'a pas abouti. Réessayez dans un instant.',
+			'enseignant.profil.remuneration' => 'Rémunération',
+			'enseignant.profil.revenus' => 'Revenus estimés',
+			'enseignant.profil.revenusDetail' => 'Estimation du mois en cours, Classe par Classe',
 			'enseignant.creneaux.heureLibelle' => ({required Object jour, required Object heure}) => '${jour} ${heure} h',
 			'enseignant.creneaux.aucuneHeure' => 'Vous n\'avez proposé aucune heure. Sans créneau, aucune Classe ne peut vous être proposée.',
 			'enseignant.creneaux.heureEnregistree' => ({required Object heure}) => '${heure} enregistré',
@@ -20372,6 +22627,57 @@ extension on Traductions {
 			'enseignant.revue.typeCorridor' => 'Élève hors corridor',
 			'enseignant.revue.typeTransfert' => 'Proposition de transfert',
 			'enseignant.revue.typeReorientation' => 'Proposition de réorientation',
+			'enseignant.revenus.titre' => 'Revenus estimés',
+			'enseignant.revenus.intro' => 'Une estimation de votre rémunération du mois choisi, Classe par Classe.',
+			'enseignant.revenus.introSansChoix' => 'Une estimation de votre rémunération du mois en cours, Classe par Classe.',
+			_ => null,
+		} ?? switch (path) {
+			'enseignant.revenus.estimation' => 'Estimation',
+			'enseignant.revenus.periode' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
+			'enseignant.revenus.totalEstime' => 'Revenu estimé du mois',
+			'enseignant.revenus.totalDetail' => 'Rémunération pédagogique, hors aide Internet.',
+			'enseignant.revenus.heuresAssurees' => 'Heures assurées',
+			'enseignant.revenus.classesActives' => 'Classes',
+			'enseignant.revenus.heures' => ({required Object heures}) => '${heures} h',
+			'enseignant.revenus.heuresMinutes' => ({required Object heures, required Object minutes}) => '${heures} h ${minutes}',
+			'enseignant.revenus.detailSection' => 'Détail par Classe',
+			'enseignant.revenus.classe' => ({required Object nom}) => 'Classe ${nom}',
+			'enseignant.revenus.capacite' => 'Capacité',
+			'enseignant.revenus.capaciteValeur' => ({required Object nombre}) => '${nombre} places',
+			'enseignant.revenus.sieges' => 'Sièges éligibles',
+			'enseignant.revenus.siegesValeur' => ({required Object nombre, required Object capacite}) => '${nombre} sur ${capacite}',
+			'enseignant.revenus.siegesDetail' => 'Élèves financés, présents ou absents, et élèves en essai présents. Nombre retenu pour le mois, tel que l\'académie le transmet.',
+			'enseignant.revenus.taux' => 'Taux horaire effectif',
+			'enseignant.revenus.tauxValeur' => ({required Object montant}) => '${montant} par heure',
+			'enseignant.revenus.montantClasse' => 'Montant estimé',
+			'enseignant.revenus.classeColonne' => 'Classe',
+			'enseignant.revenus.type' => 'Type',
+			'enseignant.revenus.typeEnfants' => 'Enfants',
+			'enseignant.revenus.typeDebutants' => 'Enfants débutants',
+			'enseignant.revenus.typeAdultes' => 'Adultes',
+			'enseignant.revenus.remplacement' => 'Remplacement',
+			'enseignant.revenus.tauxColonne' => 'Taux par heure',
+			'enseignant.revenus.tauxMoyen' => 'Taux horaire moyen',
+			'enseignant.revenus.total' => 'Total',
+			'enseignant.revenus.calculSection' => 'Comment l\'estimation se calcule',
+			'enseignant.revenus.base' => '1. Base garantie',
+			'enseignant.revenus.baseDetail' => ({required Object base}) => '${base} par heure assurée, quelle que soit l\'occupation de la Classe.',
+			'enseignant.revenus.occupation' => '2. Composante d\'occupation',
+			'enseignant.revenus.occupationDetail' => 'Chaque siège éligible ajoute une part au taux. Un élève financé absent compte : une absence ne vous fait rien perdre.',
+			'enseignant.revenus.plafond' => '3. Plafond horaire',
+			'enseignant.revenus.plafondDetail' => ({required Object plafond}) => 'Le taux ne dépasse jamais ${plafond} par heure, même au-delà de la capacité.',
+			'enseignant.revenus.internetSection' => 'Aide Internet',
+			'enseignant.revenus.internet' => 'Aide Internet du mois',
+			'enseignant.revenus.internetDetail' => 'Une seule aide par mois, versée à part de la rémunération pédagogique.',
+			'enseignant.revenus.internetAucune' => 'Aucune aide Internet n\'est prévue ce mois-ci.',
+			'enseignant.revenus.releveSection' => 'Relevé',
+			'enseignant.revenus.releveIndisponibleTitre' => 'Le relevé n\'est pas encore disponible',
+			'enseignant.revenus.releveIndisponiblePhrase' => 'Les mois arrêtés par l\'académie s\'afficheront ici dès que le relevé sera en service. D\'ici là, seule l\'estimation du mois en cours est montrée.',
+			'enseignant.revenus.releveVide' => 'Aucun mois arrêté pour l\'instant',
+			'enseignant.revenus.releveVideDetail' => 'Chaque mois apparaîtra ici une fois arrêté par l\'académie.',
+			'enseignant.revenus.mention' => 'Ce montant est une estimation, pas une paie définitive. Le relevé arrêté par l\'académie fait foi.',
+			'enseignant.revenus.vide' => 'Aucune heure assurée ce mois-ci',
+			'enseignant.revenus.videDetail' => 'L\'estimation apparaîtra après votre première séance assurée du mois.',
 			'controleur.historique.titre' => 'Historique',
 			'controleur.historique.provisoire' => 'Cet écran est en préparation.',
 			'controleur.historique.envoye' => 'Envoyé',
@@ -20753,8 +23059,6 @@ extension on Traductions {
 			'tc.outils.marquer.aide' => 'Choisissez ce que ce passage demande.',
 			'tc.outils.marquer.retirer' => 'Retirer le marqueur',
 			'tc.outils.revision.titre' => 'À préparer',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.revision.aide' => 'Le passage sélectionné devient un travail à préparer.',
 			'tc.outils.revision.groupeEntier' => 'Tout le groupe',
 			'tc.outils.revision.consigne' => 'Consigne courte (facultatif)',
@@ -20840,6 +23144,8 @@ extension on Traductions {
 			'tc.classe.attente.ouverture' => 'Ouverture du cours',
 			'tc.classe.attente.connexion' => 'Connexion au cours',
 			'tc.classe.attente.refus' => 'Le cours n\'est pas accessible pour le moment',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.lien.instable' => 'Connexion instable',
 			'tc.classe.lien.reconnexion' => 'Reconnexion en cours',
 			'tc.classe.lien.retabli' => 'Connexion rétablie',
@@ -21115,29 +23421,22 @@ extension on Traductions {
 			'adulte.monEspace.pageAccords.indisponiblePhrase' => 'Accepter, refuser ou retirer chacun de vos accords n\'est pas encore possible dans l\'application. Aucun accord ne vous est demandé ici.',
 			'adulte.monEspace.pageCoursAcces.indisponibleTitre' => 'Cours et accès pas encore consultables',
 			'adulte.monEspace.pageCoursAcces.indisponiblePhrase' => 'Le détail de vos cours, de vos séances et de votre accès n\'est pas encore disponible dans l\'application.',
+			'adulte.monEspace.paiementsLegendeAutonome' => 'Solde, période et recharge',
 			'adulte.coranDemo.titre' => 'Disponible après connexion',
 			'adulte.coranDemo.phrase' => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte du Coran. Après connexion à votre espace élève, il s\'ouvre ici.',
-			'adulte.recharge.titre' => 'Nouvelle recharge',
-			'adulte.recharge.phrase' => 'Sélectionnez un ou plusieurs bénéficiaires, puis choisissez une offre pour chacun.',
-			'adulte.recharge.toutSelectionner' => 'Tout sélectionner',
-			'adulte.recharge.toutDeselectionner' => 'Tout désélectionner',
-			'adulte.recharge.offrePour' => ({required Object prenom}) => 'Offre pour ${prenom}',
+			'adulte.recharge.titre' => 'Recharge',
+			'adulte.recharge.phrase' => 'Choisissez les profils et les montants.',
 			'adulte.recharge.verifier' => 'Vérifier la recharge',
-			'adulte.recharge.raisonAucun' => 'Sélectionnez au moins un bénéficiaire pour continuer.',
-			'adulte.recharge.raisonOffre' => 'Choisissez une offre pour chaque bénéficiaire sélectionné.',
-			'adulte.recharge.horsLigneVerifier' => 'Vous pourrez vérifier la recharge quand la connexion sera revenue.',
+			'adulte.recharge.raisonAucun' => 'Sélectionnez au moins un profil pour continuer.',
 			'adulte.recharge.sansDonnees' => 'Les bénéficiaires à recharger n\'ont pas pu être chargés',
 			'adulte.recharge.indisponibleTitre' => 'Recharge pas encore disponible',
-			'adulte.recharge.indisponiblePhrase' => 'Les offres de recharge ne sont pas encore disponibles dans l\'application. Aucun paiement n\'est possible ici pour l\'instant.',
+			'adulte.recharge.indisponiblePhrase' => 'La recharge n\'est pas encore disponible dans l\'application. Aucun paiement n\'est possible ici pour l\'instant.',
 			'adulte.recharge.verificationEchecTitre' => 'La vérification n\'a pas abouti.',
 			'adulte.recharge.verificationEchecPhrase' => 'Vos choix sont conservés. Vous pouvez réessayer.',
-			'adulte.recharge.verifierTitre' => 'Vérifier la recharge',
-			'adulte.recharge.verifierPhrase' => 'Vérifiez les détails avant de procéder au paiement.',
-			'adulte.recharge.recapitulatif' => 'Récapitulatif par bénéficiaire',
+			'adulte.recharge.recapitulatif' => 'Récapitulatif par profil',
 			'adulte.recharge.montantPaye' => 'Montant payé',
 			'adulte.recharge.soldeAttribue' => 'Solde attribué',
 			'adulte.recharge.statut' => 'Statut de l\'attribution',
-			'adulte.recharge.modifier' => 'Modifier',
 			'adulte.recharge.total' => 'Total à payer',
 			'adulte.recharge.payer' => ({required Object montant}) => 'Payer ${montant}',
 			'adulte.recharge.horsLignePayer' => 'Vous pourrez payer quand la connexion sera revenue.',
@@ -21146,6 +23445,60 @@ extension on Traductions {
 			'adulte.recharge.paiementIndisponibleTitre' => 'Paiement pas encore disponible',
 			'adulte.recharge.paiementIndisponiblePhrase' => 'Aucun paiement n\'a été effectué. Le paiement en ligne n\'est pas encore ouvert dans l\'application.',
 			'adulte.recharge.revenirPaiements' => 'Revenir aux paiements du foyer',
+			'adulte.recharge.phraseUnique' => 'Cochez le profil, puis choisissez le montant.',
+			'adulte.recharge.profils' => 'Profils à recharger',
+			'adulte.recharge.profilUnique' => 'Profil à recharger',
+			'adulte.recharge.soldeActuel' => ({required Object montant}) => 'Solde actuel : ${montant}',
+			'adulte.recharge.montantSuggere' => ({required Object montant}) => 'Montant suggéré : ${montant}',
+			'adulte.recharge.montantPour' => ({required Object prenom}) => 'Montant pour ${prenom}',
+			'adulte.recharge.diminuer' => ({required Object prenom}) => 'Diminuer le montant pour ${prenom}',
+			'adulte.recharge.augmenter' => ({required Object prenom}) => 'Augmenter le montant pour ${prenom}',
+			'adulte.recharge.repartition' => 'Un seul paiement sera effectué. Chaque montant va au solde de son profil : il n\'y a pas de solde commun.',
+			'adulte.recharge.moyen' => 'Moyen de paiement',
+			'adulte.recharge.raisonMontant' => 'Choisissez un montant pour chaque profil sélectionné.',
+			'adulte.recharge.payerSeul' => 'Payer',
+			'adulte.recharge.ajouter' => ({required Object prenom}) => 'Ajouter ${prenom} à la recharge',
+			'adulte.recharge.regularisationDe' => ({required Object prenom, required Object message}) => '${prenom} : ${message}',
+			'adulte.recharge.commandeRendue' => 'Le paiement est envoyé. Ne payez pas une seconde fois : suivez son état.',
+			'adulte.recharge.suivrePaiement' => 'Suivre le paiement',
+			'adulte.recharge.resultat.preparationTitre' => 'Paiement en préparation',
+			'adulte.recharge.resultat.preparationPhrase' => 'Vérifiez la répartition avant de payer.',
+			'adulte.recharge.resultat.attenteTitre' => 'Paiement en cours de confirmation',
+			'adulte.recharge.resultat.attentePhrase' => 'Le prestataire de paiement n\'a pas encore confirmé. Les soldes ne changent qu\'après sa confirmation.',
+			'adulte.recharge.resultat.attenteBandeauTitre' => 'Ne payez pas une seconde fois.',
+			'adulte.recharge.resultat.attenteBandeauPhrase' => 'Ce paiement est peut-être déjà passé. Actualisez dans quelques instants pour voir son état.',
+			'adulte.recharge.resultat.confirmeTitre' => 'Paiement confirmé',
+			'adulte.recharge.resultat.confirmePhrase' => 'Le paiement est confirmé. Les soldes vont être mis à jour.',
+			'adulte.recharge.resultat.allocationPhrase' => 'Mise à jour des soldes...',
+			'adulte.recharge.resultat.terminePhrase' => ({required Object montant}) => 'Votre paiement de ${montant} a bien été effectué et réparti entre les profils sélectionnés.',
+			'adulte.recharge.resultat.details' => 'Détails du paiement',
+			'adulte.recharge.resultat.reference' => 'Référence',
+			'adulte.recharge.resultat.date' => 'Date',
+			'adulte.recharge.resultat.moyen' => 'Moyen de paiement',
+			'adulte.recharge.resultat.total' => 'Montant total',
+			'adulte.recharge.resultat.repartition' => 'Répartition par profil',
+			'adulte.recharge.resultat.nouveauSolde' => ({required Object montant}) => 'Nouveau solde : ${montant}',
+			'adulte.recharge.resultat.soldesTitre' => 'Soldes mis à jour',
+			'adulte.recharge.resultat.soldesPhrase' => 'Les nouveaux soldes sont disponibles pour chaque profil concerné.',
+			'adulte.recharge.resultat.retourSoldes' => 'Retour aux soldes',
+			'adulte.recharge.resultat.echecTitre' => 'Le paiement a échoué',
+			'adulte.recharge.resultat.echecPhrase' => 'Aucun solde n\'a été crédité. Votre sélection est conservée : vous pouvez réessayer ou changer de moyen de paiement.',
+			'adulte.recharge.resultat.echecMotif' => 'Motif',
+			'adulte.recharge.resultat.reessayer' => 'Réessayer',
+			'adulte.recharge.resultat.changerMoyen' => 'Changer de moyen de paiement',
+			'adulte.recharge.resultat.annuleTitre' => 'Paiement annulé',
+			'adulte.recharge.resultat.annulePhrase' => 'Le paiement a été annulé avant sa confirmation. Aucun solde n\'a été crédité. Vous pouvez recommencer avec la même sélection.',
+			'adulte.recharge.resultat.perimeTitre' => 'Commande expirée',
+			'adulte.recharge.resultat.perimePhrase' => 'Le délai de paiement de cette commande est dépassé. Aucun solde n\'a été crédité. Recommencez la recharge pour obtenir une nouvelle commande.',
+			'adulte.recharge.resultat.recommencer' => 'Recommencer la recharge',
+			'adulte.recharge.resultat.actualiser' => 'Actualiser',
+			'adulte.recharge.resultat.horsLigne' => 'L\'état affiché peut avoir changé depuis : actualisez dès que la lecture est de nouveau possible.',
+			'adulte.recharge.resultat.videTitre' => 'Aucun paiement à suivre',
+			'adulte.recharge.resultat.videPhrase' => 'Cette adresse ne désigne aucune commande. Revenez aux paiements du foyer pour retrouver vos recharges.',
+			'adulte.recharge.resultat.indisponibleTitre' => 'Suivi du paiement pas encore disponible',
+			'adulte.recharge.resultat.indisponiblePhrase' => 'L\'état des paiements n\'est pas encore disponible dans l\'application. Aucun paiement n\'a été effectué ici.',
+			'adulte.recharge.resultat.lectureEchecTitre' => 'L\'état du paiement n\'a pas pu être lu.',
+			'adulte.recharge.resultat.lectureEchecPhrase' => 'Le paiement n\'est pas annulé pour autant. Ne payez pas une seconde fois : réessayez la lecture.',
 			'adulte.paiements.beneficiaires' => 'Bénéficiaires',
 			'adulte.paiements.recharger' => 'Recharger',
 			'adulte.paiements.recapitulatif' => ({required Object valeur}) => 'Récapitulatif du foyer : ${valeur}. Chaque solde reste celui de son bénéficiaire.',
@@ -21267,8 +23620,6 @@ extension on Traductions {
 			'adulte.acceptation.recu' => ({required Object date}) => 'Réponse enregistrée le ${date}.',
 			'adulte.acceptation.titreNeutre' => 'Invitation au forfait famille',
 			'adulte.acceptation.sansCompteTitre' => 'Invitation au forfait famille',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.acceptation.sansCompte' => 'Pour répondre, connectez-vous à votre compte, ou créez-en un. Vous lirez alors ce que la personne qui vous invite verra et ne verra pas avant de décider.',
 			'adulte.acceptation.sansCompteAction' => 'Me connecter ou créer mon compte',
 			'adulte.sortie.retirerElle' => 'Retirer ma conjointe',
@@ -21307,6 +23658,8 @@ extension on Traductions {
 			'adulte.reprise.jamaisTitre' => 'Ce qui n\'est jamais repris',
 			'adulte.reprise.jamais.identifiants' => 'Les identifiants de connexion du titulaire',
 			'adulte.reprise.jamais.messages' => 'Ses messages privés',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.reprise.jamais.conversations' => 'Ses conversations',
 			'adulte.reprise.jamais.historique' => 'Son historique pédagogique personnel',
 			'adulte.reprise.jamais.moyensPaiement' => 'Ses moyens de paiement enregistrés',
@@ -21401,6 +23754,16 @@ extension on Traductions {
 			'adulte.demo.etats.doubleSoumission' => 'La même action a été envoyée deux fois.',
 			'adulte.demo.etats.notificationDansLApplication' => 'La notification n\'a pas pu partir sur le téléphone, elle reste visible dans l\'application.',
 			'adulte.demo.etats.emancipation' => 'Émancipation d\'un élève devenu adulte : non construite dans cette vague.',
+			'adulte.finances.indisponibleTitre' => 'Vos finances ne sont pas encore disponibles',
+			'adulte.finances.indisponiblePhrase' => 'Votre solde, votre période financée et votre mensualité s\'afficheront ici dès leur mise en service.',
+			'adulte.finances.erreurTitre' => 'Vos finances ne peuvent pas être lues',
+			'adulte.finances.videTitre' => 'Aucune finance enregistrée',
+			'adulte.finances.videPhrase' => 'Aucun solde ni aucune mensualité n\'est encore rendu pour votre profil. Ils apparaîtront ici après votre inscription à une classe.',
+			'adulte.finances.voirMouvementsSemantique' => 'Voir vos mouvements',
+			'adulte.finances.mouvementsContexte' => 'Vos recharges, mensualités, remises et avoirs, du plus récent au plus ancien. Rien ne s\'efface : une correction s\'ajoute comme un nouveau mouvement.',
+			'adulte.finances.mouvementsErreurTitre' => 'Vos mouvements ne peuvent pas être lus',
+			'adulte.finances.mouvementsIndisponiblePhrase' => 'Vos recharges et vos mensualités s\'afficheront ici dès leur mise en service.',
+			'adulte.finances.mouvementsVidePhrase' => 'Aucune recharge ni aucune mensualité n\'est encore enregistrée pour votre profil. Les mouvements apparaîtront ici après le premier paiement.',
 			'formulaire.motif.manque' => 'Il manque le motif : choisissez-en un dans la liste, ou touchez « Autre » et écrivez-le.',
 			'formulaire.motif.autreVide' => 'Vous avez choisi « Autre » : écrivez le motif en quelques mots.',
 			'formulaire.motif.autreChamp' => 'Le motif, en quelques mots',
@@ -21524,6 +23887,53 @@ extension on Traductions {
 			'alertes.cloche' => 'Alertes',
 			'alertes.clocheUneUrgente' => 'Alertes, une urgente',
 			'alertes.clocheUrgentes' => ({required Object nombre}) => 'Alertes, ${nombre} urgentes',
+			'argent.etat.finance' => 'Financé',
+			'argent.etat.essai' => 'Essai',
+			'argent.etat.essaiCompte' => ({required Object n, required Object max}) => 'Essai : ${n}/${max}',
+			'argent.etat.manque' => 'À financer',
+			'argent.etat.enConfirmation' => 'En confirmation',
+			'argent.etat.expire' => 'Accès expiré',
+			'argent.etat.pause' => 'En pause',
+			'argent.etat.aRegulariser' => 'À régulariser',
+			'argent.periode.jusquau' => ({required Object date}) => 'Financé jusqu\'au ${date}',
+			'argent.periode.aucune' => 'Aucune période financée',
+			'argent.allocation.credite' => 'Crédité',
+			'argent.moyen.webStripe' => 'Carte bancaire',
+			'argent.moyen.webStripeDetail' => 'Paiement par le web. Aucun débit avant votre confirmation.',
+			'argent.soldes.total' => 'Total des soldes (lecture)',
+			'argent.soldes.totalDetail' => 'Une lecture : chaque solde reste celui de son profil.',
+			'argent.soldes.aPayer' => 'À payer ce mois',
+			'argent.soldes.profilsFinances' => 'Profils financés',
+			'argent.soldes.profilsFinancesValeur' => ({required Object n, required Object total}) => '${n} sur ${total}',
+			'argent.soldes.paiements' => 'Paiements du mois',
+			'argent.acces.enfantTitre' => 'Accès à cette classe fermé pour le moment',
+			'argent.acces.enfantMessage' => 'Votre tuteur peut gérer l\'accès.',
+			'argent.acces.regulariserTitre' => 'Accès à régulariser',
+			'argent.acces.regulariserManque' => ({required Object montant, required Object mois}) => 'Il manque ${montant} pour financer ${mois}.',
+			'argent.acces.regulariserManqueNouvellePeriode' => ({required Object montant}) => 'Il manque ${montant} pour financer la nouvelle période.',
+			'argent.acces.regulariserSansManque' => 'La nouvelle période n\'est pas encore financée.',
+			'argent.acces.placeConservee' => ({required Object date}) => 'Place conservée jusqu\'au ${date}.',
+			'argent.acces.seancesFermeesTitre' => 'Nouvelles séances indisponibles',
+			'argent.acces.seancesFermees' => ({required Object prenom}) => '${prenom} ne peut pas rejoindre de nouvelle séance pour le moment. Son compte et ses contenus restent accessibles.',
+			'argent.acces.adulteSeancesFermees' => 'Vous ne pouvez pas rejoindre de nouvelle séance pour le moment. Votre compte et vos contenus restent accessibles.',
+			'argent.acces.suspenduTitre' => 'Accès suspendu',
+			'argent.acces.suspenduTuteur' => ({required Object prenom, required Object date}) => 'La place réservée à ${prenom} a été libérée le ${date}. Son compte et ses contenus restent accessibles.',
+			'argent.acces.suspenduTuteurSansDate' => ({required Object prenom}) => 'La place réservée à ${prenom} a été libérée. Son compte et ses contenus restent accessibles.',
+			'argent.acces.suspenduAdulte' => ({required Object date}) => 'Votre place a été libérée le ${date}. Votre compte et vos contenus restent accessibles.',
+			'argent.acces.suspenduAdulteSansDate' => 'Votre place a été libérée. Votre compte et vos contenus restent accessibles.',
+			'argent.acces.reactiveTitre' => 'Accès réactivé',
+			'argent.acces.reactiveTuteur' => ({required Object prenom, required Object date}) => '${prenom} peut de nouveau rejoindre ses séances depuis le ${date}.',
+			'argent.acces.reactiveTuteurSansDate' => ({required Object prenom}) => '${prenom} peut de nouveau rejoindre ses séances.',
+			'argent.acces.reactiveAdulte' => ({required Object date}) => 'Vous pouvez de nouveau rejoindre vos séances depuis le ${date}.',
+			'argent.acces.reactiveAdulteSansDate' => 'Vous pouvez de nouveau rejoindre vos séances.',
+			'argent.acces.pastilleSuspendu' => 'Suspendu',
+			'argent.acces.pastilleReactive' => 'Réactivé',
+			'identiteProfil.age' => ({required Object n}) => '${n} ans',
+			'identiteProfil.classe' => ({required Object classe}) => 'Classe ${classe}',
+			'identiteProfil.ageEtClasse' => ({required Object age, required Object classe}) => '${age} · ${classe}',
+			'identiteProfil.lecteurEnfant' => ({required Object prenom}) => '${prenom}, profil enfant',
+			'identiteProfil.lecteurAdulte' => ({required Object prenom}) => '${prenom}, profil adulte',
+			'identiteProfil.lecteurAvecClasse' => ({required Object profil, required Object classe}) => '${profil}, ${classe}',
 			_ => null,
 		};
 	}

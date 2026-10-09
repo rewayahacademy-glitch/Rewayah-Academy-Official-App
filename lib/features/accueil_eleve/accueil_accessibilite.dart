@@ -43,6 +43,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
+import '../acces_finance/acces_finance.dart';
 import '../tc_espace_groupe/carte_session.dart';
 import '../tc_espace_groupe/emplacements_groupe.dart';
 import '../tc_mes_groupes/photo_enseignant.dart';
@@ -84,6 +85,7 @@ class AccueilAccessibilite extends ConsumerWidget {
     super.key,
     this.onRejoindre,
     this.onTache,
+    this.accesFerme = false,
   }) : onRejoindreEspace = null;
 
   /// Cree l'Accueil qui lit sa source (route de l'eleve, demonstration).
@@ -97,10 +99,17 @@ class AccueilAccessibilite extends ConsumerWidget {
     super.key,
     this.onRejoindreEspace,
     this.onTache,
+    this.accesFerme = false,
   }) : prenom = null,
        espace = null,
        tutoiement = null,
        onRejoindre = null;
+
+  /// Vrai quand l'acces de l'eleve ferme ses seances (FI-9a, lu par l'hote
+  /// sur `accesAppelantProvider`) : Rejoindre est retire de la carte et la
+  /// copie neutre le dit, sans cause ni montant (guide §1.7). L'hote rend
+  /// aussi [onRejoindre] nul tant que l'acces se lit.
+  final bool accesFerme;
 
   /// Le prenom de l'eleve, jamais son age ; nul : lu dans la source.
   final String? prenom;
@@ -182,6 +191,7 @@ class AccueilAccessibilite extends ConsumerWidget {
         prenom: prenomDonne,
         espace: espaceDonne,
         tutoiement: tutoiement ?? false,
+        accesFerme: accesFerme,
         horsLigne: false,
         onVoirClasse: onVoirClasse,
         onRejoindre: onRejoindre,
@@ -243,6 +253,7 @@ class AccueilAccessibilite extends ConsumerWidget {
             prenom: donnees.prenom,
             espace: lu,
             tutoiement: donnees.tutoiement,
+            accesFerme: accesFerme,
             horsLigne: horsLigne,
             onVoirClasse: onVoirClasse,
             onRejoindre: rejoindre == null ? null : () => rejoindre(lu),
@@ -331,6 +342,7 @@ class _Haut extends StatelessWidget {
     required this.prenom,
     required this.espace,
     required this.tutoiement,
+    required this.accesFerme,
     required this.horsLigne,
     required this.onVoirClasse,
     required this.onRejoindre,
@@ -342,6 +354,7 @@ class _Haut extends StatelessWidget {
   final String prenom;
   final GroupHomeVM espace;
   final bool tutoiement;
+  final bool accesFerme;
   final bool horsLigne;
   final VoidCallback onVoirClasse;
   final VoidCallback? onRejoindre;
@@ -371,13 +384,23 @@ class _Haut extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        // Le mineur lit la copie de l'enfant, l'adulte autonome la sienne :
+        // choisi par [tutoiement] (age legal, MA4), jamais par un role.
+        if (accesFerme) ...<Widget>[
+          if (tutoiement)
+            const BandeauAccesEnfant()
+          else
+            const BandeauAccesAdulte(),
+          Ecart.vLg,
+        ],
         _Salutation(prenom: prenom),
         const SizedBox(height: AppSpacing.xxxl),
         SectionHeader(titre: t.accessibilite.accueil.prochaineSeance),
         Ecart.vMd,
         CarteSession(
           espace: espace,
-          onRejoindre: onRejoindre,
+          entreeRetiree: accesFerme,
+          onRejoindre: accesFerme ? null : onRejoindre,
           tutoiement: tutoiement,
           // Hors ligne, l'entree reste presente et inerte (D9) ; le bandeau
           // de `PageShell` dit pourquoi.

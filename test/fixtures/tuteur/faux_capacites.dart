@@ -5,6 +5,7 @@
 // PROPRIETE : coordinateur (`test/fixtures/tuteur/`). Chaque faux rend ce
 // qu'on lui donne, en memoire. Aucune ligne de production ne l'importe.
 
+import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/port_acces_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_catalogue_classes.dart';
 import 'package:rewayah_academy/core/capacites/port_consentements.dart';
@@ -16,6 +17,8 @@ import 'package:rewayah_academy/core/capacites/port_progression_famille.dart';
 import 'package:rewayah_academy/core/capacites/port_resume_seance_famille.dart';
 import 'package:rewayah_academy/core/capacites/port_support.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/finance/finances_profil.dart';
+import 'package:rewayah_academy/core/finance/mouvements_profil.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/profil/service_acceptations.dart';
 
@@ -106,6 +109,22 @@ class FauxPaiementsFoyer implements PortPaiementsFoyer {
 
   @override
   Future<SoldesFoyer> soldes() async => lesSoldes;
+
+  @override
+  Future<FinancesFoyer> finances() =>
+      Future<FinancesFoyer>.error(const CapaciteIndisponible('FI-BR-03'));
+
+  @override
+  Future<List<MouvementProfil>> mouvements(String profilId) =>
+      Future<List<MouvementProfil>>.error(
+        const CapaciteIndisponible('FI-BR-05'),
+      );
+
+  @override
+  Future<List<MouvementFoyer>> derniersMouvements({int limite = 3}) =>
+      Future<List<MouvementFoyer>>.error(
+        const CapaciteIndisponible('FI-BR-05'),
+      );
 
   @override
   Future<PaiementFoyer?> detail(String id) async {

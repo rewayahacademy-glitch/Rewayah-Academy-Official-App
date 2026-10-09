@@ -32,6 +32,7 @@ class EntetePage extends StatelessWidget {
     required this.titre,
     super.key,
     this.sousTitre,
+    this.ligneSousTitre,
     this.onRetour,
     this.actions = const <Widget>[],
     this.focusTitre,
@@ -46,6 +47,11 @@ class EntetePage extends StatelessWidget {
 
   /// Une ligne sous le titre, en encre attenuee.
   final String? sousTitre;
+
+  /// Une ligne composee sous le titre, a la place de [sousTitre] : un fil
+  /// d'Ariane dont un maillon mene ailleurs (« Foyer › Mariam »,
+  /// maquette 06). `null` : [sousTitre].
+  final Widget? ligneSousTitre;
 
   /// Le retour. Sans lui, pas de disque retour.
   final VoidCallback? onRetour;
@@ -89,7 +95,10 @@ class EntetePage extends StatelessWidget {
       ),
     );
     final List<Widget> sousTitreW = <Widget>[
-      if (sousTitre != null) ...<Widget>[
+      if (ligneSousTitre case final Widget ligne) ...<Widget>[
+        Ecart.vXs,
+        ligne,
+      ] else if (sousTitre != null) ...<Widget>[
         Ecart.vXs,
         TexteSansCoupure(
           sousTitre!,

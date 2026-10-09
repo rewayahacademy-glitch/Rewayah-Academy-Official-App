@@ -55,12 +55,17 @@
 // - sur bureau, la ligne famille suit « Mon compte » dans la colonne de debut
 //   (l'ordre du telephone) et la colonne de fin commence par le titre « Aide
 //   et support », a la hauteur du titre « Mon compte ».
+//
+// FI-9b : pour l'adulte autonome (« Ajouter ma famille »), « Paiements »
+// ouvre ses propres finances (`MesFinancesPage`, `PortMesFinances`) ; sa
+// valeur suit cette source, jamais celle des paiements du foyer.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_identite_titulaire.dart';
+import '../../core/capacites/port_mes_finances.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
@@ -73,6 +78,7 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../acces_finance/acces_finance.dart';
 import '../compte/carte_rubriques.dart' show ColonneSousPage;
 import '../compte/compte_tuteur_page.dart'
     show CarteDeconnexion, CarteIdentiteCompte;
@@ -190,9 +196,19 @@ class MonEspaceAdultePage extends ConsumerWidget {
     // « Non disponible » suit la source de la page d'arrivee : les paiements
     // (DB-CPT-03) et l'aide (DB-CPT-07) le disent tant que leur port est
     // indisponible ou sans canal, jamais en dur.
-    final String? paiementsValeur = _indisponible(
-      ref.watch(paiementsFoyerProvider),
-    );
+    // L'adulte autonome (« Ajouter ma famille ») arrive sur ses propres
+    // finances (FI-9b, `PortMesFinances`), les autres sur les paiements du
+    // foyer : la valeur suit celle de ces deux sources qui sera lue.
+    // Rien n'est lu tant que la ligne famille ne l'est pas : la rubrique
+    // n'existe pas encore (F7), et l'adulte autonome ne charge jamais les
+    // paiements du foyer.
+    final String? paiementsValeur = vue == null
+        ? null
+        : _indisponible(
+            vue.ligneFamille == LigneFamilleAdulte.ajouterMaFamille
+                ? ref.watch(mesFinancesProvider)
+                : ref.watch(paiementsFoyerProvider),
+          );
     final AsyncValue<Object?> canal = ref.watch(canalSupportProvider);
     final String? aideValeur =
         _indisponible(canal) ??
@@ -294,7 +310,12 @@ class MonEspaceAdultePage extends ConsumerWidget {
             AppIcons.finance,
             t.adulte.monEspace.paiements,
             // `paiementsLegende` : libelle provisoire, lexique D4.
-            legende: t.adulte.monEspace.paiementsLegende,
+            // L'adulte autonome arrive sur SES finances (FI-9b) : solde,
+            // periode et recharge, pas un historique de recus (revue
+            // FI-VAGUE-R R4-07).
+            legende: vue.ligneFamille == LigneFamilleAdulte.ajouterMaFamille
+                ? t.adulte.monEspace.paiementsLegendeAutonome
+                : t.adulte.monEspace.paiementsLegende,
             valeur: paiementsValeur,
           ),
         // Aucune source (EA-BR-08) : la page d'arrivee le dit toujours.
@@ -402,6 +423,17 @@ class MonEspaceAdultePage extends ConsumerWidget {
       ],
     );
 
+    // L'acces de l'eleve adulte autonome (FI-9a, guide §1.2, §1.7) : « Accès
+    // à régulariser » et le manque exact, ou « Essai : n/2 ». Seulement pour
+    // l'adulte seul (« Ajouter ma famille »), une fois la ligne famille lue
+    // (F7, revue EA-R M2) : le titulaire d'une famille lit l'acces de chaque
+    // profil dans son Foyer, le second adulte rattache n'a aucune donnee
+    // financiere propre (lecon 15).
+    final Widget? acces =
+        vue?.ligneFamille == LigneFamilleAdulte.ajouterMaFamille
+        ? AccesAdulte(ecartApres: ecart * 2)
+        : null;
+
     Widget pile(List<Widget> blocs) => Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -428,6 +460,7 @@ class MonEspaceAdultePage extends ConsumerWidget {
             children: <Widget>[
               identite,
               SizedBox(height: ecart * 2),
+              ?acces,
               if (deuxColonnes)
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,

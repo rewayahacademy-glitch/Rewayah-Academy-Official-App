@@ -1,4 +1,5 @@
 import '../domain/enums.dart';
+import '../finance/montant.dart';
 
 /// Les chemins de l'application.
 ///
@@ -148,11 +149,100 @@ abstract final class Routes {
   /// declare avant `:eleveId` (contrainte R5).
   static const String tuteurFoyerAppareils = '/tuteur/foyer/appareils';
 
+  /// La recharge d'un ou plusieurs profils (guide Finance V4 §4, FI-4), sur
+  /// un chemin statique declare avant `:eleveId` (contrainte R5). Un seul
+  /// moteur de recharge (`RechargeFoyerPage`).
+  static const String tuteurFoyerRecharge = '/tuteur/foyer/recharge';
+
+  /// La recharge avec [profils] deja coches (`?profils=a,b`).
+  static String rechargePour(Iterable<String> profils) => Uri(
+    path: tuteurFoyerRecharge,
+    queryParameters: <String, String>{'profils': profils.join(',')},
+  ).toString();
+
+  /// La recharge ouverte depuis Compte > Paiements (`?depuis=compte`) :
+  /// l'abandon y ramene, jamais au Foyer (revue FI-7).
+  static final String rechargeDepuisCompte = Uri(
+    path: tuteurFoyerRecharge,
+    queryParameters: <String, String>{'depuis': origineCompte},
+  ).toString();
+
+  /// La valeur de `?depuis=` d'une recharge ouverte depuis le Compte.
+  static const String origineCompte = 'compte';
+
+  /// La recharge reprise apres un echec (FI-8, guide §5.4 : « ne pas perdre
+  /// la selection ») : les profils coches et le montant de chacun
+  /// (`?profils=a,b&montants=a:1000:USD,b:4000:USD`). Le montant n'est
+  /// qu'un rappel : l'ecran ne le retient que s'il fait partie des montants
+  /// que la source propose. [commande] : la commande d'ou l'on reprend
+  /// (`&reprise=`), pour qu'une reprise ouvre toujours une recharge neuve.
+  /// La recharge est une seule page (R3-01) : le recapitulatif et le moyen
+  /// de paiement s'y lisent des que la selection rappelee est complete.
+  static String rechargeReprise(
+    Map<String, Montant> montants, {
+    String? commande,
+  }) => Uri(
+    path: tuteurFoyerRecharge,
+    queryParameters: <String, String>{
+      'profils': montants.keys.join(','),
+      'montants': <String>[
+        for (final MapEntry<String, Montant> e in montants.entries)
+          '${e.key}:${e.value.mineur}:${e.value.devise}',
+      ].join(','),
+      if (commande != null && commande.isNotEmpty) 'reprise': commande,
+    },
+  ).toString();
+
+  /// Relit `?montants=` ([rechargeReprise]) ; une entree illisible est
+  /// ignoree, jamais devinee.
+  static Map<String, Montant> montantsDe(String? brut) => <String, Montant>{
+    for (final String entree in (brut ?? '').split(','))
+      if (entree.split(':')
+          case [final String id, final String mineur, final String devise]
+          when id.isNotEmpty && devise.isNotEmpty)
+        if (int.tryParse(mineur) case final int m) id: Montant(m, devise),
+  };
+
+  /// Le resultat d'une recharge (FI-8, guide §1.6 et §5.4) : l'etat de la
+  /// commande tel que la source le rend, sur un chemin statique declare sous
+  /// la recharge, avant `:eleveId` (contrainte R5).
+  static const String tuteurFoyerRechargeResultat =
+      '$tuteurFoyerRecharge/result';
+
+  /// Le resultat de la commande [commandeId] (`?commande=`) : une adresse
+  /// rouverte relit l'etat, elle ne rejoue jamais le paiement. [recharge] :
+  /// les parametres de la recharge qui a paye, gardes dans l'adresse pour
+  /// que la recharge sous le resultat reste la meme page (sa commande, son
+  /// « Suivre le paiement »), y compris au retour du navigateur.
+  static String resultatRechargePour(
+    String commandeId, {
+    Map<String, String> recharge = const <String, String>{},
+  }) => Uri(
+    path: tuteurFoyerRechargeResultat,
+    queryParameters: <String, String>{
+      for (final MapEntry<String, String> e in recharge.entries)
+        if (!_horsIdentite.contains(e.key)) e.key: e.value,
+      'commande': commandeId,
+    },
+  ).toString();
+
+  /// L'identite d'une recharge, lue de son adresse ou de celle de son
+  /// resultat : tous les parametres sauf `commande` et `etape`, tries. La
+  /// meme identite garde la meme page (et sa commande) ; une autre en ouvre
+  /// une neuve.
+  static String identiteRecharge(Map<String, String> parametres) => (<String>[
+    for (final MapEntry<String, String> e in parametres.entries)
+      if (!_horsIdentite.contains(e.key)) '${e.key}=${e.value}',
+  ]..sort()).join('&');
+
+  /// Les parametres qui ne font pas l'identite d'une recharge.
+  static const Set<String> _horsIdentite = <String>{'commande', 'etape'};
+
   /// La fiche d'un profil eleve du foyer.
   static String ficheElevePour(String eleveId) => '$tuteurFoyer/$eleveId';
 
   /// Une sous-page de la fiche : `informations`, `inscription`, `interface`,
-  /// `camera`, `acces` ou `appareils`.
+  /// `camera`, `acces`, `finances`, `mouvements` ou `appareils`.
   static String ficheEleveSousPage(String eleveId, String segment) =>
       '${ficheElevePour(eleveId)}/$segment';
 
@@ -161,8 +251,11 @@ abstract final class Routes {
     'informations',
     'inscription',
     'interface',
+    'couleur',
     'camera',
     'acces',
+    'finances',
+    'mouvements',
     'appareils',
   ];
 
@@ -328,6 +421,10 @@ abstract final class Routes {
   /// Profil de l'enseignant.
   static const String enseignantProfil = '/enseignant/profil';
 
+  /// Mes revenus (FI-10, guide Finance V4 §4 et §5.5) : l'estimation du mois,
+  /// atteinte depuis le Profil (le Compte de l'enseignant), dans sa branche.
+  static const String enseignantRevenus = '/enseignant/revenus';
+
   // Les quatre routes suivantes ne sont **pas** des destinations de premier
   // niveau : la barre de l'enseignant en tient quatre, Aujourd'hui, Classes,
   // Disponibilites et Profil (E10, decision du directeur du 26/09/2026, qui
@@ -486,6 +583,15 @@ abstract final class Routes {
   /// Controle qualite pedagogique (`ADM-14`), sous Pedagogie.
   static const String adminPedagogieQualite = '/admin/pedagogie/qualite';
 
+  /// Domaine Finance (FI-1b) : racine et onglet « Vue globale » (route
+  /// canonique « Vue d'ensemble » du contrat metier,
+  /// `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_FINANCE_CONFIGURATION.md:68`).
+  static const String adminFinance = '/admin/finance';
+
+  /// Politiques commerciales, onglet de Finance (FI-1b ; revue FI-1a,
+  /// `17_finance/UX_REVIEW_08_FINANCE.md:91`).
+  static const String adminFinancePolitiques = '/admin/finance/politiques';
+
   /// Domaine Configuration -- regles globales du systeme, contrat metier du
   /// 19 septembre 2026 (`docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_FINANCE_CONFIGURATION.md`).
   static const String adminConfiguration = '/admin/configuration';
@@ -579,6 +685,10 @@ abstract final class Routes {
   /// `?ecran=...&etat=...&titulaire=femme&vue=conjoint`.
   /// Enregistree seulement hors production (`environnementAutoriseDemo`).
   static const String demoAdulte = '/demo/adulte';
+
+  /// Le domaine Finance en demonstration (FI-1b) : `?ecran=...`.
+  /// Enregistree seulement hors production (`environnementAutoriseDemo`).
+  static const String demoFinance = '/demo/finance';
 
   // --- Developpement --------------------------------------------------------
 

@@ -540,7 +540,7 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.text(t.foyer.membre.accesExpire(date: '1 septembre 2026')),
+        find.text(t.foyer.membre.accesExpire(date: '1er septembre 2026')),
         findsOneWidget,
       );
     });
@@ -572,7 +572,10 @@ void main() {
   });
 
   group('Foyer : bureau', () {
-    testWidgets('1440 : deux colonnes, membres a gauche, appareils a droite, '
+    // FI-5b (guide V4 §5.1 « Desktop », maquette 05) : les membres occupent
+    // toute la largeur utile ; les appareils passent dessous, dans la
+    // rangee des annexes, a leur largeur de colonne.
+    testWidgets('1440 : membres sur toute la largeur, appareils dessous, '
         'onglet par la barre laterale', (WidgetTester tester) async {
       final GoRouter routeur = await _monter(
         tester,
@@ -586,8 +589,8 @@ void main() {
 
       final Rect membres = tester.getRect(find.byKey(FoyerPage.membresKey));
       final Rect appareils = tester.getRect(find.byKey(FoyerPage.appareilsKey));
-      expect(appareils.left, greaterThan(membres.right));
-      expect((appareils.top - membres.top).abs(), lessThan(1));
+      expect(appareils.top, greaterThan(membres.bottom));
+      expect(appareils.width, lessThan(membres.width * 0.5));
       expect(tester.takeException(), isNull);
     });
 

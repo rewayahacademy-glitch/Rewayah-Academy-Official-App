@@ -41,9 +41,11 @@ import 'package:rewayah_academy/features/consentements/consentement_observation_
 import 'package:rewayah_academy/features/foyer/creer_mon_profil_indisponible.dart';
 import 'package:rewayah_academy/features/foyer/fiche/acces_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/camera_page.dart';
+import 'package:rewayah_academy/features/foyer/fiche/finances_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/informations_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/inscription_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/interface_page.dart';
+import 'package:rewayah_academy/features/foyer/fiche/mouvements_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
@@ -262,6 +264,8 @@ void main() {
       (Routes.ficheEleveSousPage('e1', 'interface'), InterfaceElevePage, 1),
       (Routes.ficheEleveSousPage('e1', 'camera'), CameraElevePage, 1),
       (Routes.ficheEleveSousPage('e1', 'acces'), AccesElevePage, 1),
+      (Routes.ficheEleveSousPage('e1', 'finances'), FinancesElevePage, 1),
+      (Routes.ficheEleveSousPage('e1', 'mouvements'), MouvementsElevePage, 1),
       (Routes.ficheEleveSousPage('e1', 'appareils'), AppareilsElevePage, 1),
       (Routes.parcoursPour('e1'), ParcoursOffresPage, 1),
       (Routes.tuteurSuivi, SuiviFoyerPage, 2),
@@ -320,6 +324,9 @@ void main() {
       InterfaceElevePage: fiche,
       CameraElevePage: fiche,
       AccesElevePage: fiche,
+      FinancesElevePage: 'test/features/foyer/fiche_eleve_finances_test.dart',
+      MouvementsElevePage:
+          'test/features/foyer/fiche_eleve_mouvements_test.dart',
       AppareilsElevePage: partage,
       ParcoursOffresPage: fiche,
       SuiviFoyerPage: classe,

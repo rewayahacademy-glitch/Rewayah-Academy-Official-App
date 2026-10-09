@@ -57,6 +57,7 @@ class _Traductions$commun$ar extends Traductions$commun$fr {
 
 	// Translations
 	@override late final _Traductions$commun$sections$ar sections = _Traductions$commun$sections$ar._(_root);
+	@override late final _Traductions$commun$dates$ar dates = _Traductions$commun$dates$ar._(_root);
 }
 
 // Path: etat
@@ -155,6 +156,16 @@ class _Traductions$commun$sections$ar extends Traductions$commun$sections$fr {
 
 	// Translations
 	@override String get page => 'أقسام الصفحة';
+}
+
+// Path: commun.dates
+class _Traductions$commun$dates$ar extends Traductions$commun$dates$fr {
+	_Traductions$commun$dates$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get premierJour => '1';
 }
 
 // Path: classe.entree
@@ -338,6 +349,7 @@ extension on TraductionsAr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
 			'commun.sections.page' => 'أقسام الصفحة',
+			'commun.dates.premierJour' => '1',
 			'etat.enDirect' => 'مباشر',
 			'etat.seanceAnnulee' => 'ملغاة',
 			'etat.annuleeValeur' => ({required Object valeur}) => 'ملغاة : ${valeur}',

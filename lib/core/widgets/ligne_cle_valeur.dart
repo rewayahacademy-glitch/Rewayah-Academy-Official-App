@@ -27,7 +27,16 @@ class LigneCleValeur extends StatelessWidget {
     this.complement,
     this.chiffres = false,
     this.annulee = false,
+    this.detailCle,
+    this.meneur,
+    this.valeurForte = false,
+    this.valeurEnFin = false,
   });
+
+  /// La marge au-dessus et au-dessous de la ligne : un bandeau de profil
+  /// pose en [meneur] y remonte sans depasser la ligne (`BandeauProfil`,
+  /// `remontee`).
+  static const double margeVerticale = AppSpacing.sm;
 
   /// Ce que la valeur designe : « Horaire », « Duree », « Presence ».
   final String cle;
@@ -46,14 +55,36 @@ class LigneCleValeur extends StatelessWidget {
   /// attenuee, annoncee « Annulee : ... » (ANNUL-VIS-1).
   final bool annulee;
 
+  /// Une precision sous la cle, en plus petit : la date d'un mouvement, la
+  /// periode d'un profil (lignes d'argent, FI-3a).
+  final String? detailCle;
+
+  /// Ce qui se pose avant la cle : l'avatar d'un profil (lignes d'argent,
+  /// FI-3a). Reste en tete quand la ligne s'empile.
+  final Widget? meneur;
+
+  /// Vrai pour une valeur qui conclut un bloc (un total) : au rang des noms
+  /// et titres de carte (`titleMedium`) au lieu du corps.
+  final bool valeurForte;
+
+  /// Vrai pour une valeur posee au bord de fin de la ligne (droite en LTR,
+  /// gauche en RTL) : les montants des lignes d'argent (revue FI-3-R, M1 ;
+  /// guide Finance V4 §7, §11.3 « colonnes calmes et stables »). Les fins de
+  /// montants d'une meme carte tombent alors sur un seul bord, et les
+  /// chiffres tabulaires alignent les decimales. Le complement (une
+  /// pastille) passe avant la valeur, pour que le montant reste au bord.
+  /// Faux par defaut : les autres lignes gardent leur valeur au debut.
+  final bool valeurEnFin;
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final TextStyle base =
+        (valeurForte ? textes.titleMedium : textes.bodyLarge) ??
+        const TextStyle();
     final TextStyle styleValeur = palette.inkStrong.applyTo(
-      chiffres
-          ? AppTypography.tabulaire(textes.bodyLarge ?? const TextStyle())
-          : textes.bodyLarge ?? const TextStyle(),
+      chiffres ? AppTypography.tabulaire(base) : base,
     );
     // COUPE-MOTS-1 : la cle passe a la ligne entre les mots, a la taille du
     // theme ; un mot trop long pour sa colonne (« Reconnexions » a 320 px,
@@ -62,43 +93,90 @@ class LigneCleValeur extends StatelessWidget {
     final TextStyle styleCle = palette.inkMuted.applyTo(
       textes.bodyMedium ?? const TextStyle(),
     );
-    final Widget texteCle = TexteSansCoupure(cle, style: styleCle);
+    final Widget libelleCle = TexteSansCoupure(cle, style: styleCle);
+    final String? detail = detailCle;
+    final Widget texteCle = detail == null
+        ? libelleCle
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              libelleCle,
+              TexteSansCoupure(
+                detail,
+                style: palette.inkMuted.applyTo(
+                  textes.bodySmall ?? const TextStyle(),
+                ),
+              ),
+            ],
+          );
+    final Widget texteValeur = annulee
+        ? TexteHeureSeance(heure: valeur, annulee: true, style: styleValeur)
+        : TexteSansCoupure(
+            valeur,
+            style: styleValeur,
+            textAlign: valeurEnFin ? TextAlign.end : null,
+          );
     final Widget blocValeur = Wrap(
       spacing: AppSpacing.sm,
       runSpacing: AppSpacing.xs,
+      alignment: valeurEnFin ? WrapAlignment.end : WrapAlignment.start,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: <Widget>[
-        if (annulee)
-          TexteHeureSeance(heure: valeur, annulee: true, style: styleValeur)
-        else
-          TexteSansCoupure(valeur, style: styleValeur),
-        ?complement,
+        if (valeurEnFin) ?complement,
+        texteValeur,
+        if (!valeurEnFin) ?complement,
       ],
     );
     final bool grandTexte =
         MediaQuery.textScalerOf(context).scale(AppSpacing.lg) / AppSpacing.lg >=
         AppGabarit.seuilTexteColonne;
 
+    Widget corps(bool empiler) => empiler
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              texteCle,
+              Ecart.vXs,
+              // Empilee, la valeur garde son bord : celui de fin pour un
+              // montant, celui de la colonne des autres montants.
+              if (valeurEnFin)
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: blocValeur,
+                )
+              else
+                blocValeur,
+            ],
+          )
+        : Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(flex: 2, child: texteCle),
+              Ecart.hLg,
+              Expanded(flex: 3, child: blocValeur),
+            ],
+          );
+    final Widget mesure = LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints c) => corps(
+        grandTexte || !_cleTientEnColonne(contexte, styleCle, c.maxWidth),
+      ),
+    );
+    final Widget? tete = meneur;
     return MergeSemantics(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-        child: LayoutBuilder(
-          builder: (BuildContext contexte, BoxConstraints c) =>
-              grandTexte || !_cleTientEnColonne(contexte, styleCle, c.maxWidth)
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[texteCle, Ecart.vXs, blocValeur],
-                )
-              : Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Expanded(flex: 2, child: texteCle),
-                    Ecart.hLg,
-                    Expanded(flex: 3, child: blocValeur),
-                  ],
-                ),
-        ),
+        padding: const EdgeInsets.symmetric(vertical: margeVerticale),
+        child: tete == null
+            ? mesure
+            : Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  tete,
+                  Ecart.hMd,
+                  Expanded(child: mesure),
+                ],
+              ),
       ),
     );
   }

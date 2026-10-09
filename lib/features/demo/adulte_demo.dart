@@ -13,6 +13,8 @@ import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/capacites/port_paiements_foyer.dart';
 import '../../core/capacites/port_recharge_foyer.dart';
 import '../../core/domain/enums.dart';
+import '../../core/finance/finances_profil.dart';
+import '../../core/finance/montant.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/planning/service_planning.dart' show Seance;
@@ -23,6 +25,7 @@ import '../foyer/place_adulte.dart';
 import '../ma_classe_adulte/ma_classe_adulte_page.dart';
 import '../mon_espace_adulte/mon_espace_adulte_page.dart';
 import 'classe_demo.dart';
+import 'finance_demo.dart';
 
 /// Les 25 cas du doc section 18, dans son ordre.
 enum EtatDemoAdulte {
@@ -610,6 +613,32 @@ abstract final class DonneesAdulteDemo {
     );
   }
 
+  /// Les finances du foyer vues par le titulaire (revue FI-VAGUE-R R1-06,
+  /// E-11) : les memes beneficiaires que [soldes], dans le meme ordre, lus
+  /// par la Finance (`DonneesFinanceDemo`, seule source de ses donnees).
+  /// Ma famille les montre comme le Foyer du tuteur : la synthese, puis la
+  /// finance de chaque enfant sur sa carte.
+  static List<FinancesProfil> finances(
+    EtatDemoAdulte etat,
+    GenreTitulaireDemo genre, {
+    bool foyerNouveau = false,
+  }) => DonneesFinanceDemo.profilsFoyerTitulaire(
+    titulaire: (id: idTitulaire(genre), prenom: prenomTitulaire(genre)),
+    secondAdulte: !foyerNouveau && secondAdultePresent(etat)
+        ? (
+            id: genre == GenreTitulaireDemo.homme ? mariamaId : mamadouId,
+            prenom: prenomSecondAdulte(genre),
+          )
+        : null,
+    enfants: <({String id, String prenom})>[
+      for (final EleveDuFoyer e in enfantsPour(
+        etat,
+        foyerNouveau: foyerNouveau,
+      ))
+        (id: e.id, prenom: e.prenom),
+    ],
+  );
+
   /// L'identifiant de l'offre A de la demonstration.
   static const String offreA = 'demo-offre-a';
 
@@ -680,8 +709,43 @@ abstract final class DonneesAdulteDemo {
         cleAvatar: s.cleAvatar,
         soldeRendu: s.soldeRendu,
         offres: _offresRecharge,
+        montantsProposes: const <Montant>[montantOffreA, montantOffreB],
+        // Chaque montant se lit comme le prix de son offre, MARQUE
+        // « (démonstration) » a l'etape 1 comme au recapitulatif (F12).
+        montantsRediges: <Montant, String>{
+          montantOffreA: t.adulte.demo.donnees.prixOffreA,
+          montantOffreB: t.adulte.demo.donnees.prixOffreB,
+        },
       ),
   ];
+
+  /// Le montant de l'offre A, en unites mineures (FI-7) : la recharge se
+  /// choisit par montants, chaque montant de la demonstration reprend le
+  /// prix d'une offre de la planche 4.3.
+  static const Montant montantOffreA = Montant(500, 'EUR');
+
+  /// Le montant de l'offre B, en unites mineures (FI-7).
+  static const Montant montantOffreB = Montant(1000, 'EUR');
+
+  /// Le recapitulatif de montants choisis (FI-7) : chaque montant est
+  /// ramene a l'offre de meme prix, puis le recapitulatif des offres ; un
+  /// montant que la demonstration ne propose pas est refuse.
+  static RecapitulatifRecharge recapitulatifMontants(
+    EtatDemoAdulte etat,
+    GenreTitulaireDemo genre,
+    List<MontantRecharge> choix, {
+    bool foyerNouveau = false,
+  }) => recapitulatifRecharge(etat, genre, <ChoixRecharge>[
+    for (final MontantRecharge c in choix)
+      ChoixRecharge(
+        beneficiaireId: c.beneficiaireId,
+        offreId: switch (c.montant) {
+          montantOffreA => offreA,
+          montantOffreB => offreB,
+          _ => throw ArgumentError.value(c.montant, 'montant'),
+        },
+      ),
+  ], foyerNouveau: foyerNouveau);
 
   /// Le recapitulatif que le SERVEUR de demonstration arrete pour ces choix
   /// (EA-10, EA-BR-24) : une ligne par beneficiaire choisi, dans l'ordre des
@@ -744,6 +808,13 @@ abstract final class DonneesAdulteDemo {
   /// L'identifiant du titulaire selon la variante.
   static String idTitulaire(GenreTitulaireDemo genre) =>
       genre == GenreTitulaireDemo.homme ? mamadouId : mariamaId;
+
+  /// L'identifiant de la personne qui regarde : le titulaire, ou le second
+  /// adulte, de l'autre genre.
+  static String idVue(GenreTitulaireDemo genre, VueDemoAdulte vue) =>
+      (genre == GenreTitulaireDemo.homme) == (vue == VueDemoAdulte.titulaire)
+      ? mamadouId
+      : mariamaId;
 
   /// Ma classe de la personne qui regarde, ou `null` quand la demonstration
   /// n'a pas sa Classe.

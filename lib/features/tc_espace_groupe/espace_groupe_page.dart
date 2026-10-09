@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/i18n/isolat_bidi.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -22,6 +23,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../acces_finance/acces_finance.dart';
 import '../tc_catalogue/routes_tc_b.dart';
 import '../tc_mes_groupes/carte_groupe.dart';
 import '../tc_mes_groupes/chemins_tc_a.dart';
@@ -101,7 +103,18 @@ class EspaceGroupePage extends ConsumerWidget {
     // la photo, la couleur et la capacite. Un « Mes groupes » en tete
     // repeterait le libelle du chemin de sortie, juste en dessous.
     final String? titreDestination = titre;
-    final Widget corps = LecteurGroupe(
+    // L'acces de l'eleve connecte (FI-9a, revue FI-VAGUE-R R4-01), la meme
+    // regle que son Accueil et Mes groupes : seances fermees, Rejoindre est
+    // retire et la copie neutre le dit, sans cause ni montant ; tant que
+    // l'acces se lit, le bouton reste present et inerte. Lu borne a sa
+    // session : un tuteur ou un enseignant n'a pas de ligne, rien ne change.
+    final AsyncValue<AccesBeneficiaire?> ligneAcces = ref.watch(
+      accesAppelantProvider,
+    );
+    final ({bool ferme, bool enLecture}) acces = rejoindreSelonAcces(
+      ligneAcces,
+    );
+    final Widget lecteur = LecteurGroupe(
       groupeId: groupeId,
       role: role,
       construire: (BuildContext _, LectureGroupe lecture) => _Colonnes(
@@ -111,8 +124,25 @@ class EspaceGroupePage extends ConsumerWidget {
         contenuRoster: contenuRoster,
         tutoiement: tutoiement,
         enPile: enPile,
+        accesFerme: acces.ferme,
+        accesEnLecture: acces.enLecture,
       ),
     );
+    final Widget corps = acces.ferme
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              // L'adulte autonome y revient depuis la salle : sa copie, jamais
+              // celle du tuteur (contre-revue FI-VAGUE-CORR).
+              BandeauAccesFerme(
+                acces: ligneAcces.value,
+                tutoiement: tutoiement,
+              ),
+              Ecart.vLg,
+              lecteur,
+            ],
+          )
+        : lecteur;
     final Widget? basDePage = pied;
     final Widget contenu = basDePage == null
         ? corps
@@ -195,9 +225,15 @@ class LectureGroupe {
   /// La carte de seance CL-4, cablee sur cette lecture. « Rejoindre » est
   /// desactive hors ligne ou sans [onRejoindre]. [tutoiement] : l'eleve
   /// mineur est tutoye (MA4, MA-3).
+  ///
+  /// [accesFerme] : les seances de l'eleve connecte sont fermees (FI-9a),
+  /// Rejoindre est retire ; [accesEnLecture] : son acces se lit encore,
+  /// Rejoindre reste present et inerte (revue FI-VAGUE-R R4-01).
   Widget carte({
     void Function(GroupSummaryVM groupe)? onRejoindre,
     bool tutoiement = false,
+    bool accesFerme = false,
+    bool accesEnLecture = false,
   }) {
     final GroupSummaryVM identite = espace.identite;
     return CarteSession(
@@ -207,7 +243,9 @@ class LectureGroupe {
       lectureEchouee: lectureEchouee,
       onReessayer: onReessayer,
       tutoiement: tutoiement,
-      onRejoindre: horsLigne || onRejoindre == null
+      entreeRetiree: accesFerme,
+      onRejoindre:
+          horsLigne || accesFerme || accesEnLecture || onRejoindre == null
           ? null
           : () => onRejoindre(identite),
     );
@@ -219,6 +257,8 @@ class LectureGroupe {
     void Function(GroupSummaryVM groupe)? onRejoindre,
     bool tutoiement = false,
     bool enPile = false,
+    bool accesFerme = false,
+    bool accesEnLecture = false,
   }) => <Widget>[
     IdentiteGroupe(
       groupe: espace.identite,
@@ -231,7 +271,12 @@ class LectureGroupe {
       afficherCapacite: !(enPile && espace.role == RoleEspaceGroupe.eleve),
     ),
     Ecart.vXl,
-    carte(onRejoindre: onRejoindre, tutoiement: tutoiement),
+    carte(
+      onRejoindre: onRejoindre,
+      tutoiement: tutoiement,
+      accesFerme: accesFerme,
+      accesEnLecture: accesEnLecture,
+    ),
   ];
 }
 
@@ -364,10 +409,14 @@ class _Colonnes extends StatelessWidget {
     this.contenuRoster,
     this.tutoiement = false,
     this.enPile = false,
+    this.accesFerme = false,
+    this.accesEnLecture = false,
   });
 
   final bool tutoiement;
   final bool enPile;
+  final bool accesFerme;
+  final bool accesEnLecture;
   final LectureGroupe lecture;
   final void Function(GroupSummaryVM groupe)? onRejoindre;
   final void Function(GroupSummaryVM groupe)? onReprendreLeCours;
@@ -401,6 +450,8 @@ class _Colonnes extends StatelessWidget {
         onRejoindre: onRejoindre,
         tutoiement: tutoiement,
         enPile: enPile,
+        accesFerme: accesFerme,
+        accesEnLecture: accesEnLecture,
       ),
       if (reprise != null) ...<Widget>[Ecart.vLg, reprise],
     ];

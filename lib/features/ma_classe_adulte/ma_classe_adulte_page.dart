@@ -41,6 +41,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
+import '../acces_finance/acces_finance.dart';
 import '../foyer/photo_eleve.dart' show PhotoEleve;
 import '../tc_catalogue/routes_tc_b.dart' show RoutesTcB;
 import '../tc_espace_groupe/bloc_cartes_classe.dart';
@@ -150,6 +151,11 @@ class MaClasseAdultePage extends ConsumerWidget {
       horsLigne: horsLigne,
     );
     void relire() => ref.invalidate(maClasseAdulteProvider);
+    // Son acces, borne a sa session, la meme regle que son Accueil (FI-9a,
+    // revue FI-VAGUE-R R4-01).
+    final ({bool ferme, bool enLecture}) acces = rejoindreSelonAcces(
+      ref.watch(accesAppelantProvider),
+    );
     final bool echecHorsLigne = sansDonneesHorsLigne(
       classe,
       horsLigne: horsLigne,
@@ -177,16 +183,26 @@ class MaClasseAdultePage extends ConsumerWidget {
                     registre: RegistreVide.subi,
                   );
                 }
-                return LecteurGroupe(
+                final Widget lecteur = LecteurGroupe(
                   groupeId: groupeId,
                   construire: (BuildContext _, LectureGroupe lecture) =>
                       _Sections(
                         vue: vue,
                         groupeId: groupeId,
                         lecture: lecture,
+                        acces: acces,
                         onRejoindre: onRejoindre,
                         onVoirRessources: onVoirRessources,
                       ),
+                );
+                if (!acces.ferme) return lecteur;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    const BandeauAccesAdulte(),
+                    Ecart.vLg,
+                    lecteur,
+                  ],
                 );
               },
             ),
@@ -199,6 +215,7 @@ class _Sections extends StatelessWidget {
     required this.vue,
     required this.groupeId,
     required this.lecture,
+    required this.acces,
     this.onRejoindre,
     this.onVoirRessources,
   });
@@ -206,6 +223,7 @@ class _Sections extends StatelessWidget {
   final MaClasseAdulteVM vue;
   final String groupeId;
   final LectureGroupe lecture;
+  final ({bool ferme, bool enLecture}) acces;
   final void Function(GroupSummaryVM groupe)? onRejoindre;
   final void Function(String groupeId)? onVoirRessources;
 
@@ -307,7 +325,11 @@ class _Sections extends StatelessWidget {
     return ColonnesParRangees(
       rangees: <(List<Widget>, List<Widget>)>[
         (
-          lecture.identiteEtCarte(onRejoindre: onRejoindre),
+          lecture.identiteEtCarte(
+            onRejoindre: onRejoindre,
+            accesFerme: acces.ferme,
+            accesEnLecture: acces.enLecture,
+          ),
           bloc(<List<Widget>>[aPropos, cartes]),
         ),
         if (participants.isEmpty)

@@ -13,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 
+import '../../core/capacites/port_revenus_enseignant.dart';
 import '../../core/domain/enums.dart';
 import '../../core/enseignant/absence_remplacement.dart';
 import '../../core/enseignant/depot_cahiers.dart';
@@ -48,9 +49,11 @@ import '../enseignant_classes/mes_classes_page.dart';
 import '../journee/journee_page.dart';
 import '../profil_enseignant/photo_publique.dart';
 import '../profil_enseignant/profil_enseignant_page.dart';
+import '../revenus_enseignant/revenus_enseignant_page.dart';
 import 'classe_demo.dart' show DonneesClasseDemo, EtatDemoClasse;
 import 'demo_classe_page.dart' show adresseDemoClasse;
 import 'enseignant_demo.dart';
+import 'finance_demo.dart' show RevenusEnseignantDemo;
 import 'mode_demonstration.dart';
 import 'repere_demonstration.dart';
 
@@ -103,6 +106,7 @@ String libelleEcranDemoEnseignant(EcranDemoEnseignant ecran) => switch (ecran) {
   EcranDemoEnseignant.premiersPas => t.enseignant.bienvenue.titre,
   EcranDemoEnseignant.cahier => t.enseignant.cahier.titre,
   EcranDemoEnseignant.profil => t.nav.enseignant.profil,
+  EcranDemoEnseignant.revenus => t.enseignant.revenus.titre,
 };
 
 /// Le libelle d'une situation.
@@ -207,6 +211,29 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
     // Classes disponibles (ENS-06), une par etat.
     offresClassesProvider.overrideWithValue(
       vide ? const <OffreClasseDemo>[] : DonneesEnseignantDemo.offres,
+    ),
+    // Mes revenus (FI-10) : le double de la Finance (FI-BR-11), calcule dans
+    // la demonstration, jamais dans l'ecran. Le provider de l'ecran est
+    // surcharge aussi : sous ce ProviderScope imbrique, il se resoudrait
+    // sinon dans le conteneur racine, ou le port reste indisponible.
+    portRevenusEnseignantProvider.overrideWithValue(
+      RevenusEnseignantDemo(vide: vide),
+    ),
+    moisRevenusProvider.overrideWith(MoisRevenusDemo.new),
+    moisRevenusDisponiblesProvider.overrideWith(
+      (Ref ref) => ref.watch(portRevenusEnseignantProvider).moisDisponibles(),
+    ),
+    revenusEnseignantProvider.overrideWith(
+      (Ref ref) => lireRevenus(
+        ref.watch(portRevenusEnseignantProvider),
+        ref.watch(moisRevenusProvider),
+      ),
+    ),
+    // Le releve aussi : resolu a la racine, il lisait la session de
+    // l'application, et son echec s'affichait « Impossible de charger » au
+    // lieu de l'etat honnete du port, « pas encore disponible » (R5-03).
+    releveEnseignantProvider.overrideWith(
+      (Ref ref) => ref.watch(portRevenusEnseignantProvider).releve(),
     ),
     // Profil (ENS-05).
     // Pays et langues se choisissent (FORM-L8) : l'ecriture reste sur
@@ -411,7 +438,10 @@ class CoquilleEnseignantDemo extends StatelessWidget {
       child: RepereDemonstration(
         child: NavShell(
           destinations: destinations,
-          indexActif: ecran.index,
+          // Mes revenus est une pose de la branche Profil.
+          indexActif: ecran == EcranDemoEnseignant.revenus
+              ? EcranDemoEnseignant.profil.index
+              : ecran.index,
           libellesDansLeRail: true,
           onAller: (String chemin) {
             final int i = destinations.indexWhere(
@@ -441,7 +471,16 @@ class CoquilleEnseignantDemo extends StatelessWidget {
               },
             ),
             EcranDemoEnseignant.disponibilites => const CreneauxPage(),
-            EcranDemoEnseignant.profil => const ProfilEnseignantPage(),
+            EcranDemoEnseignant.profil => ProfilEnseignantPage(
+              onOuvrirRevenus: (BuildContext c) => c.go(
+                adresseDemoEnseignant(EcranDemoEnseignant.revenus, etat: etat),
+              ),
+            ),
+            EcranDemoEnseignant.revenus => RevenusEnseignantPage(
+              onRetour: () => context.go(
+                adresseDemoEnseignant(EcranDemoEnseignant.profil, etat: etat),
+              ),
+            ),
             // Rendu plus haut, hors de la coquille.
             EcranDemoEnseignant.premiersPas ||
             EcranDemoEnseignant.cahier => const SizedBox.shrink(),

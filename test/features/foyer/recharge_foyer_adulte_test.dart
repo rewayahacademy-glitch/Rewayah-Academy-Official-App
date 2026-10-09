@@ -1,10 +1,13 @@
 // EA-10 : la recharge du foyer, atteinte depuis la VRAIE coquille adulte
 // (K-07) : on tape la VRAIE destination « Mon espace », la VRAIE ligne « Ma
 // famille », la VRAIE ligne « Paiements du foyer », puis le VRAI bouton
-// « Recharger ». Un, plusieurs ou tous les beneficiaires, une offre par
-// beneficiaire lue dans les donnees (F11), le recapitulatif separe et le
-// total tels que rendus (F12), « Modifier » sans perte, et un paiement qui
-// s'arrete sur un etat honnete (F13). Puis les etats : chargement, erreur,
+// « Recharger ». Un, plusieurs ou tous les beneficiaires, un montant par
+// beneficiaire choisi parmi ceux que les donnees proposent (FI-7, guide V4
+// §5.3 ; le montant de la demonstration EA reprend le prix de chaque offre),
+// le recapitulatif separe et le total tels que rendus (F12), sur la meme
+// page (une seule page, revue FI-VAGUE-R R3-01), le moyen de paiement web
+// seul, et un paiement qui s'arrete sur
+// un etat honnete (F13). Puis les etats : chargement, erreur,
 // hors ligne, indisponible, vide, remise rendue, coupure (D5), double envoi.
 
 import 'dart:async';
@@ -17,19 +20,22 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/capacites/port_recharge_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/finance/format_montant.dart';
+import 'package:rewayah_academy/core/finance/montant.dart';
+import 'package:rewayah_academy/core/finance/politique_commerciale.dart';
+import 'package:rewayah_academy/core/finance/suivi_paiement.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
-import 'package:rewayah_academy/core/widgets/choice_card_group.dart';
+import 'package:rewayah_academy/core/widgets/bouton_icone.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
-import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
 import 'package:rewayah_academy/core/widgets/ligne_cle_valeur.dart';
+import 'package:rewayah_academy/core/widgets/ligne_moyen_paiement.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/compte/paiements_page.dart';
-import 'package:rewayah_academy/features/compte/soldes_foyer.dart';
 import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
@@ -39,6 +45,7 @@ import 'package:rewayah_academy/features/foyer/place_adulte.dart'
     show paiementsFoyerKey;
 import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
+import '../../support/harnais.dart' show sansPersonneConnectee;
 import '../../support/hors_ligne_une_fois.dart';
 
 const String _mamadou = DonneesAdulteDemo.mamadouId;
@@ -63,6 +70,7 @@ void main() {
     addTearDown(routeur.dispose);
     await tester.pumpWidget(
       ProviderScope(
+        overrides: <Override>[sansPersonneConnectee()],
         child: TranslationProvider(
           child: MaterialApp.router(
             theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
@@ -85,10 +93,22 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  /// Le montant de la demonstration qui reprend le prix de [offre] : le
+  /// premier montant propose (offre A) ou le second (offre B).
+  Future<void> montant(WidgetTester tester, String id, String offre) async {
+    for (int i = 0; i < (offre == _offreB ? 2 : 1); i++) {
+      await taper(tester, find.byKey(RechargeFoyerPage.plusDe(id)));
+    }
+  }
+
   Future<void> choisir(WidgetTester tester, String id, String offre) async {
     await taper(tester, find.byKey(RechargeFoyerPage.caseDe(id)));
-    await taper(tester, find.byKey(RechargeFoyerPage.offreDe(id, offre)));
+    await montant(tester, id, offre);
   }
+
+  bool actif(WidgetTester tester, Key cle) =>
+      find.byKey(cle).evaluate().isNotEmpty &&
+      tester.widget<BoutonIcone>(find.byKey(cle)).onPress != null;
 
   ActionPrincipale bouton(WidgetTester tester, Key cle) =>
       tester.widget<ActionPrincipale>(find.byKey(cle));
@@ -100,8 +120,9 @@ void main() {
   Finder dans(Key parent, Finder f) =>
       find.descendant(of: find.byKey(parent), matching: f);
 
-  /// Aucun chiffre economique invente (F12), aucun moyen de paiement (F13),
-  /// aucune Classe (F6), jamais « admin » (K-53.6), jamais un succes.
+  /// Aucun chiffre economique invente (F12), aucune carte enregistree ni
+  /// rail de magasin (guide V4 §1.6), aucune Classe (F6), jamais « admin »
+  /// (K-53.6), jamais un succes.
   void rienDInvente() {
     for (final Pattern interdit in <Pattern>[
       '%',
@@ -112,6 +133,8 @@ void main() {
       RegExp('admin', caseSensitive: false),
       RegExp('réussi', caseSensitive: false),
       RegExp('budget', caseSensitive: false),
+      RegExp('App Store', caseSensitive: false),
+      RegExp('Play', caseSensitive: false),
       DonneesAdulteDemo.classeTitulaire,
       'Classe',
     ]) {
@@ -120,7 +143,7 @@ void main() {
   }
 
   testWidgets('Mon espace > Ma famille > Paiements du foyer > Recharger, '
-      'tapes : choix, verification, Modifier sans perte, etat honnete', (
+      'tapes : choix, recapitulatif sur la meme page, etat honnete', (
     WidgetTester tester,
   ) async {
     taille(tester, const Size(390, 844));
@@ -142,13 +165,13 @@ void main() {
         matching: find.text(t.adulte.famille.paiementsFoyer),
       ),
     );
-    await taper(tester, find.byKey(SoldesFoyerSection.rechargerKey));
+    await taper(tester, find.byKey(PaiementsComptePage.rechargerKey));
 
-    // Etape 1, « Nouvelle recharge » (planche 4.2).
+    // Une seule page « Recharge », sans barre d'etape (R3-01).
     expect(find.byType(RechargeFoyerPage), findsOneWidget);
     expect(find.byType(PaiementsComptePage), findsNothing);
     expect(find.text(t.adulte.recharge.titre), findsOneWidget);
-    expect(find.text(t.commun.etape.sur(n: 1, total: 2)), findsOneWidget);
+    expect(find.text(t.commun.etape.sur(n: 1, total: 2)), findsNothing);
     // Une ligne par beneficiaire autorise, sa photo ou ses initiales (K-44),
     // son solde tel que rendu, une case.
     for (final (String id, String prenom, String solde)
@@ -164,65 +187,91 @@ void main() {
     }
     expect(
       find.descendant(
-        of: find.byType(GroupeReglages),
+        of: find.byKey(RechargeFoyerPage.profilsKey),
         matching: find.byType(PhotoEleve),
       ),
       findsNWidgets(4),
     );
-    // Aucune offre proposee d'avance (F11), aucun bouton actif sans choix,
-    // et la phrase qui dit pourquoi.
-    expect(find.byType(ChoiceCardGroup), findsNothing);
-    expect(bouton(tester, RechargeFoyerPage.verifierKey).onPress, isNull);
+    // Aucun montant choisi d'avance (F11) : chaque montant est desactive
+    // tant que son profil n'est pas coche (guide V4 §5.3), aucun bouton
+    // actif sans choix, et la phrase qui dit pourquoi.
+    for (final String id in <String>[_mamadou, _mariama, _aicha, _oumar]) {
+      expect(actif(tester, RechargeFoyerPage.plusDe(id)), isFalse);
+      expect(actif(tester, RechargeFoyerPage.moinsDe(id)), isFalse);
+    }
+    expect(find.byKey(RechargeFoyerPage.repartitionKey), findsOneWidget);
+    expect(bouton(tester, RechargeFoyerPage.payerKey).onPress, isNull);
     expect(find.text(t.adulte.recharge.raisonAucun), findsOneWidget);
     expect(find.byType(ActionPrincipale), findsOneWidget);
     rienDInvente();
 
-    // Mamadou coche : ses offres apparaissent, aucune n'est choisie.
+    // Mamadou coche : son montant s'active, aucun n'est choisi.
     await taper(tester, find.byKey(RechargeFoyerPage.caseDe(_mamadou)));
     expect(coche(tester, _mamadou), isTrue);
-    expect(find.byType(ChoiceCardGroup), findsOneWidget);
+    expect(actif(tester, RechargeFoyerPage.plusDe(_mamadou)), isTrue);
+    expect(actif(tester, RechargeFoyerPage.moinsDe(_mamadou)), isFalse);
+    expect(actif(tester, RechargeFoyerPage.plusDe(_mariama)), isFalse);
+    expect(find.text(t.adulte.demo.donnees.soldeTitulaire), findsOneWidget);
+    // Le montant de Mamadou dans SA ligne, avant la ligne suivante.
+    final Finder ligneMamadou = find.byKey(
+      RechargeFoyerPage.profilDe(_mamadou),
+    );
     expect(
-      find.text(t.adulte.recharge.offrePour(prenom: 'Mamadou')),
+      find.descendant(
+        of: ligneMamadou,
+        matching: find.byKey(RechargeFoyerPage.plusDe(_mamadou)),
+      ),
       findsOneWidget,
     );
-    // Les offres telles que rendues (planche 4.3), sans « Autre » ; aucune
-    // quantite d'unites a cote d'un prix, donc aucun taux (4.1 C3, 4.2 C2).
-    expect(find.text(t.adulte.demo.donnees.prixOffreA), findsOneWidget);
-    expect(find.text(t.adulte.demo.donnees.prixOffreB), findsOneWidget);
-    expect(find.text('Solde de démonstration A'), findsOneWidget);
-    expect(find.text('Solde de démonstration B'), findsOneWidget);
-    expect(find.text(t.adulte.demo.donnees.soldeTitulaire), findsOneWidget);
-    // Les offres de Mamadou juste sous SA ligne (ligne 15 a) : avant la
-    // ligne suivante.
     expect(
-      tester.getTopLeft(find.byType(ChoiceCardGroup)).dy,
-      greaterThan(
-        tester.getBottomLeft(find.byKey(RechargeFoyerPage.caseDe(_mamadou))).dy,
-      ),
-    );
-    expect(
-      tester.getBottomLeft(find.byType(ChoiceCardGroup)).dy,
+      tester.getBottomLeft(ligneMamadou).dy,
       lessThan(
         tester.getTopLeft(find.byKey(RechargeFoyerPage.caseDe(_mariama))).dy,
       ),
     );
     expect(find.text(t.choix.autre), findsNothing);
-    expect(find.text(t.adulte.recharge.raisonOffre), findsOneWidget);
-    expect(bouton(tester, RechargeFoyerPage.verifierKey).onPress, isNull);
+    expect(find.text(t.adulte.recharge.raisonMontant), findsOneWidget);
+    expect(bouton(tester, RechargeFoyerPage.payerKey).onPress, isNull);
 
-    await taper(
-      tester,
-      find.byKey(RechargeFoyerPage.offreDe(_mamadou, _offreB)),
+    // Deux pas : le second montant propose ; un pas en arriere puis en avant
+    // le garde, et « plus » s'arrete au dernier montant rendu.
+    await montant(tester, _mamadou, _offreB);
+    // Le prix de la demonstration EA reste MARQUE « (démonstration) » des
+    // l'etape 1, comme au recapitulatif : jamais un prix nu (F12, revue
+    // EA-R m4).
+    expect(
+      dans(
+        RechargeFoyerPage.montantDe(_mamadou),
+        find.text(t.adulte.demo.donnees.prixOffreB),
+      ),
+      findsOneWidget,
     );
+    for (final Montant prix in <Montant>[
+      DonneesAdulteDemo.montantOffreA,
+      DonneesAdulteDemo.montantOffreB,
+    ]) {
+      expect(find.text(formaterMontant(prix)), findsNothing, reason: '$prix');
+    }
+    expect(actif(tester, RechargeFoyerPage.plusDe(_mamadou)), isFalse);
+    expect(actif(tester, RechargeFoyerPage.moinsDe(_mamadou)), isTrue);
     expect(find.byKey(RechargeFoyerPage.raisonKey), findsNothing);
-    expect(bouton(tester, RechargeFoyerPage.verifierKey).onPress, isNotNull);
+    expect(bouton(tester, RechargeFoyerPage.payerKey).onPress, isNotNull);
     await choisir(tester, _aicha, _offreA);
-    expect(find.byType(ChoiceCardGroup), findsNWidgets(2));
+    expect(
+      dans(
+        RechargeFoyerPage.montantDe(_aicha),
+        find.text(t.adulte.demo.donnees.prixOffreA),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.text(formaterMontant(DonneesAdulteDemo.montantOffreA)),
+      findsNothing,
+    );
 
-    // « Verifier la recharge » : etape 2 (planche 4.3).
-    await taper(tester, find.byKey(RechargeFoyerPage.verifierKey));
-    expect(find.text(t.adulte.recharge.verifierTitre), findsOneWidget);
-    expect(find.text(t.commun.etape.sur(n: 2, total: 2)), findsOneWidget);
+    // Le recapitulatif, sur la meme page, sans « Verifier la recharge ».
+    expect(find.text(t.adulte.recharge.verifier), findsNothing);
+    expect(find.text(t.commun.etape.sur(n: 2, total: 2)), findsNothing);
     expect(find.text(t.adulte.recharge.recapitulatif), findsOneWidget);
     // Une ligne par beneficiaire choisi, separee (F11) : qui recoit, montant
     // paye, solde attribue, statut ; aucune remise rendue, aucune ligne.
@@ -255,7 +304,8 @@ void main() {
     expect(find.byKey(RechargeFoyerPage.ligneDe(_mariama)), findsNothing);
     expect(find.byKey(RechargeFoyerPage.ligneDe(_oumar)), findsNothing);
     expect(find.textContaining('Remise'), findsNothing);
-    // Le total rendu, et « Payer {total} » au bord de fin, 16 sous le total.
+    // Le total rendu et la repartition, le seul moyen de paiement web, et
+    // « Payer {total} » au bord de fin, 16 sous le moyen de paiement.
     expect(
       dans(
         RechargeFoyerPage.totalKey,
@@ -275,28 +325,36 @@ void main() {
       ),
       findsOneWidget,
     );
-    final Finder total = find.byKey(RechargeFoyerPage.totalKey);
     expect(
-      tester.getTopLeft(payer).dy - tester.getBottomLeft(total).dy,
+      dans(
+        RechargeFoyerPage.totalKey,
+        find.text(t.adulte.recharge.repartition),
+      ),
+      findsOneWidget,
+    );
+    expect(find.byType(LigneMoyenPaiement), findsOneWidget);
+    expect(
+      tester.widget<LigneMoyenPaiement>(find.byType(LigneMoyenPaiement)).rail,
+      RailPaiement.webStripe,
+    );
+    final Finder moyen = find.byKey(RechargeFoyerPage.moyenKey);
+    expect(
+      tester.getTopLeft(payer).dy - tester.getBottomLeft(moyen).dy,
       AppSpacing.lg,
     );
     expect(
       tester.getTopRight(payer).dx,
-      moreOrLessEquals(tester.getTopRight(total).dx, epsilon: 0.5),
+      moreOrLessEquals(tester.getTopRight(moyen).dx, epsilon: 0.5),
     );
     expect(find.byType(ActionPrincipale), findsOneWidget);
     rienDInvente();
 
-    // « Modifier » sur la ligne d'Aicha : l'etape 1, sans rien perdre.
-    await taper(tester, find.byKey(RechargeFoyerPage.modifierDe(_aicha)));
-    expect(find.text(t.adulte.recharge.titre), findsOneWidget);
+    // Relecture sur place : Aicha passe au montant suivant, le
+    // recapitulatif suit, sans rien perdre des autres choix.
+    await taper(tester, find.byKey(RechargeFoyerPage.plusDe(_aicha)));
     expect(coche(tester, _mamadou), isTrue);
     expect(coche(tester, _aicha), isTrue);
     expect(coche(tester, _mariama), isFalse);
-    expect(bouton(tester, RechargeFoyerPage.verifierKey).onPress, isNotNull);
-    // Aicha passe a l'autre offre : le recapitulatif suit.
-    await taper(tester, find.byKey(RechargeFoyerPage.offreDe(_aicha, _offreB)));
-    await taper(tester, find.byKey(RechargeFoyerPage.verifierKey));
     expect(
       dans(
         RechargeFoyerPage.ligneDe(_aicha),
@@ -323,56 +381,42 @@ void main() {
       findsOneWidget,
     );
     expect(find.byKey(RechargeFoyerPage.payerKey), findsNothing);
-    expect(find.byKey(RechargeFoyerPage.modifierDe(_aicha)), findsNothing);
+    // Les choix se figent : plus rien ne se modifie.
+    expect(actif(tester, RechargeFoyerPage.plusDe(_aicha)), isFalse);
     rienDInvente();
     await taper(tester, find.text(t.adulte.recharge.revenirPaiements));
     expect(find.byType(PaiementsComptePage), findsOneWidget);
     expect(find.byType(FoyerPage), findsNothing);
   });
 
-  testWidgets('tous les beneficiaires : « Tout selectionner », puis « Tout '
-      'deselectionner » ; le retour de l\'etape 1 rend les paiements', (
+  testWidgets('tous les beneficiaires, coches un a un (sans « Tout '
+      'selectionner », E-14) ; le retour rend les paiements', (
     WidgetTester tester,
   ) async {
     taille(tester, const Size(390, 844));
     await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.recharge));
-    final Finder lien = find.byKey(RechargeFoyerPage.toutSelectionnerKey);
-    expect(
-      find.descendant(
-        of: lien,
-        matching: find.text(t.adulte.recharge.toutSelectionner),
-      ),
-      findsOneWidget,
-    );
-    // Le lien est au-dessus de la liste (UX_REVIEW_07 ligne 15 b).
-    expect(
-      tester.getBottomLeft(lien).dy,
-      lessThanOrEqualTo(tester.getTopLeft(find.byType(GroupeReglages)).dy),
-    );
-    await taper(tester, lien);
+    expect(find.textContaining('Tout sélectionner'), findsNothing);
+    for (final String id in <String>[_mamadou, _mariama, _aicha, _oumar]) {
+      await taper(tester, find.byKey(RechargeFoyerPage.caseDe(id)));
+    }
     for (final String id in <String>[_mamadou, _mariama, _aicha, _oumar]) {
       expect(coche(tester, id), isTrue);
     }
-    expect(find.byType(ChoiceCardGroup), findsNWidgets(4));
-    expect(find.text(t.adulte.recharge.toutDeselectionner), findsOneWidget);
-    // Chaque groupe d'offres juste sous la ligne qu'il concerne, avant la
-    // suivante (ligne 15 a).
+    // Chaque montant actif, dans la ligne de son profil, avant la suivante.
     final List<String> ordre = <String>[_mamadou, _mariama, _aicha, _oumar];
     for (int i = 0; i < ordre.length; i++) {
-      final Finder offres = find.byKey(
-        ValueKey<String>('recharge.offres.${ordre[i]}'),
-      );
+      expect(actif(tester, RechargeFoyerPage.plusDe(ordre[i])), isTrue);
+      final Finder ligne = find.byKey(RechargeFoyerPage.profilDe(ordre[i]));
       expect(
-        tester.getTopLeft(offres).dy,
-        greaterThan(
-          tester
-              .getBottomLeft(find.byKey(RechargeFoyerPage.caseDe(ordre[i])))
-              .dy,
+        find.descendant(
+          of: ligne,
+          matching: find.byKey(RechargeFoyerPage.montantDe(ordre[i])),
         ),
+        findsOneWidget,
       );
       if (i + 1 < ordre.length) {
         expect(
-          tester.getBottomLeft(offres).dy,
+          tester.getBottomLeft(ligne).dy,
           lessThan(
             tester
                 .getTopLeft(find.byKey(RechargeFoyerPage.caseDe(ordre[i + 1])))
@@ -381,13 +425,12 @@ void main() {
         );
       }
     }
-    // Rien n'est reparti : sans offre pour chacun, le bouton attend.
-    expect(bouton(tester, RechargeFoyerPage.verifierKey).onPress, isNull);
+    // Rien n'est reparti : sans montant pour chacun, le bouton attend.
+    expect(bouton(tester, RechargeFoyerPage.payerKey).onPress, isNull);
     for (final String id in <String>[_mamadou, _mariama, _aicha, _oumar]) {
-      await taper(tester, find.byKey(RechargeFoyerPage.offreDe(id, _offreA)));
+      await montant(tester, id, _offreA);
     }
-    expect(bouton(tester, RechargeFoyerPage.verifierKey).onPress, isNotNull);
-    await taper(tester, find.byKey(RechargeFoyerPage.verifierKey));
+    expect(bouton(tester, RechargeFoyerPage.payerKey).onPress, isNotNull);
     for (final String id in <String>[_mamadou, _mariama, _aicha, _oumar]) {
       expect(find.byKey(RechargeFoyerPage.ligneDe(id)), findsOneWidget);
     }
@@ -403,13 +446,16 @@ void main() {
       ),
       findsOneWidget,
     );
-    // Retour de l'etape 2 : l'etape 1 ; puis tout deselectionne.
-    await tester.tap(find.byType(DisqueRetour));
-    await tester.pumpAndSettle();
-    await taper(tester, find.byKey(RechargeFoyerPage.toutSelectionnerKey));
-    expect(find.byType(ChoiceCardGroup), findsNothing);
+    // Tout decoche, un a un : plus de recapitulatif, la raison dite.
+    for (final String id in <String>[_mamadou, _mariama, _aicha, _oumar]) {
+      await taper(tester, find.byKey(RechargeFoyerPage.caseDe(id)));
+    }
+    for (final String id in <String>[_mamadou, _mariama, _aicha, _oumar]) {
+      expect(actif(tester, RechargeFoyerPage.plusDe(id)), isFalse);
+    }
+    expect(find.byKey(RechargeFoyerPage.recapitulatifKey), findsNothing);
     expect(find.text(t.adulte.recharge.raisonAucun), findsOneWidget);
-    // Retour de l'etape 1 : les paiements du foyer.
+    // Le retour : les paiements du foyer.
     await tester.tap(find.byType(DisqueRetour));
     await tester.pumpAndSettle();
     expect(find.byType(PaiementsComptePage), findsOneWidget);
@@ -429,7 +475,6 @@ void main() {
     );
     expect(find.byType(RechargeFoyerPage), findsOneWidget);
     await choisir(tester, _oumar, _offreA);
-    await taper(tester, find.byKey(RechargeFoyerPage.verifierKey));
     await taper(tester, find.byKey(RechargeFoyerPage.payerKey));
     expect(find.text(t.adulte.recharge.paiementEchecTitre), findsOneWidget);
     expect(find.text(t.adulte.recharge.paiementEchecPhrase), findsOneWidget);
@@ -437,7 +482,13 @@ void main() {
     expect(find.textContaining("n'est pas parti"), findsNothing);
     expect(bouton(tester, RechargeFoyerPage.payerKey).onPress, isNotNull);
     // Les choix ne se modifient plus : une autre cle pourrait payer deux fois.
-    expect(find.byKey(RechargeFoyerPage.modifierDe(_oumar)), findsNothing);
+    expect(actif(tester, RechargeFoyerPage.plusDe(_oumar)), isFalse);
+    expect(
+      tester
+          .widget<Checkbox>(find.byKey(RechargeFoyerPage.caseDe(_oumar)))
+          .onChanged,
+      isNull,
+    );
     rienDInvente();
     // Le retour mene aux paiements du foyer, ou l'on verifie.
     await tester.tap(find.byType(DisqueRetour));
@@ -457,7 +508,10 @@ void main() {
       ),
     );
     await choisir(tester, _aicha, _offreA);
-    await taper(tester, find.byKey(RechargeFoyerPage.verifierKey));
+    await tester.pump(latenceSimulee);
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(RechargeFoyerPage.payerKey));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(RechargeFoyerPage.payerKey));
     await tester.pump();
     expect(bouton(tester, RechargeFoyerPage.payerKey).enCours, isTrue);
@@ -494,9 +548,7 @@ void main() {
         id: 'b1',
         prenom: 'Yusuf',
         soldeRendu: 'solde rendu',
-        offres: <OffreRecharge>[
-          OffreRecharge(id: 'o1', libelle: 'offre rendue', detail: 'detail'),
-        ],
+        montantsProposes: <Montant>[Montant(1000, 'USD')],
       ),
     ];
 
@@ -505,6 +557,7 @@ void main() {
       PortRechargeFoyer? port,
       Stream<bool>? horsLigne,
       VoidCallback? onTerminee,
+      ValueChanged<String>? onPaye,
     }) async {
       taille(tester, const Size(390, 844));
       await tester.pumpWidget(
@@ -516,6 +569,7 @@ void main() {
           child: RechargeFoyerPage(
             onAbandon: () {},
             onTerminee: onTerminee ?? () {},
+            onPaye: onPaye ?? (String _) {},
           ),
         ),
       );
@@ -531,8 +585,13 @@ void main() {
     }
 
     Future<void> jusquAuRecapitulatif(WidgetTester tester) async {
-      await choisir(tester, 'b1', 'o1');
-      await taper(tester, find.byKey(RechargeFoyerPage.verifierKey));
+      await choisir(tester, 'b1', _offreA);
+      // « Payer » sous le moyen de paiement : amene a l'ecran.
+      final Finder payer = find.byKey(RechargeFoyerPage.payerKey);
+      if (payer.evaluate().isNotEmpty) {
+        await tester.ensureVisible(payer);
+        await tester.pumpAndSettle();
+      }
     }
 
     testWidgets('chargement : le squelette, sans faux nom ni bouton', (
@@ -544,7 +603,7 @@ void main() {
       await monter(tester, port: port);
       expect(find.byType(Skeleton), findsWidgets);
       expect(find.text(t.adulte.recharge.titre), findsOneWidget);
-      expect(find.byKey(RechargeFoyerPage.verifierKey), findsNothing);
+      expect(find.byKey(RechargeFoyerPage.payerKey), findsNothing);
       await tester.pumpWidget(const SizedBox.shrink());
     });
 
@@ -555,7 +614,7 @@ void main() {
       await monter(tester, port: port);
       await tester.pumpAndSettle();
       expect(etat(tester)?.nature, NatureEtat.echecServeur);
-      expect(find.byKey(RechargeFoyerPage.verifierKey), findsNothing);
+      expect(find.byKey(RechargeFoyerPage.payerKey), findsNothing);
       final int avant = port.lectures;
       await tester.tap(find.text(t.commun.etats.actions.reessayer));
       await tester.pumpAndSettle();
@@ -596,16 +655,16 @@ void main() {
       expectAvecDonnees();
     });
 
-    testWidgets('indisponible : le port reel, la dependance EA-BR-24', (
+    testWidgets('indisponible : le port reel, la dependance FI-BR-06', (
       WidgetTester tester,
     ) async {
       await monter(tester);
       await tester.pumpAndSettle();
       final EtatSysteme? e = etat(tester);
       expect(e?.nature, NatureEtat.indisponible);
-      expect(e?.dependance, 'EA-BR-24');
+      expect(e?.dependance, 'FI-BR-06');
       expect(e?.titre, t.adulte.recharge.indisponibleTitre);
-      expect(find.byKey(RechargeFoyerPage.verifierKey), findsNothing);
+      expect(find.byKey(RechargeFoyerPage.payerKey), findsNothing);
     });
 
     testWidgets('vide : aucun beneficiaire, aucun bouton', (
@@ -618,10 +677,10 @@ void main() {
         find.text(t.adulte.paiements.aucunBeneficiaireTitre),
         findsOneWidget,
       );
-      expect(find.byKey(RechargeFoyerPage.verifierKey), findsNothing);
+      expect(find.byKey(RechargeFoyerPage.payerKey), findsNothing);
     });
 
-    testWidgets('hors ligne a l\'etape 1 : rien ne part, la raison dite', (
+    testWidgets('hors ligne : rien ne part, la raison dite', (
       WidgetTester tester,
     ) async {
       await monter(
@@ -630,9 +689,9 @@ void main() {
         horsLigne: Stream<bool>.value(true),
       );
       await tester.pumpAndSettle();
-      await choisir(tester, 'b1', 'o1');
-      expect(bouton(tester, RechargeFoyerPage.verifierKey).onPress, isNull);
-      expect(find.text(t.adulte.recharge.horsLigneVerifier), findsOneWidget);
+      await choisir(tester, 'b1', _offreA);
+      expect(bouton(tester, RechargeFoyerPage.payerKey).onPress, isNull);
+      expect(find.text(t.adulte.recharge.horsLignePayer), findsOneWidget);
     });
 
     testWidgets('verification manquee : dite, les choix gardes', (
@@ -650,7 +709,7 @@ void main() {
       );
       expect(find.text(t.adulte.recharge.titre), findsOneWidget);
       expect(coche(tester, 'b1'), isTrue);
-      expect(bouton(tester, RechargeFoyerPage.verifierKey).onPress, isNotNull);
+      expect(bouton(tester, RechargeFoyerPage.payerKey).onPress, isNull);
     });
 
     testWidgets('remise rendue : sa ligne, avec SON libelle ; total rendu', (
@@ -669,9 +728,8 @@ void main() {
       );
     });
 
-    testWidgets('hors ligne a l\'etape 2 : « Payer » inactif, la raison dite', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('reseau perdu apres le recapitulatif : « Payer » inactif, la '
+        'raison dite', (WidgetTester tester) async {
       final StreamController<bool> reseau = StreamController<bool>();
       addTearDown(reseau.close);
       await monter(
@@ -712,9 +770,8 @@ void main() {
     });
 
     testWidgets('coupure au paiement avec perte du reseau : D5 seul, jamais '
-        '« Rien n\'est payé » ; ni Modifier ni retour aux choix, meme cle', (
-      WidgetTester tester,
-    ) async {
+        '« Rien n\'est payé » ; choix figes, pas de retour aux choix, meme '
+        'cle', (WidgetTester tester) async {
       final StreamController<bool> reseau = StreamController<bool>();
       addTearDown(reseau.close);
       final _Port port = _Port(liste: exemple, paiementSuspendu: true);
@@ -740,7 +797,7 @@ void main() {
       expect(find.textContaining("Rien n'est payé"), findsNothing);
       expect(find.textContaining("n'a pas été payé"), findsNothing);
       expect(bouton(tester, RechargeFoyerPage.payerKey).onPress, isNull);
-      expect(find.byKey(RechargeFoyerPage.modifierDe('b1')), findsNothing);
+      expect(actif(tester, RechargeFoyerPage.plusDe('b1')), isFalse);
       // Le retour ne rouvre pas les choix : il mene aux paiements du foyer.
       await tester.tap(find.byType(DisqueRetour));
       await tester.pumpAndSettle();
@@ -755,22 +812,27 @@ void main() {
       expect(port.cles.toSet(), hasLength(1));
     });
 
-    testWidgets('etat rendu par le serveur : affiche tel quel, sans succes '
-        'local, et le seul retour', (WidgetTester tester) async {
-      bool termine = false;
+    testWidgets('commande rendue par le serveur (FI-8) : son resultat '
+        's ouvre, sans succes local ni second paiement', (
+      WidgetTester tester,
+    ) async {
+      final List<String> commandes = <String>[];
       await monter(
         tester,
         port: _Port(liste: exemple),
-        onTerminee: () => termine = true,
+        onPaye: commandes.add,
       );
       await tester.pumpAndSettle();
       await jusquAuRecapitulatif(tester);
       await taper(tester, find.byKey(RechargeFoyerPage.payerKey));
-      expect(find.text('etat redige par le serveur'), findsOneWidget);
+      expect(commandes, <String>['commande rendue par le serveur']);
       expect(find.byKey(RechargeFoyerPage.payerKey), findsNothing);
+      expect(find.text(t.adulte.recharge.commandeRendue), findsOneWidget);
       expect(find.byType(ActionPrincipale), findsOneWidget);
-      await taper(tester, find.text(t.adulte.recharge.revenirPaiements));
-      expect(termine, isTrue);
+      // Revenu sur cette page, le seul geste est le suivi de la commande.
+      await taper(tester, find.byKey(RechargeFoyerPage.suivreKey));
+      expect(commandes, hasLength(2));
+      expect(commandes.toSet(), hasLength(1));
     });
   });
 }
@@ -807,13 +869,19 @@ class _Port implements PortRechargeFoyer {
   }
 
   @override
-  Future<RecapitulatifRecharge> verifier(List<ChoixRecharge> choix) async {
+  Future<RecapitulatifRecharge> verifier(List<ChoixRecharge> choix) =>
+      Future<RecapitulatifRecharge>.error(StateError('EA-10'));
+
+  @override
+  Future<RecapitulatifRecharge> verifierMontants(
+    List<MontantRecharge> choix,
+  ) async {
     if (erreurVerification) throw StateError('coupure');
     return RecapitulatifRecharge(
       id: 'r1',
       total: 'total rendu',
       lignes: <LigneRecapitulatif>[
-        for (final ChoixRecharge c in choix)
+        for (final MontantRecharge c in choix)
           LigneRecapitulatif(
             beneficiaireId: c.beneficiaireId,
             prenom: 'Yusuf',
@@ -835,8 +903,12 @@ class _Port implements PortRechargeFoyer {
   Future<String> payer({required String recapitulatifId, required String cle}) {
     cles.add(cle);
     if (paiementSuspendu) return reponse.future;
-    return Future<String>.value('etat redige par le serveur');
+    return Future<String>.value('commande rendue par le serveur');
   }
+
+  @override
+  Future<SuiviPaiement> suivre(String commandeId) =>
+      Future<SuiviPaiement>.error(StateError('FI-8'));
 }
 
 Widget _page({
@@ -845,6 +917,7 @@ Widget _page({
   List<Override> overrides = const <Override>[],
 }) => ProviderScope(
   overrides: <Override>[
+    sansPersonneConnectee(),
     horsLigneProvider.overrideWith((Ref _) => horsLigne),
     ...overrides,
   ],

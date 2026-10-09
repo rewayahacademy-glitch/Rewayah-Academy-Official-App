@@ -42,10 +42,16 @@ import '../../core/appairage/service_appairage.dart'
     show AppareilAppaire, EleveDuFoyer;
 import '../../core/auth/service_auth.dart';
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/capacites/port_mes_finances.dart';
 import '../../core/capacites/port_notifications.dart';
+import '../../core/capacites/port_paiements_foyer.dart';
+import '../../core/capacites/port_politiques_commerciales.dart';
 import '../../core/capacites/port_recharge_foyer.dart';
 import '../../core/config/env.dart';
 import '../../core/domain/enums.dart';
+import '../../core/finance/finances_profil.dart';
+import '../../core/finance/mouvements_profil.dart';
+import '../../core/finance/suivi_paiement.dart';
 import '../../core/foyer/port_creation_profil_eleve.dart';
 import '../../core/foyer/profil_eleve_brouillon.dart';
 import '../../core/foyer/selection_eleve.dart';
@@ -72,7 +78,7 @@ import '../appareils/liste_appareils_eleve.dart'
 import '../compte/aide_page.dart';
 import '../compte/apparence_page.dart';
 import '../compte/donnees_compte.dart'
-    show identiteTitulaireProvider, soldesFoyerProvider;
+    show identiteTitulaireProvider, paiementsFoyerProvider;
 import '../compte/informations_legales_page.dart';
 import '../compte/informations_page.dart';
 import '../compte/paiements_page.dart';
@@ -80,11 +86,16 @@ import '../compte/preferences_page.dart';
 import '../compte/securite_page.dart';
 import '../foyer/creer_mon_profil_indisponible.dart';
 import '../foyer/fiche_eleve_page.dart';
+import '../foyer/finances_foyer.dart'
+    show financesFoyerProvider, politiqueActiveProvider;
 import '../foyer/formulaire_profil_eleve.dart';
 import '../foyer/foyer_page.dart';
 import '../foyer/invitation_conjoint.dart';
 import '../foyer/place_adulte.dart';
+import '../foyer/transactions_foyer.dart'
+    show derniersMouvementsFoyerProvider, nombreDernieresTransactions;
 import '../ma_classe_adulte/ma_classe_adulte_page.dart';
+import '../mon_espace_adulte/mes_finances_page.dart';
 import '../mon_espace_adulte/mon_espace_adulte_page.dart';
 import '../notifications/notifications_page.dart';
 import 'adulte_demo.dart';
@@ -92,6 +103,7 @@ import 'classe_demo.dart';
 import 'coran_demo_adulte.dart';
 import 'demo_classe_page.dart'
     show PreparationEleveDemo, adressePreparationEleveDemo, surchargesEleveDemo;
+import 'finance_demo.dart';
 import 'mode_demonstration.dart';
 import 'repere_demonstration.dart';
 
@@ -211,6 +223,15 @@ enum EcranDemoAdulte {
   /// L'historique des seances passees, ouvert par « Voir tout » des
   /// dernieres seances de l'Accueil (DASH-EA-PROD).
   seancesPassees,
+
+  /// Mes mouvements, ouverts depuis Paiements par l'eleve adulte autonome
+  /// (FI-9b).
+  mesMouvements,
+
+  /// La recharge de l'eleve adulte autonome, ouverte par « Recharger » de
+  /// Paiements (FI-9b) : le meme moteur que celle du foyer, son seul profil
+  /// coche (`eleve=`).
+  maRecharge,
 }
 
 /// Les ecrans ranges sous l'Accueil : la cloche y mene (EA-7).
@@ -237,6 +258,28 @@ const Set<EcranDemoAdulte> _ecransFoyer = <EcranDemoAdulte>{
   EcranDemoAdulte.profilNonCree,
   EcranDemoAdulte.repriseTitulaire,
 };
+
+/// Les ecrans des finances de l'eleve adulte autonome (FI-9b), dans SA
+/// coquille : jamais au titulaire d'une famille ni au second adulte
+/// rattache, qui n'ont pas de finances personnelles a lire ici (F7).
+const Set<EcranDemoAdulte> _ecransAutonome = <EcranDemoAdulte>{
+  EcranDemoAdulte.mesMouvements,
+  EcranDemoAdulte.maRecharge,
+};
+
+/// Les ecrans qui lisent `PortMesFinances` : Mon espace (la valeur de la
+/// rubrique Paiements), Paiements, Mes mouvements et la recharge.
+const Set<EcranDemoAdulte> _ecransMesFinances = <EcranDemoAdulte>{
+  EcranDemoAdulte.monEspace,
+  EcranDemoAdulte.paiements,
+  ..._ecransAutonome,
+};
+
+/// Vrai pour l'adulte autonome : la ligne famille « Ajouter ma famille »
+/// (adulte seul, ou second adulte qui n'est pas ou plus rattache).
+bool _autonome(EtatDemoAdulte etat, VueDemoAdulte vue) =>
+    DonneesAdulteDemo.ligneFamille(etat, vue) ==
+    LigneFamilleAdulte.ajouterMaFamille;
 
 /// Les ecrans du Foyer qu'ouvre « Ajouter ma famille » a l'adulte seul
 /// (EA-PL) : l'invitation du second adulte, l'ajout d'un enfant et son
@@ -292,6 +335,10 @@ EcranDemoAdulte ecranPermisDemoAdulte(
             LigneFamilleAdulte.forfaitFamille
         ? ecran
         : EcranDemoAdulte.monEspace;
+  }
+  // Les finances personnelles (FI-9b) : a l'adulte autonome seulement.
+  if (_ecransAutonome.contains(ecran)) {
+    return _autonome(etat, vue) ? ecran : EcranDemoAdulte.monEspace;
   }
   if (!_ecransFoyer.contains(ecran)) return ecran;
   // « Ajouter ma famille » (EA-PL, doc section 4) : l'adulte seul ouvre
@@ -379,6 +426,7 @@ List<RouteBase> routesDemoAdulte(String environnement) {
           eleve: p['eleve'],
           reseauCoupe: p['reseau'] == 'coupe',
           foyerNouveau: p['foyer'] == 'nouveau',
+          financeARegulariser: p['finance'] == 'a-regulariser',
         );
       },
     ),
@@ -402,6 +450,7 @@ String adresseDemoAdulte(
   String? eleve,
   bool reseauCoupe = false,
   bool foyerNouveau = false,
+  bool financeARegulariser = false,
 }) => Uri(
   path: Routes.demoAdulte,
   queryParameters: <String, String>{
@@ -413,6 +462,7 @@ String adresseDemoAdulte(
     'eleve': ?eleve,
     if (reseauCoupe) 'reseau': 'coupe',
     if (foyerNouveau) 'foyer': 'nouveau',
+    if (financeARegulariser) 'finance': 'a-regulariser',
   },
 ).toString();
 
@@ -451,6 +501,8 @@ String libelleEcranDemoAdulte(EcranDemoAdulte ecran) => switch (ecran) {
   EcranDemoAdulte.repriseFoyer ||
   EcranDemoAdulte.repriseTitulaire => t.adulte.reprise.titre,
   EcranDemoAdulte.seancesPassees => t.adulte.historique.titre,
+  EcranDemoAdulte.mesMouvements => t.ficheEleve.mouvements.titre,
+  EcranDemoAdulte.maRecharge => t.adulte.paiements.recharger,
 };
 
 /// Le libelle d'une situation (doc section 18).
@@ -546,8 +598,13 @@ class DemoAdultePage extends StatelessWidget {
     this.eleve,
     this.reseauCoupe = false,
     this.foyerNouveau = false,
+    this.financeARegulariser = false,
     super.key,
   });
+
+  /// `finance=a-regulariser` : l'eleve adulte autonome n'a pas finance le
+  /// mois de reference (FI-12, refus 9 du guide §13) ; sans lui, finance.
+  final bool financeARegulariser;
 
   /// `foyer=nouveau` : le foyer que l'adulte seul vient d'ouvrir par
   /// « Ajouter ma famille » (EA-PL), sans enfant.
@@ -587,6 +644,7 @@ class DemoAdultePage extends StatelessWidget {
         eleve: eleve,
         reseauCoupe: reseauCoupe,
         foyerNouveau: foyerNouveau,
+        financeARegulariser: financeARegulariser,
       );
     }
     final AppPalette palette = AppPalette.of(context);
@@ -717,8 +775,13 @@ class CoquilleAdulteDemo extends StatelessWidget {
     this.eleve,
     this.reseauCoupe = false,
     this.foyerNouveau = false,
+    this.financeARegulariser = false,
     super.key,
   });
+
+  /// `finance=a-regulariser` : l'eleve adulte autonome n'a pas finance le
+  /// mois de reference (FI-12, refus 9 du guide §13) ; sans lui, finance.
+  final bool financeARegulariser;
 
   /// `foyer=nouveau` : le foyer que l'adulte seul vient d'ouvrir par
   /// « Ajouter ma famille » (EA-PL). Ma famille n'y montre aucun enfant, et
@@ -763,6 +826,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
     eleve: eleve,
     reseauCoupe: reseauCoupe,
     foyerNouveau: foyerNouveau,
+    financeARegulariser: financeARegulariser,
   );
 
   @override
@@ -796,6 +860,17 @@ class CoquilleAdulteDemo extends StatelessWidget {
         ? EcranDemoAdulte.monEspace.index
         : vu.index;
     void versMonEspace() => context.go(_adresse(EcranDemoAdulte.monEspace));
+    void versPaiements() => context.go(_adresse(EcranDemoAdulte.paiements));
+    // L'eleve adulte autonome et sa finance de demonstration (FI-9b).
+    final bool autonome = _autonome(etat, vue);
+    final FinancesProfil mesFinances = DonneesFinanceDemo.financesAdulte(
+      profilId: DonneesAdulteDemo.idVue(genre, vue),
+      prenom: DonneesAdulteDemo.prenomVue(genre, vue),
+      classe: vue == VueDemoAdulte.titulaire
+          ? DonneesAdulteDemo.classeTitulaire
+          : null,
+      aRegulariser: financeARegulariser,
+    );
     void versNotifications() =>
         context.go(_adresse(EcranDemoAdulte.notifications));
     void versMonEspaceApres(EtatInvitationRecue suite) => context.go(
@@ -972,6 +1047,39 @@ class CoquilleAdulteDemo extends StatelessWidget {
                 const CapaciteIndisponible('demonstration'),
               ),
             ),
+            // Les finances de l'adulte autonome (FI-9b, FI-BR-17) : son seul
+            // profil, jamais un autre membre ; la recharge est le moteur du
+            // foyer, son seul profil pour beneficiaire. Rien n'est paye.
+            // Reseau coupe : les lectures echouent (hors ligne).
+            if (autonome && _ecransMesFinances.contains(vu)) ...<Override>[
+              portMesFinancesProvider.overrideWithValue(
+                MesFinancesDemo(mesFinances),
+              ),
+              mesFinancesProvider.overrideWith(
+                (Ref _) => reseauCoupe
+                    ? Future<FinancesProfil?>.error(_reseauCoupe)
+                    : Future<FinancesProfil?>.value(mesFinances),
+              ),
+              mesMouvementsProvider.overrideWith(
+                (Ref _) => reseauCoupe
+                    ? Future<List<MouvementProfil>>.error(_reseauCoupe)
+                    : MesFinancesDemo(mesFinances).mouvements(),
+              ),
+              portRechargeFoyerProvider.overrideWithValue(
+                RechargeAdulteDemo(mesFinances),
+              ),
+              beneficiairesRechargeProvider.overrideWith(
+                (Ref _) => reseauCoupe
+                    ? Future<List<BeneficiaireRecharge>>.error(_reseauCoupe)
+                    : RechargeAdulteDemo(mesFinances).beneficiaires(),
+              ),
+              portPolitiquesCommercialesProvider.overrideWithValue(
+                const PolitiquesCommercialesDemo(),
+              ),
+              politiqueActiveProvider.overrideWith(
+                (Ref _) async => DonneesFinanceDemo.politiqueLancement,
+              ),
+            ],
             // Forfait famille du second adulte rattache (EA-8, EA-BR-22) et
             // sa sortie, ou rien n'est envoye (EA-BR-21, K-28).
             if (vu == EcranDemoAdulte.forfaitFamille) ...<Override>[
@@ -1047,8 +1155,34 @@ class CoquilleAdulteDemo extends StatelessWidget {
                 }),
               ),
             ),
-            EcranDemoAdulte.paiements => PaiementsComptePage(
-              onRetour: versMonEspace,
+            // L'adulte autonome : ses finances (FI-9b) ; les autres, la page
+            // des paiements existante.
+            EcranDemoAdulte.paiements =>
+              autonome
+                  ? MesFinancesPage(
+                      onRetour: versMonEspace,
+                      onRecharger: (String id) => context.go(
+                        _adresse(EcranDemoAdulte.maRecharge, eleve: id),
+                      ),
+                      onMouvements: () =>
+                          context.go(_adresse(EcranDemoAdulte.mesMouvements)),
+                    )
+                  : PaiementsComptePage(onRetour: versMonEspace),
+            EcranDemoAdulte.mesMouvements => MesMouvementsPage(
+              onRetour: versPaiements,
+            ),
+            // LE moteur de recharge du foyer, son seul profil coche
+            // (guide §4) : aucun second moteur. Ouverte directement, sans
+            // `eleve=`, elle coche aussi son profil : il n'en a pas d'autre.
+            EcranDemoAdulte.maRecharge => RechargeFoyerPage(
+              preselection: <String>{mesFinances.profilId},
+              // Son seul profil : aucune finance du foyer lue (FI-9b).
+              regularisation: false,
+              onAbandon: versPaiements,
+              onTerminee: versPaiements,
+              // La demo de l'adulte seul ne rend aucune commande payee : par
+              // surete, une commande rendue ramenerait a ses paiements.
+              onPaye: (String _) => versPaiements(),
             ),
             EcranDemoAdulte.informations => InformationsComptePage(
               onRetour: versMonEspace,
@@ -1238,9 +1372,21 @@ class CoquilleAdulteDemo extends StatelessWidget {
         );
       } else if (p == Routes.tuteurFoyerAppareils) {
         context.go(_adresse(EcranDemoAdulte.appareils));
+      } else if (p == Routes.tuteurFoyerRecharge) {
+        // La recharge de la synthese, ou celle d'une carte (`?profils=`),
+        // ce profil coche (R1-06).
+        final String? profils = uri.queryParameters['profils'];
+        context.go(
+          _adresse(
+            EcranDemoAdulte.recharge,
+            eleve: profils == null || profils.contains(',') ? null : profils,
+          ),
+        );
       } else if (p.startsWith('${Routes.tuteurFoyer}/')) {
+        // La fiche, ou une de ses sous-pages (« Voir le détail » d'une
+        // carte) : la demonstration n'a que la fiche, ouverte a sa place.
         final String id = p.substring(Routes.tuteurFoyer.length + 1);
-        if (!id.contains('/')) versFiche(id);
+        versFiche(id.split('/').first);
       }
     }
 
@@ -1260,22 +1406,32 @@ class CoquilleAdulteDemo extends StatelessWidget {
       ),
     );
     final EtatPlaceAdulte place = titulaire.place;
+    final PaiementsFoyerProfilsDemo paiements = PaiementsFoyerProfilsDemo(
+      DonneesAdulteDemo.finances(etat, genre, foyerNouveau: foyerNouveau),
+    );
 
     final Widget page = switch (vu) {
-      // Le titulaire : les soldes de ses beneficiaires, « Recharger » et
-      // l'historique (EA-9, EA-BR-23).
+      // Le titulaire : « Recharger », raccourci vers LA recharge du foyer,
+      // puis l'historique (FI-7). Ses soldes ne sont plus repetes ici : la
+      // synthese et les cartes de Ma famille les portent (E-11, revue
+      // FI-VAGUE-R R1-06).
       EcranDemoAdulte.paiementsFoyer => PaiementsComptePage(
         titre: t.adulte.famille.paiementsFoyer,
         onRetour: versMaFamille,
-        soldes: true,
         onRecharger: versRecharge,
       ),
       // La recharge (EA-10, EA-BR-24 et 25) : les beneficiaires et leurs
       // offres, la verification, puis un etat honnete, jamais un paiement
-      // reussi (F13). Rien n'est paye.
+      // reussi (F13). Rien n'est paye. Ouverte depuis la carte d'un enfant,
+      // ce profil coche (`eleve`).
       EcranDemoAdulte.recharge => RechargeFoyerPage(
+        preselection: <String>{?eleve},
         onAbandon: () => context.go(_adresse(EcranDemoAdulte.paiementsFoyer)),
         onTerminee: () => context.go(_adresse(EcranDemoAdulte.paiementsFoyer)),
+        // Le paiement EA ne rend jamais de commande (F13) : par surete, une
+        // commande rendue ramenerait aux paiements, ou l'on verifie.
+        onPaye: (String _) =>
+            context.go(_adresse(EcranDemoAdulte.paiementsFoyer)),
       ),
       EcranDemoAdulte.inviterConjoint => InviterConjointPage(
         placeFeminine: titulaire.placeFeminine,
@@ -1369,6 +1525,8 @@ class CoquilleAdulteDemo extends StatelessWidget {
         eleveId: eleve ?? DonneesAdulteDemo.aichaId,
         onAller: allerFoyer,
         onRetour: versMaFamille,
+        // Aucune page Finances de demonstration : pas d'onglets.
+        avecPageFinances: false,
       ),
       EcranDemoAdulte.appareils => AppareilsPage(
         onAller: allerFoyer,
@@ -1413,7 +1571,6 @@ class CoquilleAdulteDemo extends StatelessWidget {
                 ),
                 onPaiementsFoyer: () =>
                     context.go(_adresse(EcranDemoAdulte.paiementsFoyer)),
-                onRecharger: versRecharge,
                 onAProposForfait: () =>
                     context.go(_adresse(EcranDemoAdulte.aProposForfait)),
                 // Validation refusee : la nouvelle demande relance
@@ -1462,10 +1619,30 @@ class CoquilleAdulteDemo extends StatelessWidget {
               DonneesAdulteDemo.identite(genre, VueDemoAdulte.titulaire),
         ),
         foyerTitulaireProvider.overrideWith((Ref _) async => titulaire),
-        // Les soldes du foyer (EA-9, EA-BR-23), au titulaire seulement (F7).
-        soldesFoyerProvider.overrideWith(
-          (Ref _) async =>
-              DonneesAdulteDemo.soldes(etat, genre, foyerNouveau: foyerNouveau),
+        // Les finances du foyer, au titulaire seulement (F7) : Ma famille a
+        // la composition du Foyer du tuteur (E-11, revue FI-VAGUE-R R1-06),
+        // la synthese, la finance de chaque enfant sur sa carte et les
+        // dernieres transactions ; « Paiements du foyer », l'historique.
+        // Les fournisseurs derives sont surcharges ici : sous ce
+        // ProviderScope imbrique, ils se resoudraient sinon sur le port reel
+        // (indisponible). Reseau coupe : les lectures echouent (hors ligne).
+        portPaiementsFoyerProvider.overrideWithValue(paiements),
+        financesFoyerProvider.overrideWith(
+          (Ref _) => reseauCoupe
+              ? Future<FinancesFoyer>.error(_reseauCoupe)
+              : paiements.finances(),
+        ),
+        derniersMouvementsFoyerProvider.overrideWith(
+          (Ref _) => reseauCoupe
+              ? Future<List<MouvementFoyer>>.error(_reseauCoupe)
+              : paiements.derniersMouvements(
+                  limite: nombreDernieresTransactions,
+                ),
+        ),
+        paiementsFoyerProvider.overrideWith(
+          (Ref _) => reseauCoupe
+              ? Future<List<PaiementFoyer>>.error(_reseauCoupe)
+              : paiements.historique(),
         ),
         // L'invitation (EA-6, EA-BR-15) : rien n'est envoye (K-28).
         portInvitationConjointProvider.overrideWithValue(_InvitationDemo(etat)),
@@ -1664,8 +1841,24 @@ class _RechargeDemo implements PortRechargeFoyer {
     if (etat == EtatDemoAdulte.doubleSoumission) {
       await Future<void>.delayed(latenceSimulee);
     }
-    throw const CapaciteIndisponible('EA-BR-25');
+    throw const CapaciteIndisponible('FI-BR-06');
   }
+
+  // La recharge se choisit par montants depuis FI-7 (un seul moteur) ; le
+  // suivi des huit etats arrive avec FI-8.
+  @override
+  Future<RecapitulatifRecharge> verifierMontants(
+    List<MontantRecharge> choix,
+  ) async => DonneesAdulteDemo.recapitulatifMontants(
+    etat,
+    genre,
+    choix,
+    foyerNouveau: foyerNouveau,
+  );
+
+  @override
+  Future<SuiviPaiement> suivre(String commandeId) =>
+      Future<SuiviPaiement>.error(const CapaciteIndisponible('FI-BR-06'));
 }
 
 /// La reprise du foyer en demonstration (EA-11, EA-BR-27 et 28) : rien n'est

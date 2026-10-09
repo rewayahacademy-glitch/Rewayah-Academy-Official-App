@@ -4,6 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/admin/admin_domaine.dart';
 import '../../../core/admin/service_programme.dart';
 import '../../../core/domain/enums.dart';
+import '../../../core/finance/finances_profil.dart';
+import '../../../core/finance/format_montant.dart';
+import '../../../core/finance/montant.dart';
+import '../../../core/finance/politique_commerciale.dart';
 import '../../../core/i18n/cle_audio.dart';
 import '../../../core/i18n/elision.dart';
 import '../../../core/i18n/strings.g.dart';
@@ -14,6 +18,7 @@ import '../../../core/presence/service_presence.dart';
 import '../../../core/presence/vue_presence.dart';
 import '../../../core/priere/horaires_priere.dart';
 import '../../../core/session/session_state.dart';
+import '../../../core/theme/accent_profil.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -25,6 +30,8 @@ import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/audio_label.dart';
 import '../../../core/widgets/avatar_nom.dart';
 import '../../../core/widgets/avatar_tile.dart';
+import '../../../core/widgets/badge_periode_financee.dart';
+import '../../../core/widgets/bandeau_attention.dart';
 import '../../../core/widgets/bandeau_observation.dart';
 import '../../../core/widgets/barre_precedent_suivant.dart';
 import '../../../core/widgets/bento_tile.dart';
@@ -46,13 +53,19 @@ import '../../../core/widgets/fil_discussion.dart';
 import '../../../core/widgets/filter_pill.dart';
 import '../../../core/widgets/grille_bento.dart';
 import '../../../core/widgets/groupe_reglages.dart';
+import '../../../core/widgets/identite_profil.dart';
 import '../../../core/widgets/lien_fleche.dart';
+import '../../../core/widgets/ligne_allocation.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
+import '../../../core/widgets/ligne_finance.dart';
+import '../../../core/widgets/ligne_moyen_paiement.dart';
 import '../../../core/widgets/ligne_presence.dart';
+import '../../../core/widgets/ligne_transaction.dart';
 import '../../../core/widgets/local_feedback.dart';
 import '../../../core/widgets/marque_page.dart';
 import '../../../core/widgets/menu_actions.dart';
 import '../../../core/widgets/menu_filtre.dart';
+import '../../../core/widgets/montant_argent.dart';
 import '../../../core/widgets/nav_shell.dart';
 import '../../../core/widgets/offline_banner.dart';
 import '../../../core/widgets/page_etape.dart';
@@ -60,6 +73,7 @@ import '../../../core/widgets/page_immersive.dart';
 import '../../../core/widgets/page_parcours.dart';
 import '../../../core/widgets/page_shell.dart';
 import '../../../core/widgets/pastille_etat_seance.dart';
+import '../../../core/widgets/pastille_financiere.dart';
 import '../../../core/widgets/pays_enseignant.dart';
 import '../../../core/widgets/permanent_notice.dart';
 import '../../../core/widgets/pile_cartes.dart';
@@ -68,9 +82,12 @@ import '../../../core/widgets/point_rappel.dart';
 import '../../../core/widgets/pressable.dart';
 import '../../../core/widgets/raccourci_tactile.dart';
 import '../../../core/widgets/rangee_filtres.dart';
+import '../../../core/widgets/resume_soldes.dart';
 import '../../../core/widgets/rosace_verset.dart';
 import '../../../core/widgets/schedule_option.dart';
 import '../../../core/widgets/section_header.dart';
+import '../../../core/widgets/selecteur_couleur_profil.dart';
+import '../../../core/widgets/selecteur_mois.dart';
 import '../../../core/widgets/selecteur_motif.dart';
 import '../../../core/widgets/selecteur_niveau_programme.dart';
 import '../../../core/widgets/selecteur_personne.dart';
@@ -1003,6 +1020,333 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           prenom: 'Youssef',
           nom: 'Sayyid Youssef',
           role: 'Coran, niveau 2',
+        ),
+      ),
+    ],
+  ),
+  // FI-3a (guide Finance V4 §7, §11.3) : les composants d'argent.
+  EntreeGalerie(
+    nom: 'MontantArgent',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'grand : le solde',
+        (BuildContext _) => const MontantArgent(
+          Montant(14500, 'USD'),
+          taille: TailleMontant.grand,
+        ),
+      ),
+      EtatGalerie(
+        'signe : une remise',
+        (BuildContext _) =>
+            const MontantArgent(Montant(-500, 'USD'), signe: true),
+      ),
+      EtatGalerie(
+        'attenue, avec centimes',
+        (BuildContext _) =>
+            const MontantArgent(Montant(14320, 'USD'), attenue: true),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'LigneFinance',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'decomposition dans une seule carte',
+        (BuildContext _) => const CarteLignes(
+          lignes: <Widget>[
+            LigneFinance(
+              libelle: 'Tarif enfant',
+              montant: Montant(5000, 'USD'),
+            ),
+            LigneFinance(
+              libelle: 'Remise familiale',
+              detail: '3e membre',
+              montant: Montant(-500, 'USD'),
+            ),
+            LigneFinance(
+              libelle: 'Total à financer',
+              montant: Montant(4500, 'USD'),
+              total: true,
+            ),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'une taxe ajoutee, signee',
+        (BuildContext _) => const LigneFinance(
+          libelle: 'Taxe applicable',
+          montant: Montant(250, 'USD'),
+          signe: true,
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'LigneTransaction',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'credit et debit, toujours signes',
+        (BuildContext _) => const CarteLignes(
+          lignes: <Widget>[
+            LigneTransaction(
+              libelle: 'Recharge',
+              date: '1er octobre',
+              montant: Montant(14500, 'USD'),
+            ),
+            LigneTransaction(
+              libelle: "Période d'octobre",
+              date: '1er octobre',
+              montant: Montant(-5000, 'USD'),
+            ),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'en confirmation : la pastille dit l etat',
+        (BuildContext _) => const LigneTransaction(
+          libelle: 'Recharge',
+          date: '4 octobre',
+          montant: Montant(9500, 'USD'),
+          statut: StatusPill(
+            libelle: 'En confirmation',
+            ton: TonEtat.avertissement,
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'LigneAllocation',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'a qui va chaque montant',
+        (BuildContext _) => const CarteLignes(
+          lignes: <Widget>[
+            LigneAllocation(
+              prenom: 'Mariam',
+              detail: 'Octobre',
+              montant: Montant(5000, 'USD'),
+              avatar: BandeauProfil(
+                avatar: AvatarTile(prenom: 'Mariam', diametre: AppAvatar.moyen),
+                diametre: AppAvatar.moyen,
+                accent: AccentProfil.rose,
+              ),
+            ),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'sans couleur choisie : le cercle seul',
+        (BuildContext _) => const LigneAllocation(
+          prenom: 'Ibrahim',
+          // Meme ecriture que le formateur : espace insecable avant la devise.
+          detail: 'Nouveau solde : 50\u00A0\$',
+          montant: Montant(5000, 'USD'),
+          avatar: BandeauProfil(
+            avatar: AvatarTile(prenom: 'Ibrahim', diametre: AppAvatar.moyen),
+            diametre: AppAvatar.moyen,
+            accent: null,
+          ),
+        ),
+      ),
+    ],
+  ),
+  // FI-3b (guide Finance V4 §1.6, §1.7, §5.1-5.4, §11.4) : statuts,
+  // bandeau, moyen de paiement, synthese.
+  EntreeGalerie(
+    nom: 'PastilleFinanciere',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'finance',
+        (BuildContext _) =>
+            const PastilleFinanciere(etat: EtatFinancier.finance),
+      ),
+      EtatGalerie(
+        'a regulariser',
+        (BuildContext _) =>
+            const PastilleFinanciere(etat: EtatFinancier.aRegulariser),
+      ),
+      EtatGalerie(
+        'en confirmation',
+        (BuildContext _) =>
+            const PastilleFinanciere(etat: EtatFinancier.enConfirmation),
+      ),
+      EtatGalerie(
+        'essai : le compteur rendu par la source',
+        (BuildContext _) => const PastilleFinanciere(
+          etat: EtatFinancier.essai,
+          essaisUtilises: 1,
+          essaisMax: 2,
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'BadgePeriodeFinancee',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'periode financee',
+        (BuildContext _) => BadgePeriodeFinancee(
+          periode: PeriodeFinancee(
+            debut: DateTime(2026, 10),
+            fin: DateTime(2026, 10, 31),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'aucune periode (essai)',
+        (BuildContext _) => const BadgePeriodeFinancee(periode: null),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'BandeauAttention',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'acces a regulariser',
+        (BuildContext _) => BandeauAttention(
+          titre: 'Accès à régulariser',
+          message:
+              'Il manque ${formaterMontant(const Montant(800, 'USD'))} '
+              'pour financer janvier.',
+        ),
+      ),
+      EtatGalerie(
+        'paiement en confirmation',
+        (BuildContext _) => const BandeauAttention(
+          titre: 'Paiement en cours de confirmation',
+          message: 'Ne payez pas une seconde fois.',
+          ton: TonEtat.accent,
+        ),
+      ),
+      EtatGalerie(
+        'echec',
+        (BuildContext _) => const BandeauAttention(
+          titre: "Le paiement n'a pas abouti",
+          message: 'Votre sélection est gardée. Réessayez ou changez de moyen.',
+          ton: TonEtat.alerte,
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'LigneMoyenPaiement',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'retenu',
+        (BuildContext _) => const LigneMoyenPaiement(
+          rail: RailPaiement.webStripe,
+          retenu: true,
+          onPress: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'a choisir',
+        (BuildContext _) => const LigneMoyenPaiement(
+          rail: RailPaiement.webStripe,
+          onPress: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'hors ligne : la carte ne se presse plus',
+        (BuildContext _) =>
+            const LigneMoyenPaiement(rail: RailPaiement.webStripe),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'ResumeSoldes',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'foyer de trois profils',
+        (BuildContext _) => const ResumeSoldes(
+          synthese: SyntheseFoyer(
+            totalSoldes: Montant(14500, 'USD'),
+            aPayerCeMois: Montant(800, 'USD'),
+            profilsFinances: 2,
+            profils: 3,
+            paiementsDuMois: 2,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'tout est finance',
+        (BuildContext _) => const ResumeSoldes(
+          synthese: SyntheseFoyer(
+            totalSoldes: Montant(0, 'USD'),
+            aPayerCeMois: Montant(0, 'USD'),
+            profilsFinances: 3,
+            profils: 3,
+            paiementsDuMois: 1,
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'IdentiteProfil',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'bandeau choisi par le tuteur, age et classe',
+        (BuildContext _) => const IdentiteProfil(
+          prenom: 'Mariam',
+          accent: AccentProfil.rose,
+          age: 10,
+          classe: 'An-Nour',
+        ),
+      ),
+      EtatGalerie(
+        'sans couleur choisie : le cercle seul',
+        (BuildContext _) =>
+            const IdentiteProfil(prenom: 'Ibrahim', accent: null),
+      ),
+      EtatGalerie(
+        'grand en-tete, profil adulte',
+        (BuildContext _) => const IdentiteProfil(
+          prenom: 'Fatimah',
+          accent: AccentProfil.lavande,
+          estAdulte: true,
+          taille: TailleIdentite.entete,
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'SelecteurCouleurProfil',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'Menthe retenue, Rose deja prise',
+        (BuildContext _) => SelecteurCouleurProfil(
+          valeur: AccentProfil.menthe,
+          prenom: 'Mariam',
+          prises: const <AccentProfil, String>{AccentProfil.rose: 'Yusuf'},
+          onChoix: (AccentProfil? _) {},
+        ),
+      ),
+      EtatGalerie(
+        'sans couleur',
+        (BuildContext _) => SelecteurCouleurProfil(
+          valeur: null,
+          prenom: 'Ibrahim',
+          onChoix: (AccentProfil? _) {},
+        ),
+      ),
+      EtatGalerie(
+        'hors ligne : les ronds ne se pressent plus',
+        (BuildContext _) => const SelecteurCouleurProfil(
+          valeur: AccentProfil.ciel,
+          prenom: 'Aicha',
         ),
       ),
     ],
@@ -2213,6 +2557,45 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       ),
     ],
   ),
+  // FI-Q18 (a) : le choix du mois d'une vue chiffree. Il ne propose que les
+  // mois rendus par la source ; le bouton dit toujours le mois retenu.
+  EntreeGalerie(
+    nom: 'SelecteurMois',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      // La demonstration ne rend qu'un mois : le menu n'en offre qu'un.
+      EtatGalerie(
+        'un seul mois rendu',
+        (BuildContext _) => _SousMaterial(
+          child: SelecteurMois(
+            mois: <DateTime>[DateTime(2026, 10)],
+            choisi: null,
+            onChoix: _moisIgnore,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'plusieurs mois, le plus recent par defaut',
+        (BuildContext _) => _SousMaterial(
+          child: SelecteurMois(
+            mois: <DateTime>[DateTime(2026, 10), DateTime(2026, 9)],
+            choisi: null,
+            onChoix: _moisIgnore,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'un mois plus ancien choisi',
+        (BuildContext _) => _SousMaterial(
+          child: SelecteurMois(
+            mois: <DateTime>[DateTime(2026, 10), DateTime(2026, 9)],
+            choisi: DateTime(2026, 9),
+            onChoix: _moisIgnore,
+          ),
+        ),
+      ),
+    ],
+  ),
   EntreeGalerie(
     nom: 'SelecteurNiveauProgramme',
     famille: FamilleComposant.composantEtat,
@@ -3199,6 +3582,8 @@ const List<PersonneProposee> _personnesExemple = <PersonneProposee>[
   ),
   PersonneProposee(id: 'p7', nom: 'Adam Tazi', identifiant: 'STUD-AT-000007'),
 ];
+
+void _moisIgnore(DateTime mois) {}
 
 void _codeIgnore(String code) {}
 

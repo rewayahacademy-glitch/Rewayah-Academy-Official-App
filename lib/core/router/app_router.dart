@@ -18,6 +18,7 @@ import '../../features/admin_configuration_politique_kyc/politique_revue_kyc_pag
 import '../../features/admin_configuration_regles/regles_page.dart';
 import '../../features/admin_demandes/demandes_page.dart';
 import '../../features/admin_dossiers/dossiers_page.dart';
+import '../../features/admin_finance/finance_page.dart';
 import '../../features/admin_groupes/groupes_page.dart';
 import '../../features/admin_journal/journal_page.dart';
 import '../../features/admin_observations/observations_admin_page.dart';
@@ -72,6 +73,7 @@ import '../../features/demo/demo_adulte_page.dart';
 import '../../features/demo/demo_classe_page.dart';
 import '../../features/demo/demo_controleur_page.dart';
 import '../../features/demo/demo_enseignant_page.dart';
+import '../../features/demo/demo_finance_page.dart';
 import '../../features/demo/demo_salle_page.dart';
 import '../../features/dossier/attente_page.dart';
 import '../../features/dossier/depot_piece_page.dart';
@@ -84,11 +86,16 @@ import '../../features/fiche_groupe/fiche_groupe_page.dart';
 import '../../features/foyer/creer_mon_profil_indisponible.dart';
 import '../../features/foyer/fiche/acces_page.dart';
 import '../../features/foyer/fiche/camera_page.dart';
+import '../../features/foyer/fiche/couleur_page.dart';
+import '../../features/foyer/fiche/finances_page.dart';
 import '../../features/foyer/fiche/informations_page.dart';
 import '../../features/foyer/fiche/inscription_page.dart';
 import '../../features/foyer/fiche/interface_page.dart';
+import '../../features/foyer/fiche/mouvements_page.dart';
 import '../../features/foyer/fiche_eleve_page.dart';
+import '../../features/foyer/finances_foyer.dart' show financesFoyerProvider;
 import '../../features/foyer/foyer_page.dart';
+import '../../features/foyer/invitation_conjoint.dart';
 import '../../features/inscription/etapes/genre_etape.dart';
 import '../../features/inscription/etapes/identite_etape.dart';
 import '../../features/inscription/etapes/recapitulatif_etape.dart';
@@ -98,6 +105,7 @@ import '../../features/journee/journee_page.dart';
 import '../../features/notifications/notifications_page.dart';
 import '../../features/parcours_offres/parcours_offres_page.dart';
 import '../../features/profil_enseignant/profil_enseignant_page.dart';
+import '../../features/revenus_enseignant/revenus_enseignant_page.dart';
 import '../../features/revue_groupe/revue_groupe_page.dart';
 import '../../features/salle/salle_page.dart';
 import '../../features/suivi_eleve/suivi_eleve_page.dart';
@@ -116,6 +124,7 @@ import '../alertes/port_alertes.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
 import '../dossier/resignature_contrat.dart';
+import '../finance/montant.dart';
 import '../i18n/strings.g.dart';
 import '../mouvement/transitions.dart';
 import '../preferences/presentation_vue.dart';
@@ -603,6 +612,93 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     ),
                   ),
                   GoRoute(
+                    path: 'recharge',
+                    pageBuilder: glissee(
+                      (GoRouterState etat) => Builder(
+                        builder: (BuildContext context) => RechargeFoyerPage(
+                          // Une autre selection (« Reessayer » apres un
+                          // echec, FI-8, `&reprise=`) ouvre une recharge
+                          // neuve. Sous le resultat, l'adresse garde les
+                          // memes parametres (plus `commande`, ignore ici) :
+                          // la page et sa commande restent, et le retour du
+                          // navigateur montre « Suivre le paiement », jamais
+                          // un second « Payer » (revue FI-8).
+                          key: ValueKey<String>(
+                            Routes.identiteRecharge(etat.uri.queryParameters),
+                          ),
+                          preselection: <String>{
+                            for (final String id
+                                in (etat.uri.queryParameters['profils'] ?? '')
+                                    .split(','))
+                              if (id.isNotEmpty) id,
+                          },
+                          montantsInitiaux: Routes.montantsDe(
+                            etat.uri.queryParameters['montants'],
+                          ),
+                          // L'abandon ramene d'ou la recharge est partie :
+                          // Compte > Paiements (`?depuis=compte`) ou le Foyer.
+                          onAbandon: () => GoRouter.of(context).go(
+                            etat.uri.queryParameters['depuis'] ==
+                                    Routes.origineCompte
+                                ? Routes.compteTuteurSousPage('paiements')
+                                : Routes.tuteurFoyer,
+                          ),
+                          // Apres le paiement, le Foyer relit ses finances
+                          // (soldes, etats) au lieu de montrer les anciennes.
+                          onTerminee: () {
+                            ProviderScope.containerOf(
+                              context,
+                              listen: false,
+                            ).invalidate(financesFoyerProvider);
+                            GoRouter.of(context).go(Routes.tuteurFoyer);
+                          },
+                          // Le paiement rend une commande : son resultat
+                          // (FI-8), qui relit l'etat, jamais un succes local.
+                          onPaye: (String commande) => GoRouter.of(context).go(
+                            Routes.resultatRechargePour(
+                              commande,
+                              recharge: etat.uri.queryParameters,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    routes: <RouteBase>[
+                      // Le resultat et ses huit etats (FI-8, guide §5.4).
+                      GoRoute(
+                        path: 'result',
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => Builder(
+                            builder: (BuildContext context) =>
+                                ResultatRechargePage(
+                                  commandeId:
+                                      etat.uri.queryParameters['commande'] ??
+                                      '',
+                                  // Retour au Foyer : ses finances sont
+                                  // relues, jamais les soldes d'avant.
+                                  onRevenir: () {
+                                    ProviderScope.containerOf(
+                                      context,
+                                      listen: false,
+                                    ).invalidate(financesFoyerProvider);
+                                    GoRouter.of(context).go(Routes.tuteurFoyer);
+                                  },
+                                  onReprendre: (Map<String, Montant> m) =>
+                                      GoRouter.of(context).go(
+                                        Routes.rechargeReprise(
+                                          m,
+                                          commande: etat
+                                              .uri
+                                              .queryParameters['commande'],
+                                        ),
+                                      ),
+                                ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  GoRoute(
                     path: 'appairer/:eleveId',
                     pageBuilder: glissee(
                       (GoRouterState etat) =>
@@ -641,6 +737,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                         ),
                       ),
                       GoRoute(
+                        path: 'couleur',
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => CouleurElevePage(
+                            eleveId: _parametre(etat, 'eleveId'),
+                          ),
+                        ),
+                      ),
+                      GoRoute(
                         path: 'camera',
                         pageBuilder: glissee(
                           (GoRouterState etat) => CameraElevePage(
@@ -652,6 +756,22 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                         path: 'acces',
                         pageBuilder: glissee(
                           (GoRouterState etat) => AccesElevePage(
+                            eleveId: _parametre(etat, 'eleveId'),
+                          ),
+                        ),
+                      ),
+                      GoRoute(
+                        path: 'finances',
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => FinancesElevePage(
+                            eleveId: _parametre(etat, 'eleveId'),
+                          ),
+                        ),
+                      ),
+                      GoRoute(
+                        path: 'mouvements',
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => MouvementsElevePage(
                             eleveId: _parametre(etat, 'eleveId'),
                           ),
                         ),
@@ -746,8 +866,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                   ),
                   GoRoute(
                     path: 'paiements',
+                    // « Recharger » ouvre LA recharge du Foyer (FI-7,
+                    // guide V4 §4) : jamais un second centre de paiement.
                     pageBuilder: glissee(
-                      (GoRouterState _) => const PaiementsComptePage(),
+                      (GoRouterState _) => Builder(
+                        builder: (BuildContext context) => PaiementsComptePage(
+                          // `?depuis=compte` : l'abandon revient ici.
+                          onRecharger: () =>
+                              GoRouter.of(context)
+                                  .go(Routes.rechargeDepuisCompte),
+                        ),
+                      ),
                     ),
                   ),
                   GoRoute(
@@ -856,6 +985,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 builder: (BuildContext _, GoRouterState _) =>
                     const ProfilEnseignantPage(),
               ),
+              // Mes revenus (FI-10) : une pose de la branche Profil, ou elle
+              // s'ouvre ; la barre garde Profil actif.
+              GoRoute(
+                path: Routes.enseignantRevenus,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const RevenusEnseignantPage(),
+              ),
             ],
           ),
         ],
@@ -953,10 +1089,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md`), routes NESTED par domaine.
       // Chaque route porte son domaine explicitement, comme
       // `_CoquilleSecondaire` portait deja son role -- ni l'un ni l'autre ne
-      // devine depuis le chemin courant. Pedagogie, Finance, Configuration et
-      // Direction n'ont **aucune route ici** : l'audit interdit une page
-      // construite pour un domaine sans fonction reelle
-      // (`AdminDomaine.chemin` y est nul, `AdminShell` les rend inertes).
+      // devine depuis le chemin courant. Direction n'a **aucune route ici** :
+      // l'audit interdit une page construite pour un domaine sans fonction
+      // reelle (`AdminDomaine.chemin` y est nul, `AdminShell` le rend inerte).
+      // Finance a ses routes depuis FI-1b (guide Finance V4 du directeur,
+      // 02/10/2026) : sans port branche, chaque onglet dit honnetement
+      // « Pas encore disponible ».
       GoRoute(
         path: Routes.admin,
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
@@ -1096,6 +1234,24 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
           child: QualitePage(),
+        ),
+      ),
+      // Domaine Finance (FI-1b) : la racine EST la Vue globale (route
+      // canonique « Vue d'ensemble » du contrat metier), jamais une
+      // redirection ; Politiques commerciales est son onglet pair
+      // (`ongletsFinance()`).
+      GoRoute(
+        path: Routes.adminFinance,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.finance,
+          child: FinancePage(onglet: OngletFinance.vueGlobale),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminFinancePolitiques,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.finance,
+          child: FinancePage(onglet: OngletFinance.politiques),
         ),
       ),
       // Domaine Configuration : la racine redirige vers Regles, sa fonction
@@ -1288,6 +1444,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ...routesDemoControleur(Env.environnement),
       ...routesDemoAccessibilite(Env.environnement),
       ...routesDemoAdulte(Env.environnement),
+      ...routesDemoFinance(Env.environnement),
     ],
   );
 });

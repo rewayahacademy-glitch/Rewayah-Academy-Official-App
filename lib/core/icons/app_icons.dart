@@ -737,6 +737,13 @@ abstract final class AppIcons {
     IconData(0xe6ec, fontFamily: _actif),
   );
 
+  /// Couleur d'un profil (`ph-palette`) : la ligne « Couleur du profil » de
+  /// la fiche eleve (K-62, FI-2).
+  static const AppIcon palette = AppIcon._(
+    IconData(0xe6c8, fontFamily: _repos),
+    IconData(0xe6c8, fontFamily: _actif),
+  );
+
   /// Observation (G) : politique personnalisee par groupe. Remplace [foyer].
   static const AppIcon personnalisationGroupe = AppIcon._(
     IconData(0xe434, fontFamily: _repos),
