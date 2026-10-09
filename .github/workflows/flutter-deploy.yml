@@ -53,6 +53,9 @@ jobs:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       SITE: https://rewayah-academy.vercel.app
+      # Les aperçus de PR utilisent l'API STAGING, jamais le backend de PROD.
+      SUPABASE_URL: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && secrets.SUPABASE_URL || 'https://xldmmlrnxyabdtvxqbyy.supabase.co' }}
+      SUPABASE_ANON_KEY: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && secrets.SUPABASE_ANON_KEY || secrets.SUPABASE_STAGING_ANON_KEY }}
 
     steps:
       - uses: actions/checkout@v4
@@ -86,8 +89,6 @@ jobs:
       - name: Refuse de partir si un secret manque
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         shell: bash
         run: |
           manquants=""
@@ -98,7 +99,7 @@ jobs:
             echo "::error title=Secrets GitHub absents::$manquants -- a creer dans Settings > Secrets and variables > Actions"
             exit 1
           fi
-          echo "Les cinq secrets exiges sont presents."
+          echo "La configuration Vercel et Supabase requise pour la cible est présente."
 
       - uses: subosito/flutter-action@v2
         with:
@@ -125,8 +126,8 @@ jobs:
         run: |
           flutter build web \
             --release \
-            --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
-            --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }} \
+            --dart-define=SUPABASE_URL=$SUPABASE_URL \
+            --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY \
             --dart-define=ENVIRONNEMENT=${{ steps.cible.outputs.environnement }} \
             --dart-define=SENTRY_DSN_FLUTTER=${{ secrets.SENTRY_DSN_FLUTTER }} \
             --dart-define=GALERIE=false \
@@ -153,7 +154,7 @@ jobs:
           # main.dart.js, le --dart-define n'a pas pris et l'application
           # partirait sans dorsale. On cherche la chaine litterale, jamais la
           # cle -- qui n'a rien a faire dans un journal de CI.
-          if ! grep -qF "${{ secrets.SUPABASE_URL }}" build/web/main.dart.js; then
+          if ! grep -qF "$SUPABASE_URL" build/web/main.dart.js; then
             echo "::error title=Bundle non configure::l URL Supabase n est pas compilee dans main.dart.js"
             exit 1
           fi
