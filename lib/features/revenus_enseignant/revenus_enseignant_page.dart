@@ -36,6 +36,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
@@ -263,10 +264,12 @@ String _duree(int minutes) {
   final int heures = minutes ~/ 60;
   final int reste = minutes % 60;
   return reste == 0
-      ? t.enseignant.revenus.heures(heures: heures)
-      : t.enseignant.revenus.heuresMinutes(
-          heures: heures,
-          minutes: reste.toString().padLeft(2, '0'),
+      ? LibellesGroupe.insecable(t.enseignant.revenus.heures(heures: heures))
+      : LibellesGroupe.insecable(
+          t.enseignant.revenus.heuresMinutes(
+            heures: heures,
+            minutes: reste.toString().padLeft(2, '0'),
+          ),
         );
 }
 

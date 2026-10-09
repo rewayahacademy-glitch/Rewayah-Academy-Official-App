@@ -12,6 +12,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/profil/service_acceptations.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -34,7 +35,9 @@ List<ParagrapheTexte> paragraphesA3() => <ParagrapheTexte>[
   (titre: t.contrat.a3.quiTitre, corps: t.contrat.a3.qui),
   (
     titre: t.contrat.a3.dureeTitre,
-    corps: t.contrat.a3.duree(duree: VersionsContrat.dureeEnregistrementJours),
+    corps: LibellesGroupe.insecable(
+      t.contrat.a3.duree(duree: VersionsContrat.dureeEnregistrementJours),
+    ),
   ),
   (titre: t.contrat.a3.desaccordTitre, corps: t.contrat.a3.desaccord),
 ];
@@ -48,7 +51,9 @@ List<ParagrapheTexte> paragraphesE1() => <ParagrapheTexte>[
   (titre: t.contrat.a3.quiTitre, corps: t.contrat.a3.qui),
   (
     titre: t.contrat.a3.dureeTitre,
-    corps: t.contrat.a3.duree(duree: VersionsContrat.dureeEnregistrementJours),
+    corps: LibellesGroupe.insecable(
+      t.contrat.a3.duree(duree: VersionsContrat.dureeEnregistrementJours),
+    ),
   ),
   (titre: t.contrat.e1.refusTitre, corps: t.contrat.e1.refus),
 ];

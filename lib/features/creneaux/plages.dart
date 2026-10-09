@@ -197,7 +197,8 @@ String jourCapitalise(int jour) {
 }
 
 /// « de 17 h », la colonne de debut d'une plage.
-String libelleDe(int heure) => t.enseignant.creneaux.plageDe(heure: '$heure');
+String libelleDe(int heure) =>
+    LibellesGroupe.insecable(t.enseignant.creneaux.plageDe(heure: '$heure'));
 
 /// « a 23 h », ou « a minuit » pour une plage qui finit a 24 h.
 // DUREE-INSECABLE (porte par JONCTION-LIGNES-1) : « 23 h » ne se coupe pas.

@@ -39,6 +39,7 @@ import 'package:rewayah_academy/core/finance/montant.dart';
 import 'package:rewayah_academy/core/finance/politique_commerciale.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/bandeau_attention.dart';
@@ -365,7 +366,11 @@ void main() {
       expect(find.text(pol.eleves(n: 4)), findsNWidgets(2));
       // Essai, place conservee.
       expect(find.text(pol.seances(n: 2)), findsOneWidget);
-      expect(find.text(pol.jours(n: 7)), findsOneWidget);
+      // Insecable a l'ecran (DUREE-INSECABLE-3, JONCTION-LIGNES-1).
+      expect(
+        find.text(LibellesGroupe.insecable(pol.jours(n: 7))),
+        findsOneWidget,
+      );
       expect(pol.jours(n: 7), '7 jours');
       // Pilotage : trois reperes lus, jamais un champ hors brouillon.
       for (final (String id, String valeur) in <(String, String)>[
@@ -1570,7 +1575,9 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text(pol.relanceRang(rang: '3')), findsOneWidget);
       expect(
-        find.text(pol.relanceApres(jours: pol.jours(n: 6))),
+        find.text(
+          pol.relanceApres(jours: LibellesGroupe.insecable(pol.jours(n: 6))),
+        ),
         findsOneWidget,
       );
       expect(find.text(pol.budgetMarketing), findsOneWidget);

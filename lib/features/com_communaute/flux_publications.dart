@@ -19,6 +19,7 @@ import '../../core/accessibilite/texte_agrandi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -41,9 +42,15 @@ String momentCommunaute(DateTime instant, DateTime maintenant) {
   final m = t.com.communaute.moment;
   final Duration ecart = maintenant.difference(instant);
   if (ecart.inMinutes < 1) return m.instant;
-  if (ecart.inHours < 1) return m.minutes(n: ecart.inMinutes);
-  if (ecart.inDays < 1) return m.heures(n: ecart.inHours);
-  if (ecart.inDays < 7) return m.jours(n: ecart.inDays);
+  if (ecart.inHours < 1) {
+    return LibellesGroupe.insecable(m.minutes(n: ecart.inMinutes));
+  }
+  if (ecart.inDays < 1) {
+    return LibellesGroupe.insecable(m.heures(n: ecart.inHours));
+  }
+  if (ecart.inDays < 7) {
+    return LibellesGroupe.insecable(m.jours(n: ecart.inDays));
+  }
   final DateTime local = instant.toLocal();
   return m.date(
     jour: local.day.toString().padLeft(2, '0'),

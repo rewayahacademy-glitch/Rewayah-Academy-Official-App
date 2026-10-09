@@ -141,10 +141,12 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
     if (qui == null || _libelleSaisi) {
       return;
     }
-    _libelle.text = t.admin.agents.libelleAuto(
-      dePrenom: deDevant(qui.prenom.isEmpty ? qui.identifiant : qui.prenom),
-      date: ChampDate.ecrire(ref.read(horlogeFormulairesProvider)()),
-      duree: _duree,
+    _libelle.text = LibellesGroupe.insecable(
+      t.admin.agents.libelleAuto(
+        dePrenom: deDevant(qui.prenom.isEmpty ? qui.identifiant : qui.prenom),
+        date: ChampDate.ecrire(ref.read(horlogeFormulairesProvider)()),
+        duree: _duree,
+      ),
     );
   }
 

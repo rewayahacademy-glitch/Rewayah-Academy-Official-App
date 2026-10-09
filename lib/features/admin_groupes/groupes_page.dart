@@ -16,6 +16,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
 import '../../core/reseau/service_reseau.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
@@ -1241,7 +1242,7 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
               for (int h = _heureDebut; h <= _heureFin; h++)
                 EntreeFiltre<int>(
                   valeur: h,
-                  libelle: f.heureValeur(heure: '$h'),
+                  libelle: LibellesGroupe.insecable(f.heureValeur(heure: '$h')),
                 ),
             ],
             onChoix: (int? h) {

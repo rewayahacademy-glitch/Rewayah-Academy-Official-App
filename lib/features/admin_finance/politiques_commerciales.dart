@@ -56,6 +56,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -1149,7 +1150,9 @@ class _PolitiquesCommercialesContenuState
           key: PolitiquesCommercialesContenu.champKey('relance-${i + 1}'),
           cle: pol.relanceRang(rang: '${i + 1}'),
           detailCle: i == 0 ? pol.relancesDetail : null,
-          valeur: pol.relanceApres(jours: pol.jours(n: jours[i])),
+          valeur: pol.relanceApres(
+            jours: LibellesGroupe.insecable(pol.jours(n: jours[i])),
+          ),
           chiffres: true,
           complement: i == jours.length - 1 ? comparaison : null,
         ),
@@ -1164,7 +1167,9 @@ class _PolitiquesCommercialesContenuState
       for (int i = 0; i < jours.length; i++)
         pol.relanceComparaison(
           rang: pol.relanceRang(rang: '${i + 1}'),
-          apres: pol.relanceApres(jours: pol.jours(n: jours[i])),
+          apres: pol.relanceApres(
+            jours: LibellesGroupe.insecable(pol.jours(n: jours[i])),
+          ),
         ),
     ].join(pol.separateurComparaison);
   }
@@ -1361,7 +1366,7 @@ String _texteValeur(Object? valeur, _Nature nature) {
       _Nature.eleves => pol.eleves(n: n),
       _Nature.seances => pol.seances(n: n),
       _Nature.classes => pol.classes(n: n),
-      _ => pol.jours(n: n),
+      _ => LibellesGroupe.insecable(pol.jours(n: n)),
     },
     _ => '$valeur',
   };
