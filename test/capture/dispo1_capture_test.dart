@@ -71,7 +71,9 @@ List<Override> _surcharges() => <Override>[
 
 const List<(Size, double, double, String)> _cadres =
     <(Size, double, double, String)>[
-      (Size(320, 1400), 2, 2, '320_x2'),
+      // Pleine hauteur : toute la liste, le bouton, et les feuilles jusqu'a
+      // Supprimer et Enregistrer, sans defilement.
+      (Size(320, 2600), 2, 2, '320_x2'),
       (Size(390, 844), 2, 1, '390_x1'),
       (Size(1440, 900), 1, 1, '1440_x1'),
     ];
