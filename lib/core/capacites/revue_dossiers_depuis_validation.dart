@@ -33,12 +33,15 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
   /// [lire] rend la file du service existant (en production, le cache
   /// partage `dossiersEnAttenteProvider`).
   ///
-  /// [apercu] signe une URL courte de la piece (en production,
+  /// [apercu] signe une URL courte de la piece (a partir de BR-1,
   /// ServiceValidation.apercu : le createSignedUrl de 60 s DEJA utilise
-  /// avant AD-6, aucun nouvel appel ni changement serveur). La porte serveur
-  /// utoriser_lecture_piece_identite n'est pas branchee (AD-BR-03, BR-1).
+  /// avant AD-6, aucun nouvel appel ni changement serveur ; en production
+  /// aujourd'hui l'apercu est ferme, voir `surchargeRevueDossiersProduction`).
+  /// La porte serveur `autoriser_lecture_piece_identite` n'est pas branchee
+  /// (AD-BR-03, BR-1).
   ///
-  /// [deciderExistant] appelle `decider_dossier` (ServiceValidation.decider) ;
+  /// [deciderExistant] appelle `decider_dossier` (ServiceValidation.decider,
+  /// a partir de BR-1 ; ferme en production aujourd'hui) ;
   /// [relire] recharge la file par `dossiers_en_attente`. Nuls, la decision
   /// reste indisponible.
   const RevueDossiersDepuisValidation(

@@ -323,6 +323,37 @@ void main() {
     expect(lectures, 0);
   });
 
+  // MUT-A-3 : a BR-1, l'apercu sera rebranche avant ou avec la decision. Une
+  // piece consultable ne suffit pas : sans `decider_dossier`, la validation
+  // reste fermee et dit pourquoi.
+  test('apercu branche sans decision : la validation reste fermee', () async {
+    final RevueDossiersDepuisValidation port = RevueDossiersDepuisValidation(
+      () async => <DossierAValider>[
+        DossierAValider(
+          documentId: 'd1',
+          profilId: 'p1',
+          type: TypePiece.carteIdentite,
+          cleObjet: 'x/d1.png',
+          deposeLe: DateTime.utc(2026, 9, 25, 14, 30),
+          prenom: 'Omar',
+          nom: 'Test',
+          identifiantImmuable: 'ID-p1',
+          role: AppRole.teacher,
+        ),
+      ],
+      apercu: (String cle) async => 'https://exemple.invalid/$cle',
+    );
+    final DossierPourRevue d = await port.dossierPourRevue('p1');
+    // La piece est consultable : seule la decision manque.
+    expect(d.peutVoirPiece, isTrue);
+    expect(d.lectureRequise, isTrue);
+    expect(d.peutValider, isFalse);
+    expect(d.peutRefuser, isFalse);
+    expect(d.blocagesValidation, <BlocageRevue>[
+      BlocageRevue.decisionIndisponible,
+    ]);
+  });
+
   // AD-M3-PROD (decision du directeur du 27/09, S1 -> a) : le branchement
   // de production ne signe aucune URL et n'appelle jamais decider_dossier.
   test(
