@@ -450,7 +450,7 @@ abstract final class DonneesSeanceDemo {
   /// Le rayon du cercle, en part de la largeur de la page.
   static const double rayonCercle = 0.18;
 
-  static const int _pointsCercle = 32;
+  static const int _pointsCercle = 64;
 
   // --- Bibliotheque en seance (TB-8) ---
 

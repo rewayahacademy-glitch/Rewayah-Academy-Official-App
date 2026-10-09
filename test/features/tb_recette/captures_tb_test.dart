@@ -47,6 +47,13 @@
 //   CAPTURE_DIR=docs/current/captures/TB-6 flutter test \
 //     test/features/tb_recette/captures_tb_test.dart --name tb6_
 //
+// TB-7a : le calque au repere de la page, cercle de demonstration en PED-03
+// (enseignant, eleve) et PED-04 (enseignant), 390 et 1440 clair et sombre,
+// 390 x2, 320 x2 ; la page lue a 200 % (enseignant, 390 et 1440). Rangees
+// dans docs/current/captures/TB-7a/ :
+//   CAPTURE_DIR=docs/current/captures/TB-7a flutter test \
+//     test/features/tb_recette/captures_tb_test.dart --name tb7a_
+//
 // TB-8 (LIB-01 a LIB-04) : catalogue, apercu personnel, ouverture et echec,
 // 390 et 1440 clair et sombre, 390 x2, 320 x2. Rangees dans
 // docs/current/captures/TB-8/ :
@@ -59,9 +66,11 @@
 //     test/features/tb_recette/captures_tb_test.dart --name ar_salle_
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show LogicalKeyboardKey;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/accessibilite/commandes_masquables.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/bibliotheque_seance.dart';
@@ -580,6 +589,110 @@ void main() {
           });
         }
       }
+    }
+  });
+
+  // TB-7a : le calque au repere de la page. Le cercle de demonstration sur
+  // la page (PED-03) et sur la feuille du Tableau (PED-04), puis la meme
+  // page lue a 200 % par le vrai bouton des Commandes : le cercle reste au
+  // meme endroit de la page.
+  group('TB-7a : calque au repere de la page', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    const List<String> tailles = <String>[
+      '390_x1_clair',
+      '390_x1_sombre',
+      '390_x2_clair',
+      '1440_x1_clair',
+      '1440_x1_sombre',
+      '320_x2_clair',
+    ];
+    for (final (RoleSeance role, SituationTb situation)
+        in <(RoleSeance, SituationTb)>[
+          (RoleSeance.enseignant, SituationTb.ped03),
+          (RoleSeance.eleve, SituationTb.ped03),
+          (RoleSeance.enseignant, SituationTb.ped04),
+        ]) {
+      for (final _Cadrage cas in <_Cadrage>[
+        for (final _Cadrage c in _cadragesTb)
+          if (tailles.contains(c.$1)) c,
+      ]) {
+        final String nom = 'tb7a_${role.name}_${situation.name}_${cas.$1}';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+          await tester.pumpWidget(
+            hoteCapture(
+              DemoSallePage(role: role, situation: situation),
+              themeMode: cas.$6,
+              echelleTexte: cas.$5,
+            ),
+          );
+          await stabiliser(tester);
+          await tester.pump(const Duration(milliseconds: 1400));
+          // La capture prouve ce qu'elle nomme : la couche couvre la page.
+          expect(
+            tester.getRect(find.byKey(SurfacePageFixe.cleCouche)),
+            tester.getRect(
+              find.byKey(
+                situation == SituationTb.ped04
+                    ? SurfacePageFixe.cleFeuille
+                    : SurfacePageFixe.clePage,
+              ),
+            ),
+          );
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
+      }
+    }
+
+    for (final _Cadrage cas in <_Cadrage>[
+      for (final _Cadrage c in _cadragesTb)
+        if (<String>[
+          '390_x1_clair',
+          '1440_x1_clair',
+          '1440_x1_sombre',
+        ].contains(c.$1))
+          c,
+    ]) {
+      final String nom = 'tb7a_enseignant_ped03_zoom200_${cas.$1}';
+      testWidgets(nom, (WidgetTester tester) async {
+        fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+        await tester.pumpWidget(
+          hoteCapture(
+            const DemoSallePage(
+              role: RoleSeance.enseignant,
+              situation: SituationTb.ped03,
+            ),
+            themeMode: cas.$6,
+            echelleTexte: cas.$5,
+          ),
+        );
+        await stabiliser(tester);
+        await tester.tap(find.byKey(DeclencheurCommandes.cle));
+        await stabiliser(tester);
+        final Finder plus = find.byWidgetPredicate(
+          (Widget w) =>
+              w is Pressable && w.libelleSemantique == t.salle.seance.zoomPlus,
+        );
+        await tester.ensureVisible(plus.first);
+        await tester.pump();
+        for (int i = 0; i < 10; i++) {
+          await tester.tap(plus.first);
+          await tester.pump();
+        }
+        expect(find.text(t.salle.seance.zoomValeur(valeur: 200)), findsWidgets);
+        // Les Commandes refermees : la page seule, lue a 200 %.
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        await stabiliser(tester);
+        await tester.pump(const Duration(milliseconds: 1400));
+        expect(find.byKey(CommandesPedagogiques.cle), findsNothing);
+        expect(
+          tester.getRect(find.byKey(SurfacePageFixe.cleCouche)),
+          tester.getRect(find.byKey(SurfacePageFixe.clePage)),
+        );
+        expect(tester.takeException(), isNull);
+        debugPrint('PNG ${await capturer(tester, nom)}');
+      });
     }
   });
 

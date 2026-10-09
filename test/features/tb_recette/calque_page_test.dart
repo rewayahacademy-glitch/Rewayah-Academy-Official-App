@@ -7,15 +7,21 @@
 // Aucune attente n'est recalculee avec le code teste : le point vise est
 // pris sur le rectangle de la page tel qu'il s'affiche.
 
+import 'dart:math' as math;
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart';
 import 'package:rewayah_academy/core/tc_outils/etat_outils.dart';
 import 'package:rewayah_academy/core/tc_outils/port_annotations.dart';
-import 'package:rewayah_academy/core/tc_outils/port_dock_hote.dart' show OutilDock;
+import 'package:rewayah_academy/core/tc_outils/port_dock_hote.dart'
+    show OutilDock;
 import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
@@ -179,7 +185,11 @@ void main() {
       expect(r.page.left, greaterThan(0), reason: 'marges laterales');
       expect(r.versPage(Offset(r.page.left / 2, 450)), isNull);
       expect(r.versPage(Offset(r.page.right + 10, 450)), isNull);
-      _memePoint(r.versPage(r.page.center)!, const PointNormalise(0.5, 0.5), 'centre');
+      _memePoint(
+        r.versPage(r.page.center)!,
+        const PointNormalise(0.5, 0.5),
+        'centre',
+      );
     });
   });
 
@@ -396,6 +406,81 @@ void main() {
             .widget<Visibility>(find.byKey(SurfacePageFixe.cleCalque))
             .visible,
         isFalse,
+      );
+    });
+  });
+
+  // L'epaisseur se mesure sur l'image rendue : la largeur, en pixels, de
+  // l'encre du cercle la ou il coupe l'horizontale de son centre, rapportee
+  // a la largeur de la page a l'ecran. Une epaisseur fixe en points
+  // d'ecran donnerait a 1440 une part de page bien plus fine qu'a 390.
+  group('l epaisseur suit la page (§9)', () {
+    Future<double> partDePage(WidgetTester tester, Size ecran) async {
+      fixerVueCapture(tester, ecran, 3);
+      addTearDown(tester.view.reset);
+      final VueSeance vue = DonneesSeanceDemo.vueTb(
+        RoleSeance.enseignant,
+        SituationTb.ped03,
+      );
+      await tester.pumpWidget(
+        hoteCapture(
+          SurfacePageFixe(vue: vue, surface: vue.vueSurface),
+          surcharges: <Override>[
+            portAnnotationsProvider.overrideWithValue(
+              AnnotationsMemoire('prof-demo'),
+            ),
+          ],
+        ),
+      );
+      await _attendre(tester);
+      final Rect page = tester.getRect(_page);
+      final RenderRepaintBoundary cadre = tester.renderObject(
+        find.byKey(cadreCapture),
+      );
+      final ByteData? octets = await tester.runAsync<ByteData?>(() async {
+        final ui.Image image = await cadre.toImage(pixelRatio: 3);
+        final ByteData? brut = await image.toByteData();
+        image.dispose();
+        return brut;
+      });
+      final int largeur = (ecran.width * 3).round();
+      int pixel(int x, int y) {
+        final int i = (y * largeur + x) * 4;
+        return octets!.getUint8(i) +
+            octets.getUint8(i + 1) +
+            octets.getUint8(i + 2);
+      }
+
+      const PointNormalise c = DonneesSeanceDemo.centreCercle;
+      const double r = DonneesSeanceDemo.rayonCercle;
+      final int y = ((page.top + c.y * page.height) * 3).round();
+      final int fond = pixel(((page.left + c.x * page.width) * 3).round(), y);
+      final int debut = ((page.left + (c.x + r - 0.05) * page.width) * 3)
+          .round();
+      final int fin = ((page.left + (c.x + r + 0.05) * page.width) * 3).round();
+      // L'encre est plus sombre que la page : sa couverture se somme pixel
+      // a pixel (l'anticrenelage compte pour sa part).
+      int plusSombre = 0;
+      for (int x = debut; x <= fin; x++) {
+        plusSombre = math.max(plusSombre, fond - pixel(x, y));
+      }
+      expect(plusSombre, greaterThan(60), reason: 'le cercle est peint');
+      double couverture = 0;
+      for (int x = debut; x <= fin; x++) {
+        couverture += ((fond - pixel(x, y)) / plusSombre).clamp(0, 1);
+      }
+      return couverture / (page.width * 3);
+    }
+
+    testWidgets('meme part de la page a 390 et a 1440', (
+      WidgetTester tester,
+    ) async {
+      final double telephone = await partDePage(tester, const Size(390, 844));
+      final double bureau = await partDePage(tester, const Size(1440, 900));
+      expect(
+        bureau / telephone,
+        moreOrLessEquals(1, epsilon: 0.2),
+        reason: 'telephone $telephone, bureau $bureau',
       );
     });
   });
