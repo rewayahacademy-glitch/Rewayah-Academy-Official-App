@@ -24,6 +24,8 @@ const List<String> _horsLot = <String>[
   'lib/features/com_',
   'lib/core/widgets/fil_discussion.dart',
   'lib/features/finance',
+  // La voie Finance a aussi ses ecrans de direction (JONCTION-LIGNES-1).
+  'lib/features/admin_finance/',
   'lib/features/comptable',
   'lib/features/salle/',
   'lib/features/tc_classe_live/',

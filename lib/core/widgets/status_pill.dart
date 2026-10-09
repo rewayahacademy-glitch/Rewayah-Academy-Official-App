@@ -100,7 +100,12 @@ class StatusPill extends StatelessWidget {
           horizontal: AppSpacing.md,
           vertical: AppSpacing.xs,
         ),
-        decoration: fond.decoration(borderRadius: AppRadius.arrondiFull),
+        // `arrondiLg` et non `arrondiFull` (CPT-RC, revue CPT-R m8, ecarts
+        // E4 et E5) : sur une ligne, la pilule reste un demi-cercle a chaque
+        // bout (le rayon est ramene a la demi-hauteur, a texte x1 comme x2) ;
+        // quand un libelle long passe sur deux ou trois lignes, la forme
+        // devient un rectangle arrondi et le bord ne touche plus le texte.
+        decoration: fond.decoration(borderRadius: AppRadius.arrondiLg),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           // Etiree par son parent, la pastille garde son contenu au centre

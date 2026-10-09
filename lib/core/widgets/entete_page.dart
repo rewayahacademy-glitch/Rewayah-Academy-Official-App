@@ -60,6 +60,11 @@ class EntetePage extends StatelessWidget {
   /// Les actions a droite du titre.
   final List<Widget> actions;
 
+  /// La part minimale de la largeur de l'en-tete laissee au titre quand
+  /// retour et actions sont sur sa ligne ; en dessous, ils passent
+  /// au-dessus et le titre prend toute la largeur.
+  static const double partMinTitre = 0.5;
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);

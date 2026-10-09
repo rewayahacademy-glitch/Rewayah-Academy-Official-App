@@ -112,6 +112,7 @@ import '../../../core/widgets/zone_saisie.dart';
 import '../../admin_tableau/tuiles_compteur.dart';
 import '../../disponibilites/grille_semaine.dart';
 import '../../enseignant_classes/mes_classes_page.dart' show MarquesClasse;
+import 'entrees_etats_comptable.dart';
 import 'entrees_etats_tuteur.dart';
 
 /// Les familles d'etats obligatoires.
@@ -3505,6 +3506,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
     ],
   ),
   ...entreesEtatsTuteur(),
+  ...entreesEtatsComptable(),
 ];
 
 /// Quatre sections courtes, pour le selecteur de section de la galerie.

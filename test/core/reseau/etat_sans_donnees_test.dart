@@ -302,6 +302,9 @@ void main() {
     // cause supposee. Chacune est nommee ; aucune autre ne passe.
     const Set<String> faits = <String>{
       'adulte.reprise.phrases.attenteAdministration',
+      // L'etat d'une capacite que le serveur dit fermee (Comptable, CPT-F),
+      // nom d'un statut (JONCTION-LIGNES-1).
+      'comptable.statuts.capacite.temporairementIndisponible',
       // Acces de l'eleve ferme par le serveur (FI-9a) : copie du guide
       // §1.7, mot pour mot (JONCTION-LIGNES-1).
       'argent.acces.enfantTitre',

@@ -51,6 +51,18 @@ import '../../features/com_communaute/communaute_page.dart';
 import '../../features/com_messages/messages_admin.dart';
 import '../../features/com_messages/messages_page.dart';
 import '../../features/com_studio/studio_page.dart';
+import '../../features/comptable/aujourdhui/aujourdhui_page.dart';
+import '../../features/comptable/beneficiaires/beneficiaires_page.dart';
+import '../../features/comptable/beneficiaires/profil_paiement_page.dart';
+import '../../features/comptable/contractuels/contractuels_page.dart';
+import '../../features/comptable/contractuels/nouvelle_obligation_page.dart';
+import '../../features/comptable/contractuels/obligation_contractuel_page.dart';
+import '../../features/comptable/encaissements/detail_encaissement_page.dart';
+import '../../features/comptable/encaissements/encaissements_page.dart';
+import '../../features/comptable/encaissements/rapprochement_page.dart';
+import '../../features/comptable/paiements/detail_paiement_page.dart';
+import '../../features/comptable/paiements/paiements_page.dart';
+import '../../features/comptable/tresorerie/tresorerie_page.dart';
 import '../../features/compte/acces_page.dart';
 import '../../features/compte/aide_page.dart';
 import '../../features/compte/apparence_page.dart';
@@ -78,6 +90,7 @@ import '../../features/demo/communications/demo_communications_page.dart';
 import '../../features/demo/demo_accessibilite_page.dart';
 import '../../features/demo/demo_adulte_page.dart';
 import '../../features/demo/demo_classe_page.dart';
+import '../../features/demo/demo_comptable_page.dart';
 import '../../features/demo/demo_controleur_page.dart';
 import '../../features/demo/demo_enseignant_page.dart';
 import '../../features/demo/demo_finance_page.dart';
@@ -110,6 +123,7 @@ import '../../features/inscription/etapes/usage_etape.dart';
 import '../../features/inscription/inscription_page.dart';
 import '../../features/journee/journee_page.dart';
 import '../../features/notifications/notifications_page.dart';
+import '../../features/paiements_recus/recevoir_paiements_page.dart';
 import '../../features/parcours_offres/parcours_offres_page.dart';
 import '../../features/profil_enseignant/profil_enseignant_page.dart';
 import '../../features/revenus_enseignant/revenus_enseignant_page.dart';
@@ -363,6 +377,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             profilId: etat.pathParameters['profilId'] ?? '',
           ),
         ),
+      ),
+      // « Recevoir mes paiements » (Comptable V1, CPT-F ; spec Finance
+      // operationnelle §17, §38) : la surface personnelle de tout
+      // beneficiaire avec compte, dans la coquille de son role. Le
+      // beneficiaire seul y modifie ses coordonnees (R-FIN-13).
+      GoRoute(
+        path: Routes.comptePaiementsRecus,
+        builder: (BuildContext _, GoRouterState _) =>
+            const _CoquilleSecondaire(child: RecevoirPaiementsPage()),
       ),
 
       // Eleve. Meme arborescence en mode enfant et en mode standard : c'est ce
@@ -1423,6 +1446,25 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           child: FinancePage(onglet: OngletFinance.politiques),
         ),
       ),
+      // Reserve et delegation (Comptable V1, CPT-F ; spec Finance
+      // operationnelle §37) : le troisieme onglet du meme domaine, jamais un
+      // second systeme Finance. La voie CPT-DIR remplit sa page.
+      GoRoute(
+        path: Routes.adminFinanceReserveDelegation,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.finance,
+          child: FinancePage(onglet: OngletFinance.reserveDelegation),
+        ),
+      ),
+      // A valider (CPT-VAL-1, decision Q-8 = (a) du 05/10) : le quatrieme
+      // onglet du meme domaine.
+      GoRoute(
+        path: Routes.adminFinanceAValider,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.finance,
+          child: FinancePage(onglet: OngletFinance.aValider),
+        ),
+      ),
       // Domaine Configuration : la racine redirige vers Regles, sa fonction
       // primaire -- meme mecanique que Pedagogie plus haut. Academie, Classe
       // en ligne, Notifications et Localisation n'ont pas de route : aucune
@@ -1529,10 +1571,150 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             Routes.adminSecuriteAuditAccesAgents,
       ),
 
-      // Comptable : le role existe, son interface arrive en V1 (ADR-003).
-      GoRoute(
-        path: Routes.comptable,
-        builder: (BuildContext _, GoRouterState _) => const ComptePage(),
+      // Comptable (Comptable V1, CPT-F) : quatre destinations, Aujourd'hui,
+      // Paiements, Tresorerie, Compte (spec Finance operationnelle §45 ;
+      // `20_comptable/UX_REVIEW_FINANCE_COMPTABLE_L0.md` §3). Les trois
+      // premieres sont les branches, dans l'ordre de
+      // `destinationsPour(AppRole.accountant)` ; Compte est `/compte`,
+      // partage, rejoint par `go`. Le second niveau (A effectuer,
+      // Contractuels, Beneficiaires ; Coffres, Encaissements, Rapprochement)
+      // est en onglets DANS la page, et chaque page de detail est une route
+      // imbriquee de sa branche. Les constructeurs ne recoivent que des
+      // chaines (identifiant, filtre brut) : la page lit son port. Les pages
+      // « en preparation » sont remplacees par les voies (CPT-FUS) sans que
+      // ces routes changent. ADR-003 est remplace par la spec du 04/10/2026.
+      StatefulShellRoute.indexedStack(
+        builder:
+            (BuildContext _, GoRouterState etat, StatefulNavigationShell n) =>
+                _CoquilleNavigation(
+                  role: AppRole.accountant,
+                  navigationShell: n,
+                  chemin: etat.uri.path,
+                ),
+        branches: <StatefulShellBranch>[
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.comptable,
+                builder: (BuildContext _, GoRouterState etat) =>
+                    AujourdhuiComptablePage(
+                      vue: etat
+                          .uri
+                          .queryParameters[Routes.parametreVueComptable],
+                    ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.comptablePaiements,
+                builder: (BuildContext _, GoRouterState etat) =>
+                    PaiementsAEffectuerPage(
+                      filtre: etat
+                          .uri
+                          .queryParameters[Routes.parametreFiltreComptable],
+                      type: etat
+                          .uri
+                          .queryParameters[Routes.parametreTypeComptable],
+                      classe: etat
+                          .uri
+                          .queryParameters[Routes.parametreClasseComptable],
+                    ),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'obligation/:obligationId',
+                    builder: (BuildContext _, GoRouterState etat) =>
+                        DetailPaiementPage(
+                          obligationId: _parametre(etat, 'obligationId'),
+                        ),
+                  ),
+                  GoRoute(
+                    path: 'contractuels',
+                    builder: (BuildContext _, GoRouterState etat) =>
+                        ContractuelsPage(
+                          onglet: etat.uri.queryParameters['onglet'],
+                        ),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'nouvelle',
+                        builder: (BuildContext _, GoRouterState _) =>
+                            const NouvelleObligationPage(),
+                      ),
+                      GoRoute(
+                        path: 'obligation/:obligationId',
+                        builder: (BuildContext _, GoRouterState etat) =>
+                            ObligationContractuelPage(
+                              obligationId: _parametre(etat, 'obligationId'),
+                            ),
+                      ),
+                    ],
+                  ),
+                  GoRoute(
+                    path: 'beneficiaires',
+                    builder: (BuildContext _, GoRouterState etat) =>
+                        BeneficiairesPage(
+                          filtre: etat
+                              .uri
+                              .queryParameters[Routes.parametreFiltreComptable],
+                        ),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: ':beneficiaireId',
+                        builder: (BuildContext _, GoRouterState etat) =>
+                            ProfilPaiementPage(
+                              beneficiaireId: _parametre(
+                                etat,
+                                'beneficiaireId',
+                              ),
+                            ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.comptableTresorerie,
+                builder: (BuildContext _, GoRouterState etat) => TresoreriePage(
+                  action:
+                      etat.uri.queryParameters[Routes.parametreActionComptable],
+                ),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'encaissements',
+                    builder: (BuildContext _, GoRouterState etat) =>
+                        EncaissementsPage(
+                          filtre: etat
+                              .uri
+                              .queryParameters[Routes.parametreFiltreComptable],
+                        ),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: ':encaissementId',
+                        builder: (BuildContext _, GoRouterState etat) =>
+                            DetailEncaissementPage(
+                              encaissementId: _parametre(
+                                etat,
+                                'encaissementId',
+                              ),
+                            ),
+                      ),
+                    ],
+                  ),
+                  GoRoute(
+                    path: 'rapprochement',
+                    builder: (BuildContext _, GoRouterState _) =>
+                        const RapprochementPage(),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
       ),
 
       // Teaching Core (plan d'integration, etape 7). Cinq lots, cinq
@@ -1615,6 +1797,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ...routesDemoAdulte(Env.environnement),
       ...routesDemoFinance(Env.environnement),
       ...routesDemoCommunications(Env.environnement),
+      ...routesDemoComptable(Env.environnement),
     ],
   );
 });
@@ -1842,7 +2025,9 @@ class _CoquilleNavigation extends ConsumerWidget {
                   ? navigationShell.currentIndex
                   : null,
             ),
-      masquerBarreBasse: Routes.estTacheFocalisee(chemin),
+      masquerBarreBasse:
+          Routes.estTacheFocalisee(chemin) ||
+          Routes.estTacheFocaliseeComptable(chemin),
       // Le rail replie a icones seules est la maquette du tuteur ; l'eleve et
       // l'enseignant gardent leurs libelles visibles sur tablette, comme avant
       // le chantier (revue phase 0, jetons D2, routes D3).

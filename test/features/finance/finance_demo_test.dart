@@ -705,6 +705,10 @@ void main() {
       if (f is! File || !f.path.endsWith('.dart')) continue;
       if (f.path.endsWith('.g.dart')) continue;
       if (f.path.endsWith('finance_demo.dart')) continue;
+      // Les donnees de demonstration du Comptable (CPT-FUS) : comme
+      // `finance_demo.dart`, des montants de demonstration ecrits dans leur
+      // seul fichier (K-09), jamais une valeur de la politique commerciale.
+      if (f.path.contains('lib/features/demo/comptable/')) continue;
       final List<String> lignes = f.readAsLinesSync();
       for (int i = 0; i < lignes.length; i++) {
         if (lignes[i].trimLeft().startsWith('//')) continue;

@@ -205,8 +205,39 @@ List<Destination> destinationsPour({
         chemin: Routes.compte,
       ),
     ],
-    // Le comptable est hors de l'arborescence en MVP-0 (ADR-003).
-    //
+    // **Aujourd'hui, Paiements, Tresorerie, Compte**, dans cet ordre et sur
+    // tous les formats (Comptable V1, CPT-F ; spec Finance operationnelle
+    // §45 « bottom navigation reelle » ; `UX_REVIEW_FINANCE_COMPTABLE_L0.md`
+    // §3, DR-01). Les planches montraient une barre de 7 a 10 entrees : le
+    // depot n'en admet que quatre, le second niveau (A effectuer,
+    // Contractuels, Beneficiaires ; Coffres, Encaissements, Rapprochement)
+    // vit en onglets dans la page (`navigation_comptable.dart`). Les trois
+    // premieres sont les branches de la coquille comptable dans
+    // `app_router.dart`, dans le meme ordre ; Compte est `/compte`, partage,
+    // rejoint par `go`. ADR-003 (« hors de l'arborescence en MVP-0 ») est
+    // remplace par la spec du 04/10/2026.
+    AppRole.accountant => <Destination>[
+      Destination(
+        libelle: t.comptable.nav.aujourdhui,
+        icone: AppIcons.journee,
+        chemin: Routes.comptable,
+      ),
+      Destination(
+        libelle: t.comptable.nav.paiements,
+        icone: AppIcons.paiements,
+        chemin: Routes.comptablePaiements,
+      ),
+      Destination(
+        libelle: t.comptable.nav.tresorerie,
+        icone: AppIcons.coffre,
+        chemin: Routes.comptableTresorerie,
+      ),
+      Destination(
+        libelle: t.comptable.nav.compte,
+        icone: AppIcons.profil,
+        chemin: Routes.compte,
+      ),
+    ],
     // **L'admin n'en tient plus aucune ici depuis le lot IA-01** (19 septembre
     // 2026) : l'operateur a impose une architecture a huit domaines, au dela
     // de ce que `maxDestinations` peut rendre en barre physique. L'admin a
@@ -214,7 +245,7 @@ List<Destination> destinationsPour({
     // (`lib/core/widgets/admin_shell.dart`, `lib/core/admin/admin_domaine.dart`),
     // qui ne partage pas cette limite de quatre : elle est nee pour un role a
     // barre courte, et huit domaines en feraient un menu si on les y forcait.
-    AppRole.accountant || AppRole.admin => const <Destination>[],
+    AppRole.admin => const <Destination>[],
   };
 
   final List<Destination> destinations = mode == InterfaceMode.enfant

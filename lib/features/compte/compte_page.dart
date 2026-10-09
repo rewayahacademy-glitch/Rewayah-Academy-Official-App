@@ -26,6 +26,7 @@ import '../../core/widgets/section_header.dart';
 import '../../core/widgets/selecteur_theme.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
+import '../paiements_recus/rubrique_recevoir_paiements.dart';
 import '../salle_seance/libelles_salle_b.dart';
 import 'espaces_compte.dart';
 
@@ -108,6 +109,8 @@ class ComptePage extends ConsumerWidget {
               ),
             ],
           ),
+          // CPT-BEN-2 : « Recevoir mes paiements », selon la capacite du port.
+          const RubriqueRecevoirPaiements(),
           Ecart.vSection,
           SectionHeader(titre: t.compte.espaces),
           Text(t.compte.espacesDetail),

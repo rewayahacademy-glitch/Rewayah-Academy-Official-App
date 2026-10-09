@@ -32,6 +32,7 @@ import '../../core/widgets/raccourci_tactile.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../paiements_recus/rubrique_recevoir_paiements.dart';
 import 'declaration_choix.dart';
 import 'photo_publique.dart';
 
@@ -167,6 +168,8 @@ class _Corps extends StatelessWidget {
         const _Contrat(),
         Ecart.vSection,
         _Remuneration(onOuvrir: onOuvrirRevenus),
+        // CPT-BEN-2 : « Recevoir mes paiements », selon la capacite du port.
+        const RubriqueRecevoirPaiements(),
         Ecart.vSection,
         const _Personnel(),
       ],

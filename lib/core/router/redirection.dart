@@ -70,7 +70,9 @@ String? deciderRedirection({
           cheminDemande == Routes.demoFinance ||
           cheminDemande.startsWith('${Routes.demoFinance}/') ||
           cheminDemande == Routes.demoCommunications ||
-          cheminDemande.startsWith('${Routes.demoCommunications}/'))) {
+          cheminDemande.startsWith('${Routes.demoCommunications}/') ||
+          cheminDemande == Routes.demoComptable ||
+          cheminDemande.startsWith('${Routes.demoComptable}/'))) {
     return null;
   }
 

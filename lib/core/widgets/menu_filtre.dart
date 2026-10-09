@@ -243,17 +243,16 @@ class MenuFiltre<T> extends StatelessWidget {
                   : MainAxisAlignment.center,
               children: <Widget>[
                 Flexible(
+                  // Un nom de section n'est jamais tronque ni coupe dans un
+                  // mot : il passe a la ligne entre les mots, un mot trop
+                  // long se reduit (COUPE-MOTS-1 ; « Rapprochement » a
+                  // 320 px, texte x2, CPT-FUS).
                   child: selecteurDeSection
-                      // Un nom de section n'est jamais tronque ni coupe dans
-                      // un mot : il passe a la ligne entre les mots, et un
-                      // mot trop long se reduit (texte x2, 320 px,
-                      // ONGLETS-COUPE-1).
                       ? TexteSansCoupure(
                           texte,
                           textAlign: TextAlign.start,
-                          style: palette.inkStrong.applyTo(
-                            textes.labelLarge ?? const TextStyle(),
-                          ),
+                          style: (actif ? palette.inkAccent : palette.inkStrong)
+                              .applyTo(textes.labelLarge ?? const TextStyle()),
                         )
                       : Text(
                           texte,

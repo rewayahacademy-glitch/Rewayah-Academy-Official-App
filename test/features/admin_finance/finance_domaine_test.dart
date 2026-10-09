@@ -136,13 +136,19 @@ void _verifierPolitiquesDemo() {
 }
 
 void main() {
-  test('ongletsFinance : Vue globale puis Politiques commerciales', () {
+  test('ongletsFinance : Vue globale, Politiques commerciales, '
+      'Reserve et delegation, A valider', () {
     expect(ongletsFinance(), <({String libelle, String chemin})>[
       (libelle: 'Vue globale', chemin: Routes.adminFinance),
       (
         libelle: 'Politiques commerciales',
         chemin: Routes.adminFinancePolitiques,
       ),
+      (
+        libelle: 'Réserve et délégation',
+        chemin: Routes.adminFinanceReserveDelegation,
+      ),
+      (libelle: 'À valider', chemin: Routes.adminFinanceAValider),
     ]);
     expect(AdminDomaine.finance.chemin, Routes.adminFinance);
     expect(AdminDomaine.finance.actif, isTrue);
