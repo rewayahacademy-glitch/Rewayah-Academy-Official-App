@@ -551,4 +551,24 @@ void main() {
       expect(find.text(t.enseignant.profil.enregistrer), findsNothing);
     });
   });
+
+  group('ASSETS-DIR-1 : la politique de controle, rangee dans l espace '
+      'enseignant', () {
+    for (final bool echec in <bool>[false, true]) {
+      testWidgets('le lien ouvre la politique (lecture des acceptations '
+          '${echec ? 'en echec' : 'vide'})', (WidgetTester tester) async {
+        await _monter(
+          tester,
+          profil: _profilDeTest(),
+          echecAcceptations: echec,
+        );
+        await tester.pumpAndSettle();
+
+        // Un texte fixe : lisible quel que soit l'etat des acceptations.
+        await _taperLigne(tester, t.contrat.politique.lien);
+        expect(find.text(t.contrat.politique.titre), findsOneWidget);
+        expect(find.text(t.contrat.politique.s10.titre), findsOneWidget);
+      });
+    }
+  });
 }

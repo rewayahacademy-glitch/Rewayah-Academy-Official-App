@@ -32,6 +32,7 @@ import '../../core/widgets/raccourci_tactile.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../dossier/politique_controle.dart';
 import '../paiements_recus/rubrique_recevoir_paiements.dart';
 import 'declaration_choix.dart';
 import 'photo_publique.dart';
@@ -550,7 +551,8 @@ class _DeclarationState extends ConsumerState<_Declaration> {
   }
 }
 
-/// Le contrat et les accuses, en lecture seule et pour toujours.
+/// Le contrat et les accuses, en lecture seule et pour toujours, puis le
+/// lien vers la politique de controle des enseignants.
 ///
 /// Sans cette section, un enseignant valide ne peut plus les relire du tout :
 /// `deciderRedirection` ferme `/attente/*` des que le compte devient actif.
@@ -615,6 +617,15 @@ class _Contrat extends ConsumerWidget {
           ),
           _ => const Skeleton.liste(lignes: 2),
         },
+        // La politique de controle que le contrat fait « confirmer avoir
+        // recue », « disponible dans votre espace » (clause du contrat) : un
+        // texte fixe, lisible quel que soit l'etat de la lecture des
+        // acceptations.
+        Ecart.vSm,
+        LienFleche(
+          libelle: t.contrat.politique.lien,
+          onPress: () => unawaited(ouvrirPolitiqueControle(context)),
+        ),
       ],
     );
   }
