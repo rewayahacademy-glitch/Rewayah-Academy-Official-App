@@ -14,10 +14,10 @@ import '../../core/theme/app_typography.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/pressable.dart';
 
-/// Au-dela de ce grossissement du texte, les commandes du telephone passent
-/// l'icone au-dessus du libelle (maquette V8 M3) : trois libelles cote a cote
-/// ne tiennent plus sur 390 points.
-const double seuilTexteEmpile = 1.3;
+// Au-dela de ce grossissement, les commandes du telephone passent l'icone
+// au-dessus du libelle : trois libelles cote a cote ne tiennent plus sur 390
+// points. La borne vit dans le noyau, partagee (MA-HORSLIGNE-CLASSE-1).
+export '../../core/accessibilite/texte_sans_coupure.dart' show seuilTexteEmpile;
 
 /// Un point de garde pour l'arrondi des glyphes : au plancher lisible,
 /// [TexteSansCoupure] ne retire plus sa marge de deux points, le mot doit

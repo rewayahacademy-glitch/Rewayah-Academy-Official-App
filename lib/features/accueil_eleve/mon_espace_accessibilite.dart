@@ -17,6 +17,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../core/accessibilite/port_demande_presentation.dart';
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
@@ -126,7 +127,7 @@ class _MonEspaceAccessibiliteEtat extends State<MonEspaceAccessibilite> {
             dominante: true,
             // MA15 : a texte agrandi, l'avatar passe au-dessus du prenom, qui
             // prend toute la largeur (aucun mot coupe).
-            child: MediaQuery.textScalerOf(context).scale(1) > 1.3
+            child: MediaQuery.textScalerOf(context).scale(1) > seuilTexteEmpile
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[

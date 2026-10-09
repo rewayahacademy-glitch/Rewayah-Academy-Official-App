@@ -25,9 +25,11 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/accessibilite/port_accueil_accessibilite.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/suivi/service_suivi.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
@@ -38,6 +40,7 @@ import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
 import 'package:rewayah_academy/features/compte/aide_page.dart';
 import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
+import 'package:rewayah_academy/features/suivi_eleve/suivi_eleve_page.dart';
 
 import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../router/support_routeur.dart';
@@ -61,12 +64,30 @@ class _PortEchecPuisContenu implements PortAccueilAccessibilite {
   }
 }
 
+/// Une seance deja lue par Ma classe (MA-HORSLIGNE-CLASSE-1).
+Seance _seanceLue() {
+  final DateTime debut = DateTime.now().subtract(const Duration(days: 2));
+  return Seance(
+    id: 's-lue',
+    debut: debut,
+    fin: debut.add(const Duration(minutes: 45)),
+    statut: StatutSeance.terminee,
+    eleveId: 'eleve-1',
+    elevePrenom: 'Mariam',
+    eleveIdentifiant: 'STUD-000001',
+    enseignantId: 'ens-1',
+    enseignantPrenom: 'Ibrahim',
+    enseignantIdentifiant: 'TEACH-000001',
+  );
+}
+
 /// Monte l'application sur son vrai routeur, session eleve en [mode].
 Future<GoRouter> _monter(
   WidgetTester tester, {
   InterfaceMode mode = InterfaceMode.enfant,
   PortAccueilAccessibilite? port,
   bool horsLigne = false,
+  ServiceSuivi? suivi,
   List<Override> surcharges = const <Override>[],
   Size taille = const Size(390, 844),
   double echelle = 1,
@@ -81,6 +102,7 @@ Future<GoRouter> _monter(
       overrides: <Override>[
         ...surchargesRouteur(
           FausseSourceSession(sessionActive(AppRole.student, mode: mode)),
+          suivi: suivi,
         ),
         if (port != null)
           portAccueilAccessibiliteProvider.overrideWithValue(port),
@@ -338,7 +360,7 @@ void main() {
 
   group('DASH-MA-PROD-b : hors ligne, aucun bouton grise (D9)', () {
     testWidgets('chaque ActionPrincipale agit ; « Reessayer » relit le '
-        'reseau, puis « Voir ma classe » revient', (WidgetTester tester) async {
+        'reseau ; « Voir ma classe » reste', (WidgetTester tester) async {
       // Hors ligne a la premiere lecture du reseau, en ligne a la suivante.
       int lecturesReseau = 0;
       await _monter(
@@ -379,6 +401,127 @@ void main() {
       expect(reessayer, findsNothing);
       expect(find.byKey(AccueilAccessibilite.cleVoirClasse), findsOneWidget);
       _coranEtAideRestent();
+    });
+  });
+
+  group('MA-HORSLIGNE-CLASSE-1 : hors ligne, Ma classe reste atteignable', () {
+    // Contre-epreuve : sur l'ancien code, `CarteSession` masquait
+    // « Voir ma classe » des que l'emplacement proposait « Reessayer ».
+    testWidgets('« Voir ma classe » reste, a cote de « Reessayer », et mene '
+        'a Ma classe, bandeau hors ligne compris', (WidgetTester tester) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        horsLigne: true,
+        port: const PortAccueilAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.mariam,
+        ),
+      );
+      expect(find.text(t.reseau.horsLigne), findsOneWidget);
+      expect(
+        find.widgetWithText(ActionPrincipale, t.classe.entree.reessayer),
+        findsOneWidget,
+      );
+      final Finder voir = find.byKey(AccueilAccessibilite.cleVoirClasse);
+      expect(voir, findsOneWidget);
+      expect(tester.widget<ActionPrincipale>(voir).onPress, isNotNull);
+      verifierUnSeulBoutonPlein(tester);
+      await tester.ensureVisible(voir);
+      await tester.pumpAndSettle();
+      await tester.tap(voir);
+      await stabiliser(tester);
+      expect(lieu(routeur), Routes.eleveSuivi);
+      // Le bouton mene a la page Ma classe, sous le bandeau ; ce qu'elle
+      // montre (seances deja lues ou erreur honnete) est prouve ci-dessous.
+      expect(find.byType(SuiviElevePage), findsOneWidget);
+      expect(find.byType(OfflineBanner), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    // Decide par delegation le 09/10 : aucun cache neuf dans ce lot. Ma
+    // classe montre hors ligne les seances deja lues pendant la session ;
+    // sans lecture prealable, l'etat d'erreur et « Reessayer », jamais une
+    // impasse.
+    testWidgets('seances deja lues dans la session, puis hors ligne : '
+        '« Voir ma classe » mene a ces seances', (WidgetTester tester) async {
+      final StreamController<bool> reseau = StreamController<bool>();
+      addTearDown(reseau.close);
+      reseau.add(false);
+      final FauxServiceSuivi suivi = FauxServiceSuivi(
+        seancesRendues: <Seance>[_seanceLue()],
+      );
+      final GoRouter routeur = await _monter(
+        tester,
+        port: const PortAccueilAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.mariam,
+        ),
+        surcharges: <Override>[
+          horsLigneProvider.overrideWith((Ref _) => reseau.stream),
+        ],
+        suivi: suivi,
+      );
+      // En ligne : l'eleve a deja ouvert Ma classe, la seance est lue.
+      routeur.go(Routes.eleveSuivi);
+      await stabiliser(tester);
+      expect(find.byKey(const ValueKey<String>('s-lue')), findsOneWidget);
+      final int lecturesEnLigne = suivi.lectures;
+      expect(lecturesEnLigne, greaterThan(0));
+      routeur.go(Routes.eleve);
+      await stabiliser(tester);
+
+      // Le reseau tombe : toute nouvelle lecture echouerait.
+      suivi.erreurAJeter = StateError('mes_seances_v injoignable');
+      reseau.add(true);
+      await stabiliser(tester);
+      expect(find.text(t.reseau.horsLigne), findsOneWidget);
+      final Finder voir = find.byKey(AccueilAccessibilite.cleVoirClasse);
+      expect(voir, findsOneWidget);
+      await tester.ensureVisible(voir);
+      await stabiliser(tester);
+      await tester.tap(voir);
+      await stabiliser(tester);
+
+      expect(lieu(routeur), Routes.eleveSuivi);
+      expect(find.byType(OfflineBanner), findsOneWidget);
+      // Au moins une ligne de seance, celle deja lue.
+      expect(find.byKey(const ValueKey<String>('s-lue')), findsOneWidget);
+      expect(find.text(t.eleve.suivi.vide), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('hors ligne sans seance lue : Ma classe dit l erreur et '
+        'propose « Reessayer », pas d impasse', (WidgetTester tester) async {
+      final FauxServiceSuivi suivi = FauxServiceSuivi()
+        ..erreurAJeter = StateError('mes_seances_v injoignable');
+      final GoRouter routeur = await _monter(
+        tester,
+        horsLigne: true,
+        port: const PortAccueilAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.mariam,
+        ),
+        suivi: suivi,
+      );
+      final Finder voir = find.byKey(AccueilAccessibilite.cleVoirClasse);
+      await tester.ensureVisible(voir);
+      await stabiliser(tester);
+      await tester.tap(voir);
+      await stabiliser(tester);
+
+      expect(lieu(routeur), Routes.eleveSuivi);
+      expect(find.byType(OfflineBanner), findsOneWidget);
+      expect(find.text(t.eleve.suivi.erreur), findsOneWidget);
+      final Finder reessayer = find.descendant(
+        of: find.byType(SuiviElevePage),
+        matching: find.text(t.commun.reessayer),
+      );
+      expect(reessayer, findsOneWidget);
+      // « Reessayer » relance la lecture.
+      final int avant = suivi.lectures;
+      await tester.ensureVisible(reessayer);
+      await stabiliser(tester);
+      await tester.tap(reessayer);
+      await stabiliser(tester);
+      expect(suivi.lectures, greaterThan(avant));
+      expect(tester.takeException(), isNull);
     });
   });
 

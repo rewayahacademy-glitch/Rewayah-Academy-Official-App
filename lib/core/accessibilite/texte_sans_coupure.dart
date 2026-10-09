@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+/// Au-dela de ce grossissement du texte (130 %), une mise en page passe en
+/// colonne : icone au-dessus du libelle (maquette V8 M3), medaillon au-dessus
+/// du texte (`EtatSysteme`), trait d'union insecable de l'Accueil du Mode
+/// Accessibilite. Une seule borne pour tout le produit (MA-HORSLIGNE-CLASSE-1).
+const double seuilTexteEmpile = 1.3;
+
 /// Un texte dont **aucun mot n'est coupe** au milieu, meme a 200 %.
 ///
 /// La regle de tout libelle du produit (lecon 8, K-54, K-61) : il passe a la

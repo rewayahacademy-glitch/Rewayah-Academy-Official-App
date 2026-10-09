@@ -144,7 +144,7 @@ class SettingRow extends StatelessWidget {
             // (icone et titre, puis description et valeur pleine largeur,
             // puis le controle en fin) ; aucun mot n'est comprime ni coupe.
             if (controle != null &&
-                MediaQuery.textScalerOf(context).scale(1) > 1.3) {
+                MediaQuery.textScalerOf(context).scale(1) > seuilTexteEmpile) {
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -246,7 +246,7 @@ class SettingRow extends StatelessWidget {
   ) {
     final TextScaler echelle = MediaQuery.textScalerOf(context);
     // Un controle de largeur inconnue (pas a pas) : la valeur passe dessous.
-    if (echelle.scale(1) > 1.3) return true;
+    if (echelle.scale(1) > seuilTexteEmpile) return true;
     if (controle != null && largeurControle == null) return true;
     double mesure(String texte, TextStyle style) {
       final TextPainter p = TextPainter(

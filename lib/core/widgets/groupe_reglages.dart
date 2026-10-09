@@ -290,7 +290,7 @@ class _Ligne extends StatelessWidget {
     final Widget? marque = ligne.marque;
     final bool marqueDessous =
         marque != null &&
-        (MediaQuery.textScalerOf(context).scale(1) > 1.3 ||
+        (MediaQuery.textScalerOf(context).scale(1) > seuilTexteEmpile ||
             largeur < _largeurMarqueEnFin);
     return Row(
       children: <Widget>[
