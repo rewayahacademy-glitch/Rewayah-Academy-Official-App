@@ -9817,7 +9817,7 @@ class Traductions$enseignant$creneaux$fr {
 	// Translations
 
 	/// fr: '{jour} {heure} h'
-	String heureLibelle({required Object jour, required Object heure}) => '${jour} ${heure} h';
+	String heureLibelle({required Object jour, required Object heure}) => '${jour} ${heure} h';
 
 	/// fr: 'Vous n'avez proposé aucune heure. Sans créneau, aucune Classe ne peut vous être proposée.'
 	String get aucuneHeure => 'Vous n\'avez proposé aucune heure. Sans créneau, aucune Classe ne peut vous être proposée.';
@@ -19845,7 +19845,7 @@ extension on Traductions {
 			'enseignant.profil.enregistrer' => 'Enregistrer',
 			'enseignant.profil.enregistre' => 'Modification enregistrée',
 			'enseignant.profil.editionErreur' => 'La modification n\'a pas abouti. Réessayez dans un instant.',
-			'enseignant.creneaux.heureLibelle' => ({required Object jour, required Object heure}) => '${jour} ${heure} h',
+			'enseignant.creneaux.heureLibelle' => ({required Object jour, required Object heure}) => '${jour} ${heure} h',
 			'enseignant.creneaux.aucuneHeure' => 'Vous n\'avez proposé aucune heure. Sans créneau, aucune Classe ne peut vous être proposée.',
 			'enseignant.creneaux.heureEnregistree' => ({required Object heure}) => '${heure} enregistré',
 			'enseignant.creneaux.heureRetiree' => ({required Object heure}) => '${heure} retiré',

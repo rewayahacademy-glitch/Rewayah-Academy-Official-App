@@ -13,6 +13,7 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/creneaux/creneaux_page.dart';
+import 'package:rewayah_academy/features/creneaux/plages.dart';
 import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 import 'package:rewayah_academy/features/disponibilites/grille_semaine.dart';
 
@@ -353,7 +354,7 @@ void main() {
 
       // 1. Le conflit est visible AVANT le geste.
       expect(
-        find.text(t.enseignant.creneaux.heureEngagee(heures: 'jeudi 9 h')),
+        find.text(t.enseignant.creneaux.heureEngagee(heures: nommerHeure((jour: 4, heure: 9)))),
         findsOneWidget,
       );
 
@@ -369,7 +370,7 @@ void main() {
       expect(planning.retires.single.creneau.heure, 9);
       expect(
         find.textContaining(
-          t.enseignant.creneaux.seanceContinue(heures: 'jeudi 9 h'),
+          t.enseignant.creneaux.seanceContinue(heures: nommerHeure((jour: 4, heure: 9))),
         ),
         findsOneWidget,
       );

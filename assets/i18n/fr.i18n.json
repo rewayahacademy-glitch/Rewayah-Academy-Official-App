@@ -3523,7 +3523,7 @@
       "editionErreur": "La modification n'a pas abouti. Réessayez dans un instant."
     },
     "creneaux": {
-      "heureLibelle": "{jour} {heure} h",
+      "heureLibelle": "{jour} {heure}\u00a0h",
       "aucuneHeure": "Vous n'avez proposé aucune heure. Sans créneau, aucune Classe ne peut vous être proposée.",
       "heureEnregistree": "{heure} enregistré",
       "heureRetiree": "{heure} retiré",

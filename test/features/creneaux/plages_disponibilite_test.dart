@@ -28,6 +28,7 @@ import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/features/creneaux/creneaux_page.dart';
 import 'package:rewayah_academy/features/creneaux/feuille_plage.dart';
+import 'package:rewayah_academy/features/creneaux/plages.dart';
 import 'package:rewayah_academy/features/creneaux/plages_disponibilite.dart';
 import 'package:rewayah_academy/features/disponibilites/grille_semaine.dart';
 
@@ -246,11 +247,11 @@ void main() {
       await _monter(tester, planning);
 
       expect(
-        find.text(t.enseignant.creneaux.plageEngagee(heures: 'jeudi 9 h')),
+        find.text(t.enseignant.creneaux.plageEngagee(heures: nommerHeure((jour: 4, heure: 9)))),
         findsOneWidget,
       );
       expect(
-        find.text(t.enseignant.creneaux.heureEngagee(heures: 'jeudi 9 h')),
+        find.text(t.enseignant.creneaux.heureEngagee(heures: nommerHeure((jour: 4, heure: 9)))),
         findsOneWidget,
       );
     });
@@ -435,7 +436,7 @@ void main() {
 
       expect(planning.poses.length, 5);
       expect(
-        find.text(t.enseignant.creneaux.echecPartiel(heures: 'lundi 21 h')),
+        find.text(t.enseignant.creneaux.echecPartiel(heures: nommerHeure((jour: 1, heure: 21)))),
         findsOneWidget,
       );
       // La feuille reste ouverte ; la liste derriere montre ce qui est passe.
@@ -539,7 +540,7 @@ void main() {
       // La confirmation dit la consequence ; renoncer ne retire rien.
       expect(
         find.text(
-          t.enseignant.creneaux.confirmerRetraitConsequence(heures: 'jeudi 9 h'),
+          t.enseignant.creneaux.confirmerRetraitConsequence(heures: nommerHeure((jour: 4, heure: 9))),
         ),
         findsOneWidget,
       );
@@ -555,7 +556,7 @@ void main() {
       expect(planning.retires.length, 1);
       expect(
         find.textContaining(
-          t.enseignant.creneaux.seanceContinue(heures: 'jeudi 9 h'),
+          t.enseignant.creneaux.seanceContinue(heures: nommerHeure((jour: 4, heure: 9))),
         ),
         findsOneWidget,
       );
