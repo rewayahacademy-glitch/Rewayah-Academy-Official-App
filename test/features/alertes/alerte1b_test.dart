@@ -455,8 +455,13 @@ void main() {
     }
 
     for (final TextDirection sens in TextDirection.values) {
-      testWidgets('390x844 Interface guidee, ${sens.name} : le bouton ; '
-          'en standard, le champ reste', (WidgetTester tester) async {
+      // JONCTION-LIGNES-1 : la regle de COM-F-Q5, plus stricte, contient
+      // celle-ci : le champ n'est en ligne que si son indication y tient sur
+      // UNE ligne (jamais de barre doublee). A 390 avec la cloche, menu,
+      // cloche et compte ne lui laissent pas cette place, en standard non
+      // plus : le bouton ouvre le meme champ en feuille, aucun mot coupe.
+      testWidgets('390x844 Interface guidee et standard, ${sens.name} : le '
+          'bouton', (WidgetTester tester) async {
         await verifier(
           tester,
           _Cas('', const Size(390, 844), guidee: true, sens: sens),
@@ -465,7 +470,7 @@ void main() {
         await verifier(
           tester,
           _Cas('', const Size(390, 844), sens: sens),
-          champEnLigne: true,
+          champEnLigne: false,
         );
       });
     }

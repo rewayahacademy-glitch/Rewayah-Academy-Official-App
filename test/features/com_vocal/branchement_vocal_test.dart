@@ -157,14 +157,16 @@ void main() {
       // Decision R-28 : le micro est a cote d'« Envoyer », plus un lien
       // sous le champ.
       expect(find.byKey(ComposerVocal.cleEnregistrer), findsNothing);
+      // SUPERPOS-1 (JONCTION-LIGNES-1) : l'envoi est dans le champ, a son
+      // bord de fin ; le micro suit le champ, sur sa ligne.
       expect(
         tester.getTopLeft(find.byKey(FilDiscussion.cleMicro)).dy,
-        tester.getTopLeft(find.byKey(FilDiscussion.envoyerKey)).dy,
+        tester.getTopLeft(find.byKey(FilDiscussion.champKey)).dy,
       );
       expect(
-        tester.getTopRight(find.byKey(FilDiscussion.cleMicro)).dx,
-        lessThanOrEqualTo(
-          tester.getTopLeft(find.byKey(FilDiscussion.envoyerKey)).dx,
+        tester.getTopLeft(find.byKey(FilDiscussion.cleMicro)).dx,
+        greaterThanOrEqualTo(
+          tester.getTopRight(find.byKey(FilDiscussion.champKey)).dx,
         ),
       );
       await _enregistrerPuisArreter(tester, horloge);

@@ -668,9 +668,11 @@ void main() {
     // Decision R-28 : dans un fil, l'entree est le micro a cote
     // d'« Envoyer », plus le lien sous le champ.
     expect(find.byKey(ComposerVocal.cleEnregistrer), findsNothing);
+    // SUPERPOS-1 (JONCTION-LIGNES-1) : le micro suit le champ, qui porte
+    // l'envoi, sur sa ligne.
     expect(
       tester.getTopLeft(find.byKey(FilDiscussion.cleMicro)).dy,
-      tester.getTopLeft(find.byKey(FilDiscussion.envoyerKey)).dy,
+      tester.getTopLeft(find.byKey(FilDiscussion.champKey)).dy,
     );
     await _toucher(tester, FilDiscussion.cleMicro);
     await avancer(tester, banc.horloge, const Duration(seconds: 6));
