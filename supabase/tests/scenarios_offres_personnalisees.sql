@@ -3,6 +3,11 @@
 -- Rejoué après toutes les migrations sur une base jetable.
 BEGIN;
 
+INSERT INTO auth.users (id, email)
+SELECT ('f1490000-0000-0000-0000-' || lpad(g.n::text, 12, '0'))::uuid,
+       'f1-adulte-' || g.n::text || '@example.test'
+FROM generate_series(1, 7) AS g(n);
+
 INSERT INTO public.households (id, timezone)
 SELECT ('f1480000-0000-0000-0000-' || lpad(g.n::text, 12, '0'))::uuid,
        'Europe/Paris'
