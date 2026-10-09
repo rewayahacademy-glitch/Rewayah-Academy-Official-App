@@ -6,7 +6,11 @@ create role service_role nologin bypassrls;
 create role supabase_auth_admin nologin bypassrls;
 create schema auth;
 grant usage on schema auth to anon, authenticated;
-create table auth.users (id uuid primary key, email text);
+create table auth.users (
+  id uuid primary key,
+  email text,
+  email_confirmed_at timestamptz
+);
 
 create function auth.uid() returns uuid language sql stable as $auth_uid$
   select coalesce(
