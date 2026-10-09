@@ -196,10 +196,14 @@ void main() {
       );
       await tester.tap(commandes);
       await tester.pump();
-      expect(tester.widget<DeclencheurCommandes>(commandes).ouvert, isTrue);
+      // Revue du 09/10 (TB-5) : ouvertes, les Commandes remplacent leur
+      // declencheur (une seule entree « Commandes » visible) ; le panneau se
+      // dit par son titre et se ferme par sa « Reduire ».
+      expect(commandes, findsNothing);
+      expect(find.byKey(CommandesPedagogiques.cle), findsOneWidget);
       expect(
-        tester.getSemantics(commandes),
-        isSemantics(isSelected: true, isButton: true),
+        find.bySemanticsLabel(t.salle.seance.commandes.titre),
+        findsWidgets,
       );
       semantique.dispose();
     });

@@ -356,8 +356,8 @@
         "presenter": "Présenter",
         "revenir": "Revenir aux supports",
         "ouverture": "Ouverture du support…",
-        "echec": "Ce support ne peut pas être ouvert.",
-        "echecDetail": "Le fichier n'a pas pu être chargé. La classe garde le support actuel. Réessayez, ou revenez aux supports pour en choisir un autre."
+        "echec": "Fichier non ouvert.",
+        "echecDetail": "Le fichier de ce support n'a pas pu être chargé. Réessayez, ou revenez aux supports pour en choisir un autre."
       },
       "surface": {
         "aucunSupport": "Choisissez un support ou écrivez au tableau.",

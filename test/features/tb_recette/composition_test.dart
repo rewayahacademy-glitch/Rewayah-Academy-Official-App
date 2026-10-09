@@ -18,6 +18,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/capsule_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/chrome_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
 import 'package:rewayah_academy/features/salle_seance/composition_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_eleves.dart';
@@ -414,6 +415,78 @@ void main() {
       expect(find.byType(ZoneSupport), findsOneWidget);
       expect(find.text(t.salle.seance.quitterQuestion), findsNothing);
     });
+  });
+
+  // Revue du 09/10 (plan V2 §19.4.3, §6) : en focus, ne subsistent que le
+  // contenu, la capsule compacte, l'acces aux Commandes et la sortie. Mesure
+  // sur le rendu : l'en-tete n'est plus monte, la surface remonte, la capsule
+  // est dans la vue ; a la sortie, tout revient.
+  group('Focus : l\'en-tete se retire, la capsule reste', () {
+    final Finder chrome = find.byType(ChromeSeance);
+    final Finder titre = find.text(t.salle.seance.titre);
+    final Finder capsule = find.byKey(CapsuleSeance.cle);
+    for (final (Size taille, double texte) cas in <(Size, double)>[
+      (_bureau, 1),
+      (_bureau, 2),
+      (_tabletteLarge, 2),
+      (_tablettePortrait, 2),
+    ]) {
+      final (Size taille, double texte) = cas;
+      testWidgets('${taille.width.toInt()} x${texte.toInt()}', (
+        WidgetTester tester,
+      ) async {
+        await _monter(tester, taille: taille, texte: texte);
+        expect(chrome, findsOneWidget);
+        expect(titre, findsOneWidget);
+        final double hautAvant = _zone(tester).top;
+        // Commandes ouvertes d'office (CMD-01) : Focus y est. Amene au
+        // milieu du panneau (a x2, son bord bas passe sous la barre de
+        // l'appel).
+        await Scrollable.ensureVisible(tester.element(_focus), alignment: 0.5);
+        await tester.pump();
+        await tester.tap(_focus);
+        await _attendre(tester);
+        expect(tester.takeException(), isNull);
+        expect(_reduireDock, findsOneWidget, reason: 'en focus');
+        expect(chrome, findsNothing);
+        expect(titre, findsNothing);
+        expect(capsule, findsOneWidget);
+        final Rect vue = Offset.zero & taille;
+        final Rect laCapsule = tester.getRect(capsule);
+        expect(vue.contains(laCapsule.topLeft), isTrue);
+        expect(vue.contains(laCapsule.bottomRight), isTrue);
+        // La surface prend la hauteur rendue par l'en-tete.
+        final double hautFocus = _zone(tester).top;
+        expect(hautFocus, lessThan(hautAvant - 24));
+        // Le contenu commence sous la capsule, sans la chevaucher.
+        expect(_chevauche(laCapsule, _zone(tester)), isFalse);
+        // Acces Commandes et sortie du focus restent.
+        expect(_declencheur, findsOneWidget);
+        expect(_reduireDock, findsOneWidget);
+        await _taper(tester, _reduireDock);
+        expect(chrome, findsOneWidget);
+        expect(titre, findsOneWidget);
+        // L'en-tete revient au-dessus de la surface (a 1024 et 768 x2, les
+        // Commandes ne reviennent pas en volet : la rangee « Eleves »
+        // reprend sa place, ecart 1 de TB-5).
+        expect(_zone(tester).top, greaterThanOrEqualTo(hautAvant - 1));
+      });
+    }
+  });
+
+  // Revue du 09/10 : Commandes ouvertes en colonne, le declencheur
+  // « Commandes » s'efface (une seule entree visible) et revient a la
+  // fermeture.
+  testWidgets('1440 x1 : un seul « Commandes » visible a la fois', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester);
+    expect(_commandes, findsOneWidget);
+    expect(_declencheur, findsNothing);
+    expect(find.text(t.salle.seance.commandes.titre), findsOneWidget);
+    await _taper(tester, find.byKey(PanneauSeance.cleReduire));
+    expect(_commandes, findsNothing);
+    expect(_declencheur, findsOneWidget);
   });
 
   // K-07 : depuis la vraie coquille (/demo/salle, lien de la situation),

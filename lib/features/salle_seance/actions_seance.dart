@@ -7,8 +7,7 @@
 
 import 'package:flutter/foundation.dart';
 
-import '../../core/tc_bibliotheque/content_position.dart';
-import '../../core/tc_bibliotheque/library_resource.dart';
+import 'bibliotheque_seance.dart';
 import 'vue_seance.dart';
 
 /// Les outils d'enseignement (CLV-06), enseignant seulement.
@@ -53,13 +52,11 @@ class ActionsSeance {
 
   /// TB-8 (LIB-02, LIB-03) : « Presenter » l'apercu choisi dans la
   /// Bibliotheque en seance. Le futur se termine quand le support est
-  /// charge et active pour la classe ; il echoue sinon, et la classe garde
-  /// le support d'avant. `null` : l'ancien selecteur (SelecteurRessources).
-  final Future<void> Function(
-    LibraryResource ressource,
-    ContentPosition? position,
-  )?
-  onPresenter;
+  /// charge, avec son activation pour la classe, que la Bibliotheque
+  /// n'appelle que si l'enseignant n'a pas renonce entre-temps ; il echoue
+  /// sinon, et la classe garde le support d'avant ([PresenterSupport]).
+  /// `null` : l'ancien selecteur (SelecteurRessources).
+  final PresenterSupport? onPresenter;
 
   /// TB-3 (CTX-01, CTX-02) : l'avatar de la capsule deplie le contexte de
   /// l'enseignant, l'oeil le meme contexte a la section du controle ;

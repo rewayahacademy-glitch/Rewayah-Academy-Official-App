@@ -484,22 +484,33 @@ class _SalleDemoState extends State<SalleDemo> {
 
   /// TB-8 (LIB-02, LIB-03) : « Presenter ». Le chargement se verifie avant
   /// tout changement ; en demonstration, le cahier sans fichier echoue et la
-  /// classe garde le support d'avant. Rien n'est diffuse (BR-1).
-  Future<void> _presenter(LibraryResource ressource, ContentPosition? _) async {
+  /// classe garde le support d'avant. Le futur rend l'activation, que la
+  /// Bibliotheque n'appelle que si l'enseignant n'a pas renonce pendant le
+  /// chargement. Le support s'active a la page de sa position (ancrage page),
+  /// sinon a la premiere. Rien n'est diffuse (BR-1).
+  Future<VoidCallback> _presenter(
+    LibraryResource ressource,
+    ContentPosition? position,
+  ) async {
     // Le chargement : un tour de boucle, le temps que « Ouverture du
     // support... » se montre.
     await Future<void>(() {});
     if (ressource.id == DonneesSeanceDemo.idSupportIndisponible) {
       throw StateError('demonstration : fichier absent');
     }
-    if (!mounted) return;
-    setState(() {
-      _presente = DonneesSeanceDemo.pagePresentee(ressource);
-      _support = DonneesSeanceDemo.diapositiveDe(ressource.id) ?? _support;
-      _page = null;
-      _affichage = AffichagePartage.avecNotes;
-      _panneau = PanneauOuvert.aucun;
-    });
+    final int? page = position?.typeAncrage == TypeAncrage.page
+        ? position?.page
+        : null;
+    return () {
+      if (!mounted) return;
+      setState(() {
+        _presente = DonneesSeanceDemo.pagePresentee(ressource, page: page);
+        _support = DonneesSeanceDemo.diapositiveDe(ressource.id) ?? _support;
+        _page = page;
+        _affichage = AffichagePartage.avecNotes;
+        _panneau = PanneauOuvert.aucun;
+      });
+    };
   }
 
   /// « Ouvrir » (CLV-08) : le support affiche change, le panneau se ferme.

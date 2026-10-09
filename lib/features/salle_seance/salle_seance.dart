@@ -16,8 +16,6 @@ import '../../core/accessibilite/commandes_masquables.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/preferences/preferences_locales.dart';
-import '../../core/tc_bibliotheque/content_position.dart';
-import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
@@ -1032,9 +1030,15 @@ class _SalleEnseignant extends StatelessWidget {
 
   /// TB-4 : le declencheur « Commandes », rendu seulement si une entree du
   /// panneau a un rappel (UX_REVIEW_TB §3 bis).
+  ///
+  /// Commandes ouvertes, il s'efface : le panneau porte deja le titre
+  /// « Commandes » et sa « Reduire » (une seule entree visible, revue du
+  /// 09/10) ; il revient a la fermeture, ou le focus le retrouve.
   Widget? _declencheur() {
     final VoidCallback? basculer = actions.onCommandes;
-    if (basculer == null || !CommandesPedagogiques.aDesEntrees(vue, actions)) {
+    if (basculer == null ||
+        vue.panneau == PanneauOuvert.commandes ||
+        !CommandesPedagogiques.aDesEntrees(vue, actions)) {
       return null;
     }
     return DeclencheurCommandes(
@@ -1112,17 +1116,15 @@ class _SalleEnseignant extends StatelessWidget {
     // personnel puis « Presenter » ; sans rappel Presenter, l'ancien
     // selecteur (Classe Live jusqu'a BR-1).
     PanneauOuvert.ressources => switch (actions.onPresenter) {
-      final Future<void> Function(LibraryResource, ContentPosition?)
-      presenter =>
-        PanneauSeance(
-          titre: t.salle.seance.commandes.bibliotheque,
-          onFermer: actions.onBibliotheque,
-          forme: forme,
-          enfant: BibliothequeSeance(
-            onPresenter: presenter,
-            groupeId: vue.groupeId,
-          ),
+      final PresenterSupport presenter => PanneauSeance(
+        titre: t.salle.seance.commandes.bibliotheque,
+        onFermer: actions.onBibliotheque,
+        forme: forme,
+        enfant: BibliothequeSeance(
+          onPresenter: presenter,
+          groupeId: vue.groupeId,
         ),
+      ),
       null => PanneauSeance(
         titre: t.salle.seance.supports,
         onFermer: actions.onBibliotheque,
@@ -1168,12 +1170,18 @@ class _SalleEnseignant extends StatelessWidget {
   /// dans le panneau des Participants (TB-3).
   Widget _telephone(Widget support) {
     const double gouttiere = AppPage.gouttiereMobile;
-    final Widget tete = TeteSalleBornee(
-      children: <Widget>[
-        ChromeSeance(vue: vue, actions: actions, focusCapsule: focusCapsule),
-        BandeauSecours(vue: vue, actions: actions),
-      ],
-    );
+    final Widget tete = agrandi
+        ? _teteFocus()
+        : TeteSalleBornee(
+            children: <Widget>[
+              ChromeSeance(
+                vue: vue,
+                actions: actions,
+                focusCapsule: focusCapsule,
+              ),
+              BandeauSecours(vue: vue, actions: actions),
+            ],
+          );
     final Widget? panneau = composition.gauche != PlacePanneau.aucune
         ? _panneauEleves(FormePanneau.feuille)
         : _panneauDroit(FormePanneau.feuille);
@@ -1224,6 +1232,68 @@ class _SalleEnseignant extends StatelessWidget {
     // place qui lui manque a 320 x2 (reste de TB-4).
     final Widget? boutons = vue.voitCapsule ? null : _bouton(etire: true);
     final Widget? declencheur = _declencheur();
+    // TB-6 (revue du 09/10) : sans support, la phrase du §12 est l'unique
+    // consigne de l'ecran ; elle ne se rogne jamais. Sa hauteur est reservee
+    // a la surface d'abord, la tete prend ce qui reste (elle defile alors en
+    // fondu, TeteSalleBornee).
+    if (!agrandi) {
+      return LayoutBuilder(
+        builder: (BuildContext contexte, BoxConstraints c) {
+          final double reserve = hauteurMinimaleSurface(
+            contexte,
+            vue,
+            largeur: c.maxWidth - 2 * gouttiere,
+          );
+          if (reserve <= 0) {
+            return _pileTelephone(tete, boutons, support, declencheur);
+          }
+          return CustomMultiChildLayout(
+            delegate: _PlaceTelephone(
+              surfaceMinimale: reserve,
+              ecart: AppSpacing.sm,
+            ),
+            children: <Widget>[
+              LayoutId(id: _PieceTelephone.tete, child: tete),
+              if (boutons != null)
+                LayoutId(
+                  id: _PieceTelephone.boutons,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: gouttiere),
+                    child: boutons,
+                  ),
+                ),
+              LayoutId(
+                id: _PieceTelephone.surface,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: gouttiere),
+                  child: support,
+                ),
+              ),
+              if (declencheur != null)
+                LayoutId(
+                  id: _PieceTelephone.declencheur,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: gouttiere),
+                    child: Align(heightFactor: 1, child: declencheur),
+                  ),
+                ),
+            ],
+          );
+        },
+      );
+    }
+    return _pileTelephone(tete, boutons, support, declencheur);
+  }
+
+  /// La pile du telephone sans panneau : tete, rangee « Eleves », surface,
+  /// declencheur.
+  Widget _pileTelephone(
+    Widget tete,
+    Widget? boutons,
+    Widget support,
+    Widget? declencheur,
+  ) {
+    const double gouttiere = AppPage.gouttiereMobile;
     // Les ecarts entre les rangees se resserrent d'un palier, la place
     // revient au support (image mobile, enseignant).
     return Column(
@@ -1366,7 +1436,10 @@ class _SalleEnseignant extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        if (desktop) ...<Widget>[
+        // TB-5 (plan V2 §19.4.3, §6 « capsule minimale ») : en focus, l'en-tete
+        // se retire comme chez l'eleve ; restent la capsule compacte et l'etat
+        // critique.
+        if (agrandi) ...<Widget>[_teteFocus()] else if (desktop) ...<Widget>[
           ChromeSeance(vue: vue, actions: actions, focusCapsule: focusCapsule),
           BandeauSecours(
             vue: vue,
@@ -1391,6 +1464,38 @@ class _SalleEnseignant extends StatelessWidget {
     );
   }
 
+  /// La cle de la tete du focus (capsule compacte et etat critique).
+  static const Key cleTeteFocus = ValueKey<String>('tete-focus');
+
+  /// TB-5 (plan V2 §19.4.3) : en focus, ne subsistent que le contenu, la
+  /// capsule compacte, l'acces aux Commandes et la sortie du focus (barre de
+  /// l'appel). Ni titre, ni sous-titre, ni mention, ni coin de l'en-tete ;
+  /// l'etat critique (reconnexion, echec) reste visible (CL-7 §2.7).
+  Widget _teteFocus() => Column(
+    key: cleTeteFocus,
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    mainAxisSize: MainAxisSize.min,
+    children: <Widget>[
+      Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(
+          AppPage.gouttiereMobile,
+          AppSpacing.sm,
+          AppPage.gouttiereMobile,
+          AppSpacing.sm,
+        ),
+        child: Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: CapsuleSeance(
+            vue: vue,
+            actions: actions,
+            focusAvatar: focusCapsule,
+          ),
+        ),
+      ),
+      BandeauSecours(vue: vue, actions: actions, espaceApres: AppSpacing.sm),
+    ],
+  );
+
   /// Le declencheur « Commandes » sous le support, au bord de fin (plan V2
   /// §4.2 : « bord droit de la surface ») ; la barre de l'appel est posee
   /// par-dessus, plus bas (TB-2).
@@ -1410,6 +1515,69 @@ class _SalleEnseignant extends StatelessWidget {
       ],
     );
   }
+}
+
+/// Les pieces de la salle du telephone sans panneau.
+enum _PieceTelephone { tete, boutons, surface, declencheur }
+
+/// TB-6 (revue du 09/10) : la pile du telephone quand la surface porte la
+/// phrase du §12. Comme la colonne (tete, rangee « Eleves », surface,
+/// declencheur, ecarts de [ecart]), mais la surface garde au moins
+/// [surfaceMinimale] : la tete, deja bornee a 55 % de l'ecran, cede d'abord
+/// sa hauteur (elle defile en elle-meme, en fondu).
+class _PlaceTelephone extends MultiChildLayoutDelegate {
+  _PlaceTelephone({required this.surfaceMinimale, required this.ecart});
+
+  final double surfaceMinimale;
+  final double ecart;
+
+  @override
+  void performLayout(Size size) {
+    final double l = size.width;
+    final BoxConstraints rangee = BoxConstraints(
+      minWidth: l,
+      maxWidth: l,
+      maxHeight: size.height,
+    );
+    final double hBoutons = hasChild(_PieceTelephone.boutons)
+        ? layoutChild(_PieceTelephone.boutons, rangee).height + ecart
+        : 0;
+    final double hDeclencheur = hasChild(_PieceTelephone.declencheur)
+        ? layoutChild(_PieceTelephone.declencheur, rangee).height + ecart
+        : 0;
+    final double resteTete = math.max(
+      0,
+      size.height - hBoutons - hDeclencheur - ecart - surfaceMinimale,
+    );
+    final double hTete = layoutChild(
+      _PieceTelephone.tete,
+      BoxConstraints(minWidth: l, maxWidth: l, maxHeight: resteTete),
+    ).height;
+    final double hSurface = math.max(
+      0,
+      size.height - hTete - ecart - hBoutons - hDeclencheur,
+    );
+    layoutChild(
+      _PieceTelephone.surface,
+      BoxConstraints.tightFor(width: l, height: hSurface),
+    );
+    double y = 0;
+    positionChild(_PieceTelephone.tete, Offset(0, y));
+    y += hTete + ecart;
+    if (hasChild(_PieceTelephone.boutons)) {
+      positionChild(_PieceTelephone.boutons, Offset(0, y));
+      y += hBoutons;
+    }
+    positionChild(_PieceTelephone.surface, Offset(0, y));
+    y += hSurface + ecart;
+    if (hasChild(_PieceTelephone.declencheur)) {
+      positionChild(_PieceTelephone.declencheur, Offset(0, y));
+    }
+  }
+
+  @override
+  bool shouldRelayout(_PlaceTelephone ancien) =>
+      ancien.surfaceMinimale != surfaceMinimale || ancien.ecart != ecart;
 }
 
 /// « Eleves 1/3 › » : enseignant seulement. TB-5 : colonne des Participants
@@ -1626,7 +1794,7 @@ class _BarreBasse extends StatelessWidget {
 /// 200 %, sur un ecran etroit, cette tete peut depasser la place. Elle
 /// defile alors en elle-meme, rien n'est rogne, et le support et le dock
 /// gardent leur place. Sinon, rien ne change (hauteur naturelle).
-class TeteSalleBornee extends StatelessWidget {
+class TeteSalleBornee extends StatefulWidget {
   /// Cree la tete.
   const TeteSalleBornee({required this.children, super.key});
 
@@ -1638,23 +1806,87 @@ class TeteSalleBornee extends StatelessWidget {
   /// La cle du defilement de la tete.
   static const Key defilementKey = ValueKey<String>('tete-salle-defile');
 
+  /// La cle du fondu pose au bas de la tete quand elle defile.
+  static const Key cleFondu = ValueKey<String>('tete-salle-fondu');
+
   /// L'en-tete, le bandeau, l'appel.
   final List<Widget> children;
 
   @override
-  Widget build(BuildContext context) => ConstrainedBox(
-    constraints: BoxConstraints(
-      maxHeight: MediaQuery.sizeOf(context).height * part,
-    ),
-    child: SingleChildScrollView(
-      key: defilementKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: children,
+  State<TeteSalleBornee> createState() => _TeteSalleBorneeState();
+}
+
+class _TeteSalleBorneeState extends State<TeteSalleBornee> {
+  /// La tete a encore du contenu sous son bord bas.
+  bool _suite = false;
+
+  /// Le defilement garde sa position quand le fondu se pose ou se retire.
+  final GlobalKey _cleDefile = GlobalKey(debugLabel: 'tete-salle');
+
+  bool _mesurer(ScrollMetricsNotification n) {
+    _suivre(n.metrics);
+    return false;
+  }
+
+  bool _defiler(ScrollUpdateNotification n) {
+    _suivre(n.metrics);
+    return false;
+  }
+
+  void _suivre(ScrollMetrics m) {
+    final bool suite = m.extentAfter > 0.5;
+    if (suite != _suite) setState(() => _suite = suite);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget defile = KeyedSubtree(
+      key: _cleDefile,
+      child: SingleChildScrollView(
+        key: TeteSalleBornee.defilementKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: widget.children,
+        ),
       ),
-    ),
-  );
+    );
+    // Revue du 09/10 : quand la tete ne tient pas (texte a 200 %, ecran
+    // etroit, place laissee a la phrase du §12), son bas s'efface en fondu :
+    // une ligne coupee se lit comme une suite a faire defiler, jamais comme
+    // un texte rogne.
+    final Color fond = AppPalette.of(context).surfaceCanvas.background;
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * TeteSalleBornee.part,
+      ),
+      child: NotificationListener<ScrollUpdateNotification>(
+        onNotification: _defiler,
+        child: NotificationListener<ScrollMetricsNotification>(
+          onNotification: _mesurer,
+          child: !_suite
+              ? defile
+              : ShaderMask(
+                  key: TeteSalleBornee.cleFondu,
+                  blendMode: BlendMode.dstIn,
+                  shaderCallback: (Rect r) => LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    stops: <double>[
+                      if (r.height <= 0)
+                        0
+                      else
+                        math.max(0, 1 - AppSpacing.xxxl / r.height),
+                      1,
+                    ],
+                    colors: <Color>[fond, fond.withValues(alpha: 0)],
+                  ).createShader(r),
+                  child: defile,
+                ),
+        ),
+      ),
+    );
+  }
 }
 
 class BandeauSecours extends StatelessWidget {

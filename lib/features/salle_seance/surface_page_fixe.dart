@@ -11,13 +11,17 @@
 // traits eux-memes arrivent avec TB-7a (CoucheAnnotation) ; ici, la place
 // et la geometrie.
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
+import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/theme/app_elevation.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_theme.dart';
 import 'vue_seance.dart';
 
 /// Le rectangle de la page dans sa boite : `BoxFit.contain`, centre (plan
@@ -61,6 +65,30 @@ class SurfacePageFixe extends StatelessWidget {
   /// La cle de la phrase du tableau libre (enseignant).
   static const Key cleConsigne = ValueKey<String>('surface-consigne');
 
+  /// La hauteur de la phrase du §12 et de sa marge dans une surface de
+  /// largeur [largeur], a l'echelle du texte de l'appareil : en dessous, la
+  /// phrase serait rognee (revue du 09/10, 320 x2). Le style est celui de la
+  /// carte, toujours claire (meme theme que [ZoneSupport]).
+  static double hauteurConsigne(BuildContext context, double largeur) {
+    final ThemeData clair = AppTheme.pour(
+      InterfaceMode.standard,
+      Brightness.light,
+    );
+    final TextPainter peintre = TextPainter(
+      text: TextSpan(
+        text: t.salle.seance.surface.aucunSupport,
+        style: DefaultTextStyle.of(context).style
+            .merge(clair.textTheme.bodyLarge),
+      ),
+      textAlign: TextAlign.center,
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+    )..layout(maxWidth: math.max(0, largeur - 2 * _margeConsigne));
+    final double hauteur = peintre.height;
+    peintre.dispose();
+    return hauteur + 2 * _margeConsigne;
+  }
+
   @override
   Widget build(BuildContext context) {
     final SupportPageFixe? page = vue.supportPresente;
@@ -73,7 +101,7 @@ class SurfacePageFixe extends StatelessWidget {
         surface == VueSurface.supportSeul ||
         surface == VueSurface.supportAvecNotes;
     final bool notesVisibles = surface != VueSurface.supportSeul;
-    final bool consigne = libre && vue.role == RoleSeance.enseignant;
+    final bool consigne = libre && vue.voitConsigneTableauLibre;
     return LayoutBuilder(
       builder: (BuildContext _, BoxConstraints c) {
         final Rect rect = rectanglePage(ratio: ratio, boite: c.biggest);
@@ -119,15 +147,12 @@ class SurfacePageFixe extends StatelessWidget {
                 Positioned.fill(
                   child: Center(
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(AppSpacing.lg),
+                      padding: const EdgeInsets.all(_margeConsigne),
                       child: Text(
                         t.salle.seance.surface.aucunSupport,
                         key: cleConsigne,
                         textAlign: TextAlign.center,
-                        style: AppPalette.of(context).inkMuted.applyTo(
-                          Theme.of(context).textTheme.bodyLarge ??
-                              const TextStyle(),
-                        ),
+                        style: _styleConsigne(context),
                       ),
                     ),
                   ),
@@ -139,6 +164,13 @@ class SurfacePageFixe extends StatelessWidget {
     );
   }
 }
+
+/// La marge autour de la phrase du §12.
+const double _margeConsigne = AppSpacing.lg;
+
+TextStyle _styleConsigne(BuildContext context) =>
+    AppPalette.of(context).inkMuted
+        .applyTo(Theme.of(context).textTheme.bodyLarge ?? const TextStyle());
 
 /// Sans donnee de ratio : celui d'une page A4 en portrait.
 const double _ratioParDefaut = 1240 / 1754;

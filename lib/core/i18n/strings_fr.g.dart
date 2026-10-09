@@ -11559,11 +11559,11 @@ class Traductions$salle$seance$bibliotheque$fr {
 	/// fr: 'Ouverture du support…'
 	String get ouverture => 'Ouverture du support…';
 
-	/// fr: 'Ce support ne peut pas être ouvert.'
-	String get echec => 'Ce support ne peut pas être ouvert.';
+	/// fr: 'Fichier non ouvert.'
+	String get echec => 'Fichier non ouvert.';
 
-	/// fr: 'Le fichier n'a pas pu être chargé. La classe garde le support actuel. Réessayez, ou revenez aux supports pour en choisir un autre.'
-	String get echecDetail => 'Le fichier n\'a pas pu être chargé. La classe garde le support actuel. Réessayez, ou revenez aux supports pour en choisir un autre.';
+	/// fr: 'Le fichier de ce support n'a pas pu être chargé. Réessayez, ou revenez aux supports pour en choisir un autre.'
+	String get echecDetail => 'Le fichier de ce support n\'a pas pu être chargé. Réessayez, ou revenez aux supports pour en choisir un autre.';
 }
 
 // Path: salle.seance.surface
@@ -15998,8 +15998,8 @@ extension on Traductions {
 			'salle.seance.bibliotheque.presenter' => 'Présenter',
 			'salle.seance.bibliotheque.revenir' => 'Revenir aux supports',
 			'salle.seance.bibliotheque.ouverture' => 'Ouverture du support…',
-			'salle.seance.bibliotheque.echec' => 'Ce support ne peut pas être ouvert.',
-			'salle.seance.bibliotheque.echecDetail' => 'Le fichier n\'a pas pu être chargé. La classe garde le support actuel. Réessayez, ou revenez aux supports pour en choisir un autre.',
+			'salle.seance.bibliotheque.echec' => 'Fichier non ouvert.',
+			'salle.seance.bibliotheque.echecDetail' => 'Le fichier de ce support n\'a pas pu être chargé. Réessayez, ou revenez aux supports pour en choisir un autre.',
 			'salle.seance.surface.aucunSupport' => 'Choisissez un support ou écrivez au tableau.',
 			'salle.seance.surface.page' => ({required Object titre, required Object page, required Object pages}) => '${titre}, page ${page} sur ${pages}',
 			'salle.seance.surface.supportMasque' => 'Tableau, le support est masqué',

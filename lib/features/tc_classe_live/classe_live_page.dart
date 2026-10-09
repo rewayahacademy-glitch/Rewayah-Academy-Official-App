@@ -413,6 +413,11 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
     final bool cameraOuverte = salle.moi?.camera ?? false;
     final VoidCallback? noter = contexte.onNoter;
     final VoidCallback? signaler = contexte.onSignaler;
+    // TB-5 (revue du 09/10) : sans support, rien a agrandir ; le focus
+    // tombe avec le support (fin du partage), sinon un nouveau support
+    // rouvrirait la salle en focus et le prochain appui inverserait le sens.
+    // Etat local remis a zero pendant la construction : aucun autre rendu.
+    if (vue.support == null) _agrandi = false;
     final bool rendSupport =
         contexte.support != null ||
         (contexte.supportActifId != null &&
