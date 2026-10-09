@@ -261,8 +261,9 @@ void main() {
         WidgetTester tester,
       ) async {
         await _jusquAuRecapitulatif(tester, langue, interface);
+        // En arabe, la phrase francaise est isolee (COUPE-MOTS-3b).
         expect(
-          find.text(t.controleur.observation.questionRecap),
+          find.textContaining(t.controleur.observation.questionRecap),
           findsOneWidget,
         );
         verifierEcranSansMotCoupe(tester);

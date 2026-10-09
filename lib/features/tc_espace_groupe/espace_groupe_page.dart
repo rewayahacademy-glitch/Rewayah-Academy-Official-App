@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
@@ -615,10 +616,15 @@ class IdentiteGroupe extends StatelessWidget {
       spacing: AppSpacing.sm,
       runSpacing: AppSpacing.sm,
       children: <Widget>[
+        // COUPE-MOTS-3b : « 3 élèves sur 6 places », jamais « élèves sur 6
+        // places 3 » dans l'interface arabe.
         StatusPill(
-          libelle: LibellesGroupe.capacitePhrase(
-            membres: groupe.nombreMembres,
-            seuil: groupe.seuilMax,
+          libelle: isolerSiAutreSens(
+            LibellesGroupe.capacitePhrase(
+              membres: groupe.nombreMembres,
+              seuil: groupe.seuilMax,
+            ),
+            Directionality.of(context),
           ),
           ton: groupe.complet ? TonEtat.avertissement : TonEtat.neutre,
         ),
