@@ -55,7 +55,7 @@ AS $function$
     p.created_at asc;
 $function$;
 
-CREATE OR REPLACE FUNCTION public.creer_groupe(p_teacher_profile_id uuid, p_type_public text, p_libelle text, p_weekday smallint, p_hour_local smallint, p_seuil_max smallint DEFAULT NULL::smallint, p_timezone_iana text DEFAULT NULL::text, p_couleur_jeton smallint DEFAULT NULL::smallint)
+CREATE OR REPLACE FUNCTION public.creer_groupe(p_teacher_profile_id uuid, p_type_public text, p_libelle text, p_weekday smallint, p_hour_local smallint, p_seuil_max smallint, p_timezone_iana text DEFAULT NULL::text, p_couleur_jeton smallint DEFAULT NULL::smallint)
  RETURNS uuid
  LANGUAGE plpgsql
  SECURITY DEFINER
