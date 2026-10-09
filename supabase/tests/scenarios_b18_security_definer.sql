@@ -32,12 +32,17 @@ begin
   exception when raise_exception then
     if sqlerrm <> 'creation de groupe reservee a l''administration' then raise; end if;
   end;
-  begin
-    perform public.creer_groupe(null::uuid, null::text, null::text, null::smallint, null::smallint, null::smallint);
-    raise exception 'B-18: short creer_groupe overload accepted missing claims';
-  exception when raise_exception then
-    if sqlerrm <> 'creation de groupe reservee a l''administration' then raise; end if;
-  end;
+  -- PostgreSQL ne peut pas résoudre l'appel à 6 arguments: la surcharge
+  -- longue accepte aussi ces arguments grâce à ses deux paramètres DEFAULT.
+  -- Vérifie donc la garde sur la signature courte exacte dans pg_proc.
+  if position(
+       'if not coalesce(public.app_role() = ''admin'' and public.app_account_valid(), false)'
+       in pg_catalog.pg_get_functiondef(
+         'public.creer_groupe(uuid,text,text,smallint,smallint,smallint)'::regprocedure
+       )
+     ) = 0 then
+    raise exception 'B-18: short creer_groupe overload lacks the admin guard';
+  end if;
   begin
     perform public.modifier_groupe(null::uuid, null::text, null::smallint, null::smallint, null::smallint, null::text, null::smallint);
     raise exception 'B-18: long modifier_groupe overload accepted missing claims';
