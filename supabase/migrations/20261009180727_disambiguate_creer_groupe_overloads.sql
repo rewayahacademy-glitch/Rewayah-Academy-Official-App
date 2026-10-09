@@ -1,7 +1,12 @@
--- 0045: disambiguate the six-argument creer_groupe overloads.
--- Keep the short signature as the unique six-argument API. The extended
--- signature requires p_seuil_max; timezone and token color remain optional.
-CREATE OR REPLACE FUNCTION public.creer_groupe(p_teacher_profile_id uuid, p_type_public text, p_libelle text, p_weekday smallint, p_hour_local smallint, p_seuil_max smallint, p_timezone_iana text DEFAULT NULL::text, p_couleur_jeton smallint DEFAULT NULL::smallint)
+-- 0045: keep the six-argument creer_groupe overload unambiguous.
+-- 0044 is already present on STAGING, so this additive migration replaces only
+-- the extended overload. PostgreSQL cannot remove argument defaults with
+-- CREATE OR REPLACE; dropping the exact signature is required. Keep timezone
+-- required (color remains optional) so calls with six arguments resolve to
+-- the short overload. Callers choosing the extended overload pass 7 or 8 args.
+DROP FUNCTION public.creer_groupe(uuid,text,text,smallint,smallint,smallint,text,smallint);
+
+CREATE FUNCTION public.creer_groupe(p_teacher_profile_id uuid, p_type_public text, p_libelle text, p_weekday smallint, p_hour_local smallint, p_seuil_max smallint, p_timezone_iana text, p_couleur_jeton smallint DEFAULT NULL::smallint)
  RETURNS uuid
  LANGUAGE plpgsql
  SECURITY DEFINER
