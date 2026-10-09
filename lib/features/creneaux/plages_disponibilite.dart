@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -254,8 +256,8 @@ class _ListePlages extends StatelessWidget {
   final void Function(Plage plage)? onToucher;
 
   /// Ce que la ligne pose autour des colonnes : retrait de debut (16), ecart
-  /// apres la tete (12), ecart et chevron (8 + 20), retrait de fin (16), et
-  /// le filet de la carte.
+  /// minimal entre le libelle et la suite de la ligne (12), ecart et chevron
+  /// (8 + 20), retrait de fin (16), et le filet de la carte.
   static const double _fixes =
       AppSpacing.lg +
       AppSpacing.md +
@@ -343,24 +345,22 @@ class _ListePlages extends StatelessWidget {
     // textes, « Lundi, de 17 h, a 23 h », une seule fois.
 
     if (colonnes) {
+      // DISPO-1b : les trois colonnes tiennent dans le CORPS de la ligne,
+      // sans tete de ligne (`meneur`) : le filet du groupe court ainsi sous
+      // le jour, « de » et « a », comme sur les autres listes a filets. Le
+      // jour est le libelle ; « de » et « a » forment la suite de la ligne,
+      // calee a la largeur de jour mesuree pour que « de » commence au meme
+      // bord sur chaque ligne.
       return LigneRubrique(
-        // Les deux premieres colonnes, a largeur commune mesuree : « de »
-        // commence au meme bord sur chaque ligne, quel que soit le jour.
-        meneur: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            SizedBox(
-              width: jour,
-              child: Text(nom, style: style, softWrap: false),
-            ),
-            const SizedBox(width: _gouttiere),
-            SizedBox(
-              width: de,
-              child: Text(debut, style: style, softWrap: false),
-            ),
-          ],
+        libelle: nom,
+        pastille: _SuiteColonnes(
+          jour: jour,
+          de: de,
+          debut: debut,
+          fin: fin,
+          style: style,
         ),
-        libelle: fin,
+        pastilleSousLibelle: false,
         legende: conflit,
         onPress: onPress,
       );
@@ -371,4 +371,47 @@ class _ListePlages extends StatelessWidget {
       onPress: onPress,
     );
   }
+}
+
+/// « de 17 h | a 23 h » : la suite d'une ligne en colonnes, apres le jour.
+///
+/// La ligne du groupe range le libelle et cette suite aux deux bords de sa
+/// largeur (`Wrap`, `spaceBetween`). La suite prend donc toute la largeur
+/// moins la colonne du jour et la gouttiere : elle commence au meme bord sur
+/// chaque ligne, quel que soit le jour, et « a » aussi.
+class _SuiteColonnes extends StatelessWidget {
+  const _SuiteColonnes({
+    required this.jour,
+    required this.de,
+    required this.debut,
+    required this.fin,
+    required this.style,
+  });
+
+  /// Largeur mesuree de la colonne du jour (le plus long des jours listes).
+  final double jour;
+
+  /// Largeur mesuree de la colonne « de ».
+  final double de;
+
+  final String debut;
+  final String fin;
+  final TextStyle style;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (BuildContext context, BoxConstraints c) => SizedBox(
+      width: math.max(0, c.maxWidth - jour - _ListePlages._gouttiere),
+      child: Row(
+        children: <Widget>[
+          SizedBox(
+            width: de,
+            child: Text(debut, style: style, softWrap: false),
+          ),
+          const SizedBox(width: _ListePlages._gouttiere),
+          Flexible(child: Text(fin, style: style, softWrap: false)),
+        ],
+      ),
+    ),
+  );
 }

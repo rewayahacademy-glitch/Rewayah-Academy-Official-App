@@ -217,6 +217,64 @@ void main() {
       ]);
     });
 
+    // DISPO-1b : en colonnes, le filet entre deux lignes court sous les
+    // trois colonnes (jour, « de », « a »), comme sur les autres listes a
+    // filets : il commence au bord du jour, pas a la colonne « a ».
+    for (final double largeur in <double>[800, 1440]) {
+      testWidgets('colonnes a $largeur : le filet commence sous le jour', (
+        WidgetTester tester,
+      ) async {
+        final FauxServicePlanning planning = FauxServicePlanning()
+          ..creneaux[_monId] = <Creneau>[
+            ..._plage(1, 17, 23),
+            ..._plage(3, 9, 11),
+          ];
+        await _monter(tester, planning, vue: Size(largeur, 1000));
+
+        // Le filet de ligne : une bordure du BAS seulement (la carte, elle,
+        // a un contour sur ses quatre cotes).
+        bool filetDeLigne(Widget w) {
+          if (w is! DecoratedBox || w.decoration is! BoxDecoration) {
+            return false;
+          }
+          final BoxBorder? bord = (w.decoration as BoxDecoration).border;
+          return bord is Border &&
+              bord.bottom.style != BorderStyle.none &&
+              bord.top.style == BorderStyle.none;
+        }
+
+        final Finder filet = find.ancestor(
+          of: find.text('Lundi'),
+          matching: find.byWidgetPredicate(filetDeLigne),
+        );
+        // Le jour, « de » et « a » sont tous au-dessus du filet de la ligne.
+        expect(filet, findsOneWidget);
+        for (final String texte in <String>[_de(17), _a(23)]) {
+          expect(
+            find.descendant(of: filet, matching: find.text(texte)),
+            findsOneWidget,
+          );
+        }
+        expect(
+          tester.getTopLeft(filet).dx,
+          tester.getTopLeft(find.text('Lundi')).dx,
+        );
+        // Les colonnes restent alignees d'une ligne a l'autre.
+        expect(
+          tester.getTopLeft(find.text(_de(17))).dx,
+          tester.getTopLeft(find.text(_de(9))).dx,
+        );
+        expect(
+          tester.getTopLeft(find.text(_a(23))).dx,
+          tester.getTopLeft(find.text(_a(11))).dx,
+        );
+        expect(
+          tester.getTopLeft(find.text(_de(17))).dx,
+          greaterThan(tester.getTopRight(find.text('Mercredi')).dx),
+        );
+      });
+    }
+
     testWidgets('une plage qui finit a minuit le dit', (
       WidgetTester tester,
     ) async {
