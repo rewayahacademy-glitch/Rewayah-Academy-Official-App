@@ -262,6 +262,10 @@ BEGIN
     RAISE EXCEPTION 'F1 heures de regroupement incorrectes: %', v_heures;
   END IF;
 
+  RAISE NOTICE 'C-12 fixture: selected %, live groups %',
+    v_regroupement,
+    (SELECT coalesce(string_agg(r.regroupement_id || ':' || r.pret::text, ','), 'none')
+       FROM public.regroupements_demandes_horaires_admin() r);
   v_groupe := public.creer_classe_depuis_regroupement(
     v_regroupement, 'c1200000-0000-0000-0000-000000000001', 'Classe F1 C-12'
   );
