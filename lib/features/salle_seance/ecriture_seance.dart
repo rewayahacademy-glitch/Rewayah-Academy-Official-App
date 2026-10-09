@@ -35,6 +35,7 @@ import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/controle_segmente.dart';
+import '../../core/widgets/filter_pill.dart';
 import '../tc_dock/barre_stylet.dart';
 import 'vue_seance.dart';
 
@@ -146,23 +147,27 @@ class EcritureSeance extends ConsumerWidget {
           _Option(
             titre: t.salle.seance.ecriture.couleur,
             aide: t.salle.seance.ecriture.couleurAide,
-            choix: ControleSegmente<IntentionPedagogique>(
+            // Une pilule par couleur (pastille et intention) : elles passent
+            // a la ligne plutot que de couper les mots.
+            choix: Wrap(
               key: cleCouleur,
-              rectangle: true,
-              segments: <Segment<IntentionPedagogique>>[
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.sm,
+              children: <Widget>[
                 for (final IntentionPedagogique i in couleursEcriture)
-                  Segment<IntentionPedagogique>(
-                    valeur: i,
+                  FilterPill(
                     libelle: libelleIntentionPedagogique(i),
+                    retenue:
+                        i ==
+                        (couleursEcriture.contains(etat.intention)
+                            ? etat.intention
+                            : couleursEcriture.first),
                     apercu: _Pastille(
                       encre: CouleurIntention.encre(palette, i).encre,
                     ),
+                    onPress: () => controleur.choisirIntention(i),
                   ),
               ],
-              valeur: couleursEcriture.contains(etat.intention)
-                  ? etat.intention
-                  : couleursEcriture.first,
-              onChange: controleur.choisirIntention,
             ),
           ),
           Ecart.vLg,

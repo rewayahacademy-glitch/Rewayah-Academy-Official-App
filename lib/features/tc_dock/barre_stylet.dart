@@ -8,6 +8,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/tc_outils/annotation_layer.dart';
 import '../../core/tc_outils/etat_outils.dart';
 import '../../core/tc_outils/libelles_outils.dart';
+import '../../core/theme/app_contour.dart';
 import '../../core/theme/app_elevation.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
@@ -90,6 +91,12 @@ class BarreStylet extends ConsumerWidget {
     final AppPalette palette = AppPalette.of(context);
     final EtatOutils etat = ref.watch(etatOutilsProvider);
     final ControleurOutils controleur = ref.read(etatOutilsProvider.notifier);
+    // Texte agrandi (plus de 130 %) : l'icone seule, le mot en infobulle et
+    // pour le lecteur d'ecran (comme les tuiles d'outils), plutot qu'une
+    // palette qui mangerait la page au telephone.
+    final bool mots =
+        MediaQuery.textScalerOf(context).scale(1) <=
+        AppContour.seuilTexteAgrandi;
 
     final List<Widget> boutons = <Widget>[
       if (compacte)
@@ -97,7 +104,7 @@ class BarreStylet extends ConsumerWidget {
           key: cleOutilActif,
           icone: _icone(etat.outilTrait),
           libelle: libelleOutilTrait(etat.outilTrait),
-          avecLibelle: true,
+          avecLibelle: mots,
           retenu: true,
           onPress: onOutilActif,
         )
@@ -107,7 +114,7 @@ class BarreStylet extends ConsumerWidget {
             key: cleOutil(outil),
             icone: _icone(outil),
             libelle: libelleOutilTrait(outil),
-            avecLibelle: !avecPortee,
+            avecLibelle: !avecPortee && mots,
             retenu: etat.outilTrait == outil,
             onPress: () => controleur.choisirOutilTrait(outil),
           ),
@@ -116,7 +123,7 @@ class BarreStylet extends ConsumerWidget {
           key: cleAnnuler,
           icone: AppIcons.annuler,
           libelle: t.tc.outils.trait.annuler,
-          avecLibelle: !avecPortee || compacte,
+          avecLibelle: (!avecPortee || compacte) && mots,
           onPress: onAnnuler,
         ),
       if (avecPortee && !compacte)
@@ -130,7 +137,7 @@ class BarreStylet extends ConsumerWidget {
           key: cleTerminer,
           icone: AppIcons.succes,
           libelle: t.salle.seance.ecriture.terminer,
-          avecLibelle: true,
+          avecLibelle: mots,
           onPress: terminer,
         ),
     ];

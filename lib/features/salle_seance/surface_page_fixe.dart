@@ -378,11 +378,14 @@ class _PointageState extends State<_Pointage> {
         fit: StackFit.expand,
         children: <Widget>[
           if (montre != null)
-            Positioned(
-              left: montre.dx - taille / 2,
-              top: montre.dy - taille / 2,
-              width: taille,
-              height: taille,
+            // Un point de la page (geometrique, comme les traits), pas un
+            // cote de lecture : le meme en arabe.
+            Positioned.fromRect(
+              rect: Rect.fromCenter(
+                center: montre,
+                width: taille,
+                height: taille,
+              ),
               child: IgnorePointer(
                 child: DecoratedBox(
                   key: SurfacePageFixe.clePointeur,
