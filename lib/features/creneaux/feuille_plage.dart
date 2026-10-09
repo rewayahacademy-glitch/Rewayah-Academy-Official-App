@@ -107,6 +107,11 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
   /// confirmee a pu passer quand meme).
   bool _aRelire = false;
 
+  /// Vrai des qu'un envoi est parti depuis l'ouverture de la feuille : un
+  /// plan devenu vide apres un echec veut dire que les operations sont
+  /// passees (relecture), pas que rien n'a change.
+  bool _aEnvoye = false;
+
   bool _envoi = false;
   bool _manqueJour = false;
   String? _echec;
@@ -218,6 +223,7 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
     required List<HeureSemaine> ajouts,
     required List<HeureSemaine> retraits,
   }) async {
+    _aEnvoye = true;
     final ServicePlanning service = ref.read(servicePlanningProvider);
     final List<HeureSemaine> ajoutsEchoues = <HeureSemaine>[];
     final List<HeureSemaine> retraitsEchoues = <HeureSemaine>[];
@@ -268,7 +274,18 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
       a: libelleA(_a),
     );
     if (plan.vide) {
-      Navigator.of(context).pop(reussite);
+      // Rien n'est envoye : la feuille ne dit pas « enregistree » si rien
+      // n'est parti depuis son ouverture (DISPO-1b, decide par delegation le
+      // 09/10). Apres un echec, un plan vide veut dire que tout est passe.
+      Navigator.of(context).pop(
+        _aEnvoye
+            ? reussite
+            : t.enseignant.creneaux.plageInchangee(
+                jours: jourLus,
+                de: libelleDe(_de),
+                a: libelleA(_a),
+              ),
+      );
       return;
     }
     final List<HeureSemaine> engagees = _engageesParmi(plan.retraits);
@@ -479,6 +496,19 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
               jour: jourCapitalise(fusion.jour),
               de: libelleDe(fusion.de),
               a: libelleA(fusion.a),
+            ),
+            style: textes.bodyMedium,
+          ),
+        ],
+        // Une plage identique ou contenue ne reunit rien : elle se dit deja
+        // posee, jamais comme une fusion (DISPO-1b).
+        for (final Plage posee in plan.dejaPosees) ...<Widget>[
+          Ecart.vMd,
+          TexteSansCoupure(
+            t.enseignant.creneaux.dejaPosee(
+              jour: jourCapitalise(posee.jour),
+              de: libelleDe(posee.de),
+              a: libelleA(posee.a),
             ),
             style: textes.bodyMedium,
           ),

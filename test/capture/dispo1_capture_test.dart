@@ -125,6 +125,19 @@ void main() {
           print('PNG ${await capturer(tester, 'dispo1_ajout_$suffixe')}');
         });
 
+        // Verification croisee DISPO-1b : la liste en arabe (droite a
+        // gauche), a 1440 et 320 x2, clair seulement.
+        if (mode == ThemeMode.light && nom != '390_x1') {
+          testWidgets('liste rtl $suffixe', (WidgetTester tester) async {
+            await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+            addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+            await monter(tester);
+            expect(tester.takeException(), isNull);
+            // ignore: avoid_print
+            print('PNG ${await capturer(tester, 'dispo1_liste_rtl_$suffixe')}');
+          });
+        }
+
         testWidgets('modifier $suffixe', (WidgetTester tester) async {
           await monter(tester);
           final Finder jeudi = find.text('Jeudi');

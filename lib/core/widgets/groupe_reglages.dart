@@ -15,7 +15,10 @@ import 'pressable.dart';
 /// ou valeur, chevron quand elle mene ailleurs.
 @immutable
 class LigneRubrique {
-  /// Cree une rubrique. Il faut une [icone] ou un [meneur].
+  /// Cree une rubrique. [icone] et [meneur] sont facultatifs : sans l'un ni
+  /// l'autre, la ligne n'a pas de tete, son texte commence au retrait de
+  /// debut et le filet court sous tout ce texte (plages de disponibilite,
+  /// DISPO-1b). Commentaire seul : le rendu n'a pas change.
   const LigneRubrique({
     required this.libelle,
     this.icone,
@@ -73,7 +76,9 @@ class LigneRubrique {
   final Widget? marque;
 
   /// Une pastille d'etat dans le flux du libelle : a cote du nom quand la
-  /// place suffit, dessous sinon (AD-5).
+  /// place suffit, dessous sinon (AD-5). Tout widget peut s'y poser : les
+  /// plages de disponibilite y mettent la suite de leur ligne en colonnes
+  /// (« de 17 h | a 23 h », DISPO-1b), avec [pastilleSousLibelle] a faux.
   final Widget? pastille;
 
   /// Place de la [pastille] imposee par la liste, pour que toutes ses lignes

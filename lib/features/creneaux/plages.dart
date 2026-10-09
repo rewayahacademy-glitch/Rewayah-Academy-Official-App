@@ -96,6 +96,7 @@ class PlanPlage {
     required this.ajouts,
     required this.retraits,
     required this.fusions,
+    this.dejaPosees = const <Plage>[],
   });
 
   /// Les heures a poser, triees.
@@ -108,6 +109,13 @@ class PlanPlage {
   /// deja posee : la plage qui en resultera. La feuille le dit AVANT
   /// d'enregistrer.
   final List<Plage> fusions;
+
+  /// Pour chaque jour choisi ou RIEN ne change : toutes les heures saisies
+  /// sont deja posees (plage identique, ou entierement contenue dans une
+  /// plage posee) et aucune heure de ce jour n'est retiree. La plage posee
+  /// qui les contient ; la feuille le dit au lieu d'annoncer une fusion
+  /// (DISPO-1b).
+  final List<Plage> dejaPosees;
 
   /// Vrai quand rien ne change.
   bool get vide => ajouts.isEmpty && retraits.isEmpty;
@@ -149,6 +157,7 @@ PlanPlage planifier({
   final Set<HeureSemaine> autres = existantes.difference(origine);
   final Set<HeureSemaine> apres = <HeureSemaine>{...autres, ...cible};
   final List<Plage> fusions = <Plage>[];
+  final List<Plage> dejaPosees = <Plage>[];
   for (final int j in (jours.toList()..sort())) {
     final Plage saisie = Plage(jour: j, de: de, a: a);
     final bool voisine = autres.any(
@@ -160,13 +169,24 @@ PlanPlage planifier({
     final Plage resultat = deduirePlages(
       apres.where((HeureSemaine h) => h.jour == j),
     ).firstWhere((Plage p) => p.contient((jour: j, heure: de)));
-    // Une saisie entierement contenue dans une plage posee ne change rien a
-    // la lecture, mais se dit aussi : l'enseignant croit ajouter.
-    if (resultat != saisie || autres.any(saisie.contient)) {
+    // Une saisie identique a une plage posee, ou entierement contenue dans
+    // elle, ne reunit rien : elle se dit deja posee, pas comme une fusion
+    // (DISPO-1b). Seulement si RIEN ne change ce jour-la : une plage touchee
+    // du meme jour deplacee dans une plage posee perd ses anciennes heures
+    // (retraits), c'est alors bien une fusion, et elle se dit comme telle.
+    final bool retraitCeJour = retraits.any((HeureSemaine h) => h.jour == j);
+    if (!retraitCeJour && autres.containsAll(saisie.heures)) {
+      dejaPosees.add(resultat);
+    } else {
       fusions.add(resultat);
     }
   }
-  return PlanPlage(ajouts: ajouts, retraits: retraits, fusions: fusions);
+  return PlanPlage(
+    ajouts: ajouts,
+    retraits: retraits,
+    fusions: fusions,
+    dejaPosees: dejaPosees,
+  );
 }
 
 /// Le jour ecrit en toutes lettres, avec sa majuscule (« Lundi », E15).

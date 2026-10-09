@@ -217,6 +217,64 @@ void main() {
       ]);
     });
 
+    // DISPO-1b : en colonnes, le filet entre deux lignes court sous les
+    // trois colonnes (jour, « de », « a »), comme sur les autres listes a
+    // filets : il commence au bord du jour, pas a la colonne « a ».
+    for (final double largeur in <double>[800, 1440]) {
+      testWidgets('colonnes a $largeur : le filet commence sous le jour', (
+        WidgetTester tester,
+      ) async {
+        final FauxServicePlanning planning = FauxServicePlanning()
+          ..creneaux[_monId] = <Creneau>[
+            ..._plage(1, 17, 23),
+            ..._plage(3, 9, 11),
+          ];
+        await _monter(tester, planning, vue: Size(largeur, 1000));
+
+        // Le filet de ligne : une bordure du BAS seulement (la carte, elle,
+        // a un contour sur ses quatre cotes).
+        bool filetDeLigne(Widget w) {
+          if (w is! DecoratedBox || w.decoration is! BoxDecoration) {
+            return false;
+          }
+          final BoxBorder? bord = (w.decoration as BoxDecoration).border;
+          return bord is Border &&
+              bord.bottom.style != BorderStyle.none &&
+              bord.top.style == BorderStyle.none;
+        }
+
+        final Finder filet = find.ancestor(
+          of: find.text('Lundi'),
+          matching: find.byWidgetPredicate(filetDeLigne),
+        );
+        // Le jour, « de » et « a » sont tous au-dessus du filet de la ligne.
+        expect(filet, findsOneWidget);
+        for (final String texte in <String>[_de(17), _a(23)]) {
+          expect(
+            find.descendant(of: filet, matching: find.text(texte)),
+            findsOneWidget,
+          );
+        }
+        expect(
+          tester.getTopLeft(filet).dx,
+          tester.getTopLeft(find.text('Lundi')).dx,
+        );
+        // Les colonnes restent alignees d'une ligne a l'autre.
+        expect(
+          tester.getTopLeft(find.text(_de(17))).dx,
+          tester.getTopLeft(find.text(_de(9))).dx,
+        );
+        expect(
+          tester.getTopLeft(find.text(_a(23))).dx,
+          tester.getTopLeft(find.text(_a(11))).dx,
+        );
+        expect(
+          tester.getTopLeft(find.text(_de(17))).dx,
+          greaterThan(tester.getTopRight(find.text('Mercredi')).dx),
+        );
+      });
+    }
+
     testWidgets('une plage qui finit a minuit le dit', (
       WidgetTester tester,
     ) async {
@@ -385,6 +443,105 @@ void main() {
       expect(planning.poses, isEmpty);
       expect(find.text(t.enseignant.creneaux.manqueJour), findsOneWidget);
       expect(_feuille, findsOneWidget);
+    });
+
+    // DISPO-1b : une plage identique a une plage posee ne s'annonce plus
+    // comme une fusion ; la feuille dit qu'elle est deja posee.
+    testWidgets('plage identique : dite deja posee, aucune fusion annoncee, '
+        'rien ne part', (WidgetTester tester) async {
+      final FauxServicePlanning planning = FauxServicePlanning()
+        ..creneaux[_monId] = _plage(1, 17, 23);
+      await _monter(tester, planning);
+
+      await _toucher(tester, find.text(t.enseignant.creneaux.ajouterPlage));
+      await _toucher(tester, _dansFeuille('Lundi'));
+
+      expect(
+        find.text(
+          t.enseignant.creneaux.dejaPosee(
+            jour: 'Lundi',
+            de: _de(17),
+            a: _a(23),
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          t.enseignant.creneaux.fusion(jour: 'Lundi', de: _de(17), a: _a(23)),
+        ),
+        findsNothing,
+      );
+
+      await _toucher(tester, find.text(t.enseignant.creneaux.enregistrerPlage));
+      expect(planning.poses, isEmpty);
+      expect(_ligne('Lundi', 17, 23), findsOneWidget);
+      // Rien n'est parti : la feuille ne dit pas « Plage enregistree ».
+      expect(
+        find.text(
+          t.enseignant.creneaux.plageInchangee(
+            jours: 'lundi',
+            de: _de(17),
+            a: _a(23),
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          t.enseignant.creneaux.plageEnregistree(
+            jours: 'lundi',
+            de: _de(17),
+            a: _a(23),
+          ),
+        ),
+        findsNothing,
+      );
+    });
+
+    // Verification croisee DISPO-1b : une plage touchee deplacee, le meme
+    // jour, dans une plage posee perd ses anciennes heures. Ce n'est pas
+    // « deja posee, rien ne change » : c'est une fusion, et elle se dit.
+    testWidgets('plage deplacee dans une plage posee du meme jour : fusion '
+        'dite, anciennes heures retirees', (WidgetTester tester) async {
+      final FauxServicePlanning planning = FauxServicePlanning()
+        ..creneaux[_monId] = <Creneau>[
+          ..._plage(1, 9, 11),
+          ..._plage(1, 17, 23),
+        ];
+      await _monter(tester, planning);
+
+      await _toucher(tester, _ligne('Lundi', 9, 11));
+      await _choisir(tester, courant: _a(11), voulu: _a(20));
+      await _choisir(tester, courant: _de(9), voulu: _de(17));
+
+      expect(
+        find.text(
+          t.enseignant.creneaux.fusion(jour: 'Lundi', de: _de(17), a: _a(23)),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          t.enseignant.creneaux.dejaPosee(
+            jour: 'Lundi',
+            de: _de(17),
+            a: _a(23),
+          ),
+        ),
+        findsNothing,
+      );
+
+      await _toucher(tester, find.text(t.enseignant.creneaux.enregistrerPlage));
+      expect(
+        planning.retires
+            .map((({String profilId, Creneau creneau}) r) => r.creneau.heure)
+            .toList(),
+        <int>[9, 10],
+      );
+      expect(planning.poses, isEmpty);
+      expect(_ligne('Lundi', 9, 11), findsNothing);
+      expect(_ligne('Lundi', 17, 23), findsOneWidget);
     });
 
     testWidgets('chevauchement : fusion dite AVANT, seules les heures '
