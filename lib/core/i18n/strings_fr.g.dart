@@ -266,9 +266,6 @@ class Traductions$salle$fr {
 	/// fr: 'Connexion au cours'
 	String get connexion => 'Connexion au cours';
 
-	/// fr: 'Connexion instable, reconnexion en cours'
-	String get reconnexion => 'Connexion instable, reconnexion en cours';
-
 	/// fr: 'Reconnexion'
 	String get reconnexionCourt => 'Reconnexion';
 
@@ -4107,8 +4104,8 @@ class Traductions$ficheEleve$interface$fr {
 	/// fr: 'Enregistrement en cours'
 	String get enCours => 'Enregistrement en cours';
 
-	/// fr: 'Le changement n'a pas été enregistré : Rewayah n'a pas répondu. Touchez de nouveau votre choix. La présentation actuelle de {prenom} reste inchangée sur son appareil.'
-	String echec({required Object prenom}) => 'Le changement n\'a pas été enregistré : Rewayah n\'a pas répondu. Touchez de nouveau votre choix. La présentation actuelle de ${prenom} reste inchangée sur son appareil.';
+	/// fr: 'Le changement n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Touchez de nouveau votre choix. S'il n'est pas arrivé, la présentation de {prenom} reste celle d'avant sur son appareil.'
+	String echec({required Object prenom}) => 'Le changement n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Touchez de nouveau votre choix. S\'il n\'est pas arrivé, la présentation de ${prenom} reste celle d\'avant sur son appareil.';
 
 	/// fr: 'La présentation pourra être changée quand la connexion reviendra.'
 	String get horsLigne => 'La présentation pourra être changée quand la connexion reviendra.';
@@ -8680,8 +8677,14 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Le cours pourra être lancé quand la connexion reviendra.'
 	String get lancerHorsLigne => 'Le cours pourra être lancé quand la connexion reviendra.';
 
-	/// fr: 'Les horaires de prière et vos pauses n'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.'
-	String get erreurPartielle => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.';
+	/// fr: 'Les horaires de prière et vos pauses n'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour : elles n'en dépendent pas. Réessayez dans un instant.'
+	String get erreurPartielle => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.';
+
+	/// fr: 'Vos cahiers de transmission à terminer n'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour : elles n'en dépendent pas. Réessayez dans un instant.'
+	String get erreurPartielleCahiers => 'Vos cahiers de transmission à terminer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.';
+
+	/// fr: 'Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour : elles n'en dépendent pas. Réessayez dans un instant.'
+	String get erreurPartielleTout => 'Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.';
 
 	/// fr: '{eleve} n'est pas entré en salle.'
 	String absenceDetectee({required Object eleve}) => '${eleve} n\'est pas entré en salle.';
@@ -9775,8 +9778,8 @@ class Traductions$controleur$complement$fr {
 	/// fr: 'Envoyer le complément'
 	String get envoyer => 'Envoyer le complément';
 
-	/// fr: 'L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre texte est gardé ici, réessayez dans un instant. Le rapport d'origine reste intact.'
-	String get echec => 'L\'envoi n\'est pas confirmé : Rewayah n\'a pas répondu. Votre texte est gardé ici, réessayez dans un instant. Le rapport d\'origine reste intact.';
+	/// fr: 'L'envoi n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Votre texte est gardé ici, réessayez dans un instant. Le rapport d'origine reste intact.'
+	String get echec => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici, réessayez dans un instant. Le rapport d\'origine reste intact.';
 
 	/// fr: 'Complément ajouté'
 	String get envoyeTitre => 'Complément ajouté';
@@ -9886,11 +9889,11 @@ class Traductions$controleur$compteRendu$fr {
 	/// fr: 'Ce compte rendu est transmis automatiquement à l'administration.'
 	String get notice => 'Ce compte rendu est transmis automatiquement à l\'administration.';
 
-	/// fr: 'L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.'
-	String get echec => 'L\'envoi n\'est pas confirmé : Rewayah n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.';
+	/// fr: 'L'envoi n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.'
+	String get echec => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.';
 
-	/// fr: 'L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.'
-	String get echecRien => 'L\'envoi n\'est pas confirmé : Rewayah n\'a pas répondu. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.';
+	/// fr: 'L'envoi n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.'
+	String get echecRien => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.';
 
 	/// fr: 'Compte rendu envoyé'
 	String get envoyeTitre => 'Compte rendu envoyé';
@@ -9907,8 +9910,8 @@ class Traductions$controleur$compteRendu$fr {
 	/// fr: 'La visite et son relevé automatique sont transmis à l'administration.'
 	String get visiteTransmise => 'La visite et son relevé automatique sont transmis à l\'administration.';
 
-	/// fr: 'La transmission de la visite n'est pas confirmée : Rewayah n'a pas répondu. Réessayez ; le relevé de la visite reste enregistré sur le serveur.'
-	String get visiteEchec => 'La transmission de la visite n\'est pas confirmée : Rewayah n\'a pas répondu. Réessayez ; le relevé de la visite reste enregistré sur le serveur.';
+	/// fr: 'La transmission de la visite n'est pas confirmée : il est possible qu'elle ne soit pas parvenue jusqu'à Rewayah. Réessayez ; le relevé de la visite reste enregistré sur le serveur.'
+	String get visiteEchec => 'La transmission de la visite n\'est pas confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez ; le relevé de la visite reste enregistré sur le serveur.';
 
 	/// fr: 'Compte rendu à terminer'
 	String get aTerminer => 'Compte rendu à terminer';
@@ -10072,8 +10075,8 @@ class Traductions$controleur$observation$fr {
 	/// fr: 'Aucun texte'
 	String get sansTexte => 'Aucun texte';
 
-	/// fr: 'L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.'
-	String get echec => 'L\'envoi n\'est pas confirmé : Rewayah n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.';
+	/// fr: 'L'envoi n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.'
+	String get echec => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.';
 }
 
 // Path: controleur.echanges
@@ -10138,8 +10141,8 @@ class Traductions$controleur$echanges$fr {
 	/// fr: 'Envoyé.'
 	String get envoye => 'Envoyé.';
 
-	/// fr: 'L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.'
-	String get echec => 'L\'envoi n\'est pas confirmé : Rewayah n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.';
+	/// fr: 'L'envoi n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.'
+	String get echec => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.';
 
 	/// fr: 'Réessayer'
 	String get reessayer => 'Réessayer';
@@ -10502,8 +10505,8 @@ class Traductions$adulte$accueil$fr {
 	/// fr: 'Votre prochaine séance et vos dernières séances n'ont pas pu être chargées'
 	String get sansDonnees => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées';
 
-	/// fr: 'Votre prochaine séance et vos dernières séances n'ont pas pu être chargées : le serveur n'a pas répondu. Réessayez dans un instant.'
-	String get echec => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées : le serveur n\'a pas répondu. Réessayez dans un instant.';
+	/// fr: 'Votre prochaine séance et vos dernières séances n'ont pas pu être chargées : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get echec => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 }
 
 // Path: adulte.historique
@@ -10520,8 +10523,8 @@ class Traductions$adulte$historique$fr {
 	/// fr: 'Vos séances passées n'ont pas pu être chargées'
 	String get sansDonnees => 'Vos séances passées n\'ont pas pu être chargées';
 
-	/// fr: 'Vos séances passées n'ont pas pu être chargées : le serveur n'a pas répondu. Réessayez dans un instant.'
-	String get echec => 'Vos séances passées n\'ont pas pu être chargées : le serveur n\'a pas répondu. Réessayez dans un instant.';
+	/// fr: 'Vos séances passées n'ont pas pu être chargées : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get echec => 'Vos séances passées n\'ont pas pu être chargées : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 
 	/// fr: 'Aucune séance passée pour le moment.'
 	String get vide => 'Aucune séance passée pour le moment.';
@@ -16103,7 +16106,6 @@ extension on Traductions {
 			'salle.ouverture' => 'Ouverture de la salle',
 			'salle.verificationMateriel' => 'Vérification de votre micro',
 			'salle.connexion' => 'Connexion au cours',
-			'salle.reconnexion' => 'Connexion instable, reconnexion en cours',
 			'salle.reconnexionCourt' => 'Reconnexion',
 			'salle.perdue' => 'La connexion au cours est perdue',
 			'salle.seulEnseignant' => 'Votre professeur n\'est pas encore arrivé',
@@ -16304,9 +16306,9 @@ extension on Traductions {
 			'contrat.pointCoordonnees' => 'Vous ne voyez jamais les coordonnées d\'une famille : ni nom complet, ni courriel, ni téléphone.',
 			'contrat.lireTexte' => 'Lire le texte complet',
 			'contrat.accepter' => 'J\'ai lu et j\'accepte',
+			'contrat.accepteLe' => ({required Object date}) => 'Accepté le ${date}',
 			_ => null,
 		} ?? switch (path) {
-			'contrat.accepteLe' => ({required Object date}) => 'Accepté le ${date}',
 			'contrat.erreur' => 'La signature n\'a pas abouti. Réessayez dans un instant.',
 			'contrat.horsLigne' => 'Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.',
 			'contrat.caseRequise' => 'Cochez la case pour continuer.',
@@ -16637,7 +16639,7 @@ extension on Traductions {
 			'ficheEleve.interface.application' => ({required Object prenom}) => 'Le changement s\'applique à la prochaine ouverture de Rewayah sur l\'appareil de ${prenom}.',
 			'ficheEleve.interface.demandeEleve' => 'La demande de changement par l\'élève lui-même n\'est pas encore proposée.',
 			'ficheEleve.interface.enCours' => 'Enregistrement en cours',
-			'ficheEleve.interface.echec' => ({required Object prenom}) => 'Le changement n\'a pas été enregistré : Rewayah n\'a pas répondu. Touchez de nouveau votre choix. La présentation actuelle de ${prenom} reste inchangée sur son appareil.',
+			'ficheEleve.interface.echec' => ({required Object prenom}) => 'Le changement n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Touchez de nouveau votre choix. S\'il n\'est pas arrivé, la présentation de ${prenom} reste celle d\'avant sur son appareil.',
 			'ficheEleve.interface.horsLigne' => 'La présentation pourra être changée quand la connexion reviendra.',
 			'ficheEleve.camera.titre' => 'Caméra en cours',
 			'ficheEleve.camera.ligne' => 'Caméra pendant les séances',
@@ -16818,9 +16820,9 @@ extension on Traductions {
 			'dossiers.file.dateHeure' => ({required Object date, required Object heure, required Object zone}) => '${date} à ${heure} (${zone})',
 			'dossiers.file.dateChiffres' => ({required Object jour, required Object mois, required Object annee}) => '${jour}/${mois}/${annee}',
 			'dossiers.file.heureChiffres' => ({required Object heures, required Object minutes}) => '${heures}:${minutes}',
+			'dossiers.file.zoneUtc' => 'UTC',
 			_ => null,
 		} ?? switch (path) {
-			'dossiers.file.zoneUtc' => 'UTC',
 			'dossiers.file.suivantAnnonce' => ({required Object nom}) => 'Dossier suivant : ${nom}',
 			'dossiers.detail.titreDe' => ({required Object nom}) => 'Dossier de ${nom}',
 			'dossiers.detail.titreElide' => ({required Object nom}) => 'Dossier d\'${nom}',
@@ -17332,9 +17334,9 @@ extension on Traductions {
 			'admin.journal.horodatage' => ({required Object date, required Object heure}) => '${date} à ${heure}',
 			'admin.journal.acteurSysteme' => 'Le système',
 			'admin.journal.acteurInconnu' => 'Compte supprimé',
+			'admin.journal.roleAdmin' => 'Administration',
 			_ => null,
 		} ?? switch (path) {
-			'admin.journal.roleAdmin' => 'Administration',
 			'admin.journal.roleEnseignant' => 'Enseignant',
 			'admin.journal.roleTuteur' => 'Tuteur',
 			'admin.journal.roleEleve' => 'Élève',
@@ -17846,9 +17848,9 @@ extension on Traductions {
 			'compte.tuteur.pagePreferences.notificationsDetail' => 'Pas encore disponibles dans l\'application',
 			'compte.tuteur.pageApparence.titre' => 'Apparence',
 			'compte.tuteur.pageApparence.sousTitre' => 'Appliqué sur cet appareil.',
+			'compte.tuteur.pageApparence.theme' => 'Thème de l\'application',
 			_ => null,
 		} ?? switch (path) {
-			'compte.tuteur.pageApparence.theme' => 'Thème de l\'application',
 			'compte.tuteur.pageApparence.themeDetail' => 'Personnalisez l\'apparence de Rewayah.',
 			'compte.tuteur.pageApparence.confort' => 'Confort visuel',
 			'compte.tuteur.pageApparence.animations' => 'Animations',
@@ -18360,9 +18362,9 @@ extension on Traductions {
 			'classe.pageCatalogue.etat.listeAttente' => 'Liste d\'attente',
 			'classe.pageCatalogue.choisir' => 'Choisir cette classe',
 			'classe.pageCatalogue.rejoindreAttente' => 'Rejoindre la liste d\'attente',
+			'classe.pageCatalogue.precisionsTitre' => 'Avant de choisir',
 			_ => null,
 		} ?? switch (path) {
-			'classe.pageCatalogue.precisionsTitre' => 'Avant de choisir',
 			'classe.pageCatalogue.precisionEnseignant' => 'Une classe garde le même enseignant pour toutes ses séances.',
 			'classe.pageCatalogue.precisionPlaces' => 'Les places affichées sont celles de l\'académie au moment de la lecture.',
 			'classe.pageCatalogue.precisionReserve' => 'Rien n\'est réservé avant votre confirmation.',
@@ -18506,7 +18508,9 @@ extension on Traductions {
 			'enseignant.journee.preflightSansMicro' => 'Aucun micro n\'est détecté. Branchez-en un pour lancer le cours.',
 			'enseignant.journee.preflightIndisponible' => 'La vérification du matériel n\'a pas abouti. Réessayez avant de lancer le cours.',
 			'enseignant.journee.lancerHorsLigne' => 'Le cours pourra être lancé quand la connexion reviendra.',
-			'enseignant.journee.erreurPartielle' => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.',
+			'enseignant.journee.erreurPartielle' => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.',
+			'enseignant.journee.erreurPartielleCahiers' => 'Vos cahiers de transmission à terminer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.',
+			'enseignant.journee.erreurPartielleTout' => 'Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.',
 			'enseignant.journee.absenceDetectee' => ({required Object eleve}) => '${eleve} n\'est pas entré en salle.',
 			'enseignant.journee.coupureDetectee' => ({required Object eleve}) => '${eleve} a perdu la connexion.',
 			'enseignant.journee.coursAnnule' => ({required Object heure}) => 'Le cours de ${heure} est annulé.',
@@ -18862,7 +18866,7 @@ extension on Traductions {
 			'controleur.complement.sansMotif' => 'Aucun motif',
 			'controleur.complement.cleTexte' => 'Complément',
 			'controleur.complement.envoyer' => 'Envoyer le complément',
-			'controleur.complement.echec' => 'L\'envoi n\'est pas confirmé : Rewayah n\'a pas répondu. Votre texte est gardé ici, réessayez dans un instant. Le rapport d\'origine reste intact.',
+			'controleur.complement.echec' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici, réessayez dans un instant. Le rapport d\'origine reste intact.',
 			'controleur.complement.envoyeTitre' => 'Complément ajouté',
 			'controleur.complement.envoyePhrase' => 'Il s\'affiche sous le rapport d\'origine, qui reste inchangé.',
 			'controleur.complement.revenir' => 'Revenir au rapport',
@@ -18873,9 +18877,9 @@ extension on Traductions {
 			'controleur.compteRendu.faits' => 'Relevé automatique de la séance',
 			'controleur.compteRendu.faitsReplies' => 'Relevé automatique de la séance, replié',
 			'controleur.compteRendu.faitsDeplies' => 'Relevé automatique de la séance, déplié',
-			'controleur.compteRendu.faitsChargement' => 'Lecture du relevé automatique de la séance : heures, élèves présents, reconnexions.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.compteRendu.faitsChargement' => 'Lecture du relevé automatique de la séance : heures, élèves présents, reconnexions.',
 			'controleur.compteRendu.faitsAbsents' => 'Le relevé automatique de la séance (heures, élèves présents, reconnexions) n\'est pas encore reçu : la séance vient de se terminer ou la connexion a été coupée. Vous pouvez répondre sans lui ; il sera joint au rapport dès sa réception.',
 			'controleur.compteRendu.cleHoraire' => 'Heure prévue',
 			'controleur.compteRendu.horaire' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
@@ -18898,14 +18902,14 @@ extension on Traductions {
 			'controleur.compteRendu.envoyer' => 'Envoyer le compte rendu',
 			'controleur.compteRendu.plusTard' => 'Plus tard',
 			'controleur.compteRendu.notice' => 'Ce compte rendu est transmis automatiquement à l\'administration.',
-			'controleur.compteRendu.echec' => 'L\'envoi n\'est pas confirmé : Rewayah n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
-			'controleur.compteRendu.echecRien' => 'L\'envoi n\'est pas confirmé : Rewayah n\'a pas répondu. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
+			'controleur.compteRendu.echec' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
+			'controleur.compteRendu.echecRien' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.compteRendu.envoyeTitre' => 'Compte rendu envoyé',
 			'controleur.compteRendu.envoyePhrase' => 'Il est transmis à l\'administration. Pour y revenir, ouvrez-le dans l\'Historique et choisissez « Ajouter un complément ».',
 			'controleur.compteRendu.ecrireAdmin' => 'Écrire à l\'administration',
 			'controleur.compteRendu.visiteEnCours' => 'Transmission de la visite à l\'administration en cours.',
 			'controleur.compteRendu.visiteTransmise' => 'La visite et son relevé automatique sont transmis à l\'administration.',
-			'controleur.compteRendu.visiteEchec' => 'La transmission de la visite n\'est pas confirmée : Rewayah n\'a pas répondu. Réessayez ; le relevé de la visite reste enregistré sur le serveur.',
+			'controleur.compteRendu.visiteEchec' => 'La transmission de la visite n\'est pas confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez ; le relevé de la visite reste enregistré sur le serveur.',
 			'controleur.compteRendu.aTerminer' => 'Compte rendu à terminer',
 			'controleur.compteRendu.reprendre' => 'Reprendre le compte rendu',
 			'controleur.observation.important' => 'Vous signalez un point important : votre texte sera demandé.',
@@ -18957,7 +18961,7 @@ extension on Traductions {
 			'controleur.observation.clePersonne' => 'Personne concernée',
 			'controleur.observation.cleTexte' => 'Remarque',
 			'controleur.observation.sansTexte' => 'Aucun texte',
-			'controleur.observation.echec' => 'L\'envoi n\'est pas confirmé : Rewayah n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
+			'controleur.observation.echec' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.titre' => 'Échanges',
 			'controleur.echanges.titreFil' => ({required Object classe, required Object date}) => '${classe} · ${date}',
 			'controleur.echanges.derniereActivite' => ({required Object date}) => 'Dernière activité : ${date}',
@@ -18976,7 +18980,7 @@ extension on Traductions {
 			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
 			'controleur.echanges.enCours' => 'Envoi en cours.',
 			'controleur.echanges.envoye' => 'Envoyé.',
-			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : Rewayah n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
+			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.reessayer' => 'Réessayer',
 			'controleur.echanges.nouveauMessage' => ({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}',
 			'controleur.demo.titre' => 'Démonstration contrôleur',
@@ -19387,9 +19391,9 @@ extension on Traductions {
 			'tc.observation.visite.sonInterrompu' => 'Son interrompu',
 			'tc.observation.visite.agrandir' => 'Agrandir',
 			'tc.observation.visite.reduire' => 'Réduire',
-			'tc.observation.visite.cameraFermee' => 'Caméra fermée',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.visite.cameraFermee' => 'Caméra fermée',
 			'tc.observation.visite.pasEncoreLa' => 'Pas encore dans la salle',
 			'tc.observation.visite.parle' => ({required Object nom}) => '${nom} parle',
 			'tc.observation.visite.quitterQuestion' => 'Quitter la visite ?',
@@ -19522,10 +19526,10 @@ extension on Traductions {
 			'adulte.accueil.aucuneClasse' => 'Aucune classe pour le moment.',
 			'adulte.accueil.aucuneClasseDetail' => 'Votre prochaine séance s\'affichera ici dès que votre classe sera ouverte.',
 			'adulte.accueil.sansDonnees' => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées',
-			'adulte.accueil.echec' => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées : le serveur n\'a pas répondu. Réessayez dans un instant.',
+			'adulte.accueil.echec' => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'adulte.historique.titre' => 'Mes séances passées',
 			'adulte.historique.sansDonnees' => 'Vos séances passées n\'ont pas pu être chargées',
-			'adulte.historique.echec' => 'Vos séances passées n\'ont pas pu être chargées : le serveur n\'a pas répondu. Réessayez dans un instant.',
+			'adulte.historique.echec' => 'Vos séances passées n\'ont pas pu être chargées : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'adulte.historique.vide' => 'Aucune séance passée pour le moment.',
 			'adulte.historique.videDetail' => 'Vos séances s\'afficheront ici après votre premier cours.',
 			'adulte.maClasse.aPropos' => 'À propos de cette classe',

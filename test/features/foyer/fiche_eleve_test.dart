@@ -1041,6 +1041,48 @@ void main() {
 
   // EA-HL-DOUBLE-1c : sombre, Interface guidee et texte x2 de la fiche
   // eleve hors ligne (revue EA-HL-DOUBLE-1-R, m4). Sautees sans CAPTURE_DIR.
+  // EA-HL-DOUBLE-1e : l'echec d'ecriture de la presentation dit la cause
+  // probable sans l'affirmer (K-59). 390, 320 texte x2 en LTR et RTL.
+  // Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1e', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size, double, TextDirection) cas
+        in <(String, Size, double, TextDirection)>[
+          ('390_clair', const Size(390, 1400), 1, TextDirection.ltr),
+          ('320x2_clair', const Size(320, 2600), 2, TextDirection.ltr),
+          ('320x2_rtl_clair', const Size(320, 2600), 2, TextDirection.rtl),
+        ]) {
+      testWidgets('interface echec ${cas.$1}', (WidgetTester tester) async {
+        final _AppairagePilote appairage = _foyerA()
+          ..erreurAJeter = Exception('refus');
+        await _monter(
+          tester,
+          appairage: appairage,
+          depart: Routes.ficheEleveSousPage(a1, 'interface'),
+          taille: cas.$2,
+          direction: cas.$4,
+          echelle: cas.$3,
+        );
+        await _toucher(tester, find.text(t.ficheEleve.interface.standard));
+        final Finder echec = find.text(
+          t.ficheEleve.interface.echec(prenom: FoyersFictifs.a1.prenom),
+        );
+        await tester.ensureVisible(echec);
+        await stabiliser(tester);
+        expect(tester.takeException(), isNull);
+        expect(echec, findsOneWidget);
+        // Le texte modifie ne coupe aucun mot. Les cartes de choix au-dessus
+        // coupent des mots a 320 texte x2 (defaut anterieur de
+        // `ChoiceCardGroup`, hors de cette etape, consigne au bilan).
+        verifierAucunMotCoupe(tester, echec);
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1e_fiche_eleve_interface_echec_${cas.$1}')}',
+        );
+      });
+    }
+  });
+
   // EA-HL-DOUBLE-1d : 320 texte x2 en LTR et RTL de la fiche eleve hors
   // ligne, sans et avec donnees (revue EA-HL-DOUBLE-1c-R, mineur 2).
   // Sautees sans CAPTURE_DIR.
