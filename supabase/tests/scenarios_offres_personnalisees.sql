@@ -6,12 +6,12 @@ BEGIN;
 INSERT INTO auth.users (id, email)
 SELECT ('f1490000-0000-0000-0000-' || lpad(g.n::text, 12, '0'))::uuid,
        'f1-adulte-' || g.n::text || '@example.test'
-FROM generate_series(1, 7) AS g(n);
+FROM generate_series(1, public.app_config_int('groupe.capacite_adulte', 6) + 4) AS g(n);
 
 INSERT INTO public.households (id, timezone)
 SELECT ('f1480000-0000-0000-0000-' || lpad(g.n::text, 12, '0'))::uuid,
        'Europe/Paris'
-FROM generate_series(1, 7) AS g(n);
+FROM generate_series(1, public.app_config_int('groupe.capacite_adulte', 6) + 4) AS g(n);
 
 INSERT INTO public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
@@ -21,7 +21,7 @@ SELECT
   'student',
   ('f1480000-0000-0000-0000-' || lpad(g.n::text, 12, '0'))::uuid,
   'Adulte', g.n::text, 'pending_kyc', 'male'
-FROM generate_series(1, 7) AS g(n);
+FROM generate_series(1, public.app_config_int('groupe.capacite_adulte', 6) + 4) AS g(n);
 
 INSERT INTO public.student_profiles
   (profile_id, student_type, interface_mode, camera_policy,
@@ -30,7 +30,7 @@ SELECT
   ('f1490000-0000-0000-0000-' || lpad(g.n::text, 12, '0'))::uuid,
   'autonomous', 'standard', 'forbidden',
   'francais', 'adulte_18_plus', 'lecture_lente', 'apprendre_a_lire'
-FROM generate_series(1, 7) AS g(n);
+FROM generate_series(1, public.app_config_int('groupe.capacite_adulte', 6) + 4) AS g(n);
 
 DO $quota$
 DECLARE
@@ -41,10 +41,37 @@ DECLARE
   v_total integer;
   v_visible integer;
   v_ok boolean;
+  v_capacite integer;
+  v_id_post_ouverture uuid;
+  v_id_choix uuid;
+  v_offre_secondaire uuid;
 BEGIN
+  v_capacite := public.app_config_int('groupe.capacite_adulte', 6);
+  IF v_capacite < 1 THEN
+    RAISE EXCEPTION 'F1 test fixture: capacité adulte invalide';
+  END IF;
+  v_id_post_ouverture :=
+    ('f1490000-0000-0000-0000-' || lpad((v_capacite + 3)::text, 12, '0'))::uuid;
+  v_id_choix :=
+    ('f1490000-0000-0000-0000-' || lpad((v_capacite + 4)::text, 12, '0'))::uuid;
+
+  UPDATE public.profiles
+     SET account_status = 'suspended'
+   WHERE id = 'f1490000-0000-0000-0000-000000000001';
+  UPDATE public.households
+     SET status = 'suspended'
+   WHERE id = 'f1480000-0000-0000-0000-000000000002';
+  INSERT INTO public.demandes_creneau_personnalise
+    (eleve_id, type_public, langue_code, fuseau_iana, jours, heure_locale)
+  VALUES
+    ('f1490000-0000-0000-0000-000000000001', 'adulte', 'francais',
+     'Europe/Paris', ARRAY[2, 4, 6]::smallint[], 3),
+    ('f1490000-0000-0000-0000-000000000002', 'adulte', 'francais',
+     'Europe/Paris', ARRAY[2, 4, 6]::smallint[], 3);
+
   -- Les tableaux vides et les longueurs qui contredisent la configuration
   -- sont refusés; ils ne doivent jamais passer une garde SQL à NULL.
-  PERFORM set_config('test.uid', 'f1490000-0000-0000-0000-000000000007', true);
+  PERFORM set_config('test.uid', v_id_post_ouverture, true);
   PERFORM set_config(
     'test.jwt',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text,
@@ -53,7 +80,7 @@ BEGIN
   v_ok := false;
   BEGIN
     PERFORM public.demander_creneau_personnalise(
-      'f1490000-0000-0000-0000-000000000007',
+      v_id_post_ouverture,
       'Europe/Paris', ARRAY[]::smallint[], 3::smallint
     );
   EXCEPTION WHEN raise_exception THEN
@@ -70,7 +97,7 @@ BEGIN
   v_ok := false;
   BEGIN
     PERFORM public.demander_creneau_personnalise(
-      'f1490000-0000-0000-0000-000000000007',
+      v_id_post_ouverture,
       'Europe/Paris', ARRAY[2]::smallint[], 3::smallint
     );
   EXCEPTION WHEN raise_exception THEN
@@ -84,8 +111,8 @@ BEGIN
     RAISE EXCEPTION 'F1 validation: un nombre de jours différent de app_config a été accepté';
   END IF;
 
-  FOR v_i IN 1..6 LOOP
-    v_id := ('f1490000-0000-0000-0000-' || lpad(v_i::text, 12, '0'))::uuid;
+  FOR v_i IN 1..v_capacite LOOP
+    v_id := ('f1490000-0000-0000-0000-' || lpad((v_i + 2)::text, 12, '0'))::uuid;
     PERFORM set_config('test.uid', v_id::text, true);
     PERFORM set_config(
       'test.jwt',
@@ -103,13 +130,13 @@ BEGIN
       3::smallint
     );
 
-    IF v_i < 6 AND v_reponse->>'etat' <> 'en_attente_quota' THEN
-      RAISE EXCEPTION 'F1 quota: demande % ouverte avant les six adultes: %',
+    IF v_i < v_capacite AND v_reponse->>'etat' <> 'en_attente_quota' THEN
+      RAISE EXCEPTION 'F1 quota: demande % ouverte avant la capacité configurée: %',
         v_i, v_reponse;
     END IF;
-    IF v_i = 6 AND v_reponse->>'etat' <> 'offre_ouverte' THEN
-      RAISE EXCEPTION 'F1 quota: la sixième demande n''ouvre pas le créneau: %',
-        v_reponse;
+    IF v_i = v_capacite AND v_reponse->>'etat' <> 'offre_ouverte' THEN
+      RAISE EXCEPTION 'F1 quota: la demande % n''ouvre pas au seuil configuré: %',
+        v_i, v_reponse;
     END IF;
   END LOOP;
 
@@ -117,8 +144,9 @@ BEGIN
   SELECT count(*) INTO v_total
     FROM public.demandes_creneau_personnalise
    WHERE offre_id = v_offre AND etat = 'offre_ouverte';
-  IF v_total <> 6 THEN
-    RAISE EXCEPTION 'F1 quota: % demandes liées à l''offre, 6 attendues', v_total;
+  IF v_total <> v_capacite THEN
+    RAISE EXCEPTION 'F1 quota: % demandes liées à l''offre, capacité % attendue',
+      v_total, v_capacite;
   END IF;
 
   SELECT count(*) INTO v_total
@@ -131,7 +159,7 @@ BEGIN
   -- Une répétition réseau, même après l'ouverture, retourne le même résultat.
   PERFORM set_config(
     'test.uid',
-    'f1490000-0000-0000-0000-000000000006',
+    'f1490000-0000-0000-0000-000000000003',
     true
   );
   PERFORM set_config(
@@ -140,7 +168,7 @@ BEGIN
     true
   );
   v_reponse := public.demander_creneau_personnalise(
-    'f1490000-0000-0000-0000-000000000006',
+    'f1490000-0000-0000-0000-000000000003',
     'Europe/Paris', ARRAY[2, 4, 6]::smallint[], 3::smallint
   );
   IF v_reponse->>'offre_id' IS DISTINCT FROM v_offre::text THEN
@@ -151,11 +179,11 @@ BEGIN
   -- l'offre déjà publique au lieu d'attendre un second quota complet.
   PERFORM set_config(
     'test.uid',
-    'f1490000-0000-0000-0000-000000000007',
+    v_id_post_ouverture,
     true
   );
   v_reponse := public.demander_creneau_personnalise(
-    'f1490000-0000-0000-0000-000000000007',
+    v_id_post_ouverture,
     'Europe/Paris', ARRAY[2, 4, 6]::smallint[], 3::smallint
   );
   IF v_reponse->>'etat' <> 'offre_ouverte'
@@ -167,7 +195,7 @@ BEGIN
   -- Une autre identité ne peut pas demander le créneau pour cet adulte.
   PERFORM set_config(
     'test.uid',
-    'f1490000-0000-0000-0000-000000000007',
+    v_id_post_ouverture,
     true
   );
   BEGIN
@@ -225,7 +253,85 @@ BEGIN
   END IF;
   RESET ROLE;
 
-  RAISE NOTICE 'F1 quota: ouverture après 6 adultes, répétition idempotente, aucun engagement automatique, relation et RLS vérifiées';
+  PERFORM set_config('test.uid', v_id_choix::text, true);
+  PERFORM set_config(
+    'test.jwt',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text,
+    true
+  );
+  v_reponse := public.demander_creneau_personnalise(
+    v_id_choix, 'Europe/Paris', ARRAY[1, 3, 5]::smallint[], 2::smallint
+  );
+  IF v_reponse->>'etat' <> 'en_attente_quota' THEN
+    RAISE EXCEPTION 'F1 intention concurrente: la demande devait rester en attente: %', v_reponse;
+  END IF;
+
+  INSERT INTO auth.users (id, email)
+  VALUES ('f1490000-0000-0000-0000-000000000999', 'f1-admin@example.test');
+  INSERT INTO public.profiles
+    (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
+  VALUES
+    ('f1490000-0000-0000-0000-000000000999', 'F1-ADMIN', 'admin', NULL,
+     'Admin', 'Test', 'active', 'male');
+
+  PERFORM set_config('test.uid', 'f1490000-0000-0000-0000-000000000999', true);
+  PERFORM set_config(
+    'test.jwt',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text,
+    true
+  );
+  v_offre_secondaire := public.creer_offre_horaire(
+    'adulte', 'francais', 'Europe/Paris', ARRAY[1, 3, 5]::smallint[], 4::smallint, NULL
+  );
+  PERFORM public.publier_offre_horaire(v_offre_secondaire);
+
+  PERFORM set_config('test.uid', v_id_choix::text, true);
+  PERFORM set_config(
+    'test.jwt',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text,
+    true
+  );
+  PERFORM public.choisir_offre_horaire(
+    v_id_choix, v_offre_secondaire, 'Europe/Paris'
+  );
+  IF NOT EXISTS (
+    SELECT 1 FROM public.demandes_creneau_personnalise
+     WHERE eleve_id = v_id_choix AND etat = 'retiree'
+  ) THEN
+    RAISE EXCEPTION 'F1 intention: choisir une autre offre n''a pas retiré la demande du quota';
+  END IF;
+
+  PERFORM set_config('test.uid', 'f1490000-0000-0000-0000-000000000999', true);
+  PERFORM set_config(
+    'test.jwt',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text,
+    true
+  );
+  PERFORM public.retirer_offre_horaire(v_offre, 'test de non republication');
+  PERFORM set_config('test.uid', v_id_post_ouverture::text, true);
+  PERFORM set_config(
+    'test.jwt',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text,
+    true
+  );
+  PERFORM public.retirer_creneau_personnalise(v_id_post_ouverture);
+  v_reponse := public.demander_creneau_personnalise(
+    v_id_post_ouverture, 'Europe/Paris', ARRAY[2, 4, 6]::smallint[], 3::smallint
+  );
+  IF v_reponse->>'etat' <> 'en_attente_quota'
+     OR EXISTS (
+       SELECT 1 FROM public.offres_horaires
+        WHERE type_public = 'adulte'
+          AND langue_code = 'francais'
+          AND fuseau_iana = 'Europe/Paris'
+          AND jours = ARRAY[2, 4, 6]::smallint[]
+          AND heure_locale = 3
+          AND etat = 'publiee'
+     ) THEN
+    RAISE EXCEPTION 'F1 offre retirée: le quota a republié un horaire retiré';
+  END IF;
+
+  RAISE NOTICE 'F1 quota: seuil lu dans app_config, états inéligibles exclus, demandes normalisées, retraits et ACL vérifiés';
 END
 $quota$;
 
