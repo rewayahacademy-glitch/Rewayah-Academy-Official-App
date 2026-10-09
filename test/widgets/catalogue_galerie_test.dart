@@ -142,6 +142,7 @@ const List<String> composantsDuCatalogue = <String>[
   'FilDiscussion',
   // ON-AIR-1, ANNUL-VIS-1 : la pastille d'etat de seance.
   'PastilleEtatSeance',
+  'ZoneSaisie',
 ];
 
 /// Les trois largeurs de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 8.

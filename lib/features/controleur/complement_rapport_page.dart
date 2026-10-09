@@ -31,6 +31,7 @@ import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_parcours.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
+import '../../core/widgets/zone_saisie.dart';
 import '../accueil_famille/bloc_seance.dart' show dateDeLAppareil;
 import 'historique_controleur.dart';
 
@@ -270,19 +271,18 @@ class _ComplementRapportPageState extends ConsumerState<ComplementRapportPage> {
     );
   }
 
-  Widget _champTexte() => TextField(
-    key: ComplementRapportPage.texteKey,
-    controller: _texte,
-    minLines: 4,
-    maxLines: 8,
-    textCapitalization: TextCapitalization.sentences,
-    decoration: InputDecoration(
-      labelText: t.controleur.complement.libelleTexte,
-      hintText: t.controleur.complement.aideTexte,
-      alignLabelWithHint: true,
-      floatingLabelBehavior: FloatingLabelBehavior.always,
-      errorText: _texteManquant ? t.controleur.complement.texteRequis : null,
-    ),
+  // Zone de saisie partagee (SUPERPOS-1) : l'etiquette au-dessus du champ,
+  // l'aide du document lisible avant la saisie.
+  Widget _champTexte() => ZoneSaisie(
+    cleChamp: ComplementRapportPage.texteKey,
+    controleur: _texte,
+    libelle: t.controleur.complement.libelleTexte,
+    aide: t.controleur.complement.aideTexte,
+    erreur: _texteManquant ? t.controleur.complement.texteRequis : null,
+    minLignes: 4,
+    maxLignes: 8,
+    // L'erreur disparait des la saisie (BAY-IV) ; aucune validation pendant
+    // la frappe.
     onChanged: (String _) {
       if (_texteManquant) setState(() => _texteManquant = false);
     },

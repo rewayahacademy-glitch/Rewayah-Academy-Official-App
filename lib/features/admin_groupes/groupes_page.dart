@@ -16,6 +16,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/zone_saisie.dart';
 import 'feuille_observation_groupe.dart';
 
 /// Operations > Groupes : le noyau du produit depuis le pivot du 19
@@ -661,11 +662,11 @@ class _FeuilleAjoutEtat extends State<_FeuilleAjout> {
             style: Theme.of(context).textTheme.bodySmall,
           ),
           Ecart.vSm,
-          TextField(
-            controller: _motif,
-            maxLines: 2,
+          ZoneSaisie(
+            controleur: _motif,
+            minLignes: 2,
             onChanged: (String _) => setState(() {}),
-            decoration: InputDecoration(labelText: t.admin.groupes.champMotif),
+            libelle: t.admin.groupes.champMotif,
           ),
           if (_erreur != null) ...<Widget>[
             Ecart.vMd,
@@ -838,10 +839,10 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
           style: Theme.of(context).textTheme.bodySmall,
         ),
         Ecart.vSm,
-        TextField(
-          controller: _motif,
-          maxLines: 2,
-          decoration: InputDecoration(labelText: t.admin.groupes.champMotif),
+        ZoneSaisie(
+          controleur: _motif,
+          minLignes: 2,
+          libelle: t.admin.groupes.champMotif,
           onChanged: (String _) => setState(() {}),
         ),
         if (_erreur != null) ...<Widget>[

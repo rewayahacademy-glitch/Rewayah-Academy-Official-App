@@ -249,7 +249,11 @@ void main() {
           for (int i = 1; i < cles.length; i++) {
             final Rect avant = tester.getRect(find.byKey(cles[i - 1]));
             final Rect apres = tester.getRect(find.byKey(cles[i]));
-            final double ecart = coteACote
+            // SUPERPOS-1 : cote a cote, les cartes s'empilent quand un mot
+            // ne tient pas dans une carte (320 px) ; l'ecart se mesure sur
+            // l'axe reellement pris.
+            final bool enLigne = coteACote && apres.top < avant.bottom;
+            final double ecart = enLigne
                 ? apres.left - avant.right
                 : apres.top - avant.bottom;
             expect(

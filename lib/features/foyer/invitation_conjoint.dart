@@ -54,6 +54,7 @@ import '../../core/widgets/page_etape.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
+import '../../core/widgets/zone_saisie.dart' show ZoneSaisie;
 import '../compte/donnees_compte.dart' show dateLongue;
 import 'ligne_membre.dart' show dateEcheance;
 import 'photo_eleve.dart';
@@ -436,7 +437,7 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
           decoration: InputDecoration(
             labelText: t.adulte.invitation.prenom,
             errorText: _erreurPrenom,
-            errorMaxLines: 3,
+            errorMaxLines: ZoneSaisie.lignesAideMax,
           ),
         ),
         Ecart.vMd,
@@ -450,6 +451,7 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
           decoration: InputDecoration(
             labelText: t.adulte.invitation.nom,
             helperText: t.adulte.invitation.nomAide,
+            helperMaxLines: ZoneSaisie.lignesAideMax,
           ),
         ),
         Ecart.vMd,
@@ -469,9 +471,9 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
             helperText: f
                 ? t.adulte.invitation.courrielAideElle
                 : t.adulte.invitation.courrielAideLui,
-            helperMaxLines: 3,
+            helperMaxLines: ZoneSaisie.lignesAideMax,
             errorText: _erreurCourriel,
-            errorMaxLines: 3,
+            errorMaxLines: ZoneSaisie.lignesAideMax,
           ),
         ),
         Ecart.vLg,

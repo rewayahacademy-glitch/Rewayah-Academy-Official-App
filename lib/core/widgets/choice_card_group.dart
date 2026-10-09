@@ -168,6 +168,79 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
     onPress: option.disponible ? () => _basculer(option.valeur) : null,
   );
 
+  /// Vrai quand chaque mot de chaque libelle tient sur une ligne d'une
+  /// carte cote a cote de cette [largeur] de groupe.
+  ///
+  /// SUPERPOS-1 (decide par delegation le 05/10) : a 320 en texte double,
+  /// une carte n'a que 92 de contenu ; « homme » s'y coupait en « hom /
+  /// me ». Les cartes s'empilent alors, chacune pleine largeur, avec la
+  /// meme anatomie (radio, disque, titre centre) : aucun mot n'est coupe.
+  /// La liste en ligne ne suffisait pas : l'icone et le radio y prennent
+  /// encore la place du mot.
+  bool _motsTiennent(BuildContext context, double largeur) {
+    final int n = widget.options.length;
+    if (n == 0 || !largeur.isFinite) return true;
+    final double carte = (largeur - (n - 1) * AppSpacing.lg) / n;
+    // Le filet de la carte (1 de chaque cote) compte aussi.
+    final double contenu = carte - 2 * AppSpacing.xl - 2;
+    final TextStyle style =
+        Theme.of(context).textTheme.titleMedium ?? const TextStyle();
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    final TextDirection sens = Directionality.of(context);
+    for (final OptionChoix option in widget.options) {
+      for (final String mot in option.libelle.split(RegExp(r'\s+'))) {
+        if (mot.isEmpty) continue;
+        final TextPainter mesure = TextPainter(
+          text: TextSpan(text: mot, style: style),
+          textDirection: sens,
+          textScaler: echelle,
+          maxLines: 1,
+        )..layout();
+        final double l = mesure.width;
+        mesure.dispose();
+        if (l > contenu) return false;
+      }
+    }
+    return true;
+  }
+
+  Widget _rangeeCoteACote() => Padding(
+    padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+    child: IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          for (int i = 0; i < widget.options.length; i++) ...<Widget>[
+            if (i > 0) Ecart.hLg,
+            Expanded(child: _carteOption(widget.options[i], verticale: true)),
+          ],
+        ],
+      ),
+    ),
+  );
+
+  Widget _pileVerticale() => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: <Widget>[
+      for (final OptionChoix option in widget.options)
+        Padding(
+          padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+          child: IntrinsicHeight(child: _carteOption(option, verticale: true)),
+        ),
+    ],
+  );
+
+  Widget _liste() => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: <Widget>[
+      for (final OptionChoix option in widget.options)
+        Padding(
+          padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+          child: _carteOption(option, verticale: false),
+        ),
+    ],
+  );
+
   @override
   Widget build(BuildContext context) {
     final AppMetriques metriques = AppMetriques.of(context);
@@ -183,28 +256,14 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
           Ecart.vMd,
         ],
         if (widget.coteACote)
-          Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-            child: IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  for (int i = 0; i < widget.options.length; i++) ...<Widget>[
-                    if (i > 0) Ecart.hLg,
-                    Expanded(
-                      child: _carteOption(widget.options[i], verticale: true),
-                    ),
-                  ],
-                ],
-              ),
-            ),
+          LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints contraintes) =>
+                _motsTiennent(context, contraintes.maxWidth)
+                ? _rangeeCoteACote()
+                : _pileVerticale(),
           )
         else
-          for (final OptionChoix option in widget.options)
-            Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-              child: _carteOption(option, verticale: false),
-            ),
+          _liste(),
         if (widget.autoriserSaisieLibre)
           _Carte(
             libelle: t.choix.autre,
@@ -406,6 +465,12 @@ class _Carte extends StatelessWidget {
 extension on _Carte {
   /// Le contenu de la carte cote a cote : radio ou coche en haut a droite,
   /// icone dans un disque puis titre, centres.
+  ///
+  /// SUPERPOS-1 (decision du 05/10/2026, prise par delegation) : le radio a
+  /// sa propre ligne, en tete, dans le flux. Peint dans un `Stack`, il
+  /// recouvrait le disque de l'icone a 320 de large (92 de contenu par
+  /// carte). La carte est posee dans une `IntrinsicHeight` (groupe cote a
+  /// cote) : le contenu prend la hauteur restante, centre.
   Widget _contenuVertical(
     AppPalette palette,
     AppColorPair paire,
@@ -416,11 +481,24 @@ extension on _Carte {
     final AppColorPair fondDisque = retenue
         ? palette.surfaceActionDouce
         : palette.surfaceSunken;
-    return Stack(
+    final Widget indicateur = radio
+        ? RadioChoix(retenue: retenue, disponible: _disponible)
+        : retenue
+        ? IconTheme(
+            data: IconThemeData(
+              color: paire.onBackground,
+              size: AppSpacing.xxl,
+            ),
+            child: Icon(AppIcons.succes.actif),
+          )
+        : const SizedBox.square(dimension: AppSpacing.xxl);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.only(top: AppSpacing.lg),
+        Align(alignment: AlignmentDirectional.topEnd, child: indicateur),
+        Ecart.vXs,
+        Expanded(
+          child: Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -479,21 +557,6 @@ extension on _Carte {
               ],
             ),
           ),
-        ),
-        PositionedDirectional(
-          top: 0,
-          end: 0,
-          child: radio
-              ? RadioChoix(retenue: retenue, disponible: _disponible)
-              : retenue
-              ? IconTheme(
-                  data: IconThemeData(
-                    color: paire.onBackground,
-                    size: AppSpacing.xxl,
-                  ),
-                  child: Icon(AppIcons.succes.actif),
-                )
-              : const SizedBox.shrink(),
         ),
       ],
     );

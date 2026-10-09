@@ -21,6 +21,7 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
+import 'package:rewayah_academy/core/widgets/zone_saisie.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
@@ -155,8 +156,11 @@ Future<void> _toucher(WidgetTester tester, String libelle) async {
 
 /// Le champ de motif de 02D, par son etiquette.
 Finder get _champMotif => find
-    .ancestor(
-      of: find.text(t.dossiers.refus.champ),
+    .descendant(
+      of: find.ancestor(
+        of: find.text(t.dossiers.refus.champ),
+        matching: find.byType(ZoneSaisie),
+      ),
       matching: find.byType(TextField),
     )
     .first;

@@ -20,6 +20,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/zone_saisie.dart';
 
 /// `ADM-05` : l'attribution manuelle.
 ///
@@ -736,13 +737,13 @@ class _Confirmation extends StatelessWidget {
             style: textes.bodySmall,
           ),
           Ecart.vSm,
-          TextField(
-            controller: motif,
+          ZoneSaisie(
+            controleur: motif,
             // Sans ce rappel, le bouton resterait inerte alors que le motif est
             // saisi : piege de l'etape 3, deja paye deux fois.
             onChanged: onMotifChange,
-            maxLines: 2,
-            decoration: InputDecoration(labelText: t.admin.attribution.motif),
+            minLignes: 2,
+            libelle: t.admin.attribution.motif,
           ),
           Ecart.vLg,
         ],

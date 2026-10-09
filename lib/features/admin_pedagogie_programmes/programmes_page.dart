@@ -17,6 +17,7 @@ import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/zone_saisie.dart';
 
 /// `ADM-13` : Pedagogie > Programmes.
 ///
@@ -639,12 +640,10 @@ class _FeuilleNiveauEtat extends State<_FeuilleNiveau> {
           decoration: InputDecoration(labelText: t.admin.programmes.champOrdre),
         ),
         Ecart.vMd,
-        TextField(
-          controller: _description,
-          maxLines: 2,
-          decoration: InputDecoration(
-            labelText: t.admin.programmes.champDescription,
-          ),
+        ZoneSaisie(
+          controleur: _description,
+          minLignes: 2,
+          libelle: t.admin.programmes.champDescription,
         ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,
@@ -728,10 +727,10 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
           style: Theme.of(context).textTheme.bodySmall,
         ),
         Ecart.vSm,
-        TextField(
-          controller: _motif,
-          maxLines: 2,
-          decoration: InputDecoration(labelText: t.admin.programmes.champMotif),
+        ZoneSaisie(
+          controleur: _motif,
+          minLignes: 2,
+          libelle: t.admin.programmes.champMotif,
           onChanged: (String _) => setState(() {}),
         ),
         if (_erreur != null) ...<Widget>[

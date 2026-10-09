@@ -1,4 +1,6 @@
 {
+  "adulte.invitation.courrielInvalide": "etape SUPERPOS-1 (05/10, decision deleguee) : typographie seule, trait d'union insecable dans « e-mail » (le mot passait a la ligne apres son trait a 320 en texte double) ; redige par l'agent, a faire valider par le directeur",
+  "controleur.echanges.contexteCompact": "etape SUPERPOS-1 (05/10, decision deleguee) : redige par l'agent, a faire valider par le directeur ; en-tete compact du fil, la classe et la date etant deja dans le titre",
   "compte.themeContexte": "phrase de contexte K-58 ajoutee par la relecture, a valider par le directeur",
   "compte.themeClairDetail": "commentaire du directeur 01-02/10, etape THEME-SW-1",
   "compte.themeSombreDetail": "commentaire du directeur 01-02/10, etape THEME-SW-1",

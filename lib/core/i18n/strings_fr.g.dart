@@ -10114,6 +10114,9 @@ class Traductions$controleur$echanges$fr {
 	/// fr: 'Contexte de la visite, joint automatiquement'
 	String get contexte => 'Contexte de la visite, joint automatiquement';
 
+	/// fr: 'Contexte joint à vos messages : séance de {heure}'
+	String contexteCompact({required Object heure}) => 'Contexte joint à vos messages : séance de ${heure}';
+
 	/// fr: 'Classe'
 	String get cleClasse => 'Classe';
 
@@ -10882,8 +10885,8 @@ class Traductions$adulte$invitation$fr {
 	/// fr: 'Indiquez son adresse e-mail.'
 	String get courrielRequis => 'Indiquez son adresse e-mail.';
 
-	/// fr: 'Vérifiez l'adresse e-mail : elle doit ressembler à nom@exemple.com.'
-	String get courrielInvalide => 'Vérifiez l\'adresse e-mail : elle doit ressembler à nom@exemple.com.';
+	/// fr: 'Vérifiez l'adresse e‑mail : elle doit ressembler à nom@exemple.com.'
+	String get courrielInvalide => 'Vérifiez l\'adresse e‑mail : elle doit ressembler à nom@exemple.com.';
 
 	/// fr: 'Continuer'
 	String get verifier => 'Continuer';
@@ -18977,6 +18980,7 @@ extension on Traductions {
 			'controleur.echanges.enAttente' => 'En attente',
 			'controleur.echanges.vide' => 'Aucun échange avec l\'administration pour le moment.',
 			'controleur.echanges.contexte' => 'Contexte de la visite, joint automatiquement',
+			'controleur.echanges.contexteCompact' => ({required Object heure}) => 'Contexte joint à vos messages : séance de ${heure}',
 			'controleur.echanges.cleClasse' => 'Classe',
 			'controleur.echanges.cleDate' => 'Date',
 			'controleur.echanges.cleHeure' => 'Heure',
@@ -19396,9 +19400,9 @@ extension on Traductions {
 			'tc.observation.visite.videoCoupee' => 'Vidéo indisponible',
 			'tc.observation.visite.reconnexionDetail' => 'La connexion est interrompue, reconnexion en cours. Votre temps d\'observation continue de s\'écouler.',
 			'tc.observation.visite.sonRecu' => 'Son reçu',
-			'tc.observation.visite.sonInterrompu' => 'Son interrompu',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.visite.sonInterrompu' => 'Son interrompu',
 			'tc.observation.visite.agrandir' => 'Agrandir',
 			'tc.observation.visite.reduire' => 'Réduire',
 			'tc.observation.visite.cameraFermee' => 'Caméra fermée',
@@ -19650,7 +19654,7 @@ extension on Traductions {
 			'adulte.invitation.courrielAideLui' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjoint l\'invitation à rejoindre Rewayah.',
 			'adulte.invitation.prenomRequis' => 'Indiquez son prénom.',
 			'adulte.invitation.courrielRequis' => 'Indiquez son adresse e-mail.',
-			'adulte.invitation.courrielInvalide' => 'Vérifiez l\'adresse e-mail : elle doit ressembler à nom@exemple.com.',
+			'adulte.invitation.courrielInvalide' => 'Vérifiez l\'adresse e‑mail : elle doit ressembler à nom@exemple.com.',
 			'adulte.invitation.verifier' => 'Continuer',
 			'adulte.invitation.verifierTitre' => 'Vérifier et envoyer',
 			'adulte.invitation.verifierPhrase' => 'Relisez ces informations. L\'invitation partira à cette adresse.',

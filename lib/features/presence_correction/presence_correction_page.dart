@@ -12,6 +12,7 @@ import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/ligne_presence.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/zone_saisie.dart';
 import 'presence_correction.dart';
 
 /// Surface propriétaire de la correction, prête à être raccordée au serveur.
@@ -294,15 +295,12 @@ class _ConfirmationPresenceSheetState
         Text(widget.cible.ligne.prenom),
         Text(decision),
         const SizedBox(height: AppSpacing.lg),
-        TextField(
-          controller: _motif,
+        ZoneSaisie(
+          controleur: _motif,
           autofocus: true,
-          maxLines: 3,
-          textInputAction: TextInputAction.newline,
-          decoration: InputDecoration(
-            labelText: widget.libelles.motif,
-            helperText: widget.libelles.motifRequis,
-          ),
+          libelle: widget.libelles.motif,
+          explication: widget.libelles.motifRequis,
+          minLignes: 3,
           onChanged: (_) => setState(() {}),
         ),
         const SizedBox(height: AppSpacing.lg),

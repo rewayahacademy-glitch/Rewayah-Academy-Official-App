@@ -20,6 +20,7 @@ import '../../core/widgets/selecteur_niveau_programme.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/zone_saisie.dart';
 
 /// `ADM-11` : Pedagogie > Progression.
 ///
@@ -410,13 +411,11 @@ class _FeuillePromotionEtat extends ConsumerState<_FeuillePromotion> {
           style: Theme.of(context).textTheme.bodySmall,
         ),
         Ecart.vSm,
-        TextField(
-          controller: _motif,
-          maxLines: 2,
+        ZoneSaisie(
+          controleur: _motif,
+          minLignes: 2,
           onChanged: (String _) => setState(() {}),
-          decoration: InputDecoration(
-            labelText: t.admin.progression.champMotif,
-          ),
+          libelle: t.admin.progression.champMotif,
         ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,
@@ -526,12 +525,10 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
           style: Theme.of(context).textTheme.bodySmall,
         ),
         Ecart.vSm,
-        TextField(
-          controller: _motif,
-          maxLines: 2,
-          decoration: InputDecoration(
-            labelText: t.admin.progression.champMotif,
-          ),
+        ZoneSaisie(
+          controleur: _motif,
+          minLignes: 2,
+          libelle: t.admin.progression.champMotif,
           onChanged: (String _) => setState(() {}),
         ),
         if (_erreur != null) ...<Widget>[

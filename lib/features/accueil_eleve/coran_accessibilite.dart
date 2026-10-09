@@ -506,6 +506,10 @@ class _LecteurCoranAccessibiliteEtat
             // Finition MA-CMD-1 : la barre du bas s'efface avec les
             // commandes et revient a la meme touche.
             effacerBarreBasse: true,
+            // SUPERPOS-1 : avec lecteur d'ecran ou clavier, les commandes ne
+            // se ferment jamais ; elles passent alors sous le Mushaf au lieu
+            // d'en recouvrir le bas.
+            placeReservee: true,
           ),
         ),
         if (vue != null && vue.aDuTexte)

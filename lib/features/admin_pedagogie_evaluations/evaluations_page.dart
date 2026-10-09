@@ -19,6 +19,7 @@ import '../../core/widgets/selecteur_niveau_programme.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/zone_saisie.dart';
 
 /// `ADM-12` : Pedagogie > Evaluations.
 ///
@@ -566,12 +567,10 @@ class _FeuilleResultatEtat extends State<_FeuilleResultat> {
             ],
           ),
           Ecart.vMd,
-          TextField(
-            controller: _notes,
-            maxLines: 2,
-            decoration: InputDecoration(
-              labelText: t.admin.evaluations.champNotes,
-            ),
+          ZoneSaisie(
+            controleur: _notes,
+            minLignes: 2,
+            libelle: t.admin.evaluations.champNotes,
           ),
           if (_erreur != null) ...<Widget>[
             Ecart.vMd,
@@ -649,12 +648,10 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
           style: Theme.of(context).textTheme.bodySmall,
         ),
         Ecart.vSm,
-        TextField(
-          controller: _motif,
-          maxLines: 2,
-          decoration: InputDecoration(
-            labelText: t.admin.evaluations.champMotif,
-          ),
+        ZoneSaisie(
+          controleur: _motif,
+          minLignes: 2,
+          libelle: t.admin.evaluations.champMotif,
           onChanged: (String _) => setState(() {}),
         ),
         if (_erreur != null) ...<Widget>[
