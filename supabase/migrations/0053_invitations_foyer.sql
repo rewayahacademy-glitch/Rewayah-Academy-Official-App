@@ -122,6 +122,16 @@ BEGIN
   END IF;
 
   IF EXISTS (
+    SELECT 1 FROM auth.users u
+    WHERE u.id = v_user AND lower(u.email) = v_email
+  ) THEN
+    RETURN jsonb_build_object(
+      'queued', false,
+      'message', 'Si cette adresse est valide, une invitation lui a été envoyée.'
+    );
+  END IF;
+
+  IF EXISTS (
     SELECT 1 FROM public.invitations_foyer i
     WHERE i.foyer_id = v_foyer AND i.statut = 'en_attente'
   ) OR EXISTS (
@@ -315,6 +325,7 @@ DECLARE
   v_old_household public.households%ROWTYPE;
   v_household public.households%ROWTYPE;
   v_has_children boolean;
+  v_old_found boolean;
   v_titulaire text;
 BEGIN
   IF p_decision NOT IN ('accepter', 'refuser') OR p_cle IS NULL THEN
@@ -401,6 +412,7 @@ BEGIN
     SELECT * INTO v_old_household FROM public.households h
     WHERE h.id = v_profile.household_id AND h.deleted_at IS NULL
     FOR UPDATE;
+    v_old_found := FOUND;
 
     SELECT EXISTS (
       SELECT 1 FROM public.profiles child
@@ -408,7 +420,10 @@ BEGIN
         AND child.role = 'student' AND child.deleted_at IS NULL
     ) INTO v_has_children;
 
-    IF NOT FOUND OR v_old_household.primary_guardian_id <> v_user OR v_has_children THEN
+    IF NOT v_old_found
+       OR v_old_household.status <> 'active'
+       OR v_old_household.primary_guardian_id IS DISTINCT FROM v_user
+       OR v_has_children THEN
       PERFORM public.log_sensitive_access(
         'invitation_conjoint_refus_foyer_existant', 'invitations_foyer',
         v_invitation.id::text,
