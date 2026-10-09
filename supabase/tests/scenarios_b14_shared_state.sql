@@ -62,7 +62,9 @@ begin
      or pg_catalog.has_table_privilege('authenticated', 'public.session_shared_content', 'UPDATE')
      or pg_catalog.has_table_privilege('authenticated', 'public.session_shared_content', 'DELETE')
      or pg_catalog.has_table_privilege('authenticated', 'public.session_shared_content', 'TRUNCATE') then
-    raise exception 'B-14: clients must write only through the bounded RPC';
+    raise exception 'B-14: direct write grants remain (relation ACL: %)',
+      (select c.relacl::text from pg_catalog.pg_class c
+        where c.oid = 'public.session_shared_content'::regclass);
   end if;
 
   perform public.publier_etat_partage(
