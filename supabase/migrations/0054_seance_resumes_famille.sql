@@ -205,8 +205,10 @@ LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = ''
 AS $function$
 DECLARE
   v_user uuid := auth.uid();
-  v_niveau text;
+  v_level text;
+  v_niveau_humain text;
   v_jalon_humain text;
+  v_jalons jsonb;
   v_seances jsonb;
   v_limit integer := least(greatest(coalesce(p_limit, 20), 1), 50);
 BEGIN
@@ -216,7 +218,7 @@ BEGIN
     RAISE EXCEPTION 'progression indisponible';
   END IF;
 
-  SELECT sp.level INTO v_niveau
+  SELECT sp.level INTO v_level
   FROM public.profiles p
   JOIN public.student_profiles sp ON sp.profile_id = p.id
   WHERE p.id = p_student_id
@@ -238,14 +240,35 @@ BEGIN
     RAISE EXCEPTION 'progression indisponible';
   END IF;
 
+  SELECT CASE
+           WHEN count(DISTINCT n.nom_humain) = 1 THEN min(n.nom_humain)
+           ELSE NULL
+         END
+  INTO v_niveau_humain
+  FROM public.programme_niveaux n
+  WHERE n.code_technique = v_level;
+
   SELECT n.nom_humain INTO v_jalon_humain
   FROM public.seance_resumes r
-  LEFT JOIN public.programme_niveaux n ON n.id = r.jalon_atteint
+  JOIN public.programme_niveaux n ON n.id = r.jalon_atteint
   WHERE r.student_id = p_student_id
     AND r.publie_le IS NOT NULL
     AND r.jalon_atteint IS NOT NULL
   ORDER BY r.publie_le DESC
   LIMIT 1;
+
+  SELECT coalesce(
+    jsonb_agg(q.nom_humain ORDER BY q.derniere_publication DESC),
+    '[]'::jsonb
+  )
+  INTO v_jalons
+  FROM (
+    SELECT n.nom_humain, max(r.publie_le) AS derniere_publication
+    FROM public.seance_resumes r
+    JOIN public.programme_niveaux n ON n.id = r.jalon_atteint
+    WHERE r.student_id = p_student_id AND r.publie_le IS NOT NULL
+    GROUP BY n.nom_humain
+  ) q;
 
   SELECT coalesce(
     jsonb_agg(
@@ -270,8 +293,9 @@ BEGIN
   ) q;
 
   RETURN jsonb_build_object(
-    'niveau_officiel', v_niveau,
+    'niveau_humain', v_niveau_humain,
     'jalon_humain', v_jalon_humain,
+    'jalons', v_jalons,
     'seances', v_seances
   );
 END;
@@ -281,6 +305,57 @@ ALTER FUNCTION public.progression_famille(uuid, integer) OWNER TO postgres;
 REVOKE EXECUTE ON FUNCTION public.progression_famille(uuid, integer) FROM PUBLIC, anon, agent_ro;
 GRANT EXECUTE ON FUNCTION public.progression_famille(uuid, integer) TO authenticated;
 
+CREATE OR REPLACE FUNCTION public.resume_seance_famille(
+  p_session_id uuid,
+  p_student_id uuid
+)
+RETURNS text
+LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = ''
+AS $function$
+DECLARE
+  v_user uuid := auth.uid();
+  v_resume text;
+BEGIN
+  IF v_user IS NULL
+     OR p_session_id IS NULL
+     OR p_student_id IS NULL
+     OR NOT coalesce(public.app_role() = 'guardian' AND public.app_account_valid(), false)
+     OR NOT EXISTS (
+       SELECT 1
+       FROM public.profiles p
+       JOIN public.student_profiles sp ON sp.profile_id = p.id
+       WHERE p.id = p_student_id
+         AND p.deleted_at IS NULL
+         AND sp.deleted_at IS NULL
+         AND (
+           (
+             p.role = 'student'
+             AND p.household_id IS NOT NULL
+             AND p.household_id = public.app_household_id()
+           )
+           OR (
+             p.id = v_user
+             AND sp.titulaire_profile_id = v_user
+           )
+         )
+     ) THEN
+    RAISE EXCEPTION 'résumé indisponible';
+  END IF;
+
+  SELECT r.texte_famille INTO v_resume
+  FROM public.seance_resumes r
+  WHERE r.session_id = p_session_id
+    AND r.student_id = p_student_id
+    AND r.publie_le IS NOT NULL;
+
+  RETURN v_resume;
+END;
+$function$;
+
+ALTER FUNCTION public.resume_seance_famille(uuid, uuid) OWNER TO postgres;
+REVOKE EXECUTE ON FUNCTION public.resume_seance_famille(uuid, uuid) FROM PUBLIC, anon, agent_ro;
+GRANT EXECUTE ON FUNCTION public.resume_seance_famille(uuid, uuid) TO authenticated;
+
 DO $verification$
 BEGIN
   IF NOT (
@@ -288,6 +363,8 @@ BEGIN
          'public.enregistrer_resume_seance(uuid,uuid,text,uuid,boolean)', 'EXECUTE')
        AND has_function_privilege('authenticated',
          'public.progression_famille(uuid,integer)', 'EXECUTE')
+       AND has_function_privilege('authenticated',
+         'public.resume_seance_famille(uuid,uuid)', 'EXECUTE')
        AND NOT has_function_privilege('anon',
          'public.enregistrer_resume_seance(uuid,uuid,text,uuid,boolean)', 'EXECUTE')
        AND NOT has_function_privilege('agent_ro',
@@ -296,6 +373,10 @@ BEGIN
          'public.progression_famille(uuid,integer)', 'EXECUTE')
        AND NOT has_function_privilege('agent_ro',
          'public.progression_famille(uuid,integer)', 'EXECUTE')
+       AND NOT has_function_privilege('anon',
+         'public.resume_seance_famille(uuid,uuid)', 'EXECUTE')
+       AND NOT has_function_privilege('agent_ro',
+         'public.resume_seance_famille(uuid,uuid)', 'EXECUTE')
        AND (SELECT relrowsecurity FROM pg_catalog.pg_class
             WHERE oid = 'public.seance_resumes'::regclass)
   ) THEN
