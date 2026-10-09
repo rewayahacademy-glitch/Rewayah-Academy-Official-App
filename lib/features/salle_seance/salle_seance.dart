@@ -16,8 +16,6 @@ import '../../core/accessibilite/commandes_masquables.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/preferences/preferences_locales.dart';
-import '../../core/tc_bibliotheque/content_position.dart';
-import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
@@ -1118,17 +1116,15 @@ class _SalleEnseignant extends StatelessWidget {
     // personnel puis « Presenter » ; sans rappel Presenter, l'ancien
     // selecteur (Classe Live jusqu'a BR-1).
     PanneauOuvert.ressources => switch (actions.onPresenter) {
-      final Future<void> Function(LibraryResource, ContentPosition?)
-      presenter =>
-        PanneauSeance(
-          titre: t.salle.seance.commandes.bibliotheque,
-          onFermer: actions.onBibliotheque,
-          forme: forme,
-          enfant: BibliothequeSeance(
-            onPresenter: presenter,
-            groupeId: vue.groupeId,
-          ),
+      final PresenterSupport presenter => PanneauSeance(
+        titre: t.salle.seance.commandes.bibliotheque,
+        onFermer: actions.onBibliotheque,
+        forme: forme,
+        enfant: BibliothequeSeance(
+          onPresenter: presenter,
+          groupeId: vue.groupeId,
         ),
+      ),
       null => PanneauSeance(
         titre: t.salle.seance.supports,
         onFermer: actions.onBibliotheque,

@@ -58,7 +58,7 @@
       "echecGuidee": "الاتصال لا يعود.",
       "horsLigne": "أنت غير متصل. تحتاج الحصة إلى اتصال.",
       "reessayer": "إعادة المحاولة",
-      "quitter": "خروج",
+      "quitter": "مغادرة",
       "indisponible": "{commande}. غير متاح أثناء إعادة الاتصال.",
       "cameraInterdite": "الكاميرا معطّلة لهذا الملف.",
       "microBloque": "الميكروفون محظور في إعدادات هذا الجهاز.",
@@ -139,12 +139,12 @@
         }
       }
     },
-    "bandeauPermanent": "الدرس مسجَّل، وزيارة مراقبة ممكنة.",
+    "bandeauPermanent": "يُسجَّل الدرس، وقد تجري زيارة مراقبة.",
     "seance": {
       "titre": "حصة مباشرة",
       "titreGuidee": "حصتي",
       "ligne": "\u2068{debut}\u2069 · \u2068{fin}\u2069",
-      "minutesRestantes": "بقيت \u2068{minutes}\u2069 دقيقة",
+      "minutesRestantes": "الوقت المتبقي: \u2068{minutes}\u2069 د",
       "sePoursuit": "الحصة مستمرة.",
       "enLigne": "متصل",
       "reconnexion": "إعادة الاتصال",
@@ -160,17 +160,17 @@
       "reglages": "الإعدادات",
       "compteDe": "حساب \u2068{nom}\u2069",
       "sortir": "مغادرة الحصة",
-      "commandesAppel": "أزرار المكالمة",
-      "compteurEleves": "الطلاب \u2068{connectes}\u2069/\u2068{inscrits}\u2069",
+      "commandesAppel": "عناصر التحكم في المكالمة",
+      "compteurEleves": "الطلاب \u2066\u2068{connectes}\u2069/\u2068{inscrits}\u2069\u2069",
       "parler": "تحدّث",
       "agrandir": "تكبير",
       "reduire": "تصغير",
-      "rienPartage": "لم يشارك \u2068{nom}\u2069 شيئًا بعد.",
+      "rienPartage": "لم تصل أي مشاركة من \u2068{nom}\u2069 بعد.",
       "videoDe": "فيديو \u2068{nom}\u2069",
       "page": "\u2068{page}\u2069 / \u2068{pages}\u2069",
       "pageSemantique": "الصفحة \u2068{page}\u2069 من \u2068{pages}\u2069",
       "zoomLocal": "تكبير محلي، لا يؤثر في الآخرين",
-      "zoomValeur": "\u2068{valeur}\u2069 %",
+      "zoomValeur": "\u2068{valeur}\u2069 ٪",
       "zoomMoins": "تقليل التكبير",
       "zoomPlus": "زيادة التكبير",
       "quitterQuestion": "مغادرة الحصة؟",
@@ -186,7 +186,7 @@
       "outils": {
         "titre": "أدوات التدريس",
         "pointeur": "المؤشر",
-        "marquer": "تعليم",
+        "marquer": "وضع علامة",
         "masquer": "إخفاء",
         "annoter": "كتابة ملاحظات"
       },
@@ -194,7 +194,7 @@
         "navigation": "التنقل",
         "marque": "Rewayah",
         "sousMarque": "Academy",
-        "journee": "اليوم",
+        "journee": "يومي",
         "classes": "الفصول",
         "ressources": "الموارد",
         "profil": "الملف الشخصي"
@@ -202,7 +202,7 @@
       "fermerPanneau": "إغلاق اللوحة",
       "panneauSupports": {
         "reprendre": "استئناف",
-        "recents": "الأحدث",
+        "recents": "المستخدمة مؤخرًا",
         "ressourcesClasse": "موارد الفصل",
         "voirTout": "عرض الكل",
         "ouvrir": "فتح",
@@ -210,26 +210,26 @@
         "voirBibliotheque": "عرض المكتبة كاملة"
       },
       "eleves": "الطلاب",
-      "rappeler": "النداء بهدوء",
+      "rappeler": "نداء خاص",
       "faireReciter": "طلب التلاوة",
-      "fileRecitation": "دور التلاوة",
+      "fileRecitation": "ترتيب التلاوة",
       "aSuivre": "التالي",
-      "vousAppelle": "\u2068{nom}\u2069 يناديك",
-      "signalerBesoin": "الإشارة إلى حاجة",
+      "vousAppelle": "نداء من \u2068{nom}\u2069",
+      "signalerBesoin": "الإبلاغ عن حاجة",
       "deplierFiche": "عرض بطاقة \u2068{prenom}\u2069",
       "replierFiche": "إخفاء بطاقة \u2068{prenom}\u2069",
       "fiche": {
         "aucuneSeanceSemaine": "لا حصص هذا الأسبوع",
         "uneSeanceSemaine": "حصة واحدة هذا الأسبوع",
-        "seancesSemaine": "\u2068{nombre}\u2069 حصص هذا الأسبوع"
+        "seancesSemaine": "عدد الحصص هذا الأسبوع: \u2068{nombre}\u2069"
       },
       "optionsPanneau": "خيارات لوحة \u2068{titre}\u2069",
       "commandes": {
-        "declencheur": "الأوامر",
-        "declencheurSemantique": "فتح أوامر المادة والسبورة",
-        "titre": "الأوامر",
+        "declencheur": "التحكم",
+        "declencheurSemantique": "فتح عناصر التحكم في المادة والسبورة",
+        "titre": "عناصر التحكم",
         "reduire": "تصغير",
-        "reduireSemantique": "تصغير الأوامر",
+        "reduireSemantique": "تصغير عناصر التحكم",
         "ongletSupport": "المادة",
         "ongletOutils": "الأدوات",
         "bibliotheque": "المكتبة",
@@ -244,14 +244,14 @@
         "quitterFocus": "الخروج من التركيز"
       },
       "bibliotheque": {
-        "intro": "المادة التي تختارها تُفتح لك وحدك. يبقى الفصل على المادة الحالية حتى «عرض».",
+        "intro": "المادة التي تختارها تُفتح لك وحدك. يبقى الفصل على المادة الحالية حتى «عرض على الفصل».",
         "apercu": "معاينة خاصة",
         "apercuClasse": "ما زال الطلاب يرون المادة الحالية.",
-        "presenter": "عرض",
+        "presenter": "عرض على الفصل",
         "revenir": "العودة إلى المواد",
         "ouverture": "جارٍ فتح المادة…",
-        "echec": "تعذّر فتح هذه المادة.",
-        "echecDetail": "تعذّر تحميل الملف. يبقى الفصل على المادة الحالية. أعد المحاولة، أو عد إلى المواد لاختيار مادة أخرى."
+        "echec": "تعذّر فتح الملف.",
+        "echecDetail": "تعذّر تحميل ملف هذه المادة. أعد المحاولة، أو عد إلى المواد لاختيار مادة أخرى."
       },
       "surface": {
         "aucunSupport": "اختر مادة أو اكتب على السبورة.",
@@ -292,10 +292,10 @@
           "enseignant": "المعلم"
         },
         "etats": {
-          "repos": "سكون",
+          "repos": "وضع عادي",
           "visite": "زيارة",
           "rienPartage": "لا شيء مُشارَك",
-          "appel": "النداء بهدوء",
+          "appel": "نداء خاص",
           "eleves": "لوحة الطلاب",
           "supports": "لوحة المواد",
           "fin": "نهاية الحصة",
@@ -321,7 +321,7 @@
           "vis01": "VIS-01 شريط الفيديو ظاهر",
           "ctx01": "CTX-01 سياق الحصة",
           "ctx02": "CTX-02 معلومات المراقبة",
-          "cmd01": "CMD-01 الأوامر",
+          "cmd01": "CMD-01 عناصر التحكم",
           "cmd02": "CMD-02 اللون والسُّمك",
           "cmd03": "CMD-03 الكتابة جارية",
           "lib01": "LIB-01 المكتبة",
@@ -361,9 +361,9 @@
         "phrase": "دفتر المتابعة جاهز بمعلومات الحصة.",
         "recapitulatif": "ملخص الحصة",
         "fin": "النهاية",
-        "connectes": "\u2068{n}\u2069 طلاب متصلون",
-        "unConnecte": "\u2068{n}\u2069 طالب متصل",
-        "inscrits": "من \u2068{n}\u2069 مسجَّلين",
+        "connectes": "الطلاب المتصلون: \u2068{n}\u2069",
+        "unConnecte": "الطلاب المتصلون: \u2068{n}\u2069",
+        "inscrits": "من أصل \u2068{n}\u2069",
         "unInscrit": "من \u2068{n}\u2069 مسجَّل",
         "cahierSeance": "دفتر المتابعة",
         "cahierACompleter": "دفتر المتابعة بانتظار الإكمال",
@@ -489,7 +489,7 @@
         "groupe": "المواد المعروضة",
         "continuer": "متابعة",
         "pourCeGroupe": "لهذا الفصل",
-        "recents": "الأحدث",
+        "recents": "المستخدمة مؤخرًا",
         "tousLesSupports": "كل المواد",
         "resultats": "النتائج"
       },
@@ -574,7 +574,7 @@
       },
       "carte": {
         "ouvrir": "فتح الفصل \u2068{libelle}\u2069",
-        "capacite": "\u2068{membres}\u2069 / \u2068{seuil}\u2069",
+        "capacite": "\u2068{membres}\u2069 من \u2068{seuil}\u2069",
         "capacitePhrase": "\u2068{membres}\u2069 طلاب من \u2068{seuil}\u2069 مقاعد",
         "complet": "مكتمل",
         "prochainCours": "الدرس القادم",
@@ -596,8 +596,8 @@
         "attente": "أنت في القاعة. لم يبدأ الدرس بعد.",
         "attenteDetail": "وقت الانتظار هذا لا يُحتسب في حضورك.",
         "enSalle": "في القاعة",
-        "resteMinutes": "بقيت \u2068{minutes}\u2069 دقيقة",
-        "resteHeures": "بقي \u2068{heures}\u2069 س \u2068{minutes}\u2069 د",
+        "resteMinutes": "المتبقي \u2068{minutes}\u2069 د",
+        "resteHeures": "المتبقي \u2068{heures}\u2069 س \u2068{minutes}\u2069 د",
         "enCours": "حصة مباشرة · \u2068{reste}\u2069",
         "enDirect": "مباشر",
         "prolongee": "الحصة ما زالت مباشرة",
@@ -659,8 +659,8 @@
         "fidele": "تنسيق الطبعة"
       },
       "zoom": {
-        "bride": "التكبير محدود بالعرض: بعده ستنقسم كلمة.",
-        "valeur": "\u2068{pourcent}\u2069 %",
+        "bride": "التكبير محدود بالعرض: ما زاد عليه يقطع الكلمات.",
+        "valeur": "\u2068{pourcent}\u2069 ٪",
         "renvoiLectureAgrandie": "لتكبير النص، انتقل إلى القراءة المكبَّرة: صفحة المصحف تحافظ على هيئتها."
       },
       "navigation": {
@@ -679,7 +679,7 @@
       },
       "focus": {
         "aucunePlage": "لا مقطع مُبرَز",
-        "aucunePlageDetail": "يتبع التركيز المقطع الذي يحدده المعلم. خارج الفصل، يتوسط الصفحة المفتوحة.",
+        "aucunePlageDetail": "يتبع التركيز المقطع الذي يحدده المعلم. خارج الفصل، يتمركز على الصفحة المفتوحة.",
         "quitter": "الخروج من التركيز"
       }
     },
@@ -689,12 +689,12 @@
         "deplacer": "نقل الأدوات",
         "position": {
           "bas": "في الأسفل",
-          "gauche": "على اليسار",
-          "droite": "على اليمين"
+          "gauche": "في جهة البداية",
+          "droite": "في جهة النهاية"
         },
         "bibliotheque": "المكتبة",
         "focus": "التركيز",
-        "marquer": "تعليم",
+        "marquer": "وضع علامة",
         "masquer": "إخفاء",
         "stylet": "القلم",
         "pointeur": "المؤشر",
@@ -719,11 +719,11 @@
       "portee": {
         "temporaire": "وقت الشرح",
         "seance": "حتى نهاية الدرس",
-        "enregistree": "حفظ",
+        "enregistree": "الاحتفاظ بها دائمًا",
         "aide": "إلى متى نحتفظ بهذه الملاحظات؟"
       },
       "marquer": {
-        "titre": "تعليم هذا المقطع",
+        "titre": "وضع علامة على هذا المقطع",
         "aide": "اختر ما يحتاجه هذا المقطع.",
         "retirer": "إزالة العلامة"
       },
@@ -755,20 +755,20 @@
           "sayyid": "سيد",
           "sayyida": "سيدة"
         },
-        "resteMinutes": "بقيت \u2068{minutes}\u2069 دقيقة",
-        "resteHeuresMinutes": "بقي \u2068{heures}\u2069 س \u2068{minutes}\u2069 د",
+        "resteMinutes": "المتبقي \u2068{minutes}\u2069 د",
+        "resteHeuresMinutes": "المتبقي \u2068{heures}\u2069 س \u2068{minutes}\u2069 د",
         "coursEnCours": "الحصة ما زالت مباشرة",
         "photoManquante": "صورة المعلم غير موجودة"
       },
       "roster": {
         "titre": "الطلاب",
-        "compteur": "الطلاب: \u2068{presents}\u2069 حاضرون من \u2068{attendus}\u2069 منتظَرين",
+        "compteur": "الحاضرون: \u2068{presents}\u2069 من أصل \u2068{attendus}\u2069",
         "indisponible": "قائمة الطلاب غير متاحة",
         "indisponibleDetail": "تعذّرت قراءة حالات طلابك. يستمر الدرس.",
         "vide": "لا طالب مسجَّل",
         "videDetail": "لا طالب مسجَّل في هذه الحصة.",
         "ouvrirFiche": "فتح بطاقة \u2068{prenom}\u2069",
-        "places": "\u2068{inscrits}\u2069 / \u2068{plafond}\u2069 مقاعد"
+        "places": "المقاعد: \u2068{inscrits}\u2069 من \u2068{plafond}\u2069"
       },
       "etat": {
         "inconnu": "حالة غير معروفة",
@@ -786,10 +786,10 @@
         "objectif": "الهدف الحالي",
         "derniereSeance": "آخر حصة",
         "page": "الصفحة \u2068{page}\u2069",
-        "travailEnCours": "\u2068{nombre}\u2069 عنصر",
+        "travailEnCours": "العناصر: \u2068{nombre}\u2069",
         "aReprendre": "للاستئناف",
         "presenceRecente": "الحضور الأخير",
-        "assiduite": "\u2068{presences}\u2069 / \u2068{total}\u2069 دروس",
+        "assiduite": "الدروس: \u2068{presences}\u2069 من \u2068{total}\u2069",
         "travailActuel": "العمل الحالي",
         "interfaceGuidee": "وضع إمكانية الوصول",
         "sansPedagogie": "المتابعة التعليمية غير متاحة",
@@ -799,7 +799,7 @@
         "rappel": "نداء هادئ",
         "reciter": "اختيار للتلاوة",
         "noter": "تدوين ملاحظة",
-        "signaler": "الإشارة إلى حاجة",
+        "signaler": "الإبلاغ عن حاجة",
         "contexte": "فتح السياق"
       },
       "rappel": {
@@ -810,8 +810,8 @@
       },
       "recitation": {
         "titre": "التلاوة",
-        "actif": "\u2068{prenom}\u2069 يتلو",
-        "pastille": "يتلو",
+        "actif": "التلاوة: \u2068{prenom}\u2069",
+        "pastille": "في التلاوة",
         "suivants": "بعد ذلك",
         "personne": "لا أحد يتلو",
         "arreter": "إيقاف التلاوة"
@@ -886,14 +886,14 @@
         "titre": "متابعة الحصة",
         "tuteurIntro": "يمكنك مشاهدة درس طفلك لوقت قصير. يبقى الميكروفون والكاميرا مغلقين.",
         "adminIntro": "اختر طريقتك قبل الدخول. لن تتغير بعد ذلك.",
-        "controleurIntro": "تدخل في متابعة غير مرئية. لا ميكروفون ولا كاميرا.",
+        "controleurIntro": "تدخل في مراقبة غير مرئية. لا ميكروفون ولا كاميرا.",
         "entrer": "دخول",
-        "modeDiscret": "المتابعة بهدوء",
+        "modeDiscret": "المتابعة دون ظهور",
         "modeDiscretDetail": "غير مرئي للمشاركين. دون ميكروفون ولا كاميرا، ودون إعلان.",
         "modeVisible": "الانضمام إلى الفصل",
         "modeVisibleDetail": "مرئي للجميع باسم إدارة Rewayah. الميكروفون والكاميرا مسموحان، ويُعلَن عن الدخول.",
         "nomInstitutionnel": "إدارة Rewayah",
-        "visiteJournalisee": "زيارة مسجَّلة في السجل: الهوية، والحصة، والدخول، والخروج، والمدة.",
+        "visiteJournalisee": "زيارة مقيَّدة في السجل: الهوية، والحصة، والدخول، والخروج، والمدة.",
         "roleSansObservation": "حسابك لا يتابع الحصص.",
         "retourClasse": "العودة إلى الفصل"
       },
@@ -901,7 +901,7 @@
         "titre": "لمحة عن تعلّمه",
         "regleUne": "\u2068{n}\u2069 زيارة مدتها \u2068{duree}\u2069",
         "regle": "\u2068{n}\u2069 زيارات مدة كل منها \u2068{duree}\u2069",
-        "regleDetail": "لكل حصة ولكل وليّ أمر، حتى لو كان عدة من أطفالك في الفصل.",
+        "regleDetail": "لكل حصة ولكل وليّ أمر، حتى لو كان أكثر من طفل من أطفالك في الفصل.",
         "ecoute": "استمع إلى المعلم والطلاب",
         "ecouteDetail": "تسمع المعلم والطلاب الذين يتكلمون، ومنهم طفلك.",
         "sansMedia": "دون ميكروفون ولا كاميرا",
@@ -912,8 +912,8 @@
         "informes": "طفلك ومعلمه على علم.",
         "observer": "المتابعة الآن",
         "pasMaintenant": "ليس الآن",
-        "restanteUne": "\u2068{restantes}\u2069/\u2068{max}\u2069 زيارة متبقية لهذه الحصة",
-        "restantes": "\u2068{restantes}\u2069/\u2068{max}\u2069 زيارات متبقية لهذه الحصة",
+        "restanteUne": "الزيارات المتبقية لهذه الحصة: \u2068{restantes}\u2069 من \u2068{max}\u2069",
+        "restantes": "الزيارات المتبقية لهذه الحصة: \u2068{restantes}\u2069 من \u2068{max}\u2069",
         "aucuneRestante": "لا زيارة متبقية لهذه الحصة"
       },
       "disponibilite": {
@@ -987,13 +987,13 @@
         "reconnexion": "إعادة الاتصال",
         "videoCoupee": "الفيديو غير متاح",
         "reconnexionDetail": "انقطع الاتصال، جارٍ إعادة الاتصال. يستمر احتساب وقت متابعتك.",
-        "sonRecu": "الصوت واصل",
+        "sonRecu": "الصوت يصل",
         "sonInterrompu": "الصوت منقطع",
         "agrandir": "تكبير",
         "reduire": "تصغير",
         "cameraFermee": "الكاميرا مغلقة",
         "pasEncoreLa": "ليس في القاعة بعد",
-        "parle": "\u2068{nom}\u2069 يتكلم",
+        "parle": "الكلمة الآن لـ\u2068{nom}\u2069",
         "quitterQuestion": "مغادرة الزيارة؟",
         "quitterConsequence": "بقي لك \u2068{duree}\u2069. الزيارة التي تُغادَر قبل نهايتها تُحتسب زيارة كاملة: الوقت غير المستخدم لا يُرحَّل.",
         "quitterConsequenceSansTemps": "الزيارة التي تُغادَر قبل نهايتها تُحتسب زيارة كاملة: الوقت غير المستخدم لا يُرحَّل.",
@@ -1014,10 +1014,10 @@
         "interrompue": "قُطعت المتابعة",
         "continuePour": "تستمر الحصة لـ\u2068{prenom}\u2069.",
         "continueSansPrenom": "تستمر الحصة.",
-        "resteUne": "بقيت لك زيارة واحدة مدتها \u2068{duree}\u2069. عد لاحقًا للاستماع إليه.",
-        "restent": "بقيت لك \u2068{n}\u2069 زيارات مدة كل منها \u2068{duree}\u2069. عد لاحقًا للاستماع إليه.",
-        "resteUneSansDuree": "بقيت لك زيارة واحدة. عد لاحقًا للاستماع إليه.",
-        "restentSansDuree": "بقيت لك \u2068{n}\u2069 زيارات. عد لاحقًا للاستماع إليه.",
+        "resteUne": "بقيت لك زيارة واحدة مدتها \u2068{duree}\u2069. عد لاحقًا للاستماع إلى طفلك.",
+        "restent": "بقيت لك \u2068{n}\u2069 زيارات مدة كل منها \u2068{duree}\u2069. عد لاحقًا للاستماع إلى طفلك.",
+        "resteUneSansDuree": "بقيت لك زيارة واحدة. عد لاحقًا للاستماع إلى طفلك.",
+        "restentSansDuree": "بقيت لك \u2068{n}\u2069 زيارات. عد لاحقًا للاستماع إلى طفلك.",
         "aucune": "استخدمت زياراتك لهذه الحصة. يمكنك متابعة الحصة القادمة.",
         "prochaineSeance": "يمكنك متابعة الحصة القادمة.",
         "verification": "جارٍ التحقق من زياراتك المتبقية",
@@ -1087,7 +1087,7 @@
         "comprehension": {
           "intitule": "هل فهمت ما تم العمل عليه؟",
           "difficile": "ليس تمامًا",
-          "bien": "نعم تقريبًا",
+          "bien": "نعم، إلى حدٍّ ما",
           "tresBien": "تمامًا"
         },
         "rythme": {
@@ -1105,7 +1105,7 @@
         "confiance": {
           "intitule": "هل تشعر أنك مستعد للدرس القادم؟",
           "difficile": "ليس بعد",
-          "bien": "تقريبًا",
+          "bien": "إلى حدٍّ ما",
           "tresBien": "تمامًا"
         },
         "merci": "شكرًا.",
@@ -1116,7 +1116,7 @@
         }
       },
       "signalement": {
-        "titre": "الإشارة إلى حاجة",
+        "titre": "الإبلاغ عن حاجة",
         "categorie": "بماذا يتعلق الأمر؟",
         "categorieValeur": {
           "pedagogique": "تعليمي",
@@ -1129,11 +1129,11 @@
         "interneAide": "تقرؤها الإدارة وحدها. لا تُرسل أبدًا تلقائيًا إلى الأسرة.",
         "famille": "رسالة إلى الأسرة",
         "familleAide": "اختيارية. الإدارة وحدها تقرر إرسالها بنقرة واحدة.",
-        "contexte": "الطالب \u2068{eleve}\u2069. الحصة والفصل واسمك مرفقة بالفعل.",
-        "envoyer": "إرسال الإشارة",
-        "envoye": "أُرسلت الإشارة إلى الإدارة.",
+        "contexte": "بخصوص \u2068{eleve}\u2069. الحصة والفصل واسمك مرفقة بالفعل.",
+        "envoyer": "إرسال البلاغ",
+        "envoye": "أُرسل البلاغ إلى الإدارة.",
         "interneRequis": "اكتب على الأقل ما يجب أن تعرفه الإدارة.",
-        "echec": "تعذّر إرسال الإشارة. أعد المحاولة."
+        "echec": "تعذّر إرسال البلاغ. أعد المحاولة."
       },
       "postCours": {
         "titre": "بعد الدرس",
