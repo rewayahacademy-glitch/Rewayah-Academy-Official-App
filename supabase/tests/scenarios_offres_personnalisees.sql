@@ -37,6 +37,108 @@ SELECT
   'francais', 'adulte_18_plus', 'lecture_lente', 'apprendre_a_lire'
 FROM generate_series(1, public.app_config_int('groupe.capacite_adulte', 6) + 4) AS g(n);
 
+INSERT INTO auth.users (id, email)
+VALUES
+  ('f1490000-0000-0000-0000-000000000998', 'f1-guardian@example.test'),
+  ('f1490000-0000-0000-0000-000000000999', 'f1-admin@example.test');
+
+INSERT INTO public.profiles
+  (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
+VALUES
+  ('f1490000-0000-0000-0000-000000000998', 'F1-GUARDIAN', 'guardian',
+   'f1480000-0000-0000-0000-000000000003', 'Foyer', 'Titulaire', 'active', 'female'),
+  ('f1490000-0000-0000-0000-000000000999', 'F1-ADMIN', 'admin', NULL,
+   'Admin', 'Test', 'active', 'male');
+
+UPDATE public.households
+   SET primary_guardian_id = 'f1490000-0000-0000-0000-000000000998'
+ WHERE id = 'f1480000-0000-0000-0000-000000000003';
+
+DO $request_account_one$
+DECLARE
+  v_reponse jsonb;
+BEGIN
+  PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('request.jwt.claims',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text, true);
+  v_reponse := public.demander_creneau_personnalise(
+    'f1490000-0000-0000-0000-000000000001',
+    'Europe/Paris', ARRAY[2,4,6]::smallint[], 18::smallint
+  );
+  IF v_reponse->>'etat' <> 'envoyee' THEN
+    RAISE EXCEPTION 'F1 fixture: première demande valide absente';
+  END IF;
+END
+$request_account_one$;
+
+DO $request_account_two$
+DECLARE
+  v_reponse jsonb;
+BEGIN
+  PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000002', true);
+  PERFORM set_config('request.jwt.claims',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text, true);
+  v_reponse := public.demander_creneau_personnalise(
+    'f1490000-0000-0000-0000-000000000002',
+    'Europe/Paris', ARRAY[2,4,6]::smallint[], 18::smallint
+  );
+  IF v_reponse->>'etat' <> 'envoyee' THEN
+    RAISE EXCEPTION 'F1 fixture: seconde demande valide absente';
+  END IF;
+END
+$request_account_two$;
+
+UPDATE public.profiles SET account_status = 'disabled'
+ WHERE id = 'f1490000-0000-0000-0000-000000000001';
+UPDATE public.households SET status = 'suspended'
+ WHERE id = 'f1480000-0000-0000-0000-000000000002';
+
+DO $request_disabled_account$
+DECLARE
+  v_ok boolean := false;
+BEGIN
+  PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('request.jwt.claims',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text, true);
+  BEGIN
+    PERFORM public.demander_creneau_personnalise(
+      'f1490000-0000-0000-0000-000000000001',
+      'Europe/Paris', ARRAY[2,4,6]::smallint[], 18::smallint
+    );
+  EXCEPTION WHEN raise_exception THEN
+    IF SQLERRM = 'ce profil n''est pas le votre ni celui de votre foyer' THEN
+      v_ok := true;
+    ELSE
+      RAISE;
+    END IF;
+  END;
+  IF NOT v_ok THEN RAISE EXCEPTION 'F1: un compte désactivé a été accepté'; END IF;
+END
+$request_disabled_account$;
+
+DO $request_suspended_household$
+DECLARE
+  v_ok boolean := false;
+BEGIN
+  PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000002', true);
+  PERFORM set_config('request.jwt.claims',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text, true);
+  BEGIN
+    PERFORM public.demander_creneau_personnalise(
+      'f1490000-0000-0000-0000-000000000002',
+      'Europe/Paris', ARRAY[2,4,6]::smallint[], 18::smallint
+    );
+  EXCEPTION WHEN raise_exception THEN
+    IF SQLERRM LIKE 'profil d''apprentissage incomplet%' THEN
+      v_ok := true;
+    ELSE
+      RAISE;
+    END IF;
+  END;
+  IF NOT v_ok THEN RAISE EXCEPTION 'F1: un foyer suspendu a été accepté'; END IF;
+END
+$request_suspended_household$;
+
 DO $quota$
 DECLARE
   v_i integer;
@@ -85,49 +187,17 @@ BEGIN
   END;
   IF NOT v_ok THEN RAISE EXCEPTION 'F1: une heure absente a été acceptée'; END IF;
 
-  -- Les demandes entrent dans la file, puis leur compte/foyer peut être
-  -- désactivé avant le calcul du regroupement. Le quota doit les exclure.
-  FOREACH v_id IN ARRAY ARRAY[
-    'f1490000-0000-0000-0000-000000000001'::uuid,
-    'f1490000-0000-0000-0000-000000000002'::uuid
-  ] LOOP
-    PERFORM set_config('request.jwt.claim.sub', v_id::text, true);
-    PERFORM set_config('request.jwt.claims',
-      jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text, true);
-    PERFORM public.demander_creneau_personnalise(v_id, 'Europe/Paris',
-      ARRAY[2,4,6]::smallint[], 18::smallint);
-  END LOOP;
-  PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000999', true);
+  -- Un même tuteur peut envoyer les demandes de plusieurs élèves de son foyer.
+  PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000998', true);
   PERFORM set_config('request.jwt.claims',
-    jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text, true);
-  UPDATE public.profiles SET account_status = 'disabled'
-   WHERE id = 'f1490000-0000-0000-0000-000000000001';
-  UPDATE public.households SET status = 'suspended'
-   WHERE id = 'f1480000-0000-0000-0000-000000000002';
-  FOREACH v_id IN ARRAY ARRAY[
-    'f1490000-0000-0000-0000-000000000001'::uuid,
-    'f1490000-0000-0000-0000-000000000002'::uuid
-  ] LOOP
-    PERFORM set_config('request.jwt.claim.sub', v_id::text, true);
-    v_ok := false;
-    BEGIN
-      PERFORM public.demander_creneau_personnalise(v_id, 'Europe/Paris',
-        ARRAY[2,4,6]::smallint[], 18::smallint);
-    EXCEPTION WHEN raise_exception THEN
-      IF SQLERRM = 'ce profil n''est pas le votre ni celui de votre foyer'
-         OR SQLERRM LIKE 'profil d''apprentissage incomplet%' THEN
-        v_ok := true;
-      ELSE
-        RAISE;
-      END IF;
-    END;
-    IF NOT v_ok THEN RAISE EXCEPTION 'F1: compte ou foyer inactif accepté'; END IF;
-  END LOOP;
+    jsonb_build_object('app_metadata', jsonb_build_object(
+      'role', 'guardian',
+      'household_id', 'f1480000-0000-0000-0000-000000000003'
+    ))::text, true);
 
   -- Tous les élèves valides partagent un seul foyer. Le quota compte les élèves.
   FOR v_i IN 1..v_capacite LOOP
     v_id := ('f1490000-0000-0000-0000-' || lpad((v_i + 2)::text, 12, '0'))::uuid;
-    PERFORM set_config('request.jwt.claim.sub', v_id::text, true);
     v_reponse := public.demander_creneau_personnalise(
       v_id, 'Europe/Paris',
       CASE WHEN v_i = 1 THEN ARRAY[6,4,2,2]::smallint[]
@@ -140,7 +210,6 @@ BEGIN
   END LOOP;
 
   -- Une répétition réseau renvoie la même demande sans compter deux fois.
-  PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000003', true);
   v_repetee := public.demander_creneau_personnalise(
     'f1490000-0000-0000-0000-000000000003',
     'Europe/Paris', ARRAY[2,4,6]::smallint[], 18::smallint
@@ -158,14 +227,6 @@ BEGIN
   ) THEN
     RAISE EXCEPTION 'F1: une demande familiale a publié une offre vitrine';
   END IF;
-
-  INSERT INTO auth.users (id, email)
-  VALUES ('f1490000-0000-0000-0000-000000000999', 'f1-admin@example.test');
-  INSERT INTO public.profiles
-    (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
-  VALUES
-    ('f1490000-0000-0000-0000-000000000999', 'F1-ADMIN', 'admin', NULL,
-     'Admin', 'Test', 'active', 'male');
 
   PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000999', true);
   PERFORM set_config('request.jwt.claims',
@@ -186,10 +247,7 @@ BEGIN
     RAISE EXCEPTION 'F1 heures de regroupement incorrectes: %', v_heures;
   END IF;
 
-  -- La famille reçoit uniquement son propre état; aucun effectif ni foyer tiers.
-  PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000003', true);
-  PERFORM set_config('request.jwt.claims',
-    jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text, true);
+  -- Le tuteur ne reçoit que l'état de l'élève de son foyer.
   v_reponse := public.mes_demandes_horaires(
     'f1490000-0000-0000-0000-000000000003');
   IF jsonb_array_length(v_reponse) <> 1
@@ -222,9 +280,6 @@ BEGIN
   );
   PERFORM public.publier_offre_horaire(v_offre);
   v_id := ('f1490000-0000-0000-0000-' || lpad((v_capacite + 3)::text, 12, '0'))::uuid;
-  PERFORM set_config('request.jwt.claim.sub', v_id::text, true);
-  PERFORM set_config('request.jwt.claims',
-    jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text, true);
   v_result := public.choisir_offre_horaire(v_id, v_offre, 'Europe/Paris');
   IF NOT EXISTS (
     SELECT 1 FROM public.demandes_horaires_famille
