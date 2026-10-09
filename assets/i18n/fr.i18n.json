@@ -2785,6 +2785,73 @@
     }
   },
   "classe": {
+    "cartes": {
+      "titre": "Cartes de la classe",
+      "contexteEnseignant": "Touchez une carte pour la modifier. Les élèves et leurs familles la voient aussitôt.",
+      "modificationPlusTard": "Les cartes pourront être modifiées quand la connexion reviendra.",
+      "aucune": "Aucune carte pour l'instant",
+      "aucuneDetail": "L'enseignant de la classe y posera les informations utiles.",
+      "aucuneEnseignant": "Aucune carte pour l'instant. Ajoutez-en une : la classe la verra aussitôt.",
+      "ajouter": "Ajouter une carte",
+      "limite": "{max} cartes au plus : retirez-en une pour en ajouter une autre.",
+      "modifierLecteur": "Modifier la carte « {titre} »",
+      "echeance": "Échéance : {date}",
+      "copierLien": "Copier le lien de « {titre} »",
+      "copierLienCourt": "Copier le lien",
+      "lienCopie": "Lien copié. Collez-le dans votre navigateur pour l'ouvrir.",
+      "indisponibleTitre": "Les cartes de la classe ne sont pas encore ouvertes",
+      "indisponiblePhrase": "Elles apparaîtront ici dès leur ouverture. Rien à faire de votre côté.",
+      "erreurLecture": "Les cartes de la classe n'ont pas pu être lues. Réessayez dans un instant.",
+      "sansDonnees": "Les cartes de la classe n'ont pas pu être chargées",
+      "enregistree": "Carte enregistrée. La classe la voit maintenant.",
+      "retiree": "Carte retirée. La classe ne la voit plus.",
+      "types": {
+        "annonce": "Annonce",
+        "devoir": "Devoir",
+        "lien": "Lien utile",
+        "rappel": "Rappel"
+      },
+      "typesDetail": {
+        "annonce": "Pour une information à toute la classe.",
+        "devoir": "Pour un travail à préparer : l'échéance proposée est la prochaine séance.",
+        "lien": "Pour partager une page ou un support : collez son adresse.",
+        "rappel": "Pour une date à ne pas oublier : sortie, examen, changement d'horaire."
+      },
+      "modeles": {
+        "annonce": "Information pour la classe",
+        "devoir": "À préparer pour la prochaine séance",
+        "lien": "Support à consulter",
+        "rappel": "À ne pas oublier"
+      },
+      "feuille": {
+        "titreNouvelle": "Nouvelle carte de la classe",
+        "titreModifier": "Modifier la carte « {titre} »",
+        "contexte": "Choisissez un modèle : il préremplit la carte. Elle est visible aussitôt par les élèves de la classe et leurs familles.",
+        "modele": "Modèle de la carte",
+        "champTitre": "Titre de la carte",
+        "champTexte": "Texte de la carte (facultatif)",
+        "champLien": "Lien de la carte (facultatif)",
+        "aideLongueur": "{max} caractères au plus",
+        "aideLien": "Une adresse complète, qui commence par https://",
+        "echeanceAucune": "Aucune échéance",
+        "choisirEcheance": "Choisir la date d'échéance",
+        "retirerEcheance": "Retirer l'échéance",
+        "enregistrer": "Enregistrer la carte",
+        "retirer": "Retirer cette carte",
+        "retirerQuestion": "Retirer la carte « {titre} » ?",
+        "retirerConsequence": "Elle disparaît aussitôt pour les élèves de la classe et leurs familles.",
+        "retirerConfirmer": "Retirer la carte",
+        "envoiNonConfirme": "La carte n'est pas confirmée : la réponse n'est pas arrivée. Vérifiez la connexion, puis enregistrez de nouveau.",
+        "retraitNonConfirme": "Le retrait n'est pas confirmé : la réponse n'est pas arrivée. Vérifiez la connexion, puis réessayez.",
+        "defauts": {
+          "titreVide": "Le titre manque. Écrivez quelques mots, par exemple « Sourate à réviser ».",
+          "titreLong": "Le titre dépasse {max} caractères. Raccourcissez-le.",
+          "texteLong": "Le texte dépasse {max} caractères. Raccourcissez-le ou partagez un lien.",
+          "lienInvalide": "Ce lien n'est pas une adresse complète. Collez une adresse qui commence par https://.",
+          "echeanceManquante": "Un devoir a besoin d'une échéance. Choisissez la date d'échéance."
+        }
+      }
+    },
     "entree": {
       "coursDans": "Cours dans {duree}",
       "coursImminent": "Cours dans moins d'une minute",
