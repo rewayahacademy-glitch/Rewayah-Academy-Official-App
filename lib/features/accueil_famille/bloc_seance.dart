@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../core/i18n/dates_appareil.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
@@ -17,6 +18,9 @@ import '../../core/theme/app_typography.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/status_pill.dart';
+
+export '../../core/i18n/dates_appareil.dart'
+    show dateDeLAppareil, heureDeLAppareil;
 
 /// Ce que l'Accueil affiche d'une seance, a un instant serveur donne.
 ///
@@ -61,7 +65,12 @@ class AffichageSeance {
       ville: foyer?.libelleVille,
       fuseau: foyer == null
           ? t.tuteur.accueil.heureAppareil
-          : t.tuteur.accueil.heureDe(deVille: deDevant(foyer.libelleVille)),
+          : t.tuteur.accueil.heureDe(
+              deVille: deDevant(
+                foyer.libelleVille,
+                cle: 'tuteur.accueil.heureDe',
+              ),
+            ),
       date: foyer?.dateLocaleRendue ?? dateDeLAppareil(local),
       duree: LibellesGroupe.dureeSeule(seance.dureePrevue),
       dureeEnPhrase: LibellesGroupe.dureeLisible(seance.dureePrevue),
@@ -201,7 +210,8 @@ class AffichageSeance {
     if (restant == null) {
       return e.prevue;
     }
-    final int minutes = restant.inMinutes;
+    // COM-RC tour 7 (lot L) : arrondi au superieur, comme l'heure affichee.
+    final int minutes = LibellesGroupe.minutesAvant(restant);
     // DUREE-INSECABLE-1 : « Dans 3 h 28 » ne se scinde jamais.
     if (minutes < Duration.minutesPerHour) {
       return LibellesGroupe.insecable(
@@ -222,23 +232,6 @@ class AffichageSeance {
     return LibellesGroupe.insecable(e.dansJours(jours: restant.inDays));
   }
 }
-
-/// L'heure locale de l'appareil, « 13:45 ».
-///
-/// Seulement quand aucune heure n'est rendue par le serveur, et toujours
-/// accompagnee du libelle « Heure de cet appareil » : ce n'est pas un fuseau
-/// devine, c'est l'aveu de la source.
-String heureDeLAppareil(DateTime local) =>
-    '${local.hour.toString().padLeft(2, '0')}:'
-    '${local.minute.toString().padLeft(2, '0')}';
-
-/// La date locale de l'appareil, « Lundi 21 septembre », par les libelles
-/// `commun.dates` (jamais une liste de noms en dur).
-String dateDeLAppareil(DateTime local) => t.commun.dates.jourDate(
-  jour: t.commun.dates.jours[local.weekday - 1],
-  numero: local.day,
-  mois: t.commun.dates.mois[local.month - 1],
-);
 
 /// Le bloc seance de la carte classe : date et etat, heure et duree, ligne
 /// d'etat, conseil d'appareil.

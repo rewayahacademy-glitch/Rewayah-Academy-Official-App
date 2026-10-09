@@ -118,12 +118,9 @@ void main() {
       clavier: 300,
     );
     expect(tester.takeException(), isNull);
-    final Rect liste = tester.getRect(
-      find.descendant(
-        of: find.byType(FilDiscussion),
-        matching: find.byType(ListView),
-      ),
-    );
+    // La zone des messages du fil (un `CustomScrollView` depuis COM-RC,
+    // reunie par JONCTION-LIGNES-1).
+    final Rect liste = tester.getRect(find.byKey(FilDiscussion.cleMessages));
     final double bulle = tester.getSize(find.byKey(_bulle)).height;
     expect(
       liste.height,

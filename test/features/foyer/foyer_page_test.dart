@@ -171,8 +171,8 @@ void main() {
 
       // Le foyer fictif arrive dans l'ordre inverse : l'ecran les range par
       // prenom (A1 avant A2), sans dependre de l'ordre de la vue.
-      final double yA1 = tester.getTopLeft(find.text('Eleve A1')).dy;
-      final double yA2 = tester.getTopLeft(find.text('Eleve A2')).dy;
+      final double yA1 = tester.getTopLeft(find.text('Élève A1')).dy;
+      final double yA2 = tester.getTopLeft(find.text('Élève A2')).dy;
       expect(yA1, lessThan(yA2));
       expect(tester.takeException(), isNull);
     });
@@ -183,7 +183,7 @@ void main() {
       final GoRouter routeur = await _monter(tester, appairage: _foyerA());
       await _ouvrirFoyerParLaBarre(tester);
 
-      await _toucher(tester, find.text('Eleve A1'));
+      await _toucher(tester, find.text('Élève A1'));
 
       expect(lieu(routeur), Routes.ficheElevePour(FoyersFictifs.a1.id));
       expect(find.byType(FicheElevePage), findsOneWidget);
@@ -262,13 +262,13 @@ void main() {
       await _monter(tester, appairage: appairage, depart: Routes.tuteurFoyer);
 
       expect(find.byType(Skeleton), findsWidgets);
-      expect(find.text('Eleve A1'), findsNothing);
+      expect(find.text('Élève A1'), findsNothing);
       // L'action d'en-tete reste accessible pendant le chargement.
       expect(find.byKey(FoyerPage.ajouterKey), findsOneWidget);
 
       appairage.attente!.complete();
       await stabiliser(tester);
-      expect(find.text('Eleve A1'), findsOneWidget);
+      expect(find.text('Élève A1'), findsOneWidget);
     });
 
     testWidgets('vide : phrase honnete, aucune fausse ligne', (
@@ -293,7 +293,7 @@ void main() {
       await _monter(tester, appairage: appairage, depart: Routes.tuteurFoyer);
 
       expect(_etat(NatureEtat.echecServeur), findsOneWidget);
-      expect(find.text('Eleve A1'), findsNothing);
+      expect(find.text('Élève A1'), findsNothing);
       final int lecturesAvant = appairage.lectures;
 
       // Aucune pompe entre la remise en etat et le geste : les nouvelles
@@ -304,7 +304,7 @@ void main() {
       expect(appairage.lectures, greaterThan(lecturesAvant));
       await stabiliser(tester);
 
-      expect(find.text('Eleve A1'), findsOneWidget);
+      expect(find.text('Élève A1'), findsOneWidget);
       expect(_etat(NatureEtat.echecServeur), findsNothing);
     });
 
@@ -337,7 +337,7 @@ void main() {
       await tester.pump();
       expect(appairage.lectures, greaterThan(lecturesAvant));
       await stabiliser(tester);
-      expect(find.text('Eleve A1'), findsOneWidget);
+      expect(find.text('Élève A1'), findsOneWidget);
     });
   });
 
@@ -518,7 +518,7 @@ void main() {
         ..elevesRendus = <EleveDuFoyer>[
           EleveDuFoyer(
             id: 'foyer-c-eleve-1',
-            prenom: 'Eleve C1',
+            prenom: 'Élève C1',
             identifiantImmuable: 'STUD-FC-000001',
             mode: InterfaceMode.standard,
             camera: CameraPolicy.forbidden,
@@ -526,7 +526,7 @@ void main() {
           ),
           EleveDuFoyer(
             id: 'foyer-c-eleve-2',
-            prenom: 'Eleve C2',
+            prenom: 'Élève C2',
             identifiantImmuable: 'STUD-FC-000002',
             mode: InterfaceMode.standard,
             camera: CameraPolicy.forbidden,

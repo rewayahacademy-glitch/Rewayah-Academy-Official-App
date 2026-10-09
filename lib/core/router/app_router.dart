@@ -45,6 +45,12 @@ import '../../features/classe_tuteur/planning_classe_page.dart';
 import '../../features/classe_tuteur/progression_classe_page.dart';
 import '../../features/classe_tuteur/ressources_classe_page.dart';
 import '../../features/classe_tuteur/travail_classe_page.dart';
+import '../../features/com_annonces/administration_communications_page.dart';
+import '../../features/com_annonces/publier_annonce_classe_page.dart';
+import '../../features/com_communaute/communaute_page.dart';
+import '../../features/com_messages/messages_admin.dart';
+import '../../features/com_messages/messages_page.dart';
+import '../../features/com_studio/studio_page.dart';
 import '../../features/compte/acces_page.dart';
 import '../../features/compte/aide_page.dart';
 import '../../features/compte/apparence_page.dart';
@@ -68,6 +74,7 @@ import '../../features/controleur/garde_controle.dart';
 import '../../features/controleur/historique_controleur_page.dart';
 import '../../features/controleur/observation_controle_page.dart';
 import '../../features/creneaux/creneaux_page.dart';
+import '../../features/demo/communications/demo_communications_page.dart';
 import '../../features/demo/demo_accessibilite_page.dart';
 import '../../features/demo/demo_adulte_page.dart';
 import '../../features/demo/demo_classe_page.dart';
@@ -126,6 +133,7 @@ import '../domain/enums.dart';
 import '../dossier/resignature_contrat.dart';
 import '../finance/montant.dart';
 import '../i18n/strings.g.dart';
+import '../icons/app_icons.dart';
 import '../mouvement/transitions.dart';
 import '../preferences/presentation_vue.dart';
 import '../session/session_controleur.dart';
@@ -134,6 +142,7 @@ import '../tc_groupe/group_home_vm.dart' show RoleEspaceGroupe;
 import '../theme/app_gabarit.dart';
 import '../widgets/admin_shell.dart';
 import '../widgets/bascule_theme.dart';
+import '../widgets/bouton_icone.dart';
 import '../widgets/entete_page.dart';
 import '../widgets/nav_shell.dart';
 import '../widgets/page_shell.dart';
@@ -583,6 +592,26 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                   ),
                 ],
               ),
+              // COM-F : les Messages metier, une pose de l'Accueil (aucune
+              // cinquieme destination) ; la voie COM-MSG remplit l'ecran.
+              GoRoute(
+                path: Routes.tuteurMessages,
+                pageBuilder: glissee(
+                  (GoRouterState _) =>
+                      const MessagesPage(cheminRetour: Routes.tuteurAccueil),
+                ),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: ':filId',
+                    pageBuilder: glissee(
+                      (GoRouterState etat) => MessagesPage(
+                        filId: _parametre(etat, 'filId'),
+                        cheminRetour: Routes.tuteurMessages,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
           // Foyer : ajout de profil, appareils, emetteur QR, fiche et ses
@@ -956,6 +985,32 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                   ),
                 ],
               ),
+              // COM-F : poses de la branche Aujourd'hui (aucune destination
+              // ajoutee, E10) : les notifications de la cloche, la
+              // `NotificationsPage` existante, et la Communaute enseignants,
+              // raccourci d'Aujourd'hui (Q2).
+              GoRoute(
+                path: Routes.enseignantNotifications,
+                builder: (BuildContext contexte, GoRouterState _) =>
+                    NotificationsPage(
+                      onRetour: () =>
+                          GoRouter.of(contexte).go(Routes.enseignantJournee),
+                    ),
+              ),
+              GoRoute(
+                path: Routes.enseignantCommunaute,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const CommunautePage(),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: ':publicationId',
+                    builder: (BuildContext _, GoRouterState etat) =>
+                        CommunautePage(
+                          publicationId: _parametre(etat, 'publicationId'),
+                        ),
+                  ),
+                ],
+              ),
             ],
           ),
           // Classes, deuxieme branche (E10) : l'ordre des branches est celui
@@ -966,6 +1021,23 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 path: Routes.enseignantClasses,
                 builder: (BuildContext _, GoRouterState _) =>
                     const MesClassesPage(),
+              ),
+              // COM-F : les Messages metier de l'enseignant, une pose de la
+              // branche Classes (aucune destination ajoutee, E10).
+              GoRoute(
+                path: Routes.enseignantMessages,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const MessagesPage(cheminRetour: Routes.enseignantClasses),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: ':filId',
+                    builder: (BuildContext _, GoRouterState etat) =>
+                        MessagesPage(
+                          filId: _parametre(etat, 'filId'),
+                          cheminRetour: Routes.enseignantMessages,
+                        ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -1037,6 +1109,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState etat) =>
             RevueGroupePage(groupeId: etat.pathParameters['groupeId'] ?? ''),
       ),
+      // COM-F : publier une annonce de Classe, tache focalisee hors de la
+      // coquille comme l'Espace Classe d'ou elle part (voie COM-ANN).
+      GoRoute(
+        path: '${Routes.enseignantGroupe}/:groupeId/annonce',
+        builder: (BuildContext _, GoRouterState etat) =>
+            PublierAnnonceClassePage(groupeId: _parametre(etat, 'groupeId')),
+      ),
 
       // Controleur : quatre destinations, Controle, Historique, Echanges,
       // Compte (C13, document 08 du 27/09/2026, qui remplace « une seule
@@ -1059,6 +1138,16 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 path: Routes.controleur,
                 builder: (BuildContext _, GoRouterState _) =>
                     const ControleControleurPage(),
+              ),
+              // COM-F : les notifications de la cloche du controleur, la
+              // `NotificationsPage` existante, pose de la branche Controle.
+              GoRoute(
+                path: Routes.controleurNotifications,
+                builder: (BuildContext contexte, GoRouterState _) =>
+                    NotificationsPage(
+                      onRetour: () =>
+                          GoRouter.of(contexte).go(Routes.controleur),
+                    ),
               ),
             ],
           ),
@@ -1154,6 +1243,86 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.operations,
           child: DemandesPage(),
+        ),
+      ),
+      // COM-F : l'Administration des communications, sous Operations
+      // (QUESTIONS Q4), jamais un neuvieme domaine. Trois onglets pairs
+      // (`ongletsCommunications`) ; la racine renvoie au premier.
+      GoRoute(
+        path: Routes.adminOperationsCommunications,
+        redirect: (BuildContext _, GoRouterState _) =>
+            Routes.adminCommunicationsAnnonces,
+      ),
+      GoRoute(
+        path: Routes.adminCommunicationsAnnonces,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: AdministrationCommunicationsPage(
+            onglet: OngletCommunications.annonces,
+          ),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminCommunicationsModeration,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: AdministrationCommunicationsPage(
+            onglet: OngletCommunications.moderation,
+          ),
+        ),
+      ),
+      // COM-FUS : l'onglet Messages monte la page de la voie COM-MSG-2
+      // (`MessagesAdminPage`), meme sous-navigation des trois onglets.
+      GoRoute(
+        path: Routes.adminCommunicationsMessages,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: MessagesAdminPage(),
+        ),
+        routes: <RouteBase>[
+          GoRoute(
+            path: ':filId',
+            builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
+              domaine: AdminDomaine.operations,
+              child: MessagesAdminPage(filId: _parametre(etat, 'filId')),
+            ),
+          ),
+        ],
+      ),
+      // COM-F : la cloche de l'en-tete admin ouvre la `NotificationsPage`
+      // existante, transverse aux domaines (aucun domaine actif).
+      GoRoute(
+        path: Routes.adminNotifications,
+        builder: (BuildContext contexte, GoRouterState _) => _CoquilleAdmin(
+          domaine: null,
+          notificationsOuvertes: true,
+          child: NotificationsPage(
+            onRetour: () => GoRouter.of(contexte).go(Routes.admin),
+          ),
+        ),
+      ),
+      // COM-F : Le Studio (QUESTIONS Q1), hors de l'`AdminShell` : sa propre
+      // navigation viendra de la voie COM-STU, la sortie ramene a `/admin`.
+      // `/admin/studio/canaux` n'a pas de page : elle renvoie a la vue des
+      // canaux du Studio (`/admin/studio` est Aujourd'hui, COM-STU-2).
+      // COM-RC (revue COM-R, R-05) : comme toute coquille admin, Le Studio
+      // porte la cloche, la bascule clair / sombre et l'acces au compte
+      // (`_ActionsStudio`), et son identite « Administrateur » dans sa
+      // colonne (`CoquilleStudio.onCompte`).
+      GoRoute(
+        path: Routes.adminStudio,
+        builder: (BuildContext _, GoRouterState _) =>
+            const _ActionsStudio(child: StudioPage()),
+      ),
+      GoRoute(
+        path: Routes.adminStudioCanaux,
+        redirect: (BuildContext _, GoRouterState _) =>
+            adresseVueStudio(VueStudio.canaux),
+      ),
+      GoRoute(
+        path: '${Routes.adminStudioCanaux}/:canalId',
+        builder: (BuildContext _, GoRouterState etat) => _ActionsStudio(
+          child: StudioPage(canalId: _parametre(etat, 'canalId')),
         ),
       ),
       GoRoute(
@@ -1445,6 +1614,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ...routesDemoAccessibilite(Env.environnement),
       ...routesDemoAdulte(Env.environnement),
       ...routesDemoFinance(Env.environnement),
+      ...routesDemoCommunications(Env.environnement),
     ],
   );
 });
@@ -1590,6 +1760,9 @@ class _CoquilleSecondaire extends ConsumerWidget {
         onCompte: () => aller(Routes.compte),
         // Retour vers l'Accueil admin partout (spec section 26 ter, Q14).
         onRetour: () => aller(Routes.admin),
+        // COM-F : la cloche et Le Studio, comme sur toute page admin.
+        onNotifications: () => aller(Routes.adminNotifications),
+        onStudio: () => aller(Routes.adminStudio),
         child: child,
       );
     }
@@ -1651,16 +1824,24 @@ class _CoquilleNavigation extends ConsumerWidget {
       mode: InterfaceMode.standard,
     );
     final List<Destination> visibles = destinationsPour(role: role, mode: mode);
+    // COM-F-Q5 : sur la page des notifications, la cloche est la seule
+    // entree active. La page vit sous une branche (la Journee, l'Accueil),
+    // mais la barre ne surligne pas cet onglet : deux selections a la fois
+    // diraient deux endroits.
+    final String? cheminCloche = Routes.notificationsPour(role);
+    final bool surNotifications = chemin == cheminCloche;
 
     final Widget coquille = NavShell(
       destinations: visibles,
-      indexActif: indexDansBarre(
-        visibles: visibles,
-        completes: destinations,
-        indexComplet: navigationShell.currentIndex < destinations.length
-            ? navigationShell.currentIndex
-            : null,
-      ),
+      indexActif: surNotifications
+          ? null
+          : indexDansBarre(
+              visibles: visibles,
+              completes: destinations,
+              indexComplet: navigationShell.currentIndex < destinations.length
+                  ? navigationShell.currentIndex
+                  : null,
+            ),
       masquerBarreBasse: Routes.estTacheFocalisee(chemin),
       // Le rail replie a icones seules est la maquette du tuteur ; l'eleve et
       // l'enseignant gardent leurs libelles visibles sur tablette, comme avant
@@ -1703,10 +1884,31 @@ class _CoquilleNavigation extends ConsumerWidget {
     );
 
     if (role != AppRole.guardian) {
+      // COM-F : la cloche des notifications, posee par la coquille du role
+      // quand ce role en a une (`Routes.notificationsPour` : enseignant et
+      // controleur ; jamais l'eleve mineur, reponse Q5 du directeur du
+      // 04/10). Sans point tant que le port est indisponible, comme le
+      // tuteur. Elle s'ajoute, en dernier, aux actions deja posees au-dessus
+      // (le raccourci Espaces de CT-9), et se montre active sur sa page.
+      final Widget avecCloche = cheminCloche == null
+          ? coquille
+          : Builder(
+              builder: (BuildContext contexte) => ActionsEnteteCoquille(
+                actions: <Widget>[
+                  ...ActionsEnteteCoquille.de(contexte),
+                  ClocheNotifications(
+                    actif: surNotifications,
+                    onPress: () => GoRouter.of(contexte).go(cheminCloche),
+                  ),
+                ],
+                onRetour: ActionsEnteteCoquille.retourDe(contexte),
+                child: coquille,
+              ),
+            );
       // CT-9 : le raccourci d'en-tete vers `Compte > Espaces`, seulement
       // quand le compte a plus d'un espace (jamais le tuteur, C6) ; l'espace
       // Controle est garde, refus generique si la capacite manque (C7).
-      final Widget avecEspaces = EnteteEspaces(child: coquille);
+      final Widget avecEspaces = EnteteEspaces(child: avecCloche);
       return role == AppRole.controller
           ? GardeControle(child: avecEspaces)
           : avecEspaces;
@@ -1720,6 +1922,7 @@ class _CoquilleNavigation extends ConsumerWidget {
       actions: <Widget>[
         if (large) const BasculeTheme(),
         ClocheNotifications(
+          actif: surNotifications,
           onPress: () => GoRouter.of(context).go(Routes.tuteurNotifications),
         ),
       ],
@@ -1727,6 +1930,40 @@ class _CoquilleNavigation extends ConsumerWidget {
     );
   }
 }
+
+/// Les actions d'en-tete du Studio (revue COM-R, R-05), posees par la route
+/// comme celles de l'`AdminShell` : a partir de 600, la bascule clair /
+/// sombre ; partout, « Mon compte » (la deconnexion y est) puis la cloche des
+/// notifications de l'admin, en dernier. Sous le prefixe `/admin`, que la
+/// garde reserve a l'admin : rien ici ne lit un role.
+class _ActionsStudio extends StatelessWidget {
+  const _ActionsStudio({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    void aller(String chemin) => GoRouter.of(context).go(chemin);
+    final bool large = AppGabarit.de(context).estLarge;
+    return ActionsEnteteCoquille(
+      actions: <Widget>[
+        if (large) const BasculeTheme(),
+        BoutonIcone(
+          key: cleCompteStudio,
+          icone: AppIcons.profil,
+          libelle: t.nav.compte,
+          infobulle: t.nav.compte,
+          onPress: () => aller(Routes.compte),
+        ),
+        ClocheNotifications(onPress: () => aller(Routes.adminNotifications)),
+      ],
+      child: child,
+    );
+  }
+}
+
+/// La cle de « Mon compte » dans l'en-tete du Studio, pour les tests.
+const Key cleCompteStudio = ValueKey<String>('studio-compte');
 
 /// Le chrome du panneau admin, huit domaines (lot IA-01, 19 septembre 2026).
 ///
@@ -1747,16 +1984,22 @@ class _CoquilleAdmin extends ConsumerWidget {
     required this.domaine,
     required this.child,
     this.sousPage = false,
+    this.notificationsOuvertes = false,
   });
 
-  /// Le domaine que revendique cette route.
-  final AdminDomaine domaine;
+  /// Le domaine que revendique cette route ; nul pour une page transverse
+  /// (les notifications), qui n'allume aucun domaine.
+  final AdminDomaine? domaine;
 
   /// Vrai pour une page rangee sous l'Accueil (les alertes) : elle garde le
   /// retour vers l'Accueil.
   final bool sousPage;
 
   final Widget child;
+
+  /// La page ouverte est celle des notifications : la cloche s'y montre
+  /// active.
+  final bool notificationsOuvertes;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -1800,6 +2043,13 @@ class _CoquilleAdmin extends ConsumerWidget {
       bandeau: domaine == AdminDomaine.accueil || (urgentes ?? 0) == 0
           ? null
           : BandeauAlerteUrgente(onOuvrir: () => aller(Routes.adminAlertes)),
+      // COM-F : la cloche mene a la `NotificationsPage` existante, l'action
+      // « Le Studio » au Studio (Q1). Posees par la route, sous le prefixe
+      // `/admin` que la garde reserve a l'admin : la coquille ne lit aucun
+      // role.
+      onNotifications: () => aller(Routes.adminNotifications),
+      notificationsActives: notificationsOuvertes,
+      onStudio: () => aller(Routes.adminStudio),
       child: child,
     );
   }

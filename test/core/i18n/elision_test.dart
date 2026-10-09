@@ -125,17 +125,42 @@ void main() {
       parcourir('', ar);
       const Set<String> appeleesAvecCle = <String>{
         'classe.entree.rejoindreLecteur',
+        // Traduites en arabe par la voie Communications (JONCTION-LIGNES-1).
+        'classe.seance.aucuneDetail',
+        'classe.observation.motif.enfantAbsent',
+        'classe.observation.motif.presenceEnVerification',
+        'classe.pagePlanning.aucuneDetail',
+        'classe.pageProgression.indisponible',
+        'classe.pageCatalogue.aucuneDetail',
+        'classe.pageCatalogue.resultat.validationPhrase',
+        'classe.pageCatalogue.resultat.listeAttentePhrase',
+        'tuteur.accueil.heureDe',
       };
       expect(trouvees.difference(appeleesAvecCle), isEmpty);
       // Et les appels du code passent bien leur cle.
       final String code = <String>[
         'lib/core/tc_horloge/emplacement_entree.dart',
         'lib/features/journee/journee_page.dart',
+        'lib/features/classe_tuteur/carte_seance_classe.dart',
+        'lib/features/classe_tuteur/bloc_observation_classe.dart',
+        'lib/features/classe_tuteur/planning_classe_page.dart',
+        'lib/features/classe_tuteur/progression_classe_page.dart',
+        'lib/features/classe_tuteur/catalogue_classes_page.dart',
+        'lib/features/accueil_famille/bloc_seance.dart',
       ].map((String f) => File(f).readAsStringSync()).join();
       for (final String cle in <String>[
         'classe.entree.rejoindreLecteur',
         'enseignant.journee.cahierObligatoire',
         'enseignant.journee.voirCahier',
+        'classe.seance.aucuneDetail',
+        'classe.observation.motif.enfantAbsent',
+        'classe.observation.motif.presenceEnVerification',
+        'classe.pagePlanning.aucuneDetail',
+        'classe.pageProgression.indisponible',
+        'classe.pageCatalogue.aucuneDetail',
+        'classe.pageCatalogue.resultat.validationPhrase',
+        'classe.pageCatalogue.resultat.listeAttentePhrase',
+        'tuteur.accueil.heureDe',
       ]) {
         expect(code, contains("cle: '$cle'"), reason: cle);
       }

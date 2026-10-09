@@ -378,6 +378,22 @@ abstract final class Routes {
   /// Les notifications du tuteur, ouvertes par la cloche de l'en-tete.
   static const String tuteurNotifications = '/tuteur/notifications';
 
+  // --- Communications V1 (COM-F) -------------------------------------------
+  //
+  // Les routes des Communications sont posees une fois par le socle (COM-F,
+  // `UX_REVIEW_COMMUNICATIONS_L0` section 3) ; chaque voie remplace ensuite
+  // l'ecran provisoire dans son propre dossier. Toutes vivent sous le
+  // prefixe du role (`prefixePour`) : aucune garde nouvelle, aucune
+  // destination ajoutee aux barres (4 sur 4, `nav_shell.dart`).
+
+  /// Les Messages metier du tuteur (COM-M01, COM-W01), une pose de l'Accueil :
+  /// aucune cinquieme destination, l'entree vient de l'Espace Classe et des
+  /// notifications.
+  static const String tuteurMessages = '/tuteur/messages';
+
+  /// Un fil des Messages du tuteur.
+  static String tuteurFilPour(String filId) => '$tuteurMessages/$filId';
+
   /// Vrai quand [chemin] est une **tache focalisee** : sur telephone, la
   /// barre basse s'efface et l'ecran porte son disque retour (manifeste
   /// visuel Tuteur V1 section 4.2 point 5 ; mapping des routes, section 5).
@@ -471,6 +487,31 @@ abstract final class Routes {
   static String revuePour(String groupeId) =>
       '$enseignantGroupe/$groupeId/revue';
 
+  /// La publication d'une annonce pour la Classe [groupeId] (COM-ANN,
+  /// spec section 14) : une tache focalisee ouverte depuis l'Espace Classe
+  /// enseignant (`FicheGroupePage`).
+  static String publierAnnoncePour(String groupeId) =>
+      '$enseignantGroupe/$groupeId/annonce';
+
+  /// Les Messages metier de l'enseignant (COM-M01, COM-W01) : une pose,
+  /// Classes reste la destination active.
+  static const String enseignantMessages = '/enseignant/messages';
+
+  /// Un fil des Messages de l'enseignant.
+  static String enseignantFilPour(String filId) => '$enseignantMessages/$filId';
+
+  /// La Communaute enseignants (COM-M02, COM-W02) : un raccourci depuis
+  /// Aujourd'hui (QUESTIONS Q2), jamais une destination.
+  static const String enseignantCommunaute = '/enseignant/communaute';
+
+  /// Une publication de la Communaute.
+  static String enseignantPublicationPour(String publicationId) =>
+      '$enseignantCommunaute/$publicationId';
+
+  /// Les notifications de l'enseignant, ouvertes par la cloche de sa
+  /// coquille : la `NotificationsPage` existante, jamais un second centre.
+  static const String enseignantNotifications = '/enseignant/notifications';
+
   // --- Controleur ---------------------------------------------------------
 
   /// Controle (CTR-01), premiere des quatre destinations du controleur (C13,
@@ -497,6 +538,10 @@ abstract final class Routes {
   static String controleurEcrireAdmin(String? missionId) => missionId == null
       ? controleurEchanges
       : controleurEchangesMission(missionId);
+
+  /// Les notifications du controleur, ouvertes par la cloche de sa coquille.
+  /// Les Echanges restent son seul fil (C13) : aucune route Messages ici.
+  static const String controleurNotifications = '/controleur/notifications';
 
   /// Compte rendu (CTR-03), la sortie de la salle d'observation (P-CTR-03
   /// point 12). Tache focalisee, hors coquille (CT-4).
@@ -547,6 +592,45 @@ abstract final class Routes {
 
   /// Demandes et regles (`ADM-06`), sous Operations.
   static const String adminOperationsDemandes = '/admin/operations/demandes';
+
+  /// L'Administration des communications (COM-W04), sous Operations
+  /// (QUESTIONS Q4) : jamais un neuvieme domaine. La racine renvoie a son
+  /// premier onglet, Annonces.
+  static const String adminOperationsCommunications =
+      '/admin/operations/communications';
+
+  /// Onglet Annonces de l'Administration des communications.
+  static const String adminCommunicationsAnnonces =
+      '$adminOperationsCommunications/annonces';
+
+  /// Onglet Moderation de l'Administration des communications.
+  static const String adminCommunicationsModeration =
+      '$adminOperationsCommunications/moderation';
+
+  /// Onglet Messages de l'Administration des communications.
+  static const String adminCommunicationsMessages =
+      '$adminOperationsCommunications/messages';
+
+  /// Un fil des Messages, cote administration.
+  static String adminFilPour(String filId) =>
+      '$adminCommunicationsMessages/$filId';
+
+  /// Le Studio (COM-W00, COM-M04) : l'espace de travail interne, reserve a
+  /// l'admin en V1 (QUESTIONS Q1). Ouvert par l'action « Le Studio » de
+  /// l'en-tete de l'`AdminShell`, hors de la coquille admin (sa propre
+  /// navigation, sortie vers [admin]).
+  static const String adminStudio = '/admin/studio';
+
+  /// Racine des canaux du Studio : pas de page a cette adresse.
+  static const String adminStudioCanaux = '$adminStudio/canaux';
+
+  /// Un canal du Studio (COM-W03, COM-M03).
+  static String canalStudioPour(String canalId) =>
+      '$adminStudioCanaux/$canalId';
+
+  /// Les notifications de l'admin, ouvertes par la cloche de l'en-tete de
+  /// l'`AdminShell`.
+  static const String adminNotifications = '/admin/notifications';
 
   /// Domaine Personnes.
   static const String adminPersonnes = '/admin/personnes';
@@ -690,6 +774,10 @@ abstract final class Routes {
   /// Enregistree seulement hors production (`environnementAutoriseDemo`).
   static const String demoFinance = '/demo/finance';
 
+  /// Les Communications en demonstration (COM-F) : `?voie=...&role=...`.
+  /// Enregistree seulement hors production (`environnementAutoriseDemo`).
+  static const String demoCommunications = '/demo/communications';
+
   // --- Developpement --------------------------------------------------------
 
   /// Galerie des composants. Compilee seulement avec `--dart-define=GALERIE=true`.
@@ -766,6 +854,17 @@ abstract final class Routes {
     connexion,
     bienvenue,
     agentEntree,
+  };
+
+  /// Ou mene la cloche des notifications de la coquille d'un role : la
+  /// `NotificationsPage` existante, sous le prefixe du role. Nul pour un
+  /// role sans cloche (l'eleve, le comptable).
+  static String? notificationsPour(AppRole role) => switch (role) {
+    AppRole.guardian => tuteurNotifications,
+    AppRole.teacher => enseignantNotifications,
+    AppRole.controller => controleurNotifications,
+    AppRole.admin => adminNotifications,
+    AppRole.student || AppRole.accountant => null,
   };
 
   /// La racine de chaque role, ou une redirection renvoie toujours.

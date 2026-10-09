@@ -26,6 +26,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/communications/modeles_communication.dart';
 import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -42,6 +43,8 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../acces_finance/acces_finance.dart';
+import '../com_annonces/annonces_de_classe.dart';
+import '../com_messages/entree_messages_contexte.dart';
 import '../foyer/photo_eleve.dart' show PhotoEleve;
 import '../tc_catalogue/routes_tc_b.dart' show RoutesTcB;
 import '../tc_espace_groupe/bloc_cartes_classe.dart';
@@ -305,6 +308,16 @@ class _Sections extends StatelessWidget {
         onVoirTout: () => voir == null
             ? GoRouter.of(context).go(RoutesTcB.avecGroupe(groupeId))
             : voir(groupeId),
+      ),
+      // COM-F : les emplacements des Communications (annonces de la Classe,
+      // entree des Messages), vides tant que leurs voies ne les remplissent
+      // pas ; en fin de section, l'ecart entre sections se pose avant eux,
+      // rendu seulement quand ils rendent quelque chose.
+      AnnoncesDeClasse(classeId: groupeId, ecartAvant: Ecart.vSection),
+      EntreeMessagesContexte(
+        type: TypeObjetLie.classe,
+        objetId: groupeId,
+        ecartAvant: Ecart.vSection,
       ),
     ];
 

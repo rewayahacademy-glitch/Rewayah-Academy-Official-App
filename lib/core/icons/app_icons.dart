@@ -826,6 +826,81 @@ abstract final class AppIcons {
     IconData(0xe2ce, fontFamily: _actif),
   );
 
+  // --- Communications (COM-F, complements COM-0b, 02_DEC-01) -------------
+  // Posees d'avance par le socle pour les cinq voies, ce fichier etant gele
+  // apres COM-F (02_DECOUPAGE, regle 5) : une icone oubliee devient une ligne
+  // traitee a COM-FUS, jamais une icone detournee. Points de code releves dans
+  // `@phosphor-icons/web` 2.1.1 (`src/regular/style.css`), glyphes compares a
+  // ceux de `assets/fonts` (memes contours, dans les deux graisses).
+  // « Mention » n'est pas posee : son besoin n'est pas prouve (02_DEC-01) ;
+  // le badge dit « Mention » avec [profil].
+
+  /// Piece jointe : l'entree « Joindre un fichier » et la carte d'une piece
+  /// (COM-F, spec section 12).
+  /// Phosphor `paperclip` (0xe39a).
+  static const AppIcon pieceJointe = AppIcon._(
+    IconData(0xe39a, fontFamily: _repos),
+    IconData(0xe39a, fontFamily: _actif),
+  );
+
+  /// Element epingle d'un canal du Studio (COM-STU, « Elements epingles »).
+  /// Phosphor `push-pin` (0xe3e2).
+  static const AppIcon epingle = AppIcon._(
+    IconData(0xe3e2, fontFamily: _repos),
+    IconData(0xe3e2, fontFamily: _actif),
+  );
+
+  /// Lien partage dans un fil ou une publication (COM-MSG, COM-COMU, COM-STU).
+  /// Phosphor `link-simple` (0xe2e6).
+  static const AppIcon lien = AppIcon._(
+    IconData(0xe2e6, fontFamily: _repos),
+    IconData(0xe2e6, fontFamily: _actif),
+  );
+
+  /// Signet : les elements enregistres d'une personne (Studio, « Enregistres »,
+  /// spec section 18). Ajoute par decision du directeur du 05/10 (D-FUS-9,
+  /// choix a), a la place du repli [cahier].
+  /// Phosphor `bookmark-simple` (0xe0ea), ligature verifiee dans les deux
+  /// polices de `assets/fonts`.
+  static const AppIcon signet = AppIcon._(
+    IconData(0xe0ea, fontFamily: _repos),
+    IconData(0xe0ea, fontFamily: _actif),
+  );
+
+  /// Telecharger un fichier partage, par jeton ephemere seulement (COM-BR-04).
+  /// Distinct de [enAttenteEnvoi] (`cloud-arrow-up`), qui dit un envoi.
+  /// Phosphor `download-simple` (0xe20c).
+  static const AppIcon telecharger = AppIcon._(
+    IconData(0xe20c, fontFamily: _repos),
+    IconData(0xe20c, fontFamily: _actif),
+  );
+
+  /// Arreter l'enregistrement d'un message vocal (COM-VOC). Jamais un envoi
+  /// automatique : l'arret mene a la pre-ecoute. Distinct de [pause]
+  /// (`coffee`), qui dit une pause de la journee.
+  /// Phosphor `stop` (0xe46c).
+  static const AppIcon arret = AppIcon._(
+    IconData(0xe46c, fontFamily: _repos),
+    IconData(0xe46c, fontFamily: _actif),
+  );
+
+  /// Annonce de Classe et Administration des communications (COM-ANN,
+  /// COM-W04).
+  /// Phosphor `megaphone` (0xe324).
+  static const AppIcon annonce = AppIcon._(
+    IconData(0xe324, fontFamily: _repos),
+    IconData(0xe324, fontFamily: _actif),
+  );
+
+  /// Le Studio, l'espace de travail de l'equipe interne (Q1, `/admin/studio`).
+  /// Propre au Studio : il n'emprunte plus [discussion], qui reste l'icone des
+  /// Echanges du controleur (revue COM-F-R, M1).
+  /// Phosphor `briefcase` (0xe0ee).
+  static const AppIcon studio = AppIcon._(
+    IconData(0xe0ee, fontFamily: _repos),
+    IconData(0xe0ee, fontFamily: _actif),
+  );
+
   // --- Etats d'une invitation au forfait famille (EA-PL) -----------------
   // Une icone par etat, pour le lire sans le texte (demande du directeur,
   // 02/10). Points de code releves dans `phosphor_flutter` 2.1.0, dont les

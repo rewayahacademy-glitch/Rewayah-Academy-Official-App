@@ -78,7 +78,10 @@ class _Progression extends ConsumerWidget {
     return LectureClasse<ProgressionEleve>(
       valeur: ref.watch(progressionEleveProvider(eleveId)),
       phraseIndisponible: t.classe.pageProgression.indisponible(
-        dePrenom: deDevant(contexte.eleve.prenom),
+        dePrenom: deDevant(
+          contexte.eleve.prenom,
+          cle: 'classe.pageProgression.indisponible',
+        ),
       ),
       onReessayer: () => ref.invalidate(progressionEleveProvider(eleveId)),
       construire: (ProgressionEleve progression) => progressionVide(progression)

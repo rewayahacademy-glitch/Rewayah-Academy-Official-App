@@ -133,9 +133,18 @@ class _Initiales extends StatelessWidget {
     if (mots.length == 1) {
       return mots.first.characters.first.toUpperCase();
     }
-    return (mots.first.characters.first + mots[1].characters.first)
-        .toUpperCase();
+    final String premiere = mots.first.characters.first;
+    final String seconde = mots[1].characters.first;
+    // L'arabe lie ses lettres : deux initiales accolees formeraient un mot
+    // (« سيدة مريم » donnait « سم », « poison »). L'antiliant (U+200C) les
+    // garde isolees, lues comme deux initiales (COM-RC tour 7).
+    if (_arabe.hasMatch(premiere) && _arabe.hasMatch(seconde)) {
+      return '$premiere\u200C$seconde';
+    }
+    return (premiere + seconde).toUpperCase();
   }
+
+  static final RegExp _arabe = RegExp(r'[\u0600-\u06FF\u0750-\u077F]');
 
   @override
   Widget build(BuildContext context) {

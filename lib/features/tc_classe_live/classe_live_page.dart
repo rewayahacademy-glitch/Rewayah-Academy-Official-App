@@ -312,24 +312,19 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
     RoleSeance.guidee => Routes.eleve,
   };
 
-  /// La cloche : aucune source de notifications avant BR-1 (K-28), la
-  /// feuille le dit plutot que d'inventer une liste.
-  Future<void> _voirNotifications() => AppBottomSheet.ouvrir<void>(
-    context,
-    titre: t.notifications.titre,
-    constructeur: (BuildContext _) => Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          t.notifications.indisponibleTitre,
-          style: Theme.of(context).textTheme.titleSmall,
-        ),
-        Ecart.vXs,
-        Text(t.notifications.indisponiblePhrase),
-      ],
-    ),
-  );
+  /// La cloche de la salle (COM-ANN-1, reponse du directeur a Q5, 04/10) :
+  /// pour l'enseignant, elle ouvre le centre de notifications partage de son
+  /// role (`/enseignant/notifications`), choisi par le role de la SEANCE
+  /// (`RoleSeance`, deja lu par [_routeDuGroupe]), jamais par `AppRole` ni
+  /// par le mode d'interface ; la salle reste ouverte (barre « Cours en
+  /// cours », D-24). Pour l'eleve, aucune cloche : seul l'eleve mineur entre
+  /// en Classe live, et il n'a pas de centre de notifications. Quand une
+  /// entree d'eleve adulte existera, sa cloche passera par le contexte de la
+  /// Classe live (signale au tableau, hors COM).
+  String? _routeNotifications(RoleSeance role) => switch (role) {
+    RoleSeance.enseignant => Routes.enseignantNotifications,
+    RoleSeance.eleve || RoleSeance.guidee => null,
+  };
 
   /// Le panneau ouvert a cote du support (enseignant).
   PanneauOuvert _panneau = PanneauOuvert.aucun;
@@ -419,11 +414,14 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
         onRetour: Navigator.of(context).canPop()
             ? () => Navigator.of(context).pop()
             : () => _allerSansQuitter(_routeDuGroupe(vue.role)),
-        // Coin de l'en-tete (images CLV-06 et CLV-07) : aucune source de
-        // notifications n'est branchee avant BR-1, la cloche le dit sur place
-        // ; reglages et compte ouvrent les pages communes `/compte`, la salle
-        // restant ouverte (barre « Cours en cours », D-24).
-        onNotifications: () => unawaited(_voirNotifications()),
+        // Coin de l'en-tete (images CLV-06 et CLV-07) : la cloche ouvre le
+        // centre partage de l'enseignant (COM-ANN-1), absente pour l'eleve ;
+        // reglages et compte ouvrent les pages communes `/compte`. La salle
+        // reste ouverte (barre « Cours en cours », D-24).
+        onNotifications: switch (_routeNotifications(vue.role)) {
+          final String route => () => _allerSansQuitter(route),
+          null => null,
+        },
         onReglages: () => _allerSansQuitter(Routes.compteReglages),
         onCompte: () => _allerSansQuitter(Routes.compte),
         onQuitter: () => unawaited(_sortir()),

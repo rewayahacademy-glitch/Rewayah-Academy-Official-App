@@ -172,6 +172,17 @@ const List<String> composantsDuCatalogue = <String>[
   // FORM-L1-7-13 : le motif en puces, « Autre » ouvre la saisie libre (K-57).
   'SelecteurMotif',
   'ZoneSaisie',
+  // COM-F (Communications V1, spec section 19) : les quatre composants du
+  // socle, ramenes a la racine de lib/core/widgets par COM-F-b (02_DEC-13) ;
+  // dans un sous-dossier, le test du disque ne les voyait pas.
+  'BadgeNonLu',
+  'CartePieceJointe',
+  'EspaceTravailAdaptatif',
+  'VueEtatCommunication',
+  // COM-RC (revue COM-R, R-07) : une seule recherche de liste, pour les
+  // Messages, Le Studio et la Communaute.
+  'ChampRecherche',
+  'SurfaceRecherche',
 ];
 
 /// Les trois largeurs de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 8.
@@ -292,6 +303,26 @@ void main() {
             ..sort();
 
       expect(fichiers, attendus);
+    });
+
+    test('aucun composant ne se cache dans un sous-dossier', () {
+      // 02_DEC-13 (COM-F-b) : le test precedent ne lit que la racine. Un
+      // composant pose dans `lib/core/widgets/<dossier>/` lui echappait, et
+      // echappait donc a la galerie : c'est arrive aux quatre composants des
+      // Communications (revue COM-F-R, M2). Les composants vivent a la racine.
+      final List<String> caches =
+          Directory('lib/core/widgets')
+              .listSync(recursive: true)
+              .whereType<File>()
+              .map((File f) => f.path.replaceAll(r'\', '/'))
+              .where((String chemin) => chemin.endsWith('.dart'))
+              .where(
+                (String chemin) =>
+                    chemin.substring('lib/core/widgets/'.length).contains('/'),
+              )
+              .toList()
+            ..sort();
+      expect(caches, isEmpty);
     });
 
     test('un composant livre avec son seul etat nominal n est pas fini', () {

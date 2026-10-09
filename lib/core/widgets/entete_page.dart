@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../accessibilite/texte_sans_coupure.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
+import '../theme/app_color_pair.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
@@ -322,6 +323,11 @@ class DisqueRetour extends StatelessWidget {
 /// service de notifications ; tant qu'aucune source n'existe (DB-CPT-04), il
 /// vaut `null` et la cloche n'a pas de point. Lue « Notifications » ou
 /// « Notifications, n non lues ».
+///
+/// **Active sur sa propre page** ([actif]) : icone pleine a l'encre d'accent
+/// et etat selectionne, le meme traitement qu'une destination active de la
+/// barre. La personne voit ou elle est, la cloche ne se lit plus comme une
+/// entree vers une page deja ouverte.
 class ClocheNotifications extends StatelessWidget {
   /// Cree la cloche.
   const ClocheNotifications({
@@ -329,6 +335,7 @@ class ClocheNotifications extends StatelessWidget {
     super.key,
     this.nonLues,
     this.libelleSemantique,
+    this.actif = false,
   });
 
   /// L'ouverture des notifications (`/tuteur/notifications`).
@@ -341,6 +348,9 @@ class ClocheNotifications extends StatelessWidget {
   /// notifications non lues : la cloche des alertes de la direction annonce
   /// ses alertes urgentes (ALERTE-1). Nul : le libelle des notifications.
   final String? libelleSemantique;
+
+  /// La page des notifications est celle qui est ouverte.
+  final bool actif;
 
   /// Diametre du point de non-lus.
   static const double diametrePoint = AppSpacing.sm;
@@ -358,9 +368,16 @@ class ClocheNotifications extends StatelessWidget {
           _ => t.commun.entete.notificationsNonLues(nombre: nombre),
         };
 
+    final AppInkColor encre = actif
+        ? palette.inkAccent
+        : (mobile ? palette.inkStrong : palette.inkMuted);
+
     return Pressable(
       onPress: onPress,
       libelleSemantique: libelle,
+      // Annoncee selectionnee sur sa page seulement ; ailleurs, aucun etat
+      // de selection (un bouton seul n'est pas un onglet).
+      selectionne: actif ? true : null,
       arrondiFocus: AppRadius.arrondiFull,
       child: ExcludeSemantics(
         child: SizedBox.square(
@@ -369,9 +386,10 @@ class ClocheNotifications extends StatelessWidget {
             children: <Widget>[
               Center(
                 child: IconTheme(
-                  data: (mobile ? palette.inkStrong : palette.inkMuted)
-                      .asIconTheme(size: AppSpacing.xxl),
-                  child: Icon(AppIcons.notifications.repos),
+                  data: encre.asIconTheme(size: AppSpacing.xxl),
+                  child: Icon(
+                    AppIcons.notifications.resoudre(selectionne: actif),
+                  ),
                 ),
               ),
               if (nombre > 0)

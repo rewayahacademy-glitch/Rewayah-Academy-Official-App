@@ -91,6 +91,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$alertes$fr alertes = Traductions$alertes$fr.internal(_root);
 	late final Traductions$argent$fr argent = Traductions$argent$fr.internal(_root);
 	late final Traductions$identiteProfil$fr identiteProfil = Traductions$identiteProfil$fr.internal(_root);
+	late final Traductions$com$fr com = Traductions$com$fr.internal(_root);
 }
 
 // Path: commun
@@ -137,6 +138,7 @@ class Traductions$commun$fr {
 	late final Traductions$commun$demarrage$fr demarrage = Traductions$commun$demarrage$fr.internal(_root);
 	late final Traductions$commun$dates$fr dates = Traductions$commun$dates$fr.internal(_root);
 	late final Traductions$commun$sections$fr sections = Traductions$commun$sections$fr.internal(_root);
+	late final Traductions$commun$recherche$fr recherche = Traductions$commun$recherche$fr.internal(_root);
 }
 
 // Path: reseau
@@ -2208,6 +2210,9 @@ class Traductions$historique$fr {
 	late final Traductions$historique$observations$fr observations = Traductions$historique$observations$fr.internal(_root);
 	late final Traductions$historique$seance$fr seance = Traductions$historique$seance$fr.internal(_root);
 	late final Traductions$historique$observation$fr observation = Traductions$historique$observation$fr.internal(_root);
+
+	/// fr: '{jour} {mois}'
+	String dateCourteSansAnnee({required Object jour, required Object mois}) => '${jour} ${mois}';
 }
 
 // Path: notifications
@@ -2217,6 +2222,28 @@ class Traductions$notifications$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$notifications$filtres$fr filtres = Traductions$notifications$filtres$fr.internal(_root);
+
+	/// fr: 'Aucune notification dans ce filtre'
+	String get filtreVideTitre => 'Aucune notification dans ce filtre';
+
+	/// fr: 'Choisissez « Toutes » pour revoir l'ensemble de vos notifications.'
+	String get filtreVidePhrase => 'Choisissez « Toutes » pour revoir l\'ensemble de vos notifications.';
+
+	/// fr: 'Voir toutes les notifications'
+	String get voirToutes => 'Voir toutes les notifications';
+
+	/// fr: 'Non lue'
+	String get nonLue => 'Non lue';
+
+	/// fr: 'non lue'
+	String get nonLueSemantique => 'non lue';
+
+	/// fr: 'La lecture n'est pas encore confirmée. Réessayez dans un instant.'
+	String get lectureNonConfirmee => 'La lecture n\'est pas encore confirmée. Réessayez dans un instant.';
+
+	late final Traductions$notifications$detail$fr detail = Traductions$notifications$detail$fr.internal(_root);
+	late final Traductions$notifications$types$fr types = Traductions$notifications$types$fr.internal(_root);
 
 	/// fr: 'Notifications'
 	String get titre => 'Notifications';
@@ -2595,6 +2622,21 @@ class Traductions$identiteProfil$fr {
 	String lecteurAvecClasse({required Object profil, required Object classe}) => '${profil}, ${classe}';
 }
 
+// Path: com
+class Traductions$com$fr {
+	Traductions$com$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$com$socle$fr socle = Traductions$com$socle$fr.internal(_root);
+	late final Traductions$com$messages$fr messages = Traductions$com$messages$fr.internal(_root);
+	late final Traductions$com$vocal$fr vocal = Traductions$com$vocal$fr.internal(_root);
+	late final Traductions$com$communaute$fr communaute = Traductions$com$communaute$fr.internal(_root);
+	late final Traductions$com$studio$fr studio = Traductions$com$studio$fr.internal(_root);
+	late final Traductions$com$annonces$fr annonces = Traductions$com$annonces$fr.internal(_root);
+}
+
 // Path: commun.demonstration
 class Traductions$commun$demonstration$fr {
 	Traductions$commun$demonstration$fr.internal(this._root);
@@ -2889,6 +2931,21 @@ class Traductions$commun$sections$fr {
 
 	/// fr: 'Sections de la page'
 	String get page => 'Sections de la page';
+}
+
+// Path: commun.recherche
+class Traductions$commun$recherche$fr {
+	Traductions$commun$recherche$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Effacer la recherche'
+	String get effacer => 'Effacer la recherche';
+
+	/// fr: 'Fermer la recherche'
+	String get fermer => 'Fermer la recherche';
 }
 
 // Path: salle.preparation
@@ -8289,6 +8346,147 @@ class Traductions$historique$observation$fr {
 	String get introuvablePhrase => 'Aucune visite enregistrée ne correspond à cette séance.';
 }
 
+// Path: notifications.filtres
+class Traductions$notifications$filtres$fr {
+	Traductions$notifications$filtres$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Filtrer les notifications'
+	String get libelle => 'Filtrer les notifications';
+
+	/// fr: 'Toutes'
+	String get toutes => 'Toutes';
+
+	/// fr: 'Non lues'
+	String get nonLues => 'Non lues';
+
+	/// fr: 'Mentions'
+	String get mentions => 'Mentions';
+
+	/// fr: 'Action requise'
+	String get actionRequise => 'Action requise';
+}
+
+// Path: notifications.detail
+class Traductions$notifications$detail$fr {
+	Traductions$notifications$detail$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Choisissez une notification'
+	String get choisirTitre => 'Choisissez une notification';
+
+	/// fr: 'Son détail s'affiche ici, à côté de la liste.'
+	String get choisirPhrase => 'Son détail s\'affiche ici, à côté de la liste.';
+
+	/// fr: 'Reçue le {date} à {heure}'
+	String recue({required Object date, required Object heure}) => 'Reçue le ${date} à ${heure}';
+
+	/// fr: 'Ouvrir la page concernée'
+	String get ouvrir => 'Ouvrir la page concernée';
+}
+
+// Path: notifications.types
+class Traductions$notifications$types$fr {
+	Traductions$notifications$types$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Annonce de Classe'
+	String get annonceClasse => 'Annonce de Classe';
+
+	/// fr: 'Changement de séance'
+	String get changementSeance => 'Changement de séance';
+
+	/// fr: 'Décision sur un dossier'
+	String get decisionDossier => 'Décision sur un dossier';
+
+	/// fr: 'Message'
+	String get messageMetier => 'Message';
+
+	/// fr: 'Réponse attendue'
+	String get reponseAttendue => 'Réponse attendue';
+
+	/// fr: 'Accès et paiements'
+	String get accesFinance => 'Accès et paiements';
+
+	/// fr: 'Observation'
+	String get observation => 'Observation';
+
+	/// fr: 'Travail ou ressource'
+	String get travailRessource => 'Travail ou ressource';
+
+	/// fr: 'Annonce de la direction'
+	String get annonceDirection => 'Annonce de la direction';
+
+	/// fr: 'Changement de planning'
+	String get changementPlanning => 'Changement de planning';
+
+	/// fr: 'Remplacement'
+	String get remplacement => 'Remplacement';
+
+	/// fr: 'Mention dans la Communauté'
+	String get mentionCommunaute => 'Mention dans la Communauté';
+
+	/// fr: 'Réponse dans la Communauté'
+	String get reponseCommunaute => 'Réponse dans la Communauté';
+
+	/// fr: 'Message de l'Administration'
+	String get messageAdministration => 'Message de l\'Administration';
+
+	/// fr: 'Dossier à traiter'
+	String get dossierATraiter => 'Dossier à traiter';
+
+	/// fr: 'Signalement dans la Communauté'
+	String get signalementCommunaute => 'Signalement dans la Communauté';
+
+	/// fr: 'Réponse dans une conversation'
+	String get reponseFil => 'Réponse dans une conversation';
+
+	/// fr: 'Annonce planifiée à publier'
+	String get annoncePlanifiee => 'Annonce planifiée à publier';
+
+	/// fr: 'Événement de l'académie'
+	String get evenementOperationnel => 'Événement de l\'académie';
+
+	/// fr: 'Mission'
+	String get mission => 'Mission';
+
+	/// fr: 'Changement de mission'
+	String get changementMission => 'Changement de mission';
+
+	/// fr: 'Réponse de l'Administration'
+	String get reponseAdministration => 'Réponse de l\'Administration';
+
+	/// fr: 'Mention dans Le Studio'
+	String get mentionStudio => 'Mention dans Le Studio';
+
+	/// fr: 'Réponse dans Le Studio'
+	String get reponseStudio => 'Réponse dans Le Studio';
+
+	/// fr: 'Décision demandée'
+	String get decisionDemandee => 'Décision demandée';
+
+	/// fr: 'Élément assigné'
+	String get elementAssigne => 'Élément assigné';
+
+	/// fr: 'Annonce interne'
+	String get annonceInterne => 'Annonce interne';
+
+	/// fr: 'Événement'
+	String get evenementContextuel => 'Événement';
+
+	/// fr: 'Notification'
+	String get autre => 'Notification';
+}
+
 // Path: eleve.accueil
 class Traductions$eleve$accueil$fr {
 	Traductions$eleve$accueil$fr.internal(this._root);
@@ -13359,6 +13557,222 @@ class Traductions$argent$acces$fr {
 
 	/// fr: 'Réactivé'
 	String get pastilleReactive => 'Réactivé';
+}
+
+// Path: com.socle
+class Traductions$com$socle$fr {
+	Traductions$com$socle$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$com$socle$composants$fr composants = Traductions$com$socle$composants$fr.internal(_root);
+	late final Traductions$com$socle$lexique$fr lexique = Traductions$com$socle$lexique$fr.internal(_root);
+	late final Traductions$com$socle$motifs$fr motifs = Traductions$com$socle$motifs$fr.internal(_root);
+	late final Traductions$com$socle$signalement$fr signalement = Traductions$com$socle$signalement$fr.internal(_root);
+	late final Traductions$com$socle$enregistrement$fr enregistrement = Traductions$com$socle$enregistrement$fr.internal(_root);
+	late final Traductions$com$socle$navigation$fr navigation = Traductions$com$socle$navigation$fr.internal(_root);
+}
+
+// Path: com.messages
+class Traductions$com$messages$fr {
+	Traductions$com$messages$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$com$messages$entree$fr entree = Traductions$com$messages$entree$fr.internal(_root);
+
+	/// fr: 'Une conversation s'ouvre depuis une Classe, un élève ou un dossier.'
+	String get videDetail => 'Une conversation s\'ouvre depuis une Classe, un élève ou un dossier.';
+
+	/// fr: 'Choisissez une conversation'
+	String get choisirTitre => 'Choisissez une conversation';
+
+	/// fr: 'Choisissez une conversation dans la liste pour la lire et y répondre.'
+	String get choisir => 'Choisissez une conversation dans la liste pour la lire et y répondre.';
+
+	late final Traductions$com$messages$recherche$fr recherche = Traductions$com$messages$recherche$fr.internal(_root);
+	late final Traductions$com$messages$ligne$fr ligne = Traductions$com$messages$ligne$fr.internal(_root);
+	late final Traductions$com$messages$noms$fr noms = Traductions$com$messages$noms$fr.internal(_root);
+	late final Traductions$com$messages$entete$fr entete = Traductions$com$messages$entete$fr.internal(_root);
+	late final Traductions$com$messages$types$fr types = Traductions$com$messages$types$fr.internal(_root);
+	late final Traductions$com$messages$panneau$fr panneau = Traductions$com$messages$panneau$fr.internal(_root);
+	late final Traductions$com$messages$fil$fr fil = Traductions$com$messages$fil$fr.internal(_root);
+	late final Traductions$com$messages$demo$fr demo = Traductions$com$messages$demo$fr.internal(_root);
+
+	/// fr: 'Messages métier'
+	String get titre => _root.com.socle.lexique.messagesMetier;
+
+	/// fr: 'Aucune conversation pour le moment.'
+	String get vide => 'Aucune conversation pour le moment.';
+}
+
+// Path: com.vocal
+class Traductions$com$vocal$fr {
+	Traductions$com$vocal$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$com$vocal$composer$fr composer = Traductions$com$vocal$composer$fr.internal(_root);
+	late final Traductions$com$vocal$lecteur$fr lecteur = Traductions$com$vocal$lecteur$fr.internal(_root);
+	late final Traductions$com$vocal$demo$fr demo = Traductions$com$vocal$demo$fr.internal(_root);
+
+	/// fr: 'Message vocal'
+	String get titre => 'Message vocal';
+}
+
+// Path: com.communaute
+class Traductions$com$communaute$fr {
+	Traductions$com$communaute$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$com$communaute$garde$fr garde = Traductions$com$communaute$garde$fr.internal(_root);
+	late final Traductions$com$communaute$lien$fr lien = Traductions$com$communaute$lien$fr.internal(_root);
+
+	/// fr: 'Échanges et entraide entre enseignants'
+	String get sousTitre => 'Échanges et entraide entre enseignants';
+
+	/// fr: 'Catégories de la Communauté enseignants'
+	String get sections => 'Catégories de la Communauté enseignants';
+
+	/// fr: 'Toutes'
+	String get toutes => 'Toutes';
+
+	/// fr: 'Aucune publication'
+	String get videTitre => 'Aucune publication';
+
+	/// fr: 'Aucun résultat'
+	String get rechercheVideTitre => 'Aucun résultat';
+
+	/// fr: 'Aucune publication ne correspond à votre recherche. Essayez un autre mot.'
+	String get rechercheVide => 'Aucune publication ne correspond à votre recherche. Essayez un autre mot.';
+
+	/// fr: 'Aucune publication pour le moment.'
+	String get videToutes => 'Aucune publication pour le moment.';
+
+	late final Traductions$com$communaute$flux$fr flux = Traductions$com$communaute$flux$fr.internal(_root);
+	late final Traductions$com$communaute$recherche$fr recherche = Traductions$com$communaute$recherche$fr.internal(_root);
+	late final Traductions$com$communaute$moment$fr moment = Traductions$com$communaute$moment$fr.internal(_root);
+	late final Traductions$com$communaute$publication$fr publication = Traductions$com$communaute$publication$fr.internal(_root);
+	late final Traductions$com$communaute$reponses$fr reponses = Traductions$com$communaute$reponses$fr.internal(_root);
+	late final Traductions$com$communaute$signalement$fr signalement = Traductions$com$communaute$signalement$fr.internal(_root);
+	late final Traductions$com$communaute$composer$fr composer = Traductions$com$communaute$composer$fr.internal(_root);
+	late final Traductions$com$communaute$regles$fr regles = Traductions$com$communaute$regles$fr.internal(_root);
+	late final Traductions$com$communaute$entree$fr entree = Traductions$com$communaute$entree$fr.internal(_root);
+	late final Traductions$com$communaute$demo$fr demo = Traductions$com$communaute$demo$fr.internal(_root);
+
+	/// fr: 'Communauté enseignants'
+	String get titre => _root.com.socle.lexique.communaute;
+
+	/// fr: 'Aucune publication dans cette catégorie.'
+	String get vide => 'Aucune publication dans cette catégorie.';
+}
+
+// Path: com.studio
+class Traductions$com$studio$fr {
+	Traductions$com$studio$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$com$studio$focus$fr focus = Traductions$com$studio$focus$fr.internal(_root);
+	late final Traductions$com$studio$aujourdhui$fr aujourdhui = Traductions$com$studio$aujourdhui$fr.internal(_root);
+	late final Traductions$com$studio$brouillons$fr brouillons = Traductions$com$studio$brouillons$fr.internal(_root);
+
+	/// fr: 'Espace de travail de l'équipe'
+	String get sousTitre => 'Espace de travail de l\'équipe';
+
+	late final Traductions$com$studio$navigation$fr navigation = Traductions$com$studio$navigation$fr.internal(_root);
+
+	/// fr: 'Choisissez un canal'
+	String get choisirTitre => 'Choisissez un canal';
+
+	/// fr: 'Choisissez un canal dans la liste pour lire la discussion et y écrire.'
+	String get choisir => 'Choisissez un canal dans la liste pour lire la discussion et y écrire.';
+
+	/// fr: 'Aucun canal pour le moment'
+	String get aucunCanalTitre => 'Aucun canal pour le moment';
+
+	/// fr: 'Les canaux qui vous sont ouverts apparaîtront ici.'
+	String get aucunCanal => 'Les canaux qui vous sont ouverts apparaîtront ici.';
+
+	late final Traductions$com$studio$sections$fr sections = Traductions$com$studio$sections$fr.internal(_root);
+	late final Traductions$com$studio$visibilite$fr visibilite = Traductions$com$studio$visibilite$fr.internal(_root);
+	late final Traductions$com$studio$canal$fr canal = Traductions$com$studio$canal$fr.internal(_root);
+	late final Traductions$com$studio$panneau$fr panneau = Traductions$com$studio$panneau$fr.internal(_root);
+	late final Traductions$com$studio$enregistrer$fr enregistrer = Traductions$com$studio$enregistrer$fr.internal(_root);
+	late final Traductions$com$studio$enregistres$fr enregistres = Traductions$com$studio$enregistres$fr.internal(_root);
+	late final Traductions$com$studio$recherche$fr recherche = Traductions$com$studio$recherche$fr.internal(_root);
+	late final Traductions$com$studio$demo$fr demo = Traductions$com$studio$demo$fr.internal(_root);
+
+	/// fr: 'Le Studio'
+	String get titre => _root.com.socle.lexique.studio;
+
+	/// fr: 'Aucune activité à traiter ici.'
+	String get vide => 'Aucune activité à traiter ici.';
+}
+
+// Path: com.annonces
+class Traductions$com$annonces$fr {
+	Traductions$com$annonces$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$com$annonces$publieur$fr publieur = Traductions$com$annonces$publieur$fr.internal(_root);
+	late final Traductions$com$annonces$administration$fr administration = Traductions$com$annonces$administration$fr.internal(_root);
+	late final Traductions$com$annonces$demoPublication$fr demoPublication = Traductions$com$annonces$demoPublication$fr.internal(_root);
+
+	/// fr: 'Annonces de la Classe'
+	String get section => 'Annonces de la Classe';
+
+	/// fr: 'Annonce'
+	String get annonce => 'Annonce';
+
+	/// fr: 'Publier une annonce'
+	String get publier => 'Publier une annonce';
+
+	/// fr: 'Aucune annonce pour cette Classe. Publiez la première pour toute la Classe.'
+	String get videPublier => 'Aucune annonce pour cette Classe. Publiez la première pour toute la Classe.';
+
+	/// fr: '{auteur}, le {date} à {heure}'
+	String auteurDate({required Object auteur, required Object date, required Object heure}) => '${auteur}, le ${date} à ${heure}';
+
+	/// fr: 'Le {date} à {heure}'
+	String date({required Object date, required Object heure}) => 'Le ${date} à ${heure}';
+
+	/// fr: 'Lire l'annonce en entier'
+	String get lire => 'Lire l\'annonce en entier';
+
+	/// fr: 'Ouvrir la Classe'
+	String get ouvrirClasse => 'Ouvrir la Classe';
+
+	/// fr: 'Ouvrir {classe}'
+	String ouvrirClasseSemantique({required Object classe}) => 'Ouvrir ${classe}';
+
+	/// fr: 'Marquer comme lue'
+	String get marquerLue => 'Marquer comme lue';
+
+	/// fr: 'Lue'
+	String get lue => 'Lue';
+
+	/// fr: 'Annonce de {classe} : {titre}'
+	String carteSemantique({required Object classe, required Object titre}) => 'Annonce de ${classe} : ${titre}';
+
+	/// fr: 'Cette annonce n'est plus disponible'
+	String get introuvableTitre => 'Cette annonce n\'est plus disponible';
+
+	/// fr: 'Elle a peut-être été retirée de la Classe. Revenez à vos notifications.'
+	String get introuvablePhrase => 'Elle a peut-être été retirée de la Classe. Revenez à vos notifications.';
+
+	late final Traductions$com$annonces$demo$fr demo = Traductions$com$annonces$demo$fr.internal(_root);
+
+	/// fr: 'Annonces'
+	String get titre => 'Annonces';
 }
 
 // Path: commun.etats.chargementProlonge
@@ -18543,6 +18957,1741 @@ class Traductions$motifs$signalement$changement$fr {
 	String get suite => 'L\'académie reviendra vers vous pour en parler.';
 }
 
+// Path: com.socle.composants
+class Traductions$com$socle$composants$fr {
+	Traductions$com$socle$composants$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$com$socle$composants$lecture$fr lecture = Traductions$com$socle$composants$lecture$fr.internal(_root);
+	late final Traductions$com$socle$composants$badge$fr badge = Traductions$com$socle$composants$badge$fr.internal(_root);
+	late final Traductions$com$socle$composants$pieceJointe$fr pieceJointe = Traductions$com$socle$composants$pieceJointe$fr.internal(_root);
+	late final Traductions$com$socle$composants$composer$fr composer = Traductions$com$socle$composants$composer$fr.internal(_root);
+	late final Traductions$com$socle$composants$etats$fr etats = Traductions$com$socle$composants$etats$fr.internal(_root);
+	late final Traductions$com$socle$composants$espace$fr espace = Traductions$com$socle$composants$espace$fr.internal(_root);
+}
+
+// Path: com.socle.lexique
+class Traductions$com$socle$lexique$fr {
+	Traductions$com$socle$lexique$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Messages'
+	String get messages => 'Messages';
+
+	/// fr: 'Messages métier'
+	String get messagesMetier => 'Messages métier';
+
+	/// fr: 'Communauté enseignants'
+	String get communaute => 'Communauté enseignants';
+
+	/// fr: 'Le Studio'
+	String get studio => 'Le Studio';
+
+	/// fr: 'Aujourd'hui'
+	String get aujourdhui => 'Aujourd\'hui';
+
+	/// fr: 'Notifications'
+	String get notifications => 'Notifications';
+
+	/// fr: 'Annonce'
+	String get annonce => 'Annonce';
+
+	/// fr: 'Publication'
+	String get publication => 'Publication';
+
+	/// fr: 'Réponse'
+	String get reponse => 'Réponse';
+
+	/// fr: 'Enregistrer'
+	String get enregistrer => 'Enregistrer';
+
+	/// fr: 'Signaler'
+	String get signaler => 'Signaler';
+
+	/// fr: 'Mode focus'
+	String get modeFocus => 'Mode focus';
+
+	/// fr: 'Quitter le focus'
+	String get quitterFocus => 'Quitter le focus';
+
+	/// fr: 'À traiter'
+	String get aTraiter => 'À traiter';
+
+	/// fr: 'Action requise'
+	String get actionRequise => 'Action requise';
+
+	/// fr: 'Brouillon'
+	String get brouillon => 'Brouillon';
+
+	/// fr: 'Éléments épinglés'
+	String get elementsEpingles => 'Éléments épinglés';
+
+	/// fr: 'Fichiers partagés'
+	String get fichiersPartages => 'Fichiers partagés';
+}
+
+// Path: com.socle.motifs
+class Traductions$com$socle$motifs$fr {
+	Traductions$com$socle$motifs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pourquoi signalez-vous ce contenu ?'
+	String get titre => 'Pourquoi signalez-vous ce contenu ?';
+
+	/// fr: 'Publicité'
+	String get publicite => 'Publicité';
+
+	/// fr: 'Lien affilié'
+	String get lienAffilie => 'Lien affilié';
+
+	/// fr: 'Vente non autorisée'
+	String get venteNonAutorisee => 'Vente non autorisée';
+
+	/// fr: 'Sollicitation commerciale'
+	String get sollicitationCommerciale => 'Sollicitation commerciale';
+
+	/// fr: 'Contenu sans rapport avec la communauté'
+	String get horsSujet => 'Contenu sans rapport avec la communauté';
+
+	/// fr: 'Harcèlement ou langage inapproprié'
+	String get harcelement => 'Harcèlement ou langage inapproprié';
+
+	/// fr: 'Données personnelles d'un élève ou d'une famille'
+	String get donneesPersonnelles => 'Données personnelles d\'un élève ou d\'une famille';
+
+	/// fr: 'Autre contenu à examiner'
+	String get autre => 'Autre contenu à examiner';
+}
+
+// Path: com.socle.signalement
+class Traductions$com$socle$signalement$fr {
+	Traductions$com$socle$signalement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Signaler ce contenu'
+	String get titre => 'Signaler ce contenu';
+
+	/// fr: 'Précision facultative'
+	String get precision => 'Précision facultative';
+
+	/// fr: 'Envoyer le signalement'
+	String get envoyer => 'Envoyer le signalement';
+
+	/// fr: 'Le contenu a été signalé. Il sera examiné.'
+	String get confirme => 'Le contenu a été signalé. Il sera examiné.';
+
+	/// fr: 'Le signalement n'a pas encore été confirmé. Réessayez dans un instant.'
+	String get erreur => 'Le signalement n\'a pas encore été confirmé. Réessayez dans un instant.';
+
+	/// fr: 'Le signalement n'est pas encore disponible ici.'
+	String get indisponible => 'Le signalement n\'est pas encore disponible ici.';
+}
+
+// Path: com.socle.enregistrement
+class Traductions$com$socle$enregistrement$fr {
+	Traductions$com$socle$enregistrement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Enregistrer'
+	String get enregistrer => _root.com.socle.lexique.enregistrer;
+
+	/// fr: 'Retirer des éléments enregistrés'
+	String get retirer => 'Retirer des éléments enregistrés';
+
+	/// fr: 'Enregistré'
+	String get enregistre => 'Enregistré';
+
+	/// fr: 'L'enregistrement n'est pas encore disponible ici.'
+	String get indisponible => 'L\'enregistrement n\'est pas encore disponible ici.';
+}
+
+// Path: com.socle.navigation
+class Traductions$com$socle$navigation$fr {
+	Traductions$com$socle$navigation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Notifications'
+	String get notifications => _root.com.socle.lexique.notifications;
+
+	/// fr: 'Ouvrir les notifications'
+	String get ouvrirNotifications => 'Ouvrir les notifications';
+
+	/// fr: 'Le Studio'
+	String get studio => _root.com.socle.lexique.studio;
+
+	/// fr: 'Ouvrir Le Studio'
+	String get ouvrirStudio => 'Ouvrir Le Studio';
+
+	/// fr: 'Quitter Le Studio'
+	String get quitterStudio => 'Quitter Le Studio';
+
+	/// fr: 'Messages'
+	String get messages => _root.com.socle.lexique.messages;
+
+	/// fr: 'Communauté enseignants'
+	String get communaute => _root.com.socle.lexique.communaute;
+
+	/// fr: 'Communications'
+	String get communications => 'Communications';
+
+	/// fr: 'Annonces, modération et messages des Classes'
+	String get communicationsDetail => 'Annonces, modération et messages des Classes';
+
+	/// fr: 'Annonces'
+	String get ongletAnnonces => 'Annonces';
+
+	/// fr: 'Modération'
+	String get ongletModeration => 'Modération';
+
+	/// fr: 'Messages'
+	String get ongletMessages => _root.com.socle.lexique.messages;
+
+	/// fr: 'Bientôt disponible'
+	String get bientot => 'Bientôt disponible';
+
+	late final Traductions$com$socle$navigation$provisoire$fr provisoire = Traductions$com$socle$navigation$provisoire$fr.internal(_root);
+	late final Traductions$com$socle$navigation$demo$fr demo = Traductions$com$socle$navigation$demo$fr.internal(_root);
+}
+
+// Path: com.messages.entree
+class Traductions$com$messages$entree$fr {
+	Traductions$com$messages$entree$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Échanger sur cette Classe'
+	String get titreClasse => 'Échanger sur cette Classe';
+
+	/// fr: 'Échanger sur ce dossier'
+	String get titreDossier => 'Échanger sur ce dossier';
+
+	/// fr: 'Échanger à ce sujet'
+	String get titreObjet => 'Échanger à ce sujet';
+
+	/// fr: 'Écrire à la famille'
+	String get ecrireFamille => 'Écrire à la famille';
+
+	/// fr: 'Écrire à l'Administration'
+	String get ecrireAdministration => 'Écrire à l\'Administration';
+
+	/// fr: 'Écrire à {nom}'
+	String ecrireA({required Object nom}) => 'Écrire à ${nom}';
+
+	/// fr: 'Conversation avec {nom}'
+	String conversationAvec({required Object nom}) => 'Conversation avec ${nom}';
+
+	/// fr: 'Voir toutes les conversations'
+	String get voirTout => 'Voir toutes les conversations';
+
+	/// fr: 'Toutes vos conversations'
+	String get toutes => 'Toutes vos conversations';
+
+	/// fr: '1 conversation à lire'
+	String get aLireUne => '1 conversation à lire';
+
+	/// fr: '{nombre} conversations à lire'
+	String aLire({required Object nombre}) => '${nombre} conversations à lire';
+
+	/// fr: 'Ouverture de la conversation'
+	String get ouverture => 'Ouverture de la conversation';
+
+	/// fr: 'Conversation inaccessible'
+	String get inaccessibleTitre => 'Conversation inaccessible';
+
+	/// fr: 'Cette conversation n'est plus ouverte pour vous. Choisissez une autre personne dans la liste.'
+	String get inaccessible => 'Cette conversation n\'est plus ouverte pour vous. Choisissez une autre personne dans la liste.';
+
+	/// fr: 'Impossible d'ouvrir cette conversation.'
+	String get erreurOuvertureTitre => 'Impossible d\'ouvrir cette conversation.';
+
+	/// fr: 'Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get ouvertureEchouee => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+}
+
+// Path: com.messages.recherche
+class Traductions$com$messages$recherche$fr {
+	Traductions$com$messages$recherche$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Rechercher une conversation'
+	String get champ => 'Rechercher une conversation';
+
+	/// fr: 'Nom, Classe ou dossier'
+	String get aide => 'Nom, Classe ou dossier';
+
+	/// fr: 'Aucune conversation trouvée'
+	String get aucunTitre => 'Aucune conversation trouvée';
+
+	/// fr: 'Aucune conversation ne correspond à « {texte} ». Essayez un autre nom ou une autre Classe.'
+	String aucun({required Object texte}) => 'Aucune conversation ne correspond à « ${texte} ». Essayez un autre nom ou une autre Classe.';
+
+	/// fr: '1 conversation trouvée'
+	String get resultatUn => '1 conversation trouvée';
+
+	/// fr: '{nombre} conversations trouvées'
+	String resultats({required Object nombre}) => '${nombre} conversations trouvées';
+}
+
+// Path: com.messages.ligne
+class Traductions$com$messages$ligne$fr {
+	Traductions$com$messages$ligne$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{objet} · {apercu}'
+	String legende({required Object objet, required Object apercu}) => '${objet} · ${apercu}';
+
+	/// fr: 'Aucun message pour le moment'
+	String get sansApercu => 'Aucun message pour le moment';
+
+	/// fr: '{numero} {mois}'
+	String dateCourte({required Object numero, required Object mois}) => '${numero} ${mois}';
+}
+
+// Path: com.messages.noms
+class Traductions$com$messages$noms$fr {
+	Traductions$com$messages$noms$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{nom}, {fonction}'
+	String avecFonction({required Object nom, required Object fonction}) => '${nom}, ${fonction}';
+
+	/// fr: '{premier} et {second}'
+	String deux({required Object premier, required Object second}) => '${premier} et ${second}';
+
+	/// fr: '{premier} et {nombre} autres personnes'
+	String plusieurs({required Object premier, required Object nombre}) => '${premier} et ${nombre} autres personnes';
+
+	/// fr: 'Conversation sur {objet}'
+	String surObjet({required Object objet}) => 'Conversation sur ${objet}';
+
+	/// fr: 'Conversation'
+	String get sansObjet => 'Conversation';
+}
+
+// Path: com.messages.entete
+class Traductions$com$messages$entete$fr {
+	Traductions$com$messages$entete$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{entete}. {attention}'
+	String avecAttention({required Object entete, required Object attention}) => '${entete}. ${attention}';
+
+	/// fr: '{premier} · {second}'
+	String deuxObjets({required Object premier, required Object second}) => '${premier} · ${second}';
+
+	/// fr: 'Conversation avec {noms}, à propos de {objets}'
+	String semantique({required Object noms, required Object objets}) => 'Conversation avec ${noms}, à propos de ${objets}';
+
+	/// fr: 'Conversation à propos de {objets}'
+	String semantiqueSansNoms({required Object objets}) => 'Conversation à propos de ${objets}';
+}
+
+// Path: com.messages.types
+class Traductions$com$messages$types$fr {
+	Traductions$com$messages$types$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Classe'
+	String get classe => 'Classe';
+
+	/// fr: 'Élève'
+	String get eleve => 'Élève';
+
+	/// fr: 'Dossier'
+	String get dossier => 'Dossier';
+
+	/// fr: 'Mission de contrôle'
+	String get mission => 'Mission de contrôle';
+
+	/// fr: 'Remplacement'
+	String get remplacement => 'Remplacement';
+
+	/// fr: 'Autre sujet'
+	String get autre => 'Autre sujet';
+}
+
+// Path: com.messages.panneau
+class Traductions$com$messages$panneau$fr {
+	Traductions$com$messages$panneau$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À propos de'
+	String get objets => 'À propos de';
+
+	/// fr: 'Participants'
+	String get participants => 'Participants';
+
+	/// fr: 'Fichiers partagés'
+	String get fichiers => _root.com.socle.lexique.fichiersPartages;
+
+	/// fr: 'Ouvrir {objet}'
+	String ouvrir({required Object objet}) => 'Ouvrir ${objet}';
+
+	/// fr: 'Ce sujet ne vous est plus ouvert. La conversation reste lisible.'
+	String get inaccessible => 'Ce sujet ne vous est plus ouvert. La conversation reste lisible.';
+
+	/// fr: 'Vous'
+	String get vous => 'Vous';
+}
+
+// Path: com.messages.fil
+class Traductions$com$messages$fil$fr {
+	Traductions$com$messages$fil$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous pouvez lire cette conversation. La réponse n'y est pas ouverte pour vous.'
+	String get lectureSeule => 'Vous pouvez lire cette conversation. La réponse n\'y est pas ouverte pour vous.';
+}
+
+// Path: com.messages.demo
+class Traductions$com$messages$demo$fr {
+	Traductions$com$messages$demo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Choisissez le point de vue de cette démonstration.'
+	String get choisirRole => 'Choisissez le point de vue de cette démonstration.';
+
+	late final Traductions$com$messages$demo$roles$fr roles = Traductions$com$messages$demo$roles$fr.internal(_root);
+
+	/// fr: 'Situations à essayer'
+	String get situations => 'Situations à essayer';
+
+	/// fr: 'Envoi non confirmé, vu par l'enseignant'
+	String get echec => 'Envoi non confirmé, vu par l\'enseignant';
+
+	/// fr: 'Hors ligne, vu par la famille'
+	String get horsLigne => 'Hors ligne, vu par la famille';
+
+	/// fr: 'Conversation d'une autre famille, refusée'
+	String get refuse => 'Conversation d\'une autre famille, refusée';
+
+	/// fr: 'Point de vue : {role}'
+	String vue({required Object role}) => 'Point de vue : ${role}';
+
+	late final Traductions$com$messages$demo$f$fr f = Traductions$com$messages$demo$f$fr.internal(_root);
+}
+
+// Path: com.vocal.composer
+class Traductions$com$vocal$composer$fr {
+	Traductions$com$vocal$composer$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Message vocal'
+	String get libelle => 'Message vocal';
+
+	/// fr: 'Enregistrer un message vocal'
+	String get enregistrer => 'Enregistrer un message vocal';
+
+	/// fr: 'Le message vocal n'est pas encore disponible ici. Écrivez votre message dans le champ ci-dessus.'
+	String get indisponible => 'Le message vocal n\'est pas encore disponible ici. Écrivez votre message dans le champ ci-dessus.';
+
+	/// fr: 'Impossible de vérifier le microphone.'
+	String get erreurVerificationTitre => 'Impossible de vérifier le microphone.';
+
+	/// fr: 'Réessayer'
+	String get erreurVerificationAction => 'Réessayer';
+
+	/// fr: 'Impossible de démarrer l'enregistrement. Vérifiez que le microphone n'est pas utilisé par une autre application, puis réessayez.'
+	String get erreurDemarrage => 'Impossible de démarrer l\'enregistrement. Vérifiez que le microphone n\'est pas utilisé par une autre application, puis réessayez.';
+
+	/// fr: 'L'enregistrement s'est interrompu. Vérifiez le microphone, puis recommencez.'
+	String get erreurInterrompu => 'L\'enregistrement s\'est interrompu. Vérifiez le microphone, puis recommencez.';
+
+	/// fr: 'Le microphone est nécessaire'
+	String get permissionTitre => 'Le microphone est nécessaire';
+
+	/// fr: 'Rewayah a besoin du microphone pour enregistrer votre message vocal. Rien ne part sans votre accord.'
+	String get permissionPhrase => 'Rewayah a besoin du microphone pour enregistrer votre message vocal. Rien ne part sans votre accord.';
+
+	/// fr: 'Autoriser le microphone'
+	String get autoriser => 'Autoriser le microphone';
+
+	/// fr: 'Annuler'
+	String get annuler => 'Annuler';
+
+	/// fr: 'Le microphone n'est pas autorisé pour Rewayah.'
+	String get refuse => 'Le microphone n\'est pas autorisé pour Rewayah.';
+
+	/// fr: 'Pour envoyer un message vocal, autorisez le microphone dans les réglages de votre appareil, puis revenez ici.'
+	String get refuseAide => 'Pour envoyer un message vocal, autorisez le microphone dans les réglages de votre appareil, puis revenez ici.';
+
+	/// fr: 'Fermer'
+	String get fermer => 'Fermer';
+
+	/// fr: 'Enregistrement en cours'
+	String get enregistrement => 'Enregistrement en cours';
+
+	/// fr: 'Enregistrement en pause'
+	String get pause => 'Enregistrement en pause';
+
+	/// fr: 'Enregistrement repris'
+	String get reprise => 'Enregistrement repris';
+
+	/// fr: 'Moins de {seuil} avant la limite de {max}'
+	String limiteProche({required Object seuil, required Object max}) => 'Moins de ${seuil} avant la limite de ${max}';
+
+	/// fr: 'Durée maximale atteinte ({max}). Écoutez votre message, puis envoyez-le ou supprimez-le.'
+	String limiteAtteinte({required Object max}) => 'Durée maximale atteinte (${max}). Écoutez votre message, puis envoyez-le ou supprimez-le.';
+
+	/// fr: '{ecoule} sur {max}'
+	String ecoule({required Object ecoule, required Object max}) => '${ecoule} sur ${max}';
+
+	/// fr: 'Pré-écoute'
+	String get preEcoute => 'Pré-écoute';
+
+	/// fr: 'Écoutez votre message avant de l'envoyer. Rien ne part sans votre accord.'
+	String get preEcouteAide => 'Écoutez votre message avant de l\'envoyer. Rien ne part sans votre accord.';
+
+	/// fr: 'Durée : {duree}'
+	String duree({required Object duree}) => 'Durée : ${duree}';
+
+	/// fr: 'Pause'
+	String get actionPause => 'Pause';
+
+	/// fr: 'Reprendre'
+	String get actionReprendre => 'Reprendre';
+
+	/// fr: 'Arrêter'
+	String get actionArreter => 'Arrêter';
+
+	/// fr: 'Supprimer'
+	String get actionSupprimer => 'Supprimer';
+
+	/// fr: 'Envoyer'
+	String get actionEnvoyer => 'Envoyer';
+
+	/// fr: 'Supprimer ce message vocal ?'
+	String get confirmerTitre => 'Supprimer ce message vocal ?';
+
+	/// fr: 'Il sera effacé de cet appareil. Cette action est définitive.'
+	String get confirmerPhrase => 'Il sera effacé de cet appareil. Cette action est définitive.';
+
+	/// fr: 'Garder'
+	String get garder => 'Garder';
+
+	/// fr: 'Envoi du message vocal en cours'
+	String get envoi => 'Envoi du message vocal en cours';
+
+	/// fr: 'Ce message vocal n'a pas encore été confirmé.'
+	String get nonConfirme => 'Ce message vocal n\'a pas encore été confirmé.';
+
+	/// fr: 'Il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Le message vocal est gardé ici ; réessayez dans un instant.'
+	String get nonConfirmeAide => 'Il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Le message vocal est gardé ici ; réessayez dans un instant.';
+
+	/// fr: 'Réessayer'
+	String get reessayer => 'Réessayer';
+
+	/// fr: 'Message vocal envoyé.'
+	String get envoye => 'Message vocal envoyé.';
+
+	/// fr: 'Le message vocal est gardé ici : envoyez-le dès que l'envoi est de nouveau possible.'
+	String get horsLigne => 'Le message vocal est gardé ici : envoyez-le dès que l\'envoi est de nouveau possible.';
+}
+
+// Path: com.vocal.lecteur
+class Traductions$com$vocal$lecteur$fr {
+	Traductions$com$vocal$lecteur$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Message vocal de {auteur}, {duree}'
+	String libelleAuteur({required Object auteur, required Object duree}) => 'Message vocal de ${auteur}, ${duree}';
+
+	/// fr: 'Message vocal, {duree}'
+	String libelle({required Object duree}) => 'Message vocal, ${duree}';
+
+	/// fr: 'Écouter'
+	String get ecouter => 'Écouter';
+
+	/// fr: 'Pause'
+	String get pause => 'Pause';
+
+	/// fr: 'Reprendre'
+	String get reprendre => 'Reprendre';
+
+	/// fr: 'Réécouter'
+	String get reecouter => 'Réécouter';
+
+	/// fr: 'Pas encore écouté'
+	String get nonEcoute => 'Pas encore écouté';
+
+	/// fr: 'Lecture en cours'
+	String get lecture => 'Lecture en cours';
+
+	/// fr: 'Lecture en pause'
+	String get enPause => 'Lecture en pause';
+
+	/// fr: 'Écouté en entier'
+	String get fin => 'Écouté en entier';
+
+	/// fr: '{position} sur {duree}'
+	String position({required Object position, required Object duree}) => '${position} sur ${duree}';
+
+	/// fr: 'La lecture n'est pas encore disponible ici. Le message reste dans la conversation : revenez plus tard pour l'écouter.'
+	String get indisponible => 'La lecture n\'est pas encore disponible ici. Le message reste dans la conversation : revenez plus tard pour l\'écouter.';
+
+	/// fr: 'Impossible de lire ce message vocal.'
+	String get erreurLectureTitre => 'Impossible de lire ce message vocal.';
+
+	/// fr: 'Réessayer'
+	String get erreurLectureAction => 'Réessayer';
+}
+
+// Path: com.vocal.demo
+class Traductions$com$vocal$demo$fr {
+	Traductions$com$vocal$demo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Démonstration du message vocal : aucun microphone réel n'est utilisé, l'enregistrement est simulé.'
+	String get contexte => 'Démonstration du message vocal : aucun microphone réel n\'est utilisé, l\'enregistrement est simulé.';
+
+	/// fr: 'Situations de démonstration'
+	String get situations => 'Situations de démonstration';
+
+	/// fr: 'Micro autorisé'
+	String get autorise => 'Micro autorisé';
+
+	/// fr: 'À demander'
+	String get aDemander => 'À demander';
+
+	/// fr: 'Micro refusé'
+	String get refuse => 'Micro refusé';
+
+	/// fr: 'Non confirmé'
+	String get nonConfirme => 'Non confirmé';
+
+	/// fr: 'Indisponible'
+	String get indisponible => 'Indisponible';
+
+	/// fr: 'Message vocal reçu'
+	String get recu => 'Message vocal reçu';
+
+	/// fr: 'Répondre dans la conversation'
+	String get repondre => 'Répondre dans la conversation';
+
+	/// fr: 'Messages vocaux envoyés'
+	String get envoyes => 'Messages vocaux envoyés';
+
+	/// fr: 'Sayyida Mariam, enseignante'
+	String get auteurEnseignante => 'Sayyida Mariam, enseignante';
+
+	/// fr: 'Ahmed, parent d'Adam'
+	String get auteurParent => 'Ahmed, parent d\'Adam';
+
+	/// fr: 'Bonjour, voici mes remarques sur la récitation de cette semaine.'
+	String get messageRecu => 'Bonjour, voici mes remarques sur la récitation de cette semaine.';
+
+	/// fr: 'Aujourd'hui, 10:28'
+	String get horodatage => 'Aujourd\'hui, 10:28';
+}
+
+// Path: com.communaute.garde
+class Traductions$com$communaute$garde$fr {
+	Traductions$com$communaute$garde$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucune publicité. Aucun lien affilié. Aucune vente.'
+	String get aide => 'Aucune publicité. Aucun lien affilié. Aucune vente.';
+
+	/// fr: 'Cette publication semble contenir une promotion commerciale. Retirez le lien, le code ou l'offre avant de publier.'
+	String get avertissement => 'Cette publication semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant de publier.';
+
+	/// fr: 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.'
+	String get bloqueAffilie => 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.';
+
+	/// fr: 'La vente de produits ou de services n'est pas autorisée dans cet espace.'
+	String get bloqueVente => 'La vente de produits ou de services n\'est pas autorisée dans cet espace.';
+
+	/// fr: 'Publication à revoir'
+	String get titreAvertissement => 'Publication à revoir';
+
+	/// fr: 'Publication bloquée'
+	String get titreBlocage => 'Publication bloquée';
+
+	/// fr: 'Motif : {motif}'
+	String motif({required Object motif}) => 'Motif : ${motif}';
+
+	/// fr: 'Liens de la publication'
+	String get liensTitre => 'Liens de la publication';
+
+	/// fr: 'Modifiez la publication, puis publiez-la de nouveau.'
+	String get consigneBlocage => 'Modifiez la publication, puis publiez-la de nouveau.';
+
+	/// fr: 'La vérification de ce contenu n'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Rien n'a été publié ; réessayez dans un instant.'
+	String get panne => 'La vérification de ce contenu n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Rien n\'a été publié ; réessayez dans un instant.';
+
+	late final Traductions$com$communaute$garde$reponse$fr reponse = Traductions$com$communaute$garde$reponse$fr.internal(_root);
+}
+
+// Path: com.communaute.lien
+class Traductions$com$communaute$lien$fr {
+	Traductions$com$communaute$lien$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Lien interne Rewayah'
+	String get interne => 'Lien interne Rewayah';
+
+	/// fr: 'Ressource pédagogique externe'
+	String get ressourceExterne => 'Ressource pédagogique externe';
+
+	/// fr: 'Lien commercial interdit'
+	String get commercialInterdit => 'Lien commercial interdit';
+
+	/// fr: 'Lien non vérifié'
+	String get nonVerifie => 'Lien non vérifié';
+
+	/// fr: '{adresse}, {etat}'
+	String semantique({required Object adresse, required Object etat}) => '${adresse}, ${etat}';
+}
+
+// Path: com.communaute.flux
+class Traductions$com$communaute$flux$fr {
+	Traductions$com$communaute$flux$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ouvrir la publication {titre}'
+	String ouvrir({required Object titre}) => 'Ouvrir la publication ${titre}';
+
+	/// fr: '1 réponse'
+	String get reponseUne => '1 réponse';
+
+	/// fr: '{nombre} réponses'
+	String reponses({required Object nombre}) => '${nombre} réponses';
+
+	/// fr: 'Aucune réponse'
+	String get aucuneReponse => 'Aucune réponse';
+
+	/// fr: 'Catégorie {categorie}'
+	String categorie({required Object categorie}) => 'Catégorie ${categorie}';
+}
+
+// Path: com.communaute.recherche
+class Traductions$com$communaute$recherche$fr {
+	Traductions$com$communaute$recherche$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Rechercher une publication'
+	String get ouvrir => 'Rechercher une publication';
+
+	/// fr: 'Rechercher une publication'
+	String get champ => 'Rechercher une publication';
+
+	/// fr: 'Un mot du titre ou du texte'
+	String get aide => 'Un mot du titre ou du texte';
+}
+
+// Path: com.communaute.moment
+class Traductions$com$communaute$moment$fr {
+	Traductions$com$communaute$moment$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À l'instant'
+	String get instant => 'À l\'instant';
+
+	/// fr: '(one) {Il y a {n} min} (other) {Il y a {n} min}'
+	String minutes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Il y a ${n} min',
+		other: 'Il y a ${n} min',
+	);
+
+	/// fr: '(one) {Il y a {n} h} (other) {Il y a {n} h}'
+	String heures({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Il y a ${n} h',
+		other: 'Il y a ${n} h',
+	);
+
+	/// fr: '(one) {Il y a {n} j} (other) {Il y a {n} j}'
+	String jours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Il y a ${n} j',
+		other: 'Il y a ${n} j',
+	);
+
+	/// fr: 'Le {jour}/{mois}'
+	String date({required Object jour, required Object mois}) => 'Le ${jour}/${mois}';
+}
+
+// Path: com.communaute.publication
+class Traductions$com$communaute$publication$fr {
+	Traductions$com$communaute$publication$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{fonction} · {moment}'
+	String auteur({required Object fonction, required Object moment}) => '${fonction} · ${moment}';
+
+	/// fr: 'Enregistrer la publication'
+	String get enregistrer => 'Enregistrer la publication';
+
+	/// fr: 'Publication enregistrée'
+	String get enregistree => 'Publication enregistrée';
+
+	/// fr: 'Retirer des éléments enregistrés'
+	String get retirer => 'Retirer des éléments enregistrés';
+
+	/// fr: 'Actions sur la publication {titre}'
+	String menu({required Object titre}) => 'Actions sur la publication ${titre}';
+
+	/// fr: 'Signaler la publication'
+	String get signaler => 'Signaler la publication';
+
+	/// fr: 'Le contenu a été signalé à l'équipe de modération.'
+	String get signalee => 'Le contenu a été signalé à l\'équipe de modération.';
+
+	/// fr: 'Aucune publication ouverte'
+	String get choisirTitre => 'Aucune publication ouverte';
+
+	/// fr: 'Choisissez une publication dans la liste pour la lire et y répondre.'
+	String get choisir => 'Choisissez une publication dans la liste pour la lire et y répondre.';
+
+	/// fr: 'Publication indisponible'
+	String get introuvableTitre => 'Publication indisponible';
+
+	/// fr: 'Cette publication a été retirée ou ne vous est plus accessible. Revenez aux publications pour en choisir une autre.'
+	String get introuvable => 'Cette publication a été retirée ou ne vous est plus accessible. Revenez aux publications pour en choisir une autre.';
+
+	/// fr: 'Revenir aux publications'
+	String get revenir => 'Revenir aux publications';
+}
+
+// Path: com.communaute.reponses
+class Traductions$com$communaute$reponses$fr {
+	Traductions$com$communaute$reponses$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Réponses ({nombre})'
+	String titre({required Object nombre}) => 'Réponses (${nombre})';
+
+	/// fr: 'Aucune réponse pour le moment.'
+	String get vide => 'Aucune réponse pour le moment.';
+
+	/// fr: 'Impossible de charger les réponses.'
+	String get erreurTitre => 'Impossible de charger les réponses.';
+
+	/// fr: 'Votre réponse'
+	String get champ => 'Votre réponse';
+
+	/// fr: 'Écrire une réponse'
+	String get aide => 'Écrire une réponse';
+
+	/// fr: 'Envoyer la réponse'
+	String get envoyer => 'Envoyer la réponse';
+
+	/// fr: 'Écrivez une réponse pour l'envoyer.'
+	String get champVide => 'Écrivez une réponse pour l\'envoyer.';
+
+	/// fr: 'Envoi en cours'
+	String get enCours => 'Envoi en cours';
+
+	/// fr: 'Cette réponse n'est pas encore confirmée : il est possible qu'elle ne soit pas parvenue jusqu'à Rewayah. Renvoyez-la dans un instant.'
+	String get nonConfirmee => 'Cette réponse n\'est pas encore confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Renvoyez-la dans un instant.';
+
+	/// fr: 'Refusée par la politique de la Communauté'
+	String get refusee => 'Refusée par la politique de la Communauté';
+
+	/// fr: 'Renvoyer la réponse'
+	String get reessayer => 'Renvoyer la réponse';
+
+	/// fr: 'Les réponses ne sont pas encore disponibles ici.'
+	String get indisponible => 'Les réponses ne sont pas encore disponibles ici.';
+
+	/// fr: 'Actions sur la réponse de {nom}'
+	String menu({required Object nom}) => 'Actions sur la réponse de ${nom}';
+
+	/// fr: 'Signaler la réponse'
+	String get signaler => 'Signaler la réponse';
+
+	/// fr: 'Vous avez signalé cette réponse.'
+	String get signalee => 'Vous avez signalé cette réponse.';
+}
+
+// Path: com.communaute.signalement
+class Traductions$com$communaute$signalement$fr {
+	Traductions$com$communaute$signalement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$com$communaute$signalement$politique$fr politique = Traductions$com$communaute$signalement$politique$fr.internal(_root);
+
+	/// fr: 'Choisissez un motif pour envoyer le signalement.'
+	String get motifManquant => 'Choisissez un motif pour envoyer le signalement.';
+}
+
+// Path: com.communaute.composer
+class Traductions$com$communaute$composer$fr {
+	Traductions$com$communaute$composer$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nouvelle publication'
+	String get nouvelle => 'Nouvelle publication';
+
+	/// fr: 'Partagez une question, une méthode ou une ressource utile à l'enseignement.'
+	String get contexte => 'Partagez une question, une méthode ou une ressource utile à l\'enseignement.';
+
+	/// fr: 'Catégorie'
+	String get categorie => 'Catégorie';
+
+	/// fr: 'Choisissez une catégorie pour publier.'
+	String get categorieManquante => 'Choisissez une catégorie pour publier.';
+
+	/// fr: 'Titre'
+	String get champTitre => 'Titre';
+
+	/// fr: 'Le sujet en quelques mots'
+	String get aideTitre => 'Le sujet en quelques mots';
+
+	/// fr: 'Écrivez un titre pour publier.'
+	String get titreManquant => 'Écrivez un titre pour publier.';
+
+	/// fr: 'Texte'
+	String get champTexte => 'Texte';
+
+	/// fr: 'Votre question ou votre retour d'expérience'
+	String get aideTexte => 'Votre question ou votre retour d\'expérience';
+
+	/// fr: 'Écrivez le texte de la publication pour publier.'
+	String get texteManquant => 'Écrivez le texte de la publication pour publier.';
+
+	/// fr: 'Pièces jointes'
+	String get pieces => 'Pièces jointes';
+
+	/// fr: 'Retirez les fichiers refusés avant de publier.'
+	String get pieceRefusee => 'Retirez les fichiers refusés avant de publier.';
+
+	/// fr: 'Le choix d'un fichier n'est pas encore disponible ici.'
+	String get choixIndisponible => 'Le choix d\'un fichier n\'est pas encore disponible ici.';
+
+	/// fr: 'Publier'
+	String get publier => 'Publier';
+
+	/// fr: 'Fermer la nouvelle publication'
+	String get fermer => 'Fermer la nouvelle publication';
+
+	/// fr: 'Votre publication est en ligne.'
+	String get confirmee => 'Votre publication est en ligne.';
+
+	/// fr: 'Votre publication n'est pas encore confirmée : il est possible qu'elle ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreurEnvoi => 'Votre publication n\'est pas encore confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: 'La publication n'est pas encore disponible ici.'
+	String get indisponible => 'La publication n\'est pas encore disponible ici.';
+}
+
+// Path: com.communaute.regles
+class Traductions$com$communaute$regles$fr {
+	Traductions$com$communaute$regles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aide et règles'
+	String get panneau => 'Aide et règles';
+
+	/// fr: 'À propos de cet espace'
+	String get aProposTitre => 'À propos de cet espace';
+
+	/// fr: 'Un espace d'entraide entre enseignants pour poser des questions, partager des méthodes et des ressources pédagogiques.'
+	String get aPropos => 'Un espace d\'entraide entre enseignants pour poser des questions, partager des méthodes et des ressources pédagogiques.';
+
+	/// fr: 'Partage pédagogique uniquement'
+	String get titre => 'Partage pédagogique uniquement';
+
+	/// fr: 'Cette communauté est réservée aux échanges professionnels entre enseignants.'
+	String get corps => 'Cette communauté est réservée aux échanges professionnels entre enseignants.';
+
+	/// fr: 'Règles de publication'
+	String get reglesTitre => 'Règles de publication';
+
+	/// fr: 'Aucune publicité'
+	String get pasPublicite => 'Aucune publicité';
+
+	/// fr: 'Aucun lien affilié'
+	String get pasAffilie => 'Aucun lien affilié';
+
+	/// fr: 'Aucune vente de produit ou de service'
+	String get pasVente => 'Aucune vente de produit ou de service';
+
+	/// fr: 'Aucune sollicitation commerciale'
+	String get pasSollicitation => 'Aucune sollicitation commerciale';
+
+	/// fr: 'Aucune donnée personnelle d'un élève ou d'une famille'
+	String get pasDonnees => 'Aucune donnée personnelle d\'un élève ou d\'une famille';
+
+	/// fr: 'Un contenu inapproprié se signale depuis le menu de la publication.'
+	String get signaler => 'Un contenu inapproprié se signale depuis le menu de la publication.';
+
+	/// fr: 'Voir les règles'
+	String get voir => 'Voir les règles';
+}
+
+// Path: com.communaute.entree
+class Traductions$com$communaute$entree$fr {
+	Traductions$com$communaute$entree$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ouvrir la Communauté enseignants'
+	String get lecteur => 'Ouvrir la Communauté enseignants';
+
+	/// fr: 'Questions, méthodes et ressources entre enseignants'
+	String get detail => 'Questions, méthodes et ressources entre enseignants';
+}
+
+// Path: com.communaute.demo
+class Traductions$com$communaute$demo$fr {
+	Traductions$com$communaute$demo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Publication à revoir : publicité'
+	String get avertissement => 'Publication à revoir : publicité';
+
+	/// fr: 'Lien affilié bloqué'
+	String get lienAffilie => 'Lien affilié bloqué';
+
+	/// fr: 'Vente bloquée'
+	String get vente => 'Vente bloquée';
+
+	/// fr: 'Signalement non confirmé'
+	String get signalementNonConfirme => 'Signalement non confirmé';
+
+	/// fr: 'Choisissez une situation à essayer, vue par un enseignant.'
+	String get choisir => 'Choisissez une situation à essayer, vue par un enseignant.';
+
+	/// fr: 'Aujourd'hui, avec le raccourci'
+	String get aujourdhui => 'Aujourd\'hui, avec le raccourci';
+
+	/// fr: 'Six publications'
+	String get nominal => 'Six publications';
+
+	/// fr: 'Une publication ouverte'
+	String get publication => 'Une publication ouverte';
+
+	/// fr: 'Aucune publication'
+	String get vide => 'Aucune publication';
+
+	/// fr: 'Lecture en échec'
+	String get lectureEchouee => 'Lecture en échec';
+
+	/// fr: 'Service pas encore disponible'
+	String get indisponible => 'Service pas encore disponible';
+
+	/// fr: 'Hors ligne'
+	String get horsLigne => 'Hors ligne';
+
+	/// fr: 'Envoi non confirmé'
+	String get envoiNonConfirme => 'Envoi non confirmé';
+
+	/// fr: 'Modération indisponible'
+	String get moderationIndisponible => 'Modération indisponible';
+
+	/// fr: 'Lecture seule, sans publication'
+	String get lecteurSeul => 'Lecture seule, sans publication';
+
+	late final Traductions$com$communaute$demo$f$fr f = Traductions$com$communaute$demo$f$fr.internal(_root);
+}
+
+// Path: com.studio.focus
+class Traductions$com$studio$focus$fr {
+	Traductions$com$studio$focus$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mode focus'
+	String get entrer => _root.com.socle.lexique.modeFocus;
+
+	/// fr: 'Quitter le focus'
+	String get quitter => _root.com.socle.lexique.quitterFocus;
+
+	/// fr: 'Focus activé'
+	String get actif => 'Focus activé';
+
+	/// fr: 'Focus activé. Échap pour quitter.'
+	String get actifAvecEchap => 'Focus activé. Échap pour quitter.';
+
+	/// fr: 'Masquez les panneaux secondaires pour vous concentrer sur cette discussion.'
+	String get aide => 'Masquez les panneaux secondaires pour vous concentrer sur cette discussion.';
+}
+
+// Path: com.studio.aujourdhui
+class Traductions$com$studio$aujourdhui$fr {
+	Traductions$com$studio$aujourdhui$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aujourd'hui'
+	String get titre => _root.com.socle.lexique.aujourdhui;
+
+	/// fr: 'Ce qui mérite votre attention dans Le Studio'
+	String get sousTitre => 'Ce qui mérite votre attention dans Le Studio';
+
+	late final Traductions$com$studio$aujourdhui$indicateurs$fr indicateurs = Traductions$com$studio$aujourdhui$indicateurs$fr.internal(_root);
+	late final Traductions$com$studio$aujourdhui$blocs$fr blocs = Traductions$com$studio$aujourdhui$blocs$fr.internal(_root);
+	late final Traductions$com$studio$aujourdhui$videsBlocs$fr videsBlocs = Traductions$com$studio$aujourdhui$videsBlocs$fr.internal(_root);
+
+	/// fr: 'Rien à traiter pour le moment'
+	String get videTitre => 'Rien à traiter pour le moment';
+
+	/// fr: 'Dans {nom}'
+	String dansCanal({required Object nom}) => 'Dans ${nom}';
+
+	/// fr: 'Échéance le {date}'
+	String echeance({required Object date}) => 'Échéance le ${date}';
+
+	/// fr: 'Se traite dans {module}'
+	String seTraiteDans({required Object module}) => 'Se traite dans ${module}';
+
+	/// fr: 'Ouvrir dans {module} : {libelle}'
+	String ouvrirDans({required Object module, required Object libelle}) => 'Ouvrir dans ${module} : ${libelle}';
+
+	late final Traductions$com$studio$aujourdhui$modules$fr modules = Traductions$com$studio$aujourdhui$modules$fr.internal(_root);
+	late final Traductions$com$studio$aujourdhui$acces$fr acces = Traductions$com$studio$aujourdhui$acces$fr.internal(_root);
+}
+
+// Path: com.studio.brouillons
+class Traductions$com$studio$brouillons$fr {
+	Traductions$com$studio$brouillons$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Brouillons'
+	String get titre => 'Brouillons';
+
+	/// fr: 'Les messages commencés dans un canal et pas encore envoyés. Ils restent sur cet appareil le temps de la session, sans synchronisation.'
+	String get detail => 'Les messages commencés dans un canal et pas encore envoyés. Ils restent sur cet appareil le temps de la session, sans synchronisation.';
+
+	/// fr: 'Brouillon dans {nom}'
+	String dansCanal({required Object nom}) => 'Brouillon dans ${nom}';
+
+	/// fr: 'Brouillon dans un canal'
+	String get canalInconnu => 'Brouillon dans un canal';
+
+	/// fr: 'Brouillon dans un canal qui n'est plus disponible'
+	String get canalIndisponible => 'Brouillon dans un canal qui n\'est plus disponible';
+
+	/// fr: 'Modifié le {moment}'
+	String modifie({required Object moment}) => 'Modifié le ${moment}';
+
+	/// fr: 'Reprendre le brouillon dans {nom}'
+	String reprendre({required Object nom}) => 'Reprendre le brouillon dans ${nom}';
+
+	/// fr: 'Aucun brouillon'
+	String get videTitre => 'Aucun brouillon';
+
+	/// fr: 'Un message commencé dans un canal et pas encore envoyé apparaîtra ici.'
+	String get vide => 'Un message commencé dans un canal et pas encore envoyé apparaîtra ici.';
+
+	/// fr: 'Voir tous les brouillons ({nombre})'
+	String tous({required Object nombre}) => 'Voir tous les brouillons (${nombre})';
+
+	/// fr: 'Brouillon restauré. Vous pouvez reprendre votre message.'
+	String get restaure => 'Brouillon restauré. Vous pouvez reprendre votre message.';
+}
+
+// Path: com.studio.navigation
+class Traductions$com$studio$navigation$fr {
+	Traductions$com$studio$navigation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aujourd'hui'
+	String get aujourdhui => _root.com.socle.lexique.aujourdhui;
+
+	/// fr: 'Brouillons'
+	String get brouillons => 'Brouillons';
+
+	/// fr: 'Canaux'
+	String get canaux => 'Canaux';
+
+	/// fr: 'Éléments enregistrés'
+	String get enregistres => 'Éléments enregistrés';
+}
+
+// Path: com.studio.sections
+class Traductions$com$studio$sections$fr {
+	Traductions$com$studio$sections$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Organisation'
+	String get organisation => 'Organisation';
+
+	/// fr: 'Admissions & familles'
+	String get admissionsFamilles => 'Admissions & familles';
+
+	/// fr: 'Pédagogie & qualité'
+	String get pedagogieQualite => 'Pédagogie & qualité';
+
+	/// fr: 'Planning & remplacements'
+	String get planningRemplacements => 'Planning & remplacements';
+
+	/// fr: 'Finance'
+	String get finance => 'Finance';
+
+	/// fr: 'Support'
+	String get support => 'Support';
+
+	/// fr: 'Produit & technique'
+	String get produitTechnique => 'Produit & technique';
+
+	/// fr: 'Direction'
+	String get direction => 'Direction';
+}
+
+// Path: com.studio.visibilite
+class Traductions$com$studio$visibilite$fr {
+	Traductions$com$studio$visibilite$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Restreint'
+	String get restreint => 'Restreint';
+
+	/// fr: 'Privé'
+	String get prive => 'Privé';
+
+	/// fr: 'Ouvert à toute l'équipe.'
+	String get visibleDetail => 'Ouvert à toute l\'équipe.';
+
+	/// fr: 'Ouvert à une partie de l'équipe, dont vous faites partie.'
+	String get restreintDetail => 'Ouvert à une partie de l\'équipe, dont vous faites partie.';
+
+	/// fr: 'Canal privé, ouvert à ses seuls membres. Vous en faites partie.'
+	String get priveDetail => 'Canal privé, ouvert à ses seuls membres. Vous en faites partie.';
+}
+
+// Path: com.studio.canal
+class Traductions$com$studio$canal$fr {
+	Traductions$com$studio$canal$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '1 membre'
+	String get membresUn => '1 membre';
+
+	/// fr: '{nombre} membres'
+	String membres({required Object nombre}) => '${nombre} membres';
+
+	/// fr: 'Écrire dans {nom}'
+	String aide({required Object nom}) => 'Écrire dans ${nom}';
+
+	/// fr: 'Vous pouvez lire ce canal. L'écriture n'y est pas ouverte pour vous.'
+	String get lectureSeule => 'Vous pouvez lire ce canal. L\'écriture n\'y est pas ouverte pour vous.';
+
+	/// fr: 'Aucun message pour le moment'
+	String get aucunMessageTitre => 'Aucun message pour le moment';
+
+	/// fr: 'Les messages de ce canal s'afficheront ici dès leur publication.'
+	String get aucunMessage => 'Les messages de ce canal s\'afficheront ici dès leur publication.';
+
+	/// fr: 'Canal indisponible'
+	String get indisponibleTitre => 'Canal indisponible';
+
+	/// fr: 'Ce canal n'est pas disponible pour vous. Choisissez un autre canal dans la liste.'
+	String get indisponible => 'Ce canal n\'est pas disponible pour vous. Choisissez un autre canal dans la liste.';
+}
+
+// Path: com.studio.panneau
+class Traductions$com$studio$panneau$fr {
+	Traductions$com$studio$panneau$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À propos du canal'
+	String get titre => 'À propos du canal';
+
+	/// fr: 'À propos'
+	String get aPropos => 'À propos';
+
+	/// fr: 'Section'
+	String get section => 'Section';
+
+	/// fr: 'Visibilité'
+	String get visibilite => 'Visibilité';
+
+	/// fr: 'Éléments épinglés'
+	String get epingles => _root.com.socle.lexique.elementsEpingles;
+
+	/// fr: 'Fichiers récents'
+	String get fichiers => 'Fichiers récents';
+
+	/// fr: 'Liens utiles'
+	String get liens => 'Liens utiles';
+
+	/// fr: 'Vous'
+	String get vous => 'Vous';
+
+	/// fr: 'Paramètres du canal'
+	String get parametres => 'Paramètres du canal';
+
+	/// fr: 'La modification des paramètres arrivera avec le service du Studio.'
+	String get parametresDetail => 'La modification des paramètres arrivera avec le service du Studio.';
+
+	/// fr: 'Ouvrir {titre}'
+	String ouvrir({required Object titre}) => 'Ouvrir ${titre}';
+
+	/// fr: 'Site externe : {hote}'
+	String lienExterne({required Object hote}) => 'Site externe : ${hote}';
+
+	/// fr: 'Rien de partagé pour le moment'
+	String get aucunPartageTitre => 'Rien de partagé pour le moment';
+
+	/// fr: 'Les éléments épinglés, les fichiers et les liens de ce canal apparaîtront ici.'
+	String get aucunPartage => 'Les éléments épinglés, les fichiers et les liens de ce canal apparaîtront ici.';
+}
+
+// Path: com.studio.enregistrer
+class Traductions$com$studio$enregistrer$fr {
+	Traductions$com$studio$enregistrer$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Enregistrer'
+	String get enregistrer => _root.com.socle.lexique.enregistrer;
+
+	/// fr: 'Retirer'
+	String get retirer => 'Retirer';
+
+	/// fr: 'Enregistrer {titre}'
+	String semantiqueEnregistrer({required Object titre}) => 'Enregistrer ${titre}';
+
+	/// fr: 'Retirer {titre} des éléments enregistrés'
+	String semantiqueRetirer({required Object titre}) => 'Retirer ${titre} des éléments enregistrés';
+
+	/// fr: 'Ajouté aux éléments enregistrés : {titre}.'
+	String ajoute({required Object titre}) => 'Ajouté aux éléments enregistrés : ${titre}.';
+
+	/// fr: 'Retiré des éléments enregistrés : {titre}.'
+	String retire({required Object titre}) => 'Retiré des éléments enregistrés : ${titre}.';
+
+	/// fr: 'L'enregistrement n'a pas encore été confirmé. Réessayez dans un instant.'
+	String get nonConfirme => 'L\'enregistrement n\'a pas encore été confirmé. Réessayez dans un instant.';
+}
+
+// Path: com.studio.enregistres
+class Traductions$com$studio$enregistres$fr {
+	Traductions$com$studio$enregistres$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les canaux et les éléments que vous gardez sous la main. Chacun s'ouvre à sa place d'origine.'
+	String get detail => 'Les canaux et les éléments que vous gardez sous la main. Chacun s\'ouvre à sa place d\'origine.';
+
+	/// fr: 'Aucun élément enregistré'
+	String get videTitre => 'Aucun élément enregistré';
+
+	/// fr: 'Touchez Enregistrer dans le panneau d'un canal pour retrouver un canal ou un élément ici.'
+	String get vide => 'Touchez Enregistrer dans le panneau d\'un canal pour retrouver un canal ou un élément ici.';
+
+	/// fr: 'Ouvrir {titre}'
+	String ouvrir({required Object titre}) => 'Ouvrir ${titre}';
+
+	/// fr: '{type}, ne s'ouvre plus d'ici'
+	String sansDestination({required Object type}) => '${type}, ne s\'ouvre plus d\'ici';
+
+	late final Traductions$com$studio$enregistres$types$fr types = Traductions$com$studio$enregistres$types$fr.internal(_root);
+}
+
+// Path: com.studio.recherche
+class Traductions$com$studio$recherche$fr {
+	Traductions$com$studio$recherche$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Rechercher dans Le Studio'
+	String get champ => 'Rechercher dans Le Studio';
+
+	/// fr: 'Canal, message ou fichier'
+	String get aide => 'Canal, message ou fichier';
+
+	/// fr: 'Aucun résultat'
+	String get aucunTitre => 'Aucun résultat';
+
+	/// fr: 'Rien ne correspond à « {texte} » dans vos canaux. Essayez un autre mot.'
+	String aucun({required Object texte}) => 'Rien ne correspond à « ${texte} » dans vos canaux. Essayez un autre mot.';
+
+	/// fr: 'Rien de ce type ne correspond. Choisissez Tout pour voir les autres résultats.'
+	String get aucunDansFiltre => 'Rien de ce type ne correspond. Choisissez Tout pour voir les autres résultats.';
+
+	/// fr: '1 résultat'
+	String get resultatUn => '1 résultat';
+
+	/// fr: '{nombre} résultats'
+	String resultats({required Object nombre}) => '${nombre} résultats';
+
+	/// fr: 'Type de résultat'
+	String get filtre => 'Type de résultat';
+
+	/// fr: 'Tout'
+	String get tout => 'Tout';
+
+	/// fr: 'Canaux'
+	String get canaux => 'Canaux';
+
+	/// fr: 'Messages'
+	String get messages => 'Messages';
+
+	/// fr: 'Fichiers'
+	String get fichiers => 'Fichiers';
+
+	/// fr: 'Dans {canal}'
+	String dansCanal({required Object canal}) => 'Dans ${canal}';
+
+	/// fr: '{auteur}, dans {canal}'
+	String messageDe({required Object auteur, required Object canal}) => '${auteur}, dans ${canal}';
+}
+
+// Path: com.studio.demo
+class Traductions$com$studio$demo$fr {
+	Traductions$com$studio$demo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Un canal en mode focus'
+	String get focus => 'Un canal en mode focus';
+
+	/// fr: 'Aujourd'hui sans activité'
+	String get aujourdhuiVide => 'Aujourd\'hui sans activité';
+
+	/// fr: 'Dans l'application, cette ligne ouvre {module}. La démonstration reste sur cette page.'
+	String horsDemo({required Object module}) => 'Dans l\'application, cette ligne ouvre ${module}. La démonstration reste sur cette page.';
+
+	/// fr: 'Choisissez une situation à essayer.'
+	String get choisir => 'Choisissez une situation à essayer.';
+
+	/// fr: 'Le Studio et ses canaux'
+	String get normale => 'Le Studio et ses canaux';
+
+	/// fr: 'Envoi non confirmé'
+	String get echec => 'Envoi non confirmé';
+
+	/// fr: 'Hors ligne'
+	String get horsLigne => 'Hors ligne';
+
+	/// fr: 'Adresse d'un canal privé qui ne vous est pas ouvert'
+	String get canalPrive => 'Adresse d\'un canal privé qui ne vous est pas ouvert';
+
+	/// fr: 'Aucun canal ouvert'
+	String get sansCanaux => 'Aucun canal ouvert';
+
+	/// fr: 'Situation : {situation}'
+	String vue({required Object situation}) => 'Situation : ${situation}';
+
+	late final Traductions$com$studio$demo$f$fr f = Traductions$com$studio$demo$f$fr.internal(_root);
+}
+
+// Path: com.annonces.publieur
+class Traductions$com$annonces$publieur$fr {
+	Traductions$com$annonces$publieur$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nouvelle annonce'
+	String get titre => 'Nouvelle annonce';
+
+	late final Traductions$com$annonces$publieur$etapes$fr etapes = Traductions$com$annonces$publieur$etapes$fr.internal(_root);
+	late final Traductions$com$annonces$publieur$contexte$fr contexte = Traductions$com$annonces$publieur$contexte$fr.internal(_root);
+
+	/// fr: 'Titre de l'annonce'
+	String get champTitre => 'Titre de l\'annonce';
+
+	/// fr: 'Texte de l'annonce'
+	String get champTexte => 'Texte de l\'annonce';
+
+	late final Traductions$com$annonces$publieur$nature$fr nature = Traductions$com$annonces$publieur$nature$fr.internal(_root);
+	late final Traductions$com$annonces$publieur$quand$fr quand = Traductions$com$annonces$publieur$quand$fr.internal(_root);
+	late final Traductions$com$annonces$publieur$apercu$fr apercu = Traductions$com$annonces$publieur$apercu$fr.internal(_root);
+
+	/// fr: 'Continuer'
+	String get continuer => 'Continuer';
+
+	/// fr: 'Publier l'annonce'
+	String get publier => 'Publier l\'annonce';
+
+	/// fr: 'Programmer l'annonce'
+	String get programmer => 'Programmer l\'annonce';
+
+	/// fr: 'Réessayer la publication'
+	String get reessayer => 'Réessayer la publication';
+
+	/// fr: 'Terminer'
+	String get terminer => 'Terminer';
+
+	/// fr: 'Écrivez un titre et un texte pour continuer.'
+	String get manqueContenu => 'Écrivez un titre et un texte pour continuer.';
+
+	/// fr: 'Choisissez les destinataires pour continuer.'
+	String get manqueAudience => 'Choisissez les destinataires pour continuer.';
+
+	/// fr: 'Publication en cours. Attendez la confirmation.'
+	String get enCours => 'Publication en cours. Attendez la confirmation.';
+
+	/// fr: 'Annonce publiée. Les destinataires la reçoivent.'
+	String get publiee => 'Annonce publiée. Les destinataires la reçoivent.';
+
+	/// fr: 'Annonce planifiée pour le {date} à {heure}.'
+	String planifiee({required Object date, required Object heure}) => 'Annonce planifiée pour le ${date} à ${heure}.';
+
+	/// fr: 'Cette annonce n'est pas encore confirmée : il est possible qu'elle ne soit pas parvenue jusqu'à Rewayah. Réessayez : elle ne partira qu'une fois.'
+	String get nonConfirmee => 'Cette annonce n\'est pas encore confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez : elle ne partira qu\'une fois.';
+
+	/// fr: 'Cette annonce n'est pas encore confirmée. Réessayez dès que l'envoi est de nouveau possible.'
+	String get horsLigne => 'Cette annonce n\'est pas encore confirmée. Réessayez dès que l\'envoi est de nouveau possible.';
+
+	/// fr: 'La publication des annonces n'est pas encore disponible. Revenez plus tard.'
+	String get indisponible => 'La publication des annonces n\'est pas encore disponible. Revenez plus tard.';
+
+	/// fr: 'Aucun destinataire ouvert'
+	String get aucuneCibleTitre => 'Aucun destinataire ouvert';
+
+	/// fr: 'Vous ne pouvez publier pour aucun destinataire pour le moment. Demandez l'accès à la direction.'
+	String get aucuneCible => 'Vous ne pouvez publier pour aucun destinataire pour le moment. Demandez l\'accès à la direction.';
+
+	/// fr: 'Publication réservée'
+	String get classeRefuseeTitre => 'Publication réservée';
+
+	/// fr: 'Vous ne pouvez pas publier d'annonce pour cette Classe. Demandez l'accès à la direction.'
+	String get classeRefusee => 'Vous ne pouvez pas publier d\'annonce pour cette Classe. Demandez l\'accès à la direction.';
+}
+
+// Path: com.annonces.administration
+class Traductions$com$annonces$administration$fr {
+	Traductions$com$annonces$administration$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nouvelle annonce'
+	String get nouvelle => 'Nouvelle annonce';
+
+	/// fr: 'Démonstration'
+	String get demo => 'Démonstration';
+
+	/// fr: 'Données de démonstration : aucun chiffre réel.'
+	String get demoDetail => 'Données de démonstration : aucun chiffre réel.';
+
+	/// fr: 'Les annonces ne peuvent pas être actualisées maintenant.'
+	String get horsLigne => 'Les annonces ne peuvent pas être actualisées maintenant.';
+
+	late final Traductions$com$annonces$administration$indicateurs$fr indicateurs = Traductions$com$annonces$administration$indicateurs$fr.internal(_root);
+	late final Traductions$com$annonces$administration$publiees$fr publiees = Traductions$com$annonces$administration$publiees$fr.internal(_root);
+	late final Traductions$com$annonces$administration$planifiees$fr planifiees = Traductions$com$annonces$administration$planifiees$fr.internal(_root);
+	late final Traductions$com$annonces$administration$matrice$fr matrice = Traductions$com$annonces$administration$matrice$fr.internal(_root);
+	late final Traductions$com$annonces$administration$moderation$fr moderation = Traductions$com$annonces$administration$moderation$fr.internal(_root);
+}
+
+// Path: com.annonces.demoPublication
+class Traductions$com$annonces$demoPublication$fr {
+	Traductions$com$annonces$demoPublication$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Administration des communications (direction)'
+	String get lienAdministration => 'Administration des communications (direction)';
+
+	/// fr: 'Publier une annonce pour une Classe (enseignant)'
+	String get lienPublier => 'Publier une annonce pour une Classe (enseignant)';
+
+	/// fr: 'Toute l'académie'
+	String get toutes => 'Toute l\'académie';
+
+	/// fr: 'Familles'
+	String get familles => 'Familles';
+
+	/// fr: 'Enseignants'
+	String get enseignants => 'Enseignants';
+
+	/// fr: 'Élèves'
+	String get eleves => 'Élèves';
+
+	/// fr: 'Contrôleurs'
+	String get controleurs => 'Contrôleurs';
+
+	/// fr: 'Direction'
+	String get direction => 'Direction';
+
+	/// fr: 'Toute l'académie, un public ou une Classe'
+	String get audiencesDirection => 'Toute l\'académie, un public ou une Classe';
+
+	/// fr: 'Sa Classe seulement'
+	String get audiencesEnseignant => 'Sa Classe seulement';
+
+	/// fr: 'Calendrier des vacances d'hiver'
+	String get vacancesTitre => 'Calendrier des vacances d\'hiver';
+
+	/// fr: 'Les cours s'arrêtent du 21 décembre au 5 janvier. Les séances reprennent le lundi 6 janvier aux horaires habituels.'
+	String get vacancesTexte => 'Les cours s\'arrêtent du 21 décembre au 5 janvier. Les séances reprennent le lundi 6 janvier aux horaires habituels.';
+
+	/// fr: 'Réunion des enseignants de jeudi'
+	String get reunionTitre => 'Réunion des enseignants de jeudi';
+
+	/// fr: 'La réunion pédagogique de jeudi commence à 18 h, en visio. L'ordre du jour est dans Le Studio.'
+	String get reunionTexte => 'La réunion pédagogique de jeudi commence à 18 h, en visio. L\'ordre du jour est dans Le Studio.';
+
+	/// fr: 'Récitation de fin de trimestre'
+	String get recitationTitre => 'Récitation de fin de trimestre';
+
+	/// fr: 'La Classe An-Nour présentera sa récitation de fin de trimestre samedi à 10 h, en visio.'
+	String get recitationTexte => 'La Classe An-Nour présentera sa récitation de fin de trimestre samedi à 10 h, en visio.';
+
+	/// fr: 'Reprise des cours après les vacances'
+	String get rentreeTitre => 'Reprise des cours après les vacances';
+
+	/// fr: 'Les séances reprennent le lundi 6 janvier aux horaires habituels.'
+	String get rentreeTexte => 'Les séances reprennent le lundi 6 janvier aux horaires habituels.';
+
+	/// fr: 'Publication « Fiches de tajwid à imprimer »'
+	String get signalementAffilie => 'Publication « Fiches de tajwid à imprimer »';
+
+	/// fr: 'Retrouvez mes fiches avec ce lien partenaire, remise de 20 % avec mon code.'
+	String get extraitAffilie => 'Retrouvez mes fiches avec ce lien partenaire, remise de 20 % avec mon code.';
+
+	/// fr: 'Publication « Cours particuliers disponibles »'
+	String get signalementVente => 'Publication « Cours particuliers disponibles »';
+
+	/// fr: 'Je propose des cours particuliers payants le week-end, écrivez-moi.'
+	String get extraitVente => 'Je propose des cours particuliers payants le week-end, écrivez-moi.';
+
+	/// fr: 'Réponse sous « Organiser une révision collective »'
+	String get signalementHorsSujet => 'Réponse sous « Organiser une révision collective »';
+}
+
+// Path: com.annonces.demo
+class Traductions$com$annonces$demo$fr {
+	Traductions$com$annonces$demo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Démonstration hors production : données fictives, rien n'est envoyé.'
+	String get detail => 'Démonstration hors production : données fictives, rien n\'est envoyé.';
+
+	/// fr: 'Choisissez le rôle à montrer'
+	String get choisirRole => 'Choisissez le rôle à montrer';
+
+	late final Traductions$com$annonces$demo$roles$fr roles = Traductions$com$annonces$demo$roles$fr.internal(_root);
+
+	/// fr: 'Classe An-Nour'
+	String get classeNour => 'Classe An-Nour';
+
+	/// fr: 'Classe Al-Fajr'
+	String get classeFajr => 'Classe Al-Fajr';
+
+	/// fr: 'Enseignante de la Classe'
+	String get enseignante => 'Enseignante de la Classe';
+
+	late final Traductions$com$annonces$demo$f$fr f = Traductions$com$annonces$demo$f$fr.internal(_root);
+}
+
 // Path: salle.preparation.eleve.guidee
 class Traductions$salle$preparation$eleve$guidee$fr {
 	Traductions$salle$preparation$eleve$guidee$fr.internal(this._root);
@@ -19026,6 +21175,1497 @@ class Traductions$tc$parcours$signalement$categorieValeur$fr {
 	String get autre => 'Autre';
 }
 
+// Path: com.socle.composants.lecture
+class Traductions$com$socle$composants$lecture$fr {
+	Traductions$com$socle$composants$lecture$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pièce jointe : {nom}'
+	String pieceJointe({required Object nom}) => 'Pièce jointe : ${nom}';
+
+	/// fr: 'Message vocal de {duree}'
+	String vocal({required Object duree}) => 'Message vocal de ${duree}';
+
+	/// fr: 'Message vocal'
+	String get vocalSansDuree => 'Message vocal';
+
+	/// fr: '{date}, {heure}'
+	String horodatage({required Object date, required Object heure}) => '${date}, ${heure}';
+}
+
+// Path: com.socle.composants.badge
+class Traductions$com$socle$composants$badge$fr {
+	Traductions$com$socle$composants$badge$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '1 non lu'
+	String get nonLuUn => '1 non lu';
+
+	/// fr: '{nombre} non lus'
+	String nonLus({required Object nombre}) => '${nombre} non lus';
+
+	/// fr: '{nombre} éléments non lus'
+	String nonLusSemantique({required Object nombre}) => '${nombre} éléments non lus';
+
+	/// fr: '1 élément non lu'
+	String get nonLuUnSemantique => '1 élément non lu';
+
+	/// fr: 'Information'
+	String get information => 'Information';
+
+	/// fr: 'À lire'
+	String get aLire => 'À lire';
+
+	/// fr: 'Action requise'
+	String get actionRequise => _root.com.socle.lexique.actionRequise;
+
+	/// fr: 'Urgent'
+	String get urgent => 'Urgent';
+
+	/// fr: 'Mention'
+	String get mention => 'Mention';
+
+	/// fr: 'Une mention vous concerne'
+	String get mentionSemantique => 'Une mention vous concerne';
+}
+
+// Path: com.socle.composants.pieceJointe
+class Traductions$com$socle$composants$pieceJointe$fr {
+	Traductions$com$socle$composants$pieceJointe$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Joindre un fichier'
+	String get joindre => 'Joindre un fichier';
+
+	/// fr: 'L'ajout de fichiers n'est pas encore disponible ici.'
+	String get joindreIndisponible => 'L\'ajout de fichiers n\'est pas encore disponible ici.';
+
+	/// fr: 'Ouvrir'
+	String get ouvrir => 'Ouvrir';
+
+	/// fr: 'Ouvrir {nom}'
+	String ouvrirLecteur({required Object nom}) => 'Ouvrir ${nom}';
+
+	/// fr: 'Retirer'
+	String get retirer => 'Retirer';
+
+	/// fr: 'Retirer {nom}'
+	String retirerLecteur({required Object nom}) => 'Retirer ${nom}';
+
+	/// fr: '{taille} octets'
+	String tailleOctets({required Object taille}) => '${taille} octets';
+
+	/// fr: '{taille} Ko'
+	String tailleKo({required Object taille}) => '${taille} Ko';
+
+	/// fr: '{taille} Mo'
+	String tailleMo({required Object taille}) => '${taille} Mo';
+
+	/// fr: 'Prêt à envoyer'
+	String get autorisee => 'Prêt à envoyer';
+
+	/// fr: 'Fichier trop lourd'
+	String get tropVolumineuse => 'Fichier trop lourd';
+
+	/// fr: 'Ce fichier dépasse la taille autorisée. Choisissez un fichier plus léger.'
+	String get tropVolumineuseDetail => 'Ce fichier dépasse la taille autorisée. Choisissez un fichier plus léger.';
+
+	/// fr: 'Type de fichier refusé'
+	String get typeInterdit => 'Type de fichier refusé';
+
+	/// fr: 'Ce type de fichier n'est pas accepté ici. Choisissez un autre format.'
+	String get typeInterditDetail => 'Ce type de fichier n\'est pas accepté ici. Choisissez un autre format.';
+
+	/// fr: 'Envoi en cours'
+	String get enCours => 'Envoi en cours';
+
+	/// fr: 'Envoyé'
+	String get envoyee => 'Envoyé';
+
+	/// fr: 'Non confirmé'
+	String get echec => 'Non confirmé';
+
+	/// fr: 'L'envoi de ce fichier n'a pas encore été confirmé. Réessayez dans un instant.'
+	String get erreurEnvoi => 'L\'envoi de ce fichier n\'a pas encore été confirmé. Réessayez dans un instant.';
+
+	/// fr: 'Pièce indisponible'
+	String get indisponible => 'Pièce indisponible';
+
+	/// fr: 'Ce fichier n'est plus disponible. Demandez à la personne qui l'a partagé de le renvoyer.'
+	String get indisponibleDetail => 'Ce fichier n\'est plus disponible. Demandez à la personne qui l\'a partagé de le renvoyer.';
+}
+
+// Path: com.socle.composants.composer
+class Traductions$com$socle$composants$composer$fr {
+	Traductions$com$socle$composants$composer$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Message'
+	String get message => 'Message';
+
+	/// fr: 'Écrire un message'
+	String get aide => 'Écrire un message';
+
+	/// fr: 'Envoyer'
+	String get envoyer => 'Envoyer';
+
+	/// fr: 'Écrivez un message pour l'envoyer.'
+	String get champVide => 'Écrivez un message pour l\'envoyer.';
+
+	/// fr: 'Message vocal'
+	String get vocal => 'Message vocal';
+
+	/// fr: 'Message vocal bientôt disponible'
+	String get vocalAVenir => 'Message vocal bientôt disponible';
+
+	/// fr: 'Envoi en cours'
+	String get enCours => 'Envoi en cours';
+
+	/// fr: 'Envoyé'
+	String get envoye => 'Envoyé';
+
+	/// fr: 'Ce message n'a pas encore été confirmé.'
+	String get nonConfirme => 'Ce message n\'a pas encore été confirmé.';
+
+	/// fr: 'Réessayer'
+	String get reessayer => 'Réessayer';
+
+	/// fr: 'Vous'
+	String get auteurSoi => 'Vous';
+
+	/// fr: 'Nouveau message de {auteur} : {texte}'
+	String annonce({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}';
+
+	/// fr: 'Brouillon'
+	String get brouillon => _root.com.socle.lexique.brouillon;
+
+	/// fr: 'Brouillon restauré'
+	String get brouillonRestaure => 'Brouillon restauré';
+
+	/// fr: 'Enregistrer un message vocal'
+	String get enregistrerVocal => _root.com.vocal.composer.enregistrer;
+
+	/// fr: 'Aucun message pour le moment'
+	String get aucunMessageTitre => 'Aucun message pour le moment';
+
+	/// fr: 'Écrivez le premier message de cette conversation : il s'affichera ici.'
+	String get aucunMessage => 'Écrivez le premier message de cette conversation : il s\'affichera ici.';
+}
+
+// Path: com.socle.composants.etats
+class Traductions$com$socle$composants$etats$fr {
+	Traductions$com$socle$composants$etats$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Chargement en cours'
+	String get chargement => 'Chargement en cours';
+
+	/// fr: 'Rien ici pour le moment'
+	String get videTitre => 'Rien ici pour le moment';
+
+	/// fr: 'Impossible de charger ce contenu.'
+	String get erreurTitre => 'Impossible de charger ce contenu.';
+
+	/// fr: 'Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: 'Réessayer'
+	String get reessayer => 'Réessayer';
+
+	/// fr: 'Les nouveaux messages ne peuvent pas être actualisés maintenant.'
+	String get horsLigne => 'Les nouveaux messages ne peuvent pas être actualisés maintenant.';
+
+	/// fr: 'Réessayez quand la connexion revient.'
+	String get horsLigneBloc => 'Réessayez quand la connexion revient.';
+
+	/// fr: 'Pas encore disponible'
+	String get indisponibleTitre => 'Pas encore disponible';
+
+	/// fr: 'Cette fonction n'est pas encore disponible ici. Elle s'ouvrira dès que le service sera prêt.'
+	String get indisponible => 'Cette fonction n\'est pas encore disponible ici. Elle s\'ouvrira dès que le service sera prêt.';
+
+	/// fr: 'Vous n'avez pas accès à ce contenu.'
+	String get permissionRefusee => 'Vous n\'avez pas accès à ce contenu.';
+}
+
+// Path: com.socle.composants.espace
+class Traductions$com$socle$composants$espace$fr {
+	Traductions$com$socle$composants$espace$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ouvrir le panneau de contexte'
+	String get ouvrirPanneau => 'Ouvrir le panneau de contexte';
+
+	/// fr: 'Fermer le panneau de contexte'
+	String get fermerPanneau => 'Fermer le panneau de contexte';
+
+	/// fr: 'Contexte'
+	String get panneauContexte => 'Contexte';
+
+	/// fr: 'Retour à la liste'
+	String get retourListe => 'Retour à la liste';
+}
+
+// Path: com.socle.navigation.provisoire
+class Traductions$com$socle$navigation$provisoire$fr {
+	Traductions$com$socle$navigation$provisoire$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Messages'
+	String get messagesTitre => _root.com.socle.lexique.messages;
+
+	/// fr: 'Les messages liés à vos Classes arriveront bientôt dans cet espace.'
+	String get messagesDetail => 'Les messages liés à vos Classes arriveront bientôt dans cet espace.';
+
+	/// fr: 'Communauté enseignants'
+	String get communauteTitre => _root.com.socle.lexique.communaute;
+
+	/// fr: 'L'espace d'échange entre enseignants arrivera bientôt ici.'
+	String get communauteDetail => 'L\'espace d\'échange entre enseignants arrivera bientôt ici.';
+
+	/// fr: 'Le Studio'
+	String get studioTitre => _root.com.socle.lexique.studio;
+
+	/// fr: 'L'espace de travail de l'équipe arrivera bientôt ici.'
+	String get studioDetail => 'L\'espace de travail de l\'équipe arrivera bientôt ici.';
+
+	/// fr: 'Administration des communications'
+	String get administrationTitre => 'Administration des communications';
+
+	/// fr: 'Les annonces, la modération et les messages se géreront bientôt ici.'
+	String get administrationDetail => 'Les annonces, la modération et les messages se géreront bientôt ici.';
+
+	/// fr: 'Publier une annonce'
+	String get publierAnnonceTitre => 'Publier une annonce';
+
+	/// fr: 'La publication d'une annonce pour une Classe arrivera bientôt ici.'
+	String get publierAnnonceDetail => 'La publication d\'une annonce pour une Classe arrivera bientôt ici.';
+}
+
+// Path: com.socle.navigation.demo
+class Traductions$com$socle$navigation$demo$fr {
+	Traductions$com$socle$navigation$demo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Démonstration des communications'
+	String get titre => 'Démonstration des communications';
+
+	/// fr: 'Données fictives, absentes des versions de production.'
+	String get detail => 'Données fictives, absentes des versions de production.';
+
+	/// fr: 'Choisissez un espace à essayer.'
+	String get choisir => 'Choisissez un espace à essayer.';
+}
+
+// Path: com.messages.demo.roles
+class Traductions$com$messages$demo$roles$fr {
+	Traductions$com$messages$demo$roles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Famille'
+	String get tuteur => 'Famille';
+
+	/// fr: 'Enseignant'
+	String get enseignant => 'Enseignant';
+
+	/// fr: 'Élève adulte'
+	String get adulte => 'Élève adulte';
+
+	/// fr: 'Direction'
+	String get admin => 'Direction';
+
+	/// fr: 'Contrôleur'
+	String get controleur => 'Contrôleur';
+}
+
+// Path: com.messages.demo.f
+class Traductions$com$messages$demo$f$fr {
+	Traductions$com$messages$demo$f$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ahmed'
+	String get ahmed => 'Ahmed';
+
+	/// fr: 'Parent d'Adam'
+	String get parentAdam => 'Parent d\'Adam';
+
+	/// fr: 'Enseignante de la Classe An-Nour'
+	String get enseignanteNour => 'Enseignante de la Classe An-Nour';
+
+	/// fr: 'Fatima'
+	String get fatima => 'Fatima';
+
+	/// fr: 'Parent de Yasmine'
+	String get parentYasmine => 'Parent de Yasmine';
+
+	/// fr: 'Karim'
+	String get karim => 'Karim';
+
+	/// fr: 'Parent de Yusuf'
+	String get parentYusuf => 'Parent de Yusuf';
+
+	/// fr: 'Administration'
+	String get administration => 'Administration';
+
+	/// fr: 'Direction de Rewayah'
+	String get directionRewayah => 'Direction de Rewayah';
+
+	/// fr: 'M. Rachid'
+	String get rachid => 'M. Rachid';
+
+	/// fr: 'Contrôleur pédagogique'
+	String get controleurPedagogique => 'Contrôleur pédagogique';
+
+	/// fr: 'Youssef'
+	String get youssef => 'Youssef';
+
+	/// fr: 'Enseignant de la Classe Al-Fajr'
+	String get enseignantFajr => 'Enseignant de la Classe Al-Fajr';
+
+	/// fr: 'Khadija'
+	String get khadija => 'Khadija';
+
+	/// fr: 'Élève de la Classe Al-Fajr'
+	String get eleveFajr => 'Élève de la Classe Al-Fajr';
+
+	/// fr: 'Adam'
+	String get adam => 'Adam';
+
+	/// fr: 'Yasmine'
+	String get yasmine => 'Yasmine';
+
+	/// fr: 'Yusuf'
+	String get yusuf => 'Yusuf';
+
+	/// fr: 'Dossier d'inscription d'Adam'
+	String get dossierAdam => 'Dossier d\'inscription d\'Adam';
+
+	/// fr: 'Visite de contrôle, Classe An-Nour'
+	String get missionNour => 'Visite de contrôle, Classe An-Nour';
+
+	/// fr: 'Devoir_semaine_3.pdf'
+	String get pieceDevoir => 'Devoir_semaine_3.pdf';
+
+	/// fr: 'Attestation_ancienne.pdf'
+	String get pieceAttestation => 'Attestation_ancienne.pdf';
+
+	/// fr: 'vocal.m4a'
+	String get pieceVocal => 'vocal.m4a';
+
+	/// fr: 'Audio'
+	String get typeAudio => 'Audio';
+
+	/// fr: 'Bonjour, je voulais savoir comment s'est passée la séance d'aujourd'hui pour Adam. Merci beaucoup.'
+	String get adamQuestion => 'Bonjour, je voulais savoir comment s\'est passée la séance d\'aujourd\'hui pour Adam. Merci beaucoup.';
+
+	/// fr: 'Bonjour, la séance s'est très bien passée. Adam a été attentif et a bien participé.'
+	String get adamReponse => 'Bonjour, la séance s\'est très bien passée. Adam a été attentif et a bien participé.';
+
+	/// fr: 'Voici le devoir de la semaine prochaine.'
+	String get adamDevoir => 'Voici le devoir de la semaine prochaine.';
+
+	/// fr: 'Il manque l'attestation de niveau d'Adam pour finaliser son inscription. Pouvez-vous la déposer dans son dossier ?'
+	String get dossierManque => 'Il manque l\'attestation de niveau d\'Adam pour finaliser son inscription. Pouvez-vous la déposer dans son dossier ?';
+
+	/// fr: 'La séance a commencé avec huit minutes de retard. Le compte rendu est déposé.'
+	String get missionRetard => 'La séance a commencé avec huit minutes de retard. Le compte rendu est déposé.';
+
+	/// fr: 'Merci, nous en parlons avec l'enseignante cette semaine.'
+	String get missionSuite => 'Merci, nous en parlons avec l\'enseignante cette semaine.';
+
+	/// fr: 'Merci beaucoup pour ces explications.'
+	String get yasmineMerci => 'Merci beaucoup pour ces explications.';
+
+	/// fr: 'Votre Classe An-Nour passe au mardi 18 h à partir du mois prochain. Merci de confirmer.'
+	String get affectation => 'Votre Classe An-Nour passe au mardi 18 h à partir du mois prochain. Merci de confirmer.';
+
+	/// fr: 'Pensez à réviser la sourate Al-Mulk pour jeudi.'
+	String get khadijaRevision => 'Pensez à réviser la sourate Al-Mulk pour jeudi.';
+}
+
+// Path: com.communaute.garde.reponse
+class Traductions$com$communaute$garde$reponse$fr {
+	Traductions$com$communaute$garde$reponse$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l'offre avant de l'envoyer.'
+	String get avertissement => 'Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant de l\'envoyer.';
+
+	/// fr: 'Liens de la réponse'
+	String get liensTitre => 'Liens de la réponse';
+
+	/// fr: 'Modifiez la réponse, puis envoyez-la de nouveau.'
+	String get consigneBlocage => 'Modifiez la réponse, puis envoyez-la de nouveau.';
+}
+
+// Path: com.communaute.signalement.politique
+class Traductions$com$communaute$signalement$politique$fr {
+	Traductions$com$communaute$signalement$politique$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La publicité n'est pas autorisée dans la Communauté enseignants.'
+	String get publicite => 'La publicité n\'est pas autorisée dans la Communauté enseignants.';
+
+	/// fr: 'La sollicitation commerciale n'est pas autorisée dans cet espace.'
+	String get sollicitation => 'La sollicitation commerciale n\'est pas autorisée dans cet espace.';
+}
+
+// Path: com.communaute.demo.f
+class Traductions$com$communaute$demo$f$fr {
+	Traductions$com$communaute$demo$f$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pédagogie'
+	String get categoriePedagogie => 'Pédagogie';
+
+	/// fr: 'Ressources'
+	String get categorieRessources => 'Ressources';
+
+	/// fr: 'Gestion'
+	String get categorieGestion => 'Gestion';
+
+	/// fr: 'Enseignant, Classe Al-Fatiha'
+	String get fonctionSoi => 'Enseignant, Classe Al-Fatiha';
+
+	/// fr: 'Ibrahim'
+	String get prenomSoi => 'Ibrahim';
+
+	/// fr: 'Samira Belkacem'
+	String get samira => 'Samira Belkacem';
+
+	/// fr: 'Enseignante, Classe An-Nour'
+	String get fonctionSamira => 'Enseignante, Classe An-Nour';
+
+	/// fr: 'Nour El Idrissi'
+	String get nour => 'Nour El Idrissi';
+
+	/// fr: 'Enseignante, Classe Al-Fajr'
+	String get fonctionNour => 'Enseignante, Classe Al-Fajr';
+
+	/// fr: 'Yasmine Haddad'
+	String get yasmine => 'Yasmine Haddad';
+
+	/// fr: 'Enseignante, Classe Al-Badr'
+	String get fonctionYasmine => 'Enseignante, Classe Al-Badr';
+
+	/// fr: 'Youssef Amrani'
+	String get youssef => 'Youssef Amrani';
+
+	/// fr: 'Enseignant, Classe Al-Kawthar'
+	String get fonctionYoussef => 'Enseignant, Classe Al-Kawthar';
+
+	/// fr: 'Mariam Benali'
+	String get mariam => 'Mariam Benali';
+
+	/// fr: 'Enseignante, Classe An-Nas'
+	String get fonctionMariam => 'Enseignante, Classe An-Nas';
+
+	/// fr: 'Hamza Ouali'
+	String get hamza => 'Hamza Ouali';
+
+	/// fr: 'Enseignant, Classe Al-Ikhlas'
+	String get fonctionHamza => 'Enseignant, Classe Al-Ikhlas';
+
+	/// fr: 'Idées pour la mémorisation ?'
+	String get memorisationTitre => 'Idées pour la mémorisation ?';
+
+	/// fr: 'Quels rituels ou activités fonctionnent bien pour aider les élèves à mémoriser les sourates ? Je cherche des retours d'expérience : jeux, supports visuels, répétition en binôme. Merci pour vos idées !'
+	String get memorisationTexte => 'Quels rituels ou activités fonctionnent bien pour aider les élèves à mémoriser les sourates ? Je cherche des retours d\'expérience : jeux, supports visuels, répétition en binôme. Merci pour vos idées !';
+
+	/// fr: 'Retour sur les cartes de répétition'
+	String get cartesTitre => 'Retour sur les cartes de répétition';
+
+	/// fr: 'J'utilise des cartes de répétition depuis la rentrée et cela fonctionne très bien, même avec les plus jeunes. Je joins le modèle que je remplis avant chaque séance.'
+	String get cartesTexte => 'J\'utilise des cartes de répétition depuis la rentrée et cela fonctionne très bien, même avec les plus jeunes. Je joins le modèle que je remplis avant chaque séance.';
+
+	/// fr: 'Cartes_repetition.pdf'
+	String get cartesFichier => 'Cartes_repetition.pdf';
+
+	/// fr: 'Gérer les différents niveaux ?'
+	String get niveauxTitre => 'Gérer les différents niveaux ?';
+
+	/// fr: 'Comment gérez-vous une Classe où les niveaux sont très différents ? Je crains que les plus avancés décrochent pendant que je reprends les bases avec les autres.'
+	String get niveauxTexte => 'Comment gérez-vous une Classe où les niveaux sont très différents ? Je crains que les plus avancés décrochent pendant que je reprends les bases avec les autres.';
+
+	/// fr: 'Faire réciter les élèves timides'
+	String get timidesTitre => 'Faire réciter les élèves timides';
+
+	/// fr: 'Une élève refuse de réciter devant les autres. Je lui propose de réciter la première, quand la Classe est encore calme. Avez-vous d'autres pistes ?'
+	String get timidesTexte => 'Une élève refuse de réciter devant les autres. Je lui propose de réciter la première, quand la Classe est encore calme. Avez-vous d\'autres pistes ?';
+
+	/// fr: 'Une fiche de suivi des révisions'
+	String get ficheTitre => 'Une fiche de suivi des révisions';
+
+	/// fr: 'Je note chaque semaine les sourates révisées et les points à reprendre. La fiche tient sur une page et aide beaucoup pour préparer la séance suivante.'
+	String get ficheTexte => 'Je note chaque semaine les sourates révisées et les points à reprendre. La fiche tient sur une page et aide beaucoup pour préparer la séance suivante.';
+
+	/// fr: 'Commencer la séance à l'heure'
+	String get heureTitre => 'Commencer la séance à l\'heure';
+
+	/// fr: 'Les premières minutes partent souvent dans l'installation. Je demande maintenant aux élèves de préparer leur page avant l'heure. Qu'en pensez-vous ?'
+	String get heureTexte => 'Les premières minutes partent souvent dans l\'installation. Je demande maintenant aux élèves de préparer leur page avant l\'heure. Qu\'en pensez-vous ?';
+
+	/// fr: 'J'utilise beaucoup la répétition en binôme et des cartes visuelles. Cela motive vraiment les élèves.'
+	String get reponseMariam => 'J\'utilise beaucoup la répétition en binôme et des cartes visuelles. Cela motive vraiment les élèves.';
+
+	/// fr: 'Les élèves réécoutent la récitation de la séance à la maison : cela aide beaucoup entre deux cours.'
+	String get reponseYoussef => 'Les élèves réécoutent la récitation de la séance à la maison : cela aide beaucoup entre deux cours.';
+
+	/// fr: 'Merci pour le modèle, je vais l'essayer cette semaine.'
+	String get reponseSamira => 'Merci pour le modèle, je vais l\'essayer cette semaine.';
+
+	/// fr: 'Je laisse parfois un élève réciter en tête-à-tête à la fin de la séance, puis devant un seul camarade.'
+	String get reponseHamza => 'Je laisse parfois un élève réciter en tête-à-tête à la fin de la séance, puis devant un seul camarade.';
+
+	/// fr: 'Mon lecteur audio préféré pour réviser'
+	String get affilieTitre => 'Mon lecteur audio préféré pour réviser';
+
+	/// fr: 'J'utilise ce lecteur pour faire réécouter les sourates. Il est en réduction cette semaine avec mon lien : {lien}'
+	String affilieTexte({required Object lien}) => 'J\'utilise ce lecteur pour faire réécouter les sourates. Il est en réduction cette semaine avec mon lien : ${lien}';
+
+	/// fr: 'Je vends mes fiches de mémorisation'
+	String get venteTitre => 'Je vends mes fiches de mémorisation';
+
+	/// fr: 'Lot de 30 fiches plastifiées, 25 euros, envoi par la poste. Écrivez-moi pour commander.'
+	String get venteTexte => 'Lot de 30 fiches plastifiées, 25 euros, envoi par la poste. Écrivez-moi pour commander.';
+
+	/// fr: 'Une application pour réviser'
+	String get publiciteTitre => 'Une application pour réviser';
+
+	/// fr: 'Je recommande cette application de révision, avec le code PROF20 pour l'abonnement : {lienOffre}. Pour le texte, la ressource de la Bibliothèque ({lienInterne}) et {lienRessource} suffisent.'
+	String publiciteTexte({required Object lienOffre, required Object lienInterne, required Object lienRessource}) => 'Je recommande cette application de révision, avec le code PROF20 pour l\'abonnement : ${lienOffre}. Pour le texte, la ressource de la Bibliothèque (${lienInterne}) et ${lienRessource} suffisent.';
+
+	/// fr: 'Pour la révision, je conseille ce lecteur, en réduction avec mon lien : {lien}'
+	String reponseAffilie({required Object lien}) => 'Pour la révision, je conseille ce lecteur, en réduction avec mon lien : ${lien}';
+
+	/// fr: 'Fiche_seance.pdf'
+	String get fichierChoisi => 'Fiche_seance.pdf';
+}
+
+// Path: com.studio.aujourdhui.indicateurs
+class Traductions$com$studio$aujourdhui$indicateurs$fr {
+	Traductions$com$studio$aujourdhui$indicateurs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Indicateurs d'attention'
+	String get titre => 'Indicateurs d\'attention';
+
+	/// fr: 'À traiter'
+	String get aTraiter => _root.com.socle.lexique.aTraiter;
+
+	/// fr: 'Mentions et réponses'
+	String get mentions => 'Mentions et réponses';
+
+	/// fr: 'Décisions en attente'
+	String get decisions => 'Décisions en attente';
+
+	/// fr: 'Non lus'
+	String get nonLus => 'Non lus';
+}
+
+// Path: com.studio.aujourdhui.blocs
+class Traductions$com$studio$aujourdhui$blocs$fr {
+	Traductions$com$studio$aujourdhui$blocs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À traiter aujourd'hui'
+	String get aTraiter => 'À traiter aujourd\'hui';
+
+	/// fr: 'Mentions et réponses'
+	String get mentions => 'Mentions et réponses';
+
+	/// fr: 'Décisions en attente'
+	String get decisions => 'Décisions en attente';
+
+	/// fr: 'Échéances proches'
+	String get echeances => 'Échéances proches';
+
+	/// fr: 'Activité récente'
+	String get activite => 'Activité récente';
+
+	/// fr: 'Brouillons'
+	String get brouillons => 'Brouillons';
+
+	/// fr: 'Accès rapides'
+	String get acces => 'Accès rapides';
+}
+
+// Path: com.studio.aujourdhui.videsBlocs
+class Traductions$com$studio$aujourdhui$videsBlocs$fr {
+	Traductions$com$studio$aujourdhui$videsBlocs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Rien à traiter aujourd'hui.'
+	String get aTraiter => 'Rien à traiter aujourd\'hui.';
+
+	/// fr: 'Aucune mention ni réponse en attente.'
+	String get mentions => 'Aucune mention ni réponse en attente.';
+
+	/// fr: 'Aucune décision en attente.'
+	String get decisions => 'Aucune décision en attente.';
+
+	/// fr: 'Aucune échéance proche.'
+	String get echeances => 'Aucune échéance proche.';
+
+	/// fr: 'Aucune activité récente.'
+	String get activite => 'Aucune activité récente.';
+}
+
+// Path: com.studio.aujourdhui.modules
+class Traductions$com$studio$aujourdhui$modules$fr {
+	Traductions$com$studio$aujourdhui$modules$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le Studio'
+	String get studio => _root.com.socle.lexique.studio;
+
+	/// fr: 'Finance'
+	String get finance => 'Finance';
+
+	/// fr: 'Planning'
+	String get planning => 'Planning';
+
+	/// fr: 'Dossiers'
+	String get dossiers => 'Dossiers';
+
+	/// fr: 'Classes'
+	String get classes => 'Classes';
+
+	/// fr: 'Admissions'
+	String get admissions => 'Admissions';
+
+	/// fr: 'Demandes'
+	String get demandes => 'Demandes';
+
+	/// fr: 'Administration des communications'
+	String get communications => 'Administration des communications';
+}
+
+// Path: com.studio.aujourdhui.acces
+class Traductions$com$studio$aujourdhui$acces$fr {
+	Traductions$com$studio$aujourdhui$acces$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Messages métier'
+	String get messages => _root.com.socle.lexique.messagesMetier;
+
+	/// fr: 'Les conversations avec les familles, les enseignants et les contrôleurs'
+	String get messagesDetail => 'Les conversations avec les familles, les enseignants et les contrôleurs';
+
+	/// fr: 'Annonces'
+	String get annonces => 'Annonces';
+
+	/// fr: 'Publier et suivre les annonces'
+	String get annoncesDetail => 'Publier et suivre les annonces';
+
+	/// fr: 'Dossiers à valider'
+	String get dossiers => 'Dossiers à valider';
+
+	/// fr: 'Les dossiers prêts pour une décision'
+	String get dossiersDetail => 'Les dossiers prêts pour une décision';
+
+	/// fr: 'Classes'
+	String get classes => 'Classes';
+
+	/// fr: 'Les Classes, leurs horaires et leurs enseignants'
+	String get classesDetail => 'Les Classes, leurs horaires et leurs enseignants';
+
+	/// fr: 'Demandes à trancher'
+	String get demandes => 'Demandes à trancher';
+
+	/// fr: 'Les demandes de changement en attente'
+	String get demandesDetail => 'Les demandes de changement en attente';
+}
+
+// Path: com.studio.enregistres.types
+class Traductions$com$studio$enregistres$types$fr {
+	Traductions$com$studio$enregistres$types$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Canal'
+	String get canal => 'Canal';
+
+	/// fr: 'Publication'
+	String get publication => 'Publication';
+
+	/// fr: 'Message'
+	String get message => 'Message';
+
+	/// fr: 'Élément du Studio'
+	String get element => 'Élément du Studio';
+}
+
+// Path: com.studio.demo.f
+class Traductions$com$studio$demo$f$fr {
+	Traductions$com$studio$demo$f$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nadia'
+	String get nadia => 'Nadia';
+
+	/// fr: 'Direction'
+	String get fonctionDirection => 'Direction';
+
+	/// fr: 'Mariam'
+	String get mariam => 'Mariam';
+
+	/// fr: 'Coordination générale'
+	String get fonctionCoordination => 'Coordination générale';
+
+	/// fr: 'Youssef'
+	String get youssef => 'Youssef';
+
+	/// fr: 'Produit et technique'
+	String get fonctionProduit => 'Produit et technique';
+
+	/// fr: 'Amina'
+	String get amina => 'Amina';
+
+	/// fr: 'Pédagogie'
+	String get fonctionPedagogie => 'Pédagogie';
+
+	/// fr: 'Samira'
+	String get samira => 'Samira';
+
+	/// fr: 'Admissions'
+	String get fonctionAdmissions => 'Admissions';
+
+	/// fr: 'Ibrahim'
+	String get ibrahim => 'Ibrahim';
+
+	/// fr: 'Planning'
+	String get fonctionPlanning => 'Planning';
+
+	/// fr: 'Audio'
+	String get pieceAudio => 'Audio';
+
+	/// fr: 'Planning_T3.pdf'
+	String get fichierPlanning => 'Planning_T3.pdf';
+
+	/// fr: 'Guide_de_moderation.pdf'
+	String get fichierModeration => 'Guide_de_moderation.pdf';
+
+	/// fr: 'vocal-youssef.m4a'
+	String get fichierVocal => 'vocal-youssef.m4a';
+
+	/// fr: 'Compte_rendu_visites.pdf'
+	String get fichierCompteRendu => 'Compte_rendu_visites.pdf';
+
+	/// fr: 'Budget_confidentiel.pdf'
+	String get fichierBudget => 'Budget_confidentiel.pdf';
+
+	/// fr: 'Organisation générale'
+	String get canalOrganisation => 'Organisation générale';
+
+	/// fr: 'Coordination de toute l'équipe'
+	String get canalOrganisationDetail => 'Coordination de toute l\'équipe';
+
+	/// fr: 'Admissions'
+	String get canalAdmissions => 'Admissions';
+
+	/// fr: 'Suivi des demandes d'inscription'
+	String get canalAdmissionsDetail => 'Suivi des demandes d\'inscription';
+
+	/// fr: 'Suivi qualité'
+	String get canalQualite => 'Suivi qualité';
+
+	/// fr: 'Retours des visites de contrôle'
+	String get canalQualiteDetail => 'Retours des visites de contrôle';
+
+	/// fr: 'Remplacements'
+	String get canalRemplacements => 'Remplacements';
+
+	/// fr: 'Absences et remplacements de la semaine'
+	String get canalRemplacementsDetail => 'Absences et remplacements de la semaine';
+
+	/// fr: 'Clôture du mois'
+	String get canalCloture => 'Clôture du mois';
+
+	/// fr: 'Préparation de la clôture mensuelle'
+	String get canalClotureDetail => 'Préparation de la clôture mensuelle';
+
+	/// fr: 'Direction stratégique'
+	String get canalDirection => 'Direction stratégique';
+
+	/// fr: 'Orientations de la direction'
+	String get canalDirectionDetail => 'Orientations de la direction';
+
+	/// fr: 'Bonjour à toute l'équipe. Voici le planning du prochain trimestre, dites-moi si quelque chose ne va pas.'
+	String get messagePlanning => 'Bonjour à toute l\'équipe. Voici le planning du prochain trimestre, dites-moi si quelque chose ne va pas.';
+
+	/// fr: 'Je mets à jour les supports du niveau 2 et on fait le point demain.'
+	String get messageSupports => 'Je mets à jour les supports du niveau 2 et on fait le point demain.';
+
+	/// fr: 'Merci à tous pour la semaine.'
+	String get messageMerci => 'Merci à tous pour la semaine.';
+
+	/// fr: 'Trois dossiers attendent une décision avant vendredi. Nadia, peux-tu regarder le dossier de la famille Karim ?'
+	String get messageDossiers => 'Trois dossiers attendent une décision avant vendredi. Nadia, peux-tu regarder le dossier de la famille Karim ?';
+
+	/// fr: 'Le compte rendu des visites du mois est prêt.'
+	String get messageCompteRendu => 'Le compte rendu des visites du mois est prêt.';
+
+	/// fr: 'Mardi, la Classe An-Nour est assurée par un remplaçant. Le planning est à jour.'
+	String get messageRemplacement => 'Mardi, la Classe An-Nour est assurée par un remplaçant. Le planning est à jour.';
+
+	/// fr: 'Les justificatifs de septembre sont rassemblés.'
+	String get messageJustificatifs => 'Les justificatifs de septembre sont rassemblés.';
+
+	/// fr: 'Budget confidentiel du trimestre.'
+	String get messageBudget => 'Budget confidentiel du trimestre.';
+
+	/// fr: 'Budget confidentiel du trimestre'
+	String get activiteBudget => 'Budget confidentiel du trimestre';
+
+	/// fr: 'Planning du trimestre'
+	String get partagePlanning => 'Planning du trimestre';
+
+	/// fr: 'Guide de modération'
+	String get partageModeration => 'Guide de modération';
+
+	/// fr: 'Épinglé par {nom}'
+	String epinglePar({required Object nom}) => 'Épinglé par ${nom}';
+
+	/// fr: 'Partagé par {nom}'
+	String partagePar({required Object nom}) => 'Partagé par ${nom}';
+
+	/// fr: 'Remplacements de la semaine'
+	String get lienRemplacements => 'Remplacements de la semaine';
+
+	/// fr: 'Charte de l'équipe'
+	String get lienCharte => 'Charte de l\'équipe';
+
+	/// fr: 'Samira, je regarde le dossier de la famille Karim ce soir et je te dis demain matin'
+	String get brouillon => 'Samira, je regarde le dossier de la famille Karim ce soir et je te dis demain matin';
+
+	/// fr: 'Paiement de septembre non confirmé pour la famille Haddad'
+	String get activitePaiement => 'Paiement de septembre non confirmé pour la famille Haddad';
+
+	/// fr: 'Échéancier de la famille Haddad'
+	String get objetEcheancier => 'Échéancier de la famille Haddad';
+
+	/// fr: 'Dossier de la famille Karim prêt pour une décision'
+	String get activiteDossierKarim => 'Dossier de la famille Karim prêt pour une décision';
+
+	/// fr: 'Dossier de la famille Karim'
+	String get objetDossierKarim => 'Dossier de la famille Karim';
+
+	/// fr: 'Samira vous a mentionnée'
+	String get activiteMention => 'Samira vous a mentionnée';
+
+	/// fr: 'Amina a répondu à votre message'
+	String get activiteReponse => 'Amina a répondu à votre message';
+
+	/// fr: 'Choisir le remplaçant de mardi pour la Classe An-Nour'
+	String get activiteRemplacant => 'Choisir le remplaçant de mardi pour la Classe An-Nour';
+
+	/// fr: 'Remplacement de mardi'
+	String get objetRemplacement => 'Remplacement de mardi';
+
+	/// fr: 'Valider l'ouverture d'une Classe le samedi matin'
+	String get activiteOuverture => 'Valider l\'ouverture d\'une Classe le samedi matin';
+
+	/// fr: 'Classe du samedi matin'
+	String get objetClasseSamedi => 'Classe du samedi matin';
+
+	/// fr: 'Clôture du mois de septembre'
+	String get activiteCloture => 'Clôture du mois de septembre';
+
+	/// fr: 'Clôture de septembre'
+	String get objetCloture => 'Clôture de septembre';
+
+	/// fr: 'Bilans de mi-parcours à relire'
+	String get activiteBilans => 'Bilans de mi-parcours à relire';
+
+	/// fr: 'Bilans de mi-parcours'
+	String get objetBilans => 'Bilans de mi-parcours';
+
+	/// fr: '2 nouveaux messages'
+	String get activiteMessages => '2 nouveaux messages';
+
+	/// fr: 'Annonce publiée : l'académie ferme le 1er novembre'
+	String get activiteAnnonce => 'Annonce publiée : l\'académie ferme le 1er novembre';
+
+	/// fr: 'Fermeture du 1er novembre'
+	String get objetFermeture => 'Fermeture du 1er novembre';
+
+	/// fr: '{nom} a partagé {fichier}'
+	String activiteFichier({required Object nom, required Object fichier}) => '${nom} a partagé ${fichier}';
+
+	/// fr: 'Nouvelle demande d'inscription reçue'
+	String get activiteInscription => 'Nouvelle demande d\'inscription reçue';
+
+	/// fr: 'Dossier de la famille Benali'
+	String get objetDossierBenali => 'Dossier de la famille Benali';
+}
+
+// Path: com.annonces.publieur.etapes
+class Traductions$com$annonces$publieur$etapes$fr {
+	Traductions$com$annonces$publieur$etapes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Contenu de l'annonce'
+	String get contenu => 'Contenu de l\'annonce';
+
+	/// fr: 'Destinataires de l'annonce'
+	String get audience => 'Destinataires de l\'annonce';
+
+	/// fr: 'Date de diffusion'
+	String get programmation => 'Date de diffusion';
+
+	/// fr: 'Aperçu de l'annonce'
+	String get previsualisation => 'Aperçu de l\'annonce';
+
+	/// fr: 'Publication de l'annonce'
+	String get publication => 'Publication de l\'annonce';
+}
+
+// Path: com.annonces.publieur.contexte
+class Traductions$com$annonces$publieur$contexte$fr {
+	Traductions$com$annonces$publieur$contexte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Écrivez ce que les destinataires doivent savoir. Une annonce part dans un seul sens : personne n'y répond.'
+	String get contenu => 'Écrivez ce que les destinataires doivent savoir. Une annonce part dans un seul sens : personne n\'y répond.';
+
+	/// fr: 'Choisissez qui reçoit l'annonce. Seuls les destinataires que vous pouvez viser sont proposés.'
+	String get audience => 'Choisissez qui reçoit l\'annonce. Seuls les destinataires que vous pouvez viser sont proposés.';
+
+	/// fr: 'Cette annonce part vers {cible}. Vous publiez seulement pour votre Classe.'
+	String audienceFixee({required Object cible}) => 'Cette annonce part vers ${cible}. Vous publiez seulement pour votre Classe.';
+
+	/// fr: 'Choisissez quand l'annonce part. Une annonce programmée attend sa date.'
+	String get programmation => 'Choisissez quand l\'annonce part. Une annonce programmée attend sa date.';
+
+	/// fr: 'Voici l'annonce telle que les destinataires la liront.'
+	String get previsualisation => 'Voici l\'annonce telle que les destinataires la liront.';
+
+	/// fr: 'Relisez les destinataires et la date, puis publiez. Rien n'est publié avant la confirmation.'
+	String get publication => 'Relisez les destinataires et la date, puis publiez. Rien n\'est publié avant la confirmation.';
+}
+
+// Path: com.annonces.publieur.nature
+class Traductions$com$annonces$publieur$nature$fr {
+	Traductions$com$annonces$publieur$nature$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Seules les familles et les élèves de cette Classe la reçoivent.'
+	String get classe => 'Seules les familles et les élèves de cette Classe la reçoivent.';
+
+	/// fr: 'Toutes les personnes de ce public la reçoivent.'
+	String get public => 'Toutes les personnes de ce public la reçoivent.';
+
+	/// fr: 'Toute l'académie la reçoit. Réservez-la à ce qui concerne tout le monde.'
+	String get toutes => 'Toute l\'académie la reçoit. Réservez-la à ce qui concerne tout le monde.';
+}
+
+// Path: com.annonces.publieur.quand
+class Traductions$com$annonces$publieur$quand$fr {
+	Traductions$com$annonces$publieur$quand$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Dès la confirmation'
+	String get maintenant => 'Dès la confirmation';
+
+	/// fr: 'L'annonce part dès que la publication est confirmée.'
+	String get maintenantDetail => 'L\'annonce part dès que la publication est confirmée.';
+
+	/// fr: 'Le {date} à {heure}'
+	String creneau({required Object date, required Object heure}) => 'Le ${date} à ${heure}';
+
+	/// fr: 'L'annonce attend cette date. Vous la retrouvez dans les annonces planifiées.'
+	String get creneauDetail => 'L\'annonce attend cette date. Vous la retrouvez dans les annonces planifiées.';
+}
+
+// Path: com.annonces.publieur.apercu
+class Traductions$com$annonces$publieur$apercu$fr {
+	Traductions$com$annonces$publieur$apercu$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À : {cible}'
+	String a({required Object cible}) => 'À : ${cible}';
+
+	/// fr: 'Diffusion : dès la confirmation'
+	String get diffusionMaintenant => 'Diffusion : dès la confirmation';
+
+	/// fr: 'Diffusion prévue le {date} à {heure}'
+	String diffusionLe({required Object date, required Object heure}) => 'Diffusion prévue le ${date} à ${heure}';
+}
+
+// Path: com.annonces.administration.indicateurs
+class Traductions$com$annonces$administration$indicateurs$fr {
+	Traductions$com$annonces$administration$indicateurs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Indicateurs des communications'
+	String get titre => 'Indicateurs des communications';
+
+	/// fr: 'Annonces publiées'
+	String get publiees => 'Annonces publiées';
+
+	/// fr: 'Annonces planifiées'
+	String get planifiees => 'Annonces planifiées';
+
+	/// fr: 'Contenus en modération'
+	String get moderation => 'Contenus en modération';
+
+	/// fr: 'Droits de publication'
+	String get regles => 'Droits de publication';
+
+	/// fr: '{libelle} : pas encore disponible'
+	String indisponible({required Object libelle}) => '${libelle} : pas encore disponible';
+
+	/// fr: '{libelle} : non chargé. Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah : rechargez la page.'
+	String echec({required Object libelle}) => '${libelle} : non chargé. Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah : rechargez la page.';
+
+	/// fr: '{libelle} : réservé aux personnes chargées de la modération'
+	String reserve({required Object libelle}) => '${libelle} : réservé aux personnes chargées de la modération';
+}
+
+// Path: com.annonces.administration.publiees
+class Traductions$com$annonces$administration$publiees$fr {
+	Traductions$com$annonces$administration$publiees$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Annonces publiées'
+	String get titre => 'Annonces publiées';
+
+	/// fr: 'Aucune annonce publiée sur la période.'
+	String get vide => 'Aucune annonce publiée sur la période.';
+
+	/// fr: 'Publiée'
+	String get pastille => 'Publiée';
+
+	/// fr: '{cible} · le {date} à {heure}'
+	String legende({required Object cible, required Object date, required Object heure}) => '${cible} · le ${date} à ${heure}';
+}
+
+// Path: com.annonces.administration.planifiees
+class Traductions$com$annonces$administration$planifiees$fr {
+	Traductions$com$annonces$administration$planifiees$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Annonces planifiées'
+	String get titre => 'Annonces planifiées';
+
+	/// fr: 'Aucune annonce planifiée.'
+	String get vide => 'Aucune annonce planifiée.';
+
+	/// fr: 'Planifiée'
+	String get pastille => 'Planifiée';
+
+	/// fr: '{cible} · prévue le {date} à {heure}'
+	String legende({required Object cible, required Object date, required Object heure}) => '${cible} · prévue le ${date} à ${heure}';
+}
+
+// Path: com.annonces.administration.matrice
+class Traductions$com$annonces$administration$matrice$fr {
+	Traductions$com$annonces$administration$matrice$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Droits de publication des annonces'
+	String get titre => 'Droits de publication des annonces';
+
+	/// fr: 'La règle de l'académie, appliquée à chaque publication.'
+	String get detail => 'La règle de l\'académie, appliquée à chaque publication.';
+
+	/// fr: 'Qui publie'
+	String get auteurs => 'Qui publie';
+
+	/// fr: 'Peut publier'
+	String get peutPublier => 'Peut publier';
+
+	/// fr: 'Destinataires'
+	String get audiences => 'Destinataires';
+
+	/// fr: 'Validation requise'
+	String get validation => 'Validation requise';
+
+	/// fr: 'Oui'
+	String get oui => 'Oui';
+
+	/// fr: 'Non'
+	String get non => 'Non';
+
+	/// fr: 'Aucune'
+	String get aucune => 'Aucune';
+
+	/// fr: 'Aucun droit de publication n'est configuré.'
+	String get vide => 'Aucun droit de publication n\'est configuré.';
+}
+
+// Path: com.annonces.administration.moderation
+class Traductions$com$annonces$administration$moderation$fr {
+	Traductions$com$annonces$administration$moderation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'File de modération'
+	String get titre => 'File de modération';
+
+	/// fr: 'Signalé le {date} à {heure}'
+	String legende({required Object date, required Object heure}) => 'Signalé le ${date} à ${heure}';
+
+	/// fr: 'Motif : {motif}'
+	String motif({required Object motif}) => 'Motif : ${motif}';
+
+	/// fr: 'Contenu signalé'
+	String get extraitTitre => 'Contenu signalé';
+
+	/// fr: 'L'extrait de ce contenu n'est pas communiqué.'
+	String get extraitAbsent => 'L\'extrait de ce contenu n\'est pas communiqué.';
+
+	/// fr: 'Règle visée'
+	String get regle => 'Règle visée';
+
+	/// fr: 'Approuver après examen'
+	String get approuver => 'Approuver après examen';
+
+	/// fr: 'Masquer le contenu'
+	String get masquer => 'Masquer le contenu';
+
+	/// fr: 'Restaurer le contenu'
+	String get restaurer => 'Restaurer le contenu';
+
+	/// fr: 'Rejeter le signalement'
+	String get rejeter => 'Rejeter le signalement';
+
+	/// fr: 'Ouvrir le contexte'
+	String get contexte => 'Ouvrir le contexte';
+
+	/// fr: 'Masqué'
+	String get masque => 'Masqué';
+
+	/// fr: 'Approuvé'
+	String get approuve => 'Approuvé';
+
+	/// fr: 'Signalement rejeté'
+	String get rejete => 'Signalement rejeté';
+
+	/// fr: 'Restauré'
+	String get restaure => 'Restauré';
+
+	/// fr: 'Décision enregistrée.'
+	String get enregistree => 'Décision enregistrée.';
+
+	/// fr: 'Cette décision n'est pas encore confirmée : il est possible qu'elle ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get nonConfirmee => 'Cette décision n\'est pas encore confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: 'La file de modération ne peut pas être actualisée maintenant.'
+	String get horsLigne => 'La file de modération ne peut pas être actualisée maintenant.';
+
+	/// fr: 'La modération n'est pas encore disponible. Revenez plus tard.'
+	String get indisponible => 'La modération n\'est pas encore disponible. Revenez plus tard.';
+
+	/// fr: 'Aucun contenu à examiner'
+	String get videTitre => 'Aucun contenu à examiner';
+
+	/// fr: 'Les signalements de la Communauté enseignants arrivent ici.'
+	String get vide => 'Les signalements de la Communauté enseignants arrivent ici.';
+
+	/// fr: 'File réservée à la modération'
+	String get refuseTitre => 'File réservée à la modération';
+
+	/// fr: 'Seules les personnes chargées de la modération voient cette file.'
+	String get refuse => 'Seules les personnes chargées de la modération voient cette file.';
+
+	/// fr: 'Aucun signalement ouvert'
+	String get choisirTitre => 'Aucun signalement ouvert';
+
+	/// fr: 'Choisissez un signalement dans la file pour l'examiner.'
+	String get choisir => 'Choisissez un signalement dans la file pour l\'examiner.';
+
+	/// fr: 'Aucune action de modération ne vous est ouverte sur ce contenu.'
+	String get sansAction => 'Aucune action de modération ne vous est ouverte sur ce contenu.';
+
+	/// fr: 'Aucune sanction de compte n'est appliquée automatiquement.'
+	String get sansSanction => 'Aucune sanction de compte n\'est appliquée automatiquement.';
+
+	/// fr: 'Politique anti-promotion'
+	String get politique => 'Politique anti-promotion';
+
+	/// fr: 'Examiner {objet}, motif {motif}'
+	String ouvrirSemantique({required Object objet, required Object motif}) => 'Examiner ${objet}, motif ${motif}';
+
+	late final Traductions$com$annonces$administration$moderation$regleMotif$fr regleMotif = Traductions$com$annonces$administration$moderation$regleMotif$fr.internal(_root);
+	late final Traductions$com$annonces$administration$moderation$regles$fr regles = Traductions$com$annonces$administration$moderation$regles$fr.internal(_root);
+}
+
+// Path: com.annonces.demo.roles
+class Traductions$com$annonces$demo$roles$fr {
+	Traductions$com$annonces$demo$roles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Famille'
+	String get tuteur => 'Famille';
+
+	/// fr: 'Enseignant'
+	String get enseignant => 'Enseignant';
+
+	/// fr: 'Élève adulte'
+	String get adulte => 'Élève adulte';
+
+	/// fr: 'Direction'
+	String get admin => 'Direction';
+
+	/// fr: 'Contrôleur'
+	String get controleur => 'Contrôleur';
+}
+
+// Path: com.annonces.demo.f
+class Traductions$com$annonces$demo$f$fr {
+	Traductions$com$annonces$demo$f$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Studio : une discussion du canal Programmes vous mentionne'
+	String get adminStudioMention => 'Studio : une discussion du canal Programmes vous mentionne';
+
+	/// fr: 'Studio : nouvelle réponse à votre message sur le programme de printemps'
+	String get adminStudioReponse => 'Studio : nouvelle réponse à votre message sur le programme de printemps';
+
+	/// fr: 'Studio : une décision est demandée sur le support de la leçon 4'
+	String get adminStudioDecision => 'Studio : une décision est demandée sur le support de la leçon 4';
+
+	/// fr: 'Studio : la relecture du support de Tajwid vous est assignée'
+	String get adminStudioAssigne => 'Studio : la relecture du support de Tajwid vous est assignée';
+
+	/// fr: 'Annonce interne de l'équipe Studio : réunion d'équipe jeudi à 18 h'
+	String get adminStudioInterne => 'Annonce interne de l\'équipe Studio : réunion d\'équipe jeudi à 18 h';
+
+	/// fr: 'Studio : un support est prêt pour la Classe An-Nour'
+	String get adminStudioContexte => 'Studio : un support est prêt pour la Classe An-Nour';
+
+	/// fr: 'Récitation de fin de trimestre devant les familles'
+	String get annonceNourTitre => 'Récitation de fin de trimestre devant les familles';
+
+	/// fr: 'Chères familles, la Classe An-Nour présentera sa récitation de fin de trimestre le samedi 14 décembre à 10 h, en visio. Chaque élève récitera la sourate travaillée ce trimestre. Merci de prévoir une connexion stable et un endroit calme. Les élèves qui le souhaitent peuvent répéter pendant la séance du mercredi précédent. Les familles peuvent assister en silence, micro coupé. Un compte rendu sera partagé après la séance.'
+	String get annonceNourTexte => 'Chères familles, la Classe An-Nour présentera sa récitation de fin de trimestre le samedi 14 décembre à 10 h, en visio. Chaque élève récitera la sourate travaillée ce trimestre. Merci de prévoir une connexion stable et un endroit calme. Les élèves qui le souhaitent peuvent répéter pendant la séance du mercredi précédent. Les familles peuvent assister en silence, micro coupé. Un compte rendu sera partagé après la séance.';
+
+	/// fr: 'Révision avant l'évaluation de jeudi'
+	String get annonceFajrTitre => 'Révision avant l\'évaluation de jeudi';
+
+	/// fr: 'Révisez les dix derniers versets de la sourate Al-Mulk avant jeudi.'
+	String get annonceFajrTexte => 'Révisez les dix derniers versets de la sourate Al-Mulk avant jeudi.';
+
+	/// fr: 'La séance de ce soir est annulée'
+	String get tuteurUrgent => 'La séance de ce soir est annulée';
+
+	/// fr: 'L'enseignante est absente ce soir. La séance est reportée à jeudi, même heure. Vous n'avez rien à faire.'
+	String get tuteurUrgentTexte => 'L\'enseignante est absente ce soir. La séance est reportée à jeudi, même heure. Vous n\'avez rien à faire.';
+
+	/// fr: 'Réponse attendue : accord pour la récitation de Yasmine'
+	String get tuteurReponse => 'Réponse attendue : accord pour la récitation de Yasmine';
+
+	/// fr: 'L'enseignante attend votre accord pour que Yasmine récite devant les familles. Répondez-lui depuis l'Espace Classe.'
+	String get tuteurReponseTexte => 'L\'enseignante attend votre accord pour que Yasmine récite devant les familles. Répondez-lui depuis l\'Espace Classe.';
+
+	/// fr: 'Nouveau message de l'enseignante de la Classe An-Nour'
+	String get tuteurMessage => 'Nouveau message de l\'enseignante de la Classe An-Nour';
+
+	/// fr: 'Votre dossier d'inscription est validé'
+	String get tuteurDossier => 'Votre dossier d\'inscription est validé';
+
+	/// fr: 'Votre séance de mardi est déplacée à 19 h'
+	String get adulteSeance => 'Votre séance de mardi est déplacée à 19 h';
+
+	/// fr: 'Nouveau message de votre enseignante'
+	String get adulteMessage => 'Nouveau message de votre enseignante';
+
+	/// fr: 'Message de la famille de Yasmine, Classe An-Nour'
+	String get enseignantFamille => 'Message de la famille de Yasmine, Classe An-Nour';
+
+	/// fr: 'Annonce de la direction : calendrier des vacances d'hiver'
+	String get enseignantDirection => 'Annonce de la direction : calendrier des vacances d\'hiver';
+
+	/// fr: 'Les cours s'arrêtent du 21 décembre au 5 janvier. Les séances reprennent le lundi 6 janvier aux horaires habituels.'
+	String get enseignantDirectionTexte => 'Les cours s\'arrêtent du 21 décembre au 5 janvier. Les séances reprennent le lundi 6 janvier aux horaires habituels.';
+
+	/// fr: 'Votre planning de la semaine prochaine a changé'
+	String get enseignantPlanning => 'Votre planning de la semaine prochaine a changé';
+
+	/// fr: 'Une publication de la Communauté vous mentionne'
+	String get enseignantMention => 'Une publication de la Communauté vous mentionne';
+
+	/// fr: 'Nouvelle réponse à votre publication'
+	String get enseignantReponse => 'Nouvelle réponse à votre publication';
+
+	/// fr: 'Message de l'Administration : pièces à fournir'
+	String get enseignantAdministration => 'Message de l\'Administration : pièces à fournir';
+
+	/// fr: 'Trois dossiers d'inscription sont à traiter'
+	String get adminDossiers => 'Trois dossiers d\'inscription sont à traiter';
+
+	/// fr: 'Une publication de la Communauté a été signalée'
+	String get adminSignalement => 'Une publication de la Communauté a été signalée';
+
+	/// fr: 'Réponse de la famille de Bilal à votre message'
+	String get adminReponse => 'Réponse de la famille de Bilal à votre message';
+
+	/// fr: 'Une annonce planifiée est à vérifier avant publication'
+	String get adminPlanifiee => 'Une annonce planifiée est à vérifier avant publication';
+
+	/// fr: 'Classe An-Nour : effectif complet'
+	String get adminOperationnel => 'Classe An-Nour : effectif complet';
+
+	/// fr: 'Nouvelle mission : visite de la Classe An-Nour'
+	String get controleurMission => 'Nouvelle mission : visite de la Classe An-Nour';
+
+	/// fr: 'Votre mission de jeudi est déplacée à 18 h'
+	String get controleurChangement => 'Votre mission de jeudi est déplacée à 18 h';
+
+	/// fr: 'Réponse de l'Administration à votre rapport'
+	String get controleurReponse => 'Réponse de l\'Administration à votre rapport';
+}
+
+// Path: com.annonces.administration.moderation.regleMotif
+class Traductions$com$annonces$administration$moderation$regleMotif$fr {
+	Traductions$com$annonces$administration$moderation$regleMotif$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La publicité n'est pas autorisée dans la Communauté enseignants.'
+	String get publicite => 'La publicité n\'est pas autorisée dans la Communauté enseignants.';
+
+	/// fr: 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.'
+	String get lienAffilie => 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.';
+
+	/// fr: 'La vente de produits ou de services n'est pas autorisée dans cet espace.'
+	String get vente => 'La vente de produits ou de services n\'est pas autorisée dans cet espace.';
+
+	/// fr: 'La sollicitation commerciale n'est pas autorisée dans cet espace.'
+	String get sollicitation => 'La sollicitation commerciale n\'est pas autorisée dans cet espace.';
+}
+
+// Path: com.annonces.administration.moderation.regles
+class Traductions$com$annonces$administration$moderation$regles$fr {
+	Traductions$com$annonces$administration$moderation$regles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Partage pédagogique uniquement'
+	String get titre => 'Partage pédagogique uniquement';
+
+	/// fr: 'La Communauté enseignants est réservée aux échanges professionnels entre enseignants.'
+	String get corps => 'La Communauté enseignants est réservée aux échanges professionnels entre enseignants.';
+
+	/// fr: 'Règles de publication'
+	String get reglesTitre => 'Règles de publication';
+
+	/// fr: 'Aucune publicité'
+	String get pasPublicite => 'Aucune publicité';
+
+	/// fr: 'Aucun lien affilié'
+	String get pasAffilie => 'Aucun lien affilié';
+
+	/// fr: 'Aucune vente de produit ou de service'
+	String get pasVente => 'Aucune vente de produit ou de service';
+
+	/// fr: 'Aucune sollicitation commerciale'
+	String get pasSollicitation => 'Aucune sollicitation commerciale';
+
+	/// fr: 'Aucune donnée personnelle d'un élève ou d'une famille'
+	String get pasDonnees => 'Aucune donnée personnelle d\'un élève ou d\'une famille';
+}
+
 /// The flat map containing all translations for locale <fr>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -19142,6 +22782,8 @@ extension on Traductions {
 			'commun.dates.jourDate' => ({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}',
 			'commun.dates.premierJour' => '1er',
 			'commun.sections.page' => 'Sections de la page',
+			'commun.recherche.effacer' => 'Effacer la recherche',
+			'commun.recherche.fermer' => 'Fermer la recherche',
 			'reseau.horsLigne' => 'Pas de réseau. Ce qui est déjà affiché reste consultable.',
 			'reseau.enAttenteEnvoi' => 'Sera envoyé dès le retour du réseau',
 			'reseau.retabli' => 'Réseau rétabli',
@@ -19544,10 +23186,10 @@ extension on Traductions {
 			'connexion.recuperation.autreAdresse' => 'Utiliser une autre adresse',
 			'connexion.recuperation.revenirConnexion' => 'Revenir à la connexion',
 			'connexion.feuilleAppareil.pourQui' => 'Réservé aux tuteurs déjà inscrits. Cet écran donne à un élève de votre foyer son propre accès, sur sa tablette ou son téléphone, sans lui confier votre compte.',
-			'connexion.feuilleAppareil.etapesTitre' => 'Où trouver le code',
-			'connexion.feuilleAppareil.etape1' => 'Sur votre propre appareil, ouvrez Foyer, puis Appareils du foyer.',
 			_ => null,
 		} ?? switch (path) {
+			'connexion.feuilleAppareil.etapesTitre' => 'Où trouver le code',
+			'connexion.feuilleAppareil.etape1' => 'Sur votre propre appareil, ouvrez Foyer, puis Appareils du foyer.',
 			'connexion.feuilleAppareil.etape2' => 'Touchez le profil de l\'élève, puis Connecter un appareil.',
 			'connexion.feuilleAppareil.etape3' => 'Un QR code et un code de six caractères s\'affichent, avec leur heure de fin.',
 			'connexion.feuilleAppareil.etape4' => 'Sur l\'appareil de l\'élève, scannez le QR code ou saisissez le code.',
@@ -20058,10 +23700,10 @@ extension on Traductions {
 			'ficheEleve.finances.noteAbsences' => 'Les absences ordinaires n\'entraînent pas de réduction sur le mois une fois celui-ci financé.',
 			'ficheEleve.finances.faitSeance' => 'Pas de consommation par séance',
 			'ficheEleve.finances.faitPeriode' => 'Accès lié à la période financée',
-			'ficheEleve.finances.historiqueTitre' => 'Historique des transactions',
-			'ficheEleve.finances.voirTout' => 'Voir tout',
 			_ => null,
 		} ?? switch (path) {
+			'ficheEleve.finances.historiqueTitre' => 'Historique des transactions',
+			'ficheEleve.finances.voirTout' => 'Voir tout',
 			'ficheEleve.finances.voirToutSemantique' => ({required Object dePrenom}) => 'Voir tout : mouvements ${dePrenom}',
 			'ficheEleve.finances.voirMouvementsSemantique' => ({required Object dePrenom}) => 'Voir les mouvements ${dePrenom}',
 			'ficheEleve.finances.telechargerRecu' => 'Télécharger le reçu',
@@ -20572,10 +24214,10 @@ extension on Traductions {
 			'admin.groupes.modifierSeuilTitre' => ({required Object deLibelle}) => 'Seuil maximal ${deLibelle}',
 			'admin.groupes.modifierSeuilEnvoyer' => 'Enregistrer',
 			'admin.groupes.modifierSeuilErreur' => ({required Object message}) => 'La modification n\'a pas abouti : ${message}',
-			'admin.groupes.cloturerTitre' => ({required Object libelle}) => 'Clôturer ${libelle}',
-			'admin.groupes.cloturerDetail' => 'Tous les membres actifs seront retirés de la classe. Cette action ne peut pas être annulée.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.groupes.cloturerTitre' => ({required Object libelle}) => 'Clôturer ${libelle}',
+			'admin.groupes.cloturerDetail' => 'Tous les membres actifs seront retirés de la classe. Cette action ne peut pas être annulée.',
 			'admin.groupes.cloturerEnvoyer' => 'Clôturer',
 			'admin.groupes.cloturerErreur' => ({required Object message}) => 'La clôture n\'a pas abouti : ${message}',
 			'admin.groupes.journalisation' => 'Chaque création, ajout, retrait et clôture est inscrit au journal d\'audit.',
@@ -21086,10 +24728,10 @@ extension on Traductions {
 			'admin.finance.vue.etatVide' => 'Aucun état de paiement rendu pour ce mois.',
 			'admin.finance.vue.topClasses' => 'Top classes',
 			'admin.finance.vue.topClassesDetail' => ({required Object deMois}) => 'Les classes qui ont le plus encaissé ${deMois}.',
-			'admin.finance.vue.topClasse' => ({required Object rang, required Object classe}) => '${rang}. Classe ${classe}',
-			'admin.finance.vue.topClassesVide' => 'Aucune classe n\'a encaissé ce mois.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.finance.vue.topClasse' => ({required Object rang, required Object classe}) => '${rang}. Classe ${classe}',
+			'admin.finance.vue.topClassesVide' => 'Aucune classe n\'a encaissé ce mois.',
 			'admin.finance.vue.dernieresOperations' => 'Dernières opérations',
 			'admin.finance.vue.dernieresOperationsDetail' => 'Les derniers mouvements sur les profils des familles, le plus récent d\'abord.',
 			'admin.finance.vue.operation' => ({required Object libelle, required Object prenom}) => '${libelle} · ${prenom}',
@@ -21600,10 +25242,10 @@ extension on Traductions {
 			'compte.tuteur.pageAcces.pastilleExpire' => 'Terminé',
 			'compte.tuteur.pageAcces.aucunTitre' => 'Aucun profil élève',
 			'compte.tuteur.pageAcces.aucunePhrase' => 'L\'accès de chaque profil élève s\'affichera ici.',
-			'compte.tuteur.pageAcces.titulaire' => 'Votre compte de titulaire n\'a pas d\'échéance propre : l\'accès se règle profil par profil.',
-			'compte.tuteur.pagePaiements.titre' => 'Paiements et reçus',
 			_ => null,
 		} ?? switch (path) {
+			'compte.tuteur.pageAcces.titulaire' => 'Votre compte de titulaire n\'a pas d\'échéance propre : l\'accès se règle profil par profil.',
+			'compte.tuteur.pagePaiements.titre' => 'Paiements et reçus',
 			'compte.tuteur.pagePaiements.indisponibleTitre' => 'Paiements pas encore consultables',
 			'compte.tuteur.pagePaiements.indisponiblePhrase' => 'L\'historique des paiements, les reçus et les moyens de paiement ne sont pas encore disponibles dans l\'application. Aucun paiement ne vous est demandé ici.',
 			'compte.tuteur.pagePaiements.aucunTitre' => 'Aucun paiement enregistré',
@@ -21741,6 +25383,51 @@ extension on Traductions {
 			'historique.observation.terminee' => 'Visite terminée',
 			'historique.observation.introuvableTitre' => 'Aucune visite pour cette séance',
 			'historique.observation.introuvablePhrase' => 'Aucune visite enregistrée ne correspond à cette séance.',
+			'historique.dateCourteSansAnnee' => ({required Object jour, required Object mois}) => '${jour} ${mois}',
+			'notifications.filtres.libelle' => 'Filtrer les notifications',
+			'notifications.filtres.toutes' => 'Toutes',
+			'notifications.filtres.nonLues' => 'Non lues',
+			'notifications.filtres.mentions' => 'Mentions',
+			'notifications.filtres.actionRequise' => 'Action requise',
+			'notifications.filtreVideTitre' => 'Aucune notification dans ce filtre',
+			'notifications.filtreVidePhrase' => 'Choisissez « Toutes » pour revoir l\'ensemble de vos notifications.',
+			'notifications.voirToutes' => 'Voir toutes les notifications',
+			'notifications.nonLue' => 'Non lue',
+			'notifications.nonLueSemantique' => 'non lue',
+			'notifications.lectureNonConfirmee' => 'La lecture n\'est pas encore confirmée. Réessayez dans un instant.',
+			'notifications.detail.choisirTitre' => 'Choisissez une notification',
+			'notifications.detail.choisirPhrase' => 'Son détail s\'affiche ici, à côté de la liste.',
+			'notifications.detail.recue' => ({required Object date, required Object heure}) => 'Reçue le ${date} à ${heure}',
+			'notifications.detail.ouvrir' => 'Ouvrir la page concernée',
+			'notifications.types.annonceClasse' => 'Annonce de Classe',
+			'notifications.types.changementSeance' => 'Changement de séance',
+			'notifications.types.decisionDossier' => 'Décision sur un dossier',
+			'notifications.types.messageMetier' => 'Message',
+			'notifications.types.reponseAttendue' => 'Réponse attendue',
+			'notifications.types.accesFinance' => 'Accès et paiements',
+			'notifications.types.observation' => 'Observation',
+			'notifications.types.travailRessource' => 'Travail ou ressource',
+			'notifications.types.annonceDirection' => 'Annonce de la direction',
+			'notifications.types.changementPlanning' => 'Changement de planning',
+			'notifications.types.remplacement' => 'Remplacement',
+			'notifications.types.mentionCommunaute' => 'Mention dans la Communauté',
+			'notifications.types.reponseCommunaute' => 'Réponse dans la Communauté',
+			'notifications.types.messageAdministration' => 'Message de l\'Administration',
+			'notifications.types.dossierATraiter' => 'Dossier à traiter',
+			'notifications.types.signalementCommunaute' => 'Signalement dans la Communauté',
+			'notifications.types.reponseFil' => 'Réponse dans une conversation',
+			'notifications.types.annoncePlanifiee' => 'Annonce planifiée à publier',
+			'notifications.types.evenementOperationnel' => 'Événement de l\'académie',
+			'notifications.types.mission' => 'Mission',
+			'notifications.types.changementMission' => 'Changement de mission',
+			'notifications.types.reponseAdministration' => 'Réponse de l\'Administration',
+			'notifications.types.mentionStudio' => 'Mention dans Le Studio',
+			'notifications.types.reponseStudio' => 'Réponse dans Le Studio',
+			'notifications.types.decisionDemandee' => 'Décision demandée',
+			'notifications.types.elementAssigne' => 'Élément assigné',
+			'notifications.types.annonceInterne' => 'Annonce interne',
+			'notifications.types.evenementContextuel' => 'Événement',
+			'notifications.types.autre' => 'Notification',
 			'notifications.titre' => 'Notifications',
 			'notifications.indisponibleTitre' => 'Les notifications ne sont pas encore disponibles',
 			'notifications.indisponiblePhrase' => 'Les rappels de séance et les messages de l\'académie s\'afficheront ici dès qu\'ils seront ouverts.',
@@ -22069,6 +25756,8 @@ extension on Traductions {
 			'classe.pageCatalogue.envoiIncertain' => 'La réponse de l\'académie n\'est pas arrivée. Réessayer ne crée pas de seconde inscription.',
 			'classe.pageCatalogue.envoiIndisponible' => 'L\'inscription en ligne n\'est pas encore ouverte : aucune place n\'a été réservée.',
 			'classe.pageCatalogue.resultat.inscritTitre' => 'Inscription confirmée',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pageCatalogue.resultat.inscritPhrase' => ({required Object prenom, required Object classe}) => '${prenom} rejoint ${classe}.',
 			'classe.pageCatalogue.resultat.voirClasse' => 'Voir la classe',
 			'classe.pageCatalogue.resultat.validationTitre' => 'Demande envoyée',
@@ -22116,8 +25805,6 @@ extension on Traductions {
 			'classe.cartes.feuille.modele' => 'Modèle de la carte',
 			'classe.cartes.feuille.champTitre' => 'Titre de la carte',
 			'classe.cartes.feuille.champTexte' => 'Texte de la carte (facultatif)',
-			_ => null,
-		} ?? switch (path) {
 			'classe.cartes.feuille.champLien' => 'Lien de la carte (facultatif)',
 			'classe.cartes.feuille.aideLongueur' => ({required Object max}) => '${max} caractères au plus',
 			'classe.cartes.feuille.aideLien' => 'Une adresse complète, qui commence par https://',
@@ -22583,6 +26270,8 @@ extension on Traductions {
 			'enseignant.creneaux.fusion' => ({required Object jour, required Object de, required Object a}) => '${jour} : cette plage chevauche ou touche une plage déjà posée. Elles seront réunies en une seule, ${de} ${a}.',
 			'enseignant.creneaux.dejaPosee' => ({required Object jour, required Object de, required Object a}) => '${jour} : ces heures sont déjà posées, dans la plage ${de} ${a}. Rien ne change pour ce jour.',
 			'enseignant.creneaux.enregistrerPlage' => 'Enregistrer la plage',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.creneaux.supprimerPlage' => 'Supprimer cette plage',
 			'enseignant.creneaux.plageEnregistree' => ({required Object jours, required Object de, required Object a}) => 'Plage enregistrée : ${jours}, ${de} ${a}.',
 			'enseignant.creneaux.plageInchangee' => ({required Object jours, required Object de, required Object a}) => 'Rien à enregistrer : ${jours}, ${de} ${a}, déjà dans vos disponibilités.',
@@ -22630,8 +26319,6 @@ extension on Traductions {
 			'enseignant.revenus.titre' => 'Revenus estimés',
 			'enseignant.revenus.intro' => 'Une estimation de votre rémunération du mois choisi, Classe par Classe.',
 			'enseignant.revenus.introSansChoix' => 'Une estimation de votre rémunération du mois en cours, Classe par Classe.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.revenus.estimation' => 'Estimation',
 			'enseignant.revenus.periode' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
 			'enseignant.revenus.totalEstime' => 'Revenu estimé du mois',
@@ -23097,6 +26784,8 @@ extension on Traductions {
 			'tc.classe.fiche.niveau' => 'Niveau',
 			'tc.classe.fiche.objectif' => 'Objectif actuel',
 			'tc.classe.fiche.derniereSeance' => 'Dernière séance',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.fiche.page' => ({required Object page}) => 'Page ${page}',
 			'tc.classe.fiche.travailEnCours' => ({required Object nombre}) => '${nombre} élément(s)',
 			'tc.classe.fiche.aReprendre' => 'À reprendre',
@@ -23144,8 +26833,6 @@ extension on Traductions {
 			'tc.classe.attente.ouverture' => 'Ouverture du cours',
 			'tc.classe.attente.connexion' => 'Connexion au cours',
 			'tc.classe.attente.refus' => 'Le cours n\'est pas accessible pour le moment',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.lien.instable' => 'Connexion instable',
 			'tc.classe.lien.reconnexion' => 'Reconnexion en cours',
 			'tc.classe.lien.retabli' => 'Connexion rétablie',
@@ -23611,6 +27298,8 @@ extension on Traductions {
 			'adulte.acceptation.acceptationEchecTitre' => 'L\'acceptation n\'a pas été confirmée.',
 			'adulte.acceptation.refusEchecTitre' => 'Le refus n\'a pas été confirmé.',
 			'adulte.acceptation.echecPhrase' => 'Vérifiez avant de réessayer.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.acceptation.accepteeTitre' => 'Invitation acceptée',
 			'adulte.acceptation.rejoint' => ({required Object dePrenom}) => 'Vous avez rejoint le forfait famille ${dePrenom}.',
 			'adulte.acceptation.refuseeTitre' => 'Invitation refusée',
@@ -23658,8 +27347,6 @@ extension on Traductions {
 			'adulte.reprise.jamaisTitre' => 'Ce qui n\'est jamais repris',
 			'adulte.reprise.jamais.identifiants' => 'Les identifiants de connexion du titulaire',
 			'adulte.reprise.jamais.messages' => 'Ses messages privés',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.reprise.jamais.conversations' => 'Ses conversations',
 			'adulte.reprise.jamais.historique' => 'Son historique pédagogique personnel',
 			'adulte.reprise.jamais.moyensPaiement' => 'Ses moyens de paiement enregistrés',
@@ -23934,6 +27621,863 @@ extension on Traductions {
 			'identiteProfil.lecteurEnfant' => ({required Object prenom}) => '${prenom}, profil enfant',
 			'identiteProfil.lecteurAdulte' => ({required Object prenom}) => '${prenom}, profil adulte',
 			'identiteProfil.lecteurAvecClasse' => ({required Object profil, required Object classe}) => '${profil}, ${classe}',
+			'com.socle.composants.lecture.pieceJointe' => ({required Object nom}) => 'Pièce jointe : ${nom}',
+			'com.socle.composants.lecture.vocal' => ({required Object duree}) => 'Message vocal de ${duree}',
+			'com.socle.composants.lecture.vocalSansDuree' => 'Message vocal',
+			'com.socle.composants.lecture.horodatage' => ({required Object date, required Object heure}) => '${date}, ${heure}',
+			'com.socle.composants.badge.nonLuUn' => '1 non lu',
+			'com.socle.composants.badge.nonLus' => ({required Object nombre}) => '${nombre} non lus',
+			'com.socle.composants.badge.nonLusSemantique' => ({required Object nombre}) => '${nombre} éléments non lus',
+			'com.socle.composants.badge.nonLuUnSemantique' => '1 élément non lu',
+			'com.socle.composants.badge.information' => 'Information',
+			'com.socle.composants.badge.aLire' => 'À lire',
+			'com.socle.composants.badge.actionRequise' => _root.com.socle.lexique.actionRequise,
+			'com.socle.composants.badge.urgent' => 'Urgent',
+			'com.socle.composants.badge.mention' => 'Mention',
+			'com.socle.composants.badge.mentionSemantique' => 'Une mention vous concerne',
+			'com.socle.composants.pieceJointe.joindre' => 'Joindre un fichier',
+			'com.socle.composants.pieceJointe.joindreIndisponible' => 'L\'ajout de fichiers n\'est pas encore disponible ici.',
+			'com.socle.composants.pieceJointe.ouvrir' => 'Ouvrir',
+			'com.socle.composants.pieceJointe.ouvrirLecteur' => ({required Object nom}) => 'Ouvrir ${nom}',
+			'com.socle.composants.pieceJointe.retirer' => 'Retirer',
+			'com.socle.composants.pieceJointe.retirerLecteur' => ({required Object nom}) => 'Retirer ${nom}',
+			'com.socle.composants.pieceJointe.tailleOctets' => ({required Object taille}) => '${taille} octets',
+			'com.socle.composants.pieceJointe.tailleKo' => ({required Object taille}) => '${taille} Ko',
+			'com.socle.composants.pieceJointe.tailleMo' => ({required Object taille}) => '${taille} Mo',
+			'com.socle.composants.pieceJointe.autorisee' => 'Prêt à envoyer',
+			'com.socle.composants.pieceJointe.tropVolumineuse' => 'Fichier trop lourd',
+			'com.socle.composants.pieceJointe.tropVolumineuseDetail' => 'Ce fichier dépasse la taille autorisée. Choisissez un fichier plus léger.',
+			'com.socle.composants.pieceJointe.typeInterdit' => 'Type de fichier refusé',
+			'com.socle.composants.pieceJointe.typeInterditDetail' => 'Ce type de fichier n\'est pas accepté ici. Choisissez un autre format.',
+			'com.socle.composants.pieceJointe.enCours' => 'Envoi en cours',
+			'com.socle.composants.pieceJointe.envoyee' => 'Envoyé',
+			'com.socle.composants.pieceJointe.echec' => 'Non confirmé',
+			'com.socle.composants.pieceJointe.erreurEnvoi' => 'L\'envoi de ce fichier n\'a pas encore été confirmé. Réessayez dans un instant.',
+			'com.socle.composants.pieceJointe.indisponible' => 'Pièce indisponible',
+			'com.socle.composants.pieceJointe.indisponibleDetail' => 'Ce fichier n\'est plus disponible. Demandez à la personne qui l\'a partagé de le renvoyer.',
+			'com.socle.composants.composer.message' => 'Message',
+			'com.socle.composants.composer.aide' => 'Écrire un message',
+			'com.socle.composants.composer.envoyer' => 'Envoyer',
+			'com.socle.composants.composer.champVide' => 'Écrivez un message pour l\'envoyer.',
+			'com.socle.composants.composer.vocal' => 'Message vocal',
+			'com.socle.composants.composer.vocalAVenir' => 'Message vocal bientôt disponible',
+			'com.socle.composants.composer.enCours' => 'Envoi en cours',
+			'com.socle.composants.composer.envoye' => 'Envoyé',
+			'com.socle.composants.composer.nonConfirme' => 'Ce message n\'a pas encore été confirmé.',
+			'com.socle.composants.composer.reessayer' => 'Réessayer',
+			'com.socle.composants.composer.auteurSoi' => 'Vous',
+			'com.socle.composants.composer.annonce' => ({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}',
+			'com.socle.composants.composer.brouillon' => _root.com.socle.lexique.brouillon,
+			'com.socle.composants.composer.brouillonRestaure' => 'Brouillon restauré',
+			'com.socle.composants.composer.enregistrerVocal' => _root.com.vocal.composer.enregistrer,
+			'com.socle.composants.composer.aucunMessageTitre' => 'Aucun message pour le moment',
+			'com.socle.composants.composer.aucunMessage' => 'Écrivez le premier message de cette conversation : il s\'affichera ici.',
+			'com.socle.composants.etats.chargement' => 'Chargement en cours',
+			'com.socle.composants.etats.videTitre' => 'Rien ici pour le moment',
+			'com.socle.composants.etats.erreurTitre' => 'Impossible de charger ce contenu.',
+			'com.socle.composants.etats.erreur' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'com.socle.composants.etats.reessayer' => 'Réessayer',
+			'com.socle.composants.etats.horsLigne' => 'Les nouveaux messages ne peuvent pas être actualisés maintenant.',
+			'com.socle.composants.etats.horsLigneBloc' => 'Réessayez quand la connexion revient.',
+			'com.socle.composants.etats.indisponibleTitre' => 'Pas encore disponible',
+			'com.socle.composants.etats.indisponible' => 'Cette fonction n\'est pas encore disponible ici. Elle s\'ouvrira dès que le service sera prêt.',
+			'com.socle.composants.etats.permissionRefusee' => 'Vous n\'avez pas accès à ce contenu.',
+			'com.socle.composants.espace.ouvrirPanneau' => 'Ouvrir le panneau de contexte',
+			'com.socle.composants.espace.fermerPanneau' => 'Fermer le panneau de contexte',
+			'com.socle.composants.espace.panneauContexte' => 'Contexte',
+			'com.socle.composants.espace.retourListe' => 'Retour à la liste',
+			'com.socle.lexique.messages' => 'Messages',
+			'com.socle.lexique.messagesMetier' => 'Messages métier',
+			'com.socle.lexique.communaute' => 'Communauté enseignants',
+			'com.socle.lexique.studio' => 'Le Studio',
+			'com.socle.lexique.aujourdhui' => 'Aujourd\'hui',
+			'com.socle.lexique.notifications' => 'Notifications',
+			'com.socle.lexique.annonce' => 'Annonce',
+			'com.socle.lexique.publication' => 'Publication',
+			'com.socle.lexique.reponse' => 'Réponse',
+			'com.socle.lexique.enregistrer' => 'Enregistrer',
+			'com.socle.lexique.signaler' => 'Signaler',
+			'com.socle.lexique.modeFocus' => 'Mode focus',
+			'com.socle.lexique.quitterFocus' => 'Quitter le focus',
+			'com.socle.lexique.aTraiter' => 'À traiter',
+			'com.socle.lexique.actionRequise' => 'Action requise',
+			'com.socle.lexique.brouillon' => 'Brouillon',
+			'com.socle.lexique.elementsEpingles' => 'Éléments épinglés',
+			'com.socle.lexique.fichiersPartages' => 'Fichiers partagés',
+			'com.socle.motifs.titre' => 'Pourquoi signalez-vous ce contenu ?',
+			'com.socle.motifs.publicite' => 'Publicité',
+			'com.socle.motifs.lienAffilie' => 'Lien affilié',
+			'com.socle.motifs.venteNonAutorisee' => 'Vente non autorisée',
+			'com.socle.motifs.sollicitationCommerciale' => 'Sollicitation commerciale',
+			'com.socle.motifs.horsSujet' => 'Contenu sans rapport avec la communauté',
+			'com.socle.motifs.harcelement' => 'Harcèlement ou langage inapproprié',
+			'com.socle.motifs.donneesPersonnelles' => 'Données personnelles d\'un élève ou d\'une famille',
+			'com.socle.motifs.autre' => 'Autre contenu à examiner',
+			'com.socle.signalement.titre' => 'Signaler ce contenu',
+			'com.socle.signalement.precision' => 'Précision facultative',
+			'com.socle.signalement.envoyer' => 'Envoyer le signalement',
+			'com.socle.signalement.confirme' => 'Le contenu a été signalé. Il sera examiné.',
+			'com.socle.signalement.erreur' => 'Le signalement n\'a pas encore été confirmé. Réessayez dans un instant.',
+			'com.socle.signalement.indisponible' => 'Le signalement n\'est pas encore disponible ici.',
+			'com.socle.enregistrement.enregistrer' => _root.com.socle.lexique.enregistrer,
+			'com.socle.enregistrement.retirer' => 'Retirer des éléments enregistrés',
+			'com.socle.enregistrement.enregistre' => 'Enregistré',
+			'com.socle.enregistrement.indisponible' => 'L\'enregistrement n\'est pas encore disponible ici.',
+			'com.socle.navigation.notifications' => _root.com.socle.lexique.notifications,
+			'com.socle.navigation.ouvrirNotifications' => 'Ouvrir les notifications',
+			'com.socle.navigation.studio' => _root.com.socle.lexique.studio,
+			'com.socle.navigation.ouvrirStudio' => 'Ouvrir Le Studio',
+			'com.socle.navigation.quitterStudio' => 'Quitter Le Studio',
+			'com.socle.navigation.messages' => _root.com.socle.lexique.messages,
+			'com.socle.navigation.communaute' => _root.com.socle.lexique.communaute,
+			'com.socle.navigation.communications' => 'Communications',
+			'com.socle.navigation.communicationsDetail' => 'Annonces, modération et messages des Classes',
+			'com.socle.navigation.ongletAnnonces' => 'Annonces',
+			'com.socle.navigation.ongletModeration' => 'Modération',
+			'com.socle.navigation.ongletMessages' => _root.com.socle.lexique.messages,
+			'com.socle.navigation.bientot' => 'Bientôt disponible',
+			'com.socle.navigation.provisoire.messagesTitre' => _root.com.socle.lexique.messages,
+			'com.socle.navigation.provisoire.messagesDetail' => 'Les messages liés à vos Classes arriveront bientôt dans cet espace.',
+			'com.socle.navigation.provisoire.communauteTitre' => _root.com.socle.lexique.communaute,
+			'com.socle.navigation.provisoire.communauteDetail' => 'L\'espace d\'échange entre enseignants arrivera bientôt ici.',
+			'com.socle.navigation.provisoire.studioTitre' => _root.com.socle.lexique.studio,
+			'com.socle.navigation.provisoire.studioDetail' => 'L\'espace de travail de l\'équipe arrivera bientôt ici.',
+			'com.socle.navigation.provisoire.administrationTitre' => 'Administration des communications',
+			'com.socle.navigation.provisoire.administrationDetail' => 'Les annonces, la modération et les messages se géreront bientôt ici.',
+			'com.socle.navigation.provisoire.publierAnnonceTitre' => 'Publier une annonce',
+			'com.socle.navigation.provisoire.publierAnnonceDetail' => 'La publication d\'une annonce pour une Classe arrivera bientôt ici.',
+			'com.socle.navigation.demo.titre' => 'Démonstration des communications',
+			'com.socle.navigation.demo.detail' => 'Données fictives, absentes des versions de production.',
+			'com.socle.navigation.demo.choisir' => 'Choisissez un espace à essayer.',
+			'com.messages.entree.titreClasse' => 'Échanger sur cette Classe',
+			'com.messages.entree.titreDossier' => 'Échanger sur ce dossier',
+			'com.messages.entree.titreObjet' => 'Échanger à ce sujet',
+			'com.messages.entree.ecrireFamille' => 'Écrire à la famille',
+			'com.messages.entree.ecrireAdministration' => 'Écrire à l\'Administration',
+			'com.messages.entree.ecrireA' => ({required Object nom}) => 'Écrire à ${nom}',
+			'com.messages.entree.conversationAvec' => ({required Object nom}) => 'Conversation avec ${nom}',
+			'com.messages.entree.voirTout' => 'Voir toutes les conversations',
+			'com.messages.entree.toutes' => 'Toutes vos conversations',
+			'com.messages.entree.aLireUne' => '1 conversation à lire',
+			'com.messages.entree.aLire' => ({required Object nombre}) => '${nombre} conversations à lire',
+			'com.messages.entree.ouverture' => 'Ouverture de la conversation',
+			'com.messages.entree.inaccessibleTitre' => 'Conversation inaccessible',
+			'com.messages.entree.inaccessible' => 'Cette conversation n\'est plus ouverte pour vous. Choisissez une autre personne dans la liste.',
+			'com.messages.entree.erreurOuvertureTitre' => 'Impossible d\'ouvrir cette conversation.',
+			'com.messages.entree.ouvertureEchouee' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'com.messages.videDetail' => 'Une conversation s\'ouvre depuis une Classe, un élève ou un dossier.',
+			'com.messages.choisirTitre' => 'Choisissez une conversation',
+			'com.messages.choisir' => 'Choisissez une conversation dans la liste pour la lire et y répondre.',
+			'com.messages.recherche.champ' => 'Rechercher une conversation',
+			'com.messages.recherche.aide' => 'Nom, Classe ou dossier',
+			'com.messages.recherche.aucunTitre' => 'Aucune conversation trouvée',
+			'com.messages.recherche.aucun' => ({required Object texte}) => 'Aucune conversation ne correspond à « ${texte} ». Essayez un autre nom ou une autre Classe.',
+			'com.messages.recherche.resultatUn' => '1 conversation trouvée',
+			'com.messages.recherche.resultats' => ({required Object nombre}) => '${nombre} conversations trouvées',
+			'com.messages.ligne.legende' => ({required Object objet, required Object apercu}) => '${objet} · ${apercu}',
+			'com.messages.ligne.sansApercu' => 'Aucun message pour le moment',
+			'com.messages.ligne.dateCourte' => ({required Object numero, required Object mois}) => '${numero} ${mois}',
+			'com.messages.noms.avecFonction' => ({required Object nom, required Object fonction}) => '${nom}, ${fonction}',
+			'com.messages.noms.deux' => ({required Object premier, required Object second}) => '${premier} et ${second}',
+			'com.messages.noms.plusieurs' => ({required Object premier, required Object nombre}) => '${premier} et ${nombre} autres personnes',
+			'com.messages.noms.surObjet' => ({required Object objet}) => 'Conversation sur ${objet}',
+			'com.messages.noms.sansObjet' => 'Conversation',
+			'com.messages.entete.avecAttention' => ({required Object entete, required Object attention}) => '${entete}. ${attention}',
+			'com.messages.entete.deuxObjets' => ({required Object premier, required Object second}) => '${premier} · ${second}',
+			'com.messages.entete.semantique' => ({required Object noms, required Object objets}) => 'Conversation avec ${noms}, à propos de ${objets}',
+			'com.messages.entete.semantiqueSansNoms' => ({required Object objets}) => 'Conversation à propos de ${objets}',
+			'com.messages.types.classe' => 'Classe',
+			'com.messages.types.eleve' => 'Élève',
+			'com.messages.types.dossier' => 'Dossier',
+			'com.messages.types.mission' => 'Mission de contrôle',
+			'com.messages.types.remplacement' => 'Remplacement',
+			'com.messages.types.autre' => 'Autre sujet',
+			'com.messages.panneau.objets' => 'À propos de',
+			'com.messages.panneau.participants' => 'Participants',
+			'com.messages.panneau.fichiers' => _root.com.socle.lexique.fichiersPartages,
+			'com.messages.panneau.ouvrir' => ({required Object objet}) => 'Ouvrir ${objet}',
+			'com.messages.panneau.inaccessible' => 'Ce sujet ne vous est plus ouvert. La conversation reste lisible.',
+			'com.messages.panneau.vous' => 'Vous',
+			'com.messages.fil.lectureSeule' => 'Vous pouvez lire cette conversation. La réponse n\'y est pas ouverte pour vous.',
+			'com.messages.demo.choisirRole' => 'Choisissez le point de vue de cette démonstration.',
+			'com.messages.demo.roles.tuteur' => 'Famille',
+			'com.messages.demo.roles.enseignant' => 'Enseignant',
+			'com.messages.demo.roles.adulte' => 'Élève adulte',
+			'com.messages.demo.roles.admin' => 'Direction',
+			'com.messages.demo.roles.controleur' => 'Contrôleur',
+			'com.messages.demo.situations' => 'Situations à essayer',
+			'com.messages.demo.echec' => 'Envoi non confirmé, vu par l\'enseignant',
+			'com.messages.demo.horsLigne' => 'Hors ligne, vu par la famille',
+			'com.messages.demo.refuse' => 'Conversation d\'une autre famille, refusée',
+			'com.messages.demo.vue' => ({required Object role}) => 'Point de vue : ${role}',
+			'com.messages.demo.f.ahmed' => 'Ahmed',
+			'com.messages.demo.f.parentAdam' => 'Parent d\'Adam',
+			_ => null,
+		} ?? switch (path) {
+			'com.messages.demo.f.enseignanteNour' => 'Enseignante de la Classe An-Nour',
+			'com.messages.demo.f.fatima' => 'Fatima',
+			'com.messages.demo.f.parentYasmine' => 'Parent de Yasmine',
+			'com.messages.demo.f.karim' => 'Karim',
+			'com.messages.demo.f.parentYusuf' => 'Parent de Yusuf',
+			'com.messages.demo.f.administration' => 'Administration',
+			'com.messages.demo.f.directionRewayah' => 'Direction de Rewayah',
+			'com.messages.demo.f.rachid' => 'M. Rachid',
+			'com.messages.demo.f.controleurPedagogique' => 'Contrôleur pédagogique',
+			'com.messages.demo.f.youssef' => 'Youssef',
+			'com.messages.demo.f.enseignantFajr' => 'Enseignant de la Classe Al-Fajr',
+			'com.messages.demo.f.khadija' => 'Khadija',
+			'com.messages.demo.f.eleveFajr' => 'Élève de la Classe Al-Fajr',
+			'com.messages.demo.f.adam' => 'Adam',
+			'com.messages.demo.f.yasmine' => 'Yasmine',
+			'com.messages.demo.f.yusuf' => 'Yusuf',
+			'com.messages.demo.f.dossierAdam' => 'Dossier d\'inscription d\'Adam',
+			'com.messages.demo.f.missionNour' => 'Visite de contrôle, Classe An-Nour',
+			'com.messages.demo.f.pieceDevoir' => 'Devoir_semaine_3.pdf',
+			'com.messages.demo.f.pieceAttestation' => 'Attestation_ancienne.pdf',
+			'com.messages.demo.f.pieceVocal' => 'vocal.m4a',
+			'com.messages.demo.f.typeAudio' => 'Audio',
+			'com.messages.demo.f.adamQuestion' => 'Bonjour, je voulais savoir comment s\'est passée la séance d\'aujourd\'hui pour Adam. Merci beaucoup.',
+			'com.messages.demo.f.adamReponse' => 'Bonjour, la séance s\'est très bien passée. Adam a été attentif et a bien participé.',
+			'com.messages.demo.f.adamDevoir' => 'Voici le devoir de la semaine prochaine.',
+			'com.messages.demo.f.dossierManque' => 'Il manque l\'attestation de niveau d\'Adam pour finaliser son inscription. Pouvez-vous la déposer dans son dossier ?',
+			'com.messages.demo.f.missionRetard' => 'La séance a commencé avec huit minutes de retard. Le compte rendu est déposé.',
+			'com.messages.demo.f.missionSuite' => 'Merci, nous en parlons avec l\'enseignante cette semaine.',
+			'com.messages.demo.f.yasmineMerci' => 'Merci beaucoup pour ces explications.',
+			'com.messages.demo.f.affectation' => 'Votre Classe An-Nour passe au mardi 18 h à partir du mois prochain. Merci de confirmer.',
+			'com.messages.demo.f.khadijaRevision' => 'Pensez à réviser la sourate Al-Mulk pour jeudi.',
+			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
+			'com.messages.vide' => 'Aucune conversation pour le moment.',
+			'com.vocal.composer.libelle' => 'Message vocal',
+			'com.vocal.composer.enregistrer' => 'Enregistrer un message vocal',
+			'com.vocal.composer.indisponible' => 'Le message vocal n\'est pas encore disponible ici. Écrivez votre message dans le champ ci-dessus.',
+			'com.vocal.composer.erreurVerificationTitre' => 'Impossible de vérifier le microphone.',
+			'com.vocal.composer.erreurVerificationAction' => 'Réessayer',
+			'com.vocal.composer.erreurDemarrage' => 'Impossible de démarrer l\'enregistrement. Vérifiez que le microphone n\'est pas utilisé par une autre application, puis réessayez.',
+			'com.vocal.composer.erreurInterrompu' => 'L\'enregistrement s\'est interrompu. Vérifiez le microphone, puis recommencez.',
+			'com.vocal.composer.permissionTitre' => 'Le microphone est nécessaire',
+			'com.vocal.composer.permissionPhrase' => 'Rewayah a besoin du microphone pour enregistrer votre message vocal. Rien ne part sans votre accord.',
+			'com.vocal.composer.autoriser' => 'Autoriser le microphone',
+			'com.vocal.composer.annuler' => 'Annuler',
+			'com.vocal.composer.refuse' => 'Le microphone n\'est pas autorisé pour Rewayah.',
+			'com.vocal.composer.refuseAide' => 'Pour envoyer un message vocal, autorisez le microphone dans les réglages de votre appareil, puis revenez ici.',
+			'com.vocal.composer.fermer' => 'Fermer',
+			'com.vocal.composer.enregistrement' => 'Enregistrement en cours',
+			'com.vocal.composer.pause' => 'Enregistrement en pause',
+			'com.vocal.composer.reprise' => 'Enregistrement repris',
+			'com.vocal.composer.limiteProche' => ({required Object seuil, required Object max}) => 'Moins de ${seuil} avant la limite de ${max}',
+			'com.vocal.composer.limiteAtteinte' => ({required Object max}) => 'Durée maximale atteinte (${max}). Écoutez votre message, puis envoyez-le ou supprimez-le.',
+			'com.vocal.composer.ecoule' => ({required Object ecoule, required Object max}) => '${ecoule} sur ${max}',
+			'com.vocal.composer.preEcoute' => 'Pré-écoute',
+			'com.vocal.composer.preEcouteAide' => 'Écoutez votre message avant de l\'envoyer. Rien ne part sans votre accord.',
+			'com.vocal.composer.duree' => ({required Object duree}) => 'Durée : ${duree}',
+			'com.vocal.composer.actionPause' => 'Pause',
+			'com.vocal.composer.actionReprendre' => 'Reprendre',
+			'com.vocal.composer.actionArreter' => 'Arrêter',
+			'com.vocal.composer.actionSupprimer' => 'Supprimer',
+			'com.vocal.composer.actionEnvoyer' => 'Envoyer',
+			'com.vocal.composer.confirmerTitre' => 'Supprimer ce message vocal ?',
+			'com.vocal.composer.confirmerPhrase' => 'Il sera effacé de cet appareil. Cette action est définitive.',
+			'com.vocal.composer.garder' => 'Garder',
+			'com.vocal.composer.envoi' => 'Envoi du message vocal en cours',
+			'com.vocal.composer.nonConfirme' => 'Ce message vocal n\'a pas encore été confirmé.',
+			'com.vocal.composer.nonConfirmeAide' => 'Il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Le message vocal est gardé ici ; réessayez dans un instant.',
+			'com.vocal.composer.reessayer' => 'Réessayer',
+			'com.vocal.composer.envoye' => 'Message vocal envoyé.',
+			'com.vocal.composer.horsLigne' => 'Le message vocal est gardé ici : envoyez-le dès que l\'envoi est de nouveau possible.',
+			'com.vocal.lecteur.libelleAuteur' => ({required Object auteur, required Object duree}) => 'Message vocal de ${auteur}, ${duree}',
+			'com.vocal.lecteur.libelle' => ({required Object duree}) => 'Message vocal, ${duree}',
+			'com.vocal.lecteur.ecouter' => 'Écouter',
+			'com.vocal.lecteur.pause' => 'Pause',
+			'com.vocal.lecteur.reprendre' => 'Reprendre',
+			'com.vocal.lecteur.reecouter' => 'Réécouter',
+			'com.vocal.lecteur.nonEcoute' => 'Pas encore écouté',
+			'com.vocal.lecteur.lecture' => 'Lecture en cours',
+			'com.vocal.lecteur.enPause' => 'Lecture en pause',
+			'com.vocal.lecteur.fin' => 'Écouté en entier',
+			'com.vocal.lecteur.position' => ({required Object position, required Object duree}) => '${position} sur ${duree}',
+			'com.vocal.lecteur.indisponible' => 'La lecture n\'est pas encore disponible ici. Le message reste dans la conversation : revenez plus tard pour l\'écouter.',
+			'com.vocal.lecteur.erreurLectureTitre' => 'Impossible de lire ce message vocal.',
+			'com.vocal.lecteur.erreurLectureAction' => 'Réessayer',
+			'com.vocal.demo.contexte' => 'Démonstration du message vocal : aucun microphone réel n\'est utilisé, l\'enregistrement est simulé.',
+			'com.vocal.demo.situations' => 'Situations de démonstration',
+			'com.vocal.demo.autorise' => 'Micro autorisé',
+			'com.vocal.demo.aDemander' => 'À demander',
+			'com.vocal.demo.refuse' => 'Micro refusé',
+			'com.vocal.demo.nonConfirme' => 'Non confirmé',
+			'com.vocal.demo.indisponible' => 'Indisponible',
+			'com.vocal.demo.recu' => 'Message vocal reçu',
+			'com.vocal.demo.repondre' => 'Répondre dans la conversation',
+			'com.vocal.demo.envoyes' => 'Messages vocaux envoyés',
+			'com.vocal.demo.auteurEnseignante' => 'Sayyida Mariam, enseignante',
+			'com.vocal.demo.auteurParent' => 'Ahmed, parent d\'Adam',
+			'com.vocal.demo.messageRecu' => 'Bonjour, voici mes remarques sur la récitation de cette semaine.',
+			'com.vocal.demo.horodatage' => 'Aujourd\'hui, 10:28',
+			'com.vocal.titre' => 'Message vocal',
+			'com.communaute.garde.aide' => 'Aucune publicité. Aucun lien affilié. Aucune vente.',
+			'com.communaute.garde.avertissement' => 'Cette publication semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant de publier.',
+			'com.communaute.garde.bloqueAffilie' => 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.',
+			'com.communaute.garde.bloqueVente' => 'La vente de produits ou de services n\'est pas autorisée dans cet espace.',
+			'com.communaute.garde.titreAvertissement' => 'Publication à revoir',
+			'com.communaute.garde.titreBlocage' => 'Publication bloquée',
+			'com.communaute.garde.motif' => ({required Object motif}) => 'Motif : ${motif}',
+			'com.communaute.garde.liensTitre' => 'Liens de la publication',
+			'com.communaute.garde.consigneBlocage' => 'Modifiez la publication, puis publiez-la de nouveau.',
+			'com.communaute.garde.panne' => 'La vérification de ce contenu n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Rien n\'a été publié ; réessayez dans un instant.',
+			'com.communaute.garde.reponse.avertissement' => 'Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant de l\'envoyer.',
+			'com.communaute.garde.reponse.liensTitre' => 'Liens de la réponse',
+			'com.communaute.garde.reponse.consigneBlocage' => 'Modifiez la réponse, puis envoyez-la de nouveau.',
+			'com.communaute.lien.interne' => 'Lien interne Rewayah',
+			'com.communaute.lien.ressourceExterne' => 'Ressource pédagogique externe',
+			'com.communaute.lien.commercialInterdit' => 'Lien commercial interdit',
+			'com.communaute.lien.nonVerifie' => 'Lien non vérifié',
+			'com.communaute.lien.semantique' => ({required Object adresse, required Object etat}) => '${adresse}, ${etat}',
+			'com.communaute.sousTitre' => 'Échanges et entraide entre enseignants',
+			'com.communaute.sections' => 'Catégories de la Communauté enseignants',
+			'com.communaute.toutes' => 'Toutes',
+			'com.communaute.videTitre' => 'Aucune publication',
+			'com.communaute.rechercheVideTitre' => 'Aucun résultat',
+			'com.communaute.rechercheVide' => 'Aucune publication ne correspond à votre recherche. Essayez un autre mot.',
+			'com.communaute.videToutes' => 'Aucune publication pour le moment.',
+			'com.communaute.flux.ouvrir' => ({required Object titre}) => 'Ouvrir la publication ${titre}',
+			'com.communaute.flux.reponseUne' => '1 réponse',
+			'com.communaute.flux.reponses' => ({required Object nombre}) => '${nombre} réponses',
+			'com.communaute.flux.aucuneReponse' => 'Aucune réponse',
+			'com.communaute.flux.categorie' => ({required Object categorie}) => 'Catégorie ${categorie}',
+			'com.communaute.recherche.ouvrir' => 'Rechercher une publication',
+			'com.communaute.recherche.champ' => 'Rechercher une publication',
+			'com.communaute.recherche.aide' => 'Un mot du titre ou du texte',
+			'com.communaute.moment.instant' => 'À l\'instant',
+			'com.communaute.moment.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il y a ${n} min', other: 'Il y a ${n} min', ), 
+			'com.communaute.moment.heures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il y a ${n} h', other: 'Il y a ${n} h', ), 
+			'com.communaute.moment.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il y a ${n} j', other: 'Il y a ${n} j', ), 
+			'com.communaute.moment.date' => ({required Object jour, required Object mois}) => 'Le ${jour}/${mois}',
+			'com.communaute.publication.auteur' => ({required Object fonction, required Object moment}) => '${fonction} · ${moment}',
+			'com.communaute.publication.enregistrer' => 'Enregistrer la publication',
+			'com.communaute.publication.enregistree' => 'Publication enregistrée',
+			'com.communaute.publication.retirer' => 'Retirer des éléments enregistrés',
+			'com.communaute.publication.menu' => ({required Object titre}) => 'Actions sur la publication ${titre}',
+			'com.communaute.publication.signaler' => 'Signaler la publication',
+			'com.communaute.publication.signalee' => 'Le contenu a été signalé à l\'équipe de modération.',
+			'com.communaute.publication.choisirTitre' => 'Aucune publication ouverte',
+			'com.communaute.publication.choisir' => 'Choisissez une publication dans la liste pour la lire et y répondre.',
+			'com.communaute.publication.introuvableTitre' => 'Publication indisponible',
+			'com.communaute.publication.introuvable' => 'Cette publication a été retirée ou ne vous est plus accessible. Revenez aux publications pour en choisir une autre.',
+			'com.communaute.publication.revenir' => 'Revenir aux publications',
+			'com.communaute.reponses.titre' => ({required Object nombre}) => 'Réponses (${nombre})',
+			'com.communaute.reponses.vide' => 'Aucune réponse pour le moment.',
+			'com.communaute.reponses.erreurTitre' => 'Impossible de charger les réponses.',
+			'com.communaute.reponses.champ' => 'Votre réponse',
+			'com.communaute.reponses.aide' => 'Écrire une réponse',
+			'com.communaute.reponses.envoyer' => 'Envoyer la réponse',
+			'com.communaute.reponses.champVide' => 'Écrivez une réponse pour l\'envoyer.',
+			'com.communaute.reponses.enCours' => 'Envoi en cours',
+			'com.communaute.reponses.nonConfirmee' => 'Cette réponse n\'est pas encore confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Renvoyez-la dans un instant.',
+			'com.communaute.reponses.refusee' => 'Refusée par la politique de la Communauté',
+			'com.communaute.reponses.reessayer' => 'Renvoyer la réponse',
+			'com.communaute.reponses.indisponible' => 'Les réponses ne sont pas encore disponibles ici.',
+			'com.communaute.reponses.menu' => ({required Object nom}) => 'Actions sur la réponse de ${nom}',
+			'com.communaute.reponses.signaler' => 'Signaler la réponse',
+			'com.communaute.reponses.signalee' => 'Vous avez signalé cette réponse.',
+			'com.communaute.signalement.politique.publicite' => 'La publicité n\'est pas autorisée dans la Communauté enseignants.',
+			'com.communaute.signalement.politique.sollicitation' => 'La sollicitation commerciale n\'est pas autorisée dans cet espace.',
+			'com.communaute.signalement.motifManquant' => 'Choisissez un motif pour envoyer le signalement.',
+			'com.communaute.composer.nouvelle' => 'Nouvelle publication',
+			'com.communaute.composer.contexte' => 'Partagez une question, une méthode ou une ressource utile à l\'enseignement.',
+			'com.communaute.composer.categorie' => 'Catégorie',
+			'com.communaute.composer.categorieManquante' => 'Choisissez une catégorie pour publier.',
+			'com.communaute.composer.champTitre' => 'Titre',
+			'com.communaute.composer.aideTitre' => 'Le sujet en quelques mots',
+			'com.communaute.composer.titreManquant' => 'Écrivez un titre pour publier.',
+			'com.communaute.composer.champTexte' => 'Texte',
+			'com.communaute.composer.aideTexte' => 'Votre question ou votre retour d\'expérience',
+			'com.communaute.composer.texteManquant' => 'Écrivez le texte de la publication pour publier.',
+			'com.communaute.composer.pieces' => 'Pièces jointes',
+			'com.communaute.composer.pieceRefusee' => 'Retirez les fichiers refusés avant de publier.',
+			'com.communaute.composer.choixIndisponible' => 'Le choix d\'un fichier n\'est pas encore disponible ici.',
+			'com.communaute.composer.publier' => 'Publier',
+			'com.communaute.composer.fermer' => 'Fermer la nouvelle publication',
+			'com.communaute.composer.confirmee' => 'Votre publication est en ligne.',
+			'com.communaute.composer.erreurEnvoi' => 'Votre publication n\'est pas encore confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'com.communaute.composer.indisponible' => 'La publication n\'est pas encore disponible ici.',
+			'com.communaute.regles.panneau' => 'Aide et règles',
+			'com.communaute.regles.aProposTitre' => 'À propos de cet espace',
+			'com.communaute.regles.aPropos' => 'Un espace d\'entraide entre enseignants pour poser des questions, partager des méthodes et des ressources pédagogiques.',
+			'com.communaute.regles.titre' => 'Partage pédagogique uniquement',
+			'com.communaute.regles.corps' => 'Cette communauté est réservée aux échanges professionnels entre enseignants.',
+			'com.communaute.regles.reglesTitre' => 'Règles de publication',
+			'com.communaute.regles.pasPublicite' => 'Aucune publicité',
+			'com.communaute.regles.pasAffilie' => 'Aucun lien affilié',
+			'com.communaute.regles.pasVente' => 'Aucune vente de produit ou de service',
+			'com.communaute.regles.pasSollicitation' => 'Aucune sollicitation commerciale',
+			'com.communaute.regles.pasDonnees' => 'Aucune donnée personnelle d\'un élève ou d\'une famille',
+			'com.communaute.regles.signaler' => 'Un contenu inapproprié se signale depuis le menu de la publication.',
+			'com.communaute.regles.voir' => 'Voir les règles',
+			'com.communaute.entree.lecteur' => 'Ouvrir la Communauté enseignants',
+			'com.communaute.entree.detail' => 'Questions, méthodes et ressources entre enseignants',
+			'com.communaute.demo.avertissement' => 'Publication à revoir : publicité',
+			'com.communaute.demo.lienAffilie' => 'Lien affilié bloqué',
+			'com.communaute.demo.vente' => 'Vente bloquée',
+			'com.communaute.demo.signalementNonConfirme' => 'Signalement non confirmé',
+			'com.communaute.demo.choisir' => 'Choisissez une situation à essayer, vue par un enseignant.',
+			'com.communaute.demo.aujourdhui' => 'Aujourd\'hui, avec le raccourci',
+			'com.communaute.demo.nominal' => 'Six publications',
+			'com.communaute.demo.publication' => 'Une publication ouverte',
+			'com.communaute.demo.vide' => 'Aucune publication',
+			'com.communaute.demo.lectureEchouee' => 'Lecture en échec',
+			'com.communaute.demo.indisponible' => 'Service pas encore disponible',
+			'com.communaute.demo.horsLigne' => 'Hors ligne',
+			'com.communaute.demo.envoiNonConfirme' => 'Envoi non confirmé',
+			'com.communaute.demo.moderationIndisponible' => 'Modération indisponible',
+			'com.communaute.demo.lecteurSeul' => 'Lecture seule, sans publication',
+			'com.communaute.demo.f.categoriePedagogie' => 'Pédagogie',
+			'com.communaute.demo.f.categorieRessources' => 'Ressources',
+			'com.communaute.demo.f.categorieGestion' => 'Gestion',
+			'com.communaute.demo.f.fonctionSoi' => 'Enseignant, Classe Al-Fatiha',
+			'com.communaute.demo.f.prenomSoi' => 'Ibrahim',
+			'com.communaute.demo.f.samira' => 'Samira Belkacem',
+			'com.communaute.demo.f.fonctionSamira' => 'Enseignante, Classe An-Nour',
+			'com.communaute.demo.f.nour' => 'Nour El Idrissi',
+			'com.communaute.demo.f.fonctionNour' => 'Enseignante, Classe Al-Fajr',
+			'com.communaute.demo.f.yasmine' => 'Yasmine Haddad',
+			'com.communaute.demo.f.fonctionYasmine' => 'Enseignante, Classe Al-Badr',
+			'com.communaute.demo.f.youssef' => 'Youssef Amrani',
+			'com.communaute.demo.f.fonctionYoussef' => 'Enseignant, Classe Al-Kawthar',
+			'com.communaute.demo.f.mariam' => 'Mariam Benali',
+			'com.communaute.demo.f.fonctionMariam' => 'Enseignante, Classe An-Nas',
+			'com.communaute.demo.f.hamza' => 'Hamza Ouali',
+			'com.communaute.demo.f.fonctionHamza' => 'Enseignant, Classe Al-Ikhlas',
+			'com.communaute.demo.f.memorisationTitre' => 'Idées pour la mémorisation ?',
+			'com.communaute.demo.f.memorisationTexte' => 'Quels rituels ou activités fonctionnent bien pour aider les élèves à mémoriser les sourates ? Je cherche des retours d\'expérience : jeux, supports visuels, répétition en binôme. Merci pour vos idées !',
+			'com.communaute.demo.f.cartesTitre' => 'Retour sur les cartes de répétition',
+			'com.communaute.demo.f.cartesTexte' => 'J\'utilise des cartes de répétition depuis la rentrée et cela fonctionne très bien, même avec les plus jeunes. Je joins le modèle que je remplis avant chaque séance.',
+			'com.communaute.demo.f.cartesFichier' => 'Cartes_repetition.pdf',
+			'com.communaute.demo.f.niveauxTitre' => 'Gérer les différents niveaux ?',
+			'com.communaute.demo.f.niveauxTexte' => 'Comment gérez-vous une Classe où les niveaux sont très différents ? Je crains que les plus avancés décrochent pendant que je reprends les bases avec les autres.',
+			'com.communaute.demo.f.timidesTitre' => 'Faire réciter les élèves timides',
+			'com.communaute.demo.f.timidesTexte' => 'Une élève refuse de réciter devant les autres. Je lui propose de réciter la première, quand la Classe est encore calme. Avez-vous d\'autres pistes ?',
+			'com.communaute.demo.f.ficheTitre' => 'Une fiche de suivi des révisions',
+			'com.communaute.demo.f.ficheTexte' => 'Je note chaque semaine les sourates révisées et les points à reprendre. La fiche tient sur une page et aide beaucoup pour préparer la séance suivante.',
+			'com.communaute.demo.f.heureTitre' => 'Commencer la séance à l\'heure',
+			'com.communaute.demo.f.heureTexte' => 'Les premières minutes partent souvent dans l\'installation. Je demande maintenant aux élèves de préparer leur page avant l\'heure. Qu\'en pensez-vous ?',
+			'com.communaute.demo.f.reponseMariam' => 'J\'utilise beaucoup la répétition en binôme et des cartes visuelles. Cela motive vraiment les élèves.',
+			'com.communaute.demo.f.reponseYoussef' => 'Les élèves réécoutent la récitation de la séance à la maison : cela aide beaucoup entre deux cours.',
+			'com.communaute.demo.f.reponseSamira' => 'Merci pour le modèle, je vais l\'essayer cette semaine.',
+			'com.communaute.demo.f.reponseHamza' => 'Je laisse parfois un élève réciter en tête-à-tête à la fin de la séance, puis devant un seul camarade.',
+			'com.communaute.demo.f.affilieTitre' => 'Mon lecteur audio préféré pour réviser',
+			'com.communaute.demo.f.affilieTexte' => ({required Object lien}) => 'J\'utilise ce lecteur pour faire réécouter les sourates. Il est en réduction cette semaine avec mon lien : ${lien}',
+			'com.communaute.demo.f.venteTitre' => 'Je vends mes fiches de mémorisation',
+			'com.communaute.demo.f.venteTexte' => 'Lot de 30 fiches plastifiées, 25 euros, envoi par la poste. Écrivez-moi pour commander.',
+			'com.communaute.demo.f.publiciteTitre' => 'Une application pour réviser',
+			'com.communaute.demo.f.publiciteTexte' => ({required Object lienOffre, required Object lienInterne, required Object lienRessource}) => 'Je recommande cette application de révision, avec le code PROF20 pour l\'abonnement : ${lienOffre}. Pour le texte, la ressource de la Bibliothèque (${lienInterne}) et ${lienRessource} suffisent.',
+			'com.communaute.demo.f.reponseAffilie' => ({required Object lien}) => 'Pour la révision, je conseille ce lecteur, en réduction avec mon lien : ${lien}',
+			'com.communaute.demo.f.fichierChoisi' => 'Fiche_seance.pdf',
+			'com.communaute.titre' => _root.com.socle.lexique.communaute,
+			'com.communaute.vide' => 'Aucune publication dans cette catégorie.',
+			'com.studio.focus.entrer' => _root.com.socle.lexique.modeFocus,
+			'com.studio.focus.quitter' => _root.com.socle.lexique.quitterFocus,
+			'com.studio.focus.actif' => 'Focus activé',
+			'com.studio.focus.actifAvecEchap' => 'Focus activé. Échap pour quitter.',
+			'com.studio.focus.aide' => 'Masquez les panneaux secondaires pour vous concentrer sur cette discussion.',
+			'com.studio.aujourdhui.titre' => _root.com.socle.lexique.aujourdhui,
+			'com.studio.aujourdhui.sousTitre' => 'Ce qui mérite votre attention dans Le Studio',
+			'com.studio.aujourdhui.indicateurs.titre' => 'Indicateurs d\'attention',
+			'com.studio.aujourdhui.indicateurs.aTraiter' => _root.com.socle.lexique.aTraiter,
+			'com.studio.aujourdhui.indicateurs.mentions' => 'Mentions et réponses',
+			'com.studio.aujourdhui.indicateurs.decisions' => 'Décisions en attente',
+			'com.studio.aujourdhui.indicateurs.nonLus' => 'Non lus',
+			'com.studio.aujourdhui.blocs.aTraiter' => 'À traiter aujourd\'hui',
+			'com.studio.aujourdhui.blocs.mentions' => 'Mentions et réponses',
+			'com.studio.aujourdhui.blocs.decisions' => 'Décisions en attente',
+			'com.studio.aujourdhui.blocs.echeances' => 'Échéances proches',
+			'com.studio.aujourdhui.blocs.activite' => 'Activité récente',
+			'com.studio.aujourdhui.blocs.brouillons' => 'Brouillons',
+			'com.studio.aujourdhui.blocs.acces' => 'Accès rapides',
+			'com.studio.aujourdhui.videsBlocs.aTraiter' => 'Rien à traiter aujourd\'hui.',
+			'com.studio.aujourdhui.videsBlocs.mentions' => 'Aucune mention ni réponse en attente.',
+			'com.studio.aujourdhui.videsBlocs.decisions' => 'Aucune décision en attente.',
+			'com.studio.aujourdhui.videsBlocs.echeances' => 'Aucune échéance proche.',
+			'com.studio.aujourdhui.videsBlocs.activite' => 'Aucune activité récente.',
+			'com.studio.aujourdhui.videTitre' => 'Rien à traiter pour le moment',
+			'com.studio.aujourdhui.dansCanal' => ({required Object nom}) => 'Dans ${nom}',
+			'com.studio.aujourdhui.echeance' => ({required Object date}) => 'Échéance le ${date}',
+			'com.studio.aujourdhui.seTraiteDans' => ({required Object module}) => 'Se traite dans ${module}',
+			'com.studio.aujourdhui.ouvrirDans' => ({required Object module, required Object libelle}) => 'Ouvrir dans ${module} : ${libelle}',
+			'com.studio.aujourdhui.modules.studio' => _root.com.socle.lexique.studio,
+			'com.studio.aujourdhui.modules.finance' => 'Finance',
+			'com.studio.aujourdhui.modules.planning' => 'Planning',
+			'com.studio.aujourdhui.modules.dossiers' => 'Dossiers',
+			'com.studio.aujourdhui.modules.classes' => 'Classes',
+			'com.studio.aujourdhui.modules.admissions' => 'Admissions',
+			'com.studio.aujourdhui.modules.demandes' => 'Demandes',
+			'com.studio.aujourdhui.modules.communications' => 'Administration des communications',
+			'com.studio.aujourdhui.acces.messages' => _root.com.socle.lexique.messagesMetier,
+			'com.studio.aujourdhui.acces.messagesDetail' => 'Les conversations avec les familles, les enseignants et les contrôleurs',
+			'com.studio.aujourdhui.acces.annonces' => 'Annonces',
+			'com.studio.aujourdhui.acces.annoncesDetail' => 'Publier et suivre les annonces',
+			'com.studio.aujourdhui.acces.dossiers' => 'Dossiers à valider',
+			'com.studio.aujourdhui.acces.dossiersDetail' => 'Les dossiers prêts pour une décision',
+			'com.studio.aujourdhui.acces.classes' => 'Classes',
+			'com.studio.aujourdhui.acces.classesDetail' => 'Les Classes, leurs horaires et leurs enseignants',
+			'com.studio.aujourdhui.acces.demandes' => 'Demandes à trancher',
+			'com.studio.aujourdhui.acces.demandesDetail' => 'Les demandes de changement en attente',
+			'com.studio.brouillons.titre' => 'Brouillons',
+			'com.studio.brouillons.detail' => 'Les messages commencés dans un canal et pas encore envoyés. Ils restent sur cet appareil le temps de la session, sans synchronisation.',
+			'com.studio.brouillons.dansCanal' => ({required Object nom}) => 'Brouillon dans ${nom}',
+			'com.studio.brouillons.canalInconnu' => 'Brouillon dans un canal',
+			'com.studio.brouillons.canalIndisponible' => 'Brouillon dans un canal qui n\'est plus disponible',
+			'com.studio.brouillons.modifie' => ({required Object moment}) => 'Modifié le ${moment}',
+			'com.studio.brouillons.reprendre' => ({required Object nom}) => 'Reprendre le brouillon dans ${nom}',
+			'com.studio.brouillons.videTitre' => 'Aucun brouillon',
+			'com.studio.brouillons.vide' => 'Un message commencé dans un canal et pas encore envoyé apparaîtra ici.',
+			'com.studio.brouillons.tous' => ({required Object nombre}) => 'Voir tous les brouillons (${nombre})',
+			'com.studio.brouillons.restaure' => 'Brouillon restauré. Vous pouvez reprendre votre message.',
+			'com.studio.sousTitre' => 'Espace de travail de l\'équipe',
+			'com.studio.navigation.aujourdhui' => _root.com.socle.lexique.aujourdhui,
+			'com.studio.navigation.brouillons' => 'Brouillons',
+			'com.studio.navigation.canaux' => 'Canaux',
+			'com.studio.navigation.enregistres' => 'Éléments enregistrés',
+			'com.studio.choisirTitre' => 'Choisissez un canal',
+			'com.studio.choisir' => 'Choisissez un canal dans la liste pour lire la discussion et y écrire.',
+			'com.studio.aucunCanalTitre' => 'Aucun canal pour le moment',
+			'com.studio.aucunCanal' => 'Les canaux qui vous sont ouverts apparaîtront ici.',
+			'com.studio.sections.organisation' => 'Organisation',
+			'com.studio.sections.admissionsFamilles' => 'Admissions & familles',
+			'com.studio.sections.pedagogieQualite' => 'Pédagogie & qualité',
+			'com.studio.sections.planningRemplacements' => 'Planning & remplacements',
+			'com.studio.sections.finance' => 'Finance',
+			'com.studio.sections.support' => 'Support',
+			'com.studio.sections.produitTechnique' => 'Produit & technique',
+			'com.studio.sections.direction' => 'Direction',
+			'com.studio.visibilite.restreint' => 'Restreint',
+			'com.studio.visibilite.prive' => 'Privé',
+			'com.studio.visibilite.visibleDetail' => 'Ouvert à toute l\'équipe.',
+			'com.studio.visibilite.restreintDetail' => 'Ouvert à une partie de l\'équipe, dont vous faites partie.',
+			'com.studio.visibilite.priveDetail' => 'Canal privé, ouvert à ses seuls membres. Vous en faites partie.',
+			'com.studio.canal.membresUn' => '1 membre',
+			'com.studio.canal.membres' => ({required Object nombre}) => '${nombre} membres',
+			'com.studio.canal.aide' => ({required Object nom}) => 'Écrire dans ${nom}',
+			'com.studio.canal.lectureSeule' => 'Vous pouvez lire ce canal. L\'écriture n\'y est pas ouverte pour vous.',
+			'com.studio.canal.aucunMessageTitre' => 'Aucun message pour le moment',
+			'com.studio.canal.aucunMessage' => 'Les messages de ce canal s\'afficheront ici dès leur publication.',
+			'com.studio.canal.indisponibleTitre' => 'Canal indisponible',
+			'com.studio.canal.indisponible' => 'Ce canal n\'est pas disponible pour vous. Choisissez un autre canal dans la liste.',
+			'com.studio.panneau.titre' => 'À propos du canal',
+			'com.studio.panneau.aPropos' => 'À propos',
+			'com.studio.panneau.section' => 'Section',
+			'com.studio.panneau.visibilite' => 'Visibilité',
+			'com.studio.panneau.epingles' => _root.com.socle.lexique.elementsEpingles,
+			'com.studio.panneau.fichiers' => 'Fichiers récents',
+			'com.studio.panneau.liens' => 'Liens utiles',
+			'com.studio.panneau.vous' => 'Vous',
+			'com.studio.panneau.parametres' => 'Paramètres du canal',
+			'com.studio.panneau.parametresDetail' => 'La modification des paramètres arrivera avec le service du Studio.',
+			'com.studio.panneau.ouvrir' => ({required Object titre}) => 'Ouvrir ${titre}',
+			'com.studio.panneau.lienExterne' => ({required Object hote}) => 'Site externe : ${hote}',
+			'com.studio.panneau.aucunPartageTitre' => 'Rien de partagé pour le moment',
+			'com.studio.panneau.aucunPartage' => 'Les éléments épinglés, les fichiers et les liens de ce canal apparaîtront ici.',
+			'com.studio.enregistrer.enregistrer' => _root.com.socle.lexique.enregistrer,
+			'com.studio.enregistrer.retirer' => 'Retirer',
+			'com.studio.enregistrer.semantiqueEnregistrer' => ({required Object titre}) => 'Enregistrer ${titre}',
+			'com.studio.enregistrer.semantiqueRetirer' => ({required Object titre}) => 'Retirer ${titre} des éléments enregistrés',
+			'com.studio.enregistrer.ajoute' => ({required Object titre}) => 'Ajouté aux éléments enregistrés : ${titre}.',
+			'com.studio.enregistrer.retire' => ({required Object titre}) => 'Retiré des éléments enregistrés : ${titre}.',
+			'com.studio.enregistrer.nonConfirme' => 'L\'enregistrement n\'a pas encore été confirmé. Réessayez dans un instant.',
+			'com.studio.enregistres.detail' => 'Les canaux et les éléments que vous gardez sous la main. Chacun s\'ouvre à sa place d\'origine.',
+			'com.studio.enregistres.videTitre' => 'Aucun élément enregistré',
+			'com.studio.enregistres.vide' => 'Touchez Enregistrer dans le panneau d\'un canal pour retrouver un canal ou un élément ici.',
+			'com.studio.enregistres.ouvrir' => ({required Object titre}) => 'Ouvrir ${titre}',
+			'com.studio.enregistres.sansDestination' => ({required Object type}) => '${type}, ne s\'ouvre plus d\'ici',
+			'com.studio.enregistres.types.canal' => 'Canal',
+			'com.studio.enregistres.types.publication' => 'Publication',
+			'com.studio.enregistres.types.message' => 'Message',
+			'com.studio.enregistres.types.element' => 'Élément du Studio',
+			'com.studio.recherche.champ' => 'Rechercher dans Le Studio',
+			'com.studio.recherche.aide' => 'Canal, message ou fichier',
+			'com.studio.recherche.aucunTitre' => 'Aucun résultat',
+			'com.studio.recherche.aucun' => ({required Object texte}) => 'Rien ne correspond à « ${texte} » dans vos canaux. Essayez un autre mot.',
+			'com.studio.recherche.aucunDansFiltre' => 'Rien de ce type ne correspond. Choisissez Tout pour voir les autres résultats.',
+			'com.studio.recherche.resultatUn' => '1 résultat',
+			'com.studio.recherche.resultats' => ({required Object nombre}) => '${nombre} résultats',
+			'com.studio.recherche.filtre' => 'Type de résultat',
+			'com.studio.recherche.tout' => 'Tout',
+			'com.studio.recherche.canaux' => 'Canaux',
+			'com.studio.recherche.messages' => 'Messages',
+			'com.studio.recherche.fichiers' => 'Fichiers',
+			'com.studio.recherche.dansCanal' => ({required Object canal}) => 'Dans ${canal}',
+			'com.studio.recherche.messageDe' => ({required Object auteur, required Object canal}) => '${auteur}, dans ${canal}',
+			'com.studio.demo.focus' => 'Un canal en mode focus',
+			'com.studio.demo.aujourdhuiVide' => 'Aujourd\'hui sans activité',
+			'com.studio.demo.horsDemo' => ({required Object module}) => 'Dans l\'application, cette ligne ouvre ${module}. La démonstration reste sur cette page.',
+			'com.studio.demo.choisir' => 'Choisissez une situation à essayer.',
+			'com.studio.demo.normale' => 'Le Studio et ses canaux',
+			'com.studio.demo.echec' => 'Envoi non confirmé',
+			'com.studio.demo.horsLigne' => 'Hors ligne',
+			'com.studio.demo.canalPrive' => 'Adresse d\'un canal privé qui ne vous est pas ouvert',
+			'com.studio.demo.sansCanaux' => 'Aucun canal ouvert',
+			'com.studio.demo.vue' => ({required Object situation}) => 'Situation : ${situation}',
+			'com.studio.demo.f.nadia' => 'Nadia',
+			'com.studio.demo.f.fonctionDirection' => 'Direction',
+			'com.studio.demo.f.mariam' => 'Mariam',
+			'com.studio.demo.f.fonctionCoordination' => 'Coordination générale',
+			'com.studio.demo.f.youssef' => 'Youssef',
+			'com.studio.demo.f.fonctionProduit' => 'Produit et technique',
+			'com.studio.demo.f.amina' => 'Amina',
+			'com.studio.demo.f.fonctionPedagogie' => 'Pédagogie',
+			'com.studio.demo.f.samira' => 'Samira',
+			'com.studio.demo.f.fonctionAdmissions' => 'Admissions',
+			'com.studio.demo.f.ibrahim' => 'Ibrahim',
+			'com.studio.demo.f.fonctionPlanning' => 'Planning',
+			'com.studio.demo.f.pieceAudio' => 'Audio',
+			'com.studio.demo.f.fichierPlanning' => 'Planning_T3.pdf',
+			'com.studio.demo.f.fichierModeration' => 'Guide_de_moderation.pdf',
+			'com.studio.demo.f.fichierVocal' => 'vocal-youssef.m4a',
+			'com.studio.demo.f.fichierCompteRendu' => 'Compte_rendu_visites.pdf',
+			'com.studio.demo.f.fichierBudget' => 'Budget_confidentiel.pdf',
+			'com.studio.demo.f.canalOrganisation' => 'Organisation générale',
+			'com.studio.demo.f.canalOrganisationDetail' => 'Coordination de toute l\'équipe',
+			'com.studio.demo.f.canalAdmissions' => 'Admissions',
+			'com.studio.demo.f.canalAdmissionsDetail' => 'Suivi des demandes d\'inscription',
+			'com.studio.demo.f.canalQualite' => 'Suivi qualité',
+			'com.studio.demo.f.canalQualiteDetail' => 'Retours des visites de contrôle',
+			'com.studio.demo.f.canalRemplacements' => 'Remplacements',
+			'com.studio.demo.f.canalRemplacementsDetail' => 'Absences et remplacements de la semaine',
+			'com.studio.demo.f.canalCloture' => 'Clôture du mois',
+			'com.studio.demo.f.canalClotureDetail' => 'Préparation de la clôture mensuelle',
+			'com.studio.demo.f.canalDirection' => 'Direction stratégique',
+			'com.studio.demo.f.canalDirectionDetail' => 'Orientations de la direction',
+			'com.studio.demo.f.messagePlanning' => 'Bonjour à toute l\'équipe. Voici le planning du prochain trimestre, dites-moi si quelque chose ne va pas.',
+			'com.studio.demo.f.messageSupports' => 'Je mets à jour les supports du niveau 2 et on fait le point demain.',
+			'com.studio.demo.f.messageMerci' => 'Merci à tous pour la semaine.',
+			'com.studio.demo.f.messageDossiers' => 'Trois dossiers attendent une décision avant vendredi. Nadia, peux-tu regarder le dossier de la famille Karim ?',
+			'com.studio.demo.f.messageCompteRendu' => 'Le compte rendu des visites du mois est prêt.',
+			'com.studio.demo.f.messageRemplacement' => 'Mardi, la Classe An-Nour est assurée par un remplaçant. Le planning est à jour.',
+			'com.studio.demo.f.messageJustificatifs' => 'Les justificatifs de septembre sont rassemblés.',
+			'com.studio.demo.f.messageBudget' => 'Budget confidentiel du trimestre.',
+			'com.studio.demo.f.activiteBudget' => 'Budget confidentiel du trimestre',
+			'com.studio.demo.f.partagePlanning' => 'Planning du trimestre',
+			'com.studio.demo.f.partageModeration' => 'Guide de modération',
+			'com.studio.demo.f.epinglePar' => ({required Object nom}) => 'Épinglé par ${nom}',
+			'com.studio.demo.f.partagePar' => ({required Object nom}) => 'Partagé par ${nom}',
+			'com.studio.demo.f.lienRemplacements' => 'Remplacements de la semaine',
+			'com.studio.demo.f.lienCharte' => 'Charte de l\'équipe',
+			'com.studio.demo.f.brouillon' => 'Samira, je regarde le dossier de la famille Karim ce soir et je te dis demain matin',
+			'com.studio.demo.f.activitePaiement' => 'Paiement de septembre non confirmé pour la famille Haddad',
+			'com.studio.demo.f.objetEcheancier' => 'Échéancier de la famille Haddad',
+			'com.studio.demo.f.activiteDossierKarim' => 'Dossier de la famille Karim prêt pour une décision',
+			'com.studio.demo.f.objetDossierKarim' => 'Dossier de la famille Karim',
+			'com.studio.demo.f.activiteMention' => 'Samira vous a mentionnée',
+			'com.studio.demo.f.activiteReponse' => 'Amina a répondu à votre message',
+			'com.studio.demo.f.activiteRemplacant' => 'Choisir le remplaçant de mardi pour la Classe An-Nour',
+			'com.studio.demo.f.objetRemplacement' => 'Remplacement de mardi',
+			'com.studio.demo.f.activiteOuverture' => 'Valider l\'ouverture d\'une Classe le samedi matin',
+			'com.studio.demo.f.objetClasseSamedi' => 'Classe du samedi matin',
+			'com.studio.demo.f.activiteCloture' => 'Clôture du mois de septembre',
+			'com.studio.demo.f.objetCloture' => 'Clôture de septembre',
+			'com.studio.demo.f.activiteBilans' => 'Bilans de mi-parcours à relire',
+			'com.studio.demo.f.objetBilans' => 'Bilans de mi-parcours',
+			'com.studio.demo.f.activiteMessages' => '2 nouveaux messages',
+			'com.studio.demo.f.activiteAnnonce' => 'Annonce publiée : l\'académie ferme le 1er novembre',
+			'com.studio.demo.f.objetFermeture' => 'Fermeture du 1er novembre',
+			'com.studio.demo.f.activiteFichier' => ({required Object nom, required Object fichier}) => '${nom} a partagé ${fichier}',
+			'com.studio.demo.f.activiteInscription' => 'Nouvelle demande d\'inscription reçue',
+			'com.studio.demo.f.objetDossierBenali' => 'Dossier de la famille Benali',
+			'com.studio.titre' => _root.com.socle.lexique.studio,
+			'com.studio.vide' => 'Aucune activité à traiter ici.',
+			'com.annonces.publieur.titre' => 'Nouvelle annonce',
+			'com.annonces.publieur.etapes.contenu' => 'Contenu de l\'annonce',
+			'com.annonces.publieur.etapes.audience' => 'Destinataires de l\'annonce',
+			'com.annonces.publieur.etapes.programmation' => 'Date de diffusion',
+			'com.annonces.publieur.etapes.previsualisation' => 'Aperçu de l\'annonce',
+			'com.annonces.publieur.etapes.publication' => 'Publication de l\'annonce',
+			'com.annonces.publieur.contexte.contenu' => 'Écrivez ce que les destinataires doivent savoir. Une annonce part dans un seul sens : personne n\'y répond.',
+			'com.annonces.publieur.contexte.audience' => 'Choisissez qui reçoit l\'annonce. Seuls les destinataires que vous pouvez viser sont proposés.',
+			'com.annonces.publieur.contexte.audienceFixee' => ({required Object cible}) => 'Cette annonce part vers ${cible}. Vous publiez seulement pour votre Classe.',
+			'com.annonces.publieur.contexte.programmation' => 'Choisissez quand l\'annonce part. Une annonce programmée attend sa date.',
+			'com.annonces.publieur.contexte.previsualisation' => 'Voici l\'annonce telle que les destinataires la liront.',
+			'com.annonces.publieur.contexte.publication' => 'Relisez les destinataires et la date, puis publiez. Rien n\'est publié avant la confirmation.',
+			'com.annonces.publieur.champTitre' => 'Titre de l\'annonce',
+			'com.annonces.publieur.champTexte' => 'Texte de l\'annonce',
+			'com.annonces.publieur.nature.classe' => 'Seules les familles et les élèves de cette Classe la reçoivent.',
+			'com.annonces.publieur.nature.public' => 'Toutes les personnes de ce public la reçoivent.',
+			'com.annonces.publieur.nature.toutes' => 'Toute l\'académie la reçoit. Réservez-la à ce qui concerne tout le monde.',
+			'com.annonces.publieur.quand.maintenant' => 'Dès la confirmation',
+			'com.annonces.publieur.quand.maintenantDetail' => 'L\'annonce part dès que la publication est confirmée.',
+			'com.annonces.publieur.quand.creneau' => ({required Object date, required Object heure}) => 'Le ${date} à ${heure}',
+			'com.annonces.publieur.quand.creneauDetail' => 'L\'annonce attend cette date. Vous la retrouvez dans les annonces planifiées.',
+			'com.annonces.publieur.apercu.a' => ({required Object cible}) => 'À : ${cible}',
+			'com.annonces.publieur.apercu.diffusionMaintenant' => 'Diffusion : dès la confirmation',
+			'com.annonces.publieur.apercu.diffusionLe' => ({required Object date, required Object heure}) => 'Diffusion prévue le ${date} à ${heure}',
+			'com.annonces.publieur.continuer' => 'Continuer',
+			'com.annonces.publieur.publier' => 'Publier l\'annonce',
+			'com.annonces.publieur.programmer' => 'Programmer l\'annonce',
+			'com.annonces.publieur.reessayer' => 'Réessayer la publication',
+			'com.annonces.publieur.terminer' => 'Terminer',
+			'com.annonces.publieur.manqueContenu' => 'Écrivez un titre et un texte pour continuer.',
+			'com.annonces.publieur.manqueAudience' => 'Choisissez les destinataires pour continuer.',
+			'com.annonces.publieur.enCours' => 'Publication en cours. Attendez la confirmation.',
+			'com.annonces.publieur.publiee' => 'Annonce publiée. Les destinataires la reçoivent.',
+			'com.annonces.publieur.planifiee' => ({required Object date, required Object heure}) => 'Annonce planifiée pour le ${date} à ${heure}.',
+			'com.annonces.publieur.nonConfirmee' => 'Cette annonce n\'est pas encore confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez : elle ne partira qu\'une fois.',
+			'com.annonces.publieur.horsLigne' => 'Cette annonce n\'est pas encore confirmée. Réessayez dès que l\'envoi est de nouveau possible.',
+			'com.annonces.publieur.indisponible' => 'La publication des annonces n\'est pas encore disponible. Revenez plus tard.',
+			'com.annonces.publieur.aucuneCibleTitre' => 'Aucun destinataire ouvert',
+			'com.annonces.publieur.aucuneCible' => 'Vous ne pouvez publier pour aucun destinataire pour le moment. Demandez l\'accès à la direction.',
+			'com.annonces.publieur.classeRefuseeTitre' => 'Publication réservée',
+			'com.annonces.publieur.classeRefusee' => 'Vous ne pouvez pas publier d\'annonce pour cette Classe. Demandez l\'accès à la direction.',
+			'com.annonces.administration.nouvelle' => 'Nouvelle annonce',
+			'com.annonces.administration.demo' => 'Démonstration',
+			_ => null,
+		} ?? switch (path) {
+			'com.annonces.administration.demoDetail' => 'Données de démonstration : aucun chiffre réel.',
+			'com.annonces.administration.horsLigne' => 'Les annonces ne peuvent pas être actualisées maintenant.',
+			'com.annonces.administration.indicateurs.titre' => 'Indicateurs des communications',
+			'com.annonces.administration.indicateurs.publiees' => 'Annonces publiées',
+			'com.annonces.administration.indicateurs.planifiees' => 'Annonces planifiées',
+			'com.annonces.administration.indicateurs.moderation' => 'Contenus en modération',
+			'com.annonces.administration.indicateurs.regles' => 'Droits de publication',
+			'com.annonces.administration.indicateurs.indisponible' => ({required Object libelle}) => '${libelle} : pas encore disponible',
+			'com.annonces.administration.indicateurs.echec' => ({required Object libelle}) => '${libelle} : non chargé. Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah : rechargez la page.',
+			'com.annonces.administration.indicateurs.reserve' => ({required Object libelle}) => '${libelle} : réservé aux personnes chargées de la modération',
+			'com.annonces.administration.publiees.titre' => 'Annonces publiées',
+			'com.annonces.administration.publiees.vide' => 'Aucune annonce publiée sur la période.',
+			'com.annonces.administration.publiees.pastille' => 'Publiée',
+			'com.annonces.administration.publiees.legende' => ({required Object cible, required Object date, required Object heure}) => '${cible} · le ${date} à ${heure}',
+			'com.annonces.administration.planifiees.titre' => 'Annonces planifiées',
+			'com.annonces.administration.planifiees.vide' => 'Aucune annonce planifiée.',
+			'com.annonces.administration.planifiees.pastille' => 'Planifiée',
+			'com.annonces.administration.planifiees.legende' => ({required Object cible, required Object date, required Object heure}) => '${cible} · prévue le ${date} à ${heure}',
+			'com.annonces.administration.matrice.titre' => 'Droits de publication des annonces',
+			'com.annonces.administration.matrice.detail' => 'La règle de l\'académie, appliquée à chaque publication.',
+			'com.annonces.administration.matrice.auteurs' => 'Qui publie',
+			'com.annonces.administration.matrice.peutPublier' => 'Peut publier',
+			'com.annonces.administration.matrice.audiences' => 'Destinataires',
+			'com.annonces.administration.matrice.validation' => 'Validation requise',
+			'com.annonces.administration.matrice.oui' => 'Oui',
+			'com.annonces.administration.matrice.non' => 'Non',
+			'com.annonces.administration.matrice.aucune' => 'Aucune',
+			'com.annonces.administration.matrice.vide' => 'Aucun droit de publication n\'est configuré.',
+			'com.annonces.administration.moderation.titre' => 'File de modération',
+			'com.annonces.administration.moderation.legende' => ({required Object date, required Object heure}) => 'Signalé le ${date} à ${heure}',
+			'com.annonces.administration.moderation.motif' => ({required Object motif}) => 'Motif : ${motif}',
+			'com.annonces.administration.moderation.extraitTitre' => 'Contenu signalé',
+			'com.annonces.administration.moderation.extraitAbsent' => 'L\'extrait de ce contenu n\'est pas communiqué.',
+			'com.annonces.administration.moderation.regle' => 'Règle visée',
+			'com.annonces.administration.moderation.approuver' => 'Approuver après examen',
+			'com.annonces.administration.moderation.masquer' => 'Masquer le contenu',
+			'com.annonces.administration.moderation.restaurer' => 'Restaurer le contenu',
+			'com.annonces.administration.moderation.rejeter' => 'Rejeter le signalement',
+			'com.annonces.administration.moderation.contexte' => 'Ouvrir le contexte',
+			'com.annonces.administration.moderation.masque' => 'Masqué',
+			'com.annonces.administration.moderation.approuve' => 'Approuvé',
+			'com.annonces.administration.moderation.rejete' => 'Signalement rejeté',
+			'com.annonces.administration.moderation.restaure' => 'Restauré',
+			'com.annonces.administration.moderation.enregistree' => 'Décision enregistrée.',
+			'com.annonces.administration.moderation.nonConfirmee' => 'Cette décision n\'est pas encore confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'com.annonces.administration.moderation.horsLigne' => 'La file de modération ne peut pas être actualisée maintenant.',
+			'com.annonces.administration.moderation.indisponible' => 'La modération n\'est pas encore disponible. Revenez plus tard.',
+			'com.annonces.administration.moderation.videTitre' => 'Aucun contenu à examiner',
+			'com.annonces.administration.moderation.vide' => 'Les signalements de la Communauté enseignants arrivent ici.',
+			'com.annonces.administration.moderation.refuseTitre' => 'File réservée à la modération',
+			'com.annonces.administration.moderation.refuse' => 'Seules les personnes chargées de la modération voient cette file.',
+			'com.annonces.administration.moderation.choisirTitre' => 'Aucun signalement ouvert',
+			'com.annonces.administration.moderation.choisir' => 'Choisissez un signalement dans la file pour l\'examiner.',
+			'com.annonces.administration.moderation.sansAction' => 'Aucune action de modération ne vous est ouverte sur ce contenu.',
+			'com.annonces.administration.moderation.sansSanction' => 'Aucune sanction de compte n\'est appliquée automatiquement.',
+			'com.annonces.administration.moderation.politique' => 'Politique anti-promotion',
+			'com.annonces.administration.moderation.ouvrirSemantique' => ({required Object objet, required Object motif}) => 'Examiner ${objet}, motif ${motif}',
+			'com.annonces.administration.moderation.regleMotif.publicite' => 'La publicité n\'est pas autorisée dans la Communauté enseignants.',
+			'com.annonces.administration.moderation.regleMotif.lienAffilie' => 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.',
+			'com.annonces.administration.moderation.regleMotif.vente' => 'La vente de produits ou de services n\'est pas autorisée dans cet espace.',
+			'com.annonces.administration.moderation.regleMotif.sollicitation' => 'La sollicitation commerciale n\'est pas autorisée dans cet espace.',
+			'com.annonces.administration.moderation.regles.titre' => 'Partage pédagogique uniquement',
+			'com.annonces.administration.moderation.regles.corps' => 'La Communauté enseignants est réservée aux échanges professionnels entre enseignants.',
+			'com.annonces.administration.moderation.regles.reglesTitre' => 'Règles de publication',
+			'com.annonces.administration.moderation.regles.pasPublicite' => 'Aucune publicité',
+			'com.annonces.administration.moderation.regles.pasAffilie' => 'Aucun lien affilié',
+			'com.annonces.administration.moderation.regles.pasVente' => 'Aucune vente de produit ou de service',
+			'com.annonces.administration.moderation.regles.pasSollicitation' => 'Aucune sollicitation commerciale',
+			'com.annonces.administration.moderation.regles.pasDonnees' => 'Aucune donnée personnelle d\'un élève ou d\'une famille',
+			'com.annonces.demoPublication.lienAdministration' => 'Administration des communications (direction)',
+			'com.annonces.demoPublication.lienPublier' => 'Publier une annonce pour une Classe (enseignant)',
+			'com.annonces.demoPublication.toutes' => 'Toute l\'académie',
+			'com.annonces.demoPublication.familles' => 'Familles',
+			'com.annonces.demoPublication.enseignants' => 'Enseignants',
+			'com.annonces.demoPublication.eleves' => 'Élèves',
+			'com.annonces.demoPublication.controleurs' => 'Contrôleurs',
+			'com.annonces.demoPublication.direction' => 'Direction',
+			'com.annonces.demoPublication.audiencesDirection' => 'Toute l\'académie, un public ou une Classe',
+			'com.annonces.demoPublication.audiencesEnseignant' => 'Sa Classe seulement',
+			'com.annonces.demoPublication.vacancesTitre' => 'Calendrier des vacances d\'hiver',
+			'com.annonces.demoPublication.vacancesTexte' => 'Les cours s\'arrêtent du 21 décembre au 5 janvier. Les séances reprennent le lundi 6 janvier aux horaires habituels.',
+			'com.annonces.demoPublication.reunionTitre' => 'Réunion des enseignants de jeudi',
+			'com.annonces.demoPublication.reunionTexte' => 'La réunion pédagogique de jeudi commence à 18 h, en visio. L\'ordre du jour est dans Le Studio.',
+			'com.annonces.demoPublication.recitationTitre' => 'Récitation de fin de trimestre',
+			'com.annonces.demoPublication.recitationTexte' => 'La Classe An-Nour présentera sa récitation de fin de trimestre samedi à 10 h, en visio.',
+			'com.annonces.demoPublication.rentreeTitre' => 'Reprise des cours après les vacances',
+			'com.annonces.demoPublication.rentreeTexte' => 'Les séances reprennent le lundi 6 janvier aux horaires habituels.',
+			'com.annonces.demoPublication.signalementAffilie' => 'Publication « Fiches de tajwid à imprimer »',
+			'com.annonces.demoPublication.extraitAffilie' => 'Retrouvez mes fiches avec ce lien partenaire, remise de 20 % avec mon code.',
+			'com.annonces.demoPublication.signalementVente' => 'Publication « Cours particuliers disponibles »',
+			'com.annonces.demoPublication.extraitVente' => 'Je propose des cours particuliers payants le week-end, écrivez-moi.',
+			'com.annonces.demoPublication.signalementHorsSujet' => 'Réponse sous « Organiser une révision collective »',
+			'com.annonces.section' => 'Annonces de la Classe',
+			'com.annonces.annonce' => 'Annonce',
+			'com.annonces.publier' => 'Publier une annonce',
+			'com.annonces.videPublier' => 'Aucune annonce pour cette Classe. Publiez la première pour toute la Classe.',
+			'com.annonces.auteurDate' => ({required Object auteur, required Object date, required Object heure}) => '${auteur}, le ${date} à ${heure}',
+			'com.annonces.date' => ({required Object date, required Object heure}) => 'Le ${date} à ${heure}',
+			'com.annonces.lire' => 'Lire l\'annonce en entier',
+			'com.annonces.ouvrirClasse' => 'Ouvrir la Classe',
+			'com.annonces.ouvrirClasseSemantique' => ({required Object classe}) => 'Ouvrir ${classe}',
+			'com.annonces.marquerLue' => 'Marquer comme lue',
+			'com.annonces.lue' => 'Lue',
+			'com.annonces.carteSemantique' => ({required Object classe, required Object titre}) => 'Annonce de ${classe} : ${titre}',
+			'com.annonces.introuvableTitre' => 'Cette annonce n\'est plus disponible',
+			'com.annonces.introuvablePhrase' => 'Elle a peut-être été retirée de la Classe. Revenez à vos notifications.',
+			'com.annonces.demo.detail' => 'Démonstration hors production : données fictives, rien n\'est envoyé.',
+			'com.annonces.demo.choisirRole' => 'Choisissez le rôle à montrer',
+			'com.annonces.demo.roles.tuteur' => 'Famille',
+			'com.annonces.demo.roles.enseignant' => 'Enseignant',
+			'com.annonces.demo.roles.adulte' => 'Élève adulte',
+			'com.annonces.demo.roles.admin' => 'Direction',
+			'com.annonces.demo.roles.controleur' => 'Contrôleur',
+			'com.annonces.demo.classeNour' => 'Classe An-Nour',
+			'com.annonces.demo.classeFajr' => 'Classe Al-Fajr',
+			'com.annonces.demo.enseignante' => 'Enseignante de la Classe',
+			'com.annonces.demo.f.adminStudioMention' => 'Studio : une discussion du canal Programmes vous mentionne',
+			'com.annonces.demo.f.adminStudioReponse' => 'Studio : nouvelle réponse à votre message sur le programme de printemps',
+			'com.annonces.demo.f.adminStudioDecision' => 'Studio : une décision est demandée sur le support de la leçon 4',
+			'com.annonces.demo.f.adminStudioAssigne' => 'Studio : la relecture du support de Tajwid vous est assignée',
+			'com.annonces.demo.f.adminStudioInterne' => 'Annonce interne de l\'équipe Studio : réunion d\'équipe jeudi à 18 h',
+			'com.annonces.demo.f.adminStudioContexte' => 'Studio : un support est prêt pour la Classe An-Nour',
+			'com.annonces.demo.f.annonceNourTitre' => 'Récitation de fin de trimestre devant les familles',
+			'com.annonces.demo.f.annonceNourTexte' => 'Chères familles, la Classe An-Nour présentera sa récitation de fin de trimestre le samedi 14 décembre à 10 h, en visio. Chaque élève récitera la sourate travaillée ce trimestre. Merci de prévoir une connexion stable et un endroit calme. Les élèves qui le souhaitent peuvent répéter pendant la séance du mercredi précédent. Les familles peuvent assister en silence, micro coupé. Un compte rendu sera partagé après la séance.',
+			'com.annonces.demo.f.annonceFajrTitre' => 'Révision avant l\'évaluation de jeudi',
+			'com.annonces.demo.f.annonceFajrTexte' => 'Révisez les dix derniers versets de la sourate Al-Mulk avant jeudi.',
+			'com.annonces.demo.f.tuteurUrgent' => 'La séance de ce soir est annulée',
+			'com.annonces.demo.f.tuteurUrgentTexte' => 'L\'enseignante est absente ce soir. La séance est reportée à jeudi, même heure. Vous n\'avez rien à faire.',
+			'com.annonces.demo.f.tuteurReponse' => 'Réponse attendue : accord pour la récitation de Yasmine',
+			'com.annonces.demo.f.tuteurReponseTexte' => 'L\'enseignante attend votre accord pour que Yasmine récite devant les familles. Répondez-lui depuis l\'Espace Classe.',
+			'com.annonces.demo.f.tuteurMessage' => 'Nouveau message de l\'enseignante de la Classe An-Nour',
+			'com.annonces.demo.f.tuteurDossier' => 'Votre dossier d\'inscription est validé',
+			'com.annonces.demo.f.adulteSeance' => 'Votre séance de mardi est déplacée à 19 h',
+			'com.annonces.demo.f.adulteMessage' => 'Nouveau message de votre enseignante',
+			'com.annonces.demo.f.enseignantFamille' => 'Message de la famille de Yasmine, Classe An-Nour',
+			'com.annonces.demo.f.enseignantDirection' => 'Annonce de la direction : calendrier des vacances d\'hiver',
+			'com.annonces.demo.f.enseignantDirectionTexte' => 'Les cours s\'arrêtent du 21 décembre au 5 janvier. Les séances reprennent le lundi 6 janvier aux horaires habituels.',
+			'com.annonces.demo.f.enseignantPlanning' => 'Votre planning de la semaine prochaine a changé',
+			'com.annonces.demo.f.enseignantMention' => 'Une publication de la Communauté vous mentionne',
+			'com.annonces.demo.f.enseignantReponse' => 'Nouvelle réponse à votre publication',
+			'com.annonces.demo.f.enseignantAdministration' => 'Message de l\'Administration : pièces à fournir',
+			'com.annonces.demo.f.adminDossiers' => 'Trois dossiers d\'inscription sont à traiter',
+			'com.annonces.demo.f.adminSignalement' => 'Une publication de la Communauté a été signalée',
+			'com.annonces.demo.f.adminReponse' => 'Réponse de la famille de Bilal à votre message',
+			'com.annonces.demo.f.adminPlanifiee' => 'Une annonce planifiée est à vérifier avant publication',
+			'com.annonces.demo.f.adminOperationnel' => 'Classe An-Nour : effectif complet',
+			'com.annonces.demo.f.controleurMission' => 'Nouvelle mission : visite de la Classe An-Nour',
+			'com.annonces.demo.f.controleurChangement' => 'Votre mission de jeudi est déplacée à 18 h',
+			'com.annonces.demo.f.controleurReponse' => 'Réponse de l\'Administration à votre rapport',
+			'com.annonces.titre' => 'Annonces',
 			_ => null,
 		};
 	}

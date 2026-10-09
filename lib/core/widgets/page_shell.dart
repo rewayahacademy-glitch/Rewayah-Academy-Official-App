@@ -45,6 +45,12 @@ const double _hauteurTeteFixe = 360;
 /// `NavShell`. Un gabarit qui saurait tout finirait par etre la seule chose que
 /// personne n'ose modifier.
 ///
+/// **Tete confiee** (COM-RC tour 2, R-02) : quand la tete doit defiler
+/// (texte agrandi sur telephone, vue tres basse) et que le corps, non
+/// defilant, contient une liste qui la prend ([TetePageConfiee], un fil de
+/// discussion), la tete defile avec cette liste : le premier ecran garde le
+/// champ du fil au lieu d'une tete qui repousse le corps sous le pli.
+///
 /// **Zone sure** : le corps est en `SafeArea`, et c'est la coquille qui retire
 /// de son `MediaQuery` l'encart deja consomme par sa barre ou sa colonne
 /// (`NavShell`) : aucun encart n'est applique deux fois.
@@ -64,7 +70,20 @@ class PageShell extends StatelessWidget {
     this.defilante = true,
     this.actionsCoquille = true,
     this.focusTitre,
+    this.bandeauHorsLigne = const OfflineBanner(),
   });
+
+  /// Le bandeau hors ligne pose en tete de page, sans gouttiere. Par defaut,
+  /// le bandeau generique de l'application ([OfflineBanner], texte
+  /// `reseau.horsLigne`, « l'envoi attendra »).
+  ///
+  /// **D-FUS-3 (decision du directeur du 05/10, choix a ; revue COM-R,
+  /// R-03)** : les pages des Communications ne gardent que leur propre
+  /// bandeau, car aucun message n'y est mis en file. Elles passent ici
+  /// `BandeauHorsLigneCommunication` (meme place, meme rendu), ou
+  /// `SizedBox.shrink()` quand leur corps pose deja ce bandeau lui-meme
+  /// (Messages, Studio). Les autres ecrans ne changent pas.
+  final Widget bandeauHorsLigne;
 
   /// Le focus du titre, pour qu'une page y ramene le lecteur (voir
   /// [EntetePage.focusTitre]).
@@ -269,7 +288,7 @@ class PageShell extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            const OfflineBanner(),
+            bandeauHorsLigne,
             Expanded(
               child: _Colonne(
                 gouttiere: gabarit.gouttiere,
@@ -438,6 +457,22 @@ class _BasculeState extends State<_Bascule> {
     debugLabel: 'PageShell.complement',
   );
   final GlobalKey _cleCorps = GlobalKey(debugLabel: 'PageShell.corps');
+  final RelaisTetePage _relais = RelaisTetePage._();
+  bool _reconstructionPrevue = false;
+
+  /// Un preneur arrive ou part pendant une construction : la bascule se
+  /// reconstruit a l'image suivante, jamais pendant la construction en
+  /// cours.
+  void _auChangementDePreneur() {
+    if (_reconstructionPrevue) return;
+    _reconstructionPrevue = true;
+    SchedulerBinding.instance
+      ..addPostFrameCallback((_) {
+        _reconstructionPrevue = false;
+        if (mounted) setState(() {});
+      })
+      ..ensureVisualUpdate();
+  }
 
   /// Ce que les `ColonneCorps` du corps signalent leur manquer
   /// (PAGESHELL-200-1b).
@@ -545,6 +580,7 @@ class _BasculeState extends State<_Bascule> {
   @override
   void initState() {
     super.initState();
+    _relais._auChangement = _auChangementDePreneur;
     _manque
       ..surManqueTeteFixe = _forcerDefilement
       ..surTientTeteFixe = _revenirTeteFixe;
@@ -630,6 +666,9 @@ class _BasculeState extends State<_Bascule> {
 
   @override
   void dispose() {
+    // Un preneur peut se retirer apres cette page (meme demontage) : le
+    // relais ne rappelle plus personne.
+    _relais._auChangement = null;
     _manque
       ..surManqueTeteFixe = null
       ..surTientTeteFixe = null;
@@ -677,10 +716,21 @@ class _BasculeState extends State<_Bascule> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[noyau, complement],
           );
-    final Widget corps = KeyedSubtree(
+    // COM-RC tour 2 (R-02) : une liste du corps peut prendre la tete
+    // ([TetePageConfiee], un fil de discussion).
+    Widget corpsAvec({required bool confiee}) => KeyedSubtree(
       key: _cleCorps,
-      child: _PorteeManque(manque: _manque, child: widget.corps),
+      child: _PorteeManque(
+        manque: _manque,
+        child: TetePageConfiee._(
+          relais: _relais,
+          titulaire: _relais.titulaire,
+          tete: confiee ? tete : null,
+          child: widget.corps,
+        ),
+      ),
     );
+    final Widget corps = corpsAvec(confiee: false);
 
     final double echelle = MediaQuery.textScalerOf(context).scale(1);
     return LayoutBuilder(
@@ -697,6 +747,13 @@ class _BasculeState extends State<_Bascule> {
         // Force seulement : une page dont la tete defile de toute facon
         // garde la regle de `_hauteurCorps`.
         _manque.forcee = forcee && !teteDefilante;
+        // COM-RC tour 2 (R-02) : un corps non defilant dont la liste a pris
+        // la tete (un fil de discussion) la fait defiler avec ses messages :
+        // le premier ecran montre la fin du fil et son champ, au lieu d'une
+        // tete qui repoussait le champ sous le pli (320 et texte x2).
+        if (teteDefilante && !widget.defilante && _relais.pris) {
+          return corpsAvec(confiee: true);
+        }
         final _Mode mode = teteDefilante || forcee
             ? _Mode.defilementGlobal
             : mesure;
@@ -1542,6 +1599,76 @@ class _RenduSignalDefileur extends RenderProxyBox {
     _manque?.oublier(this);
     super.detach();
   }
+}
+
+/// Le relais entre [PageShell] et la liste qui peut prendre sa tete (COM-RC
+/// tour 2, R-02) : un preneur s'y declare, la page le sait a l'image
+/// suivante.
+class RelaisTetePage {
+  RelaisTetePage._();
+
+  final Set<Object> _preneurs = <Object>{};
+  VoidCallback? _auChangement;
+
+  /// Vrai quand au moins une liste a pris la tete.
+  bool get pris => _preneurs.isNotEmpty;
+
+  /// Le seul preneur a qui la tete est confiee : le premier arrive encore
+  /// present (COM-RC tour 3). La tete porte une cle globale : deux preneurs
+  /// sous la meme page (deux fils) ne la montent jamais ensemble. Quand le
+  /// titulaire la rend, le suivant la recoit a l'image suivante.
+  Object? get titulaire => _preneurs.isEmpty ? null : _preneurs.first;
+
+  /// [preneur] (l'etat d'un fil) sait faire defiler la tete de la page avec
+  /// sa liste.
+  void prendre(Object preneur) {
+    if (_preneurs.add(preneur)) _auChangement?.call();
+  }
+
+  /// [preneur] ne prend plus la tete (demontage, autre page).
+  void rendre(Object preneur) {
+    if (_preneurs.remove(preneur)) _auChangement?.call();
+  }
+}
+
+/// Ce que [PageShell] confie au corps d'une page **non defilante** : la tete
+/// de la page, quand elle doit defiler (texte agrandi sur telephone, vue
+/// tres basse) et qu'une liste du corps l'a prise (COM-RC tour 2, R-02).
+///
+/// Un fil de discussion ([FilDiscussion]) se declare preneur par [relais] ;
+/// la page lui confie alors sa tete ([tete] non nul), qu'il pose en premier
+/// element de sa liste. Un seul preneur la pose : le [titulaire] (deux fils
+/// sous la meme page ne se partagent jamais sa cle globale). Sans preneur
+/// (chargement, erreur, liste des fils), la tete reste a sa place et defile
+/// au-dessus du corps, comme avant.
+class TetePageConfiee extends InheritedWidget {
+  const TetePageConfiee._({
+    required this.relais,
+    required this.titulaire,
+    required this.tete,
+    required super.child,
+  });
+
+  /// Le relais ou se declarer preneur.
+  final RelaisTetePage relais;
+
+  /// Le seul preneur autorise a poser [tete] ([RelaisTetePage.titulaire]) ;
+  /// tout autre preneur la laisse de cote.
+  final Object? titulaire;
+
+  /// La tete confiee, ou nul : la page la rend elle-meme.
+  final Widget? tete;
+
+  /// La tete confiee au-dessus de [context], ou nul hors d'une page non
+  /// defilante.
+  static TetePageConfiee? de(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<TetePageConfiee>();
+
+  @override
+  bool updateShouldNotify(TetePageConfiee ancien) =>
+      relais != ancien.relais ||
+      !identical(titulaire, ancien.titulaire) ||
+      tete != ancien.tete;
 }
 
 /// La colonne de contenu : gouttiere du gabarit, largeur bornee, centree.

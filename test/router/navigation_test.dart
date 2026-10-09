@@ -239,10 +239,12 @@ void main() {
 
     // Toute la table des routes du tuteur (mapping sections 3 et 4) : la
     // route existe, la garde la laisse passer, l'ecran se construit dans la
-    // coquille, et la destination parente est active.
-    final List<(String, Type, int)> table = <(String, Type, int)>[
+    // coquille, et la destination parente est active. La page des
+    // notifications n'en allume aucune : la cloche y est la seule entree
+    // active (COM-F-Q5).
+    final List<(String, Type, int?)> table = <(String, Type, int?)>[
       (Routes.tuteurAccueil, AccueilFamillePage, 0),
-      (Routes.tuteurNotifications, NotificationsPage, 0),
+      (Routes.tuteurNotifications, NotificationsPage, null),
       ('${Routes.tuteurClassesCatalogue}?eleve=e1', CatalogueClassesPage, 0),
       (Routes.classePour('g1', eleveId: 'e1'), ClasseTuteurPage, 0),
       (Routes.classeSousPage('g1', 'planning'), PlanningClassePage, 0),
@@ -346,7 +348,7 @@ void main() {
     };
 
     test('chaque route de la table a son test de bouton (P2-09)', () {
-      for (final (String chemin, Type ecran, int _) in table) {
+      for (final (String chemin, Type ecran, int? _) in table) {
         final String? fichier = boutonTesteDans[ecran];
         expect(fichier, isNotNull, reason: '$chemin : aucun test de bouton');
         final String source = File(fichier!).readAsStringSync();
@@ -355,7 +357,7 @@ void main() {
       }
     });
 
-    for (final (String chemin, Type ecran, int destination) in table) {
+    for (final (String chemin, Type ecran, int? destination) in table) {
       testWidgets('$chemin rend $ecran, destination $destination active', (
         WidgetTester tester,
       ) async {

@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/communications/modeles_communication.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
@@ -16,6 +17,8 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/features/com_annonces/annonces_de_classe.dart';
+import 'package:rewayah_academy/features/com_messages/entree_messages_contexte.dart';
 import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 import 'package:rewayah_academy/features/demo/classe_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
@@ -445,5 +448,25 @@ void main() {
     expect(find.byType(ActionPrincipale), findsNothing);
     expect(find.byType(CarteSession), findsNothing);
     expect(participants, findsNothing);
+  });
+
+  testWidgets('COM-F : annonces et Messages de la Classe rendus apres les '
+      'ressources, sur la Classe affichee', (WidgetTester tester) async {
+    taille(tester, const Size(390, 844));
+    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maClasse));
+    expect(find.byType(MaClasseAdultePage), findsOneWidget);
+    final AnnoncesDeClasse annonces = tester.widget<AnnoncesDeClasse>(
+      find.byType(AnnoncesDeClasse, skipOffstage: false),
+    );
+    expect(annonces.classeId, DonneesClasseDemo.groupeId);
+    expect(annonces.ecartAvant, isNotNull);
+    expect(annonces.ecartApres, isNull);
+    final EntreeMessagesContexte messages = tester
+        .widget<EntreeMessagesContexte>(
+          find.byType(EntreeMessagesContexte, skipOffstage: false),
+        );
+    expect(messages.type, TypeObjetLie.classe);
+    expect(messages.objetId, DonneesClasseDemo.groupeId);
+    expect(messages.ecartAvant, isNotNull);
   });
 }

@@ -19,7 +19,7 @@ import '../../fixtures/tuteur/faux_classes_foyer.dart';
 ProfilEleveFoyer _profil({DateTime? finAcces}) => ProfilEleveFoyer.depuis(
   EleveDuFoyer(
     id: 'foyer-a-eleve-1',
-    prenom: 'Eleve A1',
+    prenom: 'Élève A1',
     identifiantImmuable: 'STUD-FA-000001',
     mode: InterfaceMode.standard,
     camera: CameraPolicy.forbidden,

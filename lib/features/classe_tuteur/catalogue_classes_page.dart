@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/appairage/service_appairage.dart' show elevesDuFoyerProvider;
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_catalogue_classes.dart';
@@ -325,7 +326,10 @@ class _Liste extends ConsumerWidget {
           nature: NatureEtat.aucunResultat,
           titre: t.classe.pageCatalogue.aucune,
           phrase: t.classe.pageCatalogue.aucuneDetail(
-            dePrenom: deDevant(eleve.prenom),
+            dePrenom: deDevant(
+              eleve.prenom,
+              cle: 'classe.pageCatalogue.aucuneDetail',
+            ),
           ),
         ),
         construire: (List<ClasseOuverte> classes) => classes.isEmpty
@@ -333,7 +337,10 @@ class _Liste extends ConsumerWidget {
                 nature: NatureEtat.aucunResultat,
                 titre: t.classe.pageCatalogue.aucune,
                 phrase: t.classe.pageCatalogue.aucuneDetail(
-                  dePrenom: deDevant(eleve.prenom),
+                  dePrenom: deDevant(
+                    eleve.prenom,
+                    cle: 'classe.pageCatalogue.aucuneDetail',
+                  ),
                 ),
               )
             : Column(
@@ -411,7 +418,7 @@ class CarteClasseOuverte extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text(
-                  classe.libelle,
+                  traitsDUnionInsecables(classe.libelle),
                   style: palette.inkStrong.applyTo(
                     (large ? textes.titleLarge : textes.titleMedium) ??
                         const TextStyle(),
@@ -673,7 +680,7 @@ class _Resultat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final r = t.classe.pageCatalogue.resultat;
-    final String nom = classe.libelle;
+    final String nom = traitsDUnionInsecables(classe.libelle);
     return switch (resultat.statut) {
       StatutInscription.inscrit => EcranResultat(
         icone: AppIcons.succes,
@@ -688,7 +695,13 @@ class _Resultat extends StatelessWidget {
       StatutInscription.enAttenteValidation => EcranResultat(
         icone: AppIcons.attente,
         titre: r.validationTitre,
-        phrase: r.validationPhrase(dePrenom: deDevant(prenom), classe: nom),
+        phrase: r.validationPhrase(
+          dePrenom: deDevant(
+            prenom,
+            cle: 'classe.pageCatalogue.resultat.validationPhrase',
+          ),
+          classe: nom,
+        ),
         libelleAction: r.retourAccueil,
         onAction: onAccueil,
       ),
@@ -696,7 +709,13 @@ class _Resultat extends StatelessWidget {
         icone: AppIcons.attente,
         ton: TonEtat.avertissement,
         titre: r.listeAttenteTitre,
-        phrase: r.listeAttentePhrase(prenom: prenom, deClasse: deDevant(nom)),
+        phrase: r.listeAttentePhrase(
+          prenom: prenom,
+          deClasse: deDevant(
+            nom,
+            cle: 'classe.pageCatalogue.resultat.listeAttentePhrase',
+          ),
+        ),
         libelleAction: r.retourAccueil,
         onAction: onAccueil,
       ),

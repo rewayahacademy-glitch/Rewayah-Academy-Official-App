@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
@@ -180,7 +181,10 @@ class CarteSeanceClasse extends ConsumerWidget {
         Ecart.vXs,
         Text(
           t.classe.seance.aucuneDetail(
-            dePrenom: deDevant(contexte.eleve.prenom),
+            dePrenom: deDevant(
+              contexte.eleve.prenom,
+              cle: 'classe.seance.aucuneDetail',
+            ),
           ),
           style: discret,
         ),
@@ -264,8 +268,10 @@ class _Enseignant extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          // `nomClasseInsecable` garde « An-Nour » entier : a 320 px en
+          // texte x2, « Classe An- / Nour » passait a la ligne dans le nom.
           Text(
-            classe.libelle,
+            nomClasseInsecable(classe.libelle),
             style: palette.inkStrong.applyTo(
               (compact ? textes.titleMedium : textes.titleLarge) ??
                   const TextStyle(),
@@ -365,6 +371,11 @@ class _Bandeau extends StatelessWidget {
         color: palette.surfacePrimary.background,
       ),
     };
+    final TextStyle styleGauche = paire.applyTo(
+      AppTypography.tabulaire(
+        (compact ? textes.labelLarge : textes.titleSmall) ?? const TextStyle(),
+      ),
+    );
     return MergeSemantics(
       child: DecoratedBox(
         decoration: paire.decoration(borderRadius: AppRadius.arrondiSm),
@@ -373,11 +384,20 @@ class _Bandeau extends StatelessWidget {
             horizontal: AppSpacing.md,
             vertical: AppSpacing.sm,
           ),
+          // Le point reste sur la premiere ligne de l'etat : quand
+          // l'accompagnement passe dessous (320 px, texte x2), il n'est pas
+          // centre entre les deux lignes (COM-RC tour 7, lot L).
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              SizedBox.square(
-                dimension: StatusPill.diametrePastille,
-                child: DecoratedBox(decoration: point),
+              SizedBox(
+                height: _hauteurLigne(context, styleGauche),
+                child: Center(
+                  child: SizedBox.square(
+                    dimension: StatusPill.diametrePastille,
+                    child: DecoratedBox(decoration: point),
+                  ),
+                ),
               ),
               Ecart.hSm,
               // L'etat au debut, l'accompagnement au bout de la ligne ; quand
@@ -390,15 +410,7 @@ class _Bandeau extends StatelessWidget {
                   spacing: AppSpacing.sm,
                   runSpacing: AppSpacing.xs,
                   children: <Widget>[
-                    Text(
-                      gauche,
-                      style: paire.applyTo(
-                        AppTypography.tabulaire(
-                          (compact ? textes.labelLarge : textes.titleSmall) ??
-                              const TextStyle(),
-                        ),
-                      ),
-                    ),
+                    Text(gauche, style: styleGauche),
                     if (droite != null)
                       Text(
                         droite!,
@@ -439,52 +451,122 @@ class _Heures extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Expanded(
-            child: _Colonne(
-              icone: AppIcons.journee,
-              libelle: affichage.date,
-              valeur: affichage.ville == null
-                  ? affichage.heure
-                  : LibellesGroupe.heureEtVille(
-                      heure: affichage.heure,
-                      ville: affichage.ville!,
-                    ),
-              complement: affichage.ville == null ? affichage.fuseau : null,
-              compact: compact,
-              annulee: annulee,
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsetsDirectional.only(start: AppSpacing.md),
-              // Le filet vertical, comme les autres separateurs
-              // (`contourCarte`), jamais plus fonce (manifeste, bloc seance).
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  border: BorderDirectional(
-                    start: palette.contourCarte.asBorderSide(),
-                  ),
+    final String valeurHeure = affichage.ville == null
+        ? affichage.heure
+        : LibellesGroupe.heureEtVille(
+            heure: affichage.heure,
+            ville: affichage.ville!,
+          );
+    final String? complement = affichage.ville == null
+        ? affichage.fuseau
+        : null;
+    // « 4 octobre » reste sur une ligne quand il y tient : jamais « 4 » seul
+    // en fin de ligne, loin de son mois (COM-RC tour 7, lot L).
+    Widget colonneHeure(String date) => _Colonne(
+      icone: AppIcons.journee,
+      libelle: date,
+      valeur: valeurHeure,
+      complement: complement,
+      compact: compact,
+      annulee: annulee,
+    );
+    final Widget duree = _Colonne(
+      icone: AppIcons.horloge,
+      libelle: LibellesGroupe.dureeLibelle,
+      valeur: affichage.duree,
+      compact: compact,
+    );
+    final ({TextStyle discret, TextStyle valeur}) styles = _Colonne.styles(
+      context,
+      compact: compact,
+    );
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    final double filet = palette.contourCarte.asBorderSide().width;
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints c) {
+        // Deux colonnes seulement si chaque mot y tient entier, mesure sur la
+        // largeur REELLE du texte de chaque colonne (le medaillon et son
+        // ecart ; a droite, en plus, le filet et ses deux marges) ; sinon la
+        // duree passe sous l'heure, sans filet : a 320 px en texte x2, la
+        // demi-colonne coupait « Diman/che », « Duré/e » et « 14:1/0 »
+        // (COM-RC tour 7, lot L), comme le bloc seance de l'Accueil.
+        bool tient(String? texte, TextStyle style, double largeur) =>
+            texte == null ||
+            largeurMotLePlusLong(context, texte, style, echelle) <= largeur;
+        // La duree tient sur UNE ligne : « 45 / min » se lisait mal.
+        bool tientSurUneLigne(String texte, TextStyle style, double largeur) =>
+            _largeurSurUneLigne(context, texte, style) <= largeur;
+        final double demi = c.maxWidth / 2;
+        final double texteGauche = demi - _Colonne.retrait;
+        final double texteDroite =
+            demi - AppSpacing.md * 2 - filet - _Colonne.retrait;
+        final String dateEnColonne = nombresLiesSiTient(
+          context,
+          affichage.date,
+          styles.discret,
+          texteGauche,
+        );
+        final bool deuxColonnes =
+            tient(dateEnColonne, styles.discret, texteGauche) &&
+            tient(valeurHeure, styles.valeur, texteGauche) &&
+            tient(complement, styles.discret, texteGauche) &&
+            tientSurUneLigne(
+              LibellesGroupe.dureeLibelle,
+              styles.discret,
+              texteDroite,
+            ) &&
+            tientSurUneLigne(affichage.duree, styles.valeur, texteDroite);
+        if (!deuxColonnes) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              colonneHeure(
+                nombresLiesSiTient(
+                  context,
+                  affichage.date,
+                  styles.discret,
+                  c.maxWidth - _Colonne.retrait,
                 ),
+              ),
+              Ecart.vMd,
+              duree,
+            ],
+          );
+        }
+        final Widget heure = colonneHeure(dateEnColonne);
+        return IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Expanded(child: heure),
+              Expanded(
                 child: Padding(
                   padding: const EdgeInsetsDirectional.only(
                     start: AppSpacing.md,
                   ),
-                  child: _Colonne(
-                    icone: AppIcons.horloge,
-                    libelle: LibellesGroupe.dureeLibelle,
-                    valeur: affichage.duree,
-                    compact: compact,
+                  // Le filet vertical, comme les autres separateurs
+                  // (`contourCarte`), jamais plus fonce (manifeste, bloc
+                  // seance).
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      border: BorderDirectional(
+                        start: palette.contourCarte.asBorderSide(),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsetsDirectional.only(
+                        start: AppSpacing.md,
+                      ),
+                      child: duree,
+                    ),
                   ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -507,15 +589,39 @@ class _Colonne extends StatelessWidget {
   final String? complement;
   final bool compact;
 
+  /// Ce que le medaillon et son ecart prennent a la largeur du texte.
+  static const double retrait = AppSpacing.section + AppSpacing.sm;
+
+  /// Le style du libelle et celui de la valeur. Tablette et bureau : le
+  /// corps a 14 et la valeur a 22 (manifeste, typographie : legende et
+  /// chiffre d'horaire du bureau).
+  static ({TextStyle discret, TextStyle valeur}) styles(
+    BuildContext context, {
+    required bool compact,
+  }) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    return (
+      discret: palette.inkMuted.applyTo(
+        (compact ? textes.bodySmall : textes.bodyMedium) ?? const TextStyle(),
+      ),
+      valeur: AppTypography.tabulaire(
+        palette.inkStrong.applyTo(
+          (compact ? textes.titleMedium : textes.titleLarge) ??
+              const TextStyle(),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    // Tablette et bureau : le corps a 14 et la valeur a 22 (manifeste,
-    // typographie : legende et chiffre d'horaire du bureau).
-    final TextStyle discret = palette.inkMuted.applyTo(
-      (compact ? textes.bodySmall : textes.bodyMedium) ?? const TextStyle(),
+    final ({TextStyle discret, TextStyle valeur}) style = styles(
+      context,
+      compact: compact,
     );
+    final TextStyle discret = style.discret;
     return MergeSemantics(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -547,12 +653,7 @@ class _Colonne extends StatelessWidget {
                 TexteHeureSeance(
                   heure: valeur,
                   annulee: annulee,
-                  style: AppTypography.tabulaire(
-                    palette.inkStrong.applyTo(
-                      (compact ? textes.titleMedium : textes.titleLarge) ??
-                          const TextStyle(),
-                    ),
-                  ),
+                  style: style.valeur,
                 ),
                 if (complement != null) Text(complement!, style: discret),
               ],
@@ -562,4 +663,34 @@ class _Colonne extends StatelessWidget {
       ),
     );
   }
+}
+
+/// La largeur de [texte] sur une seule ligne, au [style] donne et a
+/// l'echelle de texte de [context].
+double _largeurSurUneLigne(
+  BuildContext context,
+  String texte,
+  TextStyle style,
+) => _peindre(context, texte, style).width;
+
+/// La hauteur d'une ligne de texte au [style] donne, a l'echelle de texte de
+/// [context] : la place du point d'etat a cote de la premiere ligne.
+double _hauteurLigne(BuildContext context, TextStyle style) =>
+    _peindre(context, 'Hg', style).height;
+
+/// Mesure [texte] sur une ligne, comme `Text` le rendrait ici.
+Size _peindre(BuildContext context, String texte, TextStyle style) {
+  final TextPainter peintre = TextPainter(
+    text: TextSpan(
+      text: texte,
+      style: DefaultTextStyle.of(context).style.merge(style),
+    ),
+    textDirection: Directionality.of(context),
+    textScaler: MediaQuery.textScalerOf(context),
+    locale: Localizations.maybeLocaleOf(context),
+    maxLines: 1,
+  )..layout();
+  final Size taille = peintre.size;
+  peintre.dispose();
+  return taille;
 }

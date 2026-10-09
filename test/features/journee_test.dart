@@ -25,13 +25,17 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_horloge/emplacement_entree.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
+import 'package:rewayah_academy/core/widgets/grille_bento.dart';
 import 'package:rewayah_academy/core/widgets/pastille_etat_seance.dart';
 import 'package:rewayah_academy/core/widgets/point_rappel.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/features/com_communaute/entree_communaute.dart';
+import 'package:rewayah_academy/features/demo/communications/com_communaute_demo.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
 
 import '../capture/outil_capture.dart'
@@ -222,19 +226,23 @@ Future<void> _ouvrir(
   FauxServiceReseau? reseau,
   DateTime? maintenant,
   Size taille = const Size(390, 2400),
+  List<Override> autres = const <Override>[],
 }) async {
   _fenetre(tester, taille);
   await tester.pumpWidget(
     hote(
       const JourneePage(),
-      surcharges: _surcharges(
-        enseignant: enseignant,
-        regles: regles,
-        priere: priere,
-        presence: presence,
-        reseau: reseau,
-        maintenant: maintenant,
-      ),
+      surcharges: <Override>[
+        ..._surcharges(
+          enseignant: enseignant,
+          regles: regles,
+          priere: priere,
+          presence: presence,
+          reseau: reseau,
+          maintenant: maintenant,
+        ),
+        ...autres,
+      ],
     ),
   );
   await tester.pumpAndSettle();
@@ -1321,6 +1329,117 @@ void main() {
     }
   });
 
+  // COM-F-b (QUESTIONS Q2, 02_DEC-10, K-42) : la ligne « Communaute
+  // enseignants » a son emplacement dans « Ma journee », toujours rendu ;
+  // jamais un cinquieme bloc, jamais dans « Alertes utiles ».
+  group('COM-F-b : l emplacement Communaute, quatre blocs au plus', () {
+    Finder colonneDe(Finder entree) =>
+        find.ancestor(of: entree, matching: find.byType(Column)).first;
+
+    void verifier(WidgetTester tester) {
+      final Finder entree = find.byType(EntreeCommunaute);
+      expect(entree, findsOneWidget);
+      final GrilleBento grille = tester.widget<GrilleBento>(
+        find.byType(GrilleBento),
+      );
+      expect(grille.tuiles.length, lessThanOrEqualTo(4));
+      // Le plus proche parent est la colonne de « Ma journee ».
+      expect(
+        find.descendant(
+          of: colonneDe(entree),
+          matching: find.text(t.enseignant.journee.maJournee),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: colonneDe(entree),
+          matching: find.text(t.enseignant.journee.alertesUtiles),
+        ),
+        findsNothing,
+      );
+      expect(tester.takeException(), isNull);
+    }
+
+    testWidgets('les quatre blocs rendus : toujours quatre, pas cinq', (
+      WidgetTester tester,
+    ) async {
+      await _ouvrir(
+        tester,
+        maintenant: DateTime(2026, 9, 28, 17, 40),
+        enseignant: FauxServiceEnseignant()
+          ..seancesRendues = <SeanceEnseignant>[
+            _anNour(statut: StatutSeance.enCours),
+          ]
+          ..retardsRendus = <CahierEnRetard>[_cahier('a', 'Al-Badr', 26)],
+        presence: FauxServicePresence(
+          lignes: <PresenceParticipant>[
+            _presence(etat: EtatPresence.absente, prenom: 'Maryam'),
+          ],
+        ),
+      );
+      // Les quatre blocs sont bien la, sans quoi « quatre au plus » ne
+      // prouverait rien.
+      expect(find.text(t.enseignant.journee.aTerminer), findsOneWidget);
+      expect(find.text(t.enseignant.journee.alertesUtiles), findsOneWidget);
+      expect(
+        tester.widget<GrilleBento>(find.byType(GrilleBento)).tuiles.length,
+        4,
+      );
+      verifier(tester);
+    });
+
+    testWidgets(
+      'journee vide : l emplacement reste pose (bloc toujours rendu)',
+      (WidgetTester tester) async {
+        await _ouvrir(tester);
+        expect(find.text(t.enseignant.journee.alertesUtiles), findsNothing);
+        verifier(tester);
+      },
+    );
+
+    testWidgets('R-27, production : Communaute fermee, la ligne n est pas '
+        'rendue', (WidgetTester tester) async {
+      await _ouvrir(
+        tester,
+        enseignant: FauxServiceEnseignant()
+          ..seancesRendues = <SeanceEnseignant>[_anNour()],
+      );
+      final Finder entree = find.byType(EntreeCommunaute);
+      expect(entree, findsOneWidget);
+      expect(find.byKey(EntreeCommunaute.cleLien), findsNothing);
+      expect(find.text(t.com.socle.lexique.communaute), findsNothing);
+      expect(tester.getSize(entree).height, 0);
+    });
+
+    testWidgets('remplie par COM-COMU (Communaute ouverte, demonstration) : '
+        'l ecart du socle, puis la ligne', (WidgetTester tester) async {
+      await _ouvrir(
+        tester,
+        enseignant: FauxServiceEnseignant()
+          ..seancesRendues = <SeanceEnseignant>[_anNour()],
+        autres: surchargesCommunauteDemo(SituationDemoCommunaute.nominal),
+      );
+      // La voie COM-COMU remplit l'emplacement : la ligne a une hauteur, et
+      // l'ecart fixe par la page (contrat du socle) la precede.
+      final Finder entree = find.byType(EntreeCommunaute);
+      expect(tester.getSize(entree).height, greaterThan(0));
+      expect(
+        find.descendant(
+          of: entree,
+          matching: find.byKey(EntreeCommunaute.cleLien),
+        ),
+        findsOneWidget,
+      );
+      final EntreeCommunaute widget = tester.widget<EntreeCommunaute>(entree);
+      expect(widget.ecartAvant, same(Ecart.vMd));
+      expect(
+        find.descendant(of: entree, matching: find.byWidget(Ecart.vMd)),
+        findsOneWidget,
+      );
+    });
+  });
+
   // EA-HL-DOUBLE-1e : l'echec partiel ne redit pas le reseau sous le
   // bandeau (ni « connexion », ni « reseau », sans exception pour
   // « connexion instable »), dit une cause probable sans l'affirmer, que les
@@ -1534,4 +1653,5 @@ class _CahiersEnPanne extends FauxServiceEnseignant {
   @override
   Future<List<CahierEnRetard>> cahiersEnRetard() async =>
       throw StateError('lecture des cahiers en retard impossible');
+
 }

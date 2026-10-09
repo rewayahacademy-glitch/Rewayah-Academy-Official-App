@@ -135,6 +135,10 @@ List<AdminDomaine> domainesAdmin({required bool voitDirection}) =>
 /// n'est interrogee, seulement des libelles fixes et leurs routes -- ce
 /// qu'une coquille a le droit de faire, rien de plus. Un domaine sans
 /// fonction (Direction) n'y figure pas : il n'a pas de route a trouver.
+///
+/// Les Communications (sous Operations, QUESTIONS Q4) et Le Studio (action de
+/// l'en-tete, Q1) s'y ajoutent apres les domaines : ce ne sont pas des
+/// domaines, mais des ecrans qu'aucun libelle de domaine ne nomme (COM-F).
 List<({String libelle, String chemin})> ciblesRechercheAdmin({
   required bool voitDirection,
 }) => <({String libelle, String chemin})>[
@@ -143,6 +147,11 @@ List<({String libelle, String chemin})> ciblesRechercheAdmin({
   ))
     if (domaine.chemin case final String chemin)
       (libelle: domaine.libelle, chemin: chemin),
+  (
+    libelle: t.com.socle.navigation.communications,
+    chemin: Routes.adminOperationsCommunications,
+  ),
+  (libelle: t.com.socle.navigation.studio, chemin: Routes.adminStudio),
 ];
 
 /// Les cinq fonctions pairs du domaine Pedagogie, dans l'ordre d'affichage
@@ -257,5 +266,25 @@ List<({String libelle, String chemin})> ongletsSecurite() =>
       (
         libelle: t.admin.observations.titre,
         chemin: Routes.adminSecuriteAuditObservations,
+      ),
+    ];
+
+/// Les trois onglets pairs de l'Administration des communications, sous
+/// Operations (QUESTIONS Q4) : Annonces, Moderation, Messages, dans cet
+/// ordre. Consommee par `SousNavigationDomaine` dans l'en-tete de l'ecran ;
+/// aucun neuvieme domaine, aucun second niveau de barre (COM-F).
+List<({String libelle, String chemin})> ongletsCommunications() =>
+    <({String libelle, String chemin})>[
+      (
+        libelle: t.com.socle.navigation.ongletAnnonces,
+        chemin: Routes.adminCommunicationsAnnonces,
+      ),
+      (
+        libelle: t.com.socle.navigation.ongletModeration,
+        chemin: Routes.adminCommunicationsModeration,
+      ),
+      (
+        libelle: t.com.socle.navigation.ongletMessages,
+        chemin: Routes.adminCommunicationsMessages,
       ),
     ];

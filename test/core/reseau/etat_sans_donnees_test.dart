@@ -33,6 +33,11 @@ const Set<String> _permises = <String>{
   'classe.entree.demo.etats.horsLigne',
   'enseignant.demo.etatHorsLigne',
   'adulte.demo.reseauCoupe',
+  // Le nom de l'etat montre par la demonstration des Communications
+  // (JONCTION-LIGNES-1), comme ceux de la salle et de l'enseignant.
+  'com.messages.demo.horsLigne',
+  'com.communaute.demo.horsLigne',
+  'com.studio.demo.horsLigne',
   'tc.bibliotheque.offline.indisponible',
   'tc.bibliotheque.action.telecharger',
   'tc.bibliotheque.message.telechargementImpossible',

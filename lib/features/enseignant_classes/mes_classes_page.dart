@@ -24,6 +24,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/point_rappel.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../com_messages/entree_messages_contexte.dart';
 import '../journee/journee_page.dart' show maintenantJourneeProvider;
 
 /// Ce que `mes_groupes_v` ne porte pas encore d'une Classe : son niveau, sa
@@ -212,7 +213,18 @@ class MesClassesPage extends ConsumerWidget {
         alignment: AlignmentDirectional.topStart,
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: AppPage.largeurReglages),
-          child: corps,
+          // COM-F : l'entree generale des Messages, vide tant que la voie
+          // COM-MSG ne la remplit pas ; en fin de page, l'ecart entre
+          // sections se pose avant elle, rendu seulement quand elle rend
+          // quelque chose.
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              corps,
+              const EntreeMessagesContexte(ecartAvant: Ecart.vSection),
+            ],
+          ),
         ),
       ),
     );

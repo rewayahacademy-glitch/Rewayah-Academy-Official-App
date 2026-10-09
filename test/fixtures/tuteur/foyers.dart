@@ -5,7 +5,7 @@
 // et le test `fixtures_isolees_test.dart` verifie qu'aucun double n'est servi
 // par un provider de `lib/`.
 //
-// Aucun nom ni aucune photo reels : des prenoms-etiquettes (`Eleve A1`), des
+// Aucun nom ni aucune photo reels : des prenoms-etiquettes (`Élève A1`), des
 // identifiants lisibles qui disent leur foyer, aucune cle d'avatar.
 
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
@@ -17,7 +17,7 @@ abstract final class FoyersFictifs {
   /// Premier eleve du foyer A, en interface guidee.
   static const EleveDuFoyer a1 = EleveDuFoyer(
     id: 'foyer-a-eleve-1',
-    prenom: 'Eleve A1',
+    prenom: 'Élève A1',
     identifiantImmuable: 'STUD-FA-000001',
     mode: InterfaceMode.enfant,
     camera: CameraPolicy.forbidden,
@@ -26,7 +26,7 @@ abstract final class FoyersFictifs {
   /// Second eleve du foyer A, en interface standard.
   static const EleveDuFoyer a2 = EleveDuFoyer(
     id: 'foyer-a-eleve-2',
-    prenom: 'Eleve A2',
+    prenom: 'Élève A2',
     identifiantImmuable: 'STUD-FA-000002',
     mode: InterfaceMode.standard,
     camera: CameraPolicy.allowed,
@@ -35,7 +35,7 @@ abstract final class FoyersFictifs {
   /// Le seul eleve du foyer B. Jamais visible depuis le foyer A.
   static const EleveDuFoyer b1 = EleveDuFoyer(
     id: 'foyer-b-eleve-1',
-    prenom: 'Eleve B1',
+    prenom: 'Élève B1',
     identifiantImmuable: 'STUD-FB-000001',
     mode: InterfaceMode.standard,
     camera: CameraPolicy.forbidden,

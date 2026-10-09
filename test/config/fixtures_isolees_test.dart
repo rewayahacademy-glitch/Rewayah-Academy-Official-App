@@ -50,6 +50,12 @@ const Map<String, String> _memoiresLegitimes = <String, String>{
   // le meme provider sert `StockagePreferencesDrift`. Releve a la fusion de
   // 0d dans `ui/tuteur-v1` (phase 0c1).
   'StockagePreferencesMemoire': 'lib/core/preferences/preferences_locales.dart',
+  // Brouillons des communications (COM-F, spec Communications V1 section 8.2
+  // et section 20) : la memoire de session est le comportement V1 retenu,
+  // aucun stockage local n'etant approuve pour le texte d'un message. Elle
+  // part vide, aucune donnee fictive n'y est semee, et elle est videe quand
+  // la personne connectee change (COM-BR-12).
+  'BrouillonsMemoire': 'lib/core/communications/port_brouillons.dart',
 };
 
 /// Dette connue : doubles encore servis sans condition a la production, par

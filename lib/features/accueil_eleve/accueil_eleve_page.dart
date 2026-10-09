@@ -832,7 +832,7 @@ class _PulsationEtat extends State<_Pulsation>
 /// deux ecrans ne s'adressent pas a la meme personne, et « Dans 25 min » tutoye
 /// ici ce qu'il vouvoie la-bas.
 String _compteARebours(Duration reste) {
-  final int minutes = reste.inMinutes;
+  final int minutes = LibellesGroupe.minutesAvant(reste);
   if (minutes <= 0) {
     return t.eleve.accueil.imminent;
   }

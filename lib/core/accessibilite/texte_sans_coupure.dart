@@ -34,6 +34,7 @@ class TexteSansCoupure extends StatelessWidget {
     this.voisins = const <String>[],
     this.plancher = 1,
     this.nomsComposesEntiers = false,
+    this.largeurAuPlusLong = false,
   });
 
   /// Vrai : un nom compose (« Al-Badr ») ne passe pas a la ligne apres son
@@ -41,6 +42,11 @@ class TexteSansCoupure extends StatelessWidget {
   /// la coupure au trait d'union reste celle de la typographie francaise
   /// (« es- / tu »), et le texte rendu reste exactement le texte donne.
   final bool nomsComposesEntiers;
+
+  /// Vrai : passe a la ligne, le texte prend la largeur de sa plus longue
+  /// ligne, pas toute la place offerte (une pastille ne s'etire pas sur la
+  /// largeur de sa ligne, COM-RC tour 4, N-10).
+  final bool largeurAuPlusLong;
 
   /// Les libelles voisins de MEME largeur (segments d'un `ControleSegmente`) :
   /// l'echelle est bornee par le mot le plus long de tous, pour que les
@@ -110,6 +116,9 @@ class TexteSansCoupure extends StatelessWidget {
             textAlign: textAlign,
             textScaler: retenue,
             semanticsLabel: identical(rendu, texte) ? null : texte,
+            textWidthBasis: largeurAuPlusLong
+                ? TextWidthBasis.longestLine
+                : TextWidthBasis.parent,
           );
         },
       ),
@@ -153,6 +162,47 @@ String sansCoupureAuTrait(
   p.dispose();
   return coupe ? texte.replaceAll(_traitEntreLettres, '-$_gluon') : texte;
 }
+
+/// [texte] dont chaque nombre est lie au mot qui le suit par une espace
+/// insecable : « Dimanche 4 octobre » passe a la ligne apres « Dimanche »,
+/// jamais entre « 4 » et « octobre » (COM-RC tour 7, lot L). Valable en
+/// arabe (« الأحد 4 أكتوبر »).
+String nombresLiesAuMotSuivant(String texte) => texte.replaceAllMapped(
+  RegExp(r'(\d) (?=\S)'),
+  (Match m) => '${m[1]}\u00A0',
+);
+
+/// [texte] avec ses nombres lies au mot suivant ([nombresLiesAuMotSuivant])
+/// quand chaque groupe ainsi lie tient dans [largeur] au [style] et a
+/// l'echelle de [context] ; sinon [texte] tel quel. Un groupe lie plus large
+/// que sa place serait coupe en son milieu par le moteur de texte, pire que
+/// « 4 » seul en fin de ligne.
+String nombresLiesSiTient(
+  BuildContext context,
+  String texte,
+  TextStyle? style,
+  double largeur,
+) {
+  final String lie = nombresLiesAuMotSuivant(texte);
+  if (lie == texte) return texte;
+  return largeurMotLePlusLong(
+            context,
+            lie,
+            style,
+            MediaQuery.textScalerOf(context),
+          ) <=
+          largeur
+      ? lie
+      : texte;
+}
+
+/// [libelle] dont chaque trait d'union est suivi d'un gluon (U+2060, sans
+/// chasse) : « Classe An-Nour » passe a la ligne entre les mots, jamais dans
+/// « An- / Nour » (lecon 8, K-54). Le trait d'union reste celui de la
+/// police : le trait insecable U+2011, absent des polices du produit, serait
+/// dessine par une police de secours.
+String traitsDUnionInsecables(String libelle) =>
+    libelle.replaceAll('-', '-\u2060');
 
 /// La largeur du mot le plus long de [texte], a l'echelle [echelle].
 double largeurMotLePlusLong(

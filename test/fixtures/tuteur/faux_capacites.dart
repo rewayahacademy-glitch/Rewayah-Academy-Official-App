@@ -137,13 +137,35 @@ class FauxPaiementsFoyer implements PortPaiementsFoyer {
   }
 }
 
-/// Les notifications, en memoire.
-class FauxNotifications implements PortNotifications {
+/// Les notifications, en memoire, avec la lecture du centre partage
+/// (COM-ANN-1) : chaque lecture enregistree est notee dans [lues] et rend
+/// la notification lue a la relecture ; [echecLecture] fait echouer
+/// l'enregistrement.
+class FauxNotifications implements PortNotifications, PortLectureNotifications {
   /// Cree le faux.
-  FauxNotifications({this.notifications = const <NotificationTuteur>[]});
+  FauxNotifications({
+    this.notifications = const <NotificationTuteur>[],
+    this.echecLecture = false,
+  });
 
   /// Les notifications rendues.
   List<NotificationTuteur> notifications;
+
+  /// Vrai : `marquerLue` leve.
+  bool echecLecture;
+
+  /// Les identifiants dont la lecture a ete enregistree, dans l'ordre.
+  final List<String> lues = <String>[];
+
+  @override
+  Future<void> marquerLue(String id) async {
+    if (echecLecture) throw Exception('lecture refusee');
+    lues.add(id);
+    notifications = <NotificationTuteur>[
+      for (final NotificationTuteur n in notifications)
+        n.id == id ? n.marqueeLue() : n,
+    ];
+  }
 
   @override
   Future<List<NotificationTuteur>> liste() async => notifications;

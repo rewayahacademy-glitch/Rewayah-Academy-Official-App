@@ -70,10 +70,13 @@ String texteMotif(MotifIndisponibilite motif, {required String prenom}) {
     MotifIndisponibilite.observationDesactivee => m.observationDesactivee,
     MotifIndisponibilite.lienAbsent => m.lienAbsent,
     MotifIndisponibilite.enfantAbsent => m.enfantAbsent(
-      dePrenom: deDevant(prenom),
+      dePrenom: deDevant(prenom, cle: 'classe.observation.motif.enfantAbsent'),
     ),
     MotifIndisponibilite.presenceEnVerification => m.presenceEnVerification(
-      dePrenom: deDevant(prenom),
+      dePrenom: deDevant(
+        prenom,
+        cle: 'classe.observation.motif.presenceEnVerification',
+      ),
     ),
     MotifIndisponibilite.visiteDejaOuverte => m.visiteDejaOuverte,
     MotifIndisponibilite.garantieServeurAbsente => m.garantieServeurAbsente,

@@ -306,13 +306,26 @@ abstract final class LibellesGroupe {
     r'(\d\u00A0[^\s\d]+) (?=\d)',
   );
 
+  /// Les minutes entieres d'un compte a rebours, arrondies AU SUPERIEUR :
+  /// a 14:00:01 pour un cours a 14:10, « dans 10 min », comme l'heure
+  /// affichee a cote ; « dans 9 min » la contredisait (COM-RC tour 7, lot L).
+  /// Zero sous une minute (« imminent »). Les trois comptes a rebours du
+  /// produit (Classe, Accueil famille, Accueil eleve) passent par ici.
+  static int minutesAvant(Duration reste) {
+    if (reste < const Duration(minutes: 1)) {
+      return 0;
+    }
+    const int parMinute = Duration.microsecondsPerMinute;
+    return (reste.inMicroseconds + parMinute - 1) ~/ parMinute;
+  }
+
   /// Le compte a rebours avant le debut, en clair.
   ///
   /// La coupure a une heure et le remplissage des minutes suivent
   /// `_compteARebours()` de `accueil_eleve_page.dart` : deux ecrans qui
   /// n'arrondiraient pas pareil feraient douter de l'heure du cours.
   static String compteARebours(Duration reste) {
-    final int minutes = reste.inMinutes;
+    final int minutes = minutesAvant(reste);
     if (minutes <= 0) {
       return imminent;
     }

@@ -18,6 +18,11 @@ import 'package:flutter_test/flutter_test.dart';
 const List<String> _horsLot = <String>[
   'lib/features/communications/',
   'lib/features/com_messages/',
+  // JONCTION-LIGNES-1 : la voie Communications (ui/communications-v1) a ses
+  // ecrans sous lib/features/com_* et son fil partage ; leur passage sur
+  // ZoneSaisie reste a la voie COM (releve de b061fd81, relais 47).
+  'lib/features/com_',
+  'lib/core/widgets/fil_discussion.dart',
   'lib/features/finance',
   'lib/features/comptable',
   'lib/features/salle/',
