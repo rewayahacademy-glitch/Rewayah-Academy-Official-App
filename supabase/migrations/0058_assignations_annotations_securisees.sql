@@ -213,7 +213,8 @@ declare
 begin
   select l.resource_id into v_resource_id
     from public.annotation_layer l
-   where l.id = new.layer_id;
+   where l.id = new.layer_id
+   for update;
   if v_resource_id is null
      or pg_catalog.jsonb_typeof(new.ancrage) <> 'object'
      or new.ancrage ->> 'resource_id' is distinct from v_resource_id::text
@@ -242,6 +243,91 @@ begin
     raise exception 'marqueur incompatible avec la couche';
   end if;
   return new;
+end;
+$function$;
+
+create or replace function public.tc_poser_annotation_marqueur(
+  p_layer_id uuid,
+  p_id uuid,
+  p_plage jsonb,
+  p_intention text,
+  p_note text
+) returns void
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  v_resource_id uuid;
+begin
+  if not coalesce(public.app_account_valid(), false) then
+    raise exception 'compte inactif' using errcode = '42501';
+  end if;
+
+  select l.resource_id into v_resource_id
+    from public.annotation_layer l
+   where l.id = p_layer_id
+     and l.auteur_profile_id = auth.uid()
+   for update;
+  if v_resource_id is null then
+    raise exception 'couche inaccessible' using errcode = '42501';
+  end if;
+  if p_id is null or p_plage is null
+     or pg_catalog.jsonb_typeof(p_plage) <> 'object'
+     or p_plage ->> 'resource_id' is distinct from v_resource_id::text
+     or p_intention not in ('learn', 'review', 'reinforce', 'maintain', 'assessment') then
+    raise exception 'marqueur invalide';
+  end if;
+
+  delete from public.annotation_marqueur
+   where layer_id = p_layer_id and plage = p_plage;
+  insert into public.annotation_marqueur (id, layer_id, plage, intention, note)
+  values (p_id, p_layer_id, p_plage, p_intention, p_note);
+end;
+$function$;
+
+create or replace function public.tc_annuler_derniere_annotation(p_layer_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  v_layer public.annotation_layer%rowtype;
+  v_type text;
+  v_id uuid;
+begin
+  if not coalesce(public.app_account_valid(), false) then
+    raise exception 'compte inactif' using errcode = '42501';
+  end if;
+
+  select * into v_layer
+    from public.annotation_layer l
+   where l.id = p_layer_id
+     and l.auteur_profile_id = auth.uid()
+   for update;
+  if not found then
+    raise exception 'couche inaccessible' using errcode = '42501';
+  end if;
+
+  select geste.type, geste.id into v_type, v_id
+    from (
+      select 'trait'::text as type, t.id, t.cree_le
+        from public.annotation_trait t where t.layer_id = p_layer_id
+      union all
+      select 'marqueur'::text as type, m.id, m.cree_le
+        from public.annotation_marqueur m where m.layer_id = p_layer_id
+    ) geste
+   order by geste.cree_le desc, geste.id desc
+   limit 1;
+
+  if v_id is null then
+    return;
+  elsif v_type = 'trait' then
+    delete from public.annotation_trait where id = v_id and layer_id = p_layer_id;
+  else
+    delete from public.annotation_marqueur where id = v_id and layer_id = p_layer_id;
+  end if;
 end;
 $function$;
 
@@ -288,6 +374,18 @@ create trigger tc_annotation_marqueur_toucher_couche
 revoke all on function public.tc_annotation_valider_trait() from public, anon, authenticated, agent_ro;
 revoke all on function public.tc_annotation_valider_marqueur() from public, anon, authenticated, agent_ro;
 revoke all on function public.tc_annotation_toucher_couche() from public, anon, authenticated, agent_ro;
+revoke all on function public.tc_poser_annotation_marqueur(uuid, uuid, jsonb, text, text)
+  from public, anon, agent_ro;
+grant execute on function public.tc_poser_annotation_marqueur(uuid, uuid, jsonb, text, text)
+  to authenticated;
+revoke all on function public.tc_annuler_derniere_annotation(uuid)
+  from public, anon, agent_ro;
+grant execute on function public.tc_annuler_derniere_annotation(uuid) to authenticated;
+
+-- Les marqueurs sont remplacés atomiquement par RPC; l'identité reste hors table.
+revoke insert, update on public.annotation_marqueur
+  from public, anon, authenticated, agent_ro;
+grant select, delete on public.annotation_marqueur to authenticated;
 
 -- Supabase Flutter stream() reçoit l'état initial et les changements. Le trigger
 -- ci-dessus fait remonter les mutations filles via maj_le de la couche.
