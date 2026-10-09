@@ -100,13 +100,6 @@ BEGIN
   IF NOT FOUND THEN
     RAISE EXCEPTION 'profil d''apprentissage incomplet';
   END IF;
-  IF EXISTS (
-    SELECT 1 FROM public.intentions_horaire i
-    WHERE i.eleve_id = p_membre_id AND i.etat <> 'retiree'
-  ) THEN
-    RAISE EXCEPTION 'retirez d''abord la preference horaire actuelle';
-  END IF;
-
   v_jours := p_jours;
   v_capacite := CASE v_type
     WHEN 'adulte' THEN public.app_config_int('groupe.capacite_adulte', 6)
@@ -180,10 +173,23 @@ BEGIN
     );
   END IF;
 
+  -- Une première intention horaire doit être retirée avant de demander un
+  -- créneau personnalisé. Le contrôle vient après la relecture idempotente :
+  -- une répétition réseau réussit aussi après l'ouverture de l'offre.
+  IF EXISTS (
+    SELECT 1 FROM public.intentions_horaire i
+    WHERE i.eleve_id = p_membre_id AND i.etat <> 'retiree'
+  ) THEN
+    RAISE EXCEPTION 'retirez d''abord la preference horaire actuelle';
+  END IF;
+
   SELECT count(*)::integer INTO v_vivier
     FROM public.demandes_creneau_personnalise d
     JOIN public.profiles p ON p.id = d.eleve_id
     JOIN public.student_profiles sp ON sp.profile_id = d.eleve_id
+    JOIN public.cohortes_age c ON c.code = sp.cohorte
+                               AND c.type_public = d.type_public
+                               AND c.actif
    WHERE d.etat = 'en_attente_quota'
      AND d.type_public = v_type
      AND d.langue_code = v_langue
@@ -285,7 +291,7 @@ BEGIN
   END IF;
 
   UPDATE public.demandes_creneau_personnalise
-     SET etat = 'retiree', retiree_at = now()
+     SET etat = 'retiree', retiree_at = now(), offre_id = NULL
    WHERE eleve_id = p_membre_id
      AND etat IN ('en_attente_quota', 'offre_ouverte')
   RETURNING id INTO v_id;
