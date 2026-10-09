@@ -48,8 +48,32 @@ class RangeeFiltres extends StatefulWidget {
   /// Les puces, dans l'ordre de lecture.
   final List<Widget> filtres;
 
+  /// La couleur du curseur de defilement : a mi-chemin entre le filet
+  /// (`borderHairline`, la piste) et le bord fort (`borderStrong`, le bord
+  /// d'une puce). Il se distingue de la piste mais reste plus pale que tout
+  /// bord de puce : il ne se lit jamais comme un soulignement d'onglet
+  /// (FILTRES-1b, reprise ; decide par delegation le 09/10).
+  static Color curseurDefilement(AppPalette palette) => Color.lerp(
+    palette.borderHairline.asBorderSide().color,
+    palette.borderStrong.asBorderSide().color,
+    _partCurseur,
+  )!;
+
+  /// La part du bord fort dans la couleur du curseur.
+  static const double _partCurseur = 0.5;
+
   @override
   State<RangeeFiltres> createState() => _RangeeFiltresState();
+}
+
+/// Une puce **composee** posee dans une [RangeeFiltres] : un widget qui
+/// enveloppe une `FilterPill` (une etiquette d'accessibilite, une pastille
+/// de personne qu'on touche pour la retirer) et dit s'il porte un filtre en
+/// cours. Sans elle, la rangee ne reconnait que `FilterPill` et
+/// `MenuFiltre` et n'amenerait pas la puce retenue dans la vue.
+abstract interface class PuceFiltre {
+  /// Vrai quand la puce porte un filtre en cours.
+  bool get retenue;
 }
 
 class _RangeeFiltresState extends State<RangeeFiltres> {
@@ -147,8 +171,13 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
   /// La largeur du fondu de bord ([_FonduBords]).
   static const double _largeurFondu = AppSpacing.xxl;
 
-  /// Vrai pour une puce qui porte un filtre en cours.
+  /// Vrai pour une puce qui porte un filtre en cours : une `FilterPill`
+  /// retenue, un `MenuFiltre` qui porte une valeur, ou une puce composee
+  /// (une `FilterPill` enveloppee, par exemple dans un `Semantics`) qui le
+  /// declare par [PuceFiltre]. Une puce composee qui ne le declare pas
+  /// n'est jamais amenee dans la vue (FILTRES-1b, reprise).
   static bool _retenu(Widget w) => switch (w) {
+    final PuceFiltre p => p.retenue,
     final FilterPill p => p.retenue,
     final MenuFiltre<Object?> m => !m.selecteurDeSection && m.valeur != null,
     _ => false,
@@ -201,11 +230,14 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
           onNotification: _mesurer,
           child: NotificationListener<ScrollUpdateNotification>(
             onNotification: _suivre,
-            // FILTRES-1b : une barre de defilement **neutre**, avec sa
-            // piste : sous les puces, un trait d'accent se lisait comme le
-            // soulignement d'un onglet actif. La piste sur toute la largeur
-            // et le curseur gris disent « barre de defilement », sans rien
-            // designer ; la puce retenue reste la seule marque de selection.
+            // FILTRES-1b : une barre de defilement **neutre et discrete**,
+            // avec sa piste : sous les puces, un trait d'accent, puis un
+            // trait gris fonce, se lisaient comme le soulignement d'un
+            // onglet actif. La piste sur toute la largeur et un curseur
+            // pale (a mi-chemin entre le filet et le bord fort, toujours
+            // moins marque que le bord d'une puce) disent « barre de
+            // defilement », sans rien designer ; la puce retenue reste la
+            // seule marque de selection.
             // Gardee visible des que la rangee deborde : sur ordinateur, la
             // molette ne fait pas defiler une rangee horizontale, et c'est
             // elle qu'on tire a la souris.
@@ -215,7 +247,7 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
               trackVisibility: _deborde,
               thickness: AppSpacing.xs,
               radius: const Radius.circular(AppSpacing.xs),
-              thumbColor: palette.borderStrong.asBorderSide().color,
+              thumbColor: RangeeFiltres.curseurDefilement(palette),
               trackColor: palette.borderHairline.asBorderSide().color,
               trackBorderColor: palette.borderHairline.asBorderSide().color,
               // Le fondu sous la barre : elle reste nette d'un bord a l'autre.

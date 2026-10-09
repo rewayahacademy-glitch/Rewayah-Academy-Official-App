@@ -3,6 +3,8 @@
 // alors), un libelle trop long qui passe a la ligne entre ses mots, un mot
 // plus large que la rangee jamais coupe, le debut au debut du sens de lecture.
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
@@ -24,6 +26,7 @@ Future<void> _monter(
   double echelle = 2,
   TextDirection sens = TextDirection.ltr,
   Brightness eclairage = Brightness.light,
+  bool envelopper = false,
 }) async {
   tester.view.physicalSize = Size(largeur, 800);
   tester.view.devicePixelRatio = 1;
@@ -41,12 +44,18 @@ Future<void> _monter(
               RangeeFiltres(
                 filtres: <Widget>[
                   for (final String l in libelles)
-                    FilterPill(
-                      libelle: l,
-                      compteur: 3,
-                      retenue: libelles.indexOf(l) == retenue,
-                      onPress: () {},
-                    ),
+                    if (envelopper)
+                      _Enveloppe(
+                        libelle: l,
+                        retenue: libelles.indexOf(l) == retenue,
+                      )
+                    else
+                      FilterPill(
+                        libelle: l,
+                        compteur: 3,
+                        retenue: libelles.indexOf(l) == retenue,
+                        onPress: () {},
+                      ),
                 ],
               ),
             ],
@@ -56,6 +65,29 @@ Future<void> _monter(
     ),
   );
   await tester.pumpAndSettle();
+}
+
+/// Une puce composee, comme la pastille de personne d'Observations : une
+/// `FilterPill` dans un `Semantics`, qui se declare [PuceFiltre].
+class _Enveloppe extends StatelessWidget implements PuceFiltre {
+  const _Enveloppe({required this.libelle, required this.retenue});
+
+  final String libelle;
+
+  @override
+  final bool retenue;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    label: libelle,
+    excludeSemantics: true,
+    child: FilterPill(
+      libelle: libelle,
+      compteur: 3,
+      retenue: retenue,
+      onPress: () {},
+    ),
+  );
 }
 
 List<Rect> _boites(WidgetTester tester) => <Rect>[
@@ -85,6 +117,17 @@ void _verifierOuverture(WidgetTester tester, int retenue, TextDirection sens) {
   final Rect r = b[retenue];
   expect(r.left, greaterThanOrEqualTo(debutVue - 0.5), reason: '$b');
   expect(r.right, lessThanOrEqualTo(finVue + 0.5), reason: '$b');
+  // Reprise FILTRES-1b : si la rangee a defile, la puce retenue n'est pas
+  // sous le fondu d'avant ; la vue s'arrete au debut d'une puce, placee
+  // juste apres ce fondu (et non la puce retenue collee au bord, son
+  // libelle efface).
+  if (_fondu(tester) && _aDefile(tester)) {
+    if (sens == TextDirection.ltr) {
+      expect(r.left, greaterThanOrEqualTo(debutVue + _fonduBord - 0.5));
+    } else {
+      expect(r.right, lessThanOrEqualTo(finVue - _fonduBord + 0.5));
+    }
+  }
   for (final Rect p in b) {
     // La part visible d'une puce a cheval sur le debut de la vue.
     final double visible = sens == TextDirection.ltr
@@ -98,6 +141,19 @@ void _verifierOuverture(WidgetTester tester, int retenue, TextDirection sens) {
   }
 }
 
+/// Vrai quand la rangee n'est plus a son debut.
+bool _aDefile(WidgetTester tester) =>
+    tester
+        .state<ScrollableState>(
+          find.descendant(
+            of: find.byType(RangeeFiltres),
+            matching: find.byType(Scrollable),
+          ),
+        )
+        .position
+        .pixels >
+    0.5;
+
 /// Vrai quand un bord de la rangee s'efface.
 bool _fondu(WidgetTester tester) =>
     tester
@@ -109,6 +165,13 @@ bool _fondu(WidgetTester tester) =>
         )
         .blendMode ==
     BlendMode.dstIn;
+
+/// Le rapport de contraste WCAG entre deux couleurs opaques.
+double _contraste(Color a, Color b) {
+  final double la = a.computeLuminance();
+  final double lb = b.computeLuminance();
+  return (math.max(la, lb) + 0.05) / (math.min(la, lb) + 0.05);
+}
 
 void main() {
   setUpAll(chargerPolicesDuDepot);
@@ -221,8 +284,18 @@ void main() {
         tester.element(find.byType(RangeeFiltres)),
       ).colorScheme;
       expect(barre.trackVisibility, isTrue);
-      expect(barre.thumbColor, palette.borderStrong.asBorderSide().color);
       expect(barre.trackColor, palette.borderHairline.asBorderSide().color);
+      // Reprise FILTRES-1b : un curseur discret, qui se distingue de la
+      // piste mais reste moins marque que le bord d'une puce (borderStrong) :
+      // jamais un trait fonce sous la puce retenue.
+      final Color fond = palette.surfaceCanvas.background;
+      final Color bordPuce = palette.borderStrong.asBorderSide().color;
+      expect(barre.thumbColor, isNot(bordPuce));
+      expect(
+        _contraste(barre.thumbColor!, fond),
+        lessThan(_contraste(bordPuce, fond)),
+      );
+      expect(barre.thumbColor, isNot(barre.trackColor));
       for (final Color accent in <Color>[
         schema.primary,
         palette.inkAccent.asBorderSide().color,
@@ -251,6 +324,56 @@ void main() {
           sens: sens,
         );
         _verifierOuverture(tester, retenue, sens);
+        expect(tester.takeException(), isNull);
+      });
+    }
+  }
+
+  // Reprise FILTRES-1b : une puce composee (une `FilterPill` dans un
+  // `Semantics`) qui se declare [PuceFiltre] retenue est amenee dans la vue
+  // a l'ouverture, comme une `FilterPill` nue.
+  for (final TextDirection sens in TextDirection.values) {
+    testWidgets('puce composee retenue au bout, ${sens.name} : elle se voit a '
+        'l ouverture', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        <String>['Tous', 'En attente', 'Actif', 'Provisoire', 'Suspendu'],
+        retenue: 4,
+        sens: sens,
+        envelopper: true,
+      );
+      final Rect r = _boites(tester).last;
+      expect(r.left, greaterThanOrEqualTo(16 - 0.5));
+      expect(r.right, lessThanOrEqualTo(304 + 0.5));
+      expect(tester.takeException(), isNull);
+    });
+
+    // Un filtre qu'on vient de retenir (aucun a l'ouverture) est amene
+    // dans la vue : la promesse de `didUpdateWidget`.
+    for (final bool envelopper in <bool>[false, true]) {
+      testWidgets('filtre retenu apres l ouverture, ${sens.name}'
+          '${envelopper ? ', puce composee' : ''} : il se voit', (
+        WidgetTester tester,
+      ) async {
+        const List<String> libelles = <String>[
+          'Tous',
+          'En attente',
+          'Actif',
+          'Provisoire',
+          'Suspendu',
+        ];
+        await _monter(tester, libelles, sens: sens, envelopper: envelopper);
+        expect(_aDefile(tester), isFalse);
+        await _monter(
+          tester,
+          libelles,
+          retenue: 4,
+          sens: sens,
+          envelopper: envelopper,
+        );
+        final Rect r = _boites(tester).last;
+        expect(r.left, greaterThanOrEqualTo(16 - 0.5), reason: '$r');
+        expect(r.right, lessThanOrEqualTo(304 + 0.5), reason: '$r');
         expect(tester.takeException(), isNull);
       });
     }

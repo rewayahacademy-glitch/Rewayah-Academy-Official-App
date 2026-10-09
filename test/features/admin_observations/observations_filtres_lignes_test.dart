@@ -2,6 +2,9 @@
 //
 // (4) a partir de 600 px, une personne retenue (tuteur ou eleve) rejoint
 //     les menus sur la MEME rangee, jamais une seconde rangee de puces ;
+// (4 bis, reprise) une personne qu'on vient de retenir est amenee dans la
+//     vue : sa puce est le seul moyen de retirer ce filtre, elle ne reste
+//     jamais cachee au bout de la rangee ;
 // (5) a 320 px texte x2, aucune ligne de la liste ne coupe un mot : ni le
 //     nom (« Fatouma / ta »), ni la date (« 23/09/2026 »).
 //
@@ -122,6 +125,59 @@ void main() {
         expect(champ.width, greaterThanOrEqualTo(barre.width / 3 - 1));
         expect(tester.takeException(), isNull);
       });
+    }
+  }
+
+  // Reprise FILTRES-1b : la puce d'une personne retenue (une `FilterPill`
+  // enveloppee dans un `Semantics`) se voit entiere dans la rangee des
+  // qu'on la retient, a toutes les largeurs ou la rangee deborde.
+  for (final double largeur in const <double>[700, 1024, 1440]) {
+    for (final double echelle in const <double>[1, 2]) {
+      for (final TextDirection sens in TextDirection.values) {
+        testWidgets('$largeur texte x${echelle.toInt()} ${sens.name} : la '
+            'personne qu on vient de retenir se voit entiere', (
+          WidgetTester tester,
+        ) async {
+          await _monter(
+            tester,
+            Size(largeur, 900),
+            echelle: echelle,
+            sens: sens,
+          );
+          final Rect rangee = tester.getRect(find.byType(RangeeFiltres));
+          for (final (String saisie, String cle, String libelle)
+              in <(String, String, String)>[
+                (
+                  'Fatou',
+                  'personne-tuteur-fatoumata',
+                  t.admin.observations.filtreTuteur(nom: 'Fatoumata Diallo'),
+                ),
+                (
+                  'Mari',
+                  'personne-eleve-mariam',
+                  t.admin.observations.filtreEleve(nom: 'Mariam Diallo'),
+                ),
+              ]) {
+            await tester.enterText(_champ, saisie);
+            await stabiliser(tester);
+            await tester.tap(find.byKey(ValueKey<String>(cle)));
+            await stabiliser(tester);
+            final Rect puce = tester.getRect(
+              find.ancestor(
+                of: find.text(libelle),
+                matching: find.byType(FilterPill),
+              ),
+            );
+            expect(
+              puce.left >= rangee.left - 0.5 &&
+                  puce.right <= rangee.right + 0.5,
+              isTrue,
+              reason: '« $libelle » hors de la rangee : $puce dans $rangee',
+            );
+          }
+          expect(tester.takeException(), isNull);
+        });
+      }
     }
   }
 

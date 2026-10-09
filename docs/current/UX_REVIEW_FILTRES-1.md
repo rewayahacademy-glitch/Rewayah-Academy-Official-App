@@ -52,8 +52,15 @@ elle ne bloque pas le lot, car aucune règle ci-dessous n'en dépend seule.
 - **Constat de la relecture.** Le curseur violet, posé juste sous les puces, se lisait
   comme le soulignement d'un onglet actif : la sélection devenait ambiguë.
 - **Modification (FILTRES-1b).** Barre **neutre** : piste visible sur toute la largeur
-  (`borderHairline`) et curseur gris (`borderStrong`), épaisseur `AppSpacing.xs`, jetons
-  seulement. La puce retenue (fond et bord d'accent) reste la seule marque de sélection.
+  (`borderHairline`) et curseur gris, épaisseur `AppSpacing.xs`, jetons seulement.
+- **Reprise (relecture adverse).** Le curseur `borderStrong` restait un trait sombre, posé
+  à 320 px texte x2 exactement sous la puce retenue « Ouvertes » de Qualité. Il est
+  désormais **pâle** : mi-chemin entre la piste (`borderHairline`) et le bord fort
+  (`borderStrong`, `RangeeFiltres.curseurDefilement`). Il se distingue de la piste, mais
+  son contraste avec le fond reste inférieur à celui du bord d'une puce : il ne peut plus
+  se lire comme le trait d'un onglet actif. Décidé par délégation le 09/10 (option la plus
+  prudente : barre gardée pour la souris, rendue discrète). Test : contraste du curseur
+  inférieur à celui de `borderStrong`, en clair et en sombre ; contre-épreuve faite. La puce retenue (fond et bord d'accent) reste la seule marque de sélection.
   Le fondu de bord est gardé : il dit la suite sur téléphone, la barre la dit et se tire
   sur ordinateur.
 - **Choix entre les deux options de la consigne** (barre discrète ou retrait de
@@ -73,6 +80,18 @@ elle ne bloque pas le lot, car aucune règle ci-dessous n'en dépend seule.
   puce retenue se voit entière hors des fondus. Si tout tient sans défiler, rien ne bouge
   (la première puce reste au bord). Un filtre nouvellement retenu (personne choisie dans
   Observations) est amené dans la vue de la même façon.
+- **Reprise (relecture adverse, défaut majeur).** La phrase précédente était fausse pour
+  Observations : la pastille de personne est une `FilterPill` enveloppée dans un
+  `Semantics`, que la rangée ne reconnaissait pas ; le tuteur et l'élève retenus restaient
+  cachés au bout de l'unique rangée à partir de 700 px (régression du lot, alors que la
+  puce est le seul moyen de retirer ce filtre). Correction : une puce composée se déclare
+  `PuceFiltre` (interface de `rangee_filtres.dart`) ; `_PastillePersonne` le fait. Tests :
+  personne retenue entière dans la rangée à 700, 1024 et 1440, texte x1 et x2, LTR et RTL
+  (12 cas, tous en échec sur l'ancien code) ; filtre retenu **après** l'ouverture, puce nue
+  et composée (échec si `didUpdateWidget` est neutralisé) ; puce retenue hors du fondu
+  d'avant quand la rangée a défilé (échec si la vue n'est plus arrêtée au début d'une
+  puce). Le minimum lisible des collections (`ColonneCorps.minimumEtire`) est vérifié à
+  hauteur de téléphone (échec si on le retire de Comptes).
 - **Conclusion : ajustée.** À 320 px texte x2 sur Qualité, « Toutes » et « Ouvertes » ne
   tiennent pas ensemble : la vue commence à « Ouvertes », le seul bord de « Toutes » reste
   sous le fondu pour dire qu'une puce précède, sans lettre coupée.
@@ -82,7 +101,10 @@ elle ne bloque pas le lot, car aucune règle ci-dessous n'en dépend seule.
 - **Constat.** Un tuteur ou un élève retenu formait une seconde rangée de puces sous les
   menus.
 - **Modification.** Dès 600 px, menus et personnes retenues sont dans **la même**
-  `RangeeFiltres`, à côté de la recherche (captures 1024 texte x1 et 1440 texte x2).
+  `RangeeFiltres`, à côté de la recherche ; la personne qu'on vient de retenir est amenée
+  dans la vue (reprise ci-dessus). Captures 700 texte x1, 1024 texte x1 et x2, 1440 texte
+  x2 en LTR et RTL : les deux pastilles se lisent, le début de « Tuteur » passe sous le
+  fondu d'avant à 1440 texte x2, qui dit qu'on peut revenir en arrière.
 - **Conclusion : ajustée.**
 
 ### 5. Aucun mot coupé à 320 px texte x2 (Observations, Qualité, écrans à liste)
@@ -102,13 +124,22 @@ elle ne bloque pas le lot, car aucune règle ci-dessous n'en dépend seule.
 
 ## Dérogations
 
-Aucune. Hors lot, constaté sur les captures RTL : en sens forcé de droite à gauche, les
+Aucune. Hors lot, relevé par la relecture adverse et relayé (non bloquant pour ce lot,
+la règle écrite portant sur 320 px texte x2) : à 1440 texte x2, la vue tableau de
+`DataCollection` coupe des mots (« 23/09/20 / 26 », « 18:12: / 00 », « enregistré / e »,
+en-tête « Entr… ») dans Observations, et « Enseignant », « Administration », « Pièce
+d'identité », « Inscrit depuis », « Perfectionnement », « Approfondissement » dans
+Comptes et Progression. En Interface guidée à 320x568 texte x2 : « Programme / s » coupé
+dans la sous-navigation de Programmes, textes d'aide de recherche tronqués (Observations,
+Bibliothèque), « Leçon · Tajwid » tronqué ; la page Groupes s'intitule toujours
+« Groupes ». Hors lot, constaté sur les captures RTL : en sens forcé de droite à gauche, les
 heures et durées françaises s'affichent en ordre bidirectionnel inversé (« 18:14 - 18:12 »,
 « min 2 ») ; c'est un artefact d'une chaîne française dans une vue RTL, pas un mot coupé,
 déjà antérieur au lot.
 
 ## Preuves
 
-Captures : `docs/current/captures/FILTRES-1b/` (320 px texte x2 LTR et RTL, 390, 1440,
-sombre, Interface guidée, Observations avec personnes retenues à 1024 texte x1 et 1440 texte x2) ; script
-archivé `filtres1b_capture_test.dart.txt`.
+Captures : `docs/current/captures/FILTRES-1b/` (320x568 texte x2 LTR et RTL, 320x568
+texte x2 en Interface guidée, 390, 1440, sombre, Interface guidée à 390, Observations
+avec personnes retenues à 700 x1, 1024 x1 et x2, 1440 x2 LTR et RTL) ; script archivé
+`filtres1b_capture_test.dart.txt`.

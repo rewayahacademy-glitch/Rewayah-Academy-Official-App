@@ -5,11 +5,15 @@
 // n'a plus de place sous l'intro et la rangee (320 px texte x2) n'y deborde
 // jamais. Ici, la meme liste d'ecrans a 320x568 et 320x640 texte x2, LTR et
 // RTL, et 390x844 texte x2 : aucune exception de rendu (debordement, liste
-// sans hauteur), et la rangee de filtres s'atteint.
+// sans hauteur), et la rangee de filtres s'atteint. Reprise : une
+// collection qui defile seule (`DataCollection`) garde au moins sa hauteur
+// lisible (`DataCollection.minimumLisible`, le `minimumEtire` de la
+// `ColonneCorps` qui la porte) ; la page defile plutot que de l'ecraser.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/widgets/data_collection.dart';
 import 'package:rewayah_academy/core/widgets/rangee_filtres.dart';
 
 import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
@@ -39,6 +43,20 @@ void main() {
           await tester.pump(const Duration(milliseconds: 600));
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull);
+          for (final Element e
+              in find
+                  .byWidgetPredicate(
+                    (Widget w) => w is DataCollection && w.defileSeule,
+                  )
+                  .evaluate()) {
+            final double minimum = DataCollection.minimumLisible(e);
+            final double hauteur = (e.renderObject! as RenderBox).size.height;
+            expect(
+              hauteur,
+              greaterThanOrEqualTo(minimum - 0.5),
+              reason: 'collection ecrasee sous sa hauteur lisible',
+            );
+          }
           final Finder rangee = find.byType(RangeeFiltres);
           expect(rangee, findsWidgets);
           await tester.ensureVisible(rangee.first);

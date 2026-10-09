@@ -2,13 +2,15 @@
 // commune (les cas de `test/features/filtres1_rangee_unique_test.dart`,
 // doubles en memoire, vraies polices), en six vues :
 //
-//   * 320 px texte x2, LTR et RTL, clair ;
+//   * 320x568 texte x2 (hauteur d'un telephone reel), LTR et RTL, clair ;
+//   * 320x568 texte x2, Interface guidee ;
 //   * 390x844, clair ; 1440x900, clair ;
 //   * 390x844, sombre ;
 //   * 390x844, Interface guidee (theme `InterfaceMode.enfant`).
 //
-// Plus deux vues d'Observations (admin) avec un tuteur et un eleve retenus,
-// a 1024 et 1440 (une seule rangee a cote de la recherche).
+// Plus des vues d'Observations (admin) avec un tuteur et un eleve retenus,
+// de 700 a 1440, texte x1 et x2, LTR et RTL (une seule rangee a cote de la
+// recherche ; la personne retenue en dernier se voit entiere).
 //
 // La rangee de filtres est amenee dans la vue (defilement vertical
 // seulement) : on la voit comme a l'ouverture. Saute sans CAPTURE_DIR (voir
@@ -48,7 +50,7 @@ typedef _Vue = ({
 const List<_Vue> _vues = <_Vue>[
   (
     nom: '320_x2_ltr',
-    taille: Size(320, 900),
+    taille: Size(320, 568),
     echelle: 2,
     sens: TextDirection.ltr,
     eclairage: Brightness.light,
@@ -56,11 +58,19 @@ const List<_Vue> _vues = <_Vue>[
   ),
   (
     nom: '320_x2_rtl',
-    taille: Size(320, 900),
+    taille: Size(320, 568),
     echelle: 2,
     sens: TextDirection.rtl,
     eclairage: Brightness.light,
     mode: InterfaceMode.standard,
+  ),
+  (
+    nom: '320_x2_guidee',
+    taille: Size(320, 568),
+    echelle: 2,
+    sens: TextDirection.ltr,
+    eclairage: Brightness.light,
+    mode: InterfaceMode.enfant,
   ),
   (
     nom: '390',
@@ -162,18 +172,21 @@ void main() {
     final CasFiltres1 obs = cas.firstWhere(
       (CasFiltres1 c) => c.nom.startsWith('Observations'),
     );
-    for (final (double largeur, double echelle) in <(double, double)>[
-      (1024, 1),
-      (1440, 2),
-    ]) {
-      testWidgets('Observations personnes retenues $largeur x$echelle', (
-        WidgetTester tester,
-      ) async {
+    for (final (double largeur, double echelle, TextDirection sens)
+        in <(double, double, TextDirection)>[
+          (700, 1, TextDirection.ltr),
+          (1024, 1, TextDirection.ltr),
+          (1024, 2, TextDirection.ltr),
+          (1440, 2, TextDirection.ltr),
+          (1440, 2, TextDirection.rtl),
+        ]) {
+      testWidgets('Observations personnes retenues $largeur x$echelle '
+          '${sens.name}', (WidgetTester tester) async {
         final _Vue v = (
           nom: '',
           taille: Size(largeur, 900),
           echelle: echelle,
-          sens: TextDirection.ltr,
+          sens: sens,
           eclairage: Brightness.light,
           mode: InterfaceMode.standard,
         );
@@ -194,7 +207,7 @@ void main() {
         await capturer(
           tester,
           'filtres1b_observations_personnes_${largeur.toInt()}_'
-          'x${echelle.toInt()}',
+          'x${echelle.toInt()}_${sens.name}',
         );
       });
     }

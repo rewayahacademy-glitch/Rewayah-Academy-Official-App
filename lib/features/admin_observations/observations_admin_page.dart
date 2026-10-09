@@ -520,11 +520,18 @@ class _BarreRecherche extends ConsumerWidget {
 const double _partRecherche = 1 / 3;
 
 /// Une personne retenue par la recherche : la toucher la retire.
-class _PastillePersonne extends StatelessWidget {
+///
+/// Elle se declare [PuceFiltre] retenue : la rangee l'amene dans la vue des
+/// qu'elle apparait au bout des menus, sinon la seule facon de retirer ce
+/// filtre resterait cachee hors de la rangee (FILTRES-1b, reprise).
+class _PastillePersonne extends StatelessWidget implements PuceFiltre {
   const _PastillePersonne({required this.libelle, required this.onRetirer});
 
   final String libelle;
   final VoidCallback onRetirer;
+
+  @override
+  bool get retenue => true;
 
   @override
   Widget build(BuildContext context) => Semantics(
