@@ -7,6 +7,24 @@
 -- d'éligibilité et crée l'intention sans transformer le créneau en inscription.
 BEGIN;
 
+CREATE OR REPLACE FUNCTION public.jours_iso_valides(p_jours smallint[])
+RETURNS boolean
+LANGUAGE sql IMMUTABLE SET search_path = ''
+AS $function$
+  SELECT p_jours IS NOT NULL
+     AND coalesce(array_length(p_jours, 1), 0) BETWEEN 1 AND 7
+     AND NOT EXISTS (
+       SELECT 1 FROM unnest(p_jours) AS j
+       WHERE j IS NULL OR j < 1 OR j > 7
+     )
+     AND coalesce(array_length(p_jours, 1), 0) =
+         (SELECT count(DISTINCT j) FROM unnest(p_jours) AS j);
+$function$;
+
+ALTER TABLE public.offres_horaires
+  ADD COLUMN origine text NOT NULL DEFAULT 'administration'
+  CHECK (origine IN ('administration', 'quota_familial'));
+
 CREATE TABLE public.demandes_creneau_personnalise (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   eleve_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
@@ -21,7 +39,7 @@ CREATE TABLE public.demandes_creneau_personnalise (
   created_at timestamptz NOT NULL DEFAULT now(),
   retiree_at timestamptz,
   CONSTRAINT demande_creneau_jours_valides
-    CHECK (public.jours_iso_valides(jours)),
+    CHECK (coalesce(public.jours_iso_valides(jours), false)),
   CONSTRAINT demande_creneau_etat_coherent CHECK (
     (etat = 'offre_ouverte' AND offre_id IS NOT NULL)
     OR (etat <> 'offre_ouverte' AND offre_id IS NULL)
@@ -47,10 +65,16 @@ CREATE POLICY demandes_creneau_lecture_propre
     OR coalesce(public.app_role() = 'admin' AND public.app_account_valid(), false)
   );
 
+REVOKE ALL ON public.demandes_creneau_personnalise
+  FROM PUBLIC, anon, authenticated, agent_ro;
 GRANT SELECT ON public.demandes_creneau_personnalise TO authenticated;
-REVOKE ALL ON public.demandes_creneau_personnalise FROM anon, public;
-REVOKE INSERT, UPDATE, DELETE ON public.demandes_creneau_personnalise
-  FROM authenticated, agent_ro;
+
+REVOKE ALL ON public.offres_horaires
+  FROM PUBLIC, anon, authenticated, agent_ro;
+GRANT SELECT (
+  id, type_public, langue_code, fuseau_iana, jours, heure_locale,
+  duree_minutes, programme_niveau_id, etat, publiee_at
+) ON public.offres_horaires TO authenticated, agent_ro;
 
 -- La demande n'expose aucun vivier. Le retour ne révèle que l'état de l'appelant.
 CREATE OR REPLACE FUNCTION public.demander_creneau_personnalise(
@@ -68,11 +92,12 @@ DECLARE
   v_jours smallint[];
   v_capacite integer;
   v_duree integer;
+  v_seances_par_semaine integer;
   v_demande public.demandes_creneau_personnalise%rowtype;
   v_offre uuid;
   v_vivier integer;
 BEGIN
-  IF NOT public.peut_decrire_apprenant(p_membre_id) THEN
+  IF NOT coalesce(public.peut_decrire_apprenant(p_membre_id), false) THEN
     RAISE EXCEPTION 'ce profil n''est pas le votre ni celui de votre foyer';
   END IF;
   IF coalesce(btrim(p_fuseau_iana), '') = ''
@@ -84,8 +109,19 @@ BEGIN
   IF p_heure_locale IS NULL OR p_heure_locale NOT BETWEEN 0 AND 23 THEN
     RAISE EXCEPTION 'heure locale invalide';
   END IF;
-  IF NOT public.jours_iso_valides(p_jours) THEN
+  v_jours := (
+    SELECT array_agg(DISTINCT j ORDER BY j)
+      FROM unnest(coalesce(p_jours, ARRAY[]::smallint[])) AS input(j)
+  );
+  IF NOT coalesce(public.jours_iso_valides(v_jours), false) THEN
     RAISE EXCEPTION 'jours invalides';
+  END IF;
+  v_seances_par_semaine :=
+    public.app_config_int('groupe.seances_par_semaine', 3);
+  IF v_seances_par_semaine IS NULL
+     OR v_seances_par_semaine < 1
+     OR coalesce(array_length(v_jours, 1), 0) <> v_seances_par_semaine THEN
+    RAISE EXCEPTION 'nombre de séances par semaine invalide';
   END IF;
 
   SELECT c.type_public, sp.langue_cours
@@ -100,7 +136,6 @@ BEGIN
   IF NOT FOUND THEN
     RAISE EXCEPTION 'profil d''apprentissage incomplet';
   END IF;
-  v_jours := p_jours;
   v_capacite := CASE v_type
     WHEN 'adulte' THEN public.app_config_int('groupe.capacite_adulte', 6)
     ELSE public.app_config_int('groupe.capacite_enfant', 5)
@@ -310,7 +345,7 @@ AS $function$
 DECLARE
   v_id uuid;
 BEGIN
-  IF NOT public.peut_decrire_apprenant(p_membre_id) THEN
+  IF NOT coalesce(public.peut_decrire_apprenant(p_membre_id), false) THEN
     RAISE EXCEPTION 'ce profil n''est pas le votre ni celui de votre foyer';
   END IF;
 
