@@ -40,7 +40,50 @@ DECLARE
   v_offre uuid;
   v_total integer;
   v_visible integer;
+  v_ok boolean;
 BEGIN
+  -- Les tableaux vides et les longueurs qui contredisent la configuration
+  -- sont refusés; ils ne doivent jamais passer une garde SQL à NULL.
+  PERFORM set_config('test.uid', 'f1490000-0000-0000-0000-000000000007', true);
+  PERFORM set_config(
+    'test.jwt',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text,
+    true
+  );
+  v_ok := false;
+  BEGIN
+    PERFORM public.demander_creneau_personnalise(
+      'f1490000-0000-0000-0000-000000000007',
+      'Europe/Paris', ARRAY[]::smallint[], 3::smallint
+    );
+  EXCEPTION WHEN raise_exception THEN
+    IF SQLERRM = 'jours invalides' THEN
+      v_ok := true;
+    ELSE
+      RAISE;
+    END IF;
+  END;
+  IF NOT v_ok THEN
+    RAISE EXCEPTION 'F1 validation: un tableau vide a été accepté';
+  END IF;
+
+  v_ok := false;
+  BEGIN
+    PERFORM public.demander_creneau_personnalise(
+      'f1490000-0000-0000-0000-000000000007',
+      'Europe/Paris', ARRAY[2]::smallint[], 3::smallint
+    );
+  EXCEPTION WHEN raise_exception THEN
+    IF SQLERRM = 'nombre de séances par semaine invalide' THEN
+      v_ok := true;
+    ELSE
+      RAISE;
+    END IF;
+  END;
+  IF NOT v_ok THEN
+    RAISE EXCEPTION 'F1 validation: un nombre de jours différent de app_config a été accepté';
+  END IF;
+
   FOR v_i IN 1..6 LOOP
     v_id := ('f1490000-0000-0000-0000-' || lpad(v_i::text, 12, '0'))::uuid;
     PERFORM set_config('test.uid', v_id::text, true);
@@ -51,7 +94,13 @@ BEGIN
     );
 
     v_reponse := public.demander_creneau_personnalise(
-      v_id, 'Europe/Paris', ARRAY[2, 4, 6]::smallint[], 3::smallint
+      v_id,
+      'Europe/Paris',
+      CASE WHEN v_i = 1
+        THEN ARRAY[6, 4, 2, 2]::smallint[]
+        ELSE ARRAY[2, 4, 6]::smallint[]
+      END,
+      3::smallint
     );
 
     IF v_i < 6 AND v_reponse->>'etat' <> 'en_attente_quota' THEN
@@ -144,6 +193,20 @@ BEGIN
        'EXECUTE'
      ) THEN
     RAISE EXCEPTION 'F1 ACL: anon ou agent_ro peut créer une demande';
+  END IF;
+
+  IF pg_catalog.has_table_privilege('authenticated', 'public.offres_horaires', 'SELECT')
+     OR pg_catalog.has_column_privilege('authenticated', 'public.offres_horaires', 'created_by', 'SELECT')
+     OR pg_catalog.has_column_privilege('authenticated', 'public.offres_horaires', 'publiee_par', 'SELECT')
+     OR pg_catalog.has_table_privilege('authenticated', 'public.demandes_creneau_personnalise', 'TRUNCATE')
+     OR pg_catalog.has_table_privilege('authenticated', 'public.demandes_creneau_personnalise', 'REFERENCES')
+     OR pg_catalog.has_table_privilege('authenticated', 'public.demandes_creneau_personnalise', 'TRIGGER') THEN
+    RAISE EXCEPTION 'F1 ACL: accès de table ou colonnes auteur trop large';
+  END IF;
+  IF NOT pg_catalog.has_column_privilege(
+       'authenticated', 'public.offres_horaires', 'publiee_at', 'SELECT'
+     ) THEN
+    RAISE EXCEPTION 'F1 ACL: la vitrine ne peut pas lire la date de publication';
   END IF;
 
   -- La lecture directe sous un compte ne révèle que sa propre ligne.
