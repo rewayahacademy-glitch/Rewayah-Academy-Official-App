@@ -326,5 +326,60 @@ void main() {
         expect(tester.takeException(), isNull);
       });
     }
+
+    // m1 (verification d'ETATS-MA-1) : la meme borne, mesuree aussi au plus
+    // petit ecran de reference, 320 x 568, texte x2. Resultat honnete de la
+    // mesure du 08/10/2026 : en-tete 152 + commandes 240 = 392 pour une
+    // borne de 284 (50 % de 568) : la borne N'EST PAS tenue a 320 x 568
+    // (69 %). Les commandes se masquent (le support reprend alors tout
+    // l'ecran) et une touche les rend. Ce test garde la mesure (pas de
+    // regression au-dela de 70 %) et le masquage ; la borne a 320 x 568 est
+    // rendue au directeur comme reste (DOCK-X2-1).
+    testWidgets('MA-CMD-1 : 320 x 568, texte x2, borne mesuree (m1)', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, taille: const Size(320, 568), echelle: 2);
+      final Finder rejoindre = find.text(LibellesGroupe.rejoindre);
+      await tester.ensureVisible(rejoindre);
+      await tester.tap(rejoindre);
+      await stabiliser(tester);
+      final Finder entrer = find.byKey(
+        const ValueKey<String>('preparation-entrer'),
+      );
+      await tester.ensureVisible(entrer);
+      await tester.tap(entrer);
+      await tester.pump(const Duration(milliseconds: 500));
+      final double hauteurEntete = tester
+          .getSize(find.byKey(const ValueKey<String>('entete-seance-compacte')))
+          .height;
+      final double hauteurCommandes = tester
+          .getSize(find.byKey(CommandesMasquables.commandesKey))
+          .height;
+      final double total = hauteurEntete + hauteurCommandes;
+      debugPrint(
+        'MESURE m1 320x568 x2 : en-tete $hauteurEntete + commandes '
+        '$hauteurCommandes = $total pour une borne de ${568 * 0.50}',
+      );
+      // La borne de 50 % n'est pas tenue ici (voir plus haut) ; on garde
+      // la mesure contre toute regression.
+      expect(total, lessThanOrEqualTo(568 * 0.70), reason: 'regression');
+
+      double opacite() => tester
+          .widget<AnimatedOpacity>(
+            find.ancestor(
+              of: find.byKey(CommandesMasquables.commandesKey),
+              matching: find.byType(AnimatedOpacity),
+            ),
+          )
+          .opacity;
+      expect(opacite(), 1);
+      await tester.pump(CommandesMasquables.delaiParDefaut);
+      await tester.pump(const Duration(seconds: 1));
+      expect(opacite(), 0);
+      await tester.tapAt(const Offset(160, 300));
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(opacite(), 1);
+      expect(tester.takeException(), isNull);
+    });
   });
 }

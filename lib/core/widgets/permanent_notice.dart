@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../i18n/sens_texte.dart';
 import '../i18n/strings.g.dart';
 import '../theme/app_mouvement.dart';
 import '../theme/app_palette.dart';
@@ -48,6 +49,13 @@ class PermanentNotice extends StatelessWidget {
           Flexible(
             child: Text(
               t.salle.bandeauPermanent,
+              // DOCK-X2-1 (bidi) : la phrase garde le sens de SA langue ; en
+              // francais dans une interface de droite a gauche, son point
+              // final reste a la fin (« possible. », pas « .controle »).
+              textDirection: sensDuTexte(t.salle.bandeauPermanent),
+              // Le bloc reste cale sur le cote du point, au sens de
+              // l'interface (a droite en droite a gauche).
+              textAlign: alignementDebut(context),
               style: palette.inkMuted.applyTo(
                 Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
               ),

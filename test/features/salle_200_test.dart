@@ -29,6 +29,7 @@ import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/commande_salle.dart';
 import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
 import 'package:rewayah_academy/core/widgets/page_immersive.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
@@ -1023,5 +1024,81 @@ void main() {
         );
       },
     );
+  });
+
+  // DOCK-X2-1 : /salle sur ordinateur, hors Mode Accessibilite, texte x1,5
+  // et x2 : aucun mot coupe ni tronque sous les commandes. Et m5 (verification
+  // d'ETATS-MA-1) : /salle en Mode Accessibilite a 320 x 568, texte x1,5 et
+  // x2 : deux rangees, mot d'etat entier, rien hors de l'ecran.
+  group('DOCK-X2-1 : /salle, bureau et 320 x 568', () {
+    setUpAll(chargerPolicesDuDepot);
+    final Finder commandes = find.byType(CommandeSalle);
+    for (final String role in <String>['student', 'teacher']) {
+      for (final (double l, double h) in <(double, double)>[
+        (1440, 900),
+        (1024, 768),
+      ]) {
+        for (final double texte in <double>[1.5, 2]) {
+          testWidgets(
+            '$role, ${l.toInt()} px, texte x$texte : aucun mot coupe',
+            (WidgetTester tester) async {
+              await _monter(tester, role, l, texte, hauteur: h);
+              expect(tester.takeException(), isNull);
+              expect(commandes, findsWidgets);
+              verifierAucunMotCoupe(tester, commandes);
+            },
+          );
+        }
+      }
+      for (final double texte in <double>[1.5, 2]) {
+        testWidgets(
+          '$role, 320 x 568, Mode Accessibilite, texte x$texte (m5)',
+          (WidgetTester tester) async {
+            await _monter(
+              tester,
+              role,
+              320,
+              texte,
+              hauteur: 568,
+              interfaceMode: InterfaceMode.enfant,
+            );
+            expect(tester.takeException(), isNull);
+            final Finder grille = find.byKey(
+              const ValueKey<String>('commandes-deux-rangees'),
+            );
+            expect(grille, findsOneWidget);
+            final List<String> mots = tester
+                .widgetList<Text>(
+                  find.descendant(
+                    of: grille,
+                    matching: find.byKey(
+                      const ValueKey<String>('mot-commande'),
+                    ),
+                  ),
+                )
+                .map((Text t) => t.data!)
+                .toList();
+            expect(
+              mots,
+              contains(anyOf(t.salle.microOuvert, t.salle.microCoupe)),
+            );
+            verifierAucunMotCoupe(tester, grille);
+            final Rect zone = tester.getRect(grille);
+            expect(zone.left, greaterThanOrEqualTo(-0.5));
+            expect(zone.right, lessThanOrEqualTo(320.5));
+            expect(zone.bottom, lessThanOrEqualTo(568.5));
+            // Quitter reste atteignable, a l'ecran.
+            final Finder quitter = find.bySemanticsLabel(
+              RegExp(t.salle.quitterLeCours),
+            );
+            expect(quitter, findsWidgets);
+            expect(
+              tester.getRect(quitter.first).bottom,
+              lessThanOrEqualTo(568.5),
+            );
+          },
+        );
+      }
+    }
   });
 }
