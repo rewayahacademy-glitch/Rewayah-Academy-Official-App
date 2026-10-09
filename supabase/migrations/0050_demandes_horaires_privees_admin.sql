@@ -2,6 +2,20 @@
 -- Decision du directeur: docs/current/DECISION-OFFRES-GROUPES-2026-10-09.md.
 BEGIN;
 
+CREATE OR REPLACE FUNCTION public.heures_locales_valides(p_heures smallint[])
+RETURNS boolean
+LANGUAGE sql IMMUTABLE SET search_path = ''
+AS $function$
+  SELECT p_heures IS NOT NULL
+     AND coalesce(array_length(p_heures, 1), 0) > 0
+     AND NOT EXISTS (
+       SELECT 1 FROM unnest(p_heures) h
+       WHERE h IS NULL OR h < 0 OR h > 23
+     );
+$function$;
+REVOKE EXECUTE ON FUNCTION public.heures_locales_valides(smallint[]) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.heures_locales_valides(smallint[]) TO authenticated;
+
 CREATE TABLE public.demandes_horaires_famille (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   eleve_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
@@ -21,9 +35,7 @@ CREATE TABLE public.demandes_horaires_famille (
   CONSTRAINT demande_horaire_jours CHECK (
     coalesce(public.jours_iso_valides(jours), false)
     AND cardinality(jours) = cardinality(heures_locales)
-    AND NOT EXISTS (
-      SELECT 1 FROM unnest(heures_locales) h WHERE h IS NULL OR h < 0 OR h > 23
-    )
+    AND public.heures_locales_valides(heures_locales)
   ),
   CONSTRAINT demande_horaire_source CHECK (
     (source = 'offre' AND offre_id IS NOT NULL)
@@ -245,6 +257,61 @@ GRANT EXECUTE ON FUNCTION public.choisir_offre_horaire(uuid, uuid, text) TO auth
 
 -- La file et le seuil appartiennent à l'administration. La fonction ne rend
 -- aucune identité ni liste familiale; elle renvoie une clé opaque de regroupement.
+CREATE OR REPLACE FUNCTION public.etat_creneau_personnalise(p_membre_id uuid)
+RETURNS jsonb
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = ''
+AS $function$
+  SELECT CASE
+    WHEN coalesce(public.peut_decrire_apprenant(p_membre_id), false) THEN (
+      SELECT jsonb_build_object('etat', d.etat)
+      FROM public.demandes_horaires_famille d
+      WHERE d.eleve_id = p_membre_id
+        AND d.source = 'personnalisee'
+        AND d.etat IN ('envoyee', 'classe_validee', 'enseignant_affecte')
+      ORDER BY d.created_at DESC LIMIT 1
+    )
+    ELSE NULL
+  END;
+$function$;
+REVOKE EXECUTE ON FUNCTION public.etat_creneau_personnalise(uuid) FROM PUBLIC, anon, agent_ro;
+GRANT EXECUTE ON FUNCTION public.etat_creneau_personnalise(uuid) TO authenticated;
+
+CREATE OR REPLACE FUNCTION public.retirer_creneau_personnalise(p_membre_id uuid)
+RETURNS void
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = ''
+AS $function$
+DECLARE
+  v_demande public.demandes_horaires_famille%rowtype;
+BEGIN
+  IF NOT coalesce(public.peut_decrire_apprenant(p_membre_id), false) THEN
+    RAISE EXCEPTION 'ce profil n''est pas le votre ni celui de votre foyer';
+  END IF;
+  SELECT * INTO v_demande
+    FROM public.demandes_horaires_famille
+   WHERE eleve_id = p_membre_id AND source = 'personnalisee'
+     AND etat = 'envoyee'
+   FOR UPDATE;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'aucune demande de creneau personnalise active';
+  END IF;
+  PERFORM pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(
+    v_demande.type_public || '|' || v_demande.langue_code || '|' ||
+    v_demande.fuseau_iana || '|' || array_to_string(v_demande.jours, ',') || '|' ||
+    array_to_string(v_demande.heures_locales, ','), 0
+  ));
+  UPDATE public.demandes_horaires_famille
+     SET etat = 'retiree', updated_at = now()
+   WHERE id = v_demande.id AND etat = 'envoyee';
+  PERFORM public.log_sensitive_access(
+    'creneau_personnalise_retire', 'demandes_horaires_famille',
+    v_demande.id::text, jsonb_build_object('eleve_id', p_membre_id)
+  );
+END;
+$function$;
+REVOKE EXECUTE ON FUNCTION public.retirer_creneau_personnalise(uuid)
+  FROM PUBLIC, anon, agent_ro;
+GRANT EXECUTE ON FUNCTION public.retirer_creneau_personnalise(uuid) TO authenticated;
+
 CREATE OR REPLACE FUNCTION public.regroupements_demandes_horaires_admin()
 RETURNS TABLE (
   regroupement_id text,
