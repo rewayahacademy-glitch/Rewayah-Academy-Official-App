@@ -274,4 +274,69 @@ void main() {
       );
     }
   });
+
+  // EA-HL-DOUBLE-1f (K-59, decide par delegation le 09/10, DIR-REP-1) : au
+  // dela de « Rewayah n'a pas repondu », aucune autre cause cote service
+  // n'est affirmee (« n'a pas repondu », « Service indisponible »,
+  // « momentanement indisponible »), et les textes reecrits disent la cause
+  // probable dans la formulation unique de EA-HL-DOUBLE-1e.
+  test('catalogue : aucune cause cote service affirmee, formulation '
+      'unique pour l agent, la salle et la bibliotheque', () {
+    final Map<String, String> textes = <String, String>{};
+    _aplatir(
+      jsonDecode(File('assets/i18n/fr.i18n.json').readAsStringSync()),
+      '',
+      textes,
+    );
+    // Une personne qui n'a pas repondu dans un delai, fait enregistre par
+    // le serveur : ce n'est pas une cause supposee d'un echec de l'appareil.
+    //
+    // Une fonction que le serveur dit fermee (`CapaciteIndisponible`, ou le
+    // code `indisponibleTemporairement` de la revue des dossiers), hors
+    // ligne traite a part avant l'appel : fait annonce par le serveur, pas
+    // cause supposee. Chacune est nommee ; aucune autre ne passe.
+    const Set<String> faits = <String>{
+      'adulte.reprise.phrases.attenteAdministration',
+      'dossiers.file.indisponible',
+      'dossiers.revue.pieceIndisponible',
+      'dossiers.revue.etats.decisionIndisponible',
+      'dossiers.refus.indisponible',
+      'dossiers.validation.indisponible',
+    };
+    expect(<String>[
+      for (final MapEntry<String, String> e in textes.entries)
+        if (!faits.contains(e.key) && motifCauseAffirmee.hasMatch(e.value))
+          '${e.key} = ${e.value}',
+    ], isEmpty);
+    for (final String cle in <String>[
+      'agent.indisponibleDetail',
+      'salle.refusReseauDetail',
+      'tc.bibliotheque.indisponible.invitation',
+      'tc.observation.refus.indisponibleInvitation',
+      'classe.entree.indisponible',
+      'adulte.accueil.echec',
+      'adulte.historique.echec',
+    ]) {
+      expect(textes[cle], matches(formulationCauseProbable), reason: cle);
+    }
+    // L'entree d'agent et la bibliotheque sont sous le bandeau : ni la
+    // connexion ni le reseau n'y sont redits.
+    for (final String cle in <String>[
+      'agent.indisponible',
+      'agent.indisponibleDetail',
+      'tc.bibliotheque.indisponible.message',
+      'tc.bibliotheque.indisponible.invitation',
+      'tc.observation.refus.indisponible',
+      'tc.observation.refus.indisponibleInvitation',
+      'classe.entree.indisponible',
+      'tc.bibliotheque.message.copieImpossible',
+      'compte.tuteur.pageInformations.fuseauIndisponible',
+    ]) {
+      expect(
+        RegExp('connexion|réseau', caseSensitive: false).hasMatch(textes[cle]!),
+        isFalse,
+        reason: cle,
+      );
+    }
+  });
 }

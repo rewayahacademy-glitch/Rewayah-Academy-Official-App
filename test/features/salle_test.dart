@@ -19,7 +19,10 @@ import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/indicateur_observation.dart';
 
+import '../capture/outil_capture.dart';
+import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
+import '../support/hors_ligne_une_fois.dart';
 import '../teaching_core/e/faux/faux_classe.dart';
 
 const String _seance = 's1';
@@ -140,12 +143,18 @@ Future<void> _monterSalle(
   WidgetTester tester, {
   required List<Override> surcharges,
   InterfaceMode mode = InterfaceMode.standard,
+  ThemeMode themeMode = ThemeMode.light,
+  TextDirection? direction,
+  double echelle = 1,
 }) async {
   await tester.pumpWidget(
     hoteRoutant(
       depart: Routes.salle,
       surcharges: surcharges,
       mode: mode,
+      themeMode: themeMode,
+      direction: direction,
+      echelle: echelle,
       routes: <RouteBase>[
         GoRoute(
           path: Routes.salle,
@@ -804,6 +813,10 @@ void main() {
 
       expect(find.text(t.salle.refusReseau), findsOneWidget);
       expect(preVol.verifications, 1);
+      // EA-HL-DOUBLE-1f (K-59) : « La salle n'a pas repondu » affirmait une
+      // cause ; la cause probable est dite sans l'affirmer.
+      expect(causesAffirmees(), findsNothing);
+      expect(find.textContaining(formulationCauseProbable), findsOneWidget);
 
       moteur.erreurEntree = null;
       await tester.tap(find.text(t.commun.reessayer));
@@ -1307,5 +1320,135 @@ void main() {
         expect(find.text('Tuteur de Amina observe'), findsNothing);
       },
     );
+  });
+
+  // EA-HL-DOUBLE-1f : le titre et le detail de l'impasse prenaient l'encre
+  // du fond creme (style du theme), illisible sur le fond de la salle.
+  for (final ThemeMode theme in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
+    testWidgets('l impasse ecrit avec l encre du fond de la salle, $theme', (
+      WidgetTester tester,
+    ) async {
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: FauxMoteurSalle()..erreurEntree = StateError('lien coupe'),
+          preVol: FauxServicePreVol(),
+        ),
+        themeMode: theme,
+      );
+      for (final String texte in <String>[
+        t.salle.refusReseau,
+        t.salle.refusReseauDetail,
+      ]) {
+        final Finder f = find.text(texte);
+        expect(f, findsOneWidget);
+        final Color? encreFond = DefaultTextStyle.of(tester.element(f))
+            .style
+            .color;
+        expect(encreFond, isNotNull);
+        expect(tester.widget<Text>(f).style?.color, encreFond, reason: texte);
+      }
+    });
+  }
+
+  // EA-HL-DOUBLE-1f (reprise) : « Votre presence », pose sur le fond de la
+  // salle, prenait l'encre du fond creme (captures 1440 : sombre sur sombre
+  // en clair, clair sur clair en sombre).
+  for (final ThemeMode theme in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
+    testWidgets('votre presence ecrit avec l encre du fond de la salle, '
+        '$theme', (WidgetTester tester) async {
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: FauxMoteurSalle()..erreurEntree = StateError('lien coupe'),
+          preVol: FauxServicePreVol(),
+        ),
+        themeMode: theme,
+      );
+      final Finder f = find.text(t.presence.mienne);
+      expect(f, findsOneWidget);
+      final Color? encreFond = DefaultTextStyle.of(
+        tester.element(find.text(t.salle.refusReseau)),
+      ).style.color;
+      expect(encreFond, isNotNull);
+      expect(tester.widget<Text>(f).style?.color, encreFond);
+    });
+  }
+
+  // EA-HL-DOUBLE-1f : captures de preuve de l'impasse « reseau » de la salle
+  // (sans bandeau, `PageImmersive`), 390 clair et sombre, 320 texte x2 en
+  // LTR et RTL. Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1f', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size, ThemeMode, double, TextDirection) cas
+        in <(String, Size, ThemeMode, double, TextDirection)>[
+          (
+            '390_clair',
+            const Size(390, 844),
+            ThemeMode.light,
+            1,
+            TextDirection.ltr,
+          ),
+          (
+            '390_sombre',
+            const Size(390, 844),
+            ThemeMode.dark,
+            1,
+            TextDirection.ltr,
+          ),
+          (
+            '320x2_clair',
+            const Size(320, 1000),
+            ThemeMode.light,
+            2,
+            TextDirection.ltr,
+          ),
+          (
+            '320x2_rtl_clair',
+            const Size(320, 1000),
+            ThemeMode.light,
+            2,
+            TextDirection.rtl,
+          ),
+          (
+            '320x2_rtl_sombre',
+            const Size(320, 1000),
+            ThemeMode.dark,
+            2,
+            TextDirection.rtl,
+          ),
+          (
+            '1440_clair',
+            const Size(1440, 900),
+            ThemeMode.light,
+            1,
+            TextDirection.ltr,
+          ),
+        ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        fixerVueCapture(tester, cas.$2, 1);
+        await _monterSalle(
+          tester,
+          surcharges: _surcharges(
+            video: FauxServiceVideo(acces0: _acces('student')),
+            moteur: FauxMoteurSalle()..erreurEntree = StateError('lien coupe'),
+            preVol: FauxServicePreVol(),
+          ),
+          themeMode: cas.$3,
+          direction: cas.$5,
+          echelle: cas.$4,
+        );
+        expect(tester.takeException(), isNull);
+        expect(find.text(t.salle.refusReseau), findsOneWidget);
+        expect(causesAffirmees(), findsNothing);
+        verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1f_salle_refus_reseau_${cas.$1}')}',
+        );
+      });
+    }
   });
 }

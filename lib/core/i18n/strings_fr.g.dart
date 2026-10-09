@@ -302,11 +302,11 @@ class Traductions$salle$fr {
 	/// fr: 'Ce n'est pas votre appareil : le service de visioconférence n'est pas branché. L'équipe le sait.'
 	String get refusConfigurationDetail => 'Ce n\'est pas votre appareil : le service de visioconférence n\'est pas branché. L\'équipe le sait.';
 
-	/// fr: 'La salle n'a pas répondu'
-	String get refusReseau => 'La salle n\'a pas répondu';
+	/// fr: 'La salle n'a pas pu s'ouvrir'
+	String get refusReseau => 'La salle n\'a pas pu s\'ouvrir';
 
-	/// fr: 'Vérifiez votre connexion, puis réessayez.'
-	String get refusReseauDetail => 'Vérifiez votre connexion, puis réessayez.';
+	/// fr: 'Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vérifiez votre connexion, puis réessayez.'
+	String get refusReseauDetail => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vérifiez votre connexion, puis réessayez.';
 
 	/// fr: 'Aucun micro utilisable sur cet appareil'
 	String get refusMateriel => 'Aucun micro utilisable sur cet appareil';
@@ -1468,11 +1468,11 @@ class Traductions$agent$fr {
 	/// fr: 'Ce jeton est inconnu, révoqué ou expiré. Demandez-en un nouveau à l'académie.'
 	String get refusDetail => 'Ce jeton est inconnu, révoqué ou expiré. Demandez-en un nouveau à l\'académie.';
 
-	/// fr: 'Service indisponible'
-	String get indisponible => 'Service indisponible';
+	/// fr: 'L'ouverture n'a pas abouti'
+	String get indisponible => 'L\'ouverture n\'a pas abouti';
 
-	/// fr: 'L'ouverture de session n'a pas répondu. Réessayez dans un instant.'
-	String get indisponibleDetail => 'L\'ouverture de session n\'a pas répondu. Réessayez dans un instant.';
+	/// fr: 'Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get indisponibleDetail => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 
 	/// fr: 'Réessayer'
 	String get reessayer => 'Réessayer';
@@ -8016,8 +8016,8 @@ class Traductions$classe$entree$fr {
 	/// fr: 'Vous pourrez entrer dans la séance dès le retour de la connexion.'
 	String get horsLigne => 'Vous pourrez entrer dans la séance dès le retour de la connexion.';
 
-	/// fr: 'L'information sur la séance est indisponible pour l'instant.'
-	String get indisponible => 'L\'information sur la séance est indisponible pour l\'instant.';
+	/// fr: 'L'information sur la séance n'a pas pu être chargée : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get indisponible => 'L\'information sur la séance n\'a pas pu être chargée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 
 	/// fr: 'L'accès à la salle ne peut pas être vérifié pour le moment.'
 	String get accesInverifiable => 'L\'accès à la salle ne peut pas être vérifié pour le moment.';
@@ -12305,8 +12305,8 @@ class Traductions$compte$tuteur$pageInformations$fr {
 	/// fr: 'Fuseau des séances'
 	String get fuseau => 'Fuseau des séances';
 
-	/// fr: 'Non disponible pour le moment'
-	String get fuseauIndisponible => 'Non disponible pour le moment';
+	/// fr: 'Non chargé'
+	String get fuseauIndisponible => 'Non chargé';
 
 	/// fr: 'Ces informations sont tenues par l'académie. Elles ne se modifient pas encore depuis l'application.'
 	String get note => 'Ces informations sont tenues par l\'académie. Elles ne se modifient pas encore depuis l\'application.';
@@ -12820,8 +12820,8 @@ class Traductions$classe$observation$motif$fr {
 	/// fr: 'La disponibilité de l'observation n'a pas pu être vérifiée.'
 	String get reseau => 'La disponibilité de l\'observation n\'a pas pu être vérifiée.';
 
-	/// fr: 'L'observation n'est pas disponible pour le moment.'
-	String get capaciteAbsente => 'L\'observation n\'est pas disponible pour le moment.';
+	/// fr: 'L'observation ne peut pas s'ouvrir pour cette séance.'
+	String get capaciteAbsente => 'L\'observation ne peut pas s\'ouvrir pour cette séance.';
 }
 
 // Path: classe.pageTravail.statut
@@ -13344,8 +13344,11 @@ class Traductions$tc$bibliotheque$indisponible$fr {
 
 	// Translations
 
-	/// fr: 'La bibliothèque est momentanément indisponible'
-	String get message => 'La bibliothèque est momentanément indisponible';
+	/// fr: 'La bibliothèque n'a pas pu être chargée'
+	String get message => 'La bibliothèque n\'a pas pu être chargée';
+
+	/// fr: 'Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get invitation => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 
 	/// fr: 'Réessayer'
 	String get action => 'Réessayer';
@@ -13470,8 +13473,8 @@ class Traductions$tc$bibliotheque$message$fr {
 	/// fr: 'Copie enregistrée'
 	String get copieEnregistree => 'Copie enregistrée';
 
-	/// fr: 'Cette copie n’est pas disponible pour le moment'
-	String get copieImpossible => 'Cette copie n’est pas disponible pour le moment';
+	/// fr: 'La copie n’a pas pu être préparée. Réessayez dans un instant.'
+	String get copieImpossible => 'La copie n’a pas pu être préparée. Réessayez dans un instant.';
 
 	/// fr: 'Ce support n’est pas encore disponible hors ligne'
 	String get telechargementImpossible => 'Ce support n’est pas encore disponible hors ligne';
@@ -14469,8 +14472,8 @@ class Traductions$tc$observation$disponibilite$fr {
 	/// fr: 'Observation indisponible'
 	String get capaciteTitre => 'Observation indisponible';
 
-	/// fr: 'L'observation n'est pas disponible pour le moment.'
-	String get capacite => 'L\'observation n\'est pas disponible pour le moment.';
+	/// fr: 'L'observation ne peut pas s'ouvrir pour cette séance. Aucune visite n'a commencé.'
+	String get capacite => 'L\'observation ne peut pas s\'ouvrir pour cette séance. Aucune visite n\'a commencé.';
 }
 
 // Path: tc.observation.connexion
@@ -14550,8 +14553,11 @@ class Traductions$tc$observation$refus$fr {
 	/// fr: 'La salle n'est pas ouverte à cette heure.'
 	String get horsFenetre => 'La salle n\'est pas ouverte à cette heure.';
 
-	/// fr: 'L'observation n'est pas disponible pour le moment.'
-	String get indisponible => 'L\'observation n\'est pas disponible pour le moment.';
+	/// fr: 'L'observation n'a pas pu s'ouvrir.'
+	String get indisponible => 'L\'observation n\'a pas pu s\'ouvrir.';
+
+	/// fr: 'Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get indisponibleInvitation => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 
 	/// fr: 'L'observation n'est pas encore activée sur cette installation.'
 	String get capaciteAbsente => 'L\'observation n\'est pas encore activée sur cette installation.';
@@ -16145,8 +16151,8 @@ extension on Traductions {
 			'salle.refusAccesDetail' => 'La salle s\'ouvre dix minutes avant l\'heure du cours, et se ferme un quart d\'heure après sa fin.',
 			'salle.refusConfiguration' => 'La salle n\'est pas encore disponible',
 			'salle.refusConfigurationDetail' => 'Ce n\'est pas votre appareil : le service de visioconférence n\'est pas branché. L\'équipe le sait.',
-			'salle.refusReseau' => 'La salle n\'a pas répondu',
-			'salle.refusReseauDetail' => 'Vérifiez votre connexion, puis réessayez.',
+			'salle.refusReseau' => 'La salle n\'a pas pu s\'ouvrir',
+			'salle.refusReseauDetail' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vérifiez votre connexion, puis réessayez.',
 			'salle.refusMateriel' => 'Aucun micro utilisable sur cet appareil',
 			'salle.refusMaterielDetail' => 'Un cours de Coran se fait à la voix. Autorisez l\'accès au micro, ou branchez un casque, puis réessayez.',
 			'salle.retourAccueil' => 'Revenir à mon accueil',
@@ -17562,8 +17568,8 @@ extension on Traductions {
 			'agent.ouverture' => 'Ouverture',
 			'agent.refus' => 'Jeton refusé',
 			'agent.refusDetail' => 'Ce jeton est inconnu, révoqué ou expiré. Demandez-en un nouveau à l\'académie.',
-			'agent.indisponible' => 'Service indisponible',
-			'agent.indisponibleDetail' => 'L\'ouverture de session n\'a pas répondu. Réessayez dans un instant.',
+			'agent.indisponible' => 'L\'ouverture n\'a pas abouti',
+			'agent.indisponibleDetail' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'agent.reessayer' => 'Réessayer',
 			'agent.bandeau' => 'Observation, lecture seule',
 			'agent.bandeauMasque' => 'Prénoms masqués',
@@ -17847,7 +17853,7 @@ extension on Traductions {
 			'compte.tuteur.pageInformations.courriel' => 'Adresse de connexion',
 			'compte.tuteur.pageInformations.langue' => 'Langue de l\'interface',
 			'compte.tuteur.pageInformations.fuseau' => 'Fuseau des séances',
-			'compte.tuteur.pageInformations.fuseauIndisponible' => 'Non disponible pour le moment',
+			'compte.tuteur.pageInformations.fuseauIndisponible' => 'Non chargé',
 			'compte.tuteur.pageInformations.note' => 'Ces informations sont tenues par l\'académie. Elles ne se modifient pas encore depuis l\'application.',
 			'compte.tuteur.pageSecurite.titre' => 'Connexion et sécurité',
 			'compte.tuteur.pageSecurite.sousTitre' => 'Comment vous accédez à votre compte.',
@@ -18284,7 +18290,7 @@ extension on Traductions {
 			'classe.entree.annulee' => 'Séance annulée',
 			'classe.entree.aucune' => 'Aucune séance prévue',
 			'classe.entree.horsLigne' => 'Vous pourrez entrer dans la séance dès le retour de la connexion.',
-			'classe.entree.indisponible' => 'L\'information sur la séance est indisponible pour l\'instant.',
+			'classe.entree.indisponible' => 'L\'information sur la séance n\'a pas pu être chargée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'classe.entree.accesInverifiable' => 'L\'accès à la salle ne peut pas être vérifié pour le moment.',
 			'classe.entree.reessayer' => 'Réessayer',
 			'classe.entree.chargementSeance' => 'Chargement de la prochaine séance.',
@@ -18355,7 +18361,7 @@ extension on Traductions {
 			'classe.observation.motif.visiteDejaOuverte' => 'Une visite est déjà ouverte, sur cet appareil ou sur un autre.',
 			'classe.observation.motif.garantieServeurAbsente' => 'L\'observation des séances n\'est pas encore ouverte.',
 			'classe.observation.motif.reseau' => 'La disponibilité de l\'observation n\'a pas pu être vérifiée.',
-			'classe.observation.motif.capaciteAbsente' => 'L\'observation n\'est pas disponible pour le moment.',
+			'classe.observation.motif.capaciteAbsente' => 'L\'observation ne peut pas s\'ouvrir pour cette séance.',
 			'classe.pagePlanning.prochaines' => 'Prochaines séances',
 			'classe.pagePlanning.ligne' => ({required Object heure, required Object duree}) => '${heure} · ${duree}',
 			'classe.pagePlanning.ligneFuseau' => ({required Object heure, required Object fuseau, required Object duree}) => '${heure} (${fuseau}) · ${duree}',
@@ -19141,7 +19147,8 @@ extension on Traductions {
 			'tc.bibliotheque.vide.invitation' => 'Vos enseignants déposeront ici les supports de vos cours.',
 			'tc.bibliotheque.aucunResultat.message' => 'Aucun support ne correspond',
 			'tc.bibliotheque.aucunResultat.invitation' => 'Essayez un autre mot, ou relâchez les filtres.',
-			'tc.bibliotheque.indisponible.message' => 'La bibliothèque est momentanément indisponible',
+			'tc.bibliotheque.indisponible.message' => 'La bibliothèque n\'a pas pu être chargée',
+			'tc.bibliotheque.indisponible.invitation' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'tc.bibliotheque.indisponible.action' => 'Réessayer',
 			'tc.bibliotheque.introuvable.message' => 'Ce support ne vous est pas ouvert',
 			'tc.bibliotheque.introuvable.invitation' => 'Il a peut-être été retiré, ou il est réservé à un autre groupe. Votre enseignant peut vous le rouvrir.',
@@ -19165,7 +19172,7 @@ extension on Traductions {
 			'tc.bibliotheque.action.liberer' => 'Libérer la place',
 			'tc.bibliotheque.action.enregistrerCopie' => 'Enregistrer une copie',
 			'tc.bibliotheque.message.copieEnregistree' => 'Copie enregistrée',
-			'tc.bibliotheque.message.copieImpossible' => 'Cette copie n’est pas disponible pour le moment',
+			'tc.bibliotheque.message.copieImpossible' => 'La copie n’a pas pu être préparée. Réessayez dans un instant.',
 			'tc.bibliotheque.message.telechargementImpossible' => 'Ce support n’est pas encore disponible hors ligne',
 			'tc.bibliotheque.message.horsLigneNonTelecharge' => 'Disponible une fois téléchargé ou de retour en ligne',
 			'tc.bibliotheque.message.aucunTelechargement' => 'Aucun fichier à télécharger pour cette version.',
@@ -19388,7 +19395,7 @@ extension on Traductions {
 			'tc.observation.disponibilite.reseauTitre' => 'Vérification impossible',
 			'tc.observation.disponibilite.reseau' => 'La disponibilité de l\'observation n\'a pas pu être vérifiée. Aucune visite n\'a commencé.',
 			'tc.observation.disponibilite.capaciteTitre' => 'Observation indisponible',
-			'tc.observation.disponibilite.capacite' => 'L\'observation n\'est pas disponible pour le moment.',
+			'tc.observation.disponibilite.capacite' => 'L\'observation ne peut pas s\'ouvrir pour cette séance. Aucune visite n\'a commencé.',
 			'tc.observation.connexion.titre' => 'Connexion et vérification',
 			'tc.observation.connexion.phrase' => 'Vos visites restantes sont vérifiées. La visite commence dès que l\'entrée est acceptée, connexion vidéo comprise.',
 			'tc.observation.connexion.enCours' => 'Connexion et vérification en cours',
@@ -19406,7 +19413,8 @@ extension on Traductions {
 			'tc.observation.refus.lienTuteur' => 'Vous n\'êtes rattaché à aucun élève de cette séance.',
 			'tc.observation.refus.seanceNonActive' => 'La séance n\'est pas en cours.',
 			'tc.observation.refus.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
-			'tc.observation.refus.indisponible' => 'L\'observation n\'est pas disponible pour le moment.',
+			'tc.observation.refus.indisponible' => 'L\'observation n\'a pas pu s\'ouvrir.',
+			'tc.observation.refus.indisponibleInvitation' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',
 			'tc.observation.visite.titre' => 'Observation en cours',
 			'tc.observation.visite.quitter' => 'Quitter',
@@ -19416,10 +19424,10 @@ extension on Traductions {
 			'tc.observation.visite.budgetIncertain' => 'Temps restant non confirmé par le serveur.',
 			'tc.observation.visite.videoIndisponible' => 'La vidéo de la séance n\'a pas pu s\'ouvrir. Votre temps d\'observation continue de s\'écouler.',
 			'tc.observation.visite.sortieNonConfirmee' => 'La fin de votre visite n\'a pas pu être confirmée. Elle sera fermée par le serveur.',
-			'tc.observation.visite.restantes' => 'restantes',
-			'tc.observation.visite.decompteLu' => ({required Object duree}) => 'Temps restant : ${duree}',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.visite.restantes' => 'restantes',
+			'tc.observation.visite.decompteLu' => ({required Object duree}) => 'Temps restant : ${duree}',
 			'tc.observation.visite.enDirect' => 'En direct',
 			'tc.observation.visite.connexion' => 'Connexion',
 			'tc.observation.visite.reconnexion' => 'Reconnexion',

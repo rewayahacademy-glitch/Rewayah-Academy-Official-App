@@ -154,6 +154,9 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
             decoration: InputDecoration(
               isDense: true,
               hintText: t.tc.bibliotheque.rechercheIndication,
+              // EA-HL-DOUBLE-1f : l'indication passe a la ligne (trois lignes
+              // au plus) au lieu d'etre tronquee a 320 px en texte x2 (K-54).
+              hintMaxLines: 3,
               prefixIcon: Icon(AppIcons.recherche.repos),
             ),
           ),
@@ -208,6 +211,7 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
           SliverToBoxAdapter(
             child: EmptyState(
               message: t.tc.bibliotheque.indisponible.message,
+              invitation: t.tc.bibliotheque.indisponible.invitation,
               icone: AppIcons.avertissement,
               libelleAction: t.tc.bibliotheque.indisponible.action,
               onAction: () =>

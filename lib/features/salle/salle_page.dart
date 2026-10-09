@@ -808,7 +808,11 @@ class _Entete extends StatelessWidget {
           Ecart.vSm,
           _SurLaSalle(
             active: encreAccessible,
-            child: LignePresence(nom: t.presence.mienne, vue: etat),
+            child: encreAccessible
+                ? LignePresence(nom: t.presence.mienne, vue: etat)
+                : _EncreDuFond(
+                    child: LignePresence(nom: t.presence.mienne, vue: etat),
+                  ),
           ),
         ],
         // **L'enfant apprend que son tuteur regarde, ici aussi.** Il y a DEUX
@@ -2099,6 +2103,13 @@ class _Impasse extends StatelessWidget {
       CauseImpasse.reseau => (t.salle.refusReseau, t.salle.refusReseauDetail),
     };
 
+    // EA-HL-DOUBLE-1f : le titre et le detail prennent l'encre du fond de la
+    // salle (`PageImmersive`, qui la pose dans `DefaultTextStyle`). Le style
+    // du theme portait celle du fond creme : sombre sur le fond sombre en
+    // clair, clair sur le fond clair en sombre (captures de 1f).
+    final Color? encreFond = DefaultTextStyle.of(context).style.color;
+    TextStyle? surFond(TextStyle? style) => style?.copyWith(color: encreFond);
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xxl),
@@ -2112,7 +2123,7 @@ class _Impasse extends StatelessWidget {
               textAlign: TextAlign.center,
               style: _encreSalle(
                 context,
-                textes.titleMedium,
+                surFond(textes.titleMedium),
                 active: encreAccessible,
               ),
             ),
@@ -2122,7 +2133,7 @@ class _Impasse extends StatelessWidget {
               textAlign: TextAlign.center,
               style: _encreSalle(
                 context,
-                textes.bodyMedium,
+                surFond(textes.bodyMedium),
                 active: encreAccessible,
               ),
             ),
@@ -2253,6 +2264,30 @@ TextStyle _encreSalle(
 }) {
   final TextStyle base = style ?? const TextStyle();
   return active ? AppPalette.of(context).surfaceInverse.applyTo(base) : base;
+}
+
+/// EA-HL-DOUBLE-1f : un composant partage qui ecrit avec les styles du
+/// theme (encre du fond creme) prend ici l'encre du fond de la salle, que
+/// `PageImmersive` pose dans `DefaultTextStyle`. Sans cela, « Votre
+/// presence » s'ecrivait sombre sur sombre en clair, clair sur clair en
+/// sombre (captures 1440 de 1f).
+class _EncreDuFond extends StatelessWidget {
+  const _EncreDuFond({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final Color? encre = DefaultTextStyle.of(context).style.color;
+    if (encre == null) return child;
+    final ThemeData theme = Theme.of(context);
+    return Theme(
+      data: theme.copyWith(
+        textTheme: theme.textTheme.apply(bodyColor: encre, displayColor: encre),
+      ),
+      child: child,
+    );
+  }
 }
 
 /// MA-5 : un composant partage fait pour une surface claire se pose, pour
