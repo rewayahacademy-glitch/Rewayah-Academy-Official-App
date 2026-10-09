@@ -95,6 +95,13 @@ void main() {
               if (_agrandirBarre.evaluate().isNotEmpty) {
                 verifierAucunMotCoupe(tester, _agrandirBarre);
               }
+              // ZOOM-LIB-1 (n2) : toute la rangee du zoom, libelle compris.
+              final Finder zoom = find.byKey(
+                const ValueKey<String>('zoom-local'),
+              );
+              if (zoom.evaluate().isNotEmpty) {
+                verifierAucunMotCoupe(tester, zoom);
+              }
               // Sur la rangee de bureau, le mot d'etat de chaque bascule
               // reste a l'ecran (decision du 05/10).
               if (l == '1440') {
@@ -128,11 +135,7 @@ void main() {
       testWidgets('1440 px, texte x$echelle : case de bascule de deux cibles', (
         WidgetTester tester,
       ) async {
-        await _monter(
-          tester,
-          taille: const Size(1440, 900),
-          echelle: echelle,
-        );
+        await _monter(tester, taille: const Size(1440, 900), echelle: echelle);
         final BuildContext contexte = tester.element(_dock);
         expect(
           largeurCaseBasculeAvecMot(contexte),
@@ -159,30 +162,31 @@ void main() {
     });
 
     for (final Size taille in const <Size>[Size(390, 844), Size(1440, 900)]) {
-      testWidgets('${taille.width.toInt()} px, sens rtl : point final a la fin', (
-        WidgetTester tester,
-      ) async {
-        fixerVueCapture(tester, taille, 1);
-        await tester.pumpWidget(
-          hoteCapture(
-            const Directionality(
-              textDirection: TextDirection.rtl,
-              child: DemoSallePage(
-                role: RoleSeance.eleve,
-                etat: EtatDemoSalle.repos,
+      testWidgets(
+        '${taille.width.toInt()} px, sens rtl : point final a la fin',
+        (WidgetTester tester) async {
+          fixerVueCapture(tester, taille, 1);
+          await tester.pumpWidget(
+            hoteCapture(
+              const Directionality(
+                textDirection: TextDirection.rtl,
+                child: DemoSallePage(
+                  role: RoleSeance.eleve,
+                  etat: EtatDemoSalle.repos,
+                ),
               ),
             ),
-          ),
-        );
-        await stabiliser(tester);
-        final Finder mention = find.text(t.salle.bandeauPermanent);
-        expect(mention, findsOneWidget);
-        final RenderParagraph p = tester.renderObject<RenderParagraph>(
-          find.descendant(of: mention, matching: find.byType(RichText)),
-        );
-        expect(p.textDirection, TextDirection.ltr);
-        expect(tester.takeException(), isNull);
-      });
+          );
+          await stabiliser(tester);
+          final Finder mention = find.text(t.salle.bandeauPermanent);
+          expect(mention, findsOneWidget);
+          final RenderParagraph p = tester.renderObject<RenderParagraph>(
+            find.descendant(of: mention, matching: find.byType(RichText)),
+          );
+          expect(p.textDirection, TextDirection.ltr);
+          expect(tester.takeException(), isNull);
+        },
+      );
     }
   });
 
@@ -200,12 +204,7 @@ void main() {
         ]) {
           final String nom = 'demo_salle_${role.name}_${l}_x$echelle';
           testWidgets(nom, (WidgetTester tester) async {
-            await _monter(
-              tester,
-              taille: taille,
-              echelle: echelle,
-              role: role,
-            );
+            await _monter(tester, taille: taille, echelle: echelle, role: role);
             expect(tester.takeException(), isNull);
             debugPrint('PNG ${await capturer(tester, nom)}');
           });

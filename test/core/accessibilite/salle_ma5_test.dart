@@ -335,6 +335,12 @@ void main() {
     // l'ecran) et une touche les rend. Ce test garde la mesure (pas de
     // regression au-dela de 70 %) et le masquage ; la borne a 320 x 568 est
     // rendue au directeur comme reste (DOCK-X2-1).
+    // ZOOM-LIB-1 (09/10/2026) : mesure reprise, en-tete 120 + commandes 240
+    // = 360 (63,4 %). Reduire l'en-tete seul ne peut pas tenir la borne :
+    // les commandes laissent 284 - 240 = 44, moins que la cible du chevron
+    // (48), et la mention, visible par principe (Children's Code), prend deux
+    // lignes (64). L'en-tete compact est deja a son minimum (4 + 48 + 64 + 4).
+    // La garde est resserree a la mesure actuelle.
     testWidgets('MA-CMD-1 : 320 x 568, texte x2, borne mesuree (m1)', (
       WidgetTester tester,
     ) async {
@@ -362,7 +368,7 @@ void main() {
       );
       // La borne de 50 % n'est pas tenue ici (voir plus haut) ; on garde
       // la mesure contre toute regression.
-      expect(total, lessThanOrEqualTo(568 * 0.70), reason: 'regression');
+      expect(total, lessThanOrEqualTo(360.5), reason: 'regression');
 
       double opacite() => tester
           .widget<AnimatedOpacity>(
