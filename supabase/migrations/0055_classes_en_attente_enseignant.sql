@@ -215,6 +215,8 @@ BEGIN
       AND (p.access_until IS NULL OR p.access_until > now())
       AND h.status = 'active' AND h.deleted_at IS NULL
       AND sp.deleted_at IS NULL
+      AND c.type_public = d.type_public
+      AND l.code = d.langue_code
     ORDER BY d.created_at, d.eleve_id
     LIMIT v_quota
     FOR UPDATE OF d
