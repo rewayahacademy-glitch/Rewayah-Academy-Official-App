@@ -252,6 +252,12 @@ BEGIN
   END IF;
 
   -- Le tuteur ne reçoit que l'état de l'élève de son foyer.
+  PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000998', true);
+  PERFORM set_config('request.jwt.claims',
+    jsonb_build_object('app_metadata', jsonb_build_object(
+      'role', 'guardian',
+      'household_id', 'f1480000-0000-0000-0000-000000000003'
+    ))::text, true);
   v_reponse := public.mes_demandes_horaires(
     'f1490000-0000-0000-0000-000000000003');
   IF jsonb_array_length(v_reponse) <> 1
@@ -283,6 +289,12 @@ BEGIN
     'adulte', 'francais', 'Europe/Paris', ARRAY[1,3,5]::smallint[], 20::smallint, NULL
   );
   PERFORM public.publier_offre_horaire(v_offre);
+  PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000998', true);
+  PERFORM set_config('request.jwt.claims',
+    jsonb_build_object('app_metadata', jsonb_build_object(
+      'role', 'guardian',
+      'household_id', 'f1480000-0000-0000-0000-000000000003'
+    ))::text, true);
   v_id := ('f1490000-0000-0000-0000-' || lpad((v_capacite + 3)::text, 12, '0'))::uuid;
   v_result := public.choisir_offre_horaire(v_id, v_offre, 'Europe/Paris');
   IF NOT EXISTS (
