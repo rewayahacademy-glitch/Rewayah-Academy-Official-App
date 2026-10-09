@@ -183,7 +183,7 @@ List<OffreRemplacement> _confirmesDans(WidgetTester tester) =>
 
 void main() {
   group('Les cinq etats', () {
-    testWidgets('chargement : le squelette, aucune offre inventee', (
+    testWidgets('chargement : le squelette, aucune offre inventee', (
       WidgetTester tester,
     ) async {
       final StreamController<List<OffreCommune>> jamais =
@@ -196,7 +196,7 @@ void main() {
       await _demonter(tester);
     });
 
-    testWidgets('contenu : l alerte urgente en tete, titre et ligne', (
+    testWidgets('contenu : l alerte urgente en tete, titre et ligne', (
       WidgetTester tester,
     ) async {
       await _monter(
@@ -207,7 +207,7 @@ void main() {
         ],
       );
       final Finder titre = find.text(
-        'Remplacement urgent : mardi 29 septembre 18:00',
+        'Remplacement urgent : mardi 29 septembre 18:00',
       );
       expect(titre, findsOneWidget);
       expect(
@@ -217,7 +217,7 @@ void main() {
       );
       expect(
         find.text(
-          'Un enseignant est absent. Assurez cette séance à sa place : elle '
+          'Un enseignant est absent. Assurez cette séance à sa place : elle '
           'vous sera payée après validation en fin de mois.',
         ),
         findsNWidgets(2),
@@ -277,7 +277,7 @@ void main() {
       await _demonter(tester);
     });
 
-    testWidgets('vide : une phrase, pas une page blanche', (
+    testWidgets('vide : une phrase, pas une page blanche', (
       WidgetTester tester,
     ) async {
       await _monter(
@@ -296,7 +296,7 @@ void main() {
       await _demonter(tester);
     });
 
-    testWidgets('erreur en ligne : ce qui manque, et la relecture', (
+    testWidgets('erreur en ligne : ce qui manque, et la relecture', (
       WidgetTester tester,
     ) async {
       final _PortFlux port = _PortFlux(
@@ -318,7 +318,7 @@ void main() {
       await _demonter(tester);
     });
 
-    testWidgets('erreur : les remplacements confirmes restent dessous (D11)', (
+    testWidgets('erreur : les remplacements confirmes restent dessous (D11)', (
       WidgetTester tester,
     ) async {
       await _monter(
@@ -333,7 +333,7 @@ void main() {
       await _demonter(tester);
     });
 
-    testWidgets('hors ligne sans donnees : ce qui manque, une seule fois', (
+    testWidgets('hors ligne sans donnees : ce qui manque, une seule fois', (
       WidgetTester tester,
     ) async {
       await _monter(
@@ -352,7 +352,7 @@ void main() {
       await _demonter(tester);
     });
 
-    testWidgets('hors ligne avec donnees : le bandeau seul, les offres lues', (
+    testWidgets('hors ligne avec donnees : le bandeau seul, les offres lues', (
       WidgetTester tester,
     ) async {
       await _monter(tester, port: _port(_tableau()), horsLigne: true);
@@ -361,7 +361,7 @@ void main() {
       await _demonter(tester);
     });
 
-    testWidgets('sans port : aucune offre inventee, ni bouton', (
+    testWidgets('sans port : aucune offre inventee, ni bouton', (
       WidgetTester tester,
     ) async {
       await _monter(tester, confirmes: <OffreRemplacement>[_fatiha]);
@@ -371,7 +371,7 @@ void main() {
     });
   });
 
-  group('Filtre de genre (simule ; le serveur le portera)', () {
+  group('Filtre de genre (simule ; le serveur le portera)', () {
     test('Classe d hommes aux enseignants, de femmes aux enseignantes', () {
       final TableauRemplacementsDemo tableau = _tableau();
       Set<String> vues(GenreEnseignantDemo genre) => tableau
@@ -403,7 +403,7 @@ void main() {
     });
 
     for (final GenreEnseignantDemo genre in GenreEnseignantDemo.values) {
-      testWidgets('a l ecran : ${genre.name}', (WidgetTester tester) async {
+      testWidgets('a l ecran : ${genre.name}', (WidgetTester tester) async {
         await _monter(tester, port: _port(_tableau(), genre: genre));
         final bool homme = genre == GenreEnseignantDemo.homme;
         expect(_urgente(_fatiha), findsOneWidget);
@@ -443,7 +443,7 @@ void main() {
       );
     });
 
-    testWidgets('accepter : la seance devient votre remplacement', (
+    testWidgets('accepter : la seance devient votre remplacement', (
       WidgetTester tester,
     ) async {
       final TableauRemplacementsDemo tableau = _tableau();
@@ -469,7 +469,7 @@ void main() {
       await _demonter(tester);
     });
 
-    testWidgets('un collegue accepte pendant l envoi : refus propre', (
+    testWidgets('un collegue accepte pendant l envoi : refus propre', (
       WidgetTester tester,
     ) async {
       final TableauRemplacementsDemo tableau = _tableau();
@@ -525,7 +525,7 @@ void main() {
       await _demonter(tester);
     });
 
-    testWidgets('sans reponse : rien n est suppose, le bouton reste', (
+    testWidgets('sans reponse : rien n est suppose, le bouton reste', (
       WidgetTester tester,
     ) async {
       await _monter(tester, port: _port(_tableau(), horsLigne: true));

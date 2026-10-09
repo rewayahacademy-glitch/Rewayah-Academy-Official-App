@@ -252,6 +252,30 @@ const String _baseFinance = 'aebd21a5';
     return sortie.isEmpty ? null : sortie;
   }
 
+  // JONCTION-LIGNES-1 : sur la branche d'integration, la ligne ccr (qui porte
+  // le backend de ChatGPT, K-68) est un ancetre de HEAD ; la frontiere est
+  // alors « rien sous supabase/ depuis ccr » : ce que la voie et la
+  // jonction ajoutent n'y touche pas.
+  for (final String branche in <String>[
+    'origin/ccr-1b1bfa0b-m1kvkk',
+    'ccr-1b1bfa0b-m1kvkk',
+  ]) {
+    final ProcessResult ancetre = Process.runSync('git', <String>[
+      'merge-base',
+      '--is-ancestor',
+      branche,
+      'HEAD',
+    ]);
+    essais.add(
+      'git merge-base --is-ancestor $branche HEAD -> ${ancetre.exitCode}',
+    );
+    if (ancetre.exitCode == 0) {
+      if (commit(<String>['rev-parse', '--verify', '$branche^{commit}'])
+          case final String ccr) {
+        return (reference: ccr, essais: essais);
+      }
+    }
+  }
   if (commit(<String>['rev-parse', '--verify', '$_baseFinance^{commit}'])
       case final String base) {
     return (reference: base, essais: essais);

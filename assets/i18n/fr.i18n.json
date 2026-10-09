@@ -4117,15 +4117,15 @@
     },
     "remplacements": {
       "titre": "Remplacements",
-      "contexte": "Ouverts à tous les enseignants : le premier qui accepte assure la séance.",
-      "urgentTitre": "Remplacement urgent : {jour} {heure}",
-      "urgentPhrase": "Un enseignant est absent. Assurez cette séance à sa place : elle vous sera payée après validation en fin de mois.",
+      "contexte": "Ouverts à tous les enseignants : le premier qui accepte assure la séance.",
+      "urgentTitre": "Remplacement urgent : {jour} {heure}",
+      "urgentPhrase": "Un enseignant est absent. Assurez cette séance à sa place : elle vous sera payée après validation en fin de mois.",
       "vosRemplacements": "Vos remplacements",
       "prisTitre": "Déjà pris par un collègue",
       "prisPastille": "Pris par un collègue",
       "prisAvantVous": "Un collègue a accepté cette séance juste avant vous. Rien n'a changé dans votre planning.",
-      "acceptee": "C'est confirmé : vous assurez cette séance. Elle s'ajoute à vos remplacements.",
-      "erreur": "Les remplacements à assurer n'ont pas pu être chargés : le serveur n'a pas répondu. Réessayez dans un instant.",
+      "acceptee": "C'est confirmé : vous assurez cette séance. Elle s'ajoute à vos remplacements.",
+      "erreur": "Les remplacements à assurer n'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
       "sansDonnees": "Les remplacements à assurer n'ont pas pu être chargés"
     },
     "salle": {

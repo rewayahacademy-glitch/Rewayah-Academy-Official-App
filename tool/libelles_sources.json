@@ -3290,5 +3290,6 @@
   "admin.groupes.formulaire.titreSeuil": "décidé par délégation le 09/10, étape CLASSE-FORM-1 (décisions D1 à D9) : formulaire « Nouvelle classe » semi-automatique demandé par le directeur ; fiche docs/current/UX_REVIEW_CLASSE-FORM-1.md",
   "formulaire.champObligatoire": "décidé par délégation le 09/10, étape CLASSE-FORM-1 (décisions D1 à D9) : formulaire « Nouvelle classe » semi-automatique demandé par le directeur ; fiche docs/current/UX_REVIEW_CLASSE-FORM-1.md",
   "formulaire.legendeObligatoire": "décidé par délégation le 09/10, étape CLASSE-FORM-1 (décisions D1 à D9) : formulaire « Nouvelle classe » semi-automatique demandé par le directeur ; fiche docs/current/UX_REVIEW_CLASSE-FORM-1.md",
-  "formulaire.obligatoire": "décidé par délégation le 09/10, étape CLASSE-FORM-1 (décisions D1 à D9) : formulaire « Nouvelle classe » semi-automatique demandé par le directeur ; fiche docs/current/UX_REVIEW_CLASSE-FORM-1.md"
+  "formulaire.obligatoire": "décidé par délégation le 09/10, étape CLASSE-FORM-1 (décisions D1 à D9) : formulaire « Nouvelle classe » semi-automatique demandé par le directeur ; fiche docs/current/UX_REVIEW_CLASSE-FORM-1.md",
+  "enseignant.remplacements.erreur": "etape REMPL-1 ; JONCTION-LIGNES-1 (09/10) : cause probable reformulée selon K-59 (EA-HL-DOUBLE-1e, formulation unique « il est possible que la demande ne soit pas parvenue jusqu'à Rewayah », jamais « le serveur n'a pas répondu ») et espace insécable de COUPE-MOTS-4, décidé par délégation le 09/10"
 }

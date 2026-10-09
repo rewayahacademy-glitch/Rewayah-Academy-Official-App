@@ -10113,13 +10113,13 @@ class Traductions$enseignant$remplacements$fr {
 	String get titre => 'Remplacements';
 
 	/// fr: 'Ouverts à tous les enseignants : le premier qui accepte assure la séance.'
-	String get contexte => 'Ouverts à tous les enseignants : le premier qui accepte assure la séance.';
+	String get contexte => 'Ouverts à tous les enseignants : le premier qui accepte assure la séance.';
 
 	/// fr: 'Remplacement urgent : {jour} {heure}'
-	String urgentTitre({required Object jour, required Object heure}) => 'Remplacement urgent : ${jour} ${heure}';
+	String urgentTitre({required Object jour, required Object heure}) => 'Remplacement urgent : ${jour} ${heure}';
 
 	/// fr: 'Un enseignant est absent. Assurez cette séance à sa place : elle vous sera payée après validation en fin de mois.'
-	String get urgentPhrase => 'Un enseignant est absent. Assurez cette séance à sa place : elle vous sera payée après validation en fin de mois.';
+	String get urgentPhrase => 'Un enseignant est absent. Assurez cette séance à sa place : elle vous sera payée après validation en fin de mois.';
 
 	/// fr: 'Vos remplacements'
 	String get vosRemplacements => 'Vos remplacements';
@@ -10134,10 +10134,10 @@ class Traductions$enseignant$remplacements$fr {
 	String get prisAvantVous => 'Un collègue a accepté cette séance juste avant vous. Rien n\'a changé dans votre planning.';
 
 	/// fr: 'C'est confirmé : vous assurez cette séance. Elle s'ajoute à vos remplacements.'
-	String get acceptee => 'C\'est confirmé : vous assurez cette séance. Elle s\'ajoute à vos remplacements.';
+	String get acceptee => 'C\'est confirmé : vous assurez cette séance. Elle s\'ajoute à vos remplacements.';
 
-	/// fr: 'Les remplacements à assurer n'ont pas pu être chargés : le serveur n'a pas répondu. Réessayez dans un instant.'
-	String get erreur => 'Les remplacements à assurer n\'ont pas pu être chargés : le serveur n\'a pas répondu. Réessayez dans un instant.';
+	/// fr: 'Les remplacements à assurer n'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Les remplacements à assurer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 
 	/// fr: 'Les remplacements à assurer n'ont pas pu être chargés'
 	String get sansDonnees => 'Les remplacements à assurer n\'ont pas pu être chargés';
@@ -29940,15 +29940,15 @@ extension on Traductions {
 			'enseignant.journee.remplacement.pasCetteFois' => 'Pas cette fois',
 			'enseignant.journee.erreurPartielleCahiers' => 'Vos cahiers de transmission à terminer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.',
 			'enseignant.remplacements.titre' => 'Remplacements',
-			'enseignant.remplacements.contexte' => 'Ouverts à tous les enseignants : le premier qui accepte assure la séance.',
-			'enseignant.remplacements.urgentTitre' => ({required Object jour, required Object heure}) => 'Remplacement urgent : ${jour} ${heure}',
-			'enseignant.remplacements.urgentPhrase' => 'Un enseignant est absent. Assurez cette séance à sa place : elle vous sera payée après validation en fin de mois.',
+			'enseignant.remplacements.contexte' => 'Ouverts à tous les enseignants : le premier qui accepte assure la séance.',
+			'enseignant.remplacements.urgentTitre' => ({required Object jour, required Object heure}) => 'Remplacement urgent : ${jour} ${heure}',
+			'enseignant.remplacements.urgentPhrase' => 'Un enseignant est absent. Assurez cette séance à sa place : elle vous sera payée après validation en fin de mois.',
 			'enseignant.remplacements.vosRemplacements' => 'Vos remplacements',
 			'enseignant.remplacements.prisTitre' => 'Déjà pris par un collègue',
 			'enseignant.remplacements.prisPastille' => 'Pris par un collègue',
 			'enseignant.remplacements.prisAvantVous' => 'Un collègue a accepté cette séance juste avant vous. Rien n\'a changé dans votre planning.',
-			'enseignant.remplacements.acceptee' => 'C\'est confirmé : vous assurez cette séance. Elle s\'ajoute à vos remplacements.',
-			'enseignant.remplacements.erreur' => 'Les remplacements à assurer n\'ont pas pu être chargés : le serveur n\'a pas répondu. Réessayez dans un instant.',
+			'enseignant.remplacements.acceptee' => 'C\'est confirmé : vous assurez cette séance. Elle s\'ajoute à vos remplacements.',
+			'enseignant.remplacements.erreur' => 'Les remplacements à assurer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'enseignant.remplacements.sansDonnees' => 'Les remplacements à assurer n\'ont pas pu être chargés',
 			'enseignant.salle.reference' => ({required Object page, required Object total, required Object reference}) => 'Présenté : page ${page} sur ${total} · ${reference}',
 			'enseignant.salle.rien' => 'Rien n\'est présenté',
