@@ -46,6 +46,12 @@ jobs:
             psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f "$f"
           done
 
+      # OFFRES-I5 : les créneaux demandés en privé ne deviennent une offre
+      # publique qu'au quota configuré (5 enfants / 6 adultes).
+      - name: Scenarios du créneau personnalisé au quota (F1)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_offres_personnalisees.sql
+
       # Inscription bornee a deux roles, depot KYC de l'enseignant, cloisonnement
       # de genre, appareil partage, plafond d'appareils, codes d'appairage,
       # immuabilite des signatures, etancheite du journal d'audit, RLS partout,
@@ -191,12 +197,6 @@ jobs:
       - name: Scenarios négatifs B-18 (SECURITY DEFINER)
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b18_security_definer.sql
-
-      # OFFRES-I5 : les créneaux demandés en privé ne deviennent une offre
-      # publique qu'au quota configuré (5 enfants / 6 adultes).
-      - name: Scenarios du créneau personnalisé au quota (F1)
-        shell: bash
-        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_offres_personnalisees.sql
 
       # B-07 : profil autonome adulte du titulaire, idempotence et rôle guardian conservé.
       - name: Scenarios du profil adulte titulaire (B-07)
