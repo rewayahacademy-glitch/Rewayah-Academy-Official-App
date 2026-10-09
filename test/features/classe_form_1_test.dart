@@ -1,0 +1,579 @@
+// CLASSE-FORM-1 : le formulaire « Nouvelle classe » semi-automatique.
+//
+// Deux niveaux : le classement des enseignants en fonction pure (D2, D4, D5),
+// puis la VRAIE feuille, ouverte par le vrai bouton de `GroupesPage` ; seuls
+// les services et les ports sont des doubles (`support_form_l2.dart`). Les
+// valeurs envoyees au port se mesurent champ par champ.
+
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/admin/enseignants_classe.dart';
+import 'package:rewayah_academy/core/admin/service_groupes.dart';
+import 'package:rewayah_academy/core/capacites/port_creation_classe.dart';
+import 'package:rewayah_academy/core/capacites/port_enseignants_classe.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/planning/service_planning.dart'
+    show Creneau;
+import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/app_bottom_sheet.dart';
+import 'package:rewayah_academy/core/widgets/menu_actions.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
+import 'package:rewayah_academy/features/admin_groupes/groupes_page.dart';
+
+import '../support/aucun_mot_coupe.dart';
+import '../support/garde_interface.dart';
+import '../support/harnais.dart' show FauxServiceReseau;
+import 'support_form_l2.dart';
+
+const String _paris = 'Europe/Paris';
+const String _casablanca = 'Africa/Casablanca';
+
+Creneau _c(int jour, int heure, [String fuseau = _paris]) =>
+    Creneau(jour: jour, heure: heure, fuseau: fuseau);
+
+/// Deux enseignants, une enseignante, et un enseignant dont la source ne dit
+/// ni le genre ni les disponibilites (D3).
+final List<EnseignantPropose> _enseignants = <EnseignantPropose>[
+  EnseignantPropose(
+    id: 'h1',
+    libelle: 'Bilal Haddou',
+    identifiant: 'ENS-BH-101',
+    genre: GenreEnseignant.homme,
+    creneauxLibres: <Creneau>[_c(2, 17, _casablanca), _c(4, 18, _casablanca)],
+    classesActives: 2,
+    fuseauIana: _casablanca,
+  ),
+  EnseignantPropose(
+    id: 'h2',
+    libelle: 'Hamza Sow',
+    identifiant: 'ENS-HS-102',
+    genre: GenreEnseignant.homme,
+    creneauxLibres: <Creneau>[_c(2, 17)],
+    creneauxPris: <Creneau>[_c(3, 18)],
+    classesActives: 1,
+    fuseauIana: _paris,
+  ),
+  EnseignantPropose(
+    id: 'f1',
+    libelle: 'Fatima Diallo',
+    identifiant: 'ENS-FD-103',
+    genre: GenreEnseignant.femme,
+    creneauxLibres: <Creneau>[_c(2, 17), _c(5, 10)],
+    classesActives: 2,
+    fuseauIana: _paris,
+  ),
+  const EnseignantPropose(
+    id: 'x1',
+    libelle: 'Nour Kane',
+    identifiant: 'ENS-NK-104',
+    classesActives: 0,
+  ),
+];
+
+List<String> _ids(List<EnseignantClasse> l) => <String>[
+  for (final EnseignantClasse e in l) e.enseignant.id,
+];
+
+EnseignantClasse _de(List<EnseignantClasse> l, String id) =>
+    l.firstWhere((EnseignantClasse e) => e.enseignant.id == id);
+
+// ---------------------------------------------------------------------------
+// Montage de la vraie feuille.
+
+Widget _hote(
+  List<Override> surcharges, {
+  ThemeMode theme = ThemeMode.light,
+  double echelle = 1,
+}) => ProviderScope(
+  overrides: surcharges,
+  child: TranslationProvider(
+    child: MaterialApp(
+      theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+      darkTheme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+      themeMode: theme,
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      builder: (BuildContext context, Widget? app) => MediaQuery(
+        data: MediaQuery.of(context)
+            .copyWith(textScaler: TextScaler.linear(echelle)),
+        child: app!,
+      ),
+      home: const GroupesPage(),
+    ),
+  ),
+);
+
+List<Override> _surcharges({
+  FauxGroupesFormL2? groupes,
+  FauxCreationClasse? creation,
+  bool horsLigne = false,
+}) => <Override>[
+  ...surchargesFormL2(
+    comptes: FauxComptesFormL2(comptesFormL2),
+    groupes: groupes,
+  ),
+  portEnseignantsClasseProvider.overrideWithValue(
+    FauxEnseignantsClasse(_enseignants),
+  ),
+  portCreationClasseProvider.overrideWithValue(
+    creation ?? FauxCreationClasse(),
+  ),
+  serviceReseauProvider.overrideWithValue(
+    FauxServiceReseau(horsLigneRendu: horsLigne),
+  ),
+];
+
+Future<void> _presser(WidgetTester tester, Finder cible) async {
+  await tester.ensureVisible(cible);
+  await tester.pumpAndSettle();
+  await tester.tap(cible);
+  await tester.pumpAndSettle();
+}
+
+Future<void> _ouvrir(
+  WidgetTester tester,
+  List<Override> surcharges, {
+  Size vue = const Size(1440, 1600),
+  ThemeMode theme = ThemeMode.light,
+  double echelle = 1,
+}) async {
+  tester.view.physicalSize = vue;
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+  await tester.pumpWidget(_hote(surcharges, theme: theme, echelle: echelle));
+  await tester.pumpAndSettle();
+  await _presser(tester, find.text(t.admin.groupes.creer).first);
+}
+
+Finder _cle(String cle) => find.byKey(ValueKey<String>(cle));
+
+Finder get _champNom =>
+    find.descendant(of: _cle('classe-nom'), matching: find.byType(TextField));
+
+String _nom(WidgetTester tester) =>
+    tester.widget<TextField>(_champNom).controller!.text;
+
+Finder get _envoyer => find.text(t.admin.groupes.creerEnvoyer);
+
+Future<void> _heure(WidgetTester tester, int heure) async {
+  await _presser(tester, _cle('classe-heure'));
+  await _presser(
+    tester,
+    find.text(t.admin.groupes.formulaire.heureValeur(heure: '$heure')).last,
+  );
+}
+
+void main() {
+  group('Classement des enseignants (fonction pure, D2 D4 D5)', () {
+    test('la regle de genre : hommes, femmes, non determine, inconnu', () {
+      expect(genreCompatible(GenreClasse.hommes, GenreEnseignant.homme), true);
+      expect(genreCompatible(GenreClasse.hommes, GenreEnseignant.femme), false);
+      expect(genreCompatible(GenreClasse.femmes, GenreEnseignant.femme), true);
+      expect(genreCompatible(GenreClasse.femmes, GenreEnseignant.homme), false);
+      expect(
+        genreCompatible(GenreClasse.indetermine, GenreEnseignant.homme),
+        true,
+      );
+      // D3 : genre de l'enseignant inconnu, aucune conclusion.
+      expect(genreCompatible(GenreClasse.femmes, null), isNull);
+      // Genre de la classe pas encore choisi.
+      expect(genreCompatible(null, GenreEnseignant.homme), isNull);
+    });
+
+    test('classe de femmes, mardi 17 h : l\'enseignante libre est la plus '
+        'adaptee, les hommes restent visibles en fin de liste', () {
+      final List<EnseignantClasse> l = classerEnseignants(
+        _enseignants,
+        genre: GenreClasse.femmes,
+        creneau: _c(2, 17),
+      );
+      expect(_ids(l), <String>['f1', 'x1', 'h2', 'h1']);
+      expect(_de(l, 'f1').plusAdapte, isTrue);
+      expect(l.where((EnseignantClasse e) => e.plusAdapte), hasLength(1));
+      expect(_de(l, 'h1').choisissable, isFalse);
+      expect(_de(l, 'h1').genreCompatible, isFalse);
+      // Genre inconnu : proposable, sans mention de genre.
+      expect(_de(l, 'x1').genreCompatible, isNull);
+      expect(_de(l, 'x1').choisissable, isTrue);
+      expect(_de(l, 'x1').libre, isNull);
+    });
+
+    test('classe d\'hommes, mardi 17 h : a creneau libre egal, le moins '
+        'charge passe devant', () {
+      final List<EnseignantClasse> l = classerEnseignants(
+        _enseignants,
+        genre: GenreClasse.hommes,
+        creneau: _c(2, 17),
+      );
+      expect(_ids(l), <String>['h2', 'h1', 'x1', 'f1']);
+      expect(_de(l, 'h2').plusAdapte, isTrue);
+      expect(_de(l, 'f1').choisissable, isFalse);
+    });
+
+    test('collision : deja en classe a ce creneau, non choisissable ; '
+        'personne de libre, aucune mention inventee', () {
+      final List<EnseignantClasse> l = classerEnseignants(
+        _enseignants,
+        genre: GenreClasse.hommes,
+        creneau: _c(3, 18),
+      );
+      expect(_de(l, 'h2').pris, isTrue);
+      expect(_de(l, 'h2').choisissable, isFalse);
+      expect(_de(l, 'h1').libre, isFalse);
+      expect(_ids(l), <String>['x1', 'h1', 'h2', 'f1']);
+      expect(l.any((EnseignantClasse e) => e.plusAdapte), isFalse);
+    });
+
+    test('sans creneau choisi : libre a au moins un creneau, puis le moins '
+        'charge', () {
+      final List<EnseignantClasse> l = classerEnseignants(
+        _enseignants,
+        genre: GenreClasse.indetermine,
+      );
+      // h1 et f1 ont autant de classes : le nom les departage.
+      expect(_ids(l), <String>['h2', 'h1', 'f1', 'x1']);
+      expect(_de(l, 'h2').plusAdapte, isTrue);
+      expect(
+        l.every((EnseignantClasse e) => e.genreCompatible ?? false),
+        isTrue,
+      );
+    });
+
+    test('repli sur les comptes : charge et creneaux pris lus dans les '
+        'classes, ni genre ni disponibilites devines', () {
+      final List<EnseignantPropose> l = enseignantsDepuisComptes(
+        comptesFormL2,
+        <GroupeAdmin>[groupeFormL2()],
+      );
+      expect(l.map((EnseignantPropose e) => e.id), <String>[
+        't-amina',
+        't-yacine',
+      ]);
+      final EnseignantPropose amina = l.first;
+      expect(amina.classesActives, 1);
+      expect(amina.creneauxPris.single.jour, 2);
+      expect(amina.genre, isNull);
+      expect(amina.creneauxLibres, isNull);
+      expect(amina.fuseauIana, isNull);
+    });
+  });
+
+  group('La feuille « Nouvelle classe »', () {
+    testWidgets('genre obligatoire : presser sans genre le dit, rien ne part', (
+      WidgetTester tester,
+    ) async {
+      final FauxCreationClasse creation = FauxCreationClasse();
+      await _ouvrir(tester, _surcharges(creation: creation));
+
+      // Le bouton est actif (K-56) : il n'est jamais grise.
+      final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
+        find.ancestor(of: _envoyer, matching: find.byType(ActionPrincipale)),
+      );
+      expect(bouton.onPress, isNotNull);
+
+      await _presser(tester, _envoyer);
+      expect(find.text(t.admin.groupes.formulaire.manqueGenre), findsOneWidget);
+      expect(creation.creations, isEmpty);
+
+      // Le genre choisi, le manque suivant est dit : l'enseignant.
+      await _presser(tester, _cle('classe-genre-femmes'));
+      expect(find.text(t.admin.groupes.formulaire.manqueGenre), findsNothing);
+      await _presser(tester, _envoyer);
+      expect(find.text(t.admin.groupes.manqueEnseignant), findsOneWidget);
+      // Puis le creneau.
+      await _presser(tester, _cle('personne-f1'));
+      await _presser(tester, _envoyer);
+      expect(
+        find.text(t.admin.groupes.formulaire.manqueCreneau),
+        findsOneWidget,
+      );
+      expect(creation.creations, isEmpty);
+    });
+
+    testWidgets('trois cartes de genre, chacune dit quand la choisir ; '
+        'l\'accord suit le public', (WidgetTester tester) async {
+      await _ouvrir(tester, _surcharges());
+      final f = t.admin.groupes.formulaire;
+      expect(find.text(f.contexte), findsOneWidget);
+      expect(find.text(f.genreGarcons), findsOneWidget);
+      expect(find.text(f.genreFilles), findsOneWidget);
+      expect(find.text(f.genreIndetermine), findsOneWidget);
+      expect(find.text(f.genreFillesDetail), findsOneWidget);
+      expect(find.text(f.genreIndetermineDetail), findsOneWidget);
+
+      await _presser(tester, _cle('classe-public-adulte'));
+      expect(find.text(f.genreHommes), findsOneWidget);
+      expect(find.text(f.genreFemmes), findsOneWidget);
+      expect(find.text(f.genreFemmesDetail), findsOneWidget);
+      expect(find.text(f.genreGarcons), findsNothing);
+    });
+
+    testWidgets('ligne honnete D1 : dite quand le genre ne part pas, '
+        'absente quand il est retenu', (WidgetTester tester) async {
+      await _ouvrir(
+        tester,
+        _surcharges(creation: FauxCreationClasse(retientGenre: false)),
+      );
+      expect(
+        find.text(t.admin.groupes.formulaire.genreNonEnregistre),
+        findsOneWidget,
+      );
+      await tester.pumpWidget(const SizedBox());
+      await _ouvrir(tester, _surcharges(creation: FauxCreationClasse()));
+      expect(
+        find.text(t.admin.groupes.formulaire.genreNonEnregistre),
+        findsNothing,
+      );
+    });
+
+    testWidgets('le plus adapte porte sa raison ; un enseignant du mauvais '
+        'genre reste visible, avec sa raison, et ne se choisit pas', (
+      WidgetTester tester,
+    ) async {
+      await _ouvrir(tester, _surcharges());
+      final f = t.admin.groupes.formulaire;
+      await _presser(tester, _cle('classe-public-adulte'));
+      await _presser(tester, _cle('classe-genre-femmes'));
+      await _presser(tester, _cle('classe-jour-2'));
+      await _heure(tester, 17);
+
+      expect(
+        find.textContaining(
+          f.plusAdapteCreneau(charge: f.classesEnCours(n: 2)),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(f.raisonFemmes), findsNWidgets(2));
+      // Toucher un enseignant indisponible ne le retient pas.
+      await _presser(tester, _cle('personne-h1'));
+      await _presser(tester, _envoyer);
+      expect(find.text(t.admin.groupes.manqueEnseignant), findsOneWidget);
+    });
+
+    testWidgets('preremplissages : seuil 5 puis 6 selon le public, nom deduit '
+        'du genre et du creneau, creneaux libres mis en avant', (
+      WidgetTester tester,
+    ) async {
+      final FauxCreationClasse creation = FauxCreationClasse();
+      await _ouvrir(tester, _surcharges(creation: creation));
+
+      expect(_nom(tester), t.admin.groupes.typeEnfant);
+      await _presser(tester, _cle('classe-genre-femmes'));
+      expect(_nom(tester), t.admin.groupes.formulaire.genreFilles);
+      await _presser(tester, _cle('classe-public-adulte'));
+      expect(_nom(tester), t.admin.groupes.formulaire.genreFemmes);
+
+      // L'enseignante choisie : ses creneaux libres en tete de la section.
+      await _presser(tester, _cle('personne-f1'));
+      expect(_cle('classe-libre-2-17'), findsOneWidget);
+      expect(_cle('classe-libre-5-10'), findsOneWidget);
+      await _presser(tester, _cle('classe-libre-5-10'));
+      expect(_nom(tester), contains(t.admin.groupes.formulaire.genreFemmes));
+      expect(_nom(tester), contains('vendredi'));
+
+      final String nomPropose = _nom(tester);
+      await _presser(tester, _envoyer);
+      expect(creation.creations.single.seuilMax, 6);
+      expect(creation.creations.single.libelle, nomPropose);
+    });
+
+    testWidgets('valeurs envoyees au port : enseignant, public, genre, nom, '
+        'jour, heure, fuseau deduit, seuil choisi', (
+      WidgetTester tester,
+    ) async {
+      final FauxCreationClasse creation = FauxCreationClasse();
+      await _ouvrir(tester, _surcharges(creation: creation));
+      await _presser(tester, _cle('classe-public-adulte'));
+      await _presser(tester, _cle('classe-genre-hommes'));
+      await _presser(tester, _cle('personne-h1'));
+      expect(
+        find.text(
+          t.admin.groupes.formulaire.fuseauEnseignant(fuseau: _casablanca),
+        ),
+        findsOneWidget,
+      );
+      await _presser(tester, _cle('classe-libre-4-18'));
+      await _presser(tester, find.byKey(SelecteurEntier.clePuce(4)));
+      await tester.enterText(_champNom, 'Al-Fajr');
+      await tester.pumpAndSettle();
+      await _presser(tester, _envoyer);
+
+      final CreationRecue c = creation.creations.single;
+      expect(c.teacherId, 'h1');
+      expect(c.type, TypePublicGroupe.adulte);
+      expect(c.genre, GenreClasse.hommes);
+      expect(c.libelle, 'Al-Fajr');
+      expect(c.creneau.jour, 4);
+      expect(c.creneau.heure, 18);
+      expect(c.creneau.fuseau, _casablanca);
+      expect(c.seuilMax, 4);
+      // La feuille se ferme apres la creation.
+      expect(_envoyer, findsNothing);
+    });
+
+    testWidgets('adaptateur reel : le fuseau affiche est celui que le serveur '
+        'retient, et le service recoit les memes valeurs', (
+      WidgetTester tester,
+    ) async {
+      final FauxGroupesFormL2 groupes = FauxGroupesFormL2();
+      // Sans surcharge du port de creation : l'adaptateur par defaut
+      // delegue a `ServiceGroupes.creer` (D1).
+      await _ouvrir(tester, <Override>[
+        ...surchargesFormL2(
+          comptes: FauxComptesFormL2(comptesFormL2),
+          groupes: groupes,
+        ),
+        portEnseignantsClasseProvider.overrideWithValue(
+          FauxEnseignantsClasse(_enseignants),
+        ),
+        serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+      ]);
+      await _presser(tester, _cle('classe-genre-hommes'));
+      await _presser(tester, _cle('personne-h1'));
+      expect(
+        find.text(
+          t.admin.groupes.formulaire.fuseauNonTransmis(
+            fuseau: fuseauServeurParDefaut,
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.admin.groupes.formulaire.genreNonEnregistre),
+        findsOneWidget,
+      );
+      await _presser(tester, _cle('classe-libre-2-17'));
+      await _presser(tester, _envoyer);
+
+      final CreationRecue c = groupes.creations.single;
+      expect(c.teacherId, 'h1');
+      expect(c.type, TypePublicGroupe.enfant);
+      expect(c.creneau.jour, 2);
+      expect(c.creneau.heure, 17);
+      expect(c.creneau.fuseau, fuseauServeurParDefaut);
+      expect(c.seuilMax, 5);
+      expect(c.libelle, isNotEmpty);
+    });
+
+    testWidgets('erreur de creation : la cause et quoi faire, la feuille '
+        'reste ouverte avec les choix', (WidgetTester tester) async {
+      final FauxCreationClasse creation = FauxCreationClasse(echecs: 1);
+      await _ouvrir(tester, _surcharges(creation: creation));
+      await _presser(tester, _cle('classe-genre-femmes'));
+      await _presser(tester, _cle('personne-f1'));
+      await _presser(tester, _cle('classe-libre-2-17'));
+      await _presser(tester, _envoyer);
+
+      expect(
+        find.text(
+          t.admin.groupes.creerErreur(
+            message: 'enseignant deja pris a ce creneau',
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(creation.creations, isEmpty);
+      expect(_envoyer, findsOneWidget);
+
+      // Reessayer avec les memes choix aboutit.
+      await _presser(tester, _envoyer);
+      expect(creation.creations, hasLength(1));
+    });
+
+    testWidgets('hors ligne : pas de bouton qui ne peut aboutir, une phrase '
+        'le dit ; les choix restent', (WidgetTester tester) async {
+      final FauxCreationClasse creation = FauxCreationClasse();
+      await _ouvrir(tester, _surcharges(creation: creation, horsLigne: true));
+      expect(find.text(t.admin.groupes.formulaire.horsLigne), findsOneWidget);
+      expect(_envoyer, findsNothing);
+      await _presser(tester, _cle('classe-genre-femmes'));
+      expect(_nom(tester), t.admin.groupes.formulaire.genreFilles);
+    });
+  });
+
+  group('La feuille « Seuil maximal » (D7, K-56)', () {
+    testWidgets('meme selecteur 1 a 6, valeur actuelle retenue, bouton actif', (
+      WidgetTester tester,
+    ) async {
+      final FauxGroupesFormL2 groupes = FauxGroupesFormL2();
+      tester.view.physicalSize = const Size(1440, 1600);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(_hote(_surcharges(groupes: groupes)));
+      await tester.pumpAndSettle();
+      await _presser(tester, find.byType(MenuActions).first);
+      await _presser(
+        tester,
+        find.text(t.admin.groupes.actionModifierSeuil).last,
+      );
+
+      for (int n = 1; n <= 6; n++) {
+        expect(find.byKey(SelecteurEntier.clePuce(n)), findsOneWidget);
+      }
+      // 1 a 6 couvre tout : pas de saisie libre.
+      expect(find.byKey(SelecteurEntier.cleAutre), findsNothing);
+      await _presser(tester, find.byKey(SelecteurEntier.clePuce(3)));
+      await _presser(
+        tester,
+        find.text(t.admin.groupes.modifierSeuilEnvoyer).last,
+      );
+      expect(groupes.seuilsModifies, <int>[3]);
+    });
+  });
+
+  group('CLASSE-FORM-1 : gardes de rendu', () {
+    for (final (Size vue, String nom) in <(Size, String)>[
+      (const Size(320, 800), '320'),
+      (const Size(1440, 900), '1440'),
+    ]) {
+      for (final double echelle in <double>[1, 2]) {
+        for (final ThemeMode theme in <ThemeMode>[
+          ThemeMode.light,
+          ThemeMode.dark,
+        ]) {
+          testWidgets('$nom x${echelle.toInt()} ${theme.name} : feuille '
+              'lisible, sans debordement, un seul bouton plein par feuille', (
+            WidgetTester tester,
+          ) async {
+            await _ouvrir(
+              tester,
+              _surcharges(),
+              vue: echelle == 2 && nom == '320' ? const Size(320, 2400) : vue,
+              theme: theme,
+              echelle: echelle,
+            );
+            await _presser(tester, _cle('classe-genre-femmes'));
+            await _presser(tester, _cle('personne-f1'));
+            await _presser(tester, _cle('classe-libre-2-17'));
+
+            expect(tester.takeException(), isNull);
+            final Finder feuille = find.byType(AppBottomSheet);
+            expect(feuille, findsOneWidget);
+            expect(
+              motsCoupes(
+                tester,
+                feuille,
+                traitDUnionPermis: true,
+                // L'indication du champ de recherche de `SelecteurPersonne`
+                // (FORM-L2, inchangee) : `hintText` ne passe pas par
+                // `TexteSansCoupure`, et la police de test est bien plus
+                // large que la vraie ; les captures FORM-L2 la mesurent.
+                exceptions: <String>{
+                  t.commun.selecteurPersonne.rechercheEnseignant,
+                },
+              ),
+              isEmpty,
+            );
+            // La feuille posee sur sa page : son bouton et celui de la page.
+            verifierUnSeulBoutonPlein(tester, maximum: 2);
+          });
+        }
+      }
+    }
+  });
+}
