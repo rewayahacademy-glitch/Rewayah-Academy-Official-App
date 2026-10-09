@@ -183,6 +183,30 @@ BEGIN
     RAISE EXCEPTION 'retirez d''abord la preference horaire actuelle';
   END IF;
 
+  -- Après ouverture du quota, les nouveaux demandeurs du même créneau
+  -- rejoignent l'offre publiée au lieu d'attendre un nouveau quota.
+  SELECT id INTO v_offre
+    FROM public.offres_horaires
+   WHERE type_public = v_type
+     AND langue_code = v_langue
+     AND fuseau_iana = p_fuseau_iana
+     AND jours = v_jours
+     AND heure_locale = p_heure_locale
+     AND etat = 'publiee'
+   LIMIT 1;
+
+  IF v_offre IS NOT NULL THEN
+    UPDATE public.demandes_creneau_personnalise
+       SET etat = 'offre_ouverte', offre_id = v_offre
+     WHERE id = v_demande.id;
+    PERFORM public.log_sensitive_access(
+      'creneau_personnalise_rattache_offre',
+      'demandes_creneau_personnalise', v_demande.id::text,
+      jsonb_build_object('eleve_id', p_membre_id, 'offre_id', v_offre)
+    );
+    RETURN jsonb_build_object('etat', 'offre_ouverte', 'offre_id', v_offre);
+  END IF;
+
   SELECT count(*)::integer INTO v_vivier
     FROM public.demandes_creneau_personnalise d
     JOIN public.profiles p ON p.id = d.eleve_id
