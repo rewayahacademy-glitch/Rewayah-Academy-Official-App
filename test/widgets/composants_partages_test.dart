@@ -210,7 +210,16 @@ void main() {
         tester.getSemantics(find.text('Horaire')),
         isSemantics(label: 'Horaire\n18:00, heure de Paris'),
       );
-      expect(find.byType(Row), findsWidgets);
+      // Cote a cote : la cle et la valeur sur la meme rangee (la
+      // disposition est rendue par la ligne elle-meme, JONCTION-LIGNES-1).
+      expect(
+        tester.getTopLeft(find.text('Horaire')).dy,
+        tester.getTopLeft(find.text('18:00, heure de Paris')).dy,
+      );
+      expect(
+        tester.getTopLeft(find.text('Horaire')).dx,
+        lessThan(tester.getTopLeft(find.text('18:00, heure de Paris')).dx),
+      );
       semantique.dispose();
     });
 

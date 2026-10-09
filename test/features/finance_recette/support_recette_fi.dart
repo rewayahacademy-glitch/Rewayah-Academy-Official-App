@@ -258,6 +258,9 @@ Future<GoRouter> monterEleveFi(
   List<Override> surcharges = const <Override>[],
   List<Seance> seances = const <Seance>[],
   Size taille = const Size(390, 1400),
+  // L'Interface guidee ouvre, sur `/eleve`, l'Accueil du Mode Accessibilite
+  // (DASH-MA-PROD) ; `standard` garde `ELV-02` (JONCTION-LIGNES-1).
+  InterfaceMode interface = InterfaceMode.enfant,
 }) async {
   // L'horloge des groupes de la demonstration, comme `hoteTcA` : une seance
   // en cours, sans cadence.
@@ -274,7 +277,7 @@ Future<GoRouter> monterEleveFi(
     profileId: profilId,
     householdId: 'h1',
     accountStatus: AccountStatus.active,
-    interfaceMode: InterfaceMode.enfant,
+    interfaceMode: interface,
     lectureProfil: LectureProfil.presente,
   );
   late GoRouter routeur;

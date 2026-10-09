@@ -1509,6 +1509,9 @@ void main() {
         tester,
         Routes.eleve,
         profilId: _ibrahim,
+        // L'Accueil `ELV-02` (JONCTION-LIGNES-1 : l'Interface guidee ouvre
+        // celui du Mode Accessibilite, DASH-MA-PROD).
+        interface: InterfaceMode.standard,
         seances: <Seance>[_coursEnDirect(_ibrahim)],
         surcharges: <Override>[
           // L'acces de l'enfant, borne a sa session (FI-BR-08, R4-02).
@@ -1679,6 +1682,9 @@ void main() {
           tester,
           Routes.eleve,
           profilId: _ibrahim,
+          // L'Accueil `ELV-02` (JONCTION-LIGNES-1 : l'Interface guidee ouvre
+          // celui du Mode Accessibilite, DASH-MA-PROD).
+          interface: InterfaceMode.standard,
           seances: <Seance>[_coursEnDirect(_ibrahim)],
           surcharges: <Override>[
             // L'acces de l'enfant, borne a sa session (FI-BR-08, R4-02).

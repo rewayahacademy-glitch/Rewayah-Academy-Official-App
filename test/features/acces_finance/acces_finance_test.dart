@@ -6,7 +6,7 @@
 //   ni « USD », ni un montant, et son ecran ne lit jamais la finance ;
 // - le tuteur et l'adulte autonome lisent le manque exact, mis en mots par
 //   `formaterMontant`, et le mois du debit attendu, rendus par la source ;
-// - « Essai : n/2 » vient des compteurs rendus ;
+// - « Essai\u00A0: n/2 » vient des compteurs rendus ;
 // - Rejoindre depend de la periode financee, jamais du solde ;
 // - production (ports neutres), echec, hors ligne : rien n'est invente ;
 // - 320 px, texte 200 %, clair et sombre, LTR et RTL, sans debordement.
@@ -463,9 +463,9 @@ void main() {
         DonneesFinanceDemo.aichaId,
       );
       expect(ouvertureSeances(essai), OuvertureSeances.essai);
-      expect(libelleEssai(essai), 'Essai : 1/2');
+      expect(libelleEssai(essai), 'Essai\u00A0: 1/2');
       expect(ouvertureSeances(_essaisEpuises), OuvertureSeances.fermees);
-      expect(libelleEssai(_essaisEpuises), 'Essai : 2/2');
+      expect(libelleEssai(_essaisEpuises), 'Essai\u00A0: 2/2');
       expect(ouvertureSeances(null), OuvertureSeances.inconnue);
       expect(
         ouvertureSeances(
@@ -944,7 +944,7 @@ void main() {
       );
     });
 
-    testWidgets('essai : « Essai : 1/2 »', (WidgetTester tester) async {
+    testWidgets('essai : « Essai\u00A0: 1/2 »', (WidgetTester tester) async {
       _taille(tester, const Size(390, 844));
       await tester.pumpWidget(
         _hote(
@@ -953,7 +953,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.text('Essai : 1/2'), findsOneWidget);
+      expect(find.text('Essai\u00A0: 1/2'), findsOneWidget);
     });
 
     testWidgets('finance indisponible (production) : la ligne de l echeance, '
@@ -1046,7 +1046,7 @@ void main() {
       );
     });
 
-    testWidgets('essai : la pastille « Essai : 1/2 »', (
+    testWidgets('essai : la pastille « Essai\u00A0: 1/2 »', (
       WidgetTester tester,
     ) async {
       await monter(
@@ -1056,7 +1056,7 @@ void main() {
       );
       expect(
         tester.widget<StatusPill>(find.byType(StatusPill)).libelle,
-        'Essai : 1/2',
+        'Essai\u00A0: 1/2',
       );
       expect(find.byKey(AccesElevePage.bandeauKey), findsNothing);
     });
@@ -1107,7 +1107,7 @@ void main() {
       expect(find.byKey(AccesElevePage.bandeauFermeKey), findsNothing);
       expect(
         tester.widget<StatusPill>(find.byType(StatusPill)).libelle,
-        'Essai : 2/2',
+        'Essai\u00A0: 2/2',
       );
     });
 
@@ -1221,7 +1221,7 @@ void main() {
       expect(find.text(t.adulte.monEspace.monCompte), findsOneWidget);
     });
 
-    testWidgets('essai : « Essai : 1/2 »', (WidgetTester tester) async {
+    testWidgets('essai : « Essai\u00A0: 1/2 »', (WidgetTester tester) async {
       _taille(tester, const Size(390, 1400));
       await tester.pumpWidget(
         _hote(
@@ -1235,7 +1235,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.byKey(AccesAdulte.essaiKey), findsOneWidget);
-      expect(find.text('Essai : 1/2'), findsOneWidget);
+      expect(find.text('Essai\u00A0: 1/2'), findsOneWidget);
     });
 
     testWidgets('second adulte rattache : aucune finance lue, aucun bandeau', (
