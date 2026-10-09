@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/admin/service_comptes.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/identifiant_insecable.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/filter_pill.dart';
@@ -100,7 +101,10 @@ void main() {
       // secondaires par un point median, donc l'identifiant vit dans une
       // chaine composee.
       expect(find.textContaining('Aicha Sow'), findsWidgets);
-      expect(find.textContaining('TEACHER-AS-000001'), findsWidgets);
+      expect(
+        find.textContaining(identifiantInsecable('TEACHER-AS-000001')),
+        findsWidgets,
+      );
       // Et l'ecran nomme ce qui manque, au lieu de laisser une case vide.
       expect(find.textContaining('Aucune pièce déposée'), findsWidgets);
     },
@@ -170,7 +174,10 @@ void main() {
       expect(find.text('2 personnes attendent une décision.'), findsOneWidget);
       expect(find.text('3 personnes attendent une décision.'), findsNothing);
       // Le tuteur reste visible, avec « Sans objet » pour la piece.
-      expect(find.textContaining('GUARDIAN-SR-000003'), findsWidgets);
+      expect(
+        find.textContaining(identifiantInsecable('GUARDIAN-SR-000003')),
+        findsWidgets,
+      );
       expect(find.textContaining('Sans objet'), findsOneWidget);
       // L'enseignant garde son manque de piece affiche.
       expect(find.textContaining('Aucune pièce déposée'), findsWidgets);
@@ -287,7 +294,10 @@ void main() {
     // « En attente » ne contient qu'un enseignant.
     await tester.tap(find.text('En attente'));
     await tester.pumpAndSettle();
-    expect(find.textContaining('TEACHER-AS-000001'), findsWidgets);
+    expect(
+      find.textContaining(identifiantInsecable('TEACHER-AS-000001')),
+      findsWidgets,
+    );
 
     // Croise avec le role tuteur, il ne reste rien. Le menu se cible par son
     // type : « Rôle » nomme aussi une colonne du tableau.

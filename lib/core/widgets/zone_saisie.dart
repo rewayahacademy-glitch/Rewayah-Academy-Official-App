@@ -234,8 +234,11 @@ class ZoneSaisie extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         // Le nom est deja lu sur le champ : l'ecrit ne le redit pas.
+        // COUPE-MOTS-4 : un mot lie a sa ponctuation par une espace
+        // insecable (« changement ? ») qui ne tient pas sur la ligne reduit
+        // son echelle au lieu de laisser le signe seul a la ligne.
         ExcludeSemantics(
-          child: Text(
+          child: TexteSansCoupure(
             libelle,
             style: palette.inkStrong.applyTo(
               Theme.of(context).textTheme.labelLarge ?? const TextStyle(),

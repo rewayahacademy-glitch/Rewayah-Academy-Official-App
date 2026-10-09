@@ -648,65 +648,8 @@ class _BarreFlottante extends StatelessWidget {
                     child: MediaQuery.withClampedTextScaling(
                       maxScaleFactor: NavShell.echelleTexteMaxGuide,
                       child: LayoutBuilder(
-                        builder: (BuildContext contexte, BoxConstraints c) {
-                          final double disponible =
-                              c.maxWidth - ecart * (destinations.length - 1);
-                          final List<double>? largeurs = _largeursOnglets(
-                            _minimumsOnglets(contexte, metriques),
-                            disponible,
-                          );
-                          // COUPE-MOTS-1 point 6 : une seule echelle pour les
-                          // quatre libelles, celle du plus contraint ; plus
-                          // un onglet reduit et son voisin non.
-                          final TextScaler commune = echelleCommuneSansCoupure(
-                            contexte,
-                            textes: <String>[
-                              for (final Destination d in destinations)
-                                d.libelle,
-                            ],
-                            largeurs: <double>[
-                              for (int i = 0; i < destinations.length; i++)
-                                (largeurs == null
-                                        ? disponible / destinations.length
-                                        : largeurs[i]) -
-                                    2 * AppSpacing.xs,
-                            ],
-                            style: AppTypography.graisse(
-                              Theme.of(contexte).textTheme.labelLarge ??
-                                  const TextStyle(),
-                              FontWeight.w700,
-                            ),
-                          );
-                          return MediaQuery(
-                            data: MediaQuery.of(contexte)
-                                .copyWith(textScaler: commune),
-                            child: IntrinsicHeight(
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: <Widget>[
-                                  for (
-                                    int i = 0;
-                                    i < destinations.length;
-                                    i++
-                                  ) ...<Widget>[
-                                    if (i > 0) SizedBox(width: ecart),
-                                    _part(
-                                      largeurs == null ||
-                                              i == destinations.length - 1
-                                          ? null
-                                          : largeurs[i],
-                                      _OngletBarreGuide(
-                                        destination: destinations[i],
-                                        actif: i == indexActif,
-                                        onAller: onAller,
-                                      ),
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ),
-                          );
-                        },
+                        builder: (BuildContext contexte, BoxConstraints c) =>
+                            _rangeesGuide(contexte, metriques, c, ecart),
                       ),
                     ),
                   )
@@ -792,6 +735,102 @@ class _BarreFlottante extends StatelessWidget {
     );
   }
 
+  /// Les onglets du Mode Accessibilite dans [c] (ecart [ecart]).
+  ///
+  /// COUPE-MOTS-4 (decide par delegation le 09/10) : a 320 en texte x2,
+  /// l'echelle commune des libelles ne descendait jamais sous 1, et quatre
+  /// onglets ne laissaient pas a « Historique » ou « Disponibilités » leur
+  /// largeur : « Historiq / ue », « Contrôl / e », « Échang / es ». Dans
+  /// l'ordre, et seulement si le cas precedent ne suffit pas :
+  ///
+  /// 1. une rangee, chaque onglet recevant son mot le plus long a l'echelle
+  ///    de l'appareil (au plus 1) ;
+  /// 2. une rangee, l'echelle reduite jusqu'a [echelleMinimaleLisible]
+  ///    (reduction bornee, comme la barre standard) ;
+  /// 3. deux rangees de deux onglets : la barre grandit, chaque onglet a la
+  ///    moitie de la largeur. Toutes les destinations restent visibles
+  ///    (pas de defilement, qui en cacherait une a l'utilisateur guide).
+  Widget _rangeesGuide(
+    BuildContext contexte,
+    AppMetriques metriques,
+    BoxConstraints c,
+    double ecart,
+  ) {
+    final int n = destinations.length;
+    final double disponible = c.maxWidth - ecart * (n - 1);
+    final double facteur = MediaQuery.textScalerOf(contexte).scale(1);
+    double somme(List<double> l) =>
+        l.fold<double>(0, (double a, double b) => a + b);
+    List<double>? largeurs = _largeursOnglets(
+      _minimumsOnglets(contexte, metriques),
+      disponible,
+    );
+    if (largeurs == null && facteur > echelleMinimaleLisible) {
+      final List<double> reduits = _minimumsOnglets(
+        contexte,
+        metriques,
+        echelle: echelleMinimaleLisible,
+      );
+      if (somme(reduits) <= disponible) {
+        largeurs = _largeursOnglets(reduits, disponible);
+      }
+    }
+    final bool deuxRangees = largeurs == null && n > 2 && disponible.isFinite;
+    final int parRangee = deuxRangees ? (n + 1) ~/ 2 : n;
+    final double largeurDeux =
+        (c.maxWidth - ecart * (parRangee - 1)) / parRangee;
+    // COUPE-MOTS-1 point 6 : une seule echelle pour les libelles, celle du
+    // plus contraint ; plus un onglet reduit et son voisin non.
+    final TextScaler commune = echelleCommuneSansCoupure(
+      contexte,
+      textes: <String>[for (final Destination d in destinations) d.libelle],
+      largeurs: <double>[
+        for (int i = 0; i < n; i++)
+          (deuxRangees
+                  ? largeurDeux
+                  : largeurs == null
+                  ? disponible / n
+                  : largeurs[i]) -
+              2 * AppSpacing.xs,
+      ],
+      style: AppTypography.graisse(
+        Theme.of(contexte).textTheme.labelLarge ?? const TextStyle(),
+        FontWeight.w700,
+      ),
+      plancher: echelleMinimaleLisible,
+    );
+    Widget onglet(int i) => _OngletBarreGuide(
+      destination: destinations[i],
+      actif: i == indexActif,
+      onAller: onAller,
+    );
+    Widget rangee(int debut, int fin, List<double>? parts) => IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          for (int i = debut; i < fin; i++) ...<Widget>[
+            if (i > debut) SizedBox(width: ecart),
+            _part(parts == null || i == fin - 1 ? null : parts[i], onglet(i)),
+          ],
+        ],
+      ),
+    );
+    return MediaQuery(
+      data: MediaQuery.of(contexte).copyWith(textScaler: commune),
+      child: deuxRangees
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                rangee(0, parRangee, null),
+                SizedBox(height: ecart),
+                rangee(parRangee, n, null),
+              ],
+            )
+          : rangee(0, n, largeurs),
+    );
+  }
+
   /// Un onglet de largeur fixe [largeur], ou qui prend le reste (nulle).
   static Widget _part(double? largeur, Widget onglet) => largeur == null
       ? Expanded(child: onglet)
@@ -819,8 +858,15 @@ class _BarreFlottante extends StatelessWidget {
   /// La largeur minimale de chaque onglet du Mode Accessibilite : la cible
   /// tactile, ou son mot le plus long a l'echelle 1 plus 4 de chaque cote
   /// ([TexteSansCoupure] ne descend jamais sous 1).
-  List<double> _minimumsOnglets(BuildContext context, AppMetriques metriques) {
-    final double facteur = MediaQuery.textScalerOf(context).scale(1);
+  ///
+  /// [echelle] : l'echelle de la mesure, a la place de celle de l'appareil
+  /// (au plus 1).
+  List<double> _minimumsOnglets(
+    BuildContext context,
+    AppMetriques metriques, {
+    double? echelle,
+  }) {
+    final double facteur = echelle ?? MediaQuery.textScalerOf(context).scale(1);
     final TextStyle style = DefaultTextStyle.of(context).style.merge(
       AppTypography.graisse(
         Theme.of(context).textTheme.labelLarge ?? const TextStyle(),
