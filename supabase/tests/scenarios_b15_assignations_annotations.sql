@@ -144,9 +144,13 @@ begin
     '{"resource_id":"b15fffff-0000-0000-0000-000000000007","resource_version_id":null,"debut":{"resource_id":"b15fffff-0000-0000-0000-000000000007","resource_version_id":null,"type_ancrage":"page","page":1},"fin":{"resource_id":"b15fffff-0000-0000-0000-000000000007","resource_version_id":null,"type_ancrage":"page","page":2}}',
     'reinforce', 'dernier');
 
-  select count(*), max(id) into v_count, v_id
+  select count(*) into v_count
     from public.annotation_marqueur
    where layer_id = 'b15fffff-0000-0000-0000-000000000010';
+  select id into v_id
+    from public.annotation_marqueur
+   where layer_id = 'b15fffff-0000-0000-0000-000000000010'
+   order by cree_le desc, id desc limit 1;
   if v_count <> 1 or v_id <> 'b15fffff-0000-0000-0000-000000000012' then
     raise exception 'B-15: a marker on the same range must replace its predecessor';
   end if;
