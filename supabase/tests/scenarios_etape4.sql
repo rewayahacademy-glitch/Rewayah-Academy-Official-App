@@ -996,12 +996,15 @@ end $$;
 do $$
 declare
   v_i record;
-  v_dossiers int;
+  v_personnes_en_attente int;
   v_foyers int;
   v_demandes int;
 begin
-  select count(*)::int into v_dossiers from public.kyc_documents
-  where status = 'pending' and deleted_at is null;
+  -- Depuis 0015, ce compteur désigne les personnes en attente de validation,
+  -- avec ou sans pièce déposée; il ne compte pas les lignes KYC.
+  select count(*)::int into v_personnes_en_attente
+  from public.profiles p
+  where p.deleted_at is null and p.account_status = 'pending_kyc';
 
   select count(distinct p.household_id)::int into v_foyers
   from public.profiles p
@@ -1019,9 +1022,9 @@ begin
 
   select * into v_i from public.indicateurs_admin();
 
-  if v_i.dossiers_en_attente <> v_dossiers then
+  if v_i.dossiers_en_attente <> v_personnes_en_attente then
     raise exception 'ADM-01 ECHEC : % dossiers annonces, % reels',
-      v_i.dossiers_en_attente, v_dossiers;
+      v_i.dossiers_en_attente, v_personnes_en_attente;
   end if;
   if v_i.foyers_sans_enseignant <> v_foyers then
     raise exception 'ADM-01 ECHEC : % foyers sans enseignant annonces, % reels',
