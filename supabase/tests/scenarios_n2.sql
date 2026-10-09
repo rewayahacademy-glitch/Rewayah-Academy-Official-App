@@ -174,7 +174,7 @@ create temporary table n2_video_config_snapshot as
 select id, active_provider, ws_url_override, canary_provider, canary_percentage
 from public.video_config;
 
-do $
+do $n2$
 declare
   v_avant text;
   v_apres text;
@@ -211,7 +211,7 @@ begin
          ws_url_override = snapshot.ws_url_override
     from pg_temp.n2_video_config_snapshot snapshot
    where current_config.id = snapshot.id;
-end $$;
+end $n2$;
 
 -- ============================================================
 -- N3 : le canari est deterministe, et il aiguille reellement
