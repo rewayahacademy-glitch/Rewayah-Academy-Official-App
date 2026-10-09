@@ -181,6 +181,10 @@ begin
      set active_provider = 'self_hosted', ws_url_override = 'wss://ailleurs.example'
    where id;
 
+  perform set_config('test.uid', 'b2000000-0000-0000-0000-000000000003', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"student","household_id":"b2ffffff-0000-0000-0000-00000000000a"}}',
+    true);
   perform public.autoriser_jeton_video(
     'b2aaaaaa-0000-0000-0000-00000000000a',
     'b2000000-0000-0000-0000-000000000003',
