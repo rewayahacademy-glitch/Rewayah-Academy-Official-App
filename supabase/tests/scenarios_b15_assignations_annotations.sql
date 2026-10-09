@@ -127,12 +127,6 @@ begin
     raise exception 'B-15: marker mutations must use the atomic RPC';
   end if;
 
-  insert into public.annotation_trait (layer_id, ancrage, points, outil, cree_le)
-  values
-    ('b15fffff-0000-0000-0000-000000000010',
-     '{"resource_id":"b15fffff-0000-0000-0000-000000000007","resource_version_id":null,"type_ancrage":"page","page":2}',
-     '[{"x":0.2,"y":0.3}]', 'stylet', now() - interval '1 second');
-
   perform public.tc_poser_annotation_marqueur(
     'b15fffff-0000-0000-0000-000000000010',
     'b15fffff-0000-0000-0000-000000000011',
@@ -143,6 +137,13 @@ begin
     'b15fffff-0000-0000-0000-000000000012',
     '{"resource_id":"b15fffff-0000-0000-0000-000000000007","resource_version_id":null,"debut":{"resource_id":"b15fffff-0000-0000-0000-000000000007","resource_version_id":null,"type_ancrage":"page","page":1},"fin":{"resource_id":"b15fffff-0000-0000-0000-000000000007","resource_version_id":null,"type_ancrage":"page","page":2}}',
     'reinforce', 'dernier');
+
+  -- Postérieur au marqueur pour vérifier que l'annulation compare les deux tables.
+  insert into public.annotation_trait (layer_id, ancrage, points, outil, cree_le)
+  values
+    ('b15fffff-0000-0000-0000-000000000010',
+     '{"resource_id":"b15fffff-0000-0000-0000-000000000007","resource_version_id":null,"type_ancrage":"page","page":2}',
+     '[{"x":0.2,"y":0.3}]', 'stylet', now() + interval '1 second');
 
   select count(*) into v_count
     from public.annotation_marqueur
@@ -155,9 +156,6 @@ begin
     raise exception 'B-15: a marker on the same range must replace its predecessor';
   end if;
 
-  update public.annotation_marqueur
-     set cree_le = now() - interval '2 seconds'
-   where id = 'b15fffff-0000-0000-0000-000000000012';
   perform public.tc_annuler_derniere_annotation(
     'b15fffff-0000-0000-0000-000000000010'
   );
