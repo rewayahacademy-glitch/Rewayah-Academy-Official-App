@@ -351,7 +351,10 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
             valeurRegleProvider((profilId: widget.enfant.id, cle: cle)),
           );
 
-    return Padding(
+    // SUPERPOS-1 : la feuille defile. En Interface guidee a 320 en texte
+    // double, titre, choix, motif et bouton depassaient la hauteur de
+    // l'ecran de 268 px : le bas (le bouton d'envoi) etait hors d'atteinte.
+    return SingleChildScrollView(
       padding: EdgeInsetsDirectional.only(
         start: metriques.marge,
         end: metriques.marge,

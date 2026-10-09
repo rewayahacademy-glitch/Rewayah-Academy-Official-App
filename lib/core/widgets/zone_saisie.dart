@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
@@ -196,7 +197,15 @@ class ZoneSaisie extends StatelessWidget {
       textCapitalization: majuscules,
       onChanged: onChanged,
       decoration: InputDecoration(
-        hintText: aide,
+        // L'aide du champ vide passe a la ligne entre ses mots, jamais dans
+        // un mot (« administratio / n… » a 320 en texte double, SUPERPOS-1) :
+        // le style d'aide du theme, rendu par `TexteSansCoupure`.
+        hint: aide == null
+            ? null
+            : TexteSansCoupure(
+                aide!,
+                style: Theme.of(context).inputDecorationTheme.hintStyle,
+              ),
         helperText: explication,
         helperMaxLines: lignesAideMax,
         errorText: erreur,

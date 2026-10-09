@@ -96,6 +96,52 @@ void main() {
   setUpAll(chargerPolicesDuDepot);
 
   group('ZoneSaisie', () {
+    // SUPERPOS-1, reprise : l'aide du champ vide (« Repondre a
+    // l'administration… », celle du fil du controleur) se coupait dans un mot
+    // a 320 en texte double (« administratio / n… »). Contre-epreuve faite :
+    // echoue sur l'ancien code (aide rendue par `hintText`).
+    for (final _Vue v in _vues) {
+      testWidgets('${_nom(v)} : l aide du champ vide garde ses mots '
+          'entiers', (WidgetTester tester) async {
+        _fixer(tester, v);
+        final TextEditingController texte = TextEditingController();
+        addTearDown(texte.dispose);
+        await tester.pumpWidget(
+          hote(
+            _sens(
+              v,
+              Scaffold(
+                body: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: ZoneSaisie(
+                      controleur: texte,
+                      cleChamp: _champ,
+                      libelle: 'Répondre à l administration',
+                      aide: 'Répondre à l\'administration…',
+                      explication:
+                          'Écrivez un message pour pouvoir '
+                          'l\'envoyer.',
+                      envoi: EnvoiZoneSaisie(
+                        cle: _envoi,
+                        libelle: 'Envoyer',
+                        onEnvoyer: () {},
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pump();
+        expect(tester.takeException(), isNull);
+        expect(find.text('Répondre à l\'administration…'), findsOneWidget);
+        verifierAucunMotCoupe(tester, find.byType(ZoneSaisie));
+      });
+    }
+
     for (final _Vue v in _vues) {
       testWidgets('${_nom(v)} : envoi integre et centre, a une ligne et a '
           'plusieurs', (WidgetTester tester) async {
