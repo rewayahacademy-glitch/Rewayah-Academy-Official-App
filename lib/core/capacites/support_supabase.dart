@@ -11,7 +11,9 @@ class SupportSupabase implements PortSupport {
   @override
   Future<CanalSupport?> canal() async {
     final List<dynamic> rows = await _client.rpc<List<dynamic>>('canal_support');
-    if (rows.isEmpty) return null;
+    if (rows.isEmpty) {
+      return null;
+    }
     if (rows.length != 1 || rows.single is! Map<String, dynamic>) {
       throw const FormatException('Réponse canal_support invalide');
     }
