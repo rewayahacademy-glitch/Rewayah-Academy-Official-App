@@ -3,12 +3,23 @@
 // large et texte x2 par defaut, Interface standard ou guidee.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/router/app_router.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/choice_card_group.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../router/support_routeur.dart'
+    show sessionActive, surchargesRouteur;
+import '../../support/aucun_mot_coupe.dart';
+import '../../support/harnais.dart' show FausseSourceSession;
 
 /// Les deux langues mesurees : francais (LTR) et arabe (RTL).
 const List<AppLocale> languesCoupeMots4 = <AppLocale>[
@@ -60,4 +71,67 @@ Future<void> monterCoupeMots4(
     ),
   );
   await stabiliser(tester);
+}
+
+/// COUPE-MOTS-4 (1) : les cartes de choix rendues ne coupent aucun mot.
+/// Echoue si aucune n'est rendue (la mesure doit porter sur quelque chose).
+void verifierCartesDeChoixEntieres(WidgetTester tester) {
+  final Finder cartes = find.byType(ChoiceCardGroup);
+  expect(cartes, findsWidgets, reason: 'Aucune carte de choix rendue');
+  expect(tester.takeException(), isNull);
+  expect(motsCoupes(tester, cartes), isEmpty);
+}
+
+/// Monte l'application sur son VRAI routeur, session [role], et va a
+/// [depart] : 320 px, texte x2, vraie locale [langue].
+Future<GoRouter> monterRouteCoupeMots4(
+  WidgetTester tester, {
+  required AppRole role,
+  required String depart,
+  required AppLocale langue,
+  InterfaceMode interface = InterfaceMode.standard,
+  ServiceAppairage? appairage,
+  List<Override> autres = const <Override>[],
+  double largeur = 320,
+  double hauteur = 4000,
+}) async {
+  LocaleSettings.setLocaleSync(langue);
+  addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+  fixerVueCapture(tester, Size(largeur, hauteur), 1);
+  late GoRouter routeur;
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: <Override>[
+        ...surchargesRouteur(
+          FausseSourceSession(sessionActive(role)),
+          appairage: appairage,
+        ),
+        ...autres,
+      ],
+      child: TranslationProvider(
+        child: Consumer(
+          builder: (BuildContext contexte, WidgetRef ref, Widget? _) {
+            routeur = ref.read(routeurProvider);
+            return MaterialApp.router(
+              debugShowCheckedModeBanner: false,
+              theme: AppTheme.pour(interface, Brightness.light),
+              locale: TranslationProvider.of(contexte).flutterLocale,
+              supportedLocales: AppLocaleUtils.supportedLocales,
+              localizationsDelegates: GlobalMaterialLocalizations.delegates,
+              builder: (BuildContext c, Widget? app) => MediaQuery(
+                data: MediaQuery.of(c)
+                    .copyWith(textScaler: const TextScaler.linear(2)),
+                child: app!,
+              ),
+              routerConfig: routeur,
+            );
+          },
+        ),
+      ),
+    ),
+  );
+  await stabiliser(tester);
+  routeur.go(depart);
+  await stabiliser(tester);
+  return routeur;
 }

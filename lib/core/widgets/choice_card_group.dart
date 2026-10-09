@@ -471,7 +471,9 @@ extension on _Carte {
         for (final (int i, (String texte, TextStyle style))
             in aEcrire.indexed) ...<Widget>[
           if (i > 0) texte == raisonIndisponible ? Ecart.vSm : Ecart.vXs,
-          TexteSansCoupure(texte, style: style),
+          // Le titre garde un nom compose entier (« Abd al-Rahman B. ») :
+          // il ne passe pas a la ligne apres son trait d'union.
+          TexteSansCoupure(texte, style: style, nomsComposesEntiers: i == 0),
         ],
       ],
     );
@@ -598,6 +600,7 @@ extension on _Carte {
                     texte,
                     style: style,
                     textAlign: TextAlign.center,
+                    nomsComposesEntiers: i == 0,
                   ),
                 ],
               ],
