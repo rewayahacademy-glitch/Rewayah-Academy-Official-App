@@ -88,6 +88,10 @@ BEGIN
 END
 $request_account_two$;
 
+-- Les changements de statut privilégiés passent par le contexte admin du fixture.
+SELECT set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000999', true);
+SELECT set_config('request.jwt.claims',
+  jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text, true);
 UPDATE public.profiles SET account_status = 'disabled'
  WHERE id = 'f1490000-0000-0000-0000-000000000001';
 UPDATE public.households SET status = 'suspended'
