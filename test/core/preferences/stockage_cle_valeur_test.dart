@@ -9,11 +9,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/preferences/presentation_vue.dart';
 import 'package:rewayah_academy/core/preferences/stockage_cle_valeur.dart';
 
-/// Un `localStorage` de test : une table, ou une panne a chaque appel.
+/// Un `localStorage` de test : une table, ou une panne a chaque appel, ou
+/// (PUB-1b) une panne a l'ecriture seulement (quota plein, Safari prive).
 class _FauxLocalStorage implements AccesCleValeur {
-  _FauxLocalStorage({this.enPanne = false});
+  _FauxLocalStorage({this.enPanne = false, this.ecritureEnPanne = false});
 
   final bool enPanne;
+  final bool ecritureEnPanne;
   final Map<String, String> table = <String, String>{};
 
   @override
@@ -24,7 +26,7 @@ class _FauxLocalStorage implements AccesCleValeur {
 
   @override
   void ecrire(String clef, String valeur) {
-    if (enPanne) throw StateError('QuotaExceededError');
+    if (enPanne || ecritureEnPanne) throw StateError('QuotaExceededError');
     table[clef] = valeur;
   }
 }
@@ -81,4 +83,40 @@ void main() {
     final (_, EtatPresentation etat) = await _visite(null);
     expect(etat, EtatPresentation.aVoir);
   });
+
+  // PUB-1b (reserve 2 de la relecture R2) : le stockage se lit mais refuse
+  // l'ecriture. La valeur notee reste en memoire pour la session : une
+  // nouvelle lecture rend « oui », jamais le `null` du stockage durable.
+  test(
+    'lecture possible, ecriture en echec : le secours en memoire repond',
+    () async {
+      final _FauxLocalStorage quotaPlein = _FauxLocalStorage(
+        ecritureEnPanne: true,
+      );
+      final StockagePreferencesCleValeur stockage =
+          StockagePreferencesCleValeur(quotaPlein);
+
+      expect(await stockage.lire(clefPresentationVue), isNull);
+      await stockage.ecrire(clefPresentationVue, 'oui');
+      expect(quotaPlein.table, isEmpty);
+      expect(await stockage.lire(clefPresentationVue), 'oui');
+
+      // Par le fournisseur : la croix note la visite, l'etat relu reste
+      // « vue » pendant la session.
+      final (ProviderContainer c, EtatPresentation etat) = await _visite(
+        quotaPlein,
+      );
+      expect(etat, EtatPresentation.aVoir);
+      await c.read(presentationProvider.notifier).marquerVue();
+      expect(c.read(presentationProvider), EtatPresentation.vue);
+      expect(
+        await c.read(stockagePresentationProvider).lire(clefPresentationVue),
+        'oui',
+      );
+
+      // Au rechargement, rien n'a ete garde : premiere visite, sans blocage.
+      final (_, EtatPresentation apres) = await _visite(quotaPlein);
+      expect(apres, EtatPresentation.aVoir);
+    },
+  );
 }
