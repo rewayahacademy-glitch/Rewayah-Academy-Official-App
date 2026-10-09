@@ -2,7 +2,8 @@
 // depot de la piece d'identite (type de piece) et feuille d'une regle d'un
 // eleve (« Pourquoi ce changement ? », valeur proposee). 320 px, texte x2,
 // francais (LTR) et arabe (RTL), Interface standard et guidee : aucun mot
-// coupe dans les cartes, aucune ponctuation haute seule a la ligne.
+// coupe sur l'ecran entier (cartes, valeurs « Plateforme : 60 min », textes
+// de la piece), aucune ponctuation haute seule a la ligne.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -76,6 +77,11 @@ void main() {
           ],
         );
         await tester.pumpAndSettle();
+        // La feuille des regles elle-meme, avant toute feuille ouverte :
+        // « Plateforme : 60 min » ne laisse ni « Plateforme » coupe ni le
+        // « : » seul a la ligne (relecture adverse du lot 4).
+        expect(find.textContaining('60'), findsWidgets);
+        verifierEcranEntierCoupeMots4(tester);
         final Finder changer = find.text(t.admin.demandes.changer).first;
         await tester.ensureVisible(changer);
         await tester.pumpAndSettle();
@@ -83,6 +89,7 @@ void main() {
         await tester.pumpAndSettle();
         verifierCartesDeChoixEntieres(tester);
         expect(find.text(t.admin.demandes.poserMotif), findsWidgets);
+        // L'ecran entier et la feuille ouverte (verifierCartesDeChoixEntieres).
         expect(ponctuationsIsolees(tester, find.byType(BottomSheet)), isEmpty);
       });
     }

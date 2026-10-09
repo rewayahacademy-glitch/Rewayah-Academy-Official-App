@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_parcours/libelles_parcours.dart';
 import '../../core/tc_parcours/port_signalement.dart';
@@ -138,7 +139,7 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
           onChanged: (String _) => setState(() {}),
         ),
         Ecart.vXs,
-        Text(
+        TexteSansCoupure(
           t.tc.parcours.signalement.interneAide,
           style: palette.inkMuted.applyTo(
             textes.bodySmall ?? const TextStyle(),

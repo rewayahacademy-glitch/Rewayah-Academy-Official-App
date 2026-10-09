@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
@@ -446,7 +447,7 @@ class LigneTransmissionVisite extends ConsumerWidget {
               ),
               Ecart.hSm,
               Expanded(
-                child: Text(
+                child: TexteSansCoupure(
                   texte,
                   style:
                       (etat == TransmissionVisite.echec
@@ -521,7 +522,7 @@ class _FaitsAutomatiquesState extends ConsumerState<_FaitsAutomatiques> {
                   child: Row(
                     children: <Widget>[
                       Expanded(
-                        child: Text(
+                        child: TexteSansCoupure(
                           t.controleur.compteRendu.faits,
                           style: palette.inkStrong.applyTo(
                             textes.titleMedium ?? const TextStyle(),

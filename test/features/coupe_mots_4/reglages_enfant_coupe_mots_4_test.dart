@@ -74,6 +74,8 @@ void main() {
         expect(motif, findsWidgets);
         expect(motsCoupes(tester, motif), isEmpty);
         expect(ponctuationsIsolees(tester, find.byType(BottomSheet)), isEmpty);
+        // Et l'ecran entier, sous la feuille comme dans la feuille.
+        verifierEcranEntierCoupeMots4(tester);
       });
     }
   }

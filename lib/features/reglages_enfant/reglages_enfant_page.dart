@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/appairage/service_avatar.dart';
 import '../../core/domain/enums.dart';
@@ -61,7 +62,7 @@ class ReglagesEnfantPage extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text(t.reglagesEnfant.intro, style: textes.bodySmall),
+          TexteSansCoupure(t.reglagesEnfant.intro, style: textes.bodySmall),
           Ecart.vXl,
           SectionHeader(titre: t.compte.titre),
           CarteLignes(
@@ -203,7 +204,8 @@ class _Demandes extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(t.tuteur.reglages.demandes, style: textes.titleMedium),
+        // COUPE-MOTS-4 : « changement » ne se coupe plus en Interface guidee.
+        TexteSansCoupure(t.tuteur.reglages.demandes, style: textes.titleMedium),
         Ecart.vSm,
         // Les trois demandes sont tertiaires, pas secondaires : ce sont des
         // requetes administratives que l'administration tranche, pas des
@@ -221,7 +223,7 @@ class _Demandes extends ConsumerWidget {
         else
           // Le bouton n'est pas rendu : la phrase explique la limite, comme le
           // plafond de `ENS-06`.
-          Text(
+          TexteSansCoupure(
             t.tuteur.reglages.demandeSansEnseignant(prenom: enfant.prenom),
             style: textes.bodySmall,
           ),
@@ -365,13 +367,16 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text(_titre(), style: textes.titleMedium),
+          TexteSansCoupure(_titre(), style: textes.titleMedium),
           Ecart.vMd,
           if (_envoyee)
-            Text(t.tuteur.reglages.demandeEnvoyee, style: textes.bodyMedium)
+            TexteSansCoupure(
+              t.tuteur.reglages.demandeEnvoyee,
+              style: textes.bodyMedium,
+            )
           else ...<Widget>[
             if (actuelle?.value != null) ...<Widget>[
-              Text(
+              TexteSansCoupure(
                 LibellesGroupe.insecable(
                   t.tuteur.reglages.demandeActuelle(
                     minutes: '${actuelle!.requireValue}',
@@ -412,7 +417,7 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
             ),
             if (_erreur != null) ...<Widget>[
               Ecart.vSm,
-              Text(
+              TexteSansCoupure(
                 _erreur!,
                 style: palette.inkAlert.applyTo(
                   textes.bodySmall ?? const TextStyle(),
@@ -421,7 +426,7 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
             ],
             if (_motif.text.trim().isEmpty) ...<Widget>[
               Ecart.vSm,
-              Text(
+              TexteSansCoupure(
                 t.tuteur.reglages.demandeMotifRequis,
                 style: textes.bodySmall,
               ),

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/service_admin.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
@@ -400,28 +401,29 @@ class _LigneRegle extends StatelessWidget {
         children: <Widget>[
           Text(_libelleRegle(regle.cle), style: textes.titleMedium),
           Ecart.vXs,
-          Row(
+          // COUPE-MOTS-4 : cote a cote quand les deux valeurs tiennent sur
+          // la ligne, l'une sous l'autre sinon. En demi-colonne a 320 px
+          // texte x2, « Plateforme » se coupait et le « : » partait seul a
+          // la ligne malgre l'espace insecable.
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
             children: <Widget>[
-              Expanded(
-                child: Text(
-                  t.admin.demandes.plateforme(
-                    valeur: _valeur(regle.cle, regle.valeurPlateforme),
-                  ),
-                  style: textes.bodySmall,
+              TexteSansCoupure(
+                t.admin.demandes.plateforme(
+                  valeur: _valeur(regle.cle, regle.valeurPlateforme),
                 ),
+                style: textes.bodySmall,
               ),
-              Ecart.hSm,
-              Expanded(
-                child: Text(
-                  t.admin.demandes.effective(
-                    valeur: _valeur(regle.cle, regle.valeurEffective),
-                  ),
-                  style: regle.surchargee
-                      ? palette.inkAccent.applyTo(
-                          textes.bodyMedium ?? const TextStyle(),
-                        )
-                      : textes.bodySmall,
+              TexteSansCoupure(
+                t.admin.demandes.effective(
+                  valeur: _valeur(regle.cle, regle.valeurEffective),
                 ),
+                style: regle.surchargee
+                    ? palette.inkAccent.applyTo(
+                        textes.bodyMedium ?? const TextStyle(),
+                      )
+                    : textes.bodySmall,
               ),
             ],
           ),

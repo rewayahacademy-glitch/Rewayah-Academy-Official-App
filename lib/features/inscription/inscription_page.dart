@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/auth/service_auth.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
@@ -182,10 +183,15 @@ class CoquilleEtape extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text(question, style: textes.headlineSmall ?? const TextStyle()),
+          // COUPE-MOTS-4 : « souhaitez-vous » reduit son echelle plutot que
+          // de se couper en Interface guidee a 320 px texte x2.
+          TexteSansCoupure(
+            question,
+            style: textes.headlineSmall ?? const TextStyle(),
+          ),
           if (explication != null) ...<Widget>[
             Ecart.vSm,
-            Text(
+            TexteSansCoupure(
               explication!,
               style: palette.inkMuted.applyTo(
                 textes.bodyMedium ?? const TextStyle(),

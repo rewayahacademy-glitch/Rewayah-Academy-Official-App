@@ -73,13 +73,44 @@ Future<void> monterCoupeMots4(
   await stabiliser(tester);
 }
 
-/// COUPE-MOTS-4 (1) : les cartes de choix rendues ne coupent aucun mot.
-/// Echoue si aucune n'est rendue (la mesure doit porter sur quelque chose).
+/// COUPE-MOTS-4 : l'ecran ENTIER rendu, chaque `Scaffold` et chaque
+/// feuille du bas ouverte par-dessus (corps, en-tetes, cartes, boutons).
+final Finder ecranEntierCoupeMots4 = find.byWidgetPredicate(
+  (Widget w) => w is Scaffold || w is BottomSheet,
+);
+
+/// COUPE-MOTS-4 : sur l'ecran entier, aucun mot coupe (un nom compose peut
+/// passer a la ligne apres son trait d'union, chaque partie restant
+/// entiere) et aucune ponctuation haute seule a la ligne.
+void verifierEcranEntierCoupeMots4(WidgetTester tester) {
+  expect(
+    ecranEntierCoupeMots4,
+    findsWidgets,
+    reason: 'Aucun ecran monte a mesurer',
+  );
+  expect(tester.takeException(), isNull);
+  expect(
+    motsCoupes(tester, ecranEntierCoupeMots4, traitDUnionPermis: true),
+    isEmpty,
+    reason: 'Un mot coupe sur l ecran',
+  );
+  expect(
+    ponctuationsIsolees(tester, ecranEntierCoupeMots4),
+    isEmpty,
+    reason: 'Une ponctuation haute seule a la ligne',
+  );
+}
+
+/// COUPE-MOTS-4 (1) : les cartes de choix rendues ne coupent aucun mot (nom
+/// compose entier), et le RESTE de l'ecran non plus
+/// ([verifierEcranEntierCoupeMots4]). Echoue si aucune carte n'est rendue
+/// (la mesure doit porter sur quelque chose).
 void verifierCartesDeChoixEntieres(WidgetTester tester) {
   final Finder cartes = find.byType(ChoiceCardGroup);
   expect(cartes, findsWidgets, reason: 'Aucune carte de choix rendue');
   expect(tester.takeException(), isNull);
   expect(motsCoupes(tester, cartes), isEmpty);
+  verifierEcranEntierCoupeMots4(tester);
 }
 
 /// Monte l'application sur son VRAI routeur, session [role], et va a

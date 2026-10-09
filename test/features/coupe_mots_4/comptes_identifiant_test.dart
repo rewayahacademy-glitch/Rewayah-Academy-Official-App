@@ -88,6 +88,8 @@ void main() {
           findsWidgets,
         );
         expect(find.textContaining('TEACHER-AS-000001'), findsNothing);
+        // Et l'ecran entier : aucun mot coupe, aucune ponctuation seule.
+        verifierEcranEntierCoupeMots4(tester);
       });
     }
   }
