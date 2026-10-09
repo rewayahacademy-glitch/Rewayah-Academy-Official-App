@@ -20,9 +20,14 @@
 |---|---|---|
 | Forme qui double la couleur | 1.4.1 ; `lib/CLAUDE.md` | Une **coche** (`AppIcons.succes.actif`, Phosphor plein, déjà employée par `ChoiceCardGroup` et `MenuFiltre`) devant le libellé, à la couleur du libellé (`washAccent.onBackground`), taille `AppSpacing.lg`, écart `AppSpacing.sm` (celui du compteur). Absente au repos. Fond doux et filet fort conservés. |
 | Lecteur d'écran | 4.1.2 | Un **seul nœud** : bouton, `selected`, libellé (compteur compris) dit une fois. Avant : `selected` sur un nœud sans libellé, au-dessus d'un nœud qui disait le libellé deux fois (« Lundi Lundi », mesuré par le test). La coche n'ajoute aucun mot. |
-| Largeur à la sélection | Stabilité de la mise en page sous le doigt | **Largeur constante** : la place de la coche est réservée dans les deux états, en air réparti des deux côtés du libellé au repos (libellé centré, K-54), occupée par la coche une fois retenue. Une pilule touchée ne grandit pas et ne renvoie pas ses voisines à la ligne dans un `Wrap` (jours, filtres admin). Prix : +24 px par pilule (16 + 8), mesuré. Rejeté : la pilule qui grandit (recomposition de la rangée à chaque touche) et une coche serrée dans le retrait existant (libellé à moins de 8 px du bord arrondi à texte ×2). |
+| Largeur à la sélection | Stabilité de la mise en page sous le doigt | **Largeur constante** : la place de la coche (16 + 8 = 24 px) est réservée dans les deux états, en air réparti des deux côtés du libellé au repos (libellé centré, K-54), occupée par la coche une fois retenue ; largeur = min(largeur offerte, libellé + 24). Une pilule touchée ne grandit pas et ne renvoie pas ses voisines à la ligne dans un `Wrap` (jours, filtres admin), mesuré à 390 et 1440 px. **Cas limite** (le libellé occupe déjà toute la ligne : 320 px, texte ×2, « Soirée 17 h-23 h ») : la coche passe au-dessus du libellé, centrée ; la largeur ne change pas, la hauteur grandit de 20 px ; jamais un mot coupé (garde DISPO-1 à 320 ×2, qui a fait échouer une première version à réserve fixe). Rejetés : la pilule qui grandit (rangée recomposée à chaque touche) et une coche serrée dans le retrait existant (libellé à moins de 8 px du bord arrondi à texte ×2). `RangeePuces` prévoit cette hauteur pour la puce retenue. |
 | 320 px, texte ×2, RTL, clair et sombre | K-54 ; DESIGN-GOV | Coche dans la pilule, contenu (coche + libellé) centré à 1 px près, coche placée avant le libellé dans le sens de lecture (à droite en RTL), aucun débordement : tests du composant et garde K-54. |
 
 Preuves : `test/core/widgets/filter_pill_test.dart` (contre-épreuve sur l'ancien composant :
-6 échecs sur 11), `test/core/garde_interface_test.dart`, captures dans
+voir le rapport), `test/core/garde_interface_test.dart`, captures dans
 `docs/current/captures/FILTERPILL-ETAT-1/`.
+
+Observation, hors étape : la coche garde 16 px à texte ×2 (comme celle de `MenuFiltre`) ;
+la faire suivre l'échelle du texte demanderait aussi d'adapter la mesure de `RangeePuces`.
+Capture RTL : page Comptes seulement (la feuille de plage est une route modale que
+l'enveloppe RTL de l'outil de capture n'atteint pas ; son RTL est prouvé par test).

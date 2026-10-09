@@ -3,7 +3,9 @@
 // « Ajouter une plage » de `CreneauxPage` (raccourci « Week-end » touche :
 // Samedi et Dimanche retenus, puis Lundi) et la page admin `ComptesPage`
 // (« Tous » retenu, puis « En attente »). 320 x2, 390, 1440, clair et sombre ;
-// une capture RTL de la page admin. Service en memoire, vraies polices.
+// une capture RTL de la page admin (la feuille de plage s'ouvre dans une
+// route modale que l'enveloppe `Directionality` n'atteint pas : son RTL est
+// prouve par `test/core/widgets/filter_pill_test.dart`). Service en memoire, vraies polices.
 //
 // Saute sans CAPTURE_DIR (voir `test/capture/LISEZ-MOI.md`). Nommage :
 // filterpill_<ecran>_<largeur>_x<echelle>_<mode>[_rtl].png.
@@ -196,32 +198,6 @@ void main() {
       // ignore: avoid_print
       print(
         'PNG ${await capturer(tester, 'filterpill_comptes_390_x1_light_rtl')}',
-      );
-    });
-
-    testWidgets('plage 390_x1 light rtl', (WidgetTester tester) async {
-      fixerVueCapture(tester, const Size(390, 844), 2);
-      await tester.pumpWidget(
-        hoteCapture(
-          const Directionality(
-            textDirection: TextDirection.rtl,
-            child: CreneauxPage(),
-          ),
-          surcharges: _surcharges(),
-        ),
-      );
-      await stabiliser(tester);
-      final Finder ajouter = find.text(t.enseignant.creneaux.ajouterPlage);
-      await tester.ensureVisible(ajouter);
-      await stabiliser(tester);
-      await tester.tap(ajouter);
-      await stabiliser(tester);
-      await tester.tap(find.text('Lundi').last);
-      await stabiliser(tester);
-      expect(tester.takeException(), isNull);
-      // ignore: avoid_print
-      print(
-        'PNG ${await capturer(tester, 'filterpill_plage_390_x1_light_rtl')}',
       );
     });
   });
