@@ -6,7 +6,7 @@ on:
   # la branche de BASE : il ne sert a une branche `ui/*` qu'une fois present
   # dans cette branche.
   pull_request:
-    branches: [main, 'ui/**']
+    branches: [main, 'ccr-1b1bfa0b-m1kvkk', 'ui/**']
   workflow_dispatch:
 
 jobs:
@@ -14,7 +14,7 @@ jobs:
     name: Migrations applicables (Postgres 17)
     # Le SQL et les fonctions Edge ne sont controles que vers `main` : les
     # branches `ui/*` ne touchent pas `supabase/`.
-    if: github.event_name != 'pull_request' || github.base_ref == 'main'
+    if: github.event_name != 'pull_request' || github.base_ref == 'main' || github.base_ref == 'ccr-1b1bfa0b-m1kvkk'
     runs-on: ubuntu-latest
     container: postgres:17-alpine
     services:
@@ -186,9 +186,15 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_adm04.sql
 
+      # Revue B-18 (VALID-I7 / Q3) : droits ACL et refus des RPC protégées
+      # sous anon, authenticated sans claims et agent_ro. Vérifié sur base jetable.
+      - name: Scenarios négatifs B-18 (SECURITY DEFINER)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b18_security_definer.sql
+
   edge-r2:
     name: Fonctions Edge -- stockage R2 (Deno)
-    if: github.event_name != 'pull_request' || github.base_ref == 'main'
+    if: github.event_name != 'pull_request' || github.base_ref == 'main' || github.base_ref == 'ccr-1b1bfa0b-m1kvkk'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -258,6 +264,8 @@ jobs:
           fi
 
   flutter:
+    # Les PR backend vers ccr exécutent les migrations/scénarios et Edge; les builds Flutter restent sur les PR main et les lancements manuels.
+    if: github.event_name != 'pull_request' || github.base_ref == 'main'
     name: Flutter (${{ matrix.target }})
     strategy:
       fail-fast: false
