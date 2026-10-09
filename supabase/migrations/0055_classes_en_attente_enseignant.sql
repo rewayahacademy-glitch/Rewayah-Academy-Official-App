@@ -169,15 +169,6 @@ BEGIN
     RAISE EXCEPTION 'cle idempotence deja utilisee';
   END IF;
 
-  IF EXISTS (
-    SELECT 1 FROM public.demandes_horaires_creation_classe
-    WHERE regroupement_id = p_regroupement_id
-      AND groupe_id IN (SELECT d.groupe_id FROM public.demandes_horaires_famille d
-                        WHERE d.groupe_id IS NOT NULL)
-  ) THEN
-    RAISE EXCEPTION 'regroupement deja materialise';
-  END IF;
-
   IF cardinality(v_jours) <> cardinality(v_heures)
      OR cardinality(v_jours) < 1
      OR cardinality(v_jours) <> (
@@ -221,6 +212,7 @@ BEGIN
       AND h.status = 'active' AND h.deleted_at IS NULL
       AND sp.deleted_at IS NULL
     ORDER BY d.created_at, d.eleve_id
+    LIMIT v_quota
     FOR UPDATE OF d
   LOOP
     INSERT INTO public.groupe_membres (groupe_id, student_id)
