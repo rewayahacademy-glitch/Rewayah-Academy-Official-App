@@ -513,3 +513,5 @@ Le test du Journal à 390x684 guidée sans alerte vérifie aussi que les onglets
 
 Captures ajoutées (`avant` = base 5a52ff30, `apres`) : Journal 1440x700 clair, 1024x768 sombre RTL, 800x600 clair et sombre RTL guidée, 1440x500, 1440x900 guidée, 390x844, défilés ; Règles et Dossiers 800x600 guidée défilés ; Journal 320x640 x2 guidée (barre mobile). Toutes ouvertes et relues. Les captures RTL gardent la locale française : la ponctuation y suit l'algorithme bidirectionnel (« .instant »), artefact de capture et non du produit.
 
+
+Régression après reprise (`--concurrency=2`, 0 échec) : test/features 3037 réussis (2166 ignorés) ; test/core 736 ; test/router 300 (7 ignorés) ; test/widgets 435 ; test/accessibilite 362 ; autres dossiers hors capture, fixtures, support 1881 (192 ignorés). `dart analyze --fatal-infos` : 0 ; `verifier_revue` : 1533 (égal à la base) ; `verifier_jetons` : 37 (égal à la base) ; `dart format` : 0 fichier modifié. Aucun libellé nouveau ni modifié. Aucun besoin serveur. Statut : testé localement ; ni staging, ni déploiement.
