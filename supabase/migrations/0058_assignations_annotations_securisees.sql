@@ -2,6 +2,98 @@
 -- Les tables viennent de 0032; cette migration ne change pas leur modèle métier.
 begin;
 
+-- Les policies d'assignation consultent groupes et groupe_membres, dont les
+-- propres policies se referment mutuellement. Ces helpers privés lisent les
+-- relations sous RLS contournée, avec une décision bornée à l'appelant courant.
+create schema if not exists private;
+revoke all on schema private from public, anon, agent_ro;
+grant usage on schema private to authenticated;
+
+create or replace function private.tc_assignment_teacher_owns_group(p_group_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $function$
+  select coalesce(
+    public.app_account_valid()
+    and public.app_role() = 'teacher'
+    and exists (
+      select 1
+        from public.groupes g
+       where g.id = p_group_id
+         and g.teacher_id = auth.uid()
+         and g.ended_at is null
+    ),
+    false
+  );
+$function$;
+
+create or replace function private.tc_assignment_teacher_owns_member(
+  p_group_id uuid,
+  p_student_id uuid
+) returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $function$
+  select coalesce(
+    private.tc_assignment_teacher_owns_group(p_group_id)
+    and p_student_id is not null
+    and exists (
+      select 1
+        from public.groupe_membres gm
+       where gm.groupe_id = p_group_id
+         and gm.student_id = p_student_id
+         and gm.left_at is null
+    ),
+    false
+  );
+$function$;
+
+create or replace function private.tc_assignment_member_visible(
+  p_group_id uuid,
+  p_student_id uuid
+) returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $function$
+  select coalesce(
+    public.app_account_valid()
+    and public.app_role() in ('student', 'guardian')
+    and exists (
+      select 1
+        from public.groupe_membres gm
+        join public.profiles p on p.id = gm.student_id
+       where gm.groupe_id = p_group_id
+         and gm.left_at is null
+         and (p_student_id is null or gm.student_id = p_student_id)
+         and (
+           gm.student_id = auth.uid()
+           or p.household_id = public.app_household_id()
+         )
+    ),
+    false
+  );
+$function$;
+
+revoke all on function private.tc_assignment_teacher_owns_group(uuid)
+  from public, anon, agent_ro;
+grant execute on function private.tc_assignment_teacher_owns_group(uuid)
+  to authenticated;
+revoke all on function private.tc_assignment_teacher_owns_member(uuid, uuid)
+  from public, anon, agent_ro;
+grant execute on function private.tc_assignment_teacher_owns_member(uuid, uuid)
+  to authenticated;
+revoke all on function private.tc_assignment_member_visible(uuid, uuid)
+  from public, anon, agent_ro;
+grant execute on function private.tc_assignment_member_visible(uuid, uuid)
+  to authenticated;
+
 -- Une assignation de groupe garde un statut partagé. Seul l'enseignant actif
 -- propriétaire du groupe et auteur de la ligne la crée ou la modifie.
 drop policy if exists learning_assignment_enseignant on public.learning_assignment;
@@ -12,12 +104,7 @@ create policy learning_assignment_enseignant on public.learning_assignment
       public.app_account_valid()
       and public.app_role() = 'teacher'
       and created_by = auth.uid()
-      and exists (
-        select 1 from public.groupes g
-         where g.id = learning_assignment.group_id
-           and g.teacher_id = auth.uid()
-           and g.ended_at is null
-      ),
+      and private.tc_assignment_teacher_owns_group(learning_assignment.group_id),
       false
     )
   )
@@ -26,20 +113,10 @@ create policy learning_assignment_enseignant on public.learning_assignment
       public.app_account_valid()
       and public.app_role() = 'teacher'
       and created_by = auth.uid()
-      and exists (
-        select 1 from public.groupes g
-         where g.id = learning_assignment.group_id
-           and g.teacher_id = auth.uid()
-           and g.ended_at is null
-      )
+      and private.tc_assignment_teacher_owns_group(learning_assignment.group_id)
       and (
         student_id is null
-        or exists (
-          select 1 from public.groupe_membres gm
-           where gm.groupe_id = learning_assignment.group_id
-             and gm.student_id = learning_assignment.student_id
-             and gm.left_at is null
-        )
+        or private.tc_assignment_teacher_owns_member(learning_assignment.group_id, learning_assignment.student_id)
       )
       and (
         resource_version_id is null
@@ -67,14 +144,7 @@ create policy learning_assignment_membres on public.learning_assignment
     coalesce(
       public.app_account_valid()
       and public.app_role() in ('student', 'guardian')
-      and (student_id is null or student_id = auth.uid()
-           or public.est_du_foyer(student_id))
-      and exists (
-        select 1 from public.groupe_membres gm
-         where gm.groupe_id = learning_assignment.group_id
-           and gm.left_at is null
-           and (gm.student_id = auth.uid() or public.est_du_foyer(gm.student_id))
-      ),
+      and private.tc_assignment_member_visible(learning_assignment.group_id, learning_assignment.student_id),
       false
     )
   );
