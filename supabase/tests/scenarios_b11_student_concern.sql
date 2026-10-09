@@ -96,6 +96,10 @@ begin
     raise exception 'B-11: teacher must read only concerns they deposited';
   end if;
 
+  select set_config('test.uid', 'b1100000-0000-0000-0000-000000000003', true);
+  select set_config('test.jwt',
+    '{"app_metadata":{"role":"teacher","household_id":"b11fffff-0000-0000-0000-000000000001"}}',
+    true);
   begin
     perform public.deposer_student_concern(
       'autre', 'b11fffff-0000-0000-0000-000000000002',
@@ -177,6 +181,22 @@ begin
   end;
 end
 $b11_transmit$;
+
+select set_config('test.uid', 'b1100000-0000-0000-0000-000000000004', true);
+select set_config('test.jwt',
+  '{"app_metadata":{"role":"guardian","household_id":"b11fffff-0000-0000-0000-000000000001"}}',
+  true);
+
+do $b11_family_isolation$
+declare
+  v_count integer;
+begin
+  select count(*) into v_count from public.student_concern;
+  if v_count <> 0 then
+    raise exception 'B-11: a family account must not read internal concerns';
+  end if;
+end
+$b11_family_isolation$;
 
 reset role;
 rollback;
