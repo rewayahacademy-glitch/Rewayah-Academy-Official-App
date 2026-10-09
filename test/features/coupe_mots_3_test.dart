@@ -24,6 +24,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/isolat_bidi.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/i18n/taille_fichier.dart';
 import 'package:rewayah_academy/core/tc_horloge/emplacement_entree.dart';
@@ -233,7 +234,18 @@ void main() {
         // La ligne de progression est montee et mesuree.
         expect(find.textContaining('Chapitre 1'), findsWidgets);
         expect(
-          motsCoupes(tester, find.byType(Scaffold)),
+          motsCoupes(
+            tester,
+            find.byType(Scaffold),
+            // Les cartes de la classe (CARTES-PERSO-1b) montrent a
+            // l'enseignant l'adresse d'une carte : un seul « mot » sans
+            // espace, plus large que la colonne a 320 px et texte x2, qui
+            // passe forcement a la ligne et se lit en entier (meme exception
+            // que cartes_classe_test.dart).
+            exceptions: <String>{
+              isolerSens('https://rewayah.academy/demo/recitation'),
+            },
+          ),
           isEmpty,
           reason: 'Un mot coupe ou tronque',
         );
