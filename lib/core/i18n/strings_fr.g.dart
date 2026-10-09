@@ -88,6 +88,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$adulte$fr adulte = Traductions$adulte$fr.internal(_root);
 	late final Traductions$formulaire$fr formulaire = Traductions$formulaire$fr.internal(_root);
 	late final Traductions$motifs$fr motifs = Traductions$motifs$fr.internal(_root);
+	late final Traductions$suiviDemandes$fr suiviDemandes = Traductions$suiviDemandes$fr.internal(_root);
 }
 
 // Path: commun
@@ -2467,6 +2468,70 @@ class Traductions$motifs$fr {
 	late final Traductions$motifs$reglageDuree$fr reglageDuree = Traductions$motifs$reglageDuree$fr.internal(_root);
 	late final Traductions$motifs$reglageMinimum$fr reglageMinimum = Traductions$motifs$reglageMinimum$fr.internal(_root);
 	late final Traductions$motifs$signalement$fr signalement = Traductions$motifs$signalement$fr.internal(_root);
+}
+
+// Path: suiviDemandes
+class Traductions$suiviDemandes$fr {
+	Traductions$suiviDemandes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Suivi des demandes de créneau'
+	String get titre => 'Suivi des demandes de créneau';
+
+	/// fr: 'Chaque demande avance en trois étapes. Vous êtes prévenu à chaque passage.'
+	String get contexte => 'Chaque demande avance en trois étapes. Vous êtes prévenu à chaque passage.';
+
+	/// fr: 'Demande de créneau {dePrenom}'
+	String carteTitre({required Object dePrenom}) => 'Demande de créneau ${dePrenom}';
+
+	/// fr: 'Jours choisis'
+	String get joursChoisis => 'Jours choisis';
+
+	/// fr: 'Heure choisie'
+	String get heureChoisie => 'Heure choisie';
+
+	/// fr: '{debut} et {dernier}'
+	String joursEt({required Object debut, required Object dernier}) => '${debut} et ${dernier}';
+
+	/// fr: '{heure}, heure {deVille}'
+	String heureFuseau({required Object heure, required Object deVille}) => '${heure}, heure ${deVille}';
+
+	late final Traductions$suiviDemandes$etapes$fr etapes = Traductions$suiviDemandes$etapes$fr.internal(_root);
+	late final Traductions$suiviDemandes$etats$fr etats = Traductions$suiviDemandes$etats$fr.internal(_root);
+	late final Traductions$suiviDemandes$situation$fr situation = Traductions$suiviDemandes$situation$fr.internal(_root);
+	late final Traductions$suiviDemandes$prochaine$fr prochaine = Traductions$suiviDemandes$prochaine$fr.internal(_root);
+
+	/// fr: 'Début des cours'
+	String get debutCours => 'Début des cours';
+
+	/// fr: '{date} à {heure}, heure {deVille}'
+	String debutValeur({required Object date, required Object heure, required Object deVille}) => '${date} à ${heure}, heure ${deVille}';
+
+	/// fr: 'La date du premier cours s'affichera ici dès qu'elle sera fixée.'
+	String get debutAFixer => 'La date du premier cours s\'affichera ici dès qu\'elle sera fixée.';
+
+	/// fr: 'Enseignant'
+	String get enseignant => 'Enseignant';
+
+	/// fr: 'Ce créneau ne s'ouvrira que si d'autres élèves le choisissent et remplissent la classe.'
+	String get personnaliseNotice => 'Ce créneau ne s\'ouvrira que si d\'autres élèves le choisissent et remplissent la classe.';
+
+	late final Traductions$suiviDemandes$close$fr close = Traductions$suiviDemandes$close$fr.internal(_root);
+
+	/// fr: 'Aucune demande de créneau en cours.'
+	String get vide => 'Aucune demande de créneau en cours.';
+
+	/// fr: 'Le suivi des demandes n'a pas pu être chargé : le serveur n'a pas répondu. Réessayez dans un instant.'
+	String get erreur => 'Le suivi des demandes n\'a pas pu être chargé : le serveur n\'a pas répondu. Réessayez dans un instant.';
+
+	/// fr: 'Le suivi des demandes n'a pas pu être chargé'
+	String get sansDonnees => 'Le suivi des demandes n\'a pas pu être chargé';
+
+	late final Traductions$suiviDemandes$accueil$fr accueil = Traductions$suiviDemandes$accueil$fr.internal(_root);
+	late final Traductions$suiviDemandes$notification$fr notification = Traductions$suiviDemandes$notification$fr.internal(_root);
 }
 
 // Path: commun.demonstration
@@ -12368,6 +12433,140 @@ class Traductions$motifs$signalement$fr {
 	late final Traductions$motifs$signalement$changement$fr changement = Traductions$motifs$signalement$changement$fr.internal(_root);
 }
 
+// Path: suiviDemandes.etapes
+class Traductions$suiviDemandes$etapes$fr {
+	Traductions$suiviDemandes$etapes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demande envoyée'
+	String get envoyee => 'Demande envoyée';
+
+	/// fr: 'Classe validée'
+	String get classeValidee => 'Classe validée';
+
+	/// fr: 'Enseignant affecté'
+	String get enseignantAffecte => 'Enseignant affecté';
+}
+
+// Path: suiviDemandes.etats
+class Traductions$suiviDemandes$etats$fr {
+	Traductions$suiviDemandes$etats$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Fait'
+	String get fait => 'Fait';
+
+	/// fr: 'Prochaine étape'
+	String get prochaine => 'Prochaine étape';
+
+	/// fr: 'À venir'
+	String get aVenir => 'À venir';
+}
+
+// Path: suiviDemandes.situation
+class Traductions$suiviDemandes$situation$fr {
+	Traductions$suiviDemandes$situation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre demande est arrivée à l'administration'
+	String get envoyee => 'Votre demande est arrivée à l\'administration';
+
+	/// fr: 'Votre classe a été validée'
+	String get classeValidee => 'Votre classe a été validée';
+
+	/// fr: 'Classe validée · enseignant affecté'
+	String get enseignantAffecte => 'Classe validée · enseignant affecté';
+}
+
+// Path: suiviDemandes.prochaine
+class Traductions$suiviDemandes$prochaine$fr {
+	Traductions$suiviDemandes$prochaine$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Prochaine étape : constitution de la classe'
+	String get envoyee => 'Prochaine étape : constitution de la classe';
+
+	/// fr: 'Prochaine étape : affectation de l'enseignant'
+	String get classeValidee => 'Prochaine étape : affectation de l\'enseignant';
+}
+
+// Path: suiviDemandes.close
+class Traductions$suiviDemandes$close$fr {
+	Traductions$suiviDemandes$close$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demande retirée'
+	String get retiree => 'Demande retirée';
+
+	/// fr: 'Demande non retenue'
+	String get nonRetenue => 'Demande non retenue';
+
+	late final Traductions$suiviDemandes$close$motif$fr motif = Traductions$suiviDemandes$close$motif$fr.internal(_root);
+
+	/// fr: 'Vous pouvez choisir un autre créneau parmi ceux proposés.'
+	String get suite => 'Vous pouvez choisir un autre créneau parmi ceux proposés.';
+
+	/// fr: 'Aucun autre créneau n'est proposé pour le moment. Revenez sur cette page plus tard.'
+	String get suiteSansChoix => 'Aucun autre créneau n\'est proposé pour le moment. Revenez sur cette page plus tard.';
+
+	/// fr: 'Choisir un autre créneau pour {prenom}'
+	String choisirAutre({required Object prenom}) => 'Choisir un autre créneau pour ${prenom}';
+}
+
+// Path: suiviDemandes.accueil
+class Traductions$suiviDemandes$accueil$fr {
+	Traductions$suiviDemandes$accueil$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vos demandes de créneau'
+	String get titre => 'Vos demandes de créneau';
+
+	/// fr: '{prenom} : {etat}'
+	String ligne({required Object prenom, required Object etat}) => '${prenom} : ${etat}';
+
+	/// fr: 'Voir le suivi des demandes'
+	String get voir => 'Voir le suivi des demandes';
+}
+
+// Path: suiviDemandes.notification
+class Traductions$suiviDemandes$notification$fr {
+	Traductions$suiviDemandes$notification$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demande de créneau {dePrenom} : votre demande est arrivée à l'administration'
+	String envoyee({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre demande est arrivée à l\'administration';
+
+	/// fr: 'Demande de créneau {dePrenom} : votre classe a été validée'
+	String classeValidee({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre classe a été validée';
+
+	/// fr: 'Demande de créneau {dePrenom} : classe validée · enseignant affecté'
+	String enseignantAffecte({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : classe validée · enseignant affecté';
+
+	/// fr: 'Demande de créneau {dePrenom} : {motif}'
+	String close({required Object dePrenom, required Object motif}) => 'Demande de créneau ${dePrenom} : ${motif}';
+}
+
 // Path: commun.etats.chargementProlonge
 class Traductions$commun$etats$chargementProlonge$fr {
 	Traductions$commun$etats$chargementProlonge$fr.internal(this._root);
@@ -16656,6 +16855,27 @@ class Traductions$motifs$signalement$changement$fr {
 
 	/// fr: 'L'académie reviendra vers vous pour en parler.'
 	String get suite => 'L\'académie reviendra vers vous pour en parler.';
+}
+
+// Path: suiviDemandes.close.motif
+class Traductions$suiviDemandes$close$motif$fr {
+	Traductions$suiviDemandes$close$motif$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous avez retiré cette demande.'
+	String get retraitFamille => 'Vous avez retiré cette demande.';
+
+	/// fr: 'L'académie a retiré ce créneau de ses offres.'
+	String get offreRetiree => 'L\'académie a retiré ce créneau de ses offres.';
+
+	/// fr: 'La classe de ce créneau n'a pas pu être constituée.'
+	String get classeNonConstituee => 'La classe de ce créneau n\'a pas pu être constituée.';
+
+	/// fr: 'La direction n'a pas pu retenir cette demande.'
+	String get refusDirection => 'La direction n\'a pas pu retenir cette demande.';
 }
 
 // Path: salle.preparation.eleve.guidee
@@ -21435,6 +21655,48 @@ extension on Traductions {
 			'motifs.signalement.changement.classe' => 'Un changement de classe est à l\'étude.',
 			'motifs.signalement.changement.niveau' => 'Le niveau de la classe ne semble plus adapté.',
 			'motifs.signalement.changement.suite' => 'L\'académie reviendra vers vous pour en parler.',
+			'suiviDemandes.titre' => 'Suivi des demandes de créneau',
+			'suiviDemandes.contexte' => 'Chaque demande avance en trois étapes. Vous êtes prévenu à chaque passage.',
+			'suiviDemandes.carteTitre' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom}',
+			'suiviDemandes.joursChoisis' => 'Jours choisis',
+			'suiviDemandes.heureChoisie' => 'Heure choisie',
+			'suiviDemandes.joursEt' => ({required Object debut, required Object dernier}) => '${debut} et ${dernier}',
+			'suiviDemandes.heureFuseau' => ({required Object heure, required Object deVille}) => '${heure}, heure ${deVille}',
+			'suiviDemandes.etapes.envoyee' => 'Demande envoyée',
+			'suiviDemandes.etapes.classeValidee' => 'Classe validée',
+			'suiviDemandes.etapes.enseignantAffecte' => 'Enseignant affecté',
+			'suiviDemandes.etats.fait' => 'Fait',
+			'suiviDemandes.etats.prochaine' => 'Prochaine étape',
+			'suiviDemandes.etats.aVenir' => 'À venir',
+			'suiviDemandes.situation.envoyee' => 'Votre demande est arrivée à l\'administration',
+			'suiviDemandes.situation.classeValidee' => 'Votre classe a été validée',
+			'suiviDemandes.situation.enseignantAffecte' => 'Classe validée · enseignant affecté',
+			'suiviDemandes.prochaine.envoyee' => 'Prochaine étape : constitution de la classe',
+			'suiviDemandes.prochaine.classeValidee' => 'Prochaine étape : affectation de l\'enseignant',
+			'suiviDemandes.debutCours' => 'Début des cours',
+			'suiviDemandes.debutValeur' => ({required Object date, required Object heure, required Object deVille}) => '${date} à ${heure}, heure ${deVille}',
+			'suiviDemandes.debutAFixer' => 'La date du premier cours s\'affichera ici dès qu\'elle sera fixée.',
+			'suiviDemandes.enseignant' => 'Enseignant',
+			'suiviDemandes.personnaliseNotice' => 'Ce créneau ne s\'ouvrira que si d\'autres élèves le choisissent et remplissent la classe.',
+			'suiviDemandes.close.retiree' => 'Demande retirée',
+			'suiviDemandes.close.nonRetenue' => 'Demande non retenue',
+			'suiviDemandes.close.motif.retraitFamille' => 'Vous avez retiré cette demande.',
+			'suiviDemandes.close.motif.offreRetiree' => 'L\'académie a retiré ce créneau de ses offres.',
+			'suiviDemandes.close.motif.classeNonConstituee' => 'La classe de ce créneau n\'a pas pu être constituée.',
+			'suiviDemandes.close.motif.refusDirection' => 'La direction n\'a pas pu retenir cette demande.',
+			'suiviDemandes.close.suite' => 'Vous pouvez choisir un autre créneau parmi ceux proposés.',
+			'suiviDemandes.close.suiteSansChoix' => 'Aucun autre créneau n\'est proposé pour le moment. Revenez sur cette page plus tard.',
+			'suiviDemandes.close.choisirAutre' => ({required Object prenom}) => 'Choisir un autre créneau pour ${prenom}',
+			'suiviDemandes.vide' => 'Aucune demande de créneau en cours.',
+			'suiviDemandes.erreur' => 'Le suivi des demandes n\'a pas pu être chargé : le serveur n\'a pas répondu. Réessayez dans un instant.',
+			'suiviDemandes.sansDonnees' => 'Le suivi des demandes n\'a pas pu être chargé',
+			'suiviDemandes.accueil.titre' => 'Vos demandes de créneau',
+			'suiviDemandes.accueil.ligne' => ({required Object prenom, required Object etat}) => '${prenom} : ${etat}',
+			'suiviDemandes.accueil.voir' => 'Voir le suivi des demandes',
+			'suiviDemandes.notification.envoyee' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre demande est arrivée à l\'administration',
+			'suiviDemandes.notification.classeValidee' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre classe a été validée',
+			'suiviDemandes.notification.enseignantAffecte' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : classe validée · enseignant affecté',
+			'suiviDemandes.notification.close' => ({required Object dePrenom, required Object motif}) => 'Demande de créneau ${dePrenom} : ${motif}',
 			_ => null,
 		};
 	}

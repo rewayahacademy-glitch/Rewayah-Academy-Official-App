@@ -5168,5 +5168,65 @@
         "suite": "L'académie reviendra vers vous pour en parler."
       }
     }
+  },
+  "suiviDemandes": {
+    "titre": "Suivi des demandes de créneau",
+    "contexte": "Chaque demande avance en trois étapes. Vous êtes prévenu à chaque passage.",
+    "carteTitre": "Demande de créneau {dePrenom}",
+    "joursChoisis": "Jours choisis",
+    "heureChoisie": "Heure choisie",
+    "joursEt": "{debut} et {dernier}",
+    "heureFuseau": "{heure}, heure {deVille}",
+    "etapes": {
+      "envoyee": "Demande envoyée",
+      "classeValidee": "Classe validée",
+      "enseignantAffecte": "Enseignant affecté"
+    },
+    "etats": {
+      "fait": "Fait",
+      "prochaine": "Prochaine étape",
+      "aVenir": "À venir"
+    },
+    "situation": {
+      "envoyee": "Votre demande est arrivée à l'administration",
+      "classeValidee": "Votre classe a été validée",
+      "enseignantAffecte": "Classe validée · enseignant affecté"
+    },
+    "prochaine": {
+      "envoyee": "Prochaine étape : constitution de la classe",
+      "classeValidee": "Prochaine étape : affectation de l'enseignant"
+    },
+    "debutCours": "Début des cours",
+    "debutValeur": "{date} à {heure}, heure {deVille}",
+    "debutAFixer": "La date du premier cours s'affichera ici dès qu'elle sera fixée.",
+    "enseignant": "Enseignant",
+    "personnaliseNotice": "Ce créneau ne s'ouvrira que si d'autres élèves le choisissent et remplissent la classe.",
+    "close": {
+      "retiree": "Demande retirée",
+      "nonRetenue": "Demande non retenue",
+      "motif": {
+        "retraitFamille": "Vous avez retiré cette demande.",
+        "offreRetiree": "L'académie a retiré ce créneau de ses offres.",
+        "classeNonConstituee": "La classe de ce créneau n'a pas pu être constituée.",
+        "refusDirection": "La direction n'a pas pu retenir cette demande."
+      },
+      "suite": "Vous pouvez choisir un autre créneau parmi ceux proposés.",
+      "suiteSansChoix": "Aucun autre créneau n'est proposé pour le moment. Revenez sur cette page plus tard.",
+      "choisirAutre": "Choisir un autre créneau pour {prenom}"
+    },
+    "vide": "Aucune demande de créneau en cours.",
+    "erreur": "Le suivi des demandes n'a pas pu être chargé : le serveur n'a pas répondu. Réessayez dans un instant.",
+    "sansDonnees": "Le suivi des demandes n'a pas pu être chargé",
+    "accueil": {
+      "titre": "Vos demandes de créneau",
+      "ligne": "{prenom} : {etat}",
+      "voir": "Voir le suivi des demandes"
+    },
+    "notification": {
+      "envoyee": "Demande de créneau {dePrenom} : votre demande est arrivée à l'administration",
+      "classeValidee": "Demande de créneau {dePrenom} : votre classe a été validée",
+      "enseignantAffecte": "Demande de créneau {dePrenom} : classe validée · enseignant affecté",
+      "close": "Demande de créneau {dePrenom} : {motif}"
+    }
   }
 }

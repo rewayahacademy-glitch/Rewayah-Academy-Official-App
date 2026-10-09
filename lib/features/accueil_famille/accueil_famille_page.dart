@@ -31,6 +31,7 @@ import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/skeleton.dart';
 import '../parcours_offres/bloc_parcours.dart';
+import '../suivi_demandes/carte_suivi_demandes.dart';
 import 'ancre_horloge_serveur.dart';
 import 'bandeau_blocage.dart';
 import 'bloc_seance.dart';
@@ -213,6 +214,7 @@ class _Contenu extends ConsumerWidget {
         children: <Widget>[
           selecteur,
           Ecart.vXl,
+          const CarteSuiviDemandes(),
           // Entree transitoire du questionnaire (revue C, M3 ; demande C-7) :
           // gardee tant que Fiche > Inscription (lot B) n'est pas integree.
           // Silencieuse quand aucun apprenant n'a de parcours a suivre.
@@ -311,6 +313,7 @@ class _Contenu extends ConsumerWidget {
       children: <Widget>[
         selecteur,
         Ecart.vXl,
+        const CarteSuiviDemandes(),
         LayoutBuilder(
           builder: (BuildContext _, BoxConstraints contraintes) {
             final bool coteACote =

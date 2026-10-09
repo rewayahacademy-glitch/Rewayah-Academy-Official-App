@@ -56,6 +56,7 @@ import 'dossiers_demo.dart';
 import 'observation_demo.dart';
 import 'presence_demo.dart';
 import 'services_admin_demo.dart';
+import 'suivi_demandes_demo.dart';
 
 /// Parametre d'adresse qui demande la demonstration tuteur.
 const String parametreDemo = 'demo';
@@ -162,6 +163,9 @@ List<Override> surchargesDemoTuteur({
       (Ref ref) async => const <ParcoursApprenant>[],
     ),
     monFuseauProvider.overrideWith((Ref ref) async => 'Europe/Paris'),
+    // OFFRES-FAM-1 : le suivi des demandes du foyer de demonstration, et les
+    // notifications de ses transitions (foyer de demonstration seulement).
+    if (!avecDossier && eleves == null) ...surchargesSuiviDemandesDemo(),
     seancesDuSuiviProvider.overrideWith((Ref ref) async => const <Seance>[]),
     mesGroupesProvider.overrideWith(
       (Ref ref) async => avecDossier
