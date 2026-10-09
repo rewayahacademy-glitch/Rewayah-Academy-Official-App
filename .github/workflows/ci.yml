@@ -192,6 +192,12 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b18_security_definer.sql
 
+      # OFFRES-I5 : les créneaux demandés en privé ne deviennent une offre
+      # publique qu'au quota configuré (5 enfants / 6 adultes).
+      - name: Scenarios du créneau personnalisé au quota (F1)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_offres_personnalisees.sql
+
   edge-r2:
     name: Fonctions Edge -- stockage R2 (Deno)
     if: github.event_name != 'pull_request' || github.base_ref == 'main' || github.base_ref == 'ccr-1b1bfa0b-m1kvkk'
