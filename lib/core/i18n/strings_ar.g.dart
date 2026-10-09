@@ -43,6 +43,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$historique$ar historique = _Traductions$historique$ar._(_root);
 	@override late final _Traductions$commun$ar commun = _Traductions$commun$ar._(_root);
 	@override late final _Traductions$etat$ar etat = _Traductions$etat$ar._(_root);
+	@override late final _Traductions$accessibilite$ar accessibilite = _Traductions$accessibilite$ar._(_root);
 	@override late final _Traductions$classe$ar classe = _Traductions$classe$ar._(_root);
 	@override late final _Traductions$salle$ar salle = _Traductions$salle$ar._(_root);
 	@override late final _Traductions$eleve$ar eleve = _Traductions$eleve$ar._(_root);
@@ -141,6 +142,16 @@ class _Traductions$etat$ar extends Traductions$etat$fr {
 	@override String raisonEtSuite({required Object raison, required Object suite}) => '${raison} · ${suite}';
 }
 
+// Path: accessibilite
+class _Traductions$accessibilite$ar extends Traductions$accessibilite$fr {
+	_Traductions$accessibilite$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$accessibilite$tutoiement$ar tutoiement = _Traductions$accessibilite$tutoiement$ar._(_root);
+}
+
 // Path: classe
 class _Traductions$classe$ar extends Traductions$classe$fr {
 	_Traductions$classe$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -168,6 +179,7 @@ class _Traductions$classe$ar extends Traductions$classe$fr {
 	@override late final _Traductions$classe$pageRessources$ar pageRessources = _Traductions$classe$pageRessources$ar._(_root);
 	@override late final _Traductions$classe$pageProgression$ar pageProgression = _Traductions$classe$pageProgression$ar._(_root);
 	@override late final _Traductions$classe$pageCatalogue$ar pageCatalogue = _Traductions$classe$pageCatalogue$ar._(_root);
+	@override late final _Traductions$classe$cartes$ar cartes = _Traductions$classe$cartes$ar._(_root);
 }
 
 // Path: salle
@@ -489,6 +501,22 @@ class _Traductions$commun$etats$ar extends Traductions$commun$etats$fr {
 	@override late final _Traductions$commun$etats$actions$ar actions = _Traductions$commun$etats$actions$ar._(_root);
 }
 
+// Path: accessibilite.tutoiement
+class _Traductions$accessibilite$tutoiement$ar extends Traductions$accessibilite$tutoiement$fr {
+	_Traductions$accessibilite$tutoiement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get tonHeure => 'توقيتك';
+	@override String get attenteDetail => 'وقت الانتظار هذا لا يُحتسب في حضورك.';
+	@override String attente({required Object duree}) => 'أنت في القاعة. تبدأ الحصة بعد ${duree}.';
+	@override String get attenteImminent => 'أنت في القاعة. تبدأ الحصة بعد أقل من دقيقة.';
+	@override String get annonceAttente => 'أنت في القاعة';
+	@override String get horsLigne => 'يمكنك دخول الحصة فور عودة الاتصال.';
+	@override String get finPhrase => 'يمكنك العثور على عملك في فصلك.';
+}
+
 // Path: classe.entree
 class _Traductions$classe$entree$ar extends Traductions$classe$entree$fr {
 	_Traductions$classe$entree$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -645,6 +673,38 @@ class _Traductions$classe$pageCatalogue$ar extends Traductions$classe$pageCatalo
 	@override String get envoiIncertain => 'لم يصل رد الأكاديمية. إعادة المحاولة لا تنشئ تسجيلًا ثانيًا.';
 	@override String get envoiIndisponible => 'التسجيل عبر الإنترنت غير مفتوح بعد: لم يُحجز أي مقعد.';
 	@override late final _Traductions$classe$pageCatalogue$resultat$ar resultat = _Traductions$classe$pageCatalogue$resultat$ar._(_root);
+}
+
+// Path: classe.cartes
+class _Traductions$classe$cartes$ar extends Traductions$classe$cartes$fr {
+	_Traductions$classe$cartes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'بطاقات الفصل';
+	@override String get contexteEnseignant => 'المس بطاقة لتعديلها. يراها الطلاب وأسرهم فورًا.';
+	@override String get modificationPlusTard => 'يمكن تعديل البطاقات عند عودة الاتصال.';
+	@override String get aucune => 'لا توجد بطاقات حاليًا';
+	@override String get aucuneDetail => 'سيضع معلم الفصل هنا المعلومات المفيدة.';
+	@override String get aucuneEnseignant => 'لا توجد بطاقات حاليًا. أضف بطاقة: سيراها الفصل فورًا.';
+	@override String get ajouter => 'إضافة بطاقة';
+	@override String limite({required Object max}) => '${max} بطاقات على الأكثر: احذف واحدة لتضيف أخرى.';
+	@override String modifierLecteur({required Object titre}) => 'تعديل البطاقة «${titre}»';
+	@override String echeance({required Object date}) => 'الموعد النهائي: ${date}';
+	@override String copierLien({required Object titre}) => 'نسخ رابط «${titre}»';
+	@override String get copierLienCourt => 'نسخ الرابط';
+	@override String get lienCopie => 'تم نسخ الرابط. الصقه في متصفحك لفتحه.';
+	@override String get indisponibleTitre => 'بطاقات الفصل غير مفتوحة بعد';
+	@override String get indisponiblePhrase => 'ستظهر هنا فور فتحها. لا شيء مطلوب منك.';
+	@override String get erreurLecture => 'تعذرت قراءة بطاقات الفصل. أعد المحاولة بعد قليل.';
+	@override String get sansDonnees => 'تعذر تحميل بطاقات الفصل';
+	@override String get enregistree => 'تم حفظ البطاقة. يراها الفصل الآن.';
+	@override String get retiree => 'تم حذف البطاقة. لم يعد الفصل يراها.';
+	@override late final _Traductions$classe$cartes$types$ar types = _Traductions$classe$cartes$types$ar._(_root);
+	@override late final _Traductions$classe$cartes$typesDetail$ar typesDetail = _Traductions$classe$cartes$typesDetail$ar._(_root);
+	@override late final _Traductions$classe$cartes$modeles$ar modeles = _Traductions$classe$cartes$modeles$ar._(_root);
+	@override late final _Traductions$classe$cartes$feuille$ar feuille = _Traductions$classe$cartes$feuille$ar._(_root);
 }
 
 // Path: salle.secours
@@ -1704,6 +1764,74 @@ class _Traductions$classe$pageCatalogue$resultat$ar extends Traductions$classe$p
 	@override String refusePhrase({required Object prenom}) => 'لم يُحجز أي مقعد لـ${prenom}. يمكنك اختيار فصل آخر.';
 	@override String get autresClasses => 'عرض الفصول الأخرى';
 	@override String get retourAccueil => 'العودة إلى الصفحة الرئيسية';
+}
+
+// Path: classe.cartes.types
+class _Traductions$classe$cartes$types$ar extends Traductions$classe$cartes$types$fr {
+	_Traductions$classe$cartes$types$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get annonce => 'إعلان';
+	@override String get devoir => 'واجب';
+	@override String get lien => 'رابط مفيد';
+	@override String get rappel => 'تذكير';
+}
+
+// Path: classe.cartes.typesDetail
+class _Traductions$classe$cartes$typesDetail$ar extends Traductions$classe$cartes$typesDetail$fr {
+	_Traductions$classe$cartes$typesDetail$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get annonce => 'لمعلومة موجهة إلى الفصل كله.';
+	@override String get devoir => 'لعمل يُحضَّر: الموعد النهائي المقترح هو الحصة القادمة.';
+	@override String get lien => 'لمشاركة صفحة أو مادة: الصق عنوانها.';
+	@override String get rappel => 'لتاريخ لا يُنسى: رحلة، امتحان، تغيير في الموعد.';
+}
+
+// Path: classe.cartes.modeles
+class _Traductions$classe$cartes$modeles$ar extends Traductions$classe$cartes$modeles$fr {
+	_Traductions$classe$cartes$modeles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get annonce => 'معلومة للفصل';
+	@override String get devoir => 'للتحضير للحصة القادمة';
+	@override String get lien => 'مادة للاطلاع';
+	@override String get rappel => 'لا تنسَ';
+}
+
+// Path: classe.cartes.feuille
+class _Traductions$classe$cartes$feuille$ar extends Traductions$classe$cartes$feuille$fr {
+	_Traductions$classe$cartes$feuille$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titreNouvelle => 'بطاقة جديدة للفصل';
+	@override String titreModifier({required Object titre}) => 'تعديل البطاقة «${titre}»';
+	@override String get contexte => 'اختر نموذجًا: يملأ البطاقة مسبقًا. يراها طلاب الفصل وأسرهم فورًا.';
+	@override String get modele => 'نموذج البطاقة';
+	@override String get champTitre => 'عنوان البطاقة';
+	@override String get champTexte => 'نص البطاقة (اختياري)';
+	@override String get champLien => 'رابط البطاقة (اختياري)';
+	@override String aideLongueur({required Object max}) => '${max} حرفًا على الأكثر';
+	@override String get aideLien => 'عنوان كامل، كما يظهر في شريط المتصفح';
+	@override String get echeanceAucune => 'بلا موعد نهائي';
+	@override String get choisirEcheance => 'اختيار الموعد النهائي';
+	@override String get retirerEcheance => 'إزالة الموعد النهائي';
+	@override String get enregistrer => 'حفظ البطاقة';
+	@override String get retirer => 'حذف هذه البطاقة';
+	@override String retirerQuestion({required Object titre}) => 'حذف البطاقة «${titre}»؟';
+	@override String get retirerConsequence => 'تختفي فورًا عند طلاب الفصل وأسرهم.';
+	@override String get retirerConfirmer => 'حذف البطاقة';
+	@override String get envoiNonConfirme => 'لم يتأكد حفظ البطاقة: لم يصل الرد. احفظ من جديد بعد قليل.';
+	@override String get retraitNonConfirme => 'لم يتأكد الحذف: لم يصل الرد. أعد المحاولة بعد قليل.';
+	@override late final _Traductions$classe$cartes$feuille$defauts$ar defauts = _Traductions$classe$cartes$feuille$defauts$ar._(_root);
 }
 
 // Path: tuteur.accueil.etatCourt
@@ -3540,6 +3668,20 @@ class _Traductions$comptable$direction$delegationPanneau$ar extends Traductions$
 	@override String get politiqueTarifaireDetail => 'سياسة الأسعار تبقى للإدارة.';
 }
 
+// Path: classe.cartes.feuille.defauts
+class _Traductions$classe$cartes$feuille$defauts$ar extends Traductions$classe$cartes$feuille$defauts$fr {
+	_Traductions$classe$cartes$feuille$defauts$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titreVide => 'العنوان ناقص. اكتب بضع كلمات، مثل «سورة للمراجعة».';
+	@override String titreLong({required Object max}) => 'العنوان يتجاوز ${max} حرفًا. اختصره.';
+	@override String texteLong({required Object max}) => 'النص يتجاوز ${max} حرفًا. اختصره أو شارك رابطًا.';
+	@override String get lienInvalide => 'هذا الرابط ليس عنوانًا كاملًا. انسخ العنوان كما يظهر في شريط المتصفح والصقه هنا.';
+	@override String get echeanceManquante => 'يحتاج الواجب إلى موعد نهائي. اختر الموعد النهائي.';
+}
+
 // Path: com.socle.composants.lecture
 class _Traductions$com$socle$composants$lecture$ar extends Traductions$com$socle$composants$lecture$fr {
 	_Traductions$com$socle$composants$lecture$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -4428,6 +4570,13 @@ extension on TraductionsAr {
 			'etat.aucunRemplacantTrouve' => 'لم يُعثر على بديل',
 			'etat.seanceNonFacturee' => 'الحصة غير مفوترة',
 			'etat.raisonEtSuite' => ({required Object raison, required Object suite}) => '${raison} · ${suite}',
+			'accessibilite.tutoiement.tonHeure' => 'توقيتك',
+			'accessibilite.tutoiement.attenteDetail' => 'وقت الانتظار هذا لا يُحتسب في حضورك.',
+			'accessibilite.tutoiement.attente' => ({required Object duree}) => 'أنت في القاعة. تبدأ الحصة بعد ${duree}.',
+			'accessibilite.tutoiement.attenteImminent' => 'أنت في القاعة. تبدأ الحصة بعد أقل من دقيقة.',
+			'accessibilite.tutoiement.annonceAttente' => 'أنت في القاعة',
+			'accessibilite.tutoiement.horsLigne' => 'يمكنك دخول الحصة فور عودة الاتصال.',
+			'accessibilite.tutoiement.finPhrase' => 'يمكنك العثور على عملك في فصلك.',
 			'classe.entree.coursDans' => ({required Object duree}) => 'الدرس بعد ${duree}',
 			'classe.entree.coursImminent' => 'الدرس بعد أقل من دقيقة',
 			'classe.entree.rejoindre' => 'انضمام',
@@ -4556,6 +4705,61 @@ extension on TraductionsAr {
 			'classe.pageCatalogue.resultat.refusePhrase' => ({required Object prenom}) => 'لم يُحجز أي مقعد لـ${prenom}. يمكنك اختيار فصل آخر.',
 			'classe.pageCatalogue.resultat.autresClasses' => 'عرض الفصول الأخرى',
 			'classe.pageCatalogue.resultat.retourAccueil' => 'العودة إلى الصفحة الرئيسية',
+			'classe.cartes.titre' => 'بطاقات الفصل',
+			'classe.cartes.contexteEnseignant' => 'المس بطاقة لتعديلها. يراها الطلاب وأسرهم فورًا.',
+			'classe.cartes.modificationPlusTard' => 'يمكن تعديل البطاقات عند عودة الاتصال.',
+			'classe.cartes.aucune' => 'لا توجد بطاقات حاليًا',
+			'classe.cartes.aucuneDetail' => 'سيضع معلم الفصل هنا المعلومات المفيدة.',
+			'classe.cartes.aucuneEnseignant' => 'لا توجد بطاقات حاليًا. أضف بطاقة: سيراها الفصل فورًا.',
+			'classe.cartes.ajouter' => 'إضافة بطاقة',
+			'classe.cartes.limite' => ({required Object max}) => '${max} بطاقات على الأكثر: احذف واحدة لتضيف أخرى.',
+			'classe.cartes.modifierLecteur' => ({required Object titre}) => 'تعديل البطاقة «${titre}»',
+			'classe.cartes.echeance' => ({required Object date}) => 'الموعد النهائي: ${date}',
+			'classe.cartes.copierLien' => ({required Object titre}) => 'نسخ رابط «${titre}»',
+			'classe.cartes.copierLienCourt' => 'نسخ الرابط',
+			'classe.cartes.lienCopie' => 'تم نسخ الرابط. الصقه في متصفحك لفتحه.',
+			'classe.cartes.indisponibleTitre' => 'بطاقات الفصل غير مفتوحة بعد',
+			'classe.cartes.indisponiblePhrase' => 'ستظهر هنا فور فتحها. لا شيء مطلوب منك.',
+			'classe.cartes.erreurLecture' => 'تعذرت قراءة بطاقات الفصل. أعد المحاولة بعد قليل.',
+			'classe.cartes.sansDonnees' => 'تعذر تحميل بطاقات الفصل',
+			'classe.cartes.enregistree' => 'تم حفظ البطاقة. يراها الفصل الآن.',
+			'classe.cartes.retiree' => 'تم حذف البطاقة. لم يعد الفصل يراها.',
+			'classe.cartes.types.annonce' => 'إعلان',
+			'classe.cartes.types.devoir' => 'واجب',
+			'classe.cartes.types.lien' => 'رابط مفيد',
+			'classe.cartes.types.rappel' => 'تذكير',
+			'classe.cartes.typesDetail.annonce' => 'لمعلومة موجهة إلى الفصل كله.',
+			'classe.cartes.typesDetail.devoir' => 'لعمل يُحضَّر: الموعد النهائي المقترح هو الحصة القادمة.',
+			'classe.cartes.typesDetail.lien' => 'لمشاركة صفحة أو مادة: الصق عنوانها.',
+			'classe.cartes.typesDetail.rappel' => 'لتاريخ لا يُنسى: رحلة، امتحان، تغيير في الموعد.',
+			'classe.cartes.modeles.annonce' => 'معلومة للفصل',
+			'classe.cartes.modeles.devoir' => 'للتحضير للحصة القادمة',
+			'classe.cartes.modeles.lien' => 'مادة للاطلاع',
+			'classe.cartes.modeles.rappel' => 'لا تنسَ',
+			'classe.cartes.feuille.titreNouvelle' => 'بطاقة جديدة للفصل',
+			'classe.cartes.feuille.titreModifier' => ({required Object titre}) => 'تعديل البطاقة «${titre}»',
+			'classe.cartes.feuille.contexte' => 'اختر نموذجًا: يملأ البطاقة مسبقًا. يراها طلاب الفصل وأسرهم فورًا.',
+			'classe.cartes.feuille.modele' => 'نموذج البطاقة',
+			'classe.cartes.feuille.champTitre' => 'عنوان البطاقة',
+			'classe.cartes.feuille.champTexte' => 'نص البطاقة (اختياري)',
+			'classe.cartes.feuille.champLien' => 'رابط البطاقة (اختياري)',
+			'classe.cartes.feuille.aideLongueur' => ({required Object max}) => '${max} حرفًا على الأكثر',
+			'classe.cartes.feuille.aideLien' => 'عنوان كامل، كما يظهر في شريط المتصفح',
+			'classe.cartes.feuille.echeanceAucune' => 'بلا موعد نهائي',
+			'classe.cartes.feuille.choisirEcheance' => 'اختيار الموعد النهائي',
+			'classe.cartes.feuille.retirerEcheance' => 'إزالة الموعد النهائي',
+			'classe.cartes.feuille.enregistrer' => 'حفظ البطاقة',
+			'classe.cartes.feuille.retirer' => 'حذف هذه البطاقة',
+			'classe.cartes.feuille.retirerQuestion' => ({required Object titre}) => 'حذف البطاقة «${titre}»؟',
+			'classe.cartes.feuille.retirerConsequence' => 'تختفي فورًا عند طلاب الفصل وأسرهم.',
+			'classe.cartes.feuille.retirerConfirmer' => 'حذف البطاقة',
+			'classe.cartes.feuille.envoiNonConfirme' => 'لم يتأكد حفظ البطاقة: لم يصل الرد. احفظ من جديد بعد قليل.',
+			'classe.cartes.feuille.retraitNonConfirme' => 'لم يتأكد الحذف: لم يصل الرد. أعد المحاولة بعد قليل.',
+			'classe.cartes.feuille.defauts.titreVide' => 'العنوان ناقص. اكتب بضع كلمات، مثل «سورة للمراجعة».',
+			'classe.cartes.feuille.defauts.titreLong' => ({required Object max}) => 'العنوان يتجاوز ${max} حرفًا. اختصره.',
+			'classe.cartes.feuille.defauts.texteLong' => ({required Object max}) => 'النص يتجاوز ${max} حرفًا. اختصره أو شارك رابطًا.',
+			'classe.cartes.feuille.defauts.lienInvalide' => 'هذا الرابط ليس عنوانًا كاملًا. انسخ العنوان كما يظهر في شريط المتصفح والصقه هنا.',
+			'classe.cartes.feuille.defauts.echeanceManquante' => 'يحتاج الواجب إلى موعد نهائي. اختر الموعد النهائي.',
 			'salle.microOuvert' => 'الميكروفون مفتوح',
 			'salle.microCoupe' => 'الميكروفون مغلق',
 			'salle.cameraAllumee' => 'الكاميرا مشغّلة',
@@ -4746,6 +4950,8 @@ extension on TraductionsAr {
 			'com.socle.composants.composer.envoyer' => 'إرسال',
 			'com.socle.composants.composer.champVide' => 'اكتب رسالة لإرسالها.',
 			'com.socle.composants.composer.vocal' => 'رسالة صوتية',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.composants.composer.vocalAVenir' => 'الرسالة الصوتية متاحة قريبًا',
 			'com.socle.composants.composer.enCours' => 'جارٍ الإرسال',
 			'com.socle.composants.composer.envoye' => 'أُرسلت',
@@ -4808,8 +5014,6 @@ extension on TraductionsAr {
 			'com.socle.enregistrement.enregistrer' => _root.com.socle.lexique.enregistrer,
 			'com.socle.enregistrement.retirer' => 'إزالة من العناصر المحفوظة',
 			'com.socle.enregistrement.enregistre' => 'محفوظ',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.enregistrement.indisponible' => 'الحفظ غير متاح هنا بعد.',
 			'com.socle.navigation.notifications' => _root.com.socle.lexique.notifications,
 			'com.socle.navigation.ouvrirNotifications' => 'فتح الإشعارات',
@@ -5260,6 +5464,8 @@ extension on TraductionsAr {
 			'com.studio.panneau.ouvrir' => ({required Object titre}) => 'فتح ${titre}',
 			'com.studio.panneau.lienExterne' => ({required Object hote}) => 'موقع خارجي: ${hote}',
 			'com.studio.panneau.aucunPartageTitre' => 'لا شيء مشترك حاليًا',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.panneau.aucunPartage' => 'ستظهر هنا العناصر المثبتة والملفات والروابط الخاصة بهذه القناة.',
 			'com.studio.enregistrer.enregistrer' => _root.com.socle.lexique.enregistrer,
 			'com.studio.enregistrer.retirer' => 'إزالة',
@@ -5322,8 +5528,6 @@ extension on TraductionsAr {
 			'com.studio.demo.f.canalOrganisation' => 'التنظيم العام',
 			'com.studio.demo.f.canalOrganisationDetail' => 'تنسيق عمل الفريق كله',
 			'com.studio.demo.f.canalAdmissions' => 'القبول',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.f.canalAdmissionsDetail' => 'متابعة طلبات التسجيل',
 			'com.studio.demo.f.canalQualite' => 'متابعة الجودة',
 			'com.studio.demo.f.canalQualiteDetail' => 'ملاحظات زيارات المراقبة',
@@ -5774,6 +5978,8 @@ extension on TraductionsAr {
 			'comptable.paiements.confirmation.plafond' => 'التفويض المتبقي',
 			'comptable.paiements.confirmation.exclusTitre' => 'مستبعدة من هذه الدفعة المجمّعة: لن تُرسَل',
 			'comptable.paiements.confirmation.aucunPretTitre' => 'لا توجد دفعة جاهزة',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.aucunPret' => 'لن يُرسَل أي شيء. افتح كل دفعة مستبعدة لإزالة سببها، ثم أعد تشغيل الفحص.',
 			'comptable.paiements.confirmation.erreursTitre' => 'أخطاء أرجعها الفحص',
 			'comptable.paiements.confirmation.confirmerUn' => ({required Object montant}) => 'تأكيد دفع ${montant}',
@@ -5836,8 +6042,6 @@ extension on TraductionsAr {
 			'comptable.paiements.actions.payerSelection' => 'دفع المحدد',
 			'comptable.paiements.actions.viderSelection' => 'إلغاء التحديد',
 			'comptable.paiements.actions.voirProfil' => 'عرض ملف الدفع',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.selection' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, one: 'دفعة واحدة محددة', two: 'دفعتان محددتان', few: '${n} دفعات محددة', other: '${n} دفعة محددة', ), 
 			'comptable.paiements.selectionPhrase' => 'يُرجع الفحص الإجمالي والاستبعادات قبل أي إرسال.',
 			'comptable.paiements.horsLigneCourt' => 'غير متصل: الدفع غير ممكن',
@@ -6288,6 +6492,8 @@ extension on TraductionsAr {
 			'comptable.validation.motifs.autre' => 'آخر',
 			'comptable.validation.motifAutreChamp' => 'حدّد السبب',
 			'comptable.validation.erreurMotif' => 'اختر سببًا للرفض.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.validation.erreurMotifAutre' => 'حدّد السبب للرفض.',
 			'comptable.validation.decisionValidee' => 'سُجّل قرارك: تمت المصادقة على الطلب.',
 			'comptable.validation.decisionRefusee' => 'سُجّل قرارك: رُفض الطلب، مع سببه.',
@@ -6350,8 +6556,6 @@ extension on TraductionsAr {
 			'comptable.direction.reservePanneau.pourcentageAuto' => 'حصة المقبوض المُثبَّت',
 			'comptable.direction.reservePanneau.pourcentageAutoDetail' => 'الحصة المخصَّصة للاحتياطي في كل موعد.',
 			'comptable.direction.reservePanneau.cadenceTitre' => 'الوتيرة',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.reservePanneau.cadenceDetail' => 'متى تتم التغذية.',
 			'comptable.direction.reservePanneau.cadence.clotureCycle' => 'عند كل إقفال دورة',
 			'comptable.direction.reservePanneau.cadence.hebdomadaire' => 'كل أسبوع',

@@ -21,15 +21,20 @@ import 'package:rewayah_academy/core/accessibilite/mode_accessibilite.dart';
 import 'package:rewayah_academy/core/accessibilite/texte_sans_coupure.dart';
 import 'package:rewayah_academy/core/alertes/alerte.dart';
 import 'package:rewayah_academy/core/alertes/port_alertes.dart';
+import 'package:rewayah_academy/core/capacites/port_aujourdhui_comptable.dart';
+import 'package:rewayah_academy/core/comptable/statuts_comptable.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
 import 'package:rewayah_academy/core/widgets/signal_row.dart';
+import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/_dev/galerie/catalogue_galerie.dart';
 import 'package:rewayah_academy/features/alertes/bandeau_alerte_urgente.dart';
+import 'package:rewayah_academy/features/comptable/aujourdhui/file_attention.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 
@@ -41,6 +46,9 @@ import '../../support/aucun_mot_coupe.dart';
 const Set<String> _appelantsMesures = <String>{
   'lib/features/alertes/bandeau_alerte_urgente.dart',
   'lib/features/_dev/galerie/catalogue_galerie.dart',
+  // Espace Comptable (ui/comptable-v1), mesures depuis JONCTION-LIGNES-1.
+  'lib/features/comptable/aujourdhui/aujourdhui_page.dart',
+  'lib/features/comptable/aujourdhui/file_attention.dart',
 };
 
 /// Une source qui rend une liste fixe.
@@ -229,6 +237,46 @@ void main() {
           _verifierPhrase(tester);
         });
       }
+
+      // Espace Comptable : la ligne de la file d'attention (libelle le plus
+      // long) et le resume des alertes de « Aujourd'hui » (memes arguments
+      // que aujourdhui_page.dart).
+      testWidgets('comptable, ligne d attention, 320 px x2, ${sens.name}', (
+        WidgetTester tester,
+      ) async {
+        await _monterSeul(
+          tester,
+          LigneAttention(
+            ElementAttention(
+              id: 'a1',
+              type: TypeAlerteComptable.soldePrestataireInsuffisant,
+              compteur: 12,
+              route: Routes.comptableAttention,
+              depuis: DateTime(2026, 10, 1),
+            ),
+          ),
+          sens: sens,
+        );
+        expect(tester.takeException(), isNull);
+        _verifierPhrase(tester);
+      });
+
+      testWidgets('comptable, resume des alertes, 320 px x2, ${sens.name}', (
+        WidgetTester tester,
+      ) async {
+        await _monterSeul(
+          tester,
+          SignalRow(
+            phrase: t.comptable.aujourdhui.alertesResume(n: 12),
+            icone: AppIcons.avertissement,
+            ton: TonEtat.avertissement,
+            onPress: () {},
+          ),
+          sens: sens,
+        );
+        expect(tester.takeException(), isNull);
+        _verifierPhrase(tester);
+      });
 
       for (final InterfaceMode mode in InterfaceMode.values) {
         testWidgets('bandeau d alerte urgente, 320 px x2, ${sens.name}, '

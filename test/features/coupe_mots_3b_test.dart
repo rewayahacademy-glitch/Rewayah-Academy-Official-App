@@ -245,6 +245,45 @@ void _aDroiteDe(
   );
 }
 
+/// JONCTION-LIGNES-1 : COM-RC tour 7 (lot L, ui/communications-v1) a traduit
+/// en arabe la carte de seance (`tc.groupe.*`) : en interface arabe, la
+/// capacite et le conseil d'appareil ne sont plus des phrases francaises,
+/// ils se lisent de droite a gauche ; [suivant] s'affiche a gauche de
+/// [precedent] (ou sur une ligne plus basse).
+void _aGaucheDe(
+  WidgetTester tester, {
+  required String marque,
+  required String precedent,
+  required String suivant,
+}) {
+  final RenderParagraph p = _paragraphe(tester, marque);
+  final TextBox avant = _boite(p, precedent);
+  final TextBox apres = _boite(p, suivant);
+  final double milieuAvant = (avant.top + avant.bottom) / 2;
+  final double milieuApres = (apres.top + apres.bottom) / 2;
+  final bool memeLigne =
+      (milieuAvant >= apres.top && milieuAvant <= apres.bottom) ||
+      (milieuApres >= avant.top && milieuApres <= avant.bottom);
+  expect(
+    memeLigne ? apres.right <= avant.left + 1 : milieuApres > milieuAvant,
+    isTrue,
+    reason:
+        '« $suivant » doit suivre « $precedent » dans '
+        '« ${p.text.toPlainText()} » (droite a gauche)',
+  );
+}
+
+/// La capacite de la carte, dans l'ordre de sa langue.
+void _capaciteDansLOrdre(WidgetTester tester, AppLocale langue) =>
+    langue == AppLocale.ar
+    ? _aGaucheDe(tester, marque: 'طلاب من', precedent: '3', suivant: 'طلاب')
+    : _aDroiteDe(
+        tester,
+        marque: 'élèves sur',
+        precedent: '3',
+        suivant: 'élèves',
+      );
+
 void main() {
   setUpAll(() async {
     await chargerPolicesDuDepot();
@@ -325,12 +364,7 @@ void main() {
       '($cas)',
       (WidgetTester tester) async {
         await _monterDemo(tester, langue, RoleEntree.enseignant);
-        _aDroiteDe(
-          tester,
-          marque: 'élèves sur',
-          precedent: '3',
-          suivant: 'élèves',
-        );
+        _capaciteDansLOrdre(tester, langue);
         _aDroiteDe(tester, marque: 'Chapitre 1', precedent: '60', suivant: '%');
         _aDroiteDe(
           tester,
@@ -351,20 +385,24 @@ void main() {
           precedent: '60',
           suivant: '%',
         );
-        // La capacite et le conseil d'appareil, libelles encore sans
-        // traduction arabe.
-        _aDroiteDe(
-          tester,
-          marque: 'élèves sur',
-          precedent: '3',
-          suivant: 'élèves',
-        );
-        _aDroiteDe(
-          tester,
-          marque: 'Tablette',
-          precedent: 'charge',
-          suivant: '.',
-        );
+        // La capacite et le conseil d'appareil, traduits en arabe depuis
+        // COM-RC tour 7 (lot L) : chacun dans l'ordre de sa langue.
+        _capaciteDansLOrdre(tester, langue);
+        if (langue == AppLocale.ar) {
+          _aGaucheDe(
+            tester,
+            marque: 'جهاز لوحي',
+            precedent: 'مدعومًا',
+            suivant: '.',
+          );
+        } else {
+          _aDroiteDe(
+            tester,
+            marque: 'Tablette',
+            precedent: 'charge',
+            suivant: '.',
+          );
+        }
       },
     );
 

@@ -29,6 +29,7 @@ import 'package:rewayah_academy/core/tc_parcours/port_travail_a_venir.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
+import 'package:rewayah_academy/core/widgets/avatar_nom.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/grille_bento.dart';
 import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
@@ -470,13 +471,14 @@ void main() {
 
       expect(find.byType(BandeauBlocage), findsNothing);
       expect(principales(tester), isEmpty);
-      // Toucher la carte ailleurs que sur l'indice : le nom de l'eleve.
+      // Toucher la carte ailleurs que sur l'indice : le nom de l'eleve
+      // (AvatarNom, rendu par TexteSansCoupure depuis la jonction).
       await _toucher(
         tester,
         find
             .descendant(
               of: find.byType(CarteClasseSeance),
-              matching: find.text('Eleve A1'),
+              matching: find.byType(AvatarNom),
             )
             .first,
       );
@@ -872,7 +874,10 @@ void main() {
           direction: sens,
           seances: <SeanceFamille>[
             _prochaine(
-              avant: const Duration(hours: 3, minutes: 28, seconds: 30),
+              // Arrondi a la minute superieure depuis COM-RC tour 7 (lot L,
+              // LibellesGroupe.minutesAvant) : 3 h 27 min 30 s se lit
+              // « 3 h 28 ».
+              avant: const Duration(hours: 3, minutes: 27, seconds: 30),
             ),
           ],
         );
@@ -940,7 +945,10 @@ void main() {
             direction: sens,
             seances: <SeanceFamille>[
               _prochaine(
-                avant: const Duration(hours: 3, minutes: 28, seconds: 30),
+                // Arrondi a la minute superieure depuis COM-RC tour 7 (lot L,
+              // LibellesGroupe.minutesAvant) : 3 h 27 min 30 s se lit
+              // « 3 h 28 ».
+              avant: const Duration(hours: 3, minutes: 27, seconds: 30),
               ),
             ],
           );

@@ -308,7 +308,7 @@ void main() {
         LibellesGroupe.compteARebours(
           const Duration(minutes: 10) - const Duration(milliseconds: 1),
         ),
-        t.tc.groupe.temps.dansMinutes(minutes: 10),
+        LibellesGroupe.insecable(t.tc.groupe.temps.dansMinutes(minutes: 10)),
       );
       // Sous une minute : imminent, jamais « dans 0 min ».
       expect(
@@ -324,7 +324,12 @@ void main() {
       expect(
         find.descendant(
           of: find.byType(CarteSeanceClasse),
-          matching: find.text(t.tc.groupe.temps.dansMinutes(minutes: 10)),
+          // Insecable a l'ecran (DUREE-INSECABLE-1, JONCTION-LIGNES-1).
+          matching: find.text(
+            LibellesGroupe.insecable(
+              t.tc.groupe.temps.dansMinutes(minutes: 10),
+            ),
+          ),
         ),
         findsOneWidget,
       );

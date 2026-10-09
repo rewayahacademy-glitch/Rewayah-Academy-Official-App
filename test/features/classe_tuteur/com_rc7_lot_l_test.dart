@@ -156,7 +156,9 @@ void main() {
         // La duree sur UNE ligne, jamais « 45 / min ».
         final Finder duree = find.descendant(
           of: carte,
-          matching: find.text('45 min'),
+          matching: find.text(
+            LibellesGroupe.dureeSeule(const Duration(minutes: 45)),
+          ),
         );
         expect(duree, findsOneWidget);
         final RenderBox boite = tester.renderObject<RenderBox>(duree);
@@ -169,7 +171,7 @@ void main() {
                 .style ??
             const TextStyle();
         final TextPainter une = TextPainter(
-          text: TextSpan(text: '45 min', style: style),
+          text: TextSpan(text: '45\u00A0min', style: style),
           textDirection: TextDirection.ltr,
           textScaler: TextScaler.linear(echelle),
         )..layout();

@@ -303,9 +303,13 @@ void main() {
     /// La duree « 8 min » de [detail] : isolee dans une phrase arabe, nue
     /// dans une phrase francaise.
     void dureeIsoleeSiArabe(String detail, {required bool phraseArabe}) {
-      final RegExp isolee = RegExp('$_fsi\\d+\\s*min$_pdi');
       if (phraseArabe) {
-        expect(detail, matches(isolee), reason: detail);
+        // JONCTION-LIGNES-1 : depuis COM-RC tour 7 (lot L), la duree d'une
+        // phrase arabe est arabe (« 8 د », `tc.groupe.duree`) : du meme
+        // sens que la phrase, elle n'a rien a isoler ; aucun mot francais.
+        expect(detail, matches(RegExp(r'\d+\s*د')), reason: detail);
+        expect(detail, isNot(contains('min')), reason: detail);
+        expect(detail, isNot(contains(_fsi)), reason: detail);
       } else {
         expect(detail, isNot(contains(_fsi)), reason: detail);
         expect(detail, matches(RegExp(r'\d+\s*min')), reason: detail);
@@ -326,9 +330,9 @@ void main() {
       );
       expect(vous.etat, EtatEntree.attente);
       dureeIsoleeSiArabe(vous.detail!, phraseArabe: arabe);
-      // Le tutoiement n'a pas encore de traduction arabe : sa phrase reste
-      // francaise, la duree francaise s'y lit sans isolat, dans les deux
-      // interfaces.
+      // Le tutoiement est traduit en arabe depuis JONCTION-LIGNES-1 (meme
+      // phrase qu'au vouvoiement, l'arabe dit « أنت » dans les deux cas) ;
+      // le test garde les deux cas : phrase arabe ou francaise.
       final EmplacementEntree tu = entree(
         const Duration(minutes: 8),
         connecte: true,
@@ -396,12 +400,18 @@ void main() {
       );
       final String debut = t.classe.entree.coursDans(duree: '').trim();
       final RenderParagraph p = _paragraphe(tester, debut);
-      final RegExpMatch? duree = RegExp(r'(\d+)\s*h\s*(\d+)')
+      // Depuis COM-RC tour 7 (lot L), la duree arabe est arabe (« 3 س
+      // 28 د ») et se lit de droite a gauche, comme sa phrase ; la duree
+      // francaise (« 3 h 28 ») de gauche a droite.
+      final String heure = arabe ? 'س' : 'h';
+      final RegExpMatch? duree = RegExp('(\\d+)\\s*$heure\\s*(\\d+)')
           .firstMatch(p.text.toPlainText());
       expect(duree, isNotNull, reason: p.text.toPlainText());
-      // « 3 h 28 » se lit de gauche a droite, meme dans la phrase arabe.
-      _suit(p, precedent: duree!.group(1)!, suivant: 'h');
-      _suit(p, precedent: 'h', suivant: duree.group(2)!);
+      final TextDirection sensDuree = arabe
+          ? TextDirection.rtl
+          : TextDirection.ltr;
+      _suit(p, precedent: duree!.group(1)!, suivant: heure, sens: sensDuree);
+      _suit(p, precedent: heure, suivant: duree.group(2)!, sens: sensDuree);
       // Et la duree suit le debut de la phrase dans le sens de l'interface.
       _suit(
         p,
@@ -453,7 +463,23 @@ void main() {
         langue,
         () => const Scaffold(body: ConseilAppareil()),
       );
-      _aDroiteDe(tester, marque: 'Tablette', precedent: 'charge', suivant: '.');
+      // Traduit en arabe depuis COM-RC tour 7 (lot L) : le point reste en
+      // fin de phrase, dans le sens de sa langue.
+      if (arabe) {
+        _suit(
+          _paragraphe(tester, 'جهاز لوحي'),
+          precedent: 'مدعومًا',
+          suivant: '.',
+          sens: TextDirection.rtl,
+        );
+      } else {
+        _aDroiteDe(
+          tester,
+          marque: 'Tablette',
+          precedent: 'charge',
+          suivant: '.',
+        );
+      }
     });
 
     testWidgets('EmptyState de la fiche de seance : le point reste en fin de '
