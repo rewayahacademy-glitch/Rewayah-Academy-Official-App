@@ -7,6 +7,25 @@ revoke insert, update, delete on public.student_concern
   from public, anon, authenticated, agent_ro;
 grant select on public.student_concern to authenticated;
 
+-- Les policies de lecture suivent aussi l'etat du compte; sinon un role JWT
+-- ancien permettrait encore de lire des notes internes apres suspension.
+drop policy if exists student_concern_select_enseignant on public.student_concern;
+create policy student_concern_select_enseignant
+  on public.student_concern
+  for select to authenticated
+  using (
+    coalesce(public.app_role() = 'teacher' and public.app_account_valid()
+      and teacher_id = auth.uid(), false)
+  );
+
+drop policy if exists student_concern_select_admin on public.student_concern;
+create policy student_concern_select_admin
+  on public.student_concern
+  for select to authenticated
+  using (
+    coalesce(public.app_role() = 'admin' and public.app_account_valid(), false)
+  );
+
 create or replace function public.deposer_student_concern(
   p_categorie text,
   p_groupe_id uuid,
