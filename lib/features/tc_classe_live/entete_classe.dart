@@ -9,7 +9,6 @@ import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_nom.dart';
-import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/status_pill.dart';
 import '../tc_observation_ui/indicateur_observation.dart';
 import 'encre_salle.dart';
@@ -149,18 +148,20 @@ class EnteteClasse extends StatelessWidget {
                 // AVATAR-1 : couple avatar + nom du composant partage, le nom
                 // de l'enseignant centre sur le cercle, une ligne de role (la
                 // classe).
+                // ENS-PAYS-SALLE-1 (decision Q-4 = b du 05/10) : le pays de
+                // l'enseignant ne s'affiche que sur les cartes, jamais dans
+                // la salle pendant le cours. Aucun `pays:` ici, aucune ligne
+                // `PaysEnseignant` dans la branche sans photo.
                 child: photoEnseignant != null
                     ? AvatarNom.enLigne(
                         prenom: session.enseignant.nomAffichage,
                         urlSignee: photoEnseignant,
                         nom: nomAvecTitre(session.enseignant),
-                        pays: session.enseignant.pays,
                         role: session.libelleGroupe,
                         diametre: AppAvatar.petit,
                         ecart: AppSpacing.sm,
                         styleNom: styleNom,
                         styleRole: styleLigne,
-                        stylePays: styleLigne,
                       )
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,14 +177,6 @@ class EnteteClasse extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: styleLigne,
                           ),
-                          // ENS-PAYS-1 : la meme ligne que sous l'avatar,
-                          // sous un prenom connu seulement (identite
-                          // masquee : rien).
-                          if (session.enseignant.nomAffichage.trim().isNotEmpty)
-                            ?PaysEnseignant.siDeclare(
-                              session.enseignant.pays,
-                              style: styleLigne,
-                            ),
                         ],
                       ),
               ),
