@@ -66,8 +66,9 @@ begin
   return v_id;
 end;
 $function$;
+ALTER FUNCTION public.creer_groupe(uuid,text,text,smallint,smallint,smallint,text,smallint) OWNER TO postgres;
 REVOKE EXECUTE ON FUNCTION public.creer_groupe(uuid,text,text,smallint,smallint,smallint,text,smallint) FROM PUBLIC, anon, agent_ro;
-GRANT EXECUTE ON FUNCTION public.creer_groupe(uuid,text,text,smallint,smallint,smallint,text,smallint) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.creer_groupe(uuid,text,text,smallint,smallint,smallint,text,smallint) TO authenticated, service_role;
 
 DROP FUNCTION public.modifier_groupe(uuid,text,smallint,smallint,smallint,text,smallint);
 CREATE FUNCTION public.modifier_groupe(p_groupe_id uuid, p_libelle text, p_seuil_max smallint, p_weekday smallint, p_hour_local smallint, p_timezone_iana text, p_couleur_jeton smallint DEFAULT NULL::smallint)
@@ -116,7 +117,8 @@ begin
   );
 end;
 $function$;
+ALTER FUNCTION public.modifier_groupe(uuid,text,smallint,smallint,smallint,text,smallint) OWNER TO postgres;
 REVOKE EXECUTE ON FUNCTION public.modifier_groupe(uuid,text,smallint,smallint,smallint,text,smallint) FROM PUBLIC, anon, agent_ro;
-GRANT EXECUTE ON FUNCTION public.modifier_groupe(uuid,text,smallint,smallint,smallint,text,smallint) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.modifier_groupe(uuid,text,smallint,smallint,smallint,text,smallint) TO authenticated, service_role;
 
 COMMIT;
