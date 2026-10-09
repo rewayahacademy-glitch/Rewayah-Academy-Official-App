@@ -19,6 +19,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../i18n/isolat_bidi.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
@@ -78,12 +79,19 @@ class BarrePrecedentSuivant extends StatelessWidget {
       label: positionSemantique ?? position,
       excludeSemantics: true,
       liveRegion: true,
-      child: Text(
-        position,
-        key: const ValueKey<String>('nav-position'),
-        textAlign: TextAlign.center,
-        style: palette.inkStrong.applyTo(
-          Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
+      // CORAN-320-1b : la position a le sens de son propre texte. Sans
+      // caractere fort (« 1 / 604 »), elle se lit de gauche a droite : dans
+      // une interface en arabe, elle s'affichait « 604 / 1 ». Une position
+      // redigee en toutes lettres garde le sens de sa langue.
+      child: Directionality(
+        textDirection: sensDuTexte(position) ?? TextDirection.ltr,
+        child: Text(
+          position,
+          key: const ValueKey<String>('nav-position'),
+          textAlign: TextAlign.center,
+          style: palette.inkStrong.applyTo(
+            Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
+          ),
         ),
       ),
     );
