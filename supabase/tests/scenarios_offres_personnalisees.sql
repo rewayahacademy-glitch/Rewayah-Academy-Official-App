@@ -39,16 +39,24 @@ FROM generate_series(1, public.app_config_int('groupe.capacite_adulte', 6) + 4) 
 
 INSERT INTO auth.users (id, email)
 VALUES
+  ('f1490000-0000-0000-0000-000000000997', 'f1-teacher@example.test'),
   ('f1490000-0000-0000-0000-000000000998', 'f1-guardian@example.test'),
   ('f1490000-0000-0000-0000-000000000999', 'f1-admin@example.test');
 
 INSERT INTO public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 VALUES
+  ('f1490000-0000-0000-0000-000000000997', 'F1-TEACHER', 'teacher', NULL,
+   'Enseignant', 'Test', 'active', 'male'),
   ('f1490000-0000-0000-0000-000000000998', 'F1-GUARDIAN', 'guardian',
    'f1480000-0000-0000-0000-000000000003', 'Foyer', 'Titulaire', 'active', 'female'),
   ('f1490000-0000-0000-0000-000000000999', 'F1-ADMIN', 'admin', NULL,
    'Admin', 'Test', 'active', 'male');
+
+INSERT INTO public.teacher_profiles
+  (profile_id, languages, weekly_hours_cap, kyc_status, timezone_iana)
+VALUES
+  ('f1490000-0000-0000-0000-000000000997', ARRAY['francais'], 10, 'approved', 'Europe/Paris');
 
 UPDATE public.households
    SET primary_guardian_id = 'f1490000-0000-0000-0000-000000000998'
@@ -159,6 +167,9 @@ DECLARE
   v_regroupement text;
   v_offre uuid;
   v_result uuid;
+  v_groupe uuid;
+  v_groupe_rejoue uuid;
+  v_sessions integer;
 BEGIN
   v_capacite := public.app_config_int('groupe.capacite_adulte', 6);
   IF v_capacite < 1 THEN
@@ -250,6 +261,72 @@ BEGIN
   IF v_heures IS DISTINCT FROM ARRAY[18,18,18]::smallint[] THEN
     RAISE EXCEPTION 'F1 heures de regroupement incorrectes: %', v_heures;
   END IF;
+
+  v_groupe := public.creer_classe_depuis_regroupement(
+    v_regroupement, 'c1200000-0000-0000-0000-000000000001', 'Classe F1 C-12'
+  );
+  v_groupe_rejoue := public.creer_classe_depuis_regroupement(
+    v_regroupement, 'c1200000-0000-0000-0000-000000000001', 'Classe F1 C-12'
+  );
+  IF v_groupe_rejoue <> v_groupe
+     OR NOT EXISTS (
+       SELECT 1 FROM public.groupes
+       WHERE id = v_groupe AND teacher_id IS NULL
+         AND etat = 'en_attente_enseignant'
+     )
+     OR (SELECT count(*) FROM public.groupe_membres
+         WHERE groupe_id = v_groupe AND left_at IS NULL) <> v_quota THEN
+    RAISE EXCEPTION 'C-12: classe en attente, membres ou idempotence invalides';
+  END IF;
+  SELECT count(*) INTO v_sessions FROM public.sessions WHERE groupe_id = v_groupe;
+  IF v_sessions <> 0 THEN
+    RAISE EXCEPTION 'C-12: séances matérialisées avant affectation: %', v_sessions;
+  END IF;
+
+  PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000998', true);
+  PERFORM set_config('request.jwt.claims',
+    jsonb_build_object('app_metadata', jsonb_build_object(
+      'role', 'guardian', 'household_id', 'f1480000-0000-0000-0000-000000000003'
+    ))::text, true);
+  v_ok := false;
+  BEGIN
+    PERFORM public.affecter_enseignant_classe(
+      v_groupe, 'f1490000-0000-0000-0000-000000000997'
+    );
+  EXCEPTION WHEN OTHERS THEN
+    v_ok := true;
+  END;
+  IF NOT v_ok THEN RAISE EXCEPTION 'C-12: un tuteur a affecté un enseignant'; END IF;
+
+  PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000999', true);
+  PERFORM set_config('request.jwt.claims',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text, true);
+  PERFORM public.affecter_enseignant_classe(
+    v_groupe, 'f1490000-0000-0000-0000-000000000997'
+  );
+  IF NOT EXISTS (
+    SELECT 1 FROM public.groupes
+    WHERE id = v_groupe AND teacher_id = 'f1490000-0000-0000-0000-000000000997'
+      AND etat = 'active'
+  ) THEN
+    RAISE EXCEPTION 'C-12: affectation ne rend pas la classe active';
+  END IF;
+  SELECT count(*) INTO v_sessions FROM public.sessions WHERE groupe_id = v_groupe;
+  IF v_sessions < 1 OR EXISTS (
+    SELECT 1 FROM public.sessions
+    WHERE groupe_id = v_groupe AND teacher_id <> 'f1490000-0000-0000-0000-000000000997'
+  ) THEN
+    RAISE EXCEPTION 'C-12: séances absentes ou sans enseignant affecté';
+  END IF;
+  v_ok := false;
+  BEGIN
+    PERFORM public.affecter_enseignant_classe(
+      v_groupe, 'f1490000-0000-0000-0000-000000000997'
+    );
+  EXCEPTION WHEN OTHERS THEN
+    v_ok := true;
+  END;
+  IF NOT v_ok THEN RAISE EXCEPTION 'C-12: une double affectation a été acceptée'; END IF;
 
   -- Le tuteur ne reçoit que l'état de l'élève de son foyer.
   PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000998', true);
