@@ -71,7 +71,7 @@ BEGIN
 
   -- Les tableaux vides et les longueurs qui contredisent la configuration
   -- sont refusés; ils ne doivent jamais passer une garde SQL à NULL.
-  PERFORM set_config('test.uid', v_id_post_ouverture, true);
+  PERFORM set_config('test.uid', v_id_post_ouverture::text, true);
   PERFORM set_config(
     'test.jwt',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text,
