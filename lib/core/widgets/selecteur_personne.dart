@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../tc_bibliotheque/recherche_catalogue.dart';
@@ -8,11 +9,16 @@ import '../theme/app_spacing.dart';
 import 'bloc_asynchrone.dart';
 import 'choice_card_group.dart';
 import 'etat_systeme.dart';
+import 'point_rappel.dart';
 import 'skeleton.dart';
 
 /// Une personne qu'un formulaire peut proposer : son identifiant technique
 /// (jamais affiche), son nom, et son identifiant immuable, qui departage deux
 /// homonymes.
+///
+/// CLASSE-FORM-1 : une [mention] (« Le plus adapte : ... », K-58) et une
+/// [raisonIndisponible] (option visible mais non choisissable, D4) sont
+/// facultatives ; sans elles, la carte est rendue comme avant.
 @immutable
 class PersonneProposee {
   /// Cree une personne proposee.
@@ -20,6 +26,8 @@ class PersonneProposee {
     required this.id,
     required this.nom,
     required this.identifiant,
+    this.mention,
+    this.raisonIndisponible,
   });
 
   /// L'identifiant technique du profil, celui que la RPC attend.
@@ -31,6 +39,18 @@ class PersonneProposee {
 
   /// L'identifiant immuable, `[ROLE]-[INITIALES]-[SEQ]`.
   final String identifiant;
+
+  /// Une phrase sous le nom, avant l'identifiant : pourquoi cette personne
+  /// est proposee (« Le plus adapte : libre ce creneau, 1 classe en cours »)
+  /// ou ce qu'il faut savoir avant de la choisir.
+  final String? mention;
+
+  /// Non nulle : la personne reste visible mais ne se choisit pas, et cette
+  /// phrase dit pourquoi (jamais masquee en silence, D4).
+  final String? raisonIndisponible;
+
+  /// Vrai quand la personne peut etre choisie.
+  bool get disponible => raisonIndisponible == null;
 }
 
 /// Ce que le selecteur cherche : les textes en dependent.
@@ -70,7 +90,17 @@ class SelecteurPersonne extends StatefulWidget {
     required this.onReessayer,
     super.key,
     this.maximumAffiche = 6,
+    this.obligatoire = false,
+    this.aide,
   });
+
+  /// Vrai : le titre porte la marque des champs obligatoires (le point de
+  /// [PointRappel], fixe), lue « Champ obligatoire » au lecteur d'ecran.
+  final bool obligatoire;
+
+  /// Une phrase de plus sous le contexte, propre a l'appelant (par exemple
+  /// l'ordre de la liste). Nulle : rien de plus.
+  final String? aide;
 
   /// Eleve ou enseignant.
   final SortePersonne sorte;
@@ -156,9 +186,26 @@ class _SelecteurPersonneEtat extends State<SelecteurPersonne> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Text(mots.titre, style: textes.titleMedium),
+        // Sans coupure : un titre ou une phrase dont un mot ne tient pas se
+        // reduit juste assez (320 en texte x2, CLASSE-FORM-1).
+        if (widget.obligatoire)
+          Row(
+            children: <Widget>[
+              PointRappel(libelle: t.formulaire.obligatoire, battements: 0),
+              Ecart.hSm,
+              Expanded(
+                child: TexteSansCoupure(mots.titre, style: textes.titleMedium),
+              ),
+            ],
+          )
+        else
+          TexteSansCoupure(mots.titre, style: textes.titleMedium),
         Ecart.vXs,
-        Text(mots.contexte, style: textes.bodySmall),
+        TexteSansCoupure(mots.contexte, style: textes.bodySmall),
+        if (widget.aide case final String aide) ...<Widget>[
+          Ecart.vXs,
+          TexteSansCoupure(aide, style: textes.bodySmall),
+        ],
         Ecart.vMd,
         BlocAsynchrone<List<PersonneProposee>>(
           valeur: widget.personnes,
@@ -238,12 +285,9 @@ class _SelecteurPersonneEtat extends State<SelecteurPersonne> {
                   cle: ValueKey<String>('personne-${p.id}'),
                   valeur: p.id,
                   libelle: p.nom,
-                  // Tirets insecables a l'affichage seulement : « ELV- / MS-010 »
-                  // a 320 en texte x2 (FORM-MINEURS). La valeur et la recherche
-                  // gardent l'identifiant tel quel.
-                  description: p.identifiant == p.nom
-                      ? null
-                      : p.identifiant.replaceAll('-', '\u2011'),
+                  description: _description(p),
+                  disponible: p.disponible,
+                  raisonIndisponible: p.raisonIndisponible,
                 ),
             ],
             onChange: (ReponseChoix reponse) {
@@ -262,6 +306,19 @@ class _SelecteurPersonneEtat extends State<SelecteurPersonne> {
       ],
     );
   }
+}
+
+/// La phrase sous le nom : la mention, puis l'identifiant (sauf s'il est
+/// deja le nom affiche).
+String? _description(PersonneProposee p) {
+  // Tirets insecables a l'affichage seulement : « ELV- / MS-010 » a 320 en
+  // texte x2 (FORM-MINEURS). La valeur et la recherche gardent l'identifiant
+  // tel quel.
+  final String? identifiant = p.identifiant == p.nom
+      ? null
+      : p.identifiant.replaceAll('-', '\u2011');
+  final List<String> lignes = <String>[?p.mention, ?identifiant];
+  return lignes.isEmpty ? null : lignes.join('\n');
 }
 
 /// Les phrases d'une sorte de personne.

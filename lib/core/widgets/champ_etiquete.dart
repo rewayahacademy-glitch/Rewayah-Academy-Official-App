@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../i18n/strings.g.dart';
 import '../theme/app_spacing.dart';
+import 'point_rappel.dart';
 
 /// Un champ de texte dont l'etiquette est un texte au-dessus, sur autant de
 /// lignes qu'il faut (FORM-CORR-1).
@@ -22,7 +24,13 @@ class ChampEtiquete extends StatelessWidget {
     this.textCapitalization = TextCapitalization.none,
     this.aide,
     this.indice,
+    this.obligatoire = false,
   });
+
+  /// Vrai : l'etiquette porte la marque des champs obligatoires (le point de
+  /// [PointRappel], fixe, au bord de debut), et le lecteur d'ecran l'annonce
+  /// apres le nom du champ (CLASSE-FORM-1). Faux par defaut : rendu inchange.
+  final bool obligatoire;
 
   /// Le nom du champ, ecrit en entier.
   final String libelle;
@@ -58,11 +66,29 @@ class ChampEtiquete extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         ExcludeSemantics(
-          child: Text(libelle, style: Theme.of(context).textTheme.labelLarge),
+          child: obligatoire
+              ? Row(
+                  children: <Widget>[
+                    PointRappel(
+                      libelle: t.formulaire.obligatoire,
+                      battements: 0,
+                    ),
+                    Ecart.hSm,
+                    Expanded(
+                      child: Text(
+                        libelle,
+                        style: Theme.of(context).textTheme.labelLarge,
+                      ),
+                    ),
+                  ],
+                )
+              : Text(libelle, style: Theme.of(context).textTheme.labelLarge),
         ),
         Ecart.vXs,
         Semantics(
-          label: libelle,
+          label: obligatoire
+              ? t.formulaire.champObligatoire(champ: libelle)
+              : libelle,
           child: TextField(
             controller: controller,
             onChanged: onChanged,

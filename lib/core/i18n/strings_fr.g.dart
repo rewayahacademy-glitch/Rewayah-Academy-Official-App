@@ -2428,6 +2428,15 @@ class Traductions$formulaire$fr {
 	// Translations
 	late final Traductions$formulaire$motif$fr motif = Traductions$formulaire$motif$fr.internal(_root);
 	late final Traductions$formulaire$entier$fr entier = Traductions$formulaire$entier$fr.internal(_root);
+
+	/// fr: 'Champ obligatoire'
+	String get obligatoire => 'Champ obligatoire';
+
+	/// fr: '{champ}, champ obligatoire'
+	String champObligatoire({required Object champ}) => '${champ}, champ obligatoire';
+
+	/// fr: 'Les champs marqués d'un point sont obligatoires.'
+	String get legendeObligatoire => 'Les champs marqués d\'un point sont obligatoires.';
 }
 
 // Path: motifs
@@ -21004,6 +21013,9 @@ extension on Traductions {
 			'formulaire.motif.autreChamp' => 'Le motif, en quelques mots',
 			'formulaire.entier.bornes' => ({required Object min, required Object max}) => 'Entre ${min} et ${max}',
 			'formulaire.entier.horsBornes' => ({required Object min, required Object max}) => 'Choisissez une valeur entre ${min} et ${max}, ou l\'une des valeurs proposées.',
+			'formulaire.obligatoire' => 'Champ obligatoire',
+			'formulaire.champObligatoire' => ({required Object champ}) => '${champ}, champ obligatoire',
+			'formulaire.legendeObligatoire' => 'Les champs marqués d\'un point sont obligatoires.',
 			'motifs.ajoutEleve.diagnostic' => 'Placement après diagnostic',
 			'motifs.ajoutEleve.attente' => 'Sortie de la liste d\'attente',
 			'motifs.ajoutEleve.transfert' => 'Transfert depuis une autre classe',

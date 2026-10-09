@@ -4931,7 +4931,10 @@
     "entier": {
       "bornes": "Entre {min} et {max}",
       "horsBornes": "Choisissez une valeur entre {min} et {max}, ou l'une des valeurs proposées."
-    }
+    },
+    "obligatoire": "Champ obligatoire",
+    "champObligatoire": "{champ}, champ obligatoire",
+    "legendeObligatoire": "Les champs marqués d'un point sont obligatoires."
   },
   "motifs": {
     "ajoutEleve": {

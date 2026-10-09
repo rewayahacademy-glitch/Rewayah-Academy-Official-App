@@ -2164,6 +2164,24 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           ),
         ),
       ),
+      // CLASSE-FORM-1 : la mention « le plus adapte », une personne visible
+      // mais non choisissable avec sa raison (D4), et la marque obligatoire.
+      EtatGalerie(
+        'mention, indisponible, obligatoire',
+        (BuildContext _) => _surfaceMaterielle(
+          const SelecteurPersonne(
+            sorte: SortePersonne.enseignant,
+            personnes: AsyncData<List<PersonneProposee>>(
+              _enseignantsClasseExemple,
+            ),
+            choisie: null,
+            onChoix: _personneIgnoree,
+            onReessayer: _rien,
+            obligatoire: true,
+            aide: 'Le plus adapte en premier.',
+          ),
+        ),
+      ),
       EtatGalerie(
         'liste vide',
         (BuildContext _) => _surfaceMaterielle(
@@ -3057,6 +3075,21 @@ void _dateIgnoree(DateTime jour) {}
 
 /// Sept personnes factices : une de plus que `maximumAffiche`, pour que la
 /// phrase « et N autres » se voie. Identifiants au format `[ROLE]-[INITIALES]-[SEQ]`.
+const List<PersonneProposee> _enseignantsClasseExemple = <PersonneProposee>[
+  PersonneProposee(
+    id: 'e1',
+    nom: 'Amina Exemple',
+    identifiant: 'TEACHER-AE-000001',
+    mention: 'Le plus adapte : libre ce creneau, 1 classe en cours.',
+  ),
+  PersonneProposee(
+    id: 'e2',
+    nom: 'Omar Fictif',
+    identifiant: 'TEACHER-OF-000002',
+    raisonIndisponible: 'Classe de femmes : confiee a une enseignante.',
+  ),
+];
+
 const List<PersonneProposee> _personnesExemple = <PersonneProposee>[
   PersonneProposee(
     id: 'p1',
