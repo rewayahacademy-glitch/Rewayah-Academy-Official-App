@@ -34,6 +34,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/features/com_communaute/flux_publications.dart';
@@ -625,22 +626,59 @@ void main() {
       LocaleSettings.setLocaleSync(AppLocale.ar);
       addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
       final DateTime maintenant = DateTime(2026, 10, 8, 12);
+      // Le nombre reste avec son unite (DUREE-INSECABLE-3, JONCTION-LIGNES-1).
       String il(Duration d) =>
           momentCommunaute(maintenant.subtract(d), maintenant);
-      expect(il(const Duration(minutes: 1)), 'منذ دقيقة');
-      expect(il(const Duration(minutes: 2)), 'منذ دقيقتين');
-      expect(il(const Duration(minutes: 5)), 'منذ 5 دقائق');
-      expect(il(const Duration(minutes: 12)), 'منذ 12 دقيقة');
-      expect(il(const Duration(hours: 1)), 'منذ ساعة');
-      expect(il(const Duration(hours: 2)), 'منذ ساعتين');
-      expect(il(const Duration(hours: 3)), 'منذ 3 ساعات');
-      expect(il(const Duration(hours: 11)), 'منذ 11 ساعة');
-      expect(il(const Duration(days: 1)), 'منذ يوم');
-      expect(il(const Duration(days: 2)), 'منذ يومين');
-      expect(il(const Duration(days: 3)), 'منذ 3 أيام');
+      expect(
+        il(const Duration(minutes: 1)),
+        LibellesGroupe.insecable('منذ دقيقة'),
+      );
+      expect(
+        il(const Duration(minutes: 2)),
+        LibellesGroupe.insecable('منذ دقيقتين'),
+      );
+      expect(
+        il(const Duration(minutes: 5)),
+        LibellesGroupe.insecable('منذ 5 دقائق'),
+      );
+      expect(
+        il(const Duration(minutes: 12)),
+        LibellesGroupe.insecable('منذ 12 دقيقة'),
+      );
+      expect(
+        il(const Duration(hours: 1)),
+        LibellesGroupe.insecable('منذ ساعة'),
+      );
+      expect(
+        il(const Duration(hours: 2)),
+        LibellesGroupe.insecable('منذ ساعتين'),
+      );
+      expect(
+        il(const Duration(hours: 3)),
+        LibellesGroupe.insecable('منذ 3 ساعات'),
+      );
+      expect(
+        il(const Duration(hours: 11)),
+        LibellesGroupe.insecable('منذ 11 ساعة'),
+      );
+      expect(il(const Duration(days: 1)), LibellesGroupe.insecable('منذ يوم'));
+      expect(
+        il(const Duration(days: 2)),
+        LibellesGroupe.insecable('منذ يومين'),
+      );
+      expect(
+        il(const Duration(days: 3)),
+        LibellesGroupe.insecable('منذ 3 أيام'),
+      );
       LocaleSettings.setLocaleSync(AppLocale.fr);
-      expect(il(const Duration(hours: 2)), 'Il y a 2 h');
-      expect(il(const Duration(minutes: 1)), 'Il y a 1 min');
+      expect(
+        il(const Duration(hours: 2)),
+        LibellesGroupe.insecable('Il y a 2 h'),
+      );
+      expect(
+        il(const Duration(minutes: 1)),
+        LibellesGroupe.insecable('Il y a 1 min'),
+      );
     });
 
     testWidgets('390 : « Il y a 2 h » sur une seule ligne', (

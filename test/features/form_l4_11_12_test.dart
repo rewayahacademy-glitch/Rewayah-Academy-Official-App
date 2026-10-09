@@ -221,7 +221,8 @@ void main() {
       await _presser(tester, _personne('Maryam Sow'));
       expect(
         _libelleJeton(tester),
-        'Observation de Maryam, le 04/10/2026, 8 h',
+        // Duree insecable (DUREE-INSECABLE-3, JONCTION-LIGNES-1).
+        LibellesGroupe.insecable('Observation de Maryam, le 04/10/2026, 8 h'),
       );
 
       await _presser(
@@ -232,13 +233,15 @@ void main() {
       );
       expect(
         _libelleJeton(tester),
-        'Observation de Maryam, le 04/10/2026, 4 h',
+        // Duree insecable (DUREE-INSECABLE-3, JONCTION-LIGNES-1).
+        LibellesGroupe.insecable('Observation de Maryam, le 04/10/2026, 4 h'),
       );
 
       await _presser(tester, _personne('Yacine Benali'));
       expect(
         _libelleJeton(tester),
-        'Observation de Yacine, le 04/10/2026, 4 h',
+        // Duree insecable (DUREE-INSECABLE-3, JONCTION-LIGNES-1).
+        LibellesGroupe.insecable('Observation de Yacine, le 04/10/2026, 4 h'),
       );
     });
 
@@ -277,7 +280,8 @@ void main() {
 
       expect(
         agents.emissions.single.libelle,
-        'Observation de Maryam, le 04/10/2026, 8 h',
+        // Duree insecable (DUREE-INSECABLE-3, JONCTION-LIGNES-1).
+        LibellesGroupe.insecable('Observation de Maryam, le 04/10/2026, 8 h'),
       );
     });
 
