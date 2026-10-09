@@ -158,6 +158,9 @@ void main() {
 
   testWidgets('filtre Public : Adultes', (WidgetTester tester) async {
     await _monter(tester, const Size(1440, 900));
+    // Le menu est dans la rangee de filtres qui defile (FILTRES-1).
+    await tester.ensureVisible(find.byType(MenuFiltre<TypePublicGroupe>));
+    await tester.pumpAndSettle();
     await tester.tap(find.byType(MenuFiltre<TypePublicGroupe>));
     await tester.pumpAndSettle();
     await tester.tap(find.text(t.admin.groupes.typeAdulte).last);

@@ -12,6 +12,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
+import 'package:rewayah_academy/core/widgets/zone_saisie.dart';
 import 'package:rewayah_academy/features/cahier/cahier_page.dart';
 import 'package:rewayah_academy/features/cahier/vue_cahier.dart';
 
@@ -250,8 +251,11 @@ void main() {
       await tester.ensureVisible(find.byKey(SelecteurMotif.cleAutre));
       await tester.tap(find.byKey(SelecteurMotif.cleAutre));
       await tester.pumpAndSettle();
-      final Finder champMotif = find.ancestor(
-        of: find.text(t.enseignant.cahier.exceptionMotif),
+      final Finder champMotif = find.descendant(
+        of: find.ancestor(
+          of: find.text(t.enseignant.cahier.exceptionMotif),
+          matching: find.byType(ZoneSaisie),
+        ),
         matching: find.byType(TextField),
       );
       await tester.enterText(champMotif, 'connexion coupee des le debut');
