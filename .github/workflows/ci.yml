@@ -258,6 +258,8 @@ jobs:
           fi
 
   flutter:
+    # Les PR backend vers ccr exécutent les migrations/scénarios et Edge; les builds Flutter restent sur les PR main et les lancements manuels.
+    if: github.event_name != 'pull_request' || github.base_ref == 'main'
     name: Flutter (${{ matrix.target }})
     strategy:
       fail-fast: false
