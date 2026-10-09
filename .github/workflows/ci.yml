@@ -1,13 +1,20 @@
 name: CI
 
 on:
+  # `ui/**` depuis le 09/10/2026 (decision D2, CI-D2) : les PR des postes vers
+  # leur branche `ui/*` n'etaient jamais controlees. GitHub lit ce fichier sur
+  # la branche de BASE : il ne sert a une branche `ui/*` qu'une fois present
+  # dans cette branche.
   pull_request:
-    branches: [main]
+    branches: [main, 'ui/**']
   workflow_dispatch:
 
 jobs:
   migrate-check:
     name: Migrations applicables (Postgres 17)
+    # Le SQL et les fonctions Edge ne sont controles que vers `main` : les
+    # branches `ui/*` ne touchent pas `supabase/`.
+    if: github.event_name != 'pull_request' || github.base_ref == 'main'
     runs-on: ubuntu-latest
     container: postgres:17-alpine
     services:
@@ -181,6 +188,7 @@ jobs:
 
   edge-r2:
     name: Fonctions Edge -- stockage R2 (Deno)
+    if: github.event_name != 'pull_request' || github.base_ref == 'main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
