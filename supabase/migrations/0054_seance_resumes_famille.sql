@@ -145,7 +145,7 @@ BEGIN
     AND r.student_id = p_student_id
   FOR UPDATE;
 
-  INSERT INTO public.seance_resumes
+  INSERT INTO public.seance_resumes AS actuel
     (session_id, student_id, texte_famille, jalon_atteint, publie_le, auteur_profile_id)
   VALUES (
     p_session_id,
@@ -159,8 +159,8 @@ BEGIN
   SET texte_famille = EXCLUDED.texte_famille,
       jalon_atteint = EXCLUDED.jalon_atteint,
       publie_le = CASE
-        WHEN p_publier THEN coalesce(public.seance_resumes.publie_le, now())
-        ELSE public.seance_resumes.publie_le
+        WHEN p_publier THEN coalesce(actuel.publie_le, now())
+        ELSE actuel.publie_le
       END,
       auteur_profile_id = v_user,
       updated_at = now()
