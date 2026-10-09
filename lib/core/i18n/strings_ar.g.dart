@@ -384,6 +384,7 @@ class _Traductions$salle$seance$ar extends Traductions$salle$seance$fr {
 	@override late final _Traductions$salle$seance$commandes$ar commandes = _Traductions$salle$seance$commandes$ar._(_root);
 	@override late final _Traductions$salle$seance$bibliotheque$ar bibliotheque = _Traductions$salle$seance$bibliotheque$ar._(_root);
 	@override late final _Traductions$salle$seance$surface$ar surface = _Traductions$salle$seance$surface$ar._(_root);
+	@override late final _Traductions$salle$seance$rangement$ar rangement = _Traductions$salle$seance$rangement$ar._(_root);
 	@override late final _Traductions$salle$seance$capsule$ar capsule = _Traductions$salle$seance$capsule$ar._(_root);
 	@override late final _Traductions$salle$seance$contexte$ar contexte = _Traductions$salle$seance$contexte$ar._(_root);
 	@override late final _Traductions$salle$seance$demo$ar demo = _Traductions$salle$seance$demo$ar._(_root);
@@ -796,6 +797,29 @@ class _Traductions$salle$seance$surface$ar extends Traductions$salle$seance$surf
 	@override String get aucunSupport => 'اختر مادة أو اكتب على السبورة.';
 	@override String page({required Object titre, required Object page, required Object pages}) => '⁨${titre}⁩، الصفحة ⁨${page}⁩ من ⁨${pages}⁩';
 	@override String get supportMasque => 'السبورة، المادة مخفية';
+}
+
+// Path: salle.seance.rangement
+class _Traductions$salle$seance$rangement$ar extends Traductions$salle$seance$rangement$fr {
+	_Traductions$salle$seance$rangement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get ranger => 'إرجاع إلى المكتبة';
+	@override String get menuSupport => 'إجراءات المادة المعروضة';
+	@override String get menuTableau => 'إجراءات السبورة الحرة';
+	@override String get range => 'أُرجعت المادة';
+	@override String get rangeDetail => 'تبقى في المكتبة، عند صفحتها ومع ملاحظاتها. «عرض على الفصل» يعيدها.';
+	@override String get tableauLibre => 'السبورة الحرة';
+	@override String get section => 'مواد أُرجعت خلال الحصة';
+	@override String reprise({required Object page, required Object total}) => 'الاستئناف من الصفحة ⁨${page}⁩ من ⁨${total}⁩.';
+	@override String get notesConservees => 'الملاحظات محفوظة في هذه الحصة فقط.';
+	@override String get effacer => 'مسح الملاحظات';
+	@override String get questionPage => 'مسح كل ملاحظات هذه الصفحة؟';
+	@override String get questionTableau => 'مسح كل ملاحظات السبورة؟';
+	@override String get consequencePage => 'تختفي ملاحظات هذه الصفحة عند الفصل كله.';
+	@override String get consequenceTableau => 'تختفي ملاحظات السبورة الحرة عند الفصل كله.';
 }
 
 // Path: salle.seance.capsule
@@ -2467,6 +2491,20 @@ extension on TraductionsAr {
 			'salle.seance.surface.aucunSupport' => 'اختر مادة أو اكتب على السبورة.',
 			'salle.seance.surface.page' => ({required Object titre, required Object page, required Object pages}) => '⁨${titre}⁩، الصفحة ⁨${page}⁩ من ⁨${pages}⁩',
 			'salle.seance.surface.supportMasque' => 'السبورة، المادة مخفية',
+			'salle.seance.rangement.ranger' => 'إرجاع إلى المكتبة',
+			'salle.seance.rangement.menuSupport' => 'إجراءات المادة المعروضة',
+			'salle.seance.rangement.menuTableau' => 'إجراءات السبورة الحرة',
+			'salle.seance.rangement.range' => 'أُرجعت المادة',
+			'salle.seance.rangement.rangeDetail' => 'تبقى في المكتبة، عند صفحتها ومع ملاحظاتها. «عرض على الفصل» يعيدها.',
+			'salle.seance.rangement.tableauLibre' => 'السبورة الحرة',
+			'salle.seance.rangement.section' => 'مواد أُرجعت خلال الحصة',
+			'salle.seance.rangement.reprise' => ({required Object page, required Object total}) => 'الاستئناف من الصفحة ⁨${page}⁩ من ⁨${total}⁩.',
+			'salle.seance.rangement.notesConservees' => 'الملاحظات محفوظة في هذه الحصة فقط.',
+			'salle.seance.rangement.effacer' => 'مسح الملاحظات',
+			'salle.seance.rangement.questionPage' => 'مسح كل ملاحظات هذه الصفحة؟',
+			'salle.seance.rangement.questionTableau' => 'مسح كل ملاحظات السبورة؟',
+			'salle.seance.rangement.consequencePage' => 'تختفي ملاحظات هذه الصفحة عند الفصل كله.',
+			'salle.seance.rangement.consequenceTableau' => 'تختفي ملاحظات السبورة الحرة عند الفصل كله.',
 			'salle.seance.capsule.avatar' => ({required Object nom}) => 'عرض معلومات ⁨${nom}⁩',
 			'salle.seance.capsule.controlePossible' => 'المراقبة ممكنة. عرض المعلومات',
 			'salle.seance.capsule.controleActif' => 'المراقبة جارية. عرض المعلومات',
@@ -2746,6 +2784,8 @@ extension on TraductionsAr {
 			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '⁨${heure}⁩ ⁨${ville}⁩',
 			'tc.groupe.dst.j30' => 'تغيير التوقيت بعد شهر',
 			'tc.groupe.dst.j7' => 'تغيير التوقيت الأسبوع القادم',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.dst.j1' => 'تغيير التوقيت غدًا',
 			'tc.groupe.dst.detail' => ({required Object avant, required Object apres}) => 'سينتقل درسك من ⁨${avant}⁩ إلى ⁨${apres}⁩.',
 			'tc.groupe.session.conseilAppareil' => 'يُنصح بجهاز لوحي أو حاسوب للدرس. الهاتف مدعوم أيضًا.',
@@ -2760,8 +2800,6 @@ extension on TraductionsAr {
 			'tc.groupe.espace.introuvable' => 'هذا الفصل غير مفتوح لك',
 			'tc.groupe.espace.introuvableDetail' => 'ربما أُغلق، أو يخص ملفًا آخر.',
 			'tc.groupe.emplacement.nonBranche' => 'قريبًا',
-			_ => null,
-		} ?? switch (path) {
 			'tc.groupe.emplacement.nonBrancheDetail' => 'سيُربط هذا المحتوى بهذه المساحة قريبًا.',
 			'tc.coran.modes.mushaf' => 'صفحة المصحف',
 			'tc.coran.modes.verset' => 'قراءة مكبَّرة',

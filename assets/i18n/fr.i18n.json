@@ -364,6 +364,22 @@
         "page": "{titre}, page {page} sur {pages}",
         "supportMasque": "Tableau, le support est masqué"
       },
+      "rangement": {
+        "ranger": "Ranger dans la bibliothèque",
+        "menuSupport": "Actions du support affiché",
+        "menuTableau": "Actions du tableau libre",
+        "range": "Support rangé",
+        "rangeDetail": "Il reste dans la Bibliothèque, à sa page et avec ses notes. « Présenter » le reprend.",
+        "tableauLibre": "Tableau libre",
+        "section": "Rangés pendant la séance",
+        "reprise": "Reprise à la page {page} sur {total}.",
+        "notesConservees": "Les notes sont conservées dans cette séance uniquement.",
+        "effacer": "Effacer les notes",
+        "questionPage": "Effacer toutes les notes de cette page ?",
+        "questionTableau": "Effacer toutes les notes du tableau ?",
+        "consequencePage": "Les notes de cette page disparaissent pour toute la classe.",
+        "consequenceTableau": "Les notes du tableau libre disparaissent pour toute la classe."
+      },
       "capsule": {
         "avatar": "Afficher les informations de {nom}",
         "controlePossible": "Contrôle possible. Afficher les informations",

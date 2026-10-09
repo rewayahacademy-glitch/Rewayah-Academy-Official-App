@@ -62,6 +62,13 @@
 //   CAPTURE_DIR=docs/current/captures/TB-8 flutter test \
 //     test/features/tb_recette/captures_tb_test.dart --name tb8_
 //
+// TB-9 (ranger, reprendre, effacer) : avant (menu du titre ouvert), apres
+// le rangement, la carte rangee et son point de reprise, confirmation
+// d'effacement de la page et du tableau libre ; 390 et 1440 clair et
+// sombre, 320 x2 clair et sombre. Rangees dans docs/current/captures/TB-9/ :
+//   CAPTURE_DIR=docs/current/captures/TB-9 flutter test \
+//     test/features/tb_recette/captures_tb_test.dart --name tb9_
+//
 // AR-SALLE-1 : la salle en arabe (RTL), enseignant et eleve, 390 et 1440
 // clair et sombre, 320 x2. Rangees dans docs/current/captures/AR-SALLE-1/ :
 //   CAPTURE_DIR=docs/current/captures/AR-SALLE-1 flutter test \
@@ -873,6 +880,118 @@ void main() {
           debugPrint('PNG ${await capturer(tester, nom)}');
           // L'ouverture capturee, le chargement se termine.
           await tester.pumpAndSettle();
+        });
+      }
+    }
+  });
+
+  // TB-9 (plan V2 §3, §12, §19.2) : avant et apres le rangement, la carte
+  // rangee et son point de reprise, la confirmation d'effacement (page et
+  // tableau libre).
+  group('TB-9 : ranger, reprendre, effacer', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    Future<void> taper(WidgetTester tester, Finder cible) async {
+      await tester.ensureVisible(cible);
+      await tester.pumpAndSettle();
+      await tester.tap(cible);
+      await tester.pumpAndSettle();
+    }
+
+    final Finder menu = find.byKey(CommandesPedagogiques.cleMenu);
+    for (final String etat in <String>[
+      'avant',
+      'apres',
+      'reprise',
+      'effacer_page',
+      'effacer_tableau',
+    ]) {
+      for (final _Cadrage cas in <_Cadrage>[
+        for (final _Cadrage c in _cadragesTb)
+          if (<String>[
+            '390_x1_clair',
+            '390_x1_sombre',
+            '1440_x1_clair',
+            '1440_x1_sombre',
+            '320_x2_clair',
+          ].contains(c.$1))
+            c,
+        (
+          '320_x2_sombre',
+          const Size(320, 700),
+          2,
+          EdgeInsets.zero,
+          2,
+          ThemeMode.dark,
+        ),
+      ]) {
+        final String nom = 'tb9_enseignant_${etat}_${cas.$1}';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+          await tester.pumpWidget(
+            hoteCapture(
+              DemoSallePage(
+                role: RoleSeance.enseignant,
+                situation: switch (etat) {
+                  'effacer_page' => SituationTb.dlg01,
+                  'effacer_tableau' => SituationTb.effacementTableau,
+                  _ => SituationTb.ped03,
+                },
+              ),
+              themeMode: cas.$6,
+              echelleTexte: cas.$5,
+            ),
+          );
+          await tester.pumpAndSettle();
+          await taper(tester, find.byKey(DeclencheurCommandes.cle));
+          if (etat == 'avant') {
+            await taper(tester, menu);
+          } else if (etat == 'apres' || etat == 'reprise') {
+            await taper(tester, menu);
+            await taper(
+              tester,
+              find.text(t.salle.seance.rangement.ranger).last,
+            );
+            expect(find.byKey(SurfacePageFixe.clePage), findsNothing);
+            expect(find.byKey(CommandesPedagogiques.cleRange), findsOneWidget);
+            if (etat == 'reprise') {
+              await taper(
+                tester,
+                find.byKey(CommandesPedagogiques.cleBibliotheque),
+              );
+              // Le catalogue defile en slivers : jusqu'a la section des
+              // ranges (en tete), puis sa carte et son point de reprise.
+              final Finder catalogue = find.byType(SurfaceBibliotheque);
+              final Finder defile = find
+                  .descendant(of: catalogue, matching: find.byType(Scrollable))
+                  .first;
+              await tester.scrollUntilVisible(
+                find.text(t.salle.seance.rangement.section),
+                120,
+                scrollable: defile,
+              );
+              await tester.pumpAndSettle();
+              expect(
+                find.text(t.salle.seance.rangement.section),
+                findsOneWidget,
+              );
+            }
+          } else {
+            await taper(tester, menu);
+            await taper(
+              tester,
+              find.text(t.salle.seance.rangement.effacer).last,
+            );
+            expect(
+              find.text(
+                etat == 'effacer_page'
+                    ? t.salle.seance.rangement.questionPage
+                    : t.salle.seance.rangement.questionTableau,
+              ),
+              findsWidgets,
+            );
+          }
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
         });
       }
     }

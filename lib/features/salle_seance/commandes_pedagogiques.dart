@@ -15,6 +15,8 @@
 // d'ecriture eux-memes (Stylo, Surligner, Gomme, Annuler, palette courte et
 // « Terminer ») viennent avec TB-7b : ils ne sont pas rendus ici.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
@@ -25,10 +27,13 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/controle_segmente.dart';
+import '../../core/widgets/menu_actions.dart';
 import 'actions_seance.dart';
 import 'barre_support.dart';
 import 'outils_enseignement.dart';
+import 'rangement_support.dart';
 import 'salle_seance.dart' show BoutonPanneau;
 import 'vue_seance.dart';
 
@@ -138,6 +143,12 @@ class CommandesPedagogiques extends StatefulWidget {
   /// « Focus » ou « Quitter le focus ».
   static const Key cleFocus = ValueKey<String>('commandes-focus');
 
+  /// TB-9 : le menu du titre du support (ou du tableau libre).
+  static const Key cleMenu = ValueKey<String>('commandes-menu-support');
+
+  /// TB-9 : le retour discret « Support range ».
+  static const Key cleRange = ValueKey<String>('commandes-support-range');
+
   final VueSeance vue;
   final ActionsSeance actions;
 
@@ -186,6 +197,73 @@ class CommandesPedagogiques extends StatefulWidget {
 
 class _CommandesPedagogiquesState extends State<CommandesPedagogiques> {
   OngletCommandes _onglet = OngletCommandes.support;
+
+  /// TB-9 : un support vient d'etre range depuis ce panneau ; le retour
+  /// discret « Support range » se montre tant qu'aucun support n'est
+  /// presente (enseignant seulement, aucun toast aux eleves, plan V2 §3).
+  bool _range = false;
+
+  /// Le retour « Support range » : ramene dans la vue du panneau apres le
+  /// rangement (au telephone, le panneau defile ; le retour ne reste pas
+  /// au-dessus du bord).
+  final GlobalKey _retour = GlobalKey(debugLabel: 'commandes-retour-range');
+
+  @override
+  void didUpdateWidget(CommandesPedagogiques ancien) {
+    super.didUpdateWidget(ancien);
+    if (widget.vue.supportPresente != null) _range = false;
+  }
+
+  /// TB-9 (plan V2 §3 « Ranger reellement », §19.2 point 4) : la copie part
+  /// de la feuille vers la Bibliotheque (rien sous mouvement reduit), puis
+  /// l'etat change aussitot, sans attendre la copie ni demander de
+  /// confirmation (action reversible).
+  void _ranger() {
+    final VoidCallback? ranger = widget.actions.onRanger;
+    if (ranger == null) return;
+    PorteeRangement.maybeOf(context)?.envoler(context);
+    setState(() => _range = true);
+    ranger();
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      final BuildContext? retour = _retour.currentContext;
+      if (mounted && retour != null) {
+        unawaited(Scrollable.ensureVisible(retour));
+      }
+    });
+  }
+
+  /// TB-9 (plan V2 §12) : effacer les notes de la page, ou du tableau libre,
+  /// apres `ConfirmDestructive` (l'irreversible se dit avant le choix).
+  Future<void> _effacer() async {
+    final VoidCallback? effacer = widget.actions.onEffacerNotes;
+    if (effacer == null) return;
+    final bool tableau = widget.vue.effacementDuTableau;
+    final bool confirme = await ConfirmDestructive.demander(
+      context,
+      question: tableau
+          ? t.salle.seance.rangement.questionTableau
+          : t.salle.seance.rangement.questionPage,
+      consequence: tableau
+          ? t.salle.seance.rangement.consequenceTableau
+          : t.salle.seance.rangement.consequencePage,
+      libelleConfirmer: t.salle.seance.rangement.effacer,
+      irreversible: true,
+    );
+    if (confirme) effacer();
+  }
+
+  /// Les actions rares du support ou du tableau, chacune seulement si la
+  /// vue la permet ET que son rappel existe.
+  List<EntreeAction> _entreesMenu() => <EntreeAction>[
+    if (widget.vue.voitRanger && widget.actions.onRanger != null)
+      EntreeAction(libelle: t.salle.seance.rangement.ranger, onChoix: _ranger),
+    if (widget.vue.voitEffacerNotes && widget.actions.onEffacerNotes != null)
+      EntreeAction(
+        libelle: t.salle.seance.rangement.effacer,
+        onChoix: () => unawaited(_effacer()),
+        destructif: true,
+      ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -258,14 +336,34 @@ class _CommandesPedagogiquesState extends State<CommandesPedagogiques> {
     return <Widget>[
       // Plan V2 §4.2 : la Bibliotheque est la premiere action du panneau.
       if (bibliotheque != null)
-        BoutonPanneau(
-          key: CommandesPedagogiques.cleBibliotheque,
-          icone: AppIcons.bibliotheque,
-          libelle: t.salle.seance.commandes.bibliotheque,
-          onPress: bibliotheque,
-          etire: true,
+        // TB-9 : l'arrivee de la copie du rangement.
+        KeyedSubtree(
+          key: PorteeRangement.maybeOf(context)?.bibliotheque,
+          child: BoutonPanneau(
+            key: CommandesPedagogiques.cleBibliotheque,
+            icone: AppIcons.bibliotheque,
+            libelle: t.salle.seance.commandes.bibliotheque,
+            onPress: bibliotheque,
+            etire: true,
+          ),
         ),
-      if (titre != null) _SupportMontre(titre: titre),
+      if (_range && vue.supportPresente == null)
+        KeyedSubtree(key: _retour, child: const _RetourRange()),
+      if (titre != null)
+        _SupportMontre(
+          titre: titre,
+          icone: AppIcons.fichierPdf,
+          menu: _entreesMenu(),
+          semantiqueMenu: t.salle.seance.rangement.menuSupport,
+        )
+      // TB-9 : sans support, le tableau libre et son menu, s'il a des notes.
+      else if (vue.voitEffacerNotes && actions.onEffacerNotes != null)
+        _SupportMontre(
+          titre: t.salle.seance.rangement.tableauLibre,
+          icone: AppIcons.tabletteOuOrdinateur,
+          menu: _entreesMenu(),
+          semantiqueMenu: t.salle.seance.rangement.menuTableau,
+        ),
       // Un clic par affichage (TB3) ; invisibles sans support presente.
       if (vue.voitAffichagesPartages && affichage != null)
         KeyedSubtree(
@@ -359,12 +457,20 @@ class _CommandesPedagogiquesState extends State<CommandesPedagogiques> {
 }
 
 /// Le support montre : un repere (miniature et titre court), pas un bouton
-/// (plan V2 §3). Le menu du titre (« Ranger dans la bibliotheque ») vient
-/// avec TB-9.
+/// (plan V2 §3). TB-9 : le menu du titre porte « Ranger dans la
+/// bibliotheque » et « Effacer les notes » ; sans entree, pas de menu.
 class _SupportMontre extends StatelessWidget {
-  const _SupportMontre({required this.titre});
+  const _SupportMontre({
+    required this.titre,
+    required this.icone,
+    required this.menu,
+    required this.semantiqueMenu,
+  });
 
   final String titre;
+  final AppIcon icone;
+  final List<EntreeAction> menu;
+  final String semantiqueMenu;
 
   @override
   Widget build(BuildContext context) {
@@ -382,7 +488,7 @@ class _SupportMontre extends StatelessWidget {
               child: Center(
                 child: IconTheme(
                   data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
-                  child: Icon(AppIcons.fichierPdf.repos),
+                  child: Icon(icone.repos),
                 ),
               ),
             ),
@@ -397,7 +503,51 @@ class _SupportMontre extends StatelessWidget {
             ),
           ),
         ),
+        if (menu.isNotEmpty) ...<Widget>[
+          Ecart.hSm,
+          MenuActions(
+            key: CommandesPedagogiques.cleMenu,
+            actions: menu,
+            tooltip: semantiqueMenu,
+            points: true,
+          ),
+        ],
       ],
+    );
+  }
+}
+
+/// TB-9 : « Support range », retour discret de l'enseignant (plan V2 §3,
+/// §20), et ce qui suit (K-58) ; annonce une fois au lecteur d'ecran.
+class _RetourRange extends StatelessWidget {
+  const _RetourRange();
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    return Semantics(
+      key: CommandesPedagogiques.cleRange,
+      liveRegion: true,
+      container: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            t.salle.seance.rangement.range,
+            style: palette.inkStrong.applyTo(
+              textes.titleSmall ?? const TextStyle(),
+            ),
+          ),
+          Ecart.vXs,
+          Text(
+            t.salle.seance.rangement.rangeDetail,
+            style: palette.inkMuted.applyTo(
+              textes.bodySmall ?? const TextStyle(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

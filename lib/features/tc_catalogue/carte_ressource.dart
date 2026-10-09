@@ -37,7 +37,13 @@ class CarteRessource extends StatelessWidget {
     this.onPress,
     this.raisonIndisponible,
     this.couvertureDeposee,
+    this.pointDeReprise,
   });
+
+  /// TB-9 (plan V2 §3 « Ranger reellement ») : le point de reprise d'un
+  /// support range pendant la seance (« Reprise a la page 3 sur 12 »), ou
+  /// `null`. Une ligne de texte, jamais une couleur seule.
+  final String? pointDeReprise;
 
   /// La ressource presentee.
   final LibraryResource ressource;
@@ -98,8 +104,10 @@ class CarteRessource extends StatelessWidget {
     final String base =
         '${ressource.title}, ${libelleTypeRessource(ressource.resourceType)}, '
         '${libelleOffline(etatOffline)}';
+    final String? reprise = pointDeReprise;
+    final String avecReprise = reprise == null ? base : '$base. $reprise';
     final String? raison = raisonIndisponible;
-    return raison == null ? base : '$base. $raison';
+    return raison == null ? avecReprise : '$avecReprise. $raison';
   }
 
   Widget _texte(BuildContext context) {
@@ -131,6 +139,15 @@ class CarteRessource extends StatelessWidget {
             textes.bodySmall ?? const TextStyle(),
           ),
         ),
+        if (pointDeReprise != null) ...<Widget>[
+          Ecart.vSm,
+          Text(
+            pointDeReprise!,
+            style: palette.inkStrong.applyTo(
+              textes.bodySmall ?? const TextStyle(),
+            ),
+          ),
+        ],
         Ecart.vSm,
         Align(
           alignment: AlignmentDirectional.centerStart,

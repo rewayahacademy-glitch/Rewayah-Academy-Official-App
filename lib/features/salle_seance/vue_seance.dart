@@ -466,6 +466,7 @@ class VueSeance {
     this.controle,
     this.contexte = ContexteOuvert.aucun,
     this.notesSurface = const <TraitVectoriel>[],
+    this.supportsRanges = const <SupportPageFixe>[],
   });
 
   // --- Reponses retenues aux questions Q1 a Q8 (plan de code section 4) ---
@@ -604,6 +605,13 @@ class VueSeance {
   /// page montree ([notesAffichees]). Vide hors demonstration tant que le
   /// contrat des traits n'est pas branche (TB-BR).
   final List<TraitVectoriel> notesSurface;
+
+  /// TB-9 (plan V2 §2, §3 « Ranger reellement », §19.2) : les supports
+  /// ranges pendant la seance, chacun a la page ou il a ete range (son point
+  /// de reprise). Ranger n'efface rien : leurs notes restent dans
+  /// [notesSurface], attachees a leur page ; « Presenter » les retrouve.
+  /// Donnee de la seance seulement, jamais une sauvegarde (TB-BR).
+  final List<SupportPageFixe> supportsRanges;
 
   bool get _tutoie => tutoiement ?? _guidee;
 
@@ -811,6 +819,36 @@ class VueSeance {
   /// « Support », « Avec notes », « Tableau » : invisibles sans support
   /// presente (plan V2 §4.2) ; jamais chez l'eleve.
   bool get voitAffichagesPartages => _enseignant && supportPresente != null;
+
+  /// TB-9 : « Ranger dans la bibliotheque », au menu du titre du support
+  /// presente ; enseignant seulement, jamais chez l'eleve (TB14).
+  bool get voitRanger => _enseignant && supportPresente != null && !estFinie;
+
+  /// TB-9 (plan V2 §12) : « Effacer les notes » de la surface montree (la
+  /// page du support, ou le tableau libre), quand des notes s'y voient ;
+  /// jamais en « Support » (notes cachees), jamais chez l'eleve.
+  bool get voitEffacerNotes {
+    if (!_enseignant || estFinie) return false;
+    final VueSurface surface = vueSurface;
+    if (surface == VueSurface.supportSeul) return false;
+    if (notesAffichees.isNotEmpty) return true;
+    return surface == VueSurface.tableauLibre &&
+        (tableauLibre?.aDesNotes ?? false);
+  }
+
+  /// TB-9 : l'effacement porte sur le tableau libre (« … du tableau ? »),
+  /// sinon sur la page du support (« … de cette page ? »).
+  bool get effacementDuTableau => vueSurface == VueSurface.tableauLibre;
+
+  /// TB-9 : le nombre de notes de la seance attachees a un support range
+  /// (toutes pages de sa version) : la carte dit qu'elles sont conservees.
+  int notesDuSupport(SupportPageFixe range) => notesSurface
+      .where(
+        (TraitVectoriel trait) =>
+            trait.ancrage.resourceId == range.id &&
+            trait.ancrage.resourceVersionId == range.version,
+      )
+      .length;
   bool get voitSignalVideo => _enseignant;
 
   /// Le rail de navigation enseignant : desktop seulement (image CLV-06).
@@ -1073,6 +1111,7 @@ class VueSeance {
     bool sansControle = false,
     ContexteOuvert? contexte,
     List<TraitVectoriel>? notesSurface,
+    List<SupportPageFixe>? supportsRanges,
   }) => VueSeance(
     role: role ?? this.role,
     nomClasse: nomClasse,
@@ -1108,5 +1147,6 @@ class VueSeance {
     controle: sansControle ? null : controle ?? this.controle,
     contexte: contexte ?? this.contexte,
     notesSurface: notesSurface ?? this.notesSurface,
+    supportsRanges: supportsRanges ?? this.supportsRanges,
   );
 }

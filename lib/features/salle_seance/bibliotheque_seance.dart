@@ -66,8 +66,14 @@ class BibliothequeSeance extends StatefulWidget {
   const BibliothequeSeance({
     required this.onPresenter,
     this.groupeId,
+    this.reprises = const <RepriseEnSeance>[],
     super.key,
   });
+
+  /// TB-9 : les supports ranges pendant la seance, en tete du catalogue,
+  /// chacun avec son point de reprise ; « Presenter » les reprend a leur
+  /// page, avec leurs notes de la seance.
+  final List<RepriseEnSeance> reprises;
 
   /// Charge l'apercu et rend son activation pour la classe ; echoue si le
   /// support n'est pas charge ([PresenterSupport]).
@@ -178,6 +184,8 @@ class _BibliothequeSeanceState extends State<BibliothequeSeance> {
         contexte: ContexteDecouverte.enClasse,
         groupeId: widget.groupeId,
         onChoisir: _choisir,
+        reprises: widget.reprises,
+        titreReprises: t.salle.seance.rangement.section,
         enTete: Text(
           t.salle.seance.bibliotheque.intro,
           style: AppPalette.of(context).inkMuted.applyTo(

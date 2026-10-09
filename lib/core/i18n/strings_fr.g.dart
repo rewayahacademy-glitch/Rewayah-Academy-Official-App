@@ -2937,6 +2937,7 @@ class Traductions$salle$seance$fr {
 	late final Traductions$salle$seance$commandes$fr commandes = Traductions$salle$seance$commandes$fr.internal(_root);
 	late final Traductions$salle$seance$bibliotheque$fr bibliotheque = Traductions$salle$seance$bibliotheque$fr.internal(_root);
 	late final Traductions$salle$seance$surface$fr surface = Traductions$salle$seance$surface$fr.internal(_root);
+	late final Traductions$salle$seance$rangement$fr rangement = Traductions$salle$seance$rangement$fr.internal(_root);
 	late final Traductions$salle$seance$capsule$fr capsule = Traductions$salle$seance$capsule$fr.internal(_root);
 	late final Traductions$salle$seance$contexte$fr contexte = Traductions$salle$seance$contexte$fr.internal(_root);
 	late final Traductions$salle$seance$demo$fr demo = Traductions$salle$seance$demo$fr.internal(_root);
@@ -11584,6 +11585,57 @@ class Traductions$salle$seance$surface$fr {
 	String get supportMasque => 'Tableau, le support est masqué';
 }
 
+// Path: salle.seance.rangement
+class Traductions$salle$seance$rangement$fr {
+	Traductions$salle$seance$rangement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ranger dans la bibliothèque'
+	String get ranger => 'Ranger dans la bibliothèque';
+
+	/// fr: 'Actions du support affiché'
+	String get menuSupport => 'Actions du support affiché';
+
+	/// fr: 'Actions du tableau libre'
+	String get menuTableau => 'Actions du tableau libre';
+
+	/// fr: 'Support rangé'
+	String get range => 'Support rangé';
+
+	/// fr: 'Il reste dans la Bibliothèque, à sa page et avec ses notes. « Présenter » le reprend.'
+	String get rangeDetail => 'Il reste dans la Bibliothèque, à sa page et avec ses notes. « Présenter » le reprend.';
+
+	/// fr: 'Tableau libre'
+	String get tableauLibre => 'Tableau libre';
+
+	/// fr: 'Rangés pendant la séance'
+	String get section => 'Rangés pendant la séance';
+
+	/// fr: 'Reprise à la page {page} sur {total}.'
+	String reprise({required Object page, required Object total}) => 'Reprise à la page ${page} sur ${total}.';
+
+	/// fr: 'Les notes sont conservées dans cette séance uniquement.'
+	String get notesConservees => 'Les notes sont conservées dans cette séance uniquement.';
+
+	/// fr: 'Effacer les notes'
+	String get effacer => 'Effacer les notes';
+
+	/// fr: 'Effacer toutes les notes de cette page ?'
+	String get questionPage => 'Effacer toutes les notes de cette page ?';
+
+	/// fr: 'Effacer toutes les notes du tableau ?'
+	String get questionTableau => 'Effacer toutes les notes du tableau ?';
+
+	/// fr: 'Les notes de cette page disparaissent pour toute la classe.'
+	String get consequencePage => 'Les notes de cette page disparaissent pour toute la classe.';
+
+	/// fr: 'Les notes du tableau libre disparaissent pour toute la classe.'
+	String get consequenceTableau => 'Les notes du tableau libre disparaissent pour toute la classe.';
+}
+
 // Path: salle.seance.capsule
 class Traductions$salle$seance$capsule$fr {
 	Traductions$salle$seance$capsule$fr.internal(this._root);
@@ -16003,6 +16055,20 @@ extension on Traductions {
 			'salle.seance.surface.aucunSupport' => 'Choisissez un support ou écrivez au tableau.',
 			'salle.seance.surface.page' => ({required Object titre, required Object page, required Object pages}) => '${titre}, page ${page} sur ${pages}',
 			'salle.seance.surface.supportMasque' => 'Tableau, le support est masqué',
+			'salle.seance.rangement.ranger' => 'Ranger dans la bibliothèque',
+			'salle.seance.rangement.menuSupport' => 'Actions du support affiché',
+			'salle.seance.rangement.menuTableau' => 'Actions du tableau libre',
+			'salle.seance.rangement.range' => 'Support rangé',
+			'salle.seance.rangement.rangeDetail' => 'Il reste dans la Bibliothèque, à sa page et avec ses notes. « Présenter » le reprend.',
+			'salle.seance.rangement.tableauLibre' => 'Tableau libre',
+			'salle.seance.rangement.section' => 'Rangés pendant la séance',
+			'salle.seance.rangement.reprise' => ({required Object page, required Object total}) => 'Reprise à la page ${page} sur ${total}.',
+			'salle.seance.rangement.notesConservees' => 'Les notes sont conservées dans cette séance uniquement.',
+			'salle.seance.rangement.effacer' => 'Effacer les notes',
+			'salle.seance.rangement.questionPage' => 'Effacer toutes les notes de cette page ?',
+			'salle.seance.rangement.questionTableau' => 'Effacer toutes les notes du tableau ?',
+			'salle.seance.rangement.consequencePage' => 'Les notes de cette page disparaissent pour toute la classe.',
+			'salle.seance.rangement.consequenceTableau' => 'Les notes du tableau libre disparaissent pour toute la classe.',
 			'salle.seance.capsule.avatar' => ({required Object nom}) => 'Afficher les informations de ${nom}',
 			'salle.seance.capsule.controlePossible' => 'Contrôle possible. Afficher les informations',
 			'salle.seance.capsule.controleActif' => 'Contrôle actif. Afficher les informations',
@@ -16222,6 +16288,8 @@ extension on Traductions {
 			'attente.actualiserCompte' => 'Actualiser',
 			'attente.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il reste un élément à fournir.', other: 'Il reste ${n} éléments à fournir.', ), 
 			'attente.etatAFournir' => 'À fournir',
+			_ => null,
+		} ?? switch (path) {
 			'attente.prochaineEtape' => ({required Object etape}) => 'Prochaine étape : ${etape}',
 			'attente.refuseDetail' => ({required Object element}) => 'Pour relancer la vérification, commencez par cet élément : ${element}.',
 			'attente.refuseSansElement' => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.',
@@ -16236,8 +16304,6 @@ extension on Traductions {
 			'connexion.avecGoogle' => 'Continuer avec Google',
 			'connexion.ou' => 'ou',
 			'connexion.lienEnvoye' => 'Lien envoyé',
-			_ => null,
-		} ?? switch (path) {
 			'connexion.lienEnvoyeDetail' => ({required Object courriel}) => 'Ouvrez le message envoyé à ${courriel}, puis suivez le lien. Vous pouvez laisser cette page ouverte.',
 			'connexion.changerAdresse' => 'Utiliser une autre adresse',
 			'connexion.erreurCourriel' => 'Cette adresse ne semble pas valide.',
@@ -16736,6 +16802,8 @@ extension on Traductions {
 			'eleveConnexion.profils.jetonAbsent' => ({required Object prenom}) => 'Cet appareil ne retrouve plus la connexion de ${prenom}. Demande au tuteur d\'afficher un nouveau code, puis saisis-le ici.',
 			'eleveConnexion.pin.bonjour' => ({required Object prenom}) => 'Bonjour ${prenom}',
 			'eleveConnexion.pin.creer' => 'Choisis ton code personnel',
+			_ => null,
+		} ?? switch (path) {
 			'eleveConnexion.pin.creerPhrase' => 'Quatre chiffres, rien que pour toi. Il reste sur cet appareil.',
 			'eleveConnexion.pin.confirmer' => 'Entre-le encore une fois',
 			'eleveConnexion.pin.different' => 'Les deux codes ne sont pas les mêmes. Choisis ton code à nouveau.',
@@ -16750,8 +16818,6 @@ extension on Traductions {
 			'eleveConnexion.saisie.titre' => 'Connecter cet appareil',
 			'eleveConnexion.saisie.phrase' => 'Saisissez le code de six caractères affiché sous le QR code, sur l\'appareil du tuteur.',
 			'eleveConnexion.saisie.champ' => 'Code',
-			_ => null,
-		} ?? switch (path) {
 			'eleveConnexion.saisie.aide' => 'Chiffres de 2 à 9 et lettres, sans I ni O.',
 			'eleveConnexion.saisie.valider' => 'Connecter l\'appareil',
 			'eleveConnexion.saisie.scanner' => 'Scanner le QR code',
@@ -17250,6 +17316,8 @@ extension on Traductions {
 			'admin.progression.typeDerogation' => 'Dérogation',
 			'admin.progression.actionPoserBlocage' => 'Poser un blocage',
 			'admin.progression.actionPoserDerogation' => 'Poser une dérogation',
+			_ => null,
+		} ?? switch (path) {
 			'admin.progression.actionCloreException' => 'Clore l\'exception',
 			'admin.progression.actionPromouvoir' => 'Changer de niveau',
 			'admin.progression.poserExceptionTitre' => ({required Object type, required Object eleve}) => '${type} pour ${eleve}',
@@ -17264,8 +17332,6 @@ extension on Traductions {
 			'admin.progression.promouvoirErreur' => ({required Object message}) => 'Le changement n\'a pas abouti : ${message}',
 			'admin.progression.champMotif' => 'Motif',
 			'admin.progression.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.progression.journalisation' => 'Chaque exception posée, close, et chaque changement de niveau est inscrit au journal d\'audit.',
 			'admin.programmes.titre' => 'Programmes',
 			'admin.programmes.intro' => 'Le curriculum Rewayah, versionné : une version publiée ne peut plus être modifiée, toute évolution académique en crée une nouvelle.',
@@ -17764,6 +17830,8 @@ extension on Traductions {
 			'compte.roles.controller' => 'Contrôleur',
 			'compte.roles.teacher' => 'Enseignant',
 			'compte.roles.guardian' => 'Tuteur',
+			_ => null,
+		} ?? switch (path) {
 			'compte.roles.student' => 'Élève',
 			'compte.roleDetail.admin' => 'Gère les dossiers, l\'attribution et le journal de l\'académie',
 			'compte.roleDetail.accountant' => 'Gère les paiements et les factures',
@@ -17778,8 +17846,6 @@ extension on Traductions {
 			'compte.tuteur.identite.nomInconnu' => 'Titulaire du compte',
 			'compte.tuteur.identite.courrielAbsent' => 'Adresse de connexion non communiquée',
 			'compte.tuteur.identite.connexionLien' => 'Connexion par lien reçu par courriel',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.identite.connexionGoogle' => 'Connexion avec Google',
 			'compte.tuteur.identite.connexionInconnue' => 'Méthode de connexion non précisée',
 			'compte.tuteur.acces.titre' => 'Accès et paiements',
@@ -18278,6 +18344,8 @@ extension on Traductions {
 			'classe.pageCatalogue.eleveInconnuPhrase' => 'Revenez à l\'accueil et choisissez le profil élève concerné.',
 			'classe.pageCatalogue.horairesAbsents' => 'Les jours et heures de cette classe ne sont pas encore affichés ici.',
 			'classe.pageCatalogue.seanceHebdo' => ({required Object jour, required Object heure, required Object duree}) => '${jour} à ${heure} · ${duree} min',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pageCatalogue.fuseauClasse' => ({required Object fuseau}) => 'Heures de la classe (${fuseau})',
 			'classe.pageCatalogue.placeUne' => '1 place restante',
 			'classe.pageCatalogue.places' => ({required Object nombre}) => '${nombre} places restantes',
@@ -18292,8 +18360,6 @@ extension on Traductions {
 			'classe.pageCatalogue.precisionReserve' => 'Rien n\'est réservé avant votre confirmation.',
 			'classe.pageCatalogue.confirmerTitre' => 'Confirmer la classe',
 			'classe.pageCatalogue.confirmerPhrase' => ({required Object prenom}) => 'Vous inscrivez ${prenom} dans cette classe.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageCatalogue.confirmerAttentePhrase' => ({required Object prenom}) => 'Vous inscrivez ${prenom} sur la liste d\'attente de cette classe.',
 			'classe.pageCatalogue.memeEnseignant' => ({required Object enseignant}) => 'Même classe et même enseignant pour toutes les séances de la semaine : ${enseignant}.',
 			'classe.pageCatalogue.confirmer' => 'Confirmer l\'inscription',
@@ -18792,6 +18858,8 @@ extension on Traductions {
 			'controleur.complement.revenir' => 'Revenir au rapport',
 			'controleur.compteRendu.titre' => 'Compte rendu',
 			'controleur.compteRendu.provisoire' => 'Cet écran est en préparation.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.compteRendu.revenir' => 'Revenir au contrôle',
 			'controleur.compteRendu.sousTitre' => ({required Object classe, required Object heure}) => '${classe} · ${heure}',
 			'controleur.compteRendu.faits' => 'Relevé automatique de la séance',
@@ -18806,8 +18874,6 @@ extension on Traductions {
 			'controleur.compteRendu.debutALHeure' => ({required Object heure}) => '${heure}, à l\'heure',
 			'controleur.compteRendu.cleFin' => 'Fin',
 			'controleur.compteRendu.enCours' => 'En cours',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.compteRendu.clePresents' => 'Élèves présents',
 			'controleur.compteRendu.presents' => ({required Object presents, required Object attendus}) => '${presents} sur ${attendus}',
 			'controleur.compteRendu.cleReconnexions' => 'Reconnexions',
@@ -19306,6 +19372,8 @@ extension on Traductions {
 			'tc.observation.visite.connexion' => 'Connexion',
 			'tc.observation.visite.reconnexion' => 'Reconnexion',
 			'tc.observation.visite.videoCoupee' => 'Vidéo indisponible',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.visite.reconnexionDetail' => 'La connexion est interrompue, reconnexion en cours. Votre temps d\'observation continue de s\'écouler.',
 			'tc.observation.visite.sonRecu' => 'Son reçu',
 			'tc.observation.visite.sonInterrompu' => 'Son interrompu',
@@ -19320,8 +19388,6 @@ extension on Traductions {
 			'tc.observation.visite.quitterConfirmer' => 'Quitter la visite',
 			'tc.observation.fin.sortieVolontaire' => 'Vous avez quitté l\'observation.',
 			'tc.observation.fin.quotaAtteint' => 'Votre temps d\'observation est écoulé.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.fin.seanceTerminee' => 'La séance est terminée.',
 			'tc.observation.fin.revocationServeur' => 'Votre observation a été interrompue.',
 			'tc.observation.fin.deconnexion' => 'La connexion a été perdue.',

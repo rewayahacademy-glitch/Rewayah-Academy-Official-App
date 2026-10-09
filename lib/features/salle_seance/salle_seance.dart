@@ -36,6 +36,7 @@ import 'dock_seance.dart';
 import 'panneau_eleves.dart';
 import 'panneau_seance.dart';
 import 'panneau_supports.dart';
+import 'rangement_support.dart';
 import 'selecteur_ressources.dart';
 import 'vue_seance.dart';
 import 'zone_support.dart';
@@ -1023,9 +1024,13 @@ class _SalleEnseignant extends StatelessWidget {
         contenu: contenuSupport,
       ),
     );
-    return gabarit == Gabarit.mobile
-        ? _telephone(support)
-        : _large(context, support);
+    // TB-9 : la portee du rangement (depart : la feuille de la surface ;
+    // arrivee : la Bibliotheque des Commandes).
+    return PorteeRangement(
+      child: gabarit == Gabarit.mobile
+          ? _telephone(support)
+          : _large(context, support),
+    );
   }
 
   /// TB-4 : le declencheur « Commandes », rendu seulement si une entree du
@@ -1123,6 +1128,7 @@ class _SalleEnseignant extends StatelessWidget {
         enfant: BibliothequeSeance(
           onPresenter: presenter,
           groupeId: vue.groupeId,
+          reprises: reprisesDe(vue),
         ),
       ),
       null => PanneauSeance(

@@ -36,6 +36,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
 import '../tc_dock/couche_annotation.dart';
 import 'notes_deposees.dart';
+import 'rangement_support.dart';
 import 'repere_page.dart';
 import 'vue_seance.dart';
 
@@ -123,6 +124,9 @@ class SurfacePageFixe extends StatelessWidget {
         surface == VueSurface.supportAvecNotes;
     final bool notesVisibles = surface != VueSurface.supportSeul;
     final bool consigne = libre && vue.voitConsigneTableauLibre;
+    // TB-9 : le depart de la copie du rangement (salle de l'enseignant).
+    final GlobalKey? repereRangement = PorteeRangement.maybeOf(context)
+        ?.feuille;
     return LayoutBuilder(
       builder: (BuildContext _, BoxConstraints c) {
         // TB-7a (plan V2 §9) : une seule geometrie pour l'image et l'encre,
@@ -179,7 +183,13 @@ class SurfacePageFixe extends StatelessWidget {
                   transform: repere.lecture,
                   child: Stack(
                     children: <Widget>[
-                      Positioned.fromRect(rect: rect, child: feuille),
+                      Positioned.fromRect(
+                        rect: rect,
+                        child: KeyedSubtree(
+                          key: repereRangement,
+                          child: feuille,
+                        ),
+                      ),
                     ],
                   ),
                 ),

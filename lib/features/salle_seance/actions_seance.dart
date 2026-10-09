@@ -48,7 +48,20 @@ class ActionsSeance {
     this.onOuvrirReglages,
     this.onContexte,
     this.onPresenter,
+    this.onRanger,
+    this.onEffacerNotes,
   });
+
+  /// TB-9 (plan V2 §3 « Ranger reellement », §19.2) : « Ranger dans la
+  /// bibliotheque » retire le support presente, sans rien effacer ; le
+  /// tableau libre revient. Aucune confirmation (action reversible). `null` :
+  /// l'entree n'est pas rendue (Classe Live avant TB-BR).
+  final VoidCallback? onRanger;
+
+  /// TB-9 (plan V2 §12) : efface les notes de la surface montree (la page du
+  /// support, ou le tableau libre), APRES la confirmation de la salle.
+  /// `null` : l'entree n'est pas rendue.
+  final VoidCallback? onEffacerNotes;
 
   /// TB-8 (LIB-02, LIB-03) : « Presenter » l'apercu choisi dans la
   /// Bibliotheque en seance. Le futur se termine quand le support est
@@ -169,5 +182,7 @@ class ActionsSeance {
     onOuvrirReglages: onOuvrirReglages,
     onContexte: onContexte,
     onPresenter: onPresenter,
+    onRanger: onRanger,
+    onEffacerNotes: onEffacerNotes,
   );
 }

@@ -23,6 +23,7 @@ import '../../core/tc_bibliotheque/donnees_catalogue.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
+import '../../core/tc_outils/annotation_layer.dart' show TraitVectoriel;
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
@@ -482,6 +483,52 @@ class _SalleDemoState extends State<SalleDemo> {
   /// la situation.
   SupportPageFixe? _presente;
 
+  /// TB-9 : le support a ete range ; la surface revient au tableau libre
+  /// (aucun support presente, aucune diapositive) jusqu'au prochain
+  /// « Presenter ».
+  bool _range = false;
+
+  /// TB-9 : les supports ranges pendant la seance, a leur page.
+  final List<SupportPageFixe> _ranges = <SupportPageFixe>[];
+
+  /// TB-7a, TB-9 : les notes de la seance ; `null` : celles de la
+  /// situation. Ranger n'y touche pas ; « Effacer les notes » retire celles
+  /// de la surface montree. Rien n'est diffuse (TB-BR).
+  List<TraitVectoriel>? _notes;
+
+  /// TB-9 : le tableau libre a ete efface (« … du tableau ? »).
+  bool _tableauEfface = false;
+
+  /// TB-9 (plan V2 §3 « Ranger reellement », §19.2 points 4 et 5) : le
+  /// support presente rejoint les supports ranges, a sa page ; le tableau
+  /// libre revient, sans copie des notes du support. Aucune confirmation.
+  void _ranger(VueSeance vue) {
+    final SupportPageFixe? presente = vue.supportPresente;
+    if (presente == null) return;
+    setState(() {
+      _ranges
+        ..removeWhere((SupportPageFixe s) => s.id == presente.id)
+        ..add(presente);
+      _range = true;
+      _presente = null;
+      _page = null;
+    });
+  }
+
+  /// TB-9 (plan V2 §12) : apres confirmation, les notes de la surface
+  /// montree (la page, ou le tableau libre) sont retirees.
+  void _effacerNotes(VueSeance vue) {
+    final ContentPosition? ancrage = vue.ancrageSurface;
+    if (ancrage == null) return;
+    setState(() {
+      _notes = <TraitVectoriel>[
+        for (final TraitVectoriel trait in vue.notesSurface)
+          if (trait.ancrage != ancrage) trait,
+      ];
+      if (vue.effacementDuTableau) _tableauEfface = true;
+    });
+  }
+
   /// TB-8 (LIB-02, LIB-03) : « Presenter ». Le chargement se verifie avant
   /// tout changement ; en demonstration, le cahier sans fichier echoue et la
   /// classe garde le support d'avant. Le futur rend l'activation, que la
@@ -504,6 +551,10 @@ class _SalleDemoState extends State<SalleDemo> {
     return () {
       if (!mounted) return;
       setState(() {
+        // TB-9 : reprendre un support range le retire des ranges ; ses
+        // notes de la seance l'attendent a sa page.
+        _range = false;
+        _ranges.removeWhere((SupportPageFixe s) => s.id == ressource.id);
         _presente = DonneesSeanceDemo.pagePresentee(ressource, page: page);
         _support = DonneesSeanceDemo.diapositiveDe(ressource.id) ?? _support;
         _page = page;
@@ -528,11 +579,13 @@ class _SalleDemoState extends State<SalleDemo> {
     );
     final int? page = _page;
     // Comme avant : sans support dans l'etat, rien n'est montre.
-    final SupportSeance? diapositive = etat.support == null
+    final SupportSeance? diapositive = etat.support == null || _range
         ? null
         : _support ?? etat.support;
+    final TableauLibre? tableau = etat.tableauLibre;
     final VueSeance vue = etat.copyWith(
       panneau: _panneau,
+      sansSupport: diapositive == null,
       support: diapositive == null
           ? null
           : page == null
@@ -549,6 +602,16 @@ class _SalleDemoState extends State<SalleDemo> {
         ),
         _ => _presente,
       },
+      // TB-9 : range, plus aucun support presente.
+      sansSupportPresente: _range,
+      supportsRanges: List<SupportPageFixe>.unmodifiable(_ranges),
+      notesSurface: _notes,
+      tableauLibre: tableau != null && _tableauEfface
+          ? TableauLibre(
+              largeurCanonique: tableau.largeurCanonique,
+              hauteurCanonique: tableau.hauteurCanonique,
+            )
+          : null,
     );
     final bool enseignant = widget.role == RoleSeance.enseignant;
     // Fin de seance de l'enseignant : CLV-10 (le cahier n'existe pas en
@@ -655,6 +718,14 @@ class _SalleDemoState extends State<SalleDemo> {
       // TB-8 : la Bibliotheque unique dans les situations Supports et
       // tableau (catalogue de demonstration par le port, ci-dessous).
       onPresenter: enseignant && widget.situation != null ? _presenter : null,
+      // TB-9 : ranger et effacer les notes, dans les situations Supports et
+      // tableau (Bibliotheque unique) ; rien n'est diffuse (TB-BR).
+      onRanger: enseignant && widget.situation != null
+          ? () => _ranger(vue)
+          : null,
+      onEffacerNotes: enseignant && widget.situation != null
+          ? () => _effacerNotes(vue)
+          : null,
       // Secours (CL-7), sans serveur : « Reessayer » simule le retour de la
       // connexion (« Connexion retablie. ») ; « Continuer sans micro »
       // laisse le micro coupe. Ouvrir les reglages : BR-1 (non rendu).

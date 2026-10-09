@@ -444,6 +444,23 @@ abstract final class DonneesSeanceDemo {
     ],
   );
 
+  /// TB-9 : un trait du tableau libre (§12 « Effacement du tableau
+  /// libre ») : un trait horizontal sous le milieu de la feuille, ancre au
+  /// tableau libre, jamais a un support (TB5).
+  static const TraitVectoriel traitTableauDemonstration = TraitVectoriel(
+    id: 'demo-trait-tableau',
+    ancrage: ContentPosition.page(
+      resourceId: TableauLibre.idRessource,
+      page: 1,
+    ),
+    outil: OutilTrait.stylet,
+    points: <PointNormalise>[
+      PointNormalise(0.25, 0.6),
+      PointNormalise(0.5, 0.62),
+      PointNormalise(0.75, 0.6),
+    ],
+  );
+
   /// Le centre du cercle de demonstration, dans la page.
   static const PointNormalise centreCercle = PointNormalise(0.5, 0.55);
 
@@ -621,10 +638,16 @@ abstract final class DonneesSeanceDemo {
       sansSupportPresente: sansSupport,
       // TB-7a : les notes de la page en PED-03 (Avec notes) et PED-04
       // (Tableau, support masque) ; cachees, jamais effacees, en PED-02.
+      // TB-9 : DLG-01 (effacement de page) porte le cercle de la page ;
+      // l'effacement du tableau libre, le trait du tableau.
       notesSurface: switch (situation) {
         SituationTb.ped02 ||
         SituationTb.ped03 ||
-        SituationTb.ped04 => <TraitVectoriel>[traitDemonstration],
+        SituationTb.ped04 ||
+        SituationTb.dlg01 => <TraitVectoriel>[traitDemonstration],
+        SituationTb.effacementTableau => <TraitVectoriel>[
+          traitTableauDemonstration,
+        ],
         _ => const <TraitVectoriel>[],
       },
       affichage: switch (situation) {
