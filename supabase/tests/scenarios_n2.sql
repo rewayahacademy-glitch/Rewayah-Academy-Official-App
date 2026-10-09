@@ -219,7 +219,7 @@ end $n2$;
 -- N3 : le canari est deterministe, et il aiguille reellement
 -- ============================================================
 
-do $$
+do $n3$
 declare
   v_p1 public.video_provider;
   v_p2 public.video_provider;
@@ -284,7 +284,7 @@ begin
          canary_percentage = snapshot.canary_percentage
     from pg_temp.n2_video_config_snapshot snapshot
    where current_config.id = snapshot.id;
-end $;
+end $n3$;
 drop table pg_temp.n2_video_config_snapshot;
 
 -- ============================================================
