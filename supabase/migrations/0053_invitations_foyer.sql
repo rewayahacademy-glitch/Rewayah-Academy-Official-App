@@ -328,7 +328,7 @@ DECLARE
   v_old_found boolean;
   v_titulaire text;
 BEGIN
-  IF p_decision NOT IN ('accepter', 'refuser') OR p_cle IS NULL THEN
+  IF p_decision IS NULL OR p_decision NOT IN ('accepter', 'refuser') OR p_cle IS NULL THEN
     RAISE EXCEPTION 'réponse invalide';
   END IF;
 
