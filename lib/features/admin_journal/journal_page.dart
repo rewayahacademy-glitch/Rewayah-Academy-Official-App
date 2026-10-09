@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
@@ -188,7 +190,14 @@ class _JournalPageEtat extends ConsumerState<JournalPage> {
       // colonnes collee en haut du tableau, et les filtres accessibles sans
       // remonter la page.
       defilante: false,
-      entete: _Entete(
+      // PAGESHELL-200-1e : les onglets restent fixes sous le titre ; la
+      // chaine et les filtres aussi tant que la place le permet, sinon ils
+      // defilent avec le journal (vue basse, alerte urgente ouverte,
+      // Interface guidee), decide par delegation le 09/10.
+      // Journal et historique des observations : les deux fonctions pairs de
+      // Securite et audit (`ongletsSecurite()`), une route chacune.
+      entete: SousNavigationDomaine(onglets: ongletsSecurite(), indexActif: 0),
+      enteteSecondaire: _Entete(
         acteur: _acteur,
         type: _type,
         periode: _periode,
@@ -216,7 +225,8 @@ class _JournalPageEtat extends ConsumerState<JournalPage> {
   }
 }
 
-/// L'etat de la chaine, puis les trois filtres.
+/// L'etat de la chaine, puis les trois filtres (sous les onglets, que
+/// `PageShell` tient fixes).
 class _Entete extends ConsumerWidget {
   const _Entete({
     required this.acteur,
@@ -243,10 +253,6 @@ class _Entete extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        // Journal et historique des observations : les deux fonctions pairs de
-        // Securite et audit (`ongletsSecurite()`), une route chacune.
-        SousNavigationDomaine(onglets: ongletsSecurite(), indexActif: 0),
-        Ecart.vLg,
         const BandeauChaineJournal(),
         Ecart.vLg,
         // FILTRES-1 : la periode et les deux menus sur UNE rangee qui defile
@@ -350,73 +356,31 @@ class BandeauChaineJournal extends ConsumerWidget {
         };
 
     final TextStyle stylePhrase = textes.bodySmall ?? const TextStyle();
-    final Widget pastille = StatusPill(libelle: contenu.$1, ton: contenu.$2);
-    // COUPE-MOTS-1 : la phrase passe a la ligne entre ses mots, jamais dans
-    // un mot.
-    final Widget phrase = TexteSansCoupure(contenu.$3, style: stylePhrase);
     return AppCard(
       // PAGESHELL-200-1e : a 320 px en texte x2, la pastille (« Integrite
       // inconnue ») et la phrase cote a cote debordaient de 17 px. Quand la
-      // pastille sur une ligne et le mot le plus long de la phrase ne tiennent
-      // pas cote a cote, la pastille passe au-dessus de la phrase, au debut
-      // de la ligne (decide par delegation le 09/10).
-      child: LayoutBuilder(
-        builder: (BuildContext contexte, BoxConstraints contraintes) {
-          final double besoin =
-              _largeurPastille(contexte, contenu.$1) +
-              AppSpacing.md +
-              largeurMotLePlusLong(
-                contexte,
-                contenu.$3,
-                stylePhrase,
-                MediaQuery.textScalerOf(contexte),
-              );
-          if (besoin <= contraintes.maxWidth) {
-            return Row(
-              key: cleRangee,
-              children: <Widget>[
-                pastille,
-                Ecart.hMd,
-                Expanded(child: phrase),
-              ],
-            );
-          }
-          return Column(
-            key: clePile,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[pastille, Ecart.vSm, phrase],
-          );
-        },
+      // pastille, mesuree telle qu'elle se rend, et le mot le plus long de
+      // la phrase ne tiennent pas cote a cote, la pastille passe au-dessus
+      // de la phrase, au debut de la ligne (decide par delegation le 09/10).
+      child: _PastilleEtPhrase(
+        motLePlusLong: largeurMotLePlusLong(
+          context,
+          contenu.$3,
+          stylePhrase,
+          MediaQuery.textScalerOf(context),
+        ),
+        children: <Widget>[
+          StatusPill(libelle: contenu.$1, ton: contenu.$2),
+          // COUPE-MOTS-1 : la phrase passe a la ligne entre ses mots, jamais
+          // dans un mot, ni au trait d'union de « ci-dessous ».
+          TexteSansCoupure(
+            contenu.$3,
+            style: stylePhrase,
+            nomsComposesEntiers: true,
+          ),
+        ],
       ),
     );
-  }
-
-  /// La forme cote a cote (tests).
-  static const Key cleRangee = ValueKey<String>('journal-chaine-rangee');
-
-  /// La forme empilee, pastille au-dessus de la phrase (tests).
-  static const Key clePile = ValueKey<String>('journal-chaine-pile');
-
-  /// La largeur de la pastille quand son libelle tient sur une ligne : le
-  /// libelle, le point et le retrait de `StatusPill`.
-  static double _largeurPastille(BuildContext context, String libelle) {
-    final TextPainter mesure = TextPainter(
-      text: TextSpan(
-        text: libelle,
-        style: DefaultTextStyle.of(context).style
-            .merge(Theme.of(context).textTheme.labelMedium),
-      ),
-      textDirection: Directionality.of(context),
-      textScaler: MediaQuery.textScalerOf(context),
-      maxLines: 1,
-    )..layout();
-    final double largeur = mesure.width;
-    mesure.dispose();
-    return largeur +
-        StatusPill.diametrePastille +
-        AppSpacing.sm +
-        2 * AppSpacing.md;
   }
 
   (String, TonEtat, String) _lire(EtatChaine etat) => etat.intacte
@@ -709,3 +673,171 @@ String _date(DateTime quand) =>
 String _heure(DateTime quand) =>
     '${quand.hour.toString().padLeft(2, '0')}:'
     '${quand.minute.toString().padLeft(2, '0')}';
+
+/// La pastille puis la phrase du bandeau de la chaine : cote a cote quand la
+/// pastille et le mot le plus long de la phrase y tiennent, sinon la
+/// pastille au-dessus de la phrase, au debut de la ligne (PAGESHELL-200-1e).
+///
+/// La pastille est mesuree par sa propre largeur intrinseque : son style
+/// reel (`StatusPill` et son fond), et non une copie de sa geometrie.
+class _PastilleEtPhrase extends MultiChildRenderObjectWidget {
+  const _PastilleEtPhrase({
+    required this.motLePlusLong,
+    required super.children,
+  }) : assert(children.length == 2, 'une pastille et une phrase');
+
+  /// La largeur du mot le plus long de la phrase, a l'echelle du texte.
+  final double motLePlusLong;
+
+  @override
+  _RenduPastilleEtPhrase createRenderObject(BuildContext context) =>
+      _RenduPastilleEtPhrase(motLePlusLong, Directionality.of(context));
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    _RenduPastilleEtPhrase renderObject,
+  ) {
+    renderObject
+      ..motLePlusLong = motLePlusLong
+      ..sens = Directionality.of(context);
+  }
+}
+
+class _DonneesPastilleEtPhrase extends ContainerBoxParentData<RenderBox> {}
+
+class _RenduPastilleEtPhrase extends RenderBox
+    with
+        ContainerRenderObjectMixin<RenderBox, _DonneesPastilleEtPhrase>,
+        RenderBoxContainerDefaultsMixin<RenderBox, _DonneesPastilleEtPhrase> {
+  _RenduPastilleEtPhrase(this._motLePlusLong, this._sens);
+
+  double _motLePlusLong;
+  set motLePlusLong(double valeur) {
+    if (valeur != _motLePlusLong) {
+      _motLePlusLong = valeur;
+      markNeedsLayout();
+    }
+  }
+
+  TextDirection _sens;
+  set sens(TextDirection valeur) {
+    if (valeur != _sens) {
+      _sens = valeur;
+      markNeedsLayout();
+    }
+  }
+
+  RenderBox get _pastille => firstChild!;
+  RenderBox get _phrase => lastChild!;
+
+  @override
+  void setupParentData(RenderBox child) {
+    if (child.parentData is! _DonneesPastilleEtPhrase) {
+      child.parentData = _DonneesPastilleEtPhrase();
+    }
+  }
+
+  /// Vrai quand pastille et phrase tiennent cote a cote dans [largeur].
+  bool _enRangee(double largeur) =>
+      _pastille.getMaxIntrinsicWidth(double.infinity) +
+          AppSpacing.md +
+          _motLePlusLong <=
+      largeur;
+
+  @override
+  double computeMinIntrinsicWidth(double height) =>
+      math.max(_pastille.getMinIntrinsicWidth(double.infinity), _motLePlusLong);
+
+  @override
+  double computeMaxIntrinsicWidth(double height) =>
+      _pastille.getMaxIntrinsicWidth(double.infinity) +
+      AppSpacing.md +
+      _phrase.getMaxIntrinsicWidth(double.infinity);
+
+  @override
+  double computeMinIntrinsicHeight(double width) => _hauteurPour(width);
+
+  @override
+  double computeMaxIntrinsicHeight(double width) => _hauteurPour(width);
+
+  double _hauteurPour(double largeur) {
+    if (_enRangee(largeur)) {
+      final double pastille = _pastille.getMaxIntrinsicWidth(double.infinity);
+      return math.max(
+        _pastille.getMinIntrinsicHeight(pastille),
+        _phrase.getMinIntrinsicHeight(largeur - pastille - AppSpacing.md),
+      );
+    }
+    return _pastille.getMinIntrinsicHeight(largeur) +
+        AppSpacing.sm +
+        _phrase.getMinIntrinsicHeight(largeur);
+  }
+
+  @override
+  Size computeDryLayout(covariant BoxConstraints constraints) =>
+      constraints.constrain(
+        Size(constraints.maxWidth, _hauteurPour(constraints.maxWidth)),
+      );
+
+  @override
+  void performLayout() {
+    final double largeur = constraints.maxWidth;
+    final _DonneesPastilleEtPhrase donneesPastille =
+        _pastille.parentData! as _DonneesPastilleEtPhrase;
+    final _DonneesPastilleEtPhrase donneesPhrase =
+        _phrase.parentData! as _DonneesPastilleEtPhrase;
+    final bool versLaDroite = _sens == TextDirection.ltr;
+    if (_enRangee(largeur)) {
+      final double pastille = _pastille.getMaxIntrinsicWidth(double.infinity);
+      _pastille.layout(
+        BoxConstraints(maxWidth: pastille),
+        parentUsesSize: true,
+      );
+      _phrase.layout(
+        BoxConstraints.tightFor(
+          width: largeur - _pastille.size.width - AppSpacing.md,
+        ),
+        parentUsesSize: true,
+      );
+      final double hauteur = math.max(
+        _pastille.size.height,
+        _phrase.size.height,
+      );
+      donneesPastille.offset = Offset(
+        versLaDroite ? 0 : largeur - _pastille.size.width,
+        (hauteur - _pastille.size.height) / 2,
+      );
+      donneesPhrase.offset = Offset(
+        versLaDroite ? _pastille.size.width + AppSpacing.md : 0,
+        (hauteur - _phrase.size.height) / 2,
+      );
+      size = constraints.constrain(Size(largeur, hauteur));
+      return;
+    }
+    _pastille.layout(BoxConstraints(maxWidth: largeur), parentUsesSize: true);
+    _phrase.layout(
+      BoxConstraints.tightFor(width: largeur),
+      parentUsesSize: true,
+    );
+    donneesPastille.offset = Offset(
+      versLaDroite ? 0 : largeur - _pastille.size.width,
+      0,
+    );
+    donneesPhrase.offset = Offset(0, _pastille.size.height + AppSpacing.sm);
+    size = constraints.constrain(
+      Size(
+        largeur,
+        _pastille.size.height + AppSpacing.sm + _phrase.size.height,
+      ),
+    );
+  }
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) =>
+      defaultHitTestChildren(result, position: position);
+
+  @override
+  void paint(PaintingContext context, Offset offset) =>
+      defaultPaint(context, offset);
+}

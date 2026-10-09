@@ -159,12 +159,13 @@ class AdminShell extends StatelessWidget {
     // PAGESHELL-200-1e (decide par delegation le 09/10) : la tete de la page
     // (titre, onglets et, des 600, Recherche, theme, cloche, compte) reste
     // fixe sous le bandeau, qui la pousse sans la recouvrir. `PageShell` le
-    // sait ([ActionsEnteteCoquille.sousBandeau]) et ne fait defiler sa tete
-    // que si elle prend plus de la moitie de la place restante (Interface
-    // guidee a 390x844 sur le Journal), sous 360 de haut, ou a texte agrandi
-    // (au-dela de 130 % sur une page defilante, 200 % sur telephone : la
-    // page defile pour le reste, PAGESHELL-200-1d). Le bandeau, lui, ne
-    // bouge jamais.
+    // sait ([ActionsEnteteCoquille.sousBandeau]) : la presence du bandeau ne
+    // fait jamais defiler la tete. Elle ne defile que si elle ne laisse plus
+    // au corps une cible tactile (d'abord son complement, la chaine et les
+    // filtres du Journal ; le titre et les onglets en dernier), dans une
+    // fenetre de moins de 360 de haut, ou a texte agrandi (au-dela de 130 %
+    // sur une page defilante, 200 % sur telephone : la page defile pour le
+    // reste, PAGESHELL-200-1d). Le bandeau, lui, ne bouge jamais.
     Widget contenu({required bool avecActions}) {
       final Widget page = ActionsEnteteCoquille(
         actions: <Widget>[
@@ -883,11 +884,6 @@ class _BarreMobileState extends State<_BarreMobile> {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    // AD-11 (1.4.4) : au-dela de 150 % de texte, le champ en ligne n'a plus
-    // la place de montrer son indication entiere entre menu et compte ; la
-    // barre prend alors le bouton qui ouvre le meme champ en feuille (motif
-    // deja servi a partir de 600). Rendu inchange a 100 %.
-    final bool texteAgrandi = MediaQuery.textScalerOf(context).scale(1) > 1.5;
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -901,64 +897,90 @@ class _BarreMobileState extends State<_BarreMobile> {
             horizontal: AppSpacing.lg,
             vertical: AppSpacing.sm,
           ),
-          child: Row(
-            children: <Widget>[
-              Builder(
-                builder: (BuildContext contexte) => _BoutonIcone(
-                  icone: AppIcons.menu.repos,
-                  libelle: t.nav.admin.menu,
-                  onPress: () => Scaffold.of(contexte).openDrawer(),
-                ),
-              ),
-              Ecart.hSm,
-              if (texteAgrandi) ...<Widget>[
-                const Spacer(),
-                _BoutonRecherche(onRecherche: widget.onRecherche),
-              ] else
-                Expanded(
-                  // ALERTE-1b (lecon 8) : avec la cloche, le champ peut ne
-                  // plus avoir la place du mot le plus long de son
-                  // indication (« Rec / her… » en Interface guidee a 390,
-                  // a 320 en taille normale). Il cede alors la place au
-                  // bouton qui ouvre le meme champ en feuille.
-                  child: LayoutBuilder(
-                    builder: (BuildContext contexte, BoxConstraints c) =>
-                        c.maxWidth < _largeurChampUtile(contexte)
-                        ? Align(
-                            alignment: AlignmentDirectional.centerEnd,
-                            child: _BoutonRecherche(
-                              onRecherche: widget.onRecherche,
-                            ),
-                          )
-                        : ConstrainedBox(
-                            constraints: const BoxConstraints(
-                              maxWidth: AppPage.largeurFormulaire,
-                            ),
-                            child: TextField(
-                              controller: _recherche,
-                              onSubmitted: _lancer,
-                              decoration: InputDecoration(
-                                isDense: true,
-                                hintText: t.nav.admin.rechercheIndication,
-                                // AD-11 (1.4.4) : a 200 %, l'indication passe
-                                // a la ligne au lieu d'etre coupee.
-                                hintMaxLines: 2,
-                                prefixIcon: Icon(AppIcons.recherche.repos),
-                              ),
-                            ),
-                          ),
-                  ),
-                ),
-              Ecart.hSm,
-              if (widget.cloche case final Widget cloche) ...<Widget>[
-                cloche,
-                Ecart.hSm,
-              ],
-              _BoutonCompte(onCompte: widget.onCompte),
-            ],
+          // PAGESHELL-200-1e (decide par delegation le 09/10) : en Interface
+          // guidee, menu, recherche, cloche et compte prennent chacun une
+          // cible de 72 ; a 320 px, ils ne tiennent plus avec leurs ecarts de
+          // 8 (24 de debordement). Les ecarts tombent alors : les cibles se
+          // touchent, leurs icones restent espacees de plus de 48.
+          child: LayoutBuilder(
+            builder: (BuildContext _, BoxConstraints c) {
+              final int boutons = widget.cloche == null ? 3 : 4;
+              final bool serre =
+                  c.maxWidth <
+                  boutons * AppMetriques.of(context).cibleTactile +
+                      (boutons - 1) * AppSpacing.sm;
+              return _rangee(serre ? const SizedBox.shrink() : Ecart.hSm);
+            },
           ),
         ),
       ),
     );
   }
+
+  /// Menu, recherche, cloche et compte, separes par [ecart].
+  Widget _rangee(Widget ecart) => Builder(
+    builder: (BuildContext context) {
+      // AD-11 (1.4.4) : au-dela de 150 % de texte, le champ en ligne n'a
+      // plus la place de montrer son indication entiere entre menu et
+      // compte ; la barre prend alors le bouton qui ouvre le meme champ en
+      // feuille (motif deja servi a partir de 600). Rendu inchange a 100 %.
+      final bool texteAgrandi = MediaQuery.textScalerOf(context).scale(1) > 1.5;
+      return Row(
+        children: <Widget>[
+          Builder(
+            builder: (BuildContext contexte) => _BoutonIcone(
+              icone: AppIcons.menu.repos,
+              libelle: t.nav.admin.menu,
+              onPress: () => Scaffold.of(contexte).openDrawer(),
+            ),
+          ),
+          ecart,
+          if (texteAgrandi) ...<Widget>[
+            const Spacer(),
+            _BoutonRecherche(onRecherche: widget.onRecherche),
+          ] else
+            Expanded(
+              // ALERTE-1b (lecon 8) : avec la cloche, le champ peut ne
+              // plus avoir la place du mot le plus long de son
+              // indication (« Rec / her… » en Interface guidee a 390,
+              // a 320 en taille normale). Il cede alors la place au
+              // bouton qui ouvre le meme champ en feuille.
+              child: LayoutBuilder(
+                builder: (BuildContext contexte, BoxConstraints c) =>
+                    c.maxWidth < _largeurChampUtile(contexte)
+                    ? Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: _BoutonRecherche(
+                          onRecherche: widget.onRecherche,
+                        ),
+                      )
+                    : ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxWidth: AppPage.largeurFormulaire,
+                        ),
+                        child: TextField(
+                          controller: _recherche,
+                          onSubmitted: _lancer,
+                          decoration: InputDecoration(
+                            isDense: true,
+                            hintText: t.nav.admin.rechercheIndication,
+                            // AD-11 (1.4.4) : a 200 %, l'indication passe
+                            // a la ligne au lieu d'etre coupee.
+                            hintMaxLines: 2,
+                            prefixIcon: Icon(AppIcons.recherche.repos),
+                          ),
+                        ),
+                      ),
+              ),
+            ),
+          ecart,
+          if (widget.cloche case final Widget cloche) ...<Widget>[
+            cloche,
+            ecart,
+          ],
+          _BoutonCompte(onCompte: widget.onCompte),
+        ],
+      );
+    },
+  );
 }

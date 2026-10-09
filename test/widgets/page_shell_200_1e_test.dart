@@ -20,6 +20,17 @@
 // (5) Journal admin : bandeau de la chaine a 320 px texte x2 (17 px de
 //     debordement), et Journal en Interface guidee a 390x684 sur la vraie
 //     coque (22 px de debordement en bas).
+//
+// Reprise apres refus de la relecture adverse (09/10) :
+// (1 bis) la vraie coque admin (demonstration, alerte urgente ouverte) :
+//     Journal, Regles et Dossiers ; titre, onglets et actions fixes en
+//     defilant, a taille de texte normale, compact, rail et large, LTR et
+//     RTL, standard et Interface guidee (800x600, 1024x768, 1440x700,
+//     1440x500, 1440x900...). Le Journal y faisait defiler toute sa tete.
+// (1 ter) barre mobile admin a 320x640, texte x2, Interface guidee, avec
+//     la cloche : 24 px de debordement.
+// (5 bis) la phrase du bandeau de la chaine ne se coupe plus au trait
+//     d'union de « ci-dessous », sur l'ecran entier.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,7 +50,10 @@ import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/bascule_theme.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
+import 'package:rewayah_academy/core/widgets/sous_navigation_domaine.dart';
+import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/admin_journal/journal_page.dart';
+import 'package:rewayah_academy/features/alertes/bandeau_alerte_urgente.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 
@@ -394,8 +408,22 @@ void main() {
           );
           expect(tester.takeException(), isNull);
           verifierAucunMotCoupe(tester, find.byType(BandeauChaineJournal));
-          if (echelle == 2) {
-            expect(find.byKey(BandeauChaineJournal.clePile), findsOneWidget);
+          // La pastille passe au-dessus de la phrase, au debut de la ligne.
+          final Rect pastille = tester.getRect(find.byType(StatusPill));
+          final Rect phrase = tester.getRect(
+            find
+                .descendant(
+                  of: find.byType(BandeauChaineJournal),
+                  matching: find.byType(Text),
+                )
+                .last,
+          );
+          expect(phrase.top, greaterThanOrEqualTo(pastille.bottom));
+          final Rect carte = tester.getRect(find.byType(BandeauChaineJournal));
+          if (sens == TextDirection.ltr) {
+            expect(pastille.left, lessThan(carte.left + 32));
+          } else {
+            expect(pastille.right, greaterThan(carte.right - 32));
           }
         });
       }
@@ -434,15 +462,216 @@ void main() {
           await tester.pump(const Duration(milliseconds: 100));
         }
         expect(tester.takeException(), isNull);
+        final Rect onglets = tester.getRect(find.byType(SousNavigationDomaine));
         final ScrollableState page = _defileur(tester);
         page.position.jumpTo(page.position.maxScrollExtent);
         await tester.pump();
         expect(tester.takeException(), isNull);
         // Le corps (l'etat d'erreur de la demonstration) est atteint et se
-        // touche : une tete fixe plus haute que la vue l'aurait coupe.
+        // touche : une tete fixe plus haute que la vue l'aurait coupe. Le
+        // titre et les onglets restent fixes ; la chaine et les filtres
+        // defilent avec le journal (PAGESHELL-200-1e, reprise).
+        await tester.ensureVisible(find.text(t.commun.reessayer));
+        await tester.pump();
+        expect(
+          tester.getRect(find.byType(SousNavigationDomaine)),
+          onglets,
+          reason: 'onglets fixes',
+        );
         expect(find.text(t.commun.reessayer).hitTestable(), findsOneWidget);
         verifierEcranSansMotCoupe(tester);
       });
     }
   });
+
+  group('(1 bis) vraie coque admin, alerte ouverte : tete fixe en defilant', () {
+    const Map<String, String> pages = <String, String>{
+      'Journal': Routes.adminSecuriteAuditJournal,
+      'Regles': Routes.adminConfigurationRegles,
+      'Dossiers': Routes.adminPersonnesDossiers,
+    };
+    for (final MapEntry<String, String> page in pages.entries) {
+      for (final Size taille in const <Size>[
+        Size(390, 844),
+        Size(320, 640),
+        Size(800, 600),
+        Size(1024, 768),
+        Size(1440, 700),
+        Size(1440, 500),
+        Size(1440, 900),
+      ]) {
+        for (final bool guidee in <bool>[false, true]) {
+          // Dossiers en Interface guidee a 320x640 : la tete (titre,
+          // sous-titre, onglets) est plus haute que la place sous le
+          // bandeau ; elle defile, la page ne deborde pas (decide par
+          // delegation le 09/10, voir la fiche).
+          if (page.key == 'Dossiers' && guidee && taille.width == 320) {
+            continue;
+          }
+          for (final TextDirection sens in TextDirection.values) {
+            testWidgets('${page.key} ${taille.width.toInt()}x'
+                '${taille.height.toInt()}, ${guidee ? 'guidee' : 'standard'}, '
+                '${sens.name}', (WidgetTester tester) async {
+              _vue(tester, taille);
+              await _monterCoque(
+                tester,
+                page.value,
+                sens: sens,
+                guidee: guidee,
+                alertes: true,
+              );
+              expect(tester.takeException(), isNull);
+              final Finder entete = find.byType(EntetePage);
+              final Finder onglets = find.byType(SousNavigationDomaine);
+              final Finder theme = find.byType(BasculeTheme);
+              final Rect avantEntete = tester.getRect(entete);
+              final Rect avantOnglets = tester.getRect(onglets);
+              final bool actions = taille.width >= 600;
+              final Rect? avantTheme = actions ? tester.getRect(theme) : null;
+              // Le bandeau pousse la tete, sans la recouvrir.
+              final Rect bandeau = tester.getRect(
+                find.byType(BandeauAlerteUrgente),
+              );
+              expect(avantEntete.top, greaterThanOrEqualTo(bandeau.bottom));
+              expect(avantOnglets.bottom, lessThanOrEqualTo(taille.height));
+              if (avantTheme != null) {
+                expect(avantTheme.top, greaterThanOrEqualTo(bandeau.bottom));
+              }
+
+              final ScrollableState? defileur = _defileurEventuel(tester);
+              if (defileur != null) {
+                defileur.position.jumpTo(defileur.position.maxScrollExtent);
+                await tester.pump();
+                expect(tester.takeException(), isNull);
+              }
+              expect(
+                tester.getRect(find.byType(BandeauAlerteUrgente)),
+                bandeau,
+                reason: 'bandeau fige',
+              );
+              expect(tester.getRect(entete), avantEntete, reason: 'titre');
+              expect(tester.getRect(onglets), avantOnglets, reason: 'onglets');
+              if (avantTheme != null) {
+                expect(
+                  tester.getRect(theme),
+                  avantTheme,
+                  reason: 'Recherche, theme, cloche, compte',
+                );
+              }
+            });
+          }
+        }
+      }
+    }
+  });
+
+  group('(1 ter) barre mobile admin, 320x640, texte x2, guidee, cloche', () {
+    for (final String route in const <String>[
+      Routes.adminSecuriteAuditJournal,
+      Routes.adminConfigurationRegles,
+      Routes.adminPersonnesDossiers,
+    ]) {
+      for (final TextDirection sens in TextDirection.values) {
+        testWidgets('$route, ${sens.name} : aucun debordement', (
+          WidgetTester tester,
+        ) async {
+          _vue(tester, const Size(320, 640), echelle: 2);
+          await _monterCoque(
+            tester,
+            route,
+            sens: sens,
+            guidee: true,
+            alertes: true,
+          );
+          expect(tester.takeException(), isNull);
+        });
+      }
+    }
+  });
+
+  group('(5 bis) Journal : aucun mot coupe sur l\'ecran entier', () {
+    for (final (Size, double, bool) cas in const <(Size, double, bool)>[
+      (Size(390, 844), 1, false),
+      (Size(390, 684), 1, false),
+      (Size(320, 640), 1, false),
+      (Size(390, 844), 2, false),
+      (Size(320, 640), 2, false),
+    ]) {
+      for (final TextDirection sens in TextDirection.values) {
+        testWidgets('${cas.$1.width.toInt()}x${cas.$1.height.toInt()}, texte '
+            'x${cas.$2}, ${sens.name}', (WidgetTester tester) async {
+          _vue(tester, cas.$1, echelle: cas.$2);
+          await _monterCoque(
+            tester,
+            Routes.adminSecuriteAuditJournal,
+            sens: sens,
+            guidee: cas.$3,
+            alertes: true,
+          );
+          expect(tester.takeException(), isNull);
+          verifierEcranSansMotCoupe(tester);
+        });
+      }
+    }
+  });
+}
+
+/// La vraie coque admin (demonstration), sur [route].
+Future<void> _monterCoque(
+  WidgetTester tester,
+  String route, {
+  required TextDirection sens,
+  required bool guidee,
+  required bool alertes,
+}) async {
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: <Override>[
+        ...surchargesDemoAdmin(environnement: 'staging', avecAlertes: alertes),
+        if (guidee)
+          modeAccessibiliteActifProvider.overrideWith((Ref _) => true),
+      ],
+      child: TranslationProvider(
+        child: RewayahApp(
+          builder: (BuildContext context, Widget? child) => Directionality(
+            textDirection: sens,
+            child: RepereDemonstration(child: child),
+          ),
+        ),
+      ),
+    ),
+  );
+  ProviderScope.containerOf(tester.element(find.byType(RewayahApp)))
+      .read(routeurProvider)
+      .go(route);
+  for (int i = 0; i < 10; i++) {
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+}
+
+/// Le defileur vertical le plus haut sous `PageShell` qui a quelque chose a
+/// defiler, ou nul quand la page tient dans la vue.
+ScrollableState? _defileurEventuel(WidgetTester tester) {
+  final List<ScrollableState> candidats = tester
+      .stateList<ScrollableState>(
+        find.descendant(
+          of: find.byType(PageShell),
+          matching: find.byType(Scrollable),
+        ),
+      )
+      .where(
+        (ScrollableState s) =>
+            s.position.axis == Axis.vertical &&
+            s.position.hasContentDimensions &&
+            s.position.maxScrollExtent > 0,
+      )
+      .toList();
+  if (candidats.isEmpty) {
+    return null;
+  }
+  double haut(ScrollableState s) => tester.getRect(find.byWidget(s.widget)).top;
+  candidats.sort(
+    (ScrollableState a, ScrollableState b) => haut(a).compareTo(haut(b)),
+  );
+  return candidats.first;
 }
