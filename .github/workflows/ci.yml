@@ -52,10 +52,6 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b11_student_concern.sql
 
-      - name: Scénarios B-13 (admin suspendu)
-        shell: bash
-        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b13_admin_suspended.sql
-
       - name: Scénarios B-14 (état partagé)
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b14_shared_state.sql
@@ -76,6 +72,10 @@ jobs:
       - name: Scenarios d'acceptation SQL des etapes 1 et 3
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_etape3.sql
+
+      - name: Scénarios B-13 (admin suspendu)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b13_admin_suspended.sql
 
       # Disponibilites communes aux deux roles, affectation durable et son
       # plafond, regles par eleve et leur immuabilite, chevauchement de seances,
