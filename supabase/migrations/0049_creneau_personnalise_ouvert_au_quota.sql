@@ -76,6 +76,94 @@ GRANT SELECT (
   duree_minutes, programme_niveau_id, etat, publiee_at
 ) ON public.offres_horaires TO authenticated, agent_ro;
 
+CREATE OR REPLACE FUNCTION public.choisir_offre_horaire(
+  p_membre_id uuid,
+  p_offre_id uuid,
+  p_fuseau_vue text
+)
+RETURNS uuid
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = ''
+AS $function$
+DECLARE
+  v_id uuid;
+  v_compatible record;
+  v_demande public.demandes_creneau_personnalise%rowtype;
+  v_demande_id uuid;
+BEGIN
+  IF NOT coalesce(public.peut_decrire_apprenant(p_membre_id), false) THEN
+    RAISE EXCEPTION 'ce profil n''est pas le votre ni celui de votre foyer';
+  END IF;
+
+  SELECT * INTO v_demande
+    FROM public.demandes_creneau_personnalise
+   WHERE eleve_id = p_membre_id
+     AND etat = 'en_attente_quota';
+  IF FOUND THEN
+    v_demande_id := v_demande.id;
+    PERFORM pg_catalog.pg_advisory_xact_lock(
+      pg_catalog.hashtextextended(
+        v_demande.type_public || '|' || v_demande.langue_code || '|' ||
+        v_demande.fuseau_iana || '|' ||
+        array_to_string(v_demande.jours, ',') || '|' ||
+        v_demande.heure_locale::text,
+        0
+      )
+    );
+    SELECT * INTO v_demande
+      FROM public.demandes_creneau_personnalise
+     WHERE id = v_demande_id
+       AND etat = 'en_attente_quota'
+     FOR UPDATE;
+  END IF;
+
+  SELECT * INTO v_compatible
+    FROM public.offres_compatibles(p_membre_id, p_fuseau_vue) o
+   WHERE o.offre_id = p_offre_id;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'cette offre n''est pas compatible avec ce profil, ou n''est plus publiee';
+  END IF;
+
+  BEGIN
+    INSERT INTO public.intentions_horaire
+      (eleve_id, offre_id, fuseau_affiche, heure_affichee, jours_affiches, created_by)
+    VALUES
+      (p_membre_id, p_offre_id, p_fuseau_vue,
+       v_compatible.heures_locales[1], v_compatible.jours_locaux, auth.uid())
+    RETURNING id INTO v_id;
+  EXCEPTION
+    WHEN unique_violation THEN
+      RAISE EXCEPTION 'cet apprenant a deja une preference horaire enregistree';
+  END;
+
+  UPDATE public.student_profiles
+     SET diagnostic_statut = 'a_planifier'
+   WHERE profile_id = p_membre_id
+     AND diagnostic_statut = 'non_requis';
+
+  IF v_demande_id IS NOT NULL AND v_demande.id IS NOT NULL THEN
+    UPDATE public.demandes_creneau_personnalise
+       SET etat = 'retiree', retiree_at = now(), offre_id = NULL
+     WHERE id = v_demande_id
+       AND etat = 'en_attente_quota'
+    RETURNING * INTO v_demande;
+    IF FOUND THEN
+      PERFORM public.log_sensitive_access(
+        'creneau_personnalise_retire_choix_offre',
+        'demandes_creneau_personnalise', v_demande.id::text,
+        jsonb_build_object('eleve_id', p_membre_id, 'offre_id', p_offre_id)
+      );
+    END IF;
+  END IF;
+
+  PERFORM public.log_sensitive_access(
+    'intention_horaire_enregistree', 'intentions_horaire', v_id::text,
+    jsonb_build_object('eleve_id', p_membre_id, 'offre_id', p_offre_id,
+                       'fuseau_affiche', p_fuseau_vue)
+  );
+  RETURN v_id;
+END;
+$function$;
+
 -- La demande n'expose aucun vivier. Le retour ne révèle que l'état de l'appelant.
 CREATE OR REPLACE FUNCTION public.demander_creneau_personnalise(
   p_membre_id uuid,
@@ -228,7 +316,9 @@ BEGIN
      AND jours = v_jours
      AND heure_locale = p_heure_locale
      AND etat = 'publiee'
-   LIMIT 1;
+   ORDER BY id
+   LIMIT 1
+   FOR UPDATE;
 
   IF v_offre IS NOT NULL THEN
     UPDATE public.demandes_creneau_personnalise
@@ -242,9 +332,26 @@ BEGIN
     RETURN jsonb_build_object('etat', 'offre_ouverte', 'offre_id', v_offre);
   END IF;
 
+  -- Une offre retirée ne doit pas être recréée par les demandes familiales.
+  IF EXISTS (
+    SELECT 1
+      FROM public.offres_horaires o
+     WHERE o.type_public = v_type
+       AND o.langue_code = v_langue
+       AND o.fuseau_iana = p_fuseau_iana
+       AND o.jours = v_jours
+       AND o.heure_locale = p_heure_locale
+       AND o.etat = 'retiree'
+  ) THEN
+    RETURN jsonb_build_object('etat', 'en_attente_quota');
+  END IF;
+
   SELECT count(*)::integer INTO v_vivier
     FROM public.demandes_creneau_personnalise d
     JOIN public.profiles p ON p.id = d.eleve_id
+    JOIN public.households h ON h.id = p.household_id
+                           AND h.status = 'active'
+                           AND h.deleted_at IS NULL
     JOIN public.student_profiles sp ON sp.profile_id = d.eleve_id
     JOIN public.cohortes_age c ON c.code = sp.cohorte
                                AND c.type_public = d.type_public
@@ -260,17 +367,22 @@ BEGIN
      AND (p.access_until IS NULL OR p.access_until > now())
      AND sp.deleted_at IS NULL
      AND sp.cohorte IS NOT NULL
-     AND sp.langue_cours = v_langue;
+     AND sp.langue_cours = v_langue
+     AND NOT EXISTS (
+       SELECT 1 FROM public.intentions_horaire i
+        WHERE i.eleve_id = d.eleve_id
+          AND i.etat <> 'retiree'
+     );
 
   IF v_vivier >= v_capacite THEN
     -- Une offre identique déjà publiée est réutilisée. Un brouillon existant
     -- n'est jamais publié par une demande familiale.
     INSERT INTO public.offres_horaires
       (type_public, langue_code, fuseau_iana, jours, heure_locale,
-       duree_minutes, etat, created_by, publiee_at, publiee_par)
+       duree_minutes, etat, created_by, publiee_at, publiee_par, origine)
     VALUES
       (v_type, v_langue, p_fuseau_iana, v_jours, p_heure_locale,
-       v_duree, 'publiee', auth.uid(), now(), auth.uid())
+       v_duree, 'publiee', NULL, now(), NULL, 'quota_familial')
     ON CONFLICT DO NOTHING
     RETURNING id INTO v_offre;
 
@@ -294,7 +406,12 @@ BEGIN
          AND langue_code = v_langue
          AND fuseau_iana = p_fuseau_iana
          AND jours = v_jours
-         AND heure_locale = p_heure_locale;
+         AND heure_locale = p_heure_locale
+         AND NOT EXISTS (
+           SELECT 1 FROM public.intentions_horaire i
+            WHERE i.eleve_id = demandes_creneau_personnalise.eleve_id
+              AND i.etat <> 'retiree'
+         );
       PERFORM public.log_sensitive_access(
         'creneau_personnalise_ouvert', 'offres_horaires', v_offre::text,
         jsonb_build_object('type_public', v_type, 'langue_code', v_langue,
@@ -320,7 +437,7 @@ RETURNS jsonb
 LANGUAGE sql STABLE SECURITY DEFINER SET search_path = ''
 AS $function$
   SELECT CASE
-    WHEN NOT public.peut_decrire_apprenant(p_membre_id) THEN NULL
+    WHEN NOT coalesce(public.peut_decrire_apprenant(p_membre_id), false) THEN NULL
     ELSE (
       SELECT jsonb_build_object(
         'etat', d.etat,
@@ -344,15 +461,41 @@ LANGUAGE plpgsql SECURITY DEFINER SET search_path = ''
 AS $function$
 DECLARE
   v_id uuid;
+  v_demande public.demandes_creneau_personnalise%rowtype;
 BEGIN
   IF NOT coalesce(public.peut_decrire_apprenant(p_membre_id), false) THEN
     RAISE EXCEPTION 'ce profil n''est pas le votre ni celui de votre foyer';
   END IF;
 
+  SELECT * INTO v_demande
+    FROM public.demandes_creneau_personnalise
+   WHERE eleve_id = p_membre_id
+     AND etat IN ('en_attente_quota', 'offre_ouverte');
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'aucune demande de creneau personnalise active';
+  END IF;
+
+  PERFORM pg_catalog.pg_advisory_xact_lock(
+    pg_catalog.hashtextextended(
+      v_demande.type_public || '|' || v_demande.langue_code || '|' ||
+      v_demande.fuseau_iana || '|' ||
+      array_to_string(v_demande.jours, ',') || '|' ||
+      v_demande.heure_locale::text,
+      0
+    )
+  );
+  SELECT * INTO v_demande
+    FROM public.demandes_creneau_personnalise
+   WHERE id = v_demande.id
+     AND etat IN ('en_attente_quota', 'offre_ouverte')
+   FOR UPDATE;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'aucune demande de creneau personnalise active';
+  END IF;
+
   UPDATE public.demandes_creneau_personnalise
      SET etat = 'retiree', retiree_at = now(), offre_id = NULL
-   WHERE eleve_id = p_membre_id
-     AND etat IN ('en_attente_quota', 'offre_ouverte')
+   WHERE id = v_demande.id
   RETURNING id INTO v_id;
 
   IF v_id IS NULL THEN
@@ -365,7 +508,6 @@ BEGIN
   );
 END;
 $function$;
-
 REVOKE EXECUTE ON FUNCTION public.retirer_creneau_personnalise(uuid)
   FROM PUBLIC, anon, agent_ro;
 GRANT EXECUTE ON FUNCTION public.retirer_creneau_personnalise(uuid)
