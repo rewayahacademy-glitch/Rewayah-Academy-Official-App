@@ -58,6 +58,7 @@ Future<void> monterCoupeMots4(
   double largeur = 320,
   double hauteur = 4000,
   double echelle = 2,
+  ThemeMode theme = ThemeMode.light,
 }) async {
   LocaleSettings.setLocaleSync(langue);
   addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
@@ -66,6 +67,7 @@ Future<void> monterCoupeMots4(
     hoteCapture(
       construire(),
       surcharges: surcharges,
+      themeMode: theme,
       echelleTexte: echelle,
       interfaceMode: interface,
     ),

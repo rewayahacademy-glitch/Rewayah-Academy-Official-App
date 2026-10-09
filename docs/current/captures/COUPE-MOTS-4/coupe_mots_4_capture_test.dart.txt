@@ -10,6 +10,9 @@
 // (3) identifiant de Comptes ; (4) « Pourquoi ce changement ? ».
 // 320 px texte x2, francais (LTR) et arabe (RTL) ; 390 et 1440 pour la
 // non-regression des cartes.
+// Reprise (relecture adverse) : feuille des regles d'un eleve (« Plateforme
+// : 60 min »), depot de la piece, compte rendu et inscription en Interface
+// guidee, en clair et en sombre ; filtre `--plain-name reprise`.
 
 import 'dart:io';
 
@@ -18,19 +21,26 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/service_comptes.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
+import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/dossier/selecteur_fichier.dart';
+import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/widgets/choice_card_group.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/admin_comptes/comptes_page.dart';
+import 'package:rewayah_academy/features/admin_demandes/demandes_page.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle_page.dart';
 import 'package:rewayah_academy/features/controleur/observation_controle.dart';
+import 'package:rewayah_academy/features/dossier/depot_piece_page.dart';
+import 'package:rewayah_academy/features/inscription/etapes/usage_etape.dart';
 import 'package:rewayah_academy/features/reglages_enfant/reglages_enfant_page.dart';
 
 import '../features/coupe_mots_4/support_coupe_mots_4.dart';
@@ -224,6 +234,116 @@ void main() {
         await tester.pumpAndSettle();
         debugPrint(
           'PNG ${await capturerVue(tester, '${_prefixe}_reglages_motif_guidee_320x2_$l')}',
+        );
+      });
+
+      for (final ThemeMode theme in <ThemeMode>[
+        ThemeMode.light,
+        ThemeMode.dark,
+      ]) {
+        final String nuance = theme == ThemeMode.dark ? '_sombre' : '';
+
+        testWidgets('reprise feuille des regles $l$nuance', (
+          WidgetTester tester,
+        ) async {
+          await monterCoupeMots4(
+            tester,
+            () => const Scaffold(
+              body: FeuilleRegles(profilId: 'e1', prenom: 'Aissatou'),
+            ),
+            langue: langue,
+            theme: theme,
+            hauteur: 1400,
+            surcharges: <Override>[
+              serviceReglesProvider.overrideWithValue(
+                FauxServiceRegles()
+                  ..parProfil['e1'] = const <RegleProfil>[
+                    RegleProfil(
+                      cle: CleRegle.dureeSeance,
+                      valeurEffective: 45,
+                      valeurPlateforme: 60,
+                    ),
+                    RegleProfil(
+                      cle: CleRegle.minimumPayable,
+                      valeurEffective: 45,
+                      valeurPlateforme: 45,
+                    ),
+                  ],
+              ),
+            ],
+          );
+          await tester.pumpAndSettle();
+          debugPrint(
+            'PNG ${await capturerVue(tester, '${_prefixe}_feuille_regles_320x2_$l$nuance')}',
+          );
+        });
+
+        testWidgets('reprise depot de la piece guidee $l$nuance', (
+          WidgetTester tester,
+        ) async {
+          await monterCoupeMots4(
+            tester,
+            () => const DepotPiecePage(),
+            langue: langue,
+            theme: theme,
+            interface: InterfaceMode.enfant,
+            hauteur: 2000,
+            surcharges: <Override>[
+              serviceDossierProvider.overrideWithValue(FauxServiceDossier()),
+              selecteurFichierProvider.overrideWithValue(
+                FauxSelecteurFichier(null),
+              ),
+            ],
+          );
+          await tester.pumpAndSettle();
+          debugPrint(
+            'PNG ${await capturerVue(tester, '${_prefixe}_depot_piece_guidee_320x2_$l$nuance')}',
+          );
+        });
+      }
+
+      testWidgets('reprise compte rendu guidee $l', (
+        WidgetTester tester,
+      ) async {
+        await monterCoupeMots4(
+          tester,
+          () => CompteRenduControlePage(seanceId: _visite.seanceId),
+          langue: langue,
+          interface: InterfaceMode.enfant,
+          hauteur: 2400,
+          surcharges: <Override>[
+            visitesObserveesProvider.overrideWith(
+              () => VisitesObservees(<String, CompteRenduEnSuspens>{
+                _visite.seanceId: _visite,
+              }),
+            ),
+            envoiCompteRenduProvider.overrideWithValue(_Envoi()),
+          ],
+        );
+        await tester.pumpAndSettle();
+        debugPrint(
+          'PNG ${await capturerVue(tester, '${_prefixe}_compte_rendu_guidee_320x2_$l')}',
+        );
+      });
+
+      testWidgets('reprise inscription usage guidee $l', (
+        WidgetTester tester,
+      ) async {
+        await monterCoupeMots4(
+          tester,
+          () => const UsageEtape(),
+          langue: langue,
+          interface: InterfaceMode.enfant,
+          hauteur: 1600,
+          surcharges: <Override>[
+            serviceDossierProvider.overrideWithValue(FauxServiceDossier()),
+            sourceSessionProvider.overrideWithValue(FausseSourceSession()),
+            serviceAuthProvider.overrideWithValue(FauxServiceAuth()),
+          ],
+        );
+        await tester.pumpAndSettle();
+        debugPrint(
+          'PNG ${await capturerVue(tester, '${_prefixe}_inscription_usage_guidee_320x2_$l')}',
         );
       });
     }
