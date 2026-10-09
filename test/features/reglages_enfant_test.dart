@@ -45,6 +45,10 @@ Affectation _affectation({String eleveId = 'e1'}) => Affectation(
   depuis: DateTime(2026, 9, 1),
 );
 
+/// L'erreur affichee sous le champ du motif, ou `null`.
+String? _erreurDuMotif(WidgetTester tester) =>
+    tester.widget<TextField>(find.byType(TextField)).decoration?.errorText;
+
 /// Une fenetre haute : une carte d'eleve porte un renvoi et trois demandes,
 /// et un `ListView` ne construit pas ce qui n'est pas visible.
 void _fenetreHaute(WidgetTester tester) {
@@ -279,13 +283,26 @@ void main() {
         find.text(t.tuteur.reglages.demandeTitreReaffectation(prenom: 'Amina')),
         findsOneWidget,
       );
-      // Sans motif, le bouton n'aboutit pas : la base refuse une demande sans
-      // lui, et l'ecran ne fait pas semblant.
+      // Sans motif, la demande ne part pas : la base refuse une demande sans
+      // lui. Mais le bouton n'est jamais grise (SUPERPOS-1b) : il est actif,
+      // et l'appui dit ce qui manque, en erreur sous le champ, et ramene le
+      // focus au champ. Contre-epreuve : sur l'ancien code, le bouton etait
+      // inerte (`onPress` nul) et rien ne passait en erreur.
       final Finder envoyer = find.widgetWithText(
         ActionPrincipale,
         t.tuteur.reglages.demandeEnvoyer,
       );
-      expect(tester.widget<ActionPrincipale>(envoyer).onPress, isNull);
+      expect(tester.widget<ActionPrincipale>(envoyer).onPress, isNotNull);
+      expect(_erreurDuMotif(tester), isNull);
+      expect(find.text(t.tuteur.reglages.demandeMotifRequis), findsOneWidget);
+      await tester.tap(envoyer);
+      await tester.pumpAndSettle();
+      expect(matching.demandes, isEmpty);
+      expect(_erreurDuMotif(tester), t.tuteur.reglages.demandeMotifRequis);
+      expect(
+        tester.widget<TextField>(find.byType(TextField)).focusNode?.hasFocus,
+        isTrue,
+      );
 
       await tester.enterText(find.byType(TextField), 'Horaire impossible');
       await tester.pumpAndSettle();
@@ -336,6 +353,19 @@ void main() {
         findsOneWidget,
       );
 
+      // Motif saisi, mais aucune duree choisie : l'appui dit qu'elle manque,
+      // rien ne part (SUPERPOS-1b ; contre-epreuve : sur l'ancien code, le
+      // bouton etait inerte et la phrase n'existait pas).
+      await tester.enterText(find.byType(TextField).first, 'Elle decroche');
+      await tester.pumpAndSettle();
+      expect(find.text(t.tuteur.reglages.demandeValeurRequise), findsNothing);
+      await tester.tap(
+        find.widgetWithText(ActionPrincipale, t.tuteur.reglages.demandeEnvoyer),
+      );
+      await tester.pumpAndSettle();
+      expect(matching.demandes, isEmpty);
+      expect(find.text(t.tuteur.reglages.demandeValeurRequise), findsOneWidget);
+
       await tester.tap(
         find.text(
           LibellesGroupe.valeurSeule(
@@ -343,7 +373,8 @@ void main() {
           ),
         ),
       );
-      await tester.enterText(find.byType(TextField).first, 'Elle decroche');
+      await tester.pumpAndSettle();
+      expect(find.text(t.tuteur.reglages.demandeValeurRequise), findsNothing);
       await tester.pumpAndSettle();
       await tester.tap(
         find.widgetWithText(ActionPrincipale, t.tuteur.reglages.demandeEnvoyer),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -260,7 +262,10 @@ class _Demandes extends ConsumerWidget {
 /// Meme forme que celle de `ENS-06` : un choix quand il y a une valeur a
 /// demander, un motif toujours, et une confirmation qui remplace le formulaire.
 /// **Le motif est obligatoire de bout en bout** : la base refuse une demande
-/// sans lui, et l'ecran ne rend pas le bouton tant qu'il manque.
+/// sans lui. Le bouton d'envoi n'est jamais grise (SUPERPOS-1b, decide par
+/// delegation le 09/10) : tant qu'il manque le motif, une phrase calme le dit
+/// sous le champ ; un appui sans motif la passe en erreur et ramene le focus
+/// au champ, un appui sans duree choisie dit qu'elle manque. Rien ne part.
 @visibleForTesting
 class FeuilleDemandeTuteur extends ConsumerStatefulWidget {
   /// Cree la feuille.
@@ -287,7 +292,12 @@ class FeuilleDemandeTuteur extends ConsumerStatefulWidget {
 
 class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
   final TextEditingController _motif = TextEditingController();
+  final FocusNode _focusMotif = FocusNode();
   int? _valeur;
+
+  /// Vrai apres un appui sur l'envoi alors qu'il manquait quelque chose :
+  /// ce qui manque se dit alors en erreur.
+  bool _tente = false;
   bool _enCours = false;
   String? _erreur;
   bool _envoyee = false;
@@ -304,7 +314,21 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
   @override
   void dispose() {
     _motif.dispose();
+    _focusMotif.dispose();
     super.dispose();
+  }
+
+  /// L'appui sur l'envoi : envoie quand la demande est complete, sinon dit
+  /// ce qui manque et ramene au champ du motif s'il est vide (K-59).
+  void _valider() {
+    if (!_pret) {
+      setState(() => _tente = true);
+      if (_motif.text.trim().isEmpty) {
+        _focusMotif.requestFocus();
+      }
+      return;
+    }
+    unawaited(_envoyer());
   }
 
   Future<void> _envoyer() async {
@@ -400,13 +424,30 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
                   );
                 }),
               ),
+              if (_tente && _valeur == null) ...<Widget>[
+                Ecart.vSm,
+                Text(
+                  t.tuteur.reglages.demandeValeurRequise,
+                  style: palette.inkAlert.applyTo(
+                    textes.bodySmall ?? const TextStyle(),
+                  ),
+                ),
+              ],
               Ecart.vMd,
             ],
             ZoneSaisie(
               controleur: _motif,
+              noeud: _focusMotif,
               libelle: t.tuteur.reglages.demandeMotif,
-              // Sans ceci, le bouton ne se reconstruit pas a la frappe et reste
-              // inerte alors que le motif est saisi (piege de l'etape 3).
+              // Le motif manquant se dit sous le champ : calmement tant qu'on
+              // n'a pas appuye, en erreur apres un appui sans lui.
+              explication: _motif.text.trim().isEmpty
+                  ? t.tuteur.reglages.demandeMotifRequis
+                  : null,
+              erreur: _tente && _motif.text.trim().isEmpty
+                  ? t.tuteur.reglages.demandeMotifRequis
+                  : null,
+              // La phrase sous le champ suit la frappe.
               onChanged: (String _) => setState(() {}),
               minLignes: 2,
             ),
@@ -419,18 +460,13 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
                 ),
               ),
             ],
-            if (_motif.text.trim().isEmpty) ...<Widget>[
-              Ecart.vSm,
-              Text(
-                t.tuteur.reglages.demandeMotifRequis,
-                style: textes.bodySmall,
-              ),
-            ],
             Ecart.vMd,
+            // Jamais grise : l'appui dit ce qui manque s'il manque quelque
+            // chose (SUPERPOS-1b).
             ActionPrincipale(
               libelle: t.tuteur.reglages.demandeEnvoyer,
               enCours: _enCours,
-              onPress: _pret ? _envoyer : null,
+              onPress: _valider,
             ),
           ],
         ],
