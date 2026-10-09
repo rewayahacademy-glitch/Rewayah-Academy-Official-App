@@ -81,6 +81,8 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$bienvenue$ar bienvenue = _Traductions$bienvenue$ar._(_root);
 	@override late final _Traductions$creneaux$ar creneaux = _Traductions$creneaux$ar._(_root);
 	@override late final _Traductions$disponibilites$ar disponibilites = _Traductions$disponibilites$ar._(_root);
+	@override late final _Traductions$controleur$ar controleur = _Traductions$controleur$ar._(_root);
+	@override late final _Traductions$agent$ar agent = _Traductions$agent$ar._(_root);
 }
 
 // Path: commun
@@ -1168,6 +1170,46 @@ class _Traductions$disponibilites$ar extends Traductions$disponibilites$fr {
 		'السبت',
 		'الأحد',
 	];
+}
+
+// Path: controleur
+class _Traductions$controleur$ar extends Traductions$controleur$fr {
+	_Traductions$controleur$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$controleur$historique$ar historique = _Traductions$controleur$historique$ar._(_root);
+	@override late final _Traductions$controleur$complement$ar complement = _Traductions$controleur$complement$ar._(_root);
+	@override late final _Traductions$controleur$compteRendu$ar compteRendu = _Traductions$controleur$compteRendu$ar._(_root);
+	@override late final _Traductions$controleur$observation$ar observation = _Traductions$controleur$observation$ar._(_root);
+	@override late final _Traductions$controleur$echanges$ar echanges = _Traductions$controleur$echanges$ar._(_root);
+	@override late final _Traductions$controleur$demo$ar demo = _Traductions$controleur$demo$ar._(_root);
+	@override late final _Traductions$controleur$acces$ar acces = _Traductions$controleur$acces$ar._(_root);
+	@override late final _Traductions$controleur$controle$ar controle = _Traductions$controleur$controle$ar._(_root);
+}
+
+// Path: agent
+class _Traductions$agent$ar extends Traductions$agent$fr {
+	_Traductions$agent$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'دخول موظف';
+	@override String get intro => 'تفتح هذه الصفحة التطبيق للقراءة فقط، بالرمز الذي سلّمته الأكاديمية.';
+	@override String get jeton => 'رمز المتابعة';
+	@override String get jetonExemple => 'rag_...';
+	@override String get entrer => 'فتح التطبيق';
+	@override String get ouverture => 'جارٍ الفتح';
+	@override String get refus => 'رُفض الرمز';
+	@override String get refusDetail => 'هذا الرمز غير معروف أو ملغى أو منتهي الصلاحية. اطلب رمزًا جديدًا من الأكاديمية.';
+	@override String get indisponible => 'الخدمة غير متاحة';
+	@override String get indisponibleDetail => 'لم تستجب عملية فتح الجلسة. أعد المحاولة بعد لحظة.';
+	@override String get reessayer => 'إعادة المحاولة';
+	@override String get bandeau => 'متابعة، للقراءة فقط';
+	@override String get bandeauMasque => 'الأسماء مخفية';
+	@override String bandeauExpire({required Object heure}) => 'حتى ⁨${heure}⁩';
 }
 
 // Path: commun.sections
@@ -4039,6 +4081,283 @@ class _Traductions$dossiers$decision$ar extends Traductions$dossiers$decision$fr
 	@override String get dejaTraite => 'عولج هذا الملف من قبل.';
 	@override String get conflit => 'عالج هذا الملف عضو آخر في الفريق.';
 	@override String nomComplet({required Object prenom, required Object nom}) => '⁨${prenom}⁩ ⁨${nom}⁩';
+}
+
+// Path: controleur.historique
+class _Traductions$controleur$historique$ar extends Traductions$controleur$historique$fr {
+	_Traductions$controleur$historique$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'السجل';
+	@override String get provisoire => 'هذه الشاشة قيد التحضير.';
+	@override String get envoye => 'أُرسل';
+	@override String get complementAjoute => 'أُضيفت تكملة';
+	@override String get aTerminer => 'للإنهاء';
+	@override String get filtreEtat => 'الحالة';
+	@override String get tousEtats => 'كل الحالات';
+	@override String duree({required Object minutes}) => '⁨${minutes}⁩ دقيقة من المتابعة';
+	@override String meta({required Object heure, required Object duree}) => '⁨${heure}⁩ · ⁨${duree}⁩';
+	@override String dateHeure({required Object date, required Object heure}) => '⁨${date}⁩، ⁨${heure}⁩';
+	@override String dateHeureAuteur({required Object date, required Object heure, required Object auteur}) => '⁨${date}⁩، ⁨${heure}⁩ · ⁨${auteur}⁩';
+	@override String ligne({required Object date, required Object classe, required Object enseignant, required Object duree, required Object statut}) => '⁨${date}⁩، ⁨${classe}⁩، ⁨${enseignant}⁩، ⁨${duree}⁩، ⁨${statut}⁩';
+	@override String get vide => 'لا مراقبة حتى الآن.';
+	@override String get videFiltres => 'لا مراقبة تطابق هذه المعايير.';
+	@override String resultats({required Object n}) => 'عمليات المراقبة المعروضة: ⁨${n}⁩';
+	@override String titreDetail({required Object classe, required Object date}) => '⁨${classe}⁩ · ⁨${date}⁩';
+	@override String get sectionMission => 'الفصل المراقَب';
+	@override String get sectionObservation => 'ملاحظة المراقب';
+	@override String get sectionComplements => 'التكملات';
+	@override String get sectionEchanges => 'المراسلات مع الإدارة';
+	@override String get cleClasse => 'الفصل';
+	@override String get cleEnseignant => 'المعلم';
+	@override String get cleDate => 'التاريخ';
+	@override String get cleDuree => 'مدة المتابعة';
+	@override String get cleElevesPresents => 'الحاضرون';
+	@override String get cleReponse => 'الرد';
+	@override String get sansComplement => 'لا تكملة.';
+	@override String get faitsIndisponibles => 'السجل التلقائي لهذه الزيارة (الساعات، الطلاب الحاضرون، إعادة الاتصال) لم يصل بعد: انتهت الحصة للتو أو انقطع الاتصال. سيظهر هنا بمجرد وصوله. باقي التقرير موثوق.';
+	@override String motif({required Object motif}) => 'السبب: ⁨${motif}⁩';
+	@override String get ajouterComplement => 'إضافة تكملة';
+}
+
+// Path: controleur.complement
+class _Traductions$controleur$complement$ar extends Traductions$controleur$complement$fr {
+	_Traductions$controleur$complement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get bandeau => 'ستُضاف هذه التكملة إلى التقرير الموجود.';
+	@override String get questionMotif => 'لماذا تضيف هذه التكملة؟';
+	@override String get contexteMotif => 'اختياري: السبب يساعد الإدارة على قراءة التكملة. التقرير الأصلي لا يتغير.';
+	@override String get precision => 'توضيح';
+	@override String get precisionAide => 'حين تنقص تفصيلة · يكمّل التقرير دون أن يغيّر فيه شيئًا';
+	@override String get correction => 'تصحيح';
+	@override String get correctionAide => 'حين تكون معلومة في التقرير غير دقيقة · يبقى الأصل مقروءًا، ويظهر التصحيح تحته';
+	@override String get faitNouveau => 'معلومة جديدة';
+	@override String get faitNouveauAide => 'حين تعرفها بعد الزيارة · تحمل تاريخ يوم الإضافة';
+	@override String get questionTexte => 'ماذا تضيف إلى التقرير؟';
+	@override String get texteObligatoire => 'إلزامي: ما لاحظته، في جمل قليلة.';
+	@override String get libelleTexte => 'التكملة';
+	@override String get aideTexte => 'ما لاحظته أو عرفته منذ الزيارة.';
+	@override String get texteRequis => 'اكتب التكملة للمتابعة.';
+	@override String get questionRecap => 'راجع قبل الإرسال';
+	@override String get cleRapport => 'التقرير الأصلي';
+	@override String rapportInchange({required Object classe, required Object date}) => '⁨${classe}⁩ · ⁨${date}⁩، دون تغيير';
+	@override String get cleMotif => 'السبب';
+	@override String get sansMotif => 'لا سبب';
+	@override String get cleTexte => 'التكملة';
+	@override String get envoyer => 'إرسال التكملة';
+	@override String get echec => 'لم يُؤكَّد الإرسال: لم يستجب الاتصال أو الخادم. نصك محفوظ هنا، أعد المحاولة بعد لحظة. يبقى التقرير الأصلي سليمًا.';
+	@override String get envoyeTitre => 'أُضيفت التكملة';
+	@override String get envoyePhrase => 'تظهر تحت التقرير الأصلي، الذي يبقى دون تغيير.';
+	@override String get revenir => 'العودة إلى التقرير';
+}
+
+// Path: controleur.compteRendu
+class _Traductions$controleur$compteRendu$ar extends Traductions$controleur$compteRendu$fr {
+	_Traductions$controleur$compteRendu$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'التقرير';
+	@override String get provisoire => 'هذه الشاشة قيد التحضير.';
+	@override String get revenir => 'العودة إلى المراقبة';
+	@override String sousTitre({required Object classe, required Object heure}) => '⁨${classe}⁩ · ⁨${heure}⁩';
+	@override String get faits => 'السجل التلقائي للحصة';
+	@override String get faitsReplies => 'السجل التلقائي للحصة، مطوي';
+	@override String get faitsDeplies => 'السجل التلقائي للحصة، مفتوح';
+	@override String get faitsChargement => 'جارٍ قراءة السجل التلقائي للحصة: الساعات، الطلاب الحاضرون، إعادة الاتصال.';
+	@override String get faitsAbsents => 'السجل التلقائي للحصة (الساعات، الطلاب الحاضرون، إعادة الاتصال) لم يصل بعد: انتهت الحصة للتو أو انقطع الاتصال. يمكنك الرد دونه؛ وسيُرفق بالتقرير بمجرد وصوله.';
+	@override String get cleHoraire => 'الموعد المقرر';
+	@override String horaire({required Object debut, required Object fin}) => '⁨${debut}⁩ إلى ⁨${fin}⁩';
+	@override String get cleDebutReel => 'البداية الفعلية';
+	@override String debutRetard({required Object heure, required Object minutes}) => '⁨${heure}⁩، تأخر ⁨${minutes}⁩ دقيقة';
+	@override String debutALHeure({required Object heure}) => '⁨${heure}⁩، في الموعد';
+	@override String get cleFin => 'النهاية';
+	@override String get enCours => 'جارية';
+	@override String get clePresents => 'الطلاب الحاضرون';
+	@override String presents({required Object presents, required Object attendus}) => '⁨${presents}⁩ من ⁨${attendus}⁩';
+	@override String get cleReconnexions => 'إعادات الاتصال';
+	@override String get question => 'هل لديك ما تبلغ عنه؟';
+	@override String get contexte => 'يُضاف ردك إلى السجل التلقائي للحصة: الساعات، الحاضرون، إعادات الاتصال.';
+	@override String get rienASignaler => 'لا شيء يُذكر';
+	@override String get rienASignalerAide => 'حين جرت الحصة بشكل عادي · يُرسل التقرير بإجراء واحد؛ ويمكنك إضافة تكملة بعد ذلك';
+	@override String get ajouterObservation => 'إضافة ملاحظة';
+	@override String get ajouterObservationAide => 'حين تريد تدوين ما رأيته · بعض الأسئلة القصيرة، واحد في كل مرة';
+	@override String get pointImportant => 'الإبلاغ عن نقطة مهمة';
+	@override String get pointImportantAide => 'حين يتطلب ما رأيته انتباه الإدارة · سيُطلب نصك';
+	@override String get envoyer => 'إرسال التقرير';
+	@override String get plusTard => 'لاحقًا';
+	@override String get notice => 'يُرسل هذا التقرير تلقائيًا إلى الإدارة.';
+	@override String get echec => 'لم يُؤكَّد الإرسال: لم يستجب الاتصال أو الخادم. نصك محفوظ هنا؛ أعد المحاولة بعد لحظة. إن استمرت المشكلة، راسل الإدارة.';
+	@override String get echecRien => 'لم يُؤكَّد الإرسال: لم يستجب الاتصال أو الخادم. يبقى اختيارك محددًا؛ أعد المحاولة بعد لحظة. إن استمرت المشكلة، راسل الإدارة.';
+	@override String get envoyeTitre => 'أُرسل التقرير';
+	@override String get envoyePhrase => 'أُرسل إلى الإدارة. للعودة إليه، افتحه في «السجل» واختر «إضافة تكملة».';
+	@override String get ecrireAdmin => 'مراسلة الإدارة';
+	@override String get visiteEnCours => 'جارٍ إرسال الزيارة إلى الإدارة.';
+	@override String get visiteTransmise => 'أُرسلت الزيارة وسجلها التلقائي إلى الإدارة.';
+	@override String get visiteEchec => 'لم يُؤكَّد إرسال الزيارة: لم يستجب الاتصال أو الخادم. أعد المحاولة؛ يبقى سجل الزيارة محفوظًا على الخادم.';
+	@override String get aTerminer => 'تقرير للإنهاء';
+	@override String get reprendre => 'استئناف التقرير';
+}
+
+// Path: controleur.observation
+class _Traductions$controleur$observation$ar extends Traductions$controleur$observation$fr {
+	_Traductions$controleur$observation$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get important => 'أنت تبلغ عن نقطة مهمة: سيُطلب نصك.';
+	@override String get questionNature => 'ما طبيعة ملاحظتك؟';
+	@override String get contexteNature => 'تنضم ملاحظتك إلى تقرير هذه الزيارة، المرسل إلى الإدارة.';
+	@override String get pointPositif => 'نقطة إيجابية';
+	@override String get pointPositifAide => 'حين تستحق ممارسة أن تُذكر · تظهر في التقرير كنقطة إيجابية';
+	@override String get aSuivre => 'للمتابعة';
+	@override String get aSuivreAide => 'حين يجب مراجعة نقطة في زيارة قادمة · تظهر في التقرير كنقطة للمتابعة';
+	@override String get interventionAdmin => 'تدخل الإدارة مطلوب';
+	@override String get interventionAdminAide => 'حين يجب أن تتصرف الإدارة · سيُطلب نصك، وتستلمه مع التقرير';
+	@override String get questionDomaine => 'أي مجال تخص؟';
+	@override String get contexteDomaine => 'يساعد المجال الإدارة على قراءة ملاحظتك.';
+	@override String get pedagogie => 'التعليم';
+	@override String get pedagogieAide => 'حين يتعلق الأمر بالتدريس: الشرح، التدرج، المواد';
+	@override String get interaction => 'التفاعل مع الطلاب';
+	@override String get interactionAide => 'حين يتعلق الأمر بالتواصل بين المعلم والطلاب';
+	@override String get gestionClasse => 'إدارة الفصل';
+	@override String get gestionClasseAide => 'حين يتعلق الأمر بتنظيم الحصة: الوقت، التعليمات، السير';
+	@override String get respectCadre => 'احترام الإطار';
+	@override String get respectCadreAide => 'حين يتعلق الأمر بقواعد الأكاديمية والحصة';
+	@override String get climat => 'السلوك / الجو العام';
+	@override String get climatAide => 'حين يتعلق الأمر بسلوك الفصل أو جوه العام';
+	@override String get autre => 'آخر';
+	@override String get autreAide => 'حين لا يناسب أي مجال آخر · حدّده في نصك';
+	@override String get questionPersonne => 'من المعني؟';
+	@override String get contextePersonne => 'حدّد من تخصه الملاحظة. يُختار الطالب من قائمة الفصل، بالاسم فقط.';
+	@override String get enseignant => 'المعلم';
+	@override String get enseignantAide => 'حين تخص الملاحظة معلم الحصة';
+	@override String get classeEntiere => 'الفصل كله';
+	@override String get classeEntiereAide => 'حين تخص مجموع الطلاب الحاضرين';
+	@override String get elevePrecis => 'طالب محدد';
+	@override String get elevePrecisAide => 'حين يكون طالب واحد معنيًا · تختاره من القائمة، بالاسم فقط';
+	@override String get aucun => 'لا مشارك محدد';
+	@override String get aucunAide => 'حين لا تستهدف أحدًا بعينه، مثل سير الحصة';
+	@override String get questionEleve => 'اختر الطالب من قائمة الفصل.';
+	@override String get rosterChargement => 'جارٍ قراءة قائمة الطلاب الحاضرين.';
+	@override String get rosterIndisponible => 'لم تصل قائمة الطلاب الحاضرين، غالبًا بسبب الاتصال. أعد المحاولة، أو اختر «الفصل كله» أو «لا مشارك محدد». إجاباتك الأخرى محفوظة.';
+	@override String get rosterVide => 'لا طالب حاضر في قائمة هذه الزيارة. اختر «الفصل كله» أو «لا مشارك محدد».';
+	@override String get questionTexte => 'ماذا لاحظت؟';
+	@override String get texteObligatoire => 'نصك ضروري لهذه الملاحظة.';
+	@override String get texteFacultatif => 'هذا النص اختياري.';
+	@override String get libelleTexte => 'ملاحظتك';
+	@override String get aideTexte => 'صف فقط ما لاحظته.';
+	@override String get texteRequis => 'اكتب ما لاحظته للمتابعة.';
+	@override String get questionRecap => 'راجع ملاحظتك قبل الإرسال.';
+	@override String get cleNature => 'الطبيعة';
+	@override String get cleDomaine => 'المجال';
+	@override String get clePersonne => 'الشخص المعني';
+	@override String get cleTexte => 'الملاحظة';
+	@override String get sansTexte => 'لا نص';
+	@override String get echec => 'لم يُؤكَّد الإرسال: لم يستجب الاتصال أو الخادم. نصك محفوظ هنا؛ أعد المحاولة بعد لحظة. إن استمرت المشكلة، راسل الإدارة.';
+}
+
+// Path: controleur.echanges
+class _Traductions$controleur$echanges$ar extends Traductions$controleur$echanges$fr {
+	_Traductions$controleur$echanges$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'المراسلات';
+	@override String titreFil({required Object classe, required Object date}) => '⁨${classe}⁩ · ⁨${date}⁩';
+	@override String derniereActivite({required Object date}) => 'آخر نشاط: ⁨${date}⁩';
+	@override String get reponseRecue => 'وصل رد';
+	@override String get enAttente => 'قيد الانتظار';
+	@override String get vide => 'لا مراسلات مع الإدارة حتى الآن.';
+	@override String get contexte => 'سياق الزيارة، مرفق تلقائيًا';
+	@override String get cleClasse => 'الفصل';
+	@override String get cleDate => 'التاريخ';
+	@override String get cleHeure => 'الساعة';
+	@override String get auteurVous => 'أنت';
+	@override String get auteurAdmin => 'الإدارة';
+	@override String get champ => 'الرد على الإدارة…';
+	@override String get champLibelle => 'الرد على الإدارة';
+	@override String get envoyer => 'إرسال';
+	@override String get champVide => 'اكتب رسالة لتتمكن من إرسالها.';
+	@override String get enCours => 'جارٍ الإرسال.';
+	@override String get envoye => 'أُرسل.';
+	@override String get echec => 'لم يُؤكَّد الإرسال: لم يستجب الاتصال أو الخادم. نصك محفوظ هنا؛ أعد المحاولة بعد لحظة. إن استمرت المشكلة، راسل الإدارة.';
+	@override String get reessayer => 'إعادة المحاولة';
+	@override String nouveauMessage({required Object auteur, required Object texte}) => 'رسالة جديدة من ⁨${auteur}⁩: ⁨${texte}⁩';
+}
+
+// Path: controleur.demo
+class _Traductions$controleur$demo$ar extends Traductions$controleur$demo$fr {
+	_Traductions$controleur$demo$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'عرض تجريبي للمراقب';
+	@override String get mention => 'بيانات وهمية، لا إرسال.';
+	@override String get intro => 'اختر شاشة من شاشات المراقبة وحالة زيارة.';
+	@override String get etatAucune => 'لا زيارة';
+	@override String get etatPasEncoreEnDirect => 'الحصة لم تبدأ مباشرة بعد';
+	@override String get etatEnDirect => 'حصة مباشرة';
+	@override String get etatIndisponible => 'الزيارة لم تعد مقترحة';
+	@override String get etatDejaControlee => 'الفصل مراقَب بالفعل';
+	@override String get espaces => 'المساحات والوصول';
+	@override String get espacesIntro => 'الحساب نفسه، عدة مساحات: ينتقل المعلم أو المدير إلى «المراقبة» من «الحساب»، ثم «المساحات».';
+	@override String get enseignantControle => 'معلم مراقب، مساحة المراقبة';
+	@override String get enseignantPrincipal => 'معلم مراقب، مساحة المعلم';
+	@override String get adminControle => 'مدير مراقب، مساحة المراقبة';
+	@override String get adminPrincipal => 'مدير مراقب، مساحة الإدارة';
+	@override String get missionEnCours => 'زيارة جارية، العودة إلى المساحة الرئيسية';
+	@override String get accesRevoque => 'سُحب الوصول أثناء التصفح';
+	@override String get sansCapacite => 'معلم دون صلاحية المراقبة';
+	@override String get compteRenduIndisponible => 'التقرير، الزيارة لم تعد مقترحة';
+}
+
+// Path: controleur.acces
+class _Traductions$controleur$acces$ar extends Traductions$controleur$acces$fr {
+	_Traductions$controleur$acces$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get revoque => 'وصولك إلى المراقبة لم يعد ساريًا.';
+	@override String get revenir => 'العودة إلى مساحتي';
+}
+
+// Path: controleur.controle
+class _Traductions$controleur$controle$ar extends Traductions$controleur$controle$fr {
+	_Traductions$controleur$controle$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'المراقبة';
+	@override String get mission => 'فصلك القادم للمراقبة';
+	@override String get missionEnDirect => 'فصل للمراقبة الآن';
+	@override String get commencer => 'بدء المراقبة';
+	@override String get vide => 'لا مراقبة مطلوبة الآن.';
+	@override String get videAide => 'سيقترح عليك Rewayah فصلًا للمراقبة حين تتوفر حصة مناسبة.';
+	@override String get indisponible => 'هذه الزيارة لم تعد مقترحة: أُلغيت الحصة أو أُسندت إلى مراقب آخر.';
+	@override String get attente => 'تُفتح المراقبة بمجرد أن تصبح الحصة مباشرة.';
+	@override String get dejaEnCours => 'مراقبة جارية بالفعل في هذا الفصل.';
+	@override String get dejaEnCoursAide => 'مراقبة واحدة في كل مرة لكل فصل. اختر حصة أخرى، أو عد لاحقًا: يمكنك البدء حين تنتهي هذه المراقبة.';
+	@override String get incognito => 'لا يُعلَن عن حضورك في الوقت الفعلي.';
+	@override String horaire({required Object debut, required Object fin}) => '⁨${debut}⁩ إلى ⁨${fin}⁩';
+	@override String duree({required Object minutes}) => '⁨${minutes}⁩ دقيقة مقررة';
+	@override String eleves({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		one: 'طالب واحد (⁨${n}⁩)',
+		other: '⁨${n}⁩ طلاب',
+	);
+	@override String get chargement => 'جارٍ قراءة زيارتك القادمة.';
+	@override String get erreur => 'تعذّرت قراءة زيارتك القادمة، غالبًا بسبب الاتصال أو خدمة غير متاحة مؤقتًا. أعد المحاولة بعد لحظة.';
 }
 
 // Path: commun.etats.chargementProlonge
@@ -9820,6 +10139,222 @@ extension on TraductionsAr {
 			'disponibilites.joursLongs.4' => 'الجمعة',
 			'disponibilites.joursLongs.5' => 'السبت',
 			'disponibilites.joursLongs.6' => 'الأحد',
+			'controleur.historique.titre' => 'السجل',
+			'controleur.historique.provisoire' => 'هذه الشاشة قيد التحضير.',
+			'controleur.historique.envoye' => 'أُرسل',
+			'controleur.historique.complementAjoute' => 'أُضيفت تكملة',
+			'controleur.historique.aTerminer' => 'للإنهاء',
+			'controleur.historique.filtreEtat' => 'الحالة',
+			'controleur.historique.tousEtats' => 'كل الحالات',
+			'controleur.historique.duree' => ({required Object minutes}) => '⁨${minutes}⁩ دقيقة من المتابعة',
+			'controleur.historique.meta' => ({required Object heure, required Object duree}) => '⁨${heure}⁩ · ⁨${duree}⁩',
+			'controleur.historique.dateHeure' => ({required Object date, required Object heure}) => '⁨${date}⁩، ⁨${heure}⁩',
+			'controleur.historique.dateHeureAuteur' => ({required Object date, required Object heure, required Object auteur}) => '⁨${date}⁩، ⁨${heure}⁩ · ⁨${auteur}⁩',
+			'controleur.historique.ligne' => ({required Object date, required Object classe, required Object enseignant, required Object duree, required Object statut}) => '⁨${date}⁩، ⁨${classe}⁩، ⁨${enseignant}⁩، ⁨${duree}⁩، ⁨${statut}⁩',
+			'controleur.historique.vide' => 'لا مراقبة حتى الآن.',
+			'controleur.historique.videFiltres' => 'لا مراقبة تطابق هذه المعايير.',
+			'controleur.historique.resultats' => ({required Object n}) => 'عمليات المراقبة المعروضة: ⁨${n}⁩',
+			'controleur.historique.titreDetail' => ({required Object classe, required Object date}) => '⁨${classe}⁩ · ⁨${date}⁩',
+			'controleur.historique.sectionMission' => 'الفصل المراقَب',
+			'controleur.historique.sectionObservation' => 'ملاحظة المراقب',
+			'controleur.historique.sectionComplements' => 'التكملات',
+			'controleur.historique.sectionEchanges' => 'المراسلات مع الإدارة',
+			'controleur.historique.cleClasse' => 'الفصل',
+			'controleur.historique.cleEnseignant' => 'المعلم',
+			'controleur.historique.cleDate' => 'التاريخ',
+			'controleur.historique.cleDuree' => 'مدة المتابعة',
+			'controleur.historique.cleElevesPresents' => 'الحاضرون',
+			'controleur.historique.cleReponse' => 'الرد',
+			'controleur.historique.sansComplement' => 'لا تكملة.',
+			'controleur.historique.faitsIndisponibles' => 'السجل التلقائي لهذه الزيارة (الساعات، الطلاب الحاضرون، إعادة الاتصال) لم يصل بعد: انتهت الحصة للتو أو انقطع الاتصال. سيظهر هنا بمجرد وصوله. باقي التقرير موثوق.',
+			'controleur.historique.motif' => ({required Object motif}) => 'السبب: ⁨${motif}⁩',
+			'controleur.historique.ajouterComplement' => 'إضافة تكملة',
+			'controleur.complement.bandeau' => 'ستُضاف هذه التكملة إلى التقرير الموجود.',
+			'controleur.complement.questionMotif' => 'لماذا تضيف هذه التكملة؟',
+			'controleur.complement.contexteMotif' => 'اختياري: السبب يساعد الإدارة على قراءة التكملة. التقرير الأصلي لا يتغير.',
+			'controleur.complement.precision' => 'توضيح',
+			'controleur.complement.precisionAide' => 'حين تنقص تفصيلة · يكمّل التقرير دون أن يغيّر فيه شيئًا',
+			'controleur.complement.correction' => 'تصحيح',
+			'controleur.complement.correctionAide' => 'حين تكون معلومة في التقرير غير دقيقة · يبقى الأصل مقروءًا، ويظهر التصحيح تحته',
+			'controleur.complement.faitNouveau' => 'معلومة جديدة',
+			'controleur.complement.faitNouveauAide' => 'حين تعرفها بعد الزيارة · تحمل تاريخ يوم الإضافة',
+			'controleur.complement.questionTexte' => 'ماذا تضيف إلى التقرير؟',
+			'controleur.complement.texteObligatoire' => 'إلزامي: ما لاحظته، في جمل قليلة.',
+			'controleur.complement.libelleTexte' => 'التكملة',
+			'controleur.complement.aideTexte' => 'ما لاحظته أو عرفته منذ الزيارة.',
+			'controleur.complement.texteRequis' => 'اكتب التكملة للمتابعة.',
+			'controleur.complement.questionRecap' => 'راجع قبل الإرسال',
+			'controleur.complement.cleRapport' => 'التقرير الأصلي',
+			'controleur.complement.rapportInchange' => ({required Object classe, required Object date}) => '⁨${classe}⁩ · ⁨${date}⁩، دون تغيير',
+			'controleur.complement.cleMotif' => 'السبب',
+			'controleur.complement.sansMotif' => 'لا سبب',
+			'controleur.complement.cleTexte' => 'التكملة',
+			'controleur.complement.envoyer' => 'إرسال التكملة',
+			'controleur.complement.echec' => 'لم يُؤكَّد الإرسال: لم يستجب الاتصال أو الخادم. نصك محفوظ هنا، أعد المحاولة بعد لحظة. يبقى التقرير الأصلي سليمًا.',
+			'controleur.complement.envoyeTitre' => 'أُضيفت التكملة',
+			'controleur.complement.envoyePhrase' => 'تظهر تحت التقرير الأصلي، الذي يبقى دون تغيير.',
+			'controleur.complement.revenir' => 'العودة إلى التقرير',
+			'controleur.compteRendu.titre' => 'التقرير',
+			'controleur.compteRendu.provisoire' => 'هذه الشاشة قيد التحضير.',
+			'controleur.compteRendu.revenir' => 'العودة إلى المراقبة',
+			'controleur.compteRendu.sousTitre' => ({required Object classe, required Object heure}) => '⁨${classe}⁩ · ⁨${heure}⁩',
+			'controleur.compteRendu.faits' => 'السجل التلقائي للحصة',
+			'controleur.compteRendu.faitsReplies' => 'السجل التلقائي للحصة، مطوي',
+			'controleur.compteRendu.faitsDeplies' => 'السجل التلقائي للحصة، مفتوح',
+			'controleur.compteRendu.faitsChargement' => 'جارٍ قراءة السجل التلقائي للحصة: الساعات، الطلاب الحاضرون، إعادة الاتصال.',
+			'controleur.compteRendu.faitsAbsents' => 'السجل التلقائي للحصة (الساعات، الطلاب الحاضرون، إعادة الاتصال) لم يصل بعد: انتهت الحصة للتو أو انقطع الاتصال. يمكنك الرد دونه؛ وسيُرفق بالتقرير بمجرد وصوله.',
+			'controleur.compteRendu.cleHoraire' => 'الموعد المقرر',
+			'controleur.compteRendu.horaire' => ({required Object debut, required Object fin}) => '⁨${debut}⁩ إلى ⁨${fin}⁩',
+			'controleur.compteRendu.cleDebutReel' => 'البداية الفعلية',
+			'controleur.compteRendu.debutRetard' => ({required Object heure, required Object minutes}) => '⁨${heure}⁩، تأخر ⁨${minutes}⁩ دقيقة',
+			'controleur.compteRendu.debutALHeure' => ({required Object heure}) => '⁨${heure}⁩، في الموعد',
+			'controleur.compteRendu.cleFin' => 'النهاية',
+			'controleur.compteRendu.enCours' => 'جارية',
+			'controleur.compteRendu.clePresents' => 'الطلاب الحاضرون',
+			'controleur.compteRendu.presents' => ({required Object presents, required Object attendus}) => '⁨${presents}⁩ من ⁨${attendus}⁩',
+			'controleur.compteRendu.cleReconnexions' => 'إعادات الاتصال',
+			'controleur.compteRendu.question' => 'هل لديك ما تبلغ عنه؟',
+			'controleur.compteRendu.contexte' => 'يُضاف ردك إلى السجل التلقائي للحصة: الساعات، الحاضرون، إعادات الاتصال.',
+			'controleur.compteRendu.rienASignaler' => 'لا شيء يُذكر',
+			'controleur.compteRendu.rienASignalerAide' => 'حين جرت الحصة بشكل عادي · يُرسل التقرير بإجراء واحد؛ ويمكنك إضافة تكملة بعد ذلك',
+			'controleur.compteRendu.ajouterObservation' => 'إضافة ملاحظة',
+			'controleur.compteRendu.ajouterObservationAide' => 'حين تريد تدوين ما رأيته · بعض الأسئلة القصيرة، واحد في كل مرة',
+			'controleur.compteRendu.pointImportant' => 'الإبلاغ عن نقطة مهمة',
+			'controleur.compteRendu.pointImportantAide' => 'حين يتطلب ما رأيته انتباه الإدارة · سيُطلب نصك',
+			'controleur.compteRendu.envoyer' => 'إرسال التقرير',
+			'controleur.compteRendu.plusTard' => 'لاحقًا',
+			'controleur.compteRendu.notice' => 'يُرسل هذا التقرير تلقائيًا إلى الإدارة.',
+			'controleur.compteRendu.echec' => 'لم يُؤكَّد الإرسال: لم يستجب الاتصال أو الخادم. نصك محفوظ هنا؛ أعد المحاولة بعد لحظة. إن استمرت المشكلة، راسل الإدارة.',
+			'controleur.compteRendu.echecRien' => 'لم يُؤكَّد الإرسال: لم يستجب الاتصال أو الخادم. يبقى اختيارك محددًا؛ أعد المحاولة بعد لحظة. إن استمرت المشكلة، راسل الإدارة.',
+			'controleur.compteRendu.envoyeTitre' => 'أُرسل التقرير',
+			'controleur.compteRendu.envoyePhrase' => 'أُرسل إلى الإدارة. للعودة إليه، افتحه في «السجل» واختر «إضافة تكملة».',
+			'controleur.compteRendu.ecrireAdmin' => 'مراسلة الإدارة',
+			'controleur.compteRendu.visiteEnCours' => 'جارٍ إرسال الزيارة إلى الإدارة.',
+			'controleur.compteRendu.visiteTransmise' => 'أُرسلت الزيارة وسجلها التلقائي إلى الإدارة.',
+			'controleur.compteRendu.visiteEchec' => 'لم يُؤكَّد إرسال الزيارة: لم يستجب الاتصال أو الخادم. أعد المحاولة؛ يبقى سجل الزيارة محفوظًا على الخادم.',
+			'controleur.compteRendu.aTerminer' => 'تقرير للإنهاء',
+			'controleur.compteRendu.reprendre' => 'استئناف التقرير',
+			'controleur.observation.important' => 'أنت تبلغ عن نقطة مهمة: سيُطلب نصك.',
+			'controleur.observation.questionNature' => 'ما طبيعة ملاحظتك؟',
+			'controleur.observation.contexteNature' => 'تنضم ملاحظتك إلى تقرير هذه الزيارة، المرسل إلى الإدارة.',
+			'controleur.observation.pointPositif' => 'نقطة إيجابية',
+			'controleur.observation.pointPositifAide' => 'حين تستحق ممارسة أن تُذكر · تظهر في التقرير كنقطة إيجابية',
+			'controleur.observation.aSuivre' => 'للمتابعة',
+			'controleur.observation.aSuivreAide' => 'حين يجب مراجعة نقطة في زيارة قادمة · تظهر في التقرير كنقطة للمتابعة',
+			'controleur.observation.interventionAdmin' => 'تدخل الإدارة مطلوب',
+			'controleur.observation.interventionAdminAide' => 'حين يجب أن تتصرف الإدارة · سيُطلب نصك، وتستلمه مع التقرير',
+			'controleur.observation.questionDomaine' => 'أي مجال تخص؟',
+			'controleur.observation.contexteDomaine' => 'يساعد المجال الإدارة على قراءة ملاحظتك.',
+			'controleur.observation.pedagogie' => 'التعليم',
+			'controleur.observation.pedagogieAide' => 'حين يتعلق الأمر بالتدريس: الشرح، التدرج، المواد',
+			'controleur.observation.interaction' => 'التفاعل مع الطلاب',
+			'controleur.observation.interactionAide' => 'حين يتعلق الأمر بالتواصل بين المعلم والطلاب',
+			'controleur.observation.gestionClasse' => 'إدارة الفصل',
+			'controleur.observation.gestionClasseAide' => 'حين يتعلق الأمر بتنظيم الحصة: الوقت، التعليمات، السير',
+			'controleur.observation.respectCadre' => 'احترام الإطار',
+			'controleur.observation.respectCadreAide' => 'حين يتعلق الأمر بقواعد الأكاديمية والحصة',
+			'controleur.observation.climat' => 'السلوك / الجو العام',
+			'controleur.observation.climatAide' => 'حين يتعلق الأمر بسلوك الفصل أو جوه العام',
+			'controleur.observation.autre' => 'آخر',
+			'controleur.observation.autreAide' => 'حين لا يناسب أي مجال آخر · حدّده في نصك',
+			'controleur.observation.questionPersonne' => 'من المعني؟',
+			'controleur.observation.contextePersonne' => 'حدّد من تخصه الملاحظة. يُختار الطالب من قائمة الفصل، بالاسم فقط.',
+			'controleur.observation.enseignant' => 'المعلم',
+			'controleur.observation.enseignantAide' => 'حين تخص الملاحظة معلم الحصة',
+			'controleur.observation.classeEntiere' => 'الفصل كله',
+			'controleur.observation.classeEntiereAide' => 'حين تخص مجموع الطلاب الحاضرين',
+			'controleur.observation.elevePrecis' => 'طالب محدد',
+			'controleur.observation.elevePrecisAide' => 'حين يكون طالب واحد معنيًا · تختاره من القائمة، بالاسم فقط',
+			'controleur.observation.aucun' => 'لا مشارك محدد',
+			'controleur.observation.aucunAide' => 'حين لا تستهدف أحدًا بعينه، مثل سير الحصة',
+			'controleur.observation.questionEleve' => 'اختر الطالب من قائمة الفصل.',
+			'controleur.observation.rosterChargement' => 'جارٍ قراءة قائمة الطلاب الحاضرين.',
+			'controleur.observation.rosterIndisponible' => 'لم تصل قائمة الطلاب الحاضرين، غالبًا بسبب الاتصال. أعد المحاولة، أو اختر «الفصل كله» أو «لا مشارك محدد». إجاباتك الأخرى محفوظة.',
+			'controleur.observation.rosterVide' => 'لا طالب حاضر في قائمة هذه الزيارة. اختر «الفصل كله» أو «لا مشارك محدد».',
+			'controleur.observation.questionTexte' => 'ماذا لاحظت؟',
+			'controleur.observation.texteObligatoire' => 'نصك ضروري لهذه الملاحظة.',
+			'controleur.observation.texteFacultatif' => 'هذا النص اختياري.',
+			'controleur.observation.libelleTexte' => 'ملاحظتك',
+			'controleur.observation.aideTexte' => 'صف فقط ما لاحظته.',
+			'controleur.observation.texteRequis' => 'اكتب ما لاحظته للمتابعة.',
+			'controleur.observation.questionRecap' => 'راجع ملاحظتك قبل الإرسال.',
+			'controleur.observation.cleNature' => 'الطبيعة',
+			'controleur.observation.cleDomaine' => 'المجال',
+			'controleur.observation.clePersonne' => 'الشخص المعني',
+			'controleur.observation.cleTexte' => 'الملاحظة',
+			'controleur.observation.sansTexte' => 'لا نص',
+			'controleur.observation.echec' => 'لم يُؤكَّد الإرسال: لم يستجب الاتصال أو الخادم. نصك محفوظ هنا؛ أعد المحاولة بعد لحظة. إن استمرت المشكلة، راسل الإدارة.',
+			'controleur.echanges.titre' => 'المراسلات',
+			'controleur.echanges.titreFil' => ({required Object classe, required Object date}) => '⁨${classe}⁩ · ⁨${date}⁩',
+			'controleur.echanges.derniereActivite' => ({required Object date}) => 'آخر نشاط: ⁨${date}⁩',
+			'controleur.echanges.reponseRecue' => 'وصل رد',
+			'controleur.echanges.enAttente' => 'قيد الانتظار',
+			'controleur.echanges.vide' => 'لا مراسلات مع الإدارة حتى الآن.',
+			'controleur.echanges.contexte' => 'سياق الزيارة، مرفق تلقائيًا',
+			'controleur.echanges.cleClasse' => 'الفصل',
+			'controleur.echanges.cleDate' => 'التاريخ',
+			'controleur.echanges.cleHeure' => 'الساعة',
+			'controleur.echanges.auteurVous' => 'أنت',
+			'controleur.echanges.auteurAdmin' => 'الإدارة',
+			'controleur.echanges.champ' => 'الرد على الإدارة…',
+			'controleur.echanges.champLibelle' => 'الرد على الإدارة',
+			'controleur.echanges.envoyer' => 'إرسال',
+			'controleur.echanges.champVide' => 'اكتب رسالة لتتمكن من إرسالها.',
+			'controleur.echanges.enCours' => 'جارٍ الإرسال.',
+			'controleur.echanges.envoye' => 'أُرسل.',
+			'controleur.echanges.echec' => 'لم يُؤكَّد الإرسال: لم يستجب الاتصال أو الخادم. نصك محفوظ هنا؛ أعد المحاولة بعد لحظة. إن استمرت المشكلة، راسل الإدارة.',
+			'controleur.echanges.reessayer' => 'إعادة المحاولة',
+			'controleur.echanges.nouveauMessage' => ({required Object auteur, required Object texte}) => 'رسالة جديدة من ⁨${auteur}⁩: ⁨${texte}⁩',
+			'controleur.demo.titre' => 'عرض تجريبي للمراقب',
+			'controleur.demo.mention' => 'بيانات وهمية، لا إرسال.',
+			'controleur.demo.intro' => 'اختر شاشة من شاشات المراقبة وحالة زيارة.',
+			'controleur.demo.etatAucune' => 'لا زيارة',
+			'controleur.demo.etatPasEncoreEnDirect' => 'الحصة لم تبدأ مباشرة بعد',
+			'controleur.demo.etatEnDirect' => 'حصة مباشرة',
+			'controleur.demo.etatIndisponible' => 'الزيارة لم تعد مقترحة',
+			'controleur.demo.etatDejaControlee' => 'الفصل مراقَب بالفعل',
+			'controleur.demo.espaces' => 'المساحات والوصول',
+			'controleur.demo.espacesIntro' => 'الحساب نفسه، عدة مساحات: ينتقل المعلم أو المدير إلى «المراقبة» من «الحساب»، ثم «المساحات».',
+			'controleur.demo.enseignantControle' => 'معلم مراقب، مساحة المراقبة',
+			'controleur.demo.enseignantPrincipal' => 'معلم مراقب، مساحة المعلم',
+			'controleur.demo.adminControle' => 'مدير مراقب، مساحة المراقبة',
+			'controleur.demo.adminPrincipal' => 'مدير مراقب، مساحة الإدارة',
+			'controleur.demo.missionEnCours' => 'زيارة جارية، العودة إلى المساحة الرئيسية',
+			'controleur.demo.accesRevoque' => 'سُحب الوصول أثناء التصفح',
+			'controleur.demo.sansCapacite' => 'معلم دون صلاحية المراقبة',
+			'controleur.demo.compteRenduIndisponible' => 'التقرير، الزيارة لم تعد مقترحة',
+			'controleur.acces.revoque' => 'وصولك إلى المراقبة لم يعد ساريًا.',
+			'controleur.acces.revenir' => 'العودة إلى مساحتي',
+			'controleur.controle.titre' => 'المراقبة',
+			'controleur.controle.mission' => 'فصلك القادم للمراقبة',
+			'controleur.controle.missionEnDirect' => 'فصل للمراقبة الآن',
+			'controleur.controle.commencer' => 'بدء المراقبة',
+			'controleur.controle.vide' => 'لا مراقبة مطلوبة الآن.',
+			'controleur.controle.videAide' => 'سيقترح عليك Rewayah فصلًا للمراقبة حين تتوفر حصة مناسبة.',
+			'controleur.controle.indisponible' => 'هذه الزيارة لم تعد مقترحة: أُلغيت الحصة أو أُسندت إلى مراقب آخر.',
+			'controleur.controle.attente' => 'تُفتح المراقبة بمجرد أن تصبح الحصة مباشرة.',
+			'controleur.controle.dejaEnCours' => 'مراقبة جارية بالفعل في هذا الفصل.',
+			'controleur.controle.dejaEnCoursAide' => 'مراقبة واحدة في كل مرة لكل فصل. اختر حصة أخرى، أو عد لاحقًا: يمكنك البدء حين تنتهي هذه المراقبة.',
+			'controleur.controle.incognito' => 'لا يُعلَن عن حضورك في الوقت الفعلي.',
+			'controleur.controle.horaire' => ({required Object debut, required Object fin}) => '⁨${debut}⁩ إلى ⁨${fin}⁩',
+			'controleur.controle.duree' => ({required Object minutes}) => '⁨${minutes}⁩ دقيقة مقررة',
+			'controleur.controle.eleves' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, one: 'طالب واحد (⁨${n}⁩)', other: '⁨${n}⁩ طلاب', ), 
+			'controleur.controle.chargement' => 'جارٍ قراءة زيارتك القادمة.',
+			'controleur.controle.erreur' => 'تعذّرت قراءة زيارتك القادمة، غالبًا بسبب الاتصال أو خدمة غير متاحة مؤقتًا. أعد المحاولة بعد لحظة.',
+			'agent.titre' => 'دخول موظف',
+			'agent.intro' => 'تفتح هذه الصفحة التطبيق للقراءة فقط، بالرمز الذي سلّمته الأكاديمية.',
+			'agent.jeton' => 'رمز المتابعة',
+			'agent.jetonExemple' => 'rag_...',
+			'agent.entrer' => 'فتح التطبيق',
+			'agent.ouverture' => 'جارٍ الفتح',
+			'agent.refus' => 'رُفض الرمز',
+			'agent.refusDetail' => 'هذا الرمز غير معروف أو ملغى أو منتهي الصلاحية. اطلب رمزًا جديدًا من الأكاديمية.',
+			'agent.indisponible' => 'الخدمة غير متاحة',
+			'agent.indisponibleDetail' => 'لم تستجب عملية فتح الجلسة. أعد المحاولة بعد لحظة.',
+			'agent.reessayer' => 'إعادة المحاولة',
+			'agent.bandeau' => 'متابعة، للقراءة فقط',
+			'agent.bandeauMasque' => 'الأسماء مخفية',
+			'agent.bandeauExpire' => ({required Object heure}) => 'حتى ⁨${heure}⁩',
 			_ => null,
 		};
 	}
