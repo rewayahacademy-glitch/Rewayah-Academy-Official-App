@@ -210,6 +210,10 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b15_assignations_annotations.sql
 
+      - name: Scénarios B-10 (canal de support)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b10_support.sql
+
   edge-r2:
     name: Fonctions Edge -- stockage R2 (Deno)
     if: github.event_name != 'pull_request' || github.base_ref == 'main' || github.base_ref == 'ccr-1b1bfa0b-m1kvkk'
