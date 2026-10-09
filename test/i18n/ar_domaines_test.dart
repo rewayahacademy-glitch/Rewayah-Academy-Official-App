@@ -1,11 +1,12 @@
 // AR-COMPLET-1, par tranches : les domaines traduits en arabe le restent.
 //
 // AR-SALLE-1 (`salle.*`), AR-TC-1 (`tc.*`), AR-ENS-1 (`enseignant.*`),
-// AR-TRANSVERSE-1 (nav, commun, accessibilite...) et AR-ELEVE-1 (classe,
-// ficheEleve, parcours...) : chaque cle du francais a sa traduction arabe,
-// avec exactement les memes parametres ; chaque parametre ajoute par ces
-// tranches est isole (U+2068 ... U+2069), pour qu'un nom latin ne renverse
-// pas la phrase. Une tranche suivante ajoute son domaine a [_domaines].
+// AR-TRANSVERSE-1 (nav, commun, accessibilite...), AR-ELEVE-1 (classe,
+// ficheEleve, parcours...) et AR-FAMILLE-1 (compte, tuteur, foyer...) :
+// chaque cle du francais a sa traduction arabe, avec exactement les memes
+// parametres ; chaque parametre ajoute par ces tranches est isole (U+2068 ...
+// U+2069), pour qu'un nom latin ne renverse pas la phrase. Une tranche
+// suivante ajoute son domaine a [_domaines].
 
 import 'dart:convert';
 import 'dart:io';
@@ -43,6 +44,16 @@ const Map<String, int> _domaines = <String, int>{
   'eleve': 55,
   'presence': 20,
   'priere': 10,
+  // AR-FAMILLE-1.
+  'compte': 180,
+  'tuteur': 110,
+  'historique': 90,
+  'appareils': 75,
+  'connexion': 40,
+  'attente': 35,
+  'inscription': 30,
+  'consentement': 30,
+  'foyer': 50,
 };
 
 Map<String, String> _aplatir(
@@ -104,6 +115,8 @@ const Set<String> _latins = <String>{
   'nav.motSymbole',
   'commun.marque',
   'eleve.coran.sourceLien',
+  'connexion.courrielIndice',
+  'compte.tuteur.securite.methodeGoogle',
 };
 
 final RegExp _parametre = RegExp(r'\{\w+\}');
@@ -114,7 +127,7 @@ List<String> _parametres(String texte) =>
 /// Rien que des parametres et de la ponctuation : rien a traduire.
 bool _sansMots(String texte) => texte
     .replaceAll(_parametre, '')
-    .replaceAll(RegExp('[\u2068\u2069 ·/%،,:()]'), '')
+    .replaceAll(RegExp('[\u2068\u2069 ·/%،,:()-]'), '')
     .isEmpty;
 
 void main() {

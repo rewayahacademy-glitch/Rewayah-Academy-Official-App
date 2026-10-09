@@ -69,9 +69,9 @@ void main() {
         // differe : sur le Web, l arabe est un morceau separe qui ne pese pas
         // sur le demarrage a froid.
         final Traductions ar = await AppLocale.ar.build();
-        // La salle, le reseau et le commun sont traduits (AR-*) ; la
-        // connexion ne l est pas encore.
-        expect(ar.connexion.titre, t.connexion.titre);
+        // Les espaces de l eleve, de la famille et de l enseignant sont
+        // traduits (AR-*) ; l administration ne l est pas encore.
+        expect(ar.admin.tableau.titre, t.admin.tableau.titre);
       },
     );
   });

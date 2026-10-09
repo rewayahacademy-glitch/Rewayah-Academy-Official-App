@@ -66,6 +66,14 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$eleveConnexion$ar eleveConnexion = _Traductions$eleveConnexion$ar._(_root);
 	@override late final _Traductions$presence$ar presence = _Traductions$presence$ar._(_root);
 	@override late final _Traductions$priere$ar priere = _Traductions$priere$ar._(_root);
+	@override late final _Traductions$tuteur$ar tuteur = _Traductions$tuteur$ar._(_root);
+	@override late final _Traductions$historique$ar historique = _Traductions$historique$ar._(_root);
+	@override late final _Traductions$appareils$ar appareils = _Traductions$appareils$ar._(_root);
+	@override late final _Traductions$connexion$ar connexion = _Traductions$connexion$ar._(_root);
+	@override late final _Traductions$attente$ar attente = _Traductions$attente$ar._(_root);
+	@override late final _Traductions$inscription$ar inscription = _Traductions$inscription$ar._(_root);
+	@override late final _Traductions$consentement$ar consentement = _Traductions$consentement$ar._(_root);
+	@override late final _Traductions$foyer$ar foyer = _Traductions$foyer$ar._(_root);
 }
 
 // Path: commun
@@ -258,6 +266,83 @@ class _Traductions$compte$ar extends Traductions$compte$fr {
 	@override String get themeClairDetail => 'خلفية فاتحة مهما كان إعداد جهازك';
 	@override String get themeSombre => 'داكن';
 	@override String get themeSombreDetail => 'خلفية داكنة مهما كان إعداد جهازك';
+	@override String get titre => 'حسابي';
+	@override String get intro => 'معلوماتك وتفضيلاتك وصلاحياتك، في مكان واحد.';
+	@override String get informations => 'المعلومات';
+	@override String get profil => 'الملف الشخصي';
+	@override String get profilDetail => 'عرض معلوماتك وإدارتها';
+	@override String get reglages => 'الإعدادات';
+	@override String get reglagesDetail => 'المظهر والإشعارات وإمكانية الوصول';
+	@override String get profils => 'إدارة أسرتي';
+	@override String get profilsDetail => 'إدارة ملفات أطفالك';
+	@override String get appareils => 'الأسرة';
+	@override String get appareilsDetail => 'الأجهزة والملفات المرتبطة بأسرتك';
+	@override String get confidentialite => 'الخصوصية';
+	@override String get confidentialiteDetail => 'قريبًا';
+	@override String get espaces => 'المساحات';
+	@override String get espacesDetail => 'المساحات التي يتيحها حسابك';
+	@override String get espacesMissionEnCours => 'للعودة إلى مساحتك الرئيسية، غادر أولًا الزيارة الجارية.';
+	@override String get habilitation => 'مخوَّل';
+	@override String get deconnexion => 'تسجيل الخروج';
+	@override String get deconnexionDetail => 'إنهاء الجلسة على هذا الجهاز';
+	@override String get identifiant => 'المعرّف';
+	@override String get nonDisponible => 'غير متاح';
+	@override String get contact => 'التواصل';
+	@override String get contactDetail => 'تديره الأكاديمية';
+	@override String get langue => 'اللغة';
+	@override String get francais => 'الفرنسية';
+	@override String get fuseau => 'المنطقة الزمنية';
+	@override String get academie => 'الأكاديمية';
+	@override String get securite => 'الأمان';
+	@override String get statut => 'الحالة';
+	@override String get reglagesTitre => 'الإعدادات';
+	@override String get reglagesIntro => 'تبقى هذه التفضيلات على هذا الجهاز وتُطبَّق فورًا.';
+	@override String get apparence => 'المظهر';
+	@override String get accessibilite => 'إمكانية الوصول';
+	@override String get animations => 'تقليل الحركة';
+	@override String get animationsDetail => 'يحدّ من الحركة على الشاشة';
+	@override String get effets => 'تقليل المؤثرات';
+	@override String get effetsDetail => 'يحدّ من الشفافية والظلال';
+	@override String get lisibiliteDetail => 'حجم النص يتبع إعداد جهازك.';
+	@override String get langueRegion => 'اللغة والمنطقة';
+	@override String get francaisDetail => 'لغة الواجهة';
+	@override String get actif => 'مفعَّل';
+	@override String get arabe => 'العربية';
+	@override String get arabeDetail => 'قريبًا';
+	@override String get fuseauDetail => 'يُكتشف تلقائيًا';
+	@override String get notifications => 'الإشعارات';
+	@override String get notificationsCours => 'الدروس';
+	@override String get notificationsCoursDetail => 'تذكيرات قبل دروسك';
+	@override String get notificationsFoyer => 'الأسرة';
+	@override String get notificationsFoyerDetail => 'نشاط ملفات أسرتك';
+	@override String get notificationsEtat => 'تعتمد الإشعارات أيضًا على إعدادات جهازك ومتصفحك.';
+	@override String get coursDonnees => 'الدروس والبيانات';
+	@override String get economieDonnees => 'توفير البيانات';
+	@override String get economieDonneesDetail => 'يخفّض جودة الفيديو على شبكة الجوال';
+	@override String get lectureGrande => 'القراءة بنص كبير';
+	@override String get lectureGrandeDetail => 'يعرض القرآن بحجم أكبر افتراضيًا';
+	@override String get profilsTitre => 'ملفات الأسرة';
+	@override String get profilsIntro => 'الأطفال المرتبطون بأسرتك.';
+	@override String get erreurProfils => 'تعذّرت قراءة الملفات.';
+	@override String get reessayer => 'إعادة المحاولة';
+	@override String get aucunProfil => 'لا ملفات حتى الآن';
+	@override String get aucunProfilDetail => 'أضف طفلًا للبدء';
+	@override String get ajouterEnfant => 'إضافة طفل';
+	@override String get ouvrirProfil => 'فتح الملف';
+	@override String get modeEnfant => 'وضع إمكانية الوصول';
+	@override String get modeStandard => 'الوضع العادي';
+	@override String get cameraLabel => 'الكاميرا';
+	@override String get cameraAutorisee => 'مسموح بها';
+	@override String get cameraInterdite => 'ممنوعة';
+	@override String get accesSansFin => 'وصول دون تاريخ انتهاء';
+	@override String accesJusqua({required Object date}) => 'وصول حتى ⁨${date}⁩';
+	@override String get statutActif => 'مفعَّل';
+	@override String get statutProvisoire => 'مفعَّل مؤقتًا';
+	@override String profilEnfant({required Object prenom}) => 'ملف ⁨${prenom}⁩';
+	@override String identifiantEnfant({required Object identifiant}) => 'المعرّف: ⁨${identifiant}⁩';
+	@override late final _Traductions$compte$roles$ar roles = _Traductions$compte$roles$ar._(_root);
+	@override late final _Traductions$compte$roleDetail$ar roleDetail = _Traductions$compte$roleDetail$ar._(_root);
+	@override late final _Traductions$compte$tuteur$ar tuteur = _Traductions$compte$tuteur$ar._(_root);
 }
 
 // Path: tc
@@ -651,6 +736,232 @@ class _Traductions$priere$ar extends Traductions$priere$fr {
 	@override String get lieuSansNom => 'أوقات محسوبة لمكان المعلم';
 	@override String ajustee({required Object priere, required Object minutes}) => 'عدّل المعلم ⁨${priere}⁩ بـ⁨${minutes}⁩ دقيقة';
 	@override String get reglagesAbsents => 'لم يضبط المعلم أوقات الصلاة بعد.';
+}
+
+// Path: tuteur
+class _Traductions$tuteur$ar extends Traductions$tuteur$fr {
+	_Traductions$tuteur$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$tuteur$accueil$ar accueil = _Traductions$tuteur$accueil$ar._(_root);
+	@override late final _Traductions$tuteur$reglages$ar reglages = _Traductions$tuteur$reglages$ar._(_root);
+}
+
+// Path: historique
+class _Traductions$historique$ar extends Traductions$historique$fr {
+	_Traductions$historique$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'السجل';
+	@override String get detailSeance => 'تفاصيل الحصة';
+	@override late final _Traductions$historique$segments$ar segments = _Traductions$historique$segments$ar._(_root);
+	@override List<String> get moisCourts => [
+		'يناير',
+		'فبراير',
+		'مارس',
+		'أبريل',
+		'مايو',
+		'يونيو',
+		'يوليو',
+		'أغسطس',
+		'سبتمبر',
+		'أكتوبر',
+		'نوفمبر',
+		'ديسمبر',
+	];
+	@override String dateCourte({required Object jour, required Object mois, required Object annee}) => '⁨${jour}⁩ ⁨${mois}⁩ ⁨${annee}⁩';
+	@override String dateLongue({required Object jourSemaine, required Object jour, required Object mois, required Object annee}) => '⁨${jourSemaine}⁩ ⁨${jour}⁩ ⁨${mois}⁩ ⁨${annee}⁩';
+	@override String plage({required Object debut, required Object fin}) => '⁨${debut}⁩ - ⁨${fin}⁩';
+	@override late final _Traductions$historique$duree$ar duree = _Traductions$historique$duree$ar._(_root);
+	@override String get fuseauListe => 'الساعات معروضة بتوقيت هذا الجهاز.';
+	@override String fuseauDetail({required Object decalage}) => 'الساعات معروضة بتوقيت هذا الجهاز (UTC⁨${decalage}⁩).';
+	@override String get classeInconnue => 'الفصل غير متاح';
+	@override late final _Traductions$historique$selecteur$ar selecteur = _Traductions$historique$selecteur$ar._(_root);
+	@override late final _Traductions$historique$filtres$ar filtres = _Traductions$historique$filtres$ar._(_root);
+	@override String get retour => 'العودة إلى السجل';
+	@override late final _Traductions$historique$etat$ar etat = _Traductions$historique$etat$ar._(_root);
+	@override String get presenceIllisible => 'تعذّرت قراءة الحضور: تبقى الحالات غير معروفة الآن.';
+	@override late final _Traductions$historique$seances$ar seances = _Traductions$historique$seances$ar._(_root);
+	@override late final _Traductions$historique$observations$ar observations = _Traductions$historique$observations$ar._(_root);
+	@override late final _Traductions$historique$seance$ar seance = _Traductions$historique$seance$ar._(_root);
+	@override late final _Traductions$historique$observation$ar observation = _Traductions$historique$observation$ar._(_root);
+}
+
+// Path: appareils
+class _Traductions$appareils$ar extends Traductions$appareils$fr {
+	_Traductions$appareils$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الأجهزة';
+	@override late final _Traductions$appareils$foyer$ar foyer = _Traductions$appareils$foyer$ar._(_root);
+	@override late final _Traductions$appareils$eleve$ar eleve = _Traductions$appareils$eleve$ar._(_root);
+	@override late final _Traductions$appareils$plateforme$ar plateforme = _Traductions$appareils$plateforme$ar._(_root);
+	@override late final _Traductions$appareils$retrait$ar retrait = _Traductions$appareils$retrait$ar._(_root);
+	@override late final _Traductions$appareils$emetteur$ar emetteur = _Traductions$appareils$emetteur$ar._(_root);
+	@override String get regenerer => 'إنشاء رمز جديد';
+	@override String get revoquer => 'إزالة';
+	@override String get revoquerConfirmation => 'إزالة هذا الجهاز؟ لن يستطيع الاتصال ما لم يُعد وليّ الأمر ربطه برمز جديد.';
+}
+
+// Path: connexion
+class _Traductions$connexion$ar extends Traductions$connexion$fr {
+	_Traductions$connexion$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'تسجيل الدخول';
+	@override String get intro => 'نرسل لك رابطًا بالبريد الإلكتروني. لا كلمة مرور تحفظها، ولا كلمة مرور تضيع.';
+	@override String get courriel => 'بريدك الإلكتروني';
+	@override String get courrielIndice => 'vous@exemple.com';
+	@override String get motDePasseDemo => 'كلمة مرور العرض التجريبي';
+	@override String get envoyerLien => 'استلام الرابط';
+	@override String get avecGoogle => 'المتابعة بحساب Google';
+	@override String get ou => 'أو';
+	@override String get lienEnvoye => 'أُرسل الرابط';
+	@override String lienEnvoyeDetail({required Object courriel}) => 'افتح الرسالة المرسلة إلى ⁨${courriel}⁩، ثم اتبع الرابط. يمكنك ترك هذه الصفحة مفتوحة.';
+	@override String get changerAdresse => 'استخدام عنوان آخر';
+	@override String get erreurCourriel => 'يبدو أن هذا العنوان غير صالح.';
+	@override String get erreurEnvoi => 'لم يكتمل الإرسال. أعد المحاولة بعد لحظة.';
+	@override String get appareilEleveAide => 'أنت وليّ أمر وتجهّز جهاز طالب؟';
+	@override String get appareilEleve => 'ربط جهاز طالب';
+	@override String get renvoyer => 'إعادة إرسال الرابط';
+	@override String renvoye({required Object courriel}) => 'أُرسل رابط جديد إلى ⁨${courriel}⁩. استخدم رابط أحدث رسالة.';
+	@override String get erreurTropTot => 'أُرسل رابط للتو. انتظر قليلًا قبل طلب رابط آخر.';
+	@override String get horsLigne => 'أنت غير متصل: لا يمكن إرسال الرابط الآن.';
+	@override String get probleme => 'انتهت صلاحية الرابط أو لم يصل؟';
+	@override String get decouvrir => 'اكتشف Rewayah Academy';
+	@override late final _Traductions$connexion$recuperation$ar recuperation = _Traductions$connexion$recuperation$ar._(_root);
+	@override late final _Traductions$connexion$feuilleAppareil$ar feuilleAppareil = _Traductions$connexion$feuilleAppareil$ar._(_root);
+}
+
+// Path: attente
+class _Traductions$attente$ar extends Traductions$attente$fr {
+	_Traductions$attente$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'ملفك قيد التحقق';
+	@override String get dossierIncomplet => 'ما زالت تنقص ملفك بعض الوثائق.';
+	@override String get enVerification => 'نتحقق من ملفك.';
+	@override String get refuse => 'رُفض الملف';
+	@override String get suspendu => 'حسابك موقوف.';
+	@override String get contacterAcademie => 'التواصل مع الأكاديمية';
+	@override String deposeLe({required Object date}) => 'أُودع في ⁨${date}⁩';
+	@override String get delai => 'يستغرق التحقق عادة أقل من 48 ساعة.';
+	@override String get aFournir => 'للتقديم';
+	@override String get pieceIdentite => 'وثيقة هوية';
+	@override String get signatureContrat => 'توقيع العقد';
+	@override String get carteAccuse => 'ما يجب أن تعرفه';
+	@override String get deposerLaPiece => 'إيداع وثيقتي';
+	@override String get signerLeContrat => 'القراءة والتوقيع';
+	@override String get lireLaCarte => 'قراءة';
+	@override String get toutEstDepose => 'كل شيء مودَع.';
+	@override String get corriger => 'تصحيح';
+	@override String get correctionImpossible => 'لا يمكن تعديل هذا الملف الآن.';
+	@override String get actualiser => 'تحديث حالة الملف';
+	@override String get suspenduDetail => 'يمكنك التواصل مع الأكاديمية لمعرفة الخطوات المطلوبة.';
+	@override String get seDeconnecter => 'تسجيل الخروج';
+	@override String get titreDossier => 'ملفك';
+	@override String get titreCompte => 'حسابك';
+	@override String get accordsARelire => 'بقي عليك قراءة شروطنا وقبولها.';
+	@override String get accesTitre => 'أُنشئ حسابك';
+	@override String get accesEnPreparation => 'فتح حسابك ليس تلقائيًا بعد.';
+	@override String get aucunDocument => 'ليس عليك إرسال أي وثيقة.';
+	@override String get accesContact => 'يمكن للأكاديمية فتحه لك: تواصل معها.';
+	@override String get actualiserCompte => 'تحديث';
+	@override String reste({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		one: 'بقي عنصر واحد للتقديم.',
+		other: 'بقيت ⁨${n}⁩ عناصر للتقديم.',
+	);
+	@override String get etatAFournir => 'للتقديم';
+	@override String prochaineEtape({required Object etape}) => 'الخطوة التالية: ⁨${etape}⁩';
+	@override String refuseDetail({required Object element}) => 'لإعادة إطلاق التحقق، ابدأ بهذا العنصر: ⁨${element}⁩.';
+	@override String get refuseSansElement => 'يمكنك التواصل مع الأكاديمية لمعرفة الخطوات المطلوبة.';
+	@override String get illisible => 'حالة ملفك لا تظهر الآن.';
+	@override String get horsLigne => 'أنت غير متصل. ستظهر حالة ملفك بمجرد عودة الشبكة.';
+}
+
+// Path: inscription
+class _Traductions$inscription$ar extends Traductions$inscription$fr {
+	_Traductions$inscription$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'إنشاء حسابك';
+	@override String etapeSur({required Object n, required Object total}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩';
+	@override String tempsRestant({required Object minutes}) => 'نحو ⁨${minutes}⁩ دقيقة';
+	@override String get roleQuestion => 'هل تسجّل كوليّ أمر أم كمعلم؟';
+	@override String get roleTuteur => 'وليّ أمر';
+	@override String get roleEleveAdulte => 'طالب بالغ، لنفسي';
+	@override String get roleEnseignant => 'معلم';
+	@override String get autreAide => 'راسل الأكاديمية وسننشئ لك وصولك. لا تستطيع هذه الصفحة فعل ذلك عنك.';
+	@override String get identiteQuestion => 'ما اسمك؟';
+	@override String get identiteRaison => 'يجب أن يكون هذا الاسم هو الاسم الموجود في وثيقة هويتك.';
+	@override String get prenom => 'الاسم';
+	@override String get nom => 'اللقب';
+	@override String get genreQuestion => 'أنت';
+	@override String get genreHomme => 'رجل';
+	@override String get genreFemme => 'امرأة';
+	@override String get genreRaison => 'تُستخدم هذه الإجابة فقط لتسليم وثيقة هويتك إلى موظف من الجنس نفسه.';
+	@override String get recapitulatif => 'قبل المتابعة';
+	@override String get creer => 'إنشاء حسابي';
+	@override String get erreur => 'لم يكتمل إنشاء الحساب. أعد المحاولة بعد لحظة.';
+	@override String get champRequis => 'هذه الإجابة ضرورية للمتابعة.';
+	@override String etapeCourte({required Object n, required Object total}) => '⁨${n}⁩ من ⁨${total}⁩';
+	@override String get retourEtape => 'العودة إلى الخطوة السابقة';
+	@override String get seDeconnecter => 'تسجيل الخروج';
+	@override String get modifier => 'تعديل';
+	@override String get reessayer => 'إعادة المحاولة';
+	@override String get erreurActualisation => 'أُنشئ حسابك، لكن تعذّر تحديث الاتصال. أعد المحاولة، أو سجّل الخروج ثم الدخول من جديد.';
+	@override late final _Traductions$inscription$usage$ar usage = _Traductions$inscription$usage$ar._(_root);
+	@override late final _Traductions$inscription$recap$ar recap = _Traductions$inscription$recap$ar._(_root);
+}
+
+// Path: consentement
+class _Traductions$consentement$ar extends Traductions$consentement$fr {
+	_Traductions$consentement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الموافقات';
+	@override late final _Traductions$consentement$texte$ar texte = _Traductions$consentement$texte$ar._(_root);
+	@override late final _Traductions$consentement$comment$ar comment = _Traductions$consentement$comment$ar._(_root);
+	@override late final _Traductions$consentement$compte$ar compte = _Traductions$consentement$compte$ar._(_root);
+}
+
+// Path: foyer
+class _Traductions$foyer$ar extends Traductions$foyer$fr {
+	_Traductions$foyer$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الأسرة';
+	@override String get ajouterProfil => 'إضافة ملف طالب';
+	@override String get sousTitre => 'ملفات الطلاب في أسرتك';
+	@override String get membres => 'ملفات الطلاب';
+	@override late final _Traductions$foyer$vide$ar vide = _Traductions$foyer$vide$ar._(_root);
+	@override late final _Traductions$foyer$membre$ar membre = _Traductions$foyer$membre$ar._(_root);
+	@override String get classesIndisponibles => 'فصل كل طالب لا يظهر في هذه الصفحة بعد.';
+	@override String get classesEchec => 'تعذّرت قراءة فصل بعض الطلاب.';
+	@override String get relireClasses => 'إعادة قراءة الفصول';
+	@override String get inscriptionIllisible => 'التسجيل الجاري لكل طالب لا يظهر في هذه الصفحة بعد.';
+	@override String get appareilsPartages => 'الأجهزة المشتركة';
+	@override String get appareilsFoyer => 'أجهزة الأسرة';
+	@override String get appareilsFoyerLegende => 'ربط جهاز، عرض الأجهزة المربوطة، إزالة أحدها';
+	@override String get creerMonProfil => 'إنشاء ملفي كطالب';
+	@override late final _Traductions$foyer$monProfil$ar monProfil = _Traductions$foyer$monProfil$ar._(_root);
+	@override late final _Traductions$foyer$ajout$ar ajout = _Traductions$foyer$ajout$ar._(_root);
 }
 
 // Path: commun.sections
@@ -1750,6 +2061,62 @@ class _Traductions$enseignant$revue$ar extends Traductions$enseignant$revue$fr {
 	@override String get typeReorientation => 'اقتراح إعادة توجيه';
 }
 
+// Path: compte.roles
+class _Traductions$compte$roles$ar extends Traductions$compte$roles$fr {
+	_Traductions$compte$roles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get admin => 'مدير';
+	@override String get accountant => 'محاسب';
+	@override String get controller => 'مراقب';
+	@override String get teacher => 'معلم';
+	@override String get guardian => 'وليّ أمر';
+	@override String get student => 'طالب';
+}
+
+// Path: compte.roleDetail
+class _Traductions$compte$roleDetail$ar extends Traductions$compte$roleDetail$fr {
+	_Traductions$compte$roleDetail$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get admin => 'يدير ملفات الأكاديمية والإسناد والسجل';
+	@override String get accountant => 'يدير المدفوعات والفواتير';
+	@override String get controller => 'يتابع الحصص من أجل الجودة التعليمية';
+	@override String get teacher => 'يقدّم الدروس ويتابع مواعيده';
+	@override String get guardian => 'يتابع الأسرة وأطفالها';
+	@override String get student => 'يتابع دروسه وقرآنه';
+}
+
+// Path: compte.tuteur
+class _Traductions$compte$tuteur$ar extends Traductions$compte$tuteur$fr {
+	_Traductions$compte$tuteur$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get preferences => 'التفضيلات';
+	@override String dateLongue({required Object jour, required Object mois, required Object annee}) => '⁨${jour}⁩ ⁨${mois}⁩ ⁨${annee}⁩';
+	@override late final _Traductions$compte$tuteur$identite$ar identite = _Traductions$compte$tuteur$identite$ar._(_root);
+	@override late final _Traductions$compte$tuteur$acces$ar acces = _Traductions$compte$tuteur$acces$ar._(_root);
+	@override late final _Traductions$compte$tuteur$securite$ar securite = _Traductions$compte$tuteur$securite$ar._(_root);
+	@override late final _Traductions$compte$tuteur$informations$ar informations = _Traductions$compte$tuteur$informations$ar._(_root);
+	@override late final _Traductions$compte$tuteur$foyer$ar foyer = _Traductions$compte$tuteur$foyer$ar._(_root);
+	@override late final _Traductions$compte$tuteur$aide$ar aide = _Traductions$compte$tuteur$aide$ar._(_root);
+	@override late final _Traductions$compte$tuteur$deconnexion$ar deconnexion = _Traductions$compte$tuteur$deconnexion$ar._(_root);
+	@override late final _Traductions$compte$tuteur$pageInformations$ar pageInformations = _Traductions$compte$tuteur$pageInformations$ar._(_root);
+	@override late final _Traductions$compte$tuteur$pageSecurite$ar pageSecurite = _Traductions$compte$tuteur$pageSecurite$ar._(_root);
+	@override late final _Traductions$compte$tuteur$pageAcces$ar pageAcces = _Traductions$compte$tuteur$pageAcces$ar._(_root);
+	@override late final _Traductions$compte$tuteur$pagePaiements$ar pagePaiements = _Traductions$compte$tuteur$pagePaiements$ar._(_root);
+	@override late final _Traductions$compte$tuteur$pagePreferences$ar pagePreferences = _Traductions$compte$tuteur$pagePreferences$ar._(_root);
+	@override late final _Traductions$compte$tuteur$pageApparence$ar pageApparence = _Traductions$compte$tuteur$pageApparence$ar._(_root);
+	@override late final _Traductions$compte$tuteur$pageAide$ar pageAide = _Traductions$compte$tuteur$pageAide$ar._(_root);
+	@override late final _Traductions$compte$tuteur$pageLegal$ar pageLegal = _Traductions$compte$tuteur$pageLegal$ar._(_root);
+}
+
 // Path: tc.bibliotheque
 class _Traductions$tc$bibliotheque$ar extends Traductions$tc$bibliotheque$fr {
 	_Traductions$tc$bibliotheque$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -2373,6 +2740,582 @@ class _Traductions$eleveConnexion$refus$ar extends Traductions$eleveConnexion$re
 	@override String get generique => 'لم يكتمل التحقق من الرمز. أعد المحاولة بعد لحظة.';
 }
 
+// Path: tuteur.accueil
+class _Traductions$tuteur$accueil$ar extends Traductions$tuteur$accueil$fr {
+	_Traductions$tuteur$accueil$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الرئيسية';
+	@override String get voirLaClasse => 'عرض الفصل';
+	@override String get prochaineSeance => 'الحصة القادمة';
+	@override String heureDe({required Object ville}) => 'توقيت ⁨${ville}⁩';
+	@override String get heureAppareil => 'توقيت هذا الجهاز';
+	@override String dateEtFuseau({required Object date, required Object fuseau}) => '⁨${date}⁩ · ⁨${fuseau}⁩';
+	@override String heureClasse({required Object heure, required Object ville}) => 'توقيت الفصل: ⁨${heure}⁩ ⁨${ville}⁩';
+	@override String get seanceEnDirect => 'حصة مباشرة';
+	@override String get seanceTerminee => 'انتهت الحصة';
+	@override String get seanceAnnulee => 'لن تُعقد هذه الحصة.';
+	@override String get seanceNonTenue => 'تعذّر عقد هذه الحصة.';
+	@override String get horaireIncertain => 'فتح القاعة غير مؤكَّد الآن';
+	@override String get pastilleAnnulee => 'ملغاة';
+	@override String get pastilleNonTenue => 'لم تُعقد';
+	@override String get pastilleTerminee => 'منتهية';
+	@override String get aucuneSeance => 'لا حصة مقررة';
+	@override String aucuneSeanceDetail({required Object prenom}) => 'ستظهر هنا الحصة القادمة لـ⁨${prenom}⁩ بمجرد جدولتها.';
+	@override String get seanceIllisible => 'تعذّرت قراءة الحصة القادمة.';
+	@override String get classeIndisponible => 'تفاصيل الفصل غير متاحة هنا بعد.';
+	@override String get classeIllisible => 'تعذّرت قراءة الفصل.';
+	@override String sansClasseTitre({required Object prenom}) => 'لا فصل لـ⁨${prenom}⁩';
+	@override String sansClassePhrase({required Object prenom}) => 'اختر فصلًا ليتمكن ⁨${prenom}⁩ من بدء الدروس.';
+	@override String get foyerVideTitre => 'لا ملف طالب حتى الآن';
+	@override String get foyerVidePhrase => 'أضف ملف طالب لاختيار فصل ومتابعة حصصه.';
+	@override String get ajouterProfil => 'إضافة ملف طالب';
+	@override String get profilsIllisibles => 'تعذّرت قراءة ملفات الأسرة.';
+	@override String blocageAppareilTitre({required Object prenom}) => 'لا جهاز جاهز لـ⁨${prenom}⁩';
+	@override String blocageAppareilPhrase({required Object prenom}) => 'دون جهاز مربوط، لن يستطيع ⁨${prenom}⁩ دخول الفصل.';
+	@override String get connecterAppareil => 'ربط جهاز';
+	@override String get avantProchainCours => 'قبل الدرس القادم';
+	@override String get voirTout => 'عرض الكل';
+	@override String get travailIndisponible => 'العمل المطلوب تحضيره غير مربوط بهذه المساحة بعد.';
+	@override String get travailIllisible => 'تعذّرت قراءة العمل المطلوب تحضيره.';
+	@override String get rienAPreparer => 'لا شيء للتحضير الآن';
+	@override String get derniereSeance => 'آخر حصة';
+	@override String get voirHistorique => 'عرض السجل';
+	@override String get detailsSeance => 'تفاصيل الحصة';
+	@override String get aucuneDerniere => 'لا حصة ماضية حتى الآن';
+	@override String get derniereIllisible => 'تعذّرت قراءة آخر حصة.';
+	@override String dateEtDuree({required Object date, required Object duree}) => '⁨${date}⁩ · ⁨${duree}⁩';
+	@override late final _Traductions$tuteur$accueil$etatCourt$ar etatCourt = _Traductions$tuteur$accueil$etatCourt$ar._(_root);
+	@override String get assister => 'الحضور';
+	@override String get assisterRefuse => 'تعذّر الانضمام إلى الدرس. ربما انتهى للتو.';
+	@override String enCours({required Object prenom}) => 'جارٍ مع ⁨${prenom}⁩';
+	@override String depuisMinutes({required Object minutes}) => 'بدأ منذ ⁨${minutes}⁩ دقيقة';
+	@override String get depuisInstant => 'بدأ للتو';
+	@override String aujourdhui({required Object heure, required Object prenom}) => 'اليوم الساعة ⁨${heure}⁩، مع ⁨${prenom}⁩';
+	@override String unAutreJour({required Object jour, required Object heure, required Object prenom}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩، مع ⁨${prenom}⁩';
+	@override String get rienAujourdhui => 'لا شيء اليوم';
+	@override String get aucunCoursPrevu => 'لا درس مجدول حتى الآن';
+	@override String get aucunCoursPrevuDetail => 'تُحضَّر دروس الأسبوع مسبقًا. سيظهر هذا الدرس هنا.';
+	@override String get enRecherche => 'جارٍ البحث عن معلم';
+	@override String enRechercheDepuis({required Object date}) => 'قُدِّم الطلب في ⁨${date}⁩';
+	@override String enRechercheSansDate({required Object prenom}) => 'سيتولى معلم ⁨${prenom}⁩ من بين الساعات المقترحة.';
+	@override String sansCreneau({required Object prenom}) => 'لا ساعة مقترحة لـ⁨${prenom}⁩';
+	@override String sansCreneauDetail({required Object prenom}) => 'دون موعد، لا يستطيع أي معلم تولي ⁨${prenom}⁩.';
+	@override String get poserDesHeures => 'اقتراح ساعات';
+	@override String annulee({required Object heure}) => 'لن يُعقد درس الساعة ⁨${heure}⁩';
+	@override String get motifAnnulee => 'حصة ملغاة';
+	@override String get motifAnnuleeTard => 'حصة ملغاة قبيل موعدها';
+	@override String proposeApres({required Object jour, required Object heure}) => 'الدرس القادم ⁨${jour}⁩ الساعة ⁨${heure}⁩';
+	@override String get proposeAucun => 'سيُقترح عليك درس جديد.';
+	@override String get gererLeFoyer => 'إدارة الأسرة';
+	@override String get blocAppareils => 'أجهزة الأسرة';
+	@override String get blocAppareilsDetail => 'إضافة جهاز، أو إزالة أحدها.';
+	@override String get blocReglages => 'الإعدادات لكل طفل';
+	@override String get blocReglagesDetail => 'الصورة والكاميرا والعرض، طفلًا بطفل.';
+	@override String get blocGroupesDetail => 'الفصل والمعلم والدرس القادم لكل طفل.';
+	@override String get acces => 'الوصول';
+	@override String accesJusqua({required Object prenom, required Object date}) => 'وصول ⁨${prenom}⁩ حتى ⁨${date}⁩';
+	@override String accesSansFin({required Object prenom}) => 'وصول ⁨${prenom}⁩ دون تاريخ انتهاء';
+	@override String get aucunEnfant => 'لا طفل في الأسرة';
+	@override String get aucunEnfantDetail => 'أضف طفلك الأول للبدء.';
+	@override String get erreur => 'تعذّرت قراءة الأسرة كاملة. أعد المحاولة بعد لحظة.';
+}
+
+// Path: tuteur.reglages
+class _Traductions$tuteur$reglages$ar extends Traductions$tuteur$reglages$fr {
+	_Traductions$tuteur$reglages$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الإعدادات لكل طفل';
+	@override String get intro => 'تُطبَّق هذه الإعدادات على الحصة التالية، وأبدًا أثناء درس.';
+	@override String get photo => 'الصورة';
+	@override String photoAucune({required Object prenom}) => 'ليس لـ⁨${prenom}⁩ صورة بعد. تبقى مرئية للأسرة وحدها.';
+	@override String photoPresente({required Object prenom}) => 'تبقى صورة ⁨${prenom}⁩ مرئية للأسرة وحدها، ولا يراها معلمه ولا الطلاب الآخرون.';
+	@override String get photoAjouter => 'إضافة صورة';
+	@override String get photoChanger => 'تغيير الصورة';
+	@override String photoTropLourde({required Object taille}) => 'هذه الصورة تتجاوز ⁨${taille}⁩ م.ب. التقطها بجودة أقل.';
+	@override String get camera => 'الكاميرا';
+	@override String cameraAutorisee({required Object prenom}) => 'يمكن لـ⁨${prenom}⁩ تشغيل كاميرته أثناء الدرس.';
+	@override String cameraInterdite({required Object prenom}) => 'لن يظهر زر الكاميرا لـ⁨${prenom}⁩.';
+	@override String cameraAutoriser({required Object prenom}) => 'السماح بكاميرا ⁨${prenom}⁩';
+	@override String cameraRetirer({required Object prenom}) => 'إلغاء كاميرا ⁨${prenom}⁩';
+	@override String get mode => 'العرض';
+	@override String modeEnfant({required Object prenom}) => 'عرض كبير، دون قراءة: يتعرف ⁨${prenom}⁩ على الصور ويستمع.';
+	@override String modeStandard({required Object prenom}) => 'عرض عادي: يقرأ ⁨${prenom}⁩ شاشته.';
+	@override String modePasserEnfant({required Object prenom}) => 'نقل ⁨${prenom}⁩ إلى العرض الكبير';
+	@override String modePasserStandard({required Object prenom}) => 'نقل ⁨${prenom}⁩ إلى العرض العادي';
+	@override String get demandes => 'طلب تغيير';
+	@override String get demandeReaffectation => 'تغيير المعلم';
+	@override String get demandeDuree => 'تغيير مدة الدروس';
+	@override String get demandeMinimum => 'تغيير المدة الدنيا المدفوعة';
+	@override String demandeSansEnseignant({required Object prenom}) => 'ليس لـ⁨${prenom}⁩ معلم بعد: لا شيء يُغيَّر.';
+	@override String demandeTitreReaffectation({required Object prenom}) => 'تغيير معلم ⁨${prenom}⁩';
+	@override String demandeTitreDuree({required Object prenom}) => 'مدة دروس ⁨${prenom}⁩';
+	@override String demandeTitreMinimum({required Object prenom}) => 'المدة الدنيا المدفوعة لـ⁨${prenom}⁩';
+	@override String demandeActuelle({required Object minutes}) => 'حاليًا: ⁨${minutes}⁩ دقيقة';
+	@override String demandeMinutes({required Object minutes}) => '⁨${minutes}⁩ دقيقة';
+	@override String get demandeMotif => 'لماذا هذا التغيير؟';
+	@override String get demandeMotifRequis => 'السبب ضروري: هو الذي يسمح بالحسم.';
+	@override String get demandeEnvoyer => 'إرسال الطلب';
+	@override String get demandeEnvoyee => 'أُرسل الطلب. ستحسم فيه الإدارة.';
+	@override String get aucunEnfant => 'لا طفل في الأسرة';
+	@override String get aucunEnfantDetail => 'أضف طفلًا لتتمكن من ضبط عرضه وكاميرته.';
+	@override String erreur({required Object message}) => 'لم يكتمل الحفظ: ⁨${message}⁩';
+}
+
+// Path: historique.segments
+class _Traductions$historique$segments$ar extends Traductions$historique$segments$fr {
+	_Traductions$historique$segments$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get seances => 'الحصص';
+	@override String get observations => 'المتابعات';
+}
+
+// Path: historique.duree
+class _Traductions$historique$duree$ar extends Traductions$historique$duree$fr {
+	_Traductions$historique$duree$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String secondes({required Object s}) => '⁨${s}⁩ ث';
+	@override String minutes({required Object m}) => '⁨${m}⁩ دقيقة';
+	@override String minutesSecondes({required Object m, required Object s}) => '⁨${m}⁩ د ⁨${s}⁩ ث';
+	@override String heures({required Object h}) => '⁨${h}⁩ س';
+	@override String heuresMinutes({required Object h, required Object m}) => '⁨${h}⁩ س ⁨${m}⁩ د';
+}
+
+// Path: historique.selecteur
+class _Traductions$historique$selecteur$ar extends Traductions$historique$selecteur$fr {
+	_Traductions$historique$selecteur$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get aucune => 'لا حصة';
+	@override String get une => 'حصة واحدة';
+	@override String plusieurs({required Object n}) => '⁨${n}⁩ حصص';
+}
+
+// Path: historique.filtres
+class _Traductions$historique$filtres$ar extends Traductions$historique$filtres$fr {
+	_Traductions$historique$filtres$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get classe => 'الفصل';
+	@override String get toutesClasses => 'كل الفصول';
+	@override String get periode => 'الفترة';
+	@override String get toutePeriode => 'كامل الفترة';
+	@override String get septJours => 'آخر 7 أيام';
+	@override String get trenteJours => 'آخر 30 يومًا';
+	@override String get troisMois => 'آخر 3 أشهر';
+	@override String get statut => 'الحالة';
+	@override String get tousStatuts => 'كل الحالات';
+}
+
+// Path: historique.etat
+class _Traductions$historique$etat$ar extends Traductions$historique$etat$fr {
+	_Traductions$historique$etat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get presence => 'حضور';
+	@override String retard({required Object minutes}) => 'تأخر ⁨${minutes}⁩ دقيقة';
+	@override String get retardSansDuree => 'تأخر';
+	@override String get verification => 'قيد التحقق';
+	@override String get annule => 'درس ملغى';
+	@override String get nonTenu => 'درس لم يُعقد';
+}
+
+// Path: historique.seances
+class _Traductions$historique$seances$ar extends Traductions$historique$seances$fr {
+	_Traductions$historique$seances$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get videTitre => 'لا حصة ماضية';
+	@override String videPhrase({required Object prenom}) => 'ستظهر هنا الحصص الماضية لـ⁨${prenom}⁩.';
+	@override String get videPhraseFoyer => 'ستظهر هنا الحصص الماضية لملفات الطلاب.';
+	@override String get filtreVideTitre => 'لا حصة مطابقة';
+	@override String get filtreVidePhrase => 'غيّر عوامل التصفية لتجد الحصص الأخرى.';
+	@override String tronquee({required Object nombre}) => 'تُعرض أحدث ⁨${nombre}⁩ حصة.';
+	@override String ouvrir({required Object date, required Object classe, required Object etat}) => 'حصة ⁨${date}⁩، ⁨${classe}⁩، ⁨${etat}⁩';
+}
+
+// Path: historique.observations
+class _Traductions$historique$observations$ar extends Traductions$historique$observations$fr {
+	_Traductions$historique$observations$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get indisponibleTitre => 'سجل المتابعات غير متاح';
+	@override String get indisponiblePhrase => 'لا يمكن بعد قراءة الزيارات المسجَّلة في التطبيق.';
+	@override String get videTitre => 'لا متابعة';
+	@override String videPhrase({required Object prenom}) => 'ستظهر هنا الزيارات التي تقوم بها أثناء حصص ⁨${prenom}⁩.';
+	@override String get videPhraseFoyer => 'ستظهر هنا زياراتك أثناء الحصص.';
+	@override String get filtreVideTitre => 'لا متابعة مطابقة';
+	@override String get filtreVidePhrase => 'غيّر عوامل التصفية لتجد الزيارات الأخرى.';
+	@override String get visiteUne => 'زيارة واحدة';
+	@override String visites({required Object n}) => '⁨${n}⁩ زيارات';
+	@override String get dureeNonConfirmee => 'المدة غير مؤكَّدة';
+	@override String get terminee => 'منتهية';
+	@override String get nonRefermee => 'الخروج غير مسجَّل';
+	@override String get eleveInconnu => 'طالب';
+	@override String get tronquee => 'تُعرض أحدث الزيارات فقط.';
+	@override String ouvrir({required Object date, required Object classe, required Object etat}) => 'متابعات ⁨${date}⁩، ⁨${classe}⁩، ⁨${etat}⁩';
+}
+
+// Path: historique.seance
+class _Traductions$historique$seance$ar extends Traductions$historique$seance$fr {
+	_Traductions$historique$seance$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String titreSansClasse({required Object date}) => 'حصة ⁨${date}⁩';
+	@override String get blocSeance => 'الحصة';
+	@override String blocPresence({required Object prenom}) => 'حضور ⁨${prenom}⁩';
+	@override String get date => 'التاريخ';
+	@override String get horaire => 'الموعد';
+	@override String get dureePrevue => 'المدة المقررة';
+	@override String get classe => 'الفصل';
+	@override String get enseignant => 'المعلم';
+	@override String get presence => 'الحضور';
+	@override String get arrivee => 'الوصول';
+	@override String get interruption => 'الانقطاع';
+	@override String get verificationPhrase => 'لم يُؤكَّد الحضور بعد لهذه الحصة.';
+	@override String get nonTenuPhrase => 'لم تُعقد الحصة: ليس الأمر من فعل الطالب.';
+	@override String get annulePhrase => 'أُلغيت الحصة.';
+	@override String get introuvableTitre => 'لم يُعثر على الحصة';
+	@override String get introuvablePhrase => 'هذه الحصة ليست في سجل أسرتك.';
+}
+
+// Path: historique.observation
+class _Traductions$historique$observation$ar extends Traductions$historique$observation$fr {
+	_Traductions$historique$observation$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String titreSansClasse({required Object date}) => 'متابعات ⁨${date}⁩';
+	@override String get blocResume => 'الملخص';
+	@override String get blocVisites => 'الزيارات';
+	@override String get observateur => 'المتابِع';
+	@override String get vous => 'أنت';
+	@override String get eleve => 'الطالب';
+	@override String get enseignant => 'المعلم';
+	@override String get dureeTotale => 'المدة الكلية';
+	@override String visite({required Object n}) => 'الزيارة ⁨${n}⁩';
+	@override String plageOuverte({required Object debut}) => 'الدخول الساعة ⁨${debut}⁩';
+	@override String get terminee => 'انتهت الزيارة';
+	@override String get introuvableTitre => 'لا زيارة لهذه الحصة';
+	@override String get introuvablePhrase => 'لا زيارة مسجَّلة تطابق هذه الحصة.';
+}
+
+// Path: appareils.foyer
+class _Traductions$appareils$foyer$ar extends Traductions$appareils$foyer$fr {
+	_Traductions$appareils$foyer$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'أجهزة الأسرة';
+	@override String get phrase => 'لكل ملف طالب أجهزته. المس ملفًا لترى أجهزته، أو تزيل أحدها، أو تربط جهازًا جديدًا.';
+	@override String get groupeProfils => 'ملفات الطلاب';
+	@override String get aucunAppareil => 'لا جهاز مربوط';
+	@override String unAppareil({required Object nom}) => 'جهاز واحد مربوط: ⁨${nom}⁩';
+	@override String plusieursAppareils({required Object nombre, required Object noms}) => '⁨${nombre}⁩ أجهزة مربوطة: ⁨${noms}⁩';
+	@override String get partageTitre => 'جهاز مشترك';
+	@override String get partage => 'على جهاز مشترك، يختار كل طالب ملفه ثم يدخل رمزه الشخصي. يظهر هذا الجهاز حينها تحت كل ملف يستخدمه.';
+	@override String get videTitre => 'لا ملف طالب';
+	@override String get vide => 'أضف ملف طالب لتربط به جهازًا لوحيًا أو هاتفًا أو حاسوبًا.';
+	@override String get videAction => 'إضافة ملف طالب';
+}
+
+// Path: appareils.eleve
+class _Traductions$appareils$eleve$ar extends Traductions$appareils$eleve$fr {
+	_Traductions$appareils$eleve$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String sousTitre({required Object prenom}) => 'أدر الأجهزة المسموح بها لـ⁨${prenom}⁩.';
+	@override String get groupe => 'الأجهزة المربوطة';
+	@override String get connecter => 'ربط جهاز';
+	@override String get videTitre => 'لا جهاز مربوط';
+	@override String vide({required Object prenom}) => 'اربط الجهاز اللوحي أو الهاتف أو الحاسوب الخاص بـ⁨${prenom}⁩ بالرمز الذي يعرضه الزر أدناه.';
+	@override String get introuvableTitre => 'لم يُعثر على ملف الطالب';
+	@override String get introuvable => 'ملف الطالب هذا غير مرتبط بأسرتك.';
+	@override String get introuvableAction => 'عرض أجهزة الأسرة';
+	@override String connecteLe({required Object date}) => 'رُبط في ⁨${date}⁩';
+	@override String utiliseLe({required Object date}) => 'آخر استخدام: ⁨${date}⁩';
+	@override String get jamaisUtilise => 'لم يُستخدم بعد';
+	@override String retirerLibelle({required Object appareil}) => 'إزالة ⁨${appareil}⁩';
+	@override String get horsLigne => 'إزالة جهاز أو ربطه يتطلب اتصالًا بالإنترنت.';
+	@override String get partageTitre => 'اختيار الملف والرمز الشخصي';
+	@override String get partage => 'على جهاز مشترك، يختار كل طالب ملفه ثم يدخل رمزه الشخصي، المحفوظ على هذا الجهاز.';
+	@override String get retraitTitre => 'إزالة جهاز';
+	@override String get retrait => 'الجهاز المُزال لا يستطيع إعادة الاتصال. إن كان متصلًا الآن، يبقى كذلك حتى انقطاعه التالي.';
+}
+
+// Path: appareils.plateforme
+class _Traductions$appareils$plateforme$ar extends Traductions$appareils$plateforme$fr {
+	_Traductions$appareils$plateforme$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get android => 'هاتف أو جهاز لوحي Android';
+	@override String get ios => 'iPhone أو iPad';
+	@override String get web => 'متصفح ويب';
+	@override String get windows => 'حاسوب';
+	@override String get inconnue => 'جهاز';
+}
+
+// Path: appareils.retrait
+class _Traductions$appareils$retrait$ar extends Traductions$appareils$retrait$fr {
+	_Traductions$appareils$retrait$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get question => 'إزالة هذا الجهاز؟';
+	@override String consequence({required Object appareil, required Object prenom}) => 'لن يستطيع ⁨${appareil}⁩ الاتصال بملف ⁨${prenom}⁩. إن كان متصلًا الآن، يبقى كذلك حتى انقطاعه التالي.';
+	@override String get confirmer => 'إزالة الجهاز';
+	@override String get enCours => 'جارٍ الإزالة';
+	@override String get reussi => 'أُزيل الجهاز. إن كان متصلًا الآن، يبقى كذلك حتى انقطاعه التالي.';
+	@override String get echec => 'لم تكتمل الإزالة. ما زال الجهاز مسموحًا به. أعد المحاولة بعد لحظة.';
+	@override String get horsLigne => 'لا اتصال بالإنترنت: لم يُزل الجهاز.';
+}
+
+// Path: appareils.emetteur
+class _Traductions$appareils$emetteur$ar extends Traductions$appareils$emetteur$fr {
+	_Traductions$appareils$emetteur$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'ربط جهاز';
+	@override String pourEleve({required Object prenom}) => 'لـ⁨${prenom}⁩';
+	@override String get consigneTitre => 'على الجهاز الآخر';
+	@override String get consigne => 'افتح Rewayah، والمس «ربط جهاز طالب»، ثم امسح رمز QR هذا أو أدخل الرمز.';
+	@override String get libelleQr => 'رمز QR للربط. الرمز نفسه مكتوب أيضًا على هذه الشاشة، لإدخاله إن لم يقرأ الجهاز رمز QR.';
+	@override String get codeManuel => 'الرمز للإدخال';
+	@override String codeLu({required Object code}) => 'الرمز للإدخال: ⁨${code}⁩';
+	@override String valableJusqua({required Object heure}) => 'صالح حتى ⁨${heure}⁩';
+	@override String restant({required Object temps}) => 'بقي ⁨${temps}⁩';
+	@override String sortie({required Object heure}) => 'مغادرة هذه الشاشة لا تلغي الرمز: يبقى صالحًا حتى ⁨${heure}⁩.';
+	@override String get suiviIndisponible => 'لا تستطيع هذه الشاشة تأكيد الربط. تحقّق على جهاز الطالب.';
+	@override String get preparation => 'جارٍ تحضير الرمز';
+	@override late final _Traductions$appareils$emetteur$verification$ar verification = _Traductions$appareils$emetteur$verification$ar._(_root);
+	@override late final _Traductions$appareils$emetteur$confirme$ar confirme = _Traductions$appareils$emetteur$confirme$ar._(_root);
+	@override late final _Traductions$appareils$emetteur$expire$ar expire = _Traductions$appareils$emetteur$expire$ar._(_root);
+	@override late final _Traductions$appareils$emetteur$remplace$ar remplace = _Traductions$appareils$emetteur$remplace$ar._(_root);
+	@override late final _Traductions$appareils$emetteur$dejaActif$ar dejaActif = _Traductions$appareils$emetteur$dejaActif$ar._(_root);
+	@override late final _Traductions$appareils$emetteur$horsLigne$ar horsLigne = _Traductions$appareils$emetteur$horsLigne$ar._(_root);
+	@override late final _Traductions$appareils$emetteur$erreur$ar erreur = _Traductions$appareils$emetteur$erreur$ar._(_root);
+}
+
+// Path: connexion.recuperation
+class _Traductions$connexion$recuperation$ar extends Traductions$connexion$recuperation$fr {
+	_Traductions$connexion$recuperation$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'استعادة الوصول';
+	@override String get intro => 'لا كلمة مرور لإعادة تعيينها: أدخل عنوانك، ونرسل لك رابط دخول جديدًا.';
+	@override String get lienExpireTitre => 'هذا الرابط لم يعد صالحًا';
+	@override String get lienExpire => 'رابط الدخول يُستخدم مرة واحدة وتنتهي صلاحيته بعد مدة. اطلب رابطًا جديدًا أدناه.';
+	@override String get lienRefuseTitre => 'لم يكتمل الدخول';
+	@override String get lienRefuse => 'تعذّر الدخول بهذا الرابط. اطلب رابطًا جديدًا أدناه.';
+	@override String get envoyer => 'استلام رابط جديد';
+	@override String get envoyeTitre => 'أُرسل رابط جديد';
+	@override String envoye({required Object courriel}) => 'افتح الرسالة المرسلة إلى ⁨${courriel}⁩، ثم اتبع الرابط.';
+	@override String get envoyeEncart => 'قد تستغرق الرسالة بضع دقائق لتصل. تذكّر أن تنظر في البريد غير المرغوب فيه.';
+	@override String get autreAdresse => 'استخدام عنوان آخر';
+	@override String get revenirConnexion => 'العودة إلى تسجيل الدخول';
+}
+
+// Path: connexion.feuilleAppareil
+class _Traductions$connexion$feuilleAppareil$ar extends Traductions$connexion$feuilleAppareil$fr {
+	_Traductions$connexion$feuilleAppareil$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get pourQui => 'مخصص لأولياء الأمور المسجلين. تمنح هذه الشاشة طالبًا من أسرتك وصوله الخاص، على جهازه اللوحي أو هاتفه، دون أن تسلّمه حسابك.';
+	@override String get etapesTitre => 'أين تجد الرمز';
+	@override String get etape1 => 'على جهازك، افتح «الأسرة»، ثم «أجهزة الأسرة».';
+	@override String get etape2 => 'المس ملف الطالب، ثم «ربط جهاز».';
+	@override String get etape3 => 'يظهر رمز QR ورمز من ستة أحرف، مع وقت انتهائهما.';
+	@override String get etape4 => 'على جهاز الطالب، امسح رمز QR أو أدخل الرمز.';
+	@override String get plafond => 'عدد الأجهزة لكل طالب محدود. إن بلغت الحد، أزل أحدها من «الأسرة»، «أجهزة الأسرة».';
+	@override String get saisir => 'إدخال الرمز';
+	@override String get fermer => 'إغلاق';
+}
+
+// Path: inscription.usage
+class _Traductions$inscription$usage$ar extends Traductions$inscription$usage$fr {
+	_Traductions$inscription$usage$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get question => 'أي نوع من الحسابات تريد إنشاءه؟';
+	@override String get moiTitre => 'أنا فقط';
+	@override String get moiDescription => 'أريد متابعة الدروس بملفي الخاص كطالب.';
+	@override String get familleTitre => 'أنا وأسرتي';
+	@override String get familleDescription => 'سجّل أطفالك أو أقاربك، معك أو دونك. يمكنك إنشاء ملفك الخاص كطالب في أي وقت.';
+	@override String get enseignant => 'أنا معلم';
+}
+
+// Path: inscription.recap
+class _Traductions$inscription$recap$ar extends Traductions$inscription$recap$fr {
+	_Traductions$inscription$recap$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get usage => 'نوع الحساب';
+	@override String get identite => 'الاسم';
+	@override String get genre => 'الجنس';
+	@override String get enseignant => 'معلم';
+}
+
+// Path: consentement.texte
+class _Traductions$consentement$texte$ar extends Traductions$consentement$texte$fr {
+	_Traductions$consentement$texte$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'زيارات أولياء الأمور';
+	@override String get quiResponsable => 'يمكن لأولياء أمور الطلاب الحاضرين متابعة الحصة لوقت قصير.';
+	@override String get quiResponsableDetail => 'يسمعون المعلم والطلاب الذين يتكلمون، ومنهم طفلك. يبقى ميكروفونهم وكاميرتهم معطَّلين: لا يستطيعون الكلام ولا الكتابة ولا الظهور على الشاشة.';
+	@override String get quiAdulte => 'يمكن لأولياء أمور الطلاب الآخرين الحاضرين متابعة الحصة لوقت قصير.';
+	@override String get quiAdulteDetail => 'يسمعون المعلم والطلاب الذين يتكلمون، ومنهم أنت. يبقى ميكروفونهم وكاميرتهم معطَّلين: لا يستطيعون الكلام ولا الكتابة ولا الظهور على الشاشة.';
+	@override String get pourquoi => 'لمتابعة التعلم دون مقاطعة الفصل.';
+	@override String get pourquoiDetail => 'يأتي وليّ الأمر ليرى إن كان طفله يشارك، ثم ينصرف. تذكّر القاعة باستمرار بأن الزيارة ممكنة.';
+	@override String get limites => 'زيارات قصيرة، بعدد محدود.';
+	@override String get limitesDetail => 'لكل وليّ أمر عدد قليل من الزيارات في كل حصة، تحدده الأكاديمية ويُذكَّر به في «كيف يعمل ذلك؟». الزيارة التي تُغادَر قبل نهايتها تُحتسب زيارة.';
+	@override String get caseResponsable => 'أوافق على هذه الشروط لطفلي';
+	@override String get caseAdulte => 'أوافق على هذه الشروط';
+	@override String get continuer => 'متابعة';
+	@override String get retour => 'رجوع';
+}
+
+// Path: consentement.comment
+class _Traductions$consentement$comment$ar extends Traductions$consentement$comment$fr {
+	_Traductions$consentement$comment$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'كيف يعمل ذلك؟';
+	@override String visites({required num n, required Object minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		one: 'زيارة واحدة مدتها ⁨${minutes}⁩ دقيقة في كل حصة.',
+		other: '⁨${n}⁩ زيارات مدة كل منها ⁨${minutes}⁩ دقيقة في كل حصة.',
+	);
+	@override String visitesSansDuree({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		one: 'زيارة قصيرة واحدة في كل حصة.',
+		other: '⁨${n}⁩ زيارات قصيرة في كل حصة.',
+	);
+	@override String get parParent => 'يسري هذا العدد على كل وليّ أمر، سواء جمعت الحصة طفلًا واحدًا من أطفاله أو أكثر.';
+	@override String get ecourtee => 'الزيارة التي تُغادَر قبل نهايتها تُحتسب: لا يبقى إلا التالية، حتى الأخيرة.';
+	@override String get ecouter => 'تسمع المعلم والطلاب الذين يتكلمون، ومنهم طفلك.';
+	@override String get sansMicro => 'يبقى الميكروفون والكاميرا معطَّلين أثناء الزيارة.';
+	@override String get valeursIndisponibles => 'يظهر عدد الزيارات ومدتها من فصل طفلك، حسب قواعد فصله.';
+	@override String get fermee => 'زيارات المتابعة غير مفتوحة لهذا الفصل.';
+}
+
+// Path: consentement.compte
+class _Traductions$consentement$compte$ar extends Traductions$consentement$compte$fr {
+	_Traductions$consentement$compte$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get intro => 'أضافت الأكاديمية إلى شروطها فقرة عن زيارات أولياء الأمور. لا يُعدّ شيء مقبولًا ما لم تقبله أنت.';
+	@override String accepteLe({required Object date}) => 'قبلت هذه الشروط في ⁨${date}⁩.';
+	@override String get merci => 'شكرًا، حُفظت موافقتك.';
+	@override String get chargement => 'جارٍ قراءة موافقاتك';
+	@override String get erreur => 'موافقاتك لا تظهر الآن.';
+	@override String get horsLigne => 'أنت غير متصل. ستظهر موافقاتك بمجرد عودة الشبكة.';
+	@override String get sansProfil => 'لا حساب متصل: سجّل الدخول من جديد لقراءة موافقاتك.';
+	@override String get invite => 'نسخة جديدة للقراءة: زيارات أولياء الأمور';
+	@override String get inviteAction => 'قراءة';
+}
+
+// Path: foyer.vide
+class _Traductions$foyer$vide$ar extends Traductions$foyer$vide$fr {
+	_Traductions$foyer$vide$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'لا ملف طالب حتى الآن';
+	@override String get phrase => 'أضف ملف طالب لتسجيله في فصل وربط جهازه.';
+}
+
+// Path: foyer.membre
+class _Traductions$foyer$membre$ar extends Traductions$foyer$membre$fr {
+	_Traductions$foyer$membre$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get sansClasse => 'لا فصل بعد';
+	@override String get classeEchec => 'تعذّرت قراءة الفصل';
+	@override String get accesSansEcheance => 'وصول دون موعد انتهاء';
+	@override String accesJusquau({required Object date}) => 'وصول حتى ⁨${date}⁩';
+	@override String accesExpire({required Object date}) => 'انتهى الوصول منذ ⁨${date}⁩';
+	@override String date({required Object jour, required Object mois, required Object annee}) => '⁨${jour}⁩ ⁨${mois}⁩ ⁨${annee}⁩';
+}
+
+// Path: foyer.monProfil
+class _Traductions$foyer$monProfil$ar extends Traductions$foyer$monProfil$fr {
+	_Traductions$foyer$monProfil$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'إنشاء ملفي كطالب';
+	@override String get indisponibleTitre => 'غير ممكن بعد';
+	@override String get indisponiblePhrase => 'متابعة الدروس بنفسك بملفك الخاص كطالب ستُقترح قريبًا. يبقى حسابك كوليّ أمر كما هو.';
+	@override String get retour => 'العودة إلى الأسرة';
+}
+
+// Path: foyer.ajout
+class _Traductions$foyer$ajout$ar extends Traductions$foyer$ajout$fr {
+	_Traductions$foyer$ajout$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get suivant => 'التالي';
+	@override String get creer => 'إنشاء الملف';
+	@override late final _Traductions$foyer$ajout$porte$ar porte = _Traductions$foyer$ajout$porte$ar._(_root);
+	@override late final _Traductions$foyer$ajout$pourQui$ar pourQui = _Traductions$foyer$ajout$pourQui$ar._(_root);
+	@override late final _Traductions$foyer$ajout$identite$ar identite = _Traductions$foyer$ajout$identite$ar._(_root);
+	@override late final _Traductions$foyer$ajout$erreurs$ar erreurs = _Traductions$foyer$ajout$erreurs$ar._(_root);
+	@override late final _Traductions$foyer$ajout$refus$ar refus = _Traductions$foyer$ajout$refus$ar._(_root);
+	@override late final _Traductions$foyer$ajout$incertaine$ar incertaine = _Traductions$foyer$ajout$incertaine$ar._(_root);
+	@override String get horsLigne => 'أنت غير متصل. يمكن إنشاء الملف عند عودة الاتصال.';
+}
+
 // Path: commun.etats.chargementProlonge
 class _Traductions$commun$etats$chargementProlonge$ar extends Traductions$commun$etats$chargementProlonge$fr {
 	_Traductions$commun$etats$chargementProlonge$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -2893,6 +3836,239 @@ class _Traductions$enseignant$signalement$categories$ar extends Traductions$ense
 	@override String get technique => 'تقنية';
 	@override String get changement => 'تغيير';
 	@override String get autre => 'أخرى';
+}
+
+// Path: compte.tuteur.identite
+class _Traductions$compte$tuteur$identite$ar extends Traductions$compte$tuteur$identite$fr {
+	_Traductions$compte$tuteur$identite$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get statutValide => 'الحساب معتمَد';
+	@override String get statutProvisoire => 'الملف للإكمال';
+	@override String get nomInconnu => 'صاحب الحساب';
+	@override String get courrielAbsent => 'عنوان الدخول غير متوفر';
+	@override String get connexionLien => 'الدخول برابط يصل بالبريد الإلكتروني';
+	@override String get connexionGoogle => 'الدخول بحساب Google';
+	@override String get connexionInconnue => 'طريقة الدخول غير محددة';
+}
+
+// Path: compte.tuteur.acces
+class _Traductions$compte$tuteur$acces$ar extends Traductions$compte$tuteur$acces$fr {
+	_Traductions$compte$tuteur$acces$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الوصول والمدفوعات';
+	@override String get resume => 'حالة كل ملف طالب وموعد انتهائه';
+	@override String get pastilleActif => 'الوصول ساري';
+	@override String get pastilleExpire => 'انتهى الوصول';
+	@override String get ligne => 'وصول ملفات الطلاب';
+	@override String get paiements => 'المدفوعات والإيصالات';
+}
+
+// Path: compte.tuteur.securite
+class _Traductions$compte$tuteur$securite$ar extends Traductions$compte$tuteur$securite$fr {
+	_Traductions$compte$tuteur$securite$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الدخول والأمان';
+	@override String get methode => 'طريقة الدخول';
+	@override String get methodeLien => 'رابط بالبريد الإلكتروني';
+	@override String get methodeGoogle => 'Google';
+}
+
+// Path: compte.tuteur.informations
+class _Traductions$compte$tuteur$informations$ar extends Traductions$compte$tuteur$informations$fr {
+	_Traductions$compte$tuteur$informations$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'المعلومات الشخصية';
+	@override String get resume => 'الاسم وعنوان الدخول واللغة والمنطقة الزمنية';
+	@override String langueFuseau({required Object ville}) => 'الفرنسية · ⁨${ville}⁩';
+	@override String get consulter => 'عرض معلوماتي';
+}
+
+// Path: compte.tuteur.foyer
+class _Traductions$compte$tuteur$foyer$ar extends Traductions$compte$tuteur$foyer$fr {
+	_Traductions$compte$tuteur$foyer$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'أسرتي';
+	@override String get aucun => 'لا ملف طالب حتى الآن';
+	@override String get un => 'ملف طالب واحد';
+	@override String plusieurs({required Object nombre}) => '⁨${nombre}⁩ ملفات طلاب';
+	@override String get legende => 'ملفات الطلاب وأجهزة الأسرة';
+	@override String get creerMonProfil => 'إنشاء ملفي كطالب';
+}
+
+// Path: compte.tuteur.aide
+class _Traductions$compte$tuteur$aide$ar extends Traductions$compte$tuteur$aide$fr {
+	_Traductions$compte$tuteur$aide$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'المساعدة والدعم';
+	@override String get ligne => 'المساعدة والتواصل';
+	@override String get legal => 'المعلومات القانونية';
+}
+
+// Path: compte.tuteur.deconnexion
+class _Traductions$compte$tuteur$deconnexion$ar extends Traductions$compte$tuteur$deconnexion$fr {
+	_Traductions$compte$tuteur$deconnexion$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get question => 'تسجيل الخروج من Rewayah؟';
+	@override String get consequence => 'ستحتاج إلى تسجيل الدخول من جديد للعودة إلى هذا الجهاز. تبقى أجهزتك الأخرى متصلة.';
+	@override String get confirmer => 'تسجيل خروجي';
+	@override String get echec => 'لم يكتمل تسجيل الخروج. تحقّق من اتصالك، ثم أعد المحاولة.';
+}
+
+// Path: compte.tuteur.pageInformations
+class _Traductions$compte$tuteur$pageInformations$ar extends Traductions$compte$tuteur$pageInformations$fr {
+	_Traductions$compte$tuteur$pageInformations$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'المعلومات الشخصية';
+	@override String get prenom => 'الاسم';
+	@override String get nom => 'اللقب';
+	@override String get courriel => 'عنوان الدخول';
+	@override String get langue => 'لغة الواجهة';
+	@override String get fuseau => 'المنطقة الزمنية للحصص';
+	@override String get fuseauIndisponible => 'غير متاح الآن';
+	@override String get note => 'تحتفظ الأكاديمية بهذه المعلومات. لا تُعدَّل من التطبيق بعد.';
+}
+
+// Path: compte.tuteur.pageSecurite
+class _Traductions$compte$tuteur$pageSecurite$ar extends Traductions$compte$tuteur$pageSecurite$fr {
+	_Traductions$compte$tuteur$pageSecurite$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الدخول والأمان';
+	@override String get sousTitre => 'كيف تدخل إلى حسابك.';
+	@override String get methode => 'طريقة الدخول';
+	@override String get adresse => 'عنوان الدخول';
+	@override String get appareils => 'الأجهزة المتصلة بحسابك لا تُعرض في التطبيق بعد.';
+	@override String get deconnexion => 'لإغلاق جلسة هذا الجهاز، استخدم «تسجيل الخروج» أسفل «حسابي».';
+}
+
+// Path: compte.tuteur.pageAcces
+class _Traductions$compte$tuteur$pageAcces$ar extends Traductions$compte$tuteur$pageAcces$fr {
+	_Traductions$compte$tuteur$pageAcces$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'وصول ملفات الطلاب';
+	@override String get sousTitre => 'حالة وصول كل ملف طالب.';
+	@override String get sansEcheance => 'دون تاريخ انتهاء';
+	@override String jusqua({required Object date}) => 'مفتوح حتى ⁨${date}⁩';
+	@override String expire({required Object date}) => 'انتهى في ⁨${date}⁩';
+	@override String get pastilleActif => 'ساري';
+	@override String get pastilleExpire => 'منتهٍ';
+	@override String get aucunTitre => 'لا ملف طالب';
+	@override String get aucunePhrase => 'سيظهر هنا وصول كل ملف طالب.';
+	@override String get titulaire => 'حسابك كصاحب حساب ليس له موعد انتهاء خاص: يُضبط الوصول ملفًا بملف.';
+}
+
+// Path: compte.tuteur.pagePaiements
+class _Traductions$compte$tuteur$pagePaiements$ar extends Traductions$compte$tuteur$pagePaiements$fr {
+	_Traductions$compte$tuteur$pagePaiements$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'المدفوعات والإيصالات';
+	@override String get indisponibleTitre => 'المدفوعات غير قابلة للاطلاع بعد';
+	@override String get indisponiblePhrase => 'سجل المدفوعات والإيصالات ووسائل الدفع غير متاحة في التطبيق بعد. لا يُطلب منك أي دفع هنا.';
+	@override String get aucunTitre => 'لا دفعة مسجَّلة';
+	@override String get aucunePhrase => 'ستظهر هنا المدفوعات التي تسجّلها الأكاديمية.';
+	@override String paiementDu({required Object date}) => 'دفعة ⁨${date}⁩';
+	@override String get justificatif => 'الإيصال متاح';
+}
+
+// Path: compte.tuteur.pagePreferences
+class _Traductions$compte$tuteur$pagePreferences$ar extends Traductions$compte$tuteur$pagePreferences$fr {
+	_Traductions$compte$tuteur$pagePreferences$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'التفضيلات';
+	@override String get sousTitre => 'خصّص تجربتك على هذا الجهاز.';
+	@override String get apparence => 'المظهر';
+	@override String get apparenceDetail => 'المظهر والراحة البصرية';
+	@override String get langue => 'اللغة والمنطقة';
+	@override String get notifications => 'الإشعارات';
+	@override String get notificationsDetail => 'غير متاحة في التطبيق بعد';
+}
+
+// Path: compte.tuteur.pageApparence
+class _Traductions$compte$tuteur$pageApparence$ar extends Traductions$compte$tuteur$pageApparence$fr {
+	_Traductions$compte$tuteur$pageApparence$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'المظهر';
+	@override String get sousTitre => 'مطبَّق على هذا الجهاز.';
+	@override String get theme => 'مظهر التطبيق';
+	@override String get themeDetail => 'خصّص مظهر Rewayah.';
+	@override String get confort => 'الراحة البصرية';
+	@override String get animations => 'الحركة';
+	@override String get animationsDetail => 'تقلّ حين يطلب جهازك ذلك';
+	@override String get texte => 'حجم النص';
+	@override String get texteDetail => 'يتبع حجم النظام';
+}
+
+// Path: compte.tuteur.pageAide
+class _Traductions$compte$tuteur$pageAide$ar extends Traductions$compte$tuteur$pageAide$fr {
+	_Traductions$compte$tuteur$pageAide$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'المساعدة والدعم';
+	@override String get indisponibleTitre => 'المساعدة غير متاحة بعد';
+	@override String get indisponiblePhrase => 'الأسئلة الشائعة والتواصل مع الأكاديمية غير مفتوحة في التطبيق بعد.';
+	@override String get canalCourriel => 'بريد الأكاديمية الإلكتروني';
+	@override String get canalLien => 'صفحة مساعدة الأكاديمية';
+	@override String get aucunCanal => 'لا قناة مساعدة منشورة الآن.';
+}
+
+// Path: compte.tuteur.pageLegal
+class _Traductions$compte$tuteur$pageLegal$ar extends Traductions$compte$tuteur$pageLegal$fr {
+	_Traductions$compte$tuteur$pageLegal$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'المعلومات القانونية';
+	@override String get documents => 'الوثائق المقبولة';
+	@override String get conditionsTuteur => 'شروط وليّ الأمر';
+	@override String get contratEnseignant => 'عقد المعلم';
+	@override String get accuseEnregistrement => 'الإقرار بتسجيل الدروس';
+	@override String acceptation({required Object version, required Object date}) => 'الإصدار ⁨${version}⁩، مقبول في ⁨${date}⁩';
+	@override String get aucunTitre => 'لا وثيقة مقبولة';
+	@override String get aucun => 'لا وثيقة مقبولة مسجَّلة لهذا الحساب.';
+	@override String get lectureSeule => 'الوثيقة المقبولة لا تُعدَّل.';
+	@override String get textes => 'الشروط والخصوصية';
+	@override String get textesIndisponibles => 'الشروط العامة وسياسة الخصوصية والإشعارات القانونية غير قابلة للاطلاع في التطبيق بعد.';
 }
 
 // Path: tc.bibliotheque.sections
@@ -4021,6 +5197,197 @@ class _Traductions$tc$parcours$postCours$ar extends Traductions$tc$parcours$post
 	@override String get valider => 'تأكيد';
 	@override String get enFile => 'تم الحفظ. سيُرسل بمجرد عودة الشبكة.';
 	@override String get envoye => 'أُغلق الدرس.';
+}
+
+// Path: tuteur.accueil.etatCourt
+class _Traductions$tuteur$accueil$etatCourt$ar extends Traductions$tuteur$accueil$etatCourt$fr {
+	_Traductions$tuteur$accueil$etatCourt$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get enDirect => 'مباشر';
+	@override String get salleOuverte => 'القاعة مفتوحة';
+	@override String dansMinutes({required Object minutes}) => 'بعد ⁨${minutes}⁩ دقيقة';
+	@override String dansHeures({required Object heures, required Object minutes}) => 'بعد ⁨${heures}⁩ س ⁨${minutes}⁩ د';
+	@override String dansJours({required Object jours}) => 'بعد ⁨${jours}⁩ ي';
+	@override String get prevue => 'حصة مقررة';
+	@override String get annulee => 'حصة ملغاة';
+	@override String get nonTenue => 'حصة لم تُعقد';
+	@override String get terminee => 'حصة منتهية';
+	@override String get aucune => 'لا حصة';
+	@override String get illisible => 'غير متاح';
+}
+
+// Path: appareils.emetteur.verification
+class _Traductions$appareils$emetteur$verification$ar extends Traductions$appareils$emetteur$verification$fr {
+	_Traductions$appareils$emetteur$verification$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'جارٍ التحقق من الرمز';
+	@override String get phrase => 'الرمز مخفي ريثما يُتحقق من أنه ما زال صالحًا.';
+}
+
+// Path: appareils.emetteur.confirme
+class _Traductions$appareils$emetteur$confirme$ar extends Traductions$appareils$emetteur$confirme$fr {
+	_Traductions$appareils$emetteur$confirme$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الجهاز مربوط';
+	@override String phrase({required Object prenom}) => 'جهاز ⁨${prenom}⁩ جاهز. لم يعد الرمز معروضًا ولا يمكن استخدامه.';
+	@override String get phraseSansPrenom => 'جهاز الطالب جاهز. لم يعد الرمز معروضًا ولا يمكن استخدامه.';
+	@override String get action => 'تم';
+}
+
+// Path: appareils.emetteur.expire
+class _Traductions$appareils$emetteur$expire$ar extends Traductions$appareils$emetteur$expire$fr {
+	_Traductions$appareils$emetteur$expire$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'انتهت صلاحية هذا الرمز';
+	@override String get phrase => 'لم يعد صالحًا. أنشئ رمزًا جديدًا حين يكون الجهاز الآخر جاهزًا.';
+}
+
+// Path: appareils.emetteur.remplace
+class _Traductions$appareils$emetteur$remplace$ar extends Traductions$appareils$emetteur$remplace$fr {
+	_Traductions$appareils$emetteur$remplace$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'استُبدل هذا الرمز';
+	@override String get phrase => 'طُلب رمز جديد لهذا الطالب، هنا أو على جهاز آخر. هذا الرمز لم يعد يعمل.';
+}
+
+// Path: appareils.emetteur.dejaActif
+class _Traductions$appareils$emetteur$dejaActif$ar extends Traductions$appareils$emetteur$dejaActif$fr {
+	_Traductions$appareils$emetteur$dejaActif$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'رمز صالح بالفعل';
+	@override String phrase({required Object heure}) => 'رمز أُنشئ لهذا الطالب صالح حتى ⁨${heure}⁩. لا يمكن عرضه من جديد: إنشاء رمز جديد يُبطل القديم.';
+}
+
+// Path: appareils.emetteur.horsLigne
+class _Traductions$appareils$emetteur$horsLigne$ar extends Traductions$appareils$emetteur$horsLigne$fr {
+	_Traductions$appareils$emetteur$horsLigne$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'انقطع الاتصال';
+	@override String phraseAvecCode({required Object heure}) => 'الرمز مخفي حتى عودة الاتصال. يبقى صالحًا حتى ⁨${heure}⁩.';
+	@override String get phraseSansCode => 'تعذّر تحضير الرمز. سيُحضَّر بمجرد عودة الاتصال.';
+}
+
+// Path: appareils.emetteur.erreur
+class _Traductions$appareils$emetteur$erreur$ar extends Traductions$appareils$emetteur$erreur$fr {
+	_Traductions$appareils$emetteur$erreur$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get plafondTitre => 'بلغت حد الأجهزة';
+	@override String get plafondPhrase => 'لدى هذا الطالب الحد الأقصى من الأجهزة. أزل أحدها لربط جهاز آخر.';
+	@override String get plafondAction => 'عرض الأجهزة';
+	@override String get horsFoyerTitre => 'لم يُعثر على ملف الطالب';
+	@override String get horsFoyerPhrase => 'ملف الطالب هذا غير مرتبط بأسرتك. عد إلى «الأسرة» لاختيار ملف.';
+	@override String get compteTitre => 'ربط الأجهزة غير مفتوح بعد';
+	@override String get comptePhrase => 'يجب فتح حسابك قبل ربط جهاز طالب.';
+	@override String get generiqueTitre => 'تعذّر تحضير الرمز';
+	@override String get generiquePhrase => 'لم يكتمل الطلب. أعد المحاولة بعد لحظة.';
+}
+
+// Path: foyer.ajout.porte
+class _Traductions$foyer$ajout$porte$ar extends Traductions$foyer$ajout$porte$fr {
+	_Traductions$foyer$ajout$porte$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get illisibleTitre => 'تعذّرت قراءة حسابك';
+	@override String get illisiblePhrase => 'لا نعرف بعد أي الملفات يمكنك إضافتها. أعد المحاولة بعد لحظة.';
+}
+
+// Path: foyer.ajout.pourQui
+class _Traductions$foyer$ajout$pourQui$ar extends Traductions$foyer$ajout$pourQui$fr {
+	_Traductions$foyer$ajout$pourQui$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get question => 'لمن ملف الطالب هذا؟';
+	@override String get sousTitre => 'اختر الشخص الذي سيتابع الدروس.';
+	@override String get requis => 'اختر لمن هذا الملف للمتابعة.';
+	@override String get indisponible => 'غير متاح';
+	@override String get enfantTitre => 'طفل أو قاصر';
+	@override String get enfantDescription => 'ملف مرتبط بأسرتك، تديره نيابة عنه.';
+	@override String get enfantAttente => 'ممكن بمجرد فتح وصولك.';
+	@override String get moiTitre => 'أنا';
+	@override String get moiDescription => 'غير ممكن بعد: متابعة الدروس بنفسك بملفك الخاص كطالب ستُقترح قريبًا.';
+}
+
+// Path: foyer.ajout.identite
+class _Traductions$foyer$ajout$identite$ar extends Traductions$foyer$ajout$identite$fr {
+	_Traductions$foyer$ajout$identite$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get question => 'من هو الطالب؟';
+	@override String get sousTitre => 'اسمه ولقبه وعمره.';
+	@override String get prenom => 'الاسم';
+	@override String get nom => 'اللقب';
+	@override String get nomAide => 'لا يُعرض لقب العائلة على المعلم أبدًا.';
+	@override String get age => 'العمر';
+	@override String get ageSuffixe => 'سنة';
+	@override String get ageAide => 'العمر يحدد العرض والكاميرا في البداية. يمكنك تغييرهما بعد ذلك.';
+}
+
+// Path: foyer.ajout.erreurs
+class _Traductions$foyer$ajout$erreurs$ar extends Traductions$foyer$ajout$erreurs$fr {
+	_Traductions$foyer$ajout$erreurs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get prenomRequis => 'أدخل اسم الطالب.';
+	@override String get nomRequis => 'أدخل لقب الطالب.';
+	@override String get ageRequis => 'أدخل العمر، بالأرقام.';
+	@override String ageHorsBornes({required Object min, required Object max}) => 'أدخل عمرًا بين ⁨${min}⁩ و⁨${max}⁩ سنة.';
+}
+
+// Path: foyer.ajout.refus
+class _Traductions$foyer$ajout$refus$ar extends Traductions$foyer$ajout$refus$fr {
+	_Traductions$foyer$ajout$refus$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get compteNonValide => 'يجب فتح وصولك قبل إضافة ملف طالب.';
+	@override String get ageHorsBornes => 'هذا العمر غير مقبول. تحقّق منه ثم أعد المحاولة.';
+	@override String get refuse => 'لم يُقبل الإنشاء. تحقّق من المعلومات ثم أعد المحاولة.';
+}
+
+// Path: foyer.ajout.incertaine
+class _Traductions$foyer$ajout$incertaine$ar extends Traductions$foyer$ajout$incertaine$fr {
+	_Traductions$foyer$ajout$incertaine$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'ربما أُنشئ الملف';
+	@override String get phrase => 'لم يصلنا الرد. تحقّق من الأسرة قبل إعادة المحاولة، كي لا يُنشأ الملف مرتين.';
+	@override String get voirFoyer => 'عرض الأسرة';
+	@override String get reessayer => 'إعادة المحاولة على أي حال';
 }
 
 // Path: classe.entree.demo.roles
@@ -5381,6 +6748,192 @@ extension on TraductionsAr {
 			'compte.themeClairDetail' => 'خلفية فاتحة مهما كان إعداد جهازك',
 			'compte.themeSombre' => 'داكن',
 			'compte.themeSombreDetail' => 'خلفية داكنة مهما كان إعداد جهازك',
+			'compte.titre' => 'حسابي',
+			'compte.intro' => 'معلوماتك وتفضيلاتك وصلاحياتك، في مكان واحد.',
+			'compte.informations' => 'المعلومات',
+			'compte.profil' => 'الملف الشخصي',
+			'compte.profilDetail' => 'عرض معلوماتك وإدارتها',
+			'compte.reglages' => 'الإعدادات',
+			'compte.reglagesDetail' => 'المظهر والإشعارات وإمكانية الوصول',
+			'compte.profils' => 'إدارة أسرتي',
+			'compte.profilsDetail' => 'إدارة ملفات أطفالك',
+			'compte.appareils' => 'الأسرة',
+			'compte.appareilsDetail' => 'الأجهزة والملفات المرتبطة بأسرتك',
+			'compte.confidentialite' => 'الخصوصية',
+			'compte.confidentialiteDetail' => 'قريبًا',
+			'compte.espaces' => 'المساحات',
+			'compte.espacesDetail' => 'المساحات التي يتيحها حسابك',
+			'compte.espacesMissionEnCours' => 'للعودة إلى مساحتك الرئيسية، غادر أولًا الزيارة الجارية.',
+			'compte.habilitation' => 'مخوَّل',
+			'compte.deconnexion' => 'تسجيل الخروج',
+			'compte.deconnexionDetail' => 'إنهاء الجلسة على هذا الجهاز',
+			'compte.identifiant' => 'المعرّف',
+			'compte.nonDisponible' => 'غير متاح',
+			'compte.contact' => 'التواصل',
+			'compte.contactDetail' => 'تديره الأكاديمية',
+			'compte.langue' => 'اللغة',
+			'compte.francais' => 'الفرنسية',
+			'compte.fuseau' => 'المنطقة الزمنية',
+			'compte.academie' => 'الأكاديمية',
+			'compte.securite' => 'الأمان',
+			'compte.statut' => 'الحالة',
+			'compte.reglagesTitre' => 'الإعدادات',
+			'compte.reglagesIntro' => 'تبقى هذه التفضيلات على هذا الجهاز وتُطبَّق فورًا.',
+			'compte.apparence' => 'المظهر',
+			'compte.accessibilite' => 'إمكانية الوصول',
+			'compte.animations' => 'تقليل الحركة',
+			'compte.animationsDetail' => 'يحدّ من الحركة على الشاشة',
+			'compte.effets' => 'تقليل المؤثرات',
+			'compte.effetsDetail' => 'يحدّ من الشفافية والظلال',
+			'compte.lisibiliteDetail' => 'حجم النص يتبع إعداد جهازك.',
+			'compte.langueRegion' => 'اللغة والمنطقة',
+			'compte.francaisDetail' => 'لغة الواجهة',
+			'compte.actif' => 'مفعَّل',
+			'compte.arabe' => 'العربية',
+			'compte.arabeDetail' => 'قريبًا',
+			'compte.fuseauDetail' => 'يُكتشف تلقائيًا',
+			'compte.notifications' => 'الإشعارات',
+			'compte.notificationsCours' => 'الدروس',
+			'compte.notificationsCoursDetail' => 'تذكيرات قبل دروسك',
+			'compte.notificationsFoyer' => 'الأسرة',
+			'compte.notificationsFoyerDetail' => 'نشاط ملفات أسرتك',
+			'compte.notificationsEtat' => 'تعتمد الإشعارات أيضًا على إعدادات جهازك ومتصفحك.',
+			'compte.coursDonnees' => 'الدروس والبيانات',
+			'compte.economieDonnees' => 'توفير البيانات',
+			'compte.economieDonneesDetail' => 'يخفّض جودة الفيديو على شبكة الجوال',
+			'compte.lectureGrande' => 'القراءة بنص كبير',
+			'compte.lectureGrandeDetail' => 'يعرض القرآن بحجم أكبر افتراضيًا',
+			'compte.profilsTitre' => 'ملفات الأسرة',
+			'compte.profilsIntro' => 'الأطفال المرتبطون بأسرتك.',
+			'compte.erreurProfils' => 'تعذّرت قراءة الملفات.',
+			'compte.reessayer' => 'إعادة المحاولة',
+			'compte.aucunProfil' => 'لا ملفات حتى الآن',
+			'compte.aucunProfilDetail' => 'أضف طفلًا للبدء',
+			'compte.ajouterEnfant' => 'إضافة طفل',
+			'compte.ouvrirProfil' => 'فتح الملف',
+			'compte.modeEnfant' => 'وضع إمكانية الوصول',
+			'compte.modeStandard' => 'الوضع العادي',
+			'compte.cameraLabel' => 'الكاميرا',
+			'compte.cameraAutorisee' => 'مسموح بها',
+			'compte.cameraInterdite' => 'ممنوعة',
+			'compte.accesSansFin' => 'وصول دون تاريخ انتهاء',
+			'compte.accesJusqua' => ({required Object date}) => 'وصول حتى ⁨${date}⁩',
+			'compte.statutActif' => 'مفعَّل',
+			'compte.statutProvisoire' => 'مفعَّل مؤقتًا',
+			'compte.profilEnfant' => ({required Object prenom}) => 'ملف ⁨${prenom}⁩',
+			'compte.identifiantEnfant' => ({required Object identifiant}) => 'المعرّف: ⁨${identifiant}⁩',
+			'compte.roles.admin' => 'مدير',
+			'compte.roles.accountant' => 'محاسب',
+			'compte.roles.controller' => 'مراقب',
+			'compte.roles.teacher' => 'معلم',
+			'compte.roles.guardian' => 'وليّ أمر',
+			'compte.roles.student' => 'طالب',
+			'compte.roleDetail.admin' => 'يدير ملفات الأكاديمية والإسناد والسجل',
+			'compte.roleDetail.accountant' => 'يدير المدفوعات والفواتير',
+			'compte.roleDetail.controller' => 'يتابع الحصص من أجل الجودة التعليمية',
+			'compte.roleDetail.teacher' => 'يقدّم الدروس ويتابع مواعيده',
+			'compte.roleDetail.guardian' => 'يتابع الأسرة وأطفالها',
+			'compte.roleDetail.student' => 'يتابع دروسه وقرآنه',
+			'compte.tuteur.preferences' => 'التفضيلات',
+			'compte.tuteur.dateLongue' => ({required Object jour, required Object mois, required Object annee}) => '⁨${jour}⁩ ⁨${mois}⁩ ⁨${annee}⁩',
+			'compte.tuteur.identite.statutValide' => 'الحساب معتمَد',
+			'compte.tuteur.identite.statutProvisoire' => 'الملف للإكمال',
+			'compte.tuteur.identite.nomInconnu' => 'صاحب الحساب',
+			'compte.tuteur.identite.courrielAbsent' => 'عنوان الدخول غير متوفر',
+			'compte.tuteur.identite.connexionLien' => 'الدخول برابط يصل بالبريد الإلكتروني',
+			'compte.tuteur.identite.connexionGoogle' => 'الدخول بحساب Google',
+			'compte.tuteur.identite.connexionInconnue' => 'طريقة الدخول غير محددة',
+			'compte.tuteur.acces.titre' => 'الوصول والمدفوعات',
+			'compte.tuteur.acces.resume' => 'حالة كل ملف طالب وموعد انتهائه',
+			'compte.tuteur.acces.pastilleActif' => 'الوصول ساري',
+			'compte.tuteur.acces.pastilleExpire' => 'انتهى الوصول',
+			'compte.tuteur.acces.ligne' => 'وصول ملفات الطلاب',
+			'compte.tuteur.acces.paiements' => 'المدفوعات والإيصالات',
+			'compte.tuteur.securite.titre' => 'الدخول والأمان',
+			'compte.tuteur.securite.methode' => 'طريقة الدخول',
+			'compte.tuteur.securite.methodeLien' => 'رابط بالبريد الإلكتروني',
+			'compte.tuteur.securite.methodeGoogle' => 'Google',
+			'compte.tuteur.informations.titre' => 'المعلومات الشخصية',
+			'compte.tuteur.informations.resume' => 'الاسم وعنوان الدخول واللغة والمنطقة الزمنية',
+			'compte.tuteur.informations.langueFuseau' => ({required Object ville}) => 'الفرنسية · ⁨${ville}⁩',
+			'compte.tuteur.informations.consulter' => 'عرض معلوماتي',
+			'compte.tuteur.foyer.titre' => 'أسرتي',
+			'compte.tuteur.foyer.aucun' => 'لا ملف طالب حتى الآن',
+			'compte.tuteur.foyer.un' => 'ملف طالب واحد',
+			'compte.tuteur.foyer.plusieurs' => ({required Object nombre}) => '⁨${nombre}⁩ ملفات طلاب',
+			'compte.tuteur.foyer.legende' => 'ملفات الطلاب وأجهزة الأسرة',
+			'compte.tuteur.foyer.creerMonProfil' => 'إنشاء ملفي كطالب',
+			'compte.tuteur.aide.titre' => 'المساعدة والدعم',
+			'compte.tuteur.aide.ligne' => 'المساعدة والتواصل',
+			'compte.tuteur.aide.legal' => 'المعلومات القانونية',
+			'compte.tuteur.deconnexion.question' => 'تسجيل الخروج من Rewayah؟',
+			'compte.tuteur.deconnexion.consequence' => 'ستحتاج إلى تسجيل الدخول من جديد للعودة إلى هذا الجهاز. تبقى أجهزتك الأخرى متصلة.',
+			'compte.tuteur.deconnexion.confirmer' => 'تسجيل خروجي',
+			'compte.tuteur.deconnexion.echec' => 'لم يكتمل تسجيل الخروج. تحقّق من اتصالك، ثم أعد المحاولة.',
+			'compte.tuteur.pageInformations.titre' => 'المعلومات الشخصية',
+			'compte.tuteur.pageInformations.prenom' => 'الاسم',
+			'compte.tuteur.pageInformations.nom' => 'اللقب',
+			'compte.tuteur.pageInformations.courriel' => 'عنوان الدخول',
+			'compte.tuteur.pageInformations.langue' => 'لغة الواجهة',
+			'compte.tuteur.pageInformations.fuseau' => 'المنطقة الزمنية للحصص',
+			'compte.tuteur.pageInformations.fuseauIndisponible' => 'غير متاح الآن',
+			'compte.tuteur.pageInformations.note' => 'تحتفظ الأكاديمية بهذه المعلومات. لا تُعدَّل من التطبيق بعد.',
+			'compte.tuteur.pageSecurite.titre' => 'الدخول والأمان',
+			'compte.tuteur.pageSecurite.sousTitre' => 'كيف تدخل إلى حسابك.',
+			'compte.tuteur.pageSecurite.methode' => 'طريقة الدخول',
+			'compte.tuteur.pageSecurite.adresse' => 'عنوان الدخول',
+			'compte.tuteur.pageSecurite.appareils' => 'الأجهزة المتصلة بحسابك لا تُعرض في التطبيق بعد.',
+			'compte.tuteur.pageSecurite.deconnexion' => 'لإغلاق جلسة هذا الجهاز، استخدم «تسجيل الخروج» أسفل «حسابي».',
+			'compte.tuteur.pageAcces.titre' => 'وصول ملفات الطلاب',
+			'compte.tuteur.pageAcces.sousTitre' => 'حالة وصول كل ملف طالب.',
+			'compte.tuteur.pageAcces.sansEcheance' => 'دون تاريخ انتهاء',
+			'compte.tuteur.pageAcces.jusqua' => ({required Object date}) => 'مفتوح حتى ⁨${date}⁩',
+			'compte.tuteur.pageAcces.expire' => ({required Object date}) => 'انتهى في ⁨${date}⁩',
+			'compte.tuteur.pageAcces.pastilleActif' => 'ساري',
+			'compte.tuteur.pageAcces.pastilleExpire' => 'منتهٍ',
+			'compte.tuteur.pageAcces.aucunTitre' => 'لا ملف طالب',
+			'compte.tuteur.pageAcces.aucunePhrase' => 'سيظهر هنا وصول كل ملف طالب.',
+			'compte.tuteur.pageAcces.titulaire' => 'حسابك كصاحب حساب ليس له موعد انتهاء خاص: يُضبط الوصول ملفًا بملف.',
+			'compte.tuteur.pagePaiements.titre' => 'المدفوعات والإيصالات',
+			'compte.tuteur.pagePaiements.indisponibleTitre' => 'المدفوعات غير قابلة للاطلاع بعد',
+			'compte.tuteur.pagePaiements.indisponiblePhrase' => 'سجل المدفوعات والإيصالات ووسائل الدفع غير متاحة في التطبيق بعد. لا يُطلب منك أي دفع هنا.',
+			'compte.tuteur.pagePaiements.aucunTitre' => 'لا دفعة مسجَّلة',
+			'compte.tuteur.pagePaiements.aucunePhrase' => 'ستظهر هنا المدفوعات التي تسجّلها الأكاديمية.',
+			'compte.tuteur.pagePaiements.paiementDu' => ({required Object date}) => 'دفعة ⁨${date}⁩',
+			'compte.tuteur.pagePaiements.justificatif' => 'الإيصال متاح',
+			'compte.tuteur.pagePreferences.titre' => 'التفضيلات',
+			'compte.tuteur.pagePreferences.sousTitre' => 'خصّص تجربتك على هذا الجهاز.',
+			'compte.tuteur.pagePreferences.apparence' => 'المظهر',
+			'compte.tuteur.pagePreferences.apparenceDetail' => 'المظهر والراحة البصرية',
+			'compte.tuteur.pagePreferences.langue' => 'اللغة والمنطقة',
+			'compte.tuteur.pagePreferences.notifications' => 'الإشعارات',
+			'compte.tuteur.pagePreferences.notificationsDetail' => 'غير متاحة في التطبيق بعد',
+			'compte.tuteur.pageApparence.titre' => 'المظهر',
+			'compte.tuteur.pageApparence.sousTitre' => 'مطبَّق على هذا الجهاز.',
+			'compte.tuteur.pageApparence.theme' => 'مظهر التطبيق',
+			'compte.tuteur.pageApparence.themeDetail' => 'خصّص مظهر Rewayah.',
+			'compte.tuteur.pageApparence.confort' => 'الراحة البصرية',
+			'compte.tuteur.pageApparence.animations' => 'الحركة',
+			'compte.tuteur.pageApparence.animationsDetail' => 'تقلّ حين يطلب جهازك ذلك',
+			'compte.tuteur.pageApparence.texte' => 'حجم النص',
+			'compte.tuteur.pageApparence.texteDetail' => 'يتبع حجم النظام',
+			'compte.tuteur.pageAide.titre' => 'المساعدة والدعم',
+			'compte.tuteur.pageAide.indisponibleTitre' => 'المساعدة غير متاحة بعد',
+			'compte.tuteur.pageAide.indisponiblePhrase' => 'الأسئلة الشائعة والتواصل مع الأكاديمية غير مفتوحة في التطبيق بعد.',
+			'compte.tuteur.pageAide.canalCourriel' => 'بريد الأكاديمية الإلكتروني',
+			'compte.tuteur.pageAide.canalLien' => 'صفحة مساعدة الأكاديمية',
+			'compte.tuteur.pageAide.aucunCanal' => 'لا قناة مساعدة منشورة الآن.',
+			'compte.tuteur.pageLegal.titre' => 'المعلومات القانونية',
+			'compte.tuteur.pageLegal.documents' => 'الوثائق المقبولة',
+			'compte.tuteur.pageLegal.conditionsTuteur' => 'شروط وليّ الأمر',
+			'compte.tuteur.pageLegal.contratEnseignant' => 'عقد المعلم',
+			'compte.tuteur.pageLegal.accuseEnregistrement' => 'الإقرار بتسجيل الدروس',
+			'compte.tuteur.pageLegal.acceptation' => ({required Object version, required Object date}) => 'الإصدار ⁨${version}⁩، مقبول في ⁨${date}⁩',
+			'compte.tuteur.pageLegal.aucunTitre' => 'لا وثيقة مقبولة',
+			'compte.tuteur.pageLegal.aucun' => 'لا وثيقة مقبولة مسجَّلة لهذا الحساب.',
+			'compte.tuteur.pageLegal.lectureSeule' => 'الوثيقة المقبولة لا تُعدَّل.',
+			'compte.tuteur.pageLegal.textes' => 'الشروط والخصوصية',
+			'compte.tuteur.pageLegal.textesIndisponibles' => 'الشروط العامة وسياسة الخصوصية والإشعارات القانونية غير قابلة للاطلاع في التطبيق بعد.',
 			'tc.bibliotheque.sections.groupe' => 'المواد المعروضة',
 			'tc.bibliotheque.sections.continuer' => 'متابعة',
 			'tc.bibliotheque.sections.pourCeGroupe' => 'لهذا الفصل',
@@ -5663,6 +7216,8 @@ extension on TraductionsAr {
 			'tc.observation.explication.regleUne' => ({required Object n, required Object duree}) => '⁨${n}⁩ زيارة مدتها ⁨${duree}⁩',
 			'tc.observation.explication.regle' => ({required Object n, required Object duree}) => '⁨${n}⁩ زيارات مدة كل منها ⁨${duree}⁩',
 			'tc.observation.explication.regleDetail' => 'لكل حصة ولكل وليّ أمر، حتى لو كان عدة من أطفالك في الفصل.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.explication.ecoute' => 'استمع إلى المعلم والطلاب',
 			'tc.observation.explication.ecouteDetail' => 'تسمع المعلم والطلاب الذين يتكلمون، ومنهم طفلك.',
 			'tc.observation.explication.sansMedia' => 'دون ميكروفون ولا كاميرا',
@@ -5849,8 +7404,6 @@ extension on TraductionsAr {
 			'tc.parcours.signalement.contexte' => ({required Object eleve}) => 'الطالب ⁨${eleve}⁩. الحصة والفصل واسمك مرفقة بالفعل.',
 			'tc.parcours.signalement.envoyer' => 'إرسال الإشارة',
 			'tc.parcours.signalement.envoye' => 'أُرسلت الإشارة إلى الإدارة.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.signalement.interneRequis' => 'اكتب على الأقل ما يجب أن تعرفه الإدارة.',
 			'tc.parcours.signalement.echec' => 'تعذّر إرسال الإشارة. أعد المحاولة.',
 			'tc.parcours.postCours.titre' => 'بعد الدرس',
@@ -6177,6 +7730,8 @@ extension on TraductionsAr {
 			'parcours.etatDiagnosticRequisDetail' => ({required Object prenom}) => 'بقي لقاء مع معلم لتحديد مستوى ⁨${prenom}⁩. ستقترح عليك الأكاديمية موعدًا.',
 			'parcours.etatDiagnosticEnAttente' => 'الموعد مبرمج',
 			'parcours.etatDiagnosticEnAttenteDetail' => ({required Object prenom}) => 'لقاء مبرمج لتحديد مستوى ⁨${prenom}⁩.',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.etatClasseEnFormation' => 'الفصل قيد التكوين',
 			'parcours.etatClasseEnFormationDetail' => ({required Object minimum}) => 'يبدأ الفصل ابتداءً من ⁨${minimum}⁩ طلاب. سنعلمك بمجرد تأكيده.',
 			'parcours.etatClasseEnFormationDetailSansMinimum' => 'يبدأ الفصل ابتداءً من عدد معين من الطلاب. سنعلمك بمجرد تأكيده.',
@@ -6301,6 +7856,508 @@ extension on TraductionsAr {
 			'priere.lieuSansNom' => 'أوقات محسوبة لمكان المعلم',
 			'priere.ajustee' => ({required Object priere, required Object minutes}) => 'عدّل المعلم ⁨${priere}⁩ بـ⁨${minutes}⁩ دقيقة',
 			'priere.reglagesAbsents' => 'لم يضبط المعلم أوقات الصلاة بعد.',
+			'tuteur.accueil.titre' => 'الرئيسية',
+			'tuteur.accueil.voirLaClasse' => 'عرض الفصل',
+			'tuteur.accueil.prochaineSeance' => 'الحصة القادمة',
+			'tuteur.accueil.heureDe' => ({required Object ville}) => 'توقيت ⁨${ville}⁩',
+			'tuteur.accueil.heureAppareil' => 'توقيت هذا الجهاز',
+			'tuteur.accueil.dateEtFuseau' => ({required Object date, required Object fuseau}) => '⁨${date}⁩ · ⁨${fuseau}⁩',
+			'tuteur.accueil.heureClasse' => ({required Object heure, required Object ville}) => 'توقيت الفصل: ⁨${heure}⁩ ⁨${ville}⁩',
+			'tuteur.accueil.seanceEnDirect' => 'حصة مباشرة',
+			'tuteur.accueil.seanceTerminee' => 'انتهت الحصة',
+			'tuteur.accueil.seanceAnnulee' => 'لن تُعقد هذه الحصة.',
+			'tuteur.accueil.seanceNonTenue' => 'تعذّر عقد هذه الحصة.',
+			'tuteur.accueil.horaireIncertain' => 'فتح القاعة غير مؤكَّد الآن',
+			'tuteur.accueil.pastilleAnnulee' => 'ملغاة',
+			'tuteur.accueil.pastilleNonTenue' => 'لم تُعقد',
+			'tuteur.accueil.pastilleTerminee' => 'منتهية',
+			'tuteur.accueil.aucuneSeance' => 'لا حصة مقررة',
+			'tuteur.accueil.aucuneSeanceDetail' => ({required Object prenom}) => 'ستظهر هنا الحصة القادمة لـ⁨${prenom}⁩ بمجرد جدولتها.',
+			'tuteur.accueil.seanceIllisible' => 'تعذّرت قراءة الحصة القادمة.',
+			'tuteur.accueil.classeIndisponible' => 'تفاصيل الفصل غير متاحة هنا بعد.',
+			'tuteur.accueil.classeIllisible' => 'تعذّرت قراءة الفصل.',
+			'tuteur.accueil.sansClasseTitre' => ({required Object prenom}) => 'لا فصل لـ⁨${prenom}⁩',
+			'tuteur.accueil.sansClassePhrase' => ({required Object prenom}) => 'اختر فصلًا ليتمكن ⁨${prenom}⁩ من بدء الدروس.',
+			'tuteur.accueil.foyerVideTitre' => 'لا ملف طالب حتى الآن',
+			'tuteur.accueil.foyerVidePhrase' => 'أضف ملف طالب لاختيار فصل ومتابعة حصصه.',
+			'tuteur.accueil.ajouterProfil' => 'إضافة ملف طالب',
+			'tuteur.accueil.profilsIllisibles' => 'تعذّرت قراءة ملفات الأسرة.',
+			'tuteur.accueil.blocageAppareilTitre' => ({required Object prenom}) => 'لا جهاز جاهز لـ⁨${prenom}⁩',
+			'tuteur.accueil.blocageAppareilPhrase' => ({required Object prenom}) => 'دون جهاز مربوط، لن يستطيع ⁨${prenom}⁩ دخول الفصل.',
+			'tuteur.accueil.connecterAppareil' => 'ربط جهاز',
+			'tuteur.accueil.avantProchainCours' => 'قبل الدرس القادم',
+			'tuteur.accueil.voirTout' => 'عرض الكل',
+			'tuteur.accueil.travailIndisponible' => 'العمل المطلوب تحضيره غير مربوط بهذه المساحة بعد.',
+			'tuteur.accueil.travailIllisible' => 'تعذّرت قراءة العمل المطلوب تحضيره.',
+			'tuteur.accueil.rienAPreparer' => 'لا شيء للتحضير الآن',
+			'tuteur.accueil.derniereSeance' => 'آخر حصة',
+			'tuteur.accueil.voirHistorique' => 'عرض السجل',
+			'tuteur.accueil.detailsSeance' => 'تفاصيل الحصة',
+			'tuteur.accueil.aucuneDerniere' => 'لا حصة ماضية حتى الآن',
+			'tuteur.accueil.derniereIllisible' => 'تعذّرت قراءة آخر حصة.',
+			'tuteur.accueil.dateEtDuree' => ({required Object date, required Object duree}) => '⁨${date}⁩ · ⁨${duree}⁩',
+			'tuteur.accueil.etatCourt.enDirect' => 'مباشر',
+			'tuteur.accueil.etatCourt.salleOuverte' => 'القاعة مفتوحة',
+			'tuteur.accueil.etatCourt.dansMinutes' => ({required Object minutes}) => 'بعد ⁨${minutes}⁩ دقيقة',
+			'tuteur.accueil.etatCourt.dansHeures' => ({required Object heures, required Object minutes}) => 'بعد ⁨${heures}⁩ س ⁨${minutes}⁩ د',
+			'tuteur.accueil.etatCourt.dansJours' => ({required Object jours}) => 'بعد ⁨${jours}⁩ ي',
+			'tuteur.accueil.etatCourt.prevue' => 'حصة مقررة',
+			'tuteur.accueil.etatCourt.annulee' => 'حصة ملغاة',
+			'tuteur.accueil.etatCourt.nonTenue' => 'حصة لم تُعقد',
+			'tuteur.accueil.etatCourt.terminee' => 'حصة منتهية',
+			'tuteur.accueil.etatCourt.aucune' => 'لا حصة',
+			'tuteur.accueil.etatCourt.illisible' => 'غير متاح',
+			'tuteur.accueil.assister' => 'الحضور',
+			'tuteur.accueil.assisterRefuse' => 'تعذّر الانضمام إلى الدرس. ربما انتهى للتو.',
+			'tuteur.accueil.enCours' => ({required Object prenom}) => 'جارٍ مع ⁨${prenom}⁩',
+			'tuteur.accueil.depuisMinutes' => ({required Object minutes}) => 'بدأ منذ ⁨${minutes}⁩ دقيقة',
+			'tuteur.accueil.depuisInstant' => 'بدأ للتو',
+			'tuteur.accueil.aujourdhui' => ({required Object heure, required Object prenom}) => 'اليوم الساعة ⁨${heure}⁩، مع ⁨${prenom}⁩',
+			'tuteur.accueil.unAutreJour' => ({required Object jour, required Object heure, required Object prenom}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩، مع ⁨${prenom}⁩',
+			'tuteur.accueil.rienAujourdhui' => 'لا شيء اليوم',
+			'tuteur.accueil.aucunCoursPrevu' => 'لا درس مجدول حتى الآن',
+			'tuteur.accueil.aucunCoursPrevuDetail' => 'تُحضَّر دروس الأسبوع مسبقًا. سيظهر هذا الدرس هنا.',
+			'tuteur.accueil.enRecherche' => 'جارٍ البحث عن معلم',
+			'tuteur.accueil.enRechercheDepuis' => ({required Object date}) => 'قُدِّم الطلب في ⁨${date}⁩',
+			'tuteur.accueil.enRechercheSansDate' => ({required Object prenom}) => 'سيتولى معلم ⁨${prenom}⁩ من بين الساعات المقترحة.',
+			'tuteur.accueil.sansCreneau' => ({required Object prenom}) => 'لا ساعة مقترحة لـ⁨${prenom}⁩',
+			'tuteur.accueil.sansCreneauDetail' => ({required Object prenom}) => 'دون موعد، لا يستطيع أي معلم تولي ⁨${prenom}⁩.',
+			'tuteur.accueil.poserDesHeures' => 'اقتراح ساعات',
+			'tuteur.accueil.annulee' => ({required Object heure}) => 'لن يُعقد درس الساعة ⁨${heure}⁩',
+			'tuteur.accueil.motifAnnulee' => 'حصة ملغاة',
+			'tuteur.accueil.motifAnnuleeTard' => 'حصة ملغاة قبيل موعدها',
+			'tuteur.accueil.proposeApres' => ({required Object jour, required Object heure}) => 'الدرس القادم ⁨${jour}⁩ الساعة ⁨${heure}⁩',
+			'tuteur.accueil.proposeAucun' => 'سيُقترح عليك درس جديد.',
+			'tuteur.accueil.gererLeFoyer' => 'إدارة الأسرة',
+			'tuteur.accueil.blocAppareils' => 'أجهزة الأسرة',
+			'tuteur.accueil.blocAppareilsDetail' => 'إضافة جهاز، أو إزالة أحدها.',
+			'tuteur.accueil.blocReglages' => 'الإعدادات لكل طفل',
+			'tuteur.accueil.blocReglagesDetail' => 'الصورة والكاميرا والعرض، طفلًا بطفل.',
+			'tuteur.accueil.blocGroupesDetail' => 'الفصل والمعلم والدرس القادم لكل طفل.',
+			'tuteur.accueil.acces' => 'الوصول',
+			'tuteur.accueil.accesJusqua' => ({required Object prenom, required Object date}) => 'وصول ⁨${prenom}⁩ حتى ⁨${date}⁩',
+			'tuteur.accueil.accesSansFin' => ({required Object prenom}) => 'وصول ⁨${prenom}⁩ دون تاريخ انتهاء',
+			'tuteur.accueil.aucunEnfant' => 'لا طفل في الأسرة',
+			'tuteur.accueil.aucunEnfantDetail' => 'أضف طفلك الأول للبدء.',
+			'tuteur.accueil.erreur' => 'تعذّرت قراءة الأسرة كاملة. أعد المحاولة بعد لحظة.',
+			'tuteur.reglages.titre' => 'الإعدادات لكل طفل',
+			'tuteur.reglages.intro' => 'تُطبَّق هذه الإعدادات على الحصة التالية، وأبدًا أثناء درس.',
+			'tuteur.reglages.photo' => 'الصورة',
+			'tuteur.reglages.photoAucune' => ({required Object prenom}) => 'ليس لـ⁨${prenom}⁩ صورة بعد. تبقى مرئية للأسرة وحدها.',
+			'tuteur.reglages.photoPresente' => ({required Object prenom}) => 'تبقى صورة ⁨${prenom}⁩ مرئية للأسرة وحدها، ولا يراها معلمه ولا الطلاب الآخرون.',
+			'tuteur.reglages.photoAjouter' => 'إضافة صورة',
+			'tuteur.reglages.photoChanger' => 'تغيير الصورة',
+			'tuteur.reglages.photoTropLourde' => ({required Object taille}) => 'هذه الصورة تتجاوز ⁨${taille}⁩ م.ب. التقطها بجودة أقل.',
+			'tuteur.reglages.camera' => 'الكاميرا',
+			'tuteur.reglages.cameraAutorisee' => ({required Object prenom}) => 'يمكن لـ⁨${prenom}⁩ تشغيل كاميرته أثناء الدرس.',
+			'tuteur.reglages.cameraInterdite' => ({required Object prenom}) => 'لن يظهر زر الكاميرا لـ⁨${prenom}⁩.',
+			'tuteur.reglages.cameraAutoriser' => ({required Object prenom}) => 'السماح بكاميرا ⁨${prenom}⁩',
+			'tuteur.reglages.cameraRetirer' => ({required Object prenom}) => 'إلغاء كاميرا ⁨${prenom}⁩',
+			'tuteur.reglages.mode' => 'العرض',
+			'tuteur.reglages.modeEnfant' => ({required Object prenom}) => 'عرض كبير، دون قراءة: يتعرف ⁨${prenom}⁩ على الصور ويستمع.',
+			'tuteur.reglages.modeStandard' => ({required Object prenom}) => 'عرض عادي: يقرأ ⁨${prenom}⁩ شاشته.',
+			'tuteur.reglages.modePasserEnfant' => ({required Object prenom}) => 'نقل ⁨${prenom}⁩ إلى العرض الكبير',
+			'tuteur.reglages.modePasserStandard' => ({required Object prenom}) => 'نقل ⁨${prenom}⁩ إلى العرض العادي',
+			'tuteur.reglages.demandes' => 'طلب تغيير',
+			'tuteur.reglages.demandeReaffectation' => 'تغيير المعلم',
+			'tuteur.reglages.demandeDuree' => 'تغيير مدة الدروس',
+			'tuteur.reglages.demandeMinimum' => 'تغيير المدة الدنيا المدفوعة',
+			'tuteur.reglages.demandeSansEnseignant' => ({required Object prenom}) => 'ليس لـ⁨${prenom}⁩ معلم بعد: لا شيء يُغيَّر.',
+			'tuteur.reglages.demandeTitreReaffectation' => ({required Object prenom}) => 'تغيير معلم ⁨${prenom}⁩',
+			'tuteur.reglages.demandeTitreDuree' => ({required Object prenom}) => 'مدة دروس ⁨${prenom}⁩',
+			'tuteur.reglages.demandeTitreMinimum' => ({required Object prenom}) => 'المدة الدنيا المدفوعة لـ⁨${prenom}⁩',
+			'tuteur.reglages.demandeActuelle' => ({required Object minutes}) => 'حاليًا: ⁨${minutes}⁩ دقيقة',
+			'tuteur.reglages.demandeMinutes' => ({required Object minutes}) => '⁨${minutes}⁩ دقيقة',
+			'tuteur.reglages.demandeMotif' => 'لماذا هذا التغيير؟',
+			'tuteur.reglages.demandeMotifRequis' => 'السبب ضروري: هو الذي يسمح بالحسم.',
+			'tuteur.reglages.demandeEnvoyer' => 'إرسال الطلب',
+			'tuteur.reglages.demandeEnvoyee' => 'أُرسل الطلب. ستحسم فيه الإدارة.',
+			'tuteur.reglages.aucunEnfant' => 'لا طفل في الأسرة',
+			'tuteur.reglages.aucunEnfantDetail' => 'أضف طفلًا لتتمكن من ضبط عرضه وكاميرته.',
+			'tuteur.reglages.erreur' => ({required Object message}) => 'لم يكتمل الحفظ: ⁨${message}⁩',
+			'historique.titre' => 'السجل',
+			'historique.detailSeance' => 'تفاصيل الحصة',
+			'historique.segments.seances' => 'الحصص',
+			'historique.segments.observations' => 'المتابعات',
+			'historique.moisCourts.0' => 'يناير',
+			'historique.moisCourts.1' => 'فبراير',
+			'historique.moisCourts.2' => 'مارس',
+			'historique.moisCourts.3' => 'أبريل',
+			'historique.moisCourts.4' => 'مايو',
+			'historique.moisCourts.5' => 'يونيو',
+			'historique.moisCourts.6' => 'يوليو',
+			'historique.moisCourts.7' => 'أغسطس',
+			'historique.moisCourts.8' => 'سبتمبر',
+			'historique.moisCourts.9' => 'أكتوبر',
+			'historique.moisCourts.10' => 'نوفمبر',
+			'historique.moisCourts.11' => 'ديسمبر',
+			'historique.dateCourte' => ({required Object jour, required Object mois, required Object annee}) => '⁨${jour}⁩ ⁨${mois}⁩ ⁨${annee}⁩',
+			'historique.dateLongue' => ({required Object jourSemaine, required Object jour, required Object mois, required Object annee}) => '⁨${jourSemaine}⁩ ⁨${jour}⁩ ⁨${mois}⁩ ⁨${annee}⁩',
+			'historique.plage' => ({required Object debut, required Object fin}) => '⁨${debut}⁩ - ⁨${fin}⁩',
+			'historique.duree.secondes' => ({required Object s}) => '⁨${s}⁩ ث',
+			'historique.duree.minutes' => ({required Object m}) => '⁨${m}⁩ دقيقة',
+			'historique.duree.minutesSecondes' => ({required Object m, required Object s}) => '⁨${m}⁩ د ⁨${s}⁩ ث',
+			'historique.duree.heures' => ({required Object h}) => '⁨${h}⁩ س',
+			'historique.duree.heuresMinutes' => ({required Object h, required Object m}) => '⁨${h}⁩ س ⁨${m}⁩ د',
+			'historique.fuseauListe' => 'الساعات معروضة بتوقيت هذا الجهاز.',
+			'historique.fuseauDetail' => ({required Object decalage}) => 'الساعات معروضة بتوقيت هذا الجهاز (UTC⁨${decalage}⁩).',
+			'historique.classeInconnue' => 'الفصل غير متاح',
+			'historique.selecteur.aucune' => 'لا حصة',
+			'historique.selecteur.une' => 'حصة واحدة',
+			'historique.selecteur.plusieurs' => ({required Object n}) => '⁨${n}⁩ حصص',
+			'historique.filtres.classe' => 'الفصل',
+			'historique.filtres.toutesClasses' => 'كل الفصول',
+			'historique.filtres.periode' => 'الفترة',
+			'historique.filtres.toutePeriode' => 'كامل الفترة',
+			'historique.filtres.septJours' => 'آخر 7 أيام',
+			'historique.filtres.trenteJours' => 'آخر 30 يومًا',
+			'historique.filtres.troisMois' => 'آخر 3 أشهر',
+			'historique.filtres.statut' => 'الحالة',
+			'historique.filtres.tousStatuts' => 'كل الحالات',
+			'historique.retour' => 'العودة إلى السجل',
+			'historique.etat.presence' => 'حضور',
+			'historique.etat.retard' => ({required Object minutes}) => 'تأخر ⁨${minutes}⁩ دقيقة',
+			'historique.etat.retardSansDuree' => 'تأخر',
+			'historique.etat.verification' => 'قيد التحقق',
+			'historique.etat.annule' => 'درس ملغى',
+			'historique.etat.nonTenu' => 'درس لم يُعقد',
+			'historique.presenceIllisible' => 'تعذّرت قراءة الحضور: تبقى الحالات غير معروفة الآن.',
+			'historique.seances.videTitre' => 'لا حصة ماضية',
+			'historique.seances.videPhrase' => ({required Object prenom}) => 'ستظهر هنا الحصص الماضية لـ⁨${prenom}⁩.',
+			'historique.seances.videPhraseFoyer' => 'ستظهر هنا الحصص الماضية لملفات الطلاب.',
+			'historique.seances.filtreVideTitre' => 'لا حصة مطابقة',
+			'historique.seances.filtreVidePhrase' => 'غيّر عوامل التصفية لتجد الحصص الأخرى.',
+			'historique.seances.tronquee' => ({required Object nombre}) => 'تُعرض أحدث ⁨${nombre}⁩ حصة.',
+			'historique.seances.ouvrir' => ({required Object date, required Object classe, required Object etat}) => 'حصة ⁨${date}⁩، ⁨${classe}⁩، ⁨${etat}⁩',
+			'historique.observations.indisponibleTitre' => 'سجل المتابعات غير متاح',
+			'historique.observations.indisponiblePhrase' => 'لا يمكن بعد قراءة الزيارات المسجَّلة في التطبيق.',
+			'historique.observations.videTitre' => 'لا متابعة',
+			'historique.observations.videPhrase' => ({required Object prenom}) => 'ستظهر هنا الزيارات التي تقوم بها أثناء حصص ⁨${prenom}⁩.',
+			'historique.observations.videPhraseFoyer' => 'ستظهر هنا زياراتك أثناء الحصص.',
+			'historique.observations.filtreVideTitre' => 'لا متابعة مطابقة',
+			'historique.observations.filtreVidePhrase' => 'غيّر عوامل التصفية لتجد الزيارات الأخرى.',
+			'historique.observations.visiteUne' => 'زيارة واحدة',
+			'historique.observations.visites' => ({required Object n}) => '⁨${n}⁩ زيارات',
+			'historique.observations.dureeNonConfirmee' => 'المدة غير مؤكَّدة',
+			'historique.observations.terminee' => 'منتهية',
+			'historique.observations.nonRefermee' => 'الخروج غير مسجَّل',
+			'historique.observations.eleveInconnu' => 'طالب',
+			'historique.observations.tronquee' => 'تُعرض أحدث الزيارات فقط.',
+			'historique.observations.ouvrir' => ({required Object date, required Object classe, required Object etat}) => 'متابعات ⁨${date}⁩، ⁨${classe}⁩، ⁨${etat}⁩',
+			'historique.seance.titreSansClasse' => ({required Object date}) => 'حصة ⁨${date}⁩',
+			'historique.seance.blocSeance' => 'الحصة',
+			'historique.seance.blocPresence' => ({required Object prenom}) => 'حضور ⁨${prenom}⁩',
+			'historique.seance.date' => 'التاريخ',
+			'historique.seance.horaire' => 'الموعد',
+			'historique.seance.dureePrevue' => 'المدة المقررة',
+			'historique.seance.classe' => 'الفصل',
+			'historique.seance.enseignant' => 'المعلم',
+			'historique.seance.presence' => 'الحضور',
+			'historique.seance.arrivee' => 'الوصول',
+			'historique.seance.interruption' => 'الانقطاع',
+			'historique.seance.verificationPhrase' => 'لم يُؤكَّد الحضور بعد لهذه الحصة.',
+			'historique.seance.nonTenuPhrase' => 'لم تُعقد الحصة: ليس الأمر من فعل الطالب.',
+			'historique.seance.annulePhrase' => 'أُلغيت الحصة.',
+			'historique.seance.introuvableTitre' => 'لم يُعثر على الحصة',
+			'historique.seance.introuvablePhrase' => 'هذه الحصة ليست في سجل أسرتك.',
+			'historique.observation.titreSansClasse' => ({required Object date}) => 'متابعات ⁨${date}⁩',
+			'historique.observation.blocResume' => 'الملخص',
+			'historique.observation.blocVisites' => 'الزيارات',
+			'historique.observation.observateur' => 'المتابِع',
+			'historique.observation.vous' => 'أنت',
+			'historique.observation.eleve' => 'الطالب',
+			'historique.observation.enseignant' => 'المعلم',
+			'historique.observation.dureeTotale' => 'المدة الكلية',
+			'historique.observation.visite' => ({required Object n}) => 'الزيارة ⁨${n}⁩',
+			'historique.observation.plageOuverte' => ({required Object debut}) => 'الدخول الساعة ⁨${debut}⁩',
+			'historique.observation.terminee' => 'انتهت الزيارة',
+			'historique.observation.introuvableTitre' => 'لا زيارة لهذه الحصة',
+			'historique.observation.introuvablePhrase' => 'لا زيارة مسجَّلة تطابق هذه الحصة.',
+			'appareils.titre' => 'الأجهزة',
+			'appareils.foyer.titre' => 'أجهزة الأسرة',
+			'appareils.foyer.phrase' => 'لكل ملف طالب أجهزته. المس ملفًا لترى أجهزته، أو تزيل أحدها، أو تربط جهازًا جديدًا.',
+			'appareils.foyer.groupeProfils' => 'ملفات الطلاب',
+			'appareils.foyer.aucunAppareil' => 'لا جهاز مربوط',
+			'appareils.foyer.unAppareil' => ({required Object nom}) => 'جهاز واحد مربوط: ⁨${nom}⁩',
+			'appareils.foyer.plusieursAppareils' => ({required Object nombre, required Object noms}) => '⁨${nombre}⁩ أجهزة مربوطة: ⁨${noms}⁩',
+			'appareils.foyer.partageTitre' => 'جهاز مشترك',
+			'appareils.foyer.partage' => 'على جهاز مشترك، يختار كل طالب ملفه ثم يدخل رمزه الشخصي. يظهر هذا الجهاز حينها تحت كل ملف يستخدمه.',
+			'appareils.foyer.videTitre' => 'لا ملف طالب',
+			'appareils.foyer.vide' => 'أضف ملف طالب لتربط به جهازًا لوحيًا أو هاتفًا أو حاسوبًا.',
+			'appareils.foyer.videAction' => 'إضافة ملف طالب',
+			'appareils.eleve.sousTitre' => ({required Object prenom}) => 'أدر الأجهزة المسموح بها لـ⁨${prenom}⁩.',
+			'appareils.eleve.groupe' => 'الأجهزة المربوطة',
+			'appareils.eleve.connecter' => 'ربط جهاز',
+			'appareils.eleve.videTitre' => 'لا جهاز مربوط',
+			'appareils.eleve.vide' => ({required Object prenom}) => 'اربط الجهاز اللوحي أو الهاتف أو الحاسوب الخاص بـ⁨${prenom}⁩ بالرمز الذي يعرضه الزر أدناه.',
+			'appareils.eleve.introuvableTitre' => 'لم يُعثر على ملف الطالب',
+			'appareils.eleve.introuvable' => 'ملف الطالب هذا غير مرتبط بأسرتك.',
+			'appareils.eleve.introuvableAction' => 'عرض أجهزة الأسرة',
+			'appareils.eleve.connecteLe' => ({required Object date}) => 'رُبط في ⁨${date}⁩',
+			'appareils.eleve.utiliseLe' => ({required Object date}) => 'آخر استخدام: ⁨${date}⁩',
+			'appareils.eleve.jamaisUtilise' => 'لم يُستخدم بعد',
+			'appareils.eleve.retirerLibelle' => ({required Object appareil}) => 'إزالة ⁨${appareil}⁩',
+			'appareils.eleve.horsLigne' => 'إزالة جهاز أو ربطه يتطلب اتصالًا بالإنترنت.',
+			'appareils.eleve.partageTitre' => 'اختيار الملف والرمز الشخصي',
+			'appareils.eleve.partage' => 'على جهاز مشترك، يختار كل طالب ملفه ثم يدخل رمزه الشخصي، المحفوظ على هذا الجهاز.',
+			'appareils.eleve.retraitTitre' => 'إزالة جهاز',
+			'appareils.eleve.retrait' => 'الجهاز المُزال لا يستطيع إعادة الاتصال. إن كان متصلًا الآن، يبقى كذلك حتى انقطاعه التالي.',
+			'appareils.plateforme.android' => 'هاتف أو جهاز لوحي Android',
+			'appareils.plateforme.ios' => 'iPhone أو iPad',
+			'appareils.plateforme.web' => 'متصفح ويب',
+			'appareils.plateforme.windows' => 'حاسوب',
+			'appareils.plateforme.inconnue' => 'جهاز',
+			'appareils.retrait.question' => 'إزالة هذا الجهاز؟',
+			'appareils.retrait.consequence' => ({required Object appareil, required Object prenom}) => 'لن يستطيع ⁨${appareil}⁩ الاتصال بملف ⁨${prenom}⁩. إن كان متصلًا الآن، يبقى كذلك حتى انقطاعه التالي.',
+			'appareils.retrait.confirmer' => 'إزالة الجهاز',
+			'appareils.retrait.enCours' => 'جارٍ الإزالة',
+			'appareils.retrait.reussi' => 'أُزيل الجهاز. إن كان متصلًا الآن، يبقى كذلك حتى انقطاعه التالي.',
+			'appareils.retrait.echec' => 'لم تكتمل الإزالة. ما زال الجهاز مسموحًا به. أعد المحاولة بعد لحظة.',
+			'appareils.retrait.horsLigne' => 'لا اتصال بالإنترنت: لم يُزل الجهاز.',
+			'appareils.emetteur.titre' => 'ربط جهاز',
+			'appareils.emetteur.pourEleve' => ({required Object prenom}) => 'لـ⁨${prenom}⁩',
+			'appareils.emetteur.consigneTitre' => 'على الجهاز الآخر',
+			'appareils.emetteur.consigne' => 'افتح Rewayah، والمس «ربط جهاز طالب»، ثم امسح رمز QR هذا أو أدخل الرمز.',
+			'appareils.emetteur.libelleQr' => 'رمز QR للربط. الرمز نفسه مكتوب أيضًا على هذه الشاشة، لإدخاله إن لم يقرأ الجهاز رمز QR.',
+			'appareils.emetteur.codeManuel' => 'الرمز للإدخال',
+			'appareils.emetteur.codeLu' => ({required Object code}) => 'الرمز للإدخال: ⁨${code}⁩',
+			'appareils.emetteur.valableJusqua' => ({required Object heure}) => 'صالح حتى ⁨${heure}⁩',
+			'appareils.emetteur.restant' => ({required Object temps}) => 'بقي ⁨${temps}⁩',
+			'appareils.emetteur.sortie' => ({required Object heure}) => 'مغادرة هذه الشاشة لا تلغي الرمز: يبقى صالحًا حتى ⁨${heure}⁩.',
+			'appareils.emetteur.suiviIndisponible' => 'لا تستطيع هذه الشاشة تأكيد الربط. تحقّق على جهاز الطالب.',
+			'appareils.emetteur.preparation' => 'جارٍ تحضير الرمز',
+			'appareils.emetteur.verification.titre' => 'جارٍ التحقق من الرمز',
+			'appareils.emetteur.verification.phrase' => 'الرمز مخفي ريثما يُتحقق من أنه ما زال صالحًا.',
+			'appareils.emetteur.confirme.titre' => 'الجهاز مربوط',
+			'appareils.emetteur.confirme.phrase' => ({required Object prenom}) => 'جهاز ⁨${prenom}⁩ جاهز. لم يعد الرمز معروضًا ولا يمكن استخدامه.',
+			'appareils.emetteur.confirme.phraseSansPrenom' => 'جهاز الطالب جاهز. لم يعد الرمز معروضًا ولا يمكن استخدامه.',
+			'appareils.emetteur.confirme.action' => 'تم',
+			'appareils.emetteur.expire.titre' => 'انتهت صلاحية هذا الرمز',
+			'appareils.emetteur.expire.phrase' => 'لم يعد صالحًا. أنشئ رمزًا جديدًا حين يكون الجهاز الآخر جاهزًا.',
+			'appareils.emetteur.remplace.titre' => 'استُبدل هذا الرمز',
+			'appareils.emetteur.remplace.phrase' => 'طُلب رمز جديد لهذا الطالب، هنا أو على جهاز آخر. هذا الرمز لم يعد يعمل.',
+			'appareils.emetteur.dejaActif.titre' => 'رمز صالح بالفعل',
+			'appareils.emetteur.dejaActif.phrase' => ({required Object heure}) => 'رمز أُنشئ لهذا الطالب صالح حتى ⁨${heure}⁩. لا يمكن عرضه من جديد: إنشاء رمز جديد يُبطل القديم.',
+			'appareils.emetteur.horsLigne.titre' => 'انقطع الاتصال',
+			'appareils.emetteur.horsLigne.phraseAvecCode' => ({required Object heure}) => 'الرمز مخفي حتى عودة الاتصال. يبقى صالحًا حتى ⁨${heure}⁩.',
+			'appareils.emetteur.horsLigne.phraseSansCode' => 'تعذّر تحضير الرمز. سيُحضَّر بمجرد عودة الاتصال.',
+			'appareils.emetteur.erreur.plafondTitre' => 'بلغت حد الأجهزة',
+			'appareils.emetteur.erreur.plafondPhrase' => 'لدى هذا الطالب الحد الأقصى من الأجهزة. أزل أحدها لربط جهاز آخر.',
+			'appareils.emetteur.erreur.plafondAction' => 'عرض الأجهزة',
+			'appareils.emetteur.erreur.horsFoyerTitre' => 'لم يُعثر على ملف الطالب',
+			'appareils.emetteur.erreur.horsFoyerPhrase' => 'ملف الطالب هذا غير مرتبط بأسرتك. عد إلى «الأسرة» لاختيار ملف.',
+			'appareils.emetteur.erreur.compteTitre' => 'ربط الأجهزة غير مفتوح بعد',
+			'appareils.emetteur.erreur.comptePhrase' => 'يجب فتح حسابك قبل ربط جهاز طالب.',
+			'appareils.emetteur.erreur.generiqueTitre' => 'تعذّر تحضير الرمز',
+			'appareils.emetteur.erreur.generiquePhrase' => 'لم يكتمل الطلب. أعد المحاولة بعد لحظة.',
+			'appareils.regenerer' => 'إنشاء رمز جديد',
+			'appareils.revoquer' => 'إزالة',
+			'appareils.revoquerConfirmation' => 'إزالة هذا الجهاز؟ لن يستطيع الاتصال ما لم يُعد وليّ الأمر ربطه برمز جديد.',
+			'connexion.titre' => 'تسجيل الدخول',
+			'connexion.intro' => 'نرسل لك رابطًا بالبريد الإلكتروني. لا كلمة مرور تحفظها، ولا كلمة مرور تضيع.',
+			'connexion.courriel' => 'بريدك الإلكتروني',
+			'connexion.courrielIndice' => 'vous@exemple.com',
+			'connexion.motDePasseDemo' => 'كلمة مرور العرض التجريبي',
+			'connexion.envoyerLien' => 'استلام الرابط',
+			'connexion.avecGoogle' => 'المتابعة بحساب Google',
+			'connexion.ou' => 'أو',
+			'connexion.lienEnvoye' => 'أُرسل الرابط',
+			'connexion.lienEnvoyeDetail' => ({required Object courriel}) => 'افتح الرسالة المرسلة إلى ⁨${courriel}⁩، ثم اتبع الرابط. يمكنك ترك هذه الصفحة مفتوحة.',
+			'connexion.changerAdresse' => 'استخدام عنوان آخر',
+			'connexion.erreurCourriel' => 'يبدو أن هذا العنوان غير صالح.',
+			'connexion.erreurEnvoi' => 'لم يكتمل الإرسال. أعد المحاولة بعد لحظة.',
+			'connexion.appareilEleveAide' => 'أنت وليّ أمر وتجهّز جهاز طالب؟',
+			'connexion.appareilEleve' => 'ربط جهاز طالب',
+			'connexion.renvoyer' => 'إعادة إرسال الرابط',
+			'connexion.renvoye' => ({required Object courriel}) => 'أُرسل رابط جديد إلى ⁨${courriel}⁩. استخدم رابط أحدث رسالة.',
+			'connexion.erreurTropTot' => 'أُرسل رابط للتو. انتظر قليلًا قبل طلب رابط آخر.',
+			'connexion.horsLigne' => 'أنت غير متصل: لا يمكن إرسال الرابط الآن.',
+			'connexion.probleme' => 'انتهت صلاحية الرابط أو لم يصل؟',
+			'connexion.decouvrir' => 'اكتشف Rewayah Academy',
+			'connexion.recuperation.titre' => 'استعادة الوصول',
+			'connexion.recuperation.intro' => 'لا كلمة مرور لإعادة تعيينها: أدخل عنوانك، ونرسل لك رابط دخول جديدًا.',
+			'connexion.recuperation.lienExpireTitre' => 'هذا الرابط لم يعد صالحًا',
+			'connexion.recuperation.lienExpire' => 'رابط الدخول يُستخدم مرة واحدة وتنتهي صلاحيته بعد مدة. اطلب رابطًا جديدًا أدناه.',
+			'connexion.recuperation.lienRefuseTitre' => 'لم يكتمل الدخول',
+			'connexion.recuperation.lienRefuse' => 'تعذّر الدخول بهذا الرابط. اطلب رابطًا جديدًا أدناه.',
+			'connexion.recuperation.envoyer' => 'استلام رابط جديد',
+			'connexion.recuperation.envoyeTitre' => 'أُرسل رابط جديد',
+			'connexion.recuperation.envoye' => ({required Object courriel}) => 'افتح الرسالة المرسلة إلى ⁨${courriel}⁩، ثم اتبع الرابط.',
+			'connexion.recuperation.envoyeEncart' => 'قد تستغرق الرسالة بضع دقائق لتصل. تذكّر أن تنظر في البريد غير المرغوب فيه.',
+			'connexion.recuperation.autreAdresse' => 'استخدام عنوان آخر',
+			'connexion.recuperation.revenirConnexion' => 'العودة إلى تسجيل الدخول',
+			'connexion.feuilleAppareil.pourQui' => 'مخصص لأولياء الأمور المسجلين. تمنح هذه الشاشة طالبًا من أسرتك وصوله الخاص، على جهازه اللوحي أو هاتفه، دون أن تسلّمه حسابك.',
+			'connexion.feuilleAppareil.etapesTitre' => 'أين تجد الرمز',
+			'connexion.feuilleAppareil.etape1' => 'على جهازك، افتح «الأسرة»، ثم «أجهزة الأسرة».',
+			'connexion.feuilleAppareil.etape2' => 'المس ملف الطالب، ثم «ربط جهاز».',
+			'connexion.feuilleAppareil.etape3' => 'يظهر رمز QR ورمز من ستة أحرف، مع وقت انتهائهما.',
+			'connexion.feuilleAppareil.etape4' => 'على جهاز الطالب، امسح رمز QR أو أدخل الرمز.',
+			'connexion.feuilleAppareil.plafond' => 'عدد الأجهزة لكل طالب محدود. إن بلغت الحد، أزل أحدها من «الأسرة»، «أجهزة الأسرة».',
+			'connexion.feuilleAppareil.saisir' => 'إدخال الرمز',
+			'connexion.feuilleAppareil.fermer' => 'إغلاق',
+			'attente.titre' => 'ملفك قيد التحقق',
+			'attente.dossierIncomplet' => 'ما زالت تنقص ملفك بعض الوثائق.',
+			'attente.enVerification' => 'نتحقق من ملفك.',
+			'attente.refuse' => 'رُفض الملف',
+			'attente.suspendu' => 'حسابك موقوف.',
+			'attente.contacterAcademie' => 'التواصل مع الأكاديمية',
+			'attente.deposeLe' => ({required Object date}) => 'أُودع في ⁨${date}⁩',
+			'attente.delai' => 'يستغرق التحقق عادة أقل من 48 ساعة.',
+			'attente.aFournir' => 'للتقديم',
+			'attente.pieceIdentite' => 'وثيقة هوية',
+			'attente.signatureContrat' => 'توقيع العقد',
+			'attente.carteAccuse' => 'ما يجب أن تعرفه',
+			'attente.deposerLaPiece' => 'إيداع وثيقتي',
+			'attente.signerLeContrat' => 'القراءة والتوقيع',
+			'attente.lireLaCarte' => 'قراءة',
+			'attente.toutEstDepose' => 'كل شيء مودَع.',
+			'attente.corriger' => 'تصحيح',
+			'attente.correctionImpossible' => 'لا يمكن تعديل هذا الملف الآن.',
+			'attente.actualiser' => 'تحديث حالة الملف',
+			'attente.suspenduDetail' => 'يمكنك التواصل مع الأكاديمية لمعرفة الخطوات المطلوبة.',
+			'attente.seDeconnecter' => 'تسجيل الخروج',
+			'attente.titreDossier' => 'ملفك',
+			'attente.titreCompte' => 'حسابك',
+			'attente.accordsARelire' => 'بقي عليك قراءة شروطنا وقبولها.',
+			'attente.accesTitre' => 'أُنشئ حسابك',
+			'attente.accesEnPreparation' => 'فتح حسابك ليس تلقائيًا بعد.',
+			'attente.aucunDocument' => 'ليس عليك إرسال أي وثيقة.',
+			'attente.accesContact' => 'يمكن للأكاديمية فتحه لك: تواصل معها.',
+			'attente.actualiserCompte' => 'تحديث',
+			'attente.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, one: 'بقي عنصر واحد للتقديم.', other: 'بقيت ⁨${n}⁩ عناصر للتقديم.', ), 
+			'attente.etatAFournir' => 'للتقديم',
+			'attente.prochaineEtape' => ({required Object etape}) => 'الخطوة التالية: ⁨${etape}⁩',
+			'attente.refuseDetail' => ({required Object element}) => 'لإعادة إطلاق التحقق، ابدأ بهذا العنصر: ⁨${element}⁩.',
+			'attente.refuseSansElement' => 'يمكنك التواصل مع الأكاديمية لمعرفة الخطوات المطلوبة.',
+			'attente.illisible' => 'حالة ملفك لا تظهر الآن.',
+			'attente.horsLigne' => 'أنت غير متصل. ستظهر حالة ملفك بمجرد عودة الشبكة.',
+			'inscription.titre' => 'إنشاء حسابك',
+			'inscription.etapeSur' => ({required Object n, required Object total}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩',
+			'inscription.tempsRestant' => ({required Object minutes}) => 'نحو ⁨${minutes}⁩ دقيقة',
+			'inscription.roleQuestion' => 'هل تسجّل كوليّ أمر أم كمعلم؟',
+			'inscription.roleTuteur' => 'وليّ أمر',
+			'inscription.roleEleveAdulte' => 'طالب بالغ، لنفسي',
+			'inscription.roleEnseignant' => 'معلم',
+			'inscription.autreAide' => 'راسل الأكاديمية وسننشئ لك وصولك. لا تستطيع هذه الصفحة فعل ذلك عنك.',
+			'inscription.identiteQuestion' => 'ما اسمك؟',
+			'inscription.identiteRaison' => 'يجب أن يكون هذا الاسم هو الاسم الموجود في وثيقة هويتك.',
+			'inscription.prenom' => 'الاسم',
+			'inscription.nom' => 'اللقب',
+			'inscription.genreQuestion' => 'أنت',
+			_ => null,
+		} ?? switch (path) {
+			'inscription.genreHomme' => 'رجل',
+			'inscription.genreFemme' => 'امرأة',
+			'inscription.genreRaison' => 'تُستخدم هذه الإجابة فقط لتسليم وثيقة هويتك إلى موظف من الجنس نفسه.',
+			'inscription.recapitulatif' => 'قبل المتابعة',
+			'inscription.creer' => 'إنشاء حسابي',
+			'inscription.erreur' => 'لم يكتمل إنشاء الحساب. أعد المحاولة بعد لحظة.',
+			'inscription.champRequis' => 'هذه الإجابة ضرورية للمتابعة.',
+			'inscription.etapeCourte' => ({required Object n, required Object total}) => '⁨${n}⁩ من ⁨${total}⁩',
+			'inscription.retourEtape' => 'العودة إلى الخطوة السابقة',
+			'inscription.seDeconnecter' => 'تسجيل الخروج',
+			'inscription.modifier' => 'تعديل',
+			'inscription.reessayer' => 'إعادة المحاولة',
+			'inscription.erreurActualisation' => 'أُنشئ حسابك، لكن تعذّر تحديث الاتصال. أعد المحاولة، أو سجّل الخروج ثم الدخول من جديد.',
+			'inscription.usage.question' => 'أي نوع من الحسابات تريد إنشاءه؟',
+			'inscription.usage.moiTitre' => 'أنا فقط',
+			'inscription.usage.moiDescription' => 'أريد متابعة الدروس بملفي الخاص كطالب.',
+			'inscription.usage.familleTitre' => 'أنا وأسرتي',
+			'inscription.usage.familleDescription' => 'سجّل أطفالك أو أقاربك، معك أو دونك. يمكنك إنشاء ملفك الخاص كطالب في أي وقت.',
+			'inscription.usage.enseignant' => 'أنا معلم',
+			'inscription.recap.usage' => 'نوع الحساب',
+			'inscription.recap.identite' => 'الاسم',
+			'inscription.recap.genre' => 'الجنس',
+			'inscription.recap.enseignant' => 'معلم',
+			'consentement.titre' => 'الموافقات',
+			'consentement.texte.titre' => 'زيارات أولياء الأمور',
+			'consentement.texte.quiResponsable' => 'يمكن لأولياء أمور الطلاب الحاضرين متابعة الحصة لوقت قصير.',
+			'consentement.texte.quiResponsableDetail' => 'يسمعون المعلم والطلاب الذين يتكلمون، ومنهم طفلك. يبقى ميكروفونهم وكاميرتهم معطَّلين: لا يستطيعون الكلام ولا الكتابة ولا الظهور على الشاشة.',
+			'consentement.texte.quiAdulte' => 'يمكن لأولياء أمور الطلاب الآخرين الحاضرين متابعة الحصة لوقت قصير.',
+			'consentement.texte.quiAdulteDetail' => 'يسمعون المعلم والطلاب الذين يتكلمون، ومنهم أنت. يبقى ميكروفونهم وكاميرتهم معطَّلين: لا يستطيعون الكلام ولا الكتابة ولا الظهور على الشاشة.',
+			'consentement.texte.pourquoi' => 'لمتابعة التعلم دون مقاطعة الفصل.',
+			'consentement.texte.pourquoiDetail' => 'يأتي وليّ الأمر ليرى إن كان طفله يشارك، ثم ينصرف. تذكّر القاعة باستمرار بأن الزيارة ممكنة.',
+			'consentement.texte.limites' => 'زيارات قصيرة، بعدد محدود.',
+			'consentement.texte.limitesDetail' => 'لكل وليّ أمر عدد قليل من الزيارات في كل حصة، تحدده الأكاديمية ويُذكَّر به في «كيف يعمل ذلك؟». الزيارة التي تُغادَر قبل نهايتها تُحتسب زيارة.',
+			'consentement.texte.caseResponsable' => 'أوافق على هذه الشروط لطفلي',
+			'consentement.texte.caseAdulte' => 'أوافق على هذه الشروط',
+			'consentement.texte.continuer' => 'متابعة',
+			'consentement.texte.retour' => 'رجوع',
+			'consentement.comment.titre' => 'كيف يعمل ذلك؟',
+			'consentement.comment.visites' => ({required num n, required Object minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, one: 'زيارة واحدة مدتها ⁨${minutes}⁩ دقيقة في كل حصة.', other: '⁨${n}⁩ زيارات مدة كل منها ⁨${minutes}⁩ دقيقة في كل حصة.', ), 
+			'consentement.comment.visitesSansDuree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, one: 'زيارة قصيرة واحدة في كل حصة.', other: '⁨${n}⁩ زيارات قصيرة في كل حصة.', ), 
+			'consentement.comment.parParent' => 'يسري هذا العدد على كل وليّ أمر، سواء جمعت الحصة طفلًا واحدًا من أطفاله أو أكثر.',
+			'consentement.comment.ecourtee' => 'الزيارة التي تُغادَر قبل نهايتها تُحتسب: لا يبقى إلا التالية، حتى الأخيرة.',
+			'consentement.comment.ecouter' => 'تسمع المعلم والطلاب الذين يتكلمون، ومنهم طفلك.',
+			'consentement.comment.sansMicro' => 'يبقى الميكروفون والكاميرا معطَّلين أثناء الزيارة.',
+			'consentement.comment.valeursIndisponibles' => 'يظهر عدد الزيارات ومدتها من فصل طفلك، حسب قواعد فصله.',
+			'consentement.comment.fermee' => 'زيارات المتابعة غير مفتوحة لهذا الفصل.',
+			'consentement.compte.intro' => 'أضافت الأكاديمية إلى شروطها فقرة عن زيارات أولياء الأمور. لا يُعدّ شيء مقبولًا ما لم تقبله أنت.',
+			'consentement.compte.accepteLe' => ({required Object date}) => 'قبلت هذه الشروط في ⁨${date}⁩.',
+			'consentement.compte.merci' => 'شكرًا، حُفظت موافقتك.',
+			'consentement.compte.chargement' => 'جارٍ قراءة موافقاتك',
+			'consentement.compte.erreur' => 'موافقاتك لا تظهر الآن.',
+			'consentement.compte.horsLigne' => 'أنت غير متصل. ستظهر موافقاتك بمجرد عودة الشبكة.',
+			'consentement.compte.sansProfil' => 'لا حساب متصل: سجّل الدخول من جديد لقراءة موافقاتك.',
+			'consentement.compte.invite' => 'نسخة جديدة للقراءة: زيارات أولياء الأمور',
+			'consentement.compte.inviteAction' => 'قراءة',
+			'foyer.titre' => 'الأسرة',
+			'foyer.ajouterProfil' => 'إضافة ملف طالب',
+			'foyer.sousTitre' => 'ملفات الطلاب في أسرتك',
+			'foyer.membres' => 'ملفات الطلاب',
+			'foyer.vide.titre' => 'لا ملف طالب حتى الآن',
+			'foyer.vide.phrase' => 'أضف ملف طالب لتسجيله في فصل وربط جهازه.',
+			'foyer.membre.sansClasse' => 'لا فصل بعد',
+			'foyer.membre.classeEchec' => 'تعذّرت قراءة الفصل',
+			'foyer.membre.accesSansEcheance' => 'وصول دون موعد انتهاء',
+			'foyer.membre.accesJusquau' => ({required Object date}) => 'وصول حتى ⁨${date}⁩',
+			'foyer.membre.accesExpire' => ({required Object date}) => 'انتهى الوصول منذ ⁨${date}⁩',
+			'foyer.membre.date' => ({required Object jour, required Object mois, required Object annee}) => '⁨${jour}⁩ ⁨${mois}⁩ ⁨${annee}⁩',
+			'foyer.classesIndisponibles' => 'فصل كل طالب لا يظهر في هذه الصفحة بعد.',
+			'foyer.classesEchec' => 'تعذّرت قراءة فصل بعض الطلاب.',
+			'foyer.relireClasses' => 'إعادة قراءة الفصول',
+			'foyer.inscriptionIllisible' => 'التسجيل الجاري لكل طالب لا يظهر في هذه الصفحة بعد.',
+			'foyer.appareilsPartages' => 'الأجهزة المشتركة',
+			'foyer.appareilsFoyer' => 'أجهزة الأسرة',
+			'foyer.appareilsFoyerLegende' => 'ربط جهاز، عرض الأجهزة المربوطة، إزالة أحدها',
+			'foyer.creerMonProfil' => 'إنشاء ملفي كطالب',
+			'foyer.monProfil.titre' => 'إنشاء ملفي كطالب',
+			'foyer.monProfil.indisponibleTitre' => 'غير ممكن بعد',
+			'foyer.monProfil.indisponiblePhrase' => 'متابعة الدروس بنفسك بملفك الخاص كطالب ستُقترح قريبًا. يبقى حسابك كوليّ أمر كما هو.',
+			'foyer.monProfil.retour' => 'العودة إلى الأسرة',
+			'foyer.ajout.suivant' => 'التالي',
+			'foyer.ajout.creer' => 'إنشاء الملف',
+			'foyer.ajout.porte.illisibleTitre' => 'تعذّرت قراءة حسابك',
+			'foyer.ajout.porte.illisiblePhrase' => 'لا نعرف بعد أي الملفات يمكنك إضافتها. أعد المحاولة بعد لحظة.',
+			'foyer.ajout.pourQui.question' => 'لمن ملف الطالب هذا؟',
+			'foyer.ajout.pourQui.sousTitre' => 'اختر الشخص الذي سيتابع الدروس.',
+			'foyer.ajout.pourQui.requis' => 'اختر لمن هذا الملف للمتابعة.',
+			'foyer.ajout.pourQui.indisponible' => 'غير متاح',
+			'foyer.ajout.pourQui.enfantTitre' => 'طفل أو قاصر',
+			'foyer.ajout.pourQui.enfantDescription' => 'ملف مرتبط بأسرتك، تديره نيابة عنه.',
+			'foyer.ajout.pourQui.enfantAttente' => 'ممكن بمجرد فتح وصولك.',
+			'foyer.ajout.pourQui.moiTitre' => 'أنا',
+			'foyer.ajout.pourQui.moiDescription' => 'غير ممكن بعد: متابعة الدروس بنفسك بملفك الخاص كطالب ستُقترح قريبًا.',
+			'foyer.ajout.identite.question' => 'من هو الطالب؟',
+			'foyer.ajout.identite.sousTitre' => 'اسمه ولقبه وعمره.',
+			'foyer.ajout.identite.prenom' => 'الاسم',
+			'foyer.ajout.identite.nom' => 'اللقب',
+			'foyer.ajout.identite.nomAide' => 'لا يُعرض لقب العائلة على المعلم أبدًا.',
+			'foyer.ajout.identite.age' => 'العمر',
+			'foyer.ajout.identite.ageSuffixe' => 'سنة',
+			'foyer.ajout.identite.ageAide' => 'العمر يحدد العرض والكاميرا في البداية. يمكنك تغييرهما بعد ذلك.',
+			'foyer.ajout.erreurs.prenomRequis' => 'أدخل اسم الطالب.',
+			'foyer.ajout.erreurs.nomRequis' => 'أدخل لقب الطالب.',
+			'foyer.ajout.erreurs.ageRequis' => 'أدخل العمر، بالأرقام.',
+			'foyer.ajout.erreurs.ageHorsBornes' => ({required Object min, required Object max}) => 'أدخل عمرًا بين ⁨${min}⁩ و⁨${max}⁩ سنة.',
+			'foyer.ajout.refus.compteNonValide' => 'يجب فتح وصولك قبل إضافة ملف طالب.',
+			'foyer.ajout.refus.ageHorsBornes' => 'هذا العمر غير مقبول. تحقّق منه ثم أعد المحاولة.',
+			'foyer.ajout.refus.refuse' => 'لم يُقبل الإنشاء. تحقّق من المعلومات ثم أعد المحاولة.',
+			'foyer.ajout.incertaine.titre' => 'ربما أُنشئ الملف',
+			'foyer.ajout.incertaine.phrase' => 'لم يصلنا الرد. تحقّق من الأسرة قبل إعادة المحاولة، كي لا يُنشأ الملف مرتين.',
+			'foyer.ajout.incertaine.voirFoyer' => 'عرض الأسرة',
+			'foyer.ajout.incertaine.reessayer' => 'إعادة المحاولة على أي حال',
+			'foyer.ajout.horsLigne' => 'أنت غير متصل. يمكن إنشاء الملف عند عودة الاتصال.',
 			_ => null,
 		};
 	}
