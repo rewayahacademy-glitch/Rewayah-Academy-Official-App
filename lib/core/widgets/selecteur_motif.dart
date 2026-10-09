@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart' show listEquals;
@@ -154,7 +155,8 @@ class SelecteurMotifEtat extends State<SelecteurMotif> {
       // La liste a change (une autre categorie) : la puce retenue se relit
       // dans la nouvelle liste ; une liste vide ouvre le champ libre seul. Un
       // « Autre » choisi parmi des puces reste ouvert.
-      final bool autreOuvert = _retenue == _autre && oldWidget.motifs.isNotEmpty;
+      final bool autreOuvert =
+          _retenue == _autre && oldWidget.motifs.isNotEmpty;
       _synchroniser();
       if (autreOuvert && _retenue == null) _retenue = _autre;
     }
@@ -563,11 +565,27 @@ class RangeePuces extends StatelessWidget {
             key: cles?[indices[k]],
             width: tailles[indices[k]].width,
             height: hauteur,
-            child: FilterPill(
-              libelle: libelles[indices[k]],
-              retenue: retenue == indices[k],
-              focusNode: indices[k] == 0 ? focusPremiere : null,
-              onPress: () => onChoix(indices[k]),
+            // AD-11 (2.4.11) : une puce qui recoit le focus au clavier est
+            // ramenee dans la vue de son defilement (feuille 02D a 320x640 :
+            // Tab laissait la premiere puce hors de la vue, au-dessus).
+            child: Builder(
+              builder: (BuildContext contexte) => Focus(
+                canRequestFocus: false,
+                skipTraversal: true,
+                onFocusChange: (bool focus) {
+                  if (focus) {
+                    unawaited(
+                      Scrollable.ensureVisible(contexte, alignment: 0.5),
+                    );
+                  }
+                },
+                child: FilterPill(
+                  libelle: libelles[indices[k]],
+                  retenue: retenue == indices[k],
+                  focusNode: indices[k] == 0 ? focusPremiere : null,
+                  onPress: () => onChoix(indices[k]),
+                ),
+              ),
             ),
           ),
         ],
