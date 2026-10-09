@@ -168,7 +168,13 @@ end $$;
 --      une seance deja routee
 -- ============================================================
 
-do $$
+-- N2 et N3 restaurent les valeurs d'origine, pas les valeurs par defaut :
+-- cette base est partagee par les scenarios et peut deja etre configuree.
+create temporary table n2_video_config_snapshot as
+select id, active_provider, ws_url_override, canary_provider, canary_percentage
+from public.video_config;
+
+do $
 declare
   v_avant text;
   v_apres text;
@@ -199,10 +205,12 @@ begin
       v_avant, v_apres;
   end if;
 
-  -- On remet la configuration d'origine pour la suite.
-  update public.video_config
-     set active_provider = 'cloud', ws_url_override = null
-   where id;
+  -- Restaurer la configuration exacte capturee avant N2.
+  update public.video_config current_config
+     set active_provider = snapshot.active_provider,
+         ws_url_override = snapshot.ws_url_override
+    from pg_temp.n2_video_config_snapshot snapshot
+   where current_config.id = snapshot.id;
 end $$;
 
 -- ============================================================
@@ -267,9 +275,13 @@ begin
    where teacher_id = 'b2000000-0000-0000-0000-000000000001'
      and started_at > now() + interval '7 days';
 
-  update public.video_config
-     set canary_provider = null, canary_percentage = 0 where id;
-end $$;
+  update public.video_config current_config
+     set canary_provider = snapshot.canary_provider,
+         canary_percentage = snapshot.canary_percentage
+    from pg_temp.n2_video_config_snapshot snapshot
+   where current_config.id = snapshot.id;
+end $;
+drop table pg_temp.n2_video_config_snapshot;
 
 -- ============================================================
 -- N4 : les capacites se deduisent du role et de la politique camera,
