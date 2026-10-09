@@ -138,6 +138,12 @@ class ZoneSaisie extends StatelessWidget {
   /// La part de la hauteur visible que le champ ne depasse jamais.
   static const double partMaxVue = 0.4;
 
+  /// Les lignes d'une aide ou d'une erreur de champ : assez pour qu'aucune
+  /// ne passe a l'ellipse a 320 en texte double (mesure SUPERPOS-1 : 3 ne
+  /// suffisaient pas a l'aide du courriel de l'invitation, ni a celle de
+  /// l'age d'un profil eleve). Aussi pour les champs d'une ligne.
+  static const int lignesAideMax = 8;
+
   /// Les lignes [min, max] que le champ peut prendre dans cette vue.
   ///
   /// La hauteur visible est celle de la vue, moins le clavier (lu sur la
@@ -192,9 +198,9 @@ class ZoneSaisie extends StatelessWidget {
       decoration: InputDecoration(
         hintText: aide,
         helperText: explication,
-        helperMaxLines: 8,
+        helperMaxLines: lignesAideMax,
         errorText: erreur,
-        errorMaxLines: 8,
+        errorMaxLines: lignesAideMax,
         suffixIcon: envoi == null
             ? null
             : Padding(

@@ -22,6 +22,7 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/entete_page.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/zone_saisie.dart' show ZoneSaisie;
 
 /// Le titre et la phrase d'un refus, dits simplement, jamais le texte brut du
 /// serveur (DB-APP-06). Partages par la saisie et le scanner.
@@ -200,9 +201,9 @@ class _SaisieCodePageState extends ConsumerState<SaisieCodePage> {
         return;
       }
       setState(
-        () => _erreur = libellesRefusAppairage(
-          MotifRefusAppairage.generique,
-        ).phrase,
+        () =>
+            _erreur = libellesRefusAppairage(MotifRefusAppairage.generique)
+                .phrase,
       );
     } finally {
       if (mounted) {
@@ -329,9 +330,9 @@ class _Formulaire extends StatelessWidget {
           decoration: InputDecoration(
             labelText: t.eleveConnexion.saisie.champ,
             helperText: erreur == null ? t.eleveConnexion.saisie.aide : null,
-            helperMaxLines: 2,
+            helperMaxLines: ZoneSaisie.lignesAideMax,
             errorText: erreur,
-            errorMaxLines: 4,
+            errorMaxLines: ZoneSaisie.lignesAideMax,
           ),
         ),
         if (horsLigne) ...<Widget>[

@@ -10804,8 +10804,8 @@ class Traductions$adulte$invitation$fr {
 	/// fr: 'Indiquez son adresse e-mail.'
 	String get courrielRequis => 'Indiquez son adresse e-mail.';
 
-	/// fr: 'Vérifiez l'adresse e-mail : elle doit ressembler à nom@exemple.com.'
-	String get courrielInvalide => 'Vérifiez l\'adresse e-mail : elle doit ressembler à nom@exemple.com.';
+	/// fr: 'Vérifiez l'adresse e‑mail : elle doit ressembler à nom@exemple.com.'
+	String get courrielInvalide => 'Vérifiez l\'adresse e‑mail : elle doit ressembler à nom@exemple.com.';
 
 	/// fr: 'Continuer'
 	String get verifier => 'Continuer';
@@ -19360,7 +19360,7 @@ extension on Traductions {
 			'adulte.invitation.courrielAideLui' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjoint l\'invitation à rejoindre Rewayah.',
 			'adulte.invitation.prenomRequis' => 'Indiquez son prénom.',
 			'adulte.invitation.courrielRequis' => 'Indiquez son adresse e-mail.',
-			'adulte.invitation.courrielInvalide' => 'Vérifiez l\'adresse e-mail : elle doit ressembler à nom@exemple.com.',
+			'adulte.invitation.courrielInvalide' => 'Vérifiez l\'adresse e‑mail : elle doit ressembler à nom@exemple.com.',
 			'adulte.invitation.verifier' => 'Continuer',
 			'adulte.invitation.verifierTitre' => 'Vérifier et envoyer',
 			'adulte.invitation.verifierPhrase' => 'Relisez ces informations. L\'invitation partira à cette adresse.',
