@@ -9,14 +9,16 @@ VALUES
   ('b0300000-0000-0000-0000-000000000003', 'b03-unverified@example.test', NULL),
   ('b0300000-0000-0000-0000-000000000004', 'b03-owner-other@example.test', now()),
   ('b0300000-0000-0000-0000-000000000005', 'b03-parent-with-child@example.test', now()),
-  ('b0300000-0000-0000-0000-000000000006', 'b03-child@example.test', now());
+  ('b0300000-0000-0000-0000-000000000006', 'b03-child@example.test', now()),
+  ('b0300000-0000-0000-0000-000000000007', 'b03-expired@example.test', now());
 
 INSERT INTO public.households (id, timezone, status)
 VALUES
   ('b0300000-0000-0000-0000-000000000101', 'Europe/Paris', 'active'),
   ('b0300000-0000-0000-0000-000000000102', 'Europe/Paris', 'active'),
   ('b0300000-0000-0000-0000-000000000103', 'Europe/Paris', 'active'),
-  ('b0300000-0000-0000-0000-000000000104', 'Europe/Paris', 'active');
+  ('b0300000-0000-0000-0000-000000000104', 'Europe/Paris', 'active'),
+  ('b0300000-0000-0000-0000-000000000105', 'Europe/Paris', 'active');
 
 INSERT INTO public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
@@ -38,7 +40,10 @@ VALUES
    'active'::public.account_status, 'female'),
   ('b0300000-0000-0000-0000-000000000006', 'B03-CHILD', 'student',
    'b0300000-0000-0000-0000-000000000104', 'Enfant', 'Existant',
-   'active'::public.account_status, 'female');
+   'active'::public.account_status, 'female'),
+  ('b0300000-0000-0000-0000-000000000007', 'B03-EXPIRED', 'guardian',
+   'b0300000-0000-0000-0000-000000000105', 'Compte', 'Expiré',
+   'active'::public.account_status, 'male');
 
 UPDATE public.households SET primary_guardian_id = 'b0300000-0000-0000-0000-000000000001'
 WHERE id = 'b0300000-0000-0000-0000-000000000101';
@@ -48,6 +53,8 @@ UPDATE public.households SET primary_guardian_id = 'b0300000-0000-0000-0000-0000
 WHERE id = 'b0300000-0000-0000-0000-000000000103';
 UPDATE public.households SET primary_guardian_id = 'b0300000-0000-0000-0000-000000000004'
 WHERE id = 'b0300000-0000-0000-0000-000000000104';
+UPDATE public.households SET primary_guardian_id = 'b0300000-0000-0000-0000-000000000007'
+WHERE id = 'b0300000-0000-0000-0000-000000000105';
 
 DO $scenario$
 DECLARE
@@ -116,6 +123,53 @@ BEGIN
   END IF;
   IF (SELECT p.role FROM public.profiles p WHERE p.id = v_invitee) <> 'guardian' THEN
     RAISE EXCEPTION 'B-03: le rôle du compte invité a changé';
+  END IF;
+
+  v_state := public.repondre_invitation_conjoint(
+    'accepter',
+    'b0300000-0000-0000-0000-000000000202'
+  );
+  IF v_state->>'etat' <> 'acceptee' THEN
+    RAISE EXCEPTION 'B-03: une acceptation répétée n''est pas idempotente';
+  END IF;
+
+  -- Une adresse Auth non vérifiée ne peut pas consommer l'invitation.
+  PERFORM set_config('test.uid', v_inviter::text, true);
+  PERFORM set_config('test.jwt',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'guardian',
+      'household_id', 'b0300000-0000-0000-0000-000000000101'))::text, true);
+  PERFORM public.inviter_conjoint(
+    'b03-unverified@example.test',
+    'b0300000-0000-0000-0000-000000000205'
+  );
+  PERFORM set_config('test.uid', 'b0300000-0000-0000-0000-000000000003', true);
+  PERFORM set_config('test.jwt',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'guardian',
+      'household_id', 'b0300000-0000-0000-0000-000000000103'))::text, true);
+  v_state := public.mon_invitation_en_cours();
+  IF v_state->>'etat' <> 'non_acceptable' THEN
+    RAISE EXCEPTION 'B-03: une adresse non vérifiée a vu ou accepté l''invitation';
+  END IF;
+
+  PERFORM set_config('test.uid', v_inviter::text, true);
+  PERFORM set_config('test.jwt',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'guardian',
+      'household_id', 'b0300000-0000-0000-0000-000000000101'))::text, true);
+  PERFORM public.annuler_invitation_conjoint();
+  PERFORM public.inviter_conjoint(
+    'b03-expired@example.test',
+    'b0300000-0000-0000-0000-000000000206'
+  );
+  UPDATE public.invitations_foyer
+  SET expire_le = now() - interval '1 second'
+  WHERE email_invite = 'b03-expired@example.test' AND statut = 'en_attente';
+  PERFORM set_config('test.uid', 'b0300000-0000-0000-0000-000000000007', true);
+  PERFORM set_config('test.jwt',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'guardian',
+      'household_id', 'b0300000-0000-0000-0000-000000000105'))::text, true);
+  v_state := public.mon_invitation_en_cours();
+  IF v_state->>'etat' <> 'perimee' THEN
+    RAISE EXCEPTION 'B-03: une invitation expirée reste active';
   END IF;
 
   -- Un compte déjà titulaire d'un foyer avec un enfant reste dans son foyer.
