@@ -7,7 +7,8 @@ insert into auth.users (id, email) values
   ('b1100000-0000-0000-0000-000000000002', 'b11-teacher-a@example.test'),
   ('b1100000-0000-0000-0000-000000000003', 'b11-teacher-b@example.test'),
   ('b1100000-0000-0000-0000-000000000004', 'b11-guardian@example.test'),
-  ('b1100000-0000-0000-0000-000000000005', 'b11-student@example.test');
+  ('b1100000-0000-0000-0000-000000000005', 'b11-student@example.test'),
+  ('b1100000-0000-0000-0000-000000000006', 'b11-teacher-disabled@example.test');
 
 insert into public.households (id, timezone)
 values ('b11fffff-0000-0000-0000-000000000001', 'Europe/Paris');
@@ -24,7 +25,9 @@ values
   ('b1100000-0000-0000-0000-000000000004', 'B11GUARDIAN001', 'guardian',
    'b11fffff-0000-0000-0000-000000000001', 'Fixture', 'Guardian', 'active'),
   ('b1100000-0000-0000-0000-000000000005', 'B11STUDENT0001', 'student',
-   'b11fffff-0000-0000-0000-000000000001', 'Fixture', 'Student', 'active');
+   'b11fffff-0000-0000-0000-000000000001', 'Fixture', 'Student', 'active'),
+  ('b1100000-0000-0000-0000-000000000006', 'B11TEACHER0003', 'teacher',
+   'b11fffff-0000-0000-0000-000000000001', 'Teacher', 'Disabled', 'disabled');
 
 update public.households
    set primary_guardian_id = 'b1100000-0000-0000-0000-000000000004'
@@ -101,6 +104,30 @@ begin
     raise exception 'B-11: a different teacher deposited into another group';
   exception when raise_exception then
     if sqlerrm <> 'eleve ou groupe introuvable dans votre classe' then raise; end if;
+  end;
+
+  select set_config('test.uid', 'b1100000-0000-0000-0000-000000000003', true);
+  select set_config('test.jwt',
+    '{"app_metadata":{"role":"teacher","household_id":"b11fffff-0000-0000-0000-000000000001"}}',
+    true);
+  select count(*) into v_count from public.mes_student_concerns(null);
+  if v_count <> 0 then
+    raise exception 'B-11: a teacher must not read another teacher concerns';
+  end if;
+
+  select set_config('test.uid', 'b1100000-0000-0000-0000-000000000006', true);
+  select set_config('test.jwt',
+    '{"app_metadata":{"role":"teacher","household_id":"b11fffff-0000-0000-0000-000000000001"}}',
+    true);
+  select count(*) into v_count from public.student_concern;
+  if v_count <> 0 then
+    raise exception 'B-11: a disabled teacher must not read internal concerns';
+  end if;
+  begin
+    perform 1 from public.mes_student_concerns(null);
+    raise exception 'B-11: a disabled teacher read concerns through the RPC';
+  exception when raise_exception then
+    if sqlerrm <> 'lecture de signalements reservee a un enseignant actif' then raise; end if;
   end;
 
   if v_private_id = v_family_id then
