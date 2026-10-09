@@ -1,23 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/admin_domaine.dart';
+import '../../core/admin/enseignants_classe.dart';
 import '../../core/admin/personnes_proposables.dart';
 import '../../core/admin/service_comptes.dart';
 import '../../core/admin/service_groupes.dart';
+import '../../core/capacites/port_creation_classe.dart';
+import '../../core/capacites/port_enseignants_classe.dart';
 import '../../core/domain/enums.dart';
 import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
+import '../../core/reseau/service_reseau.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
+import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/champ_etiquete.dart';
+import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
@@ -26,11 +34,13 @@ import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pays_enseignant.dart';
+import '../../core/widgets/point_rappel.dart';
 import '../../core/widgets/selecteur_motif.dart';
 import '../../core/widgets/selecteur_personne.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
+import '../creneaux/plages.dart' show jourCapitalise, nommerHeure;
 import 'feuille_observation_groupe.dart';
 
 /// Operations > Groupes : le noyau du produit depuis le pivot du 19
@@ -690,49 +700,282 @@ void _ouvrirCloture(BuildContext context, WidgetRef ref, GroupeAdmin groupe) {
   );
 }
 
-/// Le formulaire de creation d'un groupe.
-class _FeuilleCreation extends StatefulWidget {
+/// Le seuil propose par defaut selon le public : celui que `creer_groupe`
+/// applique quand on ne lui en donne aucun (5 enfants, 6 adultes, `0033`).
+int _seuilParDefaut(TypePublicGroupe type) => switch (type) {
+  TypePublicGroupe.enfant => 5,
+  TypePublicGroupe.adulte => 6,
+};
+
+/// Les seuils proposes : tout le domaine SQL `seuil_max between 1 and 6`.
+const List<int> _seuilsProposes = <int>[1, 2, 3, 4, 5, 6];
+
+/// La plage d'heures proposee, celle de la grille de la semaine (6 h - 21 h).
+const int _heureDebut = 6;
+const int _heureFin = 21;
+
+/// Le genre de la classe dit selon le public (accord par contexte).
+String _libelleGenre(GenreClasse genre, TypePublicGroupe type) {
+  final f = t.admin.groupes.formulaire;
+  final bool enfants = type == TypePublicGroupe.enfant;
+  return switch (genre) {
+    GenreClasse.hommes => enfants ? f.genreGarcons : f.genreHommes,
+    GenreClasse.femmes => enfants ? f.genreFilles : f.genreFemmes,
+    GenreClasse.indetermine => f.genreIndetermine,
+  };
+}
+
+/// Quand choisir ce genre, et ce qu'il change (K-58).
+String _detailGenre(GenreClasse genre, TypePublicGroupe type) {
+  final f = t.admin.groupes.formulaire;
+  final bool enfants = type == TypePublicGroupe.enfant;
+  return switch (genre) {
+    GenreClasse.hommes => enfants ? f.genreGarconsDetail : f.genreHommesDetail,
+    GenreClasse.femmes => enfants ? f.genreFillesDetail : f.genreFemmesDetail,
+    GenreClasse.indetermine => f.genreIndetermineDetail,
+  };
+}
+
+/// Pourquoi un enseignant ne peut pas prendre une classe de ce genre (D4).
+String _raisonGenre(GenreClasse genre, TypePublicGroupe type) {
+  final f = t.admin.groupes.formulaire;
+  final bool enfants = type == TypePublicGroupe.enfant;
+  return switch (genre) {
+    GenreClasse.hommes => enfants ? f.raisonGarcons : f.raisonHommes,
+    GenreClasse.femmes => enfants ? f.raisonFilles : f.raisonFemmes,
+    // Jamais atteint : un genre non determine accepte tout le monde.
+    GenreClasse.indetermine => f.genreIndetermineDetail,
+  };
+}
+
+/// « 2 classes en cours », « aucune classe en cours ».
+String _charge(int classes) => classes == 0
+    ? t.admin.groupes.formulaire.aucuneClasse
+    : t.admin.groupes.formulaire.classesEnCours(n: classes);
+
+/// Le titre d'un champ obligatoire : la marque partagee des champs requis
+/// ([PointRappel], fixe), au bord de debut, puis le nom du champ.
+class _TitreObligatoire extends StatelessWidget {
+  const _TitreObligatoire(this.titre);
+
+  final String titre;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    children: <Widget>[
+      PointRappel(libelle: t.formulaire.obligatoire, battements: 0),
+      Ecart.hSm,
+      Expanded(
+        child: TexteSansCoupure(
+          titre,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+      ),
+    ],
+  );
+}
+
+/// Le message d'un echec ou d'un champ manquant, a l'encre d'alerte, lu des
+/// qu'il parait.
+class _MessageAlerte extends StatelessWidget {
+  const _MessageAlerte(this.message);
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    liveRegion: true,
+    child: TexteSansCoupure(
+      message,
+      style: AppPalette.of(context).inkAlert
+          .applyTo(Theme.of(context).textTheme.bodyMedium ?? const TextStyle()),
+    ),
+  );
+}
+
+/// Le seul bouton plein d'une feuille, en bas, au bord de fin ; pleine
+/// largeur sur telephone et tablette seulement (contrat B). Hors ligne, il
+/// n'est pas rendu : une phrase dit pourquoi (pieges deja payes).
+class _BasDeFeuille extends ConsumerWidget {
+  const _BasDeFeuille({
+    required this.libelle,
+    required this.enCours,
+    required this.onPress,
+    required this.horsLigne,
+  });
+
+  final String libelle;
+  final bool enCours;
+  final VoidCallback onPress;
+  final String horsLigne;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (ref.watch(horsLigneProvider).value ?? false) {
+      return TexteSansCoupure(
+        horsLigne,
+        style: AppPalette.of(context).inkWarning.applyTo(
+          Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+        ),
+      );
+    }
+    final bool bureau = AppGabarit.de(context) == Gabarit.desktop;
+    return Align(
+      alignment: AlignmentDirectional.centerEnd,
+      child: ActionPrincipale(
+        libelle: libelle,
+        enCours: enCours,
+        pleineLargeur: !bureau,
+        onPress: onPress,
+      ),
+    );
+  }
+}
+
+/// Le formulaire de creation d'une classe (CLASSE-FORM-1).
+///
+/// Semi-automatique (K-57) : le public et le genre se choisissent, la liste
+/// des enseignants se classe d'elle-meme (le plus adapte en premier, D5), le
+/// creneau se choisit dans les creneaux libres de l'enseignant ou dans une
+/// grille 6 h - 21 h (D6), le seuil est prerempli selon le public (D7) et le
+/// nom se deduit du reste (D8), seul champ qui se tape. Le bouton ne se grise
+/// jamais (K-56) : presse trop tot, il dit le premier champ qui manque.
+class _FeuilleCreation extends ConsumerStatefulWidget {
   const _FeuilleCreation({required this.onCree});
 
   final VoidCallback onCree;
 
   @override
-  State<_FeuilleCreation> createState() => _FeuilleCreationEtat();
+  ConsumerState<_FeuilleCreation> createState() => _FeuilleCreationEtat();
 }
 
-class _FeuilleCreationEtat extends State<_FeuilleCreation> {
-  final TextEditingController _libelle = TextEditingController();
-  final TextEditingController _jour = TextEditingController(text: '1');
-  final TextEditingController _heure = TextEditingController(text: '16');
-  final TextEditingController _seuil = TextEditingController();
-
-  /// L'enseignant choisi dans la liste (FORM-L2) : plus d'identifiant tape.
-  String? _enseignantId;
+class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
   TypePublicGroupe _type = TypePublicGroupe.enfant;
+  GenreClasse? _genre;
+  String? _enseignantId;
+  int? _jour;
+  int? _heure;
+  late int? _seuil = _seuilParDefaut(_type);
+  bool _seuilChoisi = false;
+  late final TextEditingController _nom = TextEditingController(
+    text: _nomPropose,
+  );
+  bool _nomSaisi = false;
   bool _envoi = false;
   String? _erreur;
 
   @override
   void dispose() {
-    _libelle.dispose();
-    _jour.dispose();
-    _heure.dispose();
-    _seuil.dispose();
+    _nom.dispose();
     super.dispose();
   }
 
-  /// Ce qui manque encore, nul quand tout est la. Le bouton ne se grise
-  /// jamais (K-56) : le presser trop tot dit ce qui manque.
-  String? get _manque => _libelle.text.trim().isEmpty
-      ? t.admin.groupes.manqueNom
-      : _enseignantId == null
-      ? t.admin.groupes.manqueEnseignant
-      : null;
+  /// Le nom deduit : le genre (ou le public, si le genre n'est pas
+  /// determine), puis le creneau des qu'il est choisi (D8).
+  String get _nomPropose {
+    final GenreClasse? genre = _genre;
+    final String base = genre == null || genre == GenreClasse.indetermine
+        ? _nomType(_type)
+        : _libelleGenre(genre, _type);
+    final int? jour = _jour;
+    final int? heure = _heure;
+    if (jour == null || heure == null) return base;
+    return t.admin.groupes.formulaire.nomPropose(
+      base: base,
+      creneau: nommerHeure((jour: jour, heure: heure)),
+    );
+  }
 
-  Future<void> _creer(WidgetRef ref) async {
+  /// Applique un choix, efface le message, et repropose le nom tant que
+  /// l'admin ne l'a pas ecrit lui-meme.
+  void _maj(VoidCallback changement) {
+    setState(() {
+      changement();
+      _erreur = null;
+      if (!_nomSaisi) _nom.text = _nomPropose;
+    });
+  }
+
+  /// Le fuseau du creneau, deduit (D6) : celui de l'enseignant quand
+  /// l'adaptateur le transmet, sinon celui que le serveur retient.
+  ({String fuseau, String phrase}) _fuseau(
+    PortCreationClasse creation,
+    EnseignantPropose? enseignant,
+  ) {
+    final f = t.admin.groupes.formulaire;
+    if (!creation.retientFuseau) {
+      return (
+        fuseau: fuseauServeurParDefaut,
+        phrase: f.fuseauNonTransmis(fuseau: fuseauServeurParDefaut),
+      );
+    }
+    final String? propre = enseignant?.fuseauIana;
+    return propre == null
+        ? (
+            fuseau: fuseauServeurParDefaut,
+            phrase: f.fuseauDefaut(fuseau: fuseauServeurParDefaut),
+          )
+        : (fuseau: propre, phrase: f.fuseauEnseignant(fuseau: propre));
+  }
+
+  /// La raison pour laquelle cet enseignant ne se choisit pas, ou nul.
+  String? _raison(EnseignantClasse l) {
+    final GenreClasse? genre = _genre;
+    if (l.genreCompatible == false && genre != null) {
+      return _raisonGenre(genre, _type);
+    }
+    if (l.pris) return t.admin.groupes.formulaire.raisonPris;
+    return null;
+  }
+
+  /// La mention sous le nom : « le plus adapte » et sa raison (D5), ou
+  /// « pas libre a ce creneau » pour un enseignant qui reste choisissable.
+  String? _mention(EnseignantClasse l, {required bool avecCreneau}) {
+    final f = t.admin.groupes.formulaire;
+    final String charge = _charge(l.enseignant.classesActives);
+    if (l.plusAdapte) {
+      return avecCreneau
+          ? f.plusAdapteCreneau(charge: charge)
+          : f.plusAdapteSansCreneau(
+              libres: f.creneauxLibres(
+                n: l.enseignant.creneauxLibres?.length ?? 0,
+              ),
+              charge: charge,
+            );
+    }
+    if (avecCreneau && l.choisissable && l.libre == false) return f.pasLibre;
+    return null;
+  }
+
+  /// Le premier champ qui manque, dans l'ordre de la feuille ; nul quand
+  /// tout est la.
+  String? _manque(EnseignantClasse? choisi) {
+    final f = t.admin.groupes.formulaire;
+    if (_genre == null) return f.manqueGenre;
+    if (_enseignantId == null) return t.admin.groupes.manqueEnseignant;
+    if (_jour == null || _heure == null) return f.manqueCreneau;
+    if (choisi != null && !choisi.choisissable) {
+      return f.enseignantNonChoisissable(raison: _raison(choisi) ?? '');
+    }
+    if (_seuil == null) return f.manqueSeuil;
+    if (_nom.text.trim().isEmpty) return f.manqueNom;
+    return null;
+  }
+
+  Future<void> _creer(EnseignantClasse? choisi, String fuseau) async {
+    final String? manque = _manque(choisi);
+    final GenreClasse? genre = _genre;
     final String? enseignantId = _enseignantId;
-    if (_manque != null || enseignantId == null) {
-      setState(() => _erreur = _manque);
+    final int? jour = _jour;
+    final int? heure = _heure;
+    final int? seuil = _seuil;
+    if (manque != null ||
+        genre == null ||
+        enseignantId == null ||
+        jour == null ||
+        heure == null ||
+        seuil == null) {
+      setState(() => _erreur = manque);
       return;
     }
     setState(() {
@@ -741,24 +984,24 @@ class _FeuilleCreationEtat extends State<_FeuilleCreation> {
     });
     try {
       await ref
-          .read(serviceGroupesProvider)
+          .read(portCreationClasseProvider)
           .creer(
             teacherId: enseignantId,
             type: _type,
-            libelle: _libelle.text.trim(),
-            creneau: Creneau(
-              jour: int.tryParse(_jour.text) ?? 1,
-              heure: int.tryParse(_heure.text) ?? 0,
-              fuseau: 'Europe/Paris',
-            ),
-            seuilMax: int.tryParse(_seuil.text),
+            genre: genre,
+            libelle: _nom.text.trim(),
+            creneau: Creneau(jour: jour, heure: heure, fuseau: fuseau),
+            seuilMax: seuil,
           );
       widget.onCree();
       if (mounted) Navigator.of(context).pop();
     } catch (erreur) {
-      setState(
-        () => _erreur = t.admin.groupes.creerErreur(message: _message(erreur)),
-      );
+      if (mounted) {
+        setState(
+          () =>
+              _erreur = t.admin.groupes.creerErreur(message: _message(erreur)),
+        );
+      }
     } finally {
       if (mounted) setState(() => _envoi = false);
     }
@@ -766,87 +1009,297 @@ class _FeuilleCreationEtat extends State<_FeuilleCreation> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(
-      builder: (BuildContext context, WidgetRef ref, Widget? _) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          TextField(
-            controller: _libelle,
-            onChanged: (String _) => setState(() {}),
-            decoration: InputDecoration(
-              labelText: t.admin.groupes.champLibelle,
+    final TextTheme textes = Theme.of(context).textTheme;
+    final f = t.admin.groupes.formulaire;
+    final PortCreationClasse creation = ref.watch(portCreationClasseProvider);
+    final AsyncValue<List<EnseignantPropose>> source = ref.watch(
+      enseignantsPourClasseProvider(_type),
+    );
+    final int? jour = _jour;
+    final int? heure = _heure;
+    final Creneau? creneau = jour == null || heure == null
+        ? null
+        : Creneau(jour: jour, heure: heure, fuseau: fuseauServeurParDefaut);
+
+    // L'echec d'abord, comme la source : un echec de lecture se voit.
+    final AsyncValue<List<EnseignantClasse>> classes = source.hasError
+        ? AsyncError<List<EnseignantClasse>>(
+            source.error!,
+            source.stackTrace ?? StackTrace.empty,
+          )
+        : source.hasValue
+        ? AsyncData<List<EnseignantClasse>>(
+            classerEnseignants(
+              source.requireValue,
+              genre: _genre,
+              creneau: creneau,
             ),
-          ),
-          Ecart.vLg,
-          SelecteurPersonne(
-            sorte: SortePersonne.enseignant,
-            personnes: ref.watch(personnesProposablesProvider(AppRole.teacher)),
-            choisie: _enseignantId,
-            onChoix: (PersonneProposee p) => setState(() {
-              _enseignantId = p.id;
-              _erreur = null;
-            }),
-            onReessayer: () => ref.invalidate(comptesProvider),
-          ),
-          Ecart.vMd,
-          Wrap(
-            spacing: AppSpacing.sm,
-            children: <Widget>[
-              for (final TypePublicGroupe valeur in TypePublicGroupe.values)
-                FilterPill(
-                  libelle: _nomType(valeur),
-                  retenue: _type == valeur,
-                  onPress: () => setState(() => _type = valeur),
-                ),
-            ],
-          ),
-          Ecart.vMd,
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: ChampEtiquete(
-                  libelle: t.admin.groupes.champJour,
-                  controller: _jour,
-                  keyboardType: TextInputType.number,
-                ),
+          )
+        : const AsyncLoading<List<EnseignantClasse>>();
+    final EnseignantClasse? choisi = classes.value
+        ?.where((EnseignantClasse l) => l.enseignant.id == _enseignantId)
+        .firstOrNull;
+    final ({String fuseau, String phrase}) fuseau = _fuseau(
+      creation,
+      choisi?.enseignant,
+    );
+
+    final AsyncValue<List<PersonneProposee>> personnes = classes.hasValue
+        ? AsyncData<List<PersonneProposee>>(<PersonneProposee>[
+            for (final EnseignantClasse l in classes.requireValue)
+              PersonneProposee(
+                id: l.enseignant.id,
+                nom: l.enseignant.libelle,
+                identifiant: l.enseignant.identifiant,
+                mention: _mention(l, avecCreneau: creneau != null),
+                raisonIndisponible: _raison(l),
               ),
-              Ecart.hMd,
-              Expanded(
-                child: ChampEtiquete(
-                  libelle: t.admin.groupes.champHeure,
-                  controller: _heure,
-                  keyboardType: TextInputType.number,
-                ),
-              ),
-            ],
-          ),
-          Ecart.vMd,
-          ChampEtiquete(
-            libelle: t.admin.groupes.champSeuil,
-            controller: _seuil,
-            keyboardType: TextInputType.number,
-          ),
-          if (_erreur != null) ...<Widget>[
-            Ecart.vMd,
-            Text(
-              _erreur!,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ])
+        : classes.hasError
+        ? AsyncError<List<PersonneProposee>>(
+            classes.error!,
+            classes.stackTrace ?? StackTrace.empty,
+          )
+        : const AsyncLoading<List<PersonneProposee>>();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        // K-58 : une phrase de contexte ouvre la feuille.
+        TexteSansCoupure(f.contexte, style: textes.bodyMedium),
+        Ecart.vSm,
+        TexteSansCoupure(
+          t.formulaire.legendeObligatoire,
+          style: textes.bodySmall,
+        ),
+        Ecart.vXxl,
+
+        // 1. Public : choisi, deux cartes qui disent leur consequence.
+        _TitreObligatoire(f.titrePublic),
+        Ecart.vMd,
+        ChoiceCardGroup(
+          autoriserSaisieLibre: false,
+          valeurInitiale: ReponseChoix(valeurs: <String>{_type.name}),
+          options: <OptionChoix>[
+            OptionChoix(
+              cle: const ValueKey<String>('classe-public-enfant'),
+              valeur: TypePublicGroupe.enfant.name,
+              libelle: t.admin.groupes.typeEnfant,
+              description: f.publicEnfantDetail,
+            ),
+            OptionChoix(
+              cle: const ValueKey<String>('classe-public-adulte'),
+              valeur: TypePublicGroupe.adulte.name,
+              libelle: t.admin.groupes.typeAdulte,
+              description: f.publicAdulteDetail,
             ),
           ],
+          onChange: (ReponseChoix r) {
+            final TypePublicGroupe? type = TypePublicGroupe.values
+                .where((TypePublicGroupe v) => r.valeurs.contains(v.name))
+                .firstOrNull;
+            if (type == null) return;
+            _maj(() {
+              _type = type;
+              if (!_seuilChoisi) _seuil = _seuilParDefaut(type);
+            });
+          },
+        ),
+        Ecart.vXs,
+
+        // 2. Genre : choisi, obligatoire, aucune presélection (D1).
+        _TitreObligatoire(f.titreGenre),
+        Ecart.vMd,
+        ChoiceCardGroup(
+          autoriserSaisieLibre: false,
+          options: <OptionChoix>[
+            for (final GenreClasse g in GenreClasse.values)
+              OptionChoix(
+                cle: ValueKey<String>('classe-genre-${g.name}'),
+                valeur: g.name,
+                libelle: _libelleGenre(g, _type),
+                description: _detailGenre(g, _type),
+              ),
+          ],
+          onChange: (ReponseChoix r) {
+            final GenreClasse? genre = GenreClasse.values
+                .where((GenreClasse g) => r.valeurs.contains(g.name))
+                .firstOrNull;
+            _maj(() => _genre = genre);
+          },
+        ),
+        if (!creation.retientGenre) ...<Widget>[
+          TexteSansCoupure(f.genreNonEnregistre, style: textes.bodySmall),
+          Ecart.vXl,
+        ] else
+          Ecart.vXs,
+
+        // 3. Enseignant : choisi dans une liste classee (D2, D4, D5).
+        SelecteurPersonne(
+          sorte: SortePersonne.enseignant,
+          personnes: personnes,
+          choisie: _enseignantId,
+          obligatoire: true,
+          aide: f.aideEnseignant,
+          onChoix: (PersonneProposee p) => _maj(() => _enseignantId = p.id),
+          onReessayer: () {
+            ref.invalidate(enseignantsDuPortProvider(_type));
+            ref.invalidate(comptesProvider);
+          },
+        ),
+        Ecart.vXl,
+
+        // 4. Creneau : choisi, jamais tape (D6).
+        _TitreObligatoire(f.titreCreneau),
+        Ecart.vXs,
+        TexteSansCoupure(f.creneauContexte, style: textes.bodySmall),
+        Ecart.vMd,
+        if (choisi != null) ...<Widget>[
+          ..._creneauxLibres(choisi.enseignant, textes),
           Ecart.vLg,
-          ActionPrincipale(
-            libelle: t.admin.groupes.creerEnvoyer,
-            enCours: _envoi,
-            onPress: () => _creer(ref),
+        ],
+        TexteSansCoupure(f.jour, style: textes.labelLarge),
+        Ecart.vSm,
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: <Widget>[
+            for (int j = 1; j <= 7; j++)
+              FilterPill(
+                key: ValueKey<String>('classe-jour-$j'),
+                libelle: jourCapitalise(j),
+                retenue: _jour == j,
+                onPress: () => _maj(() => _jour = j),
+              ),
+          ],
+        ),
+        Ecart.vLg,
+        TexteSansCoupure(f.heure, style: textes.labelLarge),
+        Ecart.vSm,
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: MenuFiltre<int>(
+            key: const ValueKey<String>('classe-heure'),
+            libelle: f.heure,
+            valeur: _heure,
+            entrees: <EntreeFiltre<int>>[
+              for (int h = _heureDebut; h <= _heureFin; h++)
+                EntreeFiltre<int>(
+                  valeur: h,
+                  libelle: f.heureValeur(heure: '$h'),
+                ),
+            ],
+            onChoix: (int? h) {
+              if (h != null) _maj(() => _heure = h);
+            },
           ),
+        ),
+        Ecart.vSm,
+        TexteSansCoupure(fuseau.phrase, style: textes.bodySmall),
+        Ecart.vXl,
+
+        // 5. Seuil : deduit puis choisi, 1 a 6 (D7).
+        _TitreObligatoire(f.titreSeuil),
+        Ecart.vXs,
+        TexteSansCoupure(f.seuilDetail, style: textes.bodySmall),
+        Ecart.vMd,
+        SelecteurEntier(
+          // Repart de la valeur du parent quand le public la change.
+          key: ValueKey<String>('classe-seuil-$_seuil'),
+          proposees: _seuilsProposes,
+          min: 1,
+          max: 6,
+          affichage: (int n) => f.seuilValeur(n: n),
+          valeurInitiale: _seuil,
+          onChange: (int? v) => _maj(() {
+            _seuil = v;
+            _seuilChoisi = true;
+          }),
+        ),
+        Ecart.vXl,
+
+        // 6. Nom : deduit, modifiable ; seul champ tape (D8).
+        ChampEtiquete(
+          key: const ValueKey<String>('classe-nom'),
+          libelle: f.titreNom,
+          controller: _nom,
+          obligatoire: true,
+          aide: f.nomDetail,
+          onChanged: (String texte) => setState(() {
+            _nomSaisi = texte.trim().isNotEmpty && texte != _nomPropose;
+            _erreur = null;
+          }),
+        ),
+        if (_erreur case final String erreur) ...<Widget>[
           Ecart.vMd,
-          Text(
-            t.admin.groupes.journalisation,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
+          _MessageAlerte(erreur),
+        ],
+        Ecart.vXxl,
+        _BasDeFeuille(
+          libelle: t.admin.groupes.creerEnvoyer,
+          enCours: _envoi,
+          horsLigne: f.horsLigne,
+          onPress: () => _creer(choisi, fuseau.fuseau),
+        ),
+        Ecart.vMd,
+        TexteSansCoupure(
+          t.admin.groupes.journalisation,
+          style: textes.bodySmall,
+        ),
+      ],
+    );
+  }
+
+  /// Les creneaux libres de l'enseignant choisi, mis en avant (D6) : une
+  /// puce par creneau, qui regle le jour et l'heure d'un coup.
+  List<Widget> _creneauxLibres(EnseignantPropose e, TextTheme textes) {
+    final f = t.admin.groupes.formulaire;
+    final List<Creneau>? libres = e.creneauxLibres;
+    if (libres == null) {
+      return <Widget>[
+        TexteSansCoupure(
+          f.disponibilitesInconnues(deNom: deDevant(e.libelle)),
+          style: textes.bodySmall,
+        ),
+      ];
+    }
+    if (libres.isEmpty) {
+      return <Widget>[
+        TexteSansCoupure(
+          f.aucunCreneauLibre(nom: e.libelle),
+          style: textes.bodySmall,
+        ),
+      ];
+    }
+    final List<Creneau> tries = <Creneau>[...libres]
+      ..sort(
+        (Creneau a, Creneau b) => a.jour != b.jour
+            ? a.jour.compareTo(b.jour)
+            : a.heure.compareTo(b.heure),
+      );
+    return <Widget>[
+      TexteSansCoupure(
+        f.creneauxLibresDe(deNom: deDevant(e.libelle)),
+        style: textes.labelLarge,
+      ),
+      Ecart.vSm,
+      Wrap(
+        spacing: AppSpacing.sm,
+        runSpacing: AppSpacing.sm,
+        children: <Widget>[
+          for (final Creneau c in tries)
+            FilterPill(
+              key: ValueKey<String>('classe-libre-${c.jour}-${c.heure}'),
+              libelle: nommerHeure((jour: c.jour, heure: c.heure)),
+              retenue: _jour == c.jour && _heure == c.heure,
+              onPress: () => _maj(() {
+                _jour = c.jour;
+                _heure = c.heure;
+              }),
+            ),
         ],
       ),
-    );
+    ];
   }
 }
 
@@ -1024,31 +1477,34 @@ class _FeuilleAjoutEtat extends State<_FeuilleAjout> {
   }
 }
 
-/// Le formulaire du seuil maximal.
-class _FeuilleSeuil extends StatefulWidget {
+/// Le formulaire du seuil maximal : le meme selecteur 1 a 6 que la creation
+/// (D7), et un bouton qui ne se grise plus (K-56) : sans valeur, le presser
+/// dit ce qui manque.
+class _FeuilleSeuil extends ConsumerStatefulWidget {
   const _FeuilleSeuil({required this.groupe, required this.onModifie});
 
   final GroupeAdmin groupe;
   final VoidCallback onModifie;
 
   @override
-  State<_FeuilleSeuil> createState() => _FeuilleSeuilEtat();
+  ConsumerState<_FeuilleSeuil> createState() => _FeuilleSeuilEtat();
 }
 
-class _FeuilleSeuilEtat extends State<_FeuilleSeuil> {
-  late final TextEditingController _seuil = TextEditingController(
-    text: '${widget.groupe.seuilMax}',
-  );
+class _FeuilleSeuilEtat extends ConsumerState<_FeuilleSeuil> {
+  // Une valeur hors du domaine 1..6 (donnee ancienne) n'est pas retenue :
+  // l'admin en choisit une, rien n'est arrondi en silence.
+  late int? _seuil = _seuilsProposes.contains(widget.groupe.seuilMax)
+      ? widget.groupe.seuilMax
+      : null;
   bool _envoi = false;
   String? _erreur;
 
-  @override
-  void dispose() {
-    _seuil.dispose();
-    super.dispose();
-  }
-
-  Future<void> _modifier(WidgetRef ref) async {
+  Future<void> _modifier() async {
+    final int? seuil = _seuil;
+    if (seuil == null) {
+      setState(() => _erreur = t.admin.groupes.formulaire.manqueSeuil);
+      return;
+    }
     setState(() {
       _envoi = true;
       _erreur = null;
@@ -1059,17 +1515,19 @@ class _FeuilleSeuilEtat extends State<_FeuilleSeuil> {
           .modifier(
             groupeId: widget.groupe.id,
             libelle: widget.groupe.libelle,
-            seuilMax: int.parse(_seuil.text.trim()),
+            seuilMax: seuil,
             creneau: widget.groupe.creneau,
           );
       widget.onModifie();
       if (mounted) Navigator.of(context).pop();
     } catch (erreur) {
-      setState(
-        () => _erreur = t.admin.groupes.modifierSeuilErreur(
-          message: _message(erreur),
-        ),
-      );
+      if (mounted) {
+        setState(
+          () => _erreur = t.admin.groupes.modifierSeuilErreur(
+            message: _message(erreur),
+          ),
+        );
+      }
     } finally {
       if (mounted) setState(() => _envoi = false);
     }
@@ -1077,33 +1535,36 @@ class _FeuilleSeuilEtat extends State<_FeuilleSeuil> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(
-      builder: (BuildContext context, WidgetRef ref, Widget? _) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          TextField(
-            controller: _seuil,
-            keyboardType: TextInputType.number,
-            onChanged: (String _) => setState(() {}),
-            decoration: InputDecoration(labelText: t.admin.groupes.champSeuil),
-          ),
-          if (_erreur != null) ...<Widget>[
-            Ecart.vMd,
-            Text(
-              _erreur!,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
-            ),
-          ],
-          Ecart.vLg,
-          ActionPrincipale(
-            libelle: t.admin.groupes.modifierSeuilEnvoyer,
-            enCours: _envoi,
-            onPress: int.tryParse(_seuil.text.trim()) == null
-                ? null
-                : () => _modifier(ref),
-          ),
+    final TextTheme textes = Theme.of(context).textTheme;
+    final f = t.admin.groupes.formulaire;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        TexteSansCoupure(f.seuilDetail, style: textes.bodyMedium),
+        Ecart.vMd,
+        SelecteurEntier(
+          proposees: _seuilsProposes,
+          min: 1,
+          max: 6,
+          affichage: (int n) => f.seuilValeur(n: n),
+          valeurInitiale: _seuil,
+          onChange: (int? v) => setState(() {
+            _seuil = v;
+            _erreur = null;
+          }),
+        ),
+        if (_erreur case final String erreur) ...<Widget>[
+          Ecart.vMd,
+          _MessageAlerte(erreur),
         ],
-      ),
+        Ecart.vXxl,
+        _BasDeFeuille(
+          libelle: t.admin.groupes.modifierSeuilEnvoyer,
+          enCours: _envoi,
+          horsLigne: f.seuilHorsLigne,
+          onPress: _modifier,
+        ),
+      ],
     );
   }
 }
