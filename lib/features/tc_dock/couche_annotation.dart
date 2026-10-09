@@ -111,8 +111,9 @@ class CoucheAnnotation extends ConsumerStatefulWidget {
 
   /// TB-7a (plan V2 §9 ; TB19) : la couche couvre une page fixe, dont
   /// [SupportPresente.blocs] porte le cadre. Un geste qui commence hors du
-  /// cadre est rejete, un point qui en sort n'est pas garde (jamais rabattu
-  /// sur le bord, §9.4) ; l'epaisseur du trait suit la largeur de la page
+  /// cadre est rejete ; un geste qui en sort termine le trait sur son
+  /// dernier point dans la page (jamais rabattu sur le bord, §9.4), et un
+  /// retour dans la page sans lever le doigt n'ecrit rien ; l'epaisseur du trait suit la largeur de la page
   /// (§9 : « l'epaisseur de l'annotation suit la page »).
   final bool repereDePage;
 
@@ -307,7 +308,13 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
       return;
     }
     if (widget.repereDePage && !_dansLaPage(point)) {
-      // Le geste sort de la page : le point n'est pas garde.
+      // Le geste sort de la page : le trait s'arrete au dernier point pose
+      // dans la page (UX_REVIEW_TB n. 20, « l'hote finit le trait quand le
+      // doigt sort de la page »). Le point dehors n'est pas garde ni rabattu
+      // sur le bord (§9.4), et le reste du geste n'ecrit plus : un retour
+      // dans la page ne relie rien a l'ancien trait et n'en ouvre pas un
+      // autre, il faut lever le doigt (pas de trait inattendu).
+      _terminer(etat);
       return;
     }
     final PointNormalise normalise = normaliserDans(bloc, point);

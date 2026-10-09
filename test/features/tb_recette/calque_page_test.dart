@@ -8,12 +8,12 @@
 // pris sur le rectangle de la page tel qu'il s'affiche.
 
 import 'dart:math' as math;
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -142,6 +142,87 @@ void _memePoint(PointNormalise lu, PointNormalise attendu, String raison) {
   expect(lu.y, moreOrLessEquals(attendu.y, epsilon: 1e-6), reason: raison);
 }
 
+/// L'image rendue de la coquille (`cadreCapture`), lue pixel a pixel : ce
+/// qui est mesure est ce qui est peint, pas ce que le code croit peindre.
+class _Photo {
+  _Photo._(this._octets, this._largeur, this._densite);
+
+  static Future<_Photo> prendre(WidgetTester tester) async {
+    final double densite = tester.view.devicePixelRatio;
+    final RenderRepaintBoundary cadre = tester.renderObject(
+      find.byKey(cadreCapture),
+    );
+    final (ByteData, int)? lu = await tester.runAsync<(ByteData, int)>(
+      () async {
+        final ui.Image image = await cadre.toImage(pixelRatio: densite);
+        final ByteData? brut = await image.toByteData();
+        final int largeur = image.width;
+        image.dispose();
+        return (brut!, largeur);
+      },
+    );
+    return _Photo._(lu!.$1, lu.$2, densite);
+  }
+
+  final ByteData _octets;
+  final int _largeur;
+  final double _densite;
+
+  /// Somme des trois canaux (765 : blanc) au point logique [x], [y].
+  int _clarte(double x, double y) {
+    final int i =
+        ((y * _densite).round() * _largeur + (x * _densite).round()) * 4;
+    return _octets.getUint8(i) +
+        _octets.getUint8(i + 1) +
+        _octets.getUint8(i + 2);
+  }
+
+  /// Le plus grand ecart de clarte avec [autre] dans [zone], pas de 1.
+  int ecartMax(_Photo autre, Rect zone) {
+    int ecart = 0;
+    for (double y = zone.top; y < zone.bottom; y++) {
+      for (double x = zone.left; x < zone.right; x++) {
+        ecart = math.max(ecart, (_clarte(x, y) - autre._clarte(x, y)).abs());
+      }
+    }
+    return ecart;
+  }
+
+  /// Le milieu de l'encre sombre sur la ligne [y], entre [debut] et [fin]
+  /// (abscisses logiques), pondere par l'assombrissement. `null` si rien
+  /// n'est peint la.
+  double? milieuEncre(double y, double debut, double fin) {
+    double poids = 0;
+    double somme = 0;
+    for (double x = debut; x <= fin; x += 1 / _densite) {
+      final int sombre = 765 - _clarte(x, y);
+      if (sombre > 60) {
+        poids += sombre;
+        somme += sombre * x;
+      }
+    }
+    return poids == 0 ? null : somme / poids;
+  }
+}
+
+/// L'abscisse, a l'ecran, du bord droit du cercle de demonstration sur la
+/// ligne de son centre, mesuree sur l'image ; et celle ou la page la place.
+Future<(double, double)> _bordDroitCercle(WidgetTester tester) async {
+  final Rect page = tester.getRect(_page);
+  const PointNormalise c = DonneesSeanceDemo.centreCercle;
+  const double r = DonneesSeanceDemo.rayonCercle;
+  final double attendu = page.left + (c.x + r) * page.width;
+  final double y = page.top + c.y * page.height;
+  final _Photo photo = await _Photo.prendre(tester);
+  final double? lu = photo.milieuEncre(
+    y,
+    attendu - 0.06 * page.width,
+    attendu + 0.06 * page.width,
+  );
+  expect(lu, isNotNull, reason: 'le cercle est peint pres de $attendu');
+  return (lu!, attendu);
+}
+
 void main() {
   group('ReperePage : toScene, offset de BoxFit.contain, normalisation', () {
     for (final (String nom, Size boite) in _ecrans) {
@@ -252,23 +333,72 @@ void main() {
       expect(_traits(depot), isEmpty);
     });
 
-    testWidgets('un geste qui sort de la page n est pas rabattu sur le bord', (
-      WidgetTester tester,
-    ) async {
+    // UX_REVIEW_TB n. 20 : « trait qui sort de la page arrete au bord, sans
+    // point rabattu » ; plan §9.4 : pas de trait inattendu. Le doigt sort a
+    // droite, longe la page dehors sur toute sa hauteur et revient dedans
+    // sans se lever : rien ne doit relier la sortie au retour.
+    testWidgets('un geste qui sort de la page s arrete a la sortie, un '
+        'retour dans la page ne trace rien', (WidgetTester tester) async {
       final AnnotationsMemoire depot = await _monterSurface(
         tester,
         const Size(1440, 900),
       );
       final Rect r = tester.getRect(_page);
-      await _tracer(
-        tester,
-        r.center,
-        Offset(r.right + (1440 - r.right) / 2, r.center.dy),
-      );
-      final TraitVectoriel trait = _traits(depot).single;
-      for (final PointNormalise p in trait.points) {
-        expect(p.x, lessThan(1), reason: 'aucun point colle au bord : $p');
+      expect(1440 - r.right, greaterThan(40), reason: 'marge a droite');
+      final double haut = r.top + 100;
+      final double bas = r.bottom - 100;
+      final Rect bande = Rect.fromLTRB(r.right - 80, haut + 40, r.right, bas);
+      final _Photo avant = await _Photo.prendre(tester);
+
+      final TestPointer doigt = TestPointer(11);
+      Future<void> aller(Offset o) async {
+        await tester.sendEventToBinding(doigt.move(o));
+        await tester.pump();
       }
+
+      await tester.sendEventToBinding(doigt.down(Offset(r.right - 160, haut)));
+      // Dans la page, vers la droite.
+      for (final double dx in <double>[120, 80, 60, 40, 20]) {
+        await aller(Offset(r.right - dx, haut));
+      }
+      // Dehors : a droite, puis le long de la page jusqu'en bas.
+      await aller(Offset(r.right + 20, haut));
+      for (int i = 1; i <= 6; i++) {
+        await aller(Offset(r.right + 30, haut + (bas - haut) * i / 6));
+      }
+      // Retour dans la page, doigt toujours pose, et quelques pas dedans.
+      for (final double dx in <double>[20, 40, 60, 80]) {
+        await aller(Offset(r.right - dx, bas));
+      }
+      // Rendu pendant le geste : aucune encre dans la bande que le doigt a
+      // longee dehors ni la ou il est revenu.
+      final _Photo pendant = await _Photo.prendre(tester);
+      expect(
+        pendant.ecartMax(avant, bande),
+        lessThan(30),
+        reason: 'aucun trait ne relie la sortie au retour',
+      );
+
+      await tester.sendEventToBinding(doigt.up());
+      await tester.pump();
+      await tester.pump();
+
+      final TraitVectoriel trait = _traits(depot).single;
+      final double yHaut = (haut - r.top) / r.height;
+      final double xSortie = (r.width - 20) / r.width;
+      for (final PointNormalise p in trait.points) {
+        expect(
+          p.y,
+          moreOrLessEquals(yHaut, epsilon: 1e-6),
+          reason: 'aucun point apres la sortie : $p',
+        );
+        expect(p.x, lessThanOrEqualTo(xSortie + 1e-6), reason: 'non rabattu');
+      }
+      _memePoint(
+        trait.points.last,
+        PointNormalise(xSortie, yHaut),
+        'le trait finit au dernier point pose dans la page',
+      );
     });
   });
 
@@ -358,6 +488,10 @@ void main() {
         DonneesSeanceDemo.centreCercle,
       );
       expect(avant.contains(centreAvant), isTrue);
+      final (double luAvant, double attenduAvant) = await _bordDroitCercle(
+        tester,
+      );
+      expect(luAvant, moreOrLessEquals(attenduAvant, epsilon: 1.5));
 
       // Zoom par le vrai bouton des Commandes (Lecture), jusqu'a 200 %.
       final Finder plus = find.byWidgetPredicate(
@@ -373,23 +507,133 @@ void main() {
 
       final Rect apres = tester.getRect(_page);
       expect(apres.width, moreOrLessEquals(avant.width * 2, epsilon: 1e-6));
-      // La couche suit la page : le cercle, peint en part de la couche,
-      // reste sur le meme endroit de la page.
       expect(tester.getRect(_couche), apres);
-      final RenderBox couche = tester.renderObject(_couche);
-      final Offset centreCouche = couche.localToGlobal(
-        Offset(
-          DonneesSeanceDemo.centreCercle.x * couche.size.width,
-          DonneesSeanceDemo.centreCercle.y * couche.size.height,
-        ),
-      );
-      final Offset centrePage = _surEcran(
+      // Mesure sur l'image : l'encre du cercle est la ou la page zoomee
+      // place son bord droit, et elle a bouge avec la page.
+      final (double luApres, double attenduApres) = await _bordDroitCercle(
         tester,
-        DonneesSeanceDemo.centreCercle,
       );
-      expect((centreCouche - centrePage).distance, lessThan(1e-6));
+      expect(luApres, moreOrLessEquals(attenduApres, epsilon: 1.5));
+      expect(
+        (luApres - luAvant).abs(),
+        greaterThan(20),
+        reason: 'le zoom deplace le bord du cercle avec la page',
+      );
       expect(tester.takeException(), isNull);
     });
+
+    // §9 : « un changement d'orientation recalcule l'affichage, pas les
+    // traits stockes ». La meme salle, montee une fois, tourne.
+    testWidgets('rotation : le cercle suit la page, rien de stocke ne change', (
+      WidgetTester tester,
+    ) async {
+      final AnnotationsMemoire depot = await _monterSalle(
+        tester,
+        const Size(768, 1024),
+        RoleSeance.enseignant,
+      );
+      List<PointNormalise> pointsLus() => <PointNormalise>[
+        for (final TraitVectoriel trait
+            in tester.widget<CoucheAnnotation>(_couche).traits)
+          ...trait.points,
+      ];
+      final List<PointNormalise> stockesAvant = pointsLus();
+      expect(stockesAvant, isNotEmpty);
+      final Rect portrait = tester.getRect(_page);
+      final (double luPortrait, double attenduPortrait) =
+          await _bordDroitCercle(tester);
+      expect(luPortrait, moreOrLessEquals(attenduPortrait, epsilon: 1.5));
+
+      tester.view.physicalSize = const Size(1024, 768);
+      await _attendre(tester);
+
+      final Rect paysage = tester.getRect(_page);
+      expect(paysage, isNot(equals(portrait)), reason: 'la page se recalcule');
+      expect(tester.getRect(_couche), paysage);
+      final (double luPaysage, double attenduPaysage) = await _bordDroitCercle(
+        tester,
+      );
+      expect(luPaysage, moreOrLessEquals(attenduPaysage, epsilon: 1.5));
+      // Meme part de la page, de part et d'autre de la rotation.
+      expect(
+        (luPaysage - paysage.left) / paysage.width,
+        moreOrLessEquals(
+          (luPortrait - portrait.left) / portrait.width,
+          epsilon: 3 / paysage.width,
+        ),
+      );
+      expect(pointsLus(), stockesAvant, reason: 'aucun trait recalcule');
+      expect(_traits(depot), isEmpty, reason: 'rien d ecrit par la rotation');
+      expect(tester.takeException(), isNull);
+    });
+
+    // UX-04 (UX_REVIEW_TB) : l'outil arme, toucher Micro ne laisse aucun
+    // trait ; la barre consomme son toucher, meme quand la page zoomee
+    // deborde vers elle. Le toucher atteint bien la commande (elle bascule).
+    for (final (Size ecran, int clics) in <(Size, int)>[
+      (const Size(390, 844), 0),
+      (const Size(390, 844), 10),
+      (const Size(1440, 900), 0),
+    ]) {
+      final int zoom = 100 + 10 * clics;
+      testWidgets('outil arme, ${ecran.width.toInt()} a $zoom % : activer '
+          'Micro n ajoute aucun trait', (WidgetTester tester) async {
+        final AnnotationsMemoire depot = await _monterSalle(
+          tester,
+          ecran,
+          RoleSeance.enseignant,
+        );
+        if (clics > 0) {
+          await tester.tap(find.byKey(DeclencheurCommandes.cle));
+          await _attendre(tester);
+          final Finder plus = find.byWidgetPredicate(
+            (Widget w) =>
+                w is Pressable &&
+                w.libelleSemantique == t.salle.seance.zoomPlus,
+          );
+          await tester.ensureVisible(plus.first);
+          await tester.pump();
+          for (int i = 0; i < clics; i++) {
+            await tester.tap(plus.first);
+            await tester.pump();
+          }
+          expect(
+            find.text(t.salle.seance.zoomValeur(valeur: zoom)),
+            findsWidgets,
+          );
+          await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+          await _attendre(tester);
+          await tester.pump(const Duration(milliseconds: 1400));
+          expect(find.byKey(CommandesPedagogiques.cle), findsNothing);
+        }
+        final Finder micro = find.byKey(const ValueKey<String>('bouton-micro'));
+        final Rect rMicro = tester.getRect(micro);
+        final bool ouvert = find
+            .descendant(of: micro, matching: find.text(t.salle.microOuvert))
+            .evaluate()
+            .isNotEmpty;
+        await tester.tap(micro);
+        await _attendre(tester);
+        expect(
+          find.descendant(
+            of: micro,
+            matching: find.text(
+              ouvert ? t.salle.microCoupe : t.salle.microOuvert,
+            ),
+          ),
+          findsOneWidget,
+          reason: 'le toucher a bascule le micro',
+        );
+        // Un doigt pose sur Micro qui glisse jusque dans la page.
+        await _tracer(
+          tester,
+          rMicro.center,
+          _surEcran(tester, const PointNormalise(0.5, 0.5)),
+        );
+        expect(_traits(depot), isEmpty);
+        expect(tester.takeException(), isNull);
+      });
+    }
 
     testWidgets('Support seul : le calque reste monte, ses notes cachees', (
       WidgetTester tester,
