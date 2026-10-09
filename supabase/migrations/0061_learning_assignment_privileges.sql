@@ -112,4 +112,56 @@ create policy annotation_layer_participants_seance on public.annotation_layer
     )
   );
 
+-- Les ancres incompatibles sont des violations de contrainte, avec SQLSTATE stable.
+create or replace function public.tc_annotation_valider_trait()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  v_resource_id uuid;
+begin
+  select l.resource_id into v_resource_id
+    from public.annotation_layer l
+   where l.id = new.layer_id
+   for update;
+  if v_resource_id is null
+     or pg_catalog.jsonb_typeof(new.ancrage) <> 'object'
+     or new.ancrage ->> 'resource_id' is distinct from v_resource_id::text
+     or pg_catalog.jsonb_typeof(new.points) <> 'array' then
+    raise exception 'trait incompatible avec la couche'
+      using errcode = '23514';
+  end if;
+  return new;
+end;
+$function$;
+
+create or replace function public.tc_annotation_valider_marqueur()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  v_resource_id uuid;
+begin
+  select l.resource_id into v_resource_id
+    from public.annotation_layer l
+   where l.id = new.layer_id;
+  if v_resource_id is null
+     or pg_catalog.jsonb_typeof(new.plage) <> 'object'
+     or new.plage ->> 'resource_id' is distinct from v_resource_id::text then
+    raise exception 'marqueur incompatible avec la couche'
+      using errcode = '23514';
+  end if;
+  return new;
+end;
+$function$;
+
+revoke all on function public.tc_annotation_valider_trait()
+  from public, anon, authenticated, agent_ro;
+revoke all on function public.tc_annotation_valider_marqueur()
+  from public, anon, authenticated, agent_ro;
+
 commit;
