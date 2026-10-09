@@ -103,7 +103,8 @@ BEGIN
       PERFORM public.demander_creneau_personnalise(v_id, 'Europe/Paris',
         ARRAY[2,4,6]::smallint[], 18::smallint);
     EXCEPTION WHEN raise_exception THEN
-      IF SQLERRM LIKE 'profil d''apprentissage incomplet%' THEN
+      IF SQLERRM = 'ce profil n''est pas le votre ni celui de votre foyer'
+         OR SQLERRM LIKE 'profil d''apprentissage incomplet%' THEN
         v_ok := true;
       ELSE
         RAISE;
