@@ -7,6 +7,15 @@ revoke all on public.session_shared_content
   from public, anon, authenticated, agent_ro;
 grant select on public.session_shared_content to authenticated;
 
+-- Diagnostic temporaire du checkpoint ACL après la révocation.
+do $b14_acl_checkpoint$
+begin
+  raise notice 'B-14 ACL après 0057: %',
+    (select c.relacl::text from pg_catalog.pg_class c
+      where c.oid = 'public.session_shared_content'::regclass);
+end;
+$b14_acl_checkpoint$;
+
 drop policy if exists ssc_admin_read on public.session_shared_content;
 create policy ssc_admin_read on public.session_shared_content
   for select to authenticated
