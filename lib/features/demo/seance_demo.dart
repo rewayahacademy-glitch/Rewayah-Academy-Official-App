@@ -4,10 +4,14 @@
 // le panneau Eleves et le recapitulatif de fin (I-6). Les contenus (noms,
 // support) sont des contenus de demonstration, pas des libelles d'interface.
 
+import 'dart:math' as math;
+
 import '../../core/tc_bibliotheque/catalogue_local.dart';
+import '../../core/tc_bibliotheque/content_position.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
+import '../../core/tc_outils/annotation_layer.dart';
 import '../../core/tc_telechargement/port_etat_offline.dart';
 import '../salle_seance/depuis_salle.dart';
 import '../salle_seance/resultat_seance.dart';
@@ -413,6 +417,41 @@ abstract final class DonneesSeanceDemo {
     mention: 'Support illustratif',
   );
 
+  /// TB-7a : le trait de demonstration, un cercle pose sur la page 1 du
+  /// Chapitre 1 (version presentee), au milieu de la page. Coordonnees
+  /// normalisees de la page (§9) : le rayon vertical tient compte du
+  /// ratio pour que le cercle reste rond. Porte en PED-02 (cache), PED-03
+  /// et PED-04 ;
+  /// aucun serveur (TB-BR).
+  static final TraitVectoriel traitDemonstration = TraitVectoriel(
+    id: 'demo-trait-cercle',
+    ancrage: ContentPosition.page(
+      resourceId: chapitre1.id,
+      resourceVersionId: _versionChapitre1,
+      page: 1,
+    ),
+    outil: OutilTrait.stylet,
+    points: <PointNormalise>[
+      for (int i = 0; i <= _pointsCercle; i++)
+        PointNormalise(
+          centreCercle.x +
+              rayonCercle * math.cos(2 * math.pi * i / _pointsCercle),
+          centreCercle.y +
+              rayonCercle *
+                  (largeurPage / hauteurPage) *
+                  math.sin(2 * math.pi * i / _pointsCercle),
+        ),
+    ],
+  );
+
+  /// Le centre du cercle de demonstration, dans la page.
+  static const PointNormalise centreCercle = PointNormalise(0.5, 0.55);
+
+  /// Le rayon du cercle, en part de la largeur de la page.
+  static const double rayonCercle = 0.18;
+
+  static const int _pointsCercle = 32;
+
   // --- Bibliotheque en seance (TB-8) ---
 
   /// Le support de la demonstration dont l'ouverture echoue : montre LIB-03
@@ -580,6 +619,14 @@ abstract final class DonneesSeanceDemo {
           : tableauLibre,
       supportPresente: sansSupport ? null : supportPageFixe,
       sansSupportPresente: sansSupport,
+      // TB-7a : les notes de la page en PED-03 (Avec notes) et PED-04
+      // (Tableau, support masque) ; cachees, jamais effacees, en PED-02.
+      notesSurface: switch (situation) {
+        SituationTb.ped02 ||
+        SituationTb.ped03 ||
+        SituationTb.ped04 => <TraitVectoriel>[traitDemonstration],
+        _ => const <TraitVectoriel>[],
+      },
       affichage: switch (situation) {
         SituationTb.ped02 => AffichagePartage.support,
         SituationTb.ped04 => AffichagePartage.tableau,

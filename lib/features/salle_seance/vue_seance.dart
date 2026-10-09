@@ -10,8 +10,10 @@ import 'package:flutter/widgets.dart' show StringCharacters;
 
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_bibliotheque/content_position.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
+import '../../core/tc_outils/annotation_layer.dart' show TraitVectoriel;
 import '../../core/theme/app_gabarit.dart';
 import '../salle/vue_salle.dart';
 
@@ -323,6 +325,10 @@ class TableauLibre {
     this.aDesNotes = false,
   }) : assert(largeurCanonique > 0 && hauteurCanonique > 0);
 
+  /// TB-7a : la ressource a laquelle s'ancrent les notes du tableau libre,
+  /// distincte de tout support (TB5 : rien n'y est copie).
+  static const String idRessource = 'tableau-libre';
+
   /// Le repere de la feuille. Le plan ne donne pas de ratio au tableau sans
   /// support : choix provisoire, fourni par les donnees (UX_REVIEW_TB n. 15,
   /// TB-BR-14), jamais la taille de l'ecran.
@@ -459,6 +465,7 @@ class VueSeance {
     this.enregistrement = EtatEnregistrement.inconnu,
     this.controle,
     this.contexte = ContexteOuvert.aucun,
+    this.notesSurface = const <TraitVectoriel>[],
   });
 
   // --- Reponses retenues aux questions Q1 a Q8 (plan de code section 4) ---
@@ -590,6 +597,13 @@ class VueSeance {
 
   /// Le contexte deplie depuis la capsule (TB-3), etat local d'interface.
   final ContexteOuvert contexte;
+
+  /// TB-7a (plan V2 §9) : les traits valides de la surface (etat partage),
+  /// chacun ancre a une page de support ou au tableau libre, en
+  /// coordonnees normalisees de la page. La surface ne peint que ceux de la
+  /// page montree ([notesAffichees]). Vide hors demonstration tant que le
+  /// contrat des traits n'est pas branche (TB-BR).
+  final List<TraitVectoriel> notesSurface;
 
   bool get _tutoie => tutoiement ?? _guidee;
 
@@ -985,6 +999,38 @@ class VueSeance {
     };
   }
 
+  /// TB-7a : l'ancrage des notes de la surface montree : la page presentee
+  /// (ressource, version, numero), ou la feuille du tableau libre. Un trait
+  /// d'une autre page ou d'une autre version ne s'y peint jamais (§13 :
+  /// « ancien trait recu sur une nouvelle page »).
+  ContentPosition? get ancrageSurface {
+    final SupportPageFixe? page = supportPresente;
+    if (page != null) {
+      return ContentPosition.page(
+        resourceId: page.id,
+        resourceVersionId: page.version,
+        page: page.page,
+      );
+    }
+    if (tableauLibre != null) {
+      return const ContentPosition.page(
+        resourceId: TableauLibre.idRessource,
+        page: 1,
+      );
+    }
+    return null;
+  }
+
+  /// Les notes de la surface montree, et elles seules.
+  List<TraitVectoriel> get notesAffichees {
+    final ContentPosition? ancrage = ancrageSurface;
+    if (ancrage == null) return const <TraitVectoriel>[];
+    return <TraitVectoriel>[
+      for (final TraitVectoriel trait in notesSurface)
+        if (trait.ancrage == ancrage) trait,
+    ];
+  }
+
   /// Les inscrits autorises a ecrire (Participants, TB15).
   List<EleveSeance> get elevesAutorisesAEcrire =>
       eleves.where((EleveSeance e) => e.peutEcrire).toList();
@@ -1026,6 +1072,7 @@ class VueSeance {
     EtatControle? controle,
     bool sansControle = false,
     ContexteOuvert? contexte,
+    List<TraitVectoriel>? notesSurface,
   }) => VueSeance(
     role: role ?? this.role,
     nomClasse: nomClasse,
@@ -1060,5 +1107,6 @@ class VueSeance {
     enregistrement: enregistrement ?? this.enregistrement,
     controle: sansControle ? null : controle ?? this.controle,
     contexte: contexte ?? this.contexte,
+    notesSurface: notesSurface ?? this.notesSurface,
   );
 }

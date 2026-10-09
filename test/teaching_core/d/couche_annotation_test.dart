@@ -36,14 +36,19 @@ void main() {
       );
     });
 
-    test('le stylet ecrit meme sans avoir arme l outil', () {
-      expect(
-        PolitiqueSaisie.appareilsDeDessin(
-          styletDetecte: true,
-          styletArme: false,
-        ),
-        contains(PointerDeviceKind.stylus),
-      );
+    // TB-STYLET-1 (plan V2 §7, ligne 164 ; TB21) : « stylet pour l'encre
+    // lorsque Ecrire est actif ». Avant TB-7a, le stylet ecrivait toujours.
+    test('le stylet n ecrit pas tant que l outil n est pas arme', () {
+      for (final bool detecte in <bool>[true, false]) {
+        expect(
+          PolitiqueSaisie.appareilsDeDessin(
+            styletDetecte: detecte,
+            styletArme: false,
+          ),
+          isEmpty,
+          reason: 'stylet detecte : $detecte',
+        );
+      }
     });
 
     test('sans stylet, le doigt ecrit seulement si l outil est arme', () {
@@ -63,17 +68,15 @@ void main() {
       );
     });
 
-    test('le stylet est le seul appareil admis dans tous les cas', () {
+    test('outil arme : le stylet ecrit, qu il ait ete detecte ou non', () {
       for (final bool detecte in <bool>[true, false]) {
-        for (final bool arme in <bool>[true, false]) {
-          expect(
-            PolitiqueSaisie.appareilsDeDessin(
-              styletDetecte: detecte,
-              styletArme: arme,
-            ),
-            contains(PointerDeviceKind.stylus),
-          );
-        }
+        expect(
+          PolitiqueSaisie.appareilsDeDessin(
+            styletDetecte: detecte,
+            styletArme: true,
+          ),
+          contains(PointerDeviceKind.stylus),
+        );
       }
     });
   });
@@ -114,6 +117,22 @@ void main() {
       portAnnotationsProvider.overrideWithValue(annotations),
     ];
 
+    /// L'hote avec l'outil d'ecriture arme (TB-STYLET-1 : rien n'ecrit
+    /// sans lui).
+    Widget hoteArme(Widget enfant) {
+      final ProviderContainer conteneur = ProviderContainer(
+        overrides: surcharges(),
+      );
+      addTearDown(conteneur.dispose);
+      conteneur
+          .read(etatOutilsProvider.notifier)
+          .choisirOutil(OutilDock.stylet);
+      return UncontrolledProviderScope(
+        container: conteneur,
+        child: hoteSansScope(enfant),
+      );
+    }
+
     /// Trace un geste avec l'appareil demande.
     Future<void> tracer(
       WidgetTester tester,
@@ -132,10 +151,20 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    testWidgets('un trait de stylet s ancre au verset touche', (
+    testWidgets('le stylet ne pose rien tant que l outil n est pas arme', (
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(hoteD(couche(), surcharges: surcharges()));
+      await tracer(tester, PointerDeviceKind.stylus);
+
+      expect(annotations.couches, isEmpty);
+      expect(emis, isEmpty);
+    });
+
+    testWidgets('un trait de stylet s ancre au verset touche', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(hoteArme(couche()));
       await tracer(tester, PointerDeviceKind.stylus);
 
       final AnnotationLayer posee = annotations.couches.single;
@@ -195,10 +224,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
-        hoteD(
-          couche(mode: ModeAffichagePartage.page),
-          surcharges: surcharges(),
-        ),
+        hoteArme(couche(mode: ModeAffichagePartage.page)),
       );
       // Sous les deux versets : aucun bloc de texte a cet endroit.
       await tracer(
@@ -218,7 +244,7 @@ void main() {
     testWidgets('sur rendu reflowable, un trait hors bloc est signale', (
       WidgetTester tester,
     ) async {
-      await tester.pumpWidget(hoteD(couche(), surcharges: surcharges()));
+      await tester.pumpWidget(hoteArme(couche()));
       await tracer(
         tester,
         PointerDeviceKind.stylus,
@@ -259,9 +285,9 @@ void main() {
         overrides: surcharges(),
       );
       addTearDown(conteneur.dispose);
-      conteneur
-          .read(etatOutilsProvider.notifier)
-          .choisirOutilTrait(OutilTrait.gomme);
+      conteneur.read(etatOutilsProvider.notifier)
+        ..choisirOutil(OutilDock.stylet)
+        ..choisirOutilTrait(OutilTrait.gomme);
 
       await tester.pumpWidget(
         UncontrolledProviderScope(

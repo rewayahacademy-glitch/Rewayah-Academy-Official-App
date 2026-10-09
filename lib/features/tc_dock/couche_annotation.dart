@@ -23,28 +23,26 @@ import '../../core/theme/app_spacing.dart';
 
 /// Qui a le droit d'ecrire, et qui garde la navigation.
 ///
-/// **Stylet = encre, doigt = pan et zoom** (spec section 8.4). La regle n'est
-/// tenable telle quelle que sur un appareil qui a un stylet : sur un telephone,
-/// l'appliquer a la lettre rendrait l'annotation impossible. La politique
-/// ci-dessous garde donc la regle **des qu'un stylet s'est manifeste**, et
-/// n'ouvre le doigt a l'ecriture que sur un appareil qui n'en a pas, et
-/// seulement quand l'outil Stylet a ete explicitement arme dans le dock.
+/// **Rien n'ecrit tant que l'outil d'ecriture n'est pas arme** (plan V2 §7,
+/// lignes 164-165 ; TB21 ; TB-STYLET-1) : lire au doigt ou poser le stylet
+/// sur la page ne laisse aucune trace. Une fois l'outil arme : **stylet =
+/// encre, doigt = pan et zoom** des qu'un stylet s'est manifeste ; sur un
+/// appareil qui n'en a pas, le doigt et la souris ecrivent, sans quoi
+/// l'annotation serait impossible sur un telephone.
 ///
 /// Consequence voulue : sur une tablette avec stylet, poser la main ou faire
 /// glisser le texte ne dessine jamais.
 abstract final class PolitiqueSaisie {
-  /// Les appareils qui posent de l'encre, dans ce contexte.
-  ///
-  /// **Le stylet ecrit toujours**, y compris avant que l'outil ne soit arme :
-  /// c'est la regle de la spec, et c'est aussi ce que la main attend d'un
-  /// stylet. Le doigt, lui, n'ecrit que sur un appareil ou aucun stylet ne
-  /// s'est jamais manifeste, et seulement quand l'outil Stylet a ete arme dans
-  /// le dock -- sans quoi l'annotation serait impossible sur un telephone.
+  /// Les appareils qui posent de l'encre, dans ce contexte. Vide tant que
+  /// l'outil n'est pas arme.
   static Set<PointerDeviceKind> appareilsDeDessin({
     required bool styletDetecte,
     required bool styletArme,
   }) {
-    if (!styletDetecte && styletArme) {
+    if (!styletArme) {
+      return const <PointerDeviceKind>{};
+    }
+    if (!styletDetecte) {
       return const <PointerDeviceKind>{
         PointerDeviceKind.stylus,
         PointerDeviceKind.invertedStylus,
@@ -82,6 +80,7 @@ class CoucheAnnotation extends ConsumerStatefulWidget {
     this.onEvenement,
     this.onAncrageDegrade,
     this.generateur = const Uuid(),
+    this.repereDePage = false,
   });
 
   /// Le support annote, avec la geometrie courante de ses blocs.
@@ -109,6 +108,13 @@ class CoucheAnnotation extends ConsumerStatefulWidget {
 
   /// Le generateur d'identifiants, injecte pour les tests.
   final Uuid generateur;
+
+  /// TB-7a (plan V2 §9 ; TB19) : la couche couvre une page fixe, dont
+  /// [SupportPresente.blocs] porte le cadre. Un geste qui commence hors du
+  /// cadre est rejete, un point qui en sort n'est pas garde (jamais rabattu
+  /// sur le bord, §9.4) ; l'epaisseur du trait suit la largeur de la page
+  /// (§9 : « l'epaisseur de l'annotation suit la page »).
+  final bool repereDePage;
 
   @override
   ConsumerState<CoucheAnnotation> createState() => _CoucheAnnotationState();
@@ -214,11 +220,26 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
             blocApercu: _blocEnCours,
             outilApercu: etat.outilTrait,
             intentionApercu: etat.intention,
+            largeurPage: widget.repereDePage
+                ? widget.support.blocs.cadre?.width
+                : null,
           ),
           child: const SizedBox.expand(),
         ),
       ),
     );
+  }
+
+  /// Vrai quand [point] tombe dans la page, bords compris.
+  bool _dansLaPage(Offset point) {
+    final Rect? page = widget.support.blocs.cadre;
+    if (page == null) {
+      return false;
+    }
+    return point.dx >= page.left &&
+        point.dy >= page.top &&
+        point.dx <= page.right &&
+        point.dy <= page.bottom;
   }
 
   void _guetterStylet(PointerDownEvent evenement) {
@@ -234,6 +255,11 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
   void _commencer(Offset point, EtatOutils etat) {
     if (etat.outilTrait == OutilTrait.gomme) {
       _gommer(point);
+      return;
+    }
+
+    if (widget.repereDePage && !_dansLaPage(point)) {
+      // Hors de la page : rejete, jamais rabattu sur le bord (§9.4).
       return;
     }
 
@@ -278,6 +304,10 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
     final TraitEnCours? trait = _enCours;
     final Rect? bloc = _blocEnCours;
     if (trait == null || bloc == null) {
+      return;
+    }
+    if (widget.repereDePage && !_dansLaPage(point)) {
+      // Le geste sort de la page : le point n'est pas garde.
       return;
     }
     final PointNormalise normalise = normaliserDans(bloc, point);
@@ -393,10 +423,17 @@ class _PeintreAnnotations extends CustomPainter {
     required this.outilApercu,
     required this.intentionApercu,
     this.blocApercu,
+    this.largeurPage,
   });
 
   /// Epaisseur de base d'un trait de stylet.
   static const double epaisseurStylet = AppSpacing.xs / 2;
+
+  /// TB-7a : sur une page fixe, l'epaisseur de base rapportee a la largeur
+  /// de la page (§9) : [epaisseurStylet] sur une page de 400 points de
+  /// large, la largeur de lecture d'un telephone. Le meme trait couvre la
+  /// meme part de la page a 390, 768 et 1440, et grossit avec le zoom.
+  static const double epaisseurRelativePage = epaisseurStylet / 400;
 
   /// Multiplicateur d'epaisseur du surligneur.
   static const double facteurSurligneur = 4;
@@ -416,6 +453,10 @@ class _PeintreAnnotations extends CustomPainter {
   final Rect? blocApercu;
   final OutilTrait outilApercu;
   final IntentionPedagogique intentionApercu;
+
+  /// La largeur de la page fixe, ou `null` (rendu reflowable : epaisseur
+  /// en points d'ecran).
+  final double? largeurPage;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -485,10 +526,14 @@ class _PeintreAnnotations extends CustomPainter {
     final double facteurPression = pression == null
         ? 1
         : 0.6 + 0.8 * pression.clamp(0, 1);
+    final double? page = largeurPage;
+    final double base = page == null
+        ? epaisseurStylet
+        : epaisseurRelativePage * page;
     final Paint pinceau = Paint()
       ..color = encre.couleur(opacite: surligne ? opaciteSurligneur : 1)
       ..strokeWidth =
-          epaisseurStylet * facteurPression * (surligne ? facteurSurligneur : 1)
+          base * facteurPression * (surligne ? facteurSurligneur : 1)
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round
       ..style = PaintingStyle.stroke;
@@ -509,5 +554,6 @@ class _PeintreAnnotations extends CustomPainter {
       ancien.support != support ||
       ancien.outilApercu != outilApercu ||
       ancien.intentionApercu != intentionApercu ||
+      ancien.largeurPage != largeurPage ||
       ancien.palette != palette;
 }

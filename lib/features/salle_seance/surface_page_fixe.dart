@@ -7,21 +7,34 @@
 // Support (notes cachees, jamais effacees), Avec notes, Tableau (le fond du
 // support masque, feuille claire au meme ratio, notes visibles). Sans
 // support presente : le tableau libre. Le calque des notes reste monte
-// d'un affichage a l'autre : masquer puis reafficher ne perd rien. Les
-// traits eux-memes arrivent avec TB-7a (CoucheAnnotation) ; ici, la place
-// et la geometrie.
+// d'un affichage a l'autre : masquer puis reafficher ne perd rien.
+//
+// TB-7a (plan V2 §9) : le calque porte `CoucheAnnotation`, au repere de la
+// page ([ReperePage]) ; la page et ses notes sont lues dans la meme
+// transformation locale (zoom), qui remplace le `Transform.scale` de TB-6.
 
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_bibliotheque/content_position.dart';
+import '../../core/tc_bibliotheque/library_resource.dart'
+    show CapaciteRessource;
+import '../../core/tc_etat_partage/shared_content_state.dart'
+    show ModeAffichagePartage;
+import '../../core/tc_outils/ancrage_annotation.dart' show CarteDesBlocs;
+import '../../core/tc_outils/etat_outils.dart';
+import '../../core/tc_outils/port_dock_hote.dart';
 import '../../core/theme/app_elevation.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
+import '../tc_dock/couche_annotation.dart';
+import 'repere_page.dart';
 import 'vue_seance.dart';
 
 /// Le rectangle de la page dans sa boite : `BoxFit.contain`, centre (plan
@@ -49,8 +62,8 @@ class SurfacePageFixe extends StatelessWidget {
   /// Ce que montre la surface (derive de la vue, jamais calcule ici).
   final VueSurface surface;
 
-  /// Le zoom local (1 = 100 %), autour du centre de la page ; rien n'est
-  /// diffuse.
+  /// Le zoom local (1 = 100 %), autour du centre de la page, applique a la
+  /// page et a ses notes ensemble ; rien n'est diffuse.
   final double zoom;
 
   /// La cle de la page du support (Support, Avec notes).
@@ -61,6 +74,12 @@ class SurfacePageFixe extends StatelessWidget {
 
   /// La cle du calque des notes, monte dans les trois affichages.
   static const Key cleCalque = ValueKey<String>('surface-calque');
+
+  /// La cle de la couche d'annotation, posee dans le calque (TB-7a).
+  static const Key cleCouche = ValueKey<String>('surface-couche');
+
+  /// La cle de la transformation commune a l'image et aux notes (TB-7a).
+  static const Key cleLecture = ValueKey<String>('surface-lecture');
 
   /// La cle de la phrase du tableau libre (enseignant).
   static const Key cleConsigne = ValueKey<String>('surface-consigne');
@@ -104,7 +123,14 @@ class SurfacePageFixe extends StatelessWidget {
     final bool consigne = libre && vue.voitConsigneTableauLibre;
     return LayoutBuilder(
       builder: (BuildContext _, BoxConstraints c) {
-        final Rect rect = rectanglePage(ratio: ratio, boite: c.biggest);
+        // TB-7a (plan V2 §9) : une seule geometrie pour l'image et l'encre,
+        // la page en `BoxFit.contain` et la lecture locale (zoom).
+        final ReperePage repere = ReperePage.de(
+          ratio: ratio,
+          boite: c.biggest,
+          zoom: zoom,
+        );
+        final Rect rect = repere.page;
         final Widget feuille = SizedBox.fromSize(
           size: rect.size,
           child: Stack(
@@ -120,14 +146,15 @@ class SurfacePageFixe extends StatelessWidget {
                       ? t.salle.seance.commandes.affichageTableau
                       : t.salle.seance.surface.supportMasque,
                 ),
-              // Le calque des notes : cache en Support, jamais demonte.
+              // Le calque des notes : cache en Support, jamais demonte. Il
+              // couvre la page exactement : son repere est la page (TB-7a).
               Visibility(
                 key: cleCalque,
                 visible: notesVisibles,
                 maintainState: true,
                 maintainAnimation: true,
                 maintainSize: true,
-                child: const SizedBox.expand(),
+                child: _CalqueNotes(vue: vue, taille: rect.size),
               ),
             ],
           ),
@@ -135,9 +162,18 @@ class SurfacePageFixe extends StatelessWidget {
         return ClipRect(
           child: Stack(
             children: <Widget>[
-              Positioned.fromRect(
-                rect: rect,
-                child: Transform.scale(scale: zoom, child: feuille),
+              // Image et encre dans la MEME transformation (§9.5) : un
+              // point touche revient a la page par son inverse (toScene).
+              Positioned.fill(
+                child: Transform(
+                  key: cleLecture,
+                  transform: repere.lecture,
+                  child: Stack(
+                    children: <Widget>[
+                      Positioned.fromRect(rect: rect, child: feuille),
+                    ],
+                  ),
+                ),
               ),
               // La phrase du §12 se pose sur toute la surface, pas dans la
               // seule feuille : vide, celle-ci ne cache rien, et la phrase
@@ -161,6 +197,57 @@ class SurfacePageFixe extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+/// TB-7a : le calque des notes, au repere de la page. `CoucheAnnotation`
+/// (tc_dock) y est montee sur un seul bloc qui couvre la page : son cadre
+/// est la page elle-meme, l'ancrage celui de la page montree
+/// ([VueSeance.ancrageSurface]). Elle peint les notes de cette page
+/// seulement ; elle ne recoit un geste que si la personne peut ecrire
+/// ([VueSeance.peutEcrire]) ET que l'outil d'ecriture est arme : sinon le
+/// calque se lit, sans focus ni geste.
+class _CalqueNotes extends ConsumerWidget {
+  const _CalqueNotes({required this.vue, required this.taille});
+
+  final VueSeance vue;
+
+  /// La taille de la page avant la lecture locale.
+  final Size taille;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ContentPosition? ancrage = vue.ancrageSurface;
+    if (ancrage == null) return const SizedBox.expand();
+    final bool arme = ref.watch(
+      etatOutilsProvider.select((EtatOutils e) => e.styletArme),
+    );
+    final bool saisie = vue.peutEcrire && arme;
+    return ExcludeFocus(
+      excluding: !saisie,
+      child: ExcludeSemantics(
+        excluding: !saisie,
+        child: IgnorePointer(
+          ignoring: !saisie,
+          child: CoucheAnnotation(
+            key: SurfacePageFixe.cleCouche,
+            support: SupportPresente(
+              resourceId: ancrage.resourceId,
+              resourceVersionId: ancrage.resourceVersionId,
+              capacites: const <CapaciteRessource>{
+                CapaciteRessource.annotatable,
+              },
+              modeAffichage: ModeAffichagePartage.page,
+              blocs: CarteDesBlocs(cadre: Offset.zero & taille),
+              ancrageCadre: ancrage,
+            ),
+            contexte: ContexteDock(groupeId: vue.groupeId),
+            traits: vue.notesAffichees,
+            repereDePage: true,
+          ),
+        ),
+      ),
     );
   }
 }
