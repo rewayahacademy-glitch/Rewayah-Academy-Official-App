@@ -99,6 +99,7 @@ import '../../features/profil_enseignant/profil_enseignant_page.dart';
 import '../../features/remplacements/remplacements_page.dart';
 import '../../features/revue_groupe/revue_groupe_page.dart';
 import '../../features/salle/salle_page.dart';
+import '../../features/suivi_demandes/suivi_demandes_page.dart';
 import '../../features/suivi_eleve/suivi_eleve_page.dart';
 import '../../features/suivi_foyer/detail_observations_page.dart';
 import '../../features/suivi_foyer/detail_seance_page.dart';
@@ -495,6 +496,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     path: 'notifications',
                     pageBuilder: glissee(
                       (GoRouterState _) => const NotificationsPage(),
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'demandes',
+                    pageBuilder: glissee(
+                      (GoRouterState _) => const SuiviDemandesPage(),
                     ),
                   ),
                   GoRoute(
