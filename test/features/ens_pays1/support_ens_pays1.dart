@@ -395,7 +395,7 @@ ContexteClasseLive _contexteLive({
 }) => ContexteClasseLive(
   sessionId: 's-live',
   groupeId: GroupesDemonstration.alFatiha,
-  libelleGroupe: 'Groupe Al-Fatiha',
+  libelleGroupe: 'Classe Al-Fatiha',
   enseignant: EnseignantDeClasse(
     nomAffichage: prenom,
     titre: TitreEnseignant.sayyid,

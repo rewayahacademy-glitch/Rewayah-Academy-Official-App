@@ -18,7 +18,7 @@ class CatalogueClassesDemo implements PortCatalogueClasses {
   static const List<ClasseOuverte> classes = <ClasseOuverte>[
     ClasseOuverte(
       classeId: 'demo-classe-coran-2',
-      libelle: 'Coran, groupe du mardi',
+      libelle: 'Coran, classe du mardi',
       enseignant: EnseignantSeance(
         prenom: 'Maryam',
         titre: TitreEnseignant.sayyida,
@@ -36,7 +36,7 @@ class CatalogueClassesDemo implements PortCatalogueClasses {
     ),
     ClasseOuverte(
       classeId: 'demo-classe-arabe-3',
-      libelle: 'Arabe, groupe du samedi',
+      libelle: 'Arabe, classe du samedi',
       enseignant: EnseignantSeance(
         prenom: 'Ibrahim',
         titre: TitreEnseignant.sayyid,
@@ -57,7 +57,7 @@ class CatalogueClassesDemo implements PortCatalogueClasses {
     ),
     ClasseOuverte(
       classeId: 'demo-classe-coran-4',
-      libelle: 'Coran, groupe du dimanche',
+      libelle: 'Coran, classe du dimanche',
       enseignant: EnseignantSeance(
         prenom: 'Maryam',
         titre: TitreEnseignant.sayyida,

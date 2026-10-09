@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
+import '../i18n/strings.g.dart';
 import '../theme/app_spacing.dart';
+import 'point_rappel.dart';
 
 /// Un champ de texte dont l'etiquette est un texte au-dessus, sur autant de
 /// lignes qu'il faut (FORM-CORR-1).
@@ -22,7 +25,13 @@ class ChampEtiquete extends StatelessWidget {
     this.textCapitalization = TextCapitalization.none,
     this.aide,
     this.indice,
+    this.obligatoire = false,
   });
+
+  /// Vrai : l'etiquette porte la marque des champs obligatoires (le point de
+  /// [PointRappel], fixe, au bord de debut), et le lecteur d'ecran l'annonce
+  /// apres le nom du champ (CLASSE-FORM-1). Faux par defaut : rendu inchange.
+  final bool obligatoire;
 
   /// Le nom du champ, ecrit en entier.
   final String libelle;
@@ -58,11 +67,18 @@ class ChampEtiquete extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         ExcludeSemantics(
-          child: Text(libelle, style: Theme.of(context).textTheme.labelLarge),
+          child: TitreChamp(
+            libelle,
+            style: Theme.of(context).textTheme.labelLarge,
+            obligatoire: obligatoire,
+            sansCoupure: false,
+          ),
         ),
         Ecart.vXs,
         Semantics(
-          label: libelle,
+          label: obligatoire
+              ? t.formulaire.champObligatoire(champ: libelle)
+              : libelle,
           child: TextField(
             controller: controller,
             onChanged: onChanged,
@@ -78,6 +94,56 @@ class ChampEtiquete extends StatelessWidget {
             ),
           ),
         ),
+      ],
+    );
+  }
+}
+
+/// Le titre d'un champ de formulaire, avec la marque des champs obligatoires
+/// quand il l'est (CLASSE-FORM-1).
+///
+/// **Seul point d'entree de ce motif** (K-10), range avec [ChampEtiquete] qui
+/// en est le premier lecteur : `ChampEtiquete`,
+/// `SelecteurPersonne` et les sections choisies d'un formulaire (public,
+/// genre, creneau, seuil) le partagent. Obligatoire : le point de
+/// [PointRappel], fixe, au bord de debut, un palier ([Ecart.hSm]), puis le
+/// nom du champ, qui prend la place restante. Sinon, le nom seul.
+class TitreChamp extends StatelessWidget {
+  /// Cree le titre.
+  const TitreChamp(
+    this.titre, {
+    required this.style,
+    super.key,
+    this.obligatoire = false,
+    this.sansCoupure = true,
+  });
+
+  /// Le nom du champ, ecrit en entier.
+  final String titre;
+
+  /// Le style du nom (`titleMedium` pour une section, `labelLarge` pour
+  /// l'etiquette d'un champ de texte).
+  final TextStyle? style;
+
+  /// Vrai : la marque des champs obligatoires precede le nom.
+  final bool obligatoire;
+
+  /// Vrai (par defaut) : le nom passe par [TexteSansCoupure] (aucun mot
+  /// coupe a 320 en texte x2). Faux : un `Text` ordinaire, le rendu
+  /// historique de l'etiquette de `ChampEtiquete`.
+  final bool sansCoupure;
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget nom = sansCoupure
+        ? TexteSansCoupure(titre, style: style)
+        : Text(titre, style: style);
+    if (!obligatoire) return nom;
+    return Row(
+      children: <Widget>[
+        PointRappel(libelle: t.formulaire.obligatoire, battements: 0),
+        Ecart.hSm,
+        Expanded(child: nom),
       ],
     );
   }

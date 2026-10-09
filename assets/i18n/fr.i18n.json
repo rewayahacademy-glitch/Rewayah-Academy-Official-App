@@ -1700,11 +1700,84 @@
       "journalisation": "Chaque création, ajout, retrait et clôture est inscrit au journal d'audit.",
       "observationTitre": "Observation : {libelle}",
       "observationErreur": "Le réglage n'a pas pu être enregistré.",
-      "observationCapaciteAbsente": "Cette installation n'a pas encore la mise à jour serveur que ce réglage demande (migration 0036). Réessayer n'y changera rien : elle doit d'abord être appliquée à la base."
+      "observationCapaciteAbsente": "Cette installation n'a pas encore la mise à jour serveur que ce réglage demande (migration 0036). Réessayer n'y changera rien : elle doit d'abord être appliquée à la base.",
+      "formulaire": {
+        "contexte": "Une classe réunit un enseignant et ses élèves sur un même créneau chaque semaine. Choisissez le public et le genre : la liste des enseignants, le seuil et le nom de la classe en découlent.",
+        "titrePublic": "Public",
+        "publicEnfantDetail": "À choisir pour une classe d'enfants. Seuil proposé : 5 élèves.",
+        "publicAdulteDetail": "À choisir pour une classe d'adultes. Seuil proposé : 6 élèves.",
+        "titreGenre": "Genre de la classe",
+        "genreHommes": "Hommes",
+        "genreFemmes": "Femmes",
+        "genreGarcons": "Garçons",
+        "genreFilles": "Filles",
+        "genreIndetermine": "Non déterminé",
+        "genreHommesDetail": "À choisir pour une classe d'hommes : seuls les enseignants hommes pourront la prendre.",
+        "genreFemmesDetail": "À choisir pour une classe de femmes : seules les enseignantes pourront la prendre.",
+        "genreGarconsDetail": "À choisir pour une classe de garçons : seuls les enseignants hommes pourront la prendre.",
+        "genreFillesDetail": "À choisir pour une classe de filles : seules les enseignantes pourront la prendre.",
+        "genreIndetermineDetail": "À choisir quand le genre n'est pas encore connu : tous les enseignants pourront la prendre.",
+        "genreHommesDetailSansSource": "À choisir pour une classe d'hommes. Le genre des enseignants n'est pas encore lisible ici : vérifiez vous-même que l'enseignant choisi est un homme.",
+        "genreFemmesDetailSansSource": "À choisir pour une classe de femmes. Le genre des enseignants n'est pas encore lisible ici : vérifiez vous-même que vous choisissez une enseignante.",
+        "genreGarconsDetailSansSource": "À choisir pour une classe de garçons. Le genre des enseignants n'est pas encore lisible ici : vérifiez vous-même que l'enseignant choisi est un homme.",
+        "genreFillesDetailSansSource": "À choisir pour une classe de filles. Le genre des enseignants n'est pas encore lisible ici : vérifiez vous-même que vous choisissez une enseignante.",
+        "genreNonEnregistre": "Le genre guide le choix de l'enseignant. Il sera enregistré avec la classe dès que le serveur l'acceptera : pour l'instant, il ne l'est pas.",
+        "aideEnseignant": "Les enseignants sont classés du plus adapté au moins adapté : genre de la classe, créneau libre, puis le moins de classes en cours.",
+        "aideEnseignantSansSource": "Les enseignants sont classés du moins chargé au plus chargé, et un enseignant déjà en classe à ce créneau ne se choisit pas. Leur genre et leurs disponibilités ne sont pas encore lisibles ici : vérifiez-les vous-même.",
+        "plusAdapteCreneau": "Premier choix : libre à ce créneau, {charge}.",
+        "plusAdapteSansCreneau": "Premier choix : {libres}, {charge}.",
+        "classesEnCours": {
+          "one": "{n} classe en cours",
+          "other": "{n} classes en cours"
+        },
+        "aucuneClasse": "aucune classe en cours",
+        "creneauxLibres": {
+          "one": "{n} créneau libre",
+          "other": "{n} créneaux libres"
+        },
+        "pasLibre": "Ce créneau n'est pas dans ses disponibilités déclarées : vous pouvez quand même faire ce choix.",
+        "raisonHommes": "Classe d'hommes : seul un enseignant homme peut la prendre.",
+        "raisonGarcons": "Classe de garçons : seul un enseignant homme peut la prendre.",
+        "raisonFemmes": "Classe de femmes : seule une enseignante peut la prendre.",
+        "raisonFilles": "Classe de filles : seule une enseignante peut la prendre.",
+        "raisonPris": "Déjà en classe à ce créneau : changez de créneau pour le choisir.",
+        "titreCreneau": "Créneau",
+        "creneauContexte": "Le jour et l'heure de la classe, chaque semaine.",
+        "creneauxLibresDe": "Créneaux libres {deNom} : toucher un créneau règle le jour et l'heure.",
+        "aucunCreneauLibre": "{nom} n'a aucun créneau libre déclaré : choisissez un jour et une heure ci-dessous.",
+        "disponibilitesInconnues": "Les disponibilités {deNom} ne sont pas encore lisibles ici : choisissez un jour et une heure ci-dessous.",
+        "jour": "Jour",
+        "heure": "Heure",
+        "heureValeur": "{heure}\u00a0h",
+        "fuseauEnseignant": "Heures lues dans le fuseau {fuseau}, celui de l'enseignant.",
+        "fuseauDefaut": "Heures lues dans le fuseau {fuseau}, retenu par défaut.",
+        "fuseauNonTransmis": "Heures lues dans le fuseau {fuseau}, celui que le serveur retient pour l'instant. Le fuseau de l'enseignant sera pris en compte dès que le serveur l'acceptera.",
+        "titreSeuil": "Seuil maximal",
+        "seuilDetail": "La classe est complète dès qu'elle atteint ce nombre d'élèves. Proposé : 5 pour des enfants, 6 pour des adultes ; 6 au plus.",
+        "seuilValeur": {
+          "one": "{n} élève",
+          "other": "{n} élèves"
+        },
+        "titreNom": "Nom de la classe",
+        "nomDetail": "Ce nom est déduit du genre, du public et du créneau : vous pouvez le changer.",
+        "nomPropose": "{base}, {creneau}",
+        "manqueGenre": "Il manque le genre de la classe : choisissez l'une des trois cartes.",
+        "manqueCreneau": "Il manque le créneau : choisissez le jour et l'heure de la classe.",
+        "manqueSeuil": "Il manque le seuil maximal : choisissez un nombre d'élèves entre 1 et 6.",
+        "manqueNom": "Il manque le nom de la classe : écrivez-le dans le dernier champ.",
+        "manqueEnseignantHommes": "{nom} ne peut pas prendre une classe d'hommes : choisissez un enseignant homme dans la liste.",
+        "manqueEnseignantGarcons": "{nom} ne peut pas prendre une classe de garçons : choisissez un enseignant homme dans la liste.",
+        "manqueEnseignantFemmes": "{nom} ne peut pas prendre une classe de femmes : choisissez une enseignante dans la liste.",
+        "manqueEnseignantFilles": "{nom} ne peut pas prendre une classe de filles : choisissez une enseignante dans la liste.",
+        "manqueEnseignantPris": "{nom} est déjà en classe à ce créneau : changez de créneau ou choisissez une autre personne dans la liste.",
+        "manqueListeEnseignants": "La liste des enseignants n'est pas encore à jour, donc l'enseignant choisi n'a pas pu être vérifié : attendez qu'elle s'affiche, puis pressez de nouveau.",
+        "horsLigne": "Sans réseau, la classe ne peut pas être créée. Vos choix restent affichés : revenez quand la connexion est rétablie.",
+        "seuilHorsLigne": "Sans réseau, le seuil ne peut pas être enregistré. Votre choix reste affiché : revenez quand la connexion est rétablie."
+      }
     },
     "diagnostics": {
       "titre": "Diagnostics",
-      "intro": "Chaque élève inscrit attend un premier niveau avant de rejoindre un groupe : c'est ici que ce placement se décide.",
+      "intro": "Chaque élève inscrit attend un premier niveau avant de rejoindre une classe : c'est ici que ce placement se décide.",
       "aucunProgramme": "Aucun programme publié",
       "aucunProgrammeDetail": "Publiez une première version du programme (Pédagogie > Programmes) avant de pouvoir décider un placement.",
       "erreur": "La file n'a pas pu être lue. Réessayez dans un instant.",
@@ -1869,16 +1942,16 @@
     },
     "progression": {
       "titre": "Progression",
-      "intro": "Le niveau courant de chaque élève, son groupe, et les blocages ou dérogations en cours.",
+      "intro": "Le niveau courant de chaque élève, sa classe, et les blocages ou dérogations en cours.",
       "erreur": "La progression n'a pas pu être lue. Réessayez dans un instant.",
       "aucun": "Aucun élève actif",
       "aucunDetail": "Les élèves apparaîtront ici dès leur premier diagnostic de placement.",
       "colonneEleve": "Élève",
-      "colonneGroupe": "Groupe",
+      "colonneGroupe": "Classe",
       "colonneNiveau": "Niveau",
       "colonneDepuis": "Depuis",
       "colonneException": "Exception",
-      "sansGroupe": "Sans groupe",
+      "sansGroupe": "Sans classe",
       "sansNiveau": "Non diagnostiqué",
       "filtreTousCycles": "Tous les cycles",
       "depuisAujourdhui": "Aujourd'hui",
@@ -2881,7 +2954,7 @@
       "blocAppareilsDetail": "Ajouter un appareil, ou en retirer un.",
       "blocReglages": "Réglages par enfant",
       "blocReglagesDetail": "Photo, caméra et affichage, enfant par enfant.",
-      "blocGroupesDetail": "Le groupe, l'enseignant et le prochain cours de chaque enfant.",
+      "blocGroupesDetail": "La classe, l'enseignant et le prochain cours de chaque enfant.",
       "acces": "Accès",
       "aucunEnfant": "Aucun enfant dans le foyer",
       "aucunEnfantDetail": "Ajoutez votre premier enfant pour commencer.",
@@ -4008,7 +4081,7 @@
       },
       "introuvable": {
         "message": "Ce support ne vous est pas ouvert",
-        "invitation": "Il a peut-être été retiré, ou il est réservé à un autre groupe. Votre enseignant peut vous le rouvrir."
+        "invitation": "Il a peut-être été retiré, ou il est réservé à une autre classe. Votre enseignant peut vous le rouvrir."
       },
       "offline": {
         "aTelecharger": "À télécharger",
@@ -4138,7 +4211,7 @@
       "revision": {
         "titre": "À préparer",
         "aide": "Le passage sélectionné devient un travail à préparer.",
-        "groupeEntier": "Tout le groupe",
+        "groupeEntier": "Toute la classe",
         "consigne": "Consigne courte (facultatif)",
         "creer": "Poser le travail",
         "posee": "Travail à préparer posé"
@@ -4537,7 +4610,7 @@
         "interneAide": "Lue par l'administration seulement. Elle ne part jamais automatiquement à la famille.",
         "famille": "Message pour la famille",
         "familleAide": "Facultatif. L'administration décide seule de le transmettre, en un clic.",
-        "contexte": "Élève {eleve}. La séance, le groupe et votre nom sont déjà joints.",
+        "contexte": "Élève {eleve}. La séance, la classe et votre nom sont déjà joints.",
         "envoyer": "Envoyer le signalement",
         "envoye": "Signalement transmis à l'administration.",
         "interneRequis": "Écrivez au moins ce que l'administration doit savoir.",
@@ -4944,7 +5017,10 @@
     "entier": {
       "bornes": "Entre {min} et {max}",
       "horsBornes": "Choisissez une valeur entre {min} et {max}, ou l'une des valeurs proposées."
-    }
+    },
+    "obligatoire": "Champ obligatoire",
+    "champObligatoire": "{champ}, champ obligatoire",
+    "legendeObligatoire": "Les champs marqués d'un point sont obligatoires."
   },
   "motifs": {
     "ajoutEleve": {
