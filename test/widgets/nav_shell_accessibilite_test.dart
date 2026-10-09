@@ -27,6 +27,7 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
 
+import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../support/aucun_mot_coupe.dart';
 
 Future<void> _monter(
@@ -90,6 +91,11 @@ double _contraste(Color a, Color b) {
 }
 
 void main() {
+  // COUPE-MOTS-4 : vraies polices. La police de test (carres de 1 em) rend
+  // chaque mot plus large qu'un onglet : la barre passerait a deux rangees
+  // pour un defaut que l'application n'a pas.
+  setUpAll(chargerPolicesDuDepot);
+
   group('les routes ne changent pas', () {
     test('le Mode Accessibilite est un sous-ensemble de la liste standard', () {
       for (final AppRole role in AppRole.values) {

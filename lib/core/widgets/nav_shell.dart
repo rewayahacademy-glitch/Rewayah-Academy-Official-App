@@ -775,7 +775,29 @@ class _BarreFlottante extends StatelessWidget {
         largeurs = _largeursOnglets(reduits, disponible);
       }
     }
-    final bool deuxRangees = largeurs == null && n > 2 && disponible.isFinite;
+    // Parts egales (minimums de cible tactile trop larges ensemble) : la
+    // rangee unique reste, tant que chaque mot y tient a l'echelle reduite.
+    final TextStyle styleMot = DefaultTextStyle.of(contexte).style.merge(
+      AppTypography.graisse(
+        Theme.of(contexte).textTheme.labelLarge ?? const TextStyle(),
+        FontWeight.w700,
+      ),
+    );
+    final bool motsTiennentEnParts = destinations.every(
+      (Destination d) =>
+          _motLePlusLong(
+            contexte,
+            d.libelle,
+            styleMot,
+            const TextScaler.linear(echelleMinimaleLisible),
+          ) <=
+          disponible / n - 2 * AppSpacing.xs,
+    );
+    final bool deuxRangees =
+        largeurs == null &&
+        !motsTiennentEnParts &&
+        n > 2 &&
+        disponible.isFinite;
     final int parRangee = deuxRangees ? (n + 1) ~/ 2 : n;
     final double largeurDeux =
         (c.maxWidth - ecart * (parRangee - 1)) / parRangee;
