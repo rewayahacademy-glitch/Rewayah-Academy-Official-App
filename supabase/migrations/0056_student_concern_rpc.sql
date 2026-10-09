@@ -3,7 +3,7 @@
 begin;
 
 -- Les clients ne contournent pas les gardes métier des RPC.
-revoke insert, update, delete on public.student_concern
+revoke all on public.student_concern
   from public, anon, authenticated, agent_ro;
 grant select on public.student_concern to authenticated;
 
