@@ -80,7 +80,7 @@ Fichiers : `lib/features/bienvenue/bienvenue_page.dart`,
 `lib/core/preferences/presentation_vue.dart`, `lib/core/preferences/stockage_navigateur*.dart`,
 `lib/core/router/redirection.dart` (paramètre `presentation`), `lib/core/router/app_router.dart`,
 `lib/core/widgets/marque_page.dart` (mot-marque sans coupure). Tests :
-`test/features/bienvenue/presentation_test.dart`. Captures : `docs/current/captures/PUB-1/`.
+`test/features/bienvenue/presentation_test.dart`. Captures : `docs/current/captures/PUB-1/`, `docs/current/captures/PUB-1b/` (reprise).
 
 ## Décisions prises par délégation le 05/10
 
@@ -161,8 +161,55 @@ Aucun. La présentation ne lit ni n'écrit rien côté serveur.
 - compilé pour le web : oui, `flutter build web --release` réussi le 09/10 (hors dépôt) ; le
   JavaScript produit contient bien `v.G.localStorage` → `getItem("presentation.vue")` et
   `setItem`, sous garde `try`, avec le secours en mémoire ;
-- **non exécuté dans un navigateur** : aucun navigateur n'est installable sur la machine de
-  l'agent (téléchargements Chromium refusés par le proxy). La lecture et l'écriture réelles du
-  `localStorage` restent à constater sur l'aperçu Vercel (recette : ouvrir la racine, passer la
-  présentation par la croix, recharger : la connexion s'affiche directement) ;
-- testé sur staging, déployé : non.
+- ~~non exécuté dans un navigateur~~ **exécuté dans un vrai navigateur (PUB-1b, 09/10)** :
+  Chromium 141 (préinstallé, Playwright), sur `flutter build web --release` servi en local ;
+  la croix écrit `presentation.vue = oui` dans le `localStorage` réel, et après rechargement la
+  racine mène directement à `/connexion`, sans passer un instant par `/bienvenue` (voir
+  « Reprise PUB-1b ») ;
+- testé sur staging, déployé : non (la même recette reste à rejouer sur l'aperçu Vercel).
+
+## Reprise PUB-1b (09/10/2026) : réserves de la relecture R2
+
+Branche `corrections/c2-pub-b` (issue de `corrections/revue-directeur-2026-10`, tête
+`5a52ff30`). Règle permanente DIR-REP-1 : chaque choix est **décidé par délégation le 09/10**,
+selon la recommandation de la relecture ou l'option la plus prudente. Aucun code de production
+modifié : la reprise ajoute un test, des captures, une preuve en navigateur et aligne la doc.
+
+| # | Réserve R2 | Décision (décidé par délégation le 09/10) | Preuve |
+|---|---|---|---|
+| D14 | 1. `REVUE-DIRECTEUR-2026-10.md:28` citait une pause « au survol » | Ligne de catalogue alignée sur le code et D10 : pause au toucher et au focus, jamais au survol ; arrêt au premier geste et à la dernière page, sans boucle ; tests et captures cités | `docs/current/REVUE-DIRECTEUR-2026-10.md`, ligne « Présentation publique » |
+| D15 | 2. Secours en mémoire non gardé quand le stockage se lit mais refuse l'écriture | Test « lecture possible, écriture en échec : le secours en mémoire repond » (quota plein, navigation privée Safari) : la valeur notée se relit « oui » pendant la session ; au rechargement, première visite, sans blocage | `test/core/preferences/stockage_cle_valeur_test.dart` ; contre-épreuve faite : avec `return _acces?.lire(clef);` (sans `?? _secours[clef]`), le test échoue (`Expected: 'oui'`, `Actual: <null>`) |
+| D16 | 4. Captures limitées aux pages 1, 4 et 5 ; 320 ×2 sombre LTR et clair RTL absents | Les 5 pages à 320 texte ×2, LTR et RTL, clair et sombre (20), chacune **avec une seconde capture `_fin`** défilée jusqu'en bas (20), pour montrer la suite du texte et les sorties de la dernière page ; les 5 pages à 1440 clair et sombre (10) ; pages 2 et 3 à 390, LTR et RTL (4). 54 PNG, tous ouverts | `docs/current/captures/PUB-1b/` ; script archivé `pub1b_capture_test.dart.txt` |
+| D17 | 3. Persistance du `localStorage` à constater dans un vrai navigateur | Preuve locale dans Chromium plutôt qu'attendre l'aperçu Vercel (aucune PR permise à cette étape) : build web local avec une configuration Supabase **non secrète et injoignable** (`https://supabase-local-pub1b.invalid`, clé au format publishable inventée, passées en option de compilation, rien de versionné) ; toute requête hors du serveur local est refusée ; CanvasKit servi depuis le build ; langue du navigateur fixée à `fr-FR` | Script `pub1b_persistance_playwright.mjs.txt`, sortie `pub1b_persistance_sortie.txt` : 10 vérifications OK, `RESULTAT : PASS` ; captures `pub1b_navigateur_pw1…pw3.png` |
+
+Ce que dit la sortie du navigateur (`pub1b_persistance_sortie.txt`) :
+
+1. Première visite : la racine mène à `#/bienvenue` ; `localStorage["presentation.vue"]` vaut `null`.
+2. L'arbre d'accessibilité de Flutter expose `button:Passer la présentation` ; un clic sur ce
+   bouton (par son nom accessible) mène à `#/connexion` et écrit `presentation.vue = oui`.
+3. Chargement neuf de la racine, puis rechargement (F5) : `#/connexion` directement ; aucune
+   des adresses prises par la page après la croix ne contient `bienvenue`.
+4. Contre-épreuves : clé retirée du stockage, la présentation revient ; nouvel appareil
+   (contexte de navigateur neuf), la présentation s'affiche.
+
+Captures ouvertes : aucun mot coupé à 320 ×2, en LTR comme en RTL, clair comme sombre ;
+la croix et la marque ne se chevauchent pas ; en RTL, la ligne d'état se remplit de droite à
+gauche, la position se lit « n / 5 » ; à 320 ×2, le bas de chaque page est atteint par
+défilement (captures `_fin`), « Commencer » et « J'ai déjà un compte » y sont entiers ; à 1440,
+un seul bouton plein, au bord de fin.
+
+### Observations hors périmètre (consignées, non corrigées)
+
+- Sans variable `LANG`, Chromium headless annonce la langue `en-US@posix` : l'application
+  s'arrête alors au démarrage (`RangeError: Incorrect locale information provided`, avant tout
+  écran). Un navigateur réglé normalement annonce une langue comme `fr-FR`, que la preuve fixe donc.
+  À durcir dans un lot dédié (démarrage, `LocaleSettings.useDeviceLocale`), hors PUB.
+- Page de connexion, 390 px : « Vous êtes tuteur et vous préparez l'appareil d'un élève ? »
+  renvoie le « ? » seul à la ligne (espace ordinaire au lieu d'une espace insécable). Hors
+  périmètre de la présentation ; à reprendre avec les libellés de `/connexion`.
+
+### Statut de preuve (PUB-1b)
+
+Spécifié : oui. Présent dans le code : oui (inchangé depuis PUB-1). Testé localement : oui
+(test D15 ajouté). **Exécuté dans un vrai navigateur, en local : oui** (Chromium 141, build
+release). Testé sur staging : non. Déployé : non.
