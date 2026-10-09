@@ -237,6 +237,16 @@ List<Override> surchargesDemoAdmin({
       ),
     ),
     demandesProvider.overrideWith((Ref ref) async => const <Demande>[]),
+    // CARTES-PERSO-1c (revue CARTES-PERSO-1b, reserve 2) : la direction lit
+    // les memes cartes de demonstration que l'enseignant et le tuteur, en
+    // lecture seule. Le retrait par la direction est une ecriture serveur
+    // (CARTES-BR-02) : la capacite reste fausse, aucune ecriture simulee.
+    portCartesClasseProvider.overrideWith(
+      (Ref _) => PortCartesClasseDemo(
+        peutModifier: false,
+        cartes: cartesClasseDemo(DateTime.now()),
+      ),
+    ),
     // ALERTE-1 : alertes fictives, une urgente en tete ; une seconde urgente
     // arrive en cours de visite, sans recharger (temps reel simule).
     if (avecAlertes)
