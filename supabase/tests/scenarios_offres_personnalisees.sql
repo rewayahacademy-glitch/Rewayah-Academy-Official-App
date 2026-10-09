@@ -98,6 +98,23 @@ BEGIN
     RAISE EXCEPTION 'F1 idempotence: la répétition a changé d''offre: %', v_reponse;
   END IF;
 
+  -- Après l'ouverture, un nouvel élève intéressé au même créneau reçoit
+  -- l'offre déjà publique au lieu d'attendre un second quota complet.
+  PERFORM set_config(
+    'test.uid',
+    'f1490000-0000-0000-0000-000000000007',
+    true
+  );
+  v_reponse := public.demander_creneau_personnalise(
+    'f1490000-0000-0000-0000-000000000007',
+    'Europe/Paris', ARRAY[2, 4, 6]::smallint[], 3::smallint
+  );
+  IF v_reponse->>'etat' <> 'offre_ouverte'
+     OR v_reponse->>'offre_id' IS DISTINCT FROM v_offre::text THEN
+    RAISE EXCEPTION 'F1 offre existante: un nouvel élève n''a pas reçu l''offre publiée: %',
+      v_reponse;
+  END IF;
+
   -- Une autre identité ne peut pas demander le créneau pour cet adulte.
   PERFORM set_config(
     'test.uid',
