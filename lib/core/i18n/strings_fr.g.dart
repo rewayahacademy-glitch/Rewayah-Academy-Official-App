@@ -2303,6 +2303,7 @@ class Traductions$enseignant$fr {
 	late final Traductions$enseignant$bienvenue$fr bienvenue = Traductions$enseignant$bienvenue$fr.internal(_root);
 	late final Traductions$enseignant$photo$fr photo = Traductions$enseignant$photo$fr.internal(_root);
 	late final Traductions$enseignant$journee$fr journee = Traductions$enseignant$journee$fr.internal(_root);
+	late final Traductions$enseignant$remplacements$fr remplacements = Traductions$enseignant$remplacements$fr.internal(_root);
 	late final Traductions$enseignant$salle$fr salle = Traductions$enseignant$salle$fr.internal(_root);
 	late final Traductions$enseignant$cahier$fr cahier = Traductions$enseignant$cahier$fr.internal(_root);
 	late final Traductions$enseignant$profil$fr profil = Traductions$enseignant$profil$fr.internal(_root);
@@ -9206,6 +9207,48 @@ class Traductions$enseignant$journee$fr {
 
 	late final Traductions$enseignant$journee$absence$fr absence = Traductions$enseignant$journee$absence$fr.internal(_root);
 	late final Traductions$enseignant$journee$remplacement$fr remplacement = Traductions$enseignant$journee$remplacement$fr.internal(_root);
+}
+
+// Path: enseignant.remplacements
+class Traductions$enseignant$remplacements$fr {
+	Traductions$enseignant$remplacements$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Remplacements'
+	String get titre => 'Remplacements';
+
+	/// fr: 'Ouverts à tous les enseignants : le premier qui accepte assure la séance.'
+	String get contexte => 'Ouverts à tous les enseignants : le premier qui accepte assure la séance.';
+
+	/// fr: 'Remplacement urgent : {jour} {heure}'
+	String urgentTitre({required Object jour, required Object heure}) => 'Remplacement urgent : ${jour} ${heure}';
+
+	/// fr: 'Un enseignant est absent. Assurez cette séance à sa place : elle vous sera payée après validation en fin de mois.'
+	String get urgentPhrase => 'Un enseignant est absent. Assurez cette séance à sa place : elle vous sera payée après validation en fin de mois.';
+
+	/// fr: 'Vos remplacements'
+	String get vosRemplacements => 'Vos remplacements';
+
+	/// fr: 'Déjà pris par un collègue'
+	String get prisTitre => 'Déjà pris par un collègue';
+
+	/// fr: 'Pris par un collègue'
+	String get prisPastille => 'Pris par un collègue';
+
+	/// fr: 'Un collègue a accepté cette séance juste avant vous. Rien n'a changé dans votre planning.'
+	String get prisAvantVous => 'Un collègue a accepté cette séance juste avant vous. Rien n\'a changé dans votre planning.';
+
+	/// fr: 'C'est confirmé : vous assurez cette séance. Elle s'ajoute à vos remplacements.'
+	String get acceptee => 'C\'est confirmé : vous assurez cette séance. Elle s\'ajoute à vos remplacements.';
+
+	/// fr: 'Les remplacements à assurer n'ont pas pu être chargés : le serveur n'a pas répondu. Réessayez dans un instant.'
+	String get erreur => 'Les remplacements à assurer n\'ont pas pu être chargés : le serveur n\'a pas répondu. Réessayez dans un instant.';
+
+	/// fr: 'Les remplacements à assurer n'ont pas pu être chargés'
+	String get sansDonnees => 'Les remplacements à assurer n\'ont pas pu être chargés';
 }
 
 // Path: enseignant.salle
@@ -19672,6 +19715,17 @@ extension on Traductions {
 			'enseignant.journee.remplacement.titre' => 'Assurer ce remplacement ?',
 			'enseignant.journee.remplacement.assurer' => 'Assurer ce remplacement',
 			'enseignant.journee.remplacement.pasCetteFois' => 'Pas cette fois',
+			'enseignant.remplacements.titre' => 'Remplacements',
+			'enseignant.remplacements.contexte' => 'Ouverts à tous les enseignants : le premier qui accepte assure la séance.',
+			'enseignant.remplacements.urgentTitre' => ({required Object jour, required Object heure}) => 'Remplacement urgent : ${jour} ${heure}',
+			'enseignant.remplacements.urgentPhrase' => 'Un enseignant est absent. Assurez cette séance à sa place : elle vous sera payée après validation en fin de mois.',
+			'enseignant.remplacements.vosRemplacements' => 'Vos remplacements',
+			'enseignant.remplacements.prisTitre' => 'Déjà pris par un collègue',
+			'enseignant.remplacements.prisPastille' => 'Pris par un collègue',
+			'enseignant.remplacements.prisAvantVous' => 'Un collègue a accepté cette séance juste avant vous. Rien n\'a changé dans votre planning.',
+			'enseignant.remplacements.acceptee' => 'C\'est confirmé : vous assurez cette séance. Elle s\'ajoute à vos remplacements.',
+			'enseignant.remplacements.erreur' => 'Les remplacements à assurer n\'ont pas pu être chargés : le serveur n\'a pas répondu. Réessayez dans un instant.',
+			'enseignant.remplacements.sansDonnees' => 'Les remplacements à assurer n\'ont pas pu être chargés',
 			'enseignant.salle.reference' => ({required Object page, required Object total, required Object reference}) => 'Présenté : page ${page} sur ${total} · ${reference}',
 			'enseignant.salle.rien' => 'Rien n\'est présenté',
 			'enseignant.salle.rienInvitation' => 'Ouvrez le Coran pour montrer une page à votre Classe.',
@@ -19890,6 +19944,8 @@ extension on Traductions {
 			'enseignant.creneaux.etatEnAttente' => 'En attente de validation',
 			'enseignant.creneaux.etatLimite' => 'Limite de charge atteinte',
 			'enseignant.creneaux.limiteDetail' => 'Votre charge actuelle ne permet pas de réserver une Classe supplémentaire.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.creneaux.aucuneClasse' => 'Aucune Classe compatible pour le moment',
 			'enseignant.creneaux.aucuneClasseDetail' => 'Modifiez vos disponibilités si votre emploi du temps a changé.',
 			'enseignant.creneaux.reserver' => 'Réserver cette Classe',
@@ -19901,8 +19957,6 @@ extension on Traductions {
 			'enseignant.creneaux.cleNiveau' => 'Niveau',
 			'enseignant.creneaux.cleLangue' => 'Langue',
 			'enseignant.creneaux.cleRecurrence' => 'Récurrence',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.cleFuseau' => 'Fuseau de référence',
 			'enseignant.creneaux.cleHeureLocale' => 'Heure locale',
 			'enseignant.creneaux.cleDuree' => 'Durée',
@@ -20404,6 +20458,8 @@ extension on Traductions {
 			'tc.classe.action.noter' => 'Noter',
 			'tc.classe.action.signaler' => 'Signaler un besoin',
 			'tc.classe.action.contexte' => 'Ouvrir le contexte',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.rappel.recu' => 'Le professeur vous appelle',
 			'tc.classe.rappel.echec' => 'Le rappel n\'a pas pu être envoyé',
 			'tc.classe.rappel.echecDroit' => 'Votre accès à cette séance ne permet pas d\'appeler un élève',
@@ -20415,8 +20471,6 @@ extension on Traductions {
 			'tc.classe.recitation.personne' => 'Personne ne récite',
 			'tc.classe.recitation.arreter' => 'Arrêter la récitation',
 			'tc.classe.support.aucun' => 'Aucun support présenté',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.support.aucunDetail' => 'Ouvrez la Bibliothèque pour présenter un support à la Classe.',
 			'tc.classe.support.bibliotheque' => 'Bibliothèque',
 			'tc.classe.support.bibliothequeAbsente' => 'Bibliothèque non branchée',
@@ -20918,6 +20972,8 @@ extension on Traductions {
 			'adulte.reprise.motif' => 'Motif',
 			'adulte.reprise.motifDeces' => 'Décès déclaré du titulaire',
 			'adulte.reprise.deposeeLe' => 'Déposée le',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.reprise.etat' => 'État',
 			'adulte.reprise.etats.deposee' => 'Déposée',
 			'adulte.reprise.etats.refuseeParTitulaire' => 'Refusée par le titulaire',
@@ -20929,8 +20985,6 @@ extension on Traductions {
 			'adulte.reprise.phrases.refuseeParTitulaire' => 'Le titulaire du foyer a refusé cette demande. L\'administration en est informée. Aucune permission du foyer n\'est transférée.',
 			'adulte.reprise.phrases.attenteAdministration' => 'Le titulaire n\'a pas répondu. Rien n\'est transféré automatiquement : l\'administration doit encore examiner la demande.',
 			'adulte.reprise.phrases.validee' => 'L\'administration a validé la demande. Vous êtes désormais titulaire du foyer.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.reprise.phrases.refusee' => 'L\'administration a refusé la demande. Aucune permission du foyer n\'est transférée.',
 			'adulte.reprise.titulaire.notification' => 'Une demande de reprise de votre foyer a été déposée en indiquant votre décès.',
 			'adulte.reprise.titulaire.consigne' => 'Si cette demande est erronée, refusez-la.',
