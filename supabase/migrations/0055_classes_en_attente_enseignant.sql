@@ -235,6 +235,19 @@ BEGIN
     'classe_creee_depuis_regroupement', 'groupes', v_groupe::text,
     jsonb_build_object('regroupement_id', p_regroupement_id)
   );
+  IF pg_catalog.to_regclass('public.notifications') IS NOT NULL THEN
+    EXECUTE $sql$
+      INSERT INTO public.notifications
+        (destinataire, foyer_id, evenement, params, destination)
+      SELECT DISTINCT h.primary_guardian_id, h.id, 'classe_validee',
+             jsonb_build_object('groupe_id', $1), '/tuteur/demandes'
+      FROM public.groupe_membres gm
+      JOIN public.profiles p ON p.id = gm.student_id
+      JOIN public.households h ON h.id = p.household_id
+      WHERE gm.groupe_id = $1 AND gm.left_at IS NULL
+        AND h.primary_guardian_id IS NOT NULL
+    $sql$ USING v_groupe;
+  END IF;
   RETURN v_groupe;
 END;
 $function$;
@@ -264,10 +277,14 @@ BEGIN
 
   IF NOT EXISTS (
     SELECT 1 FROM public.profiles p
+    JOIN public.teacher_profiles tp ON tp.profile_id = p.id
     WHERE p.id = p_teacher_profile_id
       AND p.role = 'teacher' AND p.deleted_at IS NULL
       AND p.account_status IN ('active', 'provisional_active')
       AND (p.access_until IS NULL OR p.access_until > now())
+      AND tp.deleted_at IS NULL
+      AND tp.kyc_status = 'approved'
+      AND v_groupe.langue_code = ANY(tp.languages)
   ) THEN
     RAISE EXCEPTION 'enseignant indisponible';
   END IF;
@@ -280,6 +297,30 @@ BEGIN
     'enseignant_affecte_classe', 'groupes', p_groupe_id::text,
     jsonb_build_object('teacher_id', p_teacher_profile_id)
   );
+  IF pg_catalog.to_regclass('public.notifications') IS NOT NULL THEN
+    EXECUTE $sql$
+      INSERT INTO public.notifications
+        (destinataire, foyer_id, evenement, params, destination)
+      SELECT DISTINCT h.primary_guardian_id, h.id, 'enseignant_affecte',
+             jsonb_build_object(
+               'groupe_id', $1,
+               'debut_local', to_char(s.started_at AT TIME ZONE g.timezone_iana,
+                                      'YYYY-MM-DD"T"HH24:MI:SS')
+             ),
+             '/tuteur/demandes'
+      FROM public.groupe_membres gm
+      JOIN public.profiles p ON p.id = gm.student_id
+      JOIN public.households h ON h.id = p.household_id
+      JOIN public.groupes g ON g.id = gm.groupe_id
+      JOIN public.sessions s ON s.groupe_id = g.id AND s.deleted_at IS NULL
+      WHERE gm.groupe_id = $1 AND gm.left_at IS NULL
+        AND h.primary_guardian_id IS NOT NULL
+        AND s.started_at = (
+          SELECT min(s2.started_at) FROM public.sessions s2
+          WHERE s2.groupe_id = g.id AND s2.deleted_at IS NULL
+        )
+    $sql$ USING p_groupe_id;
+  END IF;
 END;
 $function$;
 
