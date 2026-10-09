@@ -55,10 +55,12 @@ VALUES
   ('b0800000-0000-0000-0000-000000000202',
    'b0800000-0000-0000-0000-000000000006', 'enfant', 5, 'B08 classe B', 2, 18, 'Europe/Paris');
 
-INSERT INTO public.groupe_membres (groupe_id, student_id)
+INSERT INTO public.groupe_membres (groupe_id, student_id, joined_at)
 VALUES
-  ('b0800000-0000-0000-0000-000000000201', 'b0800000-0000-0000-0000-000000000003'),
-  ('b0800000-0000-0000-0000-000000000202', 'b0800000-0000-0000-0000-000000000005');
+  ('b0800000-0000-0000-0000-000000000201',
+   'b0800000-0000-0000-0000-000000000003', now() - interval '3 hours'),
+  ('b0800000-0000-0000-0000-000000000202',
+   'b0800000-0000-0000-0000-000000000005', now() - interval '3 hours');
 
 INSERT INTO public.sessions
   (id, teacher_id, started_at, ended_at, status, session_type,
