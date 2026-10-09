@@ -548,6 +548,12 @@ begin
     'evt_n2_0005', 'participant_left', v_room,
     'b2000000-0000-0000-0000-000000000003', now(), '{}'::jsonb);
 
+  -- La lecture de son etat est faite par Idriss lui-meme : 0042 borne
+  -- etat_presence au compte concerne si l'appelant n'est pas admin/enseignant.
+  perform set_config('test.uid', 'b2000000-0000-0000-0000-000000000003', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"student","household_id":"b2ffffff-0000-0000-0000-00000000000a"}}',
+    true);
   v_etat := public.etat_presence(
     'b2aaaaaa-0000-0000-0000-00000000000a',
     'b2000000-0000-0000-0000-000000000003');
