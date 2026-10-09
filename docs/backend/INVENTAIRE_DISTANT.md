@@ -88,3 +88,10 @@ Lecture seule le 2026-10-09. Les entrées ci-dessous sont les noms et versions r
 | `20260921055048` | `0040_tuteur_masque_et_annonce_reservee_a_son_enfant` |
 | `20260921084435` | `0041_les_surfaces_d_invisibilite_oubliees_par_0040` |
 | `20260921133843` | `0042_etat_presence_fermee_et_jeton_video_verifie_le_compte` |
+
+
+## Provenance des sources 0039–0042
+
+Lecture GitHub en lecture seule : la branche candidate `observation/lot-2026-09-21` existe à `0bfc9e46c0ddc4a013273b8ced8a49791e327ba8` et contient les quatre fichiers SQL `0039` à `0042` absents de la branche `ccr-1b1bfa0b-m1kvkk`. Cela identifie une source candidate, sans prouver ici son identité caractère par caractère avec les statements PROD ni autoriser son intégration dans l’arbre actif. La règle de cohabitation réserve les nouvelles migrations au numéro 0044 et suivants; les sources historiques restent donc inchangées dans ce lot.
+
+Le correctif distinct `0043_autoriser_jeton_video_verifie_le_bon_compte` est décrit comme archivé hors dépôt dans le blueprint BR-0B, mais aucun fichier source correspondant n’a été trouvé dans la branche d’intégration ni dans les quatre documents transmis. Les questions B-01-Q1 et B-01-Q2 consignent les décisions de provenance/intégration encore nécessaires. Aucun SQL distant n’a été exécuté.
