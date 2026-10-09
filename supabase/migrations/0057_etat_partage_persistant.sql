@@ -3,7 +3,7 @@
 -- les gardes et fournit l'effacement explicite après clôture réelle.
 begin;
 
-revoke insert, update, delete on public.session_shared_content
+revoke all on public.session_shared_content
   from public, anon, authenticated, agent_ro;
 grant select on public.session_shared_content to authenticated;
 
