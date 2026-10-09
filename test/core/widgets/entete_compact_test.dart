@@ -23,7 +23,9 @@ const String _sousTitre = 'Examinez les dossiers prêts pour une décision.';
 double _taille(WidgetTester tester, String texte) {
   final RenderParagraph p = tester.renderObject<RenderParagraph>(
     find.byWidgetPredicate(
-      (Widget w) => w is RichText && w.text.toPlainText() == texte,
+      (Widget w) =>
+          w is RichText &&
+          w.text.toPlainText().replaceAll('\u2060', '') == texte,
     ),
   );
   return p.textScaler.scale(p.text.style!.fontSize!);
@@ -83,6 +85,29 @@ void main() {
     expect(
       _taille(tester, 'Classe Al-Badr · Jeudi 24 septembre'),
       greaterThan(44),
+    );
+    // Le nom compose reste entier : « Al- » et « Badr » sur la meme ligne
+    // (avant : « Classe Al- / Badr »).
+    final RenderParagraph p = tester.renderObject<RenderParagraph>(
+      find.descendant(
+        of: find.byKey(EnteteCompact.titreKey),
+        matching: find.byType(RichText),
+      ),
+    );
+    final String brut = p.text.toPlainText();
+    final int al = brut.indexOf('Al-');
+    final int badr = brut.indexOf('Badr');
+    double haut(int debut, int fin) => p
+        .getBoxesForSelection(
+          TextSelection(baseOffset: debut, extentOffset: fin),
+        )
+        .first
+        .top;
+    expect(haut(al, al + 3), haut(badr, badr + 4));
+    // Le lecteur d'ecran lit le texte d'origine.
+    expect(
+      find.bySemanticsLabel('Classe Al-Badr · Jeudi 24 septembre'),
+      findsOneWidget,
     );
   });
 
