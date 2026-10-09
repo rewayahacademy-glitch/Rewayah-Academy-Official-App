@@ -367,6 +367,7 @@ class _Traductions$salle$seance$ar extends Traductions$salle$seance$fr {
 	@override String get pagePrecedente => 'الصفحة السابقة';
 	@override String get pageSuivante => 'الصفحة التالية';
 	@override late final _Traductions$salle$seance$outils$ar outils = _Traductions$salle$seance$outils$ar._(_root);
+	@override late final _Traductions$salle$seance$ecriture$ar ecriture = _Traductions$salle$seance$ecriture$ar._(_root);
 	@override late final _Traductions$salle$seance$rail$ar rail = _Traductions$salle$seance$rail$ar._(_root);
 	@override String get fermerPanneau => 'إغلاق اللوحة';
 	@override late final _Traductions$salle$seance$panneauSupports$ar panneauSupports = _Traductions$salle$seance$panneauSupports$ar._(_root);
@@ -697,7 +698,28 @@ class _Traductions$salle$seance$outils$ar extends Traductions$salle$seance$outil
 	@override String get pointeur => 'المؤشر';
 	@override String get marquer => 'وضع علامة';
 	@override String get masquer => 'إخفاء';
-	@override String get annoter => 'كتابة ملاحظات';
+	@override String get ecrire => 'كتابة';
+	@override String get aideLecture => 'بدون أداة، تُقرأ الصفحة: يحرّكها إصبع واحد عند تكبيرها.';
+	@override String get aidePointeur => 'المؤشر: المس الصفحة لتشير إلى مقطع، ولا يبقى أي أثر.';
+	@override String get aideEcrire => 'الكتابة: اكتب على الصفحة، وإصبعان يحرّكانها.';
+}
+
+// Path: salle.seance.ecriture
+class _Traductions$salle$seance$ecriture$ar extends Traductions$salle$seance$ecriture$fr {
+	_Traductions$salle$seance$ecriture$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get palette => 'أدوات الكتابة';
+	@override String get terminer => 'إنهاء';
+	@override String get couleur => 'اللون';
+	@override String get couleurAide => 'اللون يدل على قصد الخط، للصف كله.';
+	@override String get epaisseur => 'السُّمك';
+	@override String get epaisseurAide => 'رفيع لكتابة كلمة، وسميك للإحاطة.';
+	@override String get fine => 'رفيع';
+	@override String get moyenne => 'متوسط';
+	@override String get epaisse => 'سميك';
 }
 
 // Path: salle.seance.rail
@@ -2434,7 +2456,19 @@ extension on TraductionsAr {
 			'salle.seance.outils.pointeur' => 'المؤشر',
 			'salle.seance.outils.marquer' => 'وضع علامة',
 			'salle.seance.outils.masquer' => 'إخفاء',
-			'salle.seance.outils.annoter' => 'كتابة ملاحظات',
+			'salle.seance.outils.ecrire' => 'كتابة',
+			'salle.seance.outils.aideLecture' => 'بدون أداة، تُقرأ الصفحة: يحرّكها إصبع واحد عند تكبيرها.',
+			'salle.seance.outils.aidePointeur' => 'المؤشر: المس الصفحة لتشير إلى مقطع، ولا يبقى أي أثر.',
+			'salle.seance.outils.aideEcrire' => 'الكتابة: اكتب على الصفحة، وإصبعان يحرّكانها.',
+			'salle.seance.ecriture.palette' => 'أدوات الكتابة',
+			'salle.seance.ecriture.terminer' => 'إنهاء',
+			'salle.seance.ecriture.couleur' => 'اللون',
+			'salle.seance.ecriture.couleurAide' => 'اللون يدل على قصد الخط، للصف كله.',
+			'salle.seance.ecriture.epaisseur' => 'السُّمك',
+			'salle.seance.ecriture.epaisseurAide' => 'رفيع لكتابة كلمة، وسميك للإحاطة.',
+			'salle.seance.ecriture.fine' => 'رفيع',
+			'salle.seance.ecriture.moyenne' => 'متوسط',
+			'salle.seance.ecriture.epaisse' => 'سميك',
 			'salle.seance.rail.navigation' => 'التنقل',
 			'salle.seance.rail.marque' => 'Rewayah',
 			'salle.seance.rail.sousMarque' => 'Academy',
@@ -2772,6 +2806,8 @@ extension on TraductionsAr {
 			'tc.groupe.temps.resteHeures' => ({required Object heures, required Object minutes}) => 'المتبقي ⁨${heures}⁩ س ⁨${minutes}⁩ د',
 			'tc.groupe.temps.enCours' => ({required Object reste}) => 'حصة مباشرة · ⁨${reste}⁩',
 			'tc.groupe.temps.enDirect' => 'مباشر',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.temps.prolongee' => 'الحصة ما زالت مباشرة',
 			'tc.groupe.temps.depassement' => 'تجاوز الوقت',
 			'tc.groupe.temps.terminee' => 'انتهى الدرس',
@@ -2784,8 +2820,6 @@ extension on TraductionsAr {
 			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '⁨${heure}⁩ ⁨${ville}⁩',
 			'tc.groupe.dst.j30' => 'تغيير التوقيت بعد شهر',
 			'tc.groupe.dst.j7' => 'تغيير التوقيت الأسبوع القادم',
-			_ => null,
-		} ?? switch (path) {
 			'tc.groupe.dst.j1' => 'تغيير التوقيت غدًا',
 			'tc.groupe.dst.detail' => ({required Object avant, required Object apres}) => 'سينتقل درسك من ⁨${avant}⁩ إلى ⁨${apres}⁩.',
 			'tc.groupe.session.conseilAppareil' => 'يُنصح بجهاز لوحي أو حاسوب للدرس. الهاتف مدعوم أيضًا.',

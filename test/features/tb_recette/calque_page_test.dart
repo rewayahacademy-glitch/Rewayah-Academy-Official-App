@@ -58,6 +58,18 @@ const List<(String, Size)> _ecrans = <(String, Size)>[
 const PointNormalise _depart = PointNormalise(0.40, 0.45);
 const PointNormalise _arrivee = PointNormalise(0.55, 0.52);
 
+/// TB-7b : outil arme, les Commandes s'ouvrent sur « Outils » ; la
+/// Lecture (zoom) est sous « Support ».
+Future<void> _ongletSupport(WidgetTester tester) async {
+  final Finder support = find.descendant(
+    of: find.byKey(CommandesPedagogiques.cleOnglets),
+    matching: find.text(t.salle.seance.commandes.ongletSupport),
+  );
+  if (support.evaluate().isEmpty) return;
+  await tester.tap(support);
+  await tester.pump();
+}
+
 Future<void> _attendre(WidgetTester tester) async {
   await tester.pump();
   await tester.pump();
@@ -482,6 +494,7 @@ void main() {
       // surface ; la mesure « avant » se prend a place egale.
       await tester.tap(find.byKey(DeclencheurCommandes.cle));
       await _attendre(tester);
+      await _ongletSupport(tester);
       final Rect avant = tester.getRect(_page);
       expect(tester.getRect(_couche), avant);
       final Offset centreAvant = _surEcran(
@@ -587,6 +600,7 @@ void main() {
         if (clics > 0) {
           await tester.tap(find.byKey(DeclencheurCommandes.cle));
           await _attendre(tester);
+          await _ongletSupport(tester);
           final Finder plus = find.byWidgetPredicate(
             (Widget w) =>
                 w is Pressable &&
@@ -827,6 +841,7 @@ void main() {
       // remonte ; l'encre posee reste peinte (relue du depot).
       await tester.tap(find.byKey(DeclencheurCommandes.cle));
       await _attendre(tester);
+      await _ongletSupport(tester);
       final (double? luAvant, double attenduAvant) = await encreAuMilieu(
         tester,
       );

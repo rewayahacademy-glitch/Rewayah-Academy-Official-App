@@ -11,17 +11,24 @@
 // Le panneau est pose par la salle dans [PanneauSeance] : feuille du bas au
 // telephone (au-dessus de la barre de l'appel, UX-07), panneau a droite
 // ailleurs. Il n'est rendu que pour l'enseignant ([VueSeance.voitCommandes]) ;
-// chaque entree n'existe que si son rappel existe (lib/CLAUDE.md). Les outils
-// d'ecriture eux-memes (Stylo, Surligner, Gomme, Annuler, palette courte et
-// « Terminer ») viennent avec TB-7b : ils ne sont pas rendus ici.
+// chaque entree n'existe que si son rappel existe (lib/CLAUDE.md).
+//
+// TB-7b (CMD-02, CMD-03) : l'onglet « Outils » porte la ligne d'outils
+// primaires (Pointeur, Ecrire, puis Marquer et Masquer), la phrase qui
+// explique l'outil retenu, et sous « Ecrire » la barre d'ecriture et ses
+// options (ecriture_seance.dart). Le panneau s'ouvre sur « Outils » tant
+// qu'un outil est retenu.
 
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_outils/etat_outils.dart';
+import '../../core/tc_outils/port_dock_hote.dart' show OutilDock;
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
@@ -32,6 +39,7 @@ import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/menu_actions.dart';
 import 'actions_seance.dart';
 import 'barre_support.dart';
+import 'ecriture_seance.dart';
 import 'outils_enseignement.dart';
 import 'rangement_support.dart';
 import 'salle_seance.dart' show BoutonPanneau;
@@ -109,7 +117,7 @@ class DeclencheurCommandes extends StatelessWidget {
 }
 
 /// Le contenu du panneau « Commandes ».
-class CommandesPedagogiques extends StatefulWidget {
+class CommandesPedagogiques extends ConsumerStatefulWidget {
   /// Cree le contenu.
   const CommandesPedagogiques({
     required this.vue,
@@ -192,11 +200,27 @@ class CommandesPedagogiques extends StatefulWidget {
   }
 
   @override
-  State<CommandesPedagogiques> createState() => _CommandesPedagogiquesState();
+  ConsumerState<CommandesPedagogiques> createState() =>
+      _CommandesPedagogiquesState();
 }
 
-class _CommandesPedagogiquesState extends State<CommandesPedagogiques> {
-  OngletCommandes _onglet = OngletCommandes.support;
+class _CommandesPedagogiquesState extends ConsumerState<CommandesPedagogiques> {
+  /// TB-7b : un outil retenu (Pointeur, Ecrire) rouvre le panneau sur
+  /// « Outils », la ou il se change (palette courte, plan V2 §4.2).
+  late OngletCommandes _onglet = ref.read(etatOutilsProvider).outilActif == null
+      ? OngletCommandes.support
+      : OngletCommandes.outils;
+
+  /// TB-7b : choisir « Ecrire » alors que la classe voit le support seul
+  /// (notes cachees) passe a « Avec notes » : une note ecrite se voit.
+  void _outil(OutilEnseignement outil) {
+    if (outil == OutilEnseignement.ecrire &&
+        ref.read(etatOutilsProvider).outilActif == OutilDock.stylet &&
+        widget.vue.vueSurface == VueSurface.supportSeul) {
+      widget.actions.onAffichage?.call(AffichagePartage.avecNotes);
+    }
+    widget.actions.onOutil?.call(outil);
+  }
 
   /// TB-9 : un support vient d'etre range depuis ce panneau ; le retour
   /// discret « Support range » se montre tant qu'aucun support n'est
@@ -294,12 +318,16 @@ class _CommandesPedagogiquesState extends State<CommandesPedagogiques> {
       ...switch (onglet) {
         OngletCommandes.support => _support(context),
         OngletCommandes.outils => <Widget>[
-          // Le Pointeur en tete (ordre de `OutilEnseignement`), puis les
-          // capacites existantes ; l'outil choisi reste local (CLV-06).
+          // Le Pointeur en tete (ordre de `OutilEnseignement`), puis Ecrire
+          // et les capacites existantes ; l'outil choisi reste local.
           OutilsEnseignement(
-            onOutil: widget.actions.onOutil,
+            onOutil: widget.actions.onOutil == null ? null : _outil,
             forme: FormeOutils.rangee,
+            avecEcrire: widget.vue.voitEcriture,
           ),
+          const AideOutil(),
+          if (ecritSurLaSurface(ref, widget.vue))
+            EcritureSeance(vue: widget.vue),
         ],
       },
     ];

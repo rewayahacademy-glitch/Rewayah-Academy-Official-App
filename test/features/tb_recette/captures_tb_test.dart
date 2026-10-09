@@ -777,6 +777,14 @@ void main() {
           if (zoom) {
             await tester.tap(find.byKey(DeclencheurCommandes.cle));
             await stabiliser(tester);
+            // TB-7b : outil arme, les Commandes s'ouvrent sur « Outils ».
+            await tester.tap(
+              find.descendant(
+                of: find.byKey(CommandesPedagogiques.cleOnglets),
+                matching: find.text(t.salle.seance.commandes.ongletSupport),
+              ),
+            );
+            await stabiliser(tester);
             final Finder plus = find.byWidgetPredicate(
               (Widget w) =>
                   w is Pressable &&

@@ -10,8 +10,11 @@ import 'package:flutter/foundation.dart';
 import 'bibliotheque_seance.dart';
 import 'vue_seance.dart';
 
-/// Les outils d'enseignement (CLV-06), enseignant seulement.
-enum OutilEnseignement { pointeur, marquer, masquer, annoter }
+/// Les outils d'enseignement (CLV-06), enseignant seulement. TB-7b (plan V2
+/// §4.2, §20) : « Ecrire » remplace « Annoter » et suit le Pointeur dans la
+/// ligne d'outils primaires ; Marquer et Masquer sont les capacites
+/// existantes, preservees.
+enum OutilEnseignement { pointeur, ecrire, marquer, masquer }
 
 /// Les rappels d'une salle de seance.
 @immutable

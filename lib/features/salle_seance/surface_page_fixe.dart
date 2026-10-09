@@ -12,9 +12,16 @@
 // TB-7a (plan V2 §9) : le calque porte `CoucheAnnotation`, au repere de la
 // page ([ReperePage]) ; la page et ses notes sont lues dans la meme
 // transformation locale (zoom), qui remplace le `Transform.scale` de TB-6.
+//
+// TB-7b (plan V2 §7) : gestes. En lecture, un doigt (ou la souris, ou le
+// stylet) deplace la page agrandie ; avec Ecrire, un doigt ecrit et deux
+// doigts deplacent (un doigt deplace des qu'un stylet s'est montre) ; avec
+// le Pointeur, un doigt montre un passage, sans trace, et deux doigts
+// deplacent. Le deplacement est local, borne a la page, jamais diffuse.
 
 import 'dart:math' as math;
 
+import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -29,6 +36,7 @@ import '../../core/tc_outils/ancrage_annotation.dart' show CarteDesBlocs;
 import '../../core/tc_outils/annotation_layer.dart' show TraitVectoriel;
 import '../../core/tc_outils/etat_outils.dart';
 import '../../core/tc_outils/port_dock_hote.dart';
+import '../../core/theme/app_contour.dart';
 import '../../core/theme/app_elevation.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
@@ -51,8 +59,22 @@ Rect rectanglePage({required double ratio, required Size boite}) {
   return Alignment.center.inscribe(tailles.destination, Offset.zero & boite);
 }
 
+/// Le deplacement [voulu] de la page, borne pour qu'elle ne quitte jamais sa
+/// [boite] : une page plus petite que la boite (zoom 100 %) ne bouge pas ;
+/// agrandie, elle se deplace jusqu'a son bord, pas au-dela.
+Offset borneDeplacement({
+  required Offset voulu,
+  required Rect page,
+  required Size boite,
+  required double zoom,
+}) {
+  final double x = math.max(0, (page.width * zoom - boite.width) / 2);
+  final double y = math.max(0, (page.height * zoom - boite.height) / 2);
+  return Offset(voulu.dx.clamp(-x, x), voulu.dy.clamp(-y, y));
+}
+
 /// La surface a page fixe : [VueSeance.vueSurface] dit quoi montrer.
-class SurfacePageFixe extends StatelessWidget {
+class SurfacePageFixe extends ConsumerStatefulWidget {
   const SurfacePageFixe({
     required this.vue,
     required this.surface,
@@ -87,6 +109,12 @@ class SurfacePageFixe extends StatelessWidget {
   /// La cle de la phrase du tableau libre (enseignant).
   static const Key cleConsigne = ValueKey<String>('surface-consigne');
 
+  /// TB-7b : la cle du calque du Pointeur (monte quand il est retenu).
+  static const Key clePointage = ValueKey<String>('surface-pointage');
+
+  /// TB-7b : la cle de l'indication du Pointeur, tant que le doigt est pose.
+  static const Key clePointeur = ValueKey<String>('surface-pointeur');
+
   /// La hauteur de la phrase du §12 et de sa marge dans une surface de
   /// largeur [largeur], a l'echelle du texte de l'appareil : en dessous, la
   /// phrase serait rognee (revue du 09/10, 320 x2). Le style est celui de la
@@ -112,7 +140,80 @@ class SurfacePageFixe extends StatelessWidget {
   }
 
   @override
+  ConsumerState<SurfacePageFixe> createState() => _SurfacePageFixeState();
+}
+
+class _SurfacePageFixeState extends ConsumerState<SurfacePageFixe> {
+  /// Le deplacement local de la page (points de la surface), voulu ; il est
+  /// borne a chaque rendu (la boite et le zoom changent).
+  Offset _deplacement = Offset.zero;
+
+  /// Les pointeurs poses sur la surface, et leur appareil.
+  final Map<int, PointerDeviceKind> _poses = <int, PointerDeviceKind>{};
+
+  /// Un stylet s'est montre : avec Ecrire, le doigt deplace (plan V2 §7).
+  bool _styletVu = false;
+
+  /// Le dernier repere rendu (bornes du deplacement).
+  Rect _page = Rect.zero;
+  Size _boite = Size.zero;
+
+  @override
+  void didUpdateWidget(SurfacePageFixe ancien) {
+    super.didUpdateWidget(ancien);
+    // « Ajuster a l'ecran » (zoom 100 %) recentre aussi la page.
+    if (widget.zoom != ancien.zoom && widget.zoom <= 1) {
+      _deplacement = Offset.zero;
+    }
+  }
+
+  void _poser(PointerDownEvent e) {
+    _poses[e.pointer] = e.kind;
+    if (e.kind == PointerDeviceKind.stylus ||
+        e.kind == PointerDeviceKind.invertedStylus) {
+      _styletVu = true;
+    }
+  }
+
+  void _lever(PointerEvent e) => _poses.remove(e.pointer);
+
+  /// Les pointeurs qui deplacent la page, selon l'outil retenu.
+  List<int> _quiDeplacent(EtatOutils etat) {
+    final VueSeance vue = widget.vue;
+    final bool ecrit = vue.peutEcrire && etat.styletArme;
+    final bool pointe = vue.peutPointer && etat.pointeurArme;
+    final List<int> doigts = <int>[
+      for (final MapEntry<int, PointerDeviceKind> p in _poses.entries)
+        if (p.value == PointerDeviceKind.touch) p.key,
+    ];
+    if (!ecrit && !pointe) return _poses.keys.toList();
+    if (doigts.length >= 2) return doigts;
+    if (ecrit && _styletVu) return doigts;
+    return const <int>[];
+  }
+
+  void _bouger(PointerMoveEvent e) {
+    final List<int> deplacent = _quiDeplacent(ref.read(etatOutilsProvider));
+    if (!deplacent.contains(e.pointer)) return;
+    // Deux doigts qui glissent ensemble deplacent la page de leur pas
+    // commun, pas du double.
+    final Offset voulu = borneDeplacement(
+      voulu: _deplacement + e.delta / deplacent.length.toDouble(),
+      page: _page,
+      boite: _boite,
+      zoom: widget.zoom,
+    );
+    if (voulu != _deplacement) setState(() => _deplacement = voulu);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final VueSeance vue = widget.vue;
+    final VueSurface surface = widget.surface;
+    final double zoom = widget.zoom;
+    final bool pointe =
+        vue.peutPointer &&
+        ref.watch(etatOutilsProvider.select((EtatOutils e) => e.pointeurArme));
     final SupportPageFixe? page = vue.supportPresente;
     final TableauLibre? tableau = vue.tableauLibre;
     final bool libre = surface == VueSurface.tableauLibre;
@@ -130,11 +231,20 @@ class SurfacePageFixe extends StatelessWidget {
     return LayoutBuilder(
       builder: (BuildContext _, BoxConstraints c) {
         // TB-7a (plan V2 §9) : une seule geometrie pour l'image et l'encre,
-        // la page en `BoxFit.contain` et la lecture locale (zoom).
+        // la page en `BoxFit.contain` et la lecture locale (zoom, TB-7b :
+        // deplacement).
+        _boite = c.biggest;
+        _page = rectanglePage(ratio: ratio, boite: c.biggest);
         final ReperePage repere = ReperePage.de(
           ratio: ratio,
           boite: c.biggest,
           zoom: zoom,
+          deplacement: borneDeplacement(
+            voulu: _deplacement,
+            page: _page,
+            boite: c.biggest,
+            zoom: zoom,
+          ),
         );
         final Rect rect = repere.page;
         // La part de la page qui se voit (la surface rogne la page zoomee),
@@ -147,10 +257,10 @@ class SurfacePageFixe extends StatelessWidget {
             children: <Widget>[
               // Le fond : la page du support, ou la feuille claire.
               if (fondSupport && page != null)
-                _Page(key: clePage, page: page)
+                _Page(key: SurfacePageFixe.clePage, page: page)
               else
                 _Feuille(
-                  key: cleFeuille,
+                  key: SurfacePageFixe.cleFeuille,
                   libelle: libre
                       ? t.salle.seance.commandes.affichageTableau
                       : t.salle.seance.surface.supportMasque,
@@ -158,7 +268,7 @@ class SurfacePageFixe extends StatelessWidget {
               // Le calque des notes : cache en Support, jamais demonte. Il
               // couvre la page exactement : son repere est la page (TB-7a).
               Visibility(
-                key: cleCalque,
+                key: SurfacePageFixe.cleCalque,
                 visible: notesVisibles,
                 maintainState: true,
                 maintainAnimation: true,
@@ -169,53 +279,124 @@ class SurfacePageFixe extends StatelessWidget {
                   visible: visible,
                 ),
               ),
+              // TB-7b : le Pointeur, dans tous les affichages (il ne pose
+              // rien sur le calque des notes).
+              if (pointe) const _Pointage(key: SurfacePageFixe.clePointage),
             ],
           ),
         );
-        return ClipRect(
-          child: Stack(
-            children: <Widget>[
-              // Image et encre dans la MEME transformation (§9.5) : un
-              // point touche revient a la page par son inverse (toScene).
-              Positioned.fill(
-                child: Transform(
-                  key: cleLecture,
-                  transform: repere.lecture,
-                  child: Stack(
-                    children: <Widget>[
-                      Positioned.fromRect(
-                        rect: rect,
-                        child: KeyedSubtree(
-                          key: repereRangement,
-                          child: feuille,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              // La phrase du §12 se pose sur toute la surface, pas dans la
-              // seule feuille : vide, celle-ci ne cache rien, et la phrase
-              // garde la largeur de l'ecran a texte agrandi (elle defile si
-              // la hauteur manque).
-              if (consigne)
+        return Listener(
+          // Passif : il ne prend aucun geste a la couche, il deplace la
+          // page selon l'outil retenu.
+          behavior: HitTestBehavior.translucent,
+          onPointerDown: _poser,
+          onPointerMove: _bouger,
+          onPointerUp: _lever,
+          onPointerCancel: _lever,
+          child: ClipRect(
+            child: Stack(
+              children: <Widget>[
+                // Image et encre dans la MEME transformation (§9.5) : un
+                // point touche revient a la page par son inverse (toScene).
                 Positioned.fill(
-                  child: Center(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(_margeConsigne),
-                      child: Text(
-                        t.salle.seance.surface.aucunSupport,
-                        key: cleConsigne,
-                        textAlign: TextAlign.center,
-                        style: _styleConsigne(context),
-                      ),
+                  child: Transform(
+                    key: SurfacePageFixe.cleLecture,
+                    transform: repere.lecture,
+                    child: Stack(
+                      children: <Widget>[
+                        Positioned.fromRect(
+                          rect: rect,
+                          child: KeyedSubtree(
+                            key: repereRangement,
+                            child: feuille,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-            ],
+                // La phrase du §12 se pose sur toute la surface, pas dans la
+                // seule feuille : vide, celle-ci ne cache rien, et la phrase
+                // garde la largeur de l'ecran a texte agrandi (elle defile si
+                // la hauteur manque).
+                if (consigne)
+                  Positioned.fill(
+                    child: Center(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(_margeConsigne),
+                        child: Text(
+                          t.salle.seance.surface.aucunSupport,
+                          key: SurfacePageFixe.cleConsigne,
+                          textAlign: TextAlign.center,
+                          style: _styleConsigne(context),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
         );
       },
+    );
+  }
+}
+
+/// TB-7b (plan V2 §4.2) : le Pointeur. Tant qu'un seul doigt (ou la
+/// souris, ou le stylet) est pose sur la page, une indication le suit ;
+/// levee, elle disparait. Rien n'est ecrit, rien n'est garde.
+class _Pointage extends StatefulWidget {
+  const _Pointage({super.key});
+
+  @override
+  State<_Pointage> createState() => _PointageState();
+}
+
+class _PointageState extends State<_Pointage> {
+  final Map<int, Offset> _poses = <int, Offset>{};
+
+  /// Le point montre : un seul pointeur pose. Deux doigts deplacent.
+  Offset? get _montre => _poses.length == 1 ? _poses.values.single : null;
+
+  void _suivre(PointerEvent e) =>
+      setState(() => _poses[e.pointer] = e.localPosition);
+
+  void _lever(PointerEvent e) => setState(() => _poses.remove(e.pointer));
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final Offset? montre = _montre;
+    const double taille = AppSpacing.xl;
+    return Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: _suivre,
+      onPointerMove: _suivre,
+      onPointerUp: _lever,
+      onPointerCancel: _lever,
+      child: Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
+          if (montre != null)
+            Positioned(
+              left: montre.dx - taille / 2,
+              top: montre.dy - taille / 2,
+              width: taille,
+              height: taille,
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  key: SurfacePageFixe.clePointeur,
+                  decoration: palette.washAccent.decoration(
+                    borderRadius: AppRadius.arrondiFull,
+                    side: palette.inkAccent.asBorderSide(
+                      width: AppContour.fort,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -285,6 +466,7 @@ class _CalqueNotes extends ConsumerWidget {
             contexte: ContexteDock(groupeId: vue.groupeId),
             traits: traits,
             repereDePage: true,
+            gommeSurTous: vue.gereToutesLesNotes,
             zoneVisible: visible,
           ),
         ),

@@ -2895,6 +2895,7 @@ class Traductions$salle$seance$fr {
 	String get pageSuivante => 'Page suivante';
 
 	late final Traductions$salle$seance$outils$fr outils = Traductions$salle$seance$outils$fr.internal(_root);
+	late final Traductions$salle$seance$ecriture$fr ecriture = Traductions$salle$seance$ecriture$fr.internal(_root);
 	late final Traductions$salle$seance$rail$fr rail = Traductions$salle$seance$rail$fr.internal(_root);
 
 	/// fr: 'Fermer le panneau'
@@ -11392,8 +11393,53 @@ class Traductions$salle$seance$outils$fr {
 	/// fr: 'Masquer'
 	String get masquer => 'Masquer';
 
-	/// fr: 'Annoter'
-	String get annoter => 'Annoter';
+	/// fr: 'Écrire'
+	String get ecrire => 'Écrire';
+
+	/// fr: 'Sans outil, la page se lit : un doigt la déplace quand elle est agrandie.'
+	String get aideLecture => 'Sans outil, la page se lit : un doigt la déplace quand elle est agrandie.';
+
+	/// fr: 'Pointeur : touchez la page pour montrer un passage, rien ne reste.'
+	String get aidePointeur => 'Pointeur : touchez la page pour montrer un passage, rien ne reste.';
+
+	/// fr: 'Écrire : écrivez sur la page, deux doigts la déplacent.'
+	String get aideEcrire => 'Écrire : écrivez sur la page, deux doigts la déplacent.';
+}
+
+// Path: salle.seance.ecriture
+class Traductions$salle$seance$ecriture$fr {
+	Traductions$salle$seance$ecriture$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Outils d'écriture'
+	String get palette => 'Outils d\'écriture';
+
+	/// fr: 'Terminer'
+	String get terminer => 'Terminer';
+
+	/// fr: 'Couleur'
+	String get couleur => 'Couleur';
+
+	/// fr: 'La couleur dit l'intention du trait, pour toute la classe.'
+	String get couleurAide => 'La couleur dit l\'intention du trait, pour toute la classe.';
+
+	/// fr: 'Épaisseur'
+	String get epaisseur => 'Épaisseur';
+
+	/// fr: 'Fin pour écrire un mot, épais pour entourer.'
+	String get epaisseurAide => 'Fin pour écrire un mot, épais pour entourer.';
+
+	/// fr: 'Fin'
+	String get fine => 'Fin';
+
+	/// fr: 'Moyen'
+	String get moyenne => 'Moyen';
+
+	/// fr: 'Épais'
+	String get epaisse => 'Épais';
 }
 
 // Path: salle.seance.rail
@@ -13588,8 +13634,8 @@ class Traductions$tc$outils$trait$fr {
 
 	// Translations
 
-	/// fr: 'Stylet'
-	String get stylet => 'Stylet';
+	/// fr: 'Stylo'
+	String get stylet => 'Stylo';
 
 	/// fr: 'Surligner'
 	String get surligneur => 'Surligner';
@@ -15998,7 +16044,19 @@ extension on Traductions {
 			'salle.seance.outils.pointeur' => 'Pointeur',
 			'salle.seance.outils.marquer' => 'Marquer',
 			'salle.seance.outils.masquer' => 'Masquer',
-			'salle.seance.outils.annoter' => 'Annoter',
+			'salle.seance.outils.ecrire' => 'Écrire',
+			'salle.seance.outils.aideLecture' => 'Sans outil, la page se lit : un doigt la déplace quand elle est agrandie.',
+			'salle.seance.outils.aidePointeur' => 'Pointeur : touchez la page pour montrer un passage, rien ne reste.',
+			'salle.seance.outils.aideEcrire' => 'Écrire : écrivez sur la page, deux doigts la déplacent.',
+			'salle.seance.ecriture.palette' => 'Outils d\'écriture',
+			'salle.seance.ecriture.terminer' => 'Terminer',
+			'salle.seance.ecriture.couleur' => 'Couleur',
+			'salle.seance.ecriture.couleurAide' => 'La couleur dit l\'intention du trait, pour toute la classe.',
+			'salle.seance.ecriture.epaisseur' => 'Épaisseur',
+			'salle.seance.ecriture.epaisseurAide' => 'Fin pour écrire un mot, épais pour entourer.',
+			'salle.seance.ecriture.fine' => 'Fin',
+			'salle.seance.ecriture.moyenne' => 'Moyen',
+			'salle.seance.ecriture.epaisse' => 'Épais',
 			'salle.seance.rail.navigation' => 'Navigation',
 			'salle.seance.rail.marque' => 'Rewayah',
 			'salle.seance.rail.sousMarque' => 'Academy',
@@ -16276,6 +16334,8 @@ extension on Traductions {
 			'attente.corriger' => 'Corriger',
 			'attente.correctionImpossible' => 'Ce dossier ne peut pas être modifié pour le moment.',
 			'attente.actualiser' => 'Actualiser l\'état du dossier',
+			_ => null,
+		} ?? switch (path) {
 			'attente.suspenduDetail' => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.',
 			'attente.seDeconnecter' => 'Se déconnecter',
 			'attente.titreDossier' => 'Votre dossier',
@@ -16288,8 +16348,6 @@ extension on Traductions {
 			'attente.actualiserCompte' => 'Actualiser',
 			'attente.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il reste un élément à fournir.', other: 'Il reste ${n} éléments à fournir.', ), 
 			'attente.etatAFournir' => 'À fournir',
-			_ => null,
-		} ?? switch (path) {
 			'attente.prochaineEtape' => ({required Object etape}) => 'Prochaine étape : ${etape}',
 			'attente.refuseDetail' => ({required Object element}) => 'Pour relancer la vérification, commencez par cet élément : ${element}.',
 			'attente.refuseSansElement' => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.',
@@ -16790,6 +16848,8 @@ extension on Traductions {
 			'priere.reglagesAbsents' => 'L\'enseignant n\'a pas encore réglé ses horaires de prière.',
 			'eleveConnexion.entrerCode' => 'J\'ai un code',
 			'eleveConnexion.scanner' => 'Scanner le carré',
+			_ => null,
+		} ?? switch (path) {
 			'eleveConnexion.choisirProfil' => 'Qui es-tu ?',
 			'eleveConnexion.profils.phrase' => 'Touche ton prénom pour continuer.',
 			'eleveConnexion.profils.ajouter' => 'Ajouter un profil sur cet appareil',
@@ -16802,8 +16862,6 @@ extension on Traductions {
 			'eleveConnexion.profils.jetonAbsent' => ({required Object prenom}) => 'Cet appareil ne retrouve plus la connexion de ${prenom}. Demande au tuteur d\'afficher un nouveau code, puis saisis-le ici.',
 			'eleveConnexion.pin.bonjour' => ({required Object prenom}) => 'Bonjour ${prenom}',
 			'eleveConnexion.pin.creer' => 'Choisis ton code personnel',
-			_ => null,
-		} ?? switch (path) {
 			'eleveConnexion.pin.creerPhrase' => 'Quatre chiffres, rien que pour toi. Il reste sur cet appareil.',
 			'eleveConnexion.pin.confirmer' => 'Entre-le encore une fois',
 			'eleveConnexion.pin.different' => 'Les deux codes ne sont pas les mêmes. Choisis ton code à nouveau.',
@@ -17304,6 +17362,8 @@ extension on Traductions {
 			'admin.progression.colonneEleve' => 'Élève',
 			'admin.progression.colonneGroupe' => 'Groupe',
 			'admin.progression.colonneNiveau' => 'Niveau',
+			_ => null,
+		} ?? switch (path) {
 			'admin.progression.colonneDepuis' => 'Depuis',
 			'admin.progression.colonneException' => 'Exception',
 			'admin.progression.sansGroupe' => 'Sans groupe',
@@ -17316,8 +17376,6 @@ extension on Traductions {
 			'admin.progression.typeDerogation' => 'Dérogation',
 			'admin.progression.actionPoserBlocage' => 'Poser un blocage',
 			'admin.progression.actionPoserDerogation' => 'Poser une dérogation',
-			_ => null,
-		} ?? switch (path) {
 			'admin.progression.actionCloreException' => 'Clore l\'exception',
 			'admin.progression.actionPromouvoir' => 'Changer de niveau',
 			'admin.progression.poserExceptionTitre' => ({required Object type, required Object eleve}) => '${type} pour ${eleve}',
@@ -17818,6 +17876,8 @@ extension on Traductions {
 			'compte.modeStandard' => 'Mode standard',
 			'compte.cameraLabel' => 'Caméra',
 			'compte.cameraAutorisee' => 'Autorisée',
+			_ => null,
+		} ?? switch (path) {
 			'compte.cameraInterdite' => 'Interdite',
 			'compte.accesSansFin' => 'Accès sans date de fin',
 			'compte.accesJusqua' => ({required Object date}) => 'Accès jusqu\'au ${date}',
@@ -17830,8 +17890,6 @@ extension on Traductions {
 			'compte.roles.controller' => 'Contrôleur',
 			'compte.roles.teacher' => 'Enseignant',
 			'compte.roles.guardian' => 'Tuteur',
-			_ => null,
-		} ?? switch (path) {
 			'compte.roles.student' => 'Élève',
 			'compte.roleDetail.admin' => 'Gère les dossiers, l\'attribution et le journal de l\'académie',
 			'compte.roleDetail.accountant' => 'Gère les paiements et les factures',
@@ -18332,6 +18390,8 @@ extension on Traductions {
 			'classe.pageRessources.indisponible' => 'La bibliothèque de la classe n\'est pas encore reliée à cet espace.',
 			'classe.pageProgression.indisponible' => ({required Object prenom}) => 'La progression de ${prenom} n\'est pas encore partagée ici.',
 			'classe.pageProgression.niveau' => 'Niveau',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pageProgression.jalons' => 'Étapes franchies',
 			'classe.pageProgression.aucune' => 'Aucune étape partagée pour l\'instant',
 			'classe.pageProgression.aucuneDetail' => 'Les progrès que l\'enseignant partage avec la famille apparaîtront ici.',
@@ -18344,8 +18404,6 @@ extension on Traductions {
 			'classe.pageCatalogue.eleveInconnuPhrase' => 'Revenez à l\'accueil et choisissez le profil élève concerné.',
 			'classe.pageCatalogue.horairesAbsents' => 'Les jours et heures de cette classe ne sont pas encore affichés ici.',
 			'classe.pageCatalogue.seanceHebdo' => ({required Object jour, required Object heure, required Object duree}) => '${jour} à ${heure} · ${duree} min',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageCatalogue.fuseauClasse' => ({required Object fuseau}) => 'Heures de la classe (${fuseau})',
 			'classe.pageCatalogue.placeUne' => '1 place restante',
 			'classe.pageCatalogue.places' => ({required Object nombre}) => '${nombre} places restantes',
@@ -18846,6 +18904,8 @@ extension on Traductions {
 			'controleur.complement.aideTexte' => 'Ce que vous avez constaté ou appris depuis la visite.',
 			'controleur.complement.texteRequis' => 'Écrivez le complément pour continuer.',
 			'controleur.complement.questionRecap' => 'Vérifiez avant d\'envoyer',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.complement.cleRapport' => 'Rapport d\'origine',
 			'controleur.complement.rapportInchange' => ({required Object classe, required Object date}) => '${classe} · ${date}, inchangé',
 			'controleur.complement.cleMotif' => 'Motif',
@@ -18858,8 +18918,6 @@ extension on Traductions {
 			'controleur.complement.revenir' => 'Revenir au rapport',
 			'controleur.compteRendu.titre' => 'Compte rendu',
 			'controleur.compteRendu.provisoire' => 'Cet écran est en préparation.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.compteRendu.revenir' => 'Revenir au contrôle',
 			'controleur.compteRendu.sousTitre' => ({required Object classe, required Object heure}) => '${classe} · ${heure}',
 			'controleur.compteRendu.faits' => 'Relevé automatique de la séance',
@@ -19164,7 +19222,7 @@ extension on Traductions {
 			'tc.outils.intention.aRenforcer' => 'À renforcer',
 			'tc.outils.intention.aEntretenir' => 'À entretenir',
 			'tc.outils.intention.pourEvaluation' => 'Pour l\'évaluation',
-			'tc.outils.trait.stylet' => 'Stylet',
+			'tc.outils.trait.stylet' => 'Stylo',
 			'tc.outils.trait.surligneur' => 'Surligner',
 			'tc.outils.trait.gomme' => 'Gomme',
 			'tc.outils.trait.annuler' => 'Annuler',
@@ -19360,6 +19418,8 @@ extension on Traductions {
 			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',
 			'tc.observation.visite.titre' => 'Observation en cours',
 			'tc.observation.visite.quitter' => 'Quitter',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.visite.supportIndisponible' => 'Le support partagé par l\'enseignant s\'affiche ici.',
 			'tc.observation.visite.enseignant' => 'Enseignant',
 			'tc.observation.visite.monEnfant' => 'Votre enfant',
@@ -19372,8 +19432,6 @@ extension on Traductions {
 			'tc.observation.visite.connexion' => 'Connexion',
 			'tc.observation.visite.reconnexion' => 'Reconnexion',
 			'tc.observation.visite.videoCoupee' => 'Vidéo indisponible',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.visite.reconnexionDetail' => 'La connexion est interrompue, reconnexion en cours. Votre temps d\'observation continue de s\'écouler.',
 			'tc.observation.visite.sonRecu' => 'Son reçu',
 			'tc.observation.visite.sonInterrompu' => 'Son interrompu',

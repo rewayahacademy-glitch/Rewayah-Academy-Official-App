@@ -33,6 +33,7 @@ import 'chrome_seance.dart';
 import 'commandes_pedagogiques.dart';
 import 'composition_salle.dart';
 import 'dock_seance.dart';
+import 'ecriture_seance.dart';
 import 'panneau_eleves.dart';
 import 'panneau_seance.dart';
 import 'panneau_supports.dart';
@@ -1039,6 +1040,10 @@ class _SalleEnseignant extends StatelessWidget {
   /// Commandes ouvertes, il s'efface : le panneau porte deja le titre
   /// « Commandes » et sa « Reduire » (une seule entree visible, revue du
   /// 09/10) ; il revient a la fermeture, ou le focus le retrouve.
+  ///
+  /// TB-7b (plan V2 §4.2) : panneau ferme pendant l'ecriture, la palette
+  /// courte (outil actif, Annuler, Terminer) se pose a cote de lui ; les
+  /// autres outils reparaissent par « Commandes ».
   Widget? _declencheur() {
     final VoidCallback? basculer = actions.onCommandes;
     if (basculer == null ||
@@ -1046,10 +1051,26 @@ class _SalleEnseignant extends StatelessWidget {
         !CommandesPedagogiques.aDesEntrees(vue, actions)) {
       return null;
     }
-    return DeclencheurCommandes(
+    final Widget declencheur = DeclencheurCommandes(
       onPress: basculer,
       ouvert: vue.panneau == PanneauOuvert.commandes,
       focusNode: focusCommandes,
+    );
+    return Consumer(
+      builder: (BuildContext _, WidgetRef ref, Widget? enfant) =>
+          ecritSurLaSurface(ref, vue)
+          ? Wrap(
+              spacing: AppSpacing.md,
+              runSpacing: AppSpacing.sm,
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: <Widget>[
+                PaletteEcriture(vue: vue, onCommandes: basculer),
+                enfant!,
+              ],
+            )
+          : enfant!,
+      child: declencheur,
     );
   }
 

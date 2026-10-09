@@ -352,11 +352,13 @@ void main() {
       semantique.dispose();
     });
 
-    testWidgets('sans geste : Suppr et l action semantique effacent', (
-      WidgetTester tester,
-    ) async {
-      TraitVectoriel trait(String id) => TraitVectoriel(
-        id: id,
+    // TB-7b (UX_REVIEW_TB n. 21, plan V2 §7) : « Effacer mon dernier
+    // trait » defait la derniere operation PERSONNELLE ; les traits d'un
+    // autre (deja la quand la couche s'ouvre) ne sont jamais touches.
+    testWidgets('sans geste : Suppr et l action semantique defont mon dernier '
+        'trait, jamais celui d un autre', (WidgetTester tester) async {
+      final TraitVectoriel autre = TraitVectoriel(
+        id: 't-autre',
         ancrage: ayah1,
         outil: OutilTrait.stylet,
         intention: IntentionPedagogique.aRevoir,
@@ -370,32 +372,46 @@ void main() {
         sessionId: 'seance-1',
         portee: PorteeAnnotation.temporaire,
       ))!;
-      await annotations.ajouterTrait(couchePosee.id, trait('t-1'));
-      await annotations.ajouterTrait(couchePosee.id, trait('t-2'));
+      await annotations.ajouterTrait(couchePosee.id, autre);
 
       final SemanticsHandle semantique = tester.ensureSemantics();
+      final ProviderContainer conteneur = ProviderContainer(
+        overrides: surcharges(),
+      );
+      addTearDown(conteneur.dispose);
+      conteneur
+          .read(etatOutilsProvider.notifier)
+          .choisirOutil(OutilDock.stylet);
       await tester.pumpWidget(
-        hoteD(
-          couche(traits: <TraitVectoriel>[trait('t-1'), trait('t-2')]),
-          surcharges: surcharges(),
+        UncontrolledProviderScope(
+          container: conteneur,
+          child: hoteSansScope(couche(traits: <TraitVectoriel>[autre])),
         ),
       );
+      List<String> ids() => <String>[
+        for (final TraitVectoriel x in annotations.couches.single.traits) x.id,
+      ];
 
-      // L'ardoise se nomme et se dit facultative.
+      // L'ardoise se nomme et se dit facultative ; rien de personnel : rien
+      // a effacer.
       final Finder ardoise = find.bySemanticsLabel(t.tc.outils.trait.ardoise);
       expect(ardoise, findsOneWidget);
-
-      // Clavier : la surface prend le focus, Suppr retire le dernier trait.
       await tester.sendKeyEvent(LogicalKeyboardKey.tab);
       await tester.pump();
       await tester.sendKeyEvent(LogicalKeyboardKey.delete);
       await tester.pumpAndSettle();
-      expect(
-        annotations.couches.single.traits.map((TraitVectoriel x) => x.id),
-        <String>['t-1'],
-      );
+      expect(ids(), <String>['t-autre'], reason: 'le trait d un autre reste');
+
+      // Clavier : mon trait, puis Suppr le retire, lui seul.
+      await tracer(tester, PointerDeviceKind.stylus);
+      expect(ids(), hasLength(2));
+      await tester.sendKeyEvent(LogicalKeyboardKey.delete);
+      await tester.pumpAndSettle();
+      expect(ids(), <String>['t-autre']);
 
       // Lecteur d'ecran : l'action « Effacer mon dernier trait ».
+      await tracer(tester, PointerDeviceKind.stylus);
+      expect(ids(), hasLength(2));
       final SemanticsNode noeud = tester.getSemantics(ardoise);
       tester.binding.performSemanticsAction(
         SemanticsActionEvent(
@@ -408,8 +424,22 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(annotations.couches.single.traits, isEmpty);
+      expect(ids(), <String>['t-autre']);
       expect(emis.whereType<EvenementTraitRetire>(), hasLength(2));
+      // Plus rien de personnel : l'action n'est plus offerte.
+      expect(
+        tester
+            .getSemantics(ardoise)
+            .getSemanticsData()
+            .customSemanticsActionIds,
+        isNot(
+          contains(
+            CustomSemanticsAction.getIdentifier(
+              CustomSemanticsAction(label: t.tc.outils.trait.effacerDernier),
+            ),
+          ),
+        ),
+      );
       semantique.dispose();
     });
   });
