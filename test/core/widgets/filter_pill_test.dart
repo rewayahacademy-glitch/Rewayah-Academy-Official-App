@@ -142,22 +142,76 @@ void main() {
     poignee.dispose();
   });
 
-  testWidgets(
-    'la largeur ne saute pas a la selection, la rangee ne bouge pas',
-    (WidgetTester tester) async {
-      fixerVue(tester, const Size(320, 900));
-      await tester.pumpWidget(hoteTheme(const _Rangee(), echelleTexte: 2));
-
+  for (final (Size vue, double echelle) cas in <(Size, double)>[
+    (const Size(390, 900), 1),
+    (const Size(1440, 900), 1),
+    (const Size(1440, 900), 2),
+  ]) {
+    testWidgets('la rangee ne bouge pas a la selection '
+        '(${cas.$1.width.toInt()} px, texte x${cas.$2.toInt()})', (
+      WidgetTester tester,
+    ) async {
+      fixerVue(tester, cas.$1);
+      await tester.pumpWidget(hoteTheme(const _Rangee(), echelleTexte: cas.$2));
       final Map<String, Rect> avant = <String, Rect>{
         for (final String j in _jours) j: tester.getRect(_pilule(j)),
       };
       for (final String j in _jours) {
         await tester.tap(_pilule(j));
         await tester.pump();
+        // Apres chaque touche, aucune pilule n'a bouge ni change de taille.
+        for (final String k in _jours) {
+          expect(tester.getRect(_pilule(k)), avant[k], reason: '$j : $k');
+        }
       }
       for (final String j in _jours) {
         expect(_coche(_pilule(j)), findsOneWidget, reason: j);
-        expect(tester.getRect(_pilule(j)), avant[j], reason: j);
+      }
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets(
+    'place manquante (320 px, texte x2) : largeur gardee, la coche passe '
+    'au-dessus du libelle, aucun mot coupe',
+    (WidgetTester tester) async {
+      fixerVue(tester, const Size(320, 900));
+      await tester.pumpWidget(hoteTheme(const _Rangee(), echelleTexte: 2));
+      final Map<String, Rect> avant = <String, Rect>{
+        for (final String j in _jours) j: tester.getRect(_pilule(j)),
+      };
+      final double ligne = avant.values
+          .map((Rect r) => r.width)
+          .reduce((double a, double b) => a > b ? a : b);
+      for (final String j in _jours) {
+        await tester.tap(_pilule(j));
+        await tester.pump();
+      }
+      for (final String j in _jours) {
+        final Rect apres = tester.getRect(_pilule(j));
+        // Jamais plus large, jamais deplacee en largeur.
+        expect(apres.left, avant[j]!.left, reason: j);
+        expect(apres.width, avant[j]!.width, reason: j);
+        final Rect coche = tester.getRect(_coche(_pilule(j)));
+        final Rect texte = tester.getRect(find.text(j));
+        if (apres.height != avant[j]!.height) {
+          // Seule une pilule qui occupe toute la ligne change de hauteur, et
+          // c'est parce que la coche est posee au-dessus du libelle.
+          expect(apres.width, ligne, reason: j);
+          expect(coche.bottom, lessThanOrEqualTo(texte.top), reason: j);
+        }
+        // Le libelle tient sur une ligne : aucun mot coupe pour la coche.
+        final RenderParagraph p = tester.renderObject(find.text(j));
+        expect(
+          p
+              .getBoxesForSelection(
+                TextSelection(baseOffset: 0, extentOffset: j.length),
+              )
+              .map((TextBox b) => b.top)
+              .toSet(),
+          hasLength(1),
+          reason: j,
+        );
       }
       expect(tester.takeException(), isNull);
     },
