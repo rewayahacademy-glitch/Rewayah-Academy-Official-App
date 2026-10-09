@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/service_comptes.dart';
 import '../../core/domain/enums.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
@@ -126,7 +127,15 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text(t.admin.comptes.intro, style: textes.bodyMedium),
+          // RTL-ISOL-1 : l'introduction, encore sans traduction arabe, garde
+          // son point final en fin de phrase (jamais « .endroit »).
+          Text(
+            isolerSiAutreSens(
+              t.admin.comptes.intro,
+              Directionality.of(context),
+            ),
+            style: textes.bodyMedium,
+          ),
           Ecart.vXl,
           // Les getters, jamais le type d'execution : Riverpod 3 relance un
           // provider en echec tout seul, et l'etat repasse par `AsyncLoading`

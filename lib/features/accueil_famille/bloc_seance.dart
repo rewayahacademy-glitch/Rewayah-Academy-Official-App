@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/seance_famille/seance_famille.dart';
@@ -404,7 +405,14 @@ class _LigneIcone extends StatelessWidget {
         ),
       ),
       Ecart.hMd,
-      Expanded(child: Text(texte, style: style)),
+      // RTL-ISOL-1 : le conseil d'appareil, encore sans traduction arabe,
+      // garde son point en fin de phrase (jamais « .téléphone »).
+      Expanded(
+        child: Text(
+          isolerSiAutreSens(texte, Directionality.of(context)),
+          style: style,
+        ),
+      ),
     ],
   );
 }

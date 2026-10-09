@@ -46,3 +46,14 @@ String isolerSiAutreSens(String texte, TextDirection sens) {
   final TextDirection? propre = sensDuTexte(texte);
   return propre == null || propre == sens ? texte : isolerSens(texte);
 }
+
+/// RTL-ISOL-1 : la phrase [phrase] remplie avec [valeur], la valeur isolee
+/// ([isolerSens]) seulement quand elle s'ecrit dans l'autre sens que la
+/// phrase elle-meme (sens lu sur la phrase sans sa valeur). « الدرس بعد 3 h
+/// 28 » ne s'affiche plus « h 28 3 », ni « الاستئناف: Page 24 » melange ; une
+/// valeur deja dans le sens de la phrase, ou une phrase sans lettre, reste
+/// telle quelle.
+String phraseAvecValeur(String Function(String valeur) phrase, String valeur) {
+  final TextDirection? sens = sensDuTexte(phrase(''));
+  return phrase(sens == null ? valeur : isolerSiAutreSens(valeur, sens));
+}
