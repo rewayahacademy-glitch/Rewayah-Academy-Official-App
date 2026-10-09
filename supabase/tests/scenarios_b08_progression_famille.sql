@@ -154,6 +154,10 @@ BEGIN
   IF NOT v_denied THEN
     RAISE EXCEPTION 'B-08: la RPC famille a divulgué un autre foyer';
   END IF;
+  PERFORM set_config('test.uid', v_other_guardian::text, true);
+  PERFORM set_config('test.jwt',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'guardian',
+      'household_id', 'b0800000-0000-0000-0000-000000000102'))::text, true);
   v_denied := false;
   BEGIN
     PERFORM public.resume_seance_famille(v_session, v_student);
