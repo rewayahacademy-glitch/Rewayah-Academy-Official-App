@@ -25,7 +25,7 @@ SELECT
        ELSE 'f1480000-0000-0000-0000-000000000003'::uuid END,
   'Adulte', g.n::text,
   CASE WHEN g.n = 1 THEN 'disabled'::public.account_status
-       ELSE 'pending_kyc'::public.account_status END,
+       ELSE 'active'::public.account_status END,
   'male'
 FROM generate_series(1, public.app_config_int('groupe.capacite_adulte', 6) + 4) AS g(n);
 
