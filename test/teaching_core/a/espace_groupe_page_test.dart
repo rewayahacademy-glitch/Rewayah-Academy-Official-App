@@ -94,7 +94,7 @@ void main() {
     ) async {
       await avecLargeur(tester, largeurMobile, () async {
         await _poser(tester);
-        expect(find.text('Groupe Al-Fatiha'), findsOneWidget);
+        expect(find.text('Classe Al-Fatiha'), findsOneWidget);
         expect(find.text('Sayyid Youssouf'), findsWidgets);
         expect(find.text('Lecture du Coran · Niveau 2'), findsOneWidget);
         // La capacite reelle, en toutes lettres dans la pastille.

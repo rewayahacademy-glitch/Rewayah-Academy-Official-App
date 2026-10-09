@@ -39,7 +39,7 @@ GroupSummaryVM _groupe({
 }) {
   final GroupSummaryVM base = GroupSummaryVM(
     groupeId: 'g-1',
-    libelle: 'Groupe Al-Fatiha',
+    libelle: 'Classe Al-Fatiha',
     couleurJeton: const JetonCouleurGroupe(index: 0, codeStable: 'g04'),
     enseignant: EnseignantVM(
       enseignantId: 'e-1',
@@ -86,7 +86,7 @@ void main() {
       ),
     );
 
-    expect(find.text('Groupe Al-Fatiha'), findsOneWidget);
+    expect(find.text('Classe Al-Fatiha'), findsOneWidget);
     expect(find.text('4 / 5'), findsOneWidget);
     expect(find.text('Sayyid Youssouf'), findsOneWidget);
     expect(find.text('Lecture du Coran · Niveau 2'), findsOneWidget);
@@ -218,7 +218,7 @@ void main() {
         onOuvrir: () => ouvertures++,
       ),
     );
-    await tester.tap(find.text('Groupe Al-Fatiha'));
+    await tester.tap(find.text('Classe Al-Fatiha'));
     await tester.pump();
     expect(ouvertures, 1);
   });

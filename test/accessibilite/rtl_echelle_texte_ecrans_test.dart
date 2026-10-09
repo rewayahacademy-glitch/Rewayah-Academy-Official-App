@@ -502,7 +502,7 @@ List<_EcranAVerifier> _ecrans() => <_EcranAVerifier>[
             ..groupesRendus = <GroupeEnseignant>[
               GroupeEnseignant(
                 id: 'groupe-1',
-                libelle: 'Groupe du mardi',
+                libelle: 'Classe du mardi',
                 type: TypePublicGroupe.enfant,
                 seuilMax: 5,
                 creneau: const Creneau(

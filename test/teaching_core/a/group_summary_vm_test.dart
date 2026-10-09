@@ -12,7 +12,7 @@ GroupSummaryVM _groupe({
   TitreEnseignant titre = TitreEnseignant.sayyid,
 }) => GroupSummaryVM(
   groupeId: 'g-1',
-  libelle: 'Groupe Al-Fatiha',
+  libelle: 'Classe Al-Fatiha',
   couleurJeton: const JetonCouleurGroupe(index: 0, codeStable: 'g04'),
   enseignant: EnseignantVM(
     enseignantId: 'e-1',

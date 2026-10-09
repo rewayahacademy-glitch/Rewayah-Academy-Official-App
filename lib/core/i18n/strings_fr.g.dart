@@ -2429,6 +2429,15 @@ class Traductions$formulaire$fr {
 	// Translations
 	late final Traductions$formulaire$motif$fr motif = Traductions$formulaire$motif$fr.internal(_root);
 	late final Traductions$formulaire$entier$fr entier = Traductions$formulaire$entier$fr.internal(_root);
+
+	/// fr: 'Champ obligatoire'
+	String get obligatoire => 'Champ obligatoire';
+
+	/// fr: '{champ}, champ obligatoire'
+	String champObligatoire({required Object champ}) => '${champ}, champ obligatoire';
+
+	/// fr: 'Les champs marqués d'un point sont obligatoires.'
+	String get legendeObligatoire => 'Les champs marqués d\'un point sont obligatoires.';
 }
 
 // Path: motifs
@@ -5688,6 +5697,8 @@ class Traductions$admin$groupes$fr {
 
 	/// fr: 'Cette installation n'a pas encore la mise à jour serveur que ce réglage demande (migration 0036). Réessayer n'y changera rien : elle doit d'abord être appliquée à la base.'
 	String get observationCapaciteAbsente => 'Cette installation n\'a pas encore la mise à jour serveur que ce réglage demande (migration 0036). Réessayer n\'y changera rien : elle doit d\'abord être appliquée à la base.';
+
+	late final Traductions$admin$groupes$formulaire$fr formulaire = Traductions$admin$groupes$formulaire$fr.internal(_root);
 }
 
 // Path: admin.diagnostics
@@ -5701,8 +5712,8 @@ class Traductions$admin$diagnostics$fr {
 	/// fr: 'Diagnostics'
 	String get titre => 'Diagnostics';
 
-	/// fr: 'Chaque élève inscrit attend un premier niveau avant de rejoindre un groupe : c'est ici que ce placement se décide.'
-	String get intro => 'Chaque élève inscrit attend un premier niveau avant de rejoindre un groupe : c\'est ici que ce placement se décide.';
+	/// fr: 'Chaque élève inscrit attend un premier niveau avant de rejoindre une classe : c'est ici que ce placement se décide.'
+	String get intro => 'Chaque élève inscrit attend un premier niveau avant de rejoindre une classe : c\'est ici que ce placement se décide.';
 
 	/// fr: 'Aucun programme publié'
 	String get aucunProgramme => 'Aucun programme publié';
@@ -6217,8 +6228,8 @@ class Traductions$admin$progression$fr {
 	/// fr: 'Progression'
 	String get titre => 'Progression';
 
-	/// fr: 'Le niveau courant de chaque élève, son groupe, et les blocages ou dérogations en cours.'
-	String get intro => 'Le niveau courant de chaque élève, son groupe, et les blocages ou dérogations en cours.';
+	/// fr: 'Le niveau courant de chaque élève, sa classe, et les blocages ou dérogations en cours.'
+	String get intro => 'Le niveau courant de chaque élève, sa classe, et les blocages ou dérogations en cours.';
 
 	/// fr: 'La progression n'a pas pu être lue. Réessayez dans un instant.'
 	String get erreur => 'La progression n\'a pas pu être lue. Réessayez dans un instant.';
@@ -6232,8 +6243,8 @@ class Traductions$admin$progression$fr {
 	/// fr: 'Élève'
 	String get colonneEleve => 'Élève';
 
-	/// fr: 'Groupe'
-	String get colonneGroupe => 'Groupe';
+	/// fr: 'Classe'
+	String get colonneGroupe => 'Classe';
 
 	/// fr: 'Niveau'
 	String get colonneNiveau => 'Niveau';
@@ -6244,8 +6255,8 @@ class Traductions$admin$progression$fr {
 	/// fr: 'Exception'
 	String get colonneException => 'Exception';
 
-	/// fr: 'Sans groupe'
-	String get sansGroupe => 'Sans groupe';
+	/// fr: 'Sans classe'
+	String get sansGroupe => 'Sans classe';
 
 	/// fr: 'Non diagnostiqué'
 	String get sansNiveau => 'Non diagnostiqué';
@@ -8169,8 +8180,8 @@ class Traductions$tuteur$accueil$fr {
 	/// fr: 'Photo, caméra et affichage, enfant par enfant.'
 	String get blocReglagesDetail => 'Photo, caméra et affichage, enfant par enfant.';
 
-	/// fr: 'Le groupe, l'enseignant et le prochain cours de chaque enfant.'
-	String get blocGroupesDetail => 'Le groupe, l\'enseignant et le prochain cours de chaque enfant.';
+	/// fr: 'La classe, l'enseignant et le prochain cours de chaque enfant.'
+	String get blocGroupesDetail => 'La classe, l\'enseignant et le prochain cours de chaque enfant.';
 
 	/// fr: 'Accès'
 	String get acces => 'Accès';
@@ -13216,6 +13227,210 @@ class Traductions$admin$tableau$activite$fr {
 	String ligne({required Object qui, required Object quand}) => '${qui} · ${quand}';
 }
 
+// Path: admin.groupes.formulaire
+class Traductions$admin$groupes$formulaire$fr {
+	Traductions$admin$groupes$formulaire$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Une classe réunit un enseignant et ses élèves sur un même créneau chaque semaine. Choisissez le public et le genre : la liste des enseignants, le seuil et le nom de la classe en découlent.'
+	String get contexte => 'Une classe réunit un enseignant et ses élèves sur un même créneau chaque semaine. Choisissez le public et le genre : la liste des enseignants, le seuil et le nom de la classe en découlent.';
+
+	/// fr: 'Public'
+	String get titrePublic => 'Public';
+
+	/// fr: 'À choisir pour une classe d'enfants. Seuil proposé : 5 élèves.'
+	String get publicEnfantDetail => 'À choisir pour une classe d\'enfants. Seuil proposé : 5 élèves.';
+
+	/// fr: 'À choisir pour une classe d'adultes. Seuil proposé : 6 élèves.'
+	String get publicAdulteDetail => 'À choisir pour une classe d\'adultes. Seuil proposé : 6 élèves.';
+
+	/// fr: 'Genre de la classe'
+	String get titreGenre => 'Genre de la classe';
+
+	/// fr: 'Hommes'
+	String get genreHommes => 'Hommes';
+
+	/// fr: 'Femmes'
+	String get genreFemmes => 'Femmes';
+
+	/// fr: 'Garçons'
+	String get genreGarcons => 'Garçons';
+
+	/// fr: 'Filles'
+	String get genreFilles => 'Filles';
+
+	/// fr: 'Non déterminé'
+	String get genreIndetermine => 'Non déterminé';
+
+	/// fr: 'À choisir pour une classe d'hommes : seuls les enseignants hommes pourront la prendre.'
+	String get genreHommesDetail => 'À choisir pour une classe d\'hommes : seuls les enseignants hommes pourront la prendre.';
+
+	/// fr: 'À choisir pour une classe de femmes : seules les enseignantes pourront la prendre.'
+	String get genreFemmesDetail => 'À choisir pour une classe de femmes : seules les enseignantes pourront la prendre.';
+
+	/// fr: 'À choisir pour une classe de garçons : seuls les enseignants hommes pourront la prendre.'
+	String get genreGarconsDetail => 'À choisir pour une classe de garçons : seuls les enseignants hommes pourront la prendre.';
+
+	/// fr: 'À choisir pour une classe de filles : seules les enseignantes pourront la prendre.'
+	String get genreFillesDetail => 'À choisir pour une classe de filles : seules les enseignantes pourront la prendre.';
+
+	/// fr: 'À choisir quand le genre n'est pas encore connu : tous les enseignants pourront la prendre.'
+	String get genreIndetermineDetail => 'À choisir quand le genre n\'est pas encore connu : tous les enseignants pourront la prendre.';
+
+	/// fr: 'À choisir pour une classe d'hommes. Le genre des enseignants n'est pas encore lisible ici : vérifiez vous-même que l'enseignant choisi est un homme.'
+	String get genreHommesDetailSansSource => 'À choisir pour une classe d\'hommes. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que l\'enseignant choisi est un homme.';
+
+	/// fr: 'À choisir pour une classe de femmes. Le genre des enseignants n'est pas encore lisible ici : vérifiez vous-même que vous choisissez une enseignante.'
+	String get genreFemmesDetailSansSource => 'À choisir pour une classe de femmes. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que vous choisissez une enseignante.';
+
+	/// fr: 'À choisir pour une classe de garçons. Le genre des enseignants n'est pas encore lisible ici : vérifiez vous-même que l'enseignant choisi est un homme.'
+	String get genreGarconsDetailSansSource => 'À choisir pour une classe de garçons. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que l\'enseignant choisi est un homme.';
+
+	/// fr: 'À choisir pour une classe de filles. Le genre des enseignants n'est pas encore lisible ici : vérifiez vous-même que vous choisissez une enseignante.'
+	String get genreFillesDetailSansSource => 'À choisir pour une classe de filles. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que vous choisissez une enseignante.';
+
+	/// fr: 'Le genre guide le choix de l'enseignant. Il sera enregistré avec la classe dès que le serveur l'acceptera : pour l'instant, il ne l'est pas.'
+	String get genreNonEnregistre => 'Le genre guide le choix de l\'enseignant. Il sera enregistré avec la classe dès que le serveur l\'acceptera : pour l\'instant, il ne l\'est pas.';
+
+	/// fr: 'Les enseignants sont classés du plus adapté au moins adapté : genre de la classe, créneau libre, puis le moins de classes en cours.'
+	String get aideEnseignant => 'Les enseignants sont classés du plus adapté au moins adapté : genre de la classe, créneau libre, puis le moins de classes en cours.';
+
+	/// fr: 'Les enseignants sont classés du moins chargé au plus chargé, et un enseignant déjà en classe à ce créneau ne se choisit pas. Leur genre et leurs disponibilités ne sont pas encore lisibles ici : vérifiez-les vous-même.'
+	String get aideEnseignantSansSource => 'Les enseignants sont classés du moins chargé au plus chargé, et un enseignant déjà en classe à ce créneau ne se choisit pas. Leur genre et leurs disponibilités ne sont pas encore lisibles ici : vérifiez-les vous-même.';
+
+	/// fr: 'Premier choix : libre à ce créneau, {charge}.'
+	String plusAdapteCreneau({required Object charge}) => 'Premier choix : libre à ce créneau, ${charge}.';
+
+	/// fr: 'Premier choix : {libres}, {charge}.'
+	String plusAdapteSansCreneau({required Object libres, required Object charge}) => 'Premier choix : ${libres}, ${charge}.';
+
+	/// fr: '(one) {{n} classe en cours} (other) {{n} classes en cours}'
+	String classesEnCours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} classe en cours',
+		other: '${n} classes en cours',
+	);
+
+	/// fr: 'aucune classe en cours'
+	String get aucuneClasse => 'aucune classe en cours';
+
+	/// fr: '(one) {{n} créneau libre} (other) {{n} créneaux libres}'
+	String creneauxLibres({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} créneau libre',
+		other: '${n} créneaux libres',
+	);
+
+	/// fr: 'Ce créneau n'est pas dans ses disponibilités déclarées : vous pouvez quand même faire ce choix.'
+	String get pasLibre => 'Ce créneau n\'est pas dans ses disponibilités déclarées : vous pouvez quand même faire ce choix.';
+
+	/// fr: 'Classe d'hommes : seul un enseignant homme peut la prendre.'
+	String get raisonHommes => 'Classe d\'hommes : seul un enseignant homme peut la prendre.';
+
+	/// fr: 'Classe de garçons : seul un enseignant homme peut la prendre.'
+	String get raisonGarcons => 'Classe de garçons : seul un enseignant homme peut la prendre.';
+
+	/// fr: 'Classe de femmes : seule une enseignante peut la prendre.'
+	String get raisonFemmes => 'Classe de femmes : seule une enseignante peut la prendre.';
+
+	/// fr: 'Classe de filles : seule une enseignante peut la prendre.'
+	String get raisonFilles => 'Classe de filles : seule une enseignante peut la prendre.';
+
+	/// fr: 'Déjà en classe à ce créneau : changez de créneau pour le choisir.'
+	String get raisonPris => 'Déjà en classe à ce créneau : changez de créneau pour le choisir.';
+
+	/// fr: 'Créneau'
+	String get titreCreneau => 'Créneau';
+
+	/// fr: 'Le jour et l'heure de la classe, chaque semaine.'
+	String get creneauContexte => 'Le jour et l\'heure de la classe, chaque semaine.';
+
+	/// fr: 'Créneaux libres {deNom} : toucher un créneau règle le jour et l'heure.'
+	String creneauxLibresDe({required Object deNom}) => 'Créneaux libres ${deNom} : toucher un créneau règle le jour et l\'heure.';
+
+	/// fr: '{nom} n'a aucun créneau libre déclaré : choisissez un jour et une heure ci-dessous.'
+	String aucunCreneauLibre({required Object nom}) => '${nom} n\'a aucun créneau libre déclaré : choisissez un jour et une heure ci-dessous.';
+
+	/// fr: 'Les disponibilités {deNom} ne sont pas encore lisibles ici : choisissez un jour et une heure ci-dessous.'
+	String disponibilitesInconnues({required Object deNom}) => 'Les disponibilités ${deNom} ne sont pas encore lisibles ici : choisissez un jour et une heure ci-dessous.';
+
+	/// fr: 'Jour'
+	String get jour => 'Jour';
+
+	/// fr: 'Heure'
+	String get heure => 'Heure';
+
+	/// fr: '{heure} h'
+	String heureValeur({required Object heure}) => '${heure} h';
+
+	/// fr: 'Heures lues dans le fuseau {fuseau}, celui de l'enseignant.'
+	String fuseauEnseignant({required Object fuseau}) => 'Heures lues dans le fuseau ${fuseau}, celui de l\'enseignant.';
+
+	/// fr: 'Heures lues dans le fuseau {fuseau}, retenu par défaut.'
+	String fuseauDefaut({required Object fuseau}) => 'Heures lues dans le fuseau ${fuseau}, retenu par défaut.';
+
+	/// fr: 'Heures lues dans le fuseau {fuseau}, celui que le serveur retient pour l'instant. Le fuseau de l'enseignant sera pris en compte dès que le serveur l'acceptera.'
+	String fuseauNonTransmis({required Object fuseau}) => 'Heures lues dans le fuseau ${fuseau}, celui que le serveur retient pour l\'instant. Le fuseau de l\'enseignant sera pris en compte dès que le serveur l\'acceptera.';
+
+	/// fr: 'Seuil maximal'
+	String get titreSeuil => 'Seuil maximal';
+
+	/// fr: 'La classe est complète dès qu'elle atteint ce nombre d'élèves. Proposé : 5 pour des enfants, 6 pour des adultes ; 6 au plus.'
+	String get seuilDetail => 'La classe est complète dès qu\'elle atteint ce nombre d\'élèves. Proposé : 5 pour des enfants, 6 pour des adultes ; 6 au plus.';
+
+	/// fr: '(one) {{n} élève} (other) {{n} élèves}'
+	String seuilValeur({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} élève',
+		other: '${n} élèves',
+	);
+
+	/// fr: 'Nom de la classe'
+	String get titreNom => 'Nom de la classe';
+
+	/// fr: 'Ce nom est déduit du genre, du public et du créneau : vous pouvez le changer.'
+	String get nomDetail => 'Ce nom est déduit du genre, du public et du créneau : vous pouvez le changer.';
+
+	/// fr: '{base}, {creneau}'
+	String nomPropose({required Object base, required Object creneau}) => '${base}, ${creneau}';
+
+	/// fr: 'Il manque le genre de la classe : choisissez l'une des trois cartes.'
+	String get manqueGenre => 'Il manque le genre de la classe : choisissez l\'une des trois cartes.';
+
+	/// fr: 'Il manque le créneau : choisissez le jour et l'heure de la classe.'
+	String get manqueCreneau => 'Il manque le créneau : choisissez le jour et l\'heure de la classe.';
+
+	/// fr: 'Il manque le seuil maximal : choisissez un nombre d'élèves entre 1 et 6.'
+	String get manqueSeuil => 'Il manque le seuil maximal : choisissez un nombre d\'élèves entre 1 et 6.';
+
+	/// fr: 'Il manque le nom de la classe : écrivez-le dans le dernier champ.'
+	String get manqueNom => 'Il manque le nom de la classe : écrivez-le dans le dernier champ.';
+
+	/// fr: '{nom} ne peut pas prendre une classe d'hommes : choisissez un enseignant homme dans la liste.'
+	String manqueEnseignantHommes({required Object nom}) => '${nom} ne peut pas prendre une classe d\'hommes : choisissez un enseignant homme dans la liste.';
+
+	/// fr: '{nom} ne peut pas prendre une classe de garçons : choisissez un enseignant homme dans la liste.'
+	String manqueEnseignantGarcons({required Object nom}) => '${nom} ne peut pas prendre une classe de garçons : choisissez un enseignant homme dans la liste.';
+
+	/// fr: '{nom} ne peut pas prendre une classe de femmes : choisissez une enseignante dans la liste.'
+	String manqueEnseignantFemmes({required Object nom}) => '${nom} ne peut pas prendre une classe de femmes : choisissez une enseignante dans la liste.';
+
+	/// fr: '{nom} ne peut pas prendre une classe de filles : choisissez une enseignante dans la liste.'
+	String manqueEnseignantFilles({required Object nom}) => '${nom} ne peut pas prendre une classe de filles : choisissez une enseignante dans la liste.';
+
+	/// fr: '{nom} est déjà en classe à ce créneau : changez de créneau ou choisissez une autre personne dans la liste.'
+	String manqueEnseignantPris({required Object nom}) => '${nom} est déjà en classe à ce créneau : changez de créneau ou choisissez une autre personne dans la liste.';
+
+	/// fr: 'La liste des enseignants n'est pas encore à jour, donc l'enseignant choisi n'a pas pu être vérifié : attendez qu'elle s'affiche, puis pressez de nouveau.'
+	String get manqueListeEnseignants => 'La liste des enseignants n\'est pas encore à jour, donc l\'enseignant choisi n\'a pas pu être vérifié : attendez qu\'elle s\'affiche, puis pressez de nouveau.';
+
+	/// fr: 'Sans réseau, la classe ne peut pas être créée. Vos choix restent affichés : revenez quand la connexion est rétablie.'
+	String get horsLigne => 'Sans réseau, la classe ne peut pas être créée. Vos choix restent affichés : revenez quand la connexion est rétablie.';
+
+	/// fr: 'Sans réseau, le seuil ne peut pas être enregistré. Votre choix reste affiché : revenez quand la connexion est rétablie.'
+	String get seuilHorsLigne => 'Sans réseau, le seuil ne peut pas être enregistré. Votre choix reste affiché : revenez quand la connexion est rétablie.';
+}
+
 // Path: admin.journal.evenements
 class Traductions$admin$journal$evenements$fr {
 	Traductions$admin$journal$evenements$fr.internal(this._root);
@@ -14351,8 +14566,8 @@ class Traductions$tc$bibliotheque$introuvable$fr {
 	/// fr: 'Ce support ne vous est pas ouvert'
 	String get message => 'Ce support ne vous est pas ouvert';
 
-	/// fr: 'Il a peut-être été retiré, ou il est réservé à un autre groupe. Votre enseignant peut vous le rouvrir.'
-	String get invitation => 'Il a peut-être été retiré, ou il est réservé à un autre groupe. Votre enseignant peut vous le rouvrir.';
+	/// fr: 'Il a peut-être été retiré, ou il est réservé à une autre classe. Votre enseignant peut vous le rouvrir.'
+	String get invitation => 'Il a peut-être été retiré, ou il est réservé à une autre classe. Votre enseignant peut vous le rouvrir.';
 }
 
 // Path: tc.bibliotheque.offline
@@ -14773,8 +14988,8 @@ class Traductions$tc$outils$revision$fr {
 	/// fr: 'Le passage sélectionné devient un travail à préparer.'
 	String get aide => 'Le passage sélectionné devient un travail à préparer.';
 
-	/// fr: 'Tout le groupe'
-	String get groupeEntier => 'Tout le groupe';
+	/// fr: 'Toute la classe'
+	String get groupeEntier => 'Toute la classe';
 
 	/// fr: 'Consigne courte (facultatif)'
 	String get consigne => 'Consigne courte (facultatif)';
@@ -15929,8 +16144,8 @@ class Traductions$tc$parcours$signalement$fr {
 	/// fr: 'Facultatif. L'administration décide seule de le transmettre, en un clic.'
 	String get familleAide => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.';
 
-	/// fr: 'Élève {eleve}. La séance, le groupe et votre nom sont déjà joints.'
-	String contexte({required Object eleve}) => 'Élève ${eleve}. La séance, le groupe et votre nom sont déjà joints.';
+	/// fr: 'Élève {eleve}. La séance, la classe et votre nom sont déjà joints.'
+	String contexte({required Object eleve}) => 'Élève ${eleve}. La séance, la classe et votre nom sont déjà joints.';
 
 	/// fr: 'Envoyer le signalement'
 	String get envoyer => 'Envoyer le signalement';
@@ -18275,8 +18490,70 @@ extension on Traductions {
 			'admin.groupes.observationTitre' => ({required Object libelle}) => 'Observation : ${libelle}',
 			'admin.groupes.observationErreur' => 'Le réglage n\'a pas pu être enregistré.',
 			'admin.groupes.observationCapaciteAbsente' => 'Cette installation n\'a pas encore la mise à jour serveur que ce réglage demande (migration 0036). Réessayer n\'y changera rien : elle doit d\'abord être appliquée à la base.',
+			'admin.groupes.formulaire.contexte' => 'Une classe réunit un enseignant et ses élèves sur un même créneau chaque semaine. Choisissez le public et le genre : la liste des enseignants, le seuil et le nom de la classe en découlent.',
+			'admin.groupes.formulaire.titrePublic' => 'Public',
+			'admin.groupes.formulaire.publicEnfantDetail' => 'À choisir pour une classe d\'enfants. Seuil proposé : 5 élèves.',
+			'admin.groupes.formulaire.publicAdulteDetail' => 'À choisir pour une classe d\'adultes. Seuil proposé : 6 élèves.',
+			'admin.groupes.formulaire.titreGenre' => 'Genre de la classe',
+			'admin.groupes.formulaire.genreHommes' => 'Hommes',
+			'admin.groupes.formulaire.genreFemmes' => 'Femmes',
+			'admin.groupes.formulaire.genreGarcons' => 'Garçons',
+			'admin.groupes.formulaire.genreFilles' => 'Filles',
+			'admin.groupes.formulaire.genreIndetermine' => 'Non déterminé',
+			'admin.groupes.formulaire.genreHommesDetail' => 'À choisir pour une classe d\'hommes : seuls les enseignants hommes pourront la prendre.',
+			'admin.groupes.formulaire.genreFemmesDetail' => 'À choisir pour une classe de femmes : seules les enseignantes pourront la prendre.',
+			'admin.groupes.formulaire.genreGarconsDetail' => 'À choisir pour une classe de garçons : seuls les enseignants hommes pourront la prendre.',
+			'admin.groupes.formulaire.genreFillesDetail' => 'À choisir pour une classe de filles : seules les enseignantes pourront la prendre.',
+			'admin.groupes.formulaire.genreIndetermineDetail' => 'À choisir quand le genre n\'est pas encore connu : tous les enseignants pourront la prendre.',
+			'admin.groupes.formulaire.genreHommesDetailSansSource' => 'À choisir pour une classe d\'hommes. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que l\'enseignant choisi est un homme.',
+			'admin.groupes.formulaire.genreFemmesDetailSansSource' => 'À choisir pour une classe de femmes. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que vous choisissez une enseignante.',
+			'admin.groupes.formulaire.genreGarconsDetailSansSource' => 'À choisir pour une classe de garçons. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que l\'enseignant choisi est un homme.',
+			'admin.groupes.formulaire.genreFillesDetailSansSource' => 'À choisir pour une classe de filles. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que vous choisissez une enseignante.',
+			'admin.groupes.formulaire.genreNonEnregistre' => 'Le genre guide le choix de l\'enseignant. Il sera enregistré avec la classe dès que le serveur l\'acceptera : pour l\'instant, il ne l\'est pas.',
+			'admin.groupes.formulaire.aideEnseignant' => 'Les enseignants sont classés du plus adapté au moins adapté : genre de la classe, créneau libre, puis le moins de classes en cours.',
+			'admin.groupes.formulaire.aideEnseignantSansSource' => 'Les enseignants sont classés du moins chargé au plus chargé, et un enseignant déjà en classe à ce créneau ne se choisit pas. Leur genre et leurs disponibilités ne sont pas encore lisibles ici : vérifiez-les vous-même.',
+			'admin.groupes.formulaire.plusAdapteCreneau' => ({required Object charge}) => 'Premier choix : libre à ce créneau, ${charge}.',
+			'admin.groupes.formulaire.plusAdapteSansCreneau' => ({required Object libres, required Object charge}) => 'Premier choix : ${libres}, ${charge}.',
+			'admin.groupes.formulaire.classesEnCours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} classe en cours', other: '${n} classes en cours', ), 
+			'admin.groupes.formulaire.aucuneClasse' => 'aucune classe en cours',
+			'admin.groupes.formulaire.creneauxLibres' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} créneau libre', other: '${n} créneaux libres', ), 
+			'admin.groupes.formulaire.pasLibre' => 'Ce créneau n\'est pas dans ses disponibilités déclarées : vous pouvez quand même faire ce choix.',
+			'admin.groupes.formulaire.raisonHommes' => 'Classe d\'hommes : seul un enseignant homme peut la prendre.',
+			'admin.groupes.formulaire.raisonGarcons' => 'Classe de garçons : seul un enseignant homme peut la prendre.',
+			'admin.groupes.formulaire.raisonFemmes' => 'Classe de femmes : seule une enseignante peut la prendre.',
+			'admin.groupes.formulaire.raisonFilles' => 'Classe de filles : seule une enseignante peut la prendre.',
+			'admin.groupes.formulaire.raisonPris' => 'Déjà en classe à ce créneau : changez de créneau pour le choisir.',
+			'admin.groupes.formulaire.titreCreneau' => 'Créneau',
+			'admin.groupes.formulaire.creneauContexte' => 'Le jour et l\'heure de la classe, chaque semaine.',
+			'admin.groupes.formulaire.creneauxLibresDe' => ({required Object deNom}) => 'Créneaux libres ${deNom} : toucher un créneau règle le jour et l\'heure.',
+			'admin.groupes.formulaire.aucunCreneauLibre' => ({required Object nom}) => '${nom} n\'a aucun créneau libre déclaré : choisissez un jour et une heure ci-dessous.',
+			'admin.groupes.formulaire.disponibilitesInconnues' => ({required Object deNom}) => 'Les disponibilités ${deNom} ne sont pas encore lisibles ici : choisissez un jour et une heure ci-dessous.',
+			'admin.groupes.formulaire.jour' => 'Jour',
+			'admin.groupes.formulaire.heure' => 'Heure',
+			'admin.groupes.formulaire.heureValeur' => ({required Object heure}) => '${heure} h',
+			'admin.groupes.formulaire.fuseauEnseignant' => ({required Object fuseau}) => 'Heures lues dans le fuseau ${fuseau}, celui de l\'enseignant.',
+			'admin.groupes.formulaire.fuseauDefaut' => ({required Object fuseau}) => 'Heures lues dans le fuseau ${fuseau}, retenu par défaut.',
+			'admin.groupes.formulaire.fuseauNonTransmis' => ({required Object fuseau}) => 'Heures lues dans le fuseau ${fuseau}, celui que le serveur retient pour l\'instant. Le fuseau de l\'enseignant sera pris en compte dès que le serveur l\'acceptera.',
+			'admin.groupes.formulaire.titreSeuil' => 'Seuil maximal',
+			'admin.groupes.formulaire.seuilDetail' => 'La classe est complète dès qu\'elle atteint ce nombre d\'élèves. Proposé : 5 pour des enfants, 6 pour des adultes ; 6 au plus.',
+			'admin.groupes.formulaire.seuilValeur' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève', other: '${n} élèves', ), 
+			'admin.groupes.formulaire.titreNom' => 'Nom de la classe',
+			'admin.groupes.formulaire.nomDetail' => 'Ce nom est déduit du genre, du public et du créneau : vous pouvez le changer.',
+			'admin.groupes.formulaire.nomPropose' => ({required Object base, required Object creneau}) => '${base}, ${creneau}',
+			'admin.groupes.formulaire.manqueGenre' => 'Il manque le genre de la classe : choisissez l\'une des trois cartes.',
+			'admin.groupes.formulaire.manqueCreneau' => 'Il manque le créneau : choisissez le jour et l\'heure de la classe.',
+			'admin.groupes.formulaire.manqueSeuil' => 'Il manque le seuil maximal : choisissez un nombre d\'élèves entre 1 et 6.',
+			'admin.groupes.formulaire.manqueNom' => 'Il manque le nom de la classe : écrivez-le dans le dernier champ.',
+			'admin.groupes.formulaire.manqueEnseignantHommes' => ({required Object nom}) => '${nom} ne peut pas prendre une classe d\'hommes : choisissez un enseignant homme dans la liste.',
+			'admin.groupes.formulaire.manqueEnseignantGarcons' => ({required Object nom}) => '${nom} ne peut pas prendre une classe de garçons : choisissez un enseignant homme dans la liste.',
+			'admin.groupes.formulaire.manqueEnseignantFemmes' => ({required Object nom}) => '${nom} ne peut pas prendre une classe de femmes : choisissez une enseignante dans la liste.',
+			'admin.groupes.formulaire.manqueEnseignantFilles' => ({required Object nom}) => '${nom} ne peut pas prendre une classe de filles : choisissez une enseignante dans la liste.',
+			'admin.groupes.formulaire.manqueEnseignantPris' => ({required Object nom}) => '${nom} est déjà en classe à ce créneau : changez de créneau ou choisissez une autre personne dans la liste.',
+			'admin.groupes.formulaire.manqueListeEnseignants' => 'La liste des enseignants n\'est pas encore à jour, donc l\'enseignant choisi n\'a pas pu être vérifié : attendez qu\'elle s\'affiche, puis pressez de nouveau.',
+			'admin.groupes.formulaire.horsLigne' => 'Sans réseau, la classe ne peut pas être créée. Vos choix restent affichés : revenez quand la connexion est rétablie.',
+			'admin.groupes.formulaire.seuilHorsLigne' => 'Sans réseau, le seuil ne peut pas être enregistré. Votre choix reste affiché : revenez quand la connexion est rétablie.',
 			'admin.diagnostics.titre' => 'Diagnostics',
-			'admin.diagnostics.intro' => 'Chaque élève inscrit attend un premier niveau avant de rejoindre un groupe : c\'est ici que ce placement se décide.',
+			'admin.diagnostics.intro' => 'Chaque élève inscrit attend un premier niveau avant de rejoindre une classe : c\'est ici que ce placement se décide.',
 			'admin.diagnostics.aucunProgramme' => 'Aucun programme publié',
 			'admin.diagnostics.aucunProgrammeDetail' => 'Publiez une première version du programme (Pédagogie > Programmes) avant de pouvoir décider un placement.',
 			'admin.diagnostics.erreur' => 'La file n\'a pas pu être lue. Réessayez dans un instant.',
@@ -18340,6 +18617,8 @@ extension on Traductions {
 			'admin.regles.ageCameraAuto' => 'Âge minimum caméra automatique',
 			'admin.regles.ageCameraAutoDetail' => 'En dessous de cet âge, l\'activation de la caméra reste soumise à l\'accord du tuteur.',
 			'admin.regles.ageInterfaceEnfant' => 'Âge maximum interface enfant',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regles.ageInterfaceEnfantDetail' => 'En dessous de cet âge, un profil bascule sur l\'interface simplifiée à sa création.',
 			'admin.regles.appareilsParEleve' => 'Appareils par élève',
 			'admin.regles.appareilsParEleveDetail' => 'Le nombre d\'appareils qu\'un élève peut avoir actifs en même temps.',
@@ -18402,8 +18681,6 @@ extension on Traductions {
 			'admin.evaluations.statutRealisee' => 'Réalisée',
 			'admin.evaluations.statutAnnulee' => 'Annulée',
 			'admin.evaluations.resultatReussi' => 'Réussi',
-			_ => null,
-		} ?? switch (path) {
 			'admin.evaluations.resultatEchec' => 'Échec',
 			'admin.evaluations.resultatARevoir' => 'À revoir',
 			'admin.evaluations.planifier' => 'Planifier une évaluation',
@@ -18429,16 +18706,16 @@ extension on Traductions {
 			'admin.evaluations.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
 			'admin.evaluations.journalisation' => 'Chaque planification, résultat et annulation est inscrit au journal d\'audit.',
 			'admin.progression.titre' => 'Progression',
-			'admin.progression.intro' => 'Le niveau courant de chaque élève, son groupe, et les blocages ou dérogations en cours.',
+			'admin.progression.intro' => 'Le niveau courant de chaque élève, sa classe, et les blocages ou dérogations en cours.',
 			'admin.progression.erreur' => 'La progression n\'a pas pu être lue. Réessayez dans un instant.',
 			'admin.progression.aucun' => 'Aucun élève actif',
 			'admin.progression.aucunDetail' => 'Les élèves apparaîtront ici dès leur premier diagnostic de placement.',
 			'admin.progression.colonneEleve' => 'Élève',
-			'admin.progression.colonneGroupe' => 'Groupe',
+			'admin.progression.colonneGroupe' => 'Classe',
 			'admin.progression.colonneNiveau' => 'Niveau',
 			'admin.progression.colonneDepuis' => 'Depuis',
 			'admin.progression.colonneException' => 'Exception',
-			'admin.progression.sansGroupe' => 'Sans groupe',
+			'admin.progression.sansGroupe' => 'Sans classe',
 			'admin.progression.sansNiveau' => 'Non diagnostiqué',
 			'admin.progression.filtreTousCycles' => 'Tous les cycles',
 			'admin.progression.depuisAujourdhui' => 'Aujourd\'hui',
@@ -18854,6 +19131,8 @@ extension on Traductions {
 			'nav.eleve.suivi' => 'Suivi',
 			'nav.eleve.compte' => 'Compte',
 			'nav.tuteur.accueil' => 'Accueil',
+			_ => null,
+		} ?? switch (path) {
 			'nav.tuteur.foyer' => 'Foyer',
 			'nav.tuteur.disponibilites' => 'Disponibilités',
 			'nav.tuteur.reglages' => 'Réglages',
@@ -18916,8 +19195,6 @@ extension on Traductions {
 			'compte.nonDisponible' => 'Non disponible',
 			'compte.contact' => 'Contact',
 			'compte.contactDetail' => 'Géré par l\'académie',
-			_ => null,
-		} ?? switch (path) {
 			'compte.langue' => 'Langue',
 			'compte.francais' => 'Français',
 			'compte.fuseau' => 'Fuseau horaire',
@@ -19332,7 +19609,7 @@ extension on Traductions {
 			'tuteur.accueil.blocAppareilsDetail' => 'Ajouter un appareil, ou en retirer un.',
 			'tuteur.accueil.blocReglages' => 'Réglages par enfant',
 			'tuteur.accueil.blocReglagesDetail' => 'Photo, caméra et affichage, enfant par enfant.',
-			'tuteur.accueil.blocGroupesDetail' => 'Le groupe, l\'enseignant et le prochain cours de chaque enfant.',
+			'tuteur.accueil.blocGroupesDetail' => 'La classe, l\'enseignant et le prochain cours de chaque enfant.',
 			'tuteur.accueil.acces' => 'Accès',
 			'tuteur.accueil.aucunEnfant' => 'Aucun enfant dans le foyer',
 			'tuteur.accueil.aucunEnfantDetail' => 'Ajoutez votre premier enfant pour commencer.',
@@ -19368,6 +19645,8 @@ extension on Traductions {
 			'tuteur.reglages.demandeMotif' => 'Pourquoi ce changement ?',
 			'tuteur.reglages.demandeMotifRequis' => 'Un motif est nécessaire : c\'est lui qui permet de trancher.',
 			'tuteur.reglages.demandeManqueValeur' => 'Il manque la durée demandée : choisissez-la dans la liste, ou touchez « Autre » et écrivez-la.',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.reglages.demandeEnvoyer' => 'Envoyer la demande',
 			'tuteur.reglages.demandeEnvoyee' => 'Demande envoyée. L\'administration la tranchera.',
 			'tuteur.reglages.aucunEnfant' => 'Aucun enfant dans le foyer',
@@ -19430,8 +19709,6 @@ extension on Traductions {
 			'classe.historique' => 'Historique',
 			'classe.sousTitre' => ({required Object prenom, required Object enseignant}) => '${prenom} · ${enseignant}',
 			'classe.indisponiblePhrase' => 'Le détail de la classe n\'est pas encore disponible ici.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.introuvableTitre' => 'Cette classe n\'est pas ouverte à ce profil',
 			'classe.introuvablePhrase' => 'Elle a peut-être pris fin, ou elle concerne un autre élève du foyer.',
 			'classe.seance.aucune' => 'Aucune séance planifiée',
@@ -19882,6 +20159,8 @@ extension on Traductions {
 			'enseignant.profil.statutSuspenduDetail' => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.',
 			'enseignant.profil.statutInconnu' => 'Statut non disponible',
 			'enseignant.profil.statutInconnuDetail' => 'Nous n\'avons pas pu lire votre statut.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.statutDivergent' => 'Ce statut vient de changer. Rouvrez l\'application pour que votre accès suive.',
 			'enseignant.profil.verification' => 'Vérification du dossier',
 			'enseignant.profil.verificationEnAttente' => 'En attente',
@@ -19944,8 +20223,6 @@ extension on Traductions {
 			'enseignant.creneaux.etatEnAttente' => 'En attente de validation',
 			'enseignant.creneaux.etatLimite' => 'Limite de charge atteinte',
 			'enseignant.creneaux.limiteDetail' => 'Votre charge actuelle ne permet pas de réserver une Classe supplémentaire.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.aucuneClasse' => 'Aucune Classe compatible pour le moment',
 			'enseignant.creneaux.aucuneClasseDetail' => 'Modifiez vos disponibilités si votre emploi du temps a changé.',
 			'enseignant.creneaux.reserver' => 'Réserver cette Classe',
@@ -20321,7 +20598,7 @@ extension on Traductions {
 			'tc.bibliotheque.indisponible.message' => 'La bibliothèque est momentanément indisponible',
 			'tc.bibliotheque.indisponible.action' => 'Réessayer',
 			'tc.bibliotheque.introuvable.message' => 'Ce support ne vous est pas ouvert',
-			'tc.bibliotheque.introuvable.invitation' => 'Il a peut-être été retiré, ou il est réservé à un autre groupe. Votre enseignant peut vous le rouvrir.',
+			'tc.bibliotheque.introuvable.invitation' => 'Il a peut-être été retiré, ou il est réservé à une autre classe. Votre enseignant peut vous le rouvrir.',
 			'tc.bibliotheque.offline.aTelecharger' => 'À télécharger',
 			'tc.bibliotheque.offline.enCours' => 'Téléchargement',
 			'tc.bibliotheque.offline.enCache' => 'En cache',
@@ -20396,6 +20673,8 @@ extension on Traductions {
 			'tc.outils.trait.gomme' => 'Gomme',
 			'tc.outils.trait.annuler' => 'Annuler',
 			'tc.outils.trait.plus' => 'Plus',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.trait.ardoise' => 'Ardoise d\'annotation, facultative : le cours reste lisible sans elle',
 			'tc.outils.trait.effacerDernier' => 'Effacer mon dernier trait',
 			'tc.outils.portee.temporaire' => 'Le temps d\'expliquer',
@@ -20407,7 +20686,7 @@ extension on Traductions {
 			'tc.outils.marquer.retirer' => 'Retirer le marqueur',
 			'tc.outils.revision.titre' => 'À préparer',
 			'tc.outils.revision.aide' => 'Le passage sélectionné devient un travail à préparer.',
-			'tc.outils.revision.groupeEntier' => 'Tout le groupe',
+			'tc.outils.revision.groupeEntier' => 'Toute la classe',
 			'tc.outils.revision.consigne' => 'Consigne courte (facultatif)',
 			'tc.outils.revision.creer' => 'Poser le travail',
 			'tc.outils.revision.posee' => 'Travail à préparer posé',
@@ -20458,8 +20737,6 @@ extension on Traductions {
 			'tc.classe.action.noter' => 'Noter',
 			'tc.classe.action.signaler' => 'Signaler un besoin',
 			'tc.classe.action.contexte' => 'Ouvrir le contexte',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.rappel.recu' => 'Le professeur vous appelle',
 			'tc.classe.rappel.echec' => 'Le rappel n\'a pas pu être envoyé',
 			'tc.classe.rappel.echecDroit' => 'Votre accès à cette séance ne permet pas d\'appeler un élève',
@@ -20710,7 +20987,7 @@ extension on Traductions {
 			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
 			'tc.parcours.signalement.famille' => 'Message pour la famille',
 			'tc.parcours.signalement.familleAide' => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.',
-			'tc.parcours.signalement.contexte' => ({required Object eleve}) => 'Élève ${eleve}. La séance, le groupe et votre nom sont déjà joints.',
+			'tc.parcours.signalement.contexte' => ({required Object eleve}) => 'Élève ${eleve}. La séance, la classe et votre nom sont déjà joints.',
 			'tc.parcours.signalement.envoyer' => 'Envoyer le signalement',
 			'tc.parcours.signalement.envoye' => 'Signalement transmis à l\'administration.',
 			'tc.parcours.signalement.interneRequis' => 'Écrivez au moins ce que l\'administration doit savoir.',
@@ -20910,6 +21187,8 @@ extension on Traductions {
 			'adulte.acceptation.acceptationEchecTitre' => 'L\'acceptation n\'a pas été confirmée.',
 			'adulte.acceptation.refusEchecTitre' => 'Le refus n\'a pas été confirmé.',
 			'adulte.acceptation.echecPhrase' => 'Vérifiez avant de réessayer.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.acceptation.accepteeTitre' => 'Invitation acceptée',
 			'adulte.acceptation.rejoint' => ({required Object dePrenom}) => 'Vous avez rejoint le forfait famille ${dePrenom}.',
 			'adulte.acceptation.refuseeTitre' => 'Invitation refusée',
@@ -20972,8 +21251,6 @@ extension on Traductions {
 			'adulte.reprise.motif' => 'Motif',
 			'adulte.reprise.motifDeces' => 'Décès déclaré du titulaire',
 			'adulte.reprise.deposeeLe' => 'Déposée le',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.reprise.etat' => 'État',
 			'adulte.reprise.etats.deposee' => 'Déposée',
 			'adulte.reprise.etats.refuseeParTitulaire' => 'Refusée par le titulaire',
@@ -21058,6 +21335,9 @@ extension on Traductions {
 			'formulaire.motif.autreChamp' => 'Le motif, en quelques mots',
 			'formulaire.entier.bornes' => ({required Object min, required Object max}) => 'Entre ${min} et ${max}',
 			'formulaire.entier.horsBornes' => ({required Object min, required Object max}) => 'Choisissez une valeur entre ${min} et ${max}, ou l\'une des valeurs proposées.',
+			'formulaire.obligatoire' => 'Champ obligatoire',
+			'formulaire.champObligatoire' => ({required Object champ}) => '${champ}, champ obligatoire',
+			'formulaire.legendeObligatoire' => 'Les champs marqués d\'un point sont obligatoires.',
 			'motifs.ajoutEleve.diagnostic' => 'Placement après diagnostic',
 			'motifs.ajoutEleve.attente' => 'Sortie de la liste d\'attente',
 			'motifs.ajoutEleve.transfert' => 'Transfert depuis une autre classe',

@@ -390,7 +390,9 @@ class _Carte extends StatelessWidget {
                                 ],
                                 if (raisonIndisponible != null) ...<Widget>[
                                   Ecart.vSm,
-                                  Text(
+                                  // Sans coupure : « enseignan / te » a 320 en
+                                  // texte x2 (CLASSE-FORM-1).
+                                  TexteSansCoupure(
                                     raisonIndisponible!,
                                     style: palette.inkMuted.applyTo(
                                       textes.labelMedium ?? const TextStyle(),
@@ -491,7 +493,7 @@ extension on _Carte {
                 ],
                 if (raisonIndisponible != null) ...<Widget>[
                   Ecart.vSm,
-                  Text(
+                  TexteSansCoupure(
                     raisonIndisponible!,
                     textAlign: TextAlign.center,
                     style: palette.inkMuted.applyTo(
