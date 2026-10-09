@@ -13,7 +13,9 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/creneaux/creneaux_page.dart';
+import 'package:rewayah_academy/features/creneaux/plages.dart';
 import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
+import 'package:rewayah_academy/features/disponibilites/grille_semaine.dart';
 
 import '../support/harnais.dart';
 
@@ -121,28 +123,16 @@ Future<void> _monter(
   await tester.pumpAndSettle();
 }
 
-/// Tape une case de la grille par son libelle parle.
-///
-/// La grille n'expose aucune cle : la seule prise stable sur une case donnee
-/// est le libelle semantique que `ENS-06` doit de toute facon porter (fiche
-/// `ENS-06`, section Accessibilite). Le mesurer ici verifie les deux choses a
-/// la fois.
-Future<void> _taperCase(WidgetTester tester, {required String libelle}) async {
-  // Sur mobile, des plages deja posees se lisent en liste : la grille s'ouvre
-  // par « Ajouter un creneau » (EN-5).
-  final Finder ajouter = find.text(t.enseignant.creneaux.ajouterCreneau);
-  if (ajouter.evaluate().isNotEmpty) {
-    await tester.ensureVisible(ajouter);
-    await tester.tap(ajouter);
-    await tester.pumpAndSettle();
-  }
-  final Finder cellule = find.bySemanticsLabel(libelle);
-  expect(cellule, findsOneWidget, reason: 'case introuvable : $libelle');
-  await tester.ensureVisible(cellule);
+/// Touche un texte, apres l'avoir rendu visible.
+Future<void> _toucher(WidgetTester tester, Finder cible) async {
+  await tester.ensureVisible(cible);
   await tester.pumpAndSettle();
-  await tester.tap(cellule);
+  await tester.tap(cible);
   await tester.pumpAndSettle();
 }
+
+String _de(int h) => t.enseignant.creneaux.plageDe(heure: '$h');
+String _a(int h) => t.enseignant.creneaux.plageA(heure: '$h');
 
 void main() {
   group('ENS-06 Disponibilites : l ancien modele est retire (EN-5)', () {
@@ -165,7 +155,7 @@ void main() {
       expect(find.textContaining('Prendre'), findsNothing);
     });
 
-    testWidgets('mobile : la liste par jour, sans date (E15)', (
+    testWidgets('mobile : une ligne par plage, sans date (E15, DISPO-1)', (
       WidgetTester tester,
     ) async {
       final FauxServicePlanning planning = FauxServicePlanning()
@@ -176,13 +166,14 @@ void main() {
 
       await _monter(tester, planning: planning);
 
+      // 17 h et 18 h se lisent « Lundi | de 17 h | a 19 h » (empilee a 390
+      // avec la police de test).
       expect(find.text('Lundi'), findsOneWidget);
-      expect(find.text('17 h, 18 h'), findsOneWidget);
-      // La grille attend « Ajouter un creneau ».
-      expect(find.text(t.disponibilites.titreEnseignant), findsNothing);
-      await tester.tap(find.text(t.enseignant.creneaux.ajouterCreneau));
-      await tester.pumpAndSettle();
-      expect(find.text(t.disponibilites.titreEnseignant), findsOneWidget);
+      expect(find.textContaining(_de(17)), findsOneWidget);
+      expect(find.textContaining(_a(19)), findsOneWidget);
+      // Plus de grille de cases a l'enseignant (directeur, 01/10).
+      expect(find.byType(GrilleSemaine), findsNothing);
+      expect(find.text(t.enseignant.creneaux.ajouterPlage), findsOneWidget);
     });
 
     testWidgets('sans offres branchees, aucune section Classes (BR-1)', (
@@ -277,7 +268,7 @@ void main() {
     });
   });
 
-  group('ENS-06 : les etats de la grille', () {
+  group('ENS-06 : les etats des plages (DISPO-1)', () {
     testWidgets('loading : aucune heure avant que le fuseau ait repondu', (
       WidgetTester tester,
     ) async {
@@ -322,23 +313,28 @@ void main() {
       expect(find.text(t.enseignant.creneaux.aucuneHeure), findsOneWidget);
     });
 
-    testWidgets('sauvegarde : la case enregistree est NOMMEE', (
+    testWidgets('sauvegarde : la plage enregistree est NOMMEE', (
       WidgetTester tester,
     ) async {
       final FauxServicePlanning planning = FauxServicePlanning();
 
       await _monter(tester, planning: planning);
-      await _taperCase(
-        tester,
-        libelle: t.disponibilites.celluleLibre(jour: 'mardi', heure: '17'),
-      );
+      await _toucher(tester, find.text(t.enseignant.creneaux.ajouterPlage));
+      await _toucher(tester, find.text('Mardi'));
+      await _toucher(tester, find.text(t.enseignant.creneaux.enregistrerPlage));
 
-      expect(planning.poses.length, 1);
-      expect(planning.poses.single.creneau.jour, 2);
-      expect(planning.poses.single.creneau.heure, 17);
-      // `enCours` figeait la grille sans jamais dire qu'une case etait passee.
+      // La soiree par defaut, 17 h a 23 h : six heures pleines.
+      expect(planning.poses.length, 6);
+      expect(planning.poses.first.creneau.jour, 2);
+      expect(planning.poses.first.creneau.heure, 17);
       expect(
-        find.text(t.enseignant.creneaux.heureEnregistree(heure: 'mardi 17 h')),
+        find.text(
+          t.enseignant.creneaux.plageEnregistree(
+            jours: 'mardi',
+            de: _de(17),
+            a: _a(23),
+          ),
+        ),
         findsOneWidget,
       );
     });
@@ -346,10 +342,8 @@ void main() {
     testWidgets('conflit : une heure qui porte un eleve se VOIT', (
       WidgetTester tester,
     ) async {
-      // Sans ce calcul, la case d'une heure engagee est indiscernable d'une
-      // case libre. Le conflit se voit, il ne se bloque pas : retirer une
-      // disponibilite n'annule aucun cours, et refuser le geste serait une
-      // regle metier qu'aucun document du depot ne pose.
+      // Le conflit se voit, il ne se bloque pas : retirer une disponibilite
+      // n'annule aucun cours ; la suppression est confirmee et le dit.
       final FauxServicePlanning planning = FauxServicePlanning()
         ..creneaux[_monId] = <Creneau>[
           const Creneau(jour: 4, heure: 9, fuseau: 'Europe/Paris'),
@@ -360,48 +354,60 @@ void main() {
 
       // 1. Le conflit est visible AVANT le geste.
       expect(
-        find.text(t.enseignant.creneaux.heureEngagee(heures: 'jeudi 9 h')),
+        find.textContaining(
+          t.enseignant.creneaux.plageEngagee(
+            heures: nommerHeure((jour: 4, heure: 9)),
+          ),
+        ),
         findsOneWidget,
       );
 
-      await _taperCase(
+      await _toucher(tester, find.text('Jeudi'));
+      await _toucher(tester, find.text(t.enseignant.creneaux.supprimerPlage));
+      await _toucher(
         tester,
-        libelle: t.disponibilites.cellulePosee(jour: 'jeudi', heure: '9'),
+        find.text(t.enseignant.creneaux.confirmerRetraitAction),
       );
 
       // 2. Le geste passe, et la confirmation dit ce qu'il ne fait PAS.
       expect(planning.retires.length, 1);
       expect(planning.retires.single.creneau.heure, 9);
       expect(
-        find.text(t.enseignant.creneaux.retraitEngage(heure: 'jeudi 9 h')),
+        find.textContaining(
+          t.enseignant.creneaux.seanceContinue(
+            heures: nommerHeure((jour: 4, heure: 9)),
+          ),
+        ),
         findsOneWidget,
       );
     });
 
-    testWidgets('une heure libre retiree ne parle d aucune reaffectation', (
+    testWidgets('une plage libre retiree ne parle d aucune reaffectation', (
       WidgetTester tester,
     ) async {
-      // Le pendant du test ci-dessus : sans eleve sur l'heure, la confirmation
-      // reste courte. Une phrase de reaffectation partout serait du bruit.
       final FauxServicePlanning planning = FauxServicePlanning()
         ..creneaux[_monId] = <Creneau>[
           const Creneau(jour: 2, heure: 17, fuseau: 'Europe/Paris'),
         ];
 
       await _monter(tester, planning: planning);
-      await _taperCase(
-        tester,
-        libelle: t.disponibilites.cellulePosee(jour: 'mardi', heure: '17'),
-      );
+      await _toucher(tester, find.text('Mardi'));
+      await _toucher(tester, find.text(t.enseignant.creneaux.supprimerPlage));
 
       expect(planning.retires.length, 1);
       expect(
-        find.text(t.enseignant.creneaux.heureRetiree(heure: 'mardi 17 h')),
+        find.text(
+          t.enseignant.creneaux.plageSupprimee(
+            jour: 'mardi',
+            de: _de(17),
+            a: _a(18),
+          ),
+        ),
         findsOneWidget,
       );
     });
 
-    testWidgets('offline : la grille reste lisible mais n accepte rien', (
+    testWidgets('offline : les plages restent lisibles mais rien ne s ouvre', (
       WidgetTester tester,
     ) async {
       final FauxServicePlanning planning = FauxServicePlanning()
@@ -411,16 +417,15 @@ void main() {
 
       await _monter(tester, planning: planning, horsLigne: true);
 
-      // Consultable : le compteur d'heures posees est la.
+      // Consultable : la plage et le compteur d'heures posees sont la.
+      expect(find.text('Mardi'), findsOneWidget);
       expect(find.text(t.disponibilites.poseeUne), findsOneWidget);
       expect(find.text(t.enseignant.creneaux.horsLigneGrille), findsOneWidget);
-      // Et inerte : la case n'expose plus de libelle pressable.
-      expect(
-        find.bySemanticsLabel(
-          t.disponibilites.cellulePosee(jour: 'mardi', heure: '17'),
-        ),
-        findsNothing,
-      );
+      // Et inerte : aucun ajout rendu, la plage ne s'ouvre pas.
+      expect(find.text(t.enseignant.creneaux.ajouterPlage), findsNothing);
+      await tester.tap(find.text('Mardi'));
+      await tester.pumpAndSettle();
+      expect(find.text(t.enseignant.creneaux.supprimerPlage), findsNothing);
       expect(planning.poses, isEmpty);
       expect(planning.retires, isEmpty);
     });

@@ -9817,7 +9817,7 @@ class Traductions$enseignant$creneaux$fr {
 	// Translations
 
 	/// fr: '{jour} {heure} h'
-	String heureLibelle({required Object jour, required Object heure}) => '${jour} ${heure} h';
+	String heureLibelle({required Object jour, required Object heure}) => '${jour} ${heure} h';
 
 	/// fr: 'Vous n'avez proposé aucune heure. Sans créneau, aucune Classe ne peut vous être proposée.'
 	String get aucuneHeure => 'Vous n\'avez proposé aucune heure. Sans créneau, aucune Classe ne peut vous être proposée.';
@@ -9941,6 +9941,111 @@ class Traductions$enseignant$creneaux$fr {
 
 	/// fr: '{minutes} min'
 	String duree({required Object minutes}) => '${minutes} min';
+
+	/// fr: 'Une ligne par plage. Touchez une plage pour la modifier ou la supprimer.'
+	String get plagesContexte => 'Une ligne par plage. Touchez une plage pour la modifier ou la supprimer.';
+
+	/// fr: 'de {heure} h'
+	String plageDe({required Object heure}) => 'de ${heure} h';
+
+	/// fr: 'à {heure} h'
+	String plageA({required Object heure}) => 'à ${heure} h';
+
+	/// fr: 'à minuit'
+	String get plageAMinuit => 'à minuit';
+
+	/// fr: 'Classe déjà engagée sur {heures}'
+	String plageEngagee({required Object heures}) => 'Classe déjà engagée sur ${heures}';
+
+	/// fr: 'Ajouter une plage'
+	String get ajouterPlage => 'Ajouter une plage';
+
+	/// fr: 'Nouvelle plage de disponibilité'
+	String get feuilleAjouterTitre => 'Nouvelle plage de disponibilité';
+
+	/// fr: 'Modifier la plage du {jour}'
+	String feuilleModifierTitre({required Object jour}) => 'Modifier la plage du ${jour}';
+
+	/// fr: 'Choisissez un ou plusieurs jours, puis l'heure de début et l'heure de fin. Un cours peut commencer à chaque heure pleine de la plage.'
+	String get feuilleContexte => 'Choisissez un ou plusieurs jours, puis l\'heure de début et l\'heure de fin. Un cours peut commencer à chaque heure pleine de la plage.';
+
+	/// fr: 'Raccourcis'
+	String get raccourcis => 'Raccourcis';
+
+	/// fr: 'Soirée 17 h-23 h'
+	String get raccourciSoiree => 'Soirée 17 h-23 h';
+
+	/// fr: 'Matinée 8 h-12 h'
+	String get raccourciMatinee => 'Matinée 8 h-12 h';
+
+	/// fr: 'Week-end'
+	String get raccourciWeekEnd => 'Week-end';
+
+	/// fr: 'Soirée et Matinée règlent les heures. Week-end choisit samedi et dimanche.'
+	String get raccourcisDetail => 'Soirée et Matinée règlent les heures. Week-end choisit samedi et dimanche.';
+
+	/// fr: 'Jours'
+	String get jours => 'Jours';
+
+	/// fr: 'Heures'
+	String get heures => 'Heures';
+
+	/// fr: 'Heure de début'
+	String get menuDe => 'Heure de début';
+
+	/// fr: 'Heure de fin'
+	String get menuA => 'Heure de fin';
+
+	/// fr: 'Aucun jour choisi. Touchez au moins un jour pour enregistrer la plage.'
+	String get manqueJour => 'Aucun jour choisi. Touchez au moins un jour pour enregistrer la plage.';
+
+	/// fr: '{jour} : cette plage chevauche ou touche une plage déjà posée. Elles seront réunies en une seule, {de} {a}.'
+	String fusion({required Object jour, required Object de, required Object a}) => '${jour} : cette plage chevauche ou touche une plage déjà posée. Elles seront réunies en une seule, ${de} ${a}.';
+
+	/// fr: 'Enregistrer la plage'
+	String get enregistrerPlage => 'Enregistrer la plage';
+
+	/// fr: 'Supprimer cette plage'
+	String get supprimerPlage => 'Supprimer cette plage';
+
+	/// fr: 'Plage enregistrée : {jours}, {de} {a}.'
+	String plageEnregistree({required Object jours, required Object de, required Object a}) => 'Plage enregistrée : ${jours}, ${de} ${a}.';
+
+	/// fr: 'Plage supprimée : {jour}, {de} {a}.'
+	String plageSupprimee({required Object jour, required Object de, required Object a}) => 'Plage supprimée : ${jour}, ${de} ${a}.';
+
+	/// fr: 'La séance déjà attribuée sur {heures} continue : demandez une réaffectation pour l'arrêter.'
+	String seanceContinue({required Object heures}) => 'La séance déjà attribuée sur ${heures} continue : demandez une réaffectation pour l\'arrêter.';
+
+	/// fr: 'Retirer {heures} de vos disponibilités ?'
+	String confirmerRetraitQuestion({required Object heures}) => 'Retirer ${heures} de vos disponibilités ?';
+
+	/// fr: 'Une Classe a lieu sur {heures}. Retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu'à une réaffectation.'
+	String confirmerRetraitConsequence({required Object heures}) => 'Une Classe a lieu sur ${heures}. Retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu\'à une réaffectation.';
+
+	/// fr: 'Retirer ces heures'
+	String get confirmerRetraitAction => 'Retirer ces heures';
+
+	/// fr: 'Ajout non confirmé : {heures}.'
+	String ajoutNonConfirme({required Object heures}) => 'Ajout non confirmé : ${heures}.';
+
+	/// fr: 'Retrait non confirmé : {heures}.'
+	String retraitNonConfirme({required Object heures}) => 'Retrait non confirmé : ${heures}.';
+
+	/// fr: 'La connexion a pu se couper ou le serveur n'a pas répondu.'
+	String get echecCause => 'La connexion a pu se couper ou le serveur n\'a pas répondu.';
+
+	/// fr: 'Touchez « {action} » pour réessayer : seules ces heures seront renvoyées, après relecture de vos plages.'
+	String echecQuoiFaire({required Object action}) => 'Touchez « ${action} » pour réessayer : seules ces heures seront renvoyées, après relecture de vos plages.';
+
+	/// fr: 'Vos Classes déjà engagées ne sont pas confirmées : un conflit avec une plage ne peut pas être signalé. Vérifiez votre connexion, puis touchez « Réessayer ».'
+	String get engagementsNonConfirmes => 'Vos Classes déjà engagées ne sont pas confirmées : un conflit avec une plage ne peut pas être signalé. Vérifiez votre connexion, puis touchez « Réessayer ».';
+
+	/// fr: 'Vos Classes déjà engagées ne sont pas confirmées. Si une Classe a lieu sur {heures}, retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu'à une réaffectation.'
+	String retraitSansEngagements({required Object heures}) => 'Vos Classes déjà engagées ne sont pas confirmées. Si une Classe a lieu sur ${heures}, retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu\'à une réaffectation.';
+
+	/// fr: 'Sans réseau, cette plage ne peut pas être enregistrée. Vos choix restent affichés : revenez quand la connexion est rétablie.'
+	String get horsLigneFeuille => 'Sans réseau, cette plage ne peut pas être enregistrée. Vos choix restent affichés : revenez quand la connexion est rétablie.';
 }
 
 // Path: enseignant.ficheGroupe
@@ -19752,7 +19857,7 @@ extension on Traductions {
 			'enseignant.profil.enregistrer' => 'Enregistrer',
 			'enseignant.profil.enregistre' => 'Modification enregistrée',
 			'enseignant.profil.editionErreur' => 'La modification n\'a pas abouti. Réessayez dans un instant.',
-			'enseignant.creneaux.heureLibelle' => ({required Object jour, required Object heure}) => '${jour} ${heure} h',
+			'enseignant.creneaux.heureLibelle' => ({required Object jour, required Object heure}) => '${jour} ${heure} h',
 			'enseignant.creneaux.aucuneHeure' => 'Vous n\'avez proposé aucune heure. Sans créneau, aucune Classe ne peut vous être proposée.',
 			'enseignant.creneaux.heureEnregistree' => ({required Object heure}) => '${heure} enregistré',
 			'enseignant.creneaux.heureRetiree' => ({required Object heure}) => '${heure} retiré',
@@ -19796,6 +19901,41 @@ extension on Traductions {
 			'enseignant.creneaux.cleHeureLocale' => 'Heure locale',
 			'enseignant.creneaux.cleDuree' => 'Durée',
 			'enseignant.creneaux.duree' => ({required Object minutes}) => '${minutes} min',
+			'enseignant.creneaux.plagesContexte' => 'Une ligne par plage. Touchez une plage pour la modifier ou la supprimer.',
+			'enseignant.creneaux.plageDe' => ({required Object heure}) => 'de ${heure} h',
+			'enseignant.creneaux.plageA' => ({required Object heure}) => 'à ${heure} h',
+			'enseignant.creneaux.plageAMinuit' => 'à minuit',
+			'enseignant.creneaux.plageEngagee' => ({required Object heures}) => 'Classe déjà engagée sur ${heures}',
+			'enseignant.creneaux.ajouterPlage' => 'Ajouter une plage',
+			'enseignant.creneaux.feuilleAjouterTitre' => 'Nouvelle plage de disponibilité',
+			'enseignant.creneaux.feuilleModifierTitre' => ({required Object jour}) => 'Modifier la plage du ${jour}',
+			'enseignant.creneaux.feuilleContexte' => 'Choisissez un ou plusieurs jours, puis l\'heure de début et l\'heure de fin. Un cours peut commencer à chaque heure pleine de la plage.',
+			'enseignant.creneaux.raccourcis' => 'Raccourcis',
+			'enseignant.creneaux.raccourciSoiree' => 'Soirée 17 h-23 h',
+			'enseignant.creneaux.raccourciMatinee' => 'Matinée 8 h-12 h',
+			'enseignant.creneaux.raccourciWeekEnd' => 'Week-end',
+			'enseignant.creneaux.raccourcisDetail' => 'Soirée et Matinée règlent les heures. Week-end choisit samedi et dimanche.',
+			'enseignant.creneaux.jours' => 'Jours',
+			'enseignant.creneaux.heures' => 'Heures',
+			'enseignant.creneaux.menuDe' => 'Heure de début',
+			'enseignant.creneaux.menuA' => 'Heure de fin',
+			'enseignant.creneaux.manqueJour' => 'Aucun jour choisi. Touchez au moins un jour pour enregistrer la plage.',
+			'enseignant.creneaux.fusion' => ({required Object jour, required Object de, required Object a}) => '${jour} : cette plage chevauche ou touche une plage déjà posée. Elles seront réunies en une seule, ${de} ${a}.',
+			'enseignant.creneaux.enregistrerPlage' => 'Enregistrer la plage',
+			'enseignant.creneaux.supprimerPlage' => 'Supprimer cette plage',
+			'enseignant.creneaux.plageEnregistree' => ({required Object jours, required Object de, required Object a}) => 'Plage enregistrée : ${jours}, ${de} ${a}.',
+			'enseignant.creneaux.plageSupprimee' => ({required Object jour, required Object de, required Object a}) => 'Plage supprimée : ${jour}, ${de} ${a}.',
+			'enseignant.creneaux.seanceContinue' => ({required Object heures}) => 'La séance déjà attribuée sur ${heures} continue : demandez une réaffectation pour l\'arrêter.',
+			'enseignant.creneaux.confirmerRetraitQuestion' => ({required Object heures}) => 'Retirer ${heures} de vos disponibilités ?',
+			'enseignant.creneaux.confirmerRetraitConsequence' => ({required Object heures}) => 'Une Classe a lieu sur ${heures}. Retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu\'à une réaffectation.',
+			'enseignant.creneaux.confirmerRetraitAction' => 'Retirer ces heures',
+			'enseignant.creneaux.ajoutNonConfirme' => ({required Object heures}) => 'Ajout non confirmé : ${heures}.',
+			'enseignant.creneaux.retraitNonConfirme' => ({required Object heures}) => 'Retrait non confirmé : ${heures}.',
+			'enseignant.creneaux.echecCause' => 'La connexion a pu se couper ou le serveur n\'a pas répondu.',
+			'enseignant.creneaux.echecQuoiFaire' => ({required Object action}) => 'Touchez « ${action} » pour réessayer : seules ces heures seront renvoyées, après relecture de vos plages.',
+			'enseignant.creneaux.engagementsNonConfirmes' => 'Vos Classes déjà engagées ne sont pas confirmées : un conflit avec une plage ne peut pas être signalé. Vérifiez votre connexion, puis touchez « Réessayer ».',
+			'enseignant.creneaux.retraitSansEngagements' => ({required Object heures}) => 'Vos Classes déjà engagées ne sont pas confirmées. Si une Classe a lieu sur ${heures}, retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu\'à une réaffectation.',
+			'enseignant.creneaux.horsLigneFeuille' => 'Sans réseau, cette plage ne peut pas être enregistrée. Vos choix restent affichés : revenez quand la connexion est rétablie.',
 			'enseignant.ficheGroupe.creneauHebdo' => ({required Object jour, required Object heure}) => '${jour} à ${heure}, chaque semaine',
 			'enseignant.ficheGroupe.aucunMembre' => 'Aucun élève dans cette Classe',
 			'enseignant.ficheGroupe.aucunMembreDetail' => 'L\'administration compose les Classes : celle-ci n\'a pas encore d\'élève.',
@@ -20269,6 +20409,8 @@ extension on Traductions {
 			'tc.classe.support.aucun' => 'Aucun support présenté',
 			'tc.classe.support.aucunDetail' => 'Ouvrez la Bibliothèque pour présenter un support à la Classe.',
 			'tc.classe.support.bibliotheque' => 'Bibliothèque',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.support.bibliothequeAbsente' => 'Bibliothèque non branchée',
 			'tc.classe.support.bibliothequeAbsenteDetail' => 'Le choix de support sera disponible dès l\'intégration du catalogue.',
 			'tc.classe.commandes.micro' => 'Ouvrir le micro',
@@ -20304,8 +20446,6 @@ extension on Traductions {
 			'tc.classe.prevol.permissionRefusee' => 'Accès au micro refusé. Autorisez-le pour ouvrir le cours.',
 			'tc.classe.prevol.reessayer' => 'Vérifier à nouveau',
 			'tc.classe.observation.restant' => ({required Object secondes}) => 'Reste ${secondes} s',
-			_ => null,
-		} ?? switch (path) {
 			'tc.realtime.transport.partage_indisponible' => 'Le partage du support n’est pas disponible sur ce serveur. Le cours continue, mais les autres appareils ne suivront pas la page.',
 			'tc.realtime.etat.restauration_impossible' => 'Impossible de retrouver le support en cours. Demandez à l’enseignant de le présenter à nouveau.',
 			'tc.observation.entree.titre' => 'Observer la séance',
@@ -20783,6 +20923,8 @@ extension on Traductions {
 			'adulte.reprise.phrases.validee' => 'L\'administration a validé la demande. Vous êtes désormais titulaire du foyer.',
 			'adulte.reprise.phrases.refusee' => 'L\'administration a refusé la demande. Aucune permission du foyer n\'est transférée.',
 			'adulte.reprise.titulaire.notification' => 'Une demande de reprise de votre foyer a été déposée en indiquant votre décès.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.reprise.titulaire.consigne' => 'Si cette demande est erronée, refusez-la.',
 			'adulte.reprise.titulaire.refuser' => 'Refuser la demande',
 			'adulte.reprise.titulaire.ligne' => 'Une demande de reprise de votre foyer a été déposée.',
@@ -20818,8 +20960,6 @@ extension on Traductions {
 			'adulte.demo.donnees.detailOffreB' => 'Solde de démonstration B',
 			'adulte.demo.donnees.totalRecharge5' => '5,00 € (démonstration)',
 			'adulte.demo.donnees.totalRecharge10' => '10,00 € (démonstration)',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.donnees.totalRecharge15' => '15,00 € (démonstration)',
 			'adulte.demo.donnees.totalRecharge20' => '20,00 € (démonstration)',
 			'adulte.demo.donnees.totalRecharge25' => '25,00 € (démonstration)',

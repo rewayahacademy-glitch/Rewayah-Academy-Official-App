@@ -3,11 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
-import '../../core/planning/service_planning.dart';
-import '../../core/reseau/service_reseau.dart';
-import '../../core/session/session_controleur.dart';
 import '../../core/theme/app_gabarit.dart';
-import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
@@ -17,10 +13,10 @@ import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
-import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../demo/enseignant_demo.dart';
-import '../disponibilites/grille_semaine.dart';
+import 'plages.dart';
+import 'plages_disponibilite.dart';
 
 /// Les Classes disponibles, telles que le serveur les filtrerait (doc 04 §15.4).
 ///
@@ -30,8 +26,8 @@ import '../disponibilites/grille_semaine.dart';
 final Provider<List<OffreClasseDemo>?> offresClassesProvider =
     Provider<List<OffreClasseDemo>?>((Ref ref) => null);
 
-/// `ENS-06` Disponibilites : les heures hebdomadaires de l'enseignant, puis
-/// les Classes disponibles (EN-5).
+/// `ENS-06` Disponibilites : les plages hebdomadaires de l'enseignant
+/// (DISPO-1, une ligne par plage), puis les Classes disponibles (EN-5).
 ///
 /// **L'ancien modele est retire de l'ecran** (doc 04 §15.1, E1) : plus
 /// d'onglet « Eleves en attente », plus de « Prendre {jour} a {heure} ». Le
@@ -52,7 +48,7 @@ class CreneauxPage extends StatelessWidget {
     final Gabarit gabarit = AppGabarit.de(context);
     // Le titre de la page dit deja « Disponibilites » : pas de sous-titre
     // « Mes disponibilites » qui le repete (K-42 §1).
-    const Widget heures = _OngletHeures();
+    const Widget heures = PlagesDisponibilite();
     const Widget classes = _ClassesDisponibles();
 
     return PageShell(
@@ -94,258 +90,7 @@ class _Panneau extends StatelessWidget {
 }
 
 /// Le jour ecrit en toutes lettres, avec sa majuscule (« Lundi », E15).
-String _jour(int jour) {
-  final String long = t.disponibilites.joursLongs[jour - 1];
-  return long[0].toUpperCase() + long.substring(1);
-}
-
-/// « Mes disponibilites » : la liste par jour, puis la grille de `TUT-04`.
-class _OngletHeures extends ConsumerStatefulWidget {
-  const _OngletHeures();
-
-  @override
-  ConsumerState<_OngletHeures> createState() => _OngletHeuresEtat();
-}
-
-class _OngletHeuresEtat extends ConsumerState<_OngletHeures> {
-  bool _enCours = false;
-  bool _erreur = false;
-  String? _confirmation;
-  bool _grilleOuverte = false;
-
-  /// Nomme une case : c'est ce qui manquait a l'etat « enregistre ».
-  ///
-  /// Sans le jour et l'heure, la confirmation dit qu'« un » creneau est passe,
-  /// pas lequel : au troisieme tap d'affilee, l'enseignant ne sait plus si
-  /// c'est le sien qui a abouti.
-  String _nommer(Creneau creneau) => t.enseignant.creneaux.heureLibelle(
-    jour: t.disponibilites.joursLongs[creneau.jour - 1],
-    heure: '${creneau.heure}',
-  );
-
-  /// Les heures qui portent deja un eleve : le **conflit** de la grille.
-  ///
-  /// Sans ce calcul, une case sur laquelle un eleve est engage est indiscernable
-  /// d'une case libre. Le conflit se **voit**, il ne se bloque pas : retirer une
-  /// disponibilite n'annule aucun cours (`weekly_availability` et
-  /// `teacher_student_assignments` sont deux tables), et refuser le geste serait
-  /// une regle metier qu'aucun document ne pose. L'ecran dit donc ce que le
-  /// retrait fait, et ce qu'il ne fait pas.
-  ///
-  /// Deduplique : deux eleves sur la meme heure ne font qu'un conflit, et
-  /// l'enumeration ne repete pas « mardi 17 h, mardi 17 h ».
-  List<Creneau> _engagements(List<Affectation> affectations, String monId) =>
-      <Creneau>{
-        for (final Affectation a in affectations)
-          if (a.active && a.enseignantId == monId) a.creneau,
-      }.toList();
-
-  bool _engagee(List<Creneau> engagements, Creneau creneau) => engagements.any(
-    (Creneau e) => e.jour == creneau.jour && e.heure == creneau.heure,
-  );
-
-  Future<void> _basculer(
-    String monId,
-    List<Creneau> engagements,
-    Creneau creneau,
-    bool posee,
-  ) async {
-    // Retirer une heure engagee n'annule pas le cours : la relation dure et ne
-    // se rompt que par une demande de reaffectation (ADR-017). Le geste passe,
-    // et la confirmation dit exactement cela plutot que « retire » tout court.
-    final bool engagee = posee && _engagee(engagements, creneau);
-
-    setState(() {
-      _enCours = true;
-      _erreur = false;
-    });
-    try {
-      final ServicePlanning service = ref.read(servicePlanningProvider);
-      if (posee) {
-        await service.retirer(profilId: monId, creneau: creneau);
-      } else {
-        await service.poser(profilId: monId, creneau: creneau);
-      }
-      ref.invalidate(disponibilitesProvider(monId));
-      if (mounted) {
-        setState(() {
-          final String heure = _nommer(creneau);
-          _confirmation = switch ((posee, engagee)) {
-            (true, true) => t.enseignant.creneaux.retraitEngage(heure: heure),
-            (true, false) => t.enseignant.creneaux.heureRetiree(heure: heure),
-            (false, _) => t.enseignant.creneaux.heureEnregistree(heure: heure),
-          };
-        });
-      }
-    } on Object {
-      if (mounted) {
-        setState(() {
-          _erreur = true;
-          _confirmation = null;
-        });
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _enCours = false);
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    final AppPalette palette = AppPalette.of(context);
-    final String? monId = ref.watch(sessionProvider).profileId;
-
-    if (monId == null) {
-      // La session n'a pas encore livre l'identifiant : c'est un CHARGEMENT,
-      // pas un vide. L'ecran rendait ici un `EmptyState` avec une invitation
-      // vide, c'est-a-dire ni l'un ni l'autre des deux etats.
-      return const Skeleton.liste(lignes: 6);
-    }
-
-    final AsyncValue<String> fuseau = ref.watch(monFuseauProvider);
-    final AsyncValue<List<Creneau>> creneaux = ref.watch(
-      disponibilitesProvider(monId),
-    );
-    final AsyncValue<List<Affectation>> affectations = ref.watch(
-      affectationsProvider,
-    );
-    // Tant que la reponse n'est pas la, l'appareil est repute en ligne : un
-    // bandeau affiche pendant la premiere frame clignoterait a chaque montage.
-    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
-
-    // Jamais par le type d'execution de l'`AsyncValue` : Riverpod 3 relance un
-    // provider en echec et repasse par `AsyncLoading` en conservant `hasError`.
-    final bool lisible = fuseau.hasValue && creneaux.hasValue;
-    final bool echec = fuseau.hasError || creneaux.hasError;
-
-    if (!lisible) {
-      if (echec) {
-        return EmptyState(
-          message: t.enseignant.creneaux.grilleErreur,
-          invitation: t.enseignant.creneaux.grilleErreurDetail,
-          icone: AppIcons.avertissement,
-          libelleAction: t.commun.reessayer,
-          onAction: () {
-            ref.invalidate(monFuseauProvider);
-            ref.invalidate(disponibilitesProvider(monId));
-          },
-        );
-      }
-      // **Aucune heure affichee avant que le fuseau ait repondu.** La grille
-      // se repliait sur 'Europe/Paris' code en dur : un enseignant de Conakry
-      // lisait ses heures en heure de Paris, puis les voyait changer.
-      return const Skeleton.liste(lignes: 6);
-    }
-
-    final List<Creneau> poses = creneaux.requireValue;
-    final List<Creneau> engagements = _engagements(
-      affectations.value ?? const <Affectation>[],
-      monId,
-    );
-
-    // Mobile : la liste par jour avec les plages, puis « Ajouter un creneau »
-    // qui ouvre la grille (00_MAQUETTES, ENS-06 P). Sans aucune plage, la
-    // grille est ouverte d'emblee. Bureau : le planning est toujours visible.
-    final bool liste =
-        AppGabarit.de(context) == Gabarit.mobile && poses.isNotEmpty;
-    final bool grille = !liste || _grilleOuverte;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        // Jours sans date (E15).
-        if (liste) ...<Widget>[
-          for (final int jour in (<int>{
-            for (final Creneau c in poses) c.jour,
-          }.toList()..sort()))
-            LigneCleValeur(
-              cle: _jour(jour),
-              valeur:
-                  (poses
-                          .where((Creneau c) => c.jour == jour)
-                          .map((Creneau c) => c.heure)
-                          .toList()
-                        ..sort())
-                      .map((int h) => t.enseignant.creneaux.heure(heure: '$h'))
-                      .join(', '),
-            ),
-          Ecart.vLg,
-        ],
-        if (!grille)
-          ActionPrincipale(
-            libelle: t.enseignant.creneaux.ajouterCreneau,
-            niveau: NiveauAction.secondaire,
-            onPress: () => setState(() => _grilleOuverte = true),
-          )
-        else ...<Widget>[
-          Text(t.disponibilites.titreEnseignant, style: textes.titleMedium),
-          Ecart.vXs,
-          Text(t.disponibilites.consigneEnseignant, style: textes.bodySmall),
-          Ecart.vMd,
-          GrilleSemaine(
-            creneaux: poses,
-            fuseau: fuseau.requireValue,
-            // Hors ligne, la grille reste CONSULTABLE mais inerte : une case
-            // pressee sans reseau echouerait apres le geste, et un bouton qui ne
-            // peut pas aboutir n'est pas rendu (`lib/CLAUDE.md`).
-            enCours: _enCours || horsLigne,
-            onBasculer: (Creneau creneau, bool posee) =>
-                _basculer(monId, engagements, creneau, posee),
-          ),
-        ],
-        Ecart.vSm,
-        Text(switch (poses.length) {
-          0 => t.enseignant.creneaux.aucuneHeure,
-          1 => t.disponibilites.poseeUne,
-          _ => t.disponibilites.posees(nombre: '${poses.length}'),
-        }, style: textes.bodySmall),
-        if (horsLigne) ...<Widget>[
-          Ecart.vSm,
-          Text(
-            t.enseignant.creneaux.horsLigneGrille,
-            style: palette.inkWarning.applyTo(
-              textes.bodySmall ?? const TextStyle(),
-            ),
-          ),
-        ],
-        if (engagements.isNotEmpty) ...<Widget>[
-          Ecart.vSm,
-          Text(
-            // Le conflit se VOIT, avant tout geste : une case engagee et une
-            // case libre ne se distinguent autrement par rien.
-            engagements.length == 1
-                ? t.enseignant.creneaux.heureEngagee(
-                    heures: _nommer(engagements.single),
-                  )
-                : t.enseignant.creneaux.heuresEngagees(
-                    heures: engagements.map(_nommer).join(', '),
-                  ),
-            style: palette.inkWarning.applyTo(
-              textes.bodySmall ?? const TextStyle(),
-            ),
-          ),
-        ],
-        if (_erreur || echec) ...<Widget>[
-          Ecart.vSm,
-          Text(
-            t.disponibilites.erreur,
-            style: palette.inkAlert.applyTo(
-              textes.bodySmall ?? const TextStyle(),
-            ),
-          ),
-        ],
-        Ecart.vSm,
-        // L'etat « enregistre », nomme. `enCours` figeait la grille sans
-        // jamais dire qu'une case etait passee : l'enseignant tapait, la
-        // couleur changeait, et rien ne distinguait un enregistrement reussi
-        // d'un rendu optimiste.
-        LocalFeedback(message: _confirmation),
-      ],
-    );
-  }
-}
+String _jour(int jour) => jourCapitalise(jour);
 
 /// Le mot et le ton de chaque etat, ecrits et pas seulement colores
 /// (UX_REVIEW_04, ligne 7 b).
