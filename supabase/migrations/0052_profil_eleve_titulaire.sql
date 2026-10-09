@@ -66,8 +66,8 @@ AS $function$
 $function$;
 
 ALTER FUNCTION public.peut_decrire_apprenant(uuid) OWNER TO postgres;
-REVOKE EXECUTE ON FUNCTION public.peut_decrire_apprenant(uuid) FROM PUBLIC, anon, agent_ro;
-GRANT EXECUTE ON FUNCTION public.peut_decrire_apprenant(uuid) TO authenticated;
+REVOKE EXECUTE ON FUNCTION public.peut_decrire_apprenant(uuid) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.peut_decrire_apprenant(uuid) TO authenticated, agent_ro;
 
 CREATE OR REPLACE FUNCTION public.creer_profil_eleve_titulaire()
 RETURNS uuid
