@@ -8,6 +8,7 @@ import 'package:rewayah_academy/core/matching/service_attribution.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_attribution/attribution_page.dart';
 
@@ -222,18 +223,24 @@ void main() {
         t.admin.attribution.attribuer(eleve: 'Yacine', enseignant: 'Ibrahim'),
       );
 
-      // Le champ est la, l'avertissement aussi, et le bouton reste inerte : la
+      // Les motifs proposes sont la (FORM-L1) ; le bouton n'est jamais grise
+      // (K-56) : presse sans motif, il dit ce qui manque, rien ne part. La
       // base refuserait de toute facon (ADR-021), l'ecran le dit avant.
-      expect(find.text(t.admin.attribution.motif), findsOneWidget);
-      expect(tester.widget<ActionPrincipale>(bouton).onPress, isNull);
+      expect(find.text(t.motifs.attribution.confirmee), findsOneWidget);
+      expect(tester.widget<ActionPrincipale>(bouton).onPress, isNotNull);
+      await tester.tap(bouton);
+      await tester.pumpAndSettle();
+      expect(find.text(t.formulaire.motif.manque), findsOneWidget);
+      expect(service.attributions, isEmpty);
 
+      await tester.tap(find.byKey(SelecteurMotif.cleAutre));
+      await tester.pumpAndSettle();
+      expect(find.text(t.admin.attribution.motif), findsOneWidget);
       await tester.enterText(
         find.byType(TextField),
         'Aucun enseignant libre sur ce creneau, accord verbal.',
       );
       await tester.pumpAndSettle();
-
-      expect(tester.widget<ActionPrincipale>(bouton).onPress, isNotNull);
       await tester.tap(bouton);
       await tester.pumpAndSettle();
 
@@ -298,14 +305,17 @@ void main() {
       // Deux heures possibles : choisir a la place de l'administration serait
       // poser une heure de cours par defaut.
       expect(find.text(t.admin.attribution.quelleHeure), findsOneWidget);
-      expect(tester.widget<ActionPrincipale>(bouton).onPress, isNull);
+      // Jamais grise (K-56) : presse trop tot, il demande l'heure.
+      await tester.tap(bouton);
+      await tester.pumpAndSettle();
+      expect(find.text(t.admin.attribution.manqueHeure), findsOneWidget);
+      expect(service.attributions, isEmpty);
 
       await tester.tap(
         find.text(t.admin.attribution.creneau(jour: 'jeudi', heure: '18')),
       );
       await tester.pumpAndSettle();
 
-      expect(tester.widget<ActionPrincipale>(bouton).onPress, isNotNull);
       await tester.tap(bouton);
       await tester.pumpAndSettle();
 

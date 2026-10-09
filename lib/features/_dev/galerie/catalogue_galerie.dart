@@ -70,6 +70,7 @@ import '../../../core/widgets/raccourci_tactile.dart';
 import '../../../core/widgets/rosace_verset.dart';
 import '../../../core/widgets/schedule_option.dart';
 import '../../../core/widgets/section_header.dart';
+import '../../../core/widgets/selecteur_motif.dart';
 import '../../../core/widgets/selecteur_niveau_programme.dart';
 import '../../../core/widgets/selecteur_personne.dart';
 import '../../../core/widgets/selecteur_section.dart';
@@ -2243,6 +2244,82 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
             libelle: 'Nom du nouveau cycle',
             controller: TextEditingController(text: 'Avance'),
             aide: 'Une phrase sous le champ.',
+          ),
+        ),
+      ),
+    ],
+  ),
+
+  // FORM-L1-7-13 : le motif en puces, « Autre » en dernier ouvre la saisie
+  // libre ; meme rangee pour les valeurs entieres proposees (L13).
+  EntreeGalerie(
+    nom: 'SelecteurMotif',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'puces, rien de retenu',
+        (BuildContext _) => _surfaceMaterielle(
+          SelecteurMotif(
+            motifs: const <String>[
+              'Demande de la famille',
+              'Transfert vers une autre classe',
+              'Fin de l inscription',
+            ],
+            controleur: TextEditingController(),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'puce retenue',
+        (BuildContext _) => _surfaceMaterielle(
+          SelecteurMotif(
+            motifs: const <String>[
+              'Demande de la famille',
+              'Transfert vers une autre classe',
+            ],
+            controleur: TextEditingController(
+              text: 'Transfert vers une autre classe',
+            ),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'motif manquant',
+        (BuildContext _) => _surfaceMaterielle(
+          SelecteurMotif(
+            motifs: const <String>['Demande de la famille'],
+            controleur: TextEditingController(),
+            erreur: 'Il manque le motif.',
+          ),
+        ),
+      ),
+      EtatGalerie(
+        '« Autre » ouvert, texte libre',
+        (BuildContext _) => _surfaceMaterielle(
+          SelecteurMotif(
+            motifs: const <String>['Demande de la famille'],
+            controleur: TextEditingController(text: 'Demenagement'),
+            aide: 'Une phrase sous le champ.',
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'sans puce : champ libre seul',
+        (BuildContext _) => _surfaceMaterielle(
+          SelecteurMotif(
+            motifs: const <String>[],
+            controleur: TextEditingController(),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'valeur entiere proposee (L13)',
+        (BuildContext _) => _surfaceMaterielle(
+          SelecteurEntier(
+            proposees: const <int>[30, 45, 60, 90],
+            affichage: (int n) => '$n min',
+            valeurInitiale: 60,
+            onChange: (int? _) {},
           ),
         ),
       ),

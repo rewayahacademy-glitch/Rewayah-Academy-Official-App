@@ -15,6 +15,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/features/admin_dossiers/file_dossiers.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
@@ -206,6 +207,7 @@ void main() {
     await _monter(tester, etat);
     await _ouvrir(tester, 'Amina');
     await _toucher(tester, t.dossiers.refuser);
+    await _ouvrirAutre(tester);
     await tester.enterText(
       find
           .ancestor(
@@ -398,4 +400,14 @@ void main() {
       throwsStateError,
     );
   });
+}
+
+/// FORM-L1 : le motif libre s'ecrit apres « Autre », derniere puce.
+Future<void> _ouvrirAutre(WidgetTester tester) async {
+  if (find.byKey(SelecteurMotif.cleAutre).evaluate().isEmpty) return;
+  if (find.text(t.dossiers.refus.champ).evaluate().isNotEmpty) return;
+  await tester.ensureVisible(find.byKey(SelecteurMotif.cleAutre));
+  await tester.pumpAndSettle();
+  await tester.tap(find.byKey(SelecteurMotif.cleAutre));
+  await tester.pumpAndSettle();
 }

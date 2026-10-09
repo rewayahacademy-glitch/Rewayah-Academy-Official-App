@@ -27,6 +27,7 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/features/admin_dossiers/visionneuse_piece.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
@@ -157,6 +158,18 @@ Finder get _champMotif => find
     )
     .first;
 
+/// FORM-L1 : le motif libre s'ecrit apres « Autre », derniere puce ; le
+/// champ doit alors exister et recevoir le texte (jamais un `enterText` dans
+/// le vide).
+Future<void> _saisirMotif(WidgetTester tester, String texte) async {
+  await tester.ensureVisible(find.byKey(SelecteurMotif.cleAutre));
+  await _stabiliser(tester);
+  await tester.tap(find.byKey(SelecteurMotif.cleAutre));
+  await _stabiliser(tester);
+  expect(_champMotif, findsOneWidget);
+  await tester.enterText(_champMotif, texte);
+}
+
 const List<(Size, String)> _tailles = <(Size, String)>[
   (Size(390, 844), 'telephone'),
   (Size(768, 1024), 'tablette'),
@@ -263,7 +276,16 @@ void main() {
           await _stabiliser(tester);
           await tester.tap(find.text(t.dossiers.refuser).first);
           await _stabiliser(tester);
-          expect(find.text(t.dossiers.refus.champ), findsOneWidget);
+          // FORM-L1 : 02D s'ouvre sur les motifs proposes, « Autre » en
+          // dernier ; le champ libre n'existe qu'apres « Autre ». Le focus est
+          // dans la zone du motif (premiere puce).
+          expect(find.byKey(SelecteurMotif.clePuce(0)), findsOneWidget);
+          expect(find.byKey(SelecteurMotif.cleAutre), findsOneWidget);
+          expect(find.text(t.dossiers.refus.champ), findsNothing);
+          expect(
+            FocusManager.instance.primaryFocus?.debugLabel,
+            SelecteurMotif.focusPremierePuce,
+          );
           debugPrint('PNG ${await capturer(tester, fichier('refus'))}');
 
           // 6. Erreur de motif (confirmer a vide).
@@ -306,7 +328,7 @@ void main() {
           await _stabiliser(tester);
           await tester.tap(find.text(t.dossiers.refuser).first);
           await _stabiliser(tester);
-          await tester.enterText(_champMotif, 'Photo illisible.');
+          await _saisirMotif(tester, 'Photo illisible.');
           await _stabiliser(tester);
           await tester.tap(find.text(t.dossiers.refuser).last);
           await _stabiliser(tester);
@@ -437,29 +459,35 @@ void main() {
           WidgetTester tester,
         ) async {
           fixerVueCapture(tester, taille, _densite(tailleNom));
-          await _monter(tester, mode.key, <Override>[
-            sourceSessionProvider.overrideWithValue(
-              FausseSourceSession(
-                const SessionState(
-                  resolue: true,
-                  role: AppRole.guardian,
-                  profileId: 'capture-tuteur',
-                  accountStatus: AccountStatus.pendingKyc,
-                  lectureProfil: LectureProfil.presente,
+          await _monter(
+            tester,
+            mode.key,
+            <Override>[
+              sourceSessionProvider.overrideWithValue(
+                FausseSourceSession(
+                  const SessionState(
+                    resolue: true,
+                    role: AppRole.guardian,
+                    profileId: 'capture-tuteur',
+                    accountStatus: AccountStatus.pendingKyc,
+                    lectureProfil: LectureProfil.presente,
+                  ),
                 ),
               ),
-            ),
-            serviceDossierProvider.overrideWithValue(
-              FauxServiceDossier()
-                ..etatRendu = const EtatDossier(
-                  profilExiste: true,
-                  role: AppRole.guardian,
-                  statutCompte: AccountStatus.pendingKyc,
-                  accuseSigne: true,
-                  contratSigne: true,
-                ),
-            ),
-          ], Routes.attente, repere: false);
+              serviceDossierProvider.overrideWithValue(
+                FauxServiceDossier()
+                  ..etatRendu = const EtatDossier(
+                    profilExiste: true,
+                    role: AppRole.guardian,
+                    statutCompte: AccountStatus.pendingKyc,
+                    accuseSigne: true,
+                    contratSigne: true,
+                  ),
+              ),
+            ],
+            Routes.attente,
+            repere: false,
+          );
           expect(find.text(t.attente.accesEnPreparation), findsOneWidget);
           expect(find.text(t.attente.deposerLaPiece), findsNothing);
           debugPrint(

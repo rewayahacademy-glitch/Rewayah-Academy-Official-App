@@ -6,6 +6,7 @@ import '../../core/admin/personnes_proposables.dart';
 import '../../core/admin/service_comptes.dart';
 import '../../core/admin/service_groupes.dart';
 import '../../core/domain/enums.dart';
+import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -25,6 +26,7 @@ import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pays_enseignant.dart';
+import '../../core/widgets/selecteur_motif.dart';
 import '../../core/widgets/selecteur_personne.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
@@ -614,6 +616,7 @@ void _ouvrirRetrait(
       deLibelle: deDevant(groupe.libelle),
     ),
     constructeur: (BuildContext contexte) => _FeuilleMotif(
+      motifs: MotifsProposes.retraitEleve(),
       libelleEnvoyer: t.admin.groupes.retirerEnvoyer,
       onEnvoyer: (String motif) => ref
           .read(serviceGroupesProvider)
@@ -675,6 +678,7 @@ void _ouvrirCloture(BuildContext context, WidgetRef ref, GroupeAdmin groupe) {
     context,
     titre: t.admin.groupes.cloturerTitre(libelle: groupe.libelle),
     constructeur: (BuildContext contexte) => _FeuilleMotif(
+      motifs: MotifsProposes.clotureClasse(),
       libelleEnvoyer: t.admin.groupes.cloturerEnvoyer,
       detail: t.admin.groupes.cloturerDetail,
       onEnvoyer: (String motif) => ref
@@ -921,28 +925,31 @@ class _FeuilleAjoutEtat extends State<_FeuilleAjout> {
   bool _envoi = false;
   String? _erreur;
 
+  /// Vrai quand le motif manque : il se dit sous les puces.
+  bool _motifManquant = false;
+
   @override
   void dispose() {
     _motif.dispose();
     super.dispose();
   }
 
-  /// Ce qui manque encore, nul quand tout est la (bouton jamais grise, K-56).
-  String? get _manque => _eleveId == null
-      ? t.admin.groupes.manqueEleve
-      : _motif.text.trim().isEmpty
-      ? t.admin.groupes.manqueMotif
-      : null;
-
   Future<void> _ajouter(WidgetRef ref) async {
     final String? eleveId = _eleveId;
-    if (_manque != null || eleveId == null) {
-      setState(() => _erreur = _manque);
+    final bool sansMotif = _motif.text.trim().isEmpty;
+    // Bouton jamais grise (K-56) : il dit ce qui manque, chaque chose a sa
+    // place (l'eleve sous la liste, le motif sous les puces).
+    if (eleveId == null || sansMotif) {
+      setState(() {
+        _erreur = eleveId == null ? t.admin.groupes.manqueEleve : null;
+        _motifManquant = sansMotif;
+      });
       return;
     }
     setState(() {
       _envoi = true;
       _erreur = null;
+      _motifManquant = false;
     });
     try {
       await ref
@@ -986,11 +993,12 @@ class _FeuilleAjoutEtat extends State<_FeuilleAjout> {
             style: Theme.of(context).textTheme.bodySmall,
           ),
           Ecart.vSm,
-          TextField(
-            controller: _motif,
-            maxLines: 2,
-            onChanged: (String _) => setState(() {}),
-            decoration: InputDecoration(labelText: t.admin.groupes.champMotif),
+          SelecteurMotif(
+            motifs: MotifsProposes.ajoutEleve(),
+            controleur: _motif,
+            libelleChamp: t.admin.groupes.champMotif,
+            erreur: _motifManquant ? t.formulaire.motif.manque : null,
+            onChange: (String _) => setState(() => _motifManquant = false),
           ),
           if (_erreur != null) ...<Widget>[
             Ecart.vMd,
@@ -1103,6 +1111,7 @@ class _FeuilleSeuilEtat extends State<_FeuilleSeuil> {
 /// Une feuille generique « motif requis, un bouton » : retrait ou cloture.
 class _FeuilleMotif extends StatefulWidget {
   const _FeuilleMotif({
+    required this.motifs,
     required this.libelleEnvoyer,
     required this.onEnvoyer,
     required this.messageErreur,
@@ -1110,6 +1119,8 @@ class _FeuilleMotif extends StatefulWidget {
     this.detail,
   });
 
+  /// Les motifs proposes en puces (FORM-L1), « Autre » en dernier.
+  final List<String> motifs;
   final String libelleEnvoyer;
   final Future<void> Function(String motif) onEnvoyer;
   final String Function({required String message}) messageErreur;
@@ -1123,6 +1134,7 @@ class _FeuilleMotif extends StatefulWidget {
 class _FeuilleMotifEtat extends State<_FeuilleMotif> {
   final TextEditingController _motif = TextEditingController();
   bool _envoi = false;
+  bool _motifManquant = false;
   String? _erreur;
 
   @override
@@ -1132,6 +1144,11 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
   }
 
   Future<void> _envoyer() async {
+    // Bouton jamais grise (K-56) : sans motif, on dit ce qui manque.
+    if (_motif.text.trim().isEmpty) {
+      setState(() => _motifManquant = true);
+      return;
+    }
     setState(() {
       _envoi = true;
       _erreur = null;
@@ -1161,11 +1178,12 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
           style: Theme.of(context).textTheme.bodySmall,
         ),
         Ecart.vSm,
-        TextField(
-          controller: _motif,
-          maxLines: 2,
-          decoration: InputDecoration(labelText: t.admin.groupes.champMotif),
-          onChanged: (String _) => setState(() {}),
+        SelecteurMotif(
+          motifs: widget.motifs,
+          controleur: _motif,
+          libelleChamp: t.admin.groupes.champMotif,
+          erreur: _motifManquant ? t.formulaire.motif.manque : null,
+          onChange: (String _) => setState(() => _motifManquant = false),
         ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,
@@ -1178,7 +1196,7 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
         ActionPrincipale(
           libelle: widget.libelleEnvoyer,
           enCours: _envoi,
-          onPress: _motif.text.trim().isEmpty ? null : _envoyer,
+          onPress: _envoyer,
         ),
       ],
     );

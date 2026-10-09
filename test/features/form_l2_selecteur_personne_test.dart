@@ -16,6 +16,7 @@ import 'package:rewayah_academy/core/admin/service_comptes.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_personne.dart';
 import 'package:rewayah_academy/features/admin_groupes/groupes_page.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_evaluations/evaluations_page.dart';
@@ -267,6 +268,20 @@ void main() {
         expect(find.text(t.admin.groupes.manqueEleve), findsOneWidget);
 
         await _presser(tester, _carte('e-ines'));
+        // Eleve choisi, sans motif : le manque se dit sous les puces (le
+        // selecteur recoit `erreur`), rien ne part.
+        await _presser(tester, find.text(t.admin.groupes.ajouterEnvoyer));
+        expect(find.text(t.admin.groupes.manqueEleve), findsNothing);
+        expect(
+          find.descendant(
+            of: find.byType(SelecteurMotif),
+            matching: find.text(t.formulaire.motif.manque),
+          ),
+          findsOneWidget,
+        );
+        expect(groupes.ajouts, isEmpty);
+        // FORM-L1 : le motif libre s'ecrit apres « Autre ».
+        await _presser(tester, find.byKey(SelecteurMotif.cleAutre));
         await tester.enterText(
           find.widgetWithText(TextField, t.admin.groupes.champMotif),
           'Inscription confirmee',

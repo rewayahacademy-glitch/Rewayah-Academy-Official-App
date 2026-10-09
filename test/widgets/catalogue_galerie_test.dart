@@ -147,6 +147,8 @@ const List<String> composantsDuCatalogue = <String>[
   'PaysEnseignant',
   // FORM-CORR-1 : l'etiquette d'un champ de texte passe a la ligne.
   'ChampEtiquete',
+  // FORM-L1-7-13 : le motif en puces, « Autre » ouvre la saisie libre (K-57).
+  'SelecteurMotif',
 ];
 
 /// Les trois largeurs de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 8.

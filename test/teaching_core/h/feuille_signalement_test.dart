@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/tc_parcours/libelles_parcours.dart';
 import 'package:rewayah_academy/core/tc_parcours/port_signalement.dart';
 import 'package:rewayah_academy/core/tc_parcours/student_concern.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/features/tc_flux_academique/feuille_signalement.dart';
 
 import 'support/hote_h.dart';
@@ -49,6 +51,20 @@ Future<void> _envoyer(WidgetTester tester) async {
   await tester.pumpAndSettle();
 }
 
+/// Touche une cible apres l'avoir rendue visible.
+Future<void> _toucher(WidgetTester tester, Finder cible) async {
+  await tester.ensureVisible(cible);
+  await tester.pumpAndSettle();
+  await tester.tap(cible);
+  await tester.pumpAndSettle();
+}
+
+/// Passe en categorie « Autre » (aucune phrase-type).
+Future<void> _categorieAutre(WidgetTester tester) => _toucher(
+  tester,
+  find.text(libelleCategorieSignalement(CategorieSignalement.autre)).first,
+);
+
 void main() {
   group('feuille de signalement', () {
     testWidgets('le contexte est dit, il n est pas saisi', (
@@ -65,31 +81,65 @@ void main() {
         find.text(t.tc.parcours.signalement.contexte(eleve: 'Amina')),
         findsOneWidget,
       );
-      // Deux champs, et deux seulement : aucun champ d'identifiant a retaper.
-      expect(find.byType(TextField), findsNWidgets(2));
-      // La regle est ecrite sous le champ concerne, pas dans une page d'aide.
+      // Un seul champ ouvert, la note interne : aucun champ d'identifiant a
+      // retaper. Le message famille se choisit en phrases-types (L7), le
+      // champ libre s'ouvre par « Autre ».
+      expect(find.byType(TextField), findsOneWidget);
       expect(
-        find.text(t.tc.parcours.signalement.interneAide),
+        find.text(t.motifs.signalement.pedagogique.renforcement),
         findsOneWidget,
       );
+      // La regle est ecrite sous le champ concerne, pas dans une page d'aide.
+      expect(find.text(t.tc.parcours.signalement.interneAide), findsOneWidget);
     });
 
-    testWidgets('sans note interne, le bouton reste inerte', (
+    testWidgets('sans note interne, le bouton dit ce qui manque', (
       WidgetTester tester,
     ) async {
       telephone(tester);
+      final SignalementMemoire depot = SignalementMemoire('ens-1');
 
       await _ouvrirLaFeuille(tester, <Override>[
-        portSignalementProvider.overrideWithValue(SignalementMemoire('ens-1')),
+        portSignalementProvider.overrideWithValue(depot),
       ]);
 
+      // Jamais grise (K-56).
       final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
         find.byType(ActionPrincipale),
       );
-      expect(bouton.onPress, isNull);
+      expect(bouton.onPress, isNotNull);
+      await _envoyer(tester);
       expect(
         find.text(t.tc.parcours.signalement.interneRequis),
         findsOneWidget,
+      );
+      expect(await depot.mesSignalements(), isEmpty);
+    });
+
+    testWidgets('L7 : la phrase-type part telle quelle vers la famille', (
+      WidgetTester tester,
+    ) async {
+      telephone(tester);
+      final SignalementMemoire depot = SignalementMemoire('ens-1');
+
+      await _ouvrirLaFeuille(tester, <Override>[
+        portSignalementProvider.overrideWithValue(depot),
+      ]);
+
+      await tester.enterText(find.byType(TextField).first, _interne);
+      final Finder phrase = find.text(
+        t.motifs.signalement.pedagogique.revision,
+      );
+      await tester.ensureVisible(phrase);
+      await tester.pumpAndSettle();
+      await tester.tap(phrase);
+      await tester.pumpAndSettle();
+      await _envoyer(tester);
+
+      final StudentConcern signalement = (await depot.mesSignalements()).single;
+      expect(
+        signalement.pourLaFamille()!.message,
+        t.motifs.signalement.pedagogique.revision,
       );
     });
 
@@ -132,6 +182,10 @@ void main() {
       ]);
 
       await tester.enterText(find.byType(TextField).first, _interne);
+      await tester.ensureVisible(find.byKey(SelecteurMotif.cleAutre));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(SelecteurMotif.cleAutre));
+      await tester.pumpAndSettle();
       await tester.enterText(
         find.byType(TextField).at(1),
         'Un point de prononciation a travailler a la maison.',
@@ -143,10 +197,62 @@ void main() {
       final ResumeFamilleSignalement resume = signalement.pourLaFamille()!;
 
       expect(resume.message, isNot(contains('sad')));
-      expect(
-        resume.versJson().values.join(' '),
-        isNot(contains(_interne)),
+      expect(resume.versJson().values.join(' '), isNot(contains(_interne)));
+    });
+    // Contre-epreuves du verificateur (08/10) : sur cde41490, en categorie
+    // « Autre », ni puce ni champ famille ne s'affichaient.
+    testWidgets('L7 : categorie « Autre » sans phrase, le champ famille seul', (
+      WidgetTester tester,
+    ) async {
+      telephone(tester);
+      final SignalementMemoire depot = SignalementMemoire('ens-1');
+      await _ouvrirLaFeuille(tester, <Override>[
+        portSignalementProvider.overrideWithValue(depot),
+      ]);
+      await tester.enterText(find.byType(TextField).first, _interne);
+      await _categorieAutre(tester);
+
+      // La note interne et le champ famille ; aucune puce, aucun « Autre ».
+      expect(find.byType(TextField), findsNWidgets(2));
+      expect(find.byKey(SelecteurMotif.cleAutre), findsNothing);
+      await tester.enterText(find.byType(TextField).last, 'Un mot libre.');
+      await tester.pumpAndSettle();
+      await _envoyer(tester);
+
+      final StudentConcern signalement = (await depot.mesSignalements()).single;
+      expect(signalement.categorie, CategorieSignalement.autre);
+      expect(signalement.pourLaFamille()!.message, 'Un mot libre.');
+    });
+
+    testWidgets('L7 : phrase choisie puis categorie « Autre », champ vide', (
+      WidgetTester tester,
+    ) async {
+      telephone(tester);
+      final SignalementMemoire depot = SignalementMemoire('ens-1');
+      await _ouvrirLaFeuille(tester, <Override>[
+        portSignalementProvider.overrideWithValue(depot),
+      ]);
+      await tester.enterText(find.byType(TextField).first, _interne);
+      await _toucher(
+        tester,
+        find.text(t.motifs.signalement.pedagogique.renforcement),
       );
+      await _categorieAutre(tester);
+
+      expect(find.byType(TextField), findsNWidgets(2));
+      expect(find.byKey(SelecteurMotif.cleAutre), findsNothing);
+      // La phrase de l'ancienne categorie ne vaut plus : le champ est vide.
+      expect(
+        tester.widget<TextField>(find.byType(TextField).last).controller!.text,
+        isEmpty,
+      );
+      await tester.enterText(find.byType(TextField).last, 'Ecrit a la main.');
+      await tester.pumpAndSettle();
+      await _envoyer(tester);
+
+      final StudentConcern signalement = (await depot.mesSignalements()).single;
+      expect(signalement.categorie, CategorieSignalement.autre);
+      expect(signalement.pourLaFamille()!.message, 'Ecrit a la main.');
     });
   });
 }

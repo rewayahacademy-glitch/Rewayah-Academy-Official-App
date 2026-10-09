@@ -11,6 +11,7 @@ import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/features/cahier/cahier_page.dart';
 import 'package:rewayah_academy/features/cahier/vue_cahier.dart';
 
@@ -242,6 +243,17 @@ void main() {
       await tester.tap(find.text(t.enseignant.cahier.exceptionCorriger));
       await tester.pumpAndSettle();
 
+      // FORM-L1 : le motif se choisit en puces ; sans motif, Valider dit ce
+      // qui manque et rien ne part (bouton jamais grise, K-56).
+      await tester.tap(find.text(t.commun.valider));
+      await tester.pumpAndSettle();
+      expect(find.text(t.formulaire.motif.manque), findsOneWidget);
+      expect(find.text(t.enseignant.cahier.exceptionSucces), findsNothing);
+
+      // Un motif propre a cette seance : « Autre », puis le texte.
+      await tester.ensureVisible(find.byKey(SelecteurMotif.cleAutre));
+      await tester.tap(find.byKey(SelecteurMotif.cleAutre));
+      await tester.pumpAndSettle();
       final Finder champMotif = find.ancestor(
         of: find.text(t.enseignant.cahier.exceptionMotif),
         matching: find.byType(TextField),

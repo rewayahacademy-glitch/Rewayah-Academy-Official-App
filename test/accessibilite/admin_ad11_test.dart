@@ -36,6 +36,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/features/admin_dossiers/visionneuse_piece.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
@@ -265,10 +266,29 @@ Future<void> _visionneuse(WidgetTester tester) async {
   expect(find.byType(VisionneusePiece), findsOneWidget);
 }
 
+/// 02D (FORM-L1) : la zone du motif s'ouvre sur les puces, focus sur la
+/// premiere ; « Autre » ouvre ensuite le champ. Les mesures de l'ecran
+/// (reflow, Tab, 200 %, cibles de 48) portent donc sur les puces ET sur le
+/// champ ouvert.
 Future<void> _refus(WidgetTester tester) async {
   await _revue(tester);
   await _toucher(tester, find.text(t.dossiers.refuser).first);
+  _zoneMotifOuverte();
+  await _toucher(tester, find.byKey(SelecteurMotif.cleAutre));
   expect(find.text(t.dossiers.refus.champ), findsOneWidget);
+  expect(FocusManager.instance.primaryFocus?.debugLabel, 'adm02d-motif');
+}
+
+/// 02D vient de s'ouvrir : les puces, « Autre » en dernier, pas encore de
+/// champ, et le focus sur la premiere puce.
+void _zoneMotifOuverte() {
+  expect(find.byKey(SelecteurMotif.clePuce(0)), findsOneWidget);
+  expect(find.byKey(SelecteurMotif.cleAutre), findsOneWidget);
+  expect(find.text(t.dossiers.refus.champ), findsNothing);
+  expect(
+    FocusManager.instance.primaryFocus?.debugLabel,
+    SelecteurMotif.focusPremierePuce,
+  );
 }
 
 Future<void> _cocherTout(WidgetTester tester) async {
@@ -678,7 +698,26 @@ void main() {
         await _focusSur(tester, refuser);
         await tester.sendKeyEvent(LogicalKeyboardKey.enter);
         await _stab(tester);
+        // FORM-L1 : 02D s'ouvre sur les puces, focus sur la premiere.
+        _zoneMotifOuverte();
+        // Au clavier seul : Tab jusqu'a « Autre », Entree ouvre le champ,
+        // qui recoit le focus.
+        for (int i = 0; i < 12; i++) {
+          final FocusNode? f = FocusManager.instance.primaryFocus;
+          if (f != null &&
+              find
+                  .byKey(SelecteurMotif.cleAutre)
+                  .evaluate()
+                  .any((Element e) => _estSousFocus(e, f))) {
+            break;
+          }
+          await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+          await _stab(tester);
+        }
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+        await _stab(tester);
         expect(find.text(t.dossiers.refus.champ), findsOneWidget);
+        expect(FocusManager.instance.primaryFocus?.debugLabel, 'adm02d-motif');
         // Clavier virtuel simule : le champ focalise reste visible.
         addTearDown(tester.view.resetViewInsets);
         tester.view.viewInsets = FakeViewPadding(
@@ -692,6 +731,7 @@ void main() {
         await tester.sendKeyEvent(LogicalKeyboardKey.escape);
         await _stab(tester);
         expect(find.text(t.dossiers.refus.champ), findsNothing);
+        expect(find.byKey(SelecteurMotif.cleAutre), findsNothing);
         final FocusNode? n = FocusManager.instance.primaryFocus;
         expect(
           n != null &&

@@ -86,6 +86,8 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$galerie$fr galerie = Traductions$galerie$fr.internal(_root);
 	late final Traductions$tc$fr tc = Traductions$tc$fr.internal(_root);
 	late final Traductions$adulte$fr adulte = Traductions$adulte$fr.internal(_root);
+	late final Traductions$formulaire$fr formulaire = Traductions$formulaire$fr.internal(_root);
+	late final Traductions$motifs$fr motifs = Traductions$motifs$fr.internal(_root);
 }
 
 // Path: commun
@@ -2415,6 +2417,46 @@ class Traductions$adulte$fr {
 	late final Traductions$adulte$sortie$fr sortie = Traductions$adulte$sortie$fr.internal(_root);
 	late final Traductions$adulte$reprise$fr reprise = Traductions$adulte$reprise$fr.internal(_root);
 	late final Traductions$adulte$demo$fr demo = Traductions$adulte$demo$fr.internal(_root);
+}
+
+// Path: formulaire
+class Traductions$formulaire$fr {
+	Traductions$formulaire$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$formulaire$motif$fr motif = Traductions$formulaire$motif$fr.internal(_root);
+	late final Traductions$formulaire$entier$fr entier = Traductions$formulaire$entier$fr.internal(_root);
+}
+
+// Path: motifs
+class Traductions$motifs$fr {
+	Traductions$motifs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$motifs$ajoutEleve$fr ajoutEleve = Traductions$motifs$ajoutEleve$fr.internal(_root);
+	late final Traductions$motifs$retraitEleve$fr retraitEleve = Traductions$motifs$retraitEleve$fr.internal(_root);
+	late final Traductions$motifs$clotureClasse$fr clotureClasse = Traductions$motifs$clotureClasse$fr.internal(_root);
+	late final Traductions$motifs$attribution$fr attribution = Traductions$motifs$attribution$fr.internal(_root);
+	late final Traductions$motifs$refusDemande$fr refusDemande = Traductions$motifs$refusDemande$fr.internal(_root);
+	late final Traductions$motifs$poserRegle$fr poserRegle = Traductions$motifs$poserRegle$fr.internal(_root);
+	late final Traductions$motifs$cloreSurcharge$fr cloreSurcharge = Traductions$motifs$cloreSurcharge$fr.internal(_root);
+	late final Traductions$motifs$annulationEvaluation$fr annulationEvaluation = Traductions$motifs$annulationEvaluation$fr.internal(_root);
+	late final Traductions$motifs$changementNiveau$fr changementNiveau = Traductions$motifs$changementNiveau$fr.internal(_root);
+	late final Traductions$motifs$blocage$fr blocage = Traductions$motifs$blocage$fr.internal(_root);
+	late final Traductions$motifs$derogation$fr derogation = Traductions$motifs$derogation$fr.internal(_root);
+	late final Traductions$motifs$cloreException$fr cloreException = Traductions$motifs$cloreException$fr.internal(_root);
+	late final Traductions$motifs$placement$fr placement = Traductions$motifs$placement$fr.internal(_root);
+	late final Traductions$motifs$refusDossier$fr refusDossier = Traductions$motifs$refusDossier$fr.internal(_root);
+	late final Traductions$motifs$presenceCorrigee$fr presenceCorrigee = Traductions$motifs$presenceCorrigee$fr.internal(_root);
+	late final Traductions$motifs$presenceExcusee$fr presenceExcusee = Traductions$motifs$presenceExcusee$fr.internal(_root);
+	late final Traductions$motifs$reglageEnseignant$fr reglageEnseignant = Traductions$motifs$reglageEnseignant$fr.internal(_root);
+	late final Traductions$motifs$reglageDuree$fr reglageDuree = Traductions$motifs$reglageDuree$fr.internal(_root);
+	late final Traductions$motifs$reglageMinimum$fr reglageMinimum = Traductions$motifs$reglageMinimum$fr.internal(_root);
+	late final Traductions$motifs$signalement$fr signalement = Traductions$motifs$signalement$fr.internal(_root);
 }
 
 // Path: commun.demonstration
@@ -5322,6 +5364,9 @@ class Traductions$admin$demandes$fr {
 	/// fr: 'Une règle sans motif ne se relit pas six mois plus tard.'
 	String get poserMotifRequis => 'Une règle sans motif ne se relit pas six mois plus tard.';
 
+	/// fr: 'Il manque la valeur : choisissez-en une dans la liste, ou touchez « Autre » et écrivez-la.'
+	String get manqueValeur => 'Il manque la valeur : choisissez-en une dans la liste, ou touchez « Autre » et écrivez-la.';
+
 	/// fr: 'Poser la règle'
 	String get poserEnvoyer => 'Poser la règle';
 
@@ -5414,6 +5459,9 @@ class Traductions$admin$attribution$fr {
 
 	/// fr: 'Sur quelle heure ?'
 	String get quelleHeure => 'Sur quelle heure ?';
+
+	/// fr: 'Il manque l'heure : choisissez-la sous « Sur quelle heure ? ».'
+	String get manqueHeure => 'Il manque l\'heure : choisissez-la sous « Sur quelle heure ? ».';
 
 	/// fr: '{jour} à {heure} h'
 	String creneau({required Object jour, required Object heure}) => '${jour} à ${heure} h';
@@ -5586,9 +5634,6 @@ class Traductions$admin$groupes$fr {
 	/// fr: 'Il manque l'élève : choisissez-le dans la liste.'
 	String get manqueEleve => 'Il manque l\'élève : choisissez-le dans la liste.';
 
-	/// fr: 'Il manque le motif : écrivez-le, il s'inscrit au journal d'audit.'
-	String get manqueMotif => 'Il manque le motif : écrivez-le, il s\'inscrit au journal d\'audit.';
-
 	/// fr: 'Motif'
 	String get champMotif => 'Motif';
 
@@ -5690,6 +5735,9 @@ class Traductions$admin$diagnostics$fr {
 
 	/// fr: 'Niveau de placement'
 	String get champNiveau => 'Niveau de placement';
+
+	/// fr: 'Il manque le niveau de placement : choisissez-le dans la liste des niveaux.'
+	String get manqueNiveau => 'Il manque le niveau de placement : choisissez-le dans la liste des niveaux.';
 
 	/// fr: 'Motif'
 	String get champMotif => 'Motif';
@@ -6254,6 +6302,9 @@ class Traductions$admin$progression$fr {
 
 	/// fr: 'Nouveau niveau'
 	String get promouvoirChampNiveau => 'Nouveau niveau';
+
+	/// fr: 'Il manque le nouveau niveau : choisissez-le dans la liste des niveaux.'
+	String get manqueNiveau => 'Il manque le nouveau niveau : choisissez-le dans la liste des niveaux.';
 
 	/// fr: 'Enregistrer'
 	String get promouvoirEnvoyer => 'Enregistrer';
@@ -8230,6 +8281,9 @@ class Traductions$tuteur$reglages$fr {
 
 	/// fr: 'Un motif est nécessaire : c'est lui qui permet de trancher.'
 	String get demandeMotifRequis => 'Un motif est nécessaire : c\'est lui qui permet de trancher.';
+
+	/// fr: 'Il manque la durée demandée : choisissez-la dans la liste, ou touchez « Autre » et écrivez-la.'
+	String get demandeManqueValeur => 'Il manque la durée demandée : choisissez-la dans la liste, ou touchez « Autre » et écrivez-la.';
 
 	/// fr: 'Envoyer la demande'
 	String get demandeEnvoyer => 'Envoyer la demande';
@@ -11678,6 +11732,475 @@ class Traductions$adulte$demo$fr {
 
 	late final Traductions$adulte$demo$donnees$fr donnees = Traductions$adulte$demo$donnees$fr.internal(_root);
 	late final Traductions$adulte$demo$etats$fr etats = Traductions$adulte$demo$etats$fr.internal(_root);
+}
+
+// Path: formulaire.motif
+class Traductions$formulaire$motif$fr {
+	Traductions$formulaire$motif$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Il manque le motif : choisissez-en un dans la liste, ou touchez « Autre » et écrivez-le.'
+	String get manque => 'Il manque le motif : choisissez-en un dans la liste, ou touchez « Autre » et écrivez-le.';
+
+	/// fr: 'Vous avez choisi « Autre » : écrivez le motif en quelques mots.'
+	String get autreVide => 'Vous avez choisi « Autre » : écrivez le motif en quelques mots.';
+
+	/// fr: 'Le motif, en quelques mots'
+	String get autreChamp => 'Le motif, en quelques mots';
+}
+
+// Path: formulaire.entier
+class Traductions$formulaire$entier$fr {
+	Traductions$formulaire$entier$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Entre {min} et {max}'
+	String bornes({required Object min, required Object max}) => 'Entre ${min} et ${max}';
+
+	/// fr: 'Choisissez une valeur entre {min} et {max}, ou l'une des valeurs proposées.'
+	String horsBornes({required Object min, required Object max}) => 'Choisissez une valeur entre ${min} et ${max}, ou l\'une des valeurs proposées.';
+}
+
+// Path: motifs.ajoutEleve
+class Traductions$motifs$ajoutEleve$fr {
+	Traductions$motifs$ajoutEleve$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Placement après diagnostic'
+	String get diagnostic => 'Placement après diagnostic';
+
+	/// fr: 'Sortie de la liste d'attente'
+	String get attente => 'Sortie de la liste d\'attente';
+
+	/// fr: 'Transfert depuis une autre classe'
+	String get transfert => 'Transfert depuis une autre classe';
+
+	/// fr: 'Demande de la famille'
+	String get famille => 'Demande de la famille';
+}
+
+// Path: motifs.retraitEleve
+class Traductions$motifs$retraitEleve$fr {
+	Traductions$motifs$retraitEleve$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demande de la famille'
+	String get famille => 'Demande de la famille';
+
+	/// fr: 'Transfert vers une autre classe'
+	String get transfert => 'Transfert vers une autre classe';
+
+	/// fr: 'Écart de niveau durable'
+	String get ecartNiveau => 'Écart de niveau durable';
+
+	/// fr: 'Fin de l'inscription'
+	String get finInscription => 'Fin de l\'inscription';
+}
+
+// Path: motifs.clotureClasse
+class Traductions$motifs$clotureClasse$fr {
+	Traductions$motifs$clotureClasse$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Fin du cycle de la classe'
+	String get finCycle => 'Fin du cycle de la classe';
+
+	/// fr: 'Faible remplissage'
+	String get remplissage => 'Faible remplissage';
+
+	/// fr: 'Élèves transférés dans d'autres classes'
+	String get transfert => 'Élèves transférés dans d\'autres classes';
+
+	/// fr: 'Enseignant absent sans remplacement'
+	String get remplacement => 'Enseignant absent sans remplacement';
+
+	/// fr: 'Classe créée par erreur'
+	String get parErreur => 'Classe créée par erreur';
+}
+
+// Path: motifs.attribution
+class Traductions$motifs$attribution$fr {
+	Traductions$motifs$attribution$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Heure confirmée avec la famille'
+	String get confirmee => 'Heure confirmée avec la famille';
+
+	/// fr: 'Aucune heure commune'
+	String get aucuneCommune => 'Aucune heure commune';
+
+	/// fr: 'Continuité avec le même enseignant'
+	String get continuite => 'Continuité avec le même enseignant';
+
+	/// fr: 'Demande de la famille'
+	String get famille => 'Demande de la famille';
+}
+
+// Path: motifs.refusDemande
+class Traductions$motifs$refusDemande$fr {
+	Traductions$motifs$refusDemande$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucun enseignant disponible sur cet horaire'
+	String get aucunEnseignant => 'Aucun enseignant disponible sur cet horaire';
+
+	/// fr: 'Un changement d'enseignant reste exceptionnel'
+	String get exceptionnel => 'Un changement d\'enseignant reste exceptionnel';
+
+	/// fr: 'La règle de la plateforme s'applique'
+	String get reglePlateforme => 'La règle de la plateforme s\'applique';
+
+	/// fr: 'Plafond d'élèves déjà atteint'
+	String get plafond => 'Plafond d\'élèves déjà atteint';
+
+	/// fr: 'Informations insuffisantes pour trancher'
+	String get insuffisant => 'Informations insuffisantes pour trancher';
+}
+
+// Path: motifs.poserRegle
+class Traductions$motifs$poserRegle$fr {
+	Traductions$motifs$poserRegle$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demande de la famille accordée'
+	String get famille => 'Demande de la famille accordée';
+
+	/// fr: 'Besoin pédagogique de l'élève'
+	String get pedagogique => 'Besoin pédagogique de l\'élève';
+
+	/// fr: 'Durée adaptée à l'âge'
+	String get age => 'Durée adaptée à l\'âge';
+
+	/// fr: 'Charge de l'enseignant'
+	String get charge => 'Charge de l\'enseignant';
+
+	/// fr: 'Correction d'une erreur de saisie'
+	String get parErreur => 'Correction d\'une erreur de saisie';
+}
+
+// Path: motifs.cloreSurcharge
+class Traductions$motifs$cloreSurcharge$fr {
+	Traductions$motifs$cloreSurcharge$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Besoin ponctuel terminé'
+	String get termine => 'Besoin ponctuel terminé';
+
+	/// fr: 'Demande de la famille'
+	String get famille => 'Demande de la famille';
+
+	/// fr: 'Changement de classe ou d'enseignant'
+	String get changement => 'Changement de classe ou d\'enseignant';
+
+	/// fr: 'Règle posée par erreur'
+	String get parErreur => 'Règle posée par erreur';
+}
+
+// Path: motifs.annulationEvaluation
+class Traductions$motifs$annulationEvaluation$fr {
+	Traductions$motifs$annulationEvaluation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Absence de l'élève'
+	String get absenceEleve => 'Absence de l\'élève';
+
+	/// fr: 'Absence de l'enseignant'
+	String get absenceEnseignant => 'Absence de l\'enseignant';
+
+	/// fr: 'Élève pas encore prêt'
+	String get pasPret => 'Élève pas encore prêt';
+
+	/// fr: 'Report à une autre date'
+	String get report => 'Report à une autre date';
+
+	/// fr: 'Évaluation planifiée par erreur'
+	String get parErreur => 'Évaluation planifiée par erreur';
+}
+
+// Path: motifs.changementNiveau
+class Traductions$motifs$changementNiveau$fr {
+	Traductions$motifs$changementNiveau$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Évaluation réussie'
+	String get reussie => 'Évaluation réussie';
+
+	/// fr: 'Unité acquise et stable'
+	String get stable => 'Unité acquise et stable';
+
+	/// fr: 'Décision de l'enseignant'
+	String get enseignant => 'Décision de l\'enseignant';
+
+	/// fr: 'Réévaluation demandée par la famille'
+	String get reevaluation => 'Réévaluation demandée par la famille';
+
+	/// fr: 'Correction du niveau de placement'
+	String get placement => 'Correction du niveau de placement';
+}
+
+// Path: motifs.blocage
+class Traductions$motifs$blocage$fr {
+	Traductions$motifs$blocage$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Prérequis pas encore stables'
+	String get prerequis => 'Prérequis pas encore stables';
+
+	/// fr: 'Renforcement nécessaire avant d'avancer'
+	String get renforcement => 'Renforcement nécessaire avant d\'avancer';
+
+	/// fr: 'Évaluation à revoir'
+	String get aRevoir => 'Évaluation à revoir';
+
+	/// fr: 'Absences répétées'
+	String get absences => 'Absences répétées';
+}
+
+// Path: motifs.derogation
+class Traductions$motifs$derogation$fr {
+	Traductions$motifs$derogation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucune classe appropriée'
+	String get aucuneClasse => 'Aucune classe appropriée';
+
+	/// fr: 'Progression plus rapide que la classe'
+	String get avance => 'Progression plus rapide que la classe';
+
+	/// fr: 'Décision de l'enseignant'
+	String get enseignant => 'Décision de l\'enseignant';
+
+	/// fr: 'Accord de la direction pédagogique'
+	String get direction => 'Accord de la direction pédagogique';
+}
+
+// Path: motifs.cloreException
+class Traductions$motifs$cloreException$fr {
+	Traductions$motifs$cloreException$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Prérequis désormais stables'
+	String get stables => 'Prérequis désormais stables';
+
+	/// fr: 'Élève placé dans une classe adaptée'
+	String get classe => 'Élève placé dans une classe adaptée';
+
+	/// fr: 'L'exception n'est plus nécessaire'
+	String get inutile => 'L\'exception n\'est plus nécessaire';
+
+	/// fr: 'Exception posée par erreur'
+	String get parErreur => 'Exception posée par erreur';
+}
+
+// Path: motifs.placement
+class Traductions$motifs$placement$fr {
+	Traductions$motifs$placement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Débutant : parcours de base'
+	String get debutant => 'Débutant : parcours de base';
+
+	/// fr: 'Niveau constaté à la lecture'
+	String get lecture => 'Niveau constaté à la lecture';
+
+	/// fr: 'Pré-diagnostic déclaratif confirmé'
+	String get declaratif => 'Pré-diagnostic déclaratif confirmé';
+
+	/// fr: 'Classe la plus proche du niveau évalué'
+	String get procheNiveau => 'Classe la plus proche du niveau évalué';
+
+	/// fr: 'Placement provisoire, à réévaluer'
+	String get provisoire => 'Placement provisoire, à réévaluer';
+}
+
+// Path: motifs.refusDossier
+class Traductions$motifs$refusDossier$fr {
+	Traductions$motifs$refusDossier$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pièce d'identité illisible'
+	String get illisible => 'Pièce d\'identité illisible';
+
+	/// fr: 'Pièce d'identité expirée'
+	String get expiree => 'Pièce d\'identité expirée';
+
+	/// fr: 'Nom différent de celui du compte'
+	String get nom => 'Nom différent de celui du compte';
+
+	/// fr: 'Pièce requise non transmise'
+	String get nonTransmise => 'Pièce requise non transmise';
+
+	/// fr: 'Accord requis manquant'
+	String get accord => 'Accord requis manquant';
+}
+
+// Path: motifs.presenceCorrigee
+class Traductions$motifs$presenceCorrigee$fr {
+	Traductions$motifs$presenceCorrigee$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Présence non détectée par l'application'
+	String get nonDetectee => 'Présence non détectée par l\'application';
+
+	/// fr: 'Coupure réseau pendant le cours'
+	String get reseau => 'Coupure réseau pendant le cours';
+
+	/// fr: 'Arrivée en retard'
+	String get retard => 'Arrivée en retard';
+
+	/// fr: 'Connexion depuis un autre appareil'
+	String get appareil => 'Connexion depuis un autre appareil';
+
+	/// fr: 'Erreur de saisie'
+	String get parErreur => 'Erreur de saisie';
+}
+
+// Path: motifs.presenceExcusee
+class Traductions$motifs$presenceExcusee$fr {
+	Traductions$motifs$presenceExcusee$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Absence prévenue à l'avance'
+	String get prevenue => 'Absence prévenue à l\'avance';
+
+	/// fr: 'Coupure réseau signalée'
+	String get reseau => 'Coupure réseau signalée';
+
+	/// fr: 'Jour férié ou congé'
+	String get conge => 'Jour férié ou congé';
+
+	/// fr: 'Raison familiale'
+	String get familiale => 'Raison familiale';
+}
+
+// Path: motifs.reglageEnseignant
+class Traductions$motifs$reglageEnseignant$fr {
+	Traductions$motifs$reglageEnseignant$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Horaire qui ne convient plus'
+	String get horaire => 'Horaire qui ne convient plus';
+
+	/// fr: 'Niveau qui ne correspond plus'
+	String get niveau => 'Niveau qui ne correspond plus';
+
+	/// fr: 'Changement de fuseau horaire'
+	String get fuseau => 'Changement de fuseau horaire';
+
+	/// fr: 'Réunir les enfants du foyer'
+	String get fratrie => 'Réunir les enfants du foyer';
+}
+
+// Path: motifs.reglageDuree
+class Traductions$motifs$reglageDuree$fr {
+	Traductions$motifs$reglageDuree$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Durée trop longue pour l'âge'
+	String get tropLongue => 'Durée trop longue pour l\'âge';
+
+	/// fr: 'Besoin de plus de temps'
+	String get plusDeTemps => 'Besoin de plus de temps';
+
+	/// fr: 'Pause nécessaire pendant le cours'
+	String get pause => 'Pause nécessaire pendant le cours';
+
+	/// fr: 'Contraintes d'horaire de la famille'
+	String get horaire => 'Contraintes d\'horaire de la famille';
+}
+
+// Path: motifs.reglageMinimum
+class Traductions$motifs$reglageMinimum$fr {
+	Traductions$motifs$reglageMinimum$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Séances souvent écourtées'
+	String get ecourtees => 'Séances souvent écourtées';
+
+	/// fr: 'Coupures réseau fréquentes'
+	String get reseau => 'Coupures réseau fréquentes';
+
+	/// fr: 'Durée des cours modifiée'
+	String get duree => 'Durée des cours modifiée';
+
+	/// fr: 'Contraintes d'horaire de la famille'
+	String get horaire => 'Contraintes d\'horaire de la famille';
+}
+
+// Path: motifs.signalement
+class Traductions$motifs$signalement$fr {
+	Traductions$motifs$signalement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$motifs$signalement$pedagogique$fr pedagogique = Traductions$motifs$signalement$pedagogique$fr.internal(_root);
+	late final Traductions$motifs$signalement$presence$fr presence = Traductions$motifs$signalement$presence$fr.internal(_root);
+	late final Traductions$motifs$signalement$technique$fr technique = Traductions$motifs$signalement$technique$fr.internal(_root);
+	late final Traductions$motifs$signalement$changement$fr changement = Traductions$motifs$signalement$changement$fr.internal(_root);
 }
 
 // Path: commun.etats.chargementProlonge
@@ -15691,6 +16214,81 @@ class Traductions$adulte$demo$etats$fr {
 	String get emancipation => 'Émancipation d\'un élève devenu adulte : non construite dans cette vague.';
 }
 
+// Path: motifs.signalement.pedagogique
+class Traductions$motifs$signalement$pedagogique$fr {
+	Traductions$motifs$signalement$pedagogique$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Un renforcement est conseillé sur la leçon en cours.'
+	String get renforcement => 'Un renforcement est conseillé sur la leçon en cours.';
+
+	/// fr: 'Un peu de révision à la maison aidera avant le prochain cours.'
+	String get revision => 'Un peu de révision à la maison aidera avant le prochain cours.';
+
+	/// fr: 'La régularité du travail à la maison fera la différence.'
+	String get regularite => 'La régularité du travail à la maison fera la différence.';
+
+	/// fr: 'Un échange avec l'académie est proposé.'
+	String get echange => 'Un échange avec l\'académie est proposé.';
+}
+
+// Path: motifs.signalement.presence
+class Traductions$motifs$signalement$presence$fr {
+	Traductions$motifs$signalement$presence$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Plusieurs absences récentes : la régularité aide à progresser.'
+	String get absences => 'Plusieurs absences récentes : la régularité aide à progresser.';
+
+	/// fr: 'Arrivées en retard lors des dernières séances.'
+	String get retards => 'Arrivées en retard lors des dernières séances.';
+
+	/// fr: 'Merci de prévenir l'académie en cas d'absence.'
+	String get prevenir => 'Merci de prévenir l\'académie en cas d\'absence.';
+}
+
+// Path: motifs.signalement.technique
+class Traductions$motifs$signalement$technique$fr {
+	Traductions$motifs$signalement$technique$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le son ou la connexion a gêné le cours.'
+	String get son => 'Le son ou la connexion a gêné le cours.';
+
+	/// fr: 'Un essai de l'appareil avant le cours est conseillé.'
+	String get essai => 'Un essai de l\'appareil avant le cours est conseillé.';
+
+	/// fr: 'La caméra ou le micro n'a pas fonctionné.'
+	String get camera => 'La caméra ou le micro n\'a pas fonctionné.';
+}
+
+// Path: motifs.signalement.changement
+class Traductions$motifs$signalement$changement$fr {
+	Traductions$motifs$signalement$changement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Un changement de classe est à l'étude.'
+	String get classe => 'Un changement de classe est à l\'étude.';
+
+	/// fr: 'Le niveau de la classe ne semble plus adapté.'
+	String get niveau => 'Le niveau de la classe ne semble plus adapté.';
+
+	/// fr: 'L'académie reviendra vers vous pour en parler.'
+	String get suite => 'L\'académie reviendra vers vous pour en parler.';
+}
+
 // Path: salle.preparation.eleve.guidee
 class Traductions$salle$preparation$eleve$guidee$fr {
 	Traductions$salle$preparation$eleve$guidee$fr.internal(this._root);
@@ -17421,6 +18019,7 @@ extension on Traductions {
 			'admin.demandes.cloreTitre' => ({required Object dePrenom}) => 'Clore la surcharge ${dePrenom}',
 			'admin.demandes.poserMotif' => 'Pourquoi ce changement ?',
 			'admin.demandes.poserMotifRequis' => 'Une règle sans motif ne se relit pas six mois plus tard.',
+			'admin.demandes.manqueValeur' => 'Il manque la valeur : choisissez-en une dans la liste, ou touchez « Autre » et écrivez-la.',
 			'admin.demandes.poserEnvoyer' => 'Poser la règle',
 			'admin.demandes.cloreEnvoyer' => 'Clore la surcharge',
 			'admin.demandes.erreurFile' => 'La file des demandes n\'a pas pu se charger. Réessayez dans un instant.',
@@ -17449,6 +18048,7 @@ extension on Traductions {
 			'admin.attribution.libreSurPlusieurs' => ({required Object nombre}) => 'Libre sur ${nombre} des heures proposées',
 			'admin.attribution.sansHeureCommune' => 'Aucune heure commune',
 			'admin.attribution.quelleHeure' => 'Sur quelle heure ?',
+			'admin.attribution.manqueHeure' => 'Il manque l\'heure : choisissez-la sous « Sur quelle heure ? ».',
 			'admin.attribution.creneau' => ({required Object jour, required Object heure}) => '${jour} à ${heure} h',
 			'admin.attribution.motif' => 'Pourquoi passer outre ?',
 			'admin.attribution.motifRequis' => ({required Object prenom}) => '${prenom} n\'a pas posé cette heure. L\'attribuer quand même peut se justifier, et cela s\'inscrit au journal.',
@@ -17503,7 +18103,6 @@ extension on Traductions {
 			'admin.groupes.actionCloturer' => 'Clôturer la classe',
 			'admin.groupes.ajouterTitre' => ({required Object libelle}) => 'Ajouter un élève à ${libelle}',
 			'admin.groupes.manqueEleve' => 'Il manque l\'élève : choisissez-le dans la liste.',
-			'admin.groupes.manqueMotif' => 'Il manque le motif : écrivez-le, il s\'inscrit au journal d\'audit.',
 			'admin.groupes.champMotif' => 'Motif',
 			'admin.groupes.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
 			'admin.groupes.ajouterEnvoyer' => 'Ajouter',
@@ -17535,6 +18134,7 @@ extension on Traductions {
 			'admin.diagnostics.aucun' => 'Aucun élève à diagnostiquer',
 			'admin.diagnostics.aucunDetail' => 'Tous les élèves inscrits ont déjà un niveau décidé.',
 			'admin.diagnostics.champNiveau' => 'Niveau de placement',
+			'admin.diagnostics.manqueNiveau' => 'Il manque le niveau de placement : choisissez-le dans la liste des niveaux.',
 			'admin.diagnostics.champMotif' => 'Motif',
 			'admin.diagnostics.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
 			'admin.diagnostics.decider' => 'Décider le placement',
@@ -17648,10 +18248,10 @@ extension on Traductions {
 			'admin.evaluations.statutRealisee' => 'Réalisée',
 			'admin.evaluations.statutAnnulee' => 'Annulée',
 			'admin.evaluations.resultatReussi' => 'Réussi',
-			'admin.evaluations.resultatEchec' => 'Échec',
-			'admin.evaluations.resultatARevoir' => 'À revoir',
 			_ => null,
 		} ?? switch (path) {
+			'admin.evaluations.resultatEchec' => 'Échec',
+			'admin.evaluations.resultatARevoir' => 'À revoir',
 			'admin.evaluations.planifier' => 'Planifier une évaluation',
 			'admin.evaluations.planifierTitre' => 'Planifier une évaluation',
 			'admin.evaluations.manqueEleve' => 'Il manque l\'élève : choisissez-le dans la liste.',
@@ -17704,6 +18304,7 @@ extension on Traductions {
 			'admin.progression.clorerExceptionErreur' => ({required Object message}) => 'La clôture n\'a pas abouti : ${message}',
 			'admin.progression.promouvoirTitre' => ({required Object deEleve}) => 'Changer le niveau ${deEleve}',
 			'admin.progression.promouvoirChampNiveau' => 'Nouveau niveau',
+			'admin.progression.manqueNiveau' => 'Il manque le nouveau niveau : choisissez-le dans la liste des niveaux.',
 			'admin.progression.promouvoirEnvoyer' => 'Enregistrer',
 			'admin.progression.promouvoirErreur' => ({required Object message}) => 'Le changement n\'a pas abouti : ${message}',
 			'admin.progression.champMotif' => 'Motif',
@@ -18161,11 +18762,11 @@ extension on Traductions {
 			'compte.nonDisponible' => 'Non disponible',
 			'compte.contact' => 'Contact',
 			'compte.contactDetail' => 'Géré par l\'académie',
+			_ => null,
+		} ?? switch (path) {
 			'compte.langue' => 'Langue',
 			'compte.francais' => 'Français',
 			'compte.fuseau' => 'Fuseau horaire',
-			_ => null,
-		} ?? switch (path) {
 			'compte.academie' => 'Académie',
 			'compte.securite' => 'Sécurité',
 			'compte.statut' => 'Statut',
@@ -18612,6 +19213,7 @@ extension on Traductions {
 			'tuteur.reglages.demandeMinutes' => ({required Object minutes}) => '${minutes} min',
 			'tuteur.reglages.demandeMotif' => 'Pourquoi ce changement ?',
 			'tuteur.reglages.demandeMotifRequis' => 'Un motif est nécessaire : c\'est lui qui permet de trancher.',
+			'tuteur.reglages.demandeManqueValeur' => 'Il manque la durée demandée : choisissez-la dans la liste, ou touchez « Autre » et écrivez-la.',
 			'tuteur.reglages.demandeEnvoyer' => 'Envoyer la demande',
 			'tuteur.reglages.demandeEnvoyee' => 'Demande envoyée. L\'administration la tranchera.',
 			'tuteur.reglages.aucunEnfant' => 'Aucun enfant dans le foyer',
@@ -18674,12 +19276,12 @@ extension on Traductions {
 			'classe.historique' => 'Historique',
 			'classe.sousTitre' => ({required Object prenom, required Object enseignant}) => '${prenom} · ${enseignant}',
 			'classe.indisponiblePhrase' => 'Le détail de la classe n\'est pas encore disponible ici.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.introuvableTitre' => 'Cette classe n\'est pas ouverte à ce profil',
 			'classe.introuvablePhrase' => 'Elle a peut-être pris fin, ou elle concerne un autre élève du foyer.',
 			'classe.seance.aucune' => 'Aucune séance planifiée',
 			'classe.seance.aucuneDetail' => ({required Object dePrenom}) => 'La prochaine séance ${dePrenom} apparaîtra ici dès qu\'elle sera programmée.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.seance.illisible' => 'La prochaine séance n\'a pas pu être lue.',
 			'classe.seance.presence' => ({required Object prenom, required Object etat}) => '${prenom} : ${etat}',
 			'classe.observation.commentCaMarche' => 'Comment ça marche ?',
@@ -19188,12 +19790,12 @@ extension on Traductions {
 			'enseignant.creneaux.cleNiveau' => 'Niveau',
 			'enseignant.creneaux.cleLangue' => 'Langue',
 			'enseignant.creneaux.cleRecurrence' => 'Récurrence',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.creneaux.cleFuseau' => 'Fuseau de référence',
 			'enseignant.creneaux.cleHeureLocale' => 'Heure locale',
 			'enseignant.creneaux.cleDuree' => 'Durée',
 			'enseignant.creneaux.duree' => ({required Object minutes}) => '${minutes} min',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.ficheGroupe.creneauHebdo' => ({required Object jour, required Object heure}) => '${jour} à ${heure}, chaque semaine',
 			'enseignant.ficheGroupe.aucunMembre' => 'Aucun élève dans cette Classe',
 			'enseignant.ficheGroupe.aucunMembreDetail' => 'L\'administration compose les Classes : celle-ci n\'a pas encore d\'élève.',
@@ -19702,12 +20304,12 @@ extension on Traductions {
 			'tc.classe.prevol.permissionRefusee' => 'Accès au micro refusé. Autorisez-le pour ouvrir le cours.',
 			'tc.classe.prevol.reessayer' => 'Vérifier à nouveau',
 			'tc.classe.observation.restant' => ({required Object secondes}) => 'Reste ${secondes} s',
+			_ => null,
+		} ?? switch (path) {
 			'tc.realtime.transport.partage_indisponible' => 'Le partage du support n’est pas disponible sur ce serveur. Le cours continue, mais les autres appareils ne suivront pas la page.',
 			'tc.realtime.etat.restauration_impossible' => 'Impossible de retrouver le support en cours. Demandez à l’enseignant de le présenter à nouveau.',
 			'tc.observation.entree.titre' => 'Observer la séance',
 			'tc.observation.entree.tuteurIntro' => 'Vous pouvez regarder un court moment le cours de votre enfant. Votre micro et votre caméra restent fermés.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.entree.adminIntro' => 'Choisissez votre mode avant d\'entrer. Il ne change plus ensuite.',
 			'tc.observation.entree.controleurIntro' => 'Vous entrez en observation invisible. Aucun micro, aucune caméra.',
 			'tc.observation.entree.entrer' => 'Entrer',
@@ -20216,12 +20818,12 @@ extension on Traductions {
 			'adulte.demo.donnees.detailOffreB' => 'Solde de démonstration B',
 			'adulte.demo.donnees.totalRecharge5' => '5,00 € (démonstration)',
 			'adulte.demo.donnees.totalRecharge10' => '10,00 € (démonstration)',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.donnees.totalRecharge15' => '15,00 € (démonstration)',
 			'adulte.demo.donnees.totalRecharge20' => '20,00 € (démonstration)',
 			'adulte.demo.donnees.totalRecharge25' => '25,00 € (démonstration)',
 			'adulte.demo.donnees.totalRecharge30' => '30,00 € (démonstration)',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.donnees.totalRecharge35' => '35,00 € (démonstration)',
 			'adulte.demo.donnees.totalRecharge40' => '40,00 € (démonstration)',
 			'adulte.demo.etats.adulteSeul' => 'L\'adulte est seul, sans foyer.',
@@ -20249,6 +20851,108 @@ extension on Traductions {
 			'adulte.demo.etats.doubleSoumission' => 'La même action a été envoyée deux fois.',
 			'adulte.demo.etats.notificationDansLApplication' => 'La notification n\'a pas pu partir sur le téléphone, elle reste visible dans l\'application.',
 			'adulte.demo.etats.emancipation' => 'Émancipation d\'un élève devenu adulte : non construite dans cette vague.',
+			'formulaire.motif.manque' => 'Il manque le motif : choisissez-en un dans la liste, ou touchez « Autre » et écrivez-le.',
+			'formulaire.motif.autreVide' => 'Vous avez choisi « Autre » : écrivez le motif en quelques mots.',
+			'formulaire.motif.autreChamp' => 'Le motif, en quelques mots',
+			'formulaire.entier.bornes' => ({required Object min, required Object max}) => 'Entre ${min} et ${max}',
+			'formulaire.entier.horsBornes' => ({required Object min, required Object max}) => 'Choisissez une valeur entre ${min} et ${max}, ou l\'une des valeurs proposées.',
+			'motifs.ajoutEleve.diagnostic' => 'Placement après diagnostic',
+			'motifs.ajoutEleve.attente' => 'Sortie de la liste d\'attente',
+			'motifs.ajoutEleve.transfert' => 'Transfert depuis une autre classe',
+			'motifs.ajoutEleve.famille' => 'Demande de la famille',
+			'motifs.retraitEleve.famille' => 'Demande de la famille',
+			'motifs.retraitEleve.transfert' => 'Transfert vers une autre classe',
+			'motifs.retraitEleve.ecartNiveau' => 'Écart de niveau durable',
+			'motifs.retraitEleve.finInscription' => 'Fin de l\'inscription',
+			'motifs.clotureClasse.finCycle' => 'Fin du cycle de la classe',
+			'motifs.clotureClasse.remplissage' => 'Faible remplissage',
+			'motifs.clotureClasse.transfert' => 'Élèves transférés dans d\'autres classes',
+			'motifs.clotureClasse.remplacement' => 'Enseignant absent sans remplacement',
+			'motifs.clotureClasse.parErreur' => 'Classe créée par erreur',
+			'motifs.attribution.confirmee' => 'Heure confirmée avec la famille',
+			'motifs.attribution.aucuneCommune' => 'Aucune heure commune',
+			'motifs.attribution.continuite' => 'Continuité avec le même enseignant',
+			'motifs.attribution.famille' => 'Demande de la famille',
+			'motifs.refusDemande.aucunEnseignant' => 'Aucun enseignant disponible sur cet horaire',
+			'motifs.refusDemande.exceptionnel' => 'Un changement d\'enseignant reste exceptionnel',
+			'motifs.refusDemande.reglePlateforme' => 'La règle de la plateforme s\'applique',
+			'motifs.refusDemande.plafond' => 'Plafond d\'élèves déjà atteint',
+			'motifs.refusDemande.insuffisant' => 'Informations insuffisantes pour trancher',
+			'motifs.poserRegle.famille' => 'Demande de la famille accordée',
+			'motifs.poserRegle.pedagogique' => 'Besoin pédagogique de l\'élève',
+			'motifs.poserRegle.age' => 'Durée adaptée à l\'âge',
+			'motifs.poserRegle.charge' => 'Charge de l\'enseignant',
+			'motifs.poserRegle.parErreur' => 'Correction d\'une erreur de saisie',
+			'motifs.cloreSurcharge.termine' => 'Besoin ponctuel terminé',
+			'motifs.cloreSurcharge.famille' => 'Demande de la famille',
+			'motifs.cloreSurcharge.changement' => 'Changement de classe ou d\'enseignant',
+			'motifs.cloreSurcharge.parErreur' => 'Règle posée par erreur',
+			'motifs.annulationEvaluation.absenceEleve' => 'Absence de l\'élève',
+			'motifs.annulationEvaluation.absenceEnseignant' => 'Absence de l\'enseignant',
+			'motifs.annulationEvaluation.pasPret' => 'Élève pas encore prêt',
+			'motifs.annulationEvaluation.report' => 'Report à une autre date',
+			'motifs.annulationEvaluation.parErreur' => 'Évaluation planifiée par erreur',
+			'motifs.changementNiveau.reussie' => 'Évaluation réussie',
+			'motifs.changementNiveau.stable' => 'Unité acquise et stable',
+			'motifs.changementNiveau.enseignant' => 'Décision de l\'enseignant',
+			'motifs.changementNiveau.reevaluation' => 'Réévaluation demandée par la famille',
+			'motifs.changementNiveau.placement' => 'Correction du niveau de placement',
+			'motifs.blocage.prerequis' => 'Prérequis pas encore stables',
+			'motifs.blocage.renforcement' => 'Renforcement nécessaire avant d\'avancer',
+			'motifs.blocage.aRevoir' => 'Évaluation à revoir',
+			'motifs.blocage.absences' => 'Absences répétées',
+			'motifs.derogation.aucuneClasse' => 'Aucune classe appropriée',
+			'motifs.derogation.avance' => 'Progression plus rapide que la classe',
+			'motifs.derogation.enseignant' => 'Décision de l\'enseignant',
+			'motifs.derogation.direction' => 'Accord de la direction pédagogique',
+			'motifs.cloreException.stables' => 'Prérequis désormais stables',
+			'motifs.cloreException.classe' => 'Élève placé dans une classe adaptée',
+			'motifs.cloreException.inutile' => 'L\'exception n\'est plus nécessaire',
+			'motifs.cloreException.parErreur' => 'Exception posée par erreur',
+			'motifs.placement.debutant' => 'Débutant : parcours de base',
+			'motifs.placement.lecture' => 'Niveau constaté à la lecture',
+			'motifs.placement.declaratif' => 'Pré-diagnostic déclaratif confirmé',
+			'motifs.placement.procheNiveau' => 'Classe la plus proche du niveau évalué',
+			'motifs.placement.provisoire' => 'Placement provisoire, à réévaluer',
+			'motifs.refusDossier.illisible' => 'Pièce d\'identité illisible',
+			'motifs.refusDossier.expiree' => 'Pièce d\'identité expirée',
+			'motifs.refusDossier.nom' => 'Nom différent de celui du compte',
+			'motifs.refusDossier.nonTransmise' => 'Pièce requise non transmise',
+			'motifs.refusDossier.accord' => 'Accord requis manquant',
+			'motifs.presenceCorrigee.nonDetectee' => 'Présence non détectée par l\'application',
+			'motifs.presenceCorrigee.reseau' => 'Coupure réseau pendant le cours',
+			'motifs.presenceCorrigee.retard' => 'Arrivée en retard',
+			'motifs.presenceCorrigee.appareil' => 'Connexion depuis un autre appareil',
+			'motifs.presenceCorrigee.parErreur' => 'Erreur de saisie',
+			'motifs.presenceExcusee.prevenue' => 'Absence prévenue à l\'avance',
+			'motifs.presenceExcusee.reseau' => 'Coupure réseau signalée',
+			'motifs.presenceExcusee.conge' => 'Jour férié ou congé',
+			'motifs.presenceExcusee.familiale' => 'Raison familiale',
+			'motifs.reglageEnseignant.horaire' => 'Horaire qui ne convient plus',
+			'motifs.reglageEnseignant.niveau' => 'Niveau qui ne correspond plus',
+			'motifs.reglageEnseignant.fuseau' => 'Changement de fuseau horaire',
+			'motifs.reglageEnseignant.fratrie' => 'Réunir les enfants du foyer',
+			'motifs.reglageDuree.tropLongue' => 'Durée trop longue pour l\'âge',
+			'motifs.reglageDuree.plusDeTemps' => 'Besoin de plus de temps',
+			'motifs.reglageDuree.pause' => 'Pause nécessaire pendant le cours',
+			'motifs.reglageDuree.horaire' => 'Contraintes d\'horaire de la famille',
+			'motifs.reglageMinimum.ecourtees' => 'Séances souvent écourtées',
+			'motifs.reglageMinimum.reseau' => 'Coupures réseau fréquentes',
+			'motifs.reglageMinimum.duree' => 'Durée des cours modifiée',
+			'motifs.reglageMinimum.horaire' => 'Contraintes d\'horaire de la famille',
+			'motifs.signalement.pedagogique.renforcement' => 'Un renforcement est conseillé sur la leçon en cours.',
+			'motifs.signalement.pedagogique.revision' => 'Un peu de révision à la maison aidera avant le prochain cours.',
+			'motifs.signalement.pedagogique.regularite' => 'La régularité du travail à la maison fera la différence.',
+			'motifs.signalement.pedagogique.echange' => 'Un échange avec l\'académie est proposé.',
+			'motifs.signalement.presence.absences' => 'Plusieurs absences récentes : la régularité aide à progresser.',
+			'motifs.signalement.presence.retards' => 'Arrivées en retard lors des dernières séances.',
+			'motifs.signalement.presence.prevenir' => 'Merci de prévenir l\'académie en cas d\'absence.',
+			'motifs.signalement.technique.son' => 'Le son ou la connexion a gêné le cours.',
+			'motifs.signalement.technique.essai' => 'Un essai de l\'appareil avant le cours est conseillé.',
+			'motifs.signalement.technique.camera' => 'La caméra ou le micro n\'a pas fonctionné.',
+			'motifs.signalement.changement.classe' => 'Un changement de classe est à l\'étude.',
+			'motifs.signalement.changement.niveau' => 'Le niveau de la classe ne semble plus adapté.',
+			'motifs.signalement.changement.suite' => 'L\'académie reviendra vers vous pour en parler.',
 			_ => null,
 		};
 	}

@@ -30,6 +30,7 @@ class FilterPill extends StatelessWidget {
     super.key,
     this.retenue = false,
     this.compteur,
+    this.focusNode,
   });
 
   /// Ce qui s'affiche.
@@ -46,6 +47,9 @@ class FilterPill extends StatelessWidget {
   /// autres valeurs** (`02-regles-ux.md` section 2).
   final int? compteur;
 
+  /// Le noeud de focus de la pilule, facultatif.
+  final FocusNode? focusNode;
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -56,6 +60,7 @@ class FilterPill extends StatelessWidget {
       button: true,
       child: Pressable.selon(
         onPress: onPress,
+        focusNode: focusNode,
         libelleSemantique: compteur == null ? libelle : '$libelle, $compteur',
         arrondiFocus: AppRadius.arrondiFull,
         constructeur: (BuildContext contexte, EtatPression etat) {

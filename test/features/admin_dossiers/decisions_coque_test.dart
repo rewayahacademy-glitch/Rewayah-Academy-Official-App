@@ -21,6 +21,7 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
@@ -161,6 +162,16 @@ Finder get _champMotif => find
     )
     .first;
 
+/// FORM-L1 : le motif libre s'ecrit apres « Autre », derniere puce.
+Future<void> _ouvrirAutre(WidgetTester tester) async {
+  if (find.byKey(SelecteurMotif.cleAutre).evaluate().isEmpty) return;
+  if (find.text(t.dossiers.refus.champ).evaluate().isNotEmpty) return;
+  await tester.ensureVisible(find.byKey(SelecteurMotif.cleAutre));
+  await tester.pumpAndSettle();
+  await tester.tap(find.byKey(SelecteurMotif.cleAutre));
+  await tester.pumpAndSettle();
+}
+
 const Size _mobile = Size(390, 844);
 const Size _bureau = Size(1440, 900);
 
@@ -178,12 +189,15 @@ void main() {
     await tester.tap(find.text(t.dossiers.refuser).last);
     await _stabiliser(tester);
     expect(find.text(t.dossiers.refus.erreurVide), findsOneWidget);
+    await _ouvrirAutre(tester);
     await tester.enterText(_champMotif, '   ');
     await tester.tap(find.text(t.dossiers.refuser).last);
     await _stabiliser(tester);
-    expect(find.text(t.dossiers.refus.erreurVide), findsOneWidget);
+    // « Autre » vide : le selecteur precise que c'est le champ qui manque.
+    expect(find.text(t.formulaire.motif.autreVide), findsOneWidget);
     expect(etat.nombreDecisions, 0);
 
+    await _ouvrirAutre(tester);
     await tester.enterText(_champMotif, 'Photo illisible.');
     await _stabiliser(tester);
     await tester.tap(find.text(t.dossiers.refuser).last);
@@ -201,6 +215,7 @@ void main() {
     await _monter(tester, _mobile, etat: etat);
     await _ouvrir(tester, 'Omar');
     await _toucher(tester, t.dossiers.refuser);
+    await _ouvrirAutre(tester);
     await tester.enterText(_champMotif, 'Photo floue.');
     await _stabiliser(tester);
     await tester.tap(find.text(t.commun.annuler));
@@ -225,12 +240,15 @@ void main() {
     await _monter(tester, _mobile, etat: etat);
     await _ouvrir(tester, 'Omar');
     await _toucher(tester, t.dossiers.refuser);
+    await _ouvrirAutre(tester);
     await tester.enterText(_champMotif, 'Photo floue.');
     await _stabiliser(tester);
 
+    // FORM-L1 : les puces de motifs allongent la feuille ; le glissement
+    // doit depasser la moitie de sa hauteur pour demander la fermeture.
     await tester.drag(
       find.text(t.dossiers.refus.titre).last,
-      const Offset(0, 400),
+      const Offset(0, 700),
     );
     await _stabiliser(tester);
     expect(find.text(t.dossiers.refus.abandonQuestion), findsOneWidget);
@@ -282,6 +300,7 @@ void main() {
     const double clavier = 336;
     tester.view.viewInsets = const FakeViewPadding(bottom: clavier);
     await _stabiliser(tester);
+    await _ouvrirAutre(tester);
     await tester.enterText(_champMotif, 'Photo illisible.');
     await _stabiliser(tester);
 
@@ -317,6 +336,7 @@ void main() {
     await _monter(tester, _bureau, etat: etat, port: port);
     await _ouvrir(tester, 'Omar');
     await _toucher(tester, t.dossiers.refuser);
+    await _ouvrirAutre(tester);
     await tester.enterText(_champMotif, 'Motif fictif.');
     await _stabiliser(tester);
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
@@ -343,6 +363,7 @@ void main() {
     await _monter(tester, _bureau, etat: etat);
     await _ouvrir(tester, 'Inès');
     await _toucher(tester, t.dossiers.refuser);
+    await _ouvrirAutre(tester);
     await tester.enterText(_champMotif, 'Motif fictif.');
     await _stabiliser(tester);
     await tester.tap(find.text(t.dossiers.refuser).last);
