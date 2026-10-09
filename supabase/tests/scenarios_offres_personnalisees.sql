@@ -64,16 +64,6 @@ BEGIN
   PERFORM set_config('test.uid', 'f1490000-0000-0000-0000-000000000003', true);
   PERFORM set_config('test.jwt',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text, true);
-  IF NOT coalesce(public.peut_decrire_apprenant(
-       'f1490000-0000-0000-0000-000000000003'), false) THEN
-    RAISE EXCEPTION 'F1 fixture: uid=%, profile=%, student=%, household=%, account=%',
-      auth.uid(),
-      EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid()),
-      EXISTS (SELECT 1 FROM public.student_profiles WHERE profile_id = auth.uid()
-        AND student_type = 'autonomous' AND deleted_at IS NULL),
-      (SELECT household_id FROM public.profiles WHERE id = auth.uid()),
-      (SELECT account_status FROM public.profiles WHERE id = auth.uid());
-  END IF;
   v_ok := false;
   BEGIN
     PERFORM public.demander_creneau_personnalise(
@@ -105,6 +95,9 @@ BEGIN
     'f1490000-0000-0000-0000-000000000001'::uuid,
     'f1490000-0000-0000-0000-000000000002'::uuid
   ] LOOP
+    PERFORM set_config('test.uid', v_id::text, true);
+    PERFORM set_config('test.jwt',
+      jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text, true);
     v_ok := false;
     BEGIN
       PERFORM public.demander_creneau_personnalise(v_id, 'Europe/Paris',
