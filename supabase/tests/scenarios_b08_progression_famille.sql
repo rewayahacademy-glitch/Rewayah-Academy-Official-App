@@ -85,8 +85,8 @@ DECLARE
   v_count integer;
   v_denied boolean;
 BEGIN
-  PERFORM set_config('test.uid', v_teacher::text, true);
-  PERFORM set_config('test.jwt',
+  PERFORM set_config('request.jwt.claim.sub', v_teacher::text, true);
+  PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'teacher'))::text, true);
 
   PERFORM public.enregistrer_resume_seance(
@@ -98,8 +98,8 @@ BEGIN
     RAISE EXCEPTION 'B-08: le brouillon a été publié sans geste explicite';
   END IF;
 
-  PERFORM set_config('test.uid', v_guardian::text, true);
-  PERFORM set_config('test.jwt',
+  PERFORM set_config('request.jwt.claim.sub', v_guardian::text, true);
+  PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'guardian',
       'household_id', 'b0800000-0000-0000-0000-000000000101'))::text, true);
   v_result := public.progression_famille(v_student);
@@ -108,8 +108,8 @@ BEGIN
     RAISE EXCEPTION 'B-08: un brouillon est visible au foyer avant publication';
   END IF;
 
-  PERFORM set_config('test.uid', v_teacher::text, true);
-  PERFORM set_config('test.jwt',
+  PERFORM set_config('request.jwt.claim.sub', v_teacher::text, true);
+  PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'teacher'))::text, true);
   v_denied := false;
   BEGIN
@@ -127,8 +127,8 @@ BEGIN
     v_session, v_student, 'Lecture régulière; revoir les liaisons.', NULL, true
   );
 
-  PERFORM set_config('test.uid', v_guardian::text, true);
-  PERFORM set_config('test.jwt',
+  PERFORM set_config('request.jwt.claim.sub', v_guardian::text, true);
+  PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'guardian',
       'household_id', 'b0800000-0000-0000-0000-000000000101'))::text, true);
 
@@ -154,8 +154,8 @@ BEGIN
   IF NOT v_denied THEN
     RAISE EXCEPTION 'B-08: la RPC famille a divulgué un autre foyer';
   END IF;
-  PERFORM set_config('test.uid', v_other_guardian::text, true);
-  PERFORM set_config('test.jwt',
+  PERFORM set_config('request.jwt.claim.sub', v_other_guardian::text, true);
+  PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'guardian',
       'household_id', 'b0800000-0000-0000-0000-000000000102'))::text, true);
   v_denied := false;
@@ -168,8 +168,8 @@ BEGIN
     RAISE EXCEPTION 'B-08: la RPC de résumé a divulgué un autre foyer';
   END IF;
 
-  PERFORM set_config('test.uid', v_other_teacher::text, true);
-  PERFORM set_config('test.jwt',
+  PERFORM set_config('request.jwt.claim.sub', v_other_teacher::text, true);
+  PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'teacher'))::text, true);
   v_denied := false;
   BEGIN
@@ -186,8 +186,8 @@ END
 $scenario$;
 
 SET LOCAL ROLE authenticated;
-SELECT set_config('test.uid', 'b0800000-0000-0000-0000-000000000002', true);
-SELECT set_config('test.jwt',
+SELECT set_config('request.jwt.claim.sub', 'b0800000-0000-0000-0000-000000000002', true);
+SELECT set_config('request.jwt.claims',
   '{"app_metadata":{"role":"guardian","household_id":"b0800000-0000-0000-0000-000000000101"}}',
   true);
 DO $rls_foyer$
@@ -202,8 +202,8 @@ BEGIN
 END
 $rls_foyer$;
 
-SELECT set_config('test.uid', 'b0800000-0000-0000-0000-000000000004', true);
-SELECT set_config('test.jwt',
+SELECT set_config('request.jwt.claim.sub', 'b0800000-0000-0000-0000-000000000004', true);
+SELECT set_config('request.jwt.claims',
   '{"app_metadata":{"role":"guardian","household_id":"b0800000-0000-0000-0000-000000000102"}}',
   true);
 DO $rls_autre_foyer$
