@@ -275,7 +275,7 @@ begin
   if p_id is null or p_plage is null
      or pg_catalog.jsonb_typeof(p_plage) <> 'object'
      or p_plage ->> 'resource_id' is distinct from v_resource_id::text
-     or p_intention not in ('learn', 'review', 'reinforce', 'maintain', 'assessment') then
+     or not coalesce(p_intention in ('learn', 'review', 'reinforce', 'maintain', 'assessment'), false) then
     raise exception 'marqueur invalide';
   end if;
 
@@ -375,15 +375,15 @@ revoke all on function public.tc_annotation_valider_trait() from public, anon, a
 revoke all on function public.tc_annotation_valider_marqueur() from public, anon, authenticated, agent_ro;
 revoke all on function public.tc_annotation_toucher_couche() from public, anon, authenticated, agent_ro;
 revoke all on function public.tc_poser_annotation_marqueur(uuid, uuid, jsonb, text, text)
-  from public, anon, agent_ro;
+  from public, anon, authenticated, agent_ro;
 grant execute on function public.tc_poser_annotation_marqueur(uuid, uuid, jsonb, text, text)
   to authenticated;
 revoke all on function public.tc_annuler_derniere_annotation(uuid)
-  from public, anon, agent_ro;
+  from public, anon, authenticated, agent_ro;
 grant execute on function public.tc_annuler_derniere_annotation(uuid) to authenticated;
 
 -- Les marqueurs sont remplacés atomiquement par RPC; l'identité reste hors table.
-revoke insert, update on public.annotation_marqueur
+revoke all on public.annotation_marqueur
   from public, anon, authenticated, agent_ro;
 grant select, delete on public.annotation_marqueur to authenticated;
 
