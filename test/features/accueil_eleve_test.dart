@@ -33,6 +33,7 @@ import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
 import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
+import '../support/hors_ligne_une_fois.dart';
 
 const String _enseignantId = 't1';
 
@@ -320,7 +321,11 @@ void main() {
 
       expect(find.text(t.eleve.accueil.aucunCours), findsOneWidget);
       expect(
-        find.text(t.eleve.accueil.prochainDansJours(jours: '3')),
+        find.text(
+          LibellesGroupe.insecable(
+            t.eleve.accueil.prochainDansJours(jours: '3'),
+          ),
+        ),
         findsOneWidget,
       );
       // En jours, jamais en date : ni le jour de la semaine, ni l'heure.
@@ -395,6 +400,9 @@ void main() {
       expect(bouton.onPress, isNull);
       expect(find.text(t.eleve.accueil.horsLigne), findsOneWidget);
       expect(find.text(t.eleve.accueil.horsLigneDetail), findsOneWidget);
+      // EA-HL-DOUBLE-1 (reprise) : le bandeau seul dit « hors ligne », en
+      // mots et en icone ; la ligne d'attente ne repose pas le wifi barre.
+      expectHorsLigneUneFois();
     });
   });
 
@@ -819,6 +827,10 @@ void main() {
         findsNothing,
       );
       expect(find.text(t.eleve.accueil.coran), findsOneWidget);
+      // EA-HL-DOUBLE-1d : le bandeau seul porte le « wifi barre » ; le bloc
+      // d'echec, pose dessous, prend le sablier.
+      expectHorsLigneUneFois();
+      expect(bloc.icone, AppIcons.attente);
     });
 
     // DASH-ELV-ERR-b, m3 : une erreur apres une valeur deja lue garde la

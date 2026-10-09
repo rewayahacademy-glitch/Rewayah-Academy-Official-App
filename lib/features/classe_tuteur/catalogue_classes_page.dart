@@ -104,10 +104,12 @@ String seanceCatalogue(CreneauHebdomadaire seance) {
   final String heure =
       '${seance.heure.toString().padLeft(2, '0')}:'
       '${seance.minute.toString().padLeft(2, '0')}';
-  return t.classe.pageCatalogue.seanceHebdo(
-    jour: jours[(seance.jourIso - 1) % jours.length],
-    heure: heure,
-    duree: seance.dureeMinutes,
+  return LibellesGroupe.insecable(
+    t.classe.pageCatalogue.seanceHebdo(
+      jour: jours[(seance.jourIso - 1) % jours.length],
+      heure: heure,
+      duree: seance.dureeMinutes,
+    ),
   );
 }
 

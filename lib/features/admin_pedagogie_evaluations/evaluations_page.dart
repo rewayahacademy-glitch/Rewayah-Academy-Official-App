@@ -21,6 +21,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/selecteur_motif.dart';
 import '../../core/widgets/selecteur_niveau_programme.dart';
 import '../../core/widgets/selecteur_personne.dart';
@@ -138,13 +139,11 @@ class _Corps extends StatelessWidget {
         .where((EvaluationAdmin e) => _correspond(e, filtre))
         .toList(growable: false);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return ColonneCorps(
+      minimumEtire: DataCollection.minimumLisible(context),
       children: <Widget>[
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: <Widget>[
+        RangeeFiltres(
+          filtres: <Widget>[
             for (final _Filtre f in _Filtre.values)
               FilterPill(
                 libelle: _libelleFiltre(f),
@@ -416,6 +415,7 @@ class _FeuillePlanificationEtat extends ConsumerState<_FeuillePlanification> {
           style: Theme.of(context).textTheme.titleMedium,
         ),
         Ecart.vSm,
+        // Choix de formulaire, pas un filtre : le type de l'evaluation a planifier.
         Wrap(
           spacing: AppSpacing.sm,
           children: <Widget>[
@@ -567,6 +567,7 @@ class _FeuilleResultatEtat extends State<_FeuilleResultat> {
       builder: (BuildContext context, WidgetRef ref, Widget? _) => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          // Choix de formulaire, pas un filtre : le resultat a enregistrer.
           Wrap(
             spacing: AppSpacing.sm,
             children: <Widget>[

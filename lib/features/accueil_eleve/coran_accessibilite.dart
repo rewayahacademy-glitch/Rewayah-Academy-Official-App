@@ -522,6 +522,10 @@ class _LecteurCoranAccessibiliteEtat
             // restent lisibles a texte x2. Une page lue garde tout l'ecran,
             // exactement comme avant (le rendu du Coran ne change pas).
             margeLecture: vue != null && !vue.aDuTexte,
+            // SUPERPOS-1 : avec lecteur d'ecran ou clavier, les commandes ne
+            // se ferment jamais ; elles passent alors sous le Mushaf au lieu
+            // d'en recouvrir le bas.
+            placeReservee: true,
           ),
         ),
         if (vue != null && vue.aDuTexte)

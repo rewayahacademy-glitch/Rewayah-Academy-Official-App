@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
@@ -25,6 +26,7 @@ import '../tc_catalogue/routes_tc_b.dart';
 import '../tc_mes_groupes/carte_groupe.dart';
 import '../tc_mes_groupes/chemins_tc_a.dart';
 import '../tc_mes_groupes/photo_enseignant.dart';
+import 'bloc_cartes_classe.dart';
 import 'carte_session.dart';
 import 'emplacements_groupe.dart';
 
@@ -351,7 +353,8 @@ class SqueletteGroupe extends StatelessWidget {
 
 /// La page, composee par rangees (revue UX, ajustement n° 2).
 ///
-/// Rangee 1 : [identite + seance | Avant le prochain cours] ; rangee 2 :
+/// Rangee 1 : [identite + seance | Avant le prochain cours, cartes de la
+/// classe] ; rangee 2 :
 /// [bibliotheque | progression].
 class _Colonnes extends StatelessWidget {
   const _Colonnes({
@@ -405,6 +408,12 @@ class _Colonnes extends StatelessWidget {
       actions: espace.avantProchainCours,
       portBranche: lecture.portTravailBranche,
     );
+    // CARTES-PERSO-1 : les cartes que l'enseignant compose, sous « Avant le
+    // prochain cours ». La capacite de les modifier vient de leur lecture.
+    final Widget cartes = BlocCartesClasse(
+      groupeId: identite.groupeId,
+      prochaineSeance: identite.prochaineSeance?.debutUtc.toLocal(),
+    );
     final Widget bibliotheque = BlocBibliotheque(
       emplacement: espace.bibliotheque,
       // Ouvre la Bibliotheque sur ce groupe : l'identifiant voyage dans
@@ -423,7 +432,7 @@ class _Colonnes extends StatelessWidget {
 
     return ColonnesParRangees(
       rangees: <(List<Widget>, List<Widget>)>[
-        (identiteEtSeance, <Widget>[avant]),
+        (identiteEtSeance, <Widget>[avant, Ecart.vSection, cartes]),
         (<Widget>[bibliotheque], secondaire),
       ],
     );
@@ -619,10 +628,15 @@ class IdentiteGroupe extends StatelessWidget {
       runSpacing: AppSpacing.sm,
       children: <Widget>[
         if (afficherCapacite)
+          // COUPE-MOTS-3b : « 3 élèves sur 6 places », jamais « élèves sur 6
+          // places 3 » dans l'interface arabe.
           StatusPill(
-            libelle: LibellesGroupe.capacitePhrase(
-              membres: groupe.nombreMembres,
-              seuil: groupe.seuilMax,
+            libelle: isolerSiAutreSens(
+              LibellesGroupe.capacitePhrase(
+                membres: groupe.nombreMembres,
+                seuil: groupe.seuilMax,
+              ),
+              Directionality.of(context),
             ),
             ton: groupe.complet ? TonEtat.avertissement : TonEtat.neutre,
           ),

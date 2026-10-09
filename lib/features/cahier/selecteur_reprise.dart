@@ -17,6 +17,7 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/zone_saisie.dart';
 
 /// Une position de reprise choisie : une sourate et un verset.
 @immutable
@@ -107,7 +108,7 @@ class ChampReprise extends StatelessWidget {
       child: InputDecorator(
         decoration: InputDecoration(
           helperText: t.enseignant.cahier.repriseDetail,
-          helperMaxLines: 4,
+          helperMaxLines: ZoneSaisie.lignesAideMax,
           errorText: erreur,
           errorMaxLines: 3,
           suffixIcon: Icon(AppIcons.chevron.repos),
@@ -331,6 +332,7 @@ class _FeuilleRepriseEtat extends ConsumerState<FeuilleReprise> {
             ),
           ),
           Ecart.vMd,
+          // Choix de formulaire, pas un filtre : le verset de reprise.
           Wrap(
             spacing: AppSpacing.sm,
             runSpacing: AppSpacing.sm,

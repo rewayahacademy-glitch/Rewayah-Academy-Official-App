@@ -23,6 +23,9 @@ import 'pressable.dart';
 ///
 /// Ce n'est pas la coquille : `PageShell` reste le seul gabarit de page ;
 /// l'en-tete se pose dans son corps ou dans son emplacement d'en-tete.
+///
+/// **En-tete compact** (SUPERPOS-1, decide par delegation le 05/10) : a texte
+/// agrandi (au-dela de 130 %) ou sur une vue basse, voir [EnteteCompact].
 class EntetePage extends StatelessWidget {
   /// Cree un en-tete.
   const EntetePage({
@@ -58,45 +61,194 @@ class EntetePage extends StatelessWidget {
     final TextStyle styleTitre =
         (mobile ? textes.headlineSmall : textes.headlineMedium) ??
         const TextStyle();
+    final bool compact = EnteteCompact.actif(context);
+    final TextScaler echelleTitre = compact
+        ? EnteteCompact.echelleTitre(context, styleTitre)
+        : MediaQuery.textScalerOf(context);
+    final TextStyle styleSousTitre =
+        (compact ? textes.bodyMedium : textes.bodyLarge) ?? const TextStyle();
 
-    return Row(
-      children: <Widget>[
-        if (onRetour != null) ...<Widget>[
-          DisqueRetour(onPress: onRetour!),
-          Ecart.hMd,
-        ],
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              titreFocalisable(
-                focusTitre,
-                // COUPE-MOTS-1 : entre les mots, jamais dans un mot
-                // (« Centre de com / mande », « Cahier de trans / mission »).
-                Semantics(
-                  header: true,
-                  child: TexteSansCoupure(
-                    titre,
-                    style: palette.inkStrong.applyTo(styleTitre),
-                  ),
-                ),
-              ),
-              if (sousTitre != null) ...<Widget>[
-                Ecart.vXs,
-                TexteSansCoupure(
-                  sousTitre!,
-                  style: palette.inkMuted.applyTo(
-                    textes.bodyLarge ?? const TextStyle(),
-                  ),
-                ),
-              ],
-            ],
+    final TextStyle titreComplet = palette.inkStrong.applyTo(styleTitre);
+    final Widget titreW = titreFocalisable(
+      focusTitre,
+      // COUPE-MOTS-1 : entre les mots, jamais dans un mot
+      // (« Centre de com / mande », « Cahier de trans / mission »).
+      Semantics(
+        header: true,
+        child: MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaler: echelleTitre),
+          child: TexteSansCoupure(
+            titre,
+            key: EnteteCompact.titreKey,
+            style: titreComplet,
+            // SUPERPOS-1 : « Classe Al- / Badr » a 320 en texte double ;
+            // en mode compact seulement (texte agrandi, vue basse).
+            nomsComposesEntiers: compact,
           ),
         ),
-        for (final Widget action in actions) ...<Widget>[Ecart.hXs, action],
-      ],
+      ),
     );
+    final List<Widget> sousTitreW = <Widget>[
+      if (sousTitre != null) ...<Widget>[
+        Ecart.vXs,
+        TexteSansCoupure(
+          sousTitre!,
+          key: EnteteCompact.sousTitreKey,
+          style: palette.inkMuted.applyTo(styleSousTitre),
+        ),
+      ],
+    ];
+    final Widget? retour = onRetour == null
+        ? null
+        : DisqueRetour(onPress: onRetour!);
+
+    if (!compact) {
+      return Row(
+        children: <Widget>[
+          if (retour != null) ...<Widget>[retour, Ecart.hMd],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[titreW, ...sousTitreW],
+            ),
+          ),
+          for (final Widget action in actions) ...<Widget>[Ecart.hXs, action],
+        ],
+      );
+    }
+
+    // En-tete compact : le sous-titre prend toute la largeur, sous la rangee
+    // du titre. Quand le mot le plus long du titre ne tient pas a cote du
+    // disque retour et des actions, ils passent sur une rangee au-dessus et
+    // le titre prend lui aussi toute la largeur : sinon, le mot se serait
+    // reduit sous la taille d'un titre de section agrandi (HIER-1).
+    return LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints c) {
+        final double aCote =
+            c.maxWidth -
+            (retour == null ? 0 : AppTouchTarget.standard + AppSpacing.md) -
+            actions.length * (AppTouchTarget.standard + AppSpacing.xs);
+        final double motLong = largeurMotLePlusLong(
+          contexte,
+          titre,
+          titreComplet,
+          echelleTitre,
+        );
+        final bool auDessus =
+            (retour != null || actions.isNotEmpty) &&
+            motLong + AppSpacing.xs > aCote;
+        if (!auDessus) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  if (retour != null) ...<Widget>[retour, Ecart.hMd],
+                  Expanded(child: titreW),
+                  for (final Widget action in actions) ...<Widget>[
+                    Ecart.hXs,
+                    action,
+                  ],
+                ],
+              ),
+              ...sousTitreW,
+            ],
+          );
+        }
+        return Column(
+          key: EnteteCompact.rangeeAuDessusKey,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                ?retour,
+                const Spacer(),
+                for (final Widget action in actions) ...<Widget>[
+                  Ecart.hXs,
+                  action,
+                ],
+              ],
+            ),
+            Ecart.vSm,
+            titreW,
+            ...sousTitreW,
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// L'en-tete compact, selon l'echelle HIER-1 (SUPERPOS-1, decide par
+/// delegation le 05/10).
+///
+/// A texte agrandi (au-dela de [echelleSeuil]) ou sur une vue basse (sous
+/// [hauteurSeuil], telephone en paysage), un titre d'ecran agrandi en
+/// proportion prenait le tiers ou la moitie d'un telephone (320 en texte
+/// double : « Classe Al-Badr · Jeudi 24 septembre » sur quatre lignes de
+/// 56, « Dossiers a valider » et son sous-titre sur la moitie de l'ecran).
+/// En mode compact :
+///
+/// - le titre grandit avec le texte, mais seulement jusqu'a rester **un
+///   palier** ([palier]) au-dessus d'un titre de section (`titleLarge`) lui
+///   aussi agrandi : la hierarchie HIER-1 tient a la taille rendue (titre
+///   d'ecran > titre de section > corps), sans le surplus qui ne sert pas la
+///   lecture. Jamais sous la taille du theme ;
+/// - le sous-titre descend d'un rang du corps (`bodyMedium`), toujours
+///   agrandi a l'echelle de l'appareil, et prend toute la largeur sous la
+///   rangee du titre ;
+/// - quand le mot le plus long du titre ne tient pas a cote du disque retour
+///   et des actions, ceux-ci passent sur une rangee au-dessus et le titre
+///   prend toute la largeur (sinon le mot se reduirait sous un titre de
+///   section agrandi) ;
+/// - un nom compose du titre (« Al-Badr ») ne passe pas a la ligne apres son
+///   trait d'union (`TexteSansCoupure.nomsComposesEntiers`).
+///
+/// Le clavier ne compte pas : la structure ne bascule pas a son ouverture
+/// (meme regle que `PageShell`).
+abstract final class EnteteCompact {
+  /// L'echelle de texte au-dela de laquelle l'en-tete est compact.
+  static const double echelleSeuil = 1.3;
+
+  /// La hauteur de vue sous laquelle l'en-tete est compact.
+  static const double hauteurSeuil = 600;
+
+  /// L'ecart minimal entre deux niveaux de l'echelle HIER-1 (titre de carte
+  /// 18, titre de carte secondaire 16).
+  static const double palier = 2;
+
+  /// Le titre de l'en-tete (tests, captures).
+  static const Key titreKey = ValueKey<String>('entete-page-titre');
+
+  /// La forme a rangee au-dessus du titre (tests, captures).
+  static const Key rangeeAuDessusKey = ValueKey<String>(
+    'entete-page-rangee-au-dessus',
+  );
+
+  /// Le sous-titre de l'en-tete (tests, captures).
+  static const Key sousTitreKey = ValueKey<String>('entete-page-sous-titre');
+
+  /// Vrai quand l'en-tete de [context] doit etre compact.
+  static bool actif(BuildContext context) =>
+      MediaQuery.textScalerOf(context).scale(1) > echelleSeuil ||
+      MediaQuery.sizeOf(context).height < hauteurSeuil;
+
+  /// L'echelle du titre [style] en mode compact : celle qui le pose un
+  /// [palier] au-dessus d'un titre de section agrandi, jamais plus grande
+  /// que celle de l'appareil, jamais sous 1.
+  static TextScaler echelleTitre(BuildContext context, TextStyle style) {
+    final TextScaler appareil = MediaQuery.textScalerOf(context);
+    final double taille = style.fontSize ?? 0;
+    final double section =
+        Theme.of(context).textTheme.titleLarge?.fontSize ?? 0;
+    if (taille <= 0) return appareil;
+    final double vise = appareil.scale(section) + palier;
+    if (appareil.scale(taille) <= vise) return appareil;
+    final double facteur = vise / taille;
+    return TextScaler.linear(facteur < 1 ? 1 : facteur);
   }
 }
 
@@ -163,13 +315,23 @@ class DisqueRetour extends StatelessWidget {
 /// « Notifications, n non lues ».
 class ClocheNotifications extends StatelessWidget {
   /// Cree la cloche.
-  const ClocheNotifications({required this.onPress, super.key, this.nonLues});
+  const ClocheNotifications({
+    required this.onPress,
+    super.key,
+    this.nonLues,
+    this.libelleSemantique,
+  });
 
   /// L'ouverture des notifications (`/tuteur/notifications`).
   final VoidCallback? onPress;
 
   /// Le nombre de notifications non lues, tel que le service le rend.
   final int? nonLues;
+
+  /// Ce que lit le lecteur d'ecran, quand la cloche dit autre chose que des
+  /// notifications non lues : la cloche des alertes de la direction annonce
+  /// ses alertes urgentes (ALERTE-1). Nul : le libelle des notifications.
+  final String? libelleSemantique;
 
   /// Diametre du point de non-lus.
   static const double diametrePoint = AppSpacing.sm;
@@ -179,11 +341,13 @@ class ClocheNotifications extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final bool mobile = AppGabarit.de(context) == Gabarit.mobile;
     final int nombre = nonLues ?? 0;
-    final String libelle = switch (nombre) {
-      <= 0 => t.commun.entete.notifications,
-      1 => t.commun.entete.notificationsUneNonLue,
-      _ => t.commun.entete.notificationsNonLues(nombre: nombre),
-    };
+    final String libelle =
+        libelleSemantique ??
+        switch (nombre) {
+          <= 0 => t.commun.entete.notifications,
+          1 => t.commun.entete.notificationsUneNonLue,
+          _ => t.commun.entete.notificationsNonLues(nombre: nombre),
+        };
 
     return Pressable(
       onPress: onPress,

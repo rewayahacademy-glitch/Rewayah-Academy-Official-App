@@ -12,6 +12,7 @@ import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../salle/vue_salle.dart';
 
@@ -438,8 +439,9 @@ class VueSeance {
             : base;
       case RoleSeance.enseignant:
         final String? suite = switch (horloge) {
-          HorlogeRestante(:final int minutes) =>
+          HorlogeRestante(:final int minutes) => LibellesGroupe.valeurSeule(
             t.salle.seance.minutesRestantes(minutes: minutes),
+          ),
           HorlogeDepassee() => t.salle.seance.sePoursuit,
           null => null,
         };

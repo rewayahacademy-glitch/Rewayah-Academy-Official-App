@@ -117,8 +117,9 @@ void main() {
         final AppPalette palette = AppPalette.of(
           tester.element(find.byType(ZoomLocal)),
         );
-        final Color attendu =
-            palette.inkFaint.asIconTheme(size: AppSpacing.xxl).color!;
+        final Color attendu = palette.inkFaint
+            .asIconTheme(size: AppSpacing.xxl)
+            .color!;
 
         final IconTheme themeMoins = tester.widget<IconTheme>(
           find
@@ -194,10 +195,7 @@ void main() {
       expect(precedente, 0);
       // NAV-FLECHES-1 : la fleche disparait, elle n'est pas grisee. Une seule
       // fleche (suivante) est rendue ; sa place vide garde la page au centre.
-      expect(
-        find.byKey(const ValueKey<String>('nav-precedent')),
-        findsNothing,
-      );
+      expect(find.byKey(const ValueKey<String>('nav-precedent')), findsNothing);
       expect(find.byKey(const ValueKey<String>('nav-suivant')), findsOneWidget);
       expect(find.byIcon(AppIcons.suivant.repos), findsOneWidget);
     });

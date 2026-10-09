@@ -262,7 +262,7 @@ void main() {
       );
       expect(
         avec.avisDst,
-        "Changement d'heure : le cours passera de 18:00 à 17:00.",
+        "Changement d'heure\u00A0: le cours passera de 18:00 à 17:00.",
       );
       expect(avec.etat, EtatEntree.aVenir);
       final EmplacementEntree sans = a(

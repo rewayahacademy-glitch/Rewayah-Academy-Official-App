@@ -20,11 +20,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
 import '../../core/mouvement/mouvement.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -496,7 +498,7 @@ class LigneTransmissionVisite extends ConsumerWidget {
               ),
               Ecart.hSm,
               Expanded(
-                child: Text(
+                child: TexteSansCoupure(
                   texte,
                   style:
                       (etat == TransmissionVisite.echec
@@ -577,7 +579,7 @@ class _FaitsAutomatiquesState extends ConsumerState<_FaitsAutomatiques> {
                   child: Row(
                     children: <Widget>[
                       Expanded(
-                        child: Text(
+                        child: TexteSansCoupure(
                           t.controleur.compteRendu.faits,
                           style: palette.inkStrong.applyTo(
                             textes.titleMedium ?? const TextStyle(),
@@ -659,12 +661,14 @@ class LignesFaitsVisite extends StatelessWidget {
         LigneCleValeur(
           cle: t.controleur.compteRendu.cleDebutReel,
           // L'ecart est ecrit, jamais porte par la couleur seule (C4).
-          valeur: retard > 0
-              ? t.controleur.compteRendu.debutRetard(
-                  heure: debutReel,
-                  minutes: retard,
-                )
-              : t.controleur.compteRendu.debutALHeure(heure: debutReel),
+          valeur: LibellesGroupe.valeurSeule(
+            retard > 0
+                ? t.controleur.compteRendu.debutRetard(
+                    heure: debutReel,
+                    minutes: retard,
+                  )
+                : t.controleur.compteRendu.debutALHeure(heure: debutReel),
+          ),
           chiffres: true,
         ),
         LigneCleValeur(

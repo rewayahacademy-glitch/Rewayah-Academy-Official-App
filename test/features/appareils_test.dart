@@ -14,6 +14,7 @@ import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/reseau/etat_sans_donnees.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
@@ -24,6 +25,8 @@ import 'package:rewayah_academy/features/appareils/appareils_eleve_page.dart';
 import 'package:rewayah_academy/features/appareils/appareils_page.dart';
 import 'package:rewayah_academy/features/appareils/liste_appareils_eleve.dart';
 
+import '../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../support/harnais.dart';
 import '../support/hors_ligne_une_fois.dart';
 import 'appareils/faux_appareils.dart';
@@ -44,6 +47,8 @@ Future<_Montage> _monter(
   bool horsLigne = false,
   Size taille = const Size(390, 844),
   double echelleTexte = 1,
+  ThemeMode mode = ThemeMode.light,
+  InterfaceMode interface = InterfaceMode.standard,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -97,7 +102,9 @@ Future<_Montage> _monter(
       ],
       child: TranslationProvider(
         child: MaterialApp.router(
-          theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+          theme: AppTheme.pour(interface, Brightness.light),
+          darkTheme: AppTheme.pour(interface, Brightness.dark),
+          themeMode: mode,
           routerConfig: routeur,
           builder: (BuildContext contexte, Widget? enfant) => MediaQuery(
             data: MediaQuery.of(contexte)
@@ -398,6 +405,9 @@ void main() {
       expect(find.text(t.appareils.revoquer), findsNothing);
       expect(find.text(t.appareils.eleve.horsLigne), findsOneWidget);
       expect(find.text(t.appareils.plateforme.android), findsOneWidget);
+      // La note dit ce qui ne peut pas se faire et quand, sans redire le
+      // reseau que porte le bandeau (EA-HL-DOUBLE-1c).
+      expectAvecDonnees();
     });
 
     testWidgets('hors ligne sans donnees : le bloc dit ce qui manque, sans '
@@ -554,5 +564,159 @@ void main() {
         expect(tester.takeException(), isNull);
       },
     );
+  });
+
+  // EA-HL-DOUBLE-1c : sombre, Interface guidee et 1440 des appareils hors
+  // ligne (revue EA-HL-DOUBLE-1-R, m4). Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1c', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, String, Size, ThemeMode, InterfaceMode, bool) cas
+        in <(String, String, Size, ThemeMode, InterfaceMode, bool)>[
+          (
+            'foyer_sans_donnees_390_sombre',
+            Routes.tuteurFoyerAppareils,
+            const Size(390, 844),
+            ThemeMode.dark,
+            InterfaceMode.standard,
+            true,
+          ),
+          (
+            'foyer_sans_donnees_390_guidee',
+            Routes.tuteurFoyerAppareils,
+            const Size(390, 844),
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            true,
+          ),
+          (
+            'foyer_avec_donnees_1440_clair',
+            Routes.tuteurFoyerAppareils,
+            const Size(1440, 900),
+            ThemeMode.light,
+            InterfaceMode.standard,
+            false,
+          ),
+          (
+            'eleve_avec_donnees_390_sombre',
+            _page('e1'),
+            const Size(390, 844),
+            ThemeMode.dark,
+            InterfaceMode.standard,
+            false,
+          ),
+          (
+            'eleve_avec_donnees_390_guidee',
+            _page('e1'),
+            const Size(390, 844),
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            false,
+          ),
+        ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        final FauxAppairagePilote service = _foyer();
+        if (cas.$6) {
+          service.attenteLecture = Completer<void>();
+        }
+        await _monter(
+          tester,
+          service: service,
+          depart: cas.$2,
+          horsLigne: true,
+          taille: cas.$3,
+          mode: cas.$4,
+          interface: cas.$5,
+        );
+        expect(tester.takeException(), isNull);
+        if (cas.$6) {
+          expect(find.byType(EtatSansDonnees), findsOneWidget);
+          expectHorsLigneUneFois();
+        } else {
+          expectAvecDonnees();
+        }
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1_appareils_${cas.$1}')}',
+        );
+      });
+    }
+  });
+
+  // EA-HL-DOUBLE-1 (reprise) : captures de preuve des appareils hors ligne,
+  // sans donnees (le bloc dit ce qui manque) et avec donnees (le bandeau
+  // seul). Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, String, Size, double, bool) cas
+        in <(String, String, Size, double, bool)>[
+          (
+            'foyer_sans_donnees_390',
+            Routes.tuteurFoyerAppareils,
+            const Size(390, 844),
+            1,
+            true,
+          ),
+          (
+            'foyer_sans_donnees_320x2',
+            Routes.tuteurFoyerAppareils,
+            const Size(320, 900),
+            2,
+            true,
+          ),
+          (
+            'eleve_sans_donnees_390',
+            _page('e1'),
+            const Size(390, 844),
+            1,
+            true,
+          ),
+          (
+            'foyer_avec_donnees_390',
+            Routes.tuteurFoyerAppareils,
+            const Size(390, 844),
+            1,
+            false,
+          ),
+          (
+            'eleve_avec_donnees_390',
+            _page('e1'),
+            const Size(390, 844),
+            1,
+            false,
+          ),
+          (
+            'eleve_avec_donnees_1440',
+            _page('e1'),
+            const Size(1440, 900),
+            1,
+            false,
+          ),
+        ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        final FauxAppairagePilote service = _foyer();
+        if (cas.$5) {
+          service.attenteLecture = Completer<void>();
+        }
+        await _monter(
+          tester,
+          service: service,
+          depart: cas.$2,
+          horsLigne: true,
+          taille: cas.$3,
+          echelleTexte: cas.$4,
+        );
+        expect(tester.takeException(), isNull);
+        if (cas.$5) {
+          expect(find.byType(EtatSansDonnees), findsOneWidget);
+          expectHorsLigneUneFois();
+        } else {
+          expectAvecDonnees();
+        }
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1_appareils_${cas.$1}_clair')}',
+        );
+      });
+    }
   });
 }

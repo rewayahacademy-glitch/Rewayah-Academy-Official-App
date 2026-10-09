@@ -22,6 +22,7 @@ import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/page_etape.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/zone_saisie.dart' show ZoneSaisie;
 import '../compte/donnees_compte.dart' show identiteTitulaireProvider;
 
 /// La porte d'acces du titulaire, qui decide de ce qui est creable (K3).
@@ -541,6 +542,7 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
             errorText: erreurs[ChampProfilEleve.prenom] == null
                 ? null
                 : t.foyer.ajout.erreurs.prenomRequis,
+            errorMaxLines: ZoneSaisie.lignesAideMax,
           ),
         ),
         Ecart.vMd,
@@ -560,11 +562,11 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
             helperText: _nomPrerempli
                 ? t.foyer.ajout.identite.nomAidePrerempli
                 : t.foyer.ajout.identite.nomAide,
-            helperMaxLines: 8,
+            helperMaxLines: ZoneSaisie.lignesAideMax,
             errorText: erreurs[ChampProfilEleve.nom] == null
                 ? null
                 : t.foyer.ajout.erreurs.nomRequis,
-            errorMaxLines: 3,
+            errorMaxLines: ZoneSaisie.lignesAideMax,
           ),
         ),
         Ecart.vMd,
@@ -617,6 +619,7 @@ class _ChoixAge extends StatelessWidget {
           ),
         ),
         Ecart.vSm,
+        // Choix de formulaire, pas un filtre : l'age du profil.
         Wrap(
           spacing: AppSpacing.sm,
           runSpacing: AppSpacing.sm,

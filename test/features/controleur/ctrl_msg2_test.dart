@@ -326,7 +326,11 @@ void main() {
         // Avant la correction : « A RenderFlex overflowed by 60 pixels on
         // the bottom », signale par le testeur, et le bouton coupe.
         expect(tester.takeException(), isNull);
-        final Finder echec = find.text(t.controleur.observation.echecSansTexte);
+        // Isole dans l'autre sens que l'interface (COUPE-MOTS-3b) : le texte
+        // rendu contient la phrase.
+        final Finder echec = find.textContaining(
+          t.controleur.observation.echecSansTexte,
+        );
         expect(echec, findsOneWidget);
         // L'echec est amene a l'ecran par son debut (il est plus haut que la
         // fenetre a texte x2).
@@ -335,7 +339,7 @@ void main() {
         _dansLaFenetre(tester, envoyer.last);
         // Le recapitulatif reste lisible : la question se retrouve en
         // remontant le corps.
-        final Finder question = find.text(
+        final Finder question = find.textContaining(
           t.controleur.observation.questionRecap,
         );
         await tester.ensureVisible(question);

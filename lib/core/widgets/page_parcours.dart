@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../i18n/strings.g.dart';
+import '../tc_groupe/libelles_tc_groupe.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
@@ -123,7 +125,9 @@ class PageParcours extends StatelessWidget {
           if (minutesRestantes != null) ...<Widget>[
             Ecart.vSm,
             Text(
-              t.inscription.tempsRestant(minutes: minutesRestantes!),
+              LibellesGroupe.insecable(
+                t.inscription.tempsRestant(minutes: minutesRestantes!),
+              ),
               textAlign: TextAlign.center,
               style: textes.bodySmall,
             ),
@@ -133,10 +137,16 @@ class PageParcours extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text(question, style: textes.headlineSmall ?? const TextStyle()),
+          // La question et son explication passent a la ligne entre les
+          // mots, jamais dans un mot : « Vérifiez votre obse / rvation » a
+          // 320 px, texte x2 (COUPE-MOTS-3, revue CTRL-ROSTER-C7-1b-R).
+          TexteSansCoupure(
+            question,
+            style: textes.headlineSmall ?? const TextStyle(),
+          ),
           if (explication != null) ...<Widget>[
             Ecart.vSm,
-            Text(explication!, style: textes.bodyMedium),
+            TexteSansCoupure(explication!, style: textes.bodyMedium),
           ],
           Ecart.vXxl,
           enfant,

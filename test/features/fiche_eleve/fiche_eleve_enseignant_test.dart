@@ -108,6 +108,10 @@ void main() {
 
       await tester.tap(find.text('Mariam').last);
       await tester.pumpAndSettle();
+      // La Classe porte aussi ses cartes (CARTES-PERSO-1) : la page defile,
+      // le retour du panneau est ramene dans la vue avant d'etre touche.
+      await tester.ensureVisible(find.byKey(PanneauFicheEleve.retourKey));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(PanneauFicheEleve.retourKey));
       await tester.pumpAndSettle();
       expect(find.byType(PanneauFicheEleve), findsNothing);

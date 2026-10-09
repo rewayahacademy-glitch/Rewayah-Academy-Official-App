@@ -250,7 +250,7 @@ class _Corps extends ConsumerWidget {
         : horairesIllisibles && retards.hasError
         ? t.enseignant.journee.erreurPartielleTout
         : retards.hasError
-        ? t.enseignant.journee.erreurPartielleRetards
+        ? t.enseignant.journee.erreurPartielleCahiers
         : t.enseignant.journee.erreurPartielle;
 
     // ENS-13B : les offres arrivent en Alerte utile ; une offre acceptee et

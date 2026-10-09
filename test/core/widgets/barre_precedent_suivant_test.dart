@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/widgets/barre_precedent_suivant.dart';
@@ -198,6 +199,99 @@ void main() {
     );
     expect(_retourne(tester, _prec), isFalse, reason: 'pointe a droite');
     expect(_retourne(tester, _suiv), isTrue, reason: 'pointe a gauche');
+  });
+
+  // CORAN-320-1b : en arabe, « 1 / 604 » s'affichait « 604 / 1 ». La
+  // position sans lettre se lit de gauche a droite ; une position redigee
+  // en toutes lettres garde le sens de sa langue.
+  group('position en arabe', () {
+    /// Les bords gauches du premier et du dernier caractere de la position.
+    (double, double) bords(WidgetTester tester) {
+      final RenderParagraph p = tester.renderObject<RenderParagraph>(
+        find.descendant(of: find.byKey(_pos), matching: find.byType(RichText)),
+      );
+      final int n = p.text.toPlainText().length;
+      double gauche(int i) => p
+          .getBoxesForSelection(
+            TextSelection(baseOffset: i, extentOffset: i + 1),
+          )
+          .first
+          .left;
+      return (gauche(0), gauche(n - 1));
+    }
+
+    // La barre resserree se mesure a 390 x1 : a 320 x2, hors de sa pastille
+    // de salle, elle deborde deja de 24 px avant cette etape (consigne).
+    for (final (bool etendue, Size taille, double echelle) cas
+        in <(bool, Size, double)>[
+          (true, const Size(320, 640), 2),
+          (false, const Size(390, 844), 1),
+        ]) {
+      final bool etendue = cas.$1;
+      testWidgets('« 1 / 604 » se lit 1 puis 604, de gauche a droite '
+          '(barre ${etendue ? 'etendue' : 'resserree'})', (
+        WidgetTester tester,
+      ) async {
+        fixerVue(tester, cas.$2);
+        await tester.pumpWidget(
+          hoteTheme(
+            Directionality(
+              textDirection: TextDirection.rtl,
+              child: Align(
+                child: _barre(page: 1, appels: <int>[], etendue: etendue),
+              ),
+            ),
+            echelleTexte: cas.$3,
+            defilant: false,
+          ),
+        );
+        final (double premier, double dernier) = bords(tester);
+        expect(premier, lessThan(dernier), reason: '« 1 » a gauche de « 4 »');
+        // Les fleches, elles, gardent le miroir de l'arabe.
+        expect(
+          tester.getCenter(find.byKey(_suiv)).dx,
+          lessThan(tester.getCenter(find.byKey(_pos)).dx),
+        );
+        expect(tester.takeException(), isNull);
+      });
+    }
+
+    testWidgets('une position en lettres arabes garde le sens de l arabe', (
+      WidgetTester tester,
+    ) async {
+      fixerVue(tester, const Size(390, 844));
+      await tester.pumpWidget(
+        hoteTheme(
+          Directionality(
+            textDirection: TextDirection.rtl,
+            child: BarrePrecedentSuivant(
+              position: 'صفحة 1',
+              libellePrecedent: 'السابق',
+              libelleSuivant: 'التالي',
+              onPrecedent: () {},
+              onSuivant: () {},
+            ),
+          ),
+          defilant: false,
+        ),
+      );
+      final (double premier, double dernier) = bords(tester);
+      expect(premier, greaterThan(dernier), reason: 'lu de droite a gauche');
+      // Le paragraphe lui-meme est de droite a gauche : une position qui
+      // commencerait par un chiffre s'y placerait du bon cote.
+      expect(
+        tester
+            .renderObject<RenderParagraph>(
+              find.descendant(
+                of: find.byKey(_pos),
+                matching: find.byType(RichText),
+              ),
+            )
+            .textDirection,
+        TextDirection.rtl,
+      );
+      expect(tester.takeException(), isNull);
+    });
   });
 
   testWidgets('barre resserree : meme disposition autour de la position', (

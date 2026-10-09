@@ -43,14 +43,17 @@ String _dureeVisiteSecable(Duration duree) {
   final int minutes = total ~/ Duration.secondsPerMinute;
   final int secondes = total % Duration.secondsPerMinute;
   if (minutes == 0) {
-    return t.classe.observation.secondes(secondes: secondes);
+    return LibellesGroupe.insecable(
+      t.classe.observation.secondes(secondes: secondes),
+    );
   }
   if (secondes == 0) {
-    return t.classe.observation.minutes(minutes: minutes);
+    return LibellesGroupe.insecable(
+      t.classe.observation.minutes(minutes: minutes),
+    );
   }
-  return t.classe.observation.minutesSecondes(
-    minutes: minutes,
-    secondes: secondes,
+  return LibellesGroupe.insecable(
+    t.classe.observation.minutesSecondes(minutes: minutes, secondes: secondes),
   );
 }
 

@@ -243,6 +243,10 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
                     nature: horsLigne
                         ? NatureEtat.horsLigne
                         : NatureEtat.echecServeur,
+                    // Hors ligne se dit une fois (EA-HL-DOUBLE-1d) : le
+                    // « wifi barre » est celui du bandeau de `PageShell` ;
+                    // sous lui, le bloc prend l'attente (sablier).
+                    icone: horsLigne ? AppIcons.attente : null,
                     // Le titre commun hors ligne vouvoie ; l'accueil eleve
                     // tutoie.
                     titre: horsLigne
@@ -462,7 +466,9 @@ class _CoursEnDirect extends StatelessWidget {
                   color: paire.onBackground,
                   size: AppSpacing.xl,
                 ),
-                child: Icon(AppIcons.horsLigne.repos),
+                // Hors ligne se dit une fois (EA-HL-DOUBLE-1) : le « wifi
+                // barre » est celui du bandeau ; ici, l'attente de l'entree.
+                child: Icon(AppIcons.attente.repos),
               ),
               Ecart.hSm,
               Flexible(
@@ -547,7 +553,9 @@ class _SansCoursAujourdhui extends StatelessWidget {
         (null, _) => t.eleve.accueil.aucunCoursDetail,
         (_, <= 0) => t.eleve.accueil.prochainAujourdhui,
         (_, 1) => t.eleve.accueil.prochainDemain,
-        (_, _) => t.eleve.accueil.prochainDansJours(jours: '$jours'),
+        (_, _) => LibellesGroupe.insecable(
+          t.eleve.accueil.prochainDansJours(jours: '$jours'),
+        ),
       },
     );
   }

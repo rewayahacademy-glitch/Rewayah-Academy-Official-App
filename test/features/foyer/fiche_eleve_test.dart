@@ -47,12 +47,16 @@ import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
 import 'package:rewayah_academy/features/parcours_offres/parcours_offres_page.dart';
 
+import '../../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../../fixtures/tuteur/faux_classes_foyer.dart';
 import '../../fixtures/tuteur/foyers.dart';
 import '../../parcours/faux_service_offres.dart';
 import '../../router/support_routeur.dart';
+import '../../support/aucun_mot_coupe.dart';
 import '../../support/harnais.dart';
 import '../../support/hors_ligne_une_fois.dart';
+import '../../support/sens_et_echelle.dart';
 
 /// L'instant fixe des tests : le 24 septembre 2026 a midi.
 final DateTime _maintenant = DateTime(2026, 9, 24, 12);
@@ -116,6 +120,10 @@ Future<GoRouter> _monter(
   String depart = Routes.tuteurAccueil,
   List<Override> autres = const <Override>[],
   Size taille = const Size(390, 844),
+  ThemeMode mode = ThemeMode.light,
+  InterfaceMode interface = InterfaceMode.standard,
+  TextDirection? direction,
+  double echelle = 1,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -136,7 +144,10 @@ Future<GoRouter> _monter(
           builder: (BuildContext _, WidgetRef ref, Widget? _) {
             routeur = ref.read(routeurProvider);
             return MaterialApp.router(
-              theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+              theme: AppTheme.pour(interface, Brightness.light),
+              darkTheme: AppTheme.pour(interface, Brightness.dark),
+              themeMode: mode,
+              builder: sensEtEchelle(direction: direction, echelle: echelle),
               routerConfig: routeur,
             );
           },
@@ -1031,5 +1042,196 @@ void main() {
       expect(photo.left, greaterThan(identite.right));
       expect(tester.takeException(), isNull);
     });
+  });
+
+  // EA-HL-DOUBLE-1c : sombre, Interface guidee et texte x2 de la fiche
+  // eleve hors ligne (revue EA-HL-DOUBLE-1-R, m4). Sautees sans CAPTURE_DIR.
+  // EA-HL-DOUBLE-1e : l'echec d'ecriture de la presentation dit la cause
+  // probable sans l'affirmer (K-59). 390, 320 texte x2 en LTR et RTL.
+  // Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1e', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size, double, TextDirection) cas
+        in <(String, Size, double, TextDirection)>[
+          ('390_clair', const Size(390, 1400), 1, TextDirection.ltr),
+          ('320x2_clair', const Size(320, 2600), 2, TextDirection.ltr),
+          ('320x2_rtl_clair', const Size(320, 2600), 2, TextDirection.rtl),
+        ]) {
+      testWidgets('interface echec ${cas.$1}', (WidgetTester tester) async {
+        final _AppairagePilote appairage = _foyerA()
+          ..erreurAJeter = Exception('refus');
+        await _monter(
+          tester,
+          appairage: appairage,
+          depart: Routes.ficheEleveSousPage(a1, 'interface'),
+          taille: cas.$2,
+          direction: cas.$4,
+          echelle: cas.$3,
+        );
+        await _toucher(tester, find.text(t.ficheEleve.interface.standard));
+        final Finder echec = find.text(
+          t.ficheEleve.interface.echec(
+            dePrenom: deDevant(FoyersFictifs.a1.prenom),
+          ),
+        );
+        await tester.ensureVisible(echec);
+        await stabiliser(tester);
+        expect(tester.takeException(), isNull);
+        expect(echec, findsOneWidget);
+        // Le texte modifie ne coupe aucun mot. Les cartes de choix au-dessus
+        // coupent des mots a 320 texte x2 (defaut anterieur de
+        // `ChoiceCardGroup`, hors de cette etape, consigne au bilan).
+        verifierAucunMotCoupe(tester, echec);
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1e_fiche_eleve_interface_echec_${cas.$1}')}',
+        );
+      });
+    }
+  });
+
+  // EA-HL-DOUBLE-1d : 320 texte x2 en LTR et RTL de la fiche eleve hors
+  // ligne, sans et avec donnees (revue EA-HL-DOUBLE-1c-R, mineur 2).
+  // Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1d', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, TextDirection) cas in <(String, TextDirection)>[
+      ('320x2_clair', TextDirection.ltr),
+      ('320x2_rtl_clair', TextDirection.rtl),
+    ]) {
+      for (final bool sans in <bool>[true, false]) {
+        final String etat = sans ? 'sans_donnees' : 'avec_donnees';
+        testWidgets('$etat ${cas.$1}', (WidgetTester tester) async {
+          await _monter(
+            tester,
+            appairage: _foyerA()..echoue = sans,
+            depart: Routes.ficheEleveSousPage(a1, 'informations'),
+            taille: const Size(320, 1800),
+            direction: cas.$2,
+            echelle: 2,
+            autres: <Override>[
+              horsLigneProvider.overrideWith(
+                (Ref ref) => Stream<bool>.value(true),
+              ),
+            ],
+          );
+          expect(tester.takeException(), isNull);
+          if (sans) {
+            expectSansDonnees(t.ficheEleve.sansDonnees);
+          } else {
+            expectAvecDonnees();
+          }
+          verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'ea_hl_double1d_fiche_eleve_${etat}_${cas.$1}')}',
+          );
+        });
+      }
+    }
+  });
+
+  group('Capture EA-HL-DOUBLE-1c', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size, ThemeMode, InterfaceMode, bool) cas
+        in <(String, Size, ThemeMode, InterfaceMode, bool)>[
+          (
+            'sans_donnees_390_sombre',
+            const Size(390, 844),
+            ThemeMode.dark,
+            InterfaceMode.standard,
+            true,
+          ),
+          (
+            'sans_donnees_390_guidee',
+            const Size(390, 844),
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            true,
+          ),
+          (
+            'sans_donnees_1440_clair',
+            const Size(1440, 900),
+            ThemeMode.light,
+            InterfaceMode.standard,
+            true,
+          ),
+          (
+            'avec_donnees_390_sombre',
+            const Size(390, 844),
+            ThemeMode.dark,
+            InterfaceMode.standard,
+            false,
+          ),
+          (
+            'avec_donnees_390_guidee',
+            const Size(390, 844),
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            false,
+          ),
+        ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        await _monter(
+          tester,
+          appairage: _foyerA()..echoue = cas.$5,
+          depart: Routes.ficheEleveSousPage(a1, 'informations'),
+          taille: cas.$2,
+          mode: cas.$3,
+          interface: cas.$4,
+          autres: <Override>[
+            horsLigneProvider.overrideWith(
+              (Ref ref) => Stream<bool>.value(true),
+            ),
+          ],
+        );
+        expect(tester.takeException(), isNull);
+        if (cas.$5) {
+          expectSansDonnees(t.ficheEleve.sansDonnees);
+        } else {
+          expectAvecDonnees();
+        }
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1_fiche_eleve_${cas.$1}')}',
+        );
+      });
+    }
+  });
+
+  // EA-HL-DOUBLE-1 (reprise) : captures de preuve de la fiche eleve hors
+  // ligne, sans donnees et avec donnees. Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size, bool) cas in <(String, Size, bool)>[
+      ('sans_donnees_390', const Size(390, 844), true),
+      ('sans_donnees_320', const Size(320, 900), true),
+      ('avec_donnees_390', const Size(390, 844), false),
+      ('avec_donnees_1440', const Size(1440, 900), false),
+    ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        await _monter(
+          tester,
+          appairage: _foyerA()..echoue = cas.$3,
+          depart: Routes.ficheEleveSousPage(a1, 'informations'),
+          taille: cas.$2,
+          autres: <Override>[
+            horsLigneProvider.overrideWith(
+              (Ref ref) => Stream<bool>.value(true),
+            ),
+          ],
+        );
+        expect(tester.takeException(), isNull);
+        if (cas.$3) {
+          expectSansDonnees(t.ficheEleve.sansDonnees);
+        } else {
+          expectAvecDonnees();
+        }
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1_fiche_eleve_${cas.$1}_clair')}',
+        );
+      });
+    }
   });
 }

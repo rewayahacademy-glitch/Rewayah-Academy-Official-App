@@ -114,7 +114,12 @@ void main() {
         testWidgets('en11_revue_vide_${l}_${mode.name}', (
           WidgetTester tester,
         ) async {
-          await _monter(tester, taille, mode, anomalies: const <AnomalieRevue>[]);
+          await _monter(
+            tester,
+            taille,
+            mode,
+            anomalies: const <AnomalieRevue>[],
+          );
           debugPrint(
             'PNG ${await capturer(tester, 'en11_revue_vide_${l}_${mode.name}')}',
           );

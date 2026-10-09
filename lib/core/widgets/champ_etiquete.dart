@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_spacing.dart';
+import 'zone_saisie.dart';
 
 /// Un champ de texte dont l'etiquette est un texte au-dessus, sur autant de
 /// lignes qu'il faut (FORM-CORR-1).
@@ -53,6 +54,21 @@ class ChampEtiquete extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Plusieurs lignes : la zone de saisie partagee, seule a porter un champ
+    // multiligne (SUPERPOS-1, reunie par JONCTION-LIGNES-1). Meme contrat :
+    // l'etiquette au-dessus, sur autant de lignes qu'il faut.
+    if (maxLines > 1) {
+      return ZoneSaisie(
+        controleur: controller,
+        libelle: libelle,
+        aide: indice,
+        explication: aide,
+        minLignes: maxLines,
+        maxLignes: maxLines,
+        majuscules: textCapitalization,
+        onChanged: onChanged,
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -67,7 +83,6 @@ class ChampEtiquete extends StatelessWidget {
             controller: controller,
             onChanged: onChanged,
             keyboardType: keyboardType,
-            maxLines: maxLines,
             textAlign: textAlign,
             textCapitalization: textCapitalization,
             decoration: InputDecoration(

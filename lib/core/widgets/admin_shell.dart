@@ -46,7 +46,10 @@ import 'pressable.dart';
 /// [ActionsEnteteCoquille], a cote du titre et du sous-titre de la page.
 /// Sous 600, une barre mobile garde Menu, le champ de recherche et le
 /// compte. Pas de cloche tant qu'aucun service de notifications n'existe
-/// (Q5). Chaque page recoit aussi le retour vers l'Accueil ([onRetour]).
+/// (Q5) : [cloche] n'est fournie que lorsque la capacite « alertes » rend
+/// quelque chose (ALERTE-1), et se pose alors avant le compte, sur toutes
+/// les formes. Chaque page recoit aussi le retour vers l'Accueil
+/// ([onRetour]).
 class AdminShell extends StatelessWidget {
   /// Cree la coquille admin.
   ///
@@ -62,6 +65,8 @@ class AdminShell extends StatelessWidget {
     required this.child,
     super.key,
     this.onRetour,
+    this.cloche,
+    this.bandeau,
   }) : assert(
          domaines.length <= maxDomaines,
          'La sidebar admin ne contient jamais plus de $maxDomaines domaines '
@@ -85,6 +90,22 @@ class AdminShell extends StatelessWidget {
   /// Le retour pose sur chaque page de la coquille (spec section 26 ter,
   /// Q14) : vers l'Accueil, nul sur l'Accueil lui-meme.
   final VoidCallback? onRetour;
+
+  /// La cloche des alertes, ou `null` sans capacite « alertes » (Q5).
+  final Widget? cloche;
+
+  /// Le bandeau pose tout en haut de chaque page : l'alerte urgente
+  /// (ALERTE-1). Nul : aucun.
+  ///
+  /// **Fige au-dessus de la page, jamais dans sa tete** (ALERTE-1b) : la
+  /// coquille le pose au-dessus de la page ouverte, hors de la zone qui
+  /// defile. Il reste en vue tant que l'alerte est ouverte, et pousse la page
+  /// vers le bas sans jamais la recouvrir (« tout en haut de l'ecran,
+  /// jusqu'a ce qu'elle soit traitee », decision du 05/10). Sa hauteur est
+  /// bornee a la moitie de la vue : au-dela (vue tres basse, texte a 400 %),
+  /// il defile dans sa propre zone et la page garde l'autre moitie
+  /// (WCAG 1.4.10).
+  final Widget? bandeau;
 
   /// L'ecran affiche.
   final Widget child;
@@ -131,17 +152,45 @@ class AdminShell extends StatelessWidget {
 
     // Les actions de l'en-tete de page, a partir de 600 : Recherche, theme,
     // compte, dans cet ordre (maquette 02A).
-    Widget contenu({required bool avecActions}) => ActionsEnteteCoquille(
-      actions: <Widget>[
-        if (avecActions) ...<Widget>[
-          _BoutonRecherche(onRecherche: onAller),
-          const BasculeTheme(),
-          _BoutonCompte(onCompte: onCompte),
+    //
+    // ALERTE-1b : le bandeau n'est plus rendu par `PageShell` (il etait dans
+    // la tete, qui defile avec le corps, et sortait de la vue) ; il est pose
+    // ici, au-dessus de la page, par [_ZoneBandeau], et reste en vue.
+    // PAGESHELL-200-1e (decide par delegation le 09/10) : la tete de la page
+    // (titre, onglets et, des 600, Recherche, theme, cloche, compte) reste
+    // fixe sous le bandeau, qui la pousse sans la recouvrir. `PageShell` le
+    // sait ([ActionsEnteteCoquille.sousBandeau]) : la presence du bandeau ne
+    // fait jamais defiler la tete. Elle ne defile que si elle ne laisse plus
+    // au corps une cible tactile (d'abord son complement, la chaine et les
+    // filtres du Journal ; le titre et les onglets en dernier), dans une
+    // fenetre de moins de 360 de haut, ou a texte agrandi (au-dela de 130 %
+    // sur une page defilante, 200 % sur telephone : la page defile pour le
+    // reste, PAGESHELL-200-1d). Le bandeau, lui, ne bouge jamais.
+    Widget contenu({required bool avecActions}) {
+      final Widget page = ActionsEnteteCoquille(
+        actions: <Widget>[
+          if (avecActions) ...<Widget>[
+            _BoutonRecherche(onRecherche: onAller),
+            const BasculeTheme(),
+            ?cloche,
+            _BoutonCompte(onCompte: onCompte),
+          ],
         ],
-      ],
-      onRetour: onRetour,
-      child: child,
-    );
+        onRetour: onRetour,
+        sousBandeau: bandeau != null,
+        child: child,
+      );
+      return switch (bandeau) {
+        null => page,
+        final Widget b => _ZoneBandeau(
+          bandeau: b,
+          // Sous 600, la barre mobile tient deja le haut de l'ecran (et sa
+          // marge de securite) : le bandeau se pose sous elle.
+          sousBarre: chrome == ChromeNavigation.barreBasse,
+          child: page,
+        ),
+      };
+    }
 
     // **Un seul `Scaffold`, quel que soit le gabarit.** La barre mobile porte
     // un `TextField`, qui exige un ancetre `Material` ; le mobile a de toute
@@ -158,7 +207,11 @@ class AdminShell extends StatelessWidget {
       body: switch (chrome) {
         ChromeNavigation.barreBasse => Column(
           children: <Widget>[
-            _BarreMobile(onRecherche: onAller, onCompte: onCompte),
+            _BarreMobile(
+              onRecherche: onAller,
+              onCompte: onCompte,
+              cloche: cloche,
+            ),
             Expanded(child: contenu(avecActions: false)),
           ],
         ),
@@ -183,6 +236,77 @@ class AdminShell extends StatelessWidget {
           ],
         ),
       },
+    );
+  }
+}
+
+/// La zone du bandeau d'alerte urgente (ALERTE-1b) : le bandeau fige en
+/// haut, la page dessous, dans la hauteur qui reste.
+///
+/// Le bandeau prend la gouttiere et la largeur bornee de la colonne de page
+/// (`PageShell`), pour s'aligner sur le titre. Sa hauteur ne depasse jamais
+/// la moitie de la vue : au-dela, il defile dans sa zone.
+class _ZoneBandeau extends StatelessWidget {
+  const _ZoneBandeau({
+    required this.bandeau,
+    required this.sousBarre,
+    required this.child,
+  });
+
+  final Widget bandeau;
+  final bool sousBarre;
+  final Widget child;
+
+  /// La part maximale de la hauteur que le bandeau occupe.
+  static const double partMaximale = 0.5;
+
+  @override
+  Widget build(BuildContext context) {
+    final double gouttiere = AppGabarit.de(context).gouttiere;
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          SafeArea(
+            top: !sousBarre,
+            bottom: false,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: contraintes.maxHeight * partMaximale,
+              ),
+              child: SingleChildScrollView(
+                child: Align(
+                  alignment: AlignmentDirectional.topCenter,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxWidth: AppPage.largeurMaxContenu,
+                    ),
+                    child: Padding(
+                      // Directionnel : en arabe, la gouttiere de debut est a
+                      // droite. 8 sous le bandeau, avant la tete de la page.
+                      padding: EdgeInsetsDirectional.only(
+                        start: gouttiere,
+                        end: gouttiere,
+                        bottom: AppSpacing.sm,
+                      ),
+                      child: bandeau,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            // La marge de securite du haut est deja prise au-dessus du
+            // bandeau : la page ne la reprend pas.
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: !sousBarre,
+              child: child,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -705,10 +829,15 @@ class _BoutonRecherche extends StatelessWidget {
 /// **Rien d'autre n'y vit** : ni reglage, ni eleve, ni groupe, ni bouton
 /// metier isole.
 class _BarreMobile extends StatefulWidget {
-  const _BarreMobile({required this.onRecherche, required this.onCompte});
+  const _BarreMobile({
+    required this.onRecherche,
+    required this.onCompte,
+    this.cloche,
+  });
 
   final void Function(String chemin) onRecherche;
   final VoidCallback onCompte;
+  final Widget? cloche;
 
   @override
   State<_BarreMobile> createState() => _BarreMobileState();
@@ -731,14 +860,30 @@ class _BarreMobileState extends State<_BarreMobile> {
     }
   }
 
+  /// La largeur sous laquelle le champ de recherche couperait un mot de son
+  /// indication : le mot le plus long, a l'echelle du texte, plus l'icone de
+  /// tete (une cible de 48) et la marge de fin du champ.
+  double _largeurChampUtile(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final TextStyle style = (theme.textTheme.bodyLarge ?? const TextStyle())
+        .merge(theme.inputDecorationTheme.hintStyle);
+    double mot = 0;
+    for (final String m in t.nav.admin.rechercheIndication.split(' ')) {
+      final TextPainter peintre = TextPainter(
+        text: TextSpan(text: m, style: style),
+        textDirection: Directionality.of(context),
+        textScaler: MediaQuery.textScalerOf(context),
+        maxLines: 1,
+      )..layout();
+      mot = math.max(mot, peintre.width);
+      peintre.dispose();
+    }
+    return mot + kMinInteractiveDimension + AppSpacing.lg + AppSpacing.xs;
+  }
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    // AD-11 (1.4.4) : au-dela de 150 % de texte, le champ en ligne n'a plus
-    // la place de montrer son indication entiere entre menu et compte ; la
-    // barre prend alors le bouton qui ouvre le meme champ en feuille (motif
-    // deja servi a partir de 600). Rendu inchange a 100 %.
-    final bool texteAgrandi = MediaQuery.textScalerOf(context).scale(1) > 1.5;
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -752,45 +897,90 @@ class _BarreMobileState extends State<_BarreMobile> {
             horizontal: AppSpacing.lg,
             vertical: AppSpacing.sm,
           ),
-          child: Row(
-            children: <Widget>[
-              Builder(
-                builder: (BuildContext contexte) => _BoutonIcone(
-                  icone: AppIcons.menu.repos,
-                  libelle: t.nav.admin.menu,
-                  onPress: () => Scaffold.of(contexte).openDrawer(),
-                ),
-              ),
-              Ecart.hSm,
-              if (texteAgrandi) ...<Widget>[
-                const Spacer(),
-                _BoutonRecherche(onRecherche: widget.onRecherche),
-              ] else
-                Expanded(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      maxWidth: AppPage.largeurFormulaire,
-                    ),
-                    child: TextField(
-                      controller: _recherche,
-                      onSubmitted: _lancer,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        hintText: t.nav.admin.rechercheIndication,
-                        // AD-11 (1.4.4) : a 200 %, l'indication passe a la
-                        // ligne au lieu d'etre coupee.
-                        hintMaxLines: 2,
-                        prefixIcon: Icon(AppIcons.recherche.repos),
-                      ),
-                    ),
-                  ),
-                ),
-              Ecart.hSm,
-              _BoutonCompte(onCompte: widget.onCompte),
-            ],
+          // PAGESHELL-200-1e (decide par delegation le 09/10) : en Interface
+          // guidee, menu, recherche, cloche et compte prennent chacun une
+          // cible de 72 ; a 320 px, ils ne tiennent plus avec leurs ecarts de
+          // 8 (24 de debordement). Les ecarts tombent alors : les cibles se
+          // touchent, leurs icones restent espacees de plus de 48.
+          child: LayoutBuilder(
+            builder: (BuildContext _, BoxConstraints c) {
+              final int boutons = widget.cloche == null ? 3 : 4;
+              final bool serre =
+                  c.maxWidth <
+                  boutons * AppMetriques.of(context).cibleTactile +
+                      (boutons - 1) * AppSpacing.sm;
+              return _rangee(serre ? const SizedBox.shrink() : Ecart.hSm);
+            },
           ),
         ),
       ),
     );
   }
+
+  /// Menu, recherche, cloche et compte, separes par [ecart].
+  Widget _rangee(Widget ecart) => Builder(
+    builder: (BuildContext context) {
+      // AD-11 (1.4.4) : au-dela de 150 % de texte, le champ en ligne n'a
+      // plus la place de montrer son indication entiere entre menu et
+      // compte ; la barre prend alors le bouton qui ouvre le meme champ en
+      // feuille (motif deja servi a partir de 600). Rendu inchange a 100 %.
+      final bool texteAgrandi = MediaQuery.textScalerOf(context).scale(1) > 1.5;
+      return Row(
+        children: <Widget>[
+          Builder(
+            builder: (BuildContext contexte) => _BoutonIcone(
+              icone: AppIcons.menu.repos,
+              libelle: t.nav.admin.menu,
+              onPress: () => Scaffold.of(contexte).openDrawer(),
+            ),
+          ),
+          ecart,
+          if (texteAgrandi) ...<Widget>[
+            const Spacer(),
+            _BoutonRecherche(onRecherche: widget.onRecherche),
+          ] else
+            Expanded(
+              // ALERTE-1b (lecon 8) : avec la cloche, le champ peut ne
+              // plus avoir la place du mot le plus long de son
+              // indication (« Rec / her… » en Interface guidee a 390,
+              // a 320 en taille normale). Il cede alors la place au
+              // bouton qui ouvre le meme champ en feuille.
+              child: LayoutBuilder(
+                builder: (BuildContext contexte, BoxConstraints c) =>
+                    c.maxWidth < _largeurChampUtile(contexte)
+                    ? Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: _BoutonRecherche(
+                          onRecherche: widget.onRecherche,
+                        ),
+                      )
+                    : ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxWidth: AppPage.largeurFormulaire,
+                        ),
+                        child: TextField(
+                          controller: _recherche,
+                          onSubmitted: _lancer,
+                          decoration: InputDecoration(
+                            isDense: true,
+                            hintText: t.nav.admin.rechercheIndication,
+                            // AD-11 (1.4.4) : a 200 %, l'indication passe
+                            // a la ligne au lieu d'etre coupee.
+                            hintMaxLines: 2,
+                            prefixIcon: Icon(AppIcons.recherche.repos),
+                          ),
+                        ),
+                      ),
+              ),
+            ),
+          ecart,
+          if (widget.cloche case final Widget cloche) ...<Widget>[
+            cloche,
+            ecart,
+          ],
+          _BoutonCompte(onCompte: widget.onCompte),
+        ],
+      );
+    },
+  );
 }

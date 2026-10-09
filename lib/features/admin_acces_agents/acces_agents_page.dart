@@ -10,6 +10,7 @@ import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
@@ -323,13 +324,16 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
 
           Text(t.admin.agents.duree, style: textes.titleSmall),
           Ecart.vMd,
+          // Choix de formulaire, pas un filtre : la duree du jeton.
           Wrap(
             spacing: AppSpacing.sm,
             runSpacing: AppSpacing.sm,
             children: <Widget>[
               for (final int h in _durees)
                 FilterPill(
-                  libelle: t.admin.agents.dureeHeure(nombre: h),
+                  libelle: LibellesGroupe.valeurSeule(
+                    t.admin.agents.dureeHeure(nombre: h),
+                  ),
                   retenue: _duree == h,
                   onPress: () => setState(() {
                     _duree = h;
@@ -344,6 +348,7 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
 
           Text(t.admin.agents.identite, style: textes.titleSmall),
           Ecart.vMd,
+          // Choix de formulaire, pas un filtre : l'identite du jeton.
           Wrap(
             spacing: AppSpacing.sm,
             runSpacing: AppSpacing.sm,

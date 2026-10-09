@@ -190,10 +190,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monterFin(tester, const Size(1440, 900), indisponible: true);
-      expect(
-        find.text(t.salle.fin.enseignant.erreurCahier),
-        findsOneWidget,
-      );
+      expect(find.text(t.salle.fin.enseignant.erreurCahier), findsOneWidget);
       expect(find.text(t.commun.reessayer), findsOneWidget);
       expect(find.text('Ouvrir le cahier de transmission'), findsNothing);
     });

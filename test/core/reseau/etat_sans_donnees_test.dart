@@ -26,6 +26,7 @@ import '../../support/hors_ligne_une_fois.dart';
 const Set<String> _permises = <String>{
   'reseau.horsLigne',
   'commun.etats.horsLigne.titre',
+  'commun.etats.horsLigne.phrase',
   'salle.secours.horsLigne',
   'salle.preparation.eleve.demo.horsLigne',
   'salle.seance.demo.etats.horsLigne',
@@ -35,6 +36,43 @@ const Set<String> _permises = <String>{
   'tc.bibliotheque.offline.indisponible',
   'tc.bibliotheque.action.telecharger',
   'tc.bibliotheque.message.telechargementImpossible',
+  // La salle et la classe en direct (`PageImmersive`, sans bandeau) disent
+  // elles-memes l'etat de leur lien.
+  'salle.secours.reconnexion',
+  'salle.seance.statut.connexionInterrompue',
+  'salle.lienPerdu',
+  'tc.classe.reseau.perdu',
+  'tc.classe.lien.echec',
+  'tc.observation.visite.reconnexionDetail',
+  'salle.refusReseauDetail',
+  'salle.preparation.eleve.guidee.horsLigne',
+  'salle.secours.echecGuidee',
+  'salle.seance.demo.etats.echec',
+  // La qualite du lien de la salle et de la classe en direct (« Connexion
+  // instable », « Reseau faible »), dite par la salle elle-meme, sans
+  // bandeau (EA-HL-DOUBLE-1e : la garde cherche desormais ces formes
+  // partout ailleurs, sans exception).
+  'salle.preparation.connexionInstable',
+  'salle.preparation.reseauFaible',
+  'salle.secours.reseauFaible',
+  'salle.secours.reseauFaibleGuidee',
+  'salle.lienMediocre',
+  'tc.classe.reseau.mediocre',
+  'tc.classe.lien.instable',
+  // Etiquettes du selecteur d'etats des demonstrations de la salle.
+  'salle.preparation.demo.reseauFaible',
+  'salle.seance.demo.etats.reseauFaible',
+  // Une cause passee, pas l'etat de l'appareil qui lit : la visite a pris
+  // fin, ou le releve d'une seance terminee manque.
+  'tc.observation.fin.deconnexion',
+  'controleur.historique.faitsIndisponibles',
+  'controleur.compteRendu.faitsAbsents',
+  // Textes du cahier sources « commentaire du directeur, LIB-CAHIER-1 »
+  // (tool/libelles_sources.json) : non reecrits par l'agent. Ils redisent le
+  // reseau sous le bandeau ; l'arbitrage est remonte au directeur
+  // (EA-HL-DOUBLE-1, reprise).
+  'enseignant.cahier.enFileDetailHorsLigne',
+  'enseignant.cahier.exceptionHorsLigne',
 };
 
 void _aplatir(Object? noeud, String chemin, Map<String, String> sortie) {
@@ -156,6 +194,9 @@ void main() {
     expect(etat.nature, NatureEtat.horsLigne);
     expect(find.text(t.adulte.maClasse.sansDonnees), findsOneWidget);
     expect(signauxHorsLigne(), findsNothing);
+    // La phrase par defaut du hors ligne redit le bandeau : jamais rendue.
+    expect(phraseHorsLigneParDefaut(), findsNothing);
+    expect(etat.phrase, isEmpty);
     await tester.tap(find.text(t.commun.etats.actions.reessayer));
     expect(relectures, 1);
   });
@@ -170,13 +211,132 @@ void main() {
     );
     final List<String> fautifs = <String>[
       for (final MapEntry<String, String> e in textes.entries)
-        if (!_permises.contains(e.key) &&
-            RegExp(
-              r'hors ligne|pas de réseau|pas de connexion',
-              caseSensitive: false,
-            ).hasMatch(e.value))
+        if (!_permises.contains(e.key) && motifHorsLigne.hasMatch(e.value))
           '${e.key} = ${e.value}',
     ];
     expect(fautifs, isEmpty);
+  });
+
+  // EA-HL-DOUBLE-1e (K-59, decide par delegation le 05/10, DIR-REP-1) :
+  // « Rewayah n'a pas repondu » est inexact quand c'est l'appareil qui est
+  // hors ligne. Un envoi ou une lecture restes sans reponse disent la cause
+  // probable sans l'affirmer, en une seule formulation.
+  test('catalogue : jamais « Rewayah n a pas repondu », une seule '
+      'formulation de la cause probable', () {
+    final Map<String, String> textes = <String, String>{};
+    _aplatir(
+      jsonDecode(File('assets/i18n/fr.i18n.json').readAsStringSync()),
+      '',
+      textes,
+    );
+    expect(<String>[
+      for (final MapEntry<String, String> e in textes.entries)
+        if (RegExp(
+          r'(Rewayah|le serveur) n.a pas répondu|'
+          r'(Rewayah|le serveur) ne répond pas',
+          caseSensitive: false,
+        ).hasMatch(e.value))
+          '${e.key} = ${e.value}',
+    ], isEmpty);
+    final RegExp formulation = RegExp(
+      r'il est possible qu(.il|.elle|e la demande) ne soit pas parvenue? '
+      r'jusqu.à Rewayah',
+    );
+    for (final String cle in <String>[
+      'ficheEleve.interface.echec',
+      'controleur.complement.echec',
+      'controleur.compteRendu.echec',
+      'controleur.compteRendu.echecRien',
+      'controleur.compteRendu.visiteEchec',
+      'controleur.observation.echec',
+      'controleur.echanges.echec',
+      'enseignant.journee.erreurPartielle',
+      'enseignant.journee.erreurPartielleCahiers',
+      'enseignant.journee.erreurPartielleTout',
+      'adulte.accueil.echec',
+      'adulte.historique.echec',
+    ]) {
+      expect(textes[cle], matches(formulation), reason: cle);
+      expect(motifHorsLigne.hasMatch(textes[cle]!), isFalse, reason: cle);
+    }
+    // Les trois echecs partiels de la Journee, poses sous le bandeau, ne
+    // nomment ni la connexion ni le reseau, sous aucune forme (pas meme
+    // « connexion instable »).
+    for (final String cle in <String>[
+      'enseignant.journee.erreurPartielle',
+      'enseignant.journee.erreurPartielleCahiers',
+      'enseignant.journee.erreurPartielleTout',
+    ]) {
+      expect(
+        RegExp('connexion|réseau', caseSensitive: false).hasMatch(textes[cle]!),
+        isFalse,
+        reason: cle,
+      );
+    }
+  });
+
+  // EA-HL-DOUBLE-1f (K-59, decide par delegation le 09/10, DIR-REP-1) : au
+  // dela de « Rewayah n'a pas repondu », aucune autre cause cote service
+  // n'est affirmee (« n'a pas repondu », « Service indisponible »,
+  // « momentanement indisponible »), et les textes reecrits disent la cause
+  // probable dans la formulation unique de EA-HL-DOUBLE-1e.
+  test('catalogue : aucune cause cote service affirmee, formulation '
+      'unique pour l agent, la salle et la bibliotheque', () {
+    final Map<String, String> textes = <String, String>{};
+    _aplatir(
+      jsonDecode(File('assets/i18n/fr.i18n.json').readAsStringSync()),
+      '',
+      textes,
+    );
+    // Une personne qui n'a pas repondu dans un delai, fait enregistre par
+    // le serveur : ce n'est pas une cause supposee d'un echec de l'appareil.
+    //
+    // Une fonction que le serveur dit fermee (`CapaciteIndisponible`, ou le
+    // code `indisponibleTemporairement` de la revue des dossiers), hors
+    // ligne traite a part avant l'appel : fait annonce par le serveur, pas
+    // cause supposee. Chacune est nommee ; aucune autre ne passe.
+    const Set<String> faits = <String>{
+      'adulte.reprise.phrases.attenteAdministration',
+      'dossiers.file.indisponible',
+      'dossiers.revue.pieceIndisponible',
+      'dossiers.revue.etats.decisionIndisponible',
+      'dossiers.refus.indisponible',
+      'dossiers.validation.indisponible',
+    };
+    expect(<String>[
+      for (final MapEntry<String, String> e in textes.entries)
+        if (!faits.contains(e.key) && motifCauseAffirmee.hasMatch(e.value))
+          '${e.key} = ${e.value}',
+    ], isEmpty);
+    for (final String cle in <String>[
+      'agent.indisponibleDetail',
+      'salle.refusReseauDetail',
+      'tc.bibliotheque.indisponible.invitation',
+      'tc.observation.refus.indisponibleInvitation',
+      'classe.entree.indisponible',
+      'adulte.accueil.echec',
+      'adulte.historique.echec',
+    ]) {
+      expect(textes[cle], matches(formulationCauseProbable), reason: cle);
+    }
+    // L'entree d'agent et la bibliotheque sont sous le bandeau : ni la
+    // connexion ni le reseau n'y sont redits.
+    for (final String cle in <String>[
+      'agent.indisponible',
+      'agent.indisponibleDetail',
+      'tc.bibliotheque.indisponible.message',
+      'tc.bibliotheque.indisponible.invitation',
+      'tc.observation.refus.indisponible',
+      'tc.observation.refus.indisponibleInvitation',
+      'classe.entree.indisponible',
+      'tc.bibliotheque.message.copieImpossible',
+      'compte.tuteur.pageInformations.fuseauIndisponible',
+    ]) {
+      expect(
+        RegExp('connexion|réseau', caseSensitive: false).hasMatch(textes[cle]!),
+        isFalse,
+        reason: cle,
+      );
+    }
   });
 }

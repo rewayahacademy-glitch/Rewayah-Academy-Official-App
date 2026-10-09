@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_parcours/libelles_parcours.dart';
@@ -14,6 +15,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/selecteur_motif.dart';
+import '../../core/widgets/zone_saisie.dart';
 
 /// Le signalement structure, depuis la fiche d'un eleve (spec section 12.2).
 ///
@@ -120,9 +122,7 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
         Ecart.vSm,
         ChoiceCardGroup(
           autoriserSaisieLibre: false,
-          valeurInitiale: ReponseChoix(
-            valeurs: <String>{_categorie.valeurSql},
-          ),
+          valeurInitiale: ReponseChoix(valeurs: <String>{_categorie.valeurSql}),
           options: <OptionChoix>[
             for (final CategorieSignalement categorie
                 in CategorieSignalement.values)
@@ -135,23 +135,20 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
         ),
         Ecart.vXl,
 
-        TextField(
-          controller: _interne,
-          maxLines: 3,
+        ZoneSaisie(
+          controleur: _interne,
+          libelle: t.tc.parcours.signalement.interne,
+          minLignes: 3,
           // Le bouton depend de ce champ : sans ce rappel, il resterait inerte
           // alors que la note est saisie.
           onChanged: (String _) => setState(() => _interneManquante = false),
-          decoration: InputDecoration(
-            labelText: t.tc.parcours.signalement.interne,
-            // Bouton jamais grise (K-56) : la note manquante se dit ici.
-            errorText: _interneManquante
-                ? t.tc.parcours.signalement.interneRequis
-                : null,
-            errorMaxLines: 3,
-          ),
+          // Bouton jamais grise (K-56) : la note manquante se dit ici.
+          erreur: _interneManquante
+              ? t.tc.parcours.signalement.interneRequis
+              : null,
         ),
         Ecart.vXs,
-        Text(
+        TexteSansCoupure(
           t.tc.parcours.signalement.interneAide,
           style: palette.inkMuted.applyTo(
             textes.bodySmall ?? const TextStyle(),
@@ -217,9 +214,8 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
       setState(() {
         // Une phrase-type de l'ancienne categorie ne vaut plus : elle
         // s'efface ; un texte ecrit a la main reste.
-        if (MotifsProposes.signalement(
-          _categorie.valeurSql,
-        ).contains(_famille.text)) {
+        if (MotifsProposes.signalement(_categorie.valeurSql)
+            .contains(_famille.text)) {
           _famille.clear();
         }
         _categorie = choisie;

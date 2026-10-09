@@ -426,6 +426,11 @@ abstract final class Routes {
   /// Domaine Accueil : le centre de commande (`ADM-01`).
   static const String admin = '/admin';
 
+  /// Toutes les alertes ouvertes (`ADM-ALERTES`, ALERTE-1), sous l'Accueil :
+  /// ouverte par la cloche, le bandeau d'alerte urgente et « Voir toutes les
+  /// alertes » du Centre de commande.
+  static const String adminAlertes = '/admin/alertes';
+
   /// Domaine Operations.
   static const String adminOperations = '/admin/operations';
 

@@ -207,9 +207,7 @@ void main() {
 
     testWidgets('hors demonstration, politique de controle non publiee : un '
         'enseignant signe la version 2026-09, sans la clause qui fait '
-        'confirmer la reception de la politique', (
-      WidgetTester tester,
-    ) async {
+        'confirmer la reception de la politique', (WidgetTester tester) async {
       expect(VersionsContrat.politiqueControlePubliee, isFalse);
       final FauxServiceDossier dossier = await monter(tester, AppRole.teacher);
 

@@ -26,6 +26,7 @@ import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pays_enseignant.dart';
+import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/selecteur_motif.dart';
 import '../../core/widgets/selecteur_personne.dart';
 import '../../core/widgets/skeleton.dart';
@@ -88,10 +89,10 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
       pleineLargeur: false,
       onPress: () => _ouvrirCreation(context, ref),
     );
-    final Widget statuts = Wrap(
-      spacing: AppSpacing.sm,
-      runSpacing: AppSpacing.sm,
-      children: <Widget>[
+    // FILTRES-1 : une seule rangee de puces, qui defile quand elle ne tient
+    // pas (porte par JONCTION-LIGNES-1 sur les onglets d'etat d'AD-X).
+    final Widget statuts = RangeeFiltres(
+      filtres: <Widget>[
         FilterPill(
           libelle: t.admin.groupes.filtreToutes,
           compteur: tous.length,
@@ -110,6 +111,28 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
           retenue: _actives == false,
           onPress: () => setState(() => _actives = false),
         ),
+        // Le public de la classe, dans la meme rangee (FILTRES-1 : une seule
+        // rangee de filtres par ecran).
+        MenuFiltre<TypePublicGroupe>(
+          libelle: t.admin.groupes.filtrePublic,
+          valeur: _type,
+          entrees: <EntreeFiltre<TypePublicGroupe>>[
+            EntreeFiltre<TypePublicGroupe>(
+              valeur: null,
+              libelle: t.admin.groupes.filtreTousTypes,
+              compteur: tous.length,
+            ),
+            for (final TypePublicGroupe valeur in TypePublicGroupe.values)
+              EntreeFiltre<TypePublicGroupe>(
+                valeur: valeur,
+                libelle: _nomType(valeur),
+                compteur: tous
+                    .where((GroupeAdmin g) => g.type == valeur)
+                    .length,
+              ),
+          ],
+          onChoix: (TypePublicGroupe? type) => setState(() => _type = type),
+        ),
       ],
     );
 
@@ -122,8 +145,11 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
         indexActif: 1,
       ),
       defilante: false,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      // FILTRES-1b : une colonne de corps qui dit a `PageShell` la hauteur
+      // qui lui manque : a 320 px texte x2, la page defile au lieu de
+      // deborder, et la liste garde au moins une ligne lisible.
+      child: ColonneCorps(
+        minimumEtire: DataCollection.minimumLisible(context),
         children: <Widget>[
           Text(t.admin.groupes.intro, style: textes.bodyMedium),
           Ecart.vLg,
@@ -139,30 +165,6 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
               ],
             )
           else ...<Widget>[creer, Ecart.vLg, statuts],
-          Ecart.vMd,
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: MenuFiltre<TypePublicGroupe>(
-              libelle: t.admin.groupes.filtrePublic,
-              valeur: _type,
-              entrees: <EntreeFiltre<TypePublicGroupe>>[
-                EntreeFiltre<TypePublicGroupe>(
-                  valeur: null,
-                  libelle: t.admin.groupes.filtreTousTypes,
-                  compteur: tous.length,
-                ),
-                for (final TypePublicGroupe valeur in TypePublicGroupe.values)
-                  EntreeFiltre<TypePublicGroupe>(
-                    valeur: valeur,
-                    libelle: _nomType(valeur),
-                    compteur: tous
-                        .where((GroupeAdmin g) => g.type == valeur)
-                        .length,
-                  ),
-              ],
-              onChoix: (TypePublicGroupe? type) => setState(() => _type = type),
-            ),
-          ),
           Ecart.vXl,
           switch (groupes) {
             AsyncValue<List<GroupeAdmin>>(hasValue: true) => Expanded(
@@ -789,6 +791,7 @@ class _FeuilleCreationEtat extends State<_FeuilleCreation> {
             onReessayer: () => ref.invalidate(comptesProvider),
           ),
           Ecart.vMd,
+          // Choix de formulaire, pas un filtre : le public de la classe a creer.
           Wrap(
             spacing: AppSpacing.sm,
             children: <Widget>[

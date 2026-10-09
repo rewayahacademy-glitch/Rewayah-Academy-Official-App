@@ -15,10 +15,10 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/core/widgets/zone_saisie.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle_page.dart';
 import 'package:rewayah_academy/features/controleur/controle_page.dart';
@@ -66,12 +66,11 @@ Future<void> _attendre(WidgetTester tester) async {
 
 Future<void> _ecrireEtEnvoyer(WidgetTester tester, String texte) async {
   final e = t.controleur.echanges;
-  // Champ vide : le bouton est inactif, la raison est ecrite.
+  // Champ vide : le bouton n'est pas rendu (jamais grise, SUPERPOS-1), sa
+  // place est gardee, la raison est ecrite.
   expect(find.text(e.champVide), findsOneWidget);
-  final ActionPrincipale inactif = tester.widget<ActionPrincipale>(
-    find.byKey(FilDiscussion.envoyerKey),
-  );
-  expect(inactif.onPress, isNull);
+  expect(find.byKey(FilDiscussion.envoyerKey), findsNothing);
+  expect(find.byKey(ZoneSaisie.placeEnvoiKey), findsOneWidget);
 
   await tester.enterText(find.byKey(FilDiscussion.champKey), texte);
   await tester.pump();
@@ -365,6 +364,51 @@ void main() {
         // Le fil de la mission, contexte joint.
         expect(find.text(t.controleur.echanges.contexte), findsOneWidget);
       }
+    });
+  }
+
+  // SUPERPOS-1 : en-tete compact. A 320 en texte double, le contexte en
+  // trois lignes cle / valeur et le titre prenaient tout l'ecran ; le
+  // contexte tient alors en une phrase, sans rien retirer. Contre-epreuve :
+  // echoue sur l'ancien code (aucune forme compacte).
+  for (final (Size, double, bool) cas in <(Size, double, bool)>[
+    (const Size(320, 640), 2, true),
+    (const Size(390, 844), 1, false),
+    (const Size(1440, 900), 1, false),
+  ]) {
+    testWidgets('fil ${cas.$1.width.toInt()} x${cas.$2.toInt()} : contexte '
+        '${cas.$3 ? 'compact' : 'en lignes'}', (WidgetTester tester) async {
+      tester.platformDispatcher.textScaleFactorTestValue = cas.$2;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await _monter(
+        tester,
+        adresseDemoControleur(
+          EcranDemoControleur.echanges,
+          fil: 'demo-mission-al-badr-0924',
+        ),
+        taille: cas.$1,
+      );
+      await _attendre(tester);
+      expect(tester.takeException(), isNull);
+      expect(
+        find.byKey(EchangesControleurPage.contexteCompactKey),
+        cas.$3 ? findsOneWidget : findsNothing,
+      );
+      // Rien n'est retire : classe, date et heure restent ecrites.
+      // Le titre peut porter un gluon invisible apres le trait d'union
+      // (« Al-Badr » reste entier, SUPERPOS-1) : lu sans lui.
+      expect(
+        find.byWidgetPredicate(
+          (Widget w) =>
+              w is RichText &&
+              w.text
+                  .toPlainText()
+                  .replaceAll('\u2060', '')
+                  .contains('Classe Al-Badr'),
+        ),
+        findsWidgets,
+      );
+      expect(find.textContaining('17:00'), findsOneWidget);
     });
   }
 }

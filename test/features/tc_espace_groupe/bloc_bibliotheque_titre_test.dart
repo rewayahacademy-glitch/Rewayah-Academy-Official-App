@@ -1,6 +1,7 @@
 // BLOC-BIB-1 (revue BENTO-3b-R, C5 et m2) : a texte double, le titre de
-// la section Bibliotheque (« Ressources de la classe » sur l'accueil adulte,
-// « Ressources recentes » sur l'Espace Classe enseignant) garde la taille des autres titres
+// la section Bibliotheque (« Ressources de la classe » sur l'accueil adulte
+// et sur Ma classe de l'eleve adulte, « Ressources recentes » sur l'Espace
+// Classe enseignant) garde la taille des autres titres
 // de section et passe a la ligne entre les mots ; il n'est plus reduit en
 // bloc. « Voir tout » est place comme celui des « Dernieres seances » :
 // sous le titre, au bord de debut.
@@ -20,6 +21,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/tc_horloge/emplacement_entree.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart'
     show EnteteVoirTout;
 import 'package:rewayah_academy/features/demo/classe_demo.dart'
@@ -171,6 +173,60 @@ void main() {
           debut(lienR),
           closeTo(debut(tester.getRect(lienDernieres)), 0.5),
         );
+      });
+
+      // Ma classe de l'eleve adulte (EA-3) titre aussi la section
+      // « Ressources de la classe » (BLOC-BIB-1b, reserve 1 de la revue
+      // BLOC-BIB-1-R) : meme taille que « Participants », retour a la ligne,
+      // « Voir tout » dessous au bord de debut du titre.
+      testWidgets('Ma classe adulte, $cas : « Ressources de la classe » a la '
+          'taille de « Participants », « Voir tout » dessous au meme bord', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          adresseDemoAdulte(EcranDemoAdulte.maClasse),
+          largeur,
+          sens,
+        );
+        expect(tester.takeException(), isNull);
+        final Finder bloc = find.byType(BlocBibliotheque);
+        expect(bloc, findsOneWidget);
+        final RenderParagraph ressources = _paragraphe(
+          tester,
+          bloc,
+          t.adulte.accueil.ressources,
+        );
+        final RenderParagraph participants = _paragraphe(
+          tester,
+          find.byType(Scaffold).first,
+          t.adulte.maClasse.participants,
+        );
+        expect(
+          _tailleRendue(ressources),
+          closeTo(_tailleRendue(participants), 0.01),
+        );
+        expect(_lignes(ressources), greaterThan(1));
+        verifierAucunMotCoupe(tester, bloc);
+
+        final Finder lien = find.descendant(
+          of: bloc,
+          matching: find.text(LibellesGroupe.bibliothequeVoirTout),
+        );
+        expect(lien, findsOneWidget);
+        final Rect titreR = MatrixUtils.transformRect(
+          ressources.getTransformTo(null),
+          Offset.zero & ressources.size,
+        );
+        // Le bouton entier (sa marge interne comprise) part du bord de
+        // debut du bloc, comme le titre.
+        final Rect blocR = tester.getRect(bloc);
+        final Rect boutonR = tester.getRect(
+          find.ancestor(of: lien, matching: find.byType(ActionPrincipale)),
+        );
+        expect(boutonR.top, greaterThanOrEqualTo(titreR.bottom));
+        double debut(Rect r) => sens == TextDirection.ltr ? r.left : r.right;
+        expect(debut(boutonR), closeTo(debut(blocR), 0.5));
       });
 
       // L'Espace Groupe de l'eleve titre la section « Bibliotheque », un seul

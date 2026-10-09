@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/service_groupes.dart' show TypePublicGroupe;
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
@@ -30,6 +32,7 @@ import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../foyer/photo_eleve.dart' show PhotoEleve;
+import '../tc_espace_groupe/bloc_cartes_classe.dart';
 import '../tc_espace_groupe/carte_session.dart';
 import '../tc_espace_groupe/emplacements_groupe.dart';
 import '../tc_espace_groupe/espace_groupe_page.dart' show IdentiteGroupe;
@@ -303,12 +306,27 @@ class _CorpsState extends ConsumerState<_Corps> {
       progressionGroupeProvider(groupe.id),
     );
 
-    // La Classe, dans l'ordre de lecture : seance, preparation, progression,
-    // ressources.
+    // CARTES-PERSO-1 : les cartes de la Classe, que l'enseignant touche pour
+    // les modifier (la capacite vient de leur lecture, jamais du role). La
+    // prochaine seance, quand elle est lue, devient l'echeance proposee.
+    final Widget cartes = BlocCartesClasse(
+      groupeId: groupe.id,
+      prochaineSeance: ref
+          .watch(groupeProvider(groupe.id))
+          .value
+          ?.prochaineSeance
+          ?.debutUtc
+          .toLocal(),
+    );
+
+    // La Classe, dans l'ordre de lecture : seance, preparation, cartes,
+    // progression, ressources.
     final List<Widget> classe = <Widget>[
       seance,
       Ecart.vSection,
       preparation,
+      Ecart.vSection,
+      cartes,
       if (avancement != null) ...<Widget>[
         Ecart.vSection,
         _ProgressionClasse(valeur: avancement),
@@ -471,7 +489,11 @@ class _Seance extends ConsumerWidget {
               ? t.classe.entree.indisponible
               : t.classe.entree.aucune,
           icone: AppIcons.cours,
-          registre: RegistreVide.subi,
+          // EA-HL-DOUBLE-1f : un registre subi taisait le bouton, et
+          // « Reessayez dans un instant » restait sans action.
+          registre: lecture.hasError
+              ? RegistreVide.actionnable
+              : RegistreVide.subi,
           libelleAction: lecture.hasError ? t.classe.entree.reessayer : null,
           onAction: lecture.hasError
               ? () => ref.invalidate(groupeProvider(groupeId))
@@ -563,7 +585,7 @@ class _Preparation extends ConsumerWidget {
         Ecart.vSm,
         AppCard(
           child: lignes.isEmpty
-              ? Text(
+              ? TexteSansCoupure(
                   t.enseignant.ficheGroupe.preparationVide,
                   style: palette.inkMuted.applyTo(
                     textes.bodyMedium ?? const TextStyle(),
@@ -581,14 +603,16 @@ class _Preparation extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Text(
+                            // Passe a la ligne entre les mots, jamais dans
+                            // un mot (« compréhension », COUPE-MOTS-3).
+                            TexteSansCoupure(
                               ligne.$1,
                               style: palette.inkMuted.applyTo(
                                 textes.bodySmall ?? const TextStyle(),
                               ),
                             ),
                             Ecart.vXs,
-                            Text(
+                            TexteSansCoupure(
                               ligne.$2,
                               style: textes.titleSmall ?? const TextStyle(),
                             ),
@@ -673,10 +697,14 @@ class _EnteteGroupe extends ConsumerWidget {
           Ecart.vSm,
           // Le seuil affiche est celui du groupe, jamais un chiffre calcule
           // ici : cinq enfants, six adultes, et c'est la base qui le tient.
+          // COUPE-MOTS-3b : jamais « élèves sur 6 places 3 » en arabe.
           StatusPill(
-            libelle: LibellesGroupe.capacitePhrase(
-              membres: groupe.nbMembres,
-              seuil: groupe.seuilMax,
+            libelle: isolerSiAutreSens(
+              LibellesGroupe.capacitePhrase(
+                membres: groupe.nbMembres,
+                seuil: groupe.seuilMax,
+              ),
+              Directionality.of(context),
             ),
             ton: groupe.complet ? TonEtat.avertissement : TonEtat.neutre,
           ),
@@ -734,6 +762,7 @@ class _Membres extends StatelessWidget {
                   projections[membre.studentId],
                   onOuvrirEleve,
                   noeud?.call(membre.studentId),
+                  Directionality.of(context),
                 ),
             ],
           ),
@@ -760,15 +789,28 @@ LigneRubrique _ligneMembre(
   ProjectionEleve? projection,
   void Function(String studentId)? onOuvrirEleve,
   FocusNode? focusNode,
+  TextDirection sens,
 ) {
   final String? niveau = membre.niveau?.trim();
   final String? page = projection?.pageReprise?.trim();
   // Une seule ligne secondaire (K-42 style §4) : le dernier point reste dans
   // la fiche eleve (ENS-11), qu'une pression sur la ligne ouvre.
+  // RTL-ISOL-1 : chaque segment ecrit dans l'autre sens que l'interface
+  // (« Niveau 1 » en arabe), et la page dans l'autre sens que sa phrase
+  // (« الاستئناف: Page 24 »), est isole : le separateur suit le sens de
+  // l'interface et rien ne se melange. Ordre des segments : celui de
+  // l'interface, niveau d'abord (option la plus prudente, decide par
+  // delegation le 09/10, regle DIR-REP-1).
   final String legende = <String>[
-    if (niveau != null && niveau.isNotEmpty) niveau,
+    if (niveau != null && niveau.isNotEmpty) isolerSiAutreSens(niveau, sens),
     if (page != null && page.isNotEmpty)
-      t.enseignant.ficheGroupe.repriseEleve(page: page),
+      isolerSiAutreSens(
+        phraseAvecValeur(
+          (String p) => t.enseignant.ficheGroupe.repriseEleve(page: p),
+          page,
+        ),
+        sens,
+      ),
   ].join(' · ');
 
   return LigneRubrique(
@@ -799,6 +841,11 @@ LigneRubrique _ligneMembre(
 /// « Progression de la Classe » en une ligne : l'etape commune et sa valeur
 /// ecrites, puis la barre, en un seul noeud (UX_REVIEW_04 n° 9 b). Une
 /// barre, jamais un anneau.
+///
+/// COUPE-MOTS-3 : le texte a la moitie de la ligne, la barre l'autre. Quand
+/// le mot le plus long du texte n'y tient pas (« Chapit / re 1 » a 320 px,
+/// texte x2, Interface guidee), la barre passe dessous et le texte prend
+/// toute la ligne : il passe a la ligne entre les mots, jamais dans un mot.
 class _ProgressionClasse extends StatelessWidget {
   const _ProgressionClasse({required this.valeur});
 
@@ -810,6 +857,11 @@ class _ProgressionClasse extends StatelessWidget {
       chapitre: valeur.chapitre,
       pourcentage: (valeur.fraction * 100).round(),
     );
+    // COUPE-MOTS-3b : une etape ecrite dans l'autre sens que l'interface
+    // (« Chapitre 1 · 60 % » en arabe) est isolee a l'affichage : elle ne se
+    // lit plus « % 1 · 60 ». Le lecteur d'ecran lit le texte nu.
+    final String affiche = isolerSiAutreSens(texte, Directionality.of(context));
+    final TextStyle? style = Theme.of(context).textTheme.titleSmall;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -818,19 +870,39 @@ class _ProgressionClasse extends StatelessWidget {
         Semantics(
           label: texte,
           child: ExcludeSemantics(
-            child: Row(
-              children: <Widget>[
-                Flexible(
-                  child: Text(
-                    texte,
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                ),
-                Ecart.hLg,
-                Expanded(
-                  child: LinearProgressIndicator(value: valeur.fraction),
-                ),
-              ],
+            child: LayoutBuilder(
+              builder: (BuildContext contexte, BoxConstraints c) {
+                final Widget barre = LinearProgressIndicator(
+                  value: valeur.fraction,
+                );
+                final double moitie = (c.maxWidth - AppSpacing.lg) / 2;
+                final bool empile =
+                    largeurMotLePlusLong(
+                      contexte,
+                      texte,
+                      style,
+                      MediaQuery.textScalerOf(contexte),
+                    ) >
+                    moitie;
+                if (empile) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      TexteSansCoupure(affiche, style: style),
+                      Ecart.vSm,
+                      barre,
+                    ],
+                  );
+                }
+                return Row(
+                  children: <Widget>[
+                    Flexible(child: Text(affiche, style: style)),
+                    Ecart.hLg,
+                    Expanded(child: barre),
+                  ],
+                );
+              },
             ),
           ),
         ),

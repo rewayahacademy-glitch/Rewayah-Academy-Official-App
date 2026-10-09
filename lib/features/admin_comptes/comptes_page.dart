@@ -5,8 +5,11 @@ import 'package:go_router/go_router.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/service_comptes.dart';
 import '../../core/domain/enums.dart';
+import '../../core/i18n/identifiant_insecable.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
@@ -14,6 +17,7 @@ import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pays_enseignant.dart';
+import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
@@ -122,10 +126,20 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
       // `DataCollection` porte son propre `ListView` : il exige une hauteur
       // bornee, donc l'ecran gere son defilement, comme `ADM-04`.
       defilante: false,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      // FILTRES-1b : des colonnes de corps (ici et dans le corps) qui disent
+      // a `PageShell` la hauteur qui leur manque : a 320 px texte x2, la page
+      // defile au lieu de deborder sous la liste.
+      child: ColonneCorps(
         children: <Widget>[
-          Text(t.admin.comptes.intro, style: textes.bodyMedium),
+          // RTL-ISOL-1 : l'introduction, encore sans traduction arabe, garde
+          // son point final en fin de phrase (jamais « .endroit »).
+          Text(
+            isolerSiAutreSens(
+              t.admin.comptes.intro,
+              Directionality.of(context),
+            ),
+            style: textes.bodyMedium,
+          ),
           Ecart.vXl,
           // Les getters, jamais le type d'execution : Riverpod 3 relance un
           // provider en echec tout seul, et l'etat repasse par `AsyncLoading`
@@ -238,8 +252,8 @@ class _Corps extends StatelessWidget {
       (CompteAdmin c) => c.prenom != null,
     );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return ColonneCorps(
+      minimumEtire: DataCollection.minimumLisible(context),
       children: <Widget>[
         // Le fait d'abord, en une phrase et sans cadre. Une carte bordee pour
         // une seule ligne de texte est du poids visuel sans information.
@@ -249,8 +263,8 @@ class _Corps extends StatelessWidget {
                 ? switch (attendent.first.joursDAttente(maintenant)) {
                     <= 0 => t.admin.comptes.attenteUneAujourdhui,
                     1 => t.admin.comptes.attenteUneUnJour,
-                    final int jours => t.admin.comptes.attenteUne(
-                      jours: '$jours',
+                    final int jours => LibellesGroupe.insecable(
+                      t.admin.comptes.attenteUne(jours: '$jours'),
                     ),
                   }
                 : t.admin.comptes.attentePlusieurs(
@@ -277,11 +291,8 @@ class _Corps extends StatelessWidget {
         // que c'est l'axe secondaire. Colles l'un a l'autre et non pousses aux
         // deux bords : deux filtres separes par la largeur de l'ecran ne se
         // lisent plus comme deux filtres, mais comme deux fonctions.
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: <Widget>[
+        RangeeFiltres(
+          filtres: <Widget>[
             FilterPill(
               libelle: t.admin.comptes.filtreTousEtats,
               compteur: comptes.length,
@@ -355,14 +366,21 @@ class _Corps extends StatelessWidget {
                   titre: t.admin.comptes.colonnePersonne,
                   role: RoleColonne.identifiante,
                   flex: 2,
-                  texte: (CompteAdmin c) => c.libelle,
+                  // COUPE-MOTS-4 : sous masquage, le libelle est
+                  // l'identifiant, tenu sur une ligne comme dans sa colonne.
+                  texte: (CompteAdmin c) => c.libelle == c.identifiant
+                      ? identifiantInsecable(c.identifiant)
+                      : c.libelle,
                 ),
                 // Sous masquage, `libelle` **est** l'identifiant : la colonne
                 // dediee afficherait deux fois la meme valeur cote a cote.
                 if (identitesConnues)
                   ColonneDonnees<CompteAdmin>(
                     titre: t.admin.comptes.colonneIdentifiant,
-                    texte: (CompteAdmin c) => c.identifiant,
+                    // COUPE-MOTS-4 : « TEACHER-AS-000001 » ne se coupe plus
+                    // a son trait d'union.
+                    texte: (CompteAdmin c) =>
+                        identifiantInsecable(c.identifiant),
                   ),
                 // ENS-PAYS-1 : le pays des comptes enseignants, seulement
                 // quand une ligne au moins le porte (pas de colonne vide).
@@ -428,7 +446,9 @@ class _Corps extends StatelessWidget {
   static String _attente(int jours) => switch (jours) {
     0 => t.admin.comptes.attendAujourdhui,
     1 => t.admin.comptes.attendUnJour,
-    _ => t.admin.comptes.attendJours(jours: '$jours'),
+    _ => LibellesGroupe.valeurSeule(
+      t.admin.comptes.attendJours(jours: '$jours'),
+    ),
   };
 }
 

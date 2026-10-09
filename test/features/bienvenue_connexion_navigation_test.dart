@@ -21,31 +21,30 @@ import '../support/harnais.dart';
 
 void main() {
   group('LA-1 : navigation reelle', () {
-    testWidgets(
-      'depuis /connexion, « Lien expire ou jamais recu ? » mene a la '
-      'recuperation, et le retour revient sur la connexion',
-      (WidgetTester tester) async {
-        final GoRouter routeur = await monterRouteur(
-          tester,
-          Routes.connexion,
-          source: FausseSourceSession(),
-        );
+    testWidgets('depuis /connexion, « Lien expire ou jamais recu ? » mene a la '
+        'recuperation, et le retour revient sur la connexion', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await monterRouteur(
+        tester,
+        Routes.connexion,
+        source: FausseSourceSession(),
+      );
 
-        final Finder probleme = find.text(t.connexion.probleme);
-        await tester.ensureVisible(probleme);
-        await tester.pumpAndSettle();
-        await tester.tap(probleme);
-        await tester.pumpAndSettle();
+      final Finder probleme = find.text(t.connexion.probleme);
+      await tester.ensureVisible(probleme);
+      await tester.pumpAndSettle();
+      await tester.tap(probleme);
+      await tester.pumpAndSettle();
 
-        expect(lieu(routeur), Routes.connexionRecuperation);
-        expect(find.byType(RecuperationPage), findsOneWidget);
+      expect(lieu(routeur), Routes.connexionRecuperation);
+      expect(find.byType(RecuperationPage), findsOneWidget);
 
-        await tester.tap(find.byType(DisqueRetour));
-        await tester.pumpAndSettle();
+      await tester.tap(find.byType(DisqueRetour));
+      await tester.pumpAndSettle();
 
-        expect(lieu(routeur), Routes.connexion);
-      },
-    );
+      expect(lieu(routeur), Routes.connexion);
+    });
 
     testWidgets(
       'depuis /connexion, « Decouvrir Rewayah Academy » mene a /bienvenue, '
@@ -98,16 +97,12 @@ void main() {
                 builder: (BuildContext context, GoRouterState state) =>
                     RecuperationPage(
                       motif: motifDepuisUrlRetour(
-                        Uri(
-                          queryParameters: state.uri.queryParameters,
-                        ),
+                        Uri(queryParameters: state.uri.queryParameters),
                       ),
                     ),
               ),
             ],
-            surcharges: <Override>[
-              serviceAuthProvider.overrideWithValue(auth),
-            ],
+            surcharges: <Override>[serviceAuthProvider.overrideWithValue(auth)],
           ),
         );
         await tester.pumpAndSettle();
@@ -194,24 +189,23 @@ void main() {
       expect(find.text(t.connexion.horsLigne), findsOneWidget);
     });
 
-    testWidgets(
-      'un second appui pendant l envoi ne double pas la demande',
-      (WidgetTester tester) async {
-        final FauxServiceAuth auth = await monter(tester);
+    testWidgets('un second appui pendant l envoi ne double pas la demande', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceAuth auth = await monter(tester);
 
-        final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
-          find.byKey(const ValueKey<String>('connexion-renvoyer')),
-        );
-        bouton.onPress!();
-        bouton.onPress!();
-        await tester.pumpAndSettle();
+      final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
+        find.byKey(const ValueKey<String>('connexion-renvoyer')),
+      );
+      bouton.onPress!();
+      bouton.onPress!();
+      await tester.pumpAndSettle();
 
-        expect(auth.liensEnvoyes, <String>[
-          'fatou@example.test',
-          'fatou@example.test',
-        ]);
-      },
-    );
+      expect(auth.liensEnvoyes, <String>[
+        'fatou@example.test',
+        'fatou@example.test',
+      ]);
+    });
   });
 
   group('LA-1 : recuperation d acces', () {
@@ -262,10 +256,7 @@ void main() {
         find.text(t.connexion.recuperation.lienRefuseTitre),
         findsOneWidget,
       );
-      expect(
-        find.text(t.connexion.recuperation.lienExpireTitre),
-        findsNothing,
-      );
+      expect(find.text(t.connexion.recuperation.lienExpireTitre), findsNothing);
     });
 
     testWidgets('sans motif : aucun encart, la saisie reste nue', (
@@ -402,9 +393,7 @@ void main() {
 
     test('issueEchecEnvoi classe les erreurs', () {
       expect(
-        issueEchecEnvoi(
-          AuthRetryableFetchException(message: 'sans reseau'),
-        ),
+        issueEchecEnvoi(AuthRetryableFetchException(message: 'sans reseau')),
         IssueEnvoiLien.horsLigne,
       );
       expect(

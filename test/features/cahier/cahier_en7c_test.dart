@@ -116,6 +116,40 @@ void main() {
     expect(find.text(t.enseignant.cahier.depose), findsOneWidget);
   });
 
+  // SUPERPOS-1 : l'aide du champ de reprise (« C'est la position de reprise
+  // d'un remplacant. ») se coupait en « d'un rempla… » a 320 en texte double
+  // (deux lignes au plus), et la position saisie defilait de cote dans une
+  // ligne. Contre-epreuve faite : echoue sur l'ancien champ.
+  testWidgets('reprise a 320 en texte double : l aide n est jamais coupee', (
+    WidgetTester tester,
+  ) async {
+    fixerVueCapture(tester, const Size(320, 640), 1);
+    await tester.pumpWidget(
+      hoteCapture(
+        const CoquilleEnseignantDemo(
+          ecran: EcranDemoEnseignant.cahier,
+          etat: EtatDemoEnseignant.nominal,
+        ),
+        surcharges: <Override>[
+          depotRapportsProvider.overrideWithValue(FauxDepotRapports()),
+        ],
+        echelleTexte: 2,
+      ),
+    );
+    await stabiliser(tester);
+    final Finder aide = find.text(t.enseignant.cahier.repriseDetail);
+    await tester.ensureVisible(aide);
+    await stabiliser(tester);
+    expect(
+      tester.renderObject<RenderParagraph>(aide).didExceedMaxLines,
+      isFalse,
+    );
+    // JONCTION-LIGNES-1 : la reprise se choisit (FORM-L9, `ChampReprise`),
+    // elle ne se tape plus ; la partie « position saisie qui defile de cote »
+    // de SUPERPOS-1 ne s'applique plus qu'au champ de secours, sans liste de
+    // sourates.
+  });
+
   // EN-7c-200 (K-61) : la feuille « Ajuster » de Nour, ouverte depuis la vraie
   // coquille, a 200 % de texte, sur 390 et sur 320 de large. Un debordement
   // leve une exception de rendu et fait echouer le test de lui-meme ; on

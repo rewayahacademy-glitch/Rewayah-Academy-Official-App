@@ -280,9 +280,7 @@ class _ProchaineSeance extends StatelessWidget {
           Ecart.vXs,
           Text(
             LibellesGroupe.joindre(
-              LibellesGroupe.duree(
-                LibellesGroupe.dureeLisible(occurrence.duree),
-              ),
+              LibellesGroupe.dureeCarte(occurrence.duree),
               LibellesGroupe.ligneEtat(horloge),
             ),
             style: palette.inkMuted.applyTo(

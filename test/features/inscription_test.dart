@@ -345,10 +345,7 @@ void main() {
       // Plus d'etape precedente : la rangee reste, sans disque (demande
       // A-5.1) ; la seule sortie est « Se deconnecter », sans doublon.
       expect(find.byType(DisqueRetour), findsNothing);
-      await _taper(
-        tester,
-        find.byKey(const Key('inscription-deconnexion')),
-      );
+      await _taper(tester, find.byKey(const Key('inscription-deconnexion')));
       expect(auth.deconnexions, 1);
       expect(find.text('3 sur 4'), findsNothing);
     });

@@ -38,6 +38,9 @@ import 'package:rewayah_academy/features/tc_observation_ui/panneau_observation_t
 import 'package:rewayah_academy/features/tc_observation_ui/routes_tc_g.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/verification_prealable.dart';
 
+import '../../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
+import '../../support/aucun_mot_coupe.dart';
 import '../../support/harnais.dart' show FauxServicePresence;
 import '../../support/hors_ligne_une_fois.dart';
 import 'faux/faux_observation.dart';
@@ -119,7 +122,10 @@ Future<void> _monter(
   String depart = '/tuteur/classes/c1?eleve=enfant-1',
   Size taille = const Size(390, 844),
   ThemeMode mode = ThemeMode.light,
+  InterfaceMode interface = InterfaceMode.standard,
   bool attendre = true,
+  TextDirection direction = TextDirection.ltr,
+  double echelle = 1,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -137,9 +143,19 @@ Future<void> _monter(
       ),
       child: TranslationProvider(
         child: MaterialApp.router(
-          theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
-          darkTheme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+          theme: AppTheme.pour(interface, Brightness.light),
+          darkTheme: AppTheme.pour(interface, Brightness.dark),
           themeMode: mode,
+          // Sens et echelle du texte des captures (EA-HL-DOUBLE-1d) ; par
+          // defaut, ceux de l'application.
+          builder: (BuildContext contexte, Widget? app) => Directionality(
+            textDirection: direction,
+            child: MediaQuery(
+              data: MediaQuery.of(contexte)
+                  .copyWith(textScaler: TextScaler.linear(echelle)),
+              child: app!,
+            ),
+          ),
           routerConfig: GoRouter(initialLocation: depart, routes: _routes()),
         ),
       ),
@@ -196,7 +212,7 @@ void main() {
           find.text(regleVisitesObservation(2, const Duration(seconds: 120))),
           findsOneWidget,
         );
-        expect(find.text('2 visites de 2 minutes'), findsOneWidget);
+        expect(find.text('2 visites de 2\u00A0minutes'), findsOneWidget);
         final e = t.tc.observation.explication;
         for (final String texte in <String>[
           e.regleDetail,
@@ -691,6 +707,34 @@ void main() {
       expect(find.byType(PanneauObservationTuteur), findsOneWidget);
     });
 
+    // EA-HL-DOUBLE-1d : le reseau tombe apres la verification prealable.
+    // L'echec de l'entree, pose sous le bandeau, dit ce qui manque ; ni
+    // « Connexion impossible », ni « Verifiez votre connexion ».
+    testWidgets('hors ligne pendant l\'entree : l\'echec ne redit pas le '
+        'reseau sous le bandeau', (WidgetTester tester) async {
+      final FauxPortVisite visites = FauxPortVisite(
+        echecEntree: const EchecObservation(MotifEchecObservation.reseau),
+      );
+      final FauxPortPolitique politique = FauxPortPolitique();
+      addTearDown(politique.fermer);
+      await _monter(
+        tester,
+        taille: _tailleSalle,
+        visites: visites,
+        politique: politique,
+        horsLigne: true,
+      );
+
+      await _presser(tester, find.text(t.classe.observer));
+      await _presser(tester, _observerMaintenant);
+
+      final c = t.tc.observation.connexion;
+      expect(find.text(c.impossibleTitre), findsOneWidget);
+      expect(find.text(c.impossible), findsOneWidget);
+      expect(visites.rolesDemandes, hasLength(1));
+      expectHorsLigneUneFois();
+    });
+
     testWidgets('un refus du serveur a l\'entree se dit par son motif', (
       WidgetTester tester,
     ) async {
@@ -795,8 +839,11 @@ void main() {
 
       await _presser(tester, find.text(_commentCaMarche));
 
-      expect(find.text('3 visites de 1 min 30 s'), findsOneWidget);
-      expect(find.text('2 visites de 2 minutes'), findsNothing);
+      expect(
+        find.text('3 visites de 1\u00A0min\u00A030\u00A0s'),
+        findsOneWidget,
+      );
+      expect(find.text('2 visites de 2\u00A0minutes'), findsNothing);
     });
 
     testWidgets('sans regle lisible, aucune explication chiffree', (
@@ -820,5 +867,188 @@ void main() {
       expect(find.textContaining('visites de'), findsNothing);
       expect(_observerMaintenant, findsNothing);
     });
+  });
+
+  // EA-HL-DOUBLE-1d : l'echec de l'entree quand le reseau tombe apres la
+  // verification (revue EA-HL-DOUBLE-1c-R, mineur 3), dans tous ses formats ;
+  // et la verification hors ligne a 320 texte x2, LTR et RTL (mineur 2).
+  // Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1d', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size, ThemeMode, InterfaceMode, double, TextDirection)
+        cas
+        in <(String, Size, ThemeMode, InterfaceMode, double, TextDirection)>[
+          (
+            '390_clair',
+            const Size(390, 844),
+            ThemeMode.light,
+            InterfaceMode.standard,
+            1,
+            TextDirection.ltr,
+          ),
+          (
+            '390_sombre',
+            const Size(390, 844),
+            ThemeMode.dark,
+            InterfaceMode.standard,
+            1,
+            TextDirection.ltr,
+          ),
+          (
+            '390_guidee',
+            const Size(390, 844),
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            1,
+            TextDirection.ltr,
+          ),
+          (
+            '320x2_clair',
+            const Size(320, 1800),
+            ThemeMode.light,
+            InterfaceMode.standard,
+            2,
+            TextDirection.ltr,
+          ),
+          (
+            '320x2_rtl_clair',
+            const Size(320, 1800),
+            ThemeMode.light,
+            InterfaceMode.standard,
+            2,
+            TextDirection.rtl,
+          ),
+          (
+            '1440_clair',
+            const Size(1440, 900),
+            ThemeMode.light,
+            InterfaceMode.standard,
+            1,
+            TextDirection.ltr,
+          ),
+        ]) {
+      testWidgets('echec de l\'entree ${cas.$1}', (WidgetTester tester) async {
+        final FauxPortVisite visites = FauxPortVisite(
+          echecEntree: const EchecObservation(MotifEchecObservation.reseau),
+        );
+        final FauxPortPolitique politique = FauxPortPolitique();
+        addTearDown(politique.fermer);
+        await _monter(
+          tester,
+          visites: visites,
+          politique: politique,
+          horsLigne: true,
+          taille: cas.$2,
+          mode: cas.$3,
+          interface: cas.$4,
+          echelle: cas.$5,
+          direction: cas.$6,
+        );
+        await _presser(tester, find.text(t.classe.observer));
+        await _presser(tester, _observerMaintenant);
+        expect(tester.takeException(), isNull);
+        expect(
+          find.text(t.tc.observation.connexion.impossibleTitre),
+          findsOneWidget,
+        );
+        expectHorsLigneUneFois();
+        verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1d_observation_echec_entree_${cas.$1}')}',
+        );
+      });
+
+      if (cas.$5 == 2) {
+        testWidgets('verification ${cas.$1}', (WidgetTester tester) async {
+          final FauxPortPolitique politique = FauxPortPolitique()
+            ..echecBudget = const EchecObservation(
+              MotifEchecObservation.reseau,
+            );
+          addTearDown(politique.fermer);
+          await _monter(
+            tester,
+            politique: politique,
+            horsLigne: true,
+            taille: cas.$2,
+            mode: cas.$3,
+            interface: cas.$4,
+            echelle: cas.$5,
+            direction: cas.$6,
+          );
+          await _presser(tester, find.text(t.classe.observer));
+          expect(tester.takeException(), isNull);
+          expectHorsLigneUneFois();
+          verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'ea_hl_double1d_observation_verification_${cas.$1}')}',
+          );
+        });
+      }
+    }
+  });
+
+  // EA-HL-DOUBLE-1c : Interface guidee et texte x2 de la verification de
+  // l'observation hors ligne (revue EA-HL-DOUBLE-1-R, m4). Sautees sans
+  // CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1c', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, ThemeMode) cas in <(String, ThemeMode)>[
+      ('390_guidee', ThemeMode.light),
+      ('390_guidee_sombre', ThemeMode.dark),
+    ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        final FauxPortPolitique politique = FauxPortPolitique()
+          ..echecBudget = const EchecObservation(MotifEchecObservation.reseau);
+        addTearDown(politique.fermer);
+        await _monter(
+          tester,
+          politique: politique,
+          horsLigne: true,
+          mode: cas.$2,
+          interface: InterfaceMode.enfant,
+        );
+        await _presser(tester, find.text(t.classe.observer));
+        expect(tester.takeException(), isNull);
+        expectHorsLigneUneFois();
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1_observation_${cas.$1}')}',
+        );
+      });
+    }
+  });
+
+  // EA-HL-DOUBLE-1 (reprise) : captures de preuve de la verification de
+  // l'observation hors ligne : le motif dit ce qui manque, le bandeau seul
+  // dit le reseau. Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size, ThemeMode) cas in <(String, Size, ThemeMode)>[
+      ('390_clair', const Size(390, 844), ThemeMode.light),
+      ('390_sombre', const Size(390, 844), ThemeMode.dark),
+      ('320_clair', const Size(320, 900), ThemeMode.light),
+      ('1440_clair', const Size(1440, 900), ThemeMode.light),
+    ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        final FauxPortPolitique politique = FauxPortPolitique()
+          ..echecBudget = const EchecObservation(MotifEchecObservation.reseau);
+        addTearDown(politique.fermer);
+        await _monter(
+          tester,
+          politique: politique,
+          horsLigne: true,
+          taille: cas.$2,
+          mode: cas.$3,
+        );
+        await _presser(tester, find.text(t.classe.observer));
+        expect(tester.takeException(), isNull);
+        expectHorsLigneUneFois();
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1_observation_${cas.$1}')}',
+        );
+      });
+    }
   });
 }

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/service_admin.dart';
 import '../../core/domain/enums.dart';
 import '../../core/formulaires/motifs_proposes.dart';
@@ -11,6 +12,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/matching/service_matching.dart';
 import '../../core/regles/service_regles.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -422,28 +424,32 @@ class _LigneRegle extends StatelessWidget {
         children: <Widget>[
           Text(_libelleRegle(regle.cle), style: textes.titleMedium),
           Ecart.vXs,
-          Row(
+          // COUPE-MOTS-4 : cote a cote quand les deux valeurs tiennent sur
+          // la ligne, l'une sous l'autre sinon. En demi-colonne a 320 px
+          // texte x2, « Plateforme » se coupait et le « : » partait seul a
+          // la ligne malgre l'espace insecable.
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
+            // Meme ligne lue quand elles tiennent : centres alignes, la
+            // valeur surchargee etant ecrite plus gros.
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: <Widget>[
-              Expanded(
-                child: Text(
-                  t.admin.demandes.plateforme(
-                    valeur: _valeur(regle.cle, regle.valeurPlateforme),
-                  ),
-                  style: textes.bodySmall,
+              TexteSansCoupure(
+                t.admin.demandes.plateforme(
+                  valeur: _valeur(regle.cle, regle.valeurPlateforme),
                 ),
+                style: textes.bodySmall,
               ),
-              Ecart.hSm,
-              Expanded(
-                child: Text(
-                  t.admin.demandes.effective(
-                    valeur: _valeur(regle.cle, regle.valeurEffective),
-                  ),
-                  style: regle.surchargee
-                      ? palette.inkAccent.applyTo(
-                          textes.bodyMedium ?? const TextStyle(),
-                        )
-                      : textes.bodySmall,
+              TexteSansCoupure(
+                t.admin.demandes.effective(
+                  valeur: _valeur(regle.cle, regle.valeurEffective),
                 ),
+                style: regle.surchargee
+                    ? palette.inkAccent.applyTo(
+                        textes.bodyMedium ?? const TextStyle(),
+                      )
+                    : textes.bodySmall,
               ),
             ],
           ),
@@ -731,10 +737,11 @@ String _libelleRegle(CleRegle? cle) => switch (cle) {
 
 /// Une valeur de regle avec son unite. **Le plafond compte des eleves, les
 /// trois autres regles comptent des minutes** : une valeur nue laisserait
-/// lire « 5 » pour cinq minutes de cours.
+/// lire « 5 » pour cinq minutes de cours. Insecable sans ancre de sens : la
+/// valeur est aussi glissee dans « Plateforme : 60 min » (DUREE-INSECABLE-3).
 String _valeur(CleRegle? cle, int valeur) => cle == CleRegle.plafondEleves
     ? t.admin.demandes.eleves(valeur: '$valeur')
-    : t.admin.demandes.minutes(valeur: '$valeur');
+    : LibellesGroupe.insecable(t.admin.demandes.minutes(valeur: '$valeur'));
 
 /// Ce que la demande reclame, dit en clair.
 String _reclame(Demande demande) => switch (demande.sorte) {
@@ -752,9 +759,11 @@ String _reclame(Demande demande) => switch (demande.sorte) {
         ? t.admin.demandes.reclameRegleSansValeur(
             regle: _libelleRegle(demande.cleRegle),
           )
-        : t.admin.demandes.reclameRegle(
-            regle: _libelleRegle(demande.cleRegle),
-            valeur: '${demande.valeurDemandee}',
+        : LibellesGroupe.insecable(
+            t.admin.demandes.reclameRegle(
+              regle: _libelleRegle(demande.cleRegle),
+              valeur: '${demande.valeurDemandee}',
+            ),
           ),
 };
 

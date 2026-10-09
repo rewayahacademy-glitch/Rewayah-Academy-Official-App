@@ -50,10 +50,16 @@ void main() {
         'dock de la seance': (_dock, _dockCle),
         'barre du support': (_barre, _barreCle),
       };
-  sites.forEach((String nom, (Widget Function({required bool agrandi}), Key) s) {
+  sites.forEach((
+    String nom,
+    (Widget Function({required bool agrandi}), Key) s,
+  ) {
     final Widget Function({required bool agrandi}) monter = s.$1;
     final Key cle = s.$2;
-    for (final ThemeMode luminosite in const <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
+    for (final ThemeMode luminosite in const <ThemeMode>[
+      ThemeMode.light,
+      ThemeMode.dark,
+    ]) {
       testWidgets('$nom, ${luminosite.name} : trois signaux, un par un', (
         WidgetTester tester,
       ) async {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -192,7 +193,10 @@ class _Corps extends StatelessWidget {
       children: <Widget>[
         // En-tete d'identite sobre (K-42 point 5) : le nom, une ligne de
         // contexte, une pastille discrete.
-        Text(
+        // Aucun mot coupe a 320 texte x2 (lecon 8) : « Bienvenue, » ne
+        // tient pas en titre a 200 % ; l'echelle se borne juste assez
+        // (EA-HL-DOUBLE-1d, vu sur la capture).
+        TexteSansCoupure(
           prenom.isEmpty
               ? t.enseignant.bienvenue.salutationSansNom
               : t.enseignant.bienvenue.salutation(prenom: prenom),

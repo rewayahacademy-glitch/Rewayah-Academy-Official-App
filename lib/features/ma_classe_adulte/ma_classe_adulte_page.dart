@@ -26,6 +26,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
@@ -42,6 +43,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../foyer/photo_eleve.dart' show PhotoEleve;
 import '../tc_catalogue/routes_tc_b.dart' show RoutesTcB;
+import '../tc_espace_groupe/bloc_cartes_classe.dart';
 import '../tc_espace_groupe/emplacements_groupe.dart' show BlocBibliotheque;
 import '../tc_espace_groupe/espace_groupe_page.dart'
     show ColonnesParRangees, LecteurGroupe, LectureGroupe, SqueletteGroupe;
@@ -219,8 +221,11 @@ class _Sections extends StatelessWidget {
           SectionHeader(titre: titre),
           Ecart.vMd,
           AppCard(
+            // RTL-ISOL-1 : une ligne rendue dans l'autre sens que l'interface
+            // (« ... règles de tajwid. », « Chapitre 1 · Page 24 » en arabe)
+            // est isolee : son point et son separateur restent a leur place.
             child: Text(
-              texte,
+              isolerSiAutreSens(texte, Directionality.of(context)),
               key: ValueKey<String>(cle),
               style: Theme.of(context).textTheme.bodyLarge,
             ),
@@ -285,6 +290,10 @@ class _Sections extends StatelessWidget {
       ),
     ];
 
+    // CARTES-PERSO-1 : les cartes que l'enseignant de la Classe compose, en
+    // lecture (la capacite de modifier vient de leur lecture).
+    final List<Widget> cartes = <Widget>[BlocCartesClasse(groupeId: groupeId)];
+
     List<Widget> bloc(List<List<Widget>> sections) => <Widget>[
       for (final (int i, List<Widget> s)
           in sections
@@ -297,7 +306,10 @@ class _Sections extends StatelessWidget {
     // sections en deux rangees.
     return ColonnesParRangees(
       rangees: <(List<Widget>, List<Widget>)>[
-        (lecture.identiteEtCarte(onRejoindre: onRejoindre), aPropos),
+        (
+          lecture.identiteEtCarte(onRejoindre: onRejoindre),
+          bloc(<List<Widget>>[aPropos, cartes]),
+        ),
         if (participants.isEmpty)
           (bloc(<List<Widget>>[ressources, progression]), const <Widget>[])
         else

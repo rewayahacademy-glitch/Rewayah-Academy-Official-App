@@ -200,7 +200,7 @@ class _Contenu extends ConsumerWidget {
                   cle: t.historique.observation.dureeTotale,
                   valeur: total == null
                       ? t.historique.observations.dureeNonConfirmee
-                      : dureeLisible(total),
+                      : dureeSeule(total),
                   chiffres: total != null,
                 ),
               ],
@@ -287,7 +287,7 @@ class _Visite extends StatelessWidget {
                   // Une duree seulement quand le serveur l'a ecrite.
                   if (terminee) ...<Widget>[
                     Text(
-                      dureeLisible(duree),
+                      dureeSeule(duree),
                       style: AppTypography.tabulaire(
                         palette.inkStrong.applyTo(
                           textes.bodyMedium ?? const TextStyle(),

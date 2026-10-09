@@ -56,8 +56,9 @@ Future<void> _allerA(WidgetTester tester, String libelle) async {
 
 void _repereVisible() {
   expect(
-    find.byWidgetPredicate(
-      (Widget w) => w is Banner && w.message == libelleRepereDemonstration,
+    find.descendant(
+      of: find.byKey(RepereDemonstration.bandeKey),
+      matching: find.text(libelleRepereDemonstration),
     ),
     findsOneWidget,
   );
@@ -73,7 +74,7 @@ void main() {
     );
     expect(entree, findsOneWidget);
     expect(find.text(libelleEntreeDemonstration), findsOneWidget);
-    expect(find.byType(Banner), findsNothing);
+    expect(find.byKey(RepereDemonstration.bandeKey), findsNothing);
     await tester.ensureVisible(entree);
     await tester.tap(entree);
     await stabiliser(tester);
@@ -102,7 +103,7 @@ void main() {
       find.byKey(const ValueKey<String>('entree-demonstration')),
       findsNothing,
     );
-    expect(find.byType(Banner), findsNothing);
+    expect(find.byKey(RepereDemonstration.bandeKey), findsNothing);
   });
 
   testWidgets('sans lanceur (application ordinaire) : l entree ne rend rien', (

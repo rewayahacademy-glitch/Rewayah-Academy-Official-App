@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../core/i18n/elision.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/seance_famille/seance_famille.dart';
@@ -34,6 +35,7 @@ class AffichageSeance {
     required this.fuseau,
     required this.date,
     required this.duree,
+    required this.dureeEnPhrase,
     this.heureClasse,
   });
 
@@ -62,6 +64,7 @@ class AffichageSeance {
           : t.tuteur.accueil.heureDe(deVille: deDevant(foyer.libelleVille)),
       date: foyer?.dateLocaleRendue ?? dateDeLAppareil(local),
       duree: LibellesGroupe.dureeSeule(seance.dureePrevue),
+      dureeEnPhrase: LibellesGroupe.dureeLisible(seance.dureePrevue),
       heureClasse: classe == null
           ? null
           : t.tuteur.accueil.heureClasse(
@@ -91,8 +94,17 @@ class AffichageSeance {
   /// La date lisible : « Lundi 21 septembre ».
   final String date;
 
-  /// La duree prevue, « 1 h 30 ».
+  /// La duree prevue, « 1 h 30 », affichee seule : ancree en interface de
+  /// droite a gauche ([LibellesGroupe.dureeSeule]).
   final String duree;
+
+  /// La meme duree, sans ancre : elle suit la date dans [dateEtDuree].
+  final String dureeEnPhrase;
+
+  /// « Lundi 21 septembre · 45 min » : la duree suit la date, l'ancre de sens
+  /// n'a rien a faire au milieu du libelle (DUREE-INSECABLE-3).
+  String get dateEtDuree =>
+      t.tuteur.accueil.dateEtDuree(date: date, duree: dureeEnPhrase);
 
   /// L'heure dans le fuseau de la classe quand il differe, sinon `null`.
   final String? heureClasse;
@@ -394,7 +406,14 @@ class _LigneIcone extends StatelessWidget {
         ),
       ),
       Ecart.hMd,
-      Expanded(child: Text(texte, style: style)),
+      // RTL-ISOL-1 : le conseil d'appareil, encore sans traduction arabe,
+      // garde son point en fin de phrase (jamais « .téléphone »).
+      Expanded(
+        child: Text(
+          isolerSiAutreSens(texte, Directionality.of(context)),
+          style: style,
+        ),
+      ),
     ],
   );
 }

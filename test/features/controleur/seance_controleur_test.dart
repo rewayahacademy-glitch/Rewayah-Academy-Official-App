@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/isolat_bidi.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
@@ -148,9 +149,9 @@ void main() {
       ),
     );
     expect(find.byKey(ObservationControlePage.cleEleve('a1')), findsOneWidget);
-    expect(find.text('Amina'), findsOneWidget);
+    expect(find.text(isolerSens('Amina')), findsOneWidget);
     expect(find.byKey(ObservationControlePage.cleEleve('b1')), findsNothing);
-    expect(find.text('Bilal'), findsNothing);
+    expect(find.text(isolerSens('Bilal')), findsNothing);
     expect(lues, everyElement('roster:seance-A'));
   });
 }

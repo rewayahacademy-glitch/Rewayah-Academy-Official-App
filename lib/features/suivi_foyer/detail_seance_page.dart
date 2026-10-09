@@ -190,7 +190,7 @@ class _Contenu extends ConsumerWidget {
           ),
           LigneCleValeur(
             cle: t.historique.seance.dureePrevue,
-            valeur: dureeLisible(seance.duree),
+            valeur: dureeSeule(seance.duree),
             chiffres: true,
           ),
           LigneCleValeur(
@@ -231,9 +231,7 @@ class _Contenu extends ConsumerWidget {
           if (seance.minutesInterruption > 0)
             LigneCleValeur(
               cle: t.historique.seance.interruption,
-              valeur: dureeLisible(
-                Duration(minutes: seance.minutesInterruption),
-              ),
+              valeur: dureeSeule(Duration(minutes: seance.minutesInterruption)),
               chiffres: true,
             ),
           if (phrase != null || presenceIllisible)

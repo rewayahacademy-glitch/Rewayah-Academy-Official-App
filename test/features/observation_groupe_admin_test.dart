@@ -4,7 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/service_configuration.dart';
 import 'package:rewayah_academy/core/admin/service_groupes.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/core/planning/service_planning.dart' show Creneau;
+import 'package:rewayah_academy/core/planning/service_planning.dart'
+    show Creneau;
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/tc_observation/echec_observation.dart';
 import 'package:rewayah_academy/core/tc_observation/guardian_observation_policy.dart';
 import 'package:rewayah_academy/core/tc_observation/port_politique_observation.dart';
@@ -168,7 +170,10 @@ void main() {
 
       expect(find.text(t.tc.observation.reglages.titre), findsOneWidget);
       expect(find.text(t.tc.observation.reglages.heriter), findsOneWidget);
-      expect(find.text(t.tc.observation.reglages.personnaliser), findsOneWidget);
+      expect(
+        find.text(t.tc.observation.reglages.personnaliser),
+        findsOneWidget,
+      );
       expect(find.text(t.tc.observation.reglages.desactiver), findsOneWidget);
     });
 
@@ -194,7 +199,9 @@ void main() {
       expect(
         find.text(
           t.tc.observation.reglages.valeurHeritee(
-            valeur: t.tc.observation.reglages.uniteSecondes(n: 240),
+            valeur: LibellesGroupe.insecable(
+              t.tc.observation.reglages.uniteSecondes(n: 240),
+            ),
           ),
         ),
         findsOneWidget,
@@ -230,10 +237,16 @@ void main() {
       );
 
       await _ouvrirDepuisLaListe(tester, port);
-      expect(find.text(t.tc.observation.reglages.plafondVisite), findsOneWidget);
+      expect(
+        find.text(t.tc.observation.reglages.plafondVisite),
+        findsOneWidget,
+      );
 
       // Le troisieme « Augmenter » est celui du plafond par visite.
-      await _presser(tester, find.text(t.tc.observation.reglages.augmenter).at(2));
+      await _presser(
+        tester,
+        find.text(t.tc.observation.reglages.augmenter).at(2),
+      );
       await _presser(tester, find.text(t.tc.observation.reglages.enregistrer));
 
       expect(
@@ -255,11 +268,11 @@ void main() {
       // seule `0036` manque. « L'observation n'est pas encore activee sur
       // cette installation. » enverrait l'administrateur la chercher dans
       // Configuration.
-      final FauxPortPolitique port = FauxPortPolitique(
-        politique: _politiqueGroupe,
-      )..echecEcriture = const EchecObservation(
-        MotifEchecObservation.capaciteAbsente,
-      );
+      final FauxPortPolitique port =
+          FauxPortPolitique(politique: _politiqueGroupe)
+            ..echecEcriture = const EchecObservation(
+              MotifEchecObservation.capaciteAbsente,
+            );
 
       await _ouvrirDepuisLaListe(tester, port);
       await _presser(tester, find.text(t.tc.observation.reglages.enregistrer));
@@ -283,7 +296,9 @@ void main() {
           (nom: 'arabe', direction: TextDirection.rtl, echelle: 1),
           (nom: '200 pour cent', direction: TextDirection.ltr, echelle: 2),
         ]) {
-      testWidgets('la feuille tient en ${axe.nom}', (WidgetTester tester) async {
+      testWidgets('la feuille tient en ${axe.nom}', (
+        WidgetTester tester,
+      ) async {
         final FauxPortPolitique port = FauxPortPolitique(
           politique: _politiqueGroupe,
         );

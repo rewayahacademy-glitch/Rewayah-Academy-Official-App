@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../i18n/elision.dart';
+import '../i18n/isolat_bidi.dart';
 import '../i18n/strings.g.dart';
 import '../tc_groupe/libelles_tc_groupe.dart';
 import 'session_clock_vm.dart';
@@ -134,7 +135,11 @@ class EmplacementEntree {
               ? t.classe.entree.coursImminent
               : role == RoleEntree.enseignant
               ? _dansEnseignant(reste)
-              : t.classe.entree.coursDans(duree: duree),
+              // RTL-ISOL-1 : « الدرس بعد 3 h 28 », jamais « h 28 3 ».
+              : phraseAvecValeur(
+                  (String d) => t.classe.entree.coursDans(duree: d),
+                  duree,
+                ),
           annonce: t.classe.entree.annonce.aVenir,
           avisDst: dst,
         );
@@ -176,10 +181,17 @@ class EmplacementEntree {
         detail: tutoiement
             ? (imminent
                   ? t.accessibilite.tutoiement.attenteImminent
-                  : t.accessibilite.tutoiement.attente(duree: duree))
+                  : phraseAvecValeur(
+                      (String d) =>
+                          t.accessibilite.tutoiement.attente(duree: d),
+                      duree,
+                    ))
             : imminent
             ? t.classe.entree.attenteImminent
-            : t.classe.entree.attente(duree: duree),
+            : phraseAvecValeur(
+                (String d) => t.classe.entree.attente(duree: d),
+                duree,
+              ),
         annonce: tutoiement
             ? t.accessibilite.tutoiement.annonceAttente
             : t.classe.entree.annonce.attente,
@@ -211,7 +223,10 @@ class EmplacementEntree {
         nomClasse,
         detail: imminent
             ? t.classe.entree.salleOuverteImminent
-            : t.classe.entree.salleOuverte(duree: duree),
+            : phraseAvecValeur(
+                (String d) => t.classe.entree.salleOuverte(duree: d),
+                duree,
+              ),
         annonce: t.classe.entree.annonce.fenetreOuverte,
         dst: dst,
       ),

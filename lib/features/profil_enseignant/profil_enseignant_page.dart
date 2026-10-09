@@ -16,6 +16,7 @@ import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -518,8 +519,10 @@ class _DeclarationState extends ConsumerState<_Declaration> {
               legende: t.enseignant.profil.plafondDetail,
               valeur: profil.plafondHeures == null
                   ? t.enseignant.profil.nonRenseigne
-                  : t.enseignant.profil.plafondValeur(
-                      nombre: profil.plafondHeures!,
+                  : LibellesGroupe.valeurSeule(
+                      t.enseignant.profil.plafondValeur(
+                        nombre: profil.plafondHeures!,
+                      ),
                     ),
               icone: AppIcons.journee,
             ),

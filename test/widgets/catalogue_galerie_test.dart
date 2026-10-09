@@ -110,6 +110,9 @@ const List<String> composantsDuCatalogue = <String>[
   // ONGLETS-1 (revue du directeur, 01/10/2026) : le selecteur de section
   // unique, qui remplace les rangees d'onglets et de pilules qui defilent.
   'SelecteurSection',
+  // FILTRES-1 (decide par delegation le 05/10/2026) : la rangee unique de
+  // puces de filtre qui defile, sur tous les ecrans a filtres.
+  'RangeeFiltres',
   // Les composants partages du chantier Tuteur V1 (phase 0c1 du 24/09/2026,
   // manifeste visuel section 3.4 et contrat K5), sans cle i18n nouvelle.
   'EcranResultat',
@@ -149,6 +152,7 @@ const List<String> composantsDuCatalogue = <String>[
   'ChampEtiquete',
   // FORM-L1-7-13 : le motif en puces, « Autre » ouvre la saisie libre (K-57).
   'SelecteurMotif',
+  'ZoneSaisie',
 ];
 
 /// Les trois largeurs de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 8.

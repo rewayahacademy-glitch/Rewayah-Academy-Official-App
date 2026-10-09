@@ -43,6 +43,8 @@ import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 
+import 'sens_et_echelle.dart';
+
 /// L'hote minimal d'un ecran sous test.
 ///
 /// Le theme est indispensable : `AppPalette.of` et `AppMetriques.of` lisent des
@@ -68,16 +70,25 @@ Widget hote(
 /// routeur, ils echouent au moment ou l'on teste justement ce qu'ils font de
 /// reussi. Le routeur du test reste minimal, il ne rejoue pas celui de
 /// l'application.
+///
+/// [themeMode], [direction] et [echelle] servent aux captures (sombre, RTL,
+/// texte x2 ; EA-HL-DOUBLE-1d) ; par defaut, l'arbre reste celui d'avant.
 Widget hoteRoutant({
   required String depart,
   required List<RouteBase> routes,
   List<Override> surcharges = const <Override>[],
   InterfaceMode mode = InterfaceMode.standard,
+  ThemeMode themeMode = ThemeMode.light,
+  TextDirection? direction,
+  double echelle = 1,
 }) => ProviderScope(
   overrides: surcharges,
   child: TranslationProvider(
     child: MaterialApp.router(
       theme: AppTheme.pour(mode, Brightness.light),
+      darkTheme: AppTheme.pour(mode, Brightness.dark),
+      themeMode: themeMode,
+      builder: sensEtEchelle(direction: direction, echelle: echelle),
       routerConfig: GoRouter(initialLocation: depart, routes: routes),
     ),
   ),

@@ -25,6 +25,10 @@ import 'package:rewayah_academy/features/controleur/observation_controle_page.da
 import 'package:rewayah_academy/features/demo/controleur_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
 
+import '../../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
+import '../../support/aucun_mot_coupe.dart';
+
 /// Echoue au premier essai de transmission, reussit ensuite.
 class _PortEchecPuisSucces implements EnvoiCompteRendu {
   int essais = 0;
@@ -202,7 +206,7 @@ void main() {
     expect(find.textContaining('min de retard'), findsNothing);
     await tester.tap(find.text(r.faits));
     await tester.pumpAndSettle();
-    expect(find.textContaining('3 min de retard'), findsOneWidget);
+    expect(find.textContaining('3\u00A0min de retard'), findsOneWidget);
     expect(find.text(r.enCours), findsOneWidget);
     expect(find.textContaining('Enregistrement'), findsNothing);
 
@@ -704,5 +708,67 @@ void main() {
       findsWidgets,
     );
     expect(port.transmises, <String>[_visiteA.seanceId]);
+  });
+
+  // EA-HL-DOUBLE-1e : la transmission de la visite en echec dit la cause
+  // probable sans l'affirmer (K-59), jamais « Rewayah n'a pas repondu ».
+  // 390, 320 texte x2 en LTR et RTL. Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1e', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size, double, TextDirection) cas
+        in <(String, Size, double, TextDirection)>[
+          ('390_clair', const Size(390, 1600), 1, TextDirection.ltr),
+          ('320x2_clair', const Size(320, 3200), 2, TextDirection.ltr),
+          ('320x2_rtl_clair', const Size(320, 3200), 2, TextDirection.rtl),
+        ]) {
+      testWidgets('visite en echec ${cas.$1}', (WidgetTester tester) async {
+        tester.view.physicalSize = cas.$2;
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: <Override>[
+              visitesObserveesProvider.overrideWith(
+                () => VisitesObservees(<String, CompteRenduEnSuspens>{
+                  _visiteA.seanceId: _visiteA,
+                }),
+              ),
+              envoiCompteRenduProvider.overrideWithValue(
+                _PortEchecPuisSucces(),
+              ),
+            ],
+            child: TranslationProvider(
+              child: MaterialApp(
+                theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+                locale: AppLocale.fr.flutterLocale,
+                supportedLocales: AppLocaleUtils.supportedLocales,
+                localizationsDelegates: GlobalMaterialLocalizations.delegates,
+                builder: (BuildContext contexte, Widget? app) => Directionality(
+                  textDirection: cas.$4,
+                  child: MediaQuery(
+                    data: MediaQuery.of(contexte)
+                        .copyWith(textScaler: TextScaler.linear(cas.$3)),
+                    child: app!,
+                  ),
+                ),
+                home: CompteRenduControlePage(seanceId: _visiteA.seanceId),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        final Finder echec = find.text(t.controleur.compteRendu.visiteEchec);
+        expect(echec, findsOneWidget);
+        // Le texte modifie ne coupe aucun mot. Les cartes de choix du compte
+        // rendu coupent des mots a 320 texte x2 (defaut anterieur de
+        // `ChoiceCardGroup`, hors de cette etape, consigne au bilan).
+        verifierAucunMotCoupe(tester, echec);
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1e_controleur_visite_echec_${cas.$1}')}',
+        );
+      });
+    }
   });
 }

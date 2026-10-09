@@ -403,6 +403,10 @@ class _VisionneusePieceState extends ConsumerState<VisionneusePiece> {
           liveRegion: true,
           child: EtatSysteme(
             nature: nature,
+            // Hors ligne se dit une fois (EA-HL-DOUBLE-1d) : le « wifi
+            // barre » est celui du bandeau de la page, visible au-dessus de
+            // la feuille ; la piece qui manque prend l'attente (sablier).
+            icone: nature == NatureEtat.horsLigne ? AppIcons.attente : null,
             titre: phrase,
             // Phrase vide : seul le texte exact de la spec s'affiche, sans la
             // phrase generique commun.etats.* (§11.5, §26 ter).
@@ -533,7 +537,10 @@ class _BoutonZoom extends StatelessWidget {
   Widget build(BuildContext context) => BoutonIcone(
     icone: icone,
     libelle: libelle,
-    infobulle: t.dossiers.visionneuse.infoBulle(action: libelle, touche: touche),
+    infobulle: t.dossiers.visionneuse.infoBulle(
+      action: libelle,
+      touche: touche,
+    ),
     onPress: onPress,
   );
 }

@@ -16,6 +16,7 @@ import '../../core/tc_classe/roster_enseignant.dart';
 import '../../core/tc_classe/session_live_vm.dart';
 import '../../core/tc_classe/session_persistante.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -361,14 +362,16 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
       if (!mounted) return;
       setState(
         () => _echecRappel = switch (echec.motif) {
-          MotifEchecRappel.cooldown => t.tc.classe.rappel.cooldown(
-            secondes:
-                (rappel.cooldownRestant(
-                          sessionId: sessionId,
-                          academyId: academyId,
-                        ) ??
-                        rappel.cooldown)
-                    .inSeconds,
+          MotifEchecRappel.cooldown => LibellesGroupe.insecable(
+            t.tc.classe.rappel.cooldown(
+              secondes:
+                  (rappel.cooldownRestant(
+                            sessionId: sessionId,
+                            academyId: academyId,
+                          ) ??
+                          rappel.cooldown)
+                      .inSeconds,
+            ),
           ),
           MotifEchecRappel.droitRefuse => t.tc.classe.rappel.echecDroit,
           MotifEchecRappel.transport => t.tc.classe.rappel.echec,

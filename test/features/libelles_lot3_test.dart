@@ -290,7 +290,7 @@ void main() {
       await stabiliser(tester);
       expect(
         find.text(
-          "Votre pièce d'identité se dépose telle quelle : elle n'est "
+          "Votre pièce d'identité se dépose telle quelle\u00A0: elle n'est "
           'jamais publique, seule la direction la consulte, et elle est '
           "exigée par la réglementation sur la protection de l'enfance.",
         ),

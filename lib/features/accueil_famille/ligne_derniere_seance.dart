@@ -94,10 +94,7 @@ class LigneDerniereSeance extends StatelessWidget {
           children: <Widget>[
             // Une seance annulee : date barree et attenuee (ANNUL-VIS-1).
             TexteHeureSeance(
-              heure: t.tuteur.accueil.dateEtDuree(
-                date: affichage.date,
-                duree: affichage.duree,
-              ),
+              heure: affichage.dateEtDuree,
               annulee: affichage.etatPastille == EtatPastilleSeance.annulee,
               style: discret,
             ),

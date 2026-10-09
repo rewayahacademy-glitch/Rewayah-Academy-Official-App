@@ -384,6 +384,38 @@ void main() {
     expect(participants, findsNothing);
   });
 
+  // Revue EA-HL-DOUBLE-1 (m1) : une classe deja lue, relue en echec hors
+  // ligne, reste affichee ; le bandeau seul dit le reseau.
+  testWidgets('hors ligne, classe deja lue puis relue en echec : elle reste '
+      'affichee, sans bloc ni echec', (WidgetTester tester) async {
+    int lectures = 0;
+    await tester.pumpWidget(
+      app(
+        overrides: <Override>[
+          horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(true)),
+          maClasseAdulteProvider.overrideWith((Ref _) {
+            lectures++;
+            return lectures == 1
+                ? Future<MaClasseAdulteVM>.value(const MaClasseAdulteVM())
+                : Future<MaClasseAdulteVM>.error(StateError('reseau'));
+          }),
+        ],
+        child: const MaClasseAdultePage(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final ProviderContainer conteneur = ProviderScope.containerOf(
+      tester.element(find.byType(MaClasseAdultePage)),
+    )..invalidate(maClasseAdulteProvider);
+    await tester.pumpAndSettle();
+    final AsyncValue<MaClasseAdulteVM> etat = conteneur.read(
+      maClasseAdulteProvider,
+    );
+    expect(etat.hasError && etat.hasValue && !etat.isLoading, isTrue);
+    expect(find.text(t.adulte.accueil.aucuneClasse), findsOneWidget);
+    expectAvecDonnees();
+  });
+
   testWidgets('sans source serveur : indisponible, sans « Reessayer »', (
     WidgetTester tester,
   ) async {

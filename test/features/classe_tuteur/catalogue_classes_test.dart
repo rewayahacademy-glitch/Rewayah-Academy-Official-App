@@ -23,6 +23,7 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/seance_famille/seance_famille.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
@@ -180,10 +181,12 @@ void main() {
       // seances rendues, la phrase honnete reste.
       expect(
         find.text(
-          _c.seanceHebdo(
-            jour: t.commun.dates.jours[1],
-            heure: '18:30',
-            duree: 45,
+          LibellesGroupe.insecable(
+            _c.seanceHebdo(
+              jour: t.commun.dates.jours[1],
+              heure: '18:30',
+              duree: 45,
+            ),
           ),
         ),
         findsOneWidget,

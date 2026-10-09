@@ -257,12 +257,16 @@ class AccueilAccessibilite extends ConsumerWidget {
       );
     }
 
-    if (deuxColonnes) {
-      return haut;
-    }
+    // Une Column dans les deux cas, `haut` toujours en tete : franchir le
+    // seuil (fenetre redimensionnee, facteur de texte change) garde le meme
+    // element, donc le meme State du bloc asynchrone, ses reessais et ses
+    // minuteries (MA-2COL-1b).
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[haut, Ecart.vSection, coranEtAide],
+      children: <Widget>[
+        haut,
+        if (!deuxColonnes) ...<Widget>[Ecart.vSection, coranEtAide],
+      ],
     );
   }
 }

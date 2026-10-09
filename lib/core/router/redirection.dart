@@ -1,6 +1,7 @@
 import '../../features/demo/mode_demonstration.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
+import '../preferences/presentation_vue.dart';
 import '../session/session_state.dart';
 import 'billet_salle.dart';
 import 'chemin_retour.dart';
@@ -34,6 +35,10 @@ import 'routes.dart';
 ///
 /// [cheminComplet] est l'adresse demandee avec sa requete (le `retour`), et
 /// [retour] le parametre `retour` de cette adresse.
+///
+/// [presentation] dit si la presentation publique a deja ete vue sur cet
+/// appareil (PUB-1) : elle ne compte que pour la racine d'un visiteur sans
+/// session.
 String? deciderRedirection({
   required SessionState session,
   required String cheminDemande,
@@ -44,6 +49,7 @@ String? deciderRedirection({
   String? retour,
   String environnement = Env.environnement,
   bool resignatureContrat = false,
+  EtatPresentation presentation = EtatPresentation.aVoir,
 }) {
   // La salle de demonstration passe sans session hors production : donnees
   // fictives, aucun appel serveur (K-28). En production, la route n'existe
@@ -99,11 +105,16 @@ String? deciderRedirection({
       if (!routeConnue) {
         return null;
       }
-      // La racine d'un visiteur sans session : l'accueil public (premiere
-      // visite, demande A-1). `/bienvenue` mene a la connexion par
-      // « Commencer » et « J'ai deja un compte ».
+      // La racine d'un visiteur sans session (demande A-1, PUB-1) : la
+      // presentation publique `/bienvenue` a la premiere visite sur cet
+      // appareil, la connexion ensuite. Tant que l'appareil n'a pas ete lu,
+      // on ne decide rien : l'ecran de demarrage reste, sans clignotement.
       if (cheminDemande == Routes.racine) {
-        return Routes.bienvenue;
+        return switch (presentation) {
+          EtatPresentation.inconnu => null,
+          EtatPresentation.aVoir => Routes.bienvenue,
+          EtatPresentation.vue => Routes.connexion,
+        };
       }
       // Session expiree, ou lien profond ouvert sans session : la connexion
       // garde la destination, si c'en est une (R7 : un chemin interne valide,

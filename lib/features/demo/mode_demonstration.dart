@@ -18,6 +18,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 
 import '../../core/admin/service_admin.dart';
 import '../../core/admin/service_groupes.dart';
+import '../../core/alertes/port_alertes.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_catalogue_classes.dart';
@@ -40,6 +41,7 @@ import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/session/source_session.dart';
 import '../../core/suivi/service_suivi.dart';
+import '../../core/tc_groupe/cartes_classe.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/port_groupes.dart';
 import '../../core/tc_observation/activation_observation.dart';
@@ -48,6 +50,8 @@ import '../../core/tc_observation/port_politique_observation.dart';
 import '../../core/tc_observation/port_visite_observation.dart';
 import '../admin_tableau/activite_recente.dart';
 import 'admin_x_demo.dart';
+import 'alertes_demo.dart';
+import 'cartes_classe_demo.dart';
 import 'catalogue_demo.dart';
 import 'dossiers_demo.dart';
 import 'observation_demo.dart';
@@ -165,6 +169,16 @@ List<Override> surchargesDemoTuteur({
           ? const <GroupSummaryVM>[]
           : DonneesDemo.classes.values.toList(),
     ),
+    // CARTES-PERSO-1b : la page Classe du tuteur lit les memes cartes de
+    // demonstration que la demonstration enseignant, en lecture seule (la
+    // capacite que le serveur rendrait au tuteur). Sans elle, elle disait
+    // « pas encore ouvertes » (revue CARTES-PERSO-1, deuxieme passe).
+    portCartesClasseProvider.overrideWith(
+      (Ref _) => PortCartesClasseDemo(
+        peutModifier: false,
+        cartes: cartesClasseDemo(DateTime.now()),
+      ),
+    ),
     // Observation simulee : politique, budget, historique. La salle video
     // demande un jeton au serveur, donc l'observation reelle reste fermee.
     observationTuteurReelleProvider.overrideWithValue(false),
@@ -199,13 +213,24 @@ bool demoAdminActive({required Uri adresse, required String environnement}) =>
 bool get demoAdminActiveIci =>
     demoAdminActive(adresse: Uri.base, environnement: Env.environnement);
 
+/// Le delai avant l'arrivee d'une alerte urgente dans la demonstration admin
+/// (ALERTE-1) : assez long pour regarder la page d'abord.
+const Duration dureeArriveeAlerteDemo = Duration(seconds: 20);
+
 /// Les surcharges de la demonstration admin.
 ///
 /// Une seule [EtatRevueDemo] partagee par les doubles : une bascule de
 /// politique se voit dans la file. Leve une [StateError] en production.
+/// [avecAlertes] (ALERTE-1) : la visite montre des alertes fictives, une
+/// urgente en tete ; [arriveeAlerte] : le delai avant qu'une seconde alerte
+/// urgente arrive en cours de visite, sans recharger. Sans [avecAlertes]
+/// (defaut, tests des autres ecrans), la source des alertes reste celle de
+/// la production : indisponible, ni cloche ni bandeau.
 List<Override> surchargesDemoAdmin({
   String? environnement,
   EtatRevueDemo? etat,
+  bool avecAlertes = false,
+  Duration? arriveeAlerte,
 }) {
   if (!environnementAutoriseDemo(environnement ?? Env.environnement)) {
     throw StateError('Demonstration interdite en production.');
@@ -241,6 +266,22 @@ List<Override> surchargesDemoAdmin({
     activiteRecenteProvider.overrideWith(
       (Ref ref) async => activiteRecenteDemo(e.maintenant.toLocal()),
     ),
+    // CARTES-PERSO-1c (revue CARTES-PERSO-1b, reserve 2) : la direction lit
+    // les memes cartes de demonstration que l'enseignant et le tuteur, en
+    // lecture seule. Le retrait par la direction est une ecriture serveur
+    // (CARTES-BR-02) : la capacite reste fausse, aucune ecriture simulee.
+    portCartesClasseProvider.overrideWith(
+      (Ref _) => PortCartesClasseDemo(
+        peutModifier: false,
+        cartes: cartesClasseDemo(DateTime.now()),
+      ),
+    ),
+    // ALERTE-1 : alertes fictives, une urgente en tete ; une seconde urgente
+    // arrive en cours de visite, sans recharger (temps reel simule).
+    if (avecAlertes)
+      portAlertesProvider.overrideWithValue(
+        AlertesDemo(arrivee: arriveeAlerte),
+      ),
     // Tous les autres services admin adosses a Supabase : « indisponible ».
     ...surchargesServicesAdminIndisponibles(),
   ];

@@ -122,20 +122,17 @@ void main() {
     expect(find.byKey(EditeurPhotoPublique.apercuKey), findsOneWidget);
   });
 
-  testWidgets(
-    'le raccourci de la photo n\'ajoute ni arret de focus ni bouton '
-    'annonce : le lien reste le seul controle',
-    (WidgetTester tester) async {
-      await _monter(tester, taille: const Size(390, 800));
-      final SemanticsHandle poignee = tester.ensureSemantics();
-      expect(
-        find.bySemanticsLabel(t.enseignant.photo.choisir),
-        findsOneWidget,
-        reason: 'un seul controle porte ce nom',
-      );
-      poignee.dispose();
-    },
-  );
+  testWidgets('le raccourci de la photo n\'ajoute ni arret de focus ni bouton '
+      'annonce : le lien reste le seul controle', (WidgetTester tester) async {
+    await _monter(tester, taille: const Size(390, 800));
+    final SemanticsHandle poignee = tester.ensureSemantics();
+    expect(
+      find.bySemanticsLabel(t.enseignant.photo.choisir),
+      findsOneWidget,
+      reason: 'un seul controle porte ce nom',
+    );
+    poignee.dispose();
+  });
 
   testWidgets('apercu : un seul bouton plein, « autre photo » est un lien', (
     WidgetTester tester,

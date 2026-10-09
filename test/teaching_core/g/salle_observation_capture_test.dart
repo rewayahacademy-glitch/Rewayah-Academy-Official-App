@@ -86,6 +86,7 @@ Future<FauxMoteurClasse> _monterSalle(
   double echelleTexte = 1,
   bool sansImage = false,
   TextDirection? sens,
+  InterfaceMode interface = InterfaceMode.standard,
 }) async {
   final FauxPortPolitique politique = FauxPortPolitique();
   addTearDown(politique.fermer);
@@ -128,8 +129,8 @@ Future<FauxMoteurClasse> _monterSalle(
           child: Builder(
             builder: (BuildContext context) => MaterialApp.router(
               debugShowCheckedModeBanner: false,
-              theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
-              darkTheme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+              theme: AppTheme.pour(interface, Brightness.light),
+              darkTheme: AppTheme.pour(interface, Brightness.dark),
               themeMode: mode,
               locale: TranslationProvider.of(context).flutterLocale,
               supportedLocales: AppLocaleUtils.supportedLocales,
@@ -205,6 +206,26 @@ Future<(int, int)> _taillePx(WidgetTester tester, String chemin) async {
 
 Future<void> _capturer(WidgetTester tester, String nom) async =>
     debugPrint('PNG ${await capturer(tester, nom)}');
+
+/// PAGESHELL-200-1b : fait defiler la page de la salle tout en haut, ou
+/// tout au bout (la barre). Sans defileur de page (tete fixe), ne fait rien.
+Future<void> _defilerPage(WidgetTester tester, {required bool bout}) async {
+  final List<ScrollableState> page = tester
+      .stateList<ScrollableState>(
+        find.ancestor(
+          of: find.byType(BarreCommandesObservation),
+          matching: find.byType(Scrollable),
+        ),
+      )
+      .where((ScrollableState d) => d.position.axis == Axis.vertical)
+      .toList();
+  if (page.isEmpty) {
+    return;
+  }
+  final ScrollPosition position = page.last.position;
+  position.jumpTo(bout ? position.maxScrollExtent : 0);
+  await stabiliser(tester);
+}
 
 Future<void> _presser(WidgetTester tester, String texte) async {
   await tester.tap(find.text(texte));
@@ -437,6 +458,465 @@ void main() {
       await _monterSalle(tester, echelleTexte: 2);
       await _capturer(tester, 'o2_large_texte200_768x900@1_light');
     });
+
+    // PAGESHELL-200-1b : a 200 % sous une tete qui defile, le corps recoit
+    // max(minimum utile, vue - tete). Portrait a hauteur atypique et
+    // telephone en paysage sous les barres d'Android : en haut de la page,
+    // le bandeau ; au bout, la barre entiere dans la zone sure. Sombre, 1440
+    // et Interface guidee en non-regression.
+    for (final (String, Size, EdgeInsets, ThemeMode, InterfaceMode) cas
+        in const <(String, Size, EdgeInsets, ThemeMode, InterfaceMode)>[
+          (
+            '320x568',
+            Size(320, 568),
+            _zoneSure,
+            ThemeMode.light,
+            InterfaceMode.standard,
+          ),
+          (
+            '320x568',
+            Size(320, 568),
+            _zoneSure,
+            ThemeMode.dark,
+            InterfaceMode.standard,
+          ),
+          (
+            '320x480',
+            Size(320, 480),
+            EdgeInsets.only(top: 20),
+            ThemeMode.light,
+            InterfaceMode.standard,
+          ),
+          (
+            '800x360',
+            Size(800, 360),
+            EdgeInsets.only(top: 24, bottom: 48),
+            ThemeMode.light,
+            InterfaceMode.standard,
+          ),
+          (
+            '800x360',
+            Size(800, 360),
+            EdgeInsets.only(top: 24, bottom: 48),
+            ThemeMode.dark,
+            InterfaceMode.standard,
+          ),
+          (
+            '320x568',
+            Size(320, 568),
+            _zoneSure,
+            ThemeMode.light,
+            InterfaceMode.enfant,
+          ),
+          (
+            '320x844',
+            Size(320, 844),
+            _zoneSure,
+            ThemeMode.light,
+            InterfaceMode.enfant,
+          ),
+          (
+            '390x844',
+            Size(390, 844),
+            _zoneSure,
+            ThemeMode.light,
+            InterfaceMode.enfant,
+          ),
+          (
+            '1440x900',
+            Size(1440, 900),
+            EdgeInsets.zero,
+            ThemeMode.light,
+            InterfaceMode.standard,
+          ),
+          (
+            '1440x900',
+            Size(1440, 900),
+            EdgeInsets.zero,
+            ThemeMode.dark,
+            InterfaceMode.standard,
+          ),
+        ]) {
+      final double densite = cas.$2.width >= 1440 ? 1 : 2;
+      final String guidee = cas.$5 == InterfaceMode.enfant ? '_guidee' : '';
+      for (final bool bout in <bool>[false, true]) {
+        final String nom =
+            'pageshell200_1b_${cas.$1}@${densite.toInt()}_texte200_'
+            '${cas.$4.name}${guidee}_${bout ? 'bout' : 'haut'}';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(tester, cas.$2, densite, zoneSure: cas.$3);
+          await _monterSalle(
+            tester,
+            echelleTexte: 2,
+            mode: cas.$4,
+            interface: cas.$5,
+          );
+          await _defilerPage(tester, bout: bout);
+          await _capturer(tester, nom);
+        });
+      }
+    }
+
+    // PAGESHELL-200-1c : le minimum utile du corps garde le support visible.
+    // Quand la page defile, la zone du support montre l'en-tete (pastille du
+    // direct comprise) et le support entiers : en haut, au support, au bout
+    // (la barre). 667x375 sans zone sure a 200 % : la page passe en
+    // defilement global au lieu de deborder (standard et Interface guidee).
+    // RTL pour l'en-tete en `Wrap`.
+    // Reprise apres revue adverse : les vues ou la salle « tenait » en
+    // ecrasant le support (390x844 et 414x896 en Interface guidee a 200 %,
+    // 360x800 a 200 %, 390x844 en Interface guidee a 100 %) et le paysage a
+    // 100 % (667x375, standard et Interface guidee) defilent maintenant avec
+    // le support entier ; 320x568 a 100 % montre le bandeau sans debordement.
+    for (final (
+          String,
+          Size,
+          EdgeInsets,
+          ThemeMode,
+          InterfaceMode,
+          bool,
+          double,
+        )
+        cas
+        in const <
+          (String, Size, EdgeInsets, ThemeMode, InterfaceMode, bool, double)
+        >[
+          (
+            '320x568',
+            Size(320, 568),
+            _zoneSure,
+            ThemeMode.light,
+            InterfaceMode.standard,
+            false,
+            2,
+          ),
+          (
+            '320x568',
+            Size(320, 568),
+            _zoneSure,
+            ThemeMode.dark,
+            InterfaceMode.standard,
+            false,
+            2,
+          ),
+          (
+            '320x568',
+            Size(320, 568),
+            _zoneSure,
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            false,
+            2,
+          ),
+          (
+            '320x568',
+            Size(320, 568),
+            _zoneSure,
+            ThemeMode.light,
+            InterfaceMode.standard,
+            true,
+            2,
+          ),
+          (
+            '320x568',
+            Size(320, 568),
+            _zoneSure,
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            true,
+            2,
+          ),
+          (
+            '800x360',
+            Size(800, 360),
+            EdgeInsets.only(top: 24, bottom: 48),
+            ThemeMode.light,
+            InterfaceMode.standard,
+            false,
+            2,
+          ),
+          (
+            '800x360',
+            Size(800, 360),
+            EdgeInsets.only(top: 24, bottom: 48),
+            ThemeMode.dark,
+            InterfaceMode.standard,
+            false,
+            2,
+          ),
+          (
+            '800x360',
+            Size(800, 360),
+            EdgeInsets.only(top: 24, bottom: 48),
+            ThemeMode.light,
+            InterfaceMode.standard,
+            true,
+            2,
+          ),
+          (
+            '667x375',
+            Size(667, 375),
+            EdgeInsets.zero,
+            ThemeMode.light,
+            InterfaceMode.standard,
+            false,
+            2,
+          ),
+          (
+            '667x375',
+            Size(667, 375),
+            EdgeInsets.zero,
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            false,
+            2,
+          ),
+          (
+            '667x375',
+            Size(667, 375),
+            EdgeInsets.zero,
+            ThemeMode.dark,
+            InterfaceMode.enfant,
+            true,
+            2,
+          ),
+          (
+            '360x640',
+            Size(360, 640),
+            EdgeInsets.only(top: 24, bottom: 48),
+            ThemeMode.light,
+            InterfaceMode.standard,
+            false,
+            2,
+          ),
+          (
+            '667x375',
+            Size(667, 375),
+            EdgeInsets.zero,
+            ThemeMode.light,
+            InterfaceMode.standard,
+            false,
+            1,
+          ),
+          (
+            '667x375',
+            Size(667, 375),
+            EdgeInsets.zero,
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            false,
+            1,
+          ),
+          (
+            '667x375',
+            Size(667, 375),
+            EdgeInsets.zero,
+            ThemeMode.dark,
+            InterfaceMode.enfant,
+            true,
+            1,
+          ),
+          (
+            '390x844',
+            Size(390, 844),
+            EdgeInsets.zero,
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            false,
+            2,
+          ),
+          (
+            '390x844',
+            Size(390, 844),
+            EdgeInsets.zero,
+            ThemeMode.dark,
+            InterfaceMode.enfant,
+            true,
+            2,
+          ),
+          (
+            '414x896',
+            Size(414, 896),
+            EdgeInsets.zero,
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            false,
+            2,
+          ),
+          (
+            '360x800',
+            Size(360, 800),
+            EdgeInsets.zero,
+            ThemeMode.light,
+            InterfaceMode.standard,
+            false,
+            2,
+          ),
+          (
+            '390x844',
+            Size(390, 844),
+            EdgeInsets.zero,
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            false,
+            1,
+          ),
+          (
+            '320x568',
+            Size(320, 568),
+            _zoneSure,
+            ThemeMode.light,
+            InterfaceMode.standard,
+            false,
+            1,
+          ),
+          (
+            '320x568',
+            Size(320, 568),
+            _zoneSure,
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            true,
+            1,
+          ),
+        ]) {
+      final String guidee = cas.$5 == InterfaceMode.enfant ? '_guidee' : '';
+      final String rtl = cas.$6 ? '_rtl' : '';
+      final String texte = 'texte${(cas.$7 * 100).toInt()}';
+      for (final String ou in <String>['haut', 'support', 'bout']) {
+        final String nom =
+            'pageshell200_1c_${cas.$1}@2_${texte}_'
+            '${cas.$4.name}$guidee${rtl}_$ou';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(tester, cas.$2, 2, zoneSure: cas.$3);
+          await _monterSalle(
+            tester,
+            echelleTexte: cas.$7,
+            mode: cas.$4,
+            interface: cas.$5,
+            sens: cas.$6 ? TextDirection.rtl : null,
+          );
+          if (ou == 'support') {
+            await _defilerPage(tester, bout: false);
+            await tester.ensureVisible(
+              find.byKey(const ValueKey<String>('support-observation')),
+            );
+            await stabiliser(tester);
+          } else {
+            await _defilerPage(tester, bout: ou == 'bout');
+          }
+          await _capturer(tester, nom);
+        });
+      }
+    }
+
+    // PAGESHELL-200-1d : sur telephone, les vignettes defilent avec la page
+    // (au bout : support, vignettes, barre) ; captures standard a 100 %
+    // demandees par la revue (1440 et 390x844), et 320x568 a 100 %.
+    for (final (String, Size, double, ThemeMode, InterfaceMode, bool, double)
+        cas
+        in const <
+          (String, Size, double, ThemeMode, InterfaceMode, bool, double)
+        >[
+          (
+            '1440x900',
+            Size(1440, 900),
+            1,
+            ThemeMode.light,
+            InterfaceMode.standard,
+            false,
+            1,
+          ),
+          (
+            '1440x900',
+            Size(1440, 900),
+            1,
+            ThemeMode.dark,
+            InterfaceMode.standard,
+            false,
+            1,
+          ),
+          (
+            '390x844',
+            Size(390, 844),
+            2,
+            ThemeMode.light,
+            InterfaceMode.standard,
+            false,
+            1,
+          ),
+          (
+            '390x844',
+            Size(390, 844),
+            2,
+            ThemeMode.dark,
+            InterfaceMode.standard,
+            true,
+            1,
+          ),
+          (
+            '320x568',
+            Size(320, 568),
+            2,
+            ThemeMode.light,
+            InterfaceMode.standard,
+            false,
+            1,
+          ),
+          (
+            '320x568',
+            Size(320, 568),
+            2,
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            true,
+            1,
+          ),
+          (
+            '390x844',
+            Size(390, 844),
+            2,
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            false,
+            2,
+          ),
+          (
+            '320x568',
+            Size(320, 568),
+            2,
+            ThemeMode.dark,
+            InterfaceMode.standard,
+            true,
+            2,
+          ),
+        ]) {
+      final String guidee = cas.$5 == InterfaceMode.enfant ? '_guidee' : '';
+      final String rtl = cas.$6 ? '_rtl' : '';
+      final String texte = 'texte${(cas.$7 * 100).toInt()}';
+      for (final String ou in <String>['haut', 'bout']) {
+        final String nom =
+            'pageshell200_1d_${cas.$1}@${cas.$3.toInt()}_${texte}_'
+            '${cas.$4.name}$guidee${rtl}_$ou';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(
+            tester,
+            cas.$2,
+            cas.$3,
+            zoneSure: cas.$2.width < 600 ? _zoneSure : EdgeInsets.zero,
+          );
+          await _monterSalle(
+            tester,
+            echelleTexte: cas.$7,
+            mode: cas.$4,
+            interface: cas.$5,
+            sens: cas.$6 ? TextDirection.rtl : null,
+          );
+          await _defilerPage(tester, bout: ou == 'bout');
+          await _capturer(tester, nom);
+        });
+      }
+    }
 
     // PAGESHELL-200-1 (reserve 2) : la barre large seule, la ou l'ancienne
     // coupait « Quitter » (440 px de barre, texte a 300 %).

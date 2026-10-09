@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/admin/service_comptes.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/identifiant_insecable.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/filter_pill.dart';
@@ -105,7 +106,10 @@ void main() {
       // secondaires par un point median, donc l'identifiant vit dans une
       // chaine composee.
       expect(find.textContaining('Aicha Sow'), findsWidgets);
-      expect(find.textContaining('TEACHER-AS-000001'), findsWidgets);
+      expect(
+        find.textContaining(identifiantInsecable('TEACHER-AS-000001')),
+        findsWidgets,
+      );
       // Et l'ecran nomme ce qui manque, au lieu de laisser une case vide.
       expect(find.textContaining('Aucune pièce déposée'), findsWidgets);
     },
@@ -175,7 +179,10 @@ void main() {
       expect(find.text('2 personnes attendent une décision.'), findsOneWidget);
       expect(find.text('3 personnes attendent une décision.'), findsNothing);
       // Le tuteur reste visible, avec « Sans objet » pour la piece.
-      expect(find.textContaining('GUARDIAN-SR-000003'), findsWidgets);
+      expect(
+        find.textContaining(identifiantInsecable('GUARDIAN-SR-000003')),
+        findsWidgets,
+      );
       expect(find.textContaining('Sans objet'), findsOneWidget);
       // L'enseignant garde son manque de piece affiche.
       expect(find.textContaining('Aucune pièce déposée'), findsWidgets);
@@ -245,10 +252,18 @@ void main() {
 
       expect(tester.takeException(), isNull);
       final double enseignant = tester
-          .getTopLeft(find.textContaining('TEACHER-AS-000001').first)
+          .getTopLeft(
+            find
+                .textContaining(identifiantInsecable('TEACHER-AS-000001'))
+                .first,
+          )
           .dy;
       final double tuteur = tester
-          .getTopLeft(find.textContaining('GUARDIAN-SR-000003').first)
+          .getTopLeft(
+            find
+                .textContaining(identifiantInsecable('GUARDIAN-SR-000003'))
+                .first,
+          )
           .dy;
       expect(enseignant, lessThan(tuteur));
     },
@@ -368,9 +383,18 @@ void main() {
     // Retenue, la pastille montre exactement ces deux enseignants.
     await tester.tap(pastille);
     await tester.pumpAndSettle();
-    expect(find.textContaining('TEACHER-AS-000001'), findsWidgets);
-    expect(find.textContaining('TEACHER-AS-000002'), findsWidgets);
-    expect(find.textContaining('GUARDIAN-MS-000003'), findsNothing);
+    expect(
+      find.textContaining(identifiantInsecable('TEACHER-AS-000001')),
+      findsWidgets,
+    );
+    expect(
+      find.textContaining(identifiantInsecable('TEACHER-AS-000002')),
+      findsWidgets,
+    );
+    expect(
+      find.textContaining(identifiantInsecable('GUARDIAN-MS-000003')),
+      findsNothing,
+    );
     expect(find.textContaining('UNKNOWN-XX-000001'), findsNothing);
   });
 
@@ -430,9 +454,18 @@ void main() {
     // Retenue, « Sans décision » montre les deux tuteurs, avec ce badge.
     await tester.tap(find.byWidget(sansDecision));
     await tester.pumpAndSettle();
-    expect(find.textContaining('GUARDIAN-MS-000003'), findsWidgets);
-    expect(find.textContaining('GUARDIAN-YB-000004'), findsWidgets);
-    expect(find.textContaining('TEACHER-AS-000001'), findsNothing);
+    expect(
+      find.textContaining(identifiantInsecable('GUARDIAN-MS-000003')),
+      findsWidgets,
+    );
+    expect(
+      find.textContaining(identifiantInsecable('GUARDIAN-YB-000004')),
+      findsWidgets,
+    );
+    expect(
+      find.textContaining(identifiantInsecable('TEACHER-AS-000001')),
+      findsNothing,
+    );
     // La pastille, puis le badge (ou la ligne resumee) de chaque tuteur.
     expect(
       find.textContaining('Sans décision', findRichText: true),
@@ -515,7 +548,10 @@ void main() {
     // « En attente » ne contient qu'un enseignant.
     await tester.tap(find.text('En attente'));
     await tester.pumpAndSettle();
-    expect(find.textContaining('TEACHER-AS-000001'), findsWidgets);
+    expect(
+      find.textContaining(identifiantInsecable('TEACHER-AS-000001')),
+      findsWidgets,
+    );
 
     // Croise avec le role tuteur, il ne reste rien. Le menu se cible par son
     // type : « Rôle » nomme aussi une colonne du tableau.
