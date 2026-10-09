@@ -184,7 +184,7 @@ void main() {
   tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
 
   group('Le nom de l enseignante An-Nour', () {
-    test('fr : « Sayyida Mariam », celui de la Classe et de l annonce', () {
+    test('fr : « Sayyida Mariam », celui de la Classe et de l annonce', () {
       LocaleSettings.setLocaleSync(AppLocale.fr);
       final Participant p = _enseignanteNour();
       expect(p.nomAffiche, 'Sayyida Mariam');
@@ -193,13 +193,13 @@ void main() {
         expect(
           _textesVisibles(r).where((String s) => s.contains('Mme ')),
           isEmpty,
-          reason: '${r.name} : plus de « Mme Mariam »',
+          reason: '${r.name} : plus de « Mme Mariam »',
         );
       }
       expect(t.com.vocal.demo.auteurEnseignante, startsWith('Sayyida Mariam'));
     });
 
-    test('ar : « سيدة مريم », comme la page de la Classe', () async {
+    test('ar : « سيدة مريم », comme la page de la Classe', () async {
       await LocaleSettings.setLocale(AppLocale.ar);
       final Participant p = _enseignanteNour();
       expect(p.nomAffiche, 'سيدة مريم');
@@ -209,7 +209,7 @@ void main() {
   });
 
   group('Les donnees de demonstration suivent la langue', () {
-    test('fr : les textes francais d origine', () {
+    test('fr : les textes francais d origine', () {
       LocaleSettings.setLocaleSync(AppLocale.fr);
       final List<String> textes = _textesVisibles(
         RoleDemoCommunications.tuteur,
@@ -219,14 +219,14 @@ void main() {
       expect(textes, contains("Parent d'Adam"));
     });
 
-    test('ar : aucun mot francais, pour chaque role', () async {
+    test('ar : aucun mot francais, pour chaque role', () async {
       await LocaleSettings.setLocale(AppLocale.ar);
       for (final RoleDemoCommunications r in RoleDemoCommunications.values) {
         for (final String s in _textesVisibles(r)) {
           expect(
             _latin.hasMatch(s),
             isFalse,
-            reason: '${r.name} : « $s » est en francais dans l arabe',
+            reason: '${r.name} : « $s » est en francais dans l arabe',
           );
         }
       }
@@ -236,7 +236,7 @@ void main() {
       );
     });
 
-    test('ar : l apercu de la liste est en arabe', () async {
+    test('ar : l apercu de la liste est en arabe', () async {
       await LocaleSettings.setLocale(AppLocale.ar);
       final List<ResumeFil> fils = await MessagesMetierDemo(
         role: RoleDemoCommunications.tuteur,
@@ -277,7 +277,7 @@ void main() {
       );
     }
 
-    testWidgets('texte x1,5 (plafond de la ligne) : un paragraphe entier', (
+    testWidgets('texte x1,5 (plafond de la ligne) : un paragraphe entier', (
       WidgetTester tester,
     ) async {
       // 176 : la largeur de la ligne a 320, entre retour et (i).
@@ -299,7 +299,7 @@ void main() {
       );
     });
 
-    testWidgets('texte x1 : noms puis objets, en deux blocs', (
+    testWidgets('texte x1 : noms puis objets, en deux blocs', (
       WidgetTester tester,
     ) async {
       await monter(tester, 1);
@@ -312,12 +312,12 @@ void main() {
   });
 
   group('Studio et Communaute suivent la langue (captures 390_rtl_clair)', () {
-    test('fr : les textes francais d origine', () {
+    test('fr : les textes francais d origine', () {
       LocaleSettings.setLocaleSync(AppLocale.fr);
       expect(_textesStudio(), contains('Organisation générale'));
       expect(_textesStudio(), contains('Merci à tous pour la semaine.'));
       expect(_textesStudio(), contains('Budget confidentiel du trimestre'));
-      expect(_textesCommunaute(), contains('Idées pour la mémorisation ?'));
+      expect(_textesCommunaute(), contains('Idées pour la mémorisation ?'));
       expect(_textesCommunaute(), contains('Samira Belkacem'));
       expect(DonneesCommunauteDemo.soi.nomAffiche, 'Sayyid Ibrahim');
       expect(
@@ -326,25 +326,25 @@ void main() {
       );
     });
 
-    test('ar : aucun mot francais dans le Studio', () async {
+    test('ar : aucun mot francais dans le Studio', () async {
       await LocaleSettings.setLocale(AppLocale.ar);
       for (final String s in _textesStudio()) {
         expect(
           _latin.hasMatch(_sansTechnique(s)),
           isFalse,
-          reason: '« $s » est en francais dans l arabe',
+          reason: '« $s » est en francais dans l arabe',
         );
       }
       expect(_textesStudio(), contains('التنظيم العام'));
     });
 
-    test('ar : aucun mot francais dans la Communaute', () async {
+    test('ar : aucun mot francais dans la Communaute', () async {
       await LocaleSettings.setLocale(AppLocale.ar);
       for (final String s in _textesCommunaute()) {
         expect(
           _latin.hasMatch(_sansTechnique(s)),
           isFalse,
-          reason: '« $s » est en francais dans l arabe',
+          reason: '« $s » est en francais dans l arabe',
         );
       }
       // Le garde reconnait ses brouillons marques dans la langue courante.
@@ -363,7 +363,7 @@ void main() {
           ),
         );
 
-    testWidgets('deux initiales arabes restent isolees (pas « سم »)', (
+    testWidgets('deux initiales arabes restent isolees (pas « سم »)', (
       WidgetTester tester,
     ) async {
       await monter(tester, 'سيدة مريم');
@@ -377,7 +377,7 @@ void main() {
     });
   });
 
-  group('ar : les guillemets se lisent tournes vers l exterieur', () {
+  group('ar : les guillemets se lisent tournes vers l exterieur', () {
     // Les chaines arabes stockent les guillemets dans l'ORDRE LOGIQUE
     // (« ouvre, » ferme), comme tout texte Unicode : c'est ce que recoivent
     // le lecteur d'ecran, le copier-coller et la recherche. Au rendu, dans
@@ -416,7 +416,10 @@ void main() {
 
       parcourir(lireAr());
       expect(visuels, isEmpty);
-      expect(cites, hasLength(6));
+      // Six chaines citantes sur la ligne Communications ; la jonction
+      // (JONCTION-LIGNES-1) en ajoute d'autres (Comptable, cartes de la
+      // classe) : toutes en ordre logique, aucune ne doit manquer.
+      expect(cites.length, greaterThanOrEqualTo(6));
       // Pas d'espace a l'interieur des guillemets arabes.
       expect(
         cites.where((String c) => RegExp(r'«\s|\s»').hasMatch(c)),
@@ -455,7 +458,7 @@ void main() {
       ];
     }
 
-    testWidgets('rendu mesure : l ouvrant a droite pointe a droite, le '
+    testWidgets('rendu mesure : l ouvrant a droite pointe a droite, le '
         'fermant a gauche pointe a gauche', (WidgetTester tester) async {
       final List<String> textes = citations();
       tester.view.physicalSize = const Size(1600, 200);
@@ -467,22 +470,22 @@ void main() {
         expect(
           ouvrant.$1.left,
           greaterThan(fermant.$1.right),
-          reason: '« doit etre a droite de » dans une ligne arabe : $texte',
+          reason: '« doit etre a droite de » dans une ligne arabe : $texte',
         );
         expect(
           ouvrant.$2,
           isFalse,
-          reason: '« a droite du titre doit pointer a droite : $texte',
+          reason: '« a droite du titre doit pointer a droite : $texte',
         );
         expect(
           fermant.$2,
           isTrue,
-          reason: '» a gauche du titre doit pointer a gauche : $texte',
+          reason: '» a gauche du titre doit pointer a gauche : $texte',
         );
       }
     });
 
-    testWidgets('contre-preuve : l ordre visuel est dessine vers l interieur', (
+    testWidgets('contre-preuve : l ordre visuel est dessine vers l interieur', (
       WidgetTester tester,
     ) async {
       tester.view.physicalSize = const Size(1600, 200);
@@ -503,7 +506,7 @@ void main() {
     });
   });
 
-  testWidgets('liste des fils : « Classe An-Nour » ne se coupe plus au '
+  testWidgets('liste des fils : « Classe An-Nour » ne se coupe plus au '
       'trait d union (capture com_admin_messages_1440)', (
     WidgetTester tester,
   ) async {
@@ -543,7 +546,7 @@ void main() {
     expect(
       ligneDe(nour - 3),
       ligneDe(nour + 1),
-      reason: '« An- » et « Nour » sur la meme ligne',
+      reason: '« An- » et « Nour » sur la meme ligne',
     );
     expect(texte, contains('An\u2011Nour'));
   });

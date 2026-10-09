@@ -103,7 +103,7 @@ void main() {
       expect(libelleTypeObjet(TypeObjetLie.annonce), 'Autre sujet');
     });
 
-    test('le moment : l heure du jour, sinon le jour et le mois', () {
+    test('le moment : l heure du jour, sinon le jour et le mois', () {
       final DateTime ici = DateTime(2026, 10, 4, 15);
       expect(momentCourt(DateTime(2026, 10, 4, 9, 5), ici), '09:05');
       expect(momentCourt(DateTime(2026, 9, 12, 9, 5), ici), '12 septembre');
@@ -132,7 +132,7 @@ void main() {
         ],
       );
       final String texte = texteDuMessage(m);
-      expect(texte, 'Voici\nPièce jointe : Devoir.pdf\nMessage vocal de 1:05');
+      expect(texte, 'Voici\nPièce jointe : Devoir.pdf\nMessage vocal de 1:05');
       expect(texte.contains('ref-secrete'), isFalse);
     });
 
@@ -191,7 +191,7 @@ void main() {
       );
     });
 
-    test('chaque role : un seul « soi », jamais deux familles dans un fil, '
+    test('chaque role : un seul « soi », jamais deux familles dans un fil, '
         'jamais une coordonnee, toujours un objet de fil metier', () {
       for (final RoleDemoCommunications role in RoleDemoCommunications.values) {
         for (final FilMetier f in fixturesMessagesDemo(role, maintenantTest)) {
@@ -207,7 +207,7 @@ void main() {
                 )
                 .length,
             lessThanOrEqualTo(1),
-            reason: 'Famille A / Famille B : jamais (${f.id})',
+            reason: 'Famille A / Famille B : jamais (${f.id})',
           );
           expect(typesObjetsFilMetier.contains(f.objet.type), isTrue);
           for (final MessageCommunication m in f.messages) {
@@ -265,7 +265,7 @@ void main() {
       );
     });
 
-    test('echec puis succes sur la meme cle ; hors ligne, jamais', () async {
+    test('echec puis succes sur la meme cle ; hors ligne, jamais', () async {
       final MessagesMetierDemo echec = portDemo(
         RoleDemoCommunications.enseignant,
         situation: SituationDemoMessages.echecEnvoi,
@@ -325,7 +325,7 @@ void main() {
       expect(routesDemoCommunications('production'), isEmpty);
     });
 
-    testWidgets('sans role : le choix du point de vue et des situations', (
+    testWidgets('sans role : le choix du point de vue et des situations', (
       WidgetTester tester,
     ) async {
       final GoRouter routeur = await monterDemo(
@@ -351,7 +351,7 @@ void main() {
       expect(find.byKey(ListeFils.cleLigne('fil-adam')), findsNothing);
     });
 
-    testWidgets('situation « fil refuse » : rien de l autre famille', (
+    testWidgets('situation « fil refuse » : rien de l autre famille', (
       WidgetTester tester,
     ) async {
       await monterDemo(
@@ -368,7 +368,7 @@ void main() {
       expect(find.byType(FilDiscussion), findsNothing);
     });
 
-    testWidgets('direction : le fil famille et le fil de mission, l ouvrir '
+    testWidgets('direction : le fil famille et le fil de mission, l ouvrir '
         'montre son contexte', (WidgetTester tester) async {
       await monterDemo(
         tester,

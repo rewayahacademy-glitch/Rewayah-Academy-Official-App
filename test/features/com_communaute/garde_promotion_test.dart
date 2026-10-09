@@ -62,10 +62,10 @@ void _jamaisVerifie() {
 void main() {
   final g = t.com.communaute.garde;
 
-  group('R-COM-06 : lien affilie bloque', () {
+  group('R-COM-06 : lien affilie bloque', () {
     for (final Size taille in <Size>[_telephone, _tablette, _bureau]) {
-      testWidgets('${taille.width.toInt()} : le garde bloque avec le texte '
-          'canonique, le motif et l etat du lien ; rien ne part', (
+      testWidgets('${taille.width.toInt()} : le garde bloque avec le texte '
+          'canonique, le motif et l etat du lien ; rien ne part', (
         WidgetTester tester,
       ) async {
         final GardePromotionFixtures garde = DonneesCommunauteDemo.garde();
@@ -88,7 +88,7 @@ void main() {
           findsOneWidget,
         );
         expect(find.text(g.titreBlocage), findsOneWidget);
-        expect(find.text('Motif : Lien affilié'), findsOneWidget);
+        expect(find.text('Motif : Lien affilié'), findsOneWidget);
         expect(find.text(g.consigneBlocage), findsOneWidget);
         expect(
           find.byKey(LigneEtatLien.cle(DonneesCommunauteDemo.lienAffilieDemo)),
@@ -113,7 +113,7 @@ void main() {
       });
     }
 
-    testWidgets('« Publier » a nouveau sans rien changer : toujours bloque', (
+    testWidgets('« Publier » a nouveau sans rien changer : toujours bloque', (
       WidgetTester tester,
     ) async {
       final GardePromotionFixtures garde = DonneesCommunauteDemo.garde();
@@ -129,7 +129,7 @@ void main() {
       await demonter(tester);
     });
 
-    testWidgets('le texte modifie apres un blocage : le verdict perime '
+    testWidgets('le texte modifie apres un blocage : le verdict perime '
         'disparait aussitot, sans rien envoyer', (WidgetTester tester) async {
       final GardePromotionFixtures garde = DonneesCommunauteDemo.garde();
       final BancCommunaute banc = await monterCommunaute(
@@ -162,7 +162,7 @@ void main() {
       await demonter(tester);
     });
 
-    testWidgets('une autre categorie apres un blocage : le verdict perime '
+    testWidgets('une autre categorie apres un blocage : le verdict perime '
         'disparait aussi', (WidgetTester tester) async {
       final GardePromotionFixtures garde = DonneesCommunauteDemo.garde();
       await monterCommunaute(tester, autres: _avecGarde(garde));
@@ -177,7 +177,7 @@ void main() {
       await demonter(tester);
     });
 
-    testWidgets('le lien retire, la publication repart : elle est confirmee '
+    testWidgets('le lien retire, la publication repart : elle est confirmee '
         'et le verdict disparait', (WidgetTester tester) async {
       final GardePromotionFixtures garde = DonneesCommunauteDemo.garde();
       final BancCommunaute banc = await monterCommunaute(
@@ -203,9 +203,9 @@ void main() {
     });
   });
 
-  group('R-COM-05 : publicite retenue', () {
-    testWidgets('le composer affiche le motif et l avertissement exact ; '
-        'aucun faux succes ; les etats de lien', (WidgetTester tester) async {
+  group('R-COM-05 : publicite retenue', () {
+    testWidgets('le composer affiche le motif et l avertissement exact ; '
+        'aucun faux succes ; les etats de lien', (WidgetTester tester) async {
       final BancCommunaute banc = await monterCommunaute(
         tester,
         taille: _bureau,
@@ -223,7 +223,7 @@ void main() {
         findsOneWidget,
       );
       expect(find.byKey(GardePromotion.cleMotif), findsOneWidget);
-      expect(find.text('Motif : Publicité'), findsOneWidget);
+      expect(find.text('Motif : Publicité'), findsOneWidget);
       expect(find.text(g.titreAvertissement), findsOneWidget);
       // Trois liens, trois etats, chacun avec son mot.
       for (final (String adresse, String etat) in <(String, String)>[
@@ -272,7 +272,7 @@ void main() {
         ),
         findsOneWidget,
       );
-      expect(find.text('Motif : Vente non autorisée'), findsOneWidget);
+      expect(find.text('Motif : Vente non autorisée'), findsOneWidget);
       expect(find.text(g.liensTitre), findsNothing);
       expect(banc.memoire.publicationsAcceptees, 0);
       await demonter(tester);
@@ -280,8 +280,8 @@ void main() {
   });
 
   group('aide et garde sans verdict', () {
-    testWidgets('le composer rappelle la politique : textes exacts de l aide '
-        'et « Voir les regles »', (WidgetTester tester) async {
+    testWidgets('le composer rappelle la politique : textes exacts de l aide '
+        'et « Voir les regles »', (WidgetTester tester) async {
       await monterCommunaute(tester);
       await taper(tester, find.byKey(EntreeNouvellePublication.cle));
       final Finder aide = find.byKey(GardePromotion.cleAide);
@@ -323,8 +323,8 @@ void main() {
       await demonter(tester);
     });
 
-    testWidgets('garde sans contrat (port neutre, COM-BR-07) : aucun verdict '
-        'invente, aucun « Verifie » ; la publication part au serveur', (
+    testWidgets('garde sans contrat (port neutre, COM-BR-07) : aucun verdict '
+        'invente, aucun « Verifie » ; la publication part au serveur', (
       WidgetTester tester,
     ) async {
       // Le banc ne surcharge pas le garde : c'est celui de la production.
@@ -338,8 +338,8 @@ void main() {
       await demonter(tester);
     });
 
-    testWidgets('garde en panne (revue COM-R, R-17) : la publication est '
-        'retenue, « Réessayer » relance le garde', (WidgetTester tester) async {
+    testWidgets('garde en panne (revue COM-R, R-17) : la publication est '
+        'retenue, « Réessayer » relance le garde', (WidgetTester tester) async {
       // Contre-preuve : avant R-17, toute erreur du garde laissait partir la
       // publication (`publicationsAcceptees` valait 1).
       final GardePromotionFixtures garde = DonneesCommunauteDemo.garde()
@@ -367,7 +367,7 @@ void main() {
   });
 
   group('rendu', () {
-    testWidgets('arabe (RTL) a 390 : le blocage se lit, l adresse reste de '
+    testWidgets('arabe (RTL) a 390 : le blocage se lit, l adresse reste de '
         'gauche a droite', (WidgetTester tester) async {
       // Le garde et le brouillon marque sont lus ensemble, avant le passage
       // a l'arabe (COM-RC tour 7 : les fixtures suivent la langue) : le
@@ -392,7 +392,7 @@ void main() {
       await demonter(tester);
     });
 
-    testWidgets('sombre, texte x2, 390 : aucun debordement', (
+    testWidgets('sombre, texte x2, 390 : aucun debordement', (
       WidgetTester tester,
     ) async {
       await monterCommunaute(
@@ -409,8 +409,8 @@ void main() {
   });
 
   group('demonstration', () {
-    test('fixtures (spec section 26) : 2 publications bloquees, dont 1 lien '
-        'affilie et 1 vente ; 1 publicite ; les 4 etats de lien', () {
+    test('fixtures (spec section 26) : 2 publications bloquees, dont 1 lien '
+        'affilie et 1 vente ; 1 publicite ; les 4 etats de lien', () {
       final List<BrouillonMarqueDemo> marques =
           DonneesCommunauteDemo.brouillonsMarques;
       final List<VerdictPromotion> verdicts = <VerdictPromotion>[

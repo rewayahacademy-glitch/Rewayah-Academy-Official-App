@@ -79,12 +79,12 @@ void main() {
   final c = t.com.communaute;
 
   group('disposition, dans la coquille Enseignant', () {
-    testWidgets('390 : une surface a la fois, le flux de six publications', (
+    testWidgets('390 : une surface a la fois, le flux de six publications', (
       WidgetTester tester,
     ) async {
       await monterCommunaute(tester);
 
-      // La vraie coquille de l'enseignant : Aujourd'hui est actif, jamais
+      // La vraie coquille de l'enseignant : Aujourd'hui est actif, jamais
       // « Foyer ».
       expect(find.byType(NavShell), findsOneWidget);
       expect(find.text(t.nav.enseignant.journee), findsWidgets);
@@ -103,14 +103,14 @@ void main() {
       verifierUnSeulBoutonPlein(tester);
     });
 
-    testWidgets('390 : ouvrir une publication, puis revenir au flux', (
+    testWidgets('390 : ouvrir une publication, puis revenir au flux', (
       WidgetTester tester,
     ) async {
       final BancCommunaute banc = await monterCommunaute(tester);
 
       await taper(tester, find.byKey(FluxPublications.cleCarte('pub-niveaux')));
       expect(find.byType(PublicationDetail), findsOneWidget);
-      expect(find.text('Gérer les différents niveaux ?'), findsOneWidget);
+      expect(find.text('Gérer les différents niveaux ?'), findsOneWidget);
       // Le flux et son entree « Nouvelle publication » ont laisse la place.
       expect(_cartes(), 0);
       expect(_present(EntreeNouvellePublication.cle), isFalse);
@@ -129,8 +129,8 @@ void main() {
       expect(find.text(texteJourneeBanc), findsOneWidget);
     });
 
-    testWidgets('768 : dans la coquille Enseignant (rail a libelles), '
-        'l espace recoit moins de 600 : une surface a la fois', (
+    testWidgets('768 : dans la coquille Enseignant (rail a libelles), '
+        'l espace recoit moins de 600 : une surface a la fois', (
       WidgetTester tester,
     ) async {
       await monterCommunaute(tester, taille: const Size(768, 1024));
@@ -144,7 +144,7 @@ void main() {
       expect(find.byType(PublicationDetail), findsNothing);
     });
 
-    testWidgets('1024 : Flux | Publication, l aide en feuille', (
+    testWidgets('1024 : Flux | Publication, l aide en feuille', (
       WidgetTester tester,
     ) async {
       await monterCommunaute(tester, taille: const Size(1024, 1366));
@@ -170,7 +170,7 @@ void main() {
       expect(find.text(c.regles.titre), findsWidgets);
     });
 
-    testWidgets('1440 : Flux | Publication/Reponses | Aide/Regles', (
+    testWidgets('1440 : Flux | Publication/Reponses | Aide/Regles', (
       WidgetTester tester,
     ) async {
       await monterCommunaute(tester, taille: const Size(1440, 900));
@@ -211,12 +211,12 @@ void main() {
         tester,
         find.byKey(FluxPublications.cleCarte('pub-memorisation')),
       );
-      expect(find.text('Idées pour la mémorisation ?'), findsWidgets);
+      expect(find.text('Idées pour la mémorisation ?'), findsWidgets);
       expect(find.text(c.reponses.titre(nombre: 2)), findsOneWidget);
       verifierUnSeulBoutonPlein(tester);
     });
 
-    testWidgets('sombre, texte a 200 % : rien ne deborde a 390', (
+    testWidgets('sombre, texte a 200 % : rien ne deborde a 390', (
       WidgetTester tester,
     ) async {
       await monterCommunaute(
@@ -227,12 +227,12 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(_cartes(), greaterThan(0));
       // A 200 %, une carte depasse la hauteur visible : on touche son titre.
-      await taper(tester, find.text('Idées pour la mémorisation ?'));
+      await taper(tester, find.text('Idées pour la mémorisation ?'));
       expect(tester.takeException(), isNull);
       expect(find.byType(PublicationDetail), findsOneWidget);
     });
 
-    testWidgets('arabe (RTL) a 390 et 1440 : miroir et textes traduits', (
+    testWidgets('arabe (RTL) a 390 et 1440 : miroir et textes traduits', (
       WidgetTester tester,
     ) async {
       await monterCommunaute(tester, arabe: true);
@@ -260,7 +260,7 @@ void main() {
   });
 
   group('categories et recherche', () {
-    testWidgets('une categorie filtre le flux ; « Toutes » le rend entier', (
+    testWidgets('une categorie filtre le flux ; « Toutes » le rend entier', (
       WidgetTester tester,
     ) async {
       await monterCommunaute(tester, taille: const Size(1440, 900));
@@ -275,7 +275,7 @@ void main() {
       expect(_cartes(), 6);
     });
 
-    testWidgets('ordinateur : le champ persistant filtre, sans resultat dit '
+    testWidgets('ordinateur : le champ persistant filtre, sans resultat dit '
         'quoi faire', (WidgetTester tester) async {
       await monterCommunaute(tester, taille: const Size(1440, 900));
       await tester.enterText(
@@ -293,7 +293,7 @@ void main() {
       expect(find.text(c.rechercheVide), findsOneWidget);
     });
 
-    testWidgets('telephone : la recherche est une surface temporaire, la '
+    testWidgets('telephone : la recherche est une surface temporaire, la '
         'fermer rend le flux tel qu il etait', (WidgetTester tester) async {
       await monterCommunaute(tester);
       await choisirCategorie(tester, 'Ressources');
@@ -315,7 +315,7 @@ void main() {
   });
 
   group('etats (spec section 25)', () {
-    testWidgets('chargement : un squelette, aucune colonne inventee', (
+    testWidgets('chargement : un squelette, aucune colonne inventee', (
       WidgetTester tester,
     ) async {
       fixerTaille(tester, const Size(390, 844));
@@ -325,7 +325,7 @@ void main() {
       await demonter(tester);
     });
 
-    testWidgets('vide sur « Toutes » : « Aucune publication pour le '
+    testWidgets('vide sur « Toutes » : « Aucune publication pour le '
         'moment. »', (WidgetTester tester) async {
       await monterCommunaute(tester, port: memoireDemo(vide: true));
       expect(_cartes(), 0);
@@ -334,7 +334,7 @@ void main() {
       expect(_present(EntreeNouvellePublication.cle), isTrue);
     });
 
-    testWidgets('erreur : « Reessayer » relit, puis le flux revient', (
+    testWidgets('erreur : « Reessayer » relit, puis le flux revient', (
       WidgetTester tester,
     ) async {
       final CommunauteMemoire memoire = memoireDemo();
@@ -351,8 +351,8 @@ void main() {
       expect(_cartes(), 2);
     });
 
-    testWidgets('port neutre de production : « Pas encore disponible », '
-        'sans « Reessayer »', (WidgetTester tester) async {
+    testWidgets('port neutre de production : « Pas encore disponible », '
+        'sans « Reessayer »', (WidgetTester tester) async {
       await monterCommunaute(tester, port: const CommunauteIndisponible());
       expect(
         find.text(t.com.socle.composants.etats.indisponibleTitre),
@@ -366,7 +366,7 @@ void main() {
       expect(_present(EntreeNouvellePublication.cle), isFalse);
     });
 
-    testWidgets('hors ligne : le bandeau, et la lecture en echec le dit', (
+    testWidgets('hors ligne : le bandeau, et la lecture en echec le dit', (
       WidgetTester tester,
     ) async {
       await monterCommunaute(
@@ -374,12 +374,12 @@ void main() {
         port: memoireDemo(echecLecture: true),
         horsLigne: true,
       );
-      // Les capacites n'ont pas pu etre lues : l'ecran le dit, sans colonne.
+      // Les capacites n'ont pas pu etre lues : l'ecran le dit, sans colonne.
       expect(_cartes(), 0);
       expect(find.byType(EtatSysteme), findsWidgets);
     });
 
-    testWidgets('hors ligne, contenu deja lu : le flux reste, le bandeau dit '
+    testWidgets('hors ligne, contenu deja lu : le flux reste, le bandeau dit '
         'pourquoi rien ne s actualise', (WidgetTester tester) async {
       await monterCommunaute(tester, horsLigne: true);
       expect(_cartes(), 6);
@@ -428,13 +428,13 @@ void main() {
     });
   });
 
-  testWidgets('la situation de demonstration « publication » ouvre la '
+  testWidgets('la situation de demonstration « publication » ouvre la '
       'publication demandee', (WidgetTester tester) async {
     await monterCommunaute(
       tester,
       publicationId: DonneesCommunauteDemo.publicationOuverte,
     );
     expect(find.byType(PublicationDetail), findsOneWidget);
-    expect(find.text('Idées pour la mémorisation ?'), findsOneWidget);
+    expect(find.text('Idées pour la mémorisation ?'), findsOneWidget);
   });
 }

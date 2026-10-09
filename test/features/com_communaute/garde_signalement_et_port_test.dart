@@ -72,13 +72,13 @@ const BrouillonPublication _brouillonAffilie = BrouillonPublication(
   titre: 'Mon lecteur audio préféré pour réviser',
   texte:
       "J'utilise ce lecteur pour faire réécouter les sourates. Il est en "
-      'réduction cette semaine avec mon lien : '
+      'réduction cette semaine avec mon lien : '
       'https://lecteur-coran.example/produit?ref=prof42',
 );
 
 void main() {
   group('motifs de signalement (spec section 5.5)', () {
-    testWidgets('les huit motifs, dans l ordre de la spec ; un motif de la '
+    testWidgets('les huit motifs, dans l ordre de la spec ; un motif de la '
         'politique dit la regle qu il vise', (WidgetTester tester) async {
       await monterCommunaute(tester, taille: const Size(1440, 900));
       await _ouvrirSignalement(tester);
@@ -138,7 +138,7 @@ void main() {
       await demonter(tester);
     });
 
-    test('reglePolitique : les quatre motifs commerciaux seulement', () {
+    test('reglePolitique : les quatre motifs commerciaux seulement', () {
       final List<MotifSignalement> politiques = <MotifSignalement>[
         for (final MotifSignalement m in MotifSignalement.values)
           if (reglePolitique(m) != null) m,
@@ -151,7 +151,7 @@ void main() {
       ]);
     });
 
-    testWidgets('le motif choisi part au port ; la confirmation exacte ne '
+    testWidgets('le motif choisi part au port ; la confirmation exacte ne '
         'vient qu apres l accuse', (WidgetTester tester) async {
       final ModerationDemo moderation = ModerationDemo();
       await monterCommunaute(
@@ -180,7 +180,7 @@ void main() {
 
   group('port du garde (COM-BR-07)', () {
     test(
-      'production : chaque appel echoue avec CapaciteIndisponible',
+      'production : chaque appel echoue avec CapaciteIndisponible',
       () async {
         const GardePromotionIndisponible garde = GardePromotionIndisponible();
         await expectLater(
@@ -200,7 +200,7 @@ void main() {
       },
     );
 
-    test('fixtures : une table, pas une detection ; un mot change rend le '
+    test('fixtures : une table, pas une detection ; un mot change rend le '
         'brouillon normal', () async {
       final GardePromotionFixtures garde = DonneesCommunauteDemo.garde();
       final VerificationPromotion marque = await garde.verifier(
@@ -233,7 +233,7 @@ void main() {
     });
 
     test(
-      'etatLien : les quatre etats des fixtures ; inconnu = non verifie',
+      'etatLien : les quatre etats des fixtures ; inconnu = non verifie',
       () async {
         final GardePromotionFixtures garde = DonneesCommunauteDemo.garde();
         for (final MapEntry<String, EtatLien> e
@@ -247,7 +247,7 @@ void main() {
       },
     );
 
-    test('verdicts : seuls lien affilie et vente bloquent ; tout sauf normal '
+    test('verdicts : seuls lien affilie et vente bloquent ; tout sauf normal '
         'retient', () {
       expect(
         <VerdictPromotion>[
@@ -264,7 +264,7 @@ void main() {
       expect(GardePromotion.texteDe(VerdictPromotion.normal), isNull);
     });
 
-    test('jamais « Verifie » : quatre etats de lien, aucun texte de la '
+    test('jamais « Verifie » : quatre etats de lien, aucun texte de la '
         'Communaute ne le dit', () {
       expect(EtatLien.values, hasLength(4));
       for (final EtatLien e in EtatLien.values) {
@@ -308,7 +308,7 @@ void main() {
             GardePromotion.cleAvertissement,
           ),
         ]) {
-      testWidgets('${s.name} : brouillon restaure, une categorie, « Publier » '
+      testWidgets('${s.name} : brouillon restaure, une categorie, « Publier » '
           'retient la publication', (WidgetTester tester) async {
         await _monterDemo(tester, s);
         expect(find.byType(NavShell), findsOneWidget);
@@ -330,7 +330,7 @@ void main() {
       });
     }
 
-    testWidgets('signalement non confirme : il le dit, sans confirmation', (
+    testWidgets('signalement non confirme : il le dit, sans confirmation', (
       WidgetTester tester,
     ) async {
       await _monterDemo(

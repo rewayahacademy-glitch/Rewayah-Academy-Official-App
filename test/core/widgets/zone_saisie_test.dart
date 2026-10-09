@@ -336,7 +336,18 @@ void main() {
         // touche pas le champ.
         final Rect bulle = tester
             .getRect(find.byKey(const ValueKey<String>('message-1')))
-            .intersect(tester.getRect(find.byType(ListView)));
+            // La zone qui defile autour de la bulle (le fil des
+            // Communications n'est plus une ListView, JONCTION-LIGNES-1).
+            .intersect(
+              tester.getRect(
+                find
+                    .ancestor(
+                      of: find.byKey(const ValueKey<String>('message-1')),
+                      matching: find.byType(Scrollable),
+                    )
+                    .first,
+              ),
+            );
         final Rect champ = tester.getRect(find.byKey(FilDiscussion.champKey));
         final Rect commun = bulle.intersect(champ);
         expect(

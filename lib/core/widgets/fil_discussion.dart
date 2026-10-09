@@ -98,6 +98,7 @@ import 'bouton_icone.dart';
 import 'empty_state.dart';
 import 'espace_travail_adaptatif.dart';
 import 'page_shell.dart';
+import 'zone_saisie.dart';
 
 /// Le raccourci d'envoi au clavier (R-25) : Ctrl+Entree, ou Cmd+Entree sur
 /// Mac, declenche [onEnvoyer] quand le focus est dans [child]. Entree seule
@@ -1331,28 +1332,10 @@ class _Saisie extends StatelessWidget {
 
   static const Key _cleVocal = ValueKey<String>('fil-discussion-vocal');
 
-  /// En dessous de cette largeur, a texte agrandi (`SeuilsTexteAgrandi`),
-  /// « Envoyer » passe sous le champ : a 390 en texte double, il prenait la
-  /// ligne et laissait au champ 86 points de large (COM-FUS, COM-MSG-1).
-  static const double _largeurEmpilee = 480;
-
-  /// En dessous de cette largeur, « Envoyer » passe sous le champ meme en
-  /// texte normal (lot K) : a 320, a cote du micro et d'« Envoyer », le
-  /// champ n'avait plus que 114 points et son aide se coupait (« pour
-  /// l'envoy... »). A 390 (358 points de fil), la rangee reste sur une ligne.
-  static const double _largeurEtroite = 340;
-
   @override
   Widget build(BuildContext context) {
     final Widget? vocal = this.vocal;
-    final Widget rangee = LayoutBuilder(
-      builder: (BuildContext contexte, BoxConstraints contraintes) => _rangee(
-        empilee:
-            contraintes.maxWidth < _largeurEtroite ||
-            (contraintes.maxWidth < _largeurEmpilee &&
-                SeuilsTexteAgrandi.texteAgrandi(contexte)),
-      ),
-    );
+    final Widget rangee = _rangee();
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.lg),
       child: vocal == null
@@ -1376,145 +1359,58 @@ class _Saisie extends StatelessWidget {
     );
   }
 
-  /// Vrai quand l'aide du champ tient entiere sur une ligne, dans
-  /// [largeur] moins les marges interieures du theme (`AppSpacing.lg` de
-  /// part et d'autre), au style et a l'echelle de texte de l'aide.
-  bool _aideTient(BuildContext context, double largeur) {
-    if (!largeur.isFinite) return true;
-    final ThemeData theme = Theme.of(context);
-    final TextPainter mesure = TextPainter(
-      text: TextSpan(
-        text: textes.aideChamp,
-        style: DefaultTextStyle.of(context).style
-            .merge(theme.textTheme.bodyLarge)
-            .merge(theme.inputDecorationTheme.hintStyle),
-      ),
-      textDirection: Directionality.of(context),
-      textScaler: MediaQuery.textScalerOf(context),
-      maxLines: 1,
-    )..layout();
-    final bool tient =
-        !mesure.didExceedMaxLines &&
-        mesure.width <= largeur - 2 * AppSpacing.lg;
-    mesure.dispose();
-    return tient;
-  }
-
-  Widget _rangee({required bool empilee}) {
+  Widget _rangee() {
+    // SUPERPOS-1 (decide par delegation le 05/10), repris dans le fil des
+    // Communications par JONCTION-LIGNES-1 : la zone de saisie partagee du
+    // core. L'envoi est une icone nommee DANS le champ, centree en hauteur ;
+    // tant que le champ est vide, elle n'est pas rendue (jamais grisee, ni
+    // « Envoyer » inerte) et la raison est ecrite sous le champ. Le champ
+    // prend toute la largeur, moins le micro : a 320 en texte double, il ne
+    // cede plus la moitie de la ligne a un bouton, et la saisie n'a plus a
+    // s'empiler (COM-FUS, lot K).
     final Widget saisie = KeyedSubtree(
       key: cleChamp,
       child: raccourciEnvoi(
         onEnvoyer: onEnvoyer,
-        child: LayoutBuilder(
-          builder: (BuildContext contexte, BoxConstraints contraintes) {
-            // Lot K, point 4 : l'aide ne se peint que si elle tient entiere
-            // sur une ligne du champ (« Ecrire dans Organisation generale »
-            // a 1440, pas a 390 a cote du micro et d'« Envoyer », ou elle
-            // passait sur deux ou trois lignes et faisait sauter le champ
-            // au toucher, ou se coupait en « Ecrire dans Organi... »). Le
-            // champ garde une ligne, au repos comme au toucher, et ne
-            // grandit qu'avec le texte saisi.
-            final bool aidePeinte = _aideTient(contexte, contraintes.maxWidth);
-            // Material ne peint l'aide que champ vide et au focus, et la
-            // retire alors de la semantique. Le lecteur d'ecran (dont le
-            // focus n'est pas celui de la saisie) dit donc toujours ou l'on
-            // ecrit, en entier, sans la doubler quand elle est peinte.
-            final bool aideVisible =
-                aidePeinte && noeudChamp.hasFocus && champ.text.isEmpty;
-            return Semantics(
-              hint: aideVisible ? null : textes.aideChamp,
-              child: TextField(
-                key: FilDiscussion.champKey,
-                controller: champ,
-                focusNode: noeudChamp,
-                minLines: 1,
-                maxLines: reduite ? 1 : 5,
-                keyboardType: TextInputType.multiline,
-                textInputAction: TextInputAction.newline,
-                textCapitalization: TextCapitalization.sentences,
-                decoration: InputDecoration(
-                  labelText: textes.libelleChamp,
-                  hintText: aidePeinte ? textes.aideChamp : null,
-                  hintMaxLines: 1,
-                  floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  // La raison du bouton inactif, lisible sous le champ ; la
-                  // saisie reduite n'a pas de bouton inactif.
-                  helperText: vide && !reduite ? textes.champVide : null,
-                  helperMaxLines: 3,
+        child: ZoneSaisie(
+          cleChamp: FilDiscussion.champKey,
+          controleur: champ,
+          noeud: noeudChamp,
+          libelle: textes.libelleChamp,
+          // Un champ d'envoi ne montre pas son etiquette : l'invite la dit,
+          // le lecteur d'ecran la lit (SUPERPOS-1), saisie reduite comprise.
+          libelleVisible: false,
+          aide: textes.aideChamp,
+          // La raison de l'envoi absent ; la saisie reduite n'a pas d'envoi.
+          explication: vide && !reduite ? textes.champVide : null,
+          maxLignes: reduite ? 1 : 5,
+          envoi: reduite
+              ? null
+              : EnvoiZoneSaisie(
+                  cle: FilDiscussion.envoyerKey,
+                  libelle: textes.envoyer,
+                  onEnvoyer: onEnvoyer,
                 ),
-              ),
-            );
-          },
         ),
       ),
     );
-    // Decision R-28 : le micro, une icone nommee (cible de 48), a cote
-    // d'« Envoyer » ; il ouvre l'enregistrement du composer vocal.
+    // Decision R-28 : le micro, une icone nommee (cible de 48), a cote du
+    // champ ; il ouvre l'enregistrement du composer vocal.
     final VoidCallback? onMicro = this.onMicro;
-    final Widget? micro = onMicro == null
-        ? null
-        : BoutonIcone(
-            key: FilDiscussion.cleMicro,
-            icone: AppIcons.micro,
-            libelle: t.com.socle.composants.composer.enregistrerVocal,
-            onPress: onMicro,
-            // Lot K, point 2 : a texte agrandi, le micro grandit avec le
-            // texte d'« Envoyer », a cote duquel il se pose.
-            suitTexte: true,
-          );
-    if (reduite) {
-      // Une ligne : le champ, et le micro s'il y en a un. « Envoyer »
-      // revient des que le champ prend le focus ou recoit du texte.
-      return Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Expanded(child: saisie),
-          if (micro != null) ...<Widget>[Ecart.hSm, micro],
-        ],
-      );
-    }
-    // Une action se nomme, elle ne s'illustre pas : « Envoyer » en toutes
-    // lettres, inerte (et dit comme tel) tant que le champ est vide ; la
-    // raison est ecrite sous le champ.
-    final Widget envoyer = ActionPrincipale(
-      key: FilDiscussion.envoyerKey,
-      libelle: textes.envoyer,
-      onPress: vide ? null : onEnvoyer,
-      pleineLargeur: false,
-    );
-    if (empilee) {
-      // Le meme champ (cle globale) : le texte et le focus restent si la
-      // disposition change (rotation, taille du texte).
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          saisie,
-          Ecart.vSm,
-          Align(
-            alignment: AlignmentDirectional.centerEnd,
-            child: micro == null
-                ? envoyer
-                // A 320 en texte x2, « Envoyer » passe sous le micro s'ils
-                // ne tiennent pas sur une ligne.
-                : Wrap(
-                    alignment: WrapAlignment.end,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    spacing: AppSpacing.sm,
-                    runSpacing: AppSpacing.sm,
-                    children: <Widget>[micro, envoyer],
-                  ),
-          ),
-        ],
-      );
-    }
+    if (onMicro == null) return saisie;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Expanded(child: saisie),
         Ecart.hSm,
-        if (micro != null) ...<Widget>[micro, Ecart.hSm],
-        envoyer,
+        BoutonIcone(
+          key: FilDiscussion.cleMicro,
+          icone: AppIcons.micro,
+          libelle: t.com.socle.composants.composer.enregistrerVocal,
+          onPress: onMicro,
+          // Lot K, point 2 : a texte agrandi, le micro grandit avec le texte.
+          suitTexte: true,
+        ),
       ],
     );
   }

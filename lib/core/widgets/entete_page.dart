@@ -191,9 +191,17 @@ class EntetePage extends StatelessWidget {
           titreComplet,
           echelleTitre,
         );
+        // JONCTION-LIGNES-1 : avec le seul retour a cote (aucune action),
+        // passer au-dessus ne sert que si le mot y garde sa taille. Plus
+        // large que toute la colonne (« enseignants » a 320 en texte x2), il
+        // se reduit de toute facon : il reste a cote du retour, et la rangee
+        // gagnee laisse une publication au premier ecran de la Communaute
+        // (COM-RC tour 3). Avec des actions, le titre passe sous leur rangee
+        // (R-05, R-09) : il y gagne toute leur largeur.
         final bool auDessus =
             (retour != null || actions.isNotEmpty) &&
-            motLong + AppSpacing.xs > aCote;
+            motLong + AppSpacing.xs > aCote &&
+            (actions.isNotEmpty || motLong <= c.maxWidth);
         if (!auDessus) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
