@@ -60,8 +60,8 @@ BEGIN
   END IF;
 
   -- Une demande sans jour ou sans heure est refusée avant toute écriture.
-  PERFORM set_config('test.uid', 'f1490000-0000-0000-0000-000000000003', true);
-  PERFORM set_config('test.jwt',
+  PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000003', true);
+  PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text, true);
   v_ok := false;
   BEGIN
@@ -91,19 +91,14 @@ BEGIN
     'f1490000-0000-0000-0000-000000000001'::uuid,
     'f1490000-0000-0000-0000-000000000002'::uuid
   ] LOOP
-    PERFORM set_config('test.uid', v_id::text, true);
-    PERFORM set_config('test.jwt',
+    PERFORM set_config('request.jwt.claim.sub', v_id::text, true);
+    PERFORM set_config('request.jwt.claims',
       jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text, true);
-    RAISE NOTICE 'F1 preflight uid=% id=% role=% active=% student_type=% household=% can_describe=%',
-      auth.uid(), v_id, public.app_role(), public.compte_en_parcours(),
-      (SELECT sp.student_type FROM public.student_profiles sp WHERE sp.profile_id = v_id),
-      (SELECT p.household_id FROM public.profiles p WHERE p.id = v_id),
-      public.peut_decrire_apprenant(v_id);
     PERFORM public.demander_creneau_personnalise(v_id, 'Europe/Paris',
       ARRAY[2,4,6]::smallint[], 18::smallint);
   END LOOP;
-  PERFORM set_config('test.uid', 'f1490000-0000-0000-0000-000000000999', true);
-  PERFORM set_config('test.jwt',
+  PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000999', true);
+  PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text, true);
   UPDATE public.profiles SET account_status = 'disabled'
    WHERE id = 'f1490000-0000-0000-0000-000000000001';
@@ -113,7 +108,7 @@ BEGIN
     'f1490000-0000-0000-0000-000000000001'::uuid,
     'f1490000-0000-0000-0000-000000000002'::uuid
   ] LOOP
-    PERFORM set_config('test.uid', v_id::text, true);
+    PERFORM set_config('request.jwt.claim.sub', v_id::text, true);
     v_ok := false;
     BEGIN
       PERFORM public.demander_creneau_personnalise(v_id, 'Europe/Paris',
@@ -132,7 +127,7 @@ BEGIN
   -- Tous les élèves valides partagent un seul foyer. Le quota compte les élèves.
   FOR v_i IN 1..v_capacite LOOP
     v_id := ('f1490000-0000-0000-0000-' || lpad((v_i + 2)::text, 12, '0'))::uuid;
-    PERFORM set_config('test.uid', v_id::text, true);
+    PERFORM set_config('request.jwt.claim.sub', v_id::text, true);
     v_reponse := public.demander_creneau_personnalise(
       v_id, 'Europe/Paris',
       CASE WHEN v_i = 1 THEN ARRAY[6,4,2,2]::smallint[]
@@ -145,7 +140,7 @@ BEGIN
   END LOOP;
 
   -- Une répétition réseau renvoie la même demande sans compter deux fois.
-  PERFORM set_config('test.uid', 'f1490000-0000-0000-0000-000000000003', true);
+  PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000003', true);
   v_repetee := public.demander_creneau_personnalise(
     'f1490000-0000-0000-0000-000000000003',
     'Europe/Paris', ARRAY[2,4,6]::smallint[], 18::smallint
@@ -172,8 +167,8 @@ BEGIN
     ('f1490000-0000-0000-0000-000000000999', 'F1-ADMIN', 'admin', NULL,
      'Admin', 'Test', 'active', 'male');
 
-  PERFORM set_config('test.uid', 'f1490000-0000-0000-0000-000000000999', true);
-  PERFORM set_config('test.jwt',
+  PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000999', true);
+  PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text, true);
   SELECT regroupement_id, nombre_eleves, quota, pret, jours, heures_locales
     INTO v_regroupement, v_count, v_quota, v_pret, v_jours, v_heures
@@ -192,8 +187,8 @@ BEGIN
   END IF;
 
   -- La famille reçoit uniquement son propre état; aucun effectif ni foyer tiers.
-  PERFORM set_config('test.uid', 'f1490000-0000-0000-0000-000000000003', true);
-  PERFORM set_config('test.jwt',
+  PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000003', true);
+  PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text, true);
   v_reponse := public.mes_demandes_horaires(
     'f1490000-0000-0000-0000-000000000003');
@@ -219,16 +214,16 @@ BEGIN
 
   -- La carte publiée par l'administration crée aussi une demande privée,
   -- sans exposer de disponibilité ou publier à nouveau la vitrine.
-  PERFORM set_config('test.uid', 'f1490000-0000-0000-0000-000000000999', true);
-  PERFORM set_config('test.jwt',
+  PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000999', true);
+  PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text, true);
   v_offre := public.creer_offre_horaire(
     'adulte', 'francais', 'Europe/Paris', ARRAY[1,3,5]::smallint[], 20::smallint, NULL
   );
   PERFORM public.publier_offre_horaire(v_offre);
   v_id := ('f1490000-0000-0000-0000-' || lpad((v_capacite + 3)::text, 12, '0'))::uuid;
-  PERFORM set_config('test.uid', v_id::text, true);
-  PERFORM set_config('test.jwt',
+  PERFORM set_config('request.jwt.claim.sub', v_id::text, true);
+  PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text, true);
   v_result := public.choisir_offre_horaire(v_id, v_offre, 'Europe/Paris');
   IF NOT EXISTS (
