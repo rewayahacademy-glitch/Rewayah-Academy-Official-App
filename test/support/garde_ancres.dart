@@ -20,9 +20,17 @@
 //   - element d'une liste jointe (`[role, duree].join(' · ')`).
 //
 // L'analyse lit un source « masque » : commentaires effaces, contenu des
-// chaines remplace (les interpolations restent du code). Elle ne suit pas une
-// valeur rangee dans un CHAMP d'objet (argument nomme d'un constructeur) : ces
-// champs sont des valeurs affichees seules (`valeur:`, `libelle:`).
+// chaines remplace (les interpolations restent du code).
+//
+// Reprise (relecture adverse) : une valeur rangee dans un CHAMP d'objet
+// (argument nomme d'un constructeur) n'est pas toujours affichee seule. Une
+// `ColonneDonnees` repliee en carte voit son `texte:` JOINT aux autres
+// colonnes par « · » (« Enseignant · En attente · 12 jours »). La garde
+// releve donc d'abord, dans tout le source, les champs que du code joint
+// lui-meme (`.map((C c) => c.champ(...))` ... `.join(`) ; une valeur ancree
+// qui finit dans l'argument `champ:` d'un constructeur `C(` est une faute.
+// Un composant qui joint par `enchainer` (lib/core/i18n/isolat_bidi.dart),
+// qui ne garde l'ancre qu'en tete de ligne, n'est pas releve.
 
 import 'dart:io';
 
@@ -333,7 +341,7 @@ const Set<String> _transparents = <String>{
   'dureeSeule',
 };
 
-_Destination _classer(_Source s, int p) {
+_Destination _classer(_Source s, int p, Set<ChampJoint> joints) {
   // Concatenation derriere autre chose.
   final int a = s.avant(p);
   if (a >= 0 && s.m[a] == '+' && (a == 0 || s.m[a - 1] != '+')) {
@@ -343,15 +351,27 @@ _Destination _classer(_Source s, int p) {
   if (o < 0) return _instruction(s, -1, p);
   final String c = s.m[o];
   if (c == '(') {
+    // Argument nomme d'un constructeur dont le champ est joint ailleurs.
+    final int d = s.debutSegment(o, p, virgule: true);
+    final RegExpMatch? nomme = RegExp(r'^\s*(\w+)\s*:')
+        .firstMatch(s.m.substring(d, p));
+    if (nomme != null) {
+      final String classe = _constructeur(s, o).split('.').last;
+      if (joints.contains((classe: classe, champ: nomme[1]!))) {
+        return _Faute(
+          'champ ${nomme[1]} de $classe, joint a d\'autres colonnes',
+        );
+      }
+    }
     final ({String nom, int debut}) app = s.appelant(o);
     final String nom = app.nom;
-    if (nom.isEmpty) return _classer(s, o);
+    if (nom.isEmpty) return _classer(s, o, joints);
     final String tete = nom.split('.').first;
     if (nom.startsWith('t.') || s.alias.contains(tete)) {
       return _Faute('argument du libelle $nom');
     }
     if (_transparents.contains(nom.split('.').last)) {
-      return _classer(s, app.debut);
+      return _classer(s, app.debut, joints);
     }
     return const _Affichee();
   }
@@ -370,7 +390,7 @@ _Destination _classer(_Source s, int p) {
       while (debut > 0 && s.m[debut - 1] == s.m[q]) {
         debut--;
       }
-      return _classer(s, debut);
+      return _classer(s, debut, joints);
     }
     return const _Faute('interpolee au milieu d\'une chaine');
   }
@@ -378,7 +398,7 @@ _Destination _classer(_Source s, int p) {
     final int d = s.debutSegment(o, p, virgule: true);
     if (s.m.substring(d, p).contains('=>')) {
       final int fermante = s.avant(o);
-      return _classer(s, s.appelant(s.paire[fermante]!).debut);
+      return _classer(s, s.appelant(s.paire[fermante]!).debut, joints);
     }
   }
   return _instruction(s, o, p);
@@ -412,6 +432,45 @@ _Destination _instruction(_Source s, int o, int p) {
   return const _Affichee();
 }
 
+/// Un champ d'objet que du code joint a d'autres textes : `(classe, champ)`.
+typedef ChampJoint = ({String classe, String champ});
+
+/// `.map((C c) => c.champ` : le parametre type, son nom, le champ lu.
+final RegExp _mapChamp = RegExp(
+  r'\.map\(\s*\(\s*(\w+)(?:<[\w<>?, ]*>)?\s+(\w+)\s*\)\s*=>\s*(\w+)\.(\w+)',
+);
+
+/// Les champs que [sources] joignent par `.join(` (et non par `enchainer`).
+Set<ChampJoint> champsJoints(Iterable<String> sourcesMasquees) => <ChampJoint>{
+  for (final String m in sourcesMasquees)
+    for (final RegExpMatch x in _mapChamp.allMatches(m))
+      if (x[2] == x[3] && _suiviDeJoin(m, x.end)) (classe: x[1]!, champ: x[4]!),
+};
+
+/// Vrai si l'instruction qui contient [i] se poursuit par `.join(`.
+bool _suiviDeJoin(String m, int i) {
+  int fin = m.indexOf(';', i);
+  if (fin < 0) fin = m.length;
+  return m.substring(i, fin).contains('.join(');
+}
+
+/// Le nom du constructeur appele par la parenthese [o], arguments de type
+/// omis (`ColonneDonnees<CompteAdmin>(` donne `ColonneDonnees`).
+String _constructeur(_Source s, int o) {
+  int j = s.avant(o);
+  if (j < 0 || s.m[j] != '>') return s.appelant(o).nom;
+  int profondeur = 0;
+  while (j >= 0) {
+    if (s.m[j] == '>') profondeur++;
+    if (s.m[j] == '<') {
+      profondeur--;
+      if (profondeur == 0) break;
+    }
+    j--;
+  }
+  return j < 0 ? '' : s.appelant(j).nom;
+}
+
 /// Toutes les valeurs ancrees de [sources] qui finissent au milieu d'un
 /// libelle.
 List<AncreGlissee> ancresGlissees([Iterable<File>? sources]) {
@@ -421,6 +480,9 @@ List<AncreGlissee> ancresGlissees([Iterable<File>? sources]) {
   ];
   final List<AncreGlissee> fautes = <AncreGlissee>[];
   final Set<String> vus = <String>{};
+  final Set<ChampJoint> joints = champsJoints(<String>[
+    for (final _Source s in fichiers) s.m,
+  ]);
   final List<({_Source s, int p, String chemin})> aSuivre =
       <({_Source s, int p, String chemin})>[];
 
@@ -442,7 +504,7 @@ List<AncreGlissee> ancresGlissees([Iterable<File>? sources]) {
     final ({_Source s, int p, String chemin}) x = aSuivre.removeLast();
     final String cle = '${x.s.fichier}:${x.p}';
     if (!vus.add(cle)) continue;
-    switch (_classer(x.s, x.p)) {
+    switch (_classer(x.s, x.p, joints)) {
       case _Affichee():
         break;
       case _Faute(:final String raison):
@@ -512,6 +574,8 @@ List<AncreGlissee> ancresGlissees([Iterable<File>? sources]) {
             final bool declaration =
                 a >= 0 &&
                 RegExp(r'[\w?>]').hasMatch(autre.m[a]) &&
+                // `=> f(` est un appel, pas un type de retour generique.
+                !(autre.m[a] == '>' && a > 0 && autre.m[a - 1] == '=') &&
                 !RegExp(r'\b(return|await|case|else)$')
                     .hasMatch(autre.m.substring(0, a + 1)) &&
                 RegExp(r'^\s*(\(|=>|\{)').hasMatch(apres) &&

@@ -14,12 +14,17 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rewayah_academy/core/accessibilite/sens_du_contenu.dart';
+import 'package:rewayah_academy/core/admin/service_comptes.dart';
+import 'package:rewayah_academy/core/admin/service_progression.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/isolat_bidi.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/presence/vue_presence.dart';
+import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/tc_classe/port_rappel_discret.dart';
 import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
@@ -28,6 +33,8 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
 import 'package:rewayah_academy/core/widgets/local_feedback.dart';
+import 'package:rewayah_academy/features/admin_comptes/comptes_page.dart';
+import 'package:rewayah_academy/features/admin_pedagogie_progression/progression_page.dart';
 import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_support.dart';
@@ -37,11 +44,17 @@ import 'package:rewayah_academy/features/tc_espace_groupe/carte_session.dart';
 
 import '../support/garde_ancres.dart';
 import '../support/garde_durees.dart';
+import '../support/harnais.dart';
 import '../teaching_core/e/faux/faux_classe.dart';
 import '../teaching_core/e/support/hote_classe.dart';
 
 const String _nbsp = '\u00A0';
 const String _lrm = '\u200E';
+const String _fsi = '\u2068';
+const String _pdi = '\u2069';
+
+/// Une lettre latine : le libelle est en francais.
+final RegExp _latin = RegExp('[A-Za-z\u00C0-\u024F]');
 
 /// Les textes rendus sous [racine].
 List<String> _textes(WidgetTester tester, Finder racine) => <String>[
@@ -76,6 +89,33 @@ PresenceParticipant _retard(DateTime debut) => PresenceParticipant(
   entreLe: debut.add(const Duration(minutes: 7)),
   debutSeance: debut,
 );
+
+/// Aucun texte rendu ne porte d'ancre de sens ailleurs qu'en tete, et la
+/// valeur [attendue] est bien rendue au milieu d'une ligne jointe.
+void _sansAncreAuMilieu(WidgetTester tester, String attendue) {
+  final List<String> textes = _textes(tester, find.byType(Scaffold));
+  final String ligne = textes.firstWhere(
+    (String s) => s.contains(' · ') && s.contains(attendue),
+    orElse: () => fail('aucune ligne jointe avec « $attendue » : $textes'),
+  );
+  expect(ligne.indexOf(attendue), greaterThan(0));
+  for (final String s in textes) {
+    expect(
+      s.lastIndexOf(_lrm),
+      lessThanOrEqualTo(0),
+      reason: 'ancre de sens au milieu de « $s »',
+    );
+  }
+}
+
+class _FauxServiceComptes implements ServiceComptes {
+  _FauxServiceComptes(this._comptes);
+
+  final List<CompteAdmin> _comptes;
+
+  @override
+  Future<List<CompteAdmin>> comptes() async => _comptes;
+}
 
 void main() {
   group('1. Ancre de sens : jamais au milieu d un libelle', () {
@@ -125,6 +165,134 @@ Widget seule(int n) => Text(LibellesGroupe.dureeSeule(Duration(minutes: n)));
         for (final AncreGlissee a in ancresGlissees(<File>[f])) a.ligne,
       ];
       expect(lignes, <int>[4, 10, 13, 17, 19]);
+    });
+
+    test('la garde suit une valeur ancree jusqu a une colonne jointe', () {
+      final Directory dossier = Directory.systemTemp.createTempSync('joints');
+      addTearDown(() => dossier.deleteSync(recursive: true));
+      // Une colonne dont le `texte:` est joint par `.join` ailleurs : la
+      // valeur ancree qu'on y range finit au milieu de la ligne repliee.
+      const String colonne = r'''
+class Col<T> {
+  const Col({required this.texte});
+  final String Function(T ligne) texte;
+}
+String _attente(int j) => switch (j) {
+  0 => t.a.aujourdhui,
+  _ => LibellesGroupe.valeurSeule(t.a.attendJours(jours: '$j')),
+};
+List<Col<int>> colonnes() => <Col<int>>[
+  Col<int>(texte: (int j) => _attente(j)),
+  Col<int>(texte: (int j) => LibellesGroupe.dureeSeule(Duration(days: j))),
+];
+''';
+      File('${dossier.path}/colonne.dart').writeAsStringSync(colonne);
+      final File carte = File('${dossier.path}/carte.dart')
+        ..writeAsStringSync(r'''
+String resume(List<Col<int>> cs, int l) => cs
+    .map((Col<int> c) => c.texte(l))
+    .where((String v) => v.isNotEmpty)
+    .join(' · ');
+''');
+      List<int> lignes() => <int>[
+        for (final AncreGlissee a in ancresGlissees(
+          dossier.listSync().whereType<File>(),
+        ))
+          a.ligne,
+      ]..sort();
+      expect(lignes(), <int>[10, 11]);
+      // Jointe par `enchainer` (ancre gardee en tete seulement) : permis.
+      carte.writeAsStringSync(r'''
+String resume(List<Col<int>> cs, int l) =>
+    enchainer(cs.map((Col<int> c) => c.texte(l)), ' · ');
+''');
+      expect(lignes(), isEmpty);
+    });
+
+    test('enchainer ne garde l ancre qu en tete de ligne', () {
+      expect(
+        enchainer(<String>['${_lrm}12 jours', '', 'Enseignant'], ' · '),
+        '${_lrm}12 jours · Enseignant',
+      );
+      expect(
+        enchainer(<String>['Enseignant', '${_lrm}12 jours', '2'], ' · '),
+        'Enseignant · 12 jours · 2',
+      );
+    });
+
+    testWidgets('Comptes, replie en cartes : « … · 12 jours » sans ancre', (
+      WidgetTester tester,
+    ) async {
+      tester.view.physicalSize = const Size(800, 1200);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        hote(
+          const ComptesPage(),
+          surcharges: <Override>[
+            serviceComptesProvider.overrideWithValue(
+              _FauxServiceComptes(<CompteAdmin>[
+                CompteAdmin(
+                  profilId: 'p1',
+                  identifiant: 'TEACHER-AS-000001',
+                  prenom: 'Aicha',
+                  nom: 'Sow',
+                  role: AppRole.teacher,
+                  etat: AccountStatus.pendingKyc,
+                  inscritLe: DateTime.now().subtract(const Duration(days: 12)),
+                  accesJusquAu: null,
+                  foyerId: null,
+                  piece: EtatPiece.aucune,
+                  contrats: 2,
+                  aEnseignant: false,
+                  enfantsDuFoyer: 0,
+                ),
+              ]),
+            ),
+            serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+      _sansAncreAuMilieu(tester, '12${_nbsp}jours');
+    });
+
+    testWidgets('Progression, repliee en cartes : « … · 9 jours » sans ancre', (
+      WidgetTester tester,
+    ) async {
+      tester.view.physicalSize = const Size(800, 1200);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        hote(
+          const ProgressionPage(),
+          surcharges: <Override>[
+            progressionProvider.overrideWith(
+              (Ref ref) async => <EleveProgression>[
+                EleveProgression(
+                  studentId: 's1',
+                  identifiant: 'STUD-000001',
+                  prenom: 'Sofia',
+                  nom: 'B.',
+                  groupeId: 'g1',
+                  groupeLibelle: 'Groupe du soir',
+                  niveauId: 'n1',
+                  niveauNomHumain: 'Niveau 2',
+                  niveauCycle: 'tajwid',
+                  niveauDepuis: DateTime.now().subtract(
+                    const Duration(days: 9, hours: 1),
+                  ),
+                  exceptionActiveId: null,
+                  exceptionActiveType: null,
+                ),
+              ],
+            ),
+            serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+      _sansAncreAuMilieu(tester, '9${_nbsp}jours');
     });
 
     test('salle, enseignant : « Classe · 32 min restantes » sans ancre', () {
@@ -233,13 +401,6 @@ Widget seule(int n) => Text(LibellesGroupe.dureeSeule(Duration(minutes: n)));
   });
 
   group('4. CarteSession : sens du contenu et largeur de lecture', () {
-    test('sensDuContenu lit la premiere lettre forte', () {
-      expect(sensDuContenu('Déjà appelé.'), TextDirection.ltr);
-      expect(sensDuContenu('$_lrm 45 min'), TextDirection.ltr);
-      expect(sensDuContenu('45 دقيقة'), TextDirection.rtl);
-      expect(sensDuContenu('18:00 · 45'), isNull);
-    });
-
     testWidgets('RTL : chaque libelle francais ponctue est isole dans son '
         'sens', (WidgetTester tester) async {
       int ponctues = 0;
@@ -265,13 +426,13 @@ Widget seule(int n) => Text(LibellesGroupe.dureeSeule(Duration(minutes: n)));
                 .evaluate()) {
           final String? d = (e.widget as Text).data;
           if (d == null || !RegExp(r'[.,;:!?\u2026]').hasMatch(d)) continue;
-          if (sensDuContenu(d) != TextDirection.ltr) continue;
+          if (!_latin.hasMatch(d)) continue;
           // Les heures (« 18:00 Paris ») sont ancrees par U+200E, elles.
           if (d.startsWith(_lrm)) continue;
           ponctues++;
           expect(
-            Directionality.of(e),
-            TextDirection.ltr,
+            d,
+            allOf(startsWith(_fsi), endsWith(_pdi)),
             reason: '${moment.name} : « $d » suit le sens de l interface',
           );
         }
@@ -289,8 +450,11 @@ Widget seule(int n) => Text(LibellesGroupe.dureeSeule(Duration(minutes: n)));
         _hote(LocalFeedback(message: message), sens: TextDirection.rtl),
       );
       await tester.pump();
-      final Element texte = find.text(message).evaluate().single;
-      expect(Directionality.of(texte), TextDirection.ltr);
+      expect(
+        find.text(isolerDansInterface(message, TextDirection.rtl)),
+        findsOneWidget,
+      );
+      expect(isolerDansInterface(message, TextDirection.rtl), startsWith(_fsi));
       await tester.pump(const Duration(seconds: 5));
     });
 

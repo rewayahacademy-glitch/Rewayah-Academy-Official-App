@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../core/accessibilite/sens_du_contenu.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
@@ -166,13 +166,13 @@ class _CarteSessionState extends State<CarteSession> {
         focusNode: _focusTitre,
         child: Semantics(
           header: true,
-          child: SensDuContenu(
-            texte: horloge.horlogeUtilisateur.dateLocaleRendue,
-            child: Text(
+          child: Text(
+            isolerDansInterface(
               horloge.horlogeUtilisateur.dateLocaleRendue,
-              key: const ValueKey<String>('carte-seance-titre'),
-              style: textes.titleMedium ?? const TextStyle(),
+              Directionality.of(context),
             ),
+            key: const ValueKey<String>('carte-seance-titre'),
+            style: textes.titleMedium ?? const TextStyle(),
           ),
         ),
       ),
@@ -527,14 +527,11 @@ class _LigneEtat extends StatelessWidget {
           Flexible(
             // Aucun mot coupe a 320 px texte x2 (lecon 8, DASH-MA-PROD-b :
             // « une conn / exion » hors ligne sur l'Accueil MA).
-            child: SensDuContenu(
-              texte: texte,
-              child: TexteSansCoupure(
-                texte,
-                // Un decompte : chiffres tabulaires (revue phase 0, jetons D4).
-                style: AppTypography.tabulaire(
-                  textes.titleMedium ?? const TextStyle(),
-                ),
+            child: TexteSansCoupure(
+              isolerDansInterface(texte, Directionality.of(context)),
+              // Un decompte : chiffres tabulaires (revue phase 0, jetons D4).
+              style: AppTypography.tabulaire(
+                textes.titleMedium ?? const TextStyle(),
               ),
             ),
           ),
@@ -745,9 +742,9 @@ class LargeurLectureCarte extends StatelessWidget {
   }
 }
 
-/// Un texte de la carte isole dans le sens de son contenu ([SensDuContenu]) :
-/// en interface de droite a gauche, la ponctuation d'un libelle francais
-/// reste a sa place.
+/// Un texte de la carte isole par l'isolat partage FSI ... PDI
+/// ([isolerDansInterface]) : en interface de droite a gauche, la ponctuation
+/// d'un libelle francais reste a sa place.
 class _TexteIsole extends StatelessWidget {
   const _TexteIsole(this.texte, {this.style});
 
@@ -756,9 +753,9 @@ class _TexteIsole extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SensDuContenu(
-      texte: texte,
-      child: Text(texte, style: style),
+    return Text(
+      isolerDansInterface(texte, Directionality.of(context)),
+      style: style,
     );
   }
 }

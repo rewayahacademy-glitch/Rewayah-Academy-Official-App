@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../i18n/isolat_bidi.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
@@ -397,13 +398,15 @@ class _Carte<T> extends StatelessWidget {
       }
     }
 
-    final String resume = secondaires
-        .map((ColonneDonnees<T> c) => c.texte(ligne))
-        .where((String v) => v.isNotEmpty)
-        // Le point median, et non un tiret : le tiret cadratin est refuse par
-        // `tool/verifier_jetons.dart`, et le tiret court se confond avec un
-        // signe moins dans une colonne de chiffres.
-        .join(' · ');
+    // Le point median, et non un tiret : le tiret cadratin est refuse par
+    // `tool/verifier_jetons.dart`, et le tiret court se confond avec un signe
+    // moins dans une colonne de chiffres. DUREE-INSECABLE-4 : une valeur
+    // ancree pour sa cellule (« 12 jours ») perd son ancre de sens (U+200E)
+    // quand elle n'ouvre pas la ligne ([enchainer]).
+    final String resume = enchainer(
+      secondaires.map((ColonneDonnees<T> c) => c.texte(ligne)),
+      ' · ',
+    );
 
     // La carte entiere se lit comme un seul element : sans ce regroupement, un
     // lecteur d'ecran enoncerait quatre fragments sans lien entre eux.
