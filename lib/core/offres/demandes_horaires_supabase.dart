@@ -23,11 +23,11 @@ class DemandesHorairesSupabase
       },
     );
     return DemandeHoraireFamille(
-      id: reponse['id'] as String? ?? '',
+      id: reponse['id'] as String,
       etat: EtatDemandeHoraire.depuisSql(reponse['etat'] as String?),
       prochaineEtape: reponse['prochaine_etape'] as String? ?? 'constitution_classe',
       motif: reponse['motif'] as String?,
-      updatedAt: DateTime.now().toUtc(),
+      updatedAt: DateTime.parse(reponse['updated_at'] as String).toUtc(),
     );
   }
 
