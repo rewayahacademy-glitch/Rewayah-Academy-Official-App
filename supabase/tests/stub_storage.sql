@@ -22,7 +22,7 @@ returns text[]
 language sql
 immutable
 as $folder$
-  select string_to_array(trim(both '/' from name), '/')[1:greatest(array_length(string_to_array(trim(both '/' from name), '/'), 1) - 1, 0)]
+  select (regexp_split_to_array(trim(both '/' from name), '/'))[1:array_length(regexp_split_to_array(trim(both '/' from name), '/'), 1) - 1]
 $folder$;
 
 create function storage.extension(name text)
