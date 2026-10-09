@@ -46,6 +46,10 @@ jobs:
             psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f "$f"
           done
 
+      - name: Scénarios B-09 (notifications)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b09_notifications.sql
+
       # B-11 mesure les ACL exactes laissées par les migrations; il doit précéder
       # les scénarios historiques, qui accordent des droits larges à leur jeu de test.
       - name: Scénarios B-11 (signalement)
