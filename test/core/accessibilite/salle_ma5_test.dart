@@ -328,13 +328,9 @@ void main() {
     }
 
     // m1 (verification d'ETATS-MA-1) : la meme borne, mesuree aussi au plus
-    // petit ecran de reference, 320 x 568, texte x2. Resultat honnete de la
-    // mesure du 08/10/2026 : en-tete 152 + commandes 240 = 392 pour une
-    // borne de 284 (50 % de 568) : la borne N'EST PAS tenue a 320 x 568
-    // (69 %). Les commandes se masquent (le support reprend alors tout
-    // l'ecran) et une touche les rend. Ce test garde la mesure (pas de
-    // regression au-dela de 70 %) et le masquage ; la borne a 320 x 568 est
-    // rendue au directeur comme reste (DOCK-X2-1).
+    // petit ecran de reference, 320 x 568, texte x2 (borne 284, 50 % de 568).
+    // Les commandes se masquent (le support reprend alors tout l'ecran) et
+    // une touche les rend ; ce test garde la mesure et le masquage.
     // ZOOM-LIB-1 (09/10/2026) : mesure reprise, en-tete 120 + commandes 240
     // = 360 (63,4 %). Reduire l'en-tete seul ne peut pas tenir la borne :
     // les commandes laissent 284 - 240 = 44, moins que la cible du chevron
