@@ -236,7 +236,18 @@ void main() {
       );
       expect(tester.takeException(), isNull);
       for (final String libelle in _attendus) {
-        expect(find.text(isolerSens(libelle)), findsOneWidget, reason: libelle);
+        // COUPE-MOTS-4 : le titre d'une carte de choix garde un nom compose
+        // entier (gluon invisible U+2060 apres le trait quand la ligne s'y
+        // couperait) ; le texte lu est le meme.
+        expect(
+          find.byWidgetPredicate(
+            (Widget w) =>
+                w is Text &&
+                w.data?.replaceAll('\u2060', '') == isolerSens(libelle),
+          ),
+          findsOneWidget,
+          reason: libelle,
+        );
       }
       // Jamais le prenom seul quand le serveur donne l'initiale.
       expect(find.text('Mariam'), findsNothing);

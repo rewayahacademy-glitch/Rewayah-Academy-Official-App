@@ -81,6 +81,13 @@ void main() {
         // Chaque mot de chaque paragraphe qui porte l'identifiant reste
         // entier : le trait d'union ne laisse pas « 000001 » seul a la ligne.
         expect(motsCoupes(tester, porteurs), isEmpty);
+        // Et le trait d'union de l'identifiant est insecable a l'ecran : une
+        // ligne pleine ne peut plus le couper la (« TEACHER-AS- / 000001 »).
+        expect(
+          find.textContaining('TEACHER\u2011AS\u2011000001'),
+          findsWidgets,
+        );
+        expect(find.textContaining('TEACHER-AS-000001'), findsNothing);
       });
     }
   }
