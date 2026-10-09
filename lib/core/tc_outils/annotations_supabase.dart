@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../tc_bibliotheque/content_position.dart';
 import '../tc_bibliotheque/content_range.dart';
+import '../tc_etat_partage/codec_etat_partage.dart';
 import 'annotation_layer.dart';
 import 'intention_pedagogique.dart';
 import 'port_annotations.dart';
@@ -221,7 +221,7 @@ class AnnotationsSupabase implements PortAnnotations {
     }
     await _client.from('annotation_trait').insert(<String, dynamic>{
       'layer_id': coucheId,
-      'ancrage': _positionJson(trait.ancrage),
+      'ancrage': positionVersJson(trait.ancrage),
       'points': <Map<String, double>>[
         for (final PointNormalise point in trait.points)
           <String, double>{'x': point.x, 'y': point.y},
@@ -264,7 +264,7 @@ class AnnotationsSupabase implements PortAnnotations {
       params: <String, dynamic>{
         'p_layer_id': coucheId,
         'p_id': marqueur.id,
-        'p_plage': _plageJson(marqueur.plage),
+        'p_plage': plageVersJson(marqueur.plage),
         'p_intention': marqueur.intention.valeurSql,
         'p_note': marqueur.note,
       },
@@ -296,28 +296,8 @@ class AnnotationsSupabase implements PortAnnotations {
     );
   }
 
-  static Map<String, dynamic> _positionJson(ContentPosition position) =>
-      <String, dynamic>{
-        'resource_id': position.resourceId,
-        'resource_version_id': position.resourceVersionId,
-        'type_ancrage': position.typeAncrage.valeurSql,
-        'page': position.page,
-        'sourate': position.sourate,
-        'ayah': position.ayah,
-        'section_id': position.sectionId,
-        'fraction': position.fraction,
-      };
-
-  static Map<String, dynamic> _plageJson(ContentRange plage) =>
-      <String, dynamic>{
-        'resource_id': plage.resourceId,
-        'resource_version_id': plage.resourceVersionId,
-        'debut': _positionJson(plage.debut),
-        'fin': _positionJson(plage.fin),
-      };
-
   static TraitVectoriel _traitDepuisJson(Map<String, dynamic> row) {
-    final ContentPosition? ancrage = _positionDepuisJson(row['ancrage']);
+    final ContentPosition? ancrage = positionDepuisJson(row['ancrage']);
     final OutilTrait? outil = OutilTrait.depuisSql(row['outil'] as String?);
     final String? intentionSql = row['intention'] as String?;
     final IntentionPedagogique? intention = intentionSql == null
@@ -366,7 +346,7 @@ class AnnotationsSupabase implements PortAnnotations {
     );
   }
 
-  static ContentPosition? _positionDepuisJson(Object? row) {
+  static ContentPosition? positionDepuisJson(Object? row) {
     if (row is! Map) return null;
     final Map<String, dynamic> valeurs = Map<String, dynamic>.from(row);
     final String? resourceId = valeurs['resource_id'] as String?;
