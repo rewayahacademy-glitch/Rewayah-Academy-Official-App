@@ -2212,6 +2212,12 @@ class Traductions$alertes$fr {
 	/// fr: '{nombre} alertes urgentes. La plus récente : {titre}'
 	String bandeauPlusieurs({required Object nombre, required Object titre}) => '${nombre} alertes urgentes. La plus récente : ${titre}';
 
+	/// fr: 'Alerte urgente à traiter'
+	String get bandeauCourtUne => 'Alerte urgente à traiter';
+
+	/// fr: '{nombre} alertes urgentes à traiter'
+	String bandeauCourtPlusieurs({required Object nombre}) => '${nombre} alertes urgentes à traiter';
+
 	/// fr: 'Voir toutes les alertes'
 	String get voirTout => 'Voir toutes les alertes';
 
@@ -17986,6 +17992,8 @@ extension on Traductions {
 			'alertes.ligne' => ({required Object gravite, required Object titre, required Object date, required Object heure}) => '${gravite}, ${titre}, le ${date} à ${heure}',
 			'alertes.bandeauUne' => ({required Object titre}) => 'Alerte urgente : ${titre}',
 			'alertes.bandeauPlusieurs' => ({required Object nombre, required Object titre}) => '${nombre} alertes urgentes. La plus récente : ${titre}',
+			'alertes.bandeauCourtUne' => 'Alerte urgente à traiter',
+			'alertes.bandeauCourtPlusieurs' => ({required Object nombre}) => '${nombre} alertes urgentes à traiter',
 			'alertes.voirTout' => 'Voir toutes les alertes',
 			'alertes.vide' => 'Aucune alerte en cours.',
 			'alertes.videTitre' => 'Aucune alerte en cours',
@@ -18361,10 +18369,10 @@ extension on Traductions {
 			'classe.pageCatalogue.etat.complete' => 'Complète',
 			'classe.pageCatalogue.etat.listeAttente' => 'Liste d\'attente',
 			'classe.pageCatalogue.choisir' => 'Choisir cette classe',
-			'classe.pageCatalogue.rejoindreAttente' => 'Rejoindre la liste d\'attente',
-			'classe.pageCatalogue.precisionsTitre' => 'Avant de choisir',
 			_ => null,
 		} ?? switch (path) {
+			'classe.pageCatalogue.rejoindreAttente' => 'Rejoindre la liste d\'attente',
+			'classe.pageCatalogue.precisionsTitre' => 'Avant de choisir',
 			'classe.pageCatalogue.precisionEnseignant' => 'Une classe garde le même enseignant pour toutes ses séances.',
 			'classe.pageCatalogue.precisionPlaces' => 'Les places affichées sont celles de l\'académie au moment de la lecture.',
 			'classe.pageCatalogue.precisionReserve' => 'Rien n\'est réservé avant votre confirmation.',
@@ -18875,10 +18883,10 @@ extension on Traductions {
 			'controleur.compteRendu.revenir' => 'Revenir au contrôle',
 			'controleur.compteRendu.sousTitre' => ({required Object classe, required Object heure}) => '${classe} · ${heure}',
 			'controleur.compteRendu.faits' => 'Relevé automatique de la séance',
-			'controleur.compteRendu.faitsReplies' => 'Relevé automatique de la séance, replié',
-			'controleur.compteRendu.faitsDeplies' => 'Relevé automatique de la séance, déplié',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.compteRendu.faitsReplies' => 'Relevé automatique de la séance, replié',
+			'controleur.compteRendu.faitsDeplies' => 'Relevé automatique de la séance, déplié',
 			'controleur.compteRendu.faitsChargement' => 'Lecture du relevé automatique de la séance : heures, élèves présents, reconnexions.',
 			'controleur.compteRendu.faitsAbsents' => 'Le relevé automatique de la séance (heures, élèves présents, reconnexions) n\'est pas encore reçu : la séance vient de se terminer ou la connexion a été coupée. Vous pouvez répondre sans lui ; il sera joint au rapport dès sa réception.',
 			'controleur.compteRendu.cleHoraire' => 'Heure prévue',
@@ -19389,10 +19397,10 @@ extension on Traductions {
 			'tc.observation.visite.reconnexionDetail' => 'La connexion est interrompue, reconnexion en cours. Votre temps d\'observation continue de s\'écouler.',
 			'tc.observation.visite.sonRecu' => 'Son reçu',
 			'tc.observation.visite.sonInterrompu' => 'Son interrompu',
-			'tc.observation.visite.agrandir' => 'Agrandir',
-			'tc.observation.visite.reduire' => 'Réduire',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.visite.agrandir' => 'Agrandir',
+			'tc.observation.visite.reduire' => 'Réduire',
 			'tc.observation.visite.cameraFermee' => 'Caméra fermée',
 			'tc.observation.visite.pasEncoreLa' => 'Pas encore dans la salle',
 			'tc.observation.visite.parle' => ({required Object nom}) => '${nom} parle',
