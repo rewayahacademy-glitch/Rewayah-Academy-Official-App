@@ -469,20 +469,17 @@ class Traductions$bienvenue$fr {
 	/// fr: 'Bienvenue'
 	String get titre => 'Bienvenue';
 
-	/// fr: 'Apprendre le Coran en classe, avec un enseignant attitré'
-	String get accroche => 'Apprendre le Coran en classe, avec un enseignant attitré';
+	/// fr: 'Apprendre le Coran en classe, en visio'
+	String get accroche => 'Apprendre le Coran en classe, en visio';
 
-	/// fr: 'Des séances en visio, à horaire fixe, pour vous ou pour les élèves de votre foyer.'
-	String get phrase => 'Des séances en visio, à horaire fixe, pour vous ou pour les élèves de votre foyer.';
+	/// fr: 'Rewayah Academy propose des cours de Coran en direct, en vidéo, pour vous ou pour les élèves de votre foyer.'
+	String get phrase => 'Rewayah Academy propose des cours de Coran en direct, en vidéo, pour vous ou pour les élèves de votre foyer.';
 
-	/// fr: 'Comment ça se passe'
-	String get pointsTitre => 'Comment ça se passe';
+	/// fr: 'Une classe stable, à horaire fixe'
+	String get pointClasseTitre => 'Une classe stable, à horaire fixe';
 
-	/// fr: 'Une classe stable'
-	String get pointClasseTitre => 'Une classe stable';
-
-	/// fr: 'Les mêmes camarades et le même horaire, chaque semaine.'
-	String get pointClasse => 'Les mêmes camarades et le même horaire, chaque semaine.';
+	/// fr: 'Les mêmes camarades et le même horaire, chaque semaine. Vous choisissez une classe dont l'horaire vous convient.'
+	String get pointClasse => 'Les mêmes camarades et le même horaire, chaque semaine. Vous choisissez une classe dont l\'horaire vous convient.';
 
 	/// fr: 'Un enseignant attitré'
 	String get pointEnseignantTitre => 'Un enseignant attitré';
@@ -490,17 +487,38 @@ class Traductions$bienvenue$fr {
 	/// fr: 'Un Sayyid ou une Sayyida qui suit chaque élève d'une séance à l'autre.'
 	String get pointEnseignant => 'Un Sayyid ou une Sayyida qui suit chaque élève d\'une séance à l\'autre.';
 
-	/// fr: 'Un seul compte pour le foyer'
-	String get pointFoyerTitre => 'Un seul compte pour le foyer';
+	/// fr: 'Un parcours selon le niveau'
+	String get pointParcoursTitre => 'Un parcours selon le niveau';
 
-	/// fr: 'Les séances de chaque élève du foyer se suivent depuis votre compte.'
-	String get pointFoyer => 'Les séances de chaque élève du foyer se suivent depuis votre compte.';
+	/// fr: 'Le débutant commence par la lecture de l'arabe et du Coran. L'élève déjà avancé rejoint la classe la plus proche de son niveau.'
+	String get pointParcours => 'Le débutant commence par la lecture de l\'arabe et du Coran. L\'élève déjà avancé rejoint la classe la plus proche de son niveau.';
+
+	/// fr: 'Le suivi de la famille'
+	String get pointFoyerTitre => 'Le suivi de la famille';
+
+	/// fr: 'Un seul compte pour le foyer : les séances de chaque élève se suivent depuis votre compte.'
+	String get pointFoyer => 'Un seul compte pour le foyer : les séances de chaque élève se suivent depuis votre compte.';
 
 	/// fr: 'Commencer'
 	String get commencer => 'Commencer';
 
 	/// fr: 'J'ai déjà un compte'
 	String get dejaCompte => 'J\'ai déjà un compte';
+
+	/// fr: 'Passer la présentation'
+	String get passer => 'Passer la présentation';
+
+	/// fr: '{numero} / {total}'
+	String position({required Object numero, required Object total}) => '${numero} / ${total}';
+
+	/// fr: 'Présentation, page {numero} sur {total}'
+	String positionLecteur({required Object numero, required Object total}) => 'Présentation, page ${numero} sur ${total}';
+
+	/// fr: 'Page précédente de la présentation'
+	String get precedente => 'Page précédente de la présentation';
+
+	/// fr: 'Page suivante de la présentation'
+	String get suivante => 'Page suivante de la présentation';
 }
 
 // Path: attente
@@ -16183,17 +16201,23 @@ extension on Traductions {
 			'presence.attenteInstant' => 'le cours vient de commencer',
 			'presence.attenteMinutes' => ({required Object minutes}) => 'le cours a commencé il y a ${minutes} min',
 			'bienvenue.titre' => 'Bienvenue',
-			'bienvenue.accroche' => 'Apprendre le Coran en classe, avec un enseignant attitré',
-			'bienvenue.phrase' => 'Des séances en visio, à horaire fixe, pour vous ou pour les élèves de votre foyer.',
-			'bienvenue.pointsTitre' => 'Comment ça se passe',
-			'bienvenue.pointClasseTitre' => 'Une classe stable',
-			'bienvenue.pointClasse' => 'Les mêmes camarades et le même horaire, chaque semaine.',
+			'bienvenue.accroche' => 'Apprendre le Coran en classe, en visio',
+			'bienvenue.phrase' => 'Rewayah Academy propose des cours de Coran en direct, en vidéo, pour vous ou pour les élèves de votre foyer.',
+			'bienvenue.pointClasseTitre' => 'Une classe stable, à horaire fixe',
+			'bienvenue.pointClasse' => 'Les mêmes camarades et le même horaire, chaque semaine. Vous choisissez une classe dont l\'horaire vous convient.',
 			'bienvenue.pointEnseignantTitre' => 'Un enseignant attitré',
 			'bienvenue.pointEnseignant' => 'Un Sayyid ou une Sayyida qui suit chaque élève d\'une séance à l\'autre.',
-			'bienvenue.pointFoyerTitre' => 'Un seul compte pour le foyer',
-			'bienvenue.pointFoyer' => 'Les séances de chaque élève du foyer se suivent depuis votre compte.',
+			'bienvenue.pointParcoursTitre' => 'Un parcours selon le niveau',
+			'bienvenue.pointParcours' => 'Le débutant commence par la lecture de l\'arabe et du Coran. L\'élève déjà avancé rejoint la classe la plus proche de son niveau.',
+			'bienvenue.pointFoyerTitre' => 'Le suivi de la famille',
+			'bienvenue.pointFoyer' => 'Un seul compte pour le foyer : les séances de chaque élève se suivent depuis votre compte.',
 			'bienvenue.commencer' => 'Commencer',
 			'bienvenue.dejaCompte' => 'J\'ai déjà un compte',
+			'bienvenue.passer' => 'Passer la présentation',
+			'bienvenue.position' => ({required Object numero, required Object total}) => '${numero} / ${total}',
+			'bienvenue.positionLecteur' => ({required Object numero, required Object total}) => 'Présentation, page ${numero} sur ${total}',
+			'bienvenue.precedente' => 'Page précédente de la présentation',
+			'bienvenue.suivante' => 'Page suivante de la présentation',
 			'attente.titre' => 'Votre dossier est en cours de vérification',
 			'attente.dossierIncomplet' => 'Il manque encore des pièces à votre dossier.',
 			'attente.enVerification' => 'Nous vérifions votre dossier.',
@@ -16310,14 +16334,14 @@ extension on Traductions {
 			'inscription.recap.enseignant' => 'Enseignant',
 			'contrat.titre' => 'Ce que vous signez',
 			'contrat.intro' => 'Deux points comptent plus que les autres. Ils sont écrits ici en clair plutôt qu\'au milieu d\'un texte long.',
+			_ => null,
+		} ?? switch (path) {
 			'contrat.pointEnregistrement' => 'Chaque cours est enregistré en audio, conservé trente jours, puis effacé. Chaque écoute est inscrite au journal, avec le nom de qui écoute.',
 			'contrat.pointControle' => 'Un contrôleur qualité peut assister à un cours sans être vu. La salle le rappelle en permanence, que la visite ait lieu ou non.',
 			'contrat.pointCoordonnees' => 'Vous ne voyez jamais les coordonnées d\'une famille : ni nom complet, ni courriel, ni téléphone.',
 			'contrat.lireTexte' => 'Lire le texte complet',
 			'contrat.accepter' => 'J\'ai lu et j\'accepte',
 			'contrat.accepteLe' => ({required Object date}) => 'Accepté le ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'contrat.erreur' => 'La signature n\'a pas abouti. Réessayez dans un instant.',
 			'contrat.horsLigne' => 'Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.',
 			'contrat.caseRequise' => 'Cochez la case pour continuer.',
@@ -16824,14 +16848,14 @@ extension on Traductions {
 			'dossiers.file.ouvrirDe' => ({required Object nom}) => 'Ouvrir le dossier de ${nom}',
 			'dossiers.file.ouvrirElide' => ({required Object nom}) => 'Ouvrir le dossier d\'${nom}',
 			'dossiers.file.enVerification' => 'En cours de vérification',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.file.sansNom' => 'Dossier sans nom disponible',
 			'dossiers.file.legende' => ({required Object type, required Object date}) => '${type} · ${date}',
 			'dossiers.file.dateHeure' => ({required Object date, required Object heure, required Object zone}) => '${date} à ${heure} (${zone})',
 			'dossiers.file.dateChiffres' => ({required Object jour, required Object mois, required Object annee}) => '${jour}/${mois}/${annee}',
 			'dossiers.file.heureChiffres' => ({required Object heures, required Object minutes}) => '${heures}:${minutes}',
 			'dossiers.file.zoneUtc' => 'UTC',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.file.suivantAnnonce' => ({required Object nom}) => 'Dossier suivant : ${nom}',
 			'dossiers.detail.titreDe' => ({required Object nom}) => 'Dossier de ${nom}',
 			'dossiers.detail.titreElide' => ({required Object nom}) => 'Dossier d\'${nom}',
@@ -17338,14 +17362,14 @@ extension on Traductions {
 			'admin.journal.colonneQui' => 'Qui',
 			'admin.journal.colonneRole' => 'À quel titre',
 			'admin.journal.colonneQuoi' => 'Ce qui a été fait',
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.colonneCible' => 'Sur quoi',
 			'admin.journal.colonneDetail' => 'Détail',
 			'admin.journal.horodatage' => ({required Object date, required Object heure}) => '${date} à ${heure}',
 			'admin.journal.acteurSysteme' => 'Le système',
 			'admin.journal.acteurInconnu' => 'Compte supprimé',
 			'admin.journal.roleAdmin' => 'Administration',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.roleEnseignant' => 'Enseignant',
 			'admin.journal.roleTuteur' => 'Tuteur',
 			'admin.journal.roleEleve' => 'Élève',
@@ -17852,14 +17876,14 @@ extension on Traductions {
 			'compte.tuteur.pagePreferences.sousTitre' => 'Personnalisez votre expérience sur cet appareil.',
 			'compte.tuteur.pagePreferences.apparence' => 'Apparence',
 			'compte.tuteur.pagePreferences.apparenceDetail' => 'Thème et confort visuel',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pagePreferences.langue' => 'Langue et région',
 			'compte.tuteur.pagePreferences.notifications' => 'Notifications',
 			'compte.tuteur.pagePreferences.notificationsDetail' => 'Pas encore disponibles dans l\'application',
 			'compte.tuteur.pageApparence.titre' => 'Apparence',
 			'compte.tuteur.pageApparence.sousTitre' => 'Appliqué sur cet appareil.',
 			'compte.tuteur.pageApparence.theme' => 'Thème de l\'application',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageApparence.themeDetail' => 'Personnalisez l\'apparence de Rewayah.',
 			'compte.tuteur.pageApparence.confort' => 'Confort visuel',
 			'compte.tuteur.pageApparence.animations' => 'Animations',
@@ -18366,14 +18390,14 @@ extension on Traductions {
 			'classe.pageCatalogue.horairesAbsents' => 'Les jours et heures de cette classe ne sont pas encore affichés ici.',
 			'classe.pageCatalogue.seanceHebdo' => ({required Object jour, required Object heure, required Object duree}) => '${jour} à ${heure} · ${duree} min',
 			'classe.pageCatalogue.fuseauClasse' => ({required Object fuseau}) => 'Heures de la classe (${fuseau})',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pageCatalogue.placeUne' => '1 place restante',
 			'classe.pageCatalogue.places' => ({required Object nombre}) => '${nombre} places restantes',
 			'classe.pageCatalogue.etat.ouverte' => 'Ouverte',
 			'classe.pageCatalogue.etat.complete' => 'Complète',
 			'classe.pageCatalogue.etat.listeAttente' => 'Liste d\'attente',
 			'classe.pageCatalogue.choisir' => 'Choisir cette classe',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageCatalogue.rejoindreAttente' => 'Rejoindre la liste d\'attente',
 			'classe.pageCatalogue.precisionsTitre' => 'Avant de choisir',
 			'classe.pageCatalogue.precisionEnseignant' => 'Une classe garde le même enseignant pour toutes ses séances.',
@@ -18880,14 +18904,14 @@ extension on Traductions {
 			'controleur.complement.echec' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici, réessayez dans un instant. Le rapport d\'origine reste intact.',
 			'controleur.complement.envoyeTitre' => 'Complément ajouté',
 			'controleur.complement.envoyePhrase' => 'Il s\'affiche sous le rapport d\'origine, qui reste inchangé.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.complement.revenir' => 'Revenir au rapport',
 			'controleur.compteRendu.titre' => 'Compte rendu',
 			'controleur.compteRendu.provisoire' => 'Cet écran est en préparation.',
 			'controleur.compteRendu.revenir' => 'Revenir au contrôle',
 			'controleur.compteRendu.sousTitre' => ({required Object classe, required Object heure}) => '${classe} · ${heure}',
 			'controleur.compteRendu.faits' => 'Relevé automatique de la séance',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.compteRendu.faitsReplies' => 'Relevé automatique de la séance, replié',
 			'controleur.compteRendu.faitsDeplies' => 'Relevé automatique de la séance, déplié',
 			'controleur.compteRendu.faitsChargement' => 'Lecture du relevé automatique de la séance : heures, élèves présents, reconnexions.',
@@ -19394,14 +19418,14 @@ extension on Traductions {
 			'tc.observation.visite.sortieNonConfirmee' => 'La fin de votre visite n\'a pas pu être confirmée. Elle sera fermée par le serveur.',
 			'tc.observation.visite.restantes' => 'restantes',
 			'tc.observation.visite.decompteLu' => ({required Object duree}) => 'Temps restant : ${duree}',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.visite.enDirect' => 'En direct',
 			'tc.observation.visite.connexion' => 'Connexion',
 			'tc.observation.visite.reconnexion' => 'Reconnexion',
 			'tc.observation.visite.videoCoupee' => 'Vidéo indisponible',
 			'tc.observation.visite.reconnexionDetail' => 'La connexion est interrompue, reconnexion en cours. Votre temps d\'observation continue de s\'écouler.',
 			'tc.observation.visite.sonRecu' => 'Son reçu',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.visite.sonInterrompu' => 'Son interrompu',
 			'tc.observation.visite.agrandir' => 'Agrandir',
 			'tc.observation.visite.reduire' => 'Réduire',
