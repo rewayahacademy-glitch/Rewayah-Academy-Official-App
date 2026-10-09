@@ -1352,6 +1352,31 @@ void main() {
     });
   }
 
+  // EA-HL-DOUBLE-1f (reprise) : « Votre presence », pose sur le fond de la
+  // salle, prenait l'encre du fond creme (captures 1440 : sombre sur sombre
+  // en clair, clair sur clair en sombre).
+  for (final ThemeMode theme in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
+    testWidgets('votre presence ecrit avec l encre du fond de la salle, '
+        '$theme', (WidgetTester tester) async {
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: FauxMoteurSalle()..erreurEntree = StateError('lien coupe'),
+          preVol: FauxServicePreVol(),
+        ),
+        themeMode: theme,
+      );
+      final Finder f = find.text(t.presence.mienne);
+      expect(f, findsOneWidget);
+      final Color? encreFond = DefaultTextStyle.of(
+        tester.element(find.text(t.salle.refusReseau)),
+      ).style.color;
+      expect(encreFond, isNotNull);
+      expect(tester.widget<Text>(f).style?.color, encreFond);
+    });
+  }
+
   // EA-HL-DOUBLE-1f : captures de preuve de l'impasse « reseau » de la salle
   // (sans bandeau, `PageImmersive`), 390 clair et sombre, 320 texte x2 en
   // LTR et RTL. Sautees sans CAPTURE_DIR.

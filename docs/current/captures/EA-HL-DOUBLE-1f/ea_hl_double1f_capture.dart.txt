@@ -1,15 +1,18 @@
-// EA-HL-DOUBLE-1f : script de capture archive. Les groupes « Capture
-// EA-HL-DOUBLE-1f » vivent dans les fichiers de test ci-dessous ; relance :
+// EA-HL-DOUBLE-1f (reprise) : script de capture archive. Les groupes
+// « Capture EA-HL-DOUBLE-1f » vivent dans les fichiers de test ci-dessous ;
+// relance :
 // CAPTURE_DIR=$PWD/docs/current/captures/EA-HL-DOUBLE-1f flutter test --concurrency=2 \
 //   test/features/agent_entree_test.dart \
 //   test/teaching_core/b/bibliotheque_page_test.dart \
 //   test/features/salle_test.dart \
+//   test/features/fiche_groupe_test.dart \
+//   test/teaching_core/g/observation_cause_probable_test.dart \
 //   --plain-name "Capture EA-HL-DOUBLE-1f"
+//
+// Cas : 390 clair et sombre, 320 texte x2 clair LTR et RTL, 320 texte x2
+// sombre RTL, 1440 clair, et 390 en ligne (hors salle, sans bandeau).
 
 // ===== test/features/agent_entree_test.dart =====
-  // EA-HL-DOUBLE-1f : captures de preuve, hors ligne sous le bandeau (390
-  // clair et sombre, 320 texte x2 en LTR et RTL) et en ligne. Sautees sans
-  // CAPTURE_DIR.
   group('Capture EA-HL-DOUBLE-1f', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
     for (final (String, Size, ThemeMode, double, TextDirection, bool) cas
@@ -44,6 +47,22 @@
             ThemeMode.light,
             2,
             TextDirection.rtl,
+            true,
+          ),
+          (
+            '320x2_rtl_sombre',
+            const Size(320, 1700),
+            ThemeMode.dark,
+            2,
+            TextDirection.rtl,
+            true,
+          ),
+          (
+            '1440_clair',
+            const Size(1440, 900),
+            ThemeMode.light,
+            1,
+            TextDirection.ltr,
             true,
           ),
           (
@@ -78,6 +97,7 @@
         await stabiliser(tester);
         expect(tester.takeException(), isNull);
         expect(find.text(t.agent.indisponibleDetail), findsOneWidget);
+        expect(find.text(t.agent.reessayer), findsOneWidget);
         expect(causesAffirmees(), findsNothing);
         if (cas.$6) {
           expectHorsLigneUneFois();
@@ -91,9 +111,6 @@
   });
 
 // ===== test/teaching_core/b/bibliotheque_page_test.dart =====
-  // EA-HL-DOUBLE-1f : captures de preuve de la panne de la bibliotheque,
-  // page entiere sous le bandeau, hors ligne (390 clair et sombre, 320
-  // texte x2 en LTR et RTL) et en ligne. Sautees sans CAPTURE_DIR.
   group('Capture EA-HL-DOUBLE-1f', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
     for (final (String, Size, ThemeMode, double, TextDirection, bool) cas
@@ -128,6 +145,22 @@
             ThemeMode.light,
             2,
             TextDirection.rtl,
+            true,
+          ),
+          (
+            '320x2_rtl_sombre',
+            const Size(320, 1200),
+            ThemeMode.dark,
+            2,
+            TextDirection.rtl,
+            true,
+          ),
+          (
+            '1440_clair',
+            const Size(1440, 900),
+            ThemeMode.light,
+            1,
+            TextDirection.ltr,
             true,
           ),
           (
@@ -176,9 +209,6 @@
   });
 
 // ===== test/features/salle_test.dart =====
-  // EA-HL-DOUBLE-1f : captures de preuve de l'impasse « reseau » de la salle
-  // (sans bandeau, `PageImmersive`), 390 clair et sombre, 320 texte x2 en
-  // LTR et RTL. Sautees sans CAPTURE_DIR.
   group('Capture EA-HL-DOUBLE-1f', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
     setUp(masquerRubanDebug);
@@ -212,6 +242,20 @@
             2,
             TextDirection.rtl,
           ),
+          (
+            '320x2_rtl_sombre',
+            const Size(320, 1000),
+            ThemeMode.dark,
+            2,
+            TextDirection.rtl,
+          ),
+          (
+            '1440_clair',
+            const Size(1440, 900),
+            ThemeMode.light,
+            1,
+            TextDirection.ltr,
+          ),
         ]) {
       testWidgets(cas.$1, (WidgetTester tester) async {
         fixerVueCapture(tester, cas.$2, 1);
@@ -232,6 +276,180 @@
         verifierAucunMotCoupe(tester, find.byType(MaterialApp));
         debugPrint(
           'PNG ${await capturerVue(tester, 'ea_hl_double1f_salle_refus_reseau_${cas.$1}')}',
+        );
+      });
+    }
+  });
+
+// ===== test/features/fiche_groupe_test.dart =====
+    group('Capture EA-HL-DOUBLE-1f', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      for (final (String, Size, ThemeMode, double, TextDirection, bool) cas
+          in <(String, Size, ThemeMode, double, TextDirection, bool)>[
+            (
+              '390_clair',
+              const Size(390, 844),
+              ThemeMode.light,
+              1,
+              TextDirection.ltr,
+              true,
+            ),
+            (
+              '390_sombre',
+              const Size(390, 844),
+              ThemeMode.dark,
+              1,
+              TextDirection.ltr,
+              true,
+            ),
+            (
+              '320x2_clair',
+              const Size(320, 1700),
+              ThemeMode.light,
+              2,
+              TextDirection.ltr,
+              true,
+            ),
+            (
+              '320x2_rtl_clair',
+              const Size(320, 1700),
+              ThemeMode.light,
+              2,
+              TextDirection.rtl,
+              true,
+            ),
+            (
+              '320x2_rtl_sombre',
+              const Size(320, 1700),
+              ThemeMode.dark,
+              2,
+              TextDirection.rtl,
+              true,
+            ),
+            (
+              '1440_clair',
+              const Size(1440, 900),
+              ThemeMode.light,
+              1,
+              TextDirection.ltr,
+              true,
+            ),
+            (
+              '390_en_ligne_clair',
+              const Size(390, 844),
+              ThemeMode.light,
+              1,
+              TextDirection.ltr,
+              false,
+            ),
+          ]) {
+        testWidgets(cas.$1, (WidgetTester tester) async {
+          fixerVueCapture(tester, cas.$2, 1);
+          await monter(
+            tester,
+            horsLigne: cas.$6,
+            themeMode: cas.$3,
+            direction: cas.$5,
+            echelle: cas.$4,
+          );
+          expect(tester.takeException(), isNull);
+          expect(find.text(t.classe.entree.indisponible), findsOneWidget);
+          expect(causesAffirmees(), findsNothing);
+          if (cas.$6) {
+            expectHorsLigneUneFois();
+          }
+          verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'ea_hl_double1f_fiche_seance_echec_${cas.$1}')}',
+          );
+        });
+      }
+    });
+
+// ===== test/teaching_core/g/observation_cause_probable_test.dart =====
+  group('Capture EA-HL-DOUBLE-1f', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String, Size, ThemeMode, double, TextDirection, bool) cas
+        in <(String, Size, ThemeMode, double, TextDirection, bool)>[
+          (
+            '390_clair',
+            const Size(390, 844),
+            ThemeMode.light,
+            1,
+            TextDirection.ltr,
+            true,
+          ),
+          (
+            '390_sombre',
+            const Size(390, 844),
+            ThemeMode.dark,
+            1,
+            TextDirection.ltr,
+            true,
+          ),
+          (
+            '320x2_clair',
+            const Size(320, 1400),
+            ThemeMode.light,
+            2,
+            TextDirection.ltr,
+            true,
+          ),
+          (
+            '320x2_rtl_clair',
+            const Size(320, 1400),
+            ThemeMode.light,
+            2,
+            TextDirection.rtl,
+            true,
+          ),
+          (
+            '320x2_rtl_sombre',
+            const Size(320, 1400),
+            ThemeMode.dark,
+            2,
+            TextDirection.rtl,
+            true,
+          ),
+          (
+            '1440_clair',
+            const Size(1440, 900),
+            ThemeMode.light,
+            1,
+            TextDirection.ltr,
+            true,
+          ),
+          (
+            '390_en_ligne_clair',
+            const Size(390, 844),
+            ThemeMode.light,
+            1,
+            TextDirection.ltr,
+            false,
+          ),
+        ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        fixerVueCapture(tester, cas.$2, 1);
+        await _monterEtEntrer(
+          tester,
+          motif: MotifEchecObservation.reseau,
+          horsLigne: cas.$6,
+          themeMode: cas.$3,
+          direction: cas.$5,
+          echelle: cas.$4,
+        );
+        expect(tester.takeException(), isNull);
+        expect(
+          find.text(t.tc.observation.refus.indisponibleInvitation),
+          findsOneWidget,
+        );
+        expect(causesAffirmees(), findsNothing);
+        if (cas.$6) {
+          expectHorsLigneUneFois();
+        }
+        verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1f_observation_echec_${cas.$1}')}',
         );
       });
     }

@@ -2875,7 +2875,7 @@
       "annulee": "Séance annulée",
       "aucune": "Aucune séance prévue",
       "horsLigne": "Vous pourrez entrer dans la séance dès le retour de la connexion.",
-      "indisponible": "L'information sur la séance n'a pas pu être chargée : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "indisponible": "L'information sur la séance n'a pas pu être chargée\u00A0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
       "accesInverifiable": "L'accès à la salle ne peut pas être vérifié pour le moment.",
       "reessayer": "Réessayer",
       "chargementSeance": "Chargement de la prochaine séance.",
