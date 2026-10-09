@@ -8,7 +8,7 @@ ALTER TABLE public.student_profiles
 
 CREATE UNIQUE INDEX IF NOT EXISTS student_profiles_titulaire_unique
   ON public.student_profiles (titulaire_profile_id)
-  WHERE titulaire_profile_id IS NOT NULL;
+  WHERE titulaire_profile_id IS NOT NULL AND deleted_at IS NULL;
 
 DO $constraint$
 BEGIN
