@@ -397,11 +397,9 @@ List<CasFiltres1> casFiltres1() => <CasFiltres1>[
       _reseau(),
       anomaliesQualiteProvider.overrideWith(
         (Ref _) async => <AnomalieQualite>[
-          // Toutes traitees : le filtre par defaut (« Ouvertes ») montre
-          // l'etat vide. La liste elle-meme leve « Vertical viewport was
-          // given unbounded height » a 320 px texte x2, defaut anterieur a
-          // FILTRES-1 et hors de la rangee, consigne pour relais.
-          _anomalie('a1', StatutControleQualite.traite),
+          // Une ouverte, une traitee : le filtre par defaut (« Ouvertes »)
+          // montre la liste (elle plantait avant FILTRES-1b).
+          _anomalie('a1', StatutControleQualite.ouvert),
           _anomalie('a2', StatutControleQualite.traite),
         ],
       ),

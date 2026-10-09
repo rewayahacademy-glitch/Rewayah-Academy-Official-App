@@ -27,7 +27,9 @@ import 'menu_filtre.dart';
 ///   * **aucun debordement** : ce qui ne tient pas defile, dans le sens de
 ///     lecture (de droite a gauche en arabe) ;
 ///   * **rien de cache sans le dire** : des que la rangee deborde, une barre de
-///     defilement reste visible sous les puces. Elle dit qu'il y a d'autres
+///     defilement neutre (piste et curseur gris, jamais l'accent : elle ne
+///     doit pas se lire comme le soulignement d'un onglet, FILTRES-1b) reste
+///     visible sous les puces. Elle dit qu'il y a d'autres
 ///     filtres, et elle se tire a la souris (sur ordinateur, la molette ne
 ///     fait pas defiler une rangee horizontale). Au clavier, la puce qui
 ///     recoit le focus est amenee dans la vue.
@@ -70,32 +72,80 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
   void initState() {
     super.initState();
     // A l'ouverture, le filtre retenu se voit, meme s'il est loin dans la
-    // rangee (une page ouverte filtree, un filtre par defaut).
+    // rangee (une page ouverte filtree, un filtre par defaut), et le debut
+    // de la vue reste lisible (FILTRES-1b) : la rangee defile du moins
+    // possible et s'arrete au debut d'une puce, jamais au milieu d'un
+    // libelle.
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
-      if (!mounted) return;
-      final int i = widget.filtres.indexWhere(_retenu);
-      final RenderObject? cible = i < 0 || i >= _cles.length
-          ? null
-          : _cles[i].currentContext?.findRenderObject();
-      // La seule rangee defile : `Scrollable.ensureVisible` ferait aussi
-      // defiler la page, qui sauterait jusqu'aux filtres.
-      if (cible != null && _defilement.hasClients) {
-        // Centree si elle etait cachee ; rien ne bouge si elle se voit deja.
-        final RenderAbstractViewport vue = RenderAbstractViewport.of(cible);
-        final ScrollPosition position = _defilement.position;
-        final double debut = vue.getOffsetToReveal(cible, 0).offset;
-        final double fin = vue.getOffsetToReveal(cible, 1).offset;
-        if (position.pixels > debut || position.pixels < fin) {
-          position.jumpTo(
-            vue
-                .getOffsetToReveal(cible, 0.5)
-                .offset
-                .clamp(position.minScrollExtent, position.maxScrollExtent),
-          );
-        }
-      }
+      if (mounted) _placerRetenu(widget.filtres.indexWhere(_retenu));
     });
   }
+
+  @override
+  void didUpdateWidget(RangeeFiltres ancien) {
+    super.didUpdateWidget(ancien);
+    // Un filtre qui vient d'etre retenu (une personne choisie par la
+    // recherche, ajoutee en fin de rangee) se voit aussitot.
+    final int i = _nouvellementRetenu(ancien.filtres, widget.filtres);
+    if (i >= 0) {
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        if (mounted) _placerRetenu(i);
+      });
+    }
+  }
+
+  /// L'indice de la premiere puce retenue dans [apres] qui ne l'etait pas
+  /// dans [avant] (ou qui n'y existait pas), ou -1.
+  static int _nouvellementRetenu(List<Widget> avant, List<Widget> apres) {
+    for (int i = 0; i < apres.length; i++) {
+      if (!_retenu(apres[i])) continue;
+      if (i >= avant.length || !_retenu(avant[i])) return i;
+    }
+    return -1;
+  }
+
+  /// Place la rangee pour que la puce retenue se voie entiere, hors des
+  /// fondus, sans couper la premiere puce visible : la vue commence au debut
+  /// d'une puce (le fondu d'avant ne couvre que l'espace qui la precede et
+  /// la fin de la puce d'avant, qui dit qu'il y en a d'autres). Rien ne
+  /// bouge si la puce retenue se voit deja hors des fondus.
+  ///
+  /// La seule rangee defile : `Scrollable.ensureVisible` ferait aussi
+  /// defiler la page, qui sauterait jusqu'aux filtres.
+  void _placerRetenu(int i) {
+    if (i < 0 || i >= _cles.length || !_defilement.hasClients) return;
+    final ScrollPosition position = _defilement.position;
+    RenderObject? rendu(int k) => _cles[k].currentContext?.findRenderObject();
+    final RenderObject? cible = rendu(i);
+    if (cible == null) return;
+    final RenderAbstractViewport vue = RenderAbstractViewport.of(cible);
+    double borne(double v) =>
+        v.clamp(position.minScrollExtent, position.maxScrollExtent);
+    // La puce retenue entiere, sa fin hors du fondu d'apres (sauf au bout).
+    final double auMoins = borne(
+      vue.getOffsetToReveal(cible, 1).offset + _largeurFondu,
+    );
+    final double auPlus = borne(vue.getOffsetToReveal(cible, 0).offset);
+    if (position.pixels >= auMoins && position.pixels <= auPlus) return;
+    // La premiere puce dont le debut, place juste apres le fondu d'avant,
+    // laisse la puce retenue entiere : la vue s'arrete au debut d'une puce.
+    double cibleDefilement = auPlus;
+    for (int k = 0; k <= i; k++) {
+      final RenderObject? puce = rendu(k);
+      if (puce == null) continue;
+      final double debut = borne(
+        vue.getOffsetToReveal(puce, 0).offset - (k == 0 ? 0 : _largeurFondu),
+      );
+      if (debut >= auMoins && debut <= auPlus) {
+        cibleDefilement = debut;
+        break;
+      }
+    }
+    position.jumpTo(cibleDefilement);
+  }
+
+  /// La largeur du fondu de bord ([_FonduBords]).
+  static const double _largeurFondu = AppSpacing.xxl;
 
   /// Vrai pour une puce qui porte un filtre en cours.
   static bool _retenu(Widget w) => switch (w) {
@@ -145,14 +195,29 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
     return LayoutBuilder(
       builder: (BuildContext _, BoxConstraints contraintes) {
         final double largeurMax = contraintes.maxWidth;
-        final Color opaque = AppPalette.of(context).surfaceRaised.background;
+        final AppPalette palette = AppPalette.of(context);
+        final Color opaque = palette.surfaceRaised.background;
         return NotificationListener<ScrollMetricsNotification>(
           onNotification: _mesurer,
           child: NotificationListener<ScrollUpdateNotification>(
             onNotification: _suivre,
-            child: Scrollbar(
+            // FILTRES-1b : une barre de defilement **neutre**, avec sa
+            // piste : sous les puces, un trait d'accent se lisait comme le
+            // soulignement d'un onglet actif. La piste sur toute la largeur
+            // et le curseur gris disent « barre de defilement », sans rien
+            // designer ; la puce retenue reste la seule marque de selection.
+            // Gardee visible des que la rangee deborde : sur ordinateur, la
+            // molette ne fait pas defiler une rangee horizontale, et c'est
+            // elle qu'on tire a la souris.
+            child: RawScrollbar(
               controller: _defilement,
               thumbVisibility: _deborde,
+              trackVisibility: _deborde,
+              thickness: AppSpacing.xs,
+              radius: const Radius.circular(AppSpacing.xs),
+              thumbColor: palette.borderStrong.asBorderSide().color,
+              trackColor: palette.borderHairline.asBorderSide().color,
+              trackBorderColor: palette.borderHairline.asBorderSide().color,
               // Le fondu sous la barre : elle reste nette d'un bord a l'autre.
               child: _FonduBords(
                 couleur: opaque,
@@ -218,7 +283,7 @@ class _FonduBords extends StatelessWidget {
       shaderCallback: (Rect zone) {
         final double f = zone.width <= 0
             ? 0
-            : (AppSpacing.xxl / zone.width).clamp(0, 0.5);
+            : (_RangeeFiltresState._largeurFondu / zone.width).clamp(0, 0.5);
         return LinearGradient(
           begin: AlignmentDirectional.centerStart.resolve(sens),
           end: AlignmentDirectional.centerEnd.resolve(sens),
