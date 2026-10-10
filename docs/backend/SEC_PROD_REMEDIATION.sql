@@ -1432,7 +1432,7 @@ begin
   if has_function_privilege('authenticated', 'public.log_sensitive_access(text, text, text, jsonb)', 'EXECUTE') then
     raise exception 'SEC-PROD: authenticated conserve EXECUTE direct sur le writer d''audit';
   end if;
-  if v_auth <> 117 then raise exception 'SEC-PROD: nombre inattendu de RPC authenticated (% au lieu de 117)', v_auth; end if;
+  if v_auth <> 116 then raise exception 'SEC-PROD: nombre inattendu de RPC authenticated (% au lieu de 116)', v_auth; end if;
   select count(*) into v_agent from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
    where n.nspname='public' and p.prosecdef and has_function_privilege('agent_ro',p.oid,'EXECUTE');
   if v_agent <> 47 then raise exception 'SEC-PROD: droits agent_ro inattendus après retrait KYC (% au lieu de 47)', v_agent; end if;
@@ -1505,7 +1505,6 @@ begin
 ('public.demandes_en_attente()','a9003a8e91895e4b6d7674e584a7fe75','if[[:space:]]+public[.]app_role[(][)][[:space:]]+not[[:space:]]+in[[:space:]]*[(][[:space:]]*''admin''[[:space:]]*,[[:space:]]*''controller''[[:space:]]*[)][[:space:]]+then','if not coalesce(public.app_account_valid() and public.app_role() in (''admin'', ''controller''), false) then'),
 ('public.eleves_sans_enseignant()','d3e14512ba428ffec5e9623d8e8bacbd','if[[:space:]]+public[.]app_role[(][)][[:space:]]*<>[[:space:]]*''admin''[[:space:]]+then','if not coalesce(public.app_account_valid() and public.app_role() = ''admin'', false) then'),
 ('public.enseignants_pour(uuid)','f2446791e27fe948db4a172470be5940','if[[:space:]]+public[.]app_role[(][)][[:space:]]*<>[[:space:]]*''admin''[[:space:]]+then','if not coalesce(public.app_account_valid() and public.app_role() = ''admin'', false) then'),
-('public.guard_profile_privileged_columns()','0e0b9d7f966e64b2e5182a0a9d5495eb','if[[:space:]]+public[.]app_role[(][)][[:space:]]*<>[[:space:]]*''admin''[[:space:]]+and[[:space:]]*[(]','if not coalesce(public.app_account_valid() and public.app_role() = ''admin'', false) and ('),
 ('public.indicateurs_admin()','d7e1209572394c2ab6d5f9dae3834aaa','if[[:space:]]+public[.]app_role[(][)][[:space:]]*<>[[:space:]]*''admin''[[:space:]]+then','if not coalesce(public.app_account_valid() and public.app_role() = ''admin'', false) then'),
 ('public.journal_audit_filtres()','49c1360b67ef589d2aaef8468ecc31bc','if[[:space:]]+public[.]app_role[(][)][[:space:]]*<>[[:space:]]*''admin''[[:space:]]+then','if not coalesce(public.app_account_valid() and public.app_role() = ''admin'', false) then'),
 ('public.journal_audit(uuid,text,timestamp with time zone,integer,timestamp with time zone,bigint)','973fec3923b807963042e424ef181e50','if[[:space:]]+public[.]app_role[(][)][[:space:]]*<>[[:space:]]*''admin''[[:space:]]+then','if not coalesce(public.app_account_valid() and public.app_role() = ''admin'', false) then'),
@@ -1526,7 +1525,7 @@ begin
   if v_new_definition is not distinct from v_definition then raise exception 'définition non réécrite: %',r.signature; end if;
   execute v_new_definition; v_seen:=v_seen+1;
  end loop;
- if v_seen<>15 then raise exception 'nombre inattendu: %',v_seen; end if;
+ if v_seen<>14 then raise exception 'nombre inattendu: %',v_seen; end if;
 end
 $sec_prod_active_role_guards$;
 
@@ -1540,7 +1539,6 @@ begin
     'public.demandes_en_attente()',
     'public.eleves_sans_enseignant()',
     'public.enseignants_pour(uuid)',
-    'public.guard_profile_privileged_columns()',
     'public.indicateurs_admin()',
     'public.journal_audit_filtres()',
     'public.journal_audit(uuid,text,timestamp with time zone,integer,timestamp with time zone,bigint)',
@@ -1558,7 +1556,7 @@ begin
     end if;
     v_seen:=v_seen+1;
   end loop;
-  if v_seen<>15 then raise exception 'SEC-PROD M2: postflight rôle incomplet (%)',v_seen; end if;
+  if v_seen<>14 then raise exception 'SEC-PROD M2: postflight rôle incomplet (%)',v_seen; end if;
 end
 $sec_prod_active_role_postflight$;
 
