@@ -15,6 +15,13 @@
 // « Annuler » ne defait que la derniere operation personnelle de la
 // surface montree (`historiquePersonnelProvider`), jamais le travail d'un
 // autre (§7, UX_REVIEW_TB n. 21).
+//
+// TB-RC (revue TB-R, M6, m32) : une seule voie d'annulation pour le
+// clavier de la couche, le panneau et la palette
+// (`ControleurHistorique.annuler`), qui rend l'operation defaite a la
+// classe par le rappel de la couche ([emettreEcriture]) ; Annuler n'est
+// propose que si sa cible est encore sur la surface (meme regle que la
+// couche, `HistoriquePersonnel.peutAnnulerParmi`).
 
 import 'dart:async';
 
@@ -26,6 +33,7 @@ import '../../core/tc_bibliotheque/content_position.dart';
 import '../../core/tc_outils/annotation_layer.dart';
 import '../../core/tc_outils/couleur_intention.dart';
 import '../../core/tc_outils/etat_outils.dart';
+import '../../core/tc_outils/evenements_outils.dart';
 import '../../core/tc_outils/intention_pedagogique.dart';
 import '../../core/tc_outils/libelles_outils.dart';
 import '../../core/tc_outils/operations_personnelles.dart';
@@ -37,6 +45,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../tc_dock/barre_stylet.dart';
+import 'notes_deposees.dart';
 import 'vue_seance.dart';
 
 /// Les couleurs proposees : quatre intentions, quatre encres du theme
@@ -50,11 +59,77 @@ const List<IntentionPedagogique> couleursEcriture = <IntentionPedagogique>[
   IntentionPedagogique.aEntretenir,
 ];
 
-/// Annuler : defait la derniere operation personnelle de [surface].
-Future<void> annulerSurLaSurface(
+/// TB-RC (M6) : le transport des evenements d'ecriture vers la classe, ou
+/// `null` (aucun transport : demonstration, avant BR-1, qui le branche ici).
+final Provider<void Function(EvenementOutil evenement)?>
+diffusionEcritureProvider = Provider<void Function(EvenementOutil)?>(
+  (Ref _) => null,
+);
+
+/// TB-RC (M6) : le seul rappel des evenements d'ecriture de la salle,
+/// celui de la couche de la surface ET des boutons Annuler. Il tient la
+/// marque des traits non partages (TB-11b) et passe l'evenement au
+/// transport ([diffusionEcritureProvider]).
+void emettreEcriture(WidgetRef ref, VueSeance vue, EvenementOutil evenement) {
+  final TraitsNonPartages suivi = ref.read(traitsNonPartagesProvider.notifier);
+  if (evenement is EvenementTraitTermine && vue.encreNonPartagee) {
+    suivi.ajouter(evenement.trait.id);
+  } else if (evenement is EvenementTraitRetire) {
+    suivi.retirer(evenement.traitId);
+  }
+  ref.read(diffusionEcritureProvider)?.call(evenement);
+}
+
+/// Les traits que la surface montree peint : ceux de la vue, puis ceux que
+/// le depot a pris pour cette page ([notesDeposeesProvider]). [suivre] :
+/// lu pendant la construction (le widget se reconstruit quand ils
+/// changent) ; faux dans un rappel.
+List<TraitVectoriel> traitsDeLaSurface(
   WidgetRef ref,
-  ContentPosition? surface,
-) async {
+  VueSeance vue, {
+  bool suivre = true,
+}) {
+  final ContentPosition? ancrage = vue.ancrageSurface;
+  if (ancrage == null) return const <TraitVectoriel>[];
+  final List<TraitVectoriel> notes = vue.notesAffichees;
+  final Set<String> connus = <String>{
+    for (final TraitVectoriel trait in notes) trait.id,
+  };
+  return <TraitVectoriel>[
+    ...notes,
+    for (final TraitVectoriel trait
+        in suivre
+            ? ref.watch(notesDeposeesProvider(ancrage.resourceId))
+            : ref.read(notesDeposeesProvider(ancrage.resourceId)))
+      if (trait.ancrage == ancrage && !connus.contains(trait.id)) trait,
+  ];
+}
+
+/// TB-RC (m32) : Annuler a-t-il une cible sur la surface montree ? La
+/// meme regle que la couche : un trait pose qui n'est plus peint (gomme par
+/// un autre) n'est pas propose.
+bool peutAnnulerSurLaSurface(
+  WidgetRef ref,
+  VueSeance vue, {
+  bool suivre = true,
+}) {
+  final HistoriquePersonnel historique = suivre
+      ? ref.watch(historiquePersonnelProvider)
+      : ref.read(historiquePersonnelProvider);
+  return historique.peutAnnulerParmi(surLaSurface(vue.ancrageSurface), <String>{
+    for (final TraitVectoriel trait in traitsDeLaSurface(
+      ref,
+      vue,
+      suivre: suivre,
+    ))
+      if (!historique.retires.contains(trait.id)) trait.id,
+  });
+}
+
+/// Annuler : defait la derniere operation personnelle de la surface de
+/// [vue] et l'emet a la classe par [emettreEcriture] (TB-RC, M6 : la meme
+/// voie que le clavier de la couche).
+Future<void> annulerSurLaSurface(WidgetRef ref, VueSeance vue) async {
   final PortAnnotations depot;
   try {
     depot = ref.read(portAnnotationsProvider);
@@ -62,9 +137,15 @@ Future<void> annulerSurLaSurface(
     // Sans depot, rien n'a ete pris, rien n'est a defaire.
     return;
   }
+  // m32 : une cible disparue ne consomme pas l'operation en silence.
+  if (!peutAnnulerSurLaSurface(ref, vue, suivre: false)) return;
   await ref
       .read(historiquePersonnelProvider.notifier)
-      .annuler(surLaSurface(surface), depot);
+      .annuler(
+        surLaSurface(vue.ancrageSurface),
+        depot,
+        emettre: (EvenementOutil e) => emettreEcriture(ref, vue, e),
+      );
 }
 
 /// TB-10 (plan V2 §5) : l'outil de trace revient au Stylo s'il n'est pas
@@ -138,12 +219,7 @@ class EcritureSeance extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final EtatOutils etat = ref.watch(etatOutilsProvider);
     final ControleurOutils controleur = ref.read(etatOutilsProvider.notifier);
-    final ContentPosition? surface = vue.ancrageSurface;
-    final bool peutAnnuler = ref.watch(
-      historiquePersonnelProvider.select(
-        (HistoriquePersonnel h) => h.peutAnnuler(surLaSurface(surface)),
-      ),
-    );
+    final bool peutAnnuler = peutAnnulerSurLaSurface(ref, vue);
     final AppPalette palette = AppPalette.of(context);
     // La gomme n'a ni couleur ni epaisseur : ses options ne sont pas
     // rendues (options de l'outil actif, plan V2 §4.2). TB-10 : la barre de
@@ -154,7 +230,7 @@ class EcritureSeance extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         BarreStylet(
-          onAnnuler: () => unawaited(annulerSurLaSurface(ref, surface)),
+          onAnnuler: () => unawaited(annulerSurLaSurface(ref, vue)),
           peutAnnuler: peutAnnuler,
           avecPortee: false,
           surface: false,
@@ -247,19 +323,14 @@ class PaletteEcriture extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ContentPosition? surface = vue.ancrageSurface;
-    final bool peutAnnuler = ref.watch(
-      historiquePersonnelProvider.select(
-        (HistoriquePersonnel h) => h.peutAnnuler(surLaSurface(surface)),
-      ),
-    );
+    final bool peutAnnuler = peutAnnulerSurLaSurface(ref, vue);
     return Semantics(
       container: true,
       label: t.salle.seance.ecriture.palette,
       child: BarreStylet(
         compacte: true,
         onOutilActif: onCommandes,
-        onAnnuler: () => unawaited(annulerSurLaSurface(ref, surface)),
+        onAnnuler: () => unawaited(annulerSurLaSurface(ref, vue)),
         peutAnnuler: peutAnnuler,
         avecPortee: false,
         onTerminer: ref.read(etatOutilsProvider.notifier).relacherOutil,

@@ -89,7 +89,15 @@ class CoucheAnnotation extends ConsumerStatefulWidget {
     this.saisie = true,
     this.traitsNonPartages = const <String>{},
     this.encreNonPartagee = false,
+    this.styletDetecte = false,
   });
+
+  /// TB-RC (revue TB-R, M5) : l'hote a deja vu un stylet sur cette surface
+  /// (en lecture, quand la couche ne recoit aucun pointeur). Un seul
+  /// « stylet detecte » : celui de l'hote, ajoute a ce que la couche voit
+  /// elle-meme ; des lors, avec Ecrire, le doigt deplace et n'ecrit pas
+  /// (plan V2 §7, TB21).
+  final bool styletDetecte;
 
   /// TB-11b (plan V2 §10 « Les nouveaux traits locaux restent identifies
   /// comme non partages jusqu'a reconciliation ») : les traits que la
@@ -155,6 +163,9 @@ class CoucheAnnotation extends ConsumerStatefulWidget {
   /// n'ecrit pas la ou l'on ne voit pas.
   final Rect? zoneVisible;
 
+  /// TB-RC (m30) : la cle de la frontiere de repeint du trait en cours.
+  static const Key cleApercu = ValueKey<String>('couche-apercu');
+
   /// TB-7b (plan V2 §13) : le nombre de fois ou les traits termines ont
   /// ete peints. Un test mesure qu'un trait en cours ne les repeint pas.
   @visibleForTesting
@@ -174,10 +185,14 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
   String? _idEnCours;
 
   /// TB-7b (plan V2 §13 « repaint cible ») : le trait en cours se peint par
-  /// cette valeur, sans reconstruire la couche ni repeindre les traits
-  /// termines a chaque point.
-  final ValueNotifier<List<PointNormalise>> _apercu =
-      ValueNotifier<List<PointNormalise>>(const <PointNormalise>[]);
+  /// cet apercu, sans reconstruire la couche ni repeindre les traits
+  /// termines a chaque point. TB-RC (m30) : la liste grandit sur place,
+  /// elle n'est pas recopiee a chaque point.
+  final _Apercu _apercu = _Apercu();
+
+  /// TB-RC (m15) : un geste de gomme est en cours, meme s'il n'a encore
+  /// rien retire. Un changement de page ou un retrait du droit l'arrete.
+  bool _gesteGomme = false;
 
   /// Les traits que cette couche vient de terminer, tant que [widget.traits]
   /// ne les rend pas encore : l'encre posee reste peinte des que le doigt
@@ -220,16 +235,21 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
       _terminer(ref.read(etatOutilsProvider));
       if (saisieRetiree) _plusieursDoigts = true;
     }
-    if ((pageChangee || saisieRetiree) && _gommesDuGeste.isNotEmpty) {
-      final EtatOutils etat = ref.read(etatOutilsProvider);
-      final List<TraitVectoriel> gommes = List<TraitVectoriel>.of(
-        _gommesDuGeste,
-      );
-      _gommesDuGeste.clear();
+    // TB-RC (m15) : un geste de gomme commence « a vide » (rien retire
+    // encore) s'arrete aussi ; sans cela, il gommait sur la nouvelle page.
+    if ((pageChangee || saisieRetiree) && _gesteGomme) {
+      _gesteGomme = false;
       _plusieursDoigts = true;
-      // L'historique est un provider : il ne se modifie pas pendant la
-      // construction de l'arbre.
-      scheduleMicrotask(() => _historiserGommes(gommes, etat));
+      if (_gommesDuGeste.isNotEmpty) {
+        final EtatOutils etat = ref.read(etatOutilsProvider);
+        final List<TraitVectoriel> gommes = List<TraitVectoriel>.of(
+          _gommesDuGeste,
+        );
+        _gommesDuGeste.clear();
+        // L'historique est un provider : il ne se modifie pas pendant la
+        // construction de l'arbre.
+        scheduleMicrotask(() => _historiserGommes(gommes, etat));
+      }
     }
     if (_poses.isEmpty) return;
     final Set<String> rendus = <String>{
@@ -292,7 +312,7 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
       historiquePersonnelProvider,
     );
     final Set<PointerDeviceKind> appareils = PolitiqueSaisie.appareilsDeDessin(
-      styletDetecte: _styletDetecte,
+      styletDetecte: _styletDetecte || widget.styletDetecte,
       styletArme: etat.styletArme,
     );
     _appareils = appareils;
@@ -325,27 +345,28 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
 
   /// La derniere operation personnelle de cette surface peut-elle etre
   /// defaite ? Un trait pose que l'hote ne rend plus (annule ailleurs) n'a
-  /// plus rien a retirer : l'hote fait foi.
+  /// plus rien a retirer : l'hote fait foi. TB-RC (m32) : la meme regle
+  /// que le panneau et la palette ([HistoriquePersonnel.peutAnnulerParmi]).
   bool _annulable(
     HistoriquePersonnel historique,
     List<TraitVectoriel> visibles,
-  ) {
-    final OperationPersonnelle? derniere = historique.derniere(
-      _surCetteSurface,
-    );
-    return switch (derniere) {
-      null => false,
-      TraitPosePersonnel(:final TraitVectoriel trait) => visibles.any(
-        (TraitVectoriel v) => v.id == trait.id,
-      ),
-      TraitsGommesPersonnels() => true,
-    };
-  }
+  ) => historique.peutAnnulerParmi(_surCetteSurface, <String>{
+    for (final TraitVectoriel v in visibles) v.id,
+  });
 
   /// Defait la derniere operation personnelle de cette surface (un trait
   /// pose, ou un geste de gomme), sans geste : la voie du clavier et du
-  /// lecteur d'ecran. Le meme « Annuler » que la barre d'ecriture.
-  void effacerDernierTrait() => unawaited(_annuler());
+  /// lecteur d'ecran. TB-RC (M6) : la meme voie que les boutons Annuler
+  /// ([ControleurHistorique.annuler]), qui emet ce qui est defait par
+  /// [CoucheAnnotation.onEvenement].
+  void effacerDernierTrait() {
+    final HistoriquePersonnel historique = ref.read(
+      historiquePersonnelProvider,
+    );
+    // m32 : une cible disparue ne consomme pas l'operation en silence.
+    if (!_annulable(historique, _visibles(historique.retires))) return;
+    unawaited(_annuler());
+  }
 
   Future<void> _annuler() async {
     final PortAnnotations depot;
@@ -356,26 +377,14 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
     }
     final OperationDefaite? defaite = await ref
         .read(historiquePersonnelProvider.notifier)
-        .annuler(_surCetteSurface, depot);
+        .annuler(_surCetteSurface, depot, emettre: widget.onEvenement);
     if (defaite == null || !mounted) return;
-    switch (defaite.operation) {
-      case TraitPosePersonnel(:final TraitVectoriel trait):
-        setState(
-          () => _poses.removeWhere((TraitVectoriel p) => p.id == trait.id),
-        );
-        widget.onEvenement?.call(
-          EvenementTraitRetire(coucheId: defaite.coucheId, traitId: trait.id),
-        );
-      case final TraitsGommesPersonnels gommes:
-        for (final TraitVectoriel trait in gommes.traits) {
-          widget.onEvenement?.call(
-            EvenementTraitTermine(
-              coucheId: defaite.coucheId,
-              trait: trait,
-              portee: gommes.portee,
-            ),
-          );
-        }
+    if (defaite.operation case TraitPosePersonnel(
+      :final TraitVectoriel trait,
+    )) {
+      setState(
+        () => _poses.removeWhere((TraitVectoriel p) => p.id == trait.id),
+      );
     }
   }
 
@@ -427,17 +436,22 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
                 ),
               ),
             ),
-            // Le trait en cours, seul repeint a chaque point.
-            CustomPaint(
-              painter: _PeintreApercu(
-                palette: palette,
-                apercu: _apercu,
-                bloc: () => _blocEnCours,
-                outil: etat.outilTrait,
-                intention: etat.intention,
-                epaisseur: etat.epaisseur,
-                largeurPage: largeurPage,
-                pointille: widget.encreNonPartagee,
+            // Le trait en cours, seul repeint a chaque point. TB-RC (m30) :
+            // sous sa propre frontiere de repeint, la page, la tete et la
+            // palette ne sont pas repeintes a chaque point.
+            RepaintBoundary(
+              key: CoucheAnnotation.cleApercu,
+              child: CustomPaint(
+                painter: _PeintreApercu(
+                  palette: palette,
+                  apercu: _apercu,
+                  bloc: () => _blocEnCours,
+                  outil: etat.outilTrait,
+                  intention: etat.intention,
+                  epaisseur: etat.epaisseur,
+                  largeurPage: largeurPage,
+                  pointille: widget.encreNonPartagee,
+                ),
               ),
             ),
           ],
@@ -496,13 +510,14 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
     _enCours = null;
     _blocEnCours = null;
     _idEnCours = null;
-    _apercu.value = const <PointNormalise>[];
+    _apercu.vider();
   }
 
   void _commencer(Offset point, EtatOutils etat) {
     if (_plusieursDoigts || !widget.saisie) return;
     if (etat.outilTrait == OutilTrait.gomme) {
       _gommesDuGeste.clear();
+      _gesteGomme = true;
       _gommer(point);
       return;
     }
@@ -543,13 +558,13 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
       intention: etat.intention,
       epaisseur: etat.epaisseur,
     )..ajouter(normaliserDans(cadre, point));
-    _apercu.value = <PointNormalise>[normaliserDans(cadre, point)];
+    _apercu.commencer(normaliserDans(cadre, point));
   }
 
   void _prolonger(Offset point, EtatOutils etat) {
     if (_plusieursDoigts || !widget.saisie) return;
     if (etat.outilTrait == OutilTrait.gomme) {
-      _gommer(point);
+      if (_gesteGomme) _gommer(point);
       return;
     }
     final TraitEnCours? trait = _enCours;
@@ -569,7 +584,7 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
     }
     final PointNormalise normalise = normaliserDans(bloc, point);
     trait.ajouter(normalise);
-    _apercu.value = <PointNormalise>[..._apercu.value, normalise];
+    _apercu.ajouter(normalise);
 
     if (trait.paquetPret) {
       final List<PointNormalise> paquet = trait.prendrePaquet();
@@ -590,6 +605,7 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
   }
 
   void _terminer(EtatOutils etat) {
+    _gesteGomme = false;
     if (_gommesDuGeste.isNotEmpty) {
       _historiserGommes(List<TraitVectoriel>.of(_gommesDuGeste), etat);
       _gommesDuGeste.clear();
@@ -599,7 +615,7 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
     _enCours = null;
     _blocEnCours = null;
     _idEnCours = null;
-    _apercu.value = const <PointNormalise>[];
+    _apercu.vider();
     if (enCours == null || id == null || enCours.nombreDePoints < 2) {
       return;
     }
@@ -684,6 +700,10 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
   /// vue de loin. TB-7b : sans [CoucheAnnotation.gommeSurTous], elle ne
   /// retire que les traits de la personne.
   void _gommer(Offset point) {
+    // TB-RC (m16) : la gomme suit la meme regle que le stylo (plan V2
+    // §9.4) : hors de la page ou de sa part visible, elle ne retire rien
+    // (on ne gomme pas un trait que l'on ne voit pas).
+    if (widget.repereDePage && !_dansLaPage(point)) return;
     final HistoriquePersonnel historique = ref.read(
       historiquePersonnelProvider,
     );
@@ -928,7 +948,7 @@ class _PeintreApercu extends CustomPainter {
   }) : super(repaint: apercu);
 
   final AppPalette palette;
-  final ValueListenable<List<PointNormalise>> apercu;
+  final _Apercu apercu;
 
   /// Le cadre du bloc du trait en cours, lu au moment de peindre.
   final Rect? Function() bloc;
@@ -943,7 +963,7 @@ class _PeintreApercu extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final Rect? cadre = bloc();
-    final List<PointNormalise> points = apercu.value;
+    final List<PointNormalise> points = apercu.points;
     if (cadre == null || points.length < 2) {
       return;
     }
@@ -959,6 +979,10 @@ class _PeintreApercu extends CustomPainter {
       palette: palette,
       outil: outil,
       intention: intention,
+      // TB-RC (m18), ecart ecrit : la pression du stylet n'est pas encore
+      // capturee (le geste passe par `onPan*`, sans `PointerEvent.pressure`) ;
+      // le trait garde l'epaisseur choisie. A reprendre avec TB-BR (le
+      // paquet ephemere ne la porte pas non plus).
       pression: null,
       epaisseur: epaisseur,
       largeurPage: largeurPage,
@@ -975,4 +999,34 @@ class _PeintreApercu extends CustomPainter {
       ancien.largeurPage != largeurPage ||
       ancien.pointille != pointille ||
       ancien.palette != palette;
+}
+
+/// TB-RC (m30) : les points du trait en cours. La liste grandit sur place ;
+/// chaque point previent seulement le peintre de l'apercu.
+class _Apercu extends ChangeNotifier {
+  final List<PointNormalise> _points = <PointNormalise>[];
+
+  /// Les points poses, sans copie.
+  List<PointNormalise> get points => _points;
+
+  /// Un nouveau trait, sur son premier point.
+  void commencer(PointNormalise point) {
+    _points
+      ..clear()
+      ..add(point);
+    notifyListeners();
+  }
+
+  /// Un point de plus.
+  void ajouter(PointNormalise point) {
+    _points.add(point);
+    notifyListeners();
+  }
+
+  /// Plus de trait en cours.
+  void vider() {
+    if (_points.isEmpty) return;
+    _points.clear();
+    notifyListeners();
+  }
 }

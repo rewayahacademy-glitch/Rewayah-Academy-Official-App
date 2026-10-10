@@ -160,6 +160,10 @@ class BoutonOutil extends StatelessWidget {
 
     final Widget bouton = Pressable(
       libelleSemantique: libelle,
+      // TB-RC (revue TB-R, m6) : l'outil retenu est annonce au lecteur
+      // d'ecran (« selectionne »), pas seulement peint. Non retenu : rien
+      // n'est annonce (une action comme Annuler n'a pas d'etat de choix).
+      selectionne: retenu ? true : null,
       arrondiFocus: tuile ? AppRadius.arrondiMd : AppRadius.arrondiSm,
       onPress: onPress,
       focusNode: focusNode,

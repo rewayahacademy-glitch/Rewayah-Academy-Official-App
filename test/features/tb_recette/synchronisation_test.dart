@@ -803,12 +803,16 @@ void main() {
     final String pose = _depot(tester).single.id;
     expect(_conteneur(tester).read(traitsNonPartagesProvider), contains(pose));
     expect(_calque(tester).traitsNonPartages, contains(pose));
-    // Le tableau revient.
+    // Le tableau revient : la marque est levee sans renvoi ni accuse de
+    // reception par trait (TB-RC, m19 : ecart ecrit, la levee sur accuse
+    // arrive avec TB-BR-42). Le depot local garde le trait ; rien ne prouve
+    // que la classe l'a recu.
     await tester.pumpWidget(salle(SituationTb.ped03));
     await _attendre(tester);
     expect(_depot(tester).map((TraitVectoriel x) => x.id), contains(pose));
     expect(_conteneur(tester).read(traitsNonPartagesProvider), isEmpty);
-    // Nouvelle interruption : le trait recu n'est pas remarque.
+    // Nouvelle interruption : le trait pose pendant la precedente n'est plus
+    // marque (marque levee au retour, sans accuse).
     await tester.pumpWidget(salle(SituationTb.err01));
     await _attendre(tester);
     expect(_calque(tester).traitsNonPartages, isNot(contains(pose)));

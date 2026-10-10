@@ -349,8 +349,21 @@ class _CommandesPedagogiquesState extends ConsumerState<CommandesPedagogiques> {
   /// TB-9 (plan V2 §12) : effacer les notes de la page, ou du tableau libre,
   /// apres `ConfirmDestructive` (l'irreversible se dit avant le choix).
   Future<void> _effacer() async {
-    final VoidCallback? effacer = widget.actions.onEffacerNotes;
-    if (effacer == null) return;
+    final VoidCallback? rappel = widget.actions.onEffacerNotes;
+    if (rappel == null) return;
+    // TB-RC (revue TB-R, m31) : l'historique et la surface sont lus avant
+    // la confirmation. Si le panneau est demonte pendant qu'elle s'affiche,
+    // l'effacement vide quand meme l'historique de la surface : Annuler ne
+    // remet jamais une note effacee.
+    final ControleurHistorique historique = ref.read(
+      historiquePersonnelProvider.notifier,
+    );
+    final surface = surLaSurface(widget.vue.ancrageSurface);
+    void effacer() {
+      rappel();
+      historique.oublierSurface(surface);
+    }
+
     final bool tableau = widget.vue.effacementDuTableau;
     final bool confirme = await ConfirmDestructive.demander(
       context,

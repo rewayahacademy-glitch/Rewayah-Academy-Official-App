@@ -80,9 +80,13 @@ class TraitsNonPartages extends Notifier<Set<String>> {
   /// Le trait [id] vient d'etre pose sans etre partage.
   void ajouter(String id) => state = <String>{...state, id};
 
-  /// TB-11b (tour 2) : le tableau est revenu ; la reconciliation du moteur
-  /// fait foi, plus rien n'est a marquer (une interruption suivante ne
-  /// remarque pas des traits deja recus).
+  /// TB-11b (tour 2) : le tableau est revenu ; plus rien n'est marque (une
+  /// interruption suivante ne remarque pas les memes traits).
+  ///
+  /// TB-RC (revue TB-R, m19), ecart ecrit : la marque est levee sans renvoi
+  /// ni accuse de reception par trait. Rien ne prouve encore que la classe
+  /// a recu ces traits ; la levee sur accuse par trait (TB-BR-42) arrive
+  /// avec le transport (BR-1).
   void reconcilier() {
     if (state.isNotEmpty) state = const <String>{};
   }

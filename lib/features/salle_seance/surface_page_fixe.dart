@@ -18,6 +18,18 @@
 // doigts deplacent (un doigt deplace des qu'un stylet s'est montre) ; avec
 // le Pointeur, un doigt montre un passage, sans trace, et deux doigts
 // deplacent. Le deplacement est local, borne a la page, jamais diffuse.
+//
+// TB-RC (revue TB-R) :
+// - M5 : un seul « stylet detecte », appris ici (Listener passif, toujours
+//   atteint, meme en lecture) et passe a la couche : apres un stylet vu en
+//   lecture, le doigt ne pose plus d'encre en Ecrire.
+// - m14 : le deplacement est garde, rapporte a la page agrandie, dans le
+//   stockage de la route (`PageStorage`) : ouvrir les Commandes ou armer
+//   Ecrire remonte la surface sans perdre la part de page regardee.
+// - m17, ecart ecrit : deux doigts deplacent la page, ils ne la zooment
+//   pas (pas de pincement). Le zoom passe par les Commandes (Lecture,
+//   plus / moins, Ajuster) ; le pincement du plan §7 est reporte (TB-7b,
+//   TB21 ne demandaient que le deplacement).
 
 import 'dart:math' as math;
 
@@ -44,6 +56,7 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
 import '../tc_dock/couche_annotation.dart';
+import 'ecriture_seance.dart' show emettreEcriture, traitsDeLaSurface;
 import 'notes_deposees.dart';
 import 'rangement_support.dart';
 import 'repere_page.dart';
@@ -145,14 +158,28 @@ class SurfacePageFixe extends ConsumerStatefulWidget {
 }
 
 class _SurfacePageFixeState extends ConsumerState<SurfacePageFixe> {
-  /// Le deplacement local de la page (points de la surface), voulu ; il est
-  /// borne a chaque rendu (la boite et le zoom changent).
-  Offset _deplacement = Offset.zero;
+  /// TB-RC (m14) : l'identifiant du deplacement dans le stockage de la
+  /// route.
+  static const String _cleStockage = 'surface-page-fixe-deplacement';
+
+  /// TB-RC (M5) : l'identifiant du stylet vu, dans le meme stockage (la
+  /// surface se remonte quand on arme Ecrire ; le stylet vu reste su).
+  static const String _cleStylet = 'surface-page-fixe-stylet';
+
+  /// Le deplacement local de la page, voulu, rapporte a la taille de la
+  /// page agrandie (TB-RC, m14 : il survit a une boite qui change, quand
+  /// les Commandes s'ouvrent) ; il est borne a chaque rendu.
+  Offset _relatif = Offset.zero;
+
+  /// Le stockage a deja ete relu.
+  bool _relu = false;
 
   /// Les pointeurs poses sur la surface, et leur appareil.
   final Map<int, PointerDeviceKind> _poses = <int, PointerDeviceKind>{};
 
   /// Un stylet s'est montre : avec Ecrire, le doigt deplace (plan V2 §7).
+  /// TB-RC (M5) : le seul « stylet detecte » de la salle, passe a la
+  /// couche et garde pour toute la route.
   bool _styletVu = false;
 
   /// Le dernier repere rendu (bornes du deplacement).
@@ -165,9 +192,49 @@ class _SurfacePageFixeState extends ConsumerState<SurfacePageFixe> {
     _reconcilier();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_relu) return;
+    _relu = true;
+    final Object? garde = PageStorage.maybeOf(context)
+        ?.readState(context, identifier: _cleStockage);
+    if (garde is Offset) _relatif = garde;
+    _styletVu =
+        PageStorage.maybeOf(
+          context,
+        )?.readState(context, identifier: _cleStylet) ==
+        true;
+  }
+
+  /// TB-RC (m14) : garde le deplacement pour la prochaine surface montee.
+  void _garder(Offset relatif) {
+    _relatif = relatif;
+    PageStorage.maybeOf(context)
+        ?.writeState(context, relatif, identifier: _cleStockage);
+  }
+
+  /// La taille de la page agrandie, ou `null` (pas encore rendue).
+  Size? get _agrandie {
+    final Size taille = _page.size * widget.zoom;
+    return taille.isEmpty ? null : taille;
+  }
+
+  /// Le deplacement voulu, en points de la surface.
+  Offset get _deplacement {
+    final Size? taille = _agrandie;
+    if (taille == null) return Offset.zero;
+    return Offset(_relatif.dx * taille.width, _relatif.dy * taille.height);
+  }
+
   /// TB-11b (tour 2) : le tableau partage (revenu, ou jamais interrompu),
   /// les traits notes « non partages » ne le sont plus : la marque est
   /// effacee, une interruption suivante ne les remarque pas.
+  ///
+  /// TB-RC (m19), ecart ecrit : la marque est levee au retour a
+  /// « partage » sans renvoi ni accuse de reception par trait ; un trait
+  /// pose pendant l'interruption n'est donc pas prouve recu. La levee sur
+  /// accuse par trait (TB-BR-42) arrive avec le transport (BR-1).
   void _reconcilier() {
     if (widget.vue.synchroTableau != SynchroTableau.partage) return;
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
@@ -182,15 +249,20 @@ class _SurfacePageFixeState extends ConsumerState<SurfacePageFixe> {
     if (ancien.vue.synchroTableau != widget.vue.synchroTableau) _reconcilier();
     // « Ajuster a l'ecran » (zoom 100 %) recentre aussi la page.
     if (widget.zoom != ancien.zoom && widget.zoom <= 1) {
-      _deplacement = Offset.zero;
+      _garder(Offset.zero);
     }
   }
 
   void _poser(PointerDownEvent e) {
     _poses[e.pointer] = e.kind;
-    if (e.kind == PointerDeviceKind.stylus ||
-        e.kind == PointerDeviceKind.invertedStylus) {
-      _styletVu = true;
+    if (!_styletVu &&
+        (e.kind == PointerDeviceKind.stylus ||
+            e.kind == PointerDeviceKind.invertedStylus)) {
+      // M5 : la couche l'apprend d'ici, ou qu'en soit l'outil.
+      setState(() => _styletVu = true);
+      PageStorage.maybeOf(
+        context,
+      )?.writeState(context, true, identifier: _cleStylet);
     }
   }
 
@@ -216,13 +288,18 @@ class _SurfacePageFixeState extends ConsumerState<SurfacePageFixe> {
     if (!deplacent.contains(e.pointer)) return;
     // Deux doigts qui glissent ensemble deplacent la page de leur pas
     // commun, pas du double.
+    final Size? taille = _agrandie;
+    if (taille == null) return;
     final Offset voulu = borneDeplacement(
       voulu: _deplacement + e.delta / deplacent.length.toDouble(),
       page: _page,
       boite: _boite,
       zoom: widget.zoom,
     );
-    if (voulu != _deplacement) setState(() => _deplacement = voulu);
+    if (voulu == _deplacement) return;
+    setState(
+      () => _garder(Offset(voulu.dx / taille.width, voulu.dy / taille.height)),
+    );
   }
 
   @override
@@ -296,6 +373,7 @@ class _SurfacePageFixeState extends ConsumerState<SurfacePageFixe> {
                   vue: vue,
                   taille: rect.size,
                   visible: visible,
+                  styletDetecte: _styletVu,
                 ),
               ),
               // TB-7b : le Pointeur, dans tous les affichages (il ne pose
@@ -436,9 +514,13 @@ class _CalqueNotes extends ConsumerWidget {
     required this.vue,
     required this.taille,
     required this.visible,
+    required this.styletDetecte,
   });
 
   final VueSeance vue;
+
+  /// TB-RC (M5) : la surface a deja vu un stylet.
+  final bool styletDetecte;
 
   /// La taille de la page avant la lecture locale.
   final Size taille;
@@ -464,17 +546,7 @@ class _CalqueNotes extends ConsumerWidget {
         : <String>{...vue.traitsNonPartages, ...locaux};
     // Les notes de la vue, puis celles que le depot a prises pour cette
     // page (l'encre posee reste peinte, meme quand la surface se remonte).
-    final List<TraitVectoriel> notes = vue.notesAffichees;
-    final Set<String> connus = <String>{
-      for (final TraitVectoriel trait in notes) trait.id,
-    };
-    final List<TraitVectoriel> traits = <TraitVectoriel>[
-      ...notes,
-      for (final TraitVectoriel trait in ref.watch(
-        notesDeposeesProvider(ancrage.resourceId),
-      ))
-        if (trait.ancrage == ancrage && !connus.contains(trait.id)) trait,
-    ];
+    final List<TraitVectoriel> traits = traitsDeLaSurface(ref, vue);
     return ExcludeFocus(
       excluding: !saisie,
       child: ExcludeSemantics(
@@ -502,16 +574,10 @@ class _CalqueNotes extends ConsumerWidget {
             saisie: saisie,
             traitsNonPartages: nonPartages,
             encreNonPartagee: vue.encreNonPartagee,
-            onEvenement: (EvenementOutil evenement) {
-              final TraitsNonPartages suivi = ref.read(
-                traitsNonPartagesProvider.notifier,
-              );
-              if (evenement is EvenementTraitTermine && vue.encreNonPartagee) {
-                suivi.ajouter(evenement.trait.id);
-              } else if (evenement is EvenementTraitRetire) {
-                suivi.retirer(evenement.traitId);
-              }
-            },
+            styletDetecte: styletDetecte,
+            // TB-RC (M6) : le rappel unique, celui des boutons Annuler.
+            onEvenement: (EvenementOutil evenement) =>
+                emettreEcriture(ref, vue, evenement),
           ),
         ),
       ),
