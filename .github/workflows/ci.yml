@@ -198,6 +198,11 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b18_security_definer.sql
 
+      # SEC-01 : identité opaque de l'agent, résolution de la portée actuelle et révocation.
+      - name: Scenario SEC-01 (identité agent / profil observé)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_agent_identity.sql
+
       # B-07 : profil autonome adulte du titulaire, idempotence et rôle guardian conservé.
       - name: Scenarios du profil adulte titulaire (B-07)
         shell: bash
@@ -248,6 +253,10 @@ jobs:
             supabase/functions/piece-identite-depot/index.ts \
             supabase/functions/piece-identite-confirme/index.ts \
             supabase/functions/archive-seance-acces/index.ts
+
+      # SEC-01 : la session d'agent conserve l'identité du jeton dans le JWT.
+      - name: Type-check de la session agent
+        run: deno check supabase/functions/agent-session/index.ts
 
       # Aucune valeur de secret ne doit exister dans le depot. Les NOMS des
       # variables R2 ont le droit d'y etre, et y sont ; leurs valeurs jamais.
