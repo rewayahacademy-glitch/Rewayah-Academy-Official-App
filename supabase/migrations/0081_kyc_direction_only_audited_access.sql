@@ -106,6 +106,10 @@ grant execute on function public.autoriser_lecture_piece_identite(uuid) to authe
 -- par genre ni événement par pièce.
 drop policy if exists kyc_admin_all on public.kyc_documents;
 
+-- Aucun client ne lit directement la table, même si une policy est ajoutée
+-- par erreur plus tard. Les accès légitimes passent par les RPC auditées.
+revoke select on table public.kyc_documents from public, anon, authenticated, agent_ro;
+
 -- Le navigateur ne signe plus d'URL Storage directement. L'Edge Function
 -- piece-identite-acces signe avec le client serveur après l'autorisation SQL.
 do $storage$
