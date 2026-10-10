@@ -46,8 +46,13 @@ class _Comptes implements ServiceComptes {
 }
 
 /// Les paragraphes rendus qui portent l'identifiant, quel que soit son
-/// trait d'union.
-final RegExp _identifiant = RegExp('TEACHER[-‑]AS[-‑]00000[12]');
+/// trait d'union. COUPE-MOTS-FOND-1 : un identifiant trop long pour sa
+/// place (titre de carte a 320 px texte x2) s'ouvre apres ses traits (espace
+/// sans chasse U+200B) au lieu de se reduire sous la taille des autres
+/// titres ; chaque segment reste entier.
+final RegExp _identifiant = RegExp(
+  'TEACHER[-\u2011]\u200B?AS[-\u2011]\u200B?00000[12]',
+);
 
 void main() {
   preparerCoupeMots4();
@@ -83,8 +88,15 @@ void main() {
         expect(motsCoupes(tester, porteurs), isEmpty);
         // Et le trait d'union de l'identifiant est insecable a l'ecran : une
         // ligne pleine ne peut plus le couper la (« TEACHER-AS- / 000001 »).
+        // COUPE-MOTS-FOND-1 : sauf dans une carte trop etroite (320 px
+        // texte x2), ou il s'ouvre apres ses traits, segment par segment,
+        // a la taille de son voisinage (hierarchie gardee).
         expect(
-          find.textContaining('TEACHER\u2011AS\u2011000001'),
+          find.textContaining(
+            largeur <= 320 && echelle > 1
+                ? 'TEACHER-\u200BAS-\u200B000001'
+                : 'TEACHER\u2011AS\u2011000001',
+          ),
           findsWidgets,
         );
         expect(find.textContaining('TEACHER-AS-000001'), findsNothing);

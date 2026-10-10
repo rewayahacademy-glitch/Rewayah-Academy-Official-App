@@ -175,6 +175,58 @@ class DataCollection<T> extends StatelessWidget {
   /// la collection en pure lecture, comme avant l'ajout de ce parametre.
   final void Function(T ligne)? onSelectionner;
 
+  /// Vrai quand chaque colonne du tableau tient, a [largeur] et a l'echelle
+  /// du texte de [context] : le mot le plus long de son en-tete et de chacune
+  /// de ses cellules entre dans sa colonne SANS reduction (COUPE-MOTS-FOND-1).
+  ///
+  /// Une date (« 23/09/2026 »), une heure (« 18:12:00 »), un identifiant
+  /// (« TEACHER-AS-000001 ») sont chacun un mot : ils ne se coupent jamais,
+  /// et un en-tete ne se tronque plus (« Entr... »). Quand le texte agrandi
+  /// ne tient pas, la collection passe en cartes, meme sur un bureau.
+  @visibleForTesting
+  static bool tientEnTableau<T>(
+    BuildContext context, {
+    required List<ColonneDonnees<T>> colonnes,
+    required List<T> lignes,
+    required double largeur,
+  }) {
+    if (!largeur.isFinite || colonnes.isEmpty) return true;
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    // Seul le texte AGRANDI fait replier le tableau : a la taille du theme,
+    // la colonne trop etroite pour un identifiant le reduit, borne
+    // (COUPE-MOTS-4), comme avant.
+    if (echelle.scale(1) <= 1) return true;
+    final TextTheme textes = Theme.of(context).textTheme;
+    final TextStyle enTete = textes.labelMedium ?? const TextStyle();
+    final TextStyle cellule = textes.bodySmall ?? const TextStyle();
+    final int flexTotal = colonnes.fold<int>(
+      0,
+      (int somme, ColonneDonnees<T> c) => somme + c.flex,
+    );
+    final double utile = largeur - 2 * AppSpacing.lg;
+    for (final ColonneDonnees<T> colonne in colonnes) {
+      final double place = utile * colonne.flex / flexTotal - AppSpacing.md;
+      // Un rendu riche (une pastille) entoure son texte d'une marge.
+      final double marge = colonne.rendu == null ? 0 : 2 * AppSpacing.md;
+      if (largeurMotLePlusLong(context, colonne.titre, enTete, echelle) >
+          place) {
+        return false;
+      }
+      final Set<String> valeurs = <String>{
+        for (final T ligne in lignes) colonne.texte(ligne),
+      };
+      final TextStyle style = colonne.tabulaire
+          ? AppTypography.tabulaire(cellule)
+          : cellule;
+      if (largeurMotLePlusLong(context, valeurs.join(' '), style, echelle) +
+              marge >
+          place) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool tableau = enTableau(context);
@@ -184,22 +236,38 @@ class DataCollection<T> extends StatelessWidget {
     // sans defileur propre.
     final bool enBloc = defileAvecLaPage || !defileSeule;
 
-    if (!tableau) {
-      return _Defilement<T>(
-        enBloc: enBloc,
-        lignes: lignes,
-        piedDePage: piedDePage,
-        cle: cle,
-        espacement: AppSpacing.md,
-        constructeur: (BuildContext contexte, T ligne) => _Carte<T>(
-          colonnes: colonnes,
-          ligne: ligne,
-          onSelectionner: onSelectionner,
-          selectionnee: estSelectionnee?.call(ligne) ?? false,
-        ),
-      );
-    }
+    Widget cartes() => _Defilement<T>(
+      enBloc: enBloc,
+      lignes: lignes,
+      piedDePage: piedDePage,
+      cle: cle,
+      espacement: AppSpacing.md,
+      constructeur: (BuildContext contexte, T ligne) => _Carte<T>(
+        colonnes: colonnes,
+        ligne: ligne,
+        onSelectionner: onSelectionner,
+        selectionnee: estSelectionnee?.call(ligne) ?? false,
+      ),
+    );
 
+    if (!tableau) return cartes();
+
+    // COUPE-MOTS-FOND-1 : un tableau ou une colonne coupe un mot (texte
+    // agrandi) se replie en cartes, comme sur une tablette.
+    return LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints contraintes) =>
+          tientEnTableau<T>(
+            contexte,
+            colonnes: colonnes,
+            lignes: lignes,
+            largeur: contraintes.maxWidth,
+          )
+          ? _tableau(contexte, enBloc)
+          : cartes(),
+    );
+  }
+
+  Widget _tableau(BuildContext context, bool enBloc) {
     final AppPalette palette = AppPalette.of(context);
     final AppMetriques metriques = AppMetriques.of(context);
     final Widget corps = _Defilement<T>(
@@ -331,12 +399,11 @@ class _EnTeteTableau<T> extends StatelessWidget {
                     padding: const EdgeInsetsDirectional.only(
                       end: AppSpacing.md,
                     ),
-                    child: Text(
-                      colonne.titre,
-                      style: style,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    // COUPE-MOTS-FOND-1 : l'en-tete passe a la ligne entre
+                    // ses mots, jamais tronque (« Entr... ») ; la collection
+                    // garantit que chacun de ses mots tient
+                    // ([DataCollection.tientEnTableau]).
+                    child: TexteSansCoupure(colonne.titre, style: style),
                   ),
                 ),
             ],
@@ -449,7 +516,9 @@ class _Cellule<T> extends StatelessWidget {
       label: '${colonne.titre} : ${colonne.texte(ligne)}',
       excludeSemantics: true,
       // COUPE-MOTS-4 : un mot plus long que sa colonne (un identifiant)
-      // reduit son echelle au lieu d'etre coupe.
+      // reduit son echelle au lieu d'etre coupe. COUPE-MOTS-FOND-1 : le
+      // tableau n'est rendu que si chaque mot tient sans reduction
+      // ([DataCollection.tientEnTableau]) ; la reduction reste un filet.
       child: TexteSansCoupure(colonne.texte(ligne), style: style),
     );
   }
@@ -512,6 +581,10 @@ class _Carte<T> extends StatelessWidget {
                   TexteSansCoupure(
                     titre.texte(ligne),
                     style: textes.titleMedium ?? const TextStyle(),
+                    // COUPE-MOTS-FOND-1 : un identifiant en titre passe
+                    // sur deux lignes a la taille des autres titres, au
+                    // lieu de se reduire sous elle (hierarchie).
+                    identifiantSurDeuxLignes: true,
                   ),
               Ecart.vSm,
             ],
@@ -521,6 +594,7 @@ class _Carte<T> extends StatelessWidget {
                 style: palette.inkMuted.applyTo(
                   textes.bodySmall ?? const TextStyle(),
                 ),
+                identifiantSurDeuxLignes: true,
               ),
             for (final ColonneDonnees<T> colonne in aPart)
               if (colonne.rendreMemeSiTexteVide ||
@@ -534,6 +608,7 @@ class _Carte<T> extends StatelessWidget {
                           textes.bodySmall ?? const TextStyle(),
                         ),
                       ),
+                      identifiantSurDeuxLignes: true,
                     ),
               ],
           ],

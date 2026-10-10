@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -35,7 +37,18 @@ class TexteSansCoupure extends StatelessWidget {
     this.plancher = 1,
     this.nomsComposesEntiers = false,
     this.largeurAuPlusLong = false,
+    this.identifiantSurDeuxLignes = false,
   });
+
+  /// Vrai : un identifiant technique plus long que sa place a la taille de
+  /// l'appareil (« TEACHER-AS-000001 » a traits insecables,
+  /// « observation_entry_recorded ») passe a la ligne a ses traits d'union
+  /// et a ses soulignes AU LIEU d'etre reduit (COUPE-MOTS-FOND-1) : un titre
+  /// de carte garde la taille des autres titres, la hierarchie ne casse pas.
+  /// Chaque segment reste entier ; seul un segment encore trop long se
+  /// reduit, borne comme ailleurs. Quand l'identifiant tient, il reste tel
+  /// quel, insecable.
+  final bool identifiantSurDeuxLignes;
 
   /// Vrai : un nom compose (« Al-Badr ») ne passe pas a la ligne apres son
   /// trait d'union (titre d'ecran, SUPERPOS-1). Faux par defaut : ailleurs,
@@ -101,15 +114,36 @@ class TexteSansCoupure extends StatelessWidget {
       echellePour: pour,
       child: LayoutBuilder(
         builder: (BuildContext _, BoxConstraints c) {
-          final TextScaler retenue = pour(c.maxWidth);
+          // COUPE-MOTS-FOND-1 : l'identifiant trop long s'ouvre a ses traits
+          // et a ses soulignes avant toute reduction.
+          final String source =
+              identifiantSurDeuxLignes &&
+                  c.maxWidth.isFinite &&
+                  _motLePlusLong(complet, sens, texte, echelle) >
+                      c.maxWidth - _margeArrondi
+              ? identifiantSecable(texte)
+              : texte;
+          final TextScaler retenue = identical(source, texte)
+              ? pour(c.maxWidth)
+              : _echelleBornee(
+                  echelle: echelle,
+                  complet: complet,
+                  sens: sens,
+                  texte: source,
+                  largeur: c.maxWidth,
+                  maxLignes: maxLignes,
+                  voisins: voisins,
+                  plancher: plancher,
+                  segments: true,
+                );
           // SUPERPOS-1 : un nom compose (« Al-Badr ») passait a la ligne
           // apres son trait d'union (« Classe Al- / Badr ») : il est lu
           // comme un mot, il reste entier. Le texte n'est retouche (un
           // gluon invisible apres le trait) que si la ligne s'y coupait
           // vraiment ; le lecteur d'ecran lit le texte d'origine.
           final String rendu = nomsComposesEntiers
-              ? sansCoupureAuTrait(texte, complet, sens, retenue, c.maxWidth)
-              : texte;
+              ? sansCoupureAuTrait(source, complet, sens, retenue, c.maxWidth)
+              : source;
           return Text(
             rendu,
             style: style,
@@ -125,6 +159,36 @@ class TexteSansCoupure extends StatelessWidget {
     );
   }
 }
+
+/// Le nombre de lignes qu'un texte d'aide (`InputDecoration.hintText`) peut
+/// prendre sans jamais etre tronque : une ligne par mot au plus, puisqu'un
+/// mot ne se coupe pas (COUPE-MOTS-FOND-1). A passer a `hintMaxLines` : le
+/// texte d'aide d'une recherche passe a la ligne entre ses mots au lieu de
+/// finir en ellipse (« Rechercher un tuteur ou un... » a 320 px texte x2).
+int lignesTexteAide(String texte) => math.max(
+  1,
+  texte.split(_espacesSecables).where((String m) => m.isNotEmpty).length,
+);
+
+/// Le texte d'aide d'un champ, a passer a `InputDecoration.hint` (a la place
+/// de `hintText`) : il passe a la ligne entre ses mots, et un mot plus large
+/// que le champ (« Rechercher » a cote de la loupe, 320 px texte x2,
+/// Interface guidee) se reduit, borne, au lieu d'etre coupe
+/// (COUPE-MOTS-FOND-1). Le style est celui des textes d'aide du theme.
+Widget texteAideSansCoupure(BuildContext context, String texte) =>
+    TexteSansCoupure(
+      texte,
+      style: Theme.of(context).inputDecorationTheme.hintStyle,
+    );
+
+/// [identifiant] ouvert a la coupure : ses traits d'union insecables
+/// (U+2011) redeviennent des traits ordinaires ; chaque trait et chaque
+/// souligne est suivi d'une espace sans chasse (U+200B), car le moteur ne
+/// coupe pas entre un trait et un chiffre (« AS- / 000002 »). La ligne passe
+/// alors apres un trait ou un souligne, jamais au milieu d'un segment
+/// ([TexteSansCoupure.identifiantSurDeuxLignes]).
+String identifiantSecable(String identifiant) =>
+    identifiant.replaceAll('\u2011', '-\u200B').replaceAll('_', '_\u200B');
 
 /// Un trait d'union entre deux lettres : « Al-Badr », « Saint-Denis ».
 final RegExp _traitEntreLettres = RegExp(
@@ -286,9 +350,15 @@ TextScaler _echelleBornee({
   required int? maxLignes,
   required List<String> voisins,
   required double plancher,
+  bool segments = false,
 }) {
   final double facteur = echelle.scale(1);
   if (!largeur.isFinite) return echelle;
+  // Un identifiant ouvert ([identifiantSecable]) se coupe apres ses traits
+  // et ses espaces sans chasse : seul le plus long SEGMENT doit tenir.
+  final String mesure = segments
+      ? texte.replaceAll('-', '- ').replaceAll('\u200B', ' ')
+      : texte;
   // 1. Le mot le plus long doit tenir : l'echelle se reduit juste assez,
   // jamais sous [echelleMinimaleLisible] (sauf si l'appareil est deja en
   // dessous). Cela vaut aussi a 100 % : un mot plus long que sa place a la
@@ -300,7 +370,7 @@ TextScaler _echelleBornee({
   final double motLong = _motLePlusLong(
     complet,
     sens,
-    <String>[texte, ...voisins].join(' '),
+    <String>[mesure, ...voisins].join(' '),
     echelle,
   );
   double borne = motLong <= largeur
