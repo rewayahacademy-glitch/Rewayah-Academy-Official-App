@@ -8,10 +8,12 @@ import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_gabarit.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
+import 'package:rewayah_academy/core/widgets/brand_logo.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
 
 import '../support/harnais.dart';
+import '../support/logo.dart';
 
 const List<Destination> _destinations = <Destination>[
   Destination(libelle: 'Accueil', icone: AppIcons.accueil, chemin: '/accueil'),
@@ -266,7 +268,7 @@ void main() {
     },
   );
 
-  testWidgets('barre laterale : mot-symbole, bouton de repli, choix garde', (
+  testWidgets('barre laterale : logo, bouton de repli, choix garde', (
     WidgetTester tester,
   ) async {
     _vue(tester, const Size(1440, 900));
@@ -281,13 +283,16 @@ void main() {
     await tester.pump();
 
     expect(find.byKey(NavShell.barreLateraleKey), findsOneWidget);
-    expect(find.text('Rewayah'), findsOneWidget);
+    // LOGO-APP : le logo horizontal a remplace le mot-symbole « Rewayah ».
+    expect(logoRendu(VarianteLogo.horizontal), findsOneWidget);
+    expect(find.text('Rewayah'), findsNothing);
     expect(find.text('Compte'), findsOneWidget);
 
     await tester.tap(find.byKey(NavShell.boutonRepliKey));
     await tester.pump();
     expect(find.byKey(NavShell.railKey), findsOneWidget);
     expect(tester.getSize(find.byKey(NavShell.railKey)).width, 80);
+    expect(logoRendu(VarianteLogo.symbole), findsOneWidget);
 
     await tester.tap(find.byKey(NavShell.boutonRepliKey));
     await tester.pump();

@@ -469,6 +469,7 @@ class _Traductions$nav$ar extends Traductions$nav$fr {
 	@override String get compte => 'حسابي';
 	@override String get principale => 'التنقل الرئيسي';
 	@override String get motSymbole => 'Rewayah';
+	@override String get logoAccueil => 'Rewayah Academy، الصفحة الرئيسية';
 	@override String get replier => 'طي شريط التنقل';
 	@override String get deplier => 'فتح شريط التنقل';
 }
@@ -13218,6 +13219,7 @@ extension on TraductionsAr {
 			'nav.compte' => 'حسابي',
 			'nav.principale' => 'التنقل الرئيسي',
 			'nav.motSymbole' => 'Rewayah',
+			'nav.logoAccueil' => 'Rewayah Academy، الصفحة الرئيسية',
 			'nav.replier' => 'طي شريط التنقل',
 			'nav.deplier' => 'فتح شريط التنقل',
 			'tc.groupe.mesGroupes.titre' => 'فصولي',
@@ -13577,9 +13579,9 @@ extension on TraductionsAr {
 			'tc.observation.visite.reconnexionDetail' => 'انقطع الاتصال، جارٍ إعادة الاتصال. يستمر احتساب وقت متابعتك.',
 			'tc.observation.visite.sonRecu' => 'الصوت يصل',
 			'tc.observation.visite.sonInterrompu' => 'الصوت منقطع',
-			'tc.observation.visite.agrandir' => 'تكبير',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.visite.agrandir' => 'تكبير',
 			'tc.observation.visite.reduire' => 'تصغير',
 			'tc.observation.visite.cameraFermee' => 'الكاميرا مغلقة',
 			'tc.observation.visite.pasEncoreLa' => 'ليس في القاعة بعد',
@@ -14091,9 +14093,9 @@ extension on TraductionsAr {
 			'com.communaute.regles.signaler' => 'يُبلَّغ عن المحتوى غير المناسب من قائمة المنشور.',
 			'com.communaute.regles.voir' => 'عرض القواعد',
 			'com.communaute.entree.lecteur' => 'فتح مجتمع المعلّمين',
-			'com.communaute.entree.detail' => 'أسئلة وطرق وموارد بين المعلّمين',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.entree.detail' => 'أسئلة وطرق وموارد بين المعلّمين',
 			'com.communaute.demo.avertissement' => 'منشور يحتاج إلى مراجعة: إعلان تجاري',
 			'com.communaute.demo.lienAffilie' => 'رابط تسويق بالعمولة محظور',
 			'com.communaute.demo.vente' => 'بيع محظور',
@@ -14605,9 +14607,9 @@ extension on TraductionsAr {
 			'admin.demandes.roleInconnu' => 'طرف في الملف',
 			'admin.demandes.reclame' => 'المطلوب',
 			'admin.demandes.reclameReaffectation' => ({required Object dePrenom}) => 'تغيير معلم ⁨${dePrenom}⁩',
-			'admin.demandes.reclamePlafond' => ({required num valeur}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(valeur, zero: 'رفع الحد الأقصى إلى صفر', one: 'رفع الحد الأقصى إلى طالب واحد', two: 'رفع الحد الأقصى إلى طالبين', few: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طلاب', many: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طالبًا', other: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طالب', ), 
 			_ => null,
 		} ?? switch (path) {
+			'admin.demandes.reclamePlafond' => ({required num valeur}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(valeur, zero: 'رفع الحد الأقصى إلى صفر', one: 'رفع الحد الأقصى إلى طالب واحد', two: 'رفع الحد الأقصى إلى طالبين', few: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طلاب', many: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طالبًا', other: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طالب', ), 
 			'admin.demandes.reclameRegle' => ({required Object regle, required Object valeur}) => 'جعل ⁨${regle}⁩ ⁨${valeur}⁩ د',
 			'admin.demandes.reclameRegleSansValeur' => ({required Object regle}) => 'مراجعة ⁨${regle}⁩',
 			'admin.demandes.motifDemande' => 'السبب المذكور',
@@ -15119,9 +15121,9 @@ extension on TraductionsAr {
 			'admin.comptes.roleEleve' => 'طالب',
 			'admin.comptes.roleInconnu' => 'دور غير معروف',
 			'admin.comptes.pieceAucune' => 'لا وثيقة مودَعة',
-			'admin.comptes.pieceAVerifier' => 'للتحقق',
 			_ => null,
 		} ?? switch (path) {
+			'admin.comptes.pieceAVerifier' => 'للتحقق',
 			'admin.comptes.pieceValidee' => 'معتمَدة',
 			'admin.comptes.pieceRefusee' => 'مرفوضة',
 			'admin.comptes.pieceNonVisible' => 'خارج صلاحيتك',
@@ -15633,9 +15635,9 @@ extension on TraductionsAr {
 			'comptable.encaissements.rapprochement' => 'المطابقة',
 			'comptable.encaissements.rapprochementAucun' => 'لم تتم المطابقة بعد',
 			'comptable.encaissements.ouvrirRapprochement' => 'فتح المطابقة',
-			'comptable.encaissements.confirmeNote' => 'لا تظهر «مؤكَّد» إلا بعد تأكيد مزوّد الدفع.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.encaissements.confirmeNote' => 'لا تظهر «مؤكَّد» إلا بعد تأكيد مزوّد الدفع.',
 			'comptable.encaissements.enAttenteNote' => 'بانتظار تأكيد مزوّد الدفع: لم يُكتسب شيء بعد.',
 			'comptable.encaissements.journal' => 'سجل المقبوض',
 			'comptable.encaissements.journalVide' => 'لا توجد عملية مسجلة لهذا المقبوض.',
@@ -16147,9 +16149,9 @@ extension on TraductionsAr {
 			'ficheEleve.acces.pastilleEnCours' => 'ساري',
 			'ficheEleve.acces.pastilleExpire' => 'منتهٍ',
 			'ficheEleve.acces.sansEcheance' => 'لا تاريخ انتهاء مسجَّل.',
-			'ficheEleve.acces.jusquau' => ({required Object date}) => 'حتى ⁨${date}⁩',
 			_ => null,
 		} ?? switch (path) {
+			'ficheEleve.acces.jusquau' => ({required Object date}) => 'حتى ⁨${date}⁩',
 			'ficheEleve.acces.expireDepuis' => ({required Object date}) => 'منتهٍ منذ ⁨${date}⁩',
 			'ficheEleve.acces.expirePhrase' => ({required Object prenom}) => 'منذ هذا التاريخ، لا يستطيع ⁨${prenom}⁩ الدخول إلى Rewayah.',
 			'ficheEleve.acces.detailIndisponible' => 'بداية الوصول وسببه لا يظهران بعد.',
@@ -16661,9 +16663,9 @@ extension on TraductionsAr {
 			'adulte.monEspace.informations' => 'معلوماتي',
 			'adulte.monEspace.coursAcces' => 'الدروس والوصول',
 			'adulte.monEspace.coursAccesLegende' => 'الفصل والحصص والوصول',
-			'adulte.monEspace.paiements' => 'المدفوعات',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.monEspace.paiements' => 'المدفوعات',
 			'adulte.monEspace.paiementsLegende' => 'السجل والإيصالات',
 			'adulte.monEspace.accords' => 'موافقاتي',
 			'adulte.monEspace.accordsLegende' => 'الموافقات الممنوحة للأكاديمية',
@@ -17175,9 +17177,9 @@ extension on TraductionsAr {
 			'controleur.historique.sansComplement' => 'لا تكملة.',
 			'controleur.historique.faitsIndisponibles' => 'السجل التلقائي لهذه الزيارة (الساعات، الطلاب الحاضرون، إعادة الاتصال) لم يصل بعد: انتهت الحصة للتو أو انقطع الاتصال. سيظهر هنا بمجرد وصوله. باقي التقرير موثوق.',
 			'controleur.historique.motif' => ({required Object motif}) => 'السبب: ⁨${motif}⁩',
-			'controleur.historique.ajouterComplement' => 'إضافة تكملة',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.historique.ajouterComplement' => 'إضافة تكملة',
 			'controleur.complement.bandeau' => 'ستُضاف هذه التكملة إلى التقرير الموجود.',
 			'controleur.complement.questionMotif' => 'لماذا تضيف هذه التكملة؟',
 			'controleur.complement.contexteMotif' => 'اختياري: السبب يساعد الإدارة على قراءة التكملة. التقرير الأصلي لا يتغير.',
