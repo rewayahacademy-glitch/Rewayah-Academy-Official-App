@@ -225,23 +225,68 @@ begin
 end
 $sec_prod_functions_preflight$;
 
--- Les 15 vues doivent exister et ne pas déjà être en SECURITY INVOKER.
+-- Preflight strict des 15 vues : définitions, owner, options, ACL directes
+-- et SELECT effectif doivent correspondre exactement au snapshot.
+-- Expected view definitions, ACLs and options from the exact PROD snapshot.
+create temporary table sec_prod_expected_views (
+  view_name text primary key,
+  md5_definition text not null,
+  expected_relacl text not null,
+  expected_reloptions text[] not null,
+  expected_owner text not null,
+  anon_select boolean not null,
+  authenticated_select boolean not null,
+  agent_ro_select boolean not null
+) on commit drop;
+insert into pg_temp.sec_prod_expected_views values
+  ('concern_famille_v', 'cbdc1455db6cdd936d41856517ec2c21', '{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}', array['security_barrier=true']::text[], 'postgres', false, true, false),
+  ('eleves_en_attente_v', '5f909b7adbbf0feb38146f9364c2468f', '{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres,agent_ro=r/postgres}', array['security_barrier=true']::text[], 'postgres', false, true, true),
+  ('mes_affectations_v', '618110777250838d10c04ddb79da304c', '{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres,agent_ro=r/postgres}', array['security_barrier=true']::text[], 'postgres', false, true, true),
+  ('mes_appareils_v', '0c7c334a9070e9cc43d0262bc4c34ad0', '{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres,agent_ro=r/postgres}', array['security_barrier=true']::text[], 'postgres', true, true, true),
+  ('mes_codes_appairage_v', '8ea8a6236f2cf66f3bd03229bc706b04', '{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres,agent_ro=r/postgres}', array['security_barrier=true']::text[], 'postgres', true, true, true),
+  ('mes_groupes_famille_v', 'b75cd7b1fe443df98d3b49e697a9910b', '{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres,agent_ro=r/postgres}', array['security_barrier=true']::text[], 'postgres', false, true, true),
+  ('mes_groupes_v', '10ae29f7162b67873fb9fe39a0077fbc', '{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres,agent_ro=r/postgres}', array['security_barrier=true']::text[], 'postgres', false, true, true),
+  ('mes_seances_enseignant_v', 'dfcbf379090a7265d98786e2da48e799', '{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres,agent_ro=r/postgres}', array['security_barrier=true']::text[], 'postgres', false, true, true),
+  ('mes_seances_v', 'ebbdd7b2516aab5514fcceccd0320361', '{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres,agent_ro=r/postgres}', array['security_barrier=true']::text[], 'postgres', false, true, true),
+  ('presence_seance_v', '87730d907d7210e4fe6b9cbc830b904e', '{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres,agent_ro=r/postgres}', array['security_barrier=true']::text[], 'postgres', true, true, true),
+  ('profils_du_foyer_v', 'de6bcd8b1ff623fffa10c735248b8909', '{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres,agent_ro=r/postgres}', array['security_barrier=true']::text[], 'postgres', true, true, true),
+  ('regles_profil_v', 'c3a01cde33501e90fdb1c50a5e6dbe48', '{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres,agent_ro=r/postgres}', array['security_barrier=true']::text[], 'postgres', false, true, true),
+  ('session_peers_v', '4dba47724f45f172d362643972e272e4', '{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres,agent_ro=r/postgres}', array[]::text[], 'postgres', false, true, true),
+  ('teacher_roster_v', '44ffcb9c5828d4c36036a3f78f0d8792', '{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres,agent_ro=r/postgres}', array['security_barrier=true']::text[], 'postgres', false, true, true),
+  ('tendance_feedback_v', '824d982444d0e62643af53159cfc2429', '{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}', array['security_barrier=true']::text[], 'postgres', false, true, false);
+
 do $sec_prod_views_preflight$
 declare
-  v_name text;
+  r record;
   v_oid oid;
-  v_views text[] := array['concern_famille_v', 'eleves_en_attente_v', 'mes_affectations_v', 'mes_appareils_v', 'mes_codes_appairage_v', 'mes_groupes_famille_v', 'mes_groupes_v', 'mes_seances_enseignant_v', 'mes_seances_v', 'presence_seance_v', 'profils_du_foyer_v', 'regles_profil_v', 'session_peers_v', 'teacher_roster_v', 'tendance_feedback_v'];
+  v_kind "char";
+  v_md5 text;
+  v_relacl text;
+  v_reloptions text;
+  v_owner text;
 begin
-  foreach v_name in array v_views loop
-    v_oid := to_regclass(format('public.%I', v_name));
-    if v_oid is null or (select relkind from pg_catalog.pg_class where oid=v_oid) <> 'v' then
-      raise exception 'SEC-PROD: vue absente ou remplacée: public.%', v_name;
+  if (select count(*) from pg_temp.sec_prod_expected_views) <> 15 then
+    raise exception 'SEC-PROD: matrice des vues incomplète';
+  end if;
+  for r in select * from pg_temp.sec_prod_expected_views order by view_name loop
+    v_oid := to_regclass(format('public.%I', r.view_name));
+    if v_oid is null then raise exception 'SEC-PROD: vue absente: public.%', r.view_name; end if;
+    select relkind, md5(pg_get_viewdef(c.oid, true)), coalesce(c.relacl::text, ''),
+           coalesce(array_to_string(c.reloptions, ','), ''), pg_get_userbyid(c.relowner)
+      into v_kind, v_md5, v_relacl, v_reloptions, v_owner
+      from pg_catalog.pg_class c where c.oid = v_oid;
+    if v_kind <> 'v' then raise exception 'SEC-PROD: objet remplacé (relkind=%): public.%', v_kind, r.view_name; end if;
+    if v_md5 is distinct from r.md5_definition then raise exception 'SEC-PROD: définition différente du snapshot: public.%', r.view_name; end if;
+    if v_owner is distinct from r.expected_owner then raise exception 'SEC-PROD: owner différent du snapshot: public.%', r.view_name; end if;
+    if v_relacl is distinct from r.expected_relacl then raise exception 'SEC-PROD: ACL directe différente du snapshot: public.%', r.view_name; end if;
+    if v_reloptions is distinct from array_to_string(r.expected_reloptions, ',') then raise exception 'SEC-PROD: options différentes du snapshot: public.%', r.view_name; end if;
+    if has_table_privilege('anon', v_oid, 'SELECT') is distinct from r.anon_select
+       or has_table_privilege('authenticated', v_oid, 'SELECT') is distinct from r.authenticated_select
+       or has_table_privilege('agent_ro', v_oid, 'SELECT') is distinct from r.agent_ro_select then
+      raise exception 'SEC-PROD: SELECT effectif différent du snapshot: public.%', r.view_name;
     end if;
-    if coalesce((select reloptions @> array['security_invoker=true'] from pg_catalog.pg_class where oid=v_oid), false) then
-      raise exception 'SEC-PROD: vue déjà security_invoker: public.%', v_name;
-    end if;
-    if not has_table_privilege('authenticated', v_oid, 'SELECT') then
-      raise exception 'SEC-PROD: authenticated n''a déjà plus SELECT sur public.%', v_name;
+    if r.expected_reloptions @> array['security_invoker=true'] then
+      raise exception 'SEC-PROD: vue déjà security_invoker: public.%', r.view_name;
     end if;
   end loop;
 end
@@ -1145,6 +1190,36 @@ begin
   end if;
 end
 $sec_prod_postflight$;
+
+do $sec_prod_views_postflight$
+declare
+  r record;
+  v_oid oid;
+  v_options text[];
+  v_expected_agent boolean;
+begin
+  for r in select * from pg_temp.sec_prod_expected_views order by view_name loop
+    v_oid := to_regclass(format('public.%I', r.view_name));
+    if v_oid is null then raise exception 'SEC-PROD: vue absente après remédiation: public.%', r.view_name; end if;
+    if md5(pg_get_viewdef(v_oid, true)) is distinct from r.md5_definition then
+      raise exception 'SEC-PROD: définition modifiée pendant remédiation: public.%', r.view_name;
+    end if;
+    select reloptions into v_options from pg_catalog.pg_class where oid=v_oid;
+    if not coalesce(v_options @> array['security_invoker=true'], false)
+       or cardinality(coalesce(v_options, array[]::text[])) <> cardinality(r.expected_reloptions) + 1
+       or not coalesce(v_options @> r.expected_reloptions, false) then
+      raise exception 'SEC-PROD: options invoker/barrier inattendues: public.%', r.view_name;
+    end if;
+    v_expected_agent := r.agent_ro_select
+      and r.view_name not in ('mes_appareils_v','mes_groupes_famille_v','mes_groupes_v','mes_seances_enseignant_v','teacher_roster_v');
+    if has_table_privilege('anon', v_oid, 'SELECT')
+       or has_table_privilege('authenticated', v_oid, 'SELECT') is distinct from r.authenticated_select
+       or has_table_privilege('agent_ro', v_oid, 'SELECT') is distinct from v_expected_agent then
+      raise exception 'SEC-PROD: droits SELECT post-remédiation inattendus: public.%', r.view_name;
+    end if;
+  end loop;
+end
+$sec_prod_views_postflight$;
 
 -- Ne modifie ni btree_gist ni l'index sessions_no_teacher_overlap:
 -- pg_depend établit que le déplacement requiert une opération séparée et testée.
