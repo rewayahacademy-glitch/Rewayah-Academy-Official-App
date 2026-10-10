@@ -68,6 +68,7 @@ final class RepriseDemande extends EtatReprise {
     required this.statut,
     this.deposeeLe,
     this.examenPossibleLe,
+    this.redepotPossibleLe,
   });
 
   /// Le statut rendu.
@@ -79,6 +80,11 @@ final class RepriseDemande extends EtatReprise {
   /// La date a partir de laquelle l'administration pourra examiner la
   /// demande sans reponse du titulaire (section 12.3), si elle est rendue.
   final DateTime? examenPossibleLe;
+
+  /// BACK-FRONT-REPRISE-1 (K-65) : apres un refus, la date a partir de
+  /// laquelle une nouvelle demande pourra etre deposee, si elle est rendue.
+  /// Jamais calculee ici (F17).
+  final DateTime? redepotPossibleLe;
 }
 
 /// Ce que le titulaire lit de la demande qui le concerne (EA-BR-28).
@@ -460,6 +466,10 @@ class _EtatDemande extends StatelessWidget {
     final r = t.adulte.reprise;
     final DateTime? depot = demande.deposeeLe;
     final DateTime? examen = demande.examenPossibleLe;
+    final DateTime? redepot = demande.redepotPossibleLe;
+    final bool refusee =
+        demande.statut == StatutReprise.refusee ||
+        demande.statut == StatutReprise.refuseeParTitulaire;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -489,6 +499,14 @@ class _EtatDemande extends StatelessWidget {
           Ecart.vMd,
           _Note(
             texte: r.phrases.examenLe(date: dateEcheance(examen)),
+            attenuee: true,
+          ),
+        ],
+        if (refusee && redepot != null) ...<Widget>[
+          Ecart.vMd,
+          _Note(
+            key: const ValueKey<String>('reprise-redepot'),
+            texte: r.phrases.redepotLe(date: dateEcheance(redepot)),
             attenuee: true,
           ),
         ],

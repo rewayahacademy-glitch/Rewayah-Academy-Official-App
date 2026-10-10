@@ -241,6 +241,14 @@ Future<void> _presser(WidgetTester tester, String cle) async {
   await tester.tap(bouton);
 }
 
+/// L'etiquette et l'indication de `ChampRecherche` (composant partage,
+/// inchange) : au-dela de 130 % de texte elles restent dans le champ, hors
+/// de `TexteSansCoupure` (meme exception que classes_echelle_test).
+Set<String> get _exceptionsRecherche => <String>{
+  t.admin.regroupements.liste.rechercheLibelle,
+  t.admin.regroupements.liste.rechercheAide,
+};
+
 void main() {
   group('Les etats', () {
     testWidgets('chargement : le squelette, rien d invente', (
@@ -743,7 +751,7 @@ void main() {
           findsNothing,
         );
         expect(tester.takeException(), isNull);
-        verifierEcranSansMotCoupe(tester);
+        verifierEcranSansMotCoupe(tester, exceptions: _exceptionsRecherche);
         verifierUnSeulBoutonPlein(tester, maximum: 2);
         await _demonter(tester);
       });
@@ -925,7 +933,7 @@ void main() {
           direction: direction,
         );
         expect(tester.takeException(), isNull);
-        verifierEcranSansMotCoupe(tester);
+        verifierEcranSansMotCoupe(tester, exceptions: _exceptionsRecherche);
         await _ouvrir(tester, differentes);
         expect(tester.takeException(), isNull);
         expect(
@@ -934,7 +942,7 @@ void main() {
           ),
           findsWidgets,
         );
-        verifierEcranSansMotCoupe(tester);
+        verifierEcranSansMotCoupe(tester, exceptions: _exceptionsRecherche);
         verifierUnSeulBoutonPlein(tester, maximum: 2);
         await _demonter(tester);
       });
@@ -957,7 +965,7 @@ void main() {
           direction: direction,
         );
         expect(tester.takeException(), isNull);
-        verifierEcranSansMotCoupe(tester);
+        verifierEcranSansMotCoupe(tester, exceptions: _exceptionsRecherche);
         verifierUnSeulBoutonPlein(tester);
 
         // La feuille de creation, avec son message (genre manquant).
@@ -965,7 +973,7 @@ void main() {
         await _presser(tester, 'regroupement-creer');
         await tester.pump();
         expect(tester.takeException(), isNull);
-        verifierEcranSansMotCoupe(tester);
+        verifierEcranSansMotCoupe(tester, exceptions: _exceptionsRecherche);
         verifierUnSeulBoutonPlein(tester, maximum: 2);
 
         // La proposition d'enseignant.
@@ -974,7 +982,7 @@ void main() {
         await _laisser(tester);
         expect(_parCle('regroupement-feuille-enseignant'), findsOneWidget);
         expect(tester.takeException(), isNull);
-        verifierEcranSansMotCoupe(tester);
+        verifierEcranSansMotCoupe(tester, exceptions: _exceptionsRecherche);
         verifierUnSeulBoutonPlein(tester, maximum: 2);
         await _demonter(tester);
       });

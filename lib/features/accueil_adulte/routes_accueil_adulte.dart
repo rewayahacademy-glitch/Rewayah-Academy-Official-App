@@ -16,6 +16,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
+import '../suivi_famille/suivi_famille_page.dart';
 import '../tc_catalogue/routes_tc_b.dart' show RoutesTcB;
 import '../tc_mes_groupes/routes_tc_a.dart' show preparerSalleEleve;
 import 'accueil_adulte_page.dart';
@@ -48,5 +49,18 @@ List<GoRoute> routesAccueilAdulte() => <GoRoute>[
         HistoriqueSeancesAdultePage(
           onRetour: () => GoRouter.of(contexte).go(Routes.eleveAdulte),
         ),
+  ),
+  // BACK-FRONT-SUIVI-1 : l'eleve adulte autonome suit lui-meme ses demandes.
+  GoRoute(
+    path: Routes.eleveAdulteDemandes,
+    builder: (BuildContext _, GoRouterState _) =>
+        const SuiviFamillePage(chemins: CheminsSuivi.adulte),
+  ),
+  GoRoute(
+    path: '${Routes.eleveAdulteDemandes}/:demandeId',
+    builder: (BuildContext _, GoRouterState etat) => FriseDemandePage(
+      demandeId: etat.pathParameters['demandeId'] ?? '',
+      chemins: CheminsSuivi.adulte,
+    ),
   ),
 ];

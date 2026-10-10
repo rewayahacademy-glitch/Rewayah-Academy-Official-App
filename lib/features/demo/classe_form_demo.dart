@@ -90,6 +90,19 @@ const List<_EnseignantDemo> _enseignants = <_EnseignantDemo>[
   ),
 ];
 
+/// Un enseignant de la demonstration par son identifiant : son prenom, son
+/// nom et son identifiant immuable. Un identifiant inconnu se dit tel quel.
+({String identifiant, String nom, String prenom}) enseignantDemoParId(
+  String id,
+) {
+  for (final _EnseignantDemo e in _enseignants) {
+    if (e.id == id) {
+      return (identifiant: e.identifiant, nom: e.nom, prenom: e.prenom);
+    }
+  }
+  return (identifiant: id, nom: '', prenom: id);
+}
+
 /// Les enseignants proposes en demonstration : creneaux libres = leurs
 /// disponibilites moins les creneaux de leurs classes actives.
 class EnseignantsClasseDemo implements PortEnseignantsClasse {

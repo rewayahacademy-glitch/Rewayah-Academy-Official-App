@@ -28,8 +28,11 @@ import '../../features/admin_pedagogie_evaluations/evaluations_page.dart';
 import '../../features/admin_pedagogie_programmes/programmes_page.dart';
 import '../../features/admin_pedagogie_progression/progression_page.dart';
 import '../../features/admin_pedagogie_qualite/qualite_page.dart';
+import '../../features/admin_pilotage/pilotage_page.dart';
 import '../../features/admin_regroupements/regroupements_page.dart';
+import '../../features/admin_reprises/reprises_page.dart';
 import '../../features/admin_tableau/tableau_de_bord_page.dart';
+import '../../features/admin_tirage/tirage_page.dart';
 import '../../features/admin_traitement/traitement_page.dart';
 import '../../features/agent_entree/agent_entree_page.dart';
 import '../../features/alertes/alertes_page.dart';
@@ -127,12 +130,14 @@ import '../../features/journee/journee_page.dart';
 import '../../features/notifications/notifications_page.dart';
 import '../../features/paiements_recus/recevoir_paiements_page.dart';
 import '../../features/parcours_offres/parcours_offres_page.dart';
+import '../../features/presentation_tuteur/demandes_presentation_page.dart';
 import '../../features/profil_enseignant/profil_enseignant_page.dart';
 import '../../features/recrutement/invitation_candidat_page.dart';
 import '../../features/remplacements/remplacements_page.dart';
 import '../../features/revenus_enseignant/revenus_enseignant_page.dart';
 import '../../features/revue_groupe/revue_groupe_page.dart';
 import '../../features/salle/salle_page.dart';
+import '../../features/suivi_demandes/changement_classe_page.dart';
 import '../../features/suivi_eleve/suivi_eleve_page.dart';
 import '../../features/suivi_famille/suivi_famille_page.dart';
 import '../../features/suivi_foyer/detail_observations_page.dart';
@@ -571,6 +576,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     ),
                   ),
                   GoRoute(
+                    path: 'presentation',
+                    pageBuilder: glissee(
+                      (GoRouterState _) => const DemandesPresentationPage(),
+                    ),
+                  ),
+                  GoRoute(
                     path: 'demandes',
                     pageBuilder: glissee(
                       (GoRouterState _) => const SuiviDemandesEntree(),
@@ -580,6 +591,16 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                         path: ':demandeId',
                         pageBuilder: glissee(
                           (GoRouterState etat) => FriseDemandePage(
+                            demandeId: _parametre(etat, 'demandeId'),
+                          ),
+                        ),
+                      ),
+                      // ECHELLE-FAM-ETATS-1 : le resultat d'une fusion ou
+                      // d'un transfert, adresse que le rechargement garde.
+                      GoRoute(
+                        path: ':demandeId/changement',
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => ChangementClassePage(
                             demandeId: _parametre(etat, 'demandeId'),
                           ),
                         ),
@@ -1274,9 +1295,22 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: Routes.adminOperationsGroupes,
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          // ECHELLE-ADM-PILOTAGE-1 : `?etat=attente` ouvre la liste sur les
+          // classes en attente d'enseignant.
+          child: GroupesPage(
+            attenteInitiale: etat.uri.queryParameters['etat'] == 'attente',
+          ),
+        ),
+      ),
+      // ECHELLE-ADM-PILOTAGE-1 : le tableau de pilotage par horaire, atteint
+      // depuis l'Accueil (raccourci « Pilotage des horaires »).
+      GoRoute(
+        path: Routes.adminOperationsPilotage,
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.operations,
-          child: GroupesPage(),
+          child: PilotagePage(),
         ),
       ),
       GoRoute(
@@ -1383,6 +1417,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.operations,
           child: RegroupementsPage(),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminPersonnesReprises,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: ReprisesPage(),
         ),
       ),
       GoRoute(
@@ -1575,6 +1616,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.securite,
           child: ObservationsAdminPage(),
+        ),
+      ),
+      // ECHELLE-CTRL-DIRECT-1 : le tirage des controles, onglet pair du
+      // Journal et des observations (`ongletsSecurite()`).
+      GoRoute(
+        path: Routes.adminSecuriteAuditTirages,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.securite,
+          child: TiragePage(),
         ),
       ),
 

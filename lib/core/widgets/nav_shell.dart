@@ -19,6 +19,7 @@ import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_typography.dart';
+import 'brand_logo.dart';
 import 'pressable.dart';
 
 /// Une destination de premier niveau.
@@ -1315,6 +1316,10 @@ class _Colonne extends StatelessWidget {
                             _EnteteColonne(
                               repliee: repliee,
                               onBasculer: onBasculer,
+                              // LOGO-APP : la premiere destination est
+                              // l'accueil du role.
+                              onAccueil: () =>
+                                  onAller(destinations.first.chemin),
                             ),
                             Ecart.vLg,
                             ...haut,
@@ -1464,18 +1469,25 @@ TextScaler _commune(
   return f < d ? TextScaler.linear(f) : depart;
 }
 
-/// La tete de la colonne : mot-symbole et bouton de repli quand elle est
-/// depliee, bouton de depli seul quand elle est repliee.
+/// La tete de la colonne : logo horizontal et bouton de repli quand elle est
+/// depliee, symbole et bouton de depli quand elle est repliee (LOGO-APP,
+/// README du logo : en-tete large `logo-horizontal`, barre etroite
+/// `symbole-plein`). Seul logo de l'ecran, seul cliquable : il ramene a
+/// l'accueil du role. Au debut de ligne, jamais retourne en arabe.
 class _EnteteColonne extends StatelessWidget {
-  const _EnteteColonne({required this.repliee, required this.onBasculer});
+  const _EnteteColonne({
+    required this.repliee,
+    required this.onBasculer,
+    required this.onAccueil,
+  });
 
   final bool repliee;
   final VoidCallback onBasculer;
+  final VoidCallback onAccueil;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
     final String libelle = repliee ? t.nav.deplier : t.nav.replier;
 
     final Widget bouton = Tooltip(
@@ -1518,33 +1530,43 @@ class _EnteteColonne extends StatelessWidget {
     );
 
     if (repliee) {
+      // Le symbole (32, zone de protection de 8 comprise dans ses 48), puis
+      // le bouton de depli.
       return Padding(
-        padding: const EdgeInsets.only(top: AppSpacing.lg),
-        child: Center(child: bouton),
+        padding: const EdgeInsets.only(top: AppSpacing.sm),
+        child: Column(
+          children: <Widget>[
+            BrandLogo(
+              variante: VarianteLogo.symbole,
+              hauteur: AppSpacing.xxxl,
+              onAccueil: onAccueil,
+            ),
+            Ecart.vSm,
+            bouton,
+          ],
+        ),
       );
     }
+    // Le logo porte sa zone de protection (8) : 12 + 8 alignent son bord sur
+    // les 20 de l'ancien mot-symbole. Il ne grandit pas avec le texte (un
+    // logo n'est pas un texte) ; s'il manquait de place, il passerait au
+    // symbole plutot que de descendre sous 28 (BrandLogo).
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(
-        AppSpacing.xl,
-        AppSpacing.lg,
+        AppSpacing.md,
+        AppSpacing.sm,
         AppSpacing.sm,
         0,
       ),
       child: Row(
         children: <Widget>[
           Expanded(
-            // COUPE-MOTS-1 : plus de « Reway... » a 1440 px et 200 % ; le
-            // nom de l'application reduit son echelle pour tenir en entier.
-            child: Semantics(
-              header: true,
-              child: TexteSansCoupure(
-                t.nav.motSymbole,
-                style: palette.inkStrong.applyTo(
-                  AppTypography.graisse(
-                    textes.titleLarge ?? const TextStyle(),
-                    FontWeight.w700,
-                  ),
-                ),
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: BrandLogo(
+                variante: VarianteLogo.horizontal,
+                hauteur: AppSpacing.xxxl,
+                onAccueil: onAccueil,
               ),
             ),
           ),
