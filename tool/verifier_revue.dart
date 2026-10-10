@@ -118,6 +118,7 @@ void main(List<String> arguments) {
   final Set<String> regles = <String>{
     'libelle-sans-source',
     'bouton-grise',
+    'bouton-grise-conditionnel',
     'affirmation-reseau',
     'cartes-collees',
     'bouton-recompose',
@@ -176,6 +177,9 @@ void main(List<String> arguments) {
   if (regles.contains('bouton-grise') ||
       (filtre?.split(',').contains('bouton-desactive') ?? false)) {
     violations.addAll(_boutonsGrises());
+  }
+  if (regles.contains('bouton-grise-conditionnel')) {
+    violations.addAll(_boutonsGrisesConditionnels());
   }
   if (regles.contains('cartes-collees')) {
     violations.addAll(_cartesCollees());
@@ -250,6 +254,22 @@ void main(List<String> arguments) {
         );
       }
     }
+  }
+
+  // Les cas hors de l'etape BOUTONS-GRISES-1 (voie TB, communications,
+  // finance, comptable, fichiers reserves) sont comptes a part : listes avec
+  // --detail, jamais dans le total ni dans le socle.
+  final List<Violation> exclus = violations
+      .where((Violation v) => v.regle == 'bouton-grise-conditionnel-exclu')
+      .toList();
+  violations.removeWhere(exclus.contains);
+  if (exclus.isNotEmpty) {
+    if (detail) {
+      exclus.forEach(stdout.writeln);
+    }
+    stdout.writeln(
+      'bouton-grise-conditionnel (exclus, comptes a part) : ${exclus.length}',
+    );
   }
 
   if (arguments.contains('--ecrire-socle')) {
@@ -1170,6 +1190,168 @@ bool _estGrise(String e) {
   return RegExp(r'\?\s*null\s*:').hasMatch(e) ||
       RegExp(r':\s*null$').hasMatch(e);
 }
+
+/// BOUTONS-GRISES-1 : les widgets d'action, ceux dont une action nulle rend
+/// un bouton inerte (grise). `AppCard`, `SettingRow` sans action sont du
+/// contenu, pas un bouton grise ; `BarrePrecedentSuivant` fait disparaitre
+/// la fleche au bord (lib/CLAUDE.md, NAV-FLECHES-1) : hors de la liste.
+final RegExp _widgetAction = RegExp(
+  r'^(?:ActionPrincipale|LienFleche|BoutonIcone|BoutonOutil|CommandeSalle|'
+  r'Pressable|FilterPill|FilledButton|TextButton|OutlinedButton|'
+  r'ElevatedButton|IconButton|MenuItemButton|FloatingActionButton|'
+  // Un bouton prive qui enveloppe l'un d'eux (`_BoutonZoom`, `_Commande`).
+  r'_Bouton\w*|_Commande\w*)'
+  r'(?:\.\w+)?$',
+);
+
+/// Vrai quand l'appel qui porte l'action est fige `enCours: true` : le
+/// bouton montre un travail en cours (telechargement), il ne se grise pas.
+bool _enCoursFixe(String t, int position) {
+  int profondeur = 0;
+  for (int i = position - 1; i >= 0; i--) {
+    final String c = t[i];
+    if (c == ')' || c == ']' || c == '}') {
+      profondeur++;
+    } else if (c == '(' || c == '[' || c == '{') {
+      if (profondeur == 0) {
+        final int ferme = _fermante(t, i);
+        return ferme > i &&
+            RegExp(r'\benCours\s*:\s*true\b').hasMatch(t.substring(i, ferme));
+      }
+      profondeur--;
+    }
+  }
+  return false;
+}
+
+/// Les chemins hors de cette etape (BOUTONS-GRISES-1) : voie TB (salle,
+/// classe en direct, dock), communications, finance, comptable, et les
+/// fichiers reserves a d'autres sessions. Leurs cas sont comptes a part
+/// (`bouton-grise-conditionnel-exclu`), jamais caches.
+const List<String> exclusBoutonsConditionnels = <String>[
+  'lib/features/salle/',
+  'lib/features/salle_seance/',
+  'lib/features/salle_enseignant/',
+  'lib/features/tc_classe_live/',
+  'lib/features/tc_dock/',
+  'lib/features/com_',
+  'lib/core/communications/',
+  'lib/features/admin_finance/',
+  'lib/features/acces_finance/',
+  'lib/core/finance/',
+  'lib/features/comptable/',
+  'lib/core/comptable/',
+  'lib/core/widgets/comptable/',
+  'lib/core/widgets/data_collection.dart',
+  'lib/core/widgets/rangee_filtres.dart',
+  'lib/core/widgets/admin_shell.dart',
+  'lib/core/widgets/pressable.dart',
+  'lib/features/tc_espace_groupe/feuille_carte_classe.dart',
+  'lib/features/fiche_groupe/fiche_groupe_page.dart',
+  'lib/features/admin_regroupements/',
+  'lib/features/admin_groupes/groupes_page.dart',
+  // K-64 : vitrine et pages publiques, chantier d'une autre session.
+  'lib/features/parcours_offres/',
+];
+
+/// Une variable d'action posee nulle sous condition, puis passee au bouton
+/// (`final VoidCallback? a = pret ? _envoyer : null;` ... `onPress: a`).
+final RegExp _variableActionConditionnelle = RegExp(
+  r'\b(?:VoidCallback|void\s+Function\([^)]*\)|'
+  r'Future<void>\s+Function\([^)]*\))\?\s+(\w+)\s*=\s*([^;]+);',
+);
+
+/// Le nom du constructeur dont l'argument commence a [position] : on remonte
+/// jusqu'a la parenthese ouvrante non fermee, puis on lit l'identifiant
+/// (`FilledButton.tonal`, `ActionPrincipale`).
+String _appelantDe(String t, int position) {
+  int profondeur = 0;
+  for (int i = position - 1; i >= 0; i--) {
+    final String c = t[i];
+    if (c == ')' || c == ']' || c == '}') {
+      profondeur++;
+    } else if (c == '[' || c == '{') {
+      if (profondeur == 0) {
+        return '';
+      }
+      profondeur--;
+    } else if (c == '(') {
+      if (profondeur == 0) {
+        final RegExpMatch? nom = RegExp(
+          r'([A-Za-z_]\w*(?:\.[A-Za-z_]\w*)?)\s*(?:<[^()]*>)?\s*$',
+        ).firstMatch(t.substring(0, i));
+        return nom?.group(1) ?? '';
+      }
+      profondeur--;
+    }
+  }
+  return '';
+}
+
+/// Vrai quand l'expression d'action vaut `null` selon une condition (ou
+/// toujours). Le relais d'un composant du core (`actif ? onPress : null`,
+/// son propre champ) n'est pas une decision d'ecran : l'ecran appelant est
+/// controle a sa place.
+bool estActionConditionnelleNulle(String expression, {bool relais = false}) {
+  final String e = expression.trim();
+  if (e == 'null') {
+    return true;
+  }
+  if (!_estGrise(e)) {
+    return false;
+  }
+  if (relais &&
+      RegExp(r'^[^?]+\?\s*(?:widget\.)?on[A-Z]\w*\s*:\s*null$').hasMatch(e)) {
+    return false;
+  }
+  return true;
+}
+
+/// Les boutons d'action dont `onPress`, `onPressed` ou `onTap` vaut `null`
+/// selon l'etat : la vraie forme d'un bouton grise (BOUTONS-GRISES-1). Lit
+/// le ternaire passe en argument, le litteral `null` et la variable
+/// d'action posee nulle sous condition. Expose pour le test qui prouve la
+/// detection (`test/tool/verifier_revue_boutons_test.dart`).
+List<Violation> boutonsGrisesConditionnels(String chemin, String texte) {
+  final List<Violation> v = <Violation>[];
+  final Set<String> variables = <String>{
+    for (final RegExpMatch m in _variableActionConditionnelle.allMatches(texte))
+      if (estActionConditionnelleNulle(m.group(2)!)) m.group(1)!,
+  };
+  final bool relais = chemin.contains('lib/core/widgets/');
+  for (final RegExpMatch m in _argumentAction.allMatches(texte)) {
+    final String expression = _argument(texte, m.end).trim();
+    final bool nulle =
+        estActionConditionnelleNulle(expression, relais: relais) ||
+        variables.contains(expression);
+    if (!nulle) {
+      continue;
+    }
+    final String appelant = _appelantDe(texte, m.start);
+    if (!_widgetAction.hasMatch(appelant) || _enCoursFixe(texte, m.start)) {
+      continue;
+    }
+    v.add(
+      Violation(
+        chemin,
+        _ligneDe(texte, m.start),
+        exclusBoutonsConditionnels.any(chemin.contains)
+            ? 'bouton-grise-conditionnel-exclu'
+            : 'bouton-grise-conditionnel',
+        '$appelant ${m.group(0)} ${expression.replaceAll(RegExp(r'\s+'), ' ')}',
+      ),
+    );
+  }
+  return v;
+}
+
+List<Violation> _boutonsGrisesConditionnels() => <Violation>[
+  for (final File f in _sourcesLib())
+    ...boutonsGrisesConditionnels(
+      f.path.replaceAll(r'\', '/'),
+      _sansCommentaires(f),
+    ),
+];
 
 /// Ce qui identifie une violation d'une version a l'autre, sans le numero
 /// de ligne, qui bouge a chaque modification du fichier.

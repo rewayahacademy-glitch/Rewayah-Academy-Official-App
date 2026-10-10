@@ -31,7 +31,13 @@ class LienFleche extends StatelessWidget {
     this.legende = false,
     this.libelleSemantique,
     this.encre,
+    this.focusNode,
   });
+
+  /// Le noeud de focus du lien, pour y ramener le focus quand c'est lui qui
+  /// manque (BOUTONS-GRISES-1 : « Choisissez d'abord la photo »). Par defaut,
+  /// celui de `Pressable`.
+  final FocusNode? focusNode;
 
   /// Ce que lit le lecteur d'ecran quand il doit dire plus que le texte
   /// visible (« 4 presents sur 4 attendus » pour un « 4/4 »). Par defaut, le
@@ -85,6 +91,7 @@ class LienFleche extends StatelessWidget {
       onPress: onPress,
       libelleSemantique: libelleSemantique ?? libelle,
       lien: annonceLien,
+      focusNode: focusNode,
       arrondiFocus: AppRadius.arrondiSm,
       constructeur: (BuildContext contexte, EtatPression etat) => Padding(
         padding: alignerEnFin

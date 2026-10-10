@@ -1031,7 +1031,9 @@
     "envoiEnCours": "Envoi en cours",
     "deposee": "Pièce reçue",
     "erreur": "L'envoi n'a pas abouti. Réessayez dans un instant.",
-    "tropVolumineux": "Cette photo dépasse {taille} Mo. Reprenez-la en qualité plus basse."
+    "tropVolumineux": "Cette photo dépasse {taille} Mo. Reprenez-la en qualité plus basse.",
+    "manqueType": "Choisissez d'abord la pièce que vous déposez.",
+    "manquePhoto": "Choisissez d'abord la photo de votre pièce."
   },
   "appareils": {
     "titre": "Appareils",

@@ -1,4 +1,8 @@
 {
+  "kyc": {
+    "manquePhoto": "اختر أولًا صورة وثيقتك.",
+    "manqueType": "اختر أولًا الوثيقة التي تودعها."
+  },
   "notifications": {
     "titre": "الإشعارات",
     "indisponibleTitre": "الإشعارات غير متاحة بعد",

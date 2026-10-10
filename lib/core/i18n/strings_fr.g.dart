@@ -972,6 +972,12 @@ class Traductions$kyc$fr {
 
 	/// fr: 'Cette photo dépasse {taille} Mo. Reprenez-la en qualité plus basse.'
 	String tropVolumineux({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.';
+
+	/// fr: 'Choisissez d'abord la pièce que vous déposez.'
+	String get manqueType => 'Choisissez d\'abord la pièce que vous déposez.';
+
+	/// fr: 'Choisissez d'abord la photo de votre pièce.'
+	String get manquePhoto => 'Choisissez d\'abord la photo de votre pièce.';
 }
 
 // Path: appareils
@@ -27670,6 +27676,8 @@ extension on Traductions {
 			'kyc.deposee' => 'Pièce reçue',
 			'kyc.erreur' => 'L\'envoi n\'a pas abouti. Réessayez dans un instant.',
 			'kyc.tropVolumineux' => ({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.',
+			'kyc.manqueType' => 'Choisissez d\'abord la pièce que vous déposez.',
+			'kyc.manquePhoto' => 'Choisissez d\'abord la photo de votre pièce.',
 			'appareils.titre' => 'Appareils',
 			'appareils.foyer.titre' => 'Appareils du foyer',
 			'appareils.foyer.phrase' => 'Chaque profil élève a ses propres appareils. Touchez un profil pour voir ses appareils, en retirer un ou en connecter un nouveau.',
@@ -27879,10 +27887,10 @@ extension on Traductions {
 			'ficheEleve.informations.changer' => 'Changer la photo',
 			'ficheEleve.informations.apercuTitre' => 'Aperçu',
 			'ficheEleve.informations.apercuPhrase' => 'Vérifiez la photo avant de l\'envoyer.',
-			'ficheEleve.informations.apercuIllisible' => 'L\'aperçu ne s\'affiche pas sur cet appareil. La photo peut quand même être envoyée.',
-			'ficheEleve.informations.envoyer' => 'Envoyer cette photo',
 			_ => null,
 		} ?? switch (path) {
+			'ficheEleve.informations.apercuIllisible' => 'L\'aperçu ne s\'affiche pas sur cet appareil. La photo peut quand même être envoyée.',
+			'ficheEleve.informations.envoyer' => 'Envoyer cette photo',
 			'ficheEleve.informations.autre' => 'Choisir une autre photo',
 			'ficheEleve.informations.annuler' => 'Annuler',
 			'ficheEleve.informations.etapeEnvoi' => 'Envoi de la photo, étape 1 sur 2',
@@ -28393,10 +28401,10 @@ extension on Traductions {
 			'admin.demandes.motif' => 'Ce qui motive ce refus, en une phrase',
 			'admin.demandes.motifRequis' => 'Un refus doit dire pourquoi : c\'est la seule phrase que la partie recevra.',
 			'admin.demandes.effet' => 'Accorder applique l\'effet en base : l\'affectation se clôt, ou la règle se pose. Cet écran ne fait que rendre le verdict.',
-			'admin.demandes.journalisation' => 'Chaque décision et chaque règle posée sont inscrites au journal d\'audit, avec votre nom.',
-			'admin.demandes.feuille' => ({required Object dePrenom}) => 'Les règles ${dePrenom}',
 			_ => null,
 		} ?? switch (path) {
+			'admin.demandes.journalisation' => 'Chaque décision et chaque règle posée sont inscrites au journal d\'audit, avec votre nom.',
+			'admin.demandes.feuille' => ({required Object dePrenom}) => 'Les règles ${dePrenom}',
 			'admin.demandes.feuilleIntro' => 'La valeur de la plateforme et celle qui s\'applique, côte à côte. Une règle se change ici sans qu\'une demande existe.',
 			'admin.demandes.regleDuree' => 'Durée d\'une séance',
 			'admin.demandes.regleMinimum' => 'Durée minimale payable',
@@ -28907,10 +28915,10 @@ extension on Traductions {
 			'admin.journal.roleAdmin' => 'Administration',
 			'admin.journal.roleEnseignant' => 'Enseignant',
 			'admin.journal.roleTuteur' => 'Tuteur',
-			'admin.journal.roleEleve' => 'Élève',
-			'admin.journal.roleControleur' => 'Contrôleur',
 			_ => null,
 		} ?? switch (path) {
+			'admin.journal.roleEleve' => 'Élève',
+			'admin.journal.roleControleur' => 'Contrôleur',
 			'admin.journal.roleComptable' => 'Comptable',
 			'admin.journal.roleAucun' => 'Hors session',
 			'admin.journal.evtKycLu' => 'Dossier d\'identité consulté',
@@ -29421,10 +29429,10 @@ extension on Traductions {
 			'parcours.momentApresMidi' => 'L\'après-midi',
 			'parcours.momentSoir' => 'Le soir',
 			'parcours.offresQuestion' => ({required Object prenom}) => 'Voici les horaires ouverts pour ${prenom}',
-			'parcours.offresRaison' => 'Ces horaires sont affichés à votre heure locale. Choisir un horaire enregistre votre préférence : cela ne réserve pas de place et ne constitue pas encore une classe.',
-			'parcours.offreRecommandee' => 'Le plus proche de vos réponses',
 			_ => null,
 		} ?? switch (path) {
+			'parcours.offresRaison' => 'Ces horaires sont affichés à votre heure locale. Choisir un horaire enregistre votre préférence : cela ne réserve pas de place et ne constitue pas encore une classe.',
+			'parcours.offreRecommandee' => 'Le plus proche de vos réponses',
 			'parcours.offresAutres' => 'Autres horaires possibles',
 			'parcours.offreRecurrence' => ({required Object seances, required Object duree}) => '${seances} séances par semaine, ${duree} min',
 			'parcours.offreRecurrencePause' => ({required Object seances, required Object duree, required Object pause}) => '${seances} séances par semaine, ${duree} min dont ${pause} min de pause',
@@ -29935,10 +29943,10 @@ extension on Traductions {
 			'tuteur.accueil.sansClasseTitre' => ({required Object prenom}) => 'Aucune classe pour ${prenom}',
 			'tuteur.accueil.sansClassePhrase' => ({required Object quePrenom}) => 'Choisissez une classe pour ${quePrenom} puisse commencer les cours.',
 			'tuteur.accueil.foyerVideTitre' => 'Aucun profil élève pour l\'instant',
-			'tuteur.accueil.foyerVidePhrase' => 'Ajoutez un profil élève pour choisir une classe et suivre ses séances.',
-			'tuteur.accueil.ajouterProfil' => 'Ajouter un profil élève',
 			_ => null,
 		} ?? switch (path) {
+			'tuteur.accueil.foyerVidePhrase' => 'Ajoutez un profil élève pour choisir une classe et suivre ses séances.',
+			'tuteur.accueil.ajouterProfil' => 'Ajouter un profil élève',
 			'tuteur.accueil.profilsIllisibles' => 'Les profils du foyer n\'ont pas pu être lus.',
 			'tuteur.accueil.blocageAppareilTitre' => ({required Object prenom}) => 'Aucun appareil prêt pour ${prenom}',
 			'tuteur.accueil.blocageAppareilPhrase' => ({required Object prenom}) => 'Sans appareil connecté, ${prenom} ne pourra pas entrer en classe.',
@@ -30449,10 +30457,10 @@ extension on Traductions {
 			'enseignant.salle.suivante' => 'Présenter la page suivante',
 			'enseignant.salle.bibliotheque' => 'Choisir une sourate',
 			'enseignant.salle.presenterSourate' => ({required Object deSourate}) => 'Présenter le début ${deSourate}',
-			'enseignant.salle.sourateDetail' => ({required Object numero, required Object versets}) => 'Sourate ${numero} · ${versets} versets',
-			'enseignant.salle.souratesIndisponibles' => 'La liste des sourates n\'a pas pu être lue',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.salle.sourateDetail' => ({required Object numero, required Object versets}) => 'Sourate ${numero} · ${versets} versets',
+			'enseignant.salle.souratesIndisponibles' => 'La liste des sourates n\'a pas pu être lue',
 			'enseignant.salle.souratesIndisponiblesDetail' => 'Ce que votre Classe voit n\'a pas changé. Réessayez.',
 			'enseignant.salle.pageIndisponible' => 'Cette page n\'a pas pu être lue',
 			'enseignant.salle.pageIndisponibleDetail' => 'Le texte n\'est pas arrivé jusqu\'ici. Votre Classe voit toujours la page présentée.',
@@ -30963,10 +30971,10 @@ extension on Traductions {
 			'controleur.demo.titre' => 'Démonstration contrôleur',
 			'controleur.demo.mention' => 'Données fictives, aucun envoi.',
 			'controleur.demo.intro' => 'Choisissez un écran du contrôle et une situation de visite.',
-			'controleur.demo.etatAucune' => 'Aucune visite',
-			'controleur.demo.etatPasEncoreEnDirect' => 'Séance pas encore en direct',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.demo.etatAucune' => 'Aucune visite',
+			'controleur.demo.etatPasEncoreEnDirect' => 'Séance pas encore en direct',
 			'controleur.demo.etatEnDirect' => 'Séance en direct',
 			'controleur.demo.etatIndisponible' => 'Visite plus proposée',
 			'controleur.demo.etatDejaControlee' => 'Classe déjà contrôlée',
@@ -31477,10 +31485,10 @@ extension on Traductions {
 			'tc.parcours.signalement.famille' => 'Message pour la famille',
 			'tc.parcours.signalement.familleAide' => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.',
 			'tc.parcours.signalement.contexte' => ({required Object eleve}) => 'Élève ${eleve}. La séance, la classe et votre nom sont déjà joints.',
-			'tc.parcours.signalement.envoyer' => 'Envoyer le signalement',
-			'tc.parcours.signalement.envoye' => 'Signalement transmis à l\'administration.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.signalement.envoyer' => 'Envoyer le signalement',
+			'tc.parcours.signalement.envoye' => 'Signalement transmis à l\'administration.',
 			'tc.parcours.signalement.interneRequis' => 'Écrivez au moins ce que l\'administration doit savoir.',
 			'tc.parcours.signalement.echec' => 'Le signalement n\'a pas pu être transmis. Réessayez.',
 			'tc.parcours.postCours.titre' => 'Après le cours',
@@ -31991,10 +31999,10 @@ extension on Traductions {
 			'suiviDemandes.creneauxChoisis' => 'Jours et heures choisis',
 			'suiviDemandes.jourHeure' => ({required Object jour, required Object heure}) => '${jour} ${heure}',
 			'suiviDemandes.fuseauChoisi' => 'Fuseau horaire',
-			'suiviDemandes.fuseauValeur' => ({required Object deVille}) => 'Heure ${deVille}',
-			'suiviDemandes.etapes.envoyee' => 'Demande envoyée',
 			_ => null,
 		} ?? switch (path) {
+			'suiviDemandes.fuseauValeur' => ({required Object deVille}) => 'Heure ${deVille}',
+			'suiviDemandes.etapes.envoyee' => 'Demande envoyée',
 			'suiviDemandes.etapes.classeValidee' => 'Classe validée',
 			'suiviDemandes.etapes.enseignantAffecte' => 'Enseignant affecté',
 			'suiviDemandes.etats.fait' => 'Fait',
@@ -32505,10 +32513,10 @@ extension on Traductions {
 			'com.communaute.demo.horsLigne' => 'Hors ligne',
 			'com.communaute.demo.envoiNonConfirme' => 'Envoi non confirmé',
 			'com.communaute.demo.moderationIndisponible' => 'Modération indisponible',
-			'com.communaute.demo.lecteurSeul' => 'Lecture seule, sans publication',
-			'com.communaute.demo.f.categoriePedagogie' => 'Pédagogie',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.demo.lecteurSeul' => 'Lecture seule, sans publication',
+			'com.communaute.demo.f.categoriePedagogie' => 'Pédagogie',
 			'com.communaute.demo.f.categorieRessources' => 'Ressources',
 			'com.communaute.demo.f.categorieGestion' => 'Gestion',
 			'com.communaute.demo.f.fonctionSoi' => 'Enseignant, Classe Al-Fatiha',
@@ -33019,10 +33027,10 @@ extension on Traductions {
 			'comptable.statuts.paiement.soumis' => 'Soumis',
 			'comptable.statuts.paiement.enTransit' => 'En transit',
 			'comptable.statuts.paiement.reussi' => 'Réussi',
-			'comptable.statuts.paiement.echoue' => 'Échoué',
-			'comptable.statuts.paiement.aRelancer' => 'À relancer',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.statuts.paiement.echoue' => 'Échoué',
+			'comptable.statuts.paiement.aRelancer' => 'À relancer',
 			'comptable.statuts.paiement.annule' => 'Annulé',
 			'comptable.statuts.paiement.retourne' => 'Remboursé / retourné',
 			'comptable.statuts.paiement.indisponible' => 'Indisponible',
@@ -33533,10 +33541,10 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.supprimerQuestion' => ({required Object methode}) => 'Supprimer ${methode} ?',
 			'comptable.beneficiaires.recevoir.supprimerConsequence' => 'Vous ne recevrez plus de versement sur cette méthode. Si c\'est la seule, votre prochain versement attendra une nouvelle méthode.',
 			'comptable.beneficiaires.recevoir.ajouter' => 'Ajouter une méthode de paiement',
-			'comptable.beneficiaires.recevoir.ajoutTitre' => 'Ajouter une méthode de paiement',
-			'comptable.beneficiaires.recevoir.remplacementTitre' => ({required Object methode}) => 'Remplacer ${methode}',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.recevoir.ajoutTitre' => 'Ajouter une méthode de paiement',
+			'comptable.beneficiaires.recevoir.remplacementTitre' => ({required Object methode}) => 'Remplacer ${methode}',
 			'comptable.beneficiaires.recevoir.ajoutContexte' => 'Choisissez le type de méthode. Vous saisirez ensuite vos coordonnées dans un espace sécurisé : l\'application ne les voit pas et ne les conserve pas.',
 			'comptable.beneficiaires.recevoir.continuerSaisie' => 'Continuer vers la saisie sécurisée',
 			'comptable.beneficiaires.recevoir.typeRequis' => 'Choisissez un type de méthode pour continuer.',

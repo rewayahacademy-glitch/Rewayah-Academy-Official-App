@@ -39,6 +39,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	TraductionsAr $copyWith({TranslationMetadata<AppLocale, Traductions>? meta}) => TraductionsAr(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Traductions$kyc$ar kyc = _Traductions$kyc$ar._(_root);
 	@override late final _Traductions$notifications$ar notifications = _Traductions$notifications$ar._(_root);
 	@override late final _Traductions$historique$ar historique = _Traductions$historique$ar._(_root);
 	@override late final _Traductions$commun$ar commun = _Traductions$commun$ar._(_root);
@@ -58,6 +59,17 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$reseau$ar reseau = _Traductions$reseau$ar._(_root);
 	@override late final _Traductions$admin$ar admin = _Traductions$admin$ar._(_root);
 	@override late final _Traductions$comptable$ar comptable = _Traductions$comptable$ar._(_root);
+}
+
+// Path: kyc
+class _Traductions$kyc$ar extends Traductions$kyc$fr {
+	_Traductions$kyc$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get manquePhoto => 'اختر أولًا صورة وثيقتك.';
+	@override String get manqueType => 'اختر أولًا الوثيقة التي تودعها.';
 }
 
 // Path: notifications
@@ -4532,6 +4544,8 @@ class _Traductions$com$annonces$administration$moderation$regles$ar extends Trad
 extension on TraductionsAr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'kyc.manquePhoto' => 'اختر أولًا صورة وثيقتك.',
+			'kyc.manqueType' => 'اختر أولًا الوثيقة التي تودعها.',
 			'notifications.titre' => 'الإشعارات',
 			'notifications.indisponibleTitre' => 'الإشعارات غير متاحة بعد',
 			'notifications.indisponiblePhrase' => 'ستظهر هنا تذكيرات الحصص ورسائل الأكاديمية بمجرد تفعيلها.',
@@ -5042,10 +5056,10 @@ extension on TraductionsAr {
 			'tc.groupe.espace.bibliotheque' => 'المكتبة',
 			'tc.groupe.espace.bibliothequeVoirTout' => 'عرض الكل',
 			'tc.groupe.espace.progression' => 'التقدم',
-			'tc.groupe.espace.roster' => 'طلاب الفصل',
-			'tc.groupe.espace.reprendreLeCours' => 'استئناف الدرس',
 			_ => null,
 		} ?? switch (path) {
+			'tc.groupe.espace.roster' => 'طلاب الفصل',
+			'tc.groupe.espace.reprendreLeCours' => 'استئناف الدرس',
 			'tc.groupe.espace.introuvable' => 'هذا الفصل غير متاح لك',
 			'tc.groupe.espace.introuvableDetail' => 'ربما أُغلق، أو يخص ملفًا آخر.',
 			'tc.groupe.emplacement.nonBranche' => 'متاح قريبًا',
@@ -5556,10 +5570,10 @@ extension on TraductionsAr {
 			'com.studio.brouillons.canalIndisponible' => 'مسودة في قناة لم تعد متاحة',
 			'com.studio.brouillons.modifie' => ({required Object moment}) => 'عُدّلت في ${moment}',
 			'com.studio.brouillons.reprendre' => ({required Object nom}) => 'متابعة المسودة في ${nom}',
-			'com.studio.brouillons.videTitre' => 'لا توجد مسودات',
-			'com.studio.brouillons.vide' => 'ستظهر هنا أي رسالة بدأتها في قناة ولم تُرسل بعد.',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.brouillons.videTitre' => 'لا توجد مسودات',
+			'com.studio.brouillons.vide' => 'ستظهر هنا أي رسالة بدأتها في قناة ولم تُرسل بعد.',
 			'com.studio.brouillons.tous' => ({required Object nombre}) => 'عرض كل المسودات (${nombre})',
 			'com.studio.brouillons.restaure' => 'استُعيدت المسودة. يمكنك متابعة رسالتك.',
 			'com.studio.sousTitre' => 'مساحة عمل الفريق',
@@ -6070,10 +6084,10 @@ extension on TraductionsAr {
 			'comptable.aujourdhui.accesPaiements' => 'عرض المدفوعات للتنفيذ',
 			'comptable.aujourdhui.accesContractuels' => 'إدارة التزامات المتعاقدين',
 			'comptable.aujourdhui.accesEncaissements' => 'عرض المقبوضات',
-			'comptable.aujourdhui.accesTresorerie' => 'عرض الخزينة والصناديق',
-			'comptable.aujourdhui.accesAlimenter' => 'تغذية الاحتياطي الاستراتيجي',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.aujourdhui.accesTresorerie' => 'عرض الخزينة والصناديق',
+			'comptable.aujourdhui.accesAlimenter' => 'تغذية الاحتياطي الاستراتيجي',
 			'comptable.aujourdhui.titre' => 'اليوم',
 			'comptable.aujourdhui.sousTitre' => 'ماذا عليّ أن أفعل الآن؟',
 			'comptable.aujourdhui.attention' => 'للمعالجة والتنبيهات',
@@ -6584,10 +6598,10 @@ extension on TraductionsAr {
 			'comptable.contractuels.erreurCreation' => 'لا نعلم إن كان الالتزام قد أُنشئ. حدّث القائمة قبل إعادة المحاولة.',
 			'comptable.contractuels.creationIndisponible' => 'لا يستطيع حسابك إنشاء التزام.',
 			'comptable.contractuels.retourListe' => 'العودة إلى المتعاقدين',
-			'comptable.contractuels.titre' => 'المتعاقدون والالتزامات',
-			'comptable.contractuels.sousTitre' => 'تُحدَّد المبالغ عند إنشاء الالتزام، وتُثبَّت بعد الاعتماد.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.contractuels.titre' => 'المتعاقدون والالتزامات',
+			'comptable.contractuels.sousTitre' => 'تُحدَّد المبالغ عند إنشاء الالتزام، وتُثبَّت بعد الاعتماد.',
 			'comptable.contractuels.nouvelle' => 'التزام جديد',
 			'comptable.contractuels.detailTitre' => 'الالتزام',
 			'comptable.validation.sousTitre' => 'طلبات المحاسب التي تنتظر قرار شخص مخوَّل آخر. صاحب الطلب لا يصادق أبدًا على طلبه.',
