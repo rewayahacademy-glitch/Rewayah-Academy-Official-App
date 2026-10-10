@@ -1372,6 +1372,75 @@ begin
 end
 $sec_prod_teacher_publish_postflight$;
 
+-- M2: an authenticated JWT role claim is not proof that the profile remains active.
+-- Keep admin/controller/guardian role gates, but fail closed on revoked, expired,
+-- deleted or otherwise invalid profiles before exposing or mutating privileged state.
+do $sec_prod_active_role_guards$
+declare r record; v_oid oid; v_definition text; v_source text; v_new_source text; v_new_definition text; v_matches integer; v_seen integer:=0;
+begin
+ for r in select * from (values ('public.clore_regle(uuid,text)','69c2d22a82d2d06431a75488e9b96aad','if[[:space:]]+public[.]app_role[(][)][[:space:]]*<>[[:space:]]*''admin''[[:space:]]+then','if not coalesce(public.app_account_valid() and public.app_role() = ''admin'', false) then'),
+('public.decider_demande(uuid,boolean,text)','7e1986d430bef88eec0dffa29e290acf','if[[:space:]]+public[.]app_role[(][)][[:space:]]*<>[[:space:]]*''admin''[[:space:]]+then','if not coalesce(public.app_account_valid() and public.app_role() = ''admin'', false) then'),
+('public.decider_dossier(uuid,boolean,text)','9b1f8d0d3baea020be07d676c34de6e2','if[[:space:]]+public[.]app_role[(][)][[:space:]]*<>[[:space:]]*''admin''[[:space:]]+then','if not coalesce(public.app_account_valid() and public.app_role() = ''admin'', false) then'),
+('public.demandes_en_attente()','a9003a8e91895e4b6d7674e584a7fe75','if[[:space:]]+public[.]app_role[(][)][[:space:]]+not[[:space:]]+in[[:space:]]*[(][[:space:]]*''admin''[[:space:]]*,[[:space:]]*''controller''[[:space:]]*[)][[:space:]]+then','if not coalesce(public.app_account_valid() and public.app_role() in (''admin'', ''controller''), false) then'),
+('public.eleves_sans_enseignant()','d3e14512ba428ffec5e9623d8e8bacbd','if[[:space:]]+public[.]app_role[(][)][[:space:]]*<>[[:space:]]*''admin''[[:space:]]+then','if not coalesce(public.app_account_valid() and public.app_role() = ''admin'', false) then'),
+('public.enseignants_pour(uuid)','f2446791e27fe948db4a172470be5940','if[[:space:]]+public[.]app_role[(][)][[:space:]]*<>[[:space:]]*''admin''[[:space:]]+then','if not coalesce(public.app_account_valid() and public.app_role() = ''admin'', false) then'),
+('public.guard_profile_privileged_columns()','0e0b9d7f966e64b2e5182a0a9d5495eb','if[[:space:]]+public[.]app_role[(][)][[:space:]]*<>[[:space:]]*''admin''[[:space:]]+and[[:space:]]*[(]','if not coalesce(public.app_account_valid() and public.app_role() = ''admin'', false) and ('),
+('public.indicateurs_admin()','d7e1209572394c2ab6d5f9dae3834aaa','if[[:space:]]+public[.]app_role[(][)][[:space:]]*<>[[:space:]]*''admin''[[:space:]]+then','if not coalesce(public.app_account_valid() and public.app_role() = ''admin'', false) then'),
+('public.journal_audit_filtres()','49c1360b67ef589d2aaef8468ecc31bc','if[[:space:]]+public[.]app_role[(][)][[:space:]]*<>[[:space:]]*''admin''[[:space:]]+then','if not coalesce(public.app_account_valid() and public.app_role() = ''admin'', false) then'),
+('public.journal_audit(uuid,text,timestamp with time zone,integer,timestamp with time zone,bigint)','973fec3923b807963042e424ef181e50','if[[:space:]]+public[.]app_role[(][)][[:space:]]*<>[[:space:]]*''admin''[[:space:]]+then','if not coalesce(public.app_account_valid() and public.app_role() = ''admin'', false) then'),
+('public.maj_eleve_pedagogie(uuid,text,text)','f9164b5c4b9a7bbc582ae7675ff94678','if[[:space:]]+public[.]app_role[(][)][[:space:]]*<>[[:space:]]*''admin''[[:space:]]+then','if not coalesce(public.app_account_valid() and public.app_role() = ''admin'', false) then'),
+('public.poser_regle(uuid,text,integer,text)','b42b46c02c394102058503378bc35c6e','if[[:space:]]+public[.]app_role[(][)][[:space:]]*<>[[:space:]]*''admin''[[:space:]]+then','if not coalesce(public.app_account_valid() and public.app_role() = ''admin'', false) then'),
+('public.revoquer_appareil(uuid)','94514a938b71c72c9c480554c0ac6bb1','if[[:space:]]+public[.]app_role[(][)][[:space:]]+not[[:space:]]+in[[:space:]]*[(][[:space:]]*''guardian''[[:space:]]*,[[:space:]]*''admin''[[:space:]]*[)][[:space:]]+then','if not coalesce(public.app_account_valid() and public.app_role() in (''guardian'', ''admin''), false) then'),
+('public.verifier_chaine_audit(integer)','cf28eb75e08bd5cdd0cb8d18067c720b','if[[:space:]]+public[.]app_role[(][)][[:space:]]*<>[[:space:]]*''admin''[[:space:]]+then','if not coalesce(public.app_account_valid() and public.app_role() = ''admin'', false) then'),
+('public.video_config_lire()','4af82d0a2db1602453eeeaf40a10e9cc','if[[:space:]]+public[.]app_role[(][)][[:space:]]*<>[[:space:]]*''admin''[[:space:]]+then','if not coalesce(public.app_account_valid() and public.app_role() = ''admin'', false) then')) as t(signature,expected_hash,pattern,replacement) order by signature
+ loop
+  v_oid:=to_regprocedure(r.signature);
+  if v_oid is null or md5(pg_get_functiondef(v_oid)) is distinct from r.expected_hash then raise exception 'définition inattendue: %',r.signature; end if;
+  v_definition:=pg_get_functiondef(v_oid); select p.prosrc into v_source from pg_catalog.pg_proc p where p.oid=v_oid;
+  v_matches:=regexp_count(v_source,r.pattern,1,'i');
+  if v_matches<>1 then raise exception 'garde rôle non unique (%): %',v_matches,r.signature; end if;
+  v_new_source:=regexp_replace(v_source,r.pattern,r.replacement,'i');
+  if v_new_source is not distinct from v_source then raise exception 'remplacement vide: %',r.signature; end if;
+  v_new_definition:=replace(v_definition,v_source,v_new_source);
+  if v_new_definition is not distinct from v_definition then raise exception 'définition non réécrite: %',r.signature; end if;
+  execute v_new_definition; v_seen:=v_seen+1;
+ end loop;
+ if v_seen<>15 then raise exception 'nombre inattendu: %',v_seen; end if;
+end
+$sec_prod_active_role_guards$;
+
+do $sec_prod_active_role_postflight$
+declare r record; v_source text; v_normalized text; v_seen integer:=0;
+begin
+  for r in select unnest(array[
+    'public.clore_regle(uuid,text)',
+    'public.decider_demande(uuid,boolean,text)',
+    'public.decider_dossier(uuid,boolean,text)',
+    'public.demandes_en_attente()',
+    'public.eleves_sans_enseignant()',
+    'public.enseignants_pour(uuid)',
+    'public.guard_profile_privileged_columns()',
+    'public.indicateurs_admin()',
+    'public.journal_audit_filtres()',
+    'public.journal_audit(uuid,text,timestamp with time zone,integer,timestamp with time zone,bigint)',
+    'public.maj_eleve_pedagogie(uuid,text,text)',
+    'public.poser_regle(uuid,text,integer,text)',
+    'public.revoquer_appareil(uuid)',
+    'public.verifier_chaine_audit(integer)',
+    'public.video_config_lire()'
+  ]) as signature
+  loop
+    select p.prosrc into v_source from pg_catalog.pg_proc p where p.oid=to_regprocedure(r.signature);
+    v_normalized:=regexp_replace(lower(coalesce(v_source,'')),'[[:space:]]+','','g');
+    if position('ifnotcoalesce(public.app_account_valid()andpublic.app_role()' in v_normalized)=0 then
+      raise exception 'SEC-PROD M2: compte actif absent du garde rôle de %',r.signature;
+    end if;
+    v_seen:=v_seen+1;
+  end loop;
+  if v_seen<>15 then raise exception 'SEC-PROD M2: postflight rôle incomplet (%)',v_seen; end if;
+end
+$sec_prod_active_role_postflight$;
+
 do $sec_prod_active_read_postflight$
 declare v_source text; v_normalized text; v_policy text;
 begin
