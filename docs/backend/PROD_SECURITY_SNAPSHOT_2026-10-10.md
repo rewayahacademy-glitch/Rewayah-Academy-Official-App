@@ -6,6 +6,7 @@
 
 - 15 vues public identifiées par l'advisor sécurité comme SECURITY DEFINER; toutes ci-dessous ont `security_barrier=true` ou aucune option, sans `security_invoker=true`.
 - 334 fonctions utilisateur cataloguées dans public/app_private; 141 SECURITY DEFINER dans cet ensemble.
+- Recontrôle catalogue postérieur au snapshot (10/10 06:27Z) : 141 SECURITY DEFINER dans `public`; le schéma `app_private` est absent en PROD (ledger 0042 n’inclut pas 0073). `btree_gist` est dans `public` et `extrelocatable=true`; aucun déplacement n’a été effectué.
 - 39 fonctions SECURITY DEFINER contiennent une garde négative sur `app_role()`; elles sont capturées intégralement ci-dessous, avec `autoriser_lecture_piece_identite(uuid)` et `guard_profile_privileged_columns()`.
 - 27 fonctions SECURITY DEFINER sont exécutables par `anon`; 118 par `authenticated`; 48 par `agent_ro`. La liste nominative des 118 fonctions authenticated est ci-dessous.
 - Policies KYC/Storage et grants des 15 vues + `kyc_documents` sont archivés. Les grants sur `storage.objects` sont listés par rôle; la policy de lecture KYC est ci-dessous.
