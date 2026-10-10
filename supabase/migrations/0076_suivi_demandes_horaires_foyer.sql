@@ -47,7 +47,14 @@ BEGIN
       WHEN 'enseignant_affecte' THEN 'enseignant_affecte'
       ELSE 'close'
     END,
-    d.motif,
+    CASE d.motif
+      WHEN 'retrait_famille' THEN d.motif
+      WHEN 'offre_retiree' THEN d.motif
+      WHEN 'classe_non_constituee' THEN d.motif
+      WHEN 'refus_direction' THEN d.motif
+      WHEN 'deja_en_classe' THEN d.motif
+      ELSE NULL
+    END,
     coalesce(
       (
         SELECT jsonb_agg(
