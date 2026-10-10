@@ -553,33 +553,39 @@ class _Page extends StatelessWidget {
       ),
       child: ExcludeSemantics(
         child: _Cadre(
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            // Le texte de la page est celui du document : il suit la taille
-            // de la page, jamais le texte de l'interface.
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: AlignmentDirectional.topStart,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  if (mention != null) ...<Widget>[
+          // Une page fixe est un document : son contenu suit le sens de sa
+          // langue, jamais celui de l'interface (revue TB-6 : en arabe, la
+          // page francaise de demonstration se calait a droite).
+          child: Directionality(
+            textDirection: sensDuDocument(<String?>[mention, page.titre]),
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              // Le texte de la page est celui du document : il suit la taille
+              // de la page, jamais le texte de l'interface.
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: AlignmentDirectional.topStart,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    if (mention != null) ...<Widget>[
+                      Text(
+                        mention,
+                        style: palette.inkMuted.applyTo(
+                          textes.labelMedium ?? const TextStyle(),
+                        ),
+                      ),
+                      Ecart.vSm,
+                    ],
                     Text(
-                      mention,
-                      style: palette.inkMuted.applyTo(
-                        textes.labelMedium ?? const TextStyle(),
+                      page.titre,
+                      style: palette.inkStrong.applyTo(
+                        textes.titleLarge ?? const TextStyle(),
                       ),
                     ),
-                    Ecart.vSm,
                   ],
-                  Text(
-                    page.titre,
-                    style: palette.inkStrong.applyTo(
-                      textes.titleLarge ?? const TextStyle(),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
@@ -588,6 +594,32 @@ class _Page extends StatelessWidget {
     );
   }
 }
+
+/// Le sens d'ecriture d'un document, d'apres le premier caractere fort de
+/// ses [textes] (dans l'ordre) : arabe ou hebreu, droite a gauche ; sinon,
+/// et sans caractere fort, gauche a droite. La ressource ne porte pas
+/// encore sa langue (BR-1) : son texte la dit.
+@visibleForTesting
+TextDirection sensDuDocument(Iterable<String?> textes) {
+  for (final String? texte in textes) {
+    if (texte == null) continue;
+    for (final int c in texte.runes) {
+      if (_droiteAGauche(c)) return TextDirection.rtl;
+      if (_gaucheADroite(c)) return TextDirection.ltr;
+    }
+  }
+  return TextDirection.ltr;
+}
+
+bool _droiteAGauche(int c) =>
+    (c >= 0x0590 && c <= 0x08FF) ||
+    (c >= 0xFB1D && c <= 0xFDFF) ||
+    (c >= 0xFE70 && c <= 0xFEFF);
+
+bool _gaucheADroite(int c) =>
+    (c >= 0x41 && c <= 0x5A) ||
+    (c >= 0x61 && c <= 0x7A) ||
+    (c >= 0xC0 && c <= 0x024F && c != 0xD7 && c != 0xF7);
 
 /// La feuille claire du tableau : meme ratio que la page, notes au-dessus.
 class _Feuille extends StatelessWidget {

@@ -8,7 +8,9 @@
 // code. Deux recherches lisent le depot lui-meme : aucun « Sauvegarde »
 // (succes) dans le code ni dans les cles, aucun « Suivre ».
 
+import 'dart:convert' show jsonDecode;
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:typed_data' show ByteData;
 import 'dart:ui' as ui;
 
@@ -1067,10 +1069,7 @@ void main() {
   group('aucun « Sauvegarde » de succes (§12, §19.5 point 5)', () {
     // Le succes d'une sauvegarde (« Sauvegarde », « Notes sauvegardees. ») ;
     // la negation « ne sont pas sauvegardees » et l'etiquette « Sauvegarde
-    // en echec » (sans accent) ne sont pas des succes. L'arabe n'est pas
-    // traduit avant LG-1 (K-41) : « تم الحفظ » existant traduit
-    // « Enregistre » d'une file locale (tc.parcours.postCours), hors
-    // tableau.
+    // en echec » (sans accent) ne sont pas des succes.
     // Tour 3 (revue du tour 2) : toutes les formes, avec ou sans accent, en
     // capitale ou non, ponctuees ou non (« notes sauvegardees dans ... ») ;
     // seules la negation (« pas », « non ») et l'etiquette d'echec ou
@@ -1081,6 +1080,105 @@ void main() {
       caseSensitive: false,
     );
 
+    // Verification TB-11b (lot D-surface) : la garde lit les VALEURS des
+    // cles (JSON lu) et les chaines entieres du code (multilignes ''' et
+    // chaines adjacentes jointes), et connait les synonymes de succes.
+    //
+    // Partout (toutes les cles, tout lib) : « sauvegarde » sous toutes ses
+    // formes, l'arabe « تم الحفظ » / « تم حفظ » et le passif « حُفظ »
+    // (« حُفظت » : a ete sauvegardee). Le simple « حفظ » n'est pas un
+    // succes : c'est le bouton « Enregistrer » ou la memorisation du Coran
+    // (« للحفظ »).
+    final List<RegExp> partout = <RegExp>[
+      succes,
+      RegExp(r'تم\s+(?:ال)?حفظ'),
+      RegExp('حُفِ?ظ'),
+    ];
+    // Dans la salle (cles `salle.` et `tc.`, code de salle_seance, tc_dock,
+    // demo) : aussi « enregistre(e)(s) » et « محفوظ(ة) ». Ailleurs dans
+    // l'application, « Photo enregistree » ou « accord enregistre » sont
+    // de vrais succes confirmes par le serveur, hors tableau.
+    final List<RegExp> salle = <RegExp>[
+      ...partout,
+      RegExp(r'(?<![\wÀ-ÿ])enregistr[eé]e?s?(?![\wÀ-ÿ])', caseSensitive: false),
+      RegExp(
+        '(?<![ء-ي])محفوظ'
+        '(?:ة|ات|ون)?(?![ء-ي])',
+      ),
+    ];
+    // Une negation dans la meme proposition, avant le motif, en fait un
+    // aveu d'absence (« n'a pas ete enregistre », « غير محفوظة ») ; une
+    // etiquette d'echec juste apres aussi (« Sauvegarde en echec »).
+    final RegExp negation = RegExp(
+      r'(?<![\wÀ-ÿ])(?:pas|non|jamais|rien|aucune?|ni)(?![\wÀ-ÿ])|'
+      '(?<![ء-ي])(?:غير|لم|لا|'
+      'لن|فشل)(?![ء-ي])',
+      caseSensitive: false,
+    );
+    final RegExp echecApres = RegExp(
+      r'^\s+(?:en\s+[ée]chec|absente)',
+      caseSensitive: false,
+    );
+    final RegExp finProposition = RegExp('[.!?;:\n،؛]');
+    final RegExp diacritiques = RegExp('[ً-ِّْٰ]');
+
+    // LISTE BLANCHE, cle par cle, chacune justifiee. Ce ne sont pas des
+    // succes de sauvegarde des notes ou du tableau :
+    const Map<String, String> listeBlanche = <String, String>{
+      // « Cours enregistre » : l'enregistrement AUDIO du cours (point de
+      // contrat, arbitrage ouvert, 06), pas les notes.
+      'salle.bandeauPermanent': 'enregistrement audio du cours',
+      'salle.seance.coursEnregistreCourt': 'enregistrement audio du cours',
+      // ar « محفوظة في هذه الحصة فقط » : la conservation limitee a la
+      // seance, dite honnetement (fr « conservees ... uniquement »).
+      'salle.seance.rangement.notesConservees': 'conservation dans la seance',
+      // Une copie de fichier enregistree sur l'appareil, a la demande.
+      'tc.bibliotheque.message.copieEnregistree': 'copie de fichier',
+      // La file locale du post-cours, qui dit « partira des le retour du
+      // reseau » (hors tableau).
+      'tc.parcours.postCours.enFile': 'file locale du post-cours',
+      // Futur : la sortie sera inscrite au journal.
+      'tc.classe.commandes.quitterConsequence': 'sortie journalisee',
+    };
+
+    final Map<String, Map<String, String>> valeurs =
+        <String, Map<String, String>>{
+          for (final String langue in <String>['fr', 'ar'])
+            langue: _valeursDesCles(
+              jsonDecode(
+                File('assets/i18n/$langue.i18n.json').readAsStringSync(),
+              ),
+            ),
+        };
+    final List<String> textesBlancs = <String>[
+      for (final Map<String, String> v in valeurs.values)
+        for (final String cle in listeBlanche.keys)
+          if (v[cle] != null) v[cle]!,
+    ];
+
+    bool annonceUnSucces(String texte, {required List<RegExp> motifs}) {
+      String reste = texte;
+      for (final String blanc in textesBlancs) {
+        reste = reste.replaceAll(blanc, ' ');
+      }
+      for (final String vu in <String>{
+        reste,
+        reste.replaceAll(diacritiques, ''),
+      }) {
+        for (final RegExp motif in motifs) {
+          for (final RegExpMatch m in motif.allMatches(vu)) {
+            final String avant = vu.substring(0, m.start);
+            final int debut =
+                finProposition.allMatches(avant).lastOrNull?.end ?? 0;
+            if (negation.hasMatch(avant.substring(debut))) continue;
+            if (echecApres.hasMatch(vu.substring(m.end))) continue;
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
     test('la garde reconnait chaque forme de succes, pas la negation', () {
       for (final String vu in <String>[
         'Sauvegardé',
@@ -1090,8 +1188,16 @@ void main() {
         'notes sauvegardees dans la bibliotheque',
         'SAUVEGARDÉES',
         'Tout est sauvegardé !',
+        'Sauvegarde réussie',
+        'Notes enregistrées.',
+        'Tableau enregistré',
+        'Tout est enregistré !',
+        'تم الحفظ',
+        'تمّ حفظ الملاحظات',
+        'حُفظت الملاحظات',
+        'الملاحظات محفوظة.',
       ]) {
-        expect(succes.hasMatch(vu), isTrue, reason: vu);
+        expect(annonceUnSucces(vu, motifs: salle), isTrue, reason: vu);
       }
       for (final String passe in <String>[
         'Les notes de cette séance ne sont pas sauvegardées.',
@@ -1099,41 +1205,90 @@ void main() {
         'Sauvegarde absente',
         'notes non sauvegardees',
         'Sauvegarder',
+        'Enregistrer',
+        'Enregistrement actif',
+        "Le changement n'a pas été enregistré.",
+        'ملاحظات هذه الحصة غير محفوظة.',
+        'ERR-03 فشل الحفظ',
+        'حفظ',
+        'للحفظ',
+        // Liste blanche : l'enregistrement audio du cours.
+        t.salle.bandeauPermanent,
+        t.salle.seance.coursEnregistreCourt,
       ]) {
-        expect(succes.hasMatch(passe), isFalse, reason: passe);
+        expect(annonceUnSucces(passe, motifs: salle), isFalse, reason: passe);
+      }
+      // Hors de la salle, « enregistre » ne compte pas ; « sauvegarde », si.
+      expect(annonceUnSucces('Photo enregistrée', motifs: partout), isFalse);
+      expect(annonceUnSucces('Photo sauvegardée', motifs: partout), isTrue);
+    });
+
+    test('la liste blanche ne nomme que des cles existantes', () {
+      for (final String cle in listeBlanche.keys) {
+        expect(valeurs['fr']![cle], isNotNull, reason: cle);
+        expect(valeurs['ar']![cle], isNotNull, reason: cle);
       }
     });
 
-    test('dans les cles (fr, ar)', () {
-      for (final String chemin in <String>[
-        'assets/i18n/fr.i18n.json',
-        'assets/i18n/ar.i18n.json',
-      ]) {
-        final List<String> trouves = <String>[
-          for (final String ligne in File(chemin).readAsLinesSync())
-            if (succes.hasMatch(ligne)) ligne.trim(),
-        ];
-        expect(trouves, isEmpty, reason: chemin);
-      }
-    });
-
-    test('dans le code (lib)', () {
-      // Les chaines du code (les commentaires parlent de « la sauvegarde »
-      // absente : ce ne sont pas des textes montres).
-      final RegExp chaine = RegExp(
-        r"'(?:[^'\\]|\\.)*'|"
-        r'"(?:[^"\\]|\\.)*"',
+    test('le lecteur du code joint les chaines multilignes et adjacentes', () {
+      const String source =
+          "final a = '''\n  Les notes du tableau :\n  Notes enregistrées.\n''';\n"
+          "final b = 'Notes '\n      'sauve'\n      'gardées.';\n"
+          'final c = "Tout est \${x} sauvegardé";\n'
+          '// final d = "Notes sauvegardees" (un commentaire)\n'
+          "final e = r'Sauvegarder';\n";
+      final List<String> chaines = _chainesDuCode(source);
+      expect(chaines, hasLength(4));
+      expect(chaines[0], contains('Notes enregistrées.'));
+      expect(chaines[1], 'Notes sauvegardées.');
+      expect(
+        <bool>[
+          for (final String c in chaines) annonceUnSucces(c, motifs: salle),
+        ],
+        <bool>[true, true, true, false],
       );
+    });
+
+    test('dans les valeurs des cles (fr, ar)', () {
       final List<String> trouves = <String>[
-        for (final FileSystemEntity f in Directory(
-          'lib',
-        ).listSync(recursive: true))
-          if (f is File && f.path.endsWith('.dart'))
-            for (final String ligne in f.readAsLinesSync())
-              if (!ligne.trimLeft().startsWith('//'))
-                for (final RegExpMatch m in chaine.allMatches(ligne))
-                  if (succes.hasMatch(m[0]!)) '${f.path}: ${ligne.trim()}',
+        for (final MapEntry<String, Map<String, String>> langue
+            in valeurs.entries)
+          for (final MapEntry<String, String> cle in langue.value.entries)
+            if (annonceUnSucces(
+              cle.value,
+              motifs: cle.key.startsWith('salle.') || cle.key.startsWith('tc.')
+                  ? salle
+                  : partout,
+            ))
+              '${langue.key} ${cle.key} : ${cle.value}',
       ];
+      expect(trouves, isEmpty);
+    });
+
+    test('dans le code (lib, et la salle en entier)', () {
+      // Les chaines du code, entieres (les commentaires parlent de « la
+      // sauvegarde » absente : ce ne sont pas des textes montres).
+      const List<String> dossiersSalle = <String>[
+        'lib/features/salle_seance/',
+        'lib/features/tc_dock/',
+        'lib/features/demo/',
+      ];
+      int fichiersSalle = 0;
+      final List<String> trouves = <String>[];
+      for (final FileSystemEntity f in Directory(
+        'lib',
+      ).listSync(recursive: true)) {
+        if (f is! File || !f.path.endsWith('.dart')) continue;
+        final String chemin = f.path.replaceAll(r'\', '/');
+        final bool dansLaSalle = dossiersSalle.any(chemin.startsWith);
+        if (dansLaSalle) fichiersSalle++;
+        for (final String c in _chainesDuCode(f.readAsStringSync())) {
+          if (annonceUnSucces(c, motifs: dansLaSalle ? salle : partout)) {
+            trouves.add('$chemin : $c');
+          }
+        }
+      }
+      expect(fichiersSalle, greaterThan(20));
       expect(trouves, isEmpty);
     });
 
@@ -1145,7 +1300,7 @@ void main() {
           await _monter(tester, role: role, situation: s, taille: _bureau);
           final List<String> trouves = <String>[
             for (final String x in _textes(tester))
-              if (succes.hasMatch(x)) x,
+              if (annonceUnSucces(x, motifs: salle)) x,
           ];
           expect(trouves, isEmpty, reason: '${role.name} ${s.name}');
           await tester.pumpWidget(const SizedBox());
@@ -1207,4 +1362,95 @@ void main() {
       await tester.pumpWidget(const SizedBox());
     }
   });
+}
+
+/// Les valeurs des cles i18n, a plat (`salle.seance.x` -> texte).
+Map<String, String> _valeursDesCles(Object? json, [String prefixe = '']) {
+  final Map<String, String> valeurs = <String, String>{};
+  if (json is Map<String, Object?>) {
+    json.forEach((String cle, Object? v) {
+      valeurs.addAll(
+        _valeursDesCles(v, prefixe.isEmpty ? cle : '$prefixe.$cle'),
+      );
+    });
+  } else if (json is List<Object?>) {
+    for (int i = 0; i < json.length; i++) {
+      valeurs.addAll(_valeursDesCles(json[i], '$prefixe.$i'));
+    }
+  } else if (json is String) {
+    valeurs[prefixe] = json;
+  }
+  return valeurs;
+}
+
+/// Les chaines d'un source Dart, entieres : commentaires sautes, chaines
+/// multilignes (`'''`, `"""`) lues d'un bloc, chaines adjacentes (separees
+/// seulement par des blancs, retours a la ligne compris) jointes, comme le
+/// compilateur les joint. Une interpolation `${...}` compte pour un blanc.
+List<String> _chainesDuCode(String s) {
+  final List<String> chaines = <String>[];
+  final RegExp identifiant = RegExp(r'[\w$]');
+  StringBuffer? courante;
+  int finPrecedente = 0;
+  int i = 0;
+  while (i < s.length) {
+    if (s.startsWith('//', i)) {
+      final int fin = s.indexOf('\n', i);
+      i = fin < 0 ? s.length : fin;
+      continue;
+    }
+    if (s.startsWith('/*', i)) {
+      final int fin = s.indexOf('*/', i + 2);
+      i = fin < 0 ? s.length : fin + 2;
+      continue;
+    }
+    final int debut = i;
+    bool brute = false;
+    if ((s[i] == 'r' || s[i] == 'R') &&
+        i + 1 < s.length &&
+        (s[i + 1] == "'" || s[i + 1] == '"') &&
+        (i == 0 || !identifiant.hasMatch(s[i - 1]))) {
+      brute = true;
+      i++;
+    }
+    final String q = s[i];
+    if (q != "'" && q != '"') {
+      i++;
+      continue;
+    }
+    final String fermeture = s.startsWith(q * 3, i) ? q * 3 : q;
+    int j = i + fermeture.length;
+    final StringBuffer contenu = StringBuffer();
+    while (j < s.length && !s.startsWith(fermeture, j)) {
+      if (!brute && s[j] == r'\') {
+        if (j + 1 < s.length) contenu.write(s[j + 1]);
+        j += 2;
+        continue;
+      }
+      if (!brute && s.startsWith(r'${', j)) {
+        int profondeur = 1;
+        j += 2;
+        while (j < s.length && profondeur > 0) {
+          if (s[j] == '{') profondeur++;
+          if (s[j] == '}') profondeur--;
+          j++;
+        }
+        contenu.write(' ');
+        continue;
+      }
+      contenu.write(s[j]);
+      j++;
+    }
+    final int fin = math.min(s.length, j + fermeture.length);
+    if (courante != null && s.substring(finPrecedente, debut).trim().isEmpty) {
+      courante.write(contenu);
+    } else {
+      if (courante != null) chaines.add(courante.toString());
+      courante = StringBuffer(contenu.toString());
+    }
+    finPrecedente = fin;
+    i = fin;
+  }
+  if (courante != null) chaines.add(courante.toString());
+  return chaines;
 }
