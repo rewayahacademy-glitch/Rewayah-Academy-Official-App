@@ -2595,8 +2595,8 @@ class Traductions$suiviDemandes$fr {
 	/// fr: 'Aucune demande de créneau en cours.'
 	String get vide => 'Aucune demande de créneau en cours.';
 
-	/// fr: 'Le suivi des demandes n'a pas pu être chargé : le serveur n'a pas répondu. Réessayez dans un instant.'
-	String get erreur => 'Le suivi des demandes n\'a pas pu être chargé : le serveur n\'a pas répondu. Réessayez dans un instant.';
+	/// fr: 'Le suivi des demandes n'a pas pu être chargé : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Le suivi des demandes n\'a pas pu être chargé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 
 	/// fr: 'Le suivi des demandes n'a pas pu être chargé'
 	String get sansDonnees => 'Le suivi des demandes n\'a pas pu être chargé';
@@ -6453,8 +6453,8 @@ class Traductions$admin$regroupements$fr {
 	/// fr: 'Les demandes réunies s'afficheront ici dès le branchement serveur. D'ici là, rien n'est affiché : aucune demande n'est inventée.'
 	String get indisponiblePhrase => 'Les demandes réunies s\'afficheront ici dès le branchement serveur. D\'ici là, rien n\'est affiché : aucune demande n\'est inventée.';
 
-	/// fr: 'Les demandes réunies n'ont pas pu être lues : le serveur n'a pas répondu. Réessayez dans un instant.'
-	String get erreur => 'Les demandes réunies n\'ont pas pu être lues : le serveur n\'a pas répondu. Réessayez dans un instant.';
+	/// fr: 'Les demandes réunies n'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Les demandes réunies n\'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 
 	/// fr: 'Les demandes réunies n'ont pas pu être chargées'
 	String get sansDonnees => 'Les demandes réunies n\'ont pas pu être chargées';
@@ -6600,8 +6600,8 @@ class Traductions$admin$regroupements$fr {
 	/// fr: 'Confirmer l'enseignant'
 	String get confirmerEnseignant => 'Confirmer l\'enseignant';
 
-	/// fr: 'Sans réseau, l'enseignant ne peut pas être confirmé. Votre choix reste affiché : revenez quand la connexion est rétablie.'
-	String get enseignantHorsLigne => 'Sans réseau, l\'enseignant ne peut pas être confirmé. Votre choix reste affiché : revenez quand la connexion est rétablie.';
+	/// fr: 'L'enseignant pourra être confirmé quand la connexion sera revenue. Votre choix reste affiché.'
+	String get enseignantHorsLigne => 'L\'enseignant pourra être confirmé quand la connexion sera revenue. Votre choix reste affiché.';
 
 	/// fr: 'L'enseignant n'est pas confirmé : la réponse du serveur n'est pas arrivée. Pressez de nouveau.'
 	String get affectationNonConfirmee => 'L\'enseignant n\'est pas confirmé : la réponse du serveur n\'est pas arrivée. Pressez de nouveau.';
@@ -28590,7 +28590,7 @@ extension on Traductions {
 			'admin.regroupements.tri' => 'Les demandes prêtes à ouvrir une classe d\'abord, puis les plus nombreuses.',
 			'admin.regroupements.indisponibleTitre' => 'Disponible au branchement serveur',
 			'admin.regroupements.indisponiblePhrase' => 'Les demandes réunies s\'afficheront ici dès le branchement serveur. D\'ici là, rien n\'est affiché : aucune demande n\'est inventée.',
-			'admin.regroupements.erreur' => 'Les demandes réunies n\'ont pas pu être lues : le serveur n\'a pas répondu. Réessayez dans un instant.',
+			'admin.regroupements.erreur' => 'Les demandes réunies n\'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'admin.regroupements.sansDonnees' => 'Les demandes réunies n\'ont pas pu être chargées',
 			'admin.regroupements.vide' => 'Aucune demande en attente',
 			'admin.regroupements.videDetail' => 'Les nouvelles demandes des familles apparaîtront ici, réunies quand elles se ressemblent.',
@@ -28634,7 +28634,7 @@ extension on Traductions {
 			'admin.regroupements.enseignantTitre' => 'Enseignant proposé',
 			'admin.regroupements.enseignantContexte' => 'Le premier choix tient compte du genre de la classe, de ses créneaux libres aux mêmes jours et à la même heure, puis du nombre de ses classes. Ces heures sont comparées telles quelles, sans conversion de fuseau : si l\'enseignant vit dans un autre fuseau, vérifiez avec lui avant de confirmer. Confirmez-le ou choisissez une autre personne.',
 			'admin.regroupements.confirmerEnseignant' => 'Confirmer l\'enseignant',
-			'admin.regroupements.enseignantHorsLigne' => 'Sans réseau, l\'enseignant ne peut pas être confirmé. Votre choix reste affiché : revenez quand la connexion est rétablie.',
+			'admin.regroupements.enseignantHorsLigne' => 'L\'enseignant pourra être confirmé quand la connexion sera revenue. Votre choix reste affiché.',
 			'admin.regroupements.affectationNonConfirmee' => 'L\'enseignant n\'est pas confirmé : la réponse du serveur n\'est pas arrivée. Pressez de nouveau.',
 			'admin.regroupements.dejaAffecte' => 'Un autre membre de la direction a déjà confirmé l\'enseignant de cette classe : votre choix ne remplace pas le sien.',
 			'admin.regroupements.famillesPrevenues' => 'Les familles ont été prévenues.',
@@ -32026,7 +32026,7 @@ extension on Traductions {
 			'suiviDemandes.close.suiteSansChoix' => 'Aucun autre créneau n\'est proposé pour le moment. Revenez sur cette page plus tard.',
 			'suiviDemandes.close.choisirAutre' => ({required Object prenom}) => 'Choisir un autre créneau pour ${prenom}',
 			'suiviDemandes.vide' => 'Aucune demande de créneau en cours.',
-			'suiviDemandes.erreur' => 'Le suivi des demandes n\'a pas pu être chargé : le serveur n\'a pas répondu. Réessayez dans un instant.',
+			'suiviDemandes.erreur' => 'Le suivi des demandes n\'a pas pu être chargé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'suiviDemandes.sansDonnees' => 'Le suivi des demandes n\'a pas pu être chargé',
 			'suiviDemandes.accueil.titre' => 'Vos demandes de créneau',
 			'suiviDemandes.accueil.ligne' => ({required Object prenom, required Object etat}) => '${prenom} : ${etat}',
