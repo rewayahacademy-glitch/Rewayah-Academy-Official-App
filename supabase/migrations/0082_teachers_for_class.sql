@@ -148,7 +148,7 @@ BEGIN
         FROM public.weekly_availability wa
         WHERE wa.profile_id = p_teacher_id
       LOOP
-        FOR v_aw IN pg_catalog.greatest(0, v_w - 1)..pg_catalog.least(52, v_w + 1) LOOP
+        FOR v_aw IN greatest(0, v_w - 1)..least(52, v_w + 1) LOOP
           v_busy_debut := public.instant_creneau(
             v_busy.weekday, v_busy.hour_local, v_busy.timezone_iana, v_aw
           );
@@ -203,7 +203,7 @@ BEGIN
     LOOP
       FOR v_w IN 0..51 LOOP
         v_debut := public.instant_creneau(v_c.weekday, v_c.hour_local, v_c.timezone_iana, v_w);
-        FOR v_aw IN pg_catalog.greatest(0, v_w - 1)..pg_catalog.least(52, v_w + 1) LOOP
+        FOR v_aw IN greatest(0, v_w - 1)..least(52, v_w + 1) LOOP
           v_busy_debut := public.instant_creneau(
             v_busy.weekday, v_busy.hour_local, v_busy.timezone_iana, v_aw
           );
@@ -263,6 +263,8 @@ BEFORE INSERT OR UPDATE OF teacher_id, genre_public, type_public, langue_code,
 ON public.groupes
 FOR EACH ROW EXECUTE FUNCTION public.tc_garde_affectation_enseignant();
 
+REVOKE ALL ON FUNCTION public.tc_garde_affectation_enseignant() FROM PUBLIC, anon, authenticated, agent_ro;
+
 CREATE OR REPLACE FUNCTION public.tc_garde_creneau_affectation_enseignant()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -285,6 +287,8 @@ BEGIN
 END;
 $trigger$;
 
+REVOKE ALL ON FUNCTION public.tc_garde_creneau_affectation_enseignant() FROM PUBLIC, anon, authenticated, agent_ro;
+
 DROP TRIGGER IF EXISTS groupe_creneaux_affectation_guard ON public.groupe_creneaux;
 CREATE TRIGGER groupe_creneaux_affectation_guard
 AFTER INSERT OR UPDATE OR DELETE ON public.groupe_creneaux
@@ -304,7 +308,7 @@ RETURNS TABLE (
   creneaux_libres jsonb
 )
 LANGUAGE plpgsql
-STABLE
+VOLATILE
 SECURITY DEFINER
 SET search_path = ''
 AS $function$
