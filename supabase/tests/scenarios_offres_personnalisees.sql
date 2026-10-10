@@ -655,6 +655,9 @@ VALUES
    3, 10, 'Africa/Conakry', 'francais'),
   ('f1470000-0000-0000-0000-000000000103', NULL, 'en_attente_enseignant',
    'adulte', 'femmes', 6, 'C04 public incompatible',
+   4, 20, 'Europe/Paris', 'francais'),
+  ('f1470000-0000-0000-0000-000000000104', NULL, 'en_attente_enseignant',
+   'adulte', 'hommes', 6, 'C04 projection libre inter-fuseaux',
    4, 20, 'Europe/Paris', 'francais');
 
 INSERT INTO public.groupe_creneaux (groupe_id, weekday, hour_local)
@@ -666,6 +669,7 @@ DECLARE
   v_titre text;
   v_count integer;
   v_refuse boolean := false;
+  v_libres jsonb;
 BEGIN
   SET LOCAL ROLE authenticated;
   PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000999', true);
@@ -690,6 +694,20 @@ BEGIN
     'f1470000-0000-0000-0000-000000000101',
     'f1490000-0000-0000-0000-000000000997'
   );
+
+  SELECT creneaux_libres INTO v_libres
+  FROM public.enseignants_pour_classe('f1470000-0000-0000-0000-000000000104')
+  WHERE teacher_id = 'f1490000-0000-0000-0000-000000000997';
+  IF v_libres IS NULL OR EXISTS (
+    SELECT 1 FROM jsonb_array_elements(v_libres) AS slot
+    WHERE slot ->> 'timezone_iana' = 'Africa/Conakry'
+      AND (slot ->> 'weekday')::integer = 3
+      AND (slot ->> 'hour_local')::integer = 10
+  ) THEN
+    RAISE EXCEPTION
+      'C-04: créneau libre affiché malgré collision hiver Paris/Conakry: %',
+      v_libres;
+  END IF;
 
   -- La seconde occurrence de la première classe chevauche la classe cible
   -- en hiver (Paris UTC+1 / Conakry UTC) ; une comparaison ancrée sur la
