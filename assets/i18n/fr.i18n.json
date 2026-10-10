@@ -4069,7 +4069,6 @@
       "alertesErreur": "Les alertes de présence n'ont pas pu être lues. Réessayez dans un instant.",
       "voirAutreAlerte": "Voir l'autre alerte",
       "voirAutresAlertes": "Voir les {nombre} autres alertes",
-      "remplacementsTitre": "Remplacements confirmés",
       "remplacementsVide": "Aucun cours d'un collègue à assurer pour le moment.",
       "voirTousRemplacements": "Voir tout : les {nombre} remplacements confirmés",
       "heure": "Heure",

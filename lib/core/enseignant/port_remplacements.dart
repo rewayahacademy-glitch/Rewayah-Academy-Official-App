@@ -21,8 +21,8 @@
 ///
 /// Aucun branchement serveur ici : en production le port est absent
 /// ([portRemplacementsProvider] vaut `null`), le flux est vide et aucune
-/// offre n'est inventee (meme convention que `offresRemplacementProvider`
-/// avant BR-1). La demonstration le surcharge.
+/// offre n'est inventee. La demonstration le surcharge. C'est la seule source
+/// des offres (REMPL-1b) : l'Alerte utile de la Journee la lit aussi.
 library;
 
 import 'package:flutter/foundation.dart';
