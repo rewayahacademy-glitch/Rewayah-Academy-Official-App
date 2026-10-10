@@ -37,6 +37,7 @@ import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_presence.dart';
 import '../../core/widgets/page_immersive.dart';
+import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/permanent_notice.dart';
 import '../../core/widgets/section_header.dart';
@@ -473,7 +474,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     final SessionState session = ref.watch(sessionProvider);
     // Session pas encore lue : aucune preparation n'est choisie a l'aveugle.
     if (_enPreparation && !session.resolue) {
-      return const Scaffold(body: SizedBox.shrink());
+      return const PageShell(actionsCoquille: false, child: SizedBox.shrink());
     }
     // Seuls l'eleve et l'enseignant ont une preparation. Le tuteur
     // observateur n'en a AUCUNE (D-14), et un autre role (admin, controleur)
@@ -1400,7 +1401,7 @@ class _Scene extends StatelessWidget {
     // gouttiere mobile (16 px) de chaque cote -- ni ne passe sous le bandeau
     // ou les commandes du bas : 16 px d'ecart dessous (SUPERPOS-1).
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
+      padding: const EdgeInsetsDirectional.fromSTEB(
         AppSpacing.lg,
         0,
         AppSpacing.lg,

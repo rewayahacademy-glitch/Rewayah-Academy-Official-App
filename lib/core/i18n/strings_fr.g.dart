@@ -6758,6 +6758,9 @@ class Traductions$admin$groupes$fr {
 	/// fr: 'Les classes n'ont pas pu être lues. Réessayez dans un instant.'
 	String get erreur => 'Les classes n\'ont pas pu être lues. Réessayez dans un instant.';
 
+	/// fr: 'La liste des classes n'a pas pu être chargée'
+	String get sansDonnees => 'La liste des classes n\'a pas pu être chargée';
+
 	/// fr: 'Nouvelle classe'
 	String get creer => 'Nouvelle classe';
 
@@ -29409,6 +29412,7 @@ extension on Traductions {
 			'admin.groupes.aucunAvecCeFiltre' => 'Aucune classe avec ce filtre',
 			'admin.groupes.aucunAvecCeFiltreDetail' => 'Changez de filtre pour voir les autres classes.',
 			'admin.groupes.erreur' => 'Les classes n\'ont pas pu être lues. Réessayez dans un instant.',
+			'admin.groupes.sansDonnees' => 'La liste des classes n\'a pas pu être chargée',
 			'admin.groupes.creer' => 'Nouvelle classe',
 			'admin.groupes.creerTitre' => 'Nouvelle classe',
 			'admin.groupes.champLibelle' => 'Nom de la classe',
@@ -29711,9 +29715,9 @@ extension on Traductions {
 			'admin.evaluations.resultatEnvoyer' => 'Enregistrer',
 			'admin.evaluations.resultatErreur' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
 			'admin.evaluations.annulerTitre' => ({required Object deEleve}) => 'Annuler l\'évaluation ${deEleve}',
-			'admin.evaluations.annulerEnvoyer' => 'Annuler',
 			_ => null,
 		} ?? switch (path) {
+			'admin.evaluations.annulerEnvoyer' => 'Annuler',
 			'admin.evaluations.annulerErreur' => ({required Object message}) => 'L\'annulation n\'a pas abouti : ${message}',
 			'admin.evaluations.champMotif' => 'Motif',
 			'admin.evaluations.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
@@ -30225,9 +30229,9 @@ extension on Traductions {
 			'admin.finance.pol.publier' => 'Publier la version',
 			'admin.finance.pol.publierConsequence' => 'Publier rend ce brouillon applicable à partir de sa date d\'effet ; aucune facture déjà payée n\'est modifiée.',
 			'admin.finance.pol.publicationIndisponible' => 'La publication n\'est pas encore disponible',
-			'admin.finance.pol.publicationIndisponibleDetail' => 'Rien n\'a été publié : le service de publication n\'est pas encore branché. La version active continue de s\'appliquer. Gardez cet écran ouvert pour conserver vos modifications, ou revenez quand la publication sera ouverte.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.finance.pol.publicationIndisponibleDetail' => 'Rien n\'a été publié : le service de publication n\'est pas encore branché. La version active continue de s\'appliquer. Gardez cet écran ouvert pour conserver vos modifications, ou revenez quand la publication sera ouverte.',
 			'admin.finance.pol.publicationNonConfirmee' => 'Publication non confirmée',
 			'admin.finance.pol.publicationNonConfirmeeDetail' => 'La réponse n\'est pas arrivée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vérifiez la version active avant de réessayer.',
 			'admin.finance.pol.champsACorriger' => 'Corrigez d\'abord les champs signalés',
@@ -30739,9 +30743,9 @@ extension on Traductions {
 			'notifications.nonLueSemantique' => 'non lue',
 			'notifications.lectureNonConfirmee' => 'La lecture n\'est pas encore confirmée. Réessayez dans un instant.',
 			'notifications.detail.choisirTitre' => 'Choisissez une notification',
-			'notifications.detail.choisirPhrase' => 'Son détail s\'affiche ici, à côté de la liste.',
 			_ => null,
 		} ?? switch (path) {
+			'notifications.detail.choisirPhrase' => 'Son détail s\'affiche ici, à côté de la liste.',
 			'notifications.detail.recue' => ({required Object date, required Object heure}) => 'Reçue le ${date} à ${heure}',
 			'notifications.detail.ouvrir' => 'Ouvrir la page concernée',
 			'notifications.types.annonceClasse' => 'Annonce de Classe',
@@ -31253,9 +31257,9 @@ extension on Traductions {
 			'enseignant.photo.changer' => 'Changer la photo',
 			'enseignant.photo.alternatif' => 'Votre photo publique',
 			'enseignant.photo.succes' => 'La photo est enregistrée.',
-			'enseignant.photo.echec' => 'La photo n\'a pas pu être envoyée. Rien n\'a changé sur le profil.',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.photo.echec' => 'La photo n\'a pas pu être envoyée. Rien n\'a changé sur le profil.',
 			'enseignant.photo.selectionEchec' => 'La photo n\'a pas pu être ouverte. Vérifiez l\'accès aux photos de l\'appareil, puis réessayez.',
 			'enseignant.photo.horsLigne' => 'La photo pourra être envoyée quand la connexion reviendra.',
 			'enseignant.journee.lancer' => 'Lancer le cours',
@@ -31767,9 +31771,9 @@ extension on Traductions {
 			'controleur.complement.cleRapport' => 'Rapport d\'origine',
 			'controleur.complement.rapportInchange' => ({required Object classe, required Object date}) => '${classe} · ${date}, inchangé',
 			'controleur.complement.cleMotif' => 'Motif',
-			'controleur.complement.sansMotif' => 'Aucun motif',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.complement.sansMotif' => 'Aucun motif',
 			'controleur.complement.cleTexte' => 'Complément',
 			'controleur.complement.envoyer' => 'Envoyer le complément',
 			'controleur.complement.echec' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici, réessayez dans un instant. Le rapport d\'origine reste intact.',
@@ -32281,9 +32285,9 @@ extension on Traductions {
 			'tc.observation.refus.indisponibleInvitation' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',
 			'tc.observation.visite.titre' => 'Observation en cours',
-			'tc.observation.visite.quitter' => 'Quitter',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.visite.quitter' => 'Quitter',
 			'tc.observation.visite.supportIndisponible' => 'Le support partagé par l\'enseignant s\'affiche ici.',
 			'tc.observation.visite.enseignant' => 'Enseignant',
 			'tc.observation.visite.monEnfant' => 'Votre enfant',
@@ -32795,9 +32799,9 @@ extension on Traductions {
 			'adulte.demo.etats.emancipation' => 'Émancipation d\'un élève devenu adulte : non construite dans cette vague.',
 			'adulte.finances.indisponibleTitre' => 'Vos finances ne sont pas encore disponibles',
 			'adulte.finances.indisponiblePhrase' => 'Votre solde, votre période financée et votre mensualité s\'afficheront ici dès leur mise en service.',
-			'adulte.finances.erreurTitre' => 'Vos finances ne peuvent pas être lues',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.finances.erreurTitre' => 'Vos finances ne peuvent pas être lues',
 			'adulte.finances.videTitre' => 'Aucune finance enregistrée',
 			'adulte.finances.videPhrase' => 'Aucun solde ni aucune mensualité n\'est encore rendu pour votre profil. Ils apparaîtront ici après votre inscription à une classe.',
 			'adulte.finances.voirMouvementsSemantique' => 'Voir vos mouvements',
@@ -33309,9 +33313,9 @@ extension on Traductions {
 			'com.vocal.composer.preEcoute' => 'Pré-écoute',
 			'com.vocal.composer.preEcouteAide' => 'Écoutez votre message avant de l\'envoyer. Rien ne part sans votre accord.',
 			'com.vocal.composer.duree' => ({required Object duree}) => 'Durée : ${duree}',
-			'com.vocal.composer.actionPause' => 'Pause',
 			_ => null,
 		} ?? switch (path) {
+			'com.vocal.composer.actionPause' => 'Pause',
 			'com.vocal.composer.actionReprendre' => 'Reprendre',
 			'com.vocal.composer.actionArreter' => 'Arrêter',
 			'com.vocal.composer.actionSupprimer' => 'Supprimer',
@@ -33823,9 +33827,9 @@ extension on Traductions {
 			'com.annonces.administration.moderation.sansAction' => 'Aucune action de modération ne vous est ouverte sur ce contenu.',
 			'com.annonces.administration.moderation.sansSanction' => 'Aucune sanction de compte n\'est appliquée automatiquement.',
 			'com.annonces.administration.moderation.politique' => 'Politique anti-promotion',
-			'com.annonces.administration.moderation.ouvrirSemantique' => ({required Object objet, required Object motif}) => 'Examiner ${objet}, motif ${motif}',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.administration.moderation.ouvrirSemantique' => ({required Object objet, required Object motif}) => 'Examiner ${objet}, motif ${motif}',
 			'com.annonces.administration.moderation.regleMotif.publicite' => 'La publicité n\'est pas autorisée dans la Communauté enseignants.',
 			'com.annonces.administration.moderation.regleMotif.lienAffilie' => 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.',
 			'com.annonces.administration.moderation.regleMotif.vente' => 'La vente de produits ou de services n\'est pas autorisée dans cet espace.',
@@ -34337,9 +34341,9 @@ extension on Traductions {
 			'comptable.encaissements.profilsPour' => ({required Object prenoms}) => 'Pour ${prenoms}',
 			'comptable.encaissements.moyenPrestataire' => ({required Object moyen, required Object prestataire}) => '${moyen} · ${prestataire}',
 			'comptable.encaissements.videTitre' => 'Aucun encaissement pour l\'instant.',
-			'comptable.encaissements.videPhrase' => 'Les paiements des familles apparaîtront ici dès que le prestataire les aura transmis.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.encaissements.videPhrase' => 'Les paiements des familles apparaîtront ici dès que le prestataire les aura transmis.',
 			'comptable.encaissements.videFiltreTitre' => 'Aucun encaissement ne correspond.',
 			'comptable.encaissements.videFiltrePhrase' => 'Choisissez « Tous » ou effacez la recherche pour revoir toute la liste.',
 			'comptable.encaissements.voirTous' => 'Voir tous les encaissements',

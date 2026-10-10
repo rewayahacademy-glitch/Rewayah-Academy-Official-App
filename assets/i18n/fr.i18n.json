@@ -2180,6 +2180,7 @@
       "aucunAvecCeFiltre": "Aucune classe avec ce filtre",
       "aucunAvecCeFiltreDetail": "Changez de filtre pour voir les autres classes.",
       "erreur": "Les classes n'ont pas pu être lues. Réessayez dans un instant.",
+      "sansDonnees": "La liste des classes n'a pas pu être chargée",
       "creer": "Nouvelle classe",
       "creerTitre": "Nouvelle classe",
       "champLibelle": "Nom de la classe",

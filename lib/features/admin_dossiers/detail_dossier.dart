@@ -155,6 +155,9 @@ class _SelectionRetiree extends StatelessWidget {
 
 /// Le squelette du detail, a la geometrie du contenu : en-tete, quatre
 /// cartes, puis le groupe de deux boutons au bord de fin. Sans shimmer.
+/// Largeur du squelette de l'action du detail.
+const double _largeurSqueletteAction = 160;
+
 class SqueletteDetail extends StatelessWidget {
   /// Cree le squelette.
   const SqueletteDetail({super.key});
@@ -219,7 +222,7 @@ class SqueletteDetail extends StatelessWidget {
         const Align(
           alignment: AlignmentDirectional.centerEnd,
           child: SizedBox(
-            width: 160,
+            width: _largeurSqueletteAction,
             child: Skeleton(hauteur: AppPage.hauteurBouton),
           ),
         ),

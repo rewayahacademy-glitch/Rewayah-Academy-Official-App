@@ -12,12 +12,16 @@
 // - 320 px, texte a 200 %, LTR et RTL : aucun debordement, un seul bouton
 //   plein.
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' show Ref;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/port_classes_admin.dart';
 import 'package:rewayah_academy/core/admin/service_groupes.dart';
 import 'package:rewayah_academy/core/capacites/port_enseignants_classe.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/reseau/etat_sans_donnees.dart';
+import 'package:rewayah_academy/core/reseau/service_reseau.dart'
+    show horsLigneProvider;
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_groupes/groupes_page.dart';
@@ -57,6 +61,7 @@ Future<void> _monter(
   double echelle = 1,
   TextDirection direction = TextDirection.ltr,
   bool attendre = true,
+  bool horsLigneReseau = false,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -73,7 +78,11 @@ Future<void> _monter(
           ),
         ),
       ),
-      surcharges: <Override>[portClassesAdminProvider.overrideWithValue(port)],
+      surcharges: <Override>[
+        portClassesAdminProvider.overrideWithValue(port),
+        if (horsLigneReseau)
+          horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(true)),
+      ],
     ),
   );
   if (attendre) await tester.pumpAndSettle();
@@ -311,6 +320,43 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text(t.admin.groupes.erreur), findsNothing);
       expect(port.pagesDemandees, greaterThanOrEqualTo(2));
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('hors ligne sans donnees : ce qui manque, une relecture', (
+      WidgetTester tester,
+    ) async {
+      final ClassesAdminDemo port = ClassesAdminDemo(
+        classes: _tout(),
+        horsLigne: true,
+      );
+      await _monter(tester, port: port, horsLigneReseau: true);
+      expect(_cle('classes-sans-donnees'), findsOneWidget);
+      expect(find.text(t.admin.groupes.sansDonnees), findsOneWidget);
+      // Le bandeau dit l'absence de reseau ; le bloc ne la redit pas.
+      expect(find.text(t.admin.groupes.erreur), findsNothing);
+      expect(find.byType(EtatSansDonnees), findsOneWidget);
+      port.horsLigne = false;
+      await tester.tap(find.text(t.commun.reessayer));
+      await tester.pumpAndSettle();
+      expect(_cle('classes-sans-donnees'), findsNothing);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('recherche : une seule requete, 300 ms apres la derniere '
+        'frappe', (WidgetTester tester) async {
+      final ClassesAdminDemo port = ClassesAdminDemo(classes: _tout());
+      await _monter(tester, port: port);
+      final int avant = port.pagesDemandees;
+      for (final String texte in <String>['a', 'am', 'ama']) {
+        await tester.enterText(_cle('classes-recherche'), texte);
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      // 200 ms depuis la premiere frappe, 100 depuis la derniere : rien.
+      expect(port.pagesDemandees, avant);
+      await tester.pump(const Duration(milliseconds: 250));
+      await tester.pumpAndSettle();
+      expect(port.pagesDemandees, avant + 1);
       await tester.pumpWidget(const SizedBox());
     });
 
