@@ -18,6 +18,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/port_reponse_presentation.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
@@ -89,7 +90,9 @@ class _DemandesPresentationPageState
       setState(() {
         _retour = accepter
             ? t.presentationTuteur.acceptee(prenom: d.prenom)
-            : t.presentationTuteur.refusee(prenom: d.prenom);
+            : t.presentationTuteur.refusee(
+                dePrenom: deDevant(d.prenom, cle: 'presentationTuteur.refusee'),
+              );
       });
     } on Object {
       if (!mounted) return;

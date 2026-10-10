@@ -13,6 +13,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/accessibilite/age_eleve.dart';
 import 'package:rewayah_academy/core/accessibilite/port_reponse_presentation.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
@@ -164,7 +165,14 @@ void main() {
     );
     await laisser(tester);
     expect(port.refusees, <String>['p2']);
-    expect(find.text(p.refusee(prenom: 'Aïcha')), findsOneWidget);
+    expect(
+      find.text(
+        p.refusee(
+          dePrenom: deDevant('Aïcha', cle: 'presentationTuteur.refusee'),
+        ),
+      ),
+      findsOneWidget,
+    );
     expect(find.text(p.ligne(prenom: 'Aïcha')), findsNothing);
   });
 

@@ -8927,7 +8927,7 @@
     "accepter": "Accepter",
     "refuser": "Refuser",
     "acceptee": "Présentation standard activée pour {prenom}.",
-    "refusee": "Demande de {prenom} refusée.",
+    "refusee": "Demande {dePrenom} refusée.",
     "echecReponse": "Votre réponse n'a pas pu être confirmée. La demande reste en attente : réessayez.",
     "vide": "Aucune demande de présentation en attente.",
     "erreur": "Les demandes n'ont pas pu être chargées. Réessayez.",

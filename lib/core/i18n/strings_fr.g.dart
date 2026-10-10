@@ -2903,8 +2903,8 @@ class Traductions$presentationTuteur$fr {
 	/// fr: 'Présentation standard activée pour {prenom}.'
 	String acceptee({required Object prenom}) => 'Présentation standard activée pour ${prenom}.';
 
-	/// fr: 'Demande de {prenom} refusée.'
-	String refusee({required Object prenom}) => 'Demande de ${prenom} refusée.';
+	/// fr: 'Demande {dePrenom} refusée.'
+	String refusee({required Object dePrenom}) => 'Demande ${dePrenom} refusée.';
 
 	/// fr: 'Votre réponse n'a pas pu être confirmée. La demande reste en attente : réessayez.'
 	String get echecReponse => 'Votre réponse n\'a pas pu être confirmée. La demande reste en attente : réessayez.';
@@ -36168,7 +36168,7 @@ extension on Traductions {
 			'presentationTuteur.accepter' => 'Accepter',
 			'presentationTuteur.refuser' => 'Refuser',
 			'presentationTuteur.acceptee' => ({required Object prenom}) => 'Présentation standard activée pour ${prenom}.',
-			'presentationTuteur.refusee' => ({required Object prenom}) => 'Demande de ${prenom} refusée.',
+			'presentationTuteur.refusee' => ({required Object dePrenom}) => 'Demande ${dePrenom} refusée.',
 			'presentationTuteur.echecReponse' => 'Votre réponse n\'a pas pu être confirmée. La demande reste en attente : réessayez.',
 			'presentationTuteur.vide' => 'Aucune demande de présentation en attente.',
 			'presentationTuteur.erreur' => 'Les demandes n\'ont pas pu être chargées. Réessayez.',

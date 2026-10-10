@@ -72,26 +72,34 @@ String intervalleEntre(DateTime avant, DateTime apres) {
 /// Le titre de la notification d'un passage d'etape. Les trois premieres
 /// etapes gardent les titres du suivi existant.
 String titreNotificationFrise(TypeEtapeFrise type, String prenom) {
-  String de(String cle) => deDevant(prenom, cle: cle);
   return switch (type) {
     TypeEtapeFrise.envoyee => t.suiviDemandes.notification.envoyee(
-      dePrenom: de('suiviDemandes.notification.envoyee'),
+      dePrenom: deDevant(prenom, cle: 'suiviDemandes.notification.envoyee'),
     ),
     TypeEtapeFrise.classeCreee => t.suiviDemandes.notification.classeValidee(
-      dePrenom: de('suiviDemandes.notification.classeValidee'),
+      dePrenom: deDevant(
+        prenom,
+        cle: 'suiviDemandes.notification.classeValidee',
+      ),
     ),
     TypeEtapeFrise.enseignantAffecte =>
       t.suiviDemandes.notification.enseignantAffecte(
-        dePrenom: de('suiviDemandes.notification.enseignantAffecte'),
+        dePrenom: deDevant(
+          prenom,
+          cle: 'suiviDemandes.notification.enseignantAffecte',
+        ),
       ),
     TypeEtapeFrise.enAttente => t.suiviFamille.notification.enAttente(
-      dePrenom: de('suiviFamille.notification.enAttente'),
+      dePrenom: deDevant(prenom, cle: 'suiviFamille.notification.enAttente'),
     ),
     TypeEtapeFrise.eleveIntegre => t.suiviFamille.notification.eleveIntegre(
-      dePrenom: de('suiviFamille.notification.eleveIntegre'),
+      dePrenom: deDevant(prenom, cle: 'suiviFamille.notification.eleveIntegre'),
     ),
     TypeEtapeFrise.premiereSeance => t.suiviFamille.notification.premiereSeance(
-      dePrenom: de('suiviFamille.notification.premiereSeance'),
+      dePrenom: deDevant(
+        prenom,
+        cle: 'suiviFamille.notification.premiereSeance',
+      ),
     ),
   };
 }
@@ -115,16 +123,14 @@ String libelleMotifCloture(
 /// Le titre de la notification de cloture : « Demande de Yusuf : ce
 /// créneau n'est plus proposé. »
 String titreNotificationCloture(MotifClotureFrise motif, String prenom) {
-  final String dePrenom = deDevant(
-    prenom,
-    cle: 'suiviFamille.notification.close',
-  );
   if (motif == MotifClotureFrise.dejaEnClasse) {
-    return t.suiviFamille.notification.dejaEnClasse(dePrenom: dePrenom);
+    return t.suiviFamille.notification.dejaEnClasse(
+      dePrenom: deDevant(prenom, cle: 'suiviFamille.notification.dejaEnClasse'),
+    );
   }
   final String phrase = libelleMotifCloture(motif, prenom);
   return t.suiviFamille.notification.close(
-    dePrenom: dePrenom,
+    dePrenom: deDevant(prenom, cle: 'suiviFamille.notification.close'),
     motif: phrase.isEmpty
         ? phrase
         : phrase[0].toLowerCase() + phrase.substring(1),
