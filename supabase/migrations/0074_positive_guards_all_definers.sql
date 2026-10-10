@@ -24,7 +24,7 @@ begin
       and lang.lanname = 'plpgsql'
       and exists (
         select 1
-        from pg_catalog.regexp_split_to_table(p.prosrc, E'\\n') as ligne(texte)
+        from pg_catalog.regexp_split_to_table(p.prosrc, E'\n') as ligne(texte)
         where pg_catalog.btrim(ligne.texte) ~* '^if.*app_role.*(<>|not[[:space:]]+in)'
       )
   loop
@@ -35,7 +35,7 @@ begin
     v_corrigee := pg_catalog.regexp_replace(
       v_definition,
       '(?i)(public[.])?app_role[(][)][[:space:]]*<>[[:space:]]*''([^'']+)''',
-      'NOT coalesce(public.app_role() = ''\\2'' AND public.app_account_valid(), false)',
+      'NOT coalesce(public.app_role() = ''\2'' AND public.app_account_valid(), false)',
       'gi'
     );
 
@@ -70,7 +70,7 @@ begin
       and lang.lanname = 'plpgsql'
       and exists (
         select 1
-        from pg_catalog.regexp_split_to_table(p.prosrc, E'\\n') as ligne(texte)
+        from pg_catalog.regexp_split_to_table(p.prosrc, E'\n') as ligne(texte)
         where pg_catalog.btrim(ligne.texte) ~* '^if.*app_role.*(<>|not[[:space:]]+in)'
       )
   ) then
