@@ -27,7 +27,7 @@ set local search_path = pg_catalog, public, app_private;
 do $sec_prod_preflight$
 declare
   v_count integer;
-  v_latest text;
+  v_latest_name text;
   v_schema text;
 begin
   if current_setting('codex.sec_prod_confirm_ref', true) is distinct from 'gggmtelinlpseweouyav' then
@@ -39,10 +39,14 @@ begin
   if to_regclass('supabase_migrations.schema_migrations') is null then
     raise exception 'SEC-PROD: ledger Supabase absent';
   end if;
-  select count(*), max(version::text) into v_count, v_latest
+  select count(*) into v_count
     from supabase_migrations.schema_migrations;
-  if v_count <> 50 or v_latest <> '0042' then
-    raise exception 'SEC-PROD: ledger inattendu (count=%, max=%); attendu 50 / 0042', v_count, v_latest;
+  select name into v_latest_name
+    from supabase_migrations.schema_migrations
+   order by version desc
+   limit 1;
+  if v_count <> 50 or v_latest_name is distinct from '0042_etat_presence_fermee_et_jeton_video_verifie_le_compte' then
+    raise exception 'SEC-PROD: ledger inattendu (count=%, latest=%); attendu 50 / 0042_etat_presence_fermee_et_jeton_video_verifie_le_compte', v_count, v_latest_name;
   end if;
   if to_regnamespace('app_private') is not null then
     raise exception 'SEC-PROD: app_private déjà présent; cible divergée du ledger 0042 observé';
