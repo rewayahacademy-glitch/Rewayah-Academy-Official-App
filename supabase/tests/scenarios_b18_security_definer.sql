@@ -113,7 +113,6 @@ begin
 end
 $b2$;
 reset role;
-rreset role;
 
 -- B-06 / SEC-04 : Direction active seulement, et aucun SELECT direct sur KYC.
 insert into auth.users (id, email) values
