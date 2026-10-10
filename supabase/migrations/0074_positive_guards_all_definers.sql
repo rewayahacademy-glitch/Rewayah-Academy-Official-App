@@ -1,9 +1,8 @@
--- 0074 — fermer les gardes NULL restantes dans les fonctions SECURITY DEFINER.
--- Les migrations historiques contrôlaient parfois un rôle par
--- « app_role() <> 'admin' ». Sans rôle, NULL <> 'admin' vaut NULL et IF NULL
--- n'entre pas dans la branche de refus. 0067 ne couvrait qu'une liste fermée
--- et une forme de garde; cette migration balaie les fonctions réellement
--- installées, y compris les RPC créées après cette liste.
+-- 0074 — convertir les comparaisons de rôles négatives en gardes positives.
+-- Le balayage couvre les fonctions SECURITY DEFINER PL/pgSQL de public et
+-- app_private, sans dépendre d'une forme IF sur une seule ligne. Une fonction
+-- qui contient encore une comparaison négative non transformée fait échouer
+-- la migration plutôt que de laisser une garde NULL-sensible.
 begin;
 
 do $migration$
@@ -14,70 +13,67 @@ declare
   v_modifiees integer := 0;
 begin
   for v in
-    select distinct p.oid
+    select p.oid
     from pg_catalog.pg_proc p
     join pg_catalog.pg_namespace n on n.oid = p.pronamespace
-    join pg_catalog.pg_language lang on lang.oid = p.prolang
-    where n.nspname = 'public'
+    where n.nspname in ('public', 'app_private')
       and p.prokind = 'f'
       and p.prosecdef
-      and lang.lanname = 'plpgsql'
-      and exists (
-        select 1
-        from pg_catalog.regexp_split_to_table(p.prosrc, E'\n') as ligne(texte)
-        where pg_catalog.btrim(ligne.texte) ~* '^if.*app_role.*(<>|not[[:space:]]+in)'
-      )
+      and p.prosrc ~* $pattern$
+        (app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]*(<>|!=)[[:space:]]*'[^']+'
+         |app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]+not[[:space:]]+in[[:space:]]*[(]
+         |'[^']+'[[:space:]]*(<>|!=)[[:space:]]*app_role[[:space:]]*[(][[:space:]]*[)])
+      $pattern$
   loop
     v_definition := pg_catalog.pg_get_functiondef(v.oid);
 
-    -- Un rôle attendu devient une exigence positive. COALESCE transforme le
-    -- NULL produit par un JWT sans app_metadata.role en refus certain.
+    -- Rôle requis et compte valide : toute valeur NULL devient un refus.
     v_corrigee := pg_catalog.regexp_replace(
       v_definition,
-      '(?i)(public[.])?app_role[(][)][[:space:]]*<>[[:space:]]*''([^'']+)''',
-      'NOT coalesce(public.app_role() = ''\2'' AND public.app_account_valid(), false)',
+      '(?i)(public[.])?app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]*(<>|!=)[[:space:]]*''([^'']+)''',
+      E'NOT coalesce(public.app_role() = ''\\3'' AND public.app_account_valid(), false)',
       'gi'
     );
 
-    -- Même défaut pour les gardes « NOT IN », notamment admin/controller.
     v_corrigee := pg_catalog.regexp_replace(
       v_corrigee,
-      '(?i)(public[.])?app_role[(][)][[:space:]]+NOT[[:space:]]+IN[[:space:]]*[(]([^)]*)[)]',
-      'NOT coalesce(public.app_role() IN (\2) AND public.app_account_valid(), false)',
+      '(?i)(public[.])?app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]+NOT[[:space:]]+IN[[:space:]]*[(]([^)]*)[)]',
+      E'NOT coalesce(public.app_role() IN (\\2) AND public.app_account_valid(), false)',
+      'gi'
+    );
+
+    v_corrigee := pg_catalog.regexp_replace(
+      v_corrigee,
+      '(?i)''([^'']+)''[[:space:]]*(<>|!=)[[:space:]]*(public[.])?app_role[[:space:]]*[(][[:space:]]*[)]',
+      E'NOT coalesce(public.app_role() = ''\\1'' AND public.app_account_valid(), false)',
       'gi'
     );
 
     if v_corrigee = v_definition then
-      raise exception 'B2 : garde à rôle négative non réécrite dans la fonction oid=%', v.oid;
+      raise exception '0074: comparaison négative non transformée dans la fonction oid=%', v.oid;
     end if;
 
     execute v_corrigee;
     v_modifiees := v_modifiees + 1;
   end loop;
 
-  if v_modifiees = 0 then
-    raise exception 'B2 : aucune fonction SECURITY DEFINER corrigée';
-  end if;
-
   if exists (
     select 1
     from pg_catalog.pg_proc p
     join pg_catalog.pg_namespace n on n.oid = p.pronamespace
-    join pg_catalog.pg_language lang on lang.oid = p.prolang
-    where n.nspname = 'public'
+    where n.nspname in ('public', 'app_private')
       and p.prokind = 'f'
       and p.prosecdef
-      and lang.lanname = 'plpgsql'
-      and exists (
-        select 1
-        from pg_catalog.regexp_split_to_table(p.prosrc, E'\n') as ligne(texte)
-        where pg_catalog.btrim(ligne.texte) ~* '^if.*app_role.*(<>|not[[:space:]]+in)'
-      )
+      and p.prosrc ~* $pattern$
+        (app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]*(<>|!=)[[:space:]]*'[^']+'
+         |app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]+not[[:space:]]+in[[:space:]]*[(]
+         |'[^']+'[[:space:]]*(<>|!=)[[:space:]]*app_role[[:space:]]*[(][[:space:]]*[)])
+      $pattern$
   ) then
-    raise exception 'B2 : une garde négative subsiste dans une fonction SECURITY DEFINER';
+    raise exception '0074: une comparaison négative subsiste dans une fonction SECURITY DEFINER';
   end if;
 
-  raise notice 'B2 : % fonctions SECURITY DEFINER mises en garde positive', v_modifiees;
+  raise notice '0074: % fonctions SECURITY DEFINER mises à garde positive', v_modifiees;
 end
 $migration$;
 
