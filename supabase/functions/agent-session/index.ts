@@ -187,7 +187,7 @@ Deno.serve(async (requete) => {
       is_agent: true,
     })
       .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
-      .setSubject(remise.profil_observe)
+      .setSubject(remise.jeton_id)
       .setIssuer(`${url}/auth/v1`)
       .setAudience('authenticated')
       .setIssuedAt(maintenant)
