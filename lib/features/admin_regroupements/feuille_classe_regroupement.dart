@@ -38,7 +38,8 @@ import 'package:uuid/uuid.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/enseignants_classe.dart';
 import '../../core/admin/service_comptes.dart' show comptesProvider;
-import '../../core/admin/service_groupes.dart' show TypePublicGroupe;
+import '../../core/admin/service_groupes.dart'
+    show TypePublicGroupe, groupesProvider;
 import '../../core/capacites/port_enseignants_classe.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/offres/port_regroupements_admin.dart';
@@ -223,7 +224,15 @@ class _FeuilleClasseRegroupementEtat
         _etape = EtapeFeuilleRegroupement.termine;
       }
     });
-    if (resultat != null) _relireListe();
+    if (resultat != null) {
+      _relireListe();
+      // La charge et les creneaux pris de l'enseignant changent avec cette
+      // affectation : toute la famille est relue (sinon la collision ne se
+      // verrait plus a la prochaine ouverture), comme apres une creation.
+      ref
+        ..invalidate(enseignantsDuPortProvider)
+        ..invalidate(groupesProvider);
+    }
   }
 
   @override
