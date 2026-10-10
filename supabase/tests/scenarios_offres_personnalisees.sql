@@ -253,9 +253,9 @@ BEGIN
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text, true);
   SELECT regroupement_id, nombre_eleves, quota, pret, jours, heures_locales
     INTO v_regroupement, v_count, v_quota, v_pret, v_jours, v_heures
-    FROM public.regroupements_demandes_horaires_admin()
+   FROM public.regroupements_demandes_horaires_admin()
    WHERE type_public = 'adulte' AND langue_code = 'francais'
-     AND fuseau_iana = 'UTC';
+     AND fuseau_iana = 'Europe/Paris';
   IF v_count <> v_capacite OR v_quota <> v_capacite OR NOT v_pret THEN
     RAISE EXCEPTION 'F1 quota: regroupement=% eleves=% quota=% pret=%',
       v_regroupement, v_count, v_quota, v_pret;
@@ -263,8 +263,8 @@ BEGIN
   IF v_jours IS DISTINCT FROM ARRAY[2,4,6]::smallint[] THEN
     RAISE EXCEPTION 'F1 normalisation des jours incorrecte: %', v_jours;
   END IF;
-  IF v_heures IS DISTINCT FROM ARRAY[16,16,16]::smallint[] THEN
-    RAISE EXCEPTION 'F1 heures UTC normalisees incorrectes: %', v_heures;
+  IF v_heures IS DISTINCT FROM ARRAY[18,18,18]::smallint[] THEN
+    RAISE EXCEPTION 'F1 heures Europe/Paris incorrectes: %', v_heures;
   END IF;
 
   v_groupe := public.creer_classe_depuis_regroupement(
