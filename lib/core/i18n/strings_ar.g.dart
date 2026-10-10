@@ -2499,7 +2499,6 @@ class _Traductions$enseignant$journee$ar extends Traductions$enseignant$journee$
 	@override String get alertesErreur => 'تعذّرت قراءة تنبيهات الحضور: لم يستجب الاتصال أو الخادم. أعد المحاولة بعد لحظة.';
 	@override String get voirAutreAlerte => 'عرض التنبيه الآخر';
 	@override String voirAutresAlertes({required Object nombre}) => 'عرض التنبيهات الأخرى (⁨${nombre}⁩)';
-	@override String get remplacementsTitre => 'الاستخلافات المؤكَّدة';
 	@override String get remplacementsVide => 'لا درس لزميل تتولاه الآن.';
 	@override String voirTousRemplacements({required Object nombre}) => 'عرض الكل: الاستخلافات المؤكَّدة (⁨${nombre}⁩)';
 	@override String get heure => 'الساعة';
@@ -12590,7 +12589,6 @@ extension on TraductionsAr {
 			'enseignant.journee.alertesErreur' => 'تعذّرت قراءة تنبيهات الحضور: لم يستجب الاتصال أو الخادم. أعد المحاولة بعد لحظة.',
 			'enseignant.journee.voirAutreAlerte' => 'عرض التنبيه الآخر',
 			'enseignant.journee.voirAutresAlertes' => ({required Object nombre}) => 'عرض التنبيهات الأخرى (⁨${nombre}⁩)',
-			'enseignant.journee.remplacementsTitre' => 'الاستخلافات المؤكَّدة',
 			'enseignant.journee.remplacementsVide' => 'لا درس لزميل تتولاه الآن.',
 			'enseignant.journee.voirTousRemplacements' => ({required Object nombre}) => 'عرض الكل: الاستخلافات المؤكَّدة (⁨${nombre}⁩)',
 			'enseignant.journee.heure' => 'الساعة',
@@ -12635,9 +12633,9 @@ extension on TraductionsAr {
 			'enseignant.ficheGroupe.aucunMembreDetail' => 'الإدارة تكوّن الفصول: هذا الفصل ليس فيه طالب بعد.',
 			'enseignant.ficheGroupe.erreur' => 'تعذّرت قراءة هذا الفصل. أعد المحاولة بعد لحظة.',
 			'enseignant.ficheGroupe.introuvable' => 'هذا الفصل ليس من فصولك',
+			'enseignant.ficheGroupe.introuvableDetail' => 'ربما أُغلق، أو هو لمعلم آخر.',
 			_ => null,
 		} ?? switch (path) {
-			'enseignant.ficheGroupe.introuvableDetail' => 'ربما أُغلق، أو هو لمعلم آخر.',
 			'enseignant.ficheGroupe.revue' => 'فتح مراجعة الفصل',
 			'enseignant.ficheGroupe.ressourcesTitre' => 'الموارد الأخيرة',
 			'enseignant.ficheGroupe.progressionTitre' => 'تقدم الفصل',
@@ -13149,9 +13147,9 @@ extension on TraductionsAr {
 			'tuteur.accueil.heureClasse' => ({required Object heure, required Object ville}) => 'توقيت الفصل: ⁨${heure}⁩ ⁨${ville}⁩',
 			'tuteur.accueil.seanceEnDirect' => 'حصة مباشرة',
 			'tuteur.accueil.seanceTerminee' => 'انتهت الحصة',
+			'tuteur.accueil.seanceAnnulee' => 'لن تُعقد هذه الحصة.',
 			_ => null,
 		} ?? switch (path) {
-			'tuteur.accueil.seanceAnnulee' => 'لن تُعقد هذه الحصة.',
 			'tuteur.accueil.seanceNonTenue' => 'تعذّر عقد هذه الحصة.',
 			'tuteur.accueil.horaireIncertain' => 'فتح القاعة غير مؤكَّد الآن',
 			'tuteur.accueil.pastilleAnnulee' => 'ملغاة',
@@ -13663,9 +13661,9 @@ extension on TraductionsAr {
 			'tc.observation.visite.decompteLu' => ({required Object duree}) => 'الوقت المتبقي: ⁨${duree}⁩',
 			'tc.observation.visite.enDirect' => 'مباشر',
 			'tc.observation.visite.connexion' => 'الاتصال',
+			'tc.observation.visite.reconnexion' => 'إعادة الاتصال',
 			_ => null,
 		} ?? switch (path) {
-			'tc.observation.visite.reconnexion' => 'إعادة الاتصال',
 			'tc.observation.visite.videoCoupee' => 'الفيديو غير متاح',
 			'tc.observation.visite.reconnexionDetail' => 'انقطع الاتصال، جارٍ إعادة الاتصال. يستمر احتساب وقت متابعتك.',
 			'tc.observation.visite.sonRecu' => 'الصوت يصل',
@@ -14177,9 +14175,9 @@ extension on TraductionsAr {
 			'com.communaute.regles.reglesTitre' => 'قواعد النشر',
 			'com.communaute.regles.pasPublicite' => 'لا إعلانات',
 			'com.communaute.regles.pasAffilie' => 'لا روابط تسويق بالعمولة',
+			'com.communaute.regles.pasVente' => 'لا بيع لمنتج أو خدمة',
 			_ => null,
 		} ?? switch (path) {
-			'com.communaute.regles.pasVente' => 'لا بيع لمنتج أو خدمة',
 			'com.communaute.regles.pasSollicitation' => 'لا التماس تجاري',
 			'com.communaute.regles.pasDonnees' => 'لا بيانات شخصية لطالب أو عائلة',
 			'com.communaute.regles.signaler' => 'يُبلَّغ عن المحتوى غير المناسب من قائمة المنشور.',
@@ -14691,9 +14689,9 @@ extension on TraductionsAr {
 			'admin.demandes.faitePar' => ({required Object date, required Object role}) => 'طُلب في ⁨${date}⁩، من ⁨${role}⁩',
 			'admin.demandes.roleGuardian' => 'وليّ أمر',
 			'admin.demandes.roleTeacher' => 'معلم',
+			'admin.demandes.roleStudent' => 'طالب مستقل',
 			_ => null,
 		} ?? switch (path) {
-			'admin.demandes.roleStudent' => 'طالب مستقل',
 			'admin.demandes.roleAdmin' => 'الإدارة',
 			'admin.demandes.roleController' => 'مراقب',
 			'admin.demandes.roleInconnu' => 'طرف في الملف',
@@ -15205,9 +15203,9 @@ extension on TraductionsAr {
 			'admin.comptes.etatProvisoire' => 'مؤقت',
 			'admin.comptes.etatSuspendu' => 'موقوف',
 			'admin.comptes.etatInconnu' => 'حالة غير معروفة',
+			'admin.comptes.roleAdmin' => 'الإدارة',
 			_ => null,
 		} ?? switch (path) {
-			'admin.comptes.roleAdmin' => 'الإدارة',
 			'admin.comptes.roleComptable' => 'محاسب',
 			'admin.comptes.roleControleur' => 'مراقب',
 			'admin.comptes.roleEnseignant' => 'معلم',
@@ -15719,9 +15717,9 @@ extension on TraductionsAr {
 			'comptable.encaissements.prestataire' => 'مزوّد الدفع',
 			'comptable.encaissements.moyen' => 'وسيلة الدفع',
 			'comptable.encaissements.foyer' => 'الأسرة',
+			'comptable.encaissements.date' => 'التاريخ',
 			_ => null,
 		} ?? switch (path) {
-			'comptable.encaissements.date' => 'التاريخ',
 			'comptable.encaissements.etat' => 'الحالة',
 			'comptable.encaissements.devise' => 'العملة',
 			'comptable.encaissements.affectation' => 'التوزيع حسب الملف',
@@ -16233,9 +16231,9 @@ extension on TraductionsAr {
 			'ficheEleve.camera.application' => ({required Object dePrenom}) => 'يُحتسب التغيير عند الدخول التالي لـ⁨${dePrenom}⁩ إلى حصة.',
 			'ficheEleve.camera.distincte' => 'هذا الإعداد لا يغيّر إذن الكاميرا في الجهاز، الذي يطلبه الهاتف لقراءة رمز QR.',
 			'ficheEleve.camera.echec' => 'لم يُحفظ التغيير. أعد المحاولة.',
+			'ficheEleve.camera.horsLigne' => 'أنت غير متصل. يمكن ضبط الكاميرا عند عودة الاتصال.',
 			_ => null,
 		} ?? switch (path) {
-			'ficheEleve.camera.horsLigne' => 'أنت غير متصل. يمكن ضبط الكاميرا عند عودة الاتصال.',
 			'ficheEleve.acces.titre' => 'الوصول إلى Rewayah',
 			'ficheEleve.acces.ligne' => ({required Object dePrenom}) => 'وصول ⁨${dePrenom}⁩',
 			'ficheEleve.acces.pastilleSansEcheance' => 'دون موعد انتهاء',
@@ -16747,9 +16745,9 @@ extension on TraductionsAr {
 			'adulte.historique.videDetail' => 'ستظهر حصصك هنا بعد درسك الأول.',
 			'adulte.maClasse.aPropos' => 'عن هذا الفصل',
 			'adulte.maClasse.participants' => 'المشاركون',
+			'adulte.maClasse.vous' => ({required Object prenom}) => '⁨${prenom}⁩ (أنت)',
 			_ => null,
 		} ?? switch (path) {
-			'adulte.maClasse.vous' => ({required Object prenom}) => '⁨${prenom}⁩ (أنت)',
 			'adulte.maClasse.progression' => 'تقدمي في هذا الفصل',
 			'adulte.maClasse.aucuneClasseDetail' => 'سيظهر فصلك ومشاركوه وموارده هنا بمجرد فتحه.',
 			'adulte.monEspace.role' => 'طالب بالغ',
@@ -17261,9 +17259,9 @@ extension on TraductionsAr {
 			'controleur.historique.sectionMission' => 'الفصل المراقَب',
 			'controleur.historique.sectionObservation' => 'ملاحظة المراقب',
 			'controleur.historique.sectionComplements' => 'التكملات',
+			'controleur.historique.sectionEchanges' => 'المراسلات مع الإدارة',
 			_ => null,
 		} ?? switch (path) {
-			'controleur.historique.sectionEchanges' => 'المراسلات مع الإدارة',
 			'controleur.historique.cleClasse' => 'الفصل',
 			'controleur.historique.cleEnseignant' => 'المعلم',
 			'controleur.historique.cleDate' => 'التاريخ',

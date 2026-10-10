@@ -2609,7 +2609,7 @@ class Traductions$suiviFamille$fr {
 	String detailTitre({required Object dePrenom}) => 'Suivi de la demande ${dePrenom}';
 
 	/// fr: 'Étape en cours : {etape}'
-	String etapeCourante({required Object etape}) => 'Étape en cours : ${etape}';
+	String etapeCourante({required Object etape}) => 'Étape en cours : ${etape}';
 
 	/// fr: 'Toutes les étapes sont franchies.'
 	String get toutFait => 'Toutes les étapes sont franchies.';
@@ -2636,7 +2636,7 @@ class Traductions$suiviFamille$fr {
 	String get retour => 'Retour aux demandes';
 
 	/// fr: 'Heures affichées : heure {deVille}.'
-	String fuseau({required Object deVille}) => 'Heures affichées : heure ${deVille}.';
+	String fuseau({required Object deVille}) => 'Heures affichées : heure ${deVille}.';
 
 	/// fr: '{date} à {heure}'
 	String horodatage({required Object date, required Object heure}) => '${date} à ${heure}';
@@ -2651,7 +2651,7 @@ class Traductions$suiviFamille$fr {
 	late final Traductions$suiviFamille$notification$fr notification = Traductions$suiviFamille$notification$fr.internal(_root);
 
 	/// fr: 'Étape {n} sur {total} : {etape}'
-	String etapeSurTotal({required Object n, required Object total, required Object etape}) => 'Étape ${n} sur ${total} : ${etape}';
+	String etapeSurTotal({required Object n, required Object total, required Object etape}) => 'Étape ${n} sur ${total} : ${etape}';
 
 	late final Traductions$suiviFamille$close$fr close = Traductions$suiviFamille$close$fr.internal(_root);
 }
@@ -2911,7 +2911,7 @@ class Traductions$presentationTuteur$fr {
 	String refusee({required Object prenom}) => 'Demande de ${prenom} refusée.';
 
 	/// fr: 'Votre réponse n'a pas pu être confirmée. La demande reste en attente : réessayez.'
-	String get echecReponse => 'Votre réponse n\'a pas pu être confirmée. La demande reste en attente : réessayez.';
+	String get echecReponse => 'Votre réponse n\'a pas pu être confirmée. La demande reste en attente : réessayez.';
 
 	/// fr: 'Aucune demande de présentation en attente.'
 	String get vide => 'Aucune demande de présentation en attente.';
@@ -2969,13 +2969,13 @@ class Traductions$reprisesAdmin$fr {
 	String get refuser => 'Refuser la reprise';
 
 	/// fr: 'Valider la reprise du foyer par {prenom} ?'
-	String validerQuestion({required Object prenom}) => 'Valider la reprise du foyer par ${prenom} ?';
+	String validerQuestion({required Object prenom}) => 'Valider la reprise du foyer par ${prenom} ?';
 
 	/// fr: 'Cette personne deviendra titulaire du foyer. Cette décision transfère la titularité.'
 	String get validerConsequence => 'Cette personne deviendra titulaire du foyer. Cette décision transfère la titularité.';
 
 	/// fr: 'Refuser la reprise du foyer par {prenom} ?'
-	String refuserQuestion({required Object prenom}) => 'Refuser la reprise du foyer par ${prenom} ?';
+	String refuserQuestion({required Object prenom}) => 'Refuser la reprise du foyer par ${prenom} ?';
 
 	/// fr: 'Aucune permission n'est transférée. La personne pourra déposer une nouvelle demande après le délai prévu.'
 	String get refuserConsequence => 'Aucune permission n\'est transférée. La personne pourra déposer une nouvelle demande après le délai prévu.';
@@ -5690,7 +5690,7 @@ class Traductions$recrutement$invitations$fr {
 	String get champEmail => 'Adresse de courriel de l\'enseignant';
 
 	/// fr: 'Le code est créé pour cette adresse. Transmettez-le à la personne : il n'est pas envoyé automatiquement.'
-	String get aideEmail => 'Le code est créé pour cette adresse. Transmettez-le à la personne : il n\'est pas envoyé automatiquement.';
+	String get aideEmail => 'Le code est créé pour cette adresse. Transmettez-le à la personne : il n\'est pas envoyé automatiquement.';
 
 	/// fr: 'Créer l'invitation'
 	String get inviter => 'Créer l\'invitation';
@@ -5699,7 +5699,7 @@ class Traductions$recrutement$invitations$fr {
 	String get emailInvalide => 'Cette adresse n\'a pas la forme d\'une adresse e-mail. Vérifiez-la, puis réessayez.';
 
 	/// fr: 'Un compte existe déjà pour cette adresse : aucune invitation n'est nécessaire.'
-	String get compteExistant => 'Un compte existe déjà pour cette adresse : aucune invitation n\'est nécessaire.';
+	String get compteExistant => 'Un compte existe déjà pour cette adresse : aucune invitation n\'est nécessaire.';
 
 	/// fr: 'Une invitation est déjà active pour cette adresse. Elle est dans la liste ci-dessous.'
 	String get dejaInvite => 'Une invitation est déjà active pour cette adresse. Elle est dans la liste ci-dessous.';
@@ -5708,13 +5708,13 @@ class Traductions$recrutement$invitations$fr {
 	String get nonAutorise => 'Vous n\'avez pas le droit d\'inviter un enseignant. Adressez-vous à la direction.';
 
 	/// fr: 'Pas de connexion : l'invitation n'a pas été créée. Reconnectez-vous, puis réessayez.'
-	String get horsLigne => 'Pas de connexion : l\'invitation n\'a pas été créée. Reconnectez-vous, puis réessayez.';
+	String get horsLigne => 'Pas de connexion : l\'invitation n\'a pas été créée. Reconnectez-vous, puis réessayez.';
 
 	/// fr: 'La création de l'invitation n'est pas confirmée. Elle existe peut-être : regardez la liste avant de recommencer.'
-	String get erreur => 'La création de l\'invitation n\'est pas confirmée. Elle existe peut-être : regardez la liste avant de recommencer.';
+	String get erreur => 'La création de l\'invitation n\'est pas confirmée. Elle existe peut-être : regardez la liste avant de recommencer.';
 
 	/// fr: 'Invitation créée. Transmettez ce code à l'enseignant : {code}'
-	String creee({required Object code}) => 'Invitation créée. Transmettez ce code à l\'enseignant : ${code}';
+	String creee({required Object code}) => 'Invitation créée. Transmettez ce code à l\'enseignant : ${code}';
 
 	/// fr: 'Invitations'
 	String get liste => 'Invitations';
@@ -5723,7 +5723,7 @@ class Traductions$recrutement$invitations$fr {
 	String get vide => 'Aucune invitation pour le moment';
 
 	/// fr: 'Invitez un enseignant avec son adresse e-mail : le code apparaît ici.'
-	String get videDetail => 'Invitez un enseignant avec son adresse e-mail : le code apparaît ici.';
+	String get videDetail => 'Invitez un enseignant avec son adresse e-mail : le code apparaît ici.';
 
 	/// fr: 'Les invitations n'ont pas pu être lues. Vérifiez la connexion, puis réessayez.'
 	String get erreurListe => 'Les invitations n\'ont pas pu être lues. Vérifiez la connexion, puis réessayez.';
@@ -5752,7 +5752,7 @@ class Traductions$recrutement$invitations$fr {
 	String revoquerPour({required Object email}) => 'Révoquer l\'invitation de ${email}';
 
 	/// fr: 'Révoquer l'invitation de {email} ?'
-	String revoquerQuestion({required Object email}) => 'Révoquer l\'invitation de ${email} ?';
+	String revoquerQuestion({required Object email}) => 'Révoquer l\'invitation de ${email} ?';
 
 	/// fr: 'Le code ne pourra plus servir. Vous pourrez inviter la même adresse de nouveau.'
 	String get revoquerConsequence => 'Le code ne pourra plus servir. Vous pourrez inviter la même adresse de nouveau.';
@@ -5803,7 +5803,7 @@ class Traductions$recrutement$candidat$fr {
 	String get demanderNouvelle => 'Demander une nouvelle invitation';
 
 	/// fr: 'Adresse de la direction copiée : écrivez-lui depuis votre messagerie.'
-	String get contactCopie => 'Adresse de la direction copiée : écrivez-lui depuis votre messagerie.';
+	String get contactCopie => 'Adresse de la direction copiée : écrivez-lui depuis votre messagerie.';
 
 	/// fr: 'Cette invitation a déjà servi.'
 	String get dejaUtilisee => 'Cette invitation a déjà servi.';
@@ -5824,7 +5824,7 @@ class Traductions$recrutement$candidat$fr {
 	String get ressaisir => 'Saisir un autre code';
 
 	/// fr: 'Pas de connexion : le code n'a pas été vérifié. Reconnectez-vous, puis réessayez.'
-	String get horsLigne => 'Pas de connexion : le code n\'a pas été vérifié. Reconnectez-vous, puis réessayez.';
+	String get horsLigne => 'Pas de connexion : le code n\'a pas été vérifié. Reconnectez-vous, puis réessayez.';
 
 	/// fr: 'Le code n'a pas pu être vérifié. Réessayez dans un instant.'
 	String get erreur => 'Le code n\'a pas pu être vérifié. Réessayez dans un instant.';
@@ -5848,10 +5848,10 @@ class Traductions$recrutement$signature$fr {
 	String version({required Object version}) => 'Version ${version}';
 
 	/// fr: 'Empreinte du texte : {empreinte}'
-	String empreinte({required Object empreinte}) => 'Empreinte du texte : ${empreinte}';
+	String empreinte({required Object empreinte}) => 'Empreinte du texte : ${empreinte}';
 
 	/// fr: 'Le texte reçu ne correspond pas à son empreinte : la signature n'est pas proposée. Réessayez plus tard ou prévenez la direction.'
-	String get texteAltere => 'Le texte reçu ne correspond pas à son empreinte : la signature n\'est pas proposée. Réessayez plus tard ou prévenez la direction.';
+	String get texteAltere => 'Le texte reçu ne correspond pas à son empreinte : la signature n\'est pas proposée. Réessayez plus tard ou prévenez la direction.';
 
 	/// fr: 'Votre nom complet'
 	String get champNom => 'Votre nom complet';
@@ -5863,7 +5863,7 @@ class Traductions$recrutement$signature$fr {
 	String get nomVide => 'Saisissez votre nom complet pour signer.';
 
 	/// fr: 'Ce nom est trop long : abrégez-le.'
-	String get nomTropLong => 'Ce nom est trop long : abrégez-le.';
+	String get nomTropLong => 'Ce nom est trop long : abrégez-le.';
 
 	/// fr: 'Je confirme avoir lu ce contrat.'
 	String get accuse => 'Je confirme avoir lu ce contrat.';
@@ -5881,7 +5881,7 @@ class Traductions$recrutement$signature$fr {
 	String get copie => 'Télécharger ma copie';
 
 	/// fr: 'Le lien de votre copie est copié. Collez-le dans votre navigateur : il reste valable quelques minutes.'
-	String get copieLien => 'Le lien de votre copie est copié. Collez-le dans votre navigateur : il reste valable quelques minutes.';
+	String get copieLien => 'Le lien de votre copie est copié. Collez-le dans votre navigateur : il reste valable quelques minutes.';
 
 	/// fr: 'Votre copie n'a pas pu être préparée. Réessayez dans un instant.'
 	String get copieErreur => 'Votre copie n\'a pas pu être préparée. Réessayez dans un instant.';
@@ -5890,10 +5890,10 @@ class Traductions$recrutement$signature$fr {
 	String nouvelleVersion({required Object version}) => 'Le contrat a été mis à jour depuis votre dernière signature (version ${version}). Relisez-le, puis signez de nouveau.';
 
 	/// fr: 'Le contrat a été mis à jour pendant votre lecture. Le texte est rechargé : relisez-le, puis signez de nouveau.'
-	String get versionPerimee => 'Le contrat a été mis à jour pendant votre lecture. Le texte est rechargé : relisez-le, puis signez de nouveau.';
+	String get versionPerimee => 'Le contrat a été mis à jour pendant votre lecture. Le texte est rechargé : relisez-le, puis signez de nouveau.';
 
 	/// fr: 'Pas de connexion : le contrat n'est pas signé. Reconnectez-vous, puis réessayez.'
-	String get horsLigne => 'Pas de connexion : le contrat n\'est pas signé. Reconnectez-vous, puis réessayez.';
+	String get horsLigne => 'Pas de connexion : le contrat n\'est pas signé. Reconnectez-vous, puis réessayez.';
 
 	/// fr: 'La signature n'est pas confirmée. Regardez si le contrat apparaît signé avant de recommencer.'
 	String get erreur => 'La signature n\'est pas confirmée. Regardez si le contrat apparaît signé avant de recommencer.';
@@ -5944,19 +5944,19 @@ class Traductions$recrutement$statuts$fr {
 	String get nonSigne => 'Non signé';
 
 	/// fr: 'Contrat non signé à la version courante : le dossier ne peut pas être approuvé tant que le contrat et l'accusé ne sont pas signés à la version courante.'
-	String get bloque => 'Contrat non signé à la version courante : le dossier ne peut pas être approuvé tant que le contrat et l\'accusé ne sont pas signés à la version courante.';
+	String get bloque => 'Contrat non signé à la version courante : le dossier ne peut pas être approuvé tant que le contrat et l\'accusé ne sont pas signés à la version courante.';
 
 	/// fr: 'Contrat non signé à la version courante. Le dossier n'a pas été activé : l'enseignant doit signer, puis actualisez le dossier.'
-	String get refuse => 'Contrat non signé à la version courante. Le dossier n\'a pas été activé : l\'enseignant doit signer, puis actualisez le dossier.';
+	String get refuse => 'Contrat non signé à la version courante. Le dossier n\'a pas été activé : l\'enseignant doit signer, puis actualisez le dossier.';
 
 	/// fr: 'Manque : le contrat.'
-	String get manqueContrat => 'Manque : le contrat.';
+	String get manqueContrat => 'Manque : le contrat.';
 
 	/// fr: 'Manque : l'accusé.'
-	String get manqueAccuse => 'Manque : l\'accusé.';
+	String get manqueAccuse => 'Manque : l\'accusé.';
 
 	/// fr: 'Manquent : le contrat et l'accusé.'
-	String get manqueLesDeux => 'Manquent : le contrat et l\'accusé.';
+	String get manqueLesDeux => 'Manquent : le contrat et l\'accusé.';
 
 	/// fr: 'Inviter un enseignant'
 	String get inviter => 'Inviter un enseignant';
@@ -6306,7 +6306,7 @@ class Traductions$dossiers$accesKyc$fr {
 	String get exceptionMessage => 'Vous pouvez ouvrir les pièces des deux genres. Chaque ouverture hors de votre genre est tracée.';
 
 	/// fr: 'Cette ouverture est hors de votre genre : elle sera tracée.'
-	String get exceptionPiece => 'Cette ouverture est hors de votre genre : elle sera tracée.';
+	String get exceptionPiece => 'Cette ouverture est hors de votre genre : elle sera tracée.';
 
 	/// fr: 'Vérification de vos droits d'accès…'
 	String get verification => 'Vérification de vos droits d\'accès…';
@@ -13849,7 +13849,7 @@ class Traductions$adulte$sortie$fr {
 	String get pourquoiPhrase => 'Cette mesure permet de garantir la sécurité des foyers et la bonne gestion des accès des enfants.';
 
 	/// fr: 'Un foyer personnel a été créé pour vous : vous y retrouvez votre compte et vos élèves.'
-	String get foyerPersonnel => 'Un foyer personnel a été créé pour vous : vous y retrouvez votre compte et vos élèves.';
+	String get foyerPersonnel => 'Un foyer personnel a été créé pour vous : vous y retrouvez votre compte et vos élèves.';
 }
 
 // Path: adulte.reprise
@@ -14573,19 +14573,19 @@ class Traductions$suiviFamille$notification$fr {
 	// Translations
 
 	/// fr: 'Demande {dePrenom} : en liste d'attente'
-	String enAttente({required Object dePrenom}) => 'Demande ${dePrenom} : en liste d\'attente';
+	String enAttente({required Object dePrenom}) => 'Demande ${dePrenom} : en liste d\'attente';
 
 	/// fr: 'Demande {dePrenom} : élève intégré à la classe'
-	String eleveIntegre({required Object dePrenom}) => 'Demande ${dePrenom} : élève intégré à la classe';
+	String eleveIntegre({required Object dePrenom}) => 'Demande ${dePrenom} : élève intégré à la classe';
 
 	/// fr: 'Demande {dePrenom} : première séance effectuée'
-	String premiereSeance({required Object dePrenom}) => 'Demande ${dePrenom} : première séance effectuée';
+	String premiereSeance({required Object dePrenom}) => 'Demande ${dePrenom} : première séance effectuée';
 
 	/// fr: 'Demande {dePrenom} : {motif}'
-	String close({required Object dePrenom, required Object motif}) => 'Demande ${dePrenom} : ${motif}';
+	String close({required Object dePrenom, required Object motif}) => 'Demande ${dePrenom} : ${motif}';
 
 	/// fr: 'Demande {dePrenom} : élève déjà en classe, demande classée'
-	String dejaEnClasse({required Object dePrenom}) => 'Demande ${dePrenom} : élève déjà en classe, demande classée';
+	String dejaEnClasse({required Object dePrenom}) => 'Demande ${dePrenom} : élève déjà en classe, demande classée';
 }
 
 // Path: suiviFamille.close
@@ -17796,7 +17796,7 @@ class Traductions$dossiers$accesKyc$refus$fr {
 	String get genreDifferent => 'Cette pièce est réservée à un administrateur du même genre que le candidat.';
 
 	/// fr: 'Votre genre n'est pas renseigné : aucune pièce ne peut s'ouvrir. Demandez à la direction de le renseigner.'
-	String get adminSansGenre => 'Votre genre n\'est pas renseigné : aucune pièce ne peut s\'ouvrir. Demandez à la direction de le renseigner.';
+	String get adminSansGenre => 'Votre genre n\'est pas renseigné : aucune pièce ne peut s\'ouvrir. Demandez à la direction de le renseigner.';
 
 	/// fr: 'Votre profil ne peut pas consulter les pièces d'identité.'
 	String get profilNonAutorise => 'Votre profil ne peut pas consulter les pièces d\'identité.';
@@ -22380,7 +22380,7 @@ class Traductions$suiviFamille$close$motif$fr {
 	String get refusDirection => 'La direction n\'a pas retenu cette demande.';
 
 	/// fr: '{prenom} a déjà une place en classe : cette demande n'est plus nécessaire.'
-	String dejaEnClasse({required Object prenom}) => '${prenom} a déjà une place en classe : cette demande n\'est plus nécessaire.';
+	String dejaEnClasse({required Object prenom}) => '${prenom} a déjà une place en classe : cette demande n\'est plus nécessaire.';
 
 	/// fr: 'Cette demande est close.'
 	String get inconnu => 'Cette demande est close.';
@@ -29312,18 +29312,18 @@ extension on Traductions {
 			'recrutement.invitations.onglet' => 'Invitations',
 			'recrutement.invitations.sousTitre' => 'Un enseignant ne peut s\'inscrire qu\'avec un code d\'invitation. Le code sert une seule fois et expire.',
 			'recrutement.invitations.champEmail' => 'Adresse de courriel de l\'enseignant',
-			'recrutement.invitations.aideEmail' => 'Le code est créé pour cette adresse. Transmettez-le à la personne : il n\'est pas envoyé automatiquement.',
+			'recrutement.invitations.aideEmail' => 'Le code est créé pour cette adresse. Transmettez-le à la personne : il n\'est pas envoyé automatiquement.',
 			'recrutement.invitations.inviter' => 'Créer l\'invitation',
 			'recrutement.invitations.emailInvalide' => 'Cette adresse n\'a pas la forme d\'une adresse e-mail. Vérifiez-la, puis réessayez.',
-			'recrutement.invitations.compteExistant' => 'Un compte existe déjà pour cette adresse : aucune invitation n\'est nécessaire.',
+			'recrutement.invitations.compteExistant' => 'Un compte existe déjà pour cette adresse : aucune invitation n\'est nécessaire.',
 			'recrutement.invitations.dejaInvite' => 'Une invitation est déjà active pour cette adresse. Elle est dans la liste ci-dessous.',
 			'recrutement.invitations.nonAutorise' => 'Vous n\'avez pas le droit d\'inviter un enseignant. Adressez-vous à la direction.',
-			'recrutement.invitations.horsLigne' => 'Pas de connexion : l\'invitation n\'a pas été créée. Reconnectez-vous, puis réessayez.',
-			'recrutement.invitations.erreur' => 'La création de l\'invitation n\'est pas confirmée. Elle existe peut-être : regardez la liste avant de recommencer.',
-			'recrutement.invitations.creee' => ({required Object code}) => 'Invitation créée. Transmettez ce code à l\'enseignant : ${code}',
+			'recrutement.invitations.horsLigne' => 'Pas de connexion : l\'invitation n\'a pas été créée. Reconnectez-vous, puis réessayez.',
+			'recrutement.invitations.erreur' => 'La création de l\'invitation n\'est pas confirmée. Elle existe peut-être : regardez la liste avant de recommencer.',
+			'recrutement.invitations.creee' => ({required Object code}) => 'Invitation créée. Transmettez ce code à l\'enseignant : ${code}',
 			'recrutement.invitations.liste' => 'Invitations',
 			'recrutement.invitations.vide' => 'Aucune invitation pour le moment',
-			'recrutement.invitations.videDetail' => 'Invitez un enseignant avec son adresse e-mail : le code apparaît ici.',
+			'recrutement.invitations.videDetail' => 'Invitez un enseignant avec son adresse e-mail : le code apparaît ici.',
 			'recrutement.invitations.erreurListe' => 'Les invitations n\'ont pas pu être lues. Vérifiez la connexion, puis réessayez.',
 			'recrutement.invitations.sansDonnees' => 'Les invitations ne sont pas lisibles hors connexion.',
 			'recrutement.invitations.indisponibleTitre' => 'Invitations d\'enseignants',
@@ -29336,7 +29336,7 @@ extension on Traductions {
 			'recrutement.invitations.utiliseeLe' => ({required Object date}) => 'Utilisée le ${date}',
 			'recrutement.invitations.revoquer' => 'Révoquer',
 			'recrutement.invitations.revoquerPour' => ({required Object email}) => 'Révoquer l\'invitation de ${email}',
-			'recrutement.invitations.revoquerQuestion' => ({required Object email}) => 'Révoquer l\'invitation de ${email} ?',
+			'recrutement.invitations.revoquerQuestion' => ({required Object email}) => 'Révoquer l\'invitation de ${email} ?',
 			'recrutement.invitations.revoquerConsequence' => 'Le code ne pourra plus servir. Vous pourrez inviter la même adresse de nouveau.',
 			'recrutement.invitations.revoquerEchec' => 'La révocation n\'est pas confirmée. Actualisez la liste avant de recommencer.',
 			'recrutement.candidat.titre' => 'Votre code',
@@ -29350,34 +29350,34 @@ extension on Traductions {
 			'recrutement.candidat.expiree' => 'Cette invitation a expiré.',
 			'recrutement.candidat.expireeDetail' => 'Demandez une nouvelle invitation à la direction de l\'académie.',
 			'recrutement.candidat.demanderNouvelle' => 'Demander une nouvelle invitation',
-			'recrutement.candidat.contactCopie' => 'Adresse de la direction copiée : écrivez-lui depuis votre messagerie.',
+			'recrutement.candidat.contactCopie' => 'Adresse de la direction copiée : écrivez-lui depuis votre messagerie.',
 			'recrutement.candidat.dejaUtilisee' => 'Cette invitation a déjà servi.',
 			'recrutement.candidat.dejaUtiliseeDetail' => 'Si c\'est vous, connectez-vous avec le compte créé.',
 			'recrutement.candidat.seConnecter' => 'Me connecter',
 			'recrutement.candidat.inconnue' => 'Code non reconnu.',
 			'recrutement.candidat.inconnueDetail' => 'Vérifiez le code, puis saisissez-le de nouveau.',
 			'recrutement.candidat.ressaisir' => 'Saisir un autre code',
-			'recrutement.candidat.horsLigne' => 'Pas de connexion : le code n\'a pas été vérifié. Reconnectez-vous, puis réessayez.',
+			'recrutement.candidat.horsLigne' => 'Pas de connexion : le code n\'a pas été vérifié. Reconnectez-vous, puis réessayez.',
 			'recrutement.candidat.erreur' => 'Le code n\'a pas pu être vérifié. Réessayez dans un instant.',
 			'recrutement.candidat.indisponible' => 'La vérification des invitations sera disponible au branchement du serveur.',
 			'recrutement.signature.titre' => 'Contrat',
 			'recrutement.signature.version' => ({required Object version}) => 'Version ${version}',
-			'recrutement.signature.empreinte' => ({required Object empreinte}) => 'Empreinte du texte : ${empreinte}',
-			'recrutement.signature.texteAltere' => 'Le texte reçu ne correspond pas à son empreinte : la signature n\'est pas proposée. Réessayez plus tard ou prévenez la direction.',
+			'recrutement.signature.empreinte' => ({required Object empreinte}) => 'Empreinte du texte : ${empreinte}',
+			'recrutement.signature.texteAltere' => 'Le texte reçu ne correspond pas à son empreinte : la signature n\'est pas proposée. Réessayez plus tard ou prévenez la direction.',
 			'recrutement.signature.champNom' => 'Votre nom complet',
 			'recrutement.signature.aideNom' => 'Tapez votre prénom et votre nom, comme sur votre pièce d\'identité.',
 			'recrutement.signature.nomVide' => 'Saisissez votre nom complet pour signer.',
-			'recrutement.signature.nomTropLong' => 'Ce nom est trop long : abrégez-le.',
+			'recrutement.signature.nomTropLong' => 'Ce nom est trop long : abrégez-le.',
 			'recrutement.signature.accuse' => 'Je confirme avoir lu ce contrat.',
 			'recrutement.signature.signer' => 'Signer le contrat',
 			'recrutement.signature.dejaSigne' => ({required Object date, required Object version}) => 'Signé le ${date}, version ${version}.',
 			'recrutement.signature.signePar' => ({required Object nom}) => 'Signé par ${nom}',
 			'recrutement.signature.copie' => 'Télécharger ma copie',
-			'recrutement.signature.copieLien' => 'Le lien de votre copie est copié. Collez-le dans votre navigateur : il reste valable quelques minutes.',
+			'recrutement.signature.copieLien' => 'Le lien de votre copie est copié. Collez-le dans votre navigateur : il reste valable quelques minutes.',
 			'recrutement.signature.copieErreur' => 'Votre copie n\'a pas pu être préparée. Réessayez dans un instant.',
 			'recrutement.signature.nouvelleVersion' => ({required Object version}) => 'Le contrat a été mis à jour depuis votre dernière signature (version ${version}). Relisez-le, puis signez de nouveau.',
-			'recrutement.signature.versionPerimee' => 'Le contrat a été mis à jour pendant votre lecture. Le texte est rechargé : relisez-le, puis signez de nouveau.',
-			'recrutement.signature.horsLigne' => 'Pas de connexion : le contrat n\'est pas signé. Reconnectez-vous, puis réessayez.',
+			'recrutement.signature.versionPerimee' => 'Le contrat a été mis à jour pendant votre lecture. Le texte est rechargé : relisez-le, puis signez de nouveau.',
+			'recrutement.signature.horsLigne' => 'Pas de connexion : le contrat n\'est pas signé. Reconnectez-vous, puis réessayez.',
 			'recrutement.signature.erreur' => 'La signature n\'est pas confirmée. Regardez si le contrat apparaît signé avant de recommencer.',
 			'recrutement.signature.nonConnecte' => 'Votre session a expiré. Reconnectez-vous pour signer.',
 			'recrutement.signature.introuvable' => 'Aucun contrat n\'est publié pour le moment. Prévenez la direction.',
@@ -29391,11 +29391,11 @@ extension on Traductions {
 			'recrutement.statuts.signeCourante' => 'Signé, version courante',
 			'recrutement.statuts.signeAncienne' => ({required Object version}) => 'Signé, ancienne version ${version}',
 			'recrutement.statuts.nonSigne' => 'Non signé',
-			'recrutement.statuts.bloque' => 'Contrat non signé à la version courante : le dossier ne peut pas être approuvé tant que le contrat et l\'accusé ne sont pas signés à la version courante.',
-			'recrutement.statuts.refuse' => 'Contrat non signé à la version courante. Le dossier n\'a pas été activé : l\'enseignant doit signer, puis actualisez le dossier.',
-			'recrutement.statuts.manqueContrat' => 'Manque : le contrat.',
-			'recrutement.statuts.manqueAccuse' => 'Manque : l\'accusé.',
-			'recrutement.statuts.manqueLesDeux' => 'Manquent : le contrat et l\'accusé.',
+			'recrutement.statuts.bloque' => 'Contrat non signé à la version courante : le dossier ne peut pas être approuvé tant que le contrat et l\'accusé ne sont pas signés à la version courante.',
+			'recrutement.statuts.refuse' => 'Contrat non signé à la version courante. Le dossier n\'a pas été activé : l\'enseignant doit signer, puis actualisez le dossier.',
+			'recrutement.statuts.manqueContrat' => 'Manque : le contrat.',
+			'recrutement.statuts.manqueAccuse' => 'Manque : l\'accusé.',
+			'recrutement.statuts.manqueLesDeux' => 'Manquent : le contrat et l\'accusé.',
 			'recrutement.statuts.inviter' => 'Inviter un enseignant',
 			'dossiers.titre' => 'Dossiers à valider',
 			'dossiers.sousTitre' => 'Examinez les dossiers prêts pour une décision.',
@@ -29519,12 +29519,12 @@ extension on Traductions {
 			'dossiers.inscritDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Inscrit depuis ${jours} jour', other: 'Inscrit depuis ${jours} jours', ), 
 			'dossiers.accesKyc.exceptionTitre' => 'Exception du super administrateur active',
 			'dossiers.accesKyc.exceptionMessage' => 'Vous pouvez ouvrir les pièces des deux genres. Chaque ouverture hors de votre genre est tracée.',
-			'dossiers.accesKyc.exceptionPiece' => 'Cette ouverture est hors de votre genre : elle sera tracée.',
+			'dossiers.accesKyc.exceptionPiece' => 'Cette ouverture est hors de votre genre : elle sera tracée.',
 			'dossiers.accesKyc.verification' => 'Vérification de vos droits d\'accès…',
 			'dossiers.accesKyc.verificationEchec' => 'Vos droits d\'accès à cette pièce n\'ont pas pu être vérifiés.',
 			'dossiers.accesKyc.reessayer' => 'Réessayer',
 			'dossiers.accesKyc.refus.genreDifferent' => 'Cette pièce est réservée à un administrateur du même genre que le candidat.',
-			'dossiers.accesKyc.refus.adminSansGenre' => 'Votre genre n\'est pas renseigné : aucune pièce ne peut s\'ouvrir. Demandez à la direction de le renseigner.',
+			'dossiers.accesKyc.refus.adminSansGenre' => 'Votre genre n\'est pas renseigné : aucune pièce ne peut s\'ouvrir. Demandez à la direction de le renseigner.',
 			'dossiers.accesKyc.refus.profilNonAutorise' => 'Votre profil ne peut pas consulter les pièces d\'identité.',
 			'admin.tableau.titre' => 'Centre de commande',
 			'admin.tableau.dossiers' => 'Dossiers à valider',
@@ -33022,7 +33022,7 @@ extension on Traductions {
 			'adulte.sortie.delaiPhrase' => ({required Object date}) => 'Une nouvelle demande pourra être déposée à partir du ${date}. Elle devra ensuite être validée par l\'administration.',
 			'adulte.sortie.pourquoi' => 'Pourquoi cette attente ?',
 			'adulte.sortie.pourquoiPhrase' => 'Cette mesure permet de garantir la sécurité des foyers et la bonne gestion des accès des enfants.',
-			'adulte.sortie.foyerPersonnel' => 'Un foyer personnel a été créé pour vous : vous y retrouvez votre compte et vos élèves.',
+			'adulte.sortie.foyerPersonnel' => 'Un foyer personnel a été créé pour vous : vous y retrouvez votre compte et vos élèves.',
 			'adulte.reprise.titre' => 'Demande de reprise du foyer',
 			'adulte.reprise.explication' => 'Utilisez cette démarche si le titulaire du foyer est décédé. La demande sera signalée au compte concerné et examinée par l\'administration.',
 			'adulte.reprise.reprisTitre' => 'Ce qui sera repris',
@@ -33251,7 +33251,7 @@ extension on Traductions {
 			'suiviFamille.contexte' => 'Chaque demande avance étape par étape. Vous êtes prévenu à chaque passage.',
 			'suiviFamille.carteTitre' => ({required Object dePrenom}) => 'Demande ${dePrenom}',
 			'suiviFamille.detailTitre' => ({required Object dePrenom}) => 'Suivi de la demande ${dePrenom}',
-			'suiviFamille.etapeCourante' => ({required Object etape}) => 'Étape en cours : ${etape}',
+			'suiviFamille.etapeCourante' => ({required Object etape}) => 'Étape en cours : ${etape}',
 			'suiviFamille.toutFait' => 'Toutes les étapes sont franchies.',
 			'suiviFamille.voirSuivi' => 'Voir le suivi',
 			'suiviFamille.vide' => 'Aucune demande pour le moment.',
@@ -33260,7 +33260,7 @@ extension on Traductions {
 			'suiviFamille.sansDonnees' => 'vos demandes',
 			'suiviFamille.introuvable' => 'Cette demande n\'existe plus ou n\'est pas la vôtre.',
 			'suiviFamille.retour' => 'Retour aux demandes',
-			'suiviFamille.fuseau' => ({required Object deVille}) => 'Heures affichées : heure ${deVille}.',
+			'suiviFamille.fuseau' => ({required Object deVille}) => 'Heures affichées : heure ${deVille}.',
 			'suiviFamille.horodatage' => ({required Object date, required Object heure}) => '${date} à ${heure}',
 			'suiviFamille.prevue' => ({required Object date, required Object heure}) => 'Prévue le ${date} à ${heure}',
 			'suiviFamille.etapes.envoyee' => 'Demande envoyée',
@@ -33280,12 +33280,12 @@ extension on Traductions {
 			'suiviFamille.intervalle.heures' => ({required Object n}) => '${n} heures plus tard',
 			'suiviFamille.intervalle.jour' => '1 jour plus tard',
 			'suiviFamille.intervalle.jours' => ({required Object n}) => '${n} jours plus tard',
-			'suiviFamille.notification.enAttente' => ({required Object dePrenom}) => 'Demande ${dePrenom} : en liste d\'attente',
-			'suiviFamille.notification.eleveIntegre' => ({required Object dePrenom}) => 'Demande ${dePrenom} : élève intégré à la classe',
-			'suiviFamille.notification.premiereSeance' => ({required Object dePrenom}) => 'Demande ${dePrenom} : première séance effectuée',
-			'suiviFamille.notification.close' => ({required Object dePrenom, required Object motif}) => 'Demande ${dePrenom} : ${motif}',
-			'suiviFamille.notification.dejaEnClasse' => ({required Object dePrenom}) => 'Demande ${dePrenom} : élève déjà en classe, demande classée',
-			'suiviFamille.etapeSurTotal' => ({required Object n, required Object total, required Object etape}) => 'Étape ${n} sur ${total} : ${etape}',
+			'suiviFamille.notification.enAttente' => ({required Object dePrenom}) => 'Demande ${dePrenom} : en liste d\'attente',
+			'suiviFamille.notification.eleveIntegre' => ({required Object dePrenom}) => 'Demande ${dePrenom} : élève intégré à la classe',
+			'suiviFamille.notification.premiereSeance' => ({required Object dePrenom}) => 'Demande ${dePrenom} : première séance effectuée',
+			'suiviFamille.notification.close' => ({required Object dePrenom, required Object motif}) => 'Demande ${dePrenom} : ${motif}',
+			'suiviFamille.notification.dejaEnClasse' => ({required Object dePrenom}) => 'Demande ${dePrenom} : élève déjà en classe, demande classée',
+			'suiviFamille.etapeSurTotal' => ({required Object n, required Object total, required Object etape}) => 'Étape ${n} sur ${total} : ${etape}',
 			'suiviFamille.close.etat' => 'Demande close',
 			'suiviFamille.close.suite' => ({required Object prenom}) => 'Vous pouvez choisir un autre créneau pour ${prenom}.',
 			'suiviFamille.close.suiteSansChoix' => 'Rien d\'autre à faire de votre côté.',
@@ -33294,7 +33294,7 @@ extension on Traductions {
 			'suiviFamille.close.motif.offreRetiree' => 'Ce créneau n\'est plus proposé.',
 			'suiviFamille.close.motif.classeNonConstituee' => 'La classe de ce créneau n\'a pas pu être constituée.',
 			'suiviFamille.close.motif.refusDirection' => 'La direction n\'a pas retenu cette demande.',
-			'suiviFamille.close.motif.dejaEnClasse' => ({required Object prenom}) => '${prenom} a déjà une place en classe : cette demande n\'est plus nécessaire.',
+			'suiviFamille.close.motif.dejaEnClasse' => ({required Object prenom}) => '${prenom} a déjà une place en classe : cette demande n\'est plus nécessaire.',
 			'suiviFamille.close.motif.inconnu' => 'Cette demande est close.',
 			'suiviDemandes.titre' => 'Suivi des demandes de créneau',
 			'suiviDemandes.contexte' => 'Chaque demande avance en trois étapes. Vous êtes prévenu à chaque passage.',
@@ -35116,7 +35116,7 @@ extension on Traductions {
 			'presentationTuteur.refuser' => 'Refuser',
 			'presentationTuteur.acceptee' => ({required Object prenom}) => 'Présentation standard activée pour ${prenom}.',
 			'presentationTuteur.refusee' => ({required Object prenom}) => 'Demande de ${prenom} refusée.',
-			'presentationTuteur.echecReponse' => 'Votre réponse n\'a pas pu être confirmée. La demande reste en attente : réessayez.',
+			'presentationTuteur.echecReponse' => 'Votre réponse n\'a pas pu être confirmée. La demande reste en attente : réessayez.',
 			'presentationTuteur.vide' => 'Aucune demande de présentation en attente.',
 			'presentationTuteur.erreur' => 'Les demandes n\'ont pas pu être chargées. Réessayez.',
 			'presentationTuteur.sansDonnees' => 'les demandes de présentation',
@@ -35135,9 +35135,9 @@ extension on Traductions {
 			'reprisesAdmin.refuseeInfo' => 'Le titulaire a refusé cette demande. Aucune décision n\'est attendue.',
 			'reprisesAdmin.valider' => 'Valider la reprise',
 			'reprisesAdmin.refuser' => 'Refuser la reprise',
-			'reprisesAdmin.validerQuestion' => ({required Object prenom}) => 'Valider la reprise du foyer par ${prenom} ?',
+			'reprisesAdmin.validerQuestion' => ({required Object prenom}) => 'Valider la reprise du foyer par ${prenom} ?',
 			'reprisesAdmin.validerConsequence' => 'Cette personne deviendra titulaire du foyer. Cette décision transfère la titularité.',
-			'reprisesAdmin.refuserQuestion' => ({required Object prenom}) => 'Refuser la reprise du foyer par ${prenom} ?',
+			'reprisesAdmin.refuserQuestion' => ({required Object prenom}) => 'Refuser la reprise du foyer par ${prenom} ?',
 			'reprisesAdmin.refuserConsequence' => 'Aucune permission n\'est transférée. La personne pourra déposer une nouvelle demande après le délai prévu.',
 			'reprisesAdmin.validee' => 'Reprise validée.',
 			'reprisesAdmin.refusee' => 'Reprise refusée.',

@@ -1078,18 +1078,6 @@ motifs.refusDossier.expiree
 motifs.refusDossier.illisible
 motifs.refusDossier.nom
 motifs.refusDossier.nonTransmise
-motifs.reglageDuree.horaire
-motifs.reglageDuree.pause
-motifs.reglageDuree.plusDeTemps
-motifs.reglageDuree.tropLongue
-motifs.reglageEnseignant.fratrie
-motifs.reglageEnseignant.fuseau
-motifs.reglageEnseignant.horaire
-motifs.reglageEnseignant.niveau
-motifs.reglageMinimum.duree
-motifs.reglageMinimum.ecourtees
-motifs.reglageMinimum.horaire
-motifs.reglageMinimum.reseau
 motifs.retraitEleve.ecartNiveau
 motifs.retraitEleve.famille
 motifs.retraitEleve.finInscription
@@ -1335,4 +1323,3 @@ suiviFamille.vide
 suiviFamille.voirSuivi
 tc.bibliotheque.indisponible.invitation
 tc.observation.refus.indisponibleInvitation
-tuteur.reglages.demandeManqueValeur

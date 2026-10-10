@@ -1259,7 +1259,6 @@
       "alertesErreur": "تعذّرت قراءة تنبيهات الحضور: لم يستجب الاتصال أو الخادم. أعد المحاولة بعد لحظة.",
       "voirAutreAlerte": "عرض التنبيه الآخر",
       "voirAutresAlertes": "عرض التنبيهات الأخرى (\u2068{nombre}\u2069)",
-      "remplacementsTitre": "الاستخلافات المؤكَّدة",
       "remplacementsVide": "لا درس لزميل تتولاه الآن.",
       "voirTousRemplacements": "عرض الكل: الاستخلافات المؤكَّدة (\u2068{nombre}\u2069)",
       "heure": "الساعة",
