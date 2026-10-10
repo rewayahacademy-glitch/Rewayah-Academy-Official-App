@@ -253,27 +253,26 @@ const String _baseFinance = 'aebd21a5';
   }
 
   // JONCTION-LIGNES-1 : sur la branche d'integration, la ligne ccr (qui porte
-  // le backend de ChatGPT, K-68) est un ancetre de HEAD ; la frontiere est
-  // alors « rien sous supabase/ depuis ccr » : ce que la voie et la
-  // jonction ajoutent n'y touche pas.
+  // le backend de ChatGPT, K-68) a ete reunie dans HEAD ; la frontiere est
+  // alors « rien sous supabase/ depuis le dernier point de ccr reuni » : ce
+  // que la voie et la jonction ajoutent n'y touche pas. Ce point est le
+  // merge-base de HEAD et de ccr, pas la tete de ccr : ccr avance apres la
+  // jonction (verification du 10/10), et exiger qu'elle soit un ancetre
+  // faisait retomber la garde sur la base de la voie, backend compris.
+  // Sur la voie seule, ce merge-base est le depart de la voie (ccr jamais
+  // reunie) : la base de la voie reste alors la reference.
   for (final String branche in <String>[
     'origin/ccr-1b1bfa0b-m1kvkk',
     'ccr-1b1bfa0b-m1kvkk',
   ]) {
-    final ProcessResult ancetre = Process.runSync('git', <String>[
+    final String? reunie = commit(<String>['merge-base', 'HEAD', branche]);
+    final String? depart = commit(<String>[
       'merge-base',
-      '--is-ancestor',
+      _baseFinance,
       branche,
-      'HEAD',
     ]);
-    essais.add(
-      'git merge-base --is-ancestor $branche HEAD -> ${ancetre.exitCode}',
-    );
-    if (ancetre.exitCode == 0) {
-      if (commit(<String>['rev-parse', '--verify', '$branche^{commit}'])
-          case final String ccr) {
-        return (reference: ccr, essais: essais);
-      }
+    if (reunie != null && depart != null && reunie != depart) {
+      return (reference: reunie, essais: essais);
     }
   }
   if (commit(<String>['rev-parse', '--verify', '$_baseFinance^{commit}'])
