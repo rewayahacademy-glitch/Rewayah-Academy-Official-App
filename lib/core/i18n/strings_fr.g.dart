@@ -89,6 +89,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$adulte$fr adulte = Traductions$adulte$fr.internal(_root);
 	late final Traductions$formulaire$fr formulaire = Traductions$formulaire$fr.internal(_root);
 	late final Traductions$motifs$fr motifs = Traductions$motifs$fr.internal(_root);
+	late final Traductions$suiviFamille$fr suiviFamille = Traductions$suiviFamille$fr.internal(_root);
 	late final Traductions$suiviDemandes$fr suiviDemandes = Traductions$suiviDemandes$fr.internal(_root);
 	late final Traductions$alertes$fr alertes = Traductions$alertes$fr.internal(_root);
 	late final Traductions$argent$fr argent = Traductions$argent$fr.internal(_root);
@@ -2572,6 +2573,69 @@ class Traductions$motifs$fr {
 	late final Traductions$motifs$reglageDuree$fr reglageDuree = Traductions$motifs$reglageDuree$fr.internal(_root);
 	late final Traductions$motifs$reglageMinimum$fr reglageMinimum = Traductions$motifs$reglageMinimum$fr.internal(_root);
 	late final Traductions$motifs$signalement$fr signalement = Traductions$motifs$signalement$fr.internal(_root);
+}
+
+// Path: suiviFamille
+class Traductions$suiviFamille$fr {
+	Traductions$suiviFamille$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Suivi des demandes'
+	String get titre => 'Suivi des demandes';
+
+	/// fr: 'Chaque demande avance étape par étape. Vous êtes prévenu à chaque passage.'
+	String get contexte => 'Chaque demande avance étape par étape. Vous êtes prévenu à chaque passage.';
+
+	/// fr: 'Demande {dePrenom}'
+	String carteTitre({required Object dePrenom}) => 'Demande ${dePrenom}';
+
+	/// fr: 'Suivi de la demande {dePrenom}'
+	String detailTitre({required Object dePrenom}) => 'Suivi de la demande ${dePrenom}';
+
+	/// fr: 'Étape en cours : {etape}'
+	String etapeCourante({required Object etape}) => 'Étape en cours : ${etape}';
+
+	/// fr: 'Toutes les étapes sont franchies.'
+	String get toutFait => 'Toutes les étapes sont franchies.';
+
+	/// fr: 'Voir le suivi'
+	String get voirSuivi => 'Voir le suivi';
+
+	/// fr: 'Aucune demande pour le moment.'
+	String get vide => 'Aucune demande pour le moment.';
+
+	/// fr: 'Faire une demande'
+	String get faireDemande => 'Faire une demande';
+
+	/// fr: 'Le suivi n'a pas pu être chargé. Réessayez.'
+	String get erreur => 'Le suivi n\'a pas pu être chargé. Réessayez.';
+
+	/// fr: 'vos demandes'
+	String get sansDonnees => 'vos demandes';
+
+	/// fr: 'Cette demande n'existe plus ou n'est pas la vôtre.'
+	String get introuvable => 'Cette demande n\'existe plus ou n\'est pas la vôtre.';
+
+	/// fr: 'Retour aux demandes'
+	String get retour => 'Retour aux demandes';
+
+	/// fr: 'Heures affichées : heure {deVille}.'
+	String fuseau({required Object deVille}) => 'Heures affichées : heure ${deVille}.';
+
+	/// fr: '{date} à {heure}'
+	String horodatage({required Object date, required Object heure}) => '${date} à ${heure}';
+
+	/// fr: 'Prévue le {date} à {heure}'
+	String prevue({required Object date, required Object heure}) => 'Prévue le ${date} à ${heure}';
+
+	late final Traductions$suiviFamille$etapes$fr etapes = Traductions$suiviFamille$etapes$fr.internal(_root);
+	late final Traductions$suiviFamille$etats$fr etats = Traductions$suiviFamille$etats$fr.internal(_root);
+	late final Traductions$suiviFamille$motif$fr motif = Traductions$suiviFamille$motif$fr.internal(_root);
+	late final Traductions$suiviFamille$intervalle$fr intervalle = Traductions$suiviFamille$intervalle$fr.internal(_root);
+	late final Traductions$suiviFamille$notification$fr notification = Traductions$suiviFamille$notification$fr.internal(_root);
 }
 
 // Path: suiviDemandes
@@ -14213,6 +14277,111 @@ class Traductions$motifs$signalement$fr {
 	late final Traductions$motifs$signalement$presence$fr presence = Traductions$motifs$signalement$presence$fr.internal(_root);
 	late final Traductions$motifs$signalement$technique$fr technique = Traductions$motifs$signalement$technique$fr.internal(_root);
 	late final Traductions$motifs$signalement$changement$fr changement = Traductions$motifs$signalement$changement$fr.internal(_root);
+}
+
+// Path: suiviFamille.etapes
+class Traductions$suiviFamille$etapes$fr {
+	Traductions$suiviFamille$etapes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demande envoyée'
+	String get envoyee => 'Demande envoyée';
+
+	/// fr: 'En liste d'attente'
+	String get enAttente => 'En liste d\'attente';
+
+	/// fr: 'Classe créée'
+	String get classeCreee => 'Classe créée';
+
+	/// fr: 'Enseignant affecté'
+	String get enseignantAffecte => 'Enseignant affecté';
+
+	/// fr: 'Élève intégré'
+	String get eleveIntegre => 'Élève intégré';
+
+	/// fr: 'Première séance'
+	String get premiereSeance => 'Première séance';
+}
+
+// Path: suiviFamille.etats
+class Traductions$suiviFamille$etats$fr {
+	Traductions$suiviFamille$etats$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Fait'
+	String get fait => 'Fait';
+
+	/// fr: 'En cours'
+	String get enCours => 'En cours';
+
+	/// fr: 'À venir'
+	String get aVenir => 'À venir';
+}
+
+// Path: suiviFamille.motif
+class Traductions$suiviFamille$motif$fr {
+	Traductions$suiviFamille$motif$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Toutes les classes de ce créneau sont complètes. Vous serez prévenu dès qu'une place se libère.'
+	String get classesPleines => 'Toutes les classes de ce créneau sont complètes. Vous serez prévenu dès qu\'une place se libère.';
+
+	/// fr: 'Aucun enseignant n'est libre sur ce créneau pour le moment. Vous serez prévenu dès que ce changera.'
+	String get aucunEnseignantLibre => 'Aucun enseignant n\'est libre sur ce créneau pour le moment. Vous serez prévenu dès que ce changera.';
+
+	/// fr: 'Votre demande est en attente. Vous serez prévenu dès qu'elle avance.'
+	String get inconnu => 'Votre demande est en attente. Vous serez prévenu dès qu\'elle avance.';
+}
+
+// Path: suiviFamille.intervalle
+class Traductions$suiviFamille$intervalle$fr {
+	Traductions$suiviFamille$intervalle$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Moins d'une heure plus tard'
+	String get moinsHeure => 'Moins d\'une heure plus tard';
+
+	/// fr: '1 heure plus tard'
+	String get heure => '1 heure plus tard';
+
+	/// fr: '{n} heures plus tard'
+	String heures({required Object n}) => '${n} heures plus tard';
+
+	/// fr: '1 jour plus tard'
+	String get jour => '1 jour plus tard';
+
+	/// fr: '{n} jours plus tard'
+	String jours({required Object n}) => '${n} jours plus tard';
+}
+
+// Path: suiviFamille.notification
+class Traductions$suiviFamille$notification$fr {
+	Traductions$suiviFamille$notification$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demande {dePrenom} : en liste d'attente'
+	String enAttente({required Object dePrenom}) => 'Demande ${dePrenom} : en liste d\'attente';
+
+	/// fr: 'Demande {dePrenom} : élève intégré à la classe'
+	String eleveIntegre({required Object dePrenom}) => 'Demande ${dePrenom} : élève intégré à la classe';
+
+	/// fr: 'Demande {dePrenom} : première séance effectuée'
+	String premiereSeance({required Object dePrenom}) => 'Demande ${dePrenom} : première séance effectuée';
 }
 
 // Path: suiviDemandes.etapes
@@ -32741,6 +32910,42 @@ extension on Traductions {
 			'motifs.signalement.changement.classe' => 'Un changement de classe est à l\'étude.',
 			'motifs.signalement.changement.niveau' => 'Le niveau de la classe ne semble plus adapté.',
 			'motifs.signalement.changement.suite' => 'L\'académie reviendra vers vous pour en parler.',
+			'suiviFamille.titre' => 'Suivi des demandes',
+			'suiviFamille.contexte' => 'Chaque demande avance étape par étape. Vous êtes prévenu à chaque passage.',
+			'suiviFamille.carteTitre' => ({required Object dePrenom}) => 'Demande ${dePrenom}',
+			'suiviFamille.detailTitre' => ({required Object dePrenom}) => 'Suivi de la demande ${dePrenom}',
+			'suiviFamille.etapeCourante' => ({required Object etape}) => 'Étape en cours : ${etape}',
+			'suiviFamille.toutFait' => 'Toutes les étapes sont franchies.',
+			'suiviFamille.voirSuivi' => 'Voir le suivi',
+			'suiviFamille.vide' => 'Aucune demande pour le moment.',
+			'suiviFamille.faireDemande' => 'Faire une demande',
+			'suiviFamille.erreur' => 'Le suivi n\'a pas pu être chargé. Réessayez.',
+			'suiviFamille.sansDonnees' => 'vos demandes',
+			'suiviFamille.introuvable' => 'Cette demande n\'existe plus ou n\'est pas la vôtre.',
+			'suiviFamille.retour' => 'Retour aux demandes',
+			'suiviFamille.fuseau' => ({required Object deVille}) => 'Heures affichées : heure ${deVille}.',
+			'suiviFamille.horodatage' => ({required Object date, required Object heure}) => '${date} à ${heure}',
+			'suiviFamille.prevue' => ({required Object date, required Object heure}) => 'Prévue le ${date} à ${heure}',
+			'suiviFamille.etapes.envoyee' => 'Demande envoyée',
+			'suiviFamille.etapes.enAttente' => 'En liste d\'attente',
+			'suiviFamille.etapes.classeCreee' => 'Classe créée',
+			'suiviFamille.etapes.enseignantAffecte' => 'Enseignant affecté',
+			'suiviFamille.etapes.eleveIntegre' => 'Élève intégré',
+			'suiviFamille.etapes.premiereSeance' => 'Première séance',
+			'suiviFamille.etats.fait' => 'Fait',
+			'suiviFamille.etats.enCours' => 'En cours',
+			'suiviFamille.etats.aVenir' => 'À venir',
+			'suiviFamille.motif.classesPleines' => 'Toutes les classes de ce créneau sont complètes. Vous serez prévenu dès qu\'une place se libère.',
+			'suiviFamille.motif.aucunEnseignantLibre' => 'Aucun enseignant n\'est libre sur ce créneau pour le moment. Vous serez prévenu dès que ce changera.',
+			'suiviFamille.motif.inconnu' => 'Votre demande est en attente. Vous serez prévenu dès qu\'elle avance.',
+			'suiviFamille.intervalle.moinsHeure' => 'Moins d\'une heure plus tard',
+			'suiviFamille.intervalle.heure' => '1 heure plus tard',
+			'suiviFamille.intervalle.heures' => ({required Object n}) => '${n} heures plus tard',
+			'suiviFamille.intervalle.jour' => '1 jour plus tard',
+			'suiviFamille.intervalle.jours' => ({required Object n}) => '${n} jours plus tard',
+			'suiviFamille.notification.enAttente' => ({required Object dePrenom}) => 'Demande ${dePrenom} : en liste d\'attente',
+			'suiviFamille.notification.eleveIntegre' => ({required Object dePrenom}) => 'Demande ${dePrenom} : élève intégré à la classe',
+			'suiviFamille.notification.premiereSeance' => ({required Object dePrenom}) => 'Demande ${dePrenom} : première séance effectuée',
 			'suiviDemandes.titre' => 'Suivi des demandes de créneau',
 			'suiviDemandes.contexte' => 'Chaque demande avance en trois étapes. Vous êtes prévenu à chaque passage.',
 			'suiviDemandes.carteTitre' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom}',
@@ -33105,6 +33310,8 @@ extension on Traductions {
 			'com.vocal.composer.preEcouteAide' => 'Écoutez votre message avant de l\'envoyer. Rien ne part sans votre accord.',
 			'com.vocal.composer.duree' => ({required Object duree}) => 'Durée : ${duree}',
 			'com.vocal.composer.actionPause' => 'Pause',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.composer.actionReprendre' => 'Reprendre',
 			'com.vocal.composer.actionArreter' => 'Arrêter',
 			'com.vocal.composer.actionSupprimer' => 'Supprimer',
@@ -33141,8 +33348,6 @@ extension on Traductions {
 			'com.vocal.demo.indisponible' => 'Indisponible',
 			'com.vocal.demo.recu' => 'Message vocal reçu',
 			'com.vocal.demo.repondre' => 'Répondre dans la conversation',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.demo.envoyes' => 'Messages vocaux envoyés',
 			'com.vocal.demo.auteurEnseignante' => 'Sayyida Mariam, enseignante',
 			'com.vocal.demo.auteurParent' => 'Ahmed, parent d\'Adam',
@@ -33619,6 +33824,8 @@ extension on Traductions {
 			'com.annonces.administration.moderation.sansSanction' => 'Aucune sanction de compte n\'est appliquée automatiquement.',
 			'com.annonces.administration.moderation.politique' => 'Politique anti-promotion',
 			'com.annonces.administration.moderation.ouvrirSemantique' => ({required Object objet, required Object motif}) => 'Examiner ${objet}, motif ${motif}',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.moderation.regleMotif.publicite' => 'La publicité n\'est pas autorisée dans la Communauté enseignants.',
 			'com.annonces.administration.moderation.regleMotif.lienAffilie' => 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.',
 			'com.annonces.administration.moderation.regleMotif.vente' => 'La vente de produits ou de services n\'est pas autorisée dans cet espace.',
@@ -33655,8 +33862,6 @@ extension on Traductions {
 			'com.annonces.demoPublication.extraitVente' => 'Je propose des cours particuliers payants le week-end, écrivez-moi.',
 			'com.annonces.demoPublication.signalementHorsSujet' => 'Réponse sous « Organiser une révision collective »',
 			'com.annonces.section' => 'Annonces de la Classe',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.annonce' => 'Annonce',
 			'com.annonces.publier' => 'Publier une annonce',
 			'com.annonces.videPublier' => 'Aucune annonce pour cette Classe. Publiez la première pour toute la Classe.',
@@ -34133,6 +34338,8 @@ extension on Traductions {
 			'comptable.encaissements.moyenPrestataire' => ({required Object moyen, required Object prestataire}) => '${moyen} · ${prestataire}',
 			'comptable.encaissements.videTitre' => 'Aucun encaissement pour l\'instant.',
 			'comptable.encaissements.videPhrase' => 'Les paiements des familles apparaîtront ici dès que le prestataire les aura transmis.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.videFiltreTitre' => 'Aucun encaissement ne correspond.',
 			'comptable.encaissements.videFiltrePhrase' => 'Choisissez « Tous » ou effacez la recherche pour revoir toute la liste.',
 			'comptable.encaissements.voirTous' => 'Voir tous les encaissements',
@@ -34169,8 +34376,6 @@ extension on Traductions {
 			'comptable.encaissements.rap.natPreuve' => 'Preuve',
 			'comptable.encaissements.rap.natureDate' => ({required Object nature, required Object date}) => '${nature} · ${date}',
 			'comptable.encaissements.rap.choisirTitre' => 'Choisissez une transaction.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.rap.choisirPhrase' => 'Ses correspondances proposées, son état et son journal s\'ouvrent ici.',
 			'comptable.encaissements.rap.videTitre' => 'Rien à rapprocher.',
 			'comptable.encaissements.rap.videPhrase' => 'Chaque transaction reçue est déjà reliée à ce qui l\'attendait.',

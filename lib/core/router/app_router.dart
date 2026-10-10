@@ -133,8 +133,8 @@ import '../../features/remplacements/remplacements_page.dart';
 import '../../features/revenus_enseignant/revenus_enseignant_page.dart';
 import '../../features/revue_groupe/revue_groupe_page.dart';
 import '../../features/salle/salle_page.dart';
-import '../../features/suivi_demandes/suivi_demandes_page.dart';
 import '../../features/suivi_eleve/suivi_eleve_page.dart';
+import '../../features/suivi_famille/suivi_famille_page.dart';
 import '../../features/suivi_foyer/detail_observations_page.dart';
 import '../../features/suivi_foyer/detail_seance_page.dart';
 import '../../features/suivi_foyer/observations_page.dart';
@@ -573,8 +573,18 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                   GoRoute(
                     path: 'demandes',
                     pageBuilder: glissee(
-                      (GoRouterState _) => const SuiviDemandesPage(),
+                      (GoRouterState _) => const SuiviDemandesEntree(),
                     ),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: ':demandeId',
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => FriseDemandePage(
+                            demandeId: _parametre(etat, 'demandeId'),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   GoRoute(
                     path: 'classes/catalogue',

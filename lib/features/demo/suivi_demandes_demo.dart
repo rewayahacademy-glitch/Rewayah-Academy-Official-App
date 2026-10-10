@@ -14,9 +14,11 @@ import 'dart:async';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
 import '../../core/capacites/port_notifications.dart';
+import '../../core/offres/port_frise_demande.dart';
 import '../../core/offres/port_suivi_demandes.dart';
 import '../../core/router/routes.dart';
 import '../suivi_demandes/libelles_suivi_demandes.dart';
+import '../suivi_famille/libelles_suivi_famille.dart';
 import 'mode_demonstration.dart' show DonneesDemo;
 
 /// Une demande telle que le serveur simule la connait.
@@ -36,6 +38,12 @@ class DemandeServeurDemo {
     this.debutCours,
     this.motif,
     this.peutChoisirAutreCreneau = false,
+    this.attenteDepuis,
+    this.attenteJusquA,
+    this.motifAttente,
+    this.integreLe,
+    this.premiereSeanceLe,
+    this.premiereSeancePrevue,
   });
 
   /// L'identifiant.
@@ -76,6 +84,80 @@ class DemandeServeurDemo {
 
   /// Capacite de rechoisir.
   bool peutChoisirAutreCreneau;
+
+  /// SUIVI-FAMILLE : entree en liste d'attente, et sortie (classe creee) ;
+  /// tant que [attenteJusquA] est nul, la famille attend.
+  DateTime? attenteDepuis;
+
+  /// Fin de l'attente.
+  DateTime? attenteJusquA;
+
+  /// Pourquoi la famille attend.
+  MotifAttente? motifAttente;
+
+  /// L'eleve est integre a la classe.
+  DateTime? integreLe;
+
+  /// La premiere seance a eu lieu.
+  DateTime? premiereSeanceLe;
+
+  /// La premiere seance, date connue du serveur (jamais estimee).
+  DateTime? premiereSeancePrevue;
+
+  DateTime? _quand(EtapeDemande e) {
+    for (final (EtapeDemande x, DateTime q) in transitions) {
+      if (x == e) return q;
+    }
+    return null;
+  }
+
+  /// La frise que le port rend a la famille.
+  FriseDemande versFrise() {
+    final DateTime? envoyee = _quand(EtapeDemande.envoyee);
+    final DateTime? classe = _quand(EtapeDemande.classeValidee);
+    final DateTime? affecte = _quand(EtapeDemande.enseignantAffecte);
+    final bool attente = attenteDepuis != null;
+    final TypeEtapeFrise? courante = attente && attenteJusquA == null
+        ? TypeEtapeFrise.enAttente
+        : classe == null
+        ? TypeEtapeFrise.classeCreee
+        : affecte == null
+        ? TypeEtapeFrise.enseignantAffecte
+        : integreLe == null
+        ? TypeEtapeFrise.eleveIntegre
+        : premiereSeanceLe == null
+        ? TypeEtapeFrise.premiereSeance
+        : null;
+    return FriseDemande(
+      demandeId: demandeId,
+      eleveId: eleveId,
+      prenom: prenom,
+      fuseauIana: fuseauIana,
+      courante: courante,
+      motifAttente: motifAttente,
+      etapes: <EtapeFrise>[
+        EtapeFrise(type: TypeEtapeFrise.envoyee, quand: envoyee),
+        if (attente)
+          EtapeFrise(type: TypeEtapeFrise.enAttente, quand: attenteDepuis),
+        EtapeFrise(type: TypeEtapeFrise.classeCreee, quand: classe),
+        EtapeFrise(type: TypeEtapeFrise.enseignantAffecte, quand: affecte),
+        EtapeFrise(type: TypeEtapeFrise.eleveIntegre, quand: integreLe),
+        EtapeFrise(
+          type: TypeEtapeFrise.premiereSeance,
+          quand: premiereSeanceLe ?? premiereSeancePrevue,
+        ),
+      ],
+    );
+  }
+
+  /// Chaque passage d'etape de la frise, avec son instant.
+  List<(TypeEtapeFrise, DateTime)> passages() => <(TypeEtapeFrise, DateTime)>[
+    for (final EtapeFrise e in versFrise().etapes)
+      if (e.quand != null &&
+          !(e.type == TypeEtapeFrise.premiereSeance &&
+              premiereSeanceLe == null))
+        (e.type, e.quand!),
+  ];
 
   /// Ce que le port rend a la famille.
   SuiviDemande versFamille() => SuiviDemande(
@@ -148,6 +230,35 @@ class SuiviDemandesDemo implements PortSuiviDemandes {
         ),
       ]);
 
+  /// SUIVI-FAMILLE : trois frises. Yusuf attend une place (classes pleines),
+  /// Aicha a son enseignante, Ines est integree et sa premiere seance est
+  /// fixee.
+  factory SuiviDemandesDemo.frises() => SuiviDemandesDemo(<DemandeServeurDemo>[
+    demandeYusufEnvoyee()
+      ..attenteDepuis = DateTime(2026, 10, 9, 8, 15)
+      ..motifAttente = MotifAttente.classesPleines,
+    demandeAichaAffectee(),
+    DemandeServeurDemo(
+      demandeId: 'demo-demande-ines',
+      eleveId: 'demo-eleve-ines',
+      prenom: 'Inès',
+      creneau: CreneauDemande(
+        occurrences: const <OccurrenceCreneau>[
+          OccurrenceCreneau(jourIso: 6, heure: 10),
+        ],
+      ),
+      etape: EtapeDemande.enseignantAffecte,
+      transitions: <(EtapeDemande, DateTime)>[
+        (EtapeDemande.envoyee, DateTime(2026, 10, 1, 9)),
+        (EtapeDemande.classeValidee, DateTime(2026, 10, 4, 15)),
+        (EtapeDemande.enseignantAffecte, DateTime(2026, 10, 5, 9, 30)),
+      ],
+      enseignant: 'Sayyida Khadija',
+      integreLe: DateTime(2026, 10, 6, 18),
+      premiereSeancePrevue: DateTime(2026, 10, 17, 10),
+    ),
+  ]);
+
   /// Yusuf : creneau personnalise, en attente du quota.
   static DemandeServeurDemo demandeYusufEnvoyee() => DemandeServeurDemo(
     demandeId: 'demo-demande-yusuf',
@@ -200,6 +311,12 @@ class SuiviDemandesDemo implements PortSuiviDemandes {
   final StreamController<void> _changements =
       StreamController<void>.broadcast();
 
+  /// Les changements, pour les ports qui lisent le meme serveur simule.
+  Stream<void> get changements => _changements.stream;
+
+  /// Annonce un changement fait directement sur une demande.
+  void notifier() => _changements.add(null);
+
   /// Fait passer [demandeId] a l'etape [etape], le [quand] donne.
   void avancer(
     String demandeId,
@@ -231,6 +348,28 @@ class SuiviDemandesDemo implements PortSuiviDemandes {
     yield _lire();
     await for (final void _ in _changements.stream) {
       yield _lire();
+    }
+  }
+}
+
+/// Le port de frise de demonstration, sur le meme serveur simule.
+class FriseDemandesDemo implements PortFriseDemandes {
+  /// Cree la frise de [suivi].
+  FriseDemandesDemo(this.suivi);
+
+  /// Le serveur simule.
+  final SuiviDemandesDemo suivi;
+
+  @override
+  Stream<List<FriseDemande>> suivre() async* {
+    if (suivi.echec) throw StateError('serveur');
+    List<FriseDemande> lire() => <FriseDemande>[
+      for (final DemandeServeurDemo d in suivi.demandes)
+        if (d.etape != EtapeDemande.close) d.versFrise(),
+    ];
+    yield lire();
+    await for (final void _ in suivi.changements) {
+      yield lire();
     }
   }
 }
@@ -270,6 +409,19 @@ class NotificationsSuiviDemandesDemo implements PortNotifications {
                 date: quand,
                 destination: Routes.tuteurDemandes,
               ),
+          // SUIVI-FAMILLE : les passages que le suivi a trois etapes ne
+          // connait pas (attente, integration, premiere seance).
+          for (final DemandeServeurDemo d in suivi.demandes)
+            for (final (TypeEtapeFrise type, DateTime quand) in d.passages())
+              if (type == TypeEtapeFrise.enAttente ||
+                  type == TypeEtapeFrise.eleveIntegre ||
+                  type == TypeEtapeFrise.premiereSeance)
+                NotificationTuteur(
+                  id: '${d.demandeId}-${type.name}',
+                  titre: titreNotificationFrise(type, d.prenom),
+                  date: quand,
+                  destination: Routes.tuteurDemande(d.demandeId),
+                ),
         ]..sort(
           (NotificationTuteur a, NotificationTuteur b) =>
               b.date.compareTo(a.date),
@@ -291,6 +443,7 @@ List<Override> surchargesSuiviDemandesDemo() {
   final SuiviDemandesDemo suivi = SuiviDemandesDemo.demonstration();
   return <Override>[
     portSuiviDemandesProvider.overrideWithValue(suivi),
+    portFriseDemandesProvider.overrideWithValue(FriseDemandesDemo(suivi)),
     portNotificationsProvider.overrideWithValue(
       NotificationsSuiviDemandesDemo(suivi),
     ),
