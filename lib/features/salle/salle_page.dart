@@ -2061,7 +2061,9 @@ class _ListePresence extends StatelessWidget {
                 Ecart.hSm,
                 Icon(
                   ouvert ? AppIcons.micro.repos : AppIcons.microCoupe.repos,
-                  semanticLabel: ouvert ? t.salle.micro : t.salle.microCoupe,
+                  semanticLabel: ouvert
+                      ? t.presence.etatMicroOuvert
+                      : t.presence.etatMicroCoupe,
                   size: AppSpacing.xl,
                 ),
               ],

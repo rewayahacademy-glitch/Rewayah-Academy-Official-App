@@ -1,4 +1,6 @@
 {
+  "presence.etatMicroOuvert": "integration TB-11a et CT-3 (10/10) : etat du micro sur une ligne de presence, distinct de la commande salle.micro (K-41.3, une cle = un sens)",
+  "presence.etatMicroCoupe": "integration TB-11a et CT-3 (10/10) : etat du micro sur une ligne de presence, distinct de la commande salle.microCoupe (K-41.3)",
   "salle.observationMuetteTitre": "releve VERIF-CORR-2, etape SALLE-CORR-3 : titre du rappel du tuteur en texte tres agrandi (premiere phrase de salle.observationMuette), a valider par le directeur",
   "salle.bandeauControleTitre": "releve VERIF-CORR-2, etape SALLE-CORR-3 : titre du rappel du controleur en texte tres agrandi (premiere phrase de salle.bandeauControle), a valider par le directeur",
   "compte.themeContexte": "phrase de contexte K-58 ajoutee par la relecture, a valider par le directeur",

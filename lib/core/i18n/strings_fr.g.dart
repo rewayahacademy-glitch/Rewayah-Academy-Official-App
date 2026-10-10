@@ -464,6 +464,12 @@ class Traductions$presence$fr {
 
 	/// fr: 'le cours a commencé il y a {minutes} min'
 	String attenteMinutes({required Object minutes}) => 'le cours a commencé il y a ${minutes} min';
+
+	/// fr: 'son micro est ouvert'
+	String get etatMicroOuvert => 'son micro est ouvert';
+
+	/// fr: 'son micro est coupé'
+	String get etatMicroCoupe => 'son micro est coupé';
 }
 
 // Path: bienvenue
@@ -16253,6 +16259,8 @@ extension on Traductions {
 			'presence.silenceMinutes' => ({required Object minutes}) => 'sans nouvelles depuis ${minutes} min',
 			'presence.attenteInstant' => 'le cours vient de commencer',
 			'presence.attenteMinutes' => ({required Object minutes}) => 'le cours a commencé il y a ${minutes} min',
+			'presence.etatMicroOuvert' => 'son micro est ouvert',
+			'presence.etatMicroCoupe' => 'son micro est coupé',
 			'bienvenue.titre' => 'Bienvenue',
 			'bienvenue.accroche' => 'Apprendre le Coran en classe, avec un enseignant attitré',
 			'bienvenue.phrase' => 'Des séances en visio, à horaire fixe, pour vous ou pour les élèves de votre foyer.',
@@ -16292,10 +16300,10 @@ extension on Traductions {
 			'attente.accesTitre' => 'Votre compte est créé',
 			'attente.accesEnPreparation' => 'L\'ouverture de votre compte n\'est pas encore automatique.',
 			'attente.aucunDocument' => 'Vous n\'avez aucun document à envoyer.',
-			'attente.accesContact' => 'L\'académie peut l\'ouvrir pour vous : joignez-la.',
-			'attente.actualiserCompte' => 'Actualiser',
 			_ => null,
 		} ?? switch (path) {
+			'attente.accesContact' => 'L\'académie peut l\'ouvrir pour vous : joignez-la.',
+			'attente.actualiserCompte' => 'Actualiser',
 			'attente.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il reste un élément à fournir.', other: 'Il reste ${n} éléments à fournir.', ), 
 			'attente.etatAFournir' => 'À fournir',
 			'attente.prochaineEtape' => ({required Object etape}) => 'Prochaine étape : ${etape}',
@@ -16806,10 +16814,10 @@ extension on Traductions {
 			'eleveConnexion.profils.videTitre' => 'Aucun profil sur cet appareil',
 			'eleveConnexion.profils.vide' => 'Pour utiliser cet appareil, le tuteur doit afficher un nouveau code sur son propre appareil.',
 			'eleveConnexion.profils.videAction' => 'Saisir un code',
-			'eleveConnexion.profils.retire' => ({required Object prenom}) => 'Cet appareil a été retiré pour ${prenom}. Demande au tuteur de le reconnecter avec un nouveau code.',
-			'eleveConnexion.profils.jetonAbsent' => ({required Object prenom}) => 'Cet appareil ne retrouve plus la connexion de ${prenom}. Demande au tuteur d\'afficher un nouveau code, puis saisis-le ici.',
 			_ => null,
 		} ?? switch (path) {
+			'eleveConnexion.profils.retire' => ({required Object prenom}) => 'Cet appareil a été retiré pour ${prenom}. Demande au tuteur de le reconnecter avec un nouveau code.',
+			'eleveConnexion.profils.jetonAbsent' => ({required Object prenom}) => 'Cet appareil ne retrouve plus la connexion de ${prenom}. Demande au tuteur d\'afficher un nouveau code, puis saisis-le ici.',
 			'eleveConnexion.pin.bonjour' => ({required Object prenom}) => 'Bonjour ${prenom}',
 			'eleveConnexion.pin.creer' => 'Choisis ton code personnel',
 			'eleveConnexion.pin.creerPhrase' => 'Quatre chiffres, rien que pour toi. Il reste sur cet appareil.',
@@ -17320,10 +17328,10 @@ extension on Traductions {
 			'admin.progression.depuisAujourdhui' => 'Aujourd\'hui',
 			'admin.progression.depuisUnJour' => '1 jour',
 			'admin.progression.depuisJours' => ({required Object jours}) => '${jours} jours',
-			'admin.progression.typeBlocage' => 'Blocage',
-			'admin.progression.typeDerogation' => 'Dérogation',
 			_ => null,
 		} ?? switch (path) {
+			'admin.progression.typeBlocage' => 'Blocage',
+			'admin.progression.typeDerogation' => 'Dérogation',
 			'admin.progression.actionPoserBlocage' => 'Poser un blocage',
 			'admin.progression.actionPoserDerogation' => 'Poser une dérogation',
 			'admin.progression.actionCloreException' => 'Clore l\'exception',
@@ -17834,10 +17842,10 @@ extension on Traductions {
 			'compte.profilEnfant' => ({required Object prenom}) => 'Profil de ${prenom}',
 			'compte.identifiantEnfant' => ({required Object identifiant}) => 'Identifiant : ${identifiant}',
 			'compte.roles.admin' => 'Administrateur',
-			'compte.roles.accountant' => 'Comptable',
-			'compte.roles.controller' => 'Contrôleur',
 			_ => null,
 		} ?? switch (path) {
+			'compte.roles.accountant' => 'Comptable',
+			'compte.roles.controller' => 'Contrôleur',
 			'compte.roles.teacher' => 'Enseignant',
 			'compte.roles.guardian' => 'Tuteur',
 			'compte.roles.student' => 'Élève',
@@ -18348,10 +18356,10 @@ extension on Traductions {
 			'classe.pageCatalogue.indisponible' => 'Le choix de classe en ligne n\'est pas encore ouvert.',
 			'classe.pageCatalogue.aucune' => 'Aucune classe ne convient pour l\'instant',
 			'classe.pageCatalogue.aucuneDetail' => ({required Object prenom}) => 'Aucune classe ouverte ne correspond au profil de ${prenom} en ce moment.',
-			'classe.pageCatalogue.eleveInconnuTitre' => 'Ce profil n\'est pas dans votre foyer',
-			'classe.pageCatalogue.eleveInconnuPhrase' => 'Revenez à l\'accueil et choisissez le profil élève concerné.',
 			_ => null,
 		} ?? switch (path) {
+			'classe.pageCatalogue.eleveInconnuTitre' => 'Ce profil n\'est pas dans votre foyer',
+			'classe.pageCatalogue.eleveInconnuPhrase' => 'Revenez à l\'accueil et choisissez le profil élève concerné.',
 			'classe.pageCatalogue.horairesAbsents' => 'Les jours et heures de cette classe ne sont pas encore affichés ici.',
 			'classe.pageCatalogue.seanceHebdo' => ({required Object jour, required Object heure, required Object duree}) => '${jour} à ${heure} · ${duree} min',
 			'classe.pageCatalogue.fuseauClasse' => ({required Object fuseau}) => 'Heures de la classe (${fuseau})',
@@ -18862,10 +18870,10 @@ extension on Traductions {
 			'controleur.complement.envoyer' => 'Envoyer le complément',
 			'controleur.complement.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici, réessayez dans un instant. Le rapport d\'origine reste intact.',
 			'controleur.complement.envoyeTitre' => 'Complément ajouté',
-			'controleur.complement.envoyePhrase' => 'Il s\'affiche sous le rapport d\'origine, qui reste inchangé.',
-			'controleur.complement.revenir' => 'Revenir au rapport',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.complement.envoyePhrase' => 'Il s\'affiche sous le rapport d\'origine, qui reste inchangé.',
+			'controleur.complement.revenir' => 'Revenir au rapport',
 			'controleur.compteRendu.titre' => 'Compte rendu',
 			'controleur.compteRendu.provisoire' => 'Cet écran est en préparation.',
 			'controleur.compteRendu.revenir' => 'Revenir au contrôle',
@@ -19376,10 +19384,10 @@ extension on Traductions {
 			'tc.observation.visite.sortieNonConfirmee' => 'La fin de votre visite n\'a pas pu être confirmée. Elle sera fermée par le serveur.',
 			'tc.observation.visite.restantes' => 'restantes',
 			'tc.observation.visite.decompteLu' => ({required Object duree}) => 'Temps restant : ${duree}',
-			'tc.observation.visite.enDirect' => 'En direct',
-			'tc.observation.visite.connexion' => 'Connexion',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.visite.enDirect' => 'En direct',
+			'tc.observation.visite.connexion' => 'Connexion',
 			'tc.observation.visite.reconnexion' => 'Reconnexion',
 			'tc.observation.visite.videoCoupee' => 'Vidéo indisponible',
 			'tc.observation.visite.reconnexionDetail' => 'La connexion est interrompue, reconnexion en cours. Votre temps d\'observation continue de s\'écouler.',

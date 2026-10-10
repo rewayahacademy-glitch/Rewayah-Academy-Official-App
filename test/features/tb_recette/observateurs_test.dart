@@ -23,6 +23,7 @@
 //    jusqu'a la derniere ligne, avec ou sans presentation. Le tuteur tient
 //    aussi a x2 sur ces trois tablettes.
 
+import 'package:flutter/gestures.dart' show HitTestEntry, HitTestResult;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter_test/flutter_test.dart';
@@ -297,10 +298,31 @@ void main() {
               CommandesPedagogiques,
               OutilsEnseignement,
               BarreStylet,
-              CoucheAnnotation,
               BibliothequeSeance,
             ]) {
               expect(find.byType(interdit), findsNothing, reason: '$interdit');
+            }
+            // TB-7a : le calque des notes est monte pour PEINDRE les notes
+            // (plan §5 : l'observateur voit les notes), mais il ne recoit
+            // aucun geste : un appui au centre de la page n'atteint pas
+            // CoucheAnnotation.
+            for (final Element calque
+                in find.byType(CoucheAnnotation).evaluate()) {
+              final RenderBox boite = calque.renderObject! as RenderBox;
+              final Offset centre = boite.localToGlobal(
+                boite.size.center(Offset.zero),
+              );
+              final HitTestResult touche = HitTestResult();
+              WidgetsBinding.instance.hitTestInView(
+                touche,
+                centre,
+                tester.view.viewId,
+              );
+              expect(
+                touche.path.any((HitTestEntry e) => identical(e.target, boite)),
+                isFalse,
+                reason: 'le calque des notes ne recoit aucun geste',
+              );
             }
             for (final String mot in <String>[
               t.salle.seance.commandes.declencheur,

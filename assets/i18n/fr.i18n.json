@@ -582,7 +582,9 @@
     "silenceInstant": "sans nouvelles depuis quelques secondes",
     "silenceMinutes": "sans nouvelles depuis {minutes} min",
     "attenteInstant": "le cours vient de commencer",
-    "attenteMinutes": "le cours a commencé il y a {minutes} min"
+    "attenteMinutes": "le cours a commencé il y a {minutes} min",
+    "etatMicroOuvert": "son micro est ouvert",
+    "etatMicroCoupe": "son micro est coupé"
   },
   "bienvenue": {
     "titre": "Bienvenue",
