@@ -586,7 +586,7 @@ begin
         v_state := 'double_quote';
         v_i := v_i + 1;
         continue;
-      elsif v_char = ' and (v_i = 1 or substring(v_input from v_i - 1 for 1) !~ '[[:alnum:]_$]') then
+      elsif v_char = chr(36) and (v_i = 1 or substring(v_input from v_i - 1 for 1) !~ '[[:alnum:]_$]') then
         v_tag := substring(substring(v_input from v_i) from '^\$[[:alnum:]_]*\$');
         if coalesce(v_tag, '') <> '' then
           v_clean := v_clean || chr(39) || 'x' || chr(39);
