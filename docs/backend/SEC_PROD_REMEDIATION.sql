@@ -946,6 +946,14 @@ declare
   v_lower text;
   v_role_pos integer;
   v_account_pos integer;
+  v_coalesce_pos integer;
+  v_open_pos integer;
+  v_close_pos integer;
+  v_depth integer;
+  v_i integer;
+  v_char text;
+  v_next text;
+  v_in_string boolean;
 begin
   if app_private.has_unsafe_role_guard(p_definition) then
     return true;
@@ -963,13 +971,47 @@ begin
       v_lower := lower(v_condition);
       v_role_pos := strpos(v_lower, 'app_role(');
       v_account_pos := strpos(v_lower, 'app_account_valid(');
+      v_coalesce_pos := strpos(v_lower, 'coalesce(');
+      v_open_pos := v_coalesce_pos + length('coalesce');
+      v_close_pos := 0;
+      v_depth := 0;
+      v_i := v_open_pos;
+      v_in_string := false;
+
+      -- Locate the matching COALESCE close while ignoring parentheses in
+      -- SQL string literals. The boolean guard must end there; otherwise an
+      -- outside AND/OR tail could invert or bypass the fail-closed condition.
+      while v_i <= length(v_lower) loop
+        v_char := substring(v_lower from v_i for 1);
+        v_next := substring(v_lower from v_i + 1 for 1);
+        if v_char = chr(39) then
+          if v_in_string and v_next = chr(39) then
+            v_i := v_i + 2;
+            continue;
+          end if;
+          v_in_string := not v_in_string;
+        elsif not v_in_string then
+          if v_char = '(' then
+            v_depth := v_depth + 1;
+          elsif v_char = ')' then
+            v_depth := v_depth - 1;
+            if v_depth = 0 then
+              v_close_pos := v_i;
+              exit;
+            end if;
+          end if;
+        end if;
+        v_i := v_i + 1;
+      end loop;
 
       -- Whitelist a fail-closed NOT COALESCE guard only when the one
       -- app_role() check is an equality, account validity is conjoined,
-      -- and the condition has no OR that could bypass either requirement.
+      -- there is a false fallback, and no boolean tail follows COALESCE.
       if v_lower !~ '^[[:space:]]*(if|elsif)[[:space:]]+not[[:space:]]+coalesce[[:space:]]*[(]'
          or v_role_pos = 0
          or v_account_pos = 0
+         or v_close_pos = 0
+         or lower(btrim(substring(v_lower from v_close_pos + 1))) <> 'then'
          or length(v_lower) - length(replace(v_lower, 'app_role(', '')) <> length('app_role(')
          or v_role_pos >= v_account_pos
          or v_lower !~ 'app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]*=[[:space:]]*''[^'']+'''
@@ -1010,6 +1052,11 @@ begin
     'IF NOT coalesce(auth.uid() IS NOT NULL AND public.app_role() = ''teacher'' AND public.app_account_valid(), false) OR public.app_role() = ''admin'' THEN RAISE; END IF;'
   ) then
     raise exception 'SEC-PROD M2 scanner missed OR outside a null-safe role guard';
+  end if;
+  if not app_private.sec_prod_has_unsafe_role_guard(
+    'IF NOT coalesce(app_role() = ''admin'' AND app_account_valid(), false) AND false THEN RAISE; END IF;'
+  ) then
+    raise exception 'SEC-PROD M2 scanner missed a boolean tail outside COALESCE';
   end if;
   if not app_private.sec_prod_has_unsafe_role_guard(
     'IF NOT coalesce(app_role() = ''admin'' AND app_account_valid(), false) AND app_role() = ''admin'' THEN RAISE; END IF;'
