@@ -5,7 +5,8 @@ insert into auth.users (id, email) values
   ('f1660000-0000-0000-0000-000000000001', 'notif-guardian@example.test'),
   ('f1660000-0000-0000-0000-000000000002', 'notif-student@example.test'),
   ('f1660000-0000-0000-0000-000000000003', 'notif-teacher@example.test'),
-  ('f1660000-0000-0000-0000-000000000004', 'notif-admin@example.test');
+  ('f1660000-0000-0000-0000-000000000004', 'notif-admin@example.test'),
+  ('f1660000-0000-0000-0000-000000000005', 'notif-adult@example.test');
 insert into public.households (id, timezone)
 values ('f16fffff-0000-0000-0000-000000000011', 'Europe/Paris');
 insert into public.profiles
@@ -18,7 +19,9 @@ values
   ('f1660000-0000-0000-0000-000000000003', 'F1NOTIFTEACHER', 'teacher',
    'f16fffff-0000-0000-0000-000000000011', 'Fixture', 'Teacher', 'active'),
   ('f1660000-0000-0000-0000-000000000004', 'F1NOTIFADMIN', 'admin',
-   null, 'Fixture', 'Admin', 'active');
+   null, 'Fixture', 'Admin', 'active'),
+  ('f1660000-0000-0000-0000-000000000005', 'F1NOTIFADULT', 'student',
+   'f16fffff-0000-0000-0000-000000000011', 'Fixture', 'Adult', 'active');
 
 update public.households
 set primary_guardian_id = 'f1660000-0000-0000-0000-000000000001'
@@ -28,7 +31,9 @@ do $notification$
 declare
   v_langue text;
   v_cohorte text;
+  v_cohorte_adulte text;
   v_admin jsonb;
+  v_demande_adulte uuid;
   v_id uuid;
   v_received integer;
   v_closed integer;
@@ -44,7 +49,12 @@ begin
   where actif and type_public = 'enfant'
   order by ordre, code
   limit 1;
-  if v_langue is null or v_cohorte is null then
+  select code into v_cohorte_adulte
+  from public.cohortes_age
+  where actif and type_public = 'adulte'
+  order by ordre, code
+  limit 1;
+  if v_langue is null or v_cohorte is null or v_cohorte_adulte is null then
     raise exception 'B-09: fixture requires an active language and child cohort';
   end if;
 
@@ -53,6 +63,12 @@ begin
     'f1660000-0000-0000-0000-000000000002',
     v_langue,
     v_cohorte
+  );
+  insert into public.student_profiles
+    (profile_id, student_type, interface_mode, langue_cours, cohorte)
+  values (
+    'f1660000-0000-0000-0000-000000000005',
+    'autonomous', 'standard', v_langue, v_cohorte_adulte
   );
 
   insert into public.demandes_horaires_famille
@@ -67,6 +83,37 @@ begin
     and params ->> 'demande_id' = v_id::text;
   if v_received <> 1 then
     raise exception 'B-09: une demande doit produire une seule notification foyer';
+  end if;
+
+  insert into public.demandes_horaires_famille
+    (eleve_id, type_public, langue_code, fuseau_iana, jours, heures_locales, source)
+  values (
+    'f1660000-0000-0000-0000-000000000005', 'adulte', v_langue,
+    'Europe/Paris', array[2]::smallint[], array[18]::smallint[], 'personnalisee'
+  )
+  returning id into v_demande_adulte;
+  if (select count(*) from public.notifications
+      where params ->> 'demande_id' = v_demande_adulte::text
+        and evenement = 'demande_recue'
+        and destinataire in (
+          'f1660000-0000-0000-0000-000000000001',
+          'f1660000-0000-0000-0000-000000000005'
+        )) <> 2 then
+    raise exception 'M6: demande adulte autonome non notifiée au foyer et à son titulaire';
+  end if;
+
+  update public.demandes_horaires_famille
+     set etat = 'refusee', motif = 'refus_direction'
+   where id = v_demande_adulte;
+  if (select count(*) from public.notifications
+      where params ->> 'demande_id' = v_demande_adulte::text
+        and evenement = 'demande_close'
+        and params ->> 'motif' = 'refus_direction'
+        and destinataire in (
+          'f1660000-0000-0000-0000-000000000001',
+          'f1660000-0000-0000-0000-000000000005'
+        )) <> 2 then
+    raise exception 'M6: clôture adulte sans code de motif aux deux destinataires';
   end if;
 
   perform set_config('request.jwt.claim.sub',
