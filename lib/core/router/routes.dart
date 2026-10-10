@@ -741,6 +741,12 @@ abstract final class Routes {
   static const String adminSecuriteAuditObservations =
       '/admin/securite-audit/observations';
 
+  /// ECHELLE-CTRL-DIRECT-1 : les regles du tirage des missions de controle et
+  /// l'historique audite des tirages, lisibles par la direction seule, sous
+  /// Securite et audit.
+  static const String adminSecuriteAuditTirages =
+      '/admin/securite-audit/tirages';
+
   // --- Observation par un agent IA -----------------------------------------
 
   /// Entree d'un agent IA (`AGT-00`, ADR-025).

@@ -61,6 +61,7 @@ void main() {
       Routes.adminOperationsPilotage,
       Routes.adminSecuriteAuditJournal,
       Routes.adminSecuriteAuditObservations,
+      Routes.adminSecuriteAuditTirages,
       Routes.comptable,
       Routes.compte,
       Routes.compteProfil,

@@ -282,6 +282,12 @@ List<({String libelle, String chemin})> ongletsSecurite() =>
         libelle: t.admin.observations.titre,
         chemin: Routes.adminSecuriteAuditObservations,
       ),
+      // ECHELLE-CTRL-DIRECT-1 : le tirage des controles (regles et
+      // historique), la direction seule.
+      (
+        libelle: t.admin.tirage.titre,
+        chemin: Routes.adminSecuriteAuditTirages,
+      ),
     ];
 
 /// Les trois onglets pairs de l'Administration des communications, sous

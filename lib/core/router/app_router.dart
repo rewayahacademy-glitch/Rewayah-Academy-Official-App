@@ -31,6 +31,7 @@ import '../../features/admin_pedagogie_qualite/qualite_page.dart';
 import '../../features/admin_pilotage/pilotage_page.dart';
 import '../../features/admin_regroupements/regroupements_page.dart';
 import '../../features/admin_tableau/tableau_de_bord_page.dart';
+import '../../features/admin_tirage/tirage_page.dart';
 import '../../features/admin_traitement/traitement_page.dart';
 import '../../features/agent_entree/agent_entree_page.dart';
 import '../../features/alertes/alertes_page.dart';
@@ -1592,6 +1593,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.securite,
           child: ObservationsAdminPage(),
+        ),
+      ),
+      // ECHELLE-CTRL-DIRECT-1 : le tirage des controles, onglet pair du
+      // Journal et des observations (`ongletsSecurite()`).
+      GoRoute(
+        path: Routes.adminSecuriteAuditTirages,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.securite,
+          child: TiragePage(),
         ),
       ),
 

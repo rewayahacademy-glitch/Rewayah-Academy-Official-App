@@ -1510,6 +1510,7 @@ class Traductions$admin$fr {
 	late final Traductions$admin$finance$fr finance = Traductions$admin$finance$fr.internal(_root);
 	late final Traductions$admin$pilotage$fr pilotage = Traductions$admin$pilotage$fr.internal(_root);
 	late final Traductions$admin$fusion$fr fusion = Traductions$admin$fusion$fr.internal(_root);
+	late final Traductions$admin$tirage$fr tirage = Traductions$admin$tirage$fr.internal(_root);
 }
 
 // Path: agent
@@ -8972,6 +8973,249 @@ class Traductions$admin$fusion$fr {
 
 	/// fr: '{prenom} transféré depuis {autre}'
 	String evenementTransfertEntrant({required Object prenom, required Object autre}) => '${prenom} transféré depuis ${autre}';
+
+	/// fr: '{date} à {heure}'
+	String quand({required Object date, required Object heure}) => '${date} à ${heure}';
+}
+
+// Path: admin.tirage
+class Traductions$admin$tirage$fr {
+	Traductions$admin$tirage$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Tirage des contrôles'
+	String get titre => 'Tirage des contrôles';
+
+	/// fr: 'Le serveur tire au sort la séance que chaque contrôleur reçoit. La direction fixe les règles ; le contrôleur ne choisit jamais sa classe.'
+	String get sousTitre => 'Le serveur tire au sort la séance que chaque contrôleur reçoit. La direction fixe les règles ; le contrôleur ne choisit jamais sa classe.';
+
+	/// fr: 'Les tirages n'ont pas pu être chargés'
+	String get sansDonnees => 'Les tirages n\'ont pas pu être chargés';
+
+	/// fr: 'Les tirages n'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Les tirages n\'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: 'Disponible au branchement serveur'
+	String get indisponibleTitre => 'Disponible au branchement serveur';
+
+	/// fr: 'Les règles et l'historique des tirages s'afficheront ici dès le branchement serveur. D'ici là, rien n'est affiché : aucun tirage n'est inventé.'
+	String get indisponiblePhrase => 'Les règles et l\'historique des tirages s\'afficheront ici dès le branchement serveur. D\'ici là, rien n\'est affiché : aucun tirage n\'est inventé.';
+
+	/// fr: 'Cet écran est réservé à la direction'
+	String get reserveTitre => 'Cet écran est réservé à la direction';
+
+	/// fr: 'Votre compte n'a pas accès aux tirages : ils sont réservés à la direction, pour que personne ne puisse prévoir qui sera contrôlé. Si vous en avez besoin, demandez l'accès à la direction.'
+	String get reservePhrase => 'Votre compte n\'a pas accès aux tirages : ils sont réservés à la direction, pour que personne ne puisse prévoir qui sera contrôlé. Si vous en avez besoin, demandez l\'accès à la direction.';
+
+	/// fr: 'Règles du tirage'
+	String get reglesTitre => 'Règles du tirage';
+
+	/// fr: 'Ces règles s'appliquent aux prochains tirages. Les missions déjà attribuées ne changent pas. Chaque modification est inscrite au journal d'audit.'
+	String get reglesIntro => 'Ces règles s\'appliquent aux prochains tirages. Les missions déjà attribuées ne changent pas. Chaque modification est inscrite au journal d\'audit.';
+
+	/// fr: 'Fréquence'
+	String get frequenceTitre => 'Fréquence';
+
+	/// fr: 'Le nombre de missions qu'un contrôleur reçoit par semaine, au plus.'
+	String get frequenceDetail => 'Le nombre de missions qu\'un contrôleur reçoit par semaine, au plus.';
+
+	/// fr: '(one) {{n} mission par semaine} (other) {{n} missions par semaine}'
+	String missionsParSemaine({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} mission par semaine',
+		other: '${n} missions par semaine',
+	);
+
+	/// fr: 'Pondération'
+	String get ponderationTitre => 'Pondération';
+
+	/// fr: 'Plus le poids est fort, plus ces séances ont de chances d'être tirées. Le tirage reste imprévisible pour l'enseignant comme pour le contrôleur.'
+	String get ponderationDetail => 'Plus le poids est fort, plus ces séances ont de chances d\'être tirées. Le tirage reste imprévisible pour l\'enseignant comme pour le contrôleur.';
+
+	/// fr: 'Enseignants arrivés récemment'
+	String get critereEnseignantsRecents => 'Enseignants arrivés récemment';
+
+	/// fr: 'Classes signalées à l'administration'
+	String get critereClassesSignalees => 'Classes signalées à l\'administration';
+
+	/// fr: 'Heures de pointe'
+	String get critereHeuresDePointe => 'Heures de pointe';
+
+	/// fr: 'Aucun poids'
+	String get niveauAucun => 'Aucun poids';
+
+	/// fr: 'Poids normal'
+	String get niveauNormal => 'Poids normal';
+
+	/// fr: 'Poids fort'
+	String get niveauFort => 'Poids fort';
+
+	/// fr: 'Classes ou enseignants à cibler'
+	String get ciblesTitre => 'Classes ou enseignants à cibler';
+
+	/// fr: 'Une cible est tirée en priorité quand sa séance est en direct. Elle n'est jamais annoncée au contrôleur ni à l'enseignant.'
+	String get ciblesDetail => 'Une cible est tirée en priorité quand sa séance est en direct. Elle n\'est jamais annoncée au contrôleur ni à l\'enseignant.';
+
+	/// fr: 'Aucune cible : toutes les séances en direct ont les mêmes chances, au poids près.'
+	String get aucuneCible => 'Aucune cible : toutes les séances en direct ont les mêmes chances, au poids près.';
+
+	/// fr: 'Classe'
+	String get cibleClasse => 'Classe';
+
+	/// fr: 'Enseignant'
+	String get cibleEnseignant => 'Enseignant';
+
+	/// fr: 'Retirer {libelle}'
+	String retirerCible({required Object libelle}) => 'Retirer ${libelle}';
+
+	/// fr: 'Ajouter une cible'
+	String get ajouterCible => 'Ajouter une cible';
+
+	/// fr: 'Ajouter une cible'
+	String get ajouterTitre => 'Ajouter une cible';
+
+	/// fr: 'Choisissez la classe ou l'enseignant à tirer en priorité. La cible s'ajoute aux règles, que vous enregistrez ensuite.'
+	String get ajouterContexte => 'Choisissez la classe ou l\'enseignant à tirer en priorité. La cible s\'ajoute aux règles, que vous enregistrez ensuite.';
+
+	/// fr: 'Classe ou enseignant à cibler'
+	String get ajouterChoix => 'Classe ou enseignant à cibler';
+
+	/// fr: 'Ajouter cette cible'
+	String get ajouterConfirmer => 'Ajouter cette cible';
+
+	/// fr: 'Il manque la cible : choisissez-la dans la liste.'
+	String get manqueCible => 'Il manque la cible : choisissez-la dans la liste.';
+
+	/// fr: 'Aucune classe ni aucun enseignant à cibler'
+	String get aucunCandidat => 'Aucune classe ni aucun enseignant à cibler';
+
+	/// fr: 'Toutes les classes et tous les enseignants sont déjà ciblés, ou aucune séance n'existe encore.'
+	String get aucunCandidatDetail => 'Toutes les classes et tous les enseignants sont déjà ciblés, ou aucune séance n\'existe encore.';
+
+	/// fr: 'La liste des cibles n'a pas pu être lue. Réessayez dans un instant.'
+	String get erreurCandidats => 'La liste des cibles n\'a pas pu être lue. Réessayez dans un instant.';
+
+	/// fr: 'Enregistrer les règles'
+	String get enregistrer => 'Enregistrer les règles';
+
+	/// fr: 'Règles enregistrées. Elles s'appliquent aux prochains tirages.'
+	String get enregistrees => 'Règles enregistrées. Elles s\'appliquent aux prochains tirages.';
+
+	/// fr: 'L'enregistrement n'est pas confirmé : la réponse du serveur n'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans doublon.'
+	String get nonConfirmees => 'L\'enregistrement n\'est pas confirmé : la réponse du serveur n\'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans doublon.';
+
+	/// fr: 'Les règles n'ont pas été enregistrées : {motif}. Vérifiez-les, puis recommencez.'
+	String refusees({required Object motif}) => 'Les règles n\'ont pas été enregistrées : ${motif}. Vérifiez-les, puis recommencez.';
+
+	/// fr: 'Les règles pourront être enregistrées quand la connexion sera revenue. Vos choix restent affichés.'
+	String get horsLigne => 'Les règles pourront être enregistrées quand la connexion sera revenue. Vos choix restent affichés.';
+
+	/// fr: 'Vous pouvez lire ces règles, mais pas les modifier : leur modification est réservée à une personne de la direction qui en a le droit.'
+	String get lectureSeule => 'Vous pouvez lire ces règles, mais pas les modifier : leur modification est réservée à une personne de la direction qui en a le droit.';
+
+	/// fr: 'Historique des tirages'
+	String get historiqueTitre => 'Historique des tirages';
+
+	/// fr: 'Chaque tirage et chaque mission non contrôlée sont conservés avec leur date. Seule la direction les lit : le contrôleur ne voit que sa propre mission.'
+	String get historiqueDetail => 'Chaque tirage et chaque mission non contrôlée sont conservés avec leur date. Seule la direction les lit : le contrôleur ne voit que sa propre mission.';
+
+	/// fr: 'Rechercher un tirage'
+	String get rechercheLibelle => 'Rechercher un tirage';
+
+	/// fr: 'Classe, enseignant ou contrôleur'
+	String get rechercheAide => 'Classe, enseignant ou contrôleur';
+
+	/// fr: 'Tous'
+	String get filtreTous => 'Tous';
+
+	/// fr: 'Attribuées'
+	String get filtreAttribuees => 'Attribuées';
+
+	/// fr: 'Contrôles en cours'
+	String get filtreEnCours => 'Contrôles en cours';
+
+	/// fr: 'Contrôlées'
+	String get filtreControlees => 'Contrôlées';
+
+	/// fr: 'Non contrôlées'
+	String get filtreNonControlees => 'Non contrôlées';
+
+	/// fr: 'Déjà contrôlées'
+	String get filtreDejaControlees => 'Déjà contrôlées';
+
+	/// fr: 'Tirée le'
+	String get colonneQuand => 'Tirée le';
+
+	/// fr: 'Classe'
+	String get colonneClasse => 'Classe';
+
+	/// fr: 'Enseignant'
+	String get colonneEnseignant => 'Enseignant';
+
+	/// fr: 'Contrôleur'
+	String get colonneControleur => 'Contrôleur';
+
+	/// fr: 'Tirage'
+	String get colonneCritere => 'Tirage';
+
+	/// fr: 'Mission'
+	String get colonneStatut => 'Mission';
+
+	/// fr: 'Attribuée'
+	String get statutAttribuee => 'Attribuée';
+
+	/// fr: 'Contrôle en cours'
+	String get statutEnCours => 'Contrôle en cours';
+
+	/// fr: 'Contrôlée'
+	String get statutControlee => 'Contrôlée';
+
+	/// fr: 'Non contrôlée'
+	String get statutNonControlee => 'Non contrôlée';
+
+	/// fr: 'Déjà contrôlée par un autre'
+	String get statutDejaControlee => 'Déjà contrôlée par un autre';
+
+	/// fr: 'Rapport envoyé à l'administration'
+	String get rapportEnvoye => 'Rapport envoyé à l\'administration';
+
+	/// fr: 'Au hasard'
+	String get critereAleatoire => 'Au hasard';
+
+	/// fr: 'Selon le poids'
+	String get criterePonderation => 'Selon le poids';
+
+	/// fr: 'Cible'
+	String get critereCible => 'Cible';
+
+	/// fr: 'Aucun tirage pour le moment'
+	String get vide => 'Aucun tirage pour le moment';
+
+	/// fr: 'Les tirages apparaîtront ici dès que des séances seront en direct.'
+	String get videDetail => 'Les tirages apparaîtront ici dès que des séances seront en direct.';
+
+	/// fr: 'Aucun tirage avec ce filtre'
+	String get aucunAvecCeFiltre => 'Aucun tirage avec ce filtre';
+
+	/// fr: 'Changez de filtre pour voir les autres tirages.'
+	String get aucunAvecCeFiltreDetail => 'Changez de filtre pour voir les autres tirages.';
+
+	/// fr: 'Page {page} sur {total}'
+	String position({required Object page, required Object total}) => 'Page ${page} sur ${total}';
+
+	/// fr: 'Page {page} sur {total} de l'historique des tirages'
+	String positionSemantique({required Object page, required Object total}) => 'Page ${page} sur ${total} de l\'historique des tirages';
+
+	/// fr: 'Page précédente de l'historique des tirages'
+	String get precedente => 'Page précédente de l\'historique des tirages';
+
+	/// fr: 'Page suivante de l'historique des tirages'
+	String get suivante => 'Page suivante de l\'historique des tirages';
+
+	/// fr: 'Tirages {debut} à {fin} sur {total}'
+	String resume({required Object debut, required Object fin, required Object total}) => 'Tirages ${debut} à ${fin} sur ${total}';
 
 	/// fr: '{date} à {heure}'
 	String quand({required Object date, required Object heure}) => '${date} à ${heure}';
@@ -30853,6 +31097,83 @@ extension on Traductions {
 			'admin.fusion.evenementTransfertSortant' => ({required Object prenom, required Object autre}) => '${prenom} transféré vers ${autre}',
 			'admin.fusion.evenementTransfertEntrant' => ({required Object prenom, required Object autre}) => '${prenom} transféré depuis ${autre}',
 			'admin.fusion.quand' => ({required Object date, required Object heure}) => '${date} à ${heure}',
+			'admin.tirage.titre' => 'Tirage des contrôles',
+			'admin.tirage.sousTitre' => 'Le serveur tire au sort la séance que chaque contrôleur reçoit. La direction fixe les règles ; le contrôleur ne choisit jamais sa classe.',
+			'admin.tirage.sansDonnees' => 'Les tirages n\'ont pas pu être chargés',
+			'admin.tirage.erreur' => 'Les tirages n\'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'admin.tirage.indisponibleTitre' => 'Disponible au branchement serveur',
+			'admin.tirage.indisponiblePhrase' => 'Les règles et l\'historique des tirages s\'afficheront ici dès le branchement serveur. D\'ici là, rien n\'est affiché : aucun tirage n\'est inventé.',
+			'admin.tirage.reserveTitre' => 'Cet écran est réservé à la direction',
+			'admin.tirage.reservePhrase' => 'Votre compte n\'a pas accès aux tirages : ils sont réservés à la direction, pour que personne ne puisse prévoir qui sera contrôlé. Si vous en avez besoin, demandez l\'accès à la direction.',
+			'admin.tirage.reglesTitre' => 'Règles du tirage',
+			'admin.tirage.reglesIntro' => 'Ces règles s\'appliquent aux prochains tirages. Les missions déjà attribuées ne changent pas. Chaque modification est inscrite au journal d\'audit.',
+			'admin.tirage.frequenceTitre' => 'Fréquence',
+			'admin.tirage.frequenceDetail' => 'Le nombre de missions qu\'un contrôleur reçoit par semaine, au plus.',
+			'admin.tirage.missionsParSemaine' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} mission par semaine', other: '${n} missions par semaine', ), 
+			'admin.tirage.ponderationTitre' => 'Pondération',
+			'admin.tirage.ponderationDetail' => 'Plus le poids est fort, plus ces séances ont de chances d\'être tirées. Le tirage reste imprévisible pour l\'enseignant comme pour le contrôleur.',
+			'admin.tirage.critereEnseignantsRecents' => 'Enseignants arrivés récemment',
+			'admin.tirage.critereClassesSignalees' => 'Classes signalées à l\'administration',
+			'admin.tirage.critereHeuresDePointe' => 'Heures de pointe',
+			'admin.tirage.niveauAucun' => 'Aucun poids',
+			'admin.tirage.niveauNormal' => 'Poids normal',
+			'admin.tirage.niveauFort' => 'Poids fort',
+			'admin.tirage.ciblesTitre' => 'Classes ou enseignants à cibler',
+			'admin.tirage.ciblesDetail' => 'Une cible est tirée en priorité quand sa séance est en direct. Elle n\'est jamais annoncée au contrôleur ni à l\'enseignant.',
+			'admin.tirage.aucuneCible' => 'Aucune cible : toutes les séances en direct ont les mêmes chances, au poids près.',
+			'admin.tirage.cibleClasse' => 'Classe',
+			'admin.tirage.cibleEnseignant' => 'Enseignant',
+			'admin.tirage.retirerCible' => ({required Object libelle}) => 'Retirer ${libelle}',
+			'admin.tirage.ajouterCible' => 'Ajouter une cible',
+			'admin.tirage.ajouterTitre' => 'Ajouter une cible',
+			'admin.tirage.ajouterContexte' => 'Choisissez la classe ou l\'enseignant à tirer en priorité. La cible s\'ajoute aux règles, que vous enregistrez ensuite.',
+			'admin.tirage.ajouterChoix' => 'Classe ou enseignant à cibler',
+			'admin.tirage.ajouterConfirmer' => 'Ajouter cette cible',
+			'admin.tirage.manqueCible' => 'Il manque la cible : choisissez-la dans la liste.',
+			'admin.tirage.aucunCandidat' => 'Aucune classe ni aucun enseignant à cibler',
+			'admin.tirage.aucunCandidatDetail' => 'Toutes les classes et tous les enseignants sont déjà ciblés, ou aucune séance n\'existe encore.',
+			'admin.tirage.erreurCandidats' => 'La liste des cibles n\'a pas pu être lue. Réessayez dans un instant.',
+			'admin.tirage.enregistrer' => 'Enregistrer les règles',
+			'admin.tirage.enregistrees' => 'Règles enregistrées. Elles s\'appliquent aux prochains tirages.',
+			'admin.tirage.nonConfirmees' => 'L\'enregistrement n\'est pas confirmé : la réponse du serveur n\'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans doublon.',
+			'admin.tirage.refusees' => ({required Object motif}) => 'Les règles n\'ont pas été enregistrées : ${motif}. Vérifiez-les, puis recommencez.',
+			'admin.tirage.horsLigne' => 'Les règles pourront être enregistrées quand la connexion sera revenue. Vos choix restent affichés.',
+			'admin.tirage.lectureSeule' => 'Vous pouvez lire ces règles, mais pas les modifier : leur modification est réservée à une personne de la direction qui en a le droit.',
+			'admin.tirage.historiqueTitre' => 'Historique des tirages',
+			'admin.tirage.historiqueDetail' => 'Chaque tirage et chaque mission non contrôlée sont conservés avec leur date. Seule la direction les lit : le contrôleur ne voit que sa propre mission.',
+			'admin.tirage.rechercheLibelle' => 'Rechercher un tirage',
+			'admin.tirage.rechercheAide' => 'Classe, enseignant ou contrôleur',
+			'admin.tirage.filtreTous' => 'Tous',
+			'admin.tirage.filtreAttribuees' => 'Attribuées',
+			'admin.tirage.filtreEnCours' => 'Contrôles en cours',
+			'admin.tirage.filtreControlees' => 'Contrôlées',
+			'admin.tirage.filtreNonControlees' => 'Non contrôlées',
+			'admin.tirage.filtreDejaControlees' => 'Déjà contrôlées',
+			'admin.tirage.colonneQuand' => 'Tirée le',
+			'admin.tirage.colonneClasse' => 'Classe',
+			'admin.tirage.colonneEnseignant' => 'Enseignant',
+			'admin.tirage.colonneControleur' => 'Contrôleur',
+			'admin.tirage.colonneCritere' => 'Tirage',
+			'admin.tirage.colonneStatut' => 'Mission',
+			'admin.tirage.statutAttribuee' => 'Attribuée',
+			'admin.tirage.statutEnCours' => 'Contrôle en cours',
+			'admin.tirage.statutControlee' => 'Contrôlée',
+			'admin.tirage.statutNonControlee' => 'Non contrôlée',
+			'admin.tirage.statutDejaControlee' => 'Déjà contrôlée par un autre',
+			'admin.tirage.rapportEnvoye' => 'Rapport envoyé à l\'administration',
+			'admin.tirage.critereAleatoire' => 'Au hasard',
+			'admin.tirage.criterePonderation' => 'Selon le poids',
+			'admin.tirage.critereCible' => 'Cible',
+			'admin.tirage.vide' => 'Aucun tirage pour le moment',
+			'admin.tirage.videDetail' => 'Les tirages apparaîtront ici dès que des séances seront en direct.',
+			'admin.tirage.aucunAvecCeFiltre' => 'Aucun tirage avec ce filtre',
+			'admin.tirage.aucunAvecCeFiltreDetail' => 'Changez de filtre pour voir les autres tirages.',
+			'admin.tirage.position' => ({required Object page, required Object total}) => 'Page ${page} sur ${total}',
+			'admin.tirage.positionSemantique' => ({required Object page, required Object total}) => 'Page ${page} sur ${total} de l\'historique des tirages',
+			'admin.tirage.precedente' => 'Page précédente de l\'historique des tirages',
+			'admin.tirage.suivante' => 'Page suivante de l\'historique des tirages',
+			'admin.tirage.resume' => ({required Object debut, required Object fin, required Object total}) => 'Tirages ${debut} à ${fin} sur ${total}',
+			'admin.tirage.quand' => ({required Object date, required Object heure}) => '${date} à ${heure}',
 			'agent.titre' => 'Entrée d\'un agent',
 			'agent.intro' => 'Cette page ouvre l\'application en lecture seule, avec le jeton remis par l\'académie.',
 			'agent.jeton' => 'Jeton d\'observation',
@@ -31103,6 +31424,8 @@ extension on Traductions {
 			'compte.roleDetail.controller' => 'Observe les séances pour la qualité pédagogique',
 			'compte.roleDetail.teacher' => 'Donne les cours et suit ses créneaux',
 			'compte.roleDetail.guardian' => 'Suit le foyer et ses enfants',
+			_ => null,
+		} ?? switch (path) {
 			'compte.roleDetail.student' => 'Suit ses cours et son Coran',
 			'compte.tuteur.preferences' => 'Préférences',
 			'compte.tuteur.dateLongue' => ({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}',
@@ -31180,8 +31503,6 @@ extension on Traductions {
 			'compte.tuteur.pagePreferences.notificationsDetail' => 'Pas encore disponibles dans l\'application',
 			'compte.tuteur.pageApparence.titre' => 'Apparence',
 			'compte.tuteur.pageApparence.sousTitre' => 'Appliqué sur cet appareil.',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageApparence.theme' => 'Thème de l\'application',
 			'compte.tuteur.pageApparence.themeDetail' => 'Personnalisez l\'apparence de Rewayah.',
 			'compte.tuteur.pageApparence.confort' => 'Confort visuel',
@@ -31617,6 +31938,8 @@ extension on Traductions {
 			'classe.observation.motif.lienAbsent' => 'Aucun élève de votre foyer n\'est rattaché à cette séance.',
 			'classe.observation.motif.enfantAbsent' => ({required Object dePrenom}) => 'L\'observation attend l\'arrivée ${dePrenom}.',
 			'classe.observation.motif.presenceEnVerification' => ({required Object dePrenom}) => 'La présence ${dePrenom} est en cours de vérification.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.observation.motif.visiteDejaOuverte' => 'Une visite est déjà ouverte, sur cet appareil ou sur un autre.',
 			'classe.observation.motif.garantieServeurAbsente' => 'L\'observation des séances n\'est pas encore ouverte.',
 			'classe.observation.motif.reseau' => 'La disponibilité de l\'observation n\'a pas pu être vérifiée.',
@@ -31694,8 +32017,6 @@ extension on Traductions {
 			'classe.cartes.aucuneDetail' => 'L\'enseignant de la classe y posera les informations utiles.',
 			'classe.cartes.aucuneEnseignant' => 'Aucune carte pour l\'instant. Ajoutez-en une : la classe la verra aussitôt.',
 			'classe.cartes.ajouter' => 'Ajouter une carte',
-			_ => null,
-		} ?? switch (path) {
 			'classe.cartes.limite' => ({required Object max}) => '${max} cartes au plus : retirez-en une pour en ajouter une autre.',
 			'classe.cartes.modifierLecteur' => ({required Object titre}) => 'Modifier la carte « ${titre} »',
 			'classe.cartes.echeance' => ({required Object date}) => 'Échéance : ${date}',
@@ -32131,6 +32452,8 @@ extension on Traductions {
 			'enseignant.profil.languesRequises' => 'Cochez au moins une langue.',
 			'enseignant.profil.languesErreur' => 'La liste des langues n\'a pas pu être lue',
 			'enseignant.profil.languesErreurDetail' => 'Vos langues actuelles ne changent pas. Réessayez dans un instant.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.enregistrer' => 'Enregistrer',
 			'enseignant.profil.enregistre' => 'Modification enregistrée',
 			'enseignant.profil.editionErreur' => 'La modification n\'a pas abouti. Réessayez dans un instant.',
@@ -32208,8 +32531,6 @@ extension on Traductions {
 			'enseignant.creneaux.plageSupprimee' => ({required Object jour, required Object de, required Object a}) => 'Plage supprimée : ${jour}, ${de} ${a}.',
 			'enseignant.creneaux.seanceContinue' => ({required Object heures}) => 'La séance déjà attribuée sur ${heures} continue : demandez une réaffectation pour l\'arrêter.',
 			'enseignant.creneaux.confirmerRetraitQuestion' => ({required Object heures}) => 'Retirer ${heures} de vos disponibilités ?',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.confirmerRetraitConsequence' => ({required Object heures}) => 'Une Classe a lieu sur ${heures}. Retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu\'à une réaffectation.',
 			'enseignant.creneaux.confirmerRetraitAction' => 'Retirer ces heures',
 			'enseignant.creneaux.ajoutNonConfirme' => ({required Object heures}) => 'Ajout non confirmé : ${heures}.',
@@ -32645,6 +32966,8 @@ extension on Traductions {
 			'tc.coran.reprise.groupeDetail' => ({required Object page}) => 'La Classe en était page ${page}',
 			'tc.coran.focus.aucunePlage' => 'Aucun passage mis en avant',
 			'tc.coran.focus.aucunePlageDetail' => 'Le focus suit le passage que l\'enseignant désigne. Hors classe, il centre la page ouverte.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.coran.focus.quitter' => 'Quitter le focus',
 			'tc.outils.dock.titre' => 'Outils',
 			'tc.outils.dock.deplacer' => 'Déplacer les outils',
@@ -32722,8 +33045,6 @@ extension on Traductions {
 			'tc.classe.fiche.presenceRecente' => 'Présence récente',
 			'tc.classe.fiche.assiduite' => ({required Object presences, required Object total}) => '${presences} / ${total} cours',
 			'tc.classe.fiche.travailActuel' => 'Travail actuel',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.fiche.interfaceGuidee' => 'Mode Accessibilité',
 			'tc.classe.fiche.sansPedagogie' => 'Suivi pédagogique indisponible',
 			'tc.classe.fiche.sansPedagogieDetail' => 'Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l\'enseignant.',
@@ -33159,6 +33480,8 @@ extension on Traductions {
 			'adulte.famille.place.envoyeeA' => ({required Object courriel}) => 'Envoyée à ${courriel}',
 			'adulte.famille.place.expiree' => 'L\'invitation précédente a expiré. Vous pouvez en envoyer une nouvelle.',
 			'adulte.famille.place.annulee' => 'L\'invitation a été annulée et ne peut plus être acceptée. Vous pouvez en envoyer une nouvelle.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.invitation.titreElle' => 'Inviter ma conjointe',
 			'adulte.invitation.titreLui' => 'Inviter mon conjoint',
 			'adulte.invitation.enteteElle' => 'Un compte personnel pour elle',
@@ -33236,8 +33559,6 @@ extension on Traductions {
 			'adulte.acceptation.monEspace' => 'Aller à Mon espace',
 			'adulte.acceptation.recu' => ({required Object date}) => 'Réponse enregistrée le ${date}.',
 			'adulte.acceptation.titreNeutre' => 'Invitation au forfait famille',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.acceptation.sansCompteTitre' => 'Invitation au forfait famille',
 			'adulte.acceptation.sansCompte' => 'Pour répondre, connectez-vous à votre compte, ou créez-en un. Vous lirez alors ce que la personne qui vous invite verra et ne verra pas avant de décider.',
 			'adulte.acceptation.sansCompteAction' => 'Me connecter ou créer mon compte',
@@ -33673,6 +33994,8 @@ extension on Traductions {
 			'com.socle.composants.composer.aide' => 'Écrire un message',
 			'com.socle.composants.composer.envoyer' => 'Envoyer',
 			'com.socle.composants.composer.champVide' => 'Écrivez un message pour l\'envoyer.',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.composants.composer.vocal' => 'Message vocal',
 			'com.socle.composants.composer.vocalAVenir' => 'Message vocal bientôt disponible',
 			'com.socle.composants.composer.enCours' => 'Envoi en cours',
@@ -33750,8 +34073,6 @@ extension on Traductions {
 			'com.socle.navigation.ongletModeration' => 'Modération',
 			'com.socle.navigation.ongletMessages' => _root.com.socle.lexique.messages,
 			'com.socle.navigation.bientot' => 'Bientôt disponible',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.navigation.provisoire.messagesTitre' => _root.com.socle.lexique.messages,
 			'com.socle.navigation.provisoire.messagesDetail' => 'Les messages liés à vos Classes arriveront bientôt dans cet espace.',
 			'com.socle.navigation.provisoire.communauteTitre' => _root.com.socle.lexique.communaute,
@@ -34187,6 +34508,8 @@ extension on Traductions {
 			'com.studio.panneau.parametresDetail' => 'La modification des paramètres arrivera avec le service du Studio.',
 			'com.studio.panneau.ouvrir' => ({required Object titre}) => 'Ouvrir ${titre}',
 			'com.studio.panneau.lienExterne' => ({required Object hote}) => 'Site externe : ${hote}',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.panneau.aucunPartageTitre' => 'Rien de partagé pour le moment',
 			'com.studio.panneau.aucunPartage' => 'Les éléments épinglés, les fichiers et les liens de ce canal apparaîtront ici.',
 			'com.studio.enregistrer.enregistrer' => _root.com.socle.lexique.enregistrer,
@@ -34264,8 +34587,6 @@ extension on Traductions {
 			'com.studio.demo.f.messageMerci' => 'Merci à tous pour la semaine.',
 			'com.studio.demo.f.messageDossiers' => 'Trois dossiers attendent une décision avant vendredi. Nadia, peux-tu regarder le dossier de la famille Karim ?',
 			'com.studio.demo.f.messageCompteRendu' => 'Le compte rendu des visites du mois est prêt.',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.f.messageRemplacement' => 'Mardi, la Classe An-Nour est assurée par un remplaçant. Le planning est à jour.',
 			'com.studio.demo.f.messageJustificatifs' => 'Les justificatifs de septembre sont rassemblés.',
 			'com.studio.demo.f.messageBudget' => 'Budget confidentiel du trimestre.',
@@ -34701,6 +35022,8 @@ extension on Traductions {
 			'comptable.paiements.confirmation.confirmerUn' => ({required Object montant}) => 'Confirmer le paiement de ${montant}',
 			'comptable.paiements.confirmation.confirmerLot' => ({required num n, required Object montants}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Confirmer le paiement prêt de ${montants}', other: 'Confirmer les ${n} paiements prêts : ${montants}', ), 
 			'comptable.paiements.confirmation.demanderValidation' => 'Demander validation',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.annuler' => 'Annuler',
 			'comptable.paiements.confirmation.fermer' => 'Fermer',
 			'comptable.paiements.confirmation.soumisTitre' => 'Envoyé au prestataire',
@@ -34778,8 +35101,6 @@ extension on Traductions {
 			'comptable.paiements.detail.periode' => 'Période / objet',
 			'comptable.paiements.detail.echeance' => 'Échéance',
 			'comptable.paiements.detail.prestataire' => 'Prestataire prévu',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.detail.preuve' => 'Preuve',
 			'comptable.paiements.detail.classes' => 'Classes',
 			'comptable.paiements.detail.version' => 'Version du calcul',
@@ -35215,6 +35536,8 @@ extension on Traductions {
 			'comptable.validation.decisionRefusee' => 'Votre décision est enregistrée : la demande est refusée, avec son motif.',
 			'comptable.validation.refusTitre' => 'Décision non enregistrée',
 			'comptable.validation.refusDemandeur' => 'Vous avez fait cette demande : une autre personne habilitée doit la décider. Rien n\'a changé.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.validation.refusMotif' => 'Un refus demande un motif. Choisissez-en un, puis confirmez.',
 			'comptable.validation.refusDejaDecidee' => 'Cette demande a déjà été décidée. Relisez la liste.',
 			'comptable.validation.inconnuTitre' => 'Décision non confirmée',
@@ -35292,8 +35615,6 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.remboursement' => 'Exécuter un remboursement standard',
 			'comptable.direction.delegationPanneau.remboursementDetail' => 'Un remboursement conforme à la règle part sans validation.',
 			'comptable.direction.delegationPanneau.alimentationReserve' => 'Alimenter la Réserve stratégique',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.alimentationReserveDetail' => 'Un mouvement vers la Réserve, conforme à sa politique.',
 			'comptable.direction.delegationPanneau.plafondsTitre' => 'Plafonds',
 			'comptable.direction.delegationPanneau.plafondsDetail' => 'Au-delà d\'un plafond, le paiement demande votre validation. Laissez vide pour ne fixer aucun plafond.',

@@ -570,6 +570,7 @@ class _Traductions$admin$ar extends Traductions$admin$fr {
 	@override late final _Traductions$admin$regroupements$ar regroupements = _Traductions$admin$regroupements$ar._(_root);
 	@override late final _Traductions$admin$pilotage$ar pilotage = _Traductions$admin$pilotage$ar._(_root);
 	@override late final _Traductions$admin$fusion$ar fusion = _Traductions$admin$fusion$ar._(_root);
+	@override late final _Traductions$admin$tirage$ar tirage = _Traductions$admin$tirage$ar._(_root);
 }
 
 // Path: comptable
@@ -4708,6 +4709,99 @@ class _Traductions$admin$fusion$ar extends Traductions$admin$fusion$fr {
 	);
 	@override String evenementTransfertSortant({required Object prenom, required Object autre}) => 'نُقل ⁨${prenom}⁩ إلى ⁨${autre}⁩';
 	@override String evenementTransfertEntrant({required Object prenom, required Object autre}) => 'نُقل ⁨${prenom}⁩ من ⁨${autre}⁩';
+	@override String quand({required Object date, required Object heure}) => '⁨${date}⁩ في ⁨${heure}⁩';
+}
+
+// Path: admin.tirage
+class _Traductions$admin$tirage$ar extends Traductions$admin$tirage$fr {
+	_Traductions$admin$tirage$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'قرعة المراقبة';
+	@override String get sousTitre => 'يسحب الخادم بالقرعة الحصة التي يتلقاها كل مراقب. تحدد الإدارة القواعد، ولا يختار المراقب فصله أبدًا.';
+	@override String get sansDonnees => 'تعذّر تحميل القرعات';
+	@override String get erreur => 'تعذّرت قراءة القرعات: ربما لم تصل القراءة إلى رواية. أعيدوا المحاولة بعد قليل.';
+	@override String get indisponibleTitre => 'متاحة عند الربط بالخادم';
+	@override String get indisponiblePhrase => 'ستظهر قواعد القرعة وسجلها هنا فور الربط بالخادم. إلى ذلك الحين لا يُعرض شيء: لا قرعة مختلقة.';
+	@override String get reserveTitre => 'هذه الشاشة مخصصة للإدارة';
+	@override String get reservePhrase => 'ليس لحسابكم حق الاطلاع على القرعات: هي مخصصة للإدارة حتى لا يستطيع أحد توقع من سيُراقَب. إن احتجتم إلى ذلك فاطلبوا الإذن من الإدارة.';
+	@override String get reglesTitre => 'قواعد القرعة';
+	@override String get reglesIntro => 'تُطبَّق هذه القواعد على القرعات القادمة. المهام الموزعة لا تتغير. يُسجَّل كل تعديل في سجل التدقيق.';
+	@override String get frequenceTitre => 'التواتر';
+	@override String get frequenceDetail => 'أقصى عدد من المهام يتلقاه المراقب في الأسبوع.';
+	@override String missionsParSemaine({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا مهمة في الأسبوع',
+		one: 'مهمة واحدة في الأسبوع',
+		two: 'مهمتان في الأسبوع',
+		few: '⁨${n}⁩ مهام في الأسبوع',
+		many: '⁨${n}⁩ مهمة في الأسبوع',
+		other: '⁨${n}⁩ مهمة في الأسبوع',
+	);
+	@override String get ponderationTitre => 'الترجيح';
+	@override String get ponderationDetail => 'كلما قوي الوزن زادت فرص سحب هذه الحصص. تبقى القرعة غير قابلة للتوقع على المعلم والمراقب معًا.';
+	@override String get critereEnseignantsRecents => 'معلمون التحقوا حديثًا';
+	@override String get critereClassesSignalees => 'فصول أُبلغ عنها للإدارة';
+	@override String get critereHeuresDePointe => 'ساعات الذروة';
+	@override String get niveauAucun => 'بلا وزن';
+	@override String get niveauNormal => 'وزن عادي';
+	@override String get niveauFort => 'وزن قوي';
+	@override String get ciblesTitre => 'فصول أو معلمون مستهدفون';
+	@override String get ciblesDetail => 'يُسحب الهدف أولًا عندما تكون حصته مباشرة. لا يُعلَن أبدًا للمراقب ولا للمعلم.';
+	@override String get aucuneCible => 'لا هدف: لكل الحصص المباشرة الفرص نفسها، بحسب الوزن.';
+	@override String get cibleClasse => 'فصل';
+	@override String get cibleEnseignant => 'معلم';
+	@override String retirerCible({required Object libelle}) => 'إزالة ⁨${libelle}⁩';
+	@override String get ajouterCible => 'إضافة هدف';
+	@override String get ajouterTitre => 'إضافة هدف';
+	@override String get ajouterContexte => 'اختاروا الفصل أو المعلم الذي يُسحب أولًا. يُضاف الهدف إلى القواعد ثم تحفظونها.';
+	@override String get ajouterChoix => 'الفصل أو المعلم المستهدف';
+	@override String get ajouterConfirmer => 'إضافة هذا الهدف';
+	@override String get manqueCible => 'ينقص الهدف: اختاروه من القائمة.';
+	@override String get aucunCandidat => 'لا فصل ولا معلم يمكن استهدافه';
+	@override String get aucunCandidatDetail => 'كل الفصول والمعلمين مستهدفون بالفعل أو لا توجد حصص بعد.';
+	@override String get erreurCandidats => 'تعذّرت قراءة قائمة الأهداف. أعيدوا المحاولة بعد قليل.';
+	@override String get enregistrer => 'حفظ القواعد';
+	@override String get enregistrees => 'تم حفظ القواعد. تُطبَّق على القرعات القادمة.';
+	@override String get nonConfirmees => 'الحفظ غير مؤكَّد: لم يصل ردّ الخادم. اضغطوا من جديد: سيُستأنف الطلب نفسه دون تكرار.';
+	@override String refusees({required Object motif}) => 'لم تُحفظ القواعد: ⁨${motif}⁩. تحققوا منها ثم أعيدوا المحاولة.';
+	@override String get horsLigne => 'يمكن حفظ القواعد عند عودة الاتصال. تبقى اختياراتكم معروضة.';
+	@override String get lectureSeule => 'يمكنكم قراءة هذه القواعد دون تعديلها: التعديل مخصص لشخص من الإدارة له هذا الحق.';
+	@override String get historiqueTitre => 'سجل القرعات';
+	@override String get historiqueDetail => 'تُحفظ كل قرعة وكل مهمة لم تُراقَب مع تاريخها. لا تطلع عليها إلا الإدارة: لا يرى المراقب إلا مهمته.';
+	@override String get rechercheLibelle => 'البحث عن قرعة';
+	@override String get rechercheAide => 'الفصل أو المعلم أو المراقب';
+	@override String get filtreTous => 'الكل';
+	@override String get filtreAttribuees => 'الموزعة';
+	@override String get filtreEnCours => 'المراقبات الجارية';
+	@override String get filtreControlees => 'التي روقبت';
+	@override String get filtreNonControlees => 'التي لم تُراقَب';
+	@override String get filtreDejaControlees => 'المراقَبة سابقًا';
+	@override String get colonneQuand => 'تاريخ السحب';
+	@override String get colonneClasse => 'الفصل';
+	@override String get colonneEnseignant => 'المعلم';
+	@override String get colonneControleur => 'المراقب';
+	@override String get colonneCritere => 'القرعة';
+	@override String get colonneStatut => 'المهمة';
+	@override String get statutAttribuee => 'موزعة';
+	@override String get statutEnCours => 'مراقبة جارية';
+	@override String get statutControlee => 'روقبت';
+	@override String get statutNonControlee => 'لم تُراقَب';
+	@override String get statutDejaControlee => 'سبقه مراقب آخر';
+	@override String get rapportEnvoye => 'أُرسل تقرير إلى الإدارة';
+	@override String get critereAleatoire => 'بالصدفة';
+	@override String get criterePonderation => 'بحسب الوزن';
+	@override String get critereCible => 'هدف';
+	@override String get vide => 'لا قرعات حتى الآن';
+	@override String get videDetail => 'ستظهر القرعات هنا بمجرد وجود حصص مباشرة.';
+	@override String get aucunAvecCeFiltre => 'لا قرعات بهذا المعيار';
+	@override String get aucunAvecCeFiltreDetail => 'غيّروا المعيار لرؤية بقية القرعات.';
+	@override String position({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩';
+	@override String positionSemantique({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩ من سجل القرعات';
+	@override String get precedente => 'الصفحة السابقة من سجل القرعات';
+	@override String get suivante => 'الصفحة التالية من سجل القرعات';
+	@override String resume({required Object debut, required Object fin, required Object total}) => 'القرعات من ⁨${debut}⁩ إلى ⁨${fin}⁩ من أصل ⁨${total}⁩';
 	@override String quand({required Object date, required Object heure}) => '⁨${date}⁩ في ⁨${heure}⁩';
 }
 
@@ -15803,6 +15897,83 @@ extension on TraductionsAr {
 			'admin.fusion.evenementTransfertSortant' => ({required Object prenom, required Object autre}) => 'نُقل ⁨${prenom}⁩ إلى ⁨${autre}⁩',
 			'admin.fusion.evenementTransfertEntrant' => ({required Object prenom, required Object autre}) => 'نُقل ⁨${prenom}⁩ من ⁨${autre}⁩',
 			'admin.fusion.quand' => ({required Object date, required Object heure}) => '⁨${date}⁩ في ⁨${heure}⁩',
+			'admin.tirage.titre' => 'قرعة المراقبة',
+			'admin.tirage.sousTitre' => 'يسحب الخادم بالقرعة الحصة التي يتلقاها كل مراقب. تحدد الإدارة القواعد، ولا يختار المراقب فصله أبدًا.',
+			'admin.tirage.sansDonnees' => 'تعذّر تحميل القرعات',
+			'admin.tirage.erreur' => 'تعذّرت قراءة القرعات: ربما لم تصل القراءة إلى رواية. أعيدوا المحاولة بعد قليل.',
+			'admin.tirage.indisponibleTitre' => 'متاحة عند الربط بالخادم',
+			'admin.tirage.indisponiblePhrase' => 'ستظهر قواعد القرعة وسجلها هنا فور الربط بالخادم. إلى ذلك الحين لا يُعرض شيء: لا قرعة مختلقة.',
+			'admin.tirage.reserveTitre' => 'هذه الشاشة مخصصة للإدارة',
+			'admin.tirage.reservePhrase' => 'ليس لحسابكم حق الاطلاع على القرعات: هي مخصصة للإدارة حتى لا يستطيع أحد توقع من سيُراقَب. إن احتجتم إلى ذلك فاطلبوا الإذن من الإدارة.',
+			'admin.tirage.reglesTitre' => 'قواعد القرعة',
+			'admin.tirage.reglesIntro' => 'تُطبَّق هذه القواعد على القرعات القادمة. المهام الموزعة لا تتغير. يُسجَّل كل تعديل في سجل التدقيق.',
+			'admin.tirage.frequenceTitre' => 'التواتر',
+			'admin.tirage.frequenceDetail' => 'أقصى عدد من المهام يتلقاه المراقب في الأسبوع.',
+			'admin.tirage.missionsParSemaine' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا مهمة في الأسبوع', one: 'مهمة واحدة في الأسبوع', two: 'مهمتان في الأسبوع', few: '⁨${n}⁩ مهام في الأسبوع', many: '⁨${n}⁩ مهمة في الأسبوع', other: '⁨${n}⁩ مهمة في الأسبوع', ), 
+			'admin.tirage.ponderationTitre' => 'الترجيح',
+			'admin.tirage.ponderationDetail' => 'كلما قوي الوزن زادت فرص سحب هذه الحصص. تبقى القرعة غير قابلة للتوقع على المعلم والمراقب معًا.',
+			'admin.tirage.critereEnseignantsRecents' => 'معلمون التحقوا حديثًا',
+			'admin.tirage.critereClassesSignalees' => 'فصول أُبلغ عنها للإدارة',
+			'admin.tirage.critereHeuresDePointe' => 'ساعات الذروة',
+			'admin.tirage.niveauAucun' => 'بلا وزن',
+			'admin.tirage.niveauNormal' => 'وزن عادي',
+			'admin.tirage.niveauFort' => 'وزن قوي',
+			'admin.tirage.ciblesTitre' => 'فصول أو معلمون مستهدفون',
+			'admin.tirage.ciblesDetail' => 'يُسحب الهدف أولًا عندما تكون حصته مباشرة. لا يُعلَن أبدًا للمراقب ولا للمعلم.',
+			'admin.tirage.aucuneCible' => 'لا هدف: لكل الحصص المباشرة الفرص نفسها، بحسب الوزن.',
+			'admin.tirage.cibleClasse' => 'فصل',
+			'admin.tirage.cibleEnseignant' => 'معلم',
+			'admin.tirage.retirerCible' => ({required Object libelle}) => 'إزالة ⁨${libelle}⁩',
+			'admin.tirage.ajouterCible' => 'إضافة هدف',
+			'admin.tirage.ajouterTitre' => 'إضافة هدف',
+			'admin.tirage.ajouterContexte' => 'اختاروا الفصل أو المعلم الذي يُسحب أولًا. يُضاف الهدف إلى القواعد ثم تحفظونها.',
+			'admin.tirage.ajouterChoix' => 'الفصل أو المعلم المستهدف',
+			'admin.tirage.ajouterConfirmer' => 'إضافة هذا الهدف',
+			'admin.tirage.manqueCible' => 'ينقص الهدف: اختاروه من القائمة.',
+			'admin.tirage.aucunCandidat' => 'لا فصل ولا معلم يمكن استهدافه',
+			'admin.tirage.aucunCandidatDetail' => 'كل الفصول والمعلمين مستهدفون بالفعل أو لا توجد حصص بعد.',
+			'admin.tirage.erreurCandidats' => 'تعذّرت قراءة قائمة الأهداف. أعيدوا المحاولة بعد قليل.',
+			'admin.tirage.enregistrer' => 'حفظ القواعد',
+			'admin.tirage.enregistrees' => 'تم حفظ القواعد. تُطبَّق على القرعات القادمة.',
+			'admin.tirage.nonConfirmees' => 'الحفظ غير مؤكَّد: لم يصل ردّ الخادم. اضغطوا من جديد: سيُستأنف الطلب نفسه دون تكرار.',
+			'admin.tirage.refusees' => ({required Object motif}) => 'لم تُحفظ القواعد: ⁨${motif}⁩. تحققوا منها ثم أعيدوا المحاولة.',
+			'admin.tirage.horsLigne' => 'يمكن حفظ القواعد عند عودة الاتصال. تبقى اختياراتكم معروضة.',
+			'admin.tirage.lectureSeule' => 'يمكنكم قراءة هذه القواعد دون تعديلها: التعديل مخصص لشخص من الإدارة له هذا الحق.',
+			'admin.tirage.historiqueTitre' => 'سجل القرعات',
+			'admin.tirage.historiqueDetail' => 'تُحفظ كل قرعة وكل مهمة لم تُراقَب مع تاريخها. لا تطلع عليها إلا الإدارة: لا يرى المراقب إلا مهمته.',
+			'admin.tirage.rechercheLibelle' => 'البحث عن قرعة',
+			'admin.tirage.rechercheAide' => 'الفصل أو المعلم أو المراقب',
+			'admin.tirage.filtreTous' => 'الكل',
+			'admin.tirage.filtreAttribuees' => 'الموزعة',
+			'admin.tirage.filtreEnCours' => 'المراقبات الجارية',
+			'admin.tirage.filtreControlees' => 'التي روقبت',
+			'admin.tirage.filtreNonControlees' => 'التي لم تُراقَب',
+			'admin.tirage.filtreDejaControlees' => 'المراقَبة سابقًا',
+			'admin.tirage.colonneQuand' => 'تاريخ السحب',
+			'admin.tirage.colonneClasse' => 'الفصل',
+			'admin.tirage.colonneEnseignant' => 'المعلم',
+			'admin.tirage.colonneControleur' => 'المراقب',
+			'admin.tirage.colonneCritere' => 'القرعة',
+			'admin.tirage.colonneStatut' => 'المهمة',
+			'admin.tirage.statutAttribuee' => 'موزعة',
+			'admin.tirage.statutEnCours' => 'مراقبة جارية',
+			'admin.tirage.statutControlee' => 'روقبت',
+			'admin.tirage.statutNonControlee' => 'لم تُراقَب',
+			'admin.tirage.statutDejaControlee' => 'سبقه مراقب آخر',
+			'admin.tirage.rapportEnvoye' => 'أُرسل تقرير إلى الإدارة',
+			'admin.tirage.critereAleatoire' => 'بالصدفة',
+			'admin.tirage.criterePonderation' => 'بحسب الوزن',
+			'admin.tirage.critereCible' => 'هدف',
+			'admin.tirage.vide' => 'لا قرعات حتى الآن',
+			'admin.tirage.videDetail' => 'ستظهر القرعات هنا بمجرد وجود حصص مباشرة.',
+			'admin.tirage.aucunAvecCeFiltre' => 'لا قرعات بهذا المعيار',
+			'admin.tirage.aucunAvecCeFiltreDetail' => 'غيّروا المعيار لرؤية بقية القرعات.',
+			'admin.tirage.position' => ({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩',
+			'admin.tirage.positionSemantique' => ({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩ من سجل القرعات',
+			'admin.tirage.precedente' => 'الصفحة السابقة من سجل القرعات',
+			'admin.tirage.suivante' => 'الصفحة التالية من سجل القرعات',
+			'admin.tirage.resume' => ({required Object debut, required Object fin, required Object total}) => 'القرعات من ⁨${debut}⁩ إلى ⁨${fin}⁩ من أصل ⁨${total}⁩',
+			'admin.tirage.quand' => ({required Object date, required Object heure}) => '⁨${date}⁩ في ⁨${heure}⁩',
 			'comptable.nav.aujourdhui' => 'اليوم',
 			'comptable.nav.paiements' => 'المدفوعات',
 			'comptable.nav.tresorerie' => 'الخزينة',
@@ -16032,6 +16203,8 @@ extension on TraductionsAr {
 			'comptable.paiements.confirmation.reessayer' => 'إعادة المحاولة',
 			'comptable.paiements.confirmation.validationDemandeeTitre' => 'طُلبت المصادقة',
 			'comptable.paiements.confirmation.validationDemandeePhrase' => 'سيصادق شخص مخوَّل آخر على هذه الدفعة. لن تُرسَل قبل قراره.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.validationEchouee' => 'لم يكتمل طلب المصادقة. أعد المحاولة: لن يُسجَّل إلا مرة واحدة.',
 			'comptable.paiements.filtres.tous' => 'الكل',
 			'comptable.paiements.filtres.enseignants' => 'المعلمون',
@@ -16109,8 +16282,6 @@ extension on TraductionsAr {
 			'comptable.paiements.ecart.motif' => 'ما الخطأ',
 			'comptable.paiements.ecart.motifs.montantLigne' => 'مبلغ هذا السطر غير مطابق',
 			'comptable.paiements.ecart.motifs.ligneManquante' => 'سطر ناقص (حصة، استبدال، مكافأة)',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.ecart.motifs.ligneEnTrop' => 'هذا السطر لا ينبغي أن يكون هنا',
 			'comptable.paiements.ecart.motifs.sourceErronee' => 'المصدر المذكور غير صحيح',
 			'comptable.paiements.ecart.envoyer' => 'إرسال البلاغ',
@@ -16546,6 +16717,8 @@ extension on TraductionsAr {
 			'comptable.direction.enregistree' => 'سُجّل الإصدار الجديد.',
 			'comptable.direction.erreurEnregistrement' => 'لا نعلم إن كان هذا الإصدار قد سُجّل. أعد قراءة الإصدار الساري، ثم أعد المحاولة.',
 			'comptable.direction.enregistrementIndisponible' => 'التسجيل غير متاح بعد. أعد المحاولة لاحقًا.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.historique' => 'سجل الإصدارات',
 			'comptable.direction.historiqueVide' => 'لا يوجد إصدار قبل هذا.',
 			'comptable.direction.etatActuel' => 'الحالة الحالية للاحتياطي',
@@ -16623,8 +16796,6 @@ extension on TraductionsAr {
 			'comptable.direction.delegationPanneau.joursRecents' => 'مدة التعديل الحديث',
 			'comptable.direction.delegationPanneau.joursRecentsDetail' => 'خلال هذا العدد من الأيام بعد التعديل، تُعدّ البيانات حديثة.',
 			'comptable.direction.delegationPanneau.toujoursTitre' => 'ممنوع دائمًا على المحاسب',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.toujoursDetail' => 'هذه القواعد الثلاث لا تُعدَّل.',
 			'comptable.direction.delegationPanneau.autoPayout' => 'أن يدفع لنفسه',
 			'comptable.direction.delegationPanneau.autoPayoutDetail' => 'دفعته الخاصة تمر دائمًا عبر شخص آخر.',
@@ -17060,6 +17231,8 @@ extension on TraductionsAr {
 			'connexion.renvoyer' => 'إعادة إرسال الرابط',
 			'connexion.renvoye' => ({required Object courriel}) => 'أُرسل رابط جديد إلى ⁨${courriel}⁩. استخدم رابط أحدث رسالة.',
 			'connexion.erreurTropTot' => 'أُرسل رابط للتو. انتظر قليلًا قبل طلب رابط آخر.',
+			_ => null,
+		} ?? switch (path) {
 			'connexion.horsLigne' => 'أنت غير متصل: لا يمكن إرسال الرابط الآن.',
 			'connexion.probleme' => 'انتهت صلاحية الرابط أو لم يصل؟',
 			'connexion.decouvrir' => 'اكتشف Rewayah Academy',
@@ -17137,8 +17310,6 @@ extension on TraductionsAr {
 			'inscription.genreFemme' => 'امرأة',
 			'inscription.genreRaison' => 'تُستخدم هذه الإجابة فقط لتسليم وثيقة هويتك إلى موظف من الجنس نفسه.',
 			'inscription.recapitulatif' => 'قبل المتابعة',
-			_ => null,
-		} ?? switch (path) {
 			'inscription.creer' => 'إنشاء حسابي',
 			'inscription.erreur' => 'لم يكتمل إنشاء الحساب. أعد المحاولة بعد لحظة.',
 			'inscription.champRequis' => 'هذه الإجابة ضرورية للمتابعة.',
@@ -17574,6 +17745,8 @@ extension on TraductionsAr {
 			'dossiers.file.ouvrirDe' => ({required Object nom}) => 'فتح ملف ⁨${nom}⁩',
 			'dossiers.file.ouvrirElide' => ({required Object nom}) => 'فتح ملف ⁨${nom}⁩',
 			'dossiers.file.enVerification' => 'قيد التحقق',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.file.sansNom' => 'ملف دون اسم متاح',
 			'dossiers.file.legende' => ({required Object type, required Object date}) => '⁨${type}⁩ · ⁨${date}⁩',
 			'dossiers.file.dateHeure' => ({required Object date, required Object heure, required Object zone}) => '⁨${date}⁩ الساعة ⁨${heure}⁩ (⁨${zone}⁩)',
@@ -17651,8 +17824,6 @@ extension on TraductionsAr {
 			'dossiers.refus.horsLigne' => 'أنت غير متصل. لم يُرسل الرفض.',
 			'dossiers.refus.inconnu' => 'نتيجة الرفض غير مؤكَّدة بعد.',
 			'dossiers.refus.interdit' => 'لم يعد بإمكانك رفض هذا الملف.',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.refus.indisponible' => 'الرفض غير متاح الآن.',
 			'dossiers.refus.succes' => 'رُفض الملف.',
 			'dossiers.refus.abandonQuestion' => 'التخلي عن السبب المكتوب؟',

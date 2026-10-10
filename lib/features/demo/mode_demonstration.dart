@@ -36,6 +36,7 @@ import '../../core/capacites/port_politiques_commerciales.dart';
 import '../../core/capacites/port_recharge_foyer.dart';
 import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/config/env.dart';
+import '../../core/controle/port_tirage_controle.dart';
 import '../../core/domain/enums.dart';
 import '../../core/dossier/selecteur_fichier.dart';
 import '../../core/dossier/service_dossier.dart';
@@ -82,6 +83,7 @@ import 'recrutement_demo.dart';
 import 'regroupements_demo.dart';
 import 'services_admin_demo.dart';
 import 'suivi_demandes_demo.dart';
+import 'tirage_demo.dart';
 
 /// Parametre d'adresse qui demande la demonstration tuteur.
 const String parametreDemo = 'demo';
@@ -375,6 +377,8 @@ List<Override> surchargesDemoAdmin({
     // paralleles de meme cle, un grand volume simule, les classes creees).
     portClassesAdminProvider.overrideWithValue(classesAdminDemo),
     portFusionClassesProvider.overrideWithValue(fusionDemo),
+    // ECHELLE-CTRL-DIRECT-1 : les regles et l'historique audite des tirages.
+    portTirageControleProvider.overrideWithValue(TirageDemo()),
     // ECHELLE-ADM-PILOTAGE-1 : le tableau de pilotage par horaire.
     portPilotageProvider.overrideWithValue(
       PilotageDemo(
