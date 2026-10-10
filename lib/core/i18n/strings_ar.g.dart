@@ -470,6 +470,7 @@ class _Traductions$nav$ar extends Traductions$nav$fr {
 	@override String get compte => 'حسابي';
 	@override String get principale => 'التنقل الرئيسي';
 	@override String get motSymbole => 'Rewayah';
+	@override String get logoAccueil => 'Rewayah Academy، الصفحة الرئيسية';
 	@override String get replier => 'طي شريط التنقل';
 	@override String get deplier => 'فتح شريط التنقل';
 }
@@ -13787,6 +13788,7 @@ extension on TraductionsAr {
 			'nav.compte' => 'حسابي',
 			'nav.principale' => 'التنقل الرئيسي',
 			'nav.motSymbole' => 'Rewayah',
+			'nav.logoAccueil' => 'Rewayah Academy، الصفحة الرئيسية',
 			'nav.replier' => 'طي شريط التنقل',
 			'nav.deplier' => 'فتح شريط التنقل',
 			'tc.groupe.mesGroupes.titre' => 'فصولي',
@@ -14146,9 +14148,9 @@ extension on TraductionsAr {
 			'tc.observation.visite.reconnexionDetail' => 'انقطع الاتصال، جارٍ إعادة الاتصال. يستمر احتساب وقت متابعتك.',
 			'tc.observation.visite.sonRecu' => 'الصوت يصل',
 			'tc.observation.visite.sonInterrompu' => 'الصوت منقطع',
-			'tc.observation.visite.agrandir' => 'تكبير',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.visite.agrandir' => 'تكبير',
 			'tc.observation.visite.reduire' => 'تصغير',
 			'tc.observation.visite.cameraFermee' => 'الكاميرا مغلقة',
 			'tc.observation.visite.pasEncoreLa' => 'ليس في القاعة بعد',
@@ -14660,9 +14662,9 @@ extension on TraductionsAr {
 			'com.communaute.regles.signaler' => 'يُبلَّغ عن المحتوى غير المناسب من قائمة المنشور.',
 			'com.communaute.regles.voir' => 'عرض القواعد',
 			'com.communaute.entree.lecteur' => 'فتح مجتمع المعلّمين',
-			'com.communaute.entree.detail' => 'أسئلة وطرق وموارد بين المعلّمين',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.entree.detail' => 'أسئلة وطرق وموارد بين المعلّمين',
 			'com.communaute.demo.avertissement' => 'منشور يحتاج إلى مراجعة: إعلان تجاري',
 			'com.communaute.demo.lienAffilie' => 'رابط تسويق بالعمولة محظور',
 			'com.communaute.demo.vente' => 'بيع محظور',
@@ -15174,9 +15176,9 @@ extension on TraductionsAr {
 			'admin.demandes.roleAdmin' => 'الإدارة',
 			'admin.demandes.roleController' => 'مراقب',
 			'admin.demandes.roleInconnu' => 'طرف في الملف',
-			'admin.demandes.reclame' => 'المطلوب',
 			_ => null,
 		} ?? switch (path) {
+			'admin.demandes.reclame' => 'المطلوب',
 			'admin.demandes.reclameReaffectation' => ({required Object dePrenom}) => 'تغيير معلم ⁨${dePrenom}⁩',
 			'admin.demandes.reclamePlafond' => ({required num valeur}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(valeur, zero: 'رفع الحد الأقصى إلى صفر', one: 'رفع الحد الأقصى إلى طالب واحد', two: 'رفع الحد الأقصى إلى طالبين', few: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طلاب', many: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طالبًا', other: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طالب', ), 
 			'admin.demandes.reclameRegle' => ({required Object regle, required Object valeur}) => 'جعل ⁨${regle}⁩ ⁨${valeur}⁩ د',
@@ -15688,9 +15690,9 @@ extension on TraductionsAr {
 			'admin.comptes.etatInconnu' => 'حالة غير معروفة',
 			'admin.comptes.roleAdmin' => 'الإدارة',
 			'admin.comptes.roleComptable' => 'محاسب',
-			'admin.comptes.roleControleur' => 'مراقب',
 			_ => null,
 		} ?? switch (path) {
+			'admin.comptes.roleControleur' => 'مراقب',
 			'admin.comptes.roleEnseignant' => 'معلم',
 			'admin.comptes.roleTuteur' => 'وليّ أمر',
 			'admin.comptes.roleEleve' => 'طالب',
@@ -16202,9 +16204,9 @@ extension on TraductionsAr {
 			'comptable.paiements.confirmation.inconnuPhrase' => 'لم يصلنا الرد: ربما أُرسلت الدفعة. أعد المحاولة: يُعاد إرسال الطلب نفسه ولن يُنفَّذ إلا مرة واحدة.',
 			'comptable.paiements.confirmation.reessayer' => 'إعادة المحاولة',
 			'comptable.paiements.confirmation.validationDemandeeTitre' => 'طُلبت المصادقة',
-			'comptable.paiements.confirmation.validationDemandeePhrase' => 'سيصادق شخص مخوَّل آخر على هذه الدفعة. لن تُرسَل قبل قراره.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.paiements.confirmation.validationDemandeePhrase' => 'سيصادق شخص مخوَّل آخر على هذه الدفعة. لن تُرسَل قبل قراره.',
 			'comptable.paiements.confirmation.validationEchouee' => 'لم يكتمل طلب المصادقة. أعد المحاولة: لن يُسجَّل إلا مرة واحدة.',
 			'comptable.paiements.filtres.tous' => 'الكل',
 			'comptable.paiements.filtres.enseignants' => 'المعلمون',
@@ -16716,9 +16718,9 @@ extension on TraductionsAr {
 			'comptable.direction.corrigezChamps' => 'صحّح الحقول المشار إليها للتسجيل.',
 			'comptable.direction.enregistree' => 'سُجّل الإصدار الجديد.',
 			'comptable.direction.erreurEnregistrement' => 'لا نعلم إن كان هذا الإصدار قد سُجّل. أعد قراءة الإصدار الساري، ثم أعد المحاولة.',
-			'comptable.direction.enregistrementIndisponible' => 'التسجيل غير متاح بعد. أعد المحاولة لاحقًا.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.direction.enregistrementIndisponible' => 'التسجيل غير متاح بعد. أعد المحاولة لاحقًا.',
 			'comptable.direction.historique' => 'سجل الإصدارات',
 			'comptable.direction.historiqueVide' => 'لا يوجد إصدار قبل هذا.',
 			'comptable.direction.etatActuel' => 'الحالة الحالية للاحتياطي',
@@ -17230,9 +17232,9 @@ extension on TraductionsAr {
 			'connexion.appareilEleve' => 'ربط جهاز طالب',
 			'connexion.renvoyer' => 'إعادة إرسال الرابط',
 			'connexion.renvoye' => ({required Object courriel}) => 'أُرسل رابط جديد إلى ⁨${courriel}⁩. استخدم رابط أحدث رسالة.',
-			'connexion.erreurTropTot' => 'أُرسل رابط للتو. انتظر قليلًا قبل طلب رابط آخر.',
 			_ => null,
 		} ?? switch (path) {
+			'connexion.erreurTropTot' => 'أُرسل رابط للتو. انتظر قليلًا قبل طلب رابط آخر.',
 			'connexion.horsLigne' => 'أنت غير متصل: لا يمكن إرسال الرابط الآن.',
 			'connexion.probleme' => 'انتهت صلاحية الرابط أو لم يصل؟',
 			'connexion.decouvrir' => 'اكتشف Rewayah Academy',
@@ -17744,9 +17746,9 @@ extension on TraductionsAr {
 			'dossiers.file.suivants' => 'تحميل الملفات التالية',
 			'dossiers.file.ouvrirDe' => ({required Object nom}) => 'فتح ملف ⁨${nom}⁩',
 			'dossiers.file.ouvrirElide' => ({required Object nom}) => 'فتح ملف ⁨${nom}⁩',
-			'dossiers.file.enVerification' => 'قيد التحقق',
 			_ => null,
 		} ?? switch (path) {
+			'dossiers.file.enVerification' => 'قيد التحقق',
 			'dossiers.file.sansNom' => 'ملف دون اسم متاح',
 			'dossiers.file.legende' => ({required Object type, required Object date}) => '⁨${type}⁩ · ⁨${date}⁩',
 			'dossiers.file.dateHeure' => ({required Object date, required Object heure, required Object zone}) => '⁨${date}⁩ الساعة ⁨${heure}⁩ (⁨${zone}⁩)',

@@ -4,10 +4,12 @@ import 'package:rewayah_academy/core/admin/admin_domaine.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
+import 'package:rewayah_academy/core/widgets/brand_logo.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
 
 import '../support/harnais.dart';
+import '../support/logo.dart';
 
 Widget _shell({required void Function(String chemin) onAller}) => AdminShell(
   domaines: domainesAdmin(voitDirection: true),
@@ -198,7 +200,8 @@ void main() {
       ),
     );
     await tester.pump();
-    expect(find.text(t.nav.motSymbole), findsOneWidget);
+    // LOGO-APP : le logo horizontal tient la tete de la barre laterale.
+    expect(logoRendu(VarianteLogo.horizontal), findsOneWidget);
     expect(find.text(t.compte.roles.admin), findsOneWidget);
     expect(find.text(t.admin.comptes.roleAdmin), findsOneWidget);
     await tester.tap(find.text(t.compte.roles.admin));
@@ -222,7 +225,9 @@ void main() {
     tester.view.physicalSize = const Size(768, 900);
     await tester.pump();
     expect(find.byKey(AdminShell.railKey), findsOneWidget);
-    expect(find.text(t.nav.motSymbole), findsNothing);
+    // Rail : le symbole seul, jamais le logo horizontal.
+    expect(logoRendu(VarianteLogo.horizontal), findsNothing);
+    expect(logoRendu(VarianteLogo.symbole), findsOneWidget);
     expect(find.text(t.admin.comptes.roleAdmin), findsNothing);
     expect(tester.takeException(), isNull);
   });
