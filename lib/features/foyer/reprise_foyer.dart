@@ -386,15 +386,17 @@ class _RepriseFoyerPageState extends ConsumerState<RepriseFoyerPage> {
             niveau: NiveauAction.secondaire,
             pleineLargeur: false,
           ),
-          principale: ActionPrincipale(
-            key: RepriseFoyerPage.deposerKey,
-            libelle: r.deposer,
-            onPress: horsLigne || _echec == _Echec.indisponible
-                ? null
-                : () => unawaited(_deposer()),
-            enCours: _envoi,
-            pleineLargeur: false,
-          ),
+          // Hors ligne ou indisponible : le depot n'est pas rendu, la note
+          // ou l'etat au-dessus le dit (BOUTONS-GRISES-1).
+          principale: horsLigne || _echec == _Echec.indisponible
+              ? null
+              : ActionPrincipale(
+                  key: RepriseFoyerPage.deposerKey,
+                  libelle: r.deposer,
+                  onPress: () => unawaited(_deposer()),
+                  enCours: _envoi,
+                  pleineLargeur: false,
+                ),
         ),
       ],
     );
@@ -665,20 +667,22 @@ class _RepriseTitulairePageState extends ConsumerState<RepriseTitulairePage> {
         ],
         // Rien ne part tout seul. Libelle provisoire, lexique D4.
         if (horsLigne) ...<Widget>[Ecart.vLg, _Note(texte: r.horsLigne)],
-        Ecart.vLg,
         // Bouton principal : c'est la protection du titulaire, pas une
-        // destruction (UX_REVIEW_07 ligne 18 a).
-        _Actions(
-          principale: ActionPrincipale(
-            key: RepriseTitulairePage.refuserKey,
-            libelle: r.refuser,
-            onPress: horsLigne || _echec == _Echec.indisponible
-                ? null
-                : () => unawaited(_refuser()),
-            enCours: _envoi,
-            pleineLargeur: false,
+        // destruction (UX_REVIEW_07 ligne 18 a). Hors ligne ou indisponible,
+        // il n'est pas rendu : la note ou l'etat au-dessus le dit
+        // (BOUTONS-GRISES-1).
+        if (!horsLigne && _echec != _Echec.indisponible) ...<Widget>[
+          Ecart.vLg,
+          _Actions(
+            principale: ActionPrincipale(
+              key: RepriseTitulairePage.refuserKey,
+              libelle: r.refuser,
+              onPress: () => unawaited(_refuser()),
+              enCours: _envoi,
+              pleineLargeur: false,
+            ),
           ),
-        ),
+        ],
       ],
     );
   }

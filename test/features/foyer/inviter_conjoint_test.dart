@@ -635,19 +635,8 @@ void main() {
       expect(find.text(t.adulte.invitation.horsLigne), findsOneWidget);
       // Rien ne part tout seul au retour de la connexion.
       expect(find.textContaining('pourra partir'), findsNothing);
-      expect(
-        tester
-            .widget<ActionPrincipale>(
-              find.byKey(InviterConjointPage.envoyerKey),
-            )
-            .onPress,
-        isNull,
-      );
-      await tester.ensureVisible(find.byKey(InviterConjointPage.envoyerKey));
-      await tester.tap(
-        find.byKey(InviterConjointPage.envoyerKey),
-        warnIfMissed: false,
-      );
+      // BOUTONS-GRISES-1 : non rendu, jamais grise.
+      expect(find.byKey(InviterConjointPage.envoyerKey), findsNothing);
       await tester.pump();
       expect(port.envois, 0);
     });
@@ -750,20 +739,9 @@ void main() {
       expect(find.text(t.adulte.invitation.annulerHorsLigne), findsOneWidget);
       // Rien ne s'annule tout seul au retour de la connexion.
       expect(find.textContaining('annulera'), findsNothing);
-      expect(
-        tester
-            .widget<ActionPrincipale>(
-              find.byKey(InvitationEnvoyeePage.annulerKey),
-            )
-            .onPress,
-        isNull,
-      );
+      // BOUTONS-GRISES-1 : non rendu, jamais grise.
+      expect(find.byKey(InvitationEnvoyeePage.annulerKey), findsNothing);
       // « Rien n'est annulé » est vrai : aucun appel (revue EA-R m13).
-      await tester.ensureVisible(find.byKey(InvitationEnvoyeePage.annulerKey));
-      await tester.tap(
-        find.byKey(InvitationEnvoyeePage.annulerKey),
-        warnIfMissed: false,
-      );
       await tester.pumpAndSettle();
       expect(port.annulations, 0);
     });
@@ -820,14 +798,8 @@ void main() {
       expect(find.textContaining('compte'), findsNothing);
       expect(aLeFocus(tester, InviterConjointPage.focusEchecKey), isTrue);
       // « Envoyer » n'est plus actif ; l'action est de revenir a Ma famille.
-      expect(
-        tester
-            .widget<ActionPrincipale>(
-              find.byKey(InviterConjointPage.envoyerKey),
-            )
-            .onPress,
-        isNull,
-      );
+      // BOUTONS-GRISES-1 : non rendu, jamais grise.
+      expect(find.byKey(InviterConjointPage.envoyerKey), findsNothing);
       final Finder revenir = find.descendant(
         of: find.byType(EtatSysteme),
         matching: find.text(t.adulte.invitation.revenirMaFamille),

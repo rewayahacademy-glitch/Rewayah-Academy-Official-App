@@ -476,9 +476,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.text(t.adulte.sortie.horsLigne), findsOneWidget);
-      expect(bouton(tester, cle).onPress, isNull);
-      await tester.ensureVisible(find.byKey(cle));
-      await tester.tap(find.byKey(cle), warnIfMissed: false);
+      expect(find.byKey(cle), findsNothing);
       await tester.pumpAndSettle();
       expect(port.retraits + port.departs, 0);
     });
@@ -558,7 +556,7 @@ void main() {
     );
     expect(etat.nature, NatureEtat.indisponible);
     expect(etat.dependance, 'EA-BR-21');
-    expect(bouton(tester, PlaceConjointPage.retirerKey).onPress, isNull);
+    expect(find.byKey(PlaceConjointPage.retirerKey), findsNothing);
     expect(find.byKey(sortieResultatKey), findsNothing);
   });
 

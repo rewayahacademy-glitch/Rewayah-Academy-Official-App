@@ -629,7 +629,9 @@ class _ChoixAge extends StatelessWidget {
                 key: FormulaireProfilEleve.ageChoixKey(age),
                 libelle: '$age',
                 retenue: age == choisi,
-                onPress: onChoisir == null ? null : () => onChoisir!(age),
+                // Jamais grisee (BOUTONS-GRISES-1) : pendant l'envoi, le
+                // choix est seulement fige le temps de la reponse.
+                onPress: () => onChoisir?.call(age),
               ),
           ],
         ),

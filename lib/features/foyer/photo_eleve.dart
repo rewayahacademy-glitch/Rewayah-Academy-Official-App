@@ -307,20 +307,22 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
             Text(t.ficheEleve.informations.horsLigne, style: attenue),
             Ecart.vMd,
           ],
-          ActionPrincipale(
-            key: _phase == _Phase.apercu
-                ? EditeurPhotoEleve.envoyerKey
-                : EditeurPhotoEleve.reprendreKey,
-            libelle: _phase == _Phase.apercu
-                ? t.ficheEleve.informations.envoyer
-                : t.ficheEleve.informations.reprendre,
-            // L'envoi est l'unique bouton plein de cet etat (K-56) : les
-            // autres actions sont des liens.
-            // Hors ligne, l'envoi ne peut pas aboutir : pas de geste, une
-            // phrase dit pourquoi (lib/CLAUDE.md).
-            onPress: horsLigne ? null : _envoyer,
-          ),
-          Ecart.vSm,
+          // L'envoi est l'unique bouton plein de cet etat (K-56) : les
+          // autres actions sont des liens. Hors ligne, l'envoi ne peut pas
+          // aboutir : il n'est pas rendu, la phrase au-dessus dit pourquoi
+          // (lib/CLAUDE.md, BOUTONS-GRISES-1).
+          if (!horsLigne) ...<Widget>[
+            ActionPrincipale(
+              key: _phase == _Phase.apercu
+                  ? EditeurPhotoEleve.envoyerKey
+                  : EditeurPhotoEleve.reprendreKey,
+              libelle: _phase == _Phase.apercu
+                  ? t.ficheEleve.informations.envoyer
+                  : t.ficheEleve.informations.reprendre,
+              onPress: _envoyer,
+            ),
+            Ecart.vSm,
+          ],
           if (_phase != _Phase.echecEnregistrement)
             Align(
               alignment: AlignmentDirectional.centerStart,
