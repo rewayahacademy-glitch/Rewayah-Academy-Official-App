@@ -214,7 +214,7 @@ BEGIN
     ))::text, true);
 
   -- Tous les élèves valides partagent un seul foyer. Le quota compte les élèves.
-  FOR v_i IN 1..v_capacite LOOP
+  FOR v_i IN 1..(v_capacite + 1) LOOP
     v_id := ('f1490000-0000-0000-0000-' || lpad((v_i + 2)::text, 12, '0'))::uuid;
     v_reponse := public.demander_creneau_personnalise(
       v_id, 'Europe/Paris',
@@ -226,6 +226,19 @@ BEGIN
       RAISE EXCEPTION 'F1: demande non transmise à l''administration: %', v_reponse;
     END IF;
   END LOOP;
+
+  -- Cet élève a rejoint une autre classe entre sa demande et le regroupement.
+  INSERT INTO public.groupes
+    (id, teacher_id, etat, type_public, seuil_max, libelle, weekday,
+     hour_local, timezone_iana, langue_code)
+  VALUES
+    ('f1470000-0000-0000-0000-000000000001', NULL, 'en_attente_enseignant',
+     'adulte', v_capacite, 'Classe existante', 1, 17, 'Europe/Paris', 'francais');
+  INSERT INTO public.groupe_membres (groupe_id, student_id)
+  VALUES (
+    'f1470000-0000-0000-0000-000000000001',
+    'f1490000-0000-0000-0000-000000000003'
+  );
 
   -- Une répétition réseau renvoie la même demande sans compter deux fois.
   v_repetee := public.demander_creneau_personnalise(
@@ -254,9 +267,16 @@ BEGIN
     FROM public.regroupements_demandes_horaires_admin()
    WHERE type_public = 'adulte' AND langue_code = 'francais'
      AND fuseau_iana = 'Europe/Paris';
-  IF v_count <> v_capacite OR v_quota <> v_capacite OR NOT v_pret THEN
+  IF v_count <> v_capacite + 1 OR v_quota <> v_capacite OR NOT v_pret THEN
     RAISE EXCEPTION 'F1 quota: regroupement=% eleves=% quota=% pret=%',
       v_regroupement, v_count, v_quota, v_pret;
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM public.demandes_horaires_famille
+     WHERE eleve_id = 'f1490000-0000-0000-0000-000000000003'
+       AND etat = 'envoyee'
+  ) THEN
+    RAISE EXCEPTION 'M2 fixture: la demande de l''élève déjà groupé manque';
   END IF;
   IF v_jours IS DISTINCT FROM ARRAY[2,4,6]::smallint[] THEN
     RAISE EXCEPTION 'F1 normalisation des jours incorrecte: %', v_jours;
@@ -280,6 +300,18 @@ BEGIN
      OR (SELECT count(*) FROM public.groupe_membres
          WHERE groupe_id = v_groupe AND left_at IS NULL) <> v_quota THEN
     RAISE EXCEPTION 'C-12: classe en attente, membres ou idempotence invalides';
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM public.demandes_horaires_famille
+     WHERE eleve_id = 'f1490000-0000-0000-0000-000000000003'
+       AND etat = 'refusee' AND motif = 'refus_direction'
+  ) OR EXISTS (
+    SELECT 1 FROM public.groupe_membres
+     WHERE groupe_id = v_groupe
+       AND student_id = 'f1490000-0000-0000-0000-000000000003'
+       AND left_at IS NULL
+  ) THEN
+    RAISE EXCEPTION 'M2 ECHEC : élève déjà groupé ajouté ou demande non clôturée';
   END IF;
   SELECT count(*) INTO v_sessions FROM public.sessions WHERE groupe_id = v_groupe;
   IF v_sessions <> 0 THEN
@@ -411,7 +443,7 @@ BEGIN
       'role', 'guardian',
       'household_id', 'f1480000-0000-0000-0000-000000000003'
     ))::text, true);
-  v_id := ('f1490000-0000-0000-0000-' || lpad((v_capacite + 3)::text, 12, '0'))::uuid;
+  v_id := ('f1490000-0000-0000-0000-' || lpad((v_capacite + 4)::text, 12, '0'))::uuid;
   v_result := public.choisir_offre_horaire(v_id, v_offre, 'Europe/Paris');
   IF NOT EXISTS (
     SELECT 1 FROM public.demandes_horaires_famille
