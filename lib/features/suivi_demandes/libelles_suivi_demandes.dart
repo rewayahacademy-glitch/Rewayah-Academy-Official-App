@@ -35,13 +35,15 @@ const Set<String> _fuseauxUniversels = <String>{
 };
 
 /// Ce qui suit « heure » : « de Paris », « d'Amman », ou « UTC » pour le
-/// temps universel (sans ville, donc sans « de »).
-String deFuseau(String fuseauIana) {
+/// temps universel (sans ville, donc sans « de »). [cle] : celle du libelle
+/// qui recoit le fuseau, pour le repli francais d'une langue qui ne la
+/// traduit pas encore ([deDevant]).
+String deFuseau(String fuseauIana, {String? cle}) {
   final String nu = fuseauIana.trim();
   if (_fuseauxUniversels.contains(nu)) {
     return 'UTC';
   }
-  return deDevant(villeDuFuseau(nu));
+  return deDevant(villeDuFuseau(nu), cle: cle);
 }
 
 /// « Lundi, mardi et jeudi » : jours tries et dedoublonnes, le premier avec
@@ -74,7 +76,7 @@ String? heureDemande(SuiviDemande d) {
   final OccurrenceCreneau o = c.occurrences.first;
   return t.suiviDemandes.heureFuseau(
     heure: hhmmDemande(o.heure, o.minute),
-    deVille: deFuseau(d.fuseauIana),
+    deVille: deFuseau(d.fuseauIana, cle: 'suiviDemandes.heureFuseau'),
   );
 }
 
@@ -93,8 +95,9 @@ String joursEtHeuresDemande(CreneauDemande c) {
 
 /// « Heure de Paris », « Heure UTC » : le fuseau des heures choisies, dit
 /// seul quand chaque jour a son heure.
-String fuseauDemande(SuiviDemande d) =>
-    t.suiviDemandes.fuseauValeur(deVille: deFuseau(d.fuseauIana));
+String fuseauDemande(SuiviDemande d) => t.suiviDemandes.fuseauValeur(
+  deVille: deFuseau(d.fuseauIana, cle: 'suiviDemandes.fuseauValeur'),
+);
 
 /// « Lundi 19 octobre a 18:00, heure de Paris », ou `null` sans date.
 ///
@@ -113,7 +116,7 @@ String? debutCoursDemande(SuiviDemande d) {
       mois: t.commun.dates.mois[debut.month - 1],
     ),
     heure: hhmmDemande(debut.hour, debut.minute),
-    deVille: deFuseau(d.fuseauIana),
+    deVille: deFuseau(d.fuseauIana, cle: 'suiviDemandes.debutValeur'),
   );
 }
 
@@ -163,17 +166,23 @@ String? situationDemande(EtapeDemande etape) => switch (etape) {
 /// Le titre d'une notification de transition : qui, puis ce qui a change.
 String titreNotificationDemande(SuiviDemande d) => switch (d.etape) {
   EtapeDemande.envoyee => t.suiviDemandes.notification.envoyee(
-    dePrenom: deDevant(d.prenom),
+    dePrenom: deDevant(d.prenom, cle: 'suiviDemandes.notification.envoyee'),
   ),
   EtapeDemande.classeValidee => t.suiviDemandes.notification.classeValidee(
-    dePrenom: deDevant(d.prenom),
+    dePrenom: deDevant(
+      d.prenom,
+      cle: 'suiviDemandes.notification.classeValidee',
+    ),
   ),
   EtapeDemande.enseignantAffecte =>
     t.suiviDemandes.notification.enseignantAffecte(
-      dePrenom: deDevant(d.prenom),
+      dePrenom: deDevant(
+        d.prenom,
+        cle: 'suiviDemandes.notification.enseignantAffecte',
+      ),
     ),
   EtapeDemande.close => t.suiviDemandes.notification.close(
-    dePrenom: deDevant(d.prenom),
+    dePrenom: deDevant(d.prenom, cle: 'suiviDemandes.notification.close'),
     motif: _minusculeInitiale(motifDemande(d.motif!)),
   ),
 };

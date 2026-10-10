@@ -4,8 +4,9 @@
 // Finance, deja faite sur sa branche).
 //
 // - la regle de lib/core/i18n/elision.dart, y compris « y » consonne ;
-// - hors du francais : le nom seul pour une cle traduite, l'elision
-//   francaise pour un texte de repli (voir aussi elision_repli_arabe_test) ;
+// - hors du francais : le nom seul pour une cle traduite (ou sans cle,
+//   AR-ENS-1), l'elision francaise pour un texte de repli dont l'appel
+//   passe sa cle (voir aussi elision_repli_arabe_test) ;
 // - des phrases reelles, ecrites en dur ;
 // - aucun texte francais ne garde « de {prenom} » ou « que {prenom} ».
 
@@ -83,15 +84,22 @@ void main() {
         t.classe.entree.rejoindreLecteur(
           deClasse: deDevant('Al-Badr', cle: cle),
         ),
-        'الانضمام إلى حصة Al-Badr',
+        'الانضمام إلى حصة \u2068Al-Badr\u2069',
       );
+    });
+
+    test('en arabe, sans cle, le nom seul (AR-ENS-1)', () async {
+      await LocaleSettings.setLocale(AppLocale.ar);
+      expect(deDevant('Al-Badr'), 'Al-Badr');
+      expect(queDevant('Nour'), 'Nour');
     });
 
     test('en arabe, une cle NON traduite garde l elision francaise', () async {
       await LocaleSettings.setLocale(AppLocale.ar);
       // Repli francais : la cle passee n'est pas traduite en arabe.
-      expect(deDevant('Aïcha', cle: 'ficheEleve.lignes.appareils'), "d'Aïcha");
-      expect(queDevant('Nour'), 'que Nour');
+      const String cle = 'ficheEleve.finances.erreurTitre';
+      expect(deDevant('Aïcha', cle: cle), "d'Aïcha");
+      expect(queDevant('Nour', cle: cle), 'que Nour');
     });
 
     test('en francais, la cle ne change rien', () {
@@ -101,67 +109,80 @@ void main() {
       );
     });
 
-    test('les cles traduites en arabe qui recoivent un nom elide passent '
+    test('les cles NON traduites en arabe qui recoivent un nom elide passent '
         'leur cle a deDevant', () {
-      // Chaque cle arabe qui porte un parametre `{de...}` / `{que...}`, ou
-      // un `{classe}` rempli par deDevant cote francais, doit etre appelee
-      // avec `cle:` : sinon l'arabe recevrait « d'Al-Badr ».
-      final Map<String, dynamic> ar = jsonDecode(
-        File('assets/i18n/ar.i18n.json').readAsStringSync(),
-      ) as Map<String, dynamic>;
-      final Set<String> trouvees = <String>{};
-      void parcourir(String chemin, Object? noeud) {
+      // Reunion de la ligne arabe dans ccr (10/10) : sans `cle:`, l'arabe
+      // recoit le nom seul. Une cle francaise qui porte un parametre
+      // `{de...}` / `{que...}` et que l'arabe ne traduit pas encore tombe
+      // en repli francais : son appel doit passer `cle:`, sinon le repli lirait
+      // « Les finances Aïcha ».
+      Map<String, String> aplatir(Object? noeud, [String chemin = '']) {
+        final Map<String, String> sortie = <String, String>{};
         if (noeud is Map<String, dynamic>) {
-          noeud.forEach(
-            (String k, Object? v) =>
-                parcourir(chemin.isEmpty ? k : '$chemin.$k', v),
-          );
-        } else if (noeud is String &&
-            RegExp(r'\{(?:de|que)[A-Z]\w*\}').hasMatch(noeud)) {
-          trouvees.add(chemin);
+          noeud.forEach((String k, Object? v) {
+            final String nom = k.replaceFirst(RegExp(r'\(.*\)$'), '');
+            sortie.addAll(aplatir(v, chemin.isEmpty ? nom : '$chemin.$nom'));
+          });
+        } else if (noeud is String) {
+          sortie[chemin] = noeud;
         }
+        return sortie;
       }
 
-      parcourir('', ar);
-      const Set<String> appeleesAvecCle = <String>{
-        'classe.entree.rejoindreLecteur',
-        // Traduites en arabe par la voie Communications (JONCTION-LIGNES-1).
-        'classe.seance.aucuneDetail',
-        'classe.observation.motif.enfantAbsent',
-        'classe.observation.motif.presenceEnVerification',
-        'classe.pagePlanning.aucuneDetail',
-        'classe.pageProgression.indisponible',
-        'classe.pageCatalogue.aucuneDetail',
-        'classe.pageCatalogue.resultat.validationPhrase',
-        'classe.pageCatalogue.resultat.listeAttentePhrase',
-        'tuteur.accueil.heureDe',
+      Map<String, String> lire(String langue) => aplatir(
+        jsonDecode(File('assets/i18n/$langue.i18n.json').readAsStringSync()),
+      );
+      String sansForme(String cle) =>
+          cle.replaceFirst(RegExp(r'\.(zero|one|two|few|many|other)$'), '');
+      final Set<String> traduites = lire('ar').keys.map(sansForme).toSet();
+      final Set<String> enRepli = <String>{
+        for (final MapEntry<String, String> e in lire('fr').entries)
+          if (RegExp(r'\{(?:de|que)[A-Z]\w*\}').hasMatch(e.value) &&
+              !traduites.contains(sansForme(e.key)))
+            sansForme(e.key),
       };
-      expect(trouvees.difference(appeleesAvecCle), isEmpty);
+      const Set<String> appeleesAvecCle = <String>{
+        'foyer.finances.voirDetailSemantique',
+        'ficheEleve.finances.moisNonFinance',
+        'ficheEleve.finances.indisponiblePhrase',
+        'ficheEleve.finances.erreurTitre',
+        'ficheEleve.finances.voirToutSemantique',
+        'ficheEleve.finances.voirMouvementsSemantique',
+        'ficheEleve.mouvements.contexte',
+        'ficheEleve.mouvements.erreurTitre',
+        'ficheEleve.mouvements.indisponiblePhrase',
+        'admin.groupes.formulaire.creneauxLibresDe',
+        'admin.groupes.formulaire.disponibilitesInconnues',
+        'admin.regroupements.heureFuseau',
+        'admin.regroupements.fuseauValeur',
+        'admin.agents.libelleAuto',
+        'admin.finance.vue.contexte',
+        'admin.finance.vue.graphiqueRepartitionDetail',
+        'admin.finance.vue.topClassesDetail',
+        'suiviDemandes.carteTitre',
+        'suiviDemandes.heureFuseau',
+        'suiviDemandes.fuseauValeur',
+        'suiviDemandes.debutValeur',
+        'suiviDemandes.notification.envoyee',
+        'suiviDemandes.notification.classeValidee',
+        'suiviDemandes.notification.enseignantAffecte',
+        'suiviDemandes.notification.close',
+      };
+      // Une cle traduite en sort ; une nouvelle cle en repli y entre.
+      expect(enRepli.difference(appeleesAvecCle), isEmpty);
       // Et les appels du code passent bien leur cle.
       final String code = <String>[
-        'lib/core/tc_horloge/emplacement_entree.dart',
-        'lib/features/journee/journee_page.dart',
-        'lib/features/classe_tuteur/carte_seance_classe.dart',
-        'lib/features/classe_tuteur/bloc_observation_classe.dart',
-        'lib/features/classe_tuteur/planning_classe_page.dart',
-        'lib/features/classe_tuteur/progression_classe_page.dart',
-        'lib/features/classe_tuteur/catalogue_classes_page.dart',
-        'lib/features/accueil_famille/bloc_seance.dart',
+        'lib/features/foyer/foyer_page.dart',
+        'lib/features/foyer/fiche/finances_page.dart',
+        'lib/features/foyer/fiche/mouvements_page.dart',
+        'lib/features/admin_groupes/groupes_page.dart',
+        'lib/features/admin_regroupements/regroupements_libelles.dart',
+        'lib/features/admin_acces_agents/acces_agents_page.dart',
+        'lib/features/admin_finance/vue_globale_finance.dart',
+        'lib/features/suivi_demandes/suivi_demandes_page.dart',
+        'lib/features/suivi_demandes/libelles_suivi_demandes.dart',
       ].map((String f) => File(f).readAsStringSync()).join();
-      for (final String cle in <String>[
-        'classe.entree.rejoindreLecteur',
-        'enseignant.journee.cahierObligatoire',
-        'enseignant.journee.voirCahier',
-        'classe.seance.aucuneDetail',
-        'classe.observation.motif.enfantAbsent',
-        'classe.observation.motif.presenceEnVerification',
-        'classe.pagePlanning.aucuneDetail',
-        'classe.pageProgression.indisponible',
-        'classe.pageCatalogue.aucuneDetail',
-        'classe.pageCatalogue.resultat.validationPhrase',
-        'classe.pageCatalogue.resultat.listeAttentePhrase',
-        'tuteur.accueil.heureDe',
-      ]) {
+      for (final String cle in enRepli) {
         expect(code, contains("cle: '$cle'"), reason: cle);
       }
     });

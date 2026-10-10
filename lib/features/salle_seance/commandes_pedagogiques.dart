@@ -150,7 +150,11 @@ class CommandesPedagogiques extends StatefulWidget {
   /// La Bibliotheque de la salle : le panneau des supports, sinon le
   /// selecteur de ressources ; `null` : pas d'entree.
   static VoidCallback? bibliotheque(ActionsSeance actions) =>
-      actions.onSupports ?? actions.onBibliotheque;
+      // TB-8 : avec « Presenter », la Bibliotheque unique (apercu
+      // personnel) ; sinon le panneau Supports d'avant.
+      actions.onPresenter != null
+      ? actions.onBibliotheque ?? actions.onSupports
+      : actions.onSupports ?? actions.onBibliotheque;
 
   /// Le panneau a-t-il un onglet « Outils » ?
   static bool voitOutils(VueSeance vue, ActionsSeance actions) =>

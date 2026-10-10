@@ -431,7 +431,7 @@ class _CarteEleve extends StatelessWidget {
                   ? t.admin.attribution.heureProposee
                   : LibellesGroupe.valeurSeule(
                       t.admin.attribution.heuresProposees(
-                        nombre: '${foyer.creneaux.length}',
+                        nombre: foyer.creneaux.length,
                       ),
                     ),
               ton: TonEtat.neutre,
@@ -460,7 +460,7 @@ class _CarteEleve extends StatelessWidget {
       null || 0 => t.admin.attribution.attendAujourdhui,
       1 => t.admin.attribution.attendUnJour,
       _ => LibellesGroupe.insecable(
-        t.admin.attribution.attendJours(jours: '$jours'),
+        t.admin.attribution.attendJours(jours: jours),
       ),
     };
   }
@@ -693,7 +693,7 @@ class _CarteEnseignant extends StatelessWidget {
           Ecart.vSm,
           Text(
             t.admin.attribution.charge(
-              actifs: '${candidat.elevesActifs}',
+              actifs: candidat.elevesActifs,
               plafond: '${candidat.plafond}',
             ),
             style: textes.bodyMedium,

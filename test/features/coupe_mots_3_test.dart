@@ -159,7 +159,9 @@ Future<void> _jusquAuRecapitulatif(
 /// Les pourcentages (« 60 % ») des paragraphes contenant [dans] qui
 /// occupent plus d'une ligne. Echoue si aucun n'est rendu.
 List<String> _pourcentagesCoupes(WidgetTester tester, String dans) {
-  final RegExp motif = RegExp(r'\d+[ \u00A0\u202F]*%');
+  // En arabe, la ligne arabe isole le nombre (U+2069 apres) et ecrit le
+  // signe arabe « ٪ » (reunion du 10/10).
+  final RegExp motif = RegExp('\\d+\u2069?[ \u00A0\u202F]*[%٪]');
   final List<String> coupes = <String>[];
   int mesures = 0;
   for (final RenderParagraph p
@@ -168,13 +170,19 @@ List<String> _pourcentagesCoupes(WidgetTester tester, String dans) {
     if (!texte.contains(dans)) continue;
     for (final RegExpMatch m in motif.allMatches(texte)) {
       mesures++;
-      final Set<double> lignes = <double>{
-        for (final TextBox b in p.getBoxesForSelection(
-          TextSelection(baseOffset: m.start, extentOffset: m.end),
-        ))
-          ((b.top + b.bottom) / 2).roundToDouble(),
-      };
-      if (lignes.length > 1) coupes.add('$texte : ${m.group(0)}');
+      // Deux boites sur des lignes differentes ne se recouvrent pas
+      // verticalement. Le milieu ne suffit pas : en arabe, le chiffre et le
+      // signe « ٪ » viennent de deux polices de hauteurs differentes, sur la
+      // meme ligne (reunion de la ligne arabe, 10/10).
+      final List<TextBox> boites = p.getBoxesForSelection(
+        TextSelection(baseOffset: m.start, extentOffset: m.end),
+      );
+      final bool scinde = boites.any(
+        (TextBox a) => boites.any(
+          (TextBox b) => a.bottom <= b.top || b.bottom <= a.top,
+        ),
+      );
+      if (scinde) coupes.add('$texte : ${m.group(0)}');
     }
   }
   expect(mesures, greaterThan(0), reason: 'Aucun pourcentage rendu');

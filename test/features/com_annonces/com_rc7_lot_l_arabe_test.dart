@@ -215,7 +215,17 @@ void main() {
           isNot(matches(RegExp('[A-Za-zÀ-ÿ]'))),
           reason: cle,
         );
-        expect(_parametres(arabe), _parametres(fr[cle]!), reason: cle);
+        if (RegExp(r'\.(zero|one|two|few|many)$').hasMatch(cle)) {
+          // Une forme du pluriel arabe peut taire le nombre (« طالبان »,
+          // regle de la ligne arabe) mais n'invente aucun parametre.
+          expect(
+            _parametres(arabe).difference(_parametres(fr[cle]!)),
+            isEmpty,
+            reason: cle,
+          );
+        } else {
+          expect(_parametres(arabe), _parametres(fr[cle]!), reason: cle);
+        }
       }
     }
   });

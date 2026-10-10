@@ -317,7 +317,8 @@ void main() {
       final Rect support = tester.getRect(
         find.byKey(const ValueKey<String>('zone-support')),
       );
-      expect(panneau.left, greaterThan(support.right));
+      // TB-5 (n. 12, remplace EN-9 « a droite ») : Participants a gauche.
+      expect(panneau.right, lessThan(support.left));
     });
 
     testWidgets('« Signaler un besoin » ouvre la feuille d\'EN-4', (

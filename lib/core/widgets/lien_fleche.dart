@@ -28,6 +28,7 @@ class LienFleche extends StatelessWidget {
     this.icone,
     this.annonceLien = false,
     this.alignerEnFin = false,
+    this.alignerEnDebut = false,
     this.legende = false,
     this.libelleSemantique,
     this.encre,
@@ -47,6 +48,12 @@ class LienFleche extends StatelessWidget {
   /// (HL-A-3) : aucun retrait de fin, lignes alignees en fin quand le texte
   /// passe a la ligne (200 %, 390). Faux (defaut) : rendu inchange.
   final bool alignerEnFin;
+
+  /// Vrai : le lien part du bord de debut, comme le texte qu'il precede
+  /// (aucun retrait de debut) : un « Revenir aux supports » en tete d'un
+  /// contenu, aligne sur les lignes qui suivent. Faux (defaut) : rendu
+  /// inchange. La cible tactile reste de 48 sur 48.
+  final bool alignerEnDebut;
 
   /// Registre de legende (`labelSmall`, fleche plus petite) : le « Voir tout »
   /// d'un titre de rubrique dense. La cible tactile reste de 48 sur 48.
@@ -89,6 +96,8 @@ class LienFleche extends StatelessWidget {
       constructeur: (BuildContext contexte, EtatPression etat) => Padding(
         padding: alignerEnFin
             ? const EdgeInsetsDirectional.only(start: AppSpacing.xs)
+            : alignerEnDebut
+            ? const EdgeInsetsDirectional.only(end: AppSpacing.xs)
             : const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
         // Le libelle est deja porte par `Pressable` : le texte visible est
         // retire de l'arbre semantique pour ne pas etre lu deux fois.

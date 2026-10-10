@@ -208,7 +208,9 @@ class CarteDemande extends StatelessWidget {
     final Widget titre = Semantics(
       header: true,
       child: TexteSansCoupure(
-        t.suiviDemandes.carteTitre(dePrenom: deDevant(d.prenom)),
+        t.suiviDemandes.carteTitre(
+          dePrenom: deDevant(d.prenom, cle: 'suiviDemandes.carteTitre'),
+        ),
         style: textes.titleMedium ?? const TextStyle(),
       ),
     );

@@ -256,7 +256,7 @@ String _depuis(int jours) => switch (jours) {
   <= 0 => t.admin.qualite.depuisAujourdhui,
   1 => t.admin.qualite.depuisUnJour,
   final int j => LibellesGroupe.valeurSeule(
-    t.admin.qualite.depuisJours(jours: '$j'),
+    t.admin.qualite.depuisJours(jours: j),
   ),
 };
 

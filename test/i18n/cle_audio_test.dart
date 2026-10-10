@@ -61,14 +61,16 @@ void main() {
       expect(codes, isNot(contains('fuf')));
     });
 
-    test('l arabe se replie sur le francais tant qu il est vide', () async {
+    test('l arabe se construit, complet, sans repli sur le francais', () async {
       // fallback_strategy: base_locale dans slang.yaml. La construction est
       // asynchrone parce que slang charge les langues non basiques en
       // differe : sur le Web, l arabe est un morceau separe qui ne pese pas
       // sur le demarrage a froid.
       final Traductions ar = await AppLocale.ar.build();
-      expect(ar.salle.bandeauPermanent, t.salle.bandeauPermanent);
-      expect(ar.commun.valider, t.commun.valider);
+      // fallback_strategy: base_locale reste pose ; depuis AR-COMPLET-1,
+      // aucune cle ne s en sert (test/i18n/ar_domaines_test.dart).
+      expect(ar.admin.tableau.titre, isNot(t.admin.tableau.titre));
+      expect(ar.salle.bandeauPermanent, isNot(t.salle.bandeauPermanent));
     });
   });
 

@@ -7,6 +7,7 @@
 
 import 'package:flutter/foundation.dart';
 
+import 'bibliotheque_seance.dart';
 import 'vue_seance.dart';
 
 /// Les outils d'enseignement (CLV-06), enseignant seulement.
@@ -46,7 +47,16 @@ class ActionsSeance {
     this.onContinuerSansMicro,
     this.onOuvrirReglages,
     this.onContexte,
+    this.onPresenter,
   });
+
+  /// TB-8 (LIB-02, LIB-03) : « Presenter » l'apercu choisi dans la
+  /// Bibliotheque en seance. Le futur se termine quand le support est
+  /// charge, avec son activation pour la classe, que la Bibliotheque
+  /// n'appelle que si l'enseignant n'a pas renonce entre-temps ; il echoue
+  /// sinon, et la classe garde le support d'avant ([PresenterSupport]).
+  /// `null` : l'ancien selecteur (SelecteurRessources).
+  final PresenterSupport? onPresenter;
 
   /// TB-3 (CTX-01, CTX-02) : l'avatar de la capsule deplie le contexte de
   /// l'enseignant, l'oeil le meme contexte a la section du controle ;
@@ -124,4 +134,40 @@ class ActionsSeance {
   /// Une entree du rail enseignant (desktop) : la route cible, apres la
   /// confirmation de Quitter. `null` : le rail n'est pas rendu.
   final ValueChanged<String>? onNaviguer;
+
+  /// TB-5 : les memes rappels, Focus et sa sortie passes par la salle, qui
+  /// replie puis restaure ses panneaux (plan V2 §18.1, UX-14 a UX-16).
+  ActionsSeance avecAgrandir(VoidCallback? onAgrandir) => ActionsSeance(
+    onRetour: onRetour,
+    onQuitter: onQuitter,
+    onMicro: onMicro,
+    onCamera: onCamera,
+    onAgrandir: onAgrandir,
+    onReseau: onReseau,
+    onEleves: onEleves,
+    onSupports: onSupports,
+    onCommandes: onCommandes,
+    onAffichage: onAffichage,
+    onAjusterEcran: onAjusterEcran,
+    onOutil: onOutil,
+    onPagePrecedente: onPagePrecedente,
+    onPageSuivante: onPageSuivante,
+    onZoomMoins: onZoomMoins,
+    onZoomPlus: onZoomPlus,
+    onNotifications: onNotifications,
+    onReglages: onReglages,
+    onCompte: onCompte,
+    onNaviguer: onNaviguer,
+    onRappeler: onRappeler,
+    onChoisirPourReciter: onChoisirPourReciter,
+    onNoter: onNoter,
+    onSignaler: onSignaler,
+    onOuvrirSupport: onOuvrirSupport,
+    onBibliotheque: onBibliotheque,
+    onReessayerConnexion: onReessayerConnexion,
+    onContinuerSansMicro: onContinuerSansMicro,
+    onOuvrirReglages: onOuvrirReglages,
+    onContexte: onContexte,
+    onPresenter: onPresenter,
+  );
 }

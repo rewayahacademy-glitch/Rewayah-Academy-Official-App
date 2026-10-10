@@ -138,7 +138,7 @@ class _BlocEnfantEtat extends ConsumerState<_BlocEnfant> {
               poses.length == 1
                   ? t.disponibilites.poseeUne
                   : LibellesGroupe.valeurSeule(
-                      t.disponibilites.posees(nombre: '${poses.length}'),
+                      t.disponibilites.posees(nombre: poses.length),
                     ),
               style: textes.bodySmall,
             ),

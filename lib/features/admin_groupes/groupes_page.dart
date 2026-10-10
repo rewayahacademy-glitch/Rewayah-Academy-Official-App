@@ -1390,7 +1390,12 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
     if (libres == null) {
       return <Widget>[
         TexteSansCoupure(
-          f.disponibilitesInconnues(deNom: deDevant(e.libelle)),
+          f.disponibilitesInconnues(
+            deNom: deDevant(
+              e.libelle,
+              cle: 'admin.groupes.formulaire.disponibilitesInconnues',
+            ),
+          ),
           style: textes.bodySmall,
         ),
       ];
@@ -1411,7 +1416,12 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
       );
     return <Widget>[
       TexteSansCoupure(
-        f.creneauxLibresDe(deNom: deDevant(e.libelle)),
+        f.creneauxLibresDe(
+          deNom: deDevant(
+            e.libelle,
+            cle: 'admin.groupes.formulaire.creneauxLibresDe',
+          ),
+        ),
         style: textes.labelLarge,
       ),
       Ecart.vSm,

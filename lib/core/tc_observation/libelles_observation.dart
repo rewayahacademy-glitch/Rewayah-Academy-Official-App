@@ -36,16 +36,10 @@ String dureeVisiteLisible(Duration duree) {
   final int minutes = total ~/ 60;
   final int secondes = total % 60;
   final d = t.tc.observation.duree;
-  if (minutes == 0) {
-    return secondes <= 1
-        ? LibellesGroupe.insecable(d.secondeUne(n: secondes))
-        : LibellesGroupe.insecable(d.secondes(n: secondes));
-  }
-  if (secondes == 0) {
-    return minutes == 1
-        ? LibellesGroupe.insecable(d.minuteUne(n: minutes))
-        : LibellesGroupe.insecable(d.minutes(n: minutes));
-  }
+  // Pluriels slang : l'arabe accorde l'unite au nombre (AR-CORR-2) ; la
+  // duree reste insecable (DUREE-INSECABLE-3).
+  if (minutes == 0) return LibellesGroupe.insecable(d.secondes(n: secondes));
+  if (secondes == 0) return LibellesGroupe.insecable(d.minutes(n: minutes));
   return LibellesGroupe.insecable(d.minutesSecondes(m: minutes, s: secondes));
 }
 

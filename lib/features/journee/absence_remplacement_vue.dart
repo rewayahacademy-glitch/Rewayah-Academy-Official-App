@@ -176,7 +176,7 @@ List<LigneCleValeur> lignesRemplacement(
     cle: t.enseignant.journee.eleves,
     valeur: offre.nbEleves == 1
         ? t.enseignant.journee.effectifUn
-        : t.enseignant.journee.effectif(nombre: '${offre.nbEleves}'),
+        : t.enseignant.journee.effectif(nombre: offre.nbEleves),
     chiffres: true,
   ),
 ];

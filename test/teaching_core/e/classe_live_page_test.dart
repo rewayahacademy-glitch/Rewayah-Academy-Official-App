@@ -13,6 +13,9 @@ import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dar
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
+import 'package:rewayah_academy/features/salle_seance/chrome_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
+import 'package:rewayah_academy/features/salle_seance/panneau_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/tc_classe_live/classe_live_page.dart';
 import 'package:rewayah_academy/features/tc_classe_live/roster_classe.dart';
@@ -175,6 +178,118 @@ void main() {
       // du support, sans passer par le bouton.
       expect(find.text('Amina'), findsOneWidget);
       expect(tester.takeException(), isNull);
+    });
+
+    // TB-5 (UX-24) : changer d'orientation ou de largeur ne reconnecte
+    // pas et ne perd pas l'etat local (Participants replies).
+    testWidgets('orientation : ni reconnexion ni perte d etat (UX-24)', (
+      WidgetTester tester,
+    ) async {
+      final banc0 = banc(presence: troisEleves());
+      await monterClasse(
+        tester,
+        contexte: contexte(support: 'r1', seuilMax: 5),
+        surcharges: banc0.surcharges,
+        ecran: LargeurEcran.desktop,
+      );
+      final int entrees = banc0.moteur.entrees.length;
+      expect(entrees, 1);
+      expect(find.text('Amina'), findsOneWidget);
+      await tester.tap(find.byKey(PanneauSeance.cleReduireParticipants));
+      await tester.pumpAndSettle();
+      expect(find.text('Amina'), findsNothing);
+      for (final Size taille in <Size>[
+        const Size(900, 1400),
+        const Size(1400, 900),
+      ]) {
+        tester.view.physicalSize = taille;
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(banc0.moteur.entrees.length, entrees);
+        expect(banc0.moteur.departs, 0);
+        // Toujours repliee : l'etat local a survecu.
+        expect(find.text('Amina'), findsNothing);
+      }
+    });
+
+    // TB-5 (revue du 09/10) : le focus de la Classe Live, depuis les
+    // Commandes : l'en-tete et les Participants se retirent, la capsule et
+    // la sortie restent ; « Reduire » de la barre restaure.
+    Finder enTete() => find.byType(ChromeSeance);
+    final Finder focus = find.byKey(CommandesPedagogiques.cleFocus);
+    final Finder sortie = find.byKey(const ValueKey<String>('bouton-agrandir'));
+    final Finder teteFocus = find.byKey(const ValueKey<String>('tete-focus'));
+
+    testWidgets('focus : entree et sortie depuis les Commandes (TB-5)', (
+      WidgetTester tester,
+    ) async {
+      final banc0 = banc(presence: troisEleves());
+      await monterClasse(
+        tester,
+        contexte: contexte(support: 'r1', seuilMax: 5),
+        surcharges: banc0.surcharges,
+        ecran: LargeurEcran.desktop,
+      );
+      expect(enTete(), findsOneWidget);
+      expect(find.text('Amina'), findsOneWidget);
+      await tester.tap(find.byKey(DeclencheurCommandes.cle));
+      await tester.pumpAndSettle();
+      await tester.tap(focus);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      // En focus : ni titre, ni Participants ; la tete du focus et la
+      // sortie sont la, le support aussi.
+      expect(enTete(), findsNothing);
+      expect(find.text('Amina'), findsNothing);
+      expect(teteFocus, findsOneWidget);
+      expect(sortie, findsOneWidget);
+      expect(find.text('support presente'), findsOneWidget);
+      await tester.tap(sortie);
+      await tester.pumpAndSettle();
+      expect(enTete(), findsOneWidget);
+      expect(find.text('Amina'), findsOneWidget);
+      expect(teteFocus, findsNothing);
+      // La connexion n'a pas bouge.
+      expect(banc0.moteur.entrees.length, 1);
+      expect(banc0.moteur.departs, 0);
+    });
+
+    testWidgets('focus : la fin du partage le retire, un nouveau support '
+        'ouvre la salle hors focus', (WidgetTester tester) async {
+      final banc0 = banc(presence: troisEleves());
+      final ValueNotifier<ContexteClasseLive> vivant =
+          ValueNotifier<ContexteClasseLive>(
+            contexte(support: 'r1', seuilMax: 5),
+          );
+      addTearDown(vivant.dispose);
+      await monterClasse(
+        tester,
+        contexte: vivant.value,
+        contexteVivant: vivant,
+        surcharges: banc0.surcharges,
+        ecran: LargeurEcran.desktop,
+      );
+      await tester.tap(find.byKey(DeclencheurCommandes.cle));
+      await tester.pumpAndSettle();
+      await tester.tap(focus);
+      await tester.pumpAndSettle();
+      expect(teteFocus, findsOneWidget);
+      // Fin du partage, puis un nouveau support.
+      vivant.value = contexte(seuilMax: 5);
+      await tester.pumpAndSettle();
+      vivant.value = contexte(support: 'r2', seuilMax: 5);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(teteFocus, findsNothing);
+      expect(enTete(), findsOneWidget);
+      expect(sortie, findsNothing);
+      // Le prochain Focus entre bien en focus (sens non inverse).
+      await tester.tap(find.byKey(DeclencheurCommandes.cle));
+      await tester.pumpAndSettle();
+      await tester.tap(focus);
+      await tester.pumpAndSettle();
+      expect(teteFocus, findsOneWidget);
+      expect(enTete(), findsNothing);
     });
 
     testWidgets('telephone, support actif : roster en feuille', (

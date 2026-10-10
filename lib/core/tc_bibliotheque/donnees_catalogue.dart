@@ -135,58 +135,68 @@ class DonneesCatalogue {
 
 /// Les donnees de la Bibliotheque, pour un groupe donne ou sans groupe.
 final FutureProviderFamily<DonneesCatalogue, String?> donneesCatalogueProvider =
-    FutureProvider.family<DonneesCatalogue, String?>((
-      Ref ref,
-      String? groupeId,
-    ) async {
-      final PortCatalogue catalogue = ref.watch(portCatalogueProvider);
-      final PortEtatOffline offline = ref.watch(portEtatOfflineProvider);
+    FutureProvider.family<DonneesCatalogue, String?>(
+      (Ref ref, String? groupeId) => lireDonneesCatalogue(
+        catalogue: ref.watch(portCatalogueProvider),
+        offline: ref.watch(portEtatOfflineProvider),
+        groupeId: groupeId,
+      ),
+    );
 
-      final List<LibraryResource> tous = await catalogue.tous();
-      final List<LibraryResource> recents = await catalogue.recents();
-      // Des quatre lectures, une seule peut etre REFUSEE : cote serveur,
-      // `ressources_du_groupe` (migration 0033) LEVE sur un groupe qui n'est
-      // pas celui de l'appelant, elle ne rend pas une liste vide. Et le groupe
-      // vient desormais de l'adresse (`?groupe=`), donc d'une valeur que
-      // n'importe qui peut ecrire. Sans cette garde, un identifiant falsifie
-      // emporterait `tous`, `recents` et `reprise` avec lui : toute la
-      // Bibliotheque tomberait pour une seule section. La garde prend tout
-      // echec, et pas seulement `EchecCatalogue` : aucun adaptateur serveur
-      // n'est encore ecrit, et rien ne garantit la forme de ce qu'il levera.
-      // Une section vide disparait, elle ne se remplit pas d'autre chose
-      // (`surface_bibliotheque.dart`).
-      final List<LibraryResource> pourGroupe = groupeId == null
-          ? const <LibraryResource>[]
-          : await catalogue
-                .pourGroupe(groupeId)
-                .onError<Object>(
-                  (Object erreur, StackTrace trace) =>
-                      const <LibraryResource>[],
-                );
-      final ReprisLecture? reprise = await catalogue.derniereLecture();
+/// Lit les donnees de la Bibliotheque depuis [catalogue] et [offline].
+///
+/// Sortie du provider pour qu'un ecran de demonstration surcharge un membre
+/// de la famille sous un `ProviderScope` imbrique (TB-8) : la famille, sans
+/// `dependencies`, se resoudrait sinon dans le conteneur racine.
+Future<DonneesCatalogue> lireDonneesCatalogue({
+  required PortCatalogue catalogue,
+  required PortEtatOffline offline,
+  String? groupeId,
+}) async {
+  final List<LibraryResource> tous = await catalogue.tous();
+  final List<LibraryResource> recents = await catalogue.recents();
+  // Des quatre lectures, une seule peut etre REFUSEE : cote serveur,
+  // `ressources_du_groupe` (migration 0033) LEVE sur un groupe qui n'est
+  // pas celui de l'appelant, elle ne rend pas une liste vide. Et le groupe
+  // vient desormais de l'adresse (`?groupe=`), donc d'une valeur que
+  // n'importe qui peut ecrire. Sans cette garde, un identifiant falsifie
+  // emporterait `tous`, `recents` et `reprise` avec lui : toute la
+  // Bibliotheque tomberait pour une seule section. La garde prend tout
+  // echec, et pas seulement `EchecCatalogue` : aucun adaptateur serveur
+  // n'est encore ecrit, et rien ne garantit la forme de ce qu'il levera.
+  // Une section vide disparait, elle ne se remplit pas d'autre chose
+  // (`surface_bibliotheque.dart`).
+  final List<LibraryResource> pourGroupe = groupeId == null
+      ? const <LibraryResource>[]
+      : await catalogue
+            .pourGroupe(groupeId)
+            .onError<Object>(
+              (Object erreur, StackTrace trace) => const <LibraryResource>[],
+            );
+  final ReprisLecture? reprise = await catalogue.derniereLecture();
 
-      // L'etat hors ligne se mesure une fois par ressource citee, pas une fois
-      // par carte : la meme ressource apparait dans « Recents » et dans « Tous
-      // les supports », et deux mesures pourraient diverger a l'ecran.
-      final Map<String, EtatOffline> etats = <String, EtatOffline>{};
-      for (final LibraryResource r in <LibraryResource>[
-        ...tous,
-        ...recents,
-        ...pourGroupe,
-        if (reprise != null) reprise.ressource,
-      ]) {
-        if (etats.containsKey(r.id)) continue;
-        etats[r.id] = await offline.etatDe(r.id);
-      }
+  // L'etat hors ligne se mesure une fois par ressource citee, pas une fois
+  // par carte : la meme ressource apparait dans « Recents » et dans « Tous
+  // les supports », et deux mesures pourraient diverger a l'ecran.
+  final Map<String, EtatOffline> etats = <String, EtatOffline>{};
+  for (final LibraryResource r in <LibraryResource>[
+    ...tous,
+    ...recents,
+    ...pourGroupe,
+    if (reprise != null) reprise.ressource,
+  ]) {
+    if (etats.containsKey(r.id)) continue;
+    etats[r.id] = await offline.etatDe(r.id);
+  }
 
-      return DonneesCatalogue(
-        tous: tous,
-        recents: recents,
-        pourGroupe: pourGroupe,
-        etatsOffline: Map<String, EtatOffline>.unmodifiable(etats),
-        reprise: reprise,
-      );
-    });
+  return DonneesCatalogue(
+    tous: tous,
+    recents: recents,
+    pourGroupe: pourGroupe,
+    etatsOffline: Map<String, EtatOffline>.unmodifiable(etats),
+    reprise: reprise,
+  );
+}
 
 /// La fiche d'une ressource : son manifeste, sa version, son artefact.
 @immutable

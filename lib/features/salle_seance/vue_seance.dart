@@ -927,6 +927,11 @@ class VueSeance {
   /// de l'enseignant publie.
   bool get voitVignetteSurSupport => cameraEnseignantActive && !voitCapsule;
 
+  /// TB-6 (plan V2 §12) : sur le tableau libre, la phrase « Choisissez un
+  /// support ou ecrivez au tableau. » s'adresse a qui peut choisir le
+  /// support : l'enseignant ; l'eleve voit le tableau sans consigne.
+  bool get voitConsigneTableauLibre => role == RoleSeance.enseignant;
+
   /// Le contexte deplie se montre : seulement depuis la capsule.
   bool get contexteOuvert => voitCapsule && contexte != ContexteOuvert.aucun;
 

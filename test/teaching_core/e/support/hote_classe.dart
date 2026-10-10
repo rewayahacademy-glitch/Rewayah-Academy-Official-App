@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // `Override` n'est pas exporte par l'entree principale de Riverpod 3 : il vit
@@ -121,6 +122,7 @@ Future<void> monterClasse(
   InterfaceMode mode = InterfaceMode.standard,
   Brightness luminosite = Brightness.light,
   bool mouvementReduit = false,
+  ValueListenable<ContexteClasseLive>? contexteVivant,
 }) async {
   poserEcran(tester, ecran);
   await tester.pumpWidget(
@@ -144,8 +146,19 @@ Future<void> monterClasse(
             routes: <RouteBase>[
               GoRoute(
                 path: RoutesTcE.classe,
+                // `contexteVivant` : le contexte change sans remonter la page
+                // (fin du partage, nouveau support), l'etat local survit.
                 builder: (BuildContext _, GoRouterState _) =>
-                    ClasseLivePage(contexte: contexte),
+                    contexteVivant == null
+                    ? ClasseLivePage(contexte: contexte)
+                    : ValueListenableBuilder<ContexteClasseLive>(
+                        valueListenable: contexteVivant,
+                        builder: (
+                          BuildContext _,
+                          ContexteClasseLive c,
+                          Widget? _,
+                        ) => ClasseLivePage(contexte: c),
+                      ),
               ),
               GoRoute(
                 path: '/tc/groupe-de-test',

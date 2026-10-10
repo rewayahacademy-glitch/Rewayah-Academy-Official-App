@@ -173,14 +173,23 @@ class _CorpsMouvements extends ConsumerWidget {
     onRelire: () => ref.invalidate(mouvementsProfilProvider(profil.eleveId)),
     textes: (
       contexte: t.ficheEleve.mouvements.contexte(
-        dePrenom: deDevant(profil.prenom),
+        dePrenom: deDevant(
+          profil.prenom,
+          cle: 'ficheEleve.mouvements.contexte',
+        ),
       ),
       indisponibleTitre: t.ficheEleve.mouvements.indisponibleTitre,
       indisponiblePhrase: t.ficheEleve.mouvements.indisponiblePhrase(
-        dePrenom: deDevant(profil.prenom),
+        dePrenom: deDevant(
+          profil.prenom,
+          cle: 'ficheEleve.mouvements.indisponiblePhrase',
+        ),
       ),
       erreurTitre: t.ficheEleve.mouvements.erreurTitre(
-        dePrenom: deDevant(profil.prenom),
+        dePrenom: deDevant(
+          profil.prenom,
+          cle: 'ficheEleve.mouvements.erreurTitre',
+        ),
       ),
       videTitre: t.ficheEleve.mouvements.videTitre,
       videPhrase: t.ficheEleve.mouvements.videPhrase(prenom: profil.prenom),

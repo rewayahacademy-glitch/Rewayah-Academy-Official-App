@@ -443,6 +443,6 @@ String _anciennete(DateTime maintenant, DateTime depuis) =>
       <= 0 => t.admin.tableau.attenteAujourdhui,
       1 => t.admin.tableau.attenteUnJour,
       final int jours => LibellesGroupe.insecable(
-        t.admin.tableau.attenteJours(jours: '$jours'),
+        t.admin.tableau.attenteJours(jours: jours),
       ),
     };

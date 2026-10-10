@@ -252,7 +252,7 @@ LigneRubrique _ligne(ClasseListee l, VoidCallback? onPress) {
       if (n == 1)
         t.enseignant.classes.eleveUn
       else
-        t.enseignant.classes.eleves(nombre: '$n'),
+        t.enseignant.classes.eleves(nombre: n),
     ].join(' · '),
   );
   final DateTime? p = l.prochaine;

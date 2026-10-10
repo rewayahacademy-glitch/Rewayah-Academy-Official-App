@@ -409,7 +409,11 @@ void main() {
         if (v is Map<String, Object?>) {
           v.values.forEach(parcourir);
         } else if (v is String) {
-          if (RegExp('»[^«»]*«').hasMatch(v)) visuels.add(v);
+          // Les citations en ordre logique retirees d'abord : entre deux
+          // citations d'une meme phrase (« «a» puis «b» »), « » ... « » est
+          // l'intervalle, pas un ordre visuel (reunion de la ligne arabe).
+          final String horsCitations = v.replaceAll(RegExp('«[^«»]*»'), '');
+          if (RegExp('»[^«»]*«').hasMatch(horsCitations)) visuels.add(v);
           if (RegExp('«[^«»]+»').hasMatch(v)) cites.add(v);
         }
       }
