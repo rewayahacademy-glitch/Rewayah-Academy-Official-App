@@ -197,6 +197,37 @@ begin
     raise exception 'B-09: affectation du groupe ne fait pas progresser la demande';
   end if;
 
+  insert into public.demandes_horaires_famille
+    (eleve_id, type_public, langue_code, fuseau_iana, jours, heures_locales,
+     source)
+  values (
+    'f1660000-0000-0000-0000-000000000005', 'adulte', v_langue,
+    'Europe/Paris', array[2]::smallint[], array[18]::smallint[], 'personnalisee'
+  )
+  returning id into v_demande_adulte;
+  update public.demandes_horaires_famille
+     set etat = 'classe_validee', groupe_id = v_group_id
+   where id = v_demande_adulte;
+  if (select count(*) from public.notifications
+      where destinataire = 'f1660000-0000-0000-0000-000000000005'
+        and evenement = 'classe_validee'
+        and params ->> 'groupe_id' = v_group_id::text) <> 1 then
+    raise exception 'M6: classe validée non notifiée au titulaire adulte autonome';
+  end if;
+
+  update public.demandes_horaires_famille
+     set etat = 'enseignant_affecte'
+   where id = v_demande_adulte;
+  if not exists (
+    select 1 from public.notifications
+    where destinataire = 'f1660000-0000-0000-0000-000000000005'
+      and evenement = 'enseignant_affecte'
+      and params ->> 'groupe_id' = v_group_id::text
+      and coalesce(params ->> 'debut_local', '') <> ''
+  ) then
+    raise exception 'M6: enseignant affecté ou première séance future non notifiée au titulaire';
+  end if;
+
   perform set_config('request.jwt.claim.sub', 'f1660000-0000-0000-0000-000000000004', true);
   perform set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text, true);
