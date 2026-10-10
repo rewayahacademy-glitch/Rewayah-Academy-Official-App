@@ -258,7 +258,7 @@ $trigger$;
 
 DROP TRIGGER IF EXISTS groupes_affectation_enseignant_guard ON public.groupes;
 CREATE TRIGGER groupes_affectation_enseignant_guard
-BEFORE INSERT OR UPDATE OF teacher_id, genre_public, type_public, langue_code,
+AFTER INSERT OR UPDATE OF teacher_id, genre_public, type_public, langue_code,
   weekday, hour_local, timezone_iana, ended_at
 ON public.groupes
 FOR EACH ROW EXECUTE FUNCTION public.tc_garde_affectation_enseignant();
@@ -283,7 +283,10 @@ BEGIN
   IF v_teacher_id IS NOT NULL THEN
     PERFORM public.tc_verifier_affectation_enseignant(v_groupe_id, v_teacher_id);
   END IF;
-  RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;
+  IF TG_OP = 'DELETE' THEN
+    RETURN OLD;
+  END IF;
+  RETURN NEW;
 END;
 $trigger$;
 
