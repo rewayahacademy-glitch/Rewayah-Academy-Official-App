@@ -12,9 +12,9 @@ VALUES ('eaffffff-0000-0000-0000-000000000001', 'Europe/Paris');
 INSERT INTO public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 VALUES
-  ('ea000000-0000-0000-0000-000000000001', 'SEC01-AGENT-000001', 'admin',
+  ('ea000000-0000-0000-0000-000000000001', 'AGENT-ID-000001', 'admin',
    'eaffffff-0000-0000-0000-000000000001', 'Agent', 'SEC01', 'active', 'male'),
-  ('ea000000-0000-0000-0000-000000000002', 'SEC01-OBS-000001', 'student',
+  ('ea000000-0000-0000-0000-000000000002', 'OBS-ID-000001', 'student',
    'eaffffff-0000-0000-0000-000000000001', 'Observed', 'SEC01', 'active', 'female');
 
 INSERT INTO public.jetons_agent
