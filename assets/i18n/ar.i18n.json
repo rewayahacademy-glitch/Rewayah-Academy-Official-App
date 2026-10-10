@@ -1,8 +1,46 @@
 {
   "commun": {
+    "annuler": "إلغاء",
+    "reessayer": "إعادة المحاولة",
     "sections": {
       "page": "أقسام الصفحة"
     }
+  },
+  "reseau": {
+    "retabli": "عادت الشبكة"
+  },
+  "destructif": {
+    "irreversible": "لا يمكن التراجع عن هذا الإجراء."
+  },
+  "presence": {
+    "titre": "الحضور",
+    "voir": "عرض الحضور",
+    "mienne": "حضورك",
+    "consolide": "مُثبَّت",
+    "planifiee": "درس قادم",
+    "enAttente": "لم يصل بعد",
+    "enConnexion": "جارٍ الاتصال",
+    "presente": "في القاعة",
+    "enRetard": "متأخر",
+    "deconnectee": "انقطع الاتصال",
+    "enReconnexion": "جارٍ إعادة الاتصال",
+    "reconnectee": "عاد",
+    "sortie": "غادر الدرس",
+    "absente": "غياب",
+    "excusee": "غياب بعذر",
+    "confirmationEnAttente": "بانتظار التأكيد",
+    "corrigeeManuel": "تصحيح يدوي",
+    "finalisee": "نهائي",
+    "inconnu": "حالة غير معروفة",
+    "entreeInstant": "في القاعة منذ لحظة",
+    "entreeMinutes": "في القاعة منذ ⁨{minutes}⁩ دقيقة",
+    "retardMinutes": "⁨{minutes}⁩ دقيقة بعد الموعد",
+    "silenceInstant": "لا أخبار منذ بضع ثوانٍ",
+    "silenceMinutes": "لا أخبار منذ ⁨{minutes}⁩ دقيقة",
+    "attenteInstant": "بدأ الدرس للتو",
+    "attenteMinutes": "بدأ الدرس منذ ⁨{minutes}⁩ دقيقة",
+    "etatMicroOuvert": "ميكروفونه مفتوح",
+    "etatMicroCoupe": "ميكروفونه مغلق"
   },
   "etat": {
     "enDirect": "مباشر",
@@ -59,7 +97,7 @@
       "horsLigne": "أنت غير متصل. تحتاج الحصة إلى اتصال.",
       "reessayer": "إعادة المحاولة",
       "quitter": "مغادرة",
-      "indisponible": "{commande}. غير متاح أثناء إعادة الاتصال.",
+      "indisponible": "⁨{commande}⁩. غير متاح أثناء إعادة الاتصال.",
       "cameraInterdite": "الكاميرا معطّلة لهذا الملف.",
       "microBloque": "الميكروفون محظور في إعدادات هذا الجهاز.",
       "microBloqueGuidee": "الميكروفون محظور على هذا الجهاز.",
@@ -167,7 +205,7 @@
       "reduire": "تصغير",
       "rienPartage": "لم تصل أي مشاركة من \u2068{nom}\u2069 بعد.",
       "videoDe": "فيديو \u2068{nom}\u2069",
-      "page": "\u2068{page}\u2069 / \u2068{pages}\u2069",
+      "page": "\u2066\u2068{page}\u2069 / \u2068{pages}\u2069\u2069",
       "pageSemantique": "الصفحة \u2068{page}\u2069 من \u2068{pages}\u2069",
       "zoomLocal": "تكبير محلي، لا يؤثر في الآخرين",
       "zoomValeur": "\u2068{valeur}\u2069 ٪",
@@ -197,7 +235,7 @@
         "palette": "أدوات الكتابة",
         "terminer": "إنهاء",
         "couleur": "اللون",
-        "couleurAide": "اللون يدل على قصد الخط، للصف كله.",
+        "couleurAide": "اللون يدل على قصد الخط، للفصل كله.",
         "epaisseur": "السُّمك",
         "epaisseurAide": "رفيع لكتابة كلمة، وسميك للإحاطة.",
         "fine": "رفيع",
@@ -339,7 +377,7 @@
         "intro": "بيانات وهمية، دون خادم. اختر دورًا وحالة.",
         "groupes": {
           "seance": "مجرى الحصة",
-          "secours": "حالات الطوارئ",
+          "secours": "حالات الاحتياط",
           "tableau": "المواد والسبورة"
         },
         "roles": {

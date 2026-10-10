@@ -40,6 +40,9 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 
 	// Translations
 	@override late final _Traductions$commun$ar commun = _Traductions$commun$ar._(_root);
+	@override late final _Traductions$reseau$ar reseau = _Traductions$reseau$ar._(_root);
+	@override late final _Traductions$destructif$ar destructif = _Traductions$destructif$ar._(_root);
+	@override late final _Traductions$presence$ar presence = _Traductions$presence$ar._(_root);
 	@override late final _Traductions$etat$ar etat = _Traductions$etat$ar._(_root);
 	@override late final _Traductions$classe$ar classe = _Traductions$classe$ar._(_root);
 	@override late final _Traductions$salle$ar salle = _Traductions$salle$ar._(_root);
@@ -56,7 +59,66 @@ class _Traductions$commun$ar extends Traductions$commun$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get annuler => 'إلغاء';
+	@override String get reessayer => 'إعادة المحاولة';
 	@override late final _Traductions$commun$sections$ar sections = _Traductions$commun$sections$ar._(_root);
+}
+
+// Path: reseau
+class _Traductions$reseau$ar extends Traductions$reseau$fr {
+	_Traductions$reseau$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get retabli => 'عادت الشبكة';
+}
+
+// Path: destructif
+class _Traductions$destructif$ar extends Traductions$destructif$fr {
+	_Traductions$destructif$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get irreversible => 'لا يمكن التراجع عن هذا الإجراء.';
+}
+
+// Path: presence
+class _Traductions$presence$ar extends Traductions$presence$fr {
+	_Traductions$presence$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الحضور';
+	@override String get voir => 'عرض الحضور';
+	@override String get mienne => 'حضورك';
+	@override String get consolide => 'مُثبَّت';
+	@override String get planifiee => 'درس قادم';
+	@override String get enAttente => 'لم يصل بعد';
+	@override String get enConnexion => 'جارٍ الاتصال';
+	@override String get presente => 'في القاعة';
+	@override String get enRetard => 'متأخر';
+	@override String get deconnectee => 'انقطع الاتصال';
+	@override String get enReconnexion => 'جارٍ إعادة الاتصال';
+	@override String get reconnectee => 'عاد';
+	@override String get sortie => 'غادر الدرس';
+	@override String get absente => 'غياب';
+	@override String get excusee => 'غياب بعذر';
+	@override String get confirmationEnAttente => 'بانتظار التأكيد';
+	@override String get corrigeeManuel => 'تصحيح يدوي';
+	@override String get finalisee => 'نهائي';
+	@override String get inconnu => 'حالة غير معروفة';
+	@override String get entreeInstant => 'في القاعة منذ لحظة';
+	@override String entreeMinutes({required Object minutes}) => 'في القاعة منذ ⁨${minutes}⁩ دقيقة';
+	@override String retardMinutes({required Object minutes}) => '⁨${minutes}⁩ دقيقة بعد الموعد';
+	@override String get silenceInstant => 'لا أخبار منذ بضع ثوانٍ';
+	@override String silenceMinutes({required Object minutes}) => 'لا أخبار منذ ⁨${minutes}⁩ دقيقة';
+	@override String get attenteInstant => 'بدأ الدرس للتو';
+	@override String attenteMinutes({required Object minutes}) => 'بدأ الدرس منذ ⁨${minutes}⁩ دقيقة';
+	@override String get etatMicroOuvert => 'ميكروفونه مفتوح';
+	@override String get etatMicroCoupe => 'ميكروفونه مغلق';
 }
 
 // Path: etat
@@ -262,7 +324,7 @@ class _Traductions$salle$secours$ar extends Traductions$salle$secours$fr {
 	@override String get horsLigne => 'أنت غير متصل. تحتاج الحصة إلى اتصال.';
 	@override String get reessayer => 'إعادة المحاولة';
 	@override String get quitter => 'مغادرة';
-	@override String indisponible({required Object commande}) => '${commande}. غير متاح أثناء إعادة الاتصال.';
+	@override String indisponible({required Object commande}) => '⁨${commande}⁩. غير متاح أثناء إعادة الاتصال.';
 	@override String get cameraInterdite => 'الكاميرا معطّلة لهذا الملف.';
 	@override String get microBloque => 'الميكروفون محظور في إعدادات هذا الجهاز.';
 	@override String get microBloqueGuidee => 'الميكروفون محظور على هذا الجهاز.';
@@ -350,7 +412,7 @@ class _Traductions$salle$seance$ar extends Traductions$salle$seance$fr {
 	@override String get reduire => 'تصغير';
 	@override String rienPartage({required Object nom}) => 'لم تصل أي مشاركة من ⁨${nom}⁩ بعد.';
 	@override String videoDe({required Object nom}) => 'فيديو ⁨${nom}⁩';
-	@override String page({required Object page, required Object pages}) => '⁨${page}⁩ / ⁨${pages}⁩';
+	@override String page({required Object page, required Object pages}) => '⁦⁨${page}⁩ / ⁨${pages}⁩⁩';
 	@override String pageSemantique({required Object page, required Object pages}) => 'الصفحة ⁨${page}⁩ من ⁨${pages}⁩';
 	@override String get zoomLocal => 'تكبير محلي، لا يؤثر في الآخرين';
 	@override String zoomValeur({required Object valeur}) => '⁨${valeur}⁩ ٪';
@@ -715,7 +777,7 @@ class _Traductions$salle$seance$ecriture$ar extends Traductions$salle$seance$ecr
 	@override String get palette => 'أدوات الكتابة';
 	@override String get terminer => 'إنهاء';
 	@override String get couleur => 'اللون';
-	@override String get couleurAide => 'اللون يدل على قصد الخط، للصف كله.';
+	@override String get couleurAide => 'اللون يدل على قصد الخط، للفصل كله.';
 	@override String get epaisseur => 'السُّمك';
 	@override String get epaisseurAide => 'رفيع لكتابة كلمة، وسميك للإحاطة.';
 	@override String get fine => 'رفيع';
@@ -2127,7 +2189,7 @@ class _Traductions$salle$seance$demo$groupes$ar extends Traductions$salle$seance
 
 	// Translations
 	@override String get seance => 'مجرى الحصة';
-	@override String get secours => 'حالات الطوارئ';
+	@override String get secours => 'حالات الاحتياط';
 	@override String get tableau => 'المواد والسبورة';
 }
 
@@ -2330,7 +2392,39 @@ class _Traductions$tc$parcours$signalement$categorieValeur$ar extends Traduction
 extension on TraductionsAr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'commun.annuler' => 'إلغاء',
+			'commun.reessayer' => 'إعادة المحاولة',
 			'commun.sections.page' => 'أقسام الصفحة',
+			'reseau.retabli' => 'عادت الشبكة',
+			'destructif.irreversible' => 'لا يمكن التراجع عن هذا الإجراء.',
+			'presence.titre' => 'الحضور',
+			'presence.voir' => 'عرض الحضور',
+			'presence.mienne' => 'حضورك',
+			'presence.consolide' => 'مُثبَّت',
+			'presence.planifiee' => 'درس قادم',
+			'presence.enAttente' => 'لم يصل بعد',
+			'presence.enConnexion' => 'جارٍ الاتصال',
+			'presence.presente' => 'في القاعة',
+			'presence.enRetard' => 'متأخر',
+			'presence.deconnectee' => 'انقطع الاتصال',
+			'presence.enReconnexion' => 'جارٍ إعادة الاتصال',
+			'presence.reconnectee' => 'عاد',
+			'presence.sortie' => 'غادر الدرس',
+			'presence.absente' => 'غياب',
+			'presence.excusee' => 'غياب بعذر',
+			'presence.confirmationEnAttente' => 'بانتظار التأكيد',
+			'presence.corrigeeManuel' => 'تصحيح يدوي',
+			'presence.finalisee' => 'نهائي',
+			'presence.inconnu' => 'حالة غير معروفة',
+			'presence.entreeInstant' => 'في القاعة منذ لحظة',
+			'presence.entreeMinutes' => ({required Object minutes}) => 'في القاعة منذ ⁨${minutes}⁩ دقيقة',
+			'presence.retardMinutes' => ({required Object minutes}) => '⁨${minutes}⁩ دقيقة بعد الموعد',
+			'presence.silenceInstant' => 'لا أخبار منذ بضع ثوانٍ',
+			'presence.silenceMinutes' => ({required Object minutes}) => 'لا أخبار منذ ⁨${minutes}⁩ دقيقة',
+			'presence.attenteInstant' => 'بدأ الدرس للتو',
+			'presence.attenteMinutes' => ({required Object minutes}) => 'بدأ الدرس منذ ⁨${minutes}⁩ دقيقة',
+			'presence.etatMicroOuvert' => 'ميكروفونه مفتوح',
+			'presence.etatMicroCoupe' => 'ميكروفونه مغلق',
 			'etat.enDirect' => 'مباشر',
 			'etat.seanceAnnulee' => 'ملغاة',
 			'etat.annuleeValeur' => ({required Object valeur}) => 'ملغاة : ${valeur}',
@@ -2376,7 +2470,7 @@ extension on TraductionsAr {
 			'salle.secours.horsLigne' => 'أنت غير متصل. تحتاج الحصة إلى اتصال.',
 			'salle.secours.reessayer' => 'إعادة المحاولة',
 			'salle.secours.quitter' => 'مغادرة',
-			'salle.secours.indisponible' => ({required Object commande}) => '${commande}. غير متاح أثناء إعادة الاتصال.',
+			'salle.secours.indisponible' => ({required Object commande}) => '⁨${commande}⁩. غير متاح أثناء إعادة الاتصال.',
 			'salle.secours.cameraInterdite' => 'الكاميرا معطّلة لهذا الملف.',
 			'salle.secours.microBloque' => 'الميكروفون محظور في إعدادات هذا الجهاز.',
 			'salle.secours.microBloqueGuidee' => 'الميكروفون محظور على هذا الجهاز.',
@@ -2472,7 +2566,7 @@ extension on TraductionsAr {
 			'salle.seance.reduire' => 'تصغير',
 			'salle.seance.rienPartage' => ({required Object nom}) => 'لم تصل أي مشاركة من ⁨${nom}⁩ بعد.',
 			'salle.seance.videoDe' => ({required Object nom}) => 'فيديو ⁨${nom}⁩',
-			'salle.seance.page' => ({required Object page, required Object pages}) => '⁨${page}⁩ / ⁨${pages}⁩',
+			'salle.seance.page' => ({required Object page, required Object pages}) => '⁦⁨${page}⁩ / ⁨${pages}⁩⁩',
 			'salle.seance.pageSemantique' => ({required Object page, required Object pages}) => 'الصفحة ⁨${page}⁩ من ⁨${pages}⁩',
 			'salle.seance.zoomLocal' => 'تكبير محلي، لا يؤثر في الآخرين',
 			'salle.seance.zoomValeur' => ({required Object valeur}) => '⁨${valeur}⁩ ٪',
@@ -2499,7 +2593,7 @@ extension on TraductionsAr {
 			'salle.seance.ecriture.palette' => 'أدوات الكتابة',
 			'salle.seance.ecriture.terminer' => 'إنهاء',
 			'salle.seance.ecriture.couleur' => 'اللون',
-			'salle.seance.ecriture.couleurAide' => 'اللون يدل على قصد الخط، للصف كله.',
+			'salle.seance.ecriture.couleurAide' => 'اللون يدل على قصد الخط، للفصل كله.',
 			'salle.seance.ecriture.epaisseur' => 'السُّمك',
 			'salle.seance.ecriture.epaisseurAide' => 'رفيع لكتابة كلمة، وسميك للإحاطة.',
 			'salle.seance.ecriture.fine' => 'رفيع',
@@ -2618,7 +2712,7 @@ extension on TraductionsAr {
 			'salle.seance.demo.titre' => 'قاعة العرض التجريبي',
 			'salle.seance.demo.intro' => 'بيانات وهمية، دون خادم. اختر دورًا وحالة.',
 			'salle.seance.demo.groupes.seance' => 'مجرى الحصة',
-			'salle.seance.demo.groupes.secours' => 'حالات الطوارئ',
+			'salle.seance.demo.groupes.secours' => 'حالات الاحتياط',
 			'salle.seance.demo.groupes.tableau' => 'المواد والسبورة',
 			'salle.seance.demo.roles.eleve' => 'طالب عادي',
 			'salle.seance.demo.roles.guidee' => 'وضع إمكانية الوصول',
@@ -2810,6 +2904,8 @@ extension on TraductionsAr {
 			'tc.bibliotheque.indisponible.action' => 'إعادة المحاولة',
 			'tc.bibliotheque.introuvable.message' => 'هذه المادة غير مفتوحة لك',
 			'tc.bibliotheque.introuvable.invitation' => 'ربما سُحبت، أو هي مخصصة لفصل آخر. يمكن لمعلمك أن يعيد فتحها لك.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.offline.aTelecharger' => 'للتنزيل',
 			'tc.bibliotheque.offline.enCours' => 'جارٍ التنزيل',
 			'tc.bibliotheque.offline.enCache' => 'في الذاكرة المؤقتة',
@@ -2842,8 +2938,6 @@ extension on TraductionsAr {
 			'tc.groupe.enseignant.photoManquanteDetail' => 'لم تُسجَّل صورة المعلم بعد.',
 			'tc.groupe.mesGroupes.titre' => 'فصولي',
 			'tc.groupe.mesGroupes.aucun' => 'لا فصل حتى الآن',
-			_ => null,
-		} ?? switch (path) {
 			'tc.groupe.mesGroupes.aucunDetail' => 'ستضعك الأكاديمية في فصل حين يتوفر موعد يناسبك.',
 			'tc.groupe.commun.erreur' => 'تعذّرت قراءة فصولك',
 			'tc.groupe.commun.reessayer' => 'إعادة المحاولة',

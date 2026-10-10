@@ -14,7 +14,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 
 /// Les domaines entierement traduits, et leur nombre minimal de cles.
-const Map<String, int> _domaines = <String, int>{'salle': 300, 'tc': 450};
+/// `presence` et `destructif` (verification TB, 10/10) : la colonne de
+/// presence du controleur et la feuille ConfirmDestructive de la salle.
+const Map<String, int> _domaines = <String, int>{
+  'salle': 300,
+  'tc': 450,
+  'presence': 25,
+  'destructif': 0,
+};
 
 Map<String, String> _aplatir(
   Map<String, dynamic> carte, [
@@ -37,9 +44,6 @@ Map<String, String> _domaine(String langue, String domaine) => _aplatir(
       as Map<String, dynamic>,
   '$domaine.',
 );
-
-/// Les cles traduites avant ces tranches, sans isolation.
-const Set<String> _anciennes = <String>{'salle.secours.indisponible'};
 
 /// Les textes gardes en latin (marque, format de fichier).
 const Set<String> _latins = <String>{
@@ -138,8 +142,22 @@ void main() {
 
       test('parametres isoles (U+2068 ... U+2069)', () {
         for (final MapEntry<String, String> e in ar.entries) {
-          if (_anciennes.contains(e.key)) continue;
           expect(defautsIsolation(e.value), isEmpty, reason: e.key);
+        }
+      });
+
+      // Une fraction « {a} / {b} » se lit dans un seul sens, celui du
+      // compteur d'eleves (« 2/4 ») : de gauche a droite, sous U+2066.
+      test('fractions lues de gauche a droite (U+2066)', () {
+        final RegExp fraction = RegExp('\u2068\\{\\w+\\}\u2069 ?/ ?\u2068\\{\\w+\\}\u2069');
+        for (final MapEntry<String, String> e in ar.entries) {
+          for (final Match m in fraction.allMatches(e.value)) {
+            expect(
+              m.start > 0 && e.value[m.start - 1] == '\u2066',
+              isTrue,
+              reason: e.key,
+            );
+          }
         }
       });
 

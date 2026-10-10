@@ -251,7 +251,7 @@ class Traductions$salle$fr {
 	String get ouvrirCoran => 'Ouvrir le Coran';
 
 	/// fr: 'Quitter le cours ?'
-	String get confirmerSortie => 'Quitter le cours ?';
+	String get confirmerSortie => 'Quitter le cours ?';
 
 	/// fr: 'Cette salle n'est plus accessible. Revenez à votre accueil pour rejoindre le prochain cours.'
 	String get expiree => 'Cette salle n\'est plus accessible. Revenez à votre accueil pour rejoindre le prochain cours.';
@@ -302,7 +302,7 @@ class Traductions$salle$fr {
 	String get refusConfiguration => 'La salle n\'est pas encore disponible';
 
 	/// fr: 'Ce n'est pas votre appareil : le service de visioconférence n'est pas branché. L'équipe le sait.'
-	String get refusConfigurationDetail => 'Ce n\'est pas votre appareil : le service de visioconférence n\'est pas branché. L\'équipe le sait.';
+	String get refusConfigurationDetail => 'Ce n\'est pas votre appareil : le service de visioconférence n\'est pas branché. L\'équipe le sait.';
 
 	/// fr: 'La salle n'a pas répondu'
 	String get refusReseau => 'La salle n\'a pas répondu';
@@ -2871,7 +2871,7 @@ class Traductions$salle$seance$fr {
 	String get zoomPlus => 'Augmenter le zoom';
 
 	/// fr: 'Quitter la séance ?'
-	String get quitterQuestion => 'Quitter la séance ?';
+	String get quitterQuestion => 'Quitter la séance ?';
 
 	/// fr: 'Vous pourrez revenir si la séance est encore ouverte.'
 	String get quitterConsequence => 'Vous pourrez revenir si la séance est encore ouverte.';
@@ -11404,13 +11404,13 @@ class Traductions$salle$seance$outils$fr {
 	String get ecrire => 'Écrire';
 
 	/// fr: 'Sans outil, la page se lit ; agrandie, elle se déplace en la faisant glisser.'
-	String get aideLecture => 'Sans outil, la page se lit ; agrandie, elle se déplace en la faisant glisser.';
+	String get aideLecture => 'Sans outil, la page se lit ; agrandie, elle se déplace en la faisant glisser.';
 
 	/// fr: 'Pointeur : touchez la page pour montrer un passage, rien ne reste.'
-	String get aidePointeur => 'Pointeur : touchez la page pour montrer un passage, rien ne reste.';
+	String get aidePointeur => 'Pointeur : touchez la page pour montrer un passage, rien ne reste.';
 
 	/// fr: 'Écrire : écrivez sur la page. Sur un écran tactile, deux doigts la déplacent.'
-	String get aideEcrire => 'Écrire : écrivez sur la page. Sur un écran tactile, deux doigts la déplacent.';
+	String get aideEcrire => 'Écrire : écrivez sur la page. Sur un écran tactile, deux doigts la déplacent.';
 }
 
 // Path: salle.seance.ecriture
@@ -11470,10 +11470,10 @@ class Traductions$salle$seance$ecriture$fr {
 	String get choisirVous => 'Touchez « Écrire » quand vous voulez écrire. Sinon la page se lit, sans laisser de trait.';
 
 	/// fr: 'Écris avec le stylo. La gomme et Annuler ne touchent que tes traits ; Terminer revient à la lecture.'
-	String get aideEleveTu => 'Écris avec le stylo. La gomme et Annuler ne touchent que tes traits ; Terminer revient à la lecture.';
+	String get aideEleveTu => 'Écris avec le stylo. La gomme et Annuler ne touchent que tes traits ; Terminer revient à la lecture.';
 
 	/// fr: 'Écrivez avec le stylo. La gomme et Annuler ne touchent que vos traits ; Terminer revient à la lecture.'
-	String get aideEleveVous => 'Écrivez avec le stylo. La gomme et Annuler ne touchent que vos traits ; Terminer revient à la lecture.';
+	String get aideEleveVous => 'Écrivez avec le stylo. La gomme et Annuler ne touchent que vos traits ; Terminer revient à la lecture.';
 
 	/// fr: 'Peut écrire'
 	String get peutEcrire => 'Peut écrire';
@@ -11485,7 +11485,7 @@ class Traductions$salle$seance$ecriture$fr {
 	String get retirer => 'Retirer l\'autorisation d\'écrire';
 
 	/// fr: 'Autoriser à écrire : {prenom}'
-	String autoriserSemantique({required Object prenom}) => 'Autoriser à écrire : ${prenom}';
+	String autoriserSemantique({required Object prenom}) => 'Autoriser à écrire : ${prenom}';
 
 	/// fr: 'Retirer l'autorisation d'écrire de {prenom}'
 	String retirerSemantique({required Object prenom}) => 'Retirer l\'autorisation d\'écrire de ${prenom}';
@@ -11494,7 +11494,7 @@ class Traductions$salle$seance$ecriture$fr {
 	String autoriserAide({required Object prenom}) => '${prenom} pourra écrire sur la page ou le tableau. La page et le support restent à vous.';
 
 	/// fr: 'Ses traits restent sur la page ; ses outils d'écriture se retirent.'
-	String get retirerAide => 'Ses traits restent sur la page ; ses outils d\'écriture se retirent.';
+	String get retirerAide => 'Ses traits restent sur la page ; ses outils d\'écriture se retirent.';
 }
 
 // Path: salle.seance.rail
@@ -11758,10 +11758,10 @@ class Traductions$salle$seance$rangement$fr {
 	String get effacer => 'Effacer les notes';
 
 	/// fr: 'Effacer toutes les notes de cette page ?'
-	String get questionPage => 'Effacer toutes les notes de cette page ?';
+	String get questionPage => 'Effacer toutes les notes de cette page ?';
 
 	/// fr: 'Effacer toutes les notes du tableau ?'
-	String get questionTableau => 'Effacer toutes les notes du tableau ?';
+	String get questionTableau => 'Effacer toutes les notes du tableau ?';
 
 	/// fr: 'Les notes de cette page disparaissent pour toute la classe.'
 	String get consequencePage => 'Les notes de cette page disparaissent pour toute la classe.';
@@ -13445,7 +13445,7 @@ class Traductions$tc$bibliotheque$detail$fr {
 	String get niveaux => 'Niveaux';
 
 	/// fr: 'Aucune version publiée : rien à ouvrir pour le moment.'
-	String get sansVersion => 'Aucune version publiée : rien à ouvrir pour le moment.';
+	String get sansVersion => 'Aucune version publiée : rien à ouvrir pour le moment.';
 
 	/// fr: 'L’aperçu de ce format n’est pas encore disponible dans l’application. Vous pouvez en enregistrer une copie.'
 	String get apercuIndisponible => 'L’aperçu de ce format n’est pas encore disponible dans l’application. Vous pouvez en enregistrer une copie.';
@@ -13562,7 +13562,7 @@ class Traductions$tc$coran$fidelite$fr {
 	String get approchee => 'Composition approchée';
 
 	/// fr: 'Les versets de cette page sont exactement ceux de la page du Mushaf de Médine. Leur répartition sur les lignes, elle, est celle de cet écran : le découpage en lignes de l'édition n'est pas encore importé.'
-	String get approcheeDetail => 'Les versets de cette page sont exactement ceux de la page du Mushaf de Médine. Leur répartition sur les lignes, elle, est celle de cet écran : le découpage en lignes de l\'édition n\'est pas encore importé.';
+	String get approcheeDetail => 'Les versets de cette page sont exactement ceux de la page du Mushaf de Médine. Leur répartition sur les lignes, elle, est celle de cet écran : le découpage en lignes de l\'édition n\'est pas encore importé.';
 
 	/// fr: 'Composition de l'édition'
 	String get fidele => 'Composition de l\'édition';
@@ -13577,13 +13577,13 @@ class Traductions$tc$coran$zoom$fr {
 	// Translations
 
 	/// fr: 'Grossissement limité par la largeur : au-delà, un mot serait coupé.'
-	String get bride => 'Grossissement limité par la largeur : au-delà, un mot serait coupé.';
+	String get bride => 'Grossissement limité par la largeur : au-delà, un mot serait coupé.';
 
 	/// fr: '{pourcent} %'
 	String valeur({required Object pourcent}) => '${pourcent} %';
 
 	/// fr: 'Pour grossir le texte, passez en lecture agrandie : la page du mushaf garde sa géométrie.'
-	String get renvoiLectureAgrandie => 'Pour grossir le texte, passez en lecture agrandie : la page du mushaf garde sa géométrie.';
+	String get renvoiLectureAgrandie => 'Pour grossir le texte, passez en lecture agrandie : la page du mushaf garde sa géométrie.';
 }
 
 // Path: tc.coran.navigation
@@ -13738,7 +13738,7 @@ class Traductions$tc$outils$trait$fr {
 	String get plus => 'Plus';
 
 	/// fr: 'Ardoise d'annotation, facultative : le cours reste lisible sans elle'
-	String get ardoise => 'Ardoise d\'annotation, facultative : le cours reste lisible sans elle';
+	String get ardoise => 'Ardoise d\'annotation, facultative : le cours reste lisible sans elle';
 
 	/// fr: 'Effacer mon dernier trait'
 	String get effacerDernier => 'Effacer mon dernier trait';
@@ -13762,7 +13762,7 @@ class Traductions$tc$outils$portee$fr {
 	String get enregistree => 'Enregistrer';
 
 	/// fr: 'Combien de temps garder ces annotations ?'
-	String get aide => 'Combien de temps garder ces annotations ?';
+	String get aide => 'Combien de temps garder ces annotations ?';
 }
 
 // Path: tc.outils.marquer
@@ -13849,10 +13849,10 @@ class Traductions$tc$outils$annotation$fr {
 	// Translations
 
 	/// fr: 'Ce passage n'a pas de repère de texte : l'annotation suivra la page, pas les mots.'
-	String get ancrageDegrade => 'Ce passage n\'a pas de repère de texte : l\'annotation suivra la page, pas les mots.';
+	String get ancrageDegrade => 'Ce passage n\'a pas de repère de texte : l\'annotation suivra la page, pas les mots.';
 
 	/// fr: 'Annotations masquées : leur passage n'est pas à l'écran.'
-	String get horsPage => 'Annotations masquées : leur passage n\'est pas à l\'écran.';
+	String get horsPage => 'Annotations masquées : leur passage n\'est pas à l\'écran.';
 
 	/// fr: 'Sélectionnez d'abord un passage.'
 	String get aucuneSelection => 'Sélectionnez d\'abord un passage.';
@@ -13892,7 +13892,7 @@ class Traductions$tc$classe$roster$fr {
 	String get titre => 'Élèves';
 
 	/// fr: 'Élèves : {presents} présents sur {attendus} attendus'
-	String compteur({required Object presents, required Object attendus}) => 'Élèves : ${presents} présents sur ${attendus} attendus';
+	String compteur({required Object presents, required Object attendus}) => 'Élèves : ${presents} présents sur ${attendus} attendus';
 
 	/// fr: 'Roster indisponible'
 	String get indisponible => 'Roster indisponible';
@@ -14117,7 +14117,7 @@ class Traductions$tc$classe$commandes$fr {
 	String get quitter => 'Quitter';
 
 	/// fr: 'Quitter le cours ?'
-	String get quitterQuestion => 'Quitter le cours ?';
+	String get quitterQuestion => 'Quitter le cours ?';
 
 	/// fr: 'Votre sortie sera enregistrée. Vous pourrez revenir tant que la séance est ouverte.'
 	String get quitterConsequence => 'Votre sortie sera enregistrée. Vous pourrez revenir tant que la séance est ouverte.';
@@ -14324,7 +14324,7 @@ class Traductions$tc$observation$entree$fr {
 	String get nomInstitutionnel => 'Administration Rewayah';
 
 	/// fr: 'Visite journalisée : identité, séance, entrée, sortie et durée.'
-	String get visiteJournalisee => 'Visite journalisée : identité, séance, entrée, sortie et durée.';
+	String get visiteJournalisee => 'Visite journalisée : identité, séance, entrée, sortie et durée.';
 
 	/// fr: 'Votre compte n'observe pas les séances.'
 	String get roleSansObservation => 'Votre compte n\'observe pas les séances.';
@@ -14369,7 +14369,7 @@ class Traductions$tc$observation$explication$fr {
 	String get revenir => 'Si un autre élève récite lors de votre première visite, vous pourrez revenir plus tard pour écouter votre enfant.';
 
 	/// fr: 'Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n'est pas reporté.'
-	String get ecourtee => 'Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.';
+	String get ecourtee => 'Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.';
 
 	/// fr: 'Pour préserver la concentration, vous observez sans intervenir.'
 	String get sansIntervenir => 'Pour préserver la concentration, vous observez sans intervenir.';
@@ -14504,13 +14504,13 @@ class Traductions$tc$observation$connexion$fr {
 	String get enCours => 'Connexion et vérification en cours';
 
 	/// fr: 'Restez sur cette page : la vérification continue.'
-	String get prolongee => 'Restez sur cette page : la vérification continue.';
+	String get prolongee => 'Restez sur cette page : la vérification continue.';
 
 	/// fr: 'Connexion impossible'
 	String get impossibleTitre => 'Connexion impossible';
 
 	/// fr: 'L'entrée dans la séance n'a pas abouti. Vérifiez votre connexion, puis réessayez : vos visites restantes seront vérifiées à nouveau.'
-	String get impossible => 'L\'entrée dans la séance n\'a pas abouti. Vérifiez votre connexion, puis réessayez : vos visites restantes seront vérifiées à nouveau.';
+	String get impossible => 'L\'entrée dans la séance n\'a pas abouti. Vérifiez votre connexion, puis réessayez : vos visites restantes seront vérifiées à nouveau.';
 }
 
 // Path: tc.observation.duree
@@ -14606,7 +14606,7 @@ class Traductions$tc$observation$visite$fr {
 	String get restantes => 'restantes';
 
 	/// fr: 'Temps restant : {duree}'
-	String decompteLu({required Object duree}) => 'Temps restant : ${duree}';
+	String decompteLu({required Object duree}) => 'Temps restant : ${duree}';
 
 	/// fr: 'En direct'
 	String get enDirect => 'En direct';
@@ -14645,13 +14645,13 @@ class Traductions$tc$observation$visite$fr {
 	String parle({required Object nom}) => '${nom} parle';
 
 	/// fr: 'Quitter la visite ?'
-	String get quitterQuestion => 'Quitter la visite ?';
+	String get quitterQuestion => 'Quitter la visite ?';
 
 	/// fr: 'Il vous reste {duree}. Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n'est pas reporté.'
-	String quitterConsequence({required Object duree}) => 'Il vous reste ${duree}. Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.';
+	String quitterConsequence({required Object duree}) => 'Il vous reste ${duree}. Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.';
 
 	/// fr: 'Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n'est pas reporté.'
-	String get quitterConsequenceSansTemps => 'Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.';
+	String get quitterConsequenceSansTemps => 'Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.';
 
 	/// fr: 'Quitter la visite'
 	String get quitterConfirmer => 'Quitter la visite';
@@ -14807,7 +14807,7 @@ class Traductions$tc$observation$reglages$fr {
 	String get invalideTemps => 'Au moins trente secondes par séance.';
 
 	/// fr: 'Académie : {valeur}'
-	String valeurHeritee({required Object valeur}) => 'Académie : ${valeur}';
+	String valeurHeritee({required Object valeur}) => 'Académie : ${valeur}';
 
 	/// fr: '{n} visite'
 	String uniteVisiteUne({required Object n}) => '${n} visite';
@@ -14843,7 +14843,7 @@ class Traductions$tc$parcours$avant$fr {
 	String get nonBranche => 'Le travail à préparer n\'est pas encore relié à cet espace.';
 
 	/// fr: 'Cela ne veut pas dire qu'il n'y a rien à préparer : cet écran ne sait pas encore le lire.'
-	String get nonBrancheDetail => 'Cela ne veut pas dire qu\'il n\'y a rien à préparer : cet écran ne sait pas encore le lire.';
+	String get nonBrancheDetail => 'Cela ne veut pas dire qu\'il n\'y a rien à préparer : cet écran ne sait pas encore le lire.';
 
 	/// fr: 'Reprendre le cours'
 	String get reprendre => 'Reprendre le cours';
@@ -14937,7 +14937,7 @@ class Traductions$tc$parcours$signalement$fr {
 	String get titre => 'Signaler un besoin';
 
 	/// fr: 'De quoi s'agit-il ?'
-	String get categorie => 'De quoi s\'agit-il ?';
+	String get categorie => 'De quoi s\'agit-il ?';
 
 	late final Traductions$tc$parcours$signalement$categorieValeur$fr categorieValeur = Traductions$tc$parcours$signalement$categorieValeur$fr.internal(_root);
 
@@ -15410,7 +15410,7 @@ class Traductions$salle$preparation$eleve$guidee$fr {
 	String get microCoupe => 'Le micro sera coupé en entrant.';
 
 	/// fr: 'Le micro est bloqué. On l'autorise ?'
-	String get microQuestion => 'Le micro est bloqué. On l\'autorise ?';
+	String get microQuestion => 'Le micro est bloqué. On l\'autorise ?';
 
 	/// fr: 'Le micro est bloqué.'
 	String get microBloque => 'Le micro est bloqué.';
@@ -15770,7 +15770,7 @@ class Traductions$tc$parcours$feedback$cours$fr {
 	// Translations
 
 	/// fr: 'Comment était le cours aujourd'hui ?'
-	String get intitule => 'Comment était le cours aujourd\'hui ?';
+	String get intitule => 'Comment était le cours aujourd\'hui ?';
 
 	/// fr: 'Difficile'
 	String get difficile => 'Difficile';
@@ -15791,7 +15791,7 @@ class Traductions$tc$parcours$feedback$comprehension$fr {
 	// Translations
 
 	/// fr: 'Avez-vous compris ce qui a été travaillé ?'
-	String get intitule => 'Avez-vous compris ce qui a été travaillé ?';
+	String get intitule => 'Avez-vous compris ce qui a été travaillé ?';
 
 	/// fr: 'Pas vraiment'
 	String get difficile => 'Pas vraiment';
@@ -15812,7 +15812,7 @@ class Traductions$tc$parcours$feedback$rythme$fr {
 	// Translations
 
 	/// fr: 'Le rythme du cours vous a-t-il convenu ?'
-	String get intitule => 'Le rythme du cours vous a-t-il convenu ?';
+	String get intitule => 'Le rythme du cours vous a-t-il convenu ?';
 
 	/// fr: 'Trop rapide'
 	String get difficile => 'Trop rapide';
@@ -15833,7 +15833,7 @@ class Traductions$tc$parcours$feedback$technique$fr {
 	// Translations
 
 	/// fr: 'Le son et l'image étaient-ils confortables ?'
-	String get intitule => 'Le son et l\'image étaient-ils confortables ?';
+	String get intitule => 'Le son et l\'image étaient-ils confortables ?';
 
 	/// fr: 'Gênants'
 	String get difficile => 'Gênants';
@@ -15854,7 +15854,7 @@ class Traductions$tc$parcours$feedback$confiance$fr {
 	// Translations
 
 	/// fr: 'Vous sentez-vous prêt pour le prochain cours ?'
-	String get intitule => 'Vous sentez-vous prêt pour le prochain cours ?';
+	String get intitule => 'Vous sentez-vous prêt pour le prochain cours ?';
 
 	/// fr: 'Pas encore'
 	String get difficile => 'Pas encore';
@@ -16065,7 +16065,7 @@ extension on Traductions {
 			'salle.preparation.eleve.guidee.verification' => 'Préparation de la séance…',
 			'salle.preparation.eleve.guidee.pret' => 'Tout est prêt.',
 			'salle.preparation.eleve.guidee.microCoupe' => 'Le micro sera coupé en entrant.',
-			'salle.preparation.eleve.guidee.microQuestion' => 'Le micro est bloqué. On l\'autorise ?',
+			'salle.preparation.eleve.guidee.microQuestion' => 'Le micro est bloqué. On l\'autorise ?',
 			'salle.preparation.eleve.guidee.microBloque' => 'Le micro est bloqué.',
 			'salle.preparation.eleve.guidee.horsLigne' => 'La connexion ne marche pas pour l\'instant.',
 			'salle.preparation.eleve.demo.section' => 'Préparation élève',
@@ -16124,7 +16124,7 @@ extension on Traductions {
 			'salle.seance.zoomValeur' => ({required Object valeur}) => '${valeur} %',
 			'salle.seance.zoomMoins' => 'Réduire le zoom',
 			'salle.seance.zoomPlus' => 'Augmenter le zoom',
-			'salle.seance.quitterQuestion' => 'Quitter la séance ?',
+			'salle.seance.quitterQuestion' => 'Quitter la séance ?',
 			'salle.seance.quitterConsequence' => 'Vous pourrez revenir si la séance est encore ouverte.',
 			'salle.seance.illustration' => 'Illustration du support',
 			'salle.seance.quitterCahierConsequence' => 'Vous passerez ensuite au cahier de transmission.',
@@ -16139,9 +16139,9 @@ extension on Traductions {
 			'salle.seance.outils.marquer' => 'Marquer',
 			'salle.seance.outils.masquer' => 'Masquer',
 			'salle.seance.outils.ecrire' => 'Écrire',
-			'salle.seance.outils.aideLecture' => 'Sans outil, la page se lit ; agrandie, elle se déplace en la faisant glisser.',
-			'salle.seance.outils.aidePointeur' => 'Pointeur : touchez la page pour montrer un passage, rien ne reste.',
-			'salle.seance.outils.aideEcrire' => 'Écrire : écrivez sur la page. Sur un écran tactile, deux doigts la déplacent.',
+			'salle.seance.outils.aideLecture' => 'Sans outil, la page se lit ; agrandie, elle se déplace en la faisant glisser.',
+			'salle.seance.outils.aidePointeur' => 'Pointeur : touchez la page pour montrer un passage, rien ne reste.',
+			'salle.seance.outils.aideEcrire' => 'Écrire : écrivez sur la page. Sur un écran tactile, deux doigts la déplacent.',
 			'salle.seance.ecriture.palette' => 'Outils d\'écriture',
 			'salle.seance.ecriture.terminer' => 'Terminer',
 			'salle.seance.ecriture.couleur' => 'Couleur',
@@ -16158,15 +16158,15 @@ extension on Traductions {
 			'salle.seance.ecriture.repriseNom' => ({required Object nom}) => '${nom} reprend le tableau.',
 			'salle.seance.ecriture.choisirTu' => 'Touche « Écrire » quand tu veux écrire. Sinon la page se lit, sans laisser de trait.',
 			'salle.seance.ecriture.choisirVous' => 'Touchez « Écrire » quand vous voulez écrire. Sinon la page se lit, sans laisser de trait.',
-			'salle.seance.ecriture.aideEleveTu' => 'Écris avec le stylo. La gomme et Annuler ne touchent que tes traits ; Terminer revient à la lecture.',
-			'salle.seance.ecriture.aideEleveVous' => 'Écrivez avec le stylo. La gomme et Annuler ne touchent que vos traits ; Terminer revient à la lecture.',
+			'salle.seance.ecriture.aideEleveTu' => 'Écris avec le stylo. La gomme et Annuler ne touchent que tes traits ; Terminer revient à la lecture.',
+			'salle.seance.ecriture.aideEleveVous' => 'Écrivez avec le stylo. La gomme et Annuler ne touchent que vos traits ; Terminer revient à la lecture.',
 			'salle.seance.ecriture.peutEcrire' => 'Peut écrire',
 			'salle.seance.ecriture.autoriser' => 'Autoriser à écrire',
 			'salle.seance.ecriture.retirer' => 'Retirer l\'autorisation d\'écrire',
-			'salle.seance.ecriture.autoriserSemantique' => ({required Object prenom}) => 'Autoriser à écrire : ${prenom}',
+			'salle.seance.ecriture.autoriserSemantique' => ({required Object prenom}) => 'Autoriser à écrire : ${prenom}',
 			'salle.seance.ecriture.retirerSemantique' => ({required Object prenom}) => 'Retirer l\'autorisation d\'écrire de ${prenom}',
 			'salle.seance.ecriture.autoriserAide' => ({required Object prenom}) => '${prenom} pourra écrire sur la page ou le tableau. La page et le support restent à vous.',
-			'salle.seance.ecriture.retirerAide' => 'Ses traits restent sur la page ; ses outils d\'écriture se retirent.',
+			'salle.seance.ecriture.retirerAide' => 'Ses traits restent sur la page ; ses outils d\'écriture se retirent.',
 			'salle.seance.rail.navigation' => 'Navigation',
 			'salle.seance.rail.marque' => 'Rewayah',
 			'salle.seance.rail.sousMarque' => 'Academy',
@@ -16241,8 +16241,8 @@ extension on Traductions {
 			'salle.seance.rangement.reprise' => ({required Object page, required Object total}) => 'Reprise à la page ${page} sur ${total}.',
 			'salle.seance.rangement.notesConservees' => 'Les notes sont conservées dans cette séance uniquement.',
 			'salle.seance.rangement.effacer' => 'Effacer les notes',
-			'salle.seance.rangement.questionPage' => 'Effacer toutes les notes de cette page ?',
-			'salle.seance.rangement.questionTableau' => 'Effacer toutes les notes du tableau ?',
+			'salle.seance.rangement.questionPage' => 'Effacer toutes les notes de cette page ?',
+			'salle.seance.rangement.questionTableau' => 'Effacer toutes les notes du tableau ?',
 			'salle.seance.rangement.consequencePage' => 'Les notes de cette page disparaissent pour toute la classe.',
 			'salle.seance.rangement.consequenceTableau' => 'Les notes du tableau libre disparaissent pour toute la classe.',
 			'salle.seance.capsule.avatar' => ({required Object nom}) => 'Afficher les informations de ${nom}',
@@ -16348,7 +16348,7 @@ extension on Traductions {
 			'salle.cameraAllumee' => 'Caméra allumée',
 			'salle.quitter' => 'Quitter',
 			'salle.ouvrirCoran' => 'Ouvrir le Coran',
-			'salle.confirmerSortie' => 'Quitter le cours ?',
+			'salle.confirmerSortie' => 'Quitter le cours ?',
 			'salle.expiree' => 'Cette salle n\'est plus accessible. Revenez à votre accueil pour rejoindre le prochain cours.',
 			'salle.ouverture' => 'Ouverture de la salle',
 			'salle.verificationMateriel' => 'Vérification de votre micro',
@@ -16365,7 +16365,7 @@ extension on Traductions {
 			'salle.refusAcces' => 'Ce cours ne vous est pas ouvert en ce moment',
 			'salle.refusAccesDetail' => 'La salle s\'ouvre dix minutes avant l\'heure du cours, et se ferme un quart d\'heure après sa fin.',
 			'salle.refusConfiguration' => 'La salle n\'est pas encore disponible',
-			'salle.refusConfigurationDetail' => 'Ce n\'est pas votre appareil : le service de visioconférence n\'est pas branché. L\'équipe le sait.',
+			'salle.refusConfigurationDetail' => 'Ce n\'est pas votre appareil : le service de visioconférence n\'est pas branché. L\'équipe le sait.',
 			'salle.refusReseau' => 'La salle n\'a pas répondu',
 			'salle.refusReseauDetail' => 'Vérifiez votre connexion, puis réessayez.',
 			'salle.refusMateriel' => 'Aucun micro utilisable sur cet appareil',
@@ -19288,7 +19288,7 @@ extension on Traductions {
 			'tc.bibliotheque.detail.titre' => 'Support',
 			'tc.bibliotheque.detail.capacites' => 'Ce que ce support permet',
 			'tc.bibliotheque.detail.niveaux' => 'Niveaux',
-			'tc.bibliotheque.detail.sansVersion' => 'Aucune version publiée : rien à ouvrir pour le moment.',
+			'tc.bibliotheque.detail.sansVersion' => 'Aucune version publiée : rien à ouvrir pour le moment.',
 			'tc.bibliotheque.detail.apercuIndisponible' => 'L’aperçu de ce format n’est pas encore disponible dans l’application. Vous pouvez en enregistrer une copie.',
 			'tc.bibliotheque.detail.renduCoran' => 'Le Coran s’ouvre dans le lecteur dédié.',
 			'tc.bibliotheque.action.telecharger' => 'Rendre disponible hors ligne',
@@ -19309,11 +19309,11 @@ extension on Traductions {
 			'tc.coran.mushaf.coteGauche' => 'Page de gauche',
 			'tc.coran.mushaf.ouverture' => ({required Object droite, required Object gauche}) => 'Ouverture, pages ${droite} et ${gauche}',
 			'tc.coran.fidelite.approchee' => 'Composition approchée',
-			'tc.coran.fidelite.approcheeDetail' => 'Les versets de cette page sont exactement ceux de la page du Mushaf de Médine. Leur répartition sur les lignes, elle, est celle de cet écran : le découpage en lignes de l\'édition n\'est pas encore importé.',
+			'tc.coran.fidelite.approcheeDetail' => 'Les versets de cette page sont exactement ceux de la page du Mushaf de Médine. Leur répartition sur les lignes, elle, est celle de cet écran : le découpage en lignes de l\'édition n\'est pas encore importé.',
 			'tc.coran.fidelite.fidele' => 'Composition de l\'édition',
-			'tc.coran.zoom.bride' => 'Grossissement limité par la largeur : au-delà, un mot serait coupé.',
+			'tc.coran.zoom.bride' => 'Grossissement limité par la largeur : au-delà, un mot serait coupé.',
 			'tc.coran.zoom.valeur' => ({required Object pourcent}) => '${pourcent} %',
-			'tc.coran.zoom.renvoiLectureAgrandie' => 'Pour grossir le texte, passez en lecture agrandie : la page du mushaf garde sa géométrie.',
+			'tc.coran.zoom.renvoiLectureAgrandie' => 'Pour grossir le texte, passez en lecture agrandie : la page du mushaf garde sa géométrie.',
 			'tc.coran.navigation.titre' => 'Aller à',
 			'tc.coran.navigation.ouvrir' => 'Aller à une page',
 			'tc.coran.navigation.champ' => 'Page, sourate, juz ou référence',
@@ -19349,12 +19349,12 @@ extension on Traductions {
 			'tc.outils.trait.gomme' => 'Gomme',
 			'tc.outils.trait.annuler' => 'Annuler',
 			'tc.outils.trait.plus' => 'Plus',
-			'tc.outils.trait.ardoise' => 'Ardoise d\'annotation, facultative : le cours reste lisible sans elle',
+			'tc.outils.trait.ardoise' => 'Ardoise d\'annotation, facultative : le cours reste lisible sans elle',
 			'tc.outils.trait.effacerDernier' => 'Effacer mon dernier trait',
 			'tc.outils.portee.temporaire' => 'Le temps d\'expliquer',
 			'tc.outils.portee.seance' => 'Jusqu\'à la fin du cours',
 			'tc.outils.portee.enregistree' => 'Enregistrer',
-			'tc.outils.portee.aide' => 'Combien de temps garder ces annotations ?',
+			'tc.outils.portee.aide' => 'Combien de temps garder ces annotations ?',
 			'tc.outils.marquer.titre' => 'Marquer ce passage',
 			'tc.outils.marquer.aide' => 'Choisissez ce que ce passage demande.',
 			'tc.outils.marquer.retirer' => 'Retirer le marqueur',
@@ -19368,8 +19368,8 @@ extension on Traductions {
 			'tc.outils.masquer.refermer' => 'Masquer de nouveau',
 			'tc.outils.masquer.tout' => 'Tout démasquer',
 			'tc.outils.focus.quitter' => 'Quitter le focus',
-			'tc.outils.annotation.ancrageDegrade' => 'Ce passage n\'a pas de repère de texte : l\'annotation suivra la page, pas les mots.',
-			'tc.outils.annotation.horsPage' => 'Annotations masquées : leur passage n\'est pas à l\'écran.',
+			'tc.outils.annotation.ancrageDegrade' => 'Ce passage n\'a pas de repère de texte : l\'annotation suivra la page, pas les mots.',
+			'tc.outils.annotation.horsPage' => 'Annotations masquées : leur passage n\'est pas à l\'écran.',
 			'tc.outils.annotation.aucuneSelection' => 'Sélectionnez d\'abord un passage.',
 			'tc.classe.entete.titreEnseignant.sayyid' => 'Sayyid',
 			'tc.classe.entete.titreEnseignant.sayyida' => 'Sayyida',
@@ -19378,7 +19378,7 @@ extension on Traductions {
 			'tc.classe.entete.coursEnCours' => 'Séance toujours en direct',
 			'tc.classe.entete.photoManquante' => 'Photo enseignant manquante',
 			'tc.classe.roster.titre' => 'Élèves',
-			'tc.classe.roster.compteur' => ({required Object presents, required Object attendus}) => 'Élèves : ${presents} présents sur ${attendus} attendus',
+			'tc.classe.roster.compteur' => ({required Object presents, required Object attendus}) => 'Élèves : ${presents} présents sur ${attendus} attendus',
 			'tc.classe.roster.indisponible' => 'Roster indisponible',
 			'tc.classe.roster.indisponibleDetail' => 'Les états de vos élèves n\'ont pas pu être lus. Le cours continue.',
 			'tc.classe.roster.vide' => 'Aucun élève inscrit',
@@ -19432,7 +19432,7 @@ extension on Traductions {
 			'tc.classe.commandes.cameraFermer' => 'Fermer la caméra',
 			'tc.classe.commandes.microCoupe' => 'Micro fermé',
 			'tc.classe.commandes.quitter' => 'Quitter',
-			'tc.classe.commandes.quitterQuestion' => 'Quitter le cours ?',
+			'tc.classe.commandes.quitterQuestion' => 'Quitter le cours ?',
 			'tc.classe.commandes.quitterConsequence' => 'Votre sortie sera enregistrée. Vous pourrez revenir tant que la séance est ouverte.',
 			'tc.classe.commandes.fermerBibliotheque' => 'Fermer la Bibliothèque',
 			'tc.classe.scene.vide' => 'Vous êtes seul dans la salle pour le moment',
@@ -19471,7 +19471,7 @@ extension on Traductions {
 			'tc.observation.entree.modeVisible' => 'Rejoindre la classe',
 			'tc.observation.entree.modeVisibleDetail' => 'Visible par tous sous le nom Administration Rewayah. Micro et caméra permis, annonce faite.',
 			'tc.observation.entree.nomInstitutionnel' => 'Administration Rewayah',
-			'tc.observation.entree.visiteJournalisee' => 'Visite journalisée : identité, séance, entrée, sortie et durée.',
+			'tc.observation.entree.visiteJournalisee' => 'Visite journalisée : identité, séance, entrée, sortie et durée.',
 			'tc.observation.entree.roleSansObservation' => 'Votre compte n\'observe pas les séances.',
 			'tc.observation.entree.retourClasse' => 'Retour à la classe',
 			'tc.observation.explication.titre' => 'Un aperçu de son apprentissage',
@@ -19483,7 +19483,7 @@ extension on Traductions {
 			'tc.observation.explication.sansMedia' => 'Sans micro ni caméra',
 			'tc.observation.explication.sansMediaDetail' => 'Votre micro et votre caméra restent désactivés pour ne pas interrompre la classe.',
 			'tc.observation.explication.revenir' => 'Si un autre élève récite lors de votre première visite, vous pourrez revenir plus tard pour écouter votre enfant.',
-			'tc.observation.explication.ecourtee' => 'Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.',
+			'tc.observation.explication.ecourtee' => 'Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.',
 			'tc.observation.explication.sansIntervenir' => 'Pour préserver la concentration, vous observez sans intervenir.',
 			'tc.observation.explication.informes' => 'Votre enfant et son enseignant sont informés.',
 			'tc.observation.explication.observer' => 'Observer maintenant',
@@ -19524,9 +19524,9 @@ extension on Traductions {
 			'tc.observation.connexion.titre' => 'Connexion et vérification',
 			'tc.observation.connexion.phrase' => 'Vos visites restantes sont vérifiées. La visite commence dès que l\'entrée est acceptée, connexion vidéo comprise.',
 			'tc.observation.connexion.enCours' => 'Connexion et vérification en cours',
-			'tc.observation.connexion.prolongee' => 'Restez sur cette page : la vérification continue.',
+			'tc.observation.connexion.prolongee' => 'Restez sur cette page : la vérification continue.',
 			'tc.observation.connexion.impossibleTitre' => 'Connexion impossible',
-			'tc.observation.connexion.impossible' => 'L\'entrée dans la séance n\'a pas abouti. Vérifiez votre connexion, puis réessayez : vos visites restantes seront vérifiées à nouveau.',
+			'tc.observation.connexion.impossible' => 'L\'entrée dans la séance n\'a pas abouti. Vérifiez votre connexion, puis réessayez : vos visites restantes seront vérifiées à nouveau.',
 			'tc.observation.duree.secondeUne' => ({required Object n}) => '${n} seconde',
 			'tc.observation.duree.secondes' => ({required Object n}) => '${n} secondes',
 			'tc.observation.duree.minuteUne' => ({required Object n}) => '${n} minute',
@@ -19549,7 +19549,7 @@ extension on Traductions {
 			'tc.observation.visite.videoIndisponible' => 'La vidéo de la séance n\'a pas pu s\'ouvrir. Votre temps d\'observation continue de s\'écouler.',
 			'tc.observation.visite.sortieNonConfirmee' => 'La fin de votre visite n\'a pas pu être confirmée. Elle sera fermée par le serveur.',
 			'tc.observation.visite.restantes' => 'restantes',
-			'tc.observation.visite.decompteLu' => ({required Object duree}) => 'Temps restant : ${duree}',
+			'tc.observation.visite.decompteLu' => ({required Object duree}) => 'Temps restant : ${duree}',
 			'tc.observation.visite.enDirect' => 'En direct',
 			'tc.observation.visite.connexion' => 'Connexion',
 			'tc.observation.visite.reconnexion' => 'Reconnexion',
@@ -19562,9 +19562,9 @@ extension on Traductions {
 			'tc.observation.visite.cameraFermee' => 'Caméra fermée',
 			'tc.observation.visite.pasEncoreLa' => 'Pas encore dans la salle',
 			'tc.observation.visite.parle' => ({required Object nom}) => '${nom} parle',
-			'tc.observation.visite.quitterQuestion' => 'Quitter la visite ?',
-			'tc.observation.visite.quitterConsequence' => ({required Object duree}) => 'Il vous reste ${duree}. Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.',
-			'tc.observation.visite.quitterConsequenceSansTemps' => 'Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.',
+			'tc.observation.visite.quitterQuestion' => 'Quitter la visite ?',
+			'tc.observation.visite.quitterConsequence' => ({required Object duree}) => 'Il vous reste ${duree}. Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.',
+			'tc.observation.visite.quitterConsequenceSansTemps' => 'Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.',
 			'tc.observation.visite.quitterConfirmer' => 'Quitter la visite',
 			'tc.observation.fin.sortieVolontaire' => 'Vous avez quitté l\'observation.',
 			'tc.observation.fin.quotaAtteint' => 'Votre temps d\'observation est écoulé.',
@@ -19604,7 +19604,7 @@ extension on Traductions {
 			'tc.observation.reglages.enregistrer' => 'Enregistrer',
 			'tc.observation.reglages.invalideVisites' => 'Au moins une visite par séance.',
 			'tc.observation.reglages.invalideTemps' => 'Au moins trente secondes par séance.',
-			'tc.observation.reglages.valeurHeritee' => ({required Object valeur}) => 'Académie : ${valeur}',
+			'tc.observation.reglages.valeurHeritee' => ({required Object valeur}) => 'Académie : ${valeur}',
 			'tc.observation.reglages.uniteVisiteUne' => ({required Object n}) => '${n} visite',
 			'tc.observation.reglages.uniteVisites' => ({required Object n}) => '${n} visites',
 			'tc.observation.reglages.uniteSecondes' => ({required Object n}) => '${n} s',
@@ -19613,7 +19613,7 @@ extension on Traductions {
 			'tc.parcours.avant.rien' => 'Rien à préparer pour le prochain cours.',
 			'tc.parcours.avant.rienDetail' => 'Votre enseignant proposera le travail à la fin de la prochaine séance.',
 			'tc.parcours.avant.nonBranche' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
-			'tc.parcours.avant.nonBrancheDetail' => 'Cela ne veut pas dire qu\'il n\'y a rien à préparer : cet écran ne sait pas encore le lire.',
+			'tc.parcours.avant.nonBrancheDetail' => 'Cela ne veut pas dire qu\'il n\'y a rien à préparer : cet écran ne sait pas encore le lire.',
 			'tc.parcours.avant.reprendre' => 'Reprendre le cours',
 			'tc.parcours.avant.reprendreDepuis' => ({required Object position}) => 'Reprendre le cours à ${position}',
 			'tc.parcours.intention.apprendre' => 'À apprendre',
@@ -19628,23 +19628,23 @@ extension on Traductions {
 			'tc.parcours.plage.pageUnique' => ({required Object premiere}) => 'Page ${premiere}',
 			'tc.parcours.plage.section' => ({required Object section}) => 'Section ${section}',
 			'tc.parcours.plage.ressource' => 'Tout le support',
-			'tc.parcours.feedback.cours.intitule' => 'Comment était le cours aujourd\'hui ?',
+			'tc.parcours.feedback.cours.intitule' => 'Comment était le cours aujourd\'hui ?',
 			'tc.parcours.feedback.cours.difficile' => 'Difficile',
 			'tc.parcours.feedback.cours.bien' => 'Bien',
 			'tc.parcours.feedback.cours.tresBien' => 'Très bien',
-			'tc.parcours.feedback.comprehension.intitule' => 'Avez-vous compris ce qui a été travaillé ?',
+			'tc.parcours.feedback.comprehension.intitule' => 'Avez-vous compris ce qui a été travaillé ?',
 			'tc.parcours.feedback.comprehension.difficile' => 'Pas vraiment',
 			'tc.parcours.feedback.comprehension.bien' => 'Plutôt oui',
 			'tc.parcours.feedback.comprehension.tresBien' => 'Tout à fait',
-			'tc.parcours.feedback.rythme.intitule' => 'Le rythme du cours vous a-t-il convenu ?',
+			'tc.parcours.feedback.rythme.intitule' => 'Le rythme du cours vous a-t-il convenu ?',
 			'tc.parcours.feedback.rythme.difficile' => 'Trop rapide',
 			'tc.parcours.feedback.rythme.bien' => 'Convenable',
 			'tc.parcours.feedback.rythme.tresBien' => 'Très confortable',
-			'tc.parcours.feedback.technique.intitule' => 'Le son et l\'image étaient-ils confortables ?',
+			'tc.parcours.feedback.technique.intitule' => 'Le son et l\'image étaient-ils confortables ?',
 			'tc.parcours.feedback.technique.difficile' => 'Gênants',
 			'tc.parcours.feedback.technique.bien' => 'Corrects',
 			'tc.parcours.feedback.technique.tresBien' => 'Très bons',
-			'tc.parcours.feedback.confiance.intitule' => 'Vous sentez-vous prêt pour le prochain cours ?',
+			'tc.parcours.feedback.confiance.intitule' => 'Vous sentez-vous prêt pour le prochain cours ?',
 			'tc.parcours.feedback.confiance.difficile' => 'Pas encore',
 			'tc.parcours.feedback.confiance.bien' => 'Plutôt',
 			'tc.parcours.feedback.confiance.tresBien' => 'Tout à fait',
@@ -19653,7 +19653,7 @@ extension on Traductions {
 			'tc.parcours.feedback.tendance.sousSeuil' => 'Pas encore assez de retours pour dégager une tendance.',
 			'tc.parcours.feedback.tendance.anonyme' => 'Les retours sont anonymes et agrégés. Ils ne suffisent jamais, seuls, à une décision.',
 			'tc.parcours.signalement.titre' => 'Signaler un besoin',
-			'tc.parcours.signalement.categorie' => 'De quoi s\'agit-il ?',
+			'tc.parcours.signalement.categorie' => 'De quoi s\'agit-il ?',
 			'tc.parcours.signalement.categorieValeur.pedagogique' => 'Pédagogique',
 			'tc.parcours.signalement.categorieValeur.presence' => 'Présence',
 			'tc.parcours.signalement.categorieValeur.technique' => 'Technique',

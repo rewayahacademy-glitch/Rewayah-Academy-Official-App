@@ -268,7 +268,7 @@ void main() {
         find.descendant(of: _dock, matching: find.text('Quitter')),
       );
       await tester.pumpAndSettle();
-      expect(find.text('Quitter la séance ?'), findsOneWidget);
+      expect(find.text('Quitter la séance\u00a0?'), findsOneWidget);
     });
   });
 

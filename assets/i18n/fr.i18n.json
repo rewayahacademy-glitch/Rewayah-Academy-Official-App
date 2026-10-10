@@ -212,7 +212,7 @@
           "verification": "Préparation de la séance…",
           "pret": "Tout est prêt.",
           "microCoupe": "Le micro sera coupé en entrant.",
-          "microQuestion": "Le micro est bloqué. On l'autorise ?",
+          "microQuestion": "Le micro est bloqué. On l'autorise\u00a0?",
           "microBloque": "Le micro est bloqué.",
           "horsLigne": "La connexion ne marche pas pour l'instant."
         },
@@ -279,7 +279,7 @@
       "zoomValeur": "{valeur} %",
       "zoomMoins": "Réduire le zoom",
       "zoomPlus": "Augmenter le zoom",
-      "quitterQuestion": "Quitter la séance ?",
+      "quitterQuestion": "Quitter la séance\u00a0?",
       "quitterConsequence": "Vous pourrez revenir si la séance est encore ouverte.",
       "illustration": "Illustration du support",
       "quitterCahierConsequence": "Vous passerez ensuite au cahier de transmission.",
@@ -295,9 +295,9 @@
         "marquer": "Marquer",
         "masquer": "Masquer",
         "ecrire": "Écrire",
-        "aideLecture": "Sans outil, la page se lit ; agrandie, elle se déplace en la faisant glisser.",
-        "aidePointeur": "Pointeur : touchez la page pour montrer un passage, rien ne reste.",
-        "aideEcrire": "Écrire : écrivez sur la page. Sur un écran tactile, deux doigts la déplacent."
+        "aideLecture": "Sans outil, la page se lit\u00a0; agrandie, elle se déplace en la faisant glisser.",
+        "aidePointeur": "Pointeur\u00a0: touchez la page pour montrer un passage, rien ne reste.",
+        "aideEcrire": "Écrire\u00a0: écrivez sur la page. Sur un écran tactile, deux doigts la déplacent."
       },
       "ecriture": {
         "palette": "Outils d'écriture",
@@ -316,15 +316,15 @@
         "repriseNom": "{nom} reprend le tableau.",
         "choisirTu": "Touche « Écrire » quand tu veux écrire. Sinon la page se lit, sans laisser de trait.",
         "choisirVous": "Touchez « Écrire » quand vous voulez écrire. Sinon la page se lit, sans laisser de trait.",
-        "aideEleveTu": "Écris avec le stylo. La gomme et Annuler ne touchent que tes traits ; Terminer revient à la lecture.",
-        "aideEleveVous": "Écrivez avec le stylo. La gomme et Annuler ne touchent que vos traits ; Terminer revient à la lecture.",
+        "aideEleveTu": "Écris avec le stylo. La gomme et Annuler ne touchent que tes traits\u00a0; Terminer revient à la lecture.",
+        "aideEleveVous": "Écrivez avec le stylo. La gomme et Annuler ne touchent que vos traits\u00a0; Terminer revient à la lecture.",
         "peutEcrire": "Peut écrire",
         "autoriser": "Autoriser à écrire",
         "retirer": "Retirer l'autorisation d'écrire",
-        "autoriserSemantique": "Autoriser à écrire : {prenom}",
+        "autoriserSemantique": "Autoriser à écrire\u00a0: {prenom}",
         "retirerSemantique": "Retirer l'autorisation d'écrire de {prenom}",
         "autoriserAide": "{prenom} pourra écrire sur la page ou le tableau. La page et le support restent à vous.",
-        "retirerAide": "Ses traits restent sur la page ; ses outils d'écriture se retirent."
+        "retirerAide": "Ses traits restent sur la page\u00a0; ses outils d'écriture se retirent."
       },
       "rail": {
         "navigation": "Navigation",
@@ -415,8 +415,8 @@
         "reprise": "Reprise à la page {page} sur {total}.",
         "notesConservees": "Les notes sont conservées dans cette séance uniquement.",
         "effacer": "Effacer les notes",
-        "questionPage": "Effacer toutes les notes de cette page ?",
-        "questionTableau": "Effacer toutes les notes du tableau ?",
+        "questionPage": "Effacer toutes les notes de cette page\u00a0?",
+        "questionTableau": "Effacer toutes les notes du tableau\u00a0?",
         "consequencePage": "Les notes de cette page disparaissent pour toute la classe.",
         "consequenceTableau": "Les notes du tableau libre disparaissent pour toute la classe."
       },
@@ -544,7 +544,7 @@
     "cameraAllumee": "Caméra allumée",
     "quitter": "Quitter",
     "ouvrirCoran": "Ouvrir le Coran",
-    "confirmerSortie": "Quitter le cours ?",
+    "confirmerSortie": "Quitter le cours\u00a0?",
     "expiree": "Cette salle n'est plus accessible. Revenez à votre accueil pour rejoindre le prochain cours.",
     "ouverture": "Ouverture de la salle",
     "verificationMateriel": "Vérification de votre micro",
@@ -561,7 +561,7 @@
     "refusAcces": "Ce cours ne vous est pas ouvert en ce moment",
     "refusAccesDetail": "La salle s'ouvre dix minutes avant l'heure du cours, et se ferme un quart d'heure après sa fin.",
     "refusConfiguration": "La salle n'est pas encore disponible",
-    "refusConfigurationDetail": "Ce n'est pas votre appareil : le service de visioconférence n'est pas branché. L'équipe le sait.",
+    "refusConfigurationDetail": "Ce n'est pas votre appareil\u00a0: le service de visioconférence n'est pas branché. L'équipe le sait.",
     "refusReseau": "La salle n'a pas répondu",
     "refusReseauDetail": "Vérifiez votre connexion, puis réessayez.",
     "refusMateriel": "Aucun micro utilisable sur cet appareil",
@@ -3921,7 +3921,7 @@
         "titre": "Support",
         "capacites": "Ce que ce support permet",
         "niveaux": "Niveaux",
-        "sansVersion": "Aucune version publiée : rien à ouvrir pour le moment.",
+        "sansVersion": "Aucune version publiée\u00a0: rien à ouvrir pour le moment.",
         "apercuIndisponible": "L’aperçu de ce format n’est pas encore disponible dans l’application. Vous pouvez en enregistrer une copie.",
         "renduCoran": "Le Coran s’ouvre dans le lecteur dédié."
       },
@@ -3956,13 +3956,13 @@
       },
       "fidelite": {
         "approchee": "Composition approchée",
-        "approcheeDetail": "Les versets de cette page sont exactement ceux de la page du Mushaf de Médine. Leur répartition sur les lignes, elle, est celle de cet écran : le découpage en lignes de l'édition n'est pas encore importé.",
+        "approcheeDetail": "Les versets de cette page sont exactement ceux de la page du Mushaf de Médine. Leur répartition sur les lignes, elle, est celle de cet écran\u00a0: le découpage en lignes de l'édition n'est pas encore importé.",
         "fidele": "Composition de l'édition"
       },
       "zoom": {
-        "bride": "Grossissement limité par la largeur : au-delà, un mot serait coupé.",
+        "bride": "Grossissement limité par la largeur\u00a0: au-delà, un mot serait coupé.",
         "valeur": "{pourcent} %",
-        "renvoiLectureAgrandie": "Pour grossir le texte, passez en lecture agrandie : la page du mushaf garde sa géométrie."
+        "renvoiLectureAgrandie": "Pour grossir le texte, passez en lecture agrandie\u00a0: la page du mushaf garde sa géométrie."
       },
       "navigation": {
         "titre": "Aller à",
@@ -4014,14 +4014,14 @@
         "gomme": "Gomme",
         "annuler": "Annuler",
         "plus": "Plus",
-        "ardoise": "Ardoise d'annotation, facultative : le cours reste lisible sans elle",
+        "ardoise": "Ardoise d'annotation, facultative\u00a0: le cours reste lisible sans elle",
         "effacerDernier": "Effacer mon dernier trait"
       },
       "portee": {
         "temporaire": "Le temps d'expliquer",
         "seance": "Jusqu'à la fin du cours",
         "enregistree": "Enregistrer",
-        "aide": "Combien de temps garder ces annotations ?"
+        "aide": "Combien de temps garder ces annotations\u00a0?"
       },
       "marquer": {
         "titre": "Marquer ce passage",
@@ -4045,8 +4045,8 @@
         "quitter": "Quitter le focus"
       },
       "annotation": {
-        "ancrageDegrade": "Ce passage n'a pas de repère de texte : l'annotation suivra la page, pas les mots.",
-        "horsPage": "Annotations masquées : leur passage n'est pas à l'écran.",
+        "ancrageDegrade": "Ce passage n'a pas de repère de texte\u00a0: l'annotation suivra la page, pas les mots.",
+        "horsPage": "Annotations masquées\u00a0: leur passage n'est pas à l'écran.",
         "aucuneSelection": "Sélectionnez d'abord un passage."
       }
     },
@@ -4063,7 +4063,7 @@
       },
       "roster": {
         "titre": "Élèves",
-        "compteur": "Élèves : {presents} présents sur {attendus} attendus",
+        "compteur": "Élèves\u00a0: {presents} présents sur {attendus} attendus",
         "indisponible": "Roster indisponible",
         "indisponibleDetail": "Les états de vos élèves n'ont pas pu être lus. Le cours continue.",
         "vide": "Aucun élève inscrit",
@@ -4131,7 +4131,7 @@
         "cameraFermer": "Fermer la caméra",
         "microCoupe": "Micro fermé",
         "quitter": "Quitter",
-        "quitterQuestion": "Quitter le cours ?",
+        "quitterQuestion": "Quitter le cours\u00a0?",
         "quitterConsequence": "Votre sortie sera enregistrée. Vous pourrez revenir tant que la séance est ouverte.",
         "fermerBibliotheque": "Fermer la Bibliothèque"
       },
@@ -4194,7 +4194,7 @@
         "modeVisible": "Rejoindre la classe",
         "modeVisibleDetail": "Visible par tous sous le nom Administration Rewayah. Micro et caméra permis, annonce faite.",
         "nomInstitutionnel": "Administration Rewayah",
-        "visiteJournalisee": "Visite journalisée : identité, séance, entrée, sortie et durée.",
+        "visiteJournalisee": "Visite journalisée\u00a0: identité, séance, entrée, sortie et durée.",
         "roleSansObservation": "Votre compte n'observe pas les séances.",
         "retourClasse": "Retour à la classe"
       },
@@ -4208,7 +4208,7 @@
         "sansMedia": "Sans micro ni caméra",
         "sansMediaDetail": "Votre micro et votre caméra restent désactivés pour ne pas interrompre la classe.",
         "revenir": "Si un autre élève récite lors de votre première visite, vous pourrez revenir plus tard pour écouter votre enfant.",
-        "ecourtee": "Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n'est pas reporté.",
+        "ecourtee": "Une visite quittée avant la fin compte comme une visite entière\u00a0: le temps non utilisé n'est pas reporté.",
         "sansIntervenir": "Pour préserver la concentration, vous observez sans intervenir.",
         "informes": "Votre enfant et son enseignant sont informés.",
         "observer": "Observer maintenant",
@@ -4251,9 +4251,9 @@
         "titre": "Connexion et vérification",
         "phrase": "Vos visites restantes sont vérifiées. La visite commence dès que l'entrée est acceptée, connexion vidéo comprise.",
         "enCours": "Connexion et vérification en cours",
-        "prolongee": "Restez sur cette page : la vérification continue.",
+        "prolongee": "Restez sur cette page\u00a0: la vérification continue.",
         "impossibleTitre": "Connexion impossible",
-        "impossible": "L'entrée dans la séance n'a pas abouti. Vérifiez votre connexion, puis réessayez : vos visites restantes seront vérifiées à nouveau."
+        "impossible": "L'entrée dans la séance n'a pas abouti. Vérifiez votre connexion, puis réessayez\u00a0: vos visites restantes seront vérifiées à nouveau."
       },
       "duree": {
         "secondeUne": "{n} seconde",
@@ -4282,7 +4282,7 @@
         "videoIndisponible": "La vidéo de la séance n'a pas pu s'ouvrir. Votre temps d'observation continue de s'écouler.",
         "sortieNonConfirmee": "La fin de votre visite n'a pas pu être confirmée. Elle sera fermée par le serveur.",
         "restantes": "restantes",
-        "decompteLu": "Temps restant : {duree}",
+        "decompteLu": "Temps restant\u00a0: {duree}",
         "enDirect": "En direct",
         "connexion": "Connexion",
         "reconnexion": "Reconnexion",
@@ -4295,9 +4295,9 @@
         "cameraFermee": "Caméra fermée",
         "pasEncoreLa": "Pas encore dans la salle",
         "parle": "{nom} parle",
-        "quitterQuestion": "Quitter la visite ?",
-        "quitterConsequence": "Il vous reste {duree}. Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n'est pas reporté.",
-        "quitterConsequenceSansTemps": "Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n'est pas reporté.",
+        "quitterQuestion": "Quitter la visite\u00a0?",
+        "quitterConsequence": "Il vous reste {duree}. Une visite quittée avant la fin compte comme une visite entière\u00a0: le temps non utilisé n'est pas reporté.",
+        "quitterConsequenceSansTemps": "Une visite quittée avant la fin compte comme une visite entière\u00a0: le temps non utilisé n'est pas reporté.",
         "quitterConfirmer": "Quitter la visite"
       },
       "fin": {
@@ -4345,7 +4345,7 @@
         "enregistrer": "Enregistrer",
         "invalideVisites": "Au moins une visite par séance.",
         "invalideTemps": "Au moins trente secondes par séance.",
-        "valeurHeritee": "Académie : {valeur}",
+        "valeurHeritee": "Académie\u00a0: {valeur}",
         "uniteVisiteUne": "{n} visite",
         "uniteVisites": "{n} visites",
         "uniteSecondes": "{n} s",
@@ -4358,7 +4358,7 @@
         "rien": "Rien à préparer pour le prochain cours.",
         "rienDetail": "Votre enseignant proposera le travail à la fin de la prochaine séance.",
         "nonBranche": "Le travail à préparer n'est pas encore relié à cet espace.",
-        "nonBrancheDetail": "Cela ne veut pas dire qu'il n'y a rien à préparer : cet écran ne sait pas encore le lire.",
+        "nonBrancheDetail": "Cela ne veut pas dire qu'il n'y a rien à préparer\u00a0: cet écran ne sait pas encore le lire.",
         "reprendre": "Reprendre le cours",
         "reprendreDepuis": "Reprendre le cours à {position}"
       },
@@ -4380,31 +4380,31 @@
       },
       "feedback": {
         "cours": {
-          "intitule": "Comment était le cours aujourd'hui ?",
+          "intitule": "Comment était le cours aujourd'hui\u00a0?",
           "difficile": "Difficile",
           "bien": "Bien",
           "tresBien": "Très bien"
         },
         "comprehension": {
-          "intitule": "Avez-vous compris ce qui a été travaillé ?",
+          "intitule": "Avez-vous compris ce qui a été travaillé\u00a0?",
           "difficile": "Pas vraiment",
           "bien": "Plutôt oui",
           "tresBien": "Tout à fait"
         },
         "rythme": {
-          "intitule": "Le rythme du cours vous a-t-il convenu ?",
+          "intitule": "Le rythme du cours vous a-t-il convenu\u00a0?",
           "difficile": "Trop rapide",
           "bien": "Convenable",
           "tresBien": "Très confortable"
         },
         "technique": {
-          "intitule": "Le son et l'image étaient-ils confortables ?",
+          "intitule": "Le son et l'image étaient-ils confortables\u00a0?",
           "difficile": "Gênants",
           "bien": "Corrects",
           "tresBien": "Très bons"
         },
         "confiance": {
-          "intitule": "Vous sentez-vous prêt pour le prochain cours ?",
+          "intitule": "Vous sentez-vous prêt pour le prochain cours\u00a0?",
           "difficile": "Pas encore",
           "bien": "Plutôt",
           "tresBien": "Tout à fait"
@@ -4418,7 +4418,7 @@
       },
       "signalement": {
         "titre": "Signaler un besoin",
-        "categorie": "De quoi s'agit-il ?",
+        "categorie": "De quoi s'agit-il\u00a0?",
         "categorieValeur": {
           "pedagogique": "Pédagogique",
           "presence": "Présence",
