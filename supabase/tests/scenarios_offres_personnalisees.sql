@@ -713,9 +713,14 @@ BEGIN
     WHERE slot ->> 'timezone_iana' = 'Africa/Conakry'
       AND (slot ->> 'weekday')::integer = 3
       AND (slot ->> 'hour_local')::integer = 10
+  ) OR EXISTS (
+    SELECT 1 FROM jsonb_array_elements(v_libres) AS slot
+    WHERE slot ->> 'timezone_iana' = 'Europe/Paris'
+      AND (slot ->> 'weekday')::integer = 4
+      AND (slot ->> 'hour_local')::integer = 20
   ) THEN
     RAISE EXCEPTION
-      'C-04: créneau libre affiché malgré collision hiver Paris/Conakry: %',
+      'C-04: créneau libre affiché malgré collision récurrente ou séance ponctuelle: %',
       v_libres;
   END IF;
 
