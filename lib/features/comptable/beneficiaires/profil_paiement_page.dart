@@ -102,9 +102,18 @@ class _ProfilPaiementPageEtat extends ConsumerState<ProfilPaiementPage> {
     }
   }
 
-  String _messageEchec(Object erreur) => erreur is CapaciteIndisponible
-      ? t.comptable.beneficiaires.profil.erreurIndisponible
-      : t.comptable.beneficiaires.profil.erreurAction;
+  /// La phrase d'un echec d'action : source absente, puis hors ligne (le
+  /// reseau manque : la phrase le dit, sans affirmer que rien n'est parti),
+  /// puis l'echec generique.
+  String _messageEchec(Object erreur) {
+    if (erreur is CapaciteIndisponible) {
+      return t.comptable.beneficiaires.profil.erreurIndisponible;
+    }
+    final bool horsLigne = ref.read(horsLigneProvider).value ?? false;
+    return horsLigne
+        ? t.comptable.beneficiaires.profil.erreurHorsLigne
+        : t.comptable.beneficiaires.profil.erreurAction;
+  }
 
   Future<void> _agir(
     Future<ProfilPaiementBeneficiaire> Function(PortBeneficiairesPaiement port)

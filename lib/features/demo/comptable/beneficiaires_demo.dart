@@ -337,6 +337,9 @@ class BeneficiairesPaiementDemo implements PortBeneficiairesPaiement {
 /// Les fils « Profil de paiement » que la relance peut ouvrir (CPT-COM) :
 /// un par beneficiaire qui a un compte Rewayah. L'externe sans compte n'en a
 /// pas (CPT-BR-08 : « Renvoyer l'invitation » reste son seul recours).
+/// L'objet se nomme « Profil de paiement » seul : l'interlocuteur est deja
+/// nomme en tete du fil, le repeter allongeait la ligne compacte a 320 en
+/// texte x2 (revue CPT-COM).
 List<ConversationPossible> conversationsProfilPaiementDemo() =>
     <ConversationPossible>[
       for (final IdentiteBeneficiaire b in <IdentiteBeneficiaire>[
@@ -349,7 +352,7 @@ List<ConversationPossible> conversationsProfilPaiementDemo() =>
             objet: ObjetLie(
               type: TypeObjetLie.profilPaiement,
               id: b.id,
-              libelle: t.comptable.beneficiaires.profil.carteTitre(nom: b.nom),
+              libelle: t.comptable.beneficiaires.profilTitre,
             ),
           ),
     ];
@@ -555,12 +558,35 @@ class MesMoyensPaiementDemo implements PortMesMoyensPaiement {
   ];
 }
 
-/// Les brouillons des fils de la demonstration Comptable : UNE memoire pour
-/// toute la demonstration, car chaque ecran monte sa propre portee
-/// (`CoquilleComptableDemo`) et le message modele prerempli par « Relancer »
-/// sur le profil doit se retrouver dans le champ du fil (CPT-COM). En
-/// memoire du processus seulement, hors production (K-09).
-final BrouillonsMemoire _brouillonsDemo = BrouillonsMemoire();
+/// L'etat des fils de la demonstration Comptable : UNE session pour toute
+/// la demonstration, car chaque ecran monte sa propre portee
+/// (`CoquilleComptableDemo`). Le message modele prerempli par « Relancer »
+/// sur le profil doit se retrouver dans le champ du fil, et un message
+/// envoye dans le fil doit y etre encore quand on y revient (CPT-COM). En
+/// memoire du processus seulement, hors production (K-09) ;
+/// [reinitialiserDemoBeneficiaires] repart d'une session vierge.
+final class SessionFilsDemoBeneficiaires {
+  SessionFilsDemoBeneficiaires._();
+
+  /// Les brouillons des fils (dont le message modele prerempli).
+  final BrouillonsMemoire brouillons = BrouillonsMemoire();
+
+  /// Les Messages metier : le fil « Profil de paiement » cree a la demande.
+  final MessagesMetierDemo messages = MessagesMetierDemo.surObjets(
+    aOuvrir: conversationsProfilPaiementDemo(),
+  );
+}
+
+SessionFilsDemoBeneficiaires? _session;
+
+/// La session en cours des fils de la demonstration Comptable.
+SessionFilsDemoBeneficiaires get sessionFilsDemoBeneficiaires =>
+    _session ??= SessionFilsDemoBeneficiaires._();
+
+/// Repart d'une session vierge : aucun brouillon, aucun fil ouvert. Les
+/// tests l'appellent avant chaque parcours, pour qu'aucun n'herite des
+/// brouillons ou des messages d'un autre.
+void reinitialiserDemoBeneficiaires() => _session = null;
 
 /// Les surcharges de la demonstration des beneficiaires.
 List<Override> surchargesDemoBeneficiaires() => <Override>[
@@ -570,9 +596,11 @@ List<Override> surchargesDemoBeneficiaires() => <Override>[
   // CPT-COM : la relance ouvre le fil metier « Profil de paiement » des
   // Messages de demonstration, ecriture ouverte (COM-BR-16), hors production.
   portMessagesMetierProvider.overrideWithValue(
-    MessagesMetierDemo.surObjets(aOuvrir: conversationsProfilPaiementDemo()),
+    sessionFilsDemoBeneficiaires.messages,
   ),
-  portBrouillonsProvider.overrideWithValue(_brouillonsDemo),
+  portBrouillonsProvider.overrideWithValue(
+    sessionFilsDemoBeneficiaires.brouillons,
+  ),
   capacitesCommunicationProvider.overrideWith(
     (Ref _) => const CapacitesCommunicationsFixes(<CapaciteCommunication>{
       CapaciteCommunication.ecrireDansFil,

@@ -17,6 +17,8 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/comptable/beneficiaires/fil_profil_paiement_page.dart';
 import 'package:rewayah_academy/features/comptable/beneficiaires/profil_paiement_page.dart';
+import 'package:rewayah_academy/features/demo/comptable/beneficiaires_demo.dart'
+    show reinitialiserDemoBeneficiaires;
 import 'package:rewayah_academy/features/demo/demo_comptable_page.dart';
 
 import 'outil_capture.dart';
@@ -69,6 +71,9 @@ void main() {
         final List<String> familles = await chargerPolicesDuDepot();
         debugPrint('FAMILLES chargees : ${familles.join(', ')}');
       });
+      // Chaque capture part d'une session de demonstration vierge : c'est
+      // SA relance qui preremplit le champ.
+      setUp(reinitialiserDemoBeneficiaires);
 
       for (final ThemeMode mode in <ThemeMode>[
         ThemeMode.light,

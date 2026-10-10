@@ -216,13 +216,21 @@ void main() {
         find.text(t.comptable.beneficiaires.profil.filTitre),
         findsWidgets,
       );
-      // L'objet du fil, rendu par le port : « Profil de paiement de ... ».
+      // L'objet du fil, rendu par le port : « Profil de paiement », sans
+      // repeter le nom de l'interlocuteur, deja en tete du fil.
+      expect(
+        find.textContaining(
+          t.comptable.beneficiaires.profilTitre,
+          findRichText: true,
+        ),
+        findsWidgets,
+      );
       expect(
         find.textContaining(
           t.comptable.beneficiaires.profil.carteTitre(nom: _nom),
           findRichText: true,
         ),
-        findsWidgets,
+        findsNothing,
       );
       expect(_champ(tester), t.comptable.beneficiaires.profil.messageModele);
       // D5 : rien n'est parti sans « Envoyer ».
@@ -274,6 +282,22 @@ void main() {
       await tester.pump();
       expect(messages.appels, hasLength(1));
       expect(find.byType(FilProfilPaiementPage), findsNothing);
+    });
+
+    testWidgets('hors ligne : la phrase dit le reseau, aucun fil ouvert', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        _surcharges(_Messages(mode: _Mode.echec), horsLigne: true),
+      );
+      await _relancer(tester);
+      expect(find.byType(FilProfilPaiementPage), findsNothing);
+      expect(
+        tester.widget<Text>(find.byKey(ProfilPaiementPage.retourKey)).data,
+        t.comptable.beneficiaires.profil.erreurHorsLigne,
+      );
+      expect(find.byKey(ProfilPaiementPage.relancerKey), findsOneWidget);
     });
 
     for (final (_Mode mode, String Function() phrase) cas
@@ -387,25 +411,42 @@ void main() {
   });
 
   group('Vraie coquille du Comptable (route de demonstration)', () {
+    // Chaque parcours part d'une session de demonstration vierge : aucun
+    // brouillon ni message herite d'un autre test (revue CPT-COM).
+    setUp(reinitialiserDemoBeneficiaires);
+
+    Future<void> monterCoquille(WidgetTester tester, Size taille) async {
+      fixerVueCapture(tester, taille, 1);
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: adresseDemoComptable(EcranDemoComptable.profilPaiement),
+          routes: routesDemoComptable('staging'),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(NavShell), findsOneWidget);
+    }
+
+    Future<void> relancerCoquille(WidgetTester tester) async {
+      await tester.ensureVisible(find.byKey(ProfilPaiementPage.relancerKey));
+      await tester.tap(find.byKey(ProfilPaiementPage.relancerKey));
+      await tester.pumpAndSettle();
+    }
+
+    final CleBrouillon cleDemo = cleBrouillonFil('fil-$_ens01');
+
     for (final Size taille in const <Size>[Size(390, 844), Size(1440, 900)]) {
       testWidgets(
         '${taille.width.toInt()} : « Relancer » arrive dans le fil « Profil '
         'de paiement », barre du Comptable gardee',
         (WidgetTester tester) async {
-          fixerVueCapture(tester, taille, 1);
-          await tester.pumpWidget(
-            hoteRoutant(
-              depart: adresseDemoComptable(EcranDemoComptable.profilPaiement),
-              routes: routesDemoComptable('staging'),
-            ),
+          // Session vierge : c'est CE parcours qui preremplit le champ.
+          expect(
+            await sessionFilsDemoBeneficiaires.brouillons.lire(cleDemo),
+            isNull,
           );
-          await tester.pumpAndSettle();
-          expect(find.byType(NavShell), findsOneWidget);
-          await tester.ensureVisible(
-            find.byKey(ProfilPaiementPage.relancerKey),
-          );
-          await tester.tap(find.byKey(ProfilPaiementPage.relancerKey));
-          await tester.pumpAndSettle();
+          await monterCoquille(tester, taille);
+          await relancerCoquille(tester);
 
           expect(find.byType(FilProfilPaiementPage), findsOneWidget);
           expect(find.byType(ProfilPaiementPage), findsNothing);
@@ -415,14 +456,53 @@ void main() {
             _champ(tester),
             t.comptable.beneficiaires.profil.messageModele,
           );
-          final Object? exception = tester.takeException();
           expect(
-            exception == null || '$exception'.contains('overflowed'),
-            isTrue,
-            reason: '$exception',
+            (await sessionFilsDemoBeneficiaires.brouillons.lire(cleDemo))
+                ?.texte,
+            t.comptable.beneficiaires.profil.messageModele,
           );
+          // Aucune exception, debordement compris.
+          expect(tester.takeException(), isNull);
         },
       );
     }
+
+    testWidgets('un message envoye dans le fil de demonstration y est encore '
+        'au retour', (WidgetTester tester) async {
+      await monterCoquille(tester, const Size(390, 844));
+      await relancerCoquille(tester);
+      await tester.tap(find.byKey(FilDiscussion.envoyerKey));
+      await tester.pumpAndSettle();
+      expect(find.byKey(FilDiscussion.cleAucunMessage), findsNothing);
+
+      // Un nouvel ecran de demonstration (nouvelle portee) : le fil garde
+      // son message.
+      await tester.pumpWidget(const SizedBox.shrink());
+      await monterCoquille(tester, const Size(390, 844));
+      await relancerCoquille(tester);
+      expect(find.byType(FilContextuel), findsOneWidget);
+      expect(find.byKey(FilDiscussion.cleAucunMessage), findsNothing);
+      expect(
+        sessionFilsDemoBeneficiaires.messages
+            .filEnMemoire('fil-$_ens01')!
+            .messages,
+        hasLength(1),
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    test(
+      'reinitialiserDemoBeneficiaires repart d une session vierge',
+      () async {
+        final SessionFilsDemoBeneficiaires avant = sessionFilsDemoBeneficiaires;
+        await avant.brouillons.enregistrer(cleDemo, 'texte');
+        reinitialiserDemoBeneficiaires();
+        expect(identical(sessionFilsDemoBeneficiaires, avant), isFalse);
+        expect(
+          await sessionFilsDemoBeneficiaires.brouillons.lire(cleDemo),
+          isNull,
+        );
+      },
+    );
   });
 }

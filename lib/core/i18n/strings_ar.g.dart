@@ -3574,6 +3574,7 @@ class _Traductions$comptable$beneficiaires$profil$ar extends Traductions$comptab
 	@override String repris({required Object nom}) => 'استُؤنفت مدفوعات ${nom}.';
 	@override String get erreurAction => 'لم يكتمل الإجراء. تحقق من اتصالك، ثم أعد المحاولة.';
 	@override String get erreurIndisponible => 'هذا الإجراء غير مربوط بعد بالخدمة التي تعالجه. أعد المحاولة لاحقًا.';
+	@override String get erreurHorsLigne => 'لا توجد شبكة: تعذّر تأكيد الإجراء. أعد المحاولة عند عودة الاتصال.';
 	@override String suspensionTitre({required Object nom}) => 'إيقاف مدفوعات ${nom}؟';
 	@override String get suspensionContexte => 'لن تُصرف أي دفعة لهذا المستفيد ما لم تستأنفها. لن تتغير بياناته. اختر السبب: سيُدوَّن في سجل الملف.';
 	@override String get motifVerifier => 'بيانات تحتاج إلى تحقق';
@@ -6459,6 +6460,7 @@ extension on TraductionsAr {
 			'comptable.beneficiaires.profil.repris' => ({required Object nom}) => 'استُؤنفت مدفوعات ${nom}.',
 			'comptable.beneficiaires.profil.erreurAction' => 'لم يكتمل الإجراء. تحقق من اتصالك، ثم أعد المحاولة.',
 			'comptable.beneficiaires.profil.erreurIndisponible' => 'هذا الإجراء غير مربوط بعد بالخدمة التي تعالجه. أعد المحاولة لاحقًا.',
+			'comptable.beneficiaires.profil.erreurHorsLigne' => 'لا توجد شبكة: تعذّر تأكيد الإجراء. أعد المحاولة عند عودة الاتصال.',
 			'comptable.beneficiaires.profil.suspensionTitre' => ({required Object nom}) => 'إيقاف مدفوعات ${nom}؟',
 			'comptable.beneficiaires.profil.suspensionContexte' => 'لن تُصرف أي دفعة لهذا المستفيد ما لم تستأنفها. لن تتغير بياناته. اختر السبب: سيُدوَّن في سجل الملف.',
 			'comptable.beneficiaires.profil.motifVerifier' => 'بيانات تحتاج إلى تحقق',
@@ -6585,9 +6587,9 @@ extension on TraductionsAr {
 			'comptable.contractuels.creationIndisponible' => 'لا يستطيع حسابك إنشاء التزام.',
 			'comptable.contractuels.retourListe' => 'العودة إلى المتعاقدين',
 			'comptable.contractuels.titre' => 'المتعاقدون والالتزامات',
-			'comptable.contractuels.sousTitre' => 'تُحدَّد المبالغ عند إنشاء الالتزام، وتُثبَّت بعد الاعتماد.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.contractuels.sousTitre' => 'تُحدَّد المبالغ عند إنشاء الالتزام، وتُثبَّت بعد الاعتماد.',
 			'comptable.contractuels.nouvelle' => 'التزام جديد',
 			'comptable.contractuels.detailTitre' => 'الالتزام',
 			'comptable.validation.sousTitre' => 'طلبات المحاسب التي تنتظر قرار شخص مخوَّل آخر. صاحب الطلب لا يصادق أبدًا على طلبه.',

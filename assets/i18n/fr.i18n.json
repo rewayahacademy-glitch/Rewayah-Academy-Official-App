@@ -7765,6 +7765,7 @@
         "repris": "Paiements de {nom} repris.",
         "erreurAction": "L'action n'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
         "erreurIndisponible": "Cette action n'est pas encore branchée sur le service qui la traite. Réessayez plus tard.",
+        "erreurHorsLigne": "Pas de réseau : l'action n'a pas pu être confirmée. Réessayez quand la connexion sera revenue.",
         "suspensionTitre": "Suspendre les paiements de {nom} ?",
         "suspensionContexte": "Aucun versement ne partira vers ce bénéficiaire tant que vous ne les reprenez pas. Ses coordonnées ne changent pas. Choisissez le motif : il sera inscrit au journal du profil.",
         "motifVerifier": "Coordonnées à vérifier",

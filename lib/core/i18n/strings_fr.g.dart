@@ -23810,6 +23810,9 @@ class Traductions$comptable$beneficiaires$profil$fr {
 	/// fr: 'Cette action n'est pas encore branchée sur le service qui la traite. Réessayez plus tard.'
 	String get erreurIndisponible => 'Cette action n\'est pas encore branchée sur le service qui la traite. Réessayez plus tard.';
 
+	/// fr: 'Pas de réseau : l'action n'a pas pu être confirmée. Réessayez quand la connexion sera revenue.'
+	String get erreurHorsLigne => 'Pas de réseau : l\'action n\'a pas pu être confirmée. Réessayez quand la connexion sera revenue.';
+
 	/// fr: 'Suspendre les paiements de {nom} ?'
 	String suspensionTitre({required Object nom}) => 'Suspendre les paiements de ${nom} ?';
 
@@ -32966,6 +32969,7 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.repris' => ({required Object nom}) => 'Paiements de ${nom} repris.',
 			'comptable.beneficiaires.profil.erreurAction' => 'L\'action n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'comptable.beneficiaires.profil.erreurIndisponible' => 'Cette action n\'est pas encore branchée sur le service qui la traite. Réessayez plus tard.',
+			'comptable.beneficiaires.profil.erreurHorsLigne' => 'Pas de réseau : l\'action n\'a pas pu être confirmée. Réessayez quand la connexion sera revenue.',
 			'comptable.beneficiaires.profil.suspensionTitre' => ({required Object nom}) => 'Suspendre les paiements de ${nom} ?',
 			'comptable.beneficiaires.profil.suspensionContexte' => 'Aucun versement ne partira vers ce bénéficiaire tant que vous ne les reprenez pas. Ses coordonnées ne changent pas. Choisissez le motif : il sera inscrit au journal du profil.',
 			'comptable.beneficiaires.profil.motifVerifier' => 'Coordonnées à vérifier',
@@ -33103,9 +33107,9 @@ extension on Traductions {
 			'comptable.validation.natures.payoutSensible' => 'Paiement sensible',
 			'comptable.validation.natures.retraitReserve' => 'Retrait de la Réserve stratégique',
 			'comptable.validation.natures.obligationAApprouver' => 'Obligation ponctuelle',
-			'comptable.validation.natures.payoutDuComptable' => 'Paie du Comptable',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.validation.natures.payoutDuComptable' => 'Paie du Comptable',
 			'comptable.validation.natures.sortieCoffreProtege' => 'Sortie d\'un coffre protégé',
 			'comptable.validation.demandePar' => ({required Object demandeur, required Object date}) => 'Demandée par ${demandeur} le ${date}',
 			'comptable.validation.valideePar' => ({required Object decideur, required Object date}) => 'Validée par ${decideur} le ${date}',
