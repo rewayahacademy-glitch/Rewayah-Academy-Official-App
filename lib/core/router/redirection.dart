@@ -264,6 +264,14 @@ String? deciderRedirection({
       if (_dansLeSousArbre(cheminDemande, prefixe)) {
         return null;
       }
+      // EA-ROLE-1 : l'adulte inscrit est un compte tuteur ; la capacite
+      // « eleve autonome » servie (C-24) lui ouvre l'accueil adulte, et lui
+      // seul. `/eleve` et `/tc/classe` restent refuses au tuteur.
+      if (role == AppRole.guardian &&
+          session.eleveAutonome &&
+          _dansLeSousArbre(cheminDemande, Routes.eleveAdulte)) {
+        return null;
+      }
       return role == AppRole.guardian ? Routes.accesRefuse : racine;
   }
 }

@@ -775,7 +775,10 @@
       "moiDescription": "Je souhaite suivre les cours avec mon propre profil élève.",
       "familleTitre": "Moi et ma famille",
       "familleDescription": "Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.",
-      "enseignant": "Je suis enseignant"
+      "enseignant": "Je suis enseignant",
+      "coursQuestion": "Suivez-vous aussi des cours ?",
+      "coursOui": "Oui",
+      "coursNon": "Non"
     },
     "recap": {
       "usage": "Type de compte",

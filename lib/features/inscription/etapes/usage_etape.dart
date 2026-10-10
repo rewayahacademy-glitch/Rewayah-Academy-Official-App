@@ -29,6 +29,12 @@ class UsageEtape extends ConsumerWidget {
       brouillonInscriptionProvider.notifier,
     );
 
+    final bool? suitDesCours = ref.watch(
+      brouillonInscriptionProvider.select(
+        (BrouillonInscription b) => b.parentSuitDesCours,
+      ),
+    );
+
     // Une carte deja choisie reste retenue au retour ; l'enseignant n'est pas
     // une carte : on ne le montre pas comme une preselection.
     final UsageInscription? retenu = usage == UsageInscription.enseignant
@@ -39,7 +45,11 @@ class UsageEtape extends ConsumerWidget {
       route: _route,
       question: t.inscription.usage.question,
       libelleAction: t.commun.continuer,
-      onAction: retenu == null ? null : () => avancerDepuis(context, _route),
+      onAction:
+          retenu == null ||
+              (retenu == UsageInscription.famille && suitDesCours == null)
+          ? null
+          : () => avancerDepuis(context, _route),
       complement: Center(
         child: ActionPrincipale(
           key: const Key('inscription-lien-enseignant'),
@@ -64,36 +74,76 @@ class UsageEtape extends ConsumerWidget {
       ),
       // Le groupe partage (ADR-013), sans carte « Autre » : deux cartes
       // exactement, a description (demande B-3 levee par COORD).
-      enfant: ChoiceCardGroup(
-        key: const Key('inscription-usage'),
-        autoriserSaisieLibre: false,
-        valeurInitiale: retenu == null
-            ? null
-            : ReponseChoix(valeurs: <String>{retenu.name}),
-        options: <OptionChoix>[
-          OptionChoix(
-            valeur: UsageInscription.moi.name,
-            libelle: t.inscription.usage.moiTitre,
-            description: t.inscription.usage.moiDescription,
-            icone: AppIcons.profil,
+      enfant: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          ChoiceCardGroup(
+            key: const Key('inscription-usage'),
+            autoriserSaisieLibre: false,
+            valeurInitiale: retenu == null
+                ? null
+                : ReponseChoix(valeurs: <String>{retenu.name}),
+            options: <OptionChoix>[
+              OptionChoix(
+                valeur: UsageInscription.moi.name,
+                libelle: t.inscription.usage.moiTitre,
+                description: t.inscription.usage.moiDescription,
+                icone: AppIcons.profil,
+              ),
+              OptionChoix(
+                valeur: UsageInscription.famille.name,
+                libelle: t.inscription.usage.familleTitre,
+                description: t.inscription.usage.familleDescription,
+                icone: AppIcons.foyer,
+              ),
+            ],
+            onChange: (ReponseChoix reponse) {
+              for (final UsageInscription u in <UsageInscription>[
+                UsageInscription.moi,
+                UsageInscription.famille,
+              ]) {
+                if (reponse.valeurs.contains(u.name)) {
+                  controleur.choisirUsage(u);
+                }
+              }
+            },
           ),
-          OptionChoix(
-            valeur: UsageInscription.famille.name,
-            libelle: t.inscription.usage.familleTitre,
-            description: t.inscription.usage.familleDescription,
-            icone: AppIcons.foyer,
-          ),
+          if (retenu == UsageInscription.famille) ...<Widget>[
+            const SizedBox(height: 24),
+            Text(
+              t.inscription.usage.coursQuestion,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 12),
+            ChoiceCardGroup(
+              key: const Key('inscription-parent-suit-des-cours'),
+              autoriserSaisieLibre: false,
+              coteACote: true,
+              valeurInitiale: suitDesCours == null
+                  ? null
+                  : ReponseChoix(
+                      valeurs: <String>{suitDesCours ? 'oui' : 'non'},
+                    ),
+              options: <OptionChoix>[
+                OptionChoix(
+                  valeur: 'oui',
+                  libelle: t.inscription.usage.coursOui,
+                ),
+                OptionChoix(
+                  valeur: 'non',
+                  libelle: t.inscription.usage.coursNon,
+                ),
+              ],
+              onChange: (ReponseChoix reponse) {
+                if (reponse.valeurs.contains('oui')) {
+                  controleur.choisirParentSuitDesCours(suit: true);
+                } else if (reponse.valeurs.contains('non')) {
+                  controleur.choisirParentSuitDesCours(suit: false);
+                }
+              },
+            ),
+          ],
         ],
-        onChange: (ReponseChoix reponse) {
-          for (final UsageInscription u in <UsageInscription>[
-            UsageInscription.moi,
-            UsageInscription.famille,
-          ]) {
-            if (reponse.valeurs.contains(u.name)) {
-              controleur.choisirUsage(u);
-            }
-          }
-        },
       ),
     );
   }

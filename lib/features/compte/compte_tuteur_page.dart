@@ -13,6 +13,7 @@ import '../../core/mouvement/apparition_douce.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/session/session_state.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -84,9 +85,12 @@ class _Hub extends ConsumerWidget {
       profilEleveTitulaireExisteProvider,
     );
     final bool aSonProfil =
-        profilPropre.hasValue &&
-        !profilPropre.hasError &&
-        profilPropre.requireValue;
+        ref.watch(
+          sessionProvider.select((SessionState s) => s.eleveAutonome),
+        ) ||
+        (profilPropre.hasValue &&
+            !profilPropre.hasError &&
+            profilPropre.requireValue);
 
     final Widget carteIdentite = BlocAsynchrone<IdentiteTitulaire>(
       valeur: identite,
