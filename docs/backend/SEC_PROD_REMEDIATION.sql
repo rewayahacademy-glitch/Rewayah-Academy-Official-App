@@ -817,7 +817,7 @@ begin
 end;
 $function$;
 
-create or replace function public.autoriser_lecture_piece_identite(uuid)
+create or replace function public.autoriser_lecture_piece_identite(p_document_id uuid)
 returns jsonb
 language plpgsql
 security definer
