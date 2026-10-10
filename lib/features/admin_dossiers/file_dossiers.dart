@@ -12,6 +12,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_typography.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/empty_state.dart';
@@ -358,9 +359,9 @@ bool pastilleSousLeNom(
   // Retrait de debut et de fin, puis chevron et son ecart (GroupeReglages).
   final double utile =
       largeur - AppSpacing.lg * 2 - AppSpacing.sm - AppSpacing.xl;
-  final TextStyle? styleNom = textes.bodyLarge?.copyWith(
-    fontWeight: FontWeight.w600,
-  );
+  final TextStyle? styleNom = textes.bodyLarge == null
+      ? null
+      : AppTypography.graisse(textes.bodyLarge!, FontWeight.w600);
   for (final DossierEnFile d in elements) {
     final String libelle = pastilleDossier(d).$1;
     final double pastille =

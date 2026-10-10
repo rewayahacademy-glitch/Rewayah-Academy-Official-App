@@ -3722,6 +3722,7 @@ class _Traductions$admin$groupes$ar extends Traductions$admin$groupes$fr {
 	@override String get aucunAvecCeFiltre => 'لا فصل بهذا المعيار';
 	@override String get aucunAvecCeFiltreDetail => 'غيّر المعيار لترى الفصول الأخرى.';
 	@override String get erreur => 'تعذّرت قراءة الفصول. أعد المحاولة بعد لحظة.';
+	@override String get sansDonnees => 'تعذّر تحميل قائمة الفصول';
 	@override String get creer => 'إنشاء فصل';
 	@override String get creerTitre => 'إنشاء فصل';
 	@override String get champLibelle => 'اسم الفصل';
@@ -14693,6 +14694,7 @@ extension on TraductionsAr {
 			'admin.groupes.aucunAvecCeFiltre' => 'لا فصل بهذا المعيار',
 			'admin.groupes.aucunAvecCeFiltreDetail' => 'غيّر المعيار لترى الفصول الأخرى.',
 			'admin.groupes.erreur' => 'تعذّرت قراءة الفصول. أعد المحاولة بعد لحظة.',
+			'admin.groupes.sansDonnees' => 'تعذّر تحميل قائمة الفصول',
 			'admin.groupes.creer' => 'إنشاء فصل',
 			'admin.groupes.creerTitre' => 'إنشاء فصل',
 			'admin.groupes.champLibelle' => 'اسم الفصل',
@@ -15118,9 +15120,9 @@ extension on TraductionsAr {
 			'admin.comptes.roleInconnu' => 'دور غير معروف',
 			'admin.comptes.pieceAucune' => 'لا وثيقة مودَعة',
 			'admin.comptes.pieceAVerifier' => 'للتحقق',
-			'admin.comptes.pieceValidee' => 'معتمَدة',
 			_ => null,
 		} ?? switch (path) {
+			'admin.comptes.pieceValidee' => 'معتمَدة',
 			'admin.comptes.pieceRefusee' => 'مرفوضة',
 			'admin.comptes.pieceNonVisible' => 'خارج صلاحيتك',
 			'admin.comptes.pieceSansObjet' => 'لا ينطبق',
@@ -15632,9 +15634,9 @@ extension on TraductionsAr {
 			'comptable.encaissements.rapprochementAucun' => 'لم تتم المطابقة بعد',
 			'comptable.encaissements.ouvrirRapprochement' => 'فتح المطابقة',
 			'comptable.encaissements.confirmeNote' => 'لا تظهر «مؤكَّد» إلا بعد تأكيد مزوّد الدفع.',
-			'comptable.encaissements.enAttenteNote' => 'بانتظار تأكيد مزوّد الدفع: لم يُكتسب شيء بعد.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.encaissements.enAttenteNote' => 'بانتظار تأكيد مزوّد الدفع: لم يُكتسب شيء بعد.',
 			'comptable.encaissements.journal' => 'سجل المقبوض',
 			'comptable.encaissements.journalVide' => 'لا توجد عملية مسجلة لهذا المقبوض.',
 			'comptable.encaissements.rap.vueTransactions' => 'للمطابقة',
@@ -16146,9 +16148,9 @@ extension on TraductionsAr {
 			'ficheEleve.acces.pastilleExpire' => 'منتهٍ',
 			'ficheEleve.acces.sansEcheance' => 'لا تاريخ انتهاء مسجَّل.',
 			'ficheEleve.acces.jusquau' => ({required Object date}) => 'حتى ⁨${date}⁩',
-			'ficheEleve.acces.expireDepuis' => ({required Object date}) => 'منتهٍ منذ ⁨${date}⁩',
 			_ => null,
 		} ?? switch (path) {
+			'ficheEleve.acces.expireDepuis' => ({required Object date}) => 'منتهٍ منذ ⁨${date}⁩',
 			'ficheEleve.acces.expirePhrase' => ({required Object prenom}) => 'منذ هذا التاريخ، لا يستطيع ⁨${prenom}⁩ الدخول إلى Rewayah.',
 			'ficheEleve.acces.detailIndisponible' => 'بداية الوصول وسببه لا يظهران بعد.',
 			'parcours.titre' => ({required Object dePrenom}) => 'مسار ⁨${dePrenom}⁩',
@@ -16660,9 +16662,9 @@ extension on TraductionsAr {
 			'adulte.monEspace.coursAcces' => 'الدروس والوصول',
 			'adulte.monEspace.coursAccesLegende' => 'الفصل والحصص والوصول',
 			'adulte.monEspace.paiements' => 'المدفوعات',
-			'adulte.monEspace.paiementsLegende' => 'السجل والإيصالات',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.monEspace.paiementsLegende' => 'السجل والإيصالات',
 			'adulte.monEspace.accords' => 'موافقاتي',
 			'adulte.monEspace.accordsLegende' => 'الموافقات الممنوحة للأكاديمية',
 			'adulte.monEspace.securiteLegende' => 'طريقة الدخول وعنوانه',
@@ -17174,9 +17176,9 @@ extension on TraductionsAr {
 			'controleur.historique.faitsIndisponibles' => 'السجل التلقائي لهذه الزيارة (الساعات، الطلاب الحاضرون، إعادة الاتصال) لم يصل بعد: انتهت الحصة للتو أو انقطع الاتصال. سيظهر هنا بمجرد وصوله. باقي التقرير موثوق.',
 			'controleur.historique.motif' => ({required Object motif}) => 'السبب: ⁨${motif}⁩',
 			'controleur.historique.ajouterComplement' => 'إضافة تكملة',
-			'controleur.complement.bandeau' => 'ستُضاف هذه التكملة إلى التقرير الموجود.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.complement.bandeau' => 'ستُضاف هذه التكملة إلى التقرير الموجود.',
 			'controleur.complement.questionMotif' => 'لماذا تضيف هذه التكملة؟',
 			'controleur.complement.contexteMotif' => 'اختياري: السبب يساعد الإدارة على قراءة التكملة. التقرير الأصلي لا يتغير.',
 			'controleur.complement.precision' => 'توضيح',

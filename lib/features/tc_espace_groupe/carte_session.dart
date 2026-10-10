@@ -411,16 +411,11 @@ class _EmplacementEntreeVueState extends State<EmplacementEntreeVue> {
     if (bouton) {
       final Widget action = Focus(
         focusNode: _focusBouton,
-        child: Semantics(
-          label: e.libelleLecteur,
-          button: true,
-          excludeSemantics: true,
-          onTap: widget.onEntrer,
-          child: ActionPrincipale(
-            libelle: e.libelle,
-            onPress: widget.onEntrer,
-            pleineLargeur: mobile,
-          ),
+        child: ActionPrincipale(
+          libelle: e.libelle,
+          libelleSemantique: e.libelleLecteur,
+          onPress: widget.onEntrer,
+          pleineLargeur: mobile,
         ),
       );
       contenu = <Widget>[

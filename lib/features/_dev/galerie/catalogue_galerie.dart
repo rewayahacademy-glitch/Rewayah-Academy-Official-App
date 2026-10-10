@@ -176,6 +176,10 @@ enum FamilleComposant {
   final List<String> etatsObligatoires;
 }
 
+/// Hauteurs de cadre du fil de discussion dans la galerie.
+const double _hauteurFilVide = 480;
+const double _hauteurFilMessages = 640;
+
 /// Un etat d'un composant, tel que la galerie le montre.
 @immutable
 class EtatGalerie {
@@ -1728,7 +1732,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       EtatGalerie(
         'vide',
         (BuildContext _) => SizedBox(
-          height: 480,
+          height: _hauteurFilVide,
           child: Material(
             type: MaterialType.transparency,
             child: FilDiscussion(
@@ -1765,7 +1769,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       EtatGalerie(
         'messages',
         (BuildContext _) => SizedBox(
-          height: 640,
+          height: _hauteurFilMessages,
           child: Material(
             type: MaterialType.transparency,
             child: FilDiscussion(

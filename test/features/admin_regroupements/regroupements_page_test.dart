@@ -24,6 +24,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/admin/enseignants_classe.dart'
+    show enseignantsDuPortProvider;
 import 'package:rewayah_academy/core/admin/service_groupes.dart';
 import 'package:rewayah_academy/core/capacites/port_enseignants_classe.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
@@ -54,10 +56,18 @@ const String _paris = 'Europe/Paris';
 /// Maryam est le premier choix (compatible, libre aux trois jours), Salma
 /// n'est libre que le lundi, Yusuf est incompatible.
 class _Enseignants implements PortEnseignantsClasse {
+  /// Nombre de lectures de la source depuis le dernier remise a zero.
+  static int lectures = 0;
+
   @override
   Future<List<EnseignantPropose>> pourClasse({
     required TypePublicGroupe public,
-  }) async => const <EnseignantPropose>[
+  }) async {
+    lectures++;
+    return _liste;
+  }
+
+  static const List<EnseignantPropose> _liste = <EnseignantPropose>[
     EnseignantPropose(
       id: 'ens-yusuf',
       libelle: 'Yusuf Exemple',
@@ -488,6 +498,36 @@ void main() {
       expect(_carte(_pret), findsNothing);
       await _demonter(tester);
     });
+
+    testWidgets(
+      'apres l affectation, la source des enseignants est relue (charge '
+      'et creneaux pris a jour)',
+      (WidgetTester tester) async {
+        _Enseignants.lectures = 0;
+        await _monter(tester, port: RegroupementsDemo());
+        await _ouvrir(tester, _pret);
+        await _choisirGenre(tester, GenreClasse.femmes);
+        await _presser(tester, 'regroupement-creer');
+        await _laisser(tester);
+        expect(_parCle('regroupement-feuille-enseignant'), findsOneWidget);
+        expect(_Enseignants.lectures, 1);
+
+        await _presser(tester, 'regroupement-confirmer');
+        await _laisser(tester);
+        expect(_parCle('regroupement-familles-prevenues'), findsOneWidget);
+
+        // Une relecture de la famille repart de la source : le cache n'a pas
+        // survecu a l'affectation.
+        final ProviderContainer conteneur = ProviderScope.containerOf(
+          tester.element(find.byType(MaterialApp)),
+        );
+        await conteneur.read(
+          enseignantsDuPortProvider(TypePublicGroupe.enfant).future,
+        );
+        expect(_Enseignants.lectures, 2);
+        await _demonter(tester);
+      },
+    );
 
     testWidgets('classe d hommes : le premier choix suit le genre', (
       WidgetTester tester,
