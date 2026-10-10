@@ -1,6 +1,6 @@
 // BOUTONS-GRISES-1 : dans les programmes, aucun bouton grise.
-// - « Publier la version » sans niveau ne peut pas aboutir : il n'est pas
-//   rendu, une phrase dit quoi faire a sa place.
+// - « Publier la version » sans niveau reste actif : l'appui dit ce qui
+//   manque, l'annonce et rend le focus a « Ajouter un niveau ».
 // - « Publier » de la feuille de motif reste actif : sans motif, l'appui le
 //   dit sous le champ, l'annonce au lecteur d'ecran et rend le focus au champ.
 import 'package:flutter/material.dart';
@@ -98,15 +98,33 @@ Future<_FauxProgramme> _monter(WidgetTester tester, int niveaux) async {
 void main() {
   setUp(() => LocaleSettings.setLocaleSync(AppLocale.fr));
 
-  testWidgets('sans niveau : pas de bouton grise, une phrase a sa place', (
-    WidgetTester tester,
-  ) async {
-    await _monter(tester, 0);
+  testWidgets('sans niveau : actif, dit, annonce, focus sur Ajouter un '
+      'niveau, rien ne part', (WidgetTester tester) async {
+    final List<String> annonces = ecouterAnnonces(tester);
+    final _FauxProgramme service = await _monter(tester, 0);
+    final Finder publierVersion = find.widgetWithText(
+      ActionPrincipale,
+      t.admin.programmes.publierVersion,
+    );
+    expect(tester.widget<ActionPrincipale>(publierVersion).onPress, isNotNull);
+    // Rien n'est dit avant l'appui.
+    expect(find.text(t.admin.programmes.publierSansNiveau), findsNothing);
+    await tester.ensureVisible(publierVersion);
+    await tester.tap(publierVersion);
+    await tester.pumpAndSettle();
+
+    expect(find.text(t.admin.programmes.publierSansNiveau), findsOneWidget);
+    expect(annonces, <String>[t.admin.programmes.publierSansNiveau]);
+    expect(FocusManager.instance.primaryFocus?.debugLabel, 'ajouter-niveau');
+    // Aucune feuille de motif ouverte, aucune publication.
     expect(
-      find.widgetWithText(ActionPrincipale, t.admin.programmes.publierVersion),
+      find.widgetWithText(
+        ActionPrincipale,
+        t.admin.programmes.publierVersionEnvoyer,
+      ),
       findsNothing,
     );
-    expect(find.text(t.admin.programmes.publierSansNiveau), findsOneWidget);
+    expect(service.publications, 0);
   });
 
   testWidgets('publier sans motif : actif, dit, annonce, focus au champ', (

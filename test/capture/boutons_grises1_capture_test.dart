@@ -6,18 +6,26 @@
 //   CAPTURE_DIR=docs/current/captures/BOUTONS-GRISES-1 \
 //     flutter test test/capture/boutons_grises1_capture_test.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/service_programme.dart';
+import 'package:rewayah_academy/core/capacites/port_acces_foyer.dart';
 import 'package:rewayah_academy/core/dossier/selecteur_fichier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
+import 'package:rewayah_academy/core/tc_horloge/demonstration_horloge.dart';
+import 'package:rewayah_academy/features/acces_finance/acces_finance.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_programmes/programmes_page.dart';
 import 'package:rewayah_academy/features/dossier/depot_piece_page.dart';
+import 'package:rewayah_academy/features/tc_espace_groupe/espace_groupe_page.dart';
+import 'package:rewayah_academy/features/tc_mes_groupes/mes_groupes_page.dart';
 
 import '../features/coupe_mots_4/support_coupe_mots_4.dart';
 import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
+import '../teaching_core/a/support/hote_tc_a.dart';
 import 'outil_capture.dart';
 
 class _SansNiveau implements ServiceProgramme {
@@ -101,9 +109,66 @@ void main() {
         ],
       );
       await stabiliser(tester);
+      final Finder publier = find.text(t.admin.programmes.publierVersion);
+      await tester.ensureVisible(publier);
+      await tester.tap(publier);
+      await stabiliser(tester);
       expect(find.text(t.admin.programmes.publierSansNiveau), findsOneWidget);
       verifierEcranSansMotCoupe(tester);
       await _capturer(tester, 'programmes_sans_niveau_320x2_$l');
+    });
+
+    testWidgets('mes classes : Rejoindre en attente du reseau, 320 x2 $l', (
+      WidgetTester tester,
+    ) async {
+      await monterCoupeMots4(
+        tester,
+        () => MesGroupesPage(onRejoindre: (_) {}),
+        langue: langue,
+        hauteur: 1600,
+        surcharges: surchargesDemonstration(horsLigne: true),
+      );
+      final Finder rejoindre = find.text(LibellesGroupe.rejoindre).first;
+      await tester.ensureVisible(rejoindre);
+      await tester.tap(rejoindre);
+      await stabiliser(tester);
+      expect(find.text(t.tc.groupe.carte.entreeAttendReseau), findsOneWidget);
+      // La garde porte sur la phrase nouvelle et son bouton : les titres de
+      // carte de la demonstration (« Classe Al-Fatiha ») coupent deja leur
+      // nom compose a 320 px x2, defaut anterieur hors de cette etape.
+      verifierAucunMotCoupe(
+        tester,
+        find.byKey(const ValueKey<String>('carte-groupe-attente-entree')),
+      );
+      verifierAucunMotCoupe(tester, find.text(LibellesGroupe.rejoindre));
+      await _capturer(tester, 'mes_classes_attente_reseau_320x2_$l');
+    });
+
+    testWidgets('espace de classe : acces en lecture, 320 x2 $l', (
+      WidgetTester tester,
+    ) async {
+      await monterCoupeMots4(
+        tester,
+        () => EspaceGroupePage(
+          groupeId: GroupesDemonstration.anNour,
+          onRejoindre: (_) {},
+        ),
+        langue: langue,
+        hauteur: 1600,
+        surcharges: <Override>[
+          ...surchargesDemonstration(),
+          accesAppelantProvider.overrideWithValue(
+            const AsyncLoading<AccesBeneficiaire?>(),
+          ),
+        ],
+      );
+      final Finder rejoindre = find.text(LibellesGroupe.rejoindre);
+      await tester.ensureVisible(rejoindre);
+      await tester.tap(rejoindre);
+      await tester.pump();
+      expect(find.text(t.tc.groupe.carte.entreeSePrepare), findsOneWidget);
+      verifierEcranSansMotCoupe(tester);
+      await _capturer(tester, 'espace_classe_entree_se_prepare_320x2_$l');
     });
   }
 }

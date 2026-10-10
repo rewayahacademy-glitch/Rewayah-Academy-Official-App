@@ -1,4 +1,11 @@
 {
+  "foyer": {
+    "ajout": {
+      "identite": {
+        "ageFige": "الإرسال جارٍ: يمكن تغيير العمر بعد الرد."
+      }
+    }
+  },
   "formulaire": {
     "manqueAccord": "موافقتك ناقصة: ضع علامة في الخانة للمتابعة.",
     "motif": {
@@ -611,7 +618,9 @@
         "aucuneSeanceDetail": "لم يُحدَّد جدول هذا الفصل بعد.",
         "duree": "المدة {valeur}",
         "dureeLibelle": "المدة",
-        "rejoindre": "انضمام"
+        "rejoindre": "انضمام",
+        "entreeSePrepare": "دخولكم قيد التحضير. أعيدوا المحاولة بعد لحظة.",
+        "entreeAttendReseau": "ستتمكنون من الدخول عند عودة الشبكة."
       },
       "enseignant": {
         "sayyid": "سيد",

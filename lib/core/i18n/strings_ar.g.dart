@@ -39,6 +39,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	TraductionsAr $copyWith({TranslationMetadata<AppLocale, Traductions>? meta}) => TraductionsAr(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Traductions$foyer$ar foyer = _Traductions$foyer$ar._(_root);
 	@override late final _Traductions$formulaire$ar formulaire = _Traductions$formulaire$ar._(_root);
 	@override late final _Traductions$kyc$ar kyc = _Traductions$kyc$ar._(_root);
 	@override late final _Traductions$notifications$ar notifications = _Traductions$notifications$ar._(_root);
@@ -60,6 +61,16 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$reseau$ar reseau = _Traductions$reseau$ar._(_root);
 	@override late final _Traductions$admin$ar admin = _Traductions$admin$ar._(_root);
 	@override late final _Traductions$comptable$ar comptable = _Traductions$comptable$ar._(_root);
+}
+
+// Path: foyer
+class _Traductions$foyer$ar extends Traductions$foyer$fr {
+	_Traductions$foyer$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$foyer$ajout$ar ajout = _Traductions$foyer$ajout$ar._(_root);
 }
 
 // Path: formulaire
@@ -379,6 +390,16 @@ class _Traductions$comptable$ar extends Traductions$comptable$fr {
 	@override late final _Traductions$comptable$validation$ar validation = _Traductions$comptable$validation$ar._(_root);
 	@override late final _Traductions$comptable$direction$ar direction = _Traductions$comptable$direction$ar._(_root);
 	@override late final _Traductions$comptable$demo$ar demo = _Traductions$comptable$demo$ar._(_root);
+}
+
+// Path: foyer.ajout
+class _Traductions$foyer$ajout$ar extends Traductions$foyer$ajout$fr {
+	_Traductions$foyer$ajout$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$foyer$ajout$identite$ar identite = _Traductions$foyer$ajout$identite$ar._(_root);
 }
 
 // Path: formulaire.motif
@@ -1699,6 +1720,16 @@ class _Traductions$comptable$demo$ar extends Traductions$comptable$demo$fr {
 	@override String get groupeDirection => 'الإدارة';
 }
 
+// Path: foyer.ajout.identite
+class _Traductions$foyer$ajout$identite$ar extends Traductions$foyer$ajout$identite$fr {
+	_Traductions$foyer$ajout$identite$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get ageFige => 'الإرسال جارٍ: يمكن تغيير العمر بعد الرد.';
+}
+
 // Path: commun.etats.chargementProlonge
 class _Traductions$commun$etats$chargementProlonge$ar extends Traductions$commun$etats$chargementProlonge$fr {
 	_Traductions$commun$etats$chargementProlonge$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -2055,6 +2086,8 @@ class _Traductions$tc$groupe$carte$ar extends Traductions$tc$groupe$carte$fr {
 	@override String duree({required Object valeur}) => 'المدة ${valeur}';
 	@override String get dureeLibelle => 'المدة';
 	@override String get rejoindre => 'انضمام';
+	@override String get entreeSePrepare => 'دخولكم قيد التحضير. أعيدوا المحاولة بعد لحظة.';
+	@override String get entreeAttendReseau => 'ستتمكنون من الدخول عند عودة الشبكة.';
 }
 
 // Path: tc.groupe.enseignant
@@ -4599,6 +4632,7 @@ class _Traductions$com$annonces$administration$moderation$regles$ar extends Trad
 extension on TraductionsAr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'foyer.ajout.identite.ageFige' => 'الإرسال جارٍ: يمكن تغيير العمر بعد الرد.',
 			'formulaire.manqueAccord' => 'موافقتك ناقصة: ضع علامة في الخانة للمتابعة.',
 			'formulaire.motif.manqueSaisi' => 'السبب ناقص: اكتبه في كلمات قليلة.',
 			'kyc.manquePhoto' => 'اختر أولًا صورة وثيقتك.',
@@ -5076,6 +5110,8 @@ extension on TraductionsAr {
 			'tc.groupe.carte.duree' => ({required Object valeur}) => 'المدة ${valeur}',
 			'tc.groupe.carte.dureeLibelle' => 'المدة',
 			'tc.groupe.carte.rejoindre' => 'انضمام',
+			'tc.groupe.carte.entreeSePrepare' => 'دخولكم قيد التحضير. أعيدوا المحاولة بعد لحظة.',
+			'tc.groupe.carte.entreeAttendReseau' => 'ستتمكنون من الدخول عند عودة الشبكة.',
 			'tc.groupe.enseignant.sayyid' => 'سيد',
 			'tc.groupe.enseignant.sayyida' => 'سيدة',
 			'tc.groupe.enseignant.photoManquante' => 'الصورة مطلوبة',
@@ -5108,11 +5144,11 @@ extension on TraductionsAr {
 			'tc.groupe.dst.j1' => 'تغيير التوقيت غدًا',
 			'tc.groupe.dst.detail' => ({required Object avant, required Object apres}) => 'سينتقل درسك من ${avant} إلى ${apres}.',
 			'tc.groupe.session.conseilAppareil' => 'يُنصح بجهاز لوحي أو حاسوب للدرس. يبقى الهاتف مدعومًا.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.espace.retour' => 'فصولي',
 			'tc.groupe.espace.avantProchainCours' => 'قبل الدرس القادم',
 			'tc.groupe.espace.aucuneAction' => 'لا شيء للتحضير حاليًا',
-			_ => null,
-		} ?? switch (path) {
 			'tc.groupe.espace.bibliotheque' => 'المكتبة',
 			'tc.groupe.espace.bibliothequeVoirTout' => 'عرض الكل',
 			'tc.groupe.espace.progression' => 'التقدم',
@@ -5622,11 +5658,11 @@ extension on TraductionsAr {
 			'com.studio.aujourdhui.acces.demandes' => 'طلبات بانتظار القرار',
 			'com.studio.aujourdhui.acces.demandesDetail' => 'طلبات التغيير المنتظرة',
 			'com.studio.brouillons.titre' => 'المسودات',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.brouillons.detail' => 'الرسائل التي بدأتها في قناة ولم تُرسل بعد. تبقى على هذا الجهاز طوال الجلسة، دون مزامنة.',
 			'com.studio.brouillons.dansCanal' => ({required Object nom}) => 'مسودة في ${nom}',
 			'com.studio.brouillons.canalInconnu' => 'مسودة في قناة',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.brouillons.canalIndisponible' => 'مسودة في قناة لم تعد متاحة',
 			'com.studio.brouillons.modifie' => ({required Object moment}) => 'عُدّلت في ${moment}',
 			'com.studio.brouillons.reprendre' => ({required Object nom}) => 'متابعة المسودة في ${nom}',
@@ -6136,11 +6172,11 @@ extension on TraductionsAr {
 			'comptable.aujourdhui.paiementsAEffectuer' => 'مدفوعات للتنفيذ',
 			'comptable.aujourdhui.paiementsAEffectuerDetail' => 'تُراجَع كل دفعة في قائمتها قبل دفعها.',
 			'comptable.aujourdhui.paiementsVide' => 'لا توجد مدفوعات للتنفيذ.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.aujourdhui.echeancesVide' => 'لا توجد مواعيد استحقاق قريبة.',
 			'comptable.aujourdhui.encaissementsVide' => 'لا توجد مقبوضات حديثة.',
 			'comptable.aujourdhui.activiteVide' => 'لا يوجد نشاط حديث.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.aujourdhui.prestatairesVide' => 'لا يوجد مزوّد دفع مفعّل.',
 			'comptable.aujourdhui.prestatairesVideDetail' => 'ستنطلق المدفوعات الصادرة عندما تفعّل الإدارة مزوّد دفع.',
 			'comptable.aujourdhui.accesPaiements' => 'عرض المدفوعات للتنفيذ',
@@ -6650,11 +6686,11 @@ extension on TraductionsAr {
 			'comptable.contractuels.champRefJustificatif' => 'مرجع المستند المؤيِّد (اختياري)',
 			'comptable.contractuels.champMontantSaisi' => 'المبلغ',
 			'comptable.contractuels.aideMontant' => 'يُدخل مرة واحدة: لا يُعدَّل بعد الاعتماد.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.creer' => 'إنشاء الالتزام',
 			'comptable.contractuels.horsLigneCreation' => 'أنت غير متصل. أعد الاتصال لإنشاء الالتزام.',
 			'comptable.contractuels.erreurObjet' => 'أدخل موضوع الالتزام.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.erreurMontant' => 'أدخل مبلغًا أكبر من صفر، مثلًا 350 أو 350,50.',
 			'comptable.contractuels.erreurNomExterne' => 'أدخل اسم المستفيد الخارجي.',
 			'comptable.contractuels.erreurCreation' => 'لا نعلم إن كان الالتزام قد أُنشئ. حدّث القائمة قبل إعادة المحاولة.',

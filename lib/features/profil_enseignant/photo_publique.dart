@@ -390,13 +390,18 @@ class _EditeurPhotoPubliqueState extends ConsumerState<EditeurPhotoPublique> {
                 libelle: t.enseignant.photo.autre,
                 onPress: _phase == _Phase.envoi ? null : _choisir,
               ),
-              ActionPrincipale(
-                key: EditeurPhotoPublique.utiliserKey,
-                libelle: t.enseignant.photo.utiliser,
-                pleineLargeur: false,
-                enCours: _phase == _Phase.envoi,
-                onPress: horsLigne || _phase == _Phase.envoi ? null : _utiliser,
-              ),
+              // Hors ligne, l'envoi ne peut pas aboutir : « Utiliser » n'est
+              // pas rendu, la phrase au-dessus dit pourquoi (lib/CLAUDE.md,
+              // BOUTONS-GRISES-1, jamais grise). Pendant l'envoi, il montre
+              // le travail en cours et ne repart pas (double envoi).
+              if (!horsLigne)
+                ActionPrincipale(
+                  key: EditeurPhotoPublique.utiliserKey,
+                  libelle: t.enseignant.photo.utiliser,
+                  pleineLargeur: false,
+                  enCours: _phase == _Phase.envoi,
+                  onPress: _phase == _Phase.envoi ? null : _utiliser,
+                ),
             ],
           )
         else
