@@ -165,6 +165,7 @@ DECLARE
   v_count integer;
   v_quota integer;
   v_pret boolean;
+  v_fuseau text;
   v_jours smallint[];
   v_heures smallint[];
   v_regroupement text;
@@ -278,8 +279,8 @@ BEGIN
     RAISE EXCEPTION 'M3: les jours Tokyo ne sont pas triés: %', v_jours;
   END IF;
 
-  SELECT regroupement_id, nombre_eleves, quota, pret, jours, heures_locales
-    INTO v_regroupement, v_count, v_quota, v_pret, v_jours, v_heures
+  SELECT regroupement_id, fuseau_iana, nombre_eleves, quota, pret, jours, heures_locales
+    INTO v_regroupement, v_fuseau, v_count, v_quota, v_pret, v_jours, v_heures
     FROM public.regroupements_demandes_horaires_admin()
    WHERE regroupement_id = 'p:' || pg_catalog.md5(
      'adulte|francais|' ||
