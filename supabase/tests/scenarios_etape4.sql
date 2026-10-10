@@ -706,10 +706,16 @@ begin
 end $$;
 
 -- La date de fin d'acces, que TUT-01 affiche par enfant en MVP-0 a la place d'un
--- portefeuille. Posee ici en superuser : elle vient d'un import d'administration
--- (ADR-014), aucun tuteur ne l'ecrit.
-update public.profiles set access_until = now() + interval '30 days'
-where id = 'aaaaaaaa-0000-0000-0000-000000000003';
+-- portefeuille. L'import d'administration est represente par un admin actif;
+-- la garde du trigger ne doit pas s'appuyer sur un role JWT absent.
+do $import_admin$
+begin
+  perform set_config('test.uid', 'dddddddd-0000-0000-0000-000000000001', true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
+  update public.profiles set access_until = now() + interval '30 days'
+  where id = 'aaaaaaaa-0000-0000-0000-000000000003';
+end
+$import_admin$;
 
 do $$
 declare
