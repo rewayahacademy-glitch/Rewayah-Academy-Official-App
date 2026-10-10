@@ -676,3 +676,29 @@ begin
 end $$;
 
 select 'TOUS LES SCENARIOS SQL DE L''ETAPE 3 SONT PASSES' as verdict;
+
+-- H2 / SEC-ROLE : un compte actif avec un JWT sans rôle ne franchit jamais
+-- une garde d'administration (régression du tri logique NULL de 0019).
+do $$
+begin
+  set local role authenticated;
+  perform set_config('test.uid', '33333333-3333-3333-3333-333333333333', true);
+  perform set_config('test.jwt', '{}', true);
+
+  if public.app_role() is not null then
+    raise exception 'SEC-ROLE ECHEC : le JWT vide a reçu un rôle';
+  end if;
+  if public.app_account_valid() is not true then
+    raise exception 'SEC-ROLE ECHEC : la fixture doit être un compte valide';
+  end if;
+
+  begin
+    perform public.ajouter_eleve_groupe(null, null, 'test SEC-ROLE');
+    raise exception 'SEC-ROLE ECHEC : un JWT sans rôle a franchi la garde admin';
+  exception when others then
+    if position('ajout d''un eleve a un groupe reserve a l''administration' in sqlerrm) = 0 then
+      raise;
+    end if;
+  end;
+  raise notice 'SEC-ROLE ok : un compte valide sans rôle est refusé avant la mutation';
+end $$;
