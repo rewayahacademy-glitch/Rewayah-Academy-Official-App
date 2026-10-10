@@ -414,6 +414,27 @@ BEGIN
     v_groupe, 'f1490000-0000-0000-0000-000000000997'
   );
   IF NOT EXISTS (
+    SELECT 1
+    FROM public.notifications n
+    JOIN public.households h
+      ON h.id = 'f1480000-0000-0000-0000-000000000003'
+    WHERE n.destinataire = h.primary_guardian_id
+      AND n.evenement = 'enseignant_affecte'
+      AND n.params ->> 'groupe_id' = v_groupe::text
+      AND n.params ->> 'debut_local' = (
+        SELECT pg_catalog.to_char(
+          min(s.started_at) AT TIME ZONE h.timezone,
+          'YYYY-MM-DD"T"HH24:MI:SS'
+        )
+        FROM public.sessions s
+        WHERE s.groupe_id = v_groupe
+          AND s.deleted_at IS NULL
+          AND s.started_at > pg_catalog.now()
+      )
+  ) THEN
+    RAISE EXCEPTION 'M-b: notification absente ou pas dans le fuseau du foyer / première séance future';
+  END IF;
+  IF NOT EXISTS (
     SELECT 1 FROM public.groupes
     WHERE id = v_groupe AND teacher_id = 'f1490000-0000-0000-0000-000000000997'
       AND etat = 'active'
