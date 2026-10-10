@@ -135,6 +135,16 @@ void main() {
         'classe.pageCatalogue.resultat.validationPhrase',
         'classe.pageCatalogue.resultat.listeAttentePhrase',
         'tuteur.accueil.heureDe',
+        // Relecture de COUPE-MOTS-FOND-1 (10/10) : reglages de l'enfant.
+        'tuteur.reglages.demandeTitreReaffectation',
+        'tuteur.reglages.demandeTitreDuree',
+        'reglagesEnfant.renvoiLegende',
+        // Traduites avec l'ecran, mais sans appelant dans lib/ (la fiche de
+        // l'eleve a repris photo et camera) : rien a passer aujourd'hui ; un
+        // futur appel devra passer sa cle.
+        'tuteur.reglages.photoPresente',
+        'tuteur.reglages.cameraAutoriser',
+        'tuteur.reglages.cameraRetirer',
       };
       expect(trouvees.difference(appeleesAvecCle), isEmpty);
       // Et les appels du code passent bien leur cle.
@@ -147,6 +157,7 @@ void main() {
         'lib/features/classe_tuteur/progression_classe_page.dart',
         'lib/features/classe_tuteur/catalogue_classes_page.dart',
         'lib/features/accueil_famille/bloc_seance.dart',
+        'lib/features/reglages_enfant/reglages_enfant_page.dart',
       ].map((String f) => File(f).readAsStringSync()).join();
       for (final String cle in <String>[
         'classe.entree.rejoindreLecteur',
@@ -161,6 +172,9 @@ void main() {
         'classe.pageCatalogue.resultat.validationPhrase',
         'classe.pageCatalogue.resultat.listeAttentePhrase',
         'tuteur.accueil.heureDe',
+        'tuteur.reglages.demandeTitreReaffectation',
+        'tuteur.reglages.demandeTitreDuree',
+        'reglagesEnfant.renvoiLegende',
       ]) {
         expect(code, contains("cle: '$cle'"), reason: cle);
       }

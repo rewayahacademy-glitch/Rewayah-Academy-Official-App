@@ -146,7 +146,10 @@ class _CarteEnfant extends StatelessWidget {
                   icone: AppIcons.reglages,
                   libelle: t.reglagesEnfant.renvoi,
                   legende: t.reglagesEnfant.renvoiLegende(
-                    dePrenom: deDevant(enfant.prenom),
+                    dePrenom: deDevant(
+                      enfant.prenom,
+                      cle: 'reglagesEnfant.renvoiLegende',
+                    ),
                   ),
                   onPress: () =>
                       GoRouter.of(context).go(Routes.ficheElevePour(enfant.id)),
@@ -506,13 +509,19 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
 
   String _titre() => switch (widget.sorte) {
     SorteDemande.reaffectation => t.tuteur.reglages.demandeTitreReaffectation(
-      dePrenom: deDevant(widget.enfant.prenom),
+      dePrenom: deDevant(
+        widget.enfant.prenom,
+        cle: 'tuteur.reglages.demandeTitreReaffectation',
+      ),
     ),
     SorteDemande.plafond || SorteDemande.regle =>
       widget.cle == CleRegle.minimumPayable
           ? t.tuteur.reglages.demandeTitreMinimum(prenom: widget.enfant.prenom)
           : t.tuteur.reglages.demandeTitreDuree(
-              dePrenom: deDevant(widget.enfant.prenom),
+              dePrenom: deDevant(
+                widget.enfant.prenom,
+                cle: 'tuteur.reglages.demandeTitreDuree',
+              ),
             ),
   };
 }

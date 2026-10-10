@@ -53,6 +53,8 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$enseignant$ar enseignant = _Traductions$enseignant$ar._(_root);
 	@override late final _Traductions$compte$ar compte = _Traductions$compte$ar._(_root);
 	@override late final _Traductions$tuteur$ar tuteur = _Traductions$tuteur$ar._(_root);
+	@override late final _Traductions$motifs$ar motifs = _Traductions$motifs$ar._(_root);
+	@override late final _Traductions$reglagesEnfant$ar reglagesEnfant = _Traductions$reglagesEnfant$ar._(_root);
 	@override late final _Traductions$nav$ar nav = _Traductions$nav$ar._(_root);
 	@override late final _Traductions$tc$ar tc = _Traductions$tc$ar._(_root);
 	@override late final _Traductions$com$ar com = _Traductions$com$ar._(_root);
@@ -277,6 +279,32 @@ class _Traductions$tuteur$ar extends Traductions$tuteur$fr {
 
 	// Translations
 	@override late final _Traductions$tuteur$accueil$ar accueil = _Traductions$tuteur$accueil$ar._(_root);
+	@override late final _Traductions$tuteur$reglages$ar reglages = _Traductions$tuteur$reglages$ar._(_root);
+}
+
+// Path: motifs
+class _Traductions$motifs$ar extends Traductions$motifs$fr {
+	_Traductions$motifs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$motifs$reglageEnseignant$ar reglageEnseignant = _Traductions$motifs$reglageEnseignant$ar._(_root);
+	@override late final _Traductions$motifs$reglageDuree$ar reglageDuree = _Traductions$motifs$reglageDuree$ar._(_root);
+	@override late final _Traductions$motifs$reglageMinimum$ar reglageMinimum = _Traductions$motifs$reglageMinimum$ar._(_root);
+}
+
+// Path: reglagesEnfant
+class _Traductions$reglagesEnfant$ar extends Traductions$reglagesEnfant$fr {
+	_Traductions$reglagesEnfant$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'إعدادات كل ملف تلميذ';
+	@override String get intro => 'تُضبط صورة كل تلميذ وكاميرته وواجهته في بطاقته، من صفحة الأسرة. أما الطلبات الموجهة إلى الإدارة فتبقى هنا.';
+	@override String get renvoi => 'الصورة والكاميرا والواجهة';
+	@override String renvoiLegende({required Object dePrenom}) => 'في بطاقة ${dePrenom}';
 }
 
 // Path: nav
@@ -895,6 +923,90 @@ class _Traductions$tuteur$accueil$ar extends Traductions$tuteur$accueil$fr {
 	@override String get pastilleTerminee => 'منتهية';
 	@override late final _Traductions$tuteur$accueil$etatCourt$ar etatCourt = _Traductions$tuteur$accueil$etatCourt$ar._(_root);
 	@override String get motifAnnuleeTard => 'أُلغيت الحصة قبل موعدها بقليل';
+}
+
+// Path: tuteur.reglages
+class _Traductions$tuteur$reglages$ar extends Traductions$tuteur$reglages$fr {
+	_Traductions$tuteur$reglages$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'إعدادات كل طفل';
+	@override String get intro => 'تُطبَّق هذه الإعدادات ابتداءً من الحصة التالية، ولا تُطبَّق أبدًا أثناء الدرس.';
+	@override String get photo => 'الصورة';
+	@override String photoAucune({required Object prenom}) => 'لم تُضَف صورة ${prenom} بعد. لن يراها إلا أفراد الأسرة.';
+	@override String photoPresente({required Object dePrenom}) => 'لا يرى صورة ${dePrenom} إلا أفراد الأسرة، فلا يراها المعلم ولا باقي التلاميذ.';
+	@override String get photoAjouter => 'إضافة صورة';
+	@override String get photoChanger => 'تغيير الصورة';
+	@override String photoTropLourde({required Object taille}) => 'حجم هذه الصورة يتجاوز ${taille} ميغابايت. أعد حفظها بجودة أقل.';
+	@override String get camera => 'الكاميرا';
+	@override String cameraAutorisee({required Object prenom}) => 'يمكن لـ${prenom} تشغيل الكاميرا أثناء الدرس.';
+	@override String cameraInterdite({required Object prenom}) => 'لن يظهر زر الكاميرا لـ${prenom}.';
+	@override String cameraAutoriser({required Object dePrenom}) => 'السماح بكاميرا ${dePrenom}';
+	@override String cameraRetirer({required Object dePrenom}) => 'سحب إذن الكاميرا من ${dePrenom}';
+	@override String get mode => 'طريقة العرض';
+	@override String modeEnfant({required Object prenom}) => 'عرض كبير دون قراءة: يتعرّف ${prenom} على الصور ويستمع.';
+	@override String modeStandard({required Object prenom}) => 'العرض المعتاد: يقرأ ${prenom} شاشته بنفسه.';
+	@override String modePasserEnfant({required Object prenom}) => 'تفعيل العرض الكبير لـ${prenom}';
+	@override String modePasserStandard({required Object prenom}) => 'تفعيل العرض المعتاد لـ${prenom}';
+	@override String get demandes => 'طلب تغيير';
+	@override String get demandeReaffectation => 'تغيير المعلم';
+	@override String get demandeDuree => 'تغيير مدة الدروس';
+	@override String get demandeMinimum => 'تغيير الحد الأدنى للمدة المدفوعة';
+	@override String demandeSansEnseignant({required Object prenom}) => 'لا يوجد معلم لـ${prenom} بعد، فلا شيء يمكن تغييره.';
+	@override String demandeTitreReaffectation({required Object dePrenom}) => 'تغيير معلم ${dePrenom}';
+	@override String demandeTitreDuree({required Object dePrenom}) => 'مدة دروس ${dePrenom}';
+	@override String demandeTitreMinimum({required Object prenom}) => 'الحد الأدنى للمدة المدفوعة لـ${prenom}';
+	@override String demandeActuelle({required Object minutes}) => 'حاليًا: ${minutes} دقيقة';
+	@override String demandeMinutes({required Object minutes}) => '${minutes} دقيقة';
+	@override String get demandeMotif => 'ما سبب هذا التغيير؟';
+	@override String get demandeMotifRequis => 'السبب مطلوب: على أساسه يُتَّخذ القرار.';
+	@override String get demandeManqueValeur => 'المدة المطلوبة ناقصة: اخترها من القائمة، أو اضغط «آخر» واكتبها.';
+	@override String get demandeEnvoyer => 'إرسال الطلب';
+	@override String get demandeEnvoyee => 'أُرسل الطلب. ستبتّ فيه الإدارة.';
+	@override String get aucunEnfant => 'لا يوجد طفل في الأسرة';
+	@override String get aucunEnfantDetail => 'أضف طفلًا لتتمكن من ضبط طريقة عرضه وكاميرته.';
+	@override String erreur({required Object message}) => 'لم يكتمل الحفظ: ${message}';
+}
+
+// Path: motifs.reglageEnseignant
+class _Traductions$motifs$reglageEnseignant$ar extends Traductions$motifs$reglageEnseignant$fr {
+	_Traductions$motifs$reglageEnseignant$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get horaire => 'التوقيت لم يعد مناسبًا';
+	@override String get niveau => 'المستوى لم يعد مناسبًا';
+	@override String get fuseau => 'تغيّر المنطقة الزمنية';
+	@override String get fratrie => 'جمع أطفال الأسرة معًا';
+}
+
+// Path: motifs.reglageDuree
+class _Traductions$motifs$reglageDuree$ar extends Traductions$motifs$reglageDuree$fr {
+	_Traductions$motifs$reglageDuree$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get tropLongue => 'المدة طويلة بالنسبة للسن';
+	@override String get plusDeTemps => 'الحاجة إلى وقت أطول';
+	@override String get pause => 'الحاجة إلى استراحة أثناء الدرس';
+	@override String get horaire => 'قيود توقيت الأسرة';
+}
+
+// Path: motifs.reglageMinimum
+class _Traductions$motifs$reglageMinimum$ar extends Traductions$motifs$reglageMinimum$fr {
+	_Traductions$motifs$reglageMinimum$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get ecourtees => 'الحصص تُختصر كثيرًا';
+	@override String get reseau => 'انقطاعات متكررة في الشبكة';
+	@override String get duree => 'تغيّرت مدة الدروس';
+	@override String get horaire => 'قيود توقيت الأسرة';
 }
 
 // Path: nav.eleve
@@ -5053,6 +5165,58 @@ extension on TraductionsAr {
 			'tuteur.accueil.etatCourt.aucune' => 'لا توجد حصة',
 			'tuteur.accueil.etatCourt.illisible' => 'غير متاح',
 			'tuteur.accueil.motifAnnuleeTard' => 'أُلغيت الحصة قبل موعدها بقليل',
+			'tuteur.reglages.titre' => 'إعدادات كل طفل',
+			'tuteur.reglages.intro' => 'تُطبَّق هذه الإعدادات ابتداءً من الحصة التالية، ولا تُطبَّق أبدًا أثناء الدرس.',
+			'tuteur.reglages.photo' => 'الصورة',
+			'tuteur.reglages.photoAucune' => ({required Object prenom}) => 'لم تُضَف صورة ${prenom} بعد. لن يراها إلا أفراد الأسرة.',
+			'tuteur.reglages.photoPresente' => ({required Object dePrenom}) => 'لا يرى صورة ${dePrenom} إلا أفراد الأسرة، فلا يراها المعلم ولا باقي التلاميذ.',
+			'tuteur.reglages.photoAjouter' => 'إضافة صورة',
+			'tuteur.reglages.photoChanger' => 'تغيير الصورة',
+			'tuteur.reglages.photoTropLourde' => ({required Object taille}) => 'حجم هذه الصورة يتجاوز ${taille} ميغابايت. أعد حفظها بجودة أقل.',
+			'tuteur.reglages.camera' => 'الكاميرا',
+			'tuteur.reglages.cameraAutorisee' => ({required Object prenom}) => 'يمكن لـ${prenom} تشغيل الكاميرا أثناء الدرس.',
+			'tuteur.reglages.cameraInterdite' => ({required Object prenom}) => 'لن يظهر زر الكاميرا لـ${prenom}.',
+			'tuteur.reglages.cameraAutoriser' => ({required Object dePrenom}) => 'السماح بكاميرا ${dePrenom}',
+			'tuteur.reglages.cameraRetirer' => ({required Object dePrenom}) => 'سحب إذن الكاميرا من ${dePrenom}',
+			'tuteur.reglages.mode' => 'طريقة العرض',
+			'tuteur.reglages.modeEnfant' => ({required Object prenom}) => 'عرض كبير دون قراءة: يتعرّف ${prenom} على الصور ويستمع.',
+			'tuteur.reglages.modeStandard' => ({required Object prenom}) => 'العرض المعتاد: يقرأ ${prenom} شاشته بنفسه.',
+			'tuteur.reglages.modePasserEnfant' => ({required Object prenom}) => 'تفعيل العرض الكبير لـ${prenom}',
+			'tuteur.reglages.modePasserStandard' => ({required Object prenom}) => 'تفعيل العرض المعتاد لـ${prenom}',
+			'tuteur.reglages.demandes' => 'طلب تغيير',
+			'tuteur.reglages.demandeReaffectation' => 'تغيير المعلم',
+			'tuteur.reglages.demandeDuree' => 'تغيير مدة الدروس',
+			'tuteur.reglages.demandeMinimum' => 'تغيير الحد الأدنى للمدة المدفوعة',
+			'tuteur.reglages.demandeSansEnseignant' => ({required Object prenom}) => 'لا يوجد معلم لـ${prenom} بعد، فلا شيء يمكن تغييره.',
+			'tuteur.reglages.demandeTitreReaffectation' => ({required Object dePrenom}) => 'تغيير معلم ${dePrenom}',
+			'tuteur.reglages.demandeTitreDuree' => ({required Object dePrenom}) => 'مدة دروس ${dePrenom}',
+			'tuteur.reglages.demandeTitreMinimum' => ({required Object prenom}) => 'الحد الأدنى للمدة المدفوعة لـ${prenom}',
+			'tuteur.reglages.demandeActuelle' => ({required Object minutes}) => 'حاليًا: ${minutes} دقيقة',
+			'tuteur.reglages.demandeMinutes' => ({required Object minutes}) => '${minutes} دقيقة',
+			'tuteur.reglages.demandeMotif' => 'ما سبب هذا التغيير؟',
+			'tuteur.reglages.demandeMotifRequis' => 'السبب مطلوب: على أساسه يُتَّخذ القرار.',
+			'tuteur.reglages.demandeManqueValeur' => 'المدة المطلوبة ناقصة: اخترها من القائمة، أو اضغط «آخر» واكتبها.',
+			'tuteur.reglages.demandeEnvoyer' => 'إرسال الطلب',
+			'tuteur.reglages.demandeEnvoyee' => 'أُرسل الطلب. ستبتّ فيه الإدارة.',
+			'tuteur.reglages.aucunEnfant' => 'لا يوجد طفل في الأسرة',
+			'tuteur.reglages.aucunEnfantDetail' => 'أضف طفلًا لتتمكن من ضبط طريقة عرضه وكاميرته.',
+			'tuteur.reglages.erreur' => ({required Object message}) => 'لم يكتمل الحفظ: ${message}',
+			'motifs.reglageEnseignant.horaire' => 'التوقيت لم يعد مناسبًا',
+			'motifs.reglageEnseignant.niveau' => 'المستوى لم يعد مناسبًا',
+			'motifs.reglageEnseignant.fuseau' => 'تغيّر المنطقة الزمنية',
+			'motifs.reglageEnseignant.fratrie' => 'جمع أطفال الأسرة معًا',
+			'motifs.reglageDuree.tropLongue' => 'المدة طويلة بالنسبة للسن',
+			'motifs.reglageDuree.plusDeTemps' => 'الحاجة إلى وقت أطول',
+			'motifs.reglageDuree.pause' => 'الحاجة إلى استراحة أثناء الدرس',
+			'motifs.reglageDuree.horaire' => 'قيود توقيت الأسرة',
+			'motifs.reglageMinimum.ecourtees' => 'الحصص تُختصر كثيرًا',
+			'motifs.reglageMinimum.reseau' => 'انقطاعات متكررة في الشبكة',
+			'motifs.reglageMinimum.duree' => 'تغيّرت مدة الدروس',
+			'motifs.reglageMinimum.horaire' => 'قيود توقيت الأسرة',
+			'reglagesEnfant.titre' => 'إعدادات كل ملف تلميذ',
+			'reglagesEnfant.intro' => 'تُضبط صورة كل تلميذ وكاميرته وواجهته في بطاقته، من صفحة الأسرة. أما الطلبات الموجهة إلى الإدارة فتبقى هنا.',
+			'reglagesEnfant.renvoi' => 'الصورة والكاميرا والواجهة',
+			'reglagesEnfant.renvoiLegende' => ({required Object dePrenom}) => 'في بطاقة ${dePrenom}',
 			'nav.eleve.accueil' => 'الرئيسية',
 			'nav.eleve.maClasse' => 'فصلي',
 			'nav.eleve.coran' => 'القرآن',
@@ -5094,6 +5258,8 @@ extension on TraductionsAr {
 			'nav.admin.rechercheIndication' => 'البحث عن شاشة',
 			'nav.admin.notificationsTitre' => 'الإشعارات',
 			'nav.admin.menu' => 'القائمة',
+			_ => null,
+		} ?? switch (path) {
 			'nav.compte' => 'حسابي',
 			'nav.principale' => 'التنقل الرئيسي',
 			'nav.motSymbole' => 'Rewayah',
@@ -5146,8 +5312,6 @@ extension on TraductionsAr {
 			'tc.groupe.dst.j30' => 'تغيير التوقيت بعد شهر',
 			'tc.groupe.dst.j7' => 'تغيير التوقيت الأسبوع القادم',
 			'tc.groupe.dst.j1' => 'تغيير التوقيت غدًا',
-			_ => null,
-		} ?? switch (path) {
 			'tc.groupe.dst.detail' => ({required Object avant, required Object apres}) => 'سينتقل درسك من ${avant} إلى ${apres}.',
 			'tc.groupe.session.conseilAppareil' => 'يُنصح بجهاز لوحي أو حاسوب للدرس. يبقى الهاتف مدعومًا.',
 			'tc.groupe.espace.retour' => 'فصولي',
@@ -5608,6 +5772,8 @@ extension on TraductionsAr {
 			'com.communaute.demo.f.affilieTexte' => ({required Object lien}) => 'أستخدم هذا المشغّل لإعادة الاستماع إلى السور. سعره مخفَّض هذا الأسبوع عبر رابطي: ${lien}',
 			'com.communaute.demo.f.venteTitre' => 'أبيع بطاقات الحفظ الخاصة بي',
 			'com.communaute.demo.f.venteTexte' => 'مجموعة من 30 بطاقة مغلَّفة، بـ 25 يورو، تُرسل بالبريد. راسلوني للطلب.',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.demo.f.publiciteTitre' => 'تطبيق للمراجعة',
 			'com.communaute.demo.f.publiciteTexte' => ({required Object lienOffre, required Object lienInterne, required Object lienRessource}) => 'أنصح بتطبيق المراجعة هذا، مع الرمز PROF20 للاشتراك: ${lienOffre}. أما النص، فيكفي مورد المكتبة (${lienInterne}) و${lienRessource}.',
 			'com.communaute.demo.f.reponseAffilie' => ({required Object lien}) => 'للمراجعة، أنصح بهذا المشغّل، بسعر مخفَّض عبر رابطي: ${lien}',
@@ -5660,8 +5826,6 @@ extension on TraductionsAr {
 			'com.studio.aujourdhui.acces.classes' => 'الفصول',
 			'com.studio.aujourdhui.acces.classesDetail' => 'الفصول ومواعيدها ومعلّموها',
 			'com.studio.aujourdhui.acces.demandes' => 'طلبات بانتظار القرار',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.aujourdhui.acces.demandesDetail' => 'طلبات التغيير المنتظرة',
 			'com.studio.brouillons.titre' => 'المسودات',
 			'com.studio.brouillons.detail' => 'الرسائل التي بدأتها في قناة ولم تُرسل بعد. تبقى على هذا الجهاز طوال الجلسة، دون مزامنة.',
@@ -6122,6 +6286,8 @@ extension on TraductionsAr {
 			'comptable.statuts.capacite.nonPrisEnCharge' => 'غير مدعوم',
 			'comptable.statuts.capacite.temporairementIndisponible' => 'غير متاح مؤقتًا',
 			'comptable.statuts.capacite.verificationRequise' => 'يلزم التحقق',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.capacite.soldePrestataireInsuffisant' => 'رصيد مزوّد الدفع غير كافٍ',
 			'comptable.statuts.reserve.atteint' => 'تحقق الهدف',
 			'comptable.statuts.reserve.sousObjectif' => 'دون الهدف',
@@ -6174,8 +6340,6 @@ extension on TraductionsAr {
 			'comptable.aujourdhui.alertesVide' => 'لا توجد تنبيهات حاليًا.',
 			'comptable.aujourdhui.alertesResume' => ({required Object n}) => 'تنبيهات للمراقبة: ${n}',
 			'comptable.aujourdhui.paiementsAEffectuer' => 'مدفوعات للتنفيذ',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.aujourdhui.paiementsAEffectuerDetail' => 'تُراجَع كل دفعة في قائمتها قبل دفعها.',
 			'comptable.aujourdhui.paiementsVide' => 'لا توجد مدفوعات للتنفيذ.',
 			'comptable.aujourdhui.echeancesVide' => 'لا توجد مواعيد استحقاق قريبة.',
@@ -6636,6 +6800,8 @@ extension on TraductionsAr {
 			'comptable.contractuels.colonneEcheance' => 'الاستحقاق',
 			'comptable.contractuels.colonneStatut' => 'الحالة',
 			'comptable.contractuels.typeRecurrente' => 'متكرر',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.typePonctuelle' => 'لمرة واحدة',
 			'comptable.contractuels.echeanceLe' => ({required Object date}) => 'الاستحقاق: ${date}',
 			'comptable.contractuels.payer' => 'دفع',
@@ -6688,8 +6854,6 @@ extension on TraductionsAr {
 			'comptable.contractuels.champObjet' => 'موضوع الالتزام',
 			'comptable.contractuels.aideObjet' => 'مثلًا: الفاتورة رقم 024',
 			'comptable.contractuels.champRefJustificatif' => 'مرجع المستند المؤيِّد (اختياري)',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.champMontantSaisi' => 'المبلغ',
 			'comptable.contractuels.aideMontant' => 'يُدخل مرة واحدة: لا يُعدَّل بعد الاعتماد.',
 			'comptable.contractuels.creer' => 'إنشاء الالتزام',

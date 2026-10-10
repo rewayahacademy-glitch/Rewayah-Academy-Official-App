@@ -160,6 +160,9 @@ void balayer(
         final List<String> fautes = await defautsEcranDefile(
           tester,
           exceptions: exceptions[ecran.nom] ?? const <String>{},
+          ligneVisuelleRtl:
+              c.langue != AppLocale.ar ||
+              ecransTraduitsEnArabe.contains(ecran.nom),
         );
         expect(fautes, isEmpty, reason: '${ecran.nom} ${nomConfig(c)}');
       });

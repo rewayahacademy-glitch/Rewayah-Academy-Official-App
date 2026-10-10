@@ -11,6 +11,9 @@
 //     un identifiant technique (traits, insecables ou non, soulignes, meme
 //     avec une espace sans chasse) est un seul mot ;
 //   * ponctuation seule : « ? ! : ; » ou un guillemet seul a la ligne ;
+//     et, dans un paragraphe RTL sans arabe (repli francais), un signe
+//     final dont la boite n'est pas collee a son mot sur la ligne VISUELLE
+//     (« ? changement », « .trancher ») ;
 //   * rogne : un texte sur une ligne plus large que sa boite, ou un texte
 //     coupe par le bord d'un ancetre qui le decoupe (ou de l'ecran), hors
 //     defilement horizontal ;
@@ -309,9 +312,14 @@ List<String> exceptionsDeRendu(WidgetTester tester) {
 ///
 /// [exceptions] : des textes entiers exclus, chacun pour une raison ecrite
 /// par l'appelant.
+///
+/// [ligneVisuelleRtl] : la ponctuation d'un texte latin dans un paragraphe
+/// RTL est lue sur la ligne VISUELLE (defaut) ; faux seulement pour un ecran
+/// dont l'arabe est connu incomplet (`ecransTraduitsEnArabe`).
 List<String> defautsDeTexte(
   WidgetTester tester, {
   Set<String> exceptions = const <String>{},
+  bool ligneVisuelleRtl = true,
 }) {
   final Set<Element> visibles = textesVisibles().evaluate().where((Element e) {
     final String texte = (e.renderObject! as RenderParagraph).text
@@ -324,7 +332,7 @@ List<String> defautsDeTexte(
         .where((String _) => !exceptions.contains(debordementConnu)),
     ...motsCoupes(tester, mesures, traitDUnionPermis: true),
     ...identifiantsCoupes(tester, mesures),
-    ...ponctuationsIsolees(tester, mesures),
+    ...ponctuationsIsolees(tester, mesures, ligneVisuelleRtl: ligneVisuelleRtl),
     ...textesRognes(tester, mesures),
     ...rangeesSansFondu(tester),
   ];
@@ -341,9 +349,14 @@ Future<List<String>> defautsEcranDefile(
   WidgetTester tester, {
   Set<String> exceptions = const <String>{},
   int pagesMax = 200,
+  bool ligneVisuelleRtl = true,
 }) async {
   final Set<String> fautes = <String>{
-    ...defautsDeTexte(tester, exceptions: exceptions),
+    ...defautsDeTexte(
+      tester,
+      exceptions: exceptions,
+      ligneVisuelleRtl: ligneVisuelleRtl,
+    ),
   };
   final List<ScrollableState> verticaux = <ScrollableState>[
     for (final Element e in find.byType(Scrollable).evaluate())
@@ -373,7 +386,13 @@ Future<List<String>> defautsEcranDefile(
       );
       await tester.pump();
       pages++;
-      fautes.addAll(defautsDeTexte(tester, exceptions: exceptions));
+      fautes.addAll(
+        defautsDeTexte(
+          tester,
+          exceptions: exceptions,
+          ligneVisuelleRtl: ligneVisuelleRtl,
+        ),
+      );
     }
     if (s.mounted) {
       pos.jumpTo(pos.minScrollExtent);

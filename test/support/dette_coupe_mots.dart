@@ -83,3 +83,14 @@ const Map<String, Set<String>> detteCoupeMots = <String, Set<String>>{
     debordementConnu,
   },
 };
+
+/// Relecture de COUPE-MOTS-FOND-1 (10/10) : les ecrans du balayage dont
+/// TOUTES les cles visibles sont traduites en arabe. Sur ceux-la seulement,
+/// la garde lit la ponctuation d'un texte latin sur la ligne VISUELLE d'un
+/// paragraphe RTL (`ponctuationsIsolees`, « ? changement », « .trancher ») :
+/// ailleurs, l'arabe ne traduit qu'une petite partie des cles et le repli
+/// francais, attendu, y place chaque point final en tete de ligne. Un ecran
+/// entre dans cette liste quand sa traduction arabe est complete ; les
+/// reglages de l'enfant sont mesures par leur propre test
+/// (`coupe_mots_reglages_enfant_test.dart`), toujours avec cette lecture.
+const Set<String> ecransTraduitsEnArabe = <String>{};

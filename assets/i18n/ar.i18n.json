@@ -539,7 +539,71 @@
         "illisible": "غير متاح"
       },
       "motifAnnuleeTard": "أُلغيت الحصة قبل موعدها بقليل"
+    },
+    "reglages": {
+      "titre": "إعدادات كل طفل",
+      "intro": "تُطبَّق هذه الإعدادات ابتداءً من الحصة التالية، ولا تُطبَّق أبدًا أثناء الدرس.",
+      "photo": "الصورة",
+      "photoAucune": "لم تُضَف صورة {prenom} بعد. لن يراها إلا أفراد الأسرة.",
+      "photoPresente": "لا يرى صورة {dePrenom} إلا أفراد الأسرة، فلا يراها المعلم ولا باقي التلاميذ.",
+      "photoAjouter": "إضافة صورة",
+      "photoChanger": "تغيير الصورة",
+      "photoTropLourde": "حجم هذه الصورة يتجاوز {taille} ميغابايت. أعد حفظها بجودة أقل.",
+      "camera": "الكاميرا",
+      "cameraAutorisee": "يمكن لـ{prenom} تشغيل الكاميرا أثناء الدرس.",
+      "cameraInterdite": "لن يظهر زر الكاميرا لـ{prenom}.",
+      "cameraAutoriser": "السماح بكاميرا {dePrenom}",
+      "cameraRetirer": "سحب إذن الكاميرا من {dePrenom}",
+      "mode": "طريقة العرض",
+      "modeEnfant": "عرض كبير دون قراءة: يتعرّف {prenom} على الصور ويستمع.",
+      "modeStandard": "العرض المعتاد: يقرأ {prenom} شاشته بنفسه.",
+      "modePasserEnfant": "تفعيل العرض الكبير لـ{prenom}",
+      "modePasserStandard": "تفعيل العرض المعتاد لـ{prenom}",
+      "demandes": "طلب تغيير",
+      "demandeReaffectation": "تغيير المعلم",
+      "demandeDuree": "تغيير مدة الدروس",
+      "demandeMinimum": "تغيير الحد الأدنى للمدة المدفوعة",
+      "demandeSansEnseignant": "لا يوجد معلم لـ{prenom} بعد، فلا شيء يمكن تغييره.",
+      "demandeTitreReaffectation": "تغيير معلم {dePrenom}",
+      "demandeTitreDuree": "مدة دروس {dePrenom}",
+      "demandeTitreMinimum": "الحد الأدنى للمدة المدفوعة لـ{prenom}",
+      "demandeActuelle": "حاليًا: {minutes} دقيقة",
+      "demandeMinutes": "{minutes} دقيقة",
+      "demandeMotif": "ما سبب هذا التغيير؟",
+      "demandeMotifRequis": "السبب مطلوب: على أساسه يُتَّخذ القرار.",
+      "demandeManqueValeur": "المدة المطلوبة ناقصة: اخترها من القائمة، أو اضغط «آخر» واكتبها.",
+      "demandeEnvoyer": "إرسال الطلب",
+      "demandeEnvoyee": "أُرسل الطلب. ستبتّ فيه الإدارة.",
+      "aucunEnfant": "لا يوجد طفل في الأسرة",
+      "aucunEnfantDetail": "أضف طفلًا لتتمكن من ضبط طريقة عرضه وكاميرته.",
+      "erreur": "لم يكتمل الحفظ: {message}"
     }
+  },
+  "motifs": {
+    "reglageEnseignant": {
+      "horaire": "التوقيت لم يعد مناسبًا",
+      "niveau": "المستوى لم يعد مناسبًا",
+      "fuseau": "تغيّر المنطقة الزمنية",
+      "fratrie": "جمع أطفال الأسرة معًا"
+    },
+    "reglageDuree": {
+      "tropLongue": "المدة طويلة بالنسبة للسن",
+      "plusDeTemps": "الحاجة إلى وقت أطول",
+      "pause": "الحاجة إلى استراحة أثناء الدرس",
+      "horaire": "قيود توقيت الأسرة"
+    },
+    "reglageMinimum": {
+      "ecourtees": "الحصص تُختصر كثيرًا",
+      "reseau": "انقطاعات متكررة في الشبكة",
+      "duree": "تغيّرت مدة الدروس",
+      "horaire": "قيود توقيت الأسرة"
+    }
+  },
+  "reglagesEnfant": {
+    "titre": "إعدادات كل ملف تلميذ",
+    "intro": "تُضبط صورة كل تلميذ وكاميرته وواجهته في بطاقته، من صفحة الأسرة. أما الطلبات الموجهة إلى الإدارة فتبقى هنا.",
+    "renvoi": "الصورة والكاميرا والواجهة",
+    "renvoiLegende": "في بطاقة {dePrenom}"
   },
   "nav": {
     "eleve": {

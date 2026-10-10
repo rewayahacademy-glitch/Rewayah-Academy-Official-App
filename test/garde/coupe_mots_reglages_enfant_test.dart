@@ -8,6 +8,15 @@
 // insecable avant « ? » dans `fr.i18n.json`, mais le JSON ne prouve pas le
 // rendu : c'est le paragraphe dessine qui est mesure (ponctuation seule a
 // la ligne, mot coupe, texte rogne ou tronque).
+//
+// Relecture de COUPE-MOTS-FOND-1 (10/10) : en arabe, les cles
+// `tuteur.reglages` et `reglagesEnfant` manquaient ; le repli francais,
+// rendu dans un paragraphe RTL, affichait « ? changement » et « .trancher ».
+// La garde lit desormais la ligne VISUELLE (`ponctuationsIsolees`) : avec
+// l'ancien `ar.i18n.json`, les configurations arabes echouent.
+
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -21,6 +30,7 @@ import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/features/reglages_enfant/reglages_enfant_page.dart';
 
 import '../capture/outil_capture.dart';
+import '../support/aucun_mot_coupe.dart';
 import '../support/balayage_ecrans.dart';
 import '../support/garde_coupe_mots_rendu.dart';
 import '../support/harnais.dart';
@@ -61,7 +71,106 @@ Future<void> ouvrirDemande(WidgetTester tester, String libelle) async {
   await stabiliser(tester);
 }
 
+/// Un paragraphe [texte] rendu dans le sens [sens], a la largeur [largeur].
+Widget _paragraphe(String texte, TextDirection sens, double largeur) =>
+    Directionality(
+      textDirection: sens,
+      child: Align(
+        alignment: AlignmentDirectional.topStart,
+        child: SizedBox(
+          width: largeur,
+          child: Text(texte, style: const TextStyle(fontSize: 20)),
+        ),
+      ),
+    );
+
+/// Les feuilles de [arbre], en chemins pointes.
+Set<String> _feuilles(Object? arbre, [String chemin = '']) => <String>{
+  if (arbre is Map<String, dynamic>)
+    for (final MapEntry<String, dynamic> e in arbre.entries)
+      ..._feuilles(e.value, chemin.isEmpty ? e.key : '$chemin.${e.key}')
+  else
+    chemin,
+};
+
 void main() {
+  group('la garde lit la ligne visuelle d\'un paragraphe RTL', () {
+    const String question = 'Pourquoi ce changement\u00A0?';
+    const String phrase = "C'est lui qui permet de trancher.";
+
+    testWidgets('texte latin en RTL : « ? » et « . » loin de leur mot', (
+      WidgetTester tester,
+    ) async {
+      for (final String texte in <String>[question, phrase]) {
+        await tester.pumpWidget(_paragraphe(texte, TextDirection.rtl, 600));
+        expect(
+          ponctuationsIsolees(tester, find.byType(Text)),
+          isNotEmpty,
+          reason: texte,
+        );
+        // Passe a la ligne : « ? changement », « .trancher ».
+        await tester.pumpWidget(_paragraphe(texte, TextDirection.rtl, 150));
+        expect(
+          ponctuationsIsolees(tester, find.byType(Text)),
+          isNotEmpty,
+          reason: texte,
+        );
+      }
+    });
+
+    testWidgets('le meme texte en LTR, et l\'arabe en RTL : rien', (
+      WidgetTester tester,
+    ) async {
+      for (final double largeur in <double>[600, 150]) {
+        for (final String texte in <String>[question, phrase]) {
+          await tester.pumpWidget(
+            _paragraphe(texte, TextDirection.ltr, largeur),
+          );
+          expect(ponctuationsIsolees(tester, find.byType(Text)), isEmpty);
+        }
+        await tester.pumpWidget(
+          _paragraphe('ما سبب هذا التغيير؟', TextDirection.rtl, largeur),
+        );
+        expect(ponctuationsIsolees(tester, find.byType(Text)), isEmpty);
+        await tester.pumpWidget(
+          _paragraphe(
+            'السبب مطلوب: على أساسه يُتَّخذ القرار.',
+            TextDirection.rtl,
+            largeur,
+          ),
+        );
+        expect(ponctuationsIsolees(tester, find.byType(Text)), isEmpty);
+      }
+    });
+  });
+
+  test("l'arabe traduit toutes les cles de l'ecran", () {
+    Map<String, dynamic> lire(String langue) =>
+        jsonDecode(File('assets/i18n/$langue.i18n.json').readAsStringSync())
+            as Map<String, dynamic>;
+    final Map<String, dynamic> fr = lire('fr');
+    final Map<String, dynamic> ar = lire('ar');
+    for (final (Object? f, Object? a) in <(Object?, Object?)>[
+      (
+        (fr['tuteur'] as Map<String, dynamic>)['reglages'],
+        (ar['tuteur'] as Map<String, dynamic>)['reglages'],
+      ),
+      (fr['reglagesEnfant'], ar['reglagesEnfant']),
+      for (final String sorte in <String>[
+        'reglageEnseignant',
+        'reglageDuree',
+        'reglageMinimum',
+      ])
+        (
+          (fr['motifs'] as Map<String, dynamic>)[sorte],
+          (ar['motifs'] as Map<String, dynamic>?)?[sorte],
+        ),
+    ]) {
+      expect(a, isNotNull);
+      expect(_feuilles(f).difference(_feuilles(a)), isEmpty);
+    }
+  });
+
   setUpAll(() async {
     await chargerPolicesDuDepot();
     await LocaleSettings.setLocale(AppLocale.ar);

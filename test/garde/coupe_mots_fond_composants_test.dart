@@ -236,7 +236,12 @@ void main() {
             isNotEmpty,
           );
           expect(identifiantsCoupes(tester, textesVisibles()), isEmpty);
-          expect(defautsDeTexte(tester), isEmpty);
+          // Comptes n'est pas traduit en arabe : la ligne visuelle RTL n'est
+          // pas lue (repli francais, `ecransTraduitsEnArabe`).
+          expect(
+            defautsDeTexte(tester, ligneVisuelleRtl: langue != AppLocale.ar),
+            isEmpty,
+          );
         });
       }
     }
