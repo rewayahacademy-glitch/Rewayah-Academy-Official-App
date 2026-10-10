@@ -139,6 +139,12 @@ begin
     raise exception 'B-06: direct KYC table read policy remains';
   end if;
 
+  if pg_catalog.has_table_privilege('anon', 'public.kyc_documents', 'SELECT')
+     or pg_catalog.has_table_privilege('authenticated', 'public.kyc_documents', 'SELECT')
+     or pg_catalog.has_table_privilege('agent_ro', 'public.kyc_documents', 'SELECT') then
+    raise exception 'B-06: anon, authenticated, or agent_ro retains direct KYC SELECT privilege';
+  end if;
+
   if pg_catalog.has_function_privilege('anon', 'public.read_kyc_documents()', 'execute')
      or pg_catalog.has_function_privilege('agent_ro', 'public.read_kyc_documents()', 'execute')
      or pg_catalog.has_function_privilege('anon', 'public.autoriser_lecture_piece_identite(uuid)', 'execute')
