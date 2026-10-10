@@ -272,10 +272,17 @@ BEGIN
   END IF;
   IF public.cle_horaire_utc(
        ARRAY[2,4,6]::smallint[], ARRAY[18,18,18]::smallint[], 'Europe/Paris'
-     ) IS NOT DISTINCT FROM public.cle_horaire_utc(
+     ) IS DISTINCT FROM public.cle_horaire_utc(
        ARRAY[2,4,6]::smallint[], ARRAY[18,18,18]::smallint[], 'Europe/Brussels'
      ) THEN
-    RAISE EXCEPTION 'M-a: deux fuseaux IANA différents sont fusionnés';
+    RAISE EXCEPTION 'M-a: les offsets saisonniers compatibles ne sont pas regroupés';
+  END IF;
+  IF public.cle_horaire_utc(
+       ARRAY[2,4,6]::smallint[], ARRAY[18,18,18]::smallint[], 'Europe/Paris'
+     ) IS NOT DISTINCT FROM public.cle_horaire_utc(
+       ARRAY[2,4,6]::smallint[], ARRAY[18,18,18]::smallint[], 'Asia/Tokyo'
+     ) THEN
+    RAISE EXCEPTION 'M-a: des offsets saisonniers incompatibles sont regroupés';
   END IF;
   IF public.instant_creneau(
        extract(isodow FROM (pg_catalog.now() AT TIME ZONE 'UTC'))::int,
