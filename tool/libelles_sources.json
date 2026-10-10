@@ -218,5 +218,22 @@
   "salle.seance.surface.supportIndisponible": "revue TB-R 10/10, M1 : texte exact du plan V2 §12 (« Ressource indisponible », colonne Eleve)",
   "salle.seance.surface.supportIndisponibleDetail": "revue TB-R 10/10, M1 et K-59 : ce qui manque, la cause probable, quoi faire (plan V2 §12 « Reessayer sans quitter la seance », « Audio maintenu »), a valider par le directeur",
   "salle.seance.surface.reessayerSemantique": "revue TB-R 10/10, M1 : nom lu de « Reessayer » cote eleve (plan V2 §12, qui et quoi), a valider par le directeur",
-  "salle.seance.surface.supportIllustratif": "revue TB-R 10/10, TB_RAPPORT §d n. 13 : mention de la page de demonstration, traduite (plus de francais en arabe), a valider par le directeur"
+  "salle.seance.surface.supportIllustratif": "revue TB-R 10/10, TB_RAPPORT §d n. 13 : mention de la page de demonstration, traduite (plus de francais en arabe), a valider par le directeur",
+  "salle.seance.commandes.declencheur": "etape TB-4 (Supports et tableau, bouton Commandes), declare par TB-RC (revue TB-R 10/10, m24) : plan V2 §20 « Déclencheur pédagogique » : texte visible « Commandes »",
+  "salle.seance.commandes.declencheurSemantique": "etape TB-4 (Supports et tableau, bouton Commandes), declare par TB-RC (revue TB-R 10/10, m24) : plan V2 §20 « Déclencheur pédagogique » : sémantique exacte",
+  "salle.seance.commandes.titre": "etape TB-4 (Supports et tableau, bouton Commandes), declare par TB-RC (revue TB-R 10/10, m24) : plan V2 §4.2 et §20 « Déclencheur pédagogique » : titre du panneau ouvert par « Commandes »",
+  "salle.seance.commandes.reduire": "etape TB-4 (Supports et tableau, bouton Commandes), declare par TB-RC (revue TB-R 10/10, m24) : plan V2 §20 « Fermeture du panneau » : texte visible « Réduire »",
+  "salle.seance.commandes.reduireSemantique": "etape TB-4 (Supports et tableau, bouton Commandes), declare par TB-RC (revue TB-R 10/10, m24) : plan V2 §20 « Fermeture du panneau » : sémantique exacte « Réduire les commandes »",
+  "salle.seance.commandes.ongletSupport": "etape TB-4 (Supports et tableau, bouton Commandes), declare par TB-RC (revue TB-R 10/10, m24) : decision TB-Q1 (a) deleguee le 05/10 (fiche TB-4), confirmee par TB-R le 09/10 : onglet « Support », Bibliotheque en tete",
+  "salle.seance.commandes.ongletOutils": "etape TB-4 (Supports et tableau, bouton Commandes), declare par TB-RC (revue TB-R 10/10, m24) : decision TB-Q1 (a) deleguee le 05/10 (fiche TB-4), confirmee par TB-R le 09/10 : onglet « Outils », Pointeur en tete",
+  "salle.seance.commandes.bibliotheque": "etape TB-4 (Supports et tableau, bouton Commandes), declare par TB-RC (revue TB-R 10/10, m24) : plan V2 §20 « Catalogue » : « Bibliothèque »",
+  "salle.seance.commandes.affichageSupport": "etape TB-4 (Supports et tableau, bouton Commandes), declare par TB-RC (revue TB-R 10/10, m24) : plan V2 §4.2 (Support / Avec notes / Tableau) et §20 « Modes » : « Support »",
+  "salle.seance.commandes.affichageAvecNotes": "etape TB-4 (Supports et tableau, bouton Commandes), declare par TB-RC (revue TB-R 10/10, m24) : plan V2 §4.2 (Support / Avec notes / Tableau) et §20 « Modes » : « Avec notes »",
+  "salle.seance.commandes.affichageTableau": "etape TB-4 (Supports et tableau, bouton Commandes), declare par TB-RC (revue TB-R 10/10, m24) : plan V2 §4.2 (Support / Avec notes / Tableau) et §20 « Modes » : « Tableau »",
+  "salle.seance.commandes.lecture": "etape TB-4 (Supports et tableau, bouton Commandes), declare par TB-RC (revue TB-R 10/10, m24) : plan V2 §4.2, ligne « Ajuster à l'écran » : « Section Lecture »",
+  "salle.seance.commandes.ajuster": "etape TB-4 (Supports et tableau, bouton Commandes), declare par TB-RC (revue TB-R 10/10, m24) : plan V2 §4.2 : « Ajuster à l'écran », section Lecture, locale",
+  "salle.seance.commandes.affichage": "etape TB-4 (Supports et tableau, bouton Commandes), declare par TB-RC (revue TB-R 10/10, m24) : plan V2 §4.2, ligne « Focus » : « Section Affichage »",
+  "salle.seance.commandes.focus": "etape TB-4 (Supports et tableau, bouton Commandes), declare par TB-RC (revue TB-R 10/10, m24) : plan V2 §4.2 et §20 « Focus » : texte visible « Focus »",
+  "salle.seance.commandes.focusSemantique": "etape TB-4 (Supports et tableau, bouton Commandes), declare par TB-RC (revue TB-R 10/10, m24) : plan V2 §20 « Focus » : sémantique « Agrandir le contenu et réduire les panneaux », precedee du mot visible « Focus » pour que le nom lu contienne le libelle vu (WCAG 2.5.3) ; ecart ecrit par TB-RC, a valider par le directeur",
+  "salle.seance.commandes.quitterFocus": "etape TB-4 (Supports et tableau, bouton Commandes), declare par TB-RC (revue TB-R 10/10, m24) : plan V2 §20 « Sortie focus » : « Quitter le focus »"
 }

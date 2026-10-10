@@ -165,6 +165,9 @@ class _SupportPartage extends StatefulWidget {
   /// Combien de fois la vue s'est abonnee (un remontage se compte ici).
   static int abonnements = 0;
 
+  /// Combien de vues du support sont montees en ce moment.
+  static int montees = 0;
+
   @override
   State<_SupportPartage> createState() => _SupportPartageEtat();
 }
@@ -177,6 +180,7 @@ class _SupportPartageEtat extends State<_SupportPartage> {
   void initState() {
     super.initState();
     _SupportPartage.abonnements++;
+    _SupportPartage.montees++;
     _abonnement = widget.port.suivre(_seance).listen((SharedContentState e) {
       if (mounted) setState(() => _etat = e);
     });
@@ -184,6 +188,7 @@ class _SupportPartageEtat extends State<_SupportPartage> {
 
   @override
   void dispose() {
+    _SupportPartage.montees--;
     unawaited(_abonnement?.cancel());
     super.dispose();
   }
@@ -595,8 +600,15 @@ void main() {
   // ---------------------------------------------------------------- R-12 --
   group('R-12 : coupure de l\'enseignant (ERR-01), aucune capacite '
       'enseignant chez l\'eleve', () {
-    test('service : l\'eleve n\'obtient aucun droit de pilotage ; son envoi '
-        'est refuse et l\'etat garde son emetteur', () async {
+    // Revue TB-R 10/10, m34 : la coupure joue un role. Sans elle, la
+    // publication de l'enseignant pendant la coupure parviendrait a l'eleve.
+    // Ce test est une BORNE d'ERR-01 (pas de nouveau maitre cote capacites,
+    // l'eleve garde le dernier etat recu), pas sa preuve entiere : « l'etat
+    // partage ne change pas d'emetteur » cote serveur reste a BR-1 (TB-BR-44).
+    test('service : l\'eleve n\'obtient aucun droit de pilotage, avant comme '
+        'apres la coupure (borne d\'ERR-01) ; rien de l\'enseignant coupe ne '
+        'lui parvient ; son envoi est refuse et l\'etat garde son '
+        'emetteur', () async {
       final _Flux flux = _Flux()..brancherCoupures();
       addTearDown(flux.liberer);
       await flux.chezLeProf.publier(_etat(revision: 0, page: 7));
@@ -606,20 +618,43 @@ void main() {
           .listen(recus.add);
       addTearDown(a.cancel);
       await pumpEventQueue();
+      expect(recus.map((SharedContentState e) => e.revision), <int>[0]);
+
+      // Avant la coupure : les droits signes de chacun.
+      final CapacitesPedagogiques eleveAvant = await flux.realtimeEleve
+          .capacites(_seance);
+      final CapacitesPedagogiques profAvant = await flux.realtimeProf.capacites(
+        _seance,
+      );
+      expect(eleveAvant.peutPiloterSupport, isFalse);
+      expect(profAvant.peutPiloterSupport, isTrue);
+
       // ERR-01 : l'enseignant est coupe.
       flux.profCoupe = true;
       flux.prof.poserEtat(EtatTransport.interrompu);
-      final CapacitesPedagogiques cap = await flux.realtimeEleve.capacites(
-        _seance,
-      );
-      expect(cap.peutPiloterSupport, isFalse);
-      expect(cap.peutAnnoter, isFalse);
-      expect(cap.peutEmettreNudge, isFalse);
-      // Contre-epreuve : l'enseignant, lui, garde ses droits signes.
+      await pumpEventQueue();
+
+      // La coupure est reelle : la page 8 que l'enseignant publie pendant
+      // la coupure ne parvient pas a l'eleve, qui garde la page 7.
+      await flux.chezLeProf.publier(_etat(revision: 1, page: 8));
+      await pumpEventQueue();
       expect(
-        (await flux.realtimeProf.capacites(_seance)).peutPiloterSupport,
-        isTrue,
+        recus.map((SharedContentState e) => e.contentPosition.page),
+        <int?>[7],
+        reason: 'rien de l\'enseignant coupe ne passe',
       );
+
+      // Aucun nouveau maitre : l'eleve a exactement les memes capacites
+      // qu'avant la coupure, aucune d'enseignant.
+      final CapacitesPedagogiques eleveApres = await flux.realtimeEleve
+          .capacites(_seance);
+      expect(eleveApres, eleveAvant);
+      expect(eleveApres.peutPiloterSupport, isFalse);
+      expect(eleveApres.peutAnnoter, isFalse);
+      expect(eleveApres.peutEmettreNudge, isFalse);
+      // Contre-epreuve : l'enseignant, lui, garde ses droits signes.
+      expect(await flux.realtimeProf.capacites(_seance), profAvant);
+
       // Un paquet de revision forge par l'eleve ne sort pas de son appareil.
       await expectLater(
         flux.realtimeEleve.emettre(
@@ -644,8 +679,8 @@ void main() {
       await pumpEventQueue();
       expect(recus, hasLength(1));
       expect(recus.single.updatedBy, _prof);
+      // Le seul ecrivain du durable reste l'enseignant.
       expect((await flux.backend.lire(_seance))!.updatedBy, _prof);
-      expect(flux.backend.ecritures, 1);
     });
 
     testWidgets('coquille /demo/salle : eleve et guidee en ERR-01, ni page, '
@@ -720,6 +755,8 @@ void main() {
   ) async {
     final _Flux flux = _Flux();
     addTearDown(flux.liberer);
+    _SupportPartage.abonnements = 0;
+    _SupportPartage.montees = 0;
     await tester.runAsync(
       () => flux.chezLeProf.publier(
         _etat(revision: 4, page: 9, mode: ModeAffichagePartage.verse),
@@ -736,13 +773,36 @@ void main() {
     const String attendu = 'res-1 p9 verse r4 $_prof';
     expect(_vu(tester), attendu);
     final int ecritures = flux.backend.ecritures;
-    void inchange(String etape) {
+    // Revue TB-R 10/10, n14 : le compteur de remontage est lu. Une seule vue
+    // du support est montee a chaque etape ; un remontage n'est admis que
+    // la ou il est mesure aujourd'hui (focus, sortie, rotation), et il relit
+    // l'etat partage sans reconnexion (assertions ci-dessous). Limite ecrite :
+    // la Classe Live remonte la vue du support a chaque changement de
+    // disposition (mesure : +2 au focus, +1 a la sortie, +1 par rotation) ;
+    // un vrai support rechargerait sa page. Le panneau, lui, ne remonte rien.
+    expect(_SupportPartage.abonnements, 1);
+    expect(_SupportPartage.montees, 1);
+    int abonnementsVus = _SupportPartage.abonnements;
+    void inchange(String etape, {bool remontageAdmis = false}) {
       expect(tester.takeException(), isNull, reason: etape);
       expect(banc.moteur.entrees, hasLength(1), reason: etape);
       expect(banc.moteur.departs, 0, reason: etape);
       expect(_vu(tester), attendu, reason: etape);
       expect(flux.backend.ecritures, ecritures, reason: etape);
       expect(flux.prof.emis, hasLength(1), reason: '$etape : rien publie');
+      expect(
+        _SupportPartage.montees,
+        1,
+        reason: '$etape : une seule vue du support montee',
+      );
+      if (!remontageAdmis) {
+        expect(
+          _SupportPartage.abonnements,
+          abonnementsVus,
+          reason: '$etape : la vue du support s\'est remontee',
+        );
+      }
+      abonnementsVus = _SupportPartage.abonnements;
     }
 
     // Focus, depuis les Commandes, puis sortie.
@@ -751,10 +811,10 @@ void main() {
     await tester.tap(find.byKey(CommandesPedagogiques.cleFocus));
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey<String>('tete-focus')), findsOneWidget);
-    inchange('focus');
+    inchange('focus', remontageAdmis: true);
     await tester.tap(find.byKey(const ValueKey<String>('bouton-agrandir')));
     await tester.pumpAndSettle();
-    inchange('sortie du focus');
+    inchange('sortie du focus', remontageAdmis: true);
     // Un panneau : les Participants replies puis les Commandes ouvertes.
     await tester.tap(find.byKey(PanneauSeance.cleReduireParticipants));
     await tester.pumpAndSettle();
@@ -776,7 +836,10 @@ void main() {
     ]) {
       tester.view.physicalSize = taille;
       await tester.pumpAndSettle();
-      inchange('rotation ${taille.width.toInt()}x${taille.height.toInt()}');
+      inchange(
+        'rotation ${taille.width.toInt()}x${taille.height.toInt()}',
+        remontageAdmis: true,
+      );
     }
     // Contre-epreuve : la vue n'est pas figee, une vraie revision la change
     // (et ne reconnecte toujours pas).

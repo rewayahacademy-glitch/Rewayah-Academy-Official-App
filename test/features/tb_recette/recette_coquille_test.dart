@@ -16,7 +16,14 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart' show RenderParagraph;
+import 'package:flutter/rendering.dart'
+    show
+        RenderClipOval,
+        RenderClipPath,
+        RenderClipRRect,
+        RenderClipRect,
+        RenderFittedBox,
+        RenderParagraph;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -47,6 +54,8 @@ import 'package:rewayah_academy/features/salle_seance/zone_support.dart';
 import 'package:rewayah_academy/features/tc_catalogue/surface_bibliotheque.dart';
 import 'package:rewayah_academy/features/tc_dock/couche_annotation.dart';
 
+import '../../capture/outil_capture.dart'
+    show chargerPolicesDuDepot, largeurSonde;
 import '../../router/support_routeur.dart';
 import '../../support/harnais.dart' show FausseSourceSession;
 
@@ -201,6 +210,104 @@ Finder _dans(Finder parent, String texte) =>
     find.descendant(of: parent, matching: find.text(texte));
 
 Finder _pageAvecTitre(String titre) => _dans(_page, titre);
+
+/// Le rectangle a l'ecran d'une boite, transformations comprises (zoom de la
+/// page, `FittedBox`).
+Rect _aLEcran(RenderBox boite) => MatrixUtils.transformRect(
+  boite.getTransformTo(null),
+  Offset.zero & boite.size,
+);
+
+/// Le plus petit corps de texte tenu pour lisible sur la page d'un support,
+/// en points logiques rendus : celui du texte courant de l'interface
+/// (`bodyMedium`, 14). Revue TB-R 10/10, m33.
+const double _corpsLisible = 14;
+
+/// R-18, « aucun signe coupe » et « signes lisibles », mesures sur le RENDU
+/// (revue TB-R 10/10, m33 : `didExceedMaxLines` sans `maxLines` et la
+/// relecture du texte ne pouvaient pas echouer).
+///
+/// - entier : la largeur posee du paragraphe couvre sa largeur intrinseque
+///   (aucun retour ni troncature) ; les signes a l'ecran, diacritiques
+///   compris, sont dans la page, dans la vue et dans chaque decoupe qui les
+///   entoure jusqu'a la racine ;
+/// - lisible : le corps rendu (taille du style x facteur de texte x echelle
+///   du `FittedBox` et du zoom) est au moins [_corpsLisible], et la famille
+///   qui le dessine est une police arabe du depot (polices chargees par
+///   `chargerPolicesDuDepot`).
+void _titreEntierEtLisible(WidgetTester tester, Finder texte, String titre) {
+  final RenderParagraph rendu = tester.renderObject(texte);
+  final double intrinseque = rendu.getMaxIntrinsicWidth(double.infinity);
+  expect(
+    rendu.size.width,
+    greaterThanOrEqualTo(intrinseque - 0.5),
+    reason: 'largeur posee ${rendu.size.width}, intrinseque $intrinseque',
+  );
+  // Les boites des signes, a l'ecran : diacritiques compris, elles peuvent
+  // depasser la hauteur de ligne du paragraphe (elles debordent dans la
+  // marge de la page) ; elles ne doivent sortir ni de la page ni d'une
+  // decoupe. En largeur, aucune ne sort du paragraphe (aucune troncature).
+  final Matrix4 versEcran = rendu.getTransformTo(null);
+  Rect? encre;
+  for (final TextBox b in rendu.getBoxesForSelection(
+    TextSelection(baseOffset: 0, extentOffset: titre.length),
+  )) {
+    expect(
+      b.left >= -0.5 && b.right <= rendu.size.width + 0.5,
+      isTrue,
+      reason: 'signe $b hors de la largeur du paragraphe ${rendu.size}',
+    );
+    final Rect r = MatrixUtils.transformRect(versEcran, b.toRect());
+    encre = encre?.expandToInclude(r) ?? r;
+  }
+  final Rect ecran = _aLEcran(rendu).expandToInclude(encre!);
+  final RenderObject laPage = tester.renderObject(_page);
+  bool dedans(Rect cadre) =>
+      cadre.inflate(0.5).contains(ecran.topLeft) &&
+      cadre.inflate(0.5).contains(ecran.bottomRight);
+  // Toutes les decoupes au-dessus du titre, jusqu'a la racine, et la page.
+  RenderObject? o = rendu.parent;
+  bool dansLaPage = false;
+  while (o != null) {
+    final bool decoupe =
+        o is RenderClipRect ||
+        o is RenderClipRRect ||
+        o is RenderClipOval ||
+        o is RenderClipPath ||
+        (o is RenderFittedBox && o.clipBehavior != Clip.none);
+    if (identical(o, laPage)) dansLaPage = true;
+    if (decoupe || identical(o, laPage)) {
+      final Rect cadre = _aLEcran(o as RenderBox);
+      expect(dedans(cadre), isTrue, reason: 'titre $ecran coupe par $o $cadre');
+    }
+    o = o.parent;
+  }
+  expect(dansLaPage, isTrue, reason: 'le titre doit etre dans la page');
+  final Size vue = tester.view.physicalSize / tester.view.devicePixelRatio;
+  expect(dedans(Offset.zero & vue), isTrue, reason: 'titre $ecran hors vue');
+  final double echelle = _aLEcran(rendu).width / rendu.size.width;
+  final TextStyle style = rendu.text.style!;
+  final double corps = rendu.textScaler.scale(style.fontSize!) * echelle;
+  expect(
+    corps,
+    greaterThanOrEqualTo(_corpsLisible),
+    reason: 'corps rendu $corps (echelle $echelle)',
+  );
+  final List<String> familles = <String>[
+    ?style.fontFamily,
+    ...?style.fontFamilyFallback,
+  ];
+  expect(
+    familles,
+    contains('NotoSansArabic'),
+    reason: 'familles du titre $familles',
+  );
+  expect(
+    largeurSonde('NotoSansArabic'),
+    lessThan(150),
+    reason: 'polices du depot non chargees : signes dessines en carres',
+  );
+}
 
 /// Le catalogue defile en slivers : descend jusqu'a la carte.
 Future<Finder> _versCarte(WidgetTester tester, String titre) async {
@@ -473,6 +580,9 @@ void main() {
   });
 
   group('R-18 : support arabe, interface arabe', () {
+    // Les vraies polices : « signes lisibles » se mesure sur les glyphes du
+    // depot, pas sur les carres de la police de test (revue TB-R, m33).
+    setUpAll(chargerPolicesDuDepot);
     setUp(() => LocaleSettings.setLocale(AppLocale.ar));
     tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
 
@@ -522,11 +632,7 @@ void main() {
           lessThanOrEqualTo(leTitre.left - laPage.left),
           reason: 'titre $leTitre dans la page $laPage',
         );
-        expect(laPage.contains(leTitre.topLeft), isTrue);
-        expect(laPage.contains(leTitre.bottomRight), isTrue);
-        final RenderParagraph rendu = tester.renderObject(texteTitre);
-        expect(rendu.didExceedMaxLines, isFalse);
-        expect(rendu.text.toPlainText(), titre);
+        _titreEntierEtLisible(tester, texteTitre, titre);
 
         // Les pages, en RTL : « precedente » a droite, glyphe miroir.
         await _taper(tester, _declencheur);
@@ -603,11 +709,8 @@ void main() {
               .currentVersionId,
           ressource.currentVersionId,
         );
-        // Le titre se lit toujours entier, sans debordement.
-        expect(
-          tester.renderObject<RenderParagraph>(texteTitre).didExceedMaxLines,
-          isFalse,
-        );
+        // Apres l'annotation, le titre de la page 2 reste entier et lisible.
+        _titreEntierEtLisible(tester, texteTitre, titre);
       });
     }
   });
