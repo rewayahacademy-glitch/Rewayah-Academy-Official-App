@@ -8012,8 +8012,11 @@ class Traductions$classe$observation$fr {
 	/// fr: '1 visite restante pour cette séance'
 	String get restanteUne => '1 visite restante pour cette séance';
 
-	/// fr: '{nombre} visites restantes pour cette séance'
-	String restantes({required Object nombre}) => '${nombre} visites restantes pour cette séance';
+	/// fr: '(one) {{nombre} visite restante pour cette séance} (other) {{nombre} visites restantes pour cette séance}'
+	String restantes({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: '${nombre} visite restante pour cette séance',
+		other: '${nombre} visites restantes pour cette séance',
+	);
 
 	/// fr: '{minutes} min'
 	String minutes({required Object minutes}) => '${minutes} min';
@@ -8166,8 +8169,11 @@ class Traductions$classe$pageCatalogue$fr {
 	/// fr: '1 place restante'
 	String get placeUne => '1 place restante';
 
-	/// fr: '{nombre} places restantes'
-	String places({required Object nombre}) => '${nombre} places restantes';
+	/// fr: '(one) {{nombre} place restante} (other) {{nombre} places restantes}'
+	String places({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: '${nombre} place restante',
+		other: '${nombre} places restantes',
+	);
 
 	late final Traductions$classe$pageCatalogue$etat$fr etat = Traductions$classe$pageCatalogue$etat$fr.internal(_root);
 
@@ -9195,8 +9201,11 @@ class Traductions$enseignant$profil$fr {
 	/// fr: 'Plafond hebdomadaire'
 	String get plafond => 'Plafond hebdomadaire';
 
-	/// fr: '{nombre} h par semaine'
-	String plafondValeur({required Object nombre}) => '${nombre} h par semaine';
+	/// fr: '(one) {{nombre} h par semaine} (other) {{nombre} h par semaine}'
+	String plafondValeur({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: '${nombre} h par semaine',
+		other: '${nombre} h par semaine',
+	);
 
 	/// fr: 'Fixé par l'académie.'
 	String get plafondDetail => 'Fixé par l\'académie.';
@@ -11586,8 +11595,11 @@ class Traductions$salle$seance$fiche$fr {
 	/// fr: '1 séance cette semaine'
 	String get uneSeanceSemaine => '1 séance cette semaine';
 
-	/// fr: '{nombre} séances cette semaine'
-	String seancesSemaine({required Object nombre}) => '${nombre} séances cette semaine';
+	/// fr: '(one) {{nombre} séance cette semaine} (other) {{nombre} séances cette semaine}'
+	String seancesSemaine({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: '${nombre} séance cette semaine',
+		other: '${nombre} séances cette semaine',
+	);
 }
 
 // Path: salle.seance.commandes
@@ -11825,8 +11837,11 @@ class Traductions$salle$fin$enseignant$fr {
 	/// fr: 'Fin'
 	String get fin => 'Fin';
 
-	/// fr: '{n} élèves connectés'
-	String connectes({required Object n}) => '${n} élèves connectés';
+	/// fr: '(one) {{n} élève connecté} (other) {{n} élèves connectés}'
+	String connectes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} élève connecté',
+		other: '${n} élèves connectés',
+	);
 
 	/// fr: '{n} élève connecté'
 	String unConnecte({required Object n}) => '${n} élève connecté';
@@ -14461,14 +14476,11 @@ class Traductions$tc$observation$duree$fr {
 
 	// Translations
 
-	/// fr: '{n} seconde'
-	String secondeUne({required Object n}) => '${n} seconde';
-
-	/// fr: '{n} secondes'
-	String secondes({required Object n}) => '${n} secondes';
-
-	/// fr: '{n} minute'
-	String minuteUne({required Object n}) => '${n} minute';
+	/// fr: '(one) {{n} seconde} (other) {{n} secondes}'
+	String secondes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} seconde',
+		other: '${n} secondes',
+	);
 
 	/// fr: '(one) {{n} minute} (other) {{n} minutes}'
 	String minutes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
@@ -14704,8 +14716,11 @@ class Traductions$tc$observation$annonce$fr {
 	/// fr: 'Ton tuteur regarde le cours'
 	String get enfantIndicateur => 'Ton tuteur regarde le cours';
 
-	/// fr: '{nombre} tuteurs observent'
-	String tuteursObservent({required Object nombre}) => '${nombre} tuteurs observent';
+	/// fr: '(one) {{nombre} tuteur observe} (other) {{nombre} tuteurs observent}'
+	String tuteursObservent({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: '${nombre} tuteur observe',
+		other: '${nombre} tuteurs observent',
+	);
 }
 
 // Path: tc.observation.reglages
@@ -16111,7 +16126,7 @@ extension on Traductions {
 			'salle.seance.replierFiche' => ({required Object prenom}) => 'Masquer la fiche de ${prenom}',
 			'salle.seance.fiche.aucuneSeanceSemaine' => 'Aucune séance cette semaine',
 			'salle.seance.fiche.uneSeanceSemaine' => '1 séance cette semaine',
-			'salle.seance.fiche.seancesSemaine' => ({required Object nombre}) => '${nombre} séances cette semaine',
+			'salle.seance.fiche.seancesSemaine' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} séance cette semaine', other: '${nombre} séances cette semaine', ), 
 			'salle.seance.optionsPanneau' => ({required Object titre}) => 'Options du panneau ${titre}',
 			'salle.seance.commandes.declencheur' => 'Commandes',
 			'salle.seance.commandes.declencheurSemantique' => 'Ouvrir les commandes du support et du tableau',
@@ -16225,7 +16240,7 @@ extension on Traductions {
 			'salle.fin.enseignant.phrase' => 'Le cahier de transmission est prêt avec les informations de la séance.',
 			'salle.fin.enseignant.recapitulatif' => 'Récapitulatif de la séance',
 			'salle.fin.enseignant.fin' => 'Fin',
-			'salle.fin.enseignant.connectes' => ({required Object n}) => '${n} élèves connectés',
+			'salle.fin.enseignant.connectes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève connecté', other: '${n} élèves connectés', ), 
 			'salle.fin.enseignant.unConnecte' => ({required Object n}) => '${n} élève connecté',
 			'salle.fin.enseignant.inscrits' => ({required Object n}) => 'sur ${n} inscrits',
 			'salle.fin.enseignant.unInscrit' => ({required Object n}) => 'sur ${n} inscrit',
@@ -18365,7 +18380,7 @@ extension on Traductions {
 			'classe.observation.resume' => ({required Object visites, required Object duree}) => '${visites} · ${duree} par visite',
 			'classe.observation.restanteAucune' => 'Aucune visite restante pour cette séance',
 			'classe.observation.restanteUne' => '1 visite restante pour cette séance',
-			'classe.observation.restantes' => ({required Object nombre}) => '${nombre} visites restantes pour cette séance',
+			'classe.observation.restantes' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} visite restante pour cette séance', other: '${nombre} visites restantes pour cette séance', ), 
 			'classe.observation.minutes' => ({required Object minutes}) => '${minutes} min',
 			'classe.observation.minutesSecondes' => ({required Object minutes, required Object secondes}) => '${minutes} min ${secondes} s',
 			'classe.observation.secondes' => ({required Object secondes}) => '${secondes} s',
@@ -18418,7 +18433,7 @@ extension on Traductions {
 			'classe.pageCatalogue.seanceHebdo' => ({required Object jour, required Object heure, required Object duree}) => '${jour} à ${heure} · ${duree} min',
 			'classe.pageCatalogue.fuseauClasse' => ({required Object fuseau}) => 'Heures de la classe (${fuseau})',
 			'classe.pageCatalogue.placeUne' => '1 place restante',
-			'classe.pageCatalogue.places' => ({required Object nombre}) => '${nombre} places restantes',
+			'classe.pageCatalogue.places' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} place restante', other: '${nombre} places restantes', ), 
 			'classe.pageCatalogue.etat.ouverte' => 'Ouverte',
 			'classe.pageCatalogue.etat.complete' => 'Complète',
 			'classe.pageCatalogue.etat.listeAttente' => 'Liste d\'attente',
@@ -18761,7 +18776,7 @@ extension on Traductions {
 			'enseignant.profil.fuseau' => 'Fuseau de mes cours',
 			'enseignant.profil.fuseauDetail' => 'C\'est lui qui décide de l\'heure de vos créneaux, pas l\'heure de cet appareil.',
 			'enseignant.profil.plafond' => 'Plafond hebdomadaire',
-			'enseignant.profil.plafondValeur' => ({required Object nombre}) => '${nombre} h par semaine',
+			'enseignant.profil.plafondValeur' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} h par semaine', other: '${nombre} h par semaine', ), 
 			'enseignant.profil.plafondDetail' => 'Fixé par l\'académie.',
 			'enseignant.profil.nonRenseigne' => 'Non renseigné',
 			'enseignant.profil.statutSection' => 'Statut du compte',
@@ -19417,9 +19432,7 @@ extension on Traductions {
 			'tc.observation.connexion.prolongee' => 'Restez sur cette page : la vérification continue.',
 			'tc.observation.connexion.impossibleTitre' => 'Connexion impossible',
 			'tc.observation.connexion.impossible' => 'L\'entrée dans la séance n\'a pas abouti. Vérifiez votre connexion, puis réessayez : vos visites restantes seront vérifiées à nouveau.',
-			'tc.observation.duree.secondeUne' => ({required Object n}) => '${n} seconde',
-			'tc.observation.duree.secondes' => ({required Object n}) => '${n} secondes',
-			'tc.observation.duree.minuteUne' => ({required Object n}) => '${n} minute',
+			'tc.observation.duree.secondes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} seconde', other: '${n} secondes', ), 
 			'tc.observation.duree.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} minute', other: '${n} minutes', ), 
 			'tc.observation.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
 			'tc.observation.refus.politiqueDesactivee' => 'L\'observation est désactivée pour cette classe.',
@@ -19458,10 +19471,10 @@ extension on Traductions {
 			'tc.observation.visite.quitterConfirmer' => 'Quitter la visite',
 			'tc.observation.fin.sortieVolontaire' => 'Vous avez quitté l\'observation.',
 			'tc.observation.fin.quotaAtteint' => 'Votre temps d\'observation est écoulé.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.fin.seanceTerminee' => 'La séance est terminée.',
 			'tc.observation.fin.revocationServeur' => 'Votre observation a été interrompue.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.fin.deconnexion' => 'La connexion a été perdue.',
 			'tc.observation.resultat.premiereTerminee' => 'Votre première visite est terminée',
 			'tc.observation.resultat.derniereTerminee' => 'Votre dernière visite est terminée',
@@ -19482,7 +19495,7 @@ extension on Traductions {
 			'tc.observation.annonce.tuteurObserve' => ({required Object prenomEnfant}) => 'Tuteur de ${prenomEnfant} observe',
 			'tc.observation.annonce.restant' => ({required Object secondes}) => '${secondes} s',
 			'tc.observation.annonce.enfantIndicateur' => 'Ton tuteur regarde le cours',
-			'tc.observation.annonce.tuteursObservent' => ({required Object nombre}) => '${nombre} tuteurs observent',
+			'tc.observation.annonce.tuteursObservent' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} tuteur observe', other: '${nombre} tuteurs observent', ), 
 			'tc.observation.reglages.titre' => 'Observation par les tuteurs',
 			'tc.observation.reglages.intro' => 'Un tuteur peut regarder un court moment le cours de son enfant, sans micro ni caméra. Ce réglage décide de ce qui s\'applique à ce groupe.',
 			'tc.observation.reglages.heriter' => 'Hériter de l\'Académie',

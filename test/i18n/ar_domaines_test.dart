@@ -192,9 +192,15 @@ String? _autreFrancais(String cle, Map<String, String> fr) {
 /// Un nombre suivi d'un pluriel de 3 a 10 (« {n} أيام », parametre isole) hors d'un pluriel
 /// slang : faux pour 2 (duel) et pour 11 et plus (singulier). Une telle phrase
 /// passe en pluriel (zero, one, two, few, many, other).
+///
+/// AR-CORR-2 : une unite apres un nombre isole (« {n} دقيقة », « {n} ساعة »,
+/// « {n} ثوانٍ », « {n} مقاعد », « {n} يوم ») est fausse pour une partie des
+/// nombres. Hors pluriel slang, une duree s'ecrit avec l'unite abregee
+/// (« {n} د », « {n} س », « {n} ث ») ; un compte passe en pluriel.
 final RegExp _nombrePluriel = RegExp(
   '\u2069 (أيام|طلاب|ساعات|ملفات|طلبات|مرات|مستويات|أشخاص|مدخلات|دقائق|'
-  'أسابيع|زيارات|عناصر|دروس|حصص|فصول|آيات|صفحات|رسائل|أسئلة|أجهزة|سور)',
+  'أسابيع|زيارات|عناصر|دروس|حصص|فصول|آيات|صفحات|رسائل|أسئلة|أجهزة|سور|'
+  'دقيقة|ساعة|ثانية|ثوان|مقاعد|مقعد|يوم|أسبوع)',
 );
 
 bool _sansMots(String texte) => texte
@@ -344,6 +350,26 @@ void main() {
     expect(
       traductions.controleur.controle.eleves(n: 11),
       '\u206811\u2069 طالبًا',
+    );
+    // AR-CORR-2 : places, secondes et plafond d'heures accordes au nombre.
+    expect(
+      traductions.classe.pageCatalogue.places(nombre: 2),
+      'مقعدان متبقيان',
+    );
+    expect(
+      traductions.classe.pageCatalogue.places(nombre: 11),
+      '\u206811\u2069 مقعدًا متبقيًا',
+    );
+    expect(traductions.tc.observation.duree.secondes(n: 2), 'ثانيتان');
+    expect(
+      traductions.enseignant.profil.plafondValeur(nombre: 3),
+      '\u20683\u2069 ساعات في الأسبوع',
+    );
+    expect(t.classe.pageCatalogue.places(nombre: 1), '1 place restante');
+    expect(t.salle.fin.enseignant.connectes(n: 1), '1 élève connecté');
+    expect(
+      t.tc.observation.annonce.tuteursObservent(nombre: 3),
+      '3 tuteurs observent',
     );
     expect(
       traductions.tc.bibliotheque.aucunResultat.message,

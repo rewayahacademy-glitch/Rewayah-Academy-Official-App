@@ -233,8 +233,15 @@
       "resume": "\u2068{visites}\u2069 · \u2068{duree}\u2069 لكل زيارة",
       "restanteAucune": "لا زيارة متبقية لهذه الحصة",
       "restanteUne": "زيارة واحدة متبقية لهذه الحصة",
-      "restantes": "الزيارات المتبقية لهذه الحصة: \u2068{nombre}\u2069",
-      "minutes": "\u2068{minutes}\u2069 دقيقة",
+      "restantes(param=nombre)": {
+        "zero": "الزيارات المتبقية لهذه الحصة: \u2068{nombre}\u2069",
+        "one": "الزيارات المتبقية لهذه الحصة: \u2068{nombre}\u2069",
+        "two": "الزيارات المتبقية لهذه الحصة: \u2068{nombre}\u2069",
+        "few": "الزيارات المتبقية لهذه الحصة: \u2068{nombre}\u2069",
+        "many": "الزيارات المتبقية لهذه الحصة: \u2068{nombre}\u2069",
+        "other": "الزيارات المتبقية لهذه الحصة: \u2068{nombre}\u2069"
+      },
+      "minutes": "\u2068{minutes}\u2069 د",
       "minutesSecondes": "\u2068{minutes}\u2069 د \u2068{secondes}\u2069 ث",
       "secondes": "\u2068{secondes}\u2069 ث",
       "motif": {
@@ -297,10 +304,17 @@
       "eleveInconnuTitre": "هذا الملف ليس في أسرتك",
       "eleveInconnuPhrase": "عد إلى الرئيسية واختر ملف الطالب المعني.",
       "horairesAbsents": "أيام هذا الفصل وساعاته لا تظهر هنا بعد.",
-      "seanceHebdo": "\u2068{jour}\u2069 الساعة \u2068{heure}\u2069 · \u2068{duree}\u2069 دقيقة",
+      "seanceHebdo": "\u2068{jour}\u2069 الساعة \u2068{heure}\u2069 · \u2068{duree}\u2069 د",
       "fuseauClasse": "توقيت الفصل (\u2068{fuseau}\u2069)",
       "placeUne": "مقعد واحد متبقٍ",
-      "places": "\u2068{nombre}\u2069 مقاعد متبقية",
+      "places(param=nombre)": {
+        "zero": "لا مقعد متبقٍّ",
+        "one": "مقعد واحد متبقٍّ",
+        "two": "مقعدان متبقيان",
+        "few": "\u2068{nombre}\u2069 مقاعد متبقية",
+        "many": "\u2068{nombre}\u2069 مقعدًا متبقيًا",
+        "other": "\u2068{nombre}\u2069 مقعد متبقٍّ"
+      },
       "etat": {
         "ouverte": "مفتوح",
         "complete": "مكتمل",
@@ -514,7 +528,14 @@
       "fiche": {
         "aucuneSeanceSemaine": "لا حصص هذا الأسبوع",
         "uneSeanceSemaine": "حصة واحدة هذا الأسبوع",
-        "seancesSemaine": "عدد الحصص هذا الأسبوع: \u2068{nombre}\u2069"
+        "seancesSemaine(param=nombre)": {
+          "zero": "عدد الحصص هذا الأسبوع: \u2068{nombre}\u2069",
+          "one": "عدد الحصص هذا الأسبوع: \u2068{nombre}\u2069",
+          "two": "عدد الحصص هذا الأسبوع: \u2068{nombre}\u2069",
+          "few": "عدد الحصص هذا الأسبوع: \u2068{nombre}\u2069",
+          "many": "عدد الحصص هذا الأسبوع: \u2068{nombre}\u2069",
+          "other": "عدد الحصص هذا الأسبوع: \u2068{nombre}\u2069"
+        }
       },
       "optionsPanneau": "خيارات لوحة \u2068{titre}\u2069",
       "commandes": {
@@ -654,7 +675,14 @@
         "phrase": "دفتر المتابعة جاهز بمعلومات الحصة.",
         "recapitulatif": "ملخص الحصة",
         "fin": "النهاية",
-        "connectes": "الطلاب المتصلون: \u2068{n}\u2069",
+        "connectes": {
+          "zero": "الطلاب المتصلون: \u2068{n}\u2069",
+          "one": "الطلاب المتصلون: \u2068{n}\u2069",
+          "two": "الطلاب المتصلون: \u2068{n}\u2069",
+          "few": "الطلاب المتصلون: \u2068{n}\u2069",
+          "many": "الطلاب المتصلون: \u2068{n}\u2069",
+          "other": "الطلاب المتصلون: \u2068{n}\u2069"
+        },
         "unConnecte": "الطلاب المتصلون: \u2068{n}\u2069",
         "inscrits": "من أصل \u2068{n}\u2069",
         "unInscrit": "من \u2068{n}\u2069 مسجَّل",
@@ -750,7 +778,7 @@
       "prochainCours": "الدرس القادم",
       "coursEnDirect": "بدأ درسك",
       "avec": "مع \u2068{prenom}\u2069",
-      "dansMinutes": "بعد \u2068{minutes}\u2069 دقيقة",
+      "dansMinutes": "بعد \u2068{minutes}\u2069 د",
       "dansHeures": "بعد \u2068{heures}\u2069 س \u2068{minutes}\u2069 د",
       "imminent": "حان الوقت تقريبًا",
       "aucunCours": "لا دروس اليوم",
@@ -814,7 +842,7 @@
       "prochainCours": "الدرس القادم",
       "coursEnCours": "حصة مباشرة",
       "minuteurHeures": "بعد \u2068{heures}\u2069 س \u2068{minutes}\u2069 د",
-      "minuteurMinutes": "بعد \u2068{minutes}\u2069 دقيقة",
+      "minuteurMinutes": "بعد \u2068{minutes}\u2069 د",
       "minuteurImminent": "يبدأ الآن",
       "jusqua": "حتى \u2068{heure}\u2069",
       "unAutreJour": "\u2068{jour}\u2069، الساعة \u2068{heure}\u2069",
@@ -825,7 +853,7 @@
       "ligneCours": "درس مع \u2068{prenom}\u2069",
       "lignePause": "استراحة",
       "plage": "\u2068{debut}\u2069 إلى \u2068{fin}\u2069",
-      "duree": "\u2068{minutes}\u2069 دقيقة",
+      "duree": "\u2068{minutes}\u2069 د",
       "rienAujourdhui": "لا شيء مقرر اليوم",
       "rienAujourdhuiDetail": "درسك القادم \u2068{jour}\u2069 الساعة \u2068{heure}\u2069.",
       "journeeTerminee": "عدد الدروس المقدَّمة اليوم: \u2068{nombre}\u2069.",
@@ -1068,8 +1096,8 @@
       "obligatoire": "إلزامي",
       "sousTitre": "إلزامي بعد كل حصة",
       "description": "دوّن أين وصل كل طالب (السورة، الآية، القاعدة التي عُمل عليها). إن استخلفك معلم آخر، يستأنف تمامًا من حيث توقفت الحصة.",
-      "duree": "\u2068{minutes}\u2069 دقيقة من الدرس",
-      "dureeEtInterruption": "\u2068{minutes}\u2069 دقيقة من الدرس، منها \u2068{interruption}\u2069 دقيقة انقطاع",
+      "duree": "\u2068{minutes}\u2069 د من الدرس",
+      "dureeEtInterruption": "\u2068{minutes}\u2069 د من الدرس، منها \u2068{interruption}\u2069 د انقطاع",
       "unEleve": "طالب واحد",
       "eleves(param=nombre)": {
         "zero": "لا طالب",
@@ -1187,7 +1215,14 @@
       "fuseau": "المنطقة الزمنية لدروسي",
       "fuseauDetail": "هي التي تحدد توقيت مواعيدك، لا توقيت هذا الجهاز.",
       "plafond": "الحد الأسبوعي",
-      "plafondValeur": "\u2068{nombre}\u2069 ساعة في الأسبوع",
+      "plafondValeur(param=nombre)": {
+        "zero": "لا ساعة في الأسبوع",
+        "one": "ساعة واحدة في الأسبوع",
+        "two": "ساعتان في الأسبوع",
+        "few": "\u2068{nombre}\u2069 ساعات في الأسبوع",
+        "many": "\u2068{nombre}\u2069 ساعةً في الأسبوع",
+        "other": "\u2068{nombre}\u2069 ساعة في الأسبوع"
+      },
       "plafondDetail": "تحدده الأكاديمية.",
       "nonRenseigne": "غير محدد",
       "statutSection": "حالة الحساب",
@@ -1271,7 +1306,7 @@
       "cleFuseau": "المنطقة الزمنية المرجعية",
       "cleHeureLocale": "التوقيت المحلي",
       "cleDuree": "المدة",
-      "duree": "\u2068{minutes}\u2069 دقيقة"
+      "duree": "\u2068{minutes}\u2069 د"
     },
     "revue": {
       "titre": "مراجعة الفصل",
@@ -1636,7 +1671,7 @@
         "coursEtNiveau": "\u2068{cours}\u2069 · \u2068{niveau}\u2069"
       },
       "temps": {
-        "dansMinutes": "الدرس بعد \u2068{minutes}\u2069 دقيقة",
+        "dansMinutes": "الدرس بعد \u2068{minutes}\u2069 د",
         "dansHeures": "الدرس بعد \u2068{heures}\u2069 س \u2068{minutes}\u2069 د",
         "imminent": "الدرس وشيك",
         "salleOuverte": "القاعة مفتوحة · \u2068{reste}\u2069",
@@ -2010,9 +2045,14 @@
         "impossible": "لم يتم الدخول إلى الحصة. تحقّق من اتصالك ثم أعد المحاولة: سيُعاد التحقق من زياراتك المتبقية."
       },
       "duree": {
-        "secondeUne": "\u2068{n}\u2069 ثانية",
-        "secondes": "\u2068{n}\u2069 ثوانٍ",
-        "minuteUne": "\u2068{n}\u2069 دقيقة",
+        "secondes": {
+          "zero": "\u2068{n}\u2069 ثانية",
+          "one": "ثانية واحدة",
+          "two": "ثانيتان",
+          "few": "\u2068{n}\u2069 ثوانٍ",
+          "many": "\u2068{n}\u2069 ثانيةً",
+          "other": "\u2068{n}\u2069 ثانية"
+        },
         "minutes": {
           "zero": "\u2068{n}\u2069 دقيقة",
           "one": "دقيقة واحدة",
@@ -2104,7 +2144,14 @@
         "tuteurObserve": "وليّ أمر \u2068{prenomEnfant}\u2069 يتابع",
         "restant": "\u2068{secondes}\u2069 ث",
         "enfantIndicateur": "وليّ أمرك يشاهد الدرس",
-        "tuteursObservent": "\u2068{nombre}\u2069 من أولياء الأمور يتابعون"
+        "tuteursObservent(param=nombre)": {
+          "zero": "لا أحد من أولياء الأمور يتابع",
+          "one": "وليّ أمر واحد يتابع",
+          "two": "وليّا أمر يتابعان",
+          "few": "\u2068{nombre}\u2069 أولياء أمور يتابعون",
+          "many": "\u2068{nombre}\u2069 وليَّ أمر يتابعون",
+          "other": "\u2068{nombre}\u2069 وليّ أمر يتابعون"
+        }
       },
       "reglages": {
         "titre": "متابعة أولياء الأمور",
@@ -2220,7 +2267,7 @@
       },
       "postCours": {
         "titre": "بعد الدرس",
-        "duree": "المدة الفعلية \u2068{minutes}\u2069 دقيقة",
+        "duree": "المدة الفعلية \u2068{minutes}\u2069 د",
         "exceptions": "للتأكيد",
         "toutEstNominal": "لا شيء يتطلب انتباهك.",
         "reprise": "الاستئناف المقترح",
@@ -2753,12 +2800,12 @@
     "finalisee": "نهائي",
     "inconnu": "حالة غير معروفة",
     "entreeInstant": "دخل القاعة للتو",
-    "entreeMinutes": "في القاعة منذ \u2068{minutes}\u2069 دقيقة",
-    "retardMinutes": "\u2068{minutes}\u2069 دقيقة بعد الموعد",
+    "entreeMinutes": "في القاعة منذ \u2068{minutes}\u2069 د",
+    "retardMinutes": "\u2068{minutes}\u2069 د بعد الموعد",
     "silenceInstant": "لا أخبار منذ بضع ثوانٍ",
-    "silenceMinutes": "لا أخبار منذ \u2068{minutes}\u2069 دقيقة",
+    "silenceMinutes": "لا أخبار منذ \u2068{minutes}\u2069 د",
     "attenteInstant": "بدأ الدرس للتو",
-    "attenteMinutes": "بدأ الدرس منذ \u2068{minutes}\u2069 دقيقة"
+    "attenteMinutes": "بدأ الدرس منذ \u2068{minutes}\u2069 د"
   },
   "priere": {
     "fajr": "الفجر",
@@ -2766,15 +2813,15 @@
     "asr": "العصر",
     "maghrib": "المغرب",
     "isha": "العشاء",
-    "entree": "\u2068{priere}\u2069، \u2068{minutes}\u2069 دقيقة",
+    "entree": "\u2068{priere}\u2069، \u2068{minutes}\u2069 د",
     "annonce": "سيتوقف هذا الدرس لصلاة \u2068{priere}\u2069، نحو \u2068{heure}\u2069.",
     "annonceAucune": "لا توقف مقرر أثناء هذا الدرس.",
-    "alerte": "\u2068{priere}\u2069 بعد \u2068{minutes}\u2069 دقيقة",
+    "alerte": "\u2068{priere}\u2069 بعد \u2068{minutes}\u2069 د",
     "alerteMaintenant": "استراحة لصلاة \u2068{priere}\u2069، الاستئناف الساعة \u2068{heure}\u2069",
     "pause": "استراحة",
     "lieu": "أوقات محسوبة لـ\u2068{lieu}\u2069",
     "lieuSansNom": "أوقات محسوبة لمكان المعلم",
-    "ajustee": "عدّل المعلم \u2068{priere}\u2069 بـ\u2068{minutes}\u2069 دقيقة",
+    "ajustee": "عدّل المعلم \u2068{priere}\u2069 بـ\u2068{minutes}\u2069 د",
     "reglagesAbsents": "لم يضبط المعلم أوقات الصلاة بعد."
   },
   "tuteur": {
@@ -2822,7 +2869,7 @@
       "etatCourt": {
         "enDirect": "مباشر",
         "salleOuverte": "القاعة مفتوحة",
-        "dansMinutes": "بعد \u2068{minutes}\u2069 دقيقة",
+        "dansMinutes": "بعد \u2068{minutes}\u2069 د",
         "dansHeures": "بعد \u2068{heures}\u2069 س \u2068{minutes}\u2069 د",
         "dansJours": "بعد \u2068{jours}\u2069 ي",
         "prevue": "حصة مقررة",
@@ -2835,7 +2882,7 @@
       "assister": "الحضور",
       "assisterRefuse": "تعذّر الانضمام إلى الدرس. ربما انتهى للتو.",
       "enCours": "جارٍ مع \u2068{prenom}\u2069",
-      "depuisMinutes": "بدأ منذ \u2068{minutes}\u2069 دقيقة",
+      "depuisMinutes": "بدأ منذ \u2068{minutes}\u2069 د",
       "depuisInstant": "بدأ للتو",
       "aujourdhui": "اليوم الساعة \u2068{heure}\u2069، مع \u2068{prenom}\u2069",
       "unAutreJour": "\u2068{jour}\u2069 الساعة \u2068{heure}\u2069، مع \u2068{prenom}\u2069",
@@ -2893,8 +2940,8 @@
       "demandeTitreReaffectation": "تغيير معلم \u2068{prenom}\u2069",
       "demandeTitreDuree": "مدة دروس \u2068{prenom}\u2069",
       "demandeTitreMinimum": "المدة الدنيا المدفوعة لـ\u2068{prenom}\u2069",
-      "demandeActuelle": "حاليًا: \u2068{minutes}\u2069 دقيقة",
-      "demandeMinutes": "\u2068{minutes}\u2069 دقيقة",
+      "demandeActuelle": "حاليًا: \u2068{minutes}\u2069 د",
+      "demandeMinutes": "\u2068{minutes}\u2069 د",
       "demandeMotif": "لماذا هذا التغيير؟",
       "demandeMotifRequis": "السبب ضروري: هو الذي يسمح بالحسم.",
       "demandeEnvoyer": "إرسال الطلب",
@@ -2930,7 +2977,7 @@
     "plage": "\u2068{debut}\u2069 - \u2068{fin}\u2069",
     "duree": {
       "secondes": "\u2068{s}\u2069 ث",
-      "minutes": "\u2068{m}\u2069 دقيقة",
+      "minutes": "\u2068{m}\u2069 د",
       "minutesSecondes": "\u2068{m}\u2069 د \u2068{s}\u2069 ث",
       "heures": "\u2068{h}\u2069 س",
       "heuresMinutes": "\u2068{h}\u2069 س \u2068{m}\u2069 د"
@@ -2964,7 +3011,7 @@
     "retour": "العودة إلى السجل",
     "etat": {
       "presence": "حضور",
-      "retard": "تأخر \u2068{minutes}\u2069 دقيقة",
+      "retard": "تأخر \u2068{minutes}\u2069 د",
       "retardSansDuree": "تأخر",
       "verification": "قيد التحقق",
       "annule": "درس ملغى",
@@ -3247,7 +3294,7 @@
   "inscription": {
     "titre": "إنشاء حسابك",
     "etapeSur": "الخطوة \u2068{n}\u2069 من \u2068{total}\u2069",
-    "tempsRestant": "نحو \u2068{minutes}\u2069 دقيقة",
+    "tempsRestant": "نحو \u2068{minutes}\u2069 د",
     "roleQuestion": "هل تسجّل كوليّ أمر أم كمعلم؟",
     "roleTuteur": "وليّ أمر",
     "roleEleveAdulte": "طالب بالغ، لنفسي",
@@ -3307,11 +3354,11 @@
       "titre": "كيف يعمل ذلك؟",
       "visites": {
         "zero": "لا زيارة في الحصة.",
-        "one": "زيارة واحدة مدتها \u2068{minutes}\u2069 دقيقة في كل حصة.",
-        "two": "زيارتان مدة كل منهما \u2068{minutes}\u2069 دقيقة في كل حصة.",
-        "few": "\u2068{n}\u2069 زيارات مدة كل منها \u2068{minutes}\u2069 دقيقة في كل حصة.",
-        "many": "\u2068{n}\u2069 زيارةً مدة كل منها \u2068{minutes}\u2069 دقيقة في كل حصة.",
-        "other": "\u2068{n}\u2069 زيارة مدة كل منها \u2068{minutes}\u2069 دقيقة في كل حصة."
+        "one": "زيارة واحدة مدتها \u2068{minutes}\u2069 د في كل حصة.",
+        "two": "زيارتان مدة كل منهما \u2068{minutes}\u2069 د في كل حصة.",
+        "few": "\u2068{n}\u2069 زيارات مدة كل منها \u2068{minutes}\u2069 د في كل حصة.",
+        "many": "\u2068{n}\u2069 زيارةً مدة كل منها \u2068{minutes}\u2069 د في كل حصة.",
+        "other": "\u2068{n}\u2069 زيارة مدة كل منها \u2068{minutes}\u2069 د في كل حصة."
       },
       "visitesSansDuree": {
         "zero": "لا زيارة في الحصة.",
@@ -4386,7 +4433,7 @@
         "many": "رفع الحد الأقصى إلى \u2068{valeur}\u2069 طالبًا",
         "other": "رفع الحد الأقصى إلى \u2068{valeur}\u2069 طالب"
       },
-      "reclameRegle": "جعل \u2068{regle}\u2069 \u2068{valeur}\u2069 دقيقة",
+      "reclameRegle": "جعل \u2068{regle}\u2069 \u2068{valeur}\u2069 د",
       "reclameRegleSansValeur": "مراجعة \u2068{regle}\u2069",
       "motifDemande": "السبب المذكور",
       "verdict": "القرار",
@@ -4405,7 +4452,7 @@
       "regleInconnue": "قاعدة غير معروفة",
       "plateforme": "المنصة: \u2068{valeur}\u2069",
       "effective": "المطبقة: \u2068{valeur}\u2069",
-      "minutes": "\u2068{valeur}\u2069 دقيقة",
+      "minutes": "\u2068{valeur}\u2069 د",
       "eleves(param=valeur)": {
         "zero": "لا طالب",
         "one": "طالب واحد",
@@ -4638,7 +4685,7 @@
       "appareilsParEleveDetail": "عدد الأجهزة التي يمكن أن تكون نشطة لطالب في الوقت نفسه.",
       "seancesSimultanees": "الحصص المتزامنة لكل ملف",
       "seancesSimultaneesDetail": "عدد الحصص التي يمكن لملف واحد متابعتها في الوقت نفسه.",
-      "uniteMinutes": "\u2068{n}\u2069 دقيقة",
+      "uniteMinutes": "\u2068{n}\u2069 د",
       "uniteSemaines": {
         "zero": "\u2068{n}\u2069 أسبوع",
         "one": "أسبوع واحد",

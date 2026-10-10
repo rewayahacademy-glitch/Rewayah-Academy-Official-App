@@ -327,7 +327,10 @@
       "fiche": {
         "aucuneSeanceSemaine": "Aucune séance cette semaine",
         "uneSeanceSemaine": "1 séance cette semaine",
-        "seancesSemaine": "{nombre} séances cette semaine"
+        "seancesSemaine(param=nombre)": {
+          "one": "{nombre} séance cette semaine",
+          "other": "{nombre} séances cette semaine"
+        }
       },
       "optionsPanneau": "Options du panneau {titre}",
       "commandes": {
@@ -467,7 +470,10 @@
         "phrase": "Le cahier de transmission est prêt avec les informations de la séance.",
         "recapitulatif": "Récapitulatif de la séance",
         "fin": "Fin",
-        "connectes": "{n} élèves connectés",
+        "connectes": {
+          "one": "{n} élève connecté",
+          "other": "{n} élèves connectés"
+        },
         "unConnecte": "{n} élève connecté",
         "inscrits": "sur {n} inscrits",
         "unInscrit": "sur {n} inscrit",
@@ -3032,7 +3038,10 @@
       "resume": "{visites} · {duree} par visite",
       "restanteAucune": "Aucune visite restante pour cette séance",
       "restanteUne": "1 visite restante pour cette séance",
-      "restantes": "{nombre} visites restantes pour cette séance",
+      "restantes(param=nombre)": {
+        "one": "{nombre} visite restante pour cette séance",
+        "other": "{nombre} visites restantes pour cette séance"
+      },
       "minutes": "{minutes} min",
       "minutesSecondes": "{minutes} min {secondes} s",
       "secondes": "{secondes} s",
@@ -3099,7 +3108,10 @@
       "seanceHebdo": "{jour} à {heure} · {duree} min",
       "fuseauClasse": "Heures de la classe ({fuseau})",
       "placeUne": "1 place restante",
-      "places": "{nombre} places restantes",
+      "places(param=nombre)": {
+        "one": "{nombre} place restante",
+        "other": "{nombre} places restantes"
+      },
       "etat": {
         "ouverte": "Ouverte",
         "complete": "Complète",
@@ -3486,7 +3498,10 @@
       "fuseau": "Fuseau de mes cours",
       "fuseauDetail": "C'est lui qui décide de l'heure de vos créneaux, pas l'heure de cet appareil.",
       "plafond": "Plafond hebdomadaire",
-      "plafondValeur": "{nombre} h par semaine",
+      "plafondValeur(param=nombre)": {
+        "one": "{nombre} h par semaine",
+        "other": "{nombre} h par semaine"
+      },
       "plafondDetail": "Fixé par l'académie.",
       "nonRenseigne": "Non renseigné",
       "statutSection": "Statut du compte",
@@ -4322,9 +4337,10 @@
         "impossible": "L'entrée dans la séance n'a pas abouti. Vérifiez votre connexion, puis réessayez : vos visites restantes seront vérifiées à nouveau."
       },
       "duree": {
-        "secondeUne": "{n} seconde",
-        "secondes": "{n} secondes",
-        "minuteUne": "{n} minute",
+        "secondes": {
+          "one": "{n} seconde",
+          "other": "{n} secondes"
+        },
         "minutes": {
           "one": "{n} minute",
           "other": "{n} minutes"
@@ -4404,7 +4420,10 @@
         "tuteurObserve": "Tuteur de {prenomEnfant} observe",
         "restant": "{secondes} s",
         "enfantIndicateur": "Ton tuteur regarde le cours",
-        "tuteursObservent": "{nombre} tuteurs observent"
+        "tuteursObservent(param=nombre)": {
+          "one": "{nombre} tuteur observe",
+          "other": "{nombre} tuteurs observent"
+        }
       },
       "reglages": {
         "titre": "Observation par les tuteurs",

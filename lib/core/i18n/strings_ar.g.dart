@@ -737,12 +737,12 @@ class _Traductions$presence$ar extends Traductions$presence$fr {
 	@override String get finalisee => 'نهائي';
 	@override String get inconnu => 'حالة غير معروفة';
 	@override String get entreeInstant => 'دخل القاعة للتو';
-	@override String entreeMinutes({required Object minutes}) => 'في القاعة منذ ⁨${minutes}⁩ دقيقة';
-	@override String retardMinutes({required Object minutes}) => '⁨${minutes}⁩ دقيقة بعد الموعد';
+	@override String entreeMinutes({required Object minutes}) => 'في القاعة منذ ⁨${minutes}⁩ د';
+	@override String retardMinutes({required Object minutes}) => '⁨${minutes}⁩ د بعد الموعد';
 	@override String get silenceInstant => 'لا أخبار منذ بضع ثوانٍ';
-	@override String silenceMinutes({required Object minutes}) => 'لا أخبار منذ ⁨${minutes}⁩ دقيقة';
+	@override String silenceMinutes({required Object minutes}) => 'لا أخبار منذ ⁨${minutes}⁩ د';
 	@override String get attenteInstant => 'بدأ الدرس للتو';
-	@override String attenteMinutes({required Object minutes}) => 'بدأ الدرس منذ ⁨${minutes}⁩ دقيقة';
+	@override String attenteMinutes({required Object minutes}) => 'بدأ الدرس منذ ⁨${minutes}⁩ د';
 }
 
 // Path: priere
@@ -757,15 +757,15 @@ class _Traductions$priere$ar extends Traductions$priere$fr {
 	@override String get asr => 'العصر';
 	@override String get maghrib => 'المغرب';
 	@override String get isha => 'العشاء';
-	@override String entree({required Object priere, required Object minutes}) => '⁨${priere}⁩، ⁨${minutes}⁩ دقيقة';
+	@override String entree({required Object priere, required Object minutes}) => '⁨${priere}⁩، ⁨${minutes}⁩ د';
 	@override String annonce({required Object priere, required Object heure}) => 'سيتوقف هذا الدرس لصلاة ⁨${priere}⁩، نحو ⁨${heure}⁩.';
 	@override String get annonceAucune => 'لا توقف مقرر أثناء هذا الدرس.';
-	@override String alerte({required Object priere, required Object minutes}) => '⁨${priere}⁩ بعد ⁨${minutes}⁩ دقيقة';
+	@override String alerte({required Object priere, required Object minutes}) => '⁨${priere}⁩ بعد ⁨${minutes}⁩ د';
 	@override String alerteMaintenant({required Object priere, required Object heure}) => 'استراحة لصلاة ⁨${priere}⁩، الاستئناف الساعة ⁨${heure}⁩';
 	@override String get pause => 'استراحة';
 	@override String lieu({required Object lieu}) => 'أوقات محسوبة لـ⁨${lieu}⁩';
 	@override String get lieuSansNom => 'أوقات محسوبة لمكان المعلم';
-	@override String ajustee({required Object priere, required Object minutes}) => 'عدّل المعلم ⁨${priere}⁩ بـ⁨${minutes}⁩ دقيقة';
+	@override String ajustee({required Object priere, required Object minutes}) => 'عدّل المعلم ⁨${priere}⁩ بـ⁨${minutes}⁩ د';
 	@override String get reglagesAbsents => 'لم يضبط المعلم أوقات الصلاة بعد.';
 }
 
@@ -933,7 +933,7 @@ class _Traductions$inscription$ar extends Traductions$inscription$fr {
 	// Translations
 	@override String get titre => 'إنشاء حسابك';
 	@override String etapeSur({required Object n, required Object total}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩';
-	@override String tempsRestant({required Object minutes}) => 'نحو ⁨${minutes}⁩ دقيقة';
+	@override String tempsRestant({required Object minutes}) => 'نحو ⁨${minutes}⁩ د';
 	@override String get roleQuestion => 'هل تسجّل كوليّ أمر أم كمعلم؟';
 	@override String get roleTuteur => 'وليّ أمر';
 	@override String get roleEleveAdulte => 'طالب بالغ، لنفسي';
@@ -1525,8 +1525,15 @@ class _Traductions$classe$observation$ar extends Traductions$classe$observation$
 	@override String resume({required Object visites, required Object duree}) => '⁨${visites}⁩ · ⁨${duree}⁩ لكل زيارة';
 	@override String get restanteAucune => 'لا زيارة متبقية لهذه الحصة';
 	@override String get restanteUne => 'زيارة واحدة متبقية لهذه الحصة';
-	@override String restantes({required Object nombre}) => 'الزيارات المتبقية لهذه الحصة: ⁨${nombre}⁩';
-	@override String minutes({required Object minutes}) => '⁨${minutes}⁩ دقيقة';
+	@override String restantes({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'الزيارات المتبقية لهذه الحصة: ⁨${nombre}⁩',
+		one: 'الزيارات المتبقية لهذه الحصة: ⁨${nombre}⁩',
+		two: 'الزيارات المتبقية لهذه الحصة: ⁨${nombre}⁩',
+		few: 'الزيارات المتبقية لهذه الحصة: ⁨${nombre}⁩',
+		many: 'الزيارات المتبقية لهذه الحصة: ⁨${nombre}⁩',
+		other: 'الزيارات المتبقية لهذه الحصة: ⁨${nombre}⁩',
+	);
+	@override String minutes({required Object minutes}) => '⁨${minutes}⁩ د';
 	@override String minutesSecondes({required Object minutes, required Object secondes}) => '⁨${minutes}⁩ د ⁨${secondes}⁩ ث';
 	@override String secondes({required Object secondes}) => '⁨${secondes}⁩ ث';
 	@override late final _Traductions$classe$observation$motif$ar motif = _Traductions$classe$observation$motif$ar._(_root);
@@ -1604,10 +1611,17 @@ class _Traductions$classe$pageCatalogue$ar extends Traductions$classe$pageCatalo
 	@override String get eleveInconnuTitre => 'هذا الملف ليس في أسرتك';
 	@override String get eleveInconnuPhrase => 'عد إلى الرئيسية واختر ملف الطالب المعني.';
 	@override String get horairesAbsents => 'أيام هذا الفصل وساعاته لا تظهر هنا بعد.';
-	@override String seanceHebdo({required Object jour, required Object heure, required Object duree}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩ · ⁨${duree}⁩ دقيقة';
+	@override String seanceHebdo({required Object jour, required Object heure, required Object duree}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩ · ⁨${duree}⁩ د';
 	@override String fuseauClasse({required Object fuseau}) => 'توقيت الفصل (⁨${fuseau}⁩)';
 	@override String get placeUne => 'مقعد واحد متبقٍ';
-	@override String places({required Object nombre}) => '⁨${nombre}⁩ مقاعد متبقية';
+	@override String places({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'لا مقعد متبقٍّ',
+		one: 'مقعد واحد متبقٍّ',
+		two: 'مقعدان متبقيان',
+		few: '⁨${nombre}⁩ مقاعد متبقية',
+		many: '⁨${nombre}⁩ مقعدًا متبقيًا',
+		other: '⁨${nombre}⁩ مقعد متبقٍّ',
+	);
 	@override late final _Traductions$classe$pageCatalogue$etat$ar etat = _Traductions$classe$pageCatalogue$etat$ar._(_root);
 	@override String get choisir => 'اختيار هذا الفصل';
 	@override String get rejoindreAttente => 'الانضمام إلى قائمة الانتظار';
@@ -1847,7 +1861,7 @@ class _Traductions$eleve$accueil$ar extends Traductions$eleve$accueil$fr {
 	@override String get prochainCours => 'الدرس القادم';
 	@override String get coursEnDirect => 'بدأ درسك';
 	@override String avec({required Object prenom}) => 'مع ⁨${prenom}⁩';
-	@override String dansMinutes({required Object minutes}) => 'بعد ⁨${minutes}⁩ دقيقة';
+	@override String dansMinutes({required Object minutes}) => 'بعد ⁨${minutes}⁩ د';
 	@override String dansHeures({required Object heures, required Object minutes}) => 'بعد ⁨${heures}⁩ س ⁨${minutes}⁩ د';
 	@override String get imminent => 'حان الوقت تقريبًا';
 	@override String get aucunCours => 'لا دروس اليوم';
@@ -1923,7 +1937,7 @@ class _Traductions$enseignant$journee$ar extends Traductions$enseignant$journee$
 	@override String get prochainCours => 'الدرس القادم';
 	@override String get coursEnCours => 'حصة مباشرة';
 	@override String minuteurHeures({required Object heures, required Object minutes}) => 'بعد ⁨${heures}⁩ س ⁨${minutes}⁩ د';
-	@override String minuteurMinutes({required Object minutes}) => 'بعد ⁨${minutes}⁩ دقيقة';
+	@override String minuteurMinutes({required Object minutes}) => 'بعد ⁨${minutes}⁩ د';
 	@override String get minuteurImminent => 'يبدأ الآن';
 	@override String jusqua({required Object heure}) => 'حتى ⁨${heure}⁩';
 	@override String unAutreJour({required Object jour, required Object heure}) => '⁨${jour}⁩، الساعة ⁨${heure}⁩';
@@ -1934,7 +1948,7 @@ class _Traductions$enseignant$journee$ar extends Traductions$enseignant$journee$
 	@override String ligneCours({required Object prenom}) => 'درس مع ⁨${prenom}⁩';
 	@override String get lignePause => 'استراحة';
 	@override String plage({required Object debut, required Object fin}) => '⁨${debut}⁩ إلى ⁨${fin}⁩';
-	@override String duree({required Object minutes}) => '⁨${minutes}⁩ دقيقة';
+	@override String duree({required Object minutes}) => '⁨${minutes}⁩ د';
 	@override String get rienAujourdhui => 'لا شيء مقرر اليوم';
 	@override String rienAujourdhuiDetail({required Object jour, required Object heure}) => 'درسك القادم ⁨${jour}⁩ الساعة ⁨${heure}⁩.';
 	@override String journeeTerminee({required Object nombre}) => 'عدد الدروس المقدَّمة اليوم: ⁨${nombre}⁩.';
@@ -2214,8 +2228,8 @@ class _Traductions$enseignant$cahier$ar extends Traductions$enseignant$cahier$fr
 	@override String get obligatoire => 'إلزامي';
 	@override String get sousTitre => 'إلزامي بعد كل حصة';
 	@override String get description => 'دوّن أين وصل كل طالب (السورة، الآية، القاعدة التي عُمل عليها). إن استخلفك معلم آخر، يستأنف تمامًا من حيث توقفت الحصة.';
-	@override String duree({required Object minutes}) => '⁨${minutes}⁩ دقيقة من الدرس';
-	@override String dureeEtInterruption({required Object minutes, required Object interruption}) => '⁨${minutes}⁩ دقيقة من الدرس، منها ⁨${interruption}⁩ دقيقة انقطاع';
+	@override String duree({required Object minutes}) => '⁨${minutes}⁩ د من الدرس';
+	@override String dureeEtInterruption({required Object minutes, required Object interruption}) => '⁨${minutes}⁩ د من الدرس، منها ⁨${interruption}⁩ د انقطاع';
 	@override String get unEleve => 'طالب واحد';
 	@override String eleves({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
 		zero: 'لا طالب',
@@ -2340,7 +2354,14 @@ class _Traductions$enseignant$profil$ar extends Traductions$enseignant$profil$fr
 	@override String get fuseau => 'المنطقة الزمنية لدروسي';
 	@override String get fuseauDetail => 'هي التي تحدد توقيت مواعيدك، لا توقيت هذا الجهاز.';
 	@override String get plafond => 'الحد الأسبوعي';
-	@override String plafondValeur({required Object nombre}) => '⁨${nombre}⁩ ساعة في الأسبوع';
+	@override String plafondValeur({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'لا ساعة في الأسبوع',
+		one: 'ساعة واحدة في الأسبوع',
+		two: 'ساعتان في الأسبوع',
+		few: '⁨${nombre}⁩ ساعات في الأسبوع',
+		many: '⁨${nombre}⁩ ساعةً في الأسبوع',
+		other: '⁨${nombre}⁩ ساعة في الأسبوع',
+	);
 	@override String get plafondDetail => 'تحدده الأكاديمية.';
 	@override String get nonRenseigne => 'غير محدد';
 	@override String get statutSection => 'حالة الحساب';
@@ -2431,7 +2452,7 @@ class _Traductions$enseignant$creneaux$ar extends Traductions$enseignant$creneau
 	@override String get cleFuseau => 'المنطقة الزمنية المرجعية';
 	@override String get cleHeureLocale => 'التوقيت المحلي';
 	@override String get cleDuree => 'المدة';
-	@override String duree({required Object minutes}) => '⁨${minutes}⁩ دقيقة';
+	@override String duree({required Object minutes}) => '⁨${minutes}⁩ د';
 }
 
 // Path: enseignant.revue
@@ -3183,7 +3204,7 @@ class _Traductions$tuteur$accueil$ar extends Traductions$tuteur$accueil$fr {
 	@override String get assister => 'الحضور';
 	@override String get assisterRefuse => 'تعذّر الانضمام إلى الدرس. ربما انتهى للتو.';
 	@override String enCours({required Object prenom}) => 'جارٍ مع ⁨${prenom}⁩';
-	@override String depuisMinutes({required Object minutes}) => 'بدأ منذ ⁨${minutes}⁩ دقيقة';
+	@override String depuisMinutes({required Object minutes}) => 'بدأ منذ ⁨${minutes}⁩ د';
 	@override String get depuisInstant => 'بدأ للتو';
 	@override String aujourdhui({required Object heure, required Object prenom}) => 'اليوم الساعة ⁨${heure}⁩، مع ⁨${prenom}⁩';
 	@override String unAutreJour({required Object jour, required Object heure, required Object prenom}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩، مع ⁨${prenom}⁩';
@@ -3248,8 +3269,8 @@ class _Traductions$tuteur$reglages$ar extends Traductions$tuteur$reglages$fr {
 	@override String demandeTitreReaffectation({required Object prenom}) => 'تغيير معلم ⁨${prenom}⁩';
 	@override String demandeTitreDuree({required Object prenom}) => 'مدة دروس ⁨${prenom}⁩';
 	@override String demandeTitreMinimum({required Object prenom}) => 'المدة الدنيا المدفوعة لـ⁨${prenom}⁩';
-	@override String demandeActuelle({required Object minutes}) => 'حاليًا: ⁨${minutes}⁩ دقيقة';
-	@override String demandeMinutes({required Object minutes}) => '⁨${minutes}⁩ دقيقة';
+	@override String demandeActuelle({required Object minutes}) => 'حاليًا: ⁨${minutes}⁩ د';
+	@override String demandeMinutes({required Object minutes}) => '⁨${minutes}⁩ د';
 	@override String get demandeMotif => 'لماذا هذا التغيير؟';
 	@override String get demandeMotifRequis => 'السبب ضروري: هو الذي يسمح بالحسم.';
 	@override String get demandeEnvoyer => 'إرسال الطلب';
@@ -3278,7 +3299,7 @@ class _Traductions$historique$duree$ar extends Traductions$historique$duree$fr {
 
 	// Translations
 	@override String secondes({required Object s}) => '⁨${s}⁩ ث';
-	@override String minutes({required Object m}) => '⁨${m}⁩ دقيقة';
+	@override String minutes({required Object m}) => '⁨${m}⁩ د';
 	@override String minutesSecondes({required Object m, required Object s}) => '⁨${m}⁩ د ⁨${s}⁩ ث';
 	@override String heures({required Object h}) => '⁨${h}⁩ س';
 	@override String heuresMinutes({required Object h, required Object m}) => '⁨${h}⁩ س ⁨${m}⁩ د';
@@ -3329,7 +3350,7 @@ class _Traductions$historique$etat$ar extends Traductions$historique$etat$fr {
 
 	// Translations
 	@override String get presence => 'حضور';
-	@override String retard({required Object minutes}) => 'تأخر ⁨${minutes}⁩ دقيقة';
+	@override String retard({required Object minutes}) => 'تأخر ⁨${minutes}⁩ د';
 	@override String get retardSansDuree => 'تأخر';
 	@override String get verification => 'قيد التحقق';
 	@override String get annule => 'درس ملغى';
@@ -3640,11 +3661,11 @@ class _Traductions$consentement$comment$ar extends Traductions$consentement$comm
 	@override String get titre => 'كيف يعمل ذلك؟';
 	@override String visites({required num n, required Object minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
 		zero: 'لا زيارة في الحصة.',
-		one: 'زيارة واحدة مدتها ⁨${minutes}⁩ دقيقة في كل حصة.',
-		two: 'زيارتان مدة كل منهما ⁨${minutes}⁩ دقيقة في كل حصة.',
-		few: '⁨${n}⁩ زيارات مدة كل منها ⁨${minutes}⁩ دقيقة في كل حصة.',
-		many: '⁨${n}⁩ زيارةً مدة كل منها ⁨${minutes}⁩ دقيقة في كل حصة.',
-		other: '⁨${n}⁩ زيارة مدة كل منها ⁨${minutes}⁩ دقيقة في كل حصة.',
+		one: 'زيارة واحدة مدتها ⁨${minutes}⁩ د في كل حصة.',
+		two: 'زيارتان مدة كل منهما ⁨${minutes}⁩ د في كل حصة.',
+		few: '⁨${n}⁩ زيارات مدة كل منها ⁨${minutes}⁩ د في كل حصة.',
+		many: '⁨${n}⁩ زيارةً مدة كل منها ⁨${minutes}⁩ د في كل حصة.',
+		other: '⁨${n}⁩ زيارة مدة كل منها ⁨${minutes}⁩ د في كل حصة.',
 	);
 	@override String visitesSansDuree({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
 		zero: 'لا زيارة في الحصة.',
@@ -4615,7 +4636,7 @@ class _Traductions$admin$demandes$ar extends Traductions$admin$demandes$fr {
 		many: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طالبًا',
 		other: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طالب',
 	);
-	@override String reclameRegle({required Object regle, required Object valeur}) => 'جعل ⁨${regle}⁩ ⁨${valeur}⁩ دقيقة';
+	@override String reclameRegle({required Object regle, required Object valeur}) => 'جعل ⁨${regle}⁩ ⁨${valeur}⁩ د';
 	@override String reclameRegleSansValeur({required Object regle}) => 'مراجعة ⁨${regle}⁩';
 	@override String get motifDemande => 'السبب المذكور';
 	@override String get verdict => 'القرار';
@@ -4634,7 +4655,7 @@ class _Traductions$admin$demandes$ar extends Traductions$admin$demandes$fr {
 	@override String get regleInconnue => 'قاعدة غير معروفة';
 	@override String plateforme({required Object valeur}) => 'المنصة: ⁨${valeur}⁩';
 	@override String effective({required Object valeur}) => 'المطبقة: ⁨${valeur}⁩';
-	@override String minutes({required Object valeur}) => '⁨${valeur}⁩ دقيقة';
+	@override String minutes({required Object valeur}) => '⁨${valeur}⁩ د';
 	@override String eleves({required num valeur}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(valeur,
 		zero: 'لا طالب',
 		one: 'طالب واحد',
@@ -4902,7 +4923,7 @@ class _Traductions$admin$regles$ar extends Traductions$admin$regles$fr {
 	@override String get appareilsParEleveDetail => 'عدد الأجهزة التي يمكن أن تكون نشطة لطالب في الوقت نفسه.';
 	@override String get seancesSimultanees => 'الحصص المتزامنة لكل ملف';
 	@override String get seancesSimultaneesDetail => 'عدد الحصص التي يمكن لملف واحد متابعتها في الوقت نفسه.';
-	@override String uniteMinutes({required Object n}) => '⁨${n}⁩ دقيقة';
+	@override String uniteMinutes({required Object n}) => '⁨${n}⁩ د';
 	@override String uniteSemaines({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
 		zero: '⁨${n}⁩ أسبوع',
 		one: 'أسبوع واحد',
@@ -5776,7 +5797,14 @@ class _Traductions$salle$seance$fiche$ar extends Traductions$salle$seance$fiche$
 	// Translations
 	@override String get aucuneSeanceSemaine => 'لا حصص هذا الأسبوع';
 	@override String get uneSeanceSemaine => 'حصة واحدة هذا الأسبوع';
-	@override String seancesSemaine({required Object nombre}) => 'عدد الحصص هذا الأسبوع: ⁨${nombre}⁩';
+	@override String seancesSemaine({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'عدد الحصص هذا الأسبوع: ⁨${nombre}⁩',
+		one: 'عدد الحصص هذا الأسبوع: ⁨${nombre}⁩',
+		two: 'عدد الحصص هذا الأسبوع: ⁨${nombre}⁩',
+		few: 'عدد الحصص هذا الأسبوع: ⁨${nombre}⁩',
+		many: 'عدد الحصص هذا الأسبوع: ⁨${nombre}⁩',
+		other: 'عدد الحصص هذا الأسبوع: ⁨${nombre}⁩',
+	);
 }
 
 // Path: salle.seance.commandes
@@ -5906,7 +5934,14 @@ class _Traductions$salle$fin$enseignant$ar extends Traductions$salle$fin$enseign
 	@override String get phrase => 'دفتر المتابعة جاهز بمعلومات الحصة.';
 	@override String get recapitulatif => 'ملخص الحصة';
 	@override String get fin => 'النهاية';
-	@override String connectes({required Object n}) => 'الطلاب المتصلون: ⁨${n}⁩';
+	@override String connectes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'الطلاب المتصلون: ⁨${n}⁩',
+		one: 'الطلاب المتصلون: ⁨${n}⁩',
+		two: 'الطلاب المتصلون: ⁨${n}⁩',
+		few: 'الطلاب المتصلون: ⁨${n}⁩',
+		many: 'الطلاب المتصلون: ⁨${n}⁩',
+		other: 'الطلاب المتصلون: ⁨${n}⁩',
+	);
 	@override String unConnecte({required Object n}) => 'الطلاب المتصلون: ⁨${n}⁩';
 	@override String inscrits({required Object n}) => 'من أصل ⁨${n}⁩';
 	@override String unInscrit({required Object n}) => 'من ⁨${n}⁩ مسجَّل';
@@ -6429,7 +6464,7 @@ class _Traductions$tc$groupe$temps$ar extends Traductions$tc$groupe$temps$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String dansMinutes({required Object minutes}) => 'الدرس بعد ⁨${minutes}⁩ دقيقة';
+	@override String dansMinutes({required Object minutes}) => 'الدرس بعد ⁨${minutes}⁩ د';
 	@override String dansHeures({required Object heures, required Object minutes}) => 'الدرس بعد ⁨${heures}⁩ س ⁨${minutes}⁩ د';
 	@override String get imminent => 'الدرس وشيك';
 	@override String salleOuverte({required Object reste}) => 'القاعة مفتوحة · ⁨${reste}⁩';
@@ -7101,9 +7136,14 @@ class _Traductions$tc$observation$duree$ar extends Traductions$tc$observation$du
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String secondeUne({required Object n}) => '⁨${n}⁩ ثانية';
-	@override String secondes({required Object n}) => '⁨${n}⁩ ثوانٍ';
-	@override String minuteUne({required Object n}) => '⁨${n}⁩ دقيقة';
+	@override String secondes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: '⁨${n}⁩ ثانية',
+		one: 'ثانية واحدة',
+		two: 'ثانيتان',
+		few: '⁨${n}⁩ ثوانٍ',
+		many: '⁨${n}⁩ ثانيةً',
+		other: '⁨${n}⁩ ثانية',
+	);
 	@override String minutes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
 		zero: '⁨${n}⁩ دقيقة',
 		one: 'دقيقة واحدة',
@@ -7230,7 +7270,14 @@ class _Traductions$tc$observation$annonce$ar extends Traductions$tc$observation$
 	@override String tuteurObserve({required Object prenomEnfant}) => 'وليّ أمر ⁨${prenomEnfant}⁩ يتابع';
 	@override String restant({required Object secondes}) => '⁨${secondes}⁩ ث';
 	@override String get enfantIndicateur => 'وليّ أمرك يشاهد الدرس';
-	@override String tuteursObservent({required Object nombre}) => '⁨${nombre}⁩ من أولياء الأمور يتابعون';
+	@override String tuteursObservent({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'لا أحد من أولياء الأمور يتابع',
+		one: 'وليّ أمر واحد يتابع',
+		two: 'وليّا أمر يتابعان',
+		few: '⁨${nombre}⁩ أولياء أمور يتابعون',
+		many: '⁨${nombre}⁩ وليَّ أمر يتابعون',
+		other: '⁨${nombre}⁩ وليّ أمر يتابعون',
+	);
 }
 
 // Path: tc.observation.reglages
@@ -7358,7 +7405,7 @@ class _Traductions$tc$parcours$postCours$ar extends Traductions$tc$parcours$post
 
 	// Translations
 	@override String get titre => 'بعد الدرس';
-	@override String duree({required Object minutes}) => 'المدة الفعلية ⁨${minutes}⁩ دقيقة';
+	@override String duree({required Object minutes}) => 'المدة الفعلية ⁨${minutes}⁩ د';
 	@override String get exceptions => 'للتأكيد';
 	@override String get toutEstNominal => 'لا شيء يتطلب انتباهك.';
 	@override String get reprise => 'الاستئناف المقترح';
@@ -7379,7 +7426,7 @@ class _Traductions$tuteur$accueil$etatCourt$ar extends Traductions$tuteur$accuei
 	// Translations
 	@override String get enDirect => 'مباشر';
 	@override String get salleOuverte => 'القاعة مفتوحة';
-	@override String dansMinutes({required Object minutes}) => 'بعد ⁨${minutes}⁩ دقيقة';
+	@override String dansMinutes({required Object minutes}) => 'بعد ⁨${minutes}⁩ د';
 	@override String dansHeures({required Object heures, required Object minutes}) => 'بعد ⁨${heures}⁩ س ⁨${minutes}⁩ د';
 	@override String dansJours({required Object jours}) => 'بعد ⁨${jours}⁩ ي';
 	@override String get prevue => 'حصة مقررة';
@@ -8230,8 +8277,8 @@ extension on TraductionsAr {
 			'classe.observation.resume' => ({required Object visites, required Object duree}) => '⁨${visites}⁩ · ⁨${duree}⁩ لكل زيارة',
 			'classe.observation.restanteAucune' => 'لا زيارة متبقية لهذه الحصة',
 			'classe.observation.restanteUne' => 'زيارة واحدة متبقية لهذه الحصة',
-			'classe.observation.restantes' => ({required Object nombre}) => 'الزيارات المتبقية لهذه الحصة: ⁨${nombre}⁩',
-			'classe.observation.minutes' => ({required Object minutes}) => '⁨${minutes}⁩ دقيقة',
+			'classe.observation.restantes' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'الزيارات المتبقية لهذه الحصة: ⁨${nombre}⁩', one: 'الزيارات المتبقية لهذه الحصة: ⁨${nombre}⁩', two: 'الزيارات المتبقية لهذه الحصة: ⁨${nombre}⁩', few: 'الزيارات المتبقية لهذه الحصة: ⁨${nombre}⁩', many: 'الزيارات المتبقية لهذه الحصة: ⁨${nombre}⁩', other: 'الزيارات المتبقية لهذه الحصة: ⁨${nombre}⁩', ), 
+			'classe.observation.minutes' => ({required Object minutes}) => '⁨${minutes}⁩ د',
 			'classe.observation.minutesSecondes' => ({required Object minutes, required Object secondes}) => '⁨${minutes}⁩ د ⁨${secondes}⁩ ث',
 			'classe.observation.secondes' => ({required Object secondes}) => '⁨${secondes}⁩ ث',
 			'classe.observation.motif.visitesEpuisees' => 'استخدمت زياراتك لهذه الحصة.',
@@ -8280,10 +8327,10 @@ extension on TraductionsAr {
 			'classe.pageCatalogue.eleveInconnuTitre' => 'هذا الملف ليس في أسرتك',
 			'classe.pageCatalogue.eleveInconnuPhrase' => 'عد إلى الرئيسية واختر ملف الطالب المعني.',
 			'classe.pageCatalogue.horairesAbsents' => 'أيام هذا الفصل وساعاته لا تظهر هنا بعد.',
-			'classe.pageCatalogue.seanceHebdo' => ({required Object jour, required Object heure, required Object duree}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩ · ⁨${duree}⁩ دقيقة',
+			'classe.pageCatalogue.seanceHebdo' => ({required Object jour, required Object heure, required Object duree}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩ · ⁨${duree}⁩ د',
 			'classe.pageCatalogue.fuseauClasse' => ({required Object fuseau}) => 'توقيت الفصل (⁨${fuseau}⁩)',
 			'classe.pageCatalogue.placeUne' => 'مقعد واحد متبقٍ',
-			'classe.pageCatalogue.places' => ({required Object nombre}) => '⁨${nombre}⁩ مقاعد متبقية',
+			'classe.pageCatalogue.places' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا مقعد متبقٍّ', one: 'مقعد واحد متبقٍّ', two: 'مقعدان متبقيان', few: '⁨${nombre}⁩ مقاعد متبقية', many: '⁨${nombre}⁩ مقعدًا متبقيًا', other: '⁨${nombre}⁩ مقعد متبقٍّ', ), 
 			'classe.pageCatalogue.etat.ouverte' => 'مفتوح',
 			'classe.pageCatalogue.etat.complete' => 'مكتمل',
 			'classe.pageCatalogue.etat.listeAttente' => 'قائمة الانتظار',
@@ -8470,7 +8517,7 @@ extension on TraductionsAr {
 			'salle.seance.replierFiche' => ({required Object prenom}) => 'إخفاء بطاقة ⁨${prenom}⁩',
 			'salle.seance.fiche.aucuneSeanceSemaine' => 'لا حصص هذا الأسبوع',
 			'salle.seance.fiche.uneSeanceSemaine' => 'حصة واحدة هذا الأسبوع',
-			'salle.seance.fiche.seancesSemaine' => ({required Object nombre}) => 'عدد الحصص هذا الأسبوع: ⁨${nombre}⁩',
+			'salle.seance.fiche.seancesSemaine' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'عدد الحصص هذا الأسبوع: ⁨${nombre}⁩', one: 'عدد الحصص هذا الأسبوع: ⁨${nombre}⁩', two: 'عدد الحصص هذا الأسبوع: ⁨${nombre}⁩', few: 'عدد الحصص هذا الأسبوع: ⁨${nombre}⁩', many: 'عدد الحصص هذا الأسبوع: ⁨${nombre}⁩', other: 'عدد الحصص هذا الأسبوع: ⁨${nombre}⁩', ), 
 			'salle.seance.optionsPanneau' => ({required Object titre}) => 'خيارات لوحة ⁨${titre}⁩',
 			'salle.seance.commandes.declencheur' => 'التحكم',
 			'salle.seance.commandes.declencheurSemantique' => 'فتح عناصر التحكم في المادة والسبورة',
@@ -8586,7 +8633,7 @@ extension on TraductionsAr {
 			_ => null,
 		} ?? switch (path) {
 			'salle.fin.enseignant.fin' => 'النهاية',
-			'salle.fin.enseignant.connectes' => ({required Object n}) => 'الطلاب المتصلون: ⁨${n}⁩',
+			'salle.fin.enseignant.connectes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'الطلاب المتصلون: ⁨${n}⁩', one: 'الطلاب المتصلون: ⁨${n}⁩', two: 'الطلاب المتصلون: ⁨${n}⁩', few: 'الطلاب المتصلون: ⁨${n}⁩', many: 'الطلاب المتصلون: ⁨${n}⁩', other: 'الطلاب المتصلون: ⁨${n}⁩', ), 
 			'salle.fin.enseignant.unConnecte' => ({required Object n}) => 'الطلاب المتصلون: ⁨${n}⁩',
 			'salle.fin.enseignant.inscrits' => ({required Object n}) => 'من أصل ⁨${n}⁩',
 			'salle.fin.enseignant.unInscrit' => ({required Object n}) => 'من ⁨${n}⁩ مسجَّل',
@@ -8673,7 +8720,7 @@ extension on TraductionsAr {
 			'eleve.accueil.prochainCours' => 'الدرس القادم',
 			'eleve.accueil.coursEnDirect' => 'بدأ درسك',
 			'eleve.accueil.avec' => ({required Object prenom}) => 'مع ⁨${prenom}⁩',
-			'eleve.accueil.dansMinutes' => ({required Object minutes}) => 'بعد ⁨${minutes}⁩ دقيقة',
+			'eleve.accueil.dansMinutes' => ({required Object minutes}) => 'بعد ⁨${minutes}⁩ د',
 			'eleve.accueil.dansHeures' => ({required Object heures, required Object minutes}) => 'بعد ⁨${heures}⁩ س ⁨${minutes}⁩ د',
 			'eleve.accueil.imminent' => 'حان الوقت تقريبًا',
 			'eleve.accueil.aucunCours' => 'لا دروس اليوم',
@@ -8724,7 +8771,7 @@ extension on TraductionsAr {
 			'enseignant.journee.prochainCours' => 'الدرس القادم',
 			'enseignant.journee.coursEnCours' => 'حصة مباشرة',
 			'enseignant.journee.minuteurHeures' => ({required Object heures, required Object minutes}) => 'بعد ⁨${heures}⁩ س ⁨${minutes}⁩ د',
-			'enseignant.journee.minuteurMinutes' => ({required Object minutes}) => 'بعد ⁨${minutes}⁩ دقيقة',
+			'enseignant.journee.minuteurMinutes' => ({required Object minutes}) => 'بعد ⁨${minutes}⁩ د',
 			'enseignant.journee.minuteurImminent' => 'يبدأ الآن',
 			'enseignant.journee.jusqua' => ({required Object heure}) => 'حتى ⁨${heure}⁩',
 			'enseignant.journee.unAutreJour' => ({required Object jour, required Object heure}) => '⁨${jour}⁩، الساعة ⁨${heure}⁩',
@@ -8735,7 +8782,7 @@ extension on TraductionsAr {
 			'enseignant.journee.ligneCours' => ({required Object prenom}) => 'درس مع ⁨${prenom}⁩',
 			'enseignant.journee.lignePause' => 'استراحة',
 			'enseignant.journee.plage' => ({required Object debut, required Object fin}) => '⁨${debut}⁩ إلى ⁨${fin}⁩',
-			'enseignant.journee.duree' => ({required Object minutes}) => '⁨${minutes}⁩ دقيقة',
+			'enseignant.journee.duree' => ({required Object minutes}) => '⁨${minutes}⁩ د',
 			'enseignant.journee.rienAujourdhui' => 'لا شيء مقرر اليوم',
 			'enseignant.journee.rienAujourdhuiDetail' => ({required Object jour, required Object heure}) => 'درسك القادم ⁨${jour}⁩ الساعة ⁨${heure}⁩.',
 			'enseignant.journee.journeeTerminee' => ({required Object nombre}) => 'عدد الدروس المقدَّمة اليوم: ⁨${nombre}⁩.',
@@ -8938,8 +8985,8 @@ extension on TraductionsAr {
 			'enseignant.cahier.obligatoire' => 'إلزامي',
 			'enseignant.cahier.sousTitre' => 'إلزامي بعد كل حصة',
 			'enseignant.cahier.description' => 'دوّن أين وصل كل طالب (السورة، الآية، القاعدة التي عُمل عليها). إن استخلفك معلم آخر، يستأنف تمامًا من حيث توقفت الحصة.',
-			'enseignant.cahier.duree' => ({required Object minutes}) => '⁨${minutes}⁩ دقيقة من الدرس',
-			'enseignant.cahier.dureeEtInterruption' => ({required Object minutes, required Object interruption}) => '⁨${minutes}⁩ دقيقة من الدرس، منها ⁨${interruption}⁩ دقيقة انقطاع',
+			'enseignant.cahier.duree' => ({required Object minutes}) => '⁨${minutes}⁩ د من الدرس',
+			'enseignant.cahier.dureeEtInterruption' => ({required Object minutes, required Object interruption}) => '⁨${minutes}⁩ د من الدرس، منها ⁨${interruption}⁩ د انقطاع',
 			'enseignant.cahier.unEleve' => 'طالب واحد',
 			'enseignant.cahier.eleves' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا طالب', one: 'طالب واحد', two: 'طالبان', few: '⁨${nombre}⁩ طلاب', many: '⁨${nombre}⁩ طالبًا', other: '⁨${nombre}⁩ طالب', ), 
 			'enseignant.cahier.toutEstNominal' => 'جرى كل شيء كما هو متوقع.',
@@ -9041,7 +9088,7 @@ extension on TraductionsAr {
 			'enseignant.profil.fuseau' => 'المنطقة الزمنية لدروسي',
 			'enseignant.profil.fuseauDetail' => 'هي التي تحدد توقيت مواعيدك، لا توقيت هذا الجهاز.',
 			'enseignant.profil.plafond' => 'الحد الأسبوعي',
-			'enseignant.profil.plafondValeur' => ({required Object nombre}) => '⁨${nombre}⁩ ساعة في الأسبوع',
+			'enseignant.profil.plafondValeur' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا ساعة في الأسبوع', one: 'ساعة واحدة في الأسبوع', two: 'ساعتان في الأسبوع', few: '⁨${nombre}⁩ ساعات في الأسبوع', many: '⁨${nombre}⁩ ساعةً في الأسبوع', other: '⁨${nombre}⁩ ساعة في الأسبوع', ), 
 			'enseignant.profil.plafondDetail' => 'تحدده الأكاديمية.',
 			'enseignant.profil.nonRenseigne' => 'غير محدد',
 			'enseignant.profil.statutSection' => 'حالة الحساب',
@@ -9125,7 +9172,7 @@ extension on TraductionsAr {
 			'enseignant.creneaux.cleFuseau' => 'المنطقة الزمنية المرجعية',
 			'enseignant.creneaux.cleHeureLocale' => 'التوقيت المحلي',
 			'enseignant.creneaux.cleDuree' => 'المدة',
-			'enseignant.creneaux.duree' => ({required Object minutes}) => '⁨${minutes}⁩ دقيقة',
+			'enseignant.creneaux.duree' => ({required Object minutes}) => '⁨${minutes}⁩ د',
 			'enseignant.revue.titre' => 'مراجعة الفصل',
 			'enseignant.revue.titreClasse' => ({required Object classe}) => 'مراجعة الفصل ⁨${classe}⁩',
 			'enseignant.revue.aucuneAnomalie' => 'لا شيء يتطلب انتباهك.',
@@ -9395,7 +9442,7 @@ extension on TraductionsAr {
 			'tc.groupe.carte.dureeLibelle' => 'المدة',
 			'tc.groupe.carte.rejoindre' => 'انضمام',
 			'tc.groupe.cours.coursEtNiveau' => ({required Object cours, required Object niveau}) => '⁨${cours}⁩ · ⁨${niveau}⁩',
-			'tc.groupe.temps.dansMinutes' => ({required Object minutes}) => 'الدرس بعد ⁨${minutes}⁩ دقيقة',
+			'tc.groupe.temps.dansMinutes' => ({required Object minutes}) => 'الدرس بعد ⁨${minutes}⁩ د',
 			'tc.groupe.temps.dansHeures' => ({required Object heures, required Object minutes}) => 'الدرس بعد ⁨${heures}⁩ س ⁨${minutes}⁩ د',
 			'tc.groupe.temps.imminent' => 'الدرس وشيك',
 			'tc.groupe.temps.salleOuverte' => ({required Object reste}) => 'القاعة مفتوحة · ⁨${reste}⁩',
@@ -9660,9 +9707,7 @@ extension on TraductionsAr {
 			'tc.observation.connexion.prolongee' => 'ابقَ على هذه الصفحة: التحقق مستمر.',
 			'tc.observation.connexion.impossibleTitre' => 'تعذّر الاتصال',
 			'tc.observation.connexion.impossible' => 'لم يتم الدخول إلى الحصة. تحقّق من اتصالك ثم أعد المحاولة: سيُعاد التحقق من زياراتك المتبقية.',
-			'tc.observation.duree.secondeUne' => ({required Object n}) => '⁨${n}⁩ ثانية',
-			'tc.observation.duree.secondes' => ({required Object n}) => '⁨${n}⁩ ثوانٍ',
-			'tc.observation.duree.minuteUne' => ({required Object n}) => '⁨${n}⁩ دقيقة',
+			'tc.observation.duree.secondes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ ثانية', one: 'ثانية واحدة', two: 'ثانيتان', few: '⁨${n}⁩ ثوانٍ', many: '⁨${n}⁩ ثانيةً', other: '⁨${n}⁩ ثانية', ), 
 			'tc.observation.duree.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ دقيقة', one: 'دقيقة واحدة', two: 'دقيقتان', few: '⁨${n}⁩ دقائق', many: '⁨${n}⁩ دقيقةً', other: '⁨${n}⁩ دقيقة', ), 
 			'tc.observation.duree.minutesSecondes' => ({required Object m, required Object s}) => '⁨${m}⁩ د ⁨${s}⁩ ث',
 			'tc.observation.refus.politiqueDesactivee' => 'المتابعة معطَّلة لهذا الفصل.',
@@ -9723,7 +9768,7 @@ extension on TraductionsAr {
 			'tc.observation.annonce.tuteurObserve' => ({required Object prenomEnfant}) => 'وليّ أمر ⁨${prenomEnfant}⁩ يتابع',
 			'tc.observation.annonce.restant' => ({required Object secondes}) => '⁨${secondes}⁩ ث',
 			'tc.observation.annonce.enfantIndicateur' => 'وليّ أمرك يشاهد الدرس',
-			'tc.observation.annonce.tuteursObservent' => ({required Object nombre}) => '⁨${nombre}⁩ من أولياء الأمور يتابعون',
+			'tc.observation.annonce.tuteursObservent' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا أحد من أولياء الأمور يتابع', one: 'وليّ أمر واحد يتابع', two: 'وليّا أمر يتابعان', few: '⁨${nombre}⁩ أولياء أمور يتابعون', many: '⁨${nombre}⁩ وليَّ أمر يتابعون', other: '⁨${nombre}⁩ وليّ أمر يتابعون', ), 
 			'tc.observation.reglages.titre' => 'متابعة أولياء الأمور',
 			'tc.observation.reglages.intro' => 'يمكن لوليّ الأمر مشاهدة درس طفله لوقت قصير، دون ميكروفون ولا كاميرا. يحدد هذا الإعداد ما ينطبق على هذا الفصل.',
 			'tc.observation.reglages.heriter' => 'اتباع إعداد الأكاديمية',
@@ -9802,7 +9847,7 @@ extension on TraductionsAr {
 			'tc.parcours.signalement.interneRequis' => 'اكتب على الأقل ما يجب أن تعرفه الإدارة.',
 			'tc.parcours.signalement.echec' => 'تعذّر إرسال البلاغ. أعد المحاولة.',
 			'tc.parcours.postCours.titre' => 'بعد الدرس',
-			'tc.parcours.postCours.duree' => ({required Object minutes}) => 'المدة الفعلية ⁨${minutes}⁩ دقيقة',
+			'tc.parcours.postCours.duree' => ({required Object minutes}) => 'المدة الفعلية ⁨${minutes}⁩ د',
 			'tc.parcours.postCours.exceptions' => 'للتأكيد',
 			'tc.parcours.postCours.toutEstNominal' => 'لا شيء يتطلب انتباهك.',
 			'tc.parcours.postCours.reprise' => 'الاستئناف المقترح',
@@ -10125,10 +10170,10 @@ extension on TraductionsAr {
 			'parcours.etatDiagnosticRequisDetail' => ({required Object prenom}) => 'بقي لقاء مع معلم لتحديد مستوى ⁨${prenom}⁩. ستقترح عليك الأكاديمية موعدًا.',
 			'parcours.etatDiagnosticEnAttente' => 'الموعد مجدول',
 			'parcours.etatDiagnosticEnAttenteDetail' => ({required Object prenom}) => 'لقاء مجدول لتحديد مستوى ⁨${prenom}⁩.',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.etatClasseEnFormation' => 'الفصل قيد التكوين',
 			'parcours.etatClasseEnFormationDetail' => ({required num minimum}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(minimum, zero: 'يبدأ الفصل دون حد أدنى من الطلاب. سنعلمك بمجرد تأكيده.', one: 'يبدأ الفصل ابتداءً من طالب واحد. سنعلمك بمجرد تأكيده.', two: 'يبدأ الفصل ابتداءً من طالبين. سنعلمك بمجرد تأكيده.', few: 'يبدأ الفصل ابتداءً من ⁨${minimum}⁩ طلاب. سنعلمك بمجرد تأكيده.', many: 'يبدأ الفصل ابتداءً من ⁨${minimum}⁩ طالبًا. سنعلمك بمجرد تأكيده.', other: 'يبدأ الفصل ابتداءً من ⁨${minimum}⁩ طالب. سنعلمك بمجرد تأكيده.', ), 
+			_ => null,
+		} ?? switch (path) {
 			'parcours.etatClasseEnFormationDetailSansMinimum' => 'يبدأ الفصل ابتداءً من عدد معين من الطلاب. سنعلمك بمجرد تأكيده.',
 			'parcours.etatClasseConfirmee' => 'الفصل مؤكَّد',
 			'parcours.etatClasseConfirmeeDetail' => ({required Object prenom}) => 'تكوّن فصل ⁨${prenom}⁩. ستجد حصصه في مساحته.',
@@ -10230,26 +10275,26 @@ extension on TraductionsAr {
 			'presence.finalisee' => 'نهائي',
 			'presence.inconnu' => 'حالة غير معروفة',
 			'presence.entreeInstant' => 'دخل القاعة للتو',
-			'presence.entreeMinutes' => ({required Object minutes}) => 'في القاعة منذ ⁨${minutes}⁩ دقيقة',
-			'presence.retardMinutes' => ({required Object minutes}) => '⁨${minutes}⁩ دقيقة بعد الموعد',
+			'presence.entreeMinutes' => ({required Object minutes}) => 'في القاعة منذ ⁨${minutes}⁩ د',
+			'presence.retardMinutes' => ({required Object minutes}) => '⁨${minutes}⁩ د بعد الموعد',
 			'presence.silenceInstant' => 'لا أخبار منذ بضع ثوانٍ',
-			'presence.silenceMinutes' => ({required Object minutes}) => 'لا أخبار منذ ⁨${minutes}⁩ دقيقة',
+			'presence.silenceMinutes' => ({required Object minutes}) => 'لا أخبار منذ ⁨${minutes}⁩ د',
 			'presence.attenteInstant' => 'بدأ الدرس للتو',
-			'presence.attenteMinutes' => ({required Object minutes}) => 'بدأ الدرس منذ ⁨${minutes}⁩ دقيقة',
+			'presence.attenteMinutes' => ({required Object minutes}) => 'بدأ الدرس منذ ⁨${minutes}⁩ د',
 			'priere.fajr' => 'الفجر',
 			'priere.dhuhr' => 'الظهر',
 			'priere.asr' => 'العصر',
 			'priere.maghrib' => 'المغرب',
 			'priere.isha' => 'العشاء',
-			'priere.entree' => ({required Object priere, required Object minutes}) => '⁨${priere}⁩، ⁨${minutes}⁩ دقيقة',
+			'priere.entree' => ({required Object priere, required Object minutes}) => '⁨${priere}⁩، ⁨${minutes}⁩ د',
 			'priere.annonce' => ({required Object priere, required Object heure}) => 'سيتوقف هذا الدرس لصلاة ⁨${priere}⁩، نحو ⁨${heure}⁩.',
 			'priere.annonceAucune' => 'لا توقف مقرر أثناء هذا الدرس.',
-			'priere.alerte' => ({required Object priere, required Object minutes}) => '⁨${priere}⁩ بعد ⁨${minutes}⁩ دقيقة',
+			'priere.alerte' => ({required Object priere, required Object minutes}) => '⁨${priere}⁩ بعد ⁨${minutes}⁩ د',
 			'priere.alerteMaintenant' => ({required Object priere, required Object heure}) => 'استراحة لصلاة ⁨${priere}⁩، الاستئناف الساعة ⁨${heure}⁩',
 			'priere.pause' => 'استراحة',
 			'priere.lieu' => ({required Object lieu}) => 'أوقات محسوبة لـ⁨${lieu}⁩',
 			'priere.lieuSansNom' => 'أوقات محسوبة لمكان المعلم',
-			'priere.ajustee' => ({required Object priere, required Object minutes}) => 'عدّل المعلم ⁨${priere}⁩ بـ⁨${minutes}⁩ دقيقة',
+			'priere.ajustee' => ({required Object priere, required Object minutes}) => 'عدّل المعلم ⁨${priere}⁩ بـ⁨${minutes}⁩ د',
 			'priere.reglagesAbsents' => 'لم يضبط المعلم أوقات الصلاة بعد.',
 			'tuteur.accueil.titre' => 'الرئيسية',
 			'tuteur.accueil.voirLaClasse' => 'عرض الفصل',
@@ -10293,7 +10338,7 @@ extension on TraductionsAr {
 			'tuteur.accueil.dateEtDuree' => ({required Object date, required Object duree}) => '⁨${date}⁩ · ⁨${duree}⁩',
 			'tuteur.accueil.etatCourt.enDirect' => 'مباشر',
 			'tuteur.accueil.etatCourt.salleOuverte' => 'القاعة مفتوحة',
-			'tuteur.accueil.etatCourt.dansMinutes' => ({required Object minutes}) => 'بعد ⁨${minutes}⁩ دقيقة',
+			'tuteur.accueil.etatCourt.dansMinutes' => ({required Object minutes}) => 'بعد ⁨${minutes}⁩ د',
 			'tuteur.accueil.etatCourt.dansHeures' => ({required Object heures, required Object minutes}) => 'بعد ⁨${heures}⁩ س ⁨${minutes}⁩ د',
 			'tuteur.accueil.etatCourt.dansJours' => ({required Object jours}) => 'بعد ⁨${jours}⁩ ي',
 			'tuteur.accueil.etatCourt.prevue' => 'حصة مقررة',
@@ -10305,7 +10350,7 @@ extension on TraductionsAr {
 			'tuteur.accueil.assister' => 'الحضور',
 			'tuteur.accueil.assisterRefuse' => 'تعذّر الانضمام إلى الدرس. ربما انتهى للتو.',
 			'tuteur.accueil.enCours' => ({required Object prenom}) => 'جارٍ مع ⁨${prenom}⁩',
-			'tuteur.accueil.depuisMinutes' => ({required Object minutes}) => 'بدأ منذ ⁨${minutes}⁩ دقيقة',
+			'tuteur.accueil.depuisMinutes' => ({required Object minutes}) => 'بدأ منذ ⁨${minutes}⁩ د',
 			'tuteur.accueil.depuisInstant' => 'بدأ للتو',
 			'tuteur.accueil.aujourdhui' => ({required Object heure, required Object prenom}) => 'اليوم الساعة ⁨${heure}⁩، مع ⁨${prenom}⁩',
 			'tuteur.accueil.unAutreJour' => ({required Object jour, required Object heure, required Object prenom}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩، مع ⁨${prenom}⁩',
@@ -10361,8 +10406,8 @@ extension on TraductionsAr {
 			'tuteur.reglages.demandeTitreReaffectation' => ({required Object prenom}) => 'تغيير معلم ⁨${prenom}⁩',
 			'tuteur.reglages.demandeTitreDuree' => ({required Object prenom}) => 'مدة دروس ⁨${prenom}⁩',
 			'tuteur.reglages.demandeTitreMinimum' => ({required Object prenom}) => 'المدة الدنيا المدفوعة لـ⁨${prenom}⁩',
-			'tuteur.reglages.demandeActuelle' => ({required Object minutes}) => 'حاليًا: ⁨${minutes}⁩ دقيقة',
-			'tuteur.reglages.demandeMinutes' => ({required Object minutes}) => '⁨${minutes}⁩ دقيقة',
+			'tuteur.reglages.demandeActuelle' => ({required Object minutes}) => 'حاليًا: ⁨${minutes}⁩ د',
+			'tuteur.reglages.demandeMinutes' => ({required Object minutes}) => '⁨${minutes}⁩ د',
 			'tuteur.reglages.demandeMotif' => 'لماذا هذا التغيير؟',
 			'tuteur.reglages.demandeMotifRequis' => 'السبب ضروري: هو الذي يسمح بالحسم.',
 			'tuteur.reglages.demandeEnvoyer' => 'إرسال الطلب',
@@ -10390,7 +10435,7 @@ extension on TraductionsAr {
 			'historique.dateLongue' => ({required Object jourSemaine, required Object jour, required Object mois, required Object annee}) => '⁨${jourSemaine}⁩ ⁨${jour}⁩ ⁨${mois}⁩ ⁨${annee}⁩',
 			'historique.plage' => ({required Object debut, required Object fin}) => '⁨${debut}⁩ - ⁨${fin}⁩',
 			'historique.duree.secondes' => ({required Object s}) => '⁨${s}⁩ ث',
-			'historique.duree.minutes' => ({required Object m}) => '⁨${m}⁩ دقيقة',
+			'historique.duree.minutes' => ({required Object m}) => '⁨${m}⁩ د',
 			'historique.duree.minutesSecondes' => ({required Object m, required Object s}) => '⁨${m}⁩ د ⁨${s}⁩ ث',
 			'historique.duree.heures' => ({required Object h}) => '⁨${h}⁩ س',
 			'historique.duree.heuresMinutes' => ({required Object h, required Object m}) => '⁨${h}⁩ س ⁨${m}⁩ د',
@@ -10411,7 +10456,7 @@ extension on TraductionsAr {
 			'historique.filtres.tousStatuts' => 'كل الحالات',
 			'historique.retour' => 'العودة إلى السجل',
 			'historique.etat.presence' => 'حضور',
-			'historique.etat.retard' => ({required Object minutes}) => 'تأخر ⁨${minutes}⁩ دقيقة',
+			'historique.etat.retard' => ({required Object minutes}) => 'تأخر ⁨${minutes}⁩ د',
 			'historique.etat.retardSansDuree' => 'تأخر',
 			'historique.etat.verification' => 'قيد التحقق',
 			'historique.etat.annule' => 'درس ملغى',
@@ -10628,7 +10673,7 @@ extension on TraductionsAr {
 			'attente.horsLigne' => 'أنت غير متصل. ستظهر حالة ملفك بمجرد عودة الشبكة.',
 			'inscription.titre' => 'إنشاء حسابك',
 			'inscription.etapeSur' => ({required Object n, required Object total}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩',
-			'inscription.tempsRestant' => ({required Object minutes}) => 'نحو ⁨${minutes}⁩ دقيقة',
+			'inscription.tempsRestant' => ({required Object minutes}) => 'نحو ⁨${minutes}⁩ د',
 			'inscription.roleQuestion' => 'هل تسجّل كوليّ أمر أم كمعلم؟',
 			'inscription.roleTuteur' => 'وليّ أمر',
 			'inscription.roleEleveAdulte' => 'طالب بالغ، لنفسي',
@@ -10639,10 +10684,10 @@ extension on TraductionsAr {
 			'inscription.prenom' => 'الاسم',
 			'inscription.nom' => 'اللقب',
 			'inscription.genreQuestion' => 'أنت',
-			_ => null,
-		} ?? switch (path) {
 			'inscription.genreHomme' => 'رجل',
 			'inscription.genreFemme' => 'امرأة',
+			_ => null,
+		} ?? switch (path) {
 			'inscription.genreRaison' => 'تُستخدم هذه الإجابة فقط لتسليم وثيقة هويتك إلى موظف من الجنس نفسه.',
 			'inscription.recapitulatif' => 'قبل المتابعة',
 			'inscription.creer' => 'إنشاء حسابي',
@@ -10679,7 +10724,7 @@ extension on TraductionsAr {
 			'consentement.texte.continuer' => 'متابعة',
 			'consentement.texte.retour' => 'رجوع',
 			'consentement.comment.titre' => 'كيف يعمل ذلك؟',
-			'consentement.comment.visites' => ({required num n, required Object minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا زيارة في الحصة.', one: 'زيارة واحدة مدتها ⁨${minutes}⁩ دقيقة في كل حصة.', two: 'زيارتان مدة كل منهما ⁨${minutes}⁩ دقيقة في كل حصة.', few: '⁨${n}⁩ زيارات مدة كل منها ⁨${minutes}⁩ دقيقة في كل حصة.', many: '⁨${n}⁩ زيارةً مدة كل منها ⁨${minutes}⁩ دقيقة في كل حصة.', other: '⁨${n}⁩ زيارة مدة كل منها ⁨${minutes}⁩ دقيقة في كل حصة.', ), 
+			'consentement.comment.visites' => ({required num n, required Object minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا زيارة في الحصة.', one: 'زيارة واحدة مدتها ⁨${minutes}⁩ د في كل حصة.', two: 'زيارتان مدة كل منهما ⁨${minutes}⁩ د في كل حصة.', few: '⁨${n}⁩ زيارات مدة كل منها ⁨${minutes}⁩ د في كل حصة.', many: '⁨${n}⁩ زيارةً مدة كل منها ⁨${minutes}⁩ د في كل حصة.', other: '⁨${n}⁩ زيارة مدة كل منها ⁨${minutes}⁩ د في كل حصة.', ), 
 			'consentement.comment.visitesSansDuree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا زيارة في الحصة.', one: 'زيارة قصيرة واحدة في كل حصة.', two: 'زيارتان قصيرتان في كل حصة.', few: '⁨${n}⁩ زيارات قصيرة في كل حصة.', many: '⁨${n}⁩ زيارةً قصيرة في كل حصة.', other: '⁨${n}⁩ زيارة قصيرة في كل حصة.', ), 
 			'consentement.comment.parParent' => 'يسري هذا العدد على كل وليّ أمر، سواء جمعت الحصة طفلًا واحدًا من أطفاله أو أكثر.',
 			'consentement.comment.ecourtee' => 'الزيارة التي تُغادَر قبل نهايتها تُحتسب: لا يبقى إلا التالية، حتى الأخيرة.',
@@ -11153,10 +11198,10 @@ extension on TraductionsAr {
 			'dossiers.pointLisible' => 'الوثيقة مقروءة',
 			'dossiers.pointNom' => 'الاسم يطابق اسم الحساب',
 			'dossiers.pointValidite' => 'الوثيقة غير منتهية الصلاحية',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.verdict' => 'القرار',
 			'dossiers.approuver' => 'اعتماد الملف',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.refuser' => 'رفض الملف',
 			'dossiers.profilACompleter.titre' => 'الملف الشخصي للإكمال',
 			'dossiers.profilACompleter.texte' => 'يجب إكمال ملفك الشخصي قبل الاطلاع على الملفات التي تسمح بها هذه القاعدة.',
@@ -11535,7 +11580,7 @@ extension on TraductionsAr {
 			'admin.demandes.reclame' => 'المطلوب',
 			'admin.demandes.reclameReaffectation' => ({required Object prenom}) => 'تغيير معلم ⁨${prenom}⁩',
 			'admin.demandes.reclamePlafond' => ({required num valeur}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(valeur, zero: 'رفع الحد الأقصى إلى صفر', one: 'رفع الحد الأقصى إلى طالب واحد', two: 'رفع الحد الأقصى إلى طالبين', few: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طلاب', many: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طالبًا', other: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طالب', ), 
-			'admin.demandes.reclameRegle' => ({required Object regle, required Object valeur}) => 'جعل ⁨${regle}⁩ ⁨${valeur}⁩ دقيقة',
+			'admin.demandes.reclameRegle' => ({required Object regle, required Object valeur}) => 'جعل ⁨${regle}⁩ ⁨${valeur}⁩ د',
 			'admin.demandes.reclameRegleSansValeur' => ({required Object regle}) => 'مراجعة ⁨${regle}⁩',
 			'admin.demandes.motifDemande' => 'السبب المذكور',
 			'admin.demandes.verdict' => 'القرار',
@@ -11554,7 +11599,7 @@ extension on TraductionsAr {
 			'admin.demandes.regleInconnue' => 'قاعدة غير معروفة',
 			'admin.demandes.plateforme' => ({required Object valeur}) => 'المنصة: ⁨${valeur}⁩',
 			'admin.demandes.effective' => ({required Object valeur}) => 'المطبقة: ⁨${valeur}⁩',
-			'admin.demandes.minutes' => ({required Object valeur}) => '⁨${valeur}⁩ دقيقة',
+			'admin.demandes.minutes' => ({required Object valeur}) => '⁨${valeur}⁩ د',
 			'admin.demandes.eleves' => ({required num valeur}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(valeur, zero: 'لا طالب', one: 'طالب واحد', two: 'طالبان', few: '⁨${valeur}⁩ طلاب', many: '⁨${valeur}⁩ طالبًا', other: '⁨${valeur}⁩ طالب', ), 
 			'admin.demandes.surchargeDepuis' => ({required Object date, required Object motif}) => 'وُضعت في ⁨${date}⁩: ⁨${motif}⁩',
 			'admin.demandes.sansSurcharge' => 'يتبع هذا الطالب قاعدة المنصة.',
@@ -11667,10 +11712,10 @@ extension on TraductionsAr {
 			'admin.diagnostics.restants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا طالب متبقٍّ', one: 'طالب واحد متبقٍّ', two: 'طالبان متبقيان', few: '⁨${n}⁩ طلاب متبقون', many: '⁨${n}⁩ طالبًا متبقيًا', other: '⁨${n}⁩ طالب متبقٍّ', ), 
 			'admin.diagnostics.restantUn' => 'طالب واحد متبقٍ',
 			'admin.diagnostics.inscritAujourdhui' => 'مسجَّل اليوم',
-			_ => null,
-		} ?? switch (path) {
 			'admin.diagnostics.inscritDepuisUnJour' => 'مسجَّل منذ يوم',
 			'admin.diagnostics.inscritDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'مسجَّل منذ اليوم', one: 'مسجَّل منذ يوم واحد', two: 'مسجَّل منذ يومين', few: 'مسجَّل منذ ⁨${jours}⁩ أيام', many: 'مسجَّل منذ ⁨${jours}⁩ يومًا', other: 'مسجَّل منذ ⁨${jours}⁩ يوم', ), 
+			_ => null,
+		} ?? switch (path) {
 			'admin.diagnostics.aucun' => 'لا طالب لتحديد مستواه',
 			'admin.diagnostics.aucunDetail' => 'لكل الطلاب المسجلين مستوى مقرر بالفعل.',
 			'admin.diagnostics.champNiveau' => 'مستوى التوجيه',
@@ -11730,7 +11775,7 @@ extension on TraductionsAr {
 			'admin.regles.appareilsParEleveDetail' => 'عدد الأجهزة التي يمكن أن تكون نشطة لطالب في الوقت نفسه.',
 			'admin.regles.seancesSimultanees' => 'الحصص المتزامنة لكل ملف',
 			'admin.regles.seancesSimultaneesDetail' => 'عدد الحصص التي يمكن لملف واحد متابعتها في الوقت نفسه.',
-			'admin.regles.uniteMinutes' => ({required Object n}) => '⁨${n}⁩ دقيقة',
+			'admin.regles.uniteMinutes' => ({required Object n}) => '⁨${n}⁩ د',
 			'admin.regles.uniteSemaines' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ أسبوع', one: 'أسبوع واحد', two: 'أسبوعان', few: '⁨${n}⁩ أسابيع', many: '⁨${n}⁩ أسبوعًا', other: '⁨${n}⁩ أسبوع', ), 
 			'admin.regles.uniteNombre' => ({required Object n}) => '⁨${n}⁩',
 			'admin.fonctionnalites.titre' => 'الوظائف',

@@ -35,12 +35,9 @@ String dureeVisiteLisible(Duration duree) {
   final int minutes = total ~/ 60;
   final int secondes = total % 60;
   final d = t.tc.observation.duree;
-  if (minutes == 0) {
-    return secondes <= 1 ? d.secondeUne(n: secondes) : d.secondes(n: secondes);
-  }
-  if (secondes == 0) {
-    return minutes == 1 ? d.minuteUne(n: minutes) : d.minutes(n: minutes);
-  }
+  // Pluriels slang : l'arabe accorde l'unite au nombre (AR-CORR-2).
+  if (minutes == 0) return d.secondes(n: secondes);
+  if (secondes == 0) return d.minutes(n: minutes);
   return d.minutesSecondes(m: minutes, s: secondes);
 }
 
