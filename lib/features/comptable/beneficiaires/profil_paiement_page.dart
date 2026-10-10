@@ -102,17 +102,14 @@ class _ProfilPaiementPageEtat extends ConsumerState<ProfilPaiementPage> {
     }
   }
 
-  /// La phrase d'un echec d'action : source absente, puis hors ligne (le
-  /// reseau manque : la phrase le dit, sans affirmer que rien n'est parti),
-  /// puis l'echec generique.
+  /// La phrase d'un echec d'action : source absente, puis l'echec generique.
+  /// Hors ligne, le bandeau le dit deja (K-59, EA-HL-DOUBLE) : aucune phrase
+  /// de l'ecran ne le redit.
   String _messageEchec(Object erreur) {
     if (erreur is CapaciteIndisponible) {
       return t.comptable.beneficiaires.profil.erreurIndisponible;
     }
-    final bool horsLigne = ref.read(horsLigneProvider).value ?? false;
-    return horsLigne
-        ? t.comptable.beneficiaires.profil.erreurHorsLigne
-        : t.comptable.beneficiaires.profil.erreurAction;
+    return t.comptable.beneficiaires.profil.erreurAction;
   }
 
   Future<void> _agir(

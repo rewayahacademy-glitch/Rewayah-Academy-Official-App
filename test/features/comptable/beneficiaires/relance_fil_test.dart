@@ -284,7 +284,7 @@ void main() {
       expect(find.byType(FilProfilPaiementPage), findsNothing);
     });
 
-    testWidgets('hors ligne : la phrase dit le reseau, aucun fil ouvert', (
+    testWidgets('hors ligne : la phrase generique, le bandeau dit le reseau, aucun fil ouvert', (
       WidgetTester tester,
     ) async {
       await _monter(
@@ -295,7 +295,7 @@ void main() {
       expect(find.byType(FilProfilPaiementPage), findsNothing);
       expect(
         tester.widget<Text>(find.byKey(ProfilPaiementPage.retourKey)).data,
-        t.comptable.beneficiaires.profil.erreurHorsLigne,
+        t.comptable.beneficiaires.profil.erreurAction,
       );
       expect(find.byKey(ProfilPaiementPage.relancerKey), findsOneWidget);
     });
