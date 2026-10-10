@@ -156,7 +156,8 @@ BEGIN
         EXIT WHEN v_trouve;
       END LOOP;
       IF NOT v_trouve THEN
-        RAISE EXCEPTION 'enseignant non disponible sur toutes les occurrences';
+        RAISE EXCEPTION 'enseignant non disponible: jour %, heure %, fuseau %, semaine %, instant %',
+          v_c.weekday, v_c.hour_local, v_c.timezone_iana, v_w, v_debut;
       END IF;
     END LOOP;
   END LOOP;
