@@ -103,6 +103,8 @@ void main() {
       expect(ecarts.reduce(math.max), greaterThanOrEqualTo(4 * 8000));
       // Une fois les lectures abouties, la cadence revient.
       expect(ecarts.last, inInclusiveRange(8000, 12000));
+      // Des la premiere reussite (rang 5), et non apres un recul de plus.
+      expect(ecarts[5], inInclusiveRange(8000, 12000));
     });
   });
 

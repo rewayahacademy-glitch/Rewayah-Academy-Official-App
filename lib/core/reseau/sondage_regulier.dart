@@ -108,6 +108,13 @@ class SondageRegulier {
       aboutie = false;
     }
     if (_arrete) return;
+    final bool retour = aboutie && _echecs > 0;
     _echecs = aboutie ? 0 : _echecs + 1;
+    // La minuterie en cours a ete posee avec le recul de la panne : sans
+    // replanifier, le retour a la cadence attendrait un recul de plus.
+    if (retour) {
+      _minuterie?.cancel();
+      _planifier();
+    }
   }
 }
