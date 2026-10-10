@@ -263,8 +263,8 @@ void main() {
       );
       expect(
         find.text(
-          'Mardi : 5\u00a0h le lendemain à Paris · '
-          'Jeudi : 5\u00a0h\u00a030 le lendemain à Paris',
+          'Mardi\u00a0: 5\u00a0h le lendemain à Paris · '
+          'Jeudi\u00a0: 5\u00a0h\u00a030 le lendemain à Paris',
         ),
         findsOneWidget,
       );
@@ -692,7 +692,7 @@ void main() {
         expect(
           find.text(
             'Un autre membre de la direction a déjà confirmé l\'enseignant '
-            'de cette classe : votre choix ne remplace pas le sien.',
+            'de cette classe\u00a0: votre choix ne remplace pas le sien.',
           ),
           findsOneWidget,
         );
@@ -832,7 +832,7 @@ void main() {
       expect(libelleFuseau(autres), 'Heure de Paris');
       expect(
         libelleAutresFuseaux(autres),
-        'Lundi : 17 h à London · Mercredi : 18 h 30 à London',
+        'Lundi\u00a0: 17 h à London · Mercredi\u00a0: 18 h 30 à London',
       );
       expect(
         nomDeduit(autres, null),
