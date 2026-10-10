@@ -179,4 +179,146 @@ begin
 end
 $b06_storage$;
 
+-- M2 : scanner persistant sur tous les SECURITY DEFINER applicatifs et
+-- fixtures adversariales couvrant IF/ELSIF, opérateurs et retours à la ligne.
+do $b18_scanner$
+declare
+  v record;
+begin
+  for v in
+    select nom, source
+    from (values
+      ('if_inequality', 'IF app_role() <> ''admin'' THEN'),
+      ('elsif_not_equal_multiline', E'ELSIF\n public.app_role() != ''admin'' THEN'),
+      ('not_in_multiline', E'IF public.app_role()\n NOT IN (''admin'', ''controller'') THEN'),
+      ('reversed_inequality', 'IF ''admin'' <> public.app_role() THEN')
+    ) as samples(nom, source)
+  loop
+    if not app_private.has_unsafe_role_guard(v.source) then
+      raise exception 'M2 ECHEC: scanner aveugle à %', v.nom;
+    end if;
+  end loop;
+
+  if app_private.has_unsafe_role_guard(
+    'IF NOT coalesce(public.app_role() = ''admin'' AND public.app_account_valid(), false) THEN'
+  ) then
+    raise exception 'M2 ECHEC: le scanner rejette la garde positive canonique';
+  end if;
+
+  if exists (
+    select 1
+    from pg_catalog.pg_proc p
+    join pg_catalog.pg_namespace n on n.oid = p.pronamespace
+    where n.nspname in ('public', 'app_private')
+      and p.prokind = 'f'
+      and p.prosecdef
+      and app_private.has_unsafe_role_guard(p.prosrc)
+  ) then
+    raise exception 'M2 ECHEC: garde négative résiduelle dans une fonction SECURITY DEFINER applicative';
+  end if;
+end
+$b18_scanner$;
+
+-- Fixtures actives dans un même foyer : un JWT sans rôle rendrait la branche
+-- guardian NULL avec l'ancienne condition NOT (...), laquelle laissait passer.
+insert into auth.users (id, email) values
+  ('b1840000-0000-0000-0000-000000000004', 'b18-null-role-guardian@example.test'),
+  ('b1840000-0000-0000-0000-000000000005', 'b18-null-role-child@example.test');
+insert into public.profiles
+  (id, immutable_id, role, gender, first_name, last_name, account_status, household_id)
+values
+  ('b1840000-0000-0000-0000-000000000004', 'B18NROLEGUARD0004', 'guardian',
+   'female', 'Fixture', 'Guardian', 'active', 'b1840000-0000-0000-0000-000000000010'),
+  ('b1840000-0000-0000-0000-000000000005', 'B18NROLECHILD005', 'student',
+   'female', 'Fixture', 'Child', 'active', 'b1840000-0000-0000-0000-000000000010');
+
+set local role authenticated;
+select set_config('test.uid', 'b1840000-0000-0000-0000-000000000004', true);
+select set_config(
+  'request.jwt.claims',
+  '{"app_metadata":{"household_id":"b1840000-0000-0000-0000-000000000010"}}',
+  true
+);
+do $m1_no_role$
+begin
+  if public.app_role() is not null or not public.app_account_valid()
+     or not public.est_du_foyer('b1840000-0000-0000-0000-000000000005') then
+    raise exception 'M1 fixture invalide: compte actif sans rôle, même foyer attendu';
+  end if;
+
+  begin
+    perform public.etat_presence(
+      'b1840000-0000-0000-0000-000000000099'::uuid,
+      'b1840000-0000-0000-0000-000000000005'::uuid
+    );
+    raise exception 'M1 ECHEC: etat_presence accepte le JWT sans rôle';
+  exception when insufficient_privilege then
+    null;
+  end;
+end
+$m1_no_role$;
+reset role;
+
+-- M4 : le trigger voit le rôle Postgres effectif (SECURITY INVOKER); un
+-- utilisateur authentifié sans claim de rôle est refusé, tandis que l'admin
+-- actif et service_role conservent leurs usages.
+do $m4_catalog$
+declare
+  v_security_definer boolean;
+begin
+  select p.prosecdef into v_security_definer
+  from pg_catalog.pg_proc p
+  where p.oid = 'public.guard_profile_privileged_columns()'::regprocedure;
+  if v_security_definer is distinct from false then
+    raise exception 'M4 ECHEC: guard_profile_privileged_columns doit être SECURITY INVOKER';
+  end if;
+end
+$m4_catalog$;
+
+create temporary table profile_guard_fixture on commit drop as
+select role, household_id, account_status, access_until
+from public.profiles
+where id = 'b1840000-0000-0000-0000-000000000004';
+create trigger profile_guard_fixture_trigger
+before update on pg_temp.profile_guard_fixture
+for each row execute function public.guard_profile_privileged_columns();
+grant select, update on pg_temp.profile_guard_fixture to authenticated, service_role;
+
+set local role authenticated;
+select set_config('test.uid', 'b1840000-0000-0000-0000-000000000004', true);
+select set_config(
+  'request.jwt.claims',
+  '{"app_metadata":{"household_id":"b1840000-0000-0000-0000-000000000010"}}',
+  true
+);
+do $m4_no_role$
+begin
+  if public.app_role() is not null or not public.app_account_valid() then
+    raise exception 'M4 fixture invalide: compte actif sans rôle attendu';
+  end if;
+
+  begin
+    update pg_temp.profile_guard_fixture
+       set access_until = now() + interval '1 day';
+    raise exception 'M4 ECHEC: compte sans rôle a modifié access_until';
+  exception when insufficient_privilege then
+    null;
+  end;
+end
+$m4_no_role$;
+
+select set_config(
+  'request.jwt.claims',
+  '{"app_metadata":{"role":"admin","household_id":"b1840000-0000-0000-0000-000000000010"}}',
+  true
+);
+update pg_temp.profile_guard_fixture
+   set access_until = now() + interval '2 days';
+reset role;
+
+set local role service_role;
+update pg_temp.profile_guard_fixture
+   set access_until = now() + interval '3 days';
+reset role;
+
 rollback;
