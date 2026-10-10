@@ -87,7 +87,29 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
   bool get _lectureFaite => !widget.dossier.lectureRequise || _pieceLue;
 
   @override
+  void initState() {
+    super.initState();
+    _focusVoirPiece.addListener(_ramenerVoirPieceEnVue);
+  }
+
+  /// Le focus clavier sur « Voir la piece » ramene toujours le bouton dans
+  /// la zone defilante : sa carte peut sortir sous l'en-tete du volet.
+  void _ramenerVoirPieceEnVue() {
+    if (!_focusVoirPiece.hasFocus) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final BuildContext? contexte = _focusVoirPiece.context;
+      if (!mounted || contexte == null || !contexte.mounted) {
+        return;
+      }
+      unawaited(Scrollable.ensureVisible(contexte));
+    });
+  }
+
+  @override
   void dispose() {
+    _focusVoirPiece.removeListener(_ramenerVoirPieceEnVue);
     for (final FocusNode n in _focus.values) {
       n.dispose();
     }
