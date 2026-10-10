@@ -6094,7 +6094,8 @@
       "delaiTitre": "Nouvelle invitation indisponible",
       "delaiPhrase": "Une nouvelle demande pourra être déposée à partir du {date}. Elle devra ensuite être validée par l'administration.",
       "pourquoi": "Pourquoi cette attente ?",
-      "pourquoiPhrase": "Cette mesure permet de garantir la sécurité des foyers et la bonne gestion des accès des enfants."
+      "pourquoiPhrase": "Cette mesure permet de garantir la sécurité des foyers et la bonne gestion des accès des enfants.",
+      "foyerPersonnel": "Un foyer personnel a été créé pour vous : vous y retrouvez votre compte et vos élèves."
     },
     "reprise": {
       "titre": "Demande de reprise du foyer",
@@ -6140,7 +6141,8 @@
         "refuseeParTitulaire": "Le titulaire du foyer a refusé cette demande. L'administration en est informée. Aucune permission du foyer n'est transférée.",
         "attenteAdministration": "Le titulaire n'a pas répondu. Rien n'est transféré automatiquement : l'administration doit encore examiner la demande.",
         "validee": "L'administration a validé la demande. Vous êtes désormais titulaire du foyer.",
-        "refusee": "L'administration a refusé la demande. Aucune permission du foyer n'est transférée."
+        "refusee": "L'administration a refusé la demande. Aucune permission du foyer n'est transférée.",
+        "redepotLe": "Une nouvelle demande pourra être déposée à partir du {date}."
       },
       "titulaire": {
         "notification": "Une demande de reprise de votre foyer a été déposée en indiquant votre décès.",
@@ -8623,5 +8625,34 @@
       "voir": "Répondre"
     },
     "notification": "{prenom} demande la présentation standard"
+  },
+  "reprisesAdmin": {
+    "onglet": "Reprises",
+    "titre": "Reprises de foyer",
+    "sousTitre": "Demandes d'un second adulte pour devenir titulaire du foyer. L'administration décide.",
+    "demandeur": "Demandeur",
+    "foyer": "Foyer",
+    "deposeeLe": "Déposée le",
+    "etat": {
+      "aExaminer": "À examiner",
+      "refuseeParTitulaire": "Refusée par le titulaire"
+    },
+    "examenLe": "Examen possible à partir du {date}.",
+    "refuseeInfo": "Le titulaire a refusé cette demande. Aucune décision n'est attendue.",
+    "valider": "Valider la reprise",
+    "refuser": "Refuser la reprise",
+    "validerQuestion": "Valider la reprise du foyer par {prenom} ?",
+    "validerConsequence": "Cette personne deviendra titulaire du foyer. Cette décision transfère la titularité.",
+    "refuserQuestion": "Refuser la reprise du foyer par {prenom} ?",
+    "refuserConsequence": "Aucune permission n'est transférée. La personne pourra déposer une nouvelle demande après le délai prévu.",
+    "validee": "Reprise validée.",
+    "refusee": "Reprise refusée.",
+    "dejaTraitee": "Cette demande a déjà été traitée. La liste est à jour.",
+    "echecReseau": "La décision n'a pas pu être confirmée. Vérifiez la liste avant de réessayer.",
+    "vide": "Aucune demande de reprise à traiter.",
+    "erreur": "Les demandes n'ont pas pu être chargées. Réessayez.",
+    "sansDonnees": "les demandes de reprise",
+    "indisponibleTitre": "Reprises de foyer indisponibles",
+    "indisponiblePhrase": "Cette fonction sera disponible au branchement serveur."
   }
 }

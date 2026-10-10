@@ -97,6 +97,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$com$fr com = Traductions$com$fr.internal(_root);
 	late final Traductions$comptable$fr comptable = Traductions$comptable$fr.internal(_root);
 	late final Traductions$presentationTuteur$fr presentationTuteur = Traductions$presentationTuteur$fr.internal(_root);
+	late final Traductions$reprisesAdmin$fr reprisesAdmin = Traductions$reprisesAdmin$fr.internal(_root);
 }
 
 // Path: commun
@@ -2916,6 +2917,86 @@ class Traductions$presentationTuteur$fr {
 
 	/// fr: '{prenom} demande la présentation standard'
 	String notification({required Object prenom}) => '${prenom} demande la présentation standard';
+}
+
+// Path: reprisesAdmin
+class Traductions$reprisesAdmin$fr {
+	Traductions$reprisesAdmin$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Reprises'
+	String get onglet => 'Reprises';
+
+	/// fr: 'Reprises de foyer'
+	String get titre => 'Reprises de foyer';
+
+	/// fr: 'Demandes d'un second adulte pour devenir titulaire du foyer. L'administration décide.'
+	String get sousTitre => 'Demandes d\'un second adulte pour devenir titulaire du foyer. L\'administration décide.';
+
+	/// fr: 'Demandeur'
+	String get demandeur => 'Demandeur';
+
+	/// fr: 'Foyer'
+	String get foyer => 'Foyer';
+
+	/// fr: 'Déposée le'
+	String get deposeeLe => 'Déposée le';
+
+	late final Traductions$reprisesAdmin$etat$fr etat = Traductions$reprisesAdmin$etat$fr.internal(_root);
+
+	/// fr: 'Examen possible à partir du {date}.'
+	String examenLe({required Object date}) => 'Examen possible à partir du ${date}.';
+
+	/// fr: 'Le titulaire a refusé cette demande. Aucune décision n'est attendue.'
+	String get refuseeInfo => 'Le titulaire a refusé cette demande. Aucune décision n\'est attendue.';
+
+	/// fr: 'Valider la reprise'
+	String get valider => 'Valider la reprise';
+
+	/// fr: 'Refuser la reprise'
+	String get refuser => 'Refuser la reprise';
+
+	/// fr: 'Valider la reprise du foyer par {prenom} ?'
+	String validerQuestion({required Object prenom}) => 'Valider la reprise du foyer par ${prenom} ?';
+
+	/// fr: 'Cette personne deviendra titulaire du foyer. Cette décision transfère la titularité.'
+	String get validerConsequence => 'Cette personne deviendra titulaire du foyer. Cette décision transfère la titularité.';
+
+	/// fr: 'Refuser la reprise du foyer par {prenom} ?'
+	String refuserQuestion({required Object prenom}) => 'Refuser la reprise du foyer par ${prenom} ?';
+
+	/// fr: 'Aucune permission n'est transférée. La personne pourra déposer une nouvelle demande après le délai prévu.'
+	String get refuserConsequence => 'Aucune permission n\'est transférée. La personne pourra déposer une nouvelle demande après le délai prévu.';
+
+	/// fr: 'Reprise validée.'
+	String get validee => 'Reprise validée.';
+
+	/// fr: 'Reprise refusée.'
+	String get refusee => 'Reprise refusée.';
+
+	/// fr: 'Cette demande a déjà été traitée. La liste est à jour.'
+	String get dejaTraitee => 'Cette demande a déjà été traitée. La liste est à jour.';
+
+	/// fr: 'La décision n'a pas pu être confirmée. Vérifiez la liste avant de réessayer.'
+	String get echecReseau => 'La décision n\'a pas pu être confirmée. Vérifiez la liste avant de réessayer.';
+
+	/// fr: 'Aucune demande de reprise à traiter.'
+	String get vide => 'Aucune demande de reprise à traiter.';
+
+	/// fr: 'Les demandes n'ont pas pu être chargées. Réessayez.'
+	String get erreur => 'Les demandes n\'ont pas pu être chargées. Réessayez.';
+
+	/// fr: 'les demandes de reprise'
+	String get sansDonnees => 'les demandes de reprise';
+
+	/// fr: 'Reprises de foyer indisponibles'
+	String get indisponibleTitre => 'Reprises de foyer indisponibles';
+
+	/// fr: 'Cette fonction sera disponible au branchement serveur.'
+	String get indisponiblePhrase => 'Cette fonction sera disponible au branchement serveur.';
 }
 
 // Path: commun.classeDistincte
@@ -13742,6 +13823,9 @@ class Traductions$adulte$sortie$fr {
 
 	/// fr: 'Cette mesure permet de garantir la sécurité des foyers et la bonne gestion des accès des enfants.'
 	String get pourquoiPhrase => 'Cette mesure permet de garantir la sécurité des foyers et la bonne gestion des accès des enfants.';
+
+	/// fr: 'Un foyer personnel a été créé pour vous : vous y retrouvez votre compte et vos élèves.'
+	String get foyerPersonnel => 'Un foyer personnel a été créé pour vous : vous y retrouvez votre compte et vos élèves.';
 }
 
 // Path: adulte.reprise
@@ -16329,6 +16413,21 @@ class Traductions$presentationTuteur$accueil$fr {
 
 	/// fr: 'Répondre'
 	String get voir => 'Répondre';
+}
+
+// Path: reprisesAdmin.etat
+class Traductions$reprisesAdmin$etat$fr {
+	Traductions$reprisesAdmin$etat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À examiner'
+	String get aExaminer => 'À examiner';
+
+	/// fr: 'Refusée par le titulaire'
+	String get refuseeParTitulaire => 'Refusée par le titulaire';
 }
 
 // Path: commun.etats.chargementProlonge
@@ -21946,6 +22045,9 @@ class Traductions$adulte$reprise$phrases$fr {
 
 	/// fr: 'L'administration a refusé la demande. Aucune permission du foyer n'est transférée.'
 	String get refusee => 'L\'administration a refusé la demande. Aucune permission du foyer n\'est transférée.';
+
+	/// fr: 'Une nouvelle demande pourra être déposée à partir du {date}.'
+	String redepotLe({required Object date}) => 'Une nouvelle demande pourra être déposée à partir du ${date}.';
 }
 
 // Path: adulte.reprise.titulaire
@@ -32874,6 +32976,7 @@ extension on Traductions {
 			'adulte.sortie.delaiPhrase' => ({required Object date}) => 'Une nouvelle demande pourra être déposée à partir du ${date}. Elle devra ensuite être validée par l\'administration.',
 			'adulte.sortie.pourquoi' => 'Pourquoi cette attente ?',
 			'adulte.sortie.pourquoiPhrase' => 'Cette mesure permet de garantir la sécurité des foyers et la bonne gestion des accès des enfants.',
+			'adulte.sortie.foyerPersonnel' => 'Un foyer personnel a été créé pour vous : vous y retrouvez votre compte et vos élèves.',
 			'adulte.reprise.titre' => 'Demande de reprise du foyer',
 			'adulte.reprise.explication' => 'Utilisez cette démarche si le titulaire du foyer est décédé. La demande sera signalée au compte concerné et examinée par l\'administration.',
 			'adulte.reprise.reprisTitre' => 'Ce qui sera repris',
@@ -32911,6 +33014,7 @@ extension on Traductions {
 			'adulte.reprise.phrases.attenteAdministration' => 'Le titulaire n\'a pas répondu. Rien n\'est transféré automatiquement : l\'administration doit encore examiner la demande.',
 			'adulte.reprise.phrases.validee' => 'L\'administration a validé la demande. Vous êtes désormais titulaire du foyer.',
 			'adulte.reprise.phrases.refusee' => 'L\'administration a refusé la demande. Aucune permission du foyer n\'est transférée.',
+			'adulte.reprise.phrases.redepotLe' => ({required Object date}) => 'Une nouvelle demande pourra être déposée à partir du ${date}.',
 			'adulte.reprise.titulaire.notification' => 'Une demande de reprise de votre foyer a été déposée en indiquant votre décès.',
 			'adulte.reprise.titulaire.consigne' => 'Si cette demande est erronée, refusez-la.',
 			'adulte.reprise.titulaire.refuser' => 'Refuser la demande',
@@ -32970,10 +33074,10 @@ extension on Traductions {
 			'adulte.demo.etats.departsSuivants' => 'Après le troisième départ, le délai suivant s\'applique toujours.',
 			'adulte.demo.etats.repriseDemandee' => 'Une demande de reprise du foyer a été déposée.',
 			'adulte.demo.etats.repriseRefuseeParTitulaire' => 'La demande de reprise a été refusée par le titulaire.',
-			'adulte.demo.etats.repriseSansReponse' => 'Sans réponse dans le délai, la demande attend l\'administration.',
-			'adulte.demo.etats.repriseValidee' => 'La reprise du foyer a été validée.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.demo.etats.repriseSansReponse' => 'Sans réponse dans le délai, la demande attend l\'administration.',
+			'adulte.demo.etats.repriseValidee' => 'La reprise du foyer a été validée.',
 			'adulte.demo.etats.repriseRefusee' => 'La reprise du foyer a été refusée.',
 			'adulte.demo.etats.dejaDansUnAutreFoyer' => 'L\'adulte invité fait déjà partie d\'un autre foyer.',
 			'adulte.demo.etats.erreurReseau' => 'Le réseau a coupé pendant une action.',
@@ -33484,10 +33588,10 @@ extension on Traductions {
 			'com.messages.demo.f.khadijaRevision' => 'Pensez à réviser la sourate Al-Mulk pour jeudi.',
 			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
 			'com.messages.vide' => 'Aucune conversation pour le moment.',
-			'com.vocal.composer.libelle' => 'Message vocal',
-			'com.vocal.composer.enregistrer' => 'Enregistrer un message vocal',
 			_ => null,
 		} ?? switch (path) {
+			'com.vocal.composer.libelle' => 'Message vocal',
+			'com.vocal.composer.enregistrer' => 'Enregistrer un message vocal',
 			'com.vocal.composer.indisponible' => 'Le message vocal n\'est pas encore disponible ici. Écrivez votre message dans le champ ci-dessus.',
 			'com.vocal.composer.erreurVerificationTitre' => 'Impossible de vérifier le microphone.',
 			'com.vocal.composer.erreurVerificationAction' => 'Réessayer',
@@ -33998,10 +34102,10 @@ extension on Traductions {
 			'com.annonces.administration.moderation.motif' => ({required Object motif}) => 'Motif : ${motif}',
 			'com.annonces.administration.moderation.extraitTitre' => 'Contenu signalé',
 			'com.annonces.administration.moderation.extraitAbsent' => 'L\'extrait de ce contenu n\'est pas communiqué.',
-			'com.annonces.administration.moderation.regle' => 'Règle visée',
-			'com.annonces.administration.moderation.approuver' => 'Approuver après examen',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.administration.moderation.regle' => 'Règle visée',
+			'com.annonces.administration.moderation.approuver' => 'Approuver après examen',
 			'com.annonces.administration.moderation.masquer' => 'Masquer le contenu',
 			'com.annonces.administration.moderation.restaurer' => 'Restaurer le contenu',
 			'com.annonces.administration.moderation.rejeter' => 'Rejeter le signalement',
@@ -34512,10 +34616,10 @@ extension on Traductions {
 			'comptable.tresorerie.transfert.erreurEnvoiTitre' => 'Réponse non reçue',
 			'comptable.tresorerie.transfert.erreurEnvoi' => 'La réponse n\'est pas arrivée. Consultez l\'historique avant de réessayer : le même mouvement ne sera jamais compté deux fois.',
 			'comptable.tresorerie.transfert.indisponible' => 'Les mouvements entre coffres ne sont pas encore reliés au serveur. Rien n\'a été déplacé.',
-			'comptable.tresorerie.transfert.aucunCouple' => 'Aucun mouvement n\'est permis par la politique pour votre compte.',
-			'comptable.tresorerie.titre' => 'Trésorerie et coffres',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.tresorerie.transfert.aucunCouple' => 'Aucun mouvement n\'est permis par la politique pour votre compte.',
+			'comptable.tresorerie.titre' => 'Trésorerie et coffres',
 			'comptable.tresorerie.sousTitre' => 'La Trésorerie libre est le seul chiffre dépensable.',
 			'comptable.tresorerie.alimenter' => 'Alimenter la Réserve stratégique',
 			'comptable.encaissements.filtreTous' => 'Tous',
@@ -34971,6 +35075,31 @@ extension on Traductions {
 			'presentationTuteur.accueil.titre' => 'Demande de présentation',
 			'presentationTuteur.accueil.voir' => 'Répondre',
 			'presentationTuteur.notification' => ({required Object prenom}) => '${prenom} demande la présentation standard',
+			'reprisesAdmin.onglet' => 'Reprises',
+			'reprisesAdmin.titre' => 'Reprises de foyer',
+			'reprisesAdmin.sousTitre' => 'Demandes d\'un second adulte pour devenir titulaire du foyer. L\'administration décide.',
+			'reprisesAdmin.demandeur' => 'Demandeur',
+			'reprisesAdmin.foyer' => 'Foyer',
+			'reprisesAdmin.deposeeLe' => 'Déposée le',
+			'reprisesAdmin.etat.aExaminer' => 'À examiner',
+			'reprisesAdmin.etat.refuseeParTitulaire' => 'Refusée par le titulaire',
+			'reprisesAdmin.examenLe' => ({required Object date}) => 'Examen possible à partir du ${date}.',
+			'reprisesAdmin.refuseeInfo' => 'Le titulaire a refusé cette demande. Aucune décision n\'est attendue.',
+			'reprisesAdmin.valider' => 'Valider la reprise',
+			'reprisesAdmin.refuser' => 'Refuser la reprise',
+			'reprisesAdmin.validerQuestion' => ({required Object prenom}) => 'Valider la reprise du foyer par ${prenom} ?',
+			'reprisesAdmin.validerConsequence' => 'Cette personne deviendra titulaire du foyer. Cette décision transfère la titularité.',
+			'reprisesAdmin.refuserQuestion' => ({required Object prenom}) => 'Refuser la reprise du foyer par ${prenom} ?',
+			'reprisesAdmin.refuserConsequence' => 'Aucune permission n\'est transférée. La personne pourra déposer une nouvelle demande après le délai prévu.',
+			'reprisesAdmin.validee' => 'Reprise validée.',
+			'reprisesAdmin.refusee' => 'Reprise refusée.',
+			'reprisesAdmin.dejaTraitee' => 'Cette demande a déjà été traitée. La liste est à jour.',
+			'reprisesAdmin.echecReseau' => 'La décision n\'a pas pu être confirmée. Vérifiez la liste avant de réessayer.',
+			'reprisesAdmin.vide' => 'Aucune demande de reprise à traiter.',
+			'reprisesAdmin.erreur' => 'Les demandes n\'ont pas pu être chargées. Réessayez.',
+			'reprisesAdmin.sansDonnees' => 'les demandes de reprise',
+			'reprisesAdmin.indisponibleTitre' => 'Reprises de foyer indisponibles',
+			'reprisesAdmin.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
 			_ => null,
 		};
 	}

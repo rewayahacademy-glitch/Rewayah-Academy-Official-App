@@ -85,6 +85,7 @@ const Set<String> _enAttente = <String>{
   // (REPRISE.md).
   'suiviFamille',
   'presentationTuteur',
+  'reprisesAdmin',
   'recrutement',
   'formulaire',
   'motifs',

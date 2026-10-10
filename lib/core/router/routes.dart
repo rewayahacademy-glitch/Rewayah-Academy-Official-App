@@ -664,6 +664,9 @@ abstract final class Routes {
   static const String adminPersonnesInvitations =
       '/admin/personnes/invitations';
 
+  /// BACK-FRONT-REPRISE-1 : la file des reprises de foyer, sous Personnes.
+  static const String adminPersonnesReprises = '/admin/personnes/reprises';
+
   /// Domaine Personnes.
   static const String adminPersonnes = '/admin/personnes';
 
