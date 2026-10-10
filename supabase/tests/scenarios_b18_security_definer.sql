@@ -133,8 +133,6 @@ select set_config('test.jwt', '{"app_metadata":{"role":"controller"}}', true);
 do $b06_controller$
 declare
   v_rows integer;
-  v_kyc_acl text;
-  v_auth_memberships text;
 begin
   begin
     perform 1 from public.read_kyc_documents();
@@ -154,11 +152,6 @@ begin
   if v_rows <> 0 then
     raise exception 'B-06 ECHEC: le contrôleur lit directement la table KYC';
   end if;
-
-    raise exception 'B-06 ECHEC: le contrôleur lit directement la table KYC';
-  exception when insufficient_privilege then
-    null;
-  end;
 end
 $b06_controller$;
 
