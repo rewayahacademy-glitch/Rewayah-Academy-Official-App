@@ -146,9 +146,13 @@ class ZoomLocal extends StatelessWidget {
       children: <Widget>[
         if (avecLibelle) ...<Widget>[
           Flexible(
+            // TB-12 : a texte x2 (1440), une ligne coupait la phrase
+            // (« sans effet sur les a… ») ; deux lignes tiennent sous la
+            // hauteur d'« Agrandir », la rangee ne grandit pas.
             child: Text(
               t.salle.seance.zoomLocal,
-              maxLines: 1,
+              maxLines: 2,
+              textAlign: TextAlign.end,
               overflow: TextOverflow.ellipsis,
               style: palette.inkMuted.applyTo(
                 theme.textTheme.labelSmall ?? const TextStyle(),

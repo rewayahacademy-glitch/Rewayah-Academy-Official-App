@@ -106,6 +106,28 @@
 // clair et sombre, 320 x2. Rangees dans docs/current/captures/AR-SALLE-1/ :
 //   CAPTURE_DIR=docs/current/captures/AR-SALLE-1 flutter test \
 //     test/features/tb_recette/captures_tb_test.dart --name ar_salle_
+//
+// TB-12 (recette) : cadrages ajoutes aux etapes (suffixe `_ar` : arabe,
+// RTL, locale `ar`) :
+//   TB-5 focus au telephone (390, 320 x1 et x2), developpe Commandes
+//     fermees (1440 clair et sombre, 1024), telephone 320 x1 ;
+//   TB-6 768 (x1 clair et sombre, x2), 1440 x2, 320 x1 ; Mode
+//     Accessibilite (guidee) ; arabe (trois roles, PED-01 et PED-03) ;
+//   TB-7a 768 x1 et x2 ; arabe ;
+//   TB-7b palette AVANT le premier trait (320 et 390 x1) ; panneau Ecrire
+//     a x2, colonne en tete, non defilee (390, 768, 1440, 320) ;
+//   TB-8 recherche vide (LIB-04), 768, 320 x2 sombre ; arabe (catalogue,
+//     recherche vide) ;
+//   TB-9 390 x2, 768 ; arabe (avant, apres) ; l'eleve apres le rangement ;
+//   TB-10 l'enseignant : prenom de Mariam et « Peut ecrire » visibles
+//     ensemble dans la liste ;
+//   TB-11a 768 ; arabe ;
+//   TB-11b 768, x2 a 390 et 1440, 320 x1 ; arabe.
+// Et la matrice de recette tb12_ (cinq profils, trois etats, quatorze
+// cadrages, plus le rangement en cours en mouvement reduit et ordinaire),
+// rangee dans docs/current/captures/TB-12/ :
+//   CAPTURE_DIR=docs/current/captures/TB-12 flutter test \
+//     test/features/tb_recette/captures_tb_test.dart --name tb12_
 
 import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
@@ -115,6 +137,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/accessibilite/commandes_masquables.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/mouvement/envol_vers_cible.dart';
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart'
     show AnnotationLayer, OutilTrait, PointNormalise, TraitVectoriel;
 import 'package:rewayah_academy/core/tc_outils/etat_outils.dart';
@@ -179,6 +202,35 @@ const List<_Cadrage> _cadragesTb = <_Cadrage>[
   ('320_x1_clair', Size(320, 700), 2, EdgeInsets.zero, 1, ThemeMode.light),
   ('320_x2_clair', Size(320, 700), 2, EdgeInsets.zero, 2, ThemeMode.light),
 ];
+
+/// TB-12 : les cadrages sombres a texte x2 hors de la liste de « fait ».
+const List<_Cadrage> _cadragesPlus = <_Cadrage>[
+  ('390_x2_sombre', Size(390, 844), 3, _zoneTelephone, 2, ThemeMode.dark),
+  ('320_x2_sombre', Size(320, 700), 2, EdgeInsets.zero, 2, ThemeMode.dark),
+];
+
+/// Les cadrages nommes, dans l'ordre de [noms].
+List<_Cadrage> _parNoms(List<String> noms) => <_Cadrage>[
+  for (final String n in noms)
+    <_Cadrage>[
+      ..._cadragesTb,
+      ..._cadragesPlus,
+    ].firstWhere((_Cadrage c) => c.$1 == n),
+];
+
+/// TB-12 : un groupe dont les tests tournent en arabe (RTL), la locale
+/// rendue au francais apres chacun.
+void _groupeArabe(String nom, void Function() corps) => group(nom, () {
+  setUp(() => LocaleSettings.setLocale(AppLocale.ar));
+  tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+  corps();
+});
+
+/// La salle montee est-elle en arabe, de droite a gauche ?
+void _verifierRtl(WidgetTester tester) => expect(
+  Directionality.of(tester.element(find.byType(DemoSallePage))),
+  TextDirection.rtl,
+);
 
 /// Les situations capturees, par role. TB-1b n'a aucune disposition
 /// nouvelle : une seule situation, la salle et ses personnes (SAL-00),
@@ -556,6 +608,14 @@ void main() {
             ThemeMode.light,
           ),
           (
+            '320_x1_clair',
+            const Size(320, 700),
+            2,
+            EdgeInsets.zero,
+            1,
+            ThemeMode.light,
+          ),
+          (
             '320_x2_clair',
             const Size(320, 700),
             2,
@@ -598,62 +658,199 @@ void main() {
     }
   });
 
+  // TB-12 (cadrages manquants de TB-5) : le focus au telephone, par le vrai
+  // bouton des Commandes ; le bureau developpe Commandes fermees (« Reduire »
+  // du panneau) : Participants a gauche, aucune colonne vide a droite.
+  group(
+    'TB-5 : focus au telephone et Commandes fermees',
+    skip: sautSansCapture,
+    () {
+      setUpAll(chargerPolicesDuDepot);
+      for (final _Cadrage cas in <_Cadrage>[
+        ..._cadragesTb.where(
+          (_Cadrage c) => <String>[
+            '390_x1_clair',
+            '390_x2_clair',
+            '320_x1_clair',
+            '320_x2_clair',
+          ].contains(c.$1),
+        ),
+        (
+          '390_x1_sombre',
+          const Size(390, 844),
+          3,
+          _zoneTelephone,
+          1,
+          ThemeMode.dark,
+        ),
+      ]) {
+        final String nom = 'tb5_enseignant_focus_telephone_${cas.$1}';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+          await tester.pumpWidget(
+            hoteCapture(
+              const DemoSallePage(
+                role: RoleSeance.enseignant,
+                situation: SituationTb.cmd01,
+              ),
+              themeMode: cas.$6,
+              echelleTexte: cas.$5,
+            ),
+          );
+          await stabiliser(tester);
+          final Finder focus = find.byKey(CommandesPedagogiques.cleFocus);
+          await tester.ensureVisible(focus);
+          await tester.pump();
+          await tester.tap(focus);
+          await stabiliser(tester);
+          await tester.pump(const Duration(milliseconds: 1400));
+          // La capture prouve ce qu'elle nomme : Commandes refermees, le
+          // support seul dans l'ecran.
+          expect(find.byKey(CommandesPedagogiques.cle), findsNothing);
+          expect(find.byType(ZoneSupport), findsOneWidget);
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
+      }
+      for (final (String n, Size taille, ThemeMode mode)
+          in <(String, Size, ThemeMode)>[
+            ('1440_x1_clair', const Size(1440, 900), ThemeMode.light),
+            ('1440_x1_sombre', const Size(1440, 900), ThemeMode.dark),
+            ('1024_x1_clair', const Size(1024, 768), ThemeMode.light),
+          ]) {
+        final String nom = 'tb5_enseignant_developpe_ferme_$n';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(tester, taille, taille.width < 1200 ? 2 : 1);
+          await tester.pumpWidget(
+            hoteCapture(
+              const DemoSallePage(
+                role: RoleSeance.enseignant,
+                situation: SituationTb.cmd01,
+              ),
+              themeMode: mode,
+            ),
+          );
+          await stabiliser(tester);
+          await tester.tap(find.byKey(PanneauSeance.cleReduire));
+          await stabiliser(tester);
+          await tester.pump(const Duration(milliseconds: 1400));
+          expect(find.byKey(CommandesPedagogiques.cle), findsNothing);
+          expect(find.byKey(DeclencheurCommandes.cle), findsOneWidget);
+          expect(find.byType(PanneauEleves), findsOneWidget);
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
+      }
+    },
+  );
+
   // TB-6 (PED-01 a PED-04) : les trois affichages et le tableau libre, chez
   // l'enseignant et l'eleve ; clair et sombre (la page reste claire).
   group('TB-6 : surface a page fixe', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
-    for (final RoleSeance role in <RoleSeance>[
-      RoleSeance.enseignant,
-      RoleSeance.eleve,
-    ]) {
-      for (final SituationTb situation in <SituationTb>[
-        SituationTb.ped01,
-        SituationTb.ped02,
-        SituationTb.ped03,
-        SituationTb.ped04,
-      ]) {
-        for (final _Cadrage cas in <_Cadrage>[
-          for (final _Cadrage c in _cadragesTb)
-            if (<String>[
+    Future<void> scene(
+      WidgetTester tester,
+      _Cadrage cas,
+      RoleSeance role,
+      SituationTb situation, {
+      bool arabe = false,
+    }) async {
+      fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+      await tester.pumpWidget(
+        hoteCapture(
+          DemoSallePage(role: role, situation: situation),
+          themeMode: cas.$6,
+          echelleTexte: cas.$5,
+        ),
+      );
+      await stabiliser(tester);
+      await tester.pump(const Duration(milliseconds: 1400));
+      // La capture prouve ce qu'elle nomme.
+      final bool page =
+          situation == SituationTb.ped02 || situation == SituationTb.ped03;
+      expect(
+        find.byKey(SurfacePageFixe.clePage),
+        page ? findsOneWidget : findsNothing,
+      );
+      expect(
+        find.byKey(SurfacePageFixe.cleFeuille),
+        page ? findsNothing : findsOneWidget,
+      );
+      if (arabe) _verifierRtl(tester);
+      expect(tester.takeException(), isNull);
+    }
+
+    const List<SituationTb> affichages = <SituationTb>[
+      SituationTb.ped01,
+      SituationTb.ped02,
+      SituationTb.ped03,
+      SituationTb.ped04,
+    ];
+    // TB-12 : 768, 320 x1 et 1440 x2 ajoutes ; la guidee (Mode
+    // Accessibilite) a ses propres cadrages ; l'arabe ci-dessous.
+    for (final (RoleSeance role, List<String> noms)
+        in <(RoleSeance, List<String>)>[
+          for (final RoleSeance r in <RoleSeance>[
+            RoleSeance.enseignant,
+            RoleSeance.eleve,
+          ])
+            (
+              r,
+              const <String>[
+                '390_x1_clair',
+                '390_x1_sombre',
+                '390_x2_clair',
+                '768_x1_clair',
+                '768_x1_sombre',
+                '768_x2_clair',
+                '1440_x1_clair',
+                '1440_x1_sombre',
+                '1440_x2_clair',
+                '320_x1_clair',
+                '320_x2_clair',
+              ],
+            ),
+          (
+            RoleSeance.guidee,
+            const <String>[
               '390_x1_clair',
-              '390_x1_sombre',
               '390_x2_clair',
               '1440_x1_clair',
               '1440_x1_sombre',
               '320_x2_clair',
-            ].contains(c.$1))
-              c,
+            ],
+          ),
         ]) {
+      for (final SituationTb situation in affichages) {
+        for (final _Cadrage cas in _parNoms(noms)) {
           final String nom = 'tb6_${role.name}_${situation.name}_${cas.$1}';
           testWidgets(nom, (WidgetTester tester) async {
-            fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
-            await tester.pumpWidget(
-              hoteCapture(
-                DemoSallePage(role: role, situation: situation),
-                themeMode: cas.$6,
-                echelleTexte: cas.$5,
-              ),
-            );
-            await stabiliser(tester);
-            await tester.pump(const Duration(milliseconds: 1400));
-            // La capture prouve ce qu'elle nomme.
-            final bool page =
-                situation == SituationTb.ped02 ||
-                situation == SituationTb.ped03;
-            expect(
-              find.byKey(SurfacePageFixe.clePage),
-              page ? findsOneWidget : findsNothing,
-            );
-            expect(
-              find.byKey(SurfacePageFixe.cleFeuille),
-              page ? findsNothing : findsOneWidget,
-            );
-            expect(tester.takeException(), isNull);
+            await scene(tester, cas, role, situation);
             debugPrint('PNG ${await capturer(tester, nom)}');
           });
         }
       }
     }
+    _groupeArabe('arabe', () {
+      for (final RoleSeance role in RoleSeance.values) {
+        for (final SituationTb situation in <SituationTb>[
+          SituationTb.ped01,
+          SituationTb.ped03,
+        ]) {
+          for (final _Cadrage cas in _parNoms(const <String>[
+            '390_x1_clair',
+            '1440_x1_clair',
+          ])) {
+            final String nom =
+                'tb6_${role.name}_${situation.name}_${cas.$1}_ar';
+            testWidgets(nom, (WidgetTester tester) async {
+              await scene(tester, cas, role, situation, arabe: true);
+              debugPrint('PNG ${await capturer(tester, nom)}');
+            });
+          }
+        }
+      }
+    });
   });
 
   // TB-7a : le calque au repere de la page. Le cercle de demonstration sur
@@ -662,52 +859,77 @@ void main() {
   // meme endroit de la page.
   group('TB-7a : calque au repere de la page', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
+    // TB-12 : 768 x1 et x2 ajoutes, et l'arabe.
     const List<String> tailles = <String>[
       '390_x1_clair',
       '390_x1_sombre',
       '390_x2_clair',
+      '768_x1_clair',
+      '768_x2_clair',
       '1440_x1_clair',
       '1440_x1_sombre',
       '320_x2_clair',
     ];
-    for (final (RoleSeance role, SituationTb situation)
-        in <(RoleSeance, SituationTb)>[
-          (RoleSeance.enseignant, SituationTb.ped03),
-          (RoleSeance.eleve, SituationTb.ped03),
-          (RoleSeance.enseignant, SituationTb.ped04),
-        ]) {
-      for (final _Cadrage cas in <_Cadrage>[
-        for (final _Cadrage c in _cadragesTb)
-          if (tailles.contains(c.$1)) c,
-      ]) {
+    const List<(RoleSeance, SituationTb)> scenes = <(RoleSeance, SituationTb)>[
+      (RoleSeance.enseignant, SituationTb.ped03),
+      (RoleSeance.eleve, SituationTb.ped03),
+      (RoleSeance.enseignant, SituationTb.ped04),
+    ];
+    Future<void> calque(
+      WidgetTester tester,
+      _Cadrage cas,
+      RoleSeance role,
+      SituationTb situation, {
+      bool arabe = false,
+    }) async {
+      fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+      await tester.pumpWidget(
+        hoteCapture(
+          DemoSallePage(role: role, situation: situation),
+          themeMode: cas.$6,
+          echelleTexte: cas.$5,
+        ),
+      );
+      await stabiliser(tester);
+      await tester.pump(const Duration(milliseconds: 1400));
+      // La capture prouve ce qu'elle nomme : la couche couvre la page.
+      expect(
+        tester.getRect(find.byKey(SurfacePageFixe.cleCouche)),
+        tester.getRect(
+          find.byKey(
+            situation == SituationTb.ped04
+                ? SurfacePageFixe.cleFeuille
+                : SurfacePageFixe.clePage,
+          ),
+        ),
+      );
+      if (arabe) _verifierRtl(tester);
+      expect(tester.takeException(), isNull);
+    }
+
+    for (final (RoleSeance role, SituationTb situation) in scenes) {
+      for (final _Cadrage cas in _parNoms(tailles)) {
         final String nom = 'tb7a_${role.name}_${situation.name}_${cas.$1}';
         testWidgets(nom, (WidgetTester tester) async {
-          fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
-          await tester.pumpWidget(
-            hoteCapture(
-              DemoSallePage(role: role, situation: situation),
-              themeMode: cas.$6,
-              echelleTexte: cas.$5,
-            ),
-          );
-          await stabiliser(tester);
-          await tester.pump(const Duration(milliseconds: 1400));
-          // La capture prouve ce qu'elle nomme : la couche couvre la page.
-          expect(
-            tester.getRect(find.byKey(SurfacePageFixe.cleCouche)),
-            tester.getRect(
-              find.byKey(
-                situation == SituationTb.ped04
-                    ? SurfacePageFixe.cleFeuille
-                    : SurfacePageFixe.clePage,
-              ),
-            ),
-          );
-          expect(tester.takeException(), isNull);
+          await calque(tester, cas, role, situation);
           debugPrint('PNG ${await capturer(tester, nom)}');
         });
       }
     }
+    _groupeArabe('arabe', () {
+      for (final (RoleSeance role, SituationTb situation) in scenes) {
+        for (final _Cadrage cas in _parNoms(const <String>[
+          '390_x1_clair',
+          '1440_x1_clair',
+        ])) {
+          final String nom = 'tb7a_${role.name}_${situation.name}_${cas.$1}_ar';
+          testWidgets(nom, (WidgetTester tester) async {
+            await calque(tester, cas, role, situation, arabe: true);
+            debugPrint('PNG ${await capturer(tester, nom)}');
+          });
+        }
+      }
+    });
 
     for (final _Cadrage cas in <_Cadrage>[
       for (final _Cadrage c in _cadragesTb)
@@ -869,24 +1091,110 @@ void main() {
       await tester.pumpAndSettle();
     }
 
+    Future<void> bibliotheque(
+      WidgetTester tester,
+      _Cadrage cas,
+      String etat, {
+      bool arabe = false,
+    }) async {
+      fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+      await tester.pumpWidget(
+        hoteCapture(
+          DemoSallePage(
+            role: RoleSeance.enseignant,
+            situation: etat == 'recherche_vide'
+                ? SituationTb.lib04
+                : SituationTb.lib01,
+          ),
+          themeMode: cas.$6,
+          echelleTexte: cas.$5,
+        ),
+      );
+      await tester.pumpAndSettle();
+      final bool catalogue = etat == 'catalogue' || etat == 'recherche_vide';
+      if (etat == 'recherche_vide') {
+        // LIB-04 : une recherche sans resultat, tapee dans le vrai champ.
+        // A 320 x2, l'en-tete du catalogue pousse le champ hors de l'ecran :
+        // le catalogue defile jusqu'a lui, puis jusqu'au message.
+        final Finder catalogue = find.byType(SurfaceBibliotheque);
+        final Finder defile = find
+            .descendant(of: catalogue, matching: find.byType(Scrollable))
+            .first;
+        final Finder champ = find.descendant(
+          of: catalogue,
+          matching: find.byType(TextField),
+        );
+        await tester.scrollUntilVisible(champ, 120, scrollable: defile);
+        await tester.pumpAndSettle();
+        await tester.enterText(champ, 'zqxw');
+        await tester.pumpAndSettle();
+        await tester.scrollUntilVisible(
+          find.text(t.tc.bibliotheque.aucunResultat.message),
+          120,
+          scrollable: defile,
+        );
+        await tester.pumpAndSettle();
+        expect(
+          find.text(t.tc.bibliotheque.aucunResultat.message),
+          findsOneWidget,
+        );
+      }
+      expect(
+        find.byType(SurfaceBibliotheque),
+        catalogue ? findsOneWidget : findsNothing,
+      );
+      if (arabe) _verifierRtl(tester);
+      expect(tester.takeException(), isNull);
+    }
+
+    // TB-12 : recherche vide (LIB-04), 768 et 320 x2 sombre ; l'arabe
+    // (catalogue et recherche vide : les titres des cartes sont des donnees).
+    for (final _Cadrage cas in _parNoms(const <String>[
+      '390_x1_clair',
+      '768_x1_clair',
+      '1440_x1_clair',
+      '1440_x1_sombre',
+      '320_x2_clair',
+      '320_x2_sombre',
+    ])) {
+      final String nom = 'tb8_enseignant_recherche_vide_${cas.$1}';
+      testWidgets(nom, (WidgetTester tester) async {
+        await bibliotheque(tester, cas, 'recherche_vide');
+        debugPrint('PNG ${await capturer(tester, nom)}');
+      });
+    }
+    _groupeArabe('arabe', () {
+      for (final String etat in <String>['catalogue', 'recherche_vide']) {
+        for (final _Cadrage cas in _parNoms(const <String>[
+          '390_x1_clair',
+          '1440_x1_clair',
+        ])) {
+          final String nom = 'tb8_enseignant_${etat}_${cas.$1}_ar';
+          testWidgets(nom, (WidgetTester tester) async {
+            await bibliotheque(tester, cas, etat, arabe: true);
+            debugPrint('PNG ${await capturer(tester, nom)}');
+          });
+        }
+      }
+    });
+
     for (final String etat in <String>[
       'catalogue',
       'apercu',
       'ouverture',
       'echec',
     ]) {
-      for (final _Cadrage cas in <_Cadrage>[
-        for (final _Cadrage c in _cadragesTb)
-          if (<String>[
-            '390_x1_clair',
-            '390_x1_sombre',
-            '390_x2_clair',
-            '1440_x1_clair',
-            '1440_x1_sombre',
-            '320_x2_clair',
-          ].contains(c.$1))
-            c,
-      ]) {
+      for (final _Cadrage cas in _parNoms(const <String>[
+        '390_x1_clair',
+        '390_x1_sombre',
+        '390_x2_clair',
+        '768_x1_clair',
+        '768_x2_clair',
+        '1440_x1_clair',
+        '1440_x1_sombre',
+        '320_x2_clair',
+        '320_x2_sombre',
+      ])) {
         final String nom = 'tb8_enseignant_${etat}_${cas.$1}';
         testWidgets(nom, (WidgetTester tester) async {
           fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
@@ -948,6 +1256,72 @@ void main() {
     }
 
     final Finder menu = find.byKey(CommandesPedagogiques.cleMenu);
+    Future<void> scene(
+      WidgetTester tester,
+      _Cadrage cas,
+      String etat, {
+      bool arabe = false,
+    }) async {
+      fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+      await tester.pumpWidget(
+        hoteCapture(
+          DemoSallePage(
+            role: RoleSeance.enseignant,
+            situation: switch (etat) {
+              'effacer_page' => SituationTb.dlg01,
+              'effacer_tableau' => SituationTb.effacementTableau,
+              _ => SituationTb.ped03,
+            },
+          ),
+          themeMode: cas.$6,
+          echelleTexte: cas.$5,
+        ),
+      );
+      await tester.pumpAndSettle();
+      await taper(tester, find.byKey(DeclencheurCommandes.cle));
+      if (etat == 'avant') {
+        await taper(tester, menu);
+      } else if (etat == 'apres' || etat == 'reprise') {
+        await taper(tester, menu);
+        await taper(tester, find.text(t.salle.seance.rangement.ranger).last);
+        expect(find.byKey(SurfacePageFixe.clePage), findsNothing);
+        expect(find.byKey(CommandesPedagogiques.cleRange), findsOneWidget);
+        if (etat == 'reprise') {
+          await taper(
+            tester,
+            find.byKey(CommandesPedagogiques.cleBibliotheque),
+          );
+          // Le catalogue defile en slivers : jusqu'a la section des
+          // ranges (en tete), puis sa carte et son point de reprise.
+          final Finder catalogue = find.byType(SurfaceBibliotheque);
+          final Finder defile = find
+              .descendant(of: catalogue, matching: find.byType(Scrollable))
+              .first;
+          await tester.scrollUntilVisible(
+            find.text(t.salle.seance.rangement.section),
+            120,
+            scrollable: defile,
+          );
+          await tester.pumpAndSettle();
+          expect(find.text(t.salle.seance.rangement.section), findsOneWidget);
+        }
+      } else {
+        await taper(tester, menu);
+        await taper(tester, find.text(t.salle.seance.rangement.effacer).last);
+        expect(
+          find.text(
+            etat == 'effacer_page'
+                ? t.salle.seance.rangement.questionPage
+                : t.salle.seance.rangement.questionTableau,
+          ),
+          findsWidgets,
+        );
+      }
+      if (arabe) _verifierRtl(tester);
+      expect(tester.takeException(), isNull);
+    }
+
+    // TB-12 : 390 x2 et 768 ajoutes ; l'arabe (avant, apres).
     for (final String etat in <String>[
       'avant',
       'apres',
@@ -955,95 +1329,71 @@ void main() {
       'effacer_page',
       'effacer_tableau',
     ]) {
-      for (final _Cadrage cas in <_Cadrage>[
-        for (final _Cadrage c in _cadragesTb)
-          if (<String>[
-            '390_x1_clair',
-            '390_x1_sombre',
-            '1440_x1_clair',
-            '1440_x1_sombre',
-            '320_x2_clair',
-          ].contains(c.$1))
-            c,
-        (
-          '320_x2_sombre',
-          const Size(320, 700),
-          2,
-          EdgeInsets.zero,
-          2,
-          ThemeMode.dark,
-        ),
-      ]) {
+      for (final _Cadrage cas in _parNoms(const <String>[
+        '390_x1_clair',
+        '390_x1_sombre',
+        '390_x2_clair',
+        '768_x1_clair',
+        '768_x1_sombre',
+        '1440_x1_clair',
+        '1440_x1_sombre',
+        '320_x2_clair',
+        '320_x2_sombre',
+      ])) {
         final String nom = 'tb9_enseignant_${etat}_${cas.$1}';
         testWidgets(nom, (WidgetTester tester) async {
-          fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
-          await tester.pumpWidget(
-            hoteCapture(
-              DemoSallePage(
-                role: RoleSeance.enseignant,
-                situation: switch (etat) {
-                  'effacer_page' => SituationTb.dlg01,
-                  'effacer_tableau' => SituationTb.effacementTableau,
-                  _ => SituationTb.ped03,
-                },
-              ),
-              themeMode: cas.$6,
-              echelleTexte: cas.$5,
-            ),
-          );
-          await tester.pumpAndSettle();
-          await taper(tester, find.byKey(DeclencheurCommandes.cle));
-          if (etat == 'avant') {
-            await taper(tester, menu);
-          } else if (etat == 'apres' || etat == 'reprise') {
-            await taper(tester, menu);
-            await taper(
-              tester,
-              find.text(t.salle.seance.rangement.ranger).last,
-            );
-            expect(find.byKey(SurfacePageFixe.clePage), findsNothing);
-            expect(find.byKey(CommandesPedagogiques.cleRange), findsOneWidget);
-            if (etat == 'reprise') {
-              await taper(
-                tester,
-                find.byKey(CommandesPedagogiques.cleBibliotheque),
-              );
-              // Le catalogue defile en slivers : jusqu'a la section des
-              // ranges (en tete), puis sa carte et son point de reprise.
-              final Finder catalogue = find.byType(SurfaceBibliotheque);
-              final Finder defile = find
-                  .descendant(of: catalogue, matching: find.byType(Scrollable))
-                  .first;
-              await tester.scrollUntilVisible(
-                find.text(t.salle.seance.rangement.section),
-                120,
-                scrollable: defile,
-              );
-              await tester.pumpAndSettle();
-              expect(
-                find.text(t.salle.seance.rangement.section),
-                findsOneWidget,
-              );
-            }
-          } else {
-            await taper(tester, menu);
-            await taper(
-              tester,
-              find.text(t.salle.seance.rangement.effacer).last,
-            );
-            expect(
-              find.text(
-                etat == 'effacer_page'
-                    ? t.salle.seance.rangement.questionPage
-                    : t.salle.seance.rangement.questionTableau,
-              ),
-              findsWidgets,
-            );
-          }
-          expect(tester.takeException(), isNull);
+          await scene(tester, cas, etat);
           debugPrint('PNG ${await capturer(tester, nom)}');
         });
       }
+    }
+    _groupeArabe('arabe', () {
+      for (final String etat in <String>['avant', 'apres']) {
+        for (final _Cadrage cas in _parNoms(const <String>[
+          '390_x1_clair',
+          '1440_x1_clair',
+        ])) {
+          final String nom = 'tb9_enseignant_${etat}_${cas.$1}_ar';
+          testWidgets(nom, (WidgetTester tester) async {
+            await scene(tester, cas, etat, arabe: true);
+            debugPrint('PNG ${await capturer(tester, nom)}');
+          });
+        }
+      }
+    });
+
+    // TB-12 : l'eleve apres le rangement. La demonstration ne transmet pas
+    // le geste de l'enseignant a la salle de l'eleve (aucun etat partage
+    // avant BR-1) : la capture montre ce que la vue de l'eleve projette
+    // d'une seance sans support presente, le tableau libre (PED-01), sans
+    // menu du support ni mention « Support range ».
+    for (final _Cadrage cas in _parNoms(const <String>[
+      '390_x1_clair',
+      '1440_x1_clair',
+      '320_x2_clair',
+    ])) {
+      final String nom = 'tb9_eleve_apres_rangement_${cas.$1}';
+      testWidgets(nom, (WidgetTester tester) async {
+        fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+        await tester.pumpWidget(
+          hoteCapture(
+            const DemoSallePage(
+              role: RoleSeance.eleve,
+              situation: SituationTb.ped01,
+            ),
+            themeMode: cas.$6,
+            echelleTexte: cas.$5,
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(find.byKey(SurfacePageFixe.clePage), findsNothing);
+        expect(find.byKey(SurfacePageFixe.cleFeuille), findsOneWidget);
+        expect(menu, findsNothing);
+        expect(find.byKey(CommandesPedagogiques.cleRange), findsNothing);
+        expect(find.text(t.salle.seance.rangement.range), findsNothing);
+        expect(tester.takeException(), isNull);
+        debugPrint('PNG ${await capturer(tester, nom)}');
+      });
     }
   });
 
@@ -1057,6 +1407,10 @@ void main() {
       '1440_x1_sombre',
       '1440_x2_clair',
       '320_x2_clair',
+      // TB-12 : la tablette en portrait.
+      '768_x1_clair',
+      '768_x1_sombre',
+      '768_x2_clair',
     ];
     for (final ObservateurDemo o in ObservateurDemo.values) {
       for (final SituationTb situation in <SituationTb>[
@@ -1165,6 +1519,36 @@ void main() {
         }
       }
     }
+    // TB-12 : les observateurs en arabe, presentation avec notes.
+    _groupeArabe('arabe', () {
+      for (final ObservateurDemo o in ObservateurDemo.values) {
+        for (final _Cadrage cas in _parNoms(const <String>[
+          '390_x1_clair',
+          '1440_x1_clair',
+        ])) {
+          final String nom = 'tb11a_${o.name}_ped03_${cas.$1}_ar';
+          testWidgets(nom, (WidgetTester tester) async {
+            fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+            await tester.pumpWidget(
+              hoteCapture(
+                DemoSallePage(observateur: o, situation: SituationTb.ped03),
+                themeMode: cas.$6,
+                echelleTexte: cas.$5,
+              ),
+            );
+            await stabiliser(tester);
+            await tester.pump(const Duration(milliseconds: 1400));
+            expect(
+              find.byKey(const ValueKey<String>('presentation-lue')),
+              findsOneWidget,
+            );
+            _verifierRtl(tester);
+            expect(tester.takeException(), isNull);
+            debugPrint('PNG ${await capturer(tester, nom)}');
+          });
+        }
+      }
+    });
   });
 
   // TB-7b : Ecrire (plan V2 §4.2, §7, §19.1).
@@ -1298,6 +1682,57 @@ void main() {
         expect(find.byKey(EcritureSeance.cle), findsOneWidget);
         await tester.ensureVisible(find.byKey(EcritureSeance.cleEpaisseur));
         await stabiliser(tester);
+        expect(tester.takeException(), isNull);
+        debugPrint('PNG ${await capturer(tester, nom)}');
+      });
+    }
+
+    // TB-12 : la palette courte AVANT le premier trait (Ecrire choisi, le
+    // panneau reduit, aucun geste), a 320 et 390 x1.
+    for (final _Cadrage cas in _parNoms(const <String>[
+      '320_x1_clair',
+      '390_x1_clair',
+    ])) {
+      final String nom = 'tb7b_palette_avant_trait_${cas.$1}';
+      testWidgets(nom, (WidgetTester tester) async {
+        await monter(tester, cas);
+        await ecrire(tester);
+        await taper(tester, find.byKey(PanneauSeance.cleReduire));
+        expect(traits(tester), 0);
+        expect(find.byKey(PaletteEcriture.cle), findsOneWidget);
+        expect(tester.takeException(), isNull);
+        debugPrint('PNG ${await capturer(tester, nom)}');
+      });
+    }
+
+    // TB-12 : le panneau Ecrire a texte x2, NON defile : la colonne des
+    // Commandes ramenee en tete, la barre du panneau (titre, « Reduire »)
+    // dans l'ecran.
+    for (final _Cadrage cas in _parNoms(const <String>[
+      '390_x2_clair',
+      '768_x2_clair',
+      '1440_x2_clair',
+      '320_x2_clair',
+    ])) {
+      final String nom = 'tb7b_panneau_ecrire_tete_${cas.$1}';
+      testWidgets(nom, (WidgetTester tester) async {
+        await monter(tester, cas);
+        await ecrire(tester);
+        expect(find.byKey(EcritureSeance.cle), findsOneWidget);
+        for (final ScrollableState s in tester.stateList<ScrollableState>(
+          find.descendant(
+            of: find.byKey(CommandesPedagogiques.cle),
+            matching: find.byType(Scrollable),
+          ),
+        )) {
+          s.position.jumpTo(s.position.minScrollExtent);
+        }
+        await stabiliser(tester);
+        final Rect reduire = tester.getRect(
+          find.byKey(PanneauSeance.cleReduire),
+        );
+        expect(reduire.top, greaterThanOrEqualTo(0));
+        expect(reduire.bottom, lessThanOrEqualTo(cas.$2.height));
         expect(tester.takeException(), isNull);
         debugPrint('PNG ${await capturer(tester, nom)}');
       });
@@ -1518,6 +1953,53 @@ void main() {
           debugPrint('PNG ${await capturer(tester, nom)}');
         });
       }
+
+      // TB-12 : l'enseignant voit, dans le meme cadre, le prenom de Mariam
+      // et sa mention « Peut ecrire » (la ligne ramenee en tete de la
+      // liste, sans la cacher sous l'en-tete).
+      for (final _Cadrage cas in cadrages(<String>[
+        '1440_x1_clair',
+        '1440_x1_sombre',
+        '390_x1_clair',
+        '390_x2_clair',
+        '320_x2_clair',
+      ])) {
+        final String nom = 'tb10_enseignant_mariam_peut_ecrire_${cas.$1}';
+        testWidgets(nom, (WidgetTester tester) async {
+          await monter(tester, cas, RoleSeance.enseignant, SituationTb.per01);
+          await taper(
+            tester,
+            find.byKey(const ValueKey<String>('autoriser-ecrire-Mariam')),
+          );
+          final Finder ligne = find.byKey(
+            const ValueKey<String>('eleve-Mariam'),
+          );
+          final Finder mention = find.byKey(
+            const ValueKey<String>('peut-ecrire-Mariam'),
+          );
+          // La ligne de Mariam en tete de la liste : son prenom, puis la
+          // mention, dans la partie visible de la liste (sous l'en-tete fixe
+          // du panneau, pas seulement dans l'ecran).
+          await Scrollable.ensureVisible(tester.element(ligne));
+          await stabiliser(tester);
+          final Rect liste = tester.getRect(
+            find.ancestor(of: ligne, matching: find.byType(Scrollable)).first,
+          );
+          bool dans(Rect r) =>
+              r.left >= liste.left - 0.5 &&
+              r.top >= liste.top - 0.5 &&
+              r.right <= liste.right + 0.5 &&
+              r.bottom <= liste.bottom + 0.5;
+          final Rect prenom = tester.getRect(
+            find.descendant(of: ligne, matching: find.text('Mariam')).first,
+          );
+          final Rect peut = tester.getRect(mention);
+          expect(dans(prenom), isTrue, reason: 'prenom $prenom');
+          expect(dans(peut), isTrue, reason: 'Peut ecrire $peut');
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
+      }
     },
   );
 
@@ -1528,8 +2010,78 @@ void main() {
   // sombre.
   group('TB-11b : synchronisation et conservation', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
-    for (final (RoleSeance role, SituationTb situation, String etat)
-        in <(RoleSeance, SituationTb, String)>[
+    Future<void> scene(
+      WidgetTester tester,
+      _Cadrage cas,
+      RoleSeance role,
+      SituationTb situation,
+      String etat, {
+      bool arabe = false,
+    }) async {
+      fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+      await tester.pumpWidget(
+        hoteCapture(
+          DemoSallePage(role: role, situation: situation),
+          themeMode: cas.$6,
+          echelleTexte: cas.$5,
+        ),
+      );
+      await tester.pumpAndSettle();
+      // ERR-03 au bureau : le bandeau et la conservation ensemble ; au
+      // telephone, le bandeau seul (la feuille le couvrirait).
+      final bool commandes =
+          etat == 'conservation' ||
+          etat == 'ecriture_suspendue' ||
+          (etat == 'err03' && cas.$2.width >= 1440);
+      if (commandes) {
+        final Finder declencheur = find.byKey(DeclencheurCommandes.cle);
+        await tester.ensureVisible(declencheur);
+        await tester.pumpAndSettle();
+        await tester.tap(declencheur);
+        await tester.pumpAndSettle();
+      }
+      if (etat == 'err03') {
+        expect(
+          find.textContaining(
+            t.salle.seance.synchro.nonSauvegardees,
+            findRichText: true,
+          ),
+          findsOneWidget,
+        );
+      }
+      if (etat == 'ecriture_suspendue') {
+        expect(
+          find.byKey(CommandesPedagogiques.cleEcritureSuspendue),
+          findsOneWidget,
+        );
+      }
+      if (commandes && etat != 'ecriture_suspendue') {
+        final Finder conservation = find.byKey(
+          CommandesPedagogiques.cleConservation,
+        );
+        expect(conservation, findsOneWidget);
+        // A 320 (x1 et x2), la feuille des Commandes defile : la phrase
+        // est amenee au milieu de la partie visible ; ailleurs, la colonne
+        // reste en tete. TB-12 (capture ouverte) : a 320 x2, la partie
+        // visible de la feuille ne tient que deux lignes et demie, la
+        // phrase n'y est PAS entiere (« uniquement » coupe par le bord
+        // bas) ; a 320 x1 elle l'est.
+        if (cas.$2.width < 390) {
+          await tester.runAsync(
+            () => Scrollable.ensureVisible(
+              tester.element(conservation),
+              alignment: 0.5,
+            ),
+          );
+          await tester.pumpAndSettle();
+        }
+      }
+      if (arabe) _verifierRtl(tester);
+      expect(tester.takeException(), isNull);
+    }
+
+    const List<(RoleSeance, SituationTb, String)> etats =
+        <(RoleSeance, SituationTb, String)>[
           (RoleSeance.enseignant, SituationTb.err01, 'err01'),
           (RoleSeance.eleve, SituationTb.err01, 'err01'),
           (RoleSeance.enseignant, SituationTb.err02, 'err02'),
@@ -1541,86 +2093,256 @@ void main() {
           // d'« Ecrire ».
           (RoleSeance.guidee, SituationTb.err02, 'err02'),
           (RoleSeance.eleve, SituationTb.err01, 'ecriture_suspendue'),
-        ]) {
-      for (final _Cadrage cas in <_Cadrage>[
-        for (final _Cadrage c in _cadragesTb)
-          if (<String>[
-            '390_x1_clair',
-            '390_x1_sombre',
-            '1440_x1_clair',
-            '1440_x1_sombre',
-            '320_x2_clair',
-          ].contains(c.$1))
-            c,
-        (
-          '320_x2_sombre',
-          const Size(320, 700),
-          2,
-          EdgeInsets.zero,
-          2,
-          ThemeMode.dark,
-        ),
-      ]) {
+        ];
+    // TB-12 : 768, x2 a 390 et 1440, 320 x1 ajoutes ; l'arabe.
+    for (final (RoleSeance role, SituationTb situation, String etat) in etats) {
+      for (final _Cadrage cas in _parNoms(const <String>[
+        '390_x1_clair',
+        '390_x1_sombre',
+        '390_x2_clair',
+        '768_x1_clair',
+        '1440_x1_clair',
+        '1440_x1_sombre',
+        '1440_x2_clair',
+        '320_x1_clair',
+        '320_x2_clair',
+        '320_x2_sombre',
+      ])) {
         final String nom = 'tb11b_${role.name}_${etat}_${cas.$1}';
         testWidgets(nom, (WidgetTester tester) async {
-          fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
-          await tester.pumpWidget(
-            hoteCapture(
-              DemoSallePage(role: role, situation: situation),
-              themeMode: cas.$6,
-              echelleTexte: cas.$5,
-            ),
-          );
-          await tester.pumpAndSettle();
-          // ERR-03 au bureau : le bandeau et la conservation ensemble ; au
-          // telephone, le bandeau seul (la feuille le couvrirait).
-          final bool commandes =
-              etat == 'conservation' ||
-              etat == 'ecriture_suspendue' ||
-              (etat == 'err03' && cas.$2.width >= 1440);
-          if (commandes) {
-            final Finder declencheur = find.byKey(DeclencheurCommandes.cle);
-            await tester.ensureVisible(declencheur);
-            await tester.pumpAndSettle();
-            await tester.tap(declencheur);
-            await tester.pumpAndSettle();
-          }
-          if (etat == 'err03') {
-            expect(
-              find.textContaining(
-                t.salle.seance.synchro.nonSauvegardees,
-                findRichText: true,
-              ),
-              findsOneWidget,
-            );
-          }
-          if (etat == 'ecriture_suspendue') {
-            expect(
-              find.byKey(CommandesPedagogiques.cleEcritureSuspendue),
-              findsOneWidget,
-            );
-          }
-          if (commandes && etat != 'ecriture_suspendue') {
-            final Finder conservation = find.byKey(
-              CommandesPedagogiques.cleConservation,
-            );
-            expect(conservation, findsOneWidget);
-            // A 320 x2, la feuille des Commandes defile : la phrase est
-            // amenee au milieu, entiere ; ailleurs, la colonne reste en tete.
-            if (cas.$2.width < 390) {
-              await tester.runAsync(
-                () => Scrollable.ensureVisible(
-                  tester.element(conservation),
-                  alignment: 0.5,
-                ),
-              );
-              await tester.pumpAndSettle();
-            }
-          }
-          expect(tester.takeException(), isNull);
+          await scene(tester, cas, role, situation, etat);
           debugPrint('PNG ${await capturer(tester, nom)}');
         });
       }
+    }
+    _groupeArabe('arabe', () {
+      for (final (RoleSeance role, SituationTb situation, String etat)
+          in <(RoleSeance, SituationTb, String)>[
+            (RoleSeance.enseignant, SituationTb.err01, 'err01'),
+            (RoleSeance.eleve, SituationTb.err02, 'err02'),
+            (RoleSeance.enseignant, SituationTb.err03, 'err03'),
+            (RoleSeance.enseignant, SituationTb.ped03, 'conservation'),
+          ]) {
+        for (final _Cadrage cas in _parNoms(const <String>[
+          '390_x1_clair',
+          '1440_x1_clair',
+        ])) {
+          final String nom = 'tb11b_${role.name}_${etat}_${cas.$1}_ar';
+          testWidgets(nom, (WidgetTester tester) async {
+            await scene(tester, cas, role, situation, etat, arabe: true);
+            debugPrint('PNG ${await capturer(tester, nom)}');
+          });
+        }
+      }
+    });
+  });
+
+  // TB-12 : la matrice de recette du chantier. Cinq profils (enseignant,
+  // eleve, Mode Accessibilite, tuteur, controleur), trois etats chacun :
+  // sans support (tableau libre, PED-01), support avec notes (PED-03), et
+  // Commandes ouvertes par le vrai declencheur (enseignant, eleve, Mode
+  // Accessibilite) ou, pour les observateurs qui n'ont pas de Commandes,
+  // l'etat equivalent lu : l'affichage « Tableau » choisi par l'enseignant
+  // (PED-04), sans aucune commande. Quatorze cadrages : 390, 768 et 1440
+  // en clair et sombre a x1, en clair a x2 (et 390 x2 sombre) ; 320 x1 et
+  // x2 ; l'arabe (RTL) a 390 et 1440. Plus le rangement en cours, mouvement
+  // reduit et mouvement ordinaire (enseignant, 390).
+  group('TB-12 : matrice de recette', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    const List<String> cadrages = <String>[
+      '390_x1_clair',
+      '390_x1_sombre',
+      '390_x2_clair',
+      '390_x2_sombre',
+      '768_x1_clair',
+      '768_x1_sombre',
+      '768_x2_clair',
+      '1440_x1_clair',
+      '1440_x1_sombre',
+      '1440_x2_clair',
+      '320_x1_clair',
+      '320_x2_clair',
+    ];
+    const List<String> cadragesArabe = <String>[
+      '390_x1_clair',
+      '1440_x1_clair',
+    ];
+
+    // Les profils : un role de la salle, ou un observateur.
+    const List<(String, RoleSeance?, ObservateurDemo?)> profils =
+        <(String, RoleSeance?, ObservateurDemo?)>[
+          ('enseignant', RoleSeance.enseignant, null),
+          ('eleve', RoleSeance.eleve, null),
+          ('guidee', RoleSeance.guidee, null),
+          ('tuteur', null, ObservateurDemo.tuteur),
+          ('controleur', null, ObservateurDemo.controleur),
+        ];
+    List<String> etatsDe(ObservateurDemo? o) => <String>[
+      'libre',
+      'notes',
+      if (o == null) 'commandes' else 'lecture',
+    ];
+
+    Future<void> scene(
+      WidgetTester tester,
+      _Cadrage cas,
+      RoleSeance? role,
+      ObservateurDemo? observateur,
+      String etat, {
+      bool arabe = false,
+    }) async {
+      final SituationTb situation = switch (etat) {
+        'libre' => SituationTb.ped01,
+        'lecture' => SituationTb.ped04,
+        _ => SituationTb.ped03,
+      };
+      fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+      await tester.pumpWidget(
+        hoteCapture(
+          DemoSallePage(
+            role: role,
+            observateur: observateur,
+            situation: situation,
+          ),
+          themeMode: cas.$6,
+          echelleTexte: cas.$5,
+        ),
+      );
+      await stabiliser(tester);
+      await tester.pump(const Duration(milliseconds: 1400));
+      if (etat == 'commandes') {
+        final Finder declencheur = find.byKey(DeclencheurCommandes.cle);
+        await tester.ensureVisible(declencheur);
+        await tester.pump();
+        await tester.tap(declencheur);
+        await stabiliser(tester);
+        await tester.pump(const Duration(milliseconds: 400));
+      }
+      // La capture prouve ce qu'elle nomme.
+      final bool page = situation == SituationTb.ped03;
+      expect(
+        find.byKey(SurfacePageFixe.clePage),
+        page ? findsOneWidget : findsNothing,
+      );
+      expect(
+        find.byKey(SurfacePageFixe.cleFeuille),
+        page ? findsNothing : findsOneWidget,
+      );
+      if (page) {
+        // PED-03 : les notes sont peintes sur la page.
+        expect(
+          tester
+              .widget<Visibility>(find.byKey(SurfacePageFixe.cleCalque))
+              .visible,
+          isTrue,
+        );
+      }
+      if (observateur != null) {
+        expect(
+          find.byKey(const ValueKey<String>('presentation-lue')),
+          findsOneWidget,
+        );
+        expect(find.byType(DeclencheurCommandes), findsNothing);
+        expect(find.byType(CommandesPedagogiques), findsNothing);
+      } else if (etat == 'commandes') {
+        expect(find.byKey(CommandesPedagogiques.cle), findsOneWidget);
+        expect(find.byKey(DeclencheurCommandes.cle), findsNothing);
+        if (role != RoleSeance.enseignant) {
+          // L'eleve et le Mode Accessibilite : lecture et focus, rien de
+          // l'enseignant (ni menu du support, ni Bibliotheque).
+          expect(find.byKey(CommandesPedagogiques.cleLecture), findsOneWidget);
+          expect(find.byKey(CommandesPedagogiques.cleMenu), findsNothing);
+          expect(
+            find.byKey(CommandesPedagogiques.cleBibliotheque),
+            findsNothing,
+          );
+        }
+      } else {
+        expect(find.byKey(CommandesPedagogiques.cle), findsNothing);
+      }
+      if (arabe) _verifierRtl(tester);
+      expect(tester.takeException(), isNull);
+    }
+
+    for (final (String nomProfil, RoleSeance? role, ObservateurDemo? o)
+        in profils) {
+      for (final String etat in etatsDe(o)) {
+        for (final _Cadrage cas in _parNoms(cadrages)) {
+          final String nom = 'tb12_${nomProfil}_${etat}_${cas.$1}';
+          testWidgets(nom, (WidgetTester tester) async {
+            await scene(tester, cas, role, o, etat);
+            debugPrint('PNG ${await capturer(tester, nom)}');
+          });
+        }
+      }
+    }
+    _groupeArabe('arabe', () {
+      for (final (String nomProfil, RoleSeance? role, ObservateurDemo? o)
+          in profils) {
+        for (final String etat in etatsDe(o)) {
+          for (final _Cadrage cas in _parNoms(cadragesArabe)) {
+            final String nom = 'tb12_${nomProfil}_${etat}_${cas.$1}_ar';
+            testWidgets(nom, (WidgetTester tester) async {
+              await scene(tester, cas, role, o, etat, arabe: true);
+              debugPrint('PNG ${await capturer(tester, nom)}');
+            });
+          }
+        }
+      }
+    });
+
+    // Le rangement en cours (UX-22) : un cadre apres « Ranger dans la
+    // bibliotheque ». Mouvement reduit : aucune copie en vol, l'etat final
+    // aussitot ; mouvement ordinaire : la copie de la page en vol vers la
+    // Bibliotheque, l'etat deja change dessous.
+    for (final bool reduit in <bool>[true, false]) {
+      final String nom =
+          'tb12_enseignant_rangement_en_cours_'
+          '${reduit ? 'mouvement_reduit' : 'mouvement_ordinaire'}_390_x1_clair';
+      testWidgets(nom, (WidgetTester tester) async {
+        if (reduit) {
+          tester.platformDispatcher.accessibilityFeaturesTestValue =
+              const FakeAccessibilityFeatures(disableAnimations: true);
+          addTearDown(
+            tester.platformDispatcher.clearAccessibilityFeaturesTestValue,
+          );
+        }
+        final _Cadrage cas = _parNoms(const <String>['390_x1_clair']).single;
+        fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+        await tester.pumpWidget(
+          hoteCapture(
+            const DemoSallePage(
+              role: RoleSeance.enseignant,
+              situation: SituationTb.ped03,
+            ),
+            themeMode: cas.$6,
+            echelleTexte: cas.$5,
+          ),
+        );
+        await tester.pumpAndSettle();
+        Future<void> taper(Finder cible) async {
+          await tester.ensureVisible(cible);
+          await tester.pumpAndSettle();
+          await tester.tap(cible);
+          await tester.pumpAndSettle();
+        }
+
+        await taper(find.byKey(DeclencheurCommandes.cle));
+        await taper(find.byKey(CommandesPedagogiques.cleMenu));
+        await tester.tap(find.text(t.salle.seance.rangement.ranger).last);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 80));
+        // L'etat a change des le premier cadre, dans les deux cas.
+        expect(find.byKey(SurfacePageFixe.clePage), findsNothing);
+        expect(find.byKey(SurfacePageFixe.cleFeuille), findsOneWidget);
+        expect(
+          find.byKey(EnvolVersCible.cle),
+          reduit ? findsNothing : findsOneWidget,
+        );
+        expect(tester.takeException(), isNull);
+        debugPrint('PNG ${await capturer(tester, nom)}');
+        await tester.pumpAndSettle();
+      });
     }
   });
 
