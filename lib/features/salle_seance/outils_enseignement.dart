@@ -1,14 +1,20 @@
 // Les outils d'enseignement (CLV-06), enseignant seulement.
 //
-// Pointeur, Marquer, Masquer, Annoter : des tuiles avec libelle. Rendus
+// Pointeur, Ecrire, Marquer, Masquer : des tuiles avec libelle. Rendus
 // SEULEMENT si `ActionsSeance.onOutil` existe (lib/CLAUDE.md : un outil qui ne
 // peut pas aboutir n'est pas affiche ; S CLV-06 : « aucun outil fictif »).
-// L'outil choisi est un etat local de cet ecran : il ne publie rien.
+//
+// TB-7b : l'outil retenu est l'etat des outils de cet appareil
+// (`etatOutilsProvider`, jamais diffuse) : la surface le lit pour savoir si
+// un doigt lit, pointe ou ecrit. Un deuxieme appui le repose (lecture).
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_outils/etat_outils.dart';
+import '../../core/tc_outils/port_dock_hote.dart' show OutilDock;
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
@@ -45,24 +51,32 @@ abstract final class MesuresOutils {
 
 String _libelle(OutilEnseignement outil) => switch (outil) {
   OutilEnseignement.pointeur => t.salle.seance.outils.pointeur,
+  OutilEnseignement.ecrire => t.salle.seance.outils.ecrire,
   OutilEnseignement.marquer => t.salle.seance.outils.marquer,
   OutilEnseignement.masquer => t.salle.seance.outils.masquer,
-  OutilEnseignement.annoter => t.salle.seance.outils.annoter,
 };
 
 AppIcon _icone(OutilEnseignement outil) => switch (outil) {
   OutilEnseignement.pointeur => AppIcons.curseur,
+  OutilEnseignement.ecrire => AppIcons.annoter,
   OutilEnseignement.marquer => AppIcons.crayon,
   OutilEnseignement.masquer => AppIcons.oeil,
-  OutilEnseignement.annoter => AppIcons.annoter,
 };
 
-/// Les quatre outils, dans la [forme] voulue. Rien si [onOutil] est nul.
-class OutilsEnseignement extends StatefulWidget {
+/// TB-7b : l'outil de l'etat des outils que retient chaque tuile.
+OutilDock outilDock(OutilEnseignement outil) => switch (outil) {
+  OutilEnseignement.pointeur => OutilDock.pointeur,
+  OutilEnseignement.ecrire => OutilDock.stylet,
+  OutilEnseignement.marquer => OutilDock.marquer,
+  OutilEnseignement.masquer => OutilDock.masquer,
+};
+
+/// Les outils, dans la [forme] voulue. Rien si [onOutil] est nul.
+class OutilsEnseignement extends ConsumerWidget {
   const OutilsEnseignement({
     required this.onOutil,
     required this.forme,
-    this.initial = OutilEnseignement.pointeur,
+    this.avecEcrire = true,
     this.pied,
     super.key,
   });
@@ -70,36 +84,36 @@ class OutilsEnseignement extends StatefulWidget {
   final ValueChanged<OutilEnseignement>? onOutil;
   final FormeOutils forme;
 
+  /// TB-7b : « Ecrire » n'est rendu que si la surface montree prend des
+  /// notes (page fixe ou tableau libre, `VueSeance.voitEcriture`).
+  final bool avecEcrire;
+
   /// Carte seulement : ce qui suit les outils dans la meme carte (CLV-08 :
   /// Eleves et Supports en liste).
   final Widget? pied;
 
-  /// L'outil actif a l'ouverture (image CLV-06 : Pointeur ; image CLV-07,
-  /// carte a cote du panneau : aucun, `null`).
-  final OutilEnseignement? initial;
-
   @override
-  State<OutilsEnseignement> createState() => _OutilsEnseignementState();
-}
-
-class _OutilsEnseignementState extends State<OutilsEnseignement> {
-  late OutilEnseignement? _actif = widget.initial;
-
-  void _choisir(ValueChanged<OutilEnseignement> rappel, OutilEnseignement o) {
-    setState(() => _actif = o);
-    rappel(o);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final ValueChanged<OutilEnseignement>? rappel = widget.onOutil;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ValueChanged<OutilEnseignement>? rappel = onOutil;
     if (rappel == null) return const SizedBox.shrink();
+    final OutilDock? actif = ref.watch(
+      etatOutilsProvider.select((EtatOutils e) => e.outilActif),
+    );
+    final List<OutilEnseignement> outils = <OutilEnseignement>[
+      for (final OutilEnseignement o in OutilEnseignement.values)
+        if (avecEcrire || o != OutilEnseignement.ecrire) o,
+    ];
     Widget tuile(OutilEnseignement o) => _Tuile(
       outil: o,
-      actif: o == _actif,
-      onPress: () => _choisir(rappel, o),
+      actif: outilDock(o) == actif,
+      onPress: () {
+        ref.read(etatOutilsProvider.notifier).choisirOutil(outilDock(o));
+        rappel(o);
+      },
     );
-    final Widget corps = switch (widget.forme) {
+    final FormeOutils forme = this.forme;
+    final Widget? pied = this.pied;
+    final Widget corps = switch (forme) {
       FormeOutils.rangee => LayoutBuilder(
         builder: (BuildContext _, BoxConstraints c) {
           // Desktop : tuiles de taille fixe ; ailleurs, reparties.
@@ -108,7 +122,7 @@ class _OutilsEnseignementState extends State<OutilsEnseignement> {
             mainAxisSize: fixe ? MainAxisSize.min : MainAxisSize.max,
             spacing: fixe ? AppSpacing.md : AppSpacing.sm,
             children: <Widget>[
-              for (final OutilEnseignement o in OutilEnseignement.values)
+              for (final OutilEnseignement o in outils)
                 // Des minimums et non des tailles fixes : a 200 %, la tuile
                 // grandit avec son icone et son libelle (W-144).
                 if (fixe)
@@ -159,7 +173,7 @@ class _OutilsEnseignementState extends State<OutilsEnseignement> {
               Row(
                 spacing: AppSpacing.sm,
                 children: <Widget>[
-                  for (final OutilEnseignement o in OutilEnseignement.values)
+                  for (final OutilEnseignement o in outils)
                     Expanded(
                       child: ConstrainedBox(
                         constraints: BoxConstraints(
@@ -170,10 +184,7 @@ class _OutilsEnseignementState extends State<OutilsEnseignement> {
                     ),
                 ],
               ),
-              if (widget.pied case final Widget pied) ...<Widget>[
-                Ecart.vLg,
-                pied,
-              ],
+              if (pied != null) ...<Widget>[Ecart.vLg, pied],
             ],
           ),
         ),
@@ -188,7 +199,7 @@ class _OutilsEnseignementState extends State<OutilsEnseignement> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           spacing: AppSpacing.sm,
           children: <Widget>[
-            for (final OutilEnseignement o in OutilEnseignement.values)
+            for (final OutilEnseignement o in outils)
               ConstrainedBox(
                 constraints: const BoxConstraints(
                   minHeight: MesuresOutils.colonne,
@@ -203,7 +214,7 @@ class _OutilsEnseignementState extends State<OutilsEnseignement> {
       container: true,
       label: t.salle.seance.outils.titre,
       child: KeyedSubtree(
-        key: ValueKey<String>('outils-${widget.forme.name}'),
+        key: ValueKey<String>('outils-${forme.name}'),
         child: corps,
       ),
     );

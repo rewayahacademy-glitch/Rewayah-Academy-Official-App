@@ -94,6 +94,7 @@ class TraitEnCours {
     required this.ancrage,
     required this.outil,
     this.intention,
+    this.epaisseur,
     this.pointsParPaquet = pointsParPaquetParDefaut,
   }) : assert(pointsParPaquet > 0, 'un paquet porte au moins un point');
 
@@ -112,6 +113,9 @@ class TraitEnCours {
 
   /// L'intention portee, quand il y en a une.
   final IntentionPedagogique? intention;
+
+  /// TB-7b : l'epaisseur choisie, `null` = moyenne.
+  final EpaisseurTrait? epaisseur;
 
   /// Le seuil d'emission d'un paquet ephemere.
   final int pointsParPaquet;
@@ -177,6 +181,7 @@ class TraitEnCours {
     intention: intention,
     pression: _moyenne(_pressions),
     inclinaison: _moyenne(_inclinaisons),
+    epaisseur: epaisseur,
   );
 
   static double? _moyenne(List<double> valeurs) {

@@ -23,7 +23,9 @@ import '../../core/tc_bibliotheque/donnees_catalogue.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
-import '../../core/tc_outils/annotation_layer.dart' show TraitVectoriel;
+import '../../core/tc_outils/annotation_layer.dart'
+    show AnnotationLayer, TraitVectoriel;
+import '../../core/tc_outils/port_annotations.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
@@ -32,6 +34,7 @@ import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/status_pill.dart';
 import '../salle_seance/actions_seance.dart';
+import '../salle_seance/notes_deposees.dart';
 import '../salle_seance/panneau_eleves.dart';
 import '../salle_seance/resultat_seance.dart';
 import '../salle_seance/salle_seance.dart';
@@ -460,6 +463,30 @@ class _SalleDemoState extends State<SalleDemo> {
 
   bool _micro = true;
 
+  /// TB-7b : le depot d'annotations de la demonstration, en memoire (le
+  /// « double local assume » de `AnnotationsMemoire`) : les notes vivent le
+  /// temps de la salle ouverte, rien n'est envoye ni enregistre (TB-BR).
+  /// `null` quand l'hote en fournit deja un (tests, Classe Live).
+  late final AnnotationsMemoire? _depot = _depotDemonstration();
+
+  AnnotationsMemoire? _depotDemonstration() {
+    try {
+      ProviderScope.containerOf(
+        context,
+        listen: false,
+      ).read(portAnnotationsProvider);
+      return null;
+    } on Object {
+      return AnnotationsMemoire(DonneesSeanceDemo.groupeDemo);
+    }
+  }
+
+  @override
+  void dispose() {
+    unawaited(_depot?.liberer());
+    super.dispose();
+  }
+
   /// EN-10 : la camera de l'enseignant ne s'allume jamais sans son geste.
   late bool _camera = widget.role != RoleSeance.enseignant;
 
@@ -599,6 +626,17 @@ class _SalleDemoState extends State<SalleDemo> {
       ];
       if (vue.effacementDuTableau) _tableauEfface = true;
     });
+    // TB-7b : les notes ecrites dans la demonstration (depot en memoire)
+    // de cette surface s'effacent aussi.
+    final AnnotationsMemoire? depot = _depot;
+    if (depot == null) return;
+    for (final AnnotationLayer couche in depot.couches.toList()) {
+      for (final TraitVectoriel trait in couche.traits.toList()) {
+        if (trait.ancrage == ancrage) {
+          unawaited(depot.retirerTrait(couche.id, trait.id));
+        }
+      }
+    }
   }
 
   /// TB-8 (LIB-02, LIB-03) : « Presenter ». Le chargement se verifie avant
@@ -844,6 +882,13 @@ class _SalleDemoState extends State<SalleDemo> {
           (Ref _, String cle) =>
               Future<String>.error(StateError('demonstration : $cle')),
         ),
+        // TB-7b : ecrire, gommer et annuler dans la demonstration ; la
+        // relecture du depot suit ce depot-ci (famille reprise dans ce
+        // perimetre).
+        if (_depot case final AnnotationsMemoire depot) ...<Override>[
+          portAnnotationsProvider.overrideWithValue(depot),
+          notesDeposeesProvider.overrideWith2(NotesDeposees.new),
+        ],
       ],
       child: salle,
     );

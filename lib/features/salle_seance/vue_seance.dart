@@ -806,8 +806,22 @@ class VueSeance {
   bool get voitBoutonsPanneaux => _enseignant;
 
   /// Les outils d'enseignement (onglet « Outils » des Commandes, TB-4) :
-  /// enseignant, un support montre.
-  bool get voitOutils => _enseignant && support != null;
+  /// enseignant, un support montre. TB-7b (plan V2 §12, « Aucun support » :
+  /// « Bibliotheque, Ecrire cote enseignant ») : aussi sur le tableau libre.
+  bool get voitOutils =>
+      _enseignant && (support != null || ancrageSurface != null);
+
+  /// TB-7b (plan V2 §4.2) : « Ecrire » ; la surface montree prend des notes
+  /// (page fixe ou tableau libre), et la personne peut ecrire.
+  bool get voitEcriture => voitOutils && peutEcrire && ancrageSurface != null;
+
+  /// TB-7b : le Pointeur montre un passage sur la surface montree.
+  bool get peutPointer => voitOutils && ancrageSurface != null;
+
+  /// TB-7b (UX_REVIEW_TB n. 21, plan V2 §19.3.6) : la gomme retire tout
+  /// trait de la surface (l'enseignant la gere) ; sinon, seulement ceux de
+  /// la personne.
+  bool get gereToutesLesNotes => _enseignant;
 
   /// TB-4 (CMD-01) : le declencheur « Commandes » et son panneau. Enseignant
   /// seulement : l'eleve ne voit ni Bibliotheque, ni affichages, ni page

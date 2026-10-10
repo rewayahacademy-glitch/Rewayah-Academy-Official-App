@@ -294,7 +294,21 @@
         "pointeur": "Pointeur",
         "marquer": "Marquer",
         "masquer": "Masquer",
-        "annoter": "Annoter"
+        "ecrire": "Écrire",
+        "aideLecture": "Sans outil, la page se lit : un doigt la déplace quand elle est agrandie.",
+        "aidePointeur": "Pointeur : touchez la page pour montrer un passage, rien ne reste.",
+        "aideEcrire": "Écrire : écrivez sur la page, deux doigts la déplacent."
+      },
+      "ecriture": {
+        "palette": "Outils d'écriture",
+        "terminer": "Terminer",
+        "couleur": "Couleur",
+        "couleurAide": "La couleur dit l'intention du trait, pour toute la classe.",
+        "epaisseur": "Épaisseur",
+        "epaisseurAide": "Fin pour écrire un mot, épais pour entourer.",
+        "fine": "Fin",
+        "moyenne": "Moyen",
+        "epaisse": "Épais"
       },
       "rail": {
         "navigation": "Navigation",
@@ -3967,7 +3981,7 @@
         "pourEvaluation": "Pour l'évaluation"
       },
       "trait": {
-        "stylet": "Stylet",
+        "stylet": "Stylo",
         "surligneur": "Surligner",
         "gomme": "Gomme",
         "annuler": "Annuler",

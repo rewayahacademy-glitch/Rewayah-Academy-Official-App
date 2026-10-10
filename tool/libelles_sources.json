@@ -166,5 +166,19 @@
   "salle.seance.rangement.questionPage": "etape TB-9 (Supports et tableau, effacer les notes) : texte exact du plan V2 §12 (Effacement de page) et §20",
   "salle.seance.rangement.questionTableau": "etape TB-9 (Supports et tableau, effacer les notes) : texte exact du plan V2 §12 (Effacement du tableau libre) et §20",
   "salle.seance.rangement.consequencePage": "etape TB-9 (Supports et tableau, effacer les notes) : consequence de ConfirmDestructive (obligatoire, K-58 : l irreversible se dit avant le choix, la mention « ne peut pas etre annulee » vient du composant), plan V2 §12, a valider par le directeur",
-  "salle.seance.rangement.consequenceTableau": "etape TB-9 (Supports et tableau, effacer les notes) : consequence de ConfirmDestructive (obligatoire, K-58), plan V2 §12, a valider par le directeur"
+  "salle.seance.rangement.consequenceTableau": "etape TB-9 (Supports et tableau, effacer les notes) : consequence de ConfirmDestructive (obligatoire, K-58), plan V2 §12, a valider par le directeur",
+  "salle.seance.outils.ecrire": "etape TB-7b (Supports et tableau, ecrire) : texte exact du plan V2 §4.2 et §20 (Outils enseignant « Ecrire »), remplace « Annoter » (00_REPRISE §6.6)",
+  "salle.seance.outils.aideLecture": "etape TB-7b (Supports et tableau, ecrire) : K-58 (chaque choix s explique), plan V2 §7 « En mode lecture, un doigt peut deplacer la page », a valider par le directeur",
+  "salle.seance.outils.aidePointeur": "etape TB-7b (Supports et tableau, ecrire) : K-58, plan V2 §4.2 (Pointeur : « indication temporaire sans annotation permanente »), a valider par le directeur",
+  "salle.seance.outils.aideEcrire": "etape TB-7b (Supports et tableau, ecrire) : K-58, plan V2 §7 (« un doigt dessine uniquement en mode Ecrire ; deux doigts deplacent »), a valider par le directeur",
+  "salle.seance.ecriture.palette": "etape TB-7b (Supports et tableau, ecrire) : nom lu de la palette courte du telephone, plan V2 §4.2 (« courte palette contextuelle : outil actif, Annuler, Terminer »), a valider par le directeur",
+  "salle.seance.ecriture.terminer": "etape TB-7b (Supports et tableau, ecrire) : texte exact du plan V2 §20 (Outils enseignant « Terminer ») et §19.1 point 8",
+  "salle.seance.ecriture.couleur": "etape TB-7b (Supports et tableau, ecrire) : texte exact du plan V2 §20 (Options « Couleur »)",
+  "salle.seance.ecriture.couleurAide": "etape TB-7b (Supports et tableau, ecrire) : K-58 ; la couleur derive de l intention (couleur_intention.dart, spec 8.4), plan V2 §4.2 (« choix courts »), a valider par le directeur",
+  "salle.seance.ecriture.epaisseur": "etape TB-7b (Supports et tableau, ecrire) : texte exact du plan V2 §20 (Options « Epaisseur »)",
+  "salle.seance.ecriture.epaisseurAide": "etape TB-7b (Supports et tableau, ecrire) : K-58, plan V2 §4.2 (« Couleur / Epaisseur : choix courts »), a valider par le directeur",
+  "salle.seance.ecriture.fine": "etape TB-7b (Supports et tableau, ecrire) : choix court d Epaisseur, plan V2 §20 (« selection lisible par forme, texte et couleur »), a valider par le directeur",
+  "salle.seance.ecriture.moyenne": "etape TB-7b (Supports et tableau, ecrire) : choix court d Epaisseur, plan V2 §20, a valider par le directeur",
+  "salle.seance.ecriture.epaisse": "etape TB-7b (Supports et tableau, ecrire) : choix court d Epaisseur, plan V2 §20, a valider par le directeur",
+  "tc.outils.trait.stylet": "etape TB-7b (Supports et tableau, ecrire) : texte exact du plan V2 §20 (Outils enseignant « Stylo »), remplace « Stylet »"
 }
