@@ -548,6 +548,8 @@ class _Traductions$classe$entree$ar extends Traductions$classe$entree$fr {
 	@override String get aucune => 'لا توجد حصة مقررة';
 	@override String get horsLigne => 'أنت غير متصل. تحتاج الحصة إلى اتصال.';
 	@override String get indisponible => 'معلومات الحصة غير متاحة حاليًا.';
+	@override String get indisponibleCourt => 'تعذّر تحميل معلومات الحصة';
+	@override String get indisponibleInvitation => 'ربما لم يصل الطلب إلى رواية. أعد المحاولة بعد لحظة.';
 	@override String get accesInverifiable => 'لا يمكن التحقق من الدخول إلى القاعة حاليًا.';
 	@override String get reessayer => 'إعادة المحاولة';
 	@override String get chargementSeance => 'جارٍ تحميل الحصة القادمة.';
@@ -4688,6 +4690,8 @@ extension on TraductionsAr {
 			'classe.entree.aucune' => 'لا توجد حصة مقررة',
 			'classe.entree.horsLigne' => 'أنت غير متصل. تحتاج الحصة إلى اتصال.',
 			'classe.entree.indisponible' => 'معلومات الحصة غير متاحة حاليًا.',
+			'classe.entree.indisponibleCourt' => 'تعذّر تحميل معلومات الحصة',
+			'classe.entree.indisponibleInvitation' => 'ربما لم يصل الطلب إلى رواية. أعد المحاولة بعد لحظة.',
 			'classe.entree.accesInverifiable' => 'لا يمكن التحقق من الدخول إلى القاعة حاليًا.',
 			'classe.entree.reessayer' => 'إعادة المحاولة',
 			'classe.entree.chargementSeance' => 'جارٍ تحميل الحصة القادمة.',
@@ -5042,10 +5046,10 @@ extension on TraductionsAr {
 			'tc.groupe.espace.bibliotheque' => 'المكتبة',
 			'tc.groupe.espace.bibliothequeVoirTout' => 'عرض الكل',
 			'tc.groupe.espace.progression' => 'التقدم',
-			'tc.groupe.espace.roster' => 'طلاب الفصل',
-			'tc.groupe.espace.reprendreLeCours' => 'استئناف الدرس',
 			_ => null,
 		} ?? switch (path) {
+			'tc.groupe.espace.roster' => 'طلاب الفصل',
+			'tc.groupe.espace.reprendreLeCours' => 'استئناف الدرس',
 			'tc.groupe.espace.introuvable' => 'هذا الفصل غير متاح لك',
 			'tc.groupe.espace.introuvableDetail' => 'ربما أُغلق، أو يخص ملفًا آخر.',
 			'tc.groupe.emplacement.nonBranche' => 'متاح قريبًا',
@@ -5556,10 +5560,10 @@ extension on TraductionsAr {
 			'com.studio.brouillons.canalIndisponible' => 'مسودة في قناة لم تعد متاحة',
 			'com.studio.brouillons.modifie' => ({required Object moment}) => 'عُدّلت في ${moment}',
 			'com.studio.brouillons.reprendre' => ({required Object nom}) => 'متابعة المسودة في ${nom}',
-			'com.studio.brouillons.videTitre' => 'لا توجد مسودات',
-			'com.studio.brouillons.vide' => 'ستظهر هنا أي رسالة بدأتها في قناة ولم تُرسل بعد.',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.brouillons.videTitre' => 'لا توجد مسودات',
+			'com.studio.brouillons.vide' => 'ستظهر هنا أي رسالة بدأتها في قناة ولم تُرسل بعد.',
 			'com.studio.brouillons.tous' => ({required Object nombre}) => 'عرض كل المسودات (${nombre})',
 			'com.studio.brouillons.restaure' => 'استُعيدت المسودة. يمكنك متابعة رسالتك.',
 			'com.studio.sousTitre' => 'مساحة عمل الفريق',
@@ -6070,10 +6074,10 @@ extension on TraductionsAr {
 			'comptable.aujourdhui.accesPaiements' => 'عرض المدفوعات للتنفيذ',
 			'comptable.aujourdhui.accesContractuels' => 'إدارة التزامات المتعاقدين',
 			'comptable.aujourdhui.accesEncaissements' => 'عرض المقبوضات',
-			'comptable.aujourdhui.accesTresorerie' => 'عرض الخزينة والصناديق',
-			'comptable.aujourdhui.accesAlimenter' => 'تغذية الاحتياطي الاستراتيجي',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.aujourdhui.accesTresorerie' => 'عرض الخزينة والصناديق',
+			'comptable.aujourdhui.accesAlimenter' => 'تغذية الاحتياطي الاستراتيجي',
 			'comptable.aujourdhui.titre' => 'اليوم',
 			'comptable.aujourdhui.sousTitre' => 'ماذا عليّ أن أفعل الآن؟',
 			'comptable.aujourdhui.attention' => 'للمعالجة والتنبيهات',
@@ -6584,10 +6588,10 @@ extension on TraductionsAr {
 			'comptable.contractuels.erreurCreation' => 'لا نعلم إن كان الالتزام قد أُنشئ. حدّث القائمة قبل إعادة المحاولة.',
 			'comptable.contractuels.creationIndisponible' => 'لا يستطيع حسابك إنشاء التزام.',
 			'comptable.contractuels.retourListe' => 'العودة إلى المتعاقدين',
-			'comptable.contractuels.titre' => 'المتعاقدون والالتزامات',
-			'comptable.contractuels.sousTitre' => 'تُحدَّد المبالغ عند إنشاء الالتزام، وتُثبَّت بعد الاعتماد.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.contractuels.titre' => 'المتعاقدون والالتزامات',
+			'comptable.contractuels.sousTitre' => 'تُحدَّد المبالغ عند إنشاء الالتزام، وتُثبَّت بعد الاعتماد.',
 			'comptable.contractuels.nouvelle' => 'التزام جديد',
 			'comptable.contractuels.detailTitre' => 'الالتزام',
 			'comptable.validation.sousTitre' => 'طلبات المحاسب التي تنتظر قرار شخص مخوَّل آخر. صاحب الطلب لا يصادق أبدًا على طلبه.',
