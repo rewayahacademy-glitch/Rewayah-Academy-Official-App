@@ -46,6 +46,26 @@ jobs:
             psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f "$f"
           done
 
+      - name: Scénarios B-09 (notifications)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b09_notifications.sql
+
+      # B-11 mesure ses ACL avant les scénarios historiques qui accordent des droits larges.
+      - name: Scénarios B-11 (signalement)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b11_student_concern.sql
+
+      - name: Scénarios B-14 (état partagé)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b14_shared_state.sql
+
+      - name: Scénarios B-15 (assignations et annotations)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b15_assignations_annotations.sql
+
+      - name: Scénarios B-10 (canal de support)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b10_support.sql
       # OFFRES-I5 : les créneaux demandés en privé ne deviennent une offre
       # publique qu'au quota configuré (5 enfants / 6 adultes).
       - name: Scenarios du créneau personnalisé au quota (F1)
@@ -59,6 +79,10 @@ jobs:
       - name: Scenarios d'acceptation SQL des etapes 1 et 3
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_etape3.sql
+
+      - name: Scénarios B-13 (admin suspendu)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b13_admin_suspended.sql
 
       # Disponibilites communes aux deux roles, affectation durable et son
       # plafond, regles par eleve et leur immuabilite, chevauchement de seances,
