@@ -320,6 +320,45 @@ $function$;
 revoke all on function app_private.has_unsafe_role_guard(text) from public;
 revoke all on function app_private.has_unsafe_role_guard(text) from anon, authenticated, agent_ro;
 
+-- Cette voie enseignant contourne le comparateur rôle seul : le helper ne vérifie que
+-- teacher_id et deleted_at. Exiger explicitement rôle, propriété de séance et compte actif.
+do $sec_prod_teacher_publish_guard$
+declare
+  v_oid oid;
+  v_definition text;
+  v_corrected text;
+  v_source text;
+  v_normalized text;
+  v_pattern text := $pattern$(?i)if[[:space:]]+not[[:space:]]+public[.]session_belongs_to_teacher[[:space:]]*[(][[:space:]]*p_session_id[[:space:]]*,[[:space:]]*auth[.]uid[[:space:]]*[(][[:space:]]*[)][[:space:]]*[)][[:space:]]+and[[:space:]]+public[.]app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]*<>[[:space:]]*'admin'[[:space:]]+then$pattern$;
+  v_guard text := $guard$IF NOT COALESCE(((public.app_role() = 'teacher' AND public.session_belongs_to_teacher(p_session_id, auth.uid())) OR public.app_role() = 'admin') AND public.app_account_valid(), false) THEN$guard$;
+  v_matches integer;
+begin
+  v_oid := to_regprocedure('public.publier_etat_partage(uuid, uuid, uuid, jsonb, jsonb, text, jsonb, jsonb, jsonb, integer)');
+  if v_oid is null
+     or md5(pg_get_functiondef(v_oid)) is distinct from
+        (select md5_definition from pg_temp.sec_prod_expected_functions
+          where signature = 'public.publier_etat_partage(uuid, uuid, uuid, jsonb, jsonb, text, jsonb, jsonb, jsonb, integer)') then
+    raise exception 'SEC-PROD M2: définition non conforme avant garde publier_etat_partage';
+  end if;
+  v_definition := pg_get_functiondef(v_oid);
+  select count(*) into v_matches from regexp_matches(v_definition, v_pattern, 'gi');
+  if v_matches <> 1 then
+    raise exception 'SEC-PROD M2: garde teacher/admin attendue exactement une fois dans publier_etat_partage (trouvé %)', v_matches;
+  end if;
+  v_corrected := regexp_replace(v_definition, v_pattern, v_guard, 'gi');
+  if v_corrected = v_definition
+     or app_private.has_unsafe_role_guard(v_corrected) then
+    raise exception 'SEC-PROD M2: garde publier_etat_partage non transformée';
+  end if;
+  execute v_corrected;
+  select p.prosrc into v_source from pg_catalog.pg_proc p where p.oid = v_oid;
+  v_normalized := regexp_replace(lower(v_source), '[[:space:]]+', ' ', 'g');
+  if strpos(v_normalized, lower(v_guard)) = 0 then
+    raise exception 'SEC-PROD M2: garde positive publier_etat_partage absente après réécriture';
+  end if;
+end
+$sec_prod_teacher_publish_guard$;
+
 do $migration$
 declare
   v record;
@@ -1256,6 +1295,24 @@ begin
   end if;
 end
 $sec_prod_postflight$;
+
+-- Ce RPC a un chemin enseignant par appartenance de séance; vérifier aussi la
+-- garde globale de validité du compte et la séparation des rôles après simulation.
+do $sec_prod_teacher_publish_postflight$
+declare
+  v_source text;
+  v_normalized text;
+  v_guard text := $guard$if not coalesce(((public.app_role() = 'teacher' and public.session_belongs_to_teacher(p_session_id, auth.uid())) or public.app_role() = 'admin') and public.app_account_valid(), false) then$guard$;
+begin
+  select p.prosrc into v_source
+    from pg_catalog.pg_proc p
+   where p.oid = to_regprocedure('public.publier_etat_partage(uuid, uuid, uuid, jsonb, jsonb, text, jsonb, jsonb, jsonb, integer)');
+  v_normalized := regexp_replace(lower(coalesce(v_source, '')), '[[:space:]]+', ' ', 'g');
+  if strpos(v_normalized, v_guard) = 0 then
+    raise exception 'SEC-PROD M2: garde teacher/admin valide manquante dans publier_etat_partage';
+  end if;
+end
+$sec_prod_teacher_publish_postflight$;
 
 do $sec_prod_views_postflight$
 declare
