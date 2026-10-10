@@ -555,9 +555,12 @@ class _Page extends StatelessWidget {
         child: _Cadre(
           // Une page fixe est un document : son contenu suit le sens de sa
           // langue, jamais celui de l'interface (revue TB-6 : en arabe, la
-          // page francaise de demonstration se calait a droite).
+          // page francaise de demonstration se calait a droite). Le titre
+          // dit la langue du document, avant la mention (TB-12, R-18 : la
+          // mention francaise de demonstration calait a gauche un support
+          // arabe).
           child: Directionality(
-            textDirection: sensDuDocument(<String?>[mention, page.titre]),
+            textDirection: sensDuDocument(<String?>[page.titre, mention]),
             child: Padding(
               padding: const EdgeInsets.all(AppSpacing.lg),
               // Le texte de la page est celui du document : il suit la taille

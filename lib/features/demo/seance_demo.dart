@@ -493,9 +493,21 @@ abstract final class DonneesSeanceDemo {
   /// (« Fichier non ouvert. »), jamais une page vide.
   static const String idSupportIndisponible = 'demo-cahier-ecriture';
 
+  /// TB-12 (R-18, « Support arabe ») : un support non coranique a titre
+  /// arabe vocalise, texte court sans image (TB27 : aucune page de Coran).
+  static const String idSupportArabe = 'demo-adab-talib';
+
+  /// Le titre du support arabe : une donnee de demonstration, pas un
+  /// libelle d'interface.
+  static const String titreSupportArabe = 'آدَابُ طَالِبِ العِلْمِ';
+
+  /// Le nombre de pages du support arabe (chevrons a parcourir en RTL).
+  static const int pagesSupportArabe = 3;
+
   /// Les supports de la Bibliotheque unique en demonstration : ceux du
-  /// panneau Supports qui ont un contenu (memes identifiants, memes titres)
-  /// et un cahier dont le fichier manque. Aucun Coran (TB27).
+  /// panneau Supports qui ont un contenu (memes identifiants, memes titres),
+  /// un support arabe (R-18) et un cahier dont le fichier manque. Aucun
+  /// Coran (TB27).
   static List<LibraryResource> get ressourcesTb => <LibraryResource>[
     for (final SupportDisponible s in supports)
       if (s.contenu != null)
@@ -515,6 +527,22 @@ abstract final class DonneesSeanceDemo {
             CapaciteRessource.presentableInClass,
           },
         ),
+    const LibraryResource(
+      id: idSupportArabe,
+      title: titreSupportArabe,
+      shortTitle: titreSupportArabe,
+      resourceType: TypeRessource.pdf,
+      language: 'ar',
+      category: 'Bonnes manières',
+      accessPolicy: PolitiqueAcces.inscrits,
+      offlinePolicy: PolitiqueOffline.surDemande,
+      currentVersionId: 'v1.0',
+      capabilities: <CapaciteRessource>{
+        CapaciteRessource.searchable,
+        CapaciteRessource.pageable,
+        CapaciteRessource.presentableInClass,
+      },
+    ),
     const LibraryResource(
       id: idSupportIndisponible,
       title: "Cahier d'écriture",
@@ -553,7 +581,7 @@ abstract final class DonneesSeanceDemo {
   /// position (bornee a son nombre de pages), sinon la premiere ; meme
   /// repere que la page de demonstration, nombre de pages de son contenu.
   static SupportPageFixe pagePresentee(LibraryResource r, {int? page}) {
-    int total = 1;
+    int total = r.id == idSupportArabe ? pagesSupportArabe : 1;
     for (final SupportDisponible s in supports) {
       if (s.id == r.id) total = s.contenu?.pages ?? 1;
     }
