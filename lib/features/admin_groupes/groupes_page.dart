@@ -45,6 +45,7 @@ import '../../core/widgets/selecteur_personne.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
+import '../admin_fusion/feuilles_fusion.dart';
 import '../admin_regroupements/regroupements_libelles.dart' show villeDuFuseau;
 import '../creneaux/plages.dart' show jourCapitalise, nommerHeure;
 import 'bas_de_feuille.dart';
@@ -569,6 +570,7 @@ class _Inspecteur extends StatelessWidget {
                       libelle: t.admin.groupes.actionObservation,
                       onChoix: onObservation,
                     ),
+                    ..._actionsFusion(context, classe),
                     EntreeAction(
                       libelle: t.admin.groupes.actionCloturer,
                       destructif: true,
@@ -767,6 +769,7 @@ class _Corps extends StatelessWidget {
                       libelle: t.admin.groupes.actionObservation,
                       onChoix: () => onObservation(c),
                     ),
+                    ..._actionsFusion(contexte, c),
                     EntreeAction(
                       libelle: t.admin.groupes.actionCloturer,
                       destructif: true,
@@ -787,6 +790,30 @@ class _Corps extends StatelessWidget {
     );
   }
 }
+
+/// ECHELLE-ADM-FUSION-1 : les actions de fusion (R9), de transfert (R10) et
+/// l'historique d'une classe. Une action n'est rendue que si le serveur dit
+/// que la personne connectee peut la faire (`peutFusionner`,
+/// `peutTransferer`), jamais selon un role ; l'historique suit l'une ou
+/// l'autre.
+List<EntreeAction> _actionsFusion(BuildContext context, ClasseListee c) =>
+    <EntreeAction>[
+      if (c.peutFusionner)
+        EntreeAction(
+          libelle: t.admin.fusion.actionFusionner,
+          onChoix: () => unawaited(ouvrirFusion(context, c)),
+        ),
+      if (c.peutTransferer)
+        EntreeAction(
+          libelle: t.admin.fusion.actionTransferer,
+          onChoix: () => unawaited(ouvrirTransfert(context, c)),
+        ),
+      if (c.peutFusionner || c.peutTransferer)
+        EntreeAction(
+          libelle: t.admin.fusion.actionHistorique,
+          onChoix: () => unawaited(ouvrirHistorique(context, c)),
+        ),
+    ];
 
 /// L'etat d'une classe : le mot et le ton, jamais la couleur seule.
 class _PastilleEtat extends StatelessWidget {

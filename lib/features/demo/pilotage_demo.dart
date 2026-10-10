@@ -112,8 +112,12 @@ LignePilotage _ligne(String cle, _Cumul x) {
   // Les enseignants libres a cet horaire, par genre (simule).
   int libresH = graine % 3;
   int libresF = (graine ~/ 3) % 3;
-  final int manquantsH = x.attenteHommes > libresH ? x.attenteHommes - libresH : 0;
-  final int manquantsF = x.attenteFemmes > libresF ? x.attenteFemmes - libresF : 0;
+  final int manquantsH = x.attenteHommes > libresH
+      ? x.attenteHommes - libresH
+      : 0;
+  final int manquantsF = x.attenteFemmes > libresF
+      ? x.attenteFemmes - libresF
+      : 0;
   libresH = libresH > x.attenteHommes ? libresH - x.attenteHommes : 0;
   libresF = libresF > x.attenteFemmes ? libresF - x.attenteFemmes : 0;
   // Les classes dont le genre n'est pas connu, et celles que les demandes

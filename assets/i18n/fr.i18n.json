@@ -3278,6 +3278,80 @@
       "precedente": "Page précédente du tableau de pilotage",
       "suivante": "Page suivante du tableau de pilotage",
       "resume": "Horaires {debut} à {fin} sur {total}"
+    },
+    "fusion": {
+      "actionFusionner": "Fusionner avec une classe parallèle",
+      "actionTransferer": "Transférer un élève",
+      "actionHistorique": "Historique de la classe",
+      "fusionTitre": "Fusionner {libelle}",
+      "fusionContexte": "Les élèves de cette classe rejoindront une classe parallèle du même horaire et de la même catégorie qui a de la place. L'enseignant de cette classe est libéré. Rien ne se fait sans votre confirmation.",
+      "choixTitre": "Classe qui accueille les élèves",
+      "placesLibres": {
+        "one": "{n} place libre",
+        "other": "{n} places libres"
+      },
+      "enseignantDe": "Enseignant : {nom}",
+      "sansEnseignant": "Sans enseignant pour l'instant",
+      "aucuneCible": "Aucune classe parallèle n'a assez de place",
+      "aucuneCibleDetail": "Il faut une classe du même horaire et de la même catégorie, avec de la place pour tous les élèves de celle-ci.",
+      "erreurCibles": "Les classes parallèles n'ont pas pu être lues. Réessayez dans un instant.",
+      "sansDonneesCibles": "La liste des classes parallèles n'a pas pu être chargée",
+      "apercuTitre": "Ce qui va se passer",
+      "apercuErreur": "L'aperçu de la fusion n'a pas pu être calculé. Réessayez dans un instant.",
+      "apercuMembres": {
+        "one": "{n} élève passe dans {cible}",
+        "other": "{n} élèves passent dans {cible}"
+      },
+      "apercuEffectif": "{cible} aura {apres} élèves sur {capacite}.",
+      "apercuEnseignantLibere": "{enseignant} n'a plus cette classe et redevient libre à cet horaire.",
+      "apercuSansEnseignant": "Cette classe n'a pas d'enseignant : personne n'est libéré.",
+      "apercuFamilles": {
+        "one": "{n} famille est prévenue.",
+        "other": "{n} familles sont prévenues."
+      },
+      "apercuIrreversible": "La classe fusionnée est clôturée, et l'historique des deux classes est conservé. Cette décision ne se défait pas.",
+      "confirmerFusion": "Fusionner les deux classes",
+      "fusionHorsLigne": "La fusion pourra être confirmée quand la connexion sera revenue. Votre choix reste affiché.",
+      "fusionFaite": {
+        "one": "Fusion faite : {n} élève est maintenant dans {cible}.",
+        "other": "Fusion faite : {n} élèves sont maintenant dans {cible}."
+      },
+      "famillesPrevenues": "Les familles ont été prévenues.",
+      "fusionDejaFaite": "Un autre membre de la direction vient de fusionner cette classe : rien n'a été fait en double. Fermez cette feuille pour retrouver la liste à jour.",
+      "fusionRefusee": "La fusion n'a pas eu lieu : {motif}. Vérifiez les classes, puis recommencez.",
+      "fusionNonConfirmee": "La fusion n'est pas confirmée : la réponse du serveur n'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans fusion en double.",
+      "manqueCible": "Il manque la classe qui accueille les élèves : choisissez-la dans la liste.",
+      "transfertTitre": "Transférer un élève {deLibelle}",
+      "transfertContexte": "Choisissez l'élève, puis la classe parallèle qui l'accueille. Le transfert est tracé, et la famille en est prévenue.",
+      "eleveTitre": "Élève à transférer",
+      "aucunEleve": "Cette classe n'a aucun élève",
+      "aucunEleveDetail": "Il n'y a personne à transférer.",
+      "erreurEleves": "Les élèves de la classe n'ont pas pu être lus. Réessayez dans un instant.",
+      "transfertCibleTitre": "Classe qui accueille l'élève",
+      "manqueEleve": "Il manque l'élève : choisissez-le dans la liste.",
+      "confirmerTransfert": "Transférer l'élève",
+      "transfertHorsLigne": "Le transfert pourra être confirmé quand la connexion sera revenue. Votre choix reste affiché.",
+      "transfertFait": "{prenom} est maintenant dans {cible}.",
+      "transfertDejaFait": "Ce transfert a déjà été fait : rien n'a été fait en double. Fermez cette feuille pour retrouver la liste à jour.",
+      "refusChevauchement": "{prenom} suit déjà un cours qui a lieu en même temps que {cible} : un élève ne peut pas être dans deux classes qui se chevauchent. Choisissez une autre classe.",
+      "refusClassePleine": "{cible} n'a plus de place. Choisissez une autre classe.",
+      "refusAutre": "Le transfert n'a pas eu lieu : {motif}. Vérifiez la classe, puis recommencez.",
+      "transfertNonConfirme": "Le transfert n'est pas confirmé : la réponse du serveur n'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans transfert en double.",
+      "historiqueTitre": "Historique {deLibelle}",
+      "historiqueVide": "Aucun mouvement",
+      "historiqueVideDetail": "Les fusions et les transferts de cette classe apparaîtront ici.",
+      "historiqueErreur": "L'historique n'a pas pu être lu. Réessayez dans un instant.",
+      "evenementFusionSortante": {
+        "one": "Fusionnée dans {autre} : {n} élève déplacé",
+        "other": "Fusionnée dans {autre} : {n} élèves déplacés"
+      },
+      "evenementFusionEntrante": {
+        "one": "Fusion avec {autre} : {n} élève accueilli",
+        "other": "Fusion avec {autre} : {n} élèves accueillis"
+      },
+      "evenementTransfertSortant": "{prenom} transféré vers {autre}",
+      "evenementTransfertEntrant": "{prenom} transféré depuis {autre}",
+      "quand": "{date} à {heure}"
     }
   },
   "agent": {

@@ -61,6 +61,8 @@ class ClasseListee {
     this.genre,
     this.sansEnseignant = false,
     this.peutAffecterEnseignant = false,
+    this.peutFusionner = false,
+    this.peutTransferer = false,
   });
 
   /// Une ligne lue de `groupes_admin()` : ni numero, ni code, ni genre ; une
@@ -88,6 +90,16 @@ class ClasseListee {
   /// l'enseignant de cette classe. Faux tant qu'il ne la rend pas : aucun
   /// bouton d'affectation n'est alors rendu.
   final bool peutAffecterEnseignant;
+
+  /// Capacite rendue par le serveur : la personne connectee peut fusionner
+  /// cette classe avec une classe parallele (R9). Faux tant qu'il ne la
+  /// rend pas : aucune action de fusion n'est rendue.
+  final bool peutFusionner;
+
+  /// Capacite rendue par le serveur : la personne connectee peut transferer
+  /// un eleve de cette classe vers une classe parallele (R10). Faux tant
+  /// qu'il ne la rend pas.
+  final bool peutTransferer;
 
   /// L'identifiant de la classe.
   String get id => groupe.id;

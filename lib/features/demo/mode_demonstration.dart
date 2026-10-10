@@ -17,6 +17,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
 import '../../core/admin/port_classes_admin.dart';
+import '../../core/admin/port_fusion_classes.dart';
 import '../../core/admin/port_pilotage.dart';
 import '../../core/admin/service_admin.dart';
 import '../../core/admin/service_groupes.dart';
@@ -73,6 +74,7 @@ import 'classe_form_demo.dart';
 import 'classes_admin_demo.dart';
 import 'dossiers_demo.dart';
 import 'finance_demo.dart';
+import 'fusion_demo.dart';
 import 'observation_demo.dart';
 import 'pilotage_demo.dart';
 import 'presence_demo.dart';
@@ -325,8 +327,13 @@ List<Override> surchargesDemoAdmin({
       ...regroupementsVolumeDemo(),
     ],
   );
-  // La liste des classes suit les enseignants confirmes pendant la visite ;
-  // le tableau de pilotage se recalcule depuis les deux.
+  // R9, R10 : fusions et transferts, calcules des classes avant mouvement.
+  // Les deux se referencent : la fusion lit les classes, les classes lisent
+  // ce que la fusion a change.
+  late final FusionDemo fusionDemo;
+  // La liste des classes suit les enseignants confirmes pendant la visite et
+  // les fusions et transferts ; le tableau de pilotage se recalcule depuis
+  // les deux.
   final ClassesAdminDemo classesAdminDemo = ClassesAdminDemo(
     creees: creees,
     classes: <ClasseListee>[
@@ -336,7 +343,10 @@ List<Override> surchargesDemoAdmin({
     ],
     enseignantAffecte: (String classeId) =>
         regroupementsPortDemo.enseignantDe[classeId],
+    // ignore: unnecessary_lambdas, la fusion n'est affectee qu'apres.
+    ajuster: (ClasseListee c) => fusionDemo.ajuster(c),
   );
+  fusionDemo = FusionDemo(classes: classesAdminDemo.toutesBrutes);
   return <Override>[
     sourceSessionProvider.overrideWithValue(const SourceSessionDemoAdmin()),
     portRevueDossiersProvider.overrideWithValue(RevueDossiersDemo(e)),
@@ -364,6 +374,7 @@ List<Override> surchargesDemoAdmin({
     // R16, R17 : la liste paginee des classes, a grande echelle (30 classes
     // paralleles de meme cle, un grand volume simule, les classes creees).
     portClassesAdminProvider.overrideWithValue(classesAdminDemo),
+    portFusionClassesProvider.overrideWithValue(fusionDemo),
     // ECHELLE-ADM-PILOTAGE-1 : le tableau de pilotage par horaire.
     portPilotageProvider.overrideWithValue(
       PilotageDemo(

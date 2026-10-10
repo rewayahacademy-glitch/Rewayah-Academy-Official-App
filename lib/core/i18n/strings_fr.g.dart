@@ -1509,6 +1509,7 @@ class Traductions$admin$fr {
 	late final Traductions$admin$notifications$fr notifications = Traductions$admin$notifications$fr.internal(_root);
 	late final Traductions$admin$finance$fr finance = Traductions$admin$finance$fr.internal(_root);
 	late final Traductions$admin$pilotage$fr pilotage = Traductions$admin$pilotage$fr.internal(_root);
+	late final Traductions$admin$fusion$fr fusion = Traductions$admin$fusion$fr.internal(_root);
 }
 
 // Path: agent
@@ -8783,6 +8784,195 @@ class Traductions$admin$pilotage$fr {
 
 	/// fr: 'Horaires {debut} à {fin} sur {total}'
 	String resume({required Object debut, required Object fin, required Object total}) => 'Horaires ${debut} à ${fin} sur ${total}';
+}
+
+// Path: admin.fusion
+class Traductions$admin$fusion$fr {
+	Traductions$admin$fusion$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Fusionner avec une classe parallèle'
+	String get actionFusionner => 'Fusionner avec une classe parallèle';
+
+	/// fr: 'Transférer un élève'
+	String get actionTransferer => 'Transférer un élève';
+
+	/// fr: 'Historique de la classe'
+	String get actionHistorique => 'Historique de la classe';
+
+	/// fr: 'Fusionner {libelle}'
+	String fusionTitre({required Object libelle}) => 'Fusionner ${libelle}';
+
+	/// fr: 'Les élèves de cette classe rejoindront une classe parallèle du même horaire et de la même catégorie qui a de la place. L'enseignant de cette classe est libéré. Rien ne se fait sans votre confirmation.'
+	String get fusionContexte => 'Les élèves de cette classe rejoindront une classe parallèle du même horaire et de la même catégorie qui a de la place. L\'enseignant de cette classe est libéré. Rien ne se fait sans votre confirmation.';
+
+	/// fr: 'Classe qui accueille les élèves'
+	String get choixTitre => 'Classe qui accueille les élèves';
+
+	/// fr: '(one) {{n} place libre} (other) {{n} places libres}'
+	String placesLibres({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} place libre',
+		other: '${n} places libres',
+	);
+
+	/// fr: 'Enseignant : {nom}'
+	String enseignantDe({required Object nom}) => 'Enseignant : ${nom}';
+
+	/// fr: 'Sans enseignant pour l'instant'
+	String get sansEnseignant => 'Sans enseignant pour l\'instant';
+
+	/// fr: 'Aucune classe parallèle n'a assez de place'
+	String get aucuneCible => 'Aucune classe parallèle n\'a assez de place';
+
+	/// fr: 'Il faut une classe du même horaire et de la même catégorie, avec de la place pour tous les élèves de celle-ci.'
+	String get aucuneCibleDetail => 'Il faut une classe du même horaire et de la même catégorie, avec de la place pour tous les élèves de celle-ci.';
+
+	/// fr: 'Les classes parallèles n'ont pas pu être lues. Réessayez dans un instant.'
+	String get erreurCibles => 'Les classes parallèles n\'ont pas pu être lues. Réessayez dans un instant.';
+
+	/// fr: 'La liste des classes parallèles n'a pas pu être chargée'
+	String get sansDonneesCibles => 'La liste des classes parallèles n\'a pas pu être chargée';
+
+	/// fr: 'Ce qui va se passer'
+	String get apercuTitre => 'Ce qui va se passer';
+
+	/// fr: 'L'aperçu de la fusion n'a pas pu être calculé. Réessayez dans un instant.'
+	String get apercuErreur => 'L\'aperçu de la fusion n\'a pas pu être calculé. Réessayez dans un instant.';
+
+	/// fr: '(one) {{n} élève passe dans {cible}} (other) {{n} élèves passent dans {cible}}'
+	String apercuMembres({required num n, required Object cible}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} élève passe dans ${cible}',
+		other: '${n} élèves passent dans ${cible}',
+	);
+
+	/// fr: '{cible} aura {apres} élèves sur {capacite}.'
+	String apercuEffectif({required Object cible, required Object apres, required Object capacite}) => '${cible} aura ${apres} élèves sur ${capacite}.';
+
+	/// fr: '{enseignant} n'a plus cette classe et redevient libre à cet horaire.'
+	String apercuEnseignantLibere({required Object enseignant}) => '${enseignant} n\'a plus cette classe et redevient libre à cet horaire.';
+
+	/// fr: 'Cette classe n'a pas d'enseignant : personne n'est libéré.'
+	String get apercuSansEnseignant => 'Cette classe n\'a pas d\'enseignant : personne n\'est libéré.';
+
+	/// fr: '(one) {{n} famille est prévenue.} (other) {{n} familles sont prévenues.}'
+	String apercuFamilles({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} famille est prévenue.',
+		other: '${n} familles sont prévenues.',
+	);
+
+	/// fr: 'La classe fusionnée est clôturée, et l'historique des deux classes est conservé. Cette décision ne se défait pas.'
+	String get apercuIrreversible => 'La classe fusionnée est clôturée, et l\'historique des deux classes est conservé. Cette décision ne se défait pas.';
+
+	/// fr: 'Fusionner les deux classes'
+	String get confirmerFusion => 'Fusionner les deux classes';
+
+	/// fr: 'La fusion pourra être confirmée quand la connexion sera revenue. Votre choix reste affiché.'
+	String get fusionHorsLigne => 'La fusion pourra être confirmée quand la connexion sera revenue. Votre choix reste affiché.';
+
+	/// fr: '(one) {Fusion faite : {n} élève est maintenant dans {cible}.} (other) {Fusion faite : {n} élèves sont maintenant dans {cible}.}'
+	String fusionFaite({required num n, required Object cible}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Fusion faite : ${n} élève est maintenant dans ${cible}.',
+		other: 'Fusion faite : ${n} élèves sont maintenant dans ${cible}.',
+	);
+
+	/// fr: 'Les familles ont été prévenues.'
+	String get famillesPrevenues => 'Les familles ont été prévenues.';
+
+	/// fr: 'Un autre membre de la direction vient de fusionner cette classe : rien n'a été fait en double. Fermez cette feuille pour retrouver la liste à jour.'
+	String get fusionDejaFaite => 'Un autre membre de la direction vient de fusionner cette classe : rien n\'a été fait en double. Fermez cette feuille pour retrouver la liste à jour.';
+
+	/// fr: 'La fusion n'a pas eu lieu : {motif}. Vérifiez les classes, puis recommencez.'
+	String fusionRefusee({required Object motif}) => 'La fusion n\'a pas eu lieu : ${motif}. Vérifiez les classes, puis recommencez.';
+
+	/// fr: 'La fusion n'est pas confirmée : la réponse du serveur n'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans fusion en double.'
+	String get fusionNonConfirmee => 'La fusion n\'est pas confirmée : la réponse du serveur n\'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans fusion en double.';
+
+	/// fr: 'Il manque la classe qui accueille les élèves : choisissez-la dans la liste.'
+	String get manqueCible => 'Il manque la classe qui accueille les élèves : choisissez-la dans la liste.';
+
+	/// fr: 'Transférer un élève {deLibelle}'
+	String transfertTitre({required Object deLibelle}) => 'Transférer un élève ${deLibelle}';
+
+	/// fr: 'Choisissez l'élève, puis la classe parallèle qui l'accueille. Le transfert est tracé, et la famille en est prévenue.'
+	String get transfertContexte => 'Choisissez l\'élève, puis la classe parallèle qui l\'accueille. Le transfert est tracé, et la famille en est prévenue.';
+
+	/// fr: 'Élève à transférer'
+	String get eleveTitre => 'Élève à transférer';
+
+	/// fr: 'Cette classe n'a aucun élève'
+	String get aucunEleve => 'Cette classe n\'a aucun élève';
+
+	/// fr: 'Il n'y a personne à transférer.'
+	String get aucunEleveDetail => 'Il n\'y a personne à transférer.';
+
+	/// fr: 'Les élèves de la classe n'ont pas pu être lus. Réessayez dans un instant.'
+	String get erreurEleves => 'Les élèves de la classe n\'ont pas pu être lus. Réessayez dans un instant.';
+
+	/// fr: 'Classe qui accueille l'élève'
+	String get transfertCibleTitre => 'Classe qui accueille l\'élève';
+
+	/// fr: 'Il manque l'élève : choisissez-le dans la liste.'
+	String get manqueEleve => 'Il manque l\'élève : choisissez-le dans la liste.';
+
+	/// fr: 'Transférer l'élève'
+	String get confirmerTransfert => 'Transférer l\'élève';
+
+	/// fr: 'Le transfert pourra être confirmé quand la connexion sera revenue. Votre choix reste affiché.'
+	String get transfertHorsLigne => 'Le transfert pourra être confirmé quand la connexion sera revenue. Votre choix reste affiché.';
+
+	/// fr: '{prenom} est maintenant dans {cible}.'
+	String transfertFait({required Object prenom, required Object cible}) => '${prenom} est maintenant dans ${cible}.';
+
+	/// fr: 'Ce transfert a déjà été fait : rien n'a été fait en double. Fermez cette feuille pour retrouver la liste à jour.'
+	String get transfertDejaFait => 'Ce transfert a déjà été fait : rien n\'a été fait en double. Fermez cette feuille pour retrouver la liste à jour.';
+
+	/// fr: '{prenom} suit déjà un cours qui a lieu en même temps que {cible} : un élève ne peut pas être dans deux classes qui se chevauchent. Choisissez une autre classe.'
+	String refusChevauchement({required Object prenom, required Object cible}) => '${prenom} suit déjà un cours qui a lieu en même temps que ${cible} : un élève ne peut pas être dans deux classes qui se chevauchent. Choisissez une autre classe.';
+
+	/// fr: '{cible} n'a plus de place. Choisissez une autre classe.'
+	String refusClassePleine({required Object cible}) => '${cible} n\'a plus de place. Choisissez une autre classe.';
+
+	/// fr: 'Le transfert n'a pas eu lieu : {motif}. Vérifiez la classe, puis recommencez.'
+	String refusAutre({required Object motif}) => 'Le transfert n\'a pas eu lieu : ${motif}. Vérifiez la classe, puis recommencez.';
+
+	/// fr: 'Le transfert n'est pas confirmé : la réponse du serveur n'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans transfert en double.'
+	String get transfertNonConfirme => 'Le transfert n\'est pas confirmé : la réponse du serveur n\'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans transfert en double.';
+
+	/// fr: 'Historique {deLibelle}'
+	String historiqueTitre({required Object deLibelle}) => 'Historique ${deLibelle}';
+
+	/// fr: 'Aucun mouvement'
+	String get historiqueVide => 'Aucun mouvement';
+
+	/// fr: 'Les fusions et les transferts de cette classe apparaîtront ici.'
+	String get historiqueVideDetail => 'Les fusions et les transferts de cette classe apparaîtront ici.';
+
+	/// fr: 'L'historique n'a pas pu être lu. Réessayez dans un instant.'
+	String get historiqueErreur => 'L\'historique n\'a pas pu être lu. Réessayez dans un instant.';
+
+	/// fr: '(one) {Fusionnée dans {autre} : {n} élève déplacé} (other) {Fusionnée dans {autre} : {n} élèves déplacés}'
+	String evenementFusionSortante({required num n, required Object autre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Fusionnée dans ${autre} : ${n} élève déplacé',
+		other: 'Fusionnée dans ${autre} : ${n} élèves déplacés',
+	);
+
+	/// fr: '(one) {Fusion avec {autre} : {n} élève accueilli} (other) {Fusion avec {autre} : {n} élèves accueillis}'
+	String evenementFusionEntrante({required num n, required Object autre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Fusion avec ${autre} : ${n} élève accueilli',
+		other: 'Fusion avec ${autre} : ${n} élèves accueillis',
+	);
+
+	/// fr: '{prenom} transféré vers {autre}'
+	String evenementTransfertSortant({required Object prenom, required Object autre}) => '${prenom} transféré vers ${autre}';
+
+	/// fr: '{prenom} transféré depuis {autre}'
+	String evenementTransfertEntrant({required Object prenom, required Object autre}) => '${prenom} transféré depuis ${autre}';
+
+	/// fr: '{date} à {heure}'
+	String quand({required Object date, required Object heure}) => '${date} à ${heure}';
 }
 
 // Path: nav.eleve
@@ -30481,6 +30671,60 @@ extension on Traductions {
 			'admin.pilotage.precedente' => 'Page précédente du tableau de pilotage',
 			'admin.pilotage.suivante' => 'Page suivante du tableau de pilotage',
 			'admin.pilotage.resume' => ({required Object debut, required Object fin, required Object total}) => 'Horaires ${debut} à ${fin} sur ${total}',
+			'admin.fusion.actionFusionner' => 'Fusionner avec une classe parallèle',
+			'admin.fusion.actionTransferer' => 'Transférer un élève',
+			'admin.fusion.actionHistorique' => 'Historique de la classe',
+			'admin.fusion.fusionTitre' => ({required Object libelle}) => 'Fusionner ${libelle}',
+			'admin.fusion.fusionContexte' => 'Les élèves de cette classe rejoindront une classe parallèle du même horaire et de la même catégorie qui a de la place. L\'enseignant de cette classe est libéré. Rien ne se fait sans votre confirmation.',
+			'admin.fusion.choixTitre' => 'Classe qui accueille les élèves',
+			'admin.fusion.placesLibres' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} place libre', other: '${n} places libres', ), 
+			'admin.fusion.enseignantDe' => ({required Object nom}) => 'Enseignant : ${nom}',
+			'admin.fusion.sansEnseignant' => 'Sans enseignant pour l\'instant',
+			'admin.fusion.aucuneCible' => 'Aucune classe parallèle n\'a assez de place',
+			'admin.fusion.aucuneCibleDetail' => 'Il faut une classe du même horaire et de la même catégorie, avec de la place pour tous les élèves de celle-ci.',
+			'admin.fusion.erreurCibles' => 'Les classes parallèles n\'ont pas pu être lues. Réessayez dans un instant.',
+			'admin.fusion.sansDonneesCibles' => 'La liste des classes parallèles n\'a pas pu être chargée',
+			'admin.fusion.apercuTitre' => 'Ce qui va se passer',
+			'admin.fusion.apercuErreur' => 'L\'aperçu de la fusion n\'a pas pu être calculé. Réessayez dans un instant.',
+			'admin.fusion.apercuMembres' => ({required num n, required Object cible}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève passe dans ${cible}', other: '${n} élèves passent dans ${cible}', ), 
+			'admin.fusion.apercuEffectif' => ({required Object cible, required Object apres, required Object capacite}) => '${cible} aura ${apres} élèves sur ${capacite}.',
+			'admin.fusion.apercuEnseignantLibere' => ({required Object enseignant}) => '${enseignant} n\'a plus cette classe et redevient libre à cet horaire.',
+			'admin.fusion.apercuSansEnseignant' => 'Cette classe n\'a pas d\'enseignant : personne n\'est libéré.',
+			'admin.fusion.apercuFamilles' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} famille est prévenue.', other: '${n} familles sont prévenues.', ), 
+			'admin.fusion.apercuIrreversible' => 'La classe fusionnée est clôturée, et l\'historique des deux classes est conservé. Cette décision ne se défait pas.',
+			'admin.fusion.confirmerFusion' => 'Fusionner les deux classes',
+			'admin.fusion.fusionHorsLigne' => 'La fusion pourra être confirmée quand la connexion sera revenue. Votre choix reste affiché.',
+			'admin.fusion.fusionFaite' => ({required num n, required Object cible}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Fusion faite : ${n} élève est maintenant dans ${cible}.', other: 'Fusion faite : ${n} élèves sont maintenant dans ${cible}.', ), 
+			'admin.fusion.famillesPrevenues' => 'Les familles ont été prévenues.',
+			'admin.fusion.fusionDejaFaite' => 'Un autre membre de la direction vient de fusionner cette classe : rien n\'a été fait en double. Fermez cette feuille pour retrouver la liste à jour.',
+			'admin.fusion.fusionRefusee' => ({required Object motif}) => 'La fusion n\'a pas eu lieu : ${motif}. Vérifiez les classes, puis recommencez.',
+			'admin.fusion.fusionNonConfirmee' => 'La fusion n\'est pas confirmée : la réponse du serveur n\'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans fusion en double.',
+			'admin.fusion.manqueCible' => 'Il manque la classe qui accueille les élèves : choisissez-la dans la liste.',
+			'admin.fusion.transfertTitre' => ({required Object deLibelle}) => 'Transférer un élève ${deLibelle}',
+			'admin.fusion.transfertContexte' => 'Choisissez l\'élève, puis la classe parallèle qui l\'accueille. Le transfert est tracé, et la famille en est prévenue.',
+			'admin.fusion.eleveTitre' => 'Élève à transférer',
+			'admin.fusion.aucunEleve' => 'Cette classe n\'a aucun élève',
+			'admin.fusion.aucunEleveDetail' => 'Il n\'y a personne à transférer.',
+			'admin.fusion.erreurEleves' => 'Les élèves de la classe n\'ont pas pu être lus. Réessayez dans un instant.',
+			'admin.fusion.transfertCibleTitre' => 'Classe qui accueille l\'élève',
+			'admin.fusion.manqueEleve' => 'Il manque l\'élève : choisissez-le dans la liste.',
+			'admin.fusion.confirmerTransfert' => 'Transférer l\'élève',
+			'admin.fusion.transfertHorsLigne' => 'Le transfert pourra être confirmé quand la connexion sera revenue. Votre choix reste affiché.',
+			'admin.fusion.transfertFait' => ({required Object prenom, required Object cible}) => '${prenom} est maintenant dans ${cible}.',
+			'admin.fusion.transfertDejaFait' => 'Ce transfert a déjà été fait : rien n\'a été fait en double. Fermez cette feuille pour retrouver la liste à jour.',
+			'admin.fusion.refusChevauchement' => ({required Object prenom, required Object cible}) => '${prenom} suit déjà un cours qui a lieu en même temps que ${cible} : un élève ne peut pas être dans deux classes qui se chevauchent. Choisissez une autre classe.',
+			'admin.fusion.refusClassePleine' => ({required Object cible}) => '${cible} n\'a plus de place. Choisissez une autre classe.',
+			'admin.fusion.refusAutre' => ({required Object motif}) => 'Le transfert n\'a pas eu lieu : ${motif}. Vérifiez la classe, puis recommencez.',
+			'admin.fusion.transfertNonConfirme' => 'Le transfert n\'est pas confirmé : la réponse du serveur n\'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans transfert en double.',
+			'admin.fusion.historiqueTitre' => ({required Object deLibelle}) => 'Historique ${deLibelle}',
+			'admin.fusion.historiqueVide' => 'Aucun mouvement',
+			'admin.fusion.historiqueVideDetail' => 'Les fusions et les transferts de cette classe apparaîtront ici.',
+			'admin.fusion.historiqueErreur' => 'L\'historique n\'a pas pu être lu. Réessayez dans un instant.',
+			'admin.fusion.evenementFusionSortante' => ({required num n, required Object autre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Fusionnée dans ${autre} : ${n} élève déplacé', other: 'Fusionnée dans ${autre} : ${n} élèves déplacés', ), 
+			'admin.fusion.evenementFusionEntrante' => ({required num n, required Object autre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Fusion avec ${autre} : ${n} élève accueilli', other: 'Fusion avec ${autre} : ${n} élèves accueillis', ), 
+			'admin.fusion.evenementTransfertSortant' => ({required Object prenom, required Object autre}) => '${prenom} transféré vers ${autre}',
+			'admin.fusion.evenementTransfertEntrant' => ({required Object prenom, required Object autre}) => '${prenom} transféré depuis ${autre}',
+			'admin.fusion.quand' => ({required Object date, required Object heure}) => '${date} à ${heure}',
 			'agent.titre' => 'Entrée d\'un agent',
 			'agent.intro' => 'Cette page ouvre l\'application en lecture seule, avec le jeton remis par l\'académie.',
 			'agent.jeton' => 'Jeton d\'observation',
@@ -30808,6 +31052,8 @@ extension on Traductions {
 			'compte.tuteur.pagePreferences.notificationsDetail' => 'Pas encore disponibles dans l\'application',
 			'compte.tuteur.pageApparence.titre' => 'Apparence',
 			'compte.tuteur.pageApparence.sousTitre' => 'Appliqué sur cet appareil.',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pageApparence.theme' => 'Thème de l\'application',
 			'compte.tuteur.pageApparence.themeDetail' => 'Personnalisez l\'apparence de Rewayah.',
 			'compte.tuteur.pageApparence.confort' => 'Confort visuel',
@@ -30862,8 +31108,6 @@ extension on Traductions {
 			'historique.selecteur.aucune' => 'Aucune séance',
 			'historique.selecteur.une' => '1 séance',
 			'historique.selecteur.plusieurs' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} séance', other: '${n} séances', ), 
-			_ => null,
-		} ?? switch (path) {
 			'historique.filtres.classe' => 'Classe',
 			'historique.filtres.toutesClasses' => 'Toutes les classes',
 			'historique.filtres.periode' => 'Période',
@@ -31322,6 +31566,8 @@ extension on Traductions {
 			'classe.cartes.aucuneDetail' => 'L\'enseignant de la classe y posera les informations utiles.',
 			'classe.cartes.aucuneEnseignant' => 'Aucune carte pour l\'instant. Ajoutez-en une : la classe la verra aussitôt.',
 			'classe.cartes.ajouter' => 'Ajouter une carte',
+			_ => null,
+		} ?? switch (path) {
 			'classe.cartes.limite' => ({required Object max}) => '${max} cartes au plus : retirez-en une pour en ajouter une autre.',
 			'classe.cartes.modifierLecteur' => ({required Object titre}) => 'Modifier la carte « ${titre} »',
 			'classe.cartes.echeance' => ({required Object date}) => 'Échéance : ${date}',
@@ -31376,8 +31622,6 @@ extension on Traductions {
 			'enseignant.classes.videDetail' => 'Les Classes confirmées apparaîtront ici.',
 			'enseignant.classes.erreur' => 'Vos Classes n\'ont pas pu être lues. Réessayez dans un instant.',
 			'enseignant.classes.chargement' => 'Chargement de vos Classes.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.classes.niveau' => ({required Object niveau}) => 'Niveau ${niveau}',
 			'enseignant.classes.eleveUn' => '1 élève',
 			'enseignant.classes.prochaine' => ({required Object jour, required Object heure}) => 'Prochaine séance : ${jour} à ${heure}',
@@ -31836,6 +32080,8 @@ extension on Traductions {
 			'enseignant.creneaux.plageSupprimee' => ({required Object jour, required Object de, required Object a}) => 'Plage supprimée : ${jour}, ${de} ${a}.',
 			'enseignant.creneaux.seanceContinue' => ({required Object heures}) => 'La séance déjà attribuée sur ${heures} continue : demandez une réaffectation pour l\'arrêter.',
 			'enseignant.creneaux.confirmerRetraitQuestion' => ({required Object heures}) => 'Retirer ${heures} de vos disponibilités ?',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.creneaux.confirmerRetraitConsequence' => ({required Object heures}) => 'Une Classe a lieu sur ${heures}. Retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu\'à une réaffectation.',
 			'enseignant.creneaux.confirmerRetraitAction' => 'Retirer ces heures',
 			'enseignant.creneaux.ajoutNonConfirme' => ({required Object heures}) => 'Ajout non confirmé : ${heures}.',
@@ -31890,8 +32136,6 @@ extension on Traductions {
 			'enseignant.revenus.capacite' => 'Capacité',
 			'enseignant.revenus.capaciteValeur' => ({required Object nombre}) => '${nombre} places',
 			'enseignant.revenus.sieges' => 'Sièges éligibles',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.revenus.siegesValeur' => ({required Object nombre, required Object capacite}) => '${nombre} sur ${capacite}',
 			'enseignant.revenus.siegesDetail' => 'Élèves financés, présents ou absents, et élèves en essai présents. Nombre retenu pour le mois, tel que l\'académie le transmet.',
 			'enseignant.revenus.taux' => 'Taux horaire effectif',
@@ -32350,6 +32594,8 @@ extension on Traductions {
 			'tc.classe.fiche.presenceRecente' => 'Présence récente',
 			'tc.classe.fiche.assiduite' => ({required Object presences, required Object total}) => '${presences} / ${total} cours',
 			'tc.classe.fiche.travailActuel' => 'Travail actuel',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.fiche.interfaceGuidee' => 'Mode Accessibilité',
 			'tc.classe.fiche.sansPedagogie' => 'Suivi pédagogique indisponible',
 			'tc.classe.fiche.sansPedagogieDetail' => 'Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l\'enseignant.',
@@ -32404,8 +32650,6 @@ extension on Traductions {
 			'tc.classe.prevol.cameraOk' => 'Caméra détectée',
 			'tc.classe.prevol.cameraAbsente' => 'Aucune caméra. Le cours reste possible.',
 			'tc.classe.prevol.permissionRefusee' => 'Accès au micro refusé. Autorisez-le pour ouvrir le cours.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.prevol.reessayer' => 'Vérifier à nouveau',
 			'tc.classe.observation.restant' => ({required Object secondes}) => 'Reste ${secondes} s',
 			'tc.realtime.transport.partage_indisponible' => 'Le partage du support n’est pas disponible sur ce serveur. Le cours continue, mais les autres appareils ne suivront pas la page.',
@@ -32864,6 +33108,8 @@ extension on Traductions {
 			'adulte.acceptation.monEspace' => 'Aller à Mon espace',
 			'adulte.acceptation.recu' => ({required Object date}) => 'Réponse enregistrée le ${date}.',
 			'adulte.acceptation.titreNeutre' => 'Invitation au forfait famille',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.acceptation.sansCompteTitre' => 'Invitation au forfait famille',
 			'adulte.acceptation.sansCompte' => 'Pour répondre, connectez-vous à votre compte, ou créez-en un. Vous lirez alors ce que la personne qui vous invite verra et ne verra pas avant de décider.',
 			'adulte.acceptation.sansCompteAction' => 'Me connecter ou créer mon compte',
@@ -32918,8 +33164,6 @@ extension on Traductions {
 			'adulte.reprise.motif' => 'Motif',
 			'adulte.reprise.motifDeces' => 'Décès déclaré du titulaire',
 			'adulte.reprise.deposeeLe' => 'Déposée le',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.reprise.etat' => 'État',
 			'adulte.reprise.etats.deposee' => 'Déposée',
 			'adulte.reprise.etats.refuseeParTitulaire' => 'Refusée par le titulaire',
@@ -33378,6 +33622,8 @@ extension on Traductions {
 			'com.messages.choisirTitre' => 'Choisissez une conversation',
 			'com.messages.choisir' => 'Choisissez une conversation dans la liste pour la lire et y répondre.',
 			'com.messages.recherche.champ' => 'Rechercher une conversation',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.recherche.aide' => 'Nom, Classe ou dossier',
 			'com.messages.recherche.aucunTitre' => 'Aucune conversation trouvée',
 			'com.messages.recherche.aucun' => ({required Object texte}) => 'Aucune conversation ne correspond à « ${texte} ». Essayez un autre nom ou une autre Classe.',
@@ -33432,8 +33678,6 @@ extension on Traductions {
 			'com.messages.demo.f.controleurPedagogique' => 'Contrôleur pédagogique',
 			'com.messages.demo.f.youssef' => 'Youssef',
 			'com.messages.demo.f.enseignantFajr' => 'Enseignant de la Classe Al-Fajr',
-			_ => null,
-		} ?? switch (path) {
 			'com.messages.demo.f.khadija' => 'Khadija',
 			'com.messages.demo.f.eleveFajr' => 'Élève de la Classe Al-Fajr',
 			'com.messages.demo.f.adam' => 'Adam',
@@ -33892,6 +34136,8 @@ extension on Traductions {
 			'com.studio.demo.f.objetDossierBenali' => 'Dossier de la famille Benali',
 			'com.studio.titre' => _root.com.socle.lexique.studio,
 			'com.studio.vide' => 'Aucune activité à traiter ici.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.publieur.titre' => 'Nouvelle annonce',
 			'com.annonces.publieur.etapes.contenu' => 'Contenu de l\'annonce',
 			'com.annonces.publieur.etapes.audience' => 'Destinataires de l\'annonce',
@@ -33946,8 +34192,6 @@ extension on Traductions {
 			'com.annonces.administration.indicateurs.echec' => ({required Object libelle}) => '${libelle} : non chargé. Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah : rechargez la page.',
 			'com.annonces.administration.indicateurs.reserve' => ({required Object libelle}) => '${libelle} : réservé aux personnes chargées de la modération',
 			'com.annonces.administration.publiees.titre' => 'Annonces publiées',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.publiees.vide' => 'Aucune annonce publiée sur la période.',
 			'com.annonces.administration.publiees.pastille' => 'Publiée',
 			'com.annonces.administration.publiees.legende' => ({required Object cible, required Object date, required Object heure}) => '${cible} · le ${date} à ${heure}',
@@ -34406,6 +34650,8 @@ extension on Traductions {
 			'comptable.tresorerie.coffresTitre' => 'Coffres',
 			'comptable.tresorerie.coffresPhrase' => 'Où l\'argent est affecté. Une somme protégée n\'est jamais comptée comme libre.',
 			'comptable.tresorerie.coffreProtege' => 'Protégé',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.coffreNonProtege' => 'Non protégé',
 			'comptable.tresorerie.partDetenue' => ({required Object part}) => '${part} % de la trésorerie détenue',
 			'comptable.tresorerie.regleUsage' => ({required Object regle}) => 'Règle d\'usage : ${regle}',
@@ -34460,8 +34706,6 @@ extension on Traductions {
 			'comptable.tresorerie.transfert.delegable' => 'Vers une protection : exécuté selon votre délégation.',
 			'comptable.tresorerie.transfert.sensible' => 'Validation supplémentaire requise : une autre personne décide, rien ne sort du coffre avant.',
 			'comptable.tresorerie.transfert.montant' => 'Montant',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.transfert.montantAide' => ({required Object devise}) => 'En unités entières, ${devise}.',
 			'comptable.tresorerie.transfert.montantPropose' => 'Montant proposé par la politique',
 			'comptable.tresorerie.transfert.utiliserPropose' => 'Utiliser le montant proposé',
@@ -34920,6 +35164,8 @@ extension on Traductions {
 			'comptable.direction.delegation' => 'Délégation financière',
 			'comptable.demo.titre' => 'Démonstration Comptable',
 			'comptable.demo.mention' => 'Données fictives, aucun paiement, aucun envoi.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.demo.intro' => 'Choisissez un écran du Comptable. Les montants sont masqués par défaut ; la variante « montants affichés » les révèle pour la durée de la page.',
 			'comptable.demo.montantsMasques' => 'Montants masqués',
 			'comptable.demo.montantsAffiches' => 'Montants affichés',

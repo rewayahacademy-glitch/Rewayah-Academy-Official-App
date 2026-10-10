@@ -568,6 +568,7 @@ class _Traductions$admin$ar extends Traductions$admin$fr {
 	@override late final _Traductions$admin$notifications$ar notifications = _Traductions$admin$notifications$ar._(_root);
 	@override late final _Traductions$admin$regroupements$ar regroupements = _Traductions$admin$regroupements$ar._(_root);
 	@override late final _Traductions$admin$pilotage$ar pilotage = _Traductions$admin$pilotage$ar._(_root);
+	@override late final _Traductions$admin$fusion$ar fusion = _Traductions$admin$fusion$ar._(_root);
 }
 
 // Path: comptable
@@ -4565,6 +4566,111 @@ class _Traductions$admin$pilotage$ar extends Traductions$admin$pilotage$fr {
 	@override String get precedente => 'الصفحة السابقة من لوحة المتابعة';
 	@override String get suivante => 'الصفحة التالية من لوحة المتابعة';
 	@override String resume({required Object debut, required Object fin, required Object total}) => 'المواعيد من ⁨${debut}⁩ إلى ⁨${fin}⁩ من أصل ⁨${total}⁩';
+}
+
+// Path: admin.fusion
+class _Traductions$admin$fusion$ar extends Traductions$admin$fusion$fr {
+	_Traductions$admin$fusion$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get actionFusionner => 'الدمج مع فصل موازٍ';
+	@override String get actionTransferer => 'نقل طالب';
+	@override String get actionHistorique => 'سجل الفصل';
+	@override String fusionTitre({required Object libelle}) => 'دمج ⁨${libelle}⁩';
+	@override String get fusionContexte => 'سينضم طلاب هذا الفصل إلى فصل موازٍ في الموعد نفسه ومن الفئة نفسها وفيه متسع. يتحرر معلم هذا الفصل. لا يتم شيء دون تأكيدكم.';
+	@override String get choixTitre => 'الفصل الذي يستقبل الطلاب';
+	@override String placesLibres({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا مكان شاغر',
+		one: 'مكان شاغر واحد',
+		two: 'مكانان شاغران',
+		few: '⁨${n}⁩ أماكن شاغرة',
+		many: '⁨${n}⁩ مكانًا شاغرًا',
+		other: '⁨${n}⁩ مكان شاغر',
+	);
+	@override String enseignantDe({required Object nom}) => 'المعلم: ⁨${nom}⁩';
+	@override String get sansEnseignant => 'بلا معلم حتى الآن';
+	@override String get aucuneCible => 'لا فصل موازٍ فيه متسع كافٍ';
+	@override String get aucuneCibleDetail => 'يلزم فصل في الموعد نفسه ومن الفئة نفسها وفيه متسع لجميع طلاب هذا الفصل.';
+	@override String get erreurCibles => 'تعذّرت قراءة الفصول الموازية. أعيدوا المحاولة بعد قليل.';
+	@override String get sansDonneesCibles => 'تعذّر تحميل قائمة الفصول الموازية';
+	@override String get apercuTitre => 'ما الذي سيحدث';
+	@override String get apercuErreur => 'تعذّر حساب معاينة الدمج. أعيدوا المحاولة بعد قليل.';
+	@override String apercuMembres({required num n, required Object cible}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا طالب ينتقل إلى ⁨${cible}⁩',
+		one: 'ينتقل طالب واحد إلى ⁨${cible}⁩',
+		two: 'ينتقل طالبان إلى ⁨${cible}⁩',
+		few: 'ينتقل ⁨${n}⁩ طلاب إلى ⁨${cible}⁩',
+		many: 'ينتقل ⁨${n}⁩ طالبًا إلى ⁨${cible}⁩',
+		other: 'ينتقل ⁨${n}⁩ طالب إلى ⁨${cible}⁩',
+	);
+	@override String apercuEffectif({required Object cible, required Object apres, required Object capacite}) => 'سيضم ⁨${cible}⁩ ⁨${apres}⁩ من أصل ⁨${capacite}⁩.';
+	@override String apercuEnseignantLibere({required Object enseignant}) => 'لم يعد ⁨${enseignant}⁩ مكلفًا بهذا الفصل ويصبح متاحًا في هذا الموعد.';
+	@override String get apercuSansEnseignant => 'ليس لهذا الفصل معلم: لا أحد يتحرر.';
+	@override String apercuFamilles({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا أسرة تُبلَّغ.',
+		one: 'تُبلَّغ أسرة واحدة.',
+		two: 'تُبلَّغ أسرتان.',
+		few: 'تُبلَّغ ⁨${n}⁩ أسر.',
+		many: 'تُبلَّغ ⁨${n}⁩ أسرة.',
+		other: 'تُبلَّغ ⁨${n}⁩ أسرة.',
+	);
+	@override String get apercuIrreversible => 'يُغلَق الفصل المدموج ويُحفظ سجل الفصلين. لا يمكن التراجع عن هذا القرار.';
+	@override String get confirmerFusion => 'دمج الفصلين';
+	@override String get fusionHorsLigne => 'يمكن تأكيد الدمج عند عودة الاتصال. يبقى اختياركم معروضًا.';
+	@override String fusionFaite({required num n, required Object cible}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'تم الدمج: لا طالب في ⁨${cible}⁩ بعد.',
+		one: 'تم الدمج: طالب واحد في ⁨${cible}⁩ الآن.',
+		two: 'تم الدمج: طالبان في ⁨${cible}⁩ الآن.',
+		few: 'تم الدمج: ⁨${n}⁩ طلاب في ⁨${cible}⁩ الآن.',
+		many: 'تم الدمج: ⁨${n}⁩ طالبًا في ⁨${cible}⁩ الآن.',
+		other: 'تم الدمج: ⁨${n}⁩ طالب في ⁨${cible}⁩ الآن.',
+	);
+	@override String get famillesPrevenues => 'تم إبلاغ الأسر.';
+	@override String get fusionDejaFaite => 'دمج عضو آخر من الإدارة هذا الفصل للتو: لم يُنجَز شيء مرتين. أغلقوا هذه الورقة لرؤية القائمة المحدّثة.';
+	@override String fusionRefusee({required Object motif}) => 'لم يتم الدمج: ⁨${motif}⁩. تحققوا من الفصول ثم أعيدوا المحاولة.';
+	@override String get fusionNonConfirmee => 'الدمج غير مؤكَّد: لم يصل ردّ الخادم. اضغطوا من جديد: سيُستأنف الطلب نفسه دون دمج مكرر.';
+	@override String get manqueCible => 'ينقص الفصل الذي يستقبل الطلاب: اختاروه من القائمة.';
+	@override String transfertTitre({required Object deLibelle}) => 'نقل طالب من ⁨${deLibelle}⁩';
+	@override String get transfertContexte => 'اختاروا الطالب ثم الفصل الموازي الذي يستقبله. يُسجَّل النقل وتُبلَّغ الأسرة به.';
+	@override String get eleveTitre => 'الطالب المراد نقله';
+	@override String get aucunEleve => 'لا طلاب في هذا الفصل';
+	@override String get aucunEleveDetail => 'لا أحد ليُنقَل.';
+	@override String get erreurEleves => 'تعذّرت قراءة طلاب الفصل. أعيدوا المحاولة بعد قليل.';
+	@override String get transfertCibleTitre => 'الفصل الذي يستقبل الطالب';
+	@override String get manqueEleve => 'ينقص الطالب: اختاروه من القائمة.';
+	@override String get confirmerTransfert => 'نقل الطالب';
+	@override String get transfertHorsLigne => 'يمكن تأكيد النقل عند عودة الاتصال. يبقى اختياركم معروضًا.';
+	@override String transfertFait({required Object prenom, required Object cible}) => '⁨${prenom}⁩ الآن في ⁨${cible}⁩.';
+	@override String get transfertDejaFait => 'تم هذا النقل من قبل: لم يُنجَز شيء مرتين. أغلقوا هذه الورقة لرؤية القائمة المحدّثة.';
+	@override String refusChevauchement({required Object prenom, required Object cible}) => '⁨${prenom}⁩ يتابع درسًا آخر في وقت ⁨${cible}⁩ نفسه: لا يمكن أن يكون الطالب في فصلين تتداخل حصصهما. اختاروا فصلًا آخر.';
+	@override String refusClassePleine({required Object cible}) => 'لم يعد في ⁨${cible}⁩ مكان. اختاروا فصلًا آخر.';
+	@override String refusAutre({required Object motif}) => 'لم يتم النقل: ⁨${motif}⁩. تحققوا من الفصل ثم أعيدوا المحاولة.';
+	@override String get transfertNonConfirme => 'النقل غير مؤكَّد: لم يصل ردّ الخادم. اضغطوا من جديد: سيُستأنف الطلب نفسه دون نقل مكرر.';
+	@override String historiqueTitre({required Object deLibelle}) => 'سجل ⁨${deLibelle}⁩';
+	@override String get historiqueVide => 'لا حركة';
+	@override String get historiqueVideDetail => 'ستظهر هنا عمليات الدمج والنقل الخاصة بهذا الفصل.';
+	@override String get historiqueErreur => 'تعذّرت قراءة السجل. أعيدوا المحاولة بعد قليل.';
+	@override String evenementFusionSortante({required num n, required Object autre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'دُمج في ⁨${autre}⁩: لا طالب منقول',
+		one: 'دُمج في ⁨${autre}⁩: نُقل طالب واحد',
+		two: 'دُمج في ⁨${autre}⁩: نُقل طالبان',
+		few: 'دُمج في ⁨${autre}⁩: نُقل ⁨${n}⁩ طلاب',
+		many: 'دُمج في ⁨${autre}⁩: نُقل ⁨${n}⁩ طالبًا',
+		other: 'دُمج في ⁨${autre}⁩: نُقل ⁨${n}⁩ طالب',
+	);
+	@override String evenementFusionEntrante({required num n, required Object autre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'دمج مع ⁨${autre}⁩: لا طالب مستقبَل',
+		one: 'دمج مع ⁨${autre}⁩: استُقبل طالب واحد',
+		two: 'دمج مع ⁨${autre}⁩: استُقبل طالبان',
+		few: 'دمج مع ⁨${autre}⁩: استُقبل ⁨${n}⁩ طلاب',
+		many: 'دمج مع ⁨${autre}⁩: استُقبل ⁨${n}⁩ طالبًا',
+		other: 'دمج مع ⁨${autre}⁩: استُقبل ⁨${n}⁩ طالب',
+	);
+	@override String evenementTransfertSortant({required Object prenom, required Object autre}) => 'نُقل ⁨${prenom}⁩ إلى ⁨${autre}⁩';
+	@override String evenementTransfertEntrant({required Object prenom, required Object autre}) => 'نُقل ⁨${prenom}⁩ من ⁨${autre}⁩';
+	@override String quand({required Object date, required Object heure}) => '⁨${date}⁩ في ⁨${heure}⁩';
 }
 
 // Path: comptable.nav
@@ -15431,6 +15537,60 @@ extension on TraductionsAr {
 			'admin.pilotage.precedente' => 'الصفحة السابقة من لوحة المتابعة',
 			'admin.pilotage.suivante' => 'الصفحة التالية من لوحة المتابعة',
 			'admin.pilotage.resume' => ({required Object debut, required Object fin, required Object total}) => 'المواعيد من ⁨${debut}⁩ إلى ⁨${fin}⁩ من أصل ⁨${total}⁩',
+			'admin.fusion.actionFusionner' => 'الدمج مع فصل موازٍ',
+			'admin.fusion.actionTransferer' => 'نقل طالب',
+			'admin.fusion.actionHistorique' => 'سجل الفصل',
+			'admin.fusion.fusionTitre' => ({required Object libelle}) => 'دمج ⁨${libelle}⁩',
+			'admin.fusion.fusionContexte' => 'سينضم طلاب هذا الفصل إلى فصل موازٍ في الموعد نفسه ومن الفئة نفسها وفيه متسع. يتحرر معلم هذا الفصل. لا يتم شيء دون تأكيدكم.',
+			'admin.fusion.choixTitre' => 'الفصل الذي يستقبل الطلاب',
+			'admin.fusion.placesLibres' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا مكان شاغر', one: 'مكان شاغر واحد', two: 'مكانان شاغران', few: '⁨${n}⁩ أماكن شاغرة', many: '⁨${n}⁩ مكانًا شاغرًا', other: '⁨${n}⁩ مكان شاغر', ), 
+			'admin.fusion.enseignantDe' => ({required Object nom}) => 'المعلم: ⁨${nom}⁩',
+			'admin.fusion.sansEnseignant' => 'بلا معلم حتى الآن',
+			'admin.fusion.aucuneCible' => 'لا فصل موازٍ فيه متسع كافٍ',
+			'admin.fusion.aucuneCibleDetail' => 'يلزم فصل في الموعد نفسه ومن الفئة نفسها وفيه متسع لجميع طلاب هذا الفصل.',
+			'admin.fusion.erreurCibles' => 'تعذّرت قراءة الفصول الموازية. أعيدوا المحاولة بعد قليل.',
+			'admin.fusion.sansDonneesCibles' => 'تعذّر تحميل قائمة الفصول الموازية',
+			'admin.fusion.apercuTitre' => 'ما الذي سيحدث',
+			'admin.fusion.apercuErreur' => 'تعذّر حساب معاينة الدمج. أعيدوا المحاولة بعد قليل.',
+			'admin.fusion.apercuMembres' => ({required num n, required Object cible}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا طالب ينتقل إلى ⁨${cible}⁩', one: 'ينتقل طالب واحد إلى ⁨${cible}⁩', two: 'ينتقل طالبان إلى ⁨${cible}⁩', few: 'ينتقل ⁨${n}⁩ طلاب إلى ⁨${cible}⁩', many: 'ينتقل ⁨${n}⁩ طالبًا إلى ⁨${cible}⁩', other: 'ينتقل ⁨${n}⁩ طالب إلى ⁨${cible}⁩', ), 
+			'admin.fusion.apercuEffectif' => ({required Object cible, required Object apres, required Object capacite}) => 'سيضم ⁨${cible}⁩ ⁨${apres}⁩ من أصل ⁨${capacite}⁩.',
+			'admin.fusion.apercuEnseignantLibere' => ({required Object enseignant}) => 'لم يعد ⁨${enseignant}⁩ مكلفًا بهذا الفصل ويصبح متاحًا في هذا الموعد.',
+			'admin.fusion.apercuSansEnseignant' => 'ليس لهذا الفصل معلم: لا أحد يتحرر.',
+			'admin.fusion.apercuFamilles' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أسرة تُبلَّغ.', one: 'تُبلَّغ أسرة واحدة.', two: 'تُبلَّغ أسرتان.', few: 'تُبلَّغ ⁨${n}⁩ أسر.', many: 'تُبلَّغ ⁨${n}⁩ أسرة.', other: 'تُبلَّغ ⁨${n}⁩ أسرة.', ), 
+			'admin.fusion.apercuIrreversible' => 'يُغلَق الفصل المدموج ويُحفظ سجل الفصلين. لا يمكن التراجع عن هذا القرار.',
+			'admin.fusion.confirmerFusion' => 'دمج الفصلين',
+			'admin.fusion.fusionHorsLigne' => 'يمكن تأكيد الدمج عند عودة الاتصال. يبقى اختياركم معروضًا.',
+			'admin.fusion.fusionFaite' => ({required num n, required Object cible}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'تم الدمج: لا طالب في ⁨${cible}⁩ بعد.', one: 'تم الدمج: طالب واحد في ⁨${cible}⁩ الآن.', two: 'تم الدمج: طالبان في ⁨${cible}⁩ الآن.', few: 'تم الدمج: ⁨${n}⁩ طلاب في ⁨${cible}⁩ الآن.', many: 'تم الدمج: ⁨${n}⁩ طالبًا في ⁨${cible}⁩ الآن.', other: 'تم الدمج: ⁨${n}⁩ طالب في ⁨${cible}⁩ الآن.', ), 
+			'admin.fusion.famillesPrevenues' => 'تم إبلاغ الأسر.',
+			'admin.fusion.fusionDejaFaite' => 'دمج عضو آخر من الإدارة هذا الفصل للتو: لم يُنجَز شيء مرتين. أغلقوا هذه الورقة لرؤية القائمة المحدّثة.',
+			'admin.fusion.fusionRefusee' => ({required Object motif}) => 'لم يتم الدمج: ⁨${motif}⁩. تحققوا من الفصول ثم أعيدوا المحاولة.',
+			'admin.fusion.fusionNonConfirmee' => 'الدمج غير مؤكَّد: لم يصل ردّ الخادم. اضغطوا من جديد: سيُستأنف الطلب نفسه دون دمج مكرر.',
+			'admin.fusion.manqueCible' => 'ينقص الفصل الذي يستقبل الطلاب: اختاروه من القائمة.',
+			'admin.fusion.transfertTitre' => ({required Object deLibelle}) => 'نقل طالب من ⁨${deLibelle}⁩',
+			'admin.fusion.transfertContexte' => 'اختاروا الطالب ثم الفصل الموازي الذي يستقبله. يُسجَّل النقل وتُبلَّغ الأسرة به.',
+			'admin.fusion.eleveTitre' => 'الطالب المراد نقله',
+			'admin.fusion.aucunEleve' => 'لا طلاب في هذا الفصل',
+			'admin.fusion.aucunEleveDetail' => 'لا أحد ليُنقَل.',
+			'admin.fusion.erreurEleves' => 'تعذّرت قراءة طلاب الفصل. أعيدوا المحاولة بعد قليل.',
+			'admin.fusion.transfertCibleTitre' => 'الفصل الذي يستقبل الطالب',
+			'admin.fusion.manqueEleve' => 'ينقص الطالب: اختاروه من القائمة.',
+			'admin.fusion.confirmerTransfert' => 'نقل الطالب',
+			'admin.fusion.transfertHorsLigne' => 'يمكن تأكيد النقل عند عودة الاتصال. يبقى اختياركم معروضًا.',
+			'admin.fusion.transfertFait' => ({required Object prenom, required Object cible}) => '⁨${prenom}⁩ الآن في ⁨${cible}⁩.',
+			'admin.fusion.transfertDejaFait' => 'تم هذا النقل من قبل: لم يُنجَز شيء مرتين. أغلقوا هذه الورقة لرؤية القائمة المحدّثة.',
+			'admin.fusion.refusChevauchement' => ({required Object prenom, required Object cible}) => '⁨${prenom}⁩ يتابع درسًا آخر في وقت ⁨${cible}⁩ نفسه: لا يمكن أن يكون الطالب في فصلين تتداخل حصصهما. اختاروا فصلًا آخر.',
+			'admin.fusion.refusClassePleine' => ({required Object cible}) => 'لم يعد في ⁨${cible}⁩ مكان. اختاروا فصلًا آخر.',
+			'admin.fusion.refusAutre' => ({required Object motif}) => 'لم يتم النقل: ⁨${motif}⁩. تحققوا من الفصل ثم أعيدوا المحاولة.',
+			'admin.fusion.transfertNonConfirme' => 'النقل غير مؤكَّد: لم يصل ردّ الخادم. اضغطوا من جديد: سيُستأنف الطلب نفسه دون نقل مكرر.',
+			'admin.fusion.historiqueTitre' => ({required Object deLibelle}) => 'سجل ⁨${deLibelle}⁩',
+			'admin.fusion.historiqueVide' => 'لا حركة',
+			'admin.fusion.historiqueVideDetail' => 'ستظهر هنا عمليات الدمج والنقل الخاصة بهذا الفصل.',
+			'admin.fusion.historiqueErreur' => 'تعذّرت قراءة السجل. أعيدوا المحاولة بعد قليل.',
+			'admin.fusion.evenementFusionSortante' => ({required num n, required Object autre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'دُمج في ⁨${autre}⁩: لا طالب منقول', one: 'دُمج في ⁨${autre}⁩: نُقل طالب واحد', two: 'دُمج في ⁨${autre}⁩: نُقل طالبان', few: 'دُمج في ⁨${autre}⁩: نُقل ⁨${n}⁩ طلاب', many: 'دُمج في ⁨${autre}⁩: نُقل ⁨${n}⁩ طالبًا', other: 'دُمج في ⁨${autre}⁩: نُقل ⁨${n}⁩ طالب', ), 
+			'admin.fusion.evenementFusionEntrante' => ({required num n, required Object autre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'دمج مع ⁨${autre}⁩: لا طالب مستقبَل', one: 'دمج مع ⁨${autre}⁩: استُقبل طالب واحد', two: 'دمج مع ⁨${autre}⁩: استُقبل طالبان', few: 'دمج مع ⁨${autre}⁩: استُقبل ⁨${n}⁩ طلاب', many: 'دمج مع ⁨${autre}⁩: استُقبل ⁨${n}⁩ طالبًا', other: 'دمج مع ⁨${autre}⁩: استُقبل ⁨${n}⁩ طالب', ), 
+			'admin.fusion.evenementTransfertSortant' => ({required Object prenom, required Object autre}) => 'نُقل ⁨${prenom}⁩ إلى ⁨${autre}⁩',
+			'admin.fusion.evenementTransfertEntrant' => ({required Object prenom, required Object autre}) => 'نُقل ⁨${prenom}⁩ من ⁨${autre}⁩',
+			'admin.fusion.quand' => ({required Object date, required Object heure}) => '⁨${date}⁩ في ⁨${heure}⁩',
 			'comptable.nav.aujourdhui' => 'اليوم',
 			'comptable.nav.paiements' => 'المدفوعات',
 			'comptable.nav.tresorerie' => 'الخزينة',
@@ -15737,6 +15897,8 @@ extension on TraductionsAr {
 			'comptable.paiements.ecart.motif' => 'ما الخطأ',
 			'comptable.paiements.ecart.motifs.montantLigne' => 'مبلغ هذا السطر غير مطابق',
 			'comptable.paiements.ecart.motifs.ligneManquante' => 'سطر ناقص (حصة، استبدال، مكافأة)',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.ecart.motifs.ligneEnTrop' => 'هذا السطر لا ينبغي أن يكون هنا',
 			'comptable.paiements.ecart.motifs.sourceErronee' => 'المصدر المذكور غير صحيح',
 			'comptable.paiements.ecart.envoyer' => 'إرسال البلاغ',
@@ -15791,8 +15953,6 @@ extension on TraductionsAr {
 			'comptable.tresorerie.mouvementsHorsLigne' => 'غير متصل: تُستأنف الحركات بين الصناديق مع عودة الشبكة.',
 			'comptable.tresorerie.interdits' => 'أموال العملاء الملتزَم بها والضرائب والالتزامات لا تموّل أبدًا مصروفًا عاديًا؛ والتخصيص السابق لا يُعدَّل.',
 			'comptable.tresorerie.previsionTitre' => 'التوقعات',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.previsionPhrase' => 'الداخل والخارج المتوقع، حسب التاريخ.',
 			'comptable.tresorerie.previsionVide' => 'لا يوجد داخل ولا خارج متوقع حاليًا.',
 			'comptable.tresorerie.entree' => 'داخل',
@@ -16251,6 +16411,8 @@ extension on TraductionsAr {
 			'comptable.direction.delegationPanneau.joursRecents' => 'مدة التعديل الحديث',
 			'comptable.direction.delegationPanneau.joursRecentsDetail' => 'خلال هذا العدد من الأيام بعد التعديل، تُعدّ البيانات حديثة.',
 			'comptable.direction.delegationPanneau.toujoursTitre' => 'ممنوع دائمًا على المحاسب',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.toujoursDetail' => 'هذه القواعد الثلاث لا تُعدَّل.',
 			'comptable.direction.delegationPanneau.autoPayout' => 'أن يدفع لنفسه',
 			'comptable.direction.delegationPanneau.autoPayoutDetail' => 'دفعته الخاصة تمر دائمًا عبر شخص آخر.',
@@ -16305,8 +16467,6 @@ extension on TraductionsAr {
 			'ficheEleve.introuvable.titre' => 'لم يُعثر على ملف الطالب هذا',
 			'ficheEleve.introuvable.phrase' => 'ليس من أسرتك، أو الرابط ناقص.',
 			'ficheEleve.introuvable.retour' => 'العودة إلى الأسرة',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.lignes.informations' => 'المعلومات',
 			'ficheEleve.lignes.informationsLegende' => 'الاسم والصورة',
 			'ficheEleve.lignes.inscription' => 'المسار والتسجيل',
@@ -16765,6 +16925,8 @@ extension on TraductionsAr {
 			'inscription.genreFemme' => 'امرأة',
 			'inscription.genreRaison' => 'تُستخدم هذه الإجابة فقط لتسليم وثيقة هويتك إلى موظف من الجنس نفسه.',
 			'inscription.recapitulatif' => 'قبل المتابعة',
+			_ => null,
+		} ?? switch (path) {
 			'inscription.creer' => 'إنشاء حسابي',
 			'inscription.erreur' => 'لم يكتمل إنشاء الحساب. أعد المحاولة بعد لحظة.',
 			'inscription.champRequis' => 'هذه الإجابة ضرورية للمتابعة.',
@@ -16819,8 +16981,6 @@ extension on TraductionsAr {
 			'foyer.titre' => 'الأسرة',
 			'foyer.ajouterProfil' => 'إضافة ملف طالب',
 			'foyer.sousTitre' => 'ملفات الطلاب في أسرتك',
-			_ => null,
-		} ?? switch (path) {
 			'foyer.membres' => 'ملفات الطلاب',
 			'foyer.vide.titre' => 'لا ملف طالب حتى الآن',
 			'foyer.vide.phrase' => 'أضف ملف طالب لتسجيله في فصل وربط جهازه.',
@@ -17279,6 +17439,8 @@ extension on TraductionsAr {
 			'dossiers.refus.horsLigne' => 'أنت غير متصل. لم يُرسل الرفض.',
 			'dossiers.refus.inconnu' => 'نتيجة الرفض غير مؤكَّدة بعد.',
 			'dossiers.refus.interdit' => 'لم يعد بإمكانك رفض هذا الملف.',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.refus.indisponible' => 'الرفض غير متاح الآن.',
 			'dossiers.refus.succes' => 'رُفض الملف.',
 			'dossiers.refus.abandonQuestion' => 'التخلي عن السبب المكتوب؟',
@@ -17333,8 +17495,6 @@ extension on TraductionsAr {
 			'bienvenue.pointEnseignant' => 'معلّم أو معلّمة، يُنادى «السيد» أو «السيدة»، يتابع كل طالب من حصة إلى أخرى.',
 			'bienvenue.pointFoyerTitre' => 'حساب واحد للأسرة',
 			'bienvenue.pointFoyer' => 'تُتابَع حصص كل طالب في الأسرة من حسابك.',
-			_ => null,
-		} ?? switch (path) {
 			'bienvenue.commencer' => 'ابدأ',
 			'bienvenue.dejaCompte' => 'لدي حساب بالفعل',
 			'creneaux.titre' => 'المواعيد',
