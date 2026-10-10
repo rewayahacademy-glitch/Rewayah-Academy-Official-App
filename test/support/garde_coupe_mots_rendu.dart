@@ -219,6 +219,10 @@ List<String> rangeesSansFondu(WidgetTester tester) {
   return fautes;
 }
 
+/// Le marqueur de dette qui excuse les exceptions de rendu d'un ecran
+/// (`dette_coupe_mots.dart`) : elles sont prises, pas comptees.
+const String debordementConnu = '!debordement connu';
+
 /// Toutes les exceptions de rendu en attente (debordements compris).
 List<String> exceptionsDeRendu(WidgetTester tester) {
   final List<String> fautes = <String>[];
@@ -248,7 +252,8 @@ List<String> defautsDeTexte(
   }).toSet();
   final Finder mesures = find.byElementPredicate(visibles.contains);
   return <String>[
-    ...exceptionsDeRendu(tester),
+    ...exceptionsDeRendu(tester)
+        .where((String _) => !exceptions.contains(debordementConnu)),
     ...motsCoupes(tester, mesures, traitDUnionPermis: true),
     ...ponctuationsIsolees(tester, mesures),
     ...textesRognes(tester, mesures),

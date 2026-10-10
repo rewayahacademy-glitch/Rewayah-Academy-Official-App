@@ -8,7 +8,10 @@
 // Une entree se retire quand son ecran est corrige ; la garde le prouve en
 // repassant sans elle.
 
-/// La dette, par nom d'ecran du balayage : textes entiers exclus.
+import 'garde_coupe_mots_rendu.dart' show debordementConnu;
+
+/// La dette, par nom d'ecran du balayage : textes entiers exclus (et, avec
+/// [debordementConnu], les exceptions de rendu de l'ecran).
 const Map<String, Set<String>> detteCoupeMots = <String, Set<String>>{
   // `programmes_page.dart` : « Niveaux » dans une rangee a cote de la
   // pastille d'etat (320 px texte x2, Interface guidee).
@@ -57,4 +60,26 @@ const Map<String, Set<String>> detteCoupeMots = <String, Set<String>>{
   // Mon espace de l'adulte : l'adresse e-mail sans point de coupure
   // (Interface guidee, 320 px texte x2).
   'adulte monEspace': <String>{'mamadou.diallo@example.com'},
+  // Comptable (voie FIN, mesure sans modification) : les lignes d'obligation
+  // (`ligne_obligation.dart`) posent le nom a cote de la case a cocher et
+  // tronquent le montant masque (320 px texte x2, Interface guidee) ; la
+  // tete de la page deborde a 1440 texte x2, Interface guidee.
+  'comptable paiements': <String>{
+    '••\u202F•••,••\u00A0\$',
+    'Sayyida Fatoumata Conde',
+    'Sayyid Abdoulaye Sylla',
+    'Sayyida Kadiatou Doumbouya',
+    'Sayyid Mamadou Keita',
+    'Imprimerie Al-Qalam',
+    'Traduction Hikma',
+    'Maintenance Salam',
+    debordementConnu,
+  },
+  'comptable contractuels': <String>{
+    '••\u202F•••,••\u00A0\$',
+    'Maintenance Salam',
+    'Imprimerie Al-Qalam',
+    'Traduction Hikma',
+    debordementConnu,
+  },
 };

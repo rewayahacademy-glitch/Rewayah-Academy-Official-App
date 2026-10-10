@@ -159,9 +159,10 @@ class AdminShell extends StatelessWidget {
   /// quatre autres roles pour un besoin qui n'est que le sien.
   static const double largeurBarreLaterale = 288;
 
-  /// La part de la largeur de la page au-dela de laquelle les actions de
-  /// l'en-tete quittent la ligne du titre (COUPE-MOTS-FOND-1).
-  static const double _partActionsEnTete = 0.6;
+  /// La place que le titre de la page garde a cote des actions de l'en-tete,
+  /// en tailles de son texte (em, `headlineMedium` a l'echelle courante) :
+  /// en dessous, les actions quittent la ligne du titre (COUPE-MOTS-FOND-1).
+  static const double _emTitreMinimum = 10;
 
   @override
   Widget build(BuildContext context) {
@@ -226,9 +227,9 @@ class AdminShell extends StatelessWidget {
       // COUPE-MOTS-FOND-1 : en Interface guidee (cibles de 72) ou dans une
       // colonne etroite (rail a 800), sept cibles a cote du titre ne lui
       // laissaient plus que deux lettres par ligne (« Diagnosti / cs »,
-      // « Centre de commande » lettre a lettre). Quand les actions prendraient
-      // plus de six dixiemes de la largeur, elles passent sur leur propre
-      // rangee, au-dessus de la page, et le titre reprend toute la ligne.
+      // « Centre de commande » lettre a lettre). Quand elles ne laissent plus
+      // au titre dix fois la taille de son texte, elles passent sur leur
+      // propre rangee, au-dessus de la page, et le titre reprend la ligne.
       final Widget page = !avecActions
           ? pageAvec(actions)
           : LayoutBuilder(
@@ -237,7 +238,11 @@ class AdminShell extends StatelessWidget {
                 // La bascule de theme vaut deux cibles ; le retour, une.
                 final double besoin =
                     (actions.length + 2) * (cible + AppSpacing.xs);
-                if (besoin <= c.maxWidth * _partActionsEnTete) {
+                final double em = MediaQuery.textScalerOf(contexte).scale(
+                  Theme.of(contexte).textTheme.headlineMedium?.fontSize ??
+                      AppSpacing.xxl,
+                );
+                if (c.maxWidth - besoin >= _emTitreMinimum * em) {
                   return pageAvec(actions);
                 }
                 return Column(
@@ -402,9 +407,9 @@ class _ZoneBandeau extends StatelessWidget {
 }
 
 /// Les actions de l'en-tete sur leur propre rangee, au-dessus de la page,
-/// au bord de fin (COUPE-MOTS-FOND-1) : quand elles prendraient plus des six
-/// dixiemes de la ligne du titre. Meme ordre, memes composants ; la rangee
-/// passe a la ligne plutot que de deborder.
+/// au bord de fin (COUPE-MOTS-FOND-1) : quand elles ne laisseraient plus au
+/// titre dix fois la taille de son texte. Meme ordre, memes composants ; la
+/// rangee passe a la ligne plutot que de deborder.
 class _RangeeActions extends StatelessWidget {
   const _RangeeActions({required this.actions});
 
