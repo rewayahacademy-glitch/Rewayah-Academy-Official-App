@@ -200,6 +200,66 @@ class DataCollection<T> extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     final TextStyle enTete = textes.labelMedium ?? const TextStyle();
     final TextStyle cellule = textes.bodySmall ?? const TextStyle();
+    // Le cache : un meme jeu de lignes (meme objet), a la meme echelle et a
+    // la meme largeur, n'est mesure qu'une fois. Chaque mise en page du
+    // LayoutBuilder (defilement, animation) relisait sinon chaque cellule par
+    // TextPainter. Tout ce qui change la mesure entre dans la cle : colonnes
+    // (titre, flex, chiffres tabulaires, rendu riche), styles, langue, sens.
+    final Object cleCache = (
+      echelle,
+      largeur,
+      enTete,
+      cellule,
+      DefaultTextStyle.of(context).style,
+      Directionality.of(context),
+      Localizations.maybeLocaleOf(context),
+      <String>[
+        for (final ColonneDonnees<T> c in colonnes)
+          '${c.titre}\u0000${c.flex}\u0000${c.tabulaire}\u0000'
+              '${c.rendu != null}',
+      ].join('\u0001'),
+    );
+    final Map<Object, bool> cache = _cacheTientEnTableau[lignes] ??=
+        <Object, bool>{};
+    final bool? connu = cache[cleCache];
+    if (connu != null) return connu;
+    // Quelques largeurs seulement (redimensionnement) : le cache reste borne.
+    if (cache.length >= _tailleCacheTientEnTableau) cache.clear();
+    mesuresTientEnTableau++;
+    return cache[cleCache] = _mesurerTableau<T>(
+      context,
+      colonnes: colonnes,
+      lignes: lignes,
+      largeur: largeur,
+      echelle: echelle,
+      enTete: enTete,
+      cellule: cellule,
+    );
+  }
+
+  /// Le cache de [tientEnTableau], par identite du jeu de lignes : il
+  /// disparait avec la liste.
+  static final Expando<Map<Object, bool>> _cacheTientEnTableau =
+      Expando<Map<Object, bool>>('tientEnTableau');
+
+  /// Le nombre d'entrees gardees par jeu de lignes.
+  static const int _tailleCacheTientEnTableau = 8;
+
+  /// Le nombre de mesures reelles de [tientEnTableau] (cache manque) : un
+  /// test prouve qu'une seconde mise en page des memes lignes ne remesure pas.
+  @visibleForTesting
+  static int mesuresTientEnTableau = 0;
+
+  /// La mesure de [tientEnTableau], sans cache.
+  static bool _mesurerTableau<T>(
+    BuildContext context, {
+    required List<ColonneDonnees<T>> colonnes,
+    required List<T> lignes,
+    required double largeur,
+    required TextScaler echelle,
+    required TextStyle enTete,
+    required TextStyle cellule,
+  }) {
     final int flexTotal = colonnes.fold<int>(
       0,
       (int somme, ColonneDonnees<T> c) => somme + c.flex,
