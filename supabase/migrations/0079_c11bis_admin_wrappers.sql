@@ -27,6 +27,7 @@ BEGIN
      OR p_regroupement_id IS NULL
      OR p_cle_idempotence IS NULL
      OR coalesce(btrim(p_libelle), '') = ''
+     OR p_genre_classe IS NULL
      OR p_genre_classe NOT IN ('hommes', 'femmes', 'indetermine') THEN
     RAISE EXCEPTION 'creation de classe reservee a l''administration';
   END IF;
@@ -96,6 +97,8 @@ VOLATILE
 SECURITY DEFINER
 SET search_path = ''
 AS $function$
+DECLARE
+  v_groupe public.groupes%ROWTYPE;
 BEGIN
   IF NOT coalesce(
        public.app_role() = 'admin' AND public.app_account_valid(),
@@ -107,14 +110,17 @@ BEGIN
       USING ERRCODE = '42501';
   END IF;
 
-  IF NOT EXISTS (
-    SELECT 1 FROM public.groupes g
-    WHERE g.id = p_groupe_id
-      AND g.teacher_id IS NULL
-      AND g.etat = 'en_attente_enseignant'
-      AND g.ended_at IS NULL
-  ) THEN
+  SELECT * INTO v_groupe FROM public.groupes
+   WHERE id = p_groupe_id
+   FOR UPDATE;
+  IF NOT FOUND OR v_groupe.ended_at IS NOT NULL THEN
+    RAISE EXCEPTION 'classe indisponible';
+  END IF;
+  IF v_groupe.teacher_id IS NOT NULL THEN
     RETURN 'deja_affecte';
+  END IF;
+  IF v_groupe.etat <> 'en_attente_enseignant' THEN
+    RAISE EXCEPTION 'classe indisponible';
   END IF;
 
   -- teacher_profiles ne porte pas le titre public C-05 et aucune règle
