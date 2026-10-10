@@ -354,7 +354,7 @@ BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM public.demandes_horaires_famille
      WHERE eleve_id = 'f1490000-0000-0000-0000-000000000003'
-       AND etat = 'refusee' AND motif = 'refus_direction'
+       AND etat = 'refusee' AND motif = 'deja_en_classe'
   ) OR EXISTS (
     SELECT 1 FROM public.groupe_membres
      WHERE groupe_id = v_groupe
