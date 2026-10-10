@@ -11,6 +11,8 @@ on:
 
 jobs:
   migrate-check:
+    # Les migrations F1/C sont suivies de F2 0058–0064, puis feedback 0065
+    # et transitions notifications 0066; garder le replay SQL complet avant scénarios.
     name: Migrations applicables (Postgres 17)
     # Le SQL et les fonctions Edge ne sont controles que vers `main` : les
     # branches `ui/*` ne touchent pas `supabase/`.
