@@ -45,6 +45,8 @@ import '../../core/offres/service_offres.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/profil/service_acceptations.dart';
+import '../../core/recrutement/port_invitations_enseignant.dart';
+import '../../core/recrutement/port_statuts_signature.dart';
 import '../../core/seance_famille/port_seances_famille.dart';
 import '../../core/seance_famille/seance_famille.dart';
 import '../../core/session/session_controleur.dart';
@@ -70,6 +72,7 @@ import 'dossiers_demo.dart';
 import 'finance_demo.dart';
 import 'observation_demo.dart';
 import 'presence_demo.dart';
+import 'recrutement_demo.dart';
 import 'regroupements_demo.dart';
 import 'services_admin_demo.dart';
 import 'suivi_demandes_demo.dart';
@@ -354,6 +357,12 @@ List<Override> surchargesDemoAdmin({
     portCreationClasseProvider.overrideWithValue(CreationClasseDemo(creees)),
     // OFFRES-ADM-1 : les demandes semblables reunies, en memoire.
     portRegroupementsAdminProvider.overrideWithValue(RegroupementsDemo()),
+    // RECRUT-ECRANS : les invitations d'enseignants (admin et verification du
+    // code par le candidat) et les statuts de signature des dossiers.
+    ...surchargesInvitationsDemo(),
+    portStatutsSignatureProvider.overrideWithValue(
+      const StatutsSignatureDemo(),
+    ),
     membresGroupeProvider.overrideWith(
       (Ref ref, String groupeId) async => membresDemo(groupeId),
     ),
@@ -736,4 +745,14 @@ DateTime? _finAccesDemo(JeuFoyerFinance jeu, String profilId) {
     if (a.eleveId == profilId) return a.finAcces;
   }
   return null;
+}
+
+/// Les deux ports d'invitation, portes par un meme objet en memoire : ce que
+/// l'administration cree, le candidat peut le verifier.
+List<Override> surchargesInvitationsDemo() {
+  final InvitationsDemo invitations = InvitationsDemo();
+  return <Override>[
+    portInvitationsEnseignantProvider.overrideWithValue(invitations),
+    portVerificationInvitationProvider.overrideWithValue(invitations),
+  ];
 }

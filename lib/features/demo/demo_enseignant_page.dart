@@ -29,6 +29,7 @@ import '../../core/priere/service_priere.dart';
 import '../../core/profil/service_acceptations.dart';
 import '../../core/profil/service_declaration.dart';
 import '../../core/profil/service_profil_enseignant.dart';
+import '../../core/recrutement/port_signature_contrat.dart';
 import '../../core/regles/service_regles.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
@@ -56,6 +57,7 @@ import 'demo_classe_page.dart' show adresseDemoClasse;
 import 'enseignant_demo.dart';
 import 'finance_demo.dart' show RevenusEnseignantDemo;
 import 'mode_demonstration.dart';
+import 'recrutement_demo.dart';
 import 'remplacements_demo.dart';
 import 'repere_demonstration.dart';
 
@@ -277,6 +279,8 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
     photoPubliqueProvider.overrideWith(PhotoPubliqueControleur.new),
     choixPhotoPubliqueProvider.overrideWithValue(const _ChoixPhotoDemo()),
     envoiPhotoPubliqueProvider.overrideWithValue(const _EnvoiPhotoDemo()),
+    // RECRUT-ECRANS : la signature du contrat d'enseignant, en memoire.
+    portSignatureContratProvider.overrideWithValue(SignatureContratDemo()),
     // Premiers pas (ENS-01) : la photo manque, le reste est confirme (sauf
     // les disponibilites dans la situation vide).
     prerequisEnseignantProvider.overrideWith(

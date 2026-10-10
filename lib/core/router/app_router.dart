@@ -20,6 +20,7 @@ import '../../features/admin_demandes/demandes_page.dart';
 import '../../features/admin_dossiers/dossiers_page.dart';
 import '../../features/admin_finance/finance_page.dart';
 import '../../features/admin_groupes/groupes_page.dart';
+import '../../features/admin_invitations/invitations_page.dart';
 import '../../features/admin_journal/journal_page.dart';
 import '../../features/admin_observations/observations_admin_page.dart';
 import '../../features/admin_pedagogie_diagnostics/diagnostics_page.dart';
@@ -127,6 +128,7 @@ import '../../features/notifications/notifications_page.dart';
 import '../../features/paiements_recus/recevoir_paiements_page.dart';
 import '../../features/parcours_offres/parcours_offres_page.dart';
 import '../../features/profil_enseignant/profil_enseignant_page.dart';
+import '../../features/recrutement/invitation_candidat_page.dart';
 import '../../features/remplacements/remplacements_page.dart';
 import '../../features/revenus_enseignant/revenus_enseignant_page.dart';
 import '../../features/revue_groupe/revue_groupe_page.dart';
@@ -305,6 +307,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRoute(
         path: Routes.inscriptionUsage,
         builder: (BuildContext _, GoRouterState _) => const UsageEtape(),
+      ),
+      GoRoute(
+        path: Routes.inscriptionInvitation,
+        builder: (BuildContext _, GoRouterState etat) => InvitationCandidatPage(
+          codeInitial: etat.uri.queryParameters['code'],
+        ),
       ),
       GoRoute(
         path: Routes.inscriptionIdentite,
@@ -1365,6 +1373,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.operations,
           child: RegroupementsPage(),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminPersonnesInvitations,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: InvitationsPage(),
         ),
       ),
       GoRoute(

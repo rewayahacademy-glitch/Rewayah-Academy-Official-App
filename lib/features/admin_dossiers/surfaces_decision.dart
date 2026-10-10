@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/recrutement/port_statuts_signature.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -101,10 +102,24 @@ String? _message(
     refus ? t.dossiers.refus.interdit : t.dossiers.validation.interdit,
   DecisionIndisponible() =>
     refus ? t.dossiers.refus.indisponible : t.dossiers.validation.indisponible,
+  DecisionContratNonSigne(:final List<ManqueSignature> manque) =>
+    '${t.recrutement.statuts.refuse} ${_manque(manque)}',
   DecisionPlusPrete() => t.dossiers.validation.plusPret,
   DecisionTraitee() => t.dossiers.decision.dejaTraite,
   _ => null,
 };
+
+String _manque(List<ManqueSignature> manque) {
+  final bool contrat = manque.contains(ManqueSignature.contrat);
+  final bool accuse = manque.contains(ManqueSignature.accuse);
+  return contrat && accuse
+      ? t.recrutement.statuts.manqueLesDeux
+      : contrat
+      ? t.recrutement.statuts.manqueContrat
+      : accuse
+      ? t.recrutement.statuts.manqueAccuse
+      : '';
+}
 
 class _Corps extends ConsumerStatefulWidget {
   const _Corps({
@@ -521,7 +536,9 @@ class _ActionsState extends ConsumerState<_Actions> {
     return switch (e) {
       // Le dossier a change ou ete traite : l'ancien motif ne vaut plus
       // (en production la revision reste 0, la cle de la revue ne change pas).
-      DecisionConflit() || DecisionPlusPrete() => unique(
+      DecisionConflit() ||
+      DecisionPlusPrete() ||
+      DecisionContratNonSigne() => unique(
         t.dossiers.revue.etats.actualiserDossier,
         () => _relire(purgerMotif: true),
       ),
