@@ -297,10 +297,27 @@ void main() {
               CommandesPedagogiques,
               OutilsEnseignement,
               BarreStylet,
-              CoucheAnnotation,
               BibliothequeSeance,
             ]) {
               expect(find.byType(interdit), findsNothing, reason: '$interdit');
+            }
+            // TB-7a monte le calque des notes au repere de la page : il
+            // PEINT les notes de l'enseignant (Avec notes), il ne prend
+            // aucun geste. Chaque calque monte est sous un IgnorePointer
+            // actif : l'observateur n'ecrit pas.
+            for (final Element calque in find
+                .byType(CoucheAnnotation)
+                .evaluate()) {
+              expect(
+                find.ancestor(
+                  of: find.byWidget(calque.widget),
+                  matching: find.byWidgetPredicate(
+                    (Widget w) => w is IgnorePointer && w.ignoring,
+                  ),
+                ),
+                findsWidgets,
+                reason: 'calque des notes en lecture seule',
+              );
             }
             for (final String mot in <String>[
               t.salle.seance.commandes.declencheur,
