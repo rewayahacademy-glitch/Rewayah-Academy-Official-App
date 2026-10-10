@@ -1425,7 +1425,16 @@ class _SalleEnseignant extends StatelessWidget {
   /// outils. Une seule rangee : au telephone, la hauteur reste a la page au
   /// moment ou l'on ecrit (une palette posee au-dessus du declencheur la
   /// reduisait de moitie a 320 x2).
-  Widget? _declencheur() {
+  ///
+  /// Verification TB-5 (10/10) : en focus hors telephone, le declencheur au
+  /// repos monte dans la tete, a cote de la capsule ([auRepos] seul), et la
+  /// palette reste sous la surface ([enEcriture] seul, precedee de
+  /// [ecartAvant]) : aucune rangee sous la page tant qu'on n'ecrit pas.
+  Widget? _declencheur({
+    bool auRepos = true,
+    bool enEcriture = true,
+    double ecartAvant = 0,
+  }) {
     final VoidCallback? basculer = actions.onCommandes;
     if (basculer == null ||
         vue.panneau == PanneauOuvert.commandes ||
@@ -1434,18 +1443,25 @@ class _SalleEnseignant extends StatelessWidget {
     }
     return Consumer(
       builder: (BuildContext _, WidgetRef ref, Widget? enfant) =>
-          ecritSurLaSurface(ref, vue)
-          ? PaletteEcriture(
-              vue: vue,
-              onCommandes: basculer,
-              focusCommandes: focusCommandes,
+          !ecritSurLaSurface(ref, vue)
+          ? enfant!
+          : !enEcriture
+          ? const SizedBox.shrink()
+          : Padding(
+              padding: EdgeInsets.only(top: ecartAvant),
+              child: PaletteEcriture(
+                vue: vue,
+                onCommandes: basculer,
+                focusCommandes: focusCommandes,
+              ),
+            ),
+      child: auRepos
+          ? DeclencheurCommandes(
+              onPress: basculer,
+              ouvert: vue.panneau == PanneauOuvert.commandes,
+              focusNode: focusCommandes,
             )
-          : enfant!,
-      child: DeclencheurCommandes(
-        onPress: basculer,
-        ouvert: vue.panneau == PanneauOuvert.commandes,
-        focusNode: focusCommandes,
-      ),
+          : const SizedBox.shrink(),
     );
   }
 
@@ -1757,7 +1773,13 @@ class _SalleEnseignant extends StatelessWidget {
     // de debut, a sa place.
     final bool recouvre = composition.recouvre;
     final Widget? boutons = recouvre ? null : _bouton(etire: !gaucheTient);
-    final Widget? declencheur = recouvre ? null : _declencheur();
+    // En focus, sous la surface ne reste que la palette pendant l'ecriture ;
+    // le declencheur au repos passe dans la tete (verification TB-5).
+    final Widget? declencheur = recouvre
+        ? null
+        : agrandi
+        ? _declencheur(auRepos: false, ecartAvant: AppSpacing.md)
+        : _declencheur();
     final Widget centre = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -1771,7 +1793,9 @@ class _SalleEnseignant extends StatelessWidget {
                   )
                 : boutons,
           ),
-        Expanded(child: _sousSupport(support, declencheur)),
+        Expanded(
+          child: _sousSupport(support, declencheur, ecart: !agrandi),
+        ),
       ],
     );
     // Les colonnes, puis les volets par-dessus toute la largeur utile : un
@@ -1842,7 +1866,11 @@ class _SalleEnseignant extends StatelessWidget {
         // TB-5 (plan V2 §19.4.3, §6 « capsule minimale ») : en focus, l'en-tete
         // se retire comme chez l'eleve ; restent la capsule compacte et l'etat
         // critique.
-        if (agrandi) ...<Widget>[_teteFocus()] else if (desktop) ...<Widget>[
+        if (agrandi) ...<Widget>[
+          _teteFocus(
+            declencheur: recouvre ? null : _declencheur(enEcriture: false),
+          ),
+        ] else if (desktop) ...<Widget>[
           ChromeSeance(vue: vue, actions: actions, focusCapsule: focusCapsule),
           BandeauSecours(
             vue: vue,
@@ -1874,7 +1902,11 @@ class _SalleEnseignant extends StatelessWidget {
   /// capsule compacte, l'acces aux Commandes et la sortie du focus (barre de
   /// l'appel). Ni titre, ni sous-titre, ni mention, ni coin de l'en-tete ;
   /// l'etat critique (reconnexion, echec) reste visible (CL-7 §2.7).
-  Widget _teteFocus() => Column(
+  ///
+  /// Hors telephone, le [declencheur] au repos se pose sur la meme rangee,
+  /// avant la capsule (bord de fin) : il ne prend plus de rangee sous la
+  /// surface, la page grandit (verification TB-5, UX-14).
+  Widget _teteFocus({Widget? declencheur}) => Column(
     key: cleTeteFocus,
     crossAxisAlignment: CrossAxisAlignment.stretch,
     mainAxisSize: MainAxisSize.min,
@@ -1888,10 +1920,16 @@ class _SalleEnseignant extends StatelessWidget {
         ),
         child: Align(
           alignment: AlignmentDirectional.centerEnd,
-          child: CapsuleSeance(
-            vue: vue,
-            actions: actions,
-            focusAvatar: focusCapsule,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              if (declencheur != null) ...<Widget>[declencheur, Ecart.hMd],
+              CapsuleSeance(
+                vue: vue,
+                actions: actions,
+                focusAvatar: focusCapsule,
+              ),
+            ],
           ),
         ),
       ),
@@ -1902,14 +1940,21 @@ class _SalleEnseignant extends StatelessWidget {
   /// Le declencheur « Commandes » sous le support, au bord de fin (plan V2
   /// §4.2 : « bord droit de la surface ») ; la barre de l'appel est posee
   /// par-dessus, plus bas (TB-2).
-  Widget _sousSupport(Widget support, Widget? declencheur) {
+  ///
+  /// [ecart] faux (focus) : la palette porte son propre ecart, rien n'est
+  /// reserve sous la surface tant qu'on n'ecrit pas.
+  Widget _sousSupport(
+    Widget support,
+    Widget? declencheur, {
+    bool ecart = true,
+  }) {
     if (declencheur == null) return support;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Expanded(child: support),
         Padding(
-          padding: const EdgeInsets.only(top: AppSpacing.md),
+          padding: EdgeInsets.only(top: ecart ? AppSpacing.md : 0),
           child: Align(
             alignment: AlignmentDirectional.centerEnd,
             child: declencheur,
