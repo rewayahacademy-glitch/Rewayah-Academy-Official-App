@@ -11,6 +11,7 @@ import '../../core/dossier/versions_contrat.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/profil/service_acceptations.dart';
+import '../../core/recrutement/port_signature_contrat.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
@@ -22,6 +23,7 @@ import '../../core/widgets/page_shell.dart';
 import '../connexion/recuperation_page.dart'
     show IssueEnvoiLien, issueEchecEnvoi;
 import '../consentements/texte_observation.dart';
+import '../recrutement/signature_contrat_page.dart';
 import 'politique_controle.dart';
 
 /// Un paragraphe d'un texte a signer : son titre en gras, puis son corps.
@@ -128,6 +130,12 @@ class ContratPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final SorteContrat sorte = SorteContrat.pour(_role(ref));
     final bool enseignant = sorte == SorteContrat.contratEnseignant;
+    // RECRUT-ECRANS : des que le port de signature serveur est branche, le
+    // contrat de l'enseignant (texte, version, empreinte, nom tape) vient du
+    // serveur ; sans port, l'ancien parcours reste en place.
+    if (enseignant && ref.watch(portSignatureContratProvider) != null) {
+      return const SignatureContratPage();
+    }
     final String version = VersionsContrat.pour(
       sorte,
       demonstration: ref.watch(serviceDossierProvider).demonstration,

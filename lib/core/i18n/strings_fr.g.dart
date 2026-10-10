@@ -65,6 +65,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$creneaux$fr creneaux = Traductions$creneaux$fr.internal(_root);
 	late final Traductions$priere$fr priere = Traductions$priere$fr.internal(_root);
 	late final Traductions$eleveConnexion$fr eleveConnexion = Traductions$eleveConnexion$fr.internal(_root);
+	late final Traductions$recrutement$fr recrutement = Traductions$recrutement$fr.internal(_root);
 	late final Traductions$dossiers$fr dossiers = Traductions$dossiers$fr.internal(_root);
 	late final Traductions$admin$fr admin = Traductions$admin$fr.internal(_root);
 	late final Traductions$agent$fr agent = Traductions$agent$fr.internal(_root);
@@ -1367,6 +1368,19 @@ class Traductions$eleveConnexion$fr {
 	late final Traductions$eleveConnexion$saisie$fr saisie = Traductions$eleveConnexion$saisie$fr.internal(_root);
 	late final Traductions$eleveConnexion$lecteur$fr lecteur = Traductions$eleveConnexion$lecteur$fr.internal(_root);
 	late final Traductions$eleveConnexion$refus$fr refus = Traductions$eleveConnexion$refus$fr.internal(_root);
+}
+
+// Path: recrutement
+class Traductions$recrutement$fr {
+	Traductions$recrutement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$recrutement$invitations$fr invitations = Traductions$recrutement$invitations$fr.internal(_root);
+	late final Traductions$recrutement$candidat$fr candidat = Traductions$recrutement$candidat$fr.internal(_root);
+	late final Traductions$recrutement$signature$fr signature = Traductions$recrutement$signature$fr.internal(_root);
+	late final Traductions$recrutement$statuts$fr statuts = Traductions$recrutement$statuts$fr.internal(_root);
 }
 
 // Path: dossiers
@@ -5441,6 +5455,299 @@ class Traductions$eleveConnexion$refus$fr {
 
 	/// fr: 'La vérification du code n'a pas abouti. Réessayez dans un instant.'
 	String get generique => 'La vérification du code n\'a pas abouti. Réessayez dans un instant.';
+}
+
+// Path: recrutement.invitations
+class Traductions$recrutement$invitations$fr {
+	Traductions$recrutement$invitations$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Inviter un enseignant'
+	String get titre => 'Inviter un enseignant';
+
+	/// fr: 'Invitations'
+	String get onglet => 'Invitations';
+
+	/// fr: 'Un enseignant ne peut s'inscrire qu'avec un code d'invitation. Le code sert une seule fois et expire.'
+	String get sousTitre => 'Un enseignant ne peut s\'inscrire qu\'avec un code d\'invitation. Le code sert une seule fois et expire.';
+
+	/// fr: 'Adresse de courriel de l'enseignant'
+	String get champEmail => 'Adresse de courriel de l\'enseignant';
+
+	/// fr: 'Le code est créé pour cette adresse. Transmettez-le à la personne : il n'est pas envoyé automatiquement.'
+	String get aideEmail => 'Le code est créé pour cette adresse. Transmettez-le à la personne : il n\'est pas envoyé automatiquement.';
+
+	/// fr: 'Créer l'invitation'
+	String get inviter => 'Créer l\'invitation';
+
+	/// fr: 'Cette adresse n'a pas la forme d'une adresse e-mail. Vérifiez-la, puis réessayez.'
+	String get emailInvalide => 'Cette adresse n\'a pas la forme d\'une adresse e-mail. Vérifiez-la, puis réessayez.';
+
+	/// fr: 'Un compte existe déjà pour cette adresse : aucune invitation n'est nécessaire.'
+	String get compteExistant => 'Un compte existe déjà pour cette adresse : aucune invitation n\'est nécessaire.';
+
+	/// fr: 'Une invitation est déjà active pour cette adresse. Elle est dans la liste ci-dessous.'
+	String get dejaInvite => 'Une invitation est déjà active pour cette adresse. Elle est dans la liste ci-dessous.';
+
+	/// fr: 'Vous n'avez pas le droit d'inviter un enseignant. Adressez-vous à la direction.'
+	String get nonAutorise => 'Vous n\'avez pas le droit d\'inviter un enseignant. Adressez-vous à la direction.';
+
+	/// fr: 'Pas de connexion : l'invitation n'a pas été créée. Reconnectez-vous, puis réessayez.'
+	String get horsLigne => 'Pas de connexion : l\'invitation n\'a pas été créée. Reconnectez-vous, puis réessayez.';
+
+	/// fr: 'La création de l'invitation n'est pas confirmée. Elle existe peut-être : regardez la liste avant de recommencer.'
+	String get erreur => 'La création de l\'invitation n\'est pas confirmée. Elle existe peut-être : regardez la liste avant de recommencer.';
+
+	/// fr: 'Invitation créée. Transmettez ce code à l'enseignant : {code}'
+	String creee({required Object code}) => 'Invitation créée. Transmettez ce code à l\'enseignant : ${code}';
+
+	/// fr: 'Invitations'
+	String get liste => 'Invitations';
+
+	/// fr: 'Aucune invitation pour le moment'
+	String get vide => 'Aucune invitation pour le moment';
+
+	/// fr: 'Invitez un enseignant avec son adresse e-mail : le code apparaît ici.'
+	String get videDetail => 'Invitez un enseignant avec son adresse e-mail : le code apparaît ici.';
+
+	/// fr: 'Les invitations n'ont pas pu être lues. Vérifiez la connexion, puis réessayez.'
+	String get erreurListe => 'Les invitations n\'ont pas pu être lues. Vérifiez la connexion, puis réessayez.';
+
+	/// fr: 'Les invitations ne sont pas lisibles hors connexion.'
+	String get sansDonnees => 'Les invitations ne sont pas lisibles hors connexion.';
+
+	/// fr: 'Invitations d'enseignants'
+	String get indisponibleTitre => 'Invitations d\'enseignants';
+
+	/// fr: 'Cette fonction sera disponible au branchement du serveur.'
+	String get indisponiblePhrase => 'Cette fonction sera disponible au branchement du serveur.';
+
+	late final Traductions$recrutement$invitations$etat$fr etat = Traductions$recrutement$invitations$etat$fr.internal(_root);
+
+	/// fr: 'Expire le {date}'
+	String expireLe({required Object date}) => 'Expire le ${date}';
+
+	/// fr: 'Utilisée le {date}'
+	String utiliseeLe({required Object date}) => 'Utilisée le ${date}';
+
+	/// fr: 'Révoquer'
+	String get revoquer => 'Révoquer';
+
+	/// fr: 'Révoquer l'invitation de {email}'
+	String revoquerPour({required Object email}) => 'Révoquer l\'invitation de ${email}';
+
+	/// fr: 'Révoquer l'invitation de {email} ?'
+	String revoquerQuestion({required Object email}) => 'Révoquer l\'invitation de ${email} ?';
+
+	/// fr: 'Le code ne pourra plus servir. Vous pourrez inviter la même adresse de nouveau.'
+	String get revoquerConsequence => 'Le code ne pourra plus servir. Vous pourrez inviter la même adresse de nouveau.';
+
+	/// fr: 'La révocation n'est pas confirmée. Actualisez la liste avant de recommencer.'
+	String get revoquerEchec => 'La révocation n\'est pas confirmée. Actualisez la liste avant de recommencer.';
+}
+
+// Path: recrutement.candidat
+class Traductions$recrutement$candidat$fr {
+	Traductions$recrutement$candidat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre code'
+	String get titre => 'Votre code';
+
+	/// fr: 'Pour vous inscrire comme enseignant, saisissez le code d'invitation reçu de la direction.'
+	String get intro => 'Pour vous inscrire comme enseignant, saisissez le code d\'invitation reçu de la direction.';
+
+	/// fr: 'Code d'invitation'
+	String get champ => 'Code d\'invitation';
+
+	/// fr: 'Saisissez le code d'invitation reçu.'
+	String get champVide => 'Saisissez le code d\'invitation reçu.';
+
+	/// fr: 'Vérifier le code'
+	String get verifier => 'Vérifier le code';
+
+	/// fr: 'Invitation valide jusqu'au {date}.'
+	String valide({required Object date}) => 'Invitation valide jusqu\'au ${date}.';
+
+	/// fr: 'Vous pouvez créer votre profil d'enseignant.'
+	String get valideDetail => 'Vous pouvez créer votre profil d\'enseignant.';
+
+	/// fr: 'Créer mon profil'
+	String get creerProfil => 'Créer mon profil';
+
+	/// fr: 'Cette invitation a expiré.'
+	String get expiree => 'Cette invitation a expiré.';
+
+	/// fr: 'Demandez une nouvelle invitation à la direction de l'académie.'
+	String get expireeDetail => 'Demandez une nouvelle invitation à la direction de l\'académie.';
+
+	/// fr: 'Demander une nouvelle invitation'
+	String get demanderNouvelle => 'Demander une nouvelle invitation';
+
+	/// fr: 'Adresse de la direction copiée : écrivez-lui depuis votre messagerie.'
+	String get contactCopie => 'Adresse de la direction copiée : écrivez-lui depuis votre messagerie.';
+
+	/// fr: 'Cette invitation a déjà servi.'
+	String get dejaUtilisee => 'Cette invitation a déjà servi.';
+
+	/// fr: 'Si c'est vous, connectez-vous avec le compte créé.'
+	String get dejaUtiliseeDetail => 'Si c\'est vous, connectez-vous avec le compte créé.';
+
+	/// fr: 'Me connecter'
+	String get seConnecter => 'Me connecter';
+
+	/// fr: 'Code non reconnu.'
+	String get inconnue => 'Code non reconnu.';
+
+	/// fr: 'Vérifiez le code, puis saisissez-le de nouveau.'
+	String get inconnueDetail => 'Vérifiez le code, puis saisissez-le de nouveau.';
+
+	/// fr: 'Saisir un autre code'
+	String get ressaisir => 'Saisir un autre code';
+
+	/// fr: 'Pas de connexion : le code n'a pas été vérifié. Reconnectez-vous, puis réessayez.'
+	String get horsLigne => 'Pas de connexion : le code n\'a pas été vérifié. Reconnectez-vous, puis réessayez.';
+
+	/// fr: 'Le code n'a pas pu être vérifié. Réessayez dans un instant.'
+	String get erreur => 'Le code n\'a pas pu être vérifié. Réessayez dans un instant.';
+
+	/// fr: 'La vérification des invitations sera disponible au branchement du serveur.'
+	String get indisponible => 'La vérification des invitations sera disponible au branchement du serveur.';
+}
+
+// Path: recrutement.signature
+class Traductions$recrutement$signature$fr {
+	Traductions$recrutement$signature$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Contrat'
+	String get titre => 'Contrat';
+
+	/// fr: 'Version {version}'
+	String version({required Object version}) => 'Version ${version}';
+
+	/// fr: 'Empreinte du texte : {empreinte}'
+	String empreinte({required Object empreinte}) => 'Empreinte du texte : ${empreinte}';
+
+	/// fr: 'Le texte reçu ne correspond pas à son empreinte : la signature n'est pas proposée. Réessayez plus tard ou prévenez la direction.'
+	String get texteAltere => 'Le texte reçu ne correspond pas à son empreinte : la signature n\'est pas proposée. Réessayez plus tard ou prévenez la direction.';
+
+	/// fr: 'Votre nom complet'
+	String get champNom => 'Votre nom complet';
+
+	/// fr: 'Tapez votre prénom et votre nom, comme sur votre pièce d'identité.'
+	String get aideNom => 'Tapez votre prénom et votre nom, comme sur votre pièce d\'identité.';
+
+	/// fr: 'Saisissez votre nom complet pour signer.'
+	String get nomVide => 'Saisissez votre nom complet pour signer.';
+
+	/// fr: 'Ce nom est trop long : abrégez-le.'
+	String get nomTropLong => 'Ce nom est trop long : abrégez-le.';
+
+	/// fr: 'Je confirme avoir lu ce contrat.'
+	String get accuse => 'Je confirme avoir lu ce contrat.';
+
+	/// fr: 'Signer le contrat'
+	String get signer => 'Signer le contrat';
+
+	/// fr: 'Signé le {date}, version {version}.'
+	String dejaSigne({required Object date, required Object version}) => 'Signé le ${date}, version ${version}.';
+
+	/// fr: 'Signé par {nom}'
+	String signePar({required Object nom}) => 'Signé par ${nom}';
+
+	/// fr: 'Télécharger ma copie'
+	String get copie => 'Télécharger ma copie';
+
+	/// fr: 'Le lien de votre copie est copié. Collez-le dans votre navigateur : il reste valable quelques minutes.'
+	String get copieLien => 'Le lien de votre copie est copié. Collez-le dans votre navigateur : il reste valable quelques minutes.';
+
+	/// fr: 'Votre copie n'a pas pu être préparée. Réessayez dans un instant.'
+	String get copieErreur => 'Votre copie n\'a pas pu être préparée. Réessayez dans un instant.';
+
+	/// fr: 'Le contrat a été mis à jour depuis votre dernière signature (version {version}). Relisez-le, puis signez de nouveau.'
+	String nouvelleVersion({required Object version}) => 'Le contrat a été mis à jour depuis votre dernière signature (version ${version}). Relisez-le, puis signez de nouveau.';
+
+	/// fr: 'Le contrat a été mis à jour pendant votre lecture. Le texte est rechargé : relisez-le, puis signez de nouveau.'
+	String get versionPerimee => 'Le contrat a été mis à jour pendant votre lecture. Le texte est rechargé : relisez-le, puis signez de nouveau.';
+
+	/// fr: 'Pas de connexion : le contrat n'est pas signé. Reconnectez-vous, puis réessayez.'
+	String get horsLigne => 'Pas de connexion : le contrat n\'est pas signé. Reconnectez-vous, puis réessayez.';
+
+	/// fr: 'La signature n'est pas confirmée. Regardez si le contrat apparaît signé avant de recommencer.'
+	String get erreur => 'La signature n\'est pas confirmée. Regardez si le contrat apparaît signé avant de recommencer.';
+
+	/// fr: 'Votre session a expiré. Reconnectez-vous pour signer.'
+	String get nonConnecte => 'Votre session a expiré. Reconnectez-vous pour signer.';
+
+	/// fr: 'Aucun contrat n'est publié pour le moment. Prévenez la direction.'
+	String get introuvable => 'Aucun contrat n\'est publié pour le moment. Prévenez la direction.';
+
+	/// fr: 'Le contrat n'a pas pu être lu. Vérifiez la connexion, puis réessayez.'
+	String get erreurLecture => 'Le contrat n\'a pas pu être lu. Vérifiez la connexion, puis réessayez.';
+
+	/// fr: 'Le contrat n'est pas lisible hors connexion.'
+	String get sansDonnees => 'Le contrat n\'est pas lisible hors connexion.';
+
+	/// fr: 'La signature du contrat sera disponible au branchement du serveur.'
+	String get indisponible => 'La signature du contrat sera disponible au branchement du serveur.';
+
+	/// fr: 'Retour'
+	String get retour => 'Retour';
+}
+
+// Path: recrutement.statuts
+class Traductions$recrutement$statuts$fr {
+	Traductions$recrutement$statuts$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Contrat et accusé'
+	String get titre => 'Contrat et accusé';
+
+	/// fr: 'Contrat d'enseignant'
+	String get contrat => 'Contrat d\'enseignant';
+
+	/// fr: 'Accusé d'enregistrement et de contrôle'
+	String get accuse => 'Accusé d\'enregistrement et de contrôle';
+
+	/// fr: 'Signé, version courante'
+	String get signeCourante => 'Signé, version courante';
+
+	/// fr: 'Signé, ancienne version {version}'
+	String signeAncienne({required Object version}) => 'Signé, ancienne version ${version}';
+
+	/// fr: 'Non signé'
+	String get nonSigne => 'Non signé';
+
+	/// fr: 'Contrat non signé à la version courante : le dossier ne peut pas être approuvé tant que le contrat et l'accusé ne sont pas signés à la version courante.'
+	String get bloque => 'Contrat non signé à la version courante : le dossier ne peut pas être approuvé tant que le contrat et l\'accusé ne sont pas signés à la version courante.';
+
+	/// fr: 'Contrat non signé à la version courante. Le dossier n'a pas été activé : l'enseignant doit signer, puis actualisez le dossier.'
+	String get refuse => 'Contrat non signé à la version courante. Le dossier n\'a pas été activé : l\'enseignant doit signer, puis actualisez le dossier.';
+
+	/// fr: 'Manque : le contrat.'
+	String get manqueContrat => 'Manque : le contrat.';
+
+	/// fr: 'Manque : l'accusé.'
+	String get manqueAccuse => 'Manque : l\'accusé.';
+
+	/// fr: 'Manquent : le contrat et l'accusé.'
+	String get manqueLesDeux => 'Manquent : le contrat et l\'accusé.';
+
+	/// fr: 'Inviter un enseignant'
+	String get inviter => 'Inviter un enseignant';
 }
 
 // Path: dossiers.file
@@ -16991,6 +17298,27 @@ class Traductions$ficheEleve$mouvements$recu$fr {
 	String get repartition => 'Répartition';
 }
 
+// Path: recrutement.invitations.etat
+class Traductions$recrutement$invitations$etat$fr {
+	Traductions$recrutement$invitations$etat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Active'
+	String get active => 'Active';
+
+	/// fr: 'Utilisée'
+	String get utilisee => 'Utilisée';
+
+	/// fr: 'Expirée'
+	String get expiree => 'Expirée';
+
+	/// fr: 'Révoquée'
+	String get revoquee => 'Révoquée';
+}
+
 // Path: dossiers.revue.etats
 class Traductions$dossiers$revue$etats$fr {
 	Traductions$dossiers$revue$etats$fr.internal(this._root);
@@ -28494,6 +28822,95 @@ extension on Traductions {
 			'eleveConnexion.refus.nonEnregistre' => 'Cet appareil n\'a pas pu garder la connexion. Le code a sans doute déjà servi : affichez un nouveau code sur l\'appareil du tuteur, puis recommencez.',
 			'eleveConnexion.refus.generiqueTitre' => 'Connexion non aboutie',
 			'eleveConnexion.refus.generique' => 'La vérification du code n\'a pas abouti. Réessayez dans un instant.',
+			'recrutement.invitations.titre' => 'Inviter un enseignant',
+			'recrutement.invitations.onglet' => 'Invitations',
+			'recrutement.invitations.sousTitre' => 'Un enseignant ne peut s\'inscrire qu\'avec un code d\'invitation. Le code sert une seule fois et expire.',
+			'recrutement.invitations.champEmail' => 'Adresse de courriel de l\'enseignant',
+			'recrutement.invitations.aideEmail' => 'Le code est créé pour cette adresse. Transmettez-le à la personne : il n\'est pas envoyé automatiquement.',
+			'recrutement.invitations.inviter' => 'Créer l\'invitation',
+			'recrutement.invitations.emailInvalide' => 'Cette adresse n\'a pas la forme d\'une adresse e-mail. Vérifiez-la, puis réessayez.',
+			'recrutement.invitations.compteExistant' => 'Un compte existe déjà pour cette adresse : aucune invitation n\'est nécessaire.',
+			'recrutement.invitations.dejaInvite' => 'Une invitation est déjà active pour cette adresse. Elle est dans la liste ci-dessous.',
+			'recrutement.invitations.nonAutorise' => 'Vous n\'avez pas le droit d\'inviter un enseignant. Adressez-vous à la direction.',
+			'recrutement.invitations.horsLigne' => 'Pas de connexion : l\'invitation n\'a pas été créée. Reconnectez-vous, puis réessayez.',
+			'recrutement.invitations.erreur' => 'La création de l\'invitation n\'est pas confirmée. Elle existe peut-être : regardez la liste avant de recommencer.',
+			'recrutement.invitations.creee' => ({required Object code}) => 'Invitation créée. Transmettez ce code à l\'enseignant : ${code}',
+			'recrutement.invitations.liste' => 'Invitations',
+			'recrutement.invitations.vide' => 'Aucune invitation pour le moment',
+			'recrutement.invitations.videDetail' => 'Invitez un enseignant avec son adresse e-mail : le code apparaît ici.',
+			'recrutement.invitations.erreurListe' => 'Les invitations n\'ont pas pu être lues. Vérifiez la connexion, puis réessayez.',
+			'recrutement.invitations.sansDonnees' => 'Les invitations ne sont pas lisibles hors connexion.',
+			'recrutement.invitations.indisponibleTitre' => 'Invitations d\'enseignants',
+			'recrutement.invitations.indisponiblePhrase' => 'Cette fonction sera disponible au branchement du serveur.',
+			'recrutement.invitations.etat.active' => 'Active',
+			'recrutement.invitations.etat.utilisee' => 'Utilisée',
+			'recrutement.invitations.etat.expiree' => 'Expirée',
+			'recrutement.invitations.etat.revoquee' => 'Révoquée',
+			'recrutement.invitations.expireLe' => ({required Object date}) => 'Expire le ${date}',
+			'recrutement.invitations.utiliseeLe' => ({required Object date}) => 'Utilisée le ${date}',
+			'recrutement.invitations.revoquer' => 'Révoquer',
+			'recrutement.invitations.revoquerPour' => ({required Object email}) => 'Révoquer l\'invitation de ${email}',
+			'recrutement.invitations.revoquerQuestion' => ({required Object email}) => 'Révoquer l\'invitation de ${email} ?',
+			'recrutement.invitations.revoquerConsequence' => 'Le code ne pourra plus servir. Vous pourrez inviter la même adresse de nouveau.',
+			'recrutement.invitations.revoquerEchec' => 'La révocation n\'est pas confirmée. Actualisez la liste avant de recommencer.',
+			'recrutement.candidat.titre' => 'Votre code',
+			'recrutement.candidat.intro' => 'Pour vous inscrire comme enseignant, saisissez le code d\'invitation reçu de la direction.',
+			'recrutement.candidat.champ' => 'Code d\'invitation',
+			'recrutement.candidat.champVide' => 'Saisissez le code d\'invitation reçu.',
+			'recrutement.candidat.verifier' => 'Vérifier le code',
+			'recrutement.candidat.valide' => ({required Object date}) => 'Invitation valide jusqu\'au ${date}.',
+			'recrutement.candidat.valideDetail' => 'Vous pouvez créer votre profil d\'enseignant.',
+			'recrutement.candidat.creerProfil' => 'Créer mon profil',
+			'recrutement.candidat.expiree' => 'Cette invitation a expiré.',
+			'recrutement.candidat.expireeDetail' => 'Demandez une nouvelle invitation à la direction de l\'académie.',
+			'recrutement.candidat.demanderNouvelle' => 'Demander une nouvelle invitation',
+			'recrutement.candidat.contactCopie' => 'Adresse de la direction copiée : écrivez-lui depuis votre messagerie.',
+			'recrutement.candidat.dejaUtilisee' => 'Cette invitation a déjà servi.',
+			'recrutement.candidat.dejaUtiliseeDetail' => 'Si c\'est vous, connectez-vous avec le compte créé.',
+			'recrutement.candidat.seConnecter' => 'Me connecter',
+			'recrutement.candidat.inconnue' => 'Code non reconnu.',
+			'recrutement.candidat.inconnueDetail' => 'Vérifiez le code, puis saisissez-le de nouveau.',
+			'recrutement.candidat.ressaisir' => 'Saisir un autre code',
+			'recrutement.candidat.horsLigne' => 'Pas de connexion : le code n\'a pas été vérifié. Reconnectez-vous, puis réessayez.',
+			'recrutement.candidat.erreur' => 'Le code n\'a pas pu être vérifié. Réessayez dans un instant.',
+			'recrutement.candidat.indisponible' => 'La vérification des invitations sera disponible au branchement du serveur.',
+			'recrutement.signature.titre' => 'Contrat',
+			'recrutement.signature.version' => ({required Object version}) => 'Version ${version}',
+			'recrutement.signature.empreinte' => ({required Object empreinte}) => 'Empreinte du texte : ${empreinte}',
+			'recrutement.signature.texteAltere' => 'Le texte reçu ne correspond pas à son empreinte : la signature n\'est pas proposée. Réessayez plus tard ou prévenez la direction.',
+			'recrutement.signature.champNom' => 'Votre nom complet',
+			'recrutement.signature.aideNom' => 'Tapez votre prénom et votre nom, comme sur votre pièce d\'identité.',
+			'recrutement.signature.nomVide' => 'Saisissez votre nom complet pour signer.',
+			'recrutement.signature.nomTropLong' => 'Ce nom est trop long : abrégez-le.',
+			'recrutement.signature.accuse' => 'Je confirme avoir lu ce contrat.',
+			'recrutement.signature.signer' => 'Signer le contrat',
+			'recrutement.signature.dejaSigne' => ({required Object date, required Object version}) => 'Signé le ${date}, version ${version}.',
+			'recrutement.signature.signePar' => ({required Object nom}) => 'Signé par ${nom}',
+			'recrutement.signature.copie' => 'Télécharger ma copie',
+			'recrutement.signature.copieLien' => 'Le lien de votre copie est copié. Collez-le dans votre navigateur : il reste valable quelques minutes.',
+			'recrutement.signature.copieErreur' => 'Votre copie n\'a pas pu être préparée. Réessayez dans un instant.',
+			'recrutement.signature.nouvelleVersion' => ({required Object version}) => 'Le contrat a été mis à jour depuis votre dernière signature (version ${version}). Relisez-le, puis signez de nouveau.',
+			'recrutement.signature.versionPerimee' => 'Le contrat a été mis à jour pendant votre lecture. Le texte est rechargé : relisez-le, puis signez de nouveau.',
+			'recrutement.signature.horsLigne' => 'Pas de connexion : le contrat n\'est pas signé. Reconnectez-vous, puis réessayez.',
+			'recrutement.signature.erreur' => 'La signature n\'est pas confirmée. Regardez si le contrat apparaît signé avant de recommencer.',
+			'recrutement.signature.nonConnecte' => 'Votre session a expiré. Reconnectez-vous pour signer.',
+			'recrutement.signature.introuvable' => 'Aucun contrat n\'est publié pour le moment. Prévenez la direction.',
+			'recrutement.signature.erreurLecture' => 'Le contrat n\'a pas pu être lu. Vérifiez la connexion, puis réessayez.',
+			'recrutement.signature.sansDonnees' => 'Le contrat n\'est pas lisible hors connexion.',
+			'recrutement.signature.indisponible' => 'La signature du contrat sera disponible au branchement du serveur.',
+			'recrutement.signature.retour' => 'Retour',
+			'recrutement.statuts.titre' => 'Contrat et accusé',
+			'recrutement.statuts.contrat' => 'Contrat d\'enseignant',
+			'recrutement.statuts.accuse' => 'Accusé d\'enregistrement et de contrôle',
+			'recrutement.statuts.signeCourante' => 'Signé, version courante',
+			'recrutement.statuts.signeAncienne' => ({required Object version}) => 'Signé, ancienne version ${version}',
+			'recrutement.statuts.nonSigne' => 'Non signé',
+			'recrutement.statuts.bloque' => 'Contrat non signé à la version courante : le dossier ne peut pas être approuvé tant que le contrat et l\'accusé ne sont pas signés à la version courante.',
+			'recrutement.statuts.refuse' => 'Contrat non signé à la version courante. Le dossier n\'a pas été activé : l\'enseignant doit signer, puis actualisez le dossier.',
+			'recrutement.statuts.manqueContrat' => 'Manque : le contrat.',
+			'recrutement.statuts.manqueAccuse' => 'Manque : l\'accusé.',
+			'recrutement.statuts.manqueLesDeux' => 'Manquent : le contrat et l\'accusé.',
+			'recrutement.statuts.inviter' => 'Inviter un enseignant',
 			'dossiers.titre' => 'Dossiers à valider',
 			'dossiers.sousTitre' => 'Examinez les dossiers prêts pour une décision.',
 			'dossiers.aucun' => 'Aucun dossier n\'attend de validation.',
@@ -28612,6 +29029,8 @@ extension on Traductions {
 			'dossiers.decision.conflit' => 'Ce dossier a été traité par un autre membre de l\'équipe.',
 			'dossiers.decision.nomComplet' => ({required Object prenom, required Object nom}) => '${prenom} ${nom}',
 			'dossiers.inscritDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Inscrit depuis ${jours} jour', other: 'Inscrit depuis ${jours} jours', ), 
+			_ => null,
+		} ?? switch (path) {
 			'admin.tableau.titre' => 'Centre de commande',
 			'admin.tableau.dossiers' => 'Dossiers à valider',
 			'admin.tableau.dossiersDetail' => 'Ouvrir la file, le plus ancien en premier.',
@@ -28701,8 +29120,6 @@ extension on Traductions {
 			'admin.demandes.roleAdmin' => 'l\'administration',
 			'admin.demandes.roleController' => 'un contrôleur',
 			'admin.demandes.roleInconnu' => 'une partie au dossier',
-			_ => null,
-		} ?? switch (path) {
 			'admin.demandes.reclame' => 'Ce qui est demandé',
 			'admin.demandes.reclameReaffectation' => ({required Object dePrenom}) => 'Changer l\'enseignant ${dePrenom}',
 			'admin.demandes.reclameRegle' => ({required Object regle, required Object valeur}) => 'Porter ${regle} à ${valeur} min',
@@ -29126,6 +29543,8 @@ extension on Traductions {
 			'admin.evaluations.resultatErreur' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
 			'admin.evaluations.annulerTitre' => ({required Object deEleve}) => 'Annuler l\'évaluation ${deEleve}',
 			'admin.evaluations.annulerEnvoyer' => 'Annuler',
+			_ => null,
+		} ?? switch (path) {
 			'admin.evaluations.annulerErreur' => ({required Object message}) => 'L\'annulation n\'a pas abouti : ${message}',
 			'admin.evaluations.champMotif' => 'Motif',
 			'admin.evaluations.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
@@ -29215,8 +29634,6 @@ extension on Traductions {
 			'admin.programmes.manqueNom' => 'le nom affiché',
 			'admin.programmes.manqueCycle' => 'le cycle',
 			'admin.programmes.manqueOrdre' => 'l\'ordre (un nombre entier)',
-			_ => null,
-		} ?? switch (path) {
 			'admin.programmes.manqueCode' => 'le code technique',
 			'admin.programmes.manque' => ({required Object elements}) => 'Rien n\'a été enregistré : il manque ${elements}. Complétez-le, puis réessayez.',
 			'admin.programmes.champDescription' => 'Description (optionnelle)',
@@ -29640,6 +30057,8 @@ extension on Traductions {
 			'admin.finance.pol.publierConsequence' => 'Publier rend ce brouillon applicable à partir de sa date d\'effet ; aucune facture déjà payée n\'est modifiée.',
 			'admin.finance.pol.publicationIndisponible' => 'La publication n\'est pas encore disponible',
 			'admin.finance.pol.publicationIndisponibleDetail' => 'Rien n\'a été publié : le service de publication n\'est pas encore branché. La version active continue de s\'appliquer. Gardez cet écran ouvert pour conserver vos modifications, ou revenez quand la publication sera ouverte.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.publicationNonConfirmee' => 'Publication non confirmée',
 			'admin.finance.pol.publicationNonConfirmeeDetail' => 'La réponse n\'est pas arrivée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vérifiez la version active avant de réessayer.',
 			'admin.finance.pol.champsACorriger' => 'Corrigez d\'abord les champs signalés',
@@ -29729,8 +30148,6 @@ extension on Traductions {
 			'parcours.indisponibleDetail' => 'Cette étape n\'est pas encore ouverte par l\'académie. Vous n\'avez rien à faire pour l\'instant : rien n\'est perdu, et vous pourrez la remplir dès qu\'elle sera ouverte.',
 			'parcours.horsLigneTitre' => 'Le parcours n\'a pas pu être chargé',
 			'parcours.horsLigneDetail' => 'Vous pourrez réessayer quand la connexion sera revenue. Vos réponses sont gardées.',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.erreurChargement' => 'Le questionnaire n\'a pas pu s\'afficher',
 			'parcours.erreurChargementDetail' => 'Une erreur est survenue de notre côté. Réessayez dans un instant ; vos réponses sont gardées.',
 			'parcours.introuvableTitre' => 'Ce profil élève est introuvable',
@@ -30154,6 +30571,8 @@ extension on Traductions {
 			'notifications.lectureNonConfirmee' => 'La lecture n\'est pas encore confirmée. Réessayez dans un instant.',
 			'notifications.detail.choisirTitre' => 'Choisissez une notification',
 			'notifications.detail.choisirPhrase' => 'Son détail s\'affiche ici, à côté de la liste.',
+			_ => null,
+		} ?? switch (path) {
 			'notifications.detail.recue' => ({required Object date, required Object heure}) => 'Reçue le ${date} à ${heure}',
 			'notifications.detail.ouvrir' => 'Ouvrir la page concernée',
 			'notifications.types.annonceClasse' => 'Annonce de Classe',
@@ -30243,8 +30662,6 @@ extension on Traductions {
 			'eleve.suivi.colonneEtat' => 'Présence',
 			'eleve.suivi.cours' => 'Cours de Coran',
 			'eleve.suivi.moi' => 'Ma présence',
-			_ => null,
-		} ?? switch (path) {
 			'eleve.suivi.aujourdhui' => ({required Object heure}) => 'Aujourd\'hui, ${heure}',
 			'eleve.suivi.hier' => ({required Object heure}) => 'Hier, ${heure}',
 			'eleve.suivi.date' => ({required Object date, required Object heure}) => '${date}, ${heure}',
@@ -30668,6 +31085,8 @@ extension on Traductions {
 			'enseignant.photo.alternatif' => 'Votre photo publique',
 			'enseignant.photo.succes' => 'La photo est enregistrée.',
 			'enseignant.photo.echec' => 'La photo n\'a pas pu être envoyée. Rien n\'a changé sur le profil.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.photo.selectionEchec' => 'La photo n\'a pas pu être ouverte. Vérifiez l\'accès aux photos de l\'appareil, puis réessayez.',
 			'enseignant.photo.horsLigne' => 'La photo pourra être envoyée quand la connexion reviendra.',
 			'enseignant.journee.lancer' => 'Lancer le cours',
@@ -30757,8 +31176,6 @@ extension on Traductions {
 			'enseignant.journee.absence.cleDate' => 'Date',
 			'enseignant.journee.absence.notice' => 'Votre affectation à la Classe reste inchangée.',
 			'enseignant.journee.absence.declarer' => 'Déclarer mon absence',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.journee.absence.echec' => 'La demande n\'a pas abouti. Réessayez dans un instant.',
 			'enseignant.journee.absence.etats.enregistree' => 'Absence enregistrée',
 			'enseignant.journee.absence.etats.recherche' => 'Recherche d\'un remplaçant',
@@ -31182,6 +31599,8 @@ extension on Traductions {
 			'controleur.complement.rapportInchange' => ({required Object classe, required Object date}) => '${classe} · ${date}, inchangé',
 			'controleur.complement.cleMotif' => 'Motif',
 			'controleur.complement.sansMotif' => 'Aucun motif',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.complement.cleTexte' => 'Complément',
 			'controleur.complement.envoyer' => 'Envoyer le complément',
 			'controleur.complement.echec' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici, réessayez dans un instant. Le rapport d\'origine reste intact.',
@@ -31271,8 +31690,6 @@ extension on Traductions {
 			'controleur.observation.texteObligatoire' => 'Votre texte est nécessaire pour cette observation.',
 			'controleur.observation.texteFacultatif' => 'Ce texte est facultatif.',
 			'controleur.observation.libelleTexte' => 'Votre remarque',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.aideTexte' => 'Décrivez seulement ce que vous avez observé.',
 			'controleur.observation.texteRequis' => 'Écrivez ce que vous avez observé pour continuer.',
 			'controleur.observation.questionRecap' => 'Vérifiez votre observation avant l\'envoi.',
@@ -31696,6 +32113,8 @@ extension on Traductions {
 			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',
 			'tc.observation.visite.titre' => 'Observation en cours',
 			'tc.observation.visite.quitter' => 'Quitter',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.visite.supportIndisponible' => 'Le support partagé par l\'enseignant s\'affiche ici.',
 			'tc.observation.visite.enseignant' => 'Enseignant',
 			'tc.observation.visite.monEnfant' => 'Votre enfant',
@@ -31785,8 +32204,6 @@ extension on Traductions {
 			'tc.parcours.feedback.cours.intitule' => 'Comment était le cours aujourd\'hui ?',
 			'tc.parcours.feedback.cours.difficile' => 'Difficile',
 			'tc.parcours.feedback.cours.bien' => 'Bien',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.feedback.cours.tresBien' => 'Très bien',
 			'tc.parcours.feedback.comprehension.intitule' => 'Avez-vous compris ce qui a été travaillé ?',
 			'tc.parcours.feedback.comprehension.difficile' => 'Pas vraiment',
@@ -32210,6 +32627,8 @@ extension on Traductions {
 			'adulte.finances.indisponibleTitre' => 'Vos finances ne sont pas encore disponibles',
 			'adulte.finances.indisponiblePhrase' => 'Votre solde, votre période financée et votre mensualité s\'afficheront ici dès leur mise en service.',
 			'adulte.finances.erreurTitre' => 'Vos finances ne peuvent pas être lues',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.finances.videTitre' => 'Aucune finance enregistrée',
 			'adulte.finances.videPhrase' => 'Aucun solde ni aucune mensualité n\'est encore rendu pour votre profil. Ils apparaîtront ici après votre inscription à une classe.',
 			'adulte.finances.voirMouvementsSemantique' => 'Voir vos mouvements',
@@ -32299,8 +32718,6 @@ extension on Traductions {
 			'motifs.presenceExcusee.familiale' => 'Raison familiale',
 			'motifs.reglageEnseignant.horaire' => 'Horaire qui ne convient plus',
 			'motifs.reglageEnseignant.niveau' => 'Niveau qui ne correspond plus',
-			_ => null,
-		} ?? switch (path) {
 			'motifs.reglageEnseignant.fuseau' => 'Changement de fuseau horaire',
 			'motifs.reglageEnseignant.fratrie' => 'Réunir les enfants du foyer',
 			'motifs.reglageDuree.tropLongue' => 'Durée trop longue pour l\'âge',
@@ -32724,6 +33141,8 @@ extension on Traductions {
 			'com.vocal.demo.indisponible' => 'Indisponible',
 			'com.vocal.demo.recu' => 'Message vocal reçu',
 			'com.vocal.demo.repondre' => 'Répondre dans la conversation',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.demo.envoyes' => 'Messages vocaux envoyés',
 			'com.vocal.demo.auteurEnseignante' => 'Sayyida Mariam, enseignante',
 			'com.vocal.demo.auteurParent' => 'Ahmed, parent d\'Adam',
@@ -32813,8 +33232,6 @@ extension on Traductions {
 			'com.communaute.composer.choixIndisponible' => 'Le choix d\'un fichier n\'est pas encore disponible ici.',
 			'com.communaute.composer.publier' => 'Publier',
 			'com.communaute.composer.fermer' => 'Fermer la nouvelle publication',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.composer.confirmee' => 'Votre publication est en ligne.',
 			'com.communaute.composer.erreurEnvoi' => 'Votre publication n\'est pas encore confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'com.communaute.composer.indisponible' => 'La publication n\'est pas encore disponible ici.',
@@ -33238,6 +33655,8 @@ extension on Traductions {
 			'com.annonces.demoPublication.extraitVente' => 'Je propose des cours particuliers payants le week-end, écrivez-moi.',
 			'com.annonces.demoPublication.signalementHorsSujet' => 'Réponse sous « Organiser une révision collective »',
 			'com.annonces.section' => 'Annonces de la Classe',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.annonce' => 'Annonce',
 			'com.annonces.publier' => 'Publier une annonce',
 			'com.annonces.videPublier' => 'Aucune annonce pour cette Classe. Publiez la première pour toute la Classe.',
@@ -33327,8 +33746,6 @@ extension on Traductions {
 			'comptable.commun.modeMontantFixe' => 'Montant cible fixe',
 			'comptable.commun.modeCouvertureMois' => 'Couverture en mois de charges essentielles',
 			'comptable.commun.derniereAllocation' => ({required Object date}) => 'Dernière allocation : ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.commun.prochaineAllocation' => ({required Object date}) => 'Prochaine allocation prévue : ${date}',
 			'comptable.commun.aucuneAllocation' => 'Aucune allocation enregistrée',
 			'comptable.commun.destination' => 'Destination',
@@ -33752,6 +34169,8 @@ extension on Traductions {
 			'comptable.encaissements.rap.natPreuve' => 'Preuve',
 			'comptable.encaissements.rap.natureDate' => ({required Object nature, required Object date}) => '${nature} · ${date}',
 			'comptable.encaissements.rap.choisirTitre' => 'Choisissez une transaction.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.rap.choisirPhrase' => 'Ses correspondances proposées, son état et son journal s\'ouvrent ici.',
 			'comptable.encaissements.rap.videTitre' => 'Rien à rapprocher.',
 			'comptable.encaissements.rap.videPhrase' => 'Chaque transaction reçue est déjà reliée à ce qui l\'attendait.',
@@ -33841,8 +34260,6 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.suspendus' => ({required Object nom}) => 'Paiements de ${nom} suspendus : aucun versement ne part tant qu\'ils ne sont pas repris.',
 			'comptable.beneficiaires.profil.repris' => ({required Object nom}) => 'Paiements de ${nom} repris.',
 			'comptable.beneficiaires.profil.erreurAction' => 'L\'action n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.profil.erreurIndisponible' => 'Cette action n\'est pas encore branchée sur le service qui la traite. Réessayez plus tard.',
 			'comptable.beneficiaires.profil.suspensionTitre' => ({required Object nom}) => 'Suspendre les paiements de ${nom} ?',
 			'comptable.beneficiaires.profil.suspensionContexte' => 'Aucun versement ne partira vers ce bénéficiaire tant que vous ne les reprenez pas. Ses coordonnées ne changent pas. Choisissez le motif : il sera inscrit au journal du profil.',
