@@ -42,6 +42,34 @@ VALUES
   ('b0800000-0000-0000-0000-000000000003', 'minor', 'lecture_lente'),
   ('b0800000-0000-0000-0000-000000000005', 'minor', 'debut_lettres');
 
+INSERT INTO public.programme_versions
+  (id, statut, numero_version, cree_par, publie_par, publiee_at)
+VALUES
+  ('b0800000-0000-0000-0000-000000000401', 'publiee', 99991,
+   'b0800000-0000-0000-0000-000000000001',
+   'b0800000-0000-0000-0000-000000000001', now()),
+  ('b0800000-0000-0000-0000-000000000402', 'brouillon', 99992,
+   'b0800000-0000-0000-0000-000000000001', NULL, NULL),
+  ('b0800000-0000-0000-0000-000000000403', 'archivee', 99990,
+   'b0800000-0000-0000-0000-000000000001',
+   'b0800000-0000-0000-0000-000000000001', now());
+
+INSERT INTO public.programme_niveaux
+  (id, version_id, code_technique, nom_humain, cycle, ordre)
+VALUES
+  ('b0800000-0000-0000-0000-000000000411',
+   'b0800000-0000-0000-0000-000000000401', 'lecture_lente',
+   'Lecture lente', 'Lecture', 1),
+  ('b0800000-0000-0000-0000-000000000412',
+   'b0800000-0000-0000-0000-000000000401', 'autre_niveau',
+   'Autre niveau', 'Lecture', 2),
+  ('b0800000-0000-0000-0000-000000000413',
+   'b0800000-0000-0000-0000-000000000402', 'lecture_lente',
+   'Brouillon privé', 'Lecture', 1),
+  ('b0800000-0000-0000-0000-000000000414',
+   'b0800000-0000-0000-0000-000000000403', 'lecture_lente',
+   'Archivé privé', 'Lecture', 1);
+
 INSERT INTO public.teacher_profiles (profile_id, country)
 VALUES
   ('b0800000-0000-0000-0000-000000000001', 'FR'),
@@ -123,9 +151,66 @@ BEGIN
     RAISE EXCEPTION 'B-08: l''enseignant a écrit pour un élève hors de sa classe';
   END IF;
 
+  v_denied := false;
+  BEGIN
+    PERFORM public.enregistrer_resume_seance(
+      v_session, v_student, 'Jalon du brouillon.',
+      'b0800000-0000-0000-0000-000000000413', true
+    );
+  EXCEPTION WHEN OTHERS THEN
+    v_denied := true;
+  END;
+  IF NOT v_denied THEN
+    RAISE EXCEPTION 'B-08: un jalon d''une version brouillon a été accepté';
+  END IF;
+
+  v_denied := false;
+  BEGIN
+    PERFORM public.enregistrer_resume_seance(
+      v_session, v_student, 'Jalon archivé.',
+      'b0800000-0000-0000-0000-000000000414', true
+    );
+  EXCEPTION WHEN OTHERS THEN
+    v_denied := true;
+  END;
+  IF NOT v_denied THEN
+    RAISE EXCEPTION 'B-08: un jalon d''une version archivée a été accepté';
+  END IF;
+
+  v_denied := false;
+  BEGIN
+    PERFORM public.enregistrer_resume_seance(
+      v_session, v_student, 'Jalon d''un autre niveau.',
+      'b0800000-0000-0000-0000-000000000412', true
+    );
+  EXCEPTION WHEN OTHERS THEN
+    v_denied := true;
+  END;
+  IF NOT v_denied THEN
+    RAISE EXCEPTION 'B-08: un jalon incohérent avec le niveau a été accepté';
+  END IF;
+
   PERFORM public.enregistrer_resume_seance(
-    v_session, v_student, 'Lecture régulière; revoir les liaisons.', NULL, true
+    v_session, v_student, 'Lecture régulière; revoir les liaisons.',
+    'b0800000-0000-0000-0000-000000000411', true
   );
+
+  v_denied := false;
+  BEGIN
+    PERFORM public.enregistrer_resume_seance(
+      v_session, v_student, 'BROUILLON PAS PRÊT', NULL, false
+    );
+  EXCEPTION WHEN OTHERS THEN
+    v_denied := true;
+  END;
+  IF NOT v_denied OR NOT EXISTS (
+    SELECT 1 FROM public.seance_resumes r
+    WHERE r.session_id = v_session AND r.student_id = v_student
+      AND r.texte_famille = 'Lecture régulière; revoir les liaisons.'
+      AND r.publie_le IS NOT NULL
+  ) THEN
+    RAISE EXCEPTION 'B-08: un brouillon a remplacé le résumé déjà publié';
+  END IF;
 
   PERFORM set_config('request.jwt.claim.sub', v_guardian::text, true);
   PERFORM set_config('request.jwt.claims',
@@ -135,7 +220,10 @@ BEGIN
   v_result := public.progression_famille(v_student);
   IF NOT (v_result ? 'niveau_humain')
      OR jsonb_typeof(v_result->'jalons') <> 'array'
-     OR v_result->>'niveau_humain' = 'lecture_lente'
+     OR v_result->>'niveau_humain' <> 'Lecture lente'
+     OR v_result::text LIKE '%lecture_lente%'
+     OR v_result::text LIKE '%Brouillon privé%'
+     OR v_result::text LIKE '%Archivé privé%'
      OR jsonb_array_length(v_result->'seances') <> 1
      OR v_result->'seances'->0->>'texte_famille'
         <> 'Lecture régulière; revoir les liaisons.'
@@ -218,4 +306,43 @@ BEGIN
 END
 $rls_autre_foyer$;
 RESET ROLE;
+
+SELECT set_config('request.jwt.claim.sub', 'b0800000-0000-0000-0000-000000000001', true);
+SELECT set_config('request.jwt.claims',
+  '{"app_metadata":{"role":"teacher"}}', true);
+SELECT public.enregistrer_resume_seance(
+  'b0800000-0000-0000-0000-000000000301',
+  'b0800000-0000-0000-0000-000000000003',
+  'Lecture régulière; revoir les liaisons.', NULL, false, true
+);
+
+SELECT set_config('request.jwt.claim.sub', 'b0800000-0000-0000-0000-000000000002', true);
+SELECT set_config('request.jwt.claims',
+  '{"app_metadata":{"role":"guardian","household_id":"b0800000-0000-0000-0000-000000000101"}}', true);
+DO $retrait_audite$
+DECLARE
+  v_count integer;
+BEGIN
+  IF public.resume_seance_famille(
+    'b0800000-0000-0000-0000-000000000301',
+    'b0800000-0000-0000-0000-000000000003'
+  ) IS NOT NULL THEN
+    RAISE EXCEPTION 'B-08: le résumé retiré reste visible via RPC';
+  END IF;
+  SELECT count(*) INTO v_count FROM public.seance_resumes r
+  WHERE r.session_id = 'b0800000-0000-0000-0000-000000000301'
+    AND r.student_id = 'b0800000-0000-0000-0000-000000000003';
+  IF v_count <> 0 THEN
+    RAISE EXCEPTION 'B-08: RLS expose le résumé après retrait';
+  END IF;
+  SELECT count(*) INTO v_count FROM public.audit_logs a
+  WHERE a.action = 'resume_seance_famille_retire'
+    AND a.table_name = 'seance_resumes'
+    AND a.row_id = 'b0800000-0000-0000-0000-000000000301:b0800000-0000-0000-0000-000000000003';
+  IF v_count <> 1 THEN
+    RAISE EXCEPTION 'B-08: le retrait n''a pas produit une entrée d''audit';
+  END IF;
+END
+$retrait_audite$;
+
 ROLLBACK;
