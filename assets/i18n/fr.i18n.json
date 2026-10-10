@@ -3549,6 +3549,92 @@
         "droitsEchus": "Droits échus",
         "alerteTitre": "Brouillons",
         "pasDeAcces": "Vous ne pouvez pas modifier la bibliothèque."
+      },
+      "fiche": {
+        "sections": {
+          "apercu": "Aperçu",
+          "edition": "Édition",
+          "metadonnees": "Métadonnées",
+          "workflow": "Publication",
+          "versions": "Versions",
+          "droits": "Droits",
+          "perimetre": "Périmètre",
+          "historique": "Historique"
+        },
+        "afficherSection": "Afficher la section {nom}",
+        "masquerSection": "Masquer la section {nom}",
+        "apercuAucunFichier": "Aucun fichier n'est déposé pour cette version.",
+        "apercuFichier": "Un fichier est déposé. Son rendu se contrôle à l'étape « Vérifier et publier ».",
+        "apercuPublie": "Version publiée : le contenu est figé.",
+        "deposer": "Déposer un fichier",
+        "remplacer": "Remplacer le fichier",
+        "champs": {
+          "titre": "Titre",
+          "titreCourt": "Titre court",
+          "edition": "Édition",
+          "organisme": "Organisme, auteur ou éditeur",
+          "description": "Description pédagogique",
+          "conditions": "Conditions d'attribution"
+        },
+        "meta": {
+          "type": "Type",
+          "langue": "Langue",
+          "categorie": "Catégorie",
+          "niveau": "Niveau",
+          "annee": "Année",
+          "visibilite": "Visibilité",
+          "horsLigne": "Hors ligne",
+          "nonRenseigne": "Non renseigné"
+        },
+        "enregistrer": "Enregistrer les modifications",
+        "enregistre": "Modifications enregistrées.",
+        "conflit": "Un autre administrateur a modifié ce support. Rechargez la fiche avant de continuer.",
+        "recharger": "Recharger la fiche",
+        "echecEnregistrer": "Les modifications n'ont pas pu être confirmées. Réessayez.",
+        "titreVide": "Le titre est obligatoire.",
+        "figee": "Version publiée et figée : pour la modifier, créez une nouvelle version.",
+        "retireMotif": "Retiré du catalogue. Motif : {motif}",
+        "retireSansMotif": "Retiré du catalogue.",
+        "retireRestaurer": "Il ne peut être republié qu'après une nouvelle vérification des droits.",
+        "actions": {
+          "verifier": "Vérifier et publier",
+          "nouvelleVersion": "Créer une nouvelle version",
+          "completerDroits": "Compléter les droits",
+          "associer": "Associer aux classes",
+          "retirer": "Retirer du catalogue"
+        },
+        "nouvelleVersionOk": "Nouvelle version créée en brouillon.",
+        "nouvelleVersionEchec": "La nouvelle version n'a pas pu être confirmée. Réessayez.",
+        "version": {
+          "publieeLe": "Publiée le {date}",
+          "empreinte": "Empreinte {valeur}",
+          "sansFichier": "Sans fichier"
+        },
+        "droitsChamps": {
+          "revue": "Revue des droits",
+          "source": "Source",
+          "titulaire": "Titulaire du droit",
+          "preuve": "Preuve d'autorisation",
+          "preuveOui": "Déposée",
+          "preuveNon": "Manquante",
+          "usages": "Usages autorisés",
+          "aucunUsage": "Aucun usage autorisé",
+          "attribution": "Attribution",
+          "echeance": "Échéance"
+        },
+        "classesServies": "Classes servies : {nombre}",
+        "historiqueVide": "Aucun événement.",
+        "audit": {
+          "creation": "Brouillon créé",
+          "depot": "Fichier déposé",
+          "revueDroits": "Droits revus",
+          "publication": "Version publiée",
+          "attribution": "Attribué à des classes",
+          "retrait": "Retiré du catalogue",
+          "restauration": "Restauré"
+        },
+        "auditMotif": "Motif : {motif}",
+        "auditVersion": "Version {numero}"
       }
     }
   },

@@ -89,6 +89,12 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
   /// Vrai : seul le catalogue echoue (les capacites restent lues).
   bool panneListe = false;
 
+  /// Vrai : seule la lecture d'une fiche echoue, connexion perdue.
+  bool panneFiche = false;
+
+  /// Vrai : la lecture d'une fiche echoue d'une panne du serveur.
+  bool erreurFiche = false;
+
   /// Si non nul, la page de ce rang (a partir de 1) et les suivantes echouent :
   /// la pagination partielle.
   int? panneAPartirDePage;
@@ -178,7 +184,11 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
           publieeLeUtc: k == n && statut != StatutVersionRessource.publiee
               ? null
               : modifie.subtract(Duration(days: 9 * (n - k) + 1)),
-          empreinte: 'sha256:${id.hashCode.toRadixString(16)}$k',
+          // Un brouillon sans fichier n'a pas d'empreinte.
+          empreinte:
+              k != n || statut == StatutVersionRessource.publiee || cas == 1
+              ? 'sha256:${id.hashCode.toRadixString(16)}$k'
+              : null,
         ),
     ];
     final bool rempli =
@@ -350,6 +360,8 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
   @override
   Future<FicheSupport> fiche(String supportId) async {
     _garde();
+    if (panneFiche) throw const BibliothequeHorsLigne();
+    if (erreurFiche) throw StateError('serveur');
     final _Etat e = _trouve(supportId);
     return FicheSupport(
       support: e.support,

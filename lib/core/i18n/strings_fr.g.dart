@@ -9518,6 +9518,7 @@ class Traductions$admin$bibliotheque$fr {
 
 	late final Traductions$admin$bibliotheque$libelles$fr libelles = Traductions$admin$bibliotheque$libelles$fr.internal(_root);
 	late final Traductions$admin$bibliotheque$catalogue$fr catalogue = Traductions$admin$bibliotheque$catalogue$fr.internal(_root);
+	late final Traductions$admin$bibliotheque$fiche$fr fiche = Traductions$admin$bibliotheque$fiche$fr.internal(_root);
 }
 
 // Path: nav.eleve
@@ -19812,6 +19813,95 @@ class Traductions$admin$bibliotheque$catalogue$fr {
 	String get pasDeAcces => 'Vous ne pouvez pas modifier la bibliothèque.';
 }
 
+// Path: admin.bibliotheque.fiche
+class Traductions$admin$bibliotheque$fiche$fr {
+	Traductions$admin$bibliotheque$fiche$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$admin$bibliotheque$fiche$sections$fr sections = Traductions$admin$bibliotheque$fiche$sections$fr.internal(_root);
+
+	/// fr: 'Afficher la section {nom}'
+	String afficherSection({required Object nom}) => 'Afficher la section ${nom}';
+
+	/// fr: 'Masquer la section {nom}'
+	String masquerSection({required Object nom}) => 'Masquer la section ${nom}';
+
+	/// fr: 'Aucun fichier n'est déposé pour cette version.'
+	String get apercuAucunFichier => 'Aucun fichier n\'est déposé pour cette version.';
+
+	/// fr: 'Un fichier est déposé. Son rendu se contrôle à l'étape « Vérifier et publier ».'
+	String get apercuFichier => 'Un fichier est déposé. Son rendu se contrôle à l\'étape « Vérifier et publier ».';
+
+	/// fr: 'Version publiée : le contenu est figé.'
+	String get apercuPublie => 'Version publiée : le contenu est figé.';
+
+	/// fr: 'Déposer un fichier'
+	String get deposer => 'Déposer un fichier';
+
+	/// fr: 'Remplacer le fichier'
+	String get remplacer => 'Remplacer le fichier';
+
+	late final Traductions$admin$bibliotheque$fiche$champs$fr champs = Traductions$admin$bibliotheque$fiche$champs$fr.internal(_root);
+	late final Traductions$admin$bibliotheque$fiche$meta$fr meta = Traductions$admin$bibliotheque$fiche$meta$fr.internal(_root);
+
+	/// fr: 'Enregistrer les modifications'
+	String get enregistrer => 'Enregistrer les modifications';
+
+	/// fr: 'Modifications enregistrées.'
+	String get enregistre => 'Modifications enregistrées.';
+
+	/// fr: 'Un autre administrateur a modifié ce support. Rechargez la fiche avant de continuer.'
+	String get conflit => 'Un autre administrateur a modifié ce support. Rechargez la fiche avant de continuer.';
+
+	/// fr: 'Recharger la fiche'
+	String get recharger => 'Recharger la fiche';
+
+	/// fr: 'Les modifications n'ont pas pu être confirmées. Réessayez.'
+	String get echecEnregistrer => 'Les modifications n\'ont pas pu être confirmées. Réessayez.';
+
+	/// fr: 'Le titre est obligatoire.'
+	String get titreVide => 'Le titre est obligatoire.';
+
+	/// fr: 'Version publiée et figée : pour la modifier, créez une nouvelle version.'
+	String get figee => 'Version publiée et figée : pour la modifier, créez une nouvelle version.';
+
+	/// fr: 'Retiré du catalogue. Motif : {motif}'
+	String retireMotif({required Object motif}) => 'Retiré du catalogue. Motif : ${motif}';
+
+	/// fr: 'Retiré du catalogue.'
+	String get retireSansMotif => 'Retiré du catalogue.';
+
+	/// fr: 'Il ne peut être republié qu'après une nouvelle vérification des droits.'
+	String get retireRestaurer => 'Il ne peut être republié qu\'après une nouvelle vérification des droits.';
+
+	late final Traductions$admin$bibliotheque$fiche$actions$fr actions = Traductions$admin$bibliotheque$fiche$actions$fr.internal(_root);
+
+	/// fr: 'Nouvelle version créée en brouillon.'
+	String get nouvelleVersionOk => 'Nouvelle version créée en brouillon.';
+
+	/// fr: 'La nouvelle version n'a pas pu être confirmée. Réessayez.'
+	String get nouvelleVersionEchec => 'La nouvelle version n\'a pas pu être confirmée. Réessayez.';
+
+	late final Traductions$admin$bibliotheque$fiche$version$fr version = Traductions$admin$bibliotheque$fiche$version$fr.internal(_root);
+	late final Traductions$admin$bibliotheque$fiche$droitsChamps$fr droitsChamps = Traductions$admin$bibliotheque$fiche$droitsChamps$fr.internal(_root);
+
+	/// fr: 'Classes servies : {nombre}'
+	String classesServies({required Object nombre}) => 'Classes servies : ${nombre}';
+
+	/// fr: 'Aucun événement.'
+	String get historiqueVide => 'Aucun événement.';
+
+	late final Traductions$admin$bibliotheque$fiche$audit$fr audit = Traductions$admin$bibliotheque$fiche$audit$fr.internal(_root);
+
+	/// fr: 'Motif : {motif}'
+	String auditMotif({required Object motif}) => 'Motif : ${motif}';
+
+	/// fr: 'Version {numero}'
+	String auditVersion({required Object numero}) => 'Version ${numero}';
+}
+
 // Path: compte.tuteur.identite
 class Traductions$compte$tuteur$identite$fr {
 	Traductions$compte$tuteur$identite$fr.internal(this._root);
@@ -27281,6 +27371,210 @@ class Traductions$admin$bibliotheque$catalogue$colonnes$fr {
 	String get modifie => 'Modifié';
 }
 
+// Path: admin.bibliotheque.fiche.sections
+class Traductions$admin$bibliotheque$fiche$sections$fr {
+	Traductions$admin$bibliotheque$fiche$sections$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aperçu'
+	String get apercu => 'Aperçu';
+
+	/// fr: 'Édition'
+	String get edition => 'Édition';
+
+	/// fr: 'Métadonnées'
+	String get metadonnees => 'Métadonnées';
+
+	/// fr: 'Publication'
+	String get workflow => 'Publication';
+
+	/// fr: 'Versions'
+	String get versions => 'Versions';
+
+	/// fr: 'Droits'
+	String get droits => 'Droits';
+
+	/// fr: 'Périmètre'
+	String get perimetre => 'Périmètre';
+
+	/// fr: 'Historique'
+	String get historique => 'Historique';
+}
+
+// Path: admin.bibliotheque.fiche.champs
+class Traductions$admin$bibliotheque$fiche$champs$fr {
+	Traductions$admin$bibliotheque$fiche$champs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Titre'
+	String get titre => 'Titre';
+
+	/// fr: 'Titre court'
+	String get titreCourt => 'Titre court';
+
+	/// fr: 'Édition'
+	String get edition => 'Édition';
+
+	/// fr: 'Organisme, auteur ou éditeur'
+	String get organisme => 'Organisme, auteur ou éditeur';
+
+	/// fr: 'Description pédagogique'
+	String get description => 'Description pédagogique';
+
+	/// fr: 'Conditions d'attribution'
+	String get conditions => 'Conditions d\'attribution';
+}
+
+// Path: admin.bibliotheque.fiche.meta
+class Traductions$admin$bibliotheque$fiche$meta$fr {
+	Traductions$admin$bibliotheque$fiche$meta$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Type'
+	String get type => 'Type';
+
+	/// fr: 'Langue'
+	String get langue => 'Langue';
+
+	/// fr: 'Catégorie'
+	String get categorie => 'Catégorie';
+
+	/// fr: 'Niveau'
+	String get niveau => 'Niveau';
+
+	/// fr: 'Année'
+	String get annee => 'Année';
+
+	/// fr: 'Visibilité'
+	String get visibilite => 'Visibilité';
+
+	/// fr: 'Hors ligne'
+	String get horsLigne => 'Hors ligne';
+
+	/// fr: 'Non renseigné'
+	String get nonRenseigne => 'Non renseigné';
+}
+
+// Path: admin.bibliotheque.fiche.actions
+class Traductions$admin$bibliotheque$fiche$actions$fr {
+	Traductions$admin$bibliotheque$fiche$actions$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vérifier et publier'
+	String get verifier => 'Vérifier et publier';
+
+	/// fr: 'Créer une nouvelle version'
+	String get nouvelleVersion => 'Créer une nouvelle version';
+
+	/// fr: 'Compléter les droits'
+	String get completerDroits => 'Compléter les droits';
+
+	/// fr: 'Associer aux classes'
+	String get associer => 'Associer aux classes';
+
+	/// fr: 'Retirer du catalogue'
+	String get retirer => 'Retirer du catalogue';
+}
+
+// Path: admin.bibliotheque.fiche.version
+class Traductions$admin$bibliotheque$fiche$version$fr {
+	Traductions$admin$bibliotheque$fiche$version$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Publiée le {date}'
+	String publieeLe({required Object date}) => 'Publiée le ${date}';
+
+	/// fr: 'Empreinte {valeur}'
+	String empreinte({required Object valeur}) => 'Empreinte ${valeur}';
+
+	/// fr: 'Sans fichier'
+	String get sansFichier => 'Sans fichier';
+}
+
+// Path: admin.bibliotheque.fiche.droitsChamps
+class Traductions$admin$bibliotheque$fiche$droitsChamps$fr {
+	Traductions$admin$bibliotheque$fiche$droitsChamps$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Revue des droits'
+	String get revue => 'Revue des droits';
+
+	/// fr: 'Source'
+	String get source => 'Source';
+
+	/// fr: 'Titulaire du droit'
+	String get titulaire => 'Titulaire du droit';
+
+	/// fr: 'Preuve d'autorisation'
+	String get preuve => 'Preuve d\'autorisation';
+
+	/// fr: 'Déposée'
+	String get preuveOui => 'Déposée';
+
+	/// fr: 'Manquante'
+	String get preuveNon => 'Manquante';
+
+	/// fr: 'Usages autorisés'
+	String get usages => 'Usages autorisés';
+
+	/// fr: 'Aucun usage autorisé'
+	String get aucunUsage => 'Aucun usage autorisé';
+
+	/// fr: 'Attribution'
+	String get attribution => 'Attribution';
+
+	/// fr: 'Échéance'
+	String get echeance => 'Échéance';
+}
+
+// Path: admin.bibliotheque.fiche.audit
+class Traductions$admin$bibliotheque$fiche$audit$fr {
+	Traductions$admin$bibliotheque$fiche$audit$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Brouillon créé'
+	String get creation => 'Brouillon créé';
+
+	/// fr: 'Fichier déposé'
+	String get depot => 'Fichier déposé';
+
+	/// fr: 'Droits revus'
+	String get revueDroits => 'Droits revus';
+
+	/// fr: 'Version publiée'
+	String get publication => 'Version publiée';
+
+	/// fr: 'Attribué à des classes'
+	String get attribution => 'Attribué à des classes';
+
+	/// fr: 'Retiré du catalogue'
+	String get retrait => 'Retiré du catalogue';
+
+	/// fr: 'Restauré'
+	String get restauration => 'Restauré';
+}
+
 // Path: classe.entree.demo.roles
 class Traductions$classe$entree$demo$roles$fr {
 	Traductions$classe$entree$demo$roles$fr.internal(this._root);
@@ -32073,6 +32367,76 @@ extension on Traductions {
 			'admin.bibliotheque.catalogue.droitsEchus' => 'Droits échus',
 			'admin.bibliotheque.catalogue.alerteTitre' => 'Brouillons',
 			'admin.bibliotheque.catalogue.pasDeAcces' => 'Vous ne pouvez pas modifier la bibliothèque.',
+			'admin.bibliotheque.fiche.sections.apercu' => 'Aperçu',
+			'admin.bibliotheque.fiche.sections.edition' => 'Édition',
+			'admin.bibliotheque.fiche.sections.metadonnees' => 'Métadonnées',
+			'admin.bibliotheque.fiche.sections.workflow' => 'Publication',
+			'admin.bibliotheque.fiche.sections.versions' => 'Versions',
+			'admin.bibliotheque.fiche.sections.droits' => 'Droits',
+			'admin.bibliotheque.fiche.sections.perimetre' => 'Périmètre',
+			'admin.bibliotheque.fiche.sections.historique' => 'Historique',
+			'admin.bibliotheque.fiche.afficherSection' => ({required Object nom}) => 'Afficher la section ${nom}',
+			'admin.bibliotheque.fiche.masquerSection' => ({required Object nom}) => 'Masquer la section ${nom}',
+			'admin.bibliotheque.fiche.apercuAucunFichier' => 'Aucun fichier n\'est déposé pour cette version.',
+			'admin.bibliotheque.fiche.apercuFichier' => 'Un fichier est déposé. Son rendu se contrôle à l\'étape « Vérifier et publier ».',
+			'admin.bibliotheque.fiche.apercuPublie' => 'Version publiée : le contenu est figé.',
+			'admin.bibliotheque.fiche.deposer' => 'Déposer un fichier',
+			'admin.bibliotheque.fiche.remplacer' => 'Remplacer le fichier',
+			'admin.bibliotheque.fiche.champs.titre' => 'Titre',
+			'admin.bibliotheque.fiche.champs.titreCourt' => 'Titre court',
+			'admin.bibliotheque.fiche.champs.edition' => 'Édition',
+			'admin.bibliotheque.fiche.champs.organisme' => 'Organisme, auteur ou éditeur',
+			'admin.bibliotheque.fiche.champs.description' => 'Description pédagogique',
+			'admin.bibliotheque.fiche.champs.conditions' => 'Conditions d\'attribution',
+			'admin.bibliotheque.fiche.meta.type' => 'Type',
+			'admin.bibliotheque.fiche.meta.langue' => 'Langue',
+			'admin.bibliotheque.fiche.meta.categorie' => 'Catégorie',
+			'admin.bibliotheque.fiche.meta.niveau' => 'Niveau',
+			'admin.bibliotheque.fiche.meta.annee' => 'Année',
+			'admin.bibliotheque.fiche.meta.visibilite' => 'Visibilité',
+			'admin.bibliotheque.fiche.meta.horsLigne' => 'Hors ligne',
+			'admin.bibliotheque.fiche.meta.nonRenseigne' => 'Non renseigné',
+			'admin.bibliotheque.fiche.enregistrer' => 'Enregistrer les modifications',
+			'admin.bibliotheque.fiche.enregistre' => 'Modifications enregistrées.',
+			'admin.bibliotheque.fiche.conflit' => 'Un autre administrateur a modifié ce support. Rechargez la fiche avant de continuer.',
+			'admin.bibliotheque.fiche.recharger' => 'Recharger la fiche',
+			'admin.bibliotheque.fiche.echecEnregistrer' => 'Les modifications n\'ont pas pu être confirmées. Réessayez.',
+			'admin.bibliotheque.fiche.titreVide' => 'Le titre est obligatoire.',
+			'admin.bibliotheque.fiche.figee' => 'Version publiée et figée : pour la modifier, créez une nouvelle version.',
+			'admin.bibliotheque.fiche.retireMotif' => ({required Object motif}) => 'Retiré du catalogue. Motif : ${motif}',
+			'admin.bibliotheque.fiche.retireSansMotif' => 'Retiré du catalogue.',
+			'admin.bibliotheque.fiche.retireRestaurer' => 'Il ne peut être republié qu\'après une nouvelle vérification des droits.',
+			'admin.bibliotheque.fiche.actions.verifier' => 'Vérifier et publier',
+			'admin.bibliotheque.fiche.actions.nouvelleVersion' => 'Créer une nouvelle version',
+			'admin.bibliotheque.fiche.actions.completerDroits' => 'Compléter les droits',
+			'admin.bibliotheque.fiche.actions.associer' => 'Associer aux classes',
+			'admin.bibliotheque.fiche.actions.retirer' => 'Retirer du catalogue',
+			'admin.bibliotheque.fiche.nouvelleVersionOk' => 'Nouvelle version créée en brouillon.',
+			'admin.bibliotheque.fiche.nouvelleVersionEchec' => 'La nouvelle version n\'a pas pu être confirmée. Réessayez.',
+			'admin.bibliotheque.fiche.version.publieeLe' => ({required Object date}) => 'Publiée le ${date}',
+			'admin.bibliotheque.fiche.version.empreinte' => ({required Object valeur}) => 'Empreinte ${valeur}',
+			'admin.bibliotheque.fiche.version.sansFichier' => 'Sans fichier',
+			'admin.bibliotheque.fiche.droitsChamps.revue' => 'Revue des droits',
+			'admin.bibliotheque.fiche.droitsChamps.source' => 'Source',
+			'admin.bibliotheque.fiche.droitsChamps.titulaire' => 'Titulaire du droit',
+			'admin.bibliotheque.fiche.droitsChamps.preuve' => 'Preuve d\'autorisation',
+			'admin.bibliotheque.fiche.droitsChamps.preuveOui' => 'Déposée',
+			'admin.bibliotheque.fiche.droitsChamps.preuveNon' => 'Manquante',
+			'admin.bibliotheque.fiche.droitsChamps.usages' => 'Usages autorisés',
+			'admin.bibliotheque.fiche.droitsChamps.aucunUsage' => 'Aucun usage autorisé',
+			'admin.bibliotheque.fiche.droitsChamps.attribution' => 'Attribution',
+			'admin.bibliotheque.fiche.droitsChamps.echeance' => 'Échéance',
+			'admin.bibliotheque.fiche.classesServies' => ({required Object nombre}) => 'Classes servies : ${nombre}',
+			'admin.bibliotheque.fiche.historiqueVide' => 'Aucun événement.',
+			'admin.bibliotheque.fiche.audit.creation' => 'Brouillon créé',
+			'admin.bibliotheque.fiche.audit.depot' => 'Fichier déposé',
+			'admin.bibliotheque.fiche.audit.revueDroits' => 'Droits revus',
+			'admin.bibliotheque.fiche.audit.publication' => 'Version publiée',
+			'admin.bibliotheque.fiche.audit.attribution' => 'Attribué à des classes',
+			'admin.bibliotheque.fiche.audit.retrait' => 'Retiré du catalogue',
+			'admin.bibliotheque.fiche.audit.restauration' => 'Restauré',
+			'admin.bibliotheque.fiche.auditMotif' => ({required Object motif}) => 'Motif : ${motif}',
+			'admin.bibliotheque.fiche.auditVersion' => ({required Object numero}) => 'Version ${numero}',
 			'agent.titre' => 'Entrée d\'un agent',
 			'agent.intro' => 'Cette page ouvre l\'application en lecture seule, avec le jeton remis par l\'académie.',
 			'agent.jeton' => 'Jeton d\'observation',
@@ -32167,6 +32531,8 @@ extension on Traductions {
 			'parcours.etatHoraireAChoisir' => 'Horaire à choisir',
 			'parcours.etatHoraireAChoisirDetail' => ({required Object prenom}) => 'Les horaires ouverts pour ${prenom} vous attendent.',
 			'parcours.etatOffreIndisponible' => 'Cet horaire n\'est plus proposé',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.etatOffreIndisponibleDetail' => ({required Object prenom}) => 'L\'horaire retenu pour ${prenom} a été retiré avant qu\'une classe soit constituée. Choisissez-en un autre : rien n\'est perdu.',
 			'parcours.etatDiagnosticRequis' => 'Préférence enregistrée',
 			'parcours.etatDiagnosticRequisDetail' => ({required Object dePrenom}) => 'Il reste un échange avec un enseignant pour situer le niveau ${dePrenom}. L\'académie vous proposera un rendez-vous.',
@@ -32237,8 +32603,6 @@ extension on Traductions {
 			'compte.informations' => 'Informations',
 			'compte.profil' => 'Profil',
 			'compte.profilDetail' => 'Voir et gérer vos informations',
-			_ => null,
-		} ?? switch (path) {
 			'compte.reglages' => 'Réglages',
 			'compte.reglagesDetail' => 'Apparence, notifications et accessibilité',
 			'compte.profils' => 'Gérer mon foyer',
@@ -32681,6 +33045,8 @@ extension on Traductions {
 			'tuteur.accueil.dateEtDuree' => ({required Object date, required Object duree}) => '${date} · ${duree}',
 			'tuteur.accueil.etatCourt.enDirect' => 'En direct',
 			'tuteur.accueil.etatCourt.salleOuverte' => 'Salle ouverte',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.etatCourt.dansMinutes' => ({required Object minutes}) => 'Dans ${minutes} min',
 			'tuteur.accueil.etatCourt.dansHeures' => ({required Object heures, required Object minutes}) => 'Dans ${heures} h ${minutes}',
 			'tuteur.accueil.etatCourt.dansJours' => ({required Object jours}) => 'Dans ${jours} j',
@@ -32751,8 +33117,6 @@ extension on Traductions {
 			'tuteur.reglages.demandeMinutes' => ({required Object minutes}) => '${minutes} min',
 			'tuteur.reglages.demandeMotif' => 'Pourquoi ce changement ?',
 			'tuteur.reglages.demandeMotifRequis' => 'Un motif est nécessaire : c\'est lui qui permet de trancher.',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.reglages.demandeManqueValeur' => 'Il manque la durée demandée : choisissez-la dans la liste, ou touchez « Autre » et écrivez-la.',
 			'tuteur.reglages.demandeEnvoyer' => 'Envoyer la demande',
 			'tuteur.reglages.demandeEnvoyee' => 'Demande envoyée. L\'administration la tranchera.',
@@ -33195,6 +33559,8 @@ extension on Traductions {
 			'enseignant.cahier.unEleve' => '1 élève',
 			'enseignant.cahier.toutEstNominal' => 'Tout s\'est passé comme prévu.',
 			'enseignant.cahier.toutEstNominalDetail' => 'Validez, et votre journée continue.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.exceptions' => 'À regarder',
 			'enseignant.cahier.uneException' => '1 élève demande un regard.',
 			'enseignant.cahier.nominaux' => 'Rien à signaler',
@@ -33265,8 +33631,6 @@ extension on Traductions {
 			'enseignant.cahier.faiblesseWaqf' => 'Waqf',
 			'enseignant.cahier.faiblesseFluidite' => 'Fluidité',
 			'enseignant.cahier.faiblesseMemorisation' => 'Mémorisation',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.niveauARevoirDetail' => 'La leçon est à reprendre à la prochaine séance.',
 			'enseignant.cahier.niveauEnProgresDetail' => 'L\'élève avance, quelques erreurs restent.',
 			'enseignant.cahier.niveauAcquisDetail' => 'La leçon est sue, avec peu d\'erreurs.',
@@ -33709,6 +34073,8 @@ extension on Traductions {
 			'controleur.acces.revoque' => 'Votre accès au contrôle n\'est plus actif.',
 			'controleur.acces.revenir' => 'Revenir à mon espace',
 			'controleur.controle.titre' => 'Contrôle',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.controle.mission' => 'Votre prochaine Classe à observer',
 			'controleur.controle.missionEnDirect' => 'Classe à observer maintenant',
 			'controleur.controle.commencer' => 'Commencer le contrôle',
@@ -33779,8 +34145,6 @@ extension on Traductions {
 			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '${heure} ${ville}',
 			'tc.groupe.dst.j30' => 'Changement d\'heure dans un mois',
 			'tc.groupe.dst.j7' => 'Changement d\'heure la semaine prochaine',
-			_ => null,
-		} ?? switch (path) {
 			'tc.groupe.dst.j1' => 'Changement d\'heure demain',
 			'tc.groupe.dst.detail' => ({required Object avant, required Object apres}) => 'Votre cours passera de ${avant} à ${apres}.',
 			'tc.groupe.session.conseilAppareil' => 'Tablette ou ordinateur conseillé pour le cours. Le téléphone reste pris en charge.',
@@ -34223,6 +34587,8 @@ extension on Traductions {
 			'adulte.nav.coran' => 'Coran',
 			'adulte.nav.monEspace' => 'Mon espace',
 			'adulte.accueil.salutation' => ({required Object prenom}) => 'Bonjour ${prenom}',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.accueil.prochaineSeance' => 'Prochaine séance',
 			'adulte.accueil.parcours' => 'Mon parcours',
 			'adulte.accueil.dernieresSeances' => 'Dernières séances',
@@ -34293,8 +34659,6 @@ extension on Traductions {
 			'adulte.recharge.augmenter' => ({required Object prenom}) => 'Augmenter le montant pour ${prenom}',
 			'adulte.recharge.repartition' => 'Un seul paiement sera effectué. Chaque montant va au solde de son profil : il n\'y a pas de solde commun.',
 			'adulte.recharge.moyen' => 'Moyen de paiement',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.recharge.raisonMontant' => 'Choisissez un montant pour chaque profil sélectionné.',
 			'adulte.recharge.payerSeul' => 'Payer',
 			'adulte.recharge.ajouter' => ({required Object prenom}) => 'Ajouter ${prenom} à la recharge',
@@ -34737,6 +35101,8 @@ extension on Traductions {
 			'suiviFamille.motif.classesPleines' => 'Toutes les classes de ce créneau sont complètes. Vous serez prévenu dès qu\'une place se libère.',
 			'suiviFamille.motif.aucunEnseignantLibre' => 'Aucun enseignant n\'est libre sur ce créneau pour le moment. Vous serez prévenu dès que ce changera.',
 			'suiviFamille.motif.inconnu' => 'Votre demande est en attente. Vous serez prévenu dès qu\'elle avance.',
+			_ => null,
+		} ?? switch (path) {
 			'suiviFamille.intervalle.moinsHeure' => 'Moins d\'une heure plus tard',
 			'suiviFamille.intervalle.heure' => '1 heure plus tard',
 			'suiviFamille.intervalle.heures' => ({required Object n}) => '${n} heures plus tard',
@@ -34807,8 +35173,6 @@ extension on Traductions {
 			'suiviDemandes.close.choisirAutre' => ({required Object prenom}) => 'Choisir un autre créneau pour ${prenom}',
 			'suiviDemandes.vide' => 'Aucune demande de créneau en cours.',
 			'suiviDemandes.erreur' => 'Le suivi de vos demandes n\'a pas pu être affiché : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Cet échec concerne seulement l\'affichage du suivi : il ne dit rien de vos demandes de créneau. Réessayez dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviDemandes.sansDonnees' => 'Le suivi des demandes n\'a pas pu être chargé',
 			'suiviDemandes.accueil.titre' => 'Vos demandes de créneau',
 			'suiviDemandes.accueil.ligne' => ({required Object prenom, required Object etat}) => '${prenom} : ${etat}',
@@ -35251,6 +35615,8 @@ extension on Traductions {
 			'com.communaute.publication.revenir' => 'Revenir aux publications',
 			'com.communaute.reponses.titre' => ({required Object nombre}) => 'Réponses (${nombre})',
 			'com.communaute.reponses.vide' => 'Aucune réponse pour le moment.',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.reponses.erreurTitre' => 'Impossible de charger les réponses.',
 			'com.communaute.reponses.champ' => 'Votre réponse',
 			'com.communaute.reponses.aide' => 'Écrire une réponse',
@@ -35321,8 +35687,6 @@ extension on Traductions {
 			'com.communaute.demo.f.fonctionSoi' => 'Enseignant, Classe Al-Fatiha',
 			'com.communaute.demo.f.prenomSoi' => 'Ibrahim',
 			'com.communaute.demo.f.samira' => 'Samira Belkacem',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.demo.f.fonctionSamira' => 'Enseignante, Classe An-Nour',
 			'com.communaute.demo.f.nour' => 'Nour El Idrissi',
 			'com.communaute.demo.f.fonctionNour' => 'Enseignante, Classe Al-Fajr',
@@ -35765,6 +36129,8 @@ extension on Traductions {
 			'com.annonces.demo.f.controleurReponse' => 'Réponse de l\'Administration à votre rapport',
 			'com.annonces.titre' => 'Annonces',
 			'comptable.nav.aujourdhui' => 'Aujourd\'hui',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.nav.paiements' => 'Paiements',
 			'comptable.nav.tresorerie' => 'Trésorerie',
 			'comptable.nav.compte' => 'Compte',
@@ -35835,8 +36201,6 @@ extension on Traductions {
 			'comptable.statuts.paiement.indisponible' => 'Indisponible',
 			'comptable.statuts.encaissement.enAttente' => 'En attente',
 			'comptable.statuts.encaissement.confirme' => 'Confirmé',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.encaissement.echoue' => 'Échoué',
 			'comptable.statuts.encaissement.rembourse' => 'Remboursé',
 			'comptable.statuts.encaissement.partiellementRembourse' => 'Partiellement remboursé',
@@ -36279,6 +36643,8 @@ extension on Traductions {
 			'comptable.beneficiaires.enAttente' => ({required Object n}) => '${n} en attente',
 			'comptable.beneficiaires.aucunEnAttente' => 'Aucun',
 			'comptable.beneficiaires.vide' => 'Aucun bénéficiaire pour l\'instant.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.videDetail' => 'Les enseignants et les contractuels apparaissent ici dès qu\'un paiement les concerne.',
 			'comptable.beneficiaires.videFiltre' => 'Aucun bénéficiaire avec ce filtre.',
 			'comptable.beneficiaires.videFiltreDetail' => 'Choisissez « Tous » pour revoir toute la liste.',
@@ -36349,8 +36715,6 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.continuerSaisie' => 'Continuer vers la saisie sécurisée',
 			'comptable.beneficiaires.recevoir.typeRequis' => 'Choisissez un type de méthode pour continuer.',
 			'comptable.beneficiaires.recevoir.aucunType' => 'Aucun type de méthode n\'est proposé pour l\'instant. Contactez l\'académie pour en ouvrir un.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.verificationAnnoncee' => 'Tout changement est vérifié avant le prochain versement.',
 			'comptable.beneficiaires.recevoir.ajoutee' => 'Méthode ajoutée : elle est en cours de vérification.',
 			'comptable.beneficiaires.recevoir.remplacee' => 'Nouvelle méthode enregistrée : elle est en cours de vérification.',

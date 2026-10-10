@@ -722,6 +722,18 @@ abstract final class Routes {
   static const String adminPedagogieBibliothequeNouveau =
       '/admin/pedagogie/bibliotheque/nouveau';
 
+  /// CAP29-D : verifier et publier la derniere version d'un support.
+  static String adminPedagogieSupportPublication(String supportId) =>
+      '$adminPedagogieBibliotheque/$supportId/publication';
+
+  /// CAP29-E : attribuer un support aux classes, ou le retirer.
+  static String adminPedagogieSupportAttribution(String supportId) =>
+      '$adminPedagogieBibliotheque/$supportId/attribution';
+
+  /// CAP29-C : deposer un fichier pour le brouillon d'un support existant.
+  static String adminPedagogieSupportFichier(String supportId) =>
+      '$adminPedagogieBibliothequeNouveau?support=$supportId';
+
   /// CAP29-0 : la fiche d'un support de la bibliotheque.
   static String adminPedagogieSupport(String supportId) =>
       '$adminPedagogieBibliotheque/$supportId';

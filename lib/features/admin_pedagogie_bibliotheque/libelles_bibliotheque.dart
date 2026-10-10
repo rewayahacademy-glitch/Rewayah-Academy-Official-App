@@ -103,3 +103,23 @@ String libelleSegment(EtatCatalogue etat) => switch (etat) {
   EtatCatalogue.droitsExpires =>
     t.admin.bibliotheque.catalogue.segments.droitsExpires,
 };
+
+/// Le mot d'une ligne d'audit.
+String libelleAudit(ActionAudit action) => switch (action) {
+  ActionAudit.creation => t.admin.bibliotheque.fiche.audit.creation,
+  ActionAudit.depot => t.admin.bibliotheque.fiche.audit.depot,
+  ActionAudit.revueDroits => t.admin.bibliotheque.fiche.audit.revueDroits,
+  ActionAudit.publication => t.admin.bibliotheque.fiche.audit.publication,
+  ActionAudit.attribution => t.admin.bibliotheque.fiche.audit.attribution,
+  ActionAudit.retrait => t.admin.bibliotheque.fiche.audit.retrait,
+  ActionAudit.restauration => t.admin.bibliotheque.fiche.audit.restauration,
+};
+
+/// Le mot d'une politique de hors ligne.
+String libelleHorsLigne(PolitiqueOffline p) => switch (p) {
+  PolitiqueOffline.jamais => t.admin.bibliotheque.libelles.horsLigne.jamais,
+  PolitiqueOffline.surDemande =>
+    t.admin.bibliotheque.libelles.horsLigne.surDemande,
+  PolitiqueOffline.automatique =>
+    t.admin.bibliotheque.libelles.horsLigne.automatique,
+};
