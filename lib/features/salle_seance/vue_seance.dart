@@ -797,7 +797,16 @@ class VueSeance {
     // Tour 2 : en guidee, le bandeau reste court (plan V2 §20 « Reprise
     // eleve guide » : « Le tableau revient. ») ; la suspension de l'ecriture
     // se lit dans les Commandes, a la place d'« Ecrire ».
-    if (ecritureSuspendue && peutEcrire && !_guidee) {
+    // Tour 3 : Commandes de l'eleve ouvertes, la phrase est dite une fois, a
+    // la place d'« Ecrire » ([texteEcritureSuspendue], toujours visible
+    // dans ses Commandes) ; le bandeau garde son etat. L'enseignant la lit
+    // dans l'onglet Outils seulement : son bandeau la garde.
+    if (ecritureSuspendue &&
+        peutEcrire &&
+        !_guidee &&
+        !(!_enseignant &&
+            panneau == PanneauOuvert.commandes &&
+            texteEcritureSuspendue != null)) {
       return textes.ecritureSuspendue;
     }
     if (_enseignant &&

@@ -2212,6 +2212,9 @@ class TeteSalleBornee extends StatefulWidget {
   /// La cle du fondu pose au bas de la tete quand elle defile.
   static const Key cleFondu = ValueKey<String>('tete-salle-fondu');
 
+  /// La cle du fondu pose en haut de la tete quand elle a defile.
+  static const Key cleFonduHaut = ValueKey<String>('tete-salle-fondu-haut');
+
   /// L'en-tete, le bandeau, l'appel.
   final List<Widget> children;
 
@@ -2223,7 +2226,14 @@ class _TeteSalleBorneeState extends State<TeteSalleBornee> {
   /// La tete a encore du contenu sous son bord bas.
   bool _suite = false;
 
-  /// Le defilement garde sa position quand le fondu se pose ou se retire.
+  /// La tete a deja defile : du contenu est au-dessus de son bord haut.
+  bool _avant = false;
+
+  /// TB-11b (tour 3) : le rang de l'enfant qui porte l'etat critique, pose
+  /// en premier parce qu'il ne tenait pas a sa place ; `null` sinon.
+  int? _enTete;
+
+  /// Le defilement garde sa position quand un fondu se pose ou se retire.
   final GlobalKey _cleDefile = GlobalKey(debugLabel: 'tete-salle');
 
   bool _mesurer(ScrollMetricsNotification n) {
@@ -2238,15 +2248,39 @@ class _TeteSalleBorneeState extends State<TeteSalleBornee> {
 
   void _suivre(ScrollMetrics m) {
     final bool suite = m.extentAfter > 0.5;
-    if (suite != _suite) setState(() => _suite = suite);
+    final bool avant = m.extentBefore > 0.5;
+    if (suite != _suite || avant != _avant) {
+      setState(() {
+        _suite = suite;
+        _avant = avant;
+      });
+    }
   }
 
-  /// TB-11b (tour 2) : l'etat critique ([cible], le bandeau de secours) se
-  /// voit toujours en entier, hors du fondu : « une alerte urgente va
-  /// toujours en tete ». S'il deborde de la tete (texte a 200 %, ecran
-  /// etroit), la tete defile jusqu'a lui, son bord haut au bord haut de la
-  /// tete ; s'il se voit deja en entier, rien ne bouge. Le titre se relit en
-  /// faisant defiler la tete.
+  /// Le rang, dans [TeteSalleBornee.children], de l'enfant qui contient
+  /// [cible], ou `null`.
+  int? _rang(BuildContext cible) {
+    int? rang;
+    cible.visitAncestorElements((Element e) {
+      final Key? cle = e.widget.key;
+      if (cle is _RangTete) {
+        rang = cle.value;
+        return false;
+      }
+      return !identical(e.widget, widget);
+    });
+    return rang;
+  }
+
+  /// TB-11b (tours 2 et 3) : l'etat critique ([cible], le bandeau de
+  /// secours) se voit toujours en entier, hors du fondu : « une alerte
+  /// urgente va toujours en tete, avant tout autre bloc ». S'il ne tient pas
+  /// a sa place (texte a 200 %, ecran etroit), il passe en premier dans la
+  /// tete et la tete revient a son debut : aucune ligne n'est laissee
+  /// coupee a son bord haut (revue du tour 2 : un defilement arrete au
+  /// milieu d'une ligne la rognait). L'en-tete suit, sous lui, et se relit
+  /// en faisant defiler la tete (fondus bas et haut). S'il se voit deja en
+  /// entier, rien ne bouge.
   void montrer(BuildContext cible) {
     final RenderObject? objet = cible.findRenderObject();
     final ScrollableState? defile = Scrollable.maybeOf(cible);
@@ -2261,17 +2295,50 @@ class _TeteSalleBorneeState extends State<TeteSalleBornee> {
         haut.dy >= -0.5 &&
         haut.dy + objet.size.height <= cadre.size.height - fondu + 0.5;
     if (entier) return;
-    unawaited(
-      position.ensureVisible(
-        objet,
-        duration: AppMouvement.duree(context, AppMouvement.apparition),
-        curve: AppMouvement.entree,
-      ),
-    );
+    final int? rang = _rang(cible);
+    if (rang != null && rang != _enTete) setState(() => _enTete = rang);
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (!mounted || !position.hasPixels) return;
+      position.jumpTo(position.minScrollExtent);
+    });
   }
+
+  /// L'etat critique est parti : la tete reprend son ordre.
+  void relacher() {
+    if (_enTete != null) setState(() => _enTete = null);
+  }
+
+  /// Un fondu de [AppSpacing.xxxl] au bord bas ([versLeBas]) ou haut.
+  Widget _fondre(
+    Key cle,
+    Color fond, {
+    required bool versLeBas,
+    required Widget child,
+  }) => ShaderMask(
+    key: cle,
+    blendMode: BlendMode.dstIn,
+    shaderCallback: (Rect r) => LinearGradient(
+      begin: versLeBas ? Alignment.topCenter : Alignment.bottomCenter,
+      end: versLeBas ? Alignment.bottomCenter : Alignment.topCenter,
+      stops: <double>[
+        if (r.height <= 0) 0 else math.max(0, 1 - AppSpacing.xxxl / r.height),
+        1,
+      ],
+      colors: <Color>[fond, fond.withValues(alpha: 0)],
+    ).createShader(r),
+    child: child,
+  );
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> enfants = <Widget>[
+      for (int i = 0; i < widget.children.length; i++)
+        KeyedSubtree(key: _RangTete(i), child: widget.children[i]),
+    ];
+    final int? enTete = _enTete;
+    if (enTete != null && enTete > 0 && enTete < enfants.length) {
+      enfants.insert(0, enfants.removeAt(enTete));
+    }
     final Widget defile = KeyedSubtree(
       key: _cleDefile,
       child: SingleChildScrollView(
@@ -2279,15 +2346,33 @@ class _TeteSalleBorneeState extends State<TeteSalleBornee> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
-          children: widget.children,
+          children: enfants,
         ),
       ),
     );
     // Revue du 09/10 : quand la tete ne tient pas (texte a 200 %, ecran
     // etroit, place laissee a la phrase du §12), son bas s'efface en fondu :
     // une ligne coupee se lit comme une suite a faire defiler, jamais comme
-    // un texte rogne.
+    // un texte rogne. TB-11b (tour 3) : de meme a son bord haut, des qu'elle
+    // a defile.
     final Color fond = AppPalette.of(context).surfaceCanvas.background;
+    Widget contenu = defile;
+    if (_suite) {
+      contenu = _fondre(
+        TeteSalleBornee.cleFondu,
+        fond,
+        versLeBas: true,
+        child: contenu,
+      );
+    }
+    if (_avant) {
+      contenu = _fondre(
+        TeteSalleBornee.cleFonduHaut,
+        fond,
+        versLeBas: false,
+        child: contenu,
+      );
+    }
     return ConstrainedBox(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.sizeOf(context).height * TeteSalleBornee.part,
@@ -2296,29 +2381,16 @@ class _TeteSalleBorneeState extends State<TeteSalleBornee> {
         onNotification: _defiler,
         child: NotificationListener<ScrollMetricsNotification>(
           onNotification: _mesurer,
-          child: !_suite
-              ? defile
-              : ShaderMask(
-                  key: TeteSalleBornee.cleFondu,
-                  blendMode: BlendMode.dstIn,
-                  shaderCallback: (Rect r) => LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    stops: <double>[
-                      if (r.height <= 0)
-                        0
-                      else
-                        math.max(0, 1 - AppSpacing.xxxl / r.height),
-                      1,
-                    ],
-                    colors: <Color>[fond, fond.withValues(alpha: 0)],
-                  ).createShader(r),
-                  child: defile,
-                ),
+          child: contenu,
         ),
       ),
     );
   }
+}
+
+/// Le rang d'un enfant de la tete : il garde son etat quand l'ordre change.
+class _RangTete extends ValueKey<int> {
+  const _RangTete(super.value);
 }
 
 class BandeauSecours extends StatefulWidget {
@@ -2363,6 +2435,15 @@ class _BandeauSecoursState extends State<BandeauSecours> {
     super.didUpdateWidget(ancien);
     final String? etat = _etat(vue);
     if (etat != null && etat != _etat(ancien.vue)) _montrer();
+    if (etat == null && _etat(ancien.vue) != null) _relacher();
+  }
+
+  /// TB-11b (tour 3) : l'etat parti, la tete reprend son ordre.
+  void _relacher() {
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (!mounted || _etat(vue) != null) return;
+      context.findAncestorStateOfType<_TeteSalleBorneeState>()?.relacher();
+    });
   }
 
   /// TB-11b (tour 2) : dans la tete bornee du telephone, un etat qui

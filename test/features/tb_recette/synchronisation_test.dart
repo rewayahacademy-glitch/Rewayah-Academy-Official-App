@@ -27,6 +27,7 @@ import 'package:rewayah_academy/core/tc_outils/port_dock_hote.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
+import 'package:rewayah_academy/features/salle_seance/chrome_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
 import 'package:rewayah_academy/features/salle_seance/ecriture_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/notes_deposees.dart';
@@ -131,6 +132,10 @@ void _bandeauVu(WidgetTester tester, Size taille, List<String> textes) {
       lessThanOrEqualTo(cadre.bottom - fondu + 0.5),
       reason: 'le bandeau sous le bord ou sous le fondu de la tete',
     );
+    // Tour 3 : l'etat montre, la tete n'a pas defile (aucun fondu haut) et
+    // aucune ligne n'est coupee a son bord haut.
+    expect(find.byKey(TeteSalleBornee.cleFonduHaut), findsNothing);
+    _teteSansLigneRognee(tester);
   }
   for (final String texte in textes) {
     final Finder ligne = find.descendant(
@@ -151,6 +156,42 @@ void _bandeauVu(WidgetTester tester, Size taille, List<String> textes) {
     );
   }
 }
+
+/// TB-11b (tour 3) : sur le rendu, chaque ligne de texte de la tete bornee
+/// est entiere ou, si elle passe un bord de la tete, ce bord porte son
+/// fondu (« une ligne coupee se lit comme une suite a faire defiler, jamais
+/// comme un texte rogne »). Mesure : les rectangles des paragraphes montes
+/// et la presence des deux fondus.
+void _teteSansLigneRognee(WidgetTester tester) {
+  final Finder tete = find.byKey(TeteSalleBornee.defilementKey);
+  if (tete.evaluate().isEmpty) return;
+  final Rect cadre = tester.getRect(tete);
+  final bool fonduHaut = find
+      .byKey(TeteSalleBornee.cleFonduHaut)
+      .evaluate()
+      .isNotEmpty;
+  final bool fonduBas = find
+      .byKey(TeteSalleBornee.cleFondu)
+      .evaluate()
+      .isNotEmpty;
+  for (final Element e
+      in find
+          .descendant(of: tete, matching: find.byType(RichText))
+          .evaluate()) {
+    final Rect r = tester.getRect(find.byWidget(e.widget));
+    final String texte = (e.widget as RichText).text.toPlainText();
+    if (r.top < cadre.top - 0.5 && r.bottom > cadre.top + 0.5) {
+      expect(fonduHaut, isTrue, reason: '« $texte » coupe au bord haut');
+    }
+    if (r.top < cadre.bottom - 0.5 && r.bottom > cadre.bottom + 0.5) {
+      expect(fonduBas, isTrue, reason: '« $texte » coupe au bord bas');
+    }
+  }
+}
+
+/// Combien de textes montes valent exactement [texte].
+int _fois(WidgetTester tester, String texte) =>
+    _textes(tester).where((String x) => x == texte).length;
 
 /// Tous les textes montes de l'ecran.
 List<String> _textes(WidgetTester tester) => <String>[
@@ -448,6 +489,11 @@ void main() {
         texte: texte,
       );
       expect(_texteBandeau(tester), contains(t.salle.seance.synchro.reprise));
+      // Tour 3 (revue du tour 2) : ce bandeau aussi est mesure.
+      _bandeauVu(tester, taille, <String>[
+        t.salle.seance.synchro.reprise,
+        t.salle.seance.synchro.ecritureSuspendue,
+      ]);
       await _taper(tester, _entreeCommandes);
       await _taper(
         tester,
@@ -510,6 +556,12 @@ void main() {
         );
         await _taper(tester, _entreeCommandes);
         expect(_ecrire, findsNothing, reason: '${s.name} : tuile');
+        // Tour 3 : la phrase n'est pas dite deux fois a l'ecran.
+        expect(
+          _fois(tester, t.salle.seance.synchro.ecritureSuspendue),
+          1,
+          reason: s.name,
+        );
         final Finder suspendue = find.descendant(
           of: find.byKey(CommandesPedagogiques.cleEcritureEleve),
           matching: find.byKey(CommandesPedagogiques.cleEcritureSuspendue),
@@ -579,6 +631,92 @@ void main() {
       }
     });
   }
+
+  // TB-11b (tour 3, revue du tour 2) : a 320 x2, l'etat critique qui ne
+  // tenait pas a sa place passe en tete, la tete a son debut : aucune
+  // ligne coupee au bord haut ; l'en-tete suit et se relit en faisant
+  // defiler la tete, fondu haut pose des qu'elle a defile.
+  testWidgets('320 x2 : l\'etat en tete, rien de coupe au bord haut, '
+      'l\'en-tete joignable sous un fondu', (WidgetTester tester) async {
+    for (final (RoleSeance role, SituationTb s) in <(RoleSeance, SituationTb)>[
+      (RoleSeance.enseignant, SituationTb.err01),
+      (RoleSeance.enseignant, SituationTb.err02),
+      (RoleSeance.enseignant, SituationTb.err03),
+      (RoleSeance.eleve, SituationTb.err01),
+      (RoleSeance.eleve, SituationTb.err02),
+    ]) {
+      final String cas = '${role.name} ${s.name}';
+      await _monter(
+        tester,
+        role: role,
+        situation: s,
+        taille: _etroit,
+        texte: 2,
+      );
+      final Finder tete = find.byKey(TeteSalleBornee.defilementKey);
+      final Rect cadre = tester.getRect(tete);
+      final Rect bandeau = tester.getRect(_bandeau);
+      final Rect chrome = tester.getRect(find.byType(ChromeSeance));
+      // L'etat, premier bloc de la tete, a son bord haut ; l'en-tete dessous.
+      expect(bandeau.top, closeTo(cadre.top, 0.5), reason: cas);
+      expect(chrome.top, greaterThanOrEqualTo(bandeau.bottom - 0.5));
+      expect(find.byKey(TeteSalleBornee.cleFonduHaut), findsNothing);
+      _teteSansLigneRognee(tester);
+      // La tete defile : le fondu haut se pose, l'en-tete se rejoint.
+      await tester.drag(tete, const Offset(0, -120));
+      await tester.pumpAndSettle();
+      expect(find.byKey(TeteSalleBornee.cleFonduHaut), findsOneWidget);
+      _teteSansLigneRognee(tester);
+      await tester.ensureVisible(find.byType(ChromeSeance));
+      await tester.pumpAndSettle();
+      expect(
+        tester.getRect(find.byType(ChromeSeance)).top,
+        greaterThanOrEqualTo(cadre.top - 0.5),
+        reason: cas,
+      );
+      expect(tester.takeException(), isNull, reason: cas);
+      await tester.pumpWidget(const SizedBox());
+    }
+  });
+
+  testWidgets('390 x1 : la tete tient, l\'en-tete reste au-dessus de l\'etat', (
+    WidgetTester tester,
+  ) async {
+    await _monter(
+      tester,
+      role: RoleSeance.enseignant,
+      situation: SituationTb.err01,
+    );
+    expect(
+      tester.getRect(find.byType(ChromeSeance)).bottom,
+      lessThanOrEqualTo(tester.getRect(_bandeau).top + 0.5),
+    );
+    expect(find.byKey(TeteSalleBornee.cleFonduHaut), findsNothing);
+  });
+
+  testWidgets('1440 : Commandes ouvertes, la phrase de la suspension est '
+      'dite une fois', (WidgetTester tester) async {
+    for (final (RoleSeance role, SituationTb s) in <(RoleSeance, SituationTb)>[
+      (RoleSeance.eleve, SituationTb.err01),
+      (RoleSeance.eleve, SituationTb.err02),
+    ]) {
+      await _monter(tester, role: role, situation: s, taille: _bureau);
+      expect(_fois(tester, t.salle.seance.synchro.ecritureSuspendue), 1);
+      await _taper(tester, _entreeCommandes);
+      expect(_texteBandeau(tester), isNotEmpty);
+      expect(
+        find.byKey(CommandesPedagogiques.cleEcritureSuspendue),
+        findsOneWidget,
+        reason: '${role.name} ${s.name}',
+      );
+      expect(
+        _fois(tester, t.salle.seance.synchro.ecritureSuspendue),
+        1,
+        reason: '${role.name} ${s.name}',
+      );
+      await tester.pumpWidget(const SizedBox());
+    }
+  });
 
   testWidgets('temoin : tableau partage, « Ecrire » se propose a l\'eleve '
       'autorise, sans phrase de suspension', (WidgetTester tester) async {
@@ -852,9 +990,38 @@ void main() {
     // traduit avant LG-1 (K-41) : « تم الحفظ » existant traduit
     // « Enregistre » d'une file locale (tc.parcours.postCours), hors
     // tableau.
+    // Tour 3 (revue du tour 2) : toutes les formes, avec ou sans accent, en
+    // capitale ou non, ponctuees ou non (« notes sauvegardees dans ... ») ;
+    // seules la negation (« pas », « non ») et l'etiquette d'echec ou
+    // d'absence (« Sauvegarde en echec », « Sauvegarde absente ») passent.
     final RegExp succes = RegExp(
-      r'Sauvegardée?s?(?![\wÀ-ÿ])|(?<!pas )sauvegardée?s?\s*[.!]',
+      r'(?<![\wÀ-ÿ])(?<!pas )(?<!non )(?<!non-)sauvegard[eé][eé]?s?'
+      r'(?![\wÀ-ÿ])(?!\s+(?:en\s+[ée]chec|absente))',
+      caseSensitive: false,
     );
+
+    test('la garde reconnait chaque forme de succes, pas la negation', () {
+      for (final String vu in <String>[
+        'Sauvegardé',
+        'Sauvegarde',
+        'sauvegarde',
+        'Notes sauvegardées.',
+        'notes sauvegardees dans la bibliotheque',
+        'SAUVEGARDÉES',
+        'Tout est sauvegardé !',
+      ]) {
+        expect(succes.hasMatch(vu), isTrue, reason: vu);
+      }
+      for (final String passe in <String>[
+        'Les notes de cette séance ne sont pas sauvegardées.',
+        'ERR-03 Sauvegarde en échec',
+        'Sauvegarde absente',
+        'notes non sauvegardees',
+        'Sauvegarder',
+      ]) {
+        expect(succes.hasMatch(passe), isFalse, reason: passe);
+      }
+    });
 
     test('dans les cles (fr, ar)', () {
       for (final String chemin in <String>[
@@ -870,13 +1037,21 @@ void main() {
     });
 
     test('dans le code (lib)', () {
+      // Les chaines du code (les commentaires parlent de « la sauvegarde »
+      // absente : ce ne sont pas des textes montres).
+      final RegExp chaine = RegExp(
+        r"'(?:[^'\\]|\\.)*'|"
+        r'"(?:[^"\\]|\\.)*"',
+      );
       final List<String> trouves = <String>[
         for (final FileSystemEntity f in Directory(
           'lib',
         ).listSync(recursive: true))
           if (f is File && f.path.endsWith('.dart'))
             for (final String ligne in f.readAsLinesSync())
-              if (succes.hasMatch(ligne)) '${f.path}: ${ligne.trim()}',
+              if (!ligne.trimLeft().startsWith('//'))
+                for (final RegExpMatch m in chaine.allMatches(ligne))
+                  if (succes.hasMatch(m[0]!)) '${f.path}: ${ligne.trim()}',
       ];
       expect(trouves, isEmpty);
     });
