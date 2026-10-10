@@ -1,3 +1,6 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 // MA-8 : la demande de presentation standard d'un eleve mineur a son tuteur
 // (decision du directeur du 27/09, S7 = b). Le tuteur recoit et accepte la
 // demande cote serveur (BR-1, ligne MA-BR) ; sa page d'acceptation est MA-9.
