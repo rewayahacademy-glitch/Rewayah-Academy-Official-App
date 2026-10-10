@@ -949,9 +949,14 @@ begin
   end if;
   for v_condition in
     select m[1]
-    from regexp_matches(p_definition, '(if|elsif)[[:space:]]+not[^;]*then', 'gi') as m
+    from regexp_matches(
+      p_definition,
+      '((?:if|elsif)[[:space:]]+[^;]*?then)',
+      'gi'
+    ) as m
   loop
     if v_condition ~* 'app_role[[:space:]]*[(]'
+       and v_condition ~* 'not'
        and v_condition !~* '^[[:space:]]*(if|elsif)[[:space:]]+not[[:space:]]+coalesce[[:space:]]*[(][[:space:]]*(public[.])?app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]*=[[:space:]]*''[^'']+''[[:space:]]+and[[:space:]]+(public[.])?app_account_valid[[:space:]]*[(][[:space:]]*[)][[:space:]]*,[[:space:]]*false[[:space:]]*[)][[:space:]]+then[[:space:]]*$' then
       return true;
     end if;
@@ -982,6 +987,16 @@ begin
     'IF NOT coalesce(app_role() = ''admin'' AND app_account_valid(), false) AND app_role() = ''admin'' THEN RAISE; END IF;'
   ) then
     raise exception 'SEC-PROD M2 scanner missed role logic outside the null-safe guard';
+  end if;
+  if not app_private.sec_prod_has_unsafe_role_guard(
+    'IF (NOT app_role() = ''admin'') THEN RAISE; END IF;'
+  ) then
+    raise exception 'SEC-PROD M2 scanner missed parenthesized unary NOT';
+  end if;
+  if not app_private.sec_prod_has_unsafe_role_guard(
+    'IF app_account_valid() AND NOT (app_role() = ''admin'') THEN RAISE; END IF;'
+  ) then
+    raise exception 'SEC-PROD M2 scanner missed NOT after a boolean operator';
   end if;
 end
 $sec_prod_scanner_tests$;
