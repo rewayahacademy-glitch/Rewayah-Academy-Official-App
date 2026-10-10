@@ -2170,7 +2170,11 @@
         "positionSemantique": "Page {page} sur {total} de la liste des classes",
         "precedente": "Page précédente des classes",
         "suivante": "Page suivante des classes",
-        "resume": "Classes {debut} à {fin} sur {total}"
+        "resume": "Classes {debut} à {fin} sur {total}",
+        "filtreRemplissage": "Remplissage",
+        "filtreTousRemplissages": "Tous les remplissages",
+        "remplissagePleines": "Classes pleines",
+        "remplissagePlaces": "Classes avec des places"
       },
       "etatActif": "Active",
       "etatCloture": "Clôturée",
@@ -2365,7 +2369,40 @@
       "dejaAffecte": "Un autre membre de la direction a déjà confirmé l'enseignant de cette classe : votre choix ne remplace pas le sien.",
       "famillesPrevenues": "Les familles ont été prévenues.",
       "famillesClasseValidee": "Les familles ont été prévenues que leur classe est validée.",
-      "termineDetail": "Classe {libelle} : {enseignant} en est l'enseignant."
+      "termineDetail": "Classe {libelle} : {enseignant} en est l'enseignant.",
+      "decoupagePleines": {
+        "one": "{n} classe de {taille}",
+        "other": "{n} classes de {taille}"
+      },
+      "decoupageAucuneClasse": "aucune classe",
+      "decoupageDerniere": "une dernière classe de {n}",
+      "decoupageAttente": {
+        "one": "{n} élève en attente",
+        "other": "{n} élèves en attente"
+      },
+      "decoupage": "Découpage prévu : {detail}.",
+      "contexteReparti": "Les élèves de ces demandes seront répartis selon le découpage ci-dessous. Vous confirmerez ensuite l'enseignant proposé.",
+      "classesExistantes": {
+        "one": "{n} classe est déjà ouverte sur ce créneau : la nouvelle s'ajoute, aucune n'est modifiée.",
+        "other": "{n} classes sont déjà ouvertes sur ce créneau : la nouvelle s'ajoute, aucune n'est modifiée."
+      },
+      "liste": {
+        "rechercheLibelle": "Rechercher une demande",
+        "rechercheAide": "Langue, fuseau ou nom de la classe créée",
+        "filtreToutes": "Toutes",
+        "filtreAFinir": "Enseignant à confirmer",
+        "filtrePrets": "Prêtes",
+        "filtreIncompletes": "Incomplètes",
+        "filtrePublic": "Public",
+        "filtreTousPublics": "Tous les publics",
+        "aucunAvecCeFiltre": "Aucune demande avec ce filtre",
+        "aucunAvecCeFiltreDetail": "Changez de filtre pour voir les autres demandes réunies.",
+        "position": "Page {page} sur {total}",
+        "positionSemantique": "Page {page} sur {total} de la liste des demandes réunies",
+        "precedente": "Page précédente des demandes réunies",
+        "suivante": "Page suivante des demandes réunies",
+        "resume": "Demandes réunies {debut} à {fin} sur {total}"
+      }
     },
     "diagnostics": {
       "titre": "Diagnostics",

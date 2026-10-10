@@ -40,6 +40,8 @@ import '../../core/dossier/service_dossier.dart';
 import '../../core/dossier/service_validation.dart';
 import '../../core/finance/finances_profil.dart';
 import '../../core/offres/offre_horaire.dart';
+import '../../core/offres/page_regroupements.dart'
+    show portRegroupementsPagesProvider;
 import '../../core/offres/port_regroupements_admin.dart';
 import '../../core/offres/service_offres.dart';
 import '../../core/planning/service_planning.dart';
@@ -315,6 +317,12 @@ List<Override> surchargesDemoAdmin({
   // CLASSE-FORM-1 : une classe creee en demonstration se voit dans la liste
   // et compte dans la charge de son enseignant.
   final ClassesCreeesDemo creees = ClassesCreeesDemo();
+  final RegroupementsDemo regroupementsPortDemo = RegroupementsDemo(
+    depart: <RegroupementDemandes>[
+      ...regroupementsDemo(),
+      ...regroupementsVolumeDemo(),
+    ],
+  );
   return <Override>[
     sourceSessionProvider.overrideWithValue(const SourceSessionDemoAdmin()),
     portRevueDossiersProvider.overrideWithValue(RevueDossiersDemo(e)),
@@ -356,7 +364,9 @@ List<Override> surchargesDemoAdmin({
     ),
     portCreationClasseProvider.overrideWithValue(CreationClasseDemo(creees)),
     // OFFRES-ADM-1 : les demandes semblables reunies, en memoire.
-    portRegroupementsAdminProvider.overrideWithValue(RegroupementsDemo()),
+    // ECHELLE-ADM-LISTES-1 : 10 000 demandes simulees, paginees par le port.
+    portRegroupementsAdminProvider.overrideWithValue(regroupementsPortDemo),
+    portRegroupementsPagesProvider.overrideWithValue(regroupementsPortDemo),
     // RECRUT-ECRANS : les invitations d'enseignants (admin et verification du
     // code par le candidat) et les statuts de signature des dossiers.
     ...surchargesInvitationsDemo(),

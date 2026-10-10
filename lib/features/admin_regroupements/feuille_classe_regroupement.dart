@@ -259,9 +259,29 @@ class _FeuilleClasseRegroupementEtat
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         TexteSansCoupure(
-          r.contexte(n: _r.nombreEleves),
+          _r.decoupage.classes > 1
+              ? r.contexteReparti
+              : r.contexte(n: _r.nombreEleves),
           style: textes.bodyMedium,
         ),
+        Ecart.vMd,
+        // R3 : le decoupage est dit avant la confirmation, jamais deduit
+        // apres coup.
+        TexteSansCoupure(
+          r.decoupage(detail: libelleDecoupage(_r.decoupage)),
+          key: const ValueKey<String>('regroupement-decoupage'),
+          style: textes.titleSmall,
+        ),
+        // R1, R16 : la classe s'ajoute aux classes deja ouvertes sur la
+        // meme cle, aucune n'est ecrasee.
+        if (_r.classesExistantes case final int n when n > 0) ...<Widget>[
+          Ecart.vSm,
+          TexteSansCoupure(
+            r.classesExistantes(n: n),
+            key: const ValueKey<String>('regroupement-classes-existantes'),
+            style: textes.bodyMedium,
+          ),
+        ],
         Ecart.vLg,
         ...espacer(lignesRegroupement(_r)),
         Ecart.vLg,

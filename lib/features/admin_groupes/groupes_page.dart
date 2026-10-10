@@ -262,6 +262,27 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
           onChoix: (GenreClasse? genre) =>
               _filtrer(_filtre.avec(genre: () => genre)),
         ),
+        MenuFiltre<RemplissageClasse>(
+          key: const ValueKey<String>('classes-filtre-remplissage'),
+          libelle: l.filtreRemplissage,
+          valeur: _filtre.remplissage,
+          entrees: <EntreeFiltre<RemplissageClasse>>[
+            EntreeFiltre<RemplissageClasse>(
+              valeur: null,
+              libelle: l.filtreTousRemplissages,
+            ),
+            EntreeFiltre<RemplissageClasse>(
+              valeur: RemplissageClasse.pleine,
+              libelle: l.remplissagePleines,
+            ),
+            EntreeFiltre<RemplissageClasse>(
+              valeur: RemplissageClasse.avecPlaces,
+              libelle: l.remplissagePlaces,
+            ),
+          ],
+          onChoix: (RemplissageClasse? remplissage) =>
+              _filtrer(_filtre.avec(remplissage: () => remplissage)),
+        ),
         MenuFiltre<String>(
           key: const ValueKey<String>('classes-filtre-enseignant'),
           libelle: l.filtreEnseignant,

@@ -4123,7 +4123,11 @@
         "positionSemantique": "الصفحة \u2068{page}\u2069 من \u2068{total}\u2069 من قائمة الفصول",
         "precedente": "الصفحة السابقة من الفصول",
         "suivante": "الصفحة التالية من الفصول",
-        "resume": "الفصول من \u2068{debut}\u2069 إلى \u2068{fin}\u2069 من أصل \u2068{total}\u2069"
+        "resume": "الفصول من \u2068{debut}\u2069 إلى \u2068{fin}\u2069 من أصل \u2068{total}\u2069",
+        "filtreRemplissage": "الامتلاء",
+        "filtreTousRemplissages": "كل مستويات الامتلاء",
+        "remplissagePleines": "الفصول الممتلئة",
+        "remplissagePlaces": "الفصول التي بها أماكن"
       }
     },
     "diagnostics": {
@@ -4699,7 +4703,52 @@
         "many": "\u2068{n}\u2069 فصلًا ممكنًا",
         "other": "\u2068{n}\u2069 فصل ممكن"
       },
-      "demandesVersClasses": "\u2068{demandes}\u2069 تتيح \u2068{classes}\u2069"
+      "demandesVersClasses": "\u2068{demandes}\u2069 تتيح \u2068{classes}\u2069",
+      "decoupagePleines": {
+        "zero": "لا فصل",
+        "one": "فصل واحد بسعة ⁨{taille}⁩",
+        "two": "فصلان بسعة ⁨{taille}⁩",
+        "few": "⁨{n}⁩ فصول بسعة ⁨{taille}⁩",
+        "many": "⁨{n}⁩ فصلًا بسعة ⁨{taille}⁩",
+        "other": "⁨{n}⁩ فصل بسعة ⁨{taille}⁩"
+      },
+      "decoupageAucuneClasse": "لا فصل",
+      "decoupageDerniere": "وفصل أخير يضم ⁨{n}⁩",
+      "decoupageAttente": {
+        "zero": "لا أحد في الانتظار",
+        "one": "طالب واحد في الانتظار",
+        "two": "طالبان في الانتظار",
+        "few": "⁨{n}⁩ طلاب في الانتظار",
+        "many": "⁨{n}⁩ طالبًا في الانتظار",
+        "other": "⁨{n}⁩ طالب في الانتظار"
+      },
+      "decoupage": "التقسيم المتوقع: ⁨{detail}⁩.",
+      "contexteReparti": "سيُوزَّع طلاب هذه الطلبات بحسب التقسيم المبيّن أدناه. ثم تؤكدون المعلم المقترح.",
+      "classesExistantes": {
+        "zero": "لا فصل مفتوح بعدُ في هذا الموعد.",
+        "one": "يوجد فصل واحد مفتوح في هذا الموعد: ينضم إليه الفصل الجديد دون تعديل أي فصل.",
+        "two": "يوجد فصلان مفتوحان في هذا الموعد: ينضم إليهما الفصل الجديد دون تعديل أي فصل.",
+        "few": "يوجد ⁨{n}⁩ فصول مفتوحة في هذا الموعد: ينضم إليها الفصل الجديد دون تعديل أي فصل.",
+        "many": "يوجد ⁨{n}⁩ فصلًا مفتوحًا في هذا الموعد: ينضم إليها الفصل الجديد دون تعديل أي فصل.",
+        "other": "يوجد ⁨{n}⁩ فصل مفتوح في هذا الموعد: ينضم إليها الفصل الجديد دون تعديل أي فصل."
+      },
+      "liste": {
+        "rechercheLibelle": "البحث عن طلب",
+        "rechercheAide": "اللغة أو المنطقة الزمنية أو اسم الفصل المنشأ",
+        "filtreToutes": "الكل",
+        "filtreAFinir": "معلم بانتظار التأكيد",
+        "filtrePrets": "الجاهزة",
+        "filtreIncompletes": "غير المكتملة",
+        "filtrePublic": "الفئة",
+        "filtreTousPublics": "كل الفئات",
+        "aucunAvecCeFiltre": "لا طلبات بهذا المعيار",
+        "aucunAvecCeFiltreDetail": "غيّروا المعيار لرؤية بقية الطلبات المجمّعة.",
+        "position": "الصفحة ⁨{page}⁩ من ⁨{total}⁩",
+        "positionSemantique": "الصفحة ⁨{page}⁩ من ⁨{total}⁩ من قائمة الطلبات المجمّعة",
+        "precedente": "الصفحة السابقة من الطلبات المجمّعة",
+        "suivante": "الصفحة التالية من الطلبات المجمّعة",
+        "resume": "الطلبات المجمّعة من ⁨{debut}⁩ إلى ⁨{fin}⁩ من أصل ⁨{total}⁩"
+      }
     }
   },
   "comptable": {
