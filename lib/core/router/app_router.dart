@@ -27,6 +27,7 @@ import '../../features/admin_pedagogie_evaluations/evaluations_page.dart';
 import '../../features/admin_pedagogie_programmes/programmes_page.dart';
 import '../../features/admin_pedagogie_progression/progression_page.dart';
 import '../../features/admin_pedagogie_qualite/qualite_page.dart';
+import '../../features/admin_regroupements/regroupements_page.dart';
 import '../../features/admin_tableau/tableau_de_bord_page.dart';
 import '../../features/admin_traitement/traitement_page.dart';
 import '../../features/agent_entree/agent_entree_page.dart';
@@ -131,6 +132,7 @@ import '../../features/remplacements/remplacements_page.dart';
 import '../../features/revenus_enseignant/revenus_enseignant_page.dart';
 import '../../features/revue_groupe/revue_groupe_page.dart';
 import '../../features/salle/salle_page.dart';
+import '../../features/suivi_demandes/suivi_demandes_page.dart';
 import '../../features/suivi_eleve/suivi_eleve_page.dart';
 import '../../features/suivi_foyer/detail_observations_page.dart';
 import '../../features/suivi_foyer/detail_seance_page.dart';
@@ -559,6 +561,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     path: 'notifications',
                     pageBuilder: glissee(
                       (GoRouterState _) => const NotificationsPage(),
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'demandes',
+                    pageBuilder: glissee(
+                      (GoRouterState _) => const SuiviDemandesPage(),
                     ),
                   ),
                   GoRoute(
@@ -1349,6 +1357,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: '${Routes.adminStudioCanaux}/:canalId',
         builder: (BuildContext _, GoRouterState etat) => _ActionsStudio(
           child: StudioPage(canalId: _parametre(etat, 'canalId')),
+        ),
+      ),
+      // OFFRES-ADM-1 : atteinte depuis l'Accueil (raccourci « Classes a
+      // ouvrir »), comme les Demandes.
+      GoRoute(
+        path: Routes.adminOperationsRegroupements,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: RegroupementsPage(),
         ),
       ),
       GoRoute(

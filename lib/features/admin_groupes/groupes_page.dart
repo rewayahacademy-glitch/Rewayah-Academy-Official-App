@@ -15,11 +15,8 @@ import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
-import '../../core/reseau/service_reseau.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
-import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
-import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
@@ -42,7 +39,9 @@ import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 import '../creneaux/plages.dart' show jourCapitalise, nommerHeure;
+import 'bas_de_feuille.dart';
 import 'feuille_observation_groupe.dart';
+import 'genre_classe_libelles.dart';
 
 /// Operations > Groupes : le noyau du produit depuis le pivot du 19
 /// septembre 2026.
@@ -724,149 +723,6 @@ const List<int> _seuilsProposes = <int>[1, 2, 3, 4, 5, 6];
 const int _heureDebut = 6;
 const int _heureFin = 21;
 
-/// Le genre de la classe dit selon le public (accord par contexte).
-String _libelleGenre(GenreClasse genre, TypePublicGroupe type) {
-  final f = t.admin.groupes.formulaire;
-  final bool enfants = type == TypePublicGroupe.enfant;
-  return switch (genre) {
-    GenreClasse.hommes => enfants ? f.genreGarcons : f.genreHommes,
-    GenreClasse.femmes => enfants ? f.genreFilles : f.genreFemmes,
-    GenreClasse.indetermine => f.genreIndetermine,
-  };
-}
-
-/// Quand choisir ce genre, et ce qu'il change (K-58).
-///
-/// La consequence annoncee est celle qui se produit : quand la source ne dit
-/// le genre d'aucun enseignant ([genreConnu] faux, repli sur les comptes),
-/// la liste n'ecarte personne, et la phrase le dit au lieu de promettre un
-/// filtre qui n'a pas lieu (D1 : ne rien pretendre).
-String _detailGenre(
-  GenreClasse genre,
-  TypePublicGroupe type, {
-  required bool genreConnu,
-}) {
-  final f = t.admin.groupes.formulaire;
-  final bool enfants = type == TypePublicGroupe.enfant;
-  return switch ((genre, genreConnu)) {
-    (GenreClasse.hommes, true) =>
-      enfants ? f.genreGarconsDetail : f.genreHommesDetail,
-    (GenreClasse.hommes, false) =>
-      enfants ? f.genreGarconsDetailSansSource : f.genreHommesDetailSansSource,
-    (GenreClasse.femmes, true) =>
-      enfants ? f.genreFillesDetail : f.genreFemmesDetail,
-    (GenreClasse.femmes, false) =>
-      enfants ? f.genreFillesDetailSansSource : f.genreFemmesDetailSansSource,
-    (GenreClasse.indetermine, _) => f.genreIndetermineDetail,
-  };
-}
-
-/// Pourquoi un enseignant ne peut pas prendre une classe de ce genre (D4).
-String _raisonGenre(GenreClasse genre, TypePublicGroupe type) {
-  final f = t.admin.groupes.formulaire;
-  final bool enfants = type == TypePublicGroupe.enfant;
-  return switch (genre) {
-    GenreClasse.hommes => enfants ? f.raisonGarcons : f.raisonHommes,
-    GenreClasse.femmes => enfants ? f.raisonFilles : f.raisonFemmes,
-    // Un genre non determine accepte tout le monde (D2) : aucune raison
-    // d'indisponibilite n'existe, et aucune phrase hors sujet ne s'affiche.
-    GenreClasse.indetermine => throw StateError(
-      'Aucun enseignant n est incompatible avec une classe sans genre (D2).',
-    ),
-  };
-}
-
-/// Le message qui dit pourquoi l'enseignant choisi ne peut pas prendre la
-/// classe, et quoi faire : une phrase complete par cause, avec son nom (pas
-/// d'accord a deviner, K-41).
-String _manqueEnseignant(
-  EnseignantClasse choisi,
-  GenreClasse genre,
-  TypePublicGroupe type,
-) {
-  final f = t.admin.groupes.formulaire;
-  final String nom = choisi.enseignant.libelle;
-  final bool enfants = type == TypePublicGroupe.enfant;
-  if (choisi.genreCompatible == false) {
-    return switch (genre) {
-      GenreClasse.hommes =>
-        enfants
-            ? f.manqueEnseignantGarcons(nom: nom)
-            : f.manqueEnseignantHommes(nom: nom),
-      GenreClasse.femmes =>
-        enfants
-            ? f.manqueEnseignantFilles(nom: nom)
-            : f.manqueEnseignantFemmes(nom: nom),
-      GenreClasse.indetermine => throw StateError(
-        'Aucun enseignant n est incompatible avec une classe sans genre (D2).',
-      ),
-    };
-  }
-  return f.manqueEnseignantPris(nom: nom);
-}
-
-/// « 2 classes en cours », « aucune classe en cours ».
-String _charge(int classes) => classes == 0
-    ? t.admin.groupes.formulaire.aucuneClasse
-    : t.admin.groupes.formulaire.classesEnCours(n: classes);
-
-/// Le message d'un echec ou d'un champ manquant, a l'encre d'alerte, lu des
-/// qu'il parait.
-class _MessageAlerte extends StatelessWidget {
-  const _MessageAlerte(this.message);
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) => Semantics(
-    liveRegion: true,
-    child: TexteSansCoupure(
-      message,
-      style: AppPalette.of(context).inkAlert
-          .applyTo(Theme.of(context).textTheme.bodyMedium ?? const TextStyle()),
-    ),
-  );
-}
-
-/// Le seul bouton plein d'une feuille, en bas, au bord de fin ; pleine
-/// largeur sur telephone et tablette seulement (contrat B). Hors ligne, il
-/// n'est pas rendu : une phrase dit pourquoi (pieges deja payes).
-class _BasDeFeuille extends ConsumerWidget {
-  const _BasDeFeuille({
-    required this.libelle,
-    required this.enCours,
-    required this.onPress,
-    required this.horsLigne,
-  });
-
-  final String libelle;
-  final bool enCours;
-  final VoidCallback onPress;
-  final String horsLigne;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    if (ref.watch(horsLigneProvider).value ?? false) {
-      return TexteSansCoupure(
-        horsLigne,
-        style: AppPalette.of(context).inkWarning.applyTo(
-          Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
-        ),
-      );
-    }
-    final bool bureau = AppGabarit.de(context) == Gabarit.desktop;
-    return Align(
-      alignment: AlignmentDirectional.centerEnd,
-      child: ActionPrincipale(
-        libelle: libelle,
-        enCours: enCours,
-        pleineLargeur: !bureau,
-        onPress: onPress,
-      ),
-    );
-  }
-}
-
 /// Le formulaire de creation d'une classe (CLASSE-FORM-1).
 ///
 /// Semi-automatique (K-57) : le public et le genre se choisissent, la liste
@@ -911,7 +767,7 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
     final GenreClasse? genre = _genre;
     final String base = genre == null || genre == GenreClasse.indetermine
         ? _nomType(_type)
-        : _libelleGenre(genre, _type);
+        : libelleGenreClasse(genre, _type);
     final int? jour = _jour;
     final int? heure = _heure;
     if (jour == null || heure == null) return base;
@@ -953,35 +809,6 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
         : (fuseau: propre, phrase: f.fuseauEnseignant(fuseau: propre));
   }
 
-  /// La raison pour laquelle cet enseignant ne se choisit pas, ou nul.
-  String? _raison(EnseignantClasse l) {
-    final GenreClasse? genre = _genre;
-    if (l.genreCompatible == false && genre != null) {
-      return _raisonGenre(genre, _type);
-    }
-    if (l.pris) return t.admin.groupes.formulaire.raisonPris;
-    return null;
-  }
-
-  /// La mention sous le nom : « le plus adapte » et sa raison (D5), ou
-  /// « pas libre a ce creneau » pour un enseignant qui reste choisissable.
-  String? _mention(EnseignantClasse l, {required bool avecCreneau}) {
-    final f = t.admin.groupes.formulaire;
-    final String charge = _charge(l.enseignant.classesActives);
-    if (l.plusAdapte) {
-      return avecCreneau
-          ? f.plusAdapteCreneau(charge: charge)
-          : f.plusAdapteSansCreneau(
-              libres: f.creneauxLibres(
-                n: l.enseignant.creneauxLibres?.length ?? 0,
-              ),
-              charge: charge,
-            );
-    }
-    if (avecCreneau && l.choisissable && l.libre == false) return f.pasLibre;
-    return null;
-  }
-
   /// Le premier champ qui manque, dans l'ordre de la feuille ; nul quand
   /// tout est la.
   ///
@@ -996,7 +823,9 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
     if (_enseignantId == null) return t.admin.groupes.manqueEnseignant;
     if (_jour == null || _heure == null) return f.manqueCreneau;
     if (choisi == null) return f.manqueListeEnseignants;
-    if (!choisi.choisissable) return _manqueEnseignant(choisi, genre, _type);
+    if (!choisi.choisissable) {
+      return manqueEnseignantClasse(choisi, genre, _type);
+    }
     if (_seuil == null) return f.manqueSeuil;
     if (_nom.text.trim().isEmpty) return f.manqueNom;
     return null;
@@ -1100,8 +929,8 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
                 id: l.enseignant.id,
                 nom: l.enseignant.libelle,
                 identifiant: l.enseignant.identifiant,
-                mention: _mention(l, avecCreneau: creneau != null),
-                raisonIndisponible: _raison(l),
+                mention: mentionEnseignant(l, avecCreneau: creneau != null),
+                raisonIndisponible: raisonEnseignant(l, _genre, _type),
               ),
           ])
         : classes.hasError
@@ -1166,8 +995,12 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
               OptionChoix(
                 cle: ValueKey<String>('classe-genre-${g.name}'),
                 valeur: g.name,
-                libelle: _libelleGenre(g, _type),
-                description: _detailGenre(g, _type, genreConnu: genreConnu),
+                libelle: libelleGenreClasse(g, _type),
+                description: detailGenreClasse(
+                  g,
+                  _type,
+                  genreConnu: genreConnu,
+                ),
               ),
           ],
           onChange: (ReponseChoix r) {
@@ -1288,10 +1121,10 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
         ),
         if (_erreur case final String erreur) ...<Widget>[
           Ecart.vMd,
-          _MessageAlerte(erreur),
+          MessageAlerte(erreur),
         ],
         Ecart.vXxl,
-        _BasDeFeuille(
+        BasDeFeuille(
           libelle: t.admin.groupes.creerEnvoyer,
           enCours: _envoi,
           horsLigne: f.horsLigne,
@@ -1612,10 +1445,10 @@ class _FeuilleSeuilEtat extends ConsumerState<_FeuilleSeuil> {
         ),
         if (_erreur case final String erreur) ...<Widget>[
           Ecart.vMd,
-          _MessageAlerte(erreur),
+          MessageAlerte(erreur),
         ],
         Ecart.vXxl,
-        _BasDeFeuille(
+        BasDeFeuille(
           libelle: t.admin.groupes.modifierSeuilEnvoyer,
           enCours: _envoi,
           horsLigne: f.seuilHorsLigne,

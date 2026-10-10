@@ -394,6 +394,9 @@ abstract final class Routes {
   /// Un fil des Messages du tuteur.
   static String tuteurFilPour(String filId) => '$tuteurMessages/$filId';
 
+  /// Le suivi des demandes de creneau du foyer (OFFRES-FAM-1).
+  static const String tuteurDemandes = '/tuteur/demandes';
+
   /// Vrai quand [chemin] est une **tache focalisee** : sur telephone, la
   /// barre basse s'efface et l'ecran porte son disque retour (manifeste
   /// visuel Tuteur V1 section 4.2 point 5 ; mapping des routes, section 5).
@@ -631,6 +634,11 @@ abstract final class Routes {
   /// Les notifications de l'admin, ouvertes par la cloche de l'en-tete de
   /// l'`AdminShell`.
   static const String adminNotifications = '/admin/notifications';
+
+  /// OFFRES-ADM-1 : « Classes a ouvrir », les demandes semblables reunies et
+  /// la creation de leur classe, sous Operations.
+  static const String adminOperationsRegroupements =
+      '/admin/operations/regroupements';
 
   /// Domaine Personnes.
   static const String adminPersonnes = '/admin/personnes';
