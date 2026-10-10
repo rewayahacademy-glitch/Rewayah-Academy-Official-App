@@ -174,6 +174,9 @@ DECLARE
   v_groupe uuid;
   v_groupe_rejoue uuid;
   v_sessions integer;
+  v_projection jsonb;
+  v_projection_eleves integer;
+  v_projection_creneaux integer;
 BEGIN
   v_capacite := public.app_config_int('groupe.capacite_adulte', 6);
   IF v_capacite < 1 THEN
@@ -369,6 +372,27 @@ BEGIN
   ) THEN
     RAISE EXCEPTION 'M4 ECHEC : classe sans enseignant invisible à l''administration';
   END IF;
+
+  SELECT projection
+    INTO v_projection
+    FROM public.regroupements_c11bis_admin() AS projection
+   WHERE projection ->> 'regroupement_id' = 'g:' || v_groupe::text;
+  SELECT count(*)::integer INTO v_projection_eleves
+    FROM public.groupe_membres
+   WHERE groupe_id = v_groupe AND left_at IS NULL;
+  SELECT count(*)::integer INTO v_projection_creneaux
+    FROM public.groupe_creneaux
+   WHERE groupe_id = v_groupe;
+  IF v_projection IS NULL
+     OR v_projection_eleves <= 1
+     OR v_projection_creneaux <= 1
+     OR (v_projection ->> 'nombre_eleves')::integer <> v_projection_eleves
+     OR jsonb_array_length(v_projection -> 'occurrences') <> v_projection_creneaux THEN
+    RAISE EXCEPTION
+      'C-11 bis projection ECHEC : membres=% créneaux=% projection=%',
+      v_projection_eleves, v_projection_creneaux, v_projection;
+  END IF;
+
   SELECT count(*) INTO v_sessions FROM public.sessions WHERE groupe_id = v_groupe;
   IF v_sessions <> 0 THEN
     RAISE EXCEPTION 'C-12: séances matérialisées avant affectation: %', v_sessions;
