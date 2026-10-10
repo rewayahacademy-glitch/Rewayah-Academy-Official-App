@@ -45,14 +45,37 @@ LANGUAGE plpgsql STABLE SET search_path = ''
 AS $function$
 DECLARE
   v_cle text;
+  v_offset_hiver integer;
+  v_offset_ete integer;
 BEGIN
-  SELECT p_fuseau || '|' || pg_catalog.string_agg(
-    pg_catalog.lpad(c.jour::text, 2, '0') || ':' ||
-      pg_catalog.lpad(c.heure::text, 2, '0'),
-    ',' ORDER BY c.jour, c.heure
-  )
-  INTO v_cle
-  FROM unnest(p_jours, p_heures) AS c(jour, heure);
+  IF p_jours IS NULL OR p_heures IS NULL
+     OR cardinality(p_jours) = 0
+     OR cardinality(p_jours) <> cardinality(p_heures)
+     OR p_fuseau IS NULL
+     OR NOT EXISTS (
+       SELECT 1 FROM pg_catalog.pg_timezone_names WHERE name = p_fuseau
+     ) THEN
+    RAISE EXCEPTION 'créneaux ou fuseau invalides';
+  END IF;
+
+  SELECT extract(epoch FROM (
+           (timestamp '2026-01-15 12:00:00' AT TIME ZONE 'UTC')
+           - (timestamp '2026-01-15 12:00:00' AT TIME ZONE p_fuseau)
+         ))::integer,
+         extract(epoch FROM (
+           (timestamp '2026-07-15 12:00:00' AT TIME ZONE 'UTC')
+           - (timestamp '2026-07-15 12:00:00' AT TIME ZONE p_fuseau)
+         ))::integer
+    INTO v_offset_hiver, v_offset_ete;
+
+  SELECT v_offset_hiver::text || ':' || v_offset_ete::text || '|' ||
+      pg_catalog.string_agg(
+        pg_catalog.lpad(c.jour::text, 2, '0') || ':' ||
+          pg_catalog.lpad(c.heure::text, 2, '0'),
+        ',' ORDER BY c.jour, c.heure
+      )
+    INTO v_cle
+    FROM unnest(p_jours, p_heures) AS c(jour, heure);
   RETURN v_cle;
 END;
 $function$;
@@ -70,6 +93,38 @@ BEGIN
   v_definition := pg_catalog.replace(v_definition, v_old, v_new);
   IF v_definition = pg_catalog.pg_get_functiondef(v_oid) THEN
     RAISE EXCEPTION 'M-a : fuseau local du regroupement introuvable';
+  END IF;
+  EXECUTE v_definition;
+END
+$migration$;
+
+DO $migration$
+DECLARE
+  v_oid oid := 'public.regroupements_demandes_horaires_admin()'::regprocedure;
+  v_definition text;
+  v_old text;
+  v_new text;
+BEGIN
+  v_definition := pg_catalog.pg_get_functiondef(v_oid);
+  v_old := $pattern$case when p.source = 'offre' then p.fuseau_offre else 'UTC' end as fuseau_groupe,$pattern$;
+  v_new := $replacement$case when p.source = 'offre' then p.fuseau_offre else p.fuseau_iana end as fuseau_groupe,$replacement$;
+  v_definition := pg_catalog.replace(v_definition, v_old, v_new);
+
+  v_old := $pattern$      h.fuseau_groupe,
+      h.jours_groupe,$pattern$;
+  v_new := $replacement$      pg_catalog.mode() WITHIN GROUP (ORDER BY h.fuseau_groupe) as fuseau_groupe,
+      h.jours_groupe,$replacement$;
+  v_definition := pg_catalog.replace(v_definition, v_old, v_new);
+
+  v_old := $pattern$    group by h.cle, h.type_public, h.langue_code,
+             h.fuseau_groupe, h.jours_groupe, h.heures_groupe$pattern$;
+  v_new := $replacement$    group by h.cle, h.type_public, h.langue_code,
+             h.jours_groupe, h.heures_groupe$replacement$;
+  v_definition := pg_catalog.replace(v_definition, v_old, v_new);
+
+  IF v_definition NOT LIKE '%mode() WITHIN GROUP (ORDER BY h.fuseau_groupe)%'
+     OR v_definition LIKE '%group by h.cle, h.type_public, h.langue_code,%h.fuseau_groupe%' THEN
+    RAISE EXCEPTION 'M-a : fuseau majoritaire non installe pour les regroupements compatibles';
   END IF;
   EXECUTE v_definition;
 END
