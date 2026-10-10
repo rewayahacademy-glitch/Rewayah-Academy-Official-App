@@ -15,12 +15,12 @@ enum GenreClasse {
   /// Une classe de femmes (de filles chez les enfants).
   femmes,
 
-  /// Genre pas encore connu : tous les enseignants sont proposables.
+  /// Genre de classe pas encore connu : tout enseignant compatible est proposé.
   indetermine,
 }
 
-/// Le genre d'un enseignant, tel qu'une source **publique** le dirait
-/// (D3 : le titre public sayyid / sayyida, jamais `profiles.gender`).
+/// Le genre public dérivé côté serveur de `profiles.gender` via le titre
+/// sayyid/sayyida; le genre brut ne part jamais vers le client.
 enum GenreEnseignant {
   /// Un enseignant.
   homme,
@@ -58,8 +58,7 @@ class EnseignantPropose {
   /// L'identifiant immuable, qui departage deux homonymes.
   final String identifiant;
 
-  /// Le genre de l'enseignant. Nul : la source ne le dit pas, et l'ecran ne
-  /// dit alors rien du genre (D3).
+  /// Le genre dérivé du titre public. Nul si le titre est absent ou inconnu.
   final GenreEnseignant? genre;
 
   /// Ses creneaux libres : disponibilites, moins ses affectations et les
@@ -87,9 +86,8 @@ abstract interface class PortEnseignantsClasse {
   });
 }
 
-/// La source tant que le serveur ne rend ni le genre ni les disponibilites
-/// de tous les enseignants : « indisponible ». Le formulaire se replie alors
-/// sur la liste des comptes actifs (`enseignantsPourClasseProvider`).
+/// Implémentation de secours pour les environnements sans backend. Ne jamais
+/// remplacer ce résultat par une liste non filtrée de comptes.
 class EnseignantsClasseIndisponible implements PortEnseignantsClasse {
   /// Cree l'implementation.
   const EnseignantsClasseIndisponible();
