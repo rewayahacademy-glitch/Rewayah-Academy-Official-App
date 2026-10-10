@@ -5775,6 +5775,9 @@ class _Traductions$inscription$usage$ar extends Traductions$inscription$usage$fr
 	@override String get familleTitre => 'أنا وأسرتي';
 	@override String get familleDescription => 'سجّل أطفالك أو أقاربك، معك أو دونك. يمكنك إنشاء ملفك الخاص كطالب في أي وقت.';
 	@override String get enseignant => 'أنا معلم';
+	@override String get coursQuestion => 'هل تتابع أنت أيضًا دروسًا؟';
+	@override String get coursOui => 'نعم';
+	@override String get coursNon => 'لا';
 }
 
 // Path: inscription.recap
@@ -17327,6 +17330,9 @@ extension on TraductionsAr {
 			'inscription.usage.familleTitre' => 'أنا وأسرتي',
 			'inscription.usage.familleDescription' => 'سجّل أطفالك أو أقاربك، معك أو دونك. يمكنك إنشاء ملفك الخاص كطالب في أي وقت.',
 			'inscription.usage.enseignant' => 'أنا معلم',
+			'inscription.usage.coursQuestion' => 'هل تتابع أنت أيضًا دروسًا؟',
+			'inscription.usage.coursOui' => 'نعم',
+			'inscription.usage.coursNon' => 'لا',
 			'inscription.recap.usage' => 'نوع الحساب',
 			'inscription.recap.identite' => 'الاسم',
 			'inscription.recap.genre' => 'الجنس',
@@ -17743,11 +17749,11 @@ extension on TraductionsAr {
 			'dossiers.file.selectionRetiree' => 'هذا الملف لم يعد متاحًا في القائمة.',
 			'dossiers.file.actualiser' => 'تحديث الملفات',
 			'dossiers.file.aucuneSelection' => 'اختر ملفًا لدراسته.',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.file.suivants' => 'تحميل الملفات التالية',
 			'dossiers.file.ouvrirDe' => ({required Object nom}) => 'فتح ملف ⁨${nom}⁩',
 			'dossiers.file.ouvrirElide' => ({required Object nom}) => 'فتح ملف ⁨${nom}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.file.enVerification' => 'قيد التحقق',
 			'dossiers.file.sansNom' => 'ملف دون اسم متاح',
 			'dossiers.file.legende' => ({required Object type, required Object date}) => '⁨${type}⁩ · ⁨${date}⁩',

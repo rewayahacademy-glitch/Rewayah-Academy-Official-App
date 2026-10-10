@@ -6627,7 +6627,10 @@
       "moiDescription": "أريد متابعة الدروس بملفي الخاص كطالب.",
       "familleTitre": "أنا وأسرتي",
       "familleDescription": "سجّل أطفالك أو أقاربك، معك أو دونك. يمكنك إنشاء ملفك الخاص كطالب في أي وقت.",
-      "enseignant": "أنا معلم"
+      "enseignant": "أنا معلم",
+      "coursQuestion": "هل تتابع أنت أيضًا دروسًا؟",
+      "coursOui": "نعم",
+      "coursNon": "لا"
     },
     "recap": {
       "usage": "نوع الحساب",

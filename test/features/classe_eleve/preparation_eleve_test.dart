@@ -15,6 +15,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/session/port_capacite_eleve.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
@@ -587,6 +588,26 @@ void main() {
     expect(find.byType(PreparationEleve), findsNothing);
     expect(find.byType(PreparationEnseignant), findsNothing);
     expect(video.demandes, <String>['s1']);
+  });
+
+  testWidgets('tuteur adulte + capacite « eleve autonome » : la preparation '
+      'de l\'eleve s\'ouvre (EA-ROLE-1)', (WidgetTester tester) async {
+    final FauxServiceVideo video = FauxServiceVideo();
+    await _monterSalle(
+      tester,
+      surcharges: <Override>[
+        ..._surcharges(
+          role: AppRole.guardian,
+          video: video,
+          preVol: FauxServicePreVol(),
+        ),
+        portCapaciteEleveProvider.overrideWithValue(
+          const PortCapaciteEleveFactice(autonomes: <String>{'p1'}),
+        ),
+      ],
+    );
+    expect(find.byType(PreparationEleve), findsOneWidget);
+    expect(video.demandes, isEmpty);
   });
 
   testWidgets('reflow a 320 et texte a 200 % : aucun debordement', (

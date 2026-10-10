@@ -41,7 +41,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
-import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart';
@@ -140,15 +139,18 @@ final FutureProvider<AccueilAdulteVM> accueilAdulteProvider =
 /// Une lecture en echec ou indisponible la laisse fausse, meme apres une
 /// premiere lecture reussie : `/eleve` garde
 /// l'accueil de l'eleve, rien n'est suppose. Elle n'est lue que pour un
-/// compte eleve : aucun autre compte n'atteint `/eleve` (garde de role).
+/// compte « eleve autonome » (`SessionState.eleveAutonome`).
 /// Quand EA-BR-04 sera servi, une capacite rendue avec la session evitera
 /// d'attendre cette lecture (DASH-BR-02, registre `DASH_STRATEGIE.md`
 /// §5 bis, a reporter dans `EA-BR.md`).
 final Provider<bool> capaciteAccueilAdulteProvider = Provider<bool>((Ref ref) {
-  final AppRole? role = ref.watch(
-    sessionProvider.select((SessionState s) => s.role),
+  // EA-ROLE-1 : l'adulte inscrit est un compte tuteur (`guardian`) ; c'est
+  // la capacite « eleve autonome » servie (C-24), non le role, qui ouvre
+  // l'accueil adulte.
+  final bool autonome = ref.watch(
+    sessionProvider.select((SessionState s) => s.eleveAutonome),
   );
-  if (role != AppRole.student) return false;
+  if (!autonome) return false;
   // Une relecture en echec garde la valeur precedente (`hasValue` reste
   // vrai) : sans `hasError`, la capacite resterait vraie apres l'echec
   // (revue DASH-EA-PROD-R, defaut 1). Une relecture en cours, elle, la garde

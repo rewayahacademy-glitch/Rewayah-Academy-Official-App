@@ -127,6 +127,13 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// La preparation de l'enseignant est a l'ecran : rien n'est connecte.
   bool _enPreparation = false;
 
+  /// Vrai pour qui suit le cours : l'eleve, et le compte adulte dont le
+  /// serveur sert la capacite « eleve autonome » (EA-ROLE-1, C-24). Un
+  /// tuteur seul reste observateur, sans preparation (D-14).
+  static bool _suitLesCours(SessionState s) =>
+      s.role == AppRole.student ||
+      (s.role == AppRole.guardian && s.eleveAutonome);
+
   /// L'eleve a choisi « Continuer sans micro » (PRE-ERR-01, CL-4.6) : le
   /// micro reste coupe, le blocage materiel ne l'arrete plus.
   bool _sansMicro = false;
@@ -182,10 +189,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // micro ni camera.
     // Seuls l'eleve et l'enseignant en ont une ; session pas encore lue
     // (role nul) : le choix se refait au `build`.
-    final AppRole? role = ref.read(sessionProvider).role;
+    final SessionState session0 = ref.read(sessionProvider);
+    final AppRole? role = session0.role;
     _enPreparation =
         widget.preparation &&
-        (role == null || role == AppRole.student || role == AppRole.teacher);
+        (role == null || _suitLesCours(session0) || role == AppRole.teacher);
     if (!_enPreparation) {
       unawaited(_entrer());
     }
@@ -237,7 +245,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     }
     final bool observateur =
         compte != null &&
-        compte != AppRole.student &&
+        !_suitLesCours(ref.read(sessionProvider)) &&
         compte != AppRole.teacher;
     if (!observateur) {
       final ResultatPreVol mesure = await ref.refresh(preVolProvider.future);
@@ -481,7 +489,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // garde le comportement de son role : l'entree directe, jamais la
     // preparation enseignant par defaut (revue CL-4.R, m8).
     if (_enPreparation &&
-        session.role != AppRole.student &&
+        !_suitLesCours(session) &&
         session.role != AppRole.teacher) {
       _enPreparation = false;
       WidgetsBinding.instance.addPostFrameCallback((Duration _) {
@@ -489,7 +497,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       });
     }
     // PRE-ELV-01 (CL-4.6) : la preparation presque silencieuse de l'eleve.
-    if (_enPreparation && session.role == AppRole.student) {
+    if (_enPreparation && _suitLesCours(session)) {
       final String? groupe = widget.groupeId;
       final bool guidee = session.interfaceMode == InterfaceMode.enfant;
       return _PreparationEleveBranchee(
