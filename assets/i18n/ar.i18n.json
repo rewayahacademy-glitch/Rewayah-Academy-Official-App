@@ -1798,7 +1798,8 @@
         "titre": "الدخول والأمان",
         "methode": "طريقة الدخول",
         "methodeLien": "رابط بالبريد الإلكتروني",
-        "methodeGoogle": "Google"
+        "methodeGoogle": "Google",
+        "consentements": "زيارات أولياء الأمور"
       },
       "informations": {
         "titre": "المعلومات الشخصية",

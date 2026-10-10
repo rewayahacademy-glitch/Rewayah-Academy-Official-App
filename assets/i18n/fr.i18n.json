@@ -3762,7 +3762,8 @@
         "titre": "Connexion et sécurité",
         "methode": "Méthode de connexion",
         "methodeLien": "Lien par courriel",
-        "methodeGoogle": "Google"
+        "methodeGoogle": "Google",
+        "consentements": "Visites des parents"
       },
       "informations": {
         "titre": "Informations personnelles",

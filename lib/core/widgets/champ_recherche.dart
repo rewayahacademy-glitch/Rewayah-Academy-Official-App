@@ -70,17 +70,13 @@ class ChampRecherche extends StatelessWidget {
   /// Le nombre de lignes de l'aide quand l'etiquette est sortie du champ.
   static const int _lignesAide = 3;
 
-  /// Echelle de texte au-dela de laquelle l'etiquette reste dans le champ :
-  /// a texte agrandi, la colonne de la liste est deja haute, une ligne de
-  /// plus la ferait deborder sur une vue basse.
-  static const double _echelleMax = 1.3;
-
-  /// Vrai quand l'etiquette ne tient pas sur une ligne dans le champ, en
-  /// taille de texte normale (COM-RC tour 2, recette : « Rechercher une
+  /// Vrai quand l'etiquette ne tient pas sur une ligne dans le champ, a
+  /// toute taille de texte (RECETTE-NUIT-B : a texte x2 elle etait tronquee ;
+  /// COM-RC tour 2, recette : « Rechercher une
   /// conve... » dans la colonne de 256 des Messages et du Studio a 768).
   bool _etiquetteDehors(BuildContext context, double largeur) {
     final TextScaler echelle = MediaQuery.textScalerOf(context);
-    if (!largeur.isFinite || echelle.scale(1) > _echelleMax) return false;
+    if (!largeur.isFinite) return false;
     final TextPainter mesure = TextPainter(
       text: TextSpan(
         text: libelle,
@@ -115,8 +111,8 @@ class ChampRecherche extends StatelessWidget {
                 decoration: InputDecoration(
                   labelText: dehors ? null : libelle,
                   hintText: aide,
-                  // Dehors, l'aide peut passer a la ligne dans le champ.
-                  hintMaxLines: dehors ? _lignesAide : null,
+                  // L'aide passe a la ligne dans le champ au lieu d'etre tronquee.
+                  hintMaxLines: _lignesAide,
                   prefixIcon: ExcludeSemantics(
                     child: Icon(AppIcons.recherche.repos),
                   ),

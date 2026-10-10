@@ -10,11 +10,11 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
-import 'package:rewayah_academy/core/router/app_router.dart';
-import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
 
 import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../router/support_routeur.dart';
@@ -116,9 +116,8 @@ Future<void> _monter(
               supportedLocales: AppLocaleUtils.supportedLocales,
               localizationsDelegates: GlobalMaterialLocalizations.delegates,
               builder: (BuildContext contexte, Widget? app) => MediaQuery(
-                data: MediaQuery.of(contexte).copyWith(
-                  textScaler: TextScaler.linear(echelle),
-                ),
+                data: MediaQuery.of(contexte)
+                    .copyWith(textScaler: TextScaler.linear(echelle)),
                 child: app!,
               ),
               routerConfig: routeur,
@@ -158,13 +157,13 @@ void main() {
           final SemanticsHandle sem = tester.ensureSemantics();
           await _monter(tester, role, chemin, cas.$2);
           expect(tester.takeException(), isNull);
-          final List<String> coupes = motsCoupes(
-            tester,
-            find.byType(Scaffold),
-          );
+          final List<String> coupes = motsCoupes(tester, find.byType(Scaffold));
           expect(coupes, isEmpty, reason: 'mots coupes');
           if (cas.$2 == 1) {
-            await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+            await expectLater(
+              tester,
+              meetsGuideline(androidTapTargetGuideline),
+            );
           }
           sem.dispose();
         });
