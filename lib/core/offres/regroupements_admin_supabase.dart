@@ -110,7 +110,7 @@ class RegroupementsAdminSupabase implements PortRegroupementsAdmin {
           heure: (occurrence['heure'] as num).toInt(),
           minute: (occurrence['minute'] as num?)?.toInt() ?? 0,
         );
-      }),
+      }).toList(growable: false),
       nombreEleves: (row['nombre_eleves'] as num).toInt(),
       quota: (row['quota'] as num).toInt(),
       autresFuseaux: autres.map((dynamic item) {
@@ -125,7 +125,7 @@ class RegroupementsAdminSupabase implements PortRegroupementsAdmin {
           minute: (value['minute'] as num?)?.toInt() ?? 0,
           decalageJour: (value['decalage_jour'] as num?)?.toInt() ?? 0,
         );
-      }),
+      }).toList(growable: false),
       peutCreerClasse: row['peut_creer_classe'] as bool? ?? false,
       classe: classe,
     );
