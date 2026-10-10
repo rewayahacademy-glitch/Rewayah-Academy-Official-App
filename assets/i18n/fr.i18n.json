@@ -6305,6 +6305,7 @@
         "dossier": "Dossier",
         "mission": "Mission de contrôle",
         "remplacement": "Remplacement",
+        "profilPaiement": "Profil de paiement",
         "autre": "Autre sujet"
       },
       "panneau": {
@@ -7753,12 +7754,11 @@
         "demanderMiseAJour": "Demander une mise à jour à {nom}",
         "suspendre": "Suspendre les paiements de {nom}",
         "reprendre": "Reprendre les paiements de {nom}",
-        "voirFil": "Voir le fil « Profil de paiement »",
         "externe": "{nom} n'a pas de compte Rewayah : une invitation sécurisée lui permet de saisir lui-même sa méthode. Renvoyez-la depuis son obligation, dans Contractuels.",
         "voirContractuels": "Voir les obligations des contractuels",
         "aucuneAction": "Aucune action n'est ouverte sur ce profil : il est à jour.",
-        "relanceTitre": "Message prêt dans le fil « Profil de paiement »",
-        "relanceObjet": "Objet : Profil de paiement",
+        "filTitre": "Fil « Profil de paiement »",
+        "relanceRefusee": "Aucun fil « Profil de paiement » ne peut être ouvert avec {nom} : Rewayah ne l'autorise pas pour ce bénéficiaire. Demandez plutôt une mise à jour, ou signalez-le à la direction.",
         "messageModele": "Vos informations de paiement doivent être complétées avant votre prochain versement. Vous pouvez les ajouter depuis votre espace personnel.",
         "miseAJourDemandee": "Demande de mise à jour enregistrée pour {nom}.",
         "suspendus": "Paiements de {nom} suspendus : aucun versement ne part tant qu'ils ne sont pas repris.",

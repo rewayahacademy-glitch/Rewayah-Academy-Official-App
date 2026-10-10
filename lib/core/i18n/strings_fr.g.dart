@@ -21245,6 +21245,9 @@ class Traductions$com$messages$types$fr {
 	/// fr: 'Remplacement'
 	String get remplacement => 'Remplacement';
 
+	/// fr: 'Profil de paiement'
+	String get profilPaiement => 'Profil de paiement';
+
 	/// fr: 'Autre sujet'
 	String get autre => 'Autre sujet';
 }
@@ -23774,9 +23777,6 @@ class Traductions$comptable$beneficiaires$profil$fr {
 	/// fr: 'Reprendre les paiements de {nom}'
 	String reprendre({required Object nom}) => 'Reprendre les paiements de ${nom}';
 
-	/// fr: 'Voir le fil « Profil de paiement »'
-	String get voirFil => 'Voir le fil « Profil de paiement »';
-
 	/// fr: '{nom} n'a pas de compte Rewayah : une invitation sécurisée lui permet de saisir lui-même sa méthode. Renvoyez-la depuis son obligation, dans Contractuels.'
 	String externe({required Object nom}) => '${nom} n\'a pas de compte Rewayah : une invitation sécurisée lui permet de saisir lui-même sa méthode. Renvoyez-la depuis son obligation, dans Contractuels.';
 
@@ -23786,11 +23786,11 @@ class Traductions$comptable$beneficiaires$profil$fr {
 	/// fr: 'Aucune action n'est ouverte sur ce profil : il est à jour.'
 	String get aucuneAction => 'Aucune action n\'est ouverte sur ce profil : il est à jour.';
 
-	/// fr: 'Message prêt dans le fil « Profil de paiement »'
-	String get relanceTitre => 'Message prêt dans le fil « Profil de paiement »';
+	/// fr: 'Fil « Profil de paiement »'
+	String get filTitre => 'Fil « Profil de paiement »';
 
-	/// fr: 'Objet : Profil de paiement'
-	String get relanceObjet => 'Objet : Profil de paiement';
+	/// fr: 'Aucun fil « Profil de paiement » ne peut être ouvert avec {nom} : Rewayah ne l'autorise pas pour ce bénéficiaire. Demandez plutôt une mise à jour, ou signalez-le à la direction.'
+	String relanceRefusee({required Object nom}) => 'Aucun fil « Profil de paiement » ne peut être ouvert avec ${nom} : Rewayah ne l\'autorise pas pour ce bénéficiaire. Demandez plutôt une mise à jour, ou signalez-le à la direction.';
 
 	/// fr: 'Vos informations de paiement doivent être complétées avant votre prochain versement. Vous pouvez les ajouter depuis votre espace personnel.'
 	String get messageModele => 'Vos informations de paiement doivent être complétées avant votre prochain versement. Vous pouvez les ajouter depuis votre espace personnel.';
@@ -31734,6 +31734,7 @@ extension on Traductions {
 			'com.messages.types.dossier' => 'Dossier',
 			'com.messages.types.mission' => 'Mission de contrôle',
 			'com.messages.types.remplacement' => 'Remplacement',
+			'com.messages.types.profilPaiement' => 'Profil de paiement',
 			'com.messages.types.autre' => 'Autre sujet',
 			'com.messages.panneau.objets' => 'À propos de',
 			'com.messages.panneau.participants' => 'Participants',
@@ -32075,9 +32076,9 @@ extension on Traductions {
 			'com.studio.sousTitre' => 'Espace de travail de l\'équipe',
 			'com.studio.navigation.aujourdhui' => _root.com.socle.lexique.aujourdhui,
 			'com.studio.navigation.brouillons' => 'Brouillons',
-			'com.studio.navigation.canaux' => 'Canaux',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.navigation.canaux' => 'Canaux',
 			'com.studio.navigation.enregistres' => 'Éléments enregistrés',
 			'com.studio.choisirTitre' => 'Choisissez un canal',
 			'com.studio.choisir' => 'Choisissez un canal dans la liste pour lire la discussion et y écrire.',
@@ -32589,9 +32590,9 @@ extension on Traductions {
 			'comptable.aujourdhui.activiteRecente' => 'Activité récente',
 			'comptable.aujourdhui.accesRapides' => 'Accès rapides',
 			'comptable.aujourdhui.encaissementsRecents' => 'Encaissements récents',
-			'comptable.aujourdhui.voirTout' => 'Voir tout',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.aujourdhui.voirTout' => 'Voir tout',
 			'comptable.paiements.confirmation.titreUn' => 'Confirmer le paiement',
 			'comptable.paiements.confirmation.titreLot' => 'Confirmer le lot',
 			'comptable.paiements.confirmation.titreValidation' => 'Demander une validation',
@@ -32954,12 +32955,11 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.demanderMiseAJour' => ({required Object nom}) => 'Demander une mise à jour à ${nom}',
 			'comptable.beneficiaires.profil.suspendre' => ({required Object nom}) => 'Suspendre les paiements de ${nom}',
 			'comptable.beneficiaires.profil.reprendre' => ({required Object nom}) => 'Reprendre les paiements de ${nom}',
-			'comptable.beneficiaires.profil.voirFil' => 'Voir le fil « Profil de paiement »',
 			'comptable.beneficiaires.profil.externe' => ({required Object nom}) => '${nom} n\'a pas de compte Rewayah : une invitation sécurisée lui permet de saisir lui-même sa méthode. Renvoyez-la depuis son obligation, dans Contractuels.',
 			'comptable.beneficiaires.profil.voirContractuels' => 'Voir les obligations des contractuels',
 			'comptable.beneficiaires.profil.aucuneAction' => 'Aucune action n\'est ouverte sur ce profil : il est à jour.',
-			'comptable.beneficiaires.profil.relanceTitre' => 'Message prêt dans le fil « Profil de paiement »',
-			'comptable.beneficiaires.profil.relanceObjet' => 'Objet : Profil de paiement',
+			'comptable.beneficiaires.profil.filTitre' => 'Fil « Profil de paiement »',
+			'comptable.beneficiaires.profil.relanceRefusee' => ({required Object nom}) => 'Aucun fil « Profil de paiement » ne peut être ouvert avec ${nom} : Rewayah ne l\'autorise pas pour ce bénéficiaire. Demandez plutôt une mise à jour, ou signalez-le à la direction.',
 			'comptable.beneficiaires.profil.messageModele' => 'Vos informations de paiement doivent être complétées avant votre prochain versement. Vous pouvez les ajouter depuis votre espace personnel.',
 			'comptable.beneficiaires.profil.miseAJourDemandee' => ({required Object nom}) => 'Demande de mise à jour enregistrée pour ${nom}.',
 			'comptable.beneficiaires.profil.suspendus' => ({required Object nom}) => 'Paiements de ${nom} suspendus : aucun versement ne part tant qu\'ils ne sont pas repris.',

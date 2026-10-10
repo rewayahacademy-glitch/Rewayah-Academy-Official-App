@@ -2328,6 +2328,7 @@ class _Traductions$com$messages$types$ar extends Traductions$com$messages$types$
 	@override String get dossier => 'الملف';
 	@override String get mission => 'مهمة المراقبة';
 	@override String get remplacement => 'الاستبدال';
+	@override String get profilPaiement => 'ملف الدفع';
 	@override String get autre => 'موضوع آخر';
 }
 
@@ -3562,12 +3563,11 @@ class _Traductions$comptable$beneficiaires$profil$ar extends Traductions$comptab
 	@override String demanderMiseAJour({required Object nom}) => 'طلب تحديث من ${nom}';
 	@override String suspendre({required Object nom}) => 'إيقاف مدفوعات ${nom}';
 	@override String reprendre({required Object nom}) => 'استئناف مدفوعات ${nom}';
-	@override String get voirFil => 'عرض محادثة «ملف الدفع»';
 	@override String externe({required Object nom}) => 'ليس لدى ${nom} حساب Rewayah: تتيح له دعوة آمنة إدخال وسيلته بنفسه. أعد إرسالها من التزامه، في المتعاقدين.';
 	@override String get voirContractuels => 'عرض التزامات المتعاقدين';
 	@override String get aucuneAction => 'لا يوجد أي إجراء مفتوح على هذا الملف: إنه محدَّث.';
-	@override String get relanceTitre => 'رسالة جاهزة في محادثة «ملف الدفع»';
-	@override String get relanceObjet => 'الموضوع: ملف الدفع';
+	@override String get filTitre => 'محادثة «ملف الدفع»';
+	@override String relanceRefusee({required Object nom}) => 'لا يمكن فتح محادثة «ملف الدفع» مع ${nom}: لا تسمح Rewayah بذلك لهذا المستفيد. اطلب تحديثًا بدلًا من ذلك، أو أبلغ الإدارة.';
 	@override String get messageModele => 'يجب إكمال معلومات الدفع الخاصة بك قبل دفعتك القادمة. يمكنك إضافتها من مساحتك الشخصية.';
 	@override String miseAJourDemandee({required Object nom}) => 'سُجّل طلب التحديث لـ ${nom}.';
 	@override String suspendus({required Object nom}) => 'أُوقفت مدفوعات ${nom}: لن تُصرف أي دفعة ما لم تُستأنف.';
@@ -5221,6 +5221,7 @@ extension on TraductionsAr {
 			'com.messages.types.dossier' => 'الملف',
 			'com.messages.types.mission' => 'مهمة المراقبة',
 			'com.messages.types.remplacement' => 'الاستبدال',
+			'com.messages.types.profilPaiement' => 'ملف الدفع',
 			'com.messages.types.autre' => 'موضوع آخر',
 			'com.messages.panneau.objets' => 'بخصوص',
 			'com.messages.panneau.participants' => 'المشاركون',
@@ -5557,9 +5558,9 @@ extension on TraductionsAr {
 			'com.studio.brouillons.reprendre' => ({required Object nom}) => 'متابعة المسودة في ${nom}',
 			'com.studio.brouillons.videTitre' => 'لا توجد مسودات',
 			'com.studio.brouillons.vide' => 'ستظهر هنا أي رسالة بدأتها في قناة ولم تُرسل بعد.',
-			'com.studio.brouillons.tous' => ({required Object nombre}) => 'عرض كل المسودات (${nombre})',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.brouillons.tous' => ({required Object nombre}) => 'عرض كل المسودات (${nombre})',
 			'com.studio.brouillons.restaure' => 'استُعيدت المسودة. يمكنك متابعة رسالتك.',
 			'com.studio.sousTitre' => 'مساحة عمل الفريق',
 			'com.studio.navigation.aujourdhui' => _root.com.socle.lexique.aujourdhui,
@@ -6071,9 +6072,9 @@ extension on TraductionsAr {
 			'comptable.aujourdhui.accesEncaissements' => 'عرض المقبوضات',
 			'comptable.aujourdhui.accesTresorerie' => 'عرض الخزينة والصناديق',
 			'comptable.aujourdhui.accesAlimenter' => 'تغذية الاحتياطي الاستراتيجي',
-			'comptable.aujourdhui.titre' => 'اليوم',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.aujourdhui.titre' => 'اليوم',
 			'comptable.aujourdhui.sousTitre' => 'ماذا عليّ أن أفعل الآن؟',
 			'comptable.aujourdhui.attention' => 'للمعالجة والتنبيهات',
 			'comptable.aujourdhui.aTraiter' => 'للمعالجة اليوم',
@@ -6447,12 +6448,11 @@ extension on TraductionsAr {
 			'comptable.beneficiaires.profil.demanderMiseAJour' => ({required Object nom}) => 'طلب تحديث من ${nom}',
 			'comptable.beneficiaires.profil.suspendre' => ({required Object nom}) => 'إيقاف مدفوعات ${nom}',
 			'comptable.beneficiaires.profil.reprendre' => ({required Object nom}) => 'استئناف مدفوعات ${nom}',
-			'comptable.beneficiaires.profil.voirFil' => 'عرض محادثة «ملف الدفع»',
 			'comptable.beneficiaires.profil.externe' => ({required Object nom}) => 'ليس لدى ${nom} حساب Rewayah: تتيح له دعوة آمنة إدخال وسيلته بنفسه. أعد إرسالها من التزامه، في المتعاقدين.',
 			'comptable.beneficiaires.profil.voirContractuels' => 'عرض التزامات المتعاقدين',
 			'comptable.beneficiaires.profil.aucuneAction' => 'لا يوجد أي إجراء مفتوح على هذا الملف: إنه محدَّث.',
-			'comptable.beneficiaires.profil.relanceTitre' => 'رسالة جاهزة في محادثة «ملف الدفع»',
-			'comptable.beneficiaires.profil.relanceObjet' => 'الموضوع: ملف الدفع',
+			'comptable.beneficiaires.profil.filTitre' => 'محادثة «ملف الدفع»',
+			'comptable.beneficiaires.profil.relanceRefusee' => ({required Object nom}) => 'لا يمكن فتح محادثة «ملف الدفع» مع ${nom}: لا تسمح Rewayah بذلك لهذا المستفيد. اطلب تحديثًا بدلًا من ذلك، أو أبلغ الإدارة.',
 			'comptable.beneficiaires.profil.messageModele' => 'يجب إكمال معلومات الدفع الخاصة بك قبل دفعتك القادمة. يمكنك إضافتها من مساحتك الشخصية.',
 			'comptable.beneficiaires.profil.miseAJourDemandee' => ({required Object nom}) => 'سُجّل طلب التحديث لـ ${nom}.',
 			'comptable.beneficiaires.profil.suspendus' => ({required Object nom}) => 'أُوقفت مدفوعات ${nom}: لن تُصرف أي دفعة ما لم تُستأنف.',
