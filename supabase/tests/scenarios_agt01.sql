@@ -514,7 +514,7 @@ declare
   v_id  uuid := (select valeur::uuid from agt_fixture where cle = 'id_nominatif');
   v_jwt text;
 begin
-  v_jwt := format('{"app_metadata":{"role":"student","agent_token_id":"%s"}}', v_id);
+  v_jwt := format('{"sub":"%s","app_metadata":{"role":"student","agent_token_id":"%s"}}', v_id, v_id);
 
   set local role postgres;
   perform set_config('test.jwt', v_jwt, true);
