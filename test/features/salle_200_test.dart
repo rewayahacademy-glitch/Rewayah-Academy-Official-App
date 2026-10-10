@@ -140,6 +140,11 @@ const List<String> _roles = <String>[
 
 void main() {
   group('SALLE-200-1 : la salle tient, texte agrandi', () {
+    // TB-RC (TB_RAPPORT §d n° 6, revue TB-R m35) : la hauteur se mesure
+    // avec les polices du depot. La police de test (un carre par glyphe)
+    // comptait deux lignes de plus par phrase du rappel, qui garde
+    // desormais ses deux phrases a texte x2.
+    setUpAll(chargerPolicesDuDepot);
     for (final String role in _roles) {
       for (final double largeur in <double>[320, 390]) {
         for (final double texte in <double>[1, 2]) {

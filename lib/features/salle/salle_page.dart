@@ -45,7 +45,6 @@ import '../controleur/compte_rendu_controle.dart' show adresseCompteRendu;
 import '../fiche_groupe/preparation_seance.dart';
 import '../salle_enseignant/panneau_enseignant.dart';
 import '../salle_seance/actions_seance.dart';
-import '../salle_seance/barre_support.dart' show IndicateurPage;
 import '../salle_seance/depuis_salle.dart';
 import '../salle_seance/presentation_observee.dart';
 import '../salle_seance/resultat_seance.dart';
@@ -648,7 +647,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
                 vue: vue,
                 lignes: lignes,
                 document: _PresentationLue(vue: presentation),
-                plancherDocument: _CorpsDocument.plancherPresentation(context),
+                presentationLue: true,
               )
             : _Corps(vue: vue, lignes: lignes),
       );
@@ -715,7 +714,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
               vue: vue,
               lignes: lignes,
               document: _PresentationLue(vue: presentation),
-              plancherDocument: _CorpsDocument.plancherPresentation(context),
+              presentationLue: true,
             )
           : _Corps(vue: vue, lignes: lignes, encreAccessible: encreAccessible),
     );
@@ -1177,11 +1176,18 @@ class _Rappel extends StatelessWidget {
     // SALLE-CORR-3 (releve VERIF-CORR-2) : le rappel propre a qui observe
     // (controleur, tuteur) garde TOUJOURS son titre, meme en texte tres
     // agrandi : la reduction a la seule icone (SALLE-200-1, 642bb5a) rendait
-    // le rappel muet. Au-dela du seuil, il se reduit a son titre (la premiere
-    // phrase), en toutes lettres et passant a la ligne, dans une bande
-    // serree ; la phrase entiere est lue par le lecteur d'ecran et montree
-    // d'une touche en infobulle. Le support garde ainsi sa moitie d'ecran.
+    // le rappel muet. TB-RC (TB_RAPPORT §d n° 6, WCAG 1.4.4) : au-dela du
+    // seuil, il ne se reduit plus a son titre (« Vous n'etes pas entendu. »
+    // et l'inscription au journal disparaissaient) : les deux phrases se
+    // lisent, chacune sur sa ligne, dans une bande serree. Le lecteur d'ecran
+    // lit la phrase entiere, une fois.
     final bool serre = !motEtatVisible(context);
+    final String suite = texte.startsWith(titre)
+        ? texte.substring(titre.length).trimLeft()
+        : '';
+    final TextStyle style = paire.applyTo(
+      textes.bodySmall ?? const TextStyle(),
+    );
     final Widget bande = DecoratedBox(
       decoration: paire.decoration(),
       child: Padding(
@@ -1200,26 +1206,22 @@ class _Rappel extends StatelessWidget {
             ),
             Ecart.hSm,
             Flexible(
-              child: Text(
-                serre ? titre : texte,
-                style: paire.applyTo(textes.bodySmall ?? const TextStyle()),
-              ),
+              child: serre && suite.isNotEmpty
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(titre, style: style),
+                        Text(suite, style: style),
+                      ],
+                    )
+                  : Text(texte, style: style),
             ),
           ],
         ),
       ),
     );
     if (!serre) return bande;
-    return Semantics(
-      label: texte,
-      excludeSemantics: true,
-      child: Tooltip(
-        message: texte,
-        triggerMode: TooltipTriggerMode.tap,
-        excludeFromSemantics: true,
-        child: bande,
-      ),
-    );
+    return Semantics(label: texte, excludeSemantics: true, child: bande);
   }
 }
 
@@ -1272,7 +1274,7 @@ class _CorpsDocument extends StatelessWidget {
     required this.vue,
     required this.lignes,
     required this.document,
-    this.plancherDocument = _CorpsDocument._hauteurPlancherDocument,
+    this.presentationLue = false,
   });
 
   final VueSalle vue;
@@ -1281,27 +1283,22 @@ class _CorpsDocument extends StatelessWidget {
   /// Le premier niveau : le panneau de l'enseignant, ou la presentation lue.
   final Widget document;
 
+  /// Vrai pour la presentation lue par l'observateur (TB-11a) : son
+  /// plancher est [plancherPresentationLue], sa scene montre toutes ses
+  /// rangees, et la tablette en paysage pose les surfaces cote a cote.
+  final bool presentationLue;
+
   /// La hauteur sous laquelle le document ne descend pas (la colonne defile
   /// alors) : [_hauteurPlancherDocument] pour le panneau de l'enseignant,
   /// [plancherPresentationLue] pour la presentation lue.
-  final double plancherDocument;
+  double get _plancherDocument =>
+      presentationLue ? plancherPresentationLue : _hauteurPlancherDocument;
 
   /// TB-11a : le plancher de la presentation lue. La page se pose en
   /// `BoxFit.contain` dans toute hauteur : elle n'exige pas le plancher des
-  /// `EmptyState` du panneau, et la scene de l'observateur doit tenir sous
-  /// elle au telephone (aucune tuile sous le bandeau, SUPERPOS-1) : cinq
-  /// respirations : la ligne du titre et de la page (deux lignes a 320 et
-  /// texte x2) et la page entiere sous elle.
+  /// `EmptyState` du panneau. Cinq respirations : la ligne du titre et de la
+  /// page (deux ou trois lignes a 320 et texte x2) et la page sous elle.
   static const double plancherPresentationLue = AppSpacing.respiration * 5;
-
-  /// Le plancher de la presentation lue selon le texte : au-dela du seuil
-  /// de texte agrandi ([motEtatVisible] faux), la ligne du titre grandit et
-  /// la page passerait sous la taille d'une vignette ; elle reprend alors le
-  /// plancher du panneau et la colonne defile, la scene sous elle.
-  static double plancherPresentation(BuildContext context) =>
-      motEtatVisible(context)
-      ? plancherPresentationLue
-      : _hauteurPlancherDocument;
 
   /// La hauteur minimale du document, en dessous de laquelle la colonne defile.
   ///
@@ -1339,7 +1336,17 @@ class _CorpsDocument extends StatelessWidget {
     );
 
     final Gabarit gabarit = AppGabarit.de(context);
-    if (gabarit == Gabarit.desktop) {
+    // TB-RC (TB_RAPPORT §d n° 23) : sur une tablette en paysage, empiler la
+    // page et la scene reduisait la page de l'observateur a une vignette
+    // (140 points de large a 1100 x 700) : la presentation lue y prend la
+    // composition du bureau, la page a cote de la scene. L'orientation vient
+    // de l'ecran, jamais d'une largeur comparee a un nombre.
+    final bool coteACote =
+        gabarit == Gabarit.desktop ||
+        (presentationLue &&
+            gabarit.estLarge &&
+            MediaQuery.orientationOf(context) == Orientation.landscape);
+    if (coteACote) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -1390,12 +1397,13 @@ class _CorpsDocument extends StatelessWidget {
         // 390 sur 844 -- le compte est juste et rien ne defile : le groupe reste
         // visible sans un geste. Sur une surface courte, c'est la scene qui passe
         // sous la ligne de flottaison, et non le Coran qui se rogne.
-        final double reste = contraintes.hasBoundedHeight
-            ? contraintes.maxHeight - _hauteurScene
-            : plancherDocument;
-        final double document = reste < plancherDocument
-            ? plancherDocument
-            : reste;
+        final double plancher = _plancherDocument;
+        final double scene = presentationLue
+            ? _hauteurSceneLue(context)
+            : _hauteurScene;
+        final double document = presentationLue
+            ? _documentLu(contraintes, scene, plancher)
+            : _borne(contraintes, scene, plancher);
         // Le defilement est toujours pose, et ne defile que s'il le faut : quand
         // la place suffit, la colonne fait exactement la hauteur offerte et rien
         // ne bouge. C'est ce qui met l'echelle de texte a 200 % hors de danger --
@@ -1406,7 +1414,7 @@ class _CorpsDocument extends StatelessWidget {
             children: <Widget>[
               SizedBox(height: document, child: panneau),
               SizedBox(
-                height: _hauteurScene,
+                height: scene,
                 child: _Scene(vue: vue),
               ),
               // La presence sous la scene, et non en feuille : la colonne defile
@@ -1421,6 +1429,41 @@ class _CorpsDocument extends StatelessWidget {
         );
       },
     );
+  }
+
+  /// Le document sous la bande de la scene, jamais sous son plancher.
+  static double _borne(BoxConstraints c, double scene, double plancher) {
+    final double reste = c.hasBoundedHeight ? c.maxHeight - scene : plancher;
+    return reste < plancher ? plancher : reste;
+  }
+
+  /// Le nombre de visages de la galerie (comme [_Scene]).
+  int get _distants => (vue.dominant != null ? 1 : 0) + vue.autres.length;
+
+  /// TB-RC (TB_RAPPORT §d n° 5 et 11) : la bande de la scene de
+  /// l'observateur montre TOUTES ses rangees a leur plancher, sans
+  /// defilement interne. Une bande fixe de trois respirations coupait la
+  /// seconde rangee de quatre visages au ras du rappel, sans nom ni indice.
+  double _hauteurSceneLue(BuildContext context) => _distants <= 1
+      ? _hauteurScene
+      : _Galerie.hauteurEntiere(_distants, AppGabarit.de(context)) +
+            AppSpacing.lg;
+
+  /// TB-RC (TB_RAPPORT §d n° 5 et 11) : la ligne de flottaison ne tranche
+  /// jamais une tuile. Trois cas, dans l'ordre :
+  /// 1. tout tient : le document prend le reste, rien ne defile ;
+  /// 2. sinon, si le document garde son plancher, la premiere rangee entiere
+  ///    finit a la ligne de flottaison et la suivante commence dessous ;
+  /// 3. sinon, le document remplit exactement la hauteur visible et la scene
+  ///    commence sous la ligne de flottaison.
+  /// La colonne defile dans les cas 2 et 3 (une seule zone qui defile).
+  double _documentLu(BoxConstraints c, double scene, double plancher) {
+    if (!c.hasBoundedHeight) return plancher;
+    final double hauteur = c.maxHeight;
+    if (hauteur - scene >= plancher) return hauteur - scene;
+    final double premiere = _distants <= 1 ? scene : _Galerie.premiereRangee;
+    if (hauteur - premiere >= plancher) return hauteur - premiere;
+    return hauteur;
   }
 }
 
@@ -1535,9 +1578,8 @@ class _FondPresence extends StatelessWidget {
 ///
 /// **Reutilisation, aucune copie (K-10)** : la surface est celle de la salle
 /// de seance (`ZoneSupport`, qui pose `SurfacePageFixe` : la page dans son
-/// ratio, l'affichage partage, le calque des notes), et la page se lit par
-/// `IndicateurPage` (« 3 / 12 », lecture seule). Au-dessus, le titre du
-/// support. **Aucune commande** : ni pagination, ni zoom, ni affichage, ni
+/// ratio, l'affichage partage, le calque des notes). Au-dessus, une ligne
+/// dit le titre du support et la page (« titre, page 3 sur 12 »). **Aucune commande** : ni pagination, ni zoom, ni affichage, ni
 /// outil d'ecriture, ni rangement ; les commandes de l'observateur restent
 /// celles de son role, en bas ou dans sa zone haute.
 class _PresentationLue extends StatelessWidget {
@@ -1548,6 +1590,9 @@ class _PresentationLue extends StatelessWidget {
 
   /// La cle de la presentation lue (tests et captures).
   static const Key cle = ValueKey<String>('presentation-lue');
+
+  /// La ligne du titre et de la page (tests et captures).
+  static const Key cleTitre = ValueKey<String>('presentation-lue-titre');
 
   @override
   Widget build(BuildContext context) {
@@ -1561,25 +1606,25 @@ class _PresentationLue extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         if (page != null) ...<Widget>[
-          // Un `Wrap` : a texte agrandi et a 320, la page passe sous le
-          // titre plutot que de l'etrangler (SALLE-200-1).
-          // TB-RC (revue TB-R, m12) : titre et « 3 / 12 » sont deja dits par
-          // le nom de la page de la surface (annonce quand elle change) :
-          // lus une fois, pas trois.
+          // TB-RC (TB_RAPPORT §d n° 18) : la position se dit en mots, dans la
+          // ligne du titre (« Les bonnes manieres, page 3 sur 12 »), et non
+          // par la pastille `IndicateurPage`, qui avait ici le style d'un
+          // bouton plein a cote de « Quitter » sans rien commander. La ligne
+          // passe a la ligne a texte agrandi (SALLE-200-1), jamais rognee.
+          // Revue TB-R m12 : la surface dit deja ce titre et cette page au
+          // lecteur d'ecran (`SurfacePageFixe`) ; la ligne n'est donc pas
+          // relue (trois lectures avant : titre, page, surface).
           ExcludeSemantics(
-            child: Wrap(
-              spacing: AppSpacing.md,
-              runSpacing: AppSpacing.sm,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: <Widget>[
-                Text(
-                  page.titre,
-                  style: salle.applyTo(
-                    Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
-                  ),
-                ),
-                IndicateurPage(page: page.page, pages: page.total),
-              ],
+            child: Text(
+              t.salle.seance.surface.page(
+                titre: page.titre,
+                page: page.page,
+                pages: page.total,
+              ),
+              key: cleTitre,
+              style: salle.applyTo(
+                Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
+              ),
             ),
           ),
           Ecart.vMd,
@@ -1694,6 +1739,25 @@ class _Galerie extends StatelessWidget {
   /// L'ecart entre deux tuiles (K-55, VIDEO-TUILE-1) : 16 px.
   static const double _ecart = AppSpacing.lg;
 
+  /// Le nombre de colonnes pour [total] tuiles dans [gabarit].
+  static int _colonnes(int total, Gabarit gabarit) => switch (total) {
+    2 => gabarit.estLarge ? 2 : 1,
+    3 || 4 => 2,
+    _ => gabarit.estLarge ? 3 : 2,
+  };
+
+  /// TB-RC (TB_RAPPORT §d n° 5 et 11) : la hauteur ou toutes les rangees de
+  /// [total] tuiles tiennent a leur plancher, sans defilement interne.
+  static double hauteurEntiere(int total, Gabarit gabarit) {
+    final int colonnes = _colonnes(total, gabarit);
+    final int lignes = (total + colonnes - 1) ~/ colonnes;
+    return lignes * _hauteurPlancher + (lignes - 1) * _ecart;
+  }
+
+  /// La premiere rangee a son plancher, et l'ecart qui la suit : la rangee
+  /// suivante commence juste apres.
+  static const double premiereRangee = _hauteurPlancher + _ecart;
+
   @override
   Widget build(BuildContext context) {
     // Un seul distant : il occupe tout, exactement comme avant le pivot. C'est
@@ -1709,11 +1773,7 @@ class _Galerie extends StatelessWidget {
 
     final Gabarit gabarit = AppGabarit.de(context);
     final int total = participants.length;
-    final int colonnes = switch (total) {
-      2 => gabarit.estLarge ? 2 : 1,
-      3 || 4 => 2,
-      _ => gabarit.estLarge ? 3 : 2,
-    };
+    final int colonnes = _colonnes(total, gabarit);
     final int lignes = (total + colonnes - 1) ~/ colonnes;
 
     return LayoutBuilder(

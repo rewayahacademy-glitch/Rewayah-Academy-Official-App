@@ -57,10 +57,14 @@ import 'package:rewayah_academy/features/tc_dock/couche_annotation.dart';
 
 import '../../capture/outil_capture.dart' hide stabiliser;
 import '../../router/support_routeur.dart';
+import '../../support/aucun_mot_coupe.dart';
 import '../../support/garde_interface.dart';
 import '../../theme/support/contraste.dart';
 
 const Key _presentation = ValueKey<String>('presentation-lue');
+
+/// La ligne du titre et de la page de la presentation lue (TB-RC).
+const Key _ligneTitre = ValueKey<String>('presentation-lue-titre');
 
 /// Le defilement de la colonne laterale de presence (`_FondPresence`).
 const Key _defilePresence = ValueKey<String>('presence-defile');
@@ -258,16 +262,20 @@ void main() {
               s != SituationTb.ped02,
               reason: 'notes cachees en Support seulement',
             );
-            final Finder indicateur = find.byType(IndicateurPage);
+            // TB-RC (TB_RAPPORT §d n° 18) : la page se dit dans la ligne du
+            // titre, sans la pastille `IndicateurPage`.
+            expect(find.byType(IndicateurPage), findsNothing);
+            final Finder ligne = find.byKey(_ligneTitre);
             if (s == SituationTb.ped01) {
-              expect(indicateur, findsNothing);
+              expect(ligne, findsNothing);
             } else {
-              final IndicateurPage i = tester.widget(indicateur);
-              expect(i.page, 3);
-              expect(i.pages, DonneesSeanceDemo.supportPageFixe.total);
               expect(
-                find.text(DonneesSeanceDemo.supportPageFixe.titre),
-                findsWidgets,
+                tester.widget<Text>(ligne).data,
+                t.salle.seance.surface.page(
+                  titre: DonneesSeanceDemo.supportPageFixe.titre,
+                  page: 3,
+                  pages: DonneesSeanceDemo.supportPageFixe.total,
+                ),
               );
             }
             // Ni consigne de l'enseignant, ni vignette posee sur la page.
@@ -369,6 +377,8 @@ void main() {
   });
 
   group('SALLE-200-1/2 avec presentation : la salle tient', () {
+    // Revue TB-R m35 : les mots se mesurent avec les polices du depot.
+    setUpAll(chargerPolicesDuDepot);
     for (final ObservateurDemo o in ObservateurDemo.values) {
       for (final double largeur in <double>[320, 390]) {
         for (final double texte in <double>[1, 2]) {
@@ -394,25 +404,26 @@ void main() {
             expect(zone.right, lessThanOrEqualTo(largeur + 0.5));
             expect(zone.bottom, lessThanOrEqualTo(844.5));
             // Le titre du support (la ligne au-dessus de la surface, la page
-            // neutre le repete), dans l'ecran et non rogne.
-            final Finder titre = find.descendant(
-              of: find.descendant(
-                of: find.byKey(_presentation),
-                matching: find.byType(Wrap),
-              ),
-              matching: find.text(DonneesSeanceDemo.supportPageFixe.titre),
-            );
+            // neutre le repete), dans l'ecran et non rogne. Revue TB-R m35 :
+            // mesure de chaque mot au rendu, polices du depot (le
+            // `didExceedMaxLines` d'un `Text` sans `maxLines` ne mesurait
+            // rien).
+            final Finder titre = find.byKey(_ligneTitre);
             expect(titre, findsOneWidget);
+            expect(
+              tester.widget<Text>(titre).data,
+              startsWith(DonneesSeanceDemo.supportPageFixe.titre),
+            );
             final Rect rt = tester.getRect(titre);
             expect(rt.left, greaterThanOrEqualTo(-0.5));
             expect(rt.right, lessThanOrEqualTo(largeur + 0.5));
-            final RenderParagraph p = tester.renderObject(titre);
-            expect(p.didExceedMaxLines, isFalse);
+            verifierAucunMotCoupe(tester, titre);
             // SUPERPOS-1 : a texte x1, la scene tient sous la presentation,
             // aucune tuile ne passe sous le rappel du role (le bandeau). A
-            // texte x2, la colonne (presentation puis scene) defile : la
-            // tuile est rognee au bord de la colonne, au-dessus du bandeau,
-            // et se lit entiere une fois la colonne defilee jusqu'au bout.
+            // texte x2, la colonne (presentation puis scene) finit au-dessus
+            // du bandeau ; quand elle defile (TB-RC : jamais au milieu d'une
+            // tuile, rc_observateurs_test), la tuile se lit entiere une fois
+            // la colonne defilee jusqu'au bout.
             if (texte == 2) {
               final Finder colonne = find
                   .ancestor(
@@ -423,9 +434,9 @@ void main() {
               final ScrollPosition position = tester
                   .state<ScrollableState>(colonne)
                   .position;
-              expect(position.maxScrollExtent, greaterThan(0));
               final Rect vue = tester.getRect(colonne);
-              // A x2, le rappel se replie sur son titre court.
+              // TB-RC (n° 6) : a x2, le rappel garde ses deux phrases ; son
+              // titre en est la premiere ligne.
               final Rect rappel = tester.getRect(
                 find
                     .textContaining(
@@ -473,7 +484,7 @@ void main() {
               );
             }
             verifierSansChevauchement(tester, <Finder>[
-              find.byType(IndicateurPage),
+              find.byKey(_ligneTitre),
               find.byType(ZoneSupport),
             ]);
           });
