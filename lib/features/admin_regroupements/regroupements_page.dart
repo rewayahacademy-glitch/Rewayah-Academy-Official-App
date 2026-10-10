@@ -6,8 +6,10 @@
 /// regroupement montre ses jours, son heure (heure de reference et fuseaux
 /// utiles), son public, sa langue, son nombre d'eleves, et « Prete » quand le
 /// quota est atteint (lu depuis le port, jamais ecrit ici). Le bouton « Creer
-/// la classe » ne se grise jamais : avant le quota, il reste actif et la
-/// feuille dit que la classe sera incomplete, l'administration confirme.
+/// la classe » ne se grise jamais ; avant le quota, il n'est pas rendu (le
+/// serveur refuse la creation) et la phrase du quota dit ce qui manque.
+/// Chaque classe deja creee est nommee avec son numero parmi les classes
+/// paralleles (R16, [nomClasseRegroupee]).
 ///
 /// Tri : les regroupements prets d'abord, puis le plus grand nombre d'eleves
 /// ([trierRegroupements]). Une classe deja creee qui attend son enseignant
@@ -133,7 +135,7 @@ class _Contenu extends StatelessWidget {
     final String? principal = <RegroupementDemandes>[...aFinir, ...ouverts]
         .where(
           (RegroupementDemandes g) => g.classe == null
-              ? g.peutCreerClasse
+              ? g.peutCreerClasse && g.pret
               : g.classe!.peutAffecterEnseignant,
         )
         .firstOrNull
@@ -240,10 +242,15 @@ class _CarteRegroupement extends StatelessWidget {
     final r = t.admin.regroupements;
     final RegroupementDemandes g = regroupement;
     final ClasseSansEnseignant? classe = g.classe;
+    // Un regroupement sous le quota n'a pas de bouton : le serveur refuse sa
+    // creation, la phrase du quota dit ce qui manque (jamais un bouton qui
+    // ne peut pas aboutir).
     final bool peutAgir = classe == null
-        ? g.peutCreerClasse
+        ? g.peutCreerClasse && g.pret
         : classe.peutAffecterEnseignant;
-    final String titre = classe?.libelle ?? libelleCreneau(g);
+    final String titre = classe == null
+        ? libelleCreneau(g)
+        : nomClasseRegroupee(classe);
 
     return AppCard(
       key: ValueKey<String>('regroupement-${g.id}'),
@@ -269,12 +276,12 @@ class _CarteRegroupement extends StatelessWidget {
           Ecart.vLg,
           if (classe != null)
             TexteSansCoupure(
-              r.classeAttend(libelle: classe.libelle),
+              r.classeAttend(libelle: nomClasseRegroupee(classe)),
               style: textes.bodyMedium,
             )
           else
             EtatQuota(regroupement: g),
-          if (!peutAgir) ...<Widget>[
+          if (!peutAgir && (classe != null || g.pret)) ...<Widget>[
             Ecart.vMd,
             TexteSansCoupure(
               classe == null ? r.nonOuvert : r.affectationNonOuverte,

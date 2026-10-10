@@ -17,6 +17,8 @@ library;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../classes/nom_classe_distinct.dart';
+
 /// Les etats serveur d'une absence declaree (doc 04 §17.2).
 enum EtatAbsence {
   /// `Absence enregistree`.
@@ -53,6 +55,8 @@ class OffreRemplacement {
     required this.fin,
     required this.nbEleves,
     this.groupeId,
+    this.numeroDansFamille,
+    this.codeCourt,
   });
 
   /// La seance a assurer.
@@ -69,6 +73,19 @@ class OffreRemplacement {
 
   /// Le nombre d'eleves.
   final int nbEleves;
+
+  /// R16 : le numero de la Classe parmi les classes paralleles de meme
+  /// categorie, jours et heure, attribue par le serveur. Nul tant qu'il ne le
+  /// rend pas.
+  final int? numeroDansFamille;
+
+  /// R16 : le code court de la Classe, a defaut de numero. Nul tant que le
+  /// serveur ne le rend pas.
+  final String? codeCourt;
+
+  /// Le nom de la Classe, sans ambiguite parmi les classes paralleles (R16).
+  String get classeDistincte =>
+      nomClasseDistinct(classe, numero: numeroDansFamille, code: codeCourt);
 
   /// La Classe remplacee : le remplacant y trouve l'objectif, le support, la
   /// reprise et les eleves (doc 04 §17.3, question §33 n. 11). `null` si le

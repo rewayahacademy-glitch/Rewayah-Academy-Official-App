@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
+import '../../core/admin/port_classes_admin.dart';
 import '../../core/admin/service_admin.dart';
 import '../../core/admin/service_groupes.dart';
 import '../../core/alertes/port_alertes.dart';
@@ -64,6 +65,7 @@ import 'alertes_demo.dart';
 import 'cartes_classe_demo.dart';
 import 'catalogue_demo.dart';
 import 'classe_form_demo.dart';
+import 'classes_admin_demo.dart';
 import 'dossiers_demo.dart';
 import 'finance_demo.dart';
 import 'observation_demo.dart';
@@ -334,6 +336,18 @@ List<Override> surchargesDemoAdmin({
     // la creation ecrit (CLASSE-FORM-1, en memoire) ; ajouter, retirer et
     // cloturer restent « indisponibles ».
     groupesProvider.overrideWith((Ref ref) async => creees.toutes()),
+    // R16, R17 : la liste paginee des classes, a grande echelle (30 classes
+    // paralleles de meme cle, un grand volume simule, les classes creees).
+    portClassesAdminProvider.overrideWithValue(
+      ClassesAdminDemo(
+        creees: creees,
+        classes: <ClasseListee>[
+          ...familleDemo(),
+          ...<GroupeAdmin>[...groupesDemo()].map(ClasseListee.depuisGroupe),
+          ...volumeDemo(),
+        ],
+      ),
+    ),
     portEnseignantsClasseProvider.overrideWithValue(
       EnseignantsClasseDemo(creees),
     ),

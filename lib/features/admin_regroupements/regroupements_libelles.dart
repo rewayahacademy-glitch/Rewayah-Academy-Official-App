@@ -11,6 +11,7 @@ library;
 
 import '../../core/admin/service_groupes.dart' show TypePublicGroupe;
 import '../../core/capacites/port_enseignants_classe.dart' show GenreClasse;
+import '../../core/classes/nom_classe_distinct.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/offres/offre_horaire.dart' show PublicOffre;
@@ -180,6 +181,31 @@ String nomDeduit(RegroupementDemandes r, GenreClasse? genre) {
     creneau: heure == null
         ? libelleJoursHeures(r).toLowerCase()
         : '${libelleJours(r.jours).toLowerCase()} $heure',
+  );
+}
+
+/// R16 : le nom deduit, suivi du numero que le serveur donnera a la classe
+/// parmi les classes paralleles de meme cle (« Garcons, lundi 18 h · n° 4 »).
+/// Sans numero rendu, le nom deduit seul. Le libelle envoye au serveur reste
+/// [nomDeduit] : le numero est porte a part, il ne s'ecrit pas dans le nom.
+String nomDeduitDistinct(RegroupementDemandes r, GenreClasse? genre) =>
+    nomClasseDistinct(nomDeduit(r, genre), numero: r.numeroProchaineClasse);
+
+/// R16 : le nom d'une classe creee depuis un regroupement, avec son numero
+/// dans la famille de classes paralleles (ou son code court).
+String nomClasseRegroupee(ClasseSansEnseignant c) => nomClasseDistinct(
+  c.libelle,
+  numero: c.numeroDansFamille,
+  code: c.codeCourt,
+);
+
+/// R3 : « 12 demandes → 2 classes possibles ». Le nombre de classes vient du
+/// serveur ([RegroupementDemandes.classesPossiblesLues]).
+String libelleDemandesClasses(RegroupementDemandes g) {
+  final r = t.admin.regroupements;
+  return r.demandesVersClasses(
+    demandes: r.demandes(n: g.nombreEleves),
+    classes: r.classesPossibles(n: g.classesPossiblesLues),
   );
 }
 

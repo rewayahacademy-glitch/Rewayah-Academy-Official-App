@@ -117,6 +117,7 @@ class _Traductions$commun$ar extends Traductions$commun$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$commun$classeDistincte$ar classeDistincte = _Traductions$commun$classeDistincte$ar._(_root);
 	@override late final _Traductions$commun$recherche$ar recherche = _Traductions$commun$recherche$ar._(_root);
 	@override late final _Traductions$commun$sections$ar sections = _Traductions$commun$sections$ar._(_root);
 	@override late final _Traductions$commun$dates$ar dates = _Traductions$commun$dates$ar._(_root);
@@ -417,6 +418,18 @@ class _Traductions$notifications$types$ar extends Traductions$notifications$type
 	@override String get annonceInterne => 'إعلان داخلي';
 	@override String get evenementContextuel => 'حدث';
 	@override String get autre => 'إشعار';
+}
+
+// Path: commun.classeDistincte
+class _Traductions$commun$classeDistincte$ar extends Traductions$commun$classeDistincte$fr {
+	_Traductions$commun$classeDistincte$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String numero({required Object libelle, required Object numero}) => '⁨${libelle}⁩ · رقم ⁨${numero}⁩';
+	@override String code({required Object libelle, required Object code}) => '⁨${libelle}⁩ · ⁨${code}⁩';
+	@override String enseignant({required Object libelle, required Object enseignant}) => '⁨${libelle}⁩ · مع ⁨${enseignant}⁩';
 }
 
 // Path: commun.recherche
@@ -4597,6 +4610,9 @@ extension on TraductionsAr {
 			'historique.dateCourte' => ({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}',
 			'historique.dateCourteSansAnnee' => ({required Object jour, required Object mois}) => '${jour} ${mois}',
 			'historique.dateLongue' => ({required Object jourSemaine, required Object jour, required Object mois, required Object annee}) => '${jourSemaine} ${jour} ${mois} ${annee}',
+			'commun.classeDistincte.numero' => ({required Object libelle, required Object numero}) => '⁨${libelle}⁩ · رقم ⁨${numero}⁩',
+			'commun.classeDistincte.code' => ({required Object libelle, required Object code}) => '⁨${libelle}⁩ · ⁨${code}⁩',
+			'commun.classeDistincte.enseignant' => ({required Object libelle, required Object enseignant}) => '⁨${libelle}⁩ · مع ⁨${enseignant}⁩',
 			'commun.recherche.effacer' => 'مسح البحث',
 			'commun.recherche.fermer' => 'إغلاق البحث',
 			'commun.sections.page' => 'أقسام الصفحة',
@@ -5041,11 +5057,11 @@ extension on TraductionsAr {
 			'tc.groupe.espace.aucuneAction' => 'لا شيء للتحضير حاليًا',
 			'tc.groupe.espace.bibliotheque' => 'المكتبة',
 			'tc.groupe.espace.bibliothequeVoirTout' => 'عرض الكل',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.espace.progression' => 'التقدم',
 			'tc.groupe.espace.roster' => 'طلاب الفصل',
 			'tc.groupe.espace.reprendreLeCours' => 'استئناف الدرس',
-			_ => null,
-		} ?? switch (path) {
 			'tc.groupe.espace.introuvable' => 'هذا الفصل غير متاح لك',
 			'tc.groupe.espace.introuvableDetail' => 'ربما أُغلق، أو يخص ملفًا آخر.',
 			'tc.groupe.emplacement.nonBranche' => 'متاح قريبًا',
@@ -5555,11 +5571,11 @@ extension on TraductionsAr {
 			'com.studio.brouillons.canalIndisponible' => 'مسودة في قناة لم تعد متاحة',
 			'com.studio.brouillons.modifie' => ({required Object moment}) => 'عُدّلت في ${moment}',
 			'com.studio.brouillons.reprendre' => ({required Object nom}) => 'متابعة المسودة في ${nom}',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.brouillons.videTitre' => 'لا توجد مسودات',
 			'com.studio.brouillons.vide' => 'ستظهر هنا أي رسالة بدأتها في قناة ولم تُرسل بعد.',
 			'com.studio.brouillons.tous' => ({required Object nombre}) => 'عرض كل المسودات (${nombre})',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.brouillons.restaure' => 'استُعيدت المسودة. يمكنك متابعة رسالتك.',
 			'com.studio.sousTitre' => 'مساحة عمل الفريق',
 			'com.studio.navigation.aujourdhui' => _root.com.socle.lexique.aujourdhui,
@@ -6069,11 +6085,11 @@ extension on TraductionsAr {
 			'comptable.aujourdhui.accesPaiements' => 'عرض المدفوعات للتنفيذ',
 			'comptable.aujourdhui.accesContractuels' => 'إدارة التزامات المتعاقدين',
 			'comptable.aujourdhui.accesEncaissements' => 'عرض المقبوضات',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.aujourdhui.accesTresorerie' => 'عرض الخزينة والصناديق',
 			'comptable.aujourdhui.accesAlimenter' => 'تغذية الاحتياطي الاستراتيجي',
 			'comptable.aujourdhui.titre' => 'اليوم',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.aujourdhui.sousTitre' => 'ماذا عليّ أن أفعل الآن؟',
 			'comptable.aujourdhui.attention' => 'للمعالجة والتنبيهات',
 			'comptable.aujourdhui.aTraiter' => 'للمعالجة اليوم',
@@ -6583,11 +6599,11 @@ extension on TraductionsAr {
 			'comptable.contractuels.erreurNomExterne' => 'أدخل اسم المستفيد الخارجي.',
 			'comptable.contractuels.erreurCreation' => 'لا نعلم إن كان الالتزام قد أُنشئ. حدّث القائمة قبل إعادة المحاولة.',
 			'comptable.contractuels.creationIndisponible' => 'لا يستطيع حسابك إنشاء التزام.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.retourListe' => 'العودة إلى المتعاقدين',
 			'comptable.contractuels.titre' => 'المتعاقدون والالتزامات',
 			'comptable.contractuels.sousTitre' => 'تُحدَّد المبالغ عند إنشاء الالتزام، وتُثبَّت بعد الاعتماد.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.nouvelle' => 'التزام جديد',
 			'comptable.contractuels.detailTitre' => 'الالتزام',
 			'comptable.validation.sousTitre' => 'طلبات المحاسب التي تنتظر قرار شخص مخوَّل آخر. صاحب الطلب لا يصادق أبدًا على طلبه.',

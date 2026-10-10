@@ -88,6 +88,8 @@ class ClasseSansEnseignant {
     required this.libelle,
     this.genre,
     this.peutAffecterEnseignant = false,
+    this.numeroDansFamille,
+    this.codeCourt,
   });
 
   /// L'identifiant de la classe.
@@ -103,6 +105,15 @@ class ClasseSansEnseignant {
   /// Capacite rendue par le serveur : la personne connectee peut confirmer
   /// l'enseignant de cette classe.
   final bool peutAffecterEnseignant;
+
+  /// R16 : le numero de cette classe parmi les classes paralleles de meme
+  /// cle (meme categorie, memes jours, meme heure), attribue par le serveur.
+  /// Nul tant que le serveur ne le rend pas (ligne Contrats a demander).
+  final int? numeroDansFamille;
+
+  /// R16 : un code court lisible attribue par le serveur, a defaut de
+  /// numero. Nul tant que le serveur ne le rend pas.
+  final String? codeCourt;
 }
 
 /// Un regroupement de demandes semblables.
@@ -125,6 +136,8 @@ class RegroupementDemandes {
     this.autresFuseaux = const <HeureDansFuseau>[],
     this.peutCreerClasse = false,
     this.classe,
+    this.classesPossibles,
+    this.numeroProchaineClasse,
   }) : assert(occurrences.isNotEmpty, 'un regroupement a au moins un jour'),
        assert(
          joursDistincts(occurrences),
@@ -186,6 +199,21 @@ class RegroupementDemandes {
   /// La classe deja creee depuis ce regroupement, qui attend son
   /// enseignant. Nul : aucune classe encore.
   final ClasseSansEnseignant? classe;
+
+  /// R3 : le nombre de classes que ces demandes permettent d'ouvrir (minimum
+  /// et maximum d'`app_config`), calcule par le serveur. Nul tant que le
+  /// serveur ne le rend pas : [classesPossiblesLues] retombe alors sur le
+  /// seul quota connu, sans inventer de minimum.
+  final int? classesPossibles;
+
+  /// R16 : le numero que portera la prochaine classe creee sur cette cle,
+  /// attribue par le serveur. Nul tant que le serveur ne le rend pas.
+  final int? numeroProchaineClasse;
+
+  /// Le nombre de classes possibles : celui du serveur, sinon le nombre de
+  /// classes pleines au quota (jamais une classe sous le quota).
+  int get classesPossiblesLues =>
+      classesPossibles ?? (quota <= 0 ? 0 : nombreEleves ~/ quota);
 
   /// Vrai quand le quota est atteint : la classe peut ouvrir complete.
   bool get pret => nombreEleves >= quota;

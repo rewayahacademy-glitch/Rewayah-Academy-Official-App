@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../i18n/elision.dart';
 import '../i18n/strings.g.dart';
+import '../reseau/sondage_regulier.dart';
 import 'echec_observation.dart';
 import 'port_politique_observation.dart';
 
@@ -82,9 +83,9 @@ class AnnonceObservationSupabase implements PortAnnonceObservation {
   Stream<List<AnnonceObservation>> annonces(String sessionId) {
     final StreamController<List<AnnonceObservation>> sortie =
         StreamController<List<AnnonceObservation>>();
-    Timer? minuterie;
+    SondageRegulier? sondage;
 
-    Future<void> lire() async {
+    Future<bool> lire() async {
       try {
         final Object? reponse = await _client.rpc<Object?>(
           'annonces_observation',
@@ -93,6 +94,7 @@ class AnnonceObservationSupabase implements PortAnnonceObservation {
         if (!sortie.isClosed) {
           sortie.add(_lire(reponse));
         }
+        return true;
       } on PostgrestException catch (e) {
         // Une annonce absente n'interrompt pas un cours : l'enseignant garde un
         // indicateur vide, et la lecture suivante a lieu comme prevu. C'est le
@@ -101,23 +103,26 @@ class AnnonceObservationSupabase implements PortAnnonceObservation {
             motifDeErreurPostgrest(e) == MotifEchecObservation.reseau) {
           sortie.add(const <AnnonceObservation>[]);
         }
+        return false;
       } on Object {
         if (!sortie.isClosed) {
           sortie.add(const <AnnonceObservation>[]);
         }
+        return false;
       }
     }
 
     sortie
       ..onListen = () {
-        minuterie = Timer.periodic(
-          cadenceAnnonceObservation,
-          (Timer _) => unawaited(lire()),
-        );
-        unawaited(lire());
+        // R14 : decalage au hasard et recul apres echec, cadence moyenne
+        // inchangee (`SondageRegulier`).
+        sondage = SondageRegulier(
+          cadence: cadenceAnnonceObservation,
+          lire: lire,
+        )..demarrer();
       }
       ..onCancel = () {
-        minuterie?.cancel();
+        sondage?.arreter();
         return sortie.close();
       };
     return sortie.stream;
@@ -200,9 +205,9 @@ class AnnonceObservationEnfantSupabase implements PortAnnonceObservationEnfant {
   @override
   Stream<bool> monTuteurObserve(String sessionId) {
     final StreamController<bool> sortie = StreamController<bool>();
-    Timer? minuterie;
+    SondageRegulier? sondage;
 
-    Future<void> lire() async {
+    Future<bool> lire() async {
       try {
         final Object? reponse = await _client.rpc<Object?>(
           'annonce_observation_pour_moi',
@@ -213,6 +218,7 @@ class AnnonceObservationEnfantSupabase implements PortAnnonceObservationEnfant {
             reponse is Map<String, dynamic> && reponse['observe'] == true,
           );
         }
+        return true;
       } on Object {
         // Un temoin qui ne sait pas reste ETEINT. Toute erreur retombe ici, y
         // compris le refus de la porte serveur (`insufficient_privilege`) que
@@ -223,19 +229,19 @@ class AnnonceObservationEnfantSupabase implements PortAnnonceObservationEnfant {
         if (!sortie.isClosed) {
           sortie.add(false);
         }
+        return false;
       }
     }
 
     sortie
       ..onListen = () {
-        minuterie = Timer.periodic(
-          cadenceAnnonceObservation,
-          (Timer _) => unawaited(lire()),
-        );
-        unawaited(lire());
+        sondage = SondageRegulier(
+          cadence: cadenceAnnonceObservation,
+          lire: lire,
+        )..demarrer();
       }
       ..onCancel = () {
-        minuterie?.cancel();
+        sondage?.arreter();
         return sortie.close();
       };
     return sortie.stream;

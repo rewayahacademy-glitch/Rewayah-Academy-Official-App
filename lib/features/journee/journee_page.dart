@@ -1399,7 +1399,7 @@ class _AlertesUtiles extends ConsumerWidget {
                   icone: AppIcons.cours,
                   libelle: t.enseignant.journee.remplacement.titre,
                   legende:
-                      '${offre.classe} · ${dateLisible(offre.debut)} · '
+                      '${offre.classeDistincte} · ${dateLisible(offre.debut)} · '
                       '${_hhmm(offre.debut)}',
                   onPress: port == null
                       ? null

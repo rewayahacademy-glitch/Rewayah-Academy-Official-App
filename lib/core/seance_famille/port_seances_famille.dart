@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 import '../capacites/capacite_indisponible.dart';
 import '../domain/enums.dart';
 import '../planning/service_planning.dart';
+import '../reseau/sondage_regulier.dart';
 import '../tc_horloge/session_clock_vm.dart';
 import 'seance_famille.dart';
 
@@ -353,33 +354,36 @@ class SeancesFamilleDepuisPlanning implements PortSeancesFamille {
     // `Future.delayed` continuait de courir apres la sortie d'ecran.
     final StreamController<SeanceFamille> sortie =
         StreamController<SeanceFamille>();
-    Timer? minuterie;
+    SondageRegulier? sondage;
 
-    Future<void> lire() async {
+    Future<bool> lire() async {
       try {
         final SeanceFamille? lue = await seance(seanceId, eleveId: eleveId);
         if (sortie.isClosed) {
-          return;
+          return true;
         }
         if (lue == null) {
           sortie.addError(SeanceIntrouvable(seanceId));
         } else {
           sortie.add(lue);
         }
+        return true;
       } on Object catch (erreur, pile) {
         if (!sortie.isClosed) {
           sortie.addError(erreur, pile);
         }
+        return false;
       }
     }
 
     sortie
       ..onListen = () {
-        minuterie = Timer.periodic(cadence, (Timer _) => unawaited(lire()));
-        unawaited(lire());
+        // R14 : decalage au hasard et recul apres echec, cadence moyenne
+        // inchangee (`SondageRegulier`).
+        sondage = SondageRegulier(cadence: cadence, lire: lire)..demarrer();
       }
       ..onCancel = () {
-        minuterie?.cancel();
+        sondage?.arreter();
         return sortie.close();
       };
     return sortie.stream;

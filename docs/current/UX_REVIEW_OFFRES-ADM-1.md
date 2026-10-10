@@ -37,12 +37,12 @@ que CLASSE-FORM-1 a construit (voir « Réutilisé, pas dupliqué »).
 |---|---|---|---|---|---|
 | Une carte par regroupement : titre « jours · heure », puis heure de référence, autres fuseaux, public, langue, élèves | Décision §3 ; Nielsen n°1 (visibilité de l'état) ; K-55 | Ce qui sert à décider se lit sans ouvrir la carte ; cartes détachées (`PileCartes`) | Conforme | `LigneCleValeur` pour chaque donnée ; chiffres tabulaires pour l'heure et les élèves | Aucune |
 | Heure de référence et fuseaux utiles dits par la ville | Décision §1 (familles d'Europe et d'Amérique du Nord) ; COUPE-MOTS-1 ; WCAG 1.4.4 | Un fuseau se lit, il ne se déchiffre pas ; aucun mot coupé à 320 px en texte ×2 | Ajusté | « 18 h, heure de Paris » ; « 17 h à London · 12 h à Toronto » ; « 5 h le lendemain à Paris ». Le nom IANA (`America/Los_Angeles`) se coupait à 320 px ×2 : la ville en est tirée (`villeDuFuseau`) | Les heures des autres fuseaux sont calculées par le serveur ; le client n'en convertit aucune |
-| « Prête » / « Incomplète » par trois signaux | `lib/CLAUDE.md` (jamais la couleur seule) ; WCAG 1.4.1 | Pastille au ton, mot dans la pastille, phrase dessous | Conforme | `StatusPill` succès ou avertissement ; « Le quota est atteint… » ou « Il manque {n} élèves pour atteindre le quota. Vous pouvez quand même créer la classe. » | Aucune |
+| « Prête » / « Incomplète » par trois signaux | `lib/CLAUDE.md` (jamais la couleur seule) ; WCAG 1.4.1 | Pastille au ton, mot dans la pastille, phrase dessous | Conforme | `StatusPill` succès ou avertissement ; « Le quota est atteint… » ou « Il manque {n} demandes pour atteindre le quota : la classe pourra être créée dès que le regroupement sera prêt. » (ECHELLE-CORR-ECRANS-1) | Aucune |
 | Quota lu dans le port | Décision §2 (5 enfants, 6 adultes, lus dans `app_config`) ; `02_ARCHITECTURE` | Une règle de l'académie ne se recopie pas dans le client | Conforme | `RegroupementDemandes.quota` ; aucun 5 ni 6 dans l'écran. Les valeurs n'existent que dans l'adaptateur de démonstration | Aucune |
 | Tri : prêtes d'abord, puis les plus nombreuses ; une phrase le dit | Demande du directeur ; Nielsen n°1 ; Hick | L'ordre se comprend sans légende cachée | Conforme | `trierRegroupements` (pur, testé) ; phrase `tri` sous le titre de section. À égalité : premier jour, heure, identifiant (ordre stable) | Aucune |
 | Classe créée mais enseignant pas encore confirmé : en tête, « Enseignant à confirmer » | `lib/CLAUDE.md` (alerte urgente en tête) ; Nielsen n°3 (contrôle et liberté) | Fermer la feuille au milieu ne perd rien : la suite se reprend | Ajusté | Section `sectionAFinir` avant les demandes ; bouton « Choisir l'enseignant », qui rouvre la feuille directement à la proposition | Dépend du serveur : `regroupements()` rend la classe créée tant qu'elle n'a pas d'enseignant (ligne Contrats) |
 | Un seul bouton plein à l'écran | K-56 | Les autres actions sont secondaires | Conforme | Le bouton de la première carte actionnable est plein, les suivants secondaires (même règle que REMPL-1) | Aucune |
-| « Créer la classe » jamais grisé ; avant le quota, la feuille dit « incomplète » et l'administration confirme | Demande du directeur ; K-56 ; K-58 (conséquence dite avant le choix) ; Nielsen n°5 | Un bouton qui ne peut pas aboutir n'est pas grisé ; une conséquence se dit avant | Conforme | La carte ouvre la feuille (étape de confirmation) ; la feuille dit « Cette classe sera incomplète : 2 élèves sur 5. Elle ouvrira quand même… » ; le bouton dit « Créer la classe incomplète » | Aucune |
+| « Créer la classe » jamais grisé ; avant le quota, aucun bouton, une phrase dit ce qui manque | Demande du directeur ; K-56 ; K-58 ; Nielsen n°5 ; `lib/CLAUDE.md` (un bouton qui ne peut pas aboutir n'est pas rendu) | Un bouton qui ne peut pas aboutir n'est pas grisé ni rendu ; la phrase explique la limite | Conforme (revu par ECHELLE-CORR-ECRANS-1 le 10/10 : le serveur refuse un regroupement qui n'est pas prêt, et rien ne permet de rejoindre une classe ensuite) | La carte d'un regroupement prêt ouvre la feuille (étape de confirmation) ; un regroupement incomplet n'a pas de bouton et dit « Il manque {n} demandes pour atteindre le quota : la classe pourra être créée dès que le regroupement sera prêt. » | Bouton « Créer la classe incomplète » et phrase « Elle ouvrira quand même, et d'autres élèves pourront la rejoindre » retirés |
 | Genre de la classe exigé dans la feuille, trois cartes sans présélection | CLASSE-FORM-1 (D1, D2) ; K-58 | Le même geste qu'à la création d'une classe | Conforme | Mêmes cartes et mêmes textes que CLASSE-FORM-1 (`genre_classe_libelles.dart`, sorti de `groupes_page.dart`) ; presser sans genre dit « Il manque le genre de la classe… » | La ligne « genre non enregistré » de CLASSE-FORM-1 n'est pas reprise : le nouveau port reçoit le genre par contrat |
 | Nom de la classe déduit, affiché, non saisi | K-57 (déduit > choisi > saisi) ; CLASSE-FORM-1 D8 | Ce qui se déduit ne se tape pas | Ajusté | « Filles, lundi, mardi, jeudi 18 h », même forme que CLASSE-FORM-1 ; phrase « Déduit du genre, du public, des jours et de l'heure. » | Le nom n'est pas modifiable dans cette feuille : rien ne le demande, et la feuille reste courte (écart 3) |
 | Proposition d'enseignant : premier choix présélectionné, avec sa raison ; incompatible visible avec la sienne | Décision §3 ; CLASSE-FORM-1 D2, D4, D5 ; K-57 ; K-58 | Proposer, dire pourquoi, laisser confirmer | Conforme | `enseignantsPourClasseProvider` + `classerEnseignants` (étendu à plusieurs séances : libre à **chacun** des jours) ; mention « Premier choix : libre à ce créneau, … » ; raison « Classe de filles : seule une enseignante peut la prendre. » | Aucune |
@@ -165,7 +165,7 @@ Déclarés aussi dans `tool/libelles_sources.json` (source : décision du direct
 | `admin.regroupements.tri` | Les demandes prêtes à ouvrir une classe d'abord, puis les plus nombreuses. |
 | `admin.regroupements.indisponibleTitre` | Disponible au branchement serveur |
 | `admin.regroupements.indisponiblePhrase` | Les demandes réunies s'afficheront ici dès le branchement serveur. D'ici là, rien n'est affiché : aucune demande n'est inventée. |
-| `admin.regroupements.erreur` | Les demandes réunies n'ont pas pu être lues : le serveur n'a pas répondu. Réessayez dans un instant. |
+| `admin.regroupements.erreur` | Les demandes réunies n'ont pas pu être affichées : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant. (texte revu par ECHELLE-CORR-ECRANS-1, K-59) |
 | `admin.regroupements.sansDonnees` | Les demandes réunies n'ont pas pu être chargées |
 | `admin.regroupements.vide` | Aucune demande en attente |
 | `admin.regroupements.videDetail` | Les nouvelles demandes des familles apparaîtront ici, réunies quand elles se ressemblent. |
@@ -183,23 +183,25 @@ Déclarés aussi dans `tool/libelles_sources.json` (source : décision du direct
 | `admin.regroupements.ailleursMemeJour` | {heure} à {ville} |
 | `admin.regroupements.ailleursVeille` | {heure} la veille à {ville} |
 | `admin.regroupements.ailleursLendemain` | {heure} le lendemain à {ville} |
-| `admin.regroupements.eleves.one` | {n} élève sur {quota} |
-| `admin.regroupements.eleves.other` | {n} élèves sur {quota} |
+| `admin.regroupements.cleEleves` | Demandes |
+| `admin.regroupements.demandes.one` | {n} demande |
+| `admin.regroupements.demandes.other` | {n} demandes |
+| `admin.regroupements.classesPossibles.zero` | aucune classe possible |
+| `admin.regroupements.classesPossibles.one` | {n} classe possible |
+| `admin.regroupements.classesPossibles.other` | {n} classes possibles |
+| `admin.regroupements.demandesVersClasses` | {demandes} → {classes} |
 | `admin.regroupements.pret` | Prête |
 | `admin.regroupements.incomplete` | Incomplète |
 | `admin.regroupements.pretDetail` | Le quota est atteint : la classe peut ouvrir complète. |
-| `admin.regroupements.manquent.one` | Il manque {n} élève pour atteindre le quota. Vous pouvez quand même créer la classe. |
-| `admin.regroupements.manquent.other` | Il manque {n} élèves pour atteindre le quota. Vous pouvez quand même créer la classe. |
+| `admin.regroupements.manquent.one` | Il manque {n} demande pour atteindre le quota : la classe pourra être créée dès que le regroupement sera prêt. |
+| `admin.regroupements.manquent.other` | Il manque {n} demandes pour atteindre le quota : la classe pourra être créée dès que le regroupement sera prêt. |
 | `admin.regroupements.nonOuvert` | La création de cette classe ne vous est pas ouverte : un membre de la direction qui en a le droit peut la faire. |
 | `admin.regroupements.affectationNonOuverte` | La confirmation de l'enseignant ne vous est pas ouverte : un membre de la direction qui en a le droit peut la faire. |
 | `admin.regroupements.classeAttend` | Classe {libelle} créée : son enseignant reste à confirmer. |
 | `admin.regroupements.creer` | Créer la classe |
-| `admin.regroupements.creerIncomplete` | Créer la classe incomplète |
 | `admin.regroupements.choisirEnseignant` | Choisir l'enseignant |
 | `admin.regroupements.contexte.one` | L'élève de ces demandes sera intégré à la classe dès sa création. Vous confirmerez ensuite l'enseignant proposé. |
 | `admin.regroupements.contexte.other` | Les {n} élèves de ces demandes seront intégrés à la classe dès sa création. Vous confirmerez ensuite l'enseignant proposé. |
-| `admin.regroupements.incompletePhrase.one` | Cette classe sera incomplète : {n} élève sur {quota}. Elle ouvrira quand même, et d'autres élèves pourront la rejoindre. |
-| `admin.regroupements.incompletePhrase.other` | Cette classe sera incomplète : {n} élèves sur {quota}. Elle ouvrira quand même, et d'autres élèves pourront la rejoindre. |
 | `admin.regroupements.nomDetail` | Déduit du genre, du public, des jours et de l'heure. |
 | `admin.regroupements.dejaCreee` | Un autre membre de la direction vient de créer cette classe : rien n'a été créé en double. Fermez cette feuille pour retrouver la liste à jour. |
 | `admin.regroupements.refusee` | La classe n'a pas été créée : {motif}. Vérifiez les demandes, puis pressez de nouveau. |
@@ -209,7 +211,7 @@ Déclarés aussi dans `tool/libelles_sources.json` (source : décision du direct
 | `admin.regroupements.enseignantTitre` | Enseignant proposé |
 | `admin.regroupements.enseignantContexte` | Le premier choix tient compte du genre de la classe, de ses créneaux libres aux mêmes jours et à la même heure, puis du nombre de ses classes. Ces heures sont comparées telles quelles, sans conversion de fuseau : si l'enseignant vit dans un autre fuseau, vérifiez avec lui avant de confirmer. Confirmez-le ou choisissez une autre personne. (texte revu par OFFRES-1B, réserve ADM 1) |
 | `admin.regroupements.confirmerEnseignant` | Confirmer l'enseignant |
-| `admin.regroupements.enseignantHorsLigne` | Sans réseau, l'enseignant ne peut pas être confirmé. Votre choix reste affiché : revenez quand la connexion est rétablie. |
+| `admin.regroupements.enseignantHorsLigne` | L'enseignant pourra être confirmé quand la connexion sera revenue. Votre choix reste affiché. |
 | `admin.regroupements.affectationNonConfirmee` | L'enseignant n'est pas confirmé : la réponse du serveur n'est pas arrivée. Pressez de nouveau. |
 | `admin.regroupements.dejaAffecte` | Un autre membre de la direction a déjà confirmé l'enseignant de cette classe : votre choix ne remplace pas le sien. (texte revu par OFFRES-1B, réserve ADM 3) |
 | `admin.regroupements.famillesPrevenues` | Les familles ont été prévenues. |

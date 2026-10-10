@@ -41,7 +41,7 @@ l'académie ») pour les autres, rédigés par l'agent, à faire valider par le 
 - Suite : « Vous pouvez choisir un autre créneau parmi ceux proposés. » ; sans capacité de rechoisir : « Aucun autre créneau n'est proposé pour le moment. Revenez sur cette page plus tard. »
 - Lien : « Choisir un autre créneau pour {prenom} »
 - Vide : « Aucune demande de créneau en cours. »
-- Échec serveur (K-59) : « Le suivi des demandes n'a pas pu être chargé : le serveur n'a pas répondu. Réessayez dans un instant. »
+- Échec de chargement (K-59, revu par ECHELLE-CORR-ECRANS-1 le 10/10 : rien n'est affirmé de l'état du serveur, et la phrase ne laisse pas croire que la demande de créneau est perdue) : « Le suivi de vos demandes n'a pas pu être affiché : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Cet échec concerne seulement l'affichage du suivi : il ne dit rien de vos demandes de créneau. Réessayez dans un instant. »
 - Hors ligne sans données (EA-HL-DOUBLE-1, dit ce qui manque) : « Le suivi des demandes n'a pas pu être chargé »
 - Accueil : « Vos demandes de créneau », « {prenom} : {etat} », « Voir le suivi des demandes »
 - Notifications : « Demande de créneau {dePrenom} : votre demande est arrivée à l'administration », « Demande de créneau {dePrenom} : votre classe a été validée », « Demande de créneau {dePrenom} : classe validée · enseignant affecté », « Demande de créneau {dePrenom} : {motif} »

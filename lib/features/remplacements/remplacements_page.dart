@@ -466,7 +466,7 @@ class _CartePrise extends StatelessWidget {
           Semantics(
             header: true,
             child: TexteSansCoupure(
-              offre.classe,
+              offre.classeDistincte,
               style: textes.titleMedium ?? const TextStyle(),
             ),
           ),

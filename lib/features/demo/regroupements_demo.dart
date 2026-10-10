@@ -40,6 +40,8 @@ List<RegroupementDemandes> regroupementsDemo() => <RegroupementDemandes>[
     nombreEleves: 5,
     quota: quotaDemo(PublicOffre.enfants),
     peutCreerClasse: true,
+    // R16 : trois classes paralleles existent deja sur cette cle.
+    numeroProchaineClasse: 4,
   ),
   RegroupementDemandes(
     id: 'demo-reg-adultes-fr-sam-10',
@@ -134,6 +136,9 @@ class RegroupementsDemo implements PortRegroupementsAdmin {
   /// Le nombre de creations reellement recues (double appui : une seule).
   int creationsRecues = 0;
 
+  /// Les cles d'envoi recues, dans l'ordre (une par creation recue).
+  final List<String> clesRecues = <String>[];
+
   /// Le nombre de confirmations d'enseignant reellement recues.
   int affectationsRecues = 0;
 
@@ -161,6 +166,8 @@ class RegroupementsDemo implements PortRegroupementsAdmin {
             quota: r.quota,
             peutCreerClasse: r.peutCreerClasse,
             classe: classe,
+            classesPossibles: r.classesPossibles,
+            numeroProchaineClasse: r.numeroProchaineClasse,
           );
   }
 
@@ -182,6 +189,7 @@ class RegroupementsDemo implements PortRegroupementsAdmin {
       libelle: libelle,
       genre: genre,
       peutAffecterEnseignant: true,
+      numeroDansFamille: r.numeroProchaineClasse,
     );
     _classes[regroupementId] = classe;
     return ClasseCreee(classe: classe, elevesIntegres: r.nombreEleves);
@@ -202,6 +210,7 @@ class RegroupementsDemo implements PortRegroupementsAdmin {
     required String cleEnvoi,
   }) async {
     creationsRecues++;
+    clesRecues.add(cleEnvoi);
     await _attendre();
     // Idempotence : la meme cle rend la meme reponse.
     final ResultatCreationClasse? deja = _parCle[cleEnvoi];
