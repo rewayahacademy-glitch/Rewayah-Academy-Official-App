@@ -52,6 +52,11 @@ abstract final class Routes {
   /// Genre.
   static const String inscriptionGenre = '/inscription/genre';
 
+  /// RECRUT-ECRANS : le code d'invitation du candidat enseignant, sous la
+  /// porte `inscription`. Le parametre `code` d'un lien d'invitation est
+  /// verifie des l'ouverture.
+  static const String inscriptionInvitation = '/inscription/invitation';
+
   /// Recapitulatif, avant la creation du profil.
   static const String inscriptionRecapitulatif = '/inscription/recapitulatif';
 
@@ -639,6 +644,11 @@ abstract final class Routes {
   /// la creation de leur classe, sous Operations.
   static const String adminOperationsRegroupements =
       '/admin/operations/regroupements';
+
+  /// RECRUT-ECRANS : inviter un enseignant (code a usage unique), sous
+  /// Personnes.
+  static const String adminPersonnesInvitations =
+      '/admin/personnes/invitations';
 
   /// Domaine Personnes.
   static const String adminPersonnes = '/admin/personnes';
