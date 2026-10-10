@@ -43,7 +43,7 @@ begin
     v_corrigee := pg_catalog.regexp_replace(
       v_corrigee,
       '(?i)(public[.])?app_role[(][)][[:space:]]+NOT[[:space:]]+IN[[:space:]]*[(]([^)]*)[)]',
-      'NOT coalesce(public.app_role() IN (\\2) AND public.app_account_valid(), false)',
+      'NOT coalesce(public.app_role() IN (\2) AND public.app_account_valid(), false)',
       'gi'
     );
 
