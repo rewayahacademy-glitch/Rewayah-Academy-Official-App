@@ -38,9 +38,49 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/status_pill.dart';
 import '../suivi_demandes/libelles_suivi_demandes.dart';
 import '../suivi_demandes/suivi_demandes_page.dart';
 import 'libelles_suivi_famille.dart';
+
+/// Ou mene chaque lien : le meme suivi sert la famille (tuteur) et l'eleve
+/// adulte autonome, sur leurs propres routes.
+class CheminsSuivi {
+  /// Cree les chemins.
+  const CheminsSuivi({
+    required this.liste,
+    required this.detail,
+    required this.accueil,
+    this.demander,
+  });
+
+  /// La liste des demandes.
+  final String liste;
+
+  /// Le detail d'une demande.
+  final String Function(String demandeId) detail;
+
+  /// Le repli du retour de la liste.
+  final String accueil;
+
+  /// Ou faire une demande ; nul quand aucun parcours n'existe pour ce profil.
+  final String? demander;
+
+  /// La famille (tuteur).
+  static const CheminsSuivi tuteur = CheminsSuivi(
+    liste: Routes.tuteurDemandes,
+    detail: Routes.tuteurDemande,
+    accueil: Routes.tuteurAccueil,
+    demander: Routes.tuteurClassesCatalogue,
+  );
+
+  /// L'eleve adulte autonome.
+  static const CheminsSuivi adulte = CheminsSuivi(
+    liste: Routes.eleveAdulteDemandes,
+    detail: Routes.eleveAdulteDemande,
+    accueil: Routes.eleveAdulte,
+  );
+}
 
 /// L'entree de la route des demandes : la liste a frise quand le port existe,
 /// sinon l'ecran de suivi existant.
@@ -99,7 +139,10 @@ Widget _bloc({
 /// La liste des demandes, avec l'etape courante de chacune.
 class SuiviFamillePage extends ConsumerWidget {
   /// Cree l'ecran.
-  const SuiviFamillePage({super.key});
+  const SuiviFamillePage({this.chemins = CheminsSuivi.tuteur, super.key});
+
+  /// Les destinations des liens.
+  final CheminsSuivi chemins;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -107,7 +150,7 @@ class SuiviFamillePage extends ConsumerWidget {
     return PageShell(
       titre: t.suiviFamille.titre,
       sousTitre: t.suiviFamille.contexte,
-      onRetour: () => _retour(context, Routes.tuteurAccueil),
+      onRetour: () => _retour(context, chemins.accueil),
       child: Align(
         alignment: AlignmentDirectional.topStart,
         child: ConstrainedBox(
@@ -120,14 +163,18 @@ class SuiviFamillePage extends ConsumerWidget {
               key: const ValueKey<String>('suivi-famille-vide'),
               message: t.suiviFamille.vide,
               icone: AppIcons.creneaux,
-              libelleAction: t.suiviFamille.faireDemande,
-              onAction: () =>
-                  GoRouter.maybeOf(context)?.go(Routes.tuteurClassesCatalogue),
+              libelleAction: chemins.demander == null
+                  ? null
+                  : t.suiviFamille.faireDemande,
+              onAction: chemins.demander == null
+                  ? null
+                  : () => GoRouter.maybeOf(context)?.go(chemins.demander!),
             ),
             construire: (List<FriseDemande> lues) => PileCartes(
               key: const ValueKey<String>('suivi-famille-contenu'),
               children: <Widget>[
-                for (final FriseDemande f in lues) _CarteFrise(frise: f),
+                for (final FriseDemande f in lues)
+                  _CarteFrise(frise: f, chemins: chemins),
               ],
             ),
           ),
@@ -138,16 +185,19 @@ class SuiviFamillePage extends ConsumerWidget {
 }
 
 class _CarteFrise extends StatelessWidget {
-  const _CarteFrise({required this.frise});
+  const _CarteFrise({required this.frise, required this.chemins});
 
   final FriseDemande frise;
+  final CheminsSuivi chemins;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final TypeEtapeFrise? courante = frise.courante;
-    final String phrase = courante == null
+    final String phrase = frise.cloture != null
+        ? libelleMotifCloture(frise.cloture!, frise.prenom)
+        : courante == null
         ? t.suiviFamille.toutFait
         : t.suiviFamille.etapeCourante(etape: libelleEtape(courante));
     return AppCard(
@@ -166,8 +216,7 @@ class _CarteFrise extends StatelessWidget {
         libelle: t.suiviFamille.voirSuivi,
         alignerEnFin: true,
         onPress: () =>
-            GoRouter.maybeOf(context)
-                ?.go(Routes.tuteurDemande(frise.demandeId)),
+            GoRouter.maybeOf(context)?.go(chemins.detail(frise.demandeId)),
       ),
       child: Text(
         phrase,
@@ -181,7 +230,14 @@ class _CarteFrise extends StatelessWidget {
 /// Le detail d'une demande : la frise de ses etapes.
 class FriseDemandePage extends ConsumerWidget {
   /// Cree le detail de [demandeId].
-  const FriseDemandePage({required this.demandeId, super.key});
+  const FriseDemandePage({
+    required this.demandeId,
+    this.chemins = CheminsSuivi.tuteur,
+    super.key,
+  });
+
+  /// Les destinations des liens.
+  final CheminsSuivi chemins;
 
   /// La demande ouverte.
   final String demandeId;
@@ -200,7 +256,7 @@ class FriseDemandePage extends ConsumerWidget {
           : t.suiviFamille.detailTitre(
               dePrenom: deDevant(frise.prenom, cle: 'suiviFamille.detailTitre'),
             ),
-      onRetour: () => _retour(context, Routes.tuteurDemandes),
+      onRetour: () => _retour(context, chemins.liste),
       child: Align(
         alignment: AlignmentDirectional.topStart,
         child: ConstrainedBox(
@@ -209,14 +265,14 @@ class FriseDemandePage extends ConsumerWidget {
             ref: ref,
             horsLigne: horsLigne,
             prefixe: 'frise-detail',
-            vide: _Introuvable(),
+            vide: _Introuvable(liste: chemins.liste),
             construire: (List<FriseDemande> lues) {
               final Iterable<FriseDemande> trouvees = lues.where(
                 (FriseDemande f) => f.demandeId == demandeId,
               );
               return trouvees.isEmpty
-                  ? _Introuvable()
-                  : _Frise(frise: trouvees.first);
+                  ? _Introuvable(liste: chemins.liste)
+                  : _Frise(frise: trouvees.first, chemins: chemins);
             },
           ),
         ),
@@ -226,6 +282,10 @@ class FriseDemandePage extends ConsumerWidget {
 }
 
 class _Introuvable extends StatelessWidget {
+  const _Introuvable({required this.liste});
+
+  final String liste;
+
   @override
   Widget build(BuildContext context) => EmptyState(
     key: const ValueKey<String>('frise-introuvable'),
@@ -233,14 +293,15 @@ class _Introuvable extends StatelessWidget {
     icone: AppIcons.creneaux,
     registre: RegistreVide.subi,
     libelleAction: t.suiviFamille.retour,
-    onAction: () => GoRouter.maybeOf(context)?.go(Routes.tuteurDemandes),
+    onAction: () => GoRouter.maybeOf(context)?.go(liste),
   );
 }
 
 class _Frise extends StatelessWidget {
-  const _Frise({required this.frise});
+  const _Frise({required this.frise, required this.chemins});
 
   final FriseDemande frise;
+  final CheminsSuivi chemins;
 
   @override
   Widget build(BuildContext context) {
@@ -281,6 +342,10 @@ class _Frise extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         ...lignes,
+        if (frise.cloture != null) ...<Widget>[
+          Ecart.vLg,
+          _Cloture(frise: frise, chemins: chemins),
+        ],
         Ecart.vLg,
         Text(
           t.suiviFamille.fuseau(
@@ -426,6 +491,70 @@ class _LigneFrise extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// La cloture d'une demande : son motif en clair et ce qui reste possible.
+/// « Deja en classe » n'est ni un refus ni une erreur : message neutre, sans
+/// piste a suivre.
+class _Cloture extends StatelessWidget {
+  const _Cloture({required this.frise, required this.chemins});
+
+  final FriseDemande frise;
+  final CheminsSuivi chemins;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final MotifClotureFrise motif = frise.cloture!;
+    final bool choix =
+        frise.peutChoisirAutreCreneau &&
+        motif != MotifClotureFrise.dejaEnClasse;
+    return Column(
+      key: const ValueKey<String>('frise-cloture'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: StatusPill(
+            libelle: t.suiviFamille.close.etat,
+            ton: motif == MotifClotureFrise.dejaEnClasse
+                ? TonEtat.neutre
+                : TonEtat.avertissement,
+          ),
+        ),
+        Ecart.vSm,
+        Text(
+          libelleMotifCloture(motif, frise.prenom),
+          key: const ValueKey<String>('frise-cloture-motif'),
+          style: palette.inkStrong.applyTo(
+            textes.bodyLarge ?? const TextStyle(),
+          ),
+        ),
+        Ecart.vSm,
+        Text(
+          choix
+              ? t.suiviFamille.close.suite(prenom: frise.prenom)
+              : t.suiviFamille.close.suiteSansChoix,
+          style: palette.inkStrong.applyTo(
+            textes.bodyMedium ?? const TextStyle(),
+          ),
+        ),
+        if (choix) ...<Widget>[
+          Ecart.vSm,
+          LienFleche(
+            key: const ValueKey<String>('frise-cloture-rechoisir'),
+            libelle: t.suiviFamille.close.choisirAutre(prenom: frise.prenom),
+            alignerEnFin: true,
+            onPress: () =>
+                GoRouter.maybeOf(context)
+                    ?.go(Routes.parcoursPour(frise.eleveId)),
+          ),
+        ],
+      ],
     );
   }
 }

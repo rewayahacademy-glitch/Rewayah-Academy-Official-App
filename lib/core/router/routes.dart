@@ -110,6 +110,14 @@ abstract final class Routes {
   /// seances de l'Accueil adulte (D6).
   static const String eleveAdulteSeances = '/eleve/adulte/seances';
 
+  /// Le suivi de ses demandes de creneau (BACK-FRONT-SUIVI-1) : l'eleve
+  /// adulte autonome voit lui-meme sa frise.
+  static const String eleveAdulteDemandes = '/eleve/adulte/demandes';
+
+  /// La frise d'une de ses demandes.
+  static String eleveAdulteDemande(String demandeId) =>
+      '$eleveAdulteDemandes/$demandeId';
+
   // --- fin du bloc DASH-EA-PROD ---------------------------------------------
 
   // --- Tuteur -------------------------------------------------------------

@@ -94,3 +94,38 @@ String titreNotificationFrise(TypeEtapeFrise type, String prenom) {
     ),
   };
 }
+
+/// Le motif de cloture en clair.
+String libelleMotifCloture(
+  MotifClotureFrise motif,
+  String prenom,
+) => switch (motif) {
+  MotifClotureFrise.retraitFamille => t.suiviFamille.close.motif.retraitFamille,
+  MotifClotureFrise.offreRetiree => t.suiviFamille.close.motif.offreRetiree,
+  MotifClotureFrise.classeNonConstituee =>
+    t.suiviFamille.close.motif.classeNonConstituee,
+  MotifClotureFrise.refusDirection => t.suiviFamille.close.motif.refusDirection,
+  MotifClotureFrise.dejaEnClasse => t.suiviFamille.close.motif.dejaEnClasse(
+    prenom: prenom,
+  ),
+  MotifClotureFrise.inconnu => t.suiviFamille.close.motif.inconnu,
+};
+
+/// Le titre de la notification de cloture : « Demande de Yusuf : ce
+/// créneau n'est plus proposé. »
+String titreNotificationCloture(MotifClotureFrise motif, String prenom) {
+  final String dePrenom = deDevant(
+    prenom,
+    cle: 'suiviFamille.notification.close',
+  );
+  if (motif == MotifClotureFrise.dejaEnClasse) {
+    return t.suiviFamille.notification.dejaEnClasse(dePrenom: dePrenom);
+  }
+  final String phrase = libelleMotifCloture(motif, prenom);
+  return t.suiviFamille.notification.close(
+    dePrenom: dePrenom,
+    motif: phrase.isEmpty
+        ? phrase
+        : phrase[0].toLowerCase() + phrase.substring(1),
+  );
+}

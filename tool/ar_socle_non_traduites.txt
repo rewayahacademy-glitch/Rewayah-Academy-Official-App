@@ -1234,6 +1234,16 @@ suiviDemandes.situation.envoyee
 suiviDemandes.titre
 suiviDemandes.vide
 suiviFamille.carteTitre
+suiviFamille.close.choisirAutre
+suiviFamille.close.etat
+suiviFamille.close.motif.classeNonConstituee
+suiviFamille.close.motif.dejaEnClasse
+suiviFamille.close.motif.inconnu
+suiviFamille.close.motif.offreRetiree
+suiviFamille.close.motif.refusDirection
+suiviFamille.close.motif.retraitFamille
+suiviFamille.close.suite
+suiviFamille.close.suiteSansChoix
 suiviFamille.contexte
 suiviFamille.detailTitre
 suiviFamille.erreur
@@ -1260,6 +1270,8 @@ suiviFamille.introuvable
 suiviFamille.motif.aucunEnseignantLibre
 suiviFamille.motif.classesPleines
 suiviFamille.motif.inconnu
+suiviFamille.notification.close
+suiviFamille.notification.dejaEnClasse
 suiviFamille.notification.eleveIntegre
 suiviFamille.notification.enAttente
 suiviFamille.notification.premiereSeance

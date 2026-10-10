@@ -59,6 +59,29 @@ enum MotifAttente {
   inconnu,
 }
 
+/// Pourquoi une demande est close (BACK-FRONT-SUIVI-1). Texte de
+/// l'application, jamais un texte libre du serveur.
+enum MotifClotureFrise {
+  /// La famille a retire sa demande.
+  retraitFamille,
+
+  /// L'administration a retire ce creneau de ses offres.
+  offreRetiree,
+
+  /// La classe de ce creneau n'a pas pu etre constituee.
+  classeNonConstituee,
+
+  /// La direction n'a pas retenu la demande.
+  refusDirection,
+
+  /// L'eleve a deja une place en classe : la demande n'est plus necessaire.
+  /// Ce n'est ni un refus ni une erreur.
+  dejaEnClasse,
+
+  /// Motif absent ou inconnu : repli neutre, jamais un motif suppose.
+  inconnu,
+}
+
 /// L'etat d'une etape, deduit de l'etape courante.
 enum EtatEtapeFrise {
   /// Franchie.
@@ -103,10 +126,13 @@ class FriseDemande {
     required this.prenom,
     required this.fuseauIana,
     required Iterable<EtapeFrise> etapes,
-    this.courante,
+    TypeEtapeFrise? courante,
     MotifAttente? motifAttente,
+    this.cloture,
+    this.peutChoisirAutreCreneau = false,
   }) : etapes = _rangees(etapes),
-       motifAttente = courante == TypeEtapeFrise.enAttente
+       courante = cloture == null ? courante : null,
+       motifAttente = cloture == null && courante == TypeEtapeFrise.enAttente
            ? motifAttente ?? MotifAttente.inconnu
            : null;
 
@@ -125,14 +151,23 @@ class FriseDemande {
   /// Les etapes, de la demande a la premiere seance.
   final List<EtapeFrise> etapes;
 
-  /// L'etape en cours ; nulle quand toutes sont franchies.
+  /// L'etape en cours ; nulle quand toutes sont franchies, ou quand la
+  /// demande est close.
   final TypeEtapeFrise? courante;
+
+  /// Le motif de cloture ; nul tant que la demande vit. Une demande close n'a
+  /// plus d'etape en cours : les etapes franchies restent visibles.
+  final MotifClotureFrise? cloture;
+
+  /// Capacite rendue par le serveur : la famille peut choisir un autre
+  /// creneau pour cet eleve (demande close seulement).
+  final bool peutChoisirAutreCreneau;
 
   /// Pourquoi la famille attend, nul hors attente.
   final MotifAttente? motifAttente;
 
   /// L'etat de [type] : avant la courante fait, la courante en cours, apres a
-  /// venir. Sans courante, tout est fait.
+  /// venir. Sans courante, tout est fait (demande close comprise).
   EtatEtapeFrise etatDe(TypeEtapeFrise type) {
     final TypeEtapeFrise? c = courante;
     if (c == null || type.index < c.index) return EtatEtapeFrise.fait;

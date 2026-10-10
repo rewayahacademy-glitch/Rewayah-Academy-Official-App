@@ -2639,6 +2639,8 @@ class Traductions$suiviFamille$fr {
 
 	/// fr: 'Étape {n} sur {total} : {etape}'
 	String etapeSurTotal({required Object n, required Object total, required Object etape}) => 'Étape ${n} sur ${total} : ${etape}';
+
+	late final Traductions$suiviFamille$close$fr close = Traductions$suiviFamille$close$fr.internal(_root);
 }
 
 // Path: suiviDemandes
@@ -14385,6 +14387,35 @@ class Traductions$suiviFamille$notification$fr {
 
 	/// fr: 'Demande {dePrenom} : première séance effectuée'
 	String premiereSeance({required Object dePrenom}) => 'Demande ${dePrenom} : première séance effectuée';
+
+	/// fr: 'Demande {dePrenom} : {motif}'
+	String close({required Object dePrenom, required Object motif}) => 'Demande ${dePrenom} : ${motif}';
+
+	/// fr: 'Demande {dePrenom} : élève déjà en classe, demande classée'
+	String dejaEnClasse({required Object dePrenom}) => 'Demande ${dePrenom} : élève déjà en classe, demande classée';
+}
+
+// Path: suiviFamille.close
+class Traductions$suiviFamille$close$fr {
+	Traductions$suiviFamille$close$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demande close'
+	String get etat => 'Demande close';
+
+	/// fr: 'Vous pouvez choisir un autre créneau pour {prenom}.'
+	String suite({required Object prenom}) => 'Vous pouvez choisir un autre créneau pour ${prenom}.';
+
+	/// fr: 'Rien d'autre à faire de votre côté.'
+	String get suiteSansChoix => 'Rien d\'autre à faire de votre côté.';
+
+	/// fr: 'Choisir un autre créneau pour {prenom}'
+	String choisirAutre({required Object prenom}) => 'Choisir un autre créneau pour ${prenom}';
+
+	late final Traductions$suiviFamille$close$motif$fr motif = Traductions$suiviFamille$close$motif$fr.internal(_root);
 }
 
 // Path: suiviDemandes.etapes
@@ -22073,6 +22104,33 @@ class Traductions$motifs$signalement$changement$fr {
 
 	/// fr: 'L'académie reviendra vers vous pour en parler.'
 	String get suite => 'L\'académie reviendra vers vous pour en parler.';
+}
+
+// Path: suiviFamille.close.motif
+class Traductions$suiviFamille$close$motif$fr {
+	Traductions$suiviFamille$close$motif$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous avez retiré cette demande.'
+	String get retraitFamille => 'Vous avez retiré cette demande.';
+
+	/// fr: 'Ce créneau n'est plus proposé.'
+	String get offreRetiree => 'Ce créneau n\'est plus proposé.';
+
+	/// fr: 'La classe de ce créneau n'a pas pu être constituée.'
+	String get classeNonConstituee => 'La classe de ce créneau n\'a pas pu être constituée.';
+
+	/// fr: 'La direction n'a pas retenu cette demande.'
+	String get refusDirection => 'La direction n\'a pas retenu cette demande.';
+
+	/// fr: '{prenom} a déjà une place en classe : cette demande n'est plus nécessaire.'
+	String dejaEnClasse({required Object prenom}) => '${prenom} a déjà une place en classe : cette demande n\'est plus nécessaire.';
+
+	/// fr: 'Cette demande est close.'
+	String get inconnu => 'Cette demande est close.';
 }
 
 // Path: suiviDemandes.close.motif
@@ -32949,7 +33007,19 @@ extension on Traductions {
 			'suiviFamille.notification.enAttente' => ({required Object dePrenom}) => 'Demande ${dePrenom} : en liste d\'attente',
 			'suiviFamille.notification.eleveIntegre' => ({required Object dePrenom}) => 'Demande ${dePrenom} : élève intégré à la classe',
 			'suiviFamille.notification.premiereSeance' => ({required Object dePrenom}) => 'Demande ${dePrenom} : première séance effectuée',
+			'suiviFamille.notification.close' => ({required Object dePrenom, required Object motif}) => 'Demande ${dePrenom} : ${motif}',
+			'suiviFamille.notification.dejaEnClasse' => ({required Object dePrenom}) => 'Demande ${dePrenom} : élève déjà en classe, demande classée',
 			'suiviFamille.etapeSurTotal' => ({required Object n, required Object total, required Object etape}) => 'Étape ${n} sur ${total} : ${etape}',
+			'suiviFamille.close.etat' => 'Demande close',
+			'suiviFamille.close.suite' => ({required Object prenom}) => 'Vous pouvez choisir un autre créneau pour ${prenom}.',
+			'suiviFamille.close.suiteSansChoix' => 'Rien d\'autre à faire de votre côté.',
+			'suiviFamille.close.choisirAutre' => ({required Object prenom}) => 'Choisir un autre créneau pour ${prenom}',
+			'suiviFamille.close.motif.retraitFamille' => 'Vous avez retiré cette demande.',
+			'suiviFamille.close.motif.offreRetiree' => 'Ce créneau n\'est plus proposé.',
+			'suiviFamille.close.motif.classeNonConstituee' => 'La classe de ce créneau n\'a pas pu être constituée.',
+			'suiviFamille.close.motif.refusDirection' => 'La direction n\'a pas retenu cette demande.',
+			'suiviFamille.close.motif.dejaEnClasse' => ({required Object prenom}) => '${prenom} a déjà une place en classe : cette demande n\'est plus nécessaire.',
+			'suiviFamille.close.motif.inconnu' => 'Cette demande est close.',
 			'suiviDemandes.titre' => 'Suivi des demandes de créneau',
 			'suiviDemandes.contexte' => 'Chaque demande avance en trois étapes. Vous êtes prévenu à chaque passage.',
 			'suiviDemandes.carteTitre' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom}',
@@ -33301,6 +33371,8 @@ extension on Traductions {
 			'com.vocal.composer.permissionPhrase' => 'Rewayah a besoin du microphone pour enregistrer votre message vocal. Rien ne part sans votre accord.',
 			'com.vocal.composer.autoriser' => 'Autoriser le microphone',
 			'com.vocal.composer.annuler' => 'Annuler',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.composer.refuse' => 'Le microphone n\'est pas autorisé pour Rewayah.',
 			'com.vocal.composer.refuseAide' => 'Pour envoyer un message vocal, autorisez le microphone dans les réglages de votre appareil, puis revenez ici.',
 			'com.vocal.composer.fermer' => 'Fermer',
@@ -33313,8 +33385,6 @@ extension on Traductions {
 			'com.vocal.composer.preEcoute' => 'Pré-écoute',
 			'com.vocal.composer.preEcouteAide' => 'Écoutez votre message avant de l\'envoyer. Rien ne part sans votre accord.',
 			'com.vocal.composer.duree' => ({required Object duree}) => 'Durée : ${duree}',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.composer.actionPause' => 'Pause',
 			'com.vocal.composer.actionReprendre' => 'Reprendre',
 			'com.vocal.composer.actionArreter' => 'Arrêter',
@@ -33815,6 +33885,8 @@ extension on Traductions {
 			'com.annonces.administration.moderation.rejete' => 'Signalement rejeté',
 			'com.annonces.administration.moderation.restaure' => 'Restauré',
 			'com.annonces.administration.moderation.enregistree' => 'Décision enregistrée.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.moderation.nonConfirmee' => 'Cette décision n\'est pas encore confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'com.annonces.administration.moderation.horsLigne' => 'Vous êtes hors ligne. La file de modération ne peut pas être actualisée.',
 			'com.annonces.administration.moderation.indisponible' => 'La modération n\'est pas encore disponible. Revenez plus tard.',
@@ -33827,8 +33899,6 @@ extension on Traductions {
 			'com.annonces.administration.moderation.sansAction' => 'Aucune action de modération ne vous est ouverte sur ce contenu.',
 			'com.annonces.administration.moderation.sansSanction' => 'Aucune sanction de compte n\'est appliquée automatiquement.',
 			'com.annonces.administration.moderation.politique' => 'Politique anti-promotion',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.moderation.ouvrirSemantique' => ({required Object objet, required Object motif}) => 'Examiner ${objet}, motif ${motif}',
 			'com.annonces.administration.moderation.regleMotif.publicite' => 'La publicité n\'est pas autorisée dans la Communauté enseignants.',
 			'com.annonces.administration.moderation.regleMotif.lienAffilie' => 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.',
@@ -34329,6 +34399,8 @@ extension on Traductions {
 			'comptable.encaissements.filtreRembourses' => 'Remboursés',
 			'comptable.encaissements.filtreContestes' => 'Contestés',
 			'comptable.encaissements.filtreARapprocher' => 'À rapprocher',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.recherche' => 'Rechercher une famille ou une référence',
 			'comptable.encaissements.colDate' => 'Date',
 			'comptable.encaissements.colFamille' => 'Famille',
@@ -34341,8 +34413,6 @@ extension on Traductions {
 			'comptable.encaissements.profilsPour' => ({required Object prenoms}) => 'Pour ${prenoms}',
 			'comptable.encaissements.moyenPrestataire' => ({required Object moyen, required Object prestataire}) => '${moyen} · ${prestataire}',
 			'comptable.encaissements.videTitre' => 'Aucun encaissement pour l\'instant.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.videPhrase' => 'Les paiements des familles apparaîtront ici dès que le prestataire les aura transmis.',
 			'comptable.encaissements.videFiltreTitre' => 'Aucun encaissement ne correspond.',
 			'comptable.encaissements.videFiltrePhrase' => 'Choisissez « Tous » ou effacez la recherche pour revoir toute la liste.',

@@ -6426,9 +6426,25 @@
     "notification": {
       "enAttente": "Demande {dePrenom} : en liste d'attente",
       "eleveIntegre": "Demande {dePrenom} : élève intégré à la classe",
-      "premiereSeance": "Demande {dePrenom} : première séance effectuée"
+      "premiereSeance": "Demande {dePrenom} : première séance effectuée",
+      "close": "Demande {dePrenom} : {motif}",
+      "dejaEnClasse": "Demande {dePrenom} : élève déjà en classe, demande classée"
     },
-    "etapeSurTotal": "Étape {n} sur {total} : {etape}"
+    "etapeSurTotal": "Étape {n} sur {total} : {etape}",
+    "close": {
+      "etat": "Demande close",
+      "suite": "Vous pouvez choisir un autre créneau pour {prenom}.",
+      "suiteSansChoix": "Rien d'autre à faire de votre côté.",
+      "choisirAutre": "Choisir un autre créneau pour {prenom}",
+      "motif": {
+        "retraitFamille": "Vous avez retiré cette demande.",
+        "offreRetiree": "Ce créneau n'est plus proposé.",
+        "classeNonConstituee": "La classe de ce créneau n'a pas pu être constituée.",
+        "refusDirection": "La direction n'a pas retenu cette demande.",
+        "dejaEnClasse": "{prenom} a déjà une place en classe : cette demande n'est plus nécessaire.",
+        "inconnu": "Cette demande est close."
+      }
+    }
   },
   "suiviDemandes": {
     "titre": "Suivi des demandes de créneau",
