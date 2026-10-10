@@ -106,9 +106,8 @@ DECLARE
   v_new text;
 BEGIN
   v_definition := pg_catalog.pg_get_functiondef(v_oid);
-  v_old := $pattern$case when p.source = 'offre' then p.fuseau_offre else 'UTC' end as fuseau_groupe,$pattern$;
-  v_new := $replacement$case when p.source = 'offre' then p.fuseau_offre else p.fuseau_iana end as fuseau_groupe,$replacement$;
-  v_definition := pg_catalog.replace(v_definition, v_old, v_new);
+  v_old := $pattern$case when p.source = 'offre' then p.fuseau_offre else p.fuseau_iana end as fuseau_groupe,$pattern$;
+  v_new := v_old;
 
   v_old := $pattern$      h.fuseau_groupe,
       h.jours_groupe,$pattern$;
