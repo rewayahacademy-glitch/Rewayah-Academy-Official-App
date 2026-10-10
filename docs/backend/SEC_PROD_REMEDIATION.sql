@@ -1222,6 +1222,11 @@ begin
 end
 $sec_prod_scanner_tests$;
 
+-- The audit writer accepts caller-supplied fields. Its 47 current callers are
+-- SECURITY DEFINER functions owned by postgres, so they retain owner execution;
+-- authenticated clients must not be able to forge or flood audit entries.
+revoke all on function public.log_sensitive_access(text, text, text, jsonb) from authenticated;
+
 do $sec_prod_postflight$
 declare
   v_anon integer;
@@ -1244,7 +1249,10 @@ begin
   end if;
   select count(*) into v_auth from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
    where n.nspname='public' and p.prosecdef and has_function_privilege('authenticated',p.oid,'EXECUTE');
-  if v_auth <> 118 then raise exception 'SEC-PROD: nombre inattendu de RPC authenticated (% au lieu de 118)', v_auth; end if;
+  if has_function_privilege('authenticated', 'public.log_sensitive_access(text, text, text, jsonb)', 'EXECUTE') then
+    raise exception 'SEC-PROD: authenticated conserve EXECUTE direct sur le writer d''audit';
+  end if;
+  if v_auth <> 117 then raise exception 'SEC-PROD: nombre inattendu de RPC authenticated (% au lieu de 117)', v_auth; end if;
   select count(*) into v_agent from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
    where n.nspname='public' and p.prosecdef and has_function_privilege('agent_ro',p.oid,'EXECUTE');
   if v_agent <> 47 then raise exception 'SEC-PROD: droits agent_ro inattendus après retrait KYC (% au lieu de 47)', v_agent; end if;
@@ -1255,7 +1263,7 @@ begin
   ) then raise exception 'SEC-PROD: usage agent_ro non préservé conformément à la matrice'; end if;
   if exists (
     select 1 from pg_temp.sec_prod_expected_functions e
-    where has_function_privilege('authenticated', e.signature, 'EXECUTE') is distinct from e.authenticated_execute
+    where has_function_privilege('authenticated', e.signature, 'EXECUTE') is distinct from (e.authenticated_execute and e.signature <> 'public.log_sensitive_access(text, text, text, jsonb)')
   ) then raise exception 'SEC-PROD: usage authenticated non préservé'; end if;
   if not has_function_privilege('agent_ro','public.etat_presence(uuid,uuid)','EXECUTE') then
     raise exception 'SEC-PROD: agent_ro a perdu etat_presence';
