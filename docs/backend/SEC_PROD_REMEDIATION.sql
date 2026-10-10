@@ -549,6 +549,8 @@ declare
   v_close_pos integer;
   v_backslash_escape boolean := false;
   v_role_alias text;
+  v_role_alias_previous_count integer;
+  v_role_aliases text[] := array[]::text[];
 begin
   -- Masquage lexical : commentaires SQL (y compris blocs imbriqués),
   -- chaînes simples et dollar-quoted. Les identifiants cités sont conservés.
@@ -661,29 +663,36 @@ begin
 
   -- Resolve simple PL/pgSQL aliases of app_role() before scanning guards.
   -- Conservative by design: later uses of an aliased variable are checked as role uses.
-  for v_role_alias in
-    select alias_name from (
-      select m[1] as alias_name
-      from regexp_matches(
-        v_clean,
-        '([[:alpha:]_][[:alnum:]_]*)[[:space:]]*:?=[[:space:]]*[^;]*?(public[.])?app_role[[:space:]]*[(][[:space:]]*[)]',
-        'gi'
-      ) as matches(m)
-      union
-      select m[2] as alias_name
-      from regexp_matches(
-        v_clean,
-        'select[[:space:]]+(public[.])?app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]+into[[:space:]]+([[:alpha:]_][[:alnum:]_]*)',
-        'gi'
-      ) as matches(m)
-    ) aliases
+  -- Resolve aliases to a fixed point so chains such as role -> current_role are seen.
   loop
-    v_clean := regexp_replace(
-      v_clean,
-      '(^|[^[:alnum:]_$])' || v_role_alias || '([^[:alnum:]_$]|$)',
-      chr(92) || '1app_role()' || chr(92) || '2',
-      'gi'
-    );
+    v_role_alias_previous_count := cardinality(v_role_aliases);
+    for v_role_alias in
+      select alias_name from (
+        select m[1] as alias_name
+        from regexp_matches(
+          v_clean,
+          '([[:alpha:]_][[:alnum:]_]*)[[:space:]]*:?=[[:space:]]*[^;]*?(public[.])?app_role[[:space:]]*[(][[:space:]]*[)]',
+          'gi'
+        ) as matches(m)
+        union
+        select m[2] as alias_name
+        from regexp_matches(
+          v_clean,
+          'select[[:space:]]+(public[.])?app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]+into[[:space:]]+([[:alpha:]_][[:alnum:]_]*)([[:space:],;]|$)',
+          'gi'
+        ) as matches(m)
+      ) aliases
+      where not (alias_name = any(v_role_aliases))
+    loop
+      v_role_aliases := array_append(v_role_aliases, v_role_alias);
+      v_clean := regexp_replace(
+        v_clean,
+        '(^|[^[:alnum:]_$])' || v_role_alias || '([^[:alnum:]_$]|$)',
+        chr(92) || '1app_role()' || chr(92) || '2',
+        'gi'
+      );
+    end loop;
+    exit when cardinality(v_role_aliases) = v_role_alias_previous_count;
   end loop;
 
   if app_private.has_unsafe_role_guard(v_clean) then
@@ -1298,6 +1307,11 @@ begin
      'DECLARE v_role text; BEGIN SELECT public.app_role() INTO v_role; IF v_role <> ''admin'' THEN RAISE; END IF; END;'
    ) then
      raise exception 'SEC-PROD M2 scanner missed app_role SELECT INTO alias';
+   end if;
+   if not app_private.sec_prod_has_unsafe_role_guard(
+     'DECLARE v_role text; v_check text; BEGIN v_role := public.app_role(); v_check := v_role; IF v_check <> ''admin'' THEN RAISE; END IF; END;'
+   ) then
+     raise exception 'SEC-PROD M2 scanner missed chained app_role alias';
    end if;
 end
 $sec_prod_scanner_tests$;
