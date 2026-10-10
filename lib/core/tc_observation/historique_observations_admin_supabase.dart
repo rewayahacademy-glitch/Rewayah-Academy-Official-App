@@ -20,8 +20,8 @@ import 'port_historique_observations.dart';
 /// seul fondrait les visites de deux responsables du meme enfant a la meme
 /// seance ; chaque observateur est donc groupe a part.
 ///
-/// Branchement : le provider de production vit dans le fichier du port
-/// (coordinateur, demande E-9) ; d'ici la, l'ecran dit « indisponible ».
+/// Le provider de production est compose dans
+/// `historique_observations_admin_provider.dart`.
 class HistoriqueObservationsAdminSupabase
     implements PortHistoriqueObservationsAdmin {
   /// Cree l'adaptateur. Le client est lu a la demande.
