@@ -975,7 +975,7 @@ begin
   if v_anon <> 0 then raise exception 'SEC-PROD: % SECURITY DEFINER restent exécutables par anon', v_anon; end if;
   select count(*) into v_auth from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
    where n.nspname='public' and p.prosecdef and has_function_privilege('authenticated',p.oid,'EXECUTE');
-  if v_auth < 118 then raise exception 'SEC-PROD: authenticated a perdu des RPC (% restent)', v_auth; end if;
+  if v_auth <> 118 then raise exception 'SEC-PROD: nombre inattendu de RPC authenticated (% au lieu de 118)', v_auth; end if;
   select count(*) into v_agent from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
    where n.nspname='public' and p.prosecdef and has_function_privilege('agent_ro',p.oid,'EXECUTE');
   if v_agent <> 46 then raise exception 'SEC-PROD: droits agent_ro inattendus après retrait KYC (% restent)', v_agent; end if;
@@ -983,7 +983,7 @@ begin
     raise exception 'SEC-PROD: agent_ro a perdu etat_presence';
   end if;
   foreach v_name in array v_views loop
-    if not (select reloptions @> array['security_invoker=true'] from pg_catalog.pg_class where oid=to_regclass(format('public.%I',v_name))) then
+    if not coalesce((select reloptions @> array['security_invoker=true'] from pg_catalog.pg_class where oid=to_regclass(format('public.%I',v_name))), false) then
       raise exception 'SEC-PROD: vue non invoker: public.%', v_name;
     end if;
     if has_table_privilege('anon',format('public.%I',v_name),'SELECT') then
