@@ -71,6 +71,17 @@ begin
     'autonomous', 'standard', v_langue, v_cohorte_adulte
   );
 
+  -- C-04/C-07 : l'enseignant de fixture est complet et disponible pour
+  -- l'occurrence du groupe affecté plus bas.
+  insert into public.teacher_profiles
+    (profile_id, languages, weekly_hours_cap, kyc_status, timezone_iana)
+  values
+    ('f1660000-0000-0000-0000-000000000003', array[v_langue], 40, 'approved', 'Europe/Paris');
+  insert into public.weekly_availability
+    (profile_id, weekday, hour_local, timezone_iana)
+  values
+    ('f1660000-0000-0000-0000-000000000003', 2, 11, 'Europe/Paris');
+
   insert into public.demandes_horaires_famille
     (eleve_id, type_public, langue_code, fuseau_iana, jours, heures_locales, source)
   values ('f1660000-0000-0000-0000-000000000002', 'enfant', v_langue,
