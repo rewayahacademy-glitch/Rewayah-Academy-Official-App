@@ -178,6 +178,7 @@ void main() {
         'avec la clause des visites et la case art. 9', (
       WidgetTester tester,
     ) async {
+      final List<String> annonces = ecouterAnnonces(tester);
       final FauxServiceDossier dossier = await monter(
         tester,
         AppRole.teacher,
@@ -194,9 +195,14 @@ void main() {
       expect(find.text(t.contrat.e1.quoi), findsOneWidget);
 
       // Case de l'article 9 jamais precochee : sans elle, rien n'est signe.
+      // Le bouton n'est jamais grise (BOUTONS-GRISES-1) : l'appui dit ce qui
+      // manque, l'annonce et rend le focus a la case.
       await tester.tap(find.text(t.contrat.accepter));
       await tester.pumpAndSettle();
       expect(dossier.contratsAcceptes, isEmpty);
+      expect(find.text(t.formulaire.manqueAccord), findsOneWidget);
+      expect(annonces, <String>[t.formulaire.manqueAccord]);
+      expect(FocusManager.instance.primaryFocus?.debugLabel, 'case-religion');
 
       final Finder caseReligion = find.text(
         t.contrat.clauseControle.caseReligion,

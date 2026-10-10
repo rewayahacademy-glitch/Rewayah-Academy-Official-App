@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/signaler_manque.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/service_programme.dart';
 import '../../core/i18n/strings.g.dart';
@@ -216,13 +217,20 @@ class _Corps extends StatelessWidget {
                 niveau: NiveauAction.secondaire,
                 onPress: () => onAjouterNiveau(selectionnee),
               ),
-              ActionPrincipale(
-                libelle: t.admin.programmes.publierVersion,
-                pleineLargeur: false,
-                onPress: selectionnee.nombreNiveaux == 0
-                    ? null
-                    : () => onPublier(selectionnee),
-              ),
+              // Sans niveau, la publication ne peut pas aboutir : le bouton
+              // n'est pas rendu, une phrase dit quoi faire (jamais grise,
+              // BOUTONS-GRISES-1).
+              if (selectionnee.nombreNiveaux == 0)
+                Text(
+                  t.admin.programmes.publierSansNiveau,
+                  style: textes.bodyMedium,
+                )
+              else
+                ActionPrincipale(
+                  libelle: t.admin.programmes.publierVersion,
+                  pleineLargeur: false,
+                  onPress: () => onPublier(selectionnee),
+                ),
             ] else
               ActionPrincipale(
                 libelle: t.admin.programmes.creerVersionDepuisPubliee,
@@ -877,16 +885,27 @@ class _FeuilleMotif extends StatefulWidget {
 
 class _FeuilleMotifEtat extends State<_FeuilleMotif> {
   final TextEditingController _motif = TextEditingController();
+  final FocusNode _focusMotif = FocusNode(debugLabel: 'motif-programme');
   bool _envoi = false;
+  bool _motifManquant = false;
   String? _erreur;
 
   @override
   void dispose() {
     _motif.dispose();
+    _focusMotif.dispose();
     super.dispose();
   }
 
   Future<void> _envoyer() async {
+    // Jamais grise (BOUTONS-GRISES-1) : sans motif, l'appui le dit sous le
+    // champ, l'annonce et rend le focus au champ.
+    if (_motif.text.trim().isEmpty) {
+      final String message = t.formulaire.motif.manqueSaisi;
+      setState(() => _motifManquant = true);
+      signalerManque(context, message, champ: _focusMotif);
+      return;
+    }
     setState(() {
       _envoi = true;
       _erreur = null;
@@ -918,9 +937,11 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
         Ecart.vSm,
         ZoneSaisie(
           controleur: _motif,
+          noeud: _focusMotif,
           minLignes: 2,
           libelle: t.admin.programmes.champMotif,
-          onChanged: (String _) => setState(() {}),
+          erreur: _motifManquant ? t.formulaire.motif.manqueSaisi : null,
+          onChanged: (String _) => setState(() => _motifManquant = false),
         ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,
@@ -933,7 +954,7 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
         ActionPrincipale(
           libelle: widget.libelleEnvoyer,
           enCours: _envoi,
-          onPress: _motif.text.trim().isEmpty ? null : _envoyer,
+          onPress: _envoyer,
         ),
       ],
     );

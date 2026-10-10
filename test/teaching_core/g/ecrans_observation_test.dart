@@ -20,6 +20,7 @@ import 'package:rewayah_academy/features/tc_observation_ui/panneau_observation_t
 import 'package:rewayah_academy/features/tc_observation_ui/routes_tc_g.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/vue_observation_tuteur.dart';
 
+import '../../support/annonces.dart';
 import '../e/faux/faux_classe.dart';
 import 'faux/faux_observation.dart';
 import 'support/hote_tc_g.dart';
@@ -140,8 +141,9 @@ void main() {
         find.text(t.tc.observation.entree.roleSansObservation),
         findsOneWidget,
       );
-      await tester.tap(find.text(t.tc.observation.entree.entrer));
-      await tester.pump();
+      // BOUTONS-GRISES-1 : l'entree qui ne peut pas aboutir n'est pas
+      // rendue (jamais grisee) ; l'intro dit pourquoi.
+      expect(find.text(t.tc.observation.entree.entrer), findsNothing);
       expect(entre, isFalse);
     });
   });
@@ -515,6 +517,47 @@ void main() {
       // visites (migration `0036`), sans rien mesurer de plus.
       expect(recue?.maxVisitsPerSession, academie.maxVisitsPerSession + 1);
       expect(recue?.observationActivee, isTrue);
+    });
+
+    // BOUTONS-GRISES-1 : « Enregistrer » n'est jamais grise ; des quotas trop
+    // bas se disent a l'appui (annonce) et le focus va a « Augmenter ».
+    testWidgets('quotas trop bas : rien ne part, annonce et focus', (
+      WidgetTester tester,
+    ) async {
+      final List<String> annonces = ecouterAnnonces(tester);
+      GuardianObservationPolicy? recue;
+      // Un groupe personnalise dont la politique lue est sous le plancher.
+      final GuardianObservationPolicy groupe = GuardianObservationPolicy(
+        policyVersion: 'g1',
+        source: SourcePolitique.groupe,
+        observationActivee: true,
+        maxVisitsPerSession: 0,
+        maxTotalObservationTime: academie.maxTotalObservationTime,
+      );
+      await tester.pumpWidget(
+        hoteTcG(
+          ModuleReglagesObservation(
+            politiqueAcademie: academie,
+            politiqueGroupe: groupe,
+            onEnregistrer: (GuardianObservationPolicy p) => recue = p,
+          ),
+        ),
+      );
+      expect(
+        find.text(t.tc.observation.reglages.invalideVisites),
+        findsOneWidget,
+      );
+      await _presser(tester, find.text(t.tc.observation.reglages.enregistrer));
+
+      expect(recue, isNull);
+      expect(
+        annonces.single,
+        contains(t.tc.observation.reglages.invalideVisites),
+      );
+      expect(
+        FocusManager.instance.primaryFocus?.debugLabel,
+        'augmenter-visites',
+      );
     });
 
     testWidgets('desactiver ferme la porte sans toucher aux quotas', (

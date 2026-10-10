@@ -431,8 +431,12 @@ class _Colonnes extends StatelessWidget {
 
     // R16 : contextuelle, jamais permanente. Rien a reprendre tant que la
     // seance n'a pas commence, et plus rien une fois qu'elle est close.
+    // Sans action de reprise branchee, le bouton n'est pas rendu (jamais
+    // grise, BOUTONS-GRISES-1).
     final bool reprisePossible =
-        !espace.estCoteFamille && (espace.horloge?.enDirect ?? false);
+        !espace.estCoteFamille &&
+        (espace.horloge?.enDirect ?? false) &&
+        reprendre != null;
     final Widget? reprise = reprisePossible
         ? Align(
             alignment: AlignmentDirectional.centerStart,
@@ -440,7 +444,7 @@ class _Colonnes extends StatelessWidget {
               libelle: LibellesGroupe.reprendreLeCours,
               niveau: NiveauAction.secondaire,
               pleineLargeur: false,
-              onPress: reprendre == null ? null : () => reprendre(identite),
+              onPress: () => reprendre(identite),
             ),
           )
         : null;

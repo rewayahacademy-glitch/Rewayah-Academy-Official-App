@@ -394,6 +394,7 @@ void main() {
           tester,
           groupeId: GroupesDemonstration.alBaqara,
           role: RoleEspaceGroupe.enseignant,
+          onReprendre: (_) {},
         );
         expect(find.text(LibellesGroupe.reprendreLeCours), findsOneWidget);
         // Une action, jamais une section permanente.
@@ -404,6 +405,22 @@ void main() {
           ),
         );
         expect(bouton.pleineLargeur, isFalse);
+        expect(bouton.onPress, isNotNull);
+      });
+    });
+
+    // BOUTONS-GRISES-1 : sans action de reprise branchee, le bouton n'est
+    // pas rendu (il etait grise).
+    testWidgets('sans action branchee, pas de bouton grise', (
+      WidgetTester tester,
+    ) async {
+      await avecLargeur(tester, largeurMobile, () async {
+        await _poser(
+          tester,
+          groupeId: GroupesDemonstration.alBaqara,
+          role: RoleEspaceGroupe.enseignant,
+        );
+        expect(find.text(LibellesGroupe.reprendreLeCours), findsNothing);
       });
     });
   });

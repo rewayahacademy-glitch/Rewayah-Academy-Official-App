@@ -2334,7 +2334,8 @@
       "annulerErreur": "L'annulation n'a pas abouti : {message}",
       "champMotif": "Motif",
       "motifRequis": "Un motif est requis, il s'inscrit au journal d'audit.",
-      "journalisation": "Chaque planification, résultat et annulation est inscrit au journal d'audit."
+      "journalisation": "Chaque planification, résultat et annulation est inscrit au journal d'audit.",
+      "manqueResultat": "Choisissez d'abord le résultat de l'évaluation."
     },
     "progression": {
       "titre": "Progression",
@@ -2430,7 +2431,8 @@
       "champDescription": "Description (optionnelle)",
       "champMotif": "Motif",
       "motifRequis": "Un motif est requis, il s'inscrit au journal d'audit.",
-      "journalisation": "Chaque création, modification, suppression et publication est inscrite au journal d'audit."
+      "journalisation": "Chaque création, modification, suppression et publication est inscrite au journal d'audit.",
+      "publierSansNiveau": "Ajoutez au moins un niveau pour pouvoir publier cette version."
     },
     "journal": {
       "titre": "Journal",
@@ -3551,7 +3553,8 @@
       "horsLigne": "Entrée en attente",
       "horsLigneDetail": "Tu pourras entrer dès que le réseau revient.",
       "pausePriere": "Pause pour la prière",
-      "pausePriereDetail": "{priere}, vers {heure}"
+      "pausePriereDetail": "{priere}, vers {heure}",
+      "entreeSePrepare": "Ton entrée se prépare. Réessaie dans un instant."
     },
     "coran": {
       "titre": "Le Coran",
@@ -5922,7 +5925,8 @@
     "motif": {
       "manque": "Il manque le motif : choisissez-en un dans la liste, ou touchez « Autre » et écrivez-le.",
       "autreVide": "Vous avez choisi « Autre » : écrivez le motif en quelques mots.",
-      "autreChamp": "Le motif, en quelques mots"
+      "autreChamp": "Le motif, en quelques mots",
+      "manqueSaisi": "Il manque le motif : écrivez-le en quelques mots."
     },
     "entier": {
       "bornes": "Entre {min} et {max}",
@@ -5930,7 +5934,8 @@
     },
     "obligatoire": "Champ obligatoire",
     "champObligatoire": "{champ}, champ obligatoire",
-    "legendeObligatoire": "Les champs marqués d'un point sont obligatoires."
+    "legendeObligatoire": "Les champs marqués d'un point sont obligatoires.",
+    "manqueAccord": "Il manque votre accord : cochez la case pour continuer."
   },
   "motifs": {
     "ajoutEleve": {

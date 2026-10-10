@@ -39,6 +39,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	TraductionsAr $copyWith({TranslationMetadata<AppLocale, Traductions>? meta}) => TraductionsAr(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Traductions$formulaire$ar formulaire = _Traductions$formulaire$ar._(_root);
 	@override late final _Traductions$kyc$ar kyc = _Traductions$kyc$ar._(_root);
 	@override late final _Traductions$notifications$ar notifications = _Traductions$notifications$ar._(_root);
 	@override late final _Traductions$historique$ar historique = _Traductions$historique$ar._(_root);
@@ -59,6 +60,17 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$reseau$ar reseau = _Traductions$reseau$ar._(_root);
 	@override late final _Traductions$admin$ar admin = _Traductions$admin$ar._(_root);
 	@override late final _Traductions$comptable$ar comptable = _Traductions$comptable$ar._(_root);
+}
+
+// Path: formulaire
+class _Traductions$formulaire$ar extends Traductions$formulaire$fr {
+	_Traductions$formulaire$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get manqueAccord => 'موافقتك ناقصة: ضع علامة في الخانة للمتابعة.';
+	@override late final _Traductions$formulaire$motif$ar motif = _Traductions$formulaire$motif$ar._(_root);
 }
 
 // Path: kyc
@@ -215,6 +227,7 @@ class _Traductions$eleve$ar extends Traductions$eleve$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$eleve$accueil$ar accueil = _Traductions$eleve$accueil$ar._(_root);
 	@override late final _Traductions$eleve$suivi$ar suivi = _Traductions$eleve$suivi$ar._(_root);
 }
 
@@ -339,6 +352,8 @@ class _Traductions$admin$ar extends Traductions$admin$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$admin$evaluations$ar evaluations = _Traductions$admin$evaluations$ar._(_root);
+	@override late final _Traductions$admin$programmes$ar programmes = _Traductions$admin$programmes$ar._(_root);
 	@override late final _Traductions$admin$finance$ar finance = _Traductions$admin$finance$ar._(_root);
 }
 
@@ -364,6 +379,16 @@ class _Traductions$comptable$ar extends Traductions$comptable$fr {
 	@override late final _Traductions$comptable$validation$ar validation = _Traductions$comptable$validation$ar._(_root);
 	@override late final _Traductions$comptable$direction$ar direction = _Traductions$comptable$direction$ar._(_root);
 	@override late final _Traductions$comptable$demo$ar demo = _Traductions$comptable$demo$ar._(_root);
+}
+
+// Path: formulaire.motif
+class _Traductions$formulaire$motif$ar extends Traductions$formulaire$motif$fr {
+	_Traductions$formulaire$motif$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get manqueSaisi => 'السبب ناقص: اكتبه في كلمات قليلة.';
 }
 
 // Path: notifications.filtres
@@ -753,6 +778,16 @@ class _Traductions$salle$secours$ar extends Traductions$salle$secours$fr {
 	@override String get ouvrirReglages => 'فتح الإعدادات';
 }
 
+// Path: eleve.accueil
+class _Traductions$eleve$accueil$ar extends Traductions$eleve$accueil$fr {
+	_Traductions$eleve$accueil$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get entreeSePrepare => 'دخولك قيد التحضير. أعد المحاولة بعد لحظة.';
+}
+
 // Path: eleve.suivi
 class _Traductions$eleve$suivi$ar extends Traductions$eleve$suivi$fr {
 	_Traductions$eleve$suivi$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -1091,6 +1126,26 @@ class _Traductions$com$annonces$ar extends Traductions$com$annonces$fr {
 	@override String get introuvablePhrase => 'ربما سُحب من الفصل. عد إلى إشعاراتك.';
 	@override late final _Traductions$com$annonces$demo$ar demo = _Traductions$com$annonces$demo$ar._(_root);
 	@override String get titre => 'الإعلانات';
+}
+
+// Path: admin.evaluations
+class _Traductions$admin$evaluations$ar extends Traductions$admin$evaluations$fr {
+	_Traductions$admin$evaluations$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get manqueResultat => 'اختر أولًا نتيجة التقييم.';
+}
+
+// Path: admin.programmes
+class _Traductions$admin$programmes$ar extends Traductions$admin$programmes$fr {
+	_Traductions$admin$programmes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get publierSansNiveau => 'أضف مستوى واحدًا على الأقل لتتمكن من نشر هذه النسخة.';
 }
 
 // Path: admin.finance
@@ -4544,6 +4599,8 @@ class _Traductions$com$annonces$administration$moderation$regles$ar extends Trad
 extension on TraductionsAr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'formulaire.manqueAccord' => 'موافقتك ناقصة: ضع علامة في الخانة للمتابعة.',
+			'formulaire.motif.manqueSaisi' => 'السبب ناقص: اكتبه في كلمات قليلة.',
 			'kyc.manquePhoto' => 'اختر أولًا صورة وثيقتك.',
 			'kyc.manqueType' => 'اختر أولًا الوثيقة التي تودعها.',
 			'notifications.titre' => 'الإشعارات',
@@ -4890,6 +4947,7 @@ extension on TraductionsAr {
 			'salle.secours.microBloqueGuidee' => 'الميكروفون محظور على هذا الجهاز.',
 			'salle.secours.continuerSansMicro' => 'المتابعة دون ميكروفون',
 			'salle.secours.ouvrirReglages' => 'فتح الإعدادات',
+			'eleve.accueil.entreeSePrepare' => 'دخولك قيد التحضير. أعد المحاولة بعد لحظة.',
 			'eleve.suivi.titre' => 'متابعة دروسي',
 			'eleve.suivi.colonneDate' => 'التاريخ',
 			'eleve.suivi.colonneCours' => 'الدرس',
@@ -5053,11 +5111,11 @@ extension on TraductionsAr {
 			'tc.groupe.espace.retour' => 'فصولي',
 			'tc.groupe.espace.avantProchainCours' => 'قبل الدرس القادم',
 			'tc.groupe.espace.aucuneAction' => 'لا شيء للتحضير حاليًا',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.espace.bibliotheque' => 'المكتبة',
 			'tc.groupe.espace.bibliothequeVoirTout' => 'عرض الكل',
 			'tc.groupe.espace.progression' => 'التقدم',
-			_ => null,
-		} ?? switch (path) {
 			'tc.groupe.espace.roster' => 'طلاب الفصل',
 			'tc.groupe.espace.reprendreLeCours' => 'استئناف الدرس',
 			'tc.groupe.espace.introuvable' => 'هذا الفصل غير متاح لك',
@@ -5567,11 +5625,11 @@ extension on TraductionsAr {
 			'com.studio.brouillons.detail' => 'الرسائل التي بدأتها في قناة ولم تُرسل بعد. تبقى على هذا الجهاز طوال الجلسة، دون مزامنة.',
 			'com.studio.brouillons.dansCanal' => ({required Object nom}) => 'مسودة في ${nom}',
 			'com.studio.brouillons.canalInconnu' => 'مسودة في قناة',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.brouillons.canalIndisponible' => 'مسودة في قناة لم تعد متاحة',
 			'com.studio.brouillons.modifie' => ({required Object moment}) => 'عُدّلت في ${moment}',
 			'com.studio.brouillons.reprendre' => ({required Object nom}) => 'متابعة المسودة في ${nom}',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.brouillons.videTitre' => 'لا توجد مسودات',
 			'com.studio.brouillons.vide' => 'ستظهر هنا أي رسالة بدأتها في قناة ولم تُرسل بعد.',
 			'com.studio.brouillons.tous' => ({required Object nombre}) => 'عرض كل المسودات (${nombre})',
@@ -5926,6 +5984,8 @@ extension on TraductionsAr {
 			'choix.selectionMultiple' => 'يمكن اختيار أكثر من إجابة',
 			'destructif.irreversible' => 'لا يمكن التراجع عن هذا الإجراء.',
 			'reseau.horsLigne' => 'لا توجد شبكة. يبقى كل شيء متاحًا للاطلاع، وسينتظر الإرسال.',
+			'admin.evaluations.manqueResultat' => 'اختر أولًا نتيجة التقييم.',
+			'admin.programmes.publierSansNiveau' => 'أضف مستوى واحدًا على الأقل لتتمكن من نشر هذه النسخة.',
 			'admin.finance.aValider' => 'للمصادقة',
 			'comptable.nav.aujourdhui' => 'اليوم',
 			'comptable.nav.paiements' => 'المدفوعات',
@@ -6079,13 +6139,13 @@ extension on TraductionsAr {
 			'comptable.aujourdhui.echeancesVide' => 'لا توجد مواعيد استحقاق قريبة.',
 			'comptable.aujourdhui.encaissementsVide' => 'لا توجد مقبوضات حديثة.',
 			'comptable.aujourdhui.activiteVide' => 'لا يوجد نشاط حديث.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.aujourdhui.prestatairesVide' => 'لا يوجد مزوّد دفع مفعّل.',
 			'comptable.aujourdhui.prestatairesVideDetail' => 'ستنطلق المدفوعات الصادرة عندما تفعّل الإدارة مزوّد دفع.',
 			'comptable.aujourdhui.accesPaiements' => 'عرض المدفوعات للتنفيذ',
 			'comptable.aujourdhui.accesContractuels' => 'إدارة التزامات المتعاقدين',
 			'comptable.aujourdhui.accesEncaissements' => 'عرض المقبوضات',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.aujourdhui.accesTresorerie' => 'عرض الخزينة والصناديق',
 			'comptable.aujourdhui.accesAlimenter' => 'تغذية الاحتياطي الاستراتيجي',
 			'comptable.aujourdhui.titre' => 'اليوم',
@@ -6593,13 +6653,13 @@ extension on TraductionsAr {
 			'comptable.contractuels.creer' => 'إنشاء الالتزام',
 			'comptable.contractuels.horsLigneCreation' => 'أنت غير متصل. أعد الاتصال لإنشاء الالتزام.',
 			'comptable.contractuels.erreurObjet' => 'أدخل موضوع الالتزام.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.erreurMontant' => 'أدخل مبلغًا أكبر من صفر، مثلًا 350 أو 350,50.',
 			'comptable.contractuels.erreurNomExterne' => 'أدخل اسم المستفيد الخارجي.',
 			'comptable.contractuels.erreurCreation' => 'لا نعلم إن كان الالتزام قد أُنشئ. حدّث القائمة قبل إعادة المحاولة.',
 			'comptable.contractuels.creationIndisponible' => 'لا يستطيع حسابك إنشاء التزام.',
 			'comptable.contractuels.retourListe' => 'العودة إلى المتعاقدين',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.titre' => 'المتعاقدون والالتزامات',
 			'comptable.contractuels.sousTitre' => 'تُحدَّد المبالغ عند إنشاء الالتزام، وتُثبَّت بعد الاعتماد.',
 			'comptable.contractuels.nouvelle' => 'التزام جديد',

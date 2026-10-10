@@ -647,8 +647,13 @@ void main() {
       await tester.pump();
       expect(find.byKey(BandeauAccesEnfant.cle), findsNothing);
       expect(_rejoindre, findsOneWidget);
-      expect(tester.widget<ActionPrincipale>(_rejoindre).onPress, isNull);
-      // Inerte sans message hors ligne : ce n'est pas une panne de reseau.
+      // BOUTONS-GRISES-1 : jamais grise ; l'appui n'entre pas, il dit
+      // d'attendre un instant, sans message hors ligne : ce n'est pas une
+      // panne de reseau.
+      expect(tester.widget<ActionPrincipale>(_rejoindre).onPress, isNotNull);
+      await tester.tap(_rejoindre);
+      await tester.pump();
+      expect(find.text(t.eleve.accueil.entreeSePrepare), findsOneWidget);
       expect(find.text(t.eleve.accueil.horsLigne), findsNothing);
 
       port.reponse.complete(
@@ -672,7 +677,10 @@ void main() {
       );
       await tester.pump();
       await tester.pump();
-      expect(tester.widget<ActionPrincipale>(_rejoindre).onPress, isNull);
+      // Jamais grise (BOUTONS-GRISES-1) : l'appui dit d'attendre.
+      await tester.tap(_rejoindre);
+      await tester.pump();
+      expect(find.text(t.eleve.accueil.entreeSePrepare), findsOneWidget);
 
       port.reponse.complete(_essaisEpuises);
       await tester.pumpAndSettle();
@@ -694,7 +702,9 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.byKey(BandeauAccesEnfant.cle), findsNothing);
-      expect(tester.widget<ActionPrincipale>(_rejoindre).onPress, isNull);
+      // Jamais grise (BOUTONS-GRISES-1) : present, l'appui dit l'attente.
+      expect(tester.widget<ActionPrincipale>(_rejoindre).onPress, isNotNull);
+      expect(find.text(t.eleve.accueil.horsLigneDetail), findsOneWidget);
     });
 
     testWidgets('hors ligne et periode non financee : la copie neutre, sans '
