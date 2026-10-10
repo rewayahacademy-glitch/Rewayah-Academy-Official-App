@@ -208,11 +208,26 @@ void main() {
       expect(dossier.profilsCrees.single.role, AppRole.teacher);
     });
 
+    testWidgets('« Moi et ma famille » pose « Suivez-vous aussi des cours ? » '
+        'et ne continue qu\'une fois repondu', (WidgetTester tester) async {
+      await _monter(tester);
+      expect(find.text(t.inscription.usage.coursQuestion), findsNothing);
+      await _taper(tester, find.text(t.inscription.usage.familleTitre));
+      expect(find.text(t.inscription.usage.coursQuestion), findsOneWidget);
+      // Sans reponse, « Continuer » reste ferme.
+      await _continuer(tester);
+      expect(find.text('1 sur 4'), findsOneWidget);
+      await _taper(tester, find.text(t.inscription.usage.coursOui));
+      await _continuer(tester);
+      expect(find.text('2 sur 4'), findsOneWidget);
+    });
+
     testWidgets('identite : les erreurs se disent sous les champs', (
       WidgetTester tester,
     ) async {
       await _monter(tester);
       await _taper(tester, find.text(t.inscription.usage.familleTitre));
+      await _taper(tester, find.text(t.inscription.usage.coursNon));
       await _continuer(tester);
       await _continuer(tester);
       expect(find.text(t.inscription.champRequis), findsNWidgets(2));
@@ -312,6 +327,7 @@ void main() {
       await _taper(tester, find.byKey(const Key('inscription-modifier-usage')));
       expect(find.text('1 sur 4'), findsOneWidget);
       await _taper(tester, find.text(t.inscription.usage.familleTitre));
+      await _taper(tester, find.text(t.inscription.usage.coursNon));
       await _continuer(tester);
       expect(find.text('4 sur 4'), findsOneWidget);
 

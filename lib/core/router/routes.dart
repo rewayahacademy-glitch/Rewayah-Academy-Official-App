@@ -97,9 +97,11 @@ abstract final class Routes {
 
   // --- DASH-EA-PROD : Accueil de l'eleve adulte (bloc propre a l'etape) ----
   //
-  // Sous le prefixe `/eleve` : l'eleve adulte est un compte eleve
-  // (`AppRole.student`), la garde de role l'y laisse donc entrer. Atteint
-  // par `/eleve` quand la capacite « accueil adulte » est servie
+  // Sous le prefixe `/eleve` : l'eleve adulte est un compte tuteur
+  // (`AppRole.guardian`) dont le serveur sert la capacite « eleve autonome »
+  // (`SessionState.eleveAutonome`, C-24) ; la redirection le laisse entrer
+  // sur ce seul sous-arbre (EA-ROLE-1). Atteint par `/eleve` quand la
+  // capacite « accueil adulte » est servie
   // (`capaciteAccueilAdulteProvider`), jamais d'apres le role. Sans source
   // serveur avant BR-1 (EA-BR-04) : la page dit « indisponible ».
 
