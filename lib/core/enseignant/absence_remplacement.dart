@@ -97,10 +97,6 @@ final Provider<DeclarationAbsence?> declarationAbsenceProvider =
 final Provider<ReponseRemplacement?> reponseRemplacementProvider =
     Provider<ReponseRemplacement?>((Ref _) => null);
 
-/// Les offres de remplacement recues : aucune avant BR-1.
-final Provider<List<OffreRemplacement>> offresRemplacementProvider =
-    Provider<List<OffreRemplacement>>((Ref _) => const <OffreRemplacement>[]);
-
 /// Les etats d'absence rendus par le serveur, par seance.
 class EtatsAbsenceControleur extends Notifier<Map<String, EtatAbsence>> {
   @override

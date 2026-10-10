@@ -46,6 +46,7 @@ import '../../core/enseignant/absence_remplacement.dart';
 import '../../core/enseignant/cta_seance.dart';
 import '../../core/enseignant/depot_cahiers.dart' show cahiersEnFileProvider;
 import '../../core/enseignant/modeles_enseignant.dart';
+import '../../core/enseignant/port_remplacements.dart';
 import '../../core/enseignant/service_enseignant.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
@@ -78,13 +79,13 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
-import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/point_rappel.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/timeline_row.dart';
 import '../com_communaute/entree_communaute.dart';
+import '../remplacements/remplacements_page.dart' show titreRemplacementUrgent;
 import '../tc_espace_groupe/carte_session.dart' show EmplacementEntreeVue;
 import 'absence_remplacement_vue.dart';
 
@@ -259,18 +260,20 @@ class _Corps extends ConsumerWidget {
         ? t.enseignant.journee.erreurPartielleCahiers
         : t.enseignant.journee.erreurPartielle;
 
-    // ENS-13B : les offres arrivent en Alerte utile ; une offre acceptee et
-    // confirmee par le serveur devient la carte « Remplacement » (EN-8).
+    // REMPL-1b : les offres ouvertes du tableau commun arrivent en Alerte
+    // utile et menent a l'ecran commun ; une offre acceptee et confirmee par
+    // le serveur devient la carte « Remplacement » (EN-8).
     final List<OffreRemplacement> confirmes = ref.watch(
       remplacementsConfirmesProvider,
     );
-    final List<OffreRemplacement> offres = ref
-        .watch(offresRemplacementProvider)
-        .where(
-          (OffreRemplacement o) =>
-              !confirmes.any((OffreRemplacement c) => c.seanceId == o.seanceId),
-        )
-        .toList(growable: false);
+    final AsyncValue<List<OffreCommune>> lectureOffres = ref.watch(
+      offresCommunesProvider,
+    );
+    final List<OffreRemplacement> offres = offresUrgentes(
+      lectureOffres,
+      confirmes,
+    );
+    final bool offresIllisibles = offresIllisiblesDans(lectureOffres);
 
     return _Composition(
       prochaine: _CarteProchaineSeance(
@@ -300,7 +303,11 @@ class _Corps extends ConsumerWidget {
                   ref.watch(cahiersEnFileProvider).value ?? const <String>{},
             ),
       alertes:
-          alertes.isEmpty && offres.isEmpty && annulee == null && !partielle
+          alertes.isEmpty &&
+              offres.isEmpty &&
+              !offresIllisibles &&
+              annulee == null &&
+              !partielle
           ? null
           : _AlertesUtiles(
               alertes: alertes.take(maximumAlertes).toList(growable: false),
@@ -308,6 +315,7 @@ class _Corps extends ConsumerWidget {
                   ? alertes.length - maximumAlertes
                   : 0,
               offres: offres,
+              offresIllisibles: offresIllisibles,
               coursAnnule: _retrouverParId(toutes, annulee),
               phrasePartielle: phrasePartielle,
               onReessayerPartiel: partielle
@@ -368,6 +376,28 @@ SeanceEnseignant? _retrouverParId(
   }
   return null;
 }
+
+/// REMPL-1b : les offres de l'Alerte utile « Remplacement urgent », lues dans
+/// le tableau commun ([offresCommunesProvider], seule source des offres) :
+/// celles que le serveur dit ouvertes, hors celles deja confirmees a
+/// l'enseignant, les plus proches d'abord. Pendant le chargement, ou si la
+/// lecture a echoue sans valeur, aucune : rien n'est invente (D10), et
+/// l'echec se dit par [offresIllisiblesDans].
+List<OffreRemplacement> offresUrgentes(
+  AsyncValue<List<OffreCommune>> lecture,
+  List<OffreRemplacement> confirmes,
+) => trierRemplacements(<OffreRemplacement>[
+  for (final OffreCommune c in lecture.value ?? const <OffreCommune>[])
+    if (c.etat == EtatOffreCommune.ouverte &&
+        !confirmes.any((OffreRemplacement o) => o.seanceId == c.offre.seanceId))
+      c.offre,
+]);
+
+/// Vrai quand le tableau commun n'a pas pu etre lu et qu'aucune offre n'est
+/// connue : l'Alerte utile le dit et mene a l'ecran commun, qui porte
+/// « Reessayer » (K-59). Jamais « aucun remplacement » sur un echec (D10).
+bool offresIllisiblesDans(AsyncValue<List<OffreCommune>> lecture) =>
+    lecture.hasError && !lecture.hasValue;
 
 /// Les remplacements confirmes, les plus proches d'abord (D6).
 List<OffreRemplacement> trierRemplacements(List<OffreRemplacement> offres) =>
@@ -1109,52 +1139,6 @@ class ListeATerminerPage extends ConsumerWidget {
   }
 }
 
-/// Tous les remplacements confirmes (DASH-ENS-LISTES, ligne DASH-ENS-REMPL),
-/// a l'adresse [Routes.enseignantRemplacements] : ouverte par « Voir tout »
-/// de la Journee, ou directement. Les plus proches d'abord (D6).
-///
-/// La source est la memoire des remplacements que le serveur a confirmes
-/// (`remplacementsConfirmesProvider`, synchrone) : elle n'a ni chargement ni
-/// echec de lecture, et aucun n'est invente (D10). Etats : vide, contenu ;
-/// le bandeau hors ligne vient de [PageShell].
-class ListeRemplacementsPage extends ConsumerWidget {
-  /// Cree la page.
-  const ListeRemplacementsPage({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final List<OffreRemplacement> tries = trierRemplacements(
-      ref.watch(remplacementsConfirmesProvider),
-    );
-    return PageShell(
-      titre: t.enseignant.journee.remplacementsTitre,
-      onRetour: () => _retourVersJournee(context),
-      child: Align(
-        alignment: AlignmentDirectional.topStart,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: AppPage.largeurReglages),
-          child: tries.isEmpty
-              ? EmptyState(
-                  key: const ValueKey<String>('remplacements-vide'),
-                  message: t.enseignant.journee.remplacementsVide,
-                  icone: AppIcons.cours,
-                )
-              : PileCartes(
-                  key: const ValueKey<String>('remplacements-liste'),
-                  children: <Widget>[
-                    for (final OffreRemplacement offre in tries)
-                      CarteRemplacement(
-                        offre: offre,
-                        date: dateLisible(offre.debut),
-                      ),
-                  ],
-                ),
-        ),
-      ),
-    );
-  }
-}
-
 /// Toutes les « Alertes utiles » (DASH-ENS-LISTES, ligne DASH-ENS-ALERTES), a
 /// l'adresse [Routes.enseignantAlertes] : ouverte par le lien « Voir les N
 /// autres alertes » de la Journee, ou directement.
@@ -1192,14 +1176,14 @@ class ListeAlertesPage extends ConsumerWidget {
       final List<OffreRemplacement> confirmes = ref.watch(
         remplacementsConfirmesProvider,
       );
-      final List<OffreRemplacement> offres = ref
-          .watch(offresRemplacementProvider)
-          .where(
-            (OffreRemplacement o) => !confirmes.any(
-              (OffreRemplacement c) => c.seanceId == o.seanceId,
-            ),
-          )
-          .toList(growable: false);
+      final AsyncValue<List<OffreCommune>> lectureOffres = ref.watch(
+        offresCommunesProvider,
+      );
+      final List<OffreRemplacement> offres = offresUrgentes(
+        lectureOffres,
+        confirmes,
+      );
+      final bool offresIllisibles = offresIllisiblesDans(lectureOffres);
       final Seance? annulee = seanceAnnuleeDuJour(
         toutes.map(_versSeance).toList(growable: false),
         maintenant,
@@ -1216,7 +1200,11 @@ class ListeAlertesPage extends ConsumerWidget {
         final List<String> alertes = alertesPresence(
           presence?.value ?? const <PresenceParticipant>[],
         );
-        corps = alertes.isEmpty && offres.isEmpty && annulee == null
+        corps =
+            alertes.isEmpty &&
+                offres.isEmpty &&
+                !offresIllisibles &&
+                annulee == null
             ? EmptyState(
                 key: const ValueKey<String>('alertes-vide'),
                 message: t.enseignant.journee.alertesVide,
@@ -1227,6 +1215,7 @@ class ListeAlertesPage extends ConsumerWidget {
                 entete: false,
                 alertes: alertes,
                 offres: offres,
+                offresIllisibles: offresIllisibles,
                 coursAnnule: _retrouverParId(toutes, annulee),
               );
       }
@@ -1345,14 +1334,17 @@ class _LignesATerminer extends ConsumerWidget {
 }
 
 /// « Alertes utiles » : une ligne par alerte, sans destination, sauf l'offre
-/// de remplacement (ENS-13B), qui ouvre « Assurer ce remplacement ? ».
-class _AlertesUtiles extends ConsumerWidget {
+/// de remplacement « Remplacement urgent » (REMPL-1b), qui mene a l'ecran
+/// commun des remplacements ([Routes.enseignantRemplacements]) : c'est la
+/// qu'elle s'accepte, premier arrive, premier servi.
+class _AlertesUtiles extends StatelessWidget {
   const _AlertesUtiles({
     required this.alertes,
     super.key,
     this.autres = 0,
     this.entete = true,
     this.offres = const <OffreRemplacement>[],
+    this.offresIllisibles = false,
     this.coursAnnule,
     this.phrasePartielle,
     this.onReessayerPartiel,
@@ -1375,11 +1367,20 @@ class _AlertesUtiles extends ConsumerWidget {
   /// (ANNUL-VIS-1).
   final SeanceEnseignant? coursAnnule;
   final List<String> alertes;
+
+  /// Les offres ouvertes du tableau commun (`offresUrgentes`).
   final List<OffreRemplacement> offres;
 
+  /// Le tableau commun n'a pas pu etre lu : une ligne le dit et mene a
+  /// l'ecran commun, qui propose de relire.
+  final bool offresIllisibles;
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final ReponseRemplacement? port = ref.watch(reponseRemplacementProvider);
+  Widget build(BuildContext context) {
+    final bool lignes =
+        alertes.isNotEmpty || offres.isNotEmpty || offresIllisibles;
+    void versRemplacements() =>
+        GoRouter.of(context).go(Routes.enseignantRemplacements);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -1389,35 +1390,25 @@ class _AlertesUtiles extends ConsumerWidget {
         ],
         if (coursAnnule != null) ...<Widget>[
           _CarteCoursAnnule(cours: coursAnnule!),
-          if (alertes.isNotEmpty || offres.isNotEmpty) Ecart.vLg,
+          if (lignes) Ecart.vLg,
         ],
-        if (alertes.isNotEmpty || offres.isNotEmpty)
+        if (lignes)
           GroupeReglages(
             lignes: <LigneRubrique>[
+              // REMPL-1b : une seule source d'offres, une seule destination.
+              // L'appui mene a l'ecran commun meme sans remplacement confirme.
               for (final OffreRemplacement offre in offres)
                 LigneRubrique(
                   icone: AppIcons.cours,
-                  libelle: t.enseignant.journee.remplacement.titre,
-                  legende:
-                      '${offre.classe} · ${dateLisible(offre.debut)} · '
-                      '${_hhmm(offre.debut)}',
-                  onPress: port == null
-                      ? null
-                      : () async {
-                          final bool confirme = await ouvrirFeuilleRemplacement(
-                            context,
-                            port: port,
-                            offre: offre,
-                            date: dateLisible(offre.debut),
-                          );
-                          // La carte n'apparait que sur la confirmation du
-                          // serveur (E7).
-                          if (confirme) {
-                            ref
-                                .read(remplacementsConfirmesProvider.notifier)
-                                .confirmer(offre);
-                          }
-                        },
+                  libelle: titreRemplacementUrgent(offre.debut),
+                  legende: offre.classe,
+                  onPress: versRemplacements,
+                ),
+              if (offresIllisibles)
+                LigneRubrique(
+                  icone: AppIcons.avertissement,
+                  libelle: t.enseignant.remplacements.sansDonnees,
+                  onPress: versRemplacements,
                 ),
               for (final String alerte in alertes)
                 LigneRubrique(icone: AppIcons.avertissement, libelle: alerte),
@@ -1440,8 +1431,7 @@ class _AlertesUtiles extends ConsumerWidget {
           ),
         ],
         if (onReessayerPartiel != null) ...<Widget>[
-          if (coursAnnule != null || alertes.isNotEmpty || offres.isNotEmpty)
-            Ecart.vLg,
+          if (coursAnnule != null || lignes) Ecart.vLg,
           Text(
             phrasePartielle ?? t.enseignant.journee.erreurPartielle,
             key: const ValueKey<String>('journee-erreur-partielle'),

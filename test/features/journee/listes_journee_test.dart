@@ -1,6 +1,7 @@
 // DASH-ENS-b (corrections des revues DASH-ENS-ROUTE-R et DASH-ENS-LISTES-R) :
-// les trois listes de la Journee (« A terminer », « Remplacements
-// confirmes », « Alertes utiles »), montees seules en VRAIES polices, a
+// les trois listes de la Journee (« A terminer », l'ecran commun
+// « Remplacements » depuis REMPL-1b, « Alertes utiles »), montees seules en
+// VRAIES polices, a
 // 320 px et texte a 200 %, en LTR comme en RTL, dans chacun de leurs etats.
 //
 // Ce que la contre-revue de DASH-ENS-ROUTE a trouve : l'etat vide d'« A
@@ -19,6 +20,7 @@ import 'package:rewayah_academy/core/enseignant/absence_remplacement.dart';
 import 'package:rewayah_academy/core/enseignant/depot_cahiers.dart'
     show cahiersEnFileProvider;
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
+import 'package:rewayah_academy/core/enseignant/port_remplacements.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
@@ -29,6 +31,7 @@ import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
+import 'package:rewayah_academy/features/remplacements/remplacements_page.dart';
 
 import '../../capture/outil_capture.dart'
     show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
@@ -100,6 +103,16 @@ List<Override> _surcharges(_Etat etat) {
     return Future<T>.value(valeur);
   }
 
+  // REMPL-1b : le tableau commun, seule source des offres, dans le meme etat
+  // que les autres lectures.
+  Stream<T> suivre<T>(T valeur) {
+    if (etat == _Etat.chargement) return StreamController<T>().stream;
+    if (etat == _Etat.erreur || etat == _Etat.horsLigne) {
+      return Stream<T>.error(StateError('reseau'));
+    }
+    return Stream<T>.value(valeur);
+  }
+
   final bool vide = etat == _Etat.vide;
   return <Override>[
     sourceSessionProvider.overrideWithValue(
@@ -145,6 +158,18 @@ List<Override> _surcharges(_Etat etat) {
                 _remplacement('Al-Ikhlas', 4),
                 _remplacement('As-Salam', 3),
                 _remplacement('Al-Kawthar', 5),
+              ],
+      ),
+    ),
+    offresCommunesProvider.overrideWith(
+      (Ref _) => suivre<List<OffreCommune>>(
+        vide
+            ? const <OffreCommune>[]
+            : <OffreCommune>[
+                OffreCommune(
+                  offre: _remplacement('Al-Muzzammil', 6),
+                  etat: EtatOffreCommune.ouverte,
+                ),
               ],
       ),
     ),
@@ -209,11 +234,9 @@ void main() {
   final Map<String, (Widget, List<_Etat>)> pages =
       <String, (Widget, List<_Etat>)>{
         'A terminer': (const ListeATerminerPage(), _Etat.values),
-        // Une memoire synchrone : ni chargement, ni echec de lecture.
-        'Remplacements': (
-          const ListeRemplacementsPage(),
-          <_Etat>[_Etat.contenu, _Etat.vide],
-        ),
+        // REMPL-1b : « Voir tout » et l'alerte urgente menent a l'ecran
+        // commun, qui lit un flux : ses cinq etats.
+        'Remplacements': (const RemplacementsPage(), _Etat.values),
         'Alertes': (const ListeAlertesPage(), _Etat.values),
       };
 
