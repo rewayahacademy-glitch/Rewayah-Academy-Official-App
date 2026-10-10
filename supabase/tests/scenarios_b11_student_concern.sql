@@ -14,20 +14,31 @@ insert into public.households (id, timezone)
 values ('b11fffff-0000-0000-0000-000000000001', 'Europe/Paris');
 
 insert into public.profiles
-  (id, immutable_id, role, household_id, first_name, last_name, account_status)
+  (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 values
   ('b1100000-0000-0000-0000-000000000001', 'B11ADMIN000001', 'admin',
-   'b11fffff-0000-0000-0000-000000000001', 'Fixture', 'Admin', 'active'),
+   'b11fffff-0000-0000-0000-000000000001', 'Fixture', 'Admin', 'active', 'male'),
   ('b1100000-0000-0000-0000-000000000002', 'B11TEACHER0001', 'teacher',
-   'b11fffff-0000-0000-0000-000000000001', 'Teacher', 'One', 'active'),
+   'b11fffff-0000-0000-0000-000000000001', 'Teacher', 'One', 'active', 'male'),
   ('b1100000-0000-0000-0000-000000000003', 'B11TEACHER0002', 'teacher',
-   'b11fffff-0000-0000-0000-000000000001', 'Teacher', 'Two', 'active'),
+   'b11fffff-0000-0000-0000-000000000001', 'Teacher', 'Two', 'active', 'female'),
   ('b1100000-0000-0000-0000-000000000004', 'B11GUARDIAN001', 'guardian',
-   'b11fffff-0000-0000-0000-000000000001', 'Fixture', 'Guardian', 'active'),
+   'b11fffff-0000-0000-0000-000000000001', 'Fixture', 'Guardian', 'active', 'female'),
   ('b1100000-0000-0000-0000-000000000005', 'B11STUDENT0001', 'student',
-   'b11fffff-0000-0000-0000-000000000001', 'Fixture', 'Student', 'active'),
+   'b11fffff-0000-0000-0000-000000000001', 'Fixture', 'Student', 'active', 'male'),
   ('b1100000-0000-0000-0000-000000000006', 'B11TEACHER0003', 'teacher',
-   'b11fffff-0000-0000-0000-000000000001', 'Teacher', 'Disabled', 'disabled');
+   'b11fffff-0000-0000-0000-000000000001', 'Teacher', 'Disabled', 'disabled', 'male');
+
+insert into public.teacher_profiles
+  (profile_id, languages, weekly_hours_cap, kyc_status, timezone_iana)
+values
+  ('b1100000-0000-0000-0000-000000000002', array['francais'], 10, 'approved', 'Europe/Paris'),
+  ('b1100000-0000-0000-0000-000000000003', array['francais'], 10, 'approved', 'Europe/Paris');
+
+insert into public.weekly_availability (profile_id, weekday, hour_local, timezone_iana)
+values
+  ('b1100000-0000-0000-0000-000000000002', 1, 10, 'Europe/Paris'),
+  ('b1100000-0000-0000-0000-000000000003', 2, 11, 'Europe/Paris');
 
 update public.households
    set primary_guardian_id = 'b1100000-0000-0000-0000-000000000004'
