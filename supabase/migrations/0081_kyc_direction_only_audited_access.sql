@@ -15,7 +15,7 @@ begin
     public.app_role() = 'admin' and public.app_account_valid(),
     false
   ) then
-    raise exception 'acces KYC refuse' using errcode = '42501';
+    raise exception 'acces KYC refuse';
   end if;
 
   select p.gender into reader_gender

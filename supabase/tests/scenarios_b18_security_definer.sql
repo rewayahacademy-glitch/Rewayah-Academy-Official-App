@@ -137,8 +137,8 @@ begin
   begin
     perform 1 from public.read_kyc_documents();
     raise exception 'B-06 ECHEC: le contrôleur lit la RPC KYC';
-  exception when insufficient_privilege then
-    null;
+  exception when raise_exception then
+    if sqlerrm <> 'acces KYC refuse' then raise; end if;
   end;
   begin
     perform public.autoriser_lecture_piece_identite(
