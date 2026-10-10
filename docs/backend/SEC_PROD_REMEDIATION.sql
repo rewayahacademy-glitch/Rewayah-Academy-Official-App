@@ -740,7 +740,7 @@ begin
           or v_compact ~ '(and|or)not(public\.)?app_account_valid\(\)'
           or (
             v_condition ~* '(^|[^[:alnum:]_])or([^[:alnum:]_]|$)'
-            and v_compact <> 'ifnotcoalesce(((public.app_role()=''x''andpublic.session_belongs_to_teacher(p_session_id,auth.uid()))orpublic.app_role()=''x'')andpublic.app_account_valid(),false)then'
+            and replace(v_compact, 'public.app_role()', 'app_role()') <> 'ifnotcoalesce(((app_role()=''x''andpublic.session_belongs_to_teacher(p_session_id,auth.uid()))orapp_role()=''x'')andpublic.app_account_valid(),false)then'
           ) then
          return true;
        end if;
@@ -1282,6 +1282,11 @@ begin
      'IF NOT COALESCE(public.app_role() = ''admin'' IS NOT TRUE AND public.app_account_valid(), false) THEN RAISE; END IF;'
    ) then
      raise exception 'SEC-PROD M2 scanner missed IS NOT TRUE role predicate';
+   end if;
+   if app_private.sec_prod_has_unsafe_role_guard(
+     'DECLARE v_role text; BEGIN v_role := public.app_role(); IF NOT coalesce(((v_role = ''teacher'' AND public.session_belongs_to_teacher(p_session_id, auth.uid())) OR v_role = ''admin'') AND public.app_account_valid(), false) THEN RAISE; END IF; END;'
+   ) then
+     raise exception 'SEC-PROD M2 scanner rejected valid teacher/admin alias guard';
    end if;
    if not app_private.sec_prod_has_unsafe_role_guard(
      'IF NOT COALESCE(public.app_role() = ''admin'' AND public.fake_app_account_valid(), false) THEN RAISE; END IF;'
