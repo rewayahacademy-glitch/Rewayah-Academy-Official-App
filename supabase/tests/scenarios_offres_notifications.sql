@@ -34,6 +34,7 @@ declare
   v_group_id uuid := 'f16fffff-0000-0000-0000-000000000012';
   v_class_request uuid;
   v_rejected_request uuid;
+  v_suivi record;
 begin
   select code into v_langue from public.langues_cours where actif order by code limit 1;
   if v_langue is null then
@@ -52,6 +53,28 @@ begin
     and params ->> 'demande_id' = v_id::text;
   if v_received <> 1 then
     raise exception 'B-09: une demande doit produire une seule notification foyer';
+  end if;
+
+  perform set_config('request.jwt.claim.sub',
+    'f1660000-0000-0000-0000-000000000001', true);
+  perform set_config('request.jwt.claims', jsonb_build_object(
+    'sub', 'f1660000-0000-0000-0000-000000000001',
+    'app_metadata', jsonb_build_object(
+      'role', 'guardian',
+      'household_id', 'f16fffff-0000-0000-0000-000000000011'
+    )
+  )::text, true);
+  select * into v_suivi
+  from public.suivi_demandes_horaires_foyer()
+  where demande_id = v_id;
+  if not found
+     or v_suivi.eleve_id <> 'f1660000-0000-0000-0000-000000000002'
+     or v_suivi.etape <> 'envoyee'
+     or v_suivi.fuseau_iana <> 'Europe/Paris'
+     or jsonb_array_length(v_suivi.occurrences) <> 1
+     or v_suivi.enseignant is not null
+     or v_suivi.debut_cours is not null then
+    raise exception 'M6: suivi foyer incomplet ou divulguant une donnée prématurée';
   end if;
   select exists (
     select 1 from public.notifications
