@@ -5,14 +5,17 @@
 //     1440 texte x2, aucun en-tete ni aucune cellule n'est tronque ou coupe
 //     (« Entr... », « 23/09/20 / 26 », « 18:12: / 00 ») : le tableau se
 //     replie en cartes quand le texte agrandi ne tient pas.
-// (2) Comptes, cartes a 320 texte x2 : l'identifiant en titre garde la
-//     taille des autres titres (hierarchie), sur deux lignes au besoin.
+// (2) Comptes, cartes a 320 texte x2 : chaque carte a un titre a la taille
+//     des autres titres (hierarchie) ; un identifiant trop long pour le
+//     titre passe en sous-titre, ENTIER : ses traits restent insecables
+//     (U+2011), aucune espace sans chasse, jamais coupe.
 // (3) `RangeeFiltres` : puce retenue en derniere position, rangee en
 //     butee : la puce precedente, a moitie visible, est sous un fondu.
 //
 // Contre-epreuve (ancien code, d986c1de) : (1) echoue (« Entrée :
 // tronque », identifiants coupes), (2) echoue (titre reduit), (3) echoue
-// (« puce coupee ... visible au-dela du fondu »).
+// (« puce coupee ... visible au-dela du fondu »). Sur d643e317, (2) echoue
+// aussi : l'identifiant ouvert par U+200B est coupe a ses traits.
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -206,14 +209,33 @@ void main() {
             titres.add(_tailleRendue(p.first));
             secondaires.add(_tailleRendue(p[1]));
           }
-          // Le titre identifiant (« TEACHER-AS-000002 », sans nom) a la
-          // taille des titres nommes : il passe sur deux lignes.
+          // La carte dont le titre est l'identifiant (« TEACHER-AS-000002 »,
+          // sans nom) garde un titre a la taille des titres nommes : l'en-tete
+          // de la colonne ; l'identifiant passe en sous-titre, entier.
           for (final double taille in titres) {
             expect(taille, moreOrLessEquals(titres.first, epsilon: 0.01));
           }
           for (int k = 0; k < titres.length; k++) {
             expect(titres[k], greaterThan(secondaires[k]));
           }
+          // L'identifiant n'est jamais ouvert a la coupure : traits
+          // insecables, aucune espace sans chasse, sur une seule ligne.
+          final Iterable<String> rendus = find
+              .descendant(
+                of: find.byType(DataCollection<CompteAdmin>),
+                matching: find.byType(RichText),
+              )
+              .evaluate()
+              .map(
+                (Element e) =>
+                    (e.renderObject! as RenderParagraph).text.toPlainText(),
+              );
+          expect(rendus.where((String t) => t.contains('\u200B')), isEmpty);
+          expect(
+            rendus.where((String t) => t.contains('TEACHER\u2011AS\u2011')),
+            isNotEmpty,
+          );
+          expect(identifiantsCoupes(tester, textesVisibles()), isEmpty);
           expect(defautsDeTexte(tester), isEmpty);
         });
       }
@@ -271,13 +293,44 @@ void main() {
           rangee.position.pixels,
           moreOrLessEquals(rangee.position.maxScrollExtent, epsilon: 0.5),
         );
-        final FonduBordsRangee fondu = tester.widget(
+        final RenduFonduBordsRangee fondu = tester.renderObject(
           find.byType(FonduBordsRangee),
         );
-        expect(fondu.avant, isTrue, reason: 'le debut cache des puces');
-        expect(fondu.apres, isFalse, reason: 'rien apres la derniere');
+        expect(
+          fondu.etatPeint.avant,
+          isTrue,
+          reason: 'le debut cache des puces',
+        );
+        expect(
+          fondu.etatPeint.apres,
+          isFalse,
+          reason: 'rien apres la derniere',
+        );
+        // Le masque compose est actif, lu sur le calque.
+        final Layer? calque = fondu.debugLayer;
+        expect(calque, isA<ShaderMaskLayer>());
+        expect((calque! as ShaderMaskLayer).blendMode, BlendMode.dstIn);
         expect(rangeesSansFondu(tester), isEmpty);
         expect(defautsDeTexte(tester), isEmpty);
+
+        // Un pas de defilement qui ne change ni le debordement ni les bords
+        // caches ne reconstruit pas la rangee : seul le masque se
+        // redessine (il ecoute le controleur), et il suit la puce coupee.
+        final StatefulElement element =
+            tester.element(find.byType(RangeeFiltres)) as StatefulElement;
+        // Hors butee d'abord (les deux bords cachent des puces), puis un
+        // petit pas.
+        rangee.position.jumpTo(rangee.position.pixels - 20);
+        await tester.pump();
+        expect(fondu.etatPeint.avant, isTrue);
+        expect(fondu.etatPeint.apres, isTrue);
+        rangee.position.jumpTo(rangee.position.pixels - 6);
+        expect(element.dirty, isFalse, reason: 'aucune reconstruction');
+        expect(fondu.debugNeedsPaint, isTrue, reason: 'le masque se redessine');
+        await tester.pump();
+        expect(fondu.etatPeint.avant, isTrue);
+        expect(fondu.etatPeint.apres, isTrue);
+        expect(rangeesSansFondu(tester), isEmpty);
       });
     }
   });

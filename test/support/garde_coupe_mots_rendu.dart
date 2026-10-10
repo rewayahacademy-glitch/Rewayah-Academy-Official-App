@@ -8,7 +8,8 @@
 //   * mot coupe : un mot dont les boites tombent sur deux lignes (les lignes
 //     calculees par le moteur de texte, `getBoxesForSelection`), un nom
 //     compose pouvant passer a la ligne apres son trait d'union ordinaire ;
-//     un identifiant a traits insecables (U+2011) est un seul mot ;
+//     un identifiant technique (traits, insecables ou non, soulignes, meme
+//     avec une espace sans chasse) est un seul mot ;
 //   * ponctuation seule : « ? ! : ; » ou un guillemet seul a la ligne ;
 //   * rogne : un texte sur une ligne plus large que sa boite, ou un texte
 //     coupe par le bord d'un ancetre qui le decoupe (ou de l'ecran), hors
@@ -159,12 +160,20 @@ List<String> textesRognes(WidgetTester tester, Finder textes) {
 /// chaque cote qui cache une puce (entiere ou en partie) porte un fondu, et
 /// la partie visible d'une puce coupee tient dans ce fondu (qui couvre au
 /// plus la moitie de la rangee).
+///
+/// Ce qui est lu sans passer par le composant : la geometrie des puces
+/// (leurs rectangles a l'ecran) et le CALQUE reellement compose
+/// (`ShaderMaskLayer`) : quand un bord cache une puce, le masque doit etre
+/// actif (`BlendMode.dstIn`) et couvrir la rangee. Seules les largeurs du
+/// degrade viennent du rendu (`etatPeint`, l'etat tel qu'il a ete peint),
+/// car un shader ne se relit pas.
 List<String> rangeesSansFondu(WidgetTester tester) {
   final List<String> fautes = <String>[];
   for (final Element e in find.byType(FonduBordsRangee).evaluate()) {
     final RenderObject? r = e.renderObject;
-    if (r is! RenderBox || !r.hasSize || !rendreVisible(r)) continue;
-    final FonduBordsRangee f = e.widget as FonduBordsRangee;
+    if (r is! RenduFonduBordsRangee || !r.hasSize || !rendreVisible(r)) {
+      continue;
+    }
     final TextDirection sens = Directionality.of(e);
     final Rect vue = _global(r);
     // Les puces : chaque enfant de la rangee.
@@ -180,15 +189,33 @@ List<String> rangeesSansFondu(WidgetTester tester) {
     }
 
     r.visitChildren(chercher);
-    final double largeurDebut = f.largeurAvant;
-    final double largeurFin = f.largeurApres;
+    final String nom = e.toStringShort();
+    final bool cachee = puces.any(
+      (Rect p) =>
+          p.left < vue.left - _tolerance || p.right > vue.right + _tolerance,
+    );
+    // Le calque compose, lu independamment de l'etat du composant.
+    final Layer? calque = r.debugLayer;
+    final bool masqueActif =
+        calque is ShaderMaskLayer &&
+        calque.blendMode == BlendMode.dstIn &&
+        calque.maskRect != null &&
+        calque.maskRect!.width >= r.size.width - _tolerance;
+    if (cachee && !masqueActif) {
+      fautes.add('$nom : puce cachee, aucun masque de fondu compose');
+      continue;
+    }
+    final EtatFonduRangee f = r.etatPeint;
     // Les bords physiques : gauche et droite, selon le sens de lecture.
     final bool gaucheEstDebut = sens == TextDirection.ltr;
     final bool fonduGauche = gaucheEstDebut ? f.avant : f.apres;
     final bool fonduDroite = gaucheEstDebut ? f.apres : f.avant;
-    final double largeurGauche = gaucheEstDebut ? largeurDebut : largeurFin;
-    final double largeurDroite = gaucheEstDebut ? largeurFin : largeurDebut;
-    final String nom = e.toStringShort();
+    final double largeurGauche = gaucheEstDebut
+        ? f.largeurAvant
+        : f.largeurApres;
+    final double largeurDroite = gaucheEstDebut
+        ? f.largeurApres
+        : f.largeurAvant;
     for (final Rect p in puces) {
       if (p.left < vue.left - _tolerance) {
         if (!fonduGauche) {
@@ -213,6 +240,47 @@ List<String> rangeesSansFondu(WidgetTester tester) {
             '${largeurDroite.toStringAsFixed(0)})',
           );
         }
+      }
+    }
+  }
+  return fautes;
+}
+
+/// Un identifiant technique, quel que soit le caractere place entre ses
+/// segments : « TEACHER-AS-000001 » (trait ordinaire ou insecable U+2011,
+/// segments en capitales et chiffres, un chiffre au moins) ou
+/// « observation_entry_recorded » (soulignes). Une espace sans chasse
+/// (U+200B) glissee a cote d'un trait ou d'un souligne ne le scinde pas :
+/// il reste UN mot (COUPE-MOTS-FOND-1, point 2).
+final RegExp _identifiant = RegExp(
+  '(?<![A-Za-z0-9])(?:'
+  '(?=[A-Z0-9\u200B\u2011-]*[0-9])'
+  '[A-Z0-9]+(?:\u200B?[-\u2011]\u200B?[A-Z0-9]+)+'
+  '|[a-z0-9]+(?:\u200B?_\u200B?[a-z0-9]+)+'
+  ')(?![A-Za-z0-9])',
+);
+
+/// Les identifiants coupes parmi [textes] : un identifiant technique dont
+/// les glyphes tombent sur deux lignes, meme a un point de coupure voulu
+/// (trait ordinaire, espace sans chasse). Un identifiant ne se coupe jamais :
+/// il se reduit, ou sa place change (sous-titre, cartes).
+List<String> identifiantsCoupes(WidgetTester tester, Finder textes) {
+  final List<String> fautes = <String>[];
+  for (final Element e in textes.evaluate()) {
+    final RenderParagraph p = e.renderObject! as RenderParagraph;
+    final String texte = p.text.toPlainText();
+    for (final RegExpMatch m in _identifiant.allMatches(texte)) {
+      final List<TextBox> boites = p.getBoxesForSelection(
+        TextSelection(baseOffset: m.start, extentOffset: m.end),
+      );
+      final Set<double> lignes = <double>{};
+      for (final TextBox b in boites) {
+        if (lignes.every((double h) => (h - b.top).abs() > b.bottom - b.top)) {
+          lignes.add(b.top);
+        }
+      }
+      if (lignes.length > 1) {
+        fautes.add('$texte : identifiant coupe ${m.group(0)}');
       }
     }
   }
@@ -255,6 +323,7 @@ List<String> defautsDeTexte(
     ...exceptionsDeRendu(tester)
         .where((String _) => !exceptions.contains(debordementConnu)),
     ...motsCoupes(tester, mesures, traitDUnionPermis: true),
+    ...identifiantsCoupes(tester, mesures),
     ...ponctuationsIsolees(tester, mesures),
     ...textesRognes(tester, mesures),
     ...rangeesSansFondu(tester),
@@ -262,12 +331,16 @@ List<String> defautsDeTexte(
 }
 
 /// Les defauts de l'ecran entier, page defilee de haut en bas : chaque
-/// defilement vertical est mesure a son debut, puis page par page jusqu'a
-/// sa fin (une liste paresseuse ne construit que ce qui se voit).
+/// defilement vertical est mesure a son debut, puis page par page JUSQU'A
+/// SA FIN (une liste paresseuse ne construit que ce qui se voit, et sa fin
+/// recule a mesure qu'elle se construit : elle est relue a chaque pas).
+///
+/// [pagesMax] n'est qu'un garde-fou contre une liste sans fin : l'atteindre
+/// est un defaut ecrit (« bas de page non mesure »), jamais un silence.
 Future<List<String>> defautsEcranDefile(
   WidgetTester tester, {
   Set<String> exceptions = const <String>{},
-  int pagesMax = 6,
+  int pagesMax = 200,
 }) async {
   final Set<String> fautes = <String>{
     ...defautsDeTexte(tester, exceptions: exceptions),
@@ -286,16 +359,21 @@ Future<List<String>> defautsEcranDefile(
     if (!s.mounted) continue;
     final ScrollPosition pos = s.position;
     final double pas = pos.viewportDimension * 0.8;
-    for (int i = 1; i <= pagesMax; i++) {
-      if (!s.mounted) break;
-      final double cible = (pas * i).clamp(
-        pos.minScrollExtent,
-        pos.maxScrollExtent,
+    int pages = 0;
+    while (s.mounted && pos.pixels < pos.maxScrollExtent - 0.5) {
+      if (pages == pagesMax) {
+        fautes.add(
+          '${s.widget.runtimeType} : bas de page non mesure apres '
+          '$pagesMax pages',
+        );
+        break;
+      }
+      pos.jumpTo(
+        (pos.pixels + pas).clamp(pos.minScrollExtent, pos.maxScrollExtent),
       );
-      pos.jumpTo(cible);
       await tester.pump();
+      pages++;
       fautes.addAll(defautsDeTexte(tester, exceptions: exceptions));
-      if (cible >= pos.maxScrollExtent) break;
     }
     if (s.mounted) {
       pos.jumpTo(pos.minScrollExtent);

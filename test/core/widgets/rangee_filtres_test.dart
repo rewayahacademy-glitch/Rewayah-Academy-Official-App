@@ -6,6 +6,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
@@ -154,17 +155,20 @@ bool _aDefile(WidgetTester tester) =>
         .pixels >
     0.5;
 
-/// Vrai quand un bord de la rangee s'efface.
-bool _fondu(WidgetTester tester) =>
-    tester
-        .widget<ShaderMask>(
-          find.descendant(
-            of: find.byType(RangeeFiltres),
-            matching: find.byType(ShaderMask),
-          ),
-        )
-        .blendMode ==
-    BlendMode.dstIn;
+/// Vrai quand un bord de la rangee s'efface : le masque reellement compose
+/// (`ShaderMaskLayer`, COUPE-MOTS-FOND-1 : le fondu se peint par son
+/// propre rendu, sans reconstruire la rangee) est actif.
+bool _fondu(WidgetTester tester) {
+  final Layer? calque = tester
+      .renderObject(
+        find.descendant(
+          of: find.byType(RangeeFiltres),
+          matching: find.byType(FonduBordsRangee),
+        ),
+      )
+      .debugLayer;
+  return calque is ShaderMaskLayer && calque.blendMode == BlendMode.dstIn;
+}
 
 /// Le rapport de contraste WCAG entre deux couleurs opaques.
 double _contraste(Color a, Color b) {

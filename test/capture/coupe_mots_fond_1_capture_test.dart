@@ -12,9 +12,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/widgets/app_card.dart';
 
 import '../garde/coupe_mots_balayage_admin_test.dart' show ecransAdmin;
 import '../garde/coupe_mots_balayage_pages_test.dart' show ecransPages;
+import '../garde/coupe_mots_reglages_enfant_test.dart'
+    show ouvrirDemande, reglagesEnfant;
 import '../support/balayage_ecrans.dart';
 import '../support/garde_coupe_mots_rendu.dart';
 import 'outil_capture.dart';
@@ -43,7 +46,7 @@ const List<CasCapture> _cas = <CasCapture>[
   ),
   ('admin Journal', Size(1440, 900), 2, AppLocale.fr, InterfaceMode.enfant, 0),
   // (2) et (3) Comptes a 320 texte x2 : fondu de la rangee, titres de
-  // carte a la meme taille (identifiant sur deux lignes).
+  // carte a la meme taille (identifiant trop long : en sous-titre, entier).
   ('Comptes', Size(320, 568), 2, AppLocale.fr, InterfaceMode.standard, 0),
   ('Comptes', Size(320, 568), 2, AppLocale.fr, InterfaceMode.standard, 700),
   // (4) Interface guidee 320 texte x2 : aide de recherche d'Observations,
@@ -126,5 +129,69 @@ void main() {
         await capturer(tester, nom);
       });
     }
+
+    // (6) Reglages de l'enfant, Interface guidee 320 texte x2, feuille
+    // « demander un changement » ouverte : « Pourquoi ce changement ? »
+    // entier, le « ? » avec son mot.
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      final String nom = 'reglages_enfant_feuille_320x2_${langue.name}_guidee';
+      testWidgets(nom, (WidgetTester tester) async {
+        await monterEcranBalayage(tester, reglagesEnfant(), (
+          gabarit: (nom: nom, taille: const Size(320, 568), echelle: 2),
+          langue: langue,
+          interface: InterfaceMode.enfant,
+        ));
+        await ouvrirDemande(tester, t.tuteur.reglages.demandeDuree);
+        // Le titre du motif, amene dans la vue de la feuille.
+        await tester.ensureVisible(
+          find.text(t.tuteur.reglages.demandeMotif).last,
+        );
+        await stabiliser(tester);
+        expect(defautsDeTexte(tester), isEmpty);
+        await capturer(tester, nom);
+      });
+    }
+
+    // (2) Comptes a 320 texte x2 : la carte dont l'identifiant est le titre
+    // (« TEACHER-AS-000002 », sans nom) garde un titre a la taille des
+    // autres ; l'identifiant passe en sous-titre, entier.
+    testWidgets('comptes_320x2_fr_standard_identifiant', (
+      WidgetTester tester,
+    ) async {
+      await monterEcranBalayage(
+        tester,
+        ecransPages().firstWhere((EcranBalayage e) => e.nom == 'Comptes'),
+        (
+          gabarit: (
+            nom: 'comptes_identifiant',
+            taille: const Size(320, 568),
+            echelle: 2,
+          ),
+          langue: AppLocale.fr,
+          interface: InterfaceMode.standard,
+        ),
+      );
+      // La liste est paresseuse : la page defile jusqu'a ce que la carte
+      // soit construite, puis l'amene dans la vue.
+      final Finder carte = find.textContaining('TEACHER‑AS‑000002');
+      for (final Element e in find.byType(Scrollable).evaluate()) {
+        final ScrollableState s =
+            (e as StatefulElement).state as ScrollableState;
+        if (axisDirectionToAxis(s.axisDirection) != Axis.vertical) continue;
+        while (carte.evaluate().isEmpty &&
+            s.position.pixels < s.position.maxScrollExtent) {
+          s.position.jumpTo(
+            (s.position.pixels + 200).clamp(0, s.position.maxScrollExtent),
+          );
+          await tester.pump();
+        }
+      }
+      await tester.ensureVisible(
+        find.ancestor(of: carte.first, matching: find.byType(AppCard)).first,
+      );
+      await stabiliser(tester);
+      expect(defautsDeTexte(tester), isEmpty);
+      await capturer(tester, 'comptes_320x2_fr_standard_identifiant');
+    });
   });
 }
