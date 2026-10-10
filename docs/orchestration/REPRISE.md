@@ -19,11 +19,11 @@
 
 Arabe : non prioritaire (pas de public arabophone au lancement).
 
-## Blocages qui ne dépendent que du directeur
+## Décisions du directeur (10/10, soir)
 
-1. GitHub Actions : tous les jobs échouent en 2 s sans étape depuis au moins la run 419 (minutes ou facturation). Settings, Billing and plans.
-2. Texte du contrat enseignant : relu par un juriste ?
-3. Paie enseignant au lancement : hors de l'app le premier mois (proposition de Claude).
+- Paie enseignant : hors de l'app au lancement (virements manuels).
+- Contrat enseignant : le texte de l'app est celui des enseignants actuels, réadapté ; il est validé pour la signature.
+- GitHub Actions : minutes du mois épuisées (courriel GitHub reçu). On fait sans : contrôles locaux (Flutter) et rejeu local ou transactionnel sur STAGING (base) tiennent lieu de preuve, notés comme tels ; aucune relance de CI. Reste ouvert : la mise en production passe par `flutter-deploy.yml` (Actions) ; avant le 18/10, il faut soit un petit budget de dépassement GitHub, soit la remise à zéro mensuelle.
 
 ## Pendant une coupure de Claude
 
