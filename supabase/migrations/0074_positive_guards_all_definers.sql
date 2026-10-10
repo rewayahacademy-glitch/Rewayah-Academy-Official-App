@@ -13,7 +13,7 @@ set search_path = ''
 as $function$
   select coalesce(
     p_definition ~*
-      '(app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]*(<>|!=)[[:space:]]*''[^'']+''|app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]+not[[:space:]]+in[[:space:]]*[(]|''[^'']+''[[:space:]]*(<>|!=)[[:space:]]*app_role[[:space:]]*[(][[:space:]]*[)])',
+      '((public[.])?app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]*(<>|!=)[[:space:]]*''[^'']+''|(public[.])?app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]+not[[:space:]]+in[[:space:]]*[(]|''[^'']+''[[:space:]]*(<>|!=)[[:space:]]*(public[.])?app_role[[:space:]]*[(][[:space:]]*[)])',
     false
   );
 $function$;
