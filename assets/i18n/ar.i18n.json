@@ -4064,6 +4064,7 @@
       "aucunAvecCeFiltre": "لا فصل بهذا المعيار",
       "aucunAvecCeFiltreDetail": "غيّر المعيار لترى الفصول الأخرى.",
       "erreur": "تعذّرت قراءة الفصول. أعد المحاولة بعد لحظة.",
+      "sansDonnees": "تعذّر تحميل قائمة الفصول",
       "creer": "إنشاء فصل",
       "creerTitre": "إنشاء فصل",
       "champLibelle": "اسم الفصل",

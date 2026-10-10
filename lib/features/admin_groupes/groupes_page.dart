@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,6 +18,8 @@ import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
+import '../../core/reseau/etat_sans_donnees.dart';
+import '../../core/reseau/service_reseau.dart' show horsLigneProvider;
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_spacing.dart';
@@ -97,8 +101,26 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
 
   final TextEditingController _recherche = TextEditingController();
 
+  /// L'attente qui suit la derniere frappe : une page n'est demandee au
+  /// serveur qu'une fois la saisie posee (ECHELLE, anti-rebond).
+  Timer? _attenteSaisie;
+
+  /// Le delai entre la derniere frappe et la requete. Ce n'est pas un
+  /// mouvement (aucune animation), donc pas un jeton d'`AppMouvement`.
+  static const Duration _delaiSaisie = Duration(
+    microseconds: 300 * Duration.microsecondsPerMillisecond,
+  );
+
+  void _chercher(String texte) {
+    _attenteSaisie?.cancel();
+    _attenteSaisie = Timer(_delaiSaisie, () {
+      if (mounted) _filtrer(_filtre.avec(texte: texte));
+    });
+  }
+
   @override
   void dispose() {
+    _attenteSaisie?.cancel();
     _recherche.dispose();
     super.dispose();
   }
@@ -123,6 +145,7 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
     );
     if (lecture.hasValue) _derniere = lecture.requireValue;
     final PageClasses? reference = lecture.value ?? _derniere;
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final bool bureau = DataCollection.enTableau(context);
     final l = t.admin.groupes.liste;
 
@@ -267,7 +290,7 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
       controleur: _recherche,
       libelle: l.rechercheLibelle,
       aide: l.rechercheAide,
-      onChange: (String texte) => _filtrer(_filtre.avec(texte: texte)),
+      onChange: _chercher,
     );
 
     return PageShell(
@@ -397,6 +420,12 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
                 },
               ),
             ),
+            _ when sansDonneesHorsLigne(lecture, horsLigne: horsLigne) =>
+              EtatSansDonnees(
+                key: const ValueKey<String>('classes-sans-donnees'),
+                quoi: t.admin.groupes.sansDonnees,
+                onAction: _relire,
+              ),
             AsyncValue<PageClasses>(hasError: true) => EmptyState(
               message: t.admin.groupes.erreur,
               icone: AppIcons.avertissement,

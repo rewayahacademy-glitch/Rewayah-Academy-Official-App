@@ -6926,6 +6926,9 @@ class Traductions$admin$groupes$fr {
 	/// fr: 'Les classes n'ont pas pu être lues. Réessayez dans un instant.'
 	String get erreur => 'Les classes n\'ont pas pu être lues. Réessayez dans un instant.';
 
+	/// fr: 'La liste des classes n'a pas pu être chargée'
+	String get sansDonnees => 'La liste des classes n\'a pas pu être chargée';
+
 	/// fr: 'Nouvelle classe'
 	String get creer => 'Nouvelle classe';
 
@@ -29696,6 +29699,7 @@ extension on Traductions {
 			'admin.groupes.aucunAvecCeFiltre' => 'Aucune classe avec ce filtre',
 			'admin.groupes.aucunAvecCeFiltreDetail' => 'Changez de filtre pour voir les autres classes.',
 			'admin.groupes.erreur' => 'Les classes n\'ont pas pu être lues. Réessayez dans un instant.',
+			'admin.groupes.sansDonnees' => 'La liste des classes n\'a pas pu être chargée',
 			'admin.groupes.creer' => 'Nouvelle classe',
 			'admin.groupes.creerTitre' => 'Nouvelle classe',
 			'admin.groupes.champLibelle' => 'Nom de la classe',
@@ -29989,9 +29993,9 @@ extension on Traductions {
 			'admin.evaluations.champNiveau' => 'Niveau évalué',
 			'admin.evaluations.champType' => 'Type',
 			'admin.evaluations.champDatePrevue' => 'Date prévue',
-			'admin.evaluations.planifierEnvoyer' => 'Planifier',
 			_ => null,
 		} ?? switch (path) {
+			'admin.evaluations.planifierEnvoyer' => 'Planifier',
 			'admin.evaluations.planifierErreur' => ({required Object message}) => 'La planification n\'a pas abouti : ${message}',
 			'admin.evaluations.actionEnregistrerResultat' => 'Enregistrer le résultat',
 			'admin.evaluations.actionAnnuler' => 'Annuler l\'évaluation',
@@ -30503,9 +30507,9 @@ extension on Traductions {
 			'admin.finance.pol.separateurComparaison' => ' ; ',
 			'admin.finance.pol.invariants' => 'Règles fixes',
 			'admin.finance.pol.invariantsDetail' => 'Elles protègent l\'argent des familles : ce ne sont pas des réglages, aucune version ne les change.',
-			'admin.finance.pol.invariantConfirmation' => 'Un paiement est confirmé avant tout crédit sur un profil.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.finance.pol.invariantConfirmation' => 'Un paiement est confirmé avant tout crédit sur un profil.',
 			'admin.finance.pol.invariantDoubleDebit' => 'Un même paiement n\'est jamais débité deux fois.',
 			'admin.finance.pol.invariantPeriode' => 'L\'accès au cours dépend de la période financée, jamais du solde.',
 			'admin.finance.pol.invariantSoldes' => 'Chaque profil a son propre solde ; le total du foyer n\'est qu\'une lecture.',
@@ -31017,9 +31021,9 @@ extension on Traductions {
 			'notifications.filtres.libelle' => 'Filtrer les notifications',
 			'notifications.filtres.toutes' => 'Toutes',
 			'notifications.filtres.nonLues' => 'Non lues',
-			'notifications.filtres.mentions' => 'Mentions',
 			_ => null,
 		} ?? switch (path) {
+			'notifications.filtres.mentions' => 'Mentions',
 			'notifications.filtres.actionRequise' => 'Action requise',
 			'notifications.filtreVideTitre' => 'Aucune notification dans ce filtre',
 			'notifications.filtreVidePhrase' => 'Choisissez « Toutes » pour revoir l\'ensemble de vos notifications.',
@@ -31531,9 +31535,9 @@ extension on Traductions {
 			'enseignant.photo.titre' => 'Photo professionnelle',
 			'enseignant.photo.aide' => 'Votre photo est obligatoire : les familles ne confient pas leurs enfants à un inconnu sur internet. Elle est visible des familles de vos élèves.',
 			'enseignant.photo.obligatoireLecteur' => 'Photo obligatoire',
-			'enseignant.photo.voile' => 'Si vous portez le voile intégral, votre photo de profil peut vous montrer voilée.',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.photo.voile' => 'Si vous portez le voile intégral, votre photo de profil peut vous montrer voilée.',
 			'enseignant.photo.notice' => 'N\'utilisez pas votre pièce d\'identité.',
 			'enseignant.photo.choisir' => 'Choisir une photo',
 			'enseignant.photo.utiliser' => 'Utiliser cette photo',
@@ -32045,9 +32049,9 @@ extension on Traductions {
 			'controleur.complement.correctionAide' => 'Quand une information du rapport est inexacte · l\'original reste lisible, la correction s\'affiche dessous',
 			'controleur.complement.faitNouveau' => 'Information nouvelle',
 			'controleur.complement.faitNouveauAide' => 'Quand vous l\'apprenez après la visite · il est daté du jour de l\'ajout',
-			'controleur.complement.questionTexte' => 'Qu\'ajoutez-vous au rapport ?',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.complement.questionTexte' => 'Qu\'ajoutez-vous au rapport ?',
 			'controleur.complement.texteObligatoire' => 'Obligatoire : ce que vous avez constaté, en quelques phrases.',
 			'controleur.complement.libelleTexte' => 'Complément',
 			'controleur.complement.aideTexte' => 'Ce que vous avez constaté ou appris depuis la visite.',
@@ -32559,9 +32563,9 @@ extension on Traductions {
 			'tc.observation.duree.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} minute', other: '${n} minutes', ), 
 			'tc.observation.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
 			'tc.observation.refus.politiqueDesactivee' => 'L\'observation est désactivée pour cette classe.',
-			'tc.observation.refus.quotaVisites' => 'Vous avez déjà utilisé vos visites pour cette séance.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.refus.quotaVisites' => 'Vous avez déjà utilisé vos visites pour cette séance.',
 			'tc.observation.refus.tempsEpuise' => 'Votre temps d\'observation est épuisé pour cette séance.',
 			'tc.observation.refus.lienTuteur' => 'Vous n\'êtes rattaché à aucun élève de cette séance.',
 			'tc.observation.refus.seanceNonActive' => 'La séance n\'est pas en cours.',
@@ -33073,9 +33077,9 @@ extension on Traductions {
 			'adulte.demo.etats.delai120' => 'Un délai suivant, plus long, est en cours.',
 			'adulte.demo.etats.departsSuivants' => 'Après le troisième départ, le délai suivant s\'applique toujours.',
 			'adulte.demo.etats.repriseDemandee' => 'Une demande de reprise du foyer a été déposée.',
-			'adulte.demo.etats.repriseRefuseeParTitulaire' => 'La demande de reprise a été refusée par le titulaire.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.demo.etats.repriseRefuseeParTitulaire' => 'La demande de reprise a été refusée par le titulaire.',
 			'adulte.demo.etats.repriseSansReponse' => 'Sans réponse dans le délai, la demande attend l\'administration.',
 			'adulte.demo.etats.repriseValidee' => 'La reprise du foyer a été validée.',
 			'adulte.demo.etats.repriseRefusee' => 'La reprise du foyer a été refusée.',
@@ -33587,9 +33591,9 @@ extension on Traductions {
 			'com.messages.demo.f.affectation' => 'Votre Classe An-Nour passe au mardi 18 h à partir du mois prochain. Merci de confirmer.',
 			'com.messages.demo.f.khadijaRevision' => 'Pensez à réviser la sourate Al-Mulk pour jeudi.',
 			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
-			'com.messages.vide' => 'Aucune conversation pour le moment.',
 			_ => null,
 		} ?? switch (path) {
+			'com.messages.vide' => 'Aucune conversation pour le moment.',
 			'com.vocal.composer.libelle' => 'Message vocal',
 			'com.vocal.composer.enregistrer' => 'Enregistrer un message vocal',
 			'com.vocal.composer.indisponible' => 'Le message vocal n\'est pas encore disponible ici. Écrivez votre message dans le champ ci-dessus.',
@@ -34101,9 +34105,9 @@ extension on Traductions {
 			'com.annonces.administration.moderation.legende' => ({required Object date, required Object heure}) => 'Signalé le ${date} à ${heure}',
 			'com.annonces.administration.moderation.motif' => ({required Object motif}) => 'Motif : ${motif}',
 			'com.annonces.administration.moderation.extraitTitre' => 'Contenu signalé',
-			'com.annonces.administration.moderation.extraitAbsent' => 'L\'extrait de ce contenu n\'est pas communiqué.',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.administration.moderation.extraitAbsent' => 'L\'extrait de ce contenu n\'est pas communiqué.',
 			'com.annonces.administration.moderation.regle' => 'Règle visée',
 			'com.annonces.administration.moderation.approuver' => 'Approuver après examen',
 			'com.annonces.administration.moderation.masquer' => 'Masquer le contenu',
@@ -34615,9 +34619,9 @@ extension on Traductions {
 			'comptable.tresorerie.transfert.refusPhrase' => ({required Object raison}) => 'Raison : ${raison}. Rien n\'a été déplacé.',
 			'comptable.tresorerie.transfert.erreurEnvoiTitre' => 'Réponse non reçue',
 			'comptable.tresorerie.transfert.erreurEnvoi' => 'La réponse n\'est pas arrivée. Consultez l\'historique avant de réessayer : le même mouvement ne sera jamais compté deux fois.',
-			'comptable.tresorerie.transfert.indisponible' => 'Les mouvements entre coffres ne sont pas encore reliés au serveur. Rien n\'a été déplacé.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.tresorerie.transfert.indisponible' => 'Les mouvements entre coffres ne sont pas encore reliés au serveur. Rien n\'a été déplacé.',
 			'comptable.tresorerie.transfert.aucunCouple' => 'Aucun mouvement n\'est permis par la politique pour votre compte.',
 			'comptable.tresorerie.titre' => 'Trésorerie et coffres',
 			'comptable.tresorerie.sousTitre' => 'La Trésorerie libre est le seul chiffre dépensable.',

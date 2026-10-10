@@ -11,6 +11,7 @@ import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
+import '../theme/app_typography.dart';
 import 'app_bottom_sheet.dart';
 import 'avatar_nom.dart';
 import 'bascule_theme.dart';
@@ -645,9 +646,9 @@ class _Rail extends StatelessWidget {
             ),
             // L'etat actif ne passe pas par la couleur seule (spec section
             // 20) : la graisse le porte aussi.
-            selectedLabelTextStyle: base.copyWith(
-              color: palette.inkAccent.asBorderSide().color,
-              fontWeight: FontWeight.w600,
+            selectedLabelTextStyle: AppTypography.graisse(
+              base.copyWith(color: palette.inkAccent.asBorderSide().color),
+              FontWeight.w600,
             ),
             unselectedLabelTextStyle: base.copyWith(
               color: palette.inkMuted.asBorderSide().color,
@@ -795,9 +796,9 @@ WidgetStateProperty<TextStyle?> _stylesLibelleNav(
   // graisse le porte aussi, sur le fond discret `washAccent`.
   return WidgetStateProperty.resolveWith<TextStyle?>(
     (Set<WidgetState> states) => states.contains(WidgetState.selected)
-        ? base.copyWith(
-            color: palette.inkAccent.asBorderSide().color,
-            fontWeight: FontWeight.w600,
+        ? AppTypography.graisse(
+            base.copyWith(color: palette.inkAccent.asBorderSide().color),
+            FontWeight.w600,
           )
         : base.copyWith(color: palette.inkMuted.asBorderSide().color),
   );
