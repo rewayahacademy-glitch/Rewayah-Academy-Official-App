@@ -1,6 +1,26 @@
 -- 0076 — projection privée des demandes du foyer pour le suivi C-10 bis.
 BEGIN;
 
+-- M2 : une demande déjà classée reçoit un code métier propre.
+DO $migration$
+DECLARE
+  v_oid oid := 'public.creer_classe_depuis_regroupement(text, uuid, text)'::regprocedure;
+  v_definition text;
+  v_corrected text;
+BEGIN
+  v_definition := pg_catalog.pg_get_functiondef(v_oid);
+  v_corrected := pg_catalog.replace(
+    v_definition,
+    $old$motif = 'refus_direction', updated_at = pg_catalog.now()$old$,
+    $new$motif = 'deja_en_classe', updated_at = pg_catalog.now()$new$
+  );
+  IF v_corrected = v_definition THEN
+    RAISE EXCEPTION 'M2 : fermeture des demandes déjà en classe introuvable';
+  END IF;
+  EXECUTE v_corrected;
+END
+$migration$;
+
 CREATE OR REPLACE FUNCTION public.suivi_demandes_horaires_foyer()
 RETURNS TABLE (
   demande_id uuid,
