@@ -66,7 +66,7 @@ class GroupeAdmin {
       creneau: Creneau(
         jour: entier('weekday'),
         heure: entier('hour_local'),
-        fuseau: 'Europe/Paris',
+        fuseau: json['timezone_iana'] as String? ?? 'Europe/Paris',
       ),
       nombreMembres: entier('nombre_membres'),
       actif: json['actif'] as bool? ?? false,
@@ -186,6 +186,7 @@ abstract interface class ServiceGroupes {
     required String libelle,
     required Creneau creneau,
     int? seuilMax,
+    int? couleurJeton,
   });
 
   /// Modifie le libelle, le seuil et le creneau d'un groupe.
@@ -256,6 +257,7 @@ class ServiceGroupesSupabase implements ServiceGroupes {
     required String libelle,
     required Creneau creneau,
     int? seuilMax,
+    int? couleurJeton,
   }) => _client.rpc<String>(
     'creer_groupe',
     params: <String, dynamic>{
@@ -265,6 +267,8 @@ class ServiceGroupesSupabase implements ServiceGroupes {
       'p_weekday': creneau.jour,
       'p_hour_local': creneau.heure,
       'p_seuil_max': seuilMax,
+      'p_timezone_iana': creneau.fuseau,
+      'p_couleur_jeton': couleurJeton,
     },
   );
 
@@ -282,6 +286,7 @@ class ServiceGroupesSupabase implements ServiceGroupes {
       'p_seuil_max': seuilMax,
       'p_weekday': creneau.jour,
       'p_hour_local': creneau.heure,
+      'p_timezone_iana': creneau.fuseau,
     },
   );
 
