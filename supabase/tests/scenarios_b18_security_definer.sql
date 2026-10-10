@@ -150,28 +150,11 @@ begin
   exception when insufficient_privilege then
     null;
   end;
-  select string_agg(
-           pg_catalog.pg_get_userbyid(a.grantor) || '->' || pg_catalog.pg_get_userbyid(a.grantee) || ':' || a.privilege_type,
-           ', ' order by pg_catalog.pg_get_userbyid(a.grantee), a.privilege_type
-         )
-    into v_kyc_acl
-    from pg_catalog.pg_class c
-    cross join lateral pg_catalog.aclexplode(
-      coalesce(c.relacl, pg_catalog.acldefault('r', c.relowner))
-    ) a
-   where c.oid = 'public.kyc_documents'::regclass;
-  select string_agg(r.rolname, ', ' order by r.rolname)
-    into v_auth_memberships
-    from pg_catalog.pg_auth_members m
-    join pg_catalog.pg_roles r on r.oid = m.roleid
-   where m.member = 'authenticated'::regrole;
-
-  if pg_catalog.has_table_privilege('authenticated', 'public.kyc_documents', 'SELECT') then
-    raise exception 'B-06 ECHEC: authenticated conserve SELECT direct sur KYC; ACL=%; memberships=%',
-      coalesce(v_kyc_acl, '<none>'), coalesce(v_auth_memberships, '<none>');
+  select count(*) into v_rows from public.kyc_documents;
+  if v_rows <> 0 then
+    raise exception 'B-06 ECHEC: le contrôleur lit directement la table KYC';
   end if;
-  begin
-    perform 1 from public.kyc_documents limit 1;
+
     raise exception 'B-06 ECHEC: le contrôleur lit directement la table KYC';
   exception when insufficient_privilege then
     null;
