@@ -280,10 +280,13 @@ class DataCollection<T> extends StatelessWidget {
       final TextStyle style = colonne.tabulaire
           ? AppTypography.tabulaire(cellule)
           : cellule;
-      if (largeurMotLePlusLong(context, valeurs.join(' '), style, echelle) +
-              marge >
-          place) {
-        return false;
+      // Chaque valeur mesuree seule : le mot le plus long de la colonne est
+      // le plus long de ses valeurs (aucune chaine jointe, garde DUREE-FOND-1).
+      for (final String valeur in valeurs) {
+        if (largeurMotLePlusLong(context, valeur, style, echelle) + marge >
+            place) {
+          return false;
+        }
       }
     }
     return true;

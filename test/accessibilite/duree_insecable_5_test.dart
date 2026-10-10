@@ -518,9 +518,16 @@ Widget seule(Seance s) => Text(s.duree);
     const String cellule =
         '    return Semantics(\n'
         r"      label: '${colonne.titre} : ${sansAncre(colonne.texte(ligne))}',";
+    // COUPE-MOTS-FOND-1 : le resume ecarte la valeur deja affichee en tete
+    // de carte ; la mutation remplace toujours le resume entier.
     const String resume =
         '    final String resume = enchainer(\n'
-        '      secondaires.map((ColonneDonnees<T> c) => c.texte(ligne)),\n'
+        '      secondaires\n'
+        '          .map((ColonneDonnees<T> c) => c.texte(ligne))\n'
+        '          .where(\n'
+        '            (String v) =>\n'
+        '                enTete == null || identifiantsInsecables(v).trim() != enTete,\n'
+        '          ),\n'
         "      ' · ',\n"
         '    );';
 
