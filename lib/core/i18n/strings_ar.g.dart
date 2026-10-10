@@ -5407,6 +5407,9 @@ class _Traductions$inscription$usage$ar extends Traductions$inscription$usage$fr
 	@override String get familleTitre => 'أنا وأسرتي';
 	@override String get familleDescription => 'سجّل أطفالك أو أقاربك، معك أو دونك. يمكنك إنشاء ملفك الخاص كطالب في أي وقت.';
 	@override String get enseignant => 'أنا معلم';
+	@override String get coursQuestion => 'هل تتابع أنت أيضًا دروسًا؟';
+	@override String get coursOui => 'نعم';
+	@override String get coursNon => 'لا';
 }
 
 // Path: inscription.recap
@@ -16542,6 +16545,9 @@ extension on TraductionsAr {
 			'inscription.usage.familleTitre' => 'أنا وأسرتي',
 			'inscription.usage.familleDescription' => 'سجّل أطفالك أو أقاربك، معك أو دونك. يمكنك إنشاء ملفك الخاص كطالب في أي وقت.',
 			'inscription.usage.enseignant' => 'أنا معلم',
+			'inscription.usage.coursQuestion' => 'هل تتابع أنت أيضًا دروسًا؟',
+			'inscription.usage.coursOui' => 'نعم',
+			'inscription.usage.coursNon' => 'لا',
 			'inscription.recap.usage' => 'نوع الحساب',
 			'inscription.recap.identite' => 'الاسم',
 			'inscription.recap.genre' => 'الجنس',
@@ -16659,11 +16665,11 @@ extension on TraductionsAr {
 			'adulte.monEspace.role' => 'طالب بالغ',
 			'adulte.monEspace.monCompte' => 'حسابي',
 			'adulte.monEspace.informations' => 'معلوماتي',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.monEspace.coursAcces' => 'الدروس والوصول',
 			'adulte.monEspace.coursAccesLegende' => 'الفصل والحصص والوصول',
 			'adulte.monEspace.paiements' => 'المدفوعات',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.monEspace.paiementsLegende' => 'السجل والإيصالات',
 			'adulte.monEspace.accords' => 'موافقاتي',
 			'adulte.monEspace.accordsLegende' => 'الموافقات الممنوحة للأكاديمية',
@@ -17173,11 +17179,11 @@ extension on TraductionsAr {
 			'controleur.historique.cleElevesPresents' => 'الحاضرون',
 			'controleur.historique.cleReponse' => 'الرد',
 			'controleur.historique.sansComplement' => 'لا تكملة.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.historique.faitsIndisponibles' => 'السجل التلقائي لهذه الزيارة (الساعات، الطلاب الحاضرون، إعادة الاتصال) لم يصل بعد: انتهت الحصة للتو أو انقطع الاتصال. سيظهر هنا بمجرد وصوله. باقي التقرير موثوق.',
 			'controleur.historique.motif' => ({required Object motif}) => 'السبب: ⁨${motif}⁩',
 			'controleur.historique.ajouterComplement' => 'إضافة تكملة',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.complement.bandeau' => 'ستُضاف هذه التكملة إلى التقرير الموجود.',
 			'controleur.complement.questionMotif' => 'لماذا تضيف هذه التكملة؟',
 			'controleur.complement.contexteMotif' => 'اختياري: السبب يساعد الإدارة على قراءة التكملة. التقرير الأصلي لا يتغير.',

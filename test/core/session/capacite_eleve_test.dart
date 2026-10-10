@@ -52,19 +52,22 @@ void main() {
   final DateTime maintenant = DateTime.utc(2026, 10, 10, 10);
 
   group('SessionControleur remplit eleveAutonome depuis le port', () {
-    test('port factice : le profil autonome est servi, les autres non', () async {
-      final ProviderContainer c = await _ouvrir(
-        _session(AppRole.guardian),
-        const PortCapaciteEleveFactice(autonomes: <String>{'p-guardian'}),
-      );
-      expect(c.read(sessionProvider).eleveAutonome, isTrue);
+    test(
+      'port factice : le profil autonome est servi, les autres non',
+      () async {
+        final ProviderContainer c = await _ouvrir(
+          _session(AppRole.guardian),
+          const PortCapaciteEleveFactice(autonomes: <String>{'p-guardian'}),
+        );
+        expect(c.read(sessionProvider).eleveAutonome, isTrue);
 
-      final ProviderContainer autre = await _ouvrir(
-        _session(AppRole.guardian),
-        const PortCapaciteEleveFactice(),
-      );
-      expect(autre.read(sessionProvider).eleveAutonome, isFalse);
-    });
+        final ProviderContainer autre = await _ouvrir(
+          _session(AppRole.guardian),
+          const PortCapaciteEleveFactice(),
+        );
+        expect(autre.read(sessionProvider).eleveAutonome, isFalse);
+      },
+    );
 
     test('production (port neutre) : capacite inconnue, donc fausse', () async {
       final ProviderContainer c = await _ouvrir(
@@ -111,18 +114,21 @@ void main() {
       );
     });
 
-    test('tuteur + autonome : /eleve et /tc/classe restent refuses', () {
+    test('tuteur + autonome : /eleve ramene a l\'accueil adulte, '
+        '/tc/classe reste refuse, /eleve/coran s\'ouvre', () {
       final SessionState s = _session(AppRole.guardian, autonome: true);
-      expect(decider(s, Routes.eleve), Routes.accesRefuse);
+      expect(decider(s, Routes.eleve), Routes.eleveAdulte);
+      expect(decider(s, Routes.eleveCoran), isNull);
       expect(decider(s, Routes.tcClasse), Routes.accesRefuse);
+      expect(
+        decider(_session(AppRole.guardian), Routes.eleve),
+        Routes.accesRefuse,
+      );
     });
 
     test('la capacite n\'ouvre rien a un autre role', () {
       expect(
-        decider(
-          _session(AppRole.teacher, autonome: true),
-          Routes.eleveAdulte,
-        ),
+        decider(_session(AppRole.teacher, autonome: true), Routes.eleveAdulte),
         isNot(isNull),
       );
     });

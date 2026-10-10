@@ -20,8 +20,6 @@ import '../../core/offres/service_offres.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
-import '../../core/session/session_controleur.dart';
-import '../../core/session/session_state.dart';
 import '../../core/theme/accent_profil.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -176,11 +174,6 @@ class FoyerPage extends ConsumerWidget {
 
     final AsyncValue<FoyerTitulaireVM> lectureAdulte = ref.watch(
       foyerTitulaireProvider,
-    );
-    // PAQ-DIR-EA : le titulaire deja eleve autonome (capacite servie, C-24)
-    // n'a plus de profil eleve a creer pour lui-meme.
-    final bool dejaEleve = ref.watch(
-      sessionProvider.select((SessionState s) => s.eleveAutonome),
     );
     // Seul « pas titulaire » (`CapaciteIndisponible`) rend le Foyer du tuteur.
     // Le chargement et toute autre erreur se disent comme tels (squelette,
@@ -342,15 +335,14 @@ class FoyerPage extends ConsumerWidget {
           // Deux liens, deux cibles : jamais colles, meme a 200 %.
           Ecart.vSm,
         ],
-        if (!dejaEleve)
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: LienFleche(
-              key: monProfilKey,
-              libelle: t.foyer.creerMonProfil,
-              onPress: () => aller(Routes.tuteurAjouterPourMoi),
-            ),
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: LienFleche(
+            key: monProfilKey,
+            libelle: t.foyer.creerMonProfil,
+            onPress: () => aller(Routes.tuteurAjouterPourMoi),
           ),
+        ),
       ],
     );
 
