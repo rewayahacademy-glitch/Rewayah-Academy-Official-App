@@ -232,3 +232,55 @@ Aucun port ni aucune logique de classement modifiés.
 | ADM 3 : « déjà affecté par un autre » affichait « Un autre membre de la direction a déjà confirmé un enseignant pour cette classe : rien n'a changé. » puis « Les familles ont été prévenues » | Une seule phrase, en `liveRegion` : « Un autre membre de la direction a déjà confirmé l'enseignant de cette classe : votre choix ne remplace pas le sien. » ; « Les familles ont été prévenues » n'est plus affiché dans ce cas | « ADM 3 : deja affecte par un autre, une seule phrase claire » (320 px, texte ×2, LTR et RTL) |
 
 Aucun bouton grisé ajouté ; un seul bouton plein (« Fermer ») sur l'étape de fin.
+
+## C-11 bis : une heure par jour (10/10/2026)
+
+Statut : `présent dans le code` et `testé localement` (groupe « C-11 bis : une heure par
+jour » de `test/features/admin_regroupements/regroupements_page_test.dart`). Branche
+locale `claude/c10-bis`, non poussée, non déployée.
+
+**Même défaut que C-10 bis.** `RegroupementDemandes` portait `jours` et une seule
+`reference` (`HeureDansFuseau`) pour tous les jours, et `autresFuseaux` une heure par
+fuseau sans dire pour quel jour. Les demandes réunies pouvant avoir une heure différente
+selon le jour, la clé de ressemblance devient « mêmes jours, même heure pour chacun ».
+
+**Contrat C-11 bis** (`lib/core/offres/port_regroupements_admin.dart`) :
+
+- `RegroupementDemandes({…, required String fuseau, required Iterable<OccurrenceCreneau>
+  occurrences, List<HeureDansFuseau> autresFuseaux, …})` remplace `jours` + `reference` ;
+  occurrences triées par jour ; liste vide et jour en double refusés par assertion ;
+  getters `jours` et `heuresToutesEgales` ; le constructeur n'est plus `const` ;
+- `HeureDansFuseau.jourIso` (`int?`) : le jour de l'occurrence que cette heure traduit ;
+  nul, elle vaut pour tous les jours, ce que l'assertion n'admet que si toutes les
+  heures de référence sont égales ;
+- tri (premier jour, puis heure de ce jour), nom déduit et créneaux comparés à
+  l'enseignant (`creneauxDe`) lisent l'heure de chaque jour.
+- Ligne Contrats à relire par ChatGPT avant son adaptateur : une occurrence par jour,
+  et une heure d'un autre fuseau par jour quand les heures diffèrent.
+
+**Règle d'affichage** (la même que C-10 bis) : heures égales, la carte et la feuille
+restent inchangées (« Lundi, mardi, jeudi · 18 h », « Jours », « Heure de référence »
+« 18 h, heure de Paris ») ; heures différentes, le titre et la ligne « Jours et heures »
+disent « Mardi 20 h, jeudi 20 h 30 », puis « Fuseau de référence » « Heure de Los
+Angeles », et « Ailleurs » dit le jour de chaque heure (« Mardi : 5 h le lendemain à
+Paris · Jeudi : 5 h 30 le lendemain à Paris »). Testé à 320 px, texte ×2, LTR et RTL,
+feuille ouverte.
+
+**Libellés ajoutés** (`admin.regroupements`, ajoutés après `ailleursLendemain`, rien
+réordonné ; rédigés par l'agent, à faire valider par le directeur ; déclarés dans
+`tool/libelles_sources.json`) :
+
+| Clé | Texte |
+|---|---|
+| `admin.regroupements.cleJoursHeures` | Jours et heures |
+| `admin.regroupements.cleFuseau` | Fuseau de référence |
+| `admin.regroupements.fuseauValeur` | Heure {deVille} |
+| `admin.regroupements.jourHeure` | {jour} {heure} |
+| `admin.regroupements.ailleursJour` | {jour} : {ailleurs} |
+
+**Démonstration.** Le regroupement adultes en anglais (Los Angeles) a désormais mardi
+20 h et jeudi 20 h 30, et une heure de Paris par jour.
+
+**Contre-épreuve** : les mêmes défauts que C-10 bis rendent rouges les tests C-11 bis
+(heures écrasées par la première, heure commune affichée sans vérification, tri retiré,
+doublon accepté, heure d'un autre fuseau sans jour acceptée), puis annulés.

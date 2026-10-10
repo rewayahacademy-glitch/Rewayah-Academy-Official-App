@@ -101,3 +101,55 @@ directeur) :
 - Motif inconnu : « Cette demande est close. »
 - Notification correspondante (composée, aucune clé nouvelle) : « Demande de créneau de Bilal : cette demande est close. »
 - « heure UTC » : composé à partir de la clé existante `heureFuseau` (« {heure}, heure {deVille} ») ; aucune clé nouvelle.
+
+## C-10 bis : une heure par jour (10/10/2026)
+
+Statut : `présent dans le code` et `testé localement` (groupe « C-10 bis : une heure par
+jour » de `test/features/suivi_demandes/suivi_demandes_page_test.dart`). Branche locale
+`claude/c10-bis`, non poussée, non déployée.
+
+**Défaut.** `CreneauDemande` portait une seule heure pour tous les jours, alors que le
+serveur stocke `jours[]` et `heures_locales[]` en tableaux parallèles : une demande peut
+avoir une heure différente selon le jour (semaine de changement d'heure, créneau
+personnalisé). Un adaptateur aurait dû écraser les heures par la première.
+
+**Contrat C-10 bis** (`lib/core/offres/port_suivi_demandes.dart`,
+`lib/core/offres/occurrence_creneau.dart`) :
+
+- `OccurrenceCreneau({required int jourIso, required int heure, int minute = 0})` :
+  jour ISO 1 à 7, heure 0 à 23, minute 0 à 59, gardés par assertion ;
+- `CreneauDemande({required Iterable<OccurrenceCreneau> occurrences})` : triées par jour,
+  liste vide et jour en double refusés par assertion ; `occurrences` (liste non
+  modifiable), `joursIso`, `heuresToutesEgales`. Aucun getter « l'heure du créneau ».
+- Ligne Contrats à relire par ChatGPT avant son adaptateur : une occurrence par indice
+  des deux tableaux, `jours[i]` avec `heures_locales[i]` ; jamais d'heure de repli
+  prise au premier jour.
+
+**Règle d'affichage.**
+
+| Cas | Rendu | Règle et source | Conséquence |
+| :--- | :--- | :--- | :--- |
+| Toutes les heures égales | Inchangé : « Jours choisis » « Lundi, mardi et jeudi », « Heure choisie » « 18:00, heure de Paris » | Nielsen n° 4 (cohérence) ; décision du lot | Aucune régression pour le cas courant |
+| Heures différentes | « Jours et heures choisis » « Lundi 18:00, mercredi 19:30 », puis « Fuseau horaire » « Heure de Paris » | WCAG 2.2 SC 1.3.1 (une valeur par ligne clé-valeur) ; COUPE-MOTS-1 | Le fuseau a sa propre ligne : une virgule de plus après la liste se serait confondue avec un jour ; jours du lundi au dimanche, chacun avec son heure |
+| 320 px, texte ×2, LTR et RTL | Liste de sept jours à heures différentes sans débordement ni mot coupé | WCAG 2.2 SC 1.4.4 et 1.4.10 | `LigneCleValeur` empilée à 200 % |
+
+**Libellés ajoutés** (`suiviDemandes`, ajoutés après `heureFuseau`, rien réordonné ;
+rédigés par l'agent, à faire valider par le directeur ; déclarés dans
+`tool/libelles_sources.json`) :
+
+- « Jours et heures choisis »
+- « {jour} {heure} » (« Lundi 18:00 »)
+- « Fuseau horaire »
+- « Heure {deVille} » (« Heure de Paris », « Heure UTC »)
+
+**Démonstration.** Inès (étape 2) a désormais samedi 10:00 et dimanche 11:30.
+
+**Contre-épreuve** (chaque défaut remis, tests rouges, puis annulé) :
+
+1. Le constructeur écrase les heures par celle du premier jour → 13 rouges (dont
+   « le creneau trie par jour et garde l heure de chaque jour », « heures differentes :
+   chaque jour avec son heure… », « 2. classe validee… »).
+2. L'écran affiche l'heure du premier jour sans vérifier qu'elles sont égales → 11 rouges.
+3. Tri par jour retiré → 5 rouges.
+4. Doublon de jour accepté → rouge « doublon de jour, liste vide, valeurs hors bornes :
+   refuses ».
