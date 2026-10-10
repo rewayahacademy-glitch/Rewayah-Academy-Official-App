@@ -10,6 +10,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_elevation.dart';
@@ -69,11 +70,22 @@ class PanneauSeance extends StatelessWidget {
     this.forme = FormePanneau.colonne,
     this.enMenu = false,
     this.ajusteAuContenu = false,
+    this.libelleFermer,
+    this.semantiqueFermer,
     super.key,
   });
 
   final String titre;
   final VoidCallback? onFermer;
+
+  /// TB-4 (plan V2 §20) : le mot visible de la fermeture (« Reduire ») a la
+  /// place de la croix, et son nom lu ([semantiqueFermer], « Reduire les
+  /// commandes »), qui contient le mot visible (W-253). `null` : la croix.
+  final String? libelleFermer;
+  final String? semantiqueFermer;
+
+  /// La cle de « Reduire » quand [libelleFermer] remplace la croix.
+  static const Key cleReduire = ValueKey<String>('panneau-seance-reduire');
 
   /// Image CLV-07 desktop : un menu « … » (Fermer le panneau) a la place de
   /// la croix. Colonne seulement.
@@ -154,6 +166,8 @@ class PanneauSeance extends StatelessWidget {
                   titre: titre,
                   onFermer: onFermer,
                   enMenu: colonne && enMenu,
+                  libelleFermer: libelleFermer,
+                  semantiqueFermer: semantiqueFermer,
                 ),
                 Ecart.vSm,
                 if (ajuste)
@@ -274,11 +288,15 @@ class _EnTete extends StatelessWidget {
     required this.titre,
     required this.onFermer,
     required this.enMenu,
+    this.libelleFermer,
+    this.semantiqueFermer,
   });
 
   final String titre;
   final VoidCallback? onFermer;
   final bool enMenu;
+  final String? libelleFermer;
+  final String? semantiqueFermer;
 
   @override
   Widget build(BuildContext context) {
@@ -291,6 +309,57 @@ class _EnTete extends StatelessWidget {
           children: <Widget>[
             Expanded(child: _Titre(titre: titre)),
             _MenuPanneau(titre: titre, onFermer: fermer),
+          ],
+        ),
+      );
+    }
+    final String? mot = libelleFermer;
+    if (mot != null && fermer != null) {
+      // « Reduire » et son chevron (planches 1 et 6) : une cible de 48 au
+      // moins, le mot passe a la ligne plutot que d'etre coupe.
+      return Padding(
+        padding: const EdgeInsetsDirectional.only(start: AppSpacing.xs),
+        child: Row(
+          children: <Widget>[
+            Expanded(child: _Titre(titre: titre)),
+            Pressable(
+              key: PanneauSeance.cleReduire,
+              onPress: fermer,
+              libelleSemantique: semantiqueFermer ?? mot,
+              arrondiFocus: AppRadius.arrondiMd,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  minHeight: AppSpacing.titreEcran,
+                  minWidth: AppSpacing.titreEcran,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.sm,
+                  ),
+                  child: ExcludeSemantics(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text(
+                          mot,
+                          style: palette.inkAccent.applyTo(
+                            Theme.of(context).textTheme.labelLarge ??
+                                const TextStyle(),
+                          ),
+                        ),
+                        Ecart.hXs,
+                        IconTheme(
+                          data: palette.inkAccent.asIconTheme(
+                            size: AppSpacing.xl,
+                          ),
+                          child: Icon(AppIcons.suiteEnBas.repos),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       );
@@ -329,10 +398,11 @@ class _Titre extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Semantics(
     header: true,
-    child: Text(
+    // TB-3 : jamais de points de suspension (« Informations de la sea... »,
+    // COUPE-MOTS-1) ; le titre passe a la ligne entre les mots, un mot trop
+    // long se reduit juste assez pour tenir.
+    child: TexteSansCoupure(
       titre,
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
       style: AppPalette.of(context).inkStrong
           .applyTo(Theme.of(context).textTheme.titleLarge ?? const TextStyle()),
     ),

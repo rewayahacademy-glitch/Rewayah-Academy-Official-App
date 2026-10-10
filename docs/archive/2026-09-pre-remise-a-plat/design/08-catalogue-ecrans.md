@@ -86,7 +86,7 @@ réellement dans `lib/`, au 7 septembre 2026.
 | `ADM-16` | Fonctionnalités | Admin | E | 1 | `/admin/configuration/fonctionnalites` | Liste de réglages | Liste de réglages, pleine largeur | **construit (19/09, contrat Finance/Configuration)**, fiche §6 |
 | `ADM-17` | Conservation des données | Admin | E | 1 | `/admin/configuration/conservation-donnees` | Liste de réglages | Liste de réglages, pleine largeur | **construit (19/09, contrat Finance/Configuration)**, fiche §6 |
 | `ENS-05` | Profil enseignant | Enseignant | D | 0 | `/enseignant/profil` | Page, liste de sections | Page + colonnes | **à construire** (talon branché), lot Enseignant (Agent E), fiche §7. **Report ADR-003 levé** par ADR-027 |
-| `CPT-01` | Espace comptable | Comptable | E | 0 | `/comptable` | Cartes | Tableaux | **hors MVP-0** (ADR-003) |
+| `CPT-01` | Espace comptable | Comptable | E | 0 | `/comptable` | Cartes | Tableaux | **construit (Comptable V1, 05/10)** : voir `docs/current/CATALOGUE_ECRANS_COMPTABLE.md` |
 
 `ENS-05` figure dans la zone Administration par héritage du registre d'origine,
 qui y a rangé les écrans sans zone propre. Sa zone réelle est la **surface
@@ -121,6 +121,8 @@ vers leur route canonique ci-dessus. Aucun code `ADM-xx` n'est ajouté : quatre
 des huit domaines (Pédagogie, Finance, Configuration, Direction) n'ont aucune
 fonction livrée et **ne reçoivent ni route ni écran** -- l'audit interdit
 explicitement une page construite pour remplir un domaine vide.
+
+Les écrans du Comptable (`CPT-01` à `CPT-13`, `ADM-18`, `ADM-19`) sont inscrits dans `docs/current/CATALOGUE_ECRANS_COMPTABLE.md` (08/10/2026).
 
 ## 2. Ce que le registre révèle
 

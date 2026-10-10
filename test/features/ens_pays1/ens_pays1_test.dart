@@ -253,13 +253,13 @@ void main() {
       final SemanticsHandle h = tester.ensureSemantics();
       await tester.pumpWidget(_seul(const PaysEnseignant(pays: 'Guinée')));
       await _chargerImages(tester);
-      expect(find.bySemanticsLabel('Pays : Guinée'), findsOneWidget);
+      expect(find.bySemanticsLabel('Pays\u00A0: Guinée'), findsOneWidget);
       final Image image = tester.widget<Image>(find.byType(Image));
       expect(image.excludeFromSemantics, isTrue);
       final SemanticsNode noeud = tester.getSemantics(
         find.byKey(PaysEnseignant.ligneKey),
       );
-      expect(noeud.label, 'Pays : Guinée');
+      expect(noeud.label, 'Pays\u00A0: Guinée');
       // Le noeud du pays n'a aucun enfant : l'image n'en ajoute pas.
       int enfants = 0;
       noeud.visitChildren((SemanticsNode _) {

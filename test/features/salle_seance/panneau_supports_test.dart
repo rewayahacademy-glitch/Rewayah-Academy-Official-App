@@ -158,12 +158,31 @@ void main() {
               scrollable: dansPanneau(find.byType(Scrollable)).first,
             );
             expect(dansPanneau(find.text(texte)), findsOneWidget);
+            // « Voir tout » : Recents partout, Ressources hors desktop. Mesure
+            // dans la ligne de son titre : la liste est paresseuse, et la
+            // feuille s'arrete au-dessus de la barre de l'appel (TB-2).
+            final bool recents =
+                texte == t.salle.seance.panneauSupports.recents;
+            final bool classe =
+                texte == t.salle.seance.panneauSupports.ressourcesClasse;
+            if (recents || classe) {
+              expect(
+                find.descendant(
+                  of: find
+                      .ancestor(
+                        of: find.text(texte),
+                        matching: find.byType(Row),
+                      )
+                      .first,
+                  matching: find.text(t.salle.seance.panneauSupports.voirTout),
+                ),
+                recents || taille.key != 'desktop'
+                    ? findsOneWidget
+                    : findsNothing,
+                reason: texte,
+              );
+            }
           }
-          // « Voir tout » : Recents partout, Ressources hors desktop.
-          expect(
-            dansPanneau(find.text(t.salle.seance.panneauSupports.voirTout)),
-            findsNWidgets(taille.key == 'desktop' ? 1 : 2),
-          );
           await tester.scrollUntilVisible(
             find.byKey(const ValueKey<String>('voir-bibliotheque')),
             50,
@@ -208,17 +227,17 @@ void main() {
               _chevauche(panneau, tester.getRect(find.byType(ZoneSupport))),
               isFalse,
             );
-            // Colonne droite : les outils, puis Eleves et Supports.
-            final double outils = tester
-                .getTopLeft(find.text(t.salle.seance.outils.titre))
-                .dy;
+            // TB-4 : plus de carte d'outils permanente (dans les
+            // Commandes) ; la colonne droite garde le bouton Eleves, a droite
+            // du support.
+            expect(find.text(t.salle.seance.outils.titre), findsNothing);
             expect(
               tester
                   .getTopLeft(
                     find.byKey(const ValueKey<String>('bouton-eleves')),
                   )
-                  .dy,
-              greaterThan(outils),
+                  .dx,
+              greaterThan(tester.getRect(find.byType(ZoneSupport)).right),
             );
           }
         });

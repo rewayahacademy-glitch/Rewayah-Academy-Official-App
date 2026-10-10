@@ -4,6 +4,7 @@ import '../accessibilite/texte_sans_coupure.dart';
 import '../i18n/strings.g.dart';
 import '../theme/app_spacing.dart';
 import 'point_rappel.dart';
+import 'zone_saisie.dart';
 
 /// Un champ de texte dont l'etiquette est un texte au-dessus, sur autant de
 /// lignes qu'il faut (FORM-CORR-1).
@@ -62,6 +63,42 @@ class ChampEtiquete extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Plusieurs lignes : la zone de saisie partagee, seule a porter un champ
+    // multiligne (SUPERPOS-1, reunie par JONCTION-LIGNES-1). Meme contrat :
+    // l'etiquette au-dessus, sur autant de lignes qu'il faut.
+    if (maxLines > 1) {
+      final Widget zone = ZoneSaisie(
+        controleur: controller,
+        libelle: obligatoire
+            ? t.formulaire.champObligatoire(champ: libelle)
+            : libelle,
+        // Obligatoire (CLASSE-FORM-1) : l'etiquette porte la marque, posee
+        // par [TitreChamp] au-dessus ; la zone ne la redit pas a l'ecran.
+        libelleVisible: obligatoire ? false : null,
+        aide: indice,
+        explication: aide,
+        minLignes: maxLines,
+        maxLignes: maxLines,
+        majuscules: textCapitalization,
+        onChanged: onChanged,
+      );
+      if (!obligatoire) return zone;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          ExcludeSemantics(
+            child: TitreChamp(
+              libelle,
+              style: Theme.of(context).textTheme.labelLarge,
+              obligatoire: true,
+            ),
+          ),
+          Ecart.vSm,
+          zone,
+        ],
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -83,7 +120,6 @@ class ChampEtiquete extends StatelessWidget {
             controller: controller,
             onChanged: onChanged,
             keyboardType: keyboardType,
-            maxLines: maxLines,
             textAlign: textAlign,
             textCapitalization: textCapitalization,
             decoration: InputDecoration(

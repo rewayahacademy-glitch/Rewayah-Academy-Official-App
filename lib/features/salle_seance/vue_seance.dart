@@ -9,9 +9,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' show StringCharacters;
 
 import '../../core/domain/enums.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../salle/vue_salle.dart';
 
@@ -122,7 +124,14 @@ class EleveSeance {
     this.fiche,
     this.id,
     this.cleAvatar,
+    this.peutEcrire = false,
   });
+
+  /// L'enseignant l'a autorise a ecrire sur le support ou le tableau (plan
+  /// V2 §4.3, §12, TB15). Faux par defaut : ecrire demande une autorisation
+  /// explicite (TB14). En demonstration seulement : le droit effectif viendra
+  /// du serveur (TB-BR-10).
+  final bool peutEcrire;
 
   /// La cle de sa photo (E5, K-44), `null` sans photo : les initiales en
   /// repli. Nulle en demonstration, qui n'a aucune photo stockee.
@@ -176,6 +185,157 @@ class SupportSeance {
   final List<String> points;
   final int page;
   final int pages;
+}
+
+/// L'affichage partage de la surface pedagogique (plan V2 §2, §3, TB3).
+///
+/// Un AUTRE axe que `ModeAffichagePartage` (page, verset, focus), contrat de
+/// base inchange : ce qui est visible (fond du support, calque des notes),
+/// pas ce qui est cadre. Pas de colonne en base aujourd'hui (TB-BR-13) :
+/// donnee de demonstration jusqu'a BR-1.
+enum AffichagePartage {
+  /// « Support » : le support seul, les notes cachees, jamais effacees (PED-02).
+  support,
+
+  /// « Avec notes » : le support et son calque (PED-03).
+  avecNotes,
+
+  /// « Tableau » : la feuille claire et les notes, le support masque (PED-04).
+  tableau,
+}
+
+/// Ce que montre la surface pedagogique, derive de l'etat partage (plan V2
+/// §17, PED-01 a PED-04). Lu par les widgets, jamais calcule par eux.
+enum VueSurface {
+  /// PED-01 : aucun support presente, le tableau libre.
+  tableauLibre,
+
+  /// PED-02 : le support seul.
+  supportSeul,
+
+  /// PED-03 : le support avec notes.
+  supportAvecNotes,
+
+  /// PED-04 : le tableau, le support retenu et masque.
+  tableauSupportMasque,
+}
+
+/// L'etat d'enregistrement de la seance, a trois valeurs (UX_REVIEW_TB
+/// n. 7, TB12) : le point rouge ne se montre que sur `actif`. Inconnu par
+/// defaut : un etat qu'on ne connait pas ne se montre pas (TB-BR-23).
+enum EtatEnregistrement { actif, inactif, inconnu }
+
+/// Le controle de la seance, quand la donnee existe (plan V2 §4.3, §19.6,
+/// TB12) : l'oeil informe, il ne declenche rien et ne donne aucun droit.
+/// Aucune valeur « inconnu » : sans donnee, [VueSeance.controle] est `null`
+/// et aucun oeil n'est rendu (jamais un etat fabrique). Donnee de
+/// demonstration seulement jusqu'au contrat d'observation (TB-BR-24).
+enum EtatControle {
+  /// « Controle possible » : une visite peut avoir lieu ; personne n'est
+  /// annonce comme observant maintenant.
+  possible,
+
+  /// « Controle actif » : le contrat dit qu'une visite a lieu.
+  actif,
+}
+
+/// Le contexte deplie depuis la capsule (CTX-01, CTX-02) : etat d'interface,
+/// jamais diffuse.
+enum ContexteOuvert {
+  /// La capsule seule (UI-01).
+  aucun,
+
+  /// L'avatar touche : le contexte de l'enseignant et de la seance (CTX-01).
+  enseignant,
+
+  /// L'oeil touche : le meme contexte, a la section du controle (CTX-02).
+  controle,
+}
+
+/// Un support a page fixe presente a la classe (plan V2 §8, etat partage) :
+/// support, version, page et total. Distinct de `SupportSeance`, diapositive
+/// de texte que la salle existante garde, et de `SupportPresente`
+/// (`core/tc_outils`), declaration du support a l'hote des outils.
+///
+/// La page est une image immuable et versionnee (TB-BR-20) ; son ratio est
+/// celui des dimensions canoniques fournies par les donnees, jamais celui de
+/// l'ecran (TB4, TB19). Aucune page de Coran n'est fabriquee ici (TB27).
+@immutable
+class SupportPageFixe {
+  const SupportPageFixe({
+    required this.id,
+    required this.version,
+    required this.titre,
+    required this.page,
+    required this.total,
+    required this.largeurCanonique,
+    required this.hauteurCanonique,
+    this.mention,
+    this.cleImage,
+  }) : assert(page >= 1 && page <= total),
+       assert(largeurCanonique > 0 && hauteurCanonique > 0);
+
+  /// L'identifiant de la ressource (celui de `SupportDisponible.id`).
+  final String id;
+
+  /// La version de la ressource : un trait reste attache a cette version.
+  final String version;
+  final String titre;
+
+  /// La page presentee, de 1 a [total].
+  final int page;
+  final int total;
+
+  /// Les dimensions canoniques de la page, en pixels de la source.
+  final int largeurCanonique;
+  final int hauteurCanonique;
+
+  /// Une mention portee par la page, ou `null` (« Support illustratif » en
+  /// demonstration : un contenu, pas un libelle d'interface).
+  final String? mention;
+
+  /// La cle de l'image de la page dans le stockage, ou `null` : aucune image
+  /// livree (demonstration ; fournisseur des pages a BR-1, TB-BR-19).
+  final String? cleImage;
+
+  /// Le ratio largeur sur hauteur, fixe par les donnees.
+  double get ratio => largeurCanonique / hauteurCanonique;
+
+  /// La meme ressource a une autre page.
+  SupportPageFixe aLaPage(int autre) => SupportPageFixe(
+    id: id,
+    version: version,
+    titre: titre,
+    page: autre,
+    total: total,
+    largeurCanonique: largeurCanonique,
+    hauteurCanonique: hauteurCanonique,
+    mention: mention,
+    cleImage: cleImage,
+  );
+}
+
+/// Le tableau libre de la seance, independant de tout support (plan V2 §2,
+/// TB5) : les traits d'un support n'y sont jamais copies.
+@immutable
+class TableauLibre {
+  const TableauLibre({
+    required this.largeurCanonique,
+    required this.hauteurCanonique,
+    this.aDesNotes = false,
+  }) : assert(largeurCanonique > 0 && hauteurCanonique > 0);
+
+  /// Le repere de la feuille. Le plan ne donne pas de ratio au tableau sans
+  /// support : choix provisoire, fourni par les donnees (UX_REVIEW_TB n. 15,
+  /// TB-BR-14), jamais la taille de l'ecran.
+  final int largeurCanonique;
+  final int hauteurCanonique;
+
+  /// Des notes existent sur le tableau libre (« Effacer les notes » n'a de
+  /// sens qu'alors).
+  final bool aDesNotes;
+
+  double get ratio => largeurCanonique / hauteurCanonique;
 }
 
 /// La rubrique d'un support dans le panneau Supports (CLV-08). Ordre repris
@@ -248,21 +408,15 @@ enum PanneauOuvert {
 
   /// EN-10 : le selecteur de ressources (04 §19).
   ressources,
+
+  /// TB-4 (CMD-01, plan V2 §4.2) : les commandes du support et du tableau,
+  /// ouvertes par le seul declencheur « Commandes ». Feuille au telephone,
+  /// panneau a droite ailleurs ; un seul panneau secondaire a la fois.
+  commandes,
 }
 
 /// Une commande du dock, par role (I-4).
-enum CommandeDock {
-  micro,
-  camera,
-  agrandir,
-  reseau,
-  quitter,
-
-  /// EN-10 : le Teaching Dock compact de l'enseignant.
-  supports,
-  partager,
-  outils,
-}
+enum CommandeDock { micro, camera, agrandir, reseau, quitter }
 
 /// Un compte affiche en haut a droite : celui de la personne devant l'ecran.
 @immutable
@@ -301,6 +455,12 @@ class VueSeance {
     this.notificationsNonLues = 0,
     this.groupeId,
     this.tutoiement,
+    this.affichage = AffichagePartage.avecNotes,
+    this.supportPresente,
+    this.tableauLibre,
+    this.enregistrement = EtatEnregistrement.inconnu,
+    this.controle,
+    this.contexte = ContexteOuvert.aucun,
   });
 
   // --- Reponses retenues aux questions Q1 a Q8 (plan de code section 4) ---
@@ -407,6 +567,32 @@ class VueSeance {
   /// guidee tutoie).
   final bool? tutoiement;
 
+  // --- Supports et tableau (TB-1b, plan V2 §2, §8) : donnees pures ---
+  //
+  // Aucun widget ne les lit encore : la salle s'affiche comme avant. Les
+  // etapes TB-2 et suivantes les rendront.
+
+  /// L'affichage partage choisi par l'enseignant. Sans objet sans
+  /// [supportPresente] : la surface est alors le tableau libre (PED-01).
+  final AffichagePartage affichage;
+
+  /// Le support a page fixe presente a la classe, ou `null` : aucun (un
+  /// seul a la fois, TB2).
+  final SupportPageFixe? supportPresente;
+
+  /// Le tableau libre de la seance, ou `null` : non connu de cette vue.
+  final TableauLibre? tableauLibre;
+
+  /// L'enregistrement, a trois valeurs (inconnu par defaut). La mention
+  /// existante (`enregistrementConfirme`) n'est pas touchee (HU-1).
+  final EtatEnregistrement enregistrement;
+
+  /// Le controle, ou `null` : la donnee manque, aucun oeil (TB-BR-24).
+  final EtatControle? controle;
+
+  /// Le contexte deplie depuis la capsule (TB-3), etat local d'interface.
+  final ContexteOuvert contexte;
+
   bool get _tutoie => tutoiement ?? _guidee;
 
   bool get _enseignant => role == RoleSeance.enseignant;
@@ -438,8 +624,9 @@ class VueSeance {
             : base;
       case RoleSeance.enseignant:
         final String? suite = switch (horloge) {
-          HorlogeRestante(:final int minutes) =>
+          HorlogeRestante(:final int minutes) => LibellesGroupe.valeurSeule(
             t.salle.seance.minutesRestantes(minutes: minutes),
+          ),
           HorlogeDepassee() => t.salle.seance.sePoursuit,
           null => null,
         };
@@ -598,7 +785,21 @@ class VueSeance {
 
   bool get voitCompteurEleves => _enseignant;
   bool get voitBoutonsPanneaux => _enseignant;
+
+  /// Les outils d'enseignement (onglet « Outils » des Commandes, TB-4) :
+  /// enseignant, un support montre.
   bool get voitOutils => _enseignant && support != null;
+
+  /// TB-4 (CMD-01) : le declencheur « Commandes » et son panneau. Enseignant
+  /// seulement : l'eleve ne voit ni Bibliotheque, ni affichages, ni page
+  /// partagee (TB14, plan V2 §5) ; son contenu propre (lecture, focus,
+  /// ecriture autorisee) vient avec TB-10. Le declencheur n'est rendu que si
+  /// une de ses entrees a un rappel (UX_REVIEW_TB §3 bis).
+  bool get voitCommandes => _enseignant && !estFinie;
+
+  /// « Support », « Avec notes », « Tableau » : invisibles sans support
+  /// presente (plan V2 §4.2) ; jamais chez l'eleve.
+  bool get voitAffichagesPartages => _enseignant && supportPresente != null;
   bool get voitSignalVideo => _enseignant;
 
   /// Le rail de navigation enseignant : desktop seulement (image CLV-06).
@@ -642,9 +843,27 @@ class VueSeance {
 
   // --- Barre du support (I-5, I-7) ---
 
-  /// Fleches ‹ 1/12 › qui changent la page de tous : enseignant, desktop.
-  bool voitPaginationActive(Gabarit gabarit) =>
-      _enseignant && support != null && gabarit == Gabarit.desktop;
+  /// « Page {numero} sur {total} » et ses fleches, qui changent la page de
+  /// tous : enseignant, dans les Commandes, a toutes les tailles (TB-4,
+  /// UX_REVIEW_TB n. 10).
+  bool get voitPaginationCommandes =>
+      _enseignant && (support != null || supportPresente != null);
+
+  /// La page montree dans les Commandes : celle du support presente, sinon
+  /// celle de la diapositive, ou `null` sans support.
+  ({int page, int total})? get pageCommandes {
+    final SupportPageFixe? fixe = supportPresente;
+    if (fixe != null) return (page: fixe.page, total: fixe.total);
+    final SupportSeance? diapositive = support;
+    if (diapositive != null) {
+      return (page: diapositive.page, total: diapositive.pages);
+    }
+    return null;
+  }
+
+  /// Lecture (zoom local, « Ajuster a l'ecran ») et Affichage (Focus) dans
+  /// les Commandes : enseignant, un support montre ; rien n'est diffuse.
+  bool get voitLectureCommandes => _enseignant && support != null;
 
   /// « 1 / 12 » en lecture seule : eleve standard, desktop.
   bool voitIndicateurPage(Gabarit gabarit) =>
@@ -656,27 +875,127 @@ class VueSeance {
       gabarit == Gabarit.desktop &&
       (_enseignant || (role == RoleSeance.eleve && optionQ6));
 
-  /// Le dock, dans l'ordre (I-4). Agrandir n'existe que si un support est
-  /// partage : sans support, il n'y a rien a agrandir.
+  /// Le dock, dans l'ordre (I-4).
+  ///
+  /// TB-2 (VIS-01, plan V2 §4.1, UX_REVIEW_TB n. 1) : la barre de l'appel
+  /// est Micro, Camera, Quitter, dans cet ordre. Agrandir la quitte (le
+  /// Focus est dans Commandes ; la salle garde « Reduire » tant que le focus
+  /// local est actif, [DockSeance.agrandi]) ; Reseau la quitte (un
+  /// indicateur, D5). TB-4 (CMD-01) : Supports devient la Bibliotheque des
+  /// Commandes, les outils leur onglet « Outils » ; Partager, sans effet
+  /// avant BR-1, n'est pas repris (« Presenter » de la Bibliotheque, TB-8).
   List<CommandeDock> get commandesDock => switch (role) {
-    // EN-10 (maquettes planche 3, 04 §18.3) : barre compacte Supports,
-    // Micro, Camera, Partager, « Ouvrir les outils d'enseignement ».
     RoleSeance.enseignant => const <CommandeDock>[
-      CommandeDock.supports,
       CommandeDock.micro,
       CommandeDock.camera,
-      CommandeDock.partager,
-      CommandeDock.outils,
-      CommandeDock.reseau,
       CommandeDock.quitter,
     ],
     RoleSeance.eleve || RoleSeance.guidee => <CommandeDock>[
       CommandeDock.micro,
       if (cameraAutorisee) CommandeDock.camera,
-      if (support != null) CommandeDock.agrandir,
       CommandeDock.quitter,
     ],
   };
+
+  /// TB-2 (plan V2 §18.1) : la barre de l'appel reste visible, sans
+  /// masquage temporise : un panneau ouvert, une erreur critique de
+  /// connexion (reconnexion, echec, hors ligne) ou de media (micro refuse
+  /// par le systeme, P09).
+  bool get visioMaintenue =>
+      (voitBoutonsPanneaux && panneau != PanneauOuvert.aucun) ||
+      // TB-3 : le contexte deplie est un panneau ouvert (TB7).
+      contexteOuvert ||
+      !commandesPublicationActives ||
+      microBloque;
+
+  // --- Capsule et contexte (TB-3 : UI-01, CTX-01, CTX-02 ; plan V2 §4.3) ---
+
+  /// Pendant le partage, la capsule compacte remplace la vignette video :
+  /// avatar statique, temoin d'enregistrement reel, oeil du controle. Hors
+  /// partage, la vignette reste (00_REPRISE §6.5).
+  ///
+  /// Le partage est celui du chantier (plan V2 §8) : un support PRESENTE a
+  /// la classe ([supportPresente], TB-1b), affiche par la surface
+  /// ([support]). Les etats anterieurs (diapositive seule) et la Classe
+  /// Live, qui ne portent pas encore [supportPresente] (TB-BR), gardent la
+  /// vignette.
+  bool get voitCapsule =>
+      supportPresente != null && support != null && !estFinie;
+
+  /// La vignette video de l'enseignant se pose sur la surface : jamais
+  /// pendant le partage (la capsule la remplace), et seulement si la camera
+  /// de l'enseignant publie.
+  bool get voitVignetteSurSupport => cameraEnseignantActive && !voitCapsule;
+
+  /// Le contexte deplie se montre : seulement depuis la capsule.
+  bool get contexteOuvert => voitCapsule && contexte != ContexteOuvert.aucun;
+
+  /// Le point rouge : seulement si l'enregistrement est ACTIF (UX-12, TB12).
+  /// Inactif ou inconnu : aucun point, jamais un voyant qui pretend.
+  bool get voitPointEnregistrement =>
+      enregistrement == EtatEnregistrement.actif && !estFinie;
+
+  /// L'oeil : seulement si la donnee du controle existe (§4.3).
+  bool get voitOeilControle => controle != null;
+
+  /// Le nom lu de l'avatar de la capsule (§20) : « Afficher les informations
+  /// de Sayyid Ibrahim » ; le nom n'est jamais ecrit dans la capsule.
+  String get libelleAvatarCapsule =>
+      t.salle.seance.capsule.avatar(deNom: deDevant(nomEnseignant));
+
+  /// Le nom lu de l'oeil (§20), ou `null` sans donnee.
+  String? get libelleOeilCapsule => switch (controle) {
+    EtatControle.possible => t.salle.seance.capsule.controlePossible,
+    EtatControle.actif => t.salle.seance.capsule.controleActif,
+    null => null,
+  };
+
+  /// L'etat du controle ecrit dans le contexte, ou `null` sans donnee.
+  String? get texteControle => switch (controle) {
+    EtatControle.possible => t.salle.seance.contexte.controlePossible,
+    EtatControle.actif => t.salle.seance.contexte.controleActif,
+    null => null,
+  };
+
+  /// L'explication sous l'etat du controle : un controle possible ne dit
+  /// pas qu'une personne observe maintenant (§19.6).
+  String? get explicationControle => switch (controle) {
+    EtatControle.possible => t.salle.seance.contexte.controlePossibleDetail,
+    EtatControle.actif => t.salle.seance.contexte.controleActifDetail,
+    null => null,
+  };
+
+  /// Le nom lu de « Reduire » (§20) : le panneau des participants de
+  /// l'enseignant, ou les informations de la seance d'un eleve.
+  String get libelleReduireContexte => _enseignant
+      ? t.salle.seance.contexte.reduireParticipants
+      : t.salle.seance.contexte.reduireInformations;
+
+  // --- Surface pedagogique (TB-1b) ---
+
+  /// Ce que montre la surface (PED-01 a PED-04), derive de l'etat partage.
+  VueSurface get vueSurface {
+    if (supportPresente == null) return VueSurface.tableauLibre;
+    return switch (affichage) {
+      AffichagePartage.support => VueSurface.supportSeul,
+      AffichagePartage.avecNotes => VueSurface.supportAvecNotes,
+      AffichagePartage.tableau => VueSurface.tableauSupportMasque,
+    };
+  }
+
+  /// Les inscrits autorises a ecrire (Participants, TB15).
+  List<EleveSeance> get elevesAutorisesAEcrire =>
+      eleves.where((EleveSeance e) => e.peutEcrire).toList();
+
+  /// La personne devant l'ecran peut-elle ecrire ? L'enseignant toujours ;
+  /// un eleve seulement si sa ligne porte l'autorisation (TB14). En
+  /// demonstration, l'eleve est retrouve par son prenom.
+  bool get peutEcrire =>
+      _enseignant ||
+      (prenomEleve != null &&
+          eleves.any(
+            (EleveSeance e) => e.prenom == prenomEleve && e.peutEcrire,
+          ));
 
   /// Copie modifiee.
   VueSeance copyWith({
@@ -697,6 +1016,14 @@ class VueSeance {
     FinSeance? fin,
     PanneauOuvert? panneau,
     bool? tutoiement,
+    AffichagePartage? affichage,
+    SupportPageFixe? supportPresente,
+    bool sansSupportPresente = false,
+    TableauLibre? tableauLibre,
+    EtatEnregistrement? enregistrement,
+    EtatControle? controle,
+    bool sansControle = false,
+    ContexteOuvert? contexte,
   }) => VueSeance(
     role: role ?? this.role,
     nomClasse: nomClasse,
@@ -723,5 +1050,13 @@ class VueSeance {
     notificationsNonLues: notificationsNonLues,
     groupeId: groupeId,
     tutoiement: tutoiement ?? this.tutoiement,
+    affichage: affichage ?? this.affichage,
+    supportPresente: sansSupportPresente
+        ? null
+        : supportPresente ?? this.supportPresente,
+    tableauLibre: tableauLibre ?? this.tableauLibre,
+    enregistrement: enregistrement ?? this.enregistrement,
+    controle: sansControle ? null : controle ?? this.controle,
+    contexte: contexte ?? this.contexte,
   );
 }

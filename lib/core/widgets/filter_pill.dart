@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_palette.dart';
@@ -131,7 +132,10 @@ class FilterPill extends StatelessWidget {
           runSpacing: AppSpacing.xs,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: <Widget>[
-            Text(
+            // Aucun mot coupe (COUPE-MOTS-4 sur les puces de motifs de
+            // FORM-L1, reuni par JONCTION-LIGNES-1) : un mot plus long que la
+            // puce reduit juste assez l'echelle au lieu de se couper.
+            TexteSansCoupure(
               libelle,
               textAlign: TextAlign.center,
               style: fond.applyTo(textes.labelLarge ?? const TextStyle()),

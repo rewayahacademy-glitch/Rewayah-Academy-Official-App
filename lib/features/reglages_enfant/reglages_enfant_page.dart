@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/appairage/service_avatar.dart';
 import '../../core/domain/enums.dart';
@@ -13,6 +16,7 @@ import '../../core/matching/service_matching.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/regles/service_regles.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -62,7 +66,7 @@ class ReglagesEnfantPage extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text(t.reglagesEnfant.intro, style: textes.bodySmall),
+          TexteSansCoupure(t.reglagesEnfant.intro, style: textes.bodySmall),
           Ecart.vXl,
           SectionHeader(titre: t.compte.titre),
           CarteLignes(
@@ -204,7 +208,8 @@ class _Demandes extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(t.tuteur.reglages.demandes, style: textes.titleMedium),
+        // COUPE-MOTS-4 : « changement » ne se coupe plus en Interface guidee.
+        TexteSansCoupure(t.tuteur.reglages.demandes, style: textes.titleMedium),
         Ecart.vSm,
         // Les trois demandes sont tertiaires, pas secondaires : ce sont des
         // requetes administratives que l'administration tranche, pas des
@@ -222,7 +227,7 @@ class _Demandes extends ConsumerWidget {
         else
           // Le bouton n'est pas rendu : la phrase explique la limite, comme le
           // plafond de `ENS-06`.
-          Text(
+          TexteSansCoupure(
             t.tuteur.reglages.demandeSansEnseignant(prenom: enfant.prenom),
             style: textes.bodySmall,
           ),
@@ -289,6 +294,7 @@ class FeuilleDemandeTuteur extends ConsumerStatefulWidget {
 class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
   final TextEditingController _motif = TextEditingController();
   int? _valeur;
+
   bool _enCours = false;
   bool _motifManquant = false;
   String? _erreur;
@@ -379,15 +385,20 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Text(_titre(), style: textes.titleMedium),
+            TexteSansCoupure(_titre(), style: textes.titleMedium),
             Ecart.vMd,
             if (_envoyee)
-              Text(t.tuteur.reglages.demandeEnvoyee, style: textes.bodyMedium)
+              TexteSansCoupure(
+                t.tuteur.reglages.demandeEnvoyee,
+                style: textes.bodyMedium,
+              )
             else ...<Widget>[
               if (actuelle?.value != null) ...<Widget>[
-                Text(
-                  t.tuteur.reglages.demandeActuelle(
-                    minutes: '${actuelle!.requireValue}',
+                TexteSansCoupure(
+                  LibellesGroupe.insecable(
+                    t.tuteur.reglages.demandeActuelle(
+                      minutes: '${actuelle!.requireValue}',
+                    ),
                   ),
                   style: textes.bodySmall,
                 ),
@@ -399,8 +410,8 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
                     for (final int minutes in dureesProposees)
                       OptionChoix(
                         valeur: '$minutes',
-                        libelle: t.tuteur.reglages.demandeMinutes(
-                          minutes: '$minutes',
+                        libelle: LibellesGroupe.valeurSeule(
+                          t.tuteur.reglages.demandeMinutes(minutes: '$minutes'),
                         ),
                       ),
                   ],

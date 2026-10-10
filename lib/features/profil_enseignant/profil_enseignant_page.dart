@@ -16,6 +16,7 @@ import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -31,6 +32,8 @@ import '../../core/widgets/raccourci_tactile.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../dossier/politique_controle.dart';
+import '../paiements_recus/rubrique_recevoir_paiements.dart';
 import 'declaration_choix.dart';
 import 'photo_publique.dart';
 
@@ -61,7 +64,15 @@ final Provider<String?> nomPublicEnseignantProvider = Provider<String?>(
 /// pouvoir faire.
 class ProfilEnseignantPage extends ConsumerWidget {
   /// Cree l'ecran de profil de l'enseignant.
-  const ProfilEnseignantPage({super.key});
+  const ProfilEnseignantPage({super.key, this.onOuvrirRevenus});
+
+  /// Ouvre Mes revenus (FI-10). Nul : la route `/enseignant/revenus`, la
+  /// demonstration y met sa propre adresse.
+  final void Function(BuildContext context)? onOuvrirRevenus;
+
+  /// L'ouverture par defaut : la pose de la branche Profil.
+  static void ouvrirRevenus(BuildContext context) =>
+      unawaited(context.push(Routes.enseignantRevenus));
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -96,6 +107,7 @@ class ProfilEnseignantPage extends ConsumerWidget {
             profil: lu,
             statutSession: statutSession,
             horsLigne: horsLigne,
+            onOuvrirRevenus: onOuvrirRevenus ?? ouvrirRevenus,
           ),
         // Une lecture qui aboutit sans rien trouver n'est pas un echec : ce
         // compte n'a pas de ligne `teacher_profiles`, et seule l'academie peut
@@ -127,11 +139,13 @@ class _Corps extends StatelessWidget {
     required this.profil,
     required this.statutSession,
     required this.horsLigne,
+    required this.onOuvrirRevenus,
   });
 
   final ProfilEnseignant profil;
   final AccountStatus? statutSession;
   final bool horsLigne;
+  final void Function(BuildContext context) onOuvrirRevenus;
 
   @override
   Widget build(BuildContext context) {
@@ -153,6 +167,10 @@ class _Corps extends StatelessWidget {
         _Statut(profil: profil, statutSession: statutSession),
         Ecart.vSection,
         const _Contrat(),
+        Ecart.vSection,
+        _Remuneration(onOuvrir: onOuvrirRevenus),
+        // CPT-BEN-2 : « Recevoir mes paiements », selon la capacite du port.
+        const RubriqueRecevoirPaiements(),
         Ecart.vSection,
         const _Personnel(),
       ],
@@ -518,8 +536,10 @@ class _DeclarationState extends ConsumerState<_Declaration> {
               legende: t.enseignant.profil.plafondDetail,
               valeur: profil.plafondHeures == null
                   ? t.enseignant.profil.nonRenseigne
-                  : t.enseignant.profil.plafondValeur(
-                      nombre: profil.plafondHeures!,
+                  : LibellesGroupe.valeurSeule(
+                      t.enseignant.profil.plafondValeur(
+                        nombre: profil.plafondHeures!,
+                      ),
                     ),
               icone: AppIcons.journee,
             ),
@@ -531,7 +551,8 @@ class _DeclarationState extends ConsumerState<_Declaration> {
   }
 }
 
-/// Le contrat et les accuses, en lecture seule et pour toujours.
+/// Le contrat et les accuses, en lecture seule et pour toujours, puis le
+/// lien vers la politique de controle des enseignants.
 ///
 /// Sans cette section, un enseignant valide ne peut plus les relire du tout :
 /// `deciderRedirection` ferme `/attente/*` des que le compte devient actif.
@@ -596,6 +617,15 @@ class _Contrat extends ConsumerWidget {
           ),
           _ => const Skeleton.liste(lignes: 2),
         },
+        // La politique de controle que le contrat fait « confirmer avoir
+        // recue », « disponible dans votre espace » (clause du contrat) : un
+        // texte fixe, lisible quel que soit l'etat de la lecture des
+        // acceptations.
+        Ecart.vSm,
+        LienFleche(
+          libelle: t.contrat.politique.lien,
+          onPress: () => unawaited(ouvrirPolitiqueControle(context)),
+        ),
       ],
     );
   }
@@ -610,6 +640,27 @@ class _Contrat extends ConsumerWidget {
   String _date(DateTime quand) =>
       '${quand.day.toString().padLeft(2, '0')}/'
       '${quand.month.toString().padLeft(2, '0')}/${quand.year}';
+}
+
+/// La remuneration (FI-10) : une seule rubrique, Mes revenus, l'estimation
+/// du mois (guide Finance V4 §4, « une seule surface de reference »).
+class _Remuneration extends StatelessWidget {
+  const _Remuneration({required this.onOuvrir});
+
+  final void Function(BuildContext context) onOuvrir;
+
+  @override
+  Widget build(BuildContext context) => GroupeReglages(
+    titre: t.enseignant.profil.remuneration,
+    lignes: <LigneRubrique>[
+      LigneRubrique(
+        libelle: t.enseignant.profil.revenus,
+        legende: t.enseignant.profil.revenusDetail,
+        icone: AppIcons.finance,
+        onPress: () => onOuvrir(context),
+      ),
+    ],
+  );
 }
 
 /// L'acces aux surfaces reellement personnelles.

@@ -29,6 +29,7 @@ import 'package:rewayah_academy/core/tc_parcours/port_travail_a_venir.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
+import 'package:rewayah_academy/core/widgets/avatar_nom.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/grille_bento.dart';
 import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
@@ -51,15 +52,16 @@ import '../router/support_routeur.dart';
 import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
 
-/// Le premier profil retenu : « Eleve A1 » (tri par prenom, contrat K1).
+/// Le premier profil retenu : « Élève A1 » (tri par prenom, contrat K1).
 const String _a1 = 'foyer-a-eleve-1';
 const String _a2 = 'foyer-a-eleve-2';
 
 /// Une seance a venir : salle ouverte (fenetre fictive de 20 min), dans
-/// 10 min et 30 s (la demi-minute absorbe les millisecondes du test).
+/// 10 min (le compte a rebours arrondit au superieur : les millisecondes du
+/// test ne le font pas changer).
 SeanceFamille _prochaine({
   StatutSeance? statut = StatutSeance.planifiee,
-  Duration avant = const Duration(minutes: 10, seconds: 30),
+  Duration avant = const Duration(minutes: 10),
   bool avecHorloge = true,
 }) => seanceFictive(
   seanceId: 's1',
@@ -110,7 +112,7 @@ const ClasseFoyer _classeAvecParcours = ClasseFoyer(
 AppareilAppaire _appareilA1() => AppareilAppaire(
   id: 'app-1',
   profilId: _a1,
-  prenom: 'Eleve A1',
+  prenom: 'Élève A1',
   plateforme: 'Android',
   appaireA: DateTime.utc(2026, 9, 1),
 );
@@ -305,11 +307,11 @@ void main() {
         tester,
         find.descendant(
           of: find.byType(SelecteurProfils),
-          matching: find.text('Eleve A2'),
+          matching: find.text('Élève A2'),
         ),
       );
       expect(
-        find.text(t.tuteur.accueil.sansClasseTitre(prenom: 'Eleve A2')),
+        find.text(t.tuteur.accueil.sansClasseTitre(prenom: 'Élève A2')),
         findsOneWidget,
       );
       // Aucune valeur de l'eleve precedent ne subsiste.
@@ -347,7 +349,7 @@ void main() {
 
       expect(find.byType(BandeauBlocage), findsOneWidget);
       expect(
-        find.text(t.tuteur.accueil.blocageAppareilTitre(prenom: 'Eleve A1')),
+        find.text(t.tuteur.accueil.blocageAppareilTitre(prenom: 'Élève A1')),
         findsOneWidget,
       );
       await _toucher(tester, find.text(t.tuteur.accueil.connecterAppareil));
@@ -359,7 +361,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final Finder titre = find.text(
-        t.tuteur.accueil.blocageAppareilTitre(prenom: 'Eleve A1'),
+        t.tuteur.accueil.blocageAppareilTitre(prenom: 'Élève A1'),
       );
       final Finder action = find.text(t.tuteur.accueil.connecterAppareil);
 
@@ -390,7 +392,7 @@ void main() {
             child: Scaffold(
               body: SingleChildScrollView(
                 child: BandeauBlocage(
-                  prenom: 'Eleve A1',
+                  prenom: 'Élève A1',
                   compact: true,
                   onConnecter: () {},
                 ),
@@ -469,13 +471,14 @@ void main() {
 
       expect(find.byType(BandeauBlocage), findsNothing);
       expect(principales(tester), isEmpty);
-      // Toucher la carte ailleurs que sur l'indice : le nom de l'eleve.
+      // Toucher la carte ailleurs que sur l'indice : le nom de l'eleve
+      // (AvatarNom, rendu par TexteSansCoupure depuis la jonction).
       await _toucher(
         tester,
         find
             .descendant(
               of: find.byType(CarteClasseSeance),
-              matching: find.text('Eleve A1'),
+              matching: find.byType(AvatarNom),
             )
             .first,
       );
@@ -871,7 +874,10 @@ void main() {
           direction: sens,
           seances: <SeanceFamille>[
             _prochaine(
-              avant: const Duration(hours: 3, minutes: 28, seconds: 30),
+              // Arrondi a la minute superieure depuis COM-RC tour 7 (lot L,
+              // LibellesGroupe.minutesAvant) : 3 h 27 min 30 s se lit
+              // « 3 h 28 ».
+              avant: const Duration(hours: 3, minutes: 27, seconds: 30),
             ),
           ],
         );
@@ -939,7 +945,10 @@ void main() {
             direction: sens,
             seances: <SeanceFamille>[
               _prochaine(
-                avant: const Duration(hours: 3, minutes: 28, seconds: 30),
+                // Arrondi a la minute superieure depuis COM-RC tour 7 (lot L,
+              // LibellesGroupe.minutesAvant) : 3 h 27 min 30 s se lit
+              // « 3 h 28 ».
+              avant: const Duration(hours: 3, minutes: 27, seconds: 30),
               ),
             ],
           );
@@ -1020,7 +1029,7 @@ void main() {
       );
 
       final AffichageSeance loin = AffichageSeance.depuis(
-        _prochaine(avant: const Duration(hours: 3, minutes: 28, seconds: 30)),
+        _prochaine(avant: const Duration(hours: 3, minutes: 28)),
         maintenantServeurUtc: instantServeurFige,
       );
       expect(loin.etat, EtatSeanceFamille.aVenir);
@@ -1050,7 +1059,7 @@ void main() {
         final AppareilAppaire revoque = AppareilAppaire(
           id: 'app-2',
           profilId: _a1,
-          prenom: 'Eleve A1',
+          prenom: 'Élève A1',
           plateforme: 'Web',
           appaireA: DateTime.utc(2026, 9, 1),
           revoqueA: DateTime.utc(2026, 9, 2),
@@ -1099,7 +1108,7 @@ void main() {
               PresenceParticipant(
                 profilId: _a1,
                 role: 'student',
-                prenom: 'Eleve A1',
+                prenom: 'Élève A1',
                 identifiantImmuable: 'STUD-FA-000001',
                 etat: EtatPresence.finalisee,
                 consolide: true,

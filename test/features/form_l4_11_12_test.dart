@@ -26,6 +26,7 @@ import 'package:rewayah_academy/core/dossier/selecteur_fichier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/champ_date.dart';
 import 'package:rewayah_academy/features/admin_acces_agents/acces_agents_page.dart';
@@ -220,19 +221,27 @@ void main() {
       await _presser(tester, _personne('Maryam Sow'));
       expect(
         _libelleJeton(tester),
-        'Observation de Maryam, le 04/10/2026, 8 h',
+        // Duree insecable (DUREE-INSECABLE-3, JONCTION-LIGNES-1).
+        LibellesGroupe.insecable('Observation de Maryam, le 04/10/2026, 8 h'),
       );
 
-      await _presser(tester, find.text(t.admin.agents.dureeHeure(nombre: 4)));
+      await _presser(
+        tester,
+        find.text(
+          LibellesGroupe.valeurSeule(t.admin.agents.dureeHeure(nombre: 4)),
+        ),
+      );
       expect(
         _libelleJeton(tester),
-        'Observation de Maryam, le 04/10/2026, 4 h',
+        // Duree insecable (DUREE-INSECABLE-3, JONCTION-LIGNES-1).
+        LibellesGroupe.insecable('Observation de Maryam, le 04/10/2026, 4 h'),
       );
 
       await _presser(tester, _personne('Yacine Benali'));
       expect(
         _libelleJeton(tester),
-        'Observation de Yacine, le 04/10/2026, 4 h',
+        // Duree insecable (DUREE-INSECABLE-3, JONCTION-LIGNES-1).
+        LibellesGroupe.insecable('Observation de Yacine, le 04/10/2026, 4 h'),
       );
     });
 
@@ -247,7 +256,12 @@ void main() {
         'Relecture du suivi',
       );
       await tester.pumpAndSettle();
-      await _presser(tester, find.text(t.admin.agents.dureeHeure(nombre: 1)));
+      await _presser(
+        tester,
+        find.text(
+          LibellesGroupe.valeurSeule(t.admin.agents.dureeHeure(nombre: 1)),
+        ),
+      );
       await _presser(tester, _personne('Yacine Benali'));
       expect(_libelleJeton(tester), 'Relecture du suivi');
 
@@ -266,7 +280,8 @@ void main() {
 
       expect(
         agents.emissions.single.libelle,
-        'Observation de Maryam, le 04/10/2026, 8 h',
+        // Duree insecable (DUREE-INSECABLE-3, JONCTION-LIGNES-1).
+        LibellesGroupe.insecable('Observation de Maryam, le 04/10/2026, 8 h'),
       );
     });
 

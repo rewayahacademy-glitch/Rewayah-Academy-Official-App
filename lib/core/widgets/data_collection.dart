@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
@@ -104,6 +105,7 @@ class DataCollection<T> extends StatelessWidget {
     this.onSelectionner,
     this.defileAvecLaPage = false,
     this.estSelectionnee,
+    this.defileSeule = true,
   });
 
   /// Dit si une ligne est la ligne choisie (inspecteur, AD-X). Nul : aucune
@@ -130,6 +132,31 @@ class DataCollection<T> extends StatelessWidget {
   /// en tableau, l'en-tete reste colle et la collection defile seule.
   final bool defileAvecLaPage;
 
+  /// Faux quand la collection est **une section** d'une liste qui defile
+  /// deja (Pedagogie > Qualite : une collection par type d'anomalie, toutes
+  /// dans le meme defilement) : elle pose alors toutes ses lignes a leur
+  /// hauteur, sans defileur propre, et l'en-tete de colonnes ouvre la
+  /// section. Une liste dans une liste qui defile n'a pas de hauteur
+  /// (« Vertical viewport was given unbounded height », FILTRES-1b) ; vrai
+  /// par defaut, le comportement d'avant.
+  final bool defileSeule;
+
+  /// La hauteur sous laquelle une collection ne se lit plus : un titre et
+  /// deux lignes de texte, a l'echelle du texte de [context]. C'est le
+  /// `minimumEtire` d'une `ColonneCorps` qui la porte (FILTRES-1b) : a 320 px
+  /// texte x2, l'intro et la rangee de filtres ne laissent plus de place a
+  /// la liste, et la page defile au lieu de deborder.
+  static double minimumLisible(BuildContext context) {
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    double ligne(TextStyle? style) =>
+        echelle.scale(style?.fontSize ?? 14) * (style?.height ?? 1.2);
+    return ligne(textes.titleMedium) +
+        AppSpacing.sm +
+        ligne(textes.bodyLarge) * 2 +
+        AppSpacing.lg * 2;
+  }
+
   /// Les colonnes, dans l'ordre d'affichage.
   final List<ColonneDonnees<T>> colonnes;
 
@@ -151,10 +178,15 @@ class DataCollection<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool tableau = enTableau(context);
+    // JONCTION-LIGNES-1 : deux lignes de travail ont pose le meme besoin sous
+    // deux noms ([defileAvecLaPage], ONGLETS-COUPE-1 ; [defileSeule] a faux,
+    // FILTRES-1b). Un seul comportement : toutes les lignes a leur hauteur,
+    // sans defileur propre.
+    final bool enBloc = defileAvecLaPage || !defileSeule;
 
     if (!tableau) {
       return _Defilement<T>(
-        enBloc: defileAvecLaPage,
+        enBloc: enBloc,
         lignes: lignes,
         piedDePage: piedDePage,
         cle: cle,
@@ -170,6 +202,21 @@ class DataCollection<T> extends StatelessWidget {
 
     final AppPalette palette = AppPalette.of(context);
     final AppMetriques metriques = AppMetriques.of(context);
+    final Widget corps = _Defilement<T>(
+      enBloc: enBloc,
+      lignes: lignes,
+      piedDePage: piedDePage,
+      cle: cle,
+      espacement: 0,
+      constructeur: (BuildContext contexte, T ligne) => _LigneTableau<T>(
+        colonnes: colonnes,
+        ligne: ligne,
+        onSelectionner: onSelectionner,
+        // Nul sans [estSelectionnee] : un tableau sans selection
+        // n'annonce aucun etat « non selectionne ».
+        selectionnee: estSelectionnee?.call(ligne),
+      ),
+    );
 
     // Le filet et l'arrondi sont portes par le bloc entier, et le decoupage par
     // un seul `ClipRRect` : arrondir separement les deux coins hauts de
@@ -183,29 +230,11 @@ class DataCollection<T> extends StatelessWidget {
       child: ClipRRect(
         borderRadius: metriques.arrondi,
         child: Column(
-          mainAxisSize: defileAvecLaPage ? MainAxisSize.min : MainAxisSize.max,
+          mainAxisSize: enBloc ? MainAxisSize.min : MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             _EnTeteTableau<T>(colonnes: colonnes),
-            Flexible(
-              fit: defileAvecLaPage ? FlexFit.loose : FlexFit.tight,
-              child: _Defilement<T>(
-                enBloc: defileAvecLaPage,
-                lignes: lignes,
-                piedDePage: piedDePage,
-                cle: cle,
-                espacement: 0,
-                constructeur: (BuildContext contexte, T ligne) =>
-                    _LigneTableau<T>(
-                      colonnes: colonnes,
-                      ligne: ligne,
-                      onSelectionner: onSelectionner,
-                      // Nul sans [estSelectionnee] : un tableau sans selection
-                      // n'annonce aucun etat « non selectionne ».
-                      selectionnee: estSelectionnee?.call(ligne),
-                    ),
-              ),
-            ),
+            Flexible(fit: enBloc ? FlexFit.loose : FlexFit.tight, child: corps),
           ],
         ),
       ),
@@ -419,7 +448,9 @@ class _Cellule<T> extends StatelessWidget {
     return Semantics(
       label: '${colonne.titre} : ${colonne.texte(ligne)}',
       excludeSemantics: true,
-      child: Text(colonne.texte(ligne), style: style),
+      // COUPE-MOTS-4 : un mot plus long que sa colonne (un identifiant)
+      // reduit son echelle au lieu d'etre coupe.
+      child: TexteSansCoupure(colonne.texte(ligne), style: style),
     );
   }
 }
@@ -478,14 +509,14 @@ class _Carte<T> extends StatelessWidget {
           children: <Widget>[
             if (titre != null) ...<Widget>[
               titre.rendu?.call(context, ligne) ??
-                  Text(
+                  TexteSansCoupure(
                     titre.texte(ligne),
                     style: textes.titleMedium ?? const TextStyle(),
                   ),
               Ecart.vSm,
             ],
             if (resume.isNotEmpty)
-              Text(
+              TexteSansCoupure(
                 resume,
                 style: palette.inkMuted.applyTo(
                   textes.bodySmall ?? const TextStyle(),
@@ -496,7 +527,7 @@ class _Carte<T> extends StatelessWidget {
                   colonne.texte(ligne).isNotEmpty) ...<Widget>[
                 Ecart.vSm,
                 colonne.rendu?.call(context, ligne) ??
-                    Text(
+                    TexteSansCoupure(
                       colonne.texte(ligne),
                       style: palette.inkMuted.applyTo(
                         AppTypography.tabulaire(

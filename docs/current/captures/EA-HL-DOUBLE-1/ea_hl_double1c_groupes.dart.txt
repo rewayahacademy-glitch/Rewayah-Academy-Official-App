@@ -1,0 +1,290 @@
+// EA-HL-DOUBLE-1c : archive des groupes de capture « Capture EA-HL-DOUBLE-1c »
+// poses dans les fichiers de test des ecrans (sombre, Interface guidee, 1440
+// et texte x2 manquants apres la reprise ; revue EA-HL-DOUBLE-1-R, m4). Ils
+// reutilisent le harnais prive de chaque fichier, qui accepte desormais un
+// theme et un mode d'interface. Lancement :
+//   CAPTURE_DIR=$PWD/docs/current/captures/EA-HL-DOUBLE-1 flutter test \
+//     --concurrency=2 <fichier> --plain-name 'Capture EA-HL-DOUBLE-1c'
+// Soldes et recharge : ea_hl_double1c_capture_test.dart.txt.
+
+
+// ===== test/features/appareils_test.dart =====
+  // EA-HL-DOUBLE-1c : sombre, Interface guidee et 1440 des appareils hors
+  // ligne (revue EA-HL-DOUBLE-1-R, m4). Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1c', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, String, Size, ThemeMode, InterfaceMode, bool) cas
+        in <(String, String, Size, ThemeMode, InterfaceMode, bool)>[
+          (
+            'foyer_sans_donnees_390_sombre',
+            Routes.tuteurFoyerAppareils,
+            const Size(390, 844),
+            ThemeMode.dark,
+            InterfaceMode.standard,
+            true,
+          ),
+          (
+            'foyer_sans_donnees_390_guidee',
+            Routes.tuteurFoyerAppareils,
+            const Size(390, 844),
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            true,
+          ),
+          (
+            'foyer_avec_donnees_1440_clair',
+            Routes.tuteurFoyerAppareils,
+            const Size(1440, 900),
+            ThemeMode.light,
+            InterfaceMode.standard,
+            false,
+          ),
+          (
+            'eleve_avec_donnees_390_sombre',
+            _page('e1'),
+            const Size(390, 844),
+            ThemeMode.dark,
+            InterfaceMode.standard,
+            false,
+          ),
+          (
+            'eleve_avec_donnees_390_guidee',
+            _page('e1'),
+            const Size(390, 844),
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            false,
+          ),
+        ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        final FauxAppairagePilote service = _foyer();
+        if (cas.$6) {
+          service.attenteLecture = Completer<void>();
+        }
+        await _monter(
+          tester,
+          service: service,
+          depart: cas.$2,
+          horsLigne: true,
+          taille: cas.$3,
+          mode: cas.$4,
+          interface: cas.$5,
+        );
+        expect(tester.takeException(), isNull);
+        if (cas.$6) {
+          expect(find.byType(EtatSansDonnees), findsOneWidget);
+          expectHorsLigneUneFois();
+        } else {
+          expectAvecDonnees();
+        }
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1_appareils_${cas.$1}')}',
+        );
+      });
+    }
+  });
+
+// ===== test/features/foyer/fiche_eleve_test.dart =====
+  // EA-HL-DOUBLE-1c : sombre, Interface guidee et texte x2 de la fiche
+  // eleve hors ligne (revue EA-HL-DOUBLE-1-R, m4). Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1c', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size, ThemeMode, InterfaceMode, bool) cas
+        in <(String, Size, ThemeMode, InterfaceMode, bool)>[
+          (
+            'sans_donnees_390_sombre',
+            const Size(390, 844),
+            ThemeMode.dark,
+            InterfaceMode.standard,
+            true,
+          ),
+          (
+            'sans_donnees_390_guidee',
+            const Size(390, 844),
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            true,
+          ),
+          (
+            'sans_donnees_1440_clair',
+            const Size(1440, 900),
+            ThemeMode.light,
+            InterfaceMode.standard,
+            true,
+          ),
+          (
+            'avec_donnees_390_sombre',
+            const Size(390, 844),
+            ThemeMode.dark,
+            InterfaceMode.standard,
+            false,
+          ),
+          (
+            'avec_donnees_390_guidee',
+            const Size(390, 844),
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            false,
+          ),
+        ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        await _monter(
+          tester,
+          appairage: _foyerA()..echoue = cas.$5,
+          depart: Routes.ficheEleveSousPage(a1, 'informations'),
+          taille: cas.$2,
+          mode: cas.$3,
+          interface: cas.$4,
+          autres: <Override>[
+            horsLigneProvider.overrideWith(
+              (Ref ref) => Stream<bool>.value(true),
+            ),
+          ],
+        );
+        expect(tester.takeException(), isNull);
+        if (cas.$5) {
+          expectSansDonnees(t.ficheEleve.sansDonnees);
+        } else {
+          expectAvecDonnees();
+        }
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1_fiche_eleve_${cas.$1}')}',
+        );
+      });
+    }
+  });
+
+// ===== test/features/foyer/ma_famille_adulte_test.dart =====
+    // EA-HL-DOUBLE-1c : sombre et Interface guidee du Foyer hors ligne, sans
+    // et avec donnees (revue EA-HL-DOUBLE-1-R, m4). Sautees sans
+    // CAPTURE_DIR.
+    group('Capture EA-HL-DOUBLE-1c', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final (String, ThemeMode, InterfaceMode, bool) cas
+          in <(String, ThemeMode, InterfaceMode, bool)>[
+            (
+              'sans_donnees_390_sombre',
+              ThemeMode.dark,
+              InterfaceMode.standard,
+              true,
+            ),
+            (
+              'sans_donnees_390_guidee',
+              ThemeMode.light,
+              InterfaceMode.enfant,
+              true,
+            ),
+            (
+              'avec_donnees_390_sombre',
+              ThemeMode.dark,
+              InterfaceMode.standard,
+              false,
+            ),
+            (
+              'avec_donnees_390_guidee',
+              ThemeMode.light,
+              InterfaceMode.enfant,
+              false,
+            ),
+          ]) {
+        testWidgets(cas.$1, (WidgetTester tester) async {
+          await monterPage(
+            tester,
+            eleves: cas.$4
+                ? () => Future<List<EleveDuFoyer>>.error(Exception('x'))
+                : () async => const <EleveDuFoyer>[],
+            horsLigne: true,
+            identite: cas.$4
+                ? () => Future<IdentiteTitulaire>.error(Exception('x'))
+                : null,
+            mode: cas.$2,
+            interface: cas.$3,
+          );
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          if (cas.$4) {
+            expectHorsLigneUneFois();
+            expect(find.byType(EtatSansDonnees), findsNWidgets(2));
+          } else {
+            expectAvecDonnees();
+          }
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'ea_hl_double1_foyer_${cas.$1}')}',
+          );
+        });
+      }
+    });
+
+// ===== test/features/journee/listes_journee_test.dart =====
+  // EA-HL-DOUBLE-1c : sombre, Interface guidee et 1440 des listes de la
+  // Journee hors ligne (revue EA-HL-DOUBLE-1-R, m4). Sautees sans
+  // CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1c', skip: sautSansCapture, () {
+    setUp(masquerRubanDebug);
+    for (final (String, Widget) page in <(String, Widget)>[
+      ('a_terminer', const ListeATerminerPage()),
+      ('alertes', const ListeAlertesPage()),
+    ]) {
+      for (final (String, double, ThemeMode, InterfaceMode) cas
+          in <(String, double, ThemeMode, InterfaceMode)>[
+            ('390_sombre', 390, ThemeMode.dark, InterfaceMode.standard),
+            ('390_guidee', 390, ThemeMode.light, InterfaceMode.enfant),
+            ('1440_clair', 1440, ThemeMode.light, InterfaceMode.standard),
+          ]) {
+        testWidgets('${page.$1} ${cas.$1}', (WidgetTester tester) async {
+          await _monter(
+            tester,
+            page.$2,
+            _Etat.horsLigne,
+            direction: TextDirection.ltr,
+            largeur: cas.$2,
+            echelle: 1,
+            mode: cas.$3,
+            interface: cas.$4,
+          );
+          tester.view.physicalSize = Size(cas.$2, 900);
+          await tester.pump();
+          expect(tester.takeException(), isNull);
+          expectHorsLigneUneFois();
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'ea_hl_double1_journee_${page.$1}_sans_donnees_${cas.$1}')}',
+          );
+        });
+      }
+    }
+  });
+
+// ===== test/teaching_core/g/entree_explication_test.dart =====
+  // EA-HL-DOUBLE-1c : Interface guidee et texte x2 de la verification de
+  // l'observation hors ligne (revue EA-HL-DOUBLE-1-R, m4). Sautees sans
+  // CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1c', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, ThemeMode) cas in <(String, ThemeMode)>[
+      ('390_guidee', ThemeMode.light),
+      ('390_guidee_sombre', ThemeMode.dark),
+    ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        final FauxPortPolitique politique = FauxPortPolitique()
+          ..echecBudget = const EchecObservation(MotifEchecObservation.reseau);
+        addTearDown(politique.fermer);
+        await _monter(
+          tester,
+          politique: politique,
+          horsLigne: true,
+          mode: cas.$2,
+          interface: InterfaceMode.enfant,
+        );
+        await _presser(tester, find.text(t.classe.observer));
+        expect(tester.takeException(), isNull);
+        expectHorsLigneUneFois();
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1_observation_${cas.$1}')}',
+        );
+      });
+    }
+  });

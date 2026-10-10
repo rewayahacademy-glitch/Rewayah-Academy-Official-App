@@ -158,7 +158,8 @@ class MoteurSalleControleurDemo implements VideoSessionProvider {
   }
 
   @override
-  Stream<PaquetDonnees> get donneesRecues => const Stream<PaquetDonnees>.empty();
+  Stream<PaquetDonnees> get donneesRecues =>
+      const Stream<PaquetDonnees>.empty();
 
   @override
   AccesSalle? get accesCourant => _acces;

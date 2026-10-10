@@ -69,6 +69,7 @@ class CarteGroupe extends StatelessWidget {
     this.onOuvrir,
     this.onRejoindre,
     this.urlPhotoEnseignant,
+    this.rejoindreRetire = false,
   });
 
   /// Le groupe montre.
@@ -83,6 +84,12 @@ class CarteGroupe extends StatelessWidget {
   /// L'URL signee de la photo, quand l'hote sait la resoudre.
   final String? urlPhotoEnseignant;
 
+  /// Vrai quand les seances de l'eleve sont fermees (FI-9a, guide §1.7) :
+  /// une limite de droit, pas une panne. Le bouton est alors absent, jamais
+  /// grise ; l'hote dit l'etat avec la copie neutre, sans cause. La carte
+  /// garde son geste d'ouverture : l'Espace Groupe reste lisible.
+  final bool rejoindreRetire;
+
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
@@ -93,7 +100,7 @@ class CarteGroupe extends StatelessWidget {
       onPress: onOuvrir,
       libelleSemantique: LibellesGroupe.ouvrirGroupe(groupe.libelle),
       entete: _Entete(groupe: groupe),
-      actions: groupe.rejoindreOuvert
+      actions: groupe.rejoindreOuvert && !rejoindreRetire
           ? ActionPrincipale(
               libelle: LibellesGroupe.rejoindre,
               onPress: onRejoindre,
@@ -280,9 +287,7 @@ class _ProchaineSeance extends StatelessWidget {
           Ecart.vXs,
           Text(
             LibellesGroupe.joindre(
-              LibellesGroupe.duree(
-                LibellesGroupe.dureeLisible(occurrence.duree),
-              ),
+              LibellesGroupe.dureeCarte(occurrence.duree),
               LibellesGroupe.ligneEtat(horloge),
             ),
             style: palette.inkMuted.applyTo(

@@ -12,14 +12,17 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/profil/service_acceptations.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../connexion/recuperation_page.dart'
     show IssueEnvoiLien, issueEchecEnvoi;
 import '../consentements/texte_observation.dart';
+import 'politique_controle.dart';
 
 /// Un paragraphe d'un texte a signer : son titre en gras, puis son corps.
 typedef ParagrapheTexte = ({String titre, String? corps});
@@ -32,7 +35,9 @@ List<ParagrapheTexte> paragraphesA3() => <ParagrapheTexte>[
   (titre: t.contrat.a3.quiTitre, corps: t.contrat.a3.qui),
   (
     titre: t.contrat.a3.dureeTitre,
-    corps: t.contrat.a3.duree(duree: VersionsContrat.dureeEnregistrementJours),
+    corps: LibellesGroupe.insecable(
+      t.contrat.a3.duree(duree: VersionsContrat.dureeEnregistrementJours),
+    ),
   ),
   (titre: t.contrat.a3.desaccordTitre, corps: t.contrat.a3.desaccord),
 ];
@@ -46,7 +51,9 @@ List<ParagrapheTexte> paragraphesE1() => <ParagrapheTexte>[
   (titre: t.contrat.a3.quiTitre, corps: t.contrat.a3.qui),
   (
     titre: t.contrat.a3.dureeTitre,
-    corps: t.contrat.a3.duree(duree: VersionsContrat.dureeEnregistrementJours),
+    corps: LibellesGroupe.insecable(
+      t.contrat.a3.duree(duree: VersionsContrat.dureeEnregistrementJours),
+    ),
   ),
   (titre: t.contrat.e1.refusTitre, corps: t.contrat.e1.refus),
 ];
@@ -103,13 +110,16 @@ class AccusePage extends ConsumerWidget {
 /// laquelle la signature reste fermee (`POLITIQUE_CONTROLE_ENSEIGNANTS.md`,
 /// partie A).
 ///
-/// **Garde-fou** ([VersionsContrat.politiqueControlePubliee]) : tant que la
-/// politique de controle que la clause fait « confirmer avoir recue » n'est
-/// pas publiee, un vrai enseignant lit et signe la version
-/// [VersionsContrat.courante], ses textes d'origine gardes tels quels
+/// La clause est suivie du lien « Lire la politique de controle » : la piece
+/// qu'elle fait « confirmer avoir recue » s'ouvre en lecture
+/// ([ouvrirPolitiqueControle]), avant la signature.
+///
+/// **Garde-fou** ([VersionsContrat.politiqueControlePubliee], vrai depuis le
+/// 05/10/2026) : s'il repasse a faux, un vrai enseignant lit et signe la
+/// version [VersionsContrat.courante], ses textes d'origine gardes tels quels
 /// (`t.contrat.intro`, `pointEnregistrement`, `pointControle`,
-/// `pointCoordonnees`), sans la clause ni la case. La demonstration seule
-/// montre la version [VersionsContrat.textesJuridiques].
+/// `pointCoordonnees`), sans la clause ni la case ; la demonstration seule
+/// montre alors la version [VersionsContrat.textesJuridiques].
 class ContratPage extends ConsumerWidget {
   /// Cree la page de contrat.
   const ContratPage({super.key});
@@ -331,6 +341,13 @@ class _PageASignerState extends ConsumerState<_PageASigner> {
                   legende: clause.corps,
                 ),
               ],
+            ),
+            // La politique que la clause fait « confirmer avoir recue », a
+            // lire avant de signer : un lien, jamais un second bouton plein
+            // (K-56).
+            LienFleche(
+              libelle: t.contrat.politique.lien,
+              onPress: () => unawaited(ouvrirPolitiqueControle(context)),
             ),
           ],
           if (widget.caseReligion) ...<Widget>[

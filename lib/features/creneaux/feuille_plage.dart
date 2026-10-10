@@ -400,6 +400,7 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
         // sur la puce elle-meme, jamais par la seule couleur (FilterPill).
         TexteSansCoupure(t.enseignant.creneaux.raccourcis, style: etiquette),
         Ecart.vSm,
+        // Choix de formulaire, pas un filtre : une plage horaire proposee.
         Wrap(
           spacing: AppSpacing.sm,
           runSpacing: AppSpacing.sm,
@@ -440,6 +441,7 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
         Ecart.vLg,
         TexteSansCoupure(t.enseignant.creneaux.jours, style: etiquette),
         Ecart.vSm,
+        // Choix de formulaire, pas un filtre : les jours de la plage.
         Wrap(
           spacing: AppSpacing.sm,
           runSpacing: AppSpacing.sm,
@@ -455,6 +457,7 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
         Ecart.vLg,
         TexteSansCoupure(t.enseignant.creneaux.heures, style: etiquette),
         Ecart.vSm,
+        // Choix de formulaire, pas un filtre : les heures de debut et de fin de la plage.
         Wrap(
           spacing: AppSpacing.md,
           runSpacing: AppSpacing.sm,

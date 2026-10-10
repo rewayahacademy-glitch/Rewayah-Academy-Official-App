@@ -16,6 +16,7 @@ import '../../core/tc_classe/roster_enseignant.dart';
 import '../../core/tc_classe/session_live_vm.dart';
 import '../../core/tc_classe/session_persistante.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -64,6 +65,7 @@ class ContexteClasseLive {
     this.seuilMax,
     this.supportActifId,
     this.descriptionSupport,
+    this.supportPresente,
     this.support,
     this.dock,
     this.bibliotheque,
@@ -103,6 +105,12 @@ class ContexteClasseLive {
   /// [support] n'est fourni. `null` tant que le catalogue n'est pas branche
   /// (BR-1) ; la demonstration et les captures le remplissent.
   final SupportSeance? descriptionSupport;
+
+  /// Le support a page fixe PRESENTE a la classe (TB-1b, plan V2 §8), port
+  /// neutre : `null` tant que l'etat partage n'est pas branche (TB-BR). Avec
+  /// lui, la capsule compacte remplace la vignette pendant le partage (TB-3,
+  /// UI-01) ; sans lui, la vignette reste.
+  final SupportPageFixe? supportPresente;
 
   /// Le rendu du support, par Agent B ou Agent C.
   final WidgetBuilder? support;
@@ -311,27 +319,26 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
     RoleSeance.guidee => Routes.eleve,
   };
 
-  /// La cloche : aucune source de notifications avant BR-1 (K-28), la
-  /// feuille le dit plutot que d'inventer une liste.
-  Future<void> _voirNotifications() => AppBottomSheet.ouvrir<void>(
-    context,
-    titre: t.notifications.titre,
-    constructeur: (BuildContext _) => Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          t.notifications.indisponibleTitre,
-          style: Theme.of(context).textTheme.titleSmall,
-        ),
-        Ecart.vXs,
-        Text(t.notifications.indisponiblePhrase),
-      ],
-    ),
-  );
+  /// La cloche de la salle (COM-ANN-1, reponse du directeur a Q5, 04/10) :
+  /// pour l'enseignant, elle ouvre le centre de notifications partage de son
+  /// role (`/enseignant/notifications`), choisi par le role de la SEANCE
+  /// (`RoleSeance`, deja lu par [_routeDuGroupe]), jamais par `AppRole` ni
+  /// par le mode d'interface ; la salle reste ouverte (barre « Cours en
+  /// cours », D-24). Pour l'eleve, aucune cloche : seul l'eleve mineur entre
+  /// en Classe live, et il n'a pas de centre de notifications. Quand une
+  /// entree d'eleve adulte existera, sa cloche passera par le contexte de la
+  /// Classe live (signale au tableau, hors COM).
+  String? _routeNotifications(RoleSeance role) => switch (role) {
+    RoleSeance.enseignant => Routes.enseignantNotifications,
+    RoleSeance.eleve || RoleSeance.guidee => null,
+  };
 
   /// Le panneau ouvert a cote du support (enseignant).
   PanneauOuvert _panneau = PanneauOuvert.aucun;
+
+  /// TB-3 (CTX-01, CTX-02) : le contexte deplie depuis la capsule. Etat
+  /// local d'interface, jamais diffuse.
+  ContexteOuvert _contexte = ContexteOuvert.aucun;
 
   /// Le zoom local, qui n'agit que sur cet ecran.
   double _zoom = 1;
@@ -341,6 +348,9 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
 
   void _basculerPanneau(PanneauOuvert panneau) => setState(() {
     _panneau = _panneau == panneau ? PanneauOuvert.aucun : panneau;
+    // TB-4 (plan V2 §18.3) : un seul panneau secondaire ; les Commandes
+    // remplacent le contexte deplie.
+    if (_panneau == PanneauOuvert.commandes) _contexte = ContexteOuvert.aucun;
   });
 
   void _zoomer(double pas) => setState(() {
@@ -361,14 +371,16 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
       if (!mounted) return;
       setState(
         () => _echecRappel = switch (echec.motif) {
-          MotifEchecRappel.cooldown => t.tc.classe.rappel.cooldown(
-            secondes:
-                (rappel.cooldownRestant(
-                          sessionId: sessionId,
-                          academyId: academyId,
-                        ) ??
-                        rappel.cooldown)
-                    .inSeconds,
+          MotifEchecRappel.cooldown => LibellesGroupe.insecable(
+            t.tc.classe.rappel.cooldown(
+              secondes:
+                  (rappel.cooldownRestant(
+                            sessionId: sessionId,
+                            academyId: academyId,
+                          ) ??
+                          rappel.cooldown)
+                      .inSeconds,
+            ),
           ),
           MotifEchecRappel.droitRefuse => t.tc.classe.rappel.echecDroit,
           MotifEchecRappel.transport => t.tc.classe.rappel.echec,
@@ -416,11 +428,14 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
         onRetour: Navigator.of(context).canPop()
             ? () => Navigator.of(context).pop()
             : () => _allerSansQuitter(_routeDuGroupe(vue.role)),
-        // Coin de l'en-tete (images CLV-06 et CLV-07) : aucune source de
-        // notifications n'est branchee avant BR-1, la cloche le dit sur place
-        // ; reglages et compte ouvrent les pages communes `/compte`, la salle
-        // restant ouverte (barre « Cours en cours », D-24).
-        onNotifications: () => unawaited(_voirNotifications()),
+        // Coin de l'en-tete (images CLV-06 et CLV-07) : la cloche ouvre le
+        // centre partage de l'enseignant (COM-ANN-1), absente pour l'eleve ;
+        // reglages et compte ouvrent les pages communes `/compte`. La salle
+        // reste ouverte (barre « Cours en cours », D-24).
+        onNotifications: switch (_routeNotifications(vue.role)) {
+          final String route => () => _allerSansQuitter(route),
+          null => null,
+        },
         onReglages: () => _allerSansQuitter(Routes.compteReglages),
         onCompte: () => _allerSansQuitter(Routes.compte),
         onQuitter: () => unawaited(_sortir()),
@@ -436,9 +451,30 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
             ? () => unawaited(_basculerCamera(cameraOuverte))
             : null,
         // L'etat du lien, en un mot (J7), lu du moteur : aucune mesure maison.
+        // Depuis TB-2, le Reseau n'est plus dans la barre : la feuille s'ouvre
+        // par « Detail du reseau » du contexte enseignant (TB-3, plan §19.6).
         onReseau: enseignant ? () => unawaited(_voirReseau(vue)) : null,
+        // TB-3 : l'avatar et l'oeil de la capsule deplient le contexte,
+        // « Reduire » le replie ; etat local, rien n'est diffuse.
+        // TB-4 (plan V2 §18.3) : le contexte deplie remplace les Commandes
+        // (un seul panneau secondaire), qui ne reviennent pas a sa fermeture.
+        onContexte: (ContexteOuvert c) => setState(() {
+          _contexte = c;
+          if (c != ContexteOuvert.aucun &&
+              _panneau == PanneauOuvert.commandes) {
+            _panneau = PanneauOuvert.aucun;
+          }
+        }),
         onZoomMoins: () => _zoomer(-0.1),
         onZoomPlus: () => _zoomer(0.1),
+        // TB-4 (CMD-01) : le panneau « Commandes » de l'enseignant (etat
+        // local) ; « Ajuster a l'ecran » remet le zoom local a 100 %. Les
+        // affichages partages attendent leur champ serveur (TB-BR-13) : pas
+        // de rappel, pas de choix rendu.
+        onCommandes: enseignant
+            ? () => _basculerPanneau(PanneauOuvert.commandes)
+            : null,
+        onAjusterEcran: enseignant ? () => setState(() => _zoom = 1) : null,
         onEleves: enseignant && salle.voitLesParticipants && vue.elevesConnus
             ? () => _basculerPanneau(PanneauOuvert.eleves)
             : null,
@@ -684,7 +720,10 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
       );
       if (seance != null) {
         return _salleSeance(
-          vue: seance,
+          vue: seance.copyWith(
+            supportPresente: contexte.supportPresente,
+            contexte: _contexte,
+          ),
           salle: salle,
           support: slotSupport,
           bibliotheque: slotBibliotheque,

@@ -41,6 +41,11 @@ enum DispositionAvatar {
 /// L'avatar est decoratif pour un lecteur d'ecran (ses initiales redisent le
 /// nom) : il est exclu de la semantique, le nom et le role se lisent.
 ///
+/// Le nom et la ligne de role ne sont jamais coupes au milieu d'un mot, meme
+/// a 200 % sur 320 px ([TexteSansCoupure]) : FI-2-CORR-R l'avait pose sur la
+/// carte d'un membre du Foyer, la revue FI-VAGUE-R (R8-03) l'a mesure sur
+/// chaque ecran Finance (« Classe An- / Nour », « sep / tembre »).
+///
 /// [avatar] remplace le cercle d'initiales quand l'ecran sait poser un portrait
 /// (`PhotoEleve`, `PhotoEnseignant`) ; il doit rester un cercle de [diametre].
 class AvatarNom extends StatelessWidget {
@@ -65,6 +70,8 @@ class AvatarNom extends StatelessWidget {
     this.roleWidget,
     this.pays,
     this.stylePays,
+    this.cercleEnHaut = false,
+    this.texteEtire = false,
   });
 
   /// Avatar centre, nom centre dessous.
@@ -117,6 +124,8 @@ class AvatarNom extends StatelessWidget {
     Widget? roleWidget,
     String? pays,
     TextStyle? stylePays,
+    bool cercleEnHaut = false,
+    bool texteEtire = false,
   }) : this(
          prenom: prenom,
          disposition: DispositionAvatar.enLigne,
@@ -135,6 +144,8 @@ class AvatarNom extends StatelessWidget {
          ecart: ecart,
          ajuste: ajuste,
          roleWidget: roleWidget,
+         cercleEnHaut: cercleEnHaut,
+         texteEtire: texteEtire,
        );
 
   /// Le prenom, source des initiales de repli.
@@ -203,6 +214,19 @@ class AvatarNom extends StatelessWidget {
   /// contenu (en-tete, menu) au lieu de remplir celle de son parent.
   final bool ajuste;
 
+  /// En ligne seulement : vrai pour poser le cercle **en haut** de la rangee
+  /// au lieu de le centrer sur le texte. Pour une carte qui porte le bandeau
+  /// de couleur d'un profil (K-62) : le bandeau part du bord haut de la
+  /// carte et doit retrouver le cercle a la meme place quelle que soit la
+  /// hauteur du texte (texte agrandi, legende sur plusieurs lignes).
+  final bool cercleEnHaut;
+
+  /// En ligne seulement : vrai pour que le texte prenne toute la place
+  /// restante, et que [fin] aille donc au bout de la rangee quelle que soit
+  /// la longueur du prenom (carte d'un membre du Foyer, revue FI-2-R M1).
+  /// Faux par defaut : [fin] suit le texte.
+  final bool texteEtire;
+
   /// En ligne seulement : l'espace entre le cercle et le texte
   /// (defaut [AppSpacing.md]).
   final double? ecart;
@@ -263,11 +287,14 @@ class AvatarNom extends StatelessWidget {
       ),
       DispositionAvatar.enLigne => Row(
         mainAxisSize: ajuste ? MainAxisSize.min : MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: cercleEnHaut
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.center,
         children: <Widget>[
           cercleHabille,
           SizedBox(width: ecart ?? AppSpacing.md),
           Flexible(
+            fit: texteEtire ? FlexFit.tight : FlexFit.loose,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,

@@ -131,9 +131,8 @@ Future<_Salle> _entrerEnSalle(
           darkTheme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
           themeMode: mode,
           builder: (BuildContext context, Widget? enfant) => MediaQuery(
-            data: MediaQuery.of(
-              context,
-            ).copyWith(textScaler: TextScaler.linear(echelleTexte)),
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: TextScaler.linear(echelleTexte)),
             child: enfant!,
           ),
           routerConfig: GoRouter(initialLocation: depart, routes: _routes()),
@@ -199,7 +198,7 @@ void main() {
       // Relu aupres du serveur, jamais deduit : duree de la politique
       // effective de la classe (120 s).
       expect(salle.politique.lecturesBudget, greaterThan(lecturesAvant));
-      expect(find.text(r.resteUne(duree: '2 minutes')), findsOneWidget);
+      expect(find.text(r.resteUne(duree: '2\u00A0minutes')), findsOneWidget);
       // Horloge de la maquette M5 (demande O-4), plus le sablier.
       expect(find.byIcon(AppIcons.horloge.repos), findsOneWidget);
       expect(find.byIcon(AppIcons.attente.repos), findsNothing);
@@ -264,7 +263,7 @@ void main() {
 
       expect(find.text(r.derniereTerminee), findsOneWidget);
       expect(find.text(r.aucune), findsOneWidget);
-      expect(find.text(r.resteUne(duree: '2 minutes')), findsNothing);
+      expect(find.text(r.resteUne(duree: '2\u00A0minutes')), findsNothing);
     });
 
     testWidgets('plusieurs visites restantes : accord au pluriel', (
@@ -281,7 +280,10 @@ void main() {
       );
       await _quitter(tester);
 
-      expect(find.text(r.restent(n: 2, duree: '2 minutes')), findsOneWidget);
+      expect(
+        find.text(r.restent(n: 2, duree: '2\u00A0minutes')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('duree atteinte : le serveur epuise le budget', (
@@ -412,7 +414,10 @@ void main() {
         'referme la question', (WidgetTester tester) async {
       final _Salle salle = await _entrerEnSalle(tester);
       await _presser(tester, find.text(t.tc.observation.visite.quitter));
-      expect(find.text(t.tc.observation.visite.quitterQuestion), findsOneWidget);
+      expect(
+        find.text(t.tc.observation.visite.quitterQuestion),
+        findsOneWidget,
+      );
 
       salle.politique.flux.add(
         unBudget(restant: Duration.zero, peutEntrer: false),

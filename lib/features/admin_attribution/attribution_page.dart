@@ -9,6 +9,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/matching/service_attribution.dart';
 import '../../core/planning/service_planning.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -428,8 +429,10 @@ class _CarteEleve extends StatelessWidget {
             StatusPill(
               libelle: foyer.creneaux.length == 1
                   ? t.admin.attribution.heureProposee
-                  : t.admin.attribution.heuresProposees(
-                      nombre: '${foyer.creneaux.length}',
+                  : LibellesGroupe.valeurSeule(
+                      t.admin.attribution.heuresProposees(
+                        nombre: '${foyer.creneaux.length}',
+                      ),
                     ),
               ton: TonEtat.neutre,
             ),
@@ -456,7 +459,9 @@ class _CarteEleve extends StatelessWidget {
     return switch (jours) {
       null || 0 => t.admin.attribution.attendAujourdhui,
       1 => t.admin.attribution.attendUnJour,
-      _ => t.admin.attribution.attendJours(jours: '$jours'),
+      _ => LibellesGroupe.insecable(
+        t.admin.attribution.attendJours(jours: '$jours'),
+      ),
     };
   }
 }
@@ -709,9 +714,11 @@ class _CarteEnseignant extends StatelessWidget {
           else
             StatusPill(
               libelle: candidat.creneauxCommuns.length == 1
-                  ? t.admin.attribution.libreSur(
-                      jour: _jour(premier),
-                      heure: '${premier.heure}',
+                  ? LibellesGroupe.insecable(
+                      t.admin.attribution.libreSur(
+                        jour: _jour(premier),
+                        heure: '${premier.heure}',
+                      ),
                     )
                   : t.admin.attribution.libreSurPlusieurs(
                       nombre: '${candidat.creneauxCommuns.length}',
@@ -791,9 +798,11 @@ class _Confirmation extends StatelessWidget {
                   selectionnee: creneau == creneauChoisi,
                   onPress: () => onChoisirCreneau(creneau),
                   child: Text(
-                    t.admin.attribution.creneau(
-                      jour: _jour(creneau),
-                      heure: '${creneau.heure}',
+                    LibellesGroupe.insecable(
+                      t.admin.attribution.creneau(
+                        jour: _jour(creneau),
+                        heure: '${creneau.heure}',
+                      ),
                     ),
                     style: textes.bodyMedium,
                   ),

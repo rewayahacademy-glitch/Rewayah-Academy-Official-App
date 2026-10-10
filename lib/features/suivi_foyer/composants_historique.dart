@@ -19,6 +19,7 @@ import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/pressable.dart';
+import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/status_pill.dart';
 import '../compte/carte_rubriques.dart';
@@ -177,10 +178,8 @@ class BarreFiltresHistorique<S> extends StatelessWidget {
           (MapEntry<String, String> a, MapEntry<String, String> b) =>
               a.value.compareTo(b.value),
         );
-    return Wrap(
-      spacing: AppSpacing.sm,
-      runSpacing: AppSpacing.sm,
-      children: <Widget>[
+    return RangeeFiltres(
+      filtres: <Widget>[
         if (classesTriees.isNotEmpty)
           MenuFiltre<String>(
             libelle: t.historique.filtres.classe,

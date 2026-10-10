@@ -181,7 +181,7 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.text('Prochaine étape : constitution de la classe'),
+        find.text('Prochaine étape\u00a0: constitution de la classe'),
         findsOneWidget,
       );
       expect(find.text('Demande de créneau de Yusuf'), findsOneWidget);
@@ -202,7 +202,7 @@ void main() {
       await _monter(tester, port: _seule(_ines));
       expect(find.text('Votre classe a été validée'), findsOneWidget);
       expect(
-        find.text('Prochaine étape : affectation de l\'enseignant'),
+        find.text('Prochaine étape\u00a0: affectation de l\'enseignant'),
         findsOneWidget,
       );
       expect(find.text(t.suiviDemandes.etats.fait), findsNWidgets(2));
@@ -583,10 +583,10 @@ void main() {
         home: const _Accueil(),
       );
       expect(find.text(t.suiviDemandes.accueil.titre), findsOneWidget);
-      expect(find.text('Yusuf : Demande envoyée'), findsOneWidget);
-      expect(find.text('Inès : Classe validée'), findsOneWidget);
-      expect(find.text('Aïcha : Enseignant affecté'), findsOneWidget);
-      expect(find.text('Bilal : Demande retirée'), findsOneWidget);
+      expect(find.text('Yusuf\u00a0: Demande envoyée'), findsOneWidget);
+      expect(find.text('Inès\u00a0: Classe validée'), findsOneWidget);
+      expect(find.text('Aïcha\u00a0: Enseignant affecté'), findsOneWidget);
+      expect(find.text('Bilal\u00a0: Demande retirée'), findsOneWidget);
       expect(find.text(t.suiviDemandes.accueil.voir), findsOneWidget);
       await _demonter(tester);
     });
@@ -666,11 +666,11 @@ void main() {
         expect(
           titres,
           containsAll(<String>[
-            'Demande de créneau de Yusuf : votre demande est arrivée à '
+            'Demande de créneau de Yusuf\u00a0: votre demande est arrivée à '
                 'l\'administration',
-            'Demande de créneau d\'Inès : votre classe a été validée',
-            'Demande de créneau d\'Aïcha : classe validée · enseignant affecté',
-            'Demande de créneau de Bilal : l\'académie a retiré ce créneau de '
+            'Demande de créneau d\'Inès\u00a0: votre classe a été validée',
+            'Demande de créneau d\'Aïcha\u00a0: classe validée · enseignant affecté',
+            'Demande de créneau de Bilal\u00a0: l\'académie a retiré ce créneau de '
                 'ses offres.',
           ]),
         );
@@ -699,7 +699,7 @@ void main() {
       expect(apres, hasLength(avant + 1));
       expect(
         apres.first.titre,
-        'Demande de créneau de Yusuf : votre classe a été validée',
+        'Demande de créneau de Yusuf\u00a0: votre classe a été validée',
       );
       expect(await port.detail(apres.first.id), isNotNull);
     });
@@ -793,7 +793,7 @@ void main() {
       expect(etatCourtDemande(d), 'Demande close');
       expect(
         titreNotificationDemande(d),
-        'Demande de créneau de Bilal : cette demande est close.',
+        'Demande de créneau de Bilal\u00a0: cette demande est close.',
       );
     });
 

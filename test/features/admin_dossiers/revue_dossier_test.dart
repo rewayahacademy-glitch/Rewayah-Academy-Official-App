@@ -19,6 +19,7 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
+import 'package:rewayah_academy/core/widgets/zone_saisie.dart';
 import 'package:rewayah_academy/features/admin_dossiers/etat_file_dossiers.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
@@ -255,7 +256,13 @@ void main() {
     await _stabiliser(tester);
     expect(FocusManager.instance.primaryFocus?.debugLabel, 'adm02d-motif');
     await tester.enterText(
-      find.widgetWithText(TextField, t.dossiers.refus.champ),
+      find.descendant(
+        of: find.ancestor(
+          of: find.text(t.dossiers.refus.champ),
+          matching: find.byType(ZoneSaisie),
+        ),
+        matching: find.byType(TextField),
+      ),
       'Photo floue.',
     );
     await _stabiliser(tester);

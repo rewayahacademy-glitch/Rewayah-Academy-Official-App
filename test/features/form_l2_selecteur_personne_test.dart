@@ -18,6 +18,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_personne.dart';
+import 'package:rewayah_academy/core/widgets/zone_saisie.dart';
 import 'package:rewayah_academy/features/admin_groupes/groupes_page.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_evaluations/evaluations_page.dart';
 
@@ -299,7 +300,13 @@ void main() {
         // FORM-L1 : le motif libre s'ecrit apres « Autre ».
         await _presser(tester, find.byKey(SelecteurMotif.cleAutre));
         await tester.enterText(
-          find.widgetWithText(TextField, t.admin.groupes.champMotif),
+          find.descendant(
+        of: find.ancestor(
+          of: find.text(t.admin.groupes.champMotif),
+          matching: find.byType(ZoneSaisie),
+        ),
+        matching: find.byType(TextField),
+      ),
           'Inscription confirmee',
         );
         await _presser(tester, find.text(t.admin.groupes.ajouterEnvoyer));

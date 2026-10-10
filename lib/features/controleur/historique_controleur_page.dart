@@ -20,9 +20,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -34,6 +36,7 @@ import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pays_enseignant.dart';
+import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
@@ -244,10 +247,8 @@ class _HistoriqueControleurPageState
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: <Widget>[
+        RangeeFiltres(
+          filtres: <Widget>[
             MenuFiltre<PeriodeHistorique>(
               libelle: t.historique.filtres.periode,
               valeur: _filtres.periode == PeriodeHistorique.toute
@@ -325,7 +326,9 @@ class _HistoriqueControleurPageState
   Widget _ligne(RapportControle r) {
     final h = t.controleur.historique;
     final String date = dateDeLAppareil(r.debut);
-    final String duree = h.duree(minutes: r.dureeObservee.inMinutes);
+    final String duree = LibellesGroupe.valeurSeule(
+      h.duree(minutes: r.dureeObservee.inMinutes),
+    );
     final String statut = libelleStatutRapport(r.statut);
     return LigneHistorique(
       key: HistoriqueControleurPage.ligneKey(r.id),
@@ -411,7 +414,9 @@ class _DetailRapport extends StatelessWidget {
                 ),
                 LigneCleValeur(
                   cle: h.cleDuree,
-                  valeur: h.duree(minutes: r.dureeObservee.inMinutes),
+                  valeur: LibellesGroupe.valeurSeule(
+                    h.duree(minutes: r.dureeObservee.inMinutes),
+                  ),
                   chiffres: true,
                 ),
               ],
@@ -427,7 +432,10 @@ class _DetailRapport extends StatelessWidget {
                 if (r.presents.isNotEmpty)
                   LigneCleValeur(
                     cle: h.cleElevesPresents,
-                    valeur: r.presents.join(', '),
+                    // Chaque nom dans son isolat : la virgule et le point
+                    // de l'initiale restent a leur place, nom arabe ou
+                    // latin (CTRL-ROSTER-C7-1b).
+                    valeur: r.presents.map(isolerSens).join(', '),
                   ),
               ],
             ),

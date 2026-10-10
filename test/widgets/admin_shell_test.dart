@@ -101,11 +101,11 @@ void main() {
     );
     await tester.pump();
 
-    // Finance n'a aucune fonction livree (ADMIN_IA_AUDIT.md) : construire
+    // Direction n'a aucune fonction livree (ADMIN_IA_AUDIT.md) : construire
     // un ecran vide pour l'occasion est exactement ce que l'audit interdit.
-    // Pedagogie a quitte cet exemple le 19 septembre 2026, ses cinq
-    // fonctions livrees (voir admin_domaine_test.dart).
-    await tester.tap(find.text(AdminDomaine.finance.libelle));
+    // Pedagogie a quitte cet exemple le 19 septembre 2026, Finance le
+    // 3 octobre 2026 (FI-1b, voir admin_domaine_test.dart).
+    await tester.tap(find.text(AdminDomaine.direction.libelle));
     await tester.pump();
 
     expect(chemin, isNull);

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/planning/service_planning.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bento_tile.dart';
@@ -136,7 +137,9 @@ class _BlocEnfantEtat extends ConsumerState<_BlocEnfant> {
             Text(
               poses.length == 1
                   ? t.disponibilites.poseeUne
-                  : t.disponibilites.posees(nombre: '${poses.length}'),
+                  : LibellesGroupe.valeurSeule(
+                      t.disponibilites.posees(nombre: '${poses.length}'),
+                    ),
               style: textes.bodySmall,
             ),
           if (_erreur || creneaux.hasError) ...<Widget>[

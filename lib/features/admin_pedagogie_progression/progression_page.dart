@@ -8,6 +8,7 @@ import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
@@ -16,6 +17,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/selecteur_motif.dart';
 import '../../core/widgets/selecteur_niveau_programme.dart';
 import '../../core/widgets/skeleton.dart';
@@ -129,13 +131,11 @@ class _Corps extends StatelessWidget {
         .where((EleveProgression e) => cycle == null || e.niveauCycle == cycle)
         .toList(growable: false);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return ColonneCorps(
+      minimumEtire: DataCollection.minimumLisible(context),
       children: <Widget>[
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: <Widget>[
+        RangeeFiltres(
+          filtres: <Widget>[
             FilterPill(
               libelle: t.admin.progression.filtreTousCycles,
               compteur: eleves.length,
@@ -252,7 +252,9 @@ String _depuis(DateTime? quand) {
   return switch (jours) {
     <= 0 => t.admin.progression.depuisAujourdhui,
     1 => t.admin.progression.depuisUnJour,
-    final int j => t.admin.progression.depuisJours(jours: '$j'),
+    final int j => LibellesGroupe.valeurSeule(
+      t.admin.progression.depuisJours(jours: '$j'),
+    ),
   };
 }
 

@@ -603,6 +603,42 @@ void main() {
       semantique.dispose();
     });
 
+    // COM-F-Q5-R : sur sa page, la cloche est pleine et a l'encre d'accent ;
+    // au repos, contour et encre de la coquille. Clair et sombre.
+    for (final Brightness luminosite in Brightness.values) {
+      testWidgets(
+        'active : icone pleine a l encre d accent (${luminosite.name})',
+        (WidgetTester tester) async {
+          fixerVue(tester, vueMobile);
+          for (final bool actif in <bool>[true, false]) {
+            await tester.pumpWidget(
+              hoteTheme(
+                ClocheNotifications(onPress: () {}, actif: actif),
+                luminosite: luminosite,
+              ),
+            );
+            final Finder icone = find.descendant(
+              of: find.byType(ClocheNotifications),
+              matching: find.byType(Icon),
+            );
+            expect(
+              tester.widget<Icon>(icone).icon,
+              AppIcons.notifications.resoudre(selectionne: actif),
+            );
+            final AppPalette palette = AppPalette.of(tester.element(icone));
+            final Color? attendue = actif
+                ? palette.inkAccent.asIconTheme(size: AppSpacing.xxl).color
+                : palette.inkStrong.asIconTheme(size: AppSpacing.xxl).color;
+            expect(IconTheme.of(tester.element(icone)).color, attendue);
+            expect(
+              palette.inkAccent.asIconTheme(size: AppSpacing.xxl).color,
+              isNot(palette.inkStrong.asIconTheme(size: AppSpacing.xxl).color),
+            );
+          }
+        },
+      );
+    }
+
     testWidgets('sans retour, pas de disque', (WidgetTester tester) async {
       fixerVue(tester, vueMobile);
       await tester.pumpWidget(hoteTheme(const EntetePage(titre: 'Accueil')));

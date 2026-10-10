@@ -15,9 +15,11 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/zone_saisie.dart';
 
 /// `ADM-13` : Pedagogie > Programmes.
 ///
@@ -167,13 +169,11 @@ class _Corps extends StatelessWidget {
       orElse: () => versions.first,
     );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return ColonneCorps(
+      minimumEtire: DataCollection.minimumLisible(context),
       children: <Widget>[
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: <Widget>[
+        RangeeFiltres(
+          filtres: <Widget>[
             for (final VersionProgramme v in versions)
               FilterPill(
                 libelle: t.admin.programmes.versionNumero(
@@ -769,6 +769,7 @@ class _FeuilleNiveauEtat extends State<_FeuilleNiveau> {
           style: Theme.of(context).textTheme.labelLarge,
         ),
         Ecart.vSm,
+        // Choix de formulaire, pas un filtre : le cycle du niveau a creer.
         Wrap(
           spacing: AppSpacing.sm,
           runSpacing: AppSpacing.sm,
@@ -915,10 +916,10 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
           style: Theme.of(context).textTheme.bodySmall,
         ),
         Ecart.vSm,
-        TextField(
-          controller: _motif,
-          maxLines: 2,
-          decoration: InputDecoration(labelText: t.admin.programmes.champMotif),
+        ZoneSaisie(
+          controleur: _motif,
+          minLignes: 2,
+          libelle: t.admin.programmes.champMotif,
           onChanged: (String _) => setState(() {}),
         ),
         if (_erreur != null) ...<Widget>[

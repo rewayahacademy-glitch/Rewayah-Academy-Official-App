@@ -8,6 +8,7 @@ import '../../core/tc_classe/controleur_recitation.dart';
 import '../../core/tc_classe/port_rappel_discret.dart';
 import '../../core/tc_classe/rappel_discret.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/empty_state.dart';
@@ -95,14 +96,16 @@ class _FicheSeanceEtat extends ConsumerState<FicheSeance> {
   /// l'action redeviendra possible.
   String _messageEchec(EchecRappel echec, PortRappelDiscret rappel) =>
       switch (echec.motif) {
-        MotifEchecRappel.cooldown => t.tc.classe.rappel.cooldown(
-          secondes:
-              (rappel.cooldownRestant(
-                        sessionId: widget.sessionId,
-                        academyId: widget.eleve.academyId,
-                      ) ??
-                      rappel.cooldown)
-                  .inSeconds,
+        MotifEchecRappel.cooldown => LibellesGroupe.insecable(
+          t.tc.classe.rappel.cooldown(
+            secondes:
+                (rappel.cooldownRestant(
+                          sessionId: widget.sessionId,
+                          academyId: widget.eleve.academyId,
+                        ) ??
+                        rappel.cooldown)
+                    .inSeconds,
+          ),
         ),
         MotifEchecRappel.droitRefuse => t.tc.classe.rappel.echecDroit,
         MotifEchecRappel.transport => t.tc.classe.rappel.echec,

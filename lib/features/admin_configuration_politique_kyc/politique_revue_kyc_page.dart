@@ -7,6 +7,7 @@ import '../../core/capacites/port_politique_revue_kyc.dart';
 import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/dossier/service_validation.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
@@ -164,6 +165,12 @@ class _PolitiqueRevueKycPageState extends ConsumerState<PolitiqueRevueKycPage> {
             code: CodeErreurRevue.interdit || CodeErreurRevue.nonAutorise,
           ) =>
             const EtatSysteme(nature: NatureEtat.accesRefuse),
+          // AD9-M1 : sans reseau, l'etat hors ligne, pas l'echec serveur
+          // (meme lecture que la file des dossiers, `etatErreurDossiers`).
+          _ when ref.read(horsLigneProvider).value ?? false => EtatSysteme(
+            nature: NatureEtat.horsLigne,
+            onAction: () => ref.invalidate(politiqueRevueKycProvider),
+          ),
           _ => EtatSysteme(
             nature: NatureEtat.echecServeur,
             onAction: () => ref.invalidate(politiqueRevueKycProvider),

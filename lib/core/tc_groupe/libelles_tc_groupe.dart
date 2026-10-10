@@ -53,8 +53,14 @@ abstract final class LibellesGroupe {
   /// Pourquoi, sans accuser l'utilisateur.
   static String get aucuneSeanceDetail => t.tc.groupe.carte.aucuneSeanceDetail;
 
-  /// La duree prevue.
-  static String duree(String valeur) => t.tc.groupe.carte.duree(valeur: valeur);
+  /// La duree prevue de la carte de groupe : « Duree 45 min ».
+  ///
+  /// DUREE-INSECABLE-3 : la duree y est glissee APRES un mot, elle n'est donc
+  /// pas ancree au milieu du texte ([dureeLisible], pas [dureeSeule]). Le
+  /// libelle entier passe par [valeurSeule] : il n'est ancre que si une
+  /// langue le fait commencer par la valeur.
+  static String dureeCarte(Duration duree) =>
+      valeurSeule(t.tc.groupe.carte.duree(valeur: dureeLisible(duree)));
 
   /// L'intitule seul, pour une ligne libelle/valeur.
   static String get dureeLibelle => t.tc.groupe.carte.dureeLibelle;
@@ -300,13 +306,26 @@ abstract final class LibellesGroupe {
     r'(\d\u00A0[^\s\d]+) (?=\d)',
   );
 
+  /// Les minutes entieres d'un compte a rebours, arrondies AU SUPERIEUR :
+  /// a 14:00:01 pour un cours a 14:10, « dans 10 min », comme l'heure
+  /// affichee a cote ; « dans 9 min » la contredisait (COM-RC tour 7, lot L).
+  /// Zero sous une minute (« imminent »). Les trois comptes a rebours du
+  /// produit (Classe, Accueil famille, Accueil eleve) passent par ici.
+  static int minutesAvant(Duration reste) {
+    if (reste < const Duration(minutes: 1)) {
+      return 0;
+    }
+    const int parMinute = Duration.microsecondsPerMinute;
+    return (reste.inMicroseconds + parMinute - 1) ~/ parMinute;
+  }
+
   /// Le compte a rebours avant le debut, en clair.
   ///
   /// La coupure a une heure et le remplissage des minutes suivent
   /// `_compteARebours()` de `accueil_eleve_page.dart` : deux ecrans qui
   /// n'arrondiraient pas pareil feraient douter de l'heure du cours.
   static String compteARebours(Duration reste) {
-    final int minutes = reste.inMinutes;
+    final int minutes = minutesAvant(reste);
     if (minutes <= 0) {
       return imminent;
     }
@@ -354,8 +373,17 @@ abstract final class LibellesGroupe {
 
   /// La duree affichee seule, comme valeur (« Duree / 45 min ») : celle de
   /// [dureeLisible], ancree pour garder son ordre en interface de droite a
-  /// gauche ([ancreSens]). Dans une phrase, [dureeLisible] suffit.
+  /// gauche ([ancreSens]). Dans une phrase, ou derriere un mot (« Duree
+  /// 45 min », [dureeCarte]), [dureeLisible] suffit : l'ancre n'a de sens
+  /// qu'en tete de libelle.
   static String dureeSeule(Duration duree) => ancreSens(dureeLisible(duree));
+
+  /// DUREE-INSECABLE-2 : un libelle deja rendu qui porte une duree et peut
+  /// s'afficher seul (« 45 min de cours », « 12 min observées », « 5 min
+  /// après l'heure ») : insecable ([insecable]) et ancre en interface de
+  /// droite a gauche ([ancreSens]). Un libelle qui commence par un mot
+  /// (« Environ 3 min ») n'est qu'insecable : [ancreSens] le laisse intact.
+  static String valeurSeule(String texte) => ancreSens(insecable(texte));
 
   /// La ligne d'etat de la Session Card, deduite de l'horloge.
   ///

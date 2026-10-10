@@ -100,3 +100,12 @@ class SessionControleur extends Notifier<SessionState> {
     return true;
   }
 }
+
+/// Lie une lecture a la personne connectee : la lecture qui l'appelle est
+/// refaite des que l'identifiant du profil de la session change
+/// (deconnexion, changement de compte sur un appareil partage). Une lecture
+/// d'argent (soldes, mouvements, recharge, revenus) ne survit jamais a la
+/// personne qui l'a demandee (revue FI-VAGUE-R R7-04 ; meme precedent que
+/// `identiteTitulaireProvider` et `monAccesProvider`).
+void surveillerPersonneConnectee(Ref ref) =>
+    ref.watch(sessionProvider.select((SessionState s) => s.profileId));

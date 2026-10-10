@@ -67,6 +67,8 @@ class ActionPrincipale extends StatelessWidget {
     this.autofocus = false,
     this.focusNode,
     this.encre,
+    this.libelleSemantique,
+    this.affleurant = false,
   });
 
   /// La paire de la surface sur laquelle une action [NiveauAction.tertiaire]
@@ -77,6 +79,21 @@ class ActionPrincipale extends StatelessWidget {
   /// Ignore pour les autres niveaux, qui portent leur fond. `null` :
   /// `inkAccent`.
   final AppColorPair? encre;
+
+  /// Vrai pour poser le LIBELLE au bord de debut du contenu (lot K, point
+  /// 3) : un bouton texte ([NiveauAction.tertiaire]) seul en debut de ligne
+  /// se lisait en retrait de sa marge interne (12 en format reduit, 20
+  /// sinon), « Mode focus » sous le titre du canal par exemple. Le bouton
+  /// glisse de cette marge vers le debut (vers la droite en arabe) : son
+  /// texte s'aligne sur le titre, sa cible garde ses 48 points et son fond
+  /// de survol deborde dans la gouttiere. La mise en page ne change pas.
+  /// Reserve aux boutons sans fond ni filet au repos, en debut de ligne.
+  final bool affleurant;
+
+  /// Ce que lit le lecteur d'ecran quand le verbe visible ne suffit pas :
+  /// « Retirer devoir.pdf » sous un « Retirer » (revue COM-F-R, m3). Par
+  /// defaut, le libelle.
+  final String? libelleSemantique;
 
   /// Vrai pour prendre le focus clavier a l'ouverture de l'ecran : un ecran
   /// qui remplace la page sans geste (acces retire en salle) pose le focus
@@ -148,9 +165,9 @@ class ActionPrincipale extends StatelessWidget {
     final bool actif = onPress != null && !enCours;
     final bool reduit = compacte && !metriques.estEnfant;
 
-    return Pressable.selon(
+    final Widget bouton = Pressable.selon(
       onPress: actif ? onPress : null,
-      libelleSemantique: libelle,
+      libelleSemantique: libelleSemantique ?? libelle,
       // Le format reduit est plus petit que la cible : `Pressable` l'y porte,
       // la pastille reste centree dedans.
       respecterCibleTactile: reduit,
@@ -166,8 +183,22 @@ class ActionPrincipale extends StatelessWidget {
           actif: actif,
           reduit: reduit,
         );
-        return reduit ? Center(child: corps) : corps;
+        // R-12 (decision du directeur du 05/10, choix a) : `widthFactor: 1`.
+        // Un `Center` sans facteur prenait toute la largeur offerte par un
+        // parent souple (`Wrap`, `Align`, `Column` en debut) et y centrait la
+        // pastille : « Mode focus », « Quitter le focus », « Enregistrer » se
+        // posaient au milieu de leur ligne. Il ne garde que la cible tactile
+        // autour de la pastille ; c'est le parent qui place le bouton (en
+        // debut de ligne, miroir en arabe).
+        return reduit ? Center(widthFactor: 1, child: corps) : corps;
       },
+    );
+    if (!affleurant) return bouton;
+    final double marge = reduit ? AppSpacing.md : AppSpacing.xl;
+    final bool rtl = Directionality.of(context) == TextDirection.rtl;
+    return Transform.translate(
+      offset: Offset(rtl ? marge : -marge, 0),
+      child: bouton,
     );
   }
 

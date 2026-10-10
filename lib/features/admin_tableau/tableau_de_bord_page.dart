@@ -3,11 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/admin/service_admin.dart';
+import '../../core/alertes/alerte.dart';
+import '../../core/alertes/port_alertes.dart';
 import '../../core/capacites/revue_dossiers_depuis_validation.dart';
 import '../../core/dossier/service_validation.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/carte_lignes.dart';
@@ -16,6 +19,7 @@ import '../../core/widgets/grille_bento.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
+import '../alertes/section_alertes.dart';
 import 'activite_recente.dart';
 import 'tuiles_compteur.dart';
 
@@ -86,15 +90,30 @@ class TableauDeBordPage extends ConsumerWidget {
         ),
     ];
 
+    // ALERTE-1 : une alerte urgente va en tete de la page, au-dessus de tout
+    // autre contenu, jusqu'a son traitement. Sans alerte urgente, la section
+    // suit les compteurs (D2 : agir, savoir, aller). Lit la capacite (le flux
+    // des alertes), jamais un role.
+    final List<Alerte>? alertes = ref.watch(alertesProvider).value;
+    final bool urgence = (ref.watch(alertesUrgentesProvider) ?? 0) > 0;
+    final Widget sectionAlertes = SectionAlertes(
+      onOuvrir: (String chemin) => GoRouter.of(context).go(chemin),
+      onVoirTout: () => GoRouter.of(context).go(Routes.adminAlertes),
+    );
+
     final IndicateursAdmin? valeurs = indicateurs.value;
     // La phrase calme n'est vraie que si les quatre files d'action sont
-    // vides. Incidents et acces echus, rapports sans action, n'y comptent pas.
+    // vides, et qu'aucune alerte urgente ou importante n'est ouverte.
+    // Incidents et acces echus, rapports sans action, n'y comptent pas.
     final bool calme =
         indicateurs.hasValue &&
         valeurs!.dossiersEnAttente == 0 &&
         valeurs.demandesEnAttente == 0 &&
         valeurs.foyersSansEnseignant == 0 &&
-        valeurs.rapportsManquants == 0;
+        valeurs.rapportsManquants == 0 &&
+        !(alertes ?? const <Alerte>[]).any(
+          (Alerte a) => a.gravite != GraviteAlerte.info,
+        );
 
     // 1. AGIR ET SAVOIR : les compteurs, rendus des que la lecture aboutit,
     // zeros compris (D8). Les getters, jamais le type d'execution : Riverpod 3
@@ -174,6 +193,18 @@ class TableauDeBordPage extends ConsumerWidget {
           icon: AppIcons.classes,
           onPress: () => GoRouter.of(context).go(Routes.adminOperationsGroupes),
         ),
+        // COM-F-b (UX_REV-03, QUESTIONS Q4) : la racine Operations redirige
+        // vers Groupes et n'a pas de sous-navigation ; sans cette ligne, les
+        // Communications ne s'atteignent que par la recherche. Le domaine
+        // Operations reste surligne.
+        SettingRow(
+          key: const ValueKey<String>('tableau-communications'),
+          title: t.com.socle.navigation.communications,
+          description: t.com.socle.navigation.communicationsDetail,
+          icon: AppIcons.annonce,
+          onPress: () =>
+              GoRouter.of(context).go(Routes.adminOperationsCommunications),
+        ),
         SettingRow(
           title: t.admin.tableau.outilsComptes,
           description: t.admin.tableau.outilsComptesDetail,
@@ -194,11 +225,15 @@ class TableauDeBordPage extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        // ALERTE-1 : une alerte urgente va en tete, avant les compteurs ;
+        // sans urgence, la section suit les compteurs.
+        if (urgence) ...<Widget>[sectionAlertes, Ecart.vXxl],
         compteurs,
         if (calme) ...<Widget>[
           Ecart.vLg,
           Text(t.admin.tableau.calme, style: textes.bodyMedium),
         ],
+        if (!urgence) ...<Widget>[Ecart.vXxl, sectionAlertes],
       ],
     );
 
@@ -407,5 +442,7 @@ String _anciennete(DateTime maintenant, DateTime depuis) =>
     switch (maintenant.difference(depuis).inDays) {
       <= 0 => t.admin.tableau.attenteAujourdhui,
       1 => t.admin.tableau.attenteUnJour,
-      final int jours => t.admin.tableau.attenteJours(jours: '$jours'),
+      final int jours => LibellesGroupe.insecable(
+        t.admin.tableau.attenteJours(jours: '$jours'),
+      ),
     };

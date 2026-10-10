@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/planning/service_planning.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 
 /// Une heure pleine de la semaine : jour ISO (1 pour lundi) et heure locale.
 typedef HeureSemaine = ({int jour, int heure});
@@ -196,15 +197,19 @@ String jourCapitalise(int jour) {
 }
 
 /// « de 17 h », la colonne de debut d'une plage.
-String libelleDe(int heure) => t.enseignant.creneaux.plageDe(heure: '$heure');
+String libelleDe(int heure) =>
+    LibellesGroupe.insecable(t.enseignant.creneaux.plageDe(heure: '$heure'));
 
 /// « a 23 h », ou « a minuit » pour une plage qui finit a 24 h.
+// DUREE-INSECABLE (porte par JONCTION-LIGNES-1) : « 23 h » ne se coupe pas.
 String libelleA(int heure) => heure == 24
     ? t.enseignant.creneaux.plageAMinuit
-    : t.enseignant.creneaux.plageA(heure: '$heure');
+    : LibellesGroupe.insecable(t.enseignant.creneaux.plageA(heure: '$heure'));
 
 /// « lundi 17 h » : une heure nommee, pour les confirmations et les echecs.
-String nommerHeure(HeureSemaine h) => t.enseignant.creneaux.heureLibelle(
-  jour: t.disponibilites.joursLongs[h.jour - 1],
-  heure: '${h.heure}',
+String nommerHeure(HeureSemaine h) => LibellesGroupe.insecable(
+  t.enseignant.creneaux.heureLibelle(
+    jour: t.disponibilites.joursLongs[h.jour - 1],
+    heure: '${h.heure}',
+  ),
 );

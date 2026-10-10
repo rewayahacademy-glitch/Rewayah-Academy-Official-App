@@ -32,6 +32,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
+import 'package:rewayah_academy/core/widgets/zone_saisie.dart';
 import 'package:rewayah_academy/features/admin_dossiers/textes_dossier.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
@@ -201,8 +202,11 @@ Future<void> _ouvrirLigne(WidgetTester tester, String prenom) async {
 /// Le champ de motif de 02D, retrouve par son etiquette (plusieurs
 /// `TextField` existent ailleurs dans la coque, K-07 : jamais `byType` seul).
 Finder get _champMotif => find
-    .ancestor(
-      of: find.text(t.dossiers.refus.champ),
+    .descendant(
+      of: find.ancestor(
+        of: find.text(t.dossiers.refus.champ),
+        matching: find.byType(ZoneSaisie),
+      ),
       matching: find.byType(TextField),
     )
     .first;

@@ -85,10 +85,19 @@ void main() {
         expect(_vue(r).voitSignalVideo, isFalse);
       });
 
-      test('$r : aucune pagination active, a aucune largeur', () {
-        for (final Gabarit g in Gabarit.values) {
-          expect(_vue(r).voitPaginationActive(g), isFalse, reason: '$g');
+      test('$r : ni Commandes, ni pagination active, ni affichages', () {
+        // TB-4 (TB14) : rien de l'enseignant chez l'eleve.
+        for (final EtatDemoSalle e in EtatDemoSalle.values) {
+          expect(_vue(r, e).voitCommandes, isFalse);
+          expect(_vue(r, e).voitPaginationCommandes, isFalse);
+          expect(_vue(r, e).voitLectureCommandes, isFalse);
         }
+        expect(
+          _vue(r)
+              .copyWith(supportPresente: DonneesSeanceDemo.supportPageFixe)
+              .voitAffichagesPartages,
+          isFalse,
+        );
       });
 
       test('$r : aucune duree restante', () {
@@ -153,14 +162,12 @@ void main() {
       }
     });
 
-    test('jamais Agrandir au dock ; dock compact EN-10', () {
+    test('jamais Agrandir au dock : Micro, Camera, Quitter (TB-4)', () {
+      // TB-2 (VIS-01, D5) : Reseau quitte la barre ; TB-4 : Supports et
+      // Outils passent dans les Commandes, Partager n'est pas repris.
       expect(_vue(r).commandesDock, <CommandeDock>[
-        CommandeDock.supports,
         CommandeDock.micro,
         CommandeDock.camera,
-        CommandeDock.partager,
-        CommandeDock.outils,
-        CommandeDock.reseau,
         CommandeDock.quitter,
       ]);
     });
@@ -170,14 +177,20 @@ void main() {
       expect(_vue(r).ligneEtat, 'Classe An-Nour · La séance se poursuit.');
       expect(
         _vue(r, EtatDemoSalle.repos).ligneEtat,
-        'Classe An-Nour · 32 min restantes',
+        'Classe An-Nour · \u200E32\u00A0min restantes',
       );
     });
 
-    test('pagination active et zoom sur desktop seulement (I-7)', () {
-      expect(_vue(r).voitPaginationActive(Gabarit.desktop), isTrue);
-      expect(_vue(r).voitPaginationActive(Gabarit.mobile), isFalse);
-      expect(_vue(r).voitPaginationActive(Gabarit.tablette), isFalse);
+    test('TB-4 : pagination dans les Commandes, a toutes les tailles', () {
+      expect(_vue(r).voitCommandes, isTrue);
+      expect(_vue(r).voitPaginationCommandes, isTrue);
+      expect(_vue(r).pageCommandes, (page: 1, total: 12));
+      expect(
+        _vue(r, EtatDemoSalle.rienPartage).voitPaginationCommandes,
+        isFalse,
+      );
+      expect(_vue(r, EtatDemoSalle.rienPartage).pageCommandes, isNull);
+      expect(_vue(r, EtatDemoSalle.fin).voitCommandes, isFalse);
     });
   });
 
@@ -299,9 +312,9 @@ void main() {
     test('camera non autorisee : aucun bouton Camera pour l eleve', () {
       for (final RoleSeance r in _eleves) {
         final VueSeance v = _vue(r).copyWith(cameraAutorisee: false);
+        // TB-2 (VIS-01) : Agrandir a quitte la barre de l'appel.
         expect(v.commandesDock, <CommandeDock>[
           CommandeDock.micro,
-          CommandeDock.agrandir,
           CommandeDock.quitter,
         ]);
       }

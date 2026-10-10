@@ -22,6 +22,7 @@ import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
+import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
@@ -379,7 +380,8 @@ class _Defilant extends StatelessWidget {
 
 /// La recherche d'un tuteur ou d'un eleve, puis Classe, Periode, Statut
 /// (maquette D3 : recherche a gauche, trois filtres a droite ; sous 600 de
-/// large, les filtres passent sous la recherche).
+/// large, les filtres passent sous la recherche). Les personnes retenues
+/// rejoignent les filtres sur la meme rangee (FILTRES-1b).
 class _BarreRecherche extends ConsumerWidget {
   const _BarreRecherche({
     required this.tuteur,
@@ -477,34 +479,34 @@ class _BarreRecherche extends ConsumerWidget {
     return LayoutBuilder(
       builder: (BuildContext _, BoxConstraints contraintes) {
         final bool enLigne = contraintes.maxWidth >= AppPage.largeurDialogue;
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
+        // FILTRES-1 et 1b : les menus et les personnes retenues sur UNE
+        // rangee qui defile, jamais une seconde rangee de puces.
+        final Widget rangee = RangeeFiltres(
+          filtres: <Widget>[...filtres, ...personnes],
+        );
+        if (!enLigne) {
+          // Sous 600, la rangee sous la recherche.
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[recherche, Ecart.vMd, rangee],
+          );
+        }
+        // Au-dela, la rangee a cote de la recherche (maquette D3) : elle
+        // prend la largeur de ses puces, dans la limite de ce que la
+        // recherche laisse ([_partRecherche] de la largeur au moins), et
+        // defile au-dela.
+        return Row(
           children: <Widget>[
-            if (enLigne)
-              Row(
-                children: <Widget>[
-                  Expanded(child: recherche),
-                  for (final Widget f in filtres) ...<Widget>[Ecart.hMd, f],
-                ],
-              )
-            else ...<Widget>[
-              recherche,
-              Ecart.vMd,
-              Wrap(
-                spacing: AppSpacing.sm,
-                runSpacing: AppSpacing.sm,
-                children: filtres,
+            Expanded(child: recherche),
+            Ecart.hMd,
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth:
+                    contraintes.maxWidth * (1 - _partRecherche) - AppSpacing.md,
               ),
-            ],
-            if (personnes.isNotEmpty) ...<Widget>[
-              Ecart.vMd,
-              Wrap(
-                spacing: AppSpacing.sm,
-                runSpacing: AppSpacing.sm,
-                children: personnes,
-              ),
-            ],
+              child: rangee,
+            ),
           ],
         );
       },
@@ -512,12 +514,24 @@ class _BarreRecherche extends ConsumerWidget {
   }
 }
 
+/// La part de la largeur que la recherche garde au moins, a cote de la
+/// rangee de filtres (a partir de 600) : un champ plus etroit ne laisse plus
+/// lire ce qu'on tape.
+const double _partRecherche = 1 / 3;
+
 /// Une personne retenue par la recherche : la toucher la retire.
-class _PastillePersonne extends StatelessWidget {
+///
+/// Elle se declare [PuceFiltre] retenue : la rangee l'amene dans la vue des
+/// qu'elle apparait au bout des menus, sinon la seule facon de retirer ce
+/// filtre resterait cachee hors de la rangee (FILTRES-1b, reprise).
+class _PastillePersonne extends StatelessWidget implements PuceFiltre {
   const _PastillePersonne({required this.libelle, required this.onRetirer});
 
   final String libelle;
   final VoidCallback onRetirer;
+
+  @override
+  bool get retenue => true;
 
   @override
   Widget build(BuildContext context) => Semantics(
@@ -781,61 +795,125 @@ class _LigneVisite extends StatelessWidget {
             vertical: AppSpacing.md,
           ),
           child: LayoutBuilder(
-            builder: (BuildContext _, BoxConstraints contraintes) => Row(
-              children: <Widget>[
-                SizedBox(
-                  width: contraintes.maxWidth * 0.34,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text(
-                        dateNumerique(ligne.entree),
-                        style: AppTypography.tabulaire(fort),
-                      ),
-                      Ecart.vXs,
-                      Text(plage, style: AppTypography.tabulaire(doux)),
-                      Ecart.vXs,
-                      Text(
-                        ligne.ouverte
-                            ? t.historique.observations.dureeNonConfirmee
-                            : dureeDe(ligne),
-                        style: doux,
-                      ),
-                    ],
+            builder: (BuildContext _, BoxConstraints contraintes) {
+              // Un nom compose (« An-Nour ») ne passe pas a la ligne apres
+              // son trait d'union : trait d'union insecable (U+2011), comme
+              // les cartes de classe (BENTO-3).
+              final String tuteur = ligne.tuteur.replaceAll('-', '\u2011');
+              final String eleveClasse = '${ligne.eleve} · ${ligne.classe}'
+                  .replaceAll('-', '\u2011');
+              final String duree = ligne.ouverte
+                  ? t.historique.observations.dureeNonConfirmee
+                  : dureeDe(ligne);
+              final Widget quand = Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text(
+                    dateNumerique(ligne.entree),
+                    style: AppTypography.tabulaire(fort),
                   ),
-                ),
-                SizedBox(
-                  height: AppSpacing.section,
-                  child: VerticalDivider(
-                    width: AppSpacing.xxl,
-                    thickness: palette.contourCarte.asBorderSide().width,
-                    color: palette.contourCarte.asBorderSide().color,
+                  Ecart.vXs,
+                  Text(plage, style: AppTypography.tabulaire(doux)),
+                  Ecart.vXs,
+                  Text(duree, style: doux),
+                ],
+              );
+              final Widget qui = Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text(tuteur, style: fort),
+                  Ecart.vXs,
+                  Text(eleveClasse, style: doux),
+                  Ecart.vSm,
+                  StatusPill(
+                    libelle: statutVisite(ligne),
+                    ton: ligne.ouverte ? TonEtat.neutre : TonEtat.succes,
                   ),
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text(ligne.tuteur, style: fort),
-                      Ecart.vXs,
-                      Text('${ligne.eleve} · ${ligne.classe}', style: doux),
-                      Ecart.vSm,
-                      StatusPill(
-                        libelle: statutVisite(ligne),
-                        ton: ligne.ouverte ? TonEtat.neutre : TonEtat.succes,
-                      ),
-                    ],
+                ],
+              );
+              final double gauche = contraintes.maxWidth * _partQuand;
+              final double droite =
+                  contraintes.maxWidth - gauche - AppSpacing.xxl;
+              final TextScaler echelle = MediaQuery.textScalerOf(context);
+              // FILTRES-1b : un mot qui ne tient pas dans sa colonne (la
+              // date a 320 px texte x2, « Fatoumata ») serait coupe au
+              // milieu. La ligne empile alors la date au-dessus des noms, sur
+              // toute la largeur.
+              final bool cote =
+                  _motLePlusLarge(<(String, TextStyle)>[
+                        (
+                          dateNumerique(ligne.entree),
+                          AppTypography.tabulaire(fort),
+                        ),
+                        (plage, AppTypography.tabulaire(doux)),
+                        (duree, doux),
+                      ], echelle) <=
+                      gauche &&
+                  _motLePlusLarge(<(String, TextStyle)>[
+                        (tuteur, fort),
+                        (eleveClasse, doux),
+                      ], echelle) <=
+                      droite;
+              if (!cote) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    quand,
+                    Divider(
+                      height: AppSpacing.lg,
+                      thickness: palette.contourCarte.asBorderSide().width,
+                      color: palette.contourCarte.asBorderSide().color,
+                    ),
+                    qui,
+                  ],
+                );
+              }
+              return Row(
+                children: <Widget>[
+                  SizedBox(width: gauche, child: quand),
+                  SizedBox(
+                    height: AppSpacing.section,
+                    child: VerticalDivider(
+                      width: AppSpacing.xxl,
+                      thickness: palette.contourCarte.asBorderSide().width,
+                      color: palette.contourCarte.asBorderSide().color,
+                    ),
                   ),
-                ),
-              ],
-            ),
+                  Expanded(child: qui),
+                ],
+              );
+            },
           ),
         ),
       ),
     );
   }
+}
+
+/// La part de la ligne que prend la colonne date, plage et duree.
+const double _partQuand = 0.34;
+
+/// La largeur du plus long mot des textes donnes, a l'echelle du texte : ce
+/// qu'une colonne doit offrir pour qu'aucun mot n'y soit coupe.
+double _motLePlusLarge(List<(String, TextStyle)> textes, TextScaler echelle) {
+  double largeur = 0;
+  for (final (String texte, TextStyle style) in textes) {
+    for (final String mot in texte.split(RegExp('[ \t\n]+'))) {
+      if (mot.isEmpty) continue;
+      final TextPainter mesure = TextPainter(
+        text: TextSpan(text: mot, style: style),
+        textDirection: TextDirection.ltr,
+        textScaler: echelle,
+        maxLines: 1,
+      )..layout();
+      if (mesure.width > largeur) largeur = mesure.width;
+      mesure.dispose();
+    }
+  }
+  return largeur;
 }
 
 /// Ce qui suit la derniere visite : la suite, ou la fin ; puis le fuseau.

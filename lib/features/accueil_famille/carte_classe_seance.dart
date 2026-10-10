@@ -246,7 +246,7 @@ class _Identite extends StatelessWidget {
     );
     return <Widget>[
       Text(
-        c.libelle,
+        traitsDUnionInsecables(c.libelle),
         style: palette.inkStrong.applyTo(
           textes.titleMedium ?? const TextStyle(),
         ),

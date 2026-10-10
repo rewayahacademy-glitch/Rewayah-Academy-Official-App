@@ -59,8 +59,10 @@ class ZoneSupport extends StatelessWidget {
     const InterfaceMode mode = InterfaceMode.standard;
     // Guidee desktop (Q8) : la video a cote du support, jamais par-dessus.
     final bool aCote = vue.videoACoteDuSupport(gabarit);
-    // La vignette n'existe que si la camera de l'enseignante est active.
-    final bool video = vue.cameraEnseignantActive;
+    // La vignette n'existe que si la camera de l'enseignante est active, et
+    // jamais pendant le partage : la capsule de l'en-tete la remplace (TB-3,
+    // UI-01, plan V2 §4.3).
+    final bool video = vue.voitVignetteSurSupport;
     final double largeurVignette = MesuresVignette.largeur(
       gabarit,
       guidee: vue.vignetteAgrandie,
@@ -80,8 +82,9 @@ class ZoneSupport extends StatelessWidget {
     // A 200 % (texte agrandi, Mode Accessibilite compris), telephone et web
     // etroit : la vignette posee en coin laisserait au titre une colonne si
     // etroite que les mots s'y couperaient (« Chapitr / e 1 »). Elle passe
-    // alors au-dessus du texte, qui prend toute la largeur et ne revient a
-    // la ligne qu'entre les mots (MA-5). A 100 %, rien ne change.
+    // alors APRES le texte (A6 = a), qui reste en haut, prend toute la
+    // largeur et ne revient a la ligne qu'entre les mots (MA-5). A 100 %,
+    // rien ne change.
     final bool pile =
         contenu == null &&
         !aCote &&
@@ -122,7 +125,21 @@ class ZoneSupport extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
+                          _Contenu(
+                            support: support,
+                            gabarit: gabarit,
+                            marges: marges,
+                            largeurVignette: aCote || !video || pile
+                                ? 0
+                                : largeurVignette,
+                            encadreACote: colonneGuidee && !pile,
+                            sousVolet: vue.panneau != PanneauOuvert.aucun,
+                          ),
+                          // A6 = a (directeur, 27/09 ; ex-PT-B-cfbdb7a5) : en
+                          // pile, le support reste en haut, a sa place ; la
+                          // vignette le suit, elle ne le precede jamais.
                           if (pile) ...<Widget>[
+                            SizedBox(height: marges.ecartTitre),
                             Align(
                               alignment: AlignmentDirectional.topEnd,
                               // La video garde le theme de l'ecran.
@@ -137,18 +154,7 @@ class ZoneSupport extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            SizedBox(height: marges.ecartTitre),
                           ],
-                          _Contenu(
-                            support: support,
-                            gabarit: gabarit,
-                            marges: marges,
-                            largeurVignette: aCote || !video || pile
-                                ? 0
-                                : largeurVignette,
-                            encadreACote: colonneGuidee && !pile,
-                            sousVolet: vue.panneau != PanneauOuvert.aucun,
-                          ),
                         ],
                       ),
                     ),

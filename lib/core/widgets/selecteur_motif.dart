@@ -9,6 +9,7 @@ import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
 import 'filter_pill.dart';
+import 'zone_saisie.dart';
 
 /// Le choix d'un motif dans une rangee de puces, « Autre » en dernier
 /// (FORM-L1, K-57 : proposer avant de faire saisir).
@@ -254,29 +255,24 @@ class SelecteurMotifEtat extends State<SelecteurMotif> {
         ],
         if (autre) ...<Widget>[
           if (!_sansPuce) Ecart.vMd,
-          TextField(
-            key: widget.cleChampLibre,
-            controller: _libre,
-            focusNode: _focus,
-            readOnly: widget.lectureSeule,
-            minLines: widget.lignesMin,
-            maxLines: math.max(widget.lignesMin, widget.lignesMax),
-            keyboardType: TextInputType.multiline,
-            textInputAction: TextInputAction.newline,
+          // Zone de saisie partagee (SUPERPOS-1, reunie par
+          // JONCTION-LIGNES-1) : l'etiquette passe a la ligne au-dessus du
+          // champ (AD-11, 1.4.4), l'aide et l'erreur ne sont jamais coupees.
+          ZoneSaisie(
+            cleChamp: widget.cleChampLibre,
+            controleur: _libre,
+            noeud: _focus,
+            lectureSeule: widget.lectureSeule,
+            minLignes: widget.lignesMin,
+            maxLignes: math.max(widget.lignesMin, widget.lignesMax),
+            libelle: widget.libelleChamp ?? t.formulaire.motif.autreChamp,
+            explication: widget.aide,
+            // Sans puce, il n'y a pas de « Autre » a rappeler : le message
+            // de l'appelant s'affiche tel quel sous le champ.
+            erreur: erreur != null && autreVide
+                ? (_sansPuce ? erreur : t.formulaire.motif.autreVide)
+                : null,
             onChanged: (String v) => setState(() => _ecrire(v.trim())),
-            decoration: InputDecoration(
-              // AD-11 (1.4.4) : un `label` texte passe a la ligne en texte
-              // agrandi, la ou `labelText` se coupe en ellipse.
-              label: Text(widget.libelleChamp ?? t.formulaire.motif.autreChamp),
-              helperText: widget.aide,
-              helperMaxLines: 8,
-              // Sans puce, il n'y a pas de « Autre » a rappeler : le message
-              // de l'appelant s'affiche tel quel sous le champ.
-              errorText: erreur != null && autreVide
-                  ? (_sansPuce ? erreur : t.formulaire.motif.autreVide)
-                  : null,
-              errorMaxLines: 4,
-            ),
           ),
         ],
         if (erreur != null && !autreVide) ...<Widget>[

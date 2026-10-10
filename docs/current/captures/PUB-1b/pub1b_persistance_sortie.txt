@@ -1,0 +1,16 @@
+Serveur local : http://127.0.0.1:39769 (build/web)
+Navigateur : Chromium 141.0.7390.37
+OK    1re visite, racine -> http://127.0.0.1:39769/#/bienvenue
+OK    localStorage[presentation.vue] avant la croix = null
+  arbre d'accessibilite : HEADER:Rewayah Academy
+Présentation, page 1 sur 5 | button:Passer la présentation | button:Page suivante de la présentation
+OK    apres la croix -> http://127.0.0.1:39769/#/connexion
+OK    localStorage[presentation.vue] apres la croix = oui
+OK    rechargement, racine -> http://127.0.0.1:39769/#/connexion
+OK    apres 3 s, toujours pas de presentation (http://127.0.0.1:39769/#/connexion)
+OK    second rechargement -> http://127.0.0.1:39769/#/connexion
+  adresses prises apres la croix : about:blank , http://127.0.0.1:39769/ , http://127.0.0.1:39769/ , http://127.0.0.1:39769/#/connexion , http://127.0.0.1:39769/#/connexion , http://127.0.0.1:39769/ , http://127.0.0.1:39769/ , http://127.0.0.1:39769/#/connexion
+OK    aucune adresse /bienvenue apres la croix
+OK    contre-epreuve, stockage vide -> http://127.0.0.1:39769/#/bienvenue
+OK    nouvel appareil -> http://127.0.0.1:39769/#/bienvenue
+RESULTAT : PASS (vue une fois, persistance reelle du localStorage)

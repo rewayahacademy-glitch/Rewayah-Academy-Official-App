@@ -7,11 +7,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
+import 'package:rewayah_academy/core/dossier/resignature_contrat.dart';
 import 'package:rewayah_academy/core/dossier/selecteur_fichier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/dossier/versions_contrat.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/widgets/entete_page.dart'
+    show DisqueRetour;
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/dossier/attente_page.dart';
 import 'package:rewayah_academy/features/dossier/depot_piece_page.dart';
@@ -158,6 +161,9 @@ void main() {
           ],
           surcharges: <Override>[
             serviceDossierProvider.overrideWithValue(dossier),
+            // La re-signature (JUR-LIEN-385-1) lit la session : elle a son
+            // propre test, dossier_resignature_test.dart.
+            resignatureContratEnseignantProvider.overrideWithValue(false),
           ],
         ),
       );
@@ -205,31 +211,51 @@ void main() {
       ]);
     });
 
-    testWidgets('hors demonstration, politique de controle non publiee : un '
-        'enseignant signe la version 2026-09, sans la clause qui fait '
-        'confirmer la reception de la politique', (
-      WidgetTester tester,
-    ) async {
-      expect(VersionsContrat.politiqueControlePubliee, isFalse);
+    testWidgets('hors demonstration, politique de controle publiee : un '
+        'enseignant signe la version 2026-10-jur, avec la clause, son lien '
+        'vers la politique et la case art. 9', (WidgetTester tester) async {
       final FauxServiceDossier dossier = await monter(tester, AppRole.teacher);
 
-      // Les textes d'origine de la version 2026-09, gardes tels quels.
-      expect(find.text(t.contrat.intro), findsOneWidget);
-      expect(find.text(t.contrat.pointEnregistrement), findsOneWidget);
-      expect(find.text(t.contrat.pointControle), findsOneWidget);
+      // La version 2026-10-jur, comme en demonstration.
+      expect(find.text(t.contrat.clauseControle.titre), findsOneWidget);
+      expect(find.text(t.contrat.clauseControle.texte), findsOneWidget);
+      expect(find.text(t.contrat.e1.quoi), findsOneWidget);
       expect(find.text(t.contrat.pointCoordonnees), findsOneWidget);
-      // Rien de la version 2026-10-jur.
-      expect(find.text(t.contrat.clauseControle.titre), findsNothing);
-      expect(find.text(t.contrat.clauseControle.texte), findsNothing);
-      expect(find.text(t.contrat.clauseControle.caseReligion), findsNothing);
-      expect(find.text(t.contrat.e1.quoi), findsNothing);
+      // Rien des textes d'origine de la version 2026-09.
+      expect(find.text(t.contrat.intro), findsNothing);
+      expect(find.text(t.contrat.pointEnregistrement), findsNothing);
+      expect(find.text(t.contrat.pointControle), findsNothing);
 
+      // La politique que la clause fait « confirmer avoir recue » se lit
+      // depuis la clause, avant la signature.
+      final Finder lien = find.text(t.contrat.politique.lien);
+      await tester.ensureVisible(lien);
+      await tester.tap(lien);
+      await tester.pumpAndSettle();
+      expect(find.text(t.contrat.politique.titre), findsOneWidget);
+      expect(find.text(t.contrat.politique.s1.titre), findsOneWidget);
+      await tester.tap(find.byType(DisqueRetour).last);
+      await tester.pumpAndSettle();
+      expect(find.text(t.contrat.politique.titre), findsNothing);
+
+      // Case de l'article 9 jamais precochee : sans elle, rien n'est signe.
+      await tester.tap(find.text(t.contrat.accepter));
+      await tester.pumpAndSettle();
+      expect(dossier.contratsAcceptes, isEmpty);
+      final Finder caseReligion = find.text(
+        t.contrat.clauseControle.caseReligion,
+      );
+      await tester.ensureVisible(caseReligion);
+      await tester.tap(caseReligion);
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.contrat.accepter));
       await tester.pumpAndSettle();
       expect(dossier.contratsAcceptes, <SorteContrat>[
         SorteContrat.contratEnseignant,
       ]);
-      expect(dossier.versionsAcceptees, <String>[VersionsContrat.courante]);
+      expect(dossier.versionsAcceptees, <String>[
+        VersionsContrat.textesJuridiques,
+      ]);
     });
 
     testWidgets('un tuteur signe les conditions, sans la clause enseignant', (
@@ -452,8 +478,18 @@ void main() {
 
     test('garde-fou : 2026-10-jur pour l enseignant seulement en '
         'demonstration ou une fois la politique publiee', () {
+      // La politique est publiee (05/10/2026) : 2026-10-jur par defaut.
       expect(
         VersionsContrat.pour(SorteContrat.contratEnseignant),
+        VersionsContrat.textesJuridiques,
+      );
+      // Si l'interrupteur repassait a faux, la version d'origine hors
+      // demonstration.
+      expect(
+        VersionsContrat.pour(
+          SorteContrat.contratEnseignant,
+          politiquePubliee: false,
+        ),
         VersionsContrat.courante,
       );
       expect(

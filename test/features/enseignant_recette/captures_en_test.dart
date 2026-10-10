@@ -636,7 +636,7 @@ void main() {
     final Finder declarerMonAbsence = find.byKey(
       const ValueKey<String>('absence-principale'),
     );
-    final Finder offre = find.text('Assurer ce remplacement ?');
+    final Finder offre = find.text('Assurer ce remplacement\u00A0?');
     final Finder assurer = find.byKey(
       const ValueKey<String>('remplacement-principale'),
     );
@@ -737,10 +737,15 @@ void main() {
     }
 
     Future<void> ouvrirSelecteur(WidgetTester tester) async {
-      final Finder bouton = find.byKey(
-        const ValueKey<String>('bouton-supports'),
+      // TB-4 : Commandes, puis la Bibliotheque (premiere entree).
+      await _toucherEtAttendre(
+        tester,
+        find.byKey(const ValueKey<String>('declencheur-commandes')),
       );
-      await _toucherEtAttendre(tester, bouton);
+      await _toucherEtAttendre(
+        tester,
+        find.byKey(const ValueKey<String>('commandes-bibliotheque')),
+      );
       final Finder bureau = find.text(
         t.salle.seance.panneauSupports.voirBibliotheque,
       );

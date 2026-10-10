@@ -2,8 +2,9 @@
 // l'application. Le bandeau de la salle (guidee) avec son lien « En savoir
 // plus », la lecture E-1 ouverte, la carte d'accuse (A3 tuteur, E1
 // enseignant) et le contrat (tuteur, enseignant avec clause et case art. 9 en
-// demonstration, version 2026-09 hors demonstration tant que la politique de
-// controle n'est pas publiee).
+// demonstration comme hors demonstration depuis la publication de la
+// politique de controle le 05/10/2026, ASSETS-DIR-1), et la politique de
+// controle ouverte depuis le lien de la clause.
 //
 // Saute sans CAPTURE_DIR (voir test/capture/LISEZ-MOI.md). Les pages de texte
 // sont capturees dans une vue haute (390 x 2400) pour montrer le texte entier.
@@ -238,8 +239,8 @@ void main() {
       );
     });
 
-    testWidgets('contrat enseignant hors demonstration (garde-fou : 2026-09 '
-        'tant que la politique de controle n est pas publiee)', (
+    testWidgets('contrat enseignant hors demonstration (politique publiee : '
+        '2026-10-jur, clause, lien vers la politique, case art. 9)', (
       WidgetTester tester,
     ) async {
       await _monterDossier(
@@ -251,5 +252,22 @@ void main() {
         'PNG ${await capturer(tester, 'jur_app1_contrat_enseignant_hors_demo')}',
       );
     });
+
+    testWidgets(
+      'politique de controle ouverte depuis la clause (ASSETS-DIR-1)',
+      (WidgetTester tester) async {
+        await _monterDossier(
+          tester,
+          depart: Routes.attenteContrat,
+          role: AppRole.teacher,
+          taille: const Size(390, 4200),
+        );
+        await tester.tap(find.text(t.contrat.politique.lien));
+        await stabiliser(tester);
+        debugPrint(
+          'PNG ${await capturer(tester, 'jur_app1_politique_controle')}',
+        );
+      },
+    );
   });
 }

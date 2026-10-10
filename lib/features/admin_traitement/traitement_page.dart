@@ -23,6 +23,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
@@ -147,11 +148,10 @@ class _TraitementPageEtat extends ConsumerState<TraitementPage> {
       if (demandes.hasError && !demandesLues) t.admin.traitement.erreurDemandes,
     ];
 
-    final Widget filtres = Wrap(
-      spacing: AppSpacing.sm,
-      runSpacing: AppSpacing.sm,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: <Widget>[
+    // FILTRES-1 : une seule rangee de puces, qui defile quand elle ne tient
+    // pas (porte par JONCTION-LIGNES-1).
+    final Widget filtres = RangeeFiltres(
+      filtres: <Widget>[
         FilterPill(
           libelle: t.admin.traitement.filtreTous,
           compteur: tous.length,

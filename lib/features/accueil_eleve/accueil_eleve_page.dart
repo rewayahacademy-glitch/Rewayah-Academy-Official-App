@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/i18n/cle_audio.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -33,6 +34,7 @@ import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/raccourci_tactile.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
+import '../acces_finance/acces_finance.dart';
 
 /// Ce que le bloc principal de `ELV-02` annonce.
 ///
@@ -210,6 +212,25 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
         ? const <InterruptionPriere>[]
         : interruptionsDe(prochain, reglages.value);
 
+    // L'acces de l'eleve connecte (FI-9a) : seances ouvertes, essai ou
+    // fermees, jamais une cause ni un montant (guide §1.7, lecon 15). Lu
+    // borne a sa session (`PortMonAcces`, FI-BR-08, revue FI-VAGUE-R R4-02) :
+    // l'acces des freres et soeurs n'est jamais charge ici. Une lecture
+    // absente ou en echec ne change rien a l'ecran (port neutre en
+    // production) : Rejoindre ne disparait que sur un « ferme » explicite,
+    // et jamais selon un solde, que ce port ne porte pas. L'enfant ne voit
+    // que l'etat « ferme », jamais « Essai : n/2 » ni « Accès actif » (FI-Q12
+    // (b), decide par delegation le 05/10 ; revue FI-VAGUE-R R4-03).
+    final AsyncValue<AccesBeneficiaire?>? acces = prochain == null
+        ? null
+        : ref.watch(accesAppelantProvider);
+    final bool accesFerme =
+        ouvertureSeances(acces?.value) == OuvertureSeances.fermees;
+    // Tant que l'acces se lit, Rejoindre reste present et inerte (revue
+    // FI-9a) : un bouton actif qui disparaitrait ensuite serait une promesse
+    // retiree.
+    final bool accesEnLecture = acces != null && accesEnAttente(acces);
+
     // `PageShell` porte le fond creme, la gouttiere du gabarit courant, la
     // colonne centree et bornee a 1200 (« centre et borne, on n'ajoute rien »,
     // `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 3) et le bandeau hors ligne.
@@ -237,12 +258,20 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
                 // lue garde cette valeur (DASH-ELV-ERR-b, m3) : l'eleve voit
                 // encore son prochain cours plutot qu'un message. Hors ligne,
                 // le bloc dit la cause par sa nature (K-59, m2).
+                if (accesFerme) ...<Widget>[
+                  BandeauAccesFerme(acces: acces?.value),
+                  Ecart.vLg,
+                ],
                 if (echec)
                   EtatSysteme(
                     key: const ValueKey<String>('accueil-eleve-erreur'),
                     nature: horsLigne
                         ? NatureEtat.horsLigne
                         : NatureEtat.echecServeur,
+                    // Hors ligne se dit une fois (EA-HL-DOUBLE-1d) : le
+                    // « wifi barre » est celui du bandeau de `PageShell` ;
+                    // sous lui, le bloc prend l'attente (sablier).
+                    icone: horsLigne ? AppIcons.attente : null,
                     // Le titre commun hors ligne vouvoie ; l'accueil eleve
                     // tutoie.
                     titre: horsLigne
@@ -258,6 +287,8 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
                     prochain: prochain,
                     interruptions: interruptions,
                     maintenant: _maintenant,
+                    accesFerme: accesFerme,
+                    accesEnLecture: accesEnLecture,
                   ),
                 Ecart.vXl,
                 const _BlocCoran(),
@@ -274,12 +305,20 @@ class _BlocPrincipal extends StatelessWidget {
     required this.prochain,
     required this.interruptions,
     required this.maintenant,
+    this.accesFerme = false,
+    this.accesEnLecture = false,
   });
 
   final EtatAccueilEleve etat;
   final Seance? prochain;
   final List<InterruptionPriere> interruptions;
   final DateTime maintenant;
+
+  /// Seances fermees (FI-9a) : Rejoindre n'est pas rendu.
+  final bool accesFerme;
+
+  /// L'acces se lit encore : Rejoindre est rendu inerte.
+  final bool accesEnLecture;
 
   @override
   Widget build(BuildContext context) {
@@ -315,7 +354,9 @@ class _BlocPrincipal extends StatelessWidget {
           seance: prochain!,
           paire: paire,
           interruptions: interruptions,
-          joignable: etat == EtatAccueilEleve.coursEnDirect,
+          joignable: etat == EtatAccueilEleve.coursEnDirect && !accesEnLecture,
+          accesFerme: accesFerme,
+          accesEnLecture: accesEnLecture,
         ),
         EtatAccueilEleve.seanceAnnulee => _SansCoursAujourdhui(
           message: t.eleve.accueil.annulee,
@@ -398,12 +439,24 @@ class _CoursEnDirect extends StatelessWidget {
     required this.paire,
     required this.interruptions,
     required this.joignable,
+    this.accesFerme = false,
+    this.accesEnLecture = false,
   });
 
   final Seance seance;
   final AppColorPair paire;
   final List<InterruptionPriere> interruptions;
   final bool joignable;
+
+  /// Seances fermees (FI-9a) : une limite de droit, pas une panne. Le bouton
+  /// est absent, jamais grise ; le bandeau au-dessus du bloc dit l'etat, sans
+  /// cause (guide §1.7).
+  final bool accesFerme;
+
+  /// L'acces se lit encore (revue FI-9a) : le bouton est present et inerte
+  /// ([joignable] est alors faux), sans le message hors ligne, le temps que
+  /// la lecture aboutisse.
+  final bool accesEnLecture;
 
   @override
   Widget build(BuildContext context) {
@@ -433,51 +486,57 @@ class _CoursEnDirect extends StatelessWidget {
           style: paire.applyTo(textes.bodyMedium ?? const TextStyle()),
         ),
         _Interruptions(interruptions: interruptions, paire: paire),
-        Ecart.vLg,
-        // Hors ligne, le bouton reste **present et inerte**, contrairement a la
-        // regle du bouton absent qui vaut pour une limite de droit. Ce n'est pas
-        // une limite, c'est une panne passagere : un bouton disparu ferait
-        // croire a l'enfant que son cours n'existe plus, alors qu'il attend le
-        // reseau. `ActionPrincipale` signale l'inertie en changeant de PAIRE, et
-        // non par de la transparence, qui ferait tomber son texte sous le seuil.
-        ActionPrincipale(
-          libelle: t.eleve.accueil.rejoindre,
-          onPress: joignable
-              ? () => GoRouter.of(context).go(
-                  Routes.salle,
-                  // Le billet passe par `extra`, jamais par l'URL (ADR-005).
-                  extra: BilletSalle(
-                    sessionId: seance.id,
-                    emisA: DateTime.now(),
+        if (!accesFerme) ...<Widget>[
+          Ecart.vLg,
+          // Hors ligne, le bouton reste **present et inerte**, contrairement a la
+          // regle du bouton absent qui vaut pour une limite de droit. Ce n'est pas
+          // une limite, c'est une panne passagere : un bouton disparu ferait
+          // croire a l'enfant que son cours n'existe plus, alors qu'il attend le
+          // reseau. `ActionPrincipale` signale l'inertie en changeant de PAIRE, et
+          // non par de la transparence, qui ferait tomber son texte sous le seuil.
+          ActionPrincipale(
+            libelle: t.eleve.accueil.rejoindre,
+            onPress: joignable
+                ? () => GoRouter.of(context).go(
+                    Routes.salle,
+                    // Le billet passe par `extra`, jamais par l'URL (ADR-005).
+                    extra: BilletSalle(
+                      sessionId: seance.id,
+                      emisA: DateTime.now(),
+                    ),
+                  )
+                : null,
+          ),
+          if (!joignable && !accesEnLecture) ...<Widget>[
+            Ecart.vSm,
+            Row(
+              children: <Widget>[
+                IconTheme(
+                  data: IconThemeData(
+                    color: paire.onBackground,
+                    size: AppSpacing.xl,
                   ),
-                )
-              : null,
-        ),
-        if (!joignable) ...<Widget>[
-          Ecart.vSm,
-          Row(
-            children: <Widget>[
-              IconTheme(
-                data: IconThemeData(
-                  color: paire.onBackground,
-                  size: AppSpacing.xl,
+                  // Hors ligne se dit une fois (EA-HL-DOUBLE-1) : le « wifi
+                  // barre » est celui du bandeau ; ici, l'attente de l'entree.
+                  child: Icon(AppIcons.attente.repos),
                 ),
-                child: Icon(AppIcons.horsLigne.repos),
-              ),
-              Ecart.hSm,
-              Flexible(
-                child: Text(
-                  t.eleve.accueil.horsLigne,
-                  style: paire.applyTo(textes.titleMedium ?? const TextStyle()),
+                Ecart.hSm,
+                Flexible(
+                  child: Text(
+                    t.eleve.accueil.horsLigne,
+                    style: paire.applyTo(
+                      textes.titleMedium ?? const TextStyle(),
+                    ),
+                  ),
                 ),
-              ),
-            ],
-          ),
-          Ecart.vXs,
-          Text(
-            t.eleve.accueil.horsLigneDetail,
-            style: paire.applyTo(textes.bodyMedium ?? const TextStyle()),
-          ),
+              ],
+            ),
+            Ecart.vXs,
+            Text(
+              t.eleve.accueil.horsLigneDetail,
+              style: paire.applyTo(textes.bodyMedium ?? const TextStyle()),
+            ),
+          ],
         ],
       ],
     );
@@ -547,7 +606,9 @@ class _SansCoursAujourdhui extends StatelessWidget {
         (null, _) => t.eleve.accueil.aucunCoursDetail,
         (_, <= 0) => t.eleve.accueil.prochainAujourdhui,
         (_, 1) => t.eleve.accueil.prochainDemain,
-        (_, _) => t.eleve.accueil.prochainDansJours(jours: '$jours'),
+        (_, _) => LibellesGroupe.insecable(
+          t.eleve.accueil.prochainDansJours(jours: '$jours'),
+        ),
       },
     );
   }
@@ -771,7 +832,7 @@ class _PulsationEtat extends State<_Pulsation>
 /// deux ecrans ne s'adressent pas a la meme personne, et « Dans 25 min » tutoye
 /// ici ce qu'il vouvoie la-bas.
 String _compteARebours(Duration reste) {
-  final int minutes = reste.inMinutes;
+  final int minutes = LibellesGroupe.minutesAvant(reste);
   if (minutes <= 0) {
     return t.eleve.accueil.imminent;
   }

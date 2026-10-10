@@ -21,11 +21,15 @@ abstract final class InformationControle {
   /// c'est le seul ajout a l'ecran, discret).
   static const bool lienAccepte = true;
 
-  /// Le contact confidentialite que cite le texte E-2
-  /// (`{contact_confidentialite}`). **Pas encore fourni** (referent donnees
-  /// non nomme au 02/10) : tant qu'il manque, le texte E-2 n'est pas affiche,
-  /// plutot qu'affiche avec un trou ou une adresse inventee.
-  static const String? contactConfidentialite = null;
+  /// Le contact confidentialite (`{contact_confidentialite}`) : une seule
+  /// constante, citee par le texte E-2 de l'eleve et par la section 10 de la
+  /// politique de controle des enseignants (`politique_controle.dart`).
+  ///
+  /// Valeur du pilotage `14_controleur/juridique/COORDONNEES_LEGALES.md`
+  /// (choix du directeur du 05/10/2026, porte par delegation le 05/10/2026).
+  /// **Condition avant fusion** : l'alias support@rewayahacademy.com doit
+  /// etre cree par le directeur (`docs/current/JUR-APP-1_RESTES.md`).
+  static const String contactConfidentialite = 'support@rewayahacademy.com';
 
   /// Le bouton « Signaler » de l'eleve n'existe pas encore dans la salle
   /// (ecart E16) : la phrase de E-1 qui le cite reste cachee (principe 10 : le
@@ -59,12 +63,8 @@ abstract final class InformationControle {
   /// l'interface guidee, E-2 pour l'eleve (avec un contact). L'enseignant n'a
   /// pas de texte sur le bandeau.
   ///
-  /// **Sa politique de controle n'est pas encore dans l'application.** La
-  /// partie B de `POLITIQUE_CONTROLE_ENSEIGNANTS.md` est validee (02/10), mais
-  /// sa section 10 garde des champs non remplis (`{numero_societe}`,
-  /// `{adresse_siege}`, `{contact_confidentialite}`, `{representant_ue}`) :
-  /// elle n'est ni jointe au contrat ni dans l'espace enseignant tant que le
-  /// directeur ne les a pas fournis (reste de JUR-APP-1).
+  /// L'enseignant lit sa politique de controle depuis son contrat et son
+  /// profil (`politique_controle.dart`), pas depuis le bandeau.
   static bool texteDisponible(RoleSeance role, {String? contact}) =>
       switch (role) {
         RoleSeance.guidee => true,
@@ -72,6 +72,22 @@ abstract final class InformationControle {
         RoleSeance.enseignant => false,
       };
 }
+
+/// Le texte, avec des points de coupure possibles dans une adresse e-mail.
+///
+/// Une adresse est un seul « mot » plus large que l'ecran a 320 et texte
+/// 200 % : sans aide, le moteur la couperait n'importe ou. Une espace sans
+/// chasse (U+200B, invisible, rien n'est ajoute a la lecture) est posee apres
+/// « @ » et avant chaque point interieur de l'adresse : elle ne passe a la
+/// ligne qu'a ces endroits, comme le veut l'usage typographique pour les
+/// adresses (decide par delegation le 05/10/2026). Le reste du texte n'est
+/// pas touche.
+String coupuresAdresse(String texte) => texte.replaceAllMapped(
+  RegExp(r'[^\s@]+@[^\s@]*[^\s@.]'),
+  (Match m) => m[0]!
+      .replaceAll('@', '@\u200B')
+      .replaceAllMapped(RegExp(r'\.(?=[^.])'), (Match _) => '\u200B.'),
+);
 
 /// Ouvre la lecture du texte d'information propre au role. Elle se ferme
 /// d'un geste ; rien n'est a accepter.
@@ -133,7 +149,12 @@ class TexteInformationControle extends StatelessWidget {
         if (signaler) '${i.e1.p5} ${i.e1.signaler}' else i.e1.p5,
       ];
     }
-    return <String>[i.e2.p1, i.e2.p2, i.e2.p3, i.e2.p4(contact: contact ?? '')];
+    return <String>[
+      i.e2.p1,
+      i.e2.p2,
+      i.e2.p3,
+      coupuresAdresse(i.e2.p4(contact: contact ?? '')),
+    ];
   }
 
   @override

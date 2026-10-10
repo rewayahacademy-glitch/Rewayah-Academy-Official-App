@@ -1,20 +1,20 @@
-// EN-10 : la salle B cote enseignant. Teaching Dock compact raccorde a
-// `/salle` (Supports, Micro, Camera, Partager, « Ouvrir les outils
-// d'enseignement »), camera jamais allumee seule, selecteur de ressources
-// (Recents, Cette Classe, Tous les supports, recherche) qui ne quitte pas la
-// salle.
+// EN-10 : la salle B cote enseignant. Camera jamais allumee seule,
+// selecteur de ressources (Recents, Cette Classe, Tous les supports,
+// recherche) qui ne quitte pas la salle. TB-4 (CMD-01) : la barre de l'appel
+// est Micro, Camera, Quitter ; Supports devient la Bibliotheque des
+// Commandes, les outils leur onglet « Outils », Partager n'est pas repris.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
+import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
 import 'package:rewayah_academy/features/salle_seance/dock_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/libelles_salle_b.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/selecteur_ressources.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
-import 'package:rewayah_academy/features/tc_dock/teaching_dock.dart';
 
 import '../../capture/outil_capture.dart';
 import '../../support/selecteur_section.dart';
@@ -37,7 +37,11 @@ Future<void> _monter(WidgetTester tester, Size taille) async {
 Finder _cle(String cle) => find.byKey(ValueKey<String>(cle));
 
 Future<void> _ouvrirSelecteur(WidgetTester tester) async {
-  await tester.tap(_cle('bouton-supports'));
+  // TB-4 : Commandes, puis la Bibliotheque, premiere entree du panneau.
+  await tester.tap(find.byKey(DeclencheurCommandes.cle));
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 300));
+  await tester.tap(find.byKey(CommandesPedagogiques.cleBibliotheque));
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 600));
   // Le panneau Supports (CLV-08), puis « Voir toute la bibliotheque »
@@ -61,15 +65,16 @@ void main() {
     ('bureau', const Size(1440, 900)),
   ]) {
     group('EN-10 $nom', () {
-      testWidgets('le dock compact est present sur la salle', (
+      testWidgets('barre de l appel et declencheur Commandes (TB-4)', (
         WidgetTester tester,
       ) async {
         await _monter(tester, taille);
         expect(tester.takeException(), isNull);
         expect(find.byType(SalleSeance), findsOneWidget);
-        expect(_cle('bouton-supports'), findsOneWidget);
-        expect(_cle('dock-partager'), findsOneWidget);
-        expect(_cle('dock-outils'), findsOneWidget);
+        expect(find.byKey(DeclencheurCommandes.cle), findsOneWidget);
+        expect(_cle('bouton-supports'), findsNothing);
+        expect(_cle('dock-partager'), findsNothing);
+        expect(_cle('dock-outils'), findsNothing);
         // EN-12 (17 d) : dock serre, icone seule ; le libelle reste lu.
         expect(
           find.bySemanticsLabel(
@@ -88,12 +93,6 @@ void main() {
             ),
           ),
           findsWidgets,
-        );
-        expect(
-          find.bySemanticsLabel(
-            RegExp(RegExp.escape(LibellesSalleB.ouvrirOutils)),
-          ),
-          findsOneWidget,
         );
         expect(find.text('IndicateurEleve'), findsNothing);
       });
@@ -165,18 +164,26 @@ void main() {
         await tester.pump(const Duration(milliseconds: 600));
         expect(tester.takeException(), isNull);
         expect(find.byType(SalleSeance), findsOneWidget);
-        expect(_cle('bouton-supports'), findsOneWidget);
+        expect(find.byKey(DeclencheurCommandes.cle), findsOneWidget);
       });
 
-      testWidgets('ouvrir les outils : le Teaching Dock, salle ouverte', (
+      testWidgets('ouvrir les outils : onglet Outils, salle ouverte', (
         WidgetTester tester,
       ) async {
         await _monter(tester, taille);
-        await tester.tap(_cle('dock-outils'));
+        await tester.tap(find.byKey(DeclencheurCommandes.cle));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+        await tester.tap(
+          find.descendant(
+            of: find.byKey(CommandesPedagogiques.cleOnglets),
+            matching: find.text(t.salle.seance.commandes.ongletOutils),
+          ),
+        );
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 600));
         expect(tester.takeException(), isNull);
-        expect(find.byType(TeachingDock), findsOneWidget);
+        expect(_cle('outil-pointeur'), findsOneWidget);
         expect(find.byType(SalleSeance), findsOneWidget);
         expect(
           find.bySemanticsLabel(RegExp(RegExp.escape(t.salle.fermerCamera))),

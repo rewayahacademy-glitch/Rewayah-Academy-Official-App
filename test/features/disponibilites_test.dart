@@ -6,6 +6,7 @@ import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/features/disponibilites/disponibilites_page.dart';
 import 'package:rewayah_academy/features/disponibilites/grille_semaine.dart';
 
@@ -67,7 +68,9 @@ void main() {
       // La grille depasse la hauteur d'un ecran : la case se rejoint en
       // faisant defiler, comme le fera un tuteur au telephone.
       final Finder mardi17 = find.bySemanticsLabel(
-        t.disponibilites.celluleLibre(jour: 'mardi', heure: '17'),
+        LibellesGroupe.insecable(
+          t.disponibilites.celluleLibre(jour: 'mardi', heure: '17'),
+        ),
       );
       await tester.ensureVisible(mardi17);
       await tester.pumpAndSettle();
@@ -107,7 +110,9 @@ void main() {
       expect(find.text(t.disponibilites.poseeUne), findsOneWidget);
 
       final Finder lundi17 = find.bySemanticsLabel(
-        t.disponibilites.cellulePosee(jour: 'lundi', heure: '17'),
+        LibellesGroupe.insecable(
+          t.disponibilites.cellulePosee(jour: 'lundi', heure: '17'),
+        ),
       );
       await tester.ensureVisible(lundi17);
       await tester.pumpAndSettle();
@@ -138,7 +143,9 @@ void main() {
       await tester.pumpAndSettle();
 
       final Finder lundi9 = find.bySemanticsLabel(
-        t.disponibilites.celluleLibre(jour: 'lundi', heure: '9'),
+        LibellesGroupe.insecable(
+          t.disponibilites.celluleLibre(jour: 'lundi', heure: '9'),
+        ),
       );
       await tester.ensureVisible(lundi9);
       await tester.pumpAndSettle();
@@ -172,10 +179,12 @@ void main() {
 
       // 5 heures est hors de la plage 6 h - 21 h : sans cette regle, la case
       // serait invisible, donc impossible a retirer.
-      expect(find.text('5 h'), findsOneWidget);
+      expect(find.text('\u200E5\u00A0h'), findsOneWidget);
       expect(
         find.bySemanticsLabel(
-          t.disponibilites.cellulePosee(jour: 'mercredi', heure: '5'),
+          LibellesGroupe.insecable(
+            t.disponibilites.cellulePosee(jour: 'mercredi', heure: '5'),
+          ),
         ),
         findsOneWidget,
       );

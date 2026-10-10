@@ -18,6 +18,7 @@ import '../../features/admin_configuration_politique_kyc/politique_revue_kyc_pag
 import '../../features/admin_configuration_regles/regles_page.dart';
 import '../../features/admin_demandes/demandes_page.dart';
 import '../../features/admin_dossiers/dossiers_page.dart';
+import '../../features/admin_finance/finance_page.dart';
 import '../../features/admin_groupes/groupes_page.dart';
 import '../../features/admin_journal/journal_page.dart';
 import '../../features/admin_observations/observations_admin_page.dart';
@@ -30,6 +31,8 @@ import '../../features/admin_regroupements/regroupements_page.dart';
 import '../../features/admin_tableau/tableau_de_bord_page.dart';
 import '../../features/admin_traitement/traitement_page.dart';
 import '../../features/agent_entree/agent_entree_page.dart';
+import '../../features/alertes/alertes_page.dart';
+import '../../features/alertes/bandeau_alerte_urgente.dart';
 import '../../features/appareils/ajouter_enfant_page.dart';
 import '../../features/appareils/appairage_page.dart';
 import '../../features/appareils/appareils_eleve_page.dart';
@@ -43,6 +46,24 @@ import '../../features/classe_tuteur/planning_classe_page.dart';
 import '../../features/classe_tuteur/progression_classe_page.dart';
 import '../../features/classe_tuteur/ressources_classe_page.dart';
 import '../../features/classe_tuteur/travail_classe_page.dart';
+import '../../features/com_annonces/administration_communications_page.dart';
+import '../../features/com_annonces/publier_annonce_classe_page.dart';
+import '../../features/com_communaute/communaute_page.dart';
+import '../../features/com_messages/messages_admin.dart';
+import '../../features/com_messages/messages_page.dart';
+import '../../features/com_studio/studio_page.dart';
+import '../../features/comptable/aujourdhui/aujourdhui_page.dart';
+import '../../features/comptable/beneficiaires/beneficiaires_page.dart';
+import '../../features/comptable/beneficiaires/profil_paiement_page.dart';
+import '../../features/comptable/contractuels/contractuels_page.dart';
+import '../../features/comptable/contractuels/nouvelle_obligation_page.dart';
+import '../../features/comptable/contractuels/obligation_contractuel_page.dart';
+import '../../features/comptable/encaissements/detail_encaissement_page.dart';
+import '../../features/comptable/encaissements/encaissements_page.dart';
+import '../../features/comptable/encaissements/rapprochement_page.dart';
+import '../../features/comptable/paiements/detail_paiement_page.dart';
+import '../../features/comptable/paiements/paiements_page.dart';
+import '../../features/comptable/tresorerie/tresorerie_page.dart';
 import '../../features/compte/acces_page.dart';
 import '../../features/compte/aide_page.dart';
 import '../../features/compte/apparence_page.dart';
@@ -66,11 +87,14 @@ import '../../features/controleur/garde_controle.dart';
 import '../../features/controleur/historique_controleur_page.dart';
 import '../../features/controleur/observation_controle_page.dart';
 import '../../features/creneaux/creneaux_page.dart';
+import '../../features/demo/communications/demo_communications_page.dart';
 import '../../features/demo/demo_accessibilite_page.dart';
 import '../../features/demo/demo_adulte_page.dart';
 import '../../features/demo/demo_classe_page.dart';
+import '../../features/demo/demo_comptable_page.dart';
 import '../../features/demo/demo_controleur_page.dart';
 import '../../features/demo/demo_enseignant_page.dart';
+import '../../features/demo/demo_finance_page.dart';
 import '../../features/demo/demo_salle_page.dart';
 import '../../features/dossier/attente_page.dart';
 import '../../features/dossier/depot_piece_page.dart';
@@ -83,11 +107,16 @@ import '../../features/fiche_groupe/fiche_groupe_page.dart';
 import '../../features/foyer/creer_mon_profil_indisponible.dart';
 import '../../features/foyer/fiche/acces_page.dart';
 import '../../features/foyer/fiche/camera_page.dart';
+import '../../features/foyer/fiche/couleur_page.dart';
+import '../../features/foyer/fiche/finances_page.dart';
 import '../../features/foyer/fiche/informations_page.dart';
 import '../../features/foyer/fiche/inscription_page.dart';
 import '../../features/foyer/fiche/interface_page.dart';
+import '../../features/foyer/fiche/mouvements_page.dart';
 import '../../features/foyer/fiche_eleve_page.dart';
+import '../../features/foyer/finances_foyer.dart' show financesFoyerProvider;
 import '../../features/foyer/foyer_page.dart';
+import '../../features/foyer/invitation_conjoint.dart';
 import '../../features/inscription/etapes/genre_etape.dart';
 import '../../features/inscription/etapes/identite_etape.dart';
 import '../../features/inscription/etapes/recapitulatif_etape.dart';
@@ -95,9 +124,11 @@ import '../../features/inscription/etapes/usage_etape.dart';
 import '../../features/inscription/inscription_page.dart';
 import '../../features/journee/journee_page.dart';
 import '../../features/notifications/notifications_page.dart';
+import '../../features/paiements_recus/recevoir_paiements_page.dart';
 import '../../features/parcours_offres/parcours_offres_page.dart';
 import '../../features/profil_enseignant/profil_enseignant_page.dart';
 import '../../features/remplacements/remplacements_page.dart';
+import '../../features/revenus_enseignant/revenus_enseignant_page.dart';
 import '../../features/revue_groupe/revue_groupe_page.dart';
 import '../../features/salle/salle_page.dart';
 import '../../features/suivi_demandes/suivi_demandes_page.dart';
@@ -113,16 +144,22 @@ import '../../features/tc_mushaf/mushaf_page.dart';
 import '../../features/tc_mushaf/routes_tc_c.dart';
 import '../../features/tc_observation_ui/routes_tc_g.dart';
 import '../admin/admin_domaine.dart';
+import '../alertes/port_alertes.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
 import '../dossier/resignature_contrat.dart';
+import '../finance/montant.dart';
+import '../i18n/strings.g.dart';
+import '../icons/app_icons.dart';
 import '../mouvement/transitions.dart';
+import '../preferences/presentation_vue.dart';
 import '../session/session_controleur.dart';
 import '../session/session_state.dart';
 import '../tc_groupe/group_home_vm.dart' show RoleEspaceGroupe;
 import '../theme/app_gabarit.dart';
 import '../widgets/admin_shell.dart';
 import '../widgets/bascule_theme.dart';
+import '../widgets/bouton_icone.dart';
 import '../widgets/entete_page.dart';
 import '../widgets/nav_shell.dart';
 import '../widgets/page_shell.dart';
@@ -162,6 +199,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
     rafraichisseur.declencher();
   });
 
+  // PUB-1 : la racine d'un visiteur sans session depend de la presentation
+  // deja vue sur cet appareil, lue apres le demarrage.
+  ref.listen<EtatPresentation>(presentationProvider, (
+    EtatPresentation? _,
+    EtatPresentation _,
+  ) {
+    rafraichisseur.declencher();
+  });
+
   // Lu une fois, a la construction du routeur : un role ne change pas sans
   // reconnexion, qui recree ce provider. `routesTcA` n'en a besoin que pour
   // distinguer l'affichage eleve/tuteur au sein de l'Espace Groupe -- la
@@ -174,8 +220,16 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
     initialLocation: Routes.racine,
     refreshListenable: rafraichisseur,
     redirect: (BuildContext _, GoRouterState etat) {
+      final SessionState session = ref.read(sessionProvider);
+      // La preference n'est lue que pour la racine d'un visiteur sans
+      // session : un compte connecte ne touche jamais ce stockage.
+      if (session.porte == PorteAcces.deconnecte &&
+          etat.matchedLocation == Routes.racine) {
+        ref.read(presentationProvider.notifier).charger();
+      }
       return deciderRedirection(
-        session: ref.read(sessionProvider),
+        session: session,
+        presentation: ref.read(presentationProvider),
         cheminDemande: etat.matchedLocation,
         billet: etat.extra is BilletSalle ? etat.extra! as BilletSalle : null,
         maintenant: DateTime.now(),
@@ -326,6 +380,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             profilId: etat.pathParameters['profilId'] ?? '',
           ),
         ),
+      ),
+      // « Recevoir mes paiements » (Comptable V1, CPT-F ; spec Finance
+      // operationnelle §17, §38) : la surface personnelle de tout
+      // beneficiaire avec compte, dans la coquille de son role. Le
+      // beneficiaire seul y modifie ses coordonnees (R-FIN-13).
+      GoRoute(
+        path: Routes.comptePaiementsRecus,
+        builder: (BuildContext _, GoRouterState _) =>
+            const _CoquilleSecondaire(child: RecevoirPaiementsPage()),
       ),
 
       // Eleve. Meme arborescence en mode enfant et en mode standard : c'est ce
@@ -561,6 +624,26 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                   ),
                 ],
               ),
+              // COM-F : les Messages metier, une pose de l'Accueil (aucune
+              // cinquieme destination) ; la voie COM-MSG remplit l'ecran.
+              GoRoute(
+                path: Routes.tuteurMessages,
+                pageBuilder: glissee(
+                  (GoRouterState _) =>
+                      const MessagesPage(cheminRetour: Routes.tuteurAccueil),
+                ),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: ':filId',
+                    pageBuilder: glissee(
+                      (GoRouterState etat) => MessagesPage(
+                        filId: _parametre(etat, 'filId'),
+                        cheminRetour: Routes.tuteurMessages,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
           // Foyer : ajout de profil, appareils, emetteur QR, fiche et ses
@@ -588,6 +671,93 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     pageBuilder: glissee(
                       (GoRouterState _) => const AppareilsPage(),
                     ),
+                  ),
+                  GoRoute(
+                    path: 'recharge',
+                    pageBuilder: glissee(
+                      (GoRouterState etat) => Builder(
+                        builder: (BuildContext context) => RechargeFoyerPage(
+                          // Une autre selection (« Reessayer » apres un
+                          // echec, FI-8, `&reprise=`) ouvre une recharge
+                          // neuve. Sous le resultat, l'adresse garde les
+                          // memes parametres (plus `commande`, ignore ici) :
+                          // la page et sa commande restent, et le retour du
+                          // navigateur montre « Suivre le paiement », jamais
+                          // un second « Payer » (revue FI-8).
+                          key: ValueKey<String>(
+                            Routes.identiteRecharge(etat.uri.queryParameters),
+                          ),
+                          preselection: <String>{
+                            for (final String id
+                                in (etat.uri.queryParameters['profils'] ?? '')
+                                    .split(','))
+                              if (id.isNotEmpty) id,
+                          },
+                          montantsInitiaux: Routes.montantsDe(
+                            etat.uri.queryParameters['montants'],
+                          ),
+                          // L'abandon ramene d'ou la recharge est partie :
+                          // Compte > Paiements (`?depuis=compte`) ou le Foyer.
+                          onAbandon: () => GoRouter.of(context).go(
+                            etat.uri.queryParameters['depuis'] ==
+                                    Routes.origineCompte
+                                ? Routes.compteTuteurSousPage('paiements')
+                                : Routes.tuteurFoyer,
+                          ),
+                          // Apres le paiement, le Foyer relit ses finances
+                          // (soldes, etats) au lieu de montrer les anciennes.
+                          onTerminee: () {
+                            ProviderScope.containerOf(
+                              context,
+                              listen: false,
+                            ).invalidate(financesFoyerProvider);
+                            GoRouter.of(context).go(Routes.tuteurFoyer);
+                          },
+                          // Le paiement rend une commande : son resultat
+                          // (FI-8), qui relit l'etat, jamais un succes local.
+                          onPaye: (String commande) => GoRouter.of(context).go(
+                            Routes.resultatRechargePour(
+                              commande,
+                              recharge: etat.uri.queryParameters,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    routes: <RouteBase>[
+                      // Le resultat et ses huit etats (FI-8, guide §5.4).
+                      GoRoute(
+                        path: 'result',
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => Builder(
+                            builder: (BuildContext context) =>
+                                ResultatRechargePage(
+                                  commandeId:
+                                      etat.uri.queryParameters['commande'] ??
+                                      '',
+                                  // Retour au Foyer : ses finances sont
+                                  // relues, jamais les soldes d'avant.
+                                  onRevenir: () {
+                                    ProviderScope.containerOf(
+                                      context,
+                                      listen: false,
+                                    ).invalidate(financesFoyerProvider);
+                                    GoRouter.of(context).go(Routes.tuteurFoyer);
+                                  },
+                                  onReprendre: (Map<String, Montant> m) =>
+                                      GoRouter.of(context).go(
+                                        Routes.rechargeReprise(
+                                          m,
+                                          commande: etat
+                                              .uri
+                                              .queryParameters['commande'],
+                                        ),
+                                      ),
+                                ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   GoRoute(
                     path: 'appairer/:eleveId',
@@ -628,6 +798,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                         ),
                       ),
                       GoRoute(
+                        path: 'couleur',
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => CouleurElevePage(
+                            eleveId: _parametre(etat, 'eleveId'),
+                          ),
+                        ),
+                      ),
+                      GoRoute(
                         path: 'camera',
                         pageBuilder: glissee(
                           (GoRouterState etat) => CameraElevePage(
@@ -639,6 +817,22 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                         path: 'acces',
                         pageBuilder: glissee(
                           (GoRouterState etat) => AccesElevePage(
+                            eleveId: _parametre(etat, 'eleveId'),
+                          ),
+                        ),
+                      ),
+                      GoRoute(
+                        path: 'finances',
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => FinancesElevePage(
+                            eleveId: _parametre(etat, 'eleveId'),
+                          ),
+                        ),
+                      ),
+                      GoRoute(
+                        path: 'mouvements',
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => MouvementsElevePage(
                             eleveId: _parametre(etat, 'eleveId'),
                           ),
                         ),
@@ -733,8 +927,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                   ),
                   GoRoute(
                     path: 'paiements',
+                    // « Recharger » ouvre LA recharge du Foyer (FI-7,
+                    // guide V4 §4) : jamais un second centre de paiement.
                     pageBuilder: glissee(
-                      (GoRouterState _) => const PaiementsComptePage(),
+                      (GoRouterState _) => Builder(
+                        builder: (BuildContext context) => PaiementsComptePage(
+                          // `?depuis=compte` : l'abandon revient ici.
+                          onRecharger: () =>
+                              GoRouter.of(context)
+                                  .go(Routes.rechargeDepuisCompte),
+                        ),
+                      ),
                     ),
                   ),
                   GoRoute(
@@ -815,6 +1018,32 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                   ),
                 ],
               ),
+              // COM-F : poses de la branche Aujourd'hui (aucune destination
+              // ajoutee, E10) : les notifications de la cloche, la
+              // `NotificationsPage` existante, et la Communaute enseignants,
+              // raccourci d'Aujourd'hui (Q2).
+              GoRoute(
+                path: Routes.enseignantNotifications,
+                builder: (BuildContext contexte, GoRouterState _) =>
+                    NotificationsPage(
+                      onRetour: () =>
+                          GoRouter.of(contexte).go(Routes.enseignantJournee),
+                    ),
+              ),
+              GoRoute(
+                path: Routes.enseignantCommunaute,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const CommunautePage(),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: ':publicationId',
+                    builder: (BuildContext _, GoRouterState etat) =>
+                        CommunautePage(
+                          publicationId: _parametre(etat, 'publicationId'),
+                        ),
+                  ),
+                ],
+              ),
             ],
           ),
           // Classes, deuxieme branche (E10) : l'ordre des branches est celui
@@ -825,6 +1054,23 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 path: Routes.enseignantClasses,
                 builder: (BuildContext _, GoRouterState _) =>
                     const MesClassesPage(),
+              ),
+              // COM-F : les Messages metier de l'enseignant, une pose de la
+              // branche Classes (aucune destination ajoutee, E10).
+              GoRoute(
+                path: Routes.enseignantMessages,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const MessagesPage(cheminRetour: Routes.enseignantClasses),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: ':filId',
+                    builder: (BuildContext _, GoRouterState etat) =>
+                        MessagesPage(
+                          filId: _parametre(etat, 'filId'),
+                          cheminRetour: Routes.enseignantMessages,
+                        ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -843,6 +1089,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 path: Routes.enseignantProfil,
                 builder: (BuildContext _, GoRouterState _) =>
                     const ProfilEnseignantPage(),
+              ),
+              // Mes revenus (FI-10) : une pose de la branche Profil, ou elle
+              // s'ouvre ; la barre garde Profil actif.
+              GoRoute(
+                path: Routes.enseignantRevenus,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const RevenusEnseignantPage(),
               ),
             ],
           ),
@@ -889,6 +1142,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState etat) =>
             RevueGroupePage(groupeId: etat.pathParameters['groupeId'] ?? ''),
       ),
+      // COM-F : publier une annonce de Classe, tache focalisee hors de la
+      // coquille comme l'Espace Classe d'ou elle part (voie COM-ANN).
+      GoRoute(
+        path: '${Routes.enseignantGroupe}/:groupeId/annonce',
+        builder: (BuildContext _, GoRouterState etat) =>
+            PublierAnnonceClassePage(groupeId: _parametre(etat, 'groupeId')),
+      ),
 
       // Controleur : quatre destinations, Controle, Historique, Echanges,
       // Compte (C13, document 08 du 27/09/2026, qui remplace « une seule
@@ -911,6 +1171,16 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 path: Routes.controleur,
                 builder: (BuildContext _, GoRouterState _) =>
                     const ControleControleurPage(),
+              ),
+              // COM-F : les notifications de la cloche du controleur, la
+              // `NotificationsPage` existante, pose de la branche Controle.
+              GoRoute(
+                path: Routes.controleurNotifications,
+                builder: (BuildContext contexte, GoRouterState _) =>
+                    NotificationsPage(
+                      onRetour: () =>
+                          GoRouter.of(contexte).go(Routes.controleur),
+                    ),
               ),
             ],
           ),
@@ -941,15 +1211,25 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md`), routes NESTED par domaine.
       // Chaque route porte son domaine explicitement, comme
       // `_CoquilleSecondaire` portait deja son role -- ni l'un ni l'autre ne
-      // devine depuis le chemin courant. Pedagogie, Finance, Configuration et
-      // Direction n'ont **aucune route ici** : l'audit interdit une page
-      // construite pour un domaine sans fonction reelle
-      // (`AdminDomaine.chemin` y est nul, `AdminShell` les rend inertes).
+      // devine depuis le chemin courant. Direction n'a **aucune route ici** :
+      // l'audit interdit une page construite pour un domaine sans fonction
+      // reelle (`AdminDomaine.chemin` y est nul, `AdminShell` le rend inerte).
+      // Finance a ses routes depuis FI-1b (guide Finance V4 du directeur,
+      // 02/10/2026) : sans port branche, chaque onglet dit honnetement
+      // « Pas encore disponible ».
       GoRoute(
         path: Routes.admin,
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.accueil,
           child: TableauDeBordPage(),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminAlertes,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.accueil,
+          sousPage: true,
+          child: AlertesPage(),
         ),
       ),
       // La racine du domaine Operations n'est pas une page : elle renvoie a
@@ -996,6 +1276,86 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.operations,
           child: DemandesPage(),
+        ),
+      ),
+      // COM-F : l'Administration des communications, sous Operations
+      // (QUESTIONS Q4), jamais un neuvieme domaine. Trois onglets pairs
+      // (`ongletsCommunications`) ; la racine renvoie au premier.
+      GoRoute(
+        path: Routes.adminOperationsCommunications,
+        redirect: (BuildContext _, GoRouterState _) =>
+            Routes.adminCommunicationsAnnonces,
+      ),
+      GoRoute(
+        path: Routes.adminCommunicationsAnnonces,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: AdministrationCommunicationsPage(
+            onglet: OngletCommunications.annonces,
+          ),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminCommunicationsModeration,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: AdministrationCommunicationsPage(
+            onglet: OngletCommunications.moderation,
+          ),
+        ),
+      ),
+      // COM-FUS : l'onglet Messages monte la page de la voie COM-MSG-2
+      // (`MessagesAdminPage`), meme sous-navigation des trois onglets.
+      GoRoute(
+        path: Routes.adminCommunicationsMessages,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: MessagesAdminPage(),
+        ),
+        routes: <RouteBase>[
+          GoRoute(
+            path: ':filId',
+            builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
+              domaine: AdminDomaine.operations,
+              child: MessagesAdminPage(filId: _parametre(etat, 'filId')),
+            ),
+          ),
+        ],
+      ),
+      // COM-F : la cloche de l'en-tete admin ouvre la `NotificationsPage`
+      // existante, transverse aux domaines (aucun domaine actif).
+      GoRoute(
+        path: Routes.adminNotifications,
+        builder: (BuildContext contexte, GoRouterState _) => _CoquilleAdmin(
+          domaine: null,
+          notificationsOuvertes: true,
+          child: NotificationsPage(
+            onRetour: () => GoRouter.of(contexte).go(Routes.admin),
+          ),
+        ),
+      ),
+      // COM-F : Le Studio (QUESTIONS Q1), hors de l'`AdminShell` : sa propre
+      // navigation viendra de la voie COM-STU, la sortie ramene a `/admin`.
+      // `/admin/studio/canaux` n'a pas de page : elle renvoie a la vue des
+      // canaux du Studio (`/admin/studio` est Aujourd'hui, COM-STU-2).
+      // COM-RC (revue COM-R, R-05) : comme toute coquille admin, Le Studio
+      // porte la cloche, la bascule clair / sombre et l'acces au compte
+      // (`_ActionsStudio`), et son identite « Administrateur » dans sa
+      // colonne (`CoquilleStudio.onCompte`).
+      GoRoute(
+        path: Routes.adminStudio,
+        builder: (BuildContext _, GoRouterState _) =>
+            const _ActionsStudio(child: StudioPage()),
+      ),
+      GoRoute(
+        path: Routes.adminStudioCanaux,
+        redirect: (BuildContext _, GoRouterState _) =>
+            adresseVueStudio(VueStudio.canaux),
+      ),
+      GoRoute(
+        path: '${Routes.adminStudioCanaux}/:canalId',
+        builder: (BuildContext _, GoRouterState etat) => _ActionsStudio(
+          child: StudioPage(canalId: _parametre(etat, 'canalId')),
         ),
       ),
       // OFFRES-ADM-1 : atteinte depuis l'Accueil (raccourci « Classes a
@@ -1085,6 +1445,43 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
           child: QualitePage(),
+        ),
+      ),
+      // Domaine Finance (FI-1b) : la racine EST la Vue globale (route
+      // canonique « Vue d'ensemble » du contrat metier), jamais une
+      // redirection ; Politiques commerciales est son onglet pair
+      // (`ongletsFinance()`).
+      GoRoute(
+        path: Routes.adminFinance,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.finance,
+          child: FinancePage(onglet: OngletFinance.vueGlobale),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminFinancePolitiques,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.finance,
+          child: FinancePage(onglet: OngletFinance.politiques),
+        ),
+      ),
+      // Reserve et delegation (Comptable V1, CPT-F ; spec Finance
+      // operationnelle §37) : le troisieme onglet du meme domaine, jamais un
+      // second systeme Finance. La voie CPT-DIR remplit sa page.
+      GoRoute(
+        path: Routes.adminFinanceReserveDelegation,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.finance,
+          child: FinancePage(onglet: OngletFinance.reserveDelegation),
+        ),
+      ),
+      // A valider (CPT-VAL-1, decision Q-8 = (a) du 05/10) : le quatrieme
+      // onglet du meme domaine.
+      GoRoute(
+        path: Routes.adminFinanceAValider,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.finance,
+          child: FinancePage(onglet: OngletFinance.aValider),
         ),
       ),
       // Domaine Configuration : la racine redirige vers Regles, sa fonction
@@ -1193,10 +1590,150 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             Routes.adminSecuriteAuditAccesAgents,
       ),
 
-      // Comptable : le role existe, son interface arrive en V1 (ADR-003).
-      GoRoute(
-        path: Routes.comptable,
-        builder: (BuildContext _, GoRouterState _) => const ComptePage(),
+      // Comptable (Comptable V1, CPT-F) : quatre destinations, Aujourd'hui,
+      // Paiements, Tresorerie, Compte (spec Finance operationnelle §45 ;
+      // `20_comptable/UX_REVIEW_FINANCE_COMPTABLE_L0.md` §3). Les trois
+      // premieres sont les branches, dans l'ordre de
+      // `destinationsPour(AppRole.accountant)` ; Compte est `/compte`,
+      // partage, rejoint par `go`. Le second niveau (A effectuer,
+      // Contractuels, Beneficiaires ; Coffres, Encaissements, Rapprochement)
+      // est en onglets DANS la page, et chaque page de detail est une route
+      // imbriquee de sa branche. Les constructeurs ne recoivent que des
+      // chaines (identifiant, filtre brut) : la page lit son port. Les pages
+      // « en preparation » sont remplacees par les voies (CPT-FUS) sans que
+      // ces routes changent. ADR-003 est remplace par la spec du 04/10/2026.
+      StatefulShellRoute.indexedStack(
+        builder:
+            (BuildContext _, GoRouterState etat, StatefulNavigationShell n) =>
+                _CoquilleNavigation(
+                  role: AppRole.accountant,
+                  navigationShell: n,
+                  chemin: etat.uri.path,
+                ),
+        branches: <StatefulShellBranch>[
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.comptable,
+                builder: (BuildContext _, GoRouterState etat) =>
+                    AujourdhuiComptablePage(
+                      vue: etat
+                          .uri
+                          .queryParameters[Routes.parametreVueComptable],
+                    ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.comptablePaiements,
+                builder: (BuildContext _, GoRouterState etat) =>
+                    PaiementsAEffectuerPage(
+                      filtre: etat
+                          .uri
+                          .queryParameters[Routes.parametreFiltreComptable],
+                      type: etat
+                          .uri
+                          .queryParameters[Routes.parametreTypeComptable],
+                      classe: etat
+                          .uri
+                          .queryParameters[Routes.parametreClasseComptable],
+                    ),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'obligation/:obligationId',
+                    builder: (BuildContext _, GoRouterState etat) =>
+                        DetailPaiementPage(
+                          obligationId: _parametre(etat, 'obligationId'),
+                        ),
+                  ),
+                  GoRoute(
+                    path: 'contractuels',
+                    builder: (BuildContext _, GoRouterState etat) =>
+                        ContractuelsPage(
+                          onglet: etat.uri.queryParameters['onglet'],
+                        ),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'nouvelle',
+                        builder: (BuildContext _, GoRouterState _) =>
+                            const NouvelleObligationPage(),
+                      ),
+                      GoRoute(
+                        path: 'obligation/:obligationId',
+                        builder: (BuildContext _, GoRouterState etat) =>
+                            ObligationContractuelPage(
+                              obligationId: _parametre(etat, 'obligationId'),
+                            ),
+                      ),
+                    ],
+                  ),
+                  GoRoute(
+                    path: 'beneficiaires',
+                    builder: (BuildContext _, GoRouterState etat) =>
+                        BeneficiairesPage(
+                          filtre: etat
+                              .uri
+                              .queryParameters[Routes.parametreFiltreComptable],
+                        ),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: ':beneficiaireId',
+                        builder: (BuildContext _, GoRouterState etat) =>
+                            ProfilPaiementPage(
+                              beneficiaireId: _parametre(
+                                etat,
+                                'beneficiaireId',
+                              ),
+                            ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.comptableTresorerie,
+                builder: (BuildContext _, GoRouterState etat) => TresoreriePage(
+                  action:
+                      etat.uri.queryParameters[Routes.parametreActionComptable],
+                ),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'encaissements',
+                    builder: (BuildContext _, GoRouterState etat) =>
+                        EncaissementsPage(
+                          filtre: etat
+                              .uri
+                              .queryParameters[Routes.parametreFiltreComptable],
+                        ),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: ':encaissementId',
+                        builder: (BuildContext _, GoRouterState etat) =>
+                            DetailEncaissementPage(
+                              encaissementId: _parametre(
+                                etat,
+                                'encaissementId',
+                              ),
+                            ),
+                      ),
+                    ],
+                  ),
+                  GoRoute(
+                    path: 'rapprochement',
+                    builder: (BuildContext _, GoRouterState _) =>
+                        const RapprochementPage(),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
       ),
 
       // Teaching Core (plan d'integration, etape 7). Cinq lots, cinq
@@ -1277,6 +1814,9 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ...routesDemoControleur(Env.environnement),
       ...routesDemoAccessibilite(Env.environnement),
       ...routesDemoAdulte(Env.environnement),
+      ...routesDemoFinance(Env.environnement),
+      ...routesDemoCommunications(Env.environnement),
+      ...routesDemoComptable(Env.environnement),
     ],
   );
 });
@@ -1422,6 +1962,9 @@ class _CoquilleSecondaire extends ConsumerWidget {
         onCompte: () => aller(Routes.compte),
         // Retour vers l'Accueil admin partout (spec section 26 ter, Q14).
         onRetour: () => aller(Routes.admin),
+        // COM-F : la cloche et Le Studio, comme sur toute page admin.
+        onNotifications: () => aller(Routes.adminNotifications),
+        onStudio: () => aller(Routes.adminStudio),
         child: child,
       );
     }
@@ -1483,17 +2026,27 @@ class _CoquilleNavigation extends ConsumerWidget {
       mode: InterfaceMode.standard,
     );
     final List<Destination> visibles = destinationsPour(role: role, mode: mode);
+    // COM-F-Q5 : sur la page des notifications, la cloche est la seule
+    // entree active. La page vit sous une branche (la Journee, l'Accueil),
+    // mais la barre ne surligne pas cet onglet : deux selections a la fois
+    // diraient deux endroits.
+    final String? cheminCloche = Routes.notificationsPour(role);
+    final bool surNotifications = chemin == cheminCloche;
 
     final Widget coquille = NavShell(
       destinations: visibles,
-      indexActif: indexDansBarre(
-        visibles: visibles,
-        completes: destinations,
-        indexComplet: navigationShell.currentIndex < destinations.length
-            ? navigationShell.currentIndex
-            : null,
-      ),
-      masquerBarreBasse: Routes.estTacheFocalisee(chemin),
+      indexActif: surNotifications
+          ? null
+          : indexDansBarre(
+              visibles: visibles,
+              completes: destinations,
+              indexComplet: navigationShell.currentIndex < destinations.length
+                  ? navigationShell.currentIndex
+                  : null,
+            ),
+      masquerBarreBasse:
+          Routes.estTacheFocalisee(chemin) ||
+          Routes.estTacheFocaliseeComptable(chemin),
       // Le rail replie a icones seules est la maquette du tuteur ; l'eleve et
       // l'enseignant gardent leurs libelles visibles sur tablette, comme avant
       // le chantier (revue phase 0, jetons D2, routes D3).
@@ -1535,10 +2088,31 @@ class _CoquilleNavigation extends ConsumerWidget {
     );
 
     if (role != AppRole.guardian) {
+      // COM-F : la cloche des notifications, posee par la coquille du role
+      // quand ce role en a une (`Routes.notificationsPour` : enseignant et
+      // controleur ; jamais l'eleve mineur, reponse Q5 du directeur du
+      // 04/10). Sans point tant que le port est indisponible, comme le
+      // tuteur. Elle s'ajoute, en dernier, aux actions deja posees au-dessus
+      // (le raccourci Espaces de CT-9), et se montre active sur sa page.
+      final Widget avecCloche = cheminCloche == null
+          ? coquille
+          : Builder(
+              builder: (BuildContext contexte) => ActionsEnteteCoquille(
+                actions: <Widget>[
+                  ...ActionsEnteteCoquille.de(contexte),
+                  ClocheNotifications(
+                    actif: surNotifications,
+                    onPress: () => GoRouter.of(contexte).go(cheminCloche),
+                  ),
+                ],
+                onRetour: ActionsEnteteCoquille.retourDe(contexte),
+                child: coquille,
+              ),
+            );
       // CT-9 : le raccourci d'en-tete vers `Compte > Espaces`, seulement
       // quand le compte a plus d'un espace (jamais le tuteur, C6) ; l'espace
       // Controle est garde, refus generique si la capacite manque (C7).
-      final Widget avecEspaces = EnteteEspaces(child: coquille);
+      final Widget avecEspaces = EnteteEspaces(child: avecCloche);
       return role == AppRole.controller
           ? GardeControle(child: avecEspaces)
           : avecEspaces;
@@ -1552,6 +2126,7 @@ class _CoquilleNavigation extends ConsumerWidget {
       actions: <Widget>[
         if (large) const BasculeTheme(),
         ClocheNotifications(
+          actif: surNotifications,
           onPress: () => GoRouter.of(context).go(Routes.tuteurNotifications),
         ),
       ],
@@ -1559,6 +2134,40 @@ class _CoquilleNavigation extends ConsumerWidget {
     );
   }
 }
+
+/// Les actions d'en-tete du Studio (revue COM-R, R-05), posees par la route
+/// comme celles de l'`AdminShell` : a partir de 600, la bascule clair /
+/// sombre ; partout, « Mon compte » (la deconnexion y est) puis la cloche des
+/// notifications de l'admin, en dernier. Sous le prefixe `/admin`, que la
+/// garde reserve a l'admin : rien ici ne lit un role.
+class _ActionsStudio extends StatelessWidget {
+  const _ActionsStudio({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    void aller(String chemin) => GoRouter.of(context).go(chemin);
+    final bool large = AppGabarit.de(context).estLarge;
+    return ActionsEnteteCoquille(
+      actions: <Widget>[
+        if (large) const BasculeTheme(),
+        BoutonIcone(
+          key: cleCompteStudio,
+          icone: AppIcons.profil,
+          libelle: t.nav.compte,
+          infobulle: t.nav.compte,
+          onPress: () => aller(Routes.compte),
+        ),
+        ClocheNotifications(onPress: () => aller(Routes.adminNotifications)),
+      ],
+      child: child,
+    );
+  }
+}
+
+/// La cle de « Mon compte » dans l'en-tete du Studio, pour les tests.
+const Key cleCompteStudio = ValueKey<String>('studio-compte');
 
 /// Le chrome du panneau admin, huit domaines (lot IA-01, 19 septembre 2026).
 ///
@@ -1575,12 +2184,26 @@ class _CoquilleNavigation extends ConsumerWidget {
 /// faisaient deja `ADM-06`, `ADM-07` et `ADM-08` avant ce lot. C'est le prix
 /// assume de la restructuration, pas un oubli.
 class _CoquilleAdmin extends ConsumerWidget {
-  const _CoquilleAdmin({required this.domaine, required this.child});
+  const _CoquilleAdmin({
+    required this.domaine,
+    required this.child,
+    this.sousPage = false,
+    this.notificationsOuvertes = false,
+  });
 
-  /// Le domaine que revendique cette route.
-  final AdminDomaine domaine;
+  /// Le domaine que revendique cette route ; nul pour une page transverse
+  /// (les notifications), qui n'allume aucun domaine.
+  final AdminDomaine? domaine;
+
+  /// Vrai pour une page rangee sous l'Accueil (les alertes) : elle garde le
+  /// retour vers l'Accueil.
+  final bool sousPage;
 
   final Widget child;
+
+  /// La page ouverte est celle des notifications : la cloche s'y montre
+  /// active.
+  final bool notificationsOuvertes;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -1590,6 +2213,11 @@ class _CoquilleAdmin extends ConsumerWidget {
       sessionProvider.select((SessionState s) => s.peutVoirDirection),
     );
 
+    // ALERTE-1 : la cloche n'existe que si la capacite « alertes » rend
+    // quelque chose (jamais en production avant DASH-BR-03, Q5) ; son point
+    // dit qu'une alerte urgente est ouverte. Jamais deduite du role.
+    final int? urgentes = ref.watch(alertesUrgentesProvider);
+
     return AdminShell(
       domaines: domainesAdmin(voitDirection: voitDirection),
       domaineActif: domaine,
@@ -1597,9 +2225,35 @@ class _CoquilleAdmin extends ConsumerWidget {
       onCompte: () => aller(Routes.compte),
       // Retour vers l'Accueil sur toute page admin sauf l'Accueil lui-meme
       // (spec section 26 ter, Q14).
-      onRetour: domaine == AdminDomaine.accueil
+      onRetour: domaine == AdminDomaine.accueil && !sousPage
           ? null
           : () => aller(Routes.admin),
+      cloche: urgentes == null
+          ? null
+          : ClocheNotifications(
+              onPress: () => aller(Routes.adminAlertes),
+              nonLues: urgentes,
+              libelleSemantique: switch (urgentes) {
+                0 => t.alertes.cloche,
+                1 => t.alertes.clocheUneUrgente,
+                _ => t.alertes.clocheUrgentes(nombre: urgentes),
+              },
+            ),
+      // Le bandeau d'alerte urgente, en tete de toute page ouverte, sauf
+      // sous l'Accueil : le Centre de commande et la page des alertes
+      // montrent deja l'alerte en tete (D7, une information une fois).
+      // Pose seulement quand une alerte urgente est ouverte ; fige en haut
+      // par la coquille, hors de la zone qui defile (ALERTE-1b).
+      bandeau: domaine == AdminDomaine.accueil || (urgentes ?? 0) == 0
+          ? null
+          : BandeauAlerteUrgente(onOuvrir: () => aller(Routes.adminAlertes)),
+      // COM-F : la cloche mene a la `NotificationsPage` existante, l'action
+      // « Le Studio » au Studio (Q1). Posees par la route, sous le prefixe
+      // `/admin` que la garde reserve a l'admin : la coquille ne lit aucun
+      // role.
+      onNotifications: () => aller(Routes.adminNotifications),
+      notificationsActives: notificationsOuvertes,
+      onStudio: () => aller(Routes.adminStudio),
       child: child,
     );
   }

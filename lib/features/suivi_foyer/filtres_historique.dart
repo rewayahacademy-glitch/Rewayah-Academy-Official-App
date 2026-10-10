@@ -162,7 +162,9 @@ String libelleStatut(LigneSuivi ligne) {
   if (statut == StatutHistorique.retard) {
     final Duration? retard = ligne.presence.ecoule;
     if (retard != null && retard.inMinutes > 0) {
-      return t.historique.etat.retard(minutes: retard.inMinutes);
+      return LibellesGroupe.insecable(
+        t.historique.etat.retard(minutes: retard.inMinutes),
+      );
     }
   }
   return statut.libelle;
@@ -324,6 +326,17 @@ String dateCourte(DateTime instant) => t.historique.dateCourte(
   annee: instant.year,
 );
 
+/// « 4 oct. » dans l'annee de [maintenant], « 4 oct. 2025 » sinon : la
+/// colonne de date d'une ligne tient sur une ligne a texte x1 (COM-RC tour
+/// 4, N-10).
+String dateCompacte(DateTime instant, DateTime maintenant) =>
+    instant.year == maintenant.year
+    ? t.historique.dateCourteSansAnnee(
+        jour: instant.day,
+        mois: t.historique.moisCourts[instant.month - 1],
+      )
+    : dateCourte(instant);
+
 /// « mercredi 23 septembre 2026 ».
 String dateLongueHistorique(DateTime instant) => t.historique.dateLongue(
   jourSemaine: t.commun.dates.jours[instant.weekday - 1].toLowerCase(),
@@ -346,23 +359,34 @@ String plageHoraire(DateTime debut, DateTime fin) =>
 String dureeLisible(Duration duree) =>
     LibellesGroupe.insecable(_dureeSecable(duree));
 
+/// La meme duree affichee seule, comme valeur (« Duree prevue / 45 min ») :
+/// ancree pour garder son ordre en interface de droite a gauche
+/// (DUREE-INSECABLE-2, [LibellesGroupe.ancreSens]). Dans une phrase,
+/// [dureeLisible] suffit.
+String dureeSeule(Duration duree) =>
+    LibellesGroupe.ancreSens(dureeLisible(duree));
+
 String _dureeSecable(Duration duree) {
   final int secondes = duree.inSeconds < 0 ? 0 : duree.inSeconds;
   if (secondes < 60) {
-    return t.historique.duree.secondes(s: secondes);
+    return LibellesGroupe.insecable(t.historique.duree.secondes(s: secondes));
   }
   if (secondes < 3600) {
     final int m = secondes ~/ 60;
     final int s = secondes % 60;
     return s == 0
-        ? t.historique.duree.minutes(m: m)
-        : t.historique.duree.minutesSecondes(m: m, s: s);
+        ? LibellesGroupe.insecable(t.historique.duree.minutes(m: m))
+        : LibellesGroupe.insecable(
+            t.historique.duree.minutesSecondes(m: m, s: s),
+          );
   }
   final int h = secondes ~/ 3600;
   final int m = (secondes % 3600) ~/ 60;
   return m == 0
-      ? t.historique.duree.heures(h: h)
-      : t.historique.duree.heuresMinutes(h: h, m: _deux(m));
+      ? LibellesGroupe.insecable(t.historique.duree.heures(h: h))
+      : LibellesGroupe.insecable(
+          t.historique.duree.heuresMinutes(h: h, m: _deux(m)),
+        );
 }
 
 /// Le decalage de l'heure affichee sur UTC : « +02:00 », « -05:30 ».

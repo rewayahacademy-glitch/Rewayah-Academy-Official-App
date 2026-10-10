@@ -80,22 +80,19 @@ Future<void> _taper(WidgetTester tester, Finder f) async {
   await tester.pumpAndSettle();
 }
 
-/// Etape 1 avec deux beneficiaires coches et leurs offres sous leur ligne :
-/// Mamadou a choisi l'offre B, Aicha pas encore (les deux etats des cartes).
+/// Etape 1 avec deux beneficiaires coches : Mamadou a choisi le second
+/// montant propose, Aicha pas encore (les deux etats du montant).
 Future<void> _deuxCoches(WidgetTester tester) async {
   await _taper(
     tester,
     find.byKey(RechargeFoyerPage.caseDe(DonneesAdulteDemo.mamadouId)),
   );
-  await _taper(
-    tester,
-    find.byKey(
-      RechargeFoyerPage.offreDe(
-        DonneesAdulteDemo.mamadouId,
-        DonneesAdulteDemo.offreB,
-      ),
-    ),
-  );
+  for (int i = 0; i < 2; i++) {
+    await _taper(
+      tester,
+      find.byKey(RechargeFoyerPage.plusDe(DonneesAdulteDemo.mamadouId)),
+    );
+  }
   await _taper(
     tester,
     find.byKey(RechargeFoyerPage.caseDe(DonneesAdulteDemo.aichaId)),
@@ -105,29 +102,24 @@ Future<void> _deuxCoches(WidgetTester tester) async {
   await tester.pumpAndSettle();
 }
 
-/// A 200 %, la ligne de Mamadou en haut de l'ecran, ses offres dessous.
+/// A 200 %, la ligne de Mamadou en haut de l'ecran, son montant dessous.
 Future<void> _deuxCochesAgrandi(WidgetTester tester) async {
   await _deuxCoches(tester);
   await tester.ensureVisible(
-    find.text(t.adulte.recharge.offrePour(prenom: 'Mamadou')),
+    find.byKey(RechargeFoyerPage.profilDe(DonneesAdulteDemo.mamadouId)),
   );
   await tester.pumpAndSettle();
 }
 
-/// Deux beneficiaires et leurs offres, puis l'etape 2 : le recapitulatif
+/// Deux beneficiaires et leurs montants, puis l'etape 2 : le recapitulatif
 /// separe de plusieurs beneficiaires.
 Future<void> _jusquALEtape2(WidgetTester tester) async {
   await _deuxCoches(tester);
   await _taper(
     tester,
-    find.byKey(
-      RechargeFoyerPage.offreDe(
-        DonneesAdulteDemo.aichaId,
-        DonneesAdulteDemo.offreA,
-      ),
-    ),
+    find.byKey(RechargeFoyerPage.plusDe(DonneesAdulteDemo.aichaId)),
   );
-  await _taper(tester, find.byKey(RechargeFoyerPage.verifierKey));
+  // Une seule page (R3-01) : le recapitulatif arrive sur place.
 }
 
 /// L'etape 2, puis « Payer » : l'etat honnete (ou, selon l'etat de la

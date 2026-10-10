@@ -59,7 +59,7 @@ final Uint8List _png = base64Decode(
 final List<EleveDuFoyer> _eleves = <EleveDuFoyer>[
   EleveDuFoyer(
     id: _id,
-    prenom: 'Eleve A1',
+    prenom: 'Élève A1',
     identifiantImmuable: 'STUD-FA-000001',
     mode: InterfaceMode.enfant,
     camera: CameraPolicy.forbidden,

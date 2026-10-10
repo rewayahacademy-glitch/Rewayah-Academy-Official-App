@@ -9,6 +9,7 @@ import '../../core/admin/service_programme.dart';
 import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
@@ -274,7 +275,9 @@ class _Decision extends StatelessWidget {
               Text(switch (jours) {
                 <= 0 => t.admin.diagnostics.inscritAujourdhui,
                 1 => t.admin.diagnostics.inscritDepuisUnJour,
-                final int j => t.admin.diagnostics.inscritDepuis(jours: '$j'),
+                final int j => LibellesGroupe.insecable(
+                  t.admin.diagnostics.inscritDepuis(jours: '$j'),
+                ),
               }, style: textes.bodySmall),
             ],
           ),

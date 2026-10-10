@@ -19,6 +19,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
@@ -34,6 +36,7 @@ import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_parcours.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
+import '../../core/widgets/zone_saisie.dart';
 import 'compte_rendu_controle.dart';
 import 'compte_rendu_controle_page.dart' show VisiteInconnue;
 import 'observation_controle.dart';
@@ -389,11 +392,16 @@ class _ObservationControlePageState
         libelle = t.controleur.compteRendu.envoyer;
     }
 
+    // COUPE-MOTS-3b : une phrase ecrite dans l'autre sens que l'interface
+    // (libelle francais encore sans traduction arabe) est isolee a
+    // l'affichage : « Vérifiez ... avant l'envoi. », jamais « .l'envoi ».
+    final TextDirection sens = Directionality.of(context);
+    final String? aide = explication;
     return PageParcours(
       numero: _etape.index + 1,
       total: 5,
-      question: question,
-      explication: explication,
+      question: isolerSiAutreSens(question, sens),
+      explication: aide == null ? null : isolerSiAutreSens(aide, sens),
       // La notice et l'echec sont dans le corps qui defile, sous le
       // recapitulatif, jamais dans la zone fixe du bouton : a 320 px et texte
       // x2, un echec de onze lignes y remplissait l'ecran et coupait
@@ -541,7 +549,10 @@ class _ObservationControlePageState
                         OptionChoix(
                           cle: ObservationControlePage.cleEleve(e.id),
                           valeur: e.id,
-                          libelle: e.nomAffiche,
+                          // Isole : le point de « Mariam S. » reste a la fin
+                          // du nom, quel que soit le sens de l'interface
+                          // (CTRL-ROSTER-C7-1b).
+                          libelle: isolerSens(e.nomAffiche),
                         ),
                     ],
                     onChange: (ReponseChoix r) => setState(
@@ -558,20 +569,16 @@ class _ObservationControlePageState
     );
   }
 
-  Widget _champTexte() => TextField(
-    key: ObservationControlePage.texteKey,
-    controller: _texte,
-    minLines: 4,
-    maxLines: 8,
-    textCapitalization: TextCapitalization.sentences,
-    decoration: InputDecoration(
-      labelText: t.controleur.observation.libelleTexte,
-      hintText: t.controleur.observation.aideTexte,
-      alignLabelWithHint: true,
-      // L'aide du document reste lisible avant la saisie.
-      floatingLabelBehavior: FloatingLabelBehavior.always,
-      errorText: _texteManquant ? t.controleur.observation.texteRequis : null,
-    ),
+  // Zone de saisie partagee (SUPERPOS-1) : l'etiquette au-dessus du champ,
+  // l'aide du document lisible avant la saisie.
+  Widget _champTexte() => ZoneSaisie(
+    cleChamp: ObservationControlePage.texteKey,
+    controleur: _texte,
+    libelle: t.controleur.observation.libelleTexte,
+    aide: t.controleur.observation.aideTexte,
+    erreur: _texteManquant ? t.controleur.observation.texteRequis : null,
+    minLignes: 4,
+    maxLignes: 8,
     // L'erreur disparait des la saisie (BAY-IV) ; aucune validation pendant
     // la frappe.
     onChanged: (String _) {
@@ -591,26 +598,37 @@ class _ObservationControlePageState
         : ObservationControlePage.libellePersonne(p);
     if (p == PersonneConcernee.elevePrecis) {
       for (final EleveRoster e in roster) {
-        if (e.id == _eleveId) personne = '$personne · ${e.nomAffiche}';
+        if (e.id == _eleveId) {
+          personne = '$personne · ${isolerSens(e.nomAffiche)}';
+        }
       }
     }
     final String texte = _texte.text.trim();
+    // COUPE-MOTS-3b : chaque valeur ecrite dans l'autre sens que
+    // l'interface est isolee (« Élève précis · Mariam S. », jamais
+    // « · Élève précis »).
+    final TextDirection sens = Directionality.of(context);
+    String isoler(String v) => isolerSiAutreSens(v, sens);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         LigneCleValeur(
           cle: o.cleNature,
-          valeur: n == null ? '' : ObservationControlePage.libelleNature(n),
+          valeur: n == null
+              ? ''
+              : isoler(ObservationControlePage.libelleNature(n)),
         ),
         LigneCleValeur(
           cle: o.cleDomaine,
-          valeur: d == null ? '' : ObservationControlePage.libelleDomaine(d),
+          valeur: d == null
+              ? ''
+              : isoler(ObservationControlePage.libelleDomaine(d)),
         ),
-        LigneCleValeur(cle: o.clePersonne, valeur: personne),
+        LigneCleValeur(cle: o.clePersonne, valeur: isoler(personne)),
         LigneCleValeur(
           cle: o.cleTexte,
-          valeur: texte.isEmpty ? o.sansTexte : texte,
+          valeur: isoler(texte.isEmpty ? o.sansTexte : texte),
         ),
       ],
     );
@@ -638,6 +656,9 @@ class _Souscription extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    // COUPE-MOTS-3b : « ... à l'administration. », jamais « .à
+    // l'administration » dans l'interface arabe.
+    final TextDirection sens = Directionality.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -650,9 +671,11 @@ class _Souscription extends StatelessWidget {
               child: Icon(AppIcons.info.resoudre()),
             ),
             Ecart.hSm,
+            // « automatiquement », « l'administration. » : jamais coupes a
+            // 320 px, texte x2, Interface guidee (COUPE-MOTS-3).
             Expanded(
-              child: Text(
-                t.controleur.compteRendu.notice,
+              child: TexteSansCoupure(
+                isolerSiAutreSens(t.controleur.compteRendu.notice, sens),
                 style: palette.inkMuted.applyTo(
                   textes.bodyMedium ?? const TextStyle(),
                 ),
@@ -666,10 +689,13 @@ class _Souscription extends StatelessWidget {
               ? Padding(
                   key: cleEchec,
                   padding: const EdgeInsets.only(top: AppSpacing.md),
-                  child: Text(
-                    sansTexte
-                        ? t.controleur.observation.echecSansTexte
-                        : t.controleur.observation.echec,
+                  child: TexteSansCoupure(
+                    isolerSiAutreSens(
+                      sansTexte
+                          ? t.controleur.observation.echecSansTexte
+                          : t.controleur.observation.echec,
+                      Directionality.of(context),
+                    ),
                     style: palette.inkStrong.applyTo(
                       textes.bodyMedium ?? const TextStyle(),
                     ),

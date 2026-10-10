@@ -9,6 +9,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -184,7 +185,9 @@ class _PlagesDisponibiliteEtat extends ConsumerState<PlagesDisponibilite> {
           Ecart.vSm,
           TexteSansCoupure(switch (poses.length) {
             1 => t.disponibilites.poseeUne,
-            _ => t.disponibilites.posees(nombre: '${poses.length}'),
+            _ => LibellesGroupe.valeurSeule(
+              t.disponibilites.posees(nombre: '${poses.length}'),
+            ),
           }, style: textes.bodySmall),
         ],
         if (horsLigne) ...<Widget>[

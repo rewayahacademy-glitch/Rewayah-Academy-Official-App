@@ -36,7 +36,7 @@ final Finder _declarer = find.byKey(
 final Finder _declarerMonAbsence = find.byKey(
   const ValueKey<String>('absence-principale'),
 );
-final Finder _offre = find.text('Assurer ce remplacement ?');
+final Finder _offre = find.text('Assurer ce remplacement\u00A0?');
 final Finder _assurer = find.byKey(
   const ValueKey<String>('remplacement-principale'),
 );

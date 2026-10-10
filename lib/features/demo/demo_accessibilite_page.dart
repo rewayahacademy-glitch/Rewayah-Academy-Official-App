@@ -36,6 +36,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
+import '../acces_finance/acces_finance.dart';
 import '../accueil_eleve/accueil_accessibilite.dart';
 import '../accueil_eleve/apres_seance_accessibilite.dart';
 import '../accueil_eleve/coran_accessibilite.dart';
@@ -478,17 +479,31 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
                 ? maClasse
                 : _index == EcranAccessibiliteDemo.indexAccueil
                 // DASH-MA-PROD : le meme Accueil que la route de l'eleve,
-                // qui lit le double de demonstration du port.
-                ? AccueilAccessibilite.lu(
-                    key: const ValueKey<String>('demo-accueil'),
-                    onRejoindreEspace: (GroupHomeVM _) => entrer(),
-                    onVoirClasse: () =>
-                        _aller(EcranAccessibiliteDemo.indexMaClasse),
-                    onTache: () => _aller(EcranAccessibiliteDemo.indexMaClasse),
-                    onCoran: () => _aller(EcranAccessibiliteDemo.indexCoran),
-                    // L'aide vit dans Mon espace en demonstration (MA14,
-                    // MA-8) ; hors demonstration, `/eleve/aide`.
-                    onAide: () => _aller(EcranAccessibiliteDemo.indexMonEspace),
+                // qui lit le double de demonstration du port. L'acces de
+                // l'eleve (FI-9a, revue FI-VAGUE-R R4-01), la meme regle que
+                // l'Accueil et l'Espace groupe.
+                ? Consumer(
+                    builder: (BuildContext _, WidgetRef ref, Widget? _) {
+                      final ({bool ferme, bool enLecture}) acces =
+                          rejoindreSelonAcces(ref.watch(accesAppelantProvider));
+                      return AccueilAccessibilite.lu(
+                        key: const ValueKey<String>('demo-accueil'),
+                        accesFerme: acces.ferme,
+                        onRejoindreEspace: acces.enLecture
+                            ? null
+                            : (GroupHomeVM _) => entrer(),
+                        onVoirClasse: () =>
+                            _aller(EcranAccessibiliteDemo.indexMaClasse),
+                        onTache: () =>
+                            _aller(EcranAccessibiliteDemo.indexMaClasse),
+                        onCoran: () =>
+                            _aller(EcranAccessibiliteDemo.indexCoran),
+                        // L'aide vit dans Mon espace en demonstration (MA14,
+                        // MA-8) ; hors demonstration, `/eleve/aide`.
+                        onAide: () =>
+                            _aller(EcranAccessibiliteDemo.indexMonEspace),
+                      );
+                    },
                   )
                 : _index == EcranAccessibiliteDemo.indexCoran
                 ? Consumer(

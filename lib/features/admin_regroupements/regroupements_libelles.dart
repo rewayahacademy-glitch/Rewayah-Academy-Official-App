@@ -16,6 +16,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/offres/offre_horaire.dart' show PublicOffre;
 import '../../core/offres/port_regroupements_admin.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../admin_groupes/genre_classe_libelles.dart' show libelleGenreClasse;
 import '../creneaux/plages.dart' show jourCapitalise;
 
@@ -66,12 +67,14 @@ String libelleJours(List<int> jours) {
   ].join(', ');
 }
 
-/// « 18 h », « 18 h 30 ».
+/// « 18 h », « 18 h 30 », insecables (DUREE-INSECABLE-3).
 String libelleHeureMinute(int heure, int minute) => minute == 0
-    ? t.admin.regroupements.heure(heure: '$heure')
-    : t.admin.regroupements.heureMinutes(
-        heure: '$heure',
-        minutes: minute.toString().padLeft(2, '0'),
+    ? LibellesGroupe.insecable(t.admin.regroupements.heure(heure: '$heure'))
+    : LibellesGroupe.insecable(
+        t.admin.regroupements.heureMinutes(
+          heure: '$heure',
+          minutes: minute.toString().padLeft(2, '0'),
+        ),
       );
 
 /// « 18 h », « 18 h 30 », pour une heure d'un autre fuseau.

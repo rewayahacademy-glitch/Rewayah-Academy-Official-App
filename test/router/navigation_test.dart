@@ -41,9 +41,11 @@ import 'package:rewayah_academy/features/consentements/consentement_observation_
 import 'package:rewayah_academy/features/foyer/creer_mon_profil_indisponible.dart';
 import 'package:rewayah_academy/features/foyer/fiche/acces_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/camera_page.dart';
+import 'package:rewayah_academy/features/foyer/fiche/finances_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/informations_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/inscription_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/interface_page.dart';
+import 'package:rewayah_academy/features/foyer/fiche/mouvements_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
@@ -132,9 +134,16 @@ void main() {
           Routes.controleurEchanges,
           Routes.compte,
         ],
-        // Le comptable n'a pas de barre ; l'admin a sa propre coquille
-        // (`admin_domaine_test.dart`).
-        AppRole.accountant: <String>[],
+        // Le comptable a QUATRE destinations (Comptable V1, CPT-F) :
+        // Aujourd'hui, Paiements, Tresorerie, Compte (spec §45,
+        // `UX_REVIEW_FINANCE_COMPTABLE_L0.md` §3). L'admin a sa propre
+        // coquille (`admin_domaine_test.dart`).
+        AppRole.accountant: <String>[
+          Routes.comptable,
+          Routes.comptablePaiements,
+          Routes.comptableTresorerie,
+          Routes.compte,
+        ],
         AppRole.admin: <String>[],
       };
 
@@ -237,10 +246,12 @@ void main() {
 
     // Toute la table des routes du tuteur (mapping sections 3 et 4) : la
     // route existe, la garde la laisse passer, l'ecran se construit dans la
-    // coquille, et la destination parente est active.
-    final List<(String, Type, int)> table = <(String, Type, int)>[
+    // coquille, et la destination parente est active. La page des
+    // notifications n'en allume aucune : la cloche y est la seule entree
+    // active (COM-F-Q5).
+    final List<(String, Type, int?)> table = <(String, Type, int?)>[
       (Routes.tuteurAccueil, AccueilFamillePage, 0),
-      (Routes.tuteurNotifications, NotificationsPage, 0),
+      (Routes.tuteurNotifications, NotificationsPage, null),
       ('${Routes.tuteurClassesCatalogue}?eleve=e1', CatalogueClassesPage, 0),
       (Routes.classePour('g1', eleveId: 'e1'), ClasseTuteurPage, 0),
       (Routes.classeSousPage('g1', 'planning'), PlanningClassePage, 0),
@@ -262,6 +273,8 @@ void main() {
       (Routes.ficheEleveSousPage('e1', 'interface'), InterfaceElevePage, 1),
       (Routes.ficheEleveSousPage('e1', 'camera'), CameraElevePage, 1),
       (Routes.ficheEleveSousPage('e1', 'acces'), AccesElevePage, 1),
+      (Routes.ficheEleveSousPage('e1', 'finances'), FinancesElevePage, 1),
+      (Routes.ficheEleveSousPage('e1', 'mouvements'), MouvementsElevePage, 1),
       (Routes.ficheEleveSousPage('e1', 'appareils'), AppareilsElevePage, 1),
       (Routes.parcoursPour('e1'), ParcoursOffresPage, 1),
       (Routes.tuteurSuivi, SuiviFoyerPage, 2),
@@ -320,6 +333,9 @@ void main() {
       InterfaceElevePage: fiche,
       CameraElevePage: fiche,
       AccesElevePage: fiche,
+      FinancesElevePage: 'test/features/foyer/fiche_eleve_finances_test.dart',
+      MouvementsElevePage:
+          'test/features/foyer/fiche_eleve_mouvements_test.dart',
       AppareilsElevePage: partage,
       ParcoursOffresPage: fiche,
       SuiviFoyerPage: classe,
@@ -339,7 +355,7 @@ void main() {
     };
 
     test('chaque route de la table a son test de bouton (P2-09)', () {
-      for (final (String chemin, Type ecran, int _) in table) {
+      for (final (String chemin, Type ecran, int? _) in table) {
         final String? fichier = boutonTesteDans[ecran];
         expect(fichier, isNotNull, reason: '$chemin : aucun test de bouton');
         final String source = File(fichier!).readAsStringSync();
@@ -348,7 +364,7 @@ void main() {
       }
     });
 
-    for (final (String chemin, Type ecran, int destination) in table) {
+    for (final (String chemin, Type ecran, int? destination) in table) {
       testWidgets('$chemin rend $ecran, destination $destination active', (
         WidgetTester tester,
       ) async {

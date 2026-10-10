@@ -159,7 +159,10 @@ void main() {
       await tester.pumpWidget(
         _hote(const TexteHeureSeance(heure: 'Lundi 28 sept.', annulee: true)),
       );
-      expect(find.bySemanticsLabel('Annulée : Lundi 28 sept.'), findsOneWidget);
+      expect(
+        find.bySemanticsLabel('Annulée\u00A0: Lundi 28 sept.'),
+        findsOneWidget,
+      );
       expect(find.bySemanticsLabel(RegExp('Prévue')), findsNothing);
       poignee.dispose();
     });
@@ -211,7 +214,7 @@ void main() {
         TextDecoration.lineThrough,
       );
       expect(
-        find.bySemanticsLabel(RegExp('Annulée : 10:00 - 11:00')),
+        find.bySemanticsLabel(RegExp('Annulée\u00A0: 10:00 - 11:00')),
         findsOneWidget,
       );
       poignee.dispose();

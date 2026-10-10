@@ -45,8 +45,7 @@ BrouillonCahier _brouillon() => BrouillonCahier(
 
 ({List<Override> surcharges, FauxServiceEnseignant service}) _montage({
   List<TeacherStudentProjection>? eleves,
-  Map<String, List<ContentRange>> ranges =
-      const <String, List<ContentRange>>{},
+  Map<String, List<ContentRange>> ranges = const <String, List<ContentRange>>{},
   Map<String, ContentPosition> reprises = const <String, ContentPosition>{},
 }) {
   final FauxServiceEnseignant service = FauxServiceEnseignant()
@@ -97,23 +96,14 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(
-        find.text(t.tc.parcours.postCours.duree(minutes: 52)),
-        findsOneWidget,
-      );
-      expect(
-        find.text(t.tc.parcours.postCours.toutEstNominal),
-        findsOneWidget,
-      );
+      expect(find.text('Durée réelle 52\u00A0min'), findsOneWidget);
+      expect(find.text(t.tc.parcours.postCours.toutEstNominal), findsOneWidget);
       // Rien n'est invente : ni position de reprise, ni travail.
       expect(
         find.text(t.tc.parcours.postCours.repriseInconnue),
         findsOneWidget,
       );
-      expect(
-        find.text(t.tc.parcours.postCours.travailAucun),
-        findsOneWidget,
-      );
+      expect(find.text(t.tc.parcours.postCours.travailAucun), findsOneWidget);
     });
 
     testWidgets('la position et le travail proposes se lisent en clair', (

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_classes_foyer.dart';
@@ -77,9 +78,14 @@ final FutureProviderFamily<ContexteClasse?, CleClasse> contexteClasseProvider =
       return null;
     });
 
+/// Le nom d'une Classe a l'affichage : « Classe An-Nour » passe a la ligne
+/// entre les mots, jamais dans « An- / Nour » (lecon 8, K-54). Voir
+/// [traitsDUnionInsecables].
+String nomClasseInsecable(String libelle) => traitsDUnionInsecables(libelle);
+
 /// La ligne sous le titre d'une sous-page : « Classe An-Nour · Mariam ».
 String sousTitreSousPage(ContexteClasse contexte) => LibellesGroupe.joindre(
-  contexte.classe.classe.libelle,
+  nomClasseInsecable(contexte.classe.classe.libelle),
   contexte.eleve.prenom,
 );
 
@@ -161,7 +167,11 @@ class CadreClasse extends ConsumerWidget {
     }
 
     return PageShell(
-      titre: titre ?? contexte?.classe.classe.libelle ?? t.classe.titre,
+      titre:
+          titre ??
+          (contexte == null
+              ? t.classe.titre
+              : nomClasseInsecable(contexte.classe.classe.libelle)),
       sousTitre: contexte == null ? null : sousTitre?.call(contexte),
       onRetour: onRetour,
       child: corps,

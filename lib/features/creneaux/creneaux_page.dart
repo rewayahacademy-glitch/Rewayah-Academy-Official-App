@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -170,8 +171,8 @@ class _ClassesDisponiblesEtat extends ConsumerState<_ClassesDisponibles> {
   /// s'ouvre sur son detail, avec un chevron (ENS-06B).
   LigneRubrique _ligneOffre(OffreClasseDemo offre, EtatOffreDemo etat) {
     final bool ouvrable = etat == EtatOffreDemo.disponible;
-    final String heure = t.enseignant.creneaux.heure(
-      heure: '${offre.creneau.heure}',
+    final String heure = LibellesGroupe.insecable(
+      t.enseignant.creneaux.heure(heure: '${offre.creneau.heure}'),
     );
     final (String mot, TonEtat ton) = _etat(etat);
     return LigneRubrique(
@@ -221,12 +222,16 @@ class _DetailOffrePageEtat extends State<DetailOffrePage> {
     ),
     LigneCleValeur(
       cle: t.enseignant.creneaux.cleHeureLocale,
-      valeur: t.enseignant.creneaux.heure(heure: '${offre.creneau.heure}'),
+      valeur: LibellesGroupe.valeurSeule(
+        t.enseignant.creneaux.heure(heure: '${offre.creneau.heure}'),
+      ),
     ),
     if (offre.dureeMinutes != null)
       LigneCleValeur(
         cle: t.enseignant.creneaux.cleDuree,
-        valeur: t.enseignant.creneaux.duree(minutes: '${offre.dureeMinutes}'),
+        valeur: LibellesGroupe.valeurSeule(
+          t.enseignant.creneaux.duree(minutes: '${offre.dureeMinutes}'),
+        ),
       ),
   ];
 

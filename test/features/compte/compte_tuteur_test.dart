@@ -491,7 +491,7 @@ void main() {
         FoyersFictifs.a1,
         EleveDuFoyer(
           id: 'foyer-a-eleve-3',
-          prenom: 'Eleve A3',
+          prenom: 'Élève A3',
           identifiantImmuable: 'STUD-FA-000003',
           mode: InterfaceMode.standard,
           camera: CameraPolicy.forbidden,
@@ -499,7 +499,7 @@ void main() {
         ),
         EleveDuFoyer(
           id: 'foyer-a-eleve-4',
-          prenom: 'Eleve A4',
+          prenom: 'Élève A4',
           identifiantImmuable: 'STUD-FA-000004',
           mode: InterfaceMode.standard,
           camera: CameraPolicy.forbidden,
@@ -513,7 +513,7 @@ void main() {
       );
       expect(_texte(t.compte.tuteur.pageAcces.sansEcheance), findsOneWidget);
       expect(_texte('Ouvert jusqu\'au 30 octobre 2026'), findsOneWidget);
-      expect(_texte('Terminé le 1 septembre 2026'), findsOneWidget);
+      expect(_texte('Terminé le 1er septembre 2026'), findsOneWidget);
       expect(_texte(t.compte.tuteur.pageAcces.titulaire), findsOneWidget);
       expect(find.textContaining('bonnement'), findsNothing);
     });

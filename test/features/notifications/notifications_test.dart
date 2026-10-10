@@ -110,7 +110,8 @@ void main() {
 
           expect(lieu(routeur), Routes.tuteurNotifications);
           expect(find.byType(NotificationsPage), findsOneWidget);
-          expect(_indexActif(tester), 0);
+          // COM-F-Q5 : la cloche est la seule entree active, aucun onglet.
+          expect(_indexActif(tester), -1);
           expect(find.text(t.notifications.indisponibleTitre), findsOneWidget);
           // Une capacite absente ne se reessaie pas, et n'est pas un vide.
           expect(find.text(t.commun.etats.actions.reessayer), findsNothing);
@@ -150,13 +151,57 @@ void main() {
       expect(tester.getTopLeft(n1).dy, lessThan(tester.getTopLeft(n2).dy));
       expect(find.text('Compte rendu de la séance disponible'), findsOneWidget);
       expect(find.text(t.historique.fuseauListe), findsOneWidget);
-      // La ligne sans destination (lien externe rejete) n'est pas un bouton.
-      expect(tester.widget<LigneNotification>(n2).onPress, isNull);
+      // La ligne sans destination (lien externe rejete) ouvre son detail :
+      // aucune ligne inerte (revue COM-R, R-06 ; contre-preuve : elle
+      // n'etait pas une cible).
+      expect(tester.widget<LigneNotification>(n2).onPress, isNotNull);
 
       await tester.tap(n1);
       await stabiliser(tester);
       expect(lieu(routeur), Routes.tuteurSuivi);
       expect(find.byType(SuiviFoyerPage), findsOneWidget);
+    });
+
+    testWidgets('l horloge de la page est injectee : la date compacte suit '
+        'l instant fourni, pas l annee de l appareil (COM-R-3, constat 4)', (
+      WidgetTester tester,
+    ) async {
+      final DateTime le = DateTime(2026, 10, 4, 11);
+      Future<void> monterA(DateTime maintenant) async {
+        await monterHistorique(
+          tester,
+          autres: <Override>[
+            portNotificationsProvider.overrideWithValue(
+              FauxNotifications(
+                rendues: <NotificationTuteur>[
+                  NotificationTuteur(id: 'n1', titre: 'Annonce', date: le),
+                ],
+              ),
+            ),
+            horlogeNotificationsProvider.overrideWithValue(() => maintenant),
+          ],
+        );
+        await _toucherCloche(tester);
+      }
+
+      // Meme annee que l'horloge : sans l'annee.
+      await monterA(DateTime(2026, 10, 5));
+      expect(find.text('4 oct.'), findsOneWidget);
+      expect(
+        tester
+            .widget<LigneNotification>(
+              find.byKey(const ValueKey<String>('notification-n1')),
+            )
+            .maintenant,
+        DateTime(2026, 10, 5),
+      );
+
+      // Une autre annee : l'annee revient, quelle que soit celle de
+      // l'appareil.
+      await tester.pumpWidget(const SizedBox.shrink());
+      await monterA(DateTime(2031, 1, 2));
+      expect(find.text('4 oct. 2026'), findsOneWidget);
+      expect(find.text('4 oct.'), findsNothing);
     });
 
     testWidgets('vide : aucune notification, sans bouton', (
@@ -208,10 +253,14 @@ void main() {
       );
     });
 
-    testWidgets('hors ligne : le bandeau le dit', (WidgetTester tester) async {
+    testWidgets('hors ligne : le bandeau le dit, un seul (D-FUS-3)', (
+      WidgetTester tester,
+    ) async {
       await _monter(tester, horsLigne: true);
       await _toucherCloche(tester);
-      expect(find.text(t.reseau.horsLigne), findsOneWidget);
+      // D-FUS-3 (05/10, choix a) : seul le bandeau des Communications.
+      expect(find.text(t.reseau.horsLigne), findsNothing);
+      expect(find.text(t.com.socle.composants.etats.horsLigne), findsOneWidget);
       expect(find.text(t.notifications.indisponibleTitre), findsOneWidget);
     });
 

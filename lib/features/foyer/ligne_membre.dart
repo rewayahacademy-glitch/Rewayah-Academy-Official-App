@@ -1,14 +1,22 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_classes_foyer.dart';
+import '../../core/finance/finances_profil.dart';
 import '../../core/foyer/selection_eleve.dart';
+import '../../core/i18n/jour_du_mois.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
 import '../../core/offres/offre_horaire.dart';
+import '../../core/theme/accent_profil.dart';
+import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_nom.dart';
-import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/identite_profil.dart';
+import 'finances_foyer.dart';
 import 'photo_eleve.dart';
 
 /// Ce que le Foyer sait de la classe d'un membre.
@@ -61,11 +69,12 @@ final class _Classes extends ClasseMembre {
   final List<String> libelles;
 }
 
-/// La date d'une echeance d'acces, en toutes lettres : « 30 octobre 2026 ».
+/// La date d'une echeance d'acces, en toutes lettres : « 30 octobre 2026 »,
+/// « 1er novembre 2026 » (R8-05).
 String dateEcheance(DateTime date) {
   final DateTime locale = date.toLocal();
   return t.foyer.membre.date(
-    jour: locale.day.toString(),
+    jour: jourDuMois(locale.day),
     mois: t.commun.dates.mois[locale.month - 1],
     annee: locale.year.toString(),
   );
@@ -126,17 +135,31 @@ EtapeParcours? etapeInscriptionLue(
 
 /// La legende d'un membre : sa classe quand on la connait, sinon son
 /// inscription en cours quand on la connait, puis son acces.
+///
+/// [avecAcces] faux : l'acces n'est pas repete, la carte le dit deja par la
+/// pastille de periode financee a la meme date (revue FI-VAGUE-R R1-11).
 String legendeMembre({
   required ProfilEleveFoyer profil,
   required ClasseMembre classe,
   required DateTime maintenant,
   EtapeParcours? inscription,
+  bool avecAcces = true,
 }) {
   final String? classeLue = classe is _Classes || inscription == null
       ? texteClasse(classe)
       : libelleEtapeFiche(inscription);
+  if (!avecAcces) return classeLue ?? '';
   final String acces = statutAcces(profil, maintenant);
   return classeLue == null ? acces : '$classeLue · $acces';
+}
+
+/// Vrai quand la fin de la periode financee et l'echeance d'acces tombent le
+/// meme jour (heure locale) : une seule echeance, dite une seule fois.
+bool memeEcheance(DateTime? finPeriode, DateTime? finAcces) {
+  if (finPeriode == null || finAcces == null) return false;
+  final DateTime a = finPeriode.toLocal();
+  final DateTime b = finAcces.toLocal();
+  return a.year == b.year && a.month == b.month && a.day == b.day;
 }
 
 /// Ce que la lecture du port des classes dit d'un membre.
@@ -170,30 +193,89 @@ String? texteClasse(ClasseMembre classe) => switch (classe) {
   _Inconnue() || _Indisponible() => null,
 };
 
-/// La ligne d'un membre du foyer dans le groupe des profils eleves.
-///
-/// Une rubrique du composant partage `GroupeReglages` : une surface pour tout
-/// le groupe, un filet en retrait entre les membres, un chevron vers la fiche.
-/// La tete de ligne est la photo de l'eleve, ou ses initiales sans photo, par
-/// le composant partage `AvatarTile` (via [PhotoEleve]).
-LigneRubrique ligneMembre({
-  required ProfilEleveFoyer profil,
-  required ClasseMembre classe,
-  required DateTime maintenant,
-  required VoidCallback onPress,
-  EtapeParcours? inscription,
-}) => LigneRubrique(
-  meneur: PhotoEleve(
-    prenom: profil.prenom,
-    cleAvatar: profil.cleAvatar,
-    diametre: AppAvatar.moyen,
-  ),
-  libelle: profil.prenom,
-  legende: legendeMembre(
-    profil: profil,
-    classe: classe,
-    maintenant: maintenant,
-    inscription: inscription,
-  ),
-  onPress: onPress,
-);
+/// La carte d'un membre du foyer (maquette 11 « Foyer », decision du
+/// directeur du 04/10/2026, K-62) : une carte par enfant, sa photo en cercle
+/// en haut a gauche, et derriere elle le bandeau de la couleur choisie par le
+/// tuteur, **colle au bord haut de la carte** ([marge] de la carte = la
+/// remontee du bandeau). Sans couleur choisie, le cercle seul. Toute la carte
+/// ouvre la fiche.
+class CarteMembre extends StatelessWidget {
+  /// Cree la carte.
+  const CarteMembre({
+    required this.profil,
+    required this.legende,
+    required this.onPress,
+    super.key,
+    this.accent,
+    this.finance,
+  });
+
+  /// La marge interne de la carte, donc la remontee du bandeau.
+  static const double marge = AppSpacing.xl;
+
+  /// Le membre.
+  final ProfilEleveFoyer profil;
+
+  /// La ligne sous le prenom (classe, acces, inscription).
+  final String legende;
+
+  /// Ouvre la fiche.
+  final VoidCallback onPress;
+
+  /// La couleur choisie par le tuteur, `null` sans bandeau.
+  final AccentProfil? accent;
+
+  /// La finance rendue du profil (FI-4) : son etat, son solde et son
+  /// prochain debit sous l'identite ; `null` sans source, la carte d'avant.
+  final FinancesProfil? finance;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final Widget identite = AvatarNom.enLigne(
+      prenom: profil.prenom,
+      diametre: AppAvatar.grand,
+      cercleEnHaut: true,
+      // La fleche au bout de la carte, a toute largeur (revue FI-2-R M1).
+      texteEtire: true,
+      avatar: PhotoEleve(
+        prenom: profil.prenom,
+        cleAvatar: profil.cleAvatar,
+        diametre: AppAvatar.grand,
+      ),
+      enveloppeAvatar: BandeauProfil.enveloppe(
+        diametre: AppAvatar.grand,
+        accent: accent,
+        remontee: marge,
+      ),
+      role: legende,
+      styleNom: palette.inkStrong.applyTo(
+        textes.titleMedium ?? const TextStyle(),
+      ),
+      styleRole: palette.inkMuted.applyTo(
+        textes.bodyMedium ?? const TextStyle(),
+      ),
+      fin: IconTheme(
+        data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
+        child: Icon(AppIcons.chevron.repos),
+      ),
+    );
+    final FinancesProfil? f = finance;
+    return AppCard(
+      marge: marge,
+      onPress: onPress,
+      child: f == null
+          ? identite
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                identite,
+                Ecart.vMd,
+                BlocFinanceMembre(finance: f),
+              ],
+            ),
+    );
+  }
+}

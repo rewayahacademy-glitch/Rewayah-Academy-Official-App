@@ -28,6 +28,7 @@ import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/selecteur_motif.dart';
+import '../../core/widgets/zone_saisie.dart';
 import '../foyer/photo_eleve.dart';
 import 'preparation_seance.dart';
 
@@ -570,25 +571,19 @@ class _SignalerBesoinState extends State<SignalerBesoin> {
           ),
         ],
         Ecart.vXl,
-        TextField(
-          key: SignalerBesoin.detailsKey,
-          controller: _details,
-          focusNode: _focusDetails,
-          minLines: 2,
-          maxLines: 5,
+        ZoneSaisie(
+          cleChamp: SignalerBesoin.detailsKey,
+          controleur: _details,
+          noeud: _focusDetails,
+          libelle: t.enseignant.signalement.details,
+          explication: t.enseignant.signalement.detailsAide,
+          erreur: _erreurDetails,
+          minLignes: 2,
+          maxLignes: 5,
           onChanged: (String _) {
             // L'erreur se retire des la correction.
             if (_erreurDetails != null) setState(_validerDetails);
           },
-          decoration: InputDecoration(
-            labelText: t.enseignant.signalement.details,
-            helperText: t.enseignant.signalement.detailsAide,
-            // 2 lignes coupaient l'aide en ellipse a 320 et texte x2 : borne
-            // large, comme AD-11 (1.4.4), l'aide n'est jamais coupee.
-            helperMaxLines: 8,
-            errorText: _erreurDetails,
-            errorMaxLines: 3,
-          ),
         ),
         Ecart.vLg,
         // L7 : une phrase-type par categorie, « Autre » pour l'ecrire.

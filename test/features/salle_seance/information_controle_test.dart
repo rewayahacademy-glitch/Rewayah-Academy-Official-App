@@ -150,7 +150,7 @@ void main() {
       expect(find.text(e2.p4(contact: 'contact-test')), findsOneWidget);
     });
 
-    testWidgets('eleve sans contact fourni : pas de lien (pas de trou)', (
+    testWidgets('eleve sans contact : pas de lien (pas de trou)', (
       WidgetTester tester,
     ) async {
       await _mention(tester, RoleSeance.eleve);
@@ -172,10 +172,48 @@ void main() {
       expect(_lien, findsNothing);
     });
 
-    test('le reglage par defaut : lien accepte, contact pas encore fourni', () {
-      expect(InformationControle.lienAccepte, isTrue);
-      expect(InformationControle.contactConfidentialite, isNull);
-      expect(InformationControle.boutonSignalerEleve, isFalse);
+    test(
+      'le reglage par defaut : lien accepte, contact fourni (05/10/2026)',
+      () {
+        expect(InformationControle.lienAccepte, isTrue);
+        expect(
+          InformationControle.contactConfidentialite,
+          'support@rewayahacademy.com',
+        );
+        expect(
+          InformationControle.texteDisponible(
+            RoleSeance.eleve,
+            contact: InformationControle.contactConfidentialite,
+          ),
+          isTrue,
+        );
+        expect(InformationControle.boutonSignalerEleve, isFalse);
+      },
+    );
+
+    testWidgets('eleve, reglage par defaut : E-2 visible, avec le contact', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        hoteCapture(
+          Scaffold(
+            body: Center(child: MentionSeance(vue: _vue(RoleSeance.eleve))),
+          ),
+        ),
+      );
+      await stabiliser(tester);
+      await tester.tap(_lien);
+      await stabiliser(tester);
+      expect(
+        find.text(
+          coupuresAdresse(
+            t.salle.informationControle.e2.p4(
+              contact: InformationControle.contactConfidentialite,
+            ),
+          ),
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('dans la vraie salle guidee (390 x 844), le lien est la', (

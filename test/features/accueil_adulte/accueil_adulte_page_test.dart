@@ -7,14 +7,17 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_riverpod/misc.dart' show Override, ProviderOrFamily;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/capacites/port_acces_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/reseau/etat_sans_donnees.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_home_vm.dart';
 import 'package:rewayah_academy/core/tc_parcours/port_travail_a_venir.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
@@ -23,8 +26,11 @@ import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/grille_bento.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
+import 'package:rewayah_academy/features/acces_finance/acces_finance.dart';
 import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart';
+import 'package:rewayah_academy/features/accueil_adulte/historique_seances_adulte_page.dart';
 import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 import 'package:rewayah_academy/features/demo/classe_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
@@ -34,7 +40,13 @@ import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/carte_session.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/emplacements_groupe.dart';
 
-import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../../capture/outil_capture.dart'
+    show
+        capturer,
+        chargerPolicesDuDepot,
+        fixerVueCapture,
+        hoteCapture,
+        sautSansCapture;
 import '../../router/support_routeur.dart';
 import '../../support/aucun_mot_coupe.dart';
 import '../../support/harnais.dart';
@@ -238,6 +250,85 @@ void main() {
     expect(find.byType(AccueilAdultePage), findsNothing);
   });
 
+  // FI-9a, revue FI-VAGUE-R R4-01 : l'acces de l'adulte, borne a sa
+  // session, decide de Rejoindre, comme sur l'Accueil de l'enfant.
+  Future<void> monterPorteOuverte(
+    WidgetTester tester,
+    PortMonAcces acces,
+  ) async {
+    taille(tester, const Size(390, 1200));
+    final GoRouter routeur = GoRouter(
+      initialLocation: adresseDemoAdulte(
+        EcranDemoAdulte.accueil,
+        seance: EtatDemoClasse.fenetreOuverte,
+      ),
+      routes: <RouteBase>[
+        ...routesDemoAdulte('dev'),
+        ...routesDemoClasse('dev'),
+      ],
+    );
+    addTearDown(routeur.dispose);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: <Override>[
+          // L'acces est relu par personne connectee : la session la nomme.
+          sourceSessionProvider.overrideWithValue(
+            FausseSourceSession(sessionActive(AppRole.student)),
+          ),
+          portMonAccesProvider.overrideWithValue(acces),
+        ],
+        child: TranslationProvider(
+          child: MaterialApp.router(
+            theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+            locale: AppLocale.fr.flutterLocale,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            routerConfig: routeur,
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+  }
+
+  Finder boutonEntree() => find.descendant(
+    of: find.byType(EmplacementEntreeVue),
+    matching: find.byType(ActionPrincipale),
+  );
+
+  AccesBeneficiaire accesAdulte({required bool ouvert}) => AccesBeneficiaire(
+    eleveId: 'adulte-autonome',
+    prenom: 'Mamadou',
+    etatAffiche: EtatAccesAffiche.sansEcheance,
+    seancesPayantesOuvertes: ouvert,
+  );
+
+  testWidgets('porte ouverte, acces ferme : Rejoindre retire, la copie de '
+      'l\'adulte, aucune cause inventee', (WidgetTester tester) async {
+    await monterPorteOuverte(tester, _MonAcces(accesAdulte(ouvert: false)));
+    await tester.pumpAndSettle();
+    expect(find.byType(CarteSession), findsOneWidget);
+    expect(boutonEntree(), findsNothing);
+    expect(find.byKey(BandeauAccesAdulte.cle), findsOneWidget);
+    expect(find.text(t.argent.acces.adulteSeancesFermees), findsOneWidget);
+    expect(find.textContaining('manque'), findsNothing);
+  });
+
+  testWidgets('porte ouverte, acces en lecture : Rejoindre present et '
+      'inerte, puis actif', (WidgetTester tester) async {
+    final Completer<AccesBeneficiaire?> reponse =
+        Completer<AccesBeneficiaire?>();
+    await monterPorteOuverte(tester, _MonAcces.attente(reponse.future));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(boutonEntree(), findsOneWidget);
+    expect(tester.widget<ActionPrincipale>(boutonEntree()).onPress, isNull);
+    reponse.complete(accesAdulte(ouvert: true));
+    await tester.pumpAndSettle();
+    expect(tester.widget<ActionPrincipale>(boutonEntree()).onPress, isNotNull);
+    expect(find.byKey(BandeauAccesAdulte.cle), findsNothing);
+  });
+
   testWidgets('vue du second adulte : jamais la Classe du titulaire, '
       'l\'accueil est indisponible (EA-BR-13, EA-5)', (
     WidgetTester tester,
@@ -341,16 +432,62 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    ProviderScope.containerOf(tester.element(find.byType(AccueilAdultePage)))
-        .invalidate(accueilAdulteProvider);
+    final ProviderContainer conteneur = ProviderScope.containerOf(
+      tester.element(find.byType(AccueilAdultePage)),
+    )..invalidate(accueilAdulteProvider);
     await tester.pumpAndSettle();
     expect(lectures, greaterThanOrEqualTo(2));
+    // Le chemin vise est bien parcouru : un echec qui garde sa valeur
+    // (revue EA-HL-DOUBLE-1, m1), pas une relecture encore en cours.
+    final AsyncValue<AccueilAdulteVM> etat = conteneur.read(
+      accueilAdulteProvider,
+    );
+    expect(etat.hasError && etat.hasValue && !etat.isLoading, isTrue);
+    expect(find.text(t.adulte.accueil.echec), findsNothing);
     expect(
       find.text(t.adulte.accueil.salutation(prenom: vue.prenom)),
       findsOneWidget,
     );
     expect(find.byWidgetPredicate(estHorsLigne), findsNothing);
     expect(find.text(t.commun.etats.echecServeur.titre), findsNothing);
+    expectAvecDonnees();
+  });
+
+  // Revue EA-HL-DOUBLE-1 (m1) : l'historique deja lu, relu en echec hors
+  // ligne, reste affiche, comme l'Accueil.
+  testWidgets('hors ligne, Historique deja lu puis relu en echec : il reste '
+      'affiche, le bandeau seul le dit', (WidgetTester tester) async {
+    int lectures = 0;
+    await tester.pumpWidget(
+      app(
+        overrides: <Override>[
+          horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(true)),
+          historiqueSeancesAdulteProvider.overrideWith((Ref _) {
+            lectures++;
+            return lectures == 1
+                ? Future<List<SeancePasseeAdulte>>.value(
+                    DonneesAdulteDemo.historiqueSeances(),
+                  )
+                : Future<List<SeancePasseeAdulte>>.error(StateError('reseau'));
+          }),
+        ],
+        child: HistoriqueSeancesAdultePage(onRetour: () {}),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final ProviderContainer conteneur = ProviderScope.containerOf(
+      tester.element(find.byType(HistoriqueSeancesAdultePage)),
+    )..invalidate(historiqueSeancesAdulteProvider);
+    await tester.pumpAndSettle();
+    final AsyncValue<List<SeancePasseeAdulte>> etat = conteneur.read(
+      historiqueSeancesAdulteProvider,
+    );
+    expect(etat.hasError && etat.hasValue && !etat.isLoading, isTrue);
+    expect(
+      find.byKey(const ValueKey<String>('historique-adulte-seances')),
+      findsOneWidget,
+    );
+    expect(find.text(t.adulte.historique.echec), findsNothing);
     expectAvecDonnees();
   });
 
@@ -398,6 +535,87 @@ void main() {
     expect(find.byType(ClocheNotifications), findsOneWidget);
     expect(find.byType(CarteSession), findsNothing);
     await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  // BENTO-3d (remarque hors demande de BENTO-3c-R) : le squelette compare ses
+  // moities au meme seuil que le contenu, [largeurMinCarteClasse] x
+  // max(1, echelle du texte). Monte seul dans une place de largeur donnee :
+  // a texte x1 la bascule est a 2 x 360 + 16 = 736 px ; a texte x2, a
+  // 2 x 720 + 16 = 1456 px. A 1120 px et texte x2 (la grille a 1440 px
+  // d'ecran), chaque moitie offrirait 552 px : sans le facteur d'echelle les
+  // deux premieres grandes tuiles resteraient cote a cote. A texte 0,85,
+  // le seuil ne descend pas sous 736 : sans le plancher max(1, ...), il
+  // tomberait a 2 x 306 + 16 = 628 et 735 px passerait cote a cote.
+  group('squelette : bascule cote a cote (BENTO-3d)', () {
+    for (final TextDirection sens in TextDirection.values) {
+      for (final (double, double, bool) cas in const <(double, double, bool)>[
+        (735, 1, false),
+        (736, 1, true),
+        (735, 0.85, false),
+        (1120, 2, false),
+        (1455, 2, false),
+        (1456, 2, true),
+      ]) {
+        testWidgets('${cas.$1.toInt()} px, texte x${cas.$2}, '
+            '${sens.name} : les deux premieres grandes tuiles '
+            '${cas.$3 ? 'cote a cote' : 'empilees, en pleine largeur'}', (
+          WidgetTester tester,
+        ) async {
+          taille(tester, Size(cas.$1 + 100, 3000));
+          await tester.pumpWidget(
+            app(
+              child: Builder(
+                builder: (BuildContext c) => MediaQuery(
+                  data: MediaQuery.of(c)
+                      .copyWith(textScaler: TextScaler.linear(cas.$2)),
+                  child: Directionality(
+                    textDirection: sens,
+                    child: Align(
+                      alignment: AlignmentDirectional.topStart,
+                      child: SizedBox(
+                        width: cas.$1,
+                        child: const SqueletteAccueilAdulte(),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+          await tester.pump(const Duration(seconds: 1));
+          expect(tester.takeException(), isNull);
+          // Contexte : la grille a quatre colonnes (pas la pile d'une
+          // colonne), et le seuil vaut bien 736 a texte x1.
+          expect(GrilleBento.colonnesPour(cas.$1, cas.$2), 4);
+          expect(largeurMinCarteClasse * 2 + GrilleBento.ecart, 736);
+          final Finder blocs = find.descendant(
+            of: find.byType(SqueletteAccueilAdulte),
+            matching: find.byType(Skeleton),
+          );
+          expect(blocs, findsNWidgets(5));
+          final Rect s = tester.getRect(blocs.at(0));
+          final Rect a = tester.getRect(blocs.at(1));
+          final Rect p = tester.getRect(blocs.at(2));
+          if (cas.$3) {
+            expect(a.top, moreOrLessEquals(s.top, epsilon: 1));
+            expect(
+              sens == TextDirection.ltr ? a.left >= s.right : a.right <= s.left,
+              isTrue,
+              reason: 'la seconde a cote de la premiere, dans le sens',
+            );
+            final double moitie = (cas.$1 - GrilleBento.ecart) / 2;
+            expect(s.width, moreOrLessEquals(moitie, epsilon: 1));
+            expect(a.width, moreOrLessEquals(moitie, epsilon: 1));
+          } else {
+            expect(a.top, greaterThan(s.bottom), reason: 'empilees');
+            expect(s.width, moreOrLessEquals(cas.$1, epsilon: 1));
+            expect(a.width, moreOrLessEquals(cas.$1, epsilon: 1));
+          }
+          expect(p.top, greaterThan(math.max(s.bottom, a.bottom)));
+          await tester.pumpWidget(const SizedBox.shrink());
+        });
+      }
+    }
   });
 
   testWidgets('erreur : « Reessayer », et rien d\'invente', (
@@ -764,4 +982,208 @@ void main() {
       }
     });
   });
+  // EA-HL-DOUBLE-1 (reprise) : captures de preuve de l'Historique hors
+  // ligne, sans donnees et avec donnees deja lues puis relues en echec ;
+  // clair, sombre, 1440 et texte x2 (l'Accueil est capture par
+  // test/capture/ea_hl_double1_capture_test.dart).
+  // Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+
+    Future<void> capturerPage(
+      WidgetTester tester,
+      String nom, {
+      required Widget page,
+      required Override lecture,
+      required ProviderOrFamily fournisseur,
+      required bool relire,
+      Size taille = const Size(390, 844),
+      ThemeMode mode = ThemeMode.light,
+      double echelle = 1,
+      InterfaceMode interface = InterfaceMode.standard,
+    }) async {
+      fixerVueCapture(tester, taille, 1);
+      await tester.pumpWidget(
+        hoteCapture(
+          page,
+          surcharges: <Override>[
+            horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(true)),
+            lecture,
+          ],
+          themeMode: mode,
+          echelleTexte: echelle,
+          interfaceMode: interface,
+        ),
+      );
+      await stabiliser(tester);
+      if (relire) {
+        ProviderScope.containerOf(tester.element(find.byType(page.runtimeType)))
+            .invalidate(fournisseur);
+        await stabiliser(tester);
+      }
+      expect(tester.takeException(), isNull);
+      if (relire) {
+        expectAvecDonnees();
+      } else {
+        expect(find.byType(EtatSansDonnees), findsOneWidget);
+        expectHorsLigneUneFois();
+      }
+      debugPrint('PNG ${await capturer(tester, 'ea_hl_double1_$nom')}');
+    }
+
+    Override historique({required bool dabord}) {
+      int lectures = 0;
+      return historiqueSeancesAdulteProvider.overrideWith((Ref _) {
+        lectures++;
+        return dabord && lectures == 1
+            ? Future<List<SeancePasseeAdulte>>.value(
+                DonneesAdulteDemo.historiqueSeances(),
+              )
+            : Future<List<SeancePasseeAdulte>>.error(StateError('reseau'));
+      });
+    }
+
+    for (final (String, Size, ThemeMode, double) cas
+        in <(String, Size, ThemeMode, double)>[
+          ('390_clair', const Size(390, 844), ThemeMode.light, 1),
+          ('390_sombre', const Size(390, 844), ThemeMode.dark, 1),
+          ('320x2_clair', const Size(320, 900), ThemeMode.light, 2),
+        ]) {
+      testWidgets('historique sans donnees ${cas.$1}', (
+        WidgetTester tester,
+      ) async {
+        await capturerPage(
+          tester,
+          'historique_sans_donnees_${cas.$1}',
+          page: HistoriqueSeancesAdultePage(onRetour: () {}),
+          lecture: historique(dabord: false),
+          fournisseur: historiqueSeancesAdulteProvider,
+          relire: false,
+          taille: cas.$2,
+          mode: cas.$3,
+          echelle: cas.$4,
+        );
+      });
+    }
+    for (final (String, Size) cas in <(String, Size)>[
+      ('390_clair', const Size(390, 844)),
+      ('1440_clair', const Size(1440, 900)),
+    ]) {
+      testWidgets('historique avec donnees ${cas.$1}', (
+        WidgetTester tester,
+      ) async {
+        await capturerPage(
+          tester,
+          'historique_avec_donnees_${cas.$1}',
+          page: HistoriqueSeancesAdultePage(onRetour: () {}),
+          lecture: historique(dabord: true),
+          fournisseur: historiqueSeancesAdulteProvider,
+          relire: true,
+          taille: cas.$2,
+        );
+      });
+    }
+  });
+
+  // EA-HL-DOUBLE-1e (K-59, decide par delegation le 05/10, DIR-REP-1) :
+  // l'echec de lecture de l'Accueil et de l'Historique dit la cause probable
+  // sans l'affirmer ; « le serveur n'a pas repondu » est inexact quand c'est
+  // l'appareil qui est hors ligne.
+  group('Echec en ligne : cause probable non affirmee (EA-HL-DOUBLE-1e)', () {
+    final List<(String, Widget, Override, String Function())> pages =
+        <(String, Widget, Override, String Function())>[
+          (
+            'accueil',
+            const AccueilAdultePage(),
+            accueilAdulteProvider.overrideWith(
+              (Ref _) => Future<AccueilAdulteVM>.error(StateError('lecture')),
+            ),
+            () => t.adulte.accueil.echec,
+          ),
+          (
+            'historique',
+            HistoriqueSeancesAdultePage(onRetour: () {}),
+            historiqueSeancesAdulteProvider.overrideWith(
+              (Ref _) =>
+                  Future<List<SeancePasseeAdulte>>.error(StateError('lecture')),
+            ),
+            () => t.adulte.historique.echec,
+          ),
+        ];
+    for (final (String, Widget, Override, String Function()) cas in pages) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        await tester.pumpWidget(
+          app(
+            overrides: <Override>[
+              horsLigneProvider.overrideWith(
+                (Ref _) => Stream<bool>.value(false),
+              ),
+              cas.$3,
+            ],
+            child: cas.$2,
+          ),
+        );
+        await tester.pumpAndSettle();
+        final String texte = cas.$4();
+        expect(find.text(texte), findsOneWidget);
+        expect(texte, isNot(contains('serveur')));
+        expect(texte, isNot(contains('pas répondu')));
+        expect(
+          texte,
+          contains(
+            "il est possible que la demande ne soit pas parvenue jusqu'à Rewayah",
+          ),
+        );
+        expect(find.text(t.commun.reessayer), findsWidgets);
+      });
+    }
+
+    group('Capture EA-HL-DOUBLE-1e', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      for (final (String, Widget, Override, String Function()) page in pages) {
+        for (final (String, Size, double, TextDirection) cas
+            in <(String, Size, double, TextDirection)>[
+              ('390_clair', const Size(390, 844), 1, TextDirection.ltr),
+              ('320x2_clair', const Size(320, 900), 2, TextDirection.ltr),
+              ('320x2_rtl_clair', const Size(320, 900), 2, TextDirection.rtl),
+            ]) {
+          testWidgets('${page.$1} ${cas.$1}', (WidgetTester tester) async {
+            fixerVueCapture(tester, cas.$2, 1);
+            await tester.pumpWidget(
+              hoteCapture(
+                Directionality(textDirection: cas.$4, child: page.$2),
+                surcharges: <Override>[
+                  horsLigneProvider.overrideWith(
+                    (Ref _) => Stream<bool>.value(false),
+                  ),
+                  page.$3,
+                ],
+                echelleTexte: cas.$3,
+              ),
+            );
+            await stabiliser(tester);
+            expect(tester.takeException(), isNull);
+            expect(find.text(page.$4()), findsOneWidget);
+            verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+            debugPrint(
+              'PNG ${await capturer(tester, 'ea_hl_double1e_adulte_${page.$1}_echec_${cas.$1}')}',
+            );
+          });
+        }
+      }
+    });
+  });
+}
+
+/// L'acces de l'adulte connecte, borne a sa session (FI-BR-08).
+class _MonAcces implements PortMonAcces {
+  _MonAcces(AccesBeneficiaire acces)
+    : _lecture = Future<AccesBeneficiaire?>.value(acces);
+
+  _MonAcces.attente(this._lecture);
+
+  final Future<AccesBeneficiaire?> _lecture;
+
+  @override
+  Future<AccesBeneficiaire?> monAcces() => _lecture;
 }

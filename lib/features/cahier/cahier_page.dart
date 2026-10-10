@@ -16,6 +16,7 @@ import '../../core/presence/vue_presence.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_coran/moteur_mushaf.dart' show souratesCoranProvider;
 import '../../core/tc_coran/port_corpus_coran.dart' show SourateVM;
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -32,6 +33,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/point_rappel.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/zone_saisie.dart';
 import '../fiche_groupe/preparation_seance.dart'
     show ProjectionEleve, projectionElevesProvider;
 import '../foyer/photo_eleve.dart';
@@ -373,31 +375,23 @@ class _CahierState extends ConsumerState<_Cahier> {
         style: textes.bodySmall,
       ),
       Ecart.vSm,
-      Semantics(
-        label: t.enseignant.cahier.reprise,
-        child: TextField(
-          key: ChampReprise.champKey,
-          controller: _reprise,
-          focusNode: _focusReprise,
-          textInputAction: TextInputAction.done,
-          // A 320 de large et texte x2, la phrase tient sur deux lignes
-          // plutot que d'etre coupee (capture FORM-L9).
-          minLines: 1,
-          maxLines: 3,
-          onChanged: (String valeur) {
-            if (_repriseManquante && valeur.trim().isNotEmpty) {
-              setState(() => _repriseManquante = false);
-            }
-          },
-          decoration: InputDecoration(
-            helperText: t.enseignant.cahier.repriseDetail,
-            helperMaxLines: 4,
-            errorText: _repriseManquante
-                ? t.enseignant.cahier.repriseRequise
-                : null,
-            errorMaxLines: 3,
-          ),
-        ),
+      // Zone de saisie partagee (SUPERPOS-1, reunie par JONCTION-LIGNES-1) :
+      // a 320 de large et texte x2, la position passe a la ligne (FORM-L9).
+      ZoneSaisie(
+        cleChamp: ChampReprise.champKey,
+        controleur: _reprise,
+        noeud: _focusReprise,
+        libelle: t.enseignant.cahier.reprise,
+        libelleVisible: false,
+        explication: t.enseignant.cahier.repriseDetail,
+        erreur: _repriseManquante ? t.enseignant.cahier.repriseRequise : null,
+        maxLignes: 3,
+        actionClavier: TextInputAction.done,
+        onChanged: (String valeur) {
+          if (_repriseManquante && valeur.trim().isNotEmpty) {
+            setState(() => _repriseManquante = false);
+          }
+        },
       ),
     ],
   );
@@ -740,12 +734,16 @@ class _Resume extends StatelessWidget {
         // l'en-tete (K-42 §5), sous le nom de la Classe.
         // La duree du cahier est celle que la base a calculee, et une seule.
         Text(
-          brouillon.minutesInterruption > 0
-              ? t.enseignant.cahier.dureeEtInterruption(
-                  minutes: '${brouillon.dureeMinutes}',
-                  interruption: '${brouillon.minutesInterruption}',
-                )
-              : t.enseignant.cahier.duree(minutes: '${brouillon.dureeMinutes}'),
+          LibellesGroupe.valeurSeule(
+            brouillon.minutesInterruption > 0
+                ? t.enseignant.cahier.dureeEtInterruption(
+                    minutes: '${brouillon.dureeMinutes}',
+                    interruption: '${brouillon.minutesInterruption}',
+                  )
+                : t.enseignant.cahier.duree(
+                    minutes: '${brouillon.dureeMinutes}',
+                  ),
+          ),
           style: textes.titleMedium,
         ),
         Ecart.vXs,
@@ -1166,19 +1164,17 @@ class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
         // repete (K-42 §1) ; a 200 % de texte et 320 de large, ce label se
         // coupait en « Objectif de No… ». Le lecteur d'ecran garde le nom
         // par la semantique du champ.
-        Semantics(
-          label: t.enseignant.cahier.objectif(
+        // Le champ grandit avec son texte : a 200 % et 320 de large, deux
+        // lignes fixes cachaient la fin du devoir (EN-7c-200). Zone de
+        // saisie partagee (SUPERPOS-1) ; le titre au-dessus la nomme deja.
+        ZoneSaisie(
+          cleChamp: const ValueKey<String>('cahier-objectif'),
+          controleur: _objectif,
+          libelle: t.enseignant.cahier.objectif(
             deEleve: deDevant(participant.membre.libelle),
           ),
-          child: TextField(
-            key: const ValueKey<String>('cahier-objectif'),
-            controller: _objectif,
-            // Le champ grandit avec son texte : a 200 % et 320 de large, deux
-            // lignes fixes cachaient la fin du devoir (EN-7c-200).
-            minLines: 2,
-            maxLines: 6,
-            textInputAction: TextInputAction.newline,
-          ),
+          libelleVisible: false,
+          minLignes: 2,
         ),
         Ecart.vXl,
         ExcludeSemantics(
@@ -1209,17 +1205,14 @@ class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
           ),
         ],
         Ecart.vMd,
-        Semantics(
-          label: t.enseignant.cahier.travailMaison(
+        ZoneSaisie(
+          cleChamp: const ValueKey<String>('cahier-devoir'),
+          controleur: _travail,
+          libelle: t.enseignant.cahier.travailMaison(
             deEleve: deDevant(participant.membre.libelle),
           ),
-          child: TextField(
-            key: const ValueKey<String>('cahier-devoir'),
-            controller: _travail,
-            minLines: 2,
-            maxLines: 6,
-            textInputAction: TextInputAction.newline,
-          ),
+          libelleVisible: false,
+          minLignes: 2,
         ),
         Ecart.vSection,
         // Un libelle qui lui est propre, et non « Valider » : la feuille de

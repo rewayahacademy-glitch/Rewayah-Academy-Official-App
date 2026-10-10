@@ -11,6 +11,7 @@ import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
+import '../acces_finance/acces_finance.dart';
 import 'accueil_accessibilite.dart';
 import 'accueil_eleve_page.dart';
 
@@ -26,29 +27,39 @@ class AccueilEleveSelonPresentation extends ConsumerWidget {
       return const AccueilElevePage();
     }
     void aller(String chemin) => GoRouter.of(context).go(chemin);
+    // L'acces de l'eleve, borne a sa session (FI-9a, revue FI-VAGUE-R
+    // R4-01) : la meme regle que l'Accueil standard et l'Espace groupe
+    // (JONCTION-LIGNES-1 : cette route vient de DASH-MA-PROD, l'acces de
+    // FI-DIR-1).
+    final ({bool ferme, bool enLecture}) acces = rejoindreSelonAcces(
+      ref.watch(accesAppelantProvider),
+    );
     return AccueilAccessibilite.lu(
+      accesFerme: acces.ferme,
       // Ma classe, deuxieme destination de l'eleve.
       onVoirClasse: () => aller(Routes.eleveSuivi),
       onTache: () => aller(Routes.eleveSuivi),
       onCoran: () => aller(Routes.eleveCoran),
       onAide: () => aller(Routes.eleveAide),
-      onRejoindreEspace: (GroupHomeVM espace) {
-        final String? seance = espace.identite.horloge?.sessionId;
-        // Sans seance materialisee, l'entree se fait depuis Ma classe.
-        if (seance == null) {
-          aller(Routes.eleveSuivi);
-          return;
-        }
-        GoRouter.of(context).go(
-          Routes.salle,
-          // Le billet passe par `extra`, jamais par l'URL (ADR-005).
-          extra: BilletSalle(
-            sessionId: seance,
-            emisA: DateTime.now(),
-            groupeId: espace.identite.groupeId,
-          ),
-        );
-      },
+      onRejoindreEspace: acces.enLecture
+          ? null
+          : (GroupHomeVM espace) {
+              final String? seance = espace.identite.horloge?.sessionId;
+              // Sans seance materialisee, l'entree se fait depuis Ma classe.
+              if (seance == null) {
+                aller(Routes.eleveSuivi);
+                return;
+              }
+              GoRouter.of(context).go(
+                Routes.salle,
+                // Le billet passe par `extra`, jamais par l'URL (ADR-005).
+                extra: BilletSalle(
+                  sessionId: seance,
+                  emisA: DateTime.now(),
+                  groupeId: espace.identite.groupeId,
+                ),
+              );
+            },
     );
   }
 }

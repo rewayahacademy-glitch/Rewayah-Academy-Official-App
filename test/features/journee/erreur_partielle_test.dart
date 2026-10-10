@@ -135,7 +135,7 @@ void main() {
         'cahiers a terminer seuls': (
           false,
           true,
-          () => t.enseignant.journee.erreurPartielleRetards,
+          () => t.enseignant.journee.erreurPartielleCahiers,
         ),
         'les trois ensemble': (
           true,
@@ -161,9 +161,9 @@ void main() {
   test('chaque phrase nomme sa cause, jamais les autres', () {
     expect(t.enseignant.journee.erreurPartielle, contains('prière'));
     expect(t.enseignant.journee.erreurPartielle, isNot(contains('cahiers')));
-    expect(t.enseignant.journee.erreurPartielleRetards, contains('cahiers'));
+    expect(t.enseignant.journee.erreurPartielleCahiers, contains('cahiers'));
     expect(
-      t.enseignant.journee.erreurPartielleRetards,
+      t.enseignant.journee.erreurPartielleCahiers,
       isNot(contains('prière')),
     );
     expect(t.enseignant.journee.erreurPartielleTout, contains('cahiers'));

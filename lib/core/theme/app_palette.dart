@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'accent_profil.dart';
 import 'app_color_pair.dart';
 
 /// Semantic pairs from REFONTE_CONTEXT section 6. Existing names remain stable.
@@ -55,6 +56,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
     required this.pointsStatut,
     required this.ombre,
     required this.teintesIdentite,
+    required this.accentsProfil,
     AppColorPair? surfaceOverlay,
   }) : surfaceOverlay = surfaceOverlay ?? surfaceRaised;
 
@@ -149,6 +151,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
     ),
     ombre: AppShadowColor(Color(0xFF211E28)),
     teintesIdentite: _teintesIdentiteClaires,
+    accentsProfil: _accentsProfilClairs,
   );
 
   factory AppPalette.sombre() => const AppPalette(
@@ -244,6 +247,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
     ),
     ombre: AppShadowColor(Color(0xFF211E28)),
     teintesIdentite: _teintesIdentiteSombres,
+    accentsProfil: _accentsProfilSombres,
   );
 
   final AppColorPair surfaceRaised;
@@ -304,6 +308,17 @@ class AppPalette extends ThemeExtension<AppPalette> {
   /// sens ici. Ne pas indexer directement : passer par [teinteGroupe] ou
   /// [teinteCouverture].
   final List<AppColorPair> teintesIdentite;
+
+  /// Les accents de profil (decision du directeur du 04/10/2026, K-62), un
+  /// par valeur d'[AccentProfil], dans son ordre. **Seule exception de
+  /// couleur approuvee** apres le gel du theme (K-37) : jamais reutilises pour
+  /// une classe, un statut ou une alerte, distincts des teintes d'identite des
+  /// classes. Fond : le bandeau derriere l'avatar ; texte : l'encre lisible
+  /// posee dessus (4,5:1). Figes par `test/theme/accents_profil_test.dart`.
+  final List<AppColorPair> accentsProfil;
+
+  /// L'accent [accent] dans ce theme.
+  AppColorPair accentProfil(AccentProfil accent) => accentsProfil[accent.index];
 
   /// La teinte d'identite d'un groupe, par index stable (decision D-18).
   AppColorPair teinteGroupe(int index) =>
@@ -370,6 +385,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
     AppPointsStatut? pointsStatut,
     AppShadowColor? ombre,
     List<AppColorPair>? teintesIdentite,
+    List<AppColorPair>? accentsProfil,
   }) => AppPalette(
     surfaceRaised: surfaceRaised ?? this.surfaceRaised,
     surfaceCanvas: surfaceCanvas ?? this.surfaceCanvas,
@@ -401,6 +417,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
     pointsStatut: pointsStatut ?? this.pointsStatut,
     ombre: ombre ?? this.ombre,
     teintesIdentite: teintesIdentite ?? this.teintesIdentite,
+    accentsProfil: accentsProfil ?? this.accentsProfil,
   );
 
   @override
@@ -467,6 +484,10 @@ class AppPalette extends ThemeExtension<AppPalette> {
       teintesIdentite: <AppColorPair>[
         for (int i = 0; i < teintesIdentite.length; i++)
           AppColorPair.lerp(teintesIdentite[i], other.teintesIdentite[i], t),
+      ],
+      accentsProfil: <AppColorPair>[
+        for (int i = 0; i < accentsProfil.length; i++)
+          AppColorPair.lerp(accentsProfil[i], other.accentsProfil[i], t),
       ],
     );
   }
@@ -595,4 +616,28 @@ const List<AppColorPair> _teintesIdentiteSombres = <AppColorPair>[
   AppColorPair(background: Color(0xFF6C335C), onBackground: Color(0xFFE0A3D0)),
   AppColorPair(background: Color(0xFF293457), onBackground: Color(0xFF8A9DD8)),
   AppColorPair(background: Color(0xFF336C34), onBackground: Color(0xFFB8E7BA)),
+];
+
+/// Les accents de profil, theme clair (K-62) : tons moyens, visibles sur la
+/// carte blanche, encre sombre de la meme teinte. Voir
+/// [AppPalette.accentsProfil].
+const List<AppColorPair> _accentsProfilClairs = <AppColorPair>[
+  AppColorPair(background: Color(0xFF8ED9BE), onBackground: Color(0xFF0E3B2C)),
+  AppColorPair(background: Color(0xFF93C5F0), onBackground: Color(0xFF0E2D4A)),
+  AppColorPair(background: Color(0xFFB7A3F3), onBackground: Color(0xFF2A1866)),
+  AppColorPair(background: Color(0xFFEE9DD8), onBackground: Color(0xFF5A1448)),
+  AppColorPair(background: Color(0xFFF2B58E), onBackground: Color(0xFF5A2A0C)),
+  AppColorPair(background: Color(0xFFD8C291), onBackground: Color(0xFF45360F)),
+];
+
+/// Les accents de profil, theme sombre (K-62, maquette 11 du 04/10/2026) :
+/// pastels clairs sur la carte sombre, encre sombre posee dessus. Meme ordre
+/// que [_accentsProfilClairs].
+const List<AppColorPair> _accentsProfilSombres = <AppColorPair>[
+  AppColorPair(background: Color(0xFFC8F2E2), onBackground: Color(0xFF0E3B2C)),
+  AppColorPair(background: Color(0xFFBEDDF7), onBackground: Color(0xFF0E2D4A)),
+  AppColorPair(background: Color(0xFFCDBDF9), onBackground: Color(0xFF2A1866)),
+  AppColorPair(background: Color(0xFFF4AEE6), onBackground: Color(0xFF5A1448)),
+  AppColorPair(background: Color(0xFFF7CDAF), onBackground: Color(0xFF5A2A0C)),
+  AppColorPair(background: Color(0xFFE9D9B3), onBackground: Color(0xFF45360F)),
 ];

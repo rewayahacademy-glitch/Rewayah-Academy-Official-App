@@ -38,6 +38,23 @@ const List<String> composantsDuCatalogue = <String>[
   'BentoTile',
   'AvatarTile',
   'AvatarNom',
+  // FI-2 (decision du directeur du 04/10, K-62) : l'identite d'un profil,
+  // son bandeau de couleur choisi par le tuteur derriere l'avatar.
+  'IdentiteProfil',
+  // Revue du directeur du 04/10 : le choix de la couleur est un simple
+  // selecteur de pastilles, jamais des cartes empilees.
+  'SelecteurCouleurProfil',
+  // FI-3a (guide Finance V4 §7) : les composants d'argent.
+  'MontantArgent',
+  'LigneFinance',
+  'LigneTransaction',
+  'LigneAllocation',
+  // FI-3b : statuts, bandeau, moyen de paiement, synthese.
+  'PastilleFinanciere',
+  'BadgePeriodeFinancee',
+  'BandeauAttention',
+  'LigneMoyenPaiement',
+  'ResumeSoldes',
   'AudioLabel',
   'PermanentNotice',
   'PinPad',
@@ -105,11 +122,16 @@ const List<String> composantsDuCatalogue = <String>[
   'AdminShell',
   'MenuActions',
   'MenuFiltre',
+  // FI-DIR-1 (FI-Q18 (a), 05/10) : le choix du mois des vues chiffrees.
+  'SelecteurMois',
   'SelecteurNiveauProgramme',
   'SousNavigationDomaine',
   // ONGLETS-1 (revue du directeur, 01/10/2026) : le selecteur de section
   // unique, qui remplace les rangees d'onglets et de pilules qui defilent.
   'SelecteurSection',
+  // FILTRES-1 (decide par delegation le 05/10/2026) : la rangee unique de
+  // puces de filtre qui defile, sur tous les ecrans a filtres.
+  'RangeeFiltres',
   // Les composants partages du chantier Tuteur V1 (phase 0c1 du 24/09/2026,
   // manifeste visuel section 3.4 et contrat K5), sans cle i18n nouvelle.
   'EcranResultat',
@@ -149,6 +171,37 @@ const List<String> composantsDuCatalogue = <String>[
   'ChampEtiquete',
   // FORM-L1-7-13 : le motif en puces, « Autre » ouvre la saisie libre (K-57).
   'SelecteurMotif',
+  'ZoneSaisie',
+  // COM-F (Communications V1, spec section 19) : les quatre composants du
+  // socle, ramenes a la racine de lib/core/widgets par COM-F-b (02_DEC-13) ;
+  // dans un sous-dossier, le test du disque ne les voyait pas.
+  'BadgeNonLu',
+  'CartePieceJointe',
+  'EspaceTravailAdaptatif',
+  'VueEtatCommunication',
+  // COM-RC (revue COM-R, R-07) : une seule recherche de liste, pour les
+  // Messages, Le Studio et la Communaute.
+  'ChampRecherche',
+  'SurfaceRecherche',
+  // CPT-F (spec §7, DR-06) : le masque des montants du Comptable.
+  'BasculeMontants',
+  'MontantSensible',
+  // CPT-F (spec §16.3) : la destination de paiement masquee du personnel.
+  'LigneDestinationMasquee',
+  // CPT-F (spec §40) : une FAMILLE de neuf pastilles de statut dans un seul
+  // fichier, inscrite sous le nom du fichier. C'est l'exception inverse de
+  // `GrilleSemaine` : ici, un nom de catalogue qui n'est pas une classe ;
+  // l'entree de galerie montre chacune des neuf pastilles.
+  'PastillesComptable',
+  // CPT-F, CPT-TRES, CPT-JOUR : le sous-dossier lib/core/widgets/comptable/,
+  // inscrit par CPT-RC (revue CPT-R, m1) ; le controle des fichiers lit
+  // desormais les sous-dossiers.
+  'CarteReserveStrategique',
+  'LigneActivite',
+  'ResumeTresorerie',
+  // CPT-DIR-2 (Q-9 = a) : le pourcentage derive d'un montant, masque avec
+  // les montants ; inscrit au catalogue par JONCTION-LIGNES-1.
+  'PourcentageSensible',
 ];
 
 /// Les trois largeurs de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 8.
@@ -253,7 +306,9 @@ void main() {
       // sans passer par le catalogue, ce que la constitution interdit.
       final List<String> fichiers =
           Directory('lib/core/widgets')
-              .listSync()
+              // Recursif : un sous-dossier (lib/core/widgets/comptable/)
+              // n'echappe plus au catalogue (CPT-RC, revue CPT-R m1).
+              .listSync(recursive: true)
               .whereType<File>()
               .map((File f) => f.uri.pathSegments.last)
               .where((String n) => n.endsWith('.dart'))
@@ -269,6 +324,34 @@ void main() {
             ..sort();
 
       expect(fichiers, attendus);
+    });
+
+    test('aucun composant ne se cache dans un sous-dossier', () {
+      // 02_DEC-13 (COM-F-b) : le test precedent ne lit que la racine. Un
+      // composant pose dans `lib/core/widgets/<dossier>/` lui echappait, et
+      // echappait donc a la galerie : c'est arrive aux quatre composants des
+      // Communications (revue COM-F-R, M2). Les composants vivent a la racine.
+      final List<String> caches =
+          Directory('lib/core/widgets')
+              .listSync(recursive: true)
+              .whereType<File>()
+              .map((File f) => f.path.replaceAll(r'\', '/'))
+              .where((String chemin) => chemin.endsWith('.dart'))
+              .where(
+                (String chemin) =>
+                    chemin.substring('lib/core/widgets/'.length).contains('/'),
+              )
+              // Seule exception, decidee par CPT-RC (revue CPT-R, m1) sur la
+              // ligne ui/comptable-v1 et gardee par JONCTION-LIGNES-1 : le
+              // sous-dossier comptable/, que le test precedent lit (recursif)
+              // et confronte au catalogue.
+              .where(
+                (String chemin) =>
+                    !chemin.startsWith('lib/core/widgets/comptable/'),
+              )
+              .toList()
+            ..sort();
+      expect(caches, isEmpty);
     });
 
     test('un composant livre avec son seul etat nominal n est pas fini', () {

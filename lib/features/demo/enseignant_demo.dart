@@ -230,6 +230,9 @@ enum EcranDemoEnseignant {
   /// Cahier de seance (ENS-04, EN-7) : l'ecran de sortie de seance, hors de
   /// la barre (planche 4, R5).
   cahier,
+
+  /// Mes revenus (FI-10) : une pose de la branche Profil, Profil reste actif.
+  revenus,
 }
 
 /// Les situations proposees pour chaque ecran.

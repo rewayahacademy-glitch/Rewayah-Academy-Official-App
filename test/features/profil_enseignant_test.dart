@@ -15,6 +15,7 @@ import 'package:rewayah_academy/core/profil/service_profil_enseignant.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/core/widgets/stat_tile.dart';
 import 'package:rewayah_academy/features/profil_enseignant/declaration_choix.dart';
@@ -351,7 +352,11 @@ void main() {
       expect(find.text('GN'), findsOneWidget);
       expect(find.text('Français, Arabe'), findsOneWidget);
       expect(
-        find.text(t.enseignant.profil.plafondValeur(nombre: 20)),
+        find.text(
+          LibellesGroupe.valeurSeule(
+            t.enseignant.profil.plafondValeur(nombre: 20),
+          ),
+        ),
         findsOneWidget,
       );
 
@@ -545,5 +550,25 @@ void main() {
 
       expect(find.text(t.enseignant.profil.enregistrer), findsNothing);
     });
+  });
+
+  group('ASSETS-DIR-1 : la politique de controle, rangee dans l espace '
+      'enseignant', () {
+    for (final bool echec in <bool>[false, true]) {
+      testWidgets('le lien ouvre la politique (lecture des acceptations '
+          '${echec ? 'en echec' : 'vide'})', (WidgetTester tester) async {
+        await _monter(
+          tester,
+          profil: _profilDeTest(),
+          echecAcceptations: echec,
+        );
+        await tester.pumpAndSettle();
+
+        // Un texte fixe : lisible quel que soit l'etat des acceptations.
+        await _taperLigne(tester, t.contrat.politique.lien);
+        expect(find.text(t.contrat.politique.titre), findsOneWidget);
+        expect(find.text(t.contrat.politique.s10.titre), findsOneWidget);
+      });
+    }
   });
 }
