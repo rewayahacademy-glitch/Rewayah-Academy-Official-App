@@ -2165,7 +2165,7 @@
       "filtreTousTypes": "Tous les publics",
       "liste": {
         "rechercheLibelle": "Rechercher une classe",
-        "rechercheAide": "Nom, numéro, code ou enseignant de la classe",
+        "rechercheAide": "Nom, code ou enseignant",
         "filtreAttente": "En attente d'enseignant",
         "filtreJour": "Jour",
         "filtreTousJours": "Tous les jours",

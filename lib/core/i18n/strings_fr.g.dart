@@ -18594,8 +18594,8 @@ class Traductions$admin$groupes$liste$fr {
 	/// fr: 'Rechercher une classe'
 	String get rechercheLibelle => 'Rechercher une classe';
 
-	/// fr: 'Nom, numéro, code ou enseignant de la classe'
-	String get rechercheAide => 'Nom, numéro, code ou enseignant de la classe';
+	/// fr: 'Nom, code ou enseignant'
+	String get rechercheAide => 'Nom, code ou enseignant';
 
 	/// fr: 'En attente d'enseignant'
 	String get filtreAttente => 'En attente d\'enseignant';
@@ -30525,7 +30525,7 @@ extension on Traductions {
 			'admin.groupes.typeAdulte' => 'Adultes',
 			'admin.groupes.filtreTousTypes' => 'Tous les publics',
 			'admin.groupes.liste.rechercheLibelle' => 'Rechercher une classe',
-			'admin.groupes.liste.rechercheAide' => 'Nom, numéro, code ou enseignant de la classe',
+			'admin.groupes.liste.rechercheAide' => 'Nom, code ou enseignant',
 			'admin.groupes.liste.filtreAttente' => 'En attente d\'enseignant',
 			'admin.groupes.liste.filtreJour' => 'Jour',
 			'admin.groupes.liste.filtreTousJours' => 'Tous les jours',

@@ -9838,7 +9838,7 @@ class _Traductions$admin$groupes$liste$ar extends Traductions$admin$groupes$list
 
 	// Translations
 	@override String get rechercheLibelle => 'البحث عن فصل';
-	@override String get rechercheAide => 'اسم الفصل أو رقمه أو رمزه أو معلمه';
+	@override String get rechercheAide => 'الاسم أو الرمز أو المعلم';
 	@override String get filtreAttente => 'في انتظار معلم';
 	@override String get filtreJour => 'اليوم';
 	@override String get filtreTousJours => 'كل الأيام';
@@ -15305,7 +15305,7 @@ extension on TraductionsAr {
 			'admin.groupes.observationErreur' => 'تعذّر حفظ الإعداد.',
 			'admin.groupes.observationCapaciteAbsente' => 'هذا التثبيت لا يملك بعد تحديث الخادم الذي يتطلبه هذا الإعداد (الترحيل 0036). إعادة المحاولة لن تغيّر شيئًا: يجب تطبيقه أولًا على قاعدة البيانات.',
 			'admin.groupes.liste.rechercheLibelle' => 'البحث عن فصل',
-			'admin.groupes.liste.rechercheAide' => 'اسم الفصل أو رقمه أو رمزه أو معلمه',
+			'admin.groupes.liste.rechercheAide' => 'الاسم أو الرمز أو المعلم',
 			'admin.groupes.liste.filtreAttente' => 'في انتظار معلم',
 			'admin.groupes.liste.filtreJour' => 'اليوم',
 			'admin.groupes.liste.filtreTousJours' => 'كل الأيام',
