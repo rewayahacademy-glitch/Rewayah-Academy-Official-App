@@ -94,7 +94,8 @@ class _RemplacementsFixes extends RemplacementsControleur {
 /// ligne ; `horsLigne` echoue sans reseau.
 enum _Etat { chargement, contenu, vide, erreur, horsLigne }
 
-List<Override> _surcharges(_Etat etat) {
+/// [etatOffres] isole le flux du tableau commun ; par defaut il suit [etat].
+List<Override> _surcharges(_Etat etat, {_Etat? etatOffres}) {
   Future<T> lire<T>(T valeur) {
     if (etat == _Etat.chargement) return Completer<T>().future;
     if (etat == _Etat.erreur || etat == _Etat.horsLigne) {
@@ -105,9 +106,10 @@ List<Override> _surcharges(_Etat etat) {
 
   // REMPL-1b : le tableau commun, seule source des offres, dans le meme etat
   // que les autres lectures.
+  final _Etat offres = etatOffres ?? etat;
   Stream<T> suivre<T>(T valeur) {
-    if (etat == _Etat.chargement) return StreamController<T>().stream;
-    if (etat == _Etat.erreur || etat == _Etat.horsLigne) {
+    if (offres == _Etat.chargement) return StreamController<T>().stream;
+    if (offres == _Etat.erreur || offres == _Etat.horsLigne) {
       return Stream<T>.error(StateError('reseau'));
     }
     return Stream<T>.value(valeur);
@@ -163,7 +165,7 @@ List<Override> _surcharges(_Etat etat) {
     ),
     offresCommunesProvider.overrideWith(
       (Ref _) => suivre<List<OffreCommune>>(
-        vide
+        offres == _Etat.vide
             ? const <OffreCommune>[]
             : <OffreCommune>[
                 OffreCommune(
@@ -196,13 +198,14 @@ Future<void> _monter(
   double echelle = 2,
   ThemeMode mode = ThemeMode.light,
   InterfaceMode interface = InterfaceMode.standard,
+  _Etat? etatOffres,
 }) async {
   tester.view.physicalSize = Size(largeur, 3000);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
     ProviderScope(
-      overrides: _surcharges(etat),
+      overrides: _surcharges(etat, etatOffres: etatOffres),
       child: TranslationProvider(
         child: MaterialApp(
           theme: AppTheme.pour(interface, Brightness.light),
@@ -256,6 +259,67 @@ void main() {
             });
           }
         }
+      }
+    },
+  );
+
+  // REMPL-1b (revue, mineur 6) : la page des alertes lit le tableau commun.
+  // Le groupe ci-dessus garde la mise en page ; celui-ci garde le contenu,
+  // dans chaque etat du flux.
+  group(
+    'La page des alertes affiche les offres ouvertes du tableau commun',
+    () {
+      final String titre = titreRemplacementUrgent(DateTime(2026, 10, 6, 18));
+      final String illisible = t.enseignant.remplacements.sansDonnees;
+
+      testWidgets('contenu : l offre ouverte est une Alerte utile', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          const ListeAlertesPage(),
+          _Etat.contenu,
+          direction: TextDirection.ltr,
+        );
+        expect(find.text(titre), findsOneWidget);
+        expect(find.text('Al-Muzzammil'), findsOneWidget);
+        expect(find.text(illisible), findsNothing);
+      });
+
+      for (final _Etat etat in <_Etat>[_Etat.vide, _Etat.chargement]) {
+        testWidgets('${etat.name} : aucune alerte de remplacement', (
+          WidgetTester tester,
+        ) async {
+          // Les seances et la presence se lisent : seul le flux des offres
+          // change d'etat.
+          await _monter(
+            tester,
+            const ListeAlertesPage(),
+            _Etat.contenu,
+            etatOffres: etat,
+            direction: TextDirection.ltr,
+          );
+          expect(find.text(titre), findsNothing);
+          expect(find.text(illisible), findsNothing);
+        });
+      }
+
+      for (final _Etat etat in <_Etat>[_Etat.erreur, _Etat.horsLigne]) {
+        testWidgets('${etat.name} : l echec du flux se dit, sans offre', (
+          WidgetTester tester,
+        ) async {
+          // Les seances et la presence se lisent : seul le flux des offres
+          // change d'etat.
+          await _monter(
+            tester,
+            const ListeAlertesPage(),
+            _Etat.contenu,
+            etatOffres: etat,
+            direction: TextDirection.ltr,
+          );
+          expect(find.text(titre), findsNothing);
+          expect(find.text(illisible), findsOneWidget);
+        });
       }
     },
   );
