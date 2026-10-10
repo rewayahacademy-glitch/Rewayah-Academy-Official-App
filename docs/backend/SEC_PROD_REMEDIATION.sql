@@ -698,8 +698,8 @@ begin
           or lower(btrim(substring(v_compact from v_close_pos + 1))) <> 'then'
           or v_compact ~ 'app_role\(\)=''x''(=false|isfalse|isnottrue)'
           or v_compact ~ 'coalesce\([^)]*not(public\.)?app_role\('
-          or v_compact !~ '(^|[^[:alnum:]_$])(public\.)?app_role\(\)(=''x''|in\(''x''(,''x'')*\))'
-          or v_compact !~ '(^|[^[:alnum:]_$])(public\.)?app_account_valid\(\)'
+          or v_compact !~ '(^|and|or|[(])(public\.)?app_role\(\)(=''x''|in\(''x''(,''x'')*\))'
+          or v_compact !~ '(^|and|or|[(])(public\.)?app_account_valid\(\)'
           or v_compact ~ '(and|or)not(public\.)?app_account_valid\(\)'
           or (
             v_condition ~* '(^|[^[:alnum:]_])or([^[:alnum:]_]|$)'
