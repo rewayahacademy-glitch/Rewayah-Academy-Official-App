@@ -7,13 +7,23 @@
 // personne (K-07). Les cas de rendu (RTL, 320 px a 200 %) et les rappels
 // comptes montent la page ou la salle que sert la meme route.
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart'
+    show
+        RenderClipOval,
+        RenderClipPath,
+        RenderClipRRect,
+        RenderClipRect,
+        RenderFittedBox;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/accessibilite/commandes_masquables.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/widgets/controle_segmente.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
@@ -106,6 +116,101 @@ AffichagePartage _affichageChoisi(WidgetTester tester) => tester
     .valeur;
 
 String? _focus() => FocusManager.instance.primaryFocus?.debugLabel;
+
+/// Le rectangle a l'ecran d'une boite, transformations comprises.
+Rect _aLEcran(RenderBox boite) => MatrixUtils.transformRect(
+  boite.getTransformTo(null),
+  Offset.zero & boite.size,
+);
+
+/// La part de [f] que l'on voit : son rectangle, coupe par la vue et par
+/// chaque decoupe qui l'entoure jusqu'a la racine.
+Rect _partVue(WidgetTester tester, Finder f) {
+  final RenderBox boite = tester.renderObject(f);
+  Rect vu = _aLEcran(boite).intersect(
+    Offset.zero & (tester.view.physicalSize / tester.view.devicePixelRatio),
+  );
+  RenderObject? o = boite.parent;
+  while (o != null) {
+    if (o is RenderClipRect ||
+        o is RenderClipRRect ||
+        o is RenderClipOval ||
+        o is RenderClipPath ||
+        (o is RenderFittedBox && o.clipBehavior != Clip.none)) {
+      vu = vu.intersect(_aLEcran(o as RenderBox));
+    }
+    o = o.parent;
+  }
+  return vu;
+}
+
+/// Les entrees de la colonne des Commandes, dans l'ordre de lecture.
+List<(String, Finder)> _entrees() => <(String, Finder)>[
+  ('Bibliotheque', _bibliotheque),
+  ('Affichages', _affichages),
+  ('Pagination', _pagination),
+  ('Ajuster', find.byKey(CommandesPedagogiques.cleAjuster)),
+  ('Focus', find.byKey(CommandesPedagogiques.cleFocus)),
+].where(((String, Finder) e) => e.$2.evaluate().isNotEmpty).toList();
+
+/// Revue TB-R 10/10, m36 (defaut grave n. 2 de TB_RAPPORT) : a l'ouverture,
+/// chaque entree de la colonne des Commandes est entiere dans la part VUE du
+/// defilement ; sinon (coupee ou cachee dessous), un fondu bas est pose ET
+/// visible : son bord bas est le bord bas de la part vue (pas sous l'ecran),
+/// sa bande fait au moins [AppSpacing.md]. Puis la derniere entree, defilee,
+/// se lit entiere.
+Future<void> _feuilleSansCoupureMuette(WidgetTester tester, String cas) async {
+  expect(_contenu, findsOneWidget, reason: cas);
+  final Finder defile = find.byKey(CommandesPedagogiques.cleDefilement);
+  final Rect vu = _partVue(tester, defile);
+  expect(vu.height, greaterThan(0), reason: '$cas : colonne invisible');
+  final List<(String, Finder)> entrees = _entrees();
+  expect(entrees, isNotEmpty, reason: cas);
+  final Finder fondu = find.byKey(CommandesPedagogiques.cleFonduBas);
+  for (final (String nom, Finder f) in entrees) {
+    final Rect r = tester.getRect(f);
+    final bool entiere =
+        vu.inflate(0.5).contains(r.topLeft) &&
+        vu.inflate(0.5).contains(r.bottomRight);
+    if (entiere) continue;
+    expect(
+      fondu,
+      findsOneWidget,
+      reason: '$cas : $nom $r coupee ou cachee sous $vu, sans fondu',
+    );
+    final Rect bande = _aLEcran(tester.renderObject<RenderBox>(fondu));
+    expect(
+      (bande.bottom - vu.bottom).abs(),
+      lessThanOrEqualTo(0.5),
+      reason:
+          '$cas : $nom coupee ; le fondu finit a ${bande.bottom}, la part '
+          'vue a ${vu.bottom} : fondu hors de la vue',
+    );
+    expect(
+      math.min(AppSpacing.xxxl, bande.height / 8),
+      greaterThanOrEqualTo(AppSpacing.md),
+      reason: '$cas : $nom coupee ; fondu de ${bande.height / 8} px, invisible',
+    );
+  }
+  final (String nomDerniere, Finder derniere) = entrees.last;
+  await tester.scrollUntilVisible(
+    derniere,
+    40,
+    scrollable: find
+        .descendant(of: _contenu, matching: find.byType(Scrollable))
+        .first,
+  );
+  await tester.pump();
+  final Rect apres = _partVue(tester, defile);
+  final Rect r = tester.getRect(derniere);
+  expect(
+    apres.inflate(0.5).contains(r.topLeft) &&
+        apres.inflate(0.5).contains(r.bottomRight),
+    isTrue,
+    reason: '$cas : $nomDerniere $r, defilee, toujours coupee par $apres',
+  );
+  expect(tester.takeException(), isNull, reason: cas);
+}
 
 void main() {
   group('K-07 : le declencheur ouvre le panneau depuis la vraie coquille', () {
@@ -370,6 +475,42 @@ void main() {
       await tester.pump();
       expect(_bibliotheque, findsOneWidget);
       expect(pointeur, findsNothing);
+    });
+
+    // Revue TB-R 10/10, n15 : la decision « Pointeur en tete d'Outils » se
+    // lit aussi de droite a gauche, ou la tete est a droite. La page que sert
+    // la route, montee en RTL (comme « bureau RTL »).
+    testWidgets('onglet Outils de droite a gauche : Pointeur en tete, a '
+        'droite', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        const DemoSallePage(
+          role: RoleSeance.enseignant,
+          situation: SituationTb.cmd01,
+        ),
+        sens: TextDirection.rtl,
+      );
+      expect(Directionality.of(tester.element(_contenu)), TextDirection.rtl);
+      await tester.tap(_dans(_onglets, t.salle.seance.commandes.ongletOutils));
+      await tester.pump();
+      final Finder pointeur = find.byKey(
+        const ValueKey<String>('outil-pointeur'),
+      );
+      expect(pointeur, findsOneWidget);
+      for (final String autre in <String>[
+        'outil-ecrire',
+        'outil-marquer',
+        'outil-masquer',
+      ]) {
+        expect(
+          tester.getTopRight(pointeur).dx,
+          greaterThan(
+            tester.getTopRight(find.byKey(ValueKey<String>(autre))).dx,
+          ),
+          reason: autre,
+        );
+      }
+      expect(tester.takeException(), isNull);
     });
   });
 
@@ -647,7 +788,11 @@ void main() {
     });
   });
 
-  group('200 %, 320 px : rien ne deborde, aucun mot coupe', () {
+  // Revue TB-R 10/10, m36 : ce groupe ne voit que l'enseignant, monte seul,
+  // et les bords lateraux apres defilement ; la feuille coupee en bas est
+  // mesuree par le groupe suivant, depuis la coquille.
+  group('200 %, 320 px, enseignant monte seul : rien ne deborde sur les '
+      'cotes, aucun mot coupe', () {
     setUpAll(chargerPolicesDuDepot);
     for (final (Size, double, TextDirection) cas
         in <(Size, double, TextDirection)>[
@@ -694,6 +839,55 @@ void main() {
         expect(tester.takeException(), isNull);
         verifierAucunMotCoupe(tester, find.byType(PanneauSeance));
       });
+    }
+  });
+
+  group('Feuille Commandes depuis la coquille : derniere entree entiere ou '
+      'fondu visible (eleve, guidee, enseignant ; 320 x1, 320 x2, 390 x2)', () {
+    setUpAll(chargerPolicesDuDepot);
+    // Rouges sur a72fd566 (fondu de 9 a 10 px sous une entree coupee, vue
+    // de 75 a 80 px) : le comportement attendu est ecrit, le cas attend la
+    // correction de la feuille par le lot L2 de TB-RC. A reactiver apres.
+    const Set<String> attendL2 = <String>{
+      'eleve 320 x2',
+      'eleve 390 x2',
+      'enseignant 320 x2',
+    };
+    for (final RoleSeance role in RoleSeance.values) {
+      for (final (String nom, Size taille, double texte, EdgeInsets zone) cas
+          in <(String, Size, double, EdgeInsets)>[
+            ('320 x1', const Size(320, 700), 1, EdgeInsets.zero),
+            ('320 x2', const Size(320, 700), 2, EdgeInsets.zero),
+            (
+              '390 x2',
+              _telephone,
+              2,
+              const EdgeInsets.only(top: 47, bottom: 34),
+            ),
+          ]) {
+        final String nomCas = '${role.name} ${cas.$1}';
+        testWidgets(nomCas, skip: attendL2.contains(nomCas), (
+          WidgetTester tester,
+        ) async {
+          tester.view.padding = FakeViewPadding(
+            top: cas.$4.top,
+            bottom: cas.$4.bottom,
+          );
+          tester.view.viewPadding = FakeViewPadding(
+            top: cas.$4.top,
+            bottom: cas.$4.bottom,
+          );
+          tester.platformDispatcher.textScaleFactorTestValue = cas.$3;
+          addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+          await _ouvrir(tester, role, SituationTb.ped03, taille: cas.$2);
+          await tester.ensureVisible(_declencheur);
+          await tester.pump();
+          await tester.tap(_declencheur);
+          await stabiliser(tester);
+          await tester.pump(const Duration(milliseconds: 400));
+          await _feuilleSansCoupureMuette(tester, nomCas);
+        });
+      }
     }
   });
 }

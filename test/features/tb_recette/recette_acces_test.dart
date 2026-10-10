@@ -405,128 +405,146 @@ void main() {
   testWidgets('UX-09 / R-15 : lecteur d\'ecran et texte x2, au clavier : '
       'Commandes > Bibliotheque > apercu > Presenter > Ranger, chaque '
       'commande nommee', (WidgetTester tester) async {
+    // Revue TB-R 10/10, n16 : la poignee est liberee meme si une assertion
+    // echoue avant la fin (`finally`) ; `addTearDown` passerait apres la
+    // verification de fin de test, qui la trouverait encore active.
     final SemanticsHandle semantique = tester.ensureSemantics();
-    tester.platformDispatcher.accessibilityFeaturesTestValue =
-        const FakeAccessibilityFeatures(accessibleNavigation: true);
-    tester.platformDispatcher.textScaleFactorTestValue = 2;
-    addTearDown(() {
-      tester.platformDispatcher.clearAccessibilityFeaturesTestValue();
-      tester.platformDispatcher.clearTextScaleFactorTestValue();
-    });
-    await _ouvrir(
-      tester,
-      RoleSeance.enseignant,
-      SituationTb.ped03,
-      taille: _bureau,
-    );
-    expect(_pageAvecTitre(_titreInitial), findsOneWidget);
-    // Lecteur d'ecran : la barre ne se masque jamais d'elle-meme.
-    await tester.pump(CommandesMasquables.delaiParDefaut * 2);
-    await _attendre(tester);
-    expect(_quitter.hitTestable(), findsOneWidget);
-    final List<String> lus = <String>[];
+    try {
+      tester.platformDispatcher.accessibilityFeaturesTestValue =
+          const FakeAccessibilityFeatures(accessibleNavigation: true);
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(() {
+        tester.platformDispatcher.clearAccessibilityFeaturesTestValue();
+        tester.platformDispatcher.clearTextScaleFactorTestValue();
+      });
+      await _ouvrir(
+        tester,
+        RoleSeance.enseignant,
+        SituationTb.ped03,
+        taille: _bureau,
+      );
+      expect(_pageAvecTitre(_titreInitial), findsOneWidget);
+      // Lecteur d'ecran : la barre ne se masque jamais d'elle-meme.
+      await tester.pump(CommandesMasquables.delaiParDefaut * 2);
+      await _attendre(tester);
+      expect(_quitter.hitTestable(), findsOneWidget);
+      final List<String> lus = <String>[];
 
-    // Commandes : Tab, nom lu, Entree ouvre ; Echap referme.
-    await _tabVers(tester, _declencheur, 'Commandes');
-    lus.add(_nomLu(tester, _declencheur));
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-    await _attendre(tester);
-    expect(_contenu, findsOneWidget, reason: 'Entree ouvre les Commandes');
-    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
-    await _attendre(tester);
-    expect(_contenu, findsNothing, reason: 'Echap referme les Commandes');
-    // Le focus revient au declencheur (ou reste atteignable a Tab).
-    await _tabVers(tester, _declencheur, 'Commandes apres Echap');
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-    await _attendre(tester);
-    expect(_contenu, findsOneWidget);
-
-    // Bibliotheque.
-    await _tabVers(tester, _bibliotheque, 'Bibliotheque');
-    lus.add(_nomLu(tester, _bibliotheque));
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-    await tester.pumpAndSettle();
-    expect(_catalogue, findsOneWidget, reason: 'Entree ouvre la Bibliotheque');
-
-    // Apercu : la carte d'un autre support.
-    final Finder carte = find.ancestor(
-      of: find.descendant(of: _catalogue, matching: find.text(_autre)),
-      matching: find.byType(Pressable),
-    );
-    await _tabVers(tester, carte, 'la carte « $_autre »');
-    lus.add(_nomLu(tester, carte.first));
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-    await tester.pumpAndSettle();
-    expect(_apercu, findsOneWidget, reason: 'Entree ouvre l\'apercu');
-    // L'apercu est personnel : la classe garde sa page (UX-17).
-    expect(_pageAvecTitre(_titreInitial), findsOneWidget);
-
-    // Presenter.
-    await _tabVers(tester, _presenter, 'Presenter');
-    lus.add(_nomLu(tester, _presenter));
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(_pageAvecTitre(_autre), findsOneWidget, reason: 'presente');
-    expect(_pageAvecTitre(_titreInitial), findsNothing);
-
-    // Ranger : Commandes > menu du support > « Ranger dans la
-    // bibliotheque ».
-    if (_contenu.evaluate().isEmpty) {
-      await _tabVers(tester, _declencheur, 'Commandes (rangement)');
+      // Commandes : Tab, nom lu, Entree ouvre ; Echap referme.
+      await _tabVers(tester, _declencheur, 'Commandes');
+      lus.add(_nomLu(tester, _declencheur));
       await tester.sendKeyEvent(LogicalKeyboardKey.enter);
       await _attendre(tester);
-    }
-    await _tabVers(tester, _menu, 'menu du support');
-    lus.add(_nomLu(tester, _menu));
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-    await tester.pumpAndSettle();
-    final Finder ranger = find.ancestor(
-      of: find.text(t.salle.seance.rangement.ranger).last,
-      matching: find.byWidgetPredicate((Widget w) => w is PopupMenuItem),
-    );
-    expect(ranger, findsOneWidget, reason: 'le menu est ouvert');
-    for (int i = 0; i < 12 && !_focusDans(ranger); i++) {
-      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-      await tester.pump();
-    }
-    expect(_focusDans(ranger), isTrue, reason: 'Ranger atteint au clavier');
-    lus.add(_nomLu(tester, ranger));
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(_page, findsNothing, reason: 'range');
-    expect(_feuille, findsOneWidget, reason: 'tableau libre distinct');
+      expect(_contenu, findsOneWidget, reason: 'Entree ouvre les Commandes');
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await _attendre(tester);
+      expect(_contenu, findsNothing, reason: 'Echap referme les Commandes');
+      // Le focus revient au declencheur (ou reste atteignable a Tab).
+      await _tabVers(tester, _declencheur, 'Commandes apres Echap');
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await _attendre(tester);
+      expect(_contenu, findsOneWidget);
 
-    // Chaque commande atteinte a un nom lu comprehensible.
-    expect(lus, hasLength(6));
-    final List<String> attendus = <String>[
-      'Commandes',
-      'Bibliotheque',
-      'carte',
-      'Presenter',
-      'menu',
-      'Ranger',
-    ];
-    for (int i = 0; i < lus.length; i++) {
-      _nomComprehensible(lus[i], attendus[i]);
+      // Bibliotheque.
+      await _tabVers(tester, _bibliotheque, 'Bibliotheque');
+      lus.add(_nomLu(tester, _bibliotheque));
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(
+        _catalogue,
+        findsOneWidget,
+        reason: 'Entree ouvre la Bibliotheque',
+      );
+
+      // Apercu : la carte d'un autre support.
+      final Finder carte = find.ancestor(
+        of: find.descendant(of: _catalogue, matching: find.text(_autre)),
+        matching: find.byType(Pressable),
+      );
+      await _tabVers(tester, carte, 'la carte « $_autre »');
+      lus.add(_nomLu(tester, carte.first));
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(_apercu, findsOneWidget, reason: 'Entree ouvre l\'apercu');
+      // L'apercu est personnel : la classe garde sa page (UX-17).
+      expect(_pageAvecTitre(_titreInitial), findsOneWidget);
+
+      // Presenter.
+      await _tabVers(tester, _presenter, 'Presenter');
+      lus.add(_nomLu(tester, _presenter));
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(_pageAvecTitre(_autre), findsOneWidget, reason: 'presente');
+      expect(_pageAvecTitre(_titreInitial), findsNothing);
+
+      // Ranger : Commandes > menu du support > « Ranger dans la
+      // bibliotheque ».
+      if (_contenu.evaluate().isEmpty) {
+        await _tabVers(tester, _declencheur, 'Commandes (rangement)');
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+        await _attendre(tester);
+      }
+      await _tabVers(tester, _menu, 'menu du support');
+      lus.add(_nomLu(tester, _menu));
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      final Finder ranger = find.ancestor(
+        of: find.text(t.salle.seance.rangement.ranger).last,
+        matching: find.byWidgetPredicate((Widget w) => w is PopupMenuItem),
+      );
+      expect(ranger, findsOneWidget, reason: 'le menu est ouvert');
+      for (int i = 0; i < 12 && !_focusDans(ranger); i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+        await tester.pump();
+      }
+      expect(_focusDans(ranger), isTrue, reason: 'Ranger atteint au clavier');
+      lus.add(_nomLu(tester, ranger));
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(_page, findsNothing, reason: 'range');
+      expect(_feuille, findsOneWidget, reason: 'tableau libre distinct');
+
+      // Chaque commande atteinte a un nom lu comprehensible.
+      expect(lus, hasLength(6));
+      final List<String> attendus = <String>[
+        'Commandes',
+        'Bibliotheque',
+        'carte',
+        'Presenter',
+        'menu',
+        'Ranger',
+      ];
+      for (int i = 0; i < lus.length; i++) {
+        _nomComprehensible(lus[i], attendus[i]);
+      }
+      // Les noms exacts du §20 : ce que dit le lecteur d'ecran.
+      expect(lus[0], t.salle.seance.commandes.declencheurSemantique);
+      expect(lus[1], t.salle.seance.commandes.bibliotheque);
+      // `startsWith` tolere la double lecture connue de la carte du catalogue
+      // (TB_RAPPORT §d n. 22) ; passer a `equals` une fois ce doublon corrige.
+      expect(lus[2], startsWith(_autre));
+      expect(lus[3], t.salle.seance.bibliotheque.presenter);
+      expect(lus[4], t.salle.seance.rangement.menuSupport);
+      expect(lus[5], t.salle.seance.rangement.ranger);
+    } finally {
+      semantique.dispose();
     }
-    // Les noms exacts du §20 : ce que dit le lecteur d'ecran.
-    expect(lus[0], t.salle.seance.commandes.declencheurSemantique);
-    expect(lus[1], t.salle.seance.commandes.bibliotheque);
-    expect(lus[2], startsWith(_autre));
-    expect(lus[3], t.salle.seance.bibliotheque.presenter);
-    expect(lus[4], t.salle.seance.rangement.menuSupport);
-    expect(lus[5], t.salle.seance.rangement.ranger);
-    semantique.dispose();
   });
 
   // --- UX-22 / R-16 : mouvement reduit ---------------------------------------
 
   group('UX-22 / R-16 : mouvement reduit, memes fonctions sans animation '
       'obligatoire', () {
-    testWidgets('enseignant 390 : Commandes sans glissement, rangement '
-        'complet sans copie animee, reprise', (WidgetTester tester) async {
+    // Revue TB-R 10/10, n13 : le panneau n'a aucune animation, meme sans
+    // mouvement reduit ; « sans glissement » est une garde de
+    // non-regression, pas une preuve du mouvement reduit. La partie
+    // rangement (aucune copie animee) depend, elle, du reglage.
+    testWidgets('enseignant 390 : Commandes sans glissement (garde de '
+        'non-regression), rangement complet sans copie animee, reprise', (
+      WidgetTester tester,
+    ) async {
       tester.platformDispatcher.accessibilityFeaturesTestValue =
           const FakeAccessibilityFeatures(disableAnimations: true);
       addTearDown(
