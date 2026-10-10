@@ -36,6 +36,7 @@ class DemandeServeurDemo {
     this.debutCours,
     this.motif,
     this.peutChoisirAutreCreneau = false,
+    this.changement,
   });
 
   /// L'identifiant.
@@ -77,6 +78,9 @@ class DemandeServeurDemo {
   /// Capacite de rechoisir.
   bool peutChoisirAutreCreneau;
 
+  /// Ce qui a change dans la classe de l'eleve (fusion, transfert).
+  ChangementClasse? changement;
+
   /// Ce que le port rend a la famille.
   SuiviDemande versFamille() => SuiviDemande(
     demandeId: demandeId,
@@ -90,6 +94,12 @@ class DemandeServeurDemo {
     debutCours: debutCours,
     motif: motif,
     peutChoisirAutreCreneau: peutChoisirAutreCreneau,
+    // R20 : l'instant de chaque etape franchie (la derniere fois si une
+    // etape a ete atteinte deux fois).
+    jalons: <EtapeDemande, DateTime>{
+      for (final (EtapeDemande e, DateTime quand) in transitions) e: quand,
+    },
+    changement: changement,
   );
 }
 
@@ -147,6 +157,114 @@ class SuiviDemandesDemo implements PortSuiviDemandes {
           peutChoisirAutreCreneau: true,
         ),
       ]);
+
+  /// R7, R9, R10, R11, R20 : quatre eleves du meme foyer, chacun avec son
+  /// propre suivi. Yusuf attend en liste d'attente (ni rang ni delai), Ines a
+  /// sa classe prete qui attend son enseignant, Aicha a ete passee dans une
+  /// autre classe (transfert) et est integree, Bilal a vu sa classe reunie
+  /// avec une autre (fusion) et ses cours ont commence. Aucun suivi ne dit
+  /// que des enfants sont ensemble ou separes.
+  factory SuiviDemandesDemo.echelle() => SuiviDemandesDemo(<DemandeServeurDemo>[
+    DemandeServeurDemo(
+      demandeId: 'demo-demande-yusuf',
+      eleveId: DonneesDemo.yusufId,
+      prenom: 'Yusuf',
+      creneau: CreneauDemande(
+        occurrences: const <OccurrenceCreneau>[
+          OccurrenceCreneau(jourIso: 1, heure: 18),
+        ],
+      ),
+      etape: EtapeDemande.listeAttente,
+      transitions: <(EtapeDemande, DateTime)>[
+        (EtapeDemande.envoyee, DateTime(2026, 10, 8, 19, 40)),
+        (EtapeDemande.listeAttente, DateTime(2026, 10, 8, 19, 41)),
+      ],
+      autresDemandeurs: 29,
+    ),
+    DemandeServeurDemo(
+      demandeId: 'demo-demande-ines',
+      eleveId: 'demo-eleve-ines',
+      prenom: 'Inès',
+      creneau: CreneauDemande(
+        occurrences: const <OccurrenceCreneau>[
+          OccurrenceCreneau(jourIso: 6, heure: 10),
+          OccurrenceCreneau(jourIso: 7, heure: 11, minute: 30),
+        ],
+      ),
+      etape: EtapeDemande.classeValidee,
+      transitions: <(EtapeDemande, DateTime)>[
+        (EtapeDemande.envoyee, DateTime(2026, 10, 3, 9, 12)),
+        (EtapeDemande.classeValidee, DateTime(2026, 10, 7, 14)),
+      ],
+      autresDemandeurs: 5,
+      // Propose par le systeme, pas encore confirme : jamais rendu.
+      enseignant: 'Sayyida Khadija',
+    ),
+    DemandeServeurDemo(
+      demandeId: 'demo-demande-aicha',
+      eleveId: DonneesDemo.aichaId,
+      prenom: 'Aïcha',
+      creneau: CreneauDemande(
+        occurrences: const <OccurrenceCreneau>[
+          OccurrenceCreneau(jourIso: 1, heure: 17, minute: 30),
+          OccurrenceCreneau(jourIso: 3, heure: 17, minute: 30),
+        ],
+      ),
+      etape: EtapeDemande.eleveIntegre,
+      transitions: <(EtapeDemande, DateTime)>[
+        (EtapeDemande.envoyee, DateTime(2026, 9, 30, 18, 2)),
+        (EtapeDemande.classeValidee, DateTime(2026, 10, 2, 10)),
+        (EtapeDemande.enseignantAffecte, DateTime(2026, 10, 5, 16, 30)),
+        (EtapeDemande.eleveIntegre, DateTime(2026, 10, 5, 16, 45)),
+      ],
+      autresDemandeurs: 4,
+      enseignant: 'Sayyida Maryam',
+      debutCours: DateTime(2026, 10, 19, 17, 30),
+      changement: ChangementClasse(
+        type: TypeChangementClasse.transfert,
+        quand: DateTime(2026, 10, 9, 11, 20),
+        classe: 'Filles, lundi et mercredi 17:30',
+        enseignant: 'Sayyida Maryam',
+        creneau: CreneauDemande(
+          occurrences: const <OccurrenceCreneau>[
+            OccurrenceCreneau(jourIso: 1, heure: 17, minute: 30),
+            OccurrenceCreneau(jourIso: 3, heure: 17, minute: 30),
+          ],
+        ),
+      ),
+    ),
+    DemandeServeurDemo(
+      demandeId: 'demo-demande-bilal',
+      eleveId: 'demo-eleve-bilal',
+      prenom: 'Bilal',
+      creneau: CreneauDemande(
+        occurrences: const <OccurrenceCreneau>[
+          OccurrenceCreneau(jourIso: 3, heure: 19, minute: 30),
+        ],
+      ),
+      etape: EtapeDemande.coursCommences,
+      transitions: <(EtapeDemande, DateTime)>[
+        (EtapeDemande.envoyee, DateTime(2026, 9, 21, 20, 5)),
+        (EtapeDemande.classeValidee, DateTime(2026, 9, 24, 10)),
+        (EtapeDemande.enseignantAffecte, DateTime(2026, 9, 25, 9, 30)),
+        (EtapeDemande.eleveIntegre, DateTime(2026, 9, 25, 9, 31)),
+        (EtapeDemande.coursCommences, DateTime(2026, 10, 7, 19, 30)),
+      ],
+      enseignant: 'Sayyid Omar',
+      debutCours: DateTime(2026, 10, 7, 19, 30),
+      changement: ChangementClasse(
+        type: TypeChangementClasse.fusion,
+        quand: DateTime(2026, 10, 9, 18),
+        classe: 'Garçons, mercredi 19:30',
+        enseignant: 'Sayyid Omar',
+        creneau: CreneauDemande(
+          occurrences: const <OccurrenceCreneau>[
+            OccurrenceCreneau(jourIso: 3, heure: 19, minute: 30),
+          ],
+        ),
+      ),
+    ),
+  ]);
 
   /// Yusuf : creneau personnalise, en attente du quota.
   static DemandeServeurDemo demandeYusufEnvoyee() => DemandeServeurDemo(
@@ -270,6 +388,14 @@ class NotificationsSuiviDemandesDemo implements PortNotifications {
                 date: quand,
                 destination: Routes.tuteurDemandes,
               ),
+          for (final DemandeServeurDemo d in suivi.demandes)
+            if (d.changement case final ChangementClasse c)
+              NotificationTuteur(
+                id: '${d.demandeId}-changement',
+                titre: titreNotificationChangement(d.versFamille()),
+                date: c.quand,
+                destination: Routes.tuteurChangementPour(d.demandeId),
+              ),
         ]..sort(
           (NotificationTuteur a, NotificationTuteur b) =>
               b.date.compareTo(a.date),
@@ -288,7 +414,10 @@ class NotificationsSuiviDemandesDemo implements PortNotifications {
 
 /// Les surcharges du suivi des demandes pour la demonstration tuteur.
 List<Override> surchargesSuiviDemandesDemo() {
-  final SuiviDemandesDemo suivi = SuiviDemandesDemo.demonstration();
+  // ECHELLE-FAM-ETATS-1 : la visite montre chaque etat (liste d'attente,
+  // classe prete, eleve integre, cours commences) et les changements de
+  // classe, un suivi par enfant.
+  final SuiviDemandesDemo suivi = SuiviDemandesDemo.echelle();
   return <Override>[
     portSuiviDemandesProvider.overrideWithValue(suivi),
     portNotificationsProvider.overrideWithValue(

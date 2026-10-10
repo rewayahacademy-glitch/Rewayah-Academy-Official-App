@@ -7568,5 +7568,129 @@
     "bandeau": "متابعة، للقراءة فقط",
     "bandeauMasque": "الأسماء مخفية",
     "bandeauExpire": "حتى \u2068{heure}\u2069"
+  },
+  "suiviDemandes": {
+    "titre": "متابعة طلبات المواعيد",
+    "contexte": "يتقدّم كل طلب خطوة بعد خطوة. نُبلغكم عند كل انتقال.",
+    "carteTitre": "طلب موعد ⁨{dePrenom}⁩",
+    "joursChoisis": "الأيام المختارة",
+    "heureChoisie": "الساعة المختارة",
+    "joursEt": "⁨{debut}⁩ و⁨{dernier}⁩",
+    "heureFuseau": "⁨{heure}⁩، بتوقيت ⁨{deVille}⁩",
+    "creneauxChoisis": "الأيام والساعات المختارة",
+    "jourHeure": "⁨{jour}⁩ ⁨{heure}⁩",
+    "fuseauChoisi": "المنطقة الزمنية",
+    "fuseauValeur": "بتوقيت ⁨{deVille}⁩",
+    "etapes": {
+      "envoyee": "تم إرسال الطلب",
+      "listeAttente": "في قائمة الانتظار",
+      "classeValidee": "تم اعتماد الفصل",
+      "enseignantAffecte": "تم تعيين المعلم",
+      "eleveIntegre": "الطالب مندمج في الفصل",
+      "coursCommences": "بدء الدروس"
+    },
+    "etats": {
+      "fait": "تم",
+      "enCours": "جارية",
+      "prochaine": "الخطوة التالية",
+      "aVenir": "قادمة"
+    },
+    "situation": {
+      "envoyee": "وصل طلبكم إلى الإدارة",
+      "listeAttente": "طلبكم في قائمة الانتظار",
+      "classeValidee": "فصلكم جاهز: ينتظر معلمه",
+      "enseignantAffecte": "تم اعتماد الفصل · تم تعيين المعلم",
+      "eleveIntegre": "تم اعتماد الفصل · تم تعيين المعلم · الطالب مندمج",
+      "coursCommences": "بدأت الدروس"
+    },
+    "prochaine": {
+      "envoyee": "الخطوة التالية: تكوين الفصل",
+      "listeAttente": "نُبلغكم فور توفر مكان. لا يُعلَن أي موعد ما لم يكن معروفًا.",
+      "classeValidee": "الخطوة التالية: تعيين معلم الفصل. نُبلغكم فور ذلك.",
+      "eleveIntegre": "الخطوة التالية: بدء الدروس"
+    },
+    "debutCours": "بدء الدروس",
+    "debutValeur": "⁨{date}⁩ في ⁨{heure}⁩، بتوقيت ⁨{deVille}⁩",
+    "debutAFixer": "سيظهر موعد الدرس الأول هنا فور تحديده.",
+    "enseignant": "المعلم",
+    "personnaliseNotice": "لن يُفتح هذا الموعد إلا إذا اختاره طلاب آخرون واكتمل الفصل.",
+    "jalon": {
+      "date": "⁨{date}⁩ في ⁨{heure}⁩",
+      "apres": "⁨{date}⁩ في ⁨{heure}⁩، ⁨{duree}⁩",
+      "aussitot": "فورًا",
+      "minutes": {
+        "zero": "بعد أقل من دقيقة",
+        "one": "بعد دقيقة",
+        "two": "بعد دقيقتين",
+        "few": "بعد ⁨{n}⁩ دقائق",
+        "many": "بعد ⁨{n}⁩ دقيقة",
+        "other": "بعد ⁨{n}⁩ دقيقة"
+      },
+      "heures": {
+        "zero": "بعد أقل من ساعة",
+        "one": "بعد ساعة",
+        "two": "بعد ساعتين",
+        "few": "بعد ⁨{n}⁩ ساعات",
+        "many": "بعد ⁨{n}⁩ ساعة",
+        "other": "بعد ⁨{n}⁩ ساعة"
+      },
+      "jours": {
+        "zero": "في اليوم نفسه",
+        "one": "بعد يوم",
+        "two": "بعد يومين",
+        "few": "بعد ⁨{n}⁩ أيام",
+        "many": "بعد ⁨{n}⁩ يومًا",
+        "other": "بعد ⁨{n}⁩ يوم"
+      }
+    },
+    "changement": {
+      "titrePage": "تغيّر الفصل",
+      "titre": "تغيّر فصل ⁨{dePrenom}⁩",
+      "fusion": "دُمج فصلكم مع فصل آخر. هذا هو فصل ⁨{prenom}⁩ الآن.",
+      "transfert": "نقلت الإدارة ⁨{prenom}⁩ إلى فصل آخر. هذا هو فصله الجديد.",
+      "classe": "الفصل الجديد",
+      "enseignant": "المعلم",
+      "sansEnseignant": "سنُعلمكم باسم معلمه فور تعيينه.",
+      "date": "تاريخ التغيير",
+      "lien": "عرض الفصل الجديد",
+      "lienPour": "عرض فصل ⁨{dePrenom}⁩ الجديد",
+      "retour": "العودة إلى متابعة الطلبات",
+      "introuvable": "لم يعد هذا التغيير معروضًا",
+      "introuvableDetail": "عودوا إلى المتابعة لمعرفة أين وصلت طلباتكم."
+    },
+    "close": {
+      "retiree": "تم سحب الطلب",
+      "nonRetenue": "لم يُقبل الطلب",
+      "close": "أُغلق الطلب",
+      "motif": {
+        "retraitFamille": "لقد سحبتم هذا الطلب.",
+        "offreRetiree": "سحبت الأكاديمية هذا الموعد من عروضها.",
+        "classeNonConstituee": "تعذّر تكوين فصل هذا الموعد.",
+        "refusDirection": "لم تتمكن الإدارة من قبول هذا الطلب.",
+        "inconnu": "أُغلق هذا الطلب."
+      },
+      "suite": "يمكنكم اختيار موعد آخر من المواعيد المقترحة.",
+      "suiteSansChoix": "لا يوجد موعد آخر مقترح حاليًا. عودوا إلى هذه الصفحة لاحقًا.",
+      "choisirAutre": "اختيار موعد آخر لـ⁨{prenom}⁩"
+    },
+    "vide": "لا طلبات مواعيد جارية.",
+    "erreur": "تعذّر عرض متابعة طلباتكم: ربما لم تصل القراءة إلى رواية. هذا الإخفاق يخص عرض المتابعة فقط ولا يقول شيئًا عن طلبات مواعيدكم. أعيدوا المحاولة بعد قليل.",
+    "sansDonnees": "تعذّر تحميل متابعة الطلبات",
+    "accueil": {
+      "titre": "طلبات مواعيدكم",
+      "ligne": "⁨{prenom}⁩: ⁨{etat}⁩",
+      "voir": "عرض متابعة الطلبات"
+    },
+    "notification": {
+      "envoyee": "طلب موعد ⁨{dePrenom}⁩: وصل طلبكم إلى الإدارة",
+      "listeAttente": "طلب موعد ⁨{dePrenom}⁩: طلبكم في قائمة الانتظار",
+      "classeValidee": "طلب موعد ⁨{dePrenom}⁩: فصلكم جاهز وينتظر معلمه",
+      "enseignantAffecte": "طلب موعد ⁨{dePrenom}⁩: تم اعتماد الفصل وتعيين المعلم",
+      "eleveIntegre": "طلب موعد ⁨{dePrenom}⁩: الطالب مندمج في الفصل",
+      "coursCommences": "طلب موعد ⁨{dePrenom}⁩: بدأت الدروس",
+      "changementFusion": "طلب موعد ⁨{dePrenom}⁩: دُمج فصلكم مع فصل آخر، عرض الفصل الجديد",
+      "changementTransfert": "طلب موعد ⁨{dePrenom}⁩: فصل جديد، عرض التفاصيل",
+      "close": "طلب موعد ⁨{dePrenom}⁩: ⁨{motif}⁩"
+    }
   }
 }

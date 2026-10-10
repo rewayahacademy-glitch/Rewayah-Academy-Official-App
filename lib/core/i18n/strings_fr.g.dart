@@ -2587,8 +2587,8 @@ class Traductions$suiviDemandes$fr {
 	/// fr: 'Suivi des demandes de créneau'
 	String get titre => 'Suivi des demandes de créneau';
 
-	/// fr: 'Chaque demande avance en trois étapes. Vous êtes prévenu à chaque passage.'
-	String get contexte => 'Chaque demande avance en trois étapes. Vous êtes prévenu à chaque passage.';
+	/// fr: 'Chaque demande avance étape par étape. Vous êtes prévenu à chaque passage.'
+	String get contexte => 'Chaque demande avance étape par étape. Vous êtes prévenu à chaque passage.';
 
 	/// fr: 'Demande de créneau {dePrenom}'
 	String carteTitre({required Object dePrenom}) => 'Demande de créneau ${dePrenom}';
@@ -2650,6 +2650,8 @@ class Traductions$suiviDemandes$fr {
 
 	late final Traductions$suiviDemandes$accueil$fr accueil = Traductions$suiviDemandes$accueil$fr.internal(_root);
 	late final Traductions$suiviDemandes$notification$fr notification = Traductions$suiviDemandes$notification$fr.internal(_root);
+	late final Traductions$suiviDemandes$jalon$fr jalon = Traductions$suiviDemandes$jalon$fr.internal(_root);
+	late final Traductions$suiviDemandes$changement$fr changement = Traductions$suiviDemandes$changement$fr.internal(_root);
 }
 
 // Path: alertes
@@ -14646,6 +14648,15 @@ class Traductions$suiviDemandes$etapes$fr {
 
 	/// fr: 'Enseignant affecté'
 	String get enseignantAffecte => 'Enseignant affecté';
+
+	/// fr: 'En liste d'attente'
+	String get listeAttente => 'En liste d\'attente';
+
+	/// fr: 'Élève intégré dans la classe'
+	String get eleveIntegre => 'Élève intégré dans la classe';
+
+	/// fr: 'Début des cours'
+	String get coursCommences => 'Début des cours';
 }
 
 // Path: suiviDemandes.etats
@@ -14658,6 +14669,9 @@ class Traductions$suiviDemandes$etats$fr {
 
 	/// fr: 'Fait'
 	String get fait => 'Fait';
+
+	/// fr: 'En cours'
+	String get enCours => 'En cours';
 
 	/// fr: 'Prochaine étape'
 	String get prochaine => 'Prochaine étape';
@@ -14677,11 +14691,20 @@ class Traductions$suiviDemandes$situation$fr {
 	/// fr: 'Votre demande est arrivée à l'administration'
 	String get envoyee => 'Votre demande est arrivée à l\'administration';
 
-	/// fr: 'Votre classe a été validée'
-	String get classeValidee => 'Votre classe a été validée';
+	/// fr: 'Votre classe est prête : elle attend son enseignant'
+	String get classeValidee => 'Votre classe est prête : elle attend son enseignant';
 
 	/// fr: 'Classe validée · enseignant affecté'
 	String get enseignantAffecte => 'Classe validée · enseignant affecté';
+
+	/// fr: 'Votre demande est en liste d'attente'
+	String get listeAttente => 'Votre demande est en liste d\'attente';
+
+	/// fr: 'Classe validée · enseignant affecté · élève intégré'
+	String get eleveIntegre => 'Classe validée · enseignant affecté · élève intégré';
+
+	/// fr: 'Les cours ont commencé'
+	String get coursCommences => 'Les cours ont commencé';
 }
 
 // Path: suiviDemandes.prochaine
@@ -14695,8 +14718,14 @@ class Traductions$suiviDemandes$prochaine$fr {
 	/// fr: 'Prochaine étape : constitution de la classe'
 	String get envoyee => 'Prochaine étape : constitution de la classe';
 
-	/// fr: 'Prochaine étape : affectation de l'enseignant'
-	String get classeValidee => 'Prochaine étape : affectation de l\'enseignant';
+	/// fr: 'Prochaine étape : l'enseignant de la classe est désigné. Nous vous prévenons dès que c'est fait.'
+	String get classeValidee => 'Prochaine étape : l\'enseignant de la classe est désigné. Nous vous prévenons dès que c\'est fait.';
+
+	/// fr: 'Nous vous prévenons dès qu'une place s'ouvre. Aucune date n'est annoncée tant qu'elle n'est pas connue.'
+	String get listeAttente => 'Nous vous prévenons dès qu\'une place s\'ouvre. Aucune date n\'est annoncée tant qu\'elle n\'est pas connue.';
+
+	/// fr: 'Prochaine étape : le début des cours'
+	String get eleveIntegre => 'Prochaine étape : le début des cours';
 }
 
 // Path: suiviDemandes.close
@@ -14757,14 +14786,113 @@ class Traductions$suiviDemandes$notification$fr {
 	/// fr: 'Demande de créneau {dePrenom} : votre demande est arrivée à l'administration'
 	String envoyee({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre demande est arrivée à l\'administration';
 
-	/// fr: 'Demande de créneau {dePrenom} : votre classe a été validée'
-	String classeValidee({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre classe a été validée';
+	/// fr: 'Demande de créneau {dePrenom} : votre classe est prête, elle attend son enseignant'
+	String classeValidee({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre classe est prête, elle attend son enseignant';
 
 	/// fr: 'Demande de créneau {dePrenom} : classe validée · enseignant affecté'
 	String enseignantAffecte({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : classe validée · enseignant affecté';
 
 	/// fr: 'Demande de créneau {dePrenom} : {motif}'
 	String close({required Object dePrenom, required Object motif}) => 'Demande de créneau ${dePrenom} : ${motif}';
+
+	/// fr: 'Demande de créneau {dePrenom} : votre demande est en liste d'attente'
+	String listeAttente({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre demande est en liste d\'attente';
+
+	/// fr: 'Demande de créneau {dePrenom} : élève intégré dans la classe'
+	String eleveIntegre({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : élève intégré dans la classe';
+
+	/// fr: 'Demande de créneau {dePrenom} : les cours ont commencé'
+	String coursCommences({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : les cours ont commencé';
+
+	/// fr: 'Demande de créneau {dePrenom} : votre classe a été réunie avec une autre, voir la nouvelle classe'
+	String changementFusion({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre classe a été réunie avec une autre, voir la nouvelle classe';
+
+	/// fr: 'Demande de créneau {dePrenom} : nouvelle classe, voir le détail'
+	String changementTransfert({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : nouvelle classe, voir le détail';
+}
+
+// Path: suiviDemandes.jalon
+class Traductions$suiviDemandes$jalon$fr {
+	Traductions$suiviDemandes$jalon$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{date} à {heure}'
+	String date({required Object date, required Object heure}) => '${date} à ${heure}';
+
+	/// fr: '{date} à {heure}, {duree}'
+	String apres({required Object date, required Object heure, required Object duree}) => '${date} à ${heure}, ${duree}';
+
+	/// fr: 'aussitôt'
+	String get aussitot => 'aussitôt';
+
+	/// fr: '(one) {{n} minute plus tard} (other) {{n} minutes plus tard}'
+	String minutes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} minute plus tard',
+		other: '${n} minutes plus tard',
+	);
+
+	/// fr: '(one) {{n} heure plus tard} (other) {{n} heures plus tard}'
+	String heures({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} heure plus tard',
+		other: '${n} heures plus tard',
+	);
+
+	/// fr: '(one) {{n} jour plus tard} (other) {{n} jours plus tard}'
+	String jours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} jour plus tard',
+		other: '${n} jours plus tard',
+	);
+}
+
+// Path: suiviDemandes.changement
+class Traductions$suiviDemandes$changement$fr {
+	Traductions$suiviDemandes$changement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Changement de classe'
+	String get titrePage => 'Changement de classe';
+
+	/// fr: 'La classe {dePrenom} a changé'
+	String titre({required Object dePrenom}) => 'La classe ${dePrenom} a changé';
+
+	/// fr: 'Votre classe a été réunie avec une autre. {prenom} a maintenant la classe ci-dessous.'
+	String fusion({required Object prenom}) => 'Votre classe a été réunie avec une autre. ${prenom} a maintenant la classe ci-dessous.';
+
+	/// fr: 'La direction a changé {prenom} de classe. Voici sa nouvelle classe.'
+	String transfert({required Object prenom}) => 'La direction a changé ${prenom} de classe. Voici sa nouvelle classe.';
+
+	/// fr: 'Nouvelle classe'
+	String get classe => 'Nouvelle classe';
+
+	/// fr: 'Enseignant'
+	String get enseignant => 'Enseignant';
+
+	/// fr: 'Son enseignant sera communiqué dès qu'il sera désigné.'
+	String get sansEnseignant => 'Son enseignant sera communiqué dès qu\'il sera désigné.';
+
+	/// fr: 'Changement fait le'
+	String get date => 'Changement fait le';
+
+	/// fr: 'Voir la nouvelle classe'
+	String get lien => 'Voir la nouvelle classe';
+
+	/// fr: 'Voir la nouvelle classe {dePrenom}'
+	String lienPour({required Object dePrenom}) => 'Voir la nouvelle classe ${dePrenom}';
+
+	/// fr: 'Retour au suivi des demandes'
+	String get retour => 'Retour au suivi des demandes';
+
+	/// fr: 'Ce changement de classe n'est plus à afficher'
+	String get introuvable => 'Ce changement de classe n\'est plus à afficher';
+
+	/// fr: 'Retournez au suivi pour voir où en sont vos demandes.'
+	String get introuvableDetail => 'Retournez au suivi pour voir où en sont vos demandes.';
 }
 
 // Path: alertes.gravite
@@ -33359,7 +33487,7 @@ extension on Traductions {
 			'motifs.signalement.changement.niveau' => 'Le niveau de la classe ne semble plus adapté.',
 			'motifs.signalement.changement.suite' => 'L\'académie reviendra vers vous pour en parler.',
 			'suiviDemandes.titre' => 'Suivi des demandes de créneau',
-			'suiviDemandes.contexte' => 'Chaque demande avance en trois étapes. Vous êtes prévenu à chaque passage.',
+			'suiviDemandes.contexte' => 'Chaque demande avance étape par étape. Vous êtes prévenu à chaque passage.',
 			'suiviDemandes.carteTitre' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom}',
 			'suiviDemandes.joursChoisis' => 'Jours choisis',
 			'suiviDemandes.heureChoisie' => 'Heure choisie',
@@ -33372,14 +33500,23 @@ extension on Traductions {
 			'suiviDemandes.etapes.envoyee' => 'Demande envoyée',
 			'suiviDemandes.etapes.classeValidee' => 'Classe validée',
 			'suiviDemandes.etapes.enseignantAffecte' => 'Enseignant affecté',
+			'suiviDemandes.etapes.listeAttente' => 'En liste d\'attente',
+			'suiviDemandes.etapes.eleveIntegre' => 'Élève intégré dans la classe',
+			'suiviDemandes.etapes.coursCommences' => 'Début des cours',
 			'suiviDemandes.etats.fait' => 'Fait',
+			'suiviDemandes.etats.enCours' => 'En cours',
 			'suiviDemandes.etats.prochaine' => 'Prochaine étape',
 			'suiviDemandes.etats.aVenir' => 'À venir',
 			'suiviDemandes.situation.envoyee' => 'Votre demande est arrivée à l\'administration',
-			'suiviDemandes.situation.classeValidee' => 'Votre classe a été validée',
+			'suiviDemandes.situation.classeValidee' => 'Votre classe est prête : elle attend son enseignant',
 			'suiviDemandes.situation.enseignantAffecte' => 'Classe validée · enseignant affecté',
+			'suiviDemandes.situation.listeAttente' => 'Votre demande est en liste d\'attente',
+			'suiviDemandes.situation.eleveIntegre' => 'Classe validée · enseignant affecté · élève intégré',
+			'suiviDemandes.situation.coursCommences' => 'Les cours ont commencé',
 			'suiviDemandes.prochaine.envoyee' => 'Prochaine étape : constitution de la classe',
-			'suiviDemandes.prochaine.classeValidee' => 'Prochaine étape : affectation de l\'enseignant',
+			'suiviDemandes.prochaine.classeValidee' => 'Prochaine étape : l\'enseignant de la classe est désigné. Nous vous prévenons dès que c\'est fait.',
+			'suiviDemandes.prochaine.listeAttente' => 'Nous vous prévenons dès qu\'une place s\'ouvre. Aucune date n\'est annoncée tant qu\'elle n\'est pas connue.',
+			'suiviDemandes.prochaine.eleveIntegre' => 'Prochaine étape : le début des cours',
 			'suiviDemandes.debutCours' => 'Début des cours',
 			'suiviDemandes.debutValeur' => ({required Object date, required Object heure, required Object deVille}) => '${date} à ${heure}, heure ${deVille}',
 			'suiviDemandes.debutAFixer' => 'La date du premier cours s\'affichera ici dès qu\'elle sera fixée.',
@@ -33403,9 +33540,33 @@ extension on Traductions {
 			'suiviDemandes.accueil.ligne' => ({required Object prenom, required Object etat}) => '${prenom} : ${etat}',
 			'suiviDemandes.accueil.voir' => 'Voir le suivi des demandes',
 			'suiviDemandes.notification.envoyee' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre demande est arrivée à l\'administration',
-			'suiviDemandes.notification.classeValidee' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre classe a été validée',
+			'suiviDemandes.notification.classeValidee' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre classe est prête, elle attend son enseignant',
 			'suiviDemandes.notification.enseignantAffecte' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : classe validée · enseignant affecté',
 			'suiviDemandes.notification.close' => ({required Object dePrenom, required Object motif}) => 'Demande de créneau ${dePrenom} : ${motif}',
+			'suiviDemandes.notification.listeAttente' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre demande est en liste d\'attente',
+			'suiviDemandes.notification.eleveIntegre' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : élève intégré dans la classe',
+			'suiviDemandes.notification.coursCommences' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : les cours ont commencé',
+			'suiviDemandes.notification.changementFusion' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre classe a été réunie avec une autre, voir la nouvelle classe',
+			'suiviDemandes.notification.changementTransfert' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : nouvelle classe, voir le détail',
+			'suiviDemandes.jalon.date' => ({required Object date, required Object heure}) => '${date} à ${heure}',
+			'suiviDemandes.jalon.apres' => ({required Object date, required Object heure, required Object duree}) => '${date} à ${heure}, ${duree}',
+			'suiviDemandes.jalon.aussitot' => 'aussitôt',
+			'suiviDemandes.jalon.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} minute plus tard', other: '${n} minutes plus tard', ), 
+			'suiviDemandes.jalon.heures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} heure plus tard', other: '${n} heures plus tard', ), 
+			'suiviDemandes.jalon.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} jour plus tard', other: '${n} jours plus tard', ), 
+			'suiviDemandes.changement.titrePage' => 'Changement de classe',
+			'suiviDemandes.changement.titre' => ({required Object dePrenom}) => 'La classe ${dePrenom} a changé',
+			'suiviDemandes.changement.fusion' => ({required Object prenom}) => 'Votre classe a été réunie avec une autre. ${prenom} a maintenant la classe ci-dessous.',
+			'suiviDemandes.changement.transfert' => ({required Object prenom}) => 'La direction a changé ${prenom} de classe. Voici sa nouvelle classe.',
+			'suiviDemandes.changement.classe' => 'Nouvelle classe',
+			'suiviDemandes.changement.enseignant' => 'Enseignant',
+			'suiviDemandes.changement.sansEnseignant' => 'Son enseignant sera communiqué dès qu\'il sera désigné.',
+			'suiviDemandes.changement.date' => 'Changement fait le',
+			'suiviDemandes.changement.lien' => 'Voir la nouvelle classe',
+			'suiviDemandes.changement.lienPour' => ({required Object dePrenom}) => 'Voir la nouvelle classe ${dePrenom}',
+			'suiviDemandes.changement.retour' => 'Retour au suivi des demandes',
+			'suiviDemandes.changement.introuvable' => 'Ce changement de classe n\'est plus à afficher',
+			'suiviDemandes.changement.introuvableDetail' => 'Retournez au suivi pour voir où en sont vos demandes.',
 			'alertes.titre' => 'Alertes',
 			'alertes.gravite.urgent' => 'Urgente',
 			'alertes.gravite.important' => 'Importante',
@@ -33589,6 +33750,8 @@ extension on Traductions {
 			'com.socle.navigation.ongletModeration' => 'Modération',
 			'com.socle.navigation.ongletMessages' => _root.com.socle.lexique.messages,
 			'com.socle.navigation.bientot' => 'Bientôt disponible',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.navigation.provisoire.messagesTitre' => _root.com.socle.lexique.messages,
 			'com.socle.navigation.provisoire.messagesDetail' => 'Les messages liés à vos Classes arriveront bientôt dans cet espace.',
 			'com.socle.navigation.provisoire.communauteTitre' => _root.com.socle.lexique.communaute,
@@ -33622,8 +33785,6 @@ extension on Traductions {
 			'com.messages.choisirTitre' => 'Choisissez une conversation',
 			'com.messages.choisir' => 'Choisissez une conversation dans la liste pour la lire et y répondre.',
 			'com.messages.recherche.champ' => 'Rechercher une conversation',
-			_ => null,
-		} ?? switch (path) {
 			'com.messages.recherche.aide' => 'Nom, Classe ou dossier',
 			'com.messages.recherche.aucunTitre' => 'Aucune conversation trouvée',
 			'com.messages.recherche.aucun' => ({required Object texte}) => 'Aucune conversation ne correspond à « ${texte} ». Essayez un autre nom ou une autre Classe.',
@@ -34103,6 +34264,8 @@ extension on Traductions {
 			'com.studio.demo.f.messageMerci' => 'Merci à tous pour la semaine.',
 			'com.studio.demo.f.messageDossiers' => 'Trois dossiers attendent une décision avant vendredi. Nadia, peux-tu regarder le dossier de la famille Karim ?',
 			'com.studio.demo.f.messageCompteRendu' => 'Le compte rendu des visites du mois est prêt.',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.f.messageRemplacement' => 'Mardi, la Classe An-Nour est assurée par un remplaçant. Le planning est à jour.',
 			'com.studio.demo.f.messageJustificatifs' => 'Les justificatifs de septembre sont rassemblés.',
 			'com.studio.demo.f.messageBudget' => 'Budget confidentiel du trimestre.',
@@ -34136,8 +34299,6 @@ extension on Traductions {
 			'com.studio.demo.f.objetDossierBenali' => 'Dossier de la famille Benali',
 			'com.studio.titre' => _root.com.socle.lexique.studio,
 			'com.studio.vide' => 'Aucune activité à traiter ici.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.publieur.titre' => 'Nouvelle annonce',
 			'com.annonces.publieur.etapes.contenu' => 'Contenu de l\'annonce',
 			'com.annonces.publieur.etapes.audience' => 'Destinataires de l\'annonce',
@@ -34617,6 +34778,8 @@ extension on Traductions {
 			'comptable.paiements.detail.periode' => 'Période / objet',
 			'comptable.paiements.detail.echeance' => 'Échéance',
 			'comptable.paiements.detail.prestataire' => 'Prestataire prévu',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.detail.preuve' => 'Preuve',
 			'comptable.paiements.detail.classes' => 'Classes',
 			'comptable.paiements.detail.version' => 'Version du calcul',
@@ -34650,8 +34813,6 @@ extension on Traductions {
 			'comptable.tresorerie.coffresTitre' => 'Coffres',
 			'comptable.tresorerie.coffresPhrase' => 'Où l\'argent est affecté. Une somme protégée n\'est jamais comptée comme libre.',
 			'comptable.tresorerie.coffreProtege' => 'Protégé',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.coffreNonProtege' => 'Non protégé',
 			'comptable.tresorerie.partDetenue' => ({required Object part}) => '${part} % de la trésorerie détenue',
 			'comptable.tresorerie.regleUsage' => ({required Object regle}) => 'Règle d\'usage : ${regle}',
@@ -35131,6 +35292,8 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.remboursement' => 'Exécuter un remboursement standard',
 			'comptable.direction.delegationPanneau.remboursementDetail' => 'Un remboursement conforme à la règle part sans validation.',
 			'comptable.direction.delegationPanneau.alimentationReserve' => 'Alimenter la Réserve stratégique',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.alimentationReserveDetail' => 'Un mouvement vers la Réserve, conforme à sa politique.',
 			'comptable.direction.delegationPanneau.plafondsTitre' => 'Plafonds',
 			'comptable.direction.delegationPanneau.plafondsDetail' => 'Au-delà d\'un plafond, le paiement demande votre validation. Laissez vide pour ne fixer aucun plafond.',
@@ -35164,8 +35327,6 @@ extension on Traductions {
 			'comptable.direction.delegation' => 'Délégation financière',
 			'comptable.demo.titre' => 'Démonstration Comptable',
 			'comptable.demo.mention' => 'Données fictives, aucun paiement, aucun envoi.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.demo.intro' => 'Choisissez un écran du Comptable. Les montants sont masqués par défaut ; la variante « montants affichés » les révèle pour la durée de la page.',
 			'comptable.demo.montantsMasques' => 'Montants masqués',
 			'comptable.demo.montantsAffiches' => 'Montants affichés',

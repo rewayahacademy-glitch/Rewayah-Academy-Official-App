@@ -43,18 +43,55 @@ import 'occurrence_creneau.dart';
 export 'occurrence_creneau.dart' show OccurrenceCreneau;
 
 /// Ou en est une demande de creneau (rendu par le serveur).
+///
+/// R20 (`DECISION-CLASSES-SIMULTANEES-2026-10-10.md`) : la famille suit sa
+/// demande « comme une livraison » : demande envoyee, liste d'attente s'il y
+/// a lieu, classe creee, enseignant affecte, eleve integre, debut des cours.
+/// L'ordre des valeurs est celui de la frise.
 enum EtapeDemande {
   /// Etape 1 : la demande est arrivee a l'administration.
   envoyee,
 
-  /// Etape 2 : l'administration a valide la classe.
+  /// Toutes les classes de ce creneau sont pleines et aucun enseignant n'est
+  /// libre : la demande attend, dans l'ordre des dates de demande (R11). La
+  /// famille ne voit ni son rang ni aucun delai.
+  listeAttente,
+
+  /// L'administration a cree et valide la classe (R7 : elle peut encore
+  /// attendre son enseignant).
   classeValidee,
 
-  /// Etape 3 : un enseignant est affecte a la classe.
+  /// Un enseignant est affecte a la classe.
   enseignantAffecte,
 
-  /// Etape 4 : refus ou retrait ; le motif dit lequel.
+  /// L'eleve est integre dans la classe.
+  eleveIntegre,
+
+  /// Les cours ont commence : la premiere seance a eu lieu.
+  coursCommences,
+
+  /// Refus ou retrait ; le motif dit lequel.
   close,
+}
+
+/// Ce que chaque etape permet de dire.
+extension EtapeDemandeDeLaFrise on EtapeDemande {
+  /// Vrai quand l'enseignant de la classe est affecte (et peut se nommer).
+  bool get enseignantConnu =>
+      this == EtapeDemande.enseignantAffecte ||
+      this == EtapeDemande.eleveIntegre ||
+      this == EtapeDemande.coursCommences;
+
+  /// Le rang de l'etape dans la frise : la liste d'attente n'en a pas, elle
+  /// est une etape facultative qui s'insere apres la demande.
+  int get rang => switch (this) {
+    EtapeDemande.envoyee || EtapeDemande.listeAttente => 1,
+    EtapeDemande.classeValidee => 2,
+    EtapeDemande.enseignantAffecte => 3,
+    EtapeDemande.eleveIntegre => 4,
+    EtapeDemande.coursCommences => 5,
+    EtapeDemande.close => 0,
+  };
 }
 
 /// Pourquoi une demande est close. Le texte vient de l'application, jamais
@@ -123,6 +160,54 @@ class CreneauDemande {
   bool get heuresToutesEgales => heuresToutesEgalesDe(occurrences);
 }
 
+/// Ce qui a change dans la classe d'un eleve.
+enum TypeChangementClasse {
+  /// La classe a ete reunie avec une autre (R9).
+  fusion,
+
+  /// L'eleve a ete passe dans une autre classe (R10).
+  transfert,
+}
+
+/// La classe que l'eleve a desormais, apres une fusion ou un transfert
+/// (R9, R10, R16) : la nouvelle classe, le titre de son enseignant, son
+/// horaire, et quand. **Jamais** le nombre de classes paralleles, ni d'autres
+/// eleves, ni une phrase qui dise que des enfants sont ensemble ou separes
+/// (R4 corrigee : chaque enfant a simplement son suivi).
+@immutable
+class ChangementClasse {
+  /// Cree le changement. [quand] est une heure murale du fuseau du foyer :
+  /// un instant UTC est une erreur de l'adaptateur (assertion en mise au
+  /// point) et la date n'est alors pas affichee ([heureMuraleDuFoyer]).
+  ChangementClasse({
+    required this.type,
+    required this.quand,
+    required this.classe,
+    required this.creneau,
+    this.enseignant,
+  }) : assert(
+         !quand.isUtc,
+         'quand est une heure murale du fuseau du foyer, jamais UTC',
+       );
+
+  /// Fusion ou transfert.
+  final TypeChangementClasse type;
+
+  /// Quand, en heure murale du fuseau du foyer.
+  final DateTime quand;
+
+  /// Le nom de la nouvelle classe, tel que la famille le lit : jamais un
+  /// numero de classe parallele (C-05).
+  final String classe;
+
+  /// Le titre de l'enseignant (« Sayyida Maryam »). Nul : la classe n'a pas
+  /// encore d'enseignant, et l'ecran le dit.
+  final String? enseignant;
+
+  /// Les jours et l'heure de la nouvelle classe, dans le fuseau du foyer.
+  final CreneauDemande creneau;
+}
+
 /// Une demande de creneau d'un eleve du foyer, et ou elle en est.
 @immutable
 class SuiviDemande {
@@ -147,14 +232,22 @@ class SuiviDemande {
     DateTime? debutCours,
     MotifCloture? motif,
     this.peutChoisirAutreCreneau = false,
+    Map<EtapeDemande, DateTime> jalons = const <EtapeDemande, DateTime>{},
+    this.changement,
   }) : assert(
          debutCours == null || !debutCours.isUtc,
          'debutCours est une heure murale du fuseau du foyer, jamais UTC',
        ),
-       enseignant = etape == EtapeDemande.enseignantAffecte ? enseignant : null,
-       debutCours = etape == EtapeDemande.enseignantAffecte
+       enseignant = etape.enseignantConnu ? enseignant : null,
+       debutCours = etape.enseignantConnu
            ? heureMuraleDuFoyer(debutCours)
            : null,
+       // Une date d'etape n'est jamais un instant UTC lu comme une heure du
+       // foyer : elle est ecartee, l'etape se dit alors sans date.
+       jalons = <EtapeDemande, DateTime>{
+         for (final MapEntry<EtapeDemande, DateTime> e in jalons.entries)
+           if (!e.value.isUtc) e.key: e.value,
+       },
        motif = etape == EtapeDemande.close
            ? motif ?? MotifCloture.inconnu
            : null;
@@ -195,6 +288,15 @@ class SuiviDemande {
   /// Capacite rendue par le serveur : la famille peut choisir un autre
   /// creneau pour cet eleve.
   final bool peutChoisirAutreCreneau;
+
+  /// L'instant de chaque etape franchie, en heure murale du fuseau du foyer
+  /// (R20 : le serveur fournit l'horodatage de chaque etape). Une etape
+  /// absente n'a pas de date : l'ecran n'en invente aucune.
+  final Map<EtapeDemande, DateTime> jalons;
+
+  /// Ce qui a change dans la classe de l'eleve (fusion, transfert), s'il y a
+  /// lieu.
+  final ChangementClasse? changement;
 }
 
 /// Le port du suivi des demandes de creneau du foyer connecte.

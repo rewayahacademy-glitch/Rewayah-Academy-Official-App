@@ -6567,7 +6567,7 @@
   },
   "suiviDemandes": {
     "titre": "Suivi des demandes de créneau",
-    "contexte": "Chaque demande avance en trois étapes. Vous êtes prévenu à chaque passage.",
+    "contexte": "Chaque demande avance étape par étape. Vous êtes prévenu à chaque passage.",
     "carteTitre": "Demande de créneau {dePrenom}",
     "joursChoisis": "Jours choisis",
     "heureChoisie": "Heure choisie",
@@ -6580,21 +6580,30 @@
     "etapes": {
       "envoyee": "Demande envoyée",
       "classeValidee": "Classe validée",
-      "enseignantAffecte": "Enseignant affecté"
+      "enseignantAffecte": "Enseignant affecté",
+      "listeAttente": "En liste d'attente",
+      "eleveIntegre": "Élève intégré dans la classe",
+      "coursCommences": "Début des cours"
     },
     "etats": {
       "fait": "Fait",
+      "enCours": "En cours",
       "prochaine": "Prochaine étape",
       "aVenir": "À venir"
     },
     "situation": {
       "envoyee": "Votre demande est arrivée à l'administration",
-      "classeValidee": "Votre classe a été validée",
-      "enseignantAffecte": "Classe validée · enseignant affecté"
+      "classeValidee": "Votre classe est prête : elle attend son enseignant",
+      "enseignantAffecte": "Classe validée · enseignant affecté",
+      "listeAttente": "Votre demande est en liste d'attente",
+      "eleveIntegre": "Classe validée · enseignant affecté · élève intégré",
+      "coursCommences": "Les cours ont commencé"
     },
     "prochaine": {
       "envoyee": "Prochaine étape : constitution de la classe",
-      "classeValidee": "Prochaine étape : affectation de l'enseignant"
+      "classeValidee": "Prochaine étape : l'enseignant de la classe est désigné. Nous vous prévenons dès que c'est fait.",
+      "listeAttente": "Nous vous prévenons dès qu'une place s'ouvre. Aucune date n'est annoncée tant qu'elle n'est pas connue.",
+      "eleveIntegre": "Prochaine étape : le début des cours"
     },
     "debutCours": "Début des cours",
     "debutValeur": "{date} à {heure}, heure {deVille}",
@@ -6626,9 +6635,46 @@
     },
     "notification": {
       "envoyee": "Demande de créneau {dePrenom} : votre demande est arrivée à l'administration",
-      "classeValidee": "Demande de créneau {dePrenom} : votre classe a été validée",
+      "classeValidee": "Demande de créneau {dePrenom} : votre classe est prête, elle attend son enseignant",
       "enseignantAffecte": "Demande de créneau {dePrenom} : classe validée · enseignant affecté",
-      "close": "Demande de créneau {dePrenom} : {motif}"
+      "close": "Demande de créneau {dePrenom} : {motif}",
+      "listeAttente": "Demande de créneau {dePrenom} : votre demande est en liste d'attente",
+      "eleveIntegre": "Demande de créneau {dePrenom} : élève intégré dans la classe",
+      "coursCommences": "Demande de créneau {dePrenom} : les cours ont commencé",
+      "changementFusion": "Demande de créneau {dePrenom} : votre classe a été réunie avec une autre, voir la nouvelle classe",
+      "changementTransfert": "Demande de créneau {dePrenom} : nouvelle classe, voir le détail"
+    },
+    "jalon": {
+      "date": "{date} à {heure}",
+      "apres": "{date} à {heure}, {duree}",
+      "aussitot": "aussitôt",
+      "minutes": {
+        "one": "{n} minute plus tard",
+        "other": "{n} minutes plus tard"
+      },
+      "heures": {
+        "one": "{n} heure plus tard",
+        "other": "{n} heures plus tard"
+      },
+      "jours": {
+        "one": "{n} jour plus tard",
+        "other": "{n} jours plus tard"
+      }
+    },
+    "changement": {
+      "titrePage": "Changement de classe",
+      "titre": "La classe {dePrenom} a changé",
+      "fusion": "Votre classe a été réunie avec une autre. {prenom} a maintenant la classe ci-dessous.",
+      "transfert": "La direction a changé {prenom} de classe. Voici sa nouvelle classe.",
+      "classe": "Nouvelle classe",
+      "enseignant": "Enseignant",
+      "sansEnseignant": "Son enseignant sera communiqué dès qu'il sera désigné.",
+      "date": "Changement fait le",
+      "lien": "Voir la nouvelle classe",
+      "lienPour": "Voir la nouvelle classe {dePrenom}",
+      "retour": "Retour au suivi des demandes",
+      "introuvable": "Ce changement de classe n'est plus à afficher",
+      "introuvableDetail": "Retournez au suivi pour voir où en sont vos demandes."
     }
   },
   "alertes": {

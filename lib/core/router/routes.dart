@@ -402,6 +402,11 @@ abstract final class Routes {
   /// Le suivi des demandes de creneau du foyer (OFFRES-FAM-1).
   static const String tuteurDemandes = '/tuteur/demandes';
 
+  /// ECHELLE-FAM-ETATS-1 : le resultat d'une fusion ou d'un transfert pour une
+  /// demande : la nouvelle classe, le titre de l'enseignant, l'horaire.
+  static String tuteurChangementPour(String demandeId) =>
+      '$tuteurDemandes/$demandeId/changement';
+
   /// Vrai quand [chemin] est une **tache focalisee** : sur telephone, la
   /// barre basse s'efface et l'ecran porte son disque retour (manifeste
   /// visuel Tuteur V1 section 4.2 point 5 ; mapping des routes, section 5).

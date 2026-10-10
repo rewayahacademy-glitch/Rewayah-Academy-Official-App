@@ -134,6 +134,7 @@ import '../../features/remplacements/remplacements_page.dart';
 import '../../features/revenus_enseignant/revenus_enseignant_page.dart';
 import '../../features/revue_groupe/revue_groupe_page.dart';
 import '../../features/salle/salle_page.dart';
+import '../../features/suivi_demandes/changement_classe_page.dart';
 import '../../features/suivi_demandes/suivi_demandes_page.dart';
 import '../../features/suivi_eleve/suivi_eleve_page.dart';
 import '../../features/suivi_foyer/detail_observations_page.dart';
@@ -576,6 +577,18 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     pageBuilder: glissee(
                       (GoRouterState _) => const SuiviDemandesPage(),
                     ),
+                    routes: <RouteBase>[
+                      // ECHELLE-FAM-ETATS-1 : le resultat d'une fusion ou
+                      // d'un transfert, adresse que le rechargement garde.
+                      GoRoute(
+                        path: ':demandeId/changement',
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => ChangementClassePage(
+                            demandeId: _parametre(etat, 'demandeId'),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   GoRoute(
                     path: 'classes/catalogue',
