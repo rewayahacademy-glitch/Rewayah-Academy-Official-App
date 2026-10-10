@@ -551,7 +551,7 @@ end $$;
 -- fait que lire les portées puis modifier un GUC transaction-local. Toute
 -- autre fonction volatile applicative reste interdite à agent_ro.
 
-do $
+do $$
 declare
   v_n      int;
   v_detail text;
