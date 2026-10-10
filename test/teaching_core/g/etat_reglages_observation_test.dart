@@ -97,7 +97,10 @@ void main() {
     test('une valeur heritee hors bornes n\'est pas reprochee au groupe', () {
       // Les bornes sont celles de la saisie : une politique Academie
       // surprenante est la responsabilite de l'Academie.
-      final EtatReglagesObservation herite = _etat(visites: 0, temps: Duration.zero);
+      final EtatReglagesObservation herite = _etat(
+        visites: 0,
+        temps: Duration.zero,
+      );
 
       expect(herite.valide, isTrue);
     });
@@ -107,10 +110,22 @@ void main() {
         source: SourcePolitique.groupe,
       );
 
-      expect(depart.deplacerVisites(-5).maxVisites, EtatReglagesObservation.visitesMin);
-      expect(depart.deplacerVisites(99).maxVisites, EtatReglagesObservation.visitesMax);
-      expect(depart.deplacerTemps(-99).tempsTotal, EtatReglagesObservation.tempsMin);
-      expect(depart.deplacerTemps(999).tempsTotal, EtatReglagesObservation.tempsMax);
+      expect(
+        depart.deplacerVisites(-5).maxVisites,
+        EtatReglagesObservation.visitesMin,
+      );
+      expect(
+        depart.deplacerVisites(99).maxVisites,
+        EtatReglagesObservation.visitesMax,
+      );
+      expect(
+        depart.deplacerTemps(-99).tempsTotal,
+        EtatReglagesObservation.tempsMin,
+      );
+      expect(
+        depart.deplacerTemps(999).tempsTotal,
+        EtatReglagesObservation.tempsMax,
+      );
     });
 
     test('un pas de temps vaut trente secondes', () {
@@ -153,7 +168,10 @@ void main() {
         plafond: const Duration(seconds: 120),
       );
 
-      expect(depart.deplacerPlafond(1).plafondEffectif, const Duration(seconds: 150));
+      expect(
+        depart.deplacerPlafond(1).plafondEffectif,
+        const Duration(seconds: 150),
+      );
       expect(
         depart.deplacerPlafond(99).plafondEffectif,
         const Duration(seconds: 240),
@@ -173,7 +191,10 @@ void main() {
         temps: const Duration(seconds: 30),
       );
 
-      expect(serre.deplacerPlafond(-1).plafondEffectif, const Duration(seconds: 30));
+      expect(
+        serre.deplacerPlafond(-1).plafondEffectif,
+        const Duration(seconds: 30),
+      );
     });
 
     test('personnaliser envoie toujours un plafond, jamais nul', () {
