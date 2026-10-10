@@ -217,7 +217,7 @@ BEGIN
   FOR v_i IN 1..(v_capacite + 1) LOOP
     v_id := ('f1490000-0000-0000-0000-' || lpad((v_i + 2)::text, 12, '0'))::uuid;
     v_reponse := public.demander_creneau_personnalise(
-      v_id, 'Europe/Paris',
+      v_id, CASE WHEN v_i = 1 THEN 'Europe/Brussels' ELSE 'Europe/Paris' END,
       CASE WHEN v_i = 1 THEN ARRAY[6,4,2,2]::smallint[]
            ELSE ARRAY[2,4,6]::smallint[] END,
       18::smallint
@@ -262,12 +262,32 @@ BEGIN
   PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000999', true);
   PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text, true);
+  IF public.cle_horaire_utc(
+       ARRAY[2,4,6]::smallint[], ARRAY[18,18,18]::smallint[], 'Europe/Paris'
+     ) IS DISTINCT FROM public.cle_horaire_utc(
+       ARRAY[6,4,2]::smallint[], ARRAY[18,18,18]::smallint[], 'Europe/Brussels'
+     ) THEN
+    RAISE EXCEPTION 'M3: des créneaux équivalents Paris/Bruxelles sont séparés';
+  END IF;
+  SELECT pg_catalog.array_agg(n.jour_iso ORDER BY n.jour_iso)
+    INTO v_jours
+    FROM public.creneaux_normalises_utc(
+      ARRAY[4,6,1]::smallint[], ARRAY[18,18,18]::smallint[], 'Asia/Tokyo'
+    ) n;
+  IF v_jours IS DISTINCT FROM ARRAY[1,4,6]::smallint[] THEN
+    RAISE EXCEPTION 'M3: les jours Tokyo ne sont pas triés: %', v_jours;
+  END IF;
+
   SELECT regroupement_id, nombre_eleves, quota, pret, jours, heures_locales
     INTO v_regroupement, v_count, v_quota, v_pret, v_jours, v_heures
     FROM public.regroupements_demandes_horaires_admin()
-   WHERE type_public = 'adulte' AND langue_code = 'francais'
-     AND fuseau_iana = 'Europe/Paris';
-  IF v_count <> v_capacite + 1 OR v_quota <> v_capacite OR NOT v_pret THEN
+   WHERE regroupement_id = 'p:' || pg_catalog.md5(
+     'adulte|francais|' ||
+     public.cle_horaire_utc(
+       ARRAY[2,4,6]::smallint[], ARRAY[18,18,18]::smallint[], 'Europe/Paris'
+     )
+   );
+  IF v_count <> v_capacite OR v_quota <> v_capacite OR NOT v_pret THEN
     RAISE EXCEPTION 'F1 quota: regroupement=% eleves=% quota=% pret=%',
       v_regroupement, v_count, v_quota, v_pret;
   END IF;
@@ -281,8 +301,14 @@ BEGIN
   IF v_jours IS DISTINCT FROM ARRAY[2,4,6]::smallint[] THEN
     RAISE EXCEPTION 'F1 normalisation des jours incorrecte: %', v_jours;
   END IF;
-  IF v_heures IS DISTINCT FROM ARRAY[18,18,18]::smallint[] THEN
-    RAISE EXCEPTION 'F1 heures de regroupement incorrectes: %', v_heures;
+  IF v_fuseau <> 'UTC'
+     OR v_heures IS DISTINCT FROM ARRAY(
+       SELECT n.heure_locale
+       FROM public.creneaux_normalises_utc(
+         ARRAY[2,4,6]::smallint[], ARRAY[18,18,18]::smallint[], 'Europe/Paris'
+       ) n ORDER BY n.jour_iso, n.heure_locale
+     )::smallint[] THEN
+    RAISE EXCEPTION 'M3: horaire de référence UTC incorrect: % %', v_fuseau, v_heures;
   END IF;
 
   v_groupe := public.creer_classe_depuis_regroupement(
