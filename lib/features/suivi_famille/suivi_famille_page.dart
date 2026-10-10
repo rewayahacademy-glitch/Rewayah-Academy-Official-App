@@ -270,6 +270,8 @@ class _Frise extends StatelessWidget {
               ? libelleMotifAttente(frise.motifAttente!)
               : null,
           derniere: i == etapes.length - 1,
+          rang: i + 1,
+          total: etapes.length,
         ),
       );
     }
@@ -299,6 +301,8 @@ class _LigneFrise extends StatelessWidget {
     required this.etape,
     required this.etat,
     required this.derniere,
+    required this.rang,
+    required this.total,
     this.depuis,
     this.motif,
     super.key,
@@ -307,6 +311,8 @@ class _LigneFrise extends StatelessWidget {
   final EtapeFrise etape;
   final EtatEtapeFrise etat;
   final bool derniere;
+  final int rang;
+  final int total;
   final String? depuis;
   final String? motif;
 
@@ -340,7 +346,17 @@ class _LigneFrise extends StatelessWidget {
     final TextStyle detail = secondaire.applyTo(
       textes.bodySmall ?? const TextStyle(),
     );
-    return MergeSemantics(
+    final String etiquette = <String>[
+      t.suiviFamille.etapeSurTotal(n: rang, total: total, etape: nom),
+      libelleEtat(etat),
+      ?instant,
+      ?depuis,
+      ?motif,
+    ].join(', ');
+    return Semantics(
+      label: etiquette,
+      container: true,
+      excludeSemantics: true,
       child: IntrinsicHeight(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,

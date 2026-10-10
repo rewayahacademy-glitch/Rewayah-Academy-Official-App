@@ -6427,7 +6427,8 @@
       "enAttente": "Demande {dePrenom} : en liste d'attente",
       "eleveIntegre": "Demande {dePrenom} : élève intégré à la classe",
       "premiereSeance": "Demande {dePrenom} : première séance effectuée"
-    }
+    },
+    "etapeSurTotal": "Étape {n} sur {total} : {etape}"
   },
   "suiviDemandes": {
     "titre": "Suivi des demandes de créneau",

@@ -1238,6 +1238,7 @@ suiviFamille.contexte
 suiviFamille.detailTitre
 suiviFamille.erreur
 suiviFamille.etapeCourante
+suiviFamille.etapeSurTotal
 suiviFamille.etapes.classeCreee
 suiviFamille.etapes.eleveIntegre
 suiviFamille.etapes.enAttente

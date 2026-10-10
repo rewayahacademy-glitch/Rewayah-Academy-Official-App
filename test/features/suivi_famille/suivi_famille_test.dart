@@ -366,7 +366,9 @@ void main() {
       );
       expect(
         find.bySemanticsLabel(
-          RegExp('${f.etapes.classeCreee}.*${f.etats.fait}', dotAll: true),
+          RegExp(
+            '${f.etapeSurTotal(n: 2, total: 5, etape: f.etapes.classeCreee)}, ${f.etats.fait}, ',
+          ),
         ),
         findsOneWidget,
       );
