@@ -1158,3 +1158,85 @@ begin
   end if;
   raise notice 'Prieres ok : les reglages ne sortent pas du cercle des parties concernees';
 end $$;
+
+-- H1: la lecture des groupes ne boucle pas entre les deux policies RLS.
+begin;
+
+insert into auth.users (id, email) values
+  ('a1730000-0000-0000-0000-000000000001', 'h1-teacher@example.test'),
+  ('a1730000-0000-0000-0000-000000000002', 'h1-student-a@example.test'),
+  ('a1730000-0000-0000-0000-000000000003', 'h1-student-b@example.test'),
+  ('a1730000-0000-0000-0000-000000000004', 'h1-outsider@example.test');
+insert into public.households (id, timezone) values
+  ('a173ffff-0000-0000-0000-000000000001', 'Europe/Paris'),
+  ('a173ffff-0000-0000-0000-000000000002', 'Europe/Paris');
+insert into public.profiles
+  (id, immutable_id, role, household_id, first_name, last_name, account_status)
+values
+  ('a1730000-0000-0000-0000-000000000001', 'H1-TEACHER-001', 'teacher',
+   null, 'Fixture', 'Teacher', 'active'),
+  ('a1730000-0000-0000-0000-000000000002', 'H1-STUDENT-A-001', 'student',
+   'a173ffff-0000-0000-0000-000000000001', 'Fixture', 'StudentA', 'active'),
+  ('a1730000-0000-0000-0000-000000000003', 'H1-STUDENT-B-001', 'student',
+   'a173ffff-0000-0000-0000-000000000001', 'Fixture', 'StudentB', 'active'),
+  ('a1730000-0000-0000-0000-000000000004', 'H1-OUTSIDER-001', 'student',
+   'a173ffff-0000-0000-0000-000000000002', 'Fixture', 'Outsider', 'active');
+insert into public.groupes
+  (id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana)
+values
+  ('a173ffff-0000-0000-0000-000000000010',
+   'a1730000-0000-0000-0000-000000000001', 'enfant', 5,
+   'H1 fixture', 1, 10, 'Europe/Paris');
+insert into public.groupe_membres (groupe_id, student_id) values
+  ('a173ffff-0000-0000-0000-000000000010', 'a1730000-0000-0000-0000-000000000002'),
+  ('a173ffff-0000-0000-0000-000000000010', 'a1730000-0000-0000-0000-000000000003');
+
+do $h1$
+declare
+  v_groups integer;
+  v_members integer;
+begin
+  set local role authenticated;
+  perform set_config('test.uid', 'a1730000-0000-0000-0000-000000000002', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"student","household_id":"a173ffff-0000-0000-0000-000000000001"}}',
+    true);
+  select count(*) into v_groups from public.groupes
+   where id = 'a173ffff-0000-0000-0000-000000000010';
+  select count(*) into v_members from public.groupe_membres
+   where groupe_id = 'a173ffff-0000-0000-0000-000000000010';
+  if v_groups <> 1 or v_members <> 2 then
+    raise exception 'H1: le foyer ne lit pas le groupe et les membres de son foyer (%, %)',
+      v_groups, v_members;
+  end if;
+
+  perform set_config('test.uid', 'a1730000-0000-0000-0000-000000000004', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"student","household_id":"a173ffff-0000-0000-0000-000000000002"}}',
+    true);
+  select count(*) into v_groups from public.groupes
+   where id = 'a173ffff-0000-0000-0000-000000000010';
+  select count(*) into v_members from public.groupe_membres
+   where groupe_id = 'a173ffff-0000-0000-0000-000000000010';
+  if v_groups <> 0 or v_members <> 0 then
+    raise exception 'H1: un foyer tiers lit le groupe ou ses membres (%, %)',
+      v_groups, v_members;
+  end if;
+
+  perform set_config('test.uid', 'a1730000-0000-0000-0000-000000000001', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"teacher"}}',
+    true);
+  select count(*) into v_groups from public.groupes
+   where id = 'a173ffff-0000-0000-0000-000000000010';
+  select count(*) into v_members from public.groupe_membres
+   where groupe_id = 'a173ffff-0000-0000-0000-000000000010';
+  if v_groups <> 1 or v_members <> 2 then
+    raise exception 'H1: l''enseignant n''a pas la visibilité complète de son groupe (%, %)',
+      v_groups, v_members;
+  end if;
+end
+$h1$;
+
+reset role;
+rollback;
