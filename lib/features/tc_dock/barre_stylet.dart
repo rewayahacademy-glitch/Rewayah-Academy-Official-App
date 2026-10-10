@@ -135,10 +135,12 @@ class BarreStylet extends ConsumerWidget {
     );
   }
 
-  /// Les libelles de la palette courte, dans l'ordre des boutons.
+  /// Les libelles de la palette courte, dans l'ordre des boutons. Annuler
+  /// compte meme quand il n'est pas encore rendu (rien a defaire) : le choix
+  /// mots ou icones ne bascule pas sous la main au premier trait.
   List<String> _libellesCompacts(EtatOutils etat) => <String>[
     libelleOutilTrait(etat.outilTrait),
-    if (peutAnnuler) t.tc.outils.trait.annuler,
+    t.tc.outils.trait.annuler,
     if (onTerminer != null) t.salle.seance.ecriture.terminer,
     if (onCommandes != null) t.salle.seance.commandes.declencheur,
   ];

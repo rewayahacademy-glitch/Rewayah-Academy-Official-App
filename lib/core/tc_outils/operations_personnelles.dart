@@ -120,6 +120,11 @@ class ControleurHistorique extends Notifier<HistoriquePersonnel> {
   @override
   HistoriquePersonnel build() => const HistoriquePersonnel();
 
+  /// Une annulation attend le depot : tant qu'elle n'est pas finie, un
+  /// second appui ne relit pas la meme derniere operation (sinon un geste
+  /// de gomme rendrait deux fois le meme trait).
+  bool _annulationEnCours = false;
+
   /// Le depot a pris [trait], pose par la personne.
   void traitPose(
     TraitVectoriel trait, {
@@ -213,8 +218,22 @@ class ControleurHistorique extends Notifier<HistoriquePersonnel> {
   /// Defait la derniere operation personnelle sur [surface] : un trait pose
   /// est retire, des traits gommes reviennent. Rien d'autre n'est touche.
   /// Rend ce qui a ete defait, ou `null` ; sans depot, rien n'est defait
-  /// (l'operation reste, l'ecran ne ment pas).
+  /// (l'operation reste, l'ecran ne ment pas). Un appui pendant une
+  /// annulation en cours ne fait rien (rend `null`).
   Future<OperationDefaite?> annuler(
+    bool Function(ContentPosition surface) sur,
+    PortAnnotations depot,
+  ) async {
+    if (_annulationEnCours) return null;
+    _annulationEnCours = true;
+    try {
+      return await _annuler(sur, depot);
+    } finally {
+      _annulationEnCours = false;
+    }
+  }
+
+  Future<OperationDefaite?> _annuler(
     bool Function(ContentPosition surface) sur,
     PortAnnotations depot,
   ) async {

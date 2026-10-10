@@ -51,7 +51,10 @@ Future<void> _taper(WidgetTester tester, Finder cible) async {
 }
 
 /// Commandes > Outils > Ecrire > Reduire, par les vrais boutons.
-Future<void> _ecrireParLesBoutons(WidgetTester tester) async {
+Future<void> _ecrireParLesBoutons(
+  WidgetTester tester, {
+  bool avecTrait = true,
+}) async {
   await _taper(tester, _declencheur);
   await _taper(
     tester,
@@ -68,6 +71,11 @@ Future<void> _ecrireParLesBoutons(WidgetTester tester) async {
     OutilDock.stylet,
   );
   await _taper(tester, find.byKey(PanneauSeance.cleReduire));
+  if (avecTrait) await _unTrait(tester);
+}
+
+/// Un trait au doigt sur la page.
+Future<void> _unTrait(WidgetTester tester) async {
   // Un trait : « Annuler » parait, la palette a ses quatre boutons (le cas
   // le plus large).
   final Rect page = tester.getRect(_page);
@@ -178,6 +186,60 @@ void main() {
       });
     }
 
+    // Verificateur TB-7b : a 320 x1, la palette passait de trois boutons
+    // avec mots (avant le premier trait) a quatre icones seules (Annuler
+    // parait) : son aspect changeait sous la main. Le mode doit rester.
+    testWidgets('320 x1 : meme mode (mots ou icones) avant et apres le '
+        'premier trait', (WidgetTester tester) async {
+      const Size ecran = Size(320, 700);
+      await monterRouteur(tester, Routes.demoSalle, taille: ecran);
+      final Finder lien = find.byKey(
+        ValueKey<String>(
+          'lien-${RoleSeance.enseignant.name}-tb-${SituationTb.ped03.name}',
+        ),
+      );
+      await tester.ensureVisible(lien);
+      await tester.pump();
+      await tester.tap(lien);
+      await stabiliser(tester);
+      await _ecrireParLesBoutons(tester, avecTrait: false);
+      expect(
+        find.descendant(
+          of: _palette,
+          matching: find.byKey(BarreStylet.cleAnnuler),
+        ),
+        findsNothing,
+        reason: 'rien a annuler encore',
+      );
+      final Finder motTerminer = find.descendant(
+        of: _palette,
+        matching: find.text(t.salle.seance.ecriture.terminer),
+      );
+      final Finder terminer = find.descendant(
+        of: _palette,
+        matching: find.byKey(BarreStylet.cleTerminer),
+      );
+      final int motsAvant = motTerminer.evaluate().length;
+      final Size tailleAvant = tester.getSize(terminer);
+      await _unTrait(tester);
+      expect(
+        find.descendant(
+          of: _palette,
+          matching: find.byKey(BarreStylet.cleAnnuler),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        motTerminer.evaluate().length,
+        motsAvant,
+        reason: 'le mot de Terminer ne parait ni ne disparait au premier trait',
+      );
+      expect(
+        tester.getSize(terminer),
+        tailleAvant,
+        reason: 'Terminer garde sa taille au premier trait',
+      );
+    });
   });
 
   group('Palette courte en arabe (RTL)', () {
@@ -226,9 +288,9 @@ void main() {
     await _attendre(tester);
     // L'outil retenu comme par un etat reste d'une autre vue : la vue de
     // l'eleve ne doit rien en rendre (capacite voitEcriture).
-    ProviderScope.containerOf(
-      tester.element(find.byType(SalleSeance)),
-    ).read(etatOutilsProvider.notifier).choisirOutil(OutilDock.stylet);
+    ProviderScope.containerOf(tester.element(find.byType(SalleSeance)))
+        .read(etatOutilsProvider.notifier)
+        .choisirOutil(OutilDock.stylet);
     await _attendre(tester);
     expect(tester.takeException(), isNull);
     expect(find.byType(SalleSeance), findsOneWidget);

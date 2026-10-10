@@ -457,6 +457,47 @@ void main() {
       );
       expect(_traits(tester), hasLength(1), reason: 'Annuler rend le trait');
     });
+
+    testWidgets('deux appuis rapides sur Annuler apres une gomme : le trait '
+        'revient une seule fois', (WidgetTester tester) async {
+      await _ouvrir(tester);
+      await _armerEcrire(tester);
+      await _glisser(
+        tester,
+        _surPage(tester, 0.2, 0.2),
+        _surPage(tester, 0.6, 0.2),
+      );
+      final String id = _traits(tester).single.id;
+      await _outils(tester);
+      await _taper(tester, find.byKey(BarreStylet.cleOutil(OutilTrait.gomme)));
+      await _reduire(tester);
+      await _glisser(
+        tester,
+        _surPage(tester, 0.4, 0.1),
+        _surPage(tester, 0.4, 0.3),
+      );
+      expect(_traits(tester), isEmpty);
+      final Finder annuler = find.descendant(
+        of: _palette,
+        matching: find.byKey(BarreStylet.cleAnnuler),
+      );
+      await tester.ensureVisible(annuler);
+      await tester.pump();
+      // Deux appuis dans le meme tour d'evenements, sans image entre eux :
+      // le premier attend encore le depot quand le second arrive (le cas
+      // d'un depot lent). `tester.tap` laisserait le premier finir.
+      final Pressable bouton = tester.widget<Pressable>(
+        find.descendant(of: annuler, matching: find.byType(Pressable)).first,
+      );
+      bouton.onPress!();
+      bouton.onPress!();
+      await _attendre(tester);
+      expect(
+        _traits(tester).map((TraitVectoriel t) => t.id).toList(),
+        <String>[id],
+        reason: 'un seul effet : le trait gomme revient une fois',
+      );
+    });
   });
 
   group('Gestes (plan V2 §7, TB21, TB-STYLET-1)', () {
