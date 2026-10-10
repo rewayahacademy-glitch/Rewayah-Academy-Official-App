@@ -4,14 +4,28 @@
 -- transformée fait échouer la migration.
 begin;
 
+create or replace function app_private.has_unsafe_role_guard(p_definition text)
+returns boolean
+language sql
+immutable
+security invoker
+set search_path = ''
+as $function$
+  select coalesce(
+    p_definition ~*
+      '(app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]*(<>|!=)[[:space:]]*''[^'']+''|app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]+not[[:space:]]+in[[:space:]]*[(]|''[^'']+''[[:space:]]*(<>|!=)[[:space:]]*app_role[[:space:]]*[(][[:space:]]*[)])',
+    false
+  );
+$function$;
+revoke all on function app_private.has_unsafe_role_guard(text) from public;
+revoke all on function app_private.has_unsafe_role_guard(text) from anon, authenticated, agent_ro;
+
 do $migration$
 declare
   v record;
   v_definition text;
   v_corrigee text;
   v_modifiees integer := 0;
-  v_negative_pattern constant text :=
-    '(app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]*(<>|!=)[[:space:]]*''[^'']+''|app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]+not[[:space:]]+in[[:space:]]*[(]|''[^'']+''[[:space:]]*(<>|!=)[[:space:]]*app_role[[:space:]]*[(][[:space:]]*[)])';
 begin
   for v in
     select p.oid
@@ -20,7 +34,7 @@ begin
     where n.nspname in ('public', 'app_private')
       and p.prokind = 'f'
       and p.prosecdef
-      and p.prosrc ~* v_negative_pattern
+      and app_private.has_unsafe_role_guard(p.prosrc)
   loop
     v_definition := pg_catalog.pg_get_functiondef(v.oid);
 
@@ -61,7 +75,7 @@ begin
     where n.nspname in ('public', 'app_private')
       and p.prokind = 'f'
       and p.prosecdef
-      and p.prosrc ~* v_negative_pattern
+      and app_private.has_unsafe_role_guard(p.prosrc)
   ) then
     raise exception '0074: une comparaison négative subsiste dans une fonction SECURITY DEFINER';
   end if;
