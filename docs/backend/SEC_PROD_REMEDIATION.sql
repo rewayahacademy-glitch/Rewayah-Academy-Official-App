@@ -1229,6 +1229,11 @@ begin
     raise exception 'SEC-PROD M2 scanner missed NULL COALESCE fallback';
   end if;
   if not app_private.sec_prod_has_unsafe_role_guard(
+    'IF NOT coalesce(app_role() = ''admin'' AND app_account_valid(), true, false) THEN RAISE; END IF;'
+  ) then
+    raise exception 'SEC-PROD M2 scanner missed permissive COALESCE intermediate fallback';
+  end if;
+  if not app_private.sec_prod_has_unsafe_role_guard(
     'IF NOT coalesce(app_role() = ''admin'' AND NOT app_account_valid(), false) THEN RAISE; END IF;'
   ) then
     raise exception 'SEC-PROD M2 scanner missed negated account-validity conjunct';
