@@ -253,7 +253,7 @@ BEGIN
     INTO v_regroupement, v_count, v_quota, v_pret, v_jours, v_heures
     FROM public.regroupements_demandes_horaires_admin()
    WHERE type_public = 'adulte' AND langue_code = 'francais'
-     AND fuseau_iana = 'Europe/Paris';
+     AND fuseau_iana = 'UTC';
   IF v_count <> v_capacite OR v_quota <> v_capacite OR NOT v_pret THEN
     RAISE EXCEPTION 'F1 quota: regroupement=% eleves=% quota=% pret=%',
       v_regroupement, v_count, v_quota, v_pret;
@@ -261,8 +261,8 @@ BEGIN
   IF v_jours IS DISTINCT FROM ARRAY[2,4,6]::smallint[] THEN
     RAISE EXCEPTION 'F1 normalisation des jours incorrecte: %', v_jours;
   END IF;
-  IF v_heures IS DISTINCT FROM ARRAY[18,18,18]::smallint[] THEN
-    RAISE EXCEPTION 'F1 heures de regroupement incorrectes: %', v_heures;
+  IF v_heures IS DISTINCT FROM ARRAY[16,16,16]::smallint[] THEN
+    RAISE EXCEPTION 'F1 heures UTC normalisees incorrectes: %', v_heures;
   END IF;
 
   v_groupe := public.creer_classe_depuis_regroupement(
@@ -421,7 +421,63 @@ BEGIN
     RAISE EXCEPTION 'F1: choix d''une carte non transmis à l''administration';
   END IF;
 
-  RAISE NOTICE 'F1: demandes privées, regroupement par élèves, quota serveur, états et ACL vérifiés';
+  -- C-10 : le suivi déduit le foyer depuis la session, sans identifiant fourni
+  -- par le client, et ne rend que les demandes de ce foyer.
+  v_reponse := public.mes_demandes_horaires_famille();
+  IF jsonb_array_length(v_reponse) = 0
+     OR EXISTS (
+       SELECT 1
+       FROM jsonb_array_elements(v_reponse) AS ligne
+       WHERE NOT coalesce(public.peut_decrire_apprenant(
+         (ligne->>'eleve_id')::uuid
+       ), false)
+     ) THEN
+    RAISE EXCEPTION 'C-10 : le suivi est vide ou contient un autre foyer: %', v_reponse;
+  END IF;
+  IF EXISTS (
+    SELECT 1
+    FROM jsonb_array_elements(v_reponse) AS ligne
+    WHERE coalesce(ligne->>'etat', '') <> 'enseignant_affecte'
+      AND (ligne->>'enseignant') IS NOT NULL
+  ) THEN
+    RAISE EXCEPTION 'C-10 : un enseignant est visible avant son affectation';
+  END IF;
+  IF EXISTS (
+    SELECT 1
+    FROM jsonb_array_elements(v_reponse) AS ligne
+    WHERE jsonb_array_length(ligne->'jours') <>
+          jsonb_array_length(ligne->'heures_locales')
+  ) THEN
+    RAISE EXCEPTION 'C-10 bis : jours et heures ne sont pas parallèles';
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1
+    FROM jsonb_array_elements(v_reponse) AS ligne
+    WHERE ligne->>'eleve_id' = 'f1490000-0000-0000-0000-000000000003'
+      AND ligne->>'etat' = 'enseignant_affecte'
+      AND ligne->>'enseignant' = 'Sayid Enseignant'
+      AND (ligne->>'debut_cours_local') !~ '(Z|[+-][0-9]{2}:[0-9]{2})$'
+  ) THEN
+    RAISE EXCEPTION 'C-04/C-10 : titre masculin ou heure murale du cours absent';
+  END IF;
+
+  -- C-04 : le titre public suit le genre du profil enseignant; il n'est
+  -- jamais saisi ni fourni par le client.
+  UPDATE public.profiles SET gender = 'female'
+   WHERE id = 'f1490000-0000-0000-0000-000000000997';
+  v_reponse := public.mes_demandes_horaires_famille();
+  IF NOT EXISTS (
+    SELECT 1
+    FROM jsonb_array_elements(v_reponse) AS ligne
+    WHERE ligne->>'eleve_id' = 'f1490000-0000-0000-0000-000000000003'
+      AND ligne->>'enseignant' = 'Sayyida Enseignant'
+  ) THEN
+    RAISE EXCEPTION 'C-04 : gender=female ne produit pas le titre sayyida';
+  END IF;
+  UPDATE public.profiles SET gender = 'male'
+   WHERE id = 'f1490000-0000-0000-0000-000000000997';
+
+  RAISE NOTICE 'F1/C-10: demandes privées, suivi foyer, heures par jour, titre C-04 et ACL vérifiés';
 END
 $quota$;
 
