@@ -117,9 +117,9 @@ class _Traductions$commun$ar extends Traductions$commun$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override late final _Traductions$commun$dates$ar dates = _Traductions$commun$dates$ar._(_root);
 	@override late final _Traductions$commun$recherche$ar recherche = _Traductions$commun$recherche$ar._(_root);
 	@override late final _Traductions$commun$sections$ar sections = _Traductions$commun$sections$ar._(_root);
+	@override late final _Traductions$commun$dates$ar dates = _Traductions$commun$dates$ar._(_root);
 	@override String get reessayer => 'إعادة المحاولة';
 	@override String get annuler => 'إلغاء';
 	@override late final _Traductions$commun$choix$ar choix = _Traductions$commun$choix$ar._(_root);
@@ -250,7 +250,14 @@ class _Traductions$nav$ar extends Traductions$nav$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$nav$eleve$ar eleve = _Traductions$nav$eleve$ar._(_root);
+	@override late final _Traductions$nav$tuteur$ar tuteur = _Traductions$nav$tuteur$ar._(_root);
+	@override late final _Traductions$nav$enseignant$ar enseignant = _Traductions$nav$enseignant$ar._(_root);
+	@override late final _Traductions$nav$controleur$ar controleur = _Traductions$nav$controleur$ar._(_root);
+	@override late final _Traductions$nav$admin$ar admin = _Traductions$nav$admin$ar._(_root);
+	@override String get compte => 'حسابي';
 	@override String get principale => 'التنقل الرئيسي';
+	@override String get motSymbole => 'Rewayah';
 	@override String get replier => 'طيّ شريط التنقل';
 	@override String get deplier => 'فتح شريط التنقل';
 }
@@ -412,6 +419,27 @@ class _Traductions$notifications$types$ar extends Traductions$notifications$type
 	@override String get autre => 'إشعار';
 }
 
+// Path: commun.recherche
+class _Traductions$commun$recherche$ar extends Traductions$commun$recherche$fr {
+	_Traductions$commun$recherche$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get effacer => 'مسح البحث';
+	@override String get fermer => 'إغلاق البحث';
+}
+
+// Path: commun.sections
+class _Traductions$commun$sections$ar extends Traductions$commun$sections$fr {
+	_Traductions$commun$sections$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get page => 'أقسام الصفحة';
+}
+
 // Path: commun.dates
 class _Traductions$commun$dates$ar extends Traductions$commun$dates$fr {
 	_Traductions$commun$dates$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -444,27 +472,6 @@ class _Traductions$commun$dates$ar extends Traductions$commun$dates$fr {
 		'ديسمبر',
 	];
 	@override String jourDate({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}';
-}
-
-// Path: commun.recherche
-class _Traductions$commun$recherche$ar extends Traductions$commun$recherche$fr {
-	_Traductions$commun$recherche$ar._(TraductionsAr root) : this._root = root, super.internal(root);
-
-	final TraductionsAr _root; // ignore: unused_field
-
-	// Translations
-	@override String get effacer => 'مسح البحث';
-	@override String get fermer => 'إغلاق البحث';
-}
-
-// Path: commun.sections
-class _Traductions$commun$sections$ar extends Traductions$commun$sections$fr {
-	_Traductions$commun$sections$ar._(TraductionsAr root) : this._root = root, super.internal(root);
-
-	final TraductionsAr _root; // ignore: unused_field
-
-	// Translations
-	@override String get page => 'أقسام الصفحة';
 }
 
 // Path: commun.choix
@@ -818,6 +825,92 @@ class _Traductions$tuteur$accueil$ar extends Traductions$tuteur$accueil$fr {
 	@override String get pastilleTerminee => 'منتهية';
 	@override late final _Traductions$tuteur$accueil$etatCourt$ar etatCourt = _Traductions$tuteur$accueil$etatCourt$ar._(_root);
 	@override String get motifAnnuleeTard => 'أُلغيت الحصة قبل موعدها بقليل';
+}
+
+// Path: nav.eleve
+class _Traductions$nav$eleve$ar extends Traductions$nav$eleve$fr {
+	_Traductions$nav$eleve$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get accueil => 'الرئيسية';
+	@override String get maClasse => 'فصلي';
+	@override String get coran => 'القرآن';
+	@override String get monEspace => 'مساحتي';
+	@override String get suivi => 'المتابعة';
+	@override String get compte => 'الحساب';
+}
+
+// Path: nav.tuteur
+class _Traductions$nav$tuteur$ar extends Traductions$nav$tuteur$fr {
+	_Traductions$nav$tuteur$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get accueil => 'الرئيسية';
+	@override String get foyer => 'الأسرة';
+	@override String get disponibilites => 'الأوقات المتاحة';
+	@override String get reglages => 'الإعدادات';
+	@override String get suivi => 'المتابعة';
+	@override String get historique => 'السجل';
+	@override String get compte => 'الحساب';
+}
+
+// Path: nav.enseignant
+class _Traductions$nav$enseignant$ar extends Traductions$nav$enseignant$fr {
+	_Traductions$nav$enseignant$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get journee => 'اليوم';
+	@override String get classes => 'الفصول';
+	@override String get creneaux => 'الأوقات المتاحة';
+	@override String get profil => 'الملف الشخصي';
+}
+
+// Path: nav.controleur
+class _Traductions$nav$controleur$ar extends Traductions$nav$controleur$fr {
+	_Traductions$nav$controleur$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get planning => 'الجدول';
+	@override String get controle => 'المراقبة';
+	@override String get historique => 'السجل';
+	@override String get echanges => 'المراسلات';
+	@override String get compte => 'الحساب';
+}
+
+// Path: nav.admin
+class _Traductions$nav$admin$ar extends Traductions$nav$admin$fr {
+	_Traductions$nav$admin$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get tableauDeBord => 'لوحة التحكم';
+	@override String get dossiers => 'الملفات';
+	@override String get demandes => 'الطلبات';
+	@override String get attribution => 'الإسناد';
+	@override String get journal => 'السجل';
+	@override String get comptes => 'الحسابات';
+	@override String get accesAgents => 'صلاحيات الموظفين';
+	@override String get accueil => 'الرئيسية';
+	@override String get operations => 'العمليات';
+	@override String get personnes => 'الأشخاص';
+	@override String get pedagogie => 'التعليم';
+	@override String get finance => 'المالية';
+	@override String get configuration => 'الإعدادات';
+	@override String get securite => 'الأمان والتدقيق';
+	@override String get direction => 'الإدارة';
+	@override String get recherche => 'البحث';
+	@override String get rechercheIndication => 'البحث عن شاشة';
+	@override String get notificationsTitre => 'الإشعارات';
+	@override String get menu => 'القائمة';
 }
 
 // Path: tc.groupe
@@ -4504,6 +4597,9 @@ extension on TraductionsAr {
 			'historique.dateCourte' => ({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}',
 			'historique.dateCourteSansAnnee' => ({required Object jour, required Object mois}) => '${jour} ${mois}',
 			'historique.dateLongue' => ({required Object jourSemaine, required Object jour, required Object mois, required Object annee}) => '${jourSemaine} ${jour} ${mois} ${annee}',
+			'commun.recherche.effacer' => 'مسح البحث',
+			'commun.recherche.fermer' => 'إغلاق البحث',
+			'commun.sections.page' => 'أقسام الصفحة',
 			'commun.dates.premierJour' => '1',
 			'commun.dates.jours.0' => 'الاثنين',
 			'commun.dates.jours.1' => 'الثلاثاء',
@@ -4525,9 +4621,6 @@ extension on TraductionsAr {
 			'commun.dates.mois.10' => 'نوفمبر',
 			'commun.dates.mois.11' => 'ديسمبر',
 			'commun.dates.jourDate' => ({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}',
-			'commun.recherche.effacer' => 'مسح البحث',
-			'commun.recherche.fermer' => 'إغلاق البحث',
-			'commun.sections.page' => 'أقسام الصفحة',
 			'commun.reessayer' => 'إعادة المحاولة',
 			'commun.annuler' => 'إلغاء',
 			'commun.choix.indisponible' => 'غير متاح',
@@ -4850,7 +4943,50 @@ extension on TraductionsAr {
 			'tuteur.accueil.etatCourt.aucune' => 'لا توجد حصة',
 			'tuteur.accueil.etatCourt.illisible' => 'غير متاح',
 			'tuteur.accueil.motifAnnuleeTard' => 'أُلغيت الحصة قبل موعدها بقليل',
+			'nav.eleve.accueil' => 'الرئيسية',
+			'nav.eleve.maClasse' => 'فصلي',
+			'nav.eleve.coran' => 'القرآن',
+			'nav.eleve.monEspace' => 'مساحتي',
+			'nav.eleve.suivi' => 'المتابعة',
+			'nav.eleve.compte' => 'الحساب',
+			'nav.tuteur.accueil' => 'الرئيسية',
+			'nav.tuteur.foyer' => 'الأسرة',
+			'nav.tuteur.disponibilites' => 'الأوقات المتاحة',
+			'nav.tuteur.reglages' => 'الإعدادات',
+			'nav.tuteur.suivi' => 'المتابعة',
+			'nav.tuteur.historique' => 'السجل',
+			'nav.tuteur.compte' => 'الحساب',
+			'nav.enseignant.journee' => 'اليوم',
+			'nav.enseignant.classes' => 'الفصول',
+			'nav.enseignant.creneaux' => 'الأوقات المتاحة',
+			'nav.enseignant.profil' => 'الملف الشخصي',
+			'nav.controleur.planning' => 'الجدول',
+			'nav.controleur.controle' => 'المراقبة',
+			'nav.controleur.historique' => 'السجل',
+			'nav.controleur.echanges' => 'المراسلات',
+			'nav.controleur.compte' => 'الحساب',
+			'nav.admin.tableauDeBord' => 'لوحة التحكم',
+			'nav.admin.dossiers' => 'الملفات',
+			'nav.admin.demandes' => 'الطلبات',
+			'nav.admin.attribution' => 'الإسناد',
+			'nav.admin.journal' => 'السجل',
+			'nav.admin.comptes' => 'الحسابات',
+			'nav.admin.accesAgents' => 'صلاحيات الموظفين',
+			'nav.admin.accueil' => 'الرئيسية',
+			'nav.admin.operations' => 'العمليات',
+			'nav.admin.personnes' => 'الأشخاص',
+			'nav.admin.pedagogie' => 'التعليم',
+			'nav.admin.finance' => 'المالية',
+			'nav.admin.configuration' => 'الإعدادات',
+			'nav.admin.securite' => 'الأمان والتدقيق',
+			'nav.admin.direction' => 'الإدارة',
+			'nav.admin.recherche' => 'البحث',
+			'nav.admin.rechercheIndication' => 'البحث عن شاشة',
+			'nav.admin.notificationsTitre' => 'الإشعارات',
+			'nav.admin.menu' => 'القائمة',
+			'nav.compte' => 'حسابي',
 			'nav.principale' => 'التنقل الرئيسي',
+			'nav.motSymbole' => 'Rewayah',
 			'nav.replier' => 'طيّ شريط التنقل',
 			'nav.deplier' => 'فتح شريط التنقل',
 			'tc.groupe.mesGroupes.titre' => 'فصولي',
@@ -4908,6 +5044,8 @@ extension on TraductionsAr {
 			'tc.groupe.espace.progression' => 'التقدم',
 			'tc.groupe.espace.roster' => 'طلاب الفصل',
 			'tc.groupe.espace.reprendreLeCours' => 'استئناف الدرس',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.espace.introuvable' => 'هذا الفصل غير متاح لك',
 			'tc.groupe.espace.introuvableDetail' => 'ربما أُغلق، أو يخص ملفًا آخر.',
 			'tc.groupe.emplacement.nonBranche' => 'متاح قريبًا',
@@ -4951,8 +5089,6 @@ extension on TraductionsAr {
 			'com.socle.composants.composer.aide' => 'اكتب رسالة',
 			'com.socle.composants.composer.envoyer' => 'إرسال',
 			'com.socle.composants.composer.champVide' => 'اكتب رسالة لإرسالها.',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.composants.composer.vocal' => 'رسالة صوتية',
 			'com.socle.composants.composer.vocalAVenir' => 'الرسالة الصوتية متاحة قريبًا',
 			'com.socle.composants.composer.enCours' => 'جارٍ الإرسال',
@@ -5422,6 +5558,8 @@ extension on TraductionsAr {
 			'com.studio.brouillons.videTitre' => 'لا توجد مسودات',
 			'com.studio.brouillons.vide' => 'ستظهر هنا أي رسالة بدأتها في قناة ولم تُرسل بعد.',
 			'com.studio.brouillons.tous' => ({required Object nombre}) => 'عرض كل المسودات (${nombre})',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.brouillons.restaure' => 'استُعيدت المسودة. يمكنك متابعة رسالتك.',
 			'com.studio.sousTitre' => 'مساحة عمل الفريق',
 			'com.studio.navigation.aujourdhui' => _root.com.socle.lexique.aujourdhui,
@@ -5465,8 +5603,6 @@ extension on TraductionsAr {
 			'com.studio.panneau.parametresDetail' => 'سيتاح تعديل الإعدادات مع خدمة الاستوديو.',
 			'com.studio.panneau.ouvrir' => ({required Object titre}) => 'فتح ${titre}',
 			'com.studio.panneau.lienExterne' => ({required Object hote}) => 'موقع خارجي: ${hote}',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.panneau.aucunPartageTitre' => 'لا شيء مشترك حاليًا',
 			'com.studio.panneau.aucunPartage' => 'ستظهر هنا العناصر المثبتة والملفات والروابط الخاصة بهذه القناة.',
 			'com.studio.enregistrer.enregistrer' => _root.com.socle.lexique.enregistrer,
@@ -5936,6 +6072,8 @@ extension on TraductionsAr {
 			'comptable.aujourdhui.accesTresorerie' => 'عرض الخزينة والصناديق',
 			'comptable.aujourdhui.accesAlimenter' => 'تغذية الاحتياطي الاستراتيجي',
 			'comptable.aujourdhui.titre' => 'اليوم',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.aujourdhui.sousTitre' => 'ماذا عليّ أن أفعل الآن؟',
 			'comptable.aujourdhui.attention' => 'للمعالجة والتنبيهات',
 			'comptable.aujourdhui.aTraiter' => 'للمعالجة اليوم',
@@ -5979,8 +6117,6 @@ extension on TraductionsAr {
 			'comptable.paiements.confirmation.prestataires' => 'مزوّدو الدفع',
 			'comptable.paiements.confirmation.plafond' => 'التفويض المتبقي',
 			'comptable.paiements.confirmation.exclusTitre' => 'مستبعدة من هذه الدفعة المجمّعة: لن تُرسَل',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.confirmation.aucunPretTitre' => 'لا توجد دفعة جاهزة',
 			'comptable.paiements.confirmation.aucunPret' => 'لن يُرسَل أي شيء. افتح كل دفعة مستبعدة لإزالة سببها، ثم أعد تشغيل الفحص.',
 			'comptable.paiements.confirmation.erreursTitre' => 'أخطاء أرجعها الفحص',
@@ -6450,6 +6586,8 @@ extension on TraductionsAr {
 			'comptable.contractuels.retourListe' => 'العودة إلى المتعاقدين',
 			'comptable.contractuels.titre' => 'المتعاقدون والالتزامات',
 			'comptable.contractuels.sousTitre' => 'تُحدَّد المبالغ عند إنشاء الالتزام، وتُثبَّت بعد الاعتماد.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.nouvelle' => 'التزام جديد',
 			'comptable.contractuels.detailTitre' => 'الالتزام',
 			'comptable.validation.sousTitre' => 'طلبات المحاسب التي تنتظر قرار شخص مخوَّل آخر. صاحب الطلب لا يصادق أبدًا على طلبه.',
@@ -6493,8 +6631,6 @@ extension on TraductionsAr {
 			'comptable.validation.motifs.reporter' => 'يؤجَّل إلى الدورة القادمة',
 			'comptable.validation.motifs.autre' => 'آخر',
 			'comptable.validation.motifAutreChamp' => 'حدّد السبب',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.validation.erreurMotif' => 'اختر سببًا للرفض.',
 			'comptable.validation.erreurMotifAutre' => 'حدّد السبب للرفض.',
 			'comptable.validation.decisionValidee' => 'سُجّل قرارك: تمت المصادقة على الطلب.',
