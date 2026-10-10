@@ -607,6 +607,187 @@ $function$;
 revoke all on function app_private.has_unsafe_role_guard(text) from public;
 revoke all on function app_private.has_unsafe_role_guard(text) from anon, authenticated, agent_ro;
 
+-- Scanner M2 fail-closed: masquer commentaires et chaînes avant d'examiner
+-- les conditions; les littéraux sont remplacés par 'x' pour conserver la forme
+-- des comparaisons de rôle sans interpréter leur contenu comme du SQL.
+create or replace function app_private.sec_prod_has_unsafe_role_guard(p_definition text)
+returns boolean
+language plpgsql
+immutable
+security invoker
+set search_path = ''
+as $scanner$
+declare
+  v_clean text := '';
+  v_state text := 'code';
+  v_input text := coalesce(p_definition, '');
+  v_length integer := length(coalesce(p_definition, ''));
+  v_i integer := 1;
+  v_depth integer := 0;
+  v_char text;
+  v_next text;
+  v_tag text;
+  v_condition text;
+  v_lower text;
+  v_compact text;
+  v_role_pos integer;
+  v_account_pos integer;
+  v_coalesce_pos integer;
+  v_open_pos integer;
+  v_close_pos integer;
+begin
+  -- Masquage lexical : commentaires SQL (y compris blocs imbriqués),
+  -- chaînes simples et dollar-quoted. Les identifiants cités sont conservés.
+  while v_i <= v_length loop
+    v_char := substring(v_input from v_i for 1);
+    v_next := substring(v_input from v_i + 1 for 1);
+
+    if v_state = 'code' then
+      if v_char = '-' and v_next = '-' then
+        v_clean := v_clean || '  ';
+        v_state := 'line_comment';
+        v_i := v_i + 2;
+        continue;
+      elsif v_char = '/' and v_next = '*' then
+        v_clean := v_clean || '  ';
+        v_state := 'block_comment';
+        v_depth := 1;
+        v_i := v_i + 2;
+        continue;
+      elsif v_char = chr(39) then
+        v_clean := v_clean || chr(39) || 'x' || chr(39);
+        v_state := 'single_quote';
+        v_i := v_i + 1;
+        continue;
+      elsif v_char = '"' then
+        v_state := 'double_quote';
+        v_i := v_i + 1;
+        continue;
+      elsif v_char = '$' then
+        v_tag := substring(substring(v_input from v_i) from '^\$[[:alnum:]_]*\$');
+        if coalesce(v_tag, '') <> '' then
+          v_clean := v_clean || chr(39) || 'x' || chr(39);
+          v_state := 'dollar_quote';
+          v_i := v_i + length(v_tag);
+          continue;
+        end if;
+      end if;
+      v_clean := v_clean || v_char;
+      v_i := v_i + 1;
+
+    elsif v_state = 'line_comment' then
+      if v_char = chr(10) or v_char = chr(13) then
+        v_clean := v_clean || v_char;
+        v_state := 'code';
+      else
+        v_clean := v_clean || ' ';
+      end if;
+      v_i := v_i + 1;
+
+    elsif v_state = 'block_comment' then
+      if v_char = '/' and v_next = '*' then
+        v_clean := v_clean || '  ';
+        v_depth := v_depth + 1;
+        v_i := v_i + 2;
+      elsif v_char = '*' and v_next = '/' then
+        v_clean := v_clean || '  ';
+        v_depth := v_depth - 1;
+        v_i := v_i + 2;
+        if v_depth = 0 then
+          v_state := 'code';
+        end if;
+      else
+        v_clean := v_clean || case when v_char in (chr(10), chr(13)) then v_char else ' ' end;
+        v_i := v_i + 1;
+      end if;
+
+    elsif v_state = 'single_quote' then
+      if v_char = chr(92) and v_i < v_length then
+        v_i := v_i + 2;
+      elsif v_char = chr(39) and v_next = chr(39) then
+        v_i := v_i + 2;
+      elsif v_char = chr(39) then
+        v_state := 'code';
+        v_i := v_i + 1;
+      else
+        v_i := v_i + 1;
+      end if;
+
+    elsif v_state = 'double_quote' then
+      if v_char = '"' and v_next = '"' then
+        v_clean := v_clean || '"';
+        v_i := v_i + 2;
+      elsif v_char = '"' then
+        v_state := 'code';
+        v_i := v_i + 1;
+      else
+        v_clean := v_clean || v_char;
+        v_i := v_i + 1;
+      end if;
+
+    elsif v_state = 'dollar_quote' then
+      if substring(v_input from v_i for length(v_tag)) = v_tag then
+        v_state := 'code';
+        v_i := v_i + length(v_tag);
+      else
+        v_i := v_i + 1;
+      end if;
+    end if;
+  end loop;
+
+  if app_private.has_unsafe_role_guard(v_clean) then
+    return true;
+  end if;
+
+  for v_condition in
+    select m[1]
+    from regexp_matches(v_clean, '((if|elsif)[[:space:]]+[^;]*?then)', 'gi') as m
+  loop
+    if v_condition ~* 'app_role[[:space:]]*[(]'
+       and v_condition ~* 'not' then
+      v_lower := lower(v_condition);
+      v_compact := regexp_replace(v_lower, '[[:space:]]+', '', 'g');
+      v_role_pos := strpos(v_compact, 'app_role()');
+      v_account_pos := strpos(v_compact, 'app_account_valid()');
+      v_coalesce_pos := strpos(v_compact, 'coalesce(');
+      v_close_pos := 0;
+      v_depth := 1;
+      v_i := v_coalesce_pos + length('coalesce(');
+
+      while v_i <= length(v_compact) loop
+        v_char := substring(v_compact from v_i for 1);
+        if v_char = '(' then
+          v_depth := v_depth + 1;
+        elsif v_char = ')' then
+          v_depth := v_depth - 1;
+          if v_depth = 0 then
+            v_close_pos := v_i;
+            exit;
+          end if;
+        end if;
+        v_i := v_i + 1;
+      end loop;
+
+      if v_coalesce_pos = 0
+         or v_role_pos = 0
+         or v_account_pos = 0
+         or v_close_pos = 0
+         or lower(btrim(substring(v_compact from v_close_pos + 1))) <> 'then'
+         or length(v_compact) - length(replace(v_compact, 'app_role(', '')) <> length('app_role(')
+         or v_role_pos >= v_account_pos
+         or v_compact !~ 'app_role\(\)=[[:space:]]*''[^'']+'''
+         or v_compact !~ 'app_account_valid\(\),false\)'
+         or v_condition ~* '(^|[^[:alnum:]_])or([^[:alnum:]_]|$)'
+         or v_compact ~ '(and|or)not(public\.)?app_account_valid\(\)' then
+        return true;
+      end if;
+    end if;
+  end loop;
+  return false;
+end
+$scanner$;
+revoke all on function app_private.sec_prod_has_unsafe_role_guard(text) from public, anon, authenticated, agent_ro;
+
 do $m2_scan$
 declare
   v record;
@@ -618,7 +799,7 @@ begin
     where n.nspname in ('public', 'app_private')
       and p.prokind = 'f'
       and p.prosecdef
-      and app_private.has_unsafe_role_guard(p.prosrc)
+      and app_private.sec_prod_has_unsafe_role_guard(p.prosrc)
   loop
     raise exception '0084 M2: garde négative app_role résiduelle dans SECURITY DEFINER oid=%', v.oid;
   end loop;
@@ -1024,96 +1205,7 @@ begin
 end
 $verify$;
 
--- Contrôle M2 additionnel: le scan 0084 source ne reconnaît pas toutes les formes IF NOT.
--- Heuristique fail-closed, complétée par tests explicites ci-dessous.
-create or replace function app_private.sec_prod_has_unsafe_role_guard(p_definition text)
-returns boolean language plpgsql immutable security invoker set search_path = ''
-as $scanner$
-declare
-  v_condition text;
-  v_lower text;
-  v_role_pos integer;
-  v_account_pos integer;
-  v_coalesce_pos integer;
-  v_open_pos integer;
-  v_close_pos integer;
-  v_depth integer;
-  v_i integer;
-  v_char text;
-  v_next text;
-  v_in_string boolean;
-begin
-  if app_private.has_unsafe_role_guard(p_definition) then
-    return true;
-  end if;
-  for v_condition in
-    select m[1]
-    from regexp_matches(
-      p_definition,
-      '((?:if|elsif)[[:space:]]+[^;]*?then)',
-      'gi'
-    ) as m
-  loop
-    if v_condition ~* 'app_role[[:space:]]*[(]'
-       and v_condition ~* 'not' then
-      v_lower := lower(v_condition);
-      v_role_pos := strpos(v_lower, 'app_role(');
-      v_account_pos := strpos(v_lower, 'app_account_valid(');
-      v_coalesce_pos := strpos(v_lower, 'coalesce(');
-      v_open_pos := v_coalesce_pos + length('coalesce');
-      v_close_pos := 0;
-      v_depth := 0;
-      v_i := v_open_pos;
-      v_in_string := false;
 
-      -- Locate the matching COALESCE close while ignoring parentheses in
-      -- SQL string literals. The boolean guard must end there; otherwise an
-      -- outside AND/OR tail could invert or bypass the fail-closed condition.
-      while v_i <= length(v_lower) loop
-        v_char := substring(v_lower from v_i for 1);
-        v_next := substring(v_lower from v_i + 1 for 1);
-        if v_char = chr(39) then
-          if v_in_string and v_next = chr(39) then
-            v_i := v_i + 2;
-            continue;
-          end if;
-          v_in_string := not v_in_string;
-        elsif not v_in_string then
-          if v_char = '(' then
-            v_depth := v_depth + 1;
-          elsif v_char = ')' then
-            v_depth := v_depth - 1;
-            if v_depth = 0 then
-              v_close_pos := v_i;
-              exit;
-            end if;
-          end if;
-        end if;
-        v_i := v_i + 1;
-      end loop;
-
-      -- Whitelist a fail-closed NOT COALESCE guard only when the one
-      -- app_role() check is an equality, account validity is conjoined,
-      -- there is a false fallback, and no boolean tail follows COALESCE.
-      if v_lower !~ '^[[:space:]]*(if|elsif)[[:space:]]+not[[:space:]]+coalesce[[:space:]]*[(]'
-         or v_role_pos = 0
-         or v_account_pos = 0
-         or v_close_pos = 0
-         or lower(btrim(substring(v_lower from v_close_pos + 1))) <> 'then'
-         or length(v_lower) - length(replace(v_lower, 'app_role(', '')) <> length('app_role(')
-         or v_role_pos >= v_account_pos
-         or v_lower !~ 'app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]*=[[:space:]]*''[^'']+'''
-         or v_lower !~ 'app_account_valid[[:space:]]*[(][[:space:]]*[)][[:space:]]*,[[:space:]]*false[[:space:]]*[)]'
-         or v_condition ~* '(^|[^[:alnum:]_])or([^[:alnum:]_]|$)'
-         or v_condition ~* '(and|or)[[:space:]]+not[[:space:]]*[(]?[[:space:]]*(public[.])?app_account_valid[[:space:]]*[(][[:space:]]*[)]' then
-        return true;
-      end if;
-    end if;
-  end loop;
-  return false;
-end
-$scanner$;
-revoke all on function app_private.sec_prod_has_unsafe_role_guard(text) from public, anon, authenticated, agent_ro;
 
 -- M2: la null-sécurité du rôle ne remplace pas la validité du compte.
 -- Ces deux RPC restaient accessibles avec un JWT admin devenu invalide.
@@ -1198,6 +1290,11 @@ begin
     'IF NOT coalesce(auth.uid() IS NOT NULL AND public.app_role() = ''teacher'' AND public.app_account_valid(), false) OR public.app_role() = ''admin'' THEN RAISE; END IF;'
   ) then
     raise exception 'SEC-PROD M2 scanner missed OR outside a null-safe role guard';
+  end if;
+  if not app_private.sec_prod_has_unsafe_role_guard(
+    'IF NOT coalesce(app_role() = ''admin'' /* (app_account_valid(), false) */, false) THEN RAISE; END IF;'
+  ) then
+    raise exception 'SEC-PROD M2 scanner missed account guard hidden only in a comment';
   end if;
   if not app_private.sec_prod_has_unsafe_role_guard(
     'IF NOT coalesce(app_role() = ''admin'' AND app_account_valid(), false) AND false THEN RAISE; END IF;'
@@ -1348,7 +1445,7 @@ begin
   -- n'a survécu à la transformation, sans rejeter des contrôles d'identité OR valides.
   if exists(select 1 from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
             where n.nspname in ('public','app_private') and p.prosecdef
-              and app_private.has_unsafe_role_guard(p.prosrc)) then
+              and app_private.sec_prod_has_unsafe_role_guard(p.prosrc)) then
     raise exception 'SEC-PROD M2: comparateur de rôle négatif historique résiduel';
   end if;
 end
