@@ -85,6 +85,16 @@
 //   CAPTURE_DIR=docs/current/captures/TB-7b flutter test \
 //     test/features/tb_recette/captures_tb_test.dart --name tb7b_
 //
+// TB-10 (plan V2 §5, §12, §19.3 ; UX-20 ; MA-CMD-1) : l'eleve autorise
+// (information courte, Commandes avec Ecrire, palette apres un trait) et le
+// droit retire, eleve standard et Mode Accessibilite (guidee), 390 x1 et
+// x2, 1440, 320 x2, clair et sombre ; l'enseignant qui vient d'autoriser
+// Mariam (fiche depliee, « Peut ecrire », « Retirer l'autorisation
+// d'ecrire »), 1440 et 390, x1 et x2, 320 x2. Rangees dans
+// docs/current/captures/TB-10/ :
+//   CAPTURE_DIR=docs/current/captures/TB-10 flutter test \
+//     test/features/tb_recette/captures_tb_test.dart --name tb10_
+//
 // AR-SALLE-1 : la salle en arabe (RTL), enseignant et eleve, 390 et 1440
 // clair et sombre, 320 x2. Rangees dans docs/current/captures/AR-SALLE-1/ :
 //   CAPTURE_DIR=docs/current/captures/AR-SALLE-1 flutter test \
@@ -93,14 +103,13 @@
 import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show LogicalKeyboardKey;
-import 'package:flutter_riverpod/flutter_riverpod.dart'
-    show ProviderScope;
+import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/accessibilite/commandes_masquables.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart'
-    show AnnotationLayer, PointNormalise, TraitVectoriel;
+    show AnnotationLayer, OutilTrait, PointNormalise, TraitVectoriel;
 import 'package:rewayah_academy/core/tc_outils/etat_outils.dart';
 import 'package:rewayah_academy/core/tc_outils/port_annotations.dart';
 import 'package:rewayah_academy/core/tc_outils/port_dock_hote.dart'
@@ -410,17 +419,12 @@ void main() {
             find.byKey(CommandesPedagogiques.cle),
             ouvert ? findsOneWidget : findsNothing,
           );
-          // TB-5 : ouvertes, les Commandes sont en colonne (declencheur
-          // visible) seulement si la largeur divisee par le texte tient les
-          // Participants et elles ; sinon en volet ou en feuille.
-          final bool enColonne =
-              cas.$2.width / cas.$5 >=
-              CompositionSalle.seuilColonne + CompositionSalle.coutColonne;
+          // Revue du 09/10 : Commandes ouvertes, le declencheur s'efface
+          // (le panneau porte le titre et « Reduire »). TB-10 : l'eleve a
+          // aussi son declencheur (lecture, focus, ecriture accordee).
           expect(
             find.byKey(DeclencheurCommandes.cle),
-            role == RoleSeance.enseignant && !(ouvert && !enColonne)
-                ? findsOneWidget
-                : findsNothing,
+            ouvert ? findsNothing : findsOneWidget,
           );
           if (etat == 'outils') {
             expect(
@@ -1350,6 +1354,158 @@ void main() {
       }
     });
   });
+
+  // TB-10 (plan V2 §5, §12, §19.3 ; UX-20 ; MA-CMD-1) : l'eleve autorise
+  // (information courte, Commandes avec Ecrire, palette apres un trait),
+  // le droit retire, le Mode Accessibilite (guidee) et l'enseignant qui
+  // vient d'autoriser Mariam (fiche depliee, « Peut ecrire »).
+  group(
+    'TB-10 : eleve, Mode Accessibilite et autorisation',
+    skip: sautSansCapture,
+    () {
+      setUpAll(chargerPolicesDuDepot);
+      const List<_Cadrage> plus = <_Cadrage>[
+        (
+          '320_x2_sombre',
+          Size(320, 700),
+          2,
+          EdgeInsets.zero,
+          2,
+          ThemeMode.dark,
+        ),
+        ('390_x2_sombre', Size(390, 844), 3, _zoneTelephone, 2, ThemeMode.dark),
+      ];
+      Iterable<_Cadrage> cadrages(List<String> noms) => <_Cadrage>[
+        ..._cadragesTb,
+        ...plus,
+      ].where((_Cadrage c) => noms.contains(c.$1));
+      final Finder page = find.byKey(SurfacePageFixe.clePage);
+
+      Future<void> taper(WidgetTester tester, Finder cible) async {
+        await tester.ensureVisible(cible);
+        await tester.pump();
+        await tester.tap(cible);
+        await stabiliser(tester);
+      }
+
+      Future<void> monter(
+        WidgetTester tester,
+        _Cadrage cas,
+        RoleSeance role,
+        SituationTb situation,
+      ) async {
+        fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+        await tester.pumpWidget(
+          hoteCapture(
+            DemoSallePage(role: role, situation: situation),
+            themeMode: cas.$6,
+            echelleTexte: cas.$5,
+          ),
+        );
+        await stabiliser(tester);
+        await tester.pump(const Duration(milliseconds: 1400));
+      }
+
+      Future<void> trait(WidgetTester tester) async {
+        final Rect r = tester.getRect(page);
+        final TestPointer p = TestPointer(94);
+        final Offset a = r.topLeft + Offset(0.2 * r.width, 0.3 * r.height);
+        final Offset b = r.topLeft + Offset(0.8 * r.width, 0.36 * r.height);
+        await tester.sendEventToBinding(p.down(a));
+        for (int i = 1; i <= 8; i++) {
+          await tester.sendEventToBinding(p.move(Offset.lerp(a, b, i / 8)!));
+          await tester.pump();
+        }
+        await tester.sendEventToBinding(p.up());
+        await stabiliser(tester);
+      }
+
+      for (final RoleSeance role in <RoleSeance>[
+        RoleSeance.eleve,
+        RoleSeance.guidee,
+      ]) {
+        final String qui = role == RoleSeance.eleve ? 'eleve' : 'ma';
+        for (final _Cadrage cas in cadrages(<String>[
+          '390_x1_clair',
+          '390_x1_sombre',
+          '390_x2_clair',
+          '1440_x1_clair',
+          '1440_x1_sombre',
+          '320_x2_clair',
+          '320_x2_sombre',
+        ])) {
+          for (final String etape in <String>['avis', 'commandes', 'palette']) {
+            final String nom = 'tb10_${qui}_${etape}_${cas.$1}';
+            testWidgets(nom, (WidgetTester tester) async {
+              await monter(tester, cas, role, SituationTb.autorisationEcrire);
+              expect(find.byKey(CommandesEleve.cleAvis), findsOneWidget);
+              if (etape != 'avis') {
+                await taper(tester, find.byKey(DeclencheurCommandes.cle));
+                await taper(
+                  tester,
+                  find.byKey(const ValueKey<String>('outil-ecrire')),
+                );
+                expect(
+                  find.byKey(BarreStylet.cleOutil(OutilTrait.surligneur)),
+                  findsNothing,
+                );
+              }
+              if (etape == 'palette') {
+                await taper(tester, find.byKey(PanneauSeance.cleReduire));
+                await trait(tester);
+                expect(find.byKey(PaletteEcriture.cle), findsOneWidget);
+              }
+              expect(tester.takeException(), isNull);
+              debugPrint('PNG ${await capturer(tester, nom)}');
+            });
+          }
+        }
+        for (final _Cadrage cas in cadrages(<String>[
+          '390_x1_clair',
+          '1440_x1_clair',
+          '320_x2_clair',
+        ])) {
+          final String nom = 'tb10_${qui}_retrait_${cas.$1}';
+          testWidgets(nom, (WidgetTester tester) async {
+            await monter(tester, cas, role, SituationTb.droitRetire);
+            expect(find.byKey(CommandesEleve.cleAvis), findsOneWidget);
+            expect(tester.takeException(), isNull);
+            debugPrint('PNG ${await capturer(tester, nom)}');
+          });
+        }
+      }
+
+      for (final _Cadrage cas in cadrages(<String>[
+        '1440_x1_clair',
+        '1440_x1_sombre',
+        '1440_x2_clair',
+        '390_x1_clair',
+        '390_x1_sombre',
+        '390_x2_clair',
+        '320_x2_clair',
+        '320_x2_sombre',
+      ])) {
+        final String nom = 'tb10_enseignant_autorise_${cas.$1}';
+        testWidgets(nom, (WidgetTester tester) async {
+          await monter(tester, cas, RoleSeance.enseignant, SituationTb.per01);
+          final Finder bouton = find.byKey(
+            const ValueKey<String>('autoriser-ecrire-Mariam'),
+          );
+          await taper(tester, bouton);
+          expect(
+            find.byKey(const ValueKey<String>('peut-ecrire-Mariam')),
+            findsOneWidget,
+          );
+          await tester.ensureVisible(
+            find.byKey(const ValueKey<String>('eleve-Mariam')),
+          );
+          await stabiliser(tester);
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
+      }
+    },
+  );
 
   group('TB : captures de la salle', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);

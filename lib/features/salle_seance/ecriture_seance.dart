@@ -67,6 +67,14 @@ Future<void> annulerSurLaSurface(
       .annuler(surLaSurface(surface), depot);
 }
 
+/// TB-10 (plan V2 §5) : l'outil de trace revient au Stylo s'il n'est pas
+/// propose a cette personne (Surligner, reserve a l'enseignant).
+void garderOutilPropose(WidgetRef ref, VueSeance vue) {
+  if (!vue.outilsEcriture.contains(ref.read(etatOutilsProvider).outilTrait)) {
+    ref.read(etatOutilsProvider.notifier).choisirOutilTrait(OutilTrait.stylet);
+  }
+}
+
 /// La personne ecrit-elle sur la surface montree ? Outil d'ecriture retenu
 /// et capacite de la vue.
 bool ecritSurLaSurface(WidgetRef ref, VueSeance vue) =>
@@ -130,8 +138,10 @@ class EcritureSeance extends ConsumerWidget {
     );
     final AppPalette palette = AppPalette.of(context);
     // La gomme n'a ni couleur ni epaisseur : ses options ne sont pas
-    // rendues (options de l'outil actif, plan V2 §4.2).
-    final bool options = etat.outilTrait != OutilTrait.gomme;
+    // rendues (options de l'outil actif, plan V2 §4.2). TB-10 : la barre de
+    // l'eleve reste courte, sans options (plan V2 §5).
+    final bool options =
+        vue.voitOptionsEcriture && etat.outilTrait != OutilTrait.gomme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -141,6 +151,7 @@ class EcritureSeance extends ConsumerWidget {
           avecPortee: false,
           surface: false,
           onTerminer: controleur.relacherOutil,
+          outils: vue.outilsEcriture,
         ),
         if (options) ...<Widget>[
           Ecart.vLg,

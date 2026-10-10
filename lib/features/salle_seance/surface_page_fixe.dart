@@ -471,6 +471,8 @@ class _CalqueNotes extends ConsumerWidget {
             repereDePage: true,
             gommeSurTous: vue.gereToutesLesNotes,
             zoneVisible: visible,
+            // TB-10 : le droit retire pendant un trait le resout ici.
+            saisie: saisie,
           ),
         ),
       ),

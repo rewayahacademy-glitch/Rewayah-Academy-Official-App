@@ -13,7 +13,9 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/tc_bibliotheque/content_position.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
-import '../../core/tc_outils/annotation_layer.dart' show TraitVectoriel;
+import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
+import '../../core/tc_outils/annotation_layer.dart'
+    show OutilTrait, TraitVectoriel;
 import '../../core/theme/app_gabarit.dart';
 import '../salle/vue_salle.dart';
 
@@ -467,7 +469,21 @@ class VueSeance {
     this.contexte = ContexteOuvert.aucun,
     this.notesSurface = const <TraitVectoriel>[],
     this.supportsRanges = const <SupportPageFixe>[],
+    this.titreEnseignant,
+    this.ecritureRetiree = false,
   });
+
+  /// TB-10 (plan V2 §12, §20 « Choisir Sayyid/Sayyida selon le profil
+  /// reel ») : le titre de l'enseignant, ou `null` s'il n'est pas connu
+  /// (le nom affiche le remplace alors, jamais « Le professeur »).
+  final TitreEnseignant? titreEnseignant;
+
+  /// TB-10 (plan V2 §12 « Droit retire », §19.3 point 7) : l'enseignant
+  /// vient de retirer a la personne devant l'ecran son droit d'ecrire.
+  /// Demonstration : la situation « Droit retire » ; la salle le deduit
+  /// aussi du passage de [peutEcrire] de vrai a faux. Production : le
+  /// signal viendra du serveur (TB-BR-10).
+  final bool ecritureRetiree;
 
   // --- Reponses retenues aux questions Q1 a Q8 (plan de code section 4) ---
   //
@@ -812,8 +828,66 @@ class VueSeance {
       _enseignant && (support != null || ancrageSurface != null);
 
   /// TB-7b (plan V2 §4.2) : « Ecrire » ; la surface montree prend des notes
-  /// (page fixe ou tableau libre), et la personne peut ecrire.
-  bool get voitEcriture => voitOutils && peutEcrire && ancrageSurface != null;
+  /// (page fixe ou tableau libre), et la personne peut ecrire. TB-10 (plan
+  /// V2 §5, §19.3 points 4 et 5) : chez l'eleve et en guidee, seulement si
+  /// sa ligne porte l'autorisation ; ecrire n'ouvre aucun autre droit.
+  bool get voitEcriture =>
+      !estFinie &&
+      peutEcrire &&
+      ancrageSurface != null &&
+      (!_enseignant || voitOutils);
+
+  /// TB-10 (plan V2 §5, §19.3 point 6) : les outils de trace proposes.
+  /// L'enseignant : Stylo, Surligner, Gomme ; l'eleve autorise : Stylo et
+  /// Gomme (« Stylo, Gomme, Annuler, Terminer »).
+  List<OutilTrait> get outilsEcriture => _enseignant
+      ? OutilTrait.values
+      : const <OutilTrait>[OutilTrait.stylet, OutilTrait.gomme];
+
+  /// TB-10 : « Couleur » et « Epaisseur » (la couleur dit l'intention pour
+  /// toute la classe) : l'enseignant seulement ; la barre de l'eleve reste
+  /// courte (plan V2 §5).
+  bool get voitOptionsEcriture => _enseignant;
+
+  /// TB-10 (plan V2 §5, §12, §20) : l'information courte de l'eleve
+  /// autorise, « Tu peux ecrire sur le tableau. » ou la variante adulte
+  /// (tutoiement selon l'age, A4) ; `null` ailleurs.
+  String? get avisEcriture {
+    if (_enseignant || !voitEcriture) return null;
+    return _tutoie
+        ? t.salle.seance.ecriture.tuPeuxEcrire
+        : t.salle.seance.ecriture.vousPouvezEcrire;
+  }
+
+  /// TB-10 (plan V2 §12 « Droit retire ») : « Sayyid reprend le tableau. »
+  /// ou « Sayyida reprend le tableau. » selon le titre reel ; sans titre
+  /// connu, le nom affiche (jamais « Le professeur ») ; `null` ailleurs.
+  String? get avisRetrait {
+    if (_enseignant || estFinie || !ecritureRetiree || peutEcrire) {
+      return null;
+    }
+    return switch (titreEnseignant) {
+      TitreEnseignant.sayyid => t.salle.seance.ecriture.repriseSayyid,
+      TitreEnseignant.sayyida => t.salle.seance.ecriture.repriseSayyida,
+      null => t.salle.seance.ecriture.repriseNom(nom: nomEnseignant),
+    };
+  }
+
+  /// TB-10 (K-58) : ce que fait « Ecrire » avant de le choisir, puis ce que
+  /// font les outils une fois choisi ; tutoiement selon l'age (A4).
+  String get aideChoisirEcrire => _tutoie
+      ? t.salle.seance.ecriture.choisirTu
+      : t.salle.seance.ecriture.choisirVous;
+
+  /// TB-10 : la phrase des outils de l'eleve.
+  String get aideOutilsEleve => _tutoie
+      ? t.salle.seance.ecriture.aideEleveTu
+      : t.salle.seance.ecriture.aideEleveVous;
+
+  /// TB-10 (plan V2 §4.3, §20, UX-20) : « Autoriser a ecrire » et « Retirer
+  /// l'autorisation d'ecrire » sur la fiche de chaque eleve, dans les
+  /// Participants ; l'enseignant seulement.
+  bool get voitAutorisationEcrire => _enseignant && !estFinie;
 
   /// TB-7b : le Pointeur montre un passage sur la surface montree.
   bool get peutPointer => voitOutils && ancrageSurface != null;
@@ -828,7 +902,21 @@ class VueSeance {
   /// partagee (TB14, plan V2 §5) ; son contenu propre (lecture, focus,
   /// ecriture autorisee) vient avec TB-10. Le declencheur n'est rendu que si
   /// une de ses entrees a un rappel (UX_REVIEW_TB §3 bis).
-  bool get voitCommandes => _enseignant && !estFinie;
+  ///
+  /// TB-10 (plan V2 §19.3 point 4) : l'eleve et la guidee ont aussi leurs
+  /// Commandes, qui ne montrent que la lecture, l'ajustement, le focus et
+  /// l'ecriture si elle est accordee ; rien d'autre (TB14).
+  bool get voitCommandes => !estFinie;
+
+  /// TB-10 : les Commandes de l'enseignant (Bibliotheque, affichages, page,
+  /// outils), ou celles de l'eleve (lecture, focus, ecriture accordee).
+  bool get commandesCompletes => _enseignant;
+
+  /// TB-10 (plan V2 §5) : le zoom local dans les Commandes ; l'enseignant,
+  /// l'eleve standard (Q6), jamais la guidee (« Agrandir », « Voir toute la
+  /// page »).
+  bool get voitZoomCommandes =>
+      _enseignant || (role == RoleSeance.eleve && optionQ6);
 
   /// « Support », « Avec notes », « Tableau » : invisibles sans support
   /// presente (plan V2 §4.2) ; jamais chez l'eleve.
@@ -926,7 +1014,9 @@ class VueSeance {
 
   /// Lecture (zoom local, « Ajuster a l'ecran ») et Affichage (Focus) dans
   /// les Commandes : enseignant, un support montre ; rien n'est diffuse.
-  bool get voitLectureCommandes => _enseignant && support != null;
+  bool get voitLectureCommandes => _enseignant
+      ? support != null
+      : support != null || supportPresente != null;
 
   /// « 1 / 12 » en lecture seule : eleve standard, desktop.
   bool voitIndicateurPage(Gabarit gabarit) =>
@@ -966,6 +1056,8 @@ class VueSeance {
   /// par le systeme, P09).
   bool get visioMaintenue =>
       (voitBoutonsPanneaux && panneau != PanneauOuvert.aucun) ||
+      // TB-10 : les Commandes de l'eleve ouvertes sont un panneau ouvert.
+      (!_enseignant && panneau == PanneauOuvert.commandes) ||
       // TB-3 : le contexte deplie est un panneau ouvert (TB7).
       contexteOuvert ||
       !commandesPublicationActives ||
@@ -1126,6 +1218,7 @@ class VueSeance {
     ContexteOuvert? contexte,
     List<TraitVectoriel>? notesSurface,
     List<SupportPageFixe>? supportsRanges,
+    bool? ecritureRetiree,
   }) => VueSeance(
     role: role ?? this.role,
     nomClasse: nomClasse,
@@ -1162,5 +1255,7 @@ class VueSeance {
     contexte: contexte ?? this.contexte,
     notesSurface: notesSurface ?? this.notesSurface,
     supportsRanges: supportsRanges ?? this.supportsRanges,
+    titreEnseignant: titreEnseignant,
+    ecritureRetiree: ecritureRetiree ?? this.ecritureRetiree,
   );
 }

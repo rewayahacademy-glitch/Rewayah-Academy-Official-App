@@ -11440,6 +11440,54 @@ class Traductions$salle$seance$ecriture$fr {
 
 	/// fr: 'Épais'
 	String get epaisse => 'Épais';
+
+	/// fr: 'Tu peux écrire sur le tableau.'
+	String get tuPeuxEcrire => 'Tu peux écrire sur le tableau.';
+
+	/// fr: 'Vous pouvez écrire sur le tableau.'
+	String get vousPouvezEcrire => 'Vous pouvez écrire sur le tableau.';
+
+	/// fr: 'Sayyid reprend le tableau.'
+	String get repriseSayyid => 'Sayyid reprend le tableau.';
+
+	/// fr: 'Sayyida reprend le tableau.'
+	String get repriseSayyida => 'Sayyida reprend le tableau.';
+
+	/// fr: '{nom} reprend le tableau.'
+	String repriseNom({required Object nom}) => '${nom} reprend le tableau.';
+
+	/// fr: 'Touche « Écrire » quand tu veux écrire. Sinon la page se lit, et ton doigt ne laisse aucun trait.'
+	String get choisirTu => 'Touche « Écrire » quand tu veux écrire. Sinon la page se lit, et ton doigt ne laisse aucun trait.';
+
+	/// fr: 'Touchez « Écrire » quand vous voulez écrire. Sinon la page se lit, et votre doigt ne laisse aucun trait.'
+	String get choisirVous => 'Touchez « Écrire » quand vous voulez écrire. Sinon la page se lit, et votre doigt ne laisse aucun trait.';
+
+	/// fr: 'Écris avec le stylo. La gomme et Annuler ne touchent que tes traits ; Terminer revient à la lecture.'
+	String get aideEleveTu => 'Écris avec le stylo. La gomme et Annuler ne touchent que tes traits ; Terminer revient à la lecture.';
+
+	/// fr: 'Écrivez avec le stylo. La gomme et Annuler ne touchent que vos traits ; Terminer revient à la lecture.'
+	String get aideEleveVous => 'Écrivez avec le stylo. La gomme et Annuler ne touchent que vos traits ; Terminer revient à la lecture.';
+
+	/// fr: 'Peut écrire'
+	String get peutEcrire => 'Peut écrire';
+
+	/// fr: 'Autoriser à écrire'
+	String get autoriser => 'Autoriser à écrire';
+
+	/// fr: 'Retirer l'autorisation d'écrire'
+	String get retirer => 'Retirer l\'autorisation d\'écrire';
+
+	/// fr: 'Autoriser {prenom} à écrire'
+	String autoriserSemantique({required Object prenom}) => 'Autoriser ${prenom} à écrire';
+
+	/// fr: 'Retirer l'autorisation d'écrire de {prenom}'
+	String retirerSemantique({required Object prenom}) => 'Retirer l\'autorisation d\'écrire de ${prenom}';
+
+	/// fr: '{prenom} pourra écrire sur la page ou le tableau. La page et le support restent à vous.'
+	String autoriserAide({required Object prenom}) => '${prenom} pourra écrire sur la page ou le tableau. La page et le support restent à vous.';
+
+	/// fr: 'Ses traits restent sur la page ; ses outils d'écriture se retirent.'
+	String get retirerAide => 'Ses traits restent sur la page ; ses outils d\'écriture se retirent.';
 }
 
 // Path: salle.seance.rail
@@ -16063,6 +16111,22 @@ extension on Traductions {
 			'salle.seance.ecriture.fine' => 'Fin',
 			'salle.seance.ecriture.moyenne' => 'Moyen',
 			'salle.seance.ecriture.epaisse' => 'Épais',
+			'salle.seance.ecriture.tuPeuxEcrire' => 'Tu peux écrire sur le tableau.',
+			'salle.seance.ecriture.vousPouvezEcrire' => 'Vous pouvez écrire sur le tableau.',
+			'salle.seance.ecriture.repriseSayyid' => 'Sayyid reprend le tableau.',
+			'salle.seance.ecriture.repriseSayyida' => 'Sayyida reprend le tableau.',
+			'salle.seance.ecriture.repriseNom' => ({required Object nom}) => '${nom} reprend le tableau.',
+			'salle.seance.ecriture.choisirTu' => 'Touche « Écrire » quand tu veux écrire. Sinon la page se lit, et ton doigt ne laisse aucun trait.',
+			'salle.seance.ecriture.choisirVous' => 'Touchez « Écrire » quand vous voulez écrire. Sinon la page se lit, et votre doigt ne laisse aucun trait.',
+			'salle.seance.ecriture.aideEleveTu' => 'Écris avec le stylo. La gomme et Annuler ne touchent que tes traits ; Terminer revient à la lecture.',
+			'salle.seance.ecriture.aideEleveVous' => 'Écrivez avec le stylo. La gomme et Annuler ne touchent que vos traits ; Terminer revient à la lecture.',
+			'salle.seance.ecriture.peutEcrire' => 'Peut écrire',
+			'salle.seance.ecriture.autoriser' => 'Autoriser à écrire',
+			'salle.seance.ecriture.retirer' => 'Retirer l\'autorisation d\'écrire',
+			'salle.seance.ecriture.autoriserSemantique' => ({required Object prenom}) => 'Autoriser ${prenom} à écrire',
+			'salle.seance.ecriture.retirerSemantique' => ({required Object prenom}) => 'Retirer l\'autorisation d\'écrire de ${prenom}',
+			'salle.seance.ecriture.autoriserAide' => ({required Object prenom}) => '${prenom} pourra écrire sur la page ou le tableau. La page et le support restent à vous.',
+			'salle.seance.ecriture.retirerAide' => 'Ses traits restent sur la page ; ses outils d\'écriture se retirent.',
 			'salle.seance.rail.navigation' => 'Navigation',
 			'salle.seance.rail.marque' => 'Rewayah',
 			'salle.seance.rail.sousMarque' => 'Academy',
@@ -16324,6 +16388,8 @@ extension on Traductions {
 			'bienvenue.commencer' => 'Commencer',
 			'bienvenue.dejaCompte' => 'J\'ai déjà un compte',
 			'attente.titre' => 'Votre dossier est en cours de vérification',
+			_ => null,
+		} ?? switch (path) {
 			'attente.dossierIncomplet' => 'Il manque encore des pièces à votre dossier.',
 			'attente.enVerification' => 'Nous vérifions votre dossier.',
 			'attente.refuse' => 'Dossier refusé',
@@ -16340,8 +16406,6 @@ extension on Traductions {
 			'attente.lireLaCarte' => 'Lire',
 			'attente.toutEstDepose' => 'Tout est déposé.',
 			'attente.corriger' => 'Corriger',
-			_ => null,
-		} ?? switch (path) {
 			'attente.correctionImpossible' => 'Ce dossier ne peut pas être modifié pour le moment.',
 			'attente.actualiser' => 'Actualiser l\'état du dossier',
 			'attente.suspenduDetail' => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.',
@@ -16838,6 +16902,8 @@ extension on Traductions {
 			'creneaux.demandeEnvoyer' => 'Envoyer la demande',
 			'creneaux.demandeEnvoyee' => 'Demande envoyée. L\'administration la tranchera.',
 			'creneaux.eleves' => ({required Object nombre}) => '${nombre} élèves',
+			_ => null,
+		} ?? switch (path) {
 			'creneaux.erreur' => ({required Object message}) => 'L\'opération n\'a pas abouti : ${message}',
 			'priere.fajr' => 'Fajr',
 			'priere.dhuhr' => 'Dhuhr',
@@ -16854,8 +16920,6 @@ extension on Traductions {
 			'priere.lieuSansNom' => 'Horaires calculés pour le lieu de l\'enseignant',
 			'priere.ajustee' => ({required Object priere, required Object minutes}) => '${priere} ajustée de ${minutes} min par l\'enseignant',
 			'priere.reglagesAbsents' => 'L\'enseignant n\'a pas encore réglé ses horaires de prière.',
-			_ => null,
-		} ?? switch (path) {
 			'eleveConnexion.entrerCode' => 'J\'ai un code',
 			'eleveConnexion.scanner' => 'Scanner le carré',
 			'eleveConnexion.choisirProfil' => 'Qui es-tu ?',
@@ -17352,6 +17416,8 @@ extension on Traductions {
 			'admin.evaluations.planifierErreur' => ({required Object message}) => 'La planification n\'a pas abouti : ${message}',
 			'admin.evaluations.actionEnregistrerResultat' => 'Enregistrer le résultat',
 			'admin.evaluations.actionAnnuler' => 'Annuler l\'évaluation',
+			_ => null,
+		} ?? switch (path) {
 			'admin.evaluations.resultatTitre' => ({required Object eleve}) => 'Résultat de ${eleve}',
 			'admin.evaluations.champNotes' => 'Notes (optionnelles)',
 			'admin.evaluations.resultatEnvoyer' => 'Enregistrer',
@@ -17368,8 +17434,6 @@ extension on Traductions {
 			'admin.progression.aucun' => 'Aucun élève actif',
 			'admin.progression.aucunDetail' => 'Les élèves apparaîtront ici dès leur premier diagnostic de placement.',
 			'admin.progression.colonneEleve' => 'Élève',
-			_ => null,
-		} ?? switch (path) {
 			'admin.progression.colonneGroupe' => 'Groupe',
 			'admin.progression.colonneNiveau' => 'Niveau',
 			'admin.progression.colonneDepuis' => 'Depuis',
@@ -17866,6 +17930,8 @@ extension on Traductions {
 			'compte.notificationsCoursDetail' => 'Rappels avant vos cours',
 			'compte.notificationsFoyer' => 'Foyer',
 			'compte.notificationsFoyerDetail' => 'Activité des profils de votre foyer',
+			_ => null,
+		} ?? switch (path) {
 			'compte.notificationsEtat' => 'Les notifications dépendent aussi des réglages de votre appareil et de votre navigateur.',
 			'compte.coursDonnees' => 'Cours et données',
 			'compte.economieDonnees' => 'Économie de données',
@@ -17882,8 +17948,6 @@ extension on Traductions {
 			'compte.ouvrirProfil' => 'Ouvrir le profil',
 			'compte.modeEnfant' => 'Mode Accessibilité',
 			'compte.modeStandard' => 'Mode standard',
-			_ => null,
-		} ?? switch (path) {
 			'compte.cameraLabel' => 'Caméra',
 			'compte.cameraAutorisee' => 'Autorisée',
 			'compte.cameraInterdite' => 'Interdite',
@@ -18380,6 +18444,8 @@ extension on Traductions {
 			'classe.pagePlanning.prochaines' => 'Prochaines séances',
 			'classe.pagePlanning.ligne' => ({required Object heure, required Object duree}) => '${heure} · ${duree}',
 			'classe.pagePlanning.ligneFuseau' => ({required Object heure, required Object fuseau, required Object duree}) => '${heure} (${fuseau}) · ${duree}',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pagePlanning.aucune' => 'Aucune séance à venir pour l\'instant',
 			'classe.pagePlanning.aucuneDetail' => ({required Object prenom}) => 'Les prochaines séances de ${prenom} apparaîtront ici dès qu\'elles seront programmées.',
 			'classe.pagePlanning.habituelIndisponible' => 'Les jours habituels de la classe ne sont pas encore affichés ici : seules les séances déjà programmées apparaissent.',
@@ -18396,8 +18462,6 @@ extension on Traductions {
 			'classe.pageRessources.aucune' => 'Aucune ressource pour cette classe pour l\'instant',
 			'classe.pageRessources.aucuneDetail' => 'Les supports choisis par l\'enseignant apparaîtront ici.',
 			'classe.pageRessources.indisponible' => 'La bibliothèque de la classe n\'est pas encore reliée à cet espace.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageProgression.indisponible' => ({required Object prenom}) => 'La progression de ${prenom} n\'est pas encore partagée ici.',
 			'classe.pageProgression.niveau' => 'Niveau',
 			'classe.pageProgression.jalons' => 'Étapes franchies',
@@ -18894,6 +18958,8 @@ extension on Traductions {
 			'controleur.historique.cleElevesPresents' => 'Présents',
 			'controleur.historique.cleReponse' => 'Réponse',
 			'controleur.historique.sansComplement' => 'Aucun complément.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.historique.faitsIndisponibles' => 'Le relevé automatique de cette visite (heures, élèves présents, reconnexions) n\'est pas encore reçu : la séance vient de se terminer ou la connexion a été coupée. Il s\'affichera ici dès sa réception. Le reste du rapport reste fiable.',
 			'controleur.historique.motif' => ({required Object motif}) => 'Motif : ${motif}',
 			'controleur.historique.ajouterComplement' => 'Ajouter un complément',
@@ -18910,8 +18976,6 @@ extension on Traductions {
 			'controleur.complement.texteObligatoire' => 'Obligatoire : ce que vous avez constaté, en quelques phrases.',
 			'controleur.complement.libelleTexte' => 'Complément',
 			'controleur.complement.aideTexte' => 'Ce que vous avez constaté ou appris depuis la visite.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.complement.texteRequis' => 'Écrivez le complément pour continuer.',
 			'controleur.complement.questionRecap' => 'Vérifiez avant d\'envoyer',
 			'controleur.complement.cleRapport' => 'Rapport d\'origine',
@@ -19408,6 +19472,8 @@ extension on Traductions {
 			'tc.observation.connexion.titre' => 'Connexion et vérification',
 			'tc.observation.connexion.phrase' => 'Vos visites restantes sont vérifiées. La visite commence dès que l\'entrée est acceptée, connexion vidéo comprise.',
 			'tc.observation.connexion.enCours' => 'Connexion et vérification en cours',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.connexion.prolongee' => 'Restez sur cette page : la vérification continue.',
 			'tc.observation.connexion.impossibleTitre' => 'Connexion impossible',
 			'tc.observation.connexion.impossible' => 'L\'entrée dans la séance n\'a pas abouti. Vérifiez votre connexion, puis réessayez : vos visites restantes seront vérifiées à nouveau.',
@@ -19424,8 +19490,6 @@ extension on Traductions {
 			'tc.observation.refus.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
 			'tc.observation.refus.indisponible' => 'L\'observation n\'est pas disponible pour le moment.',
 			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.visite.titre' => 'Observation en cours',
 			'tc.observation.visite.quitter' => 'Quitter',
 			'tc.observation.visite.supportIndisponible' => 'Le support partagé par l\'enseignant s\'affiche ici.',

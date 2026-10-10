@@ -53,7 +53,15 @@ class ActionsSeance {
     this.onPresenter,
     this.onRanger,
     this.onEffacerNotes,
+    this.onAutoriserEcrire,
   });
+
+  /// TB-10 (plan V2 §4.3, §12, §20 ; UX-20) : « Autoriser a ecrire » ou
+  /// « Retirer l'autorisation d'ecrire » sur la fiche d'un eleve, selon
+  /// [EleveSeance.peutEcrire] (une bascule). L'autorisation ne delegue ni
+  /// la page, ni le support, ni l'effacement global (plan V2 §5). `null` :
+  /// l'action n'est pas rendue (Classe Live avant TB-BR-10).
+  final ValueChanged<EleveSeance>? onAutoriserEcrire;
 
   /// TB-9 (plan V2 §3 « Ranger reellement », §19.2) : « Ranger dans la
   /// bibliotheque » retire le support presente, sans rien effacer ; le
@@ -187,5 +195,6 @@ class ActionsSeance {
     onPresenter: onPresenter,
     onRanger: onRanger,
     onEffacerNotes: onEffacerNotes,
+    onAutoriserEcrire: onAutoriserEcrire,
   );
 }

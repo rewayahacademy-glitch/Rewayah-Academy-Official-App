@@ -94,8 +94,13 @@ class OutilsEnseignement extends ConsumerWidget {
     required this.forme,
     this.avecEcrire = true,
     this.pied,
+    this.outils = OutilEnseignement.values,
     super.key,
   });
+
+  /// TB-10 (plan V2 §19.3 point 4) : les outils proposes ; l'eleve autorise
+  /// n'a que « Ecrire ».
+  final List<OutilEnseignement> outils;
 
   final ValueChanged<OutilEnseignement>? onOutil;
   final FormeOutils forme;
@@ -116,7 +121,7 @@ class OutilsEnseignement extends ConsumerWidget {
       etatOutilsProvider.select((EtatOutils e) => e.outilActif),
     );
     final List<OutilEnseignement> outils = <OutilEnseignement>[
-      for (final OutilEnseignement o in OutilEnseignement.values)
+      for (final OutilEnseignement o in this.outils)
         if (avecEcrire || o != OutilEnseignement.ecrire) o,
     ];
     Widget tuile(OutilEnseignement o) => _Tuile(

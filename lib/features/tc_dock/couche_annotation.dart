@@ -85,7 +85,15 @@ class CoucheAnnotation extends ConsumerStatefulWidget {
     this.repereDePage = false,
     this.zoneVisible,
     this.gommeSurTous = true,
+    this.saisie = true,
   });
+
+  /// TB-10 (plan V2 §19.3 point 7) : la personne peut-elle ecrire ? Faux,
+  /// la couche se lit seulement. Quand la saisie se retire pendant un geste
+  /// (droit d'ecrire retire, outil repose), le trait en cours est resolu
+  /// dans son contexte : il se termine sur ses points deja poses, et la
+  /// suite du geste n'ecrit ni ne gomme plus rien (il faut lever le doigt).
+  final bool saisie;
 
   /// TB-7b (UX_REVIEW_TB n. 21, plan V2 §19.3.6) : la gomme retire tout
   /// trait (l'enseignant gere la surface), ou seulement ceux de la personne
@@ -191,10 +199,14 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
     // ne gomme rien sur la nouvelle page (il faut lever le doigt).
     final bool pageChangee =
         ancien.support.ancrageCadre != widget.support.ancrageCadre;
-    if (pageChangee && _enCours != null) {
+    // TB-10 : le droit d'ecrire se retire pendant le geste, meme regle que
+    // le changement de page.
+    final bool saisieRetiree = ancien.saisie && !widget.saisie;
+    if ((pageChangee || saisieRetiree) && _enCours != null) {
       _terminer(ref.read(etatOutilsProvider));
+      if (saisieRetiree) _plusieursDoigts = true;
     }
-    if (pageChangee && _gommesDuGeste.isNotEmpty) {
+    if ((pageChangee || saisieRetiree) && _gommesDuGeste.isNotEmpty) {
       final EtatOutils etat = ref.read(etatOutilsProvider);
       final List<TraitVectoriel> gommes = List<TraitVectoriel>.of(
         _gommesDuGeste,
@@ -462,7 +474,7 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
   }
 
   void _commencer(Offset point, EtatOutils etat) {
-    if (_plusieursDoigts) return;
+    if (_plusieursDoigts || !widget.saisie) return;
     if (etat.outilTrait == OutilTrait.gomme) {
       _gommesDuGeste.clear();
       _gommer(point);
@@ -509,7 +521,7 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
   }
 
   void _prolonger(Offset point, EtatOutils etat) {
-    if (_plusieursDoigts) return;
+    if (_plusieursDoigts || !widget.saisie) return;
     if (etat.outilTrait == OutilTrait.gomme) {
       _gommer(point);
       return;

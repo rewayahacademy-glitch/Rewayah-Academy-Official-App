@@ -18,6 +18,13 @@
 // explique l'outil retenu, et sous « Ecrire » la barre d'ecriture et ses
 // options (ecriture_seance.dart). Le panneau s'ouvre sur « Outils » tant
 // qu'un outil est retenu.
+//
+// TB-10 (plan V2 §5, §19.3 point 4) : l'eleve et la guidee ont leurs
+// Commandes, sans onglets : « Ecrire » seulement si l'enseignant l'a
+// autorise (l'information courte, puis l'outil, choisi par l'eleve), la
+// Lecture (zoom local, « Ajuster a l'ecran ») et l'Affichage (Focus). Ni
+// Bibliotheque, ni affichages partages, ni page, ni rangement, ni
+// effacement global.
 
 import 'dart:async';
 
@@ -25,16 +32,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_outils/etat_outils.dart';
 import '../../core/tc_outils/operations_personnelles.dart';
 import '../../core/tc_outils/port_dock_hote.dart' show OutilDock;
+import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/menu_actions.dart';
@@ -80,6 +90,21 @@ class DeclencheurCommandes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    // TB-10 (MA-CMD-1, directeur 02/10) : en Mode Accessibilite, l'icone
+    // seule, compacte ; le nom lu et l'infobulle gardent le mot.
+    if (AppMetriques.of(context).mode == InterfaceMode.enfant) {
+      return Semantics(
+        selected: ouvert,
+        child: BoutonIcone(
+          icone: AppIcons.replier,
+          libelle: t.salle.seance.commandes.declencheurSemantique,
+          infobulle: t.salle.seance.commandes.declencheur,
+          forme: FormeBoutonIcone.carre,
+          focusNode: focusNode,
+          onPress: onPress,
+        ),
+      );
+    }
     // La carte pressable du core (K-54), comme le bouton Eleves ; le mot
     // passe a la ligne a 200 % et a 320 au lieu de deborder ou d'etre coupe.
     return Semantics(
@@ -158,6 +183,11 @@ class CommandesPedagogiques extends ConsumerStatefulWidget {
   /// TB-9 : le retour discret « Support range ».
   static const Key cleRange = ValueKey<String>('commandes-support-range');
 
+  /// TB-10 : la section « Ecrire » de l'eleve autorise.
+  static const Key cleEcritureEleve = ValueKey<String>(
+    'commandes-ecriture-eleve',
+  );
+
   final VueSeance vue;
   final ActionsSeance actions;
 
@@ -180,14 +210,19 @@ class CommandesPedagogiques extends ConsumerStatefulWidget {
   static bool voitOutils(VueSeance vue, ActionsSeance actions) =>
       vue.voitOutils && actions.onOutil != null;
 
+  /// TB-10 : la section « Ecrire » de l'eleve (autorisation accordee, la
+  /// salle sait ecrire).
+  static bool voitEcritureEleve(VueSeance vue, ActionsSeance actions) =>
+      !vue.commandesCompletes && vue.voitEcriture && actions.onOutil != null;
+
   /// Le declencheur n'est rendu que si une entree du panneau a un rappel
   /// (UX_REVIEW_TB §3 bis) : jamais un panneau vide.
   static bool aDesEntrees(VueSeance vue, ActionsSeance actions) {
     if (!vue.voitCommandes || actions.onCommandes == null) return false;
     final bool lecture =
         vue.voitLectureCommandes &&
-        (actions.onZoomMoins != null ||
-            actions.onZoomPlus != null ||
+        ((vue.voitZoomCommandes &&
+                (actions.onZoomMoins != null || actions.onZoomPlus != null)) ||
             actions.onAjusterEcran != null ||
             actions.onAgrandir != null);
     final bool pages =
@@ -197,7 +232,8 @@ class CommandesPedagogiques extends ConsumerStatefulWidget {
         (vue.voitAffichagesPartages && actions.onAffichage != null) ||
         pages ||
         lecture ||
-        voitOutils(vue, actions);
+        voitOutils(vue, actions) ||
+        voitEcritureEleve(vue, actions);
   }
 
   @override
@@ -299,6 +335,7 @@ class _CommandesPedagogiquesState extends ConsumerState<CommandesPedagogiques> {
 
   @override
   Widget build(BuildContext context) {
+    if (!widget.vue.commandesCompletes) return _colonne(_eleve(context));
     final bool outils = CommandesPedagogiques.voitOutils(
       widget.vue,
       widget.actions,
@@ -339,10 +376,14 @@ class _CommandesPedagogiquesState extends ConsumerState<CommandesPedagogiques> {
         ],
       },
     ];
-    // Une seule colonne qui defile : a 200 % et a 320, rien n'est coupe
-    // (UX_REVIEW_TB n. 27 a).
-    // Le contenu est court : tout est construit (lecteur d'ecran, ordre du
-    // focus), et la colonne defile si la place manque.
+    return _colonne(lignes);
+  }
+
+  /// Une seule colonne qui defile : a 200 % et a 320, rien n'est coupe
+  /// (UX_REVIEW_TB n. 27 a). Le contenu est court : tout est construit
+  /// (lecteur d'ecran, ordre du focus), et la colonne defile si la place
+  /// manque.
+  Widget _colonne(List<Widget> lignes) {
     return SingleChildScrollView(
       padding: const EdgeInsets.only(bottom: AppSpacing.md),
       child: Column(
@@ -366,9 +407,6 @@ class _CommandesPedagogiquesState extends ConsumerState<CommandesPedagogiques> {
     final String? titre = vue.supportPresente?.titre ?? vue.support?.titre;
     final ValueChanged<AffichagePartage>? affichage = actions.onAffichage;
     final ({int page, int total})? page = vue.pageCommandes;
-    final bool zoom = actions.onZoomMoins != null || actions.onZoomPlus != null;
-    final VoidCallback? ajuster = actions.onAjusterEcran;
-    final VoidCallback? focus = actions.onAgrandir;
     return <Widget>[
       // Plan V2 §4.2 : la Bibliotheque est la premiere action du panneau.
       if (bibliotheque != null)
@@ -437,6 +475,71 @@ class _CommandesPedagogiquesState extends ConsumerState<CommandesPedagogiques> {
           onSuivante: actions.onPageSuivante,
           longue: true,
         ),
+      ..._lectureEtFocus(),
+    ];
+  }
+
+  /// TB-10 (plan V2 §19.3 point 4) : les Commandes de l'eleve. « Ecrire »
+  /// d'abord quand l'enseignant l'a autorise (c'est la raison d'ouvrir le
+  /// panneau), puis la Lecture et l'Affichage.
+  List<Widget> _eleve(BuildContext context) {
+    final VueSeance vue = widget.vue;
+    final ActionsSeance actions = widget.actions;
+    final ValueChanged<OutilEnseignement>? rappel = actions.onOutil;
+    final bool ecrit = ecritSurLaSurface(ref, vue);
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final String? avis = vue.avisEcriture;
+    return <Widget>[
+      if (CommandesPedagogiques.voitEcritureEleve(vue, actions) &&
+          rappel != null)
+        Column(
+          key: CommandesPedagogiques.cleEcritureEleve,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            if (avis != null) ...<Widget>[
+              Text(
+                avis,
+                style: palette.inkStrong.applyTo(
+                  textes.titleSmall ?? const TextStyle(),
+                ),
+              ),
+              Ecart.vSm,
+            ],
+            // La tuile « Ecrire » des outils de la salle, seule : l'eleve
+            // entre dans Ecrire volontairement (§19.3 point 5).
+            OutilsEnseignement(
+              onOutil: (OutilEnseignement outil) {
+                garderOutilPropose(ref, vue);
+                rappel(outil);
+              },
+              forme: FormeOutils.rangee,
+              outils: const <OutilEnseignement>[OutilEnseignement.ecrire],
+            ),
+            Ecart.vSm,
+            Text(
+              ecrit ? vue.aideOutilsEleve : vue.aideChoisirEcrire,
+              style: palette.inkMuted.applyTo(
+                textes.bodySmall ?? const TextStyle(),
+              ),
+            ),
+            if (ecrit) ...<Widget>[Ecart.vMd, EcritureSeance(vue: vue)],
+          ],
+        ),
+      ..._lectureEtFocus(),
+    ];
+  }
+
+  /// La Lecture (zoom local, « Ajuster a l'ecran ») et l'Affichage (Focus).
+  List<Widget> _lectureEtFocus() {
+    final VueSeance vue = widget.vue;
+    final ActionsSeance actions = widget.actions;
+    final bool zoom =
+        vue.voitZoomCommandes &&
+        (actions.onZoomMoins != null || actions.onZoomPlus != null);
+    final VoidCallback? ajuster = actions.onAjusterEcran;
+    final VoidCallback? focus = actions.onAgrandir;
+    return <Widget>[
       if (vue.voitLectureCommandes && (zoom || ajuster != null))
         Column(
           key: CommandesPedagogiques.cleLecture,

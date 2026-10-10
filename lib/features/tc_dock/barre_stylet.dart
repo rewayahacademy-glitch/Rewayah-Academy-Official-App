@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_outils/annotation_layer.dart';
@@ -52,7 +53,12 @@ class BarreStylet extends ConsumerWidget {
     this.surface = true,
     this.onCommandes,
     this.focusCommandes,
+    this.outils = OutilTrait.values,
   });
+
+  /// TB-10 (plan V2 §5, §19.3 point 6) : les outils de trace proposes ;
+  /// l'eleve autorise n'a que Stylo et Gomme (sans Surligner).
+  final List<OutilTrait> outils;
 
   /// La cle de « Terminer ».
   static const Key cleTerminer = ValueKey<String>('barre-stylet-terminer');
@@ -109,9 +115,12 @@ class BarreStylet extends ConsumerWidget {
     // Texte agrandi (plus de 130 %) : l'icone seule, le mot en infobulle et
     // pour le lecteur d'ecran (comme les tuiles d'outils), plutot qu'une
     // palette qui mangerait la page au telephone.
+    // TB-10 (MA-CMD-1) : en Mode Accessibilite, icones seules, le mot lu
+    // et en infobulle, a toute taille de texte.
     final bool mots =
         MediaQuery.textScalerOf(context).scale(1) <=
-        AppContour.seuilTexteAgrandi;
+            AppContour.seuilTexteAgrandi &&
+        AppMetriques.of(context).mode != InterfaceMode.enfant;
     if (!compacte || !mots) return _barre(context, ref, etat, mots: mots);
     // Palette courte : une seule rangee (la hauteur reste a la page). Si les
     // mots ne tiennent pas sur la largeur (320 avec Annuler et Commandes),
@@ -181,7 +190,7 @@ class BarreStylet extends ConsumerWidget {
           onPress: onOutilActif,
         )
       else
-        for (final OutilTrait outil in OutilTrait.values)
+        for (final OutilTrait outil in outils)
           BoutonOutil(
             key: cleOutil(outil),
             icone: _icone(outil),

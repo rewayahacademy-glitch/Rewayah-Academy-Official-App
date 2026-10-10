@@ -636,6 +636,9 @@ abstract final class DonneesSeanceDemo {
           : tableauLibre,
       supportPresente: sansSupport ? null : supportPageFixe,
       sansSupportPresente: sansSupport,
+      // TB-10 (§12 « Droit retire ») : l'eleve vient de perdre son droit
+      // d'ecrire ; l'enseignant voit sa ligne sans « Peut ecrire ».
+      ecritureRetiree: situation == SituationTb.droitRetire,
       // TB-7a : les notes de la page en PED-03 (Avec notes) et PED-04
       // (Tableau, support masque) ; cachees, jamais effacees, en PED-02.
       // TB-9 : DLG-01 (effacement de page) porte le cercle de la page ;
@@ -752,6 +755,8 @@ abstract final class DonneesSeanceDemo {
             },
       // Le point non lu de la cloche des images CLV-04 et CLV-06 desktop.
       notificationsNonLues: 2,
+      // TB-10 : « Sayyid reprend le tableau. » ou « Sayyida ... ».
+      titreEnseignant: titre,
     );
   }
 

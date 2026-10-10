@@ -18,6 +18,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/bouton_outil.dart';
 import '../../core/widgets/pressable.dart';
@@ -71,11 +72,18 @@ class PanneauEleves extends StatefulWidget {
     this.large = false,
     this.serre = false,
     this.entete,
+    this.autorisationEcrire = false,
     super.key,
   });
 
   final List<EleveSeance> eleves;
   final ActionsSeance actions;
+
+  /// TB-10 (plan V2 §4.3, §20 ; UX-20) : la fiche porte « Autoriser a
+  /// ecrire » ou « Retirer l'autorisation d'ecrire » (capacite de la vue,
+  /// [VueSeance.voitAutorisationEcrire], et rappel
+  /// [ActionsSeance.onAutoriserEcrire]).
+  final bool autorisationEcrire;
 
   /// TB-3 (CTX-01, CTX-02) : le contexte de l'enseignant et de la seance,
   /// deplie depuis la capsule, en tete du panneau de personnes (une seule
@@ -145,6 +153,7 @@ class _PanneauElevesState extends State<PanneauEleves> {
           large: widget.large,
           serre: widget.serre,
           actions: widget.actions,
+          autorisationEcrire: widget.autorisationEcrire,
           onBasculer: e.fiche == null
               ? null
               : () => setState(() => _deplie = deplie ? null : cle),
@@ -162,6 +171,7 @@ class _CarteEleve extends StatelessWidget {
     required this.serre,
     required this.actions,
     required this.onBasculer,
+    this.autorisationEcrire = false,
   });
 
   final EleveSeance eleve;
@@ -170,6 +180,7 @@ class _CarteEleve extends StatelessWidget {
   final bool serre;
   final ActionsSeance actions;
   final VoidCallback? onBasculer;
+  final bool autorisationEcrire;
 
   @override
   Widget build(BuildContext context) {
@@ -196,6 +207,14 @@ class _CarteEleve extends StatelessWidget {
                 serre: serre,
                 large: large,
               ),
+              if (autorisationEcrire)
+                if (actions.onAutoriserEcrire
+                    case final ValueChanged<EleveSeance> autoriser)
+                  _AutorisationEcrire(
+                    eleve: eleve,
+                    serre: serre,
+                    onPress: () => autoriser(eleve),
+                  ),
             ],
           ],
         ),
@@ -247,6 +266,26 @@ class _EnTeteEleve extends StatelessWidget {
                 ),
               ),
             ),
+            // TB-10 (plan V2 §12 « Autorisation de dessin » : eleve et droit
+            // visibles dans Participants ; planche 8) : l'icone et le mot,
+            // jamais la couleur seule.
+            if (eleve.peutEcrire) ...<Widget>[
+              Ecart.hSm,
+              IconTheme(
+                key: ValueKey<String>('peut-ecrire-${cleEleveSeance(eleve)}'),
+                data: palette.inkAccent.asIconTheme(size: AppSpacing.lg),
+                child: Icon(AppIcons.annoter.repos),
+              ),
+              Ecart.hXs,
+              Flexible(
+                child: Text(
+                  t.salle.seance.ecriture.peutEcrire,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: palette.inkAccent.applyTo(_styleFiche(context)),
+                ),
+              ),
+            ],
           ],
         ),
         fin: onBasculer == null
@@ -260,15 +299,18 @@ class _EnTeteEleve extends StatelessWidget {
       ),
     );
     final VoidCallback? basculer = onBasculer;
+    final String etat = eleve.peutEcrire
+        ? '$statut, ${t.salle.seance.ecriture.peutEcrire}'
+        : statut;
     if (basculer == null) {
-      return Semantics(label: '${eleve.prenom}, $statut', child: ligne);
+      return Semantics(label: '${eleve.prenom}, $etat', child: ligne);
     }
     return Semantics(
       expanded: deplie,
       child: Pressable(
         onPress: basculer,
         libelleSemantique:
-            '${deplie ? t.salle.seance.replierFiche(prenom: eleve.prenom) : t.salle.seance.deplierFiche(prenom: eleve.prenom)}, $statut',
+            '${deplie ? t.salle.seance.replierFiche(prenom: eleve.prenom) : t.salle.seance.deplierFiche(prenom: eleve.prenom)}, $etat',
         arrondiFocus: AppRadius.arrondiSm,
         child: ligne,
       ),
@@ -579,6 +621,63 @@ class _ActionsEleve extends StatelessWidget {
               ],
             )
           : rangee(tuiles),
+    );
+  }
+}
+
+/// TB-10 (plan V2 §4.3, §20 ; UX-20) : « Autoriser a ecrire » ou « Retirer
+/// l'autorisation d'ecrire », pres de la personne, apres ses quatre actions.
+/// La consequence se dit avant le choix (K-58) ; bouton discret pose en bas
+/// de la carte, sur toute sa largeur (K-56). Rien d'irreversible : le droit
+/// se retire comme il se donne, les traits restent.
+class _AutorisationEcrire extends StatelessWidget {
+  const _AutorisationEcrire({
+    required this.eleve,
+    required this.serre,
+    required this.onPress,
+  });
+
+  final EleveSeance eleve;
+  final bool serre;
+  final VoidCallback onPress;
+
+  /// La cle du bouton d'un eleve.
+  static Key cle(EleveSeance eleve) =>
+      ValueKey<String>('autoriser-ecrire-${cleEleveSeance(eleve)}');
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final bool autorise = eleve.peutEcrire;
+    return Padding(
+      padding: EdgeInsets.only(top: serre ? AppSpacing.sm : AppSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Text(
+            autorise
+                ? t.salle.seance.ecriture.retirerAide
+                : t.salle.seance.ecriture.autoriserAide(prenom: eleve.prenom),
+            style: palette.inkMuted.applyTo(_styleFiche(context)),
+          ),
+          Ecart.vSm,
+          ActionPrincipale(
+            key: cle(eleve),
+            libelle: autorise
+                ? t.salle.seance.ecriture.retirer
+                : t.salle.seance.ecriture.autoriser,
+            libelleSemantique: autorise
+                ? t.salle.seance.ecriture.retirerSemantique(
+                    prenom: eleve.prenom,
+                  )
+                : t.salle.seance.ecriture.autoriserSemantique(
+                    prenom: eleve.prenom,
+                  ),
+            niveau: NiveauAction.secondaire,
+            onPress: onPress,
+          ),
+        ],
+      ),
     );
   }
 }

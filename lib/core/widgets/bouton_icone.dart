@@ -32,7 +32,12 @@ class BoutonIcone extends StatelessWidget {
     super.key,
     this.forme = FormeBoutonIcone.cercle,
     this.infobulle,
+    this.focusNode,
   });
+
+  /// Le noeud du bouton, ou `null` : un hote y rend le focus (fermeture
+  /// d'un panneau ouvert par ce bouton).
+  final FocusNode? focusNode;
 
   /// L'icone.
   final AppIcon icone;
@@ -66,6 +71,7 @@ class BoutonIcone extends StatelessWidget {
         actif: onPress != null,
         libelleSemantique: libelle,
         arrondiFocus: arrondi,
+        focusNode: focusNode,
         child: ExcludeSemantics(
           child: SizedBox.square(
             dimension: AppTouchTarget.standard,

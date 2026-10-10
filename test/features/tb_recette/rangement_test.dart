@@ -371,7 +371,12 @@ void main() {
     WidgetTester tester,
   ) async {
     await _monter(tester, role: RoleSeance.eleve);
-    expect(_declencheur, findsNothing);
+    // TB-10 (plan V2 §19.3 point 4) : l'eleve ouvre ses propres Commandes
+    // (lecture, focus) ; ni menu du support, ni rangement.
+    await tester.tap(_declencheur);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.byKey(CommandesPedagogiques.cleLecture), findsOneWidget);
     expect(_menu, findsNothing);
     expect(find.text(t.salle.seance.rangement.range), findsNothing);
     expect(find.text(t.salle.seance.rangement.ranger), findsNothing);

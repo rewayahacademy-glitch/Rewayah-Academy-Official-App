@@ -720,6 +720,22 @@ class _Traductions$salle$seance$ecriture$ar extends Traductions$salle$seance$ecr
 	@override String get fine => 'رفيع';
 	@override String get moyenne => 'متوسط';
 	@override String get epaisse => 'سميك';
+	@override String get tuPeuxEcrire => 'يمكنك الكتابة على السبورة.';
+	@override String get vousPouvezEcrire => 'يمكنكم الكتابة على السبورة.';
+	@override String get repriseSayyid => 'السيد يستعيد السبورة.';
+	@override String get repriseSayyida => 'السيدة تستعيد السبورة.';
+	@override String repriseNom({required Object nom}) => '⁨${nom}⁩ يستعيد السبورة.';
+	@override String get choisirTu => 'المس « الكتابة » عندما تريد أن تكتب. وإلا فالصفحة للقراءة، ولا يترك إصبعك أي خط.';
+	@override String get choisirVous => 'المسوا « الكتابة » عندما تريدون الكتابة. وإلا فالصفحة للقراءة، ولا يترك إصبعكم أي خط.';
+	@override String get aideEleveTu => 'اكتب بالقلم. الممحاة والتراجع لا يمسّان إلا خطوطك؛ و« إنهاء » يعيد إلى القراءة.';
+	@override String get aideEleveVous => 'اكتبوا بالقلم. الممحاة والتراجع لا يمسّان إلا خطوطكم؛ و« إنهاء » يعيد إلى القراءة.';
+	@override String get peutEcrire => 'يمكنه الكتابة';
+	@override String get autoriser => 'السماح بالكتابة';
+	@override String get retirer => 'سحب الإذن بالكتابة';
+	@override String autoriserSemantique({required Object prenom}) => 'السماح لـ⁨${prenom}⁩ بالكتابة';
+	@override String retirerSemantique({required Object prenom}) => 'سحب الإذن بالكتابة من ⁨${prenom}⁩';
+	@override String autoriserAide({required Object prenom}) => '⁨${prenom}⁩ سيتمكن من الكتابة على الصفحة أو السبورة. تبقى الصفحة والمادة بيدك.';
+	@override String get retirerAide => 'تبقى خطوطه على الصفحة؛ وتُسحب منه أدوات الكتابة.';
 }
 
 // Path: salle.seance.rail
@@ -2471,6 +2487,22 @@ extension on TraductionsAr {
 			'salle.seance.ecriture.fine' => 'رفيع',
 			'salle.seance.ecriture.moyenne' => 'متوسط',
 			'salle.seance.ecriture.epaisse' => 'سميك',
+			'salle.seance.ecriture.tuPeuxEcrire' => 'يمكنك الكتابة على السبورة.',
+			'salle.seance.ecriture.vousPouvezEcrire' => 'يمكنكم الكتابة على السبورة.',
+			'salle.seance.ecriture.repriseSayyid' => 'السيد يستعيد السبورة.',
+			'salle.seance.ecriture.repriseSayyida' => 'السيدة تستعيد السبورة.',
+			'salle.seance.ecriture.repriseNom' => ({required Object nom}) => '⁨${nom}⁩ يستعيد السبورة.',
+			'salle.seance.ecriture.choisirTu' => 'المس « الكتابة » عندما تريد أن تكتب. وإلا فالصفحة للقراءة، ولا يترك إصبعك أي خط.',
+			'salle.seance.ecriture.choisirVous' => 'المسوا « الكتابة » عندما تريدون الكتابة. وإلا فالصفحة للقراءة، ولا يترك إصبعكم أي خط.',
+			'salle.seance.ecriture.aideEleveTu' => 'اكتب بالقلم. الممحاة والتراجع لا يمسّان إلا خطوطك؛ و« إنهاء » يعيد إلى القراءة.',
+			'salle.seance.ecriture.aideEleveVous' => 'اكتبوا بالقلم. الممحاة والتراجع لا يمسّان إلا خطوطكم؛ و« إنهاء » يعيد إلى القراءة.',
+			'salle.seance.ecriture.peutEcrire' => 'يمكنه الكتابة',
+			'salle.seance.ecriture.autoriser' => 'السماح بالكتابة',
+			'salle.seance.ecriture.retirer' => 'سحب الإذن بالكتابة',
+			'salle.seance.ecriture.autoriserSemantique' => ({required Object prenom}) => 'السماح لـ⁨${prenom}⁩ بالكتابة',
+			'salle.seance.ecriture.retirerSemantique' => ({required Object prenom}) => 'سحب الإذن بالكتابة من ⁨${prenom}⁩',
+			'salle.seance.ecriture.autoriserAide' => ({required Object prenom}) => '⁨${prenom}⁩ سيتمكن من الكتابة على الصفحة أو السبورة. تبقى الصفحة والمادة بيدك.',
+			'salle.seance.ecriture.retirerAide' => 'تبقى خطوطه على الصفحة؛ وتُسحب منه أدوات الكتابة.',
 			'salle.seance.rail.navigation' => 'التنقل',
 			'salle.seance.rail.marque' => 'Rewayah',
 			'salle.seance.rail.sousMarque' => 'Academy',
@@ -2792,6 +2824,8 @@ extension on TraductionsAr {
 			'tc.groupe.carte.capacitePhrase' => ({required Object membres, required Object seuil}) => '⁨${membres}⁩ طلاب من ⁨${seuil}⁩ مقاعد',
 			'tc.groupe.carte.complet' => 'مكتمل',
 			'tc.groupe.carte.prochainCours' => 'الدرس القادم',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.carte.aucuneSeance' => 'لا حصة مقررة',
 			'tc.groupe.carte.aucuneSeanceDetail' => 'لم يُحدَّد جدول هذا الفصل بعد.',
 			'tc.groupe.carte.duree' => ({required Object valeur}) => 'المدة ⁨${valeur}⁩',
@@ -2808,8 +2842,6 @@ extension on TraductionsAr {
 			'tc.groupe.temps.enSalle' => 'في القاعة',
 			'tc.groupe.temps.resteMinutes' => ({required Object minutes}) => 'المتبقي ⁨${minutes}⁩ د',
 			'tc.groupe.temps.resteHeures' => ({required Object heures, required Object minutes}) => 'المتبقي ⁨${heures}⁩ س ⁨${minutes}⁩ د',
-			_ => null,
-		} ?? switch (path) {
 			'tc.groupe.temps.enCours' => ({required Object reste}) => 'حصة مباشرة · ⁨${reste}⁩',
 			'tc.groupe.temps.enDirect' => 'مباشر',
 			'tc.groupe.temps.prolongee' => 'الحصة ما زالت مباشرة',

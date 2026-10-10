@@ -595,6 +595,10 @@ class _SalleDemoState extends State<SalleDemo> {
   /// de la surface montree. Rien n'est diffuse (TB-BR).
   List<TraitVectoriel>? _notes;
 
+  /// TB-10 : les autorisations d'ecrire donnees ou retirees dans la
+  /// demonstration, par prenom ; absentes : celles de la situation.
+  final Map<String, bool> _ecriture = <String, bool>{};
+
   /// TB-9 : le tableau libre a ete efface (« … du tableau ? »).
   bool _tableauEfface = false;
 
@@ -715,6 +719,19 @@ class _SalleDemoState extends State<SalleDemo> {
       // TB-9 : range, plus aucun support presente.
       sansSupportPresente: _range,
       supportsRanges: List<SupportPageFixe>.unmodifiable(_ranges),
+      eleves: _ecriture.isEmpty
+          ? null
+          : <EleveSeance>[
+              for (final EleveSeance e in etat.eleves)
+                EleveSeance(
+                  prenom: e.prenom,
+                  statut: e.statut,
+                  fiche: e.fiche,
+                  id: e.id,
+                  cleAvatar: e.cleAvatar,
+                  peutEcrire: _ecriture[e.prenom] ?? e.peutEcrire,
+                ),
+            ],
       notesSurface: _notes,
       tableauLibre: tableau != null && _tableauEfface
           ? TableauLibre(
@@ -752,13 +769,17 @@ class _SalleDemoState extends State<SalleDemo> {
       // TB-4 (CMD-01) : « Commandes » ouvre et reduit le panneau ; les trois
       // affichages, un clic chacun ; « Ajuster a l'ecran » remet le zoom
       // local a 100 %. Etat local, rien n'est diffuse.
-      onCommandes: enseignant
+      // TB-10 : l'eleve et la guidee ont leurs Commandes dans les
+      // situations Supports et tableau (lecture, focus, ecriture accordee).
+      onCommandes: enseignant || widget.situation != null
           ? () => _basculerPanneau(PanneauOuvert.commandes)
           : null,
       onAffichage: enseignant
           ? (AffichagePartage a) => setState(() => _affichage = a)
           : null,
-      onAjusterEcran: enseignant ? () => setState(() => _zoom = 1) : null,
+      onAjusterEcran: enseignant || widget.situation != null
+          ? () => setState(() => _zoom = 1)
+          : null,
       onRetour: widget.onSortir,
       onQuitter: enseignant
           ? widget.onSortir
@@ -797,7 +818,18 @@ class _SalleDemoState extends State<SalleDemo> {
       onSupports: enseignant
           ? () => _basculerPanneau(PanneauOuvert.supports)
           : null,
-      onOutil: enseignant ? (OutilEnseignement _) => _inerte() : null,
+      // TB-10 : « Ecrire » de l'eleve autorise, dans les situations
+      // Supports et tableau (depot en memoire, rien n'est diffuse).
+      onOutil: enseignant || widget.situation != null
+          ? (OutilEnseignement _) => _inerte()
+          : null,
+      // TB-10 (UX-20) : « Autoriser a ecrire » et « Retirer l'autorisation
+      // d'ecrire » sur la fiche ; etat local de la demonstration, rien
+      // n'est diffuse (TB-BR-10).
+      onAutoriserEcrire: enseignant && widget.situation != null
+          ? (EleveSeance e) =>
+                setState(() => _ecriture[e.prenom] = !e.peutEcrire)
+          : null,
       // TB-4 : la page change dans la demonstration (diffusion a BR-1).
       onPagePrecedente: enseignant ? () => _changerPage(vue, -1) : null,
       onPageSuivante: enseignant ? () => _changerPage(vue, 1) : null,
