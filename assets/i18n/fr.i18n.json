@@ -3635,6 +3635,62 @@
         },
         "auditMotif": "Motif : {motif}",
         "auditVersion": "Version {numero}"
+      },
+      "import": {
+        "completer": "Compléter le support",
+        "sections": {
+          "ressource": "Ressource",
+          "fichier": "Fichier",
+          "droits": "Droits et accès"
+        },
+        "champs": {
+          "titre": "Titre",
+          "categorie": "Catégorie",
+          "type": "Type",
+          "langue": "Langue",
+          "niveau": "Niveau"
+        },
+        "completerDabord": "Renseignez d'abord le titre, le type, la langue et la catégorie.",
+        "choisirFichier": "Choisir un fichier",
+        "choisirAutre": "Choisir un autre fichier",
+        "annulerDepot": "Annuler le dépôt",
+        "progression": "Progression du dépôt",
+        "formats": {
+          "pdf": "Format accepté : PDF.",
+          "image": "Formats acceptés : PNG, JPEG, WebP.",
+          "json": "Format accepté : JSON structuré.",
+          "aucun": "Ce type n'accepte pas de fichier."
+        },
+        "etats": {
+          "attente": "Préparation du dépôt…",
+          "envoi": "Envoi en cours : {pourcent} %",
+          "confirmation": "Envoi terminé, en attente de la confirmation du serveur…",
+          "verification": "Vérification du fichier…",
+          "pret": "Fichier vérifié. Passez aux droits.",
+          "annule": "Dépôt annulé."
+        },
+        "erreurs": {
+          "taille": "Ce fichier est trop volumineux. Choisissez un fichier plus léger.",
+          "type": "Ce type de fichier n'est pas pris en charge pour ce support. Choisissez un autre fichier.",
+          "reseau": "La connexion s'est interrompue. Le dépôt n'est pas confirmé : réessayez.",
+          "refuse": "Le serveur a refusé ce dépôt. Réessayez ou choisissez un autre fichier.",
+          "empreinte": "Le fichier reçu ne correspond pas à celui envoyé. Réessayez.",
+          "creation": "Le brouillon n'a pas pu être créé. Réessayez.",
+          "droits": "Les droits n'ont pas pu être enregistrés. Réessayez."
+        },
+        "droits": {
+          "aide": "Aucun droit n'est présumé : une valeur inconnue bloque la publication.",
+          "source": "Source d'origine",
+          "titulaire": "Titulaire du droit",
+          "attribution": "Attribution exigée",
+          "usages": "Usages autorisés",
+          "preuve": "Preuve d'autorisation",
+          "deposerPreuve": "Déposer la preuve",
+          "preuveDeposee": "Preuve déposée."
+        },
+        "poursuivre": "Poursuivre vers la vérification",
+        "poursuivreAide": "Le fichier doit être vérifié par le serveur avant de poursuivre.",
+        "retour": "Retour au catalogue"
       }
     }
   },

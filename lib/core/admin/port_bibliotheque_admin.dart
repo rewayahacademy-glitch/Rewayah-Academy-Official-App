@@ -119,6 +119,7 @@ abstract interface class PortBibliothequeAdmin {
   Future<IntentionUpload> demanderUpload({
     required String supportId,
     required FichierADeposer fichier,
+    FinaliteUpload finalite = FinaliteUpload.support,
   });
 
   /// Depose le fichier et diffuse la progression. Se termine a `pret`,

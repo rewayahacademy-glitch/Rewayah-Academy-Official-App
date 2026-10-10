@@ -1513,9 +1513,9 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: Routes.adminPedagogieBibliothequeNouveau,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
-          child: ImportPage(),
+          child: ImportPage(supportId: etat.uri.queryParameters['support']),
         ),
       ),
       GoRoute(

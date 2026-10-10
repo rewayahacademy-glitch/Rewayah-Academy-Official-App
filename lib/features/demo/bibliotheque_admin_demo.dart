@@ -103,6 +103,8 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
 
   final Map<String, _Etat> _supports = <String, _Etat>{};
   final Map<String, String> _uploads = <String, String>{};
+  final Map<String, (FichierADeposer, FinaliteUpload)> _depots =
+      <String, (FichierADeposer, FinaliteUpload)>{};
   final Set<String> _annules = <String>{};
   int _compteur = 0;
 
@@ -488,6 +490,7 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
   Future<IntentionUpload> demanderUpload({
     required String supportId,
     required FichierADeposer fichier,
+    FinaliteUpload finalite = FinaliteUpload.support,
   }) async {
     _garde();
     final _Etat e = _trouve(supportId);
@@ -497,6 +500,7 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
     }
     final String id = 'demo-upload-${++_compteur}';
     _uploads[id] = supportId;
+    _depots[id] = (fichier, finalite);
     return IntentionUpload(
       id: id,
       expireLeUtc: maintenant.add(const Duration(minutes: 15)),
@@ -514,6 +518,17 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
         phase: PhaseUpload.echec,
         erreur: ErreurUpload.refuse,
       );
+      return;
+    }
+    final (FichierADeposer fichier, FinaliteUpload finalite) =
+        _depots[uploadId]!;
+    // Controles serveur : taille et type reels, jamais ceux que le client dit.
+    final TypeRessource type = _trouve(supportId).support.type;
+    final ErreurUpload? refus = finalite == FinaliteUpload.preuve
+        ? null
+        : _controleFichier(type, fichier);
+    if (refus != null) {
+      yield ProgressionUpload(phase: PhaseUpload.echec, erreur: refus);
       return;
     }
     yield const ProgressionUpload(phase: PhaseUpload.envoi);
@@ -543,9 +558,49 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
     yield const ProgressionUpload(phase: PhaseUpload.verification, partie: 1);
     await Future<void>.delayed(pas);
     final _Etat e = _trouve(supportId);
-    e.fichierDepose = true;
+    if (finalite == FinaliteUpload.preuve) {
+      e.droits = DroitsSupport(
+        revue: e.droits.revue,
+        sourceTitre: e.droits.sourceTitre,
+        titulaire: e.droits.titulaire,
+        preuveFournie: true,
+        usages: e.droits.usages,
+        attribution: e.droits.attribution,
+        expireLeUtc: e.droits.expireLeUtc,
+      );
+    } else {
+      e.fichierDepose = true;
+      final VersionSupport v = e.versions.first;
+      e.versions[0] = VersionSupport(
+        id: v.id,
+        numero: v.numero,
+        statut: v.statut,
+        revueDroits: v.revueDroits,
+        publieeLeUtc: v.publieeLeUtc,
+        empreinte: 'sha256:depot$uploadId',
+      );
+    }
     _toucher(e, action: ActionAudit.depot, version: e.versions.first.numero);
     yield const ProgressionUpload(phase: PhaseUpload.pret, partie: 1);
+  }
+
+  /// Taille maximale d'un support dans le double : 25 Mo.
+  static const int tailleMaximale = 25 * 1024 * 1024;
+
+  static ErreurUpload? _controleFichier(TypeRessource type, FichierADeposer f) {
+    if (f.octets > tailleMaximale) return ErreurUpload.taille;
+    final bool ok = switch (type) {
+      TypeRessource.pdf => f.mime == 'application/pdf',
+      TypeRessource.image => const <String>{
+        'image/png',
+        'image/jpeg',
+        'image/webp',
+      }.contains(f.mime),
+      TypeRessource.texteStructure ||
+      TypeRessource.lecon => f.mime == 'application/json',
+      TypeRessource.quran => false,
+    };
+    return ok ? null : ErreurUpload.type;
   }
 
   @override

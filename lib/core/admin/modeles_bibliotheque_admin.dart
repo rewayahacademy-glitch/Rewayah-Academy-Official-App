@@ -673,6 +673,17 @@ class IntentionUpload {
   final DateTime expireLeUtc;
 }
 
+/// Ce que le fichier depose est : le support lui-meme, ou la preuve
+/// d'autorisation de ses droits (famille de stockage distincte, accessible a
+/// des personnes distinctes).
+enum FinaliteUpload {
+  /// Le fichier du support.
+  support,
+
+  /// La preuve d'autorisation (spec §4.3).
+  preuve,
+}
+
 /// Les phases d'un depot (spec §3.4, §7).
 enum PhaseUpload {
   /// Intention creee, rien envoye.
