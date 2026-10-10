@@ -82,3 +82,4 @@ revoke all on function public.marquer_notification_lue(uuid)
   from public, anon, agent_ro;
 grant execute on function public.marquer_notification_lue(uuid)
   to authenticated;
+commit;
