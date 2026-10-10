@@ -16,6 +16,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_revue_dossiers.dart';
+import '../../core/recrutement/port_statuts_signature.dart';
 
 /// Une commande de decision, immuable : « Reessayer » la rejoue telle quelle.
 @immutable
@@ -104,6 +105,15 @@ final class DecisionInterdite extends EtatDecision {
   const DecisionInterdite(super.commande);
 }
 
+/// L'activation est refusee : le contrat ou l'accuse n'est pas signe a la
+/// version courante (course entre la lecture des statuts et la decision).
+/// Relire le dossier, l'enseignant doit signer.
+final class DecisionContratNonSigne extends EtatDecision {
+  const DecisionContratNonSigne(super.commande, this.manque);
+
+  final List<ManqueSignature> manque;
+}
+
 final class DecisionIndisponible extends EtatDecision {
   const DecisionIndisponible(super.commande);
 }
@@ -183,6 +193,8 @@ class DecisionsDossiersNotifier extends Notifier<Map<String, EtatDecision>> {
       fin = DecisionReussie(c, r);
     } on CapaciteIndisponible {
       fin = DecisionIndisponible(c);
+    } on ContratNonSigneVersionCourante catch (e) {
+      fin = DecisionContratNonSigne(c, e.manque);
     } on ErreurRevueDossier catch (e) {
       fin = etatPourCode(c, e.code);
     } on TimeoutException {

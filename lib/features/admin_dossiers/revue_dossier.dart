@@ -7,6 +7,7 @@ import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/recrutement/port_statuts_signature.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_mouvement.dart';
@@ -221,6 +222,14 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
       ),
     );
     final bool nonResolue = commande?.nonResolue ?? false;
+    // RECRUT-ECRANS : le contrat et l'accuse a la version courante, calcules
+    // par le serveur. Absents (port non branche, ou rien a signer), ils ne
+    // changent rien ; presents et incomplets, ils ferment « Approuver » et le
+    // disent. Le serveur reste la barriere (ErreurActivation).
+    final StatutsSignature? statuts = ref
+        .watch(statutsSignatureDossierProvider(d.dossierId))
+        .value;
+    final bool statutsIncomplets = statuts != null && !statuts.complets;
     final double section = MediaQuery.sizeOf(context).width >= 600
         ? AppSpacing.xxxl
         : AppSpacing.xxl;
@@ -238,6 +247,7 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
         manquantes.isEmpty &&
         d.documentId != null &&
         !validationIndeterminee &&
+        !statutsIncomplets &&
         !bloque;
     final bool peutRefuser = d.peutRefuser && !bloque;
     final List<AccordSoumis> acceptes = <AccordSoumis>[
@@ -306,6 +316,16 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
                   _ligneVerification(v, palette),
           ],
         ),
+        if (statuts != null) ...<Widget>[
+          SizedBox(height: section),
+          GroupeReglages(
+            titre: t.recrutement.statuts.titre,
+            lignes: <LigneRubrique>[
+              _ligneStatut(t.recrutement.statuts.contrat, statuts.contrat),
+              _ligneStatut(t.recrutement.statuts.accuse, statuts.accuse),
+            ],
+          ),
+        ],
         if (acceptes.isNotEmpty) ...<Widget>[
           SizedBox(height: section),
           GroupeReglages(
@@ -365,6 +385,7 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
               lectureAttendue: !_lectureFaite,
               verificationsManquantes: manquantes.isNotEmpty,
               validationIndeterminee: validationIndeterminee,
+              statutsIncomplets: statutsIncomplets,
               onReessayer: widget.onActualiser,
               onAllerPremiere: _allerPremiere,
             ),
@@ -601,9 +622,13 @@ class _RaisonsDecision extends StatelessWidget {
     required this.lectureAttendue,
     required this.verificationsManquantes,
     required this.validationIndeterminee,
+    required this.statutsIncomplets,
     required this.onReessayer,
     required this.onAllerPremiere,
   });
+
+  /// Le contrat ou l'accuse n'est pas signe a la version courante.
+  final bool statutsIncomplets;
 
   final bool horsLigne;
   final DossierPourRevue dossier;
@@ -634,7 +659,8 @@ class _RaisonsDecision extends StatelessWidget {
         b.isNotEmpty ||
         (validationIndeterminee && dossier.peutValider) ||
         lectureAttendue ||
-        verificationsManquantes;
+        verificationsManquantes ||
+        statutsIncomplets;
   }
 
   /// Vrai quand la ligne d'etat a quelque chose a dire.
@@ -676,6 +702,12 @@ class _RaisonsDecision extends StatelessWidget {
       raison = Text(t.dossiers.revue.etats.decisionIndisponible, style: style);
     } else if (b.contains(BlocageRevue.accordManquant)) {
       raison = Text(t.dossiers.revue.etats.accordManquant, style: style);
+    } else if (statutsIncomplets) {
+      raison = Text(
+        t.recrutement.statuts.bloque,
+        key: const ValueKey<String>('revue-statuts-bloque'),
+        style: style,
+      );
     } else if (validationIndeterminee && dossier.peutValider) {
       raison = Text(t.dossiers.validation.indisponible, style: style);
     } else if (b.isNotEmpty || lectureAttendue) {
@@ -726,5 +758,27 @@ class GenreManquant extends StatelessWidget {
     nature: NatureEtat.accesRefuse,
     titre: t.dossiers.profilACompleter.titre,
     phrase: t.dossiers.profilACompleter.texte,
+  );
+}
+
+/// Une ligne de statut de signature : le mot et la pastille (jamais la couleur
+/// seule), la version signee quand elle est ancienne.
+LigneRubrique _ligneStatut(String libelle, StatutSignature statut) {
+  final r = t.recrutement.statuts;
+  final (String mot, TonEtat ton) = switch (statut) {
+    SigneVersionCourante() => (r.signeCourante, TonEtat.succes),
+    SigneAncienneVersion(:final String versionSignee) => (
+      r.signeAncienne(version: versionSignee),
+      TonEtat.avertissement,
+    ),
+    NonSigne() => (r.nonSigne, TonEtat.alerte),
+  };
+  return LigneRubrique(
+    icone: switch (statut) {
+      SigneVersionCourante() => AppIcons.succes,
+      _ => AppIcons.avertissement,
+    },
+    libelle: libelle,
+    pastille: StatusPill(libelle: mot, ton: ton),
   );
 }
