@@ -23,6 +23,15 @@ typedef NotificationContenuResolver = NotificationContenu Function(
   Map<String, dynamic> params,
 );
 
+const Set<String> _evenementsPrisEnCharge = <String>{
+  'demande_recue',
+  'classe_validee',
+  'enseignant_affecte',
+  'demande_close',
+  'remplacement_propose',
+  'remplacement_pris',
+};
+
 /// Adaptateur Supabase de la boîte privée de notifications.
 class NotificationsSupabase
     implements PortNotifications, PortLectureNotifications {
@@ -34,15 +43,6 @@ class NotificationsSupabase
 
   final SupabaseClient _client;
   final NotificationContenuResolver _contenuPour;
-
-  static const Set<String> _evenements = <String>{
-    'demande_recue',
-    'classe_validee',
-    'enseignant_affecte',
-    'demande_close',
-    'remplacement_propose',
-    'remplacement_pris',
-  };
 
   static const Set<String> _destinations = <String>{
     '/tuteur/demandes',
@@ -112,7 +112,9 @@ class NotificationsSupabase
     if (identifiant.isEmpty) {
       throw ArgumentError.value(id, 'id', 'Identifiant requis.');
     }
-    _destinataire;
+    if (_client.auth.currentUser?.id == null) {
+      throw StateError('Session requise pour lire les notifications.');
+    }
     await _client
         .rpc<void>(
           'marquer_notification_lue',
@@ -146,7 +148,7 @@ NotificationTuteur notificationDepuis(
 
   if (id.isEmpty ||
       evenement == null ||
-      !_evenements.contains(evenement) ||
+      !_evenementsPrisEnCharge.contains(evenement) ||
       rawParams is! Map ||
       date == null ||
       (rawRead != null && luLe == null)) {
