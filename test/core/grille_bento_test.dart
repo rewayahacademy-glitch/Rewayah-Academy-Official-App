@@ -490,6 +490,19 @@ void main() {
     // (vue, texte, largeur de la grille, colonnes) : valeurs fixes relevees
     // sur la page reelle, jamais recalculees par colonnesPour (BENTO-1c).
     // 800 px et texte double tombe dans le palier a trois colonnes.
+    //
+    // Depuis AD-X (ADMIN-SHELL-01), la colonne « Activite recente » (336, la
+    // file du contrat D) se pose a cote des tuiles des que la page offre
+    // 336 + 24 (xxl) + 600 (seuil des quatre colonnes) = 960 de contenu, et
+    // tant que le texte reste sous 200 %. La grille perd alors 360 :
+    // * 1024 (contenu 976) : 976 - 360 = 616. A 130 %, quatre cellules de
+    //   (616 - 48) / 4 = 142 passeraient sous 112 x 1,3 = 145,6 : trois
+    //   colonnes de (616 - 32) / 3 = 194,7. A 100 % et 115 %, quatre
+    //   colonnes de 142 (>= 112 et >= 128,8).
+    // * 1440 (contenu 1136, gabarit borne) : 1136 - 360 = 776, quatre
+    //   colonnes de 182.
+    // * A 200 %, l'activite passe sous les tuiles : la grille garde toute la
+    //   largeur (976 et 1136). 800 px (contenu 752 < 960) ne change pas.
     for (final (double, double, double, int) cas
         in <(double, double, double, int)>[
           (390, 1, 358, 2),
@@ -502,13 +515,13 @@ void main() {
           (600, 1.3, 552, 2),
           (600, 2, 552, 2),
           (800, 2, 752, 3),
-          (1024, 1, 976, 4),
-          (1024, 1.15, 976, 4),
-          (1024, 1.3, 976, 4),
+          (1024, 1, 616, 4),
+          (1024, 1.15, 616, 4),
+          (1024, 1.3, 616, 3),
           (1024, 2, 976, 4),
-          (1440, 1, 1136, 4),
-          (1440, 1.15, 1136, 4),
-          (1440, 1.3, 1136, 4),
+          (1440, 1, 776, 4),
+          (1440, 1.15, 776, 4),
+          (1440, 1.3, 776, 4),
           (1440, 2, 1136, 4),
         ]) {
       final double largeur = cas.$1;
@@ -560,6 +573,14 @@ void main() {
           expect(grille.width, cas.$3);
           final int n = cas.$4;
           final double cellule = (grille.width - 16 * (n - 1)) / n;
+          // Aucune tuile trop etroite : une cellule garde au moins sa largeur
+          // minimale (112) a l'echelle du texte, jamais moins qu'a 100 %.
+          expect(
+            cellule,
+            greaterThanOrEqualTo(
+              GrilleBento.largeurMinCellule * (cas.$2 < 1 ? 1 : cas.$2),
+            ),
+          );
           final List<Rect> rects = <Rect>[
             for (final Element e in cartes)
               tester.getRect(find.byElementPredicate((Element x) => x == e)),

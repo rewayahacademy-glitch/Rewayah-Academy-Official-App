@@ -8,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 import '../../core/appairage/service_appairage.dart';
 import '../../core/appairage/statut_code_appairage.dart';
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -506,7 +507,9 @@ class _AppairagePageState extends ConsumerState<AppairagePage>
           titre: t.appareils.emetteur.confirme.titre,
           phrase: prenom == null || prenom.isEmpty
               ? t.appareils.emetteur.confirme.phraseSansPrenom
-              : t.appareils.emetteur.confirme.phrase(prenom: prenom),
+              : t.appareils.emetteur.confirme.phrase(
+                  dePrenom: deDevant(prenom),
+                ),
           libelleAction: t.appareils.emetteur.confirme.action,
           onAction: _retour,
         );
@@ -540,10 +543,15 @@ class _AppairagePageState extends ConsumerState<AppairagePage>
           enCours: _enCours,
         );
       case EtapeEmetteur.horsLigne:
+        // Hors ligne se dit une fois (EA-HL-DOUBLE-1) : le bandeau de
+        // `PageShell` le dit, en mots et en icone ; la carte dit ce qui
+        // manque, le code, et quand il reviendra.
         return _Resultat(
-          icone: AppIcons.horsLigne,
+          icone: AppIcons.attente,
           ton: TonEtat.neutre,
-          titre: t.appareils.emetteur.horsLigne.titre,
+          titre: _code == null
+              ? t.appareils.emetteur.horsLigne.titreSansCode
+              : t.appareils.emetteur.horsLigne.titreAvecCode,
           phrase: _code == null
               ? t.appareils.emetteur.horsLigne.phraseSansCode
               : t.appareils.emetteur.horsLigne.phraseAvecCode(heure: heure),

@@ -7,6 +7,7 @@ import '../../core/admin/service_configuration.dart';
 import '../../core/capacites/port_politique_revue_kyc.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/empty_state.dart';
@@ -76,30 +77,35 @@ typedef _ChampRegle = ({
   String Function(int n) affichage,
 });
 
+/// Une valeur de regle en minutes, affichee seule : « 45 min », insecable et
+/// ancree en interface de droite a gauche (DUREE-INSECABLE-3).
+String uniteMinutesRegle(int n) =>
+    LibellesGroupe.valeurSeule(t.admin.regles.uniteMinutes(n: '$n'));
+
 List<_ChampRegle> _champs() => <_ChampRegle>[
   (
     titre: t.admin.regles.absenceSeuil,
     description: t.admin.regles.absenceSeuilDetail,
     cle: 'absence_threshold_minutes',
-    affichage: (int n) => t.admin.regles.uniteMinutes(n: '$n'),
+    affichage: uniteMinutesRegle,
   ),
   (
     titre: t.admin.regles.dureeSeance,
     description: t.admin.regles.dureeSeanceDetail,
     cle: 'session_duration_minutes',
-    affichage: (int n) => t.admin.regles.uniteMinutes(n: '$n'),
+    affichage: uniteMinutesRegle,
   ),
   (
     titre: t.admin.regles.dureeMinimalePayee,
     description: t.admin.regles.dureeMinimalePayeeDetail,
     cle: 'session_paid_minimum_minutes',
-    affichage: (int n) => t.admin.regles.uniteMinutes(n: '$n'),
+    affichage: uniteMinutesRegle,
   ),
   (
     titre: t.admin.regles.pauseEntreSeances,
     description: t.admin.regles.pauseEntreSeancesDetail,
     cle: 'break_minutes_between_sessions',
-    affichage: (int n) => t.admin.regles.uniteMinutes(n: '$n'),
+    affichage: uniteMinutesRegle,
   ),
   (
     titre: t.admin.regles.elevesParEnseignant,
@@ -111,7 +117,8 @@ List<_ChampRegle> _champs() => <_ChampRegle>[
     titre: t.admin.regles.horizonAffectation,
     description: t.admin.regles.horizonAffectationDetail,
     cle: 'matching_horizon_weeks',
-    affichage: (int n) => t.admin.regles.uniteSemaines(n: '$n'),
+    affichage: (int n) =>
+        LibellesGroupe.valeurSeule(t.admin.regles.uniteSemaines(n: n)),
   ),
   (
     titre: t.admin.regles.ageCameraAuto,

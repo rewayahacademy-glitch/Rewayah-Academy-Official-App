@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart'
     show TitreEnseignant;
@@ -240,7 +241,9 @@ void main() {
       );
       expect(
         find.bySemanticsLabel(
-          t.classe.entree.rejoindreLecteur(classe: DonneesClasseDemo.classe),
+          t.classe.entree.rejoindreLecteur(
+            deClasse: deDevant(DonneesClasseDemo.classe),
+          ),
         ),
         findsOneWidget,
       );

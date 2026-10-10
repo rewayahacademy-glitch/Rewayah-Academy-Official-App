@@ -1,5 +1,6 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
@@ -9,6 +10,7 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/status_pill.dart';
+import 'encre_salle.dart';
 
 /// Le mot qui nomme un etat projete.
 ///
@@ -38,7 +40,8 @@ TonEtat tonEtatProjete(EtatPresenceProjete etat) => switch (etat) {
   EtatPresenceProjete.enConnexion => TonEtat.accent,
   EtatPresenceProjete.enRetard ||
   EtatPresenceProjete.enReconnexion => TonEtat.avertissement,
-  EtatPresenceProjete.deconnecte || EtatPresenceProjete.absent => TonEtat.alerte,
+  EtatPresenceProjete.deconnecte ||
+  EtatPresenceProjete.absent => TonEtat.alerte,
   EtatPresenceProjete.attendu ||
   EtatPresenceProjete.sorti ||
   EtatPresenceProjete.inconnu => TonEtat.neutre,
@@ -86,12 +89,12 @@ class LigneRoster extends StatelessWidget {
                 Text(
                   eleve.firstName,
                   overflow: TextOverflow.ellipsis,
-                  style: textes.titleSmall ?? const TextStyle(),
+                  style: styleDuFond(context, textes.titleSmall),
                 ),
                 Text(
                   eleve.academyId,
                   overflow: TextOverflow.ellipsis,
-                  style: textes.labelSmall ?? const TextStyle(),
+                  style: styleDuFond(context, textes.labelSmall),
                 ),
               ],
             ),
@@ -132,7 +135,7 @@ class LigneRoster extends StatelessWidget {
     return Pressable(
       onPress: onOuvrirFiche,
       libelleSemantique: t.tc.classe.roster.ouvrirFiche(
-        prenom: eleve.firstName,
+        dePrenom: deDevant(eleve.firstName),
       ),
       child: corps,
     );
@@ -200,8 +203,10 @@ class PanneauRoster extends StatelessWidget {
                 inscrits: roster.attendus,
                 plafond: plafond,
               ),
-              style: Theme.of(context).textTheme.labelSmall ??
-                  const TextStyle(),
+              style: styleDuFond(
+                context,
+                Theme.of(context).textTheme.labelSmall,
+              ),
             ),
           Ecart.vMd,
         ],

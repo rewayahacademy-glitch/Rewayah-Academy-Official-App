@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_color_pair.dart';
@@ -18,6 +19,7 @@ import '../../core/widgets/pressable.dart';
 import '../../core/widgets/status_pill.dart';
 import 'actions_seance.dart';
 import 'capsule_seance.dart';
+import 'cible_debordante.dart';
 import 'dock_seance.dart';
 import 'mention_seance.dart';
 import 'vue_seance.dart';
@@ -65,15 +67,19 @@ class ChromeSeance extends StatelessWidget {
           displayColor: palette.surfaceCanvas.onBackground,
         ),
       ),
-      child: gabarit == Gabarit.desktop
-          ? _Large(vue: vue, actions: actions, focusCapsule: focusCapsule)
-          : _Etroit(
-              vue: vue,
-              actions: actions,
-              gabarit: gabarit,
-              compacte: compacte,
-              focusCapsule: focusCapsule,
-            ),
+      // La cible du lien « En savoir plus » de la mention deborde de sa
+      // ligne sans prendre de hauteur : l'en-tete entier recoit ses touches.
+      child: ZoneCiblesDebordantes(
+        child: gabarit == Gabarit.desktop
+            ? _Large(vue: vue, actions: actions, focusCapsule: focusCapsule)
+            : _Etroit(
+                vue: vue,
+                actions: actions,
+                gabarit: gabarit,
+                compacte: compacte,
+                focusCapsule: focusCapsule,
+              ),
+      ),
     );
   }
 }
@@ -407,8 +413,15 @@ const double rapportMinimalTitreSousTitre = 1.15;
 /// l'echelle de l'appareil.
 double plancherTitreSeance(BuildContext context, TextStyle? style) {
   final TextTheme textes = Theme.of(context).textTheme;
-  final double titre = style?.fontSize ?? textes.titleLarge?.fontSize ?? 22;
-  final double sousTitre = textes.bodyMedium?.fontSize ?? 14;
+  // Secours : l'echelle typographique elle-meme (AppTypography), jamais une
+  // copie de ses valeurs.
+  final double titre =
+      style?.fontSize ??
+      textes.titleLarge?.fontSize ??
+      AppTypography.standard.titleLarge!.fontSize!;
+  final double sousTitre =
+      textes.bodyMedium?.fontSize ??
+      AppTypography.standard.bodyMedium!.fontSize!;
   final double facteur = MediaQuery.textScalerOf(context).scale(1);
   final double p = facteur * rapportMinimalTitreSousTitre * sousTitre / titre;
   if (p > facteur) return facteur;
@@ -591,7 +604,9 @@ class _CoinComplet extends StatelessWidget {
         else
           Pressable(
             onPress: menu,
-            libelleSemantique: t.salle.seance.compteDe(nom: compte.nom),
+            libelleSemantique: t.salle.seance.compteDe(
+              deNom: deDevant(compte.nom),
+            ),
             arrondiFocus: AppRadius.arrondiFull,
             child: identite,
           ),

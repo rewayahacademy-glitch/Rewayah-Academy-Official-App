@@ -636,7 +636,7 @@ void main() {
     final Finder declarerMonAbsence = find.byKey(
       const ValueKey<String>('absence-principale'),
     );
-    final Finder offre = find.text('Assurer ce remplacement ?');
+    final Finder offre = find.text('Assurer ce remplacement\u00A0?');
     final Finder assurer = find.byKey(
       const ValueKey<String>('remplacement-principale'),
     );

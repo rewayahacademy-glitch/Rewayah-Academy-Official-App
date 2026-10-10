@@ -296,8 +296,14 @@ class DockSeance extends StatelessWidget {
       // Chaque bouton tient une case de largeur egale, centree : l'ecart
       // entre les centres ne depend pas de la longueur des libelles.
       final bool aere = vue.dockColore;
-      final double caseAeree =
-          diametreBoutonAppel(context) + AppSpacing.titreEcran + AppSpacing.sm;
+      // ETATS-MA-1 : au-dela de 130 %, en Mode Accessibilite, la case tient
+      // aussi le mot d'etat d'une bascule sur deux lignes, sans le couper.
+      final double caseAeree = math.max(
+        diametreBoutonAppel(context) + AppSpacing.titreEcran + AppSpacing.sm,
+        commandesSurDeuxRangees(context)
+            ? largeurCaseBasculeAvecMot(context) + AppSpacing.sm
+            : 0,
+      );
       dock = DecoratedBox(
         key: const ValueKey<String>('dock-seance'),
         decoration: cadre,
@@ -373,6 +379,18 @@ class DockSeance extends StatelessWidget {
               // Annule le dock a libelles visibles de M1.
               final bool accessibilite =
                   AppMetriques.of(contexte).mode == InterfaceMode.enfant;
+              // ETATS-MA-1 (decision du 05/10/2026, WCAG 1.4.1) : au-dela
+              // de 130 %, une rangee unique n'a plus la place du mot d'etat ;
+              // les commandes passent sur deux rangees et les bascules
+              // gardent leur mot (« Micro ouvert », « Camera allumee »).
+              if (accessibilite &&
+                  commandesSurDeuxRangees(contexte) &&
+                  bascules.contains(true)) {
+                return CommandesSurDeuxRangees(
+                  commandes: boutons,
+                  diametre: AppTouchTarget.standard + AppSpacing.sm,
+                );
+              }
               if (!serre && !texteAgrandi && !accessibilite) return rangee;
               // EN-12 (17 d) : icone seule, libelle lu ; disque a la case
               // moins un ecart, jamais sous la cible tactile.

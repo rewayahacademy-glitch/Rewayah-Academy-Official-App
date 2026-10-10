@@ -85,6 +85,7 @@ class Seance {
     required this.enseignantPrenom,
     required this.enseignantIdentifiant,
     this.minutesInterruption = 0,
+    this.enseignantPays,
   });
 
   /// Lit une ligne de la vue.
@@ -106,6 +107,8 @@ class Seance {
     enseignantPrenom: json['teacher_first_name'] as String? ?? '',
     enseignantIdentifiant: json['teacher_immutable_id'] as String? ?? '',
     minutesInterruption: (json['prayer_pause_minutes'] as num?)?.toInt() ?? 0,
+    // ENS-PAYS-1 : lu des que `mes_seances_v` l'expose (BR-1), nul avant.
+    enseignantPays: json['teacher_country'] as String?,
   );
 
   /// Lit une ligne de la vue, ou rend `null` si elle est illisible.
@@ -165,6 +168,10 @@ class Seance {
 
   /// Minutes d'interruption consignees, prieres comprises (ADR-017).
   final int minutesInterruption;
+
+  /// Le pays declare par l'enseignant (ENS-PAYS-1). `null` quand il n'est
+  /// pas declare ou tant que la vue ne l'expose pas : rien ne s'affiche.
+  final String? enseignantPays;
 
   /// La duree prevue.
   Duration get duree => fin.difference(debut);
@@ -361,9 +368,18 @@ final FutureProviderFamily<List<Creneau>, String> disponibilitesProvider =
     );
 
 /// Les seances de l'appelant.
+///
+/// **Aucune retentative silencieuse** (DASH-ELV-ERR-b, revue DASH-ELV-ERR-R
+/// m1). Riverpod relance par defaut dix fois, de 200 ms a 6,4 s, toute erreur
+/// qui n'etend pas `Error` : une vraie panne (`SocketException`,
+/// `PostgrestException`) laissait l'accueil eleve sur son squelette pendant
+/// pres de 40 s avant de dire que les cours manquent. Le bouton « Reessayer »
+/// de l'ecran est la retentative explicite, comme pour
+/// `dossiersEnAttenteProvider` (`service_validation.dart`).
 final FutureProvider<List<Seance>> seancesProvider =
     FutureProvider<List<Seance>>(
       (Ref ref) => ref.watch(servicePlanningProvider).seances(),
+      retry: (int retryCount, Object error) => null,
     );
 
 /// Les affectations qui concernent l'appelant.

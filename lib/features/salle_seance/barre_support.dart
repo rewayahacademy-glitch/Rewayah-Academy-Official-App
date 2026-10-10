@@ -3,8 +3,12 @@
 // Eleve standard : « 1 / 12 » en lecture seule (aucune fleche) et le zoom
 // local, qui ne publie rien. La pagination active de l'enseignant vient en T4.
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart'
+    show largeurMotLePlusLong;
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -203,70 +207,182 @@ class ZoomLocal extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final ThemeData theme = Theme.of(context);
     final VoidCallback? agrandir = onAgrandir;
-    final NomsFocus noms = nomsFocus(context, agrandi: agrandi);
-    return Row(
-      key: const ValueKey<String>('zoom-local'),
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        if (avecLibelle) ...<Widget>[
-          Flexible(
-            // TB-12 : a texte x2 (1440), une ligne coupait la phrase
-            // (« sans effet sur les a… ») ; deux lignes tiennent sous la
-            // hauteur d'« Agrandir », la rangee ne grandit pas.
-            child: Text(
-              t.salle.seance.zoomLocal,
-              maxLines: 2,
-              textAlign: TextAlign.end,
-              overflow: TextOverflow.ellipsis,
-              style: palette.inkMuted.applyTo(
-                theme.textTheme.labelSmall ?? const TextStyle(),
-              ),
-            ),
+    final String valeur = t.salle.seance.zoomValeur(
+      valeur: (zoom * 100).round(),
+    );
+    final TextStyle styleValeur = palette.inkStrong.applyTo(
+      theme.textTheme.titleSmall ?? const TextStyle(),
+    );
+    final TextStyle styleLibelle = palette.inkMuted.applyTo(
+      theme.textTheme.labelSmall ?? const TextStyle(),
+    );
+    // ZOOM-LIB-1 (n1) : le libelle n'est jamais tronque. Il passe a la ligne
+    // entre ses mots (jamais d'ellipse) quand la place manque.
+    Widget libelle({TextAlign alignement = TextAlign.start}) => Text(
+      t.salle.seance.zoomLocal,
+      key: const ValueKey<String>('zoom-local-libelle'),
+      textAlign: alignement,
+      style: styleLibelle,
+    );
+    final Widget boite = DecoratedBox(
+      decoration: _cadre(palette),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          _IconeBarre(
+            icone: AppIcons.zoomMoins,
+            libelle: t.salle.seance.zoomMoins,
+            onPress: onMoins,
           ),
-          Ecart.hXl,
+          Text(valeur, style: styleValeur),
+          _IconeBarre(
+            icone: AppIcons.zoomPlus,
+            libelle: t.salle.seance.zoomPlus,
+            onPress: onPlus,
+          ),
         ],
-        DecoratedBox(
-          decoration: _cadre(palette),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              _IconeBarre(
-                icone: AppIcons.zoomMoins,
-                libelle: t.salle.seance.zoomMoins,
-                onPress: onMoins,
-              ),
-              Text(
-                t.salle.seance.zoomValeur(valeur: (zoom * 100).round()),
-                style: palette.inkStrong.applyTo(
-                  theme.textTheme.titleSmall ?? const TextStyle(),
-                ),
-              ),
-              _IconeBarre(
-                icone: AppIcons.zoomPlus,
-                libelle: t.salle.seance.zoomPlus,
-                onPress: onPlus,
-              ),
-            ],
-          ),
-        ),
-        if (agrandir != null) ...<Widget>[
-          Ecart.hMd,
-          // Meme bascule que dans le dock (ETATS-BTN-1) : un seul composant,
-          // donc le meme rendu a trois signaux (disque plein ou contour,
-          // icone reduire / agrandir, mot d'etat).
-          // Revue TB-R m1 : le nom du focus, le meme partout ([nomsFocus]).
-          CommandeSalle(
+      ),
+    );
+    // Revue TB-R m1 : le nom du focus, le meme partout ([nomsFocus]).
+    final NomsFocus noms = nomsFocus(context, agrandi: agrandi);
+    final String motAgrandir = noms.etat;
+    // Meme bascule que dans le dock (ETATS-BTN-1) : un seul composant, donc
+    // le meme rendu a trois signaux (disque plein ou contour, icone reduire
+    // / agrandir, mot d'etat).
+    final Widget? bascule = agrandir == null
+        ? null
+        : CommandeSalle(
             key: const ValueKey<String>('bouton-agrandir-barre'),
             icone: noms.icone.repos,
-            libelle: noms.etat,
+            libelle: motAgrandir,
             libelleSemantique: noms.semantique,
             bascule: agrandi,
             onPress: agrandir,
-          ),
-        ],
-      ],
+          );
+    if (!avecLibelle && bascule == null) {
+      return Row(
+        key: const ValueKey<String>('zoom-local'),
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[boite],
+      );
+    }
+    // DOCK-X2-1 et ZOOM-LIB-1 : le mot d'etat d'Agrandir et le libelle du
+    // zoom restent entiers (decision du 05/10), leur place est donc mesuree.
+    // Selon la largeur donnee, du plus large au plus etroit :
+    // 1. une rangee : libelle, zoom, Agrandir (rendu inchange quand il tient) ;
+    // 2. libelle et zoom, Agrandir dessous ;
+    // 3. le libelle seul sur sa ligne (deux lignes s'il le faut, coupees
+    //    entre les mots), puis zoom et Agrandir ;
+    // 4. le libelle, le zoom, puis Agrandir, chacun sur sa ligne.
+    return LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints contraintes) {
+        final double place = contraintes.maxWidth;
+        final double largeurLibelle = avecLibelle
+            ? _largeurTexte(contexte, t.salle.seance.zoomLocal, styleLibelle)
+            : 0;
+        final double largeurBoite =
+            2 * AppSpacing.titreEcran +
+            _largeurTexte(contexte, valeur, styleValeur);
+        final double largeurBascule = bascule == null
+            ? 0
+            : AppSpacing.md +
+                  largeurCaseBasculeAvecMot(
+                    contexte,
+                    libelle: motAgrandir,
+                    style: theme.textTheme.labelMedium,
+                  );
+        final double avantBoite = avecLibelle
+            ? largeurLibelle + AppSpacing.xl
+            : 0;
+        // TB-12 (jonction) : la rangee unique garde le libelle sur deux
+        // lignes entieres (jamais d'ellipse) plutot que de gagner une rangee
+        // a la barre : a texte x2 sur un grand ecran, la page garde sa part de
+        // la hauteur (TB-RC m5). Le libelle prend alors au moins la moitie de
+        // sa largeur, et jamais moins que son mot le plus long.
+        final double avantBoiteSurDeuxLignes = avecLibelle
+            ? math.max(
+                    largeurLibelle * 0.6,
+                    largeurMotLePlusLong(
+                      contexte,
+                      t.salle.seance.zoomLocal,
+                      styleLibelle,
+                      MediaQuery.textScalerOf(contexte),
+                    ),
+                  ) +
+                  AppSpacing.xl
+            : 0;
+        // Le libelle reste Flexible : si la mesure differe d'un pixel, il
+        // passe sur deux lignes au lieu de deborder, sans ellipse.
+        Widget rangee({required bool avecBascule}) => Row(
+          key: const ValueKey<String>('zoom-local'),
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            if (avecLibelle) ...<Widget>[
+              if (place.isFinite) Flexible(child: libelle()) else libelle(),
+              Ecart.hXl,
+            ],
+            boite,
+            if (avecBascule && bascule != null) ...<Widget>[Ecart.hMd, bascule],
+          ],
+        );
+        if (!place.isFinite ||
+            avantBoiteSurDeuxLignes + largeurBoite + largeurBascule <= place) {
+          return rangee(avecBascule: true);
+        }
+        if (bascule != null && avantBoite + largeurBoite <= place) {
+          return Column(
+            key: const ValueKey<String>('zoom-local'),
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            spacing: AppSpacing.sm,
+            children: <Widget>[
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Flexible(child: libelle()),
+                  Ecart.hXl,
+                  boite,
+                ],
+              ),
+              bascule,
+            ],
+          );
+        }
+        final bool commandesEnRangee = largeurBoite + largeurBascule <= place;
+        return Column(
+          key: const ValueKey<String>('zoom-local'),
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          spacing: AppSpacing.sm,
+          children: <Widget>[
+            if (avecLibelle) libelle(alignement: TextAlign.end),
+            if (commandesEnRangee || bascule == null)
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  boite,
+                  if (bascule != null) ...<Widget>[Ecart.hMd, bascule],
+                ],
+              )
+            else ...<Widget>[boite, bascule],
+          ],
+        );
+      },
     );
   }
+}
+
+/// La largeur d'un texte d'une ligne, au [style] et a l'echelle courants.
+double _largeurTexte(BuildContext context, String texte, TextStyle style) {
+  final TextPainter peintre = TextPainter(
+    text: TextSpan(text: texte, style: style),
+    textDirection: Directionality.of(context),
+    textScaler: MediaQuery.textScalerOf(context),
+    maxLines: 1,
+  )..layout();
+  final double largeur = peintre.width;
+  peintre.dispose();
+  return largeur;
 }
 
 class _IconeBarre extends StatelessWidget {

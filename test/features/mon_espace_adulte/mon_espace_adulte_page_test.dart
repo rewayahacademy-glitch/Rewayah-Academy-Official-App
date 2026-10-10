@@ -43,6 +43,9 @@ import 'package:rewayah_academy/features/foyer/place_adulte.dart';
 import 'package:rewayah_academy/features/ma_classe_adulte/ma_classe_adulte_page.dart';
 import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
+import '../../support/harnais.dart' show sansPersonneConnectee;
+import '../../support/hors_ligne_une_fois.dart';
+
 void main() {
   Widget app({
     required Widget child,
@@ -51,6 +54,8 @@ void main() {
   }) => ProviderScope(
     overrides: <Override>[
       horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(horsLigne)),
+      // La source de session, comme l'application la pose toujours (R7-04).
+      sansPersonneConnectee(),
       ...overrides,
     ],
     child: TranslationProvider(
@@ -72,6 +77,9 @@ void main() {
     addTearDown(routeur.dispose);
     await tester.pumpWidget(
       ProviderScope(
+        // La source de session, comme l'application la pose toujours :
+        // les lectures d'argent suivent la personne connectee (R7-04).
+        overrides: <Override>[sansPersonneConnectee()],
         child: TranslationProvider(
           child: MaterialApp.router(
             theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
@@ -750,7 +758,8 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.byKey(MonEspaceAdultePage.horsLigneKey), findsOneWidget);
-    expect(find.text(t.commun.etats.horsLigne.titre), findsOneWidget);
+    // EA-HL-DOUBLE-1 : le bandeau dit le reseau, le bloc dit ce qui manque.
+    expectSansDonnees(t.adulte.monEspace.sansDonneesCompte);
     expect(find.text(t.commun.etats.echecServeur.titre), findsNothing);
     final Finder reessayer = find.text(t.commun.reessayer);
     expect(reessayer, findsOneWidget);
@@ -785,6 +794,7 @@ void main() {
       findsOneWidget,
     );
     expect(find.text(t.commun.reessayer), findsOneWidget);
+    expectSansDonnees(t.adulte.monEspace.sansDonneesFamille);
   });
 
   testWidgets('hors ligne, ligne deja lue : elle reste', (
@@ -807,6 +817,65 @@ void main() {
     await tester.pumpAndSettle();
     expect(dansFamille(t.adulte.famille.maFamille), findsOneWidget);
     expect(find.text(t.commun.etats.horsLigne.titre), findsNothing);
+  });
+
+  // Revue EA-HL-DOUBLE-1 (m1) : une relecture qui ECHOUE hors ligne apres
+  // une premiere lecture reussie garde ce qui etait lu, sans bloc ni echec.
+  testWidgets('hors ligne, identite et famille deja lues puis relues en '
+      'echec : elles restent, le bandeau seul le dit', (
+    WidgetTester tester,
+  ) async {
+    int identites = 0;
+    int familles = 0;
+    await tester.pumpWidget(
+      app(
+        horsLigne: true,
+        overrides: <Override>[
+          identiteTitulaireProvider.overrideWith((Ref _) {
+            identites++;
+            return identites == 1
+                ? Future<IdentiteTitulaire>.value(
+                    DonneesAdulteDemo.identite(
+                      GenreTitulaireDemo.homme,
+                      VueDemoAdulte.titulaire,
+                    ),
+                  )
+                : Future<IdentiteTitulaire>.error(StateError('reseau'));
+          }),
+          monEspaceAdulteProvider.overrideWith((Ref _) {
+            familles++;
+            return familles == 1
+                ? Future<MonEspaceAdulteVM>.value(
+                    const MonEspaceAdulteVM(
+                      ligneFamille: LigneFamilleAdulte.maFamille,
+                    ),
+                  )
+                : Future<MonEspaceAdulteVM>.error(StateError('reseau'));
+          }),
+        ],
+        child: const MonEspaceAdultePage(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final ProviderContainer conteneur =
+        ProviderScope.containerOf(
+            tester.element(find.byType(MonEspaceAdultePage)),
+          )
+          ..invalidate(identiteTitulaireProvider)
+          ..invalidate(monEspaceAdulteProvider);
+    await tester.pumpAndSettle();
+    final AsyncValue<IdentiteTitulaire> identite = conteneur.read(
+      identiteTitulaireProvider,
+    );
+    final AsyncValue<MonEspaceAdulteVM> famille = conteneur.read(
+      monEspaceAdulteProvider,
+    );
+    expect(identite.hasError && identite.hasValue, isTrue);
+    expect(famille.hasError && famille.hasValue, isTrue);
+    expect(find.text('Mamadou Diallo'), findsOneWidget);
+    expect(dansFamille(t.adulte.famille.maFamille), findsOneWidget);
+    expect(find.byKey(MonEspaceAdultePage.horsLigneKey), findsNothing);
+    expectAvecDonnees();
   });
 
   testWidgets('legendes honnetes : les rubriques sans source disent « Non '

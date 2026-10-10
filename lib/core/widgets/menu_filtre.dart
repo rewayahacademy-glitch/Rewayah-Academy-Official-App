@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../icons/app_icons.dart';
+import '../theme/app_elevation.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
+import 'avatar_nom.dart';
 
 /// Une valeur proposee par un [MenuFiltre].
 @immutable
@@ -14,6 +17,8 @@ class EntreeFiltre<T> {
     required this.valeur,
     required this.libelle,
     this.compteur,
+    this.avatar,
+    this.enveloppeAvatar,
   });
 
   /// La valeur retenue. **Nulle pour l'entree « tous »**, qui relache le
@@ -26,6 +31,15 @@ class EntreeFiltre<T> {
   /// Combien d'elements portent cette valeur. Rendu a cote du libelle : c'est
   /// lui qui dit ou regarder.
   final int? compteur;
+
+  /// Le portrait de la personne, quand l'axe filtre des personnes (« par
+  /// personne », guide Finance V4 §3.4) : un cercle de `AppAvatar.petit`,
+  /// pose avec le libelle par `AvatarNom`, jamais recompose. `null` : le
+  /// libelle seul.
+  final Widget? avatar;
+
+  /// L'habit du cercle (le bandeau de couleur du profil, `BandeauProfil`).
+  final Widget Function(Widget avatar)? enveloppeAvatar;
 }
 
 /// Un axe de filtre **ouvert**, rendu en menu et non en pastilles.
@@ -97,9 +111,50 @@ class MenuFiltre<T> extends StatelessWidget {
         ? retenue.libelle
         : libelle;
 
+    // Le selecteur de section mesure sa largeur pour y caler sa liste ; un
+    // filtre n'en a pas besoin (et reste mesurable par un parent
+    // `IntrinsicWidth`, qu'un `LayoutBuilder` ne sait pas renseigner).
+    if (!selecteurDeSection) {
+      return _bouton(context, palette, textes, actif, texte, null);
+    }
+    return LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints contraintes) =>
+          _bouton(contexte, palette, textes, actif, texte, contraintes),
+    );
+  }
+
+  Widget _bouton(
+    BuildContext context,
+    AppPalette palette,
+    TextTheme textes,
+    bool actif,
+    String texte,
+    BoxConstraints? contraintes,
+  ) {
+    // ONGLETS-COUPE-1 : le selecteur de section ouvre une liste de la largeur
+    // de son declencheur, alignee sur lui ; un filtre garde la largeur
+    // naturelle de Material.
+    final double? largeurListe =
+        contraintes != null && contraintes.maxWidth.isFinite
+        ? contraintes.maxWidth
+        : null;
     return PopupMenuButton<_Choix<T>>(
       tooltip: libelle,
       position: PopupMenuPosition.under,
+      constraints: largeurListe == null
+          ? null
+          : BoxConstraints.tightFor(width: largeurListe),
+      // ONGLETS-COUPE-1 : l'elevation de Material est remplacee par le filet
+      // et l'ombre des jetons (niveau 2 en clair, aucune en sombre, comme une
+      // boite de dialogue). L'ombre Material, noire, se dessinait en sombre
+      // et, sous `flutter test`, en un trait noir de 6 px qui debordait de
+      // 3 px a gauche du declencheur.
+      elevation: 0,
+      shape: _FiletEtOmbre(
+        filet: palette.borderHairline.asBorderSide(),
+        ombres: AppElevation.dialogue(palette),
+        arrondi: AppRadius.arrondiSm,
+      ),
       onSelected: (_Choix<T> choix) => onChoix(choix.valeur),
       itemBuilder: (BuildContext _) => <PopupMenuEntry<_Choix<T>>>[
         for (final EntreeFiltre<T> entree in entrees)
@@ -109,7 +164,19 @@ class MenuFiltre<T> extends StatelessWidget {
             value: _Choix<T>(entree.valeur),
             child: Row(
               children: <Widget>[
-                Expanded(child: Text(entree.libelle)),
+                Expanded(
+                  // Jamais coupe dans un mot (« Fonctionnalite / s » a 320 px,
+                  // texte x2) : il passe a la ligne entre les mots, et un mot
+                  // trop long se reduit (ONGLETS-COUPE-1).
+                  child: entree.avatar == null
+                      ? TexteSansCoupure(entree.libelle)
+                      : AvatarNom.enLigne(
+                          prenom: entree.libelle,
+                          diametre: AppAvatar.petit,
+                          avatar: entree.avatar,
+                          enveloppeAvatar: entree.enveloppeAvatar,
+                        ),
+                ),
                 if (selecteurDeSection && entree.valeur == valeur) ...<Widget>[
                   Ecart.hMd,
                   Icon(
@@ -176,19 +243,24 @@ class MenuFiltre<T> extends StatelessWidget {
                   : MainAxisAlignment.center,
               children: <Widget>[
                 Flexible(
-                  child: Text(
-                    texte,
-                    textAlign: selecteurDeSection
-                        ? TextAlign.start
-                        : TextAlign.center,
-                    // Un nom de section n'est jamais tronque : il passe a la
-                    // ligne (texte agrandi, 320 px).
-                    overflow: selecteurDeSection
-                        ? TextOverflow.visible
-                        : TextOverflow.ellipsis,
-                    style: (actif ? palette.inkAccent : palette.inkStrong)
-                        .applyTo(textes.labelLarge ?? const TextStyle()),
-                  ),
+                  // Un nom de section n'est jamais tronque ni coupe dans un
+                  // mot : il passe a la ligne entre les mots, un mot trop
+                  // long se reduit (COUPE-MOTS-1 ; « Rapprochement » a
+                  // 320 px, texte x2, CPT-FUS).
+                  child: selecteurDeSection
+                      ? TexteSansCoupure(
+                          texte,
+                          textAlign: TextAlign.start,
+                          style: (actif ? palette.inkAccent : palette.inkStrong)
+                              .applyTo(textes.labelLarge ?? const TextStyle()),
+                        )
+                      : Text(
+                          texte,
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
+                          style: (actif ? palette.inkAccent : palette.inkStrong)
+                              .applyTo(textes.labelLarge ?? const TextStyle()),
+                        ),
                 ),
                 Ecart.hXs,
                 Icon(
@@ -219,4 +291,86 @@ class _Choix<T> {
   const _Choix(this.valeur);
 
   final T? valeur;
+}
+
+/// Le contour de la liste d'un [MenuFiltre] : un filet et les ombres des
+/// jetons ([AppElevation]), a la place de l'elevation de Material.
+///
+/// Les ombres sont peintes **hors** de la forme (la liste reste nette), puis
+/// le filet par-dessus le bord. « Une surface elevee porte un filet ET une
+/// ombre » ([AppElevation]) ; en sombre, la liste se detache par sa surface et
+/// son filet ([AppElevation.dialogue]).
+class _FiletEtOmbre extends ShapeBorder {
+  const _FiletEtOmbre({
+    required this.filet,
+    required this.ombres,
+    required this.arrondi,
+  });
+
+  final BorderSide filet;
+  final List<BoxShadow> ombres;
+  final BorderRadius arrondi;
+
+  RRect _forme(Rect rect, TextDirection? sens) =>
+      arrondi.resolve(sens).toRRect(rect);
+
+  @override
+  EdgeInsetsGeometry get dimensions => EdgeInsets.all(filet.strokeInset);
+
+  @override
+  Path getInnerPath(Rect rect, {TextDirection? textDirection}) =>
+      Path()..addRRect(_forme(rect, textDirection).deflate(filet.strokeInset));
+
+  @override
+  Path getOuterPath(Rect rect, {TextDirection? textDirection}) =>
+      Path()..addRRect(_forme(rect, textDirection));
+
+  @override
+  void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) {
+    final RRect forme = _forme(rect, textDirection);
+    if (ombres.isNotEmpty) {
+      canvas
+        ..save()
+        ..clipPath(
+          Path.combine(
+            PathOperation.difference,
+            Path()..addRect(rect.inflate(rect.shortestSide + rect.longestSide)),
+            Path()..addRRect(forme),
+          ),
+        );
+      for (final BoxShadow ombre in ombres) {
+        canvas.drawRRect(
+          forme.shift(ombre.offset).inflate(ombre.spreadRadius),
+          ombre.toPaint(),
+        );
+      }
+      canvas.restore();
+    }
+    canvas.drawRRect(forme.deflate(filet.strokeInset), filet.toPaint());
+  }
+
+  @override
+  ShapeBorder scale(double t) => _FiletEtOmbre(
+    filet: filet.scale(t),
+    ombres: <BoxShadow>[for (final BoxShadow o in ombres) o.scale(t)],
+    arrondi: arrondi * t,
+  );
+
+  @override
+  bool operator ==(Object other) =>
+      other is _FiletEtOmbre &&
+      other.filet == filet &&
+      other.arrondi == arrondi &&
+      _memesOmbres(other.ombres, ombres);
+
+  @override
+  int get hashCode => Object.hash(filet, arrondi, Object.hashAll(ombres));
+}
+
+bool _memesOmbres(List<BoxShadow> a, List<BoxShadow> b) {
+  if (a.length != b.length) return false;
+  for (int i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
 }

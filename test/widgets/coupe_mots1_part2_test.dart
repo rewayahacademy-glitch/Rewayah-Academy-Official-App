@@ -113,7 +113,7 @@ void main() {
                   lignes: <LigneRubrique>[
                     LigneRubrique(
                       icone: AppIcons.cours,
-                      libelle: 'Assurer ce remplacement ?',
+                      libelle: 'Assurer ce remplacement\u00A0?',
                       legende: 'Al-Fatiha · mardi 29 septembre · 17:00',
                       onPress: () {},
                     ),

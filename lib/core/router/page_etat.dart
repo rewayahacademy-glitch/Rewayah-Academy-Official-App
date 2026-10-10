@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 import '../i18n/strings.g.dart';
+import '../icons/app_icons.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/etat_systeme.dart';
 import '../widgets/page_shell.dart';
@@ -31,6 +32,7 @@ class PageEtat extends StatelessWidget {
     this.libelleSecondaire,
     this.onSecondaire,
     this.dependance,
+    this.icone,
   });
 
   /// La nature de l'etat.
@@ -61,6 +63,10 @@ class PageEtat extends StatelessWidget {
   /// affiche.
   final String? dependance;
 
+  /// L'icone, si elle doit differer de celle de la nature (EA-HL-DOUBLE-1 :
+  /// hors ligne, le « wifi barre » est celui du bandeau de [PageShell]).
+  final AppIcon? icone;
+
   @override
   Widget build(BuildContext context) {
     return PageShell(
@@ -77,6 +83,7 @@ class PageEtat extends StatelessWidget {
           libelleSecondaire: libelleSecondaire,
           onSecondaire: onSecondaire,
           dependance: dependance,
+          icone: icone,
         ),
       ),
     );

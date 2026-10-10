@@ -621,8 +621,15 @@ void main() {
     for (final EleveProjectionDemo e in DonneesClasseDemo.eleves) {
       expect(unMot(e.prenom), isTrue, reason: e.prenom);
     }
+    // La liste de l'observation : le prenom et l'initiale du nom (decision
+    // C7 = a), jamais le nom entier.
     for (final EleveRoster e in rosterDemoControleur()) {
       expect(unMot(e.prenom), isTrue, reason: e.prenom);
+      expect(
+        RegExp(r'^\S+ \S\.$').hasMatch(e.nomAffiche),
+        isTrue,
+        reason: e.nomAffiche,
+      );
     }
     // Dans la salle, chaque eleve porte son prenom seul.
     for (final ParticipantSalle p in participantsControleurDemo()) {
@@ -667,8 +674,8 @@ void main() {
       addTearDown(c.dispose);
       // Aucune mission, aucun fait, aucun eleve : rien de la demonstration.
       expect(await c.read(missionControleProvider.future), isNull);
-      expect(await c.read(faitsVisiteProvider.future), isNull);
-      expect(await c.read(rosterControleProvider.future), isEmpty);
+      expect(await c.read(faitsVisiteProvider('seance-A').future), isNull);
+      expect(await c.read(rosterControleProvider('seance-A').future), isEmpty);
       // Les ports d'envoi et d'echanges ne sont pas ceux de la
       // demonstration, et ne repondent pas sans serveur.
       expect(

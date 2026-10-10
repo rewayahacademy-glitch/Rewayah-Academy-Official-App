@@ -9,6 +9,10 @@ import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/app_card.dart';
+import 'package:rewayah_academy/core/widgets/marque_page.dart';
 import 'package:rewayah_academy/features/dossier/attente_page.dart';
 import 'package:rewayah_academy/features/dossier/signature_page.dart';
 import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart';
@@ -51,6 +55,72 @@ EtatDossier _etat({
 );
 
 void main() {
+  // AD-NETTOYAGE-2 (m6, m7, m8, m11).
+  group('mise en page du portail d attente', () {
+    testWidgets('une seule tete : le titre de la page, pas le mot-marque', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceDossier dossier = FauxServiceDossier()
+        ..etatRendu = _etat(
+          accuse: true,
+          contrat: true,
+          piece: true,
+          statutPiece: StatutPiece.enAttente,
+        );
+      await _monter(tester, dossier);
+      expect(find.byType(MarquePage), findsNothing);
+      expect(find.text(t.attente.titreDossier), findsOneWidget);
+    });
+
+    testWidgets('1440 : la colonne est bornee a 760 et Actualiser tient au '
+        'bord de fin', (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(1440, 900);
+      addTearDown(tester.view.reset);
+      final FauxServiceDossier dossier = FauxServiceDossier()
+        ..etatRendu = _etat(
+          accuse: true,
+          contrat: true,
+          piece: true,
+          statutPiece: StatutPiece.enAttente,
+        );
+      await _monter(tester, dossier);
+      final Rect carte = tester.getRect(find.byType(AppCard));
+      expect(carte.width, lessThanOrEqualTo(AppPage.largeurReglages));
+      final Rect actualiser = tester.getRect(
+        find.widgetWithText(ActionPrincipale, t.attente.actualiser),
+      );
+      // Au bord de fin de la colonne, pas au centre : le bouton est a droite
+      // de la moitie de la carte, et aligne sur son bord de fin.
+      expect(actualiser.right, closeTo(carte.right, 1));
+      expect(actualiser.width, lessThan(carte.width - 4 * AppSpacing.lg));
+    });
+
+    testWidgets('refus : l element a reprendre, en minuscule apres la '
+        'ponctuation, et le motif en encre normale', (
+      WidgetTester tester,
+    ) async {
+      const String motif = 'Photo illisible, merci de la reprendre.';
+      final FauxServiceDossier dossier = FauxServiceDossier()
+        ..etatRendu = _etat(
+          accuse: true,
+          contrat: true,
+          piece: true,
+          statutPiece: StatutPiece.refusee,
+          motif: motif,
+        );
+      await _monter(tester, dossier);
+      expect(
+        t.attente.refuseDetail(element: t.attente.pieceIdentite),
+        startsWith('Élément à reprendre'),
+      );
+      final Text texteMotif = tester.widget<Text>(find.text(motif));
+      final Text titre = tester.widget<Text>(find.text(t.attente.refuse));
+      // Le motif n'est plus plus visible que le titre « Dossier refusé ».
+      expect(texteMotif.style!.fontSize!, lessThan(titre.style!.fontSize!));
+    });
+  });
+
   group('Scenario 10 : le portail d attente affiche le bon etat', () {
     testWidgets('dossier incomplet : la liste de ce qui manque, dans l ordre', (
       WidgetTester tester,

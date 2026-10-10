@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/domain/enums.dart';
 import '../../core/dossier/selecteur_fichier.dart';
 import '../../core/dossier/service_dossier.dart';
@@ -156,14 +157,17 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                Text(t.kyc.titre, style: textes.headlineSmall),
+                TexteSansCoupure(t.kyc.titre, style: textes.headlineSmall),
                 Ecart.vMd,
-                Text(t.kyc.intro, style: textes.bodyMedium),
+                TexteSansCoupure(t.kyc.intro, style: textes.bodyMedium),
                 // KYC-PHOTO-1 : jamais publique, la direction seule.
                 Ecart.vSm,
-                Text(t.kyc.confidentialite, style: textes.bodyMedium),
+                TexteSansCoupure(
+                  t.kyc.confidentialite,
+                  style: textes.bodyMedium,
+                ),
                 Ecart.vXxl,
-                Text(t.kyc.typeQuestion, style: textes.titleMedium),
+                TexteSansCoupure(t.kyc.typeQuestion, style: textes.titleMedium),
                 Ecart.vMd,
                 ChoiceCardGroup(
                   options: <OptionChoix>[
@@ -179,16 +183,21 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
                       valeur: TypePiece.titreSejour.valeurSql,
                       libelle: t.kyc.titreSejour,
                     ),
+                    // `other` existe en base : « Autre » est un type choisi
+                    // comme les trois autres. La carte « Autre » generique
+                    // ouvrait un champ libre dont le contenu n'etait jamais lu
+                    // (FORM-L11) : elle est retiree, la saisie ne servait a rien.
+                    OptionChoix(
+                      valeur: TypePiece.autre.valeurSql,
+                      libelle: t.kyc.autrePiece,
+                    ),
                   ],
+                  autoriserSaisieLibre: false,
                   onChange: (ReponseChoix reponse) => setState(() {
                     final String? valeur = reponse.valeurs.isEmpty
                         ? null
                         : reponse.valeurs.first;
-                    // La carte « Autre » a bien une valeur ici, contrairement
-                    // a la question du role : `other` existe en base.
-                    _type = valeur == ChoiceCardGroup.valeurAutre
-                        ? TypePiece.autre
-                        : TypePiece.depuisSql(valeur);
+                    _type = TypePiece.depuisSql(valeur);
                     _piece = null;
                   }),
                 ),

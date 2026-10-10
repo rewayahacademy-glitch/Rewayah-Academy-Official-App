@@ -178,7 +178,7 @@ void main() {
       'Yusuf',
     );
     await tester.enterText(find.byKey(FormulaireProfilEleve.nomKey), 'Diallo');
-    await tester.enterText(find.byKey(FormulaireProfilEleve.ageKey), '8');
+    await taper(tester, find.byKey(FormulaireProfilEleve.ageChoixKey(8)));
     await tester.pumpAndSettle();
     await taper(tester, find.byKey(FormulaireProfilEleve.actionKey));
 

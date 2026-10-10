@@ -30,30 +30,54 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/capacites/port_accents_profils.dart';
+import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/capacites/port_recharge_foyer.dart';
+import '../../core/finance/finances_profil.dart';
+import '../../core/finance/format_montant.dart';
+import '../../core/finance/montant.dart';
+import '../../core/finance/politique_commerciale.dart';
+import '../../core/finance/suivi_paiement.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/theme/accent_profil.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_typography.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/avatar_tile.dart';
+import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
-import '../../core/widgets/choice_card_group.dart';
+import '../../core/widgets/bouton_icone.dart';
+import '../../core/widgets/carte_groupee.dart';
+import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/ecran_resultat.dart';
 import '../../core/widgets/etat_systeme.dart';
-import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/identite_profil.dart' show BandeauProfil;
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/ligne_allocation.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
+import '../../core/widgets/ligne_moyen_paiement.dart';
+import '../../core/widgets/montant_argent.dart';
 import '../../core/widgets/page_etape.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
-import '../compte/donnees_compte.dart' show dateLongue;
+import '../../core/widgets/zone_saisie.dart' show ZoneSaisie;
+import '../acces_finance/acces_finance.dart'
+    show aRegulariser, messageRegularisation;
+import '../compte/donnees_compte.dart'
+    show dateLongue, identiteTitulaireProvider;
+import 'finances_foyer.dart'
+    show financesFoyerProvider, politiqueActiveProvider;
 import 'ligne_membre.dart' show dateEcheance;
 import 'photo_eleve.dart';
 import 'place_adulte.dart';
@@ -61,18 +85,16 @@ import 'place_adulte.dart';
 // Le cote du second adulte (EA-7) partage les briques privees de cette page
 // (titre, note, actions, colonne, focus a l'apparition) : rien de recree.
 part 'acceptation_invitation.dart';
-
-// La sortie et le delai (EA-8) aussi.
-part 'sortie_forfait.dart';
-
-// La recharge du foyer (EA-10) aussi.
-part 'recharge_foyer.dart';
-
-// La reprise du foyer (EA-11) aussi.
-part 'reprise_foyer.dart';
-
 // « Ajouter ma famille » (EA-PL parcours) aussi.
 part 'ajouter_ma_famille.dart';
+// La recharge du foyer (EA-10) aussi.
+part 'recharge_foyer.dart';
+// La reprise du foyer (EA-11) aussi.
+part 'reprise_foyer.dart';
+// Et son resultat, les huit etats du paiement (FI-8).
+part 'resultat_recharge.dart';
+// La sortie et le delai (EA-8) aussi.
+part 'sortie_forfait.dart';
 
 /// Ce que le titulaire envoie : le prenom et l'adresse (obligatoires), le nom
 /// (facultatif, Q7), et une cle d'idempotence tiree une fois par saisie, que
@@ -258,6 +280,8 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
   bool _verification = false;
   bool _montrerErreurs = false;
   bool _courrielQuitte = false;
+  bool _nomModifie = false;
+  bool _nomPrerempli = false;
   bool _envoi = false;
   bool _partie = false;
   _Echec? _echec;
@@ -265,6 +289,19 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
   @override
   void initState() {
     super.initState();
+    // Le nom de famille du titulaire est propose (modifiable) : un foyer partage
+    // le plus souvent le meme. Compte illisible : le champ reste vide.
+    ref.listenManual<AsyncValue<IdentiteTitulaire>>(identiteTitulaireProvider, (
+      AsyncValue<IdentiteTitulaire>? _,
+      AsyncValue<IdentiteTitulaire> suivant,
+    ) {
+      final String nom = suivant.value?.nom.trim() ?? '';
+      if (nom.isEmpty || _nomModifie || _nom.text.isNotEmpty) return;
+      setState(() {
+        _nom.text = nom;
+        _nomPrerempli = true;
+      });
+    }, fireImmediately: true);
     // L'erreur de format se dit a la sortie du champ, pas a chaque lettre.
     _focusCourriel.addListener(() {
       if (!_focusCourriel.hasFocus && _courriel.text.trim().isNotEmpty) {
@@ -435,20 +472,26 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
           decoration: InputDecoration(
             labelText: t.adulte.invitation.prenom,
             errorText: _erreurPrenom,
-            errorMaxLines: 3,
+            errorMaxLines: ZoneSaisie.lignesAideMax,
           ),
         ),
         Ecart.vMd,
         TextField(
           key: InviterConjointPage.nomKey,
           controller: _nom,
-          onChanged: _modifie,
+          onChanged: (String valeur) {
+            _nomModifie = true;
+            _modifie(valeur);
+          },
           textCapitalization: TextCapitalization.words,
           textInputAction: TextInputAction.next,
           // « Facultatif. » : libelle provisoire, lexique D4 (Q7).
           decoration: InputDecoration(
             labelText: t.adulte.invitation.nom,
-            helperText: t.adulte.invitation.nomAide,
+            helperText: _nomPrerempli
+                ? t.adulte.invitation.nomAidePrerempli
+                : t.adulte.invitation.nomAide,
+            helperMaxLines: ZoneSaisie.lignesAideMax,
           ),
         ),
         Ecart.vMd,
@@ -468,9 +511,9 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
             helperText: f
                 ? t.adulte.invitation.courrielAideElle
                 : t.adulte.invitation.courrielAideLui,
-            helperMaxLines: 3,
+            helperMaxLines: ZoneSaisie.lignesAideMax,
             errorText: _erreurCourriel,
-            errorMaxLines: 3,
+            errorMaxLines: ZoneSaisie.lignesAideMax,
           ),
         ),
         Ecart.vLg,
@@ -620,7 +663,7 @@ class _InvitationEnvoyeePageState extends ConsumerState<InvitationEnvoyeePage> {
       context,
       question: prenom == null
           ? t.adulte.invitation.annulerQuestionSansPrenom
-          : t.adulte.invitation.annulerQuestion(prenom: prenom),
+          : t.adulte.invitation.annulerQuestion(dePrenom: deDevant(prenom)),
       consequence: t.adulte.invitation.annulerConsequence,
       libelleConfirmer: t.adulte.invitation.annuler,
       libelleAnnuler: t.adulte.invitation.garder,

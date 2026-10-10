@@ -53,10 +53,26 @@ const Map<String, String> _donneesDeDemonstration = <String, String>{
   'enseignant.journee.classeNommee':
       '« Classe {classe} » : le nom de la classe, « Classe An-Nour »',
   'tc.parcours.plage.pages': '« Pages 24 à 26 » : le programme de la seance',
+  'salle.seance.fiche.seancesSemaine(param=nombre).other':
+      '« 3 séances cette semaine » : la fiche de Mariam (ar_donnees_isolees)',
   'salle.seance.fiche.seancesSemaine':
       '« 3 séances cette semaine » : la fiche de Mariam (ar_donnees_isolees)',
   'enseignant.eleve.titre': '« Fiche de mémorisation » : titre d\'un support',
   'nav.motSymbole': '« Rewayah » : la marque',
+  'enseignant.revenus.classe':
+      '« Classe An-Nour » : le nom de la classe de la demonstration',
+  'admin.groupes.detailTitre':
+      '« Classe An-Nour » : le nom de la classe de la demonstration',
+  'admin.finance.vue.alerte.quiClasse':
+      '« Classe An-Nour » : le nom de la classe de la demonstration',
+  'identiteProfil.classe':
+      '« Classe An-Nour » : le nom de la classe de la demonstration',
+  'com.annonces.demo.classeNour':
+      '« Classe An-Nour » : le nom de la classe de la demonstration',
+  'com.studio.demo.f.mariam':
+      '« Mariam » : le prénom d\'une élève de la démonstration',
+  'com.messages.demo.f.yusuf':
+      '« Yusuf » : le prénom d\'un élève de la démonstration',
 };
 
 /// Chaque libelle francais de l'interface (tous domaines) que l'arabe ne

@@ -244,6 +244,7 @@ class EcritureSeance extends ConsumerWidget {
             aide: t.salle.seance.ecriture.couleurAide,
             // Une pilule par couleur (pastille et intention) : elles passent
             // a la ligne plutot que de couper les mots.
+            // Choix de formulaire, pas un filtre : la couleur du trait a poser.
             choix: Wrap(
               key: cleCouleur,
               spacing: AppSpacing.sm,

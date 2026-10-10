@@ -27,6 +27,8 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
+import 'package:rewayah_academy/core/widgets/zone_saisie.dart';
 import 'package:rewayah_academy/features/admin_dossiers/visionneuse_piece.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
@@ -48,8 +50,11 @@ Future<void> _monter(
   WidgetTester tester,
   ThemeMode mode,
   List<Override> surcharges,
-  String depart,
-) async {
+  String depart, {
+  // AD-NETTOYAGE-2 (n5) : le repere « Demonstration » est pose par l'hote de
+  // capture ; l'ecran 16 (production avant BR-1) se capture sans lui.
+  bool repere = true,
+}) async {
   await tester.pumpWidget(
     ProviderScope(
       key: UniqueKey(),
@@ -72,8 +77,10 @@ Future<void> _monter(
                 supportedLocales: AppLocaleUtils.supportedLocales,
                 localizationsDelegates: GlobalMaterialLocalizations.delegates,
                 routerConfig: _routeur,
-                builder: (BuildContext context, Widget? child) =>
-                    RepereDemonstration(child: child),
+                builder: repere
+                    ? (BuildContext context, Widget? child) =>
+                          RepereDemonstration(child: child)
+                    : null,
               );
             },
           ),
@@ -146,11 +153,26 @@ Future<void> _cocherTout(WidgetTester tester) async {
 }
 
 Finder get _champMotif => find
-    .ancestor(
-      of: find.text(t.dossiers.refus.champ),
+    .descendant(
+      of: find.ancestor(
+        of: find.text(t.dossiers.refus.champ),
+        matching: find.byType(ZoneSaisie),
+      ),
       matching: find.byType(TextField),
     )
     .first;
+
+/// FORM-L1 : le motif libre s'ecrit apres « Autre », derniere puce ; le
+/// champ doit alors exister et recevoir le texte (jamais un `enterText` dans
+/// le vide).
+Future<void> _saisirMotif(WidgetTester tester, String texte) async {
+  await tester.ensureVisible(find.byKey(SelecteurMotif.cleAutre));
+  await _stabiliser(tester);
+  await tester.tap(find.byKey(SelecteurMotif.cleAutre));
+  await _stabiliser(tester);
+  expect(_champMotif, findsOneWidget);
+  await tester.enterText(_champMotif, texte);
+}
 
 const List<(Size, String)> _tailles = <(Size, String)>[
   (Size(390, 844), 'telephone'),
@@ -203,18 +225,37 @@ void main() {
           // 2. Fiche du dossier (revue nominale, Omar).
           await tester.tap(_ligne('Omar'));
           await _stabiliser(tester);
-          // Cadrage propre : defilee jusqu'a l'emplacement de decision (la
-          // capture a l'ouverture etait identique a « coque et file »).
-          await tester.ensureVisible(find.text(t.dossiers.refuser).first);
-          await _stabiliser(tester);
+          // K-61.1 : la fiche est prise a l'ouverture (haut de la fiche, la
+          // carte Verifications hors ecran sur telephone), pas defilee
+          // jusqu'a la decision : c'est l'etat « avant » du lien de l'ecran 3.
           debugPrint('PNG ${await capturer(tester, fichier('fiche_dossier'))}');
 
-          // 3. Verifications incompletes.
+          // 3. Verifications incompletes : ce que fait le lien. La capture 2
+          //    (AD-NETTOYAGE-2, AD-M2-CAPT) montre deja l'emplacement de
+          //    decision ; le lien ne deplace que le focus sur la premiere case
+          //    manquante (et defile jusqu'a elle si elle est hors ecran). Un
+          //    tap passe en mode de focus « tactile », qui cache l'anneau :
+          //    l'effet du lien resterait invisible et l'image identique a la
+          //    fiche. On capture donc en mode de focus « clavier » (anneau
+          //    visible), comme pour un lecteur qui active le lien au clavier.
           const String lien = 'Terminez les vérifications requises.';
           await tester.ensureVisible(find.text(lien));
           await _stabiliser(tester);
+          // Le lien est a l'ecran, la carte Verifications peut en etre sortie
+          // (telephone) : le toucher la ramene a l'ecran et pose le focus.
+          FocusManager.instance.highlightStrategy =
+              FocusHighlightStrategy.alwaysTraditional;
+          addTearDown(
+            () => FocusManager.instance.highlightStrategy =
+                FocusHighlightStrategy.automatic,
+          );
           await tester.tap(find.text(lien));
           await _stabiliser(tester);
+          expect(
+            FocusManager.instance.primaryFocus?.context,
+            isNotNull,
+            reason: 'le lien pose le focus sur la premiere verification',
+          );
           debugPrint(
             'PNG ${await capturer(tester, fichier('verifications_incompletes'))}',
           );
@@ -239,7 +280,16 @@ void main() {
           await _stabiliser(tester);
           await tester.tap(find.text(t.dossiers.refuser).first);
           await _stabiliser(tester);
-          expect(find.text(t.dossiers.refus.champ), findsOneWidget);
+          // FORM-L1 : 02D s'ouvre sur les motifs proposes, « Autre » en
+          // dernier ; le champ libre n'existe qu'apres « Autre ». Le focus est
+          // dans la zone du motif (premiere puce).
+          expect(find.byKey(SelecteurMotif.clePuce(0)), findsOneWidget);
+          expect(find.byKey(SelecteurMotif.cleAutre), findsOneWidget);
+          expect(find.text(t.dossiers.refus.champ), findsNothing);
+          expect(
+            FocusManager.instance.primaryFocus?.debugLabel,
+            SelecteurMotif.focusPremierePuce,
+          );
           debugPrint('PNG ${await capturer(tester, fichier('refus'))}');
 
           // 6. Erreur de motif (confirmer a vide).
@@ -282,7 +332,7 @@ void main() {
           await _stabiliser(tester);
           await tester.tap(find.text(t.dossiers.refuser).first);
           await _stabiliser(tester);
-          await tester.enterText(_champMotif, 'Photo illisible.');
+          await _saisirMotif(tester, 'Photo illisible.');
           await _stabiliser(tester);
           await tester.tap(find.text(t.dossiers.refuser).last);
           await _stabiliser(tester);
@@ -413,29 +463,35 @@ void main() {
           WidgetTester tester,
         ) async {
           fixerVueCapture(tester, taille, _densite(tailleNom));
-          await _monter(tester, mode.key, <Override>[
-            sourceSessionProvider.overrideWithValue(
-              FausseSourceSession(
-                const SessionState(
-                  resolue: true,
-                  role: AppRole.guardian,
-                  profileId: 'capture-tuteur',
-                  accountStatus: AccountStatus.pendingKyc,
-                  lectureProfil: LectureProfil.presente,
+          await _monter(
+            tester,
+            mode.key,
+            <Override>[
+              sourceSessionProvider.overrideWithValue(
+                FausseSourceSession(
+                  const SessionState(
+                    resolue: true,
+                    role: AppRole.guardian,
+                    profileId: 'capture-tuteur',
+                    accountStatus: AccountStatus.pendingKyc,
+                    lectureProfil: LectureProfil.presente,
+                  ),
                 ),
               ),
-            ),
-            serviceDossierProvider.overrideWithValue(
-              FauxServiceDossier()
-                ..etatRendu = const EtatDossier(
-                  profilExiste: true,
-                  role: AppRole.guardian,
-                  statutCompte: AccountStatus.pendingKyc,
-                  accuseSigne: true,
-                  contratSigne: true,
-                ),
-            ),
-          ], Routes.attente);
+              serviceDossierProvider.overrideWithValue(
+                FauxServiceDossier()
+                  ..etatRendu = const EtatDossier(
+                    profilExiste: true,
+                    role: AppRole.guardian,
+                    statutCompte: AccountStatus.pendingKyc,
+                    accuseSigne: true,
+                    contratSigne: true,
+                  ),
+              ),
+            ],
+            Routes.attente,
+            repere: false,
+          );
           expect(find.text(t.attente.accesEnPreparation), findsOneWidget);
           expect(find.text(t.attente.deposerLaPiece), findsNothing);
           debugPrint(

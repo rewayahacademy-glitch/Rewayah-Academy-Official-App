@@ -2,6 +2,7 @@
 //
 // Donnees fictives, jamais envoyees au serveur : trois classes avec jours,
 // heures, fuseau et parcours, pour que le catalogue se montre en entier.
+// Les enseignants et leur pays sont ceux de `DonneesDemo` (ENS-PAYS-1).
 
 import '../../core/capacites/port_catalogue_classes.dart';
 import '../../core/seance_famille/seance_famille.dart';
@@ -17,10 +18,11 @@ class CatalogueClassesDemo implements PortCatalogueClasses {
   static const List<ClasseOuverte> classes = <ClasseOuverte>[
     ClasseOuverte(
       classeId: 'demo-classe-coran-2',
-      libelle: 'Coran, groupe du mardi',
+      libelle: 'Coran, classe du mardi',
       enseignant: EnseignantSeance(
         prenom: 'Maryam',
         titre: TitreEnseignant.sayyida,
+        pays: 'Maroc',
       ),
       etat: EtatClasseOuverte.ouverte,
       placesRestantes: 2,
@@ -34,10 +36,11 @@ class CatalogueClassesDemo implements PortCatalogueClasses {
     ),
     ClasseOuverte(
       classeId: 'demo-classe-arabe-3',
-      libelle: 'Arabe, groupe du samedi',
+      libelle: 'Arabe, classe du samedi',
       enseignant: EnseignantSeance(
         prenom: 'Ibrahim',
         titre: TitreEnseignant.sayyid,
+        pays: 'France',
       ),
       etat: EtatClasseOuverte.listeAttente,
       seances: <CreneauHebdomadaire>[
@@ -54,10 +57,11 @@ class CatalogueClassesDemo implements PortCatalogueClasses {
     ),
     ClasseOuverte(
       classeId: 'demo-classe-coran-4',
-      libelle: 'Coran, groupe du dimanche',
+      libelle: 'Coran, classe du dimanche',
       enseignant: EnseignantSeance(
         prenom: 'Maryam',
         titre: TitreEnseignant.sayyida,
+        pays: 'Maroc',
       ),
       etat: EtatClasseOuverte.complete,
       placesRestantes: 0,

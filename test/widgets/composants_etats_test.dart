@@ -265,6 +265,72 @@ void main() {
   });
 
   group('BlocAsynchrone : squelette, prolonge, perdu, contenu', () {
+    // MA-2COL-1 : `piedEchec` reste sous tout echec et indisponibilite
+    // (erreur typee, erreur par defaut, tentative perdue), jamais sous le
+    // squelette ni le contenu.
+    testWidgets('piedEchec : sous l echec, l indisponible et la tentative '
+        'perdue ; ni sous le squelette ni sous le contenu', (
+      WidgetTester tester,
+    ) async {
+      fixerVue(tester, vueMobile);
+      const Key pied = Key('pied');
+      Widget bloc(AsyncValue<List<String>> valeur) =>
+          BlocAsynchrone<List<String>>(
+            valeur: valeur,
+            squelette: const SizedBox(key: _squelette, height: 48),
+            construire: (List<String> v) => Text('contenu ${v.join(',')}'),
+            onReessayer: () {},
+            piedEchec: const SizedBox(key: pied, height: 48),
+          );
+
+      await tester.pumpWidget(
+        hoteTheme(
+          bloc(
+            AsyncValue<List<String>>.error(StateError('x'), StackTrace.empty),
+          ),
+        ),
+      );
+      expect(find.text(t.commun.etats.echecServeur.titre), findsOneWidget);
+      expect(find.byKey(pied), findsOneWidget);
+      expect(
+        tester.getRect(find.byKey(pied)).top,
+        greaterThanOrEqualTo(
+          tester.getRect(find.text(t.commun.etats.echecServeur.titre)).bottom,
+        ),
+      );
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpWidget(
+        hoteTheme(
+          bloc(
+            const AsyncValue<List<String>>.error(
+              CapaciteIndisponible('DB-X'),
+              StackTrace.empty,
+            ),
+          ),
+        ),
+      );
+      expect(find.byKey(pied), findsOneWidget);
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpWidget(
+        hoteTheme(bloc(const AsyncData<List<String>>(<String>['a']))),
+      );
+      expect(find.text('contenu a'), findsOneWidget);
+      expect(find.byKey(pied), findsNothing);
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpWidget(
+        hoteTheme(bloc(const AsyncValue<List<String>>.loading())),
+      );
+      expect(find.byKey(_squelette), findsOneWidget);
+      expect(find.byKey(pied), findsNothing);
+      await tester.pump(AppDelais.requeteMax);
+      await tester.pump(Mouvement.maximum);
+      expect(find.text(t.commun.etats.echecServeur.titre), findsOneWidget);
+      expect(find.byKey(pied), findsOneWidget);
+    });
+
     testWidgets('le squelette, puis la phrase de chargement prolonge', (
       WidgetTester tester,
     ) async {
@@ -536,6 +602,42 @@ void main() {
       await verifierCibles(tester);
       semantique.dispose();
     });
+
+    // COM-F-Q5-R : sur sa page, la cloche est pleine et a l'encre d'accent ;
+    // au repos, contour et encre de la coquille. Clair et sombre.
+    for (final Brightness luminosite in Brightness.values) {
+      testWidgets(
+        'active : icone pleine a l encre d accent (${luminosite.name})',
+        (WidgetTester tester) async {
+          fixerVue(tester, vueMobile);
+          for (final bool actif in <bool>[true, false]) {
+            await tester.pumpWidget(
+              hoteTheme(
+                ClocheNotifications(onPress: () {}, actif: actif),
+                luminosite: luminosite,
+              ),
+            );
+            final Finder icone = find.descendant(
+              of: find.byType(ClocheNotifications),
+              matching: find.byType(Icon),
+            );
+            expect(
+              tester.widget<Icon>(icone).icon,
+              AppIcons.notifications.resoudre(selectionne: actif),
+            );
+            final AppPalette palette = AppPalette.of(tester.element(icone));
+            final Color? attendue = actif
+                ? palette.inkAccent.asIconTheme(size: AppSpacing.xxl).color
+                : palette.inkStrong.asIconTheme(size: AppSpacing.xxl).color;
+            expect(IconTheme.of(tester.element(icone)).color, attendue);
+            expect(
+              palette.inkAccent.asIconTheme(size: AppSpacing.xxl).color,
+              isNot(palette.inkStrong.asIconTheme(size: AppSpacing.xxl).color),
+            );
+          }
+        },
+      );
+    }
 
     testWidgets('sans retour, pas de disque', (WidgetTester tester) async {
       fixerVue(tester, vueMobile);

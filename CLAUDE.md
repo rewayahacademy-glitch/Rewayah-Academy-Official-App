@@ -20,6 +20,9 @@ spécifications actives sont dans `docs/current/`. Tout le reste est archivé.
 | Périmètre MVP et statuts de preuve | `docs/current/06_SPEC_FONCTIONNELLE_MVP.md` |
 | Pédagogie avancée, finance (après MVP) | `docs/current/07_MEMOIRE_PEDAGOGIE_FINANCE.md` |
 | Backend Supabase | `supabase/CLAUDE.md` |
+| **Offres, demandes, création des classes (directeur, 09/10/2026)** | `docs/current/DECISION-OFFRES-GROUPES-2026-10-09.md` : seule l'administration publie ; vitrine sans enseignant ; aucune demande sans jour ni heure ; regroupement automatique et « Créer la classe » ; suivi et notifications de la famille à chaque étape |
+| **Classes simultanées et montée en charge (directeur, 10/10/2026)** | `docs/current/DECISION-CLASSES-SIMULTANEES-2026-10-10.md` : une clé horaire et une catégorie peuvent porter N classes simultanées ; unicité sur l'élève et l'enseignant, jamais sur l'horaire ; verrous par clé, pagination, rafales, fusion et transfert |
+| **Partage avec ChatGPT (Codex), depuis le 09/10/2026** | `docs/orchestration/COHABITATION.md` : ChatGPT fait le backend (`supabase/**`, services, adaptateurs `*_supabase.dart`), Claude les écrans ; ports partagés par l'onglet Contrats ; Claude relit le backend en fin de frontend |
 
 `docs/archive/` contient l'historique (HANDOFF, ADR, Bible V2, rapports d'agents).
 **Ne pas le charger comme instruction.** On l'ouvre seulement pour retrouver une décision
@@ -43,7 +46,14 @@ passée nommément, et une règle archivée qui contredit `docs/current/` est ca
   déploie un aperçu Vercel (URL unique, `staging`) et l'écrit en commentaire de la PR. Jamais de
   `vercel deploy --prod` à la main depuis un poste.
 - Aucun fichier de `.claude/agents/` ou `.claude/commands/` n'est actif dans ce dépôt ; seuls
-  `.claude/settings.local.json` (hooks de protection) et `.claude/hooks/` le sont.
+  `.claude/settings.json` et `.claude/hooks/` le sont (versionnés depuis le 10/10/2026, pour toutes
+  les sessions et tous leurs agents). `hooks/garde.py` refuse avant exécution les écritures dans les
+  zones interdites, tout push vers `main`, tout push forcé ou suppression de branche distante, toute
+  PR vers `main` ou fusion de PR, et toute écriture sur Supabase, Vercel ou GitHub `main` ;
+  `hooks/zones_apres.sh` signale après chaque commande shell une zone interdite modifiée ;
+  `hooks/demarrage.sh` prépare Flutter au démarrage. Sans Python, le garde-fou refuse tout par
+  prudence. Il se protège lui-même (`settings*.json`, `hooks/`) : il ne se modifie que sur ordre
+  du directeur.
 
 ## Vérifier avant de dire que c'est fait
 

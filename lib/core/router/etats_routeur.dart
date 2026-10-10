@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../domain/enums.dart';
 import '../i18n/strings.g.dart';
+import '../icons/app_icons.dart';
 import '../observabilite/journal_dev.dart';
 import '../reseau/service_reseau.dart';
 import '../session/session_controleur.dart';
@@ -117,8 +118,12 @@ class _PageHorsLigneState extends ConsumerState<PageHorsLigne> {
         unawaited(_reessayer());
       }
     });
+    // Le bandeau de `PageShell` dit l'absence de reseau ; le titre dit ce qui
+    // manque, sans le redire (EA-HL-DOUBLE-1).
     return PageEtat(
       nature: NatureEtat.horsLigne,
+      icone: AppIcons.attente,
+      titre: t.commun.etats.horsLigneDemarrageTitre,
       phrase: t.commun.etats.horsLigneDemarrage,
       libelleAction: t.commun.etats.actions.reessayer,
       onAction: () => unawaited(_reessayer()),

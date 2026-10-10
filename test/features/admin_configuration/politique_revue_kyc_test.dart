@@ -17,6 +17,7 @@ import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
+import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
@@ -81,6 +82,7 @@ Future<GoRouter> _monter(
   required EtatRevueDemo etat,
   PortPolitiqueRevueKyc? port,
   Size taille = const Size(1440, 900),
+  FauxServiceReseau? reseau,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -93,6 +95,9 @@ Future<GoRouter> _monter(
   // surchargesDemoAdmin pose le port de politique en troisieme.
   if (port != null) {
     demo[2] = portPolitiqueRevueKycProvider.overrideWithValue(port);
+  }
+  if (reseau != null) {
+    demo.add(serviceReseauProvider.overrideWithValue(reseau));
   }
   await tester.pumpWidget(
     ProviderScope(
@@ -351,6 +356,33 @@ void main() {
     await _stabiliser(tester);
     expect(find.text(t.commun.etats.echecServeur.titre), findsOneWidget);
     // AD-9-ONGLET-PROD : capacite inconnue, ni titre ni onglet reserve.
+    expect(find.text(t.admin.politiqueRevueKyc.titre), findsNothing);
+    final int avant = port.lectures;
+    await tester.tap(find.text(t.commun.etats.actions.reessayer));
+    await _stabiliser(tester);
+    expect(port.lectures, avant + 1);
+    expect(find.byType(Switch), findsOneWidget);
+  });
+
+  // AD9-M1 : une lecture en erreur sans reseau dit « hors ligne », pas
+  // l'echec serveur ; Reessayer relit une fois (le faux port ne sert son erreur qu'une fois).
+  testWidgets('G11 ter : lecture en erreur hors ligne, etat hors ligne', (
+    WidgetTester tester,
+  ) async {
+    final EtatRevueDemo etat = _etat();
+    final _PortTest port = _PortTest(PolitiqueRevueKycDemo(etat));
+    final FauxServiceReseau reseau = FauxServiceReseau(horsLigneRendu: true);
+    final GoRouter routeur = await _monter(
+      tester,
+      etat: etat,
+      port: port,
+      reseau: reseau,
+    );
+    port.erreurLecture = Exception('reseau');
+    routeur.go(Routes.adminConfigurationPolitiqueRevueKyc);
+    await _stabiliser(tester);
+    expect(find.text(t.commun.etats.horsLigne.titre), findsOneWidget);
+    expect(find.text(t.commun.etats.echecServeur.titre), findsNothing);
     expect(find.text(t.admin.politiqueRevueKyc.titre), findsNothing);
     final int avant = port.lectures;
     await tester.tap(find.text(t.commun.etats.actions.reessayer));

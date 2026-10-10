@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../finance/finances_profil.dart';
+import '../finance/mouvements_profil.dart';
 import 'capacite_indisponible.dart';
 
 /// Un paiement du foyer, tel qu'une future source le rendra.
@@ -85,7 +87,8 @@ class SoldeBeneficiaire {
   final ExceptionSolde? exception;
 }
 
-/// Les soldes du foyer vus par le titulaire (EA-BR-23).
+/// Les soldes du foyer vus par le titulaire (FI-BR-03, qui remplace
+/// EA-BR-23).
 @immutable
 class SoldesFoyer {
   /// Cree la vue.
@@ -108,8 +111,27 @@ abstract interface class PortPaiementsFoyer {
   Future<PaiementFoyer?> detail(String id);
 
   /// Les soldes des beneficiaires autorises, pour le titulaire seulement
-  /// (EA-BR-23).
+  /// (FI-BR-03, qui remplace EA-BR-23).
   Future<SoldesFoyer> soldes();
+
+  /// Les finances du foyer (FI-1c, FI-BR-03, FI-BR-04) : par profil, solde
+  /// individuel en unites mineures + ISO, periode financee, prochain debit,
+  /// lignes de mensualite et etat ; synthese du foyer en lecture. Pour le
+  /// titulaire seulement : jamais rendu a l'enfant ni au second adulte
+  /// (lecon 15).
+  Future<FinancesFoyer> finances();
+
+  /// Les mouvements du profil [profilId] (FI-6b, FI-BR-05) : recharges,
+  /// debits de periode, avoirs et remises, montants signes, statut et recu
+  /// eventuel, dans l'ordre rendu (le plus recent d'abord). Historique en
+  /// ajout seul : aucune ecriture n'est exposee. Pour le titulaire seulement
+  /// (lecon 15).
+  Future<List<MouvementProfil>> mouvements(String profilId);
+
+  /// Les [limite] derniers mouvements du foyer, tous profils confondus
+  /// (FI-5b) : liste arretee par la source, le plus recent d'abord, aucun
+  /// tri ni agregat dans Flutter. Pour le titulaire seulement (lecon 15).
+  Future<List<MouvementFoyer>> derniersMouvements({int limite = 3});
 }
 
 /// Les paiements tant qu'aucune source n'existe : une page, une phrase, aucun
@@ -130,7 +152,23 @@ class PaiementsFoyerIndisponible implements PortPaiementsFoyer {
 
   @override
   Future<SoldesFoyer> soldes() =>
-      Future<SoldesFoyer>.error(const CapaciteIndisponible('EA-BR-23'));
+      Future<SoldesFoyer>.error(const CapaciteIndisponible('FI-BR-03'));
+
+  @override
+  Future<FinancesFoyer> finances() =>
+      Future<FinancesFoyer>.error(const CapaciteIndisponible('FI-BR-03'));
+
+  @override
+  Future<List<MouvementProfil>> mouvements(String profilId) =>
+      Future<List<MouvementProfil>>.error(
+        const CapaciteIndisponible('FI-BR-05'),
+      );
+
+  @override
+  Future<List<MouvementFoyer>> derniersMouvements({int limite = 3}) =>
+      Future<List<MouvementFoyer>>.error(
+        const CapaciteIndisponible('FI-BR-05'),
+      );
 }
 
 /// Les paiements employes par l'application.

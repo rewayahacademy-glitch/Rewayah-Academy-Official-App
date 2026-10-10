@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart';
@@ -20,7 +21,6 @@ import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart'
 import 'package:rewayah_academy/core/tc_telechargement/port_etat_offline.dart'
     show EtatOffline;
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
@@ -292,7 +292,9 @@ void main() {
       expect(
         _noeud(tester, video).label,
         t.salle.seance.videoDe(
-          nom: DonneesSeanceDemo.enseignantPour(TitreEnseignant.sayyid),
+          deNom: deDevant(
+            DonneesSeanceDemo.enseignantPour(TitreEnseignant.sayyid),
+          ),
         ),
       );
     });
@@ -444,7 +446,7 @@ void main() {
       final String nomEntete = _noeud(tester, entete.first).label;
       expect(
         nomEntete,
-        '${t.salle.seance.replierFiche(prenom: 'Mariam')}, '
+        '${t.salle.seance.replierFiche(dePrenom: deDevant('Mariam'))}, '
         '${t.salle.seance.statut.connecte}',
       );
       // La carte (et l'en-tete du prenom) ne recopient pas l'aide.
@@ -494,7 +496,9 @@ void main() {
     expect(
       find.text(
         t.salle.seance.capsule.avatar(
-          nom: DonneesSeanceDemo.enseignantPour(TitreEnseignant.sayyid),
+          deNom: deDevant(
+            DonneesSeanceDemo.enseignantPour(TitreEnseignant.sayyid),
+          ),
         ),
       ),
       findsOneWidget,
@@ -588,8 +592,11 @@ void main() {
 
   // --- n. 14 : le ruban de demonstration --------------------------------------
 
-  group('n. 14 : ruban « Demonstration »', () {
-    testWidgets('controleur 1440 : il ne recouvre pas « Quitter »', (
+  group('n. 14 : repere « Demonstration »', () {
+    // SUPERPOS-1 : le repere est une bande dans le flux, posee par
+    // `RewayahApp.builder` ; la salle de demonstration ne peint plus de
+    // ruban d'angle, donc rien ne peut recouvrir « Quitter ».
+    testWidgets('controleur 1440 : aucun ruban par-dessus la salle', (
       WidgetTester tester,
     ) async {
       await _monter(
@@ -600,35 +607,14 @@ void main() {
         ),
         taille: _bureau,
       );
-      final Finder quitter = find.ancestor(
-        of: find.text(t.salle.quitter),
-        matching: find.byType(ActionPrincipale),
-      );
-      final Rect q = tester.getRect(quitter.first);
-      // Le ruban occupe le coin de fin : la diagonale x + y = emprise
-      // (40 racine de 2) plus sa demi-epaisseur ; « Quitter » reste en deca.
-      final double coinX = _bureau.width - q.right;
-      final double coinY = q.top;
-      expect(
-        coinX + coinY,
-        greaterThan(empriseRepereDemonstration + 12),
-        reason: 'Quitter $q',
-      );
+      expect(find.byType(Banner), findsNothing);
     });
 
-    testWidgets('arabe : le ruban est en arabe', (WidgetTester tester) async {
+    testWidgets('arabe : le repere est en arabe', (WidgetTester tester) async {
       await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
       addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
-      await _monter(
-        tester,
-        const DemoSallePage(
-          observateur: ObservateurDemo.tuteur,
-          situation: SituationTb.ped01,
-        ),
-      );
-      final Banner ruban = tester.widget<Banner>(find.byType(Banner).first);
-      expect(ruban.message, 'عرض توضيحي');
       expect(libelleRepereDemonstration, isNot('Démonstration'));
+      expect(libelleRepereDemonstration, t.commun.demonstration.repere);
     });
   });
 

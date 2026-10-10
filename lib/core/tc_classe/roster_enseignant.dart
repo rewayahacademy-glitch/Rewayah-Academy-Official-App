@@ -9,6 +9,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../observabilite/journal_dev.dart';
 import '../presence/service_presence.dart';
+import '../reseau/sondage_regulier.dart';
 import 'port_roster_enseignant.dart';
 import 'roster_classe_vm.dart';
 import 'teacher_student_projection.dart';
@@ -253,9 +254,9 @@ class RosterEnseignantSupabase implements PortRosterEnseignant {
     // consommateur hors Riverpod.
     final StreamController<List<TeacherStudentProjection>> sortie =
         StreamController<List<TeacherStudentProjection>>();
-    Timer? minuterie;
+    SondageRegulier? sondage;
 
-    Future<void> lire() async {
+    Future<bool> lire() async {
       try {
         final List<TeacherStudentProjection> roster = await rosterDeSeance(
           sessionId,
@@ -263,26 +264,27 @@ class RosterEnseignantSupabase implements PortRosterEnseignant {
         if (!sortie.isClosed) {
           sortie.add(roster);
         }
+        return true;
       } on EchecRoster catch (erreur) {
         // Le flux ne s'interrompt jamais sur une erreur : la lecture suivante a
-        // lieu comme prevu, et le reseau revient souvent en trois secondes.
+        // lieu (apres un recul, `SondageRegulier`), et le reseau revient
+        // souvent en trois secondes.
         journalDev('roster indisponible : $erreur');
+        return false;
       }
     }
 
     sortie
       ..onListen = () {
-        unawaited(lire());
         // Une minuterie annulable, et non une boucle `async*` qui attend : le
         // depot a MESURE le defaut inverse -- un `Future.delayed` continue de
-        // courir apres la sortie de salle.
-        minuterie = Timer.periodic(
-          cadencePresence,
-          (Timer _) => unawaited(lire()),
-        );
+        // courir apres la sortie de salle. R14 : decalage au hasard et recul
+        // apres echec, cadence moyenne inchangee.
+        sondage = SondageRegulier(cadence: cadencePresence, lire: lire)
+          ..demarrer();
       }
       ..onCancel = () {
-        minuterie?.cancel();
+        sondage?.arreter();
         return sortie.close();
       };
     return sortie.stream;

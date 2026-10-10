@@ -214,9 +214,8 @@ class _SurfacePageFixeState extends ConsumerState<SurfacePageFixe> {
         ?.readState(context, identifier: _cleStockage);
     if (garde is Offset) _relatif = garde;
     _styletVu =
-        PageStorage.maybeOf(
-          context,
-        )?.readState(context, identifier: _cleStylet) ==
+        PageStorage.maybeOf(context)
+            ?.readState(context, identifier: _cleStylet) ==
         true;
   }
 
@@ -273,9 +272,8 @@ class _SurfacePageFixeState extends ConsumerState<SurfacePageFixe> {
             e.kind == PointerDeviceKind.invertedStylus)) {
       // M5 : la couche l'apprend d'ici, ou qu'en soit l'outil.
       setState(() => _styletVu = true);
-      PageStorage.maybeOf(
-        context,
-      )?.writeState(context, true, identifier: _cleStylet);
+      PageStorage.maybeOf(context)
+          ?.writeState(context, true, identifier: _cleStylet);
     }
   }
 

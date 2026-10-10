@@ -11,6 +11,7 @@ import '../../core/appairage/service_appairage.dart';
 import '../../core/appairage/service_avatar.dart';
 import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/foyer/selection_eleve.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/presence/vue_presence.dart';
@@ -30,6 +31,7 @@ import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/skeleton.dart';
 import '../parcours_offres/bloc_parcours.dart';
+import '../suivi_demandes/carte_suivi_demandes.dart';
 import 'ancre_horloge_serveur.dart';
 import 'bandeau_blocage.dart';
 import 'bloc_seance.dart';
@@ -51,17 +53,6 @@ final FutureProviderFamily<ClasseFoyer?, String> classeDeLEleveProvider =
           .classesDe(eleveId);
       return classes.isEmpty ? null : classes.first;
     });
-
-/// Largeur minimale (texte 100 %) de la carte classe pour qu'elle partage sa
-/// bande avec « Avant le prochain cours » (BENTO-2b, revue BENTO-2-R M1) :
-/// a 310 px, la colonne « Duree » coupait « Duré/e » et « 45 mi/n ». Elle
-/// croit avec l'echelle du texte. Cote a cote des que la grille fait
-/// 736 px x echelle (2 x 360 + l'ecart) : a texte 100 %, ecran de 864 px
-/// avec le rail replie (80 px, gouttieres 2 x 24), 1040 px avec la barre
-/// laterale depliee ; dessous (tablette de 600 a 863 px, texte agrandi),
-/// pleine largeur. Les bascules 863/864, 1024 et 1440 x2 sont mesurees par
-/// `accueil_famille_test.dart` (BENTO-2c), sans autre source.
-const double largeurMinCarteClasse = 360;
 
 /// La cle de lecture d'une presence : une seance, un eleve.
 typedef ClePresenceEleve = ({String seanceId, String eleveId});
@@ -223,6 +214,7 @@ class _Contenu extends ConsumerWidget {
         children: <Widget>[
           selecteur,
           Ecart.vXl,
+          const CarteSuiviDemandes(),
           // Entree transitoire du questionnaire (revue C, M3 ; demande C-7) :
           // gardee tant que Fiche > Inscription (lot B) n'est pas integree.
           // Silencieuse quand aucun apprenant n'a de parcours a suivre.
@@ -230,7 +222,9 @@ class _Contenu extends ConsumerWidget {
           EtatSysteme(
             nature: NatureEtat.aucunResultat,
             titre: t.tuteur.accueil.sansClasseTitre(prenom: profil.prenom),
-            phrase: t.tuteur.accueil.sansClassePhrase(prenom: profil.prenom),
+            phrase: t.tuteur.accueil.sansClassePhrase(
+              quePrenom: queDevant(profil.prenom),
+            ),
             libelleAction: t.classe.catalogue,
             onAction: () => routeur.go(
               Uri(
@@ -319,6 +313,7 @@ class _Contenu extends ConsumerWidget {
       children: <Widget>[
         selecteur,
         Ecart.vXl,
+        const CarteSuiviDemandes(),
         LayoutBuilder(
           builder: (BuildContext _, BoxConstraints contraintes) {
             final bool coteACote =

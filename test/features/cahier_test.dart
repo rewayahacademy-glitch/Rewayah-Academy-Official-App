@@ -11,6 +11,8 @@ import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
+import 'package:rewayah_academy/core/widgets/zone_saisie.dart';
 import 'package:rewayah_academy/features/cahier/cahier_page.dart';
 import 'package:rewayah_academy/features/cahier/vue_cahier.dart';
 
@@ -165,16 +167,12 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      // DUREE-INSECABLE-2 : insecable, et ancree en tete (U+200E).
       expect(
-        find.text(
-          t.enseignant.cahier.dureeEtInterruption(
-            minutes: '38',
-            interruption: '7',
-          ),
-        ),
+        find.text("\u200E38\u00A0min de cours, dont 7\u00A0min d'interruption"),
         findsOneWidget,
       );
-      expect(find.text(t.enseignant.cahier.duree(minutes: '45')), findsNothing);
+      expect(find.textContaining('45\u00A0min de cours'), findsNothing);
     });
   });
 
@@ -242,8 +240,22 @@ void main() {
       await tester.tap(find.text(t.enseignant.cahier.exceptionCorriger));
       await tester.pumpAndSettle();
 
-      final Finder champMotif = find.ancestor(
-        of: find.text(t.enseignant.cahier.exceptionMotif),
+      // FORM-L1 : le motif se choisit en puces ; sans motif, Valider dit ce
+      // qui manque et rien ne part (bouton jamais grise, K-56).
+      await tester.tap(find.text(t.commun.valider));
+      await tester.pumpAndSettle();
+      expect(find.text(t.formulaire.motif.manque), findsOneWidget);
+      expect(find.text(t.enseignant.cahier.exceptionSucces), findsNothing);
+
+      // Un motif propre a cette seance : « Autre », puis le texte.
+      await tester.ensureVisible(find.byKey(SelecteurMotif.cleAutre));
+      await tester.tap(find.byKey(SelecteurMotif.cleAutre));
+      await tester.pumpAndSettle();
+      final Finder champMotif = find.descendant(
+        of: find.ancestor(
+          of: find.text(t.enseignant.cahier.exceptionMotif),
+          matching: find.byType(ZoneSaisie),
+        ),
         matching: find.byType(TextField),
       );
       await tester.enterText(champMotif, 'connexion coupee des le debut');
@@ -571,7 +583,7 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(find.text(t.enseignant.cahier.valider), findsOneWidget);
       expect(
-        find.text(t.enseignant.cahier.plusieursExceptions(nombre: '2')),
+        find.text(t.enseignant.cahier.plusieursExceptions(nombre: 2)),
         findsOneWidget,
       );
     });

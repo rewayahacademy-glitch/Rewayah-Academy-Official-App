@@ -12,7 +12,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_progression_famille.dart';
+import 'package:rewayah_academy/core/communications/modeles_communication.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
@@ -44,6 +46,8 @@ import 'package:rewayah_academy/features/classe_tuteur/planning_classe_page.dart
 import 'package:rewayah_academy/features/classe_tuteur/progression_classe_page.dart';
 import 'package:rewayah_academy/features/classe_tuteur/ressources_classe_page.dart';
 import 'package:rewayah_academy/features/classe_tuteur/travail_classe_page.dart';
+import 'package:rewayah_academy/features/com_annonces/annonces_de_classe.dart';
+import 'package:rewayah_academy/features/com_messages/entree_messages_contexte.dart';
 import 'package:rewayah_academy/features/suivi_foyer/suivi_foyer_page.dart';
 import 'package:rewayah_academy/features/tc_catalogue/detail_ressource_page.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/entree_observation_page.dart';
@@ -161,7 +165,7 @@ void main() {
       expect(
         find.text(
           t.classe.sousTitre(
-            prenom: 'Eleve A1',
+            prenom: 'Élève A1',
             enseignant: '${t.tc.groupe.enseignant.sayyid} Enseignant X',
           ),
         ),
@@ -397,7 +401,9 @@ void main() {
         find.text(
           t.classe.observation.resume(
             visites: t.classe.observation.visites(nombre: 2),
-            duree: t.classe.observation.minutes(minutes: 2),
+            duree: LibellesGroupe.insecable(
+              t.classe.observation.minutes(minutes: 2),
+            ),
           ),
         ),
         findsOneWidget,
@@ -492,7 +498,9 @@ void main() {
       );
       expect(
         find.text(
-          t.classe.observation.motif.presenceEnVerification(prenom: 'Eleve A1'),
+          t.classe.observation.motif.presenceEnVerification(
+            dePrenom: deDevant('Élève A1'),
+          ),
         ),
         findsOneWidget,
       );
@@ -506,9 +514,7 @@ void main() {
         tester,
         depart: Routes.classePour(_classe, eleveId: _a1),
         seances: <SeanceFamille>[
-          seanceSalleOuverte(
-            avant: const Duration(hours: 3, minutes: 28, seconds: 30),
-          ),
+          seanceSalleOuverte(avant: const Duration(hours: 3, minutes: 28)),
         ],
         observation: true,
       );
@@ -711,7 +717,9 @@ void main() {
         depart: '${Routes.classeSousPage(_classe, 'progression')}?eleve=$_a1',
       );
       expect(
-        find.text(t.classe.pageProgression.indisponible(prenom: 'Eleve A1')),
+        find.text(
+          t.classe.pageProgression.indisponible(dePrenom: deDevant('Élève A1')),
+        ),
         findsOneWidget,
       );
     });
@@ -781,7 +789,7 @@ void main() {
         'retrouve', (WidgetTester tester) async {
       await _monter(tester, depart: Routes.classeSousPage(_classe, 'planning'));
       expect(
-        find.text(LibellesGroupe.joindre('Classe fictive A', 'Eleve A1')),
+        find.text(LibellesGroupe.joindre('Classe fictive A', 'Élève A1')),
         findsOneWidget,
       );
     });
@@ -799,21 +807,23 @@ void main() {
     test('duree d une visite : minutes, secondes, jamais arrondie', () {
       expect(
         dureeVisite(const Duration(seconds: 120)),
-        t.classe.observation.minutes(minutes: 2),
+        LibellesGroupe.insecable(t.classe.observation.minutes(minutes: 2)),
       );
       expect(
         dureeVisite(const Duration(seconds: 80)),
-        t.classe.observation.minutesSecondes(minutes: 1, secondes: 20),
+        LibellesGroupe.insecable(
+          t.classe.observation.minutesSecondes(minutes: 1, secondes: 20),
+        ),
       );
       expect(
         dureeVisite(const Duration(seconds: 40)),
-        t.classe.observation.secondes(secondes: 40),
+        LibellesGroupe.insecable(t.classe.observation.secondes(secondes: 40)),
       );
     });
 
     test('chaque motif a sa phrase, aucun code', () {
       for (final MotifIndisponibilite motif in MotifIndisponibilite.values) {
-        final String texte = texteMotif(motif, prenom: 'Eleve A1');
+        final String texte = texteMotif(motif, prenom: 'Élève A1');
         expect(texte, isNotEmpty, reason: motif.name);
         expect(texte.contains('_'), isFalse, reason: motif.name);
       }
@@ -904,5 +914,143 @@ void main() {
         isFalse,
       );
     });
+  });
+
+  group('COM-F : emplacements des Communications rendus dans la page', () {
+    for (final Size taille in <Size>[
+      const Size(390, 844),
+      const Size(1440, 1000),
+    ]) {
+      testWidgets('${taille.width.round()} : annonces en tete, Messages '
+          'apres les rubriques, sur la Classe affichee', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          depart: Routes.classePour(_classe, eleveId: _a1),
+          taille: taille,
+          // R-16 : une seance lointaine laisse l'annonce en tete.
+          seances: <SeanceFamille>[
+            seanceSalleOuverte(avant: const Duration(days: 2)),
+          ],
+        );
+        expect(find.byType(ClasseTuteurPage), findsOneWidget);
+        final AnnoncesDeClasse annonces = tester.widget<AnnoncesDeClasse>(
+          find.byType(AnnoncesDeClasse),
+        );
+        expect(annonces.classeId, _classe);
+        // En tete : l'ecart se pose apres.
+        expect(annonces.ecartAvant, isNull);
+        expect(annonces.ecartApres, isNotNull);
+        final EntreeMessagesContexte messages = tester
+            .widget<EntreeMessagesContexte>(
+              find.byType(EntreeMessagesContexte),
+            );
+        expect(messages.type, TypeObjetLie.classe);
+        expect(messages.objetId, _classe);
+        // Apres les rubriques : l'ecart se pose avant.
+        expect(messages.ecartAvant, isNotNull);
+        expect(messages.ecartApres, isNull);
+        expect(tester.takeException(), isNull);
+      });
+    }
+  });
+  group('R-16 : la seance ouverte ou proche passe avant les annonces', () {
+    final DateTime maintenant = instantServeurFige;
+
+    test(
+      'fonction pure : ouverte, en direct, bientot, lointaine, inconnue',
+      () {
+        bool enTete(SeanceFamille? s, {DateTime? a}) =>
+            seanceAvantAnnonces(s, maintenantServeurUtc: a);
+        // Salle ouverte (10 min avant, fenetre de 20 min).
+        expect(enTete(seanceSalleOuverte(), a: maintenant), isTrue);
+        expect(enTete(seanceEnDirect(), a: maintenant), isTrue);
+        // Salle encore fermee, mais debut dans 4 min : sous le seuil
+        // « C'est bientot » (5 min).
+        SeanceFamille aVenirDans(Duration avant) => seanceFictive(
+          debutUtc: maintenant.add(avant),
+          ouvertureAvantDebut: const Duration(minutes: 2),
+        );
+        expect(
+          etatSeanceFamille(
+            aVenirDans(const Duration(minutes: 4)),
+            maintenantServeurUtc: maintenant,
+          ),
+          EtatSeanceFamille.aVenir,
+        );
+        expect(
+          enTete(aVenirDans(const Duration(minutes: 4)), a: maintenant),
+          isTrue,
+        );
+        expect(
+          enTete(aVenirDans(const Duration(minutes: 5)), a: maintenant),
+          isTrue,
+        );
+        expect(
+          enTete(aVenirDans(const Duration(minutes: 6)), a: maintenant),
+          isFalse,
+        );
+        expect(
+          enTete(aVenirDans(const Duration(days: 2)), a: maintenant),
+          isFalse,
+        );
+        // Annulee, sans seance, sans horloge serveur : l'annonce garde la tete.
+        expect(
+          enTete(
+            seanceSalleOuverte(statut: StatutSeance.annulee),
+            a: maintenant,
+          ),
+          isFalse,
+        );
+        expect(enTete(null, a: maintenant), isFalse);
+        expect(enTete(seanceSalleOuverte()), isFalse);
+      },
+    );
+
+    for (final Size taille in <Size>[
+      const Size(390, 844),
+      const Size(1440, 1000),
+    ]) {
+      testWidgets('${taille.width.round()} : salle ouverte, la carte de '
+          'seance en tete, l annonce apres', (WidgetTester tester) async {
+        await _monter(
+          tester,
+          depart: Routes.classePour(_classe, eleveId: _a1),
+          taille: taille,
+          seances: <SeanceFamille>[seanceSalleOuverte()],
+        );
+        final Finder annonces = find.byType(AnnoncesDeClasse);
+        final Finder carte = find.byType(CarteSeanceClasse);
+        expect(carte, findsOneWidget);
+        final AnnoncesDeClasse a = tester.widget<AnnoncesDeClasse>(annonces);
+        expect(a.ecartAvant, isNotNull);
+        expect(a.ecartApres, isNull);
+        expect(
+          tester.getTopLeft(annonces).dy,
+          greaterThan(tester.getTopLeft(carte).dy),
+        );
+        expect(tester.takeException(), isNull);
+      });
+
+      testWidgets('${taille.width.round()} : seance lointaine, l annonce '
+          'reste en haut', (WidgetTester tester) async {
+        await _monter(
+          tester,
+          depart: Routes.classePour(_classe, eleveId: _a1),
+          taille: taille,
+          seances: <SeanceFamille>[
+            seanceSalleOuverte(avant: const Duration(days: 2)),
+          ],
+        );
+        final Finder annonces = find.byType(AnnoncesDeClasse);
+        final Finder carte = find.byType(CarteSeanceClasse);
+        expect(
+          tester.getTopLeft(annonces).dy,
+          lessThanOrEqualTo(tester.getTopLeft(carte).dy),
+        );
+        expect(tester.widget<AnnoncesDeClasse>(annonces).ecartAvant, isNull);
+      });
+    }
   });
 }

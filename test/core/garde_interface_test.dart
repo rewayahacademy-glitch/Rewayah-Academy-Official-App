@@ -207,7 +207,8 @@ void main() {
           'FilterPill': (
             cree: (String l) =>
                 FilterPill(libelle: l, onPress: () {}, retenue: true),
-            contenu: <Finder>[find.byType(Text)],
+            // FILTERPILL-ETAT-1 : la coche fait partie du contenu centre.
+            contenu: <Finder>[find.byType(Text), find.byType(Icon)],
           ),
           'LienFleche': (
             cree: (String l) => LienFleche(libelle: l, onPress: () {}),

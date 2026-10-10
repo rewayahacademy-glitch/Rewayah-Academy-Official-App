@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -263,7 +265,10 @@ class _CarteMission extends StatelessWidget {
         debut: heureDeLAppareil(mission.debut),
         fin: heureDeLAppareil(mission.finPrevue),
       ),
-      t.controleur.controle.duree(minutes: mission.dureePrevue.inMinutes),
+      // DUREE-INSECABLE-1 : la duree prevue n'est jamais scindee.
+      LibellesGroupe.insecable(
+        t.controleur.controle.duree(minutes: mission.dureePrevue.inMinutes),
+      ),
       t.controleur.controle.eleves(n: mission.nombreEleves),
     ].join(' · ');
 
@@ -274,36 +279,43 @@ class _CarteMission extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Row(
+          // COUPE-MOTS-CTRL-1 (revue BENTO-3b-R C7) : le libelle et la
+          // pastille partagent la ligne quand elle suffit (pastille au bord
+          // de fin) ; sinon la pastille passe dessous. Dans une `Row`, a
+          // 320 px et texte x2, la pastille ne laissait au libelle qu'une
+          // colonne etroite : « Classe / a obser / ver mai / ntenan / t ».
+          // Le libelle passe a la ligne entre les mots, jamais dans un mot.
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
             children: <Widget>[
-              Expanded(
-                child: Semantics(
-                  header: true,
-                  // Decision du directeur C1 = a (27/09), textes revus le
-                  // 02/10 : un titre pendant le direct, un autre avant.
-                  child: Text(
-                    _enDirect
-                        ? t.controleur.controle.missionEnDirect
-                        : t.controleur.controle.mission,
-                    style: doux,
-                  ),
+              Semantics(
+                header: true,
+                // Decision du directeur C1 = a (27/09), textes revus le
+                // 02/10 : un titre pendant le direct, un autre avant.
+                child: TexteSansCoupure(
+                  _enDirect
+                      ? t.controleur.controle.missionEnDirect
+                      : t.controleur.controle.mission,
+                  style: doux,
                 ),
               ),
               // La seance en direct se reconnait au premier coup d'oeil
               // (ON-AIR-1) : le meme composant que partout ailleurs.
-              if (_enDirect || _dejaControlee) ...<Widget>[
-                Ecart.hSm,
+              if (_enDirect || _dejaControlee)
                 const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect),
-              ],
             ],
           ),
           Ecart.vSm,
-          Text(mission.classe, style: fort),
+          Text(mission.classeDistincte, style: fort),
           Ecart.vLg,
           // AVATAR-1 : l'enseignant est un couple avatar + nom du composant
           // partage, avec au plus une ligne de role (horaire, duree, effectif).
           AvatarNom.enLigne(
             prenom: mission.enseignant,
+            pays: mission.paysEnseignant,
             role: details,
             styleNom: palette.inkStrong.applyTo(
               textes.titleMedium ?? const TextStyle(),

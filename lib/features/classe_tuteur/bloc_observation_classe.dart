@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/router/routes.dart';
 import '../../core/seance_famille/seance_famille.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_observation/activation_observation.dart';
 import '../../core/tc_observation/disponibilite_observation.dart';
 import '../../core/tc_observation/echec_observation.dart';
@@ -33,19 +35,25 @@ String visitesRestantes(int nombre) => switch (nombre) {
 
 /// La duree d'une visite, « 2 min », « 1 min 20 s », « 40 s ». Rendue telle
 /// que le serveur la donne : jamais arrondie a la hausse.
-String dureeVisite(Duration duree) {
+String dureeVisite(Duration duree) =>
+    LibellesGroupe.insecable(_dureeVisiteSecable(duree));
+
+String _dureeVisiteSecable(Duration duree) {
   final int total = duree.inSeconds < 0 ? 0 : duree.inSeconds;
   final int minutes = total ~/ Duration.secondsPerMinute;
   final int secondes = total % Duration.secondsPerMinute;
   if (minutes == 0) {
-    return t.classe.observation.secondes(secondes: secondes);
+    return LibellesGroupe.insecable(
+      t.classe.observation.secondes(secondes: secondes),
+    );
   }
   if (secondes == 0) {
-    return t.classe.observation.minutes(minutes: minutes);
+    return LibellesGroupe.insecable(
+      t.classe.observation.minutes(minutes: minutes),
+    );
   }
-  return t.classe.observation.minutesSecondes(
-    minutes: minutes,
-    secondes: secondes,
+  return LibellesGroupe.insecable(
+    t.classe.observation.minutesSecondes(minutes: minutes, secondes: secondes),
   );
 }
 
@@ -61,9 +69,14 @@ String texteMotif(MotifIndisponibilite motif, {required String prenom}) {
     MotifIndisponibilite.horsFenetre => m.horsFenetre,
     MotifIndisponibilite.observationDesactivee => m.observationDesactivee,
     MotifIndisponibilite.lienAbsent => m.lienAbsent,
-    MotifIndisponibilite.enfantAbsent => m.enfantAbsent(prenom: prenom),
+    MotifIndisponibilite.enfantAbsent => m.enfantAbsent(
+      dePrenom: deDevant(prenom, cle: 'classe.observation.motif.enfantAbsent'),
+    ),
     MotifIndisponibilite.presenceEnVerification => m.presenceEnVerification(
-      prenom: prenom,
+      dePrenom: deDevant(
+        prenom,
+        cle: 'classe.observation.motif.presenceEnVerification',
+      ),
     ),
     MotifIndisponibilite.visiteDejaOuverte => m.visiteDejaOuverte,
     MotifIndisponibilite.garantieServeurAbsente => m.garantieServeurAbsente,

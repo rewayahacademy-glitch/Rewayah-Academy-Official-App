@@ -139,9 +139,7 @@ void main() {
         final String theme = mode == ThemeMode.light ? 'clair' : 'sombre';
         testWidgets('en12 micro $nom $theme', (WidgetTester tester) async {
           fixerVueCapture(tester, taille, 1);
-          await tester.pumpWidget(
-            hoteCapture(const _Hote(), themeMode: mode),
-          );
+          await tester.pumpWidget(hoteCapture(const _Hote(), themeMode: mode));
           await stabiliser(tester);
           await tester.tap(find.byKey(const ValueKey<String>('bouton-micro')));
           await tester.pump();

@@ -1,16 +1,22 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/appairage/service_avatar.dart';
 import '../../core/domain/enums.dart';
+import '../../core/formulaires/motifs_proposes.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/matching/service_matching.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/regles/service_regles.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -24,6 +30,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
+import '../../core/widgets/selecteur_motif.dart';
 import '../../core/widgets/setting_row.dart';
 
 /// `TUT-05` : les demandes du tuteur, profil eleve par profil eleve.
@@ -59,7 +66,7 @@ class ReglagesEnfantPage extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text(t.reglagesEnfant.intro, style: textes.bodySmall),
+          TexteSansCoupure(t.reglagesEnfant.intro, style: textes.bodySmall),
           Ecart.vXl,
           SectionHeader(titre: t.compte.titre),
           CarteLignes(
@@ -138,7 +145,7 @@ class _CarteEnfant extends StatelessWidget {
                   icone: AppIcons.reglages,
                   libelle: t.reglagesEnfant.renvoi,
                   legende: t.reglagesEnfant.renvoiLegende(
-                    prenom: enfant.prenom,
+                    dePrenom: deDevant(enfant.prenom),
                   ),
                   onPress: () =>
                       GoRouter.of(context).go(Routes.ficheElevePour(enfant.id)),
@@ -201,7 +208,8 @@ class _Demandes extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(t.tuteur.reglages.demandes, style: textes.titleMedium),
+        // COUPE-MOTS-4 : « changement » ne se coupe plus en Interface guidee.
+        TexteSansCoupure(t.tuteur.reglages.demandes, style: textes.titleMedium),
         Ecart.vSm,
         // Les trois demandes sont tertiaires, pas secondaires : ce sont des
         // requetes administratives que l'administration tranche, pas des
@@ -219,7 +227,7 @@ class _Demandes extends ConsumerWidget {
         else
           // Le bouton n'est pas rendu : la phrase explique la limite, comme le
           // plafond de `ENS-06`.
-          Text(
+          TexteSansCoupure(
             t.tuteur.reglages.demandeSansEnseignant(prenom: enfant.prenom),
             style: textes.bodySmall,
           ),
@@ -258,7 +266,7 @@ class _Demandes extends ConsumerWidget {
 /// Meme forme que celle de `ENS-06` : un choix quand il y a une valeur a
 /// demander, un motif toujours, et une confirmation qui remplace le formulaire.
 /// **Le motif est obligatoire de bout en bout** : la base refuse une demande
-/// sans lui, et l'ecran ne rend pas le bouton tant qu'il manque.
+/// sans lui, et l'ecran le dit quand on presse sans (bouton jamais grise).
 @visibleForTesting
 class FeuilleDemandeTuteur extends ConsumerStatefulWidget {
   /// Cree la feuille.
@@ -286,7 +294,9 @@ class FeuilleDemandeTuteur extends ConsumerStatefulWidget {
 class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
   final TextEditingController _motif = TextEditingController();
   int? _valeur;
+
   bool _enCours = false;
+  bool _motifManquant = false;
   String? _erreur;
   bool _envoyee = false;
 
@@ -306,6 +316,18 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
   }
 
   Future<void> _envoyer() async {
+    // Bouton jamais grise (K-56) : presse trop tot, il dit ce qui manque.
+    if (_avecValeur && _valeur == null) {
+      setState(() => _erreur = t.tuteur.reglages.demandeManqueValeur);
+      return;
+    }
+    if (_motif.text.trim().isEmpty) {
+      setState(() {
+        _erreur = null;
+        _motifManquant = true;
+      });
+      return;
+    }
     setState(() {
       _enCours = true;
       _erreur = null;
@@ -349,103 +371,116 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
             valeurRegleProvider((profilId: widget.enfant.id, cle: cle)),
           );
 
-    return Padding(
-      padding: EdgeInsetsDirectional.only(
-        start: metriques.marge,
-        end: metriques.marge,
-        top: metriques.marge,
-        bottom: MediaQuery.viewInsetsOf(context).bottom + metriques.marge,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Text(_titre(), style: textes.titleMedium),
-          Ecart.vMd,
-          if (_envoyee)
-            Text(t.tuteur.reglages.demandeEnvoyee, style: textes.bodyMedium)
-          else ...<Widget>[
-            if (actuelle?.value != null) ...<Widget>[
-              Text(
-                t.tuteur.reglages.demandeActuelle(
-                  minutes: '${actuelle!.requireValue}',
-                ),
-                style: textes.bodySmall,
-              ),
-              Ecart.vMd,
-            ],
-            if (_avecValeur) ...<Widget>[
-              ChoiceCardGroup(
-                options: <OptionChoix>[
-                  for (final int minutes in dureesProposees)
-                    OptionChoix(
-                      valeur: '$minutes',
-                      libelle: t.tuteur.reglages.demandeMinutes(
-                        minutes: '$minutes',
-                      ),
+    // FORM-L1 : les puces de motifs allongent la feuille ; elle defile au
+    // lieu de deborder (vue basse, texte agrandi).
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsetsDirectional.only(
+          start: metriques.marge,
+          end: metriques.marge,
+          top: metriques.marge,
+          bottom: MediaQuery.viewInsetsOf(context).bottom + metriques.marge,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            TexteSansCoupure(_titre(), style: textes.titleMedium),
+            Ecart.vMd,
+            if (_envoyee)
+              TexteSansCoupure(
+                t.tuteur.reglages.demandeEnvoyee,
+                style: textes.bodyMedium,
+              )
+            else ...<Widget>[
+              if (actuelle?.value != null) ...<Widget>[
+                TexteSansCoupure(
+                  LibellesGroupe.insecable(
+                    t.tuteur.reglages.demandeActuelle(
+                      minutes: '${actuelle!.requireValue}',
                     ),
-                ],
-                onChange: (ReponseChoix reponse) => setState(() {
-                  _valeur = int.tryParse(
-                    reponse.valeurs.isEmpty
-                        ? reponse.saisieLibre ?? ''
-                        : reponse.valeurs.first,
-                  );
-                }),
-              ),
-              Ecart.vMd,
-            ],
-            TextField(
-              controller: _motif,
-              decoration: InputDecoration(
-                labelText: t.tuteur.reglages.demandeMotif,
-              ),
-              // Sans ceci, le bouton ne se reconstruit pas a la frappe et reste
-              // inerte alors que le motif est saisi (piege de l'etape 3).
-              onChanged: (String _) => setState(() {}),
-              maxLines: 2,
-            ),
-            if (_erreur != null) ...<Widget>[
-              Ecart.vSm,
-              Text(
-                _erreur!,
-                style: palette.inkAlert.applyTo(
-                  textes.bodySmall ?? const TextStyle(),
+                  ),
+                  style: textes.bodySmall,
                 ),
-              ),
-            ],
-            if (_motif.text.trim().isEmpty) ...<Widget>[
-              Ecart.vSm,
+                Ecart.vMd,
+              ],
+              if (_avecValeur) ...<Widget>[
+                ChoiceCardGroup(
+                  options: <OptionChoix>[
+                    for (final int minutes in dureesProposees)
+                      OptionChoix(
+                        valeur: '$minutes',
+                        libelle: LibellesGroupe.valeurSeule(
+                          t.tuteur.reglages.demandeMinutes(minutes: '$minutes'),
+                        ),
+                      ),
+                  ],
+                  onChange: (ReponseChoix reponse) => setState(() {
+                    _erreur = null;
+                    _valeur = int.tryParse(
+                      reponse.valeurs.isEmpty
+                          ? reponse.saisieLibre ?? ''
+                          : reponse.valeurs.first,
+                    );
+                  }),
+                ),
+                Ecart.vMd,
+              ],
+              Text(t.tuteur.reglages.demandeMotif, style: textes.titleSmall),
+              Ecart.vXs,
               Text(
                 t.tuteur.reglages.demandeMotifRequis,
                 style: textes.bodySmall,
               ),
+              Ecart.vSm,
+              SelecteurMotif(
+                motifs: _motifsProposes(),
+                controleur: _motif,
+                libelleChamp: t.tuteur.reglages.demandeMotif,
+                erreur: _motifManquant ? t.formulaire.motif.manque : null,
+                onChange: (String _) => setState(() => _motifManquant = false),
+              ),
+              if (_erreur != null) ...<Widget>[
+                Ecart.vSm,
+                Text(
+                  _erreur!,
+                  style: palette.inkAlert.applyTo(
+                    textes.bodySmall ?? const TextStyle(),
+                  ),
+                ),
+              ],
+              Ecart.vMd,
+              ActionPrincipale(
+                libelle: t.tuteur.reglages.demandeEnvoyer,
+                enCours: _enCours,
+                onPress: _envoyer,
+              ),
             ],
-            Ecart.vMd,
-            ActionPrincipale(
-              libelle: t.tuteur.reglages.demandeEnvoyer,
-              enCours: _enCours,
-              onPress: _pret ? _envoyer : null,
-            ),
           ],
-        ],
+        ),
       ),
     );
   }
 
-  /// Vrai quand la demande peut aboutir : un motif, et une valeur si la sorte
-  /// en attend une.
-  bool get _pret =>
-      _motif.text.trim().isNotEmpty && (!_avecValeur || _valeur != null);
+  /// Les motifs proposes selon ce qui est demande (FORM-L1).
+  List<String> _motifsProposes() => switch (widget.sorte) {
+    SorteDemande.reaffectation => MotifsProposes.reglageEnseignant(),
+    SorteDemande.plafond || SorteDemande.regle =>
+      widget.cle == CleRegle.minimumPayable
+          ? MotifsProposes.reglageMinimum()
+          : MotifsProposes.reglageDuree(),
+  };
 
   String _titre() => switch (widget.sorte) {
     SorteDemande.reaffectation => t.tuteur.reglages.demandeTitreReaffectation(
-      prenom: widget.enfant.prenom,
+      dePrenom: deDevant(widget.enfant.prenom),
     ),
     SorteDemande.plafond || SorteDemande.regle =>
       widget.cle == CleRegle.minimumPayable
           ? t.tuteur.reglages.demandeTitreMinimum(prenom: widget.enfant.prenom)
-          : t.tuteur.reglages.demandeTitreDuree(prenom: widget.enfant.prenom),
+          : t.tuteur.reglages.demandeTitreDuree(
+              dePrenom: deDevant(widget.enfant.prenom),
+            ),
   };
 }
 

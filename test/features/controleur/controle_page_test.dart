@@ -141,6 +141,8 @@ void main() {
   // Il n'inscrit pas la visite (`observerEnControle`, RPC
   // `rejoindre_observation`) : a brancher a BR-1, sinon le jeton est refuse
   // en reel et le passage n'est pas journalise. Ce test fixe l'etat actuel.
+  // A BR-1, inverser : observations == [seanceId] avant /salle, un refus
+  // reste sur CTR-01.
   testWidgets('chemin par defaut : /salle avec le billet seul, aucune '
       'inscription de visite avant BR-1 (BR-CT-19)', (
     WidgetTester tester,
@@ -190,6 +192,8 @@ void main() {
     await tester.tap(find.byKey(ControleControleurPage.commencerKey));
     await tester.pumpAndSettle();
     expect(routeur.state.uri.path, Routes.salle);
+    // Le billet seul, jamais par l'URL (ADR-005) : aucun parametre de requete.
+    expect(routeur.state.uri.queryParameters, isEmpty);
     expect(recu?.sessionId, mission.seanceId);
     expect(video.observations, isEmpty);
   });

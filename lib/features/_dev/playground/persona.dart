@@ -233,8 +233,10 @@ List<Persona> personasDuBench({required DateTime maintenant}) => <Persona>[
     ),
   ),
   personne(
-    id: 'famille-incomplet',
-    libelle: 'Famille - dossier incomplet',
+    // AD-NETTOYAGE (n2) : K-47, le tuteur n'a plus de « dossier » ; ce persona
+    // est celui dont les accords ne sont pas encore signes.
+    id: 'famille-accords',
+    libelle: 'Famille - accords a signer',
     graine: Graine(
       session: _sessionTuteur(AccountStatus.pendingKyc),
       etatDossier: const EtatDossier(
@@ -268,12 +270,12 @@ List<Persona> personasDuBench({required DateTime maintenant}) => <Persona>[
   ),
   personne(
     id: 'eleve-standard',
-    libelle: 'Eleve (interface standard)',
+    libelle: 'Élève (interface standard)',
     graine: _graineEleve(InterfaceMode.standard, maintenant),
   ),
   personne(
     id: 'eleve-enfant',
-    libelle: 'Eleve (interface enfant)',
+    libelle: 'Élève (Mode Accessibilité)',
     graine: _graineEleve(InterfaceMode.enfant, maintenant),
   ),
   personne(

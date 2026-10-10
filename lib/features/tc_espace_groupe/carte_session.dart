@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
@@ -42,7 +43,15 @@ class CarteSession extends StatefulWidget {
     this.identite,
     this.actionHorsEntree,
     this.tutoiement = false,
+    this.entreeRetiree = false,
   });
+
+  /// Vrai quand l'acces de l'eleve connecte ferme ses seances (FI-9a,
+  /// FI-BR-08) : « Rejoindre » est retire de la carte, jamais grise, et
+  /// l'hote dit pourquoi au-dessus (copie neutre). Les lignes d'etat
+  /// (annulee, hors ligne, a venir) restent : seul le bouton part.
+  /// [EmplacementEntree] n'est pas touche (HU-1).
+  final bool entreeRetiree;
 
   /// Vrai pour l'eleve mineur en Mode Accessibilite (MA4) : « Ton heure »,
   /// « Tu es dans la salle ». Faux partout ailleurs : un adulte, un tuteur ou
@@ -53,9 +62,11 @@ class CarteSession extends StatefulWidget {
   /// Accessibilite, MA-3) ; nulle dans l'Espace Classe, qui la porte deja.
   final Widget? identite;
 
-  /// Le seul bouton de la carte quand l'emplacement d'entree n'en est pas
-  /// un (ligne d'etat sans « Reessayer ») : jamais a cote de « Rejoindre »
-  /// (R4). Accueil du Mode Accessibilite : « Voir ma classe » (MA-3).
+  /// Le bouton plein de la carte quand l'emplacement d'entree n'en est pas
+  /// un (ligne d'etat, avec ou sans « Reessayer » secondaire) : jamais a
+  /// cote de « Rejoindre » (R4). Accueil du Mode Accessibilite : « Voir ma
+  /// classe » (MA-3), qui reste hors ligne (MA-HORSLIGNE-CLASSE-1) : il
+  /// mene aux seances deja lues, ou a l'erreur honnete avec « Reessayer ».
   final Widget? actionHorsEntree;
 
   /// L'Espace Groupe auquel elle appartient.
@@ -138,6 +149,7 @@ class _CarteSessionState extends State<CarteSession> {
       tutoiement: widget.tutoiement,
     );
     final TextTheme textes = Theme.of(context).textTheme;
+    final bool retire = widget.entreeRetiree && emplacement.estBouton;
 
     return AppCard(
       dominante: true,
@@ -197,19 +209,25 @@ class _CarteSessionState extends State<CarteSession> {
             ),
           ],
           // Le bouton se pose 16 sous le contenu qu'il confirme (R20).
-          Ecart.vLg,
-          EmplacementEntreeVue(
-            emplacement: emplacement,
-            // Le tuteur ne rejoint pas la classe de son enfant : il l'observe
-            // (lot C-obs, routes D8). Son emplacement reste une ligne d'etat.
-            sansBouton: espace.role == RoleEspaceGroupe.tuteur,
-            onEntrer: widget.onRejoindre,
-            onReessayer: widget.onReessayer,
-            focusRetour: _focusTitre,
-          ),
+          if (!retire) ...<Widget>[
+            Ecart.vLg,
+            EmplacementEntreeVue(
+              emplacement: emplacement,
+              // Le tuteur ne rejoint pas la classe de son enfant : il
+              // l'observe (lot C-obs, routes D8). Son emplacement reste une
+              // ligne d'etat.
+              sansBouton: espace.role == RoleEspaceGroupe.tuteur,
+              onEntrer: widget.onRejoindre,
+              onReessayer: widget.onReessayer,
+              focusRetour: _focusTitre,
+            ),
+          ],
+          // Hors ligne aussi, sous « Reessayer » (qui relit le reseau) : Ma
+          // classe montre les seances deja lues pendant la session, ou, sans
+          // lecture prealable, son etat d'erreur avec « Reessayer ». Jamais
+          // une impasse ; aucun cache neuf ici (MA-HORSLIGNE-CLASSE-1).
           if (widget.actionHorsEntree != null &&
-              !emplacement.estBouton &&
-              !emplacement.reessayer) ...<Widget>[
+              (!emplacement.estBouton || retire)) ...<Widget>[
             Ecart.vLg,
             widget.actionHorsEntree!,
           ],
@@ -273,7 +291,7 @@ class HeuresSeance extends StatelessWidget {
         Ecart.vSm,
         _LigneValeur(
           libelle: LibellesGroupe.dureeLibelle,
-          valeur: LibellesGroupe.dureeLisible(duree),
+          valeur: LibellesGroupe.dureeSeule(duree),
         ),
       ],
     );
@@ -491,7 +509,9 @@ class _LigneEtat extends StatelessWidget {
       EtatEntree.terminee => AppIcons.succes,
       EtatEntree.annulee => AppIcons.annuler,
       EtatEntree.aucune => AppIcons.info,
-      EtatEntree.indisponible => AppIcons.horsLigne,
+      // Hors ligne se dit une fois (EA-HL-DOUBLE-1) : le « wifi barre » est
+      // celui du bandeau ; la ligne dit l'attente de l'entree.
+      EtatEntree.indisponible => AppIcons.attente,
     };
     return MergeSemantics(
       child: Row(
@@ -658,8 +678,13 @@ class _ConseilAppareil extends StatelessWidget {
           ),
           Ecart.hSm,
           Expanded(
+            // COUPE-MOTS-3b : « ... pris en charge. », jamais « .Tablette »
+            // dans l'interface arabe (libelle encore sans traduction).
             child: Text(
-              LibellesGroupe.conseilAppareil,
+              isolerSiAutreSens(
+                LibellesGroupe.conseilAppareil,
+                Directionality.of(context),
+              ),
               style: palette.inkMuted.applyTo(
                 textes.bodySmall ?? const TextStyle(),
               ),

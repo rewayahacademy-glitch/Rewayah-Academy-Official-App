@@ -42,7 +42,7 @@ void main() {
       expect(e.etat, EtatEntree.aVenir);
       expect(e.forme, FormeEntree.ligne);
       expect(e.estBouton, isFalse);
-      expect(e.libelle, 'Cours dans 3 h');
+      expect(e.libelle, 'Cours dans 3\u00A0h');
       expect(e.libelleLecteur, isNull);
     });
 
@@ -61,7 +61,7 @@ void main() {
           expect(e.libelleLecteur, 'Rejoindre la séance de Classe An-Nour');
           expect(
             e.detail,
-            'La salle est ouverte. La séance commence dans 8 min.',
+            'La salle est ouverte. La séance commence dans 8\u00A0min.',
           );
         }
         final EmplacementEntree ens = a(m, role: RoleEntree.enseignant);
@@ -119,7 +119,7 @@ void main() {
       expect(e.estBouton, isTrue);
       expect(
         e.detail,
-        'Vous êtes dans la salle. La séance commence dans 3 min.',
+        'Vous êtes dans la salle. La séance commence dans 3\u00A0min.',
       );
     });
 
@@ -178,7 +178,7 @@ void main() {
         ouverture.subtract(const Duration(seconds: 1)),
       );
       expect(avant.etat, EtatEntree.aVenir);
-      expect(avant.libelle, 'Cours dans 20 min');
+      expect(avant.libelle, 'Cours dans 20\u00A0min');
     });
 
     test('T0 exact : en direct', () {
@@ -262,7 +262,7 @@ void main() {
       );
       expect(
         avec.avisDst,
-        "Changement d'heure : le cours passera de 18:00 à 17:00.",
+        "Changement d'heure\u00A0: le cours passera de 18:00 à 17:00.",
       );
       expect(avec.etat, EtatEntree.aVenir);
       final EmplacementEntree sans = a(

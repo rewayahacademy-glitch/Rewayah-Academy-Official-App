@@ -15,7 +15,10 @@ import 'pressable.dart';
 /// ou valeur, chevron quand elle mene ailleurs.
 @immutable
 class LigneRubrique {
-  /// Cree une rubrique. Il faut une [icone] ou un [meneur].
+  /// Cree une rubrique. [icone] et [meneur] sont facultatifs : sans l'un ni
+  /// l'autre, la ligne n'a pas de tete, son texte commence au retrait de
+  /// debut et le filet court sous tout ce texte (plages de disponibilite,
+  /// DISPO-1b). Commentaire seul : le rendu n'a pas change.
   const LigneRubrique({
     required this.libelle,
     this.icone,
@@ -73,7 +76,9 @@ class LigneRubrique {
   final Widget? marque;
 
   /// Une pastille d'etat dans le flux du libelle : a cote du nom quand la
-  /// place suffit, dessous sinon (AD-5).
+  /// place suffit, dessous sinon (AD-5). Tout widget peut s'y poser : les
+  /// plages de disponibilite y mettent la suite de leur ligne en colonnes
+  /// (« de 17 h | a 23 h », DISPO-1b), avec [pastilleSousLibelle] a faux.
   final Widget? pastille;
 
   /// Place de la [pastille] imposee par la liste, pour que toutes ses lignes
@@ -173,6 +178,11 @@ class _Ligne extends StatelessWidget {
       return MergeSemantics(
         child: Semantics(
           checked: ligne.cochee,
+          // m16 (AD-NETTOYAGE) : une case sans geste (ni controle ni
+          // `onPress`) est dite inactive au lecteur d'ecran.
+          enabled: ligne.cochee != null && ligne.controle == null
+              ? false
+              : null,
           child: _contenu(context, const EtatPression()),
         ),
       );
@@ -285,7 +295,7 @@ class _Ligne extends StatelessWidget {
     final Widget? marque = ligne.marque;
     final bool marqueDessous =
         marque != null &&
-        (MediaQuery.textScalerOf(context).scale(1) > 1.3 ||
+        (MediaQuery.textScalerOf(context).scale(1) > seuilTexteEmpile ||
             largeur < _largeurMarqueEnFin);
     return Row(
       children: <Widget>[
@@ -318,10 +328,10 @@ class _Ligne extends StatelessWidget {
             child: marque,
           ),
         ],
-        if (ligne.controle != null) ...<Widget>[Ecart.hSm, ligne.controle!],
-        if (ligne.onPress != null &&
-            ligne.controle == null &&
-            ligne.cochee == null) ...<Widget>[
+        // AD-NETTOYAGE-2 (n12) : `_rangee` ne sert qu'aux lignes sans controle
+        // (les autres passent par `_RangeeMesuree`) : ni bloc controle, ni
+        // test sur le controle ici.
+        if (ligne.onPress != null && ligne.cochee == null) ...<Widget>[
           Ecart.hSm,
           ExcludeSemantics(
             child: IconTheme(
@@ -346,7 +356,7 @@ class _Ligne extends StatelessWidget {
   /// (interrupteur) n'est pas mesure : une ligne a marque n'en porte pas.
   double get _fixesEnFin =>
       AppSpacing.sm +
-      (ligne.onPress != null && ligne.controle == null && ligne.cochee == null
+      (ligne.onPress != null && ligne.cochee == null
           ? AppSpacing.sm + AppSpacing.xl
           : 0);
 
@@ -375,13 +385,14 @@ class _Ligne extends StatelessWidget {
               TexteSansCoupure(
                 ligne.libelle,
                 key: const ValueKey<String>('groupe-reglages-libelle'),
-                style: palette.inkStrong
-                    .applyTo(textes.bodyLarge ?? const TextStyle())
-                    .copyWith(
-                      fontWeight: (ligne.selectionnee ?? false)
-                          ? FontWeight.w600
-                          : null,
-                    ),
+                // labelLarge : meme taille que bodyLarge dans les deux
+                // echelles, graisse 600 portee par le theme.
+                style: palette.inkStrong.applyTo(
+                  ((ligne.selectionnee ?? false)
+                          ? textes.labelLarge
+                          : textes.bodyLarge) ??
+                      const TextStyle(),
+                ),
               ),
               if (ligne.pastille != null && ligne.pastilleSousLibelle != true)
                 ligne.pastille!,
@@ -544,7 +555,18 @@ class _RenduRangeeMesuree extends RenderBox
       return contraintes.constrain(Size(w, h));
     }
     final Size t = disposer(_textes, BoxConstraints.tightFor(width: largeur));
-    final Size c = disposer(_controle, BoxConstraints(maxWidth: largeur));
+    // AD-NETTOYAGE-2 (m14) : sous le libelle, le controle garde sa largeur
+    // naturelle ; une contrainte lache seule etirait un bouton dont le
+    // contenu est centre (ActionPrincipale) sur toute la ligne.
+    final Size c = disposer(
+      _controle,
+      BoxConstraints(
+        maxWidth: math.min(
+          largeur,
+          _controle.getMaxIntrinsicWidth(double.infinity),
+        ),
+      ),
+    );
     final double h = t.height + _ecartDessous + c.height;
     if (placer) {
       (_textes.parentData! as _DonneesRangee).offset = Offset.zero;

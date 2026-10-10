@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/admin/admin_domaine.dart';
 import '../../../core/admin/service_programme.dart';
+import '../../../core/communications/modeles_communication.dart';
+import '../../../core/communications/port_pieces_jointes.dart';
 import '../../../core/domain/enums.dart';
+import '../../../core/finance/finances_profil.dart';
+import '../../../core/finance/format_montant.dart';
+import '../../../core/finance/montant.dart';
+import '../../../core/finance/politique_commerciale.dart';
 import '../../../core/i18n/cle_audio.dart';
+import '../../../core/i18n/elision.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/planning/journee.dart';
@@ -12,6 +20,7 @@ import '../../../core/presence/service_presence.dart';
 import '../../../core/presence/vue_presence.dart';
 import '../../../core/priere/horaires_priere.dart';
 import '../../../core/session/session_state.dart';
+import '../../../core/theme/accent_profil.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -23,6 +32,9 @@ import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/audio_label.dart';
 import '../../../core/widgets/avatar_nom.dart';
 import '../../../core/widgets/avatar_tile.dart';
+import '../../../core/widgets/badge_non_lu.dart';
+import '../../../core/widgets/badge_periode_financee.dart';
+import '../../../core/widgets/bandeau_attention.dart';
 import '../../../core/widgets/bandeau_observation.dart';
 import '../../../core/widgets/barre_precedent_suivant.dart';
 import '../../../core/widgets/bento_tile.dart';
@@ -30,6 +42,10 @@ import '../../../core/widgets/bouton_icone.dart';
 import '../../../core/widgets/bouton_outil.dart';
 import '../../../core/widgets/carte_groupee.dart';
 import '../../../core/widgets/carte_lignes.dart';
+import '../../../core/widgets/carte_piece_jointe.dart';
+import '../../../core/widgets/champ_date.dart';
+import '../../../core/widgets/champ_etiquete.dart';
+import '../../../core/widgets/champ_recherche.dart';
 import '../../../core/widgets/child_card.dart';
 import '../../../core/widgets/choice_card_group.dart';
 import '../../../core/widgets/commande_salle.dart';
@@ -38,17 +54,24 @@ import '../../../core/widgets/controle_segmente.dart';
 import '../../../core/widgets/data_collection.dart';
 import '../../../core/widgets/ecran_resultat.dart';
 import '../../../core/widgets/empty_state.dart';
+import '../../../core/widgets/espace_travail_adaptatif.dart';
 import '../../../core/widgets/fil_discussion.dart';
 import '../../../core/widgets/filter_pill.dart';
 import '../../../core/widgets/grille_bento.dart';
 import '../../../core/widgets/groupe_reglages.dart';
+import '../../../core/widgets/identite_profil.dart';
 import '../../../core/widgets/lien_fleche.dart';
+import '../../../core/widgets/ligne_allocation.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
+import '../../../core/widgets/ligne_finance.dart';
+import '../../../core/widgets/ligne_moyen_paiement.dart';
 import '../../../core/widgets/ligne_presence.dart';
+import '../../../core/widgets/ligne_transaction.dart';
 import '../../../core/widgets/local_feedback.dart';
 import '../../../core/widgets/marque_page.dart';
 import '../../../core/widgets/menu_actions.dart';
 import '../../../core/widgets/menu_filtre.dart';
+import '../../../core/widgets/montant_argent.dart';
 import '../../../core/widgets/nav_shell.dart';
 import '../../../core/widgets/offline_banner.dart';
 import '../../../core/widgets/page_etape.dart';
@@ -56,16 +79,24 @@ import '../../../core/widgets/page_immersive.dart';
 import '../../../core/widgets/page_parcours.dart';
 import '../../../core/widgets/page_shell.dart';
 import '../../../core/widgets/pastille_etat_seance.dart';
+import '../../../core/widgets/pastille_financiere.dart';
+import '../../../core/widgets/pays_enseignant.dart';
 import '../../../core/widgets/permanent_notice.dart';
 import '../../../core/widgets/pile_cartes.dart';
 import '../../../core/widgets/pin_pad.dart';
 import '../../../core/widgets/point_rappel.dart';
 import '../../../core/widgets/pressable.dart';
 import '../../../core/widgets/raccourci_tactile.dart';
+import '../../../core/widgets/rangee_filtres.dart';
+import '../../../core/widgets/resume_soldes.dart';
 import '../../../core/widgets/rosace_verset.dart';
 import '../../../core/widgets/schedule_option.dart';
 import '../../../core/widgets/section_header.dart';
+import '../../../core/widgets/selecteur_couleur_profil.dart';
+import '../../../core/widgets/selecteur_mois.dart';
+import '../../../core/widgets/selecteur_motif.dart';
 import '../../../core/widgets/selecteur_niveau_programme.dart';
+import '../../../core/widgets/selecteur_personne.dart';
 import '../../../core/widgets/selecteur_section.dart';
 import '../../../core/widgets/selecteur_theme.dart';
 import '../../../core/widgets/setting_row.dart';
@@ -74,9 +105,14 @@ import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/sous_navigation_domaine.dart';
 import '../../../core/widgets/stat_tile.dart';
 import '../../../core/widgets/status_pill.dart';
+import '../../../core/widgets/surface_recherche.dart';
 import '../../../core/widgets/timeline_row.dart';
+import '../../../core/widgets/vue_etat_communication.dart';
+import '../../../core/widgets/zone_saisie.dart';
 import '../../admin_tableau/tuiles_compteur.dart';
 import '../../disponibilites/grille_semaine.dart';
+import '../../enseignant_classes/mes_classes_page.dart' show MarquesClasse;
+import 'entrees_etats_comptable.dart';
 import 'entrees_etats_tuteur.dart';
 
 /// Les familles d'etats obligatoires.
@@ -233,7 +269,7 @@ List<TuileBento> _tuilesBentoPrincipales() => <TuileBento>[
       // Chaque nom ouvre son dossier (DASH-ADM-1, D4 (a)).
       apercu: <LigneApercu>[
         LigneApercu(
-          'Aicha · ${t.admin.tableau.attenteJours(jours: '4')}',
+          'Aicha · ${t.admin.tableau.attenteJours(jours: 4)}',
           onPress: _rien,
         ),
         LigneApercu(
@@ -659,7 +695,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       EtatGalerie(
         'neutre',
         (BuildContext _) => SignalRow(
-          phrase: t.admin.tableau.ligneDossier(prenom: 'Aicha'),
+          phrase: t.admin.tableau.ligneDossier(dePrenom: deDevant('Aicha')),
           icone: AppIcons.dossiers,
           anciennete: t.admin.tableau.attenteJours(jours: 3),
           onPress: _rien,
@@ -668,7 +704,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       EtatGalerie(
         'avertissement',
         (BuildContext _) => SignalRow(
-          phrase: t.admin.tableau.lignePlafond(prenom: 'Youssef'),
+          phrase: t.admin.tableau.lignePlafond(dePrenom: deDevant('Youssef')),
           icone: AppIcons.avertissement,
           anciennete: t.admin.tableau.attenteUnJour,
           ton: TonEtat.avertissement,
@@ -993,6 +1029,333 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           prenom: 'Youssef',
           nom: 'Sayyid Youssef',
           role: 'Coran, niveau 2',
+        ),
+      ),
+    ],
+  ),
+  // FI-3a (guide Finance V4 §7, §11.3) : les composants d'argent.
+  EntreeGalerie(
+    nom: 'MontantArgent',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'grand : le solde',
+        (BuildContext _) => const MontantArgent(
+          Montant(14500, 'USD'),
+          taille: TailleMontant.grand,
+        ),
+      ),
+      EtatGalerie(
+        'signe : une remise',
+        (BuildContext _) =>
+            const MontantArgent(Montant(-500, 'USD'), signe: true),
+      ),
+      EtatGalerie(
+        'attenue, avec centimes',
+        (BuildContext _) =>
+            const MontantArgent(Montant(14320, 'USD'), attenue: true),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'LigneFinance',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'decomposition dans une seule carte',
+        (BuildContext _) => const CarteLignes(
+          lignes: <Widget>[
+            LigneFinance(
+              libelle: 'Tarif enfant',
+              montant: Montant(5000, 'USD'),
+            ),
+            LigneFinance(
+              libelle: 'Remise familiale',
+              detail: '3e membre',
+              montant: Montant(-500, 'USD'),
+            ),
+            LigneFinance(
+              libelle: 'Total à financer',
+              montant: Montant(4500, 'USD'),
+              total: true,
+            ),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'une taxe ajoutee, signee',
+        (BuildContext _) => const LigneFinance(
+          libelle: 'Taxe applicable',
+          montant: Montant(250, 'USD'),
+          signe: true,
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'LigneTransaction',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'credit et debit, toujours signes',
+        (BuildContext _) => const CarteLignes(
+          lignes: <Widget>[
+            LigneTransaction(
+              libelle: 'Recharge',
+              date: '1er octobre',
+              montant: Montant(14500, 'USD'),
+            ),
+            LigneTransaction(
+              libelle: "Période d'octobre",
+              date: '1er octobre',
+              montant: Montant(-5000, 'USD'),
+            ),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'en confirmation : la pastille dit l etat',
+        (BuildContext _) => const LigneTransaction(
+          libelle: 'Recharge',
+          date: '4 octobre',
+          montant: Montant(9500, 'USD'),
+          statut: StatusPill(
+            libelle: 'En confirmation',
+            ton: TonEtat.avertissement,
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'LigneAllocation',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'a qui va chaque montant',
+        (BuildContext _) => const CarteLignes(
+          lignes: <Widget>[
+            LigneAllocation(
+              prenom: 'Mariam',
+              detail: 'Octobre',
+              montant: Montant(5000, 'USD'),
+              avatar: BandeauProfil(
+                avatar: AvatarTile(prenom: 'Mariam', diametre: AppAvatar.moyen),
+                diametre: AppAvatar.moyen,
+                accent: AccentProfil.rose,
+              ),
+            ),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'sans couleur choisie : le cercle seul',
+        (BuildContext _) => const LigneAllocation(
+          prenom: 'Ibrahim',
+          // Meme ecriture que le formateur : espace insecable avant la devise.
+          detail: 'Nouveau solde : 50\u00A0\$',
+          montant: Montant(5000, 'USD'),
+          avatar: BandeauProfil(
+            avatar: AvatarTile(prenom: 'Ibrahim', diametre: AppAvatar.moyen),
+            diametre: AppAvatar.moyen,
+            accent: null,
+          ),
+        ),
+      ),
+    ],
+  ),
+  // FI-3b (guide Finance V4 §1.6, §1.7, §5.1-5.4, §11.4) : statuts,
+  // bandeau, moyen de paiement, synthese.
+  EntreeGalerie(
+    nom: 'PastilleFinanciere',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'finance',
+        (BuildContext _) =>
+            const PastilleFinanciere(etat: EtatFinancier.finance),
+      ),
+      EtatGalerie(
+        'a regulariser',
+        (BuildContext _) =>
+            const PastilleFinanciere(etat: EtatFinancier.aRegulariser),
+      ),
+      EtatGalerie(
+        'en confirmation',
+        (BuildContext _) =>
+            const PastilleFinanciere(etat: EtatFinancier.enConfirmation),
+      ),
+      EtatGalerie(
+        'essai : le compteur rendu par la source',
+        (BuildContext _) => const PastilleFinanciere(
+          etat: EtatFinancier.essai,
+          essaisUtilises: 1,
+          essaisMax: 2,
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'BadgePeriodeFinancee',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'periode financee',
+        (BuildContext _) => BadgePeriodeFinancee(
+          periode: PeriodeFinancee(
+            debut: DateTime(2026, 10),
+            fin: DateTime(2026, 10, 31),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'aucune periode (essai)',
+        (BuildContext _) => const BadgePeriodeFinancee(periode: null),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'BandeauAttention',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'acces a regulariser',
+        (BuildContext _) => BandeauAttention(
+          titre: 'Accès à régulariser',
+          message:
+              'Il manque ${formaterMontant(const Montant(800, 'USD'))} '
+              'pour financer janvier.',
+        ),
+      ),
+      EtatGalerie(
+        'paiement en confirmation',
+        (BuildContext _) => const BandeauAttention(
+          titre: 'Paiement en cours de confirmation',
+          message: 'Ne payez pas une seconde fois.',
+          ton: TonEtat.accent,
+        ),
+      ),
+      EtatGalerie(
+        'echec',
+        (BuildContext _) => const BandeauAttention(
+          titre: "Le paiement n'a pas abouti",
+          message: 'Votre sélection est gardée. Réessayez ou changez de moyen.',
+          ton: TonEtat.alerte,
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'LigneMoyenPaiement',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'retenu',
+        (BuildContext _) => const LigneMoyenPaiement(
+          rail: RailPaiement.webStripe,
+          retenu: true,
+          onPress: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'a choisir',
+        (BuildContext _) => const LigneMoyenPaiement(
+          rail: RailPaiement.webStripe,
+          onPress: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'hors ligne : la carte ne se presse plus',
+        (BuildContext _) =>
+            const LigneMoyenPaiement(rail: RailPaiement.webStripe),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'ResumeSoldes',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'foyer de trois profils',
+        (BuildContext _) => const ResumeSoldes(
+          synthese: SyntheseFoyer(
+            totalSoldes: Montant(14500, 'USD'),
+            aPayerCeMois: Montant(800, 'USD'),
+            profilsFinances: 2,
+            profils: 3,
+            paiementsDuMois: 2,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'tout est finance',
+        (BuildContext _) => const ResumeSoldes(
+          synthese: SyntheseFoyer(
+            totalSoldes: Montant(0, 'USD'),
+            aPayerCeMois: Montant(0, 'USD'),
+            profilsFinances: 3,
+            profils: 3,
+            paiementsDuMois: 1,
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'IdentiteProfil',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'bandeau choisi par le tuteur, age et classe',
+        (BuildContext _) => const IdentiteProfil(
+          prenom: 'Mariam',
+          accent: AccentProfil.rose,
+          age: 10,
+          classe: 'An-Nour',
+        ),
+      ),
+      EtatGalerie(
+        'sans couleur choisie : le cercle seul',
+        (BuildContext _) =>
+            const IdentiteProfil(prenom: 'Ibrahim', accent: null),
+      ),
+      EtatGalerie(
+        'grand en-tete, profil adulte',
+        (BuildContext _) => const IdentiteProfil(
+          prenom: 'Fatimah',
+          accent: AccentProfil.lavande,
+          estAdulte: true,
+          taille: TailleIdentite.entete,
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'SelecteurCouleurProfil',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'Menthe retenue, Rose deja prise',
+        (BuildContext _) => SelecteurCouleurProfil(
+          valeur: AccentProfil.menthe,
+          prenom: 'Mariam',
+          prises: const <AccentProfil, String>{AccentProfil.rose: 'Yusuf'},
+          onChoix: (AccentProfil? _) {},
+        ),
+      ),
+      EtatGalerie(
+        'sans couleur',
+        (BuildContext _) => SelecteurCouleurProfil(
+          valeur: null,
+          prenom: 'Ibrahim',
+          onChoix: (AccentProfil? _) {},
+        ),
+      ),
+      EtatGalerie(
+        'hors ligne : les ronds ne se pressent plus',
+        (BuildContext _) => const SelecteurCouleurProfil(
+          valeur: AccentProfil.ciel,
+          prenom: 'Aicha',
         ),
       ),
     ],
@@ -1376,6 +1739,29 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           ),
         ),
       ),
+      // R-07 : la lecture seule, celle des Messages et des canaux du Studio.
+      EtatGalerie(
+        'lecture seule : la phrase dit la limite, ni champ ni bouton',
+        (BuildContext _) => SizedBox(
+          height: _hauteurCollection * 2,
+          child: Material(
+            type: MaterialType.transparency,
+            child: FilDiscussion(
+              messages: const <MessageFil>[
+                MessageFil(
+                  id: 'g0',
+                  auteur: 'Administration',
+                  texte: 'Le planning de la semaine est en ligne.',
+                  horodatage: 'Lundi 21 septembre, 08:15',
+                  deSoi: false,
+                ),
+              ],
+              textes: _textesFil,
+              lectureSeule: t.com.studio.canal.lectureSeule,
+            ),
+          ),
+        ),
+      ),
       EtatGalerie(
         'messages',
         (BuildContext _) => SizedBox(
@@ -1401,6 +1787,113 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
               ],
               textes: _textesFil,
               onEnvoyer: (String _) async {},
+            ),
+          ),
+        ),
+      ),
+      // COM-RC tour 4 (N-1) : sous 480 points, la ligne compacte du contexte
+      // reste fixe au-dessus de la liste ; l'en-tete complet n'est plus la.
+      EtatGalerie(
+        'vue basse : la ligne de contexte reste fixe',
+        (BuildContext _) => SizedBox(
+          height: _hauteurCollection * 2,
+          child: Material(
+            type: MaterialType.transparency,
+            child: FilDiscussion(
+              entete: const Text('M. Rachid, Controleur pedagogique'),
+              enteteCompacte: const Text(
+                'M. Rachid · Visite de controle',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              messages: const <MessageFil>[
+                MessageFil(
+                  id: 'g3',
+                  auteur: 'M. Rachid',
+                  texte: 'Le compte rendu est depose.',
+                  horodatage: 'Jeudi 1 octobre, 12:00',
+                  deSoi: false,
+                ),
+              ],
+              textes: _textesFil,
+              onEnvoyer: (String _) async {},
+            ),
+          ),
+        ),
+      ),
+    ],
+  ),
+  // SUPERPOS-1 : la zone de saisie multiligne partagee (etiquette au-dessus,
+  // hauteur qui grandit avec le texte, envoi integre et centre).
+  EntreeGalerie(
+    nom: 'ZoneSaisie',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'formulaire vide',
+        (BuildContext _) => Material(
+          type: MaterialType.transparency,
+          child: ZoneSaisie(
+            controleur: TextEditingController(),
+            libelle: 'Motif du refus',
+            explication: 'Le motif est envoye au titulaire du dossier.',
+            minLignes: 3,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'erreur',
+        (BuildContext _) => Material(
+          type: MaterialType.transparency,
+          child: ZoneSaisie(
+            controleur: TextEditingController(),
+            libelle: 'Motif du refus',
+            erreur: 'Le motif est obligatoire.',
+            minLignes: 3,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'lecture seule',
+        (BuildContext _) => Material(
+          type: MaterialType.transparency,
+          child: ZoneSaisie(
+            controleur: TextEditingController(text: 'Photo illisible.'),
+            libelle: 'Motif du refus',
+            lectureSeule: true,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'envoi integre, vide',
+        (BuildContext _) => Material(
+          type: MaterialType.transparency,
+          child: ZoneSaisie(
+            controleur: TextEditingController(),
+            libelle: _textesFil.libelleChamp,
+            aide: _textesFil.aideChamp,
+            explication: _textesFil.champVide,
+            envoi: EnvoiZoneSaisie(
+              libelle: _textesFil.envoyer,
+              onEnvoyer: _rien,
+            ),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'envoi integre, plusieurs lignes',
+        (BuildContext _) => Material(
+          type: MaterialType.transparency,
+          child: ZoneSaisie(
+            controleur: TextEditingController(
+              text:
+                  'La seance a commence avec huit minutes de retard.\n'
+                  'La connexion est revenue a 18:10.',
+            ),
+            libelle: _textesFil.libelleChamp,
+            envoi: EnvoiZoneSaisie(
+              libelle: _textesFil.envoyer,
+              onEnvoyer: _rien,
             ),
           ),
         ),
@@ -1452,6 +1945,188 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
               suite: 'seance non facturee',
             ),
           ],
+        ),
+      ),
+    ],
+  ),
+  // COM-F, COM-F-b (02_DEC-13) : les quatre composants du socle des
+  // Communications, a la racine de `lib/core/widgets/` pour que le test de la
+  // galerie les voie.
+  EntreeGalerie(
+    nom: 'BadgeNonLu',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'urgent, non lus et mention : un mot et une icone chacun',
+        (BuildContext _) => const BadgeNonLu(
+          indicateur: IndicateurAttention(
+            nonLus: 3,
+            niveau: NiveauAttention.urgent,
+            mention: true,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'compact : la pastille la plus pressante seule',
+        (BuildContext _) => const BadgeNonLu(
+          compact: true,
+          indicateur: IndicateurAttention(
+            nonLus: 1,
+            niveau: NiveauAttention.actionRequise,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'a lire, sans compte',
+        (BuildContext _) => const BadgeNonLu(
+          indicateur: IndicateurAttention(niveau: NiveauAttention.aLire),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'CartePieceJointe',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'envoyee : Ouvrir, sans reference ni adresse',
+        (BuildContext _) => CartePieceJointe(
+          piece: _pieceJointe(EtatPieceJointe.envoyee),
+          onOuvrir: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'non confirmee : Retirer et Reessayer',
+        (BuildContext _) => CartePieceJointe(
+          piece: _pieceJointe(EtatPieceJointe.echec),
+          onRetirer: _rien,
+          onReessayer: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'trop lourde : la phrase dit quoi faire',
+        (BuildContext _) => CartePieceJointe(
+          piece: _pieceJointe(EtatPieceJointe.tropVolumineuse),
+          onRetirer: _rien,
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'EspaceTravailAdaptatif',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'liste, contenu et contexte : 1, 2 ou 3 colonnes selon la largeur',
+        (BuildContext _) => const SizedBox(
+          height: _hauteurCollection,
+          child: EspaceTravailAdaptatif(
+            liste: _PanneauGalerie('Fils'),
+            principal: _PanneauGalerie('Fil'),
+            contexte: _PanneauGalerie('Contexte'),
+            surfaceMobile: SurfaceMobile.liste,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'contenu seul : aucune colonne vide',
+        (BuildContext _) => const SizedBox(
+          height: _hauteurCollection,
+          child: EspaceTravailAdaptatif(principal: _PanneauGalerie('Fil')),
+        ),
+      ),
+    ],
+  ),
+  // R-07 (revue COM-R) : la recherche d'une liste, une seule pour les
+  // Messages, Le Studio et la Communaute.
+  EntreeGalerie(
+    nom: 'ChampRecherche',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'vide : l aide, sans Effacer',
+        (BuildContext _) => Material(
+          type: MaterialType.transparency,
+          child: ChampRecherche(
+            controleur: TextEditingController(),
+            libelle: t.com.messages.recherche.champ,
+            aide: t.com.messages.recherche.aide,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'rempli : Effacer la recherche',
+        (BuildContext _) => Material(
+          type: MaterialType.transparency,
+          child: ChampRecherche(
+            controleur: TextEditingController(text: 'Classe An-Nour'),
+            libelle: t.com.messages.recherche.champ,
+            aide: t.com.messages.recherche.aide,
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'SurfaceRecherche',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'telephone : retour, champ, resultats',
+        (BuildContext _) => SizedBox(
+          height: _hauteurCollection,
+          child: Material(
+            type: MaterialType.transparency,
+            child: SurfaceRecherche(
+              controleur: TextEditingController(text: 'planning'),
+              libelle: t.com.studio.recherche.champ,
+              aide: t.com.studio.recherche.aide,
+              onFermer: _rien,
+              resultats: const _PanneauGalerie('Resultats'),
+            ),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'champ vide : aucun resultat pose',
+        (BuildContext _) => SizedBox(
+          height: _hauteurCollection,
+          child: Material(
+            type: MaterialType.transparency,
+            child: SurfaceRecherche(
+              controleur: TextEditingController(),
+              libelle: t.com.communaute.recherche.champ,
+              aide: t.com.communaute.recherche.aide,
+              onFermer: _rien,
+              resultats: const SizedBox.shrink(),
+            ),
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'VueEtatCommunication',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      for (final EtatCommunication etat in EtatCommunication.values)
+        EtatGalerie(
+          etat.name,
+          (BuildContext _) => VueEtatCommunication(
+            etat: etat,
+            onReessayer: _rien,
+            dependance: 'COM-BR-00',
+          ),
+        ),
+      // R-23 : la colonne d'un maitre-detail sans element ouvert, partagee.
+      EtatGalerie(
+        'choisir : la colonne sans element ouvert, qui defile',
+        (BuildContext _) => SizedBox(
+          height: _hauteurCollection,
+          child: VueChoisirCommunication(
+            titre: t.com.messages.choisirTitre,
+            phrase: t.com.messages.choisir,
+          ),
         ),
       ),
     ],
@@ -1661,6 +2336,40 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           libelle: t.galerie.composants,
           compteur: 0,
           onPress: _rien,
+        ),
+      ),
+    ],
+  ),
+  // FILTRES-1 : une seule rangee de puces, qui defile quand elle ne tient pas.
+  EntreeGalerie(
+    nom: 'RangeeFiltres',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'tout tient',
+        (BuildContext _) => RangeeFiltres(
+          filtres: <Widget>[
+            FilterPill(
+              libelle: t.galerie.composants,
+              retenue: true,
+              onPress: _rien,
+            ),
+            FilterPill(libelle: t.galerie.composants, onPress: _rien),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'deborde et defile',
+        (BuildContext _) => RangeeFiltres(
+          filtres: <Widget>[
+            for (int i = 0; i < 8; i++)
+              FilterPill(
+                libelle: t.galerie.composants,
+                compteur: i,
+                retenue: i == 5,
+                onPress: _rien,
+              ),
+          ],
         ),
       ),
     ],
@@ -2092,6 +2801,45 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       ),
     ],
   ),
+  // FI-Q18 (a) : le choix du mois d'une vue chiffree. Il ne propose que les
+  // mois rendus par la source ; le bouton dit toujours le mois retenu.
+  EntreeGalerie(
+    nom: 'SelecteurMois',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      // La demonstration ne rend qu'un mois : le menu n'en offre qu'un.
+      EtatGalerie(
+        'un seul mois rendu',
+        (BuildContext _) => _SousMaterial(
+          child: SelecteurMois(
+            mois: <DateTime>[DateTime(2026, 10)],
+            choisi: null,
+            onChoix: _moisIgnore,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'plusieurs mois, le plus recent par defaut',
+        (BuildContext _) => _SousMaterial(
+          child: SelecteurMois(
+            mois: <DateTime>[DateTime(2026, 10), DateTime(2026, 9)],
+            choisi: null,
+            onChoix: _moisIgnore,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'un mois plus ancien choisi',
+        (BuildContext _) => _SousMaterial(
+          child: SelecteurMois(
+            mois: <DateTime>[DateTime(2026, 10), DateTime(2026, 9)],
+            choisi: DateTime(2026, 9),
+            onChoix: _moisIgnore,
+          ),
+        ),
+      ),
+    ],
+  ),
   EntreeGalerie(
     nom: 'SelecteurNiveauProgramme',
     famille: FamilleComposant.composantEtat,
@@ -2121,6 +2869,257 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           niveaux: _niveauxExemple.take(2).toList(),
           selectionne: null,
           onSelectionner: _niveauIgnore,
+        ),
+      ),
+    ],
+  ),
+
+  // FORM-L2 : le choix d'une personne dans une liste cherchable, qui remplace
+  // l'identifiant tape a la main. Donnees de demonstration, aucune lecture.
+  EntreeGalerie(
+    nom: 'SelecteurPersonne',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'liste, rien de choisi',
+        (BuildContext _) => _surfaceMaterielle(
+          const SelecteurPersonne(
+            sorte: SortePersonne.eleve,
+            personnes: AsyncData<List<PersonneProposee>>(_personnesExemple),
+            choisie: null,
+            onChoix: _personneIgnoree,
+            onReessayer: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'choix fait',
+        (BuildContext _) => _surfaceMaterielle(
+          const SelecteurPersonne(
+            sorte: SortePersonne.enseignant,
+            personnes: AsyncData<List<PersonneProposee>>(_personnesExemple),
+            choisie: 'p2',
+            onChoix: _personneIgnoree,
+            onReessayer: _rien,
+          ),
+        ),
+      ),
+      // CLASSE-FORM-1 : la mention « le plus adapte », une personne visible
+      // mais non choisissable avec sa raison (D4), et la marque obligatoire.
+      EtatGalerie(
+        'mention, indisponible, obligatoire',
+        (BuildContext _) => _surfaceMaterielle(
+          const SelecteurPersonne(
+            sorte: SortePersonne.enseignant,
+            personnes: AsyncData<List<PersonneProposee>>(
+              _enseignantsClasseExemple,
+            ),
+            choisie: null,
+            onChoix: _personneIgnoree,
+            onReessayer: _rien,
+            obligatoire: true,
+            aide: 'Le plus adapte en premier.',
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'liste vide',
+        (BuildContext _) => _surfaceMaterielle(
+          const SelecteurPersonne(
+            sorte: SortePersonne.eleve,
+            personnes: AsyncData<List<PersonneProposee>>(<PersonneProposee>[]),
+            choisie: null,
+            onChoix: _personneIgnoree,
+            onReessayer: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'erreur : Reessayer',
+        (BuildContext _) => _surfaceMaterielle(
+          const SelecteurPersonne(
+            sorte: SortePersonne.eleve,
+            personnes: AsyncError<List<PersonneProposee>>(
+              FormatException('lecture'),
+              StackTrace.empty,
+            ),
+            choisie: null,
+            onChoix: _personneIgnoree,
+            onReessayer: _rien,
+          ),
+        ),
+      ),
+    ],
+  ),
+  // FORM-L4 : un champ date a choisir dans un calendrier, jamais a taper.
+  EntreeGalerie(
+    nom: 'ChampDate',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'vide',
+        (BuildContext _) => _surfaceMaterielle(
+          ChampDate(
+            libelle: 'Date de debut',
+            valeur: null,
+            onChoix: _dateIgnoree,
+            aujourdhui: DateTime(2026, 10, 4),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'date choisie',
+        (BuildContext _) => _surfaceMaterielle(
+          ChampDate(
+            libelle: 'Date de debut',
+            valeur: DateTime(2026, 10, 12),
+            onChoix: _dateIgnoree,
+            aujourdhui: DateTime(2026, 10, 4),
+          ),
+        ),
+      ),
+    ],
+  ),
+  // FORM-CORR-1 : un champ de texte a etiquette au-dessus, sur plusieurs lignes.
+  EntreeGalerie(
+    nom: 'ChampEtiquete',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'vide, etiquette longue',
+        (BuildContext _) => _surfaceMaterielle(
+          ChampEtiquete(
+            libelle: 'Description du niveau (facultative, une phrase)',
+            controller: TextEditingController(),
+            maxLines: 2,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'rempli, aide',
+        (BuildContext _) => _surfaceMaterielle(
+          ChampEtiquete(
+            libelle: 'Nom du nouveau cycle',
+            controller: TextEditingController(text: 'Avance'),
+            aide: 'Une phrase sous le champ.',
+          ),
+        ),
+      ),
+    ],
+  ),
+
+  // FORM-L1-7-13 : le motif en puces, « Autre » en dernier ouvre la saisie
+  // libre ; meme rangee pour les valeurs entieres proposees (L13).
+  EntreeGalerie(
+    nom: 'SelecteurMotif',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'puces, rien de retenu',
+        (BuildContext _) => _surfaceMaterielle(
+          SelecteurMotif(
+            motifs: const <String>[
+              'Demande de la famille',
+              'Transfert vers une autre classe',
+              'Fin de l inscription',
+            ],
+            controleur: TextEditingController(),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'puce retenue',
+        (BuildContext _) => _surfaceMaterielle(
+          SelecteurMotif(
+            motifs: const <String>[
+              'Demande de la famille',
+              'Transfert vers une autre classe',
+            ],
+            controleur: TextEditingController(
+              text: 'Transfert vers une autre classe',
+            ),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'motif manquant',
+        (BuildContext _) => _surfaceMaterielle(
+          SelecteurMotif(
+            motifs: const <String>['Demande de la famille'],
+            controleur: TextEditingController(),
+            erreur: 'Il manque le motif.',
+          ),
+        ),
+      ),
+      EtatGalerie(
+        '« Autre » ouvert, texte libre',
+        (BuildContext _) => _surfaceMaterielle(
+          SelecteurMotif(
+            motifs: const <String>['Demande de la famille'],
+            controleur: TextEditingController(text: 'Demenagement'),
+            aide: 'Une phrase sous le champ.',
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'sans puce : champ libre seul',
+        (BuildContext _) => _surfaceMaterielle(
+          SelecteurMotif(
+            motifs: const <String>[],
+            controleur: TextEditingController(),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'valeur entiere proposee (L13)',
+        (BuildContext _) => _surfaceMaterielle(
+          SelecteurEntier(
+            proposees: const <int>[30, 45, 60, 90],
+            affichage: (int n) => '$n min',
+            valeurInitiale: 60,
+            onChange: (int? _) {},
+          ),
+        ),
+      ),
+    ],
+  ),
+
+  // ENS-PAYS-1 : le pays de l'enseignant, sous son nom, pour tous les roles.
+  // Le drapeau ne se dessine que si l'appareil le peut (mesure) ; le nom est
+  // toujours ecrit ; rien quand le pays n'est pas declare.
+  EntreeGalerie(
+    nom: 'PaysEnseignant',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'pays de la liste (avec son drapeau)',
+        (BuildContext _) =>
+            _surfaceMaterielle(const PaysEnseignant(pays: 'Guinée')),
+      ),
+      EtatGalerie(
+        'sous un avatar en ligne',
+        (BuildContext _) => _surfaceMaterielle(
+          const AvatarNom.enLigne(
+            prenom: 'Ibrahim',
+            nom: 'Sayyid Ibrahim',
+            pays: "Côte d'Ivoire",
+            role: 'Coran, niveau 2',
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'pays ecrit dans Autre (nom seul)',
+        (BuildContext _) =>
+            _surfaceMaterielle(const PaysEnseignant(pays: 'Comores')),
+      ),
+      EtatGalerie(
+        'non declare : rien',
+        (BuildContext _) => _surfaceMaterielle(
+          const AvatarNom.enLigne(
+            prenom: 'Khadija',
+            nom: 'Sayyida Khadija',
+            role: 'Coran, niveau 3',
+          ),
         ),
       ),
     ],
@@ -2444,6 +3443,24 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           ],
         ),
       ),
+      // Revue COUPE-MOTS-1-R (m7, CORR-SUITE-2) : la ligne de Mes Classes
+      // avec sa marque la plus longue et la pastille « Remplacement », par le
+      // composant reel ; la marque passe sous la legende et a la ligne entre
+      // les mots, jamais dans un mot.
+      EtatGalerie(
+        'marque longue et pastille Remplacement',
+        (BuildContext _) => const GroupeReglages(
+          lignes: <LigneRubrique>[
+            LigneRubrique(
+              icone: AppIcons.classes,
+              libelle: 'Al-Badr',
+              legende: 'Niveau 2 · Français · 3 élèves\nMardi à 18:00',
+              onPress: _rien,
+              marque: MarquesClasse(cahierAValider: true, remplacement: true),
+            ),
+          ],
+        ),
+      ),
       EtatGalerie(
         'ligne survolee',
         (BuildContext _) => const PressionForcee(
@@ -2507,6 +3524,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
     ],
   ),
   ...entreesEtatsTuteur(),
+  ...entreesEtatsComptable(),
 ];
 
 /// Quatre sections courtes, pour le selecteur de section de la galerie.
@@ -2792,6 +3810,59 @@ void _acteurIgnore(String? acteur) {}
 
 void _niveauIgnore(String niveauId) {}
 
+void _personneIgnoree(PersonneProposee personne) {}
+
+void _dateIgnoree(DateTime jour) {}
+
+/// Sept personnes factices : une de plus que `maximumAffiche`, pour que la
+/// phrase « et N autres » se voie. Identifiants au format `[ROLE]-[INITIALES]-[SEQ]`.
+const List<PersonneProposee> _enseignantsClasseExemple = <PersonneProposee>[
+  PersonneProposee(
+    id: 'e1',
+    nom: 'Amina Exemple',
+    identifiant: 'TEACHER-AE-000001',
+    mention: 'Le plus adapte : libre ce creneau, 1 classe en cours.',
+  ),
+  PersonneProposee(
+    id: 'e2',
+    nom: 'Omar Fictif',
+    identifiant: 'TEACHER-OF-000002',
+    raisonIndisponible: 'Classe de femmes : confiee a une enseignante.',
+  ),
+];
+
+const List<PersonneProposee> _personnesExemple = <PersonneProposee>[
+  PersonneProposee(
+    id: 'p1',
+    nom: 'Aicha Benali',
+    identifiant: 'STUD-AB-000001',
+  ),
+  PersonneProposee(id: 'p2', nom: 'Omar Said', identifiant: 'STUD-OS-000002'),
+  PersonneProposee(
+    id: 'p3',
+    nom: 'Youssef Haddad',
+    identifiant: 'STUD-YH-000003',
+  ),
+  PersonneProposee(
+    id: 'p4',
+    nom: 'Maryam Idrissi',
+    identifiant: 'STUD-MI-000004',
+  ),
+  PersonneProposee(
+    id: 'p5',
+    nom: 'Ilyas Cherif',
+    identifiant: 'STUD-IC-000005',
+  ),
+  PersonneProposee(
+    id: 'p6',
+    nom: 'Zineb Amrani',
+    identifiant: 'STUD-ZA-000006',
+  ),
+  PersonneProposee(id: 'p7', nom: 'Adam Tazi', identifiant: 'STUD-AT-000007'),
+];
+
+void _moisIgnore(DateTime mois) {}
+
 void _codeIgnore(String code) {}
 
 void _choixIgnore(ReponseChoix reponse) {}
@@ -2809,6 +3880,33 @@ final TextesFilDiscussion _textesFil = TextesFilDiscussion(
   echec: t.controleur.echanges.echec,
   reessayer: t.controleur.echanges.reessayer,
   auteurSoi: t.controleur.echanges.auteurVous,
-  annonce: (String auteur, String texte) =>
-      t.controleur.echanges.nouveauMessage(auteur: auteur, texte: texte),
+  annonce: (String auteur, String texte) => t.controleur.echanges
+      .nouveauMessage(deAuteur: deDevant(auteur), texte: texte),
 );
+
+/// Une surface Material de demonstration : `TextField` et `InkWell` en exigent une, que la page hote fournit dans le produit.
+Widget _surfaceMaterielle(Widget enfant) =>
+    Material(type: MaterialType.transparency, child: enfant);
+
+/// Une piece jointe de galerie : un nom long a tirets, pour voir le passage a
+/// la ligne a 320 et texte double (revue COM-F-R, m3).
+PieceJointe _pieceJointe(EtatPieceJointe etat) => PieceJointe(
+  reference: ReferencePieceJointe('pj_galerie'),
+  nom: 'devoir-sourate-al-mulk.pdf',
+  nature: NaturePieceJointe.document,
+  typeLisible: 'PDF',
+  tailleOctets: 655360,
+  etat: etat,
+  peutOuvrir: true,
+);
+
+/// Un panneau de l'espace de travail, dans la galerie : un titre centre.
+class _PanneauGalerie extends StatelessWidget {
+  const _PanneauGalerie(this.titre);
+
+  final String titre;
+
+  @override
+  Widget build(BuildContext context) =>
+      Padding(padding: const EdgeInsets.all(AppSpacing.md), child: Text(titre));
+}

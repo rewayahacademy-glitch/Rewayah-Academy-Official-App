@@ -41,7 +41,7 @@ final Finder _absencePrincipale = find.byKey(
 final Finder _absenceSecondaire = find.byKey(
   const ValueKey<String>('absence-secondaire'),
 );
-final Finder _offre = find.text('Assurer ce remplacement ?');
+final Finder _offre = find.text('Assurer ce remplacement\u00A0?');
 final Finder _remplacementPrincipale = find.byKey(
   const ValueKey<String>('remplacement-principale'),
 );
@@ -73,7 +73,10 @@ void main() {
       await _monter(tester);
       await _toucher(tester, _declarerAbsence);
 
-      expect(find.text('Vous ne pourrez pas assurer cette séance ?'), findsOne);
+      expect(
+        find.text('Vous ne pourrez pas assurer cette séance\u00A0?'),
+        findsOne,
+      );
       expect(
         find.text('Votre affectation à la Classe reste inchangée.'),
         findsOne,
@@ -128,7 +131,7 @@ void main() {
       await _toucher(tester, _absenceSecondaire);
 
       expect(
-        find.text('Vous ne pourrez pas assurer cette séance ?'),
+        find.text('Vous ne pourrez pas assurer cette séance\u00A0?'),
         findsNothing,
       );
       expect(_declarerAbsence, findsOne);

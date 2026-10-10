@@ -4,33 +4,41 @@
 //
 // UX_REVIEW_08 n° 7 :
 // - cartes de choix (`ChoiceCardGroup`), jamais de liste deroulante ;
-// - « Eleve precis » ouvre le roster autorise : prenom seul, une ligne par
-//   eleve, aucun champ de recherche ni saisie libre (C8) ;
+// - « Eleve precis » ouvre le roster autorise : prenom et initiale du nom
+//   (decision C7 = a), une ligne par eleve, aucun champ de recherche ni
+//   saisie libre (C8) ;
 // - l'erreur « texte requis » apparait a la validation de l'etape et
 //   disparait des la saisie ; aucun compteur (C15) ;
 // - le retour d'etape garde toutes les reponses, en memoire seulement (C12) ;
 // - aucun interrupteur de partage : la notice dit la transmission (C2) ;
 // - aucun succes sans reponse du serveur ; en cas d'echec, la saisie reste.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
+import '../../core/mouvement/mouvement.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/ecran_resultat.dart';
-import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_parcours.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
+import '../../core/widgets/zone_saisie.dart';
 import 'compte_rendu_controle.dart';
+import 'compte_rendu_controle_page.dart' show VisiteInconnue;
 import 'observation_controle.dart';
 
 enum _Etape { nature, domaine, personne, texte, recapitulatif, envoye }
@@ -131,11 +139,37 @@ class _ObservationControlePageState
   bool _enCours = false;
   bool _echec = false;
 
+  /// Le paragraphe d'echec, amene a l'ecran quand il apparait sous un
+  /// recapitulatif long.
+  final GlobalKey _cleEchec = GlobalKey();
+
   /// La visite, retrouvee par sa seance ; nulle si inconnue.
   late final CompteRenduEnSuspens? _visite = visiteDeSeance(
     ref,
     widget.seanceId,
   );
+
+  /// Le roster de CETTE seance, jamais celui d'une autre Classe
+  /// (CTRL-SEANCE-1). Lu seulement quand la visite est connue.
+  FutureProvider<List<EleveRoster>> get _roster =>
+      rosterControleProvider(_visite!.seanceId);
+
+  /// Amene le debut de l'echec en haut de la vue apres son rendu : sous un
+  /// recapitulatif long, il naitrait hors de la vue, et a 320 px et texte x2
+  /// il est plus haut que l'ecran, sa lecture commence donc par son debut
+  /// (revue C1-CTRL-R M2).
+  void _montrerEchec() =>
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        final BuildContext? c = _cleEchec.currentContext;
+        if (!mounted || c == null) return;
+        unawaited(
+          Scrollable.ensureVisible(
+            c,
+            duration: Mouvement.duree(context, Mouvement.moyen),
+            curve: Mouvement.entree,
+          ),
+        );
+      });
 
   bool get _important => widget.choix == ChoixCompteRendu.pointImportant;
 
@@ -224,7 +258,9 @@ class _ObservationControlePageState
                   : null,
               texte: _texte.text.trim(),
             ),
-          );
+          )
+          // Serveur muet : « non confirme » et Reessayer (CTRL-DELAI-1).
+          .timeout(AppDelais.requeteMax);
       if (!mounted) return;
       ref.read(compteRenduATerminerProvider.notifier).terminer(visite.seanceId);
       setState(() {
@@ -237,6 +273,7 @@ class _ObservationControlePageState
         _enCours = false;
         _echec = true;
       });
+      _montrerEchec();
     }
   }
 
@@ -269,18 +306,15 @@ class _ObservationControlePageState
       );
     }
     if (_visite == null) {
-      // Seance inconnue (rechargement, lien direct) : le message generique,
-      // jamais une autre mission (C7, revue CT-R B1).
-      return PageShell(
-        titre: t.controleur.compteRendu.titre,
-        child: EmptyState(
-          message: t.controleur.controle.indisponible,
-          registre: RegistreVide.subi,
-          libelleAction: t.controleur.compteRendu.revenir,
-          onAction:
-              widget.onRevenir ??
-              () => GoRouter.of(context).go(Routes.controleur),
-        ),
+      // Seance inconnue (rechargement, lien direct) : la visite n'est plus en
+      // memoire, jamais une autre mission (C7, revue CT-R B1, CTRL-MSG-1).
+      return VisiteInconnue(
+        onEcrireAdmin: () => widget.onEcrireAdmin == null
+            ? GoRouter.of(context).go(Routes.controleurEcrireAdmin(null))
+            : widget.onEcrireAdmin!(null),
+        onRevenir:
+            widget.onRevenir ??
+            () => GoRouter.of(context).go(Routes.controleur),
       );
     }
 
@@ -358,19 +392,39 @@ class _ObservationControlePageState
         libelle = t.controleur.compteRendu.envoyer;
     }
 
+    // COUPE-MOTS-3b : une phrase ecrite dans l'autre sens que l'interface
+    // (libelle francais encore sans traduction arabe) est isolee a
+    // l'affichage : « Vérifiez ... avant l'envoi. », jamais « .l'envoi ».
+    final TextDirection sens = Directionality.of(context);
+    final String? aide = explication;
     return PageParcours(
       numero: _etape.index + 1,
       total: 5,
-      question: question,
-      explication: explication,
-      enfant: ApparitionDouce(key: ValueKey<_Etape>(_etape), child: corps),
+      question: isolerSiAutreSens(question, sens),
+      explication: aide == null ? null : isolerSiAutreSens(aide, sens),
+      // La notice et l'echec sont dans le corps qui defile, sous le
+      // recapitulatif, jamais dans la zone fixe du bouton : a 320 px et texte
+      // x2, un echec de onze lignes y remplissait l'ecran et coupait
+      // « Envoyer le compte rendu » (revue C1-CTRL-R M2).
+      enfant: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          ApparitionDouce(key: ValueKey<_Etape>(_etape), child: corps),
+          if (_etape == _Etape.recapitulatif) ...<Widget>[
+            Ecart.vXl,
+            _Souscription(
+              echec: _echec,
+              sansTexte: _texte.text.trim().isEmpty,
+              cleEchec: _cleEchec,
+            ),
+          ],
+        ],
+      ),
       libelleAction: libelle,
       onAction: _enCours ? null : action,
       onRetour: _enCours ? null : _precedent,
       enCours: _enCours,
-      souscription: _etape == _Etape.recapitulatif
-          ? _Souscription(echec: _echec)
-          : null,
     );
   }
 
@@ -405,9 +459,7 @@ class _ObservationControlePageState
   );
 
   Widget _personneEtRoster() {
-    final AsyncValue<List<EleveRoster>> etatRoster = ref.watch(
-      rosterControleProvider,
-    );
+    final AsyncValue<List<EleveRoster>> etatRoster = ref.watch(_roster);
     final List<EleveRoster> roster = etatRoster.hasError
         ? const <EleveRoster>[]
         : etatRoster.value ?? const <EleveRoster>[];
@@ -480,7 +532,7 @@ class _ObservationControlePageState
                       libelle: t.commun.reessayer,
                       niveau: NiveauAction.secondaire,
                       pleineLargeur: false,
-                      onPress: () => ref.invalidate(rosterControleProvider),
+                      onPress: () => ref.invalidate(_roster),
                     ),
                   ),
                 ],
@@ -497,7 +549,10 @@ class _ObservationControlePageState
                         OptionChoix(
                           cle: ObservationControlePage.cleEleve(e.id),
                           valeur: e.id,
-                          libelle: e.prenom,
+                          // Isole : le point de « Mariam S. » reste a la fin
+                          // du nom, quel que soit le sens de l'interface
+                          // (CTRL-ROSTER-C7-1b).
+                          libelle: isolerSens(e.nomAffiche),
                         ),
                     ],
                     onChange: (ReponseChoix r) => setState(
@@ -514,20 +569,16 @@ class _ObservationControlePageState
     );
   }
 
-  Widget _champTexte() => TextField(
-    key: ObservationControlePage.texteKey,
-    controller: _texte,
-    minLines: 4,
-    maxLines: 8,
-    textCapitalization: TextCapitalization.sentences,
-    decoration: InputDecoration(
-      labelText: t.controleur.observation.libelleTexte,
-      hintText: t.controleur.observation.aideTexte,
-      alignLabelWithHint: true,
-      // L'aide du document reste lisible avant la saisie.
-      floatingLabelBehavior: FloatingLabelBehavior.always,
-      errorText: _texteManquant ? t.controleur.observation.texteRequis : null,
-    ),
+  // Zone de saisie partagee (SUPERPOS-1) : l'etiquette au-dessus du champ,
+  // l'aide du document lisible avant la saisie.
+  Widget _champTexte() => ZoneSaisie(
+    cleChamp: ObservationControlePage.texteKey,
+    controleur: _texte,
+    libelle: t.controleur.observation.libelleTexte,
+    aide: t.controleur.observation.aideTexte,
+    erreur: _texteManquant ? t.controleur.observation.texteRequis : null,
+    minLignes: 4,
+    maxLignes: 8,
     // L'erreur disparait des la saisie (BAY-IV) ; aucune validation pendant
     // la frappe.
     onChanged: (String _) {
@@ -538,7 +589,7 @@ class _ObservationControlePageState
   Widget _recapitulatif() {
     final o = t.controleur.observation;
     final List<EleveRoster> roster =
-        ref.watch(rosterControleProvider).value ?? const <EleveRoster>[];
+        ref.watch(_roster).value ?? const <EleveRoster>[];
     final PersonneConcernee? p = _personne;
     final NatureObservation? n = _nature;
     final DomaineObservation? d = _domaine;
@@ -547,26 +598,37 @@ class _ObservationControlePageState
         : ObservationControlePage.libellePersonne(p);
     if (p == PersonneConcernee.elevePrecis) {
       for (final EleveRoster e in roster) {
-        if (e.id == _eleveId) personne = '$personne · ${e.prenom}';
+        if (e.id == _eleveId) {
+          personne = '$personne · ${isolerSens(e.nomAffiche)}';
+        }
       }
     }
     final String texte = _texte.text.trim();
+    // COUPE-MOTS-3b : chaque valeur ecrite dans l'autre sens que
+    // l'interface est isolee (« Élève précis · Mariam S. », jamais
+    // « · Élève précis »).
+    final TextDirection sens = Directionality.of(context);
+    String isoler(String v) => isolerSiAutreSens(v, sens);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         LigneCleValeur(
           cle: o.cleNature,
-          valeur: n == null ? '' : ObservationControlePage.libelleNature(n),
+          valeur: n == null
+              ? ''
+              : isoler(ObservationControlePage.libelleNature(n)),
         ),
         LigneCleValeur(
           cle: o.cleDomaine,
-          valeur: d == null ? '' : ObservationControlePage.libelleDomaine(d),
+          valeur: d == null
+              ? ''
+              : isoler(ObservationControlePage.libelleDomaine(d)),
         ),
-        LigneCleValeur(cle: o.clePersonne, valeur: personne),
+        LigneCleValeur(cle: o.clePersonne, valeur: isoler(personne)),
         LigneCleValeur(
           cle: o.cleTexte,
-          valeur: texte.isEmpty ? o.sansTexte : texte,
+          valeur: isoler(texte.isEmpty ? o.sansTexte : texte),
         ),
       ],
     );
@@ -575,14 +637,28 @@ class _ObservationControlePageState
 
 /// La notice de transmission, au-dessus du bouton, et l'echec honnete.
 class _Souscription extends StatelessWidget {
-  const _Souscription({required this.echec});
+  const _Souscription({
+    required this.echec,
+    required this.sansTexte,
+    required this.cleEchec,
+  });
 
   final bool echec;
+
+  /// La cle du paragraphe d'echec.
+  final Key cleEchec;
+
+  /// Texte facultatif laisse vide : l'echec ne parle pas d'un texte garde
+  /// (CTRL-MSG-1).
+  final bool sansTexte;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    // COUPE-MOTS-3b : « ... à l'administration. », jamais « .à
+    // l'administration » dans l'interface arabe.
+    final TextDirection sens = Directionality.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -595,9 +671,11 @@ class _Souscription extends StatelessWidget {
               child: Icon(AppIcons.info.resoudre()),
             ),
             Ecart.hSm,
+            // « automatiquement », « l'administration. » : jamais coupes a
+            // 320 px, texte x2, Interface guidee (COUPE-MOTS-3).
             Expanded(
-              child: Text(
-                t.controleur.compteRendu.notice,
+              child: TexteSansCoupure(
+                isolerSiAutreSens(t.controleur.compteRendu.notice, sens),
                 style: palette.inkMuted.applyTo(
                   textes.bodyMedium ?? const TextStyle(),
                 ),
@@ -609,9 +687,15 @@ class _Souscription extends StatelessWidget {
           liveRegion: true,
           child: echec
               ? Padding(
+                  key: cleEchec,
                   padding: const EdgeInsets.only(top: AppSpacing.md),
-                  child: Text(
-                    t.controleur.observation.echec,
+                  child: TexteSansCoupure(
+                    isolerSiAutreSens(
+                      sansTexte
+                          ? t.controleur.observation.echecSansTexte
+                          : t.controleur.observation.echec,
+                      Directionality.of(context),
+                    ),
                     style: palette.inkStrong.applyTo(
                       textes.bodyMedium ?? const TextStyle(),
                     ),

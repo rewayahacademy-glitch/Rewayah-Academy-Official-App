@@ -146,7 +146,8 @@ enum TypePiece {
   /// Titre de sejour.
   titreSejour('residence_permit'),
 
-  /// Autre piece, decrite en saisie libre.
+  /// Autre piece officielle : une carte a part entiere du depot, choisie
+  /// explicitement (`other` en base). Aucun champ libre ne l'accompagne.
   autre('other');
 
   const TypePiece(this.valeurSql);

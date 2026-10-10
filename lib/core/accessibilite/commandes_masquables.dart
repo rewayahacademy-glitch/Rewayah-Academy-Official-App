@@ -45,6 +45,7 @@ class CommandesMasquables extends StatefulWidget {
     this.maintenir = false,
     this.margeLecture = false,
     this.libelleEntree,
+    this.placeReservee = false,
     super.key,
   });
 
@@ -62,6 +63,15 @@ class CommandesMasquables extends StatefulWidget {
   /// Le nom de l'entree clavier des commandes (Tab, plan V2 §18.3), ou
   /// `null` : pas d'entree, le groupe n'est pas un arret du parcours.
   final String? libelleEntree;
+
+  /// **SUPERPOS-1** (05/10/2026, decide par delegation : un element flottant
+  /// ne reste jamais par-dessus un contenu a lire ; il prend sa place dans le
+  /// flux, ou se ferme). Vrai (lecteur du Coran) : quand les commandes sont
+  /// toujours visibles (lecteur d'ecran, clavier), elles ne se ferment
+  /// jamais et passent SOUS le contenu, dans le flux, au lieu d'en recouvrir
+  /// le bas. Au toucher, rien ne change : elles passent par-dessus puis se
+  /// ferment (reuni par JONCTION-LIGNES-1 avec la version TB-2).
+  final bool placeReservee;
 
   /// La part maximale de la hauteur que la marge de lecture peut prendre.
   static const double partMaxMarge = 1 / 3;
@@ -112,6 +122,10 @@ class CommandesMasquables extends StatefulWidget {
 
 class _CommandesMasquablesState extends State<CommandesMasquables> {
   bool _visibles = true;
+
+  /// Le contenu garde son etat quand les commandes changent de place
+  /// (SUPERPOS-1).
+  final GlobalKey _cleContenu = GlobalKey();
   Timer? _minuteur;
 
   /// Le controleur de la barre du bas, s'il est pilote.
@@ -260,7 +274,10 @@ class _CommandesMasquablesState extends State<CommandesMasquables> {
   bool _surTouche(KeyEvent evenement) {
     if (!mounted || evenement is! KeyDownEvent) return false;
     if (_pointeur) {
-      _pointeur = false;
+      // Reconstruit meme si les commandes sont deja visibles : avec
+      // [CommandesMasquables.placeReservee], le parcours clavier les fait
+      // passer sous le contenu (SUPERPOS-1, JONCTION-LIGNES-1).
+      setState(() => _pointeur = false);
       _montrer();
     }
     return false;
@@ -336,7 +353,23 @@ class _CommandesMasquablesState extends State<CommandesMasquables> {
 
   @override
   Widget build(BuildContext context) {
-    final bool visibles = _visibles || _toujoursVisibles(context);
+    final bool toujours = _toujoursVisibles(context);
+    final bool visibles = _visibles || toujours;
+    if (widget.placeReservee && toujours) {
+      // Jamais fermees : dans le flux, sous le contenu (SUPERPOS-1).
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Expanded(
+            child: KeyedSubtree(key: _cleContenu, child: widget.contenu),
+          ),
+          KeyedSubtree(
+            key: CommandesMasquables.commandesKey,
+            child: widget.commandes,
+          ),
+        ],
+      );
+    }
     final String? libelleEntree = widget.libelleEntree;
     Widget commandes = KeyedSubtree(
       key: CommandesMasquables.commandesKey,
@@ -412,7 +445,7 @@ class _CommandesMasquablesState extends State<CommandesMasquables> {
             child: _MargeCommandes(
               marge: _marge,
               recouvrement: _recouvrement,
-              child: widget.contenu,
+              child: KeyedSubtree(key: _cleContenu, child: widget.contenu),
             ),
           ),
           LayoutId(id: _Partie.commandes, child: zoneCommandes),

@@ -10,27 +10,37 @@
 // Captures (390, texte x2, eleve et enseignant) seulement avec CAPTURE_DIR.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' show Ref;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/coran/service_coran.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
+import 'package:rewayah_academy/core/theme/app_color_pair.dart';
 import 'package:rewayah_academy/core/theme/app_gabarit.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/commande_salle.dart';
+import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
 import 'package:rewayah_academy/core/widgets/page_immersive.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
+import 'package:rewayah_academy/features/salle_enseignant/panneau_enseignant.dart';
 
 import '../capture/outil_capture.dart';
+import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
 import '../teaching_core/e/faux/faux_classe.dart';
+import '../theme/support/contraste.dart';
 
 AccesSalle _acces(String role) => AccesSalle(
   urlServeur: 'wss://exemple.invalid',
@@ -102,15 +112,19 @@ Future<void> _monter(
   double densite = 1,
   ThemeMode themeMode = ThemeMode.light,
   double hauteur = 844,
+  List<Override> enPlus = const <Override>[],
+  bool presenter = true,
+  InterfaceMode interfaceMode = InterfaceMode.standard,
 }) async {
   fixerVueCapture(tester, Size(largeur, hauteur), densite);
   final FauxMoteurSalle moteur = FauxMoteurSalle();
   await tester.pumpWidget(
     hoteCapture(
       const SallePage(seanceId: 's1'),
-      surcharges: _surcharges(role, moteur),
+      surcharges: <Override>[..._surcharges(role, moteur), ...enPlus],
       echelleTexte: texte,
       themeMode: themeMode,
+      interfaceMode: interfaceMode,
     ),
   );
   await tester.pumpAndSettle();
@@ -119,6 +133,10 @@ Future<void> _monter(
     _personne('e1', 'student', 'Yasmine', role == 'student'),
     _personne('e2', 'student', 'Ilyes', false),
   ]);
+  if (!presenter) {
+    await tester.pumpAndSettle();
+    return;
+  }
   await moteur.presenterContenu(
     ContenuPresente(
       page: 42,
@@ -137,6 +155,62 @@ const List<String> _roles = <String>[
   'masked_controller',
   'guardian_observer',
 ];
+
+/// La couleur rendue d'un texte (style fusionne de son `RichText`).
+Color? _couleurRendue(WidgetTester tester, Finder texte) => tester
+    .widget<RichText>(
+      find.descendant(of: texte, matching: find.byType(RichText)).first,
+    )
+    .text
+    .style
+    ?.color;
+
+/// Le fond sous un element : la premiere boite coloree au-dessus de lui, ou
+/// le fond de l'echafaudage (celui de `PageImmersive`).
+Color _fondSous(WidgetTester tester, Finder cible) {
+  Color? trouve;
+  tester.element(cible).visitAncestorElements((Element e) {
+    final Widget w = e.widget;
+    if (w is DecoratedBox) {
+      final Decoration d = w.decoration;
+      if (d is BoxDecoration && d.color != null) {
+        trouve = d.color;
+        return false;
+      }
+      if (d is ShapeDecoration && d.color != null) {
+        trouve = d.color;
+        return false;
+      }
+    }
+    if (w is ColoredBox) {
+      trouve = w.color;
+      return false;
+    }
+    if (w is Scaffold && w.backgroundColor != null) {
+      trouve = w.backgroundColor;
+      return false;
+    }
+    return true;
+  });
+  return trouve!;
+}
+
+/// Verifie qu'un texte se lit sur ce qui est dessous : 4,5:1 au moins.
+void _lisible(WidgetTester tester, Finder texte, String quoi) {
+  expect(texte, findsWidgets, reason: quoi);
+  for (final Element e in texte.evaluate()) {
+    final Finder un = find.byWidget(e.widget).first;
+    final Color? encre = _couleurRendue(tester, un);
+    expect(encre, isNotNull, reason: quoi);
+    final Color fond = _fondSous(tester, un);
+    final double r = contraste(encre!, fond);
+    expect(
+      r,
+      greaterThanOrEqualTo(seuilTexte),
+      reason: '« $quoi » : ${r.toStringAsFixed(2)}:1 ($encre sur $fond)',
+    );
+  }
+}
 
 void main() {
   group('SALLE-200-1 : la salle tient, texte agrandi', () {
@@ -322,6 +396,515 @@ void main() {
     });
   });
 
+  // SALLE-ENCRE-1 / SALLE-CORR-4 (reserve R1 de C1-SALLE-R, releve de
+  // SALLE-CORR-3) : les textes poses sur le fond de la salle en prennent
+  // l'encre, pour tous les roles et dans les deux themes.
+  group('SALLE-ENCRE-1 : textes lisibles sur le fond de la salle', () {
+    for (final ThemeMode mode in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
+      for (final double largeur in <double>[390, 1440]) {
+        testWidgets('teacher, $largeur px, ${mode.name} : panneau du support', (
+          WidgetTester tester,
+        ) async {
+          await _monter(
+            tester,
+            'teacher',
+            largeur,
+            1,
+            themeMode: mode,
+            hauteur: largeur > 1000 ? 900 : 844,
+          );
+          expect(tester.takeException(), isNull);
+          final AppColorPair salle = AppPalette.of(
+            tester.element(find.byType(SallePage)),
+          ).surfaceInverse;
+          final Map<String, Finder> textes = <String, Finder>{
+            'Presente : page 42 sur 604': find.textContaining('sur 604'),
+            'titre d erreur': find.text(t.enseignant.salle.pageIndisponible),
+            'detail d erreur': find.text(
+              t.enseignant.salle.pageIndisponibleDetail,
+            ),
+            '42 / 604': find.byKey(const ValueKey<String>('nav-position')),
+            'Ouvrir le Coran': find.text(t.salle.ouvrirCoran),
+          };
+          for (final MapEntry<String, Finder> e in textes.entries) {
+            _lisible(tester, e.value, e.key);
+            // L'encre est celle du registre `salle`, aucune couleur nouvelle.
+            expect(
+              _couleurRendue(tester, e.value.first),
+              salle.onBackground,
+              reason: e.key,
+            );
+            expect(_fondSous(tester, e.value.first), salle.background);
+          }
+        });
+
+        for (final String role in <String>['teacher', 'student']) {
+          testWidgets('$role, $largeur px, ${mode.name} : presence lisible', (
+            WidgetTester tester,
+          ) async {
+            await _monter(
+              tester,
+              role,
+              largeur,
+              1,
+              themeMode: mode,
+              hauteur: largeur > 1000 ? 900 : 844,
+            );
+            expect(tester.takeException(), isNull);
+            final Finder lignes = find.byType(LignePresence);
+            expect(lignes, findsWidgets);
+            _lisible(
+              tester,
+              find.descendant(of: lignes, matching: find.byType(Text)),
+              'ligne de presence ($role)',
+            );
+            if (role == 'teacher') {
+              _lisible(tester, find.text(t.presence.titre), 'Presence');
+            }
+          });
+        }
+      }
+    }
+  });
+
+  // SALLE-CORR-4 (m10) : le bandeau permanent « Cours enregistre, visite de
+  // controle possible » prend l'encre du registre `salle` (enseignant, eleve) ;
+  // le controleur, qui n'a pas la mention, garde son rappel lisible.
+  group('SALLE-CORR-4 m10 : bandeau permanent lisible', () {
+    for (final ThemeMode mode in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
+      for (final double largeur in <double>[320, 390, 1440]) {
+        for (final String role in <String>[
+          'teacher',
+          'student',
+          'masked_controller',
+        ]) {
+          testWidgets('$role, $largeur px, ${mode.name}', (
+            WidgetTester tester,
+          ) async {
+            await _monter(
+              tester,
+              role,
+              largeur,
+              1,
+              themeMode: mode,
+              hauteur: largeur > 1000 ? 900 : 844,
+            );
+            expect(tester.takeException(), isNull);
+            final AppColorPair salle = AppPalette.of(
+              tester.element(find.byType(SallePage)),
+            ).surfaceInverse;
+            if (role == 'masked_controller') {
+              expect(find.text(t.salle.bandeauPermanent), findsNothing);
+              _lisible(
+                tester,
+                find.text(t.salle.bandeauControle),
+                'rappel du controleur',
+              );
+              return;
+            }
+            final Finder bandeau = find.text(t.salle.bandeauPermanent);
+            _lisible(tester, bandeau, 'bandeau permanent ($role)');
+            expect(
+              _couleurRendue(tester, bandeau.first),
+              salle.onBackground,
+              reason: 'encre du registre salle',
+            );
+            expect(_fondSous(tester, bandeau.first), salle.background);
+          });
+        }
+      }
+    }
+  });
+
+  // SALLE-ERR-320-1 : dans le panneau de l'enseignant, chaque etat du support
+  // garde son action a l'ecran, sans geste, a 320 px texte x2 comme a 390 et
+  // 1440 ; le texte qui ne tient pas defile dans le panneau, sans debordement.
+  group('SALLE-ERR-320-1 : etats du panneau enseignant', () {
+    // Les polices reelles : la police de test dessine chaque glyphe en carre
+    // plein, plus large et plus haut qu'aucune police livree ; a 320 px x2 elle
+    // mesurerait une salle que personne ne verra.
+    setUpAll(chargerPolicesDuDepot);
+    const List<(String, double, double, double)> formats =
+        <(String, double, double, double)>[
+          ('320 x2 (700)', 320, 700, 2),
+          ('320 x2 (844)', 320, 844, 2),
+          ('320 x1', 320, 700, 1),
+          ('390', 390, 844, 1),
+          ('1440', 1440, 900, 1),
+        ];
+
+    // Le bouton est a l'ecran et recoit le toucher a l'endroit ou il est
+    // dessine : ni rogne par le panneau, ni pousse hors de sa zone.
+    void touchable(
+      WidgetTester tester,
+      Finder libelle,
+      double largeur,
+      double hauteur,
+      String quoi,
+    ) {
+      expect(libelle, findsOneWidget, reason: quoi);
+      // Le toucher pose au milieu du libelle l'atteint : rien ne le rogne ni
+      // ne le recouvre.
+      expect(
+        libelle.hitTestable(),
+        findsOneWidget,
+        reason: '$quoi : touchable',
+      );
+      final Finder bouton = find.ancestor(
+        of: libelle,
+        matching: find.byType(ActionPrincipale),
+      );
+      final Rect zone = tester.getRect(bouton);
+      // Le bouton entier dans la zone visible de ce qui le fait defiler : un
+      // bouton a moitie rogne par le panneau n'est pas un bouton a l'ecran.
+      final Finder defile = find.ancestor(
+        of: bouton,
+        matching: find.byType(Scrollable),
+      );
+      final Rect vue = defile.evaluate().isEmpty
+          ? Offset.zero & Size(largeur, hauteur)
+          : tester.getRect(defile.first);
+      expect(zone.top, greaterThanOrEqualTo(vue.top - 0.5), reason: quoi);
+      expect(zone.bottom, lessThanOrEqualTo(vue.bottom + 0.5), reason: quoi);
+      expect(zone.left, greaterThanOrEqualTo(-0.5), reason: quoi);
+      expect(zone.right, lessThanOrEqualTo(largeur + 0.5), reason: quoi);
+      expect(zone.top, greaterThanOrEqualTo(-0.5), reason: quoi);
+      expect(zone.bottom, lessThanOrEqualTo(hauteur + 0.5), reason: quoi);
+    }
+
+    // Un texte qui ne tient pas reste atteignable : on le fait venir a
+    // l'ecran par le defilement du panneau, et il s'y lit.
+    Future<void> atteignable(
+      WidgetTester tester,
+      Finder texte,
+      String quoi,
+    ) async {
+      expect(texte, findsOneWidget, reason: quoi);
+      await tester.ensureVisible(texte);
+      await tester.pumpAndSettle();
+      expect(texte.hitTestable(), findsOneWidget, reason: '$quoi : atteint');
+    }
+
+    for (final (String nom, double largeur, double hauteur, double texte)
+        in formats) {
+      testWidgets('erreur de lecture, $nom : Reessayer reste a l ecran', (
+        WidgetTester tester,
+      ) async {
+        await _monter(tester, 'teacher', largeur, texte, hauteur: hauteur);
+        expect(tester.takeException(), isNull);
+        final Finder reessayer = find.text(t.commun.reessayer);
+        touchable(tester, reessayer, largeur, hauteur, 'Reessayer');
+        await tester.tap(reessayer);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        await atteignable(
+          tester,
+          find.text(t.enseignant.salle.pageIndisponible),
+          'titre',
+        );
+        await atteignable(
+          tester,
+          find.text(t.enseignant.salle.pageIndisponibleDetail),
+          'detail',
+        );
+        // Apres le defilement du texte, l'action n'a pas bouge de l'ecran.
+        touchable(
+          tester,
+          find.text(t.commun.reessayer),
+          largeur,
+          hauteur,
+          'Reessayer apres defilement',
+        );
+      });
+
+      testWidgets('corpus absent, $nom : constat et raison atteignables', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          'teacher',
+          largeur,
+          texte,
+          hauteur: hauteur,
+          enPlus: <Override>[
+            pageCoranProvider.overrideWith(
+              (Ref _, int numero) async =>
+                  PageCoran(numero: numero, versets: const <VersetCoran>[]),
+            ),
+          ],
+        );
+        expect(tester.takeException(), isNull);
+        await atteignable(
+          tester,
+          find.text(t.enseignant.salle.corpusAbsent),
+          'constat',
+        );
+        await atteignable(
+          tester,
+          find.text(t.enseignant.salle.corpusAbsentDetail),
+          'raison',
+        );
+        // Un vide subi ne propose aucune action.
+        expect(find.text(t.commun.reessayer), findsNothing);
+        expect(tester.takeException(), isNull);
+      });
+
+      testWidgets('rien n est presente, $nom : Ouvrir le Coran a l ecran', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          'teacher',
+          largeur,
+          texte,
+          hauteur: hauteur,
+          presenter: false,
+        );
+        expect(tester.takeException(), isNull);
+        touchable(
+          tester,
+          find.text(t.salle.ouvrirCoran),
+          largeur,
+          hauteur,
+          'Ouvrir le Coran',
+        );
+        await atteignable(tester, find.text(t.enseignant.salle.rien), 'rien');
+        await atteignable(
+          tester,
+          find.text(t.enseignant.salle.rienInvitation),
+          'invitation',
+        );
+        touchable(
+          tester,
+          find.text(t.salle.ouvrirCoran),
+          largeur,
+          hauteur,
+          'Ouvrir le Coran apres defilement',
+        );
+      });
+    }
+
+    // Sans le droit de presenter (le jeton refuse `can_publish_data`), la
+    // phrase remplace les commandes : elle reste a l'ecran, entiere, et
+    // l'etat du support au-dessus ne deborde pas. Le panneau est pose a la
+    // plus petite hauteur que la salle lui donne sur telephone (son plancher).
+    for (final (String nom, double largeur, double texte)
+        in <(String, double, double)>[
+          ('320 x2', 320, 2),
+          ('320 x1', 320, 1),
+          ('390', 390, 1),
+        ]) {
+      for (final bool presente in <bool>[true, false]) {
+        testWidgets(
+          'sans droit de presenter, $nom, ${presente ? 'page presentee' : 'rien'}',
+          (WidgetTester tester) async {
+            const double plancher = AppSpacing.respiration * 8;
+            fixerVueCapture(tester, Size(largeur, 844), 1);
+            final FauxMoteurSalle moteur = FauxMoteurSalle();
+            await tester.pumpWidget(
+              hoteCapture(
+                const Scaffold(
+                  body: Align(
+                    alignment: Alignment.topCenter,
+                    child: SizedBox(
+                      height: plancher,
+                      child: Padding(
+                        padding: EdgeInsets.all(AppSpacing.lg),
+                        child: PanneauEnseignantSalle(
+                          seanceId: 's1',
+                          peutPresenter: false,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                surcharges: _surcharges('teacher', moteur),
+                echelleTexte: texte,
+              ),
+            );
+            await tester.pumpAndSettle();
+            // En salle, connecte : sans droit, rien n'empeche un autre
+            // enseignant de la seance d'avoir presente une page.
+            moteur.poser(EtatSalle.connecte);
+            if (presente) {
+              moteur.publierContenu(
+                ContenuPresente(
+                  page: 42,
+                  sourate: 2,
+                  verset: 255,
+                  presentePar: 't2',
+                  emisLe: DateTime.now(),
+                ),
+              );
+            }
+            await tester.pumpAndSettle();
+            expect(tester.takeException(), isNull);
+            final Finder phrase = find.text(
+              t.enseignant.salle.sansDroitPresentation,
+            );
+            expect(phrase.hitTestable(), findsOneWidget);
+            final Rect zone = tester.getRect(phrase);
+            expect(zone.bottom, lessThanOrEqualTo(plancher + 0.5));
+            expect(zone.right, lessThanOrEqualTo(largeur + 0.5));
+            // Le droit refuse ne se grise pas : aucune commande n'existe.
+            expect(find.text(t.salle.ouvrirCoran), findsNothing);
+            // Relire la page n'est pas presenter : l'action de l'erreur de
+            // lecture reste, a l'ecran et touchable.
+            if (presente) {
+              final Finder reessayer = find.text(t.commun.reessayer);
+              expect(reessayer.hitTestable(), findsOneWidget);
+              expect(
+                tester.getRect(reessayer).bottom,
+                lessThanOrEqualTo(plancher + 0.5),
+              );
+            }
+          },
+        );
+      }
+    }
+  });
+
+  group('SALLE-ERR-320-1 : captures', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    final List<Override> corpusVide = <Override>[
+      pageCoranProvider.overrideWith(
+        (Ref _, int numero) async =>
+            PageCoran(numero: numero, versets: const <VersetCoran>[]),
+      ),
+    ];
+    for (final (String etat, List<Override> enPlus, bool presenter)
+        in <(String, List<Override>, bool)>[
+          ('erreur', const <Override>[], true),
+          ('corpus', corpusVide, true),
+          ('vide', const <Override>[], false),
+        ]) {
+      for (final (
+            String l,
+            double largeur,
+            double hauteur,
+            double texte,
+            double densite,
+          )
+          in <(String, double, double, double, double)>[
+            ('320_x2', 320, 700, 2, 2),
+            ('390', 390, 844, 1, 3),
+            ('1440', 1440, 900, 1, 1),
+          ]) {
+        for (final (String m, ThemeMode mode) in <(String, ThemeMode)>[
+          ('clair', ThemeMode.light),
+          ('sombre', ThemeMode.dark),
+        ]) {
+          final String nom = 'salle_err320_enseignant_${etat}_${l}_$m';
+          testWidgets(nom, (WidgetTester tester) async {
+            await _monter(
+              tester,
+              'teacher',
+              largeur,
+              texte,
+              densite: densite,
+              themeMode: mode,
+              hauteur: hauteur,
+              enPlus: enPlus,
+              presenter: presenter,
+            );
+            expect(tester.takeException(), isNull);
+            debugPrint('PNG ${await capturer(tester, nom)}');
+          });
+        }
+      }
+    }
+  });
+
+  group('SALLE-ENCRE-1 : captures', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String role, String nom) in <(String, String)>[
+      ('teacher', 'enseignant'),
+      ('student', 'eleve'),
+    ]) {
+      for (final (
+            String l,
+            double largeur,
+            double hauteur,
+            double texte,
+            double densite,
+          )
+          in <(String, double, double, double, double)>[
+            ('320_x1', 320, 700, 1, 2),
+            ('320_x2', 320, 700, 2, 2),
+            ('390', 390, 844, 1, 3),
+            ('1440', 1440, 900, 1, 1),
+          ]) {
+        for (final (String m, ThemeMode mode) in <(String, ThemeMode)>[
+          ('clair', ThemeMode.light),
+          ('sombre', ThemeMode.dark),
+        ]) {
+          testWidgets('salle_encre1_${nom}_${l}_$m', (
+            WidgetTester tester,
+          ) async {
+            await _monter(
+              tester,
+              role,
+              largeur,
+              texte,
+              densite: densite,
+              themeMode: mode,
+              hauteur: hauteur,
+            );
+            expect(tester.takeException(), isNull);
+            debugPrint(
+              'PNG ${await capturer(tester, 'salle_encre1_${nom}_${l}_$m')}',
+            );
+          });
+        }
+      }
+    }
+  });
+
+  group('SALLE-CORR-4 m10 : captures', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String role, String nom) in <(String, String)>[
+      ('teacher', 'enseignant'),
+      ('student', 'eleve'),
+      ('masked_controller', 'controleur'),
+    ]) {
+      for (final (
+            String l,
+            double largeur,
+            double hauteur,
+            double texte,
+            double densite,
+          )
+          in <(String, double, double, double, double)>[
+            ('320_x1', 320, 700, 1, 2),
+            ('320_x2', 320, 700, 2, 2),
+            ('390', 390, 844, 1, 3),
+            ('1440', 1440, 900, 1, 1),
+          ]) {
+        for (final (String m, ThemeMode mode) in <(String, ThemeMode)>[
+          ('clair', ThemeMode.light),
+          ('sombre', ThemeMode.dark),
+        ]) {
+          testWidgets('salle_corr4_m10_${nom}_${l}_$m', (
+            WidgetTester tester,
+          ) async {
+            await _monter(
+              tester,
+              role,
+              largeur,
+              texte,
+              densite: densite,
+              themeMode: mode,
+              hauteur: hauteur,
+            );
+            expect(tester.takeException(), isNull);
+            debugPrint(
+              'PNG ${await capturer(tester, 'salle_corr4_m10_${nom}_${l}_$m')}',
+            );
+          });
+        }
+      }
+    }
+  });
   group('SALLE-CORR-3 : captures', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
     for (final (String role, String nom) in <(String, String)>[
@@ -376,6 +959,151 @@ void main() {
         final String nom = role == 'student' ? 'eleve' : 'enseignant';
         await capturer(tester, 'salle200_${nom}_390_x2');
       });
+    }
+  });
+
+  // ETATS-MA-1 (decision du 05/10/2026, WCAG 1.4.1) : la salle `/salle`
+  // atteinte en Mode Accessibilite, texte au-dela de 130 % : les bascules
+  // gardent leur mot d'etat, les commandes passent sur deux rangees (deux
+  // par deux). Polices du depot chargees : la coupure des mots se mesure sur
+  // la vraie police. Groupe pose en dernier : le chargement ne touche pas
+  // les autres groupes.
+  group('ETATS-MA-1 : /salle en Mode Accessibilite, texte agrandi', () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final String role in <String>['student', 'teacher']) {
+      for (final double largeur in <double>[320, 390]) {
+        for (final double texte in <double>[1.5, 2]) {
+          testWidgets(
+            '$role, $largeur px, texte x$texte : mot d etat visible',
+            (WidgetTester tester) async {
+              await _monter(
+                tester,
+                role,
+                largeur,
+                texte,
+                interfaceMode: InterfaceMode.enfant,
+              );
+              expect(tester.takeException(), isNull);
+              final Finder grille = find.byKey(
+                const ValueKey<String>('commandes-deux-rangees'),
+              );
+              expect(grille, findsOneWidget);
+              final List<String> mots = tester
+                  .widgetList<Text>(
+                    find.descendant(
+                      of: grille,
+                      matching: find.byKey(
+                        const ValueKey<String>('mot-commande'),
+                      ),
+                    ),
+                  )
+                  .map((Text t) => t.data!)
+                  .toList();
+              expect(
+                mots,
+                contains(anyOf(t.salle.microOuvert, t.salle.microCoupe)),
+              );
+              if (role == 'teacher') {
+                expect(
+                  mots,
+                  contains(anyOf(t.salle.cameraAllumee, t.salle.cameraCoupee)),
+                );
+              }
+              verifierAucunMotCoupe(tester, grille);
+              final Rect zone = tester.getRect(grille);
+              expect(zone.left, greaterThanOrEqualTo(-0.5));
+              expect(zone.right, lessThanOrEqualTo(largeur + 0.5));
+              expect(zone.bottom, lessThanOrEqualTo(844.5));
+            },
+          );
+        }
+      }
+    }
+    testWidgets(
+      'student, 390 px, texte x2, hors Mode Accessibilite : inchange',
+      (WidgetTester tester) async {
+        await _monter(tester, 'student', 390, 2);
+        expect(
+          find.byKey(const ValueKey<String>('commandes-deux-rangees')),
+          findsNothing,
+        );
+      },
+    );
+  });
+
+  // DOCK-X2-1 : /salle sur ordinateur, hors Mode Accessibilite, texte x1,5
+  // et x2 : aucun mot coupe ni tronque sous les commandes. Et m5 (verification
+  // d'ETATS-MA-1) : /salle en Mode Accessibilite a 320 x 568, texte x1,5 et
+  // x2 : deux rangees, mot d'etat entier, rien hors de l'ecran.
+  group('DOCK-X2-1 : /salle, bureau et 320 x 568', () {
+    setUpAll(chargerPolicesDuDepot);
+    final Finder commandes = find.byType(CommandeSalle);
+    for (final String role in <String>['student', 'teacher']) {
+      for (final (double l, double h) in <(double, double)>[
+        (1440, 900),
+        (1024, 768),
+      ]) {
+        for (final double texte in <double>[1.5, 2]) {
+          testWidgets(
+            '$role, ${l.toInt()} px, texte x$texte : aucun mot coupe',
+            (WidgetTester tester) async {
+              await _monter(tester, role, l, texte, hauteur: h);
+              expect(tester.takeException(), isNull);
+              expect(commandes, findsWidgets);
+              verifierAucunMotCoupe(tester, commandes);
+            },
+          );
+        }
+      }
+      for (final double texte in <double>[1.5, 2]) {
+        testWidgets(
+          '$role, 320 x 568, Mode Accessibilite, texte x$texte (m5)',
+          (WidgetTester tester) async {
+            await _monter(
+              tester,
+              role,
+              320,
+              texte,
+              hauteur: 568,
+              interfaceMode: InterfaceMode.enfant,
+            );
+            expect(tester.takeException(), isNull);
+            final Finder grille = find.byKey(
+              const ValueKey<String>('commandes-deux-rangees'),
+            );
+            expect(grille, findsOneWidget);
+            final List<String> mots = tester
+                .widgetList<Text>(
+                  find.descendant(
+                    of: grille,
+                    matching: find.byKey(
+                      const ValueKey<String>('mot-commande'),
+                    ),
+                  ),
+                )
+                .map((Text t) => t.data!)
+                .toList();
+            expect(
+              mots,
+              contains(anyOf(t.salle.microOuvert, t.salle.microCoupe)),
+            );
+            verifierAucunMotCoupe(tester, grille);
+            final Rect zone = tester.getRect(grille);
+            expect(zone.left, greaterThanOrEqualTo(-0.5));
+            expect(zone.right, lessThanOrEqualTo(320.5));
+            expect(zone.bottom, lessThanOrEqualTo(568.5));
+            // Quitter reste atteignable, a l'ecran.
+            final Finder quitter = find.bySemanticsLabel(
+              RegExp(t.salle.quitterLeCours),
+            );
+            expect(quitter, findsWidgets);
+            expect(
+              tester.getRect(quitter.first).bottom,
+              lessThanOrEqualTo(568.5),
+            );
+          },
+        );
+      }
     }
   });
 }

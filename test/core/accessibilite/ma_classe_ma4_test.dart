@@ -17,6 +17,7 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/avatar_nom.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/core/widgets/pays_enseignant.dart';
 import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/espace_groupe_page.dart';
@@ -82,6 +83,13 @@ void _attendrePile(WidgetTester tester) {
   );
 }
 
+/// MA-DEC-1 (decision A5 = a du 27/09) : l'eleve voit sa progression, pas
+/// le nombre de places (« 3 eleves sur 6 places »).
+void _attendreProgressionSansPlaces() {
+  expect(find.textContaining('places'), findsNothing);
+  expect(find.textContaining('Progression'), findsWidgets);
+}
+
 void main() {
   for (final double echelle in <double>[1, 2]) {
     testWidgets(
@@ -110,6 +118,7 @@ void main() {
         expect(find.text(LibellesGroupe.rejoindre), findsNothing);
         // Tutoiement de l'eleve mineure (MA4).
         expect(find.text(t.accessibilite.tutoiement.tonHeure), findsWidgets);
+        _attendreProgressionSansPlaces();
 
         // L'action de la page : le Suivi reste atteignable.
         final Finder suivi = find.text(t.accessibilite.maClasse.suivi);
@@ -136,6 +145,7 @@ void main() {
     );
     expect(find.text(t.accessibilite.tutoiement.tonHeure), findsNothing);
     _attendrePile(tester);
+    _attendreProgressionSansPlaces();
   });
 
   testWidgets('hors Mode Accessibilite a 100 % : identite en ligne '
@@ -172,15 +182,23 @@ void main() {
       tester.getTopRight(photo).dx,
       lessThan(tester.getTopLeft(nomEnseignant).dx),
     );
+    // ENS-PAYS-1 : le pays declare se lit sous le nom ; c'est le bloc de
+    // texte (nom et pays) qui est centre sur le cercle, comme le nom et sa
+    // ligne de role.
+    final Finder pays = find.byKey(PaysEnseignant.ligneKey);
+    final Rect bloc = pays.evaluate().isEmpty
+        ? tester.getRect(nomEnseignant)
+        : tester.getRect(nomEnseignant).expandToInclude(tester.getRect(pays));
     expect(
-      (tester.getRect(photo).center.dy -
-              tester.getRect(nomEnseignant).center.dy)
-          .abs(),
+      (tester.getRect(photo).center.dy - bloc.center.dy).abs(),
       lessThanOrEqualTo(2),
     );
     expect(
       tester.getTopLeft(find.text(DonneesAccessibiliteDemo.classe)).dy,
       lessThan(tester.getTopLeft(photo).dy),
     );
+    // Hors Mode Accessibilite, la pastille des places reste (A5 ne vise que
+    // l'eleve en Mode Accessibilite).
+    expect(find.textContaining('places'), findsOneWidget);
   });
 }

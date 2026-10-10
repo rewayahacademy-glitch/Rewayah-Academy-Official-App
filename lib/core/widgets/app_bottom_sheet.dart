@@ -46,7 +46,7 @@ enum FormeModale {
 /// d'opacite, et **la feuille suit le doigt pendant le glissement**. Elle ne se
 /// referme que si la vitesse ou la distance depasse le seuil : une feuille qui
 /// se referme sur un effleurement est une feuille qu'on n'ose plus toucher.
-class AppBottomSheet extends StatelessWidget {
+class AppBottomSheet extends StatefulWidget {
   /// Cree le contenu d'une feuille.
   ///
   /// Rendu directement plutot que par [ouvrir] dans la galerie : c'est le seul
@@ -268,11 +268,23 @@ class AppBottomSheet extends StatelessWidget {
   }
 
   @override
+  State<AppBottomSheet> createState() => _AppBottomSheetEtat();
+}
+
+class _AppBottomSheetEtat extends State<AppBottomSheet> {
+  /// m15 (AD-NETTOYAGE) : le corps garde son etat (saisie, focus) quand la
+  /// feuille bascule entre le corps defilant seul et la feuille entiere
+  /// defilante (rotation, texte a 200 %). Sans cle, le corps changeait de
+  /// parent et son etat partait.
+  final GlobalKey _cleCorps = GlobalKey();
+
+  @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final AppMetriques metriques = AppMetriques.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final bool dialogue = forme == FormeModale.dialogue;
+    final bool dialogue = widget.forme == FormeModale.dialogue;
+    final Widget corps = KeyedSubtree(key: _cleCorps, child: widget.child);
     // Meme seuil que la tete defilante de PageShell.
     final bool basse = MediaQuery.sizeOf(context).height < 360;
     // La boite de dialogue prend la surface des superpositions (plus claire
@@ -310,8 +322,8 @@ class AppBottomSheet extends StatelessWidget {
                 Center(
                   child: ExcludeSemantics(
                     child: SizedBox(
-                      width: largeurPoignee,
-                      height: hauteurPoignee,
+                      width: AppBottomSheet.largeurPoignee,
+                      height: AppBottomSheet.hauteurPoignee,
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           color: palette.borderResting.asBorderSide().color,
@@ -326,7 +338,7 @@ class AppBottomSheet extends StatelessWidget {
               Semantics(
                 header: true,
                 child: TexteSansCoupure(
-                  titre,
+                  widget.titre,
                   style: surface.applyTo(
                     textes.headlineSmall ?? const TextStyle(),
                   ),
@@ -334,10 +346,13 @@ class AppBottomSheet extends StatelessWidget {
               ),
               Ecart.vLg,
               if (basse)
-                child
+                corps
               else
-                Flexible(child: SingleChildScrollView(child: child)),
-              if (actions != null) ...<Widget>[Ecart.vXxl, actions!],
+                Flexible(child: SingleChildScrollView(child: corps)),
+              if (widget.actions != null) ...<Widget>[
+                Ecart.vXxl,
+                widget.actions!,
+              ],
             ],
           ),
         ),
@@ -367,6 +382,12 @@ class _GardeGlissement extends StatelessWidget {
 
   final Widget child;
 
+  /// Part de la hauteur a descendre pour fermer (`BottomSheet` : 0,5).
+  static const double _seuilDescente = 0.5;
+
+  /// Vitesse (px/s) au-dela de laquelle un geste ferme (`BottomSheet` : 700).
+  static const double _vitesseGeste = 700;
+
   @override
   Widget build(BuildContext context) {
     final ModalRoute<Object?>? route = ModalRoute.of(context);
@@ -382,7 +403,13 @@ class _GardeGlissement extends StatelessWidget {
                 ..onStart = ((DragStartDetails _) => descente = 0)
                 ..onUpdate = ((DragUpdateDetails d) => descente += d.delta.dy)
                 ..onEnd = (DragEndDetails d) {
-                  if (descente > 0 || (d.primaryVelocity ?? 0) > 0) {
+                  // AD-NETTOYAGE-2 (n7) : memes seuils que `BottomSheet` :
+                  // une descente d'au moins la moitie de la feuille, ou un
+                  // geste rapide. Un simple effleurement ne pose plus la
+                  // question d'abandon.
+                  final double hauteur = context.size?.height ?? 0;
+                  if ((hauteur > 0 && descente >= hauteur * _seuilDescente) ||
+                      (d.primaryVelocity ?? 0) > _vitesseGeste) {
                     unawaited(Navigator.of(context).maybePop());
                   }
                 },

@@ -126,9 +126,36 @@ Future<void> _ouvrir(WidgetTester tester, String prenom) async {
   await _stabiliser(tester);
 }
 
-/// Descend jusqu'aux actions de la revue (la raison est dessous).
+/// Les trois verifications humaines, dans l'ordre de la carte.
+List<String> _verifications() => <String>[
+  t.dossiers.pointLisible,
+  t.dossiers.pointNom,
+  t.dossiers.pointValidite,
+];
+
+/// Descend jusqu'aux actions d'un dossier pret : HL-A-5, « Valider le
+/// dossier » n'est rendu qu'une fois les trois verifications cochees (sa
+/// place porte sinon la ligne d'etat). On coche donc d'abord, par des tap
+/// reels, puis on cherche le bouton.
 Future<void> _versActions(WidgetTester tester) async {
-  await tester.ensureVisible(find.text(t.dossiers.approuver).first);
+  expect(find.text(t.dossiers.approuver), findsNothing);
+  for (final String v in _verifications()) {
+    await tester.ensureVisible(find.text(v));
+    await _stabiliser(tester);
+    await tester.tap(find.text(v));
+    await _stabiliser(tester);
+  }
+  expect(find.text(t.dossiers.approuver), findsOneWidget);
+  await tester.ensureVisible(find.text(t.dossiers.approuver));
+  await _stabiliser(tester);
+}
+
+/// Descend jusqu'aux actions d'un dossier sans piece : rien a cocher,
+/// Valider n'est pas rendu (HL-A-5) ; l'emplacement de decision dit « pas
+/// pret » et la raison est dessus, dans la carte.
+Future<void> _versActionsSansPiece(WidgetTester tester) async {
+  expect(find.text(t.dossiers.approuver), findsNothing);
+  await tester.ensureVisible(find.text(t.dossiers.revue.pasPret));
   await _stabiliser(tester);
 }
 
@@ -188,11 +215,15 @@ void main() {
           fixerVueCapture(tester, taille, _densite(nom));
           await _monter(tester, mode, _admin(_etat()), Routes.admin);
           await _ouvrir(tester, 'Yanis');
-          await _versActions(tester);
+          await _versActionsSansPiece(tester);
+          // HL-A-5 (§10.11) : la raison est dite une fois, dans la carte ;
+          // l'emplacement de decision dit « pas pret » (meme attente que
+          // `revue_dossier_test.dart`).
           expect(
             find.text(t.dossiers.revue.pieceNonTransmise),
-            findsNWidgets(2),
+            findsOneWidget,
           );
+          expect(find.text(t.dossiers.revue.pasPret), findsOneWidget);
           debugPrint(
             'PNG ${await capturer(tester, fichier('2_piece_absente'))}',
           );
@@ -310,7 +341,7 @@ void main() {
       addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
       await _monter(tester, ThemeMode.light, _admin(_etat()), Routes.admin);
       await _ouvrir(tester, 'Yanis');
-      await _versActions(tester);
+      await _versActionsSansPiece(tester);
       expect(tester.takeException(), isNull);
       debugPrint(
         'PNG ${await capturer(tester, 'ad10_2_piece_absente_200_390x844@3_light')}',

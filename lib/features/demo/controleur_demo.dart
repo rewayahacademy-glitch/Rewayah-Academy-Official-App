@@ -360,10 +360,18 @@ abstract final class DonneesControleurDemo {
     ),
   ];
 
-  /// Le roster minimal autorise (prenom seul, C8) : celui d'An-Nour.
+  /// Les prenoms du roster minimal autorise (C8) : celui d'An-Nour.
   static List<String> get roster => <String>[
     for (final EleveProjectionDemo e in DonneesClasseDemo.eleves) e.prenom,
   ];
+
+  /// L'initiale du nom de chaque eleve du roster (decision C7 = a) : la
+  /// demonstration ne porte jamais de nom de famille entier.
+  static const Map<String, String> initialesNom = <String, String>{
+    'Mariam': 'S',
+    'Yusuf': 'B',
+    'Aïcha': 'N',
+  };
 
   /// La mission de la situation, ou nulle (aucune mission).
   static MissionControleurDemo? mission(

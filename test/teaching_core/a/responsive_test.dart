@@ -141,7 +141,7 @@ void main() {
         await avecLargeur(tester, largeur, () async {
           await _espace(tester);
           expect(
-            find.text('Groupe Al-Fatiha'),
+            find.text('Classe Al-Fatiha'),
             findsOneWidget,
             reason: '$largeur',
           );

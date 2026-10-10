@@ -59,9 +59,7 @@ class _FauxCoran implements ServiceCoran {
       await Future<void>.delayed(delai);
     }
     final List<VersetCoran>? versets = pages[numero];
-    return versets == null
-        ? null
-        : PageCoran(numero: numero, versets: versets);
+    return versets == null ? null : PageCoran(numero: numero, versets: versets);
   }
 
   @override
@@ -445,9 +443,18 @@ void main() {
       // entiers lus par le lecteur d'ecran.
       expect(_fleche('nav-precedent'), findsOneWidget);
       expect(_fleche('nav-suivant'), findsOneWidget);
-      expect(find.bySemanticsLabel(t.enseignant.salle.precedente), findsOneWidget);
-      expect(find.bySemanticsLabel(t.enseignant.salle.suivante), findsOneWidget);
-      expect(find.text(t.salle.seance.page(page: 42, pages: 604)), findsOneWidget);
+      expect(
+        find.bySemanticsLabel(t.enseignant.salle.precedente),
+        findsOneWidget,
+      );
+      expect(
+        find.bySemanticsLabel(t.enseignant.salle.suivante),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.salle.seance.page(page: 42, pages: 604)),
+        findsOneWidget,
+      );
 
       await tester.tap(_fleche('nav-suivant'));
       await tester.pumpAndSettle();
@@ -554,9 +561,7 @@ void main() {
       // ne rien presenter.
       final FauxMoteurSalle moteur = FauxMoteurSalle();
       await moteur.rejoindre(_acces());
-      final _FauxCoran coran = _FauxCoran(
-        catalogue: const <Sourate>[_baqara],
-      );
+      final _FauxCoran coran = _FauxCoran(catalogue: const <Sourate>[_baqara]);
 
       await _monter(
         tester,

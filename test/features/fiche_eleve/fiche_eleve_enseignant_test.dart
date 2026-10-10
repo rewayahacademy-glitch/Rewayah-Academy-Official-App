@@ -2,9 +2,11 @@
 // « Cahier a valider » a cote du point de rappel de Mes Classes.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/point_rappel.dart';
 import 'package:rewayah_academy/features/demo/classe_demo.dart';
@@ -49,7 +51,7 @@ void main() {
       // Le prenom est le titre de la feuille, sans « Fiche de » ni
       // repetition a cote de la photo (K-42 §5).
       expect(
-        find.text(t.enseignant.eleve.titre(prenom: 'Mariam')),
+        find.text(t.enseignant.eleve.titre(dePrenom: deDevant('Mariam'))),
         findsNothing,
       );
       expect(
@@ -105,6 +107,10 @@ void main() {
       expect(find.text('Yusuf'), findsOneWidget);
 
       await tester.tap(find.text('Mariam').last);
+      await tester.pumpAndSettle();
+      // La Classe porte aussi ses cartes (CARTES-PERSO-1) : la page defile,
+      // le retour du panneau est ramene dans la vue avant d'etre touche.
+      await tester.ensureVisible(find.byKey(PanneauFicheEleve.retourKey));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(PanneauFicheEleve.retourKey));
       await tester.pumpAndSettle();
@@ -175,6 +181,70 @@ void main() {
       // En demonstration, jamais la pretention d'un envoi reel.
       expect(find.byKey(SignalerBesoin.confirmationKey), findsOneWidget);
       expect(find.text(t.enseignant.signalement.demoSucces), findsOneWidget);
+    });
+
+    // Contre-epreuve du verificateur (08/10) : sur cde41490, une phrase-type
+    // choisie puis la categorie « Autre » ne laissaient ni puce ni champ.
+    testWidgets(
+      'L7 : phrase-type puis « Autre », le resume reste saisissable',
+      (WidgetTester tester) async {
+        _fenetre(tester, const Size(390, 1400));
+        await _ouvrirMariam(tester);
+        await tester.ensureVisible(
+          find.byKey(FicheEleveEnseignant.signalerKey),
+        );
+        await tester.tap(find.byKey(FicheEleveEnseignant.signalerKey));
+        await tester.pumpAndSettle();
+
+        Future<void> radio(CategorieBesoin c) async {
+          final Finder f = find.byWidgetPredicate(
+            (Widget w) => w is Radio<CategorieBesoin> && w.value == c,
+          );
+          await tester.ensureVisible(f);
+          await tester.tap(f);
+          await tester.pumpAndSettle();
+        }
+
+        await radio(CategorieBesoin.pedagogique);
+        final Finder phrase = find.text(
+          t.motifs.signalement.pedagogique.renforcement,
+        );
+        await tester.ensureVisible(phrase);
+        await tester.tap(phrase);
+        await tester.pumpAndSettle();
+        expect(find.byKey(SignalerBesoin.resumeKey), findsNothing);
+
+        await radio(CategorieBesoin.autre);
+        // Aucune phrase-type : le champ libre du resume s'affiche seul, vide.
+        expect(
+          find.text(t.motifs.signalement.pedagogique.renforcement),
+          findsNothing,
+        );
+        expect(find.byKey(SignalerBesoin.resumeKey), findsOneWidget);
+        expect(
+          tester
+              .widget<TextField>(find.byKey(SignalerBesoin.resumeKey))
+              .controller!
+              .text,
+          isEmpty,
+        );
+      },
+    );
+
+    testWidgets('320 a texte x2 : l aide des details passe a la ligne, '
+        'jamais en ellipse', (WidgetTester tester) async {
+      _fenetre(tester, const Size(320, 1400));
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await _ouvrirMariam(tester);
+      await tester.ensureVisible(find.byKey(FicheEleveEnseignant.signalerKey));
+      await tester.tap(find.byKey(FicheEleveEnseignant.signalerKey));
+      await tester.pumpAndSettle();
+      final Finder aide = find.text(t.enseignant.signalement.detailsAide);
+      await tester.ensureVisible(aide);
+      await tester.pumpAndSettle();
+      final RenderParagraph rendu = tester.renderObject<RenderParagraph>(aide);
+      expect(rendu.didExceedMaxLines, isFalse);
     });
 
     testWidgets('un envoi qui echoue ne passe jamais pour un succes', (

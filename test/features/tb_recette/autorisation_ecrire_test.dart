@@ -13,6 +13,7 @@ import 'package:flutter/services.dart' show LogicalKeyboardKey;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -967,7 +968,7 @@ void main() {
         'd un seul tenant', () {
       final e = t.salle.seance.ecriture;
       expect(e.autoriserSemantique(prenom: 'Mariam'), startsWith(e.autoriser));
-      expect(e.retirerSemantique(prenom: 'Mariam'), startsWith(e.retirer));
+      expect(e.retirerSemantique(dePrenom: deDevant('Mariam')), startsWith(e.retirer));
     });
 
     testWidgets('Echap, contexte deplie et Commandes ouvertes : le contexte '

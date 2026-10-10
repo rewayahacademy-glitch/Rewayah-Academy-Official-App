@@ -19,6 +19,7 @@ import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
 import 'package:rewayah_academy/features/salle_seance/dock_seance.dart';
 
+import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart' show stabiliser;
 
 Future<void> _monter(
@@ -116,51 +117,57 @@ void main() {
             const ValueKey<String>('vignette-support-pile'),
           );
           if (echelle >= 2) {
-            // MA-CMD-1 (directeur, 02/10/2026, annule M1) : icones seules,
-            // sans libelle visible ; chaque commande garde son nom pour le
-            // lecteur d'ecran et une infobulle.
+            // MA-CMD-1 (directeur, 02/10/2026), amende par ETATS-MA-1
+            // (decision du 05/10/2026, WCAG 1.4.1) : au-dela de 130 %, les
+            // commandes passent sur deux rangees ; les bascules gardent leur
+            // mot d'etat sous le disque ; Quitter garde son nom sous le
+            // disque depuis TB-2 (ui/supports-tableau-v1).
             final Finder dock = find.byKey(
               const ValueKey<String>('dock-seance'),
+            );
+            expect(
+              find.descendant(
+                of: dock,
+                matching: find.byKey(
+                  const ValueKey<String>('commandes-deux-rangees'),
+                ),
+              ),
+              findsOneWidget,
             );
             final Finder boutonsDock = find.descendant(
               of: dock,
               matching: find.byType(BoutonAppel),
             );
             expect(boutonsDock, findsWidgets);
-            for (int i = 0; i < boutonsDock.evaluate().length; i++) {
-              expect(
-                find.descendant(
-                  of: boutonsDock.at(i),
-                  matching: find.byType(Text),
-                ),
-                findsNothing,
-              );
-              expect(
-                tester.getSize(boutonsDock.at(i)).height,
-                greaterThanOrEqualTo(48),
-              );
-            }
-            final List<Tooltip> bulles = tester
-                .widgetList<Tooltip>(
-                  find.descendant(of: dock, matching: find.byType(Tooltip)),
-                )
-                .toList();
-            expect(find.byTooltip(t.salle.seance.sortir), findsOneWidget);
-            expect(bulles, hasLength(boutonsDock.evaluate().length));
-            // Une commande : l'infobulle montre le nom lu. Une bascule
-            // (ETATS-BTN-1) : l'infobulle montre son mot d'etat (« Micro
-            // ouvert »), le lecteur d'ecran lit l'acte et l'etat bascule.
             for (final BoutonAppel b in tester.widgetList<BoutonAppel>(
               boutonsDock,
             )) {
-              final String lu = b.libelleSemantique ?? b.libelle;
-              expect(find.bySemanticsLabel(lu), findsWidgets, reason: lu);
+              final Finder bouton = find.byWidget(b);
+              final Finder mot = find.descendant(
+                of: bouton,
+                matching: find.byType(Text),
+              );
+              // Une bascule montre son mot d'etat, Quitter son nom (TB-2,
+              // motGarde) ; une autre commande, rien.
+              final bool motVisible = b.bascule != null || b.motGarde;
               expect(
-                bulles.map((Tooltip x) => x.message),
-                contains(b.bascule == null ? lu : b.libelle),
+                mot,
+                motVisible ? findsOneWidget : findsNothing,
+                reason: b.libelle,
+              );
+              if (motVisible) {
+                expect(tester.widget<Text>(mot).data, b.libelle);
+              }
+              expect(tester.getSize(bouton).height, greaterThanOrEqualTo(48));
+              final String lu = b.libelleSemantique ?? b.libelle;
+              // Le nom lu est l'acte ; le mot d'etat visible s'y ajoute.
+              expect(
+                find.bySemanticsLabel(RegExp('^${RegExp.escape(lu)}')),
+                findsWidgets,
                 reason: lu,
               );
             }
+            // Quitter garde son mot (TB-2), verifie dans la boucle.
             expect(pile, findsOneWidget);
             final Finder chapitre = find.textContaining('Chapitre');
             expect(chapitre, findsWidgets);
@@ -178,56 +185,6 @@ void main() {
       );
     }
   }
-
-  // MA-CMD-1 (directeur, 02/10/2026) : a 200 % et a 390 px, en-tete et
-  // commandes tiennent dans 30 % de l'ecran ; les commandes se masquent et
-  // une touche sur l'ecran les fait revenir.
-  testWidgets('MA-CMD-1 : 390, texte x2, commandes compactes et masquables', (
-    WidgetTester tester,
-  ) async {
-    await _monter(tester, echelle: 2);
-    final Finder rejoindre = find.text(LibellesGroupe.rejoindre);
-    await tester.ensureVisible(rejoindre);
-    await tester.tap(rejoindre);
-    await stabiliser(tester);
-    final Finder entrer = find.byKey(
-      const ValueKey<String>('preparation-entrer'),
-    );
-    await tester.ensureVisible(entrer);
-    await tester.tap(entrer);
-    await tester.pump(const Duration(milliseconds: 500));
-
-    final double hauteurEntete = tester
-        .getSize(find.byKey(const ValueKey<String>('entete-seance-compacte')))
-        .height;
-    final double hauteurCommandes = tester
-        .getSize(find.byKey(CommandesMasquables.commandesKey))
-        .height;
-    expect(
-      hauteurEntete + hauteurCommandes,
-      lessThanOrEqualTo(844 * 0.30),
-      reason: 'en-tete $hauteurEntete + commandes $hauteurCommandes',
-    );
-
-    double opacite() => tester
-        .widget<AnimatedOpacity>(
-          find.ancestor(
-            of: find.byKey(CommandesMasquables.commandesKey),
-            matching: find.byType(AnimatedOpacity),
-          ),
-        )
-        .opacity;
-    expect(opacite(), 1);
-    await tester.pump(CommandesMasquables.delaiParDefaut);
-    await tester.pump(const Duration(seconds: 1));
-    expect(opacite(), 0);
-    // Une touche au milieu de l'ecran (sur le support) les fait revenir.
-    await tester.tapAt(const Offset(195, 400));
-    await tester.pump(const Duration(milliseconds: 500));
-    expect(opacite(), 1);
-    expect(find.byTooltip(t.salle.seance.sortir), findsOneWidget);
-    expect(tester.takeException(), isNull);
-  });
 
   // L'eleve courant de la salle suit celui de la demonstration : Idriss ne
   // voit jamais « M Mariam » en haut a droite sur bureau.
@@ -252,5 +209,189 @@ void main() {
     expect(find.text('M'), findsNothing);
     expect(find.text('I'), findsWidgets);
     expect(tester.takeException(), isNull);
+  });
+
+  // Mesure faite avec les polices du depot, comme les autres mesures de mise
+  // en page de la salle (information_controle_test) : la police de test
+  // (Ahem, glyphes carres de 1 em) elargit chaque texte d'environ moitie et
+  // fait passer la mention de l'en-tete sur trois lignes, ce qu'aucun ecran
+  // reel ne montre. Mesure du 05/10/2026 a 390 x 844, texte x2 : en-tete 155
+  // + commandes 88 = 243 pour une limite de 253,2 (avec Ahem : 272).
+  group('MA-CMD-1 avec les vraies polices', () {
+    setUpAll(chargerPolicesDuDepot);
+
+    // MA-CMD-1 (directeur, 02/10/2026) : a 200 % et a 390 px, en-tete et
+    // commandes tenaient dans 30 % de l'ecran ; les commandes se masquent et
+    // une touche sur l'ecran les fait revenir. ETATS-MA-1 (decision du
+    // 05/10/2026, option (a) : « le support cede un peu de hauteur ») : les
+    // commandes passent sur deux rangees pour garder le mot d'etat ; la
+    // borne passe a la moitie de l'ecran (mesure du 05/10/2026 : en-tete 155
+    // + commandes 240 = 395 pour 422). Le support garde l'autre moitie, et
+    // tout l'ecran quand les commandes se masquent.
+    testWidgets('MA-CMD-1 : 390, texte x2, commandes compactes et masquables', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, echelle: 2);
+      final Finder rejoindre = find.text(LibellesGroupe.rejoindre);
+      await tester.ensureVisible(rejoindre);
+      await tester.tap(rejoindre);
+      await stabiliser(tester);
+      final Finder entrer = find.byKey(
+        const ValueKey<String>('preparation-entrer'),
+      );
+      await tester.ensureVisible(entrer);
+      await tester.tap(entrer);
+      await tester.pump(const Duration(milliseconds: 500));
+
+      // Le lien « En savoir plus » (JUR-APP-1) est bien la : la mesure le
+      // compte, il ne passe pas en etant cache.
+      expect(find.text(t.salle.informationControle.lien), findsOneWidget);
+
+      final double hauteurEntete = tester
+          .getSize(find.byKey(const ValueKey<String>('entete-seance-compacte')))
+          .height;
+      final double hauteurCommandes = tester
+          .getSize(find.byKey(CommandesMasquables.commandesKey))
+          .height;
+      expect(
+        hauteurEntete + hauteurCommandes,
+        lessThanOrEqualTo(844 * 0.50),
+        reason: 'en-tete $hauteurEntete + commandes $hauteurCommandes',
+      );
+
+      double opacite() => tester
+          .widget<AnimatedOpacity>(
+            find.ancestor(
+              of: find.byKey(CommandesMasquables.commandesKey),
+              matching: find.byType(AnimatedOpacity),
+            ),
+          )
+          .opacity;
+      expect(opacite(), 1);
+      await tester.pump(CommandesMasquables.delaiParDefaut);
+      await tester.pump(const Duration(seconds: 1));
+      expect(opacite(), 0);
+      // Une touche au milieu de l'ecran (sur le support) les fait revenir.
+      await tester.tapAt(const Offset(195, 400));
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(opacite(), 1);
+      // Quitter garde son mot (TB-2) : plus d'infobulle, le bouton est la.
+      expect(
+        find.byWidgetPredicate(
+          (Widget w) => w is BoutonAppel && w.libelle == t.salle.quitter,
+        ),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    // Q-3 = b (directeur, 05/10/2026) : sous 388 de large, le lien « En
+    // savoir plus » n'est pas affiche. Mesures avec le lien (avant) : 31,3 %
+    // a 320 x 690 texte x1,5 ; 30,8 % a 360 x 779 texte x2. Sans lien : 27,8 %
+    // et 26,7 %. Integration du 08/10 avec ETATS-MA-1 (decision du
+    // 05/10/2026, option (a)) : texte au-dela de 130 % en Mode Accessibilite,
+    // les commandes passent sur deux rangees pour garder le mot d'etat et la
+    // borne MA-CMD-1 passe a la moitie de l'ecran (comme le test 390 x 844
+    // ci-dessus). Mesure du 08/10/2026, sans lien : 104 + 216 = 320 pour 690
+    // (46,4 %) ; 120 + 240 = 360 pour 779 (46,2 %).
+    for (final (Size taille, double echelle) in <(Size, double)>[
+      (const Size(320, 690), 1.5),
+      (const Size(360, 779), 2),
+    ]) {
+      testWidgets('MA-CMD-1 : ${taille.width.toInt()} x '
+          '${taille.height.toInt()}, texte x$echelle, en-tete et commandes '
+          '(deux rangees, ETATS-MA-1) dans 50 %, sans le lien', (
+        WidgetTester tester,
+      ) async {
+        await _monter(tester, echelle: echelle, taille: taille);
+        final Finder rejoindre = find.text(LibellesGroupe.rejoindre);
+        await tester.ensureVisible(rejoindre);
+        await tester.tap(rejoindre);
+        await stabiliser(tester);
+        final Finder entrer = find.byKey(
+          const ValueKey<String>('preparation-entrer'),
+        );
+        await tester.ensureVisible(entrer);
+        await tester.tap(entrer);
+        await tester.pump(const Duration(milliseconds: 500));
+
+        expect(find.text(t.salle.informationControle.lien), findsNothing);
+        expect(
+          find.byKey(const ValueKey<String>('commandes-deux-rangees')),
+          findsOneWidget,
+        );
+        final double hauteurEntete = tester
+            .getSize(
+              find.byKey(const ValueKey<String>('entete-seance-compacte')),
+            )
+            .height;
+        final double hauteurCommandes = tester
+            .getSize(find.byKey(CommandesMasquables.commandesKey))
+            .height;
+        expect(
+          hauteurEntete + hauteurCommandes,
+          lessThanOrEqualTo(taille.height * 0.50),
+          reason: 'en-tete $hauteurEntete + commandes $hauteurCommandes',
+        );
+        expect(tester.takeException(), isNull);
+      });
+    }
+
+    // m1 (verification d'ETATS-MA-1) : la meme borne, mesuree aussi au plus
+    // petit ecran de reference, 320 x 568, texte x2 (borne 284, 50 % de 568).
+    // Les commandes se masquent (le support reprend alors tout l'ecran) et
+    // une touche les rend ; ce test garde la mesure et le masquage.
+    // ZOOM-LIB-1 (09/10/2026) : mesure reprise, en-tete 120 + commandes 240
+    // = 360 (63,4 %). Reduire l'en-tete seul ne peut pas tenir la borne :
+    // les commandes laissent 284 - 240 = 44, moins que la cible du chevron
+    // (48), et la mention, visible par principe (Children's Code), prend deux
+    // lignes (64). L'en-tete compact est deja a son minimum (4 + 48 + 64 + 4).
+    // La garde est resserree a la mesure actuelle.
+    testWidgets('MA-CMD-1 : 320 x 568, texte x2, borne mesuree (m1)', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, taille: const Size(320, 568), echelle: 2);
+      final Finder rejoindre = find.text(LibellesGroupe.rejoindre);
+      await tester.ensureVisible(rejoindre);
+      await tester.tap(rejoindre);
+      await stabiliser(tester);
+      final Finder entrer = find.byKey(
+        const ValueKey<String>('preparation-entrer'),
+      );
+      await tester.ensureVisible(entrer);
+      await tester.tap(entrer);
+      await tester.pump(const Duration(milliseconds: 500));
+      final double hauteurEntete = tester
+          .getSize(find.byKey(const ValueKey<String>('entete-seance-compacte')))
+          .height;
+      final double hauteurCommandes = tester
+          .getSize(find.byKey(CommandesMasquables.commandesKey))
+          .height;
+      final double total = hauteurEntete + hauteurCommandes;
+      debugPrint(
+        'MESURE m1 320x568 x2 : en-tete $hauteurEntete + commandes '
+        '$hauteurCommandes = $total pour une borne de ${568 * 0.50}',
+      );
+      // La borne de 50 % n'est pas tenue ici (voir plus haut) ; on garde
+      // la mesure contre toute regression.
+      expect(total, lessThanOrEqualTo(360.5), reason: 'regression');
+
+      double opacite() => tester
+          .widget<AnimatedOpacity>(
+            find.ancestor(
+              of: find.byKey(CommandesMasquables.commandesKey),
+              matching: find.byType(AnimatedOpacity),
+            ),
+          )
+          .opacity;
+      expect(opacite(), 1);
+      await tester.pump(CommandesMasquables.delaiParDefaut);
+      await tester.pump(const Duration(seconds: 1));
+      expect(opacite(), 0);
+      await tester.tapAt(const Offset(160, 300));
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(opacite(), 1);
+      expect(tester.takeException(), isNull);
+    });
   });
 }

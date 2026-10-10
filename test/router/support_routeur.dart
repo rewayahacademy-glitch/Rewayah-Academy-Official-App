@@ -35,6 +35,7 @@ import 'package:rewayah_academy/core/video/service_video.dart';
 
 import '../parcours/faux_service_offres.dart';
 import '../support/harnais.dart';
+import '../support/sens_et_echelle.dart';
 import '../teaching_core/a/faux/faux_groupes.dart';
 
 /// Une session active d'un role.
@@ -92,6 +93,7 @@ class SourcePilotee implements SourceSession {
 List<Override> surchargesRouteur(
   SourceSession source, {
   ServiceAppairage? appairage,
+  ServiceSuivi? suivi,
 }) => <Override>[
   sourceSessionProvider.overrideWithValue(source),
   serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
@@ -100,7 +102,7 @@ List<Override> surchargesRouteur(
     appairage ?? FauxServiceAppairage(),
   ),
   serviceAvatarProvider.overrideWithValue(FauxServiceAvatar()),
-  serviceSuiviProvider.overrideWithValue(FauxServiceSuivi()),
+  serviceSuiviProvider.overrideWithValue(suivi ?? FauxServiceSuivi()),
   serviceMatchingProvider.overrideWithValue(FauxServiceMatching()),
   serviceReglesProvider.overrideWithValue(FauxServiceRegles()),
   servicePriereProvider.overrideWithValue(FauxServicePriere()),
@@ -134,6 +136,10 @@ Future<GoRouter> monterRouteur(
   SourceSession? source,
   Size taille = const Size(390, 844),
   List<Override> surcharges = const <Override>[],
+  ThemeMode themeMode = ThemeMode.light,
+  InterfaceMode interface = InterfaceMode.standard,
+  TextDirection? direction,
+  double echelle = 1,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -157,7 +163,10 @@ Future<GoRouter> monterRouteur(
           builder: (BuildContext _, WidgetRef ref, Widget? _) {
             routeur = ref.read(routeurProvider);
             return MaterialApp.router(
-              theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+              theme: AppTheme.pour(interface, Brightness.light),
+              darkTheme: AppTheme.pour(interface, Brightness.dark),
+              themeMode: themeMode,
+              builder: sensEtEchelle(direction: direction, echelle: echelle),
               routerConfig: routeur,
             );
           },

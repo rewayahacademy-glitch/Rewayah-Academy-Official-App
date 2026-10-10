@@ -11,6 +11,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/classes/nom_classe_distinct.dart';
+
 /// L'etat d'une mission, tel que le serveur le decidera.
 enum EtatMissionControle {
   /// La seance n'est pas encore en direct : ligne calme, aucun bouton (R4).
@@ -43,6 +45,9 @@ class MissionControle {
     required this.finPrevue,
     required this.etat,
     this.id,
+    this.paysEnseignant,
+    this.numeroDansFamille,
+    this.codeCourt,
   });
 
   /// L'identifiant de la mission, qui nomme son fil d'echanges (un seul fil
@@ -56,8 +61,23 @@ class MissionControle {
   /// Le nom de la Classe.
   final String classe;
 
+  /// R16 : le numero de la Classe parmi les classes paralleles en direct a la
+  /// meme heure, attribue par le serveur. Nul tant qu'il ne le rend pas.
+  final int? numeroDansFamille;
+
+  /// R16 : le code court de la Classe, a defaut de numero.
+  final String? codeCourt;
+
+  /// Le nom de la Classe, sans ambiguite parmi les classes paralleles (R16).
+  String get classeDistincte =>
+      nomClasseDistinct(classe, numero: numeroDansFamille, code: codeCourt);
+
   /// L'enseignant, precede de son titre (« Sayyid Ibrahim »).
   final String enseignant;
+
+  /// Le pays declare par l'enseignant (ENS-PAYS-1), affiche sous son nom.
+  /// Nul s'il ne l'est pas ou tant que le serveur ne le rend pas (BR-1).
+  final String? paysEnseignant;
 
   /// Le nombre d'eleves attendus.
   final int nombreEleves;

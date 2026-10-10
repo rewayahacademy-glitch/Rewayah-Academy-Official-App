@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/foyer/selection_eleve.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
@@ -16,6 +17,7 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
+import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../compte/carte_rubriques.dart';
@@ -188,7 +190,7 @@ class _Contenu extends ConsumerWidget {
           ),
           LigneCleValeur(
             cle: t.historique.seance.dureePrevue,
-            valeur: dureeLisible(seance.duree),
+            valeur: dureeSeule(seance.duree),
             chiffres: true,
           ),
           LigneCleValeur(
@@ -198,10 +200,17 @@ class _Contenu extends ConsumerWidget {
           LigneCleValeur(
             cle: t.historique.seance.enseignant,
             valeur: enseignantAffiche(seance, classe),
+            complement: PaysEnseignant.siDeclare(
+              paysEnseignantAffiche(seance, classe),
+            ),
           ),
         ], annulee: statut == StatutHistorique.annule),
         Ecart.vXl,
-        titreBloc(t.historique.seance.blocPresence(prenom: seance.elevePrenom)),
+        titreBloc(
+          t.historique.seance.blocPresence(
+            dePrenom: deDevant(seance.elevePrenom),
+          ),
+        ),
         carte(<Widget>[
           LigneCleValeur(
             cle: t.historique.seance.presence,
@@ -222,9 +231,7 @@ class _Contenu extends ConsumerWidget {
           if (seance.minutesInterruption > 0)
             LigneCleValeur(
               cle: t.historique.seance.interruption,
-              valeur: dureeLisible(
-                Duration(minutes: seance.minutesInterruption),
-              ),
+              valeur: dureeSeule(Duration(minutes: seance.minutesInterruption)),
               chiffres: true,
             ),
           if (phrase != null || presenceIllisible)

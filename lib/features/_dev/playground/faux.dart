@@ -46,6 +46,11 @@ class FauxServiceDossier implements ServiceDossier {
   final List<({AppRole role, String prenom, String nom, Genre? genre})>
   profilsCrees = <({AppRole role, String prenom, String nom, Genre? genre})>[];
 
+  /// Le terrain de jeu n'est pas la demonstration : il suit la regle des
+  /// vrais comptes pour la version du contrat enseignant.
+  @override
+  bool get demonstration => false;
+
   /// Les contrats acceptes.
   final List<SorteContrat> contratsAcceptes = <SorteContrat>[];
 

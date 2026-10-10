@@ -40,6 +40,7 @@ import '../salle/preparation_eleve.dart';
 import '../salle/preparation_enseignant.dart';
 import '../tc_espace_groupe/emplacements_groupe.dart';
 import '../tc_espace_groupe/espace_groupe_page.dart';
+import 'cartes_classe_demo.dart';
 import 'classe_demo.dart';
 import 'mode_demonstration.dart';
 import 'repere_demonstration.dart';
@@ -277,9 +278,13 @@ List<Override> surchargesEleveDemo(
   EtatDemoClasse etat, {
   PortTravailAVenir travail = const TravailAVenirDemo(),
   TitreEnseignant titre = TitreEnseignant.sayyid,
+  bool cartesModifiables = false,
 }) {
   const String id = DonneesClasseDemo.groupeId;
   return <Override>[
+    // CARTES-PERSO-1 : la capacite de modifier les cartes est celle que le
+    // serveur rendrait ; seul l'enseignant de la Classe l'a.
+    ...surchargesCartesClasseDemo(id, peutModifier: cartesModifiables),
     groupeProvider(id).overrideWith(
       (Ref _) async => DonneesClasseDemo.groupe(etat, titre: titre),
     ),
@@ -346,7 +351,7 @@ List<Override> surchargesEnseignantDemo(
 }) {
   const String id = DonneesClasseDemo.groupeId;
   return <Override>[
-    ...surchargesEleveDemo(etat, titre: titre),
+    ...surchargesEleveDemo(etat, titre: titre, cartesModifiables: true),
     groupesEnseignantProvider.overrideWith(
       (Ref _) async => <GroupeEnseignant>[groupeEnseignantDemo()],
     ),

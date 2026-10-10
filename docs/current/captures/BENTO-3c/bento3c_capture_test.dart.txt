@@ -1,0 +1,89 @@
+// BENTO-3c : preuves de la bascule de l'accueil adulte (ORD-2, ORD-3 de
+// BENTO-3b-R). 863 px texte x1 (grille 735 px) : seance et « Avant »
+// empiles ; 864 px texte x1 (grille 736 px) : cote a cote, moities de 360 ;
+// 1440 px texte x2 (grille 1120 px, moitie 552 < 720) : empiles. Clair et
+// sombre. Saute sans CAPTURE_DIR. A copier dans test/capture/.
+
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
+
+import 'outil_capture.dart';
+
+/// Une adresse de demonstration sur ses vraies routes, dans le cadre de
+/// capture.
+Future<void> _monter(
+  WidgetTester tester,
+  String adresse,
+  ThemeMode mode,
+  double echelle,
+) async {
+  final GoRouter routeur = GoRouter(
+    initialLocation: adresse,
+    routes: routesDemoAdulte('dev'),
+  );
+  addTearDown(routeur.dispose);
+  await tester.pumpWidget(
+    ProviderScope(
+      child: TranslationProvider(
+        child: RepaintBoundary(
+          key: cadreCapture,
+          child: MaterialApp.router(
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+            darkTheme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+            themeMode: mode,
+            locale: AppLocale.fr.flutterLocale,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            builder: (BuildContext c, Widget? app) => MediaQuery(
+              data: MediaQuery.of(c)
+                  .copyWith(textScaler: TextScaler.linear(echelle)),
+              child: app!,
+            ),
+            routerConfig: routeur,
+          ),
+        ),
+      ),
+    ),
+  );
+  await stabiliser(tester);
+}
+
+void main() {
+  group('Capture : BENTO-3c', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+
+    for (final (double, double) cas in const <(double, double)>[
+      (863, 1),
+      (864, 1),
+      (1440, 2),
+    ]) {
+      for (final ThemeMode m in const <ThemeMode>[
+        ThemeMode.light,
+        ThemeMode.dark,
+      ]) {
+        final String nom =
+            'adulte_${cas.$1.toInt()}${cas.$2 == 1 ? '' : 'x2'}_'
+            '${m == ThemeMode.light ? 'clair' : 'sombre'}';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(tester, Size(cas.$1, cas.$2 == 2 ? 2800 : 1500), 1);
+          await _monter(
+            tester,
+            adresseDemoAdulte(EcranDemoAdulte.accueil),
+            m,
+            cas.$2,
+          );
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
+      }
+    }
+  });
+}

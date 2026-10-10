@@ -9,11 +9,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' show StringCharacters;
 
 import '../../core/domain/enums.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_bibliotheque/content_position.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_outils/annotation_layer.dart'
     show OutilTrait, TraitVectoriel;
 import '../../core/theme/app_gabarit.dart';
@@ -733,8 +735,9 @@ class VueSeance {
             : base;
       case RoleSeance.enseignant:
         final String? suite = switch (horloge) {
-          HorlogeRestante(:final int minutes) =>
+          HorlogeRestante(:final int minutes) => LibellesGroupe.valeurSeule(
             t.salle.seance.minutesRestantes(minutes: minutes),
+          ),
           HorlogeDepassee() => t.salle.seance.sePoursuit,
           null => null,
         };
@@ -1327,7 +1330,7 @@ class VueSeance {
   /// Le nom lu de l'avatar de la capsule (§20) : « Afficher les informations
   /// de Sayyid Ibrahim » ; le nom n'est jamais ecrit dans la capsule.
   String get libelleAvatarCapsule =>
-      t.salle.seance.capsule.avatar(nom: nomEnseignant);
+      t.salle.seance.capsule.avatar(deNom: deDevant(nomEnseignant));
 
   /// Le nom lu de l'oeil (§20), ou `null` sans donnee.
   String? get libelleOeilCapsule => switch (controle) {

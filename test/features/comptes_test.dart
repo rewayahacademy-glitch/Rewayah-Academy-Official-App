@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/admin/service_comptes.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/identifiant_insecable.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/filter_pill.dart';
@@ -40,7 +41,7 @@ class _FauxServiceComptes implements ServiceComptes {
 CompteAdmin _compte({
   required String identifiant,
   required AccountStatus etat,
-  AppRole role = AppRole.teacher,
+  AppRole? role = AppRole.teacher,
   EtatPiece piece = EtatPiece.aucune,
   String? prenom = 'Aicha',
   int joursDepuisInscription = 7,
@@ -68,6 +69,11 @@ void main() {
     ServiceComptes service, {
     bool echusSeulement = false,
   }) async {
+    // Une surface haute : la liste est paresseuse, et le tri place les lignes
+    // sans decision en dernier, hors d'une surface de test courte.
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(800, 2400);
+    addTearDown(tester.view.reset);
     await tester.pumpWidget(
       hote(
         ComptesPage(echusSeulement: echusSeulement),
@@ -100,7 +106,10 @@ void main() {
       // secondaires par un point median, donc l'identifiant vit dans une
       // chaine composee.
       expect(find.textContaining('Aicha Sow'), findsWidgets);
-      expect(find.textContaining('TEACHER-AS-000001'), findsWidgets);
+      expect(
+        find.textContaining(identifiantInsecable('TEACHER-AS-000001')),
+        findsWidgets,
+      );
       // Et l'ecran nomme ce qui manque, au lieu de laisser une case vide.
       expect(find.textContaining('Aucune pièce déposée'), findsWidgets);
     },
@@ -170,7 +179,10 @@ void main() {
       expect(find.text('2 personnes attendent une décision.'), findsOneWidget);
       expect(find.text('3 personnes attendent une décision.'), findsNothing);
       // Le tuteur reste visible, avec « Sans objet » pour la piece.
-      expect(find.textContaining('GUARDIAN-SR-000003'), findsWidgets);
+      expect(
+        find.textContaining(identifiantInsecable('GUARDIAN-SR-000003')),
+        findsWidgets,
+      );
       expect(find.textContaining('Sans objet'), findsOneWidget);
       // L'enseignant garde son manque de piece affiche.
       expect(find.textContaining('Aucune pièce déposée'), findsWidgets);
@@ -217,6 +229,95 @@ void main() {
     expect(find.textContaining('Sans objet'), findsOneWidget);
   });
 
+  // AD-NETTOYAGE (mineur AD-RC) : la base rend les tuteurs `pending_kyc` en
+  // tete. Le tri stable cote client remet devant ce qui attend une decision.
+  testWidgets(
+    'les enseignants en attente passent devant les lignes sans decision',
+    (WidgetTester tester) async {
+      await monter(
+        tester,
+        _FauxServiceComptes(<CompteAdmin>[
+          _compte(
+            identifiant: 'GUARDIAN-SR-000003',
+            etat: AccountStatus.pendingKyc,
+            role: AppRole.guardian,
+            prenom: 'Mariam',
+          ),
+          _compte(
+            identifiant: 'TEACHER-AS-000001',
+            etat: AccountStatus.pendingKyc,
+          ),
+        ]),
+      );
+
+      expect(tester.takeException(), isNull);
+      final double enseignant = tester
+          .getTopLeft(
+            find
+                .textContaining(identifiantInsecable('TEACHER-AS-000001'))
+                .first,
+          )
+          .dy;
+      final double tuteur = tester
+          .getTopLeft(
+            find
+                .textContaining(identifiantInsecable('GUARDIAN-SR-000003'))
+                .first,
+          )
+          .dy;
+      expect(enseignant, lessThan(tuteur));
+    },
+  );
+
+  testWidgets('seul l enseignant sans piece voit « Aucune pièce déposée »', (
+    WidgetTester tester,
+  ) async {
+    await monter(
+      tester,
+      _FauxServiceComptes(<CompteAdmin>[
+        _compte(
+          identifiant: 'STUDENT-LI-000001',
+          etat: AccountStatus.active,
+          role: AppRole.student,
+          prenom: 'Lina',
+        ),
+        _compte(
+          identifiant: 'ADMIN-NA-000001',
+          etat: AccountStatus.active,
+          role: AppRole.admin,
+          prenom: 'Nadir',
+        ),
+      ]),
+    );
+
+    expect(tester.takeException(), isNull);
+    expect(find.textContaining('Sans objet'), findsNWidgets(2));
+    expect(find.textContaining('Aucune pièce déposée'), findsNothing);
+  });
+
+  testWidgets('un compte en attente au role illisible est signale', (
+    WidgetTester tester,
+  ) async {
+    await monter(
+      tester,
+      _FauxServiceComptes(<CompteAdmin>[
+        _compte(
+          identifiant: 'UNKNOWN-XX-000001',
+          etat: AccountStatus.pendingKyc,
+          role: null,
+        ),
+      ]),
+    );
+
+    expect(tester.takeException(), isNull);
+    expect(
+      find.textContaining("Le rôle d'un compte en attente n'a pas pu être lu"),
+      findsOneWidget,
+    );
+    // Il n'est pas compte comme attendant une decision : la phrase le dit.
+    expect(find.textContaining('attend une décision'), findsNothing);
+  });
+
   testWidgets('une lecture en echec le dit et laisse reessayer', (
     WidgetTester tester,
   ) async {
@@ -238,6 +339,166 @@ void main() {
   // et les six roles produisait onze pastilles qui repoussaient la liste sous
   // le pli. Seuls les etats **presents dans les donnees** sont proposes, et
   // l'axe des roles passe dans un menu deroulant.
+  // Decision « pastille-attente » du 05/10 (AD-NETTOYAGE-2, par delegation
+  // du directeur) : la pastille « En attente » ne compte que les enseignants,
+  // le meme chiffre que la tuile « Dossiers a valider ». Un tuteur et un
+  // compte au role illisible en `pending_kyc` n'y entrent pas.
+  testWidgets('la pastille « En attente » ne compte que les enseignants', (
+    WidgetTester tester,
+  ) async {
+    await monter(
+      tester,
+      _FauxServiceComptes(<CompteAdmin>[
+        _compte(
+          identifiant: 'TEACHER-AS-000001',
+          etat: AccountStatus.pendingKyc,
+        ),
+        _compte(
+          identifiant: 'TEACHER-AS-000002',
+          etat: AccountStatus.pendingKyc,
+        ),
+        _compte(
+          identifiant: 'GUARDIAN-MS-000003',
+          etat: AccountStatus.pendingKyc,
+          role: AppRole.guardian,
+        ),
+        _compte(
+          identifiant: 'UNKNOWN-XX-000001',
+          etat: AccountStatus.pendingKyc,
+          role: null,
+          prenom: null,
+        ),
+      ]),
+    );
+
+    expect(tester.takeException(), isNull);
+    final Finder pastille = find.byKey(
+      const ValueKey<String>('comptes-filtre-etat-attente'),
+    );
+    expect(pastille, findsOneWidget);
+    expect(tester.widget<FilterPill>(pastille).compteur, 2);
+    // Le bandeau dit le meme chiffre.
+    expect(find.text('2 personnes attendent une décision.'), findsOneWidget);
+
+    // Retenue, la pastille montre exactement ces deux enseignants.
+    await tester.tap(pastille);
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining(identifiantInsecable('TEACHER-AS-000001')),
+      findsWidgets,
+    );
+    expect(
+      find.textContaining(identifiantInsecable('TEACHER-AS-000002')),
+      findsWidgets,
+    );
+    expect(
+      find.textContaining(identifiantInsecable('GUARDIAN-MS-000003')),
+      findsNothing,
+    );
+    expect(find.textContaining('UNKNOWN-XX-000001'), findsNothing);
+  });
+
+  // Revue croisee de LIB-DIR-1 (08/10) : chaque compte entre dans une seule
+  // pastille d'etat, et son badge dit le nom de cette pastille. « Tous »
+  // est la somme des autres.
+  testWidgets('« Tous » est la somme des pastilles d etat, badges compris', (
+    WidgetTester tester,
+  ) async {
+    await monter(
+      tester,
+      _FauxServiceComptes(<CompteAdmin>[
+        _compte(
+          identifiant: 'TEACHER-AS-000001',
+          etat: AccountStatus.pendingKyc,
+        ),
+        _compte(
+          identifiant: 'TEACHER-AS-000002',
+          etat: AccountStatus.pendingKyc,
+        ),
+        _compte(
+          identifiant: 'GUARDIAN-MS-000003',
+          etat: AccountStatus.pendingKyc,
+          role: AppRole.guardian,
+        ),
+        _compte(
+          identifiant: 'GUARDIAN-YB-000004',
+          etat: AccountStatus.pendingKyc,
+          role: AppRole.guardian,
+        ),
+        _compte(
+          identifiant: 'STUDENT-LS-000001',
+          etat: AccountStatus.active,
+          role: AppRole.student,
+        ),
+      ]),
+    );
+
+    expect(tester.takeException(), isNull);
+    final List<FilterPill> pastilles = tester
+        .widgetList<FilterPill>(find.byType(FilterPill))
+        .toList();
+    final FilterPill tous = pastilles.firstWhere(
+      (FilterPill p) => p.libelle == 'Tous',
+    );
+    final int somme = pastilles
+        .where((FilterPill p) => p.libelle != 'Tous')
+        .fold<int>(0, (int n, FilterPill p) => n + (p.compteur ?? 0));
+    expect(tous.compteur, 5);
+    expect(somme, 5);
+    final FilterPill sansDecision = tester.widget<FilterPill>(
+      find.byKey(const ValueKey<String>('comptes-filtre-etat-sansDecision')),
+    );
+    expect(sansDecision.libelle, 'Sans décision');
+    expect(sansDecision.compteur, 2);
+
+    // Retenue, « Sans décision » montre les deux tuteurs, avec ce badge.
+    await tester.tap(find.byWidget(sansDecision));
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining(identifiantInsecable('GUARDIAN-MS-000003')),
+      findsWidgets,
+    );
+    expect(
+      find.textContaining(identifiantInsecable('GUARDIAN-YB-000004')),
+      findsWidgets,
+    );
+    expect(
+      find.textContaining(identifiantInsecable('TEACHER-AS-000001')),
+      findsNothing,
+    );
+    // La pastille, puis le badge (ou la ligne resumee) de chaque tuteur.
+    expect(
+      find.textContaining('Sans décision', findRichText: true),
+      findsAtLeastNWidgets(3),
+    );
+  });
+
+  testWidgets('un tuteur seul en attente : aucune pastille « En attente »', (
+    WidgetTester tester,
+  ) async {
+    await monter(
+      tester,
+      _FauxServiceComptes(<CompteAdmin>[
+        _compte(
+          identifiant: 'GUARDIAN-MS-000003',
+          etat: AccountStatus.pendingKyc,
+          role: AppRole.guardian,
+        ),
+        _compte(
+          identifiant: 'STUDENT-LS-000001',
+          etat: AccountStatus.active,
+          role: AppRole.student,
+        ),
+      ]),
+    );
+
+    expect(tester.takeException(), isNull);
+    expect(
+      find.byKey(const ValueKey<String>('comptes-filtre-etat-attente')),
+      findsNothing,
+    );
+  });
+
   testWidgets('un etat absent des donnees n est pas propose comme filtre', (
     WidgetTester tester,
   ) async {
@@ -287,7 +548,10 @@ void main() {
     // « En attente » ne contient qu'un enseignant.
     await tester.tap(find.text('En attente'));
     await tester.pumpAndSettle();
-    expect(find.textContaining('TEACHER-AS-000001'), findsWidgets);
+    expect(
+      find.textContaining(identifiantInsecable('TEACHER-AS-000001')),
+      findsWidgets,
+    );
 
     // Croise avec le role tuteur, il ne reste rien. Le menu se cible par son
     // type : « Rôle » nomme aussi une colonne du tableau.

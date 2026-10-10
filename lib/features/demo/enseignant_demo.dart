@@ -22,6 +22,7 @@ import '../../core/domain/enums.dart';
 import '../../core/enseignant/absence_remplacement.dart';
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/offres/offre_horaire.dart' show LangueCours;
 import '../../core/planning/service_planning.dart' show Creneau;
 import '../../core/presence/service_presence.dart' show EtatPresence;
 import '../../core/profil/service_acceptations.dart' show Acceptation;
@@ -229,6 +230,9 @@ enum EcranDemoEnseignant {
   /// Cahier de seance (ENS-04, EN-7) : l'ecran de sortie de seance, hors de
   /// la barre (planche 4, R5).
   cahier,
+
+  /// Mes revenus (FI-10) : une pose de la branche Profil, Profil reste actif.
+  revenus,
 }
 
 /// Les situations proposees pour chaque ecran.
@@ -541,6 +545,14 @@ abstract final class DonneesEnseignantDemo {
     statutCompte: AccountStatus.active,
     verification: VerificationEnseignant.validee,
   );
+
+  /// Les langues d'enseignement que la base publie a sa creation (migration
+  /// `0043`, table `langues_cours`), pour la feuille des langues (FORM-L8).
+  static const List<LangueCours> languesCours = <LangueCours>[
+    LangueCours(code: 'poular', nom: 'Poular'),
+    LangueCours(code: 'francais', nom: 'Français'),
+    LangueCours(code: 'english', nom: 'English'),
+  ];
 
   /// Les pieces signees de l'enseignant (ENS-05), telles que
   /// `contract_acceptances` les rendrait : un compte actif est passe par la

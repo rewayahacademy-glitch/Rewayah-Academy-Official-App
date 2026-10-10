@@ -33,12 +33,15 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
   /// [lire] rend la file du service existant (en production, le cache
   /// partage `dossiersEnAttenteProvider`).
   ///
-  /// [apercu] signe une URL courte de la piece (en production,
+  /// [apercu] signe une URL courte de la piece (a partir de BR-1,
   /// ServiceValidation.apercu : le createSignedUrl de 60 s DEJA utilise
-  /// avant AD-6, aucun nouvel appel ni changement serveur). La porte serveur
-  /// utoriser_lecture_piece_identite n'est pas branchee (AD-BR-03, BR-1).
+  /// avant AD-6, aucun nouvel appel ni changement serveur ; en production
+  /// aujourd'hui l'apercu est ferme, voir `surchargeRevueDossiersProduction`).
+  /// La porte serveur `autoriser_lecture_piece_identite` n'est pas branchee
+  /// (AD-BR-03, BR-1).
   ///
-  /// [deciderExistant] appelle `decider_dossier` (ServiceValidation.decider) ;
+  /// [deciderExistant] appelle `decider_dossier` (ServiceValidation.decider,
+  /// a partir de BR-1 ; ferme en production aujourd'hui) ;
   /// [relire] recharge la file par `dossiers_en_attente`. Nuls, la decision
   /// reste indisponible.
   const RevueDossiersDepuisValidation(
@@ -340,6 +343,11 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
     if (documentId == null) {
       throw const ErreurRevueDossier(CodeErreurRevue.dejaDecide);
     }
+    // AD-NETTOYAGE-2 : depuis la garde ci-dessus, `decision` ne peut plus etre
+    // `valider` ici ; `approuve` est donc toujours faux et les branches
+    // `approuve ? ...` ci-dessous ne s'executent pas. Elles restent pour que
+    // la reouverture de la validation (BR-1) ne demande que le retrait de la
+    // garde, pas une reecriture de l'appel et de la reponse.
     final bool approuve = decision == DecisionDossier.valider;
     try {
       await rpc(

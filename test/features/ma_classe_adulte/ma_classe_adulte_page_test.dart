@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/communications/modeles_communication.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
@@ -16,6 +17,8 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/features/com_annonces/annonces_de_classe.dart';
+import 'package:rewayah_academy/features/com_messages/entree_messages_contexte.dart';
 import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 import 'package:rewayah_academy/features/demo/classe_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
@@ -28,6 +31,8 @@ import 'package:rewayah_academy/features/tc_espace_groupe/carte_session.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/emplacements_groupe.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/espace_groupe_page.dart'
     show IdentiteGroupe;
+
+import '../../support/hors_ligne_une_fois.dart';
 
 void main() {
   Widget app({required Widget child, List<Override> overrides = const []}) =>
@@ -291,6 +296,8 @@ void main() {
     );
     expect(find.text(t.classe.entree.horsLigne), findsOneWidget);
     expect(find.text(t.classe.entree.rejoindre), findsNothing);
+    // EA-HL-DOUBLE-1 : avec donnees, le bandeau seul dit « hors ligne ».
+    expectAvecDonnees();
   });
 
   bool estHorsLigne(Widget w) =>
@@ -308,7 +315,8 @@ void main() {
 
     expect(find.byType(MaClasseAdultePage), findsOneWidget);
     expect(find.byWidgetPredicate(estHorsLigne), findsOneWidget);
-    expect(find.text(t.commun.etats.horsLigne.titre), findsOneWidget);
+    // EA-HL-DOUBLE-1 : le bandeau dit le reseau, le bloc dit ce qui manque.
+    expectSansDonnees(t.adulte.maClasse.sansDonnees);
     expect(find.text(t.commun.etats.echecServeur.titre), findsNothing);
     expect(find.byType(CarteSession), findsNothing);
     expect(participants, findsNothing);
@@ -379,6 +387,38 @@ void main() {
     expect(participants, findsNothing);
   });
 
+  // Revue EA-HL-DOUBLE-1 (m1) : une classe deja lue, relue en echec hors
+  // ligne, reste affichee ; le bandeau seul dit le reseau.
+  testWidgets('hors ligne, classe deja lue puis relue en echec : elle reste '
+      'affichee, sans bloc ni echec', (WidgetTester tester) async {
+    int lectures = 0;
+    await tester.pumpWidget(
+      app(
+        overrides: <Override>[
+          horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(true)),
+          maClasseAdulteProvider.overrideWith((Ref _) {
+            lectures++;
+            return lectures == 1
+                ? Future<MaClasseAdulteVM>.value(const MaClasseAdulteVM())
+                : Future<MaClasseAdulteVM>.error(StateError('reseau'));
+          }),
+        ],
+        child: const MaClasseAdultePage(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final ProviderContainer conteneur = ProviderScope.containerOf(
+      tester.element(find.byType(MaClasseAdultePage)),
+    )..invalidate(maClasseAdulteProvider);
+    await tester.pumpAndSettle();
+    final AsyncValue<MaClasseAdulteVM> etat = conteneur.read(
+      maClasseAdulteProvider,
+    );
+    expect(etat.hasError && etat.hasValue && !etat.isLoading, isTrue);
+    expect(find.text(t.adulte.accueil.aucuneClasse), findsOneWidget);
+    expectAvecDonnees();
+  });
+
   testWidgets('sans source serveur : indisponible, sans « Reessayer »', (
     WidgetTester tester,
   ) async {
@@ -408,5 +448,25 @@ void main() {
     expect(find.byType(ActionPrincipale), findsNothing);
     expect(find.byType(CarteSession), findsNothing);
     expect(participants, findsNothing);
+  });
+
+  testWidgets('COM-F : annonces et Messages de la Classe rendus apres les '
+      'ressources, sur la Classe affichee', (WidgetTester tester) async {
+    taille(tester, const Size(390, 844));
+    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maClasse));
+    expect(find.byType(MaClasseAdultePage), findsOneWidget);
+    final AnnoncesDeClasse annonces = tester.widget<AnnoncesDeClasse>(
+      find.byType(AnnoncesDeClasse, skipOffstage: false),
+    );
+    expect(annonces.classeId, DonneesClasseDemo.groupeId);
+    expect(annonces.ecartAvant, isNotNull);
+    expect(annonces.ecartApres, isNull);
+    final EntreeMessagesContexte messages = tester
+        .widget<EntreeMessagesContexte>(
+          find.byType(EntreeMessagesContexte, skipOffstage: false),
+        );
+    expect(messages.type, TypeObjetLie.classe);
+    expect(messages.objetId, DonneesClasseDemo.groupeId);
+    expect(messages.ecartAvant, isNotNull);
   });
 }

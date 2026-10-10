@@ -1141,6 +1141,16 @@ void main() {
       // La file locale du post-cours, qui dit « partira des le retour du
       // reseau » (hors tableau).
       'tc.parcours.postCours.enFile': 'file locale du post-cours',
+      // Jonction avec la ligne arabe (ccr) : hors de la salle, l'arabe dit
+      // « enregistre » par حفظ ; ce ne sont pas des notes ni le tableau.
+      'classe.cartes.enregistree': 'carte de classe enregistree (ar « حُفظ » traduit « enregistre »)',
+      'enseignant.photo.succes': 'photo de profil enregistree',
+      'enseignant.cahier.depose': 'cahier de transmission depose',
+      'enseignant.profil.enregistre': 'profil enregistre',
+      'enseignant.creneaux.heureEnregistree': 'heure de creneau enregistree',
+      'ficheEleve.informations.succes': 'photo de la fiche eleve enregistree',
+      'parcours.finTitre': 'preference du parcours enregistree',
+      'consentement.compte.merci': 'consentement du compte enregistre',
       // Futur : la sortie sera inscrite au journal.
       'tc.classe.commandes.quitterConsequence': 'sortie journalisee',
     };
@@ -1154,10 +1164,14 @@ void main() {
               ),
             ),
         };
+    // Le code (`strings_*.g.dart`) montre un parametre comme une espace.
     final List<String> textesBlancs = <String>[
       for (final Map<String, String> v in valeurs.values)
         for (final String cle in listeBlanche.keys)
-          if (v[cle] != null) v[cle]!,
+          if (v[cle] != null) ...<String>[
+            v[cle]!,
+            v[cle]!.replaceAll(RegExp(r'\{\w+\}'), ' '),
+          ],
     ];
 
     bool annonceUnSucces(String texte, {required List<RegExp> motifs}) {

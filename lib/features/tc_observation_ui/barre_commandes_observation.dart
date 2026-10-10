@@ -14,10 +14,10 @@ import '../../core/theme/app_typography.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/pressable.dart';
 
-/// Au-dela de ce grossissement du texte, les commandes du telephone passent
-/// l'icone au-dessus du libelle (maquette V8 M3) : trois libelles cote a cote
-/// ne tiennent plus sur 390 points.
-const double seuilTexteEmpile = 1.3;
+// Au-dela de ce grossissement, les commandes du telephone passent l'icone
+// au-dessus du libelle : trois libelles cote a cote ne tiennent plus sur 390
+// points. La borne vit dans le noyau, partagee (MA-HORSLIGNE-CLASSE-1).
+export '../../core/accessibilite/texte_sans_coupure.dart' show seuilTexteEmpile;
 
 /// Un point de garde pour l'arrondi des glyphes : au plancher lisible,
 /// [TexteSansCoupure] ne retire plus sa marge de deux points, le mot doit
@@ -111,13 +111,62 @@ class BarreCommandesObservation extends StatelessWidget {
         motLong * plancher + _gardeArrondi;
   }
 
+  /// Vrai quand la barre de D1 (son a gauche, agrandir au centre, quitter a
+  /// droite) ne tient pas dans [largeur] sans couper un mot.
+  ///
+  /// PAGESHELL-200-1 (reserve 2 de la revue OBS-COUPE-1b) : sur un panneau
+  /// de 680 a 840 px, texte a 200 ou 300 %, « Agrandir » garde sa largeur
+  /// propre au centre et ne laisse a « Quitter » qu'une bande de quelques
+  /// points : le mot etait coupe lettre par lettre, et « Son recu » aussi a
+  /// 300 %. La barre passe alors en deux rangees, comme sur telephone a
+  /// texte tres agrandi.
+  bool _barreLargeCoupe(BuildContext context, double largeur) {
+    if (!largeur.isFinite) return false;
+    final v = t.tc.observation.visite;
+    final TextStyle style = _style(context, Theme.of(context).textTheme);
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    final double facteur = echelle.scale(1);
+    final double plancher = math.min(echelleMinimaleLisible, facteur);
+    // « Agrandir » au centre : sa largeur propre, sur une ligne.
+    final TextPainter centre = TextPainter(
+      text: TextSpan(
+        text: agrandi ? v.reduire : v.agrandir,
+        style: DefaultTextStyle.of(context).style.merge(style),
+      ),
+      textDirection: Directionality.of(context),
+      textScaler: echelle,
+      maxLines: 1,
+    )..layout();
+    final double agrandir = _Medaillon.diametre + AppSpacing.sm + centre.width;
+    centre.dispose();
+    // Ce qui reste de chaque cote, pour le son et pour quitter.
+    final double cote = (largeur - 2 * AppSpacing.sm - agrandir) / 2;
+    final double son =
+        _Medaillon.diametre +
+        AppSpacing.sm +
+        largeurMotLePlusLong(
+              context,
+              sonRecu ? v.sonRecu : v.sonInterrompu,
+              style,
+              TextScaler.noScaling,
+            ) *
+            plancher +
+        _gardeArrondi;
+    // « Quitter » peut se reduire jusqu'au plancher lisible, comme les
+    // autres libelles ([TexteSansCoupure] dans [ActionPrincipale]).
+    final double texteQuitter = _Quitter.largeur(context) - _Quitter.marges;
+    final double quitter = _Quitter.marges + texteQuitter * plancher / facteur;
+    return cote < son || cote < quitter + _gardeArrondi;
+  }
+
   Widget _barre(BuildContext context, double largeur) {
     final AppPalette palette = AppPalette.of(context);
-    final bool empile =
-        !large &&
-        (MediaQuery.textScalerOf(context).scale(AppSpacing.lg) / AppSpacing.lg >
-                seuilTexteEmpile ||
-            _uneRangeeCoupe(context, largeur));
+    final bool empile = large
+        ? _barreLargeCoupe(context, largeur)
+        : (MediaQuery.textScalerOf(context).scale(AppSpacing.lg) /
+                      AppSpacing.lg >
+                  seuilTexteEmpile ||
+              _uneRangeeCoupe(context, largeur));
     final Widget son = _TemoinSon(sonRecu: sonRecu, empile: empile);
     final Widget agrandir = _Agrandir(
       agrandi: agrandi,
@@ -133,7 +182,7 @@ class BarreCommandesObservation extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.sm),
-        child: large
+        child: large && !empile
             ? Row(
                 children: <Widget>[
                   Expanded(
@@ -355,8 +404,13 @@ class _Quitter extends StatelessWidget {
     )..layout();
     final double texte = p.width;
     p.dispose();
-    return 2 * AppSpacing.xl + AppSpacing.xl + AppSpacing.sm + texte;
+    return marges + texte;
   }
+
+  /// Ce que la pilule ajoute a son libelle : les marges d'[ActionPrincipale]
+  /// (`xl` de chaque cote), l'icone (`xl`) et l'ecart (`sm`).
+  static const double marges =
+      2 * AppSpacing.xl + AppSpacing.xl + AppSpacing.sm;
 
   @override
   Widget build(BuildContext context) {

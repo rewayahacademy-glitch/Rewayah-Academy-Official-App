@@ -15,6 +15,8 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
+import 'package:rewayah_academy/core/widgets/zone_saisie.dart';
 import 'package:rewayah_academy/features/admin_dossiers/file_dossiers.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
@@ -206,10 +208,14 @@ void main() {
     await _monter(tester, etat);
     await _ouvrir(tester, 'Amina');
     await _toucher(tester, t.dossiers.refuser);
+    await _ouvrirAutre(tester);
     await tester.enterText(
       find
-          .ancestor(
-            of: find.text(t.dossiers.refus.champ),
+          .descendant(
+            of: find.ancestor(
+              of: find.text(t.dossiers.refus.champ),
+              matching: find.byType(ZoneSaisie),
+            ),
             matching: find.byType(TextField),
           )
           .first,
@@ -365,17 +371,23 @@ void main() {
     final String? pieceB = etat.dossiers[b]!.documentId;
     expect(pieceA, isNot(pieceB));
 
-    final ServiceValidationDemo service = ServiceValidationDemo(etat);
-    await service.decider(
-      documentId: pieceB!,
-      approuve: false,
+    final RevueDossiersDemo revue = RevueDossiersDemo(etat);
+    await revue.decider(
+      dossierId: b,
+      revisionAttendue: etat.dossiers[b]!.revision,
+      decision: DecisionDossier.refuser,
+      commandeId: 'ad10-u2-b-2',
+      verificationsFaites: const <String>{},
       motif: 'Motif fictif B.',
     );
     expect(etat.dossiers[b]!.statut, StatutRevue.refuse);
     expect(etat.dossiers[a]!.statut, StatutRevue.aVerifier);
-    await service.decider(
-      documentId: pieceA!,
-      approuve: false,
+    await revue.decider(
+      dossierId: a,
+      revisionAttendue: etat.dossiers[a]!.revision,
+      decision: DecisionDossier.refuser,
+      commandeId: 'ad10-u2-a-2',
+      verificationsFaites: const <String>{},
       motif: 'Motif fictif A.',
     );
     expect(etat.dossiers[a]!.motifRefus, 'Motif fictif A.');
@@ -392,4 +404,14 @@ void main() {
       throwsStateError,
     );
   });
+}
+
+/// FORM-L1 : le motif libre s'ecrit apres « Autre », derniere puce.
+Future<void> _ouvrirAutre(WidgetTester tester) async {
+  if (find.byKey(SelecteurMotif.cleAutre).evaluate().isEmpty) return;
+  if (find.text(t.dossiers.refus.champ).evaluate().isNotEmpty) return;
+  await tester.ensureVisible(find.byKey(SelecteurMotif.cleAutre));
+  await tester.pumpAndSettle();
+  await tester.tap(find.byKey(SelecteurMotif.cleAutre));
+  await tester.pumpAndSettle();
 }

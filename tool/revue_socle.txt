@@ -15,12 +15,9 @@ bouton-grise|lib/features/admin_demandes/demandes_page.dart|onPress: _pret ? _en
 bouton-grise|lib/features/admin_demandes/demandes_page.dart|onPress: motif.text.trim().isEmpty ? null : onRefuser
 bouton-grise|lib/features/admin_dossiers/dossiers_page.dart|onPress: motif.text.trim().isEmpty ? null : onRefuser
 bouton-grise|lib/features/admin_dossiers/dossiers_page.dart|onPress: tousVerifies ? onApprouver : null
-bouton-grise|lib/features/admin_groupes/groupes_page.dart|onPress: _eleveId.text.trim().isEmpty || _motif.text.trim().isEmpty ? null : () => _ajouter(ref)
-bouton-grise|lib/features/admin_groupes/groupes_page.dart|onPress: _libelle.text.trim().isEmpty || _enseignantId.text.trim().isEmpty ? null : () => _creer(ref)
 bouton-grise|lib/features/admin_groupes/groupes_page.dart|onPress: _motif.text.trim().isEmpty ? null : _envoyer
 bouton-grise|lib/features/admin_groupes/groupes_page.dart|onPress: int.tryParse(_seuil.text.trim()) == null ? null : () => _modifier(ref)
 bouton-grise|lib/features/admin_pedagogie_diagnostics/diagnostics_page.dart|onPress: niveauId == null || motif.text.trim().isEmpty ? null : onDecider
-bouton-grise|lib/features/admin_pedagogie_evaluations/evaluations_page.dart|onPress: _eleveId.text.trim().isEmpty || _niveauId == null || _lireDate(_date.text) == null ? null : _envoyer
 bouton-grise|lib/features/admin_pedagogie_evaluations/evaluations_page.dart|onPress: _motif.text.trim().isEmpty ? null : _envoyer
 bouton-grise|lib/features/admin_pedagogie_evaluations/evaluations_page.dart|onPress: _resultat == null ? null : () => _envoyer(ref)
 bouton-grise|lib/features/admin_pedagogie_programmes/programmes_page.dart|onPress: _motif.text.trim().isEmpty ? null : _envoyer
@@ -236,7 +233,6 @@ libelle-sans-source|assets/i18n/fr.i18n.json|admin.groupes.aucun : Aucun groupe 
 libelle-sans-source|assets/i18n/fr.i18n.json|admin.groupes.aucunAvecCeFiltre : Aucun groupe avec ce filtre
 libelle-sans-source|assets/i18n/fr.i18n.json|admin.groupes.aucunAvecCeFiltreDetail : Changez de filtre pour voir les autres groupes.
 libelle-sans-source|assets/i18n/fr.i18n.json|admin.groupes.aucunDetail : Créez un premier groupe pour donner un enseignant et des élèves à un créneau commun.
-libelle-sans-source|assets/i18n/fr.i18n.json|admin.groupes.champEnseignantId : Identifiant de l'enseignant
 libelle-sans-source|assets/i18n/fr.i18n.json|admin.groupes.champHeure : Heure (0-23)
 libelle-sans-source|assets/i18n/fr.i18n.json|admin.groupes.champSeuil : Seuil maximal
 libelle-sans-source|assets/i18n/fr.i18n.json|admin.groupes.cloturerDetail : Tous les membres actifs seront retirés du groupe. Cette action ne peut pas être annulée.

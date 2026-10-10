@@ -35,6 +35,7 @@ import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/profil/service_acceptations.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/session/source_session.dart';
 import 'package:rewayah_academy/core/suivi/service_suivi.dart';
@@ -42,6 +43,8 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
+
+import 'sens_et_echelle.dart';
 
 /// L'hote minimal d'un ecran sous test.
 ///
@@ -62,22 +65,38 @@ Widget hote(
   ),
 );
 
+/// Un appareil sans personne connectee, pour un ecran monte seul : les
+/// lectures d'argent suivent la personne de la session (revue FI-VAGUE-R
+/// R7-04), et la source reelle lirait Supabase. La session reste « sans
+/// profil » du debut a la fin : aucune relecture parasite.
+Override sansPersonneConnectee() =>
+    sourceSessionProvider.overrideWithValue(FausseSourceSession());
+
 /// L'hote d'un ecran qui navigue.
 ///
 /// Certains ecrans de l'etape 3 se terminent par un `go` vers le portail : sans
 /// routeur, ils echouent au moment ou l'on teste justement ce qu'ils font de
 /// reussi. Le routeur du test reste minimal, il ne rejoue pas celui de
 /// l'application.
+///
+/// [themeMode], [direction] et [echelle] servent aux captures (sombre, RTL,
+/// texte x2 ; EA-HL-DOUBLE-1d) ; par defaut, l'arbre reste celui d'avant.
 Widget hoteRoutant({
   required String depart,
   required List<RouteBase> routes,
   List<Override> surcharges = const <Override>[],
   InterfaceMode mode = InterfaceMode.standard,
+  ThemeMode themeMode = ThemeMode.light,
+  TextDirection? direction,
+  double echelle = 1,
 }) => ProviderScope(
   overrides: surcharges,
   child: TranslationProvider(
     child: MaterialApp.router(
       theme: AppTheme.pour(mode, Brightness.light),
+      darkTheme: AppTheme.pour(mode, Brightness.dark),
+      themeMode: themeMode,
+      builder: sensEtEchelle(direction: direction, echelle: echelle),
       routerConfig: GoRouter(initialLocation: depart, routes: routes),
     ),
   ),
@@ -95,8 +114,15 @@ class FauxServiceDossier implements ServiceDossier {
   final List<({AppRole role, String prenom, String nom, Genre? genre})>
   profilsCrees = <({AppRole role, String prenom, String nom, Genre? genre})>[];
 
+  /// Vrai pour simuler le service de la demonstration.
+  @override
+  bool demonstration = false;
+
   /// Les contrats acceptes.
   final List<SorteContrat> contratsAcceptes = <SorteContrat>[];
+
+  /// Les versions acceptees, dans le meme ordre que [contratsAcceptes].
+  final List<String> versionsAcceptees = <String>[];
 
   /// Les pieces deposees.
   final List<PieceAEnvoyer> depots = <PieceAEnvoyer>[];
@@ -134,6 +160,7 @@ class FauxServiceDossier implements ServiceDossier {
   Future<void> accepterContrat(SorteContrat sorte, String version) async {
     _peutEchouer();
     contratsAcceptes.add(sorte);
+    versionsAcceptees.add(version);
   }
 
   @override

@@ -8,6 +8,7 @@ import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/auth/service_auth.dart';
 import '../../core/domain/enums.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/preferences/preferences_locales.dart';
@@ -25,6 +26,7 @@ import '../../core/widgets/section_header.dart';
 import '../../core/widgets/selecteur_theme.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
+import '../paiements_recus/rubrique_recevoir_paiements.dart';
 import '../salle_seance/libelles_salle_b.dart';
 import 'espaces_compte.dart';
 
@@ -107,6 +109,8 @@ class ComptePage extends ConsumerWidget {
               ),
             ],
           ),
+          // CPT-BEN-2 : « Recevoir mes paiements », selon la capacite du port.
+          const RubriqueRecevoirPaiements(),
           Ecart.vSection,
           SectionHeader(titre: t.compte.espaces),
           Text(t.compte.espacesDetail),
@@ -514,7 +518,7 @@ class ProfilEnfantPage extends ConsumerWidget {
     );
 
     return PageShell(
-      titre: t.compte.profilEnfant(prenom: t.compte.nonDisponible),
+      titre: t.compte.profilEnfant(dePrenom: deDevant(t.compte.nonDisponible)),
       child: profils.when(
         loading: () => const Skeleton.liste(differe: false),
         error: (Object _, StackTrace _) => EmptyState(

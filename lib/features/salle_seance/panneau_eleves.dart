@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show RenderAbstractViewport;
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/isolation_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -377,7 +378,7 @@ class _EnTeteEleve extends StatelessWidget {
       child: Pressable(
         onPress: basculer,
         libelleSemantique:
-            '${deplie ? t.salle.seance.replierFiche(prenom: eleve.prenom) : t.salle.seance.deplierFiche(prenom: eleve.prenom)}, $etat',
+            '${deplie ? t.salle.seance.replierFiche(dePrenom: deDevant(eleve.prenom)) : t.salle.seance.deplierFiche(dePrenom: deDevant(eleve.prenom))}, $etat',
         arrondiFocus: AppRadius.arrondiSm,
         child: ExcludeSemantics(child: ligne),
       ),
@@ -514,7 +515,8 @@ class _GrilleFiche extends StatelessWidget {
       ),
       // 390 a texte agrandi : une seule colonne, pour que les mots ne se
       // coupent pas (W-144, W-1410 ; meme seuil que groupe_reglages).
-      child: serre && MediaQuery.textScalerOf(context).scale(1) > 1.3
+      child:
+          serre && MediaQuery.textScalerOf(context).scale(1) > seuilTexteEmpile
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
@@ -803,7 +805,7 @@ class _AutorisationEcrire extends StatelessWidget {
                 : t.salle.seance.ecriture.autoriser,
             libelleSemantique: autorise
                 ? t.salle.seance.ecriture.retirerSemantique(
-                    prenom: eleve.prenom,
+                    dePrenom: deDevant(eleve.prenom),
                   )
                 : t.salle.seance.ecriture.autoriserSemantique(
                     prenom: eleve.prenom,

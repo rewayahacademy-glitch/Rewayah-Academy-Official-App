@@ -45,6 +45,7 @@ import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart';
+import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
@@ -57,15 +58,13 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/entete_page.dart';
-import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/grille_bento.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
-import '../accueil_famille/accueil_famille_page.dart'
-    show largeurMinCarteClasse;
+import '../acces_finance/acces_finance.dart';
 import '../tc_espace_groupe/emplacements_groupe.dart';
 import '../tc_espace_groupe/espace_groupe_page.dart'
     show LecteurGroupe, LectureGroupe;
@@ -189,20 +188,32 @@ class AccueilAdultePage extends ConsumerWidget {
   /// Le nombre de dernieres seances et de ressources montrees.
   static const int limite = 3;
 
+  /// La cle du bloc « rien a afficher » hors ligne (EA-HL-DOUBLE-1).
+  static const Key sansDonneesKey = Key('adulte.accueil.sansDonnees');
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<AccueilAdulteVM> lecture = ref.watch(
-      accueilAdulteProvider,
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    // Hors ligne se dit une fois (EA-HL-DOUBLE-1) : le bandeau de `PageShell`
+    // le dit ; une lecture deja faite reste affichee, et sans elle le bloc dit
+    // ce qui manque. Une capacite absente reste dite indisponible.
+    final AsyncValue<AccueilAdulteVM> lecture = lectureHorsLigne(
+      ref.watch(accueilAdulteProvider),
+      horsLigne: horsLigne,
     );
     final AccueilAdulteVM? vue = lecture.value;
     void relire() => ref.invalidate(accueilAdulteProvider);
-    // Sans reseau, un echec se dit « hors ligne », comme les soldes du foyer
-    // et Mon espace ; une capacite absente reste dite indisponible.
-    final Object? erreur = lecture.hasError ? lecture.error : null;
-    final bool echecHorsLigne =
-        erreur != null &&
-        erreur is! CapaciteIndisponible &&
-        (ref.watch(horsLigneProvider).value ?? false);
+    // Son acces, borne a sa session (FI-9a, FI-BR-08, revue FI-VAGUE-R
+    // R4-01) : seances fermees, Rejoindre est retire et la copie le dit ;
+    // en lecture, Rejoindre reste inerte. Production (port neutre), echec :
+    // rien ne change, et jamais selon un solde.
+    final ({bool ferme, bool enLecture}) acces = rejoindreSelonAcces(
+      ref.watch(accesAppelantProvider),
+    );
+    final bool echecHorsLigne = sansDonneesHorsLigne(
+      lecture,
+      horsLigne: horsLigne,
+    );
     // Pendant le chargement, l'en-tete garde sa place : une ligne de
     // squelette pour la salutation, et la cloche deja posee.
     // Une lecture en echec que Riverpod relance reste `isLoading` : sans
@@ -225,7 +236,11 @@ class AccueilAdultePage extends ConsumerWidget {
           ? <Widget>[ClocheNotifications(onPress: onNotifications)]
           : const <Widget>[],
       child: echecHorsLigne
-          ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire)
+          ? EtatSansDonnees(
+              key: sansDonneesKey,
+              quoi: t.adulte.accueil.sansDonnees,
+              onAction: relire,
+            )
           : BlocAsynchrone<AccueilAdulteVM>(
               valeur: lecture,
               squelette: const SqueletteAccueilAdulte(),
@@ -233,6 +248,7 @@ class AccueilAdultePage extends ConsumerWidget {
               onReessayer: relire,
               construire: (AccueilAdulteVM vue) => _Corps(
                 vue: vue,
+                acces: acces,
                 onRejoindre: onRejoindre,
                 onVoirRessources: onVoirRessources,
                 onVoirDernieresSeances: onVoirDernieresSeances,
@@ -283,12 +299,14 @@ class _Salutation extends StatelessWidget {
 class _Corps extends StatelessWidget {
   const _Corps({
     required this.vue,
+    required this.acces,
     this.onRejoindre,
     this.onVoirRessources,
     this.onVoirDernieresSeances,
   });
 
   final AccueilAdulteVM vue;
+  final ({bool ferme, bool enLecture}) acces;
   final void Function(GroupSummaryVM groupe)? onRejoindre;
   final void Function(String groupeId)? onVoirRessources;
   final VoidCallback? onVoirDernieresSeances;
@@ -315,6 +333,7 @@ class _Corps extends StatelessWidget {
         vue: vue,
         groupeId: groupeId,
         lecture: lecture,
+        acces: acces,
         onRejoindre: onRejoindre,
         onVoirRessources: onVoirRessources,
         onVoirDernieresSeances: onVoirDernieresSeances,
@@ -328,6 +347,7 @@ class _Sections extends StatelessWidget {
     required this.vue,
     required this.groupeId,
     required this.lecture,
+    required this.acces,
     this.onRejoindre,
     this.onVoirRessources,
     this.onVoirDernieresSeances,
@@ -336,6 +356,7 @@ class _Sections extends StatelessWidget {
   final AccueilAdulteVM vue;
   final String groupeId;
   final LectureGroupe lecture;
+  final ({bool ferme, bool enLecture}) acces;
   final void Function(GroupSummaryVM groupe)? onRejoindre;
   final void Function(String groupeId)? onVoirRessources;
   final VoidCallback? onVoirDernieresSeances;
@@ -349,12 +370,17 @@ class _Sections extends StatelessWidget {
     final String? parcours = vue.ligneParcours;
 
     final List<Widget> seance = <Widget>[
+      if (acces.ferme) ...<Widget>[const BandeauAccesAdulte(), Ecart.vLg],
       SectionHeader(
         key: const ValueKey<String>('accueil-adulte-prochaine-seance'),
         titre: t.adulte.accueil.prochaineSeance,
       ),
       Ecart.vMd,
-      ...lecture.identiteEtCarte(onRejoindre: onRejoindre),
+      ...lecture.identiteEtCarte(
+        onRejoindre: onRejoindre,
+        accesFerme: acces.ferme,
+        accesEnLecture: acces.enLecture,
+      ),
     ];
 
     // Seulement ce que les donnees demandent : sans action, pas de section.

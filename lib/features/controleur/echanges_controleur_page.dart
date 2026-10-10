@@ -10,12 +10,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/entete_page.dart' show EnteteCompact;
 import '../../core/widgets/fil_discussion.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
@@ -40,6 +43,11 @@ class EchangesControleurPage extends ConsumerStatefulWidget {
 
   /// La mission dont le fil s'ouvre a l'arrivee, ou nulle pour la liste.
   final String? missionOuverte;
+
+  /// Le contexte de la visite en une phrase (en-tete compact, SUPERPOS-1).
+  static const Key contexteCompactKey = ValueKey<String>(
+    'echanges-contexte-compact',
+  );
 
   @override
   ConsumerState<EchangesControleurPage> createState() =>
@@ -171,9 +179,12 @@ class _EchangesControleurPageState
               reessayer: e.reessayer,
               auteurSoi: e.auteurVous,
               annonce: (String auteur, String texte) =>
-                  e.nouveauMessage(auteur: auteur, texte: texte),
+                  e.nouveauMessage(deAuteur: deDevant(auteur), texte: texte),
             ),
-            onEnvoyer: (String texte) => _port.envoyer(f.id, texte),
+            // Serveur muet : le message passe « non envoye », avec un
+            // nouvel essai, au lieu de rester « en cours » (CTRL-DELAI-1).
+            onEnvoyer: (String texte) =>
+                _port.envoyer(f.id, texte).timeout(AppDelais.requeteMax),
           ),
         ),
       ),
@@ -214,17 +225,34 @@ class _ContexteEpingle extends StatelessWidget {
     final e = t.controleur.echanges;
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final Widget titre = Text(
+      e.contexte,
+      style: palette.inkMuted.applyTo(textes.labelLarge ?? const TextStyle()),
+    );
+    // SUPERPOS-1 : en-tete compact (`EnteteCompact`, meme seuil que le
+    // titre). A texte agrandi ou sur une vue basse, les trois lignes cle /
+    // valeur poussaient le fil et sa saisie hors de l'ecran (320 en texte
+    // double : la page entiere n'etait qu'en-tete). Le titre du fil dit deja
+    // la Classe et la date : le contexte ne les redit pas, il tient en une
+    // phrase qui dit ce qu'il ajoute (l'heure) et qu'il est joint.
+    if (EnteteCompact.actif(context)) {
+      return Semantics(
+        key: EchangesControleurPage.contexteCompactKey,
+        container: true,
+        child: Text(
+          e.contexteCompact(heure: heureDeLAppareil(fil.debutMission)),
+          style: palette.inkMuted.applyTo(
+            textes.bodyMedium ?? const TextStyle(),
+          ),
+        ),
+      );
+    }
     return Semantics(
       container: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            e.contexte,
-            style: palette.inkMuted.applyTo(
-              textes.labelLarge ?? const TextStyle(),
-            ),
-          ),
+          titre,
           Ecart.vSm,
           LigneCleValeur(cle: e.cleClasse, valeur: fil.classe),
           LigneCleValeur(

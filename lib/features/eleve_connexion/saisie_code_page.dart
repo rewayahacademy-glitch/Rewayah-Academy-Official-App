@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart'
+    show sansCoupureAuTrait;
 import '../../core/appairage/lecteur_qr.dart';
 import '../../core/appairage/profils_locaux.dart';
 import '../../core/appairage/service_enfant.dart';
@@ -22,6 +24,7 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/entete_page.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/zone_saisie.dart' show ZoneSaisie;
 
 /// Le titre et la phrase d'un refus, dits simplement, jamais le texte brut du
 /// serveur (DB-APP-06). Partages par la saisie et le scanner.
@@ -200,9 +203,9 @@ class _SaisieCodePageState extends ConsumerState<SaisieCodePage> {
         return;
       }
       setState(
-        () => _erreur = libellesRefusAppairage(
-          MotifRefusAppairage.generique,
-        ).phrase,
+        () =>
+            _erreur = libellesRefusAppairage(MotifRefusAppairage.generique)
+                .phrase,
       );
     } finally {
       if (mounted) {
@@ -294,6 +297,32 @@ class _Formulaire extends StatelessWidget {
   final Widget? actionDansLeCorps;
   final VoidCallback? scanner;
 
+  /// [erreur] telle qu'elle se rend sous le champ sans couper un mot apres
+  /// son trait d'union (SUPERPOS-1b : « Demandez- / lui » a 320 en texte
+  /// double). L'erreur d'un champ est posee par `InputDecorator`, sur la
+  /// largeur du champ moins ses marges interieures et l'ecart du filet
+  /// (`AppSpacing.xs` de chaque cote, champ rempli) : un gluon invisible
+  /// n'est ajoute que si la ligne s'y coupait vraiment, a cette largeur ou
+  /// un peu moins (arrondis). Sinon, le texte donne, tel quel.
+  String _erreurEntiere(BuildContext context, String erreur, double largeur) {
+    final ThemeData theme = Theme.of(context);
+    final TextStyle style = (theme.textTheme.bodySmall ?? const TextStyle())
+        .merge(theme.inputDecorationTheme.errorStyle);
+    final TextDirection sens = Directionality.of(context);
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    final double utile =
+        largeur -
+        (theme.inputDecorationTheme.contentPadding?.horizontal ?? 0) -
+        AppSpacing.xs * 2;
+    for (final double l in <double>[utile, utile - AppSpacing.sm]) {
+      final String rendu = sansCoupureAuTrait(erreur, style, sens, echelle, l);
+      if (!identical(rendu, erreur)) {
+        return rendu;
+      }
+    }
+    return erreur;
+  }
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -309,29 +338,33 @@ class _Formulaire extends StatelessWidget {
           ),
         ),
         Ecart.vXxl,
-        TextField(
-          key: SaisieCodePage.champKey,
-          controller: champ,
-          enabled: !enCours,
-          autocorrect: false,
-          enableSuggestions: false,
-          keyboardType: TextInputType.visiblePassword,
-          textCapitalization: TextCapitalization.characters,
-          textInputAction: TextInputAction.done,
-          style: palette.inkStrong.applyTo(AppTypography.chiffre(taille: 28)),
-          inputFormatters: <TextInputFormatter>[
-            const MajusculesFormatter(),
-            FilteringTextInputFormatter.allow(FormatCodeAppairage.caractere),
-            LengthLimitingTextInputFormatter(FormatCodeAppairage.longueur),
-          ],
-          onChanged: (String _) => onChange(),
-          onSubmitted: (String _) => onValider?.call(),
-          decoration: InputDecoration(
-            labelText: t.eleveConnexion.saisie.champ,
-            helperText: erreur == null ? t.eleveConnexion.saisie.aide : null,
-            helperMaxLines: 2,
-            errorText: erreur,
-            errorMaxLines: 4,
+        LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints c) => TextField(
+            key: SaisieCodePage.champKey,
+            controller: champ,
+            enabled: !enCours,
+            autocorrect: false,
+            enableSuggestions: false,
+            keyboardType: TextInputType.visiblePassword,
+            textCapitalization: TextCapitalization.characters,
+            textInputAction: TextInputAction.done,
+            style: palette.inkStrong.applyTo(AppTypography.chiffre(taille: 28)),
+            inputFormatters: <TextInputFormatter>[
+              const MajusculesFormatter(),
+              FilteringTextInputFormatter.allow(FormatCodeAppairage.caractere),
+              LengthLimitingTextInputFormatter(FormatCodeAppairage.longueur),
+            ],
+            onChanged: (String _) => onChange(),
+            onSubmitted: (String _) => onValider?.call(),
+            decoration: InputDecoration(
+              labelText: t.eleveConnexion.saisie.champ,
+              helperText: erreur == null ? t.eleveConnexion.saisie.aide : null,
+              helperMaxLines: ZoneSaisie.lignesAideMax,
+              errorText: erreur == null
+                  ? null
+                  : _erreurEntiere(context, erreur!, c.maxWidth),
+              errorMaxLines: ZoneSaisie.lignesAideMax,
+            ),
           ),
         ),
         if (horsLigne) ...<Widget>[

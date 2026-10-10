@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/appairage/service_appairage.dart';
 import '../../../core/domain/enums.dart';
 import '../../../core/foyer/selection_eleve.dart';
+import '../../../core/i18n/elision.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/reseau/service_reseau.dart';
@@ -109,7 +110,9 @@ class _ChoixInterfaceState extends ConsumerState<_ChoixInterface> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          NoteFiche(t.ficheEleve.interface.intro(prenom: profil.prenom)),
+          NoteFiche(
+            t.ficheEleve.interface.intro(dePrenom: deDevant(profil.prenom)),
+          ),
           Ecart.vSm,
           KeyedSubtree(
             key: InterfaceElevePage.choixKey,
@@ -165,7 +168,9 @@ class _ChoixInterfaceState extends ConsumerState<_ChoixInterface> {
               child: Text(
                 _enCours
                     ? t.ficheEleve.interface.enCours
-                    : t.ficheEleve.interface.echec(prenom: profil.prenom),
+                    : t.ficheEleve.interface.echec(
+                        dePrenom: deDevant(profil.prenom),
+                      ),
                 style: (_echec ? palette.inkAlert : palette.inkMuted).applyTo(
                   textes.bodyMedium ?? const TextStyle(),
                 ),
@@ -179,7 +184,11 @@ class _ChoixInterfaceState extends ConsumerState<_ChoixInterface> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           NoteFiche(t.ficheEleve.interface.politique),
-          NoteFiche(t.ficheEleve.interface.application(prenom: profil.prenom)),
+          NoteFiche(
+            t.ficheEleve.interface.application(
+              dePrenom: deDevant(profil.prenom),
+            ),
+          ),
           NoteFiche(t.ficheEleve.interface.demandeEleve),
         ],
       ),

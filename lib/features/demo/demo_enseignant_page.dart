@@ -13,17 +13,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 
+import '../../core/capacites/port_revenus_enseignant.dart';
 import '../../core/domain/enums.dart';
 import '../../core/enseignant/absence_remplacement.dart';
 import '../../core/enseignant/depot_cahiers.dart';
 import '../../core/enseignant/modeles_enseignant.dart';
+import '../../core/enseignant/port_remplacements.dart';
 import '../../core/enseignant/service_enseignant.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/matching/service_matching.dart';
+import '../../core/offres/service_offres.dart' show languesCoursProvider;
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/priere/service_priere.dart';
 import '../../core/profil/service_acceptations.dart';
+import '../../core/profil/service_declaration.dart';
 import '../../core/profil/service_profil_enseignant.dart';
 import '../../core/regles/service_regles.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -46,10 +50,13 @@ import '../enseignant_classes/mes_classes_page.dart';
 import '../journee/journee_page.dart';
 import '../profil_enseignant/photo_publique.dart';
 import '../profil_enseignant/profil_enseignant_page.dart';
+import '../revenus_enseignant/revenus_enseignant_page.dart';
 import 'classe_demo.dart' show DonneesClasseDemo, EtatDemoClasse;
 import 'demo_classe_page.dart' show adresseDemoClasse;
 import 'enseignant_demo.dart';
+import 'finance_demo.dart' show RevenusEnseignantDemo;
 import 'mode_demonstration.dart';
+import 'remplacements_demo.dart';
 import 'repere_demonstration.dart';
 
 /// Les routes de la demonstration enseignant : AUCUNE en production.
@@ -101,6 +108,7 @@ String libelleEcranDemoEnseignant(EcranDemoEnseignant ecran) => switch (ecran) {
   EcranDemoEnseignant.premiersPas => t.enseignant.bienvenue.titre,
   EcranDemoEnseignant.cahier => t.enseignant.cahier.titre,
   EcranDemoEnseignant.profil => t.nav.enseignant.profil,
+  EcranDemoEnseignant.revenus => t.enseignant.revenus.titre,
 };
 
 /// Le libelle d'une situation.
@@ -157,6 +165,21 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
           ? const <OffreRemplacement>[]
           : <OffreRemplacement>[DonneesEnseignantDemo.offreRemplacement()],
     ),
+    // REMPL-1 : le tableau commun des remplacements, filtre par genre et
+    // premier arrive, premier servi, simule sur l'appareil (K-28). Le genre
+    // est un parametre de la demonstration (Sayyid : un enseignant).
+    portRemplacementsProvider.overrideWithValue(
+      PortRemplacementsDemo(
+        tableau: vide
+            ? TableauRemplacementsDemo(
+                const <(OffreRemplacement, PublicClasseDemo, String?)>[],
+              )
+            : TableauRemplacementsDemo.demonstration(),
+        enseignantId: id,
+        genre: GenreEnseignantDemo.homme,
+        horsLigne: etat == EtatDemoEnseignant.horsLigne,
+      ),
+    ),
     // Classes (ENS-09) : les quatre Classes, leur niveau, leur langue et le
     // remplacement d'Al-Fatiha. Le cahier non valide d'Al-Badr vient de
     // `cahiersEnRetardProvider`, plus bas.
@@ -206,9 +229,41 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
     offresClassesProvider.overrideWithValue(
       vide ? const <OffreClasseDemo>[] : DonneesEnseignantDemo.offres,
     ),
+    // Mes revenus (FI-10) : le double de la Finance (FI-BR-11), calcule dans
+    // la demonstration, jamais dans l'ecran. Le provider de l'ecran est
+    // surcharge aussi : sous ce ProviderScope imbrique, il se resoudrait
+    // sinon dans le conteneur racine, ou le port reste indisponible.
+    portRevenusEnseignantProvider.overrideWithValue(
+      RevenusEnseignantDemo(vide: vide),
+    ),
+    moisRevenusProvider.overrideWith(MoisRevenusDemo.new),
+    moisRevenusDisponiblesProvider.overrideWith(
+      (Ref ref) => ref.watch(portRevenusEnseignantProvider).moisDisponibles(),
+    ),
+    revenusEnseignantProvider.overrideWith(
+      (Ref ref) => lireRevenus(
+        ref.watch(portRevenusEnseignantProvider),
+        ref.watch(moisRevenusProvider),
+      ),
+    ),
+    // Le releve aussi : resolu a la racine, il lisait la session de
+    // l'application, et son echec s'affichait « Impossible de charger » au
+    // lieu de l'etat honnete du port, « pas encore disponible » (R5-03).
+    releveEnseignantProvider.overrideWith(
+      (Ref ref) => ref.watch(portRevenusEnseignantProvider).releve(),
+    ),
     // Profil (ENS-05).
+    // Pays et langues se choisissent (FORM-L8) : l'ecriture reste sur
+    // l'appareil (K-28) et le profil relu la reflete. Les langues proposees
+    // sont celles que la base publie a sa creation (`0043`).
     profilEnseignantProvider.overrideWith(
-      (Ref _) async => DonneesEnseignantDemo.profil,
+      (Ref ref) async => ref.watch(declarationEnseignantDemoProvider).profil,
+    ),
+    serviceDeclarationProvider.overrideWith(
+      (Ref ref) => ref.watch(declarationEnseignantDemoProvider),
+    ),
+    languesCoursProvider.overrideWith(
+      (Ref _) async => DonneesEnseignantDemo.languesCours,
     ),
     // Le nom public avec son titre (R18), que le modele ne porte pas encore.
     nomPublicEnseignantProvider.overrideWithValue(
@@ -400,7 +455,10 @@ class CoquilleEnseignantDemo extends StatelessWidget {
       child: RepereDemonstration(
         child: NavShell(
           destinations: destinations,
-          indexActif: ecran.index,
+          // Mes revenus est une pose de la branche Profil.
+          indexActif: ecran == EcranDemoEnseignant.revenus
+              ? EcranDemoEnseignant.profil.index
+              : ecran.index,
           libellesDansLeRail: true,
           onAller: (String chemin) {
             final int i = destinations.indexWhere(
@@ -430,7 +488,16 @@ class CoquilleEnseignantDemo extends StatelessWidget {
               },
             ),
             EcranDemoEnseignant.disponibilites => const CreneauxPage(),
-            EcranDemoEnseignant.profil => const ProfilEnseignantPage(),
+            EcranDemoEnseignant.profil => ProfilEnseignantPage(
+              onOuvrirRevenus: (BuildContext c) => c.go(
+                adresseDemoEnseignant(EcranDemoEnseignant.revenus, etat: etat),
+              ),
+            ),
+            EcranDemoEnseignant.revenus => RevenusEnseignantPage(
+              onRetour: () => context.go(
+                adresseDemoEnseignant(EcranDemoEnseignant.profil, etat: etat),
+              ),
+            ),
             // Rendu plus haut, hors de la coquille.
             EcranDemoEnseignant.premiersPas ||
             EcranDemoEnseignant.cahier => const SizedBox.shrink(),
@@ -484,3 +551,34 @@ class SoumissionCahierDemo implements SoumissionCahier {
   @override
   Future<int> rejouer() async => 0;
 }
+
+/// La declaration de la demonstration : pays et langues gardes en memoire,
+/// jamais envoyes (K-28). Le profil relu part de celui de la demonstration.
+class DeclarationEnseignantDemo implements ServiceDeclarationEnseignant {
+  String? _pays = DonneesEnseignantDemo.profil.pays;
+  List<String> _langues = DonneesEnseignantDemo.profil.langues;
+
+  /// Le profil tel que la demonstration le relit apres une ecriture.
+  ProfilEnseignant get profil {
+    const ProfilEnseignant base = DonneesEnseignantDemo.profil;
+    return ProfilEnseignant(
+      prenom: base.prenom,
+      identifiant: base.identifiant,
+      pays: _pays,
+      langues: _langues,
+      plafondHeures: base.plafondHeures,
+      statutCompte: base.statutCompte,
+      verification: base.verification,
+    );
+  }
+
+  @override
+  Future<void> declarer({String? pays, List<String>? langues}) async {
+    _pays = pays ?? _pays;
+    _langues = langues ?? _langues;
+  }
+}
+
+/// Une declaration par conteneur de demonstration.
+final Provider<DeclarationEnseignantDemo> declarationEnseignantDemoProvider =
+    Provider<DeclarationEnseignantDemo>((Ref _) => DeclarationEnseignantDemo());

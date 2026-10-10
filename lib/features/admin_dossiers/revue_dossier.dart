@@ -27,8 +27,10 @@ import 'visionneuse_piece.dart';
 /// lecture : titre, statut, identite, piece, verifications, accords, puis
 /// decision et ses raisons.
 ///
-/// Les DECISIONS restent jusqu'a AD-8 sur `ServiceValidation.decider` :
-/// `decider_dossier` en production, le pont de demonstration sinon.
+/// Les DECISIONS passent par le port : `decider_dossier`
+/// (`ServiceValidation.decider`) A PARTIR DE BR-1, le pont de demonstration
+/// sinon. En production aujourd'hui, la decision est fermee (AD-M3-PROD,
+/// voir `surchargeRevueDossiersProduction`).
 class RevueDossier extends ConsumerStatefulWidget {
   /// Cree la revue. A cle par dossier et revision : les cases repartent
   /// vides a chaque dossier et a chaque nouvelle revision.
@@ -158,6 +160,11 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
 
   /// Ouvre 02D ou 02E, puis rend le focus au declencheur (repli : titre).
   Future<void> _ouvrir(DecisionDossier decision) async {
+    // AD-NETTOYAGE-2 (n8) : pas de reentrance (double geste avant que la
+    // surface ne s'affiche) : une seule surface de decision a la fois.
+    if (_surfaceOuverte) {
+      return;
+    }
     final bool refus = decision == DecisionDossier.refuser;
     // Une commande close (echec, conflit...) laissee par une surface fermee
     // est oubliee : la nouvelle ouverture repart d'une confirmation neuve.
@@ -681,6 +688,10 @@ class _RaisonsDecision extends StatelessWidget {
         onPress: onAllerPremiere,
         fleche: false,
         annonceLien: true,
+        // AD-NETTOYAGE-2 (m12) : meme encre douce que les autres raisons ; le
+        // lien reste pressable (saut vers la premiere verification), sans
+        // l'accent qui le ferait passer pour l'action principale.
+        encre: palette.inkMuted.applyTo,
       );
     }
     return Column(

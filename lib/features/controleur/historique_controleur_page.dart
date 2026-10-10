@@ -20,9 +20,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -33,6 +35,8 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pays_enseignant.dart';
+import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
@@ -170,20 +174,15 @@ class _HistoriqueControleurPageState
   });
 
   // Revue CT-R m3 : le Detail et le Complement sont des etats internes ; le
-  // retour systeme (Android, navigateur) ferme d'abord le complement, puis le
-  // detail, au lieu de quitter l'Historique.
+  // retour systeme (Android, navigateur) ne quitte pas l'Historique. Dans le
+  // Complement, c'est sa propre PopScope qui recule d'une etape en gardant
+  // la saisie (CTRL-RETOUR-1) ; ici, seul le detail se ferme.
   @override
   Widget build(BuildContext context) => PopScope(
     canPop: _ouvert == null,
     onPopInvokedWithResult: (bool fait, Object? _) {
-      if (fait) return;
-      setState(() {
-        if (_enComplement) {
-          _enComplement = false;
-        } else {
-          _ouvert = null;
-        }
-      });
+      if (fait || _enComplement) return;
+      setState(() => _ouvert = null);
     },
     child: _corps(context),
   );
@@ -248,10 +247,8 @@ class _HistoriqueControleurPageState
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: <Widget>[
+        RangeeFiltres(
+          filtres: <Widget>[
             MenuFiltre<PeriodeHistorique>(
               libelle: t.historique.filtres.periode,
               valeur: _filtres.periode == PeriodeHistorique.toute
@@ -329,7 +326,9 @@ class _HistoriqueControleurPageState
   Widget _ligne(RapportControle r) {
     final h = t.controleur.historique;
     final String date = dateDeLAppareil(r.debut);
-    final String duree = h.duree(minutes: r.dureeObservee.inMinutes);
+    final String duree = LibellesGroupe.valeurSeule(
+      h.duree(minutes: r.dureeObservee.inMinutes),
+    );
     final String statut = libelleStatutRapport(r.statut);
     return LigneHistorique(
       key: HistoriqueControleurPage.ligneKey(r.id),
@@ -337,6 +336,7 @@ class _HistoriqueControleurPageState
       meta: h.meta(heure: heureDeLAppareil(r.debut), duree: duree),
       titre: r.classe,
       sousTitre: r.enseignant,
+      pays: r.paysEnseignant,
       statut: statut,
       ton: tonStatutRapport(r.statut),
       semantique: h.ligne(
@@ -398,7 +398,11 @@ class _DetailRapport extends StatelessWidget {
               titre: h.sectionMission,
               enfants: <Widget>[
                 LigneCleValeur(cle: h.cleClasse, valeur: r.classe),
-                LigneCleValeur(cle: h.cleEnseignant, valeur: r.enseignant),
+                LigneCleValeur(
+                  cle: h.cleEnseignant,
+                  valeur: r.enseignant,
+                  complement: PaysEnseignant.siDeclare(r.paysEnseignant),
+                ),
                 LigneCleValeur(
                   cle: h.cleDate,
                   // Ordre et virgule traduisibles (revue CT-R m9).
@@ -410,7 +414,9 @@ class _DetailRapport extends StatelessWidget {
                 ),
                 LigneCleValeur(
                   cle: h.cleDuree,
-                  valeur: h.duree(minutes: r.dureeObservee.inMinutes),
+                  valeur: LibellesGroupe.valeurSeule(
+                    h.duree(minutes: r.dureeObservee.inMinutes),
+                  ),
                   chiffres: true,
                 ),
               ],
@@ -426,7 +432,10 @@ class _DetailRapport extends StatelessWidget {
                 if (r.presents.isNotEmpty)
                   LigneCleValeur(
                     cle: h.cleElevesPresents,
-                    valeur: r.presents.join(', '),
+                    // Chaque nom dans son isolat : la virgule et le point
+                    // de l'initiale restent a leur place, nom arabe ou
+                    // latin (CTRL-ROSTER-C7-1b).
+                    valeur: r.presents.map(isolerSens).join(', '),
                   ),
               ],
             ),

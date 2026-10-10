@@ -26,8 +26,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/communications/modeles_communication.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
@@ -36,12 +39,15 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_tile.dart' show AppAvatar;
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/empty_state.dart';
-import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
+import '../acces_finance/acces_finance.dart';
+import '../com_annonces/annonces_de_classe.dart';
+import '../com_messages/entree_messages_contexte.dart';
 import '../foyer/photo_eleve.dart' show PhotoEleve;
 import '../tc_catalogue/routes_tc_b.dart' show RoutesTcB;
+import '../tc_espace_groupe/bloc_cartes_classe.dart';
 import '../tc_espace_groupe/emplacements_groupe.dart' show BlocBibliotheque;
 import '../tc_espace_groupe/espace_groupe_page.dart'
     show ColonnesParRangees, LecteurGroupe, LectureGroupe, SqueletteGroupe;
@@ -129,6 +135,9 @@ class MaClasseAdultePage extends ConsumerWidget {
   /// Le nombre de ressources montrees.
   static const int limite = 3;
 
+  /// La cle du bloc « rien a afficher » hors ligne (EA-HL-DOUBLE-1).
+  static const Key sansDonneesKey = Key('adulte.maClasse.sansDonnees');
+
   /// Le diametre des photos des participants : la valeur des eleves de la
   /// fiche du groupe (`fiche_groupe_page.dart`, `diametre: 40`), que cet
   /// ecran ne modifie pas (K-51).
@@ -136,21 +145,32 @@ class MaClasseAdultePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<MaClasseAdulteVM> classe = ref.watch(
-      maClasseAdulteProvider,
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    // Hors ligne se dit une fois (EA-HL-DOUBLE-1) : le bandeau de `PageShell`
+    // le dit ; une classe deja lue reste affichee, et sans elle le bloc dit
+    // ce qui manque. Une capacite absente reste dite indisponible.
+    final AsyncValue<MaClasseAdulteVM> classe = lectureHorsLigne(
+      ref.watch(maClasseAdulteProvider),
+      horsLigne: horsLigne,
     );
     void relire() => ref.invalidate(maClasseAdulteProvider);
-    // Sans reseau, un echec se dit « hors ligne », comme les soldes du foyer
-    // et Mon espace ; une capacite absente reste dite indisponible.
-    final Object? erreur = classe.hasError ? classe.error : null;
-    final bool echecHorsLigne =
-        erreur != null &&
-        erreur is! CapaciteIndisponible &&
-        (ref.watch(horsLigneProvider).value ?? false);
+    // Son acces, borne a sa session, la meme regle que son Accueil (FI-9a,
+    // revue FI-VAGUE-R R4-01).
+    final ({bool ferme, bool enLecture}) acces = rejoindreSelonAcces(
+      ref.watch(accesAppelantProvider),
+    );
+    final bool echecHorsLigne = sansDonneesHorsLigne(
+      classe,
+      horsLigne: horsLigne,
+    );
     return PageShell(
       titre: t.adulte.nav.maClasse,
       child: echecHorsLigne
-          ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire)
+          ? EtatSansDonnees(
+              key: sansDonneesKey,
+              quoi: t.adulte.maClasse.sansDonnees,
+              onAction: relire,
+            )
           : BlocAsynchrone<MaClasseAdulteVM>(
               valeur: classe,
               squelette: const SqueletteGroupe(),
@@ -166,16 +186,26 @@ class MaClasseAdultePage extends ConsumerWidget {
                     registre: RegistreVide.subi,
                   );
                 }
-                return LecteurGroupe(
+                final Widget lecteur = LecteurGroupe(
                   groupeId: groupeId,
                   construire: (BuildContext _, LectureGroupe lecture) =>
                       _Sections(
                         vue: vue,
                         groupeId: groupeId,
                         lecture: lecture,
+                        acces: acces,
                         onRejoindre: onRejoindre,
                         onVoirRessources: onVoirRessources,
                       ),
+                );
+                if (!acces.ferme) return lecteur;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    const BandeauAccesAdulte(),
+                    Ecart.vLg,
+                    lecteur,
+                  ],
                 );
               },
             ),
@@ -188,6 +218,7 @@ class _Sections extends StatelessWidget {
     required this.vue,
     required this.groupeId,
     required this.lecture,
+    required this.acces,
     this.onRejoindre,
     this.onVoirRessources,
   });
@@ -195,6 +226,7 @@ class _Sections extends StatelessWidget {
   final MaClasseAdulteVM vue;
   final String groupeId;
   final LectureGroupe lecture;
+  final ({bool ferme, bool enLecture}) acces;
   final void Function(GroupSummaryVM groupe)? onRejoindre;
   final void Function(String groupeId)? onVoirRessources;
 
@@ -210,8 +242,11 @@ class _Sections extends StatelessWidget {
           SectionHeader(titre: titre),
           Ecart.vMd,
           AppCard(
+            // RTL-ISOL-1 : une ligne rendue dans l'autre sens que l'interface
+            // (« ... règles de tajwid. », « Chapitre 1 · Page 24 » en arabe)
+            // est isolee : son point et son separateur restent a leur place.
             child: Text(
-              texte,
+              isolerSiAutreSens(texte, Directionality.of(context)),
               key: ValueKey<String>(cle),
               style: Theme.of(context).textTheme.bodyLarge,
             ),
@@ -274,7 +309,21 @@ class _Sections extends StatelessWidget {
             ? GoRouter.of(context).go(RoutesTcB.avecGroupe(groupeId))
             : voir(groupeId),
       ),
+      // COM-F : les emplacements des Communications (annonces de la Classe,
+      // entree des Messages), vides tant que leurs voies ne les remplissent
+      // pas ; en fin de section, l'ecart entre sections se pose avant eux,
+      // rendu seulement quand ils rendent quelque chose.
+      AnnoncesDeClasse(classeId: groupeId, ecartAvant: Ecart.vSection),
+      EntreeMessagesContexte(
+        type: TypeObjetLie.classe,
+        objetId: groupeId,
+        ecartAvant: Ecart.vSection,
+      ),
     ];
+
+    // CARTES-PERSO-1 : les cartes que l'enseignant de la Classe compose, en
+    // lecture (la capacite de modifier vient de leur lecture).
+    final List<Widget> cartes = <Widget>[BlocCartesClasse(groupeId: groupeId)];
 
     List<Widget> bloc(List<List<Widget>> sections) => <Widget>[
       for (final (int i, List<Widget> s)
@@ -288,7 +337,14 @@ class _Sections extends StatelessWidget {
     // sections en deux rangees.
     return ColonnesParRangees(
       rangees: <(List<Widget>, List<Widget>)>[
-        (lecture.identiteEtCarte(onRejoindre: onRejoindre), aPropos),
+        (
+          lecture.identiteEtCarte(
+            onRejoindre: onRejoindre,
+            accesFerme: acces.ferme,
+            accesEnLecture: acces.enLecture,
+          ),
+          bloc(<List<Widget>>[aPropos, cartes]),
+        ),
         if (participants.isEmpty)
           (bloc(<List<Widget>>[ressources, progression]), const <Widget>[])
         else

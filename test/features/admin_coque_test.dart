@@ -81,7 +81,7 @@ void main() {
       await _stabiliser(tester);
       final String? cible = domaine.chemin;
       if (cible == null) {
-        // Finance : inerte, la route ne bouge pas.
+        // Domaine sans fonction livree : inerte, la route ne bouge pas.
         expect(_chemin(routeur), avant, reason: domaine.name);
         continue;
       }

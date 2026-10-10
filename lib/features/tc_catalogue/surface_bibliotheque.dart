@@ -15,6 +15,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/menu_filtre.dart';
+import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import 'carte_ressource.dart';
@@ -185,18 +186,19 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
             decoration: InputDecoration(
               isDense: true,
               hintText: t.tc.bibliotheque.rechercheIndication,
+              // EA-HL-DOUBLE-1f : l'indication passe a la ligne (trois lignes
+              // au plus) au lieu d'etre tronquee a 320 px en texte x2 (K-54).
+              hintMaxLines: 3,
               prefixIcon: Icon(AppIcons.recherche.repos),
             ),
           ),
         ),
         Ecart.vMd,
-        // Une rangee qui defile cache des filtres hors de la vue (ONGLETS-1) :
-        // les pastilles passent a la ligne, tout est visible.
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: <Widget>[
+        // FILTRES-1 (05/10/2026) : une seule rangee de filtres, qui defile
+        // quand elle ne tient pas ; sa barre de defilement dit qu'il y en a
+        // d'autres (`RangeeFiltres`). Remplace le passage a la ligne d'ONGLETS-1.
+        RangeeFiltres(
+          filtres: <Widget>[
             for (final TypeRessource type in TypeRessource.values)
               FilterPill(
                 libelle: libelleTypeRessource(type),
@@ -245,6 +247,7 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
           SliverToBoxAdapter(
             child: EmptyState(
               message: t.tc.bibliotheque.indisponible.message,
+              invitation: t.tc.bibliotheque.indisponible.invitation,
               icone: AppIcons.avertissement,
               libelleAction: t.tc.bibliotheque.indisponible.action,
               onAction: () =>

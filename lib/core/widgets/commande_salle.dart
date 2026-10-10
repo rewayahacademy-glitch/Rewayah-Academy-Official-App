@@ -14,6 +14,8 @@
 // Un seul composant pour le dock de la seance et pour la salle : on
 // l'ameliore, on n'en recree pas un (lib/CLAUDE.md).
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../domain/enums.dart';
@@ -60,12 +62,71 @@ double diametreCommandeSalle(BuildContext context) {
 bool motEtatVisible(BuildContext context) =>
     MediaQuery.textScalerOf(context).scale(1) <= AppContour.seuilTexteAgrandi;
 
+/// ETATS-MA-1 (decision du 05/10/2026, WCAG 1.4.1) : en Mode Accessibilite,
+/// texte au-dela de 130 %, les commandes de la salle passent sur deux rangees
+/// ([CommandesSurDeuxRangees]) pour que le mot d'etat des bascules reste
+/// visible. Hors Mode Accessibilite, rien ne change.
+bool commandesSurDeuxRangees(BuildContext context) =>
+    AppMetriques.of(context).mode == InterfaceMode.enfant &&
+    !motEtatVisible(context);
+
 /// La largeur d'une case de rangee pour une commande : une bascule porte un
 /// mot d'etat de deux mots, donc deux cibles ; les autres, une cible et un
 /// ecart. Jamais sous 48 de cible, jamais collees (revue 01/10, ETATS-BTN-1).
 double largeurCaseCommande(BuildContext context, {required bool bascule}) {
   final double cible = AppMetriques.of(context).cibleTactile;
   return bascule && motEtatVisible(context) ? cible * 2 : cible + AppSpacing.sm;
+}
+
+/// La largeur de case d'une bascule qui MONTRE son mot d'etat. ETATS-MA-1 :
+/// en Mode Accessibilite au-dela de 130 %, le mot reste aussi dans la
+/// rangee unique du bureau ; la case garde alors deux cibles (le mot passe
+/// sur deux lignes sans se couper). Ailleurs, [largeurCaseCommande].
+///
+/// DOCK-X2-1 (decision du 05/10/2026 : le mot d'etat reste, sans coupure) :
+/// HORS Mode Accessibilite, au-dela de 130 %, la rangee du bureau montre
+/// encore le mot ; la case retombait pourtant a une cible et un ecart, et le
+/// mot s'y coupait (« Camér / a allu… »). Elle garde alors deux cibles, et
+/// au moins la largeur du plus long mot de [libelle] au [style] et a
+/// l'echelle courants : le mot passe a la ligne ENTRE ses mots, jamais
+/// dedans. Jusqu'a 130 %, rien ne change.
+double largeurCaseBasculeAvecMot(
+  BuildContext context, {
+  String? libelle,
+  TextStyle? style,
+}) {
+  final double cible = AppMetriques.of(context).cibleTactile;
+  if (commandesSurDeuxRangees(context)) return cible * 2;
+  if (motEtatVisible(context)) {
+    return largeurCaseCommande(context, bascule: true);
+  }
+  final String? mot = libelle;
+  return math.max(
+    cible * 2,
+    mot == null ? 0 : _largeurPlusLongMot(context, mot, style),
+  );
+}
+
+/// La largeur du plus long mot de [texte] (suite sans espace), au [style] et
+/// a l'echelle de texte courants, arrondie au pixel superieur.
+double _largeurPlusLongMot(
+  BuildContext context,
+  String texte,
+  TextStyle? style,
+) {
+  double plusLarge = 0;
+  for (final String mot in texte.split(RegExp(r'\s+'))) {
+    if (mot.isEmpty) continue;
+    final TextPainter peintre = TextPainter(
+      text: TextSpan(text: mot, style: style),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 1,
+    )..layout();
+    plusLarge = math.max(plusLarge, peintre.width.ceilToDouble());
+    peintre.dispose();
+  }
+  return plusLarge;
 }
 
 /// EN-12 (UX_REVIEW_04 n° 17 d, K-42) : la rangee est trop serree ou le texte
@@ -77,15 +138,71 @@ class CommandeSalleCompacte extends InheritedWidget {
   const CommandeSalleCompacte({
     required this.diametre,
     required super.child,
+    this.garderMotEtat = false,
     super.key,
   });
 
   /// Le diametre des disques de la rangee compacte.
   final double diametre;
 
+  /// Vrai : une bascule garde son mot d'etat a toute taille de texte, et
+  /// remplit la case que lui donne sa rangee (ETATS-MA-1, deux rangees).
+  final bool garderMotEtat;
+
   @override
   bool updateShouldNotify(CommandeSalleCompacte ancien) =>
-      ancien.diametre != diametre;
+      ancien.diametre != diametre || ancien.garderMotEtat != garderMotEtat;
+}
+
+/// ETATS-MA-1 (decision du 05/10/2026, par delegation du directeur ; regle du
+/// 02/10, DECISIONS_DELEGUEES_2026-10-02.md : « le mot d'etat reste ») : en
+/// Mode Accessibilite, texte au-dela de 130 %, une seule rangee de disques ne
+/// laisse plus la place au mot d'etat des bascules. Les commandes passent
+/// donc sur deux rangees, deux par deux et dans leur ordre (micro et camera,
+/// puis la suivante et Quitter) : chaque commande prend la moitie de la
+/// largeur, la bascule y garde son mot sous le disque (« Micro ouvert »,
+/// sur deux lignes au besoin, jamais coupe), la commande ordinaire reste en
+/// icone seule (MA-CMD-1, nom lu et en infobulle). Le support cede la hauteur
+/// d'une rangee.
+class CommandesSurDeuxRangees extends StatelessWidget {
+  const CommandesSurDeuxRangees({
+    required this.commandes,
+    required this.diametre,
+    super.key,
+  });
+
+  /// Les commandes, dans l'ordre de la rangee unique.
+  final List<Widget> commandes;
+
+  /// Le diametre des disques.
+  final double diametre;
+
+  /// La cle de la grille (tests, captures).
+  static const Key grilleKey = ValueKey<String>('commandes-deux-rangees');
+
+  @override
+  Widget build(BuildContext context) => CommandeSalleCompacte(
+    diametre: diametre,
+    garderMotEtat: true,
+    child: Column(
+      key: grilleKey,
+      mainAxisSize: MainAxisSize.min,
+      spacing: AppSpacing.sm,
+      children: <Widget>[
+        for (int i = 0; i < commandes.length; i += 2)
+          Row(
+            // Les disques d'une rangee s'alignent en haut, meme quand un mot
+            // passe sur deux lignes et l'autre non.
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(child: Center(child: commandes[i])),
+              if (i + 1 < commandes.length)
+                Expanded(child: Center(child: commandes[i + 1])),
+            ],
+          ),
+      ],
+    ),
+  );
 }
 
 /// Une commande ronde de la salle. Si [bascule] est renseigne, c'est une
@@ -161,9 +278,12 @@ class CommandeSalle extends StatelessWidget {
     // mot par commande ne tiennent plus dans la hauteur d'un telephone : le mot
     // passe alors en infobulle et dans la voix du lecteur d'ecran, comme les
     // libelles du Teaching Dock (`BoutonOutil`).
+    // ETATS-MA-1 : sur deux rangees, le mot d'une bascule reste a toute taille.
+    final bool garderMot = compacte?.garderMotEtat ?? false;
     final bool iconeSeule =
         compacte != null &&
-        (!(estBascule || motGarde) || !motEtatVisible(context));
+        (!(estBascule || motGarde) ||
+            (!garderMot && !motEtatVisible(context)));
     final double diametre =
         compacte?.diametre ?? diametreCommandeSalle(context);
     final double tailleIcone =
@@ -306,12 +426,21 @@ class CommandeSalle extends StatelessWidget {
     );
     // Une bascule tient une case de largeur fixe : son mot d'etat change de
     // longueur (« Micro ouvert », « Micro coupe ») sans deplacer ses voisines.
-    // TB-2 : texte tres agrandi hors rangee compacte (bureau), le mot reste
-    // visible : la case suit sa largeur, jamais un mot coupe dans une case
-    // pensee pour l'icone seule.
-    final Widget case_ = estBascule && (iconeSeule || motEtatVisible(context))
+    // Sur deux rangees (ETATS-MA-1), elle remplit la moitie de rangee que sa
+    // case lui donne : son mot y passe a la ligne sans se couper. TB-2 :
+    // texte tres agrandi hors rangee compacte (bureau), le mot reste visible :
+    // la case suit sa largeur, jamais un mot coupe dans une case pensee pour
+    // l'icone seule.
+    final Widget case_ =
+        estBascule && !garderMot && (iconeSeule || motEtatVisible(context))
         ? SizedBox(
-            width: largeurCaseCommande(context, bascule: true),
+            width: iconeSeule
+                ? largeurCaseCommande(context, bascule: true)
+                : largeurCaseBasculeAvecMot(
+                    context,
+                    libelle: libelle,
+                    style: styleLibelle,
+                  ),
             child: pressable,
           )
         : pressable;

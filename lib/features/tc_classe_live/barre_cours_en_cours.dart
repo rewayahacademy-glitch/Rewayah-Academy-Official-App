@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_classe/port_session_persistante.dart';
 import '../../core/tc_classe/session_persistante.dart';
@@ -53,7 +54,7 @@ class BarreCoursEnCours extends ConsumerWidget {
       child: Pressable(
         onPress: onRevenir,
         libelleSemantique: t.tc.classe.barre.revenir(
-          groupe: cours.libelleGroupe,
+          deGroupe: deDevant(cours.libelleGroupe),
         ),
         child: MergeSemantics(
           child: Row(

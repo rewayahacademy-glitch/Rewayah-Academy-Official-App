@@ -36,7 +36,7 @@ void main() {
 
       expect(find.text(LibellesGroupe.mesGroupesTitre), findsOneWidget);
       expect(find.byType(CarteGroupe), findsNWidgets(7));
-      expect(find.text('Groupe Al-Fatiha'), findsOneWidget);
+      expect(find.text('Classe Al-Fatiha'), findsOneWidget);
       // La capacite de chaque groupe vient de sa donnee : deux seuils
       // differents cohabitent dans la meme liste.
       expect(find.text('4 / 5'), findsOneWidget);
@@ -159,7 +159,7 @@ void main() {
     await avecLargeur(tester, largeurMobile, () async {
       await _poser(tester, surcharges: surchargesDemonstration());
       // Le Groupe est permanent : il existe avant d'avoir une seance.
-      expect(find.text('Groupe Sabil'), findsOneWidget);
+      expect(find.text('Classe Sabil'), findsOneWidget);
       expect(find.text(LibellesGroupe.aucuneSeance), findsOneWidget);
     });
   });
@@ -173,7 +173,10 @@ void main() {
         surcharges: surchargesDemonstration(maintenant: ancreDemonstration),
       );
 
-      expect(find.textContaining('Cours dans 3 h 28'), findsOneWidget);
+      expect(
+        find.textContaining('Cours dans 3\u00A0h\u00A028'),
+        findsOneWidget,
+      );
       expect(
         find.textContaining(LibellesGroupe.salleOuverteCourt),
         findsWidgets,
@@ -182,7 +185,7 @@ void main() {
         find.textContaining(LibellesGroupe.attenteAvantDebut),
         findsOneWidget,
       );
-      expect(find.textContaining('Reste 28 min'), findsOneWidget);
+      expect(find.textContaining('Reste 28\u00A0min'), findsOneWidget);
       expect(find.textContaining(LibellesGroupe.prolongee), findsOneWidget);
       expect(find.textContaining(LibellesGroupe.terminee), findsOneWidget);
       expect(find.text(LibellesGroupe.aucuneSeance), findsOneWidget);

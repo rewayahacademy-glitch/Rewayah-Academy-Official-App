@@ -6,12 +6,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/agent/service_agent.dart';
 import '../../core/domain/enums.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/champ_date.dart';
+import '../../core/widgets/champ_etiquete.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
@@ -19,6 +23,7 @@ import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
+import '../../core/widgets/selecteur_personne.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 
@@ -60,13 +65,19 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
   static const List<int> _durees = <int>[1, 4, 8, 24];
 
   final TextEditingController _libelle = TextEditingController();
-  final TextEditingController _recherche = TextEditingController();
 
   List<JetonAgent> _jetons = <JetonAgent>[];
   List<PersonneObservable> _personnes = <PersonneObservable>[];
   PersonneObservable? _choisie;
   int _duree = 8;
   bool _masquee = true;
+
+  /// Vrai des que la personne a ecrit elle-meme le libelle : la proposition
+  /// automatique ne le touche plus.
+  bool _libelleSaisi = false;
+
+  /// La raison affichee quand on presse « Emettre » avec un champ manquant.
+  String? _erreurFormulaire;
 
   bool _chargement = true;
   bool _emission = false;
@@ -83,7 +94,6 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
   @override
   void dispose() {
     _libelle.dispose();
-    _recherche.dispose();
     super.dispose();
   }
 
@@ -115,17 +125,47 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
     }
   }
 
-  bool get _emissionPossible =>
-      _libelle.text.trim().isNotEmpty && _choisie != null && !_emission;
+  /// Ce qui manque encore, nul quand tout est la : le bouton ne grise jamais,
+  /// il dit ce qui manque (K-56).
+  String? get _manque => _choisie == null
+      ? t.admin.agents.manquePersonne
+      : _libelle.text.trim().isEmpty
+      ? t.admin.agents.manqueLibelle
+      : null;
+
+  /// Propose « Observation de Maryam, le 04/10/2026, 8 h » tant que la
+  /// personne qui emet n'a pas ecrit son propre libelle (FORM-L12). Une
+  /// proposition se modifie ; un libelle ecrit a la main n'est jamais ecrase.
+  void _preremplir() {
+    final PersonneObservable? qui = _choisie;
+    if (qui == null || _libelleSaisi) {
+      return;
+    }
+    _libelle.text = LibellesGroupe.insecable(
+      t.admin.agents.libelleAuto(
+        dePrenom: deDevant(
+          qui.prenom.isEmpty ? qui.identifiant : qui.prenom,
+          cle: 'admin.agents.libelleAuto',
+        ),
+        date: ChampDate.ecrire(ref.read(horlogeFormulairesProvider)()),
+        duree: _duree,
+      ),
+    );
+  }
 
   Future<void> _emettre() async {
+    if (_emission) {
+      return;
+    }
     final PersonneObservable? qui = _choisie;
-    if (qui == null || !_emissionPossible) {
+    if (qui == null || _manque != null) {
+      setState(() => _erreurFormulaire = _manque);
       return;
     }
     setState(() {
       _emission = true;
       _message = null;
+      _erreurFormulaire = null;
     });
     try {
       final JetonEmis emis = await ref
@@ -143,6 +183,7 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
         _emis = emis;
         _emission = false;
         _libelle.clear();
+        _libelleSaisi = false;
         _choisie = null;
       });
       await _charger();
@@ -190,25 +231,6 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
     setState(() => _message = t.admin.agents.copie);
   }
 
-  /// Les personnes que la recherche laisse passer.
-  ///
-  /// Le filtre porte sur le prenom, le nom **et l'identifiant immuable** : une
-  /// administration qui a sous les yeux un identifiant dans un journal doit
-  /// pouvoir le coller ici sans le traduire en nom.
-  List<PersonneObservable> get _proposees {
-    final String q = _recherche.text.trim().toLowerCase();
-    if (q.isEmpty) {
-      return _personnes;
-    }
-    return _personnes
-        .where(
-          (PersonneObservable p) =>
-              p.libelle.toLowerCase().contains(q) ||
-              p.identifiant.toLowerCase().contains(q),
-        )
-        .toList(growable: false);
-  }
-
   @override
   Widget build(BuildContext context) {
     return PageShell(
@@ -226,11 +248,14 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 Ecart.vXxl,
-                if (_emis != null) _CarteJetonEmis(
-                  emis: _emis!,
-                  onCopier: _copier,
-                  onTermine: () => setState(() => _emis = null),
-                ) else _formulaire(context),
+                if (_emis != null)
+                  _CarteJetonEmis(
+                    emis: _emis!,
+                    onCopier: _copier,
+                    onTermine: () => setState(() => _emis = null),
+                  )
+                else
+                  _formulaire(context),
                 Ecart.vSection,
                 SectionHeader(
                   titre: t.admin.agents.titre,
@@ -254,49 +279,71 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          TextField(
+          ChampEtiquete(
+            libelle: t.admin.agents.libelle,
             controller: _libelle,
-            onChanged: (String _) => setState(() {}),
+            onChanged: (String texte) => setState(() {
+              // Vider le champ rend la main a la proposition automatique.
+              _libelleSaisi = texte.trim().isNotEmpty;
+              _erreurFormulaire = null;
+            }),
             textCapitalization: TextCapitalization.sentences,
-            decoration: InputDecoration(
-              labelText: t.admin.agents.libelle,
-              helperText: t.admin.agents.libelleAide,
-              hintText: t.admin.agents.libelleExemple,
-            ),
+            // Le libelle prerempli (« Observation de ..., le ..., 24 h ») est long :
+            // il passe a la ligne au lieu de se couper (FORM-MINEURS).
+            maxLines: 6,
+            aide: t.admin.agents.libelleAide,
+            indice: t.admin.agents.libelleExemple,
           ),
           Ecart.vXxl,
 
-          Text(t.admin.agents.qui, style: textes.titleSmall),
-          Ecart.vXs,
-          Text(t.admin.agents.quiAide, style: textes.bodySmall),
-          Ecart.vMd,
-          TextField(
-            controller: _recherche,
-            onChanged: (String _) => setState(() {}),
-            decoration: InputDecoration(
-              labelText: t.admin.agents.chercher,
-              prefixIcon: Icon(AppIcons.dossiers.repos),
-            ),
-          ),
-          Ecart.vMd,
-          _ChoixPersonne(
-            personnes: _proposees,
-            choisie: _choisie,
-            onChoix: (PersonneObservable p) => setState(() => _choisie = p),
+          // Le meme selecteur que les autres formulaires (K-10) : titre,
+          // recherche sur le nom et l'identifiant, cartes de choix.
+          SelecteurPersonne(
+            sorte: SortePersonne.observable,
+            personnes: _erreur != null
+                ? AsyncValue<List<PersonneProposee>>.error(
+                    _erreur!,
+                    StackTrace.empty,
+                  )
+                : _chargement
+                ? const AsyncValue<List<PersonneProposee>>.loading()
+                : AsyncValue<List<PersonneProposee>>.data(<PersonneProposee>[
+                    for (final PersonneObservable p in _personnes)
+                      PersonneProposee(
+                        id: p.id,
+                        nom: p.libelleNom,
+                        identifiant: p.identifiant,
+                      ),
+                  ]),
+            choisie: _choisie?.id,
+            onReessayer: () => unawaited(_charger()),
+            onChoix: (PersonneProposee choisie) => setState(() {
+              _choisie = _personnes.firstWhere(
+                (PersonneObservable p) => p.id == choisie.id,
+              );
+              _erreurFormulaire = null;
+              _preremplir();
+            }),
           ),
           Ecart.vXxl,
 
           Text(t.admin.agents.duree, style: textes.titleSmall),
           Ecart.vMd,
+          // Choix de formulaire, pas un filtre : la duree du jeton.
           Wrap(
             spacing: AppSpacing.sm,
             runSpacing: AppSpacing.sm,
             children: <Widget>[
               for (final int h in _durees)
                 FilterPill(
-                  libelle: t.admin.agents.dureeHeure(nombre: h),
+                  libelle: LibellesGroupe.valeurSeule(
+                    t.admin.agents.dureeHeure(nombre: h),
+                  ),
                   retenue: _duree == h,
-                  onPress: () => setState(() => _duree = h),
+                  onPress: () => setState(() {
+                    _duree = h;
+                    _preremplir();
+                  }),
                 ),
             ],
           ),
@@ -306,6 +353,7 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
 
           Text(t.admin.agents.identite, style: textes.titleSmall),
           Ecart.vMd,
+          // Choix de formulaire, pas un filtre : l'identite du jeton.
           Wrap(
             spacing: AppSpacing.sm,
             runSpacing: AppSpacing.sm,
@@ -336,10 +384,22 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
           const _PourraNePourraPas(),
           Ecart.vXxl,
 
+          if (_erreurFormulaire != null) ...<Widget>[
+            Semantics(
+              liveRegion: true,
+              child: Text(
+                _erreurFormulaire!,
+                style: textes.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.error,
+                ),
+              ),
+            ),
+            Ecart.vMd,
+          ],
           ActionPrincipale(
             libelle: t.admin.agents.emettre,
             enCours: _emission,
-            onPress: _emissionPossible ? _emettre : null,
+            onPress: _emettre,
           ),
         ],
       ),
@@ -403,9 +463,8 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
         ColonneDonnees<JetonAgent>(
           titre: t.admin.agents.colonneUsage,
           tabulaire: true,
-          texte: (JetonAgent j) => j.jamaisServi
-              ? t.admin.agents.jamaisServi
-              : '${j.remises}',
+          texte: (JetonAgent j) =>
+              j.jamaisServi ? t.admin.agents.jamaisServi : '${j.remises}',
         ),
         ColonneDonnees<JetonAgent>(
           titre: t.admin.agents.colonneEtat,
@@ -490,42 +549,6 @@ class _PourraNePourraPas extends StatelessWidget {
             ],
           ),
         ),
-      ],
-    );
-  }
-}
-
-/// La liste des personnes observables.
-class _ChoixPersonne extends StatelessWidget {
-  const _ChoixPersonne({
-    required this.personnes,
-    required this.choisie,
-    required this.onChoix,
-  });
-
-  final List<PersonneObservable> personnes;
-  final PersonneObservable? choisie;
-  final void Function(PersonneObservable personne) onChoix;
-
-  @override
-  Widget build(BuildContext context) {
-    if (personnes.isEmpty) {
-      return EmptyState(
-        message: t.admin.agents.quiVide,
-        registre: RegistreVide.subi,
-        icone: AppIcons.rienAAfficher,
-      );
-    }
-    return Wrap(
-      spacing: AppSpacing.sm,
-      runSpacing: AppSpacing.sm,
-      children: <Widget>[
-        for (final PersonneObservable p in personnes.take(40))
-          FilterPill(
-            libelle: p.libelle,
-            retenue: choisie?.id == p.id,
-            onPress: () => onChoix(p),
-          ),
       ],
     );
   }

@@ -210,7 +210,16 @@ void main() {
         tester.getSemantics(find.text('Horaire')),
         isSemantics(label: 'Horaire\n18:00, heure de Paris'),
       );
-      expect(find.byType(Row), findsWidgets);
+      // Cote a cote : la cle et la valeur sur la meme rangee (la
+      // disposition est rendue par la ligne elle-meme, JONCTION-LIGNES-1).
+      expect(
+        tester.getTopLeft(find.text('Horaire')).dy,
+        tester.getTopLeft(find.text('18:00, heure de Paris')).dy,
+      );
+      expect(
+        tester.getTopLeft(find.text('Horaire')).dx,
+        lessThan(tester.getTopLeft(find.text('18:00, heure de Paris')).dx),
+      );
       semantique.dispose();
     });
 
@@ -463,6 +472,11 @@ void main() {
         }
         // Toujours au bord de fin (16 de retrait), jamais au-dela.
         expect(controle.right, closeTo(groupe.right - AppSpacing.lg, 0.5));
+        // AD-NETTOYAGE-2 (m14) : sous le libelle, le controle garde sa largeur
+        // naturelle ; il ne s'etire pas sur toute la ligne.
+        if (dessous) {
+          expect(controle.width, lessThan(groupe.width - 3 * AppSpacing.lg));
+        }
       });
     }
 
@@ -679,7 +693,7 @@ void main() {
       unawaited(
         ConfirmDestructive.demander(
           ctx,
-          question: 'Retirer cet appareil ?',
+          question: 'Retirer cet appareil\u00A0?',
           consequence: 'Il devra etre associe de nouveau.',
           libelleConfirmer: 'Retirer l appareil',
         ).then((bool r) => reponse = r),

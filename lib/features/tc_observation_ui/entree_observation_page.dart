@@ -269,10 +269,15 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
           options,
           etat.requireValue,
         ),
+        // EA-HL-DOUBLE-1f : le flux d'etats du moteur a echoue. Ce qui n'a
+        // pas abouti est dit (« L'observation n'a pas pu s'ouvrir »), jamais
+        // une indisponibilite cote service ; la relecture est offerte.
         AsyncValue<EtatVisiteObservation>(hasError: true) => EmptyState(
           message: t.tc.observation.refus.indisponible,
           icone: AppIcons.avertissement,
-          registre: RegistreVide.subi,
+          libelleAction: t.commun.reessayer,
+          onAction: () =>
+              ref.invalidate(etatVisiteObservationProvider(widget.seanceId)),
         ),
         _ => const Skeleton.liste(lignes: 2),
       },
@@ -675,13 +680,17 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
         : NatureEtat.echecServeur;
   }
 
-  /// Le titre et la phrase d'un motif. Hors ligne, ceux de l'etat systeme
-  /// (« Vous etes hors ligne ») : le motif `reseau` dit « verification
-  /// impossible », l'appareil sans reseau dit pourquoi.
+  /// Hors ligne se dit une fois (EA-HL-DOUBLE-1) : le « wifi barre » est
+  /// celui du bandeau de `PageShell` ; le bloc dit l'attente de la
+  /// verification. Sinon, l'icone de la nature.
+  AppIcon? _iconeHorsLigne(MotifIndisponibilite motif) =>
+      _natureDe(motif) == NatureEtat.horsLigne ? AppIcons.attente : null;
+
+  /// Le titre et la phrase d'un motif. Hors ligne aussi, ceux du motif
+  /// (« Verification impossible ») : le bandeau de `PageShell` dit deja
+  /// l'absence de reseau, le bloc dit ce qui manque (EA-HL-DOUBLE-1) ; seuls
+  /// l'icone et le ton suivent la nature hors ligne.
   ({String? titre, String? phrase}) _textesDe(MotifIndisponibilite motif) {
-    if (_natureDe(motif) == NatureEtat.horsLigne) {
-      return (titre: null, phrase: null);
-    }
     final ({String titre, String phrase}) textes = textesIndisponibilite(motif);
     return (titre: textes.titre, phrase: textes.phrase);
   }
@@ -706,6 +715,7 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     final bool reverifier = _seReverifie(motif);
     return EtatSysteme(
       nature: _natureDe(motif),
+      icone: _iconeHorsLigne(motif),
       titre: textes.titre,
       phrase: textes.phrase,
       onAction: reverifier ? () => _reverifier(demande) : null,
@@ -757,6 +767,7 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     }
     return EtatSysteme(
       nature: _natureDe(motif),
+      icone: _iconeHorsLigne(motif),
       portee: PorteeEtat.page,
       titre: textes.titre,
       phrase: textes.phrase,
@@ -768,9 +779,11 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     );
   }
 
-  /// L'entree a echoue avant la salle : « Connexion impossible » pour une
-  /// panne, le motif sinon. Reessayer revient a la verification prealable :
-  /// les visites restantes sont relues, jamais supposees.
+  /// L'entree a echoue avant la salle : « Entree impossible » pour une
+  /// panne, le motif sinon. Hors ligne, le bandeau de `PageShell` dit le
+  /// reseau ; le bloc dit ce qui manque, sans « Verifiez votre connexion »
+  /// (EA-HL-DOUBLE-1d). Reessayer revient a la verification prealable : les
+  /// visites restantes sont relues, jamais supposees.
   Widget _echecEntree(EchecObservation? echec, DemandeVerification demande) {
     final MotifIndisponibilite motif = echec == null
         ? MotifIndisponibilite.capaciteAbsente
@@ -781,6 +794,7 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     final c = t.tc.observation.connexion;
     return EtatSysteme(
       nature: _natureDe(motif),
+      icone: _iconeHorsLigne(motif),
       portee: PorteeEtat.page,
       titre: c.impossibleTitre,
       phrase: c.impossible,
@@ -1090,10 +1104,16 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     EchecObservation? echec,
   ) {
     final bool reessayable = echec?.seReessaye ?? false;
+    // EA-HL-DOUBLE-1f (K-59) : une panne qui se reessaye (reseau) dit sa
+    // cause probable dans la formulation unique, sans l'affirmer ni redire
+    // le reseau sous le bandeau de `PageShell`.
     return EmptyState(
       message: echec?.motif == MotifEchecObservation.capaciteAbsente
           ? t.tc.observation.refus.capaciteAbsente
           : t.tc.observation.refus.indisponible,
+      invitation: reessayable
+          ? t.tc.observation.refus.indisponibleInvitation
+          : null,
       icone: AppIcons.avertissement,
       registre: reessayable ? RegistreVide.actionnable : RegistreVide.subi,
       libelleAction: reessayable ? t.tc.observation.entree.entrer : null,

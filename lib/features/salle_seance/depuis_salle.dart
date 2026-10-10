@@ -6,6 +6,7 @@
 // Le support partage, les outils et Supports restent sans rappel tant que
 // BR-1 ne les a pas cables : `support` est nul ici.
 
+import '../../core/accessibilite/age_eleve.dart';
 import '../../core/domain/enums.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
@@ -27,6 +28,7 @@ abstract final class DepuisSalle {
     String nomClasse = '',
     String? groupeId,
     FinSeance? fin,
+    AgeEleve age = AgeEleve.inconnu,
   }) {
     final RoleSeance? role = RoleSeance.resoudre(salle.role, mode);
     if (role == null) return null;
@@ -95,6 +97,9 @@ abstract final class DepuisSalle {
           : const <EleveSeance>[],
       fin: fin,
       groupeId: groupeId,
+      // MA-TUTOIEMENT-1 : le registre suit l'age, jamais la presentation ;
+      // un age inconnu (avant BR-1) vouvoie.
+      tutoiement: age.tutoiement,
     );
   }
 

@@ -9,6 +9,7 @@ import 'package:rewayah_academy/core/capacites/port_catalogue_classes.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_politique_revue_kyc.dart';
 import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
+import 'package:rewayah_academy/core/config/env.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/offres/service_offres.dart';
@@ -73,6 +74,36 @@ void main() {
       }
     });
 
+    test('demo=enseignant : ouverte seulement avec un dossier (alias, n1)', () {
+      expect(
+        demoTuteurActive(
+          adresse: Uri.parse('https://x/?demo=enseignant&dossier=refuse'),
+          environnement: 'staging',
+        ),
+        isTrue,
+      );
+      for (final String adresse in <String>[
+        'https://x/?demo=enseignant',
+        'https://x/?demo=enseignant&dossier=',
+      ]) {
+        expect(
+          demoTuteurActive(
+            adresse: Uri.parse(adresse),
+            environnement: 'staging',
+          ),
+          isFalse,
+          reason: adresse,
+        );
+      }
+      expect(
+        demoTuteurActive(
+          adresse: Uri.parse('https://x/?demo=enseignant&dossier=refuse'),
+          environnement: 'production',
+        ),
+        isFalse,
+      );
+    });
+
     test('la compilation de test (developpement) sans adresse : fermee', () {
       expect(demoTuteurActiveIci, isFalse);
     });
@@ -106,6 +137,18 @@ void main() {
           publication: true,
         ),
         isFalse,
+      );
+    });
+
+    // DEMO-ENV-1-M1 : le branchement reel de la garde. `flutter test` (poste
+    // et CI) compile sans `--dart-define` : la valeur par defaut injectee dans
+    // `environnementAutoriseDemo` doit dire « non declare ». Le second
+    // branchement, sur kReleaseMode, n'est garde que par la relecture.
+    test('sans --dart-define, ENVIRONNEMENT est non declare', () {
+      expect(
+        Env.environnementDeclare,
+        isFalse,
+        reason: 'a lancer sans --dart-define=ENVIRONNEMENT',
       );
     });
   });
@@ -177,7 +220,8 @@ void main() {
         // K-47 (HL-A-6) : D03 (famille dispensee, un tuteur) est retire.
         9,
       );
-      expect(await conteneur.read(demandesProvider.future), isEmpty);
+      // AD-X : deux demandes fictives (Espace de traitement).
+      expect(await conteneur.read(demandesProvider.future), hasLength(2));
     });
 
     test('aucun service admin ne resout un adaptateur Supabase', () async {

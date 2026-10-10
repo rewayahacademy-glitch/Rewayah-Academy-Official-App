@@ -10,6 +10,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../core/domain/enums.dart';
+import '../../core/i18n/sens_texte.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_elevation.dart';
@@ -656,6 +657,8 @@ class _Contenu extends StatelessWidget {
             ),
             child: Text(
               support.encadre,
+              textDirection: _sensFrancais(support.encadre),
+              textAlign: alignementDebut(context),
               style: palette.inkAccent.applyTo(
                 (large
                         ? theme.textTheme.titleLarge
@@ -809,6 +812,8 @@ class _Contenu extends StatelessWidget {
                 Expanded(
                   child: Text(
                     support.points[i],
+                    textDirection: _sensFrancais(support.points[i]),
+                    textAlign: alignementDebut(context),
                     style: palette.inkStrong.applyTo(
                       (large
                               ? theme.textTheme.titleMedium
@@ -835,6 +840,17 @@ class _Contenu extends StatelessWidget {
   }
 }
 
+/// ZOOM-LIB-1 (n4, bidi) : une phrase francaise du support, affichee dans
+/// une interface de droite a gauche, recevait le sens de l'arbre ; son point
+/// final, neutre, passait en tete (« .Ecouter avec calme »). Comme la mention
+/// (DOCK-X2-1), elle garde le sens de sa langue. Un texte dont le premier
+/// caractere fort n'est pas latin (arabe) n'est pas touche : `null`, le sens
+/// de l'arbre, comme avant.
+TextDirection? _sensFrancais(String texte) =>
+    sensDuTexte(texte, parDefaut: TextDirection.rtl) == TextDirection.ltr
+    ? TextDirection.ltr
+    : null;
+
 /// La largeur maximale du titre du support : en desktop, il tient sur deux
 /// lignes comme sur les images.
 const double _largeurTitre = 400;
@@ -852,14 +868,20 @@ class _TitreEquilibre extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (BuildContext context, BoxConstraints contraintes) {
-      final Widget titre = Text(texte, style: style);
+      final TextDirection? sens = _sensFrancais(texte);
+      final Widget titre = Text(
+        texte,
+        textDirection: sens,
+        textAlign: alignementDebut(context),
+        style: style,
+      );
       final double pleine = contraintes.maxWidth;
       if (!pleine.isFinite) return titre;
       final TextStyle effectif = DefaultTextStyle.of(context).style
           .merge(style);
       final TextPainter peintre = TextPainter(
         text: TextSpan(text: texte, style: effectif),
-        textDirection: Directionality.of(context),
+        textDirection: sens ?? Directionality.of(context),
         textScaler: MediaQuery.textScalerOf(context),
       );
       int lignes(double largeur) {

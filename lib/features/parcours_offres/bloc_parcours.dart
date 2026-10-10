@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/offres/offre_horaire.dart';
@@ -75,7 +76,9 @@ class BlocParcours extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        SectionHeader(titre: t.parcours.titre(prenom: aSuivre.first.prenom)),
+        SectionHeader(
+          titre: t.parcours.titre(dePrenom: deDevant(aSuivre.first.prenom)),
+        ),
         Ecart.vLg,
         for (final ParcoursApprenant p in aSuivre)
           Padding(

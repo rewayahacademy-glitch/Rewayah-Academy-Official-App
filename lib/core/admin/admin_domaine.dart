@@ -28,8 +28,10 @@ enum AdminDomaine {
   /// domaine.
   pedagogie,
 
-  /// Reserve. Hors MVP-0, module finance (ADR-003), voir
+  /// Vue globale et politiques commerciales (FI-1b, guide Finance V4 du
+  /// directeur, 02/10/2026), routes du contrat metier
   /// `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_FINANCE_CONFIGURATION.md`.
+  /// Sans port branche, chaque onglet dit « Pas encore disponible ».
   finance,
 
   /// Regles globales du systeme -- distinctes de Finance par nature, jamais
@@ -96,7 +98,8 @@ extension AdminDomaineX on AdminDomaine {
     AdminDomaine.pedagogie => Routes.adminPedagogie,
     AdminDomaine.configuration => Routes.adminConfiguration,
     AdminDomaine.securite => Routes.adminSecuriteAudit,
-    AdminDomaine.finance || AdminDomaine.direction => null,
+    AdminDomaine.finance => Routes.adminFinance,
+    AdminDomaine.direction => null,
   };
 
   /// Vrai quand le domaine a une fonction reelle, livree et atteignable.
@@ -109,12 +112,10 @@ extension AdminDomaineX on AdminDomaine {
 /// gel d'architecture. Direction ne parait meme pas dans cette liste tant que
 /// [voitDirection] ne l'accorde pas -- « ni la route ni le libelle ne sont
 /// exposes » (regle 6 de l'audit) -- fixe a `false` aujourd'hui, faute de
-/// toute fondation de permission (`SessionState.peutVoirDirection`). Les
-/// domaine reserve restant (Finance), lui, **reste visible** mais inerte :
-/// l'audit ne demande pas de le masquer, seulement de ne rien construire
-/// derriere. Pedagogie a quitte cette liste le 19 septembre 2026, ses cinq
+/// toute fondation de permission (`SessionState.peutVoirDirection`).
+/// Pedagogie a quitte les domaines reserves le 19 septembre 2026, ses cinq
 /// fonctions livrees ; Configuration l'a quittee le meme jour (soir), ses
-/// trois premieres fonctions livrees.
+/// trois premieres fonctions livrees ; Finance le 3 octobre 2026 (FI-1b).
 List<AdminDomaine> domainesAdmin({required bool voitDirection}) =>
     <AdminDomaine>[
       AdminDomaine.accueil,
@@ -133,7 +134,11 @@ List<AdminDomaine> domainesAdmin({required bool voitDirection}) =>
 /// **Une recherche de navigation, pas une recherche metier** : aucune donnee
 /// n'est interrogee, seulement des libelles fixes et leurs routes -- ce
 /// qu'une coquille a le droit de faire, rien de plus. Un domaine sans
-/// fonction (Finance) n'y figure pas : il n'a pas de route a trouver.
+/// fonction (Direction) n'y figure pas : il n'a pas de route a trouver.
+///
+/// Les Communications (sous Operations, QUESTIONS Q4) et Le Studio (action de
+/// l'en-tete, Q1) s'y ajoutent apres les domaines : ce ne sont pas des
+/// domaines, mais des ecrans qu'aucun libelle de domaine ne nomme (COM-F).
 List<({String libelle, String chemin})> ciblesRechercheAdmin({
   required bool voitDirection,
 }) => <({String libelle, String chemin})>[
@@ -142,6 +147,11 @@ List<({String libelle, String chemin})> ciblesRechercheAdmin({
   ))
     if (domaine.chemin case final String chemin)
       (libelle: domaine.libelle, chemin: chemin),
+  (
+    libelle: t.com.socle.navigation.communications,
+    chemin: Routes.adminOperationsCommunications,
+  ),
+  (libelle: t.com.socle.navigation.studio, chemin: Routes.adminStudio),
 ];
 
 /// Les cinq fonctions pairs du domaine Pedagogie, dans l'ordre d'affichage
@@ -169,6 +179,34 @@ List<({String libelle, String chemin})> ongletsPedagogie() =>
         chemin: Routes.adminPedagogieProgrammes,
       ),
       (libelle: t.admin.qualite.titre, chemin: Routes.adminPedagogieQualite),
+    ];
+
+/// Les quatre fonctions pairs du domaine Finance, dans l'ordre du guide
+/// Finance V4 §2 et des maquettes 09 et 10 : Vue globale, puis Politiques
+/// commerciales (revue FI-1a, `17_finance/UX_REVIEW_08_FINANCE.md:91`, :297),
+/// puis **Reserve et delegation** (Comptable V1, CPT-F : la politique de la
+/// Reserve strategique et la delegation financiere, spec Finance
+/// operationnelle §37 ; `UX_REVIEW_FINANCE_COMPTABLE_L0.md` §5.9), puis
+/// **A valider** (CPT-VAL-1, decision Q-8 = (a) du 05/10 : les demandes du
+/// Comptable, valider ou refuser avec motif).
+/// Les politiques vivent sous Finance, pas sous Configuration : une
+/// politique commerciale est financiere par nature (contrat metier) ; la
+/// Reserve et la delegation sont de la gouvernance de tresorerie, un onglet
+/// de plus dans le meme domaine, jamais un second systeme Finance.
+/// Consommee par `SousNavigationDomaine` dans l'en-tete de `FinancePage`.
+List<({String libelle, String chemin})> ongletsFinance() =>
+    <({String libelle, String chemin})>[
+      (libelle: t.admin.finance.vueGlobale, chemin: Routes.adminFinance),
+      (
+        libelle: t.admin.finance.politiques,
+        chemin: Routes.adminFinancePolitiques,
+      ),
+      (
+        libelle: t.admin.finance.reserveDelegation,
+        chemin: Routes.adminFinanceReserveDelegation,
+      ),
+      // CPT-VAL-1 (decision Q-8 = (a) du 05/10) : les demandes du Comptable.
+      (libelle: t.admin.finance.aValider, chemin: Routes.adminFinanceAValider),
     ];
 
 /// Les fonctions livrees du domaine Configuration, dans l'ordre du contrat
@@ -201,6 +239,20 @@ List<({String libelle, String chemin})> ongletsConfiguration({
     ),
 ];
 
+/// Les deux fonctions pairs du domaine Operations (AD-X) : l'Espace de
+/// traitement (`ADM-18`, image ADMIN-SHELL-02), racine du domaine, et les
+/// Classes (`ADM-09`, image ADMIN-SHELL-03). Attribution et Demandes restent
+/// des fonctions secondaires, atteintes depuis l'Accueil et depuis la file.
+/// Consommee par `SousNavigationDomaine` dans l'en-tete des deux ecrans.
+List<({String libelle, String chemin})> ongletsOperations() =>
+    <({String libelle, String chemin})>[
+      (
+        libelle: t.admin.traitement.titre,
+        chemin: Routes.adminOperationsTraitement,
+      ),
+      (libelle: t.admin.groupes.titre, chemin: Routes.adminOperationsGroupes),
+    ];
+
 /// Les deux fonctions pairs du domaine Personnes : Dossiers a valider
 /// (`ADM-02`) et Comptes (`ADM-08`), modification UX n°1. Consommee par
 /// `SousNavigationDomaine` dans l'en-tete des deux ecrans.
@@ -227,5 +279,25 @@ List<({String libelle, String chemin})> ongletsSecurite() =>
       (
         libelle: t.admin.observations.titre,
         chemin: Routes.adminSecuriteAuditObservations,
+      ),
+    ];
+
+/// Les trois onglets pairs de l'Administration des communications, sous
+/// Operations (QUESTIONS Q4) : Annonces, Moderation, Messages, dans cet
+/// ordre. Consommee par `SousNavigationDomaine` dans l'en-tete de l'ecran ;
+/// aucun neuvieme domaine, aucun second niveau de barre (COM-F).
+List<({String libelle, String chemin})> ongletsCommunications() =>
+    <({String libelle, String chemin})>[
+      (
+        libelle: t.com.socle.navigation.ongletAnnonces,
+        chemin: Routes.adminCommunicationsAnnonces,
+      ),
+      (
+        libelle: t.com.socle.navigation.ongletModeration,
+        chemin: Routes.adminCommunicationsModeration,
+      ),
+      (
+        libelle: t.com.socle.navigation.ongletMessages,
+        chemin: Routes.adminCommunicationsMessages,
       ),
     ];

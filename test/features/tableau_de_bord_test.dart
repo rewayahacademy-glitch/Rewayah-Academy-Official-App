@@ -11,6 +11,7 @@ import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/grille_bento.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
@@ -125,8 +126,15 @@ void main() {
     );
     await tester.pump();
 
-    // Un bloc par tuile (DASH-ADM-1).
-    expect(find.byType(Skeleton), findsNWidgets(5));
+    // Un bloc par tuile (DASH-ADM-1), dans la grille. La section Alertes
+    // (ALERTE-1) a son propre squelette de lignes, hors de la grille.
+    expect(
+      find.descendant(
+        of: find.byType(GrilleBento),
+        matching: find.byType(Skeleton),
+      ),
+      findsNWidgets(5),
+    );
     expect(find.text(t.commun.chargement), findsNothing);
 
     reponse.complete(_indicateurs());
@@ -168,11 +176,38 @@ void main() {
             incidents: 2,
             demandes: 4,
           ),
+        validation: FauxServiceValidation()
+          ..file = <DossierAValider>[
+            _dossier(id: 'd1'),
+            _dossier(id: 'd2'),
+            _dossier(id: 'd3'),
+          ],
       );
 
       expect(find.text('3'), findsOneWidget);
       expect(find.text('4'), findsOneWidget);
       expect(find.text('0'), findsNWidgets(2));
+    });
+
+    // AD-NETTOYAGE (m1) : le compteur serveur compte encore les tuteurs
+    // `pending_kyc` (BR-1.c) ; la tuile compte comme la liste « A traiter ».
+    testWidgets('la tuile Dossiers ne compte pas les tuteurs', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        admin: FauxServiceAdmin()
+          ..indicateursRendus = _indicateurs(dossiers: 3),
+        validation: FauxServiceValidation()
+          ..file = <DossierAValider>[
+            _dossier(),
+            _dossier(id: 'd2', role: AppRole.guardian),
+            _dossier(id: 'd3', role: AppRole.guardian),
+          ],
+      );
+
+      expect(find.text('1'), findsOneWidget);
+      expect(find.text('3'), findsNothing);
     });
 
     testWidgets('une lecture en echec le dit, et ne rend pas six zeros', (
@@ -232,8 +267,8 @@ void main() {
       ];
       // Du plus ancien au plus recent ; le quatrieme reste dans la file.
       expect(lus, <String>[
-        'Ancien · ${t.admin.tableau.attenteJours(jours: '7')}',
-        'Milieu · ${t.admin.tableau.attenteJours(jours: '3')}',
+        'Ancien · ${LibellesGroupe.insecable(t.admin.tableau.attenteJours(jours: 7))}',
+        'Milieu · ${LibellesGroupe.insecable(t.admin.tableau.attenteJours(jours: 3))}',
         'Hier · ${t.admin.tableau.attenteUnJour}',
       ]);
       expect(find.textContaining('Recent'), findsNothing);
@@ -286,6 +321,7 @@ void main() {
               (Routes.adminPedagogieQualite, 'ADM-14'),
               (Routes.adminOperationsGroupes, 'GROUPES'),
               (Routes.adminSecuriteAuditAccesAgents, 'ADM-07'),
+              (Routes.adminOperationsRegroupements, 'OFFRES-ADM-1'),
             ])
               GoRoute(
                 path: route,
@@ -360,6 +396,8 @@ void main() {
           (() => t.admin.groupes.titre, 'GROUPES'),
           (() => t.admin.tableau.outilsComptes, 'ADM-08'),
           (() => t.admin.tableau.outilsAccesAgents, 'ADM-07'),
+          // OFFRES-ADM-1 : le point d'entree des demandes reunies.
+          (() => t.admin.tableau.outilsRegroupements, 'OFFRES-ADM-1'),
           // DASH-ADM-ECHUS : la moitie « Acces echus » de la tuile double.
           (() => t.admin.tableau.comptes, 'ADM-08 echus'),
         ]) {

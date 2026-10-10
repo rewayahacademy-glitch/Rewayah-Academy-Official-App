@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:flutter_riverpod/misc.dart' show ProviderFamily;
 
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/i18n/taille_fichier.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_bibliotheque/donnees_catalogue.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
@@ -151,17 +153,19 @@ class BlocBibliotheque extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        // « Voir tout » au bord de fin de l'en-tete, sur mobile comme sur
-        // bureau : `IntrinsicWidth` donne au lien sa largeur naturelle,
-        // bornee par la place restante.
+        // Deux dispositions. Texte agrandi (`empile`) : titre sur toute la
+        // largeur, « Voir tout » dessous, au bord de debut, comme dans
+        // `EnteteVoirTout`. Sinon : une rangee, titre au debut et « Voir
+        // tout » au bord de fin. Dans les deux cas, `IntrinsicWidth` donne au
+        // lien sa largeur naturelle, bornee par la place restante.
         if (empile) ...<Widget>[
-          // Un seul mot plus large que l'ecran a 200 % : il se resserre au lieu
-          // d'etre coupe (aucun mot coupe, MA-4).
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: AlignmentDirectional.centerStart,
-            child: IntrinsicWidth(child: entete),
-          ),
+          // Le titre garde la taille des autres titres de section et passe a
+          // la ligne entre les mots : `SectionHeader` le rend en
+          // `TexteSansCoupure` des que le texte est agrandi, et seul un mot
+          // plus large que la place se resserre (aucun mot coupe, MA-4).
+          // Jamais la phrase entiere reduite en bloc (BLOC-BIB-1, revue
+          // BENTO-3b-R C5) : meme rendu que `EnteteVoirTout`.
+          entete,
           if (voirTout != null) ...<Widget>[
             Ecart.vSm,
             Align(alignment: AlignmentDirectional.centerStart, child: voirTout),
@@ -225,7 +229,10 @@ class _Couvertures extends StatelessWidget {
               lignes: <LigneRubrique>[
                 for (final LibraryResource ressource in ressources)
                   LigneRubrique(
-                    libelle: ressource.shortTitle,
+                    // Une taille de fichier venue des donnees (« 8,1 Mo »)
+                    // ne se coupe jamais entre le nombre et l'unite
+                    // (COUPE-MOTS-3).
+                    libelle: lierTaillesFichier(ressource.shortTitle),
                     icone: AppIcons.bibliotheque,
                   ),
               ],
@@ -310,7 +317,11 @@ class _BarreProgression extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text(texte, style: Theme.of(context).textTheme.titleSmall),
+            // COUPE-MOTS-3b : « Chapitre 1 · 60 % », jamais « % 60 » en arabe.
+            Text(
+              isolerSiAutreSens(texte, Directionality.of(context)),
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
             Ecart.vSm,
             LinearProgressIndicator(value: valeur.fraction),
           ],

@@ -41,6 +41,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
 import '../tc_mushaf/navigation_coran_feuille.dart';
+import '../tc_mushaf/textes_lecteur_coran.dart';
 import '../tc_mushaf/vue_page_mushaf.dart';
 import '../tc_mushaf/vue_verset_agrandi.dart';
 
@@ -178,7 +179,10 @@ class _CoranAccessibiliteEtat extends ConsumerState<CoranAccessibilite> {
                     Expanded(child: _demonstrationSansTexte()),
                   ],
                 )
-              : LecteurCoranAccessibilite(onRetour: _fermer),
+              : LecteurCoranAccessibilite(
+                  onRetour: _fermer,
+                  tutoiement: widget.tutoiement,
+                ),
         ),
       ),
     );
@@ -207,14 +211,13 @@ class _CoranAccessibiliteEtat extends ConsumerState<CoranAccessibilite> {
     final TextTheme textes = Theme.of(context).textTheme;
     final bool tu = widget.tutoiement;
     final PositionLecture? reprise = _reprise;
-    final bool grande =
-        widget.lectureGrande ??
-        ref.watch(
-          preferencesLocalesProvider.select(
-            (PreferencesLocales p) => p.lectureGrande,
-          ),
-        );
+    final bool recherche = _etatReprise == EtatRepriseCoran.recherche;
 
+    // MA-DEC-1 (decision A8 = a du 27/09) : les libelles existants sont
+    // reutilises, rien n'est ajoute. « Reprendre ta lecture » et « Tu en
+    // etais page {page} » sont ceux du Coran standard (`MushafPage`) ;
+    // « Lire le Coran » est le nom de la meme action a l'Accueil (MA9) ;
+    // « Chargement » et « Retour » sont communs.
     return PageShell(
       key: const ValueKey<String>('coran-ma-entree'),
       titre: t.eleve.coran.titre,
@@ -228,17 +231,14 @@ class _CoranAccessibiliteEtat extends ConsumerState<CoranAccessibilite> {
               liveRegion: true,
               child: Text(
                 switch (_etatReprise) {
-                  EtatRepriseCoran.recherche =>
-                    tu
-                        ? t.accessibilite.coran.repriseRecherche
-                        : t.accessibilite.coran.repriseRechercheVous,
+                  EtatRepriseCoran.recherche => t.commun.chargement,
                   EtatRepriseCoran.echec =>
                     tu
                         ? t.accessibilite.coran.repriseErreur
                         : t.accessibilite.coran.repriseErreurVous,
                   EtatRepriseCoran.connue =>
                     tu
-                        ? t.accessibilite.coran.reprendreDetail(
+                        ? t.eleve.coran.reprendreDetail(
                             page: '${reprise?.page}',
                           )
                         : t.accessibilite.coran.reprendreDetailVous(
@@ -253,31 +253,23 @@ class _CoranAccessibiliteEtat extends ConsumerState<CoranAccessibilite> {
             ),
             const SizedBox(height: AppSpacing.md),
           ],
-          Align(
-            alignment: AlignmentDirectional.centerEnd,
-            child: ActionPrincipale(
-              key: const ValueKey<String>('coran-ma-principale'),
-              libelle: reprise == null
-                  ? t.accessibilite.coran.ouvrir
-                  : tu
-                  ? t.accessibilite.coran.reprendre
-                  : t.accessibilite.coran.reprendreVous,
-              pleineLargeur: false,
-              // Pas cliquable avant l'arrivee de la reprise (revue MA-7).
-              onPress: _etatReprise == EtatRepriseCoran.recherche
-                  ? null
-                  : _ouvrir,
-            ),
-          ),
-          if (grande) ...<Widget>[
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              t.accessibilite.coran.lectureGrande,
-              style: palette.inkMuted.applyTo(
-                textes.bodyMedium ?? const TextStyle(),
+          // Pas d'action avant l'arrivee de la reprise (revue MA-7), et jamais
+          // de bouton grise (K-54) : pendant la lecture, seule la ligne
+          // « Chargement » est montree, au plus le delai de reprise.
+          if (!recherche)
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: ActionPrincipale(
+                key: const ValueKey<String>('coran-ma-principale'),
+                libelle: reprise == null
+                    ? t.accessibilite.accueil.lireCoran
+                    : tu
+                    ? t.eleve.coran.reprendre
+                    : t.accessibilite.coran.reprendreVous,
+                pleineLargeur: false,
+                onPress: _ouvrir,
               ),
             ),
-          ],
           const SizedBox(height: AppSpacing.xxl),
           GroupeReglages(
             lignes: <LigneRubrique>[
@@ -315,10 +307,19 @@ class _CoranAccessibiliteEtat extends ConsumerState<CoranAccessibilite> {
 /// avec les commandes : la licence demande qu'elle soit lisible).
 class LecteurCoranAccessibilite extends ConsumerStatefulWidget {
   /// Cree le lecteur.
-  const LecteurCoranAccessibilite({this.onRetour, super.key});
+  const LecteurCoranAccessibilite({
+    this.onRetour,
+    this.tutoiement = false,
+    super.key,
+  });
 
   /// Le retour a l'entree ; nul : pas de bouton de retour.
   final VoidCallback? onRetour;
+
+  /// Vrai pour l'eleve mineur (tutoiement) ; un adulte, ou un age inconnu,
+  /// est vouvoye (MA-TUTOIEMENT-1, decision A4 = a). Les phrases des etats
+  /// sans texte des vues de rendu suivent, par [TextesLecteurCoran].
+  final bool tutoiement;
 
   /// La cle de l'en-tete (tests, captures).
   static const Key enteteKey = ValueKey<String>('coran-ma-entete');
@@ -498,14 +499,33 @@ class _LecteurCoranAccessibiliteEtat
         ),
         Expanded(
           child: CommandesMasquables(
-            contenu: switch (etat.mode) {
-              ModeRenduCoran.versetAgrandi => const VueVersetAgrandi(),
-              _ => const VuePageMushaf(),
-            },
+            // MA-TUTOIEMENT-1 : les vues de rendu, inchangees, recoivent les
+            // phrases de leurs etats sans texte au registre de l'eleve.
+            contenu: TextesLecteurCoran(
+              indisponibleDetail: widget.tutoiement
+                  ? t.eleve.coran.indisponibleDetail
+                  : t.accessibilite.coran.indisponibleDetailVous,
+              absentDetail: widget.tutoiement
+                  ? t.eleve.coran.absentDetail
+                  : t.accessibilite.coran.absentDetailVous,
+              child: switch (etat.mode) {
+                ModeRenduCoran.versetAgrandi => const VueVersetAgrandi(),
+                _ => const VuePageMushaf(),
+              },
+            ),
             commandes: commandes,
             // Finition MA-CMD-1 : la barre du bas s'efface avec les
             // commandes et revient a la meme touche.
             effacerBarreBasse: true,
+            // MA-CORAN-X2-1 : une page sans texte (non chargee, vide) ne passe
+            // plus sous les commandes : son titre, sa phrase et « Reessayer »
+            // restent lisibles a texte x2. Une page lue garde tout l'ecran,
+            // exactement comme avant (le rendu du Coran ne change pas).
+            margeLecture: vue != null && !vue.aDuTexte,
+            // SUPERPOS-1 : avec lecteur d'ecran ou clavier, les commandes ne
+            // se ferment jamais ; elles passent alors sous le Mushaf au lieu
+            // d'en recouvrir le bas.
+            placeReservee: true,
           ),
         ),
         if (vue != null && vue.aDuTexte)
@@ -590,7 +610,8 @@ class AttributionCoranCompacte extends StatelessWidget {
 }
 
 /// L'en-tete minimal du lecteur, sur une ligne : le retour en icone seule
-/// (nom lu « Retour », infobulle) et le titre en petit.
+/// (nom lu « Retour », infobulle) et le titre en petit, reduit si besoin
+/// pour tenir en entier sur cette ligne (MA-CORAN-TETE-1).
 class EnteteLecteurCoranAccessibilite extends StatelessWidget {
   /// Cree l'en-tete.
   const EnteteLecteurCoranAccessibilite({
@@ -604,6 +625,9 @@ class EnteteLecteurCoranAccessibilite extends StatelessWidget {
 
   /// Le retour a l'entree ; nul : pas de bouton.
   final VoidCallback? onRetour;
+
+  /// La cle du titre (tests, captures).
+  static const Key titreKey = ValueKey<String>('coran-ma-entete-titre');
 
   @override
   Widget build(BuildContext context) {
@@ -624,19 +648,27 @@ class EnteteLecteurCoranAccessibilite extends StatelessWidget {
             _BoutonIcone(
               key: const ValueKey<String>('coran-ma-retour'),
               icone: AppIcons.retour,
-              libelle: t.accessibilite.coran.retour,
+              libelle: t.commun.retour,
               onPress: retour,
               disque: false,
             ),
             Ecart.hXs,
           ],
+          // MA-CORAN-TETE-1 (meme principe que MA-TITRE-1) : l'en-tete reste
+          // sur une ligne (MA-CMD-1) a texte x2 ; jamais de points de
+          // suspension, le titre se reduit juste assez pour tenir en entier.
           Expanded(
-            child: Text(
-              titre,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: palette.inkStrong.applyTo(
-                textes.labelMedium ?? const TextStyle(),
+            child: FittedBox(
+              key: titreKey,
+              fit: BoxFit.scaleDown,
+              alignment: AlignmentDirectional.centerStart,
+              child: Text(
+                titre,
+                maxLines: 1,
+                softWrap: false,
+                style: palette.inkStrong.applyTo(
+                  textes.labelMedium ?? const TextStyle(),
+                ),
               ),
             ),
           ),

@@ -10,6 +10,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_dossiers/dossiers_page.dart';
 import 'package:rewayah_academy/features/admin_dossiers/visionneuse_piece.dart';
@@ -270,7 +271,9 @@ void main() {
       await _taper(tester, t.dossiers.refuser);
       // 02D ouvert : titre, corps, champ etiquete, aide ; rien n'est parti.
       expect(find.text(t.dossiers.refus.corps), findsOneWidget);
-      expect(find.text(t.dossiers.refus.champ), findsOneWidget);
+      // FORM-L1 : motifs en puces, « Autre » en dernier ouvre le champ.
+      expect(find.text(t.motifs.refusDossier.illisible), findsOneWidget);
+      expect(find.byKey(SelecteurMotif.cleAutre), findsOneWidget);
       expect(find.text(t.dossiers.refus.aide), findsOneWidget);
       expect(service.verdicts, isEmpty);
 
@@ -278,10 +281,11 @@ void main() {
       await tester.tap(find.text(t.dossiers.refuser).last);
       await tester.pumpAndSettle();
       expect(find.text(t.dossiers.refus.erreurVide), findsOneWidget);
+      await _ouvrirAutre(tester);
       await tester.enterText(find.byType(TextField), '   ');
       await tester.tap(find.text(t.dossiers.refuser).last);
       await tester.pumpAndSettle();
-      expect(find.text(t.dossiers.refus.erreurVide), findsOneWidget);
+      expect(find.text(t.formulaire.motif.autreVide), findsOneWidget);
       expect(service.verdicts, isEmpty);
 
       await tester.enterText(find.byType(TextField), '  Photo illisible.  ');
@@ -307,6 +311,7 @@ void main() {
       );
 
       await _taper(tester, t.dossiers.refuser);
+      await _ouvrirAutre(tester);
       await tester.enterText(find.byType(TextField), 'Photo floue.');
       await tester.pumpAndSettle();
       await tester.tap(find.text(t.commun.annuler));
@@ -545,4 +550,14 @@ void main() {
       expect(find.text(t.dossiers.profilACompleter.titre), findsNothing);
     });
   });
+}
+
+/// FORM-L1 : le motif libre s'ecrit apres « Autre », derniere puce.
+Future<void> _ouvrirAutre(WidgetTester tester) async {
+  if (find.byKey(SelecteurMotif.cleAutre).evaluate().isEmpty) return;
+  if (find.text(t.dossiers.refus.champ).evaluate().isNotEmpty) return;
+  await tester.ensureVisible(find.byKey(SelecteurMotif.cleAutre));
+  await tester.pumpAndSettle();
+  await tester.tap(find.byKey(SelecteurMotif.cleAutre));
+  await tester.pumpAndSettle();
 }

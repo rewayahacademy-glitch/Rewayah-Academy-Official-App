@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/admin/service_groupes.dart'
     show TypePublicGroupe;
+import 'package:rewayah_academy/core/communications/modeles_communication.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -18,12 +19,17 @@ import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/core/widgets/stat_tile.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
+import 'package:rewayah_academy/features/com_annonces/annonces_de_classe.dart';
+import 'package:rewayah_academy/features/com_messages/entree_messages_contexte.dart';
 import 'package:rewayah_academy/features/fiche_groupe/fiche_groupe_page.dart';
 import 'package:rewayah_academy/features/fiche_groupe/preparation_seance.dart';
 import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/emplacements_groupe.dart';
 
+import '../capture/outil_capture.dart';
+import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
+import '../support/hors_ligne_une_fois.dart';
 
 const String _groupeId = 'g1';
 
@@ -672,5 +678,176 @@ void main() {
         findsNothing,
       );
     });
+  });
+
+  // Reprise de EA-HL-DOUBLE-1f (K-59, decide par delegation le 09/10,
+  // DIR-REP-1) : la seance qui n'a pas pu etre lue ne dit plus
+  // « L'information sur la seance est indisponible pour l'instant. »,
+  // indisponibilite affirmee cote service. Elle dit ce qui n'a pas abouti et
+  // la cause probable dans la formulation unique, sous le bandeau.
+  group('EA-HL-DOUBLE-1f : seance illisible', () {
+    List<Override> surchargesEchec({bool horsLigne = true}) => <Override>[
+      serviceEnseignantProvider.overrideWithValue(_avec()),
+      serviceReseauProvider.overrideWithValue(
+        FauxServiceReseau(horsLigneRendu: horsLigne),
+      ),
+      groupeProvider(_groupeId)
+          .overrideWith((Ref _) async => throw StateError('lecture coupee')),
+    ];
+
+    Future<void> monter(
+      WidgetTester tester, {
+      bool horsLigne = true,
+      ThemeMode themeMode = ThemeMode.light,
+      TextDirection? direction,
+      double echelle = 1,
+    }) async {
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: '/enseignant/groupe/$_groupeId',
+          routes: _routes(),
+          surcharges: surchargesEchec(horsLigne: horsLigne),
+          themeMode: themeMode,
+          direction: direction,
+          echelle: echelle,
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('hors ligne : aucune cause cote service affirmee, la cause '
+        'probable une fois, et Reessayer', (WidgetTester tester) async {
+      _fenetreHaute(tester);
+      await monter(tester);
+
+      expect(find.text(t.classe.entree.indisponible), findsOneWidget);
+      expect(causesAffirmees(), findsNothing);
+      expect(find.textContaining(formulationCauseProbable), findsOneWidget);
+      expectHorsLigneUneFois();
+      expect(find.text(t.classe.entree.reessayer), findsOneWidget);
+    });
+
+    group('320 texte x2 (polices du depot)', () {
+      setUpAll(chargerPolicesDuDepot);
+      for (final TextDirection sens in TextDirection.values) {
+        testWidgets('320 texte x2, ${sens.name} : aucun mot coupe ni tronque', (
+          WidgetTester tester,
+        ) async {
+          tester.view.physicalSize = const Size(320, 2400);
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.reset);
+          await monter(tester, direction: sens, echelle: 2);
+          expect(find.text(t.classe.entree.indisponible), findsOneWidget);
+          verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+        });
+      }
+    });
+
+    group('Capture EA-HL-DOUBLE-1f', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      for (final (String, Size, ThemeMode, double, TextDirection, bool) cas
+          in <(String, Size, ThemeMode, double, TextDirection, bool)>[
+            (
+              '390_clair',
+              const Size(390, 844),
+              ThemeMode.light,
+              1,
+              TextDirection.ltr,
+              true,
+            ),
+            (
+              '390_sombre',
+              const Size(390, 844),
+              ThemeMode.dark,
+              1,
+              TextDirection.ltr,
+              true,
+            ),
+            (
+              '320x2_clair',
+              const Size(320, 1700),
+              ThemeMode.light,
+              2,
+              TextDirection.ltr,
+              true,
+            ),
+            (
+              '320x2_rtl_clair',
+              const Size(320, 1700),
+              ThemeMode.light,
+              2,
+              TextDirection.rtl,
+              true,
+            ),
+            (
+              '320x2_rtl_sombre',
+              const Size(320, 1700),
+              ThemeMode.dark,
+              2,
+              TextDirection.rtl,
+              true,
+            ),
+            (
+              '1440_clair',
+              const Size(1440, 900),
+              ThemeMode.light,
+              1,
+              TextDirection.ltr,
+              true,
+            ),
+            (
+              '390_en_ligne_clair',
+              const Size(390, 844),
+              ThemeMode.light,
+              1,
+              TextDirection.ltr,
+              false,
+            ),
+          ]) {
+        testWidgets(cas.$1, (WidgetTester tester) async {
+          fixerVueCapture(tester, cas.$2, 1);
+          await monter(
+            tester,
+            horsLigne: cas.$6,
+            themeMode: cas.$3,
+            direction: cas.$5,
+            echelle: cas.$4,
+          );
+          expect(tester.takeException(), isNull);
+          expect(find.text(t.classe.entree.indisponible), findsOneWidget);
+          expect(causesAffirmees(), findsNothing);
+          if (cas.$6) {
+            expectHorsLigneUneFois();
+          }
+          verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'ea_hl_double1f_fiche_seance_echec_${cas.$1}')}',
+          );
+        });
+      }
+    });
+  });
+
+  testWidgets('COM-F : annonces et Messages de la Classe rendus en fin de '
+      'section, sur le groupe affiche', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      hote(
+        const FicheGroupePage(groupeId: _groupeId),
+        surcharges: _surcharges(_avec()),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final AnnoncesDeClasse annonces = tester.widget<AnnoncesDeClasse>(
+      find.byType(AnnoncesDeClasse),
+    );
+    expect(annonces.classeId, _groupeId);
+    expect(annonces.ecartAvant, isNotNull);
+    expect(annonces.ecartApres, isNull);
+    final EntreeMessagesContexte messages = tester
+        .widget<EntreeMessagesContexte>(find.byType(EntreeMessagesContexte));
+    expect(messages.type, TypeObjetLie.classe);
+    expect(messages.objetId, _groupeId);
+    expect(messages.ecartAvant, isNotNull);
+    expect(messages.ecartApres, isNull);
   });
 }

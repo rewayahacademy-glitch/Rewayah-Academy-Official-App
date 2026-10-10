@@ -69,9 +69,12 @@ class StatusPill extends StatelessWidget {
 
   /// Ce qui remplace le disque de statut, ou `null` pour le disque du ton.
   ///
-  /// Reserve a `PastilleEtatSeance` (point qui pulse, icone d'annulation) :
-  /// le marqueur prend la place du disque, sur [diametrePastille] de large
-  /// au plus, sans changer la mise en page de la pilule.
+  /// Reserve aux composants partages du core : `PastilleEtatSeance` (point
+  /// qui pulse, icone d'annulation) et `BadgeNonLu` (icone de la pastille
+  /// d'attention, COM-F). Jamais pose depuis un ecran. Le marqueur prend la
+  /// place du disque : un point de [diametrePastille] ou une petite icone
+  /// (`AppSpacing.lg`, 16, au plus), sans changer la mise en page de la
+  /// pilule.
   final Widget? marqueur;
 
   /// Le mot qui nomme l'etat. Court : deux mots au plus.
@@ -97,7 +100,12 @@ class StatusPill extends StatelessWidget {
           horizontal: AppSpacing.md,
           vertical: AppSpacing.xs,
         ),
-        decoration: fond.decoration(borderRadius: AppRadius.arrondiFull),
+        // `arrondiLg` et non `arrondiFull` (CPT-RC, revue CPT-R m8, ecarts
+        // E4 et E5) : sur une ligne, la pilule reste un demi-cercle a chaque
+        // bout (le rayon est ramene a la demi-hauteur, a texte x1 comme x2) ;
+        // quand un libelle long passe sur deux ou trois lignes, la forme
+        // devient un rectangle arrondi et le bord ne touche plus le texte.
+        decoration: fond.decoration(borderRadius: AppRadius.arrondiLg),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           // Etiree par son parent, la pastille garde son contenu au centre
@@ -112,11 +120,15 @@ class StatusPill extends StatelessWidget {
             Ecart.hSm,
             // PASTILLE-COUPE-1 : le libelle passe a la ligne entre les mots,
             // jamais dans un mot (« Remplacem / ent » a 200 %) ; un mot trop
-            // long pour la place reduit son echelle, jamais sous 1.
+            // long pour la place reduit son echelle, jamais sous
+            // [echelleMinimaleLisible] (0,85).
             Flexible(
               child: TexteSansCoupure(
                 libelle,
                 textAlign: TextAlign.center,
+                // N-10 : un long motif passe a la ligne sans etirer la
+                // pastille sur toute la largeur de sa ligne.
+                largeurAuPlusLong: true,
                 style: fond.applyTo(
                   Theme.of(context).textTheme.labelMedium ?? const TextStyle(),
                 ),

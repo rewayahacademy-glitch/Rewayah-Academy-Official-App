@@ -6,6 +6,7 @@ import '../../core/video/pre_vol.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/status_pill.dart';
 import '../salle/vue_salle.dart';
+import 'encre_salle.dart';
 
 /// Ce que le pre-cours montre, selon le role.
 ///
@@ -122,8 +123,7 @@ class VuePreCours {
   /// Un eleve dont tout va bien ne voit rien : c'est exactement ce que dit la
   /// spec -- « verifications silencieuses, action uniquement si un probleme
   /// bloque ».
-  bool get visible =>
-      bloque || detail == DetailPreCours.complet;
+  bool get visible => bloque || detail == DetailPreCours.complet;
 }
 
 /// Le pre-cours a l'ecran.
@@ -155,7 +155,7 @@ class PreCours extends StatelessWidget {
             Text(
               t.tc.classe.prevol.titre,
               textAlign: TextAlign.center,
-              style: textes.titleMedium ?? const TextStyle(),
+              style: styleDuFond(context, textes.titleMedium),
             ),
             Ecart.vLg,
             if (vue.detail == DetailPreCours.complet) ...<Widget>[
@@ -187,7 +187,7 @@ class PreCours extends StatelessWidget {
                   MotifPreCours.microAbsent => t.tc.classe.prevol.microAbsent,
                 },
                 textAlign: TextAlign.center,
-                style: textes.bodyMedium ?? const TextStyle(),
+                style: styleDuFond(context, textes.bodyMedium),
               ),
               Ecart.vLg,
               ActionPrincipale(

@@ -162,6 +162,12 @@ void main() {
     );
     expect(_ligne('Omar'), findsNothing);
     expect(tester.getSemantics(_ligne('Amina')), isSemantics(isSelected: true));
+    // FOCUS-1 : avec un suivant, le focus ne va pas au titre (AD-FOCUS-MD
+    // ne vaut que sans dossier suivant) : le suivant est annonce.
+    expect(
+      FocusManager.instance.primaryFocus?.debugLabel,
+      isNot('adm02a-titre'),
+    );
   });
 
   testWidgets('390 : tiroir, liste seule, detail puis Retour vers la liste', (

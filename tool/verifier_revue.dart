@@ -86,9 +86,14 @@ const Set<String> _libellesAmbigus = <String>{
 };
 
 /// Un mot interne qu'un client ne doit jamais voir (« admin » : on dit la
-/// direction, K-50 / decisions du 27/09). « foyer » chez la direction se
-/// controle a la revue : le mot est legitime cote famille.
-final RegExp _motInterne = RegExp(r'\badmin\b', caseSensitive: false);
+/// direction, K-50 / decisions du 27/09 ; « groupe » : on dit la classe,
+/// lib/CLAUDE.md:96, CLASSE-FORM-1 D10). « foyer » chez la direction se
+/// controle a la revue : le mot est legitime cote famille. Un parametre
+/// (`{deGroupe}`) n'est pas du texte visible.
+final RegExp _motInterne = RegExp(
+  r'\b(?:admin|groupes?)\b',
+  caseSensitive: false,
+);
 
 /// Une cle de message d'erreur : un segment commence par `erreur`.
 final RegExp _cleErreur = RegExp(r'(?:^|\.)erreur\w*(?:\.|$)');
@@ -126,6 +131,7 @@ void main(List<String> arguments) {
     'avatar-recompose',
     'avatar-taille',
     'onglets-defilants',
+    'wrap-filtres',
   };
   final String? filtre = arguments
       .where((String a) => a.startsWith('--regle='))
@@ -177,6 +183,9 @@ void main(List<String> arguments) {
   if (regles.contains('onglets-defilants')) {
     violations.addAll(_ongletsDefilants());
   }
+  if (regles.contains('wrap-filtres')) {
+    violations.addAll(_wrapsDeFiltres());
+  }
   if (regles.contains('bouton-recompose')) {
     violations.addAll(_boutonsRecomposes());
   }
@@ -214,7 +223,11 @@ void main(List<String> arguments) {
   if (regles.contains('mot-interne')) {
     for (final MapEntry<String, String> e in fr.entries) {
       // Un renvoi slang `@:admin.x` n'est pas du texte visible.
-      if (_motInterne.hasMatch(e.value.replaceAll(RegExp(r'@:[\w.]+'), ''))) {
+      if (_motInterne.hasMatch(
+        e.value
+            .replaceAll(RegExp(r'@:[\w.]+'), '')
+            .replaceAll(RegExp(r'\{[^}]*\}'), ''),
+      )) {
         violations.add(
           Violation(_fichierFr, 1, 'mot-interne', '${e.key} : ${e.value}'),
         );
@@ -420,6 +433,49 @@ List<Violation> _ongletsDefilants() {
             _ligneDe(texte, m.start),
             'onglets-defilants',
             'rangee horizontale qui defile avec pastilles ou onglets',
+          ),
+        );
+      }
+    }
+  }
+  return v;
+}
+
+/// FILTRES-1 (lib/CLAUDE.md) : une rangee de filtres est `RangeeFiltres`,
+/// une seule rangee qui defile ; **jamais un `Wrap` de puces de filtre**
+/// (deux, trois lignes de puces a 320 px texte x2, la liste repoussee sous
+/// le pli). Une puce de filtre : `FilterPill` ou `MenuFiltre`.
+final RegExp _puceFiltre = RegExp(r'\b(?:FilterPill|MenuFiltre)\s*[(<]');
+
+/// Un `Wrap` de puces qui n'est pas une rangee de filtres : un **choix de
+/// formulaire** (une valeur a saisir dans une feuille ou un formulaire : la
+/// portee d'un jeton, le type d'une classe a creer, un niveau). Il se
+/// declare par un commentaire sur la ligne qui le precede, ou la raison
+/// s'ecrit (FILTRES-1b) : `// Choix de formulaire, pas un filtre : ...`.
+final RegExp _marqueChoixFormulaire = RegExp(
+  r'//.*choix de formulaire',
+  caseSensitive: false,
+);
+
+List<Violation> _wrapsDeFiltres() {
+  final List<Violation> v = <Violation>[];
+  for (final File f in _sourcesLib()) {
+    final String texte = _sansCommentaires(f);
+    final List<String> brutes = f.readAsLinesSync();
+    for (final RegExpMatch m in RegExp(r'\bWrap\s*\(').allMatches(texte)) {
+      final int fin = _fermante(texte, m.end - 1);
+      if (fin < 0) continue;
+      final int ligne = _ligneDe(texte, m.start);
+      if (ligne >= 2 && _marqueChoixFormulaire.hasMatch(brutes[ligne - 2])) {
+        continue;
+      }
+      if (_puceFiltre.hasMatch(texte.substring(m.end, fin))) {
+        v.add(
+          Violation(
+            f.path,
+            ligne,
+            'wrap-filtres',
+            'Wrap de puces de filtre : RangeeFiltres (FILTRES-1)',
           ),
         );
       }

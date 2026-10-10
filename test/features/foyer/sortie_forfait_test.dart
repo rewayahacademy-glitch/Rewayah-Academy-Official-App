@@ -16,6 +16,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
@@ -243,7 +244,10 @@ void main() {
       ),
     );
     expect(find.byType(ForfaitFamillePage), findsOneWidget);
-    expect(find.text(s.forfaitPhrase(prenom: 'Mamadou')), findsOneWidget);
+    expect(
+      find.text(s.forfaitPhrase(dePrenom: deDevant('Mamadou'))),
+      findsOneWidget,
+    );
     // Rien du foyer ni des enfants (F6, F7).
     expect(find.text('Aïcha'), findsNothing);
 
@@ -307,11 +311,11 @@ void main() {
       in <(GenreTitulaireDemo, String)>[
         (
           GenreTitulaireDemo.homme,
-          t.adulte.sortie.notificationRetiree(prenom: 'Mamadou'),
+          t.adulte.sortie.notificationRetiree(dePrenom: deDevant('Mamadou')),
         ),
         (
           GenreTitulaireDemo.femme,
-          t.adulte.sortie.notificationRetire(prenom: 'Mariama'),
+          t.adulte.sortie.notificationRetire(dePrenom: deDevant('Mariama')),
         ),
       ]) {
     testWidgets('le second adulte retire en est informe (${genre.name})', (

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_observation/guardian_observation_policy.dart';
 import '../../core/theme/app_spacing.dart';
 
@@ -55,7 +56,9 @@ List<String> phrasesExplication(GuardianObservationPolicy? politique) {
   final int minutes = parVisite == null ? 0 : (parVisite.inSeconds / 60).ceil();
   return <String>[
     if (minutes > 0)
-      t.consentement.comment.visites(n: n, minutes: minutes)
+      LibellesGroupe.insecable(
+        t.consentement.comment.visites(n: n, minutes: minutes),
+      )
     else
       t.consentement.comment.visitesSansDuree(n: n),
     t.consentement.comment.parParent,

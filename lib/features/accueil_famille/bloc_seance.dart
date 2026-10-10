@@ -2,6 +2,9 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../core/i18n/dates_appareil.dart';
+import '../../core/i18n/elision.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/seance_famille/seance_famille.dart';
@@ -15,6 +18,9 @@ import '../../core/theme/app_typography.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/status_pill.dart';
+
+export '../../core/i18n/dates_appareil.dart'
+    show dateDeLAppareil, heureDeLAppareil;
 
 /// Ce que l'Accueil affiche d'une seance, a un instant serveur donne.
 ///
@@ -33,6 +39,7 @@ class AffichageSeance {
     required this.fuseau,
     required this.date,
     required this.duree,
+    required this.dureeEnPhrase,
     this.heureClasse,
   });
 
@@ -58,9 +65,15 @@ class AffichageSeance {
       ville: foyer?.libelleVille,
       fuseau: foyer == null
           ? t.tuteur.accueil.heureAppareil
-          : t.tuteur.accueil.heureDe(ville: foyer.libelleVille),
+          : t.tuteur.accueil.heureDe(
+              deVille: deDevant(
+                foyer.libelleVille,
+                cle: 'tuteur.accueil.heureDe',
+              ),
+            ),
       date: foyer?.dateLocaleRendue ?? dateDeLAppareil(local),
-      duree: LibellesGroupe.dureeLisible(seance.dureePrevue),
+      duree: LibellesGroupe.dureeSeule(seance.dureePrevue),
+      dureeEnPhrase: LibellesGroupe.dureeLisible(seance.dureePrevue),
       heureClasse: classe == null
           ? null
           : t.tuteur.accueil.heureClasse(
@@ -90,8 +103,17 @@ class AffichageSeance {
   /// La date lisible : « Lundi 21 septembre ».
   final String date;
 
-  /// La duree prevue, « 1 h 30 ».
+  /// La duree prevue, « 1 h 30 », affichee seule : ancree en interface de
+  /// droite a gauche ([LibellesGroupe.dureeSeule]).
   final String duree;
+
+  /// La meme duree, sans ancre : elle suit la date dans [dateEtDuree].
+  final String dureeEnPhrase;
+
+  /// « Lundi 21 septembre · 45 min » : la duree suit la date, l'ancre de sens
+  /// n'a rien a faire au milieu du libelle (DUREE-INSECABLE-3).
+  String get dateEtDuree =>
+      t.tuteur.accueil.dateEtDuree(date: date, duree: dureeEnPhrase);
 
   /// L'heure dans le fuseau de la classe quand il differe, sinon `null`.
   final String? heureClasse;
@@ -188,36 +210,28 @@ class AffichageSeance {
     if (restant == null) {
       return e.prevue;
     }
-    final int minutes = restant.inMinutes;
+    // COM-RC tour 7 (lot L) : arrondi au superieur, comme l'heure affichee.
+    final int minutes = LibellesGroupe.minutesAvant(restant);
+    // DUREE-INSECABLE-1 : « Dans 3 h 28 » ne se scinde jamais.
     if (minutes < Duration.minutesPerHour) {
-      return e.dansMinutes(minutes: minutes < 1 ? 1 : minutes);
-    }
-    if (minutes < Duration.minutesPerDay) {
-      return e.dansHeures(
-        heures: minutes ~/ Duration.minutesPerHour,
-        minutes: (minutes % Duration.minutesPerHour).toString().padLeft(2, '0'),
+      return LibellesGroupe.insecable(
+        e.dansMinutes(minutes: minutes < 1 ? 1 : minutes),
       );
     }
-    return e.dansJours(jours: restant.inDays);
+    if (minutes < Duration.minutesPerDay) {
+      return LibellesGroupe.insecable(
+        e.dansHeures(
+          heures: minutes ~/ Duration.minutesPerHour,
+          minutes: (minutes % Duration.minutesPerHour).toString().padLeft(
+            2,
+            '0',
+          ),
+        ),
+      );
+    }
+    return LibellesGroupe.insecable(e.dansJours(jours: restant.inDays));
   }
 }
-
-/// L'heure locale de l'appareil, « 13:45 ».
-///
-/// Seulement quand aucune heure n'est rendue par le serveur, et toujours
-/// accompagnee du libelle « Heure de cet appareil » : ce n'est pas un fuseau
-/// devine, c'est l'aveu de la source.
-String heureDeLAppareil(DateTime local) =>
-    '${local.hour.toString().padLeft(2, '0')}:'
-    '${local.minute.toString().padLeft(2, '0')}';
-
-/// La date locale de l'appareil, « Lundi 21 septembre », par les libelles
-/// `commun.dates` (jamais une liste de noms en dur).
-String dateDeLAppareil(DateTime local) => t.commun.dates.jourDate(
-  jour: t.commun.dates.jours[local.weekday - 1],
-  numero: local.day,
-  mois: t.commun.dates.mois[local.month - 1],
-);
 
 /// Le bloc seance de la carte classe : date et etat, heure et duree, ligne
 /// d'etat, conseil d'appareil.
@@ -385,7 +399,14 @@ class _LigneIcone extends StatelessWidget {
         ),
       ),
       Ecart.hMd,
-      Expanded(child: Text(texte, style: style)),
+      // RTL-ISOL-1 : le conseil d'appareil, encore sans traduction arabe,
+      // garde son point en fin de phrase (jamais « .téléphone »).
+      Expanded(
+        child: Text(
+          isolerSiAutreSens(texte, Directionality.of(context)),
+          style: style,
+        ),
+      ),
     ],
   );
 }

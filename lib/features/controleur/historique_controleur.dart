@@ -72,6 +72,7 @@ class RapportControle {
     this.eleve,
     this.presents = const <String>[],
     this.complements = const <ComplementRapport>[],
+    this.paysEnseignant,
   });
 
   /// Identifiant du rapport.
@@ -89,6 +90,10 @@ class RapportControle {
 
   /// L'enseignant, nom d'affichage professionnel (C8).
   final String enseignant;
+
+  /// Le pays declare par l'enseignant (ENS-PAYS-1), nul s'il ne l'est pas ou
+  /// tant que le serveur ne le rend pas (BR-1).
+  final String? paysEnseignant;
 
   /// Debut de la seance observee.
   final DateTime debut;

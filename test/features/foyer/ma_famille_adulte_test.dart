@@ -18,6 +18,7 @@ import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/port_identite_titulaire.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/reseau/etat_sans_donnees.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
@@ -36,6 +37,7 @@ import 'package:rewayah_academy/features/demo/classe_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 import 'package:rewayah_academy/features/foyer/creer_mon_profil_indisponible.dart';
 import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
+import 'package:rewayah_academy/features/foyer/finances_foyer.dart';
 import 'package:rewayah_academy/features/foyer/formulaire_profil_eleve.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
@@ -43,6 +45,12 @@ import 'package:rewayah_academy/features/foyer/ligne_membre.dart';
 import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
 import 'package:rewayah_academy/features/foyer/place_adulte.dart';
 import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
+
+import '../../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
+import '../../support/aucun_mot_coupe.dart';
+import '../../support/hors_ligne_une_fois.dart';
+import '../../support/sens_et_echelle.dart';
 
 void main() {
   void taille(WidgetTester tester, Size s) {
@@ -155,8 +163,15 @@ void main() {
       find.descendant(of: membres, matching: find.byType(PhotoEleve)),
       findsNWidgets(2),
     );
-    // Un seul bouton dominant : « Ajouter un profil eleve ».
-    expect(find.byType(ActionPrincipale), findsOneWidget);
+    // Un seul bouton plein : « Recharger plusieurs profils » de la synthese,
+    // les finances du foyer etant rendues ; « Ajouter un profil eleve » en
+    // secondaire (Q-FI-2, E-17, revue FI-VAGUE-R R1-01 et R1-06).
+    final List<ActionPrincipale> pleins = tester
+        .widgetList<ActionPrincipale>(find.byType(ActionPrincipale))
+        .where((ActionPrincipale a) => a.niveau == NiveauAction.principale)
+        .toList();
+    expect(pleins, hasLength(1));
+    expect(pleins.single.key, SyntheseSoldesFoyer.rechargerKey);
     expect(find.text(t.foyer.ajouterProfil), findsOneWidget);
     // Sur telephone, la carte du titulaire EN TETE, puis la place, les
     // profils, et seulement ensuite « Ajouter un profil eleve » (planche 3.1,
@@ -620,7 +635,7 @@ void main() {
       'Yusuf',
     );
     await tester.enterText(find.byKey(FormulaireProfilEleve.nomKey), 'Diallo');
-    await tester.enterText(find.byKey(FormulaireProfilEleve.ageKey), '8');
+    await toucher(find.byKey(FormulaireProfilEleve.ageChoixKey(8)));
     await tester.pumpAndSettle();
     await toucher(find.byKey(FormulaireProfilEleve.actionKey));
 
@@ -694,6 +709,26 @@ void main() {
     expect(find.byType(FoyerPage), findsOneWidget);
   });
 
+  testWidgets('fiche d\'un enfant sous 1200 : aucun onglet Général / '
+      'Finances, la demonstration n\'a pas de page Finances', (
+    WidgetTester tester,
+  ) async {
+    taille(tester, const Size(390, 844));
+    await monterCoquille(
+      tester,
+      adresseDemoAdulte(
+        EcranDemoAdulte.ficheEleve,
+        eleve: DonneesAdulteDemo.aichaId,
+      ),
+    );
+    expect(find.byType(FicheElevePage), findsOneWidget);
+    // Les finances du foyer sont bien rendues (la carte de Ma famille les
+    // montre) : seul l'absence de page retire le segment.
+    expect(find.text('Aïcha'), findsWidgets);
+    expect(find.byKey(OngletsFiche.cle), findsNothing);
+    expect(find.text(t.ficheEleve.onglets.finances), findsNothing);
+  });
+
   testWidgets('Accueil de la conjointe : jamais la Classe An-Nour du '
       'titulaire (EA-BR-13)', (WidgetTester tester) async {
     taille(tester, const Size(390, 844));
@@ -726,6 +761,10 @@ void main() {
       required Future<List<EleveDuFoyer>> Function() eleves,
       bool horsLigne = false,
       Future<IdentiteTitulaire> Function()? identite,
+      ThemeMode mode = ThemeMode.light,
+      InterfaceMode interface = InterfaceMode.standard,
+      TextDirection? direction,
+      double echelle = 1,
     }) async {
       taille(tester, const Size(390, 844));
       await tester.pumpWidget(
@@ -749,10 +788,13 @@ void main() {
           ],
           child: TranslationProvider(
             child: MaterialApp(
-              theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+              theme: AppTheme.pour(interface, Brightness.light),
+              darkTheme: AppTheme.pour(interface, Brightness.dark),
+              themeMode: mode,
               locale: AppLocale.fr.flutterLocale,
               supportedLocales: AppLocaleUtils.supportedLocales,
               localizationsDelegates: GlobalMaterialLocalizations.delegates,
+              builder: sensEtEchelle(direction: direction, echelle: echelle),
               home: const FoyerPage(),
             ),
           ),
@@ -829,6 +871,190 @@ void main() {
       expect(tester.widget<EtatSysteme>(hl).onAction, isNotNull);
       expect(find.byType(CarteIdentiteCompte), findsNothing);
       expect(placeDit(tester, t.adulte.famille.place.ajouterConjointe), isTrue);
+    });
+
+    // EA-HL-DOUBLE-1 (reprise) : captures de preuve du Foyer hors ligne,
+    // sans donnees (le bloc dit ce qui manque) et avec donnees (le bandeau
+    // seul). Sautees sans CAPTURE_DIR.
+    // EA-HL-DOUBLE-1c : sombre et Interface guidee du Foyer hors ligne, sans
+    // et avec donnees (revue EA-HL-DOUBLE-1-R, m4). Sautees sans
+    // CAPTURE_DIR.
+    // EA-HL-DOUBLE-1d : 320 texte x2 en LTR et RTL du Foyer hors ligne,
+    // sans et avec donnees (revue EA-HL-DOUBLE-1c-R, mineur 2). Sautees
+    // sans CAPTURE_DIR.
+    group('Capture EA-HL-DOUBLE-1d', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final (String, TextDirection) cas in <(String, TextDirection)>[
+        ('320x2_clair', TextDirection.ltr),
+        ('320x2_rtl_clair', TextDirection.rtl),
+      ]) {
+        for (final bool sans in <bool>[true, false]) {
+          final String etat = sans ? 'sans_donnees' : 'avec_donnees';
+          testWidgets('$etat ${cas.$1}', (WidgetTester tester) async {
+            await monterPage(
+              tester,
+              eleves: sans
+                  ? () => Future<List<EleveDuFoyer>>.error(Exception('x'))
+                  : () async => const <EleveDuFoyer>[],
+              horsLigne: true,
+              identite: sans
+                  ? () => Future<IdentiteTitulaire>.error(Exception('x'))
+                  : null,
+              direction: cas.$2,
+              echelle: 2,
+            );
+            taille(tester, const Size(320, 1800));
+            await tester.pumpAndSettle();
+            expect(tester.takeException(), isNull);
+            if (sans) {
+              expectHorsLigneUneFois();
+              expect(find.byType(EtatSansDonnees), findsNWidgets(2));
+            } else {
+              expectAvecDonnees();
+            }
+            verifierAucunMotCoupe(tester, find.byType(FoyerPage));
+            debugPrint(
+              'PNG ${await capturerVue(tester, 'ea_hl_double1d_foyer_${etat}_${cas.$1}')}',
+            );
+          });
+        }
+      }
+    });
+
+    group('Capture EA-HL-DOUBLE-1c', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final (String, ThemeMode, InterfaceMode, bool) cas
+          in <(String, ThemeMode, InterfaceMode, bool)>[
+            (
+              'sans_donnees_390_sombre',
+              ThemeMode.dark,
+              InterfaceMode.standard,
+              true,
+            ),
+            (
+              'sans_donnees_390_guidee',
+              ThemeMode.light,
+              InterfaceMode.enfant,
+              true,
+            ),
+            (
+              'avec_donnees_390_sombre',
+              ThemeMode.dark,
+              InterfaceMode.standard,
+              false,
+            ),
+            (
+              'avec_donnees_390_guidee',
+              ThemeMode.light,
+              InterfaceMode.enfant,
+              false,
+            ),
+          ]) {
+        testWidgets(cas.$1, (WidgetTester tester) async {
+          await monterPage(
+            tester,
+            eleves: cas.$4
+                ? () => Future<List<EleveDuFoyer>>.error(Exception('x'))
+                : () async => const <EleveDuFoyer>[],
+            horsLigne: true,
+            identite: cas.$4
+                ? () => Future<IdentiteTitulaire>.error(Exception('x'))
+                : null,
+            mode: cas.$2,
+            interface: cas.$3,
+          );
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          if (cas.$4) {
+            expectHorsLigneUneFois();
+            expect(find.byType(EtatSansDonnees), findsNWidgets(2));
+          } else {
+            expectAvecDonnees();
+          }
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'ea_hl_double1_foyer_${cas.$1}')}',
+          );
+        });
+      }
+    });
+
+    group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final (String, Size) cas in <(String, Size)>[
+        ('390', const Size(390, 844)),
+        ('320', const Size(320, 900)),
+        ('1440', const Size(1440, 900)),
+      ]) {
+        testWidgets('sans donnees ${cas.$1}', (WidgetTester tester) async {
+          await monterPage(
+            tester,
+            eleves: () => Future<List<EleveDuFoyer>>.error(Exception('x')),
+            horsLigne: true,
+            identite: () => Future<IdentiteTitulaire>.error(Exception('x')),
+          );
+          tester.view.physicalSize = cas.$2;
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          expectHorsLigneUneFois();
+          expect(find.byType(EtatSansDonnees), findsNWidgets(2));
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'ea_hl_double1_foyer_sans_donnees_${cas.$1}_clair')}',
+          );
+        });
+      }
+      testWidgets('avec donnees 390', (WidgetTester tester) async {
+        await monterPage(
+          tester,
+          eleves: () async => const <EleveDuFoyer>[],
+          horsLigne: true,
+        );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expectAvecDonnees();
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1_foyer_avec_donnees_390_clair')}',
+        );
+      });
+    });
+
+    // Revue EA-HL-DOUBLE-1 (m1) : une identite deja lue, relue en echec
+    // hors ligne, reste affichee ; le bandeau seul dit le reseau.
+    testWidgets('carte du titulaire deja lue puis relue en echec hors ligne : '
+        'elle reste, sans bloc', (WidgetTester tester) async {
+      int lectures = 0;
+      await monterPage(
+        tester,
+        eleves: () async => const <EleveDuFoyer>[],
+        horsLigne: true,
+        identite: () => ++lectures == 1
+            ? Future<IdentiteTitulaire>.value(
+                DonneesAdulteDemo.identite(
+                  GenreTitulaireDemo.homme,
+                  VueDemoAdulte.titulaire,
+                ),
+              )
+            : Future<IdentiteTitulaire>.error(Exception('reseau')),
+      );
+      await tester.pumpAndSettle();
+      final ProviderContainer conteneur = ProviderScope.containerOf(
+        tester.element(find.byType(FoyerPage)),
+      )..invalidate(identiteTitulaireProvider);
+      await tester.pumpAndSettle();
+      final AsyncValue<IdentiteTitulaire> lue = conteneur.read(
+        identiteTitulaireProvider,
+      );
+      expect(lue.hasError && lue.hasValue, isTrue);
+      expect(
+        find.descendant(
+          of: find.byKey(FoyerPage.titulaireKey),
+          matching: find.byType(CarteIdentiteCompte),
+        ),
+        findsOneWidget,
+      );
+      expectAvecDonnees();
     });
 
     testWidgets('hors ligne : dit comme tel', (WidgetTester tester) async {

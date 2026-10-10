@@ -17,6 +17,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/rosace_verset.dart';
+import 'textes_lecteur_coran.dart';
 
 /// Le rendu « lecture agrandie » : un verset a la fois, reflowable.
 ///
@@ -65,21 +66,24 @@ class _EtatNonLisible extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // MA-TUTOIEMENT-1 : l'enrobage peut fournir ses phrases (vouvoiement).
+    final TextesLecteurCoran? enrobage = TextesLecteurCoran.de(context);
     return switch (vue.etat) {
       EtatLecteur.chargement => const Center(
         child: CircularProgressIndicator.adaptive(),
       ),
-      EtatLecteur.corpusAbsent => Center(
-        child: EmptyState(
+      EtatLecteur.corpusAbsent => EtatSansTexteLecteur(
+        EmptyState(
           message: t.eleve.coran.absent,
-          invitation: t.eleve.coran.absentDetail,
+          invitation: enrobage?.absentDetail ?? t.eleve.coran.absentDetail,
           icone: AppIcons.rienAAfficher,
         ),
       ),
-      EtatLecteur.indisponible || EtatLecteur.lecture => Center(
-        child: EmptyState(
+      EtatLecteur.indisponible || EtatLecteur.lecture => EtatSansTexteLecteur(
+        EmptyState(
           message: t.eleve.coran.indisponible,
-          invitation: t.eleve.coran.indisponibleDetail,
+          invitation:
+              enrobage?.indisponibleDetail ?? t.eleve.coran.indisponibleDetail,
           icone: AppIcons.horsLigne,
           libelleAction: t.eleve.coran.reessayer,
           onAction: () => ref.invalidate(pageCorpusProvider(vue.numero)),

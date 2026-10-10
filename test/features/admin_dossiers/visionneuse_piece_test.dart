@@ -11,6 +11,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/app.dart';
 import 'package:rewayah_academy/core/admin/admin_domaine.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
+import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
@@ -18,6 +20,8 @@ import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/features/admin_dossiers/visionneuse_piece.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
+
+import '../../support/hors_ligne_une_fois.dart';
 
 Future<void> _stabiliser(WidgetTester tester) async {
   for (int i = 0; i < 8; i++) {
@@ -319,5 +323,34 @@ void main() {
     await _stabiliser(tester);
     expect(find.text(t.dossiers.visionneuse.documentFictif), findsOneWidget);
     expect(find.text(t.dossiers.visionneuse.expire), findsNothing);
+  });
+  // EA-HL-DOUBLE-1d : hors ligne, la feuille de la piece ne redit pas le
+  // reseau. Le « wifi barre » est celui du bandeau ; la piece qui manque
+  // prend l'attente (sablier).
+  testWidgets('hors ligne : la piece manquante prend le sablier, jamais un '
+      'second « wifi barre »', (WidgetTester tester) async {
+    await _monter(
+      tester,
+      const Size(1440, 900),
+      plus: <Override>[
+        horsLigneProvider.overrideWith((Ref ref) => Stream<bool>.value(true)),
+      ],
+    );
+    await _voirPiece(tester, 'Karim');
+    expect(find.text(t.dossiers.visionneuse.horsLigne), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(VisionneusePiece),
+        matching: iconesHorsLigne(),
+      ),
+      findsNothing,
+    );
+    expect(
+      find.descendant(
+        of: find.byType(VisionneusePiece),
+        matching: find.byIcon(AppIcons.attente.actif),
+      ),
+      findsOneWidget,
+    );
   });
 }

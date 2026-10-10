@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/demarrage.sh\"", "timeout": 360 }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit|Bash|Monitor|mcp__.*",
+        "hooks": [
+          { "type": "command", "command": "P=; for c in python3 python py; do command -v \"$c\" >/dev/null 2>&1 && \"$c\" -c 'import json' >/dev/null 2>&1 && { P=$c; break; }; done; [ -n \"$P\" ] || { echo 'Garde-fou : Python introuvable, action refusée par prudence' >&2; exit 2; }; \"$P\" \"$CLAUDE_PROJECT_DIR/.claude/hooks/garde.py\"; rc=$?; [ $rc -eq 0 ] && exit 0; [ $rc -eq 2 ] || echo \"Garde-fou : échec du contrôle (code $rc), action refusée par prudence\" >&2; exit 2", "timeout": 15 }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/zones_apres.sh\"", "timeout": 15 }
+        ]
+      }
+    ]
+  }
+}

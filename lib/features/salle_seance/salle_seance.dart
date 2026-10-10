@@ -27,6 +27,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/commande_salle.dart' show commandesSurDeuxRangees;
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/offline_banner.dart';
@@ -193,7 +194,7 @@ class SalleSeance extends StatelessWidget {
                               zoom: local.zoom,
                               gouttiere: gouttiere,
                               surface: Padding(
-                                padding: EdgeInsets.fromLTRB(
+                                padding: EdgeInsetsDirectional.fromSTEB(
                                   gouttiere,
                                   AppSpacing.xs,
                                   gouttiere,
@@ -214,21 +215,31 @@ class SalleSeance extends StatelessWidget {
                             ),
                           ),
                         ),
-                        barre: Padding(
-                          padding: EdgeInsets.fromLTRB(
-                            gouttiere,
-                            0,
-                            gouttiere,
-                            AppSpacing.sm,
-                          ),
-                          child: DockSeance(
-                            vue: vue,
-                            actions: actions,
-                            microOuvert: local.microOuvert,
-                            cameraAllumee: local.cameraAllumee,
-                            agrandi: agrandi,
-                          ),
-                        ),
+                        // Jonction ETATS-MA-1 x TB-10 : texte agrandi, les
+                        // commandes sur deux rangees (232 de haut a 320 x2)
+                        // ne laissent que 64 a la colonne des Commandes
+                        // ouvertes. Tant que la feuille est ouverte, la barre
+                        // lui cede la place ; « Reduire » la referme et rend
+                        // la barre.
+                        barre:
+                            vue.panneau == PanneauOuvert.commandes &&
+                                commandesSurDeuxRangees(context)
+                            ? const SizedBox.shrink()
+                            : Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                  gouttiere,
+                                  0,
+                                  gouttiere,
+                                  AppSpacing.sm,
+                                ),
+                                child: DockSeance(
+                                  vue: vue,
+                                  actions: actions,
+                                  microOuvert: local.microOuvert,
+                                  cameraAllumee: local.cameraAllumee,
+                                  agrandi: agrandi,
+                                ),
+                              ),
                       ),
                     ),
                   ],
@@ -621,7 +632,16 @@ Widget _surfaceEtEntreeEleve({
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Expanded(child: surface),
-          entree,
+          // Jonction ETATS-MA-1 x TB-10 : quand la barre d'appel prend deux
+          // rangees (texte agrandi, Mode Accessibilite), la place restante
+          // peut etre plus basse que l'entree (phrase d'echec ou d'ecriture
+          // et declencheur). L'entree defile alors dans la part qui lui
+          // revient, la page garde au moins un tiers de la hauteur ; plus
+          // basse, rien ne change (jamais de debordement).
+          ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: c.maxHeight * 2 / 3),
+            child: SingleChildScrollView(child: entree),
+          ),
         ],
       );
     },

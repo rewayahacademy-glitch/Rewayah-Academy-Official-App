@@ -211,7 +211,7 @@ void main() {
       );
       await tester.tap(_sortie);
       await stabiliser(tester);
-      expect(find.text('Quitter la séance\u00a0?'), findsOneWidget);
+      expect(find.text('Quitter la séance\u00A0?'), findsOneWidget);
       await tester.tap(find.text('Annuler'));
       await stabiliser(tester);
       expect(journal.quitter, 0);
@@ -234,7 +234,7 @@ void main() {
       );
       await tester.tap(_sortie);
       await stabiliser(tester);
-      expect(find.text('Quitter la séance\u00a0?'), findsOneWidget);
+      expect(find.text('Quitter la séance\u00A0?'), findsOneWidget);
       await tester.tap(find.text('Quitter').last);
       await stabiliser(tester);
       expect(journal.quitter, 1);
@@ -252,7 +252,7 @@ void main() {
       );
       await tester.tap(_sortie);
       await stabiliser(tester);
-      expect(find.text('Quitter la séance\u00a0?'), findsOneWidget);
+      expect(find.text('Quitter la séance\u00A0?'), findsOneWidget);
       await tester.tap(
         find.text('Quitter et ouvrir le cahier de transmission'),
       );

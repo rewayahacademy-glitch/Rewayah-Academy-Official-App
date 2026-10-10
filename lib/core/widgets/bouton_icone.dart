@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../icons/app_icons.dart';
@@ -33,11 +35,22 @@ class BoutonIcone extends StatelessWidget {
     this.forme = FormeBoutonIcone.cercle,
     this.infobulle,
     this.focusNode,
+    this.suitTexte = false,
   });
 
   /// Le noeud du bouton, ou `null` : un hote y rend le focus (fermeture
   /// d'un panneau ouvert par ce bouton).
   final FocusNode? focusNode;
+
+  /// Vrai pour que l'icone suive l'echelle du texte (lot K) : posee a cote
+  /// d'un bouton a libelle (le micro a cote d'« Envoyer »), une icone de
+  /// taille fixe paraissait minuscule a texte double. L'icone grandit avec
+  /// le texte, bornee a [echelleMax] fois sa taille ; la cible reste de 48
+  /// au moins et entoure l'icone d'une marge de 8 de chaque cote.
+  final bool suitTexte;
+
+  /// La borne de l'echelle de l'icone quand elle [suitTexte].
+  static const double echelleMax = 2;
 
   /// L'icone.
   final AppIcon icone;
@@ -62,6 +75,15 @@ class BoutonIcone extends StatelessWidget {
     final BorderRadius arrondi = cercle
         ? AppRadius.arrondiFull
         : AppRadius.arrondiSm;
+    final double tailleIcone = suitTexte
+        ? MediaQuery.textScalerOf(context)
+              .scale(AppSpacing.xxl)
+              .clamp(AppSpacing.xxl, AppSpacing.xxl * echelleMax)
+        : AppSpacing.xxl;
+    final double cible = math.max(
+      AppTouchTarget.standard,
+      tailleIcone + AppSpacing.lg,
+    );
 
     return Tooltip(
       message: infobulle ?? libelle,
@@ -74,7 +96,7 @@ class BoutonIcone extends StatelessWidget {
         focusNode: focusNode,
         child: ExcludeSemantics(
           child: SizedBox.square(
-            dimension: AppTouchTarget.standard,
+            dimension: cible,
             child: DecoratedBox(
               decoration: cercle
                   ? BoxDecoration(
@@ -92,7 +114,7 @@ class BoutonIcone extends StatelessWidget {
               child: Center(
                 child: IconTheme(
                   data: (onPress == null ? palette.inkMuted : palette.inkAccent)
-                      .asIconTheme(size: AppSpacing.xxl),
+                      .asIconTheme(size: tailleIcone),
                   child: Icon(icone.repos),
                 ),
               ),

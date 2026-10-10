@@ -16,20 +16,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
+import '../../core/admin/port_classes_admin.dart';
 import '../../core/admin/service_admin.dart';
+import '../../core/admin/service_groupes.dart';
+import '../../core/alertes/port_alertes.dart';
 import '../../core/appairage/service_appairage.dart';
+import '../../core/capacites/port_accents_profils.dart';
 import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_catalogue_classes.dart';
 import '../../core/capacites/port_classes_foyer.dart';
+import '../../core/capacites/port_creation_classe.dart';
+import '../../core/capacites/port_enseignants_classe.dart';
+import '../../core/capacites/port_finance_direction.dart';
+import '../../core/capacites/port_paiements_foyer.dart';
 import '../../core/capacites/port_politique_revue_kyc.dart';
+import '../../core/capacites/port_politiques_commerciales.dart';
+import '../../core/capacites/port_recharge_foyer.dart';
 import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/config/env.dart';
 import '../../core/domain/enums.dart';
 import '../../core/dossier/selecteur_fichier.dart';
 import '../../core/dossier/service_dossier.dart';
 import '../../core/dossier/service_validation.dart';
-import '../../core/matching/service_matching.dart';
+import '../../core/finance/finances_profil.dart';
 import '../../core/offres/offre_horaire.dart';
+import '../../core/offres/port_regroupements_admin.dart';
 import '../../core/offres/service_offres.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
@@ -40,17 +51,28 @@ import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/session/source_session.dart';
 import '../../core/suivi/service_suivi.dart';
+import '../../core/tc_groupe/cartes_classe.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/port_groupes.dart';
 import '../../core/tc_observation/activation_observation.dart';
 import '../../core/tc_observation/port_historique_observations.dart';
 import '../../core/tc_observation/port_politique_observation.dart';
 import '../../core/tc_observation/port_visite_observation.dart';
+import '../../core/theme/accent_profil.dart';
+import '../admin_tableau/activite_recente.dart';
+import 'admin_x_demo.dart';
+import 'alertes_demo.dart';
+import 'cartes_classe_demo.dart';
 import 'catalogue_demo.dart';
+import 'classe_form_demo.dart';
+import 'classes_admin_demo.dart';
 import 'dossiers_demo.dart';
+import 'finance_demo.dart';
 import 'observation_demo.dart';
 import 'presence_demo.dart';
+import 'regroupements_demo.dart';
 import 'services_admin_demo.dart';
+import 'suivi_demandes_demo.dart';
 
 /// Parametre d'adresse qui demande la demonstration tuteur.
 const String parametreDemo = 'demo';
@@ -70,6 +92,9 @@ const String valeurDemoTuteur = 'tuteur';
 bool environnementAutoriseDemo(
   String environnement, {
   bool declare = Env.environnementDeclare,
+  // DEMO-ENV-1-M1 : ce branchement n'est garde que par la relecture. En
+  // debogage et sous `flutter test`, kReleaseMode vaut toujours faux : un
+  // test l'affirmant serait une tautologie. `declare` est, lui, teste.
   bool publication = kReleaseMode,
 }) {
   if (publication && !declare) {
@@ -79,10 +104,23 @@ bool environnementAutoriseDemo(
   return normalise.isNotEmpty && !normalise.contains('prod');
 }
 
-/// Vrai si l'adresse demande la demonstration tuteur.
-bool demoTuteurDemandee(Uri adresse) =>
-    adresse.queryParameters[parametreDemo]?.trim().toLowerCase() ==
-    valeurDemoTuteur;
+/// Valeur du parametre qui nomme la demonstration d'un dossier d'enseignant
+/// (AD-NETTOYAGE-2, n1) : `?demo=enseignant&dossier=...`, alias de
+/// `?demo=tuteur&dossier=...` qui reste accepte. Sans `dossier`, elle ne
+/// montre rien d'enseignant et n'ouvre donc pas la demonstration.
+const String valeurDemoEnseignant = 'enseignant';
+
+/// Vrai si l'adresse demande la demonstration tuteur, ou celle d'un dossier
+/// d'enseignant (`demo=enseignant` avec un `dossier`).
+bool demoTuteurDemandee(Uri adresse) {
+  final String? demo = adresse.queryParameters[parametreDemo]
+      ?.trim()
+      .toLowerCase();
+  if (demo == valeurDemoTuteur) return true;
+  return demo == valeurDemoEnseignant &&
+      (adresse.queryParameters[parametreDossierDemo]?.trim().isNotEmpty ??
+          false);
+}
 
 /// La garde complete, pure pour etre testee sans compilation dediee.
 bool demoTuteurActive({required Uri adresse, required String environnement}) =>
@@ -106,11 +144,18 @@ List<Override> surchargesDemoTuteur({
   List<EleveDuFoyer>? eleves,
   EtatRevueDemo? dossiers,
   String? titulaire,
+  JeuFoyerFinance? finances,
 }) {
   if (!environnementAutoriseDemo(environnement ?? Env.environnement)) {
     throw StateError('Demonstration interdite en production.');
   }
   final bool avecDossier = dossiers != null && titulaire != null;
+  // FI-4 : avec un jeu Finance, le foyer est celui du jeu (memes
+  // identifiants que ses finances), avec ses couleurs de profil.
+  final JeuFoyerFinance? jeu = finances;
+  final List<FinancesProfil> profilsFinance = jeu == null
+      ? const <FinancesProfil>[]
+      : DonneesFinanceDemo.profils(jeu);
   return <Override>[
     if (avecDossier) ...<Override>[
       sourceSessionProvider.overrideWithValue(
@@ -122,13 +167,58 @@ List<Override> surchargesDemoTuteur({
       selecteurFichierProvider.overrideWithValue(const SelecteurFichierDemo()),
     ] else
       sourceSessionProvider.overrideWithValue(const SourceSessionDemo()),
-    // Un titulaire tout juste valide n'a ni eleve ni classe (P-ADM-08.6,
-    // 11.3) : la validation ne donne rien de plus que l'arrivee a /tuteur.
+    // Avec un dossier, la titulaire est une enseignante (K-47) : elle n'a pas
+    // de foyer, donc ni eleve ni classe ; le foyer vide est sa vraie valeur
+    // (et evite tout appel serveur). Sans dossier, le foyer de demonstration.
     elevesDuFoyerProvider.overrideWith(
-      (Ref ref) async =>
-          avecDossier ? const <EleveDuFoyer>[] : eleves ?? DonneesDemo.eleves,
+      (Ref ref) async => avecDossier
+          ? const <EleveDuFoyer>[]
+          : eleves ??
+                (jeu == null
+                    ? DonneesDemo.eleves
+                    : <EleveDuFoyer>[
+                        for (final FinancesProfil p in profilsFinance)
+                          EleveDuFoyer(
+                            id: p.profilId,
+                            prenom: p.prenom,
+                            identifiantImmuable: 'STUD-FI-${p.profilId}',
+                            mode: InterfaceMode.standard,
+                            camera: CameraPolicy.allowed,
+                            // L'echeance d'acces du meme jeu (FI-1c-CORR) :
+                            // jamais « sans echeance » pour un payant.
+                            finAcces: _finAccesDemo(jeu, p.profilId),
+                          ),
+                      ]),
     ),
+    if (jeu != null) ...<Override>[
+      portPaiementsFoyerProvider.overrideWithValue(
+        PaiementsFoyerFinanceDemo(jeu),
+      ),
+      portPolitiquesCommercialesProvider.overrideWithValue(
+        const PolitiquesCommercialesDemo(),
+      ),
+      portRechargeFoyerProvider.overrideWithValue(
+        RechargeFoyerFinanceDemo(jeu),
+      ),
+    ],
     portAccesFoyerProvider.overrideWithValue(const AccesFoyerDemo()),
+    // La couleur de profil choisie par le tuteur (K-62) : gardee en memoire,
+    // rien n'est envoye (FI-BR-19).
+    portAccentsProfilsProvider.overrideWithValue(
+      AccentsProfilsEnMemoire(<String, AccentProfil>{
+        DonneesDemo.aichaId: AccentProfil.menthe,
+        DonneesDemo.yusufId: AccentProfil.rose,
+        // Les couleurs de la maquette 03 (choix du tuteur de la demo).
+        if (jeu != null) ...<String, AccentProfil>{
+          DonneesFinanceDemo.mariamId: AccentProfil.rose,
+          DonneesFinanceDemo.ibrahimId: AccentProfil.ciel,
+          DonneesFinanceDemo.aichaId: AccentProfil.lavande,
+          // Le jeu a cinq profils : aucun profil sans couleur.
+          DonneesFinanceDemo.youssefId: AccentProfil.peche,
+          DonneesFinanceDemo.khadijaId: AccentProfil.sable,
+        },
+      }),
+    ),
     portClassesFoyerProvider.overrideWithValue(const ClassesFoyerDemo()),
     portSeancesFamilleProvider.overrideWithValue(SeancesFamilleDemo()),
     portCatalogueClassesProvider.overrideWithValue(
@@ -143,11 +233,24 @@ List<Override> surchargesDemoTuteur({
       (Ref ref) async => const <ParcoursApprenant>[],
     ),
     monFuseauProvider.overrideWith((Ref ref) async => 'Europe/Paris'),
+    // OFFRES-FAM-1 : le suivi des demandes du foyer de demonstration, et les
+    // notifications de ses transitions (foyer de demonstration seulement).
+    if (!avecDossier && eleves == null) ...surchargesSuiviDemandesDemo(),
     seancesDuSuiviProvider.overrideWith((Ref ref) async => const <Seance>[]),
     mesGroupesProvider.overrideWith(
       (Ref ref) async => avecDossier
           ? const <GroupSummaryVM>[]
           : DonneesDemo.classes.values.toList(),
+    ),
+    // CARTES-PERSO-1b : la page Classe du tuteur lit les memes cartes de
+    // demonstration que la demonstration enseignant, en lecture seule (la
+    // capacite que le serveur rendrait au tuteur). Sans elle, elle disait
+    // « pas encore ouvertes » (revue CARTES-PERSO-1, deuxieme passe).
+    portCartesClasseProvider.overrideWith(
+      (Ref _) => PortCartesClasseDemo(
+        peutModifier: false,
+        cartes: cartesClasseDemo(DateTime.now()),
+      ),
     ),
     // Observation simulee : politique, budget, historique. La salle video
     // demande un jeton au serveur, donc l'observation reelle reste fermee.
@@ -183,18 +286,32 @@ bool demoAdminActive({required Uri adresse, required String environnement}) =>
 bool get demoAdminActiveIci =>
     demoAdminActive(adresse: Uri.base, environnement: Env.environnement);
 
+/// Le delai avant l'arrivee d'une alerte urgente dans la demonstration admin
+/// (ALERTE-1) : assez long pour regarder la page d'abord.
+const Duration dureeArriveeAlerteDemo = Duration(seconds: 20);
+
 /// Les surcharges de la demonstration admin.
 ///
 /// Une seule [EtatRevueDemo] partagee par les doubles : une bascule de
 /// politique se voit dans la file. Leve une [StateError] en production.
+/// [avecAlertes] (ALERTE-1) : la visite montre des alertes fictives, une
+/// urgente en tete ; [arriveeAlerte] : le delai avant qu'une seconde alerte
+/// urgente arrive en cours de visite, sans recharger. Sans [avecAlertes]
+/// (defaut, tests des autres ecrans), la source des alertes reste celle de
+/// la production : indisponible, ni cloche ni bandeau.
 List<Override> surchargesDemoAdmin({
   String? environnement,
   EtatRevueDemo? etat,
+  bool avecAlertes = false,
+  Duration? arriveeAlerte,
 }) {
   if (!environnementAutoriseDemo(environnement ?? Env.environnement)) {
     throw StateError('Demonstration interdite en production.');
   }
   final EtatRevueDemo e = etat ?? EtatRevueDemo.initial();
+  // CLASSE-FORM-1 : une classe creee en demonstration se voit dans la liste
+  // et compte dans la charge de son enseignant.
+  final ClassesCreeesDemo creees = ClassesCreeesDemo();
   return <Override>[
     sourceSessionProvider.overrideWithValue(const SourceSessionDemoAdmin()),
     portRevueDossiersProvider.overrideWithValue(RevueDossiersDemo(e)),
@@ -208,10 +325,68 @@ List<Override> surchargesDemoAdmin({
         rapportsManquants: 0,
         incidents24h: 0,
         comptesEchus: 0,
-        demandesEnAttente: 0,
+        // AD-X : les deux demandes fictives de l'Espace de traitement.
+        demandesEnAttente: 2,
       ),
     ),
-    demandesProvider.overrideWith((Ref ref) async => const <Demande>[]),
+    demandesProvider.overrideWith(
+      (Ref ref) async => demandesDemo(e.maintenant.toLocal()),
+    ),
+    // AD-X : les classes fictives (collection et inspecteur, ADM-09). Seule
+    // la creation ecrit (CLASSE-FORM-1, en memoire) ; ajouter, retirer et
+    // cloturer restent « indisponibles ».
+    groupesProvider.overrideWith((Ref ref) async => creees.toutes()),
+    // R16, R17 : la liste paginee des classes, a grande echelle (30 classes
+    // paralleles de meme cle, un grand volume simule, les classes creees).
+    portClassesAdminProvider.overrideWithValue(
+      ClassesAdminDemo(
+        creees: creees,
+        classes: <ClasseListee>[
+          ...familleDemo(),
+          ...<GroupeAdmin>[...groupesDemo()].map(ClasseListee.depuisGroupe),
+          ...volumeDemo(),
+        ],
+      ),
+    ),
+    portEnseignantsClasseProvider.overrideWithValue(
+      EnseignantsClasseDemo(creees),
+    ),
+    portCreationClasseProvider.overrideWithValue(CreationClasseDemo(creees)),
+    // OFFRES-ADM-1 : les demandes semblables reunies, en memoire.
+    portRegroupementsAdminProvider.overrideWithValue(RegroupementsDemo()),
+    membresGroupeProvider.overrideWith(
+      (Ref ref, String groupeId) async => membresDemo(groupeId),
+    ),
+    // AD-X : la colonne « Activite recente » de l'Accueil, fictive.
+    activiteRecenteProvider.overrideWith(
+      (Ref ref) async => activiteRecenteDemo(e.maintenant.toLocal()),
+    ),
+    // CARTES-PERSO-1c (revue CARTES-PERSO-1b, reserve 2) : la direction lit
+    // les memes cartes de demonstration que l'enseignant et le tuteur, en
+    // lecture seule. Le retrait par la direction est une ecriture serveur
+    // (CARTES-BR-02) : la capacite reste fausse, aucune ecriture simulee.
+    portCartesClasseProvider.overrideWith(
+      (Ref _) => PortCartesClasseDemo(
+        peutModifier: false,
+        cartes: cartesClasseDemo(DateTime.now()),
+      ),
+    ),
+    // ALERTE-1 : alertes fictives, une urgente en tete ; une seconde urgente
+    // arrive en cours de visite, sans recharger (temps reel simule).
+    if (avecAlertes)
+      portAlertesProvider.overrideWithValue(
+        AlertesDemo(arrivee: arriveeAlerte),
+      ),
+    // La Vue globale de la Finance (FI-11a) : les chiffres de la
+    // demonstration, jamais en production (K-09).
+    portFinanceDirectionProvider.overrideWithValue(
+      const FinanceDirectionDemo(),
+    ),
+    // Les Politiques commerciales (FI-11b) : la version de lancement et un
+    // brouillon ; la publication reste indisponible, ici aussi.
+    portPolitiquesCommercialesProvider.overrideWithValue(
+      const PolitiquesCommercialesDemo(),
+    ),
     // Tous les autres services admin adosses a Supabase : « indisponible ».
     ...surchargesServicesAdminIndisponibles(),
   ];
@@ -351,12 +526,14 @@ abstract final class DonneesDemo {
     enseignantId: 'demo-enseignante',
     titre: TitreEnseignant.sayyida,
     nomAffichage: 'Maryam',
+    pays: 'Maroc',
   );
 
   static const EnseignantVM enseignant = EnseignantVM(
     enseignantId: 'demo-enseignant',
     titre: TitreEnseignant.sayyid,
     nomAffichage: 'Ibrahim',
+    pays: 'France',
   );
 
   static const Map<String, GroupSummaryVM> classes = <String, GroupSummaryVM>{
@@ -472,6 +649,7 @@ class SeancesFamilleDemo implements PortSeancesFamille {
             enseignant: EnseignantSeance(
               prenom: DonneesDemo.classes[e.id]!.enseignant.nomAffichage,
               titre: DonneesDemo.classes[e.id]!.enseignant.titre,
+              pays: DonneesDemo.classes[e.id]!.enseignant.pays,
             ),
           ),
     ];
@@ -550,4 +728,12 @@ class SeancesFamilleDemo implements PortSeancesFamille {
     }
     yield s;
   }
+}
+
+/// L'echeance d'acces de [profilId] dans le jeu Finance [jeu].
+DateTime? _finAccesDemo(JeuFoyerFinance jeu, String profilId) {
+  for (final AccesBeneficiaire a in DonneesFinanceDemo.acces(jeu)) {
+    if (a.eleveId == profilId) return a.finAcces;
+  }
+  return null;
 }

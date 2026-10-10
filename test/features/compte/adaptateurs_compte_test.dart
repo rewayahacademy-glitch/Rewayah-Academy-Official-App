@@ -137,7 +137,7 @@ void main() {
 
     test('dateLongue', () {
       expect(dateLongue(DateTime(2026, 10, 30, 9)), '30 octobre 2026');
-      expect(dateLongue(DateTime(2026, 8, 1)), '1 août 2026');
+      expect(dateLongue(DateTime(2026, 8, 1)), '1er août 2026');
     });
 
     test('statutAffiche : seul un statut lu se dit', () {

@@ -1,0 +1,48 @@
+Serveur local : http://127.0.0.1:PORT ; navigateur : Chromium 141.0.7390.37
+-- Voir toutes les alertes : Pressable (ActionPrincipale)
+OK    A Enter : centre de commande -> http://127.0.0.1:PORT/?demo=admin#/admin
+OK    A Enter : element actif « Voir toutes les alertes » apres 11 Tab
+ECHEC A Enter active « Voir toutes les alertes » : http://127.0.0.1:PORT/?demo=admin#/admin -> http://127.0.0.1:PORT/?demo=admin#/admin
+OK    A NumpadEnter : centre de commande -> http://127.0.0.1:PORT/?demo=admin#/admin
+OK    A NumpadEnter : element actif « Voir toutes les alertes » apres 11 Tab
+ECHEC A NumpadEnter active « Voir toutes les alertes » : http://127.0.0.1:PORT/?demo=admin#/admin -> http://127.0.0.1:PORT/?demo=admin#/admin
+OK    A Space : centre de commande -> http://127.0.0.1:PORT/?demo=admin#/admin
+OK    A Space : element actif « Voir toutes les alertes » apres 11 Tab
+OK    A Space active « Voir toutes les alertes » : http://127.0.0.1:PORT/?demo=admin#/admin -> http://127.0.0.1:PORT/?demo=admin#/admin/alertes
+OK    B Enter : centre de commande -> http://127.0.0.1:PORT/?demo=admin#/admin
+  B Enter : 11 Tab, sans arbre d'accessibilite
+ECHEC B Enter active « Voir toutes les alertes » : http://127.0.0.1:PORT/?demo=admin#/admin -> http://127.0.0.1:PORT/?demo=admin#/admin
+OK    B NumpadEnter : centre de commande -> http://127.0.0.1:PORT/?demo=admin#/admin
+  B NumpadEnter : 11 Tab, sans arbre d'accessibilite
+ECHEC B NumpadEnter active « Voir toutes les alertes » : http://127.0.0.1:PORT/?demo=admin#/admin -> http://127.0.0.1:PORT/?demo=admin#/admin
+OK    B Space : centre de commande -> http://127.0.0.1:PORT/?demo=admin#/admin
+  B Space : 11 Tab, sans arbre d'accessibilite
+OK    B Space active « Voir toutes les alertes » : http://127.0.0.1:PORT/?demo=admin#/admin -> http://127.0.0.1:PORT/?demo=admin#/admin/alertes
+-- Opérations : temoin Material (NavigationRail)
+OK    A Enter : centre de commande -> http://127.0.0.1:PORT/?demo=admin#/admin
+OK    A Enter : element actif « Opérations » apres 9 Tab
+OK    A Enter active « Opérations » : http://127.0.0.1:PORT/?demo=admin#/admin -> http://127.0.0.1:PORT/?demo=admin#/admin/operations/traitement
+OK    A NumpadEnter : centre de commande -> http://127.0.0.1:PORT/?demo=admin#/admin
+OK    A NumpadEnter : element actif « Opérations » apres 9 Tab
+OK    A NumpadEnter active « Opérations » : http://127.0.0.1:PORT/?demo=admin#/admin -> http://127.0.0.1:PORT/?demo=admin#/admin/operations/traitement
+OK    A Space : centre de commande -> http://127.0.0.1:PORT/?demo=admin#/admin
+OK    A Space : element actif « Opérations » apres 9 Tab
+OK    A Space active « Opérations » : http://127.0.0.1:PORT/?demo=admin#/admin -> http://127.0.0.1:PORT/?demo=admin#/admin/operations/traitement
+OK    B Enter : centre de commande -> http://127.0.0.1:PORT/?demo=admin#/admin
+  B Enter : 9 Tab, sans arbre d'accessibilite
+OK    B Enter active « Opérations » : http://127.0.0.1:PORT/?demo=admin#/admin -> http://127.0.0.1:PORT/?demo=admin#/admin/operations/traitement
+OK    B NumpadEnter : centre de commande -> http://127.0.0.1:PORT/?demo=admin#/admin
+  B NumpadEnter : 9 Tab, sans arbre d'accessibilite
+OK    B NumpadEnter active « Opérations » : http://127.0.0.1:PORT/?demo=admin#/admin -> http://127.0.0.1:PORT/?demo=admin#/admin/operations/traitement
+OK    B Space : centre de commande -> http://127.0.0.1:PORT/?demo=admin#/admin
+  B Space : 9 Tab, sans arbre d'accessibilite
+OK    B Space active « Opérations » : http://127.0.0.1:PORT/?demo=admin#/admin -> http://127.0.0.1:PORT/?demo=admin#/admin/operations/traitement
+  navigator.languages = en-US@posix
+  (erreur de page : Error: Invalid argument(s): Incorrect locale information provided
+
+Dart stack trace:
+RangeError: Incorrect locale information provided)
+ECHEC langue « en-US@posix » : l'application demarre -> http://127.0.0.1:PORT/?demo=admin
+ECHEC aucune RangeError (1 erreur(s) de page)
+OK    langue du document = fr
+6 echec(s)

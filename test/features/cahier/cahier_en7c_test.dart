@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/enseignant/depot_cahiers.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/app_bottom_sheet.dart';
 import 'package:rewayah_academy/core/widgets/choice_card_group.dart';
@@ -115,6 +116,40 @@ void main() {
     expect(find.text(t.enseignant.cahier.depose), findsOneWidget);
   });
 
+  // SUPERPOS-1 : l'aide du champ de reprise (« C'est la position de reprise
+  // d'un remplacant. ») se coupait en « d'un rempla… » a 320 en texte double
+  // (deux lignes au plus), et la position saisie defilait de cote dans une
+  // ligne. Contre-epreuve faite : echoue sur l'ancien champ.
+  testWidgets('reprise a 320 en texte double : l aide n est jamais coupee', (
+    WidgetTester tester,
+  ) async {
+    fixerVueCapture(tester, const Size(320, 640), 1);
+    await tester.pumpWidget(
+      hoteCapture(
+        const CoquilleEnseignantDemo(
+          ecran: EcranDemoEnseignant.cahier,
+          etat: EtatDemoEnseignant.nominal,
+        ),
+        surcharges: <Override>[
+          depotRapportsProvider.overrideWithValue(FauxDepotRapports()),
+        ],
+        echelleTexte: 2,
+      ),
+    );
+    await stabiliser(tester);
+    final Finder aide = find.text(t.enseignant.cahier.repriseDetail);
+    await tester.ensureVisible(aide);
+    await stabiliser(tester);
+    expect(
+      tester.renderObject<RenderParagraph>(aide).didExceedMaxLines,
+      isFalse,
+    );
+    // JONCTION-LIGNES-1 : la reprise se choisit (FORM-L9, `ChampReprise`),
+    // elle ne se tape plus ; la partie « position saisie qui defile de cote »
+    // de SUPERPOS-1 ne s'applique plus qu'au champ de secours, sans liste de
+    // sourates.
+  });
+
   // EN-7c-200 (K-61) : la feuille « Ajuster » de Nour, ouverte depuis la vraie
   // coquille, a 200 % de texte, sur 390 et sur 320 de large. Un debordement
   // leve une exception de rendu et fait echouer le test de lui-meme ; on
@@ -152,22 +187,26 @@ void main() {
         // Aucun texte de la feuille n'est tronque (ellipse ou lignes
         // coupees) : la feuille entiere est mise en page dans son defilement,
         // chaque paragraphe se controle, meme hors de l'ecran.
-        final List<RenderParagraph> paragraphes = tester
-            .renderObjectList<RenderParagraph>(
-              find.descendant(
-                of: find.byType(FeuilleAjusterCahier),
-                matching: find.byType(RichText),
-              ),
-            )
-            .toList();
-        expect(paragraphes, isNotEmpty);
-        for (final RenderParagraph p in paragraphes) {
-          expect(
-            p.didExceedMaxLines,
-            isFalse,
-            reason: 'tronque : ${p.text.toPlainText()}',
-          );
+        void aucunTexteTronque() {
+          final List<RenderParagraph> paragraphes = tester
+              .renderObjectList<RenderParagraph>(
+                find.descendant(
+                  of: find.byType(FeuilleAjusterCahier),
+                  matching: find.byType(RichText),
+                ),
+              )
+              .toList();
+          expect(paragraphes, isNotEmpty);
+          for (final RenderParagraph p in paragraphes) {
+            expect(
+              p.didExceedMaxLines,
+              isFalse,
+              reason: 'tronque : ${p.text.toPlainText()}',
+            );
+          }
         }
+
+        aucunTexteTronque();
 
         // Le bouton du bas : atteint en defilant le corps de la feuille, puis
         // tape ; la feuille se referme sur la decision.
@@ -178,11 +217,13 @@ void main() {
         // Le titre nomme chaque champ une seule fois : pas de label flottant
         // repete, qui se coupait a 320 (« Objectif de No… »).
         expect(
-          find.text(t.enseignant.cahier.objectif(eleve: 'Nour')),
+          find.text(t.enseignant.cahier.objectif(deEleve: deDevant('Nour'))),
           findsOneWidget,
         );
         expect(
-          find.text(t.enseignant.cahier.travailMaison(eleve: 'Nour')),
+          find.text(
+            t.enseignant.cahier.travailMaison(deEleve: deDevant('Nour')),
+          ),
           findsOneWidget,
         );
         // Le devoir saisi se lit en entier : le champ grandit avec son texte
@@ -197,6 +238,8 @@ void main() {
               .devoirPrecedent!,
         );
         await stabiliser(tester);
+        // EN-7c-MINEURS : le meme controle apres la saisie du long devoir.
+        aucunTexteTronque();
         expect(
           tester
               .state<ScrollableState>(
@@ -333,8 +376,14 @@ void main() {
     await _monter(tester);
     await _toucher(tester, find.text('Nour'));
     for (final (String cle, String nom) in <(String, String)>[
-      ('cahier-objectif', t.enseignant.cahier.objectif(eleve: 'Nour')),
-      ('cahier-devoir', t.enseignant.cahier.travailMaison(eleve: 'Nour')),
+      (
+        'cahier-objectif',
+        t.enseignant.cahier.objectif(deEleve: deDevant('Nour')),
+      ),
+      (
+        'cahier-devoir',
+        t.enseignant.cahier.travailMaison(deEleve: deDevant('Nour')),
+      ),
     ]) {
       final SemanticsNode noeud = tester.getSemantics(
         find.descendant(of: _cle(cle), matching: find.byType(EditableText)),

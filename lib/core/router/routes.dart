@@ -1,4 +1,5 @@
 import '../domain/enums.dart';
+import '../finance/montant.dart';
 
 /// Les chemins de l'application.
 ///
@@ -148,11 +149,100 @@ abstract final class Routes {
   /// declare avant `:eleveId` (contrainte R5).
   static const String tuteurFoyerAppareils = '/tuteur/foyer/appareils';
 
+  /// La recharge d'un ou plusieurs profils (guide Finance V4 §4, FI-4), sur
+  /// un chemin statique declare avant `:eleveId` (contrainte R5). Un seul
+  /// moteur de recharge (`RechargeFoyerPage`).
+  static const String tuteurFoyerRecharge = '/tuteur/foyer/recharge';
+
+  /// La recharge avec [profils] deja coches (`?profils=a,b`).
+  static String rechargePour(Iterable<String> profils) => Uri(
+    path: tuteurFoyerRecharge,
+    queryParameters: <String, String>{'profils': profils.join(',')},
+  ).toString();
+
+  /// La recharge ouverte depuis Compte > Paiements (`?depuis=compte`) :
+  /// l'abandon y ramene, jamais au Foyer (revue FI-7).
+  static final String rechargeDepuisCompte = Uri(
+    path: tuteurFoyerRecharge,
+    queryParameters: <String, String>{'depuis': origineCompte},
+  ).toString();
+
+  /// La valeur de `?depuis=` d'une recharge ouverte depuis le Compte.
+  static const String origineCompte = 'compte';
+
+  /// La recharge reprise apres un echec (FI-8, guide §5.4 : « ne pas perdre
+  /// la selection ») : les profils coches et le montant de chacun
+  /// (`?profils=a,b&montants=a:1000:USD,b:4000:USD`). Le montant n'est
+  /// qu'un rappel : l'ecran ne le retient que s'il fait partie des montants
+  /// que la source propose. [commande] : la commande d'ou l'on reprend
+  /// (`&reprise=`), pour qu'une reprise ouvre toujours une recharge neuve.
+  /// La recharge est une seule page (R3-01) : le recapitulatif et le moyen
+  /// de paiement s'y lisent des que la selection rappelee est complete.
+  static String rechargeReprise(
+    Map<String, Montant> montants, {
+    String? commande,
+  }) => Uri(
+    path: tuteurFoyerRecharge,
+    queryParameters: <String, String>{
+      'profils': montants.keys.join(','),
+      'montants': <String>[
+        for (final MapEntry<String, Montant> e in montants.entries)
+          '${e.key}:${e.value.mineur}:${e.value.devise}',
+      ].join(','),
+      if (commande != null && commande.isNotEmpty) 'reprise': commande,
+    },
+  ).toString();
+
+  /// Relit `?montants=` ([rechargeReprise]) ; une entree illisible est
+  /// ignoree, jamais devinee.
+  static Map<String, Montant> montantsDe(String? brut) => <String, Montant>{
+    for (final String entree in (brut ?? '').split(','))
+      if (entree.split(':')
+          case [final String id, final String mineur, final String devise]
+          when id.isNotEmpty && devise.isNotEmpty)
+        if (int.tryParse(mineur) case final int m) id: Montant(m, devise),
+  };
+
+  /// Le resultat d'une recharge (FI-8, guide §1.6 et §5.4) : l'etat de la
+  /// commande tel que la source le rend, sur un chemin statique declare sous
+  /// la recharge, avant `:eleveId` (contrainte R5).
+  static const String tuteurFoyerRechargeResultat =
+      '$tuteurFoyerRecharge/result';
+
+  /// Le resultat de la commande [commandeId] (`?commande=`) : une adresse
+  /// rouverte relit l'etat, elle ne rejoue jamais le paiement. [recharge] :
+  /// les parametres de la recharge qui a paye, gardes dans l'adresse pour
+  /// que la recharge sous le resultat reste la meme page (sa commande, son
+  /// « Suivre le paiement »), y compris au retour du navigateur.
+  static String resultatRechargePour(
+    String commandeId, {
+    Map<String, String> recharge = const <String, String>{},
+  }) => Uri(
+    path: tuteurFoyerRechargeResultat,
+    queryParameters: <String, String>{
+      for (final MapEntry<String, String> e in recharge.entries)
+        if (!_horsIdentite.contains(e.key)) e.key: e.value,
+      'commande': commandeId,
+    },
+  ).toString();
+
+  /// L'identite d'une recharge, lue de son adresse ou de celle de son
+  /// resultat : tous les parametres sauf `commande` et `etape`, tries. La
+  /// meme identite garde la meme page (et sa commande) ; une autre en ouvre
+  /// une neuve.
+  static String identiteRecharge(Map<String, String> parametres) => (<String>[
+    for (final MapEntry<String, String> e in parametres.entries)
+      if (!_horsIdentite.contains(e.key)) '${e.key}=${e.value}',
+  ]..sort()).join('&');
+
+  /// Les parametres qui ne font pas l'identite d'une recharge.
+  static const Set<String> _horsIdentite = <String>{'commande', 'etape'};
+
   /// La fiche d'un profil eleve du foyer.
   static String ficheElevePour(String eleveId) => '$tuteurFoyer/$eleveId';
 
   /// Une sous-page de la fiche : `informations`, `inscription`, `interface`,
-  /// `camera`, `acces` ou `appareils`.
+  /// `camera`, `acces`, `finances`, `mouvements` ou `appareils`.
   static String ficheEleveSousPage(String eleveId, String segment) =>
       '${ficheElevePour(eleveId)}/$segment';
 
@@ -161,8 +251,11 @@ abstract final class Routes {
     'informations',
     'inscription',
     'interface',
+    'couleur',
     'camera',
     'acces',
+    'finances',
+    'mouvements',
     'appareils',
   ];
 
@@ -285,6 +378,25 @@ abstract final class Routes {
   /// Les notifications du tuteur, ouvertes par la cloche de l'en-tete.
   static const String tuteurNotifications = '/tuteur/notifications';
 
+  // --- Communications V1 (COM-F) -------------------------------------------
+  //
+  // Les routes des Communications sont posees une fois par le socle (COM-F,
+  // `UX_REVIEW_COMMUNICATIONS_L0` section 3) ; chaque voie remplace ensuite
+  // l'ecran provisoire dans son propre dossier. Toutes vivent sous le
+  // prefixe du role (`prefixePour`) : aucune garde nouvelle, aucune
+  // destination ajoutee aux barres (4 sur 4, `nav_shell.dart`).
+
+  /// Les Messages metier du tuteur (COM-M01, COM-W01), une pose de l'Accueil :
+  /// aucune cinquieme destination, l'entree vient de l'Espace Classe et des
+  /// notifications.
+  static const String tuteurMessages = '/tuteur/messages';
+
+  /// Un fil des Messages du tuteur.
+  static String tuteurFilPour(String filId) => '$tuteurMessages/$filId';
+
+  /// Le suivi des demandes de creneau du foyer (OFFRES-FAM-1).
+  static const String tuteurDemandes = '/tuteur/demandes';
+
   /// Vrai quand [chemin] est une **tache focalisee** : sur telephone, la
   /// barre basse s'efface et l'ecran porte son disque retour (manifeste
   /// visuel Tuteur V1 section 4.2 point 5 ; mapping des routes, section 5).
@@ -309,8 +421,8 @@ abstract final class Routes {
   /// adresse, que le rechargement Web garde.
   static const String enseignantATerminer = '$enseignantJournee/a-terminer';
 
-  /// La liste complete des remplacements confirmes de la Journee
-  /// (DASH-ENS-LISTES, ligne DASH-ENS-REMPL) : la Journee en montre trois.
+  /// L'ecran commun des remplacements (REMPL-1) : offres urgentes, vos
+  /// remplacements confirmes (la Journee en montre trois), offres prises.
   static const String enseignantRemplacements =
       '$enseignantJournee/remplacements';
 
@@ -327,6 +439,10 @@ abstract final class Routes {
 
   /// Profil de l'enseignant.
   static const String enseignantProfil = '/enseignant/profil';
+
+  /// Mes revenus (FI-10, guide Finance V4 §4 et §5.5) : l'estimation du mois,
+  /// atteinte depuis le Profil (le Compte de l'enseignant), dans sa branche.
+  static const String enseignantRevenus = '/enseignant/revenus';
 
   // Les quatre routes suivantes ne sont **pas** des destinations de premier
   // niveau : la barre de l'enseignant en tient quatre, Aujourd'hui, Classes,
@@ -346,6 +462,12 @@ abstract final class Routes {
   /// disponibilites, qui vit dans `ENS-06` et non ici : deux grilles de semaine
   /// finiraient par diverger.
   static const String enseignantBienvenue = '/enseignant/bienvenue';
+
+  /// Le contrat a signer de nouveau (Q-2 = a, 05/10/2026) : un enseignant
+  /// actif qui a signe la version 2026-09 y est mene quand la politique de
+  /// controle est publiee (`resignatureContratEnseignantProvider`). Fermee
+  /// le reste du temps (`deciderRedirection`).
+  static const String enseignantContrat = '/enseignant/contrat';
 
   /// Racine des ecrans contextuels d'une seance.
   static const String enseignantSeance = '/enseignant/seance';
@@ -367,6 +489,31 @@ abstract final class Routes {
   /// une anomalie de la Journee.
   static String revuePour(String groupeId) =>
       '$enseignantGroupe/$groupeId/revue';
+
+  /// La publication d'une annonce pour la Classe [groupeId] (COM-ANN,
+  /// spec section 14) : une tache focalisee ouverte depuis l'Espace Classe
+  /// enseignant (`FicheGroupePage`).
+  static String publierAnnoncePour(String groupeId) =>
+      '$enseignantGroupe/$groupeId/annonce';
+
+  /// Les Messages metier de l'enseignant (COM-M01, COM-W01) : une pose,
+  /// Classes reste la destination active.
+  static const String enseignantMessages = '/enseignant/messages';
+
+  /// Un fil des Messages de l'enseignant.
+  static String enseignantFilPour(String filId) => '$enseignantMessages/$filId';
+
+  /// La Communaute enseignants (COM-M02, COM-W02) : un raccourci depuis
+  /// Aujourd'hui (QUESTIONS Q2), jamais une destination.
+  static const String enseignantCommunaute = '/enseignant/communaute';
+
+  /// Une publication de la Communaute.
+  static String enseignantPublicationPour(String publicationId) =>
+      '$enseignantCommunaute/$publicationId';
+
+  /// Les notifications de l'enseignant, ouvertes par la cloche de sa
+  /// coquille : la `NotificationsPage` existante, jamais un second centre.
+  static const String enseignantNotifications = '/enseignant/notifications';
 
   // --- Controleur ---------------------------------------------------------
 
@@ -395,6 +542,10 @@ abstract final class Routes {
       ? controleurEchanges
       : controleurEchangesMission(missionId);
 
+  /// Les notifications du controleur, ouvertes par la cloche de sa coquille.
+  /// Les Echanges restent son seul fil (C13) : aucune route Messages ici.
+  static const String controleurNotifications = '/controleur/notifications';
+
   /// Compte rendu (CTR-03), la sortie de la salle d'observation (P-CTR-03
   /// point 12). Tache focalisee, hors coquille (CT-4).
   static const String controleurCompteRendu = '/controleur/compte-rendu';
@@ -420,6 +571,11 @@ abstract final class Routes {
   /// Domaine Accueil : le centre de commande (`ADM-01`).
   static const String admin = '/admin';
 
+  /// Toutes les alertes ouvertes (`ADM-ALERTES`, ALERTE-1), sous l'Accueil :
+  /// ouverte par la cloche, le bandeau d'alerte urgente et « Voir toutes les
+  /// alertes » du Centre de commande.
+  static const String adminAlertes = '/admin/alertes';
+
   /// Domaine Operations.
   static const String adminOperations = '/admin/operations';
 
@@ -427,12 +583,62 @@ abstract final class Routes {
   /// pivot du 19 septembre 2026 (migration `0017`).
   static const String adminOperationsGroupes = '/admin/operations/groupes';
 
+  /// `ADM-18` : l'Espace de traitement (AD-X, image ADMIN-SHELL-02), file
+  /// reunie des dossiers et des demandes en attente. Racine du domaine
+  /// Operations.
+  static const String adminOperationsTraitement =
+      '/admin/operations/traitement';
+
   /// Attribution manuelle (`ADM-05`), sous Operations.
   static const String adminOperationsAttributions =
       '/admin/operations/attributions';
 
   /// Demandes et regles (`ADM-06`), sous Operations.
   static const String adminOperationsDemandes = '/admin/operations/demandes';
+
+  /// L'Administration des communications (COM-W04), sous Operations
+  /// (QUESTIONS Q4) : jamais un neuvieme domaine. La racine renvoie a son
+  /// premier onglet, Annonces.
+  static const String adminOperationsCommunications =
+      '/admin/operations/communications';
+
+  /// Onglet Annonces de l'Administration des communications.
+  static const String adminCommunicationsAnnonces =
+      '$adminOperationsCommunications/annonces';
+
+  /// Onglet Moderation de l'Administration des communications.
+  static const String adminCommunicationsModeration =
+      '$adminOperationsCommunications/moderation';
+
+  /// Onglet Messages de l'Administration des communications.
+  static const String adminCommunicationsMessages =
+      '$adminOperationsCommunications/messages';
+
+  /// Un fil des Messages, cote administration.
+  static String adminFilPour(String filId) =>
+      '$adminCommunicationsMessages/$filId';
+
+  /// Le Studio (COM-W00, COM-M04) : l'espace de travail interne, reserve a
+  /// l'admin en V1 (QUESTIONS Q1). Ouvert par l'action « Le Studio » de
+  /// l'en-tete de l'`AdminShell`, hors de la coquille admin (sa propre
+  /// navigation, sortie vers [admin]).
+  static const String adminStudio = '/admin/studio';
+
+  /// Racine des canaux du Studio : pas de page a cette adresse.
+  static const String adminStudioCanaux = '$adminStudio/canaux';
+
+  /// Un canal du Studio (COM-W03, COM-M03).
+  static String canalStudioPour(String canalId) =>
+      '$adminStudioCanaux/$canalId';
+
+  /// Les notifications de l'admin, ouvertes par la cloche de l'en-tete de
+  /// l'`AdminShell`.
+  static const String adminNotifications = '/admin/notifications';
+
+  /// OFFRES-ADM-1 : « Classes a ouvrir », les demandes semblables reunies et
+  /// la creation de leur classe, sous Operations.
+  static const String adminOperationsRegroupements =
+      '/admin/operations/regroupements';
 
   /// Domaine Personnes.
   static const String adminPersonnes = '/admin/personnes';
@@ -468,6 +674,15 @@ abstract final class Routes {
 
   /// Controle qualite pedagogique (`ADM-14`), sous Pedagogie.
   static const String adminPedagogieQualite = '/admin/pedagogie/qualite';
+
+  /// Domaine Finance (FI-1b) : racine et onglet « Vue globale » (route
+  /// canonique « Vue d'ensemble » du contrat metier,
+  /// `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_FINANCE_CONFIGURATION.md:68`).
+  static const String adminFinance = '/admin/finance';
+
+  /// Politiques commerciales, onglet de Finance (FI-1b ; revue FI-1a,
+  /// `17_finance/UX_REVIEW_08_FINANCE.md:91`).
+  static const String adminFinancePolitiques = '/admin/finance/politiques';
 
   /// Domaine Configuration -- regles globales du systeme, contrat metier du
   /// 19 septembre 2026 (`docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_FINANCE_CONFIGURATION.md`).
@@ -524,10 +739,199 @@ abstract final class Routes {
   static String entreePour(String jeton) => '$agentEntree?jeton=$jeton';
 
   // --- Comptable ----------------------------------------------------------
+  //
+  // Comptable V1 (CPT-F, spec `REWAYAH_FINANCE_OPERATIONNELLE_COMPTABLE_V1`,
+  // `20_comptable/UX_REVIEW_FINANCE_COMPTABLE_L0.md` §3) : quatre
+  // destinations, Aujourd'hui, Paiements, Tresorerie, Compte (`/compte`,
+  // partage), et des onglets DANS la page pour le second niveau. Toutes les
+  // routes du role vivent sous `/comptable` (`prefixePour`) ; « Recevoir mes
+  // paiements » vit sous `/compte`, ouvert a tout beneficiaire avec compte ;
+  // le delta Direction vit sous `/admin/finance`. Ces constantes sont posees
+  // UNE FOIS par CPT-F et gelees : une voie qui en veut une autre ecrit une
+  // ligne pour CPT-FUS (`20_comptable/02_DECOUPAGE.md`, regle de propriete).
 
-  /// Le role existe dans le modele de donnees, son interface arrive en V1
-  /// avec le module finance (ADR-003).
+  /// La racine du role : Aujourd'hui (FIN-CPT-W01, M01 ecran 1).
   static const String comptable = '/comptable';
+
+  /// Destination Paiements, onglet « A effectuer » (W02, M01 ecran 2).
+  static const String comptablePaiements = '/comptable/paiements';
+
+  /// Le segment fixe du detail d'une obligation payable (W03) : `obligation`
+  /// pour ne jamais entrer en collision avec `contractuels` et
+  /// `beneficiaires`, qui vivent sous le meme prefixe.
+  static const String comptablePaiementsObligation =
+      '/comptable/paiements/obligation';
+
+  /// Le detail d'une obligation payable (W03, M01 ecran 3).
+  static String comptablePaiementObligationPour(String obligationId) =>
+      '$comptablePaiementsObligation/$obligationId';
+
+  /// Onglet « Contractuels » de Paiements (W06).
+  static const String comptableContractuels =
+      '/comptable/paiements/contractuels';
+
+  /// « Nouvelle obligation » (W06), seulement si la capacite
+  /// `creerObligation` est rendue par la source. Une tache focalisee.
+  static const String comptableContractuelsNouvelle =
+      '/comptable/paiements/contractuels/nouvelle';
+
+  /// Le segment fixe du detail d'une obligation de contractuel.
+  static const String comptableContractuelsObligation =
+      '/comptable/paiements/contractuels/obligation';
+
+  /// Le detail d'une obligation de contractuel (W06). « Payer » y ouvre le
+  /// W03 de l'obligation payable, jamais un second tunnel (DR-12).
+  static String comptableContractuelObligationPour(String obligationId) =>
+      '$comptableContractuelsObligation/$obligationId';
+
+  /// Onglet « Beneficiaires » de Paiements (W07, liste).
+  static const String comptableBeneficiaires =
+      '/comptable/paiements/beneficiaires';
+
+  /// Le profil de paiement d'un beneficiaire, vu par le Comptable (W07).
+  static String comptableBeneficiairePour(String beneficiaireId) =>
+      '$comptableBeneficiaires/$beneficiaireId';
+
+  /// Destination Tresorerie, onglet « Coffres » (W04, M02 ecran 1).
+  static const String comptableTresorerie = '/comptable/tresorerie';
+
+  /// Onglet « Encaissements » de Tresorerie (W05, M02 ecran 2).
+  static const String comptableEncaissements =
+      '/comptable/tresorerie/encaissements';
+
+  /// Le detail d'un encaissement (panneau a 1440, page sous 1200).
+  static String comptableEncaissementPour(String encaissementId) =>
+      '$comptableEncaissements/$encaissementId';
+
+  /// Onglet « Rapprochement » de Tresorerie (`ReconciliationWorkspace`).
+  static const String comptableRapprochement =
+      '/comptable/tresorerie/rapprochement';
+
+  /// « Recevoir mes paiements » (spec §17, §38) : la surface personnelle de
+  /// tout beneficiaire avec compte (enseignant, Comptable), sous `/compte`
+  /// comme `/compte/profil`, dans la coquille du role connecte.
+  static const String comptePaiementsRecus = '/compte/paiements-recus';
+
+  /// Le troisieme onglet du domaine Finance de la direction : « Reserve et
+  /// delegation » (spec §37, delta Direction).
+  static const String adminFinanceReserveDelegation =
+      '/admin/finance/reserve-delegation';
+
+  /// Le quatrieme onglet du domaine Finance de la direction : « A valider »
+  /// (decision Q-8 = (a) du 05/10, CPT-VAL-1) : les demandes du Comptable
+  /// qu'une autre personne habilitee valide ou refuse.
+  static const String adminFinanceAValider = '/admin/finance/a-valider';
+
+  /// La coquille du Comptable en demonstration : `?ecran=...&montants=...`.
+  /// Enregistree seulement hors production (`environnementAutoriseDemo`).
+  static const String demoComptable = '/demo/comptable';
+
+  /// Parametre de requete : le filtre d'une liste du Comptable (`?filtre=`),
+  /// valeurs de [filtresPaiementsComptable] pour les paiements.
+  static const String parametreFiltreComptable = 'filtre';
+
+  /// Parametre de requete : le type de beneficiaire (`?type=enseignant` ou
+  /// `?type=contractuel`, [typesBeneficiaireComptable]).
+  static const String parametreTypeComptable = 'type';
+
+  /// Parametre de requete : la Classe, qui reste un filtre et un detail
+  /// analytique, jamais un payout separe (`?classe=`, spec §14.5).
+  static const String parametreClasseComptable = 'classe';
+
+  /// Parametre de requete : l'action ouverte a l'arrivee (`?action=`).
+  static const String parametreActionComptable = 'action';
+
+  /// Parametre de requete : la vue d'Aujourd'hui (`?vue=`).
+  static const String parametreVueComptable = 'vue';
+
+  /// Valeur de `?action=` : ouvrir « Alimenter la Reserve strategique » sur
+  /// la Tresorerie (W04), depuis les Acces rapides d'Aujourd'hui.
+  static const String actionAlimenterReserve = 'alimenter';
+
+  /// Valeur de `?vue=` : la file complete « A traiter » et « Alertes »
+  /// d'Aujourd'hui (le « Voir tout » de M01, DR-10), meme route.
+  static const String vueAttentionComptable = 'attention';
+
+  /// Les filtres de la liste « Paiements a effectuer » (`?filtre=`) : les
+  /// liens d'Aujourd'hui ouvrent la liste deja filtree (spec §5.1, « un
+  /// raccourci ouvre toujours l'ecran canonique »).
+  static const List<String> filtresPaiementsComptable = <String>[
+    'prets',
+    'infos',
+    'verification',
+    'validation',
+    'retard',
+  ];
+
+  /// Les valeurs de `?type=` de la liste des paiements.
+  static const List<String> typesBeneficiaireComptable = <String>[
+    'enseignant',
+    'contractuel',
+  ];
+
+  /// L'adresse de la liste des paiements, filtree : aucun parametre vide.
+  static String comptablePaiementsFiltres({
+    String? filtre,
+    String? type,
+    String? classe,
+  }) => _avecRequete(comptablePaiements, <String, String?>{
+    parametreFiltreComptable: filtre,
+    parametreTypeComptable: type,
+    parametreClasseComptable: classe,
+  });
+
+  /// L'adresse de la liste des encaissements, filtree.
+  static String comptableEncaissementsFiltres({String? filtre}) => _avecRequete(
+    comptableEncaissements,
+    <String, String?>{parametreFiltreComptable: filtre},
+  );
+
+  /// L'adresse des beneficiaires, filtree (`?filtre=infos`, par exemple).
+  static String comptableBeneficiairesFiltres({String? filtre}) => _avecRequete(
+    comptableBeneficiaires,
+    <String, String?>{parametreFiltreComptable: filtre},
+  );
+
+  /// La Tresorerie ouverte sur « Alimenter la Reserve strategique ».
+  static String get comptableTresorerieAlimenter => _avecRequete(
+    comptableTresorerie,
+    <String, String?>{parametreActionComptable: actionAlimenterReserve},
+  );
+
+  /// Aujourd'hui ouvert sur la file complete.
+  static String get comptableAttention => _avecRequete(
+    comptable,
+    <String, String?>{parametreVueComptable: vueAttentionComptable},
+  );
+
+  /// Vrai quand [chemin] est une page de la destination Paiements du
+  /// Comptable (onglet actif, retour des pages de detail).
+  static bool estPaiementsComptable(String chemin) =>
+      chemin == comptablePaiements || chemin.startsWith('$comptablePaiements/');
+
+  /// Vrai quand [chemin] est une page de la destination Tresorerie.
+  static bool estTresorerieComptable(String chemin) =>
+      chemin == comptableTresorerie ||
+      chemin.startsWith('$comptableTresorerie/');
+
+  /// Vrai quand [chemin] est une tache focalisee du Comptable : sur
+  /// telephone, la barre basse s'efface et l'ecran porte son disque retour.
+  /// Seul le formulaire « Nouvelle obligation » en est une : les pages de
+  /// detail (obligation, encaissement, profil de paiement) gardent la barre,
+  /// comme les fiches du tuteur.
+  static bool estTacheFocaliseeComptable(String chemin) =>
+      chemin == comptableContractuelsNouvelle;
+
+  /// [chemin] avec les parametres de [requete] qui ont une valeur non vide ;
+  /// sans aucun, le chemin nu (jamais un `?` orphelin).
+  static String _avecRequete(String chemin, Map<String, String?> requete) {
+    final Map<String, String> pleins = <String, String>{
+      for (final MapEntry<String, String?> e in requete.entries)
+        if (e.value != null && e.value!.isNotEmpty) e.key: e.value!,
+    };
+    if (pleins.isEmpty) return chemin;
+    return Uri(path: chemin, queryParameters: pleins).toString();
+  }
 
   // --- Salle ---------------------------------------------------------------
 
@@ -562,6 +966,14 @@ abstract final class Routes {
   /// `?ecran=...&etat=...&titulaire=femme&vue=conjoint`.
   /// Enregistree seulement hors production (`environnementAutoriseDemo`).
   static const String demoAdulte = '/demo/adulte';
+
+  /// Le domaine Finance en demonstration (FI-1b) : `?ecran=...`.
+  /// Enregistree seulement hors production (`environnementAutoriseDemo`).
+  static const String demoFinance = '/demo/finance';
+
+  /// Les Communications en demonstration (COM-F) : `?voie=...&role=...`.
+  /// Enregistree seulement hors production (`environnementAutoriseDemo`).
+  static const String demoCommunications = '/demo/communications';
 
   // --- Developpement --------------------------------------------------------
 
@@ -639,6 +1051,17 @@ abstract final class Routes {
     connexion,
     bienvenue,
     agentEntree,
+  };
+
+  /// Ou mene la cloche des notifications de la coquille d'un role : la
+  /// `NotificationsPage` existante, sous le prefixe du role. Nul pour un
+  /// role sans cloche (l'eleve, le comptable).
+  static String? notificationsPour(AppRole role) => switch (role) {
+    AppRole.guardian => tuteurNotifications,
+    AppRole.teacher => enseignantNotifications,
+    AppRole.controller => controleurNotifications,
+    AppRole.admin => adminNotifications,
+    AppRole.student || AppRole.accountant => null,
   };
 
   /// La racine de chaque role, ou une redirection renvoie toujours.

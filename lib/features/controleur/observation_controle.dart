@@ -7,7 +7,24 @@
 // `main.dart` ; la demonstration le surcharge.
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart' show StringCharacters;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
+
+/// Le nom d'un eleve tel que le controleur le lit (decision du directeur
+/// C7 = a, 27/09) : le prenom et l'initiale du nom, « Mariam S. ». Une seule
+/// fonction pour la liste de l'observation et pour l'Historique.
+///
+/// [nom] peut etre le nom ou deja son initiale : seule sa premiere lettre
+/// (graphème entier, arabe compris) est gardee, en majuscule, suivie d'un
+/// point. Un nom compose (« Ben Salah », « El-Amrani ») ne donne qu'une
+/// initiale. Sans nom, le prenom seul. Les espaces en trop sont retires.
+String prenomEtInitiale(String prenom, String? nom) {
+  final String p = prenom.trim().replaceAll(RegExp(r'\s+'), ' ');
+  final String n = (nom ?? '').trim();
+  if (n.isEmpty) return p;
+  return '$p ${n.characters.first.toUpperCase()}.';
+}
 
 /// Etape 1 : la nature de l'observation.
 enum NatureObservation {
@@ -57,18 +74,25 @@ enum PersonneConcernee {
   aucun,
 }
 
-/// Un eleve du roster autorise : un identifiant pedagogique et le prenom
-/// seul (C8). Jamais de photo, jamais de nom de famille.
+/// Un eleve du roster autorise : un identifiant pedagogique, le prenom et
+/// l'initiale du nom (decision du directeur C7 = a, 27/09 ; minimum C8).
+/// Jamais de photo, jamais le nom de famille entier.
 @immutable
 class EleveRoster {
   /// Cree l'entree.
-  const EleveRoster({required this.id, required this.prenom});
+  const EleveRoster({required this.id, required this.prenom, this.initialeNom});
 
   /// L'identifiant pedagogique, jamais affiche ni saisi.
   final String id;
 
   /// Le prenom.
   final String prenom;
+
+  /// L'initiale du nom, donnee par le serveur ; nulle s'il n'en donne pas.
+  final String? initialeNom;
+
+  /// Le libelle affiche : « Prenom N. » ([prenomEtInitiale]).
+  String get nomAffiche => prenomEtInitiale(prenom, initialeNom);
 }
 
 /// Une observation complete, prete a joindre au rapport de la visite.
@@ -110,6 +134,10 @@ bool texteObligatoire({
   required NatureObservation? nature,
 }) => important || nature == NatureObservation.interventionAdmin;
 
-/// Le roster autorise de la visite. **Neutre par defaut** : aucun eleve.
-final FutureProvider<List<EleveRoster>> rosterControleProvider =
-    FutureProvider<List<EleveRoster>>((Ref _) async => const <EleveRoster>[]);
+/// Le roster autorise de la visite de la seance donnee, lu PAR SEANCE
+/// (CTRL-SEANCE-1) : l'observation de la Classe A ne propose jamais les
+/// prenoms de la Classe B. **Neutre par defaut** : aucun eleve.
+final FutureProviderFamily<List<EleveRoster>, String> rosterControleProvider =
+    FutureProvider.family<List<EleveRoster>, String>(
+      (Ref _, String _) async => const <EleveRoster>[],
+    );

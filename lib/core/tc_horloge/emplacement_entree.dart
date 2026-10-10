@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+import '../i18n/elision.dart';
+import '../i18n/isolat_bidi.dart';
 import '../i18n/strings.g.dart';
 import '../tc_groupe/libelles_tc_groupe.dart';
 import 'session_clock_vm.dart';
@@ -133,7 +135,11 @@ class EmplacementEntree {
               ? t.classe.entree.coursImminent
               : role == RoleEntree.enseignant
               ? _dansEnseignant(reste)
-              : t.classe.entree.coursDans(duree: duree),
+              // RTL-ISOL-1 : « الدرس بعد 3 h 28 », jamais « h 28 3 ».
+              : phraseAvecValeur(
+                  (String d) => t.classe.entree.coursDans(duree: d),
+                  duree,
+                ),
           annonce: t.classe.entree.annonce.aVenir,
           avisDst: dst,
         );
@@ -175,10 +181,17 @@ class EmplacementEntree {
         detail: tutoiement
             ? (imminent
                   ? t.accessibilite.tutoiement.attenteImminent
-                  : t.accessibilite.tutoiement.attente(duree: duree))
+                  : phraseAvecValeur(
+                      (String d) =>
+                          t.accessibilite.tutoiement.attente(duree: d),
+                      duree,
+                    ))
             : imminent
             ? t.classe.entree.attenteImminent
-            : t.classe.entree.attente(duree: duree),
+            : phraseAvecValeur(
+                (String d) => t.classe.entree.attente(duree: d),
+                duree,
+              ),
         annonce: tutoiement
             ? t.accessibilite.tutoiement.annonceAttente
             : t.classe.entree.annonce.attente,
@@ -210,7 +223,10 @@ class EmplacementEntree {
         nomClasse,
         detail: imminent
             ? t.classe.entree.salleOuverteImminent
-            : t.classe.entree.salleOuverte(duree: duree),
+            : phraseAvecValeur(
+                (String d) => t.classe.entree.salleOuverte(duree: d),
+                duree,
+              ),
         annonce: t.classe.entree.annonce.fenetreOuverte,
         dst: dst,
       ),
@@ -287,7 +303,12 @@ class EmplacementEntree {
           : t.classe.entree.rejoindre,
       libelleLecteur: enseignant
           ? t.enseignant.journee.rejoindreSalleLecteur(classe: nomClasse)
-          : t.classe.entree.rejoindreLecteur(classe: nomClasse),
+          : t.classe.entree.rejoindreLecteur(
+              deClasse: deDevant(
+                nomClasse,
+                cle: 'classe.entree.rejoindreLecteur',
+              ),
+            ),
       detail: detail,
       annonce: annonce,
       avisDst: dst,
@@ -310,11 +331,16 @@ class EmplacementEntree {
 /// (ENSEIGNANT-2026-09-26, E11), et non « Cours dans 1 h 24 ».
 String _dansEnseignant(Duration reste) {
   final int minutes = reste.inMinutes;
+  // DUREE-INSECABLE-1 : la duree ne se scinde jamais sur deux lignes.
   if (minutes < Duration.minutesPerHour) {
-    return t.enseignant.journee.minuteurMinutes(minutes: minutes);
+    return LibellesGroupe.insecable(
+      t.enseignant.journee.minuteurMinutes(minutes: minutes),
+    );
   }
-  return t.enseignant.journee.minuteurHeures(
-    heures: minutes ~/ Duration.minutesPerHour,
-    minutes: (minutes % Duration.minutesPerHour).toString().padLeft(2, '0'),
+  return LibellesGroupe.insecable(
+    t.enseignant.journee.minuteurHeures(
+      heures: minutes ~/ Duration.minutesPerHour,
+      minutes: (minutes % Duration.minutesPerHour).toString().padLeft(2, '0'),
+    ),
   );
 }

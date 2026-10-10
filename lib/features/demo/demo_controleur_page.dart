@@ -19,6 +19,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/mouvement/mouvement.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
@@ -44,6 +45,7 @@ import '../controleur/historique_controleur_page.dart';
 import '../controleur/mission_controle.dart';
 import '../controleur/observation_controle.dart';
 import '../controleur/observation_controle_page.dart';
+import 'classe_demo.dart';
 import 'controleur_demo.dart';
 import 'espaces_controleur_demo.dart';
 import 'historique_controleur_demo.dart';
@@ -103,8 +105,13 @@ List<RouteBase> routesDemoControleur(String environnement) {
               profil: espaces.controleur,
             ),
             ...surchargesEspacesDemo(espaces.enMission()),
+            // Les faits de la visite de demonstration seulement, lus par
+            // seance (CTRL-SEANCE-1).
             faitsVisiteProvider.overrideWith(
-              (Ref _) async => faitsVisiteDemoControleur(),
+              (Ref _, String seance) async =>
+                  seance == visiteDemoControleur().seanceId
+                  ? faitsVisiteDemoControleur()
+                  : null,
             ),
             ..._visitesDemo(),
           ],
@@ -142,7 +149,10 @@ List<RouteBase> routesDemoControleur(String environnement) {
         overrides: <Override>[
           ...surchargesCoquilleControleurDemo(EtatDemoControleur.enDirect),
           rosterControleProvider.overrideWith(
-            (Ref _) async => rosterDemoControleur(),
+            (Ref _, String seance) async =>
+                seance == visiteDemoControleur().seanceId
+                ? rosterDemoControleur()
+                : const <EleveRoster>[],
           ),
           ..._visitesDemo(),
         ],
@@ -189,11 +199,15 @@ List<Override> _visitesDemo() {
   ];
 }
 
-/// Le roster autorise de demonstration : prenom seul (C8), identifiant
-/// pedagogique fictif.
+/// Le roster autorise de demonstration : prenom et initiale du nom
+/// (decision C7 = a), identifiant pedagogique fictif.
 List<EleveRoster> rosterDemoControleur() => <EleveRoster>[
   for (final (int i, String prenom) in DonneesControleurDemo.roster.indexed)
-    EleveRoster(id: 'demo-eleve-$i', prenom: prenom),
+    EleveRoster(
+      id: 'demo-eleve-$i',
+      prenom: prenom,
+      initialeNom: DonneesControleurDemo.initialesNom[prenom],
+    ),
 ];
 
 /// L'observation structuree (CTR-03A) en demonstration.
@@ -222,17 +236,17 @@ class EnvoiCompteRenduDemo implements EnvoiCompteRendu {
 
   @override
   Future<void> transmettreVisite(String seanceId) =>
-      Future<void>.delayed(const Duration(milliseconds: 400));
+      Future<void>.delayed(Mouvement.maximum);
 
   @override
   Future<void> envoyer(String seanceId, ChoixCompteRendu choix) =>
-      Future<void>.delayed(const Duration(milliseconds: 400));
+      Future<void>.delayed(Mouvement.maximum);
 
   @override
   Future<void> envoyerObservation(
     String seanceId,
     ObservationControle observation,
-  ) => Future<void>.delayed(const Duration(milliseconds: 400));
+  ) => Future<void>.delayed(Mouvement.maximum);
 }
 
 /// La salle du controleur en demonstration.
@@ -326,7 +340,7 @@ class EchangesDemo implements PortEchanges {
 
   final List<FilEchange> _fils;
 
-  static const Duration _delai = Duration(milliseconds: 400);
+  static const Duration _delai = Mouvement.maximum;
 
   @override
   Future<List<FilEchange>> fils() async {
@@ -476,6 +490,9 @@ MissionControle? missionDemoControleur(EtatDemoControleur etat) {
     seanceId: m.seanceId,
     classe: m.classe,
     enseignant: '$titre ${m.enseignant}',
+    // ENS-PAYS-1 : l'enseignant observe est celui de la Classe de
+    // demonstration ; son pays vient de la meme source.
+    paysEnseignant: DonneesClasseDemo.enseignant.pays,
     nombreEleves: m.nombreEleves,
     debut: m.debut,
     finPrevue: m.finPrevue,

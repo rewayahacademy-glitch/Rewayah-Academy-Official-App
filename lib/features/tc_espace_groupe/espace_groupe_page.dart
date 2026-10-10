@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/capacites/port_acces_foyer.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
@@ -21,10 +23,12 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../acces_finance/acces_finance.dart';
 import '../tc_catalogue/routes_tc_b.dart';
 import '../tc_mes_groupes/carte_groupe.dart';
 import '../tc_mes_groupes/chemins_tc_a.dart';
 import '../tc_mes_groupes/photo_enseignant.dart';
+import 'bloc_cartes_classe.dart';
 import 'carte_session.dart';
 import 'emplacements_groupe.dart';
 
@@ -99,7 +103,18 @@ class EspaceGroupePage extends ConsumerWidget {
     // la photo, la couleur et la capacite. Un « Mes groupes » en tete
     // repeterait le libelle du chemin de sortie, juste en dessous.
     final String? titreDestination = titre;
-    final Widget corps = LecteurGroupe(
+    // L'acces de l'eleve connecte (FI-9a, revue FI-VAGUE-R R4-01), la meme
+    // regle que son Accueil et Mes groupes : seances fermees, Rejoindre est
+    // retire et la copie neutre le dit, sans cause ni montant ; tant que
+    // l'acces se lit, le bouton reste present et inerte. Lu borne a sa
+    // session : un tuteur ou un enseignant n'a pas de ligne, rien ne change.
+    final AsyncValue<AccesBeneficiaire?> ligneAcces = ref.watch(
+      accesAppelantProvider,
+    );
+    final ({bool ferme, bool enLecture}) acces = rejoindreSelonAcces(
+      ligneAcces,
+    );
+    final Widget lecteur = LecteurGroupe(
       groupeId: groupeId,
       role: role,
       construire: (BuildContext _, LectureGroupe lecture) => _Colonnes(
@@ -109,8 +124,25 @@ class EspaceGroupePage extends ConsumerWidget {
         contenuRoster: contenuRoster,
         tutoiement: tutoiement,
         enPile: enPile,
+        accesFerme: acces.ferme,
+        accesEnLecture: acces.enLecture,
       ),
     );
+    final Widget corps = acces.ferme
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              // L'adulte autonome y revient depuis la salle : sa copie, jamais
+              // celle du tuteur (contre-revue FI-VAGUE-CORR).
+              BandeauAccesFerme(
+                acces: ligneAcces.value,
+                tutoiement: tutoiement,
+              ),
+              Ecart.vLg,
+              lecteur,
+            ],
+          )
+        : lecteur;
     final Widget? basDePage = pied;
     final Widget contenu = basDePage == null
         ? corps
@@ -193,9 +225,15 @@ class LectureGroupe {
   /// La carte de seance CL-4, cablee sur cette lecture. « Rejoindre » est
   /// desactive hors ligne ou sans [onRejoindre]. [tutoiement] : l'eleve
   /// mineur est tutoye (MA4, MA-3).
+  ///
+  /// [accesFerme] : les seances de l'eleve connecte sont fermees (FI-9a),
+  /// Rejoindre est retire ; [accesEnLecture] : son acces se lit encore,
+  /// Rejoindre reste present et inerte (revue FI-VAGUE-R R4-01).
   Widget carte({
     void Function(GroupSummaryVM groupe)? onRejoindre,
     bool tutoiement = false,
+    bool accesFerme = false,
+    bool accesEnLecture = false,
   }) {
     final GroupSummaryVM identite = espace.identite;
     return CarteSession(
@@ -205,7 +243,9 @@ class LectureGroupe {
       lectureEchouee: lectureEchouee,
       onReessayer: onReessayer,
       tutoiement: tutoiement,
-      onRejoindre: horsLigne || onRejoindre == null
+      entreeRetiree: accesFerme,
+      onRejoindre:
+          horsLigne || accesFerme || accesEnLecture || onRejoindre == null
           ? null
           : () => onRejoindre(identite),
     );
@@ -217,6 +257,8 @@ class LectureGroupe {
     void Function(GroupSummaryVM groupe)? onRejoindre,
     bool tutoiement = false,
     bool enPile = false,
+    bool accesFerme = false,
+    bool accesEnLecture = false,
   }) => <Widget>[
     IdentiteGroupe(
       groupe: espace.identite,
@@ -224,9 +266,17 @@ class LectureGroupe {
       // pastille : « Photo a fournir » est une information interne.
       repliInitiales: espace.estCoteFamille,
       enPile: enPile,
+      // MA-DEC-1 (decision A5 = a du 27/09) : en Mode Accessibilite, l'eleve
+      // voit sa progression, pas le nombre de places (il sert la vente).
+      afficherCapacite: !(enPile && espace.role == RoleEspaceGroupe.eleve),
     ),
     Ecart.vXl,
-    carte(onRejoindre: onRejoindre, tutoiement: tutoiement),
+    carte(
+      onRejoindre: onRejoindre,
+      tutoiement: tutoiement,
+      accesFerme: accesFerme,
+      accesEnLecture: accesEnLecture,
+    ),
   ];
 }
 
@@ -348,7 +398,8 @@ class SqueletteGroupe extends StatelessWidget {
 
 /// La page, composee par rangees (revue UX, ajustement n° 2).
 ///
-/// Rangee 1 : [identite + seance | Avant le prochain cours] ; rangee 2 :
+/// Rangee 1 : [identite + seance | Avant le prochain cours, cartes de la
+/// classe] ; rangee 2 :
 /// [bibliotheque | progression].
 class _Colonnes extends StatelessWidget {
   const _Colonnes({
@@ -358,10 +409,14 @@ class _Colonnes extends StatelessWidget {
     this.contenuRoster,
     this.tutoiement = false,
     this.enPile = false,
+    this.accesFerme = false,
+    this.accesEnLecture = false,
   });
 
   final bool tutoiement;
   final bool enPile;
+  final bool accesFerme;
+  final bool accesEnLecture;
   final LectureGroupe lecture;
   final void Function(GroupSummaryVM groupe)? onRejoindre;
   final void Function(GroupSummaryVM groupe)? onReprendreLeCours;
@@ -395,12 +450,20 @@ class _Colonnes extends StatelessWidget {
         onRejoindre: onRejoindre,
         tutoiement: tutoiement,
         enPile: enPile,
+        accesFerme: accesFerme,
+        accesEnLecture: accesEnLecture,
       ),
       if (reprise != null) ...<Widget>[Ecart.vLg, reprise],
     ];
     final Widget avant = EmplacementAvantProchainCours(
       actions: espace.avantProchainCours,
       portBranche: lecture.portTravailBranche,
+    );
+    // CARTES-PERSO-1 : les cartes que l'enseignant compose, sous « Avant le
+    // prochain cours ». La capacite de les modifier vient de leur lecture.
+    final Widget cartes = BlocCartesClasse(
+      groupeId: identite.groupeId,
+      prochaineSeance: identite.prochaineSeance?.debutUtc.toLocal(),
     );
     final Widget bibliotheque = BlocBibliotheque(
       emplacement: espace.bibliotheque,
@@ -420,7 +483,7 @@ class _Colonnes extends StatelessWidget {
 
     return ColonnesParRangees(
       rangees: <(List<Widget>, List<Widget>)>[
-        (identiteEtSeance, <Widget>[avant]),
+        (identiteEtSeance, <Widget>[avant, Ecart.vSection, cartes]),
         (<Widget>[bibliotheque], secondaire),
       ],
     );
@@ -527,7 +590,12 @@ class IdentiteGroupe extends StatelessWidget {
     this.ligneDiscrete,
     this.typePublic,
     this.enPile = false,
+    this.afficherCapacite = true,
   });
+
+  /// Faux : la pastille « N eleves sur M places » n'est pas montree
+  /// (eleve en Mode Accessibilite, decision A5 = a).
+  final bool afficherCapacite;
 
   /// Vrai en Mode Accessibilite (MA-4) : la photo au-dessus, le nom en
   /// dessous sur toute la largeur, qui ne passe a la ligne qu'entre les mots.
@@ -603,17 +671,26 @@ class IdentiteGroupe extends StatelessWidget {
       coursEtNiveau,
       style: palette.inkMuted.applyTo(textes.bodySmall ?? const TextStyle()),
     );
+    final bool aPastilles =
+        afficherCapacite ||
+        (!repliInitiales && groupe.enseignant.photoManquante);
     final Widget pastilles = Wrap(
       spacing: AppSpacing.sm,
       runSpacing: AppSpacing.sm,
       children: <Widget>[
-        StatusPill(
-          libelle: LibellesGroupe.capacitePhrase(
-            membres: groupe.nombreMembres,
-            seuil: groupe.seuilMax,
+        if (afficherCapacite)
+          // COUPE-MOTS-3b : « 3 élèves sur 6 places », jamais « élèves sur 6
+          // places 3 » dans l'interface arabe.
+          StatusPill(
+            libelle: isolerSiAutreSens(
+              LibellesGroupe.capacitePhrase(
+                membres: groupe.nombreMembres,
+                seuil: groupe.seuilMax,
+              ),
+              Directionality.of(context),
+            ),
+            ton: groupe.complet ? TonEtat.avertissement : TonEtat.neutre,
           ),
-          ton: groupe.complet ? TonEtat.avertissement : TonEtat.neutre,
-        ),
         if (!repliInitiales && groupe.enseignant.photoManquante)
           StatusPill(
             libelle: LibellesGroupe.photoManquante,
@@ -644,6 +721,7 @@ class IdentiteGroupe extends StatelessWidget {
                 child: AvatarNom.vertical(
                   prenom: groupe.enseignant.nomAffichage,
                   nom: nomEnseignant,
+                  pays: groupe.enseignant.pays,
                   role: role,
                   diametre: AppAvatar.grand,
                   avatar: photo,
@@ -654,8 +732,7 @@ class IdentiteGroupe extends StatelessWidget {
               Ecart.vMd,
               titre,
               if (coursEtNiveau.isNotEmpty) ...<Widget>[Ecart.vXs, cours],
-              Ecart.vSm,
-              pastilles,
+              if (aPastilles) ...<Widget>[Ecart.vSm, pastilles],
             ],
           )
         : Column(
@@ -668,6 +745,7 @@ class IdentiteGroupe extends StatelessWidget {
               AvatarNom.enLigne(
                 prenom: groupe.enseignant.nomAffichage,
                 nom: nomEnseignant,
+                pays: groupe.enseignant.pays,
                 role: role,
                 diametre: AppAvatar.grand,
                 ecart: AppSpacing.lg,
@@ -675,8 +753,7 @@ class IdentiteGroupe extends StatelessWidget {
                 styleNom: textes.titleSmall,
                 styleRole: styleRole,
               ),
-              Ecart.vSm,
-              pastilles,
+              if (aPastilles) ...<Widget>[Ecart.vSm, pastilles],
             ],
           );
     return MergeSemantics(child: texte);

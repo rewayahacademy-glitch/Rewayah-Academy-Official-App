@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/widgets/page_immersive.dart';
 import 'classe_live_page.dart';
+import 'encre_salle.dart';
 
 /// Les chemins d'Agent E, sous le prefixe reserve `/tc/`.
 ///
@@ -59,7 +60,7 @@ class _ClasseSansContexte extends StatelessWidget {
       child: Text(
         t.tc.classe.attente.refus,
         textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.titleMedium ?? const TextStyle(),
+        style: styleDuFond(context, Theme.of(context).textTheme.titleMedium),
       ),
     ),
   );

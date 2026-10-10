@@ -17,11 +17,13 @@ import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/port_catalogue_classes.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/seance_famille/seance_famille.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
@@ -94,7 +96,7 @@ String _lieu(GoRouter routeur) =>
 
 String get _catalogueA2 => '${Routes.tuteurClassesCatalogue}?eleve=$eleveA2';
 
-/// De la barre basse au catalogue : Accueil, profil « Eleve A2 » (sans
+/// De la barre basse au catalogue : Accueil, profil « Élève A2 » (sans
 /// classe), puis « Choisir une classe ».
 Future<void> _ouvrirLeCatalogue(WidgetTester tester, GoRouter routeur) async {
   await tester.tap(
@@ -109,7 +111,7 @@ Future<void> _ouvrirLeCatalogue(WidgetTester tester, GoRouter routeur) async {
     tester,
     find.descendant(
       of: find.byType(SelecteurProfils),
-      matching: find.text('Eleve A2'),
+      matching: find.text('Élève A2'),
     ),
   );
   await _toucher(tester, find.text(t.classe.catalogue));
@@ -179,10 +181,12 @@ void main() {
       // seances rendues, la phrase honnete reste.
       expect(
         find.text(
-          _c.seanceHebdo(
-            jour: t.commun.dates.jours[1],
-            heure: '18:30',
-            duree: 45,
+          LibellesGroupe.insecable(
+            _c.seanceHebdo(
+              jour: t.commun.dates.jours[1],
+              heure: '18:30',
+              duree: 45,
+            ),
           ),
         ),
         findsOneWidget,
@@ -201,7 +205,7 @@ void main() {
 
       await _toucher(tester, find.text(_c.choisir));
       expect(find.text(_c.confirmerTitre), findsWidgets);
-      expect(find.text(_c.confirmerPhrase(prenom: 'Eleve A2')), findsOneWidget);
+      expect(find.text(_c.confirmerPhrase(prenom: 'Élève A2')), findsOneWidget);
       expect(
         find.text(
           _c.memeEnseignant(
@@ -220,7 +224,7 @@ void main() {
       expect(
         find.text(
           _c.resultat.inscritPhrase(
-            prenom: 'Eleve A2',
+            prenom: 'Élève A2',
             classe: 'Classe fictive B',
           ),
         ),
@@ -245,7 +249,7 @@ void main() {
 
       await _toucher(tester, find.text(_c.rejoindreAttente));
       expect(
-        find.text(_c.confirmerAttentePhrase(prenom: 'Eleve A2')),
+        find.text(_c.confirmerAttentePhrase(prenom: 'Élève A2')),
         findsOneWidget,
       );
       await _toucher(tester, find.text(_c.confirmerAttente));
@@ -281,7 +285,7 @@ void main() {
       await _toucher(tester, find.text(_c.confirmer));
       expect(find.text(_c.resultat.refuseTitre), findsOneWidget);
       expect(
-        find.text(_c.resultat.refusePhrase(prenom: 'Eleve A2')),
+        find.text(_c.resultat.refusePhrase(prenom: 'Élève A2')),
         findsOneWidget,
       );
 
@@ -389,7 +393,10 @@ void main() {
         catalogue: FauxCatalogueClasses(classes: <ClasseOuverte>[]),
       );
       expect(find.text(_c.aucune), findsOneWidget);
-      expect(find.text(_c.aucuneDetail(prenom: 'Eleve A2')), findsOneWidget);
+      expect(
+        find.text(_c.aucuneDetail(dePrenom: deDevant('Élève A2'))),
+        findsOneWidget,
+      );
     });
 
     testWidgets('lecture en echec, puis « Reessayer » relit vraiment', (

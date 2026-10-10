@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
@@ -99,7 +100,9 @@ class GrilleSemaine extends StatelessWidget {
                 SizedBox(
                   width: metriques.cibleTactile,
                   child: Text(
-                    t.enseignant.creneaux.heure(heure: heure),
+                    LibellesGroupe.valeurSeule(
+                      t.enseignant.creneaux.heure(heure: heure),
+                    ),
                     style: textes.bodySmall,
                   ),
                 ),
@@ -206,7 +209,8 @@ class _Case extends StatelessWidget {
       return Semantics(
         enabled: false,
         checked: posee,
-        label: '$jourLong ${t.enseignant.creneaux.heure(heure: heure)}',
+        label:
+            '$jourLong ${LibellesGroupe.insecable(t.enseignant.creneaux.heure(heure: heure))}',
         child: DecoratedBox(
           decoration: _decoration(
             palette,
@@ -229,8 +233,12 @@ class _Case extends StatelessWidget {
       // Le libelle dit l'etat ET ce que le geste fera ; a l'ecran, la coche
       // distingue la case posee sans s'en remettre a la couleur.
       libelleSemantique: posee
-          ? t.disponibilites.cellulePosee(jour: jourLong, heure: '$heure')
-          : t.disponibilites.celluleLibre(jour: jourLong, heure: '$heure'),
+          ? LibellesGroupe.insecable(
+              t.disponibilites.cellulePosee(jour: jourLong, heure: '$heure'),
+            )
+          : LibellesGroupe.insecable(
+              t.disponibilites.celluleLibre(jour: jourLong, heure: '$heure'),
+            ),
       respecterCibleTactile: false,
       arrondiFocus: metriques.arrondiInterieur,
       constructeur: (BuildContext _, EtatPression etat) => DecoratedBox(

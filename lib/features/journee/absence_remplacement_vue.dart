@@ -107,7 +107,7 @@ Future<EtatAbsence?> ouvrirFeuilleAbsence(
       ),
       LigneCleValeur(
         cle: LibellesGroupe.dureeLibelle,
-        valeur: LibellesGroupe.dureeLisible(fin.difference(debut)),
+        valeur: LibellesGroupe.dureeSeule(fin.difference(debut)),
         chiffres: true,
       ),
     ],
@@ -152,7 +152,10 @@ List<LigneCleValeur> lignesRemplacement(
   required String date,
   bool heureLocale = false,
 }) => <LigneCleValeur>[
-  LigneCleValeur(cle: t.enseignant.journee.classe, valeur: offre.classe),
+  LigneCleValeur(
+    cle: t.enseignant.journee.classe,
+    valeur: offre.classeDistincte,
+  ),
   LigneCleValeur(cle: t.enseignant.journee.absence.cleDate, valeur: date),
   LigneCleValeur(
     cle: heureLocale
@@ -166,14 +169,14 @@ List<LigneCleValeur> lignesRemplacement(
   ),
   LigneCleValeur(
     cle: LibellesGroupe.dureeLibelle,
-    valeur: LibellesGroupe.dureeLisible(offre.fin.difference(offre.debut)),
+    valeur: LibellesGroupe.dureeSeule(offre.fin.difference(offre.debut)),
     chiffres: true,
   ),
   LigneCleValeur(
     cle: t.enseignant.journee.eleves,
     valeur: offre.nbEleves == 1
         ? t.enseignant.journee.effectifUn
-        : t.enseignant.journee.effectif(nombre: '${offre.nbEleves}'),
+        : t.enseignant.journee.effectif(nombre: offre.nbEleves),
     chiffres: true,
   ),
 ];
@@ -225,7 +228,7 @@ class CarteRemplacement extends StatelessWidget {
           Semantics(
             header: true,
             child: TexteSansCoupure(
-              offre.classe,
+              offre.classeDistincte,
               style: textes.titleLarge ?? const TextStyle(),
             ),
           ),

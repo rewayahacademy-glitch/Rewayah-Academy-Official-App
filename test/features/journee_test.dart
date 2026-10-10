@@ -25,25 +25,32 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_horloge/emplacement_entree.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
+import 'package:rewayah_academy/core/widgets/grille_bento.dart';
 import 'package:rewayah_academy/core/widgets/pastille_etat_seance.dart';
 import 'package:rewayah_academy/core/widgets/point_rappel.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/features/com_communaute/entree_communaute.dart';
+import 'package:rewayah_academy/features/demo/communications/com_communaute_demo.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
 
 import '../capture/outil_capture.dart'
     show
         capturer,
+        capturerVue,
         chargerPolicesDuDepot,
         fixerVueCapture,
         hoteCapture,
+        masquerRubanDebug,
         sautSansCapture;
 import '../support/aucun_mot_coupe.dart';
 import '../support/garde_interface.dart';
 import '../support/harnais.dart';
+import '../support/hors_ligne_une_fois.dart';
 
 const String _monId = 't1';
 
@@ -196,6 +203,20 @@ List<RouteBase> _routes() => <RouteBase>[
   ),
 ];
 
+/// Un service dont seule la lecture des cahiers en retard echoue.
+class _EnseignantRetardsEnEchec extends FauxServiceEnseignant {
+  @override
+  Future<List<CahierEnRetard>> cahiersEnRetard() async =>
+      throw StateError('cahiers en retard indisponibles');
+}
+
+/// Un service dont seule la lecture des horaires de priere echoue.
+class _PriereEnEchec extends FauxServicePriere {
+  @override
+  Future<ReglagesPriere?> reglages(String enseignantId) async =>
+      throw StateError('horaires de priere indisponibles');
+}
+
 Future<void> _ouvrir(
   WidgetTester tester, {
   FauxServiceEnseignant? enseignant,
@@ -205,19 +226,23 @@ Future<void> _ouvrir(
   FauxServiceReseau? reseau,
   DateTime? maintenant,
   Size taille = const Size(390, 2400),
+  List<Override> autres = const <Override>[],
 }) async {
   _fenetre(tester, taille);
   await tester.pumpWidget(
     hote(
       const JourneePage(),
-      surcharges: _surcharges(
-        enseignant: enseignant,
-        regles: regles,
-        priere: priere,
-        presence: presence,
-        reseau: reseau,
-        maintenant: maintenant,
-      ),
+      surcharges: <Override>[
+        ..._surcharges(
+          enseignant: enseignant,
+          regles: regles,
+          priere: priere,
+          presence: presence,
+          reseau: reseau,
+          maintenant: maintenant,
+        ),
+        ...autres,
+      ],
     ),
   );
   await tester.pumpAndSettle();
@@ -408,6 +433,67 @@ void main() {
     });
   });
 
+  // LIB-ERR-1 : le texte de l'echec partiel dit exactement ce qui a echoue.
+  group('LIB-ERR-1 : echec partiel de la journee', () {
+    final Finder message = find.byKey(
+      const ValueKey<String>('journee-erreur-partielle'),
+    );
+
+    testWidgets('seuls les cahiers en retard echouent : le texte les nomme, '
+        'pas les prieres', (WidgetTester tester) async {
+      await _ouvrir(tester, enseignant: _EnseignantRetardsEnEchec());
+      expect(message, findsOneWidget);
+      expect(
+        tester.widget<Text>(message).data,
+        t.enseignant.journee.erreurPartielleCahiers,
+      );
+      expect(tester.widget<Text>(message).data, contains('cahiers'));
+      expect(tester.widget<Text>(message).data, isNot(contains('prière')));
+      expect(tester.widget<Text>(message).data, isNot(contains('pauses')));
+      expect(
+        find.byKey(
+          const ValueKey<String>('journee-erreur-partielle-reessayer'),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('seuls les horaires de priere echouent : le texte les nomme, '
+        'pas les cahiers', (WidgetTester tester) async {
+      await _ouvrir(tester, priere: _PriereEnEchec());
+      expect(message, findsOneWidget);
+      expect(
+        tester.widget<Text>(message).data,
+        t.enseignant.journee.erreurPartielle,
+      );
+      expect(tester.widget<Text>(message).data, contains('prière'));
+      expect(tester.widget<Text>(message).data, isNot(contains('cahiers')));
+    });
+
+    testWidgets('priere et cahiers echouent : le texte dit les deux', (
+      WidgetTester tester,
+    ) async {
+      await _ouvrir(
+        tester,
+        enseignant: _EnseignantRetardsEnEchec(),
+        priere: _PriereEnEchec(),
+      );
+      expect(
+        tester.widget<Text>(message).data,
+        t.enseignant.journee.erreurPartielleTout,
+      );
+      expect(tester.widget<Text>(message).data, contains('prière'));
+      expect(tester.widget<Text>(message).data, contains('cahiers'));
+    });
+
+    testWidgets('tout est lu : aucun message d echec', (
+      WidgetTester tester,
+    ) async {
+      await _ouvrir(tester);
+      expect(message, findsNothing);
+    });
+  });
+
   group('ENS-02 : la carte « Prochaine seance » (E11, E12)', () {
     testWidgets('peu de donnees : nom, heure, duree, eleves', (
       WidgetTester tester,
@@ -423,10 +509,7 @@ void main() {
         find.text(t.enseignant.journee.plage(debut: '17:30', fin: '18:15')),
         findsWidgets,
       );
-      expect(
-        find.text(t.enseignant.journee.effectif(nombre: '4')),
-        findsWidgets,
-      );
+      expect(find.text(t.enseignant.journee.effectif(nombre: 4)), findsWidgets);
     });
 
     testWidgets('avant la fenetre : le contexte, puis Preparer la seance', (
@@ -1242,4 +1325,330 @@ void main() {
       }
     }
   });
+
+  // COM-F-b (QUESTIONS Q2, 02_DEC-10, K-42) : la ligne « Communaute
+  // enseignants » a son emplacement dans « Ma journee », toujours rendu ;
+  // jamais un cinquieme bloc, jamais dans « Alertes utiles ».
+  group('COM-F-b : l emplacement Communaute, quatre blocs au plus', () {
+    Finder colonneDe(Finder entree) =>
+        find.ancestor(of: entree, matching: find.byType(Column)).first;
+
+    void verifier(WidgetTester tester) {
+      final Finder entree = find.byType(EntreeCommunaute);
+      expect(entree, findsOneWidget);
+      final GrilleBento grille = tester.widget<GrilleBento>(
+        find.byType(GrilleBento),
+      );
+      expect(grille.tuiles.length, lessThanOrEqualTo(4));
+      // Le plus proche parent est la colonne de « Ma journee ».
+      expect(
+        find.descendant(
+          of: colonneDe(entree),
+          matching: find.text(t.enseignant.journee.maJournee),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: colonneDe(entree),
+          matching: find.text(t.enseignant.journee.alertesUtiles),
+        ),
+        findsNothing,
+      );
+      expect(tester.takeException(), isNull);
+    }
+
+    testWidgets('les quatre blocs rendus : toujours quatre, pas cinq', (
+      WidgetTester tester,
+    ) async {
+      await _ouvrir(
+        tester,
+        maintenant: DateTime(2026, 9, 28, 17, 40),
+        enseignant: FauxServiceEnseignant()
+          ..seancesRendues = <SeanceEnseignant>[
+            _anNour(statut: StatutSeance.enCours),
+          ]
+          ..retardsRendus = <CahierEnRetard>[_cahier('a', 'Al-Badr', 26)],
+        presence: FauxServicePresence(
+          lignes: <PresenceParticipant>[
+            _presence(etat: EtatPresence.absente, prenom: 'Maryam'),
+          ],
+        ),
+      );
+      // Les quatre blocs sont bien la, sans quoi « quatre au plus » ne
+      // prouverait rien.
+      expect(find.text(t.enseignant.journee.aTerminer), findsOneWidget);
+      expect(find.text(t.enseignant.journee.alertesUtiles), findsOneWidget);
+      expect(
+        tester.widget<GrilleBento>(find.byType(GrilleBento)).tuiles.length,
+        4,
+      );
+      verifier(tester);
+    });
+
+    testWidgets(
+      'journee vide : l emplacement reste pose (bloc toujours rendu)',
+      (WidgetTester tester) async {
+        await _ouvrir(tester);
+        expect(find.text(t.enseignant.journee.alertesUtiles), findsNothing);
+        verifier(tester);
+      },
+    );
+
+    testWidgets('R-27, production : Communaute fermee, la ligne n est pas '
+        'rendue', (WidgetTester tester) async {
+      await _ouvrir(
+        tester,
+        enseignant: FauxServiceEnseignant()
+          ..seancesRendues = <SeanceEnseignant>[_anNour()],
+      );
+      final Finder entree = find.byType(EntreeCommunaute);
+      expect(entree, findsOneWidget);
+      expect(find.byKey(EntreeCommunaute.cleLien), findsNothing);
+      expect(find.text(t.com.socle.lexique.communaute), findsNothing);
+      expect(tester.getSize(entree).height, 0);
+    });
+
+    testWidgets('remplie par COM-COMU (Communaute ouverte, demonstration) : '
+        'l ecart du socle, puis la ligne', (WidgetTester tester) async {
+      await _ouvrir(
+        tester,
+        enseignant: FauxServiceEnseignant()
+          ..seancesRendues = <SeanceEnseignant>[_anNour()],
+        autres: surchargesCommunauteDemo(SituationDemoCommunaute.nominal),
+      );
+      // La voie COM-COMU remplit l'emplacement : la ligne a une hauteur, et
+      // l'ecart fixe par la page (contrat du socle) la precede.
+      final Finder entree = find.byType(EntreeCommunaute);
+      expect(tester.getSize(entree).height, greaterThan(0));
+      expect(
+        find.descendant(
+          of: entree,
+          matching: find.byKey(EntreeCommunaute.cleLien),
+        ),
+        findsOneWidget,
+      );
+      final EntreeCommunaute widget = tester.widget<EntreeCommunaute>(entree);
+      expect(widget.ecartAvant, same(Ecart.vMd));
+      expect(
+        find.descendant(of: entree, matching: find.byWidget(Ecart.vMd)),
+        findsOneWidget,
+      );
+    });
+  });
+
+  // EA-HL-DOUBLE-1e : l'echec partiel ne redit pas le reseau sous le
+  // bandeau (ni « connexion », ni « reseau », sans exception pour
+  // « connexion instable »), dit une cause probable sans l'affirmer, que les
+  // seances affichees sont a jour, et EXACTEMENT ce qui a echoue : les
+  // cahiers seuls, les prieres et pauses seules, ou tout (repris de
+  // LIB-LOT3-2, revue adverse du 1e).
+  group('Echec partiel : exact et sans redire le reseau (EA-HL-DOUBLE-1e)', () {
+    for (final (String, bool, bool, String Function()) cas
+        in <(String, bool, bool, String Function())>[
+          (
+            'prieres et pauses',
+            true,
+            false,
+            () => t.enseignant.journee.erreurPartielle,
+          ),
+          (
+            'cahiers seuls',
+            false,
+            true,
+            () => t.enseignant.journee.erreurPartielleCahiers,
+          ),
+          ('tout', true, true, () => t.enseignant.journee.erreurPartielleTout),
+        ]) {
+      for (final bool horsLigne in <bool>[true, false]) {
+        testWidgets('${cas.$1}, ${horsLigne ? 'hors ligne' : 'en ligne'}', (
+          WidgetTester tester,
+        ) async {
+          await _ouvrir(
+            tester,
+            priere: cas.$2 ? _PriereEnPanne() : null,
+            reseau: FauxServiceReseau(horsLigneRendu: horsLigne),
+            enseignant: (cas.$3 ? _CahiersEnPanne() : FauxServiceEnseignant())
+              ..seancesRendues = <SeanceEnseignant>[_anNour()],
+          );
+          final Finder phrase = find.byKey(
+            const ValueKey<String>('journee-erreur-partielle'),
+          );
+          expect(phrase, findsOneWidget);
+          final String texte = tester.widget<Text>(phrase).data!;
+          expect(texte, cas.$4());
+          // Ce qui n'a pas echoue n'est pas nomme.
+          expect(texte.contains('prière'), cas.$2, reason: texte);
+          expect(texte.contains('cahiers'), cas.$3, reason: texte);
+          expect(
+            RegExp(
+              'connexion|réseau|internet|service',
+              caseSensitive: false,
+            ).hasMatch(texte),
+            isFalse,
+            reason: texte,
+          );
+          expect(motifHorsLigne.hasMatch(texte), isFalse, reason: texte);
+          expect(texte, contains('il est possible que la demande'));
+          if (horsLigne) {
+            expectHorsLigneUneFois();
+          } else {
+            expect(signauxHorsLigne(), findsNothing);
+          }
+        });
+      }
+    }
+  });
+
+  // EA-HL-DOUBLE-1e : captures de preuve de l'echec partiel de la Journee,
+  // hors ligne (sous le bandeau) et en ligne, 390, 1440, sombre, 320 texte
+  // x2 en LTR et RTL. Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1e', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size, Brightness, double, TextDirection, bool) cas
+        in <(String, Size, Brightness, double, TextDirection, bool)>[
+          (
+            '390_clair',
+            const Size(390, 1400),
+            Brightness.light,
+            1,
+            TextDirection.ltr,
+            true,
+          ),
+          (
+            '390_sombre',
+            const Size(390, 1400),
+            Brightness.dark,
+            1,
+            TextDirection.ltr,
+            true,
+          ),
+          (
+            '320x2_clair',
+            const Size(320, 2600),
+            Brightness.light,
+            2,
+            TextDirection.ltr,
+            true,
+          ),
+          (
+            '320x2_rtl_clair',
+            const Size(320, 2600),
+            Brightness.light,
+            2,
+            TextDirection.rtl,
+            true,
+          ),
+          (
+            '1440_clair',
+            const Size(1440, 1000),
+            Brightness.light,
+            1,
+            TextDirection.ltr,
+            true,
+          ),
+          (
+            '390_en_ligne_clair',
+            const Size(390, 1400),
+            Brightness.light,
+            1,
+            TextDirection.ltr,
+            false,
+          ),
+        ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        _fenetre(tester, cas.$2);
+        await tester.pumpWidget(
+          _hoteCarte(
+            luminosite: cas.$3,
+            echelleTexte: cas.$4,
+            direction: cas.$5,
+            surcharges: _surcharges(
+              priere: _PriereEnPanne(),
+              reseau: FauxServiceReseau(horsLigneRendu: cas.$6),
+              enseignant: FauxServiceEnseignant()
+                ..seancesRendues = <SeanceEnseignant>[_anNour()],
+            ),
+          ),
+        );
+        for (int i = 0; i < 10; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(tester.takeException(), isNull);
+        expect(find.text(t.enseignant.journee.erreurPartielle), findsOneWidget);
+        if (cas.$6) {
+          expectHorsLigneUneFois();
+        }
+        verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1e_journee_partielle_${cas.$1}')}',
+        );
+      });
+    }
+
+    // Les cas « cahiers seuls » et « tout » (revue adverse du 1e), hors
+    // ligne sous le bandeau, a 390 et a 320 texte x2 en LTR et RTL.
+    for (final (String, bool) panne in <(String, bool)>[
+      ('cahiers', false),
+      ('tout', true),
+    ]) {
+      for (final (String, Size, double, TextDirection) cas
+          in <(String, Size, double, TextDirection)>[
+            ('390_clair', const Size(390, 1400), 1, TextDirection.ltr),
+            ('320x2_clair', const Size(320, 2600), 2, TextDirection.ltr),
+            ('320x2_rtl_clair', const Size(320, 2600), 2, TextDirection.rtl),
+          ]) {
+        testWidgets('${panne.$1} ${cas.$1}', (WidgetTester tester) async {
+          _fenetre(tester, cas.$2);
+          await tester.pumpWidget(
+            _hoteCarte(
+              luminosite: Brightness.light,
+              echelleTexte: cas.$3,
+              direction: cas.$4,
+              surcharges: _surcharges(
+                priere: panne.$2 ? _PriereEnPanne() : null,
+                reseau: FauxServiceReseau(horsLigneRendu: true),
+                enseignant: _CahiersEnPanne()
+                  ..seancesRendues = <SeanceEnseignant>[_anNour()],
+              ),
+            ),
+          );
+          for (int i = 0; i < 10; i++) {
+            await tester.pump(const Duration(milliseconds: 100));
+          }
+          expect(tester.takeException(), isNull);
+          expect(
+            find.text(
+              panne.$2
+                  ? t.enseignant.journee.erreurPartielleTout
+                  : t.enseignant.journee.erreurPartielleCahiers,
+            ),
+            findsOneWidget,
+          );
+          expectHorsLigneUneFois();
+          verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'ea_hl_double1e_journee_partielle_${panne.$1}_${cas.$1}')}',
+          );
+        });
+      }
+    }
+  });
+}
+
+/// Les horaires de priere ne se lisent pas : l'echec partiel de la Journee.
+class _PriereEnPanne extends FauxServicePriere {
+  @override
+  Future<ReglagesPriere?> reglages(String enseignantId) async =>
+      throw StateError('lecture des reglages impossible');
+}
+
+/// Les cahiers de transmission en retard ne se lisent pas : l'echec
+/// partiel « cahiers » de la Journee.
+class _CahiersEnPanne extends FauxServiceEnseignant {
+  @override
+  Future<List<CahierEnRetard>> cahiersEnRetard() async =>
+      throw StateError('lecture des cahiers en retard impossible');
+
 }

@@ -25,6 +25,10 @@ import 'package:rewayah_academy/features/controleur/observation_controle_page.da
 import 'package:rewayah_academy/features/demo/controleur_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
 
+import '../../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
+import '../../support/aucun_mot_coupe.dart';
+
 /// Echoue au premier essai de transmission, reussit ensuite.
 class _PortEchecPuisSucces implements EnvoiCompteRendu {
   int essais = 0;
@@ -59,11 +63,13 @@ class _PortTemoin implements EnvoiCompteRendu {
   Future<void> envoyer(String seanceId, ChoixCompteRendu choix) async =>
       envois.add((seanceId, choix));
 
+  final List<String> observations = <String>[];
+
   @override
   Future<void> envoyerObservation(
     String seanceId,
     ObservationControle observation,
-  ) async {}
+  ) async => observations.add(seanceId);
 }
 
 /// La visite A, copiee a l'entree en salle.
@@ -200,7 +206,7 @@ void main() {
     expect(find.textContaining('min de retard'), findsNothing);
     await tester.tap(find.text(r.faits));
     await tester.pumpAndSettle();
-    expect(find.textContaining('3 min de retard'), findsOneWidget);
+    expect(find.textContaining('3\u00A0min de retard'), findsOneWidget);
     expect(find.text(r.enCours), findsOneWidget);
     expect(find.textContaining('Enregistrement'), findsNothing);
 
@@ -488,7 +494,99 @@ void main() {
     });
   }
 
-  testWidgets('Seance inconnue : le message generique, aucune transmission', (
+  // CTRL-RETOUR-1 : l'observation (CTR-03A) part sur la visite de l'adresse
+  // (A), meme quand la mission courante est devenue B.
+  testWidgets('Observation de A, mission courante B : rattachee a A', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final _PortTemoin port = _PortTemoin();
+    final GoRouter routeur = GoRouter(
+      initialLocation: adresseObservation(
+        Routes.controleurObservation,
+        ChoixCompteRendu.ajouterObservation,
+        seanceId: _visiteA.seanceId,
+      ),
+      routes: <RouteBase>[
+        // Le meme constructeur que `app_router.dart`.
+        GoRoute(
+          path: Routes.controleurObservation,
+          builder: (BuildContext _, GoRouterState etat) =>
+              ObservationControlePage(
+                seanceId: etat.uri.queryParameters['seance'],
+                choix: choixObservationDepuis(
+                  etat.uri.queryParameters,
+                  etat.extra,
+                ),
+              ),
+        ),
+      ],
+    );
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: <Override>[
+          missionControleProvider.overrideWith((Ref _) async => _missionB()),
+          visitesObserveesProvider.overrideWith(
+            () => VisitesObservees(<String, CompteRenduEnSuspens>{
+              _visiteA.seanceId: _visiteA,
+            }),
+          ),
+          rosterControleProvider.overrideWith(
+            (Ref _, String _) async => const <EleveRoster>[],
+          ),
+          envoiCompteRenduProvider.overrideWithValue(port),
+        ],
+        child: TranslationProvider(
+          child: MaterialApp.router(
+            theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+            locale: AppLocale.fr.flutterLocale,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            routerConfig: routeur,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    Future<void> toucher(Finder f) async {
+      await tester.ensureVisible(f);
+      await tester.pumpAndSettle();
+      await tester.tap(f);
+      await tester.pumpAndSettle();
+    }
+
+    await toucher(
+      find.byKey(
+        ObservationControlePage.cleNature(NatureObservation.pointPositif),
+      ),
+    );
+    await toucher(find.text(t.commun.continuer).last);
+    await toucher(
+      find.byKey(ObservationControlePage.cleDomaine(DomaineObservation.climat)),
+    );
+    await toucher(find.text(t.commun.continuer).last);
+    await toucher(
+      find.byKey(
+        ObservationControlePage.clePersonne(PersonneConcernee.classeEntiere),
+      ),
+    );
+    await toucher(find.text(t.commun.continuer).last);
+    await tester.enterText(
+      find.byKey(ObservationControlePage.texteKey),
+      'Bonne ambiance.',
+    );
+    await tester.pump();
+    await toucher(find.text(t.commun.continuer).last);
+    await toucher(find.text(t.controleur.compteRendu.envoyer).last);
+
+    expect(port.observations, <String>[_visiteA.seanceId]);
+    expect(find.text(t.controleur.compteRendu.envoyeTitre), findsOneWidget);
+    expect(find.textContaining('Al-Qamar'), findsNothing);
+  });
+
+  testWidgets('Seance inconnue : visite plus en memoire, aucune transmission', (
     WidgetTester tester,
   ) async {
     final _PortTemoin port = _PortTemoin();
@@ -498,7 +596,19 @@ void main() {
       mission: _missionB(),
       seance: 'seance-inconnue',
     );
-    expect(find.text(t.controleur.controle.indisponible), findsOneWidget);
+    // CTRL-MSG-1 (K-59) : la vraie cause, jamais « annulee ou confiee a un
+    // autre controleur ».
+    final String message = t.controleur.compteRendu.visiteInconnue;
+    expect(find.text(message), findsOneWidget);
+    expect(find.text(t.controleur.controle.indisponible), findsNothing);
+    expect(find.textContaining('annulée'), findsNothing);
+    expect(find.textContaining('autre contrôleur'), findsNothing);
+    final String aide = t.controleur.compteRendu.visiteInconnueAide;
+    expect(find.text(aide), findsOneWidget);
+    // CTRL-MSG-2 (m1) : ce que l'ecran ne peut pas confirmer, sans affirmer
+    // d'abord que la visite « reste transmise ».
+    expect(aide, contains('ne peut pas le confirmer'));
+    expect(aide, isNot(contains('reste transmise')));
     expect(port.transmises, isEmpty);
     expect(find.textContaining('Al-Qamar'), findsNothing);
   });
@@ -598,5 +708,67 @@ void main() {
       findsWidgets,
     );
     expect(port.transmises, <String>[_visiteA.seanceId]);
+  });
+
+  // EA-HL-DOUBLE-1e : la transmission de la visite en echec dit la cause
+  // probable sans l'affirmer (K-59), jamais « Rewayah n'a pas repondu ».
+  // 390, 320 texte x2 en LTR et RTL. Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1e', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size, double, TextDirection) cas
+        in <(String, Size, double, TextDirection)>[
+          ('390_clair', const Size(390, 1600), 1, TextDirection.ltr),
+          ('320x2_clair', const Size(320, 3200), 2, TextDirection.ltr),
+          ('320x2_rtl_clair', const Size(320, 3200), 2, TextDirection.rtl),
+        ]) {
+      testWidgets('visite en echec ${cas.$1}', (WidgetTester tester) async {
+        tester.view.physicalSize = cas.$2;
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: <Override>[
+              visitesObserveesProvider.overrideWith(
+                () => VisitesObservees(<String, CompteRenduEnSuspens>{
+                  _visiteA.seanceId: _visiteA,
+                }),
+              ),
+              envoiCompteRenduProvider.overrideWithValue(
+                _PortEchecPuisSucces(),
+              ),
+            ],
+            child: TranslationProvider(
+              child: MaterialApp(
+                theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+                locale: AppLocale.fr.flutterLocale,
+                supportedLocales: AppLocaleUtils.supportedLocales,
+                localizationsDelegates: GlobalMaterialLocalizations.delegates,
+                builder: (BuildContext contexte, Widget? app) => Directionality(
+                  textDirection: cas.$4,
+                  child: MediaQuery(
+                    data: MediaQuery.of(contexte)
+                        .copyWith(textScaler: TextScaler.linear(cas.$3)),
+                    child: app!,
+                  ),
+                ),
+                home: CompteRenduControlePage(seanceId: _visiteA.seanceId),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        final Finder echec = find.text(t.controleur.compteRendu.visiteEchec);
+        expect(echec, findsOneWidget);
+        // Le texte modifie ne coupe aucun mot. Les cartes de choix du compte
+        // rendu coupent des mots a 320 texte x2 (defaut anterieur de
+        // `ChoiceCardGroup`, hors de cette etape, consigne au bilan).
+        verifierAucunMotCoupe(tester, echec);
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1e_controleur_visite_echec_${cas.$1}')}',
+        );
+      });
+    }
   });
 }

@@ -6,9 +6,19 @@
 // moins (Q3 : jetons existants gardes s'ils font au moins 52), animations
 // reduites honorees. Coran : la reprise n'est plus avalee en silence et
 // l'action principale attend son arrivee (revue MA-7).
+//
+// La « cible » mesuree est celle du doigt (MA-11 : « cibles >= 48 » ; revue
+// UX_REVIEW_06 : W-258, AND-48, « cibles reelles mesurees »). D'ordinaire la
+// boite du focus la donne : `Pressable` pose son minimum de 48 (72 en guidee)
+// sous le focus. Un element qui porte sa cible hors de sa boite (le lien
+// « En savoir plus » de la salle, `CibleDebordante`, JUR-APP-1) a une boite
+// de focus serree sur son texte ; il n'est alors accepte que si la zone qui
+// l'active reellement au doigt, mesuree point par point par le test de
+// touche de l'application, fait elle-meme 48 de cote au moins.
 
 import 'dart:async';
 
+import 'package:flutter/gestures.dart' show HitTestEntry;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -68,16 +78,23 @@ Future<int> _parcourir(WidgetTester tester, String ecran) async {
     if (vus.isNotEmpty && identical(focus, vus.first)) break;
     if (vus.contains(focus)) continue;
     vus.add(focus);
-    final Rect zone = focus.rect;
+    Rect zone = focus.rect;
+    if (zone.height < _cibleMin || zone.width < _cibleMin) {
+      zone = _zoneActivable(tester, focus);
+    }
     expect(
       zone.height,
       greaterThanOrEqualTo(_cibleMin),
-      reason: '$ecran : cible clavier ${focus.debugLabel} trop basse $zone',
+      reason:
+          '$ecran : cible clavier ${focus.debugLabel} trop basse $zone '
+          '(boite du focus ${focus.rect})',
     );
     expect(
       zone.width,
       greaterThanOrEqualTo(_cibleMin),
-      reason: '$ecran : cible clavier ${focus.debugLabel} trop etroite $zone',
+      reason:
+          '$ecran : cible clavier ${focus.debugLabel} trop etroite $zone '
+          '(boite du focus ${focus.rect})',
     );
   }
   expect(vus, isNotEmpty, reason: '$ecran : aucun element au clavier');
@@ -94,6 +111,52 @@ Future<int> _parcourir(WidgetTester tester, String ecran) async {
     );
   }
   return vus.length;
+}
+
+/// Un carre de [_cibleMin] de cote, en coordonnees d'ecran, dont chaque
+/// point active reellement [focus] au doigt ; rect vide s'il n'y en a pas.
+///
+/// Mesure, pas lu : le test de touche de l'application est rejoue sur une
+/// grille de 13 x 13 points (bords compris, pas de 4 au plus) ; un point que
+/// prend une autre commande (le chevron Retour, par exemple) ne compte pas.
+/// Les carres essayes sont ceux qui couvrent le centre de la boite du focus,
+/// du plus centre au plus decale, au pas de 4 : la cible doit entourer ce
+/// qu'elle montre.
+Rect _zoneActivable(WidgetTester tester, FocusNode focus) {
+  final RenderObject element = focus.context!.findRenderObject()!;
+  bool active(Offset point) => tester
+      .hitTestOnBinding(point)
+      .path
+      .any((HitTestEntry entree) => identical(entree.target, element));
+  bool pleine(Rect carre) {
+    for (int i = 0; i <= 12; i++) {
+      for (int j = 0; j <= 12; j++) {
+        final Offset point = Offset(
+          carre.left + 0.5 + (carre.width - 1) * i / 12,
+          carre.top + 0.5 + (carre.height - 1) * j / 12,
+        );
+        if (!active(point)) return false;
+      }
+    }
+    return true;
+  }
+
+  final Offset centre = focus.rect.center;
+  final List<double> decalages = <double>[0];
+  for (double d = 4; d < _cibleMin / 2; d += 4) {
+    decalages.addAll(<double>[d, -d]);
+  }
+  for (final double dy in decalages) {
+    for (final double dx in decalages) {
+      final Rect carre = Rect.fromCenter(
+        center: centre + Offset(dx, dy),
+        width: _cibleMin,
+        height: _cibleMin,
+      );
+      if (pleine(carre)) return carre;
+    }
+  }
+  return Rect.fromCenter(center: centre, width: 0, height: 0);
 }
 
 /// Un port dont la reprise attend le test.
@@ -226,24 +289,27 @@ void main() {
   });
 
   group('MA-11 Coran : reprise (revue MA-7)', () {
-    testWidgets('pendant la recherche, message et action non cliquable ; '
-        'puis la reprise arrive', (WidgetTester tester) async {
+    testWidgets('pendant la recherche, « Chargement » et aucune action '
+        '(jamais grisee, K-54) ; puis la reprise arrive', (
+      WidgetTester tester,
+    ) async {
       final _NavigationPilotee port = _NavigationPilotee();
       await tester.pumpWidget(_hote(_coran(port)));
       await tester.pump();
-      expect(find.text(t.accessibilite.coran.repriseRecherche), findsOneWidget);
-      expect(_principale(tester).onPress, isNull);
+      // MA-DEC-1 (A8 = a) : le libelle commun existant, rien d'ajoute.
+      expect(find.text(t.commun.chargement), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('coran-ma-principale')),
+        findsNothing,
+      );
 
       port.reprise.complete(
         const PositionLecture(page: 12, sourate: 2, verset: 77),
       );
       await stabiliser(tester);
-      expect(
-        find.text(t.accessibilite.coran.reprendreDetail(page: '12')),
-        findsOneWidget,
-      );
+      expect(find.text('Tu en étais page 12'), findsOneWidget);
       expect(_principale(tester).onPress, isNotNull);
-      expect(find.text(t.accessibilite.coran.reprendre), findsOneWidget);
+      expect(find.text('Reprendre ta lecture'), findsOneWidget);
     });
 
     for (final bool tu in <bool>[true, false]) {
@@ -263,7 +329,7 @@ void main() {
           findsOneWidget,
         );
         expect(_principale(tester).onPress, isNotNull);
-        expect(find.text(t.accessibilite.coran.ouvrir), findsOneWidget);
+        expect(find.text(t.accessibilite.accueil.lireCoran), findsOneWidget);
       });
     }
 

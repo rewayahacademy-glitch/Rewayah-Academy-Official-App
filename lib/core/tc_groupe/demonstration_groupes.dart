@@ -36,12 +36,13 @@ class GroupesDemonstrationLocale implements PortGroupes {
   static List<GroupSummaryVM> gabarits() => <GroupSummaryVM>[
     const GroupSummaryVM(
       groupeId: GroupesDemonstration.alFatiha,
-      libelle: 'Groupe Al-Fatiha',
+      libelle: 'Classe Al-Fatiha',
       couleurJeton: JetonCouleurGroupe(index: 0, codeStable: 'g04'),
       enseignant: EnseignantVM(
         enseignantId: 'demo-ens-youssouf',
         titre: TitreEnseignant.sayyid,
         nomAffichage: 'Youssouf',
+        pays: 'Guinée',
         photoUrlOuCle: 'demo/photos/youssouf.jpg',
       ),
       nomCours: 'Lecture du Coran',
@@ -56,12 +57,13 @@ class GroupesDemonstrationLocale implements PortGroupes {
     // Photo absente : etat d'erreur explicite, jamais un avatar generique.
     const GroupSummaryVM(
       groupeId: GroupesDemonstration.anNour,
-      libelle: 'Groupe An-Nour',
+      libelle: 'Classe An-Nour',
       couleurJeton: JetonCouleurGroupe(index: 1, codeStable: 'g11'),
       enseignant: EnseignantVM(
         enseignantId: 'demo-ens-amina',
         titre: TitreEnseignant.sayyida,
         nomAffichage: 'Amina',
+        pays: 'Sénégal',
       ),
       nomCours: 'Regles de lecture',
       niveauHumain: 'Niveau 1',
@@ -72,12 +74,13 @@ class GroupesDemonstrationLocale implements PortGroupes {
     ),
     const GroupSummaryVM(
       groupeId: GroupesDemonstration.alIhsan,
-      libelle: 'Groupe Al-Ihsan',
+      libelle: 'Classe Al-Ihsan',
       couleurJeton: JetonCouleurGroupe(index: 6, codeStable: 'g14'),
       enseignant: EnseignantVM(
         enseignantId: 'demo-ens-fatima',
         titre: TitreEnseignant.sayyida,
         nomAffichage: 'Fatima',
+        pays: "Côte d'Ivoire",
         photoUrlOuCle: 'demo/photos/fatima.jpg',
       ),
       nomCours: 'Lecture du Coran',
@@ -89,12 +92,13 @@ class GroupesDemonstrationLocale implements PortGroupes {
     ),
     const GroupSummaryVM(
       groupeId: GroupesDemonstration.alBaqara,
-      libelle: 'Groupe Al-Baqara',
+      libelle: 'Classe Al-Baqara',
       couleurJeton: JetonCouleurGroupe(index: 2, codeStable: 'g21'),
       enseignant: EnseignantVM(
         enseignantId: 'demo-ens-ibrahim',
         titre: TitreEnseignant.sayyid,
         nomAffichage: 'Ibrahim',
+        pays: 'France',
         photoUrlOuCle: 'demo/photos/ibrahim.jpg',
       ),
       nomCours: 'Memorisation',
@@ -106,7 +110,7 @@ class GroupesDemonstrationLocale implements PortGroupes {
     ),
     const GroupSummaryVM(
       groupeId: GroupesDemonstration.alHikma,
-      libelle: 'Groupe Al-Hikma',
+      libelle: 'Classe Al-Hikma',
       couleurJeton: JetonCouleurGroupe(index: 3, codeStable: 'g27'),
       enseignant: EnseignantVM(
         enseignantId: 'demo-ens-khadija',
@@ -123,12 +127,13 @@ class GroupesDemonstrationLocale implements PortGroupes {
     ),
     const GroupSummaryVM(
       groupeId: GroupesDemonstration.arRahma,
-      libelle: 'Groupe Ar-Rahma',
+      libelle: 'Classe Ar-Rahma',
       couleurJeton: JetonCouleurGroupe(index: 4, codeStable: 'g33'),
       enseignant: EnseignantVM(
         enseignantId: 'demo-ens-moussa',
         titre: TitreEnseignant.sayyid,
         nomAffichage: 'Moussa',
+        pays: 'Mali',
         photoUrlOuCle: 'demo/photos/moussa.jpg',
       ),
       nomCours: 'Lecture du Coran',
@@ -142,12 +147,13 @@ class GroupesDemonstrationLocale implements PortGroupes {
     // de creer, et que la base actuelle laisse exactement dans cet etat.
     const GroupSummaryVM(
       groupeId: GroupesDemonstration.sabil,
-      libelle: 'Groupe Sabil',
+      libelle: 'Classe Sabil',
       couleurJeton: JetonCouleurGroupe(index: 5, codeStable: 'g08'),
       enseignant: EnseignantVM(
         enseignantId: 'demo-ens-youssouf',
         titre: TitreEnseignant.sayyid,
         nomAffichage: 'Youssouf',
+        pays: 'Guinée',
         photoUrlOuCle: 'demo/photos/youssouf.jpg',
       ),
       nombreMembres: 0,

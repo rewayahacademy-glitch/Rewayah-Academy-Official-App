@@ -14,7 +14,8 @@
 //
 // Chaque capture mesure aussi, en vraies polices, qu'aucun mot de l'ECRAN
 // ENTIER (chaque Scaffold, plus la navigation) n'est coupe ni tronque ; le
-// rail ne descend jamais sous la taille du theme.
+// rail ne descend jamais sous 0,85 a 100 %, ni sous la taille du theme
+// quand le texte est agrandi.
 //
 // Eleve et famille : aucune capture ici, leurs ecrans d'accueil et la
 // journee appartiennent a la voie Bento (fichiers interdits a ce lot).
@@ -25,121 +26,37 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/accessibilite/texte_sans_coupure.dart'
     show echelleMinimaleLisible;
-import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/core/router/app_router.dart';
-import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_gabarit.dart';
-import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
-import 'package:rewayah_academy/features/demo/controleur_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
-import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
-import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/enseignant_classes/mes_classes_page.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart'
     show maintenantJourneeProvider;
-import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
-import '../fixtures/tuteur/foyers.dart';
-import '../router/support_routeur.dart' hide stabiliser;
-import '../support/aucun_mot_coupe.dart';
-import '../support/harnais.dart';
+import '../support/ecrans_roles.dart';
 import 'outil_capture.dart';
-
-/// Monte [routeur] dans le cadre de capture, a l'echelle et dans le sens
-/// donnes.
-Future<void> _monter(
-  WidgetTester tester, {
-  required GoRouter Function(WidgetRef ref) routeur,
-  required ThemeMode mode,
-  required double echelle,
-  List<Override> surcharges = const <Override>[],
-  String? depart,
-  TextDirection? sens,
-}) async {
-  late GoRouter r;
-  await tester.pumpWidget(
-    ProviderScope(
-      key: UniqueKey(),
-      overrides: surcharges,
-      child: TranslationProvider(
-        child: RepaintBoundary(
-          key: cadreCapture,
-          child: Consumer(
-            builder: (BuildContext context, WidgetRef ref, Widget? _) {
-              r = routeur(ref);
-              return MaterialApp.router(
-                debugShowCheckedModeBanner: false,
-                theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
-                darkTheme: AppTheme.pour(
-                  InterfaceMode.standard,
-                  Brightness.dark,
-                ),
-                themeMode: mode,
-                locale: TranslationProvider.of(context).flutterLocale,
-                supportedLocales: AppLocaleUtils.supportedLocales,
-                localizationsDelegates: GlobalMaterialLocalizations.delegates,
-                routerConfig: r,
-                builder: (BuildContext contexte, Widget? app) {
-                  final Widget echelonne = MediaQuery(
-                    data: MediaQuery.of(contexte)
-                        .copyWith(textScaler: TextScaler.linear(echelle)),
-                    child: app!,
-                  );
-                  return sens == null
-                      ? echelonne
-                      : Directionality(textDirection: sens, child: echelonne);
-                },
-              );
-            },
-          ),
-        ),
-      ),
-    ),
-  );
-  await stabiliser(tester);
-  if (depart != null) {
-    r.go(depart);
-    await stabiliser(tester);
-  }
-}
 
 String _x(double echelle) => 'x${echelle.round()}';
 
-/// L'ecran ENTIER (tout le cadre capture : corps, cartes, legendes, titres,
-/// navigation, salle comprise) : aucun mot coupe ni tronque. Aucune
-/// exception d'ellipse. Seule permission : un nom compose passe a la ligne
-/// APRES son trait d'union (« Classe Al- / Badr »), chaque partie restant
-/// entiere, comme le fait le moteur de texte (question au directeur).
-void _mesurer(WidgetTester tester) {
-  final List<String> fautes = motsCoupes(
-    tester,
-    find.byKey(cadreCapture),
-    traitDUnionPermis: true,
-  );
-  if (fautes.isNotEmpty) debugPrint('FAUTES ${fautes.toSet().join(' | ')}');
-  expect(fautes, isEmpty, reason: 'Un mot coupe ou tronque');
-}
+void _mesurer(WidgetTester tester) => mesurerEcranEntier(tester);
 
 /// Le rail a libelles ne descend jamais sous `echelleMinimaleLisible`
-/// (0,85) : il s'elargirait plutot (relecture COUPE-MOTS-1). En vraies
-/// polices, francais, il garde sa largeur de base (80).
-void _railBorne(WidgetTester tester) {
+/// (0,85) a 100 %, ni sous la taille du theme (1) quand le texte est agrandi :
+/// il s'elargit plutot (revue COUPE-MOTS-1-R M1). En vraies polices,
+/// francais, a 100 %, il garde sa largeur de base (80) ; agrandi, il ne la
+/// garde plus forcement.
+void _railBorne(WidgetTester tester, double echelle) {
   final Finder rail = find.byKey(NavShell.railKey);
   if (rail.evaluate().isEmpty) return;
+  final double plancher = echelle > 1 ? 1 : echelleMinimaleLisible;
   for (final RenderParagraph p in tester.renderObjectList<RenderParagraph>(
     find.descendant(of: rail, matching: find.byType(RichText)),
   )) {
@@ -149,11 +66,17 @@ void _railBorne(WidgetTester tester) {
     );
     expect(
       p.textScaler.scale(1),
-      greaterThanOrEqualTo(echelleMinimaleLisible),
+      greaterThanOrEqualTo(plancher),
       reason: '« ${p.text.toPlainText()} » sous le plancher',
     );
   }
-  expect(tester.getSize(rail).width, AppGabarit.largeurRail);
+  final double largeur = tester.getSize(rail).width;
+  debugPrint('RAIL largeur ${largeur.toStringAsFixed(1)}');
+  if (echelle > 1) {
+    expect(largeur, greaterThanOrEqualTo(AppGabarit.largeurRail));
+  } else {
+    expect(largeur, AppGabarit.largeurRail);
+  }
 }
 
 /// La taille rendue d'un paragraphe (taille du style, a son echelle).
@@ -267,88 +190,28 @@ void main() {
 
     for (final ThemeMode mode in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
       for (final double echelle in <double>[1, 2]) {
-        testWidgets('enseignant 320 ${_x(echelle)} ${mode.name}', (
-          WidgetTester tester,
-        ) async {
-          fixerVueCapture(tester, const Size(320, 700), 2);
-          await _monter(
-            tester,
-            routeur: (WidgetRef _) => GoRouter(
-              initialLocation: adresseDemoEnseignant(
-                EcranDemoEnseignant.classes,
-              ),
-              routes: routesDemoEnseignant('dev'),
-            ),
-            mode: mode,
-            echelle: echelle,
-          );
-          _mesurer(tester);
-          debugPrint(
-            'PNG ${await capturer(tester, 'enseignant_classes_320_${_x(echelle)}_${mode.name}')}',
-          );
-        });
-
-        testWidgets('controleur 320 ${_x(echelle)} ${mode.name}', (
-          WidgetTester tester,
-        ) async {
-          fixerVueCapture(tester, const Size(320, 700), 2);
-          await _monter(
-            tester,
-            routeur: (WidgetRef _) => GoRouter(
-              initialLocation: adresseDemoControleur(
-                EcranDemoControleur.echanges,
-              ),
-              routes: routesDemoControleur('dev'),
-            ),
-            mode: mode,
-            echelle: echelle,
-          );
-          _mesurer(tester);
-          debugPrint(
-            'PNG ${await capturer(tester, 'controleur_echanges_320_${_x(echelle)}_${mode.name}')}',
-          );
-        });
-
-        testWidgets('tuteur 320 ${_x(echelle)} ${mode.name}', (
-          WidgetTester tester,
-        ) async {
-          fixerVueCapture(tester, const Size(320, 700), 2);
-          final FauxServiceAppairage appairage = FauxServiceAppairage()
-            ..elevesRendus = FoyersFictifs.foyerA;
-          await _monter(
-            tester,
-            routeur: (WidgetRef ref) => ref.read(routeurProvider),
-            surcharges: surchargesRouteur(
-              FausseSourceSession(sessionActive(AppRole.guardian)),
-              appairage: appairage,
-            ),
-            depart: Routes.tuteurSuivi,
-            mode: mode,
-            echelle: echelle,
-          );
-          _mesurer(tester);
-          debugPrint(
-            'PNG ${await capturer(tester, 'tuteur_historique_320_${_x(echelle)}_${mode.name}')}',
-          );
-        });
-
-        testWidgets('admin 320 ${_x(echelle)} ${mode.name}', (
-          WidgetTester tester,
-        ) async {
-          fixerVueCapture(tester, const Size(320, 700), 2);
-          await _monter(
-            tester,
-            routeur: (WidgetRef ref) => ref.read(routeurProvider),
-            surcharges: surchargesDemoAdmin(environnement: 'staging'),
-            depart: Routes.adminPersonnesDossiers,
-            mode: mode,
-            echelle: echelle,
-          );
-          _mesurer(tester);
-          debugPrint(
-            'PNG ${await capturer(tester, 'admin_dossiers_320_${_x(echelle)}_${mode.name}')}',
-          );
-        });
+        for (final (String role, String ecran) in <(String, String)>[
+          ('enseignant', 'enseignant_classes'),
+          ('controleur', 'controleur_echanges'),
+          ('tuteur', 'tuteur_historique'),
+          ('admin', 'admin_dossiers'),
+        ]) {
+          testWidgets('$role 320 ${_x(echelle)} ${mode.name}', (
+            WidgetTester tester,
+          ) async {
+            fixerVueCapture(tester, const Size(320, 700), 2);
+            await monterEcranRole(
+              tester,
+              ecranRole(role),
+              mode: mode,
+              echelle: echelle,
+            );
+            _mesurer(tester);
+            debugPrint(
+              'PNG ${await capturer(tester, '${ecran}_320_${_x(echelle)}_${mode.name}')}',
+            );
+          });
+        }
       }
     }
 
@@ -356,113 +219,30 @@ void main() {
       for (final double echelle in <double>[1, 2]) {
         final String suffixe = '${_x(echelle)}_${mode.name}';
 
-        testWidgets('enseignant rail 768 $suffixe', (
-          WidgetTester tester,
-        ) async {
-          fixerVueCapture(tester, const Size(768, 1024), 1);
-          await _monter(
-            tester,
-            routeur: (WidgetRef _) => GoRouter(
-              initialLocation: adresseDemoEnseignant(
-                EcranDemoEnseignant.classes,
-              ),
-              routes: routesDemoEnseignant('dev'),
-            ),
-            mode: mode,
-            echelle: echelle,
-          );
-          _mesurer(tester);
-          _railBorne(tester);
-          debugPrint(
-            'PNG ${await capturer(tester, 'enseignant_rail_768_$suffixe')}',
-          );
-        });
-
-        testWidgets('controleur rail 768 $suffixe', (
-          WidgetTester tester,
-        ) async {
-          fixerVueCapture(tester, const Size(768, 1024), 1);
-          await _monter(
-            tester,
-            routeur: (WidgetRef _) => GoRouter(
-              initialLocation: adresseDemoControleur(
-                EcranDemoControleur.echanges,
-              ),
-              routes: routesDemoControleur('dev'),
-            ),
-            mode: mode,
-            echelle: echelle,
-          );
-          _mesurer(tester);
-          _railBorne(tester);
-          debugPrint(
-            'PNG ${await capturer(tester, 'controleur_rail_768_$suffixe')}',
-          );
-        });
-
-        testWidgets('tuteur barre laterale 1440 $suffixe', (
-          WidgetTester tester,
-        ) async {
-          fixerVueCapture(tester, const Size(1440, 900), 1);
-          final FauxServiceAppairage appairage = FauxServiceAppairage()
-            ..elevesRendus = FoyersFictifs.foyerA;
-          await _monter(
-            tester,
-            routeur: (WidgetRef ref) => ref.read(routeurProvider),
-            surcharges: surchargesRouteur(
-              FausseSourceSession(sessionActive(AppRole.guardian)),
-              appairage: appairage,
-            ),
-            depart: Routes.tuteurSuivi,
-            mode: mode,
-            echelle: echelle,
-          );
-          _mesurer(tester);
-          debugPrint(
-            'PNG ${await capturer(tester, 'tuteur_barre_laterale_1440_$suffixe')}',
-          );
-        });
-
-        testWidgets('admin barre laterale 1440 $suffixe', (
-          WidgetTester tester,
-        ) async {
-          fixerVueCapture(tester, const Size(1440, 900), 1);
-          await _monter(
-            tester,
-            routeur: (WidgetRef ref) => ref.read(routeurProvider),
-            surcharges: surchargesDemoAdmin(environnement: 'staging'),
-            depart: Routes.adminPersonnesDossiers,
-            mode: mode,
-            echelle: echelle,
-          );
-          _mesurer(tester);
-          debugPrint(
-            'PNG ${await capturer(tester, 'admin_barre_laterale_1440_$suffixe')}',
-          );
-        });
-
-        testWidgets('salle « Seance en direct » 320 $suffixe', (
-          WidgetTester tester,
-        ) async {
-          fixerVueCapture(tester, const Size(320, 700), 2);
-          await _monter(
-            tester,
-            routeur: (WidgetRef _) => GoRouter(
-              initialLocation: adresseDemoSalle(
-                RoleSeance.enseignant,
-                EtatDemoSalle.repos,
-              ),
-              routes: routesDemoSalle('dev'),
-            ),
-            mode: mode,
-            echelle: echelle,
-          );
-          _mesurer(tester);
-          _titreSalleAuDessusDuSousTitre(tester);
-          debugPrint(
-            'PNG ${await capturer(tester, 'salle_titre_320_$suffixe')}',
-          );
-        });
+        // Rails a 768 (enseignant, controleur), barres laterales a 1440
+        // (tuteur, administration), titre de la salle a 320.
+        for (final (String role, String nom, Size taille, double densite)
+            in const <(String, String, Size, double)>[
+              ('enseignant', 'enseignant_rail_768', Size(768, 1024), 1),
+              ('controleur', 'controleur_rail_768', Size(768, 1024), 1),
+              ('tuteur', 'tuteur_barre_laterale_1440', Size(1440, 900), 1),
+              ('admin', 'admin_barre_laterale_1440', Size(1440, 900), 1),
+              ('salle', 'salle_titre_320', Size(320, 700), 2),
+            ]) {
+          testWidgets('$nom $suffixe', (WidgetTester tester) async {
+            fixerVueCapture(tester, taille, densite);
+            await monterEcranRole(
+              tester,
+              ecranRole(role),
+              mode: mode,
+              echelle: echelle,
+            );
+            _mesurer(tester);
+            _railBorne(tester, echelle);
+            _titreSalleAuDessusDuSousTitre(tester);
+            debugPrint('PNG ${await capturer(tester, '${nom}_$suffixe')}');
+          });
+        }
       }
     }
   });

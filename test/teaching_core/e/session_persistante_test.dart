@@ -17,7 +17,7 @@ void main() {
   const SessionEnCours cours = SessionEnCours(
     sessionId: 's1',
     groupeId: 'g1',
-    libelleGroupe: 'Groupe Al-Fatiha',
+    libelleGroupe: 'Classe Al-Fatiha',
   );
 
   _Banc monter({
@@ -227,7 +227,7 @@ void main() {
       final SessionEnCours? rendu = await t.controleur.courante();
       expect(rendu, isNotNull);
       expect(rendu!.sessionId, 's1');
-      expect(rendu.libelleGroupe, 'Groupe Al-Fatiha');
+      expect(rendu.libelleGroupe, 'Classe Al-Fatiha');
       expect(rendu.horloge?.restant, const Duration(minutes: 47));
     });
 

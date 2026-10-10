@@ -20,11 +20,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
 import '../../core/mouvement/mouvement.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -32,7 +35,6 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/ecran_resultat.dart';
-import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
@@ -146,7 +148,13 @@ class _CompteRenduControlePageState
       _echec = false;
     });
     try {
-      await ref.read(envoiCompteRenduProvider).envoyer(visite.seanceId, choix);
+      // Un serveur muet ne bloque pas l'ecran (CTRL-DELAI-1, K-59) : passe
+      // le delai maximal, l'envoi est « non confirme », Reessayer et
+      // « Plus tard » redeviennent disponibles.
+      await ref
+          .read(envoiCompteRenduProvider)
+          .envoyer(visite.seanceId, choix)
+          .timeout(AppDelais.requeteMax);
       if (!mounted) return;
       ref.read(compteRenduATerminerProvider.notifier).terminer(visite.seanceId);
       setState(() {
@@ -166,16 +174,14 @@ class _CompteRenduControlePageState
   Widget build(BuildContext context) {
     final CompteRenduEnSuspens? visite = _visite;
     if (visite == null) {
-      // Seance inconnue (rechargement, lien direct) : le message generique,
-      // jamais une autre mission (C7, revue CT-R B1).
-      return PageShell(
-        titre: t.controleur.compteRendu.titre,
-        child: EmptyState(
-          message: t.controleur.controle.indisponible,
-          registre: RegistreVide.subi,
-          libelleAction: t.controleur.compteRendu.revenir,
-          onAction: _revenir,
-        ),
+      // Seance inconnue (rechargement, lien direct) : la visite n'est plus en
+      // memoire, jamais une autre mission (C7, revue CT-R B1). Ni annulation
+      // ni changement de controleur : la vraie cause (CTRL-MSG-1, K-59).
+      return VisiteInconnue(
+        onEcrireAdmin: () => widget.onEcrireAdmin == null
+            ? GoRouter.of(context).go(Routes.controleurEcrireAdmin(null))
+            : widget.onEcrireAdmin!(null),
+        onRevenir: _revenir,
       );
     }
     final String sousTitre = t.controleur.compteRendu.sousTitre(
@@ -235,7 +241,7 @@ class _CompteRenduControlePageState
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                const _FaitsAutomatiques(),
+                _FaitsAutomatiques(seanceId: visite.seanceId),
                 Ecart.vMd,
                 LigneTransmissionVisite(seanceId: visite.seanceId),
                 Ecart.vXxl,
@@ -347,7 +353,10 @@ class _CompteRenduControlePageState
                             // Seul « Rien a signaler » envoie depuis cet
                             // ecran : aucun texte a garder (revue CT-R m1).
                             t.controleur.compteRendu.echecRien,
-                            textAlign: TextAlign.end,
+                            // Au bord de debut, comme tout paragraphe : a
+                            // 320 px, un bord gauche irregulier se lit mal
+                            // (revue C1-CTRL-R m5).
+                            textAlign: TextAlign.start,
                             style: palette.inkStrong.applyTo(
                               textes.bodyMedium ?? const TextStyle(),
                             ),
@@ -362,6 +371,50 @@ class _CompteRenduControlePageState
       ),
     );
   }
+}
+
+/// La visite qui n'est plus en memoire (rechargement, lien direct), sur le
+/// compte rendu comme sur l'observation (C7, CTRL-MSG-1, CTRL-MSG-2).
+///
+/// Jamais une impasse (revue C1-CTRL-R M1, K-59) : la route est sans
+/// coquille, sans barre ni rail, et apres un rechargement l'historique est
+/// vide. L'ecran donne donc lui-meme la suite que son texte annonce :
+/// « Ecrire a l'administration » (la liste des Echanges, la mission n'etant
+/// pas connue) et « Revenir au controle ». `EcranResultat` et non
+/// `EmptyState` : un vide actionnable a deux sorties (manifeste section
+/// 6.3), et `EmptyState` n'en porte qu'une.
+class VisiteInconnue extends StatelessWidget {
+  /// Cree l'ecran.
+  const VisiteInconnue({
+    required this.onEcrireAdmin,
+    required this.onRevenir,
+    super.key,
+  });
+
+  /// L'ouverture des Echanges avec l'administration.
+  final VoidCallback onEcrireAdmin;
+
+  /// Le retour au Controle.
+  final VoidCallback onRevenir;
+
+  /// La cle de « Ecrire a l'administration ».
+  static const Key ecrireAdminKey = ValueKey<String>('ctr03-inconnue-ecrire');
+
+  @override
+  Widget build(BuildContext context) => PageShell(
+    titre: t.controleur.compteRendu.titre,
+    child: EcranResultat(
+      icone: AppIcons.rienAAfficher,
+      ton: TonEtat.neutre,
+      titre: t.controleur.compteRendu.visiteInconnue,
+      phrase: t.controleur.compteRendu.visiteInconnueAide,
+      cleAction: ecrireAdminKey,
+      libelleAction: t.controleur.compteRendu.ecrireAdmin,
+      onAction: onEcrireAdmin,
+      libelleSecondaire: t.controleur.compteRendu.revenir,
+      onSecondaire: onRevenir,
+    ),
+  );
 }
 
 /// « Plus tard » et le bouton dominant : cote a cote au bord de fin sur
@@ -445,7 +498,7 @@ class LigneTransmissionVisite extends ConsumerWidget {
               ),
               Ecart.hSm,
               Expanded(
-                child: Text(
+                child: TexteSansCoupure(
                   texte,
                   style:
                       (etat == TransmissionVisite.echec
@@ -479,7 +532,11 @@ class LigneTransmissionVisite extends ConsumerWidget {
 /// Les faits automatiques de la visite, en lecture seule, replies par
 /// defaut ; les deplier ne quitte pas la page (UX_REVIEW_08 n° 5 a).
 class _FaitsAutomatiques extends ConsumerStatefulWidget {
-  const _FaitsAutomatiques();
+  const _FaitsAutomatiques({required this.seanceId});
+
+  /// La seance de la visite : ses faits, jamais ceux d'une autre Classe
+  /// (CTRL-SEANCE-1).
+  final String seanceId;
 
   @override
   ConsumerState<_FaitsAutomatiques> createState() => _FaitsAutomatiquesState();
@@ -492,7 +549,9 @@ class _FaitsAutomatiquesState extends ConsumerState<_FaitsAutomatiques> {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final AsyncValue<FaitsVisite?> faits = ref.watch(faitsVisiteProvider);
+    final AsyncValue<FaitsVisite?> faits = ref.watch(
+      faitsVisiteProvider(widget.seanceId),
+    );
     final TextStyle doux = palette.inkMuted.applyTo(
       textes.bodyMedium ?? const TextStyle(),
     );
@@ -520,7 +579,7 @@ class _FaitsAutomatiquesState extends ConsumerState<_FaitsAutomatiques> {
                   child: Row(
                     children: <Widget>[
                       Expanded(
-                        child: Text(
+                        child: TexteSansCoupure(
                           t.controleur.compteRendu.faits,
                           style: palette.inkStrong.applyTo(
                             textes.titleMedium ?? const TextStyle(),
@@ -602,12 +661,14 @@ class LignesFaitsVisite extends StatelessWidget {
         LigneCleValeur(
           cle: t.controleur.compteRendu.cleDebutReel,
           // L'ecart est ecrit, jamais porte par la couleur seule (C4).
-          valeur: retard > 0
-              ? t.controleur.compteRendu.debutRetard(
-                  heure: debutReel,
-                  minutes: retard,
-                )
-              : t.controleur.compteRendu.debutALHeure(heure: debutReel),
+          valeur: LibellesGroupe.valeurSeule(
+            retard > 0
+                ? t.controleur.compteRendu.debutRetard(
+                    heure: debutReel,
+                    minutes: retard,
+                  )
+                : t.controleur.compteRendu.debutALHeure(heure: debutReel),
+          ),
           chiffres: true,
         ),
         LigneCleValeur(

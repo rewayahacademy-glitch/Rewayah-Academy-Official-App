@@ -17,6 +17,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
@@ -191,16 +192,16 @@ void main() {
     expect(find.byType(PageEtape), findsOneWidget);
     expect(find.text(t.commun.etape.sur(n: 1, total: 1)), findsOneWidget);
     final a = t.adulte.acceptation;
-    expect(find.text(a.titre(prenom: 'Mamadou')), findsOneWidget);
+    expect(find.text(a.titre(dePrenom: deDevant('Mamadou'))), findsOneWidget);
     for (final String texte in <String>[
-      a.verraTitre(prenom: 'Mamadou'),
+      a.verraTitre(quePrenom: queDevant('Mamadou')),
       a.verraLui,
-      a.verraPasTitre(prenom: 'Mamadou'),
+      a.verraPasTitre(quePrenom: queDevant('Mamadou')),
       a.verraPas,
       a.pourquoiLui(prenom: 'Mamadou'),
-      a.vous(prenom: 'Mamadou'),
+      a.vous(dePrenom: deDevant('Mamadou')),
       a.autres,
-      a.duree(prenom: 'Mamadou'),
+      a.duree(quePrenom: queDevant('Mamadou')),
       a.partir,
       a.refus,
     ]) {
@@ -244,7 +245,7 @@ void main() {
     await taper(tester, find.byKey(InvitationRecuePage.accepterKey));
     // Le titre dit ce qui vient de se passer, comme « Invitation refusee ».
     expect(find.text(a.accepteeTitre), findsOneWidget);
-    expect(find.text(a.rejoint(prenom: 'Mamadou')), findsOneWidget);
+    expect(find.text(a.rejoint(dePrenom: deDevant('Mamadou'))), findsOneWidget);
     expect(find.byKey(InvitationRecuePage.accepterKey), findsNothing);
     // La demonstration ne rend aucune date : aucun recu date invente.
     expect(find.byKey(InvitationRecuePage.recuKey), findsNothing);
@@ -294,7 +295,7 @@ void main() {
       ),
     );
     final a = t.adulte.acceptation;
-    expect(find.text(a.titre(prenom: 'Mariama')), findsOneWidget);
+    expect(find.text(a.titre(dePrenom: deDevant('Mariama'))), findsOneWidget);
     expect(find.text(a.pourquoiElle(prenom: 'Mariama')), findsOneWidget);
     expect(find.text(a.verraElle), findsOneWidget);
     expect(find.text(a.verraLui), findsNothing);
@@ -533,7 +534,7 @@ void main() {
     await tester.pump(latenceSimulee);
     await tester.pumpAndSettle();
     expect(
-      find.text(t.adulte.acceptation.rejoint(prenom: 'Mamadou')),
+      find.text(t.adulte.acceptation.rejoint(dePrenom: deDevant('Mamadou'))),
       findsOneWidget,
     );
   });

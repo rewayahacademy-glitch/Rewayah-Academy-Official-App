@@ -249,8 +249,7 @@ Future<void> _monter(
   await stabiliser(tester);
   routeur.go(etat.route);
   await stabiliser(tester);
-  final Future<void> Function(WidgetTester, FauxLecteurQr?)? geste =
-      etat.geste;
+  final Future<void> Function(WidgetTester, FauxLecteurQr?)? geste = etat.geste;
   if (geste != null) {
     await geste(tester, lecteur);
   }

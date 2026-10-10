@@ -31,6 +31,9 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
+import 'package:rewayah_academy/core/widgets/zone_saisie.dart';
+import 'package:rewayah_academy/features/admin_dossiers/textes_dossier.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
@@ -199,11 +202,26 @@ Future<void> _ouvrirLigne(WidgetTester tester, String prenom) async {
 /// Le champ de motif de 02D, retrouve par son etiquette (plusieurs
 /// `TextField` existent ailleurs dans la coque, K-07 : jamais `byType` seul).
 Finder get _champMotif => find
-    .ancestor(
-      of: find.text(t.dossiers.refus.champ),
+    .descendant(
+      of: find.ancestor(
+        of: find.text(t.dossiers.refus.champ),
+        matching: find.byType(ZoneSaisie),
+      ),
       matching: find.byType(TextField),
     )
     .first;
+
+/// FORM-L1 : le motif libre s'ecrit apres « Autre », derniere puce ; le
+/// champ doit alors exister et recevoir le texte (jamais un `enterText` dans
+/// le vide).
+Future<void> _saisirMotif(WidgetTester tester, String texte) async {
+  await tester.ensureVisible(find.byKey(SelecteurMotif.cleAutre));
+  await _stabiliser(tester);
+  await tester.tap(find.byKey(SelecteurMotif.cleAutre));
+  await _stabiliser(tester);
+  expect(_champMotif, findsOneWidget);
+  await tester.enterText(_champMotif, texte);
+}
 
 Future<void> _versLabel(WidgetTester tester, Finder cible) async {
   await tester.scrollUntilVisible(
@@ -246,7 +264,16 @@ void main() {
           await _versLabel(tester, find.text(t.dossiers.refuser).first);
           await tester.tap(find.text(t.dossiers.refuser).first);
           await _stabiliser(tester);
-          expect(find.text(t.dossiers.refus.champ), findsOneWidget);
+          // FORM-L1 : 02D s'ouvre sur les motifs proposes, « Autre » en
+          // dernier ; le champ libre n'existe qu'apres « Autre ». Le focus est
+          // dans la zone du motif (premiere puce).
+          expect(find.byKey(SelecteurMotif.clePuce(0)), findsOneWidget);
+          expect(find.byKey(SelecteurMotif.cleAutre), findsOneWidget);
+          expect(find.text(t.dossiers.refus.champ), findsNothing);
+          expect(
+            FocusManager.instance.primaryFocus?.debugLabel,
+            SelecteurMotif.focusPremierePuce,
+          );
           debugPrint(
             'PNG ${await capturer(tester, 'ad8_refus_vide_${nom}_${mode.name}')}',
           );
@@ -260,7 +287,7 @@ void main() {
           );
 
           // Saisi : l'erreur disparait.
-          await tester.enterText(_champMotif, 'Photo illisible.');
+          await _saisirMotif(tester, 'Photo illisible.');
           await _stabiliser(tester);
           expect(find.text(t.dossiers.refus.erreurVide), findsNothing);
           debugPrint(
@@ -311,9 +338,7 @@ void main() {
           await _stabiliser(tester);
           expect(find.text(t.dossiers.validation.titre), findsOneWidget);
           expect(
-            find.text(
-              t.dossiers.validation.corpsActivation(nom: 'Omar Haddad'),
-            ),
+            find.text(corpsValidation('Omar Haddad', activation: true)),
             findsOneWidget,
           );
           debugPrint(
@@ -374,7 +399,7 @@ void main() {
             await _versLabel(tester, find.text(t.dossiers.refuser).first);
             await tester.tap(find.text(t.dossiers.refuser).first);
             await _stabiliser(tester);
-            await tester.enterText(_champMotif, 'Photo illisible.');
+            await _saisirMotif(tester, 'Photo illisible.');
             await _stabiliser(tester);
             await tester.tap(find.text(t.dossiers.refuser).last);
             await _stabiliser(tester);
@@ -396,7 +421,7 @@ void main() {
           await _versLabel(tester, find.text(t.dossiers.refuser).first);
           await tester.tap(find.text(t.dossiers.refuser).first);
           await _stabiliser(tester);
-          await tester.enterText(_champMotif, 'Photo illisible.');
+          await _saisirMotif(tester, 'Photo illisible.');
           await _stabiliser(tester);
           await tester.tap(find.text(t.dossiers.refuser).last);
           await _stabiliser(tester);
@@ -417,7 +442,7 @@ void main() {
           await _versLabel(tester, find.text(t.dossiers.refuser).first);
           await tester.tap(find.text(t.dossiers.refuser).first);
           await _stabiliser(tester);
-          await tester.enterText(_champMotif, 'Photo illisible.');
+          await _saisirMotif(tester, 'Photo illisible.');
           await _stabiliser(tester);
           await tester.tap(find.text(t.dossiers.refuser).last);
           await _stabiliser(tester);
@@ -483,7 +508,7 @@ void main() {
           await _versLabel(tester, find.text(t.dossiers.refuser).first);
           await tester.tap(find.text(t.dossiers.refuser).first);
           await _stabiliser(tester);
-          await tester.enterText(_champMotif, 'Photo illisible.');
+          await _saisirMotif(tester, 'Photo illisible.');
           await _stabiliser(tester);
           await tester.tap(find.text(t.dossiers.refuser).last);
           await _stabiliser(tester);
@@ -551,7 +576,7 @@ void main() {
           await _versLabel(tester, find.text(t.dossiers.refuser).first);
           await tester.tap(find.text(t.dossiers.refuser).first);
           await _stabiliser(tester);
-          await tester.enterText(_champMotif, 'Photo illisible.');
+          await _saisirMotif(tester, 'Photo illisible.');
           await _stabiliser(tester);
           debugPrint(
             'PNG ${await capturer(tester, 'ad8_refus_saisi_200_${nom}_${mode.name}')}',

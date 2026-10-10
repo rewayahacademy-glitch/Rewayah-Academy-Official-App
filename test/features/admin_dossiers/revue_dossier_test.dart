@@ -18,10 +18,14 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
+import 'package:rewayah_academy/core/widgets/zone_saisie.dart';
 import 'package:rewayah_academy/features/admin_dossiers/etat_file_dossiers.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
+
+import '../../support/hors_ligne_une_fois.dart';
 
 Future<void> _stabiliser(WidgetTester tester) async {
   for (int i = 0; i < 8; i++) {
@@ -115,6 +119,21 @@ const List<String> _points = <String>[
   "La pièce n'est pas expirée",
 ];
 
+/// Le focus est sur la premiere puce des motifs de 02D.
+void _focusSurPremierePuce(WidgetTester tester) {
+  final FocusNode? focus = FocusManager.instance.primaryFocus;
+  expect(focus?.debugLabel, SelecteurMotif.focusPremierePuce);
+  // Le rectangle du focus est celui de la puce, pas la page entiere.
+  final Rect puce = tester
+      .getRect(find.byKey(SelecteurMotif.clePuce(0)))
+      .inflate(1);
+  expect(
+    puce.contains(focus!.rect.topLeft) && puce.contains(focus.rect.bottomRight),
+    isTrue,
+    reason: '${focus.rect} hors de $puce',
+  );
+}
+
 /// Un Stream qui ne rend jamais rien : le detail reste en chargement.
 Future<DossierPourRevue> _jamais() => Completer<DossierPourRevue>().future;
 
@@ -190,7 +209,8 @@ void main() {
     expect(find.text('Refuser le dossier'), findsOneWidget);
     await _taperTexte(tester, 'Refuser le dossier');
     // AD-8 : le motif est dans 02D (dialogue a 1440), plus en ligne.
-    expect(find.byType(TextField), findsOneWidget);
+    // FORM-L1 : motifs en puces ; le champ s'ouvre par « Autre ».
+    expect(find.byKey(SelecteurMotif.cleAutre), findsOneWidget);
     expect(find.text(t.dossiers.refus.corps), findsOneWidget);
     final ActionPrincipale confirmer = tester.widget<ActionPrincipale>(
       find
@@ -204,7 +224,52 @@ void main() {
     expect(confirmer.pleineLargeur, isFalse);
     // Un seul bouton destructif dans la surface : l'autre est Annuler.
     expect(find.text(t.commun.annuler), findsOneWidget);
-    // 02D s'ouvre sur le champ.
+    // 02D s'ouvre sur la zone du motif (clavier, lecteur d'ecran) : la
+    // premiere puce, sans geste (FORM-L1, contre-epreuve du 08/10).
+    _focusSurPremierePuce(tester);
+
+    // « Refuser » a vide : l'erreur, et le focus revient dans la zone.
+    FocusManager.instance.primaryFocus?.unfocus();
+    await _stabiliser(tester);
+    await tester.tap(find.text('Refuser le dossier').last);
+    await _stabiliser(tester);
+    expect(find.text(t.dossiers.refus.erreurVide), findsOneWidget);
+    _focusSurPremierePuce(tester);
+
+    // Un motif propose, puis Annuler et « Continuer la saisie » : retour
+    // dans la zone du motif.
+    await tester.tap(find.byKey(SelecteurMotif.clePuce(1)));
+    await _stabiliser(tester);
+    await tester.tap(find.text(t.commun.annuler));
+    await _stabiliser(tester);
+    await tester.tap(find.text(t.dossiers.refus.continuerSaisie));
+    await _stabiliser(tester);
+    _focusSurPremierePuce(tester);
+
+    // « Autre » ouvert : c'est le champ qui recoit le focus, a chaque fois.
+    await tester.tap(find.byKey(SelecteurMotif.cleAutre));
+    await _stabiliser(tester);
+    expect(FocusManager.instance.primaryFocus?.debugLabel, 'adm02d-motif');
+    FocusManager.instance.primaryFocus?.unfocus();
+    await _stabiliser(tester);
+    await tester.tap(find.text('Refuser le dossier').last);
+    await _stabiliser(tester);
+    expect(FocusManager.instance.primaryFocus?.debugLabel, 'adm02d-motif');
+    await tester.enterText(
+      find.descendant(
+        of: find.ancestor(
+          of: find.text(t.dossiers.refus.champ),
+          matching: find.byType(ZoneSaisie),
+        ),
+        matching: find.byType(TextField),
+      ),
+      'Photo floue.',
+    );
+    await _stabiliser(tester);
+    await tester.tap(find.text(t.commun.annuler));
+    await _stabiliser(tester);
+    await tester.tap(find.text(t.dossiers.refus.continuerSaisie));
+    await _stabiliser(tester);
     expect(FocusManager.instance.primaryFocus?.debugLabel, 'adm02d-motif');
   });
 
@@ -408,10 +473,9 @@ void main() {
       ],
     );
     await _ouvrirDossiers(tester);
-    expect(
-      find.text('Vous êtes hors ligne. Aucune décision ne peut être envoyée.'),
-      findsOneWidget,
-    );
+    // EA-HL-DOUBLE-1 : le bandeau dit le reseau, la note dit ce qui manque.
+    expect(find.text(t.dossiers.revue.etats.horsLigne), findsOneWidget);
+    expectHorsLigneUneFois();
     expect(find.text('Valider le dossier'), findsNothing);
     expect(find.text('Refuser le dossier'), findsNothing);
     await _taperTexte(tester, t.commun.reessayer);

@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/appairage/service_appairage.dart';
 import '../../core/foyer/selection_eleve.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
@@ -208,7 +209,9 @@ class _Liste extends ConsumerWidget {
       return EtatSysteme(
         nature: NatureEtat.aucunResultat,
         titre: t.historique.seances.videTitre,
-        phrase: t.historique.seances.videPhrase(prenom: eleve.prenom),
+        phrase: t.historique.seances.videPhrase(
+          dePrenom: deDevant(eleve.prenom),
+        ),
       );
     }
 
@@ -285,6 +288,7 @@ class _Liste extends ConsumerWidget {
       meta: plageHoraire(l.seance.debut, l.seance.fin),
       titre: nom,
       sousTitre: enseignantAffiche(l.seance, classe),
+      pays: paysEnseignantAffiche(l.seance, classe),
       statut: statut,
       ton: statutDe(l).ton,
       annulee: statutDe(l) == StatutHistorique.annule,

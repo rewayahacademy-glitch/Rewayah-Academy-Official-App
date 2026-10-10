@@ -1,0 +1,137 @@
+// PUB-1b (reserve 4) : persistance reelle du localStorage dans Chromium.
+// Sert build/web en local, ouvre la racine sans session, passe la
+// presentation par la croix, recharge : la connexion doit s'afficher
+// directement. Contre-epreuve : stockage vide => presentation de nouveau.
+// Langue du navigateur fixee a fr-FR : sans LANG, Chromium headless annonce
+// « en-US@posix », que l'application refuse au demarrage (voir la fiche).
+// Usage : node pub1b_persistance.mjs <dossier build/web> <dossier captures>
+import http from 'node:http';
+import fs from 'node:fs';
+import path from 'node:path';
+import { createRequire } from 'node:module';
+const require = createRequire('/opt/node-tools/node_modules/');
+const { chromium } = require('playwright');
+
+const racine = path.resolve(process.argv[2]);
+const sortie = path.resolve(process.argv[3]);
+fs.mkdirSync(sortie, { recursive: true });
+const types = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript',
+  '.wasm': 'application/wasm', '.json': 'application/json', '.png': 'image/png',
+  '.ttf': 'font/ttf', '.otf': 'font/otf', '.css': 'text/css', '.bin': 'application/octet-stream',
+  '.frag': 'application/octet-stream' };
+const serveur = http.createServer((req, res) => {
+  let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
+  if (p === '/') p = '/index.html';
+  const f = path.join(racine, p);
+  if (!f.startsWith(racine) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) {
+    res.writeHead(404); res.end(); return;
+  }
+  res.writeHead(200, { 'content-type': types[path.extname(f)] ?? 'application/octet-stream' });
+  fs.createReadStream(f).pipe(res);
+});
+await new Promise((r) => serveur.listen(0, '127.0.0.1', r));
+const base = `http://127.0.0.1:${serveur.address().port}`;
+const journal = [];
+const dire = (m) => { journal.push(m); console.log(m); };
+dire(`Serveur local : ${base} (build/web)`);
+
+const navigateur = await chromium.launch();
+dire(`Navigateur : Chromium ${navigateur.version()}`);
+
+async function preparer(contexte) {
+  // CanvasKit est servi depuis le build local au lieu du CDN ; le serveur
+  // Supabase factice et les polices distantes sont refuses (aucune session).
+  await contexte.route('**/*', (route) => {
+    const u = new URL(route.request().url());
+    if (u.host === 'www.gstatic.com' && u.pathname.startsWith('/flutter-canvaskit/')) {
+      const nom = u.pathname.split('/').slice(3).join('/');
+      const f = path.join(racine, 'canvaskit', nom);
+      if (fs.existsSync(f)) return route.fulfill({ path: f, contentType: types[path.extname(f)] });
+      return route.abort();
+    }
+    if (u.origin === base) return route.continue();
+    return route.abort();
+  });
+}
+
+async function attendreRoute(page, fragment, delai = 60000) {
+  const debut = Date.now();
+  while (Date.now() - debut < delai) {
+    if (page.url().includes(fragment)) return true;
+    await page.waitForTimeout(250);
+  }
+  return false;
+}
+
+async function lireVue(page) {
+  return page.evaluate(() => window.localStorage.getItem('presentation.vue'));
+}
+
+let echecs = 0;
+const verifier = (cond, msg) => { dire(`${cond ? 'OK   ' : 'ECHEC'} ${msg}`); if (!cond) echecs++; };
+
+// 1. Premiere visite : la presentation.
+const ctx = await navigateur.newContext({ viewport: { width: 390, height: 844 }, locale: 'fr-FR' });
+await preparer(ctx);
+const page = await ctx.newPage();
+page.on('pageerror', (e) => dire(`  (erreur de page : ${String(e).slice(0, 160)})`));
+await page.goto(`${base}/`);
+verifier(await attendreRoute(page, 'bienvenue'), `1re visite, racine -> ${page.url()}`);
+verifier((await lireVue(page)) === null, `localStorage[presentation.vue] avant la croix = ${await lireVue(page)}`);
+await page.waitForTimeout(1500);
+await page.screenshot({ path: path.join(sortie, 'pw1_premiere_visite_bienvenue.png') });
+
+// 2. La croix, par l'arbre d'accessibilite de Flutter (nom accessible).
+await page.evaluate(() => document.querySelector('flt-semantics-placeholder')?.click());
+await page.waitForTimeout(1000);
+const noms = await page.evaluate(() => [...document.querySelectorAll('[aria-label], [role=button]')]
+  .map((e) => `${e.getAttribute('role') ?? e.tagName}:${e.getAttribute('aria-label') ?? e.textContent}`));
+dire(`  arbre d'accessibilite : ${noms.slice(0, 12).join(' | ')}`);
+const croix = page.getByRole('button', { name: 'Passer la présentation' });
+await croix.waitFor({ timeout: 20000 });
+await croix.click();
+verifier(await attendreRoute(page, 'connexion'), `apres la croix -> ${page.url()}`);
+verifier((await lireVue(page)) === 'oui', `localStorage[presentation.vue] apres la croix = ${await lireVue(page)}`);
+await page.waitForTimeout(1500);
+await page.screenshot({ path: path.join(sortie, 'pw2_apres_croix_connexion.png') });
+
+// 3. Rechargement complet a la racine (nouveau chargement de l'application).
+// Chaque adresse prise par la page est notee : la presentation ne doit
+// jamais apparaitre, meme un instant.
+const historique = [];
+page.on('framenavigated', (f) => { if (f === page.mainFrame()) historique.push(f.url()); });
+await page.goto('about:blank');
+await page.goto(`${base}/`);
+verifier(await attendreRoute(page, 'connexion'), `rechargement, racine -> ${page.url()}`);
+await page.waitForTimeout(3000);
+verifier(!page.url().includes('bienvenue'), `apres 3 s, toujours pas de presentation (${page.url()})`);
+await page.screenshot({ path: path.join(sortie, 'pw3_rechargement_connexion.png') });
+
+// 4. Second rechargement (F5) sur la meme page.
+await page.reload();
+await page.goto(`${base}/`);
+verifier(await attendreRoute(page, 'connexion'), `second rechargement -> ${page.url()}`);
+await page.waitForTimeout(1000);
+dire(`  adresses prises apres la croix : ${historique.join(' , ')}`);
+verifier(!historique.some((u) => u.includes('bienvenue')), 'aucune adresse /bienvenue apres la croix');
+
+// 5. Contre-epreuve : stockage vide => la presentation revient.
+await page.evaluate(() => window.localStorage.removeItem('presentation.vue'));
+await page.goto('about:blank');
+await page.goto(`${base}/`);
+verifier(await attendreRoute(page, 'bienvenue'), `contre-epreuve, stockage vide -> ${page.url()}`);
+await ctx.close();
+
+// 6. Contre-epreuve : nouvel appareil (contexte neuf) => presentation.
+const ctx2 = await navigateur.newContext({ viewport: { width: 390, height: 844 }, locale: 'fr-FR' });
+await preparer(ctx2);
+const page2 = await ctx2.newPage();
+await page2.goto(`${base}/`);
+verifier(await attendreRoute(page2, 'bienvenue'), `nouvel appareil -> ${page2.url()}`);
+await ctx2.close();
+
+await navigateur.close();
+serveur.close();
+dire(echecs === 0 ? 'RESULTAT : PASS (vue une fois, persistance reelle du localStorage)' : `RESULTAT : ${echecs} ECHEC(S)`);
+fs.writeFileSync(path.join(sortie, 'pub1b_persistance_sortie.txt'), journal.join('\n') + '\n');
+process.exit(echecs === 0 ? 0 : 1);

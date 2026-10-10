@@ -32,6 +32,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/capacites/port_recharge_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/finance/suivi_paiement.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
@@ -128,6 +129,14 @@ class _PortRechargeHorsLigne implements PortRechargeFoyer {
     required String recapitulatifId,
     required String cle,
   }) => Future<String>.error(StateError('coupure'));
+
+  @override
+  Future<RecapitulatifRecharge> verifierMontants(List<MontantRecharge> choix) =>
+      Future<RecapitulatifRecharge>.error(StateError('coupure'));
+
+  @override
+  Future<SuiviPaiement> suivre(String commandeId) =>
+      Future<SuiviPaiement>.error(StateError('coupure'));
 }
 
 /// 1. La recharge hors ligne, montee directement : la route de
@@ -143,7 +152,11 @@ Future<void> _capturerRechargeHorsLigne(
   fixerVueCapture(tester, taille, 1);
   await tester.pumpWidget(
     hoteCapture(
-      RechargeFoyerPage(onAbandon: () {}, onTerminee: () {}),
+      RechargeFoyerPage(
+        onAbandon: () {},
+        onTerminee: () {},
+        onPaye: (String _) {},
+      ),
       surcharges: <Override>[
         horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(true)),
         portRechargeFoyerProvider.overrideWithValue(

@@ -91,6 +91,7 @@ class EtatSysteme extends StatelessWidget {
     this.libelleSecondaire,
     this.onSecondaire,
     this.dependance,
+    this.icone,
   });
 
   /// La nature de l'etat.
@@ -122,6 +123,11 @@ class EtatSysteme extends StatelessWidget {
 
   /// L'identifiant de ce qui manque, pour la trace et les tests seulement.
   final String? dependance;
+
+  /// L'icone, si elle doit differer de celle de la nature : le bloc d'une
+  /// page hors ligne qui ne peut rien afficher ne repose pas le « wifi
+  /// barre » que le bandeau porte deja (EA-HL-DOUBLE-1).
+  final AppIcon? icone;
 
   /// Le titre et la phrase par defaut d'une nature.
   static ({String titre, String phrase}) textesPar(NatureEtat nature) {
@@ -241,7 +247,7 @@ class EtatSysteme extends StatelessWidget {
 
     if (portee == PorteeEtat.page) {
       return EcranResultat(
-        icone: iconePar(nature),
+        icone: icone ?? iconePar(nature),
         titre: titreRendu,
         phrase: phraseRendue,
         ton: tonPar(nature),
@@ -253,7 +259,7 @@ class EtatSysteme extends StatelessWidget {
       );
     }
     return _Bloc(
-      icone: iconePar(nature),
+      icone: icone ?? iconePar(nature),
       ton: tonPar(nature),
       titre: titreRendu,
       phrase: phraseRendue,
@@ -324,7 +330,7 @@ class _Bloc extends StatelessWidget {
           // DASH-MA-PROD (lecon 8) : a texte agrandi (au-dela de 130 %), le
           // medaillon passe AU-DESSUS du texte, qui garde toute la largeur
           // de la carte (« connexi / on » a 320 px x2 sinon).
-          empile: MediaQuery.textScalerOf(context).scale(1) > 1.3,
+          empile: MediaQuery.textScalerOf(context).scale(1) > seuilTexteEmpile,
         ),
       ),
     );

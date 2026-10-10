@@ -205,8 +205,39 @@ List<Destination> destinationsPour({
         chemin: Routes.compte,
       ),
     ],
-    // Le comptable est hors de l'arborescence en MVP-0 (ADR-003).
-    //
+    // **Aujourd'hui, Paiements, Tresorerie, Compte**, dans cet ordre et sur
+    // tous les formats (Comptable V1, CPT-F ; spec Finance operationnelle
+    // §45 « bottom navigation reelle » ; `UX_REVIEW_FINANCE_COMPTABLE_L0.md`
+    // §3, DR-01). Les planches montraient une barre de 7 a 10 entrees : le
+    // depot n'en admet que quatre, le second niveau (A effectuer,
+    // Contractuels, Beneficiaires ; Coffres, Encaissements, Rapprochement)
+    // vit en onglets dans la page (`navigation_comptable.dart`). Les trois
+    // premieres sont les branches de la coquille comptable dans
+    // `app_router.dart`, dans le meme ordre ; Compte est `/compte`, partage,
+    // rejoint par `go`. ADR-003 (« hors de l'arborescence en MVP-0 ») est
+    // remplace par la spec du 04/10/2026.
+    AppRole.accountant => <Destination>[
+      Destination(
+        libelle: t.comptable.nav.aujourdhui,
+        icone: AppIcons.journee,
+        chemin: Routes.comptable,
+      ),
+      Destination(
+        libelle: t.comptable.nav.paiements,
+        icone: AppIcons.paiements,
+        chemin: Routes.comptablePaiements,
+      ),
+      Destination(
+        libelle: t.comptable.nav.tresorerie,
+        icone: AppIcons.coffre,
+        chemin: Routes.comptableTresorerie,
+      ),
+      Destination(
+        libelle: t.comptable.nav.compte,
+        icone: AppIcons.profil,
+        chemin: Routes.compte,
+      ),
+    ],
     // **L'admin n'en tient plus aucune ici depuis le lot IA-01** (19 septembre
     // 2026) : l'operateur a impose une architecture a huit domaines, au dela
     // de ce que `maxDestinations` peut rendre en barre physique. L'admin a
@@ -214,7 +245,7 @@ List<Destination> destinationsPour({
     // (`lib/core/widgets/admin_shell.dart`, `lib/core/admin/admin_domaine.dart`),
     // qui ne partage pas cette limite de quatre : elle est nee pour un role a
     // barre courte, et huit domaines en feraient un menu si on les y forcait.
-    AppRole.accountant || AppRole.admin => const <Destination>[],
+    AppRole.admin => const <Destination>[],
   };
 
   final List<Destination> destinations = mode == InterfaceMode.enfant
@@ -573,23 +604,18 @@ class _BarreFlottante extends StatelessWidget {
       child: SafeArea(
         top: false,
         minimum: const EdgeInsets.only(bottom: AppSpacing.md),
-        child: LayoutBuilder(
-          builder: (BuildContext contexte, BoxConstraints c) {
-            // INTEG-RC-1 : quatre onglets a 320 dont chaque mot garde ses 4
-            // de chaque cote (MA-NAV-1) ne laissent plus de place a la marge
-            // laterale ; elle tombe alors a zero, et seulement alors.
-            double margeGuide = serre ? AppSpacing.xs : AppSpacing.sm;
-            if (guide && serre && c.maxWidth.isFinite) {
-              final double besoin =
-                  _minimumsOnglets(
-                    contexte,
-                    metriques,
-                  ).fold<double>(0, (double a, double b) => a + b) +
-                  ecart * (destinations.length - 1);
-              if (c.maxWidth - 2 * margeGuide < besoin) margeGuide = 0;
-            }
-            return _cadre(contexte, palette, metriques, margeGuide, ecart);
-          },
+        // INTEG-MINEURS-1 : la marge laterale ne tombe jamais a zero (la barre
+        // touchait les deux bords a 320). Quand les minimums des onglets ne
+        // tiennent plus dans ce qui reste, ce sont les onglets qui prennent des
+        // parts egales (`_largeursOnglets` rend nul), pas la marge qui cede.
+        child: Builder(
+          builder: (BuildContext contexte) => _cadre(
+            contexte,
+            palette,
+            metriques,
+            serre ? AppSpacing.xs : AppSpacing.sm,
+            ecart,
+          ),
         ),
       ),
     );
@@ -648,65 +674,8 @@ class _BarreFlottante extends StatelessWidget {
                     child: MediaQuery.withClampedTextScaling(
                       maxScaleFactor: NavShell.echelleTexteMaxGuide,
                       child: LayoutBuilder(
-                        builder: (BuildContext contexte, BoxConstraints c) {
-                          final double disponible =
-                              c.maxWidth - ecart * (destinations.length - 1);
-                          final List<double>? largeurs = _largeursOnglets(
-                            _minimumsOnglets(contexte, metriques),
-                            disponible,
-                          );
-                          // COUPE-MOTS-1 point 6 : une seule echelle pour les
-                          // quatre libelles, celle du plus contraint ; plus
-                          // un onglet reduit et son voisin non.
-                          final TextScaler commune = echelleCommuneSansCoupure(
-                            contexte,
-                            textes: <String>[
-                              for (final Destination d in destinations)
-                                d.libelle,
-                            ],
-                            largeurs: <double>[
-                              for (int i = 0; i < destinations.length; i++)
-                                (largeurs == null
-                                        ? disponible / destinations.length
-                                        : largeurs[i]) -
-                                    2 * AppSpacing.xs,
-                            ],
-                            style: AppTypography.graisse(
-                              Theme.of(contexte).textTheme.labelLarge ??
-                                  const TextStyle(),
-                              FontWeight.w700,
-                            ),
-                          );
-                          return MediaQuery(
-                            data: MediaQuery.of(contexte)
-                                .copyWith(textScaler: commune),
-                            child: IntrinsicHeight(
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: <Widget>[
-                                  for (
-                                    int i = 0;
-                                    i < destinations.length;
-                                    i++
-                                  ) ...<Widget>[
-                                    if (i > 0) SizedBox(width: ecart),
-                                    _part(
-                                      largeurs == null ||
-                                              i == destinations.length - 1
-                                          ? null
-                                          : largeurs[i],
-                                      _OngletBarreGuide(
-                                        destination: destinations[i],
-                                        actif: i == indexActif,
-                                        onAller: onAller,
-                                      ),
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ),
-                          );
-                        },
+                        builder: (BuildContext contexte, BoxConstraints c) =>
+                            _rangeesGuide(contexte, metriques, c, ecart),
                       ),
                     ),
                   )
@@ -792,6 +761,124 @@ class _BarreFlottante extends StatelessWidget {
     );
   }
 
+  /// Les onglets du Mode Accessibilite dans [c] (ecart [ecart]).
+  ///
+  /// COUPE-MOTS-4 (decide par delegation le 09/10) : a 320 en texte x2,
+  /// l'echelle commune des libelles ne descendait jamais sous 1, et quatre
+  /// onglets ne laissaient pas a « Historique » ou « Disponibilités » leur
+  /// largeur : « Historiq / ue », « Contrôl / e », « Échang / es ». Dans
+  /// l'ordre, et seulement si le cas precedent ne suffit pas :
+  ///
+  /// 1. une rangee, chaque onglet recevant son mot le plus long a l'echelle
+  ///    de l'appareil (au plus 1) ;
+  /// 2. une rangee, l'echelle reduite jusqu'a [echelleMinimaleLisible]
+  ///    (reduction bornee, comme la barre standard) ;
+  /// 3. deux rangees de deux onglets : la barre grandit, chaque onglet a la
+  ///    moitie de la largeur. Toutes les destinations restent visibles
+  ///    (pas de defilement, qui en cacherait une a l'utilisateur guide).
+  Widget _rangeesGuide(
+    BuildContext contexte,
+    AppMetriques metriques,
+    BoxConstraints c,
+    double ecart,
+  ) {
+    final int n = destinations.length;
+    final double disponible = c.maxWidth - ecart * (n - 1);
+    final double facteur = MediaQuery.textScalerOf(contexte).scale(1);
+    double somme(List<double> l) =>
+        l.fold<double>(0, (double a, double b) => a + b);
+    List<double>? largeurs = _largeursOnglets(
+      _minimumsOnglets(contexte, metriques),
+      disponible,
+    );
+    if (largeurs == null && facteur > echelleMinimaleLisible) {
+      final List<double> reduits = _minimumsOnglets(
+        contexte,
+        metriques,
+        echelle: echelleMinimaleLisible,
+      );
+      if (somme(reduits) <= disponible) {
+        largeurs = _largeursOnglets(reduits, disponible);
+      }
+    }
+    // Parts egales (minimums de cible tactile trop larges ensemble) : la
+    // rangee unique reste, tant que chaque mot y tient a l'echelle reduite.
+    final TextStyle styleMot = DefaultTextStyle.of(contexte).style.merge(
+      AppTypography.graisse(
+        Theme.of(contexte).textTheme.labelLarge ?? const TextStyle(),
+        FontWeight.w700,
+      ),
+    );
+    final bool motsTiennentEnParts = destinations.every(
+      (Destination d) =>
+          _motLePlusLong(
+            contexte,
+            d.libelle,
+            styleMot,
+            const TextScaler.linear(echelleMinimaleLisible),
+          ) <=
+          disponible / n - 2 * AppSpacing.xs,
+    );
+    final bool deuxRangees =
+        largeurs == null &&
+        !motsTiennentEnParts &&
+        n > 2 &&
+        disponible.isFinite;
+    final int parRangee = deuxRangees ? (n + 1) ~/ 2 : n;
+    final double largeurDeux =
+        (c.maxWidth - ecart * (parRangee - 1)) / parRangee;
+    // COUPE-MOTS-1 point 6 : une seule echelle pour les libelles, celle du
+    // plus contraint ; plus un onglet reduit et son voisin non.
+    final TextScaler commune = echelleCommuneSansCoupure(
+      contexte,
+      textes: <String>[for (final Destination d in destinations) d.libelle],
+      largeurs: <double>[
+        for (int i = 0; i < n; i++)
+          (deuxRangees
+                  ? largeurDeux
+                  : largeurs == null
+                  ? disponible / n
+                  : largeurs[i]) -
+              2 * AppSpacing.xs,
+      ],
+      style: AppTypography.graisse(
+        Theme.of(contexte).textTheme.labelLarge ?? const TextStyle(),
+        FontWeight.w700,
+      ),
+      plancher: echelleMinimaleLisible,
+    );
+    Widget onglet(int i) => _OngletBarreGuide(
+      destination: destinations[i],
+      actif: i == indexActif,
+      onAller: onAller,
+    );
+    Widget rangee(int debut, int fin, List<double>? parts) => IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          for (int i = debut; i < fin; i++) ...<Widget>[
+            if (i > debut) SizedBox(width: ecart),
+            _part(parts == null || i == fin - 1 ? null : parts[i], onglet(i)),
+          ],
+        ],
+      ),
+    );
+    return MediaQuery(
+      data: MediaQuery.of(contexte).copyWith(textScaler: commune),
+      child: deuxRangees
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                rangee(0, parRangee, null),
+                SizedBox(height: ecart),
+                rangee(parRangee, n, null),
+              ],
+            )
+          : rangee(0, n, largeurs),
+    );
+  }
+
   /// Un onglet de largeur fixe [largeur], ou qui prend le reste (nulle).
   static Widget _part(double? largeur, Widget onglet) => largeur == null
       ? Expanded(child: onglet)
@@ -819,8 +906,15 @@ class _BarreFlottante extends StatelessWidget {
   /// La largeur minimale de chaque onglet du Mode Accessibilite : la cible
   /// tactile, ou son mot le plus long a l'echelle 1 plus 4 de chaque cote
   /// ([TexteSansCoupure] ne descend jamais sous 1).
-  List<double> _minimumsOnglets(BuildContext context, AppMetriques metriques) {
-    final double facteur = MediaQuery.textScalerOf(context).scale(1);
+  ///
+  /// [echelle] : l'echelle de la mesure, a la place de celle de l'appareil
+  /// (au plus 1).
+  List<double> _minimumsOnglets(
+    BuildContext context,
+    AppMetriques metriques, {
+    double? echelle,
+  }) {
+    final double facteur = echelle ?? MediaQuery.textScalerOf(context).scale(1);
     final TextStyle style = DefaultTextStyle.of(context).style.merge(
       AppTypography.graisse(
         Theme.of(context).textTheme.labelLarge ?? const TextStyle(),
@@ -1258,10 +1352,11 @@ extension on _Colonne {
       : textes.labelMedium ?? const TextStyle();
 
   /// La largeur de la colonne. Rail replie a libelles : sa largeur de base,
-  /// elargie quand le mot le plus long, a l'[commune] (jamais sous 0,85),
-  /// n'y tient pas : le conteneur s'elargit au lieu de reduire le texte
-  /// davantage ou de le couper. En vraies polices, francais, le rail garde
-  /// sa largeur de base (80, 96 en guide).
+  /// elargie quand le mot le plus long, a l'[commune] (jamais sous 0,85 ;
+  /// jamais sous 1 quand le texte est agrandi), n'y tient pas : le
+  /// conteneur s'elargit au lieu de reduire le texte davantage ou de le
+  /// couper. En vraies polices, francais, a 100 %, le rail garde sa largeur
+  /// de base (80, 96 en guide) ; texte agrandi, il s'elargit.
   double _largeur(BuildContext context, TextScaler? commune) {
     if (!repliee) return AppGabarit.largeurBarreLaterale;
     final double base = _largeurRailDeBase;
@@ -1291,8 +1386,9 @@ extension on _Colonne {
   /// - Rail a libelles (80, ou 96 en guide) : le plafond de la barre basse
   ///   (1,5 ; 1,3 en guide), puis l'echelle qui fait tenir le mot le plus
   ///   long de tous (« Disponibilites », « Historique »), jamais sous
-  ///   [echelleMinimaleLisible] (0,85) ; au-dela, le rail s'elargit ([_largeur]) plutot que de tronquer
-  ///   « Contr... Histori... » ou de couper « Disponibilit / es ».
+  ///   [echelleMinimaleLisible] (0,85) a 100 %, ni sous 1 quand le texte
+  ///   est agrandi ; au-dela, le rail s'elargit ([_largeur]) plutot que de
+  ///   tronquer « Contr... Histori... » ou de couper « Disponibilit / es ».
   /// - Barre laterale depliee : l'echelle de l'appareil, reduite au besoin
   ///   pour tous les libelles a la fois, jamais sous 1.
   TextScaler? _echelleLibelles(BuildContext context) {
@@ -1315,9 +1411,13 @@ extension on _Colonne {
         MediaQuery.textScalerOf(context).clamp(maxScaleFactor: plafond),
         _largeurRailDeBase - _retraitLibelleRail,
         _styleLibelleRail(textes),
-        // Reduction bornee : jamais sous 85 % du theme ; au-dela, le rail
-        // s'elargit ([_largeur]).
-        plancher: echelleMinimaleLisible,
+        // Reduction bornee : jamais sous 85 % du theme a 100 % ; quand
+        // l'utilisateur agrandit le texte (facteur > 1), jamais sous la
+        // taille du theme (WCAG 1.4.4, revue COUPE-MOTS-1-R M1). Au-dela,
+        // le rail s'elargit ([_largeur]).
+        plancher: MediaQuery.textScalerOf(context).scale(1) > 1
+            ? 1
+            : echelleMinimaleLisible,
       );
     }
     // Depliee : 12 (ou 8) de chaque cote de l'item, 12 dans la pastille,

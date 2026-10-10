@@ -17,6 +17,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../core/enseignant/modeles_enseignant.dart';
+import '../../core/formulaires/motifs_proposes.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_palette.dart';
@@ -25,6 +27,8 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/selecteur_motif.dart';
+import '../../core/widgets/zone_saisie.dart';
 import '../foyer/photo_eleve.dart';
 import 'preparation_seance.dart';
 
@@ -134,7 +138,7 @@ class FicheEleveEnseignant extends StatelessWidget {
           ),
           avatar: Semantics(
             image: true,
-            label: t.enseignant.eleve.photo(prenom: eleve.prenom),
+            label: t.enseignant.eleve.photo(dePrenom: deDevant(eleve.prenom)),
             child: ExcludeSemantics(
               child: PhotoEleve(
                 prenom: eleve.prenom,
@@ -398,6 +402,19 @@ class _SignalerBesoinState extends State<SignalerBesoin> {
     super.dispose();
   }
 
+  /// Les phrases-types du resume pour une categorie (L7).
+  static List<String> _phrasesTypes(CategorieBesoin? c) =>
+      c == null ? const <String>[] : MotifsProposes.signalement(c.name);
+
+  /// Change de categorie. Une phrase-type de l'ancienne categorie ne vaut
+  /// plus : elle s'efface ; un texte ecrit a la main reste.
+  void _changerCategorie(CategorieBesoin? c) {
+    if (_phrasesTypes(_categorie).contains(_resume.text)) {
+      _resume.clear();
+    }
+    _categorie = c;
+  }
+
   void _validerDetails() {
     _erreurDetails =
         _categorie == CategorieBesoin.autre && _details.text.trim().isEmpty
@@ -523,7 +540,7 @@ class _SignalerBesoinState extends State<SignalerBesoin> {
         RadioGroup<CategorieBesoin>(
           groupValue: _categorie,
           onChanged: (CategorieBesoin? c) => setState(() {
-            _categorie = c;
+            _changerCategorie(c);
             _erreurCategorie = null;
             if (_erreurDetails != null) _validerDetails();
           }),
@@ -538,7 +555,7 @@ class _SignalerBesoinState extends State<SignalerBesoin> {
                   icone: c.icone,
                   marque: ExcludeFocus(child: Radio<CategorieBesoin>(value: c)),
                   onPress: () => setState(() {
-                    _categorie = c;
+                    _changerCategorie(c);
                     _erreurCategorie = null;
                     if (_erreurDetails != null) _validerDetails();
                   }),
@@ -554,35 +571,38 @@ class _SignalerBesoinState extends State<SignalerBesoin> {
           ),
         ],
         Ecart.vXl,
-        TextField(
-          key: SignalerBesoin.detailsKey,
-          controller: _details,
-          focusNode: _focusDetails,
-          minLines: 2,
-          maxLines: 5,
+        ZoneSaisie(
+          cleChamp: SignalerBesoin.detailsKey,
+          controleur: _details,
+          noeud: _focusDetails,
+          libelle: t.enseignant.signalement.details,
+          explication: t.enseignant.signalement.detailsAide,
+          erreur: _erreurDetails,
+          minLignes: 2,
+          maxLignes: 5,
           onChanged: (String _) {
             // L'erreur se retire des la correction.
             if (_erreurDetails != null) setState(_validerDetails);
           },
-          decoration: InputDecoration(
-            labelText: t.enseignant.signalement.details,
-            helperText: t.enseignant.signalement.detailsAide,
-            helperMaxLines: 2,
-            errorText: _erreurDetails,
-            errorMaxLines: 3,
-          ),
         ),
         Ecart.vLg,
-        TextField(
-          key: SignalerBesoin.resumeKey,
-          controller: _resume,
-          minLines: 2,
-          maxLines: 4,
-          decoration: InputDecoration(
-            labelText: t.enseignant.signalement.resume,
-            helperText: t.enseignant.signalement.resumeAide,
-            helperMaxLines: 2,
+        // L7 : une phrase-type par categorie, « Autre » pour l'ecrire.
+        Text(
+          t.enseignant.signalement.resume,
+          style: palette.inkStrong.applyTo(
+            textes.titleSmall ?? const TextStyle(),
           ),
+        ),
+        Ecart.vXs,
+        Text(t.enseignant.signalement.resumeAide, style: doux),
+        Ecart.vSm,
+        SelecteurMotif(
+          motifs: _phrasesTypes(_categorie),
+          controleur: _resume,
+          libelleChamp: t.choix.autreInvite,
+          lignesMin: 2,
+          lignesMax: 4,
+          cleChampLibre: SignalerBesoin.resumeKey,
         ),
         Ecart.vLg,
         Text(t.enseignant.signalement.notice, style: doux),

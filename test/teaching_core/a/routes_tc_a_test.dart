@@ -50,7 +50,7 @@ void main() {
       await tester.pump();
 
       expect(find.byType(MesGroupesPage), findsOneWidget);
-      await tester.tap(find.text('Groupe Al-Fatiha'));
+      await tester.tap(find.text('Classe Al-Fatiha'));
       await tester.pumpAndSettle();
 
       expect(find.byType(EspaceGroupePage), findsOneWidget);

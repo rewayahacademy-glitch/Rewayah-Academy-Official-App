@@ -50,6 +50,58 @@
   </style>
 </head>
 <body>
+  <!--
+    CLAVIER-ENTREE-1 : une langue du navigateur mal formee arretait
+    l'application avant le premier ecran. Chromium sans LANG annonce
+    « en-US@posix » ; le moteur Web de Flutter passe chaque langue a
+    Intl.Locale, qui la refuse (RangeError: Incorrect locale information
+    provided), hors de portee du code Dart. Les langues sont donc normalisees
+    ICI, avant le moteur : forme POSIX ramenee a BCP 47 (codage « .UTF-8 » et
+    modificateur « @posix » retires, « _ » devient « - »), etiquette illisible
+    ecartee, liste vide remplacee par le francais. Lecture a chaque appel,
+    pour qu'un changement de langue (evenement languagechange) soit normalise
+    lui aussi. Seconde barriere cote Dart : lib/core/i18n/langue_demarrage.dart.
+  -->
+  <script>
+    (function () {
+      function normaliser(etiquette) {
+        if (typeof etiquette !== 'string') return null;
+        var brute = etiquette.trim().split('@')[0].split('.')[0].replace(/_/g, '-');
+        if (!brute) return null;
+        try {
+          return new Intl.Locale(brute).toString();
+        } catch (e) {
+          return null;
+        }
+      }
+      function lire(nom) {
+        var d = Object.getOwnPropertyDescriptor(Navigator.prototype, nom);
+        return d && d.get ? d.get.call(navigator) : undefined;
+      }
+      function langues() {
+        var brutes = lire('languages');
+        if (!brutes || !brutes.length) brutes = [lire('language')];
+        var propres = [];
+        for (var i = 0; i < brutes.length; i++) {
+          var p = normaliser(brutes[i]);
+          if (p && propres.indexOf(p) < 0) propres.push(p);
+        }
+        return propres.length ? propres : ['fr'];
+      }
+      try {
+        Object.defineProperty(navigator, 'languages', {
+          configurable: true,
+          get: function () { return Object.freeze(langues()); }
+        });
+        Object.defineProperty(navigator, 'language', {
+          configurable: true,
+          get: function () { return langues()[0]; }
+        });
+      } catch (e) {
+        // Navigateur qui refuse la redefinition : il garde ses langues.
+      }
+    })();
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

@@ -27,7 +27,8 @@ Acceptation _accordObservation({DateTime? quand}) => Acceptation(
 /// Une destination de retour, pour que le `go` du bouton retour aboutisse.
 GoRoute _compte() => GoRoute(
   path: Routes.tuteurCompte,
-  builder: (BuildContext _, GoRouterState _) => const Scaffold(body: Text('compte')),
+  builder: (BuildContext _, GoRouterState _) =>
+      const Scaffold(body: Text('compte')),
 );
 
 /// Rend le geste visible avant de le taper : la page defile (l'explication
@@ -50,13 +51,12 @@ Future<FauxPortConsentements> _monter(
       routes: <RouteBase>[
         GoRoute(
           path: Routes.tuteurCompteConsentements,
-          builder: (BuildContext _, GoRouterState _) => const ConsentementObservationPage(),
+          builder: (BuildContext _, GoRouterState _) =>
+              const ConsentementObservationPage(),
         ),
         _compte(),
       ],
-      surcharges: <Override>[
-        consentementsLotAProvider.overrideWithValue(port),
-      ],
+      surcharges: <Override>[consentementsLotAProvider.overrideWithValue(port)],
     ),
   );
   await tester.pumpAndSettle();
@@ -76,7 +76,8 @@ void main() {
           routes: <RouteBase>[
             GoRoute(
               path: Routes.tuteurCompteConsentements,
-              builder: (BuildContext _, GoRouterState _) => const ConsentementObservationPage(),
+              builder: (BuildContext _, GoRouterState _) =>
+                  const ConsentementObservationPage(),
             ),
             _compte(),
           ],
@@ -105,7 +106,8 @@ void main() {
       expect(caseAccord, findsOneWidget);
       expect(tester.widget<Checkbox>(caseAccord).value, isFalse);
       expect(
-        find.widgetWithText(ActionPrincipale, t.consentement.texte.continuer)
+        find
+            .widgetWithText(ActionPrincipale, t.consentement.texte.continuer)
             .evaluate()
             .isEmpty,
         isFalse,
@@ -125,7 +127,8 @@ void main() {
           routes: <RouteBase>[
             GoRoute(
               path: Routes.tuteurCompteConsentements,
-              builder: (BuildContext _, GoRouterState _) => const ConsentementObservationPage(),
+              builder: (BuildContext _, GoRouterState _) =>
+                  const ConsentementObservationPage(),
             ),
             _compte(),
           ],
@@ -151,7 +154,8 @@ void main() {
           routes: <RouteBase>[
             GoRoute(
               path: Routes.tuteurCompteConsentements,
-              builder: (BuildContext _, GoRouterState _) => const ConsentementObservationPage(),
+              builder: (BuildContext _, GoRouterState _) =>
+                  const ConsentementObservationPage(),
             ),
             _compte(),
           ],
@@ -177,7 +181,8 @@ void main() {
           routes: <RouteBase>[
             GoRoute(
               path: Routes.tuteurCompteConsentements,
-              builder: (BuildContext _, GoRouterState _) => const ConsentementObservationPage(),
+              builder: (BuildContext _, GoRouterState _) =>
+                  const ConsentementObservationPage(),
             ),
             _compte(),
           ],
@@ -192,87 +197,94 @@ void main() {
     });
   });
 
-  group('/tuteur/compte/consentements : accepter, geste depuis la navigation', () {
-    testWidgets('la case non cochee ne signe rien', (
-      WidgetTester tester,
-    ) async {
-      final FauxPortConsentements port = await _monter(tester);
+  group(
+    '/tuteur/compte/consentements : accepter, geste depuis la navigation',
+    () {
+      testWidgets('la case non cochee ne signe rien', (
+        WidgetTester tester,
+      ) async {
+        final FauxPortConsentements port = await _monter(tester);
 
-      await _tapperVisible(
-        tester,
-        find.widgetWithText(ActionPrincipale, t.consentement.texte.continuer),
+        await _tapperVisible(
+          tester,
+          find.widgetWithText(ActionPrincipale, t.consentement.texte.continuer),
+        );
+
+        expect(port.accepteEnregistre, isEmpty);
+      });
+
+      testWidgets('cocher puis Continuer enregistre l accord, dit merci', (
+        WidgetTester tester,
+      ) async {
+        final FauxPortConsentements port = await _monter(tester);
+
+        await _tapperVisible(tester, find.byType(Checkbox));
+        await _tapperVisible(
+          tester,
+          find.widgetWithText(ActionPrincipale, t.consentement.texte.continuer),
+        );
+
+        expect(port.accepteEnregistre, <({SorteContrat sorte, String version})>[
+          (
+            sorte: SorteContrat.conditionsTuteur,
+            version: VersionsContrat.pour(SorteContrat.conditionsTuteur),
+          ),
+        ]);
+        expect(find.text(t.consentement.compte.merci), findsOneWidget);
+      });
+
+      testWidgets(
+        'un 23505 (deja signe ailleurs) relit au lieu d afficher une erreur',
+        (WidgetTester tester) async {
+          final FauxPortConsentements port = await _monter(tester);
+          port.erreurAJeter = const PostgrestException(
+            message: 'duplicate',
+            code: '23505',
+          );
+
+          await _tapperVisible(tester, find.byType(Checkbox));
+          await _tapperVisible(
+            tester,
+            find.widgetWithText(
+              ActionPrincipale,
+              t.consentement.texte.continuer,
+            ),
+          );
+
+          expect(find.text(t.contrat.erreur), findsNothing);
+        },
       );
 
-      expect(port.accepteEnregistre, isEmpty);
-    });
+      testWidgets('un echec d ecriture se dit, et ne quitte pas l ecran', (
+        WidgetTester tester,
+      ) async {
+        final FauxPortConsentements port = await _monter(tester);
+        port.erreurAJeter = StateError('reseau');
 
-    testWidgets('cocher puis Continuer enregistre l accord, dit merci', (
-      WidgetTester tester,
-    ) async {
-      final FauxPortConsentements port = await _monter(tester);
+        await _tapperVisible(tester, find.byType(Checkbox));
+        await _tapperVisible(
+          tester,
+          find.widgetWithText(ActionPrincipale, t.consentement.texte.continuer),
+        );
 
-      await _tapperVisible(tester, find.byType(Checkbox));
-      await _tapperVisible(
-        tester,
-        find.widgetWithText(ActionPrincipale, t.consentement.texte.continuer),
-      );
+        expect(find.text(t.contrat.erreur), findsOneWidget);
+        expect(find.text('compte'), findsNothing);
+      });
 
-      expect(port.accepteEnregistre, <({SorteContrat sorte, String version})>[
-        (
-          sorte: SorteContrat.conditionsTuteur,
-          version: VersionsContrat.pour(SorteContrat.conditionsTuteur),
-        ),
-      ]);
-      expect(find.text(t.consentement.compte.merci), findsOneWidget);
-    });
+      testWidgets('Retour ramene au compte, geste tape depuis la navigation', (
+        WidgetTester tester,
+      ) async {
+        await _monter(tester);
 
-    testWidgets('un 23505 (deja signe ailleurs) relit au lieu d afficher une erreur', (
-      WidgetTester tester,
-    ) async {
-      final FauxPortConsentements port = await _monter(tester);
-      port.erreurAJeter = const PostgrestException(
-        message: 'duplicate',
-        code: '23505',
-      );
+        await _tapperVisible(
+          tester,
+          find.widgetWithText(ActionPrincipale, t.consentement.texte.retour),
+        );
 
-      await _tapperVisible(tester, find.byType(Checkbox));
-      await _tapperVisible(
-        tester,
-        find.widgetWithText(ActionPrincipale, t.consentement.texte.continuer),
-      );
-
-      expect(find.text(t.contrat.erreur), findsNothing);
-    });
-
-    testWidgets('un echec d ecriture se dit, et ne quitte pas l ecran', (
-      WidgetTester tester,
-    ) async {
-      final FauxPortConsentements port = await _monter(tester);
-      port.erreurAJeter = StateError('reseau');
-
-      await _tapperVisible(tester, find.byType(Checkbox));
-      await _tapperVisible(
-        tester,
-        find.widgetWithText(ActionPrincipale, t.consentement.texte.continuer),
-      );
-
-      expect(find.text(t.contrat.erreur), findsOneWidget);
-      expect(find.text('compte'), findsNothing);
-    });
-
-    testWidgets('Retour ramene au compte, geste tape depuis la navigation', (
-      WidgetTester tester,
-    ) async {
-      await _monter(tester);
-
-      await _tapperVisible(
-        tester,
-        find.widgetWithText(ActionPrincipale, t.consentement.texte.retour),
-      );
-
-      expect(find.text('compte'), findsOneWidget);
-    });
-  });
+        expect(find.text('compte'), findsOneWidget);
+      });
+    },
+  );
 
   group('InviteConsentementObservation : le bouton qui ouvre l ecran', () {
     testWidgets('tapper Lire ouvre /tuteur/compte/consentements', (
@@ -291,7 +303,8 @@ void main() {
             ),
             GoRoute(
               path: Routes.tuteurCompteConsentements,
-              builder: (BuildContext _, GoRouterState _) => const ConsentementObservationPage(),
+              builder: (BuildContext _, GoRouterState _) =>
+                  const ConsentementObservationPage(),
             ),
           ],
           surcharges: <Override>[
@@ -302,7 +315,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(t.consentement.compte.invite), findsOneWidget);
-      await _tapperVisible(tester, find.text(t.consentement.compte.inviteAction));
+      await _tapperVisible(
+        tester,
+        find.text(t.consentement.compte.inviteAction),
+      );
 
       expect(find.text(t.consentement.texte.titre), findsOneWidget);
     });

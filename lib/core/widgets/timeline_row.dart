@@ -4,6 +4,7 @@ import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../planning/journee.dart';
 import '../priere/libelle_priere.dart';
+import '../tc_groupe/libelles_tc_groupe.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
@@ -69,7 +70,10 @@ class TimelineRow extends StatelessWidget {
           ),
           Ecart.hSm,
           Text(
-            t.enseignant.journee.duree(minutes: '$minutes'),
+            // DUREE-INSECABLE-1 : « 45 min » jamais scinde.
+            LibellesGroupe.insecable(
+              t.enseignant.journee.duree(minutes: '$minutes'),
+            ),
             style: encres.applyTo(textes.bodySmall ?? const TextStyle()),
           ),
         ],

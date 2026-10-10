@@ -56,6 +56,17 @@ String enseignantAffiche(Seance seance, GroupSummaryVM? classe) {
   return seance.enseignantPrenom;
 }
 
+/// Le pays de l'enseignant d'une seance (ENS-PAYS-1) : celui de la classe
+/// courante quand elle nomme ce meme enseignant, sinon celui que la seance
+/// porte. Nul quand il n'est pas declare.
+String? paysEnseignantAffiche(Seance seance, GroupSummaryVM? classe) {
+  final EnseignantVM? e = classe?.enseignant;
+  if (e != null && e.enseignantId == seance.enseignantId && e.pays != null) {
+    return e.pays;
+  }
+  return seance.enseignantPays;
+}
+
 /// Le prenom d'un profil eleve du foyer, ou « Eleve ».
 String prenomEleve(String? eleveId, List<ProfilEleveFoyer> profils) {
   for (final ProfilEleveFoyer p in profils) {

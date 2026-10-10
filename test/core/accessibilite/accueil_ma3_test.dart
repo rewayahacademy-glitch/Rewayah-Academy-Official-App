@@ -2,8 +2,9 @@
 // de demonstration /demo/accessibilite, on tape « Accueil » dans la vraie
 // coquille, puis l'action principale de l'Accueil (« Voir ma classe ») : on
 // arrive sur Ma classe (le vrai Espace Classe). Un seul emplacement d'entree,
-// jamais « Rejoindre » a cote d'une ligne d'etat, trois taches au plus, une
-// seule colonne a toute largeur (DASH-MA-PROD, Q3).
+// jamais « Rejoindre » a cote d'une ligne d'etat, trois taches au plus, deux
+// colonnes seulement sur bureau et jamais a 200 % (MA-3, retablies par
+// MA-2COL-1 selon la fiche ELV-02-MA).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -75,6 +76,7 @@ Finder _dans(Key forme, String libelle) =>
 /// Une seule colonne : « Lire le Coran » commence sous « Avant le prochain
 /// cours », au meme bord de debut.
 void _uneColonne(WidgetTester tester) {
+  expect(find.byKey(AccueilAccessibilite.cleDeuxColonnes), findsNothing);
   final Rect taches = tester.getRect(
     find.text(LibellesGroupe.avantProchainCours),
   );
@@ -94,10 +96,8 @@ void main() {
         await tester.tap(_dans(forme, t.nav.eleve.accueil));
         await stabiliser(tester);
         expect(find.byType(AccueilAccessibilite), findsOneWidget);
-        expect(
-          find.text(t.accessibilite.accueil.salutation(prenom: 'Mariam')),
-          findsOneWidget,
-        );
+        // MA-DEC-1 : graphie choisie par le directeur (A3 = c du 27/09).
+        expect(find.text('Assalamou alaykoum, Mariam.'), findsOneWidget);
         // Avant la seance : une ligne d'etat et un seul bouton, jamais
         // « Rejoindre ».
         expect(find.byType(ActionPrincipale), findsOneWidget);
@@ -105,9 +105,16 @@ void main() {
         // Trois taches au plus, le Coran, l'aide.
         expect(find.text(t.accessibilite.accueil.lireCoran), findsOneWidget);
         expect(find.text(t.accessibilite.accueil.aide), findsOneWidget);
-        // DASH-MA-PROD (DASH-1, Q3) : une seule colonne a toute largeur,
-        // le Coran vient SOUS les taches, jamais a cote.
-        _uneColonne(tester);
+        // Deux colonnes seulement sur bureau (fiche ELV-02-MA, MA-2COL-1) :
+        // le Coran a cote des taches ; sinon dessous.
+        if (taille.width >= 1200) {
+          expect(
+            find.byKey(AccueilAccessibilite.cleDeuxColonnes),
+            findsOneWidget,
+          );
+        } else {
+          _uneColonne(tester);
+        }
 
         await tester.ensureVisible(
           find.byKey(AccueilAccessibilite.cleVoirClasse),
@@ -135,10 +142,7 @@ void main() {
     );
     await tester.tap(_dans(NavShell.barreBasseKey, t.nav.eleve.accueil));
     await stabiliser(tester);
-    expect(
-      find.text(t.accessibilite.accueil.salutation(prenom: 'Idriss')),
-      findsOneWidget,
-    );
+    expect(find.text('Assalamou alaykoum, Idriss.'), findsOneWidget);
     final Finder coran = find.text(t.accessibilite.accueil.lireCoran);
     await tester.ensureVisible(coran);
     await tester.tap(coran);
@@ -150,7 +154,16 @@ void main() {
       tester.widget<NavShell>(find.byType(NavShell)).indexActif,
       EcranAccessibiliteDemo.indexCoran,
     );
-    expect(find.text(t.accessibilite.accueil.lireCoran), findsNothing);
+    expect(find.byType(AccueilAccessibilite), findsNothing);
+    // MA-DEC-1 (A8 = a, MA9) : l'entree du Coran nomme l'action comme
+    // l'Accueil, « Lire le Coran ».
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey<String>('coran-ma-principale')),
+        matching: find.text(t.accessibilite.accueil.lireCoran),
+      ),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
   });
 

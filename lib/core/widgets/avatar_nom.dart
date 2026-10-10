@@ -5,6 +5,7 @@ import '../icons/app_icons.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
 import 'avatar_tile.dart';
+import 'pays_enseignant.dart';
 
 export 'avatar_tile.dart' show AppAvatar;
 
@@ -40,6 +41,11 @@ enum DispositionAvatar {
 /// L'avatar est decoratif pour un lecteur d'ecran (ses initiales redisent le
 /// nom) : il est exclu de la semantique, le nom et le role se lisent.
 ///
+/// Le nom et la ligne de role ne sont jamais coupes au milieu d'un mot, meme
+/// a 200 % sur 320 px ([TexteSansCoupure]) : FI-2-CORR-R l'avait pose sur la
+/// carte d'un membre du Foyer, la revue FI-VAGUE-R (R8-03) l'a mesure sur
+/// chaque ecran Finance (« Classe An- / Nour », « sep / tembre »).
+///
 /// [avatar] remplace le cercle d'initiales quand l'ecran sait poser un portrait
 /// (`PhotoEleve`, `PhotoEnseignant`) ; il doit rester un cercle de [diametre].
 class AvatarNom extends StatelessWidget {
@@ -62,6 +68,10 @@ class AvatarNom extends StatelessWidget {
     this.afficherNom = true,
     this.ajuste = false,
     this.roleWidget,
+    this.pays,
+    this.stylePays,
+    this.cercleEnHaut = false,
+    this.texteEtire = false,
   });
 
   /// Avatar centre, nom centre dessous.
@@ -77,10 +87,14 @@ class AvatarNom extends StatelessWidget {
     TextStyle? styleNom,
     TextStyle? styleRole,
     bool afficherNom = true,
+    String? pays,
+    TextStyle? stylePays,
   }) : this(
          prenom: prenom,
          disposition: DispositionAvatar.vertical,
          afficherNom: afficherNom,
+         pays: pays,
+         stylePays: stylePays,
          key: key,
          nom: nom,
          role: role,
@@ -108,9 +122,15 @@ class AvatarNom extends StatelessWidget {
     double? ecart,
     bool ajuste = false,
     Widget? roleWidget,
+    String? pays,
+    TextStyle? stylePays,
+    bool cercleEnHaut = false,
+    bool texteEtire = false,
   }) : this(
          prenom: prenom,
          disposition: DispositionAvatar.enLigne,
+         pays: pays,
+         stylePays: stylePays,
          key: key,
          nom: nom,
          role: role,
@@ -124,6 +144,8 @@ class AvatarNom extends StatelessWidget {
          ecart: ecart,
          ajuste: ajuste,
          roleWidget: roleWidget,
+         cercleEnHaut: cercleEnHaut,
+         texteEtire: texteEtire,
        );
 
   /// Le prenom, source des initiales de repli.
@@ -142,6 +164,24 @@ class AvatarNom extends StatelessWidget {
   /// A la place de [role] : l'unique ligne de role quand elle porte un signe
   /// (point de statut) en plus du texte. Compte comme la ligne de role.
   final Widget? roleWidget;
+
+  /// Le pays d'un enseignant (ENS-PAYS-1), lu sous son nom par tous les roles
+  /// ([PaysEnseignant]) ; nul ou vide : rien n'est rendu. Il ne compte pas
+  /// comme la ligne de role : c'est une donnee de l'identite publique de
+  /// l'enseignant, demandee par le directeur le 04/10/2026, au meme titre que
+  /// son nom. Il n'est pas ecrit quand le nom ne l'est pas ([afficherNom]),
+  /// ni quand le [prenom] est vide (identite masquee) : un pays seul, sous un
+  /// enseignant sans nom, suffirait parfois a le reconnaitre.
+  final String? pays;
+
+  /// Le style de la ligne du pays ; par defaut celui de [PaysEnseignant]
+  /// (`bodySmall`, encre attenuee). Un fond inverse (salle) passe le sien.
+  final TextStyle? stylePays;
+
+  /// Vrai quand la ligne du pays s'ecrit : un pays declare, sous un prenom
+  /// connu.
+  bool get _paysVisible =>
+      prenom.trim().isNotEmpty && PaysEnseignant.nomAffichable(pays) != null;
 
   /// URL signee de la photo, quand l'ecran en a une.
   final String? urlSignee;
@@ -173,6 +213,19 @@ class AvatarNom extends StatelessWidget {
   /// En ligne seulement : vrai pour une rangee qui prend la largeur de son
   /// contenu (en-tete, menu) au lieu de remplir celle de son parent.
   final bool ajuste;
+
+  /// En ligne seulement : vrai pour poser le cercle **en haut** de la rangee
+  /// au lieu de le centrer sur le texte. Pour une carte qui porte le bandeau
+  /// de couleur d'un profil (K-62) : le bandeau part du bord haut de la
+  /// carte et doit retrouver le cercle a la meme place quelle que soit la
+  /// hauteur du texte (texte agrandi, legende sur plusieurs lignes).
+  final bool cercleEnHaut;
+
+  /// En ligne seulement : vrai pour que le texte prenne toute la place
+  /// restante, et que [fin] aille donc au bout de la rangee quelle que soit
+  /// la longueur du prenom (carte d'un membre du Foyer, revue FI-2-R M1).
+  /// Faux par defaut : [fin] suit le texte.
+  final bool texteEtire;
 
   /// En ligne seulement : l'espace entre le cercle et le texte
   /// (defaut [AppSpacing.md]).
@@ -222,6 +275,8 @@ class AvatarNom extends StatelessWidget {
               textAlign: TextAlign.center,
               style: styleDuNom,
             ),
+          if (afficherNom && _paysVisible)
+            PaysEnseignant(pays: pays, centre: true, style: stylePays),
           if (ligneRole != null)
             TexteSansCoupure(
               ligneRole,
@@ -232,16 +287,20 @@ class AvatarNom extends StatelessWidget {
       ),
       DispositionAvatar.enLigne => Row(
         mainAxisSize: ajuste ? MainAxisSize.min : MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: cercleEnHaut
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.center,
         children: <Widget>[
           cercleHabille,
           SizedBox(width: ecart ?? AppSpacing.md),
           Flexible(
+            fit: texteEtire ? FlexFit.tight : FlexFit.loose,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 TexteSansCoupure(affiche, style: styleDuNom),
+                if (_paysVisible) PaysEnseignant(pays: pays, style: stylePays),
                 if (roleWidget != null)
                   roleWidget!
                 else if (ligneRole != null)

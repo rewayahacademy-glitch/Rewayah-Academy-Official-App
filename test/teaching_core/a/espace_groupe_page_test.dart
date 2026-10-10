@@ -94,7 +94,7 @@ void main() {
     ) async {
       await avecLargeur(tester, largeurMobile, () async {
         await _poser(tester);
-        expect(find.text('Groupe Al-Fatiha'), findsOneWidget);
+        expect(find.text('Classe Al-Fatiha'), findsOneWidget);
         expect(find.text('Sayyid Youssouf'), findsWidgets);
         expect(find.text('Lecture du Coran · Niveau 2'), findsOneWidget);
         // La capacite reelle, en toutes lettres dans la pastille.
@@ -110,9 +110,9 @@ void main() {
       await avecLargeur(tester, largeurMobile, () async {
         await _poser(tester);
         expect(find.text(LibellesGroupe.votreHeure), findsOneWidget);
-        expect(find.text('18:00 Riyad'), findsOneWidget);
+        expect(find.text('\u200E18:00 Riyad'), findsOneWidget);
         expect(find.text('Chez Sayyid Youssouf'), findsOneWidget);
-        expect(find.text('15:00 Conakry'), findsOneWidget);
+        expect(find.text('\u200E15:00 Conakry'), findsOneWidget);
         // Jamais un offset numerique a l'ecran.
         expect(find.textContaining('UTC+'), findsNothing);
       });
@@ -124,7 +124,7 @@ void main() {
       await avecLargeur(tester, largeurMobile, () async {
         await _poser(tester, groupeId: GroupesDemonstration.anNour);
         expect(find.text(LibellesGroupe.votreHeure), findsOneWidget);
-        expect(find.text('13:45 Paris'), findsOneWidget);
+        expect(find.text('\u200E13:45 Paris'), findsOneWidget);
         expect(find.textContaining('Chez '), findsNothing);
         expect(find.text(LibellesGroupe.heureGroupe), findsNothing);
       });
@@ -157,7 +157,7 @@ void main() {
       await avecLargeur(tester, largeurMobile, () async {
         await _poser(tester);
         expect(find.text(LibellesGroupe.dureeLibelle), findsOneWidget);
-        expect(find.text('1 h 30'), findsOneWidget);
+        expect(find.text('\u200E1\u00A0h\u00A030'), findsOneWidget);
       });
     });
 

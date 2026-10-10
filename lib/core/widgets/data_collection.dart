@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
@@ -102,7 +103,59 @@ class DataCollection<T> extends StatelessWidget {
     this.piedDePage,
     this.cle,
     this.onSelectionner,
+    this.defileAvecLaPage = false,
+    this.estSelectionnee,
+    this.defileSeule = true,
   });
+
+  /// Dit si une ligne est la ligne choisie (inspecteur, AD-X). Nul : aucune
+  /// ligne n'est marquee, comme avant l'ajout de ce parametre. La ligne
+  /// choisie se marque par le fond, un contour et `Semantics(selected)`,
+  /// jamais par la couleur seule ; en cartes, par `AppCard.selectionnee`.
+  final bool Function(T ligne)? estSelectionnee;
+
+  /// Vrai quand la collection se rend en tableau (desktop), faux quand elle
+  /// se replie en cartes. Le seul endroit qui compare le gabarit : une page
+  /// qui choisit entre son propre defilement et celui de la collection lit
+  /// cette regle-ci.
+  static bool enTableau(BuildContext context) =>
+      AppGabarit.de(context) == Gabarit.desktop;
+
+  /// Vrai : la collection **ne defile pas elle-meme**, elle prend la hauteur
+  /// de ses lignes et defile avec la page (`PageShell(defilante: true)`).
+  ///
+  /// Pourquoi (ONGLETS-COUPE-1) : en cartes, il n'y a pas d'en-tete de
+  /// colonnes a garder colle. Une page qui pose une introduction, des actions
+  /// et des filtres au-dessus d'une collection qui defile seule ne laissait,
+  /// a 320 px et au texte agrandi, plus aucune hauteur a la liste : la
+  /// colonne debordait de 52 a 480 px. En cartes, tout defile donc ensemble ;
+  /// en tableau, l'en-tete reste colle et la collection defile seule.
+  final bool defileAvecLaPage;
+
+  /// Faux quand la collection est **une section** d'une liste qui defile
+  /// deja (Pedagogie > Qualite : une collection par type d'anomalie, toutes
+  /// dans le meme defilement) : elle pose alors toutes ses lignes a leur
+  /// hauteur, sans defileur propre, et l'en-tete de colonnes ouvre la
+  /// section. Une liste dans une liste qui defile n'a pas de hauteur
+  /// (« Vertical viewport was given unbounded height », FILTRES-1b) ; vrai
+  /// par defaut, le comportement d'avant.
+  final bool defileSeule;
+
+  /// La hauteur sous laquelle une collection ne se lit plus : un titre et
+  /// deux lignes de texte, a l'echelle du texte de [context]. C'est le
+  /// `minimumEtire` d'une `ColonneCorps` qui la porte (FILTRES-1b) : a 320 px
+  /// texte x2, l'intro et la rangee de filtres ne laissent plus de place a
+  /// la liste, et la page defile au lieu de deborder.
+  static double minimumLisible(BuildContext context) {
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    double ligne(TextStyle? style) =>
+        echelle.scale(style?.fontSize ?? 14) * (style?.height ?? 1.2);
+    return ligne(textes.titleMedium) +
+        AppSpacing.sm +
+        ligne(textes.bodyLarge) * 2 +
+        AppSpacing.lg * 2;
+  }
 
   /// Les colonnes, dans l'ordre d'affichage.
   final List<ColonneDonnees<T>> colonnes;
@@ -124,10 +177,16 @@ class DataCollection<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool tableau = AppGabarit.de(context) == Gabarit.desktop;
+    final bool tableau = enTableau(context);
+    // JONCTION-LIGNES-1 : deux lignes de travail ont pose le meme besoin sous
+    // deux noms ([defileAvecLaPage], ONGLETS-COUPE-1 ; [defileSeule] a faux,
+    // FILTRES-1b). Un seul comportement : toutes les lignes a leur hauteur,
+    // sans defileur propre.
+    final bool enBloc = defileAvecLaPage || !defileSeule;
 
     if (!tableau) {
       return _Defilement<T>(
+        enBloc: enBloc,
         lignes: lignes,
         piedDePage: piedDePage,
         cle: cle,
@@ -136,12 +195,28 @@ class DataCollection<T> extends StatelessWidget {
           colonnes: colonnes,
           ligne: ligne,
           onSelectionner: onSelectionner,
+          selectionnee: estSelectionnee?.call(ligne) ?? false,
         ),
       );
     }
 
     final AppPalette palette = AppPalette.of(context);
     final AppMetriques metriques = AppMetriques.of(context);
+    final Widget corps = _Defilement<T>(
+      enBloc: enBloc,
+      lignes: lignes,
+      piedDePage: piedDePage,
+      cle: cle,
+      espacement: 0,
+      constructeur: (BuildContext contexte, T ligne) => _LigneTableau<T>(
+        colonnes: colonnes,
+        ligne: ligne,
+        onSelectionner: onSelectionner,
+        // Nul sans [estSelectionnee] : un tableau sans selection
+        // n'annonce aucun etat « non selectionne ».
+        selectionnee: estSelectionnee?.call(ligne),
+      ),
+    );
 
     // Le filet et l'arrondi sont portes par le bloc entier, et le decoupage par
     // un seul `ClipRRect` : arrondir separement les deux coins hauts de
@@ -155,23 +230,11 @@ class DataCollection<T> extends StatelessWidget {
       child: ClipRRect(
         borderRadius: metriques.arrondi,
         child: Column(
+          mainAxisSize: enBloc ? MainAxisSize.min : MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             _EnTeteTableau<T>(colonnes: colonnes),
-            Expanded(
-              child: _Defilement<T>(
-                lignes: lignes,
-                piedDePage: piedDePage,
-                cle: cle,
-                espacement: 0,
-                constructeur: (BuildContext contexte, T ligne) =>
-                    _LigneTableau<T>(
-                      colonnes: colonnes,
-                      ligne: ligne,
-                      onSelectionner: onSelectionner,
-                    ),
-              ),
-            ),
+            Flexible(fit: enBloc ? FlexFit.loose : FlexFit.tight, child: corps),
           ],
         ),
       ),
@@ -185,9 +248,14 @@ class _Defilement<T> extends StatelessWidget {
     required this.lignes,
     required this.constructeur,
     required this.espacement,
+    required this.enBloc,
     this.piedDePage,
     this.cle,
   });
+
+  /// Vrai : toutes les lignes sont posees, sans defilement propre (voir
+  /// [DataCollection.defileAvecLaPage]).
+  final bool enBloc;
 
   final List<T> lignes;
   final Widget Function(BuildContext context, T ligne) constructeur;
@@ -200,6 +268,10 @@ class _Defilement<T> extends StatelessWidget {
     final int total = lignes.length + (piedDePage == null ? 0 : 1);
 
     return ListView.builder(
+      shrinkWrap: enBloc,
+      primary: enBloc ? false : null,
+      physics: enBloc ? const NeverScrollableScrollPhysics() : null,
+      padding: enBloc ? EdgeInsets.zero : null,
       itemCount: total,
       itemBuilder: (BuildContext contexte, int index) {
         if (index >= lignes.length) {
@@ -281,11 +353,16 @@ class _LigneTableau<T> extends StatelessWidget {
     required this.colonnes,
     required this.ligne,
     this.onSelectionner,
+    this.selectionnee,
   });
 
   final List<ColonneDonnees<T>> colonnes;
   final T ligne;
   final void Function(T ligne)? onSelectionner;
+
+  /// Nul quand le tableau n'a pas de selection : la ligne ne porte alors
+  /// aucun etat `selected` (ni vrai ni faux) dans l'arbre semantique.
+  final bool? selectionnee;
 
   @override
   Widget build(BuildContext context) {
@@ -319,17 +396,29 @@ class _LigneTableau<T> extends StatelessWidget {
       ),
     );
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        border: Border(bottom: palette.borderHairline.asBorderSide()),
+    return Semantics(
+      selected: selectionnee,
+      child: DecoratedBox(
+        // La ligne choisie : fond doux et contour d'accent de 2, comme
+        // `AppCard.selectionnee` (jamais la couleur seule).
+        decoration: selectionnee ?? false
+            ? BoxDecoration(
+                color: palette.washAccent.background,
+                border: Border.fromBorderSide(
+                  palette.inkAccent.asBorderSide(width: 2),
+                ),
+              )
+            : BoxDecoration(
+                border: Border(bottom: palette.borderHairline.asBorderSide()),
+              ),
+        child: onSelectionner == null
+            ? contenu
+            : Pressable(
+                onPress: () => onSelectionner!(ligne),
+                respecterCibleTactile: false,
+                child: contenu,
+              ),
       ),
-      child: onSelectionner == null
-          ? contenu
-          : Pressable(
-              onPress: () => onSelectionner!(ligne),
-              respecterCibleTactile: false,
-              child: contenu,
-            ),
     );
   }
 }
@@ -359,7 +448,9 @@ class _Cellule<T> extends StatelessWidget {
     return Semantics(
       label: '${colonne.titre} : ${colonne.texte(ligne)}',
       excludeSemantics: true,
-      child: Text(colonne.texte(ligne), style: style),
+      // COUPE-MOTS-4 : un mot plus long que sa colonne (un identifiant)
+      // reduit son echelle au lieu d'etre coupe.
+      child: TexteSansCoupure(colonne.texte(ligne), style: style),
     );
   }
 }
@@ -370,11 +461,13 @@ class _Carte<T> extends StatelessWidget {
     required this.colonnes,
     required this.ligne,
     this.onSelectionner,
+    this.selectionnee = false,
   });
 
   final List<ColonneDonnees<T>> colonnes;
   final T ligne;
   final void Function(T ligne)? onSelectionner;
+  final bool selectionnee;
 
   @override
   Widget build(BuildContext context) {
@@ -409,20 +502,21 @@ class _Carte<T> extends StatelessWidget {
     // lecteur d'ecran enoncerait quatre fragments sans lien entre eux.
     return MergeSemantics(
       child: AppCard(
+        selectionnee: selectionnee,
         onPress: onSelectionner == null ? null : () => onSelectionner!(ligne),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             if (titre != null) ...<Widget>[
               titre.rendu?.call(context, ligne) ??
-                  Text(
+                  TexteSansCoupure(
                     titre.texte(ligne),
                     style: textes.titleMedium ?? const TextStyle(),
                   ),
               Ecart.vSm,
             ],
             if (resume.isNotEmpty)
-              Text(
+              TexteSansCoupure(
                 resume,
                 style: palette.inkMuted.applyTo(
                   textes.bodySmall ?? const TextStyle(),
@@ -433,7 +527,7 @@ class _Carte<T> extends StatelessWidget {
                   colonne.texte(ligne).isNotEmpty) ...<Widget>[
                 Ecart.vSm,
                 colonne.rendu?.call(context, ligne) ??
-                    Text(
+                    TexteSansCoupure(
                       colonne.texte(ligne),
                       style: palette.inkMuted.applyTo(
                         AppTypography.tabulaire(
@@ -447,4 +541,22 @@ class _Carte<T> extends StatelessWidget {
       ),
     );
   }
+}
+
+/// La place d'une zone qui porte une [DataCollection] dans la colonne d'une
+/// page : **etiree** (`Expanded`) quand la collection defile seule (tableau,
+/// en-tete colle), **a sa hauteur** quand elle defile avec la page (cartes,
+/// voir [DataCollection.defileAvecLaPage]).
+///
+/// A poser directement dans un `Column`, la ou la page posait un `Expanded`.
+class PlaceCollection extends StatelessWidget {
+  /// Cree la place.
+  const PlaceCollection({required this.child, super.key});
+
+  /// La zone : la collection, ou ce qui la contient.
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) =>
+      DataCollection.enTableau(context) ? Expanded(child: child) : child;
 }

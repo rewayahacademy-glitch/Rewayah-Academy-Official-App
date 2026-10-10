@@ -1,14 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/appairage/service_appairage.dart';
+import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/foyer/port_creation_profil_eleve.dart';
 import '../../core/foyer/profil_eleve_brouillon.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
@@ -17,9 +18,12 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/page_etape.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/zone_saisie.dart' show ZoneSaisie;
+import '../compte/donnees_compte.dart' show identiteTitulaireProvider;
 
 /// La porte d'acces du titulaire, qui decide de ce qui est creable (K3).
 ///
@@ -99,8 +103,11 @@ class FormulaireProfilEleve extends ConsumerStatefulWidget {
   /// Le champ nom.
   static const Key nomKey = Key('profilEleve.nom');
 
-  /// Le champ age.
+  /// Le choix de l'age (puces bornees).
   static const Key ageKey = Key('profilEleve.age');
+
+  /// La puce d'un age.
+  static Key ageChoixKey(int age) => Key('profilEleve.age.$age');
 
   /// La colonne du formulaire (bornee sur bureau).
   static const Key colonneKey = Key('profilEleve.colonne');
@@ -131,8 +138,34 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
   MotifRefusCreation? _refus;
   bool _incertaine = false;
 
+  /// Le nom a ete touche par la personne : le prerempli ne le reecrit plus.
+  bool _nomModifie = false;
+
+  /// Le nom affiche vient du compte du titulaire (modifiable).
+  bool _nomPrerempli = false;
+
   static const BornesAge _bornes = BornesAge.clientActuelle;
   static const int _totalEtapes = 2;
+
+  @override
+  void initState() {
+    super.initState();
+    // Le nom de famille du titulaire est propose, jamais impose ; si le compte
+    // ne se lit pas, le champ reste vide (le serveur garde le controle).
+    ref.listenManual<AsyncValue<IdentiteTitulaire>>(identiteTitulaireProvider, (
+      AsyncValue<IdentiteTitulaire>? _,
+      AsyncValue<IdentiteTitulaire> suivant,
+    ) {
+      final String nom = suivant.value?.nom.trim() ?? '';
+      if (nom.isEmpty || _nomModifie || _nom.text.isNotEmpty) {
+        return;
+      }
+      setState(() {
+        _nom.text = nom;
+        _nomPrerempli = true;
+      });
+    }, fireImmediately: true);
+  }
 
   @override
   void dispose() {
@@ -358,9 +391,11 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
       PorteAcces.chargement => const Skeleton.liste(
         key: FormulaireProfilEleve.porteChargementKey,
       ),
-      PorteAcces.horsLigne => EtatSysteme(
+      // Le bandeau de `PageShell` dit le reseau, le bloc dit ce qui manque
+      // (EA-HL-DOUBLE-1).
+      PorteAcces.horsLigne => EtatSansDonnees(
         key: FormulaireProfilEleve.porteHorsLigneKey,
-        nature: NatureEtat.horsLigne,
+        quoi: t.foyer.ajout.porte.sansDonneesTitre,
         onAction: relire,
       ),
       _ => null,
@@ -447,6 +482,8 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
         : const <ChampProfilEleve, ErreurChamp>{};
     final bool refusAge = _refus == MotifRefusCreation.ageHorsBornes;
 
+    // L'age se choisit dans les bornes : seul le serveur peut encore le
+    // refuser (le refus reste la garde).
     String? erreurAge;
     if (erreurs[ChampProfilEleve.age] == ErreurChamp.requis) {
       erreurAge = t.foyer.ajout.erreurs.ageRequis;
@@ -459,6 +496,13 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
     }
 
     void changer(String _) => setState(() {
+      if (_refus != MotifRefusCreation.compteNonValide) {
+        _refus = null;
+      }
+    });
+
+    void choisirAge(int age) => setState(() {
+      _age.text = '$age';
       if (_refus != MotifRefusCreation.compteNonValide) {
         _refus = null;
       }
@@ -498,6 +542,7 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
             errorText: erreurs[ChampProfilEleve.prenom] == null
                 ? null
                 : t.foyer.ajout.erreurs.prenomRequis,
+            errorMaxLines: ZoneSaisie.lignesAideMax,
           ),
         ),
         Ecart.vMd,
@@ -505,46 +550,101 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
           key: FormulaireProfilEleve.nomKey,
           controller: _nom,
           readOnly: _envoi,
-          onChanged: changer,
+          onChanged: (String valeur) {
+            _nomModifie = true;
+            changer(valeur);
+          },
           textCapitalization: TextCapitalization.words,
-          textInputAction: TextInputAction.next,
+          textInputAction: TextInputAction.done,
           autofillHints: const <String>[AutofillHints.familyName],
           decoration: InputDecoration(
             labelText: t.foyer.ajout.identite.nom,
-            helperText: t.foyer.ajout.identite.nomAide,
-            helperMaxLines: 3,
+            helperText: _nomPrerempli
+                ? t.foyer.ajout.identite.nomAidePrerempli
+                : t.foyer.ajout.identite.nomAide,
+            helperMaxLines: ZoneSaisie.lignesAideMax,
             errorText: erreurs[ChampProfilEleve.nom] == null
                 ? null
                 : t.foyer.ajout.erreurs.nomRequis,
-            errorMaxLines: 3,
+            errorMaxLines: ZoneSaisie.lignesAideMax,
           ),
         ),
         Ecart.vMd,
-        TextField(
+        _ChoixAge(
           key: FormulaireProfilEleve.ageKey,
-          controller: _age,
-          readOnly: _envoi,
-          onChanged: changer,
-          keyboardType: TextInputType.number,
-          inputFormatters: <TextInputFormatter>[
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(3),
-          ],
-          textInputAction: TextInputAction.done,
-          onSubmitted: (String _) {
-            if (!_envoi && !_incertaine) {
-              unawaited(_creer());
-            }
-          },
-          decoration: InputDecoration(
-            labelText: t.foyer.ajout.identite.age,
-            suffixText: t.foyer.ajout.identite.ageSuffixe,
-            helperText: t.foyer.ajout.identite.ageAide,
-            helperMaxLines: 3,
-            errorText: erreurAge,
-            errorMaxLines: 3,
+          bornes: _bornes,
+          choisi: int.tryParse(_age.text.trim()),
+          erreur: erreurAge,
+          onChoisir: _envoi ? null : choisirAge,
+        ),
+      ],
+    );
+  }
+}
+
+/// L'age se choisit parmi des puces bornees (jamais tape) : une puce par age
+/// des bornes, la puce retenue sur la paire douce d'accent (`FilterPill`).
+class _ChoixAge extends StatelessWidget {
+  const _ChoixAge({
+    required this.bornes,
+    required this.choisi,
+    required this.erreur,
+    required this.onChoisir,
+    super.key,
+  });
+
+  final BornesAge bornes;
+  final int? choisi;
+  final String? erreur;
+  final ValueChanged<int>? onChoisir;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Text(
+          t.foyer.ajout.identite.age,
+          style: palette.inkStrong.applyTo(
+            textes.titleMedium ?? const TextStyle(),
           ),
         ),
+        Ecart.vXs,
+        Text(
+          t.foyer.ajout.identite.ageAide,
+          style: palette.inkMuted.applyTo(
+            textes.bodyMedium ?? const TextStyle(),
+          ),
+        ),
+        Ecart.vSm,
+        // Choix de formulaire, pas un filtre : l'age du profil.
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: <Widget>[
+            for (int age = bornes.min; age <= bornes.max; age++)
+              FilterPill(
+                key: FormulaireProfilEleve.ageChoixKey(age),
+                libelle: '$age',
+                retenue: age == choisi,
+                onPress: onChoisir == null ? null : () => onChoisir!(age),
+              ),
+          ],
+        ),
+        if (erreur case final String message) ...<Widget>[
+          Ecart.vSm,
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              message,
+              style: palette.inkAlert.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
+        ],
       ],
     );
   }

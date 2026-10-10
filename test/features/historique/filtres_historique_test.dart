@@ -68,7 +68,7 @@ void main() {
       );
       expect(
         libelleStatut(_ligne(EtatPresence.enRetard)),
-        t.historique.etat.retard(minutes: 12),
+        'Retard 12\u00A0min',
       );
       expect(statutDe(_ligne(EtatPresence.absente)), StatutHistorique.absence);
       expect(StatutHistorique.absence.libelle, t.presence.absente);
@@ -167,12 +167,15 @@ void main() {
 
   group('mises en forme', () {
     test('durees', () {
-      expect(dureeLisible(const Duration(seconds: 48)), '48 s');
-      expect(dureeLisible(const Duration(minutes: 2)), '2 min');
-      expect(dureeLisible(const Duration(seconds: 102)), '1 min 42 s');
-      expect(dureeLisible(const Duration(hours: 1)), '1 h');
-      expect(dureeLisible(const Duration(minutes: 65)), '1 h 05');
-      expect(dureeLisible(const Duration(seconds: -5)), '0 s');
+      expect(dureeLisible(const Duration(seconds: 48)), '48\u00A0s');
+      expect(dureeLisible(const Duration(minutes: 2)), '2\u00A0min');
+      expect(
+        dureeLisible(const Duration(seconds: 102)),
+        '1\u00A0min\u00A042\u00A0s',
+      );
+      expect(dureeLisible(const Duration(hours: 1)), '1\u00A0h');
+      expect(dureeLisible(const Duration(minutes: 65)), '1\u00A0h\u00A005');
+      expect(dureeLisible(const Duration(seconds: -5)), '0\u00A0s');
     });
 
     test('dates, plage et decalage', () {
@@ -216,7 +219,7 @@ void main() {
       expect(statutObservationDe(une), StatutObservation.terminee);
       expect(
         resumeVisites(une),
-        '${t.historique.observations.visiteUne} · 48 s',
+        '${t.historique.observations.visiteUne} · 48\u00A0s',
       );
       // Aucune ligne incomplete n'est completee.
       expect(

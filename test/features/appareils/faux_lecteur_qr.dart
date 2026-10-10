@@ -7,10 +7,8 @@ import 'package:rewayah_academy/core/appairage/service_enfant.dart';
 /// Le lecteur de QR, sans camera (tests du lot D uniquement).
 class FauxLecteurQr implements LecteurQr {
   /// Cree le lecteur ; [reponses] sont rendues dans l'ordre, puis [defaut].
-  FauxLecteurQr({
-    this.defaut = EtatCamera.pret,
-    List<EtatCamera>? reponses,
-  }) : _reponses = <EtatCamera>[...?reponses];
+  FauxLecteurQr({this.defaut = EtatCamera.pret, List<EtatCamera>? reponses})
+    : _reponses = <EtatCamera>[...?reponses];
 
   /// La cle de la fausse vue de camera.
   static const Key apercuKey = ValueKey<String>('faux-apercu-camera');

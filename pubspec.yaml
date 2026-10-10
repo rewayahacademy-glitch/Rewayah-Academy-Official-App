@@ -97,6 +97,10 @@ flutter:
   # Seuls les libelles audio sont de vrais assets d'execution.
   assets:
     - assets/audio/fr/
+    # Drapeaux des 19 pays du profil enseignant (ENS-DRAPEAU-1, decision Q-5
+    # du directeur, 05/10/2026) : flag-icons 7.5.0, MIT, PNG 64 x 48, 5,9 Ko
+    # au total. Licence et provenance : assets/flags/LICENCE.txt.
+    - assets/flags/
 
   # Quatre familles de texte, pas une de plus : deux arabes, deux francaises
   # (decision du coordinateur du 24/09/2026, chantier Tuteur V1), plus les deux

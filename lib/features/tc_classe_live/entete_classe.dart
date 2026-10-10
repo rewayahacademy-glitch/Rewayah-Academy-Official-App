@@ -1,15 +1,17 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_classe/session_live_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/status_pill.dart';
 import '../tc_observation_ui/indicateur_observation.dart';
+import 'encre_salle.dart';
 import 'roster_classe.dart';
 import 'vue_classe_live.dart';
 
@@ -37,12 +39,15 @@ String? libelleTempsRestant(SessionClockVM? horloge) {
   }
   final int heures = restant.inHours;
   final int minutes = restant.inMinutes % Duration.minutesPerHour;
-  return heures == 0
-      ? t.tc.classe.entete.resteMinutes(minutes: restant.inMinutes)
-      : t.tc.classe.entete.resteHeuresMinutes(
-          heures: heures,
-          minutes: minutes.toString().padLeft(2, '0'),
-        );
+  // DUREE-INSECABLE-1 : la duree restante n'est jamais scindee.
+  return LibellesGroupe.insecable(
+    heures == 0
+        ? t.tc.classe.entete.resteMinutes(minutes: restant.inMinutes)
+        : t.tc.classe.entete.resteHeuresMinutes(
+            heures: heures,
+            minutes: minutes.toString().padLeft(2, '0'),
+          ),
+  );
 }
 
 /// Le nom de l'enseignant, precede de son titre.
@@ -118,6 +123,16 @@ class EnteteClasse extends StatelessWidget {
     final VoidCallback? voirRoster = onVoirRoster;
     final String? mot = _motDuLien(vue.motLien);
     final String? photoEnseignant = session.enseignant.photoCleOuUrl;
+    // L'en-tete est pose sur le fond inverse de la salle (`PageImmersive`),
+    // qui donne son encre par `DefaultTextStyle`. Les styles du theme portent
+    // l'encre du fond clair : on leur rend celle de la paire, sinon le nom
+    // s'ecrit en encre sombre sur fond sombre (releve ENS-PAYS-1, capture
+    // 320 x2 de la classe en direct).
+    final Color? encre = DefaultTextStyle.of(context).style.color;
+    final TextStyle styleNom = (textes.titleSmall ?? const TextStyle())
+        .copyWith(color: encre);
+    final TextStyle styleLigne = (textes.labelMedium ?? const TextStyle())
+        .copyWith(color: encre);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -133,6 +148,10 @@ class EnteteClasse extends StatelessWidget {
                 // AVATAR-1 : couple avatar + nom du composant partage, le nom
                 // de l'enseignant centre sur le cercle, une ligne de role (la
                 // classe).
+                // ENS-PAYS-SALLE-1 (decision Q-4 = b du 05/10) : le pays de
+                // l'enseignant ne s'affiche que sur les cartes, jamais dans
+                // la salle pendant le cours. Aucun `pays:` ici, aucune ligne
+                // `PaysEnseignant` dans la branche sans photo.
                 child: photoEnseignant != null
                     ? AvatarNom.enLigne(
                         prenom: session.enseignant.nomAffichage,
@@ -141,8 +160,8 @@ class EnteteClasse extends StatelessWidget {
                         role: session.libelleGroupe,
                         diametre: AppAvatar.petit,
                         ecart: AppSpacing.sm,
-                        styleNom: textes.titleSmall,
-                        styleRole: textes.labelMedium,
+                        styleNom: styleNom,
+                        styleRole: styleLigne,
                       )
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,12 +170,12 @@ class EnteteClasse extends StatelessWidget {
                           Text(
                             session.libelleGroupe,
                             overflow: TextOverflow.ellipsis,
-                            style: textes.titleSmall ?? const TextStyle(),
+                            style: styleNom,
                           ),
                           Text(
                             nomAvecTitre(session.enseignant),
                             overflow: TextOverflow.ellipsis,
-                            style: textes.labelMedium ?? const TextStyle(),
+                            style: styleLigne,
                           ),
                         ],
                       ),
@@ -164,7 +183,7 @@ class EnteteClasse extends StatelessWidget {
             ),
             if (restant != null) ...<Widget>[
               Ecart.hSm,
-              Text(restant, style: textes.labelLarge ?? const TextStyle()),
+              Text(restant, style: styleDuFond(context, textes.labelLarge)),
             ],
             if (compteur != null && voirRoster != null) ...<Widget>[
               Ecart.hSm,
@@ -195,7 +214,7 @@ class EnteteClasse extends StatelessWidget {
           // le risque, elle n'annonce pas une coupure qui n'a pas eu lieu.
           Text(
             t.tc.classe.lien.retourDeSuspension,
-            style: textes.labelMedium ?? const TextStyle(),
+            style: styleDuFond(context, textes.labelMedium),
           ),
         ],
         // **Le composant d'Agent G, pas une seconde ecriture du meme.** Il

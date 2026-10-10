@@ -1,6 +1,7 @@
 import '../../features/demo/mode_demonstration.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
+import '../preferences/presentation_vue.dart';
 import '../session/session_state.dart';
 import 'billet_salle.dart';
 import 'chemin_retour.dart';
@@ -34,6 +35,10 @@ import 'routes.dart';
 ///
 /// [cheminComplet] est l'adresse demandee avec sa requete (le `retour`), et
 /// [retour] le parametre `retour` de cette adresse.
+///
+/// [presentation] dit si la presentation publique a deja ete vue sur cet
+/// appareil (PUB-1) : elle ne compte que pour la racine d'un visiteur sans
+/// session.
 String? deciderRedirection({
   required SessionState session,
   required String cheminDemande,
@@ -43,6 +48,8 @@ String? deciderRedirection({
   String? cheminComplet,
   String? retour,
   String environnement = Env.environnement,
+  bool resignatureContrat = false,
+  EtatPresentation presentation = EtatPresentation.aVoir,
 }) {
   // La salle de demonstration passe sans session hors production : donnees
   // fictives, aucun appel serveur (K-28). En production, la route n'existe
@@ -59,7 +66,13 @@ String? deciderRedirection({
           cheminDemande == Routes.demoAccessibilite ||
           cheminDemande.startsWith('${Routes.demoAccessibilite}/') ||
           cheminDemande == Routes.demoAdulte ||
-          cheminDemande.startsWith('${Routes.demoAdulte}/'))) {
+          cheminDemande.startsWith('${Routes.demoAdulte}/') ||
+          cheminDemande == Routes.demoFinance ||
+          cheminDemande.startsWith('${Routes.demoFinance}/') ||
+          cheminDemande == Routes.demoCommunications ||
+          cheminDemande.startsWith('${Routes.demoCommunications}/') ||
+          cheminDemande == Routes.demoComptable ||
+          cheminDemande.startsWith('${Routes.demoComptable}/'))) {
     return null;
   }
 
@@ -98,11 +111,16 @@ String? deciderRedirection({
       if (!routeConnue) {
         return null;
       }
-      // La racine d'un visiteur sans session : l'accueil public (premiere
-      // visite, demande A-1). `/bienvenue` mene a la connexion par
-      // « Commencer » et « J'ai deja un compte ».
+      // La racine d'un visiteur sans session (demande A-1, PUB-1) : la
+      // presentation publique `/bienvenue` a la premiere visite sur cet
+      // appareil, la connexion ensuite. Tant que l'appareil n'a pas ete lu,
+      // on ne decide rien : l'ecran de demarrage reste, sans clignotement.
       if (cheminDemande == Routes.racine) {
-        return Routes.bienvenue;
+        return switch (presentation) {
+          EtatPresentation.inconnu => null,
+          EtatPresentation.aVoir => Routes.bienvenue,
+          EtatPresentation.vue => Routes.connexion,
+        };
       }
       // Session expiree, ou lien profond ouvert sans session : la connexion
       // garde la destination, si c'en est une (R7 : un chemin interne valide,
@@ -134,10 +152,19 @@ String? deciderRedirection({
     case PorteAcces.suspendu:
       // K-47 (HL-A-6) : la piece d'identite ne concerne que l'enseignant. Un
       // tuteur ne depose aucune piece : le depot lui reste ferme, meme par
-      // une adresse tapee a la main.
-      if (session.role == AppRole.guardian &&
+      // une adresse tapee a la main. Regle ecrite en positif : tout role
+      // autre que l'enseignant, y compris un role illisible (nul), est ferme.
+      if (session.role != AppRole.teacher &&
           _dansLeSousArbre(cheminDemande, Routes.attentePiece)) {
         return Routes.attente;
+      }
+      // Q-2 = a : l'enseignant en attente qui a signe le contrat 2026-09
+      // signe d'abord la nouvelle version.
+      if (_resignature(session, resignatureContrat) &&
+          session.porte == PorteAcces.attente &&
+          routeConnue &&
+          cheminDemande != Routes.attenteContrat) {
+        return Routes.attenteContrat;
       }
       return _dansLeSousArbre(cheminDemande, Routes.attente) || !routeConnue
           ? null
@@ -149,6 +176,18 @@ String? deciderRedirection({
         return Routes.connexion;
       }
       final String racine = Routes.racinePour(role);
+
+      // Q-2 = a (05/10/2026) : l'enseignant qui a signe le contrat 2026-09
+      // signe la nouvelle version a sa prochaine entree, avant tout le reste.
+      // La page n'est ouverte que dans ce cas.
+      if (_resignature(session, resignatureContrat)) {
+        return cheminDemande == Routes.enseignantContrat
+            ? null
+            : Routes.enseignantContrat;
+      }
+      if (cheminDemande == Routes.enseignantContrat) {
+        return racine;
+      }
 
       // Un compte actif n'a plus rien a faire sur la racine, la connexion,
       // l'inscription, le portail d'attente ou la page hors ligne,
@@ -228,6 +267,11 @@ String? deciderRedirection({
       return role == AppRole.guardian ? Routes.accesRefuse : racine;
   }
 }
+
+/// Vrai quand l'enseignant doit signer de nouveau son contrat (Q-2 = a) ;
+/// jamais pour un autre role.
+bool _resignature(SessionState session, bool resignatureContrat) =>
+    resignatureContrat && session.role == AppRole.teacher;
 
 /// La destination gardee en `retour`, si elle est un chemin interne valide et
 /// **ouverte a cette session** ; sinon `null` (la racine du role).

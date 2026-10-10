@@ -2,14 +2,19 @@
 ///
 /// **Quatre blocs, pas un de plus** (K-42) : la carte « Prochaine seance »,
 /// « Ma journee », « A terminer » (trois au plus) et « Alertes utiles », cette
-/// derniere rendue seulement quand elle n'est pas vide. Sur bureau, deux
+/// derniere rendue seulement quand elle n'est pas vide. La ligne
+/// « Communaute enseignants » (QUESTIONS Q2) n'est pas un bloc : son
+/// emplacement ([EntreeCommunaute], voie COM-COMU) est pose a la fin de « Ma
+/// journee », toujours rendu. Sur bureau, deux
 /// colonnes a partir de 840 de largeur utile divisee par le facteur de texte :
 /// a gauche ce qui vient (carte puis journee), a droite ce qui reste a faire.
 /// L'ordre de lecture reste celui du mobile.
 ///
 /// Retires d'EN-2 (00_MAQUETTES §2, planche 1) : « Eleves en attente » (ancien
 /// matching, E1), « Cours individuel » (une seance est celle d'une Classe), la
-/// cloche, la ligne « Bonjour... » et la pastille « Confirmee ».
+/// cloche de la maquette, la ligne « Bonjour... » et la pastille « Confirmee ».
+/// La page ne pose aucune cloche : celle de l'enseignant est portee par sa
+/// coquille, sur chaque page (COM-F, reponse Q5 du directeur du 04/10).
 ///
 /// **Cours, pauses et prieres sont des entrees de meme nature** dans « Ma
 /// journee » : le gabarit `TimelineRow` est le meme pour les trois sortes.
@@ -51,6 +56,7 @@ import '../../core/presence/service_presence.dart';
 import '../../core/priere/reglages_priere.dart';
 import '../../core/priere/service_priere.dart';
 import '../../core/regles/service_regles.dart';
+import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
@@ -78,6 +84,7 @@ import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/timeline_row.dart';
+import '../com_communaute/entree_communaute.dart';
 import '../tc_espace_groupe/carte_session.dart' show EmplacementEntreeVue;
 import 'absence_remplacement_vue.dart';
 
@@ -240,8 +247,17 @@ class _Corps extends ConsumerWidget {
         : const <String>[];
     // LIB-ERR-1 : l'echec partiel dit ce qui manque, que les seances sont a
     // jour, et se relance d'un bouton.
-    final bool partielle =
-        reglages.hasError || pause.hasError || retards.hasError;
+    final bool horairesIllisibles = reglages.hasError || pause.hasError;
+    final bool partielle = horairesIllisibles || retards.hasError;
+    // LIB-ERR-2 : le texte cite ce qui manque vraiment (horaires et pauses,
+    // cahiers a terminer, ou les deux).
+    final String? phrasePartielle = !partielle
+        ? null
+        : horairesIllisibles && retards.hasError
+        ? t.enseignant.journee.erreurPartielleTout
+        : retards.hasError
+        ? t.enseignant.journee.erreurPartielleCahiers
+        : t.enseignant.journee.erreurPartielle;
 
     // ENS-13B : les offres arrivent en Alerte utile ; une offre acceptee et
     // confirmee par le serveur devient la carte « Remplacement » (EN-8).
@@ -292,7 +308,8 @@ class _Corps extends ConsumerWidget {
                   ? alertes.length - maximumAlertes
                   : 0,
               offres: offres,
-              coursAnnule: _seanceDeClasse(toutes, annulee),
+              coursAnnule: _retrouverParId(toutes, annulee),
+              phrasePartielle: phrasePartielle,
               onReessayerPartiel: partielle
                   ? () {
                       ref
@@ -335,6 +352,16 @@ SeanceEnseignant? _seanceDominante(
     toutes.map(_versSeance).toList(growable: false),
     maintenant,
   );
+  return _retrouverParId(toutes, relais);
+}
+
+/// La seance riche (Classe, groupe) qui porte le meme identifiant que
+/// [relais], lue dans le pont vers la journee partagee. La carte du cours
+/// annule en a besoin pour nommer sa Classe et y mener (SALLE-CORR-3).
+SeanceEnseignant? _retrouverParId(
+  List<SeanceEnseignant> toutes,
+  Seance? relais,
+) {
   if (relais == null) return null;
   for (final SeanceEnseignant seance in toutes) {
     if (seance.id == relais.id) return seance;
@@ -507,10 +534,17 @@ EmplacementEntree emplacementJournee(
     EtatCtaSeance.remplirCahier => (
       t.enseignant.journee.remplirCahier,
       t.enseignant.journee.remplirCahierLecteur(classe: nomClasse),
-      t.enseignant.journee.cahierObligatoire(classe: deDevant(nomClasse)),
+      t.enseignant.journee.cahierObligatoire(
+        classe: deDevant(
+          nomClasse,
+          cle: 'enseignant.journee.cahierObligatoire',
+        ),
+      ),
     ),
     EtatCtaSeance.voirCahier => (
-      t.enseignant.journee.voirCahier(classe: deDevant(nomClasse)),
+      t.enseignant.journee.voirCahier(
+        classe: deDevant(nomClasse, cle: 'enseignant.journee.voirCahier'),
+      ),
       t.enseignant.journee.voirCahierLecteur(classe: nomClasse),
       null,
     ),
@@ -716,7 +750,7 @@ class _CarteProchaineSeance extends ConsumerWidget {
               Ecart.vSm,
               LigneCleValeur(
                 cle: LibellesGroupe.dureeLibelle,
-                valeur: LibellesGroupe.dureeLisible(
+                valeur: LibellesGroupe.dureeSeule(
                   cours.fin.difference(cours.debut),
                 ),
                 chiffres: true,
@@ -745,7 +779,10 @@ class _CarteProchaineSeance extends ConsumerWidget {
                   child: LienFleche(
                     key: const ValueKey<String>('journee-voir-cahier'),
                     libelle: t.enseignant.journee.voirCahier(
-                      classe: deDevant(nom),
+                      classe: deDevant(
+                        nom,
+                        cle: 'enseignant.journee.voirCahier',
+                      ),
                     ),
                     onPress: () => unawaited(
                       GoRouter.of(context)
@@ -897,6 +934,10 @@ class _MaJournee extends StatelessWidget {
             ),
           ),
         ],
+        // Q2 (COM-F-b) : la ligne « Communaute enseignants », dans ce bloc
+        // toujours rendu, jamais un cinquieme bloc (K-42). Vide tant que
+        // COM-COMU-1 ne la remplit pas.
+        const EntreeCommunaute(ecartAvant: Ecart.vMd),
       ],
     );
   }
@@ -1038,6 +1079,7 @@ class ListeATerminerPage extends ConsumerWidget {
       corps = _EchecLecture(
         cle: 'a-terminer-erreur',
         phraseServeur: t.enseignant.journee.aTerminerErreur,
+        quoiHorsLigne: t.enseignant.journee.aTerminerSansDonnees,
         onReessayer: () => ref.invalidate(cahiersEnRetardProvider),
       );
     } else if (lecture.requireValue.isEmpty) {
@@ -1185,7 +1227,7 @@ class ListeAlertesPage extends ConsumerWidget {
                 entete: false,
                 alertes: alertes,
                 offres: offres,
-                coursAnnule: _seanceDeClasse(toutes, annulee),
+                coursAnnule: _retrouverParId(toutes, annulee),
               );
       }
     }
@@ -1214,32 +1256,43 @@ class _ErreurAlertes extends StatelessWidget {
   Widget build(BuildContext context) => _EchecLecture(
     cle: 'alertes-erreur',
     phraseServeur: t.enseignant.journee.alertesErreur,
+    quoiHorsLigne: t.enseignant.journee.alertesSansDonnees,
     onReessayer: onReessayer,
   );
 }
 
-/// L'echec de lecture d'une liste de la Journee : « hors ligne » quand le
-/// reseau manque (la cause est connue), sinon l'echec serveur et sa phrase
-/// (K-59). Les deux proposent de relire ; aucun ne dit « rien a afficher »
-/// (D10).
+/// L'echec de lecture d'une liste de la Journee : quand le reseau manque,
+/// le bandeau de `PageShell` le dit deja et le bloc dit seulement ce qui
+/// manque ([quoiHorsLigne], EA-HL-DOUBLE-1) ; sinon l'echec serveur et sa
+/// phrase (K-59). Les deux proposent de relire ; aucun ne dit « rien a
+/// afficher » (D10).
 class _EchecLecture extends ConsumerWidget {
   const _EchecLecture({
     required this.cle,
     required this.phraseServeur,
+    required this.quoiHorsLigne,
     required this.onReessayer,
   });
 
   final String cle;
   final String phraseServeur;
+  final String quoiHorsLigne;
   final VoidCallback onReessayer;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    if (horsLigne) {
+      return EtatSansDonnees(
+        key: ValueKey<String>(cle),
+        quoi: quoiHorsLigne,
+        onAction: onReessayer,
+      );
+    }
     return EtatSysteme(
       key: ValueKey<String>(cle),
-      nature: horsLigne ? NatureEtat.horsLigne : NatureEtat.echecServeur,
-      phrase: horsLigne ? null : phraseServeur,
+      nature: NatureEtat.echecServeur,
+      phrase: phraseServeur,
       onAction: onReessayer,
     );
   }
@@ -1301,6 +1354,7 @@ class _AlertesUtiles extends ConsumerWidget {
     this.entete = true,
     this.offres = const <OffreRemplacement>[],
     this.coursAnnule,
+    this.phrasePartielle,
     this.onReessayerPartiel,
   });
 
@@ -1313,6 +1367,7 @@ class _AlertesUtiles extends ConsumerWidget {
 
   /// Relance des lectures secondaires (prieres, pauses, cahiers en retard)
   /// quand elles ont echoue, ou `null` si tout a ete lu (LIB-ERR-1).
+  final String? phrasePartielle;
   final VoidCallback? onReessayerPartiel;
 
   /// Le cours annule du jour : une carte attenuee avant toute autre alerte,
@@ -1344,7 +1399,7 @@ class _AlertesUtiles extends ConsumerWidget {
                   icone: AppIcons.cours,
                   libelle: t.enseignant.journee.remplacement.titre,
                   legende:
-                      '${offre.classe} · ${dateLisible(offre.debut)} · '
+                      '${offre.classeDistincte} · ${dateLisible(offre.debut)} · '
                       '${_hhmm(offre.debut)}',
                   onPress: port == null
                       ? null
@@ -1388,7 +1443,7 @@ class _AlertesUtiles extends ConsumerWidget {
           if (coursAnnule != null || alertes.isNotEmpty || offres.isNotEmpty)
             Ecart.vLg,
           Text(
-            t.enseignant.journee.erreurPartielle,
+            phrasePartielle ?? t.enseignant.journee.erreurPartielle,
             key: const ValueKey<String>('journee-erreur-partielle'),
             style: Theme.of(context).textTheme.bodyMedium,
           ),
@@ -1424,19 +1479,6 @@ class _AlertesUtiles extends ConsumerWidget {
 /// SALLE-CORR-3 (releve VERIF-CORR-2) : comme la carte de seance, elle nomme
 /// sa Classe et y mene par « Voir la Classe » (un lien, K-56 : le seul
 /// bouton plein de la page reste celui de la carte de seance).
-/// La seance de Classe qui porte [annulee] (meme id), pour que la carte du
-/// cours annule nomme sa Classe et y mene (SALLE-CORR-3).
-SeanceEnseignant? _seanceDeClasse(
-  List<SeanceEnseignant> toutes,
-  Seance? annulee,
-) {
-  if (annulee == null) return null;
-  for (final SeanceEnseignant s in toutes) {
-    if (s.id == annulee.id) return s;
-  }
-  return null;
-}
-
 class _CarteCoursAnnule extends StatelessWidget {
   const _CarteCoursAnnule({required this.cours});
 
@@ -1584,7 +1626,7 @@ String _nomClasse(String? libelle) =>
 /// Combien d'eleves, au singulier ou au pluriel.
 String _effectif(int nombre) => nombre == 1
     ? t.enseignant.journee.effectifUn
-    : t.enseignant.journee.effectif(nombre: '$nombre');
+    : t.enseignant.journee.effectif(nombre: nombre);
 
 /// Comment nommer un eleve dans une alerte : son prenom, sinon son identifiant
 /// immuable. **Jamais un nom de famille.**

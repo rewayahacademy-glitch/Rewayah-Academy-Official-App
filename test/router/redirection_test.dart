@@ -57,6 +57,7 @@ void main() {
       Routes.admin,
       Routes.adminPersonnesDossiers,
       Routes.adminOperationsAttributions,
+      Routes.adminOperationsRegroupements,
       Routes.adminSecuriteAuditJournal,
       Routes.adminSecuriteAuditObservations,
       Routes.comptable,
@@ -130,6 +131,26 @@ void main() {
       );
       expect(pour(AppRole.teacher), isNull);
       expect(pour(AppRole.guardian), Routes.attente);
+      // AD-NETTOYAGE (m3) : la regle est positive, tout autre role est ferme.
+      expect(pour(AppRole.student), Routes.attente);
+      expect(pour(AppRole.admin), Routes.attente);
+    });
+
+    test('le depot de piece est ferme a un role illisible', () {
+      expect(
+        deciderRedirection(
+          session: const SessionState(
+            resolue: true,
+            profileId: 'p1',
+            householdId: 'h1',
+            accountStatus: AccountStatus.pendingKyc,
+            lectureProfil: LectureProfil.presente,
+          ),
+          cheminDemande: Routes.attentePiece,
+          maintenant: maintenant,
+        ),
+        Routes.attente,
+      );
     });
   });
 
