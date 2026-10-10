@@ -15,8 +15,9 @@
 ///
 /// - **l'etape** de chaque demande ([EtapeDemande]) et son motif de cloture
 ///   ([MotifCloture]) ;
-/// - **les heures dans le fuseau de la famille** : jours, heure et debut des
-///   cours sont rendus en heure murale du fuseau du foyer ([SuiviDemande.fuseauIana]).
+/// - **les heures dans le fuseau de la famille** : jours, heure de chaque jour
+///   ([CreneauDemande.occurrences], contrat C-10 bis) et debut des cours sont
+///   rendus en heure murale du fuseau du foyer ([SuiviDemande.fuseauIana]).
 ///   L'appareil ne convertit rien : son propre fuseau peut differer de celui
 ///   du foyer (voyage, appareil partage) ;
 /// - **la confidentialite des autres demandeurs** : le contrat ne porte AUCUN
@@ -36,6 +37,10 @@ library;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'occurrence_creneau.dart';
+
+export 'occurrence_creneau.dart' show OccurrenceCreneau;
 
 /// Ou en est une demande de creneau (rendu par le serveur).
 enum EtapeDemande {
@@ -82,24 +87,40 @@ enum MotifCloture {
 DateTime? heureMuraleDuFoyer(DateTime? debut) =>
     debut == null || debut.isUtc ? null : debut;
 
-/// Les jours et l'heure choisis, en heure murale du fuseau du foyer.
+/// Les jours choisis et l'heure de chacun, en heure murale du fuseau du
+/// foyer (contrat C-10 bis).
+///
+/// Le serveur rend `jours[]` et `heures_locales[]` en tableaux paralleles :
+/// l'heure peut differer d'un jour a l'autre (semaine de changement d'heure,
+/// creneau personnalise). Le creneau porte donc une [OccurrenceCreneau] par
+/// jour, triee par jour, et chaque jour garde son heure : aucune heure n'est
+/// remplacee par celle du premier jour. Il n'existe volontairement aucun
+/// getter « l'heure du creneau » : un appelant qui a besoin d'une heure
+/// unique lit [heuresToutesEgales] d'abord.
 @immutable
 class CreneauDemande {
-  /// Cree le creneau. [joursIso] : 1 (lundi) a 7 (dimanche).
-  const CreneauDemande({
-    required this.joursIso,
-    required this.heure,
-    required this.minute,
-  });
+  /// Cree le creneau. Les [occurrences] sont triees par jour ; une liste
+  /// vide ou un jour en double est une erreur de l'adaptateur (assertion en
+  /// mise au point). Les bornes de chaque valeur sont gardees par
+  /// [OccurrenceCreneau].
+  CreneauDemande({required Iterable<OccurrenceCreneau> occurrences})
+    : assert(occurrences.isNotEmpty, 'un creneau a au moins un jour'),
+      assert(
+        joursDistincts(occurrences),
+        'un jour ne figure qu une fois dans un creneau',
+      ),
+      occurrences = occurrencesTrieesParJour(occurrences);
 
-  /// Les jours, du lundi (1) au dimanche (7), tels que choisis.
-  final List<int> joursIso;
+  /// Les occurrences, du lundi au dimanche, chacune avec son heure.
+  final List<OccurrenceCreneau> occurrences;
 
-  /// L'heure de debut, dans le fuseau du foyer.
-  final int heure;
+  /// Les jours ISO, du lundi (1) au dimanche (7).
+  List<int> get joursIso => <int>[
+    for (final OccurrenceCreneau o in occurrences) o.jourIso,
+  ];
 
-  /// La minute de debut.
-  final int minute;
+  /// Vrai quand tous les jours commencent a la meme heure.
+  bool get heuresToutesEgales => heuresToutesEgalesDe(occurrences);
 }
 
 /// Une demande de creneau d'un eleve du foyer, et ou elle en est.
@@ -150,7 +171,7 @@ class SuiviDemande {
   /// L'etape atteinte.
   final EtapeDemande etape;
 
-  /// Les jours et l'heure choisis, dans le fuseau du foyer.
+  /// Les jours choisis et l'heure de chacun, dans le fuseau du foyer.
   final CreneauDemande creneau;
 
   /// Le fuseau IANA du foyer, dans lequel toutes les heures sont rendues.
