@@ -266,9 +266,22 @@ BEGIN
   IF public.cle_horaire_utc(
        ARRAY[2,4,6]::smallint[], ARRAY[18,18,18]::smallint[], 'Europe/Paris'
      ) IS DISTINCT FROM public.cle_horaire_utc(
-       ARRAY[6,4,2]::smallint[], ARRAY[18,18,18]::smallint[], 'Europe/Brussels'
+       ARRAY[6,4,2]::smallint[], ARRAY[18,18,18]::smallint[], 'Europe/Paris'
      ) THEN
-    RAISE EXCEPTION 'M3: des créneaux équivalents Paris/Bruxelles sont séparés';
+    RAISE EXCEPTION 'M-a: le tri des jours change la clé locale';
+  END IF;
+  IF public.cle_horaire_utc(
+       ARRAY[2,4,6]::smallint[], ARRAY[18,18,18]::smallint[], 'Europe/Paris'
+     ) IS NOT DISTINCT FROM public.cle_horaire_utc(
+       ARRAY[2,4,6]::smallint[], ARRAY[18,18,18]::smallint[], 'Europe/Brussels'
+     ) THEN
+    RAISE EXCEPTION 'M-a: deux fuseaux IANA différents sont fusionnés';
+  END IF;
+  IF public.instant_creneau(
+       extract(isodow FROM (pg_catalog.now() AT TIME ZONE 'UTC'))::int,
+       0, 'UTC', 0
+     ) <= pg_catalog.now() THEN
+    RAISE EXCEPTION 'M-b: semaine zéro retourne un créneau déjà passé';
   END IF;
   SELECT pg_catalog.array_agg(n.jour_iso ORDER BY n.jour_iso)
     INTO v_jours
@@ -302,14 +315,10 @@ BEGIN
   IF v_jours IS DISTINCT FROM ARRAY[2,4,6]::smallint[] THEN
     RAISE EXCEPTION 'F1 normalisation des jours incorrecte: %', v_jours;
   END IF;
-  IF v_fuseau <> 'UTC'
-     OR v_heures IS DISTINCT FROM ARRAY(
-       SELECT n.heure_locale
-       FROM public.creneaux_normalises_utc(
-         ARRAY[2,4,6]::smallint[], ARRAY[18,18,18]::smallint[], 'Europe/Paris'
-       ) n ORDER BY n.jour_iso, n.heure_locale
-     )::smallint[] THEN
-    RAISE EXCEPTION 'M3: horaire de référence UTC incorrect: % %', v_fuseau, v_heures;
+  IF v_fuseau <> 'Europe/Paris'
+     OR v_heures IS DISTINCT FROM ARRAY[18,18,18]::smallint[] THEN
+    RAISE EXCEPTION 'M-a: le regroupement doit garder le fuseau et l''heure murale: % %',
+      v_fuseau, v_heures;
   END IF;
 
   v_groupe := public.creer_classe_depuis_regroupement(
