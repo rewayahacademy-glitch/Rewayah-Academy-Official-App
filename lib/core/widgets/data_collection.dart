@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../accessibilite/texte_sans_coupure.dart';
+import '../i18n/isolat_bidi.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
@@ -445,8 +446,13 @@ class _Cellule<T> extends StatelessWidget {
     if (rendu != null) {
       return rendu(context, ligne);
     }
+    // DUREE-INSECABLE-5 : la valeur suit le titre de la colonne dans le
+    // libelle parle ; une valeur ancree pour s'afficher seule (« 12 jours »,
+    // marque U+200E en tete) y perd son ancre ([sansAncre]), qui n'a pas a
+    // se trouver au milieu d'un libelle. Le texte affiche, seul dans sa
+    // cellule, la garde.
     return Semantics(
-      label: '${colonne.titre} : ${colonne.texte(ligne)}',
+      label: '${colonne.titre} : ${sansAncre(colonne.texte(ligne))}',
       excludeSemantics: true,
       // COUPE-MOTS-4 : un mot plus long que sa colonne (un identifiant)
       // reduit son echelle au lieu d'etre coupe.
@@ -490,13 +496,14 @@ class _Carte<T> extends StatelessWidget {
       }
     }
 
-    final String resume = secondaires
-        .map((ColonneDonnees<T> c) => c.texte(ligne))
-        .where((String v) => v.isNotEmpty)
-        // Le point median, et non un tiret : le tiret cadratin est refuse par
-        // `tool/verifier_jetons.dart`, et le tiret court se confond avec un
-        // signe moins dans une colonne de chiffres.
-        .join(' · ');
+    // Le point median, et non un tiret : le tiret cadratin est refuse par
+    // `tool/verifier_jetons.dart`, et le tiret court se confond avec un
+    // signe moins dans une colonne de chiffres. DUREE-INSECABLE-4 :
+    // [enchainer] ne garde l'ancre de sens (U+200E) qu'en tete de la ligne.
+    final String resume = enchainer(
+      secondaires.map((ColonneDonnees<T> c) => c.texte(ligne)),
+      ' · ',
+    );
 
     // La carte entiere se lit comme un seul element : sans ce regroupement, un
     // lecteur d'ecran enoncerait quatre fragments sans lien entre eux.

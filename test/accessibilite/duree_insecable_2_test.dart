@@ -123,7 +123,11 @@ void main() {
       expect(dureeSeule(const Duration(seconds: 102)), '‎1 min 42 s');
     });
 
-    test('LignePresence : retard ancre, autres reperes insecables', () {
+    // DUREE-INSECABLE-4 : le retard suit le role sur la ligne (« Eleve ·
+    // 7 min apres l'heure ») ; la phrase est insecable, et l'ancre se pose
+    // sur la ligne rendue, seulement quand la duree la commence
+    // (test/accessibilite/duree_insecable_4_test.dart).
+    test('LignePresence : retard et autres reperes insecables', () {
       final DateTime debut = DateTime.utc(2026, 10, 5, 18);
       final String? retard = LignePresence.contexte(
         VuePresence.depuis(
@@ -137,7 +141,7 @@ void main() {
       );
       expect(
         retard,
-        '‎${t.presence.retardMinutes(minutes: '7').replaceFirst(' ', ' ')}',
+        t.presence.retardMinutes(minutes: '7').replaceFirst(' ', ' '),
       );
       final String? entree = LignePresence.contexte(
         VuePresence.depuis(

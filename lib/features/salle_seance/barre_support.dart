@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
@@ -140,8 +141,10 @@ class ZoomLocal extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final ThemeData theme = Theme.of(context);
     final VoidCallback? agrandir = onAgrandir;
-    final String valeur = t.salle.seance.zoomValeur(
-      valeur: (zoom * 100).round(),
+    // DUREE-INSECABLE-4 : « 150 % » affiche seul, insecable et ancre en
+    // interface de droite a gauche.
+    final String valeur = LibellesGroupe.valeurSeule(
+      t.salle.seance.zoomValeur(valeur: (zoom * 100).round()),
     );
     final TextStyle styleValeur = palette.inkStrong.applyTo(
       theme.textTheme.titleSmall ?? const TextStyle(),
