@@ -605,9 +605,10 @@ void main() {
       expect(clignote, findsWidgets, reason: 'le point clignoterait');
       for (int i = 0; i < 6; i++) {
         await tester.pump(const Duration(milliseconds: 250));
-        // Aucun fondu au-dessus du point : il est peint fixe.
+        // Aucun fondu dans le point : il est peint fixe (le fondu est
+        // construit dans PointEnregistrement, donc cherche en descendant).
         expect(
-          find.ancestor(of: clignote, matching: find.byType(FadeTransition)),
+          find.descendant(of: clignote, matching: find.byType(FadeTransition)),
           findsNothing,
           reason: 'instant $i',
         );
