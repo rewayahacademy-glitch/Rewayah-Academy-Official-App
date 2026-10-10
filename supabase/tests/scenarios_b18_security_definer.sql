@@ -151,7 +151,7 @@ begin
     null;
   end;
   select string_agg(
-           pg_catalog.pg_get_userbyid(a.grantee) || ':' || a.privilege_type,
+           pg_catalog.pg_get_userbyid(a.grantor) || '->' || pg_catalog.pg_get_userbyid(a.grantee) || ':' || a.privilege_type,
            ', ' order by pg_catalog.pg_get_userbyid(a.grantee), a.privilege_type
          )
     into v_kyc_acl
