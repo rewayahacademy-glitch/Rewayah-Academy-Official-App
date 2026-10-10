@@ -65,9 +65,9 @@ Future<void> _ecrireParLesBoutons(
   );
   await _taper(tester, find.byKey(const ValueKey<String>('outil-ecrire')));
   expect(
-    ProviderScope.containerOf(
-      tester.element(find.byType(SalleSeance)),
-    ).read(etatOutilsProvider).outilActif,
+    ProviderScope.containerOf(tester.element(find.byType(SalleSeance)))
+        .read(etatOutilsProvider)
+        .outilActif,
     OutilDock.stylet,
   );
   await _taper(tester, find.byKey(PanneauSeance.cleReduire));
@@ -140,9 +140,11 @@ void _verifier(
       reason: 'une rangee : $boutons',
     );
   }
+  // TB-RC (TB_RAPPORT §d n. 12) : hors telephone, la palette peut se poser
+  // dans la marge de la page, a cote d'elle ; elle ne la recouvre jamais.
   expect(
-    page.bottom,
-    lessThanOrEqualTo(tester.getRect(_palette).top),
+    page.overlaps(tester.getRect(_palette)),
+    isFalse,
     reason: 'la palette ne recouvre pas la page',
   );
 }
@@ -181,7 +183,9 @@ void main() {
           tester,
           cas.$1,
           lecture,
-          mots: cas.$2 == 1 && cas.$1.width >= 390,
+          // TB-RC : a 1440, la palette tient dans la marge de la page en
+          // icones seules (mot en infobulle) : la page garde sa hauteur.
+          mots: cas.$2 == 1 && cas.$1.width >= 390 && cas.$1.width < 1024,
         );
       });
     }

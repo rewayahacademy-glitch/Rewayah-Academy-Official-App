@@ -18,6 +18,7 @@ import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
+import 'package:rewayah_academy/features/salle_seance/composition_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/surface_page_fixe.dart';
 import 'package:rewayah_academy/features/salle_seance/vignette_video.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
@@ -305,8 +306,18 @@ void main() {
         taille: _telephone,
       );
       final Rect consigne = tester.getRect(_consigne);
-      // Le test mesure quelque chose : la vignette est bien posee.
-      expect(find.byType(VignetteVideo), findsWidgets);
+      // TB-RC (TB_RAPPORT §d n. 3) : la propre vignette de l'enseignant ne
+      // se pose que si la feuille, descendue sous elle, garde sa part de la
+      // hauteur ; sinon elle cede la place (polices de test, plus hautes).
+      // Avec les polices du depot, elle est posee : rc_composition_test.
+      if (find.byType(VignetteVideo).evaluate().isEmpty) {
+        expect(
+          tester.getSize(_feuille).height,
+          greaterThanOrEqualTo(
+            CompositionSalle.partMinimalePage * _telephone.height,
+          ),
+        );
+      }
       for (final Element e in find.byType(VignetteVideo).evaluate()) {
         final Rect r = tester.getRect(find.byWidget(e.widget));
         expect(r.overlaps(consigne), isFalse);

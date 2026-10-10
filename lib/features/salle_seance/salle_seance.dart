@@ -44,6 +44,8 @@ import 'panneau_seance.dart';
 import 'panneau_supports.dart';
 import 'rangement_support.dart';
 import 'selecteur_ressources.dart';
+import 'surface_page_fixe.dart' show rectanglePage;
+import 'vignette_video.dart' show MesuresVignette;
 import 'vue_seance.dart';
 import 'zone_support.dart';
 
@@ -186,31 +188,29 @@ class SalleSeance extends StatelessWidget {
                             actions: actions,
                             local: local,
                             agrandi: agrandi,
-                            contenu: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: <Widget>[
-                                Expanded(
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(
-                                      gouttiere,
-                                      AppSpacing.xs,
-                                      gouttiere,
-                                      AppSpacing.xs,
-                                    ),
-                                    child: ZoneSupport(
-                                      vue: vue,
-                                      zoom: local.zoom,
-                                      contenu: contenuSupport,
-                                    ),
-                                  ),
-                                ),
-                                ?_sousSurfaceEleve(
-                                  vue,
-                                  actions,
+                            contenu: _surfaceEtEntreeEleve(
+                              vue: vue,
+                              zoom: local.zoom,
+                              gouttiere: gouttiere,
+                              surface: Padding(
+                                padding: EdgeInsets.fromLTRB(
                                   gouttiere,
-                                  focusCommandes,
+                                  AppSpacing.xs,
+                                  gouttiere,
+                                  AppSpacing.xs,
                                 ),
-                              ],
+                                child: ZoneSupport(
+                                  vue: vue,
+                                  zoom: local.zoom,
+                                  contenu: contenuSupport,
+                                ),
+                              ),
+                              entree: _sousSurfaceEleve(
+                                vue,
+                                actions,
+                                gouttiere,
+                                focusCommandes,
+                              ),
                             ),
                           ),
                         ),
@@ -259,18 +259,24 @@ class SalleSeance extends StatelessWidget {
                 ),
                 Ecart.vLg,
               ] else if (large) ...<Widget>[
-                ChromeSeance(
-                  vue: vue,
-                  actions: actions,
-                  focusCapsule: focusCapsule,
+                // TB-RC (revue TB-R M3) : la tete du bureau est bornee comme
+                // ailleurs ; a texte x2, elle defile en fondu.
+                TeteSalleBornee(
+                  children: <Widget>[
+                    ChromeSeance(
+                      vue: vue,
+                      actions: actions,
+                      focusCapsule: focusCapsule,
+                    ),
+                    BandeauSecours(
+                      vue: vue,
+                      actions: actions,
+                      gouttiere: gouttiere,
+                      espaceApres: AppSpacing.lg,
+                    ),
+                    ?_appel(vue, gouttiere),
+                  ],
                 ),
-                BandeauSecours(
-                  vue: vue,
-                  actions: actions,
-                  gouttiere: gouttiere,
-                  espaceApres: AppSpacing.lg,
-                ),
-                ?_appel(vue, gouttiere),
               ] else ...<Widget>[
                 TeteSalleBornee(
                   children: <Widget>[
@@ -311,28 +317,26 @@ class SalleSeance extends StatelessWidget {
                             local: local,
                             agrandi: agrandi,
                             marge: gouttiere,
-                            contenu: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: <Widget>[
-                                Expanded(
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: gouttiere,
-                                    ),
-                                    child: ZoneSupport(
-                                      vue: vue,
-                                      zoom: local.zoom,
-                                      contenu: contenuSupport,
-                                    ),
-                                  ),
+                            contenu: _surfaceEtEntreeEleve(
+                              vue: vue,
+                              zoom: local.zoom,
+                              gouttiere: gouttiere,
+                              surface: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: gouttiere,
                                 ),
-                                ?_sousSurfaceEleve(
-                                  vue,
-                                  actions,
-                                  gouttiere,
-                                  focusCommandes,
+                                child: ZoneSupport(
+                                  vue: vue,
+                                  zoom: local.zoom,
+                                  contenu: contenuSupport,
                                 ),
-                              ],
+                              ),
+                              entree: _sousSurfaceEleve(
+                                vue,
+                                actions,
+                                gouttiere,
+                                focusCommandes,
+                              ),
                             ),
                           ),
                         ),
@@ -567,6 +571,60 @@ Widget? _sousSurfaceEleve(
         ),
       ),
     ),
+  );
+}
+
+/// TB-RC (revue TB-R M2, M3), eleve et guidee : la surface et, dessous,
+/// l'information courte et l'entree des Commandes ([entree]). Salle courte
+/// (telephone couche, texte x2 au bureau) et page qui laisse la place a cote
+/// d'elle : l'entree passe dans une colonne au bord de fin, en bas, et la
+/// page garde toute la hauteur ; sinon sous la surface, comme avant.
+Widget _surfaceEtEntreeEleve({
+  required VueSeance vue,
+  required double zoom,
+  required double gouttiere,
+  required Widget surface,
+  required Widget? entree,
+}) {
+  if (entree == null) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[Expanded(child: surface)],
+    );
+  }
+  return LayoutBuilder(
+    builder: (BuildContext contexte, BoxConstraints c) {
+      final double? ratio = zoom <= 1 ? ratioSurface(vue) : null;
+      final double retrait =
+          gouttiere + retraitPageSurface(AppGabarit.de(contexte));
+      final bool aCote =
+          ratio != null &&
+          TeteSalleBornee.courte(contexte) &&
+          c.maxWidth - largeurPanneauSeance >=
+              math.max(0, c.maxHeight - 2 * retrait) * ratio + 2 * retrait;
+      if (aCote) {
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Expanded(child: surface),
+            SizedBox(
+              width: largeurPanneauSeance,
+              child: Align(
+                alignment: AlignmentDirectional.bottomCenter,
+                child: entree,
+              ),
+            ),
+          ],
+        );
+      }
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Expanded(child: surface),
+          entree,
+        ],
+      );
+    },
   );
 }
 
@@ -1449,6 +1507,7 @@ class _SalleEnseignant extends StatelessWidget {
     bool auRepos = true,
     bool enEcriture = true,
     double ecartAvant = 0,
+    double? largeurPalette,
   }) {
     final VoidCallback? basculer = actions.onCommandes;
     if (basculer == null ||
@@ -1464,10 +1523,18 @@ class _SalleEnseignant extends StatelessWidget {
           ? const SizedBox.shrink()
           : Padding(
               padding: EdgeInsets.only(top: ecartAvant),
-              child: PaletteEcriture(
-                vue: vue,
-                onCommandes: basculer,
-                focusCommandes: focusCommandes,
+              // TB-RC : posee dans la marge de la page, la palette tient
+              // dans sa largeur (icones seules, mots en infobulle) : la page
+              // garde sa hauteur quand on ecrit (TB-7b).
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: largeurPalette ?? double.infinity,
+                ),
+                child: PaletteEcriture(
+                  vue: vue,
+                  onCommandes: basculer,
+                  focusCommandes: focusCommandes,
+                ),
               ),
             ),
       child: auRepos
@@ -1787,7 +1854,19 @@ class _SalleEnseignant extends StatelessWidget {
     // (images CLV-07-08-10) ; repliee, la colonne laisse son bouton au bord
     // de debut, a sa place.
     final bool recouvre = composition.recouvre;
-    final Widget? boutons = recouvre ? null : _bouton(etire: !gaucheTient);
+    // TB-RC (revue TB-R M2, M3) : salle courte (telephone couche, texte x2
+    // au bureau), la capsule ouvre deja les Participants (TB-3) : la rangee
+    // « Eleves » rend sa hauteur a la page, comme au telephone (TB-5).
+    final bool sansRangeeEleves =
+        vue.voitCapsule && TeteSalleBornee.courte(context);
+    // Salle courte sans capsule (tableau libre) : le bouton « Eleves »
+    // partage la rangee du declencheur, sous la surface (une rangee de
+    // moins), ou se pose au coin bas de debut si la page le permet.
+    final bool courte = TeteSalleBornee.courte(context);
+    final Widget? boutons = recouvre || sansRangeeEleves
+        ? null
+        : _bouton(etire: !gaucheTient && !courte);
+    final Widget? boutonsEnHaut = courte ? null : boutons;
     // En focus, sous la surface ne reste que la palette pendant l'ecriture ;
     // le declencheur au repos passe dans la tete (verification TB-5).
     final Widget? declencheur = recouvre
@@ -1795,21 +1874,32 @@ class _SalleEnseignant extends StatelessWidget {
         : agrandi
         ? _declencheur(auRepos: false, ecartAvant: AppSpacing.md)
         : _declencheur();
+    Widget? declencheurPour(double? largeurPalette) => recouvre || agrandi
+        ? declencheur
+        : _declencheur(largeurPalette: largeurPalette);
     final Widget centre = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        if (boutons != null)
+        if (boutonsEnHaut != null)
           Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.md),
             child: gaucheTient
                 ? Align(
                     alignment: AlignmentDirectional.centerStart,
-                    child: boutons,
+                    child: boutonsEnHaut,
                   )
-                : boutons,
+                : boutonsEnHaut,
           ),
         Expanded(
-          child: _sousSupport(support, declencheur, ecart: !agrandi),
+          child: _sousSupport(
+            support,
+            declencheur,
+            ecart: !agrandi,
+            auBordPossible: !agrandi,
+            gabarit: gabarit,
+            debut: courte ? boutons : null,
+            declencheurPour: declencheurPour,
+          ),
         ),
       ],
     );
@@ -1886,11 +1976,21 @@ class _SalleEnseignant extends StatelessWidget {
             declencheur: recouvre ? null : _declencheur(enEcriture: false),
           ),
         ] else if (desktop) ...<Widget>[
-          ChromeSeance(vue: vue, actions: actions, focusCapsule: focusCapsule),
-          BandeauSecours(
-            vue: vue,
-            actions: actions,
-            espaceApres: AppSpacing.md,
+          // TB-RC (revue TB-R M3) : bornee au bureau aussi ; a texte x2,
+          // elle defile en fondu au lieu de prendre la page.
+          TeteSalleBornee(
+            children: <Widget>[
+              ChromeSeance(
+                vue: vue,
+                actions: actions,
+                focusCapsule: focusCapsule,
+              ),
+              BandeauSecours(
+                vue: vue,
+                actions: actions,
+                espaceApres: AppSpacing.md,
+              ),
+            ],
           ),
         ] else ...<Widget>[
           TeteSalleBornee(
@@ -1958,12 +2058,73 @@ class _SalleEnseignant extends StatelessWidget {
   ///
   /// [ecart] faux (focus) : la palette porte son propre ecart, rien n'est
   /// reserve sous la surface tant qu'on n'ecrit pas.
+  ///
+  /// TB-RC (TB_RAPPORT §d n. 12 ; revue TB-R M2, M3) : [auBordPossible],
+  /// hors telephone, le declencheur se pose au coin bas de fin de la
+  /// surface, dans la marge que la page laisse a cote d'elle, sans rangee :
+  /// fermer les Commandes ne rapetisse plus la page. S'il ne tient pas a
+  /// cote de la page (page large, zoom local, vignette), il reprend sa
+  /// rangee sous la surface.
   Widget _sousSupport(
     Widget support,
     Widget? declencheur, {
     bool ecart = true,
+    bool auBordPossible = false,
+    Gabarit gabarit = Gabarit.desktop,
+    Widget? debut,
+    Widget? Function(double? largeurPalette)? declencheurPour,
   }) {
-    if (declencheur == null) return support;
+    if (declencheur == null && debut == null) return support;
+    if (auBordPossible) {
+      final double? ratio = local.zoom <= 1 ? ratioSurface(vue) : null;
+      final double retrait = retraitPageSurface(gabarit);
+      return LayoutBuilder(
+        builder: (BuildContext contexte, BoxConstraints c) {
+          // La palette d'ecriture se pose dans la marge de la page si elle
+          // y tient en icones seules ; sinon sa largeur naturelle.
+          final double? libre = ratio == null
+              ? null
+              : _PlaceDeclencheur.margeLaterale(
+                      taille: c.biggest,
+                      ratio: ratio,
+                      retrait: retrait,
+                    ) -
+                    2 * AppSpacing.md;
+          final Widget? entree =
+              declencheurPour?.call(
+                libre != null && libre >= _largeurPaletteIcones ? libre : null,
+              ) ??
+              declencheur;
+          return CustomMultiChildLayout(
+            delegate: _PlaceDeclencheur(
+              ratio: ratio,
+              retrait: retrait,
+              ecart: AppSpacing.md,
+              dessus: vignetteEnseignantPosee(contexte, vue)
+                  ? AppSpacing.md +
+                        MesuresVignette.largeur(
+                              gabarit,
+                              guidee: vue.vignetteAgrandie,
+                              enseignant: true,
+                              panneau: vue.panneau != PanneauOuvert.aucun,
+                            ) /
+                            MesuresVignette.ratio
+                  : 0,
+              sens: Directionality.of(contexte),
+              bas: CommandesMasquables.recouvrementDe(contexte),
+            ),
+            children: <Widget>[
+              LayoutId(id: _PieceSurface.surface, child: support),
+              // Ordre de lecture : « Eleves » (debut) avant « Commandes ».
+              if (debut != null)
+                LayoutId(id: _PieceSurface.debut, child: debut),
+              if (entree != null)
+                LayoutId(id: _PieceSurface.declencheur, child: entree),
+            ],
+          );
+        },
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -1978,6 +2139,132 @@ class _SalleEnseignant extends StatelessWidget {
       ],
     );
   }
+}
+
+/// La largeur de la palette d'ecriture en icones seules (quatre cibles de
+/// 48, leurs ecarts, la marge de sa surface) : en dessous, elle ne se pose
+/// pas dans la marge de la page.
+const double _largeurPaletteIcones =
+    4 * AppSpacing.titreEcran + 3 * AppSpacing.sm + 2 * AppSpacing.xs;
+
+/// Les pieces de la surface et de ses entrees (hors telephone).
+enum _PieceSurface { surface, declencheur, debut }
+
+/// TB-RC (TB_RAPPORT §d n. 12 ; revue TB-R M2, M3) : le declencheur
+/// « Commandes » au coin bas de fin de la surface, et [debut] (le bouton
+/// « Eleves » d'une salle courte) au coin bas de debut, quand la page,
+/// posee en `BoxFit.contain` ([ratio], retrait [retrait] de chaque cote),
+/// leur laisse la place a cote d'elle et sous la vignette ([dessus]) ;
+/// sinon sur une seule rangee sous la surface, le declencheur au bord de
+/// fin, comme avant. Rien ne recouvre la page.
+class _PlaceDeclencheur extends MultiChildLayoutDelegate {
+  _PlaceDeclencheur({
+    required this.ratio,
+    required this.retrait,
+    required this.ecart,
+    required this.dessus,
+    required this.sens,
+    this.bas = 0,
+  });
+
+  /// La hauteur du bas que la barre de l'appel recouvre quand elle se pose
+  /// par-dessus (texte agrandi sur ecran court) : les entrees restent
+  /// au-dessus d'elle, jamais dessous.
+  final double bas;
+
+  /// Le ratio de la page, ou `null` : pas de page fixe (diapositive, rendu
+  /// fourni) ou page agrandie, les entrees gardent leur rangee.
+  final double? ratio;
+  final double retrait;
+  final double ecart;
+
+  /// La hauteur occupee en haut de la surface par la vignette, ou 0.
+  final double dessus;
+  final TextDirection sens;
+
+  /// La marge que la page laisse de chaque cote d'une surface [taille].
+  static double margeLaterale({
+    required Size taille,
+    required double ratio,
+    required double retrait,
+  }) {
+    final Size boite = Size(
+      math.max(0, taille.width - 2 * retrait),
+      math.max(0, taille.height - 2 * retrait),
+    );
+    final Rect page = rectanglePage(ratio: ratio, boite: boite);
+    return (boite.width - page.width) / 2 + retrait;
+  }
+
+  @override
+  void performLayout(Size size) {
+    final bool aDecl = hasChild(_PieceSurface.declencheur);
+    final bool aDebut = hasChild(_PieceSurface.debut);
+    final Size d = aDecl
+        ? layoutChild(_PieceSurface.declencheur, BoxConstraints.loose(size))
+        : Size.zero;
+    final double resteDebut = math.max(
+      0,
+      size.width - (aDecl ? d.width + ecart : 0),
+    );
+    final Size b = aDebut
+        ? layoutChild(
+            _PieceSurface.debut,
+            BoxConstraints(maxWidth: resteDebut, maxHeight: size.height),
+          )
+        : Size.zero;
+    bool auBord = false;
+    final double? r = ratio;
+    if (r != null) {
+      final double libre = margeLaterale(
+        taille: size,
+        ratio: r,
+        retrait: retrait,
+      );
+      auBord =
+          (!aDecl ||
+              (libre >= d.width + 2 * ecart &&
+                  size.height >= dessus + d.height + 2 * ecart + bas)) &&
+          (!aDebut ||
+              (libre >= b.width + 2 * ecart &&
+                  size.height >= b.height + 2 * ecart + bas));
+    }
+    final double rangee = math.max(d.height, b.height);
+    final double hSurface = auBord
+        ? size.height
+        : math.max(0, size.height - rangee - ecart - bas);
+    layoutChild(
+      _PieceSurface.surface,
+      BoxConstraints.tightFor(width: size.width, height: hSurface),
+    );
+    positionChild(_PieceSurface.surface, Offset.zero);
+    final double marge = auBord ? ecart : 0;
+    final bool ltr = sens == TextDirection.ltr;
+    double y(Size piece) => auBord
+        ? size.height - bas - piece.height - ecart
+        : hSurface + ecart + (rangee - piece.height) / 2;
+    if (aDecl) {
+      positionChild(
+        _PieceSurface.declencheur,
+        Offset(ltr ? size.width - d.width - marge : marge, y(d)),
+      );
+    }
+    if (aDebut) {
+      positionChild(
+        _PieceSurface.debut,
+        Offset(ltr ? marge : size.width - b.width - marge, y(b)),
+      );
+    }
+  }
+
+  @override
+  bool shouldRelayout(_PlaceDeclencheur ancien) =>
+      ancien.ratio != ratio ||
+      ancien.retrait != retrait ||
+      ancien.ecart != ecart ||
+      ancien.dessus != dessus ||
+      ancien.bas != bas ||
+      ancien.sens != sens;
 }
 
 /// Les pieces de la salle du telephone sans panneau.
@@ -2266,6 +2553,23 @@ class TeteSalleBornee extends StatefulWidget {
   /// 100 % en-tete et bloc restent visibles ensemble.
   static const double part = 0.55;
 
+  /// TB-RC (revue TB-R M2, M3) : la hauteur utile de l'ecran, hors zones
+  /// du systeme (barre d'etat, indicateur d'accueil).
+  static double hauteurUtile(BuildContext context) =>
+      CompositionSalle.hauteurUtile(context);
+
+  /// La salle est courte a cet ecran ([CompositionSalle.hauteurCourte]).
+  static bool courte(BuildContext context) => CompositionSalle.courte(context);
+
+  /// La hauteur maximale de la tete : [part] de l'ecran, ou
+  /// [CompositionSalle.partTeteCourte] de la hauteur utile quand la salle
+  /// est courte (telephone couche, texte x2 au bureau ou a 320) : la tete
+  /// defile alors en fondu, l'etat critique passe en tete
+  /// ([BandeauSecours]) et la page garde sa part.
+  static double hauteurMax(BuildContext context) => courte(context)
+      ? hauteurUtile(context) * CompositionSalle.partTeteCourte
+      : MediaQuery.sizeOf(context).height * part;
+
   /// La cle du defilement de la tete.
   static const Key defilementKey = ValueKey<String>('tete-salle-defile');
 
@@ -2292,6 +2596,11 @@ class _TeteSalleBorneeState extends State<TeteSalleBornee> {
   /// TB-11b (tour 3) : le rang de l'enfant qui porte l'etat critique, pose
   /// en premier parce qu'il ne tenait pas a sa place ; `null` sinon.
   int? _enTete;
+
+  /// TB-RC : un etat critique ne tenait pas dans la tete d'une salle
+  /// courte ; la tete reprend sa borne ordinaire ([TeteSalleBornee.part])
+  /// tant qu'il dure, pour qu'il se lise en entier, hors du fondu.
+  bool _critique = false;
 
   /// Le defilement garde sa position quand un fondu se pose ou se retire.
   final GlobalKey _cleDefile = GlobalKey(debugLabel: 'tete-salle');
@@ -2356,7 +2665,12 @@ class _TeteSalleBorneeState extends State<TeteSalleBornee> {
         haut.dy + objet.size.height <= cadre.size.height - fondu + 0.5;
     if (entier) return;
     final int? rang = _rang(cible);
-    if (rang != null && rang != _enTete) setState(() => _enTete = rang);
+    if ((rang != null && rang != _enTete) || !_critique) {
+      setState(() {
+        if (rang != null) _enTete = rang;
+        _critique = true;
+      });
+    }
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
       if (!mounted || !position.hasPixels) return;
       position.jumpTo(position.minScrollExtent);
@@ -2365,7 +2679,12 @@ class _TeteSalleBorneeState extends State<TeteSalleBornee> {
 
   /// L'etat critique est parti : la tete reprend son ordre.
   void relacher() {
-    if (_enTete != null) setState(() => _enTete = null);
+    if (_enTete != null || _critique) {
+      setState(() {
+        _enTete = null;
+        _critique = false;
+      });
+    }
   }
 
   /// Un fondu de [AppSpacing.xxxl] au bord bas ([versLeBas]) ou haut.
@@ -2435,7 +2754,12 @@ class _TeteSalleBorneeState extends State<TeteSalleBornee> {
     }
     return ConstrainedBox(
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.sizeOf(context).height * TeteSalleBornee.part,
+        maxHeight: _critique
+            ? math.max(
+                TeteSalleBornee.hauteurMax(context),
+                MediaQuery.sizeOf(context).height * TeteSalleBornee.part,
+              )
+            : TeteSalleBornee.hauteurMax(context),
       ),
       child: NotificationListener<ScrollUpdateNotification>(
         onNotification: _defiler,
