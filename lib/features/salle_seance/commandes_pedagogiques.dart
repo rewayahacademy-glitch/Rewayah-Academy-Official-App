@@ -10,28 +10,48 @@
 //
 // Le panneau est pose par la salle dans [PanneauSeance] : feuille du bas au
 // telephone (au-dessus de la barre de l'appel, UX-07), panneau a droite
-// ailleurs. Il n'est rendu que pour l'enseignant ([VueSeance.voitCommandes]) ;
-// chaque entree n'existe que si son rappel existe (lib/CLAUDE.md). Les outils
-// d'ecriture eux-memes (Stylo, Surligner, Gomme, Annuler, palette courte et
-// « Terminer ») viennent avec TB-7b : ils ne sont pas rendus ici.
+// ailleurs. Il est rendu pour l'enseignant ([VueSeance.voitCommandes]) et,
+// depuis TB-10, pour l'eleve et la guidee (contenu reduit, plus bas) ;
+// chaque entree n'existe que si son rappel existe (lib/CLAUDE.md).
+//
+// TB-7b (CMD-02, CMD-03) : l'onglet « Outils » porte la ligne d'outils
+// primaires (Pointeur, Ecrire, puis Marquer et Masquer), la phrase qui
+// explique l'outil retenu, et sous « Ecrire » la barre d'ecriture et ses
+// options (ecriture_seance.dart). Le panneau s'ouvre sur « Outils » tant
+// qu'un outil est retenu.
+//
+// TB-10 (plan V2 §5, §19.3 point 4) : l'eleve et la guidee ont leurs
+// Commandes, sans onglets : « Ecrire » seulement si l'enseignant l'a
+// autorise (l'information courte, puis l'outil, choisi par l'eleve), la
+// Lecture (zoom local, « Ajuster a l'ecran ») et l'Affichage (Focus). Ni
+// Bibliotheque, ni affichages partages, ni page, ni rangement, ni
+// effacement global.
 
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_outils/etat_outils.dart';
+import '../../core/tc_outils/operations_personnelles.dart';
+import '../../core/tc_outils/port_dock_hote.dart' show OutilDock;
+import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/menu_actions.dart';
 import 'actions_seance.dart';
 import 'barre_support.dart';
+import 'ecriture_seance.dart';
 import 'outils_enseignement.dart';
 import 'rangement_support.dart';
 import 'salle_seance.dart' show BoutonPanneau;
@@ -54,11 +74,17 @@ class DeclencheurCommandes extends StatelessWidget {
     required this.onPress,
     this.ouvert = false,
     this.focusNode,
+    this.iconeSeule = false,
     super.key = cle,
   });
 
   /// La cle du declencheur.
   static const Key cle = ValueKey<String>('declencheur-commandes');
+
+  /// TB-10 : l'icone seule, comme en Mode Accessibilite, a cote de
+  /// l'information courte de l'eleve quand le texte est agrandi (la page
+  /// garde sa hauteur) ; le nom lu et l'infobulle gardent le mot.
+  final bool iconeSeule;
 
   final VoidCallback onPress;
 
@@ -71,6 +97,21 @@ class DeclencheurCommandes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    // TB-10 (MA-CMD-1, directeur 02/10) : en Mode Accessibilite, l'icone
+    // seule, compacte ; le nom lu et l'infobulle gardent le mot.
+    if (iconeSeule || AppMetriques.of(context).mode == InterfaceMode.enfant) {
+      return Semantics(
+        selected: ouvert,
+        child: BoutonIcone(
+          icone: AppIcons.replier,
+          libelle: t.salle.seance.commandes.declencheurSemantique,
+          infobulle: t.salle.seance.commandes.declencheur,
+          forme: FormeBoutonIcone.carre,
+          focusNode: focusNode,
+          onPress: onPress,
+        ),
+      );
+    }
     // La carte pressable du core (K-54), comme le bouton Eleves ; le mot
     // passe a la ligne a 200 % et a 320 au lieu de deborder ou d'etre coupe.
     return Semantics(
@@ -109,7 +150,7 @@ class DeclencheurCommandes extends StatelessWidget {
 }
 
 /// Le contenu du panneau « Commandes ».
-class CommandesPedagogiques extends StatefulWidget {
+class CommandesPedagogiques extends ConsumerStatefulWidget {
   /// Cree le contenu.
   const CommandesPedagogiques({
     required this.vue,
@@ -149,6 +190,22 @@ class CommandesPedagogiques extends StatefulWidget {
   /// TB-9 : le retour discret « Support range ».
   static const Key cleRange = ValueKey<String>('commandes-support-range');
 
+  /// TB-11b (tour 2) : « L'ecriture reprend des le retour du tableau. », a
+  /// la place de la tuile « Ecrire » pendant la suspension.
+  static const Key cleEcritureSuspendue = ValueKey<String>(
+    'commandes-ecriture-suspendue',
+  );
+
+  /// TB-11b : la conservation des notes (« dans cette seance uniquement »).
+  static const Key cleConservation = ValueKey<String>(
+    'commandes-conservation-notes',
+  );
+
+  /// TB-10 : la section « Ecrire » de l'eleve autorise.
+  static const Key cleEcritureEleve = ValueKey<String>(
+    'commandes-ecriture-eleve',
+  );
+
   final VueSeance vue;
   final ActionsSeance actions;
 
@@ -171,14 +228,19 @@ class CommandesPedagogiques extends StatefulWidget {
   static bool voitOutils(VueSeance vue, ActionsSeance actions) =>
       vue.voitOutils && actions.onOutil != null;
 
+  /// TB-10 : la section « Ecrire » de l'eleve (autorisation accordee, la
+  /// salle sait ecrire).
+  static bool voitEcritureEleve(VueSeance vue, ActionsSeance actions) =>
+      !vue.commandesCompletes && vue.voitEcriture && actions.onOutil != null;
+
   /// Le declencheur n'est rendu que si une entree du panneau a un rappel
   /// (UX_REVIEW_TB §3 bis) : jamais un panneau vide.
   static bool aDesEntrees(VueSeance vue, ActionsSeance actions) {
     if (!vue.voitCommandes || actions.onCommandes == null) return false;
     final bool lecture =
         vue.voitLectureCommandes &&
-        (actions.onZoomMoins != null ||
-            actions.onZoomPlus != null ||
+        ((vue.voitZoomCommandes &&
+                (actions.onZoomMoins != null || actions.onZoomPlus != null)) ||
             actions.onAjusterEcran != null ||
             actions.onAgrandir != null);
     final bool pages =
@@ -188,15 +250,32 @@ class CommandesPedagogiques extends StatefulWidget {
         (vue.voitAffichagesPartages && actions.onAffichage != null) ||
         pages ||
         lecture ||
-        voitOutils(vue, actions);
+        voitOutils(vue, actions) ||
+        voitEcritureEleve(vue, actions);
   }
 
   @override
-  State<CommandesPedagogiques> createState() => _CommandesPedagogiquesState();
+  ConsumerState<CommandesPedagogiques> createState() =>
+      _CommandesPedagogiquesState();
 }
 
-class _CommandesPedagogiquesState extends State<CommandesPedagogiques> {
-  OngletCommandes _onglet = OngletCommandes.support;
+class _CommandesPedagogiquesState extends ConsumerState<CommandesPedagogiques> {
+  /// TB-7b : un outil retenu (Pointeur, Ecrire) rouvre le panneau sur
+  /// « Outils », la ou il se change (palette courte, plan V2 §4.2).
+  late OngletCommandes _onglet = ref.read(etatOutilsProvider).outilActif == null
+      ? OngletCommandes.support
+      : OngletCommandes.outils;
+
+  /// TB-7b : choisir « Ecrire » alors que la classe voit le support seul
+  /// (notes cachees) passe a « Avec notes » : une note ecrite se voit.
+  void _outil(OutilEnseignement outil) {
+    if (outil == OutilEnseignement.ecrire &&
+        ref.read(etatOutilsProvider).outilActif == OutilDock.stylet &&
+        widget.vue.vueSurface == VueSurface.supportSeul) {
+      widget.actions.onAffichage?.call(AffichagePartage.avecNotes);
+    }
+    widget.actions.onOutil?.call(outil);
+  }
 
   /// TB-9 : un support vient d'etre range depuis ce panneau ; le retour
   /// discret « Support range » se montre tant qu'aucun support n'est
@@ -249,7 +328,14 @@ class _CommandesPedagogiquesState extends State<CommandesPedagogiques> {
       libelleConfirmer: t.salle.seance.rangement.effacer,
       irreversible: true,
     );
-    if (confirme) effacer();
+    if (!confirme) return;
+    effacer();
+    if (!mounted) return;
+    // TB-7b : « Annuler » ne rajoute jamais une note que l'effacement a
+    // retiree ; les operations personnelles de la surface s'en vont.
+    ref
+        .read(historiquePersonnelProvider.notifier)
+        .oublierSurface(surLaSurface(widget.vue.ancrageSurface));
   }
 
   /// Les actions rares du support ou du tableau, chacune seulement si la
@@ -267,6 +353,7 @@ class _CommandesPedagogiquesState extends State<CommandesPedagogiques> {
 
   @override
   Widget build(BuildContext context) {
+    if (!widget.vue.commandesCompletes) return _colonne(_eleve(context));
     final bool outils = CommandesPedagogiques.voitOutils(
       widget.vue,
       widget.actions,
@@ -294,19 +381,33 @@ class _CommandesPedagogiquesState extends State<CommandesPedagogiques> {
       ...switch (onglet) {
         OngletCommandes.support => _support(context),
         OngletCommandes.outils => <Widget>[
-          // Le Pointeur en tete (ordre de `OutilEnseignement`), puis les
-          // capacites existantes ; l'outil choisi reste local (CLV-06).
+          // Le Pointeur en tete (ordre de `OutilEnseignement`), puis Ecrire
+          // et les capacites existantes ; l'outil choisi reste local.
           OutilsEnseignement(
-            onOutil: widget.actions.onOutil,
+            onOutil: widget.actions.onOutil == null ? null : _outil,
             forme: FormeOutils.rangee,
+            avecEcrire: widget.vue.ecritureProposee,
           ),
+          AideOutil(
+            ecritureSuspendue: widget.vue.texteEcritureSuspendue != null,
+          ),
+          // TB-11b (tour 2) : « Ecrire » n'est pas rendu pendant la reprise
+          // du tableau ; la phrase dit pourquoi et quand il revient.
+          if (widget.vue.texteEcritureSuspendue case final String suspendue)
+            _EcritureSuspendue(texte: suspendue),
+          if (ecritSurLaSurface(ref, widget.vue))
+            EcritureSeance(vue: widget.vue),
         ],
       },
     ];
-    // Une seule colonne qui defile : a 200 % et a 320, rien n'est coupe
-    // (UX_REVIEW_TB n. 27 a).
-    // Le contenu est court : tout est construit (lecteur d'ecran, ordre du
-    // focus), et la colonne defile si la place manque.
+    return _colonne(lignes);
+  }
+
+  /// Une seule colonne qui defile : a 200 % et a 320, rien n'est coupe
+  /// (UX_REVIEW_TB n. 27 a). Le contenu est court : tout est construit
+  /// (lecteur d'ecran, ordre du focus), et la colonne defile si la place
+  /// manque.
+  Widget _colonne(List<Widget> lignes) {
     return SingleChildScrollView(
       padding: const EdgeInsets.only(bottom: AppSpacing.md),
       child: Column(
@@ -330,9 +431,6 @@ class _CommandesPedagogiquesState extends State<CommandesPedagogiques> {
     final String? titre = vue.supportPresente?.titre ?? vue.support?.titre;
     final ValueChanged<AffichagePartage>? affichage = actions.onAffichage;
     final ({int page, int total})? page = vue.pageCommandes;
-    final bool zoom = actions.onZoomMoins != null || actions.onZoomPlus != null;
-    final VoidCallback? ajuster = actions.onAjusterEcran;
-    final VoidCallback? focus = actions.onAgrandir;
     return <Widget>[
       // Plan V2 §4.2 : la Bibliotheque est la premiere action du panneau.
       if (bibliotheque != null)
@@ -363,6 +461,16 @@ class _CommandesPedagogiquesState extends State<CommandesPedagogiques> {
           icone: AppIcons.tabletteOuOrdinateur,
           menu: _entreesMenu(),
           semantiqueMenu: t.salle.seance.rangement.menuTableau,
+        ),
+      // TB-11b (plan V2 §11, §20 « Sauvegarde absente ») : ce que deviennent
+      // les notes, sous ce qui les porte ; jamais « Sauvegarde ».
+      if (vue.texteConservation case final String conservation)
+        Text(
+          conservation,
+          key: CommandesPedagogiques.cleConservation,
+          style: AppPalette.of(context).inkMuted.applyTo(
+            Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
+          ),
         ),
       // Un clic par affichage (TB3) ; invisibles sans support presente.
       if (vue.voitAffichagesPartages && affichage != null)
@@ -401,6 +509,77 @@ class _CommandesPedagogiquesState extends State<CommandesPedagogiques> {
           onSuivante: actions.onPageSuivante,
           longue: true,
         ),
+      ..._lectureEtFocus(),
+    ];
+  }
+
+  /// TB-10 (plan V2 §19.3 point 4) : les Commandes de l'eleve. « Ecrire »
+  /// d'abord quand l'enseignant l'a autorise (c'est la raison d'ouvrir le
+  /// panneau), puis la Lecture et l'Affichage.
+  List<Widget> _eleve(BuildContext context) {
+    final VueSeance vue = widget.vue;
+    final ActionsSeance actions = widget.actions;
+    final ValueChanged<OutilEnseignement>? rappel = actions.onOutil;
+    final bool ecrit = ecritSurLaSurface(ref, vue);
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final String? avis = vue.avisEcriture;
+    return <Widget>[
+      if (CommandesPedagogiques.voitEcritureEleve(vue, actions) &&
+          rappel != null)
+        Column(
+          key: CommandesPedagogiques.cleEcritureEleve,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            if (avis != null) ...<Widget>[
+              Text(
+                avis,
+                style: palette.inkStrong.applyTo(
+                  textes.titleSmall ?? const TextStyle(),
+                ),
+              ),
+              Ecart.vSm,
+            ],
+            // TB-11b (tour 2) : le tableau suspend l'ecriture ; ni tuile, ni
+            // aide qui dit d'ecrire, ni barre : la phrase de la suspension.
+            if (vue.texteEcritureSuspendue case final String suspendue)
+              _EcritureSuspendue(texte: suspendue)
+            else ...<Widget>[
+              // La tuile « Ecrire » des outils de la salle, seule : l'eleve
+              // entre dans Ecrire volontairement (§19.3 point 5).
+              OutilsEnseignement(
+                onOutil: (OutilEnseignement outil) {
+                  garderOutilPropose(ref, vue);
+                  rappel(outil);
+                },
+                forme: FormeOutils.rangee,
+                outils: const <OutilEnseignement>[OutilEnseignement.ecrire],
+              ),
+              Ecart.vSm,
+              Text(
+                ecrit ? vue.aideOutilsEleve : vue.aideChoisirEcrire,
+                style: palette.inkMuted.applyTo(
+                  textes.bodySmall ?? const TextStyle(),
+                ),
+              ),
+              if (ecrit) ...<Widget>[Ecart.vMd, EcritureSeance(vue: vue)],
+            ],
+          ],
+        ),
+      ..._lectureEtFocus(),
+    ];
+  }
+
+  /// La Lecture (zoom local, « Ajuster a l'ecran ») et l'Affichage (Focus).
+  List<Widget> _lectureEtFocus() {
+    final VueSeance vue = widget.vue;
+    final ActionsSeance actions = widget.actions;
+    final bool zoom =
+        vue.voitZoomCommandes &&
+        (actions.onZoomMoins != null || actions.onZoomPlus != null);
+    final VoidCallback? ajuster = actions.onAjusterEcran;
+    final VoidCallback? focus = actions.onAgrandir;
+    return <Widget>[
       if (vue.voitLectureCommandes && (zoom || ajuster != null))
         Column(
           key: CommandesPedagogiques.cleLecture,
@@ -565,5 +744,21 @@ class _TitreSection extends StatelessWidget {
       style: AppPalette.of(context).inkMuted
           .applyTo(Theme.of(context).textTheme.labelLarge ?? const TextStyle()),
     ),
+  );
+}
+
+/// TB-11b (tour 2) : la phrase qui remplace « Ecrire » pendant la reprise
+/// du tableau (K-58 : la limite et sa suite).
+class _EcritureSuspendue extends StatelessWidget {
+  const _EcritureSuspendue({required this.texte});
+
+  final String texte;
+
+  @override
+  Widget build(BuildContext context) => Text(
+    texte,
+    key: CommandesPedagogiques.cleEcritureSuspendue,
+    style: AppPalette.of(context).inkMuted
+        .applyTo(Theme.of(context).textTheme.bodySmall ?? const TextStyle()),
   );
 }

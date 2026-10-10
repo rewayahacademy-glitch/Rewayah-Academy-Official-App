@@ -60,3 +60,36 @@ class NotesDeposees extends Notifier<List<TraitVectoriel>> {
     ];
   }
 }
+
+/// TB-11b (plan V2 §10 « Les nouveaux traits locaux restent identifies
+/// comme non partages jusqu'a reconciliation ») : les traits que la
+/// personne a poses pendant que le tableau etait interrompu. Etat local de
+/// la salle, jamais diffuse ; la surface ne le lit que tant que le tableau
+/// n'est pas revenu (`SynchroTableau.partage` : la reconciliation du moteur
+/// fait foi, TB-BR).
+final NotifierProvider<TraitsNonPartages, Set<String>>
+traitsNonPartagesProvider = NotifierProvider<TraitsNonPartages, Set<String>>(
+  TraitsNonPartages.new,
+);
+
+/// Les identifiants des traits poses sans etre partages.
+class TraitsNonPartages extends Notifier<Set<String>> {
+  @override
+  Set<String> build() => const <String>{};
+
+  /// Le trait [id] vient d'etre pose sans etre partage.
+  void ajouter(String id) => state = <String>{...state, id};
+
+  /// TB-11b (tour 2) : le tableau est revenu ; la reconciliation du moteur
+  /// fait foi, plus rien n'est a marquer (une interruption suivante ne
+  /// remarque pas des traits deja recus).
+  void reconcilier() {
+    if (state.isNotEmpty) state = const <String>{};
+  }
+
+  /// Le trait [id] a ete retire (annule, gomme).
+  void retirer(String id) {
+    if (!state.contains(id)) return;
+    state = <String>{...state}..remove(id);
+  }
+}

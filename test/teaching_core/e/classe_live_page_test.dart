@@ -463,7 +463,7 @@ void main() {
           t.salle.seance.outils.pointeur,
           t.salle.seance.outils.marquer,
           t.salle.seance.outils.masquer,
-          t.salle.seance.outils.annoter,
+          t.salle.seance.outils.ecrire,
         ]) {
           expect(find.text(reserve), findsNothing, reason: reserve);
           expect(find.bySemanticsLabel(reserve), findsNothing, reason: reserve);

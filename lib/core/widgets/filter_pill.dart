@@ -30,7 +30,12 @@ class FilterPill extends StatelessWidget {
     super.key,
     this.retenue = false,
     this.compteur,
+    this.apercu,
   });
+
+  /// TB-7b : un apercu peint avant le libelle (la pastille d'une couleur
+  /// d'encre). Il ne remplace jamais le libelle ; muet au lecteur d'ecran.
+  final Widget? apercu;
 
   /// Ce qui s'affiche.
   final String libelle;
@@ -96,6 +101,7 @@ class FilterPill extends StatelessWidget {
                   runSpacing: AppSpacing.xs,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: <Widget>[
+                    if (apercu case final Widget a) ExcludeSemantics(child: a),
                     Text(
                       libelle,
                       textAlign: TextAlign.center,

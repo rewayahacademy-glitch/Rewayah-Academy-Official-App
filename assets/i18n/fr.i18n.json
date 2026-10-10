@@ -294,7 +294,37 @@
         "pointeur": "Pointeur",
         "marquer": "Marquer",
         "masquer": "Masquer",
-        "annoter": "Annoter"
+        "ecrire": "Écrire",
+        "aideLecture": "Sans outil, la page se lit ; agrandie, elle se déplace en la faisant glisser.",
+        "aidePointeur": "Pointeur : touchez la page pour montrer un passage, rien ne reste.",
+        "aideEcrire": "Écrire : écrivez sur la page. Sur un écran tactile, deux doigts la déplacent."
+      },
+      "ecriture": {
+        "palette": "Outils d'écriture",
+        "terminer": "Terminer",
+        "couleur": "Couleur",
+        "couleurAide": "La couleur dit l'intention du trait, pour toute la classe.",
+        "epaisseur": "Épaisseur",
+        "epaisseurAide": "Fin pour écrire un mot, épais pour entourer.",
+        "fine": "Fin",
+        "moyenne": "Moyen",
+        "epaisse": "Épais",
+        "tuPeuxEcrire": "Tu peux écrire sur le tableau.",
+        "vousPouvezEcrire": "Vous pouvez écrire sur le tableau.",
+        "repriseSayyid": "Sayyid reprend le tableau.",
+        "repriseSayyida": "Sayyida reprend le tableau.",
+        "repriseNom": "{nom} reprend le tableau.",
+        "choisirTu": "Touche « Écrire » quand tu veux écrire. Sinon la page se lit, et ton doigt ne laisse aucun trait.",
+        "choisirVous": "Touchez « Écrire » quand vous voulez écrire. Sinon la page se lit, et votre doigt ne laisse aucun trait.",
+        "aideEleveTu": "Écris avec le stylo. La gomme et Annuler ne touchent que tes traits ; Terminer revient à la lecture.",
+        "aideEleveVous": "Écrivez avec le stylo. La gomme et Annuler ne touchent que vos traits ; Terminer revient à la lecture.",
+        "peutEcrire": "Peut écrire",
+        "autoriser": "Autoriser à écrire",
+        "retirer": "Retirer l'autorisation d'écrire",
+        "autoriserSemantique": "Autoriser à écrire : {prenom}",
+        "retirerSemantique": "Retirer l'autorisation d'écrire de {prenom}",
+        "autoriserAide": "{prenom} pourra écrire sur la page ou le tableau. La page et le support restent à vous.",
+        "retirerAide": "Ses traits restent sur la page ; ses outils d'écriture se retirent."
       },
       "rail": {
         "navigation": "Navigation",
@@ -363,6 +393,16 @@
         "aucunSupport": "Choisissez un support ou écrivez au tableau.",
         "page": "{titre}, page {page} sur {pages}",
         "supportMasque": "Tableau, le support est masqué"
+      },
+      "synchro": {
+        "nonPartagees": "Vos nouvelles notes ne sont pas partagées.",
+        "nonPartageesSuite": "Les notes en pointillés ne se voient que sur votre écran, le temps que le tableau se reconnecte.",
+        "seReconnecte": "Le tableau se reconnecte.",
+        "reprise": "Reprise du tableau…",
+        "revient": "Le tableau revient.",
+        "ecritureSuspendue": "L'écriture reprend dès le retour du tableau.",
+        "nonSauvegardees": "Les notes de cette séance ne sont pas sauvegardées.",
+        "nonSauvegardeesSuite": "Elles restent au tableau jusqu'à la fin de la séance, mais ne seront pas retrouvées au prochain cours."
       },
       "rangement": {
         "ranger": "Ranger dans la bibliothèque",
@@ -3969,7 +4009,7 @@
         "pourEvaluation": "Pour l'évaluation"
       },
       "trait": {
-        "stylet": "Stylet",
+        "stylet": "Stylo",
         "surligneur": "Surligner",
         "gomme": "Gomme",
         "annuler": "Annuler",

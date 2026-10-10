@@ -461,6 +461,24 @@ abstract final class DonneesSeanceDemo {
     ],
   );
 
+  /// TB-11b (ERR-01) : le trait que l'enseignant a pose pendant
+  /// l'interruption, un souligne horizontal sous le cercle de la page 1 ;
+  /// la classe ne l'a pas recu (`VueSeance.traitsNonPartages`).
+  static final TraitVectoriel traitNonPartageDemonstration = TraitVectoriel(
+    id: 'demo-trait-non-partage',
+    ancrage: ContentPosition.page(
+      resourceId: chapitre1.id,
+      resourceVersionId: _versionChapitre1,
+      page: 1,
+    ),
+    outil: OutilTrait.stylet,
+    points: const <PointNormalise>[
+      PointNormalise(0.25, 0.8),
+      PointNormalise(0.5, 0.8),
+      PointNormalise(0.75, 0.8),
+    ],
+  );
+
   /// Le centre du cercle de demonstration, dans la page.
   static const PointNormalise centreCercle = PointNormalise(0.5, 0.55);
 
@@ -598,6 +616,9 @@ abstract final class DonneesSeanceDemo {
       SituationTb.autorisationEcrire ||
       SituationTb.cmd02 ||
       SituationTb.cmd03 => true,
+      // TB-11b : l'eleve autorise voit son ecriture suspendue (ERR-01,
+      // ERR-02), sans perdre son droit.
+      SituationTb.err01 || SituationTb.err02 => true,
       _ => false,
     };
     final List<EleveSeance> inscrits = <EleveSeance>[
@@ -636,6 +657,25 @@ abstract final class DonneesSeanceDemo {
           : tableauLibre,
       supportPresente: sansSupport ? null : supportPageFixe,
       sansSupportPresente: sansSupport,
+      // TB-10 (§12 « Droit retire ») : l'eleve vient de perdre son droit
+      // d'ecrire ; l'enseignant voit sa ligne sans « Peut ecrire ».
+      ecritureRetiree: situation == SituationTb.droitRetire,
+      // TB-11b (plan V2 §10 a §12, §19.5) : le tableau interrompu (ERR-01),
+      // en reprise (ERR-02) ; la sauvegarde en echec (ERR-03), sans
+      // « Reessayer » tant que le contrat durable manque (TB-BR-18).
+      synchroTableau: switch (situation) {
+        SituationTb.err01 => SynchroTableau.interrompue,
+        SituationTb.err02 => SynchroTableau.reprise,
+        _ => SynchroTableau.partage,
+      },
+      conservation: situation == SituationTb.err03
+          ? ConservationNotes.nonSauvegardees
+          : ConservationNotes.seanceSeulement,
+      // ERR-01 : le trait que l'enseignant vient de poser n'a pas ete
+      // recu ; la classe ne le voit pas, l'enseignant le voit marque.
+      traitsNonPartages: situation == SituationTb.err01 && enseignant
+          ? <String>{traitNonPartageDemonstration.id}
+          : const <String>{},
       // TB-7a : les notes de la page en PED-03 (Avec notes) et PED-04
       // (Tableau, support masque) ; cachees, jamais effacees, en PED-02.
       // TB-9 : DLG-01 (effacement de page) porte le cercle de la page ;
@@ -644,7 +684,13 @@ abstract final class DonneesSeanceDemo {
         SituationTb.ped02 ||
         SituationTb.ped03 ||
         SituationTb.ped04 ||
-        SituationTb.dlg01 => <TraitVectoriel>[traitDemonstration],
+        SituationTb.dlg01 ||
+        SituationTb.err02 ||
+        SituationTb.err03 => <TraitVectoriel>[traitDemonstration],
+        SituationTb.err01 => <TraitVectoriel>[
+          traitDemonstration,
+          if (enseignant) traitNonPartageDemonstration,
+        ],
         SituationTb.effacementTableau => <TraitVectoriel>[
           traitTableauDemonstration,
         ],
@@ -668,7 +714,9 @@ abstract final class DonneesSeanceDemo {
               SituationTb.per01 ||
               SituationTb.autorisationEcrire ||
               SituationTb.droitRetire => PanneauOuvert.eleves,
-              // TB-4 : CMD-01 s'ouvre sur les Commandes.
+              // TB-4 : CMD-01 s'ouvre sur les Commandes. TB-11b : ERR-03
+              // part du bandeau seul (au telephone, une feuille ouverte le
+              // couvrirait) ; la conservation se lit dans les Commandes.
               SituationTb.cmd01 => PanneauOuvert.commandes,
               _ => PanneauOuvert.aucun,
             },
@@ -752,6 +800,8 @@ abstract final class DonneesSeanceDemo {
             },
       // Le point non lu de la cloche des images CLV-04 et CLV-06 desktop.
       notificationsNonLues: 2,
+      // TB-10 : « Sayyid reprend le tableau. » ou « Sayyida ... ».
+      titreEnseignant: titre,
     );
   }
 

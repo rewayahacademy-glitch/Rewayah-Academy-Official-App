@@ -291,8 +291,16 @@ void main() {
       expect(_bibliotheque, findsOneWidget);
       expect(_affichages, findsNothing);
       expect(_pagination, findsNothing);
-      // Sans support, ni outils : pas d'onglet qui ne menerait a rien.
-      expect(_onglets, findsNothing);
+      // TB-7b (plan V2 §12, « Aucun support » : « Bibliotheque, Ecrire
+      // cote enseignant ») : le tableau libre prend des notes, l'onglet
+      // Outils porte Ecrire.
+      expect(_onglets, findsOneWidget);
+      await tester.tap(_dans(_onglets, t.salle.seance.commandes.ongletOutils));
+      await tester.pump();
+      expect(
+        find.byKey(const ValueKey<String>('outil-ecrire')),
+        findsOneWidget,
+      );
     });
   });
 
@@ -333,9 +341,9 @@ void main() {
       );
       expect(pointeur, findsOneWidget);
       for (final String autre in <String>[
+        'outil-ecrire',
         'outil-marquer',
         'outil-masquer',
-        'outil-annoter',
       ]) {
         expect(
           tester.getTopLeft(pointeur).dx,
@@ -343,8 +351,8 @@ void main() {
           reason: autre,
         );
       }
-      // Les outils d'ecriture et la palette courte viennent avec TB-7b : ni
-      // rendus, ni grises sans raison.
+      // TB-7b : les outils d'ecriture n'apparaissent que sous « Ecrire »
+      // (plan V2 §4.2, « sous-barre seulement apres Ecrire »).
       for (final String absent in <String>[
         'Stylo',
         'Surligner',
@@ -472,26 +480,40 @@ void main() {
             '${role.name} ${situation.name} ${taille.width.toInt()}',
             (WidgetTester tester) async {
               await _ouvrir(tester, role, situation, taille: taille);
-              expect(_declencheur, findsNothing);
+              // TB-10 (plan V2 §19.3 point 4) : l'eleve a ses Commandes,
+              // qui ne montrent que la lecture et le focus (sans
+              // autorisation, pas d'Ecrire) ; rien de l'enseignant.
+              expect(_declencheur, findsOneWidget);
               expect(_contenu, findsNothing);
+              await tester.ensureVisible(_declencheur);
+              await tester.tap(_declencheur);
+              await _attendre(tester);
+              expect(_contenu, findsOneWidget);
               expect(_pagination, findsNothing);
+              expect(
+                find.byKey(CommandesPedagogiques.cleOnglets),
+                findsNothing,
+              );
+              expect(
+                find.byKey(CommandesPedagogiques.cleEcritureEleve),
+                findsNothing,
+              );
               for (final String texte in <String>[
-                t.salle.seance.commandes.declencheur,
                 t.salle.seance.commandes.bibliotheque,
                 t.salle.seance.commandes.affichageAvecNotes,
                 t.salle.seance.commandes.affichageTableau,
-                t.salle.seance.commandes.ajuster,
-                t.salle.seance.commandes.focus,
                 t.salle.seance.outils.pointeur,
+                t.salle.seance.outils.ecrire,
                 t.salle.seance.supports,
                 t.salle.seance.pageSemantique(page: 1, pages: 12),
               ]) {
                 expect(find.text(texte), findsNothing, reason: texte);
               }
-              // Echap ne fait rien apparaitre.
+              // Echap reduit les Commandes de l'eleve, jamais l'appel.
               await tester.sendKeyEvent(LogicalKeyboardKey.escape);
               await _attendre(tester);
               expect(_contenu, findsNothing);
+              expect(find.byType(SalleSeance), findsOneWidget);
             },
           );
         }

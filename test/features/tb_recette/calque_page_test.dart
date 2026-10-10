@@ -29,6 +29,7 @@ import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dar
 import 'package:rewayah_academy/features/salle_seance/repere_page.dart';
 import 'package:rewayah_academy/features/salle_seance/surface_page_fixe.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
+import 'package:rewayah_academy/features/tc_dock/barre_stylet.dart';
 import 'package:rewayah_academy/features/tc_dock/couche_annotation.dart';
 
 import '../../capture/outil_capture.dart' hide stabiliser;
@@ -43,6 +44,13 @@ class _ControleurArme extends ControleurOutils {
 final double _ratio = DonneesSeanceDemo.supportPageFixe.ratio;
 
 final Finder _page = find.byKey(SurfacePageFixe.clePage);
+/// L'entree « Commandes » : le declencheur, ou, pendant l'ecriture, le
+/// dernier bouton de la palette courte qui a pris sa place (TB-7b).
+final Finder _entreeCommandes = find.byWidgetPredicate(
+  (Widget w) =>
+      w.key == DeclencheurCommandes.cle || w.key == BarreStylet.cleCommandes,
+);
+
 final Finder _couche = find.byKey(SurfacePageFixe.cleCouche);
 
 /// Les ecrans mesures : 390, 768, 1440, portrait et paysage.
@@ -57,6 +65,18 @@ const List<(String, Size)> _ecrans = <(String, Size)>[
 
 const PointNormalise _depart = PointNormalise(0.40, 0.45);
 const PointNormalise _arrivee = PointNormalise(0.55, 0.52);
+
+/// TB-7b : outil arme, les Commandes s'ouvrent sur « Outils » ; la
+/// Lecture (zoom) est sous « Support ».
+Future<void> _ongletSupport(WidgetTester tester) async {
+  final Finder support = find.descendant(
+    of: find.byKey(CommandesPedagogiques.cleOnglets),
+    matching: find.text(t.salle.seance.commandes.ongletSupport),
+  );
+  if (support.evaluate().isEmpty) return;
+  await tester.tap(support);
+  await tester.pump();
+}
 
 Future<void> _attendre(WidgetTester tester) async {
   await tester.pump();
@@ -480,8 +500,9 @@ void main() {
       await _monterSalle(tester, const Size(1440, 900), RoleSeance.enseignant);
       // Les Commandes ouvertes d'abord : leur colonne change la place de la
       // surface ; la mesure « avant » se prend a place egale.
-      await tester.tap(find.byKey(DeclencheurCommandes.cle));
+      await tester.tap(_entreeCommandes);
       await _attendre(tester);
+      await _ongletSupport(tester);
       final Rect avant = tester.getRect(_page);
       expect(tester.getRect(_couche), avant);
       final Offset centreAvant = _surEcran(
@@ -585,8 +606,9 @@ void main() {
           RoleSeance.enseignant,
         );
         if (clics > 0) {
-          await tester.tap(find.byKey(DeclencheurCommandes.cle));
+          await tester.tap(_entreeCommandes);
           await _attendre(tester);
+          await _ongletSupport(tester);
           final Finder plus = find.byWidgetPredicate(
             (Widget w) =>
                 w is Pressable &&
@@ -825,8 +847,9 @@ void main() {
 
       // Les Commandes ouvertes ensuite : la surface change de place et se
       // remonte ; l'encre posee reste peinte (relue du depot).
-      await tester.tap(find.byKey(DeclencheurCommandes.cle));
+      await tester.tap(_entreeCommandes);
       await _attendre(tester);
+      await _ongletSupport(tester);
       final (double? luAvant, double attenduAvant) = await encreAuMilieu(
         tester,
       );

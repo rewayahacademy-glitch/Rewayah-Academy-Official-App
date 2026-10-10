@@ -367,6 +367,7 @@ class _Traductions$salle$seance$ar extends Traductions$salle$seance$fr {
 	@override String get pagePrecedente => 'الصفحة السابقة';
 	@override String get pageSuivante => 'الصفحة التالية';
 	@override late final _Traductions$salle$seance$outils$ar outils = _Traductions$salle$seance$outils$ar._(_root);
+	@override late final _Traductions$salle$seance$ecriture$ar ecriture = _Traductions$salle$seance$ecriture$ar._(_root);
 	@override late final _Traductions$salle$seance$rail$ar rail = _Traductions$salle$seance$rail$ar._(_root);
 	@override String get fermerPanneau => 'إغلاق اللوحة';
 	@override late final _Traductions$salle$seance$panneauSupports$ar panneauSupports = _Traductions$salle$seance$panneauSupports$ar._(_root);
@@ -384,6 +385,7 @@ class _Traductions$salle$seance$ar extends Traductions$salle$seance$fr {
 	@override late final _Traductions$salle$seance$commandes$ar commandes = _Traductions$salle$seance$commandes$ar._(_root);
 	@override late final _Traductions$salle$seance$bibliotheque$ar bibliotheque = _Traductions$salle$seance$bibliotheque$ar._(_root);
 	@override late final _Traductions$salle$seance$surface$ar surface = _Traductions$salle$seance$surface$ar._(_root);
+	@override late final _Traductions$salle$seance$synchro$ar synchro = _Traductions$salle$seance$synchro$ar._(_root);
 	@override late final _Traductions$salle$seance$rangement$ar rangement = _Traductions$salle$seance$rangement$ar._(_root);
 	@override late final _Traductions$salle$seance$capsule$ar capsule = _Traductions$salle$seance$capsule$ar._(_root);
 	@override late final _Traductions$salle$seance$contexte$ar contexte = _Traductions$salle$seance$contexte$ar._(_root);
@@ -697,7 +699,44 @@ class _Traductions$salle$seance$outils$ar extends Traductions$salle$seance$outil
 	@override String get pointeur => 'المؤشر';
 	@override String get marquer => 'وضع علامة';
 	@override String get masquer => 'إخفاء';
-	@override String get annoter => 'كتابة ملاحظات';
+	@override String get ecrire => 'كتابة';
+	@override String get aideLecture => 'بدون أداة، تُقرأ الصفحة؛ وعند تكبيرها تُحرَّك بسحبها.';
+	@override String get aidePointeur => 'المؤشر: المس الصفحة لتشير إلى مقطع، ولا يبقى أي أثر.';
+	@override String get aideEcrire => 'الكتابة: اكتب على الصفحة. على شاشة اللمس، يحرّكها إصبعان.';
+}
+
+// Path: salle.seance.ecriture
+class _Traductions$salle$seance$ecriture$ar extends Traductions$salle$seance$ecriture$fr {
+	_Traductions$salle$seance$ecriture$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get palette => 'أدوات الكتابة';
+	@override String get terminer => 'إنهاء';
+	@override String get couleur => 'اللون';
+	@override String get couleurAide => 'اللون يدل على قصد الخط، للصف كله.';
+	@override String get epaisseur => 'السُّمك';
+	@override String get epaisseurAide => 'رفيع لكتابة كلمة، وسميك للإحاطة.';
+	@override String get fine => 'رفيع';
+	@override String get moyenne => 'متوسط';
+	@override String get epaisse => 'سميك';
+	@override String get tuPeuxEcrire => 'يمكنك الكتابة على السبورة.';
+	@override String get vousPouvezEcrire => 'يمكنكم الكتابة على السبورة.';
+	@override String get repriseSayyid => 'السيد يستعيد السبورة.';
+	@override String get repriseSayyida => 'السيدة تستعيد السبورة.';
+	@override String repriseNom({required Object nom}) => 'عادت السبورة إلى ⁨${nom}⁩.';
+	@override String get choisirTu => 'المس « الكتابة » عندما تريد أن تكتب. وإلا فالصفحة للقراءة، ولا يترك إصبعك أي خط.';
+	@override String get choisirVous => 'المسوا « الكتابة » عندما تريدون الكتابة. وإلا فالصفحة للقراءة، ولا يترك إصبعكم أي خط.';
+	@override String get aideEleveTu => 'اكتب بالقلم. الممحاة والتراجع لا يمسّان إلا خطوطك؛ و« إنهاء » يعيد إلى القراءة.';
+	@override String get aideEleveVous => 'اكتبوا بالقلم. الممحاة والتراجع لا يمسّان إلا خطوطكم؛ و« إنهاء » يعيد إلى القراءة.';
+	@override String get peutEcrire => 'الكتابة مسموحة';
+	@override String get autoriser => 'السماح بالكتابة';
+	@override String get retirer => 'سحب الإذن بالكتابة';
+	@override String autoriserSemantique({required Object prenom}) => 'السماح بالكتابة: ⁨${prenom}⁩';
+	@override String retirerSemantique({required Object prenom}) => 'سحب الإذن بالكتابة من ⁨${prenom}⁩';
+	@override String autoriserAide({required Object prenom}) => 'سيكون بإمكان ⁨${prenom}⁩ الكتابة على الصفحة أو السبورة. تبقى الصفحة والمادة بيدك.';
+	@override String get retirerAide => 'تبقى الخطوط على الصفحة؛ وتُسحب أدوات الكتابة.';
 }
 
 // Path: salle.seance.rail
@@ -797,6 +836,23 @@ class _Traductions$salle$seance$surface$ar extends Traductions$salle$seance$surf
 	@override String get aucunSupport => 'اختر مادة أو اكتب على السبورة.';
 	@override String page({required Object titre, required Object page, required Object pages}) => '⁨${titre}⁩، الصفحة ⁨${page}⁩ من ⁨${pages}⁩';
 	@override String get supportMasque => 'السبورة، المادة مخفية';
+}
+
+// Path: salle.seance.synchro
+class _Traductions$salle$seance$synchro$ar extends Traductions$salle$seance$synchro$fr {
+	_Traductions$salle$seance$synchro$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get nonPartagees => 'ملاحظاتك الجديدة غير مشارَكة.';
+	@override String get nonPartageesSuite => 'الملاحظات المنقّطة لا تظهر إلا على شاشتك، ريثما تعود السبورة إلى الاتصال.';
+	@override String get seReconnecte => 'السبورة تعيد الاتصال.';
+	@override String get reprise => 'استعادة السبورة…';
+	@override String get revient => 'السبورة تعود.';
+	@override String get ecritureSuspendue => 'تُستأنف الكتابة فور عودة السبورة.';
+	@override String get nonSauvegardees => 'ملاحظات هذه الحصة غير محفوظة.';
+	@override String get nonSauvegardeesSuite => 'تبقى على السبورة حتى نهاية الحصة، لكنها لن تُسترجع في الدرس القادم.';
 }
 
 // Path: salle.seance.rangement
@@ -2436,7 +2492,35 @@ extension on TraductionsAr {
 			'salle.seance.outils.pointeur' => 'المؤشر',
 			'salle.seance.outils.marquer' => 'وضع علامة',
 			'salle.seance.outils.masquer' => 'إخفاء',
-			'salle.seance.outils.annoter' => 'كتابة ملاحظات',
+			'salle.seance.outils.ecrire' => 'كتابة',
+			'salle.seance.outils.aideLecture' => 'بدون أداة، تُقرأ الصفحة؛ وعند تكبيرها تُحرَّك بسحبها.',
+			'salle.seance.outils.aidePointeur' => 'المؤشر: المس الصفحة لتشير إلى مقطع، ولا يبقى أي أثر.',
+			'salle.seance.outils.aideEcrire' => 'الكتابة: اكتب على الصفحة. على شاشة اللمس، يحرّكها إصبعان.',
+			'salle.seance.ecriture.palette' => 'أدوات الكتابة',
+			'salle.seance.ecriture.terminer' => 'إنهاء',
+			'salle.seance.ecriture.couleur' => 'اللون',
+			'salle.seance.ecriture.couleurAide' => 'اللون يدل على قصد الخط، للصف كله.',
+			'salle.seance.ecriture.epaisseur' => 'السُّمك',
+			'salle.seance.ecriture.epaisseurAide' => 'رفيع لكتابة كلمة، وسميك للإحاطة.',
+			'salle.seance.ecriture.fine' => 'رفيع',
+			'salle.seance.ecriture.moyenne' => 'متوسط',
+			'salle.seance.ecriture.epaisse' => 'سميك',
+			'salle.seance.ecriture.tuPeuxEcrire' => 'يمكنك الكتابة على السبورة.',
+			'salle.seance.ecriture.vousPouvezEcrire' => 'يمكنكم الكتابة على السبورة.',
+			'salle.seance.ecriture.repriseSayyid' => 'السيد يستعيد السبورة.',
+			'salle.seance.ecriture.repriseSayyida' => 'السيدة تستعيد السبورة.',
+			'salle.seance.ecriture.repriseNom' => ({required Object nom}) => 'عادت السبورة إلى ⁨${nom}⁩.',
+			'salle.seance.ecriture.choisirTu' => 'المس « الكتابة » عندما تريد أن تكتب. وإلا فالصفحة للقراءة، ولا يترك إصبعك أي خط.',
+			'salle.seance.ecriture.choisirVous' => 'المسوا « الكتابة » عندما تريدون الكتابة. وإلا فالصفحة للقراءة، ولا يترك إصبعكم أي خط.',
+			'salle.seance.ecriture.aideEleveTu' => 'اكتب بالقلم. الممحاة والتراجع لا يمسّان إلا خطوطك؛ و« إنهاء » يعيد إلى القراءة.',
+			'salle.seance.ecriture.aideEleveVous' => 'اكتبوا بالقلم. الممحاة والتراجع لا يمسّان إلا خطوطكم؛ و« إنهاء » يعيد إلى القراءة.',
+			'salle.seance.ecriture.peutEcrire' => 'الكتابة مسموحة',
+			'salle.seance.ecriture.autoriser' => 'السماح بالكتابة',
+			'salle.seance.ecriture.retirer' => 'سحب الإذن بالكتابة',
+			'salle.seance.ecriture.autoriserSemantique' => ({required Object prenom}) => 'السماح بالكتابة: ⁨${prenom}⁩',
+			'salle.seance.ecriture.retirerSemantique' => ({required Object prenom}) => 'سحب الإذن بالكتابة من ⁨${prenom}⁩',
+			'salle.seance.ecriture.autoriserAide' => ({required Object prenom}) => 'سيكون بإمكان ⁨${prenom}⁩ الكتابة على الصفحة أو السبورة. تبقى الصفحة والمادة بيدك.',
+			'salle.seance.ecriture.retirerAide' => 'تبقى الخطوط على الصفحة؛ وتُسحب أدوات الكتابة.',
 			'salle.seance.rail.navigation' => 'التنقل',
 			'salle.seance.rail.marque' => 'Rewayah',
 			'salle.seance.rail.sousMarque' => 'Academy',
@@ -2493,6 +2577,14 @@ extension on TraductionsAr {
 			'salle.seance.surface.aucunSupport' => 'اختر مادة أو اكتب على السبورة.',
 			'salle.seance.surface.page' => ({required Object titre, required Object page, required Object pages}) => '⁨${titre}⁩، الصفحة ⁨${page}⁩ من ⁨${pages}⁩',
 			'salle.seance.surface.supportMasque' => 'السبورة، المادة مخفية',
+			'salle.seance.synchro.nonPartagees' => 'ملاحظاتك الجديدة غير مشارَكة.',
+			'salle.seance.synchro.nonPartageesSuite' => 'الملاحظات المنقّطة لا تظهر إلا على شاشتك، ريثما تعود السبورة إلى الاتصال.',
+			'salle.seance.synchro.seReconnecte' => 'السبورة تعيد الاتصال.',
+			'salle.seance.synchro.reprise' => 'استعادة السبورة…',
+			'salle.seance.synchro.revient' => 'السبورة تعود.',
+			'salle.seance.synchro.ecritureSuspendue' => 'تُستأنف الكتابة فور عودة السبورة.',
+			'salle.seance.synchro.nonSauvegardees' => 'ملاحظات هذه الحصة غير محفوظة.',
+			'salle.seance.synchro.nonSauvegardeesSuite' => 'تبقى على السبورة حتى نهاية الحصة، لكنها لن تُسترجع في الدرس القادم.',
 			'salle.seance.rangement.ranger' => 'إرجاع إلى المكتبة',
 			'salle.seance.rangement.menuSupport' => 'إجراءات المادة المعروضة',
 			'salle.seance.rangement.menuTableau' => 'إجراءات السبورة الحرة',
@@ -2750,6 +2842,8 @@ extension on TraductionsAr {
 			'tc.groupe.enseignant.photoManquanteDetail' => 'لم تُسجَّل صورة المعلم بعد.',
 			'tc.groupe.mesGroupes.titre' => 'فصولي',
 			'tc.groupe.mesGroupes.aucun' => 'لا فصل حتى الآن',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.mesGroupes.aucunDetail' => 'ستضعك الأكاديمية في فصل حين يتوفر موعد يناسبك.',
 			'tc.groupe.commun.erreur' => 'تعذّرت قراءة فصولك',
 			'tc.groupe.commun.reessayer' => 'إعادة المحاولة',
@@ -2786,8 +2880,6 @@ extension on TraductionsAr {
 			'tc.groupe.horloges.chezEnseignant' => ({required Object nomme}) => 'عند ⁨${nomme}⁩',
 			'tc.groupe.horloges.heureGroupe' => 'توقيت الفصل',
 			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '⁨${heure}⁩ ⁨${ville}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'tc.groupe.dst.j30' => 'تغيير التوقيت بعد شهر',
 			'tc.groupe.dst.j7' => 'تغيير التوقيت الأسبوع القادم',
 			'tc.groupe.dst.j1' => 'تغيير التوقيت غدًا',

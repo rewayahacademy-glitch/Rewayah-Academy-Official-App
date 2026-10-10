@@ -303,6 +303,36 @@ class _EnTete extends StatelessWidget {
   final String? libelleFermer;
   final String? semantiqueFermer;
 
+  /// Le mot le plus long du titre tient-il, a l'echelle de l'appareil, a
+  /// cote de « Reduire » [mot] dans [largeur] ?
+  bool _titreTientACote(BuildContext context, String mot, double largeur) {
+    if (!largeur.isFinite) return true;
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    final TextPainter p = TextPainter(
+      text: TextSpan(
+        text: mot,
+        style: DefaultTextStyle.of(context).style
+            .merge(Theme.of(context).textTheme.labelLarge),
+      ),
+      textDirection: Directionality.of(context),
+      textScaler: echelle,
+      maxLines: 1,
+    )..layout();
+    final double cible =
+        p.width + AppSpacing.xs + AppSpacing.xl + 2 * AppSpacing.sm;
+    p.dispose();
+    final double fermer = cible > AppSpacing.titreEcran
+        ? cible
+        : AppSpacing.titreEcran;
+    final double motTitre = largeurMotLePlusLong(
+      context,
+      titre,
+      Theme.of(context).textTheme.titleLarge,
+      echelle,
+    );
+    return motTitre + fermer <= largeur;
+  }
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -322,50 +352,67 @@ class _EnTete extends StatelessWidget {
     if (mot != null && fermer != null) {
       // « Reduire » et son chevron (planches 1 et 6) : une cible de 48 au
       // moins, le mot passe a la ligne plutot que d'etre coupe.
-      return Padding(
-        padding: const EdgeInsetsDirectional.only(start: AppSpacing.xs),
-        child: Row(
-          children: <Widget>[
-            Expanded(child: _Titre(titre: titre)),
-            Pressable(
-              key: cleFermer,
-              onPress: fermer,
-              libelleSemantique: semantiqueFermer ?? mot,
-              arrondiFocus: AppRadius.arrondiMd,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  minHeight: AppSpacing.titreEcran,
-                  minWidth: AppSpacing.titreEcran,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.sm,
-                  ),
-                  child: ExcludeSemantics(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(
-                          mot,
-                          style: palette.inkAccent.applyTo(
-                            Theme.of(context).textTheme.labelLarge ??
-                                const TextStyle(),
-                          ),
-                        ),
-                        Ecart.hXs,
-                        IconTheme(
-                          data: palette.inkAccent.asIconTheme(
-                            size: AppSpacing.xl,
-                          ),
-                          child: Icon(AppIcons.suiteEnBas.repos),
-                        ),
-                      ],
+      final Widget reduire = Pressable(
+        key: cleFermer,
+        onPress: fermer,
+        libelleSemantique: semantiqueFermer ?? mot,
+        arrondiFocus: AppRadius.arrondiMd,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            minHeight: AppSpacing.titreEcran,
+            minWidth: AppSpacing.titreEcran,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+            child: ExcludeSemantics(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text(
+                    mot,
+                    style: palette.inkAccent.applyTo(
+                      Theme.of(context).textTheme.labelLarge ??
+                          const TextStyle(),
                     ),
                   ),
-                ),
+                  Ecart.hXs,
+                  IconTheme(
+                    data: palette.inkAccent.asIconTheme(size: AppSpacing.xl),
+                    child: Icon(AppIcons.suiteEnBas.repos),
+                  ),
+                ],
               ),
             ),
-          ],
+          ),
+        ),
+      );
+      // TB-10 (COUPE-MOTS-1) : quand le mot le plus long du titre ne tient
+      // plus a cote de « Reduire » (Mode Accessibilite, 320 a 200 %), le
+      // titre prend toute la ligne et « Reduire » passe dessous, au bord de
+      // fin : jamais « Comman / des ».
+      return Padding(
+        padding: const EdgeInsetsDirectional.only(start: AppSpacing.xs),
+        child: LayoutBuilder(
+          builder: (BuildContext contexte, BoxConstraints c) {
+            if (!_titreTientACote(contexte, mot, c.maxWidth)) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  _Titre(titre: titre),
+                  Align(
+                    alignment: AlignmentDirectional.centerEnd,
+                    child: reduire,
+                  ),
+                ],
+              );
+            }
+            return Row(
+              children: <Widget>[
+                Expanded(child: _Titre(titre: titre)),
+                reduire,
+              ],
+            );
+          },
         ),
       );
     }

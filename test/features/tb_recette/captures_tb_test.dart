@@ -75,19 +75,48 @@
 //   CAPTURE_DIR=docs/current/captures/TB-11a flutter test \
 //     test/features/tb_recette/captures_tb_test.dart --name tb11a_
 //
+// TB-7b (CMD-02, CMD-03) : Ecrire. La palette courte (panneau ferme, un
+// trait pose : outil actif, Annuler, Terminer), 390 x1 et 320 x2, clair et
+// sombre ; le panneau ouvert (Commandes > Outils > Ecrire, options Couleur
+// et Epaisseur), 1440 et 390, clair et sombre ; « le stylet n'ecrit que si
+// Ecrire est actif » : un geste au stylet en lecture (rien ne reste) puis
+// le meme geste avec Ecrire (le trait), 390 et 1440. Rangees dans
+// docs/current/captures/TB-7b/ :
+//   CAPTURE_DIR=docs/current/captures/TB-7b flutter test \
+//     test/features/tb_recette/captures_tb_test.dart --name tb7b_
+//
+// TB-10 (plan V2 §5, §12, §19.3 ; UX-20 ; MA-CMD-1) : l'eleve autorise
+// (information courte, Commandes avec Ecrire, palette apres un trait) et le
+// droit retire, eleve standard et Mode Accessibilite (guidee), 390 x1 et
+// x2, 1440, 320 x2, clair et sombre ; l'enseignant qui vient d'autoriser
+// Mariam (fiche depliee, « Peut ecrire », « Retirer l'autorisation
+// d'ecrire »), 1440 et 390, x1 et x2, 320 x2. Rangees dans
+// docs/current/captures/TB-10/ :
+//   CAPTURE_DIR=docs/current/captures/TB-10 flutter test \
+//     test/features/tb_recette/captures_tb_test.dart --name tb10_
+//
+// TB-11b (plan V2 §10 a §12, §19.5) : synchronisation interrompue (ERR-01,
+// enseignant et eleve), reprise (ERR-02), sauvegarde en echec (ERR-03) et
+// conservation dans la seance ; 390 et 1440 clair et sombre, 320 x2 clair
+// et sombre. Rangees dans docs/current/captures/TB-11b/ :
+//   CAPTURE_DIR=docs/current/captures/TB-11b flutter test \
+//     test/features/tb_recette/captures_tb_test.dart --name tb11b_
+//
 // AR-SALLE-1 : la salle en arabe (RTL), enseignant et eleve, 390 et 1440
 // clair et sombre, 320 x2. Rangees dans docs/current/captures/AR-SALLE-1/ :
 //   CAPTURE_DIR=docs/current/captures/AR-SALLE-1 flutter test \
 //     test/features/tb_recette/captures_tb_test.dart --name ar_salle_
 
+import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show LogicalKeyboardKey;
+import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/accessibilite/commandes_masquables.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart'
-    show PointNormalise;
+    show AnnotationLayer, OutilTrait, PointNormalise, TraitVectoriel;
 import 'package:rewayah_academy/core/tc_outils/etat_outils.dart';
 import 'package:rewayah_academy/core/tc_outils/port_annotations.dart';
 import 'package:rewayah_academy/core/tc_outils/port_dock_hote.dart'
@@ -100,11 +129,15 @@ import 'package:rewayah_academy/features/salle_seance/bibliotheque_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/capsule_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
 import 'package:rewayah_academy/features/salle_seance/composition_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/ecriture_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_eleves.dart';
+import 'package:rewayah_academy/features/salle_seance/panneau_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/surface_page_fixe.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/zone_support.dart';
 import 'package:rewayah_academy/features/tc_catalogue/surface_bibliotheque.dart';
+import 'package:rewayah_academy/features/tc_dock/barre_stylet.dart';
 
 import '../../capture/outil_capture.dart';
 
@@ -113,6 +146,13 @@ class _ControleurArme extends ControleurOutils {
   @override
   EtatOutils build() => const EtatOutils(outilActif: OutilDock.stylet);
 }
+
+/// L'entree « Commandes » : le declencheur, ou, pendant l'ecriture, le
+/// dernier bouton de la palette courte qui a pris sa place (TB-7b).
+final Finder _entreeCommandes = find.byWidgetPredicate(
+  (Widget w) =>
+      w.key == DeclencheurCommandes.cle || w.key == BarreStylet.cleCommandes,
+);
 
 typedef _Cadrage = (
   String nom,
@@ -386,17 +426,12 @@ void main() {
             find.byKey(CommandesPedagogiques.cle),
             ouvert ? findsOneWidget : findsNothing,
           );
-          // TB-5 : ouvertes, les Commandes sont en colonne (declencheur
-          // visible) seulement si la largeur divisee par le texte tient les
-          // Participants et elles ; sinon en volet ou en feuille.
-          final bool enColonne =
-              cas.$2.width / cas.$5 >=
-              CompositionSalle.seuilColonne + CompositionSalle.coutColonne;
+          // Revue du 09/10 : Commandes ouvertes, le declencheur s'efface
+          // (le panneau porte le titre et « Reduire »). TB-10 : l'eleve a
+          // aussi son declencheur (lecture, focus, ecriture accordee).
           expect(
             find.byKey(DeclencheurCommandes.cle),
-            role == RoleSeance.enseignant && !(ouvert && !enColonne)
-                ? findsOneWidget
-                : findsNothing,
+            ouvert ? findsNothing : findsOneWidget,
           );
           if (etat == 'outils') {
             expect(
@@ -697,7 +732,7 @@ void main() {
           ),
         );
         await stabiliser(tester);
-        await tester.tap(find.byKey(DeclencheurCommandes.cle));
+        await tester.tap(_entreeCommandes);
         await stabiliser(tester);
         final Finder plus = find.byWidgetPredicate(
           (Widget w) =>
@@ -782,7 +817,15 @@ void main() {
           await stabiliser(tester);
           expect(depot.couches.single.traits, hasLength(1));
           if (zoom) {
-            await tester.tap(find.byKey(DeclencheurCommandes.cle));
+            await tester.tap(_entreeCommandes);
+            await stabiliser(tester);
+            // TB-7b : outil arme, les Commandes s'ouvrent sur « Outils ».
+            await tester.tap(
+              find.descendant(
+                of: find.byKey(CommandesPedagogiques.cleOnglets),
+                matching: find.text(t.salle.seance.commandes.ongletSupport),
+              ),
+            );
             await stabiliser(tester);
             final Finder plus = find.byWidgetPredicate(
               (Widget w) =>
@@ -1120,6 +1163,463 @@ void main() {
             debugPrint('PNG ${await capturer(tester, nom)}');
           });
         }
+      }
+    }
+  });
+
+  // TB-7b : Ecrire (plan V2 §4.2, §7, §19.1).
+  group('TB-7b : ecrire', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    const _Cadrage sombre320 = (
+      '320_x2_sombre',
+      Size(320, 700),
+      2,
+      EdgeInsets.zero,
+      2,
+      ThemeMode.dark,
+    );
+    Iterable<_Cadrage> cadrages(List<String> noms) => <_Cadrage>[
+      ..._cadragesTb,
+      sombre320,
+    ].where((_Cadrage c) => noms.contains(c.$1));
+    final Finder page = find.byKey(SurfacePageFixe.clePage);
+    Offset sur(WidgetTester tester, double x, double y) {
+      final Rect r = tester.getRect(page);
+      return r.topLeft + Offset(x * r.width, y * r.height);
+    }
+
+    Future<void> geste(
+      WidgetTester tester,
+      PointerDeviceKind appareil,
+      int id,
+    ) async {
+      final TestPointer p = TestPointer(id, appareil);
+      final Offset a = sur(tester, 0.2, 0.22);
+      final Offset b = sur(tester, 0.8, 0.27);
+      await tester.sendEventToBinding(p.down(a));
+      for (int i = 1; i <= 8; i++) {
+        await tester.sendEventToBinding(p.move(Offset.lerp(a, b, i / 8)!));
+        await tester.pump();
+      }
+      await tester.sendEventToBinding(p.up());
+      await stabiliser(tester);
+    }
+
+    Future<void> taper(WidgetTester tester, Finder cible) async {
+      await tester.ensureVisible(cible);
+      await tester.pump();
+      await tester.tap(cible);
+      await stabiliser(tester);
+    }
+
+    Future<void> monter(WidgetTester tester, _Cadrage cas) async {
+      fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+      await tester.pumpWidget(
+        hoteCapture(
+          const DemoSallePage(
+            role: RoleSeance.enseignant,
+            situation: SituationTb.ped03,
+          ),
+          themeMode: cas.$6,
+          echelleTexte: cas.$5,
+        ),
+      );
+      await stabiliser(tester);
+      await tester.pump(const Duration(milliseconds: 1400));
+    }
+
+    /// Commandes > Outils > Ecrire, par les vrais boutons.
+    Future<void> ecrire(WidgetTester tester) async {
+      await taper(tester, find.byKey(DeclencheurCommandes.cle));
+      await taper(
+        tester,
+        find.descendant(
+          of: find.byKey(CommandesPedagogiques.cleOnglets),
+          matching: find.text(t.salle.seance.commandes.ongletOutils),
+        ),
+      );
+      await taper(tester, find.byKey(const ValueKey<String>('outil-ecrire')));
+    }
+
+    int traits(WidgetTester tester) {
+      final PortAnnotations depot = ProviderScope.containerOf(
+        tester.element(find.byType(SalleSeance)),
+      ).read(portAnnotationsProvider);
+      return <TraitVectoriel>[
+        for (final AnnotationLayer c in (depot as AnnotationsMemoire).couches)
+          ...c.traits,
+      ].length;
+    }
+
+    // Tour 2 : toutes les tailles, par les vrais boutons (avec les polices
+    // du depot, la feuille des Commandes tient a 320 x2).
+    for (final _Cadrage cas in cadrages(<String>[
+      '390_x1_clair',
+      '390_x1_sombre',
+      '390_x2_clair',
+      '768_x1_clair',
+      '768_x1_sombre',
+      '768_x2_clair',
+      '1440_x1_clair',
+      '1440_x1_sombre',
+      '1440_x2_clair',
+      '320_x1_clair',
+      '320_x2_clair',
+      '320_x2_sombre',
+    ])) {
+      final String nom = 'tb7b_palette_${cas.$1}';
+      testWidgets(nom, (WidgetTester tester) async {
+        await monter(tester, cas);
+        await ecrire(tester);
+        await taper(tester, find.byKey(PanneauSeance.cleReduire));
+        await geste(tester, PointerDeviceKind.touch, 91);
+        expect(traits(tester), 1);
+        expect(find.byKey(PaletteEcriture.cle), findsOneWidget);
+        expect(tester.takeException(), isNull);
+        debugPrint('PNG ${await capturer(tester, nom)}');
+      });
+    }
+
+    for (final _Cadrage cas in cadrages(<String>[
+      '1440_x1_clair',
+      '1440_x1_sombre',
+      '1440_x2_clair',
+      '768_x2_clair',
+      '390_x1_clair',
+      '390_x2_clair',
+      '320_x1_clair',
+      '320_x2_clair',
+      '320_x2_sombre',
+    ])) {
+      final String nom = 'tb7b_panneau_ecrire_${cas.$1}';
+      testWidgets(nom, (WidgetTester tester) async {
+        await monter(tester, cas);
+        await ecrire(tester);
+        expect(find.byKey(EcritureSeance.cle), findsOneWidget);
+        await tester.ensureVisible(find.byKey(EcritureSeance.cleEpaisseur));
+        await stabiliser(tester);
+        expect(tester.takeException(), isNull);
+        debugPrint('PNG ${await capturer(tester, nom)}');
+      });
+    }
+
+    for (final _Cadrage cas in cadrages(<String>[
+      '390_x1_clair',
+      '1440_x1_clair',
+    ])) {
+      for (final bool arme in <bool>[false, true]) {
+        final String nom =
+            'tb7b_stylet_${arme ? 'ecrire' : 'lecture'}_${cas.$1}';
+        testWidgets(nom, (WidgetTester tester) async {
+          await monter(tester, cas);
+          if (arme) {
+            await ecrire(tester);
+            await taper(tester, find.byKey(PanneauSeance.cleReduire));
+          }
+          await geste(tester, PointerDeviceKind.stylus, 92);
+          // La capture prouve ce qu'elle nomme : en lecture, le stylet n'a
+          // rien laisse ; avec Ecrire, un trait.
+          expect(traits(tester), arme ? 1 : 0);
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
+      }
+    }
+
+    // RTL force (arabe) : la palette courte et le panneau Ecrire.
+    group('arabe', () {
+      setUp(() => LocaleSettings.setLocale(AppLocale.ar));
+      tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+      for (final _Cadrage cas in cadrages(<String>[
+        '390_x1_clair',
+        '320_x2_clair',
+      ])) {
+        for (final bool panneau in <bool>[false, true]) {
+          final String nom =
+              'tb7b_${panneau ? 'panneau_ecrire' : 'palette'}_ar_${cas.$1}';
+          testWidgets(nom, (WidgetTester tester) async {
+            await monter(tester, cas);
+            expect(
+              Directionality.of(tester.element(find.byType(SalleSeance))),
+              TextDirection.rtl,
+            );
+            await ecrire(tester);
+            if (panneau) {
+              await tester.ensureVisible(
+                find.byKey(EcritureSeance.cleEpaisseur),
+              );
+              await stabiliser(tester);
+            } else {
+              await taper(tester, find.byKey(PanneauSeance.cleReduire));
+              await geste(tester, PointerDeviceKind.touch, 93);
+              expect(find.byKey(PaletteEcriture.cle), findsOneWidget);
+            }
+            expect(tester.takeException(), isNull);
+            debugPrint('PNG ${await capturer(tester, nom)}');
+          });
+        }
+      }
+    });
+  });
+
+  // TB-10 (plan V2 §5, §12, §19.3 ; UX-20 ; MA-CMD-1) : l'eleve autorise
+  // (information courte, Commandes avec Ecrire, palette apres un trait),
+  // le droit retire, le Mode Accessibilite (guidee) et l'enseignant qui
+  // vient d'autoriser Mariam (fiche depliee, « Peut ecrire »).
+  group(
+    'TB-10 : eleve, Mode Accessibilite et autorisation',
+    skip: sautSansCapture,
+    () {
+      setUpAll(chargerPolicesDuDepot);
+      const List<_Cadrage> plus = <_Cadrage>[
+        (
+          '320_x2_sombre',
+          Size(320, 700),
+          2,
+          EdgeInsets.zero,
+          2,
+          ThemeMode.dark,
+        ),
+        ('390_x2_sombre', Size(390, 844), 3, _zoneTelephone, 2, ThemeMode.dark),
+      ];
+      Iterable<_Cadrage> cadrages(List<String> noms) => <_Cadrage>[
+        ..._cadragesTb,
+        ...plus,
+      ].where((_Cadrage c) => noms.contains(c.$1));
+      final Finder page = find.byKey(SurfacePageFixe.clePage);
+
+      Future<void> taper(WidgetTester tester, Finder cible) async {
+        await tester.ensureVisible(cible);
+        await tester.pump();
+        await tester.tap(cible);
+        await stabiliser(tester);
+      }
+
+      Future<void> monter(
+        WidgetTester tester,
+        _Cadrage cas,
+        RoleSeance role,
+        SituationTb situation,
+      ) async {
+        fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+        await tester.pumpWidget(
+          hoteCapture(
+            DemoSallePage(role: role, situation: situation),
+            themeMode: cas.$6,
+            echelleTexte: cas.$5,
+          ),
+        );
+        await stabiliser(tester);
+        await tester.pump(const Duration(milliseconds: 1400));
+      }
+
+      Future<void> trait(WidgetTester tester) async {
+        final Rect r = tester.getRect(page);
+        final TestPointer p = TestPointer(94);
+        final Offset a = r.topLeft + Offset(0.2 * r.width, 0.3 * r.height);
+        final Offset b = r.topLeft + Offset(0.8 * r.width, 0.36 * r.height);
+        await tester.sendEventToBinding(p.down(a));
+        for (int i = 1; i <= 8; i++) {
+          await tester.sendEventToBinding(p.move(Offset.lerp(a, b, i / 8)!));
+          await tester.pump();
+        }
+        await tester.sendEventToBinding(p.up());
+        await stabiliser(tester);
+      }
+
+      for (final RoleSeance role in <RoleSeance>[
+        RoleSeance.eleve,
+        RoleSeance.guidee,
+      ]) {
+        final String qui = role == RoleSeance.eleve ? 'eleve' : 'ma';
+        for (final _Cadrage cas in cadrages(<String>[
+          '390_x1_clair',
+          '390_x1_sombre',
+          '390_x2_clair',
+          '1440_x1_clair',
+          '1440_x1_sombre',
+          '320_x2_clair',
+          '320_x2_sombre',
+        ])) {
+          for (final String etape in <String>['avis', 'commandes', 'palette']) {
+            final String nom = 'tb10_${qui}_${etape}_${cas.$1}';
+            testWidgets(nom, (WidgetTester tester) async {
+              await monter(tester, cas, role, SituationTb.autorisationEcrire);
+              expect(find.byKey(CommandesEleve.cleAvis), findsOneWidget);
+              if (etape != 'avis') {
+                await taper(tester, find.byKey(DeclencheurCommandes.cle));
+                await taper(
+                  tester,
+                  find.byKey(const ValueKey<String>('outil-ecrire')),
+                );
+                expect(
+                  find.byKey(BarreStylet.cleOutil(OutilTrait.surligneur)),
+                  findsNothing,
+                );
+              }
+              if (etape == 'palette') {
+                await taper(tester, find.byKey(PanneauSeance.cleReduire));
+                await trait(tester);
+                expect(find.byKey(PaletteEcriture.cle), findsOneWidget);
+              }
+              expect(tester.takeException(), isNull);
+              debugPrint('PNG ${await capturer(tester, nom)}');
+            });
+          }
+        }
+        for (final _Cadrage cas in cadrages(<String>[
+          '390_x1_clair',
+          '1440_x1_clair',
+          '320_x2_clair',
+        ])) {
+          final String nom = 'tb10_${qui}_retrait_${cas.$1}';
+          testWidgets(nom, (WidgetTester tester) async {
+            await monter(tester, cas, role, SituationTb.droitRetire);
+            expect(find.byKey(CommandesEleve.cleAvis), findsOneWidget);
+            expect(tester.takeException(), isNull);
+            debugPrint('PNG ${await capturer(tester, nom)}');
+          });
+        }
+      }
+
+      for (final _Cadrage cas in cadrages(<String>[
+        '1440_x1_clair',
+        '1440_x1_sombre',
+        '1440_x2_clair',
+        '390_x1_clair',
+        '390_x1_sombre',
+        '390_x2_clair',
+        '320_x2_clair',
+        '320_x2_sombre',
+      ])) {
+        final String nom = 'tb10_enseignant_autorise_${cas.$1}';
+        testWidgets(nom, (WidgetTester tester) async {
+          await monter(tester, cas, RoleSeance.enseignant, SituationTb.per01);
+          final Finder bouton = find.byKey(
+            const ValueKey<String>('autoriser-ecrire-Mariam'),
+          );
+          await taper(tester, bouton);
+          expect(
+            find.byKey(const ValueKey<String>('peut-ecrire-Mariam')),
+            findsOneWidget,
+          );
+          await tester.ensureVisible(
+            find.byKey(const ValueKey<String>('eleve-Mariam')),
+          );
+          // Tour 2 : « Retirer l'autorisation d'ecrire » au milieu de la
+          // liste, hors de la barre de l'appel posee en bas : la capture
+          // montre l'action du meme etat.
+          await Scrollable.ensureVisible(
+            tester.element(bouton),
+            alignment: 0.5,
+          );
+          await stabiliser(tester);
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
+      }
+    },
+  );
+
+  // TB-11b (plan V2 §10 a §12, §19.5) : les quatre etats, synchronisation
+  // interrompue (ERR-01, enseignant et eleve), reprise (ERR-02, enseignant
+  // et eleve), sauvegarde en echec (ERR-03) et conservation dans la seance
+  // (Commandes ouvertes) ; 390 et 1440 clair et sombre, 320 x2 clair et
+  // sombre.
+  group('TB-11b : synchronisation et conservation', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (RoleSeance role, SituationTb situation, String etat)
+        in <(RoleSeance, SituationTb, String)>[
+          (RoleSeance.enseignant, SituationTb.err01, 'err01'),
+          (RoleSeance.eleve, SituationTb.err01, 'err01'),
+          (RoleSeance.enseignant, SituationTb.err02, 'err02'),
+          (RoleSeance.eleve, SituationTb.err02, 'err02'),
+          (RoleSeance.enseignant, SituationTb.err03, 'err03'),
+          (RoleSeance.enseignant, SituationTb.ped03, 'conservation'),
+          // Tour 2 : la guidee en reprise (bandeau court) ; l'eleve autorise,
+          // Commandes ouvertes : la phrase de la suspension a la place
+          // d'« Ecrire ».
+          (RoleSeance.guidee, SituationTb.err02, 'err02'),
+          (RoleSeance.eleve, SituationTb.err01, 'ecriture_suspendue'),
+        ]) {
+      for (final _Cadrage cas in <_Cadrage>[
+        for (final _Cadrage c in _cadragesTb)
+          if (<String>[
+            '390_x1_clair',
+            '390_x1_sombre',
+            '1440_x1_clair',
+            '1440_x1_sombre',
+            '320_x2_clair',
+          ].contains(c.$1))
+            c,
+        (
+          '320_x2_sombre',
+          const Size(320, 700),
+          2,
+          EdgeInsets.zero,
+          2,
+          ThemeMode.dark,
+        ),
+      ]) {
+        final String nom = 'tb11b_${role.name}_${etat}_${cas.$1}';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+          await tester.pumpWidget(
+            hoteCapture(
+              DemoSallePage(role: role, situation: situation),
+              themeMode: cas.$6,
+              echelleTexte: cas.$5,
+            ),
+          );
+          await tester.pumpAndSettle();
+          // ERR-03 au bureau : le bandeau et la conservation ensemble ; au
+          // telephone, le bandeau seul (la feuille le couvrirait).
+          final bool commandes =
+              etat == 'conservation' ||
+              etat == 'ecriture_suspendue' ||
+              (etat == 'err03' && cas.$2.width >= 1440);
+          if (commandes) {
+            final Finder declencheur = find.byKey(DeclencheurCommandes.cle);
+            await tester.ensureVisible(declencheur);
+            await tester.pumpAndSettle();
+            await tester.tap(declencheur);
+            await tester.pumpAndSettle();
+          }
+          if (etat == 'err03') {
+            expect(
+              find.textContaining(
+                t.salle.seance.synchro.nonSauvegardees,
+                findRichText: true,
+              ),
+              findsOneWidget,
+            );
+          }
+          if (etat == 'ecriture_suspendue') {
+            expect(
+              find.byKey(CommandesPedagogiques.cleEcritureSuspendue),
+              findsOneWidget,
+            );
+          }
+          if (commandes && etat != 'ecriture_suspendue') {
+            final Finder conservation = find.byKey(
+              CommandesPedagogiques.cleConservation,
+            );
+            expect(conservation, findsOneWidget);
+            // A 320 x2, la feuille des Commandes defile : la phrase est
+            // amenee au milieu, entiere ; ailleurs, la colonne reste en tete.
+            if (cas.$2.width < 390) {
+              await tester.runAsync(
+                () => Scrollable.ensureVisible(
+                  tester.element(conservation),
+                  alignment: 0.5,
+                ),
+              );
+              await tester.pumpAndSettle();
+            }
+          }
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
       }
     }
   });
