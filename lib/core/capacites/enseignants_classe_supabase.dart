@@ -33,7 +33,7 @@ class EnseignantsClasseSupabase implements PortEnseignantsClasse {
     final Map<String, dynamic> row = Map<String, dynamic>.from(raw);
     final String titre = row['titre_public'] as String? ?? '';
     final GenreEnseignant? genre = switch (titre) {
-      'sayyid' => GenreEnseignant.homme,
+      'sayid' => GenreEnseignant.homme,
       'sayyida' => GenreEnseignant.femme,
       _ => null,
     };
