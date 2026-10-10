@@ -10,18 +10,18 @@ insert into auth.users (id, email) values
 insert into public.households (id, timezone)
 values ('f16fffff-0000-0000-0000-000000000011', 'Europe/Paris');
 insert into public.profiles
-  (id, immutable_id, role, household_id, first_name, last_name, account_status)
+  (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 values
   ('f1660000-0000-0000-0000-000000000001', 'F1NOTIFGUARDIAN', 'guardian',
-   'f16fffff-0000-0000-0000-000000000011', 'Fixture', 'Guardian', 'active'),
+   'f16fffff-0000-0000-0000-000000000011', 'Fixture', 'Guardian', 'active', 'female'),
   ('f1660000-0000-0000-0000-000000000002', 'F1NOTIFSTUDENT', 'student',
-   'f16fffff-0000-0000-0000-000000000011', 'Fixture', 'Student', 'active'),
+   'f16fffff-0000-0000-0000-000000000011', 'Fixture', 'Student', 'active', 'male'),
   ('f1660000-0000-0000-0000-000000000003', 'F1NOTIFTEACHER', 'teacher',
-   'f16fffff-0000-0000-0000-000000000011', 'Fixture', 'Teacher', 'active'),
+   'f16fffff-0000-0000-0000-000000000011', 'Fixture', 'Teacher', 'active', 'male'),
   ('f1660000-0000-0000-0000-000000000004', 'F1NOTIFADMIN', 'admin',
-   null, 'Fixture', 'Admin', 'active'),
+   null, 'Fixture', 'Admin', 'active', 'male'),
   ('f1660000-0000-0000-0000-000000000005', 'F1NOTIFADULT', 'student',
-   'f16fffff-0000-0000-0000-000000000011', 'Fixture', 'Adult', 'active');
+   'f16fffff-0000-0000-0000-000000000011', 'Fixture', 'Adult', 'active', 'male');
 
 update public.households
 set primary_guardian_id = 'f1660000-0000-0000-0000-000000000001'
