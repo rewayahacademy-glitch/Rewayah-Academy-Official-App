@@ -421,6 +421,23 @@ BEGIN
     RAISE EXCEPTION 'F1: choix d''une carte non transmis à l''administration';
   END IF;
 
+  -- M1 : le retrait doit couvrir l'intention de vitrine (source=offre) autant
+  -- que les demandes personnalisées, afin de libérer le quota et le choix suivant.
+  PERFORM public.retirer_demande_horaire(v_id, 'test retrait source offre');
+  IF EXISTS (
+    SELECT 1 FROM public.demandes_horaires_famille
+     WHERE eleve_id = v_id AND etat IN ('envoyee', 'classe_validee', 'enseignant_affecte')
+  ) THEN
+    RAISE EXCEPTION 'M1 ECHEC : demande source offre encore active';
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM public.intentions_horaire
+     WHERE eleve_id = v_id AND etat = 'retiree'
+       AND retrait_motif = 'test retrait source offre'
+  ) THEN
+    RAISE EXCEPTION 'M1 ECHEC : intention source offre non retiree';
+  END IF;
+
   RAISE NOTICE 'F1: demandes privées, regroupement par élèves, quota serveur, états et ACL vérifiés';
 END
 $quota$;
