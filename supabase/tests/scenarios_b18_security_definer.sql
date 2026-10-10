@@ -191,7 +191,10 @@ begin
       ('if_inequality', 'IF app_role() <> ''admin'' THEN'),
       ('elsif_not_equal_multiline', E'ELSIF\n public.app_role() != ''admin'' THEN'),
       ('not_in_multiline', E'IF public.app_role()\n NOT IN (''admin'', ''controller'') THEN'),
-      ('reversed_inequality', 'IF ''admin'' <> public.app_role() THEN')
+      ('reversed_inequality', 'IF ''admin'' <> public.app_role() THEN'),
+      ('if_not_parenthesized_or', 'IF NOT (public.app_role() = ''admin'' OR public.app_role() = ''controller'') THEN'),
+      ('elsif_not_parenthesized_multiline', E'ELSIF NOT (public.app_role() = ''admin''\\n OR public.app_role() = ''controller'') THEN'),
+      ('unary_not_app_role', 'IF NOT public.app_role() = ''admin'' THEN')
     ) as samples(nom, source)
   loop
     if not app_private.has_unsafe_role_guard(v.source) then
