@@ -2,17 +2,10 @@
 -- Le titre public est toujours dérivé de profiles.gender; aucune valeur de titre n'est stockée.
 BEGIN;
 
-DO $type$
-BEGIN
-  CREATE TYPE public.genre_public AS ENUM ('hommes', 'femmes', 'indetermine');
-EXCEPTION WHEN duplicate_object THEN
-  NULL;
-END
-$type$;
-
+-- 0077 already introduced genre_public as checked text. Keep that
+-- canonical column; assigning to a class with NULL/unknown public is forbidden.
 ALTER TABLE public.groupes
-  ADD COLUMN IF NOT EXISTS genre_public public.genre_public
-  NOT NULL DEFAULT 'indetermine';
+  ALTER COLUMN genre_public SET DEFAULT 'indetermine';
 
 COMMENT ON COLUMN public.groupes.genre_public IS
   'Public de genre de la classe. Le titre public enseignant est dérivé côté serveur depuis profiles.gender.';
@@ -73,7 +66,9 @@ BEGIN
     RAISE EXCEPTION 'enseignant indisponible ou genre inconnu';
   END IF;
 
-  IF (v_g.genre_public = 'hommes' AND v_gender <> 'male')
+  IF v_g.genre_public IS NULL
+     OR v_g.genre_public NOT IN ('hommes', 'femmes', 'indetermine')
+     OR (v_g.genre_public = 'hommes' AND v_gender <> 'male')
      OR (v_g.genre_public = 'femmes' AND v_gender <> 'female') THEN
     RAISE EXCEPTION 'enseignant incompatible avec le public de la classe';
   END IF;
@@ -241,61 +236,91 @@ $function$;
 REVOKE ALL ON FUNCTION public.tc_verifier_affectation_enseignant(uuid, uuid)
   FROM PUBLIC, anon, authenticated, agent_ro;
 
-CREATE OR REPLACE FUNCTION public.tc_garde_affectation_enseignant()
-RETURNS trigger
-LANGUAGE plpgsql
-VOLATILE
-SECURITY DEFINER
-SET search_path = ''
-AS $trigger$
-BEGIN
-  IF NEW.teacher_id IS NOT NULL AND NEW.ended_at IS NULL THEN
-    PERFORM public.tc_verifier_affectation_enseignant(NEW.id, NEW.teacher_id);
-  END IF;
-  RETURN NEW;
-END;
-$trigger$;
-
 DROP TRIGGER IF EXISTS groupes_affectation_enseignant_guard ON public.groupes;
-CREATE TRIGGER groupes_affectation_enseignant_guard
-AFTER INSERT OR UPDATE OF teacher_id, genre_public, type_public, langue_code,
-  weekday, hour_local, timezone_iana, ended_at
-ON public.groupes
-FOR EACH ROW EXECUTE FUNCTION public.tc_garde_affectation_enseignant();
-
-REVOKE ALL ON FUNCTION public.tc_garde_affectation_enseignant() FROM PUBLIC, anon, authenticated, agent_ro;
-
-CREATE OR REPLACE FUNCTION public.tc_garde_creneau_affectation_enseignant()
-RETURNS trigger
-LANGUAGE plpgsql
-VOLATILE
-SECURITY DEFINER
-SET search_path = ''
-AS $trigger$
-DECLARE
-  v_groupe_id uuid;
-  v_teacher_id uuid;
-BEGIN
-  v_groupe_id := CASE WHEN TG_OP = 'DELETE' THEN OLD.groupe_id ELSE NEW.groupe_id END;
-  SELECT g.teacher_id INTO v_teacher_id
-  FROM public.groupes g
-  WHERE g.id = v_groupe_id AND g.ended_at IS NULL;
-  IF v_teacher_id IS NOT NULL THEN
-    PERFORM public.tc_verifier_affectation_enseignant(v_groupe_id, v_teacher_id);
-  END IF;
-  IF TG_OP = 'DELETE' THEN
-    RETURN OLD;
-  END IF;
-  RETURN NEW;
-END;
-$trigger$;
-
-REVOKE ALL ON FUNCTION public.tc_garde_creneau_affectation_enseignant() FROM PUBLIC, anon, authenticated, agent_ro;
-
 DROP TRIGGER IF EXISTS groupe_creneaux_affectation_guard ON public.groupe_creneaux;
-CREATE TRIGGER groupe_creneaux_affectation_guard
-AFTER INSERT OR UPDATE OR DELETE ON public.groupe_creneaux
-FOR EACH ROW EXECUTE FUNCTION public.tc_garde_creneau_affectation_enseignant();
+
+CREATE OR REPLACE FUNCTION public.affecter_enseignant_classe(
+  p_groupe_id uuid,
+  p_teacher_profile_id uuid
+)
+RETURNS void
+LANGUAGE plpgsql VOLATILE SECURITY DEFINER SET search_path = ''
+AS $function$
+DECLARE
+  v_groupe public.groupes%ROWTYPE;
+BEGIN
+  IF NOT coalesce(public.app_role() = 'admin' AND public.app_account_valid(), false)
+     OR p_groupe_id IS NULL OR p_teacher_profile_id IS NULL THEN
+    RAISE EXCEPTION 'affectation reservee a l''administration';
+  END IF;
+
+  SELECT * INTO v_groupe FROM public.groupes
+  WHERE id = p_groupe_id FOR UPDATE;
+  IF NOT FOUND OR v_groupe.teacher_id IS NOT NULL
+     OR v_groupe.etat <> 'en_attente_enseignant'
+     OR v_groupe.ended_at IS NOT NULL THEN
+    RAISE EXCEPTION 'deja_affecte ou classe indisponible';
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM public.profiles p
+    JOIN public.teacher_profiles tp ON tp.profile_id = p.id
+    WHERE p.id = p_teacher_profile_id
+      AND p.role = 'teacher' AND p.deleted_at IS NULL
+      AND p.account_status IN ('active', 'provisional_active')
+      AND (p.access_until IS NULL OR p.access_until > now())
+      AND tp.deleted_at IS NULL
+      AND tp.kyc_status = 'approved'
+      AND v_groupe.langue_code = ANY(tp.languages)
+  ) THEN
+    RAISE EXCEPTION 'enseignant indisponible';
+  END IF;
+
+  -- C-04/C-07: the same eligibility/collision check is enforced at the
+  -- authorization boundary, not on arbitrary group creation or edits.
+  PERFORM public.tc_verifier_affectation_enseignant(
+    p_groupe_id, p_teacher_profile_id
+  );
+
+  UPDATE public.groupes
+     SET teacher_id = p_teacher_profile_id, etat = 'active'
+   WHERE id = p_groupe_id;
+
+  PERFORM public.log_sensitive_access(
+    'enseignant_affecte_classe', 'groupes', p_groupe_id::text,
+    jsonb_build_object('teacher_id', p_teacher_profile_id)
+  );
+  IF pg_catalog.to_regclass('public.notifications') IS NOT NULL THEN
+    EXECUTE $sql$
+      INSERT INTO public.notifications
+        (destinataire, foyer_id, evenement, params, destination)
+      SELECT DISTINCT h.primary_guardian_id, h.id, 'enseignant_affecte',
+             jsonb_build_object(
+               'groupe_id', $1,
+               'debut_local', to_char(s.started_at AT TIME ZONE g.timezone_iana,
+                                      'YYYY-MM-DD"T"HH24:MI:SS')
+             ),
+             '/tuteur/demandes'
+      FROM public.groupe_membres gm
+      JOIN public.profiles p ON p.id = gm.student_id
+      JOIN public.households h ON h.id = p.household_id
+      JOIN public.groupes g ON g.id = gm.groupe_id
+      JOIN public.sessions s ON s.groupe_id = g.id AND s.deleted_at IS NULL
+      WHERE gm.groupe_id = $1 AND gm.left_at IS NULL
+        AND h.primary_guardian_id IS NOT NULL
+        AND s.started_at = (
+          SELECT min(s2.started_at) FROM public.sessions s2
+          WHERE s2.groupe_id = g.id AND s2.deleted_at IS NULL
+        )
+    $sql$ USING p_groupe_id;
+  END IF;
+END;
+$function$;
+
+REVOKE ALL ON FUNCTION public.creer_classe_depuis_regroupement(text, uuid, text)
+  FROM PUBLIC, anon, agent_ro;
+GRANT EXECUTE ON FUNCTION public.creer_classe_depuis_regroupement(text, uuid, text)
+  TO authenticated;
 
 CREATE OR REPLACE FUNCTION public.enseignants_pour_classe(p_classe_id uuid)
 RETURNS TABLE (
