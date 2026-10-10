@@ -5703,8 +5703,8 @@ class Traductions$recrutement$invitations$fr {
 	/// fr: 'Vous n'avez pas le droit d'inviter un enseignant. Adressez-vous à la direction.'
 	String get nonAutorise => 'Vous n\'avez pas le droit d\'inviter un enseignant. Adressez-vous à la direction.';
 
-	/// fr: 'Pas de connexion : l'invitation n'a pas été créée. Reconnectez-vous, puis réessayez.'
-	String get horsLigne => 'Pas de connexion : l\'invitation n\'a pas été créée. Reconnectez-vous, puis réessayez.';
+	/// fr: 'L'invitation n'a pas été créée. Réessayez dans un instant.'
+	String get horsLigne => 'L\'invitation n\'a pas été créée. Réessayez dans un instant.';
 
 	/// fr: 'La création de l'invitation n'est pas confirmée. Elle existe peut-être : regardez la liste avant de recommencer.'
 	String get erreur => 'La création de l\'invitation n\'est pas confirmée. Elle existe peut-être : regardez la liste avant de recommencer.';
@@ -5721,8 +5721,8 @@ class Traductions$recrutement$invitations$fr {
 	/// fr: 'Invitez un enseignant avec son adresse e-mail : le code apparaît ici.'
 	String get videDetail => 'Invitez un enseignant avec son adresse e-mail : le code apparaît ici.';
 
-	/// fr: 'Les invitations n'ont pas pu être lues. Vérifiez la connexion, puis réessayez.'
-	String get erreurListe => 'Les invitations n\'ont pas pu être lues. Vérifiez la connexion, puis réessayez.';
+	/// fr: 'Les invitations n'ont pas pu être lues. Réessayez dans un instant.'
+	String get erreurListe => 'Les invitations n\'ont pas pu être lues. Réessayez dans un instant.';
 
 	/// fr: 'Les invitations ne sont pas lisibles hors connexion.'
 	String get sansDonnees => 'Les invitations ne sont pas lisibles hors connexion.';
@@ -5819,8 +5819,8 @@ class Traductions$recrutement$candidat$fr {
 	/// fr: 'Saisir un autre code'
 	String get ressaisir => 'Saisir un autre code';
 
-	/// fr: 'Pas de connexion : le code n'a pas été vérifié. Reconnectez-vous, puis réessayez.'
-	String get horsLigne => 'Pas de connexion : le code n\'a pas été vérifié. Reconnectez-vous, puis réessayez.';
+	/// fr: 'Le code n'a pas été vérifié. Réessayez dans un instant.'
+	String get horsLigne => 'Le code n\'a pas été vérifié. Réessayez dans un instant.';
 
 	/// fr: 'Le code n'a pas pu être vérifié. Réessayez dans un instant.'
 	String get erreur => 'Le code n\'a pas pu être vérifié. Réessayez dans un instant.';
@@ -5888,8 +5888,8 @@ class Traductions$recrutement$signature$fr {
 	/// fr: 'Le contrat a été mis à jour pendant votre lecture. Le texte est rechargé : relisez-le, puis signez de nouveau.'
 	String get versionPerimee => 'Le contrat a été mis à jour pendant votre lecture. Le texte est rechargé : relisez-le, puis signez de nouveau.';
 
-	/// fr: 'Pas de connexion : le contrat n'est pas signé. Reconnectez-vous, puis réessayez.'
-	String get horsLigne => 'Pas de connexion : le contrat n\'est pas signé. Reconnectez-vous, puis réessayez.';
+	/// fr: 'Le contrat n'est pas signé. Réessayez dans un instant.'
+	String get horsLigne => 'Le contrat n\'est pas signé. Réessayez dans un instant.';
 
 	/// fr: 'La signature n'est pas confirmée. Regardez si le contrat apparaît signé avant de recommencer.'
 	String get erreur => 'La signature n\'est pas confirmée. Regardez si le contrat apparaît signé avant de recommencer.';
@@ -5900,8 +5900,8 @@ class Traductions$recrutement$signature$fr {
 	/// fr: 'Aucun contrat n'est publié pour le moment. Prévenez la direction.'
 	String get introuvable => 'Aucun contrat n\'est publié pour le moment. Prévenez la direction.';
 
-	/// fr: 'Le contrat n'a pas pu être lu. Vérifiez la connexion, puis réessayez.'
-	String get erreurLecture => 'Le contrat n\'a pas pu être lu. Vérifiez la connexion, puis réessayez.';
+	/// fr: 'Le contrat n'a pas pu être lu. Réessayez dans un instant.'
+	String get erreurLecture => 'Le contrat n\'a pas pu être lu. Réessayez dans un instant.';
 
 	/// fr: 'Le contrat n'est pas lisible hors connexion.'
 	String get sansDonnees => 'Le contrat n\'est pas lisible hors connexion.';
@@ -30132,13 +30132,13 @@ extension on Traductions {
 			'recrutement.invitations.compteExistant' => 'Un compte existe déjà pour cette adresse : aucune invitation n\'est nécessaire.',
 			'recrutement.invitations.dejaInvite' => 'Une invitation est déjà active pour cette adresse. Elle est dans la liste ci-dessous.',
 			'recrutement.invitations.nonAutorise' => 'Vous n\'avez pas le droit d\'inviter un enseignant. Adressez-vous à la direction.',
-			'recrutement.invitations.horsLigne' => 'Pas de connexion : l\'invitation n\'a pas été créée. Reconnectez-vous, puis réessayez.',
+			'recrutement.invitations.horsLigne' => 'L\'invitation n\'a pas été créée. Réessayez dans un instant.',
 			'recrutement.invitations.erreur' => 'La création de l\'invitation n\'est pas confirmée. Elle existe peut-être : regardez la liste avant de recommencer.',
 			'recrutement.invitations.creee' => ({required Object code}) => 'Invitation créée. Transmettez ce code à l\'enseignant : ${code}',
 			'recrutement.invitations.liste' => 'Invitations',
 			'recrutement.invitations.vide' => 'Aucune invitation pour le moment',
 			'recrutement.invitations.videDetail' => 'Invitez un enseignant avec son adresse e-mail : le code apparaît ici.',
-			'recrutement.invitations.erreurListe' => 'Les invitations n\'ont pas pu être lues. Vérifiez la connexion, puis réessayez.',
+			'recrutement.invitations.erreurListe' => 'Les invitations n\'ont pas pu être lues. Réessayez dans un instant.',
 			'recrutement.invitations.sansDonnees' => 'Les invitations ne sont pas lisibles hors connexion.',
 			'recrutement.invitations.indisponibleTitre' => 'Invitations d\'enseignants',
 			'recrutement.invitations.indisponiblePhrase' => 'Cette fonction sera disponible au branchement du serveur.',
@@ -30171,7 +30171,7 @@ extension on Traductions {
 			'recrutement.candidat.inconnue' => 'Code non reconnu.',
 			'recrutement.candidat.inconnueDetail' => 'Vérifiez le code, puis saisissez-le de nouveau.',
 			'recrutement.candidat.ressaisir' => 'Saisir un autre code',
-			'recrutement.candidat.horsLigne' => 'Pas de connexion : le code n\'a pas été vérifié. Reconnectez-vous, puis réessayez.',
+			'recrutement.candidat.horsLigne' => 'Le code n\'a pas été vérifié. Réessayez dans un instant.',
 			'recrutement.candidat.erreur' => 'Le code n\'a pas pu être vérifié. Réessayez dans un instant.',
 			'recrutement.candidat.indisponible' => 'La vérification des invitations sera disponible au branchement du serveur.',
 			'recrutement.signature.titre' => 'Contrat',
@@ -30191,11 +30191,11 @@ extension on Traductions {
 			'recrutement.signature.copieErreur' => 'Votre copie n\'a pas pu être préparée. Réessayez dans un instant.',
 			'recrutement.signature.nouvelleVersion' => ({required Object version}) => 'Le contrat a été mis à jour depuis votre dernière signature (version ${version}). Relisez-le, puis signez de nouveau.',
 			'recrutement.signature.versionPerimee' => 'Le contrat a été mis à jour pendant votre lecture. Le texte est rechargé : relisez-le, puis signez de nouveau.',
-			'recrutement.signature.horsLigne' => 'Pas de connexion : le contrat n\'est pas signé. Reconnectez-vous, puis réessayez.',
+			'recrutement.signature.horsLigne' => 'Le contrat n\'est pas signé. Réessayez dans un instant.',
 			'recrutement.signature.erreur' => 'La signature n\'est pas confirmée. Regardez si le contrat apparaît signé avant de recommencer.',
 			'recrutement.signature.nonConnecte' => 'Votre session a expiré. Reconnectez-vous pour signer.',
 			'recrutement.signature.introuvable' => 'Aucun contrat n\'est publié pour le moment. Prévenez la direction.',
-			'recrutement.signature.erreurLecture' => 'Le contrat n\'a pas pu être lu. Vérifiez la connexion, puis réessayez.',
+			'recrutement.signature.erreurLecture' => 'Le contrat n\'a pas pu être lu. Réessayez dans un instant.',
 			'recrutement.signature.sansDonnees' => 'Le contrat n\'est pas lisible hors connexion.',
 			'recrutement.signature.indisponible' => 'La signature du contrat sera disponible au branchement du serveur.',
 			'recrutement.signature.retour' => 'Retour',
