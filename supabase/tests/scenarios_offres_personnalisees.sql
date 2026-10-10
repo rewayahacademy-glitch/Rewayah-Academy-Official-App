@@ -689,8 +689,8 @@ BEGIN
   SELECT titre_public INTO v_titre
   FROM public.enseignants_pour_classe('f1470000-0000-0000-0000-000000000101')
   WHERE teacher_id = 'f1490000-0000-0000-0000-000000000997';
-  IF v_titre IS DISTINCT FROM 'sayyid' THEN
-    RAISE EXCEPTION 'C-04: titre male doit être sayyid, reçu %', v_titre;
+  IF v_titre IS DISTINCT FROM 'sayid' THEN
+    RAISE EXCEPTION 'C-04: titre male doit être sayid, reçu %', v_titre;
   END IF;
 
   SELECT count(*) INTO v_count
