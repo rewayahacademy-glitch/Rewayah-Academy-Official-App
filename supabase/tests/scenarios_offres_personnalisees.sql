@@ -625,4 +625,88 @@ BEGIN
 END
 $quota$;
 
+
+-- C-04/C-07 : titre dérivé, compatibilité du public et toutes les occurrences,
+-- dont le croisement saisonnier Paris/Conakry, restent contrôlés par le serveur.
+INSERT INTO public.weekly_availability (profile_id, weekday, hour_local, timezone_iana)
+VALUES
+  ('f1490000-0000-0000-0000-000000000997', 1, 11, 'Europe/Paris'),
+  ('f1490000-0000-0000-0000-000000000997', 3, 11, 'Europe/Paris'),
+  ('f1490000-0000-0000-0000-000000000997', 3, 10, 'Africa/Conakry'),
+  ('f1490000-0000-0000-0000-000000000997', 4, 20, 'Europe/Paris');
+
+INSERT INTO public.groupes
+  (id, teacher_id, etat, type_public, genre_public, seuil_max, libelle,
+   weekday, hour_local, timezone_iana, langue_code)
+VALUES
+  ('f1470000-0000-0000-0000-000000000101', NULL, 'en_attente_enseignant',
+   'adulte', 'hommes', 6, 'C04 homme multi-occurrence',
+   1, 11, 'Europe/Paris', 'francais'),
+  ('f1470000-0000-0000-0000-000000000102', NULL, 'en_attente_enseignant',
+   'adulte', 'hommes', 6, 'C07 croisement saisonnier',
+   3, 10, 'Africa/Conakry', 'francais'),
+  ('f1470000-0000-0000-0000-000000000103', NULL, 'en_attente_enseignant',
+   'adulte', 'femmes', 6, 'C04 public incompatible',
+   4, 20, 'Europe/Paris', 'francais');
+
+INSERT INTO public.groupe_creneaux (groupe_id, weekday, hour_local)
+VALUES ('f1470000-0000-0000-0000-000000000101', 3, 11)
+ON CONFLICT (groupe_id, weekday, hour_local) DO NOTHING;
+
+DO $c04_c07$
+DECLARE
+  v_titre text;
+  v_count integer;
+  v_refuse boolean := false;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000999', true);
+  PERFORM set_config('request.jwt.claims',
+    '{"app_metadata":{"role":"admin"}}', true);
+
+  SELECT titre_public INTO v_titre
+  FROM public.enseignants_pour_classe('f1470000-0000-0000-0000-000000000101')
+  WHERE teacher_id = 'f1490000-0000-0000-0000-000000000997';
+  IF v_titre IS DISTINCT FROM 'sayyid' THEN
+    RAISE EXCEPTION 'C-04: titre male doit être sayyid, reçu %', v_titre;
+  END IF;
+
+  SELECT count(*) INTO v_count
+  FROM public.enseignants_pour_classe('f1470000-0000-0000-0000-000000000103')
+  WHERE teacher_id = 'f1490000-0000-0000-0000-000000000997';
+  IF v_count <> 0 THEN
+    RAISE EXCEPTION 'C-04: enseignant homme proposé pour une classe femmes';
+  END IF;
+
+  PERFORM public.affecter_enseignant_classe(
+    'f1470000-0000-0000-0000-000000000101',
+    'f1490000-0000-0000-0000-000000000997'
+  );
+
+  -- La seconde occurrence de la première classe chevauche la classe cible
+  -- en hiver (Paris UTC+1 / Conakry UTC) ; une comparaison ancrée sur la
+  -- seule occurrence principale ou sur une seule saison laisserait passer.
+  SELECT count(*) INTO v_count
+  FROM public.enseignants_pour_classe('f1470000-0000-0000-0000-000000000102')
+  WHERE teacher_id = 'f1490000-0000-0000-0000-000000000997';
+  IF v_count <> 0 THEN
+    RAISE EXCEPTION 'C-07: collision saisonnière d''une occurrence secondaire ignorée';
+  END IF;
+
+  BEGIN
+    PERFORM public.affecter_enseignant_classe(
+      'f1470000-0000-0000-0000-000000000102',
+      'f1490000-0000-0000-0000-000000000997'
+    );
+  EXCEPTION WHEN OTHERS THEN
+    v_refuse := true;
+  END;
+  IF NOT v_refuse THEN
+    RAISE EXCEPTION 'C-07: l''affectation avec collision est passée';
+  END IF;
+
+  RAISE NOTICE 'C-04/C-07: titre, public, multi-occurrences et collision saisonnière vérifiés';
+END
+$c04_c07$;
+
 ROLLBACK;
