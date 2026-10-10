@@ -7,7 +7,7 @@ create table public.feedback_questions (
   libelles jsonb not null check (
     pg_catalog.jsonb_typeof(libelles) = 'object'
     and libelles ? 'difficile' and libelles ? 'bien' and libelles ? 'tres_bien'
-    and pg_catalog.jsonb_object_length(libelles) = 3
+    and (libelles - array['difficile', 'bien', 'tres_bien']) = '{}'::jsonb
   ),
   active boolean not null default true
 );
