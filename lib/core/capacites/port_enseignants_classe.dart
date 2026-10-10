@@ -1,7 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../admin/service_groupes.dart' show TypePublicGroupe;
 import '../planning/service_planning.dart' show Creneau;
 import 'capacite_indisponible.dart';
 
@@ -85,7 +83,7 @@ abstract interface class PortEnseignantsClasse {
   /// Les enseignants actifs, avec ce que la source sait de chacun. Le
   /// classement se fait a cote (`classerEnseignants`), en fonction pure.
   Future<List<EnseignantPropose>> pourClasse({
-    required TypePublicGroupe public,
+    required String classeId,
   });
 }
 
@@ -98,14 +96,8 @@ class EnseignantsClasseIndisponible implements PortEnseignantsClasse {
 
   @override
   Future<List<EnseignantPropose>> pourClasse({
-    required TypePublicGroupe public,
+    required String classeId,
   }) => Future<List<EnseignantPropose>>.error(
     const CapaciteIndisponible('DB-CLASSE-FORM-1'),
   );
 }
-
-/// La source employee par l'application.
-final Provider<PortEnseignantsClasse> portEnseignantsClasseProvider =
-    Provider<PortEnseignantsClasse>(
-      (Ref ref) => const EnseignantsClasseIndisponible(),
-    );
