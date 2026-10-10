@@ -22,6 +22,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/port_notifications.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/offres/port_frise_demande.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart'
+    show LibellesGroupe;
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
@@ -292,7 +294,10 @@ void main() {
       );
       // Intervalles : 1 jour (39 h 58), puis 3 jours.
       expect(find.text(f.intervalle.jour), findsOneWidget);
-      expect(find.text(f.intervalle.jours(n: 3)), findsOneWidget);
+      expect(
+        find.text(LibellesGroupe.insecable(f.intervalle.jours(n: 3))),
+        findsOneWidget,
+      );
       // Aucune date de seance inventee.
       expect(
         find.byKey(const ValueKey<String>('frise-quand-premiereSeance')),

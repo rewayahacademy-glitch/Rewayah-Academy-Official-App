@@ -416,6 +416,11 @@ abstract final class Routes {
   /// La frise d'une demande (SUIVI-FAMILLE, R20).
   static String tuteurDemande(String demandeId) => '$tuteurDemandes/$demandeId';
 
+  /// ECHELLE-FAM-ETATS-1 : le resultat d'une fusion ou d'un transfert pour une
+  /// demande : la nouvelle classe, le titre de l'enseignant, l'horaire.
+  static String tuteurChangementPour(String demandeId) =>
+      '$tuteurDemandes/$demandeId/changement';
+
   /// Vrai quand [chemin] est une **tache focalisee** : sur telephone, la
   /// barre basse s'efface et l'ecran porte son disque retour (manifeste
   /// visuel Tuteur V1 section 4.2 point 5 ; mapping des routes, section 5).
@@ -659,6 +664,11 @@ abstract final class Routes {
   static const String adminOperationsRegroupements =
       '/admin/operations/regroupements';
 
+  /// ECHELLE-ADM-PILOTAGE-1 : le tableau de pilotage par horaire (classes,
+  /// remplissage, demandes, enseignants libres et manquants), sous
+  /// Operations.
+  static const String adminOperationsPilotage = '/admin/operations/pilotage';
+
   /// RECRUT-ECRANS : inviter un enseignant (code a usage unique), sous
   /// Personnes.
   static const String adminPersonnesInvitations =
@@ -747,6 +757,12 @@ abstract final class Routes {
   /// (complement observation du mandat Tuteur V1, section 8).
   static const String adminSecuriteAuditObservations =
       '/admin/securite-audit/observations';
+
+  /// ECHELLE-CTRL-DIRECT-1 : les regles du tirage des missions de controle et
+  /// l'historique audite des tirages, lisibles par la direction seule, sous
+  /// Securite et audit.
+  static const String adminSecuriteAuditTirages =
+      '/admin/securite-audit/tirages';
 
   // --- Observation par un agent IA -----------------------------------------
 

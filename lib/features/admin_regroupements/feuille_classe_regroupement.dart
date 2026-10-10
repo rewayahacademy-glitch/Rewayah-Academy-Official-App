@@ -37,6 +37,8 @@ import 'package:uuid/uuid.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/enseignants_classe.dart';
+import '../../core/admin/port_classes_admin.dart' show pageClassesAdminProvider;
+import '../../core/admin/port_pilotage.dart' show pagePilotageProvider;
 import '../../core/admin/service_comptes.dart' show comptesProvider;
 import '../../core/admin/service_groupes.dart'
     show TypePublicGroupe, groupesProvider;
@@ -117,7 +119,10 @@ class _FeuilleClasseRegroupementEtat
 
   /// La liste de la page se relit apres tout changement que le serveur a
   /// confirme (ou refuse parce qu'un autre l'a fait avant).
-  void _relireListe() => ref.invalidate(regroupementsAdminProvider);
+  void _relireListe() => ref
+    ..invalidate(regroupementsAdminProvider)
+    ..invalidate(pageClassesAdminProvider)
+    ..invalidate(pagePilotageProvider);
 
   Future<void> _creer() async {
     // Double appui : le second ne part pas.
@@ -259,9 +264,29 @@ class _FeuilleClasseRegroupementEtat
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         TexteSansCoupure(
-          r.contexte(n: _r.nombreEleves),
+          _r.decoupage.classes > 1
+              ? r.contexteReparti
+              : r.contexte(n: _r.nombreEleves),
           style: textes.bodyMedium,
         ),
+        Ecart.vMd,
+        // R3 : le decoupage est dit avant la confirmation, jamais deduit
+        // apres coup.
+        TexteSansCoupure(
+          r.decoupage(detail: libelleDecoupage(_r.decoupage)),
+          key: const ValueKey<String>('regroupement-decoupage'),
+          style: textes.titleSmall,
+        ),
+        // R1, R16 : la classe s'ajoute aux classes deja ouvertes sur la
+        // meme cle, aucune n'est ecrasee.
+        if (_r.classesExistantes case final int n when n > 0) ...<Widget>[
+          Ecart.vSm,
+          TexteSansCoupure(
+            r.classesExistantes(n: n),
+            key: const ValueKey<String>('regroupement-classes-existantes'),
+            style: textes.bodyMedium,
+          ),
+        ],
         Ecart.vLg,
         ...espacer(lignesRegroupement(_r)),
         Ecart.vLg,

@@ -7,6 +7,7 @@ library;
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/offres/port_frise_demande.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart' show LibellesGroupe;
 import '../suivi_demandes/libelles_suivi_demandes.dart';
 
 /// Le nom d'une etape : « Classe créée ».
@@ -60,12 +61,12 @@ String intervalleEntre(DateTime avant, DateTime apres) {
   if (heures < 24) {
     return heures == 1
         ? t.suiviFamille.intervalle.heure
-        : t.suiviFamille.intervalle.heures(n: heures);
+        : LibellesGroupe.insecable(t.suiviFamille.intervalle.heures(n: heures));
   }
   final int jours = ecart.inDays;
   return jours == 1
       ? t.suiviFamille.intervalle.jour
-      : t.suiviFamille.intervalle.jours(n: jours);
+      : LibellesGroupe.insecable(t.suiviFamille.intervalle.jours(n: jours));
 }
 
 /// Le titre de la notification d'un passage d'etape. Les trois premieres
