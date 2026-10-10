@@ -466,9 +466,15 @@ BEGIN
       'role', 'student', 'household_id', 'dbffffff-0000-0000-0000-000000000001'
     ))::text, true);
 
-  v_request := public.demander_presentation_standard();
-  v_retry := public.demander_presentation_standard();
-  IF v_request IS DISTINCT FROM v_retry THEN
+  PERFORM public.demander_presentation_standard();
+  SELECT id INTO v_request FROM public.demandes_presentation
+  WHERE eleve_id = 'db000000-0000-0000-0000-000000000002'
+    AND statut = 'en_attente';
+  PERFORM public.demander_presentation_standard();
+  SELECT id INTO v_retry FROM public.demandes_presentation
+  WHERE eleve_id = 'db000000-0000-0000-0000-000000000002'
+    AND statut = 'en_attente';
+  IF v_request IS NULL OR v_request IS DISTINCT FROM v_retry THEN
     RAISE EXCEPTION 'B-17 création non idempotente';
   END IF;
 

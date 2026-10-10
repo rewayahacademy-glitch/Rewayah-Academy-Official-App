@@ -25,3 +25,22 @@ class PortDemandePresentationDemo implements PortDemandePresentation {
       ? Future<void>.error(StateError('envoi non confirme (demonstration)'))
       : Future<void>.value();
 }
+
+
+/// Envoi réel MA-8; le serveur notifie le tuteur principal du foyer.
+class DemandePresentationSupabase implements PortDemandePresentation {
+  const DemandePresentationSupabase(this._client);
+
+  final SupabaseClient _client;
+
+  @override
+  Future<void> demanderPresentationStandard() async {
+    await _client.rpc<void>('demander_presentation_standard');
+  }
+}
+
+/// Port utilisé par l'application; surchargeable dans les tests/démonstrations.
+final Provider<PortDemandePresentation> portDemandePresentationProvider =
+    Provider<PortDemandePresentation>(
+  (Ref ref) => DemandePresentationSupabase(Supabase.instance.client),
+);

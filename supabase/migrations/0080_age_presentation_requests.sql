@@ -104,7 +104,7 @@ ALTER TABLE public.demandes_presentation ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON public.demandes_presentation FROM PUBLIC, anon, authenticated, agent_ro;
 
 CREATE OR REPLACE FUNCTION public.demander_presentation_standard()
-RETURNS uuid
+RETURNS void
 LANGUAGE plpgsql
 VOLATILE
 SECURITY DEFINER
@@ -168,7 +168,7 @@ BEGIN
   WHERE d.eleve_id = v_eleve AND d.statut = 'en_attente';
 
   IF FOUND THEN
-    RETURN v_demande;
+    RETURN;
   END IF;
 
   INSERT INTO public.demandes_presentation (eleve_id, foyer_id)
@@ -192,7 +192,7 @@ BEGIN
     pg_catalog.jsonb_build_object('eleve_id', v_eleve, 'foyer_id', v_foyer)
   );
 
-  RETURN v_demande;
+  RETURN;
 END;
 $function$;
 
