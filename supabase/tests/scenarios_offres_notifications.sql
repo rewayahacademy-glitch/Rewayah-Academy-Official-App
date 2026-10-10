@@ -87,6 +87,16 @@ begin
   update public.demandes_horaires_famille
      set etat = 'refusee', motif = 'fixture'
    where id = v_id;
+
+  select * into v_suivi
+  from public.suivi_demandes_horaires_foyer()
+  where demande_id = v_id;
+  if not found
+     or v_suivi.etape <> 'close'
+     or v_suivi.motif is not null
+     or not v_suivi.peut_choisir_autre_creneau then
+    raise exception 'M6: fermeture non typée ou capacité de reprise incorrecte';
+  end if;
   select count(*) into v_closed from public.notifications
   where destinataire = 'f1660000-0000-0000-0000-000000000001'
     and evenement = 'demande_close'
