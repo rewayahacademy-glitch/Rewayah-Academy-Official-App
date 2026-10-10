@@ -17,7 +17,7 @@
 \if :{?sec_prod_confirm_ref}
 \else
   \echo 'SEC-PROD refuse: fournir -v sec_prod_confirm_ref=gggmtelinlpseweouyav'
-  \quit
+  \quit 3
 \endif
 select set_config('codex.sec_prod_confirm_ref', :'sec_prod_confirm_ref', false);
 begin;
