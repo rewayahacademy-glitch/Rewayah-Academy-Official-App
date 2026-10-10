@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../tc_bibliotheque/content_position.dart';
 import '../tc_bibliotheque/content_range.dart';
 import '../tc_etat_partage/codec_etat_partage.dart';
 import 'annotation_layer.dart';
