@@ -1219,6 +1219,16 @@ begin
     raise exception 'SEC-PROD M2 scanner rejects canonical null-safe guard';
   end if;
   if not app_private.sec_prod_has_unsafe_role_guard(
+    'IF NOT coalesce(app_role() = ''admin'' AND app_account_valid(), true) THEN RAISE; END IF;'
+  ) then
+    raise exception 'SEC-PROD M2 scanner missed permissive COALESCE true fallback';
+  end if;
+  if not app_private.sec_prod_has_unsafe_role_guard(
+    'IF NOT coalesce(app_role() = ''admin'' AND app_account_valid(), null) THEN RAISE; END IF;'
+  ) then
+    raise exception 'SEC-PROD M2 scanner missed NULL COALESCE fallback';
+  end if;
+  if not app_private.sec_prod_has_unsafe_role_guard(
     'IF NOT coalesce(app_role() = ''admin'' AND NOT app_account_valid(), false) THEN RAISE; END IF;'
   ) then
     raise exception 'SEC-PROD M2 scanner missed negated account-validity conjunct';
