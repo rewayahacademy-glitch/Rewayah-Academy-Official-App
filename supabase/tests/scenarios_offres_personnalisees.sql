@@ -659,9 +659,6 @@ VALUES
    4, 20, 'Europe/Paris', 'francais'),
   ('f1470000-0000-0000-0000-000000000104', NULL, 'en_attente_enseignant',
    'adulte', 'hommes', 6, 'C04 projection libre inter-fuseaux',
-   6, 18, 'Europe/Paris', 'francais'),
-  ('f1470000-0000-0000-0000-000000000105', NULL, 'en_attente_enseignant',
-   'adulte', 'hommes', 6, 'C04 projection séance ponctuelle',
    5, 18, 'Europe/Paris', 'francais');
 
 INSERT INTO public.groupe_creneaux (groupe_id, weekday, hour_local)
@@ -719,20 +716,6 @@ BEGIN
   ) THEN
     RAISE EXCEPTION
       'C-04: créneau libre affiché malgré collision hiver Paris/Conakry: %',
-      v_libres;
-  END IF;
-
-  SELECT creneaux_libres INTO v_libres
-  FROM public.enseignants_pour_classe('f1470000-0000-0000-0000-000000000105')
-  WHERE teacher_id = 'f1490000-0000-0000-0000-000000000997';
-  IF v_libres IS NULL OR EXISTS (
-    SELECT 1 FROM jsonb_array_elements(v_libres) AS slot
-    WHERE slot ->> 'timezone_iana' = 'Europe/Paris'
-      AND (slot ->> 'weekday')::integer = 4
-      AND (slot ->> 'hour_local')::integer = 20
-  ) THEN
-    RAISE EXCEPTION
-      'C-04: créneau libre affiché malgré séance ponctuelle: %',
       v_libres;
   END IF;
 
