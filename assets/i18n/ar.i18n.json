@@ -1798,7 +1798,8 @@
         "titre": "الدخول والأمان",
         "methode": "طريقة الدخول",
         "methodeLien": "رابط بالبريد الإلكتروني",
-        "methodeGoogle": "Google"
+        "methodeGoogle": "Google",
+        "consentements": "زيارات أولياء الأمور"
       },
       "informations": {
         "titre": "المعلومات الشخصية",
@@ -4106,7 +4107,7 @@
       "observationCapaciteAbsente": "هذا التثبيت لا يملك بعد تحديث الخادم الذي يتطلبه هذا الإعداد (الترحيل 0036). إعادة المحاولة لن تغيّر شيئًا: يجب تطبيقه أولًا على قاعدة البيانات.",
       "liste": {
         "rechercheLibelle": "البحث عن فصل",
-        "rechercheAide": "اسم الفصل أو رقمه أو رمزه أو معلمه",
+        "rechercheAide": "الاسم أو الرمز أو المعلم",
         "filtreAttente": "في انتظار معلم",
         "filtreJour": "اليوم",
         "filtreTousJours": "كل الأيام",
