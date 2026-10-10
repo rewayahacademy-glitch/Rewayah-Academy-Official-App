@@ -5,6 +5,7 @@ import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/theme/app_typography.dart';
+import 'package:rewayah_academy/core/widgets/brand_logo.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/marque_page.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
@@ -16,6 +17,7 @@ import 'package:rewayah_academy/features/connexion/connexion_page.dart';
 import '../support/garde_interface.dart';
 import '../support/harnais.dart';
 import '../support/hote_theme.dart';
+import '../support/logo.dart';
 
 /// HIER-1, revue du directeur du 01/10 : « un nom et un titre ne doivent
 /// jamais avoir la meme taille ». Un niveau de texte par role, chaque niveau
@@ -157,11 +159,12 @@ void main() {
         );
         await tester.pump();
 
-        verifierHierarchie(
-          tester,
-          titre: find.text(t.connexion.titre),
-          inferieurs: <String, Finder>{'la marque': find.text(t.commun.marque)},
-        );
+        // LOGO-APP (10/10) : la marque de la connexion est le logo vertical,
+        // une image, plus un texte ; HIER-1 ne compare que des textes. Le
+        // titre reste le seul titre d'ecran, sans mot-marque concurrent.
+        expect(find.text(t.connexion.titre), findsOneWidget);
+        expect(find.text(t.commun.marque), findsNothing);
+        expect(logoRendu(VarianteLogo.vertical), findsOneWidget);
       });
 
       testWidgets('compte : titre d\'ecran et titres de section '

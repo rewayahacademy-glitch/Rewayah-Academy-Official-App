@@ -470,6 +470,7 @@ class _Traductions$nav$ar extends Traductions$nav$fr {
 	@override String get compte => 'حسابي';
 	@override String get principale => 'التنقل الرئيسي';
 	@override String get motSymbole => 'Rewayah';
+	@override String get logoAccueil => 'Rewayah Academy، الصفحة الرئيسية';
 	@override String get replier => 'طي شريط التنقل';
 	@override String get deplier => 'فتح شريط التنقل';
 }
@@ -13789,6 +13790,7 @@ extension on TraductionsAr {
 			'nav.compte' => 'حسابي',
 			'nav.principale' => 'التنقل الرئيسي',
 			'nav.motSymbole' => 'Rewayah',
+			'nav.logoAccueil' => 'Rewayah Academy، الصفحة الرئيسية',
 			'nav.replier' => 'طي شريط التنقل',
 			'nav.deplier' => 'فتح شريط التنقل',
 			'tc.groupe.mesGroupes.titre' => 'فصولي',

@@ -1939,6 +1939,9 @@ class Traductions$nav$fr {
 	/// fr: 'Rewayah'
 	String get motSymbole => 'Rewayah';
 
+	/// fr: 'Rewayah Academy, accueil'
+	String get logoAccueil => 'Rewayah Academy, accueil';
+
 	/// fr: 'Replier la navigation'
 	String get replier => 'Replier la navigation';
 
@@ -31789,6 +31792,7 @@ extension on Traductions {
 			'nav.compte' => 'Mon compte',
 			'nav.principale' => 'Navigation principale',
 			'nav.motSymbole' => 'Rewayah',
+			'nav.logoAccueil' => 'Rewayah Academy, accueil',
 			'nav.replier' => 'Replier la navigation',
 			'nav.deplier' => 'Déplier la navigation',
 			'compte.titre' => 'Mon compte',
@@ -31873,9 +31877,9 @@ extension on Traductions {
 			'compte.profilEnfant' => ({required Object dePrenom}) => 'Profil ${dePrenom}',
 			'compte.identifiantEnfant' => ({required Object identifiant}) => 'Identifiant : ${identifiant}',
 			'compte.roles.admin' => 'Administrateur',
-			'compte.roles.accountant' => 'Comptable',
 			_ => null,
 		} ?? switch (path) {
+			'compte.roles.accountant' => 'Comptable',
 			'compte.roles.controller' => 'Contrôleur',
 			'compte.roles.teacher' => 'Enseignant',
 			'compte.roles.guardian' => 'Tuteur',
