@@ -167,7 +167,7 @@ abstract interface class ServiceValidation {
   Future<List<DossierAValider>> enAttente();
 
   /// Une URL signee de courte duree pour l'apercu de la piece.
-  Future<String> apercu(String cleObjet);
+  Future<String> apercu(String documentId);
 
   /// Le verdict. Un refus exige un motif : la base le refuse sans.
   Future<void> decider({
@@ -218,9 +218,20 @@ class ServiceValidationSupabase implements ServiceValidation {
   }
 
   @override
-  Future<String> apercu(String cleObjet) => _client.storage
-      .from(ServiceDossierSupabase.seauKyc)
-      .createSignedUrl(cleObjet, dureeApercuSecondes);
+  Future<String> apercu(String documentId) async {
+    final FunctionResponse response = await _client.functions.invoke(
+      'piece-identite-acces',
+      body: <String, dynamic>{'document_id': documentId},
+    );
+    final Object? data = response.data;
+    if (response.status < 200 || response.status >= 300) {
+      throw StateError('accès à la pièce refusé');
+    }
+    if (data is! Map<String, dynamic> || data['url'] is! String) {
+      throw const FormatException('réponse d’accès à la pièce invalide');
+    }
+    return data['url'] as String;
+  }
 
   @override
   Future<void> decider({

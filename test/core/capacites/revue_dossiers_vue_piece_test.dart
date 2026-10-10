@@ -68,7 +68,7 @@ void main() {
       _d('p1/piece.png'),
       signes,
     ).demanderVuePiece(dossierId: 'p1', documentId: 'doc');
-    expect(signes, <String>['p1/piece.png']);
+    expect(signes, <String>['doc']);
     expect(vue.source, isA<SourcePieceUrl>());
     expect(vue.expireLeUtc, maintenant.add(const Duration(seconds: 60)));
     expect(vue.typeMime, 'image/png');

@@ -285,7 +285,7 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
     final DateTime maintenant = (horloge ?? DateTime.now)().toUtc();
     final String url;
     try {
-      url = await signer(cle);
+      url = await signer(documentId);
     } on StorageException catch (e) {
       throw ErreurRevueDossier(switch (e.statusCode) {
         '403' => CodeErreurRevue.interdit,

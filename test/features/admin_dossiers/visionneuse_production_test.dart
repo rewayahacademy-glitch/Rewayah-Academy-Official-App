@@ -101,7 +101,7 @@ void main() {
     );
     await _stabiliser(tester);
     expect(find.byType(VisionneusePiece), findsOneWidget);
-    expect(service.apercus, <String>['p1/piece.webp']);
+    expect(service.apercus, <String>['doc1']);
     expect(find.textContaining('http'), findsNothing);
     await _toucher(
       tester,
