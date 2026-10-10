@@ -346,4 +346,32 @@ REVOKE ALL ON FUNCTION public.refuser_demande_presentation(uuid)
   FROM PUBLIC, anon, agent_ro;
 GRANT EXECUTE ON FUNCTION public.refuser_demande_presentation(uuid) TO authenticated;
 
+-- Contrôle ACL à l'application du schéma, avant les scénarios historiques qui
+-- accordent temporairement des privilèges larges à authenticated.
+DO $acl$
+BEGIN
+  IF pg_catalog.has_table_privilege('anon', 'public.demandes_presentation', 'SELECT')
+     OR pg_catalog.has_table_privilege('authenticated', 'public.demandes_presentation', 'SELECT')
+     OR pg_catalog.has_table_privilege('agent_ro', 'public.demandes_presentation', 'SELECT')
+     OR pg_catalog.has_function_privilege(
+          'anon', 'public.demander_presentation_standard()', 'EXECUTE')
+     OR pg_catalog.has_function_privilege(
+          'anon', 'public.lire_demandes_presentation_en_attente()', 'EXECUTE')
+     OR pg_catalog.has_function_privilege(
+          'anon', 'public.accepter_demande_presentation(uuid)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege(
+          'agent_ro', 'public.repondre_demande_presentation(uuid,text)', 'EXECUTE')
+     OR NOT pg_catalog.has_function_privilege(
+          'authenticated', 'public.demander_presentation_standard()', 'EXECUTE')
+     OR NOT pg_catalog.has_function_privilege(
+          'authenticated', 'public.lire_demandes_presentation_en_attente()', 'EXECUTE')
+     OR NOT pg_catalog.has_function_privilege(
+          'authenticated', 'public.accepter_demande_presentation(uuid)', 'EXECUTE')
+     OR NOT pg_catalog.has_function_privilege(
+          'authenticated', 'public.refuser_demande_presentation(uuid)', 'EXECUTE') THEN
+    RAISE EXCEPTION 'B-17 ACL de schéma invalide';
+  END IF;
+END;
+$acl$;
+
 COMMIT;

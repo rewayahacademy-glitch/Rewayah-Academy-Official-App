@@ -538,16 +538,9 @@ BEGIN
      OR pg_catalog.has_function_privilege(
        'anon', 'public.accepter_demande_presentation(uuid)', 'EXECUTE')
      OR pg_catalog.has_function_privilege(
-       'agent_ro', 'public.repondre_demande_presentation(uuid,text)', 'EXECUTE')
-     OR pg_catalog.has_table_privilege(
-       'authenticated', 'public.demandes_presentation', 'SELECT') THEN
-    RAISE EXCEPTION 'B-17 ACL trop large: anon_demande=%, anon_lire=%, anon_accepter=%, agent_helper=%, auth_table=%, auth=%',
-      pg_catalog.has_function_privilege('anon', 'public.demander_presentation_standard()', 'EXECUTE'),
-      pg_catalog.has_function_privilege('anon', 'public.lire_demandes_presentation_en_attente()', 'EXECUTE'),
-      pg_catalog.has_function_privilege('anon', 'public.accepter_demande_presentation(uuid)', 'EXECUTE'),
-      pg_catalog.has_function_privilege('agent_ro', 'public.repondre_demande_presentation(uuid,text)', 'EXECUTE'),
-      pg_catalog.has_table_privilege('authenticated', 'public.demandes_presentation', 'SELECT'),
-      (SELECT relacl::text FROM pg_catalog.pg_class WHERE oid = 'public.demandes_presentation'::regclass);
+       'agent_ro', 'public.repondre_demande_presentation(uuid,text)', 'EXECUTE') THEN
+    RAISE EXCEPTION 'B-17 ACL RPC trop large';
+
   END IF;
 END
 $b17_requests$;
