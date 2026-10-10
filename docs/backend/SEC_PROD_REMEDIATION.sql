@@ -664,7 +664,7 @@ begin
 
   for v_condition in
     select m[1]
-    from regexp_matches(v_clean, '((if|elsif)[[:space:]]+[^;]*?then)', 'gi') as m
+    from regexp_matches(v_clean, '((if|elsif)[[:space:]]+[^;]*?then)', 'gi') as matches(m)
   loop
     if v_condition ~* 'app_role[[:space:]]*[(]'
        and v_condition ~* 'not' then
