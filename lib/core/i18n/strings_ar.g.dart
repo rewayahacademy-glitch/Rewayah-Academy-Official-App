@@ -482,6 +482,7 @@ class _Traductions$tc$ar extends Traductions$tc$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get indisponible => 'هذه الميزة غير متاحة بعد. لم يضِع شيء، والحصة مستمرة، وستتوفر قريبًا.';
 	@override late final _Traductions$tc$groupe$ar groupe = _Traductions$tc$groupe$ar._(_root);
 	@override late final _Traductions$tc$bibliotheque$ar bibliotheque = _Traductions$tc$bibliotheque$ar._(_root);
 	@override late final _Traductions$tc$coran$ar coran = _Traductions$tc$coran$ar._(_root);
@@ -13794,6 +13795,7 @@ extension on TraductionsAr {
 			'nav.logoAccueil' => 'Rewayah Academy، الصفحة الرئيسية',
 			'nav.replier' => 'طي شريط التنقل',
 			'nav.deplier' => 'فتح شريط التنقل',
+			'tc.indisponible' => 'هذه الميزة غير متاحة بعد. لم يضِع شيء، والحصة مستمرة، وستتوفر قريبًا.',
 			'tc.groupe.mesGroupes.titre' => 'فصولي',
 			'tc.groupe.mesGroupes.aucun' => 'لا فصل حتى الآن',
 			'tc.groupe.mesGroupes.aucunDetail' => 'ستضعك الأكاديمية في فصل حين يتوفر موعد يناسبك.',
@@ -14150,9 +14152,9 @@ extension on TraductionsAr {
 			'tc.observation.visite.videoCoupee' => 'الفيديو غير متاح',
 			'tc.observation.visite.reconnexionDetail' => 'انقطع الاتصال، جارٍ إعادة الاتصال. يستمر احتساب وقت متابعتك.',
 			'tc.observation.visite.sonRecu' => 'الصوت يصل',
-			'tc.observation.visite.sonInterrompu' => 'الصوت منقطع',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.visite.sonInterrompu' => 'الصوت منقطع',
 			'tc.observation.visite.agrandir' => 'تكبير',
 			'tc.observation.visite.reduire' => 'تصغير',
 			'tc.observation.visite.cameraFermee' => 'الكاميرا مغلقة',
@@ -14664,9 +14666,9 @@ extension on TraductionsAr {
 			'com.communaute.regles.pasDonnees' => 'لا بيانات شخصية لطالب أو عائلة',
 			'com.communaute.regles.signaler' => 'يُبلَّغ عن المحتوى غير المناسب من قائمة المنشور.',
 			'com.communaute.regles.voir' => 'عرض القواعد',
-			'com.communaute.entree.lecteur' => 'فتح مجتمع المعلّمين',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.entree.lecteur' => 'فتح مجتمع المعلّمين',
 			'com.communaute.entree.detail' => 'أسئلة وطرق وموارد بين المعلّمين',
 			'com.communaute.demo.avertissement' => 'منشور يحتاج إلى مراجعة: إعلان تجاري',
 			'com.communaute.demo.lienAffilie' => 'رابط تسويق بالعمولة محظور',
@@ -15178,9 +15180,9 @@ extension on TraductionsAr {
 			'admin.demandes.roleStudent' => 'طالب مستقل',
 			'admin.demandes.roleAdmin' => 'الإدارة',
 			'admin.demandes.roleController' => 'مراقب',
-			'admin.demandes.roleInconnu' => 'طرف في الملف',
 			_ => null,
 		} ?? switch (path) {
+			'admin.demandes.roleInconnu' => 'طرف في الملف',
 			'admin.demandes.reclame' => 'المطلوب',
 			'admin.demandes.reclameReaffectation' => ({required Object dePrenom}) => 'تغيير معلم ⁨${dePrenom}⁩',
 			'admin.demandes.reclamePlafond' => ({required num valeur}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(valeur, zero: 'رفع الحد الأقصى إلى صفر', one: 'رفع الحد الأقصى إلى طالب واحد', two: 'رفع الحد الأقصى إلى طالبين', few: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طلاب', many: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طالبًا', other: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طالب', ), 
@@ -15692,9 +15694,9 @@ extension on TraductionsAr {
 			'admin.comptes.etatSuspendu' => 'موقوف',
 			'admin.comptes.etatInconnu' => 'حالة غير معروفة',
 			'admin.comptes.roleAdmin' => 'الإدارة',
-			'admin.comptes.roleComptable' => 'محاسب',
 			_ => null,
 		} ?? switch (path) {
+			'admin.comptes.roleComptable' => 'محاسب',
 			'admin.comptes.roleControleur' => 'مراقب',
 			'admin.comptes.roleEnseignant' => 'معلم',
 			'admin.comptes.roleTuteur' => 'وليّ أمر',
@@ -16206,9 +16208,9 @@ extension on TraductionsAr {
 			'comptable.paiements.confirmation.inconnuTitre' => 'نتيجة غير معروفة',
 			'comptable.paiements.confirmation.inconnuPhrase' => 'لم يصلنا الرد: ربما أُرسلت الدفعة. أعد المحاولة: يُعاد إرسال الطلب نفسه ولن يُنفَّذ إلا مرة واحدة.',
 			'comptable.paiements.confirmation.reessayer' => 'إعادة المحاولة',
-			'comptable.paiements.confirmation.validationDemandeeTitre' => 'طُلبت المصادقة',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.paiements.confirmation.validationDemandeeTitre' => 'طُلبت المصادقة',
 			'comptable.paiements.confirmation.validationDemandeePhrase' => 'سيصادق شخص مخوَّل آخر على هذه الدفعة. لن تُرسَل قبل قراره.',
 			'comptable.paiements.confirmation.validationEchouee' => 'لم يكتمل طلب المصادقة. أعد المحاولة: لن يُسجَّل إلا مرة واحدة.',
 			'comptable.paiements.filtres.tous' => 'الكل',
@@ -16720,9 +16722,9 @@ extension on TraductionsAr {
 			'comptable.direction.aucuneModification' => 'لا يوجد تعديل للتسجيل.',
 			'comptable.direction.corrigezChamps' => 'صحّح الحقول المشار إليها للتسجيل.',
 			'comptable.direction.enregistree' => 'سُجّل الإصدار الجديد.',
-			'comptable.direction.erreurEnregistrement' => 'لا نعلم إن كان هذا الإصدار قد سُجّل. أعد قراءة الإصدار الساري، ثم أعد المحاولة.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.direction.erreurEnregistrement' => 'لا نعلم إن كان هذا الإصدار قد سُجّل. أعد قراءة الإصدار الساري، ثم أعد المحاولة.',
 			'comptable.direction.enregistrementIndisponible' => 'التسجيل غير متاح بعد. أعد المحاولة لاحقًا.',
 			'comptable.direction.historique' => 'سجل الإصدارات',
 			'comptable.direction.historiqueVide' => 'لا يوجد إصدار قبل هذا.',
@@ -17234,9 +17236,9 @@ extension on TraductionsAr {
 			'connexion.appareilEleveAide' => 'أنت وليّ أمر وتجهّز جهاز طالب؟',
 			'connexion.appareilEleve' => 'ربط جهاز طالب',
 			'connexion.renvoyer' => 'إعادة إرسال الرابط',
-			'connexion.renvoye' => ({required Object courriel}) => 'أُرسل رابط جديد إلى ⁨${courriel}⁩. استخدم رابط أحدث رسالة.',
 			_ => null,
 		} ?? switch (path) {
+			'connexion.renvoye' => ({required Object courriel}) => 'أُرسل رابط جديد إلى ⁨${courriel}⁩. استخدم رابط أحدث رسالة.',
 			'connexion.erreurTropTot' => 'أُرسل رابط للتو. انتظر قليلًا قبل طلب رابط آخر.',
 			'connexion.horsLigne' => 'أنت غير متصل: لا يمكن إرسال الرابط الآن.',
 			'connexion.probleme' => 'انتهت صلاحية الرابط أو لم يصل؟',
@@ -17748,9 +17750,9 @@ extension on TraductionsAr {
 			'dossiers.file.indisponible' => 'الاطلاع على الملفات غير متاح الآن.',
 			'dossiers.file.selectionRetiree' => 'هذا الملف لم يعد متاحًا في القائمة.',
 			'dossiers.file.actualiser' => 'تحديث الملفات',
-			'dossiers.file.aucuneSelection' => 'اختر ملفًا لدراسته.',
 			_ => null,
 		} ?? switch (path) {
+			'dossiers.file.aucuneSelection' => 'اختر ملفًا لدراسته.',
 			'dossiers.file.suivants' => 'تحميل الملفات التالية',
 			'dossiers.file.ouvrirDe' => ({required Object nom}) => 'فتح ملف ⁨${nom}⁩',
 			'dossiers.file.ouvrirElide' => ({required Object nom}) => 'فتح ملف ⁨${nom}⁩',

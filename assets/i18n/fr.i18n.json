@@ -6063,7 +6063,8 @@
         "enFile": "Enregistré. Il partira dès le retour du réseau.",
         "envoye": "Cours clôturé."
       }
-    }
+    },
+    "indisponible": "Cette fonction n'est pas encore disponible. Rien n'est perdu, le cours continue et elle arrivera bientôt."
   },
   "adulte": {
     "nav": {

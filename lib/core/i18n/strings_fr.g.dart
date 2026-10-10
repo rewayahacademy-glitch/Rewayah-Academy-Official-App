@@ -2510,6 +2510,9 @@ class Traductions$tc$fr {
 	late final Traductions$tc$realtime$fr realtime = Traductions$tc$realtime$fr.internal(_root);
 	late final Traductions$tc$observation$fr observation = Traductions$tc$observation$fr.internal(_root);
 	late final Traductions$tc$parcours$fr parcours = Traductions$tc$parcours$fr.internal(_root);
+
+	/// fr: 'Cette fonction n'est pas encore disponible. Rien n'est perdu, le cours continue et elle arrivera bientôt.'
+	String get indisponible => 'Cette fonction n\'est pas encore disponible. Rien n\'est perdu, le cours continue et elle arrivera bientôt.';
 }
 
 // Path: adulte
@@ -33790,6 +33793,7 @@ extension on Traductions {
 			'tc.parcours.postCours.valider' => 'Valider',
 			'tc.parcours.postCours.enFile' => 'Enregistré. Il partira dès le retour du réseau.',
 			'tc.parcours.postCours.envoye' => 'Cours clôturé.',
+			'tc.indisponible' => 'Cette fonction n\'est pas encore disponible. Rien n\'est perdu, le cours continue et elle arrivera bientôt.',
 			'adulte.nav.accueil' => 'Accueil',
 			'adulte.nav.maClasse' => 'Ma classe',
 			'adulte.nav.coran' => 'Coran',
@@ -33938,9 +33942,9 @@ extension on Traductions {
 			'adulte.famille.monProfilIndisponiblePhrase' => 'La création d\'un profil élève séparé n\'est pas encore disponible. Vos cours et Ma famille restent tels qu\'ils sont.',
 			'adulte.famille.indisponibleTitre' => 'La rubrique famille n\'est pas encore disponible',
 			'adulte.famille.indisponiblePhrase' => 'Votre famille ou votre forfait famille s\'affichera ici dès qu\'il sera disponible.',
-			'adulte.famille.place.ajouterConjointe' => 'Ajouter une conjointe',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.famille.place.ajouterConjointe' => 'Ajouter une conjointe',
 			'adulte.famille.place.ajouterConjoint' => 'Ajouter un conjoint',
 			'adulte.famille.place.inviterConjointe' => 'Invitez votre conjointe à rejoindre Rewayah avec son propre compte.',
 			'adulte.famille.place.inviterConjoint' => 'Invitez votre conjoint à rejoindre Rewayah avec son propre compte.',
@@ -34452,9 +34456,9 @@ extension on Traductions {
 			'argent.soldes.profilsFinancesValeur' => ({required Object n, required Object total}) => '${n} sur ${total}',
 			'argent.soldes.paiements' => 'Paiements du mois',
 			'argent.acces.enfantTitre' => 'Accès à cette classe temporairement indisponible',
-			'argent.acces.enfantMessage' => 'Votre tuteur peut gérer l\'accès.',
 			_ => null,
 		} ?? switch (path) {
+			'argent.acces.enfantMessage' => 'Votre tuteur peut gérer l\'accès.',
 			'argent.acces.regulariserTitre' => 'Accès à régulariser',
 			'argent.acces.regulariserManque' => ({required Object montant, required Object mois}) => 'Il manque ${montant} pour financer ${mois}.',
 			'argent.acces.regulariserManqueNouvellePeriode' => ({required Object montant}) => 'Il manque ${montant} pour financer la nouvelle période.',
@@ -34966,9 +34970,9 @@ extension on Traductions {
 			'com.studio.aujourdhui.modules.dossiers' => 'Dossiers',
 			'com.studio.aujourdhui.modules.classes' => 'Classes',
 			'com.studio.aujourdhui.modules.admissions' => 'Admissions',
-			'com.studio.aujourdhui.modules.demandes' => 'Demandes',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.aujourdhui.modules.demandes' => 'Demandes',
 			'com.studio.aujourdhui.modules.communications' => 'Administration des communications',
 			'com.studio.aujourdhui.acces.messages' => _root.com.socle.lexique.messagesMetier,
 			'com.studio.aujourdhui.acces.messagesDetail' => 'Les conversations avec les familles, les enseignants et les contrôleurs',
@@ -35480,9 +35484,9 @@ extension on Traductions {
 			'comptable.aujourdhui.elementDepuis' => ({required Object date}) => 'En attente depuis le ${date}',
 			'comptable.aujourdhui.aTraiterVide' => 'Rien à traiter aujourd\'hui.',
 			'comptable.aujourdhui.aTraiterVideDetail' => 'Les paiements, relances et rapprochements à faire apparaîtront ici.',
-			'comptable.aujourdhui.alertesVide' => 'Aucune alerte en ce moment.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.aujourdhui.alertesVide' => 'Aucune alerte en ce moment.',
 			'comptable.aujourdhui.alertesResume' => ({required Object n}) => 'Alertes à surveiller : ${n}',
 			'comptable.aujourdhui.paiementsAEffectuer' => 'Paiements à effectuer',
 			'comptable.aujourdhui.paiementsAEffectuerDetail' => 'Chaque paiement se vérifie dans sa liste avant d\'être payé.',
@@ -35994,9 +35998,9 @@ extension on Traductions {
 			'comptable.contractuels.beneficiaireExterneAide' => 'Il reçoit une invitation sécurisée pour saisir lui-même sa méthode de paiement.',
 			'comptable.contractuels.champNomExterne' => 'Nom du bénéficiaire externe',
 			'comptable.contractuels.changerEcheance' => 'Changer l\'échéance',
-			'comptable.contractuels.deviseDe' => ({required Object devise}) => 'Devise : ${devise}',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.contractuels.deviseDe' => ({required Object devise}) => 'Devise : ${devise}',
 			'comptable.contractuels.champObjet' => 'Objet de l\'obligation',
 			'comptable.contractuels.aideObjet' => 'Par exemple : Facture #024',
 			'comptable.contractuels.champRefJustificatif' => 'Référence du justificatif (facultatif)',

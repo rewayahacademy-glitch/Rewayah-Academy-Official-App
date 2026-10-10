@@ -15,6 +15,7 @@ import '../../core/tc_outils/compaction_trait.dart';
 import '../../core/tc_outils/couleur_intention.dart';
 import '../../core/tc_outils/etat_outils.dart';
 import '../../core/tc_outils/evenements_outils.dart';
+import '../../core/tc_outils/fonction_indisponible.dart';
 import '../../core/tc_outils/intention_pedagogique.dart';
 import '../../core/tc_outils/port_annotations.dart';
 import '../../core/tc_outils/port_dock_hote.dart';
@@ -328,7 +329,13 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
     if (couche == null) {
       return;
     }
-    await annotations.ajouterTrait(couche.id, trait);
+    try {
+      await annotations.ajouterTrait(couche.id, trait);
+    } on FonctionIndisponible {
+      // Sans serveur d'annotations, le trait n'est pas conserve : on ne
+      // l'annonce pas comme termine (SALLE-ROBUSTE).
+      return;
+    }
     widget.onEvenement?.call(
       EvenementTraitTermine(
         coucheId: couche.id,
@@ -371,7 +378,11 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
     if (couche == null) {
       return;
     }
-    await annotations.retirerTrait(couche.id, traitId);
+    try {
+      await annotations.retirerTrait(couche.id, traitId);
+    } on FonctionIndisponible {
+      return;
+    }
     widget.onEvenement?.call(
       EvenementTraitRetire(coucheId: couche.id, traitId: traitId),
     );
