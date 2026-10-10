@@ -128,6 +128,7 @@ values
 
 set local role authenticated;
 select set_config('test.uid', 'b1800000-0000-0000-0000-000000000002', true);
+select set_config('request.jwt.claims', '{"app_metadata":{"role":"controller"}}', true);
 select set_config('test.jwt', '{"app_metadata":{"role":"controller"}}', true);
 do $b06_controller$
 declare
@@ -155,6 +156,7 @@ end
 $b06_controller$;
 
 select set_config('test.uid', 'b1800000-0000-0000-0000-000000000003', true);
+select set_config('request.jwt.claims', '{"app_metadata":{"role":"admin"}}', true);
 select set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
 do $b06_admin$
 begin
