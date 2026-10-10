@@ -113,5 +113,69 @@ begin
 end
 $b2$;
 reset role;
+rreset role;
+
+-- B-06 / SEC-04 : Direction active seulement, et aucun SELECT direct sur KYC.
+insert into auth.users (id, email) values
+  ('b1800000-0000-0000-0000-000000000002', 'b06-controller@example.test'),
+  ('b1800000-0000-0000-0000-000000000003', 'b06-admin@example.test');
+insert into public.profiles
+  (id, immutable_id, role, gender, first_name, last_name, account_status)
+values
+  ('b1800000-0000-0000-0000-000000000002', 'B06CONTROLLER0002', 'controller',
+   'female', 'Fixture', 'Controller', 'active'),
+  ('b1800000-0000-0000-0000-000000000003', 'B06ADMIN0000003', 'admin',
+   'female', 'Fixture', 'Admin', 'active');
+
+set local role authenticated;
+select set_config('test.uid', 'b1800000-0000-0000-0000-000000000002', true);
+select set_config('test.jwt', '{"app_metadata":{"role":"controller"}}', true);
+do $b06_controller$
+declare
+  v_rows integer;
+begin
+  begin
+    perform 1 from public.read_kyc_documents();
+    raise exception 'B-06 ECHEC: le contrôleur lit la RPC KYC';
+  exception when insufficient_privilege then
+    null;
+  end;
+  begin
+    perform public.autoriser_lecture_piece_identite(
+      'b1800000-0000-0000-0000-000000000099'
+    );
+    raise exception 'B-06 ECHEC: le contrôleur obtient une signature de pièce';
+  exception when insufficient_privilege then
+    null;
+  end;
+  select count(*) into v_rows from public.kyc_documents;
+  if v_rows <> 0 then
+    raise exception 'B-06 ECHEC: le contrôleur lit directement la table KYC';
+  end if;
+end
+$b06_controller$;
+
+select set_config('test.uid', 'b1800000-0000-0000-0000-000000000003', true);
+select set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
+do $b06_admin$
+begin
+  perform 1 from public.read_kyc_documents();
+end
+$b06_admin$;
 reset role;
+
+do $b06_storage$
+begin
+  if to_regclass('storage.objects') is not null
+     and exists (
+       select 1 from pg_catalog.pg_policies
+       where schemaname = 'storage'
+         and tablename = 'objects'
+         and policyname = 'kyc_lecture_admin'
+     ) then
+    raise exception 'B-06 ECHEC: la lecture directe Storage KYC subsiste';
+  end if;
+end
+$b06_storage$;
+
 rollback;
