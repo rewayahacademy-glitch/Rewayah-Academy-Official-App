@@ -1,8 +1,7 @@
 -- 0074 — convertir les comparaisons de rôles négatives en gardes positives.
--- Le balayage couvre les fonctions SECURITY DEFINER PL/pgSQL de public et
--- app_private, sans dépendre d'une forme IF sur une seule ligne. Une fonction
--- qui contient encore une comparaison négative non transformée fait échouer
--- la migration plutôt que de laisser une garde NULL-sensible.
+-- Le balayage couvre les fonctions SECURITY DEFINER de public et app_private,
+-- sans dépendre d'une forme IF sur une seule ligne. Une comparaison non
+-- transformée fait échouer la migration.
 begin;
 
 do $migration$
@@ -11,6 +10,8 @@ declare
   v_definition text;
   v_corrigee text;
   v_modifiees integer := 0;
+  v_negative_pattern constant text :=
+    '(app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]*(<>|!=)[[:space:]]*''[^'']+''|app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]+not[[:space:]]+in[[:space:]]*[(]|''[^'']+''[[:space:]]*(<>|!=)[[:space:]]*app_role[[:space:]]*[(][[:space:]]*[)])';
 begin
   for v in
     select p.oid
@@ -19,11 +20,7 @@ begin
     where n.nspname in ('public', 'app_private')
       and p.prokind = 'f'
       and p.prosecdef
-      and p.prosrc ~* $pattern$
-        (app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]*(<>|!=)[[:space:]]*'[^']+'
-         |app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]+not[[:space:]]+in[[:space:]]*[(]
-         |'[^']+'[[:space:]]*(<>|!=)[[:space:]]*app_role[[:space:]]*[(][[:space:]]*[)])
-      $pattern$
+      and p.prosrc ~* v_negative_pattern
   loop
     v_definition := pg_catalog.pg_get_functiondef(v.oid);
 
@@ -64,11 +61,7 @@ begin
     where n.nspname in ('public', 'app_private')
       and p.prokind = 'f'
       and p.prosecdef
-      and p.prosrc ~* $pattern$
-        (app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]*(<>|!=)[[:space:]]*'[^']+'
-         |app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]+not[[:space:]]+in[[:space:]]*[(]
-         |'[^']+'[[:space:]]*(<>|!=)[[:space:]]*app_role[[:space:]]*[(][[:space:]]*[)])
-      $pattern$
+      and p.prosrc ~* v_negative_pattern
   ) then
     raise exception '0074: une comparaison négative subsiste dans une fonction SECURITY DEFINER';
   end if;
