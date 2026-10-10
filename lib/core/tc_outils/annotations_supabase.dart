@@ -40,11 +40,12 @@ class AnnotationsSupabase implements PortAnnotations {
     required PorteeAnnotation portee,
   }) async {
     if (portee == PorteeAnnotation.temporaire) {
-      final AnnotationLayer couche = await _memoire.couche(
+      final AnnotationLayer? couche = await _memoire.couche(
         resourceId: resourceId,
         sessionId: sessionId,
         portee: portee,
       );
+      if (couche == null) return null;
       _idsTemporaires.add(couche.id);
       return couche;
     }
