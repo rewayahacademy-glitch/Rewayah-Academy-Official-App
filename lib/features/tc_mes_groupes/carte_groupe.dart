@@ -170,12 +170,17 @@ class _Entete extends StatelessWidget {
         // elle passe sous le nom, et aucun mot n'est coupe.
         final TextScaler echelle = MediaQuery.textScalerOf(context);
         final TextDirection sens = Directionality.of(context);
-        double largeur(String texte, TextStyle style) => (TextPainter(
-          text: TextSpan(text: texte, style: style),
-          textDirection: sens,
-          textScaler: echelle,
-          maxLines: 1,
-        )..layout()).width;
+        double largeur(String texte, TextStyle style) {
+          final TextPainter mesure = TextPainter(
+            text: TextSpan(text: texte, style: style),
+            textDirection: sens,
+            textScaler: echelle,
+            maxLines: 1,
+          )..layout();
+          final double l = mesure.width;
+          mesure.dispose();
+          return l;
+        }
         final double motLePlusLong = groupe.libelle
             .split(RegExp(r'\s+'))
             .map((String mot) => largeur(mot, styleNom))
