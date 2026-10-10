@@ -714,6 +714,14 @@ abstract final class Routes {
   /// Controle qualite pedagogique (`ADM-14`), sous Pedagogie.
   static const String adminPedagogieQualite = '/admin/pedagogie/qualite';
 
+  /// CAP29-0 : le catalogue de la bibliotheque, sous Pedagogie.
+  static const String adminPedagogieBibliotheque =
+      '/admin/pedagogie/bibliotheque';
+
+  /// CAP29-0 : la fiche d'un support de la bibliotheque.
+  static String adminPedagogieSupport(String supportId) =>
+      '$adminPedagogieBibliotheque/$supportId';
+
   /// Domaine Finance (FI-1b) : racine et onglet « Vue globale » (route
   /// canonique « Vue d'ensemble » du contrat metier,
   /// `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_FINANCE_CONFIGURATION.md:68`).

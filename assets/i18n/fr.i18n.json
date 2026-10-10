@@ -3450,6 +3450,22 @@
       "suivante": "Page suivante de l'historique des tirages",
       "resume": "Tirages {debut} à {fin} sur {total}",
       "quand": "{date} à {heure}"
+    },
+    "bibliotheque": {
+      "titre": "Bibliothèque",
+      "intro": "Les supports pédagogiques : les déposer, vérifier leurs droits, publier une version, les attribuer aux classes.",
+      "brouillonAlerte": "Un brouillon ne donne aucun accès aux élèves ni aux enseignants.",
+      "ajouter": "Ajouter un support",
+      "vide": "Aucun support",
+      "videDetail": "Ajoutez un premier support pour le préparer, vérifier ses droits, puis le publier.",
+      "erreur": "Le catalogue n'a pas pu être chargé. Réessayez.",
+      "nonAutorise": "Vous n'avez pas accès à la bibliothèque d'administration.",
+      "indisponibleTitre": "Bibliothèque indisponible",
+      "indisponiblePhrase": "Cette fonction sera disponible au branchement serveur.",
+      "sansDonnees": "le catalogue",
+      "ficheTitre": "Support",
+      "retourCatalogue": "Retour au catalogue",
+      "introuvable": "Ce support n'existe pas ou n'est pas accessible."
     }
   },
   "agent": {

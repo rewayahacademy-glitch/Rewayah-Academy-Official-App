@@ -55,7 +55,7 @@ class _QualitePageEtat extends ConsumerState<QualitePage> {
 
     return PageShell(
       titre: t.admin.qualite.titre,
-      entete: SousNavigationDomaine(onglets: ongletsPedagogie(), indexActif: 4),
+      entete: SousNavigationDomaine(onglets: ongletsPedagogie(), indexActif: 5),
       defilante: false,
       // FILTRES-1b : une seule colonne de corps (intro, filtres, liste) qui
       // dit a `PageShell` la hauteur qui lui manque : a 320 px texte x2,

@@ -178,6 +178,12 @@ List<({String libelle, String chemin})> ongletsPedagogie() =>
         libelle: t.admin.programmes.titre,
         chemin: Routes.adminPedagogieProgrammes,
       ),
+      // CAP29-0 : la bibliotheque est la 6e fonction de Pedagogie, apres
+      // Programmes et avant Qualite (aucun neuvieme domaine).
+      (
+        libelle: t.admin.bibliotheque.titre,
+        chemin: Routes.adminPedagogieBibliotheque,
+      ),
       (libelle: t.admin.qualite.titre, chemin: Routes.adminPedagogieQualite),
     ];
 

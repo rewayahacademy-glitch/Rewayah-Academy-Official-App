@@ -1516,6 +1516,7 @@ class Traductions$admin$fr {
 	late final Traductions$admin$pilotage$fr pilotage = Traductions$admin$pilotage$fr.internal(_root);
 	late final Traductions$admin$fusion$fr fusion = Traductions$admin$fusion$fr.internal(_root);
 	late final Traductions$admin$tirage$fr tirage = Traductions$admin$tirage$fr.internal(_root);
+	late final Traductions$admin$bibliotheque$fr bibliotheque = Traductions$admin$bibliotheque$fr.internal(_root);
 }
 
 // Path: agent
@@ -9463,6 +9464,57 @@ class Traductions$admin$tirage$fr {
 
 	/// fr: '{date} à {heure}'
 	String quand({required Object date, required Object heure}) => '${date} à ${heure}';
+}
+
+// Path: admin.bibliotheque
+class Traductions$admin$bibliotheque$fr {
+	Traductions$admin$bibliotheque$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Bibliothèque'
+	String get titre => 'Bibliothèque';
+
+	/// fr: 'Les supports pédagogiques : les déposer, vérifier leurs droits, publier une version, les attribuer aux classes.'
+	String get intro => 'Les supports pédagogiques : les déposer, vérifier leurs droits, publier une version, les attribuer aux classes.';
+
+	/// fr: 'Un brouillon ne donne aucun accès aux élèves ni aux enseignants.'
+	String get brouillonAlerte => 'Un brouillon ne donne aucun accès aux élèves ni aux enseignants.';
+
+	/// fr: 'Ajouter un support'
+	String get ajouter => 'Ajouter un support';
+
+	/// fr: 'Aucun support'
+	String get vide => 'Aucun support';
+
+	/// fr: 'Ajoutez un premier support pour le préparer, vérifier ses droits, puis le publier.'
+	String get videDetail => 'Ajoutez un premier support pour le préparer, vérifier ses droits, puis le publier.';
+
+	/// fr: 'Le catalogue n'a pas pu être chargé. Réessayez.'
+	String get erreur => 'Le catalogue n\'a pas pu être chargé. Réessayez.';
+
+	/// fr: 'Vous n'avez pas accès à la bibliothèque d'administration.'
+	String get nonAutorise => 'Vous n\'avez pas accès à la bibliothèque d\'administration.';
+
+	/// fr: 'Bibliothèque indisponible'
+	String get indisponibleTitre => 'Bibliothèque indisponible';
+
+	/// fr: 'Cette fonction sera disponible au branchement serveur.'
+	String get indisponiblePhrase => 'Cette fonction sera disponible au branchement serveur.';
+
+	/// fr: 'le catalogue'
+	String get sansDonnees => 'le catalogue';
+
+	/// fr: 'Support'
+	String get ficheTitre => 'Support';
+
+	/// fr: 'Retour au catalogue'
+	String get retourCatalogue => 'Retour au catalogue';
+
+	/// fr: 'Ce support n'existe pas ou n'est pas accessible.'
+	String get introuvable => 'Ce support n\'existe pas ou n\'est pas accessible.';
 }
 
 // Path: nav.eleve
@@ -31645,6 +31697,20 @@ extension on Traductions {
 			'admin.tirage.suivante' => 'Page suivante de l\'historique des tirages',
 			'admin.tirage.resume' => ({required Object debut, required Object fin, required Object total}) => 'Tirages ${debut} à ${fin} sur ${total}',
 			'admin.tirage.quand' => ({required Object date, required Object heure}) => '${date} à ${heure}',
+			'admin.bibliotheque.titre' => 'Bibliothèque',
+			'admin.bibliotheque.intro' => 'Les supports pédagogiques : les déposer, vérifier leurs droits, publier une version, les attribuer aux classes.',
+			'admin.bibliotheque.brouillonAlerte' => 'Un brouillon ne donne aucun accès aux élèves ni aux enseignants.',
+			'admin.bibliotheque.ajouter' => 'Ajouter un support',
+			'admin.bibliotheque.vide' => 'Aucun support',
+			'admin.bibliotheque.videDetail' => 'Ajoutez un premier support pour le préparer, vérifier ses droits, puis le publier.',
+			'admin.bibliotheque.erreur' => 'Le catalogue n\'a pas pu être chargé. Réessayez.',
+			'admin.bibliotheque.nonAutorise' => 'Vous n\'avez pas accès à la bibliothèque d\'administration.',
+			'admin.bibliotheque.indisponibleTitre' => 'Bibliothèque indisponible',
+			'admin.bibliotheque.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
+			'admin.bibliotheque.sansDonnees' => 'le catalogue',
+			'admin.bibliotheque.ficheTitre' => 'Support',
+			'admin.bibliotheque.retourCatalogue' => 'Retour au catalogue',
+			'admin.bibliotheque.introuvable' => 'Ce support n\'existe pas ou n\'est pas accessible.',
 			'agent.titre' => 'Entrée d\'un agent',
 			'agent.intro' => 'Cette page ouvre l\'application en lecture seule, avec le jeton remis par l\'académie.',
 			'agent.jeton' => 'Jeton d\'observation',
@@ -31869,6 +31935,8 @@ extension on Traductions {
 			'compte.profilsTitre' => 'Profils du foyer',
 			'compte.profilsIntro' => 'Les enfants rattachés à votre foyer.',
 			'compte.erreurProfils' => 'Les profils n\'ont pas pu être lus.',
+			_ => null,
+		} ?? switch (path) {
 			'compte.reessayer' => 'Réessayer',
 			'compte.aucunProfil' => 'Aucun profil pour l\'instant',
 			'compte.aucunProfilDetail' => 'Ajoutez un enfant pour commencer',
@@ -31883,8 +31951,6 @@ extension on Traductions {
 			'compte.accesJusqua' => ({required Object date}) => 'Accès jusqu\'au ${date}',
 			'compte.statutActif' => 'Actif',
 			'compte.statutProvisoire' => 'Actif, à titre provisoire',
-			_ => null,
-		} ?? switch (path) {
 			'compte.profilEnfant' => ({required Object dePrenom}) => 'Profil ${dePrenom}',
 			'compte.identifiantEnfant' => ({required Object identifiant}) => 'Identifiant : ${identifiant}',
 			'compte.roles.admin' => 'Administrateur',
@@ -32383,6 +32449,8 @@ extension on Traductions {
 			'classe.progression' => 'Progression',
 			'classe.observer' => 'Observer la séance',
 			'classe.titre' => 'Classe',
+			_ => null,
+		} ?? switch (path) {
 			'classe.historique' => 'Historique',
 			'classe.sousTitre' => ({required Object prenom, required Object enseignant}) => '${prenom} · ${enseignant}',
 			'classe.indisponiblePhrase' => 'Le détail de la classe n\'est pas encore disponible ici.',
@@ -32397,8 +32465,6 @@ extension on Traductions {
 			'classe.observation.resume' => ({required Object visites, required Object duree}) => '${visites} · ${duree} par visite',
 			'classe.observation.restanteAucune' => 'Aucune visite restante pour cette séance',
 			'classe.observation.restanteUne' => '1 visite restante pour cette séance',
-			_ => null,
-		} ?? switch (path) {
 			'classe.observation.minutes' => ({required Object minutes}) => '${minutes} min',
 			'classe.observation.minutesSecondes' => ({required Object minutes, required Object secondes}) => '${minutes} min ${secondes} s',
 			'classe.observation.secondes' => ({required Object secondes}) => '${secondes} s',
@@ -32897,6 +32963,8 @@ extension on Traductions {
 			'enseignant.profil.verificationEnAttente' => 'En attente',
 			'enseignant.profil.verificationValidee' => 'Validée',
 			'enseignant.profil.verificationRefusee' => 'À reprendre',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.contratSection' => 'Contrat et accusés',
 			'enseignant.profil.contratEnseignant' => 'Contrat enseignant',
 			'enseignant.profil.contratConditions' => 'Conditions d\'utilisation',
@@ -32911,8 +32979,6 @@ extension on Traductions {
 			'enseignant.profil.deconnexionConfirmer' => 'Me déconnecter maintenant',
 			'enseignant.profil.deconnexionConsequence' => 'Votre journée, vos créneaux et vos cahiers de transmission restent enregistrés. Il faudra un nouveau lien de connexion pour revenir.',
 			'enseignant.profil.erreur' => 'Votre profil n\'a pas pu être lu. Réessayez dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.profil.vide' => 'Aucun profil enseignant',
 			'enseignant.profil.videDetail' => 'Ce compte n\'a pas de profil enseignant. Seule l\'académie peut en créer un.',
 			'enseignant.profil.horsLigne' => 'Rien ne peut être modifié ici pour l\'instant.',
@@ -33411,6 +33477,8 @@ extension on Traductions {
 			'tc.bibliotheque.message.telechargementImpossible' => 'Ce support n’est pas encore disponible hors ligne',
 			'tc.bibliotheque.message.horsLigneNonTelecharge' => 'Disponible une fois téléchargé ou de retour en ligne',
 			'tc.bibliotheque.message.aucunTelechargement' => 'Aucun fichier à télécharger pour cette version.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.classe.titre' => 'Choisir un support',
 			'tc.bibliotheque.classe.sousTitre' => 'Le support choisi remplace celui affiché. Le cours continue.',
 			'tc.coran.modes.mushaf' => 'Page du mushaf',
@@ -33425,8 +33493,6 @@ extension on Traductions {
 			'tc.coran.fidelite.fidele' => 'Composition de l\'édition',
 			'tc.coran.zoom.bride' => 'Grossissement limité par la largeur : au-delà, un mot serait coupé.',
 			'tc.coran.zoom.valeur' => ({required Object pourcent}) => '${pourcent} %',
-			_ => null,
-		} ?? switch (path) {
 			'tc.coran.zoom.renvoiLectureAgrandie' => 'Pour grossir le texte, passez en lecture agrandie : la page du mushaf garde sa géométrie.',
 			'tc.coran.navigation.titre' => 'Aller à',
 			'tc.coran.navigation.ouvrir' => 'Aller à une page',
@@ -33925,6 +33991,8 @@ extension on Traductions {
 			'adulte.famille.ajouterPhrase' => 'Vous pouvez ajouter vos enfants et inviter un conjoint ou une conjointe à rejoindre votre forfait famille. Votre espace élève reste inchangé.',
 			'adulte.famille.inscrireEnfant' => 'Inscrire un enfant',
 			'adulte.famille.maFamille' => 'Ma famille',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.famille.forfaitFamille' => 'Forfait famille',
 			'adulte.famille.retourMonEspace' => 'Revenir à Mon espace',
 			'adulte.famille.titulaire' => 'Vous êtes titulaire du foyer',
@@ -33939,8 +34007,6 @@ extension on Traductions {
 			'adulte.famille.indisponibleTitre' => 'La rubrique famille n\'est pas encore disponible',
 			'adulte.famille.indisponiblePhrase' => 'Votre famille ou votre forfait famille s\'affichera ici dès qu\'il sera disponible.',
 			'adulte.famille.place.ajouterConjointe' => 'Ajouter une conjointe',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.famille.place.ajouterConjoint' => 'Ajouter un conjoint',
 			'adulte.famille.place.inviterConjointe' => 'Invitez votre conjointe à rejoindre Rewayah avec son propre compte.',
 			'adulte.famille.place.inviterConjoint' => 'Invitez votre conjoint à rejoindre Rewayah avec son propre compte.',
@@ -34439,6 +34505,8 @@ extension on Traductions {
 			'argent.etat.enConfirmation' => 'En confirmation',
 			'argent.etat.expire' => 'Accès expiré',
 			'argent.etat.pause' => 'En pause',
+			_ => null,
+		} ?? switch (path) {
 			'argent.etat.aRegulariser' => 'À régulariser',
 			'argent.periode.jusquau' => ({required Object date}) => 'Financé jusqu\'au ${date}',
 			'argent.periode.aucune' => 'Aucune période financée',
@@ -34453,8 +34521,6 @@ extension on Traductions {
 			'argent.soldes.paiements' => 'Paiements du mois',
 			'argent.acces.enfantTitre' => 'Accès à cette classe temporairement indisponible',
 			'argent.acces.enfantMessage' => 'Votre tuteur peut gérer l\'accès.',
-			_ => null,
-		} ?? switch (path) {
 			'argent.acces.regulariserTitre' => 'Accès à régulariser',
 			'argent.acces.regulariserManque' => ({required Object montant, required Object mois}) => 'Il manque ${montant} pour financer ${mois}.',
 			'argent.acces.regulariserManqueNouvellePeriode' => ({required Object montant}) => 'Il manque ${montant} pour financer la nouvelle période.',
@@ -34953,6 +35019,8 @@ extension on Traductions {
 			'com.studio.aujourdhui.videsBlocs.aTraiter' => 'Rien à traiter aujourd\'hui.',
 			'com.studio.aujourdhui.videsBlocs.mentions' => 'Aucune mention ni réponse en attente.',
 			'com.studio.aujourdhui.videsBlocs.decisions' => 'Aucune décision en attente.',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.aujourdhui.videsBlocs.echeances' => 'Aucune échéance proche.',
 			'com.studio.aujourdhui.videsBlocs.activite' => 'Aucune activité récente.',
 			'com.studio.aujourdhui.videTitre' => 'Rien à traiter pour le moment',
@@ -34967,8 +35035,6 @@ extension on Traductions {
 			'com.studio.aujourdhui.modules.classes' => 'Classes',
 			'com.studio.aujourdhui.modules.admissions' => 'Admissions',
 			'com.studio.aujourdhui.modules.demandes' => 'Demandes',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.aujourdhui.modules.communications' => 'Administration des communications',
 			'com.studio.aujourdhui.acces.messages' => _root.com.socle.lexique.messagesMetier,
 			'com.studio.aujourdhui.acces.messagesDetail' => 'Les conversations avec les familles, les enseignants et les contrôleurs',
@@ -35467,6 +35533,8 @@ extension on Traductions {
 			'comptable.alertes.contractuelsAEcheance' => 'Contractuels à échéance',
 			'comptable.alertes.infosManquantes' => 'Infos paiement manquantes',
 			'comptable.alertes.payoutEchoue' => 'Payout échoué',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.alertes.paiementFamilleEchoue' => 'Paiement famille échoué',
 			'comptable.alertes.transactionNonRapprochee' => 'Transaction non rapprochée',
 			'comptable.alertes.remboursementEnAttente' => 'Remboursement en attente',
@@ -35481,8 +35549,6 @@ extension on Traductions {
 			'comptable.aujourdhui.aTraiterVide' => 'Rien à traiter aujourd\'hui.',
 			'comptable.aujourdhui.aTraiterVideDetail' => 'Les paiements, relances et rapprochements à faire apparaîtront ici.',
 			'comptable.aujourdhui.alertesVide' => 'Aucune alerte en ce moment.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.aujourdhui.alertesResume' => ({required Object n}) => 'Alertes à surveiller : ${n}',
 			'comptable.aujourdhui.paiementsAEffectuer' => 'Paiements à effectuer',
 			'comptable.aujourdhui.paiementsAEffectuerDetail' => 'Chaque paiement se vérifie dans sa liste avant d\'être payé.',
@@ -35981,6 +36047,8 @@ extension on Traductions {
 			'comptable.contractuels.nonRenseigne' => 'Non renseigné',
 			'comptable.contractuels.ligneSource' => ({required Object source}) => 'Source : ${source}',
 			'comptable.contractuels.ligneAuteur' => ({required Object auteur}) => 'Ajouté par ${auteur}',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.ligneValidation' => ({required Object validation}) => 'Validation : ${validation}',
 			'comptable.contractuels.payerAide' => 'Le paiement s\'ouvre dans le détail du paiement, avec le montant exact.',
 			'comptable.contractuels.approuverAide' => 'Après l\'approbation, le montant est figé et l\'obligation devient payable.',
@@ -35995,8 +36063,6 @@ extension on Traductions {
 			'comptable.contractuels.champNomExterne' => 'Nom du bénéficiaire externe',
 			'comptable.contractuels.changerEcheance' => 'Changer l\'échéance',
 			'comptable.contractuels.deviseDe' => ({required Object devise}) => 'Devise : ${devise}',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.champObjet' => 'Objet de l\'obligation',
 			'comptable.contractuels.aideObjet' => 'Par exemple : Facture #024',
 			'comptable.contractuels.champRefJustificatif' => 'Référence du justificatif (facultatif)',

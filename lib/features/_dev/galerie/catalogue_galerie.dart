@@ -2705,7 +2705,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       // galerie qui inventerait ses libelles ne montrerait pas la vraie
       // longueur des mots, et c'est justement ce qui decide de la bascule.
       EtatGalerie(
-        'cinq onglets, le premier actif',
+        'six onglets, le premier actif',
         (BuildContext _) => _SousMaterial(
           child: SousNavigationDomaine(
             onglets: ongletsPedagogie(),
@@ -2716,11 +2716,11 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       // Le dernier actif : le menu (telephone) ou la piste (grand ecran) dit
       // la section courante sans qu'il faille rien faire defiler.
       EtatGalerie(
-        'cinq onglets, le dernier actif',
+        'six onglets, le dernier actif',
         (BuildContext _) => _SousMaterial(
           child: SousNavigationDomaine(
             onglets: ongletsPedagogie(),
-            indexActif: 4,
+            indexActif: 5,
           ),
         ),
       ),
