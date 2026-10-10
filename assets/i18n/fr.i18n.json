@@ -402,7 +402,7 @@
         "supportMasque": "Tableau, le support est masqué",
         "supportArrive": "Le support arrive…",
         "supportIndisponible": "Le support ne s'affiche pas.",
-        "supportIndisponibleDetail": "Le fichier est indisponible pour le moment, souvent à cause d'une connexion lente. Réessayez : la séance et le son continuent.",
+        "supportIndisponibleDetail": "Le fichier est indisponible pour le moment, souvent à cause d'une connexion lente. Réessayez\u00a0: la séance et le son continuent.",
         "reessayerSemantique": "Réessayer d'afficher le support",
         "supportIllustratif": "Support illustratif"
       },

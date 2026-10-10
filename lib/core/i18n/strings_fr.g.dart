@@ -11713,7 +11713,7 @@ class Traductions$salle$seance$surface$fr {
 	String get supportIndisponible => 'Le support ne s\'affiche pas.';
 
 	/// fr: 'Le fichier est indisponible pour le moment, souvent à cause d'une connexion lente. Réessayez : la séance et le son continuent.'
-	String get supportIndisponibleDetail => 'Le fichier est indisponible pour le moment, souvent à cause d\'une connexion lente. Réessayez : la séance et le son continuent.';
+	String get supportIndisponibleDetail => 'Le fichier est indisponible pour le moment, souvent à cause d\'une connexion lente. Réessayez : la séance et le son continuent.';
 
 	/// fr: 'Réessayer d'afficher le support'
 	String get reessayerSemantique => 'Réessayer d\'afficher le support';
@@ -16268,7 +16268,7 @@ extension on Traductions {
 			'salle.seance.surface.supportMasque' => 'Tableau, le support est masqué',
 			'salle.seance.surface.supportArrive' => 'Le support arrive…',
 			'salle.seance.surface.supportIndisponible' => 'Le support ne s\'affiche pas.',
-			'salle.seance.surface.supportIndisponibleDetail' => 'Le fichier est indisponible pour le moment, souvent à cause d\'une connexion lente. Réessayez : la séance et le son continuent.',
+			'salle.seance.surface.supportIndisponibleDetail' => 'Le fichier est indisponible pour le moment, souvent à cause d\'une connexion lente. Réessayez : la séance et le son continuent.',
 			'salle.seance.surface.reessayerSemantique' => 'Réessayer d\'afficher le support',
 			'salle.seance.surface.supportIllustratif' => 'Support illustratif',
 			'salle.seance.synchro.nonPartagees' => 'Vos nouvelles notes ne sont pas partagées.',
