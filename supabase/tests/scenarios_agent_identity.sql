@@ -113,6 +113,7 @@ BEGIN
   -- A current administrator can change a profile; an already issued agent
   -- token must then fail closed against its immutable student scope.
   PERFORM pg_catalog.set_config('test.uid', 'ea000000-0000-0000-0000-000000000001', true);
+  PERFORM pg_catalog.set_config('request.jwt.claim.sub', 'ea000000-0000-0000-0000-000000000001', true);
   PERFORM pg_catalog.set_config('test.jwt', pg_catalog.jsonb_build_object(
     'sub', 'ea000000-0000-0000-0000-000000000001',
     'role', 'authenticated',
@@ -121,6 +122,7 @@ BEGIN
       'household_id', 'eaffffff-0000-0000-0000-000000000001'
     )
   )::text, true);
+  PERFORM pg_catalog.set_config('request.jwt.claims', '', true);
   UPDATE public.profiles
      SET role = 'admin'
    WHERE id = 'ea000000-0000-0000-0000-000000000005';
