@@ -148,10 +148,15 @@ begin
   exception when insufficient_privilege then
     null;
   end;
-  select count(*) into v_rows from public.kyc_documents;
-  if v_rows <> 0 then
-    raise exception 'B-06 ECHEC: le contrôleur lit directement la table KYC';
+  if pg_catalog.has_table_privilege('authenticated', 'public.kyc_documents', 'SELECT') then
+    raise exception 'B-06 ECHEC: authenticated conserve SELECT direct sur la table KYC';
   end if;
+  begin
+    perform 1 from public.kyc_documents limit 1;
+    raise exception 'B-06 ECHEC: le contrôleur lit directement la table KYC';
+  exception when insufficient_privilege then
+    null;
+  end;
 end
 $b06_controller$;
 
