@@ -16,7 +16,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Riverpod 3 a sorti `Override` de l'export principal.
 import 'package:flutter_riverpod/misc.dart' show Override, ProviderException;
 import 'package:supabase_flutter/supabase_flutter.dart'
-    show PostgrestException, StorageException;
+    show FunctionException, PostgrestException, StorageException;
 
 import '../admin/service_comptes.dart' show EtatPiece;
 import '../domain/enums.dart';
@@ -33,10 +33,8 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
   /// [lire] rend la file du service existant (en production, le cache
   /// partage `dossiersEnAttenteProvider`).
   ///
-  /// [apercu] signe une URL courte de la piece (en production,
-  /// ServiceValidation.apercu : le createSignedUrl de 60 s DEJA utilise
-  /// avant AD-6, aucun nouvel appel ni changement serveur). La porte serveur
-  /// utoriser_lecture_piece_identite n'est pas branchee (AD-BR-03, BR-1).
+  /// [apercu] demande une URL courte a l'Edge `piece-identite-acces`, avec
+  /// l'identifiant du document. La cle de stockage ne quitte jamais le serveur.
   ///
   /// [deciderExistant] appelle `decider_dossier` (ServiceValidation.decider) ;
   /// [relire] recharge la file par `dossiers_en_attente`. Nuls, la decision
@@ -57,8 +55,8 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
 
   final Future<List<DossierAValider>> Function() lire;
 
-  /// Signe l'URL courte d'un objet ; nul, la piece reste indisponible.
-  final Future<String> Function(String cleObjet)? apercu;
+  /// Demande au serveur une URL courte par identifiant de document.
+  final Future<String> Function(String documentId)? apercu;
 
   /// L'heure courante (tests) ; DateTime.now par defaut.
   final DateTime Function()? horloge;
@@ -247,8 +245,8 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
     );
   }
 
-  /// La vue de la piece, retrouvee dans la MEME file en cache puis signee
-  /// par le mecanisme existant. Aucune URL ne part dans un message d'erreur.
+  /// La piece est retrouvee par dossier/document, puis l'Edge autorise et
+  /// journalise l'ouverture avant signature. Aucune URL ne part dans un message d'erreur.
   @override
   Future<VuePiece> demanderVuePiece({
     required String dossierId,
@@ -282,7 +280,13 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
     final DateTime maintenant = (horloge ?? DateTime.now)().toUtc();
     final String url;
     try {
-      url = await signer(cle);
+      url = await signer(documentId);
+    } on FunctionException catch (e) {
+      throw ErreurRevueDossier(switch (e.status) {
+        401 || 403 => CodeErreurRevue.interdit,
+        400 || 404 => CodeErreurRevue.introuvable,
+        _ => CodeErreurRevue.indisponibleTemporairement,
+      });
     } on StorageException catch (e) {
       throw ErreurRevueDossier(switch (e.statusCode) {
         '403' => CodeErreurRevue.interdit,
@@ -420,15 +424,14 @@ class EchecDecisionCertain implements Exception {
 
 /// Le branchement de production, pose dans `lib/main.dart` seulement.
 ///
-/// AD-M3-PROD (decision du directeur du 27/09, S1 -> a) : la file et le
-/// detail sont lus, mais le refus et l'apercu de la piece restent fermes
-/// comme la validation jusqu'a BR-1 : ni `decider_dossier`, ni
-/// `createSignedUrl`. A BR-1, rebrancher ici `apercu`
-/// (ServiceValidation.apercu), `deciderExistant` (ServiceValidation.decider)
-/// et `relire` (invalidation puis relecture de `dossiersEnAttenteProvider`).
+/// La file et le detail continuent de lire le service existant. L'aperçu est
+/// raccordé à l'Edge auditée `piece-identite-acces`; les décisions restent
+/// fermées jusqu'à l'arbitrage AD-BR-02/06 et à leur RPC versionnée.
 final Override surchargeRevueDossiersProduction = portRevueDossiersProvider
     .overrideWith(
       (Ref ref) => RevueDossiersDepuisValidation(
         () => ref.read(dossiersEnAttenteProvider.future),
+        apercu: (String documentId) =>
+            ref.read(serviceValidationProvider).apercu(documentId),
       ),
     );
