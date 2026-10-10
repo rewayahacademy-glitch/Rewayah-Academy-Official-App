@@ -31,8 +31,13 @@ class RepereDemonstration extends StatelessWidget {
     final TextDirection sens = Directionality.of(context);
     // Le bandeau est peint, donc muet pour un lecteur d'ecran : ce noeud
     // l'annonce (revue P2-10, constat 2), sans rien changer au rendu.
+    // TB-12 (UX-21) : `explicitChildNodes` garde a chaque descendant son
+    // propre noeud. Sans lui, pose directement sur une salle (observateurs
+    // de /demo/salle), ce noeud absorbait l'ecran entier : un seul
+    // « bouton » lu, « Quitter » compris, sans cible separee.
     return Semantics(
       container: true,
+      explicitChildNodes: true,
       label: t.commun.demonstration.repereLu,
       child: Banner(
         message: libelleRepereDemonstration,
