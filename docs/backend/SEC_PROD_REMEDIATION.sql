@@ -361,7 +361,6 @@ $sec_prod_teacher_publish_guard$;
 -- 0084 — gardes null-safe et rôle effectif du trigger de profils.
 -- Cible les définitions présentes depuis le ledger 0042; cette migration
 -- additive ne doit pas être appliquée à PROD sans revue du script.
-begin;
 
 create or replace function public.etat_presence(
   p_session_id uuid,
@@ -1003,7 +1002,6 @@ revoke select on table public.teacher_roster_v from agent_ro;
 -- B-06: KYC Direction-only; retire lecture directe et policy de lecture Storage.
 -- B-06 / SEC-04 — reserver la revue et l'ouverture des pieces KYC a la Direction.
 -- Additif uniquement : les migrations deja appliquees ne sont jamais reecrites.
-begin;
 
 create or replace function public.read_kyc_documents()
 returns setof public.kyc_documents
@@ -1560,6 +1558,36 @@ begin
 end
 $sec_prod_active_role_postflight$;
 
+do $sec_prod_profile_guard_postflight$
+declare
+  v_oid oid;
+  v_is_definer boolean;
+  v_config text[];
+  v_trigger_enabled "char";
+begin
+  v_oid := to_regprocedure('public.guard_profile_privileged_columns()');
+  select p.prosecdef, p.proconfig
+    into v_is_definer, v_config
+    from pg_catalog.pg_proc p
+   where p.oid = v_oid;
+  if v_oid is null or v_is_definer is distinct from false then
+    raise exception 'SEC-PROD M1: guard_profile_privileged_columns absente ou pas SECURITY INVOKER';
+  end if;
+  if not coalesce(v_config @> array['search_path=""'], false) then
+    raise exception 'SEC-PROD M1: search_path vide absent de guard_profile_privileged_columns';
+  end if;
+  select t.tgenabled
+    into v_trigger_enabled
+    from pg_catalog.pg_trigger t
+   where t.tgrelid = 'public.profiles'::regclass
+     and t.tgname = 'profiles_privileged_columns_guard'
+     and not t.tgisinternal;
+  if v_trigger_enabled is null or v_trigger_enabled not in ('O', 'A') then
+    raise exception 'SEC-PROD M1: trigger profiles_privileged_columns_guard absent ou désactivé';
+  end if;
+end
+$sec_prod_profile_guard_postflight$;
+
 do $sec_prod_active_read_postflight$
 declare v_source text; v_normalized text; v_policy text;
 begin
@@ -1613,11 +1641,103 @@ end
 $sec_prod_views_postflight$;
 
 
+-- B2: patch every reviewed production signature only at its exact snapshot hash.
+do $sec_prod_negative_role_guards$
+declare
+  r record;
+  v_oid oid;
+  v_definition text;
+  v_source text;
+  v_corrected_source text;
+  v_corrected_definition text;
+  v_capture text[];
+  v_role text;
+  v_pattern constant text := 'if[[:space:]]+public[.]app_role[(][)][[:space:]]*<>[[:space:]]*''(admin|guardian|controller|teacher)''([[:space:]]+or[[:space:]]+not[[:space:]]+public[.]app_account_valid[(][)])?[[:space:]]+then';
+  v_matches integer;
+  v_seen integer := 0;
+begin
+  for r in
+    select * from (values
+      ('public.ajouter_eleve_groupe(uuid, uuid, text)', '5c001c226d18ba90fdaf5a7581be9a66'),
+      ('public.ajouter_niveau_programme(uuid, text, text, text, integer, text)', 'cee5a197b02fbed73038efe1113f45cb'),
+      ('public.assister_seance(uuid)', 'aba366511f8aaa20ea27c6dc6ceb7143'),
+      ('public.attribuer_eleve(uuid, uuid, integer, integer, text)', '0f45793b6620c4126fb8021f9ad85f71'),
+      ('public.cloturer_groupe(uuid, text)', 'c08ce88599444254b4155baff166302f'),
+      ('public.creer_code_appairage(uuid)', 'ed5103a9093421c68265efdef96ed16b'),
+      ('public.creer_groupe(uuid, text, text, smallint, smallint, smallint, text, smallint)', '97c8c9e666653e03584e0d875ad00c33'),
+      ('public.creer_groupe(uuid, text, text, smallint, smallint, smallint)', 'd85b1b126ac26ab5628777ee722b71b0'),
+      ('public.creer_jeton_agent(text, uuid, integer, boolean)', '0084e98d6eada6c376364bfead236b22'),
+      ('public.creer_version_programme(uuid)', 'b72ca828b9c07f40cb69b8a2f6e11de3'),
+      ('public.definir_politique_observation_groupe(uuid, text, smallint, integer, integer)', '967659fc78d48da104daa224138b2de6'),
+      ('public.entrer_observation(uuid, text)', '9da9386bb2c6b2d07eae3fadee3c2010'),
+      ('public.modifier_groupe(uuid, text, smallint, smallint, smallint, text, smallint)', '713d5acca4971058883ea90e06bb6ad4'),
+      ('public.modifier_groupe(uuid, text, smallint, smallint, smallint)', '5bfb604429ef9b20ac632197218f9784'),
+      ('public.modifier_niveau_programme(uuid, text, text, integer, text)', 'b61928f62425d1439e3ac806c96a7f8c'),
+      ('public.prendre_eleve(uuid, integer, integer)', 'b5ac5d0c855282281567be91c3d211c1'),
+      ('public.publier_version_programme(uuid, text)', 'c7715e24d0d338cea4113a3c787580c2'),
+      ('public.rejoindre_observation(uuid)', '11297b9563e6816b369cf55bc842af5e'),
+      ('public.retirer_eleve_groupe(uuid, uuid, text)', 'fcf523b2cdbebec969a5e2253de26aba'),
+      ('public.revoquer_jeton_agent(uuid)', 'fc536a7b55da1011ebd638ca0c269206'),
+      ('public.supprimer_niveau_programme(uuid, text)', '21449ed510bae1e51bd71972989b0fa7'),
+      ('public.transitions_fuseau_a_venir(integer)', 'c90a4ebcfe6a2f303dac10960cabddff')
+    ) as expected(signature, md5_definition)
+    order by signature
+  loop
+    v_oid := to_regprocedure(r.signature);
+    if v_oid is null or md5(pg_get_functiondef(v_oid)) is distinct from r.md5_definition then
+      raise exception 'SEC-PROD M2: définition non conforme avant patch du garde: %', r.signature;
+    end if;
+    v_definition := pg_get_functiondef(v_oid);
+    select p.prosrc into v_source from pg_catalog.pg_proc p where p.oid = v_oid;
+    v_matches := regexp_count(v_source, v_pattern, 1, 'i');
+    if v_matches <> 1 then
+      raise exception 'SEC-PROD M2: garde négative attendue exactement une fois dans % (trouvé %)', r.signature, v_matches;
+    end if;
+    v_capture := regexp_match(v_source, v_pattern, 'i');
+    v_role := lower(v_capture[1]);
+    v_corrected_source := regexp_replace(
+      v_source,
+      v_pattern,
+      'if not coalesce(public.app_account_valid() and public.app_role() = ''\1'', false) then',
+      'i'
+    );
+    if v_corrected_source is not distinct from v_source then
+      raise exception 'SEC-PROD M2: patch vide: %', r.signature;
+    end if;
+    v_matches := (length(v_definition) - length(replace(v_definition, v_source, ''))) / length(v_source);
+    if v_matches <> 1 then
+      raise exception 'SEC-PROD M2: source non unique dans pg_get_functiondef: %', r.signature;
+    end if;
+    v_corrected_definition := replace(v_definition, v_source, v_corrected_source);
+    execute v_corrected_definition;
+    select p.prosrc into v_source from pg_catalog.pg_proc p where p.oid = v_oid;
+    if app_private.sec_prod_has_unsafe_role_guard(v_source)
+       or position('if not coalesce(public.app_account_valid() and public.app_role() = ''' || v_role || ''', false) then' in lower(v_source)) = 0 then
+      raise exception 'SEC-PROD M2: garde positif non confirmé après patch: %', r.signature;
+    end if;
+    v_seen := v_seen + 1;
+  end loop;
+  if v_seen <> 22 then
+    raise exception 'SEC-PROD M2: nombre de signatures patchées inattendu (%)', v_seen;
+  end if;
+end
+$sec_prod_negative_role_guards$;
 -- Le scan M2 global est volontairement exécuté après tous les patchs ciblés.
 do $m2_scan_postflight$
 declare
   v record;
+  v_oid oid;
+  v_md5 text;
 begin
+  v_oid := to_regprocedure('public.etat_presence(uuid, uuid)');
+  select md5(p.prosrc) into v_md5 from pg_catalog.pg_proc p where p.oid = v_oid;
+  if v_oid is null or v_md5 is distinct from '1db9f68f6441a39c6bd17508629eb6dc' then
+    raise exception 'SEC-PROD M2: empreinte d''exception modifiée: public.etat_presence(uuid, uuid)';
+  end if;
+  v_oid := to_regprocedure('public.ressources_du_groupe(uuid)');
+  if v_oid is null or md5(pg_get_functiondef(v_oid)) is distinct from '7f3868abf037296891b446a5ff3a83ee' then
+    raise exception 'SEC-PROD M2: empreinte d''exception modifiée: public.ressources_du_groupe(uuid)';
+  end if;
   for v in
     select p.oid
     from pg_catalog.pg_proc p
@@ -1626,6 +1746,7 @@ begin
       and p.prokind = 'f'
       and p.prosecdef
       and app_private.sec_prod_has_unsafe_role_guard(p.prosrc)
+      and p.oid not in (to_regprocedure('public.etat_presence(uuid, uuid)'), to_regprocedure('public.ressources_du_groupe(uuid)'))
   loop
     raise exception 'SEC-PROD M2: garde négative app_role résiduelle après patch oid=%', v.oid;
   end loop;
