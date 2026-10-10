@@ -176,15 +176,27 @@ class CarteDemande extends StatelessWidget {
         ..._prochaine(d, corps),
       ],
       Ecart.vLg,
-      LigneCleValeur(
-        cle: t.suiviDemandes.joursChoisis,
-        valeur: joursDemande(d.creneau.joursIso),
-      ),
-      Ecart.vSm,
-      LigneCleValeur(
-        cle: t.suiviDemandes.heureChoisie,
-        valeur: heureDemande(d),
-      ),
+      // C-10 bis : une heure commune se dit une fois ; sinon chaque jour
+      // avec la sienne, et le fuseau sur sa propre ligne.
+      if (heureDemande(d) case final String heure) ...<Widget>[
+        LigneCleValeur(
+          cle: t.suiviDemandes.joursChoisis,
+          valeur: joursDemande(d.creneau.joursIso),
+        ),
+        Ecart.vSm,
+        LigneCleValeur(cle: t.suiviDemandes.heureChoisie, valeur: heure),
+      ] else ...<Widget>[
+        LigneCleValeur(
+          key: ValueKey<String>('demande-jours-heures-${d.demandeId}'),
+          cle: t.suiviDemandes.creneauxChoisis,
+          valeur: joursEtHeuresDemande(d.creneau),
+        ),
+        Ecart.vSm,
+        LigneCleValeur(
+          cle: t.suiviDemandes.fuseauChoisi,
+          valeur: fuseauDemande(d),
+        ),
+      ],
       if (d.personnalise && d.etape == EtapeDemande.envoyee) ...<Widget>[
         Ecart.vLg,
         _NoticePersonnalise(

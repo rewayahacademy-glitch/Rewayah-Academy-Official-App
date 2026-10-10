@@ -63,11 +63,38 @@ String joursDemande(List<int> joursIso) {
   );
 }
 
-/// « 18:00, heure de Paris ».
-String heureDemande(SuiviDemande d) => t.suiviDemandes.heureFuseau(
-  heure: hhmmDemande(d.creneau.heure, d.creneau.minute),
-  deVille: deFuseau(d.fuseauIana),
-);
+/// « 18:00, heure de Paris » : l'heure commune a tous les jours choisis,
+/// `null` quand les jours n'ont pas tous la meme heure (C-10 bis). Jamais
+/// l'heure du premier jour prise pour celle des autres.
+String? heureDemande(SuiviDemande d) {
+  final CreneauDemande c = d.creneau;
+  if (c.occurrences.isEmpty || !c.heuresToutesEgales) {
+    return null;
+  }
+  final OccurrenceCreneau o = c.occurrences.first;
+  return t.suiviDemandes.heureFuseau(
+    heure: hhmmDemande(o.heure, o.minute),
+    deVille: deFuseau(d.fuseauIana),
+  );
+}
+
+/// « Lundi 18:00, mercredi 19:30 » : chaque jour avec sa propre heure, du
+/// lundi au dimanche, le premier avec sa majuscule (C-10 bis).
+String joursEtHeuresDemande(CreneauDemande c) {
+  final List<String> noms = t.commun.dates.jours;
+  return <String>[
+    for (final (int i, OccurrenceCreneau o) in c.occurrences.indexed)
+      t.suiviDemandes.jourHeure(
+        jour: i == 0 ? noms[o.jourIso - 1] : noms[o.jourIso - 1].toLowerCase(),
+        heure: hhmmDemande(o.heure, o.minute),
+      ),
+  ].join(', ');
+}
+
+/// « Heure de Paris », « Heure UTC » : le fuseau des heures choisies, dit
+/// seul quand chaque jour a son heure.
+String fuseauDemande(SuiviDemande d) =>
+    t.suiviDemandes.fuseauValeur(deVille: deFuseau(d.fuseauIana));
 
 /// « Lundi 19 octobre a 18:00, heure de Paris », ou `null` sans date.
 ///

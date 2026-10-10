@@ -136,8 +136,10 @@ RegroupementDemandes _reg(
   public: public,
   langueCode: 'fr',
   langueNom: 'Français',
-  jours: jours,
-  reference: HeureDansFuseau(fuseau: _paris, heure: heure),
+  fuseau: _paris,
+  occurrences: <OccurrenceCreneau>[
+    for (final int j in jours) OccurrenceCreneau(jourIso: j, heure: heure),
+  ],
   autresFuseaux: const <HeureDansFuseau>[
     HeureDansFuseau(fuseau: 'America/Toronto', heure: 12),
   ],
@@ -253,7 +255,19 @@ void main() {
         findsOneWidget,
       );
       // Le passage de minuit se dit (« le lendemain »).
-      expect(find.text('5\u00a0h le lendemain à Paris'), findsOneWidget);
+      // C-11 bis : jour par jour quand les heures different.
+      // Le titre de la carte et sa ligne « Jours et heures ».
+      expect(
+        find.text('Mardi 20\u00a0h, jeudi 20\u00a0h\u00a030'),
+        findsNWidgets(2),
+      );
+      expect(
+        find.text(
+          'Mardi : 5\u00a0h le lendemain à Paris · '
+          'Jeudi : 5\u00a0h\u00a030 le lendemain à Paris',
+        ),
+        findsOneWidget,
+      );
       expect(find.text('5 élèves sur 5'), findsOneWidget);
       expect(find.text('العربية'), findsOneWidget);
       verifierUnSeulBoutonPlein(tester);
@@ -709,6 +723,183 @@ void main() {
       expect(contexte, isNot(contains('à ces jours et à cette heure')));
       await _demonter(tester);
     });
+  });
+
+  group('C-11 bis : une heure par jour', () {
+    setUpAll(chargerPolicesDuDepot);
+    const String differentes = 'demo-reg-adultes-en-mj-20';
+
+    RegroupementDemandes regAvec(
+      List<(int, int, int)> occurrences, {
+      List<HeureDansFuseau> ailleurs = const <HeureDansFuseau>[],
+    }) => RegroupementDemandes(
+      id: 'c11',
+      public: PublicOffre.enfants,
+      langueCode: 'fr',
+      langueNom: 'Français',
+      fuseau: _paris,
+      occurrences: <OccurrenceCreneau>[
+        for (final (int j, int h, int m) in occurrences)
+          OccurrenceCreneau(jourIso: j, heure: h, minute: m),
+      ],
+      autresFuseaux: ailleurs,
+      nombreEleves: 3,
+      quota: 5,
+    );
+
+    test('le modele trie par jour et garde l heure de chaque jour', () {
+      final RegroupementDemandes g = regAvec(<(int, int, int)>[
+        (3, 19, 30),
+        (1, 18, 0),
+      ]);
+      expect(g.occurrences, const <OccurrenceCreneau>[
+        OccurrenceCreneau(jourIso: 1, heure: 18),
+        OccurrenceCreneau(jourIso: 3, heure: 19, minute: 30),
+      ]);
+      expect(g.jours, <int>[1, 3]);
+      expect(g.heuresToutesEgales, isFalse);
+      // Chaque seance proposee a l'enseignant garde l'heure de son jour.
+      expect(
+        creneauxDe(g).map((Creneau c) => (c.jour, c.heure)).toList(),
+        <(int, int)>[(1, 18), (3, 19)],
+      );
+    });
+
+    test('doublon de jour, liste vide, autre fuseau sans jour : refuses', () {
+      expect(
+        () => regAvec(<(int, int, int)>[(1, 18, 0), (1, 19, 0)]),
+        throwsA(isA<AssertionError>()),
+      );
+      expect(
+        () => regAvec(const <(int, int, int)>[]),
+        throwsA(isA<AssertionError>()),
+      );
+      // Heures differentes : une heure d'ailleurs qui ne dit pas son jour
+      // mentirait pour l'autre jour.
+      expect(
+        () => regAvec(
+          <(int, int, int)>[(1, 18, 0), (3, 19, 30)],
+          ailleurs: const <HeureDansFuseau>[
+            HeureDansFuseau(fuseau: 'America/Toronto', heure: 12),
+          ],
+        ),
+        throwsA(isA<AssertionError>()),
+      );
+      // Heures egales : une heure d'ailleurs commune reste permise.
+      expect(
+        regAvec(
+          <(int, int, int)>[(1, 18, 0), (3, 18, 0)],
+          ailleurs: const <HeureDansFuseau>[
+            HeureDansFuseau(fuseau: 'America/Toronto', heure: 12),
+          ],
+        ).autresFuseaux,
+        hasLength(1),
+      );
+    });
+
+    test('libelles : heure commune une fois, sinon chaque jour la sienne', () {
+      final RegroupementDemandes egales = regAvec(<(int, int, int)>[
+        (4, 18, 0),
+        (1, 18, 0),
+        (2, 18, 0),
+      ]);
+      expect(libelleCreneau(egales), 'Lundi, mardi, jeudi · 18 h');
+      expect(libelleReference(egales), '18 h, heure de Paris');
+      expect(
+        nomDeduit(egales, null),
+        t.admin.groupes.formulaire.nomPropose(
+          base: 'Enfants',
+          creneau: 'lundi, mardi, jeudi 18 h',
+        ),
+      );
+
+      final RegroupementDemandes autres = regAvec(
+        <(int, int, int)>[(3, 19, 30), (1, 18, 0)],
+        ailleurs: const <HeureDansFuseau>[
+          HeureDansFuseau(
+            fuseau: 'Europe/London',
+            heure: 18,
+            minute: 30,
+            jourIso: 3,
+          ),
+          HeureDansFuseau(fuseau: 'Europe/London', heure: 17, jourIso: 1),
+        ],
+      );
+      // Jamais l'heure du premier jour prise pour celle des autres.
+      expect(libelleHeureCommune(autres), isNull);
+      expect(libelleReference(autres), isNull);
+      expect(libelleCreneau(autres), 'Lundi 18 h, mercredi 19 h 30');
+      expect(libelleFuseau(autres), 'Heure de Paris');
+      expect(
+        libelleAutresFuseaux(autres),
+        'Lundi : 17 h à London · Mercredi : 18 h 30 à London',
+      );
+      expect(
+        nomDeduit(autres, null),
+        t.admin.groupes.formulaire.nomPropose(
+          base: 'Enfants',
+          creneau: 'lundi 18 h, mercredi 19 h 30',
+        ),
+      );
+    });
+
+    testWidgets('heures egales : la ligne actuelle, inchangee', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, port: RegroupementsDemo());
+      expect(find.text(t.admin.regroupements.cleJours), findsNWidgets(3));
+      expect(find.text(t.admin.regroupements.cleHeure), findsNWidgets(3));
+      expect(find.text('Lundi, mardi, jeudi'), findsOneWidget);
+      await _demonter(tester);
+    });
+
+    testWidgets('heures differentes : jours et heures, puis le fuseau', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, port: RegroupementsDemo());
+      final Finder ligne = find.byKey(
+        const ValueKey<String>('regroupement-jours-heures-$differentes'),
+      );
+      expect(ligne, findsOneWidget);
+      expect(
+        find.descendant(
+          of: ligne,
+          matching: find.text('Mardi 20 h, jeudi 20 h 30'),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(t.admin.regroupements.cleFuseau), findsOneWidget);
+      expect(find.text('Heure de Los Angeles'), findsOneWidget);
+      expect(find.text('20 h, heure de Los Angeles'), findsNothing);
+      await _demonter(tester);
+    });
+
+    for (final TextDirection direction in TextDirection.values) {
+      testWidgets('320 px, texte a 200 %, feuille a heures differentes '
+          '(${direction.name})', (WidgetTester tester) async {
+        await _monter(
+          tester,
+          port: RegroupementsDemo(),
+          largeur: 320,
+          hauteur: 2400,
+          echelle: 2,
+          direction: direction,
+        );
+        expect(tester.takeException(), isNull);
+        verifierEcranSansMotCoupe(tester);
+        await _ouvrir(tester, differentes);
+        expect(tester.takeException(), isNull);
+        expect(
+          find.byKey(
+            const ValueKey<String>('regroupement-jours-heures-$differentes'),
+          ),
+          findsWidgets,
+        );
+        verifierEcranSansMotCoupe(tester);
+        verifierUnSeulBoutonPlein(tester, maximum: 2);
+        await _demonter(tester);
+      });
+    }
   });
 
   group('320 px, texte a 200 %', () {

@@ -27,8 +27,12 @@ List<RegroupementDemandes> regroupementsDemo() => <RegroupementDemandes>[
     public: PublicOffre.enfants,
     langueCode: 'fr',
     langueNom: 'Français',
-    jours: const <int>[1, 2, 4],
-    reference: const HeureDansFuseau(fuseau: 'Europe/Paris', heure: 18),
+    fuseau: 'Europe/Paris',
+    occurrences: const <OccurrenceCreneau>[
+      OccurrenceCreneau(jourIso: 1, heure: 18),
+      OccurrenceCreneau(jourIso: 2, heure: 18),
+      OccurrenceCreneau(jourIso: 4, heure: 18),
+    ],
     autresFuseaux: const <HeureDansFuseau>[
       HeureDansFuseau(fuseau: 'Europe/London', heure: 17),
       HeureDansFuseau(fuseau: 'America/Toronto', heure: 12),
@@ -42,12 +46,10 @@ List<RegroupementDemandes> regroupementsDemo() => <RegroupementDemandes>[
     public: PublicOffre.adultes,
     langueCode: 'fr',
     langueNom: 'Français',
-    jours: const <int>[6],
-    reference: const HeureDansFuseau(
-      fuseau: 'Europe/Paris',
-      heure: 10,
-      minute: 30,
-    ),
+    fuseau: 'Europe/Paris',
+    occurrences: const <OccurrenceCreneau>[
+      OccurrenceCreneau(jourIso: 6, heure: 10, minute: 30),
+    ],
     autresFuseaux: const <HeureDansFuseau>[
       HeureDansFuseau(fuseau: 'America/Toronto', heure: 4, minute: 30),
     ],
@@ -60,8 +62,10 @@ List<RegroupementDemandes> regroupementsDemo() => <RegroupementDemandes>[
     public: PublicOffre.enfants,
     langueCode: 'ar',
     langueNom: 'العربية',
-    jours: const <int>[3],
-    reference: const HeureDansFuseau(fuseau: 'America/Toronto', heure: 17),
+    fuseau: 'America/Toronto',
+    occurrences: const <OccurrenceCreneau>[
+      OccurrenceCreneau(jourIso: 3, heure: 17),
+    ],
     autresFuseaux: const <HeureDansFuseau>[
       HeureDansFuseau(fuseau: 'Europe/Paris', heure: 23),
     ],
@@ -74,10 +78,27 @@ List<RegroupementDemandes> regroupementsDemo() => <RegroupementDemandes>[
     public: PublicOffre.adultes,
     langueCode: 'en',
     langueNom: 'English',
-    jours: const <int>[2, 4],
-    reference: const HeureDansFuseau(fuseau: 'America/Los_Angeles', heure: 20),
+    fuseau: 'America/Los_Angeles',
+    // C-11 bis : une heure differente selon le jour, et dans l'autre
+    // fuseau une heure par jour.
+    occurrences: const <OccurrenceCreneau>[
+      OccurrenceCreneau(jourIso: 2, heure: 20),
+      OccurrenceCreneau(jourIso: 4, heure: 20, minute: 30),
+    ],
     autresFuseaux: const <HeureDansFuseau>[
-      HeureDansFuseau(fuseau: 'Europe/Paris', heure: 5, decalageJour: 1),
+      HeureDansFuseau(
+        fuseau: 'Europe/Paris',
+        heure: 5,
+        decalageJour: 1,
+        jourIso: 2,
+      ),
+      HeureDansFuseau(
+        fuseau: 'Europe/Paris',
+        heure: 5,
+        minute: 30,
+        decalageJour: 1,
+        jourIso: 4,
+      ),
     ],
     nombreEleves: 6,
     quota: quotaDemo(PublicOffre.adultes),
@@ -133,8 +154,8 @@ class RegroupementsDemo implements PortRegroupementsAdmin {
             public: r.public,
             langueCode: r.langueCode,
             langueNom: r.langueNom,
-            jours: r.jours,
-            reference: r.reference,
+            fuseau: r.fuseau,
+            occurrences: r.occurrences,
             autresFuseaux: r.autresFuseaux,
             nombreEleves: r.nombreEleves,
             quota: r.quota,

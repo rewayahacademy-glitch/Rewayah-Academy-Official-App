@@ -47,7 +47,7 @@ class DemandeServeurDemo {
   /// Son prenom.
   final String prenom;
 
-  /// Les jours et l'heure choisis.
+  /// Les jours choisis et l'heure de chacun.
   final CreneauDemande creneau;
 
   /// Le fuseau du foyer.
@@ -112,10 +112,12 @@ class SuiviDemandesDemo implements PortSuiviDemandes {
           demandeId: 'demo-demande-ines',
           eleveId: 'demo-eleve-ines',
           prenom: 'Inès',
-          creneau: const CreneauDemande(
-            joursIso: <int>[6, 7],
-            heure: 10,
-            minute: 0,
+          creneau: CreneauDemande(
+            // C-10 bis : une heure differente selon le jour.
+            occurrences: const <OccurrenceCreneau>[
+              OccurrenceCreneau(jourIso: 6, heure: 10),
+              OccurrenceCreneau(jourIso: 7, heure: 11, minute: 30),
+            ],
           ),
           etape: EtapeDemande.classeValidee,
           transitions: <(EtapeDemande, DateTime)>[
@@ -131,10 +133,10 @@ class SuiviDemandesDemo implements PortSuiviDemandes {
           demandeId: 'demo-demande-bilal',
           eleveId: 'demo-eleve-bilal',
           prenom: 'Bilal',
-          creneau: const CreneauDemande(
-            joursIso: <int>[3],
-            heure: 19,
-            minute: 30,
+          creneau: CreneauDemande(
+            occurrences: const <OccurrenceCreneau>[
+              OccurrenceCreneau(jourIso: 3, heure: 19, minute: 30),
+            ],
           ),
           etape: EtapeDemande.close,
           transitions: <(EtapeDemande, DateTime)>[
@@ -151,10 +153,13 @@ class SuiviDemandesDemo implements PortSuiviDemandes {
     demandeId: 'demo-demande-yusuf',
     eleveId: DonneesDemo.yusufId,
     prenom: 'Yusuf',
-    creneau: const CreneauDemande(
-      joursIso: <int>[4, 1, 2],
-      heure: 18,
-      minute: 0,
+    creneau: CreneauDemande(
+      // Choisis jeudi, lundi, mardi : le creneau les range du lundi au jeudi.
+      occurrences: const <OccurrenceCreneau>[
+        OccurrenceCreneau(jourIso: 4, heure: 18),
+        OccurrenceCreneau(jourIso: 1, heure: 18),
+        OccurrenceCreneau(jourIso: 2, heure: 18),
+      ],
     ),
     etape: EtapeDemande.envoyee,
     transitions: <(EtapeDemande, DateTime)>[
@@ -169,7 +174,12 @@ class SuiviDemandesDemo implements PortSuiviDemandes {
     demandeId: 'demo-demande-aicha',
     eleveId: DonneesDemo.aichaId,
     prenom: 'Aïcha',
-    creneau: const CreneauDemande(joursIso: <int>[1, 3], heure: 17, minute: 30),
+    creneau: CreneauDemande(
+      occurrences: const <OccurrenceCreneau>[
+        OccurrenceCreneau(jourIso: 1, heure: 17, minute: 30),
+        OccurrenceCreneau(jourIso: 3, heure: 17, minute: 30),
+      ],
+    ),
     etape: EtapeDemande.enseignantAffecte,
     transitions: <(EtapeDemande, DateTime)>[
       (EtapeDemande.envoyee, DateTime(2026, 9, 30, 18, 2)),

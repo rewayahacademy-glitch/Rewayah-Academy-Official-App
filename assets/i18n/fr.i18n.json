@@ -1801,6 +1801,11 @@
       "ailleursMemeJour": "{heure} à {ville}",
       "ailleursVeille": "{heure} la veille à {ville}",
       "ailleursLendemain": "{heure} le lendemain à {ville}",
+      "cleJoursHeures": "Jours et heures",
+      "cleFuseau": "Fuseau de référence",
+      "fuseauValeur": "Heure {deVille}",
+      "jourHeure": "{jour} {heure}",
+      "ailleursJour": "{jour} : {ailleurs}",
       "eleves": {
         "one": "{n} élève sur {quota}",
         "other": "{n} élèves sur {quota}"
@@ -5246,6 +5251,10 @@
     "heureChoisie": "Heure choisie",
     "joursEt": "{debut} et {dernier}",
     "heureFuseau": "{heure}, heure {deVille}",
+    "creneauxChoisis": "Jours et heures choisis",
+    "jourHeure": "{jour} {heure}",
+    "fuseauChoisi": "Fuseau horaire",
+    "fuseauValeur": "Heure {deVille}",
     "etapes": {
       "envoyee": "Demande envoyée",
       "classeValidee": "Classe validée",
