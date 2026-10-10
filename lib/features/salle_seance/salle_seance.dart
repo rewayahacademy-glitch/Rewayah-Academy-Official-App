@@ -636,10 +636,10 @@ Widget _surfaceEtEntreeEleve({
           // rangees (texte agrandi, Mode Accessibilite), la place restante
           // peut etre plus basse que l'entree (phrase d'echec ou d'ecriture
           // et declencheur). L'entree defile alors dans la part qui lui
-          // revient, la page garde au moins un tiers de la hauteur ; plus
-          // basse, rien ne change (jamais de debordement).
+          // revient (85 % au plus de la hauteur) ; plus basse, rien ne change
+          // (jamais de debordement).
           ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: c.maxHeight * 2 / 3),
+            constraints: BoxConstraints(maxHeight: c.maxHeight * 0.85),
             child: SingleChildScrollView(child: entree),
           ),
         ],
