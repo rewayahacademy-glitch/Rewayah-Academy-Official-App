@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
@@ -572,7 +573,7 @@ class RechercheObservations extends ConsumerWidget {
       onSelected: onChoix,
       fieldViewBuilder:
           (
-            BuildContext _,
+            BuildContext contexte,
             TextEditingController controleur,
             FocusNode focus,
             VoidCallback _,
@@ -582,7 +583,13 @@ class RechercheObservations extends ConsumerWidget {
             textInputAction: TextInputAction.search,
             decoration: InputDecoration(
               isDense: true,
-              hintText: t.admin.observations.recherche,
+              // COUPE-MOTS-FOND-1 : l'aide passe a la ligne entre ses mots, et
+              // un mot trop large se reduit, borne : jamais tronquee ni
+              // coupee (320 px texte x2, Interface guidee).
+              hint: texteAideSansCoupure(
+                contexte,
+                t.admin.observations.recherche,
+              ),
               prefixIcon: Icon(AppIcons.recherche.repos),
             ),
           ),

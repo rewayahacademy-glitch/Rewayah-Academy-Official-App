@@ -426,7 +426,15 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
                 ),
                 Ecart.vMd,
               ],
-              Text(t.tuteur.reglages.demandeMotif, style: textes.titleSmall),
+              // COUPE-MOTS-FOND-1 (6) : « changement ? » (espace insecable)
+              // est un seul bloc ; en Interface guidee a 320 px texte x2, il
+              // ne tenait qu'a 0,8 px pres, et le « ? » partait seul a la
+              // ligne des que la feuille etait plus etroite. Le bloc se
+              // reduit, borne, au lieu d'etre casse.
+              TexteSansCoupure(
+                t.tuteur.reglages.demandeMotif,
+                style: textes.titleSmall,
+              ),
               Ecart.vXs,
               Text(
                 t.tuteur.reglages.demandeMotifRequis,

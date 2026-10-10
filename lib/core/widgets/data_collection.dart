@@ -176,6 +176,59 @@ class DataCollection<T> extends StatelessWidget {
   /// la collection en pure lecture, comme avant l'ajout de ce parametre.
   final void Function(T ligne)? onSelectionner;
 
+  /// Vrai quand chaque colonne du tableau tient, a [largeur] et a l'echelle
+  /// du texte de [context] : le mot le plus long de son en-tete et de chacune
+  /// de ses cellules entre dans sa colonne SANS reduction (COUPE-MOTS-FOND-1).
+  ///
+  /// Une date (« 23/09/2026 »), une heure (« 18:12:00 »), un identifiant
+  /// (« TEACHER-AS-000001 ») sont chacun un mot : ils ne se coupent jamais,
+  /// et un en-tete ne se tronque plus (« Entr... »). Quand le texte agrandi
+  /// ne tient pas, la collection passe en cartes, meme sur un bureau.
+  @visibleForTesting
+  static bool tientEnTableau<T>(
+    BuildContext context, {
+    required List<ColonneDonnees<T>> colonnes,
+    required List<T> lignes,
+    required double largeur,
+  }) {
+    if (!largeur.isFinite || colonnes.isEmpty) return true;
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    // Seul le texte AGRANDI fait replier le tableau : a la taille du theme,
+    // la colonne trop etroite pour un identifiant le reduit, borne
+    // (COUPE-MOTS-4), comme avant.
+    if (echelle.scale(1) <= 1) return true;
+    final TextTheme textes = Theme.of(context).textTheme;
+    final TextStyle enTete = textes.labelMedium ?? const TextStyle();
+    final TextStyle cellule = textes.bodySmall ?? const TextStyle();
+    final int flexTotal = colonnes.fold<int>(
+      0,
+      (int somme, ColonneDonnees<T> c) => somme + c.flex,
+    );
+    final double utile = largeur - 2 * AppSpacing.lg;
+    for (final ColonneDonnees<T> colonne in colonnes) {
+      final double place = utile * colonne.flex / flexTotal - AppSpacing.md;
+      // Un rendu riche (une pastille) entoure son texte d'une marge.
+      final double marge = colonne.rendu == null ? 0 : 2 * AppSpacing.md;
+      if (largeurMotLePlusLong(context, colonne.titre, enTete, echelle) >
+          place) {
+        return false;
+      }
+      final Set<String> valeurs = <String>{
+        for (final T ligne in lignes)
+          identifiantsInsecables(colonne.texte(ligne)),
+      };
+      final TextStyle style = colonne.tabulaire
+          ? AppTypography.tabulaire(cellule)
+          : cellule;
+      if (largeurMotLePlusLong(context, valeurs.join(' '), style, echelle) +
+              marge >
+          place) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool tableau = enTableau(context);
@@ -185,22 +238,38 @@ class DataCollection<T> extends StatelessWidget {
     // sans defileur propre.
     final bool enBloc = defileAvecLaPage || !defileSeule;
 
-    if (!tableau) {
-      return _Defilement<T>(
-        enBloc: enBloc,
-        lignes: lignes,
-        piedDePage: piedDePage,
-        cle: cle,
-        espacement: AppSpacing.md,
-        constructeur: (BuildContext contexte, T ligne) => _Carte<T>(
-          colonnes: colonnes,
-          ligne: ligne,
-          onSelectionner: onSelectionner,
-          selectionnee: estSelectionnee?.call(ligne) ?? false,
-        ),
-      );
-    }
+    Widget cartes() => _Defilement<T>(
+      enBloc: enBloc,
+      lignes: lignes,
+      piedDePage: piedDePage,
+      cle: cle,
+      espacement: AppSpacing.md,
+      constructeur: (BuildContext contexte, T ligne) => _Carte<T>(
+        colonnes: colonnes,
+        ligne: ligne,
+        onSelectionner: onSelectionner,
+        selectionnee: estSelectionnee?.call(ligne) ?? false,
+      ),
+    );
 
+    if (!tableau) return cartes();
+
+    // COUPE-MOTS-FOND-1 : un tableau ou une colonne coupe un mot (texte
+    // agrandi) se replie en cartes, comme sur une tablette.
+    return LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints contraintes) =>
+          tientEnTableau<T>(
+            contexte,
+            colonnes: colonnes,
+            lignes: lignes,
+            largeur: contraintes.maxWidth,
+          )
+          ? _tableau(contexte, enBloc)
+          : cartes(),
+    );
+  }
+
+  Widget _tableau(BuildContext context, bool enBloc) {
     final AppPalette palette = AppPalette.of(context);
     final AppMetriques metriques = AppMetriques.of(context);
     final Widget corps = _Defilement<T>(
@@ -332,12 +401,11 @@ class _EnTeteTableau<T> extends StatelessWidget {
                     padding: const EdgeInsetsDirectional.only(
                       end: AppSpacing.md,
                     ),
-                    child: Text(
-                      colonne.titre,
-                      style: style,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    // COUPE-MOTS-FOND-1 : l'en-tete passe a la ligne entre
+                    // ses mots, jamais tronque (« Entr... ») ; la collection
+                    // garantit que chacun de ses mots tient
+                    // ([DataCollection.tientEnTableau]).
+                    child: TexteSansCoupure(colonne.titre, style: style),
                   ),
                 ),
             ],
@@ -455,8 +523,10 @@ class _Cellule<T> extends StatelessWidget {
       label: '${colonne.titre} : ${sansAncre(colonne.texte(ligne))}',
       excludeSemantics: true,
       // COUPE-MOTS-4 : un mot plus long que sa colonne (un identifiant)
-      // reduit son echelle au lieu d'etre coupe.
-      child: TexteSansCoupure(colonne.texte(ligne), style: style),
+      // reduit son echelle au lieu d'etre coupe. COUPE-MOTS-FOND-1 : le
+      // tableau n'est rendu que si chaque mot tient sans reduction
+      // ([DataCollection.tientEnTableau]) ; la reduction reste un filet.
+      child: _TexteCollection(colonne.texte(ligne), style: style),
     );
   }
 }
@@ -516,14 +586,11 @@ class _Carte<T> extends StatelessWidget {
           children: <Widget>[
             if (titre != null) ...<Widget>[
               titre.rendu?.call(context, ligne) ??
-                  TexteSansCoupure(
-                    titre.texte(ligne),
-                    style: textes.titleMedium ?? const TextStyle(),
-                  ),
+                  _TitreCarte<T>(colonne: titre, ligne: ligne),
               Ecart.vSm,
             ],
             if (resume.isNotEmpty)
-              TexteSansCoupure(
+              _TexteCollection(
                 resume,
                 style: palette.inkMuted.applyTo(
                   textes.bodySmall ?? const TextStyle(),
@@ -534,7 +601,7 @@ class _Carte<T> extends StatelessWidget {
                   colonne.texte(ligne).isNotEmpty) ...<Widget>[
                 Ecart.vSm,
                 colonne.rendu?.call(context, ligne) ??
-                    TexteSansCoupure(
+                    _TexteCollection(
                       colonne.texte(ligne),
                       style: palette.inkMuted.applyTo(
                         AppTypography.tabulaire(
@@ -546,6 +613,159 @@ class _Carte<T> extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Un identifiant technique a traits d'union ordinaires, dans un texte :
+/// des segments en capitales et chiffres, un chiffre au moins
+/// (« TEACHER-RB-000001 »).
+final RegExp _identifiantATraits = RegExp(
+  r'(?<![A-Za-z0-9])(?=[A-Z0-9-]*[0-9])[A-Z0-9]+(?:-[A-Z0-9]+)+(?![A-Za-z0-9])',
+);
+
+/// [texte] tel que la collection l'affiche : chaque identifiant technique
+/// qu'il contient (« Rachid · TEACHER-RB-000001 ») prend des traits d'union
+/// insecables (U+2011), pour passer entier a la ligne au lieu de se couper
+/// a son trait (COUPE-MOTS-FOND-1, comme `identifiantInsecable` de
+/// COUPE-MOTS-4, mais pour tous les appelants). Les mots composes en
+/// minuscules (« Al-Badr ») ne sont pas touches.
+@visibleForTesting
+String identifiantsInsecables(String texte) => texte.replaceAllMapped(
+  _identifiantATraits,
+  (Match m) => m.group(0)!.replaceAll('-', '\u2011'),
+);
+
+/// Le titre d'une carte (COUPE-MOTS-FOND-1, point 2).
+///
+/// Un titre qui tient a la taille des titres de carte (`titleMedium`, a
+/// l'echelle de l'appareil) est rendu tel quel. Un titre fait d'un seul mot
+/// qui n'y tient pas (un identifiant technique « GUARDIAN-FD-000014 » a
+/// traits insecables, a 320 px texte x2) n'est ni coupe a ses traits ni
+/// reduit sous la taille des autres titres : l'en-tete de sa colonne
+/// (« Personne ») reste le titre, a la taille des titres, et l'identifiant
+/// passe en sous-titre, entier, insecable, au style des valeurs tabulaires.
+/// La hierarchie est gardee : chaque carte a un titre a la meme taille.
+class _TitreCarte<T> extends StatelessWidget {
+  const _TitreCarte({required this.colonne, required this.ligne});
+
+  final ColonneDonnees<T> colonne;
+  final T ligne;
+
+  /// Vrai quand [texte] est un seul mot (aucune espace ou il puisse passer
+  /// a la ligne) plus large que [largeur] a la taille de [style].
+  static bool motSeulTropLong(
+    BuildContext context,
+    String texte,
+    TextStyle style,
+    double largeur,
+  ) {
+    if (!largeur.isFinite) return false;
+    if (texte.trim().contains(RegExp(r'[\s\u200B]'))) return false;
+    return largeurMotLePlusLong(
+          context,
+          texte,
+          style,
+          MediaQuery.textScalerOf(context),
+        ) >
+        largeur;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    final TextStyle styleTitre = textes.titleMedium ?? const TextStyle();
+    final String texte = colonne.texte(ligne);
+    return LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints c) {
+        if (!motSeulTropLong(contexte, texte, styleTitre, c.maxWidth)) {
+          return _TexteCollection(texte, style: styleTitre);
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            // L'en-tete est lu dans la voix de la carte avec la valeur.
+            TexteSansCoupure(colonne.titre, style: styleTitre),
+            Ecart.vXs,
+            _TexteCollection(
+              texte,
+              style: AppTypography.tabulaire(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// Un texte de la collection (cellule, titre, ligne de carte) : un
+/// [TexteSansCoupure] dont les identifiants techniques ne se coupent jamais
+/// a leurs traits (COUPE-MOTS-FOND-1).
+///
+/// Le texte reste celui de la donnee tant que la ligne ne passe pas a un
+/// trait d'identifiant ; seulement quand elle s'y couperait (« Rachid ·
+/// TEACHER-RB- / 000001 »), les traits de l'identifiant deviennent
+/// insecables ([identifiantsInsecables]) et il passe entier a la ligne. Le
+/// lecteur d'ecran lit toujours le texte d'origine.
+class _TexteCollection extends StatelessWidget {
+  const _TexteCollection(this.texte, {required this.style});
+
+  final String texte;
+  final TextStyle style;
+
+  /// Vrai quand, pose a [largeur], [texte] passe a la ligne au milieu d'un
+  /// identifiant.
+  static bool _coupeUnIdentifiant(
+    BuildContext context,
+    String texte,
+    TextStyle style,
+    double largeur,
+  ) {
+    if (!largeur.isFinite) return false;
+    final List<RegExpMatch> ids = _identifiantATraits
+        .allMatches(texte)
+        .toList();
+    if (ids.isEmpty) return false;
+    final TextPainter peintre = TextPainter(
+      text: TextSpan(
+        text: texte,
+        style: DefaultTextStyle.of(context).style.merge(style),
+      ),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+    )..layout(maxWidth: largeur);
+    try {
+      for (final RegExpMatch m in ids) {
+        final int debut = peintre
+            .getLineBoundary(TextPosition(offset: m.start))
+            .end;
+        if (debut < m.end) return true;
+      }
+      return false;
+    } finally {
+      peintre.dispose();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_identifiantATraits.hasMatch(texte)) {
+      return TexteSansCoupure(texte, style: style);
+    }
+    return LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints c) =>
+          _coupeUnIdentifiant(contexte, texte, style, c.maxWidth)
+          ? Semantics(
+              label: texte,
+              excludeSemantics: true,
+              child: TexteSansCoupure(
+                identifiantsInsecables(texte),
+                style: style,
+              ),
+            )
+          : TexteSansCoupure(texte, style: style),
     );
   }
 }
