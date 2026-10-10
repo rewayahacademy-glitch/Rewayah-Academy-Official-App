@@ -28,6 +28,7 @@
 // effacement global.
 
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,6 +40,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/tc_outils/etat_outils.dart';
 import '../../core/tc_outils/operations_personnelles.dart';
 import '../../core/tc_outils/port_dock_hote.dart' show OutilDock;
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
@@ -205,6 +207,15 @@ class CommandesPedagogiques extends ConsumerStatefulWidget {
   static const Key cleEcritureEleve = ValueKey<String>(
     'commandes-ecriture-eleve',
   );
+
+  /// Le defilement de la colonne des Commandes.
+  static const Key cleDefilement = ValueKey<String>('commandes-defilement');
+
+  /// Le fondu du bas : il reste a lire sous le bord du panneau.
+  static const Key cleFonduBas = ValueKey<String>('commandes-fondu-bas');
+
+  /// Le fondu du haut : la colonne a defile.
+  static const Key cleFonduHaut = ValueKey<String>('commandes-fondu-haut');
 
   final VueSeance vue;
   final ActionsSeance actions;
@@ -407,9 +418,15 @@ class _CommandesPedagogiquesState extends ConsumerState<CommandesPedagogiques> {
   /// (UX_REVIEW_TB n. 27 a). Le contenu est court : tout est construit
   /// (lecteur d'ecran, ordre du focus), et la colonne defile si la place
   /// manque.
+  ///
+  /// Verification TB-10 et TB-11b : a 320 x2, la colonne ne montre qu'une
+  /// ou deux lignes ; ce qui reste dessous (Stylo, Gomme, Terminer, la
+  /// phrase de conservation) ne s'atteignait qu'en defilant, sans signe, et
+  /// une ligne restait coupee a mi-hauteur au bord. L'indice maison, comme
+  /// `TeteSalleBornee` : un fondu au bord bas tant qu'il reste a lire, au
+  /// bord haut des que la colonne a defile.
   Widget _colonne(List<Widget> lignes) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.only(bottom: AppSpacing.md),
+    return _ColonneDefilante(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -574,7 +591,12 @@ class _CommandesPedagogiquesState extends ConsumerState<CommandesPedagogiques> {
   List<Widget> _lectureEtFocus() {
     final VueSeance vue = widget.vue;
     final ActionsSeance actions = widget.actions;
+    // Verification TB-10 : chez l'eleve au bureau, la barre basse porte
+    // deja le zoom local ; une seule commande de zoom visible a la fois.
+    final bool zoomEnBarre =
+        !vue.commandesCompletes && vue.voitZoomLocal(AppGabarit.de(context));
     final bool zoom =
+        !zoomEnBarre &&
         vue.voitZoomCommandes &&
         (actions.onZoomMoins != null || actions.onZoomPlus != null);
     final VoidCallback? ajuster = actions.onAjusterEcran;
@@ -761,4 +783,98 @@ class _EcritureSuspendue extends StatelessWidget {
     style: AppPalette.of(context).inkMuted
         .applyTo(Theme.of(context).textTheme.bodySmall ?? const TextStyle()),
   );
+}
+
+/// La colonne des Commandes qui defile, avec l'indice de defilement maison :
+/// un fondu au bord bas tant qu'il reste du contenu dessous, au bord haut
+/// des qu'elle a defile (meme dessin que `TeteSalleBornee`).
+class _ColonneDefilante extends StatefulWidget {
+  const _ColonneDefilante({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_ColonneDefilante> createState() => _ColonneDefilanteState();
+}
+
+class _ColonneDefilanteState extends State<_ColonneDefilante> {
+  bool _suite = false;
+  bool _avant = false;
+
+  /// Le defilement garde sa position quand un fondu se pose ou se retire.
+  final GlobalKey _cleDefile = GlobalKey(debugLabel: 'commandes-colonne');
+
+  bool _suivre(ScrollMetrics m) {
+    final bool suite = m.extentAfter > 0.5;
+    final bool avant = m.extentBefore > 0.5;
+    if (suite != _suite || avant != _avant) {
+      setState(() {
+        _suite = suite;
+        _avant = avant;
+      });
+    }
+    return false;
+  }
+
+  /// Seule l'opacite de [fond] compte (melange `dstIn`).
+  Widget _fondre(
+    Key cle,
+    Color fond, {
+    required bool versLeBas,
+    required Widget child,
+  }) => ShaderMask(
+    key: cle,
+    blendMode: BlendMode.dstIn,
+    shaderCallback: (Rect r) {
+      // Une vue basse (320 x2 : 80 a 100 px) garde l'essentiel lisible : le
+      // fondu ne prend jamais plus du huitieme de sa hauteur.
+      final double fondu = math.min(AppSpacing.xxxl, r.height / 8);
+      return LinearGradient(
+        begin: versLeBas ? Alignment.topCenter : Alignment.bottomCenter,
+        end: versLeBas ? Alignment.bottomCenter : Alignment.topCenter,
+        stops: <double>[
+          if (r.height <= 0) 0 else math.max(0, 1 - fondu / r.height),
+          1,
+        ],
+        colors: <Color>[fond, fond.withValues(alpha: 0)],
+      ).createShader(r);
+    },
+    child: child,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    Widget contenu = KeyedSubtree(
+      key: _cleDefile,
+      child: SingleChildScrollView(
+        key: CommandesPedagogiques.cleDefilement,
+        padding: const EdgeInsets.only(bottom: AppSpacing.md),
+        child: widget.child,
+      ),
+    );
+    final Color fond = AppPalette.of(context).surfaceRaised.background;
+    if (_suite) {
+      contenu = _fondre(
+        CommandesPedagogiques.cleFonduBas,
+        fond,
+        versLeBas: true,
+        child: contenu,
+      );
+    }
+    if (_avant) {
+      contenu = _fondre(
+        CommandesPedagogiques.cleFonduHaut,
+        fond,
+        versLeBas: false,
+        child: contenu,
+      );
+    }
+    return NotificationListener<ScrollUpdateNotification>(
+      onNotification: (ScrollUpdateNotification n) => _suivre(n.metrics),
+      child: NotificationListener<ScrollMetricsNotification>(
+        onNotification: (ScrollMetricsNotification n) => _suivre(n.metrics),
+        child: contenu,
+      ),
+    );
+  }
 }

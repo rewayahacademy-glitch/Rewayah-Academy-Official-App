@@ -983,6 +983,87 @@ void main() {
     expect(_conservation, findsNothing);
   });
 
+  // Verification TB-11b : a 320 x2, la phrase de conservation avait sa
+  // derniere ligne coupee au bord bas de la feuille, et en arabe elle ne
+  // paraissait pas du tout. Elle s'atteint au defilement, signale par le
+  // fondu du bas, et se lit entiere dans la vue de la colonne.
+  group('320 x2 : la conservation atteinte et entiere', () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      testWidgets('enseignant ${langue.languageCode}', (
+        WidgetTester tester,
+      ) async {
+        await tester.runAsync(() => LocaleSettings.setLocale(langue));
+        addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+        await _monter(
+          tester,
+          role: RoleSeance.enseignant,
+          situation: SituationTb.ped03,
+          taille: _etroit,
+          texte: 2,
+        );
+        await _taper(tester, _entreeCommandes);
+        expect(_conservation, findsOneWidget);
+        final Finder colonne = find.byKey(CommandesPedagogiques.cleDefilement);
+        final Rect vue = tester.getRect(colonne);
+        final Rect avant = tester.getRect(_conservation);
+        if (avant.top < vue.top - 0.5 || avant.bottom > vue.bottom + 0.5) {
+          // Hors de la vue : le fondu du bas dit qu'il reste a lire.
+          expect(
+            find.byKey(CommandesPedagogiques.cleFonduBas),
+            findsOneWidget,
+            reason: 'aucun signe de la suite (phrase $avant, vue $vue)',
+          );
+        }
+        await tester.scrollUntilVisible(
+          _conservation,
+          24,
+          scrollable: find.descendant(
+            of: colonne,
+            matching: find.byType(Scrollable),
+          ),
+        );
+        await tester.pumpAndSettle();
+        // La phrase amenee en haut de la vue : sa premiere ligne n'est pas
+        // coupee au bord haut, et tant qu'elle depasse en bas, le fondu du
+        // bas le dit (la vue de la feuille fait 80 px a 320 x2 en francais
+        // pour une phrase de 96 : limite notee, disposition TB-4 / HU-1).
+        await tester.runAsync(
+          () => Scrollable.ensureVisible(tester.element(_conservation)),
+        );
+        await tester.pumpAndSettle();
+        final Rect phrase = tester.getRect(_conservation);
+        final Rect cadre = tester.getRect(colonne);
+        expect(
+          phrase.top,
+          closeTo(cadre.top, 0.5),
+          reason: 'phrase $phrase, vue $cadre',
+        );
+        if (phrase.bottom > cadre.bottom + 0.5) {
+          expect(
+            find.byKey(CommandesPedagogiques.cleFonduBas),
+            findsOneWidget,
+            reason: 'la fin de la phrase est sous le bord, sans signe',
+          );
+        }
+        // Au bout du defilement, la derniere ligne de la phrase est passee
+        // dans la vue : elle s'atteint entiere en lisant.
+        await tester.runAsync(
+          () => Scrollable.ensureVisible(
+            tester.element(_conservation),
+            alignment: 1,
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(
+          tester.getRect(_conservation).bottom,
+          lessThanOrEqualTo(tester.getRect(colonne).bottom + 0.5),
+        );
+        expect(tester.takeException(), isNull);
+      });
+    }
+  });
+
   group('aucun « Sauvegarde » de succes (§12, §19.5 point 5)', () {
     // Le succes d'une sauvegarde (« Sauvegarde », « Notes sauvegardees. ») ;
     // la negation « ne sont pas sauvegardees » et l'etiquette « Sauvegarde

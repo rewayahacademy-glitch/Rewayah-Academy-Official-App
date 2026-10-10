@@ -261,17 +261,27 @@ class _Tuile extends StatelessWidget {
     // (K-54) ; texte agrandi (DESIGN-GOV, 200 %) : l'icone seule, le libelle en
     // infobulle et pour le lecteur d'ecran, plutot qu'un mot tronque.
     final bool agrandi = MediaQuery.textScalerOf(context).scale(1) > 1.3;
-    return Semantics(
-      selected: actif,
-      child: BoutonOutil(
-        key: ValueKey<String>('outil-${outil.name}'),
-        icone: _icone(outil),
-        libelle: _libelle(outil),
-        retenu: actif,
-        avecLibelle: !agrandi,
-        forme: FormeBoutonOutil.tuile,
-        onPress: onPress,
+    // Verification TB-10 : une tuile seule sur sa rangee (« Ecrire » de
+    // l'eleve) a la place de son mot, meme agrandi : elle le garde.
+    return LayoutBuilder(
+      builder: (BuildContext _, BoxConstraints c) => Semantics(
+        selected: actif,
+        child: BoutonOutil(
+          key: ValueKey<String>('outil-${outil.name}'),
+          icone: _icone(outil),
+          libelle: _libelle(outil),
+          retenu: actif,
+          avecLibelle:
+              !agrandi ||
+              (c.maxWidth.isFinite && c.maxWidth >= _largeurAvecMot),
+          forme: FormeBoutonOutil.tuile,
+          onPress: onPress,
+        ),
       ),
     );
   }
 }
+
+/// La largeur a partir de laquelle une tuile garde son mot au texte agrandi
+/// (trois respirations, 192) : une tuile seule sur sa rangee de telephone.
+const double _largeurAvecMot = AppSpacing.respiration * 3;

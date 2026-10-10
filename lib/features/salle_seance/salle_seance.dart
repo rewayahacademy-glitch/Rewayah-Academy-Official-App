@@ -310,6 +310,7 @@ class SalleSeance extends StatelessWidget {
                             actions: actions,
                             local: local,
                             agrandi: agrandi,
+                            marge: gouttiere,
                             contenu: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: <Widget>[
@@ -579,6 +580,7 @@ Widget _surCommandesEleve({
   required EtatLocalSeance local,
   required bool agrandi,
   required Widget contenu,
+  double marge = AppSpacing.sm,
 }) {
   final VoidCallback? reduire = actions.onCommandes;
   if (vue.commandesCompletes || reduire == null) return contenu;
@@ -623,14 +625,13 @@ Widget _surCommandesEleve({
               child: panneau,
             )
           else
+            // Verification TB-10 : le volet reste dans le cadre de la
+            // surface ([marge] : la gouttiere qui borde le support).
             PositionedDirectional(
-              end: AppSpacing.sm,
+              end: marge,
               top: 0,
               bottom: AppSpacing.sm,
-              width: math.min(
-                largeurPanneauSeance,
-                c.maxWidth - 2 * AppSpacing.sm,
-              ),
+              width: math.min(largeurPanneauSeance, c.maxWidth - 2 * marge),
               child: panneau,
             ),
         ],
@@ -727,12 +728,14 @@ class _CommandesEleveState extends ConsumerState<CommandesEleve> {
     final VoidCallback? basculer = widget.actions.onCommandes;
     final bool ouvert = vue.panneau == PanneauOuvert.commandes;
     final bool ecrit = ecritSurLaSurface(ref, vue);
-    final String? avis = _lu
+    final String? retrait = _lu
         ? null
         : vue
-                  .copyWith(ecritureRetiree: vue.ecritureRetiree || _retrait)
-                  .avisRetrait ??
-              (ecrit ? null : vue.avisEcriture);
+              .copyWith(ecritureRetiree: vue.ecritureRetiree || _retrait)
+              .avisRetrait;
+    final String? avis = _lu
+        ? null
+        : retrait ?? (ecrit ? null : vue.avisEcriture);
     // TB-10 (tour 2) : texte agrandi ou Mode Accessibilite, l'information
     // courte et le declencheur (icone seule, nom lu et infobulle gardes) se
     // partagent UNE rangee, et la phrase prend le corps court : la page
@@ -771,7 +774,10 @@ class _CommandesEleveState extends ConsumerState<CommandesEleve> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        if (avis != null) _AvisEcriture(texte: avis),
+        // Verification TB-10 : le retrait (« Sayyid reprend le tableau. »)
+        // ne porte pas le crayon de « Vous pouvez ecrire » : sans icone.
+        if (avis != null)
+          _AvisEcriture(texte: avis, avecIcone: retrait == null),
         if (avis != null && entree != null) Ecart.vSm,
         if (entree != null) Center(heightFactor: 1, child: entree),
       ],
@@ -782,9 +788,16 @@ class _CommandesEleveState extends ConsumerState<CommandesEleve> {
 /// L'information courte de l'eleve : l'icone d'ecriture et la phrase, dite
 /// au lecteur d'ecran des qu'elle change (W-413).
 class _AvisEcriture extends StatelessWidget {
-  const _AvisEcriture({required this.texte, this.compacte = false});
+  const _AvisEcriture({
+    required this.texte,
+    this.compacte = false,
+    this.avecIcone = true,
+  });
 
   final String texte;
+
+  /// Faux pour le retrait du droit d'ecrire : le crayon dirait le contraire.
+  final bool avecIcone;
 
   /// Rangee du texte agrandi : sans l'icone (le declencheur est a cote), au
   /// corps court.
@@ -811,13 +824,15 @@ class _AvisEcriture extends StatelessWidget {
           : Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                ExcludeSemantics(
-                  child: IconTheme(
-                    data: palette.inkAccent.asIconTheme(size: AppSpacing.xl),
-                    child: Icon(AppIcons.annoter.repos),
+                if (avecIcone) ...<Widget>[
+                  ExcludeSemantics(
+                    child: IconTheme(
+                      data: palette.inkAccent.asIconTheme(size: AppSpacing.xl),
+                      child: Icon(AppIcons.annoter.repos),
+                    ),
                   ),
-                ),
-                Ecart.hSm,
+                  Ecart.hSm,
+                ],
                 Flexible(child: phrase),
               ],
             ),

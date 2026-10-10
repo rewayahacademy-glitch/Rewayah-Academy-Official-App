@@ -18,6 +18,7 @@ import 'dart:io';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -473,6 +474,34 @@ void main() {
         );
         // Le doigt l'atteint tel quel : le support est presente.
         await tester.tap(_presenter);
+        await tester.pumpAndSettle();
+        expect(_pageAvecTitre(_autre), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+
+      // Verification TB-8 : a 320 x2, la vue de l'apercu ne fait qu'environ
+      // 51 px et le message d'ouverture y etait coupe (« Ouverture du »).
+      // Le message entier est dans la vue, sous le doigt, sans defiler.
+      testWidgets('LIB-03 : « Ouverture du support… » se lit entier pendant '
+          'le chargement ($cas)', (WidgetTester tester) async {
+        await _monterCadre(tester, taille: taille, texte: texte);
+        await tester.tap(await _versCarte(tester, _autre));
+        await tester.pumpAndSettle();
+        await tester.tap(_presenter);
+        // Un seul cadre, puis celui du defilement eventuel : le chargement
+        // court encore.
+        await tester.pump();
+        await tester.pump();
+        final Finder message = find.text(t.salle.seance.bibliotheque.ouverture);
+        expect(message, findsOneWidget);
+        _attendreDansLaVue(tester, message, 'le message d\'ouverture');
+        final Rect feuille = tester.getRect(_feuille);
+        final Rect rect = tester.getRect(message);
+        expect(rect.top, greaterThanOrEqualTo(feuille.top - 0.5));
+        expect(rect.bottom, lessThanOrEqualTo(feuille.bottom + 0.5));
+        final RenderParagraph texteRendu = tester.renderObject(message);
+        expect(texteRendu.didExceedMaxLines, isFalse);
+        verifierUnSeulBoutonPlein(tester);
         await tester.pumpAndSettle();
         expect(_pageAvecTitre(_autre), findsOneWidget);
         expect(tester.takeException(), isNull);

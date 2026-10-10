@@ -8,11 +8,13 @@
 // montes, rectangles, outil retenu de l'appareil.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter/services.dart' show LogicalKeyboardKey;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart'
     show TitreEnseignant;
@@ -30,10 +32,14 @@ import 'package:rewayah_academy/features/salle_seance/barre_support.dart'
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
 import 'package:rewayah_academy/features/salle_seance/dock_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/ecriture_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/panneau_eleves.dart'
+    show libelleStatutEleve;
 import 'package:rewayah_academy/features/salle_seance/panneau_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/surface_page_fixe.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/zone_support.dart'
+    show ZoneSupport;
 import 'package:rewayah_academy/features/tc_dock/barre_stylet.dart';
 import 'package:rewayah_academy/features/tc_dock/couche_annotation.dart';
 
@@ -259,9 +265,27 @@ void main() {
         findsOneWidget,
       );
       expect(find.textContaining('professeur'), findsNothing);
+      // Verification TB-10 : le retrait ne porte pas le crayon de
+      // « Vous pouvez ecrire » ; aucune icone peinte dans l'information.
+      expect(
+        find.descendant(of: _avis, matching: find.byType(Icon)),
+        findsNothing,
+      );
       expect(_palette, findsNothing);
       await _taper(tester, _declencheur);
       expect(_sectionEcrire, findsNothing);
+    });
+
+    testWidgets('verification TB-10 : l\'autorisation garde son crayon, le '
+        'retrait n\'en a pas', (WidgetTester tester) async {
+      await _ouvrir(tester, RoleSeance.eleve, SituationTb.autorisationEcrire);
+      final Finder icone = find.descendant(
+        of: _avis,
+        matching: find.byType(Icon),
+      );
+      expect(icone, findsOneWidget);
+      expect(tester.widget<Icon>(icone).icon, AppIcons.annoter.repos);
+      expect(tester.getSize(icone).width, greaterThan(0));
     });
   });
 
@@ -792,7 +816,152 @@ void main() {
         isFalse,
         reason: 'volet $volet, barre basse $zoom',
       );
+      // Verification TB-10 : une seule commande de zoom visible (la barre
+      // basse), et le volet dans le cadre de la surface.
+      expect(
+        find.byType(ZoomLocal).hitTestable(),
+        findsOneWidget,
+        reason: 'le zoom local paraissait aussi dans la Lecture du volet',
+      );
+      final Rect surface = tester.getRect(find.byType(ZoneSupport));
+      expect(volet.left, greaterThanOrEqualTo(surface.left - 0.5));
+      expect(
+        volet.right,
+        lessThanOrEqualTo(surface.right + 0.5),
+        reason: 'volet $volet, surface $surface',
+      );
     });
+
+    // Verification TB-10 : Commandes ouvertes apres « Ecrire », a 320 x2
+    // (eleve et guidee, fr et ar) et 390 x2 en guidee, la tuile n'avait que
+    // son icone et Stylo, Gomme, Terminer ne s'atteignaient qu'en defilant,
+    // sans aucun signe. La tuile garde son mot ; le fondu du bas dit la
+    // suite tant qu'il en reste ; au bout, Terminer est dans la vue.
+    for (final (RoleSeance role, Size taille, AppLocale langue)
+        in <(RoleSeance, Size, AppLocale)>[
+          (RoleSeance.eleve, etroit, AppLocale.fr),
+          (RoleSeance.eleve, etroit, AppLocale.ar),
+          (RoleSeance.guidee, etroit, AppLocale.fr),
+          (RoleSeance.guidee, etroit, AppLocale.ar),
+          (RoleSeance.guidee, _telephone, AppLocale.fr),
+        ]) {
+      testWidgets('${role.name} ${taille.width.toInt()} x2 '
+          '${langue.languageCode} : apres Ecrire, la tuile dit son mot et la '
+          'suite du volet est signalee', (WidgetTester tester) async {
+        await tester.runAsync(() => LocaleSettings.setLocale(langue));
+        addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+        await monter(tester, role, taille, 2);
+        await _taper(tester, _declencheur);
+        await _taper(tester, _ecrire);
+        final Finder mot = find.descendant(
+          of: _ecrire,
+          matching: find.text(t.salle.seance.outils.ecrire),
+        );
+        expect(mot, findsOneWidget, reason: 'la tuile Ecrire sans son mot');
+        expect(tester.getSize(mot).height, greaterThan(0));
+        final Finder colonne = find.byKey(CommandesPedagogiques.cleDefilement);
+        final ScrollableState defile = tester.state<ScrollableState>(
+          find.descendant(of: colonne, matching: find.byType(Scrollable)),
+        );
+        expect(
+          find.byKey(CommandesPedagogiques.cleFonduBas).evaluate().isNotEmpty,
+          defile.position.extentAfter > 0.5,
+          reason: 'le fondu du bas suit ce qui reste a lire',
+        );
+        final Finder fin = find.descendant(
+          of: colonne,
+          matching: find.byKey(BarreStylet.cleTerminer),
+        );
+        final Rect vue = tester.getRect(colonne);
+        final Rect avant = tester.getRect(fin);
+        if (avant.bottom > vue.bottom + 0.5) {
+          expect(
+            find.byKey(CommandesPedagogiques.cleFonduBas),
+            findsOneWidget,
+            reason: 'Terminer $avant sous le bord de $vue, sans signe',
+          );
+        }
+        await tester.runAsync(
+          () => Scrollable.ensureVisible(tester.element(fin), alignment: 1),
+        );
+        await tester.pumpAndSettle();
+        final Rect terminer = tester.getRect(fin);
+        expect(
+          terminer.top,
+          greaterThanOrEqualTo(vue.top - 0.5),
+          reason: 'Terminer $terminer, vue $vue',
+        );
+        expect(
+          terminer.bottom,
+          lessThanOrEqualTo(vue.bottom + 0.5),
+          reason: 'Terminer $terminer, vue $vue',
+        );
+        expect(tester.takeException(), isNull);
+      });
+    }
+
+    // Verification TB-10 : en arabe a 320 x2, « الكتابة مسموحة » etait
+    // tronque en « الكتاب… » sur la ligne de Mariam. Les mentions d'etat de
+    // la ligne (statut, droit d'ecrire) se lisent entieres, dans la carte.
+    for (final AppLocale langue in <AppLocale>[AppLocale.ar, AppLocale.fr]) {
+      testWidgets('320 x2 ${langue.languageCode}, enseignant : les mentions '
+          'd etat de la ligne de l eleve ne sont jamais tronquees', (
+        WidgetTester tester,
+      ) async {
+        await tester.runAsync(() => LocaleSettings.setLocale(langue));
+        addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+        fixerVueCapture(tester, etroit, 1);
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(
+          hoteCapture(
+            const DemoSallePage(
+              role: RoleSeance.enseignant,
+              situation: SituationTb.per01,
+            ),
+            echelleTexte: 2,
+          ),
+        );
+        await stabiliser(tester);
+        await _taper(
+          tester,
+          find.byKey(const ValueKey<String>('autoriser-ecrire-Mariam')),
+        );
+        final Finder ligne = find.byKey(const ValueKey<String>('eleve-Mariam'));
+        await tester.ensureVisible(ligne);
+        await stabiliser(tester);
+        final Finder mention = find.descendant(
+          of: ligne,
+          matching: find.text(t.salle.seance.ecriture.peutEcrire),
+        );
+        expect(mention, findsOneWidget);
+        final Rect carte = tester.getRect(ligne);
+        final List<Element> mentions = <Element>[
+          ...mention.evaluate(),
+          ...find
+              .descendant(
+                of: ligne,
+                matching: find.text(
+                  libelleStatutEleve(StatutEleveSeance.connecte),
+                ),
+              )
+              .evaluate(),
+        ];
+        expect(mentions, hasLength(2));
+        for (final Element e in mentions) {
+          final RenderParagraph p = e.renderObject! as RenderParagraph;
+          expect(
+            p.didExceedMaxLines,
+            isFalse,
+            reason: '« ${p.text.toPlainText()} » tronque',
+          );
+          final Rect r = p.localToGlobal(Offset.zero) & p.size;
+          expect(r.left, greaterThanOrEqualTo(carte.left - 0.5));
+          expect(r.right, lessThanOrEqualTo(carte.right + 0.5));
+        }
+        verifierAucunMotCoupe(tester, mention);
+        expect(tester.takeException(), isNull);
+      });
+    }
 
     test('W-253 (WCAG 2.5.3) : le nom lu commence par le libelle visible, '
         'd un seul tenant', () {

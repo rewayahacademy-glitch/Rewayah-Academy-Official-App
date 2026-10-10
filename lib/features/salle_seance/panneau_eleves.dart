@@ -9,6 +9,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/isolation_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -252,40 +253,53 @@ class _EnTeteEleve extends StatelessWidget {
         styleNom: palette.inkStrong.applyTo(
           textes.titleSmall ?? const TextStyle(),
         ),
-        roleWidget: Row(
+        // Verification TB-10 : en arabe a 320 x2, « Peut ecrire » etait
+        // tronque en « الكتاب… » (une ligne et points de suspension). Les
+        // deux mentions d'etat se lisent entieres : le droit d'ecrire passe
+        // a la ligne, en bloc, quand il ne tient pas a cote du statut.
+        roleWidget: Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.xs,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: <Widget>[
-            _Pastille(couleur: _couleurPastille(palette, eleve.statut)),
-            Ecart.hXs,
-            Flexible(
-              child: Text(
-                statut,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: (connecte ? encre : palette.inkMuted).applyTo(
-                  _styleFiche(context),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                _Pastille(couleur: _couleurPastille(palette, eleve.statut)),
+                Ecart.hXs,
+                Flexible(
+                  child: TexteSansCoupure(
+                    statut,
+                    style: (connecte ? encre : palette.inkMuted).applyTo(
+                      _styleFiche(context),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
             // TB-10 (plan V2 §12 « Autorisation de dessin » : eleve et droit
             // visibles dans Participants ; planche 8) : l'icone et le mot,
             // jamais la couleur seule.
-            if (eleve.peutEcrire) ...<Widget>[
-              Ecart.hSm,
-              IconTheme(
-                key: ValueKey<String>('peut-ecrire-${cleEleveSeance(eleve)}'),
-                data: palette.inkAccent.asIconTheme(size: AppSpacing.lg),
-                child: Icon(AppIcons.annoter.repos),
+            if (eleve.peutEcrire)
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  IconTheme(
+                    key: ValueKey<String>(
+                      'peut-ecrire-${cleEleveSeance(eleve)}',
+                    ),
+                    data: palette.inkAccent.asIconTheme(size: AppSpacing.lg),
+                    child: Icon(AppIcons.annoter.repos),
+                  ),
+                  Ecart.hXs,
+                  Flexible(
+                    child: TexteSansCoupure(
+                      t.salle.seance.ecriture.peutEcrire,
+                      style: palette.inkAccent.applyTo(_styleFiche(context)),
+                    ),
+                  ),
+                ],
               ),
-              Ecart.hXs,
-              Flexible(
-                child: Text(
-                  t.salle.seance.ecriture.peutEcrire,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: palette.inkAccent.applyTo(_styleFiche(context)),
-                ),
-              ),
-            ],
           ],
         ),
         fin: onBasculer == null
