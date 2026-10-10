@@ -7,8 +7,6 @@
 // personne (K-07). Les cas de rendu (RTL, 320 px a 200 %) et les rappels
 // comptes montent la page ou la salle que sert la meme route.
 
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart'
     show
@@ -23,7 +21,6 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/accessibilite/commandes_masquables.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
-import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/widgets/controle_segmente.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
@@ -157,13 +154,13 @@ List<(String, Finder)> _entrees() => <(String, Finder)>[
 /// chaque entree de la colonne des Commandes est entiere dans la part VUE du
 /// defilement ; sinon (coupee ou cachee dessous), un fondu bas est pose ET
 /// visible : son bord bas est le bord bas de la part vue (pas sous l'ecran),
-/// sa bande a sa hauteur prevue, [AppSpacing.xxxl] (le fondu reduit au
-/// huitieme d'une vue basse, 9 a 16 px, ne se voit pas : captures
-/// `tb12_eleve_commandes_320_x1_clair`, `tb12_guidee_commandes_390_x2_clair`
-/// et relecture TB-RC). Puis la derniere entree, defilee, se lit entiere.
+/// et le chevron « suite en bas » est pose dessus, entier dans la part vue
+/// (le fondu reduit au huitieme d'une vue basse, 9 a 16 px, ne se voit pas
+/// seul : captures `tb12_eleve_commandes_320_x1_clair`,
+/// `tb12_guidee_commandes_390_x2_clair`). Puis la derniere entree, defilee,
+/// se lit entiere.
 ///
-/// Limite : la bande est lue sur le `ShaderMask` du fondu (sa hauteur, huit
-/// fois la bande), pas sur les pixels ; l'opacite n'est pas mesuree.
+/// Limite : l'opacite du fondu n'est pas mesuree sur les pixels.
 Future<void> _feuilleSansCoupureMuette(WidgetTester tester, String cas) async {
   expect(_contenu, findsOneWidget, reason: cas);
   final Finder defile = find.byKey(CommandesPedagogiques.cleDefilement);
@@ -191,10 +188,23 @@ Future<void> _feuilleSansCoupureMuette(WidgetTester tester, String cas) async {
           '$cas : $nom coupee ; le fondu finit a ${bande.bottom}, la part '
           'vue a ${vu.bottom} : fondu hors de la vue',
     );
+    // TB-RC, reunion des lots (decide par delegation le 10/10) : le fondu
+    // reste borne au huitieme d'une vue basse (L2, m29 : 80 a 100 px de
+    // feuille a 320 x2 restent lisibles) ; ce qui le rend visible est le
+    // chevron « suite en bas » pose sur lui (L2, n. 2 et m4), entier dans la
+    // part vue.
+    final Finder chevron = find.byKey(PanneauSeance.cleSuite);
     expect(
-      math.min(AppSpacing.xxxl, bande.height / 8),
-      greaterThanOrEqualTo(AppSpacing.xxxl),
-      reason: '$cas : $nom coupee ; fondu de ${bande.height / 8} px, invisible',
+      chevron,
+      findsOneWidget,
+      reason: '$cas : $nom coupee ; fondu sans chevron, suite invisible',
+    );
+    final Rect signe = tester.getRect(chevron);
+    expect(
+      vu.inflate(0.5).contains(signe.topLeft) &&
+          vu.inflate(0.5).contains(signe.bottomRight),
+      isTrue,
+      reason: '$cas : $nom coupee ; chevron $signe hors de la part vue $vu',
     );
   }
   final (String nomDerniere, Finder derniere) = entrees.last;
@@ -850,20 +860,8 @@ void main() {
   group('Feuille Commandes depuis la coquille : derniere entree entiere ou '
       'fondu visible (eleve, guidee, enseignant ; 320 x1, 320 x2, 390 x2)', () {
     setUpAll(chargerPolicesDuDepot);
-    // Rouges sur a72fd566 (entree coupee sous un fondu de 9 a 24 px, vue de
-    // 75 a 192 px ; seul l'enseignant a 320 x1 a son fondu de 32) : le
-    // comportement attendu est ecrit, ces cas attendent la correction de la
-    // feuille par le lot L2 de TB-RC. A reactiver apres.
-    const Set<String> attendL2 = <String>{
-      'eleve 320 x1',
-      'eleve 320 x2',
-      'eleve 390 x2',
-      'guidee 320 x1',
-      'guidee 320 x2',
-      'guidee 390 x2',
-      'enseignant 320 x2',
-      'enseignant 390 x2',
-    };
+    // Rouges sur a72fd566 (entree coupee sous un fondu de 9 a 24 px, sans
+    // autre signe) ; reactives a la reunion des lots de TB-RC.
     for (final RoleSeance role in RoleSeance.values) {
       for (final (String nom, Size taille, double texte, EdgeInsets zone) cas
           in <(String, Size, double, EdgeInsets)>[
@@ -877,9 +875,7 @@ void main() {
             ),
           ]) {
         final String nomCas = '${role.name} ${cas.$1}';
-        testWidgets(nomCas, skip: attendL2.contains(nomCas), (
-          WidgetTester tester,
-        ) async {
+        testWidgets(nomCas, (WidgetTester tester) async {
           tester.view.padding = FakeViewPadding(
             top: cas.$4.top,
             bottom: cas.$4.bottom,
