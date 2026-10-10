@@ -11,8 +11,15 @@
 --   0084 @ ba943f016df3c3ce9720663fc1c5b7b83fd69bfd
 --   snapshot @ 98611976d56781f32a2383ec9cc5f76f5fe8b409
 --
--- Exécution prévue seulement avec psql -v ON_ERROR_STOP=1 après les gates.
+-- Exécution prévue seulement avec psql -v ON_ERROR_STOP=1 -v sec_prod_confirm_ref=gggmtelinlpseweouyav après les gates.
 -- La transaction doit pouvoir être entièrement annulée. Ne pas copier dans une migration.
+\set ON_ERROR_STOP on
+\if :{?sec_prod_confirm_ref}
+\else
+  \echo 'SEC-PROD refuse: fournir -v sec_prod_confirm_ref=gggmtelinlpseweouyav'
+  \quit
+\endif
+select set_config('codex.sec_prod_confirm_ref', :'sec_prod_confirm_ref', false);
 begin;
 set local search_path = pg_catalog, public, app_private;
 
@@ -23,6 +30,9 @@ declare
   v_latest text;
   v_schema text;
 begin
+  if current_setting('codex.sec_prod_confirm_ref', true) is distinct from 'gggmtelinlpseweouyav' then
+    raise exception 'SEC-PROD: confirmation de projet psql incorrecte';
+  end if;
   if current_setting('server_version_num')::integer < 150000 then
     raise exception 'SEC-PROD: PostgreSQL 15+ requis';
   end if;
