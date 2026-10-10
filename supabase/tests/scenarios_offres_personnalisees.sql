@@ -61,6 +61,14 @@ INSERT INTO public.teacher_profiles
 VALUES
   ('f1490000-0000-0000-0000-000000000997', ARRAY['francais'], 10, 'approved', 'Europe/Paris');
 
+-- L'enseignant de la fixture est réellement disponible aux heures du groupe
+-- C-12 que le scénario affecte avant les cas C-04/C-07.
+INSERT INTO public.weekly_availability (profile_id, weekday, hour_local, timezone_iana)
+VALUES
+  ('f1490000-0000-0000-0000-000000000997', 2, 18, 'Europe/Paris'),
+  ('f1490000-0000-0000-0000-000000000997', 4, 18, 'Europe/Paris'),
+  ('f1490000-0000-0000-0000-000000000997', 6, 18, 'Europe/Paris');
+
 UPDATE public.households
    SET primary_guardian_id = 'f1490000-0000-0000-0000-000000000998'
  WHERE id = 'f1480000-0000-0000-0000-000000000003';
