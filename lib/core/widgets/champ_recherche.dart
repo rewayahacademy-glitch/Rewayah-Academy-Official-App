@@ -68,7 +68,7 @@ class ChampRecherche extends StatelessWidget {
       AppTouchTarget.standard + 2 * AppSpacing.lg;
 
   /// Le nombre de lignes de l'aide quand l'etiquette est sortie du champ.
-  static const int _lignesAide = 3;
+  static const int _lignesAide = 6;
 
   /// Vrai quand l'etiquette ne tient pas sur une ligne dans le champ, a
   /// toute taille de texte (RECETTE-NUIT-B : a texte x2 elle etait tronquee ;
