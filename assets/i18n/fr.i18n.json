@@ -321,7 +321,7 @@
         "peutEcrire": "Peut écrire",
         "autoriser": "Autoriser à écrire",
         "retirer": "Retirer l'autorisation d'écrire",
-        "autoriserSemantique": "Autoriser {prenom} à écrire",
+        "autoriserSemantique": "Autoriser à écrire : {prenom}",
         "retirerSemantique": "Retirer l'autorisation d'écrire de {prenom}",
         "autoriserAide": "{prenom} pourra écrire sur la page ou le tableau. La page et le support restent à vous.",
         "retirerAide": "Ses traits restent sur la page ; ses outils d'écriture se retirent."

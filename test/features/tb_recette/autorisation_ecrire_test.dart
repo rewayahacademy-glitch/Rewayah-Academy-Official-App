@@ -26,8 +26,9 @@ import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_support.dart'
-    show PaginationSupport;
+    show PaginationSupport, ZoomLocal;
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
+import 'package:rewayah_academy/features/salle_seance/dock_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/ecriture_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
@@ -36,8 +37,10 @@ import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 import 'package:rewayah_academy/features/tc_dock/barre_stylet.dart';
 import 'package:rewayah_academy/features/tc_dock/couche_annotation.dart';
 
-import '../../capture/outil_capture.dart' show fixerVueCapture, hoteCapture;
+import '../../capture/outil_capture.dart'
+    show chargerPolicesDuDepot, fixerVueCapture, hoteCapture;
 import '../../router/support_routeur.dart';
+import '../../support/aucun_mot_coupe.dart';
 
 const Size _telephone = Size(390, 844);
 const Size _bureau = Size(1440, 900);
@@ -560,6 +563,46 @@ void main() {
       expect(traits.single.points.last.x, lessThanOrEqualTo(0.4 + 1e-6));
     });
 
+    testWidgets('tour 2 : l entree recreee au moment du retrait (bascule, '
+        'gabarit) repose quand meme l outil retenu', (
+      WidgetTester tester,
+    ) async {
+      // La guidee : au telephone la salle MA-CMD-1, au bureau la salle de
+      // l'eleve ; l'entree change de place dans l'arbre.
+      final VueSeance autoriseeG = DonneesSeanceDemo.vueTb(
+        RoleSeance.guidee,
+        SituationTb.autorisationEcrire,
+      );
+      final VueSeance retireeG = DonneesSeanceDemo.vueTb(
+        RoleSeance.guidee,
+        SituationTb.ped03,
+      );
+      fixerVueCapture(tester, _telephone, 1);
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(_salle(conteneur, autoriseeG, actions()));
+      await stabiliser(tester);
+      conteneur
+          .read(etatOutilsProvider.notifier)
+          .choisirOutil(OutilDock.stylet);
+      await stabiliser(tester);
+      expect(_palette, findsOneWidget);
+      // Le gabarit change (telephone vers bureau) en meme temps que le
+      // retrait : l'entree des Commandes est recreee ailleurs dans l'arbre
+      // avec la vue du retrait, le passage de vrai a faux n'est jamais vu
+      // par elle.
+      final Element avant = tester.element(find.byType(CommandesEleve));
+      fixerVueCapture(tester, _bureau, 1);
+      await tester.pumpWidget(_salle(conteneur, retireeG, actions()));
+      expect(
+        identical(tester.element(find.byType(CommandesEleve)), avant),
+        isFalse,
+        reason: 'l entree est bien recreee',
+      );
+      await stabiliser(tester);
+      expect(conteneur.read(etatOutilsProvider).outilActif, isNull);
+      expect(_palette, findsNothing);
+    });
+
     testWidgets('« Sayyida reprend le tableau. » ; sans titre, le nom', (
       WidgetTester tester,
     ) async {
@@ -653,5 +696,142 @@ void main() {
     await _taper(tester, find.byKey(PanneauSeance.cleReduire));
     await _glisser(tester, 68);
     expect(_traits(tester), hasLength(1));
+  });
+
+  group('Tour 2 : 320 a 200 % et 1440, mesures sur le rendu', () {
+    setUpAll(chargerPolicesDuDepot);
+    const Size etroit = Size(320, 700);
+
+    Future<void> monter(
+      WidgetTester tester,
+      RoleSeance role,
+      Size taille,
+      double texte,
+    ) async {
+      fixerVueCapture(tester, taille, 1);
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        hoteCapture(
+          DemoSallePage(role: role, situation: SituationTb.autorisationEcrire),
+          echelleTexte: texte,
+        ),
+      );
+      await stabiliser(tester);
+      expect(tester.takeException(), isNull);
+    }
+
+    for (final RoleSeance role in <RoleSeance>[
+      RoleSeance.eleve,
+      RoleSeance.guidee,
+    ]) {
+      testWidgets('${role.name} : Commandes ouvertes, aucun mot coupe dans '
+          'le panneau (titre et Reduire)', (WidgetTester tester) async {
+        await monter(tester, role, etroit, 2);
+        await _taper(tester, _declencheur);
+        expect(find.byType(PanneauSeance), findsOneWidget);
+        expect(tester.takeException(), isNull);
+        verifierAucunMotCoupe(tester, find.byType(PanneauSeance));
+        final Rect reduire = tester.getRect(
+          find.byKey(PanneauSeance.cleReduire),
+        );
+        expect(reduire.left, greaterThanOrEqualTo(0));
+        expect(reduire.right, lessThanOrEqualTo(etroit.width));
+      });
+
+      testWidgets('${role.name} : l information courte garde la page '
+          '(au moins les trois quarts de sa hauteur sans elle), entiere '
+          'au-dessus de la barre de l appel', (WidgetTester tester) async {
+        await monter(tester, role, etroit, 2);
+        expect(_avis, findsOneWidget);
+        final double avecAvis = tester.getRect(_page).height;
+        final Rect avis = tester.getRect(_avis);
+        final Rect declencheur = tester.getRect(_declencheur);
+        final Rect dock = tester.getRect(find.byType(DockSeance));
+        verifierAucunMotCoupe(tester, _avis);
+        for (final Rect r in <Rect>[avis, declencheur]) {
+          expect(r.left, greaterThanOrEqualTo(0));
+          expect(r.right, lessThanOrEqualTo(etroit.width));
+          expect(r.bottom, lessThanOrEqualTo(dock.top + 0.5));
+          expect(r.top, greaterThanOrEqualTo(tester.getRect(_page).bottom));
+        }
+        // La meme salle, l'information lue (Commandes ouvertes puis
+        // reduites) : seule l'entree reste sous la page.
+        await _taper(tester, _declencheur);
+        await _taper(tester, find.byKey(PanneauSeance.cleReduire));
+        expect(_avis, findsNothing);
+        final double sansAvis = tester.getRect(_page).height;
+        expect(
+          avecAvis,
+          greaterThanOrEqualTo(sansAvis * 0.75),
+          reason: 'avec $avecAvis, sans $sansAvis',
+        );
+      });
+    }
+
+    testWidgets('1440, eleve : le volet des Commandes ne couvre pas la '
+        'barre basse (page, zoom local, Agrandir)', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, RoleSeance.eleve, _bureau, 1);
+      await _taper(tester, _declencheur);
+      final Rect volet = tester.getRect(
+        find.byKey(const ValueKey<String>('panneau-seance-volet')),
+      );
+      final Iterable<Element> zooms = find
+          .byType(ZoomLocal)
+          .evaluate()
+          .where(
+            (Element e) =>
+                e.findAncestorWidgetOfExactType<PanneauSeance>() == null,
+          );
+      expect(zooms, hasLength(1), reason: 'le zoom local de la barre basse');
+      final RenderBox boite = zooms.single.renderObject! as RenderBox;
+      final Rect zoom = boite.localToGlobal(Offset.zero) & boite.size;
+      expect(
+        volet.overlaps(zoom),
+        isFalse,
+        reason: 'volet $volet, barre basse $zoom',
+      );
+    });
+
+    test('W-253 (WCAG 2.5.3) : le nom lu commence par le libelle visible, '
+        'd un seul tenant', () {
+      final e = t.salle.seance.ecriture;
+      expect(e.autoriserSemantique(prenom: 'Mariam'), startsWith(e.autoriser));
+      expect(e.retirerSemantique(prenom: 'Mariam'), startsWith(e.retirer));
+    });
+
+    testWidgets('Echap, contexte deplie et Commandes ouvertes : le contexte '
+        'se ferme d abord', (WidgetTester tester) async {
+      final List<String> appels = <String>[];
+      final VueSeance vue =
+          DonneesSeanceDemo.vueTb(
+            RoleSeance.eleve,
+            SituationTb.autorisationEcrire,
+          ).copyWith(
+            contexte: ContexteOuvert.enseignant,
+            panneau: PanneauOuvert.commandes,
+          );
+      expect(vue.contexteOuvert, isTrue);
+      fixerVueCapture(tester, _bureau, 1);
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        hoteCapture(
+          SalleSeance(
+            vue: vue,
+            actions: ActionsSeance(
+              onCommandes: () => appels.add('commandes'),
+              onContexte: (ContexteOuvert c) =>
+                  appels.add('contexte ${c.name}'),
+              onOutil: (OutilEnseignement _) {},
+            ),
+          ),
+        ),
+      );
+      await stabiliser(tester);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pump();
+      expect(appels, <String>['contexte aucun']);
+    });
   });
 }

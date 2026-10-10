@@ -1499,6 +1499,13 @@ void main() {
           await tester.ensureVisible(
             find.byKey(const ValueKey<String>('eleve-Mariam')),
           );
+          // Tour 2 : « Retirer l'autorisation d'ecrire » au milieu de la
+          // liste, hors de la barre de l'appel posee en bas : la capture
+          // montre l'action du meme etat.
+          await Scrollable.ensureVisible(
+            tester.element(bouton),
+            alignment: 0.5,
+          );
           await stabiliser(tester);
           expect(tester.takeException(), isNull);
           debugPrint('PNG ${await capturer(tester, nom)}');

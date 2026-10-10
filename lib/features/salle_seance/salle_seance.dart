@@ -13,11 +13,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/accessibilite/commandes_masquables.dart';
+import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/preferences/preferences_locales.dart';
 import '../../core/tc_outils/etat_outils.dart';
+import '../../core/theme/app_contour.dart';
 import '../../core/theme/app_gabarit.dart';
+import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
@@ -294,47 +298,57 @@ class SalleSeance extends StatelessWidget {
                   contenu: _surContexteEleve(
                     vue: vue,
                     actions: actions,
-                    contenu: _surCommandesEleve(
-                      vue: vue,
-                      actions: actions,
-                      local: local,
-                      agrandi: agrandi,
-                      contenu: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: gouttiere,
-                              ),
-                              child: ZoneSupport(
-                                vue: vue,
-                                zoom: local.zoom,
-                                contenu: contenuSupport,
-                              ),
+                    // TB-10 : les Commandes ouvertes (volet du bureau) se
+                    // posent sur la surface seule, au-dessus de la barre
+                    // basse (page, zoom local) : elles ne la couvrent pas.
+                    contenu: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Expanded(
+                          child: _surCommandesEleve(
+                            vue: vue,
+                            actions: actions,
+                            local: local,
+                            agrandi: agrandi,
+                            contenu: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: <Widget>[
+                                Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: gouttiere,
+                                    ),
+                                    child: ZoneSupport(
+                                      vue: vue,
+                                      zoom: local.zoom,
+                                      contenu: contenuSupport,
+                                    ),
+                                  ),
+                                ),
+                                ?_sousSurfaceEleve(
+                                  vue,
+                                  actions,
+                                  gouttiere,
+                                  focusCommandes,
+                                ),
+                              ],
                             ),
                           ),
-                          ?_sousSurfaceEleve(
-                            vue,
-                            actions,
-                            gouttiere,
-                            focusCommandes,
-                          ),
-                          if (large && _BarreBasse.utile(vue))
-                            Padding(
-                              padding: EdgeInsetsDirectional.only(
-                                start: gouttiere,
-                                end: gouttiere,
-                                top: AppSpacing.xl,
-                              ),
-                              child: _BarreBasse(
-                                vue: vue,
-                                actions: actions,
-                                local: local,
-                              ),
+                        ),
+                        if (large && _BarreBasse.utile(vue))
+                          Padding(
+                            padding: EdgeInsetsDirectional.only(
+                              start: gouttiere,
+                              end: gouttiere,
+                              top: AppSpacing.xl,
                             ),
-                        ],
-                      ),
+                            child: _BarreBasse(
+                              vue: vue,
+                              actions: actions,
+                              local: local,
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                   barre: Padding(
@@ -423,14 +437,19 @@ class _ContexteEleveState extends State<_ContexteEleve> {
   @override
   Widget build(BuildContext context) => CallbackShortcuts(
     bindings: <ShortcutActivator, VoidCallback>{
-      if (widget.vue.contexteOuvert)
-        const SingleActivator(LogicalKeyboardKey.escape): () =>
-            widget.actions.onContexte?.call(ContexteOuvert.aucun),
       // TB-10 (UX_REVIEW_TB n. 26, plan V2 §18.3) : Echap reduit aussi les
-      // Commandes de l'eleve, jamais l'appel.
-      if (_commandes(widget.vue) && widget.actions.onCommandes != null)
-        const SingleActivator(LogicalKeyboardKey.escape):
-            widget.actions.onCommandes!,
+      // Commandes de l'eleve, jamais l'appel. Une seule entree pour la
+      // touche (deux cles egales dans la table : la seconde ecraserait la
+      // premiere) : le contexte deplie d'abord, les Commandes ensuite.
+      if (widget.vue.contexteOuvert ||
+          (_commandes(widget.vue) && widget.actions.onCommandes != null))
+        const SingleActivator(LogicalKeyboardKey.escape): () {
+          if (widget.vue.contexteOuvert) {
+            widget.actions.onContexte?.call(ContexteOuvert.aucun);
+          } else {
+            widget.actions.onCommandes?.call();
+          }
+        },
     },
     child: widget.construire(_focusCapsule, _focusCommandes),
   );
@@ -667,6 +686,11 @@ class _CommandesEleveState extends ConsumerState<CommandesEleve> {
   void initState() {
     super.initState();
     _lu = widget.vue.panneau == PanneauOuvert.commandes;
+    // TB-10 (tour 2) : l'entree peut etre recreee au moment meme du retrait
+    // (bascule agrandi, changement de gabarit) : le passage de vrai a faux
+    // n'est alors pas vu. Sans droit, un outil retenu est donc repose des
+    // la creation, pas seulement au passage.
+    if (!widget.vue.peutEcrire) _reposerOutil();
   }
 
   void _reposerOutil() {
@@ -693,6 +717,7 @@ class _CommandesEleveState extends ConsumerState<CommandesEleve> {
     } else if (ancien.vue.ecritureRetiree != widget.vue.ecritureRetiree) {
       _lu = false;
     }
+    if (!avant && !apres) _reposerOutil();
     if (widget.vue.panneau == PanneauOuvert.commandes) _lu = true;
   }
 
@@ -708,6 +733,18 @@ class _CommandesEleveState extends ConsumerState<CommandesEleve> {
                   .copyWith(ecritureRetiree: vue.ecritureRetiree || _retrait)
                   .avisRetrait ??
               (ecrit ? null : vue.avisEcriture);
+    // TB-10 (tour 2) : texte agrandi ou Mode Accessibilite, l'information
+    // courte et le declencheur (icone seule, nom lu et infobulle gardes) se
+    // partagent UNE rangee, et la phrase prend le corps court : la page
+    // garde la hauteur qu'elle avait avant l'information (320 a 200 %).
+    final bool rangee =
+        avis != null &&
+        !ecrit &&
+        basculer != null &&
+        !ouvert &&
+        (MediaQuery.textScalerOf(context).scale(1) >
+                AppContour.seuilTexteAgrandi ||
+            AppMetriques.of(context).mode == InterfaceMode.enfant);
     final Widget? entree = basculer == null || ouvert
         ? null
         : ecrit
@@ -719,7 +756,17 @@ class _CommandesEleveState extends ConsumerState<CommandesEleve> {
         : DeclencheurCommandes(
             onPress: basculer,
             focusNode: widget.focusCommandes,
+            iconeSeule: rangee,
           );
+    if (rangee) {
+      return Row(
+        children: <Widget>[
+          Expanded(child: _AvisEcriture(texte: avis, compacte: true)),
+          Ecart.hSm,
+          ?entree,
+        ],
+      );
+    }
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -735,39 +782,45 @@ class _CommandesEleveState extends ConsumerState<CommandesEleve> {
 /// L'information courte de l'eleve : l'icone d'ecriture et la phrase, dite
 /// au lecteur d'ecran des qu'elle change (W-413).
 class _AvisEcriture extends StatelessWidget {
-  const _AvisEcriture({required this.texte});
+  const _AvisEcriture({required this.texte, this.compacte = false});
 
   final String texte;
+
+  /// Rangee du texte agrandi : sans l'icone (le declencheur est a cote), au
+  /// corps court.
+  final bool compacte;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    // Le corps du texte, pas un titre : au texte agrandi, la phrase laisse
+    // sa hauteur a la page.
+    final Widget phrase = TexteSansCoupure(
+      texte,
+      style: palette.inkStrong.applyTo(
+        (compacte ? textes.bodySmall : textes.bodyMedium) ?? const TextStyle(),
+      ),
+    );
     return Semantics(
       key: CommandesEleve.cleAvis,
       liveRegion: true,
       container: true,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          ExcludeSemantics(
-            child: IconTheme(
-              data: palette.inkAccent.asIconTheme(size: AppSpacing.xl),
-              child: Icon(AppIcons.annoter.repos),
+      child: compacte
+          ? phrase
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                ExcludeSemantics(
+                  child: IconTheme(
+                    data: palette.inkAccent.asIconTheme(size: AppSpacing.xl),
+                    child: Icon(AppIcons.annoter.repos),
+                  ),
+                ),
+                Ecart.hSm,
+                Flexible(child: phrase),
+              ],
             ),
-          ),
-          Ecart.hSm,
-          // Le corps du texte, pas un titre : au texte agrandi, la phrase
-          // laisse sa hauteur a la page.
-          Flexible(
-            child: Text(
-              texte,
-              style: palette.inkStrong.applyTo(
-                Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

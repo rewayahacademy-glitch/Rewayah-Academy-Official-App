@@ -165,7 +165,7 @@
   "salle.seance.ecriture.peutEcrire": "etape TB-10 (Supports et tableau, Participants) : planche 8 « Peut ecrire » sur la ligne, plan V2 §12 (eleve et droit visibles dans Participants)",
   "salle.seance.ecriture.autoriser": "etape TB-10 (Supports et tableau, autorisation d'ecrire) : texte exact du plan V2 §20 (Autorisation)",
   "salle.seance.ecriture.retirer": "etape TB-10 (Supports et tableau, autorisation d'ecrire) : texte exact du plan V2 §20 (Autorisation)",
-  "salle.seance.ecriture.autoriserSemantique": "etape TB-10 (Supports et tableau, autorisation d'ecrire) : nom lu de « Autoriser a ecrire » (qui et quoi, libelle-ambigu), contient le mot visible (W-253), a valider par le directeur",
+  "salle.seance.ecriture.autoriserSemantique": "etape TB-10 (Supports et tableau, autorisation d'ecrire) : nom lu de « Autoriser a ecrire » (qui et quoi, libelle-ambigu), commence par le mot visible d'un seul tenant (W-253, WCAG 2.5.3 ; tour 2 de TB-10), a valider par le directeur",
   "salle.seance.ecriture.retirerSemantique": "etape TB-10 (Supports et tableau, autorisation d'ecrire) : nom lu de « Retirer l'autorisation d'ecrire » (qui et quoi), a valider par le directeur",
   "salle.seance.ecriture.autoriserAide": "etape TB-10 (Supports et tableau, autorisation d'ecrire) : K-58 (consequence du choix) et plan V2 §5 (l'autorisation de dessiner ne delegue ni page ni support), a valider par le directeur",
   "salle.seance.ecriture.retirerAide": "etape TB-10 (Supports et tableau, droit retire) : K-58 (consequence du choix) et plan V2 §19.3 point 7 (retirer l'ecriture sans perdre les traits valides), a valider par le directeur",

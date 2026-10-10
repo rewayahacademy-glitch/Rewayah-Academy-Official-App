@@ -11477,8 +11477,8 @@ class Traductions$salle$seance$ecriture$fr {
 	/// fr: 'Retirer l'autorisation d'écrire'
 	String get retirer => 'Retirer l\'autorisation d\'écrire';
 
-	/// fr: 'Autoriser {prenom} à écrire'
-	String autoriserSemantique({required Object prenom}) => 'Autoriser ${prenom} à écrire';
+	/// fr: 'Autoriser à écrire : {prenom}'
+	String autoriserSemantique({required Object prenom}) => 'Autoriser à écrire : ${prenom}';
 
 	/// fr: 'Retirer l'autorisation d'écrire de {prenom}'
 	String retirerSemantique({required Object prenom}) => 'Retirer l\'autorisation d\'écrire de ${prenom}';
@@ -16123,7 +16123,7 @@ extension on Traductions {
 			'salle.seance.ecriture.peutEcrire' => 'Peut écrire',
 			'salle.seance.ecriture.autoriser' => 'Autoriser à écrire',
 			'salle.seance.ecriture.retirer' => 'Retirer l\'autorisation d\'écrire',
-			'salle.seance.ecriture.autoriserSemantique' => ({required Object prenom}) => 'Autoriser ${prenom} à écrire',
+			'salle.seance.ecriture.autoriserSemantique' => ({required Object prenom}) => 'Autoriser à écrire : ${prenom}',
 			'salle.seance.ecriture.retirerSemantique' => ({required Object prenom}) => 'Retirer l\'autorisation d\'écrire de ${prenom}',
 			'salle.seance.ecriture.autoriserAide' => ({required Object prenom}) => '${prenom} pourra écrire sur la page ou le tableau. La page et le support restent à vous.',
 			'salle.seance.ecriture.retirerAide' => 'Ses traits restent sur la page ; ses outils d\'écriture se retirent.',

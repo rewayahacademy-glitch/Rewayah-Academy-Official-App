@@ -10,7 +10,8 @@
 //
 // Le panneau est pose par la salle dans [PanneauSeance] : feuille du bas au
 // telephone (au-dessus de la barre de l'appel, UX-07), panneau a droite
-// ailleurs. Il n'est rendu que pour l'enseignant ([VueSeance.voitCommandes]) ;
+// ailleurs. Il est rendu pour l'enseignant ([VueSeance.voitCommandes]) et,
+// depuis TB-10, pour l'eleve et la guidee (contenu reduit, plus bas) ;
 // chaque entree n'existe que si son rappel existe (lib/CLAUDE.md).
 //
 // TB-7b (CMD-02, CMD-03) : l'onglet « Outils » porte la ligne d'outils
@@ -73,11 +74,17 @@ class DeclencheurCommandes extends StatelessWidget {
     required this.onPress,
     this.ouvert = false,
     this.focusNode,
+    this.iconeSeule = false,
     super.key = cle,
   });
 
   /// La cle du declencheur.
   static const Key cle = ValueKey<String>('declencheur-commandes');
+
+  /// TB-10 : l'icone seule, comme en Mode Accessibilite, a cote de
+  /// l'information courte de l'eleve quand le texte est agrandi (la page
+  /// garde sa hauteur) ; le nom lu et l'infobulle gardent le mot.
+  final bool iconeSeule;
 
   final VoidCallback onPress;
 
@@ -92,7 +99,7 @@ class DeclencheurCommandes extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     // TB-10 (MA-CMD-1, directeur 02/10) : en Mode Accessibilite, l'icone
     // seule, compacte ; le nom lu et l'infobulle gardent le mot.
-    if (AppMetriques.of(context).mode == InterfaceMode.enfant) {
+    if (iconeSeule || AppMetriques.of(context).mode == InterfaceMode.enfant) {
       return Semantics(
         selected: ouvert,
         child: BoutonIcone(
