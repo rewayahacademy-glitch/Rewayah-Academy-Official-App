@@ -340,6 +340,17 @@ BEGIN
   ) THEN
     RAISE EXCEPTION 'M2 ECHEC : élève déjà groupé ajouté ou demande non clôturée';
   END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM public.groupes_admin()
+     WHERE groupe_id = v_groupe AND teacher_id IS NULL
+       AND teacher_immutable_id IS NULL
+       AND teacher_prenom IS NULL AND teacher_nom IS NULL
+  ) OR NOT EXISTS (
+    SELECT 1 FROM public.classes_a_confirmer_admin()
+     WHERE classe_id = v_groupe AND peut_affecter_enseignant
+  ) THEN
+    RAISE EXCEPTION 'M4 ECHEC : classe sans enseignant invisible à l''administration';
+  END IF;
   SELECT count(*) INTO v_sessions FROM public.sessions WHERE groupe_id = v_groupe;
   IF v_sessions <> 0 THEN
     RAISE EXCEPTION 'C-12: séances matérialisées avant affectation: %', v_sessions;
