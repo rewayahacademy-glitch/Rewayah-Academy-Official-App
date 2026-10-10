@@ -20,7 +20,7 @@ enum GenreClasse {
 }
 
 /// Le genre public dérivé côté serveur de `profiles.gender` via le titre
-/// sayyid/sayyida; le genre brut ne part jamais vers le client.
+/// sayid/sayyida; le genre brut ne part jamais vers le client.
 enum GenreEnseignant {
   /// Un enseignant.
   homme,
