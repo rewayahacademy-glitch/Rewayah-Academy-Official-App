@@ -48,6 +48,7 @@ class BrouillonInscription {
     this.prenom = '',
     this.nom = '',
     this.genre,
+    this.parentSuitDesCours,
     this.profilCree = false,
   });
 
@@ -62,6 +63,9 @@ class BrouillonInscription {
 
   /// Le genre retenu.
   final Genre? genre;
+
+  /// Reponse demandee uniquement pour « Moi et ma famille ».
+  final bool? parentSuitDesCours;
 
   /// Vrai des que le serveur a cree le profil : une nouvelle tentative ne
   /// rappelle alors que le rafraichissement de session, jamais la creation.
@@ -90,12 +94,14 @@ class BrouillonInscription {
     String? prenom,
     String? nom,
     Genre? genre,
+    bool? parentSuitDesCours,
     bool? profilCree,
   }) => BrouillonInscription(
     usage: usage ?? this.usage,
     prenom: prenom ?? this.prenom,
     nom: nom ?? this.nom,
     genre: genre ?? this.genre,
+    parentSuitDesCours: parentSuitDesCours ?? this.parentSuitDesCours,
     profilCree: profilCree ?? this.profilCree,
   );
 }
@@ -115,6 +121,10 @@ class BrouillonInscriptionControleur extends Notifier<BrouillonInscription> {
 
   /// Retient le genre.
   void choisirGenre(Genre genre) => state = state.copier(genre: genre);
+
+  /// Retient si le titulaire de famille suit aussi les cours.
+  void choisirCoursTitulaire(bool suit) =>
+      state = state.copier(parentSuitDesCours: suit);
 
   /// Note que le profil existe cote serveur.
   void noterProfilCree() => state = state.copier(profilCree: true);

@@ -60,6 +60,10 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
               prenom: brouillon.prenom,
               nom: brouillon.nom,
               genre: brouillon.genre,
+              parentSuitDesCours:
+                  brouillon.usage == UsageInscription.moi ||
+                  (brouillon.usage == UsageInscription.famille &&
+                      brouillon.parentSuitDesCours == true),
             );
         ref.read(brouillonInscriptionProvider.notifier).noterProfilCree();
       }

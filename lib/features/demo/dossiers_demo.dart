@@ -766,6 +766,7 @@ class ServiceDossierDemo implements ServiceDossier {
     required String prenom,
     required String nom,
     Genre? genre,
+    bool parentSuitDesCours = false,
   }) async {}
 
   @override

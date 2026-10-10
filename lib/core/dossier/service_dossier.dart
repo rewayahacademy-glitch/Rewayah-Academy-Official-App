@@ -55,6 +55,7 @@ abstract interface class ServiceDossier {
     required String prenom,
     required String nom,
     Genre? genre,
+    bool parentSuitDesCours = false,
   });
 
   /// Ou en est le dossier.
@@ -97,6 +98,7 @@ class ServiceDossierSupabase implements ServiceDossier {
     required String prenom,
     required String nom,
     Genre? genre,
+    bool parentSuitDesCours = false,
   }) async {
     await _client.rpc<void>(
       'creer_profil_inscription',
@@ -105,6 +107,7 @@ class ServiceDossierSupabase implements ServiceDossier {
         'p_first_name': prenom,
         'p_last_name': nom,
         'p_gender': genre?.valeurSql,
+        'p_parent_suit_des_cours': parentSuitDesCours,
       },
     );
   }

@@ -82,6 +82,7 @@ class SessionState {
     this.interfaceMode = InterfaceMode.standard,
     this.lectureProfil = LectureProfil.enAttente,
     this.observation,
+    this.eleveAutonome = false,
   });
 
   /// L'etat initial, avant toute resolution.
@@ -121,6 +122,9 @@ class SessionState {
   /// la requete a la main. Ce champ ne sert qu'a **le dire** a l'ecran -- un
   /// bouton qui echouera est une promesse non tenue, pas une securite.
   final Observation? observation;
+
+  /// Capacité personnelle rendue par la fiche serveur, jamais déduite du rôle.
+  final bool eleveAutonome;
 
   /// Vrai quand une session existe.
   bool get connecte => profileId != null;
@@ -196,6 +200,7 @@ class SessionState {
     InterfaceMode? interfaceMode,
     LectureProfil? lectureProfil,
     Observation? observation,
+    bool? eleveAutonome,
   }) {
     return SessionState(
       resolue: resolue ?? this.resolue,
@@ -206,6 +211,7 @@ class SessionState {
       interfaceMode: interfaceMode ?? this.interfaceMode,
       lectureProfil: lectureProfil ?? this.lectureProfil,
       observation: observation ?? this.observation,
+      eleveAutonome: eleveAutonome ?? this.eleveAutonome,
     );
   }
 
@@ -219,7 +225,8 @@ class SessionState {
       other.accountStatus == accountStatus &&
       other.interfaceMode == interfaceMode &&
       other.lectureProfil == lectureProfil &&
-      other.observation == observation;
+      other.observation == observation &&
+      other.eleveAutonome == eleveAutonome;
 
   @override
   int get hashCode => Object.hash(
@@ -231,6 +238,7 @@ class SessionState {
     interfaceMode,
     lectureProfil,
     observation,
+    eleveAutonome,
   );
 }
 

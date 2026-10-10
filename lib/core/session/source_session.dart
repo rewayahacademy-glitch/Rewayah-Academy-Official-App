@@ -72,6 +72,7 @@ class SourceSessionSupabase implements SourceSession {
       accountStatus: profil.statut,
       interfaceMode: profil.mode,
       lectureProfil: profil.lecture,
+      eleveAutonome: profil.eleveAutonome,
     );
   }
 
@@ -81,7 +82,9 @@ class SourceSessionSupabase implements SourceSession {
       // demarrage indefiniment (C01 section 4).
       final Map<String, dynamic>? ligne = await _client
           .from('profiles')
-          .select('account_status, student_profiles(interface_mode)')
+          .select(
+            'account_status, student_profiles(interface_mode, student_type, deleted_at)',
+          )
           .eq('id', profileId)
           .maybeSingle()
           .timeout(AppDelais.requeteMax);
@@ -101,11 +104,16 @@ class SourceSessionSupabase implements SourceSession {
       final String? mode = eleve is Map<String, dynamic>
           ? eleve['interface_mode'] as String?
           : null;
+      final bool autonome =
+          eleve is Map<String, dynamic> &&
+          eleve['student_type'] == 'autonomous' &&
+          eleve['deleted_at'] == null;
 
       return _ProfilLu(
         AccountStatus.depuisSql(ligne['account_status'] as String?),
         InterfaceMode.depuisSql(mode),
         LectureProfil.presente,
+        autonome,
       );
     } on PostgrestException {
       // Lecture refusee ou indisponible. **Ne se confond pas avec l'absence** :
@@ -138,9 +146,15 @@ class SourceSessionSupabase implements SourceSession {
 }
 
 class _ProfilLu {
-  const _ProfilLu(this.statut, this.mode, this.lecture);
+  const _ProfilLu(
+    this.statut,
+    this.mode,
+    this.lecture, [
+    this.eleveAutonome = false,
+  ]);
 
   final AccountStatus? statut;
   final InterfaceMode mode;
   final LectureProfil lecture;
+  final bool eleveAutonome;
 }

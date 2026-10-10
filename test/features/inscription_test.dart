@@ -47,9 +47,16 @@ class _DossierLent extends FauxServiceDossier {
     required String prenom,
     required String nom,
     Genre? genre,
+    bool parentSuitDesCours = false,
   }) async {
     await _porte.future;
-    await super.creerProfil(role: role, prenom: prenom, nom: nom, genre: genre);
+    await super.creerProfil(
+      role: role,
+      prenom: prenom,
+      nom: nom,
+      genre: genre,
+      parentSuitDesCours: parentSuitDesCours,
+    );
   }
 }
 

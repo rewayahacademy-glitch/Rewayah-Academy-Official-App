@@ -74,6 +74,7 @@ class FauxServiceDossier implements ServiceDossier {
     required String prenom,
     required String nom,
     Genre? genre,
+    bool parentSuitDesCours = false,
   }) async {
     _peutEchouer();
     profilsCrees.add((role: role, prenom: prenom, nom: nom, genre: genre));
@@ -669,10 +670,7 @@ class FauxStockageSecurise implements StockageSecurise {
   Future<String?> jetonAppareil(String profilId) async => jetons[profilId];
 
   @override
-  Future<void> enregistrerJetonAppareil(
-    String profilId,
-    String jeton,
-  ) async {
+  Future<void> enregistrerJetonAppareil(String profilId, String jeton) async {
     jetons[profilId] = jeton;
   }
 
@@ -682,8 +680,7 @@ class FauxStockageSecurise implements StockageSecurise {
   }
 
   @override
-  Future<String?> empreintePin(String profilId) async =>
-      empreintes[profilId];
+  Future<String?> empreintePin(String profilId) async => empreintes[profilId];
 
   @override
   Future<void> enregistrerEmpreintePin(

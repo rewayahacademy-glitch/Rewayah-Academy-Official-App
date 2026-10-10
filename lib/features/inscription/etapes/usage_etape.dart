@@ -25,6 +25,11 @@ class UsageEtape extends ConsumerWidget {
     final UsageInscription? usage = ref.watch(
       brouillonInscriptionProvider.select((BrouillonInscription b) => b.usage),
     );
+    final bool parentSuitDesCours = ref.watch(
+      brouillonInscriptionProvider.select(
+        (BrouillonInscription b) => b.parentSuitDesCours ?? false,
+      ),
+    );
     final BrouillonInscriptionControleur controleur = ref.read(
       brouillonInscriptionProvider.notifier,
     );
@@ -64,36 +69,51 @@ class UsageEtape extends ConsumerWidget {
       ),
       // Le groupe partage (ADR-013), sans carte « Autre » : deux cartes
       // exactement, a description (demande B-3 levee par COORD).
-      enfant: ChoiceCardGroup(
-        key: const Key('inscription-usage'),
-        autoriserSaisieLibre: false,
-        valeurInitiale: retenu == null
-            ? null
-            : ReponseChoix(valeurs: <String>{retenu.name}),
-        options: <OptionChoix>[
-          OptionChoix(
-            valeur: UsageInscription.moi.name,
-            libelle: t.inscription.usage.moiTitre,
-            description: t.inscription.usage.moiDescription,
-            icone: AppIcons.profil,
+      enfant: Column(
+        children: <Widget>[
+          ChoiceCardGroup(
+            key: const Key('inscription-usage'),
+            autoriserSaisieLibre: false,
+            valeurInitiale: retenu == null
+                ? null
+                : ReponseChoix(valeurs: <String>{retenu.name}),
+            options: <OptionChoix>[
+              OptionChoix(
+                valeur: UsageInscription.moi.name,
+                libelle: t.inscription.usage.moiTitre,
+                description: t.inscription.usage.moiDescription,
+                icone: AppIcons.profil,
+              ),
+              OptionChoix(
+                valeur: UsageInscription.famille.name,
+                libelle: t.inscription.usage.familleTitre,
+                description: t.inscription.usage.familleDescription,
+                icone: AppIcons.foyer,
+              ),
+            ],
+            onChange: (ReponseChoix reponse) {
+              for (final UsageInscription u in <UsageInscription>[
+                UsageInscription.moi,
+                UsageInscription.famille,
+              ]) {
+                if (reponse.valeurs.contains(u.name)) {
+                  controleur.choisirUsage(u);
+                }
+              }
+            },
           ),
-          OptionChoix(
-            valeur: UsageInscription.famille.name,
-            libelle: t.inscription.usage.familleTitre,
-            description: t.inscription.usage.familleDescription,
-            icone: AppIcons.foyer,
-          ),
+          if (usage == UsageInscription.famille)
+            SwitchListTile.adaptive(
+              key: const Key('inscription-parent-suit-cours'),
+              value: parentSuitDesCours,
+              title: Text(
+                Localizations.localeOf(context).languageCode == 'ar'
+                    ? 'هل تتابع دروسًا أيضًا؟'
+                    : 'Suivez-vous aussi des cours ?',
+              ),
+              onChanged: controleur.choisirCoursTitulaire,
+            ),
         ],
-        onChange: (ReponseChoix reponse) {
-          for (final UsageInscription u in <UsageInscription>[
-            UsageInscription.moi,
-            UsageInscription.famille,
-          ]) {
-            if (reponse.valeurs.contains(u.name)) {
-              controleur.choisirUsage(u);
-            }
-          }
-        },
       ),
     );
   }
