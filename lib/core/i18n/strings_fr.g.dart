@@ -21242,6 +21242,9 @@ class Traductions$com$messages$types$fr {
 	/// fr: 'Remplacement'
 	String get remplacement => 'Remplacement';
 
+	/// fr: 'Profil de paiement'
+	String get profilPaiement => 'Profil de paiement';
+
 	/// fr: 'Autre sujet'
 	String get autre => 'Autre sujet';
 }
@@ -23771,9 +23774,6 @@ class Traductions$comptable$beneficiaires$profil$fr {
 	/// fr: 'Reprendre les paiements de {nom}'
 	String reprendre({required Object nom}) => 'Reprendre les paiements de ${nom}';
 
-	/// fr: 'Voir le fil « Profil de paiement »'
-	String get voirFil => 'Voir le fil « Profil de paiement »';
-
 	/// fr: '{nom} n'a pas de compte Rewayah : une invitation sécurisée lui permet de saisir lui-même sa méthode. Renvoyez-la depuis son obligation, dans Contractuels.'
 	String externe({required Object nom}) => '${nom} n\'a pas de compte Rewayah : une invitation sécurisée lui permet de saisir lui-même sa méthode. Renvoyez-la depuis son obligation, dans Contractuels.';
 
@@ -23783,11 +23783,11 @@ class Traductions$comptable$beneficiaires$profil$fr {
 	/// fr: 'Aucune action n'est ouverte sur ce profil : il est à jour.'
 	String get aucuneAction => 'Aucune action n\'est ouverte sur ce profil : il est à jour.';
 
-	/// fr: 'Message prêt dans le fil « Profil de paiement »'
-	String get relanceTitre => 'Message prêt dans le fil « Profil de paiement »';
+	/// fr: 'Fil « Profil de paiement »'
+	String get filTitre => 'Fil « Profil de paiement »';
 
-	/// fr: 'Objet : Profil de paiement'
-	String get relanceObjet => 'Objet : Profil de paiement';
+	/// fr: 'Aucun fil « Profil de paiement » ne peut être ouvert avec {nom} : Rewayah ne l'autorise pas pour ce bénéficiaire. Demandez plutôt une mise à jour, ou signalez-le à la direction.'
+	String relanceRefusee({required Object nom}) => 'Aucun fil « Profil de paiement » ne peut être ouvert avec ${nom} : Rewayah ne l\'autorise pas pour ce bénéficiaire. Demandez plutôt une mise à jour, ou signalez-le à la direction.';
 
 	/// fr: 'Vos informations de paiement doivent être complétées avant votre prochain versement. Vous pouvez les ajouter depuis votre espace personnel.'
 	String get messageModele => 'Vos informations de paiement doivent être complétées avant votre prochain versement. Vous pouvez les ajouter depuis votre espace personnel.';
@@ -23806,6 +23806,9 @@ class Traductions$comptable$beneficiaires$profil$fr {
 
 	/// fr: 'Cette action n'est pas encore branchée sur le service qui la traite. Réessayez plus tard.'
 	String get erreurIndisponible => 'Cette action n\'est pas encore branchée sur le service qui la traite. Réessayez plus tard.';
+
+	/// fr: 'Pas de réseau : l'action n'a pas pu être confirmée. Réessayez quand la connexion sera revenue.'
+	String get erreurHorsLigne => 'Pas de réseau : l\'action n\'a pas pu être confirmée. Réessayez quand la connexion sera revenue.';
 
 	/// fr: 'Suspendre les paiements de {nom} ?'
 	String suspensionTitre({required Object nom}) => 'Suspendre les paiements de ${nom} ?';
@@ -31730,6 +31733,7 @@ extension on Traductions {
 			'com.messages.types.dossier' => 'Dossier',
 			'com.messages.types.mission' => 'Mission de contrôle',
 			'com.messages.types.remplacement' => 'Remplacement',
+			'com.messages.types.profilPaiement' => 'Profil de paiement',
 			'com.messages.types.autre' => 'Autre sujet',
 			'com.messages.panneau.objets' => 'À propos de',
 			'com.messages.panneau.participants' => 'Participants',
@@ -32072,9 +32076,9 @@ extension on Traductions {
 			'com.studio.navigation.aujourdhui' => _root.com.socle.lexique.aujourdhui,
 			'com.studio.navigation.brouillons' => 'Brouillons',
 			'com.studio.navigation.canaux' => 'Canaux',
-			'com.studio.navigation.enregistres' => 'Éléments enregistrés',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.navigation.enregistres' => 'Éléments enregistrés',
 			'com.studio.choisirTitre' => 'Choisissez un canal',
 			'com.studio.choisir' => 'Choisissez un canal dans la liste pour lire la discussion et y écrire.',
 			'com.studio.aucunCanalTitre' => 'Aucun canal pour le moment',
@@ -32586,9 +32590,9 @@ extension on Traductions {
 			'comptable.aujourdhui.accesRapides' => 'Accès rapides',
 			'comptable.aujourdhui.encaissementsRecents' => 'Encaissements récents',
 			'comptable.aujourdhui.voirTout' => 'Voir tout',
-			'comptable.paiements.confirmation.titreUn' => 'Confirmer le paiement',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.paiements.confirmation.titreUn' => 'Confirmer le paiement',
 			'comptable.paiements.confirmation.titreLot' => 'Confirmer le lot',
 			'comptable.paiements.confirmation.titreValidation' => 'Demander une validation',
 			'comptable.paiements.confirmation.payerMaintenant' => 'Payer maintenant',
@@ -32950,18 +32954,18 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.demanderMiseAJour' => ({required Object nom}) => 'Demander une mise à jour à ${nom}',
 			'comptable.beneficiaires.profil.suspendre' => ({required Object nom}) => 'Suspendre les paiements de ${nom}',
 			'comptable.beneficiaires.profil.reprendre' => ({required Object nom}) => 'Reprendre les paiements de ${nom}',
-			'comptable.beneficiaires.profil.voirFil' => 'Voir le fil « Profil de paiement »',
 			'comptable.beneficiaires.profil.externe' => ({required Object nom}) => '${nom} n\'a pas de compte Rewayah : une invitation sécurisée lui permet de saisir lui-même sa méthode. Renvoyez-la depuis son obligation, dans Contractuels.',
 			'comptable.beneficiaires.profil.voirContractuels' => 'Voir les obligations des contractuels',
 			'comptable.beneficiaires.profil.aucuneAction' => 'Aucune action n\'est ouverte sur ce profil : il est à jour.',
-			'comptable.beneficiaires.profil.relanceTitre' => 'Message prêt dans le fil « Profil de paiement »',
-			'comptable.beneficiaires.profil.relanceObjet' => 'Objet : Profil de paiement',
+			'comptable.beneficiaires.profil.filTitre' => 'Fil « Profil de paiement »',
+			'comptable.beneficiaires.profil.relanceRefusee' => ({required Object nom}) => 'Aucun fil « Profil de paiement » ne peut être ouvert avec ${nom} : Rewayah ne l\'autorise pas pour ce bénéficiaire. Demandez plutôt une mise à jour, ou signalez-le à la direction.',
 			'comptable.beneficiaires.profil.messageModele' => 'Vos informations de paiement doivent être complétées avant votre prochain versement. Vous pouvez les ajouter depuis votre espace personnel.',
 			'comptable.beneficiaires.profil.miseAJourDemandee' => ({required Object nom}) => 'Demande de mise à jour enregistrée pour ${nom}.',
 			'comptable.beneficiaires.profil.suspendus' => ({required Object nom}) => 'Paiements de ${nom} suspendus : aucun versement ne part tant qu\'ils ne sont pas repris.',
 			'comptable.beneficiaires.profil.repris' => ({required Object nom}) => 'Paiements de ${nom} repris.',
 			'comptable.beneficiaires.profil.erreurAction' => 'L\'action n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'comptable.beneficiaires.profil.erreurIndisponible' => 'Cette action n\'est pas encore branchée sur le service qui la traite. Réessayez plus tard.',
+			'comptable.beneficiaires.profil.erreurHorsLigne' => 'Pas de réseau : l\'action n\'a pas pu être confirmée. Réessayez quand la connexion sera revenue.',
 			'comptable.beneficiaires.profil.suspensionTitre' => ({required Object nom}) => 'Suspendre les paiements de ${nom} ?',
 			'comptable.beneficiaires.profil.suspensionContexte' => 'Aucun versement ne partira vers ce bénéficiaire tant que vous ne les reprenez pas. Ses coordonnées ne changent pas. Choisissez le motif : il sera inscrit au journal du profil.',
 			'comptable.beneficiaires.profil.motifVerifier' => 'Coordonnées à vérifier',
@@ -33100,9 +33104,9 @@ extension on Traductions {
 			'comptable.validation.natures.retraitReserve' => 'Retrait de la Réserve stratégique',
 			'comptable.validation.natures.obligationAApprouver' => 'Obligation ponctuelle',
 			'comptable.validation.natures.payoutDuComptable' => 'Paie du Comptable',
-			'comptable.validation.natures.sortieCoffreProtege' => 'Sortie d\'un coffre protégé',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.validation.natures.sortieCoffreProtege' => 'Sortie d\'un coffre protégé',
 			'comptable.validation.demandePar' => ({required Object demandeur, required Object date}) => 'Demandée par ${demandeur} le ${date}',
 			'comptable.validation.valideePar' => ({required Object decideur, required Object date}) => 'Validée par ${decideur} le ${date}',
 			'comptable.validation.refuseePar' => ({required Object decideur, required Object date}) => 'Refusée par ${decideur} le ${date}',
