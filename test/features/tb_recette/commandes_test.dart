@@ -157,8 +157,13 @@ List<(String, Finder)> _entrees() => <(String, Finder)>[
 /// chaque entree de la colonne des Commandes est entiere dans la part VUE du
 /// defilement ; sinon (coupee ou cachee dessous), un fondu bas est pose ET
 /// visible : son bord bas est le bord bas de la part vue (pas sous l'ecran),
-/// sa bande fait au moins [AppSpacing.md]. Puis la derniere entree, defilee,
-/// se lit entiere.
+/// sa bande a sa hauteur prevue, [AppSpacing.xxxl] (le fondu reduit au
+/// huitieme d'une vue basse, 9 a 16 px, ne se voit pas : captures
+/// `tb12_eleve_commandes_320_x1_clair`, `tb12_guidee_commandes_390_x2_clair`
+/// et relecture TB-RC). Puis la derniere entree, defilee, se lit entiere.
+///
+/// Limite : la bande est lue sur le `ShaderMask` du fondu (sa hauteur, huit
+/// fois la bande), pas sur les pixels ; l'opacite n'est pas mesuree.
 Future<void> _feuilleSansCoupureMuette(WidgetTester tester, String cas) async {
   expect(_contenu, findsOneWidget, reason: cas);
   final Finder defile = find.byKey(CommandesPedagogiques.cleDefilement);
@@ -188,7 +193,7 @@ Future<void> _feuilleSansCoupureMuette(WidgetTester tester, String cas) async {
     );
     expect(
       math.min(AppSpacing.xxxl, bande.height / 8),
-      greaterThanOrEqualTo(AppSpacing.md),
+      greaterThanOrEqualTo(AppSpacing.xxxl),
       reason: '$cas : $nom coupee ; fondu de ${bande.height / 8} px, invisible',
     );
   }
@@ -845,13 +850,19 @@ void main() {
   group('Feuille Commandes depuis la coquille : derniere entree entiere ou '
       'fondu visible (eleve, guidee, enseignant ; 320 x1, 320 x2, 390 x2)', () {
     setUpAll(chargerPolicesDuDepot);
-    // Rouges sur a72fd566 (fondu de 9 a 10 px sous une entree coupee, vue
-    // de 75 a 80 px) : le comportement attendu est ecrit, le cas attend la
-    // correction de la feuille par le lot L2 de TB-RC. A reactiver apres.
+    // Rouges sur a72fd566 (entree coupee sous un fondu de 9 a 24 px, vue de
+    // 75 a 192 px ; seul l'enseignant a 320 x1 a son fondu de 32) : le
+    // comportement attendu est ecrit, ces cas attendent la correction de la
+    // feuille par le lot L2 de TB-RC. A reactiver apres.
     const Set<String> attendL2 = <String>{
+      'eleve 320 x1',
       'eleve 320 x2',
       'eleve 390 x2',
+      'guidee 320 x1',
+      'guidee 320 x2',
+      'guidee 390 x2',
       'enseignant 320 x2',
+      'enseignant 390 x2',
     };
     for (final RoleSeance role in RoleSeance.values) {
       for (final (String nom, Size taille, double texte, EdgeInsets zone) cas
