@@ -23,6 +23,7 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
@@ -422,7 +423,12 @@ void main() {
 
       expect(find.text(t.foyer.ajout.refus.ageHorsBornes), findsOneWidget);
       expect(
-        find.text(t.foyer.ajout.erreurs.ageHorsBornes(min: 3, max: 18)),
+        // DUREE-INSECABLE-4 : « 18 ans » insecable a l'ecran.
+        find.text(
+          LibellesGroupe.insecable(
+            t.foyer.ajout.erreurs.ageHorsBornes(min: 3, max: 18),
+          ),
+        ),
         findsOneWidget,
       );
     });
