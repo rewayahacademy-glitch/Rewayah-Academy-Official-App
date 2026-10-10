@@ -21,6 +21,7 @@ class NotificationsSupabase implements PortNotifications {
 
   static const Set<String> _evenements = <String>{
     'demande_recue',
+    'demande_presentation',
     'classe_validee',
     'enseignant_affecte',
     'demande_close',
