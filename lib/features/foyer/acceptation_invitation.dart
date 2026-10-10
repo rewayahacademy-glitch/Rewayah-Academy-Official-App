@@ -410,27 +410,33 @@ class _InvitationRecuePageState extends ConsumerState<InvitationRecuePage> {
             // Hors ligne : rien ne part tout seul. Libelle provisoire,
             // lexique D4.
             if (horsLigne) ...<Widget>[Ecart.vLg, _Note(texte: a.horsLigne)],
-            Ecart.vLg,
-            _BoutonsMemePoids(
-              refuser: ActionPrincipale(
-                key: InvitationRecuePage.refuserKey,
-                libelle: a.refuser,
-                niveau: NiveauAction.secondaire,
-                onPress: bloque || _enCours == _Reponse.accepter
-                    ? null
-                    : () => unawaited(_repondre(_Reponse.refuser)),
-                enCours: _enCours == _Reponse.refuser,
+            // Hors ligne ou indisponible : la reponse ne peut pas aboutir,
+            // les deux boutons ne sont pas rendus ; la note ou l'etat
+            // au-dessus le dit (BOUTONS-GRISES-1). Pendant une reponse deja
+            // partie, l'autre reste fige : double envoi evite.
+            if (!bloque) ...<Widget>[
+              Ecart.vLg,
+              _BoutonsMemePoids(
+                refuser: ActionPrincipale(
+                  key: InvitationRecuePage.refuserKey,
+                  libelle: a.refuser,
+                  niveau: NiveauAction.secondaire,
+                  onPress: _enCours == _Reponse.accepter
+                      ? null
+                      : () => unawaited(_repondre(_Reponse.refuser)),
+                  enCours: _enCours == _Reponse.refuser,
+                ),
+                accepter: ActionPrincipale(
+                  key: InvitationRecuePage.accepterKey,
+                  libelle: a.accepter,
+                  niveau: NiveauAction.secondaire,
+                  onPress: _enCours == _Reponse.refuser
+                      ? null
+                      : () => unawaited(_repondre(_Reponse.accepter)),
+                  enCours: _enCours == _Reponse.accepter,
+                ),
               ),
-              accepter: ActionPrincipale(
-                key: InvitationRecuePage.accepterKey,
-                libelle: a.accepter,
-                niveau: NiveauAction.secondaire,
-                onPress: bloque || _enCours == _Reponse.refuser
-                    ? null
-                    : () => unawaited(_repondre(_Reponse.accepter)),
-                enCours: _enCours == _Reponse.accepter,
-              ),
-            ),
+            ],
           ],
         ),
       ),

@@ -430,20 +430,22 @@ class _PageSortieState extends ConsumerState<_PageSortie> {
                 Ecart.vLg,
                 _Note(texte: t.adulte.sortie.horsLigne),
               ],
-              Ecart.vLg,
-              // Destructif : jamais un bouton plein (contrat B).
-              _Actions(
-                principale: ActionPrincipale(
-                  key: widget.boutonKey,
-                  libelle: widget.libelleBouton,
-                  niveau: NiveauAction.destructive,
-                  onPress: horsLigne || _echec == _Echec.indisponible
-                      ? null
-                      : () => unawaited(_sortir()),
-                  enCours: _envoi,
-                  pleineLargeur: false,
+              // Destructif : jamais un bouton plein (contrat B). Hors ligne
+              // ou indisponible, la sortie n'est pas rendue : la note ou
+              // l'etat au-dessus le dit (BOUTONS-GRISES-1).
+              if (!horsLigne && _echec != _Echec.indisponible) ...<Widget>[
+                Ecart.vLg,
+                _Actions(
+                  principale: ActionPrincipale(
+                    key: widget.boutonKey,
+                    libelle: widget.libelleBouton,
+                    niveau: NiveauAction.destructive,
+                    onPress: () => unawaited(_sortir()),
+                    enCours: _envoi,
+                    pleineLargeur: false,
+                  ),
                 ),
-              ),
+              ],
               if (widget.pied case final Widget pied)
                 if (!_envoi) ...<Widget>[Ecart.vXxl, pied],
             ],

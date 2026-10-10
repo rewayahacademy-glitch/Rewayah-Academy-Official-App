@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/signaler_manque.dart';
 import '../../core/domain/enums.dart';
 import '../../core/dossier/resignature_contrat.dart';
 import '../../core/dossier/service_dossier.dart';
@@ -238,6 +239,31 @@ class _PageASignerState extends ConsumerState<_PageASigner> {
   bool _religionCochee = false;
   String? _erreur;
 
+  /// Les cases d'accord : le focus va a la premiere qui manque.
+  final FocusNode _focusReligion = FocusNode(debugLabel: 'case-religion');
+  final FocusNode _focusObservation = FocusNode(debugLabel: 'case-observation');
+
+  @override
+  void dispose() {
+    _focusReligion.dispose();
+    _focusObservation.dispose();
+    super.dispose();
+  }
+
+  /// Jamais grise (BOUTONS-GRISES-1) : sans les cases, l'appui dit ce qui
+  /// manque, l'annonce et rend le focus a la premiere case vide.
+  void _direManque() {
+    final String message = t.formulaire.manqueAccord;
+    setState(() => _erreur = message);
+    signalerManque(
+      context,
+      message,
+      champ: widget.caseReligion && !_religionCochee
+          ? _focusReligion
+          : _focusObservation,
+    );
+  }
+
   bool get _signable =>
       (widget.observation == null || _cochee) &&
       (!widget.caseReligion || _religionCochee);
@@ -309,7 +335,7 @@ class _PageASignerState extends ConsumerState<_PageASigner> {
           ],
           ActionPrincipale(
             libelle: widget.libelleAction,
-            onPress: _signable ? () => unawaited(_signer()) : null,
+            onPress: _signable ? () => unawaited(_signer()) : _direManque,
             enCours: _envoi,
           ),
         ],
@@ -355,9 +381,13 @@ class _PageASignerState extends ConsumerState<_PageASigner> {
             CaseAccordTexte(
               libelle: t.contrat.clauseControle.caseReligion,
               cochee: _religionCochee,
+              focusNode: _focusReligion,
               onChanged: _envoi
                   ? null
-                  : (bool v) => setState(() => _religionCochee = v),
+                  : (bool v) => setState(() {
+                      _religionCochee = v;
+                      _erreur = null;
+                    }),
             ),
           ],
           if (observation != null) ...<Widget>[
@@ -369,9 +399,13 @@ class _PageASignerState extends ConsumerState<_PageASigner> {
             CaseAccordObservation(
               variante: observation,
               cochee: _cochee,
+              focusNode: _focusObservation,
               onChanged: _envoi
                   ? null
-                  : (bool v) => setState(() => _cochee = v),
+                  : (bool v) => setState(() {
+                      _cochee = v;
+                      _erreur = null;
+                    }),
             ),
           ],
         ],

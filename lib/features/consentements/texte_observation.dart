@@ -71,7 +71,12 @@ class CaseAccordObservation extends StatelessWidget {
     required this.cochee,
     required this.onChanged,
     super.key,
+    this.focusNode,
   });
+
+  /// Le noeud de focus de la case : il y revient quand l'accord manque
+  /// (BOUTONS-GRISES-1).
+  final FocusNode? focusNode;
 
   /// La variante du libelle.
   final VarianteObservation variante;
@@ -89,6 +94,7 @@ class CaseAccordObservation extends StatelessWidget {
         : t.consentement.texte.caseResponsable,
     cochee: cochee,
     onChanged: onChanged,
+    focusNode: focusNode,
   );
 }
 
@@ -103,7 +109,12 @@ class CaseAccordTexte extends StatelessWidget {
     required this.cochee,
     required this.onChanged,
     super.key,
+    this.focusNode,
   });
+
+  /// Le noeud de focus de la case : il y revient quand l'accord manque
+  /// (BOUTONS-GRISES-1).
+  final FocusNode? focusNode;
 
   /// Le texte de l'accord, mot pour mot.
   final String libelle;
@@ -124,6 +135,7 @@ class CaseAccordTexte extends StatelessWidget {
       child: Material(
         type: MaterialType.transparency,
         child: CheckboxListTile(
+          focusNode: focusNode,
           value: cochee,
           onChanged: geste == null
               ? null

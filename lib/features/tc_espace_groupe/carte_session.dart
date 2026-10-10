@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/accessibilite/signaler_manque.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
@@ -44,7 +45,14 @@ class CarteSession extends StatefulWidget {
     this.actionHorsEntree,
     this.tutoiement = false,
     this.entreeRetiree = false,
+    this.attenteEntree,
   });
+
+  /// L'entree ne peut pas encore aboutir alors que la fenetre est ouverte
+  /// (acces de l'eleve qui se lit encore, FI-9a) : « Rejoindre » reste
+  /// present et actif, jamais grise (BOUTONS-GRISES-1) ; l'appui dit cette
+  /// phrase sous le bouton et l'annonce, sans entrer.
+  final String? attenteEntree;
 
   /// Vrai quand l'acces de l'eleve connecte ferme ses seances (FI-9a,
   /// FI-BR-08) : « Rejoindre » est retire de la carte, jamais grise, et
@@ -72,7 +80,8 @@ class CarteSession extends StatefulWidget {
   /// L'Espace Groupe auquel elle appartient.
   final GroupHomeVM espace;
 
-  /// Ce que fait « Rejoindre ». Nul tant qu'Agent Z ne l'a pas branche.
+  /// Ce que fait « Rejoindre ». Nul tant que l'hote ne l'a pas branche :
+  /// le bouton n'est alors pas rendu (jamais grise).
   final VoidCallback? onRejoindre;
 
   /// Relance la lecture quand l'emplacement propose « Reessayer ».
@@ -244,6 +253,7 @@ class _CarteSessionState extends State<CarteSession> {
               // ligne d'etat.
               sansBouton: espace.role == RoleEspaceGroupe.tuteur,
               onEntrer: widget.onRejoindre,
+              motifAttente: widget.attenteEntree,
               onReessayer: widget.onReessayer,
               focusRetour: _focusTitre,
             ),
@@ -375,7 +385,12 @@ class EmplacementEntreeVue extends StatefulWidget {
     this.onReessayer,
     this.sansBouton = false,
     this.focusRetour,
+    this.motifAttente,
   });
+
+  /// Pose : l'appui sur le bouton n'entre pas, il dit cette phrase sous le
+  /// bouton (region live) et l'annonce (BOUTONS-GRISES-1, jamais grise).
+  final String? motifAttente;
 
   /// Recoit le focus quand le bouton focalise disparait (revue UX n° 13) ;
   /// en general le titre de la carte de seance.
@@ -384,10 +399,11 @@ class EmplacementEntreeVue extends StatefulWidget {
   /// Ce qu'il faut montrer.
   final EmplacementEntree emplacement;
 
-  /// « Rejoindre » ou « Preparer l'entree ».
+  /// « Rejoindre » ou « Preparer l'entree ». Nul (rien de branche), le
+  /// bouton n'est pas rendu : jamais un bouton grise.
   final VoidCallback? onEntrer;
 
-  /// « Reessayer ».
+  /// « Reessayer ». Nul, « Reessayer » n'est pas rendu.
   final VoidCallback? onReessayer;
 
   /// Vrai pour un role qui n'entre pas (tuteur) : le bouton devient la ligne.
@@ -399,6 +415,7 @@ class EmplacementEntreeVue extends StatefulWidget {
 
 class _EmplacementEntreeVueState extends State<EmplacementEntreeVue> {
   late String _annonce = widget.emplacement.annonce;
+  bool _attenteDite = false;
   final FocusNode _focusBouton = FocusNode(
     debugLabel: 'emplacement-entree',
     skipTraversal: true,
@@ -417,6 +434,7 @@ class _EmplacementEntreeVueState extends State<EmplacementEntreeVue> {
       ancien.emplacement,
     );
     if (nouvelle != null) _annonce = nouvelle;
+    if (widget.motifAttente == null) _attenteDite = false;
     // Le bouton focalise laisse place a une ligne d'etat : le focus revient
     // au titre de la carte. Le bouton qui apparait ne le prend jamais.
     final bool avaitBouton = ancien.emplacement.estBouton && !ancien.sansBouton;
@@ -433,21 +451,43 @@ class _EmplacementEntreeVueState extends State<EmplacementEntreeVue> {
   Widget build(BuildContext context) {
     final EmplacementEntree e = widget.emplacement;
     final bool mobile = AppGabarit.de(context) == Gabarit.mobile;
+    final VoidCallback? entrer = widget.onEntrer;
+    final String? motif = widget.motifAttente;
     final bool bouton = e.estBouton && !widget.sansBouton;
     final String? detail = e.detail;
 
     final List<Widget> contenu;
-    if (bouton) {
+    if (bouton && entrer == null) {
+      // Rien de branche : pas de bouton grise. La hauteur du bouton reste
+      // reservee, la ligne d'etat dit ce qui est connu.
+      contenu = <Widget>[
+        ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: AppPage.hauteurBouton),
+          child: Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: detail == null
+                ? const SizedBox.shrink()
+                : _LigneEtat(etat: e.etat, texte: detail),
+          ),
+        ),
+      ];
+    } else if (bouton && entrer != null) {
+      final VoidCallback appui = motif == null
+          ? entrer
+          : () {
+              setState(() => _attenteDite = true);
+              signalerManque(context, motif);
+            };
       final Widget action = Focus(
         focusNode: _focusBouton,
         child: Semantics(
           label: e.libelleLecteur,
           button: true,
           excludeSemantics: true,
-          onTap: widget.onEntrer,
+          onTap: appui,
           child: ActionPrincipale(
             libelle: e.libelle,
-            onPress: widget.onEntrer,
+            onPress: appui,
             pleineLargeur: mobile,
           ),
         ),
@@ -458,6 +498,19 @@ class _EmplacementEntreeVueState extends State<EmplacementEntreeVue> {
           Ecart.vLg,
         ],
         if (mobile) action else _EnFin(child: action),
+        if (_attenteDite && motif != null) ...<Widget>[
+          Ecart.vSm,
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              motif,
+              key: const ValueKey<String>('emplacement-attente-entree'),
+              style: AppPalette.of(context).inkMuted.applyTo(
+                Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
+        ],
       ];
     } else {
       contenu = <Widget>[
@@ -471,7 +524,7 @@ class _EmplacementEntreeVueState extends State<EmplacementEntreeVue> {
             ),
           ),
         ),
-        if (e.reessayer)
+        if (e.reessayer && widget.onReessayer != null)
           if (mobile)
             ActionPrincipale(
               libelle: t.classe.entree.reessayer,

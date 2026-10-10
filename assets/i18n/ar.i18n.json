@@ -1,4 +1,21 @@
 {
+  "foyer": {
+    "ajout": {
+      "identite": {
+        "ageFige": "الإرسال جارٍ: يمكن تغيير العمر بعد الرد."
+      }
+    }
+  },
+  "formulaire": {
+    "manqueAccord": "موافقتك ناقصة: ضع علامة في الخانة للمتابعة.",
+    "motif": {
+      "manqueSaisi": "السبب ناقص: اكتبه في كلمات قليلة."
+    }
+  },
+  "kyc": {
+    "manquePhoto": "اختر أولًا صورة وثيقتك.",
+    "manqueType": "اختر أولًا الوثيقة التي تودعها."
+  },
   "notifications": {
     "titre": "الإشعارات",
     "indisponibleTitre": "الإشعارات غير متاحة بعد",
@@ -437,6 +454,9 @@
     }
   },
   "eleve": {
+    "accueil": {
+      "entreeSePrepare": "دخولك قيد التحضير. أعد المحاولة بعد لحظة."
+    },
     "suivi": {
       "titre": "متابعة دروسي",
       "colonneDate": "التاريخ",
@@ -600,7 +620,9 @@
         "aucuneSeanceDetail": "لم يُحدَّد جدول هذا الفصل بعد.",
         "duree": "المدة {valeur}",
         "dureeLibelle": "المدة",
-        "rejoindre": "انضمام"
+        "rejoindre": "انضمام",
+        "entreeSePrepare": "دخولكم قيد التحضير. أعيدوا المحاولة بعد لحظة.",
+        "entreeAttendReseau": "ستتمكنون من الدخول عند عودة الشبكة."
       },
       "enseignant": {
         "sayyid": "سيد",
@@ -1729,6 +1751,12 @@
     "horsLigne": "لا توجد شبكة. يبقى كل شيء متاحًا للاطلاع، وسينتظر الإرسال."
   },
   "admin": {
+    "evaluations": {
+      "manqueResultat": "اختر أولًا نتيجة التقييم."
+    },
+    "programmes": {
+      "publierSansNiveau": "أضف مستوى واحدًا على الأقل لتتمكن من نشر هذه النسخة."
+    },
     "finance": {
       "aValider": "للمصادقة"
     }

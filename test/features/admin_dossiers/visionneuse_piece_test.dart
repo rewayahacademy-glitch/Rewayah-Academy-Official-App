@@ -17,6 +17,7 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
+import 'package:rewayah_academy/core/widgets/bouton_icone.dart';
 import 'package:rewayah_academy/features/admin_dossiers/visionneuse_piece.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
@@ -206,11 +207,27 @@ void main() {
     );
     expect(tester.getSize(agrandir).width, greaterThanOrEqualTo(48));
     expect(tester.getSize(agrandir).height, greaterThanOrEqualTo(48));
+    // BOUTONS-GRISES-1 : a la borne, le bouton disparait (jamais grise),
+    // sa place reste reservee (NAV-FLECHES-1).
+    bool visible(String libelle) => tester
+        .widget<Visibility>(
+          find.ancestor(
+            of: find.byWidgetPredicate(
+              (Widget w) => w is BoutonIcone && w.libelle == libelle,
+            ),
+            matching: find.byType(Visibility),
+          ),
+        )
+        .visible;
+    expect(visible(t.dossiers.visionneuse.reduire), isFalse);
+    expect(visible(t.dossiers.visionneuse.agrandir), isTrue);
     for (int i = 0; i < 12; i++) {
       await tester.tap(agrandir);
       await tester.pump();
     }
     expect(_echelle(tester), closeTo(4, 1e-6));
+    expect(visible(t.dossiers.visionneuse.agrandir), isFalse);
+    expect(visible(t.dossiers.visionneuse.reduire), isTrue);
     await tester.tap(reduire);
     await tester.pump();
     expect(_echelle(tester), closeTo(3.75, 1e-6));

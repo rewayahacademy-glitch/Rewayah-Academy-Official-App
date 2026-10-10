@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/signaler_manque.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/service_programme.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
@@ -205,33 +207,25 @@ class _Corps extends StatelessWidget {
           ],
         ),
         Ecart.vMd,
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: <Widget>[
-            if (selectionnee.modifiable) ...<Widget>[
-              ActionPrincipale(
-                libelle: t.admin.programmes.ajouterNiveau,
-                pleineLargeur: false,
-                niveau: NiveauAction.secondaire,
-                onPress: () => onAjouterNiveau(selectionnee),
-              ),
-              ActionPrincipale(
-                libelle: t.admin.programmes.publierVersion,
-                pleineLargeur: false,
-                onPress: selectionnee.nombreNiveaux == 0
-                    ? null
-                    : () => onPublier(selectionnee),
-              ),
-            ] else
+        if (selectionnee.modifiable)
+          _ActionsBrouillon(
+            version: selectionnee,
+            onAjouterNiveau: onAjouterNiveau,
+            onPublier: onPublier,
+          )
+        else
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: <Widget>[
               ActionPrincipale(
                 libelle: t.admin.programmes.creerVersionDepuisPubliee,
                 pleineLargeur: false,
                 niveau: NiveauAction.secondaire,
                 onPress: () => onCreerDepuis(selectionnee),
               ),
-          ],
-        ),
+            ],
+          ),
         Ecart.vLg,
         PlaceCollection(
           child: _Niveaux(
@@ -242,6 +236,102 @@ class _Corps extends StatelessWidget {
                 onSupprimerNiveau(selectionnee, n),
           ),
         ),
+      ],
+    );
+  }
+}
+
+/// « Ajouter un niveau » et « Publier la version » d'un brouillon.
+///
+/// « Publier la version » n'est jamais grise (BOUTONS-GRISES-1) : sans
+/// niveau, l'appui dit ce qui manque sous les boutons (region live),
+/// l'annonce au lecteur d'ecran et rend le focus a « Ajouter un niveau »,
+/// le geste qui comble le manque.
+class _ActionsBrouillon extends StatefulWidget {
+  const _ActionsBrouillon({
+    required this.version,
+    required this.onAjouterNiveau,
+    required this.onPublier,
+  });
+
+  final VersionProgramme version;
+  final void Function(VersionProgramme version) onAjouterNiveau;
+  final void Function(VersionProgramme version) onPublier;
+
+  @override
+  State<_ActionsBrouillon> createState() => _ActionsBrouillonEtat();
+}
+
+class _ActionsBrouillonEtat extends State<_ActionsBrouillon> {
+  final FocusNode _focusAjouter = FocusNode(debugLabel: 'ajouter-niveau');
+  bool _manqueDit = false;
+
+  @override
+  void didUpdateWidget(_ActionsBrouillon ancien) {
+    super.didUpdateWidget(ancien);
+    if (widget.version.nombreNiveaux > 0 ||
+        widget.version.id != ancien.version.id) {
+      _manqueDit = false;
+    }
+  }
+
+  @override
+  void dispose() {
+    _focusAjouter.dispose();
+    super.dispose();
+  }
+
+  void _publier() {
+    if (widget.version.nombreNiveaux == 0) {
+      setState(() => _manqueDit = true);
+      signalerManque(
+        context,
+        t.admin.programmes.publierSansNiveau,
+        champ: _focusAjouter,
+      );
+      return;
+    }
+    widget.onPublier(widget.version);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: <Widget>[
+            ActionPrincipale(
+              libelle: t.admin.programmes.ajouterNiveau,
+              pleineLargeur: false,
+              niveau: NiveauAction.secondaire,
+              focusNode: _focusAjouter,
+              onPress: () => widget.onAjouterNiveau(widget.version),
+            ),
+            ActionPrincipale(
+              libelle: t.admin.programmes.publierVersion,
+              pleineLargeur: false,
+              onPress: _publier,
+            ),
+          ],
+        ),
+        if (_manqueDit && widget.version.nombreNiveaux == 0) ...<Widget>[
+          Ecart.vSm,
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              t.admin.programmes.publierSansNiveau,
+              key: const ValueKey<String>('programmes-publier-sans-niveau'),
+              style: AppPalette.of(context).inkAlert.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
+        ],
       ],
     );
   }
@@ -877,16 +967,27 @@ class _FeuilleMotif extends StatefulWidget {
 
 class _FeuilleMotifEtat extends State<_FeuilleMotif> {
   final TextEditingController _motif = TextEditingController();
+  final FocusNode _focusMotif = FocusNode(debugLabel: 'motif-programme');
   bool _envoi = false;
+  bool _motifManquant = false;
   String? _erreur;
 
   @override
   void dispose() {
     _motif.dispose();
+    _focusMotif.dispose();
     super.dispose();
   }
 
   Future<void> _envoyer() async {
+    // Jamais grise (BOUTONS-GRISES-1) : sans motif, l'appui le dit sous le
+    // champ, l'annonce et rend le focus au champ.
+    if (_motif.text.trim().isEmpty) {
+      final String message = t.formulaire.motif.manqueSaisi;
+      setState(() => _motifManquant = true);
+      signalerManque(context, message, champ: _focusMotif);
+      return;
+    }
     setState(() {
       _envoi = true;
       _erreur = null;
@@ -918,9 +1019,11 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
         Ecart.vSm,
         ZoneSaisie(
           controleur: _motif,
+          noeud: _focusMotif,
           minLignes: 2,
           libelle: t.admin.programmes.champMotif,
-          onChanged: (String _) => setState(() {}),
+          erreur: _motifManquant ? t.formulaire.motif.manqueSaisi : null,
+          onChanged: (String _) => setState(() => _motifManquant = false),
         ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,
@@ -933,7 +1036,7 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
         ActionPrincipale(
           libelle: widget.libelleEnvoyer,
           enCours: _envoi,
-          onPress: _motif.text.trim().isEmpty ? null : _envoyer,
+          onPress: _envoyer,
         ),
       ],
     );
