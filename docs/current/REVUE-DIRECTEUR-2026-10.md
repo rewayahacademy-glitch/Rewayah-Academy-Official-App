@@ -475,7 +475,7 @@ Branche issue de `corrections/revue-directeur-2026-10` (tête commune `5a52ff30`
 | Boutons inertes (grisés) dans la feuille de demande des réglages | 1 | 0 |
 | Mots coupés mesurés dans les refus de la saisie du code à 320 ×2 (fr, ar) | 1 (« Demandez- / lui ») | 0 |
 | Tests qui protègent `minimumListe` / le point d'attention unique | 0 / 0 | 3 / 12 |
-| `verifier_revue` | 1533 | 1533 |
+| `verifier_revue` | 1533 | 1532 (remesuré le 10/10, FINITIONS-CORR2-1 : `dart tool/verifier_revue.dart` sur `5a52ff30` puis sur la tête `dcc3cb0b` de `corrections/c2-superpos-b`, extraites par `git archive` ; `libelle-sans-source` 1474 → 1473 : le texte de `eleveConnexion.refus.revoqueTitre` (« Appareil retiré ») est désormais cité dans un document de `docs/`, ce qui lui donne une source (lu par `--regle=libelle-sans-source --detail`) ; la fiche disait 1533) |
 | `verifier_jetons` | 37 | 37 |
 
 Captures : `docs/current/captures/SUPERPOS-1b/` (`superpos1b_avant_*` = tête `5a52ff30`, `superpos1b_apres_*`) : demande des réglages, feuille vide puis appui sans motif, à 320 ×2 clair, 320 ×2 Interface guidée sombre RTL et 390 ; demande de durée, appui sans durée, 320 ×2 ; saisie du code, refus « appareil retiré », 320 ×2 en français et en arabe ; aperçu avec repère et bandeaux, 320 ×2 clair et sombre RTL. Script archivé `superpos1b_capture_test.dart.txt`. Avant : bouton à filet, inerte, champ vide ; « Demandez- / lui » coupé. Après : bouton plein actif, erreur sous le champ après l'appui ; « Demandez-lui » entier. Les captures RTL posent le français en sens arabe : la ponctuation passe en tête de ligne, effet du forçage.
