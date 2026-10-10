@@ -48,9 +48,12 @@ passée nommément, et une règle archivée qui contredit `docs/current/` est ca
 - Aucun fichier de `.claude/agents/` ou `.claude/commands/` n'est actif dans ce dépôt ; seuls
   `.claude/settings.json` et `.claude/hooks/` le sont (versionnés depuis le 10/10/2026, pour toutes
   les sessions et tous leurs agents). `hooks/garde.py` refuse avant exécution les écritures dans les
-  zones interdites, tout push vers `main`, tout push forcé ou suppression de branche distante, et
-  toute écriture sur Supabase, Vercel ou GitHub `main` ; `hooks/demarrage.sh` prépare Flutter au
-  démarrage. Le garde-fou se protège lui-même : il ne se modifie que sur ordre du directeur.
+  zones interdites, tout push vers `main`, tout push forcé ou suppression de branche distante, toute
+  PR vers `main` ou fusion de PR, et toute écriture sur Supabase, Vercel ou GitHub `main` ;
+  `hooks/zones_apres.sh` signale après chaque commande shell une zone interdite modifiée ;
+  `hooks/demarrage.sh` prépare Flutter au démarrage. Sans Python, le garde-fou refuse tout par
+  prudence. Il se protège lui-même (`settings*.json`, `hooks/`) : il ne se modifie que sur ordre
+  du directeur.
 
 ## Vérifier avant de dire que c'est fait
 

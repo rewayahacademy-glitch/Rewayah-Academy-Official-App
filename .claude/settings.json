@@ -2,6 +2,7 @@
   "hooks": {
     "SessionStart": [
       {
+        "matcher": "startup",
         "hooks": [
           { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/demarrage.sh\"", "timeout": 360 }
         ]
@@ -9,9 +10,17 @@
     ],
     "PreToolUse": [
       {
-        "matcher": "Edit|Write|MultiEdit|NotebookEdit|Bash|mcp__.*",
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit|Bash|Monitor|mcp__.*",
         "hooks": [
-          { "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/garde.py\"", "timeout": 10 }
+          { "type": "command", "command": "P=$(command -v python3 || command -v python) || { echo 'Garde-fou : Python introuvable, action refusée par prudence' >&2; exit 2; }; \"$P\" \"$CLAUDE_PROJECT_DIR/.claude/hooks/garde.py\"", "timeout": 10 }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/zones_apres.sh\"", "timeout": 15 }
         ]
       }
     ]
