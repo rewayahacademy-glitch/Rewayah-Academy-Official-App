@@ -154,7 +154,8 @@ void main() {
 
     // (2) Comptes a 320 texte x2 : la carte dont l'identifiant est le titre
     // (« TEACHER-AS-000002 », sans nom) garde un titre a la taille des
-    // autres ; l'identifiant passe en sous-titre, entier.
+    // autres ; l'identifiant passe en sous-titre, entier, une seule fois
+    // (il ne se repete pas en tete du resume).
     testWidgets('comptes_320x2_fr_standard_identifiant', (
       WidgetTester tester,
     ) async {
@@ -191,6 +192,16 @@ void main() {
       );
       await stabiliser(tester);
       expect(defautsDeTexte(tester), isEmpty);
+      // L'identifiant en sous-titre n'est pas repete dans le resume.
+      expect(
+        find.descendant(
+          of: find
+              .ancestor(of: carte.first, matching: find.byType(AppCard))
+              .first,
+          matching: find.textContaining('TEACHER‑AS‑000002'),
+        ),
+        findsOneWidget,
+      );
       await capturer(tester, 'comptes_320x2_fr_standard_identifiant');
     });
   });

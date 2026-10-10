@@ -235,6 +235,28 @@ void main() {
             rendus.where((String t) => t.contains('TEACHER\u2011AS\u2011')),
             isNotEmpty,
           );
+          // Relecture : l'identifiant passe en sous-titre n'est pas repete
+          // en tete de la ligne de resume. Une seule fois dans sa carte.
+          final Finder carteId = find.ancestor(
+            of: find.text('TEACHER\u2011AS\u2011000002'),
+            matching: find.byType(AppCard),
+          );
+          expect(carteId, findsOneWidget);
+          final List<String> textesCarteId = find
+              .descendant(of: carteId, matching: find.byType(RichText))
+              .evaluate()
+              .map(
+                (Element e) =>
+                    (e.renderObject! as RenderParagraph).text.toPlainText(),
+              )
+              .toList();
+          expect(
+            textesCarteId.where(
+              (String t) => t.contains('TEACHER\u2011AS\u2011000002'),
+            ),
+            hasLength(1),
+            reason: textesCarteId.join(' | '),
+          );
           expect(identifiantsCoupes(tester, textesVisibles()), isEmpty);
           // Comptes n'est pas traduit en arabe : la ligne visuelle RTL n'est
           // pas lue (repli francais, `ecransTraduitsEnArabe`).

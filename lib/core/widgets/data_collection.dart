@@ -630,8 +630,20 @@ class _Carte<T> extends StatelessWidget {
     // `tool/verifier_jetons.dart`, et le tiret court se confond avec un
     // signe moins dans une colonne de chiffres. DUREE-INSECABLE-4 :
     // [enchainer] ne garde l'ancre de sens (U+200E) qu'en tete de la ligne.
+    //
+    // Relecture de COUPE-MOTS-FOND-1 : une valeur deja lue en tete de carte
+    // (titre, ou sous-titre quand l'identifiant n'y tient pas : « Personne »
+    // puis « TEACHER-AS-000002 ») ne se repete pas en tete du resume.
+    final String? enTete = titre != null && titre.rendu == null
+        ? identifiantsInsecables(titre.texte(ligne)).trim()
+        : null;
     final String resume = enchainer(
-      secondaires.map((ColonneDonnees<T> c) => c.texte(ligne)),
+      secondaires
+          .map((ColonneDonnees<T> c) => c.texte(ligne))
+          .where(
+            (String v) =>
+                enTete == null || identifiantsInsecables(v).trim() != enTete,
+          ),
       ' · ',
     );
 
