@@ -203,10 +203,3 @@ final Provider<PortHistoriqueObservations> portHistoriqueObservationsProvider =
     Provider<PortHistoriqueObservations>(
       (Ref ref) => const HistoriqueObservationsIndisponible(),
     );
-
-/// La consultation admin employee par l'application.
-final Provider<PortHistoriqueObservationsAdmin>
-portHistoriqueObservationsAdminProvider =
-    Provider<PortHistoriqueObservationsAdmin>(
-      (Ref ref) => const HistoriqueObservationsAdminIndisponible(),
-    );
