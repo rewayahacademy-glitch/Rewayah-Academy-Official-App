@@ -1297,7 +1297,7 @@ bool estActionConditionnelleNulle(String expression, {bool relais = false}) {
   if (e == 'null') {
     return true;
   }
-  if (!_estGrise(e)) {
+  if (!_estGriseSeul(e)) {
     return false;
   }
   if (relais &&
@@ -1307,22 +1307,87 @@ bool estActionConditionnelleNulle(String expression, {bool relais = false}) {
   return true;
 }
 
+/// Une condition qui ne dit QUE l'envoi deja parti (`_envoi`, `enCours`,
+/// `_phase == _Phase.envoi`) : le bouton aboutira, il empeche seulement le
+/// double envoi. Ancree : une condition composee (`horsLigne || _envoi`,
+/// `_envoi || brouillon.profilCree`) n'est pas exemptee (revue
+/// BOUTONS-GRISES-1 : l'ancienne exemption `_envoiEnCours` avalait toute
+/// expression qui commencait par l'envoi ou le contenait).
+final RegExp _conditionEnvoiSeule = RegExp(
+  r'^!?(?:widget\.)?_?\w*(?:enCours|EnCours|envoi|Envoi|chargement)'
+  r'(?:\s*[!=]=\s*[\w.]+)?$|'
+  r'^_phase == _Phase\.envoi$|^_?\w+ is Decision(?:Verification|Envoi)$',
+);
+
+/// La condition d'un ternaire de premier niveau (le texte avant son `?`),
+/// ou `null` quand l'expression n'est pas un ternaire.
+String? conditionTernaire(String e) {
+  int profondeur = 0;
+  for (int i = 0; i < e.length; i++) {
+    final String c = e[i];
+    if (c == '(' || c == '[' || c == '{') {
+      profondeur++;
+    } else if (c == ')' || c == ']' || c == '}') {
+      profondeur--;
+    } else if (c == '?' && profondeur == 0) {
+      final String suivant = i + 1 < e.length ? e[i + 1] : '';
+      if (suivant == '.') {
+        continue;
+      }
+      if (suivant == '?') {
+        i++;
+        continue;
+      }
+      return e.substring(0, i).trim();
+    }
+  }
+  return null;
+}
+
+/// Comme [_estGrise], mais n'exempte l'envoi deja parti que lorsqu'il est la
+/// seule condition du ternaire.
+bool _estGriseSeul(String e) {
+  if (e == 'null') {
+    return true;
+  }
+  if (e.startsWith('(') ||
+      e.contains('=>') && e.indexOf('=>') < e.indexOf('?')) {
+    return false;
+  }
+  final bool grise =
+      RegExp(r'\?\s*null\s*:').hasMatch(e) ||
+      RegExp(r':\s*null$').hasMatch(e);
+  if (!grise) {
+    return false;
+  }
+  final String? condition = conditionTernaire(e);
+  return condition == null ||
+      !_conditionEnvoiSeule.hasMatch(
+        condition.replaceAll(RegExp(r'\s+'), ' '),
+      );
+}
+
 /// Les boutons d'action dont `onPress`, `onPressed` ou `onTap` vaut `null`
 /// selon l'etat : la vraie forme d'un bouton grise (BOUTONS-GRISES-1). Lit
 /// le ternaire passe en argument, le litteral `null` et la variable
 /// d'action posee nulle sous condition. Expose pour le test qui prouve la
 /// detection (`test/tool/verifier_revue_boutons_test.dart`).
-List<Violation> boutonsGrisesConditionnels(String chemin, String texte) {
+List<Violation> boutonsGrisesConditionnels(
+  String chemin,
+  String texte, {
+  Map<String, Set<String>> relais = const <String, Set<String>>{},
+}) {
   final List<Violation> v = <Violation>[];
   final Set<String> variables = <String>{
     for (final RegExpMatch m in _variableActionConditionnelle.allMatches(texte))
       if (estActionConditionnelleNulle(m.group(2)!)) m.group(1)!,
   };
-  final bool relais = chemin.contains('lib/core/widgets/');
+  final bool relaisCore = chemin.contains('lib/core/widgets/');
+  final Set<int> vus = <int>{};
   for (final RegExpMatch m in _argumentAction.allMatches(texte)) {
     final String expression = _argument(texte, m.end).trim();
     final bool nulle =
-        estActionConditionnelleNulle(expression, relais: relais) ||
+        estActionConditionnelleNulle(expression, relais: relaisCore) ||
         variables.contains(expression);
     if (!nulle) {
       continue;
@@ -1331,6 +1396,7 @@ List<Violation> boutonsGrisesConditionnels(String chemin, String texte) {
     if (!_widgetAction.hasMatch(appelant) || _enCoursFixe(texte, m.start)) {
       continue;
     }
+    vus.add(m.start);
     v.add(
       Violation(
         chemin,
@@ -1342,16 +1408,148 @@ List<Violation> boutonsGrisesConditionnels(String chemin, String texte) {
       ),
     );
   }
+  // Le relais : la valeur nulle passee a un widget d'ecran qui la remet telle
+  // quelle a un widget d'action (`CarteGroupe(onRejoindre: horsLigne ? null
+  // : f)`, puis `ActionPrincipale(onPress: onRejoindre)`). La decision est
+  // prise ici, chez l'appelant : c'est ici qu'elle est comptee.
+  if (relais.isNotEmpty) {
+    for (final RegExpMatch m in _argumentRappel.allMatches(texte)) {
+      if (vus.contains(m.start)) {
+        continue;
+      }
+      final String appelant = _appelantDe(texte, m.start);
+      final Set<String>? champs = relais[appelant];
+      if (champs == null || !champs.contains(m.group(1))) {
+        continue;
+      }
+      final String expression = _argument(texte, m.end).trim();
+      final bool nulle =
+          (estActionConditionnelleNulle(expression) &&
+              !_propagationDuNul(expression)) ||
+          variables.contains(expression);
+      if (!nulle) {
+        continue;
+      }
+      v.add(
+        Violation(
+          chemin,
+          _ligneDe(texte, m.start),
+          exclusBoutonsConditionnels.any(chemin.contains)
+              ? 'bouton-grise-conditionnel-exclu'
+              : 'bouton-grise-conditionnel',
+          '$appelant ${m.group(0)} '
+          '${expression.replaceAll(RegExp(r'\s+'), ' ')} (relais)',
+        ),
+      );
+    }
+  }
   return v;
 }
 
-List<Violation> _boutonsGrisesConditionnels() => <Violation>[
-  for (final File f in _sourcesLib())
-    ...boutonsGrisesConditionnels(
-      f.path.replaceAll(r'\', '/'),
-      _sansCommentaires(f),
+/// Un argument de rappel nomme `onXxx` passe a un widget.
+final RegExp _argumentRappel = RegExp(r'(?<![?]\s*)\b(on[A-Z]\w*)\s*:');
+
+/// `rappel == null ? null : () => rappel(x)` : l'appelant adapte la forme du
+/// rappel sans rien decider ; le widget relais recoit `null` seulement quand
+/// rien n'est branche, et c'est lui qui decide de ne pas rendre le bouton.
+bool _propagationDuNul(String e) {
+  final RegExpMatch? m = RegExp(
+    r'^(?:widget\.)?(\w+)\s*==\s*null\s*\?\s*null\s*:(.*)$',
+    dotAll: true,
+  ).firstMatch(e);
+  return m != null && RegExp('\\b${m.group(1)}\\b').hasMatch(m.group(2)!);
+}
+
+/// Les widgets d'ecran (lib/features) qui remettent un de leurs champs de
+/// rappel tel quel a un widget d'action (`onPress: onRejoindre`,
+/// `onPress: widget.onEntrer`), directement ou par un autre relais. Nom du
+/// widget vers ses champs relayes. Les composants de `lib/core/widgets` ne
+/// sont pas des relais : ce sont les widgets d'action eux-memes, ou des
+/// lignes et cartes sans action (contenu).
+Map<String, Set<String>> relaisAction(Map<String, String> sources) {
+  final Map<String, Set<String>> relais = <String, Set<String>>{};
+  final RegExp champ = RegExp(r'^(?:widget\.)?(on[A-Z]\w*)$');
+  bool change = true;
+  while (change) {
+    change = false;
+    sources.forEach((String chemin, String texte) {
+      if (!chemin.contains('lib/features/')) {
+        return;
+      }
+      final List<(int, String)> classes = _classesDe(texte);
+      for (final RegExpMatch m in _argumentRappel.allMatches(texte)) {
+        final RegExpMatch? c = champ.firstMatch(_argument(texte, m.end).trim());
+        if (c == null) {
+          continue;
+        }
+        final String appelant = _appelantDe(texte, m.start);
+        final bool versAction =
+            const <String>{'onPress', 'onPressed', 'onTap'}.contains(
+              m.group(1),
+            ) &&
+            _widgetAction.hasMatch(appelant);
+        final bool versRelais =
+            relais[appelant]?.contains(m.group(1)) ?? false;
+        if (!versAction && !versRelais) {
+          continue;
+        }
+        String? proprietaire;
+        int debutClasse = 0;
+        int finClasse = texte.length;
+        for (final (int debut, String nom) in classes) {
+          if (debut > m.start) {
+            finClasse = debut;
+            break;
+          }
+          proprietaire = nom;
+          debutClasse = debut;
+        }
+        if (proprietaire == null) {
+          continue;
+        }
+        // Un relais qui ne rend son bouton que si le rappel est branche
+        // (`if (onX != null) ActionPrincipale(onPress: onX)`) ne grise rien :
+        // nul, le bouton n'est pas rendu.
+        if (RegExp(
+          '\\b(?:widget\\.)?${c.group(1)}\\s*(?:[!=]=\\s*null|case\\b)',
+        ).hasMatch(texte.substring(debutClasse, finClasse))) {
+          continue;
+        }
+        if ((relais[proprietaire] ??= <String>{}).add(c.group(1)!)) {
+          change = true;
+        }
+      }
+    });
+  }
+  return relais;
+}
+
+/// Les classes d'un fichier, dans l'ordre : debut et nom du widget qu'elles
+/// servent (l'etat `_XState extends State<X>` sert `X`).
+List<(int, String)> _classesDe(String texte) => <(int, String)>[
+  for (final RegExpMatch m in RegExp(
+    r'\bclass\s+(\w+)(?:<[^>{]*>)?\s+extends\s+(?:\w+\.)?(\w+)(?:<\s*(\w+)\s*>)?',
+  ).allMatches(texte))
+    (
+      m.start,
+      (m.group(2) == 'State' || m.group(2) == 'ConsumerState') &&
+              m.group(3) != null
+          ? m.group(3)!
+          : m.group(1)!,
     ),
 ];
+
+List<Violation> _boutonsGrisesConditionnels() {
+  final Map<String, String> sources = <String, String>{
+    for (final File f in _sourcesLib())
+      f.path.replaceAll(r'\', '/'): _sansCommentaires(f),
+  };
+  final Map<String, Set<String>> relais = relaisAction(sources);
+  return <Violation>[
+    for (final MapEntry<String, String> s in sources.entries)
+      ...boutonsGrisesConditionnels(s.key, s.value, relais: relais),
+  ];
+}
 
 /// Ce qui identifie une violation d'une version a l'autre, sans le numero
 /// de ligne, qui bouge a chaque modification du fichier.
