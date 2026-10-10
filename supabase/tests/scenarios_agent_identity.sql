@@ -128,8 +128,12 @@ BEGIN
 
   -- A current administrator can change a profile; an already issued agent
   -- token must then fail closed against its immutable student scope.
-  PERFORM pg_catalog.set_config('test.uid', 'ea000000-0000-0000-0000-000000000001', true);
-  PERFORM pg_catalog.set_config('test.jwt', pg_catalog.jsonb_build_object(
+  PERFORM pg_catalog.set_config(
+    'request.jwt.claim.sub',
+    'ea000000-0000-0000-0000-000000000001',
+    true
+  );
+  PERFORM pg_catalog.set_config('request.jwt.claims', pg_catalog.jsonb_build_object(
     'sub', 'ea000000-0000-0000-0000-000000000001',
     'role', 'authenticated',
     'app_metadata', pg_catalog.jsonb_build_object(
