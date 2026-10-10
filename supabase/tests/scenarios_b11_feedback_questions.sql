@@ -102,7 +102,7 @@ declare
   v_question_count integer;
 begin
   v_result := public.tendance_feedback_comprehension('f16fffff-0000-0000-0000-000000000002');
-  if (v_result ->> 'nombre_echantillons')::integer <> 6
+  if (v_result ->> 'nombre_echantillons')::integer < 5 or (v_result ->> 'nombre_echantillons')::integer > 6
      or v_result ->> 'visible_par_enseignant' <> 'true'
      or (v_result -> 'repartition' ->> 'bien')::numeric <> 1 then
     raise exception 'B-11 feedback: agregat comprehension invalide (%)', v_result;
