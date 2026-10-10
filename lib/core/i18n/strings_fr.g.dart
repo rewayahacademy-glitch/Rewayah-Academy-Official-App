@@ -11463,11 +11463,11 @@ class Traductions$salle$seance$ecriture$fr {
 	/// fr: '{nom} reprend le tableau.'
 	String repriseNom({required Object nom}) => '${nom} reprend le tableau.';
 
-	/// fr: 'Touche « Écrire » quand tu veux écrire. Sinon la page se lit, et ton doigt ne laisse aucun trait.'
-	String get choisirTu => 'Touche « Écrire » quand tu veux écrire. Sinon la page se lit, et ton doigt ne laisse aucun trait.';
+	/// fr: 'Touche « Écrire » quand tu veux écrire. Sinon la page se lit, sans laisser de trait.'
+	String get choisirTu => 'Touche « Écrire » quand tu veux écrire. Sinon la page se lit, sans laisser de trait.';
 
-	/// fr: 'Touchez « Écrire » quand vous voulez écrire. Sinon la page se lit, et votre doigt ne laisse aucun trait.'
-	String get choisirVous => 'Touchez « Écrire » quand vous voulez écrire. Sinon la page se lit, et votre doigt ne laisse aucun trait.';
+	/// fr: 'Touchez « Écrire » quand vous voulez écrire. Sinon la page se lit, sans laisser de trait.'
+	String get choisirVous => 'Touchez « Écrire » quand vous voulez écrire. Sinon la page se lit, sans laisser de trait.';
 
 	/// fr: 'Écris avec le stylo. La gomme et Annuler ne touchent que tes traits ; Terminer revient à la lecture.'
 	String get aideEleveTu => 'Écris avec le stylo. La gomme et Annuler ne touchent que tes traits ; Terminer revient à la lecture.';
@@ -16156,8 +16156,8 @@ extension on Traductions {
 			'salle.seance.ecriture.repriseSayyid' => 'Sayyid reprend le tableau.',
 			'salle.seance.ecriture.repriseSayyida' => 'Sayyida reprend le tableau.',
 			'salle.seance.ecriture.repriseNom' => ({required Object nom}) => '${nom} reprend le tableau.',
-			'salle.seance.ecriture.choisirTu' => 'Touche « Écrire » quand tu veux écrire. Sinon la page se lit, et ton doigt ne laisse aucun trait.',
-			'salle.seance.ecriture.choisirVous' => 'Touchez « Écrire » quand vous voulez écrire. Sinon la page se lit, et votre doigt ne laisse aucun trait.',
+			'salle.seance.ecriture.choisirTu' => 'Touche « Écrire » quand tu veux écrire. Sinon la page se lit, sans laisser de trait.',
+			'salle.seance.ecriture.choisirVous' => 'Touchez « Écrire » quand vous voulez écrire. Sinon la page se lit, sans laisser de trait.',
 			'salle.seance.ecriture.aideEleveTu' => 'Écris avec le stylo. La gomme et Annuler ne touchent que tes traits ; Terminer revient à la lecture.',
 			'salle.seance.ecriture.aideEleveVous' => 'Écrivez avec le stylo. La gomme et Annuler ne touchent que vos traits ; Terminer revient à la lecture.',
 			'salle.seance.ecriture.peutEcrire' => 'Peut écrire',

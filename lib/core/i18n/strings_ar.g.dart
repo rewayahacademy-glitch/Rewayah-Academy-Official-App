@@ -726,8 +726,8 @@ class _Traductions$salle$seance$ecriture$ar extends Traductions$salle$seance$ecr
 	@override String get repriseSayyid => 'السيد يستعيد السبورة.';
 	@override String get repriseSayyida => 'السيدة تستعيد السبورة.';
 	@override String repriseNom({required Object nom}) => 'عادت السبورة إلى ⁨${nom}⁩.';
-	@override String get choisirTu => 'المس « الكتابة » عندما تريد أن تكتب. وإلا فالصفحة للقراءة، ولا يترك إصبعك أي خط.';
-	@override String get choisirVous => 'المسوا « الكتابة » عندما تريدون الكتابة. وإلا فالصفحة للقراءة، ولا يترك إصبعكم أي خط.';
+	@override String get choisirTu => 'المس « الكتابة » عندما تريد أن تكتب. وإلا فالصفحة للقراءة، ولا يبقى عليها أي خط.';
+	@override String get choisirVous => 'المسوا « الكتابة » عندما تريدون الكتابة. وإلا فالصفحة للقراءة، ولا يبقى عليها أي خط.';
 	@override String get aideEleveTu => 'اكتب بالقلم. الممحاة والتراجع لا يمسّان إلا خطوطك؛ و« إنهاء » يعيد إلى القراءة.';
 	@override String get aideEleveVous => 'اكتبوا بالقلم. الممحاة والتراجع لا يمسّان إلا خطوطكم؛ و« إنهاء » يعيد إلى القراءة.';
 	@override String get peutEcrire => 'الكتابة مسموحة';
@@ -2510,8 +2510,8 @@ extension on TraductionsAr {
 			'salle.seance.ecriture.repriseSayyid' => 'السيد يستعيد السبورة.',
 			'salle.seance.ecriture.repriseSayyida' => 'السيدة تستعيد السبورة.',
 			'salle.seance.ecriture.repriseNom' => ({required Object nom}) => 'عادت السبورة إلى ⁨${nom}⁩.',
-			'salle.seance.ecriture.choisirTu' => 'المس « الكتابة » عندما تريد أن تكتب. وإلا فالصفحة للقراءة، ولا يترك إصبعك أي خط.',
-			'salle.seance.ecriture.choisirVous' => 'المسوا « الكتابة » عندما تريدون الكتابة. وإلا فالصفحة للقراءة، ولا يترك إصبعكم أي خط.',
+			'salle.seance.ecriture.choisirTu' => 'المس « الكتابة » عندما تريد أن تكتب. وإلا فالصفحة للقراءة، ولا يبقى عليها أي خط.',
+			'salle.seance.ecriture.choisirVous' => 'المسوا « الكتابة » عندما تريدون الكتابة. وإلا فالصفحة للقراءة، ولا يبقى عليها أي خط.',
 			'salle.seance.ecriture.aideEleveTu' => 'اكتب بالقلم. الممحاة والتراجع لا يمسّان إلا خطوطك؛ و« إنهاء » يعيد إلى القراءة.',
 			'salle.seance.ecriture.aideEleveVous' => 'اكتبوا بالقلم. الممحاة والتراجع لا يمسّان إلا خطوطكم؛ و« إنهاء » يعيد إلى القراءة.',
 			'salle.seance.ecriture.peutEcrire' => 'الكتابة مسموحة',
