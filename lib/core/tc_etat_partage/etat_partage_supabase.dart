@@ -49,7 +49,7 @@ class EtatPartageSupabase implements PortEtatPartagePersistant {
   Future<SharedContentState> enregistrer(SharedContentState etat) async {
     try {
       final Map<String, dynamic> payload = etatVersJson(etat);
-      final dynamic resultat = await _client.rpc(
+      final dynamic resultat = await _client.rpc<dynamic>(
         'publier_etat_partage',
         params: <String, dynamic>{
           'p_session_id': etat.sessionId,
