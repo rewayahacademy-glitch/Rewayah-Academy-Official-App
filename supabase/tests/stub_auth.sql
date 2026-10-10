@@ -6,15 +6,26 @@ create role service_role nologin bypassrls;
 create role supabase_auth_admin nologin bypassrls;
 create schema auth;
 grant usage on schema auth to anon, authenticated;
-create table auth.users (id uuid primary key, email text);
+create table auth.users (
+  id uuid primary key,
+  email text,
+  email_confirmed_at timestamptz
+);
 
-create function auth.uid() returns uuid language sql stable as $$
-  select nullif(current_setting('test.uid', true), '')::uuid
-$$;
+create function auth.uid() returns uuid language sql stable as $auth_uid$
+  select coalesce(
+    nullif(current_setting('request.jwt.claim.sub', true), ''),
+    nullif(current_setting('test.uid', true), '')
+  )::uuid
+$auth_uid$;
 
-create function auth.jwt() returns jsonb language sql stable as $$
-  select coalesce(nullif(current_setting('test.jwt', true), ''), '{}')::jsonb
-$$;
+create function auth.jwt() returns jsonb language sql stable as $auth_jwt$
+  select coalesce(
+    nullif(current_setting('request.jwt.claims', true), ''),
+    nullif(current_setting('test.jwt', true), ''),
+    '{}'
+  )::jsonb
+$auth_jwt$;
 
 -- Storage minimal pour migrations et tests sur Postgres nu.
 -- Ce stub ne remplace jamais le service Storage d'un projet Supabase.
