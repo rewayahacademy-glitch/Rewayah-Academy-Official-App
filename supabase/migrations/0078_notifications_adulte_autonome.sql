@@ -126,9 +126,11 @@ BEGIN
       'debut_local',
       (
         SELECT pg_catalog.to_char(
-          min(public.instant_creneau(
-            gc.weekday, gc.hour_local, g.timezone_iana, 0
-          )) AT TIME ZONE h.timezone,
+          min(
+            public.instant_creneau(
+              gc.weekday, gc.hour_local, g.timezone_iana, 0
+            ) AT TIME ZONE h.timezone
+          ),
           'YYYY-MM-DD"T"HH24:MI:SS'
         )
         FROM public.groupes g
