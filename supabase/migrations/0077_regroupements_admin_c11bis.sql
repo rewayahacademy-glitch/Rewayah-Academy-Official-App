@@ -160,12 +160,15 @@ BEGIN
     'langue_code', g.langue_code,
     'langue_nom', lc.nom_humain,
     'fuseau_iana', g.timezone_iana,
-    'occurrences', jsonb_agg(jsonb_build_object(
-      'jour_iso', gc.weekday,
-      'heure', gc.hour_local,
-      'minute', 0
-    ) ORDER BY gc.weekday, gc.hour_local),
-    'nombre_eleves', count(gm.student_id)::integer,
+    'occurrences', coalesce(
+      slots.valeurs,
+      jsonb_build_array(jsonb_build_object(
+        'jour_iso', g.weekday,
+        'heure', g.hour_local,
+        'minute', 0
+      ))
+    ),
+    'nombre_eleves', membres.nombre,
     'quota', g.seuil_max,
     'autres_fuseaux', coalesce(autres.valeurs, '[]'::jsonb),
     'peut_creer_classe', false,
@@ -179,9 +182,24 @@ BEGIN
   FROM public.classes_a_confirmer_admin() AS a
   JOIN public.groupes g ON g.id = a.classe_id
   JOIN public.langues_cours lc ON lc.code = g.langue_code
-  LEFT JOIN public.groupe_creneaux gc ON gc.groupe_id = g.id
-  LEFT JOIN public.groupe_membres gm
-    ON gm.groupe_id = g.id AND gm.left_at IS NULL
+  LEFT JOIN LATERAL (
+    SELECT jsonb_agg(
+      jsonb_build_object(
+        'jour_iso', gc.weekday,
+        'heure', gc.hour_local,
+        'minute', 0
+      )
+      ORDER BY gc.weekday, gc.hour_local
+    ) AS valeurs
+    FROM public.groupe_creneaux gc
+    WHERE gc.groupe_id = g.id
+  ) AS slots ON true
+  LEFT JOIN LATERAL (
+    SELECT count(*)::integer AS nombre
+    FROM public.groupe_membres gm
+    WHERE gm.groupe_id = g.id
+      AND gm.left_at IS NULL
+  ) AS membres ON true
   LEFT JOIN LATERAL (
     SELECT jsonb_agg(
       jsonb_build_object(
@@ -217,9 +235,7 @@ BEGIN
       )
     ) AS h(heure)
   ) AS autres ON true
-  GROUP BY g.id, g.type_public, g.langue_code, lc.nom_humain,
-           g.timezone_iana, g.seuil_max, g.libelle, g.genre_public,
-           autres.valeurs;
+  ;
 END;
 $function$;
 
