@@ -4,8 +4,8 @@ Constat en lecture seule des ledgers Supabase PROD et STAGING, rapproché de l'a
 
 ## Références et méthode
 
-- `ccr-1b1bfa0b-m1kvkk` : HEAD vérifié `5ea5e45c594482186ca3988c17cb5c568506535c`.
-- L'inventaire Git de 51 fichiers SQL de migration avait été établi sur l'ancienne tête `05e87f92936cd4afa2ee95e64db8baf7732a0de8`. La comparaison GitHub de `05e87f9` à `5ea5e45` retourne deux commits et aucun changement dans `supabase/migrations/`; ce périmètre de 51 fichiers reste donc inchangé.
+- `ccr-1b1bfa0b-m1kvkk` : HEAD vérifié le 2026-10-10 : `858dcc666fc3fc4a559dda1b996c15a4e413bb08`.
+- L'arbre courant contient 51 fichiers SQL de migration. La comparaison GitHub de `05e87f92936cd4afa2ee95e64db8baf7732a0de8` à `858dcc666fc3fc4a559dda1b996c15a4e413bb08` porte sur cinq commits et ne retourne aucun changement sous `supabase/migrations/`; l'inventaire des 51 fichiers reste donc inchangé.
 - Source live PROD : Supabase MCP `list_migrations`, projet `gggmtelinlpseweouyav`, 50 entrées.
 - Source live STAGING : Supabase MCP `list_migrations`, projet `xldmmlrnxyabdtvxqbyy`, 76 entrées.
 - La comparaison porte sur les noms du ledger et les noms de fichiers, normalisés en retirant l'extension `.sql`. Elle ne compare pas les corps SQL.
@@ -50,6 +50,10 @@ Les migrations 0043–0048 sont nommées séparément dans STAGING et sont absen
 | `20260912212505` | `0011_presence_bornee_controleur_invisible` |
 
 Les trois versions courtes et les trois entrées horodatées liées à 0006–0008 rendent toute réparation de ledger particulièrement risquée sans récupération des sources SQL d'origine. Le nom `0011_presence_bornee_controleur_invisible` n'a pas d'homonyme dans les 51 fichiers actuels.
+
+### Sources historiques candidates examinées (10/10)
+
+Le commit GitHub `0bfc9e46c0ddc4a013273b8ced8a49791e327ba8` (21/09/2026) contient des fichiers candidats pour les migrations anciennes, mais leurs blobs diffèrent des fichiers actuels de `ccr` : `0006` `17ddf39b` (candidat) contre `ff26f06a` (ccr), `0007` `9701feba` contre `ee0b87b3`, `0008` `f4257f47` contre `24a9f3f3`, `0011_presence_bornee` `e6b7e9c3` contre `40df0e22`. La branche `codex/backend-migrations-historiques` porte les mêmes blobs que `ccr` pour ces quatre chemins. Dans les arbres examinés, aucun fichier source nommé `0006_init`, `0007_init`, `0008_init`, `record_0006_0007_0008_versions` ou `0011_presence_bornee_controleur_invisible` n'a été retrouvé. Ces références historiques sont des pistes à comparer; aucune ne relie un blob donné à une version du ledger PROD. La lecture `list_migrations` fournit ici version et nom, sans empreinte du corps appliqué. Les huit entrées restent donc non résolues.
 
 ## Vingt-cinq entrées présentes dans STAGING seulement
 
