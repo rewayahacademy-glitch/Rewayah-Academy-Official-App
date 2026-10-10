@@ -178,6 +178,15 @@ class TableauDeBordPage extends ConsumerWidget {
           onPress: () =>
               GoRouter.of(context).go(Routes.adminOperationsTraitement),
         ),
+        // OFFRES-ADM-1 : les demandes des familles reunies quand elles se
+        // ressemblent, et la creation de leur classe.
+        SettingRow(
+          title: t.admin.tableau.outilsRegroupements,
+          description: t.admin.tableau.outilsRegroupementsDetail,
+          icon: AppIcons.classes,
+          onPress: () =>
+              GoRouter.of(context).go(Routes.adminOperationsRegroupements),
+        ),
         SettingRow(
           title: t.admin.groupes.titre,
           description: t.admin.tableau.outilsGroupesDetail,

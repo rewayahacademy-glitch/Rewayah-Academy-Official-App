@@ -321,6 +321,7 @@ void main() {
               (Routes.adminPedagogieQualite, 'ADM-14'),
               (Routes.adminOperationsGroupes, 'GROUPES'),
               (Routes.adminSecuriteAuditAccesAgents, 'ADM-07'),
+              (Routes.adminOperationsRegroupements, 'OFFRES-ADM-1'),
             ])
               GoRoute(
                 path: route,
@@ -395,6 +396,8 @@ void main() {
           (() => t.admin.groupes.titre, 'GROUPES'),
           (() => t.admin.tableau.outilsComptes, 'ADM-08'),
           (() => t.admin.tableau.outilsAccesAgents, 'ADM-07'),
+          // OFFRES-ADM-1 : le point d'entree des demandes reunies.
+          (() => t.admin.tableau.outilsRegroupements, 'OFFRES-ADM-1'),
           // DASH-ADM-ECHUS : la moitie « Acces echus » de la tuile double.
           (() => t.admin.tableau.comptes, 'ADM-08 echus'),
         ]) {

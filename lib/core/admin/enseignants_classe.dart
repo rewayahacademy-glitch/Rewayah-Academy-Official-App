@@ -80,11 +80,19 @@ class EnseignantClasse {
 /// choisissable **libre** est « le plus adapte » ; si aucun n'est libre, ou
 /// si les disponibilites ne sont pas rendues, personne ne l'est : la mention
 /// ne s'invente pas.
+///
+/// Une classe a plusieurs seances par semaine (OFFRES-ADM-1 : les jours d'un
+/// regroupement de demandes) passe [creneaux] a la place de [creneau] : libre
+/// veut alors dire libre a **chacun** d'eux, et une seule collision suffit a
+/// rendre l'enseignant non choisissable.
 List<EnseignantClasse> classerEnseignants(
   List<EnseignantPropose> enseignants, {
   GenreClasse? genre,
   Creneau? creneau,
+  List<Creneau>? creneaux,
 }) {
+  final List<Creneau>? vises =
+      creneaux ?? (creneau == null ? null : <Creneau>[creneau]);
   EnseignantClasse ligne(EnseignantPropose e) {
     final List<Creneau>? libres = e.creneauxLibres;
     return EnseignantClasse(
@@ -92,12 +100,16 @@ List<EnseignantClasse> classerEnseignants(
       genreCompatible: genreCompatible(genre, e.genre),
       libre: libres == null
           ? null
-          : creneau == null
+          : vises == null || vises.isEmpty
           ? libres.isNotEmpty
-          : libres.any((Creneau c) => memeHeure(c, creneau)),
+          : vises.every(
+              (Creneau v) => libres.any((Creneau c) => memeHeure(c, v)),
+            ),
       pris:
-          creneau != null &&
-          e.creneauxPris.any((Creneau c) => memeHeure(c, creneau)),
+          vises != null &&
+          vises.any(
+            (Creneau v) => e.creneauxPris.any((Creneau c) => memeHeure(c, v)),
+          ),
       plusAdapte: false,
     );
   }
