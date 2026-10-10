@@ -10,13 +10,11 @@
 //
 // Ce que cette fonction signe, et pourquoi chaque claim y est :
 //
-//   * `sub` = **la personne observee**, pas un compte de service. C'est tout
-//     l'edifice : les policies et les vues de ce depot se bornent deja par
-//     `auth.uid()`, `app_household_id()` et `app_role()`. En signant avec
-//     l'identifiant de la personne observee, l'agent herite de son ecran --
-//     exactement, ni plus ni moins -- sans qu'une seule regle de securite soit
-//     reecrite pour lui. Une deuxieme regle serait une regle a maintenir, et
-//     donc une regle qui divergerait.
+//   * `sub` = **l'identifiant opaque du jeton d'agent**. Le JWT garde ainsi
+//     l'identite propre de la delegation. Le garde `agent_pre_request()`
+//     valide a chaque requete la ligne et le profil observe, puis adapte
+//     transactionnellement `auth.uid()` a ce profil pour les politiques et
+//     vues existantes. Le claim signe ne devient jamais un profil utilisateur.
 //
 //   * `role` = **`agent_ro`**. PostgREST bascule sur le role Postgres nomme par
 //     ce claim. `agent_ro` ne detient AUCUN droit d'ecriture : la lecture seule
@@ -24,11 +22,10 @@
 //     Un agent qui rejoue la requete a la main avec curl obtient le meme refus
 //     que celui qui clique.
 //
-//   * `app_metadata.agent_token_id` = **un identifiant opaque**, jamais des
-//     droits. La portee (qui est observe, sous quel parcours, avec ou sans
-//     identite) se relit EN BASE a chaque requete, par le garde
-//     `agent_pre_request()`. C'est ce qui rend la revocation immediate au lieu
-//     d'attendre l'expiration de la signature.
+//   * `app_metadata.agent_token_id` = le meme identifiant opaque que `sub`.
+//     Ce doublon permet au garde de vérifier leur cohérence; ni l'un ni l'autre
+//     n'accorde de droits. La portée et sa vivacité se relisent en base à chaque
+//     requête par `agent_pre_request()`.
 //
 // Le jeton signe vit QUINZE MINUTES, et il n'y a pas de jeton de
 // rafraichissement. Un porteur qui veut continuer repasse par ici, donc par la
@@ -187,7 +184,7 @@ Deno.serve(async (requete) => {
       is_agent: true,
     })
       .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
-      .setSubject(remise.profil_observe)
+      .setSubject(remise.jeton_id)
       .setIssuer(`${url}/auth/v1`)
       .setAudience('authenticated')
       .setIssuedAt(maintenant)

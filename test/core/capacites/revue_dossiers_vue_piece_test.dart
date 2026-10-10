@@ -1,6 +1,5 @@
-// AD-7 : la vue de piece de l'adaptateur de production. Elle reutilise
-// `ServiceValidation.apercu` (URL signee de 60 s, deja utilisee avant AD-6),
-// sans nouvel appel ni changement serveur.
+// B-06 : l'adaptateur demande une URL courte a l'Edge d'acces par document.
+// La cle d'objet sert uniquement a déterminer si la visionneuse peut afficher le type.
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/service_comptes.dart' show EtatPiece;
@@ -36,8 +35,8 @@ void main() {
     Object? erreur,
   }) => RevueDossiersDepuisValidation(
     () async => <DossierAValider>[d],
-    apercu: (String cle) async {
-      signes.add(cle);
+    apercu: (String documentId) async {
+      signes.add(documentId);
       if (erreur != null) {
         // ignore: only_throw_errors
         throw erreur;
@@ -68,7 +67,7 @@ void main() {
       _d('p1/piece.png'),
       signes,
     ).demanderVuePiece(dossierId: 'p1', documentId: 'doc');
-    expect(signes, <String>['p1/piece.png']);
+    expect(signes, <String>['doc']);
     expect(vue.source, isA<SourcePieceUrl>());
     expect(vue.expireLeUtc, maintenant.add(const Duration(seconds: 60)));
     expect(vue.typeMime, 'image/png');

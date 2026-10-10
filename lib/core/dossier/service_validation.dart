@@ -6,7 +6,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../admin/service_comptes.dart' show EtatPiece;
 import '../domain/enums.dart';
-import 'service_dossier.dart';
 
 /// Un dossier a valider, tel que `dossiers_en_attente()` le rend.
 ///
@@ -166,8 +165,9 @@ abstract interface class ServiceValidation {
   /// La file, la plus ancienne en premier.
   Future<List<DossierAValider>> enAttente();
 
-  /// Une URL signee de courte duree pour l'apercu de la piece.
-  Future<String> apercu(String cleObjet);
+  /// Demande au serveur une URL de courte duree, identifiee par document.
+  /// La cle de stockage ne quitte jamais le backend.
+  Future<String> apercu(String documentId);
 
   /// Le verdict. Un refus exige un motif : la base le refuse sans.
   Future<void> decider({
@@ -218,9 +218,20 @@ class ServiceValidationSupabase implements ServiceValidation {
   }
 
   @override
-  Future<String> apercu(String cleObjet) => _client.storage
-      .from(ServiceDossierSupabase.seauKyc)
-      .createSignedUrl(cleObjet, dureeApercuSecondes);
+  Future<String> apercu(String documentId) async {
+    final dynamic data = (await _client.functions.invoke(
+      'piece-identite-acces',
+      body: <String, dynamic>{'document_id': documentId},
+    )).data;
+    if (data is! Map<String, dynamic> || data['url'] is! String) {
+      throw const FormatException('Reponse de signature de piece invalide');
+    }
+    final Uri? url = Uri.tryParse(data['url'] as String);
+    if (url == null || !url.hasScheme || url.host.isEmpty) {
+      throw const FormatException('URL de piece invalide');
+    }
+    return url.toString();
+  }
 
   @override
   Future<void> decider({

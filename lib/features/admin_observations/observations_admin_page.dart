@@ -9,6 +9,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_observation/guardian_session_visit.dart';
 import '../../core/tc_observation/port_historique_observations.dart';
+import '../../core/tc_observation/historique_observations_admin_provider.dart';
 import '../../core/theme/app_elevation.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -46,10 +47,9 @@ import 'annuaire_observations.dart';
 /// le serveur etant toujours « sortie volontaire » (DB-OBS-04). Une duree
 /// n'est jamais recalculee : celle du serveur, ou « Non confirmee ».
 ///
-/// Source : `guardian_session_visit` sous RLS admin (port K4). Tant que le
-/// coordinateur n'a pas branche l'adaptateur du lot (demande E-9), le port de
-/// production rend « indisponible » : l'ecran le dit et n'interroge rien
-/// d'autre (ni l'annuaire des noms, ni les classes).
+/// Source : `guardian_session_visit` sous RLS admin (port K4). L'adaptateur
+/// Supabase admin est le provider de production par defaut; filtres et
+/// pagination sont appliques a la source autorisee.
 class ObservationsAdminPage extends ConsumerStatefulWidget {
   /// Cree la page.
   const ObservationsAdminPage({super.key, this.horloge = DateTime.now});

@@ -16,6 +16,7 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/tc_observation/historique_observations_admin_supabase.dart';
 import 'package:rewayah_academy/core/tc_observation/port_historique_observations.dart';
+import 'package:rewayah_academy/core/tc_observation/historique_observations_admin_provider.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/admin_observations/annuaire_observations.dart';
 

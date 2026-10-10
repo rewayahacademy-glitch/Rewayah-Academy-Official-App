@@ -11,15 +11,17 @@ on:
 
 jobs:
   migrate-check:
+    # Les migrations F1/C sont suivies de F2 0058–0064, puis feedback 0065
+    # et transitions notifications 0066; garder le replay SQL complet avant scénarios.
     name: Migrations applicables (Postgres 17)
     # Le SQL et les fonctions Edge ne sont controles que vers `main` : les
     # branches `ui/*` ne touchent pas `supabase/`.
     if: github.event_name != 'pull_request' || github.base_ref == 'main' || github.base_ref == 'ccr-1b1bfa0b-m1kvkk'
     runs-on: ubuntu-latest
-    container: postgres:17-alpine
+    container: public.ecr.aws/docker/library/postgres:17-alpine
     services:
       postgres:
-        image: postgres:17-alpine
+        image: public.ecr.aws/docker/library/postgres:17-alpine
         env:
           POSTGRES_HOST_AUTH_METHOD: trust
         options: >-
@@ -46,6 +48,40 @@ jobs:
             psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f "$f"
           done
 
+      - name: Scénarios B-09 (notifications)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b09_notifications.sql
+
+      - name: Scénarios des transitions de demandes (B-09)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_offres_notifications.sql
+
+      # B-11 mesure ses ACL avant les scénarios historiques qui accordent des droits larges.
+      - name: Scénarios B-11 (signalement)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b11_student_concern.sql
+
+      - name: Scénarios des questions et agrégats feedback (B-11)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b11_feedback_questions.sql
+
+      - name: Scénarios B-14 (état partagé)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b14_shared_state.sql
+
+      - name: Scénarios B-15 (assignations et annotations)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b15_assignations_annotations.sql
+
+      - name: Scénarios B-10 (canal de support)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b10_support.sql
+      # OFFRES-I5 : les créneaux demandés en privé ne deviennent une offre
+      # publique qu'au quota configuré (5 enfants / 6 adultes).
+      - name: Scenarios du créneau personnalisé au quota (F1)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_offres_personnalisees.sql
+
       # Inscription bornee a deux roles, depot KYC de l'enseignant, cloisonnement
       # de genre, appareil partage, plafond d'appareils, codes d'appairage,
       # immuabilite des signatures, etancheite du journal d'audit, RLS partout,
@@ -53,6 +89,10 @@ jobs:
       - name: Scenarios d'acceptation SQL des etapes 1 et 3
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_etape3.sql
+
+      - name: Scénarios B-13 (admin suspendu)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b13_admin_suspended.sql
 
       # Disponibilites communes aux deux roles, affectation durable et son
       # plafond, regles par eleve et leur immuabilite, chevauchement de seances,
@@ -192,6 +232,26 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b18_security_definer.sql
 
+      # SEC-01 : identité opaque de l'agent, résolution de la portée actuelle et révocation.
+      - name: Scenario SEC-01 (identité agent / profil observé)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_agent_identity.sql
+
+      # B-07 : profil autonome adulte du titulaire, idempotence et rôle guardian conservé.
+      - name: Scenarios du profil adulte titulaire (B-07)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b07_profil_titulaire.sql
+
+      # B-03 : invitation neutre, email vérifié, expiration, idempotence et cloisonnement foyer.
+      - name: Scenarios des invitations conjoint (B-03)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b03_invitations_foyer.sql
+
+      # B-08 : résumé explicitement publié, auteur enseignant et cloisonnement par foyer.
+      - name: Scenarios de progression et résumés famille (B-08)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b08_progression_famille.sql
+
   edge-r2:
     name: Fonctions Edge -- stockage R2 (Deno)
     if: github.event_name != 'pull_request' || github.base_ref == 'main' || github.base_ref == 'ccr-1b1bfa0b-m1kvkk'
@@ -227,6 +287,10 @@ jobs:
             supabase/functions/piece-identite-depot/index.ts \
             supabase/functions/piece-identite-confirme/index.ts \
             supabase/functions/archive-seance-acces/index.ts
+
+      # SEC-01 : la session d'agent conserve l'identité du jeton dans le JWT.
+      - name: Type-check de la session agent
+        run: deno check supabase/functions/agent-session/index.ts
 
       # Aucune valeur de secret ne doit exister dans le depot. Les NOMS des
       # variables R2 ont le droit d'y etre, et y sont ; leurs valeurs jamais.
