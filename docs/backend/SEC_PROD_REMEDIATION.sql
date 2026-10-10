@@ -943,6 +943,10 @@ returns boolean language plpgsql immutable security invoker set search_path = ''
 as $scanner$
 declare
   v_condition text;
+  v_lower text;
+  v_role_pos integer;
+  v_account_pos integer;
+  v_false_pos integer;
 begin
   if app_private.has_unsafe_role_guard(p_definition) then
     return true;
@@ -956,9 +960,26 @@ begin
     ) as m
   loop
     if v_condition ~* 'app_role[[:space:]]*[(]'
-       and v_condition ~* 'not'
-       and v_condition !~* '^[[:space:]]*(if|elsif)[[:space:]]+not[[:space:]]+coalesce[[:space:]]*[(][[:space:]]*(public[.])?app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]*=[[:space:]]*''[^'']+''[[:space:]]+and[[:space:]]+(public[.])?app_account_valid[[:space:]]*[(][[:space:]]*[)][[:space:]]*,[[:space:]]*false[[:space:]]*[)][[:space:]]+then[[:space:]]*$' then
-      return true;
+       and v_condition ~* 'not' then
+      v_lower := lower(v_condition);
+      v_role_pos := strpos(v_lower, 'app_role(');
+      v_account_pos := strpos(v_lower, 'app_account_valid(');
+      v_false_pos := strpos(v_lower, ', false');
+
+      -- Whitelist a fail-closed NOT COALESCE guard only when the one
+      -- app_role() check is an equality, account validity is conjoined,
+      -- and the condition has no OR that could bypass either requirement.
+      if v_lower !~ '^[[:space:]]*(if|elsif)[[:space:]]+not[[:space:]]+coalesce[[:space:]]*[(]'
+         or v_role_pos = 0
+         or v_account_pos = 0
+         or v_false_pos = 0
+         or length(v_lower) - length(replace(v_lower, 'app_role(', '')) <> length('app_role(')
+         or v_role_pos >= v_account_pos
+         or v_account_pos >= v_false_pos
+         or v_lower !~ 'app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]*=[[:space:]]*''[^'']+'''
+         or v_condition ~* '(^|[^[:alnum:]_])or([^[:alnum:]_]|$)' then
+        return true;
+      end if;
     end if;
   end loop;
   return false;
@@ -982,6 +1003,16 @@ begin
     'IF NOT coalesce(app_role() = ''admin'' AND app_account_valid(), false) THEN RAISE; END IF;'
   ) then
     raise exception 'SEC-PROD M2 scanner rejects canonical null-safe guard';
+  end if;
+  if app_private.sec_prod_has_unsafe_role_guard(
+    'IF NOT coalesce(auth.uid() IS NOT NULL AND v_seance.teacher_id = auth.uid() AND public.app_role() = ''teacher'' AND public.app_account_valid(), false) THEN RAISE; END IF;'
+  ) then
+    raise exception 'SEC-PROD M2 scanner rejects a null-safe role guard with restrictive identity conjuncts';
+  end if;
+  if not app_private.sec_prod_has_unsafe_role_guard(
+    'IF NOT coalesce(auth.uid() IS NOT NULL AND public.app_role() = ''teacher'' AND public.app_account_valid(), false) OR public.app_role() = ''admin'' THEN RAISE; END IF;'
+  ) then
+    raise exception 'SEC-PROD M2 scanner missed OR outside a null-safe role guard';
   end if;
   if not app_private.sec_prod_has_unsafe_role_guard(
     'IF NOT coalesce(app_role() = ''admin'' AND app_account_valid(), false) AND app_role() = ''admin'' THEN RAISE; END IF;'
