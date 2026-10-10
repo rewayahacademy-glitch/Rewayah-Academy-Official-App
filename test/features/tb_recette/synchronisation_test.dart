@@ -24,9 +24,12 @@ import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart';
 import 'package:rewayah_academy/core/tc_outils/etat_outils.dart';
 import 'package:rewayah_academy/core/tc_outils/port_annotations.dart';
 import 'package:rewayah_academy/core/tc_outils/port_dock_hote.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
+import 'package:rewayah_academy/features/salle_seance/ecriture_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/notes_deposees.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/surface_page_fixe.dart';
@@ -100,6 +103,54 @@ String _texteBandeau(WidgetTester tester) => <String>[
           .evaluate())
     (e.widget as RichText).text.toPlainText(),
 ].join(' ');
+
+/// TB-11b (tour 2) : le bandeau se VOIT en entier, mesure sur le rendu :
+/// dans l'ecran ; dans la tete bornee du telephone, sous son bord haut et
+/// au-dessus de son fondu ; et le toucher au centre de chacun de ses textes
+/// ([textes]) atteint ce texte (rien ne le couvre, il n'est pas rogne par
+/// le defilement de la tete).
+void _bandeauVu(WidgetTester tester, Size taille, List<String> textes) {
+  expect(_bandeau, findsOneWidget);
+  final Rect bandeau = tester.getRect(_bandeau);
+  expect(bandeau.left, greaterThanOrEqualTo(-0.5));
+  expect(bandeau.top, greaterThanOrEqualTo(-0.5));
+  expect(bandeau.right, lessThanOrEqualTo(taille.width + 0.5));
+  expect(bandeau.bottom, lessThanOrEqualTo(taille.height + 0.5));
+  final Finder tete = find.ancestor(
+    of: _bandeau,
+    matching: find.byKey(TeteSalleBornee.defilementKey),
+  );
+  if (tete.evaluate().isNotEmpty) {
+    final Rect cadre = tester.getRect(tete);
+    final double fondu = find.byKey(TeteSalleBornee.cleFondu).evaluate().isEmpty
+        ? 0
+        : AppSpacing.xxxl;
+    expect(bandeau.top, greaterThanOrEqualTo(cadre.top - 0.5));
+    expect(
+      bandeau.bottom,
+      lessThanOrEqualTo(cadre.bottom - fondu + 0.5),
+      reason: 'le bandeau sous le bord ou sous le fondu de la tete',
+    );
+  }
+  for (final String texte in textes) {
+    final Finder ligne = find.descendant(
+      of: _bandeau,
+      matching: find.byWidgetPredicate(
+        (Widget w) => w is RichText && w.text.toPlainText() == texte,
+      ),
+    );
+    expect(ligne, findsOneWidget, reason: texte);
+    final RenderObject objet = tester.renderObject(ligne);
+    final HitTestResult touche = tester.hitTestOnBinding(
+      tester.getRect(ligne).center,
+    );
+    expect(
+      touche.path.any((HitTestEntry e) => e.target == objet),
+      isTrue,
+      reason: '« $texte » ne se touche pas : il est couvert ou rogne',
+    );
+  }
+}
 
 /// Tous les textes montes de l'ecran.
 List<String> _textes(WidgetTester tester) => <String>[
@@ -298,10 +349,11 @@ void main() {
       final String bandeau = _texteBandeau(tester);
       expect(bandeau, contains(t.salle.seance.synchro.nonPartagees));
       expect(bandeau, contains(t.salle.seance.synchro.nonPartageesSuite));
-      // Le bandeau tient dans la largeur de l'ecran.
-      final Rect r = tester.getRect(_bandeau);
-      expect(r.left, greaterThanOrEqualTo(0));
-      expect(r.right, lessThanOrEqualTo(taille.width));
+      // TB-11b (tour 2) : le bandeau se voit, en entier, et se touche.
+      _bandeauVu(tester, taille, <String>[
+        t.salle.seance.synchro.nonPartagees,
+        t.salle.seance.synchro.nonPartageesSuite,
+      ]);
       expect(_calque(tester).traitsNonPartages, contains(_nonPartage));
       expect(_calque(tester).encreNonPartagee, isTrue);
       expect(tester.takeException(), isNull);
@@ -327,6 +379,10 @@ void main() {
           _texteBandeau(tester),
           contains(t.salle.seance.synchro.ecritureSuspendue),
         );
+        _bandeauVu(tester, taille, <String>[
+          attendu,
+          t.salle.seance.synchro.ecritureSuspendue,
+        ]);
         expect(
           _textes(tester).join(' '),
           isNot(contains(t.salle.seance.synchro.nonPartagees)),
@@ -353,6 +409,10 @@ void main() {
       final String bandeau = _texteBandeau(tester);
       expect(bandeau, contains(t.salle.seance.synchro.nonSauvegardees));
       expect(bandeau, contains(t.salle.seance.synchro.nonSauvegardeesSuite));
+      _bandeauVu(tester, taille, <String>[
+        t.salle.seance.synchro.nonSauvegardees,
+        t.salle.seance.synchro.nonSauvegardeesSuite,
+      ]);
       // TB-BR-18 : aucun « Reessayer » tant que le contrat durable manque.
       expect(find.text(t.salle.secours.reessayer), findsNothing);
       expect(find.text(t.commun.reessayer), findsNothing);
@@ -366,40 +426,281 @@ void main() {
     });
   }
 
-  testWidgets('ERR-02 : l\'ecriture est suspendue pendant la reprise, chez '
-      'l\'enseignant (calque sans saisie) ; le doigt deplace la page', (
+  // TB-11b (tour 2) : pendant la suspension, rien ne propose d'ecrire :
+  // ni tuile « Ecrire », ni barre (Stylo, Gomme, Annuler, Terminer), ni
+  // aide qui dit d'ecrire ; la phrase de la suspension a leur place. Un
+  // stylet deja retenu ne prend rien et ne rend pas sa barre.
+  for (final (Size taille, double texte) in <(Size, double)>[
+    (_telephone, 1),
+    (_etroit, 2),
+  ]) {
+    final String cas = '${taille.width.toInt()} x${texte.toInt()}';
+
+    testWidgets('ERR-02 enseignant : « Ecrire » n\'est pas propose, la '
+        'phrase dit pourquoi ; le stylet retenu n\'ecrit pas ($cas)', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        role: RoleSeance.enseignant,
+        situation: SituationTb.err02,
+        taille: taille,
+        texte: texte,
+      );
+      expect(_texteBandeau(tester), contains(t.salle.seance.synchro.reprise));
+      await _taper(tester, _entreeCommandes);
+      await _taper(
+        tester,
+        find.descendant(
+          of: _onglets,
+          matching: find.text(t.salle.seance.commandes.ongletOutils),
+        ),
+      );
+      expect(_ecrire, findsNothing, reason: 'aucune tuile « Ecrire »');
+      final Finder suspendue = find.byKey(
+        CommandesPedagogiques.cleEcritureSuspendue,
+      );
+      expect(suspendue, findsOneWidget);
+      expect(
+        tester.widget<Text>(suspendue).data,
+        t.salle.seance.synchro.ecritureSuspendue,
+      );
+      await tester.ensureVisible(suspendue);
+      await tester.pump();
+      expect(
+        tester.getRect(suspendue).bottom,
+        lessThanOrEqualTo(taille.height),
+      );
+      // Un stylet retenu avant la reprise : ni barre, ni aide d'Ecrire.
+      _conteneur(tester)
+          .read(etatOutilsProvider.notifier)
+          .choisirOutil(OutilDock.stylet);
+      await _attendre(tester);
+      expect(find.byType(EcritureSeance), findsNothing);
+      expect(find.byType(BarreStylet), findsNothing);
+      expect(find.text(t.salle.seance.outils.aideEcrire), findsNothing);
+      await _taper(tester, find.byKey(PanneauSeance.cleReduire));
+      expect(find.byType(PaletteEcriture), findsNothing);
+      expect(find.byType(BarreStylet), findsNothing);
+      expect(_calque(tester).saisie, isFalse);
+      final int avant = _depot(tester).length;
+      await _glisser(
+        tester,
+        _surPage(tester, 0.3, 0.3),
+        _surPage(tester, 0.6, 0.35),
+      );
+      expect(_depot(tester).length, avant, reason: 'rien n\'est ecrit');
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('ERR-01 et ERR-02 eleve autorise : ecriture suspendue, '
+        'aucune tuile ni barre, la phrase a leur place ($cas)', (
+      WidgetTester tester,
+    ) async {
+      for (final SituationTb s in <SituationTb>[
+        SituationTb.err01,
+        SituationTb.err02,
+      ]) {
+        await _monter(
+          tester,
+          role: RoleSeance.eleve,
+          situation: s,
+          taille: taille,
+          texte: texte,
+        );
+        await _taper(tester, _entreeCommandes);
+        expect(_ecrire, findsNothing, reason: '${s.name} : tuile');
+        final Finder suspendue = find.descendant(
+          of: find.byKey(CommandesPedagogiques.cleEcritureEleve),
+          matching: find.byKey(CommandesPedagogiques.cleEcritureSuspendue),
+        );
+        expect(suspendue, findsOneWidget, reason: s.name);
+        final List<String> textes = _textes(tester);
+        for (final String menteur in <String>[
+          t.salle.seance.ecriture.aideEleveTu,
+          t.salle.seance.ecriture.aideEleveVous,
+          t.salle.seance.ecriture.choisirTu,
+          t.salle.seance.ecriture.choisirVous,
+          t.salle.seance.ecriture.tuPeuxEcrire,
+          t.salle.seance.ecriture.vousPouvezEcrire,
+        ]) {
+          expect(textes, isNot(contains(menteur)), reason: s.name);
+        }
+        _conteneur(tester)
+            .read(etatOutilsProvider.notifier)
+            .choisirOutil(OutilDock.stylet);
+        await _attendre(tester);
+        expect(find.byType(BarreStylet), findsNothing, reason: s.name);
+        await _taper(tester, find.byKey(PanneauSeance.cleReduire));
+        expect(find.byType(PaletteEcriture), findsNothing, reason: s.name);
+        expect(_calque(tester).saisie, isFalse);
+        final int avant = _depot(tester).length;
+        await _glisser(
+          tester,
+          _surPage(tester, 0.3, 0.3),
+          _surPage(tester, 0.6, 0.35),
+        );
+        expect(_depot(tester).length, avant, reason: s.name);
+        expect(tester.takeException(), isNull);
+        await tester.pumpWidget(const SizedBox());
+      }
+    });
+  }
+
+  // Tour 2 : la guidee autorisee, a 320 x2 en Mode Accessibilite : le
+  // bandeau court du §20, en entier, sans debordement de la page ; la
+  // suspension se lit dans les Commandes.
+  for (final (Size taille, double texte) in <(Size, double)>[
+    (_telephone, 1),
+    (_etroit, 2),
+  ]) {
+    testWidgets('guidee ERR-01 et ERR-02 : bandeau court, vu en entier, '
+        'rien ne deborde (${taille.width.toInt()} x${texte.toInt()})', (
+      WidgetTester tester,
+    ) async {
+      for (final (SituationTb s, String attendu) in <(SituationTb, String)>[
+        (SituationTb.err01, t.salle.seance.synchro.seReconnecte),
+        (SituationTb.err02, t.salle.seance.synchro.revient),
+      ]) {
+        await _monter(
+          tester,
+          role: RoleSeance.guidee,
+          situation: s,
+          taille: taille,
+          texte: texte,
+        );
+        expect(tester.takeException(), isNull, reason: s.name);
+        _bandeauVu(tester, taille, <String>[attendu]);
+        expect(
+          _texteBandeau(tester),
+          isNot(contains(t.salle.seance.synchro.ecritureSuspendue)),
+        );
+        await tester.pumpWidget(const SizedBox());
+      }
+    });
+  }
+
+  testWidgets('temoin : tableau partage, « Ecrire » se propose a l\'eleve '
+      'autorise, sans phrase de suspension', (WidgetTester tester) async {
+    await _monter(
+      tester,
+      role: RoleSeance.eleve,
+      situation: SituationTb.autorisationEcrire,
+    );
+    await _taper(tester, _entreeCommandes);
+    expect(_ecrire, findsOneWidget);
+    expect(
+      find.byKey(CommandesPedagogiques.cleEcritureSuspendue),
+      findsNothing,
+    );
+  });
+
+  test('donnees : la suspension retire « Ecrire » et dit pourquoi', () {
+    final VueSeance suspendue = DonneesSeanceDemo.vueTb(
+      RoleSeance.eleve,
+      SituationTb.err01,
+    );
+    expect(suspendue.voitEcriture, isTrue);
+    expect(suspendue.ecritureProposee, isFalse);
+    expect(
+      suspendue.texteEcritureSuspendue,
+      t.salle.seance.synchro.ecritureSuspendue,
+    );
+    final VueSeance partage = suspendue.copyWith(
+      synchroTableau: SynchroTableau.partage,
+    );
+    expect(partage.ecritureProposee, isTrue);
+    expect(partage.texteEcritureSuspendue, isNull);
+    // L'enseignant interrompu ecrit encore (ses traits sont marques).
+    expect(
+      DonneesSeanceDemo.vueTb(
+        RoleSeance.enseignant,
+        SituationTb.err01,
+      ).ecritureProposee,
+      isTrue,
+    );
+  });
+
+  test('donnees : « Connexion retablie. » et l\'etat du tableau ensemble, '
+      'le bandeau dit le tableau', () {
+    final VueSeance v = DonneesSeanceDemo.vueTb(
+      RoleSeance.enseignant,
+      SituationTb.err01,
+    ).copyWith(connexion: ConnexionSeance.retablie);
+    expect(v.texteRetabli, isNotNull);
+    expect(v.texteBandeau, t.salle.seance.synchro.nonPartagees);
+    expect(v.bandeauDitTableau, isTrue);
+    final VueSeance faible = v.copyWith(
+      connexion: ConnexionSeance.reseauFaible,
+    );
+    expect(faible.bandeauDitTableau, isFalse);
+  });
+
+  testWidgets('le tableau revenu (meme salle), les traits ne sont plus '
+      'marques ; l\'interruption suivante ne les remarque pas', (
+    WidgetTester tester,
+  ) async {
+    // La meme salle dont le tableau change d'etat sur place (comme en
+    // production) : SalleDemo sans cle, son depot et sa portee gardes.
+    Widget salle(SituationTb s) => hoteCapture(
+      SalleDemo(
+        role: RoleSeance.enseignant,
+        etat: DonneesSeanceDemo.etatBaseTb(s),
+        situation: s,
+        onSortir: () {},
+      ),
+    );
+    fixerVueCapture(tester, _telephone, 1);
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(salle(SituationTb.err01));
+    await tester.pumpAndSettle();
+    await _armerEcrire(tester, outils: true);
+    await _glisser(
+      tester,
+      _surPage(tester, 0.3, 0.3),
+      _surPage(tester, 0.6, 0.35),
+    );
+    final String pose = _depot(tester).single.id;
+    expect(_conteneur(tester).read(traitsNonPartagesProvider), contains(pose));
+    expect(_calque(tester).traitsNonPartages, contains(pose));
+    // Le tableau revient.
+    await tester.pumpWidget(salle(SituationTb.ped03));
+    await _attendre(tester);
+    expect(_depot(tester).map((TraitVectoriel x) => x.id), contains(pose));
+    expect(_conteneur(tester).read(traitsNonPartagesProvider), isEmpty);
+    // Nouvelle interruption : le trait recu n'est pas remarque.
+    await tester.pumpWidget(salle(SituationTb.err01));
+    await _attendre(tester);
+    expect(_calque(tester).traitsNonPartages, isNot(contains(pose)));
+  });
+
+  testWidgets('une autre salle ne recoit pas les marques de la precedente', (
     WidgetTester tester,
   ) async {
     await _monter(
       tester,
       role: RoleSeance.enseignant,
-      situation: SituationTb.err02,
+      situation: SituationTb.err01,
     );
-    expect(_texteBandeau(tester), contains(t.salle.seance.synchro.reprise));
     await _armerEcrire(tester, outils: true);
-    expect(_calque(tester).saisie, isFalse);
-    final int avant = _depot(tester).length;
     await _glisser(
       tester,
       _surPage(tester, 0.3, 0.3),
       _surPage(tester, 0.6, 0.35),
     );
-    expect(_depot(tester).length, avant, reason: 'rien n\'est ecrit');
-  });
-
-  testWidgets('ERR-01 eleve autorise : ecriture distante suspendue', (
-    WidgetTester tester,
-  ) async {
-    await _monter(tester, role: RoleSeance.eleve, situation: SituationTb.err01);
-    await _armerEcrire(tester, outils: false);
-    expect(_calque(tester).saisie, isFalse);
-    final int avant = _depot(tester).length;
-    await _glisser(
+    expect(_conteneur(tester).read(traitsNonPartagesProvider), isNotEmpty);
+    // La salle se ferme, l'application (sa portee racine) reste.
+    await tester.pumpWidget(hoteCapture(const SizedBox()));
+    await _monter(
       tester,
-      _surPage(tester, 0.3, 0.3),
-      _surPage(tester, 0.6, 0.35),
+      role: RoleSeance.enseignant,
+      situation: SituationTb.err01,
     );
-    expect(_depot(tester).length, avant);
+    expect(
+      _conteneur(tester).read(traitsNonPartagesProvider),
+      isEmpty,
+      reason: 'la portee est celle de la salle',
+    );
   });
 
   testWidgets('ERR-01 enseignant : il ecrit encore ; le nouveau trait est '
@@ -459,7 +760,8 @@ void main() {
     );
     final int tirets = await _segmentsEncre(tester, 0.8, 0.27, 0.73);
     expect(tirets, greaterThanOrEqualTo(4), reason: 'tirets : $tirets');
-    // Le meme trait, partage : un seul segment continu.
+    // Temoin : en PED-03 (tableau partage), la ligne mesuree est vide ;
+    // les tirets ci-dessus sont donc bien le trait non partage.
     await tester.pumpWidget(const SizedBox());
     await _monter(
       tester,
@@ -509,6 +811,15 @@ void main() {
       ]) {
         await _monter(tester, role: role, situation: s);
         expect(_page, findsOneWidget, reason: 'la page presentee, directement');
+        // TB-11b (tour 2) : arriver tard, c'est recevoir l'etat actuel, deja
+        // ecrit : le trait pose avant l'arrivee est au calque, sans geste.
+        if (s != SituationTb.ped03) {
+          expect(
+            _calque(tester).traits.map((TraitVectoriel x) => x.id),
+            contains(DonneesSeanceDemo.traitDemonstration.id),
+            reason: '${role.name} ${s.name}',
+          );
+        }
         expect(
           _textes(tester).where((String x) => x.startsWith('Suivre')),
           isEmpty,

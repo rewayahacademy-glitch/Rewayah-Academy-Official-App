@@ -2241,6 +2241,35 @@ class _TeteSalleBorneeState extends State<TeteSalleBornee> {
     if (suite != _suite) setState(() => _suite = suite);
   }
 
+  /// TB-11b (tour 2) : l'etat critique ([cible], le bandeau de secours) se
+  /// voit toujours en entier, hors du fondu : « une alerte urgente va
+  /// toujours en tete ». S'il deborde de la tete (texte a 200 %, ecran
+  /// etroit), la tete defile jusqu'a lui, son bord haut au bord haut de la
+  /// tete ; s'il se voit deja en entier, rien ne bouge. Le titre se relit en
+  /// faisant defiler la tete.
+  void montrer(BuildContext cible) {
+    final RenderObject? objet = cible.findRenderObject();
+    final ScrollableState? defile = Scrollable.maybeOf(cible);
+    if (objet is! RenderBox || !objet.hasSize || defile == null) return;
+    final RenderObject? cadre = defile.context.findRenderObject();
+    if (cadre is! RenderBox || !cadre.hasSize) return;
+    final ScrollPosition position = defile.position;
+    final Offset haut = objet.localToGlobal(Offset.zero, ancestor: cadre);
+    // Le fondu couvre le bas de la tete tant qu'il reste a lire dessous.
+    final double fondu = position.extentAfter > 0.5 ? AppSpacing.xxxl : 0;
+    final bool entier =
+        haut.dy >= -0.5 &&
+        haut.dy + objet.size.height <= cadre.size.height - fondu + 0.5;
+    if (entier) return;
+    unawaited(
+      position.ensureVisible(
+        objet,
+        duration: AppMouvement.duree(context, AppMouvement.apparition),
+        curve: AppMouvement.entree,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final Widget defile = KeyedSubtree(
@@ -2292,7 +2321,7 @@ class _TeteSalleBorneeState extends State<TeteSalleBornee> {
   }
 }
 
-class BandeauSecours extends StatelessWidget {
+class BandeauSecours extends StatefulWidget {
   const BandeauSecours({
     required this.vue,
     required this.actions,
@@ -2309,6 +2338,44 @@ class BandeauSecours extends StatelessWidget {
 
   /// L'ecart sous un etat visible, s'il manque au gabarit.
   final double espaceApres;
+
+  @override
+  State<BandeauSecours> createState() => _BandeauSecoursState();
+}
+
+class _BandeauSecoursState extends State<BandeauSecours> {
+  VueSeance get vue => widget.vue;
+  ActionsSeance get actions => widget.actions;
+  double get gouttiere => widget.gouttiere;
+  double get espaceApres => widget.espaceApres;
+
+  /// L'etat dit (bloc d'echec ou bandeau), ou `null`.
+  static String? _etat(VueSeance vue) => vue.titreEchec ?? vue.texteBandeau;
+
+  @override
+  void initState() {
+    super.initState();
+    if (_etat(vue) != null) _montrer();
+  }
+
+  @override
+  void didUpdateWidget(BandeauSecours ancien) {
+    super.didUpdateWidget(ancien);
+    final String? etat = _etat(vue);
+    if (etat != null && etat != _etat(ancien.vue)) _montrer();
+  }
+
+  /// TB-11b (tour 2) : dans la tete bornee du telephone, un etat qui
+  /// apparait n'est jamais laisse sous son bord ni sous son fondu
+  /// ([TeteSalleBornee]) ; ailleurs, rien a faire (pas de tete qui defile).
+  void _montrer() {
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (!mounted || _etat(vue) == null) return;
+      context.findAncestorStateOfType<_TeteSalleBorneeState>()?.montrer(
+        context,
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -2346,7 +2413,7 @@ class BandeauSecours extends StatelessWidget {
         // continue) ; son icone dit ce qui manque.
         icone: vue.connexion == ConnexionSeance.reseauFaible
             ? AppIcons.reseau.repos
-            : texte == vue.texteTableau
+            : vue.bandeauDitTableau
             ? _iconeTableau(vue)
             : null,
         encadre: true,
@@ -2367,6 +2434,8 @@ class BandeauSecours extends StatelessWidget {
             duration: AppMouvement.duree(context, AppMouvement.apparition),
             curve: AppMouvement.entree,
             alignment: AlignmentDirectional.topStart,
+            // L'etat a fini de grandir : sa taille vraie decide du defilement.
+            onEnd: _montrer,
             child: etat,
           ),
           LocalFeedback(

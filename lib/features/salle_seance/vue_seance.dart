@@ -757,10 +757,12 @@ class VueSeance {
     if (_guidee && connexion == ConnexionSeance.reseauFaible) {
       return t.salle.secours.reseauFaibleGuideeSuite;
     }
-    return _texteConnexion == null && texteTableau != null
-        ? _suiteTableau
-        : null;
+    return bandeauDitTableau ? _suiteTableau : null;
   }
+
+  /// TB-11b (tour 2) : le bandeau dit l'etat du tableau ([texteTableau]),
+  /// faute d'etat de la room a dire ; son icone est celle du tableau.
+  bool get bandeauDitTableau => _texteConnexion == null && texteTableau != null;
 
   // --- Tableau partage et conservation des notes (TB-11b) ---
 
@@ -792,7 +794,12 @@ class VueSeance {
     if (_enseignant && synchroTableau == SynchroTableau.interrompue) {
       return textes.nonPartageesSuite;
     }
-    if (ecritureSuspendue && peutEcrire) return textes.ecritureSuspendue;
+    // Tour 2 : en guidee, le bandeau reste court (plan V2 §20 « Reprise
+    // eleve guide » : « Le tableau revient. ») ; la suspension de l'ecriture
+    // se lit dans les Commandes, a la place d'« Ecrire ».
+    if (ecritureSuspendue && peutEcrire && !_guidee) {
+      return textes.ecritureSuspendue;
+    }
     if (_enseignant &&
         synchroTableau == SynchroTableau.partage &&
         conservation == ConservationNotes.nonSauvegardees) {
@@ -967,6 +974,21 @@ class VueSeance {
       peutEcrire &&
       ancrageSurface != null &&
       (!_enseignant || voitOutils);
+
+  /// TB-11b (tour 2) : « Ecrire » se propose maintenant : la personne voit
+  /// l'ecriture ([voitEcriture]) et le tableau la permet (pas de reprise,
+  /// pas d'ecriture distante suspendue). Pendant la suspension, ni la tuile
+  /// « Ecrire », ni la barre (Stylo, Gomme, Annuler, Terminer), ni l'aide
+  /// qui dit d'ecrire : une phrase dit pourquoi ([texteEcritureSuspendue]).
+  bool get ecritureProposee => voitEcriture && !ecritureSuspendue;
+
+  /// TB-11b (tour 2, K-58 et « un bouton qui ne peut pas aboutir n'est pas
+  /// rendu ; une phrase explique la limite ») : la ou « Ecrire » se
+  /// proposerait, « L'ecriture reprend des le retour du tableau. » ; `null`
+  /// ailleurs.
+  String? get texteEcritureSuspendue => voitEcriture && ecritureSuspendue
+      ? t.salle.seance.synchro.ecritureSuspendue
+      : null;
 
   /// TB-10 (plan V2 §5, §19.3 point 6) : les outils de trace proposes.
   /// L'enseignant : Stylo, Surligner, Gomme ; l'eleve autorise : Stylo et

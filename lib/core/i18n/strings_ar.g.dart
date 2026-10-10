@@ -385,6 +385,7 @@ class _Traductions$salle$seance$ar extends Traductions$salle$seance$fr {
 	@override late final _Traductions$salle$seance$commandes$ar commandes = _Traductions$salle$seance$commandes$ar._(_root);
 	@override late final _Traductions$salle$seance$bibliotheque$ar bibliotheque = _Traductions$salle$seance$bibliotheque$ar._(_root);
 	@override late final _Traductions$salle$seance$surface$ar surface = _Traductions$salle$seance$surface$ar._(_root);
+	@override late final _Traductions$salle$seance$synchro$ar synchro = _Traductions$salle$seance$synchro$ar._(_root);
 	@override late final _Traductions$salle$seance$rangement$ar rangement = _Traductions$salle$seance$rangement$ar._(_root);
 	@override late final _Traductions$salle$seance$capsule$ar capsule = _Traductions$salle$seance$capsule$ar._(_root);
 	@override late final _Traductions$salle$seance$contexte$ar contexte = _Traductions$salle$seance$contexte$ar._(_root);
@@ -835,6 +836,23 @@ class _Traductions$salle$seance$surface$ar extends Traductions$salle$seance$surf
 	@override String get aucunSupport => 'اختر مادة أو اكتب على السبورة.';
 	@override String page({required Object titre, required Object page, required Object pages}) => '⁨${titre}⁩، الصفحة ⁨${page}⁩ من ⁨${pages}⁩';
 	@override String get supportMasque => 'السبورة، المادة مخفية';
+}
+
+// Path: salle.seance.synchro
+class _Traductions$salle$seance$synchro$ar extends Traductions$salle$seance$synchro$fr {
+	_Traductions$salle$seance$synchro$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get nonPartagees => 'ملاحظاتك الجديدة غير مشارَكة.';
+	@override String get nonPartageesSuite => 'الملاحظات المنقّطة لا تظهر إلا على شاشتك، ريثما تعود السبورة إلى الاتصال.';
+	@override String get seReconnecte => 'السبورة تعيد الاتصال.';
+	@override String get reprise => 'استعادة السبورة…';
+	@override String get revient => 'السبورة تعود.';
+	@override String get ecritureSuspendue => 'تُستأنف الكتابة فور عودة السبورة.';
+	@override String get nonSauvegardees => 'ملاحظات هذه الحصة غير محفوظة.';
+	@override String get nonSauvegardeesSuite => 'تبقى على السبورة حتى نهاية الحصة، لكنها لن تُسترجع في الدرس القادم.';
 }
 
 // Path: salle.seance.rangement
@@ -2559,6 +2577,14 @@ extension on TraductionsAr {
 			'salle.seance.surface.aucunSupport' => 'اختر مادة أو اكتب على السبورة.',
 			'salle.seance.surface.page' => ({required Object titre, required Object page, required Object pages}) => '⁨${titre}⁩، الصفحة ⁨${page}⁩ من ⁨${pages}⁩',
 			'salle.seance.surface.supportMasque' => 'السبورة، المادة مخفية',
+			'salle.seance.synchro.nonPartagees' => 'ملاحظاتك الجديدة غير مشارَكة.',
+			'salle.seance.synchro.nonPartageesSuite' => 'الملاحظات المنقّطة لا تظهر إلا على شاشتك، ريثما تعود السبورة إلى الاتصال.',
+			'salle.seance.synchro.seReconnecte' => 'السبورة تعيد الاتصال.',
+			'salle.seance.synchro.reprise' => 'استعادة السبورة…',
+			'salle.seance.synchro.revient' => 'السبورة تعود.',
+			'salle.seance.synchro.ecritureSuspendue' => 'تُستأنف الكتابة فور عودة السبورة.',
+			'salle.seance.synchro.nonSauvegardees' => 'ملاحظات هذه الحصة غير محفوظة.',
+			'salle.seance.synchro.nonSauvegardeesSuite' => 'تبقى على السبورة حتى نهاية الحصة، لكنها لن تُسترجع في الدرس القادم.',
 			'salle.seance.rangement.ranger' => 'إرجاع إلى المكتبة',
 			'salle.seance.rangement.menuSupport' => 'إجراءات المادة المعروضة',
 			'salle.seance.rangement.menuTableau' => 'إجراءات السبورة الحرة',
@@ -2816,6 +2842,8 @@ extension on TraductionsAr {
 			'tc.groupe.enseignant.photoManquanteDetail' => 'لم تُسجَّل صورة المعلم بعد.',
 			'tc.groupe.mesGroupes.titre' => 'فصولي',
 			'tc.groupe.mesGroupes.aucun' => 'لا فصل حتى الآن',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.mesGroupes.aucunDetail' => 'ستضعك الأكاديمية في فصل حين يتوفر موعد يناسبك.',
 			'tc.groupe.commun.erreur' => 'تعذّرت قراءة فصولك',
 			'tc.groupe.commun.reessayer' => 'إعادة المحاولة',
@@ -2824,8 +2852,6 @@ extension on TraductionsAr {
 			'tc.groupe.carte.capacitePhrase' => ({required Object membres, required Object seuil}) => '⁨${membres}⁩ طلاب من ⁨${seuil}⁩ مقاعد',
 			'tc.groupe.carte.complet' => 'مكتمل',
 			'tc.groupe.carte.prochainCours' => 'الدرس القادم',
-			_ => null,
-		} ?? switch (path) {
 			'tc.groupe.carte.aucuneSeance' => 'لا حصة مقررة',
 			'tc.groupe.carte.aucuneSeanceDetail' => 'لم يُحدَّد جدول هذا الفصل بعد.',
 			'tc.groupe.carte.duree' => ({required Object valeur}) => 'المدة ⁨${valeur}⁩',

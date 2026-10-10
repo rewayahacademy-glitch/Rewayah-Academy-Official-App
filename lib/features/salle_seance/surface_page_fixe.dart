@@ -160,8 +160,26 @@ class _SurfacePageFixeState extends ConsumerState<SurfacePageFixe> {
   Size _boite = Size.zero;
 
   @override
+  void initState() {
+    super.initState();
+    _reconcilier();
+  }
+
+  /// TB-11b (tour 2) : le tableau partage (revenu, ou jamais interrompu),
+  /// les traits notes « non partages » ne le sont plus : la marque est
+  /// effacee, une interruption suivante ne les remarque pas.
+  void _reconcilier() {
+    if (widget.vue.synchroTableau != SynchroTableau.partage) return;
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (!mounted) return;
+      ref.read(traitsNonPartagesProvider.notifier).reconcilier();
+    });
+  }
+
+  @override
   void didUpdateWidget(SurfacePageFixe ancien) {
     super.didUpdateWidget(ancien);
+    if (ancien.vue.synchroTableau != widget.vue.synchroTableau) _reconcilier();
     // « Ajuster a l'ecran » (zoom 100 %) recentre aussi la page.
     if (widget.zoom != ancien.zoom && widget.zoom <= 1) {
       _deplacement = Offset.zero;

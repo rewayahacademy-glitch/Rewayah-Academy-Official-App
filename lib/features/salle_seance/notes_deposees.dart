@@ -80,6 +80,13 @@ class TraitsNonPartages extends Notifier<Set<String>> {
   /// Le trait [id] vient d'etre pose sans etre partage.
   void ajouter(String id) => state = <String>{...state, id};
 
+  /// TB-11b (tour 2) : le tableau est revenu ; la reconciliation du moteur
+  /// fait foi, plus rien n'est a marquer (une interruption suivante ne
+  /// remarque pas des traits deja recus).
+  void reconcilier() {
+    if (state.isNotEmpty) state = const <String>{};
+  }
+
   /// Le trait [id] a ete retire (annule, gomme).
   void retirer(String id) {
     if (!state.contains(id)) return;

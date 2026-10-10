@@ -1536,6 +1536,11 @@ void main() {
           (RoleSeance.eleve, SituationTb.err02, 'err02'),
           (RoleSeance.enseignant, SituationTb.err03, 'err03'),
           (RoleSeance.enseignant, SituationTb.ped03, 'conservation'),
+          // Tour 2 : la guidee en reprise (bandeau court) ; l'eleve autorise,
+          // Commandes ouvertes : la phrase de la suspension a la place
+          // d'« Ecrire ».
+          (RoleSeance.guidee, SituationTb.err02, 'err02'),
+          (RoleSeance.eleve, SituationTb.err01, 'ecriture_suspendue'),
         ]) {
       for (final _Cadrage cas in <_Cadrage>[
         for (final _Cadrage c in _cadragesTb)
@@ -1571,6 +1576,7 @@ void main() {
           // telephone, le bandeau seul (la feuille le couvrirait).
           final bool commandes =
               etat == 'conservation' ||
+              etat == 'ecriture_suspendue' ||
               (etat == 'err03' && cas.$2.width >= 1440);
           if (commandes) {
             final Finder declencheur = find.byKey(DeclencheurCommandes.cle);
@@ -1588,7 +1594,13 @@ void main() {
               findsOneWidget,
             );
           }
-          if (commandes) {
+          if (etat == 'ecriture_suspendue') {
+            expect(
+              find.byKey(CommandesPedagogiques.cleEcritureSuspendue),
+              findsOneWidget,
+            );
+          }
+          if (commandes && etat != 'ecriture_suspendue') {
             final Finder conservation = find.byKey(
               CommandesPedagogiques.cleConservation,
             );

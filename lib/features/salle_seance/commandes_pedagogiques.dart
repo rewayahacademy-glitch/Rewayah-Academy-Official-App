@@ -190,6 +190,12 @@ class CommandesPedagogiques extends ConsumerStatefulWidget {
   /// TB-9 : le retour discret « Support range ».
   static const Key cleRange = ValueKey<String>('commandes-support-range');
 
+  /// TB-11b (tour 2) : « L'ecriture reprend des le retour du tableau. », a
+  /// la place de la tuile « Ecrire » pendant la suspension.
+  static const Key cleEcritureSuspendue = ValueKey<String>(
+    'commandes-ecriture-suspendue',
+  );
+
   /// TB-11b : la conservation des notes (« dans cette seance uniquement »).
   static const Key cleConservation = ValueKey<String>(
     'commandes-conservation-notes',
@@ -380,9 +386,15 @@ class _CommandesPedagogiquesState extends ConsumerState<CommandesPedagogiques> {
           OutilsEnseignement(
             onOutil: widget.actions.onOutil == null ? null : _outil,
             forme: FormeOutils.rangee,
-            avecEcrire: widget.vue.voitEcriture,
+            avecEcrire: widget.vue.ecritureProposee,
           ),
-          const AideOutil(),
+          AideOutil(
+            ecritureSuspendue: widget.vue.texteEcritureSuspendue != null,
+          ),
+          // TB-11b (tour 2) : « Ecrire » n'est pas rendu pendant la reprise
+          // du tableau ; la phrase dit pourquoi et quand il revient.
+          if (widget.vue.texteEcritureSuspendue case final String suspendue)
+            _EcritureSuspendue(texte: suspendue),
           if (ecritSurLaSurface(ref, widget.vue))
             EcritureSeance(vue: widget.vue),
         ],
@@ -528,24 +540,30 @@ class _CommandesPedagogiquesState extends ConsumerState<CommandesPedagogiques> {
               ),
               Ecart.vSm,
             ],
-            // La tuile « Ecrire » des outils de la salle, seule : l'eleve
-            // entre dans Ecrire volontairement (§19.3 point 5).
-            OutilsEnseignement(
-              onOutil: (OutilEnseignement outil) {
-                garderOutilPropose(ref, vue);
-                rappel(outil);
-              },
-              forme: FormeOutils.rangee,
-              outils: const <OutilEnseignement>[OutilEnseignement.ecrire],
-            ),
-            Ecart.vSm,
-            Text(
-              ecrit ? vue.aideOutilsEleve : vue.aideChoisirEcrire,
-              style: palette.inkMuted.applyTo(
-                textes.bodySmall ?? const TextStyle(),
+            // TB-11b (tour 2) : le tableau suspend l'ecriture ; ni tuile, ni
+            // aide qui dit d'ecrire, ni barre : la phrase de la suspension.
+            if (vue.texteEcritureSuspendue case final String suspendue)
+              _EcritureSuspendue(texte: suspendue)
+            else ...<Widget>[
+              // La tuile « Ecrire » des outils de la salle, seule : l'eleve
+              // entre dans Ecrire volontairement (§19.3 point 5).
+              OutilsEnseignement(
+                onOutil: (OutilEnseignement outil) {
+                  garderOutilPropose(ref, vue);
+                  rappel(outil);
+                },
+                forme: FormeOutils.rangee,
+                outils: const <OutilEnseignement>[OutilEnseignement.ecrire],
               ),
-            ),
-            if (ecrit) ...<Widget>[Ecart.vMd, EcritureSeance(vue: vue)],
+              Ecart.vSm,
+              Text(
+                ecrit ? vue.aideOutilsEleve : vue.aideChoisirEcrire,
+                style: palette.inkMuted.applyTo(
+                  textes.bodySmall ?? const TextStyle(),
+                ),
+              ),
+              if (ecrit) ...<Widget>[Ecart.vMd, EcritureSeance(vue: vue)],
+            ],
           ],
         ),
       ..._lectureEtFocus(),
@@ -726,5 +744,21 @@ class _TitreSection extends StatelessWidget {
       style: AppPalette.of(context).inkMuted
           .applyTo(Theme.of(context).textTheme.labelLarge ?? const TextStyle()),
     ),
+  );
+}
+
+/// TB-11b (tour 2) : la phrase qui remplace « Ecrire » pendant la reprise
+/// du tableau (K-58 : la limite et sa suite).
+class _EcritureSuspendue extends StatelessWidget {
+  const _EcritureSuspendue({required this.texte});
+
+  final String texte;
+
+  @override
+  Widget build(BuildContext context) => Text(
+    texte,
+    key: CommandesPedagogiques.cleEcritureSuspendue,
+    style: AppPalette.of(context).inkMuted
+        .applyTo(Theme.of(context).textTheme.bodySmall ?? const TextStyle()),
   );
 }

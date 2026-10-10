@@ -77,15 +77,22 @@ void garderOutilPropose(WidgetRef ref, VueSeance vue) {
 
 /// La personne ecrit-elle sur la surface montree ? Outil d'ecriture retenu
 /// et capacite de la vue.
+/// TB-11b (tour 2) : pendant la reprise du tableau (ou l'ecriture distante
+/// suspendue), non : l'outil reste retenu, la barre revient avec le tableau.
 bool ecritSurLaSurface(WidgetRef ref, VueSeance vue) =>
-    vue.voitEcriture &&
+    vue.ecritureProposee &&
     ref.watch(etatOutilsProvider.select((EtatOutils e) => e.styletArme));
 
 /// La phrase qui explique l'outil retenu (K-58) : lecture, Pointeur ou
 /// Ecrire. Rien pour Marquer et Masquer (capacites existantes, preservees).
 class AideOutil extends ConsumerWidget {
   /// Cree la phrase.
-  const AideOutil({super.key = cle});
+  const AideOutil({this.ecritureSuspendue = false, super.key = cle});
+
+  /// TB-11b (tour 2) : le tableau suspend l'ecriture ; la phrase d'Ecrire
+  /// (« ecrivez sur la page ») mentirait, elle n'est pas rendue (la phrase
+  /// de la suspension est posee a cote).
+  final bool ecritureSuspendue;
 
   /// La cle de la phrase.
   static const Key cle = ValueKey<String>('ecriture-aide-outil');
@@ -98,7 +105,8 @@ class AideOutil extends ConsumerWidget {
     final String? texte = switch (actif) {
       null => t.salle.seance.outils.aideLecture,
       OutilDock.pointeur => t.salle.seance.outils.aidePointeur,
-      OutilDock.stylet => t.salle.seance.outils.aideEcrire,
+      OutilDock.stylet =>
+        ecritureSuspendue ? null : t.salle.seance.outils.aideEcrire,
       _ => null,
     };
     if (texte == null) return const SizedBox.shrink();

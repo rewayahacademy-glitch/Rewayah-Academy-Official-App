@@ -917,6 +917,9 @@ class _SalleDemoState extends State<SalleDemo> {
         // TB-7b : ecrire, gommer et annuler dans la demonstration ; la
         // relecture du depot suit ce depot-ci (famille reprise dans ce
         // perimetre).
+        // TB-11b (tour 2) : les traits poses pendant l'interruption
+        // appartiennent a cette salle, jamais a la suivante.
+        traitsNonPartagesProvider.overrideWith(TraitsNonPartages.new),
         if (_depot case final AnnotationsMemoire depot) ...<Override>[
           portAnnotationsProvider.overrideWithValue(depot),
           notesDeposeesProvider.overrideWith2(NotesDeposees.new),
