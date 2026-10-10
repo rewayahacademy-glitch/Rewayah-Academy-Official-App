@@ -1141,6 +1141,15 @@ begin
   select count(*) into v_anon from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
    where n.nspname='public' and p.prosecdef and has_function_privilege('anon',p.oid,'EXECUTE');
   if v_anon <> 0 then raise exception 'SEC-PROD: % SECURITY DEFINER restent exécutables par anon', v_anon; end if;
+  -- PROD read-only ACL review: authenticator is not a member of anon/authenticated;
+  -- retain its direct pre-request hook grant and revoke the three PUBLIC-only paths.
+  if not has_function_privilege('authenticator', 'public.agent_pre_request()', 'EXECUTE') then
+    raise exception 'SEC-PROD: authenticator a perdu EXECUTE sur le pre-request hook';
+  end if;
+  if (select count(*) from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+      where n.nspname='public' and p.prosecdef and has_function_privilege('authenticator',p.oid,'EXECUTE')) <> 1 then
+    raise exception 'SEC-PROD: droits authenticator SECURITY DEFINER inattendus après retrait PUBLIC/anon';
+  end if;
   select count(*) into v_auth from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
    where n.nspname='public' and p.prosecdef and has_function_privilege('authenticated',p.oid,'EXECUTE');
   if v_auth <> 118 then raise exception 'SEC-PROD: nombre inattendu de RPC authenticated (% au lieu de 118)', v_auth; end if;
