@@ -6387,6 +6387,9 @@ class Traductions$admin$groupes$fr {
 	/// fr: 'Les classes n'ont pas pu être lues. Réessayez dans un instant.'
 	String get erreur => 'Les classes n\'ont pas pu être lues. Réessayez dans un instant.';
 
+	/// fr: 'La liste des classes n'a pas pu être chargée'
+	String get sansDonnees => 'La liste des classes n\'a pas pu être chargée';
+
 	/// fr: 'Nouvelle classe'
 	String get creer => 'Nouvelle classe';
 
@@ -28823,6 +28826,7 @@ extension on Traductions {
 			'admin.groupes.aucunAvecCeFiltre' => 'Aucune classe avec ce filtre',
 			'admin.groupes.aucunAvecCeFiltreDetail' => 'Changez de filtre pour voir les autres classes.',
 			'admin.groupes.erreur' => 'Les classes n\'ont pas pu être lues. Réessayez dans un instant.',
+			'admin.groupes.sansDonnees' => 'La liste des classes n\'a pas pu être chargée',
 			'admin.groupes.creer' => 'Nouvelle classe',
 			'admin.groupes.creerTitre' => 'Nouvelle classe',
 			'admin.groupes.champLibelle' => 'Nom de la classe',
@@ -29214,9 +29218,9 @@ extension on Traductions {
 			'admin.programmes.codeModifier' => 'Modifier le code technique',
 			'admin.programmes.manqueNom' => 'le nom affiché',
 			'admin.programmes.manqueCycle' => 'le cycle',
-			'admin.programmes.manqueOrdre' => 'l\'ordre (un nombre entier)',
 			_ => null,
 		} ?? switch (path) {
+			'admin.programmes.manqueOrdre' => 'l\'ordre (un nombre entier)',
 			'admin.programmes.manqueCode' => 'le code technique',
 			'admin.programmes.manque' => ({required Object elements}) => 'Rien n\'a été enregistré : il manque ${elements}. Complétez-le, puis réessayez.',
 			'admin.programmes.champDescription' => 'Description (optionnelle)',
@@ -29728,9 +29732,9 @@ extension on Traductions {
 			'parcours.indisponibleTitre' => 'Le questionnaire n\'est pas encore disponible',
 			'parcours.indisponibleDetail' => 'Cette étape n\'est pas encore ouverte par l\'académie. Vous n\'avez rien à faire pour l\'instant : rien n\'est perdu, et vous pourrez la remplir dès qu\'elle sera ouverte.',
 			'parcours.horsLigneTitre' => 'Le parcours n\'a pas pu être chargé',
-			'parcours.horsLigneDetail' => 'Vous pourrez réessayer quand la connexion sera revenue. Vos réponses sont gardées.',
 			_ => null,
 		} ?? switch (path) {
+			'parcours.horsLigneDetail' => 'Vous pourrez réessayer quand la connexion sera revenue. Vos réponses sont gardées.',
 			'parcours.erreurChargement' => 'Le questionnaire n\'a pas pu s\'afficher',
 			'parcours.erreurChargementDetail' => 'Une erreur est survenue de notre côté. Réessayez dans un instant ; vos réponses sont gardées.',
 			'parcours.introuvableTitre' => 'Ce profil élève est introuvable',
@@ -30242,9 +30246,9 @@ extension on Traductions {
 			'eleve.suivi.colonneEnseignant' => 'Enseignant',
 			'eleve.suivi.colonneEtat' => 'Présence',
 			'eleve.suivi.cours' => 'Cours de Coran',
-			'eleve.suivi.moi' => 'Ma présence',
 			_ => null,
 		} ?? switch (path) {
+			'eleve.suivi.moi' => 'Ma présence',
 			'eleve.suivi.aujourdhui' => ({required Object heure}) => 'Aujourd\'hui, ${heure}',
 			'eleve.suivi.hier' => ({required Object heure}) => 'Hier, ${heure}',
 			'eleve.suivi.date' => ({required Object date, required Object heure}) => '${date}, ${heure}',
@@ -30756,9 +30760,9 @@ extension on Traductions {
 			'enseignant.journee.absence.titre' => 'Vous ne pourrez pas assurer cette séance ?',
 			'enseignant.journee.absence.cleDate' => 'Date',
 			'enseignant.journee.absence.notice' => 'Votre affectation à la Classe reste inchangée.',
-			'enseignant.journee.absence.declarer' => 'Déclarer mon absence',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.journee.absence.declarer' => 'Déclarer mon absence',
 			'enseignant.journee.absence.echec' => 'La demande n\'a pas abouti. Réessayez dans un instant.',
 			'enseignant.journee.absence.etats.enregistree' => 'Absence enregistrée',
 			'enseignant.journee.absence.etats.recherche' => 'Recherche d\'un remplaçant',
@@ -31270,9 +31274,9 @@ extension on Traductions {
 			'controleur.observation.questionTexte' => 'Qu\'avez-vous observé ?',
 			'controleur.observation.texteObligatoire' => 'Votre texte est nécessaire pour cette observation.',
 			'controleur.observation.texteFacultatif' => 'Ce texte est facultatif.',
-			'controleur.observation.libelleTexte' => 'Votre remarque',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.observation.libelleTexte' => 'Votre remarque',
 			'controleur.observation.aideTexte' => 'Décrivez seulement ce que vous avez observé.',
 			'controleur.observation.texteRequis' => 'Écrivez ce que vous avez observé pour continuer.',
 			'controleur.observation.questionRecap' => 'Vérifiez votre observation avant l\'envoi.',
@@ -31784,9 +31788,9 @@ extension on Traductions {
 			'tc.parcours.plage.ressource' => 'Tout le support',
 			'tc.parcours.feedback.cours.intitule' => 'Comment était le cours aujourd\'hui ?',
 			'tc.parcours.feedback.cours.difficile' => 'Difficile',
-			'tc.parcours.feedback.cours.bien' => 'Bien',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.feedback.cours.bien' => 'Bien',
 			'tc.parcours.feedback.cours.tresBien' => 'Très bien',
 			'tc.parcours.feedback.comprehension.intitule' => 'Avez-vous compris ce qui a été travaillé ?',
 			'tc.parcours.feedback.comprehension.difficile' => 'Pas vraiment',
@@ -32298,9 +32302,9 @@ extension on Traductions {
 			'motifs.presenceExcusee.conge' => 'Jour férié ou congé',
 			'motifs.presenceExcusee.familiale' => 'Raison familiale',
 			'motifs.reglageEnseignant.horaire' => 'Horaire qui ne convient plus',
-			'motifs.reglageEnseignant.niveau' => 'Niveau qui ne correspond plus',
 			_ => null,
 		} ?? switch (path) {
+			'motifs.reglageEnseignant.niveau' => 'Niveau qui ne correspond plus',
 			'motifs.reglageEnseignant.fuseau' => 'Changement de fuseau horaire',
 			'motifs.reglageEnseignant.fratrie' => 'Réunir les enfants du foyer',
 			'motifs.reglageDuree.tropLongue' => 'Durée trop longue pour l\'âge',
@@ -32812,9 +32816,9 @@ extension on Traductions {
 			'com.communaute.composer.pieceRefusee' => 'Retirez les fichiers refusés avant de publier.',
 			'com.communaute.composer.choixIndisponible' => 'Le choix d\'un fichier n\'est pas encore disponible ici.',
 			'com.communaute.composer.publier' => 'Publier',
-			'com.communaute.composer.fermer' => 'Fermer la nouvelle publication',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.composer.fermer' => 'Fermer la nouvelle publication',
 			'com.communaute.composer.confirmee' => 'Votre publication est en ligne.',
 			'com.communaute.composer.erreurEnvoi' => 'Votre publication n\'est pas encore confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'com.communaute.composer.indisponible' => 'La publication n\'est pas encore disponible ici.',
@@ -33326,9 +33330,9 @@ extension on Traductions {
 			'comptable.commun.modeCalcul' => 'Mode de calcul',
 			'comptable.commun.modeMontantFixe' => 'Montant cible fixe',
 			'comptable.commun.modeCouvertureMois' => 'Couverture en mois de charges essentielles',
-			'comptable.commun.derniereAllocation' => ({required Object date}) => 'Dernière allocation : ${date}',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.commun.derniereAllocation' => ({required Object date}) => 'Dernière allocation : ${date}',
 			'comptable.commun.prochaineAllocation' => ({required Object date}) => 'Prochaine allocation prévue : ${date}',
 			'comptable.commun.aucuneAllocation' => 'Aucune allocation enregistrée',
 			'comptable.commun.destination' => 'Destination',
@@ -33840,9 +33844,9 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.miseAJourDemandee' => ({required Object nom}) => 'Demande de mise à jour enregistrée pour ${nom}.',
 			'comptable.beneficiaires.profil.suspendus' => ({required Object nom}) => 'Paiements de ${nom} suspendus : aucun versement ne part tant qu\'ils ne sont pas repris.',
 			'comptable.beneficiaires.profil.repris' => ({required Object nom}) => 'Paiements de ${nom} repris.',
-			'comptable.beneficiaires.profil.erreurAction' => 'L\'action n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.profil.erreurAction' => 'L\'action n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'comptable.beneficiaires.profil.erreurIndisponible' => 'Cette action n\'est pas encore branchée sur le service qui la traite. Réessayez plus tard.',
 			'comptable.beneficiaires.profil.suspensionTitre' => ({required Object nom}) => 'Suspendre les paiements de ${nom} ?',
 			'comptable.beneficiaires.profil.suspensionContexte' => 'Aucun versement ne partira vers ce bénéficiaire tant que vous ne les reprenez pas. Ses coordonnées ne changent pas. Choisissez le motif : il sera inscrit au journal du profil.',
