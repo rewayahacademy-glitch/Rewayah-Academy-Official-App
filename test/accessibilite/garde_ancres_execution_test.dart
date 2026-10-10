@@ -29,6 +29,7 @@
 // ecrites, lints compris.
 // ignore_for_file: unnecessary_this, unnecessary_string_interpolations, omit_local_variable_types, prefer_adjacent_string_concatenation
 
+import 'package:flutter/material.dart' show Tooltip;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/isolat_bidi.dart';
@@ -411,6 +412,38 @@ void main() {
         child: const SizedBox(width: 4, height: 4),
       ),
       'EditableText': _Saisie(texte: fautive),
+      // Relecture (K-66.4) : les trois canaux restants, chacun seul. Le
+      // Tooltip exclu de la semantique n'est lu que par son message (la
+      // branche `Tooltip.message` de la garde) ; les valeurs augmentee et
+      // diminuee accompagnent une valeur propre, sans ancre.
+      // Une infobulle demande une couche (Overlay) au-dessus d'elle.
+      'Tooltip.message': SizedBox(
+        width: 40,
+        height: 40,
+        child: Overlay(
+          initialEntries: <OverlayEntry>[
+            OverlayEntry(
+              builder: (BuildContext _) => Tooltip(
+                message: fautive,
+                excludeFromSemantics: true,
+                child: const SizedBox(width: 4, height: 4),
+              ),
+            ),
+          ],
+        ),
+      ),
+      'Semantics.increasedValue': Semantics(
+        value: '20',
+        increasedValue: fautive,
+        onIncrease: () {},
+        child: const SizedBox(width: 4, height: 4),
+      ),
+      'Semantics.decreasedValue': Semantics(
+        value: '20',
+        decreasedValue: fautive,
+        onDecrease: () {},
+        child: const SizedBox(width: 4, height: 4),
+      ),
     };
     for (final MapEntry<String, Widget> c in canaux.entries) {
       testWidgets(c.key, (WidgetTester tester) async {
