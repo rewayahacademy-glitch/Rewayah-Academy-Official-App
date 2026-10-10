@@ -624,13 +624,18 @@ class VueSeance {
             : base;
       case RoleSeance.enseignant:
         final String? suite = switch (horloge) {
-          HorlogeRestante(:final int minutes) => LibellesGroupe.valeurSeule(
+          HorlogeRestante(:final int minutes) => LibellesGroupe.insecable(
             t.salle.seance.minutesRestantes(minutes: minutes),
           ),
           HorlogeDepassee() => t.salle.seance.sePoursuit,
           null => null,
         };
-        if (nomClasse.isEmpty) return suite;
+        // DUREE-INSECABLE-4 : l'ancre de sens seulement quand la duree
+        // commence la ligne ; derriere le nom de la Classe, elle serait au
+        // milieu du libelle.
+        if (nomClasse.isEmpty) {
+          return suite == null ? null : LibellesGroupe.ancreSens(suite);
+        }
         return suite == null
             ? nomClasse
             : t.salle.seance.ligne(debut: nomClasse, fin: suite);

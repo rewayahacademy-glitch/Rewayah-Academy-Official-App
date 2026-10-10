@@ -30,6 +30,7 @@ import '../../core/tc_coran/moteur_mushaf.dart' show pageMushafProvider;
 import '../../core/tc_coran/navigation_coran.dart';
 import '../../core/tc_coran/page_mushaf_vm.dart';
 import '../../core/tc_coran/port_navigation_coran.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
@@ -403,8 +404,10 @@ class _LecteurCoranAccessibiliteEtat
     final int? precedente = vue?.pagePrecedente;
     final int? suivante = vue?.pageSuivante;
     final bool agrandi = etat.mode == ModeRenduCoran.versetAgrandi;
-    final String taille = t.tc.coran.zoom.valeur(
-      pourcent: (etat.zoomLocal * 100).round(),
+    // DUREE-INSECABLE-4 : « 150 % » insecable ; la valeur suit le nom de la
+    // commande (« Agrandir, 150 % »), donc sans ancre de sens.
+    final String taille = LibellesGroupe.insecable(
+      t.tc.coran.zoom.valeur(pourcent: (etat.zoomLocal * 100).round()),
     );
 
     // La disposition de `_Commandes` (MushafPage), en icones seules : les

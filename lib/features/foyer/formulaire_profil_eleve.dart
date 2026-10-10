@@ -13,6 +13,7 @@ import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -489,9 +490,9 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
       erreurAge = t.foyer.ajout.erreurs.ageRequis;
     } else if (erreurs[ChampProfilEleve.age] == ErreurChamp.horsBornes ||
         refusAge) {
-      erreurAge = t.foyer.ajout.erreurs.ageHorsBornes(
-        min: _bornes.min,
-        max: _bornes.max,
+      // DUREE-INSECABLE-4 : « 18 ans » insecable.
+      erreurAge = LibellesGroupe.insecable(
+        t.foyer.ajout.erreurs.ageHorsBornes(min: _bornes.min, max: _bornes.max),
       );
     }
 

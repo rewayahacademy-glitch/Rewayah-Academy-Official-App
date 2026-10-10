@@ -95,7 +95,10 @@ class LignePresence extends StatelessWidget {
               ),
       // Un retard sous la minute n'existe pas : le seuil est de cinq minutes
       // par defaut, et il se regle en base, jamais ici.
-      RepereTemps.retard => LibellesGroupe.valeurSeule(
+      // DUREE-INSECABLE-4 : insecable seulement. La phrase suit le role
+      // (« Eleve · 7 min apres l'heure ») : l'ancre de sens se pose sur la
+      // ligne entiere, et seulement quand la duree la commence ([build]).
+      RepereTemps.retard => LibellesGroupe.insecable(
         t.presence.retardMinutes(minutes: '$minutes'),
       ),
       RepereTemps.silence =>
@@ -122,11 +125,13 @@ class LignePresence extends StatelessWidget {
     // Les parties basses se lisent d'un trait : le role, la duree, et le mot
     // qui dit qu'une decision a fige l'etat. Trois `Text` separes feraient
     // trois annonces pour une seule personne.
-    final String detail = <String>[
-      if (role case final String r when r.isNotEmpty) r,
-      ?dit,
-      if (afficherConsolide && vue.consolide) t.presence.consolide,
-    ].join(' · ');
+    final String detail = LibellesGroupe.ancreSens(
+      <String>[
+        if (role case final String r when r.isNotEmpty) r,
+        ?dit,
+        if (afficherConsolide && vue.consolide) t.presence.consolide,
+      ].join(' · '),
+    );
 
     return MergeSemantics(
       child: Column(
