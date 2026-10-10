@@ -527,7 +527,7 @@ begin
 end
 $m2_scan$;
 -- 0084 révoque agent_ro d'etat_presence malgré son accès effectif dans le snapshot.
--- Le rôle garde cette RPC non-KYC; 0081 retire uniquement ses deux RPC KYC.
+-- Le rôle garde cette RPC non-KYC; 0081 retire l'accès KYC effectivement présent sur read_kyc_documents().
 grant execute on function public.etat_presence(uuid, uuid) to agent_ro;
 
 -- Révoquer anon/PUBLIC sur les 27 SECURITY DEFINER exposées; conserver explicitement
@@ -987,7 +987,7 @@ begin
   if v_auth <> 118 then raise exception 'SEC-PROD: nombre inattendu de RPC authenticated (% au lieu de 118)', v_auth; end if;
   select count(*) into v_agent from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
    where n.nspname='public' and p.prosecdef and has_function_privilege('agent_ro',p.oid,'EXECUTE');
-  if v_agent <> 46 then raise exception 'SEC-PROD: droits agent_ro inattendus après retrait KYC (% restent)', v_agent; end if;
+  if v_agent <> 47 then raise exception 'SEC-PROD: droits agent_ro inattendus après retrait KYC (% au lieu de 47)', v_agent; end if;
   if exists (
     select 1 from pg_temp.sec_prod_expected_functions e
     where has_function_privilege('agent_ro', e.signature, 'EXECUTE') is distinct from
