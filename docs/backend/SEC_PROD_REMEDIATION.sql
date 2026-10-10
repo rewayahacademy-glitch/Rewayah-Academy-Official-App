@@ -976,7 +976,7 @@ begin
          or length(v_lower) - length(replace(v_lower, 'app_role(', '')) <> length('app_role(')
          or v_role_pos >= v_account_pos
          or v_account_pos >= v_false_pos
-         or v_lower !~ 'app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]*=[[:space:]]*''[^'']+'''
+         or v_lower !~ 'app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]*=[[:space:]]*''[^'']+'''''
          or v_condition ~* '(^|[^[:alnum:]_])or([^[:alnum:]_]|$)' then
         return true;
       end if;
