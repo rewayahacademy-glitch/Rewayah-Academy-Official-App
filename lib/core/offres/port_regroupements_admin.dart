@@ -3,8 +3,9 @@
 ///
 /// Decision du directeur du 09/10/2026 (`DECISION-OFFRES-GROUPES-2026-10-09.md`
 /// §3) : le systeme regroupe les demandes qui se ressemblent (memes jours,
-/// meme heure locale, meme fuseau, meme public, meme langue ; jours tries et
-/// dedoublonnes) ; a la creation, les eleves du regroupement sont integres a
+/// meme heure locale pour chacun, meme fuseau, meme public, meme langue ;
+/// jours tries et dedoublonnes ; l'heure peut differer d'un jour a l'autre,
+/// contrat C-11 bis) ; a la creation, les eleves du regroupement sont integres a
 /// la classe ; un enseignant est aussitot propose, que l'administration
 /// confirme.
 ///
@@ -38,9 +39,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../capacites/capacite_indisponible.dart';
 import '../capacites/port_enseignants_classe.dart' show GenreClasse;
+import 'occurrence_creneau.dart';
 import 'offre_horaire.dart' show PublicOffre;
 
-/// Une heure de la semaine lue dans un fuseau.
+export 'occurrence_creneau.dart' show OccurrenceCreneau;
+
+/// Une heure de la semaine lue dans un autre fuseau que celui du
+/// regroupement.
 @immutable
 class HeureDansFuseau {
   /// Cree une heure.
@@ -49,10 +54,18 @@ class HeureDansFuseau {
     required this.heure,
     this.minute = 0,
     this.decalageJour = 0,
+    this.jourIso,
   });
 
   /// Le fuseau IANA (`Europe/Paris`).
   final String fuseau;
+
+  /// Le jour ISO de l'occurrence du regroupement que cette heure traduit
+  /// (C-11 bis). Nul : elle vaut pour toutes les occurrences, ce qui n'a de
+  /// sens que si elles ont toutes la meme heure ; sinon le serveur rend une
+  /// heure par jour, parce qu'un changement d'heure decale certains jours et
+  /// pas d'autres.
+  final int? jourIso;
 
   /// L'heure pleine, de 0 a 23.
   final int heure;
@@ -95,20 +108,35 @@ class ClasseSansEnseignant {
 /// Un regroupement de demandes semblables.
 @immutable
 class RegroupementDemandes {
-  /// Cree un regroupement.
-  const RegroupementDemandes({
+  /// Cree un regroupement. Les [occurrences] (un jour et son heure, dans le
+  /// [fuseau] du regroupement) sont triees par jour ; une liste vide, un jour
+  /// en double, ou une heure d'un autre fuseau sans jour quand les jours
+  /// n'ont pas tous la meme heure sont des erreurs de l'adaptateur
+  /// (assertions en mise au point, contrat C-11 bis).
+  RegroupementDemandes({
     required this.id,
     required this.public,
     required this.langueCode,
     required this.langueNom,
-    required this.jours,
-    required this.reference,
+    required this.fuseau,
+    required Iterable<OccurrenceCreneau> occurrences,
     required this.nombreEleves,
     required this.quota,
     this.autresFuseaux = const <HeureDansFuseau>[],
     this.peutCreerClasse = false,
     this.classe,
-  });
+  }) : assert(occurrences.isNotEmpty, 'un regroupement a au moins un jour'),
+       assert(
+         joursDistincts(occurrences),
+         'un jour ne figure qu une fois dans un regroupement',
+       ),
+       assert(
+         heuresToutesEgalesDe(occurrences.toList()) ||
+             autresFuseaux.every((HeureDansFuseau h) => h.jourIso != null),
+         'heures differentes selon le jour : chaque heure d un autre fuseau '
+         'dit son jour',
+       ),
+       occurrences = occurrencesTrieesParJour(occurrences);
 
   /// L'identifiant du regroupement (cle de ressemblance cote serveur).
   final String id;
@@ -122,15 +150,26 @@ class RegroupementDemandes {
   /// Le nom affichable de la langue d'enseignement.
   final String langueNom;
 
-  /// Les jours ISO (1 = lundi), tries et dedoublonnes par le serveur.
-  final List<int> jours;
+  /// Le fuseau IANA des demandes : celui des heures de reference.
+  final String fuseau;
 
-  /// L'heure demandee, dans le fuseau des demandes : l'heure de reference.
-  final HeureDansFuseau reference;
+  /// Les jours demandes et l'heure de chacun, dans [fuseau] : les heures de
+  /// reference, du lundi au dimanche. Chaque jour garde son heure (C-11 bis) :
+  /// aucune n'est remplacee par celle du premier jour.
+  final List<OccurrenceCreneau> occurrences;
 
-  /// La meme heure dans les autres fuseaux utiles (ceux des familles et des
-  /// enseignants concernes), calculee par le serveur. Vide : non rendue.
+  /// Les memes heures dans les autres fuseaux utiles (ceux des familles et
+  /// des enseignants concernes), calculees par le serveur. Vide : non
+  /// rendues.
   final List<HeureDansFuseau> autresFuseaux;
+
+  /// Les jours ISO (1 = lundi), du lundi au dimanche.
+  List<int> get jours => <int>[
+    for (final OccurrenceCreneau o in occurrences) o.jourIso,
+  ];
+
+  /// Vrai quand tous les jours commencent a la meme heure de reference.
+  bool get heuresToutesEgales => heuresToutesEgalesDe(occurrences);
 
   /// Le nombre d'eleves du regroupement. **Jamais leurs noms** : l'ecran
   /// n'en a pas besoin pour decider.
