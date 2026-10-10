@@ -81,6 +81,8 @@ const Map<String, int> _domaines = <String, int>{
 /// relus par la ligne arabe. Un domaine en sort quand sa tranche arabe entre
 /// dans [_domaines].
 const Set<String> _enAttente = <String>{
+  // RECRUT-ECRANS : arabe non prioritaire au lancement (REPRISE.md).
+  'recrutement',
   'formulaire',
   'motifs',
   'suiviDemandes',
