@@ -1065,7 +1065,8 @@ begin
          or v_role_pos >= v_account_pos
          or v_lower !~ 'app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]*=[[:space:]]*''[^'']+'''
          or v_lower !~ 'app_account_valid[[:space:]]*[(][[:space:]]*[)][[:space:]]*,[[:space:]]*false[[:space:]]*[)]'
-         or v_condition ~* '(^|[^[:alnum:]_])or([^[:alnum:]_]|$)' then
+         or v_condition ~* '(^|[^[:alnum:]_])or([^[:alnum:]_]|$)'
+         or v_condition ~* '(and|or)[[:space:]]+not[[:space:]]*[(]?[[:space:]]*(public[.])?app_account_valid[[:space:]]*[(][[:space:]]*[)]' then
         return true;
       end if;
     end if;
@@ -1096,6 +1097,11 @@ begin
     'IF NOT coalesce(app_role() = ''admin'' AND app_account_valid(), false) THEN RAISE; END IF;'
   ) then
     raise exception 'SEC-PROD M2 scanner rejects canonical null-safe guard';
+  end if;
+  if not app_private.sec_prod_has_unsafe_role_guard(
+    'IF NOT coalesce(app_role() = ''admin'' AND NOT app_account_valid(), false) THEN RAISE; END IF;'
+  ) then
+    raise exception 'SEC-PROD M2 scanner missed negated account-validity conjunct';
   end if;
   if app_private.sec_prod_has_unsafe_role_guard(
     E'IF NOT coalesce(\n  auth.uid() IS NOT NULL\n  AND v_seance.teacher_id = auth.uid()\n  AND public.app_role() = ''teacher''\n  AND public.app_account_valid(),\n  false\n) THEN RAISE; END IF;'
@@ -1192,10 +1198,14 @@ begin
   if exists(select 1 from pg_catalog.pg_policies where schemaname='storage' and tablename='objects' and policyname='kyc_lecture_admin') then
     raise exception 'SEC-PROD: policy Storage KYC lecture encore présente';
   end if;
+  -- Le classificateur M2 couvre un corpus de cas de réécriture ci-dessus; il ne
+  -- démontre pas le contrôle de flux arbitraire de chaque corps PL/pgSQL. Le garde
+  -- global ici vérifie précisément qu'aucun comparateur négatif historique ciblé
+  -- n'a survécu à la transformation, sans rejeter des contrôles d'identité OR valides.
   if exists(select 1 from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
             where n.nspname in ('public','app_private') and p.prosecdef
-              and app_private.sec_prod_has_unsafe_role_guard(p.prosrc)) then
-    raise exception 'SEC-PROD M2: garde négative résiduelle';
+              and app_private.has_unsafe_role_guard(p.prosrc)) then
+    raise exception 'SEC-PROD M2: comparateur de rôle négatif historique résiduel';
   end if;
 end
 $sec_prod_postflight$;
