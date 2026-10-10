@@ -9452,6 +9452,12 @@ class Traductions$classe$entree$fr {
 	/// fr: 'L'information sur la séance n'a pas pu être chargée : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
 	String get indisponible => 'L\'information sur la séance n\'a pas pu être chargée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 
+	/// fr: 'L'information sur la séance n'a pas pu être chargée'
+	String get indisponibleCourt => 'L\'information sur la séance n\'a pas pu être chargée';
+
+	/// fr: 'Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get indisponibleInvitation => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
 	/// fr: 'L'accès à la salle ne peut pas être vérifié pour le moment.'
 	String get accesInverifiable => 'L\'accès à la salle ne peut pas être vérifié pour le moment.';
 
@@ -30048,6 +30054,8 @@ extension on Traductions {
 			'classe.entree.aucune' => 'Aucune séance prévue',
 			'classe.entree.horsLigne' => 'Vous pourrez entrer dans la séance dès le retour de la connexion.',
 			'classe.entree.indisponible' => 'L\'information sur la séance n\'a pas pu être chargée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'classe.entree.indisponibleCourt' => 'L\'information sur la séance n\'a pas pu être chargée',
+			'classe.entree.indisponibleInvitation' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'classe.entree.accesInverifiable' => 'L\'accès à la salle ne peut pas être vérifié pour le moment.',
 			'classe.entree.reessayer' => 'Réessayer',
 			'classe.entree.chargementSeance' => 'Chargement de la prochaine séance.',
@@ -30449,10 +30457,10 @@ extension on Traductions {
 			'enseignant.salle.suivante' => 'Présenter la page suivante',
 			'enseignant.salle.bibliotheque' => 'Choisir une sourate',
 			'enseignant.salle.presenterSourate' => ({required Object deSourate}) => 'Présenter le début ${deSourate}',
-			'enseignant.salle.sourateDetail' => ({required Object numero, required Object versets}) => 'Sourate ${numero} · ${versets} versets',
-			'enseignant.salle.souratesIndisponibles' => 'La liste des sourates n\'a pas pu être lue',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.salle.sourateDetail' => ({required Object numero, required Object versets}) => 'Sourate ${numero} · ${versets} versets',
+			'enseignant.salle.souratesIndisponibles' => 'La liste des sourates n\'a pas pu être lue',
 			'enseignant.salle.souratesIndisponiblesDetail' => 'Ce que votre Classe voit n\'a pas changé. Réessayez.',
 			'enseignant.salle.pageIndisponible' => 'Cette page n\'a pas pu être lue',
 			'enseignant.salle.pageIndisponibleDetail' => 'Le texte n\'est pas arrivé jusqu\'ici. Votre Classe voit toujours la page présentée.',
@@ -30963,10 +30971,10 @@ extension on Traductions {
 			'controleur.demo.titre' => 'Démonstration contrôleur',
 			'controleur.demo.mention' => 'Données fictives, aucun envoi.',
 			'controleur.demo.intro' => 'Choisissez un écran du contrôle et une situation de visite.',
-			'controleur.demo.etatAucune' => 'Aucune visite',
-			'controleur.demo.etatPasEncoreEnDirect' => 'Séance pas encore en direct',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.demo.etatAucune' => 'Aucune visite',
+			'controleur.demo.etatPasEncoreEnDirect' => 'Séance pas encore en direct',
 			'controleur.demo.etatEnDirect' => 'Séance en direct',
 			'controleur.demo.etatIndisponible' => 'Visite plus proposée',
 			'controleur.demo.etatDejaControlee' => 'Classe déjà contrôlée',
@@ -31477,10 +31485,10 @@ extension on Traductions {
 			'tc.parcours.signalement.famille' => 'Message pour la famille',
 			'tc.parcours.signalement.familleAide' => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.',
 			'tc.parcours.signalement.contexte' => ({required Object eleve}) => 'Élève ${eleve}. La séance, la classe et votre nom sont déjà joints.',
-			'tc.parcours.signalement.envoyer' => 'Envoyer le signalement',
-			'tc.parcours.signalement.envoye' => 'Signalement transmis à l\'administration.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.signalement.envoyer' => 'Envoyer le signalement',
+			'tc.parcours.signalement.envoye' => 'Signalement transmis à l\'administration.',
 			'tc.parcours.signalement.interneRequis' => 'Écrivez au moins ce que l\'administration doit savoir.',
 			'tc.parcours.signalement.echec' => 'Le signalement n\'a pas pu être transmis. Réessayez.',
 			'tc.parcours.postCours.titre' => 'Après le cours',
@@ -31991,10 +31999,10 @@ extension on Traductions {
 			'suiviDemandes.creneauxChoisis' => 'Jours et heures choisis',
 			'suiviDemandes.jourHeure' => ({required Object jour, required Object heure}) => '${jour} ${heure}',
 			'suiviDemandes.fuseauChoisi' => 'Fuseau horaire',
-			'suiviDemandes.fuseauValeur' => ({required Object deVille}) => 'Heure ${deVille}',
-			'suiviDemandes.etapes.envoyee' => 'Demande envoyée',
 			_ => null,
 		} ?? switch (path) {
+			'suiviDemandes.fuseauValeur' => ({required Object deVille}) => 'Heure ${deVille}',
+			'suiviDemandes.etapes.envoyee' => 'Demande envoyée',
 			'suiviDemandes.etapes.classeValidee' => 'Classe validée',
 			'suiviDemandes.etapes.enseignantAffecte' => 'Enseignant affecté',
 			'suiviDemandes.etats.fait' => 'Fait',
@@ -32505,10 +32513,10 @@ extension on Traductions {
 			'com.communaute.demo.horsLigne' => 'Hors ligne',
 			'com.communaute.demo.envoiNonConfirme' => 'Envoi non confirmé',
 			'com.communaute.demo.moderationIndisponible' => 'Modération indisponible',
-			'com.communaute.demo.lecteurSeul' => 'Lecture seule, sans publication',
-			'com.communaute.demo.f.categoriePedagogie' => 'Pédagogie',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.demo.lecteurSeul' => 'Lecture seule, sans publication',
+			'com.communaute.demo.f.categoriePedagogie' => 'Pédagogie',
 			'com.communaute.demo.f.categorieRessources' => 'Ressources',
 			'com.communaute.demo.f.categorieGestion' => 'Gestion',
 			'com.communaute.demo.f.fonctionSoi' => 'Enseignant, Classe Al-Fatiha',
@@ -33019,10 +33027,10 @@ extension on Traductions {
 			'comptable.statuts.paiement.soumis' => 'Soumis',
 			'comptable.statuts.paiement.enTransit' => 'En transit',
 			'comptable.statuts.paiement.reussi' => 'Réussi',
-			'comptable.statuts.paiement.echoue' => 'Échoué',
-			'comptable.statuts.paiement.aRelancer' => 'À relancer',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.statuts.paiement.echoue' => 'Échoué',
+			'comptable.statuts.paiement.aRelancer' => 'À relancer',
 			'comptable.statuts.paiement.annule' => 'Annulé',
 			'comptable.statuts.paiement.retourne' => 'Remboursé / retourné',
 			'comptable.statuts.paiement.indisponible' => 'Indisponible',
@@ -33533,10 +33541,10 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.supprimerQuestion' => ({required Object methode}) => 'Supprimer ${methode} ?',
 			'comptable.beneficiaires.recevoir.supprimerConsequence' => 'Vous ne recevrez plus de versement sur cette méthode. Si c\'est la seule, votre prochain versement attendra une nouvelle méthode.',
 			'comptable.beneficiaires.recevoir.ajouter' => 'Ajouter une méthode de paiement',
-			'comptable.beneficiaires.recevoir.ajoutTitre' => 'Ajouter une méthode de paiement',
-			'comptable.beneficiaires.recevoir.remplacementTitre' => ({required Object methode}) => 'Remplacer ${methode}',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.recevoir.ajoutTitre' => 'Ajouter une méthode de paiement',
+			'comptable.beneficiaires.recevoir.remplacementTitre' => ({required Object methode}) => 'Remplacer ${methode}',
 			'comptable.beneficiaires.recevoir.ajoutContexte' => 'Choisissez le type de méthode. Vous saisirez ensuite vos coordonnées dans un espace sécurisé : l\'application ne les voit pas et ne les conserve pas.',
 			'comptable.beneficiaires.recevoir.continuerSaisie' => 'Continuer vers la saisie sécurisée',
 			'comptable.beneficiaires.recevoir.typeRequis' => 'Choisissez un type de méthode pour continuer.',
