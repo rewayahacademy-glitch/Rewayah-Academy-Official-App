@@ -1,7 +1,7 @@
 {
   "commun": {
     "classeDistincte": {
-      "numero": "{libelle} · n°\u00a0{numero}",
+      "numero": "{libelle} · n° {numero}",
       "code": "{libelle} · {code}",
       "enseignant": "{libelle} · avec {enseignant}"
     },
@@ -6379,6 +6379,54 @@
         "niveau": "Le niveau de la classe ne semble plus adapté.",
         "suite": "L'académie reviendra vers vous pour en parler."
       }
+    }
+  },
+  "suiviFamille": {
+    "titre": "Suivi des demandes",
+    "contexte": "Chaque demande avance étape par étape. Vous êtes prévenu à chaque passage.",
+    "carteTitre": "Demande {dePrenom}",
+    "detailTitre": "Suivi de la demande {dePrenom}",
+    "etapeCourante": "Étape en cours : {etape}",
+    "toutFait": "Toutes les étapes sont franchies.",
+    "voirSuivi": "Voir le suivi",
+    "vide": "Aucune demande pour le moment.",
+    "faireDemande": "Faire une demande",
+    "erreur": "Le suivi n'a pas pu être chargé. Réessayez.",
+    "sansDonnees": "vos demandes",
+    "introuvable": "Cette demande n'existe plus ou n'est pas la vôtre.",
+    "retour": "Retour aux demandes",
+    "fuseau": "Heures affichées : heure {deVille}.",
+    "horodatage": "{date} à {heure}",
+    "prevue": "Prévue le {date} à {heure}",
+    "etapes": {
+      "envoyee": "Demande envoyée",
+      "enAttente": "En liste d'attente",
+      "classeCreee": "Classe créée",
+      "enseignantAffecte": "Enseignant affecté",
+      "eleveIntegre": "Élève intégré",
+      "premiereSeance": "Première séance"
+    },
+    "etats": {
+      "fait": "Fait",
+      "enCours": "En cours",
+      "aVenir": "À venir"
+    },
+    "motif": {
+      "classesPleines": "Toutes les classes de ce créneau sont complètes. Vous serez prévenu dès qu'une place se libère.",
+      "aucunEnseignantLibre": "Aucun enseignant n'est libre sur ce créneau pour le moment. Vous serez prévenu dès que ce changera.",
+      "inconnu": "Votre demande est en attente. Vous serez prévenu dès qu'elle avance."
+    },
+    "intervalle": {
+      "moinsHeure": "Moins d'une heure plus tard",
+      "heure": "1 heure plus tard",
+      "heures": "{n} heures plus tard",
+      "jour": "1 jour plus tard",
+      "jours": "{n} jours plus tard"
+    },
+    "notification": {
+      "enAttente": "Demande {dePrenom} : en liste d'attente",
+      "eleveIntegre": "Demande {dePrenom} : élève intégré à la classe",
+      "premiereSeance": "Demande {dePrenom} : première séance effectuée"
     }
   },
   "suiviDemandes": {
