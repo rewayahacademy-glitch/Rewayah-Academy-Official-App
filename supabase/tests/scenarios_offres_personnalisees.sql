@@ -244,7 +244,7 @@ BEGIN
   -- Une répétition réseau renvoie la même demande sans compter deux fois.
   v_repetee := public.demander_creneau_personnalise(
     'f1490000-0000-0000-0000-000000000003',
-    'Europe/Paris', ARRAY[2,4,6]::smallint[], 18::smallint
+    'Europe/Brussels', ARRAY[2,4,6]::smallint[], 18::smallint
   );
   IF v_repetee->>'etat' <> 'envoyee' THEN
     RAISE EXCEPTION 'F1 idempotence: la demande répétée a changé d''état';
