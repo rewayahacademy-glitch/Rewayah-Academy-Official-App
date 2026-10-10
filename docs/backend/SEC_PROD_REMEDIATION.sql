@@ -1039,6 +1039,11 @@ begin
     raise exception 'SEC-PROD M2 scanner failed: multiline ELSIF';
   end if;
   if app_private.sec_prod_has_unsafe_role_guard(
+    'IF NOT coalesce(app_role() = ''admin)'' AND app_account_valid(), false) THEN RAISE; END IF;'
+  ) then
+    raise exception 'SEC-PROD M2 scanner mishandles parentheses inside a SQL string literal';
+  end if;
+  if app_private.sec_prod_has_unsafe_role_guard(
     'IF NOT coalesce(app_role() = ''admin'' AND app_account_valid(), false) THEN RAISE; END IF;'
   ) then
     raise exception 'SEC-PROD M2 scanner rejects canonical null-safe guard';
