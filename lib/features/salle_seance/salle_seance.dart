@@ -2342,9 +2342,12 @@ class BandeauSecours extends StatelessWidget {
         message: texte,
         sousTexte: vue.sousTexteBandeau,
         // Reseau faible : la room reste connectee, jamais l'icone hors
-        // ligne (P06.5).
+        // ligne (P06.5). TB-11b : l'etat du tableau non plus (l'appel
+        // continue) ; son icone dit ce qui manque.
         icone: vue.connexion == ConnexionSeance.reseauFaible
             ? AppIcons.reseau.repos
+            : texte == vue.texteTableau
+            ? _iconeTableau(vue)
             : null,
         encadre: true,
       );
@@ -2374,6 +2377,17 @@ class BandeauSecours extends StatelessWidget {
       ),
     );
   }
+}
+
+/// TB-11b : l'icone de l'etat du tableau. Nouvelle encre non partagee : en
+/// attente d'envoi ; reprise ou reconnexion du tableau : reconnexion ;
+/// notes non sauvegardees : avertissement.
+IconData _iconeTableau(VueSeance vue) {
+  if (vue.encreNonPartagee) return AppIcons.enAttenteEnvoi.repos;
+  if (vue.synchroTableau != SynchroTableau.partage) {
+    return AppIcons.reconnexion.repos;
+  }
+  return AppIcons.avertissement.repos;
 }
 
 /// Le bloc d'erreur de connexion (P05.8) : titre exact par role, sans

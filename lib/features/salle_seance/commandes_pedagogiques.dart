@@ -190,6 +190,11 @@ class CommandesPedagogiques extends ConsumerStatefulWidget {
   /// TB-9 : le retour discret « Support range ».
   static const Key cleRange = ValueKey<String>('commandes-support-range');
 
+  /// TB-11b : la conservation des notes (« dans cette seance uniquement »).
+  static const Key cleConservation = ValueKey<String>(
+    'commandes-conservation-notes',
+  );
+
   /// TB-10 : la section « Ecrire » de l'eleve autorise.
   static const Key cleEcritureEleve = ValueKey<String>(
     'commandes-ecriture-eleve',
@@ -444,6 +449,16 @@ class _CommandesPedagogiquesState extends ConsumerState<CommandesPedagogiques> {
           icone: AppIcons.tabletteOuOrdinateur,
           menu: _entreesMenu(),
           semantiqueMenu: t.salle.seance.rangement.menuTableau,
+        ),
+      // TB-11b (plan V2 §11, §20 « Sauvegarde absente ») : ce que deviennent
+      // les notes, sous ce qui les porte ; jamais « Sauvegarde ».
+      if (vue.texteConservation case final String conservation)
+        Text(
+          conservation,
+          key: CommandesPedagogiques.cleConservation,
+          style: AppPalette.of(context).inkMuted.applyTo(
+            Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
+          ),
         ),
       // Un clic par affichage (TB3) ; invisibles sans support presente.
       if (vue.voitAffichagesPartages && affichage != null)

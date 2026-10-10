@@ -95,6 +95,13 @@
 //   CAPTURE_DIR=docs/current/captures/TB-10 flutter test \
 //     test/features/tb_recette/captures_tb_test.dart --name tb10_
 //
+// TB-11b (plan V2 §10 a §12, §19.5) : synchronisation interrompue (ERR-01,
+// enseignant et eleve), reprise (ERR-02), sauvegarde en echec (ERR-03) et
+// conservation dans la seance ; 390 et 1440 clair et sombre, 320 x2 clair
+// et sombre. Rangees dans docs/current/captures/TB-11b/ :
+//   CAPTURE_DIR=docs/current/captures/TB-11b flutter test \
+//     test/features/tb_recette/captures_tb_test.dart --name tb11b_
+//
 // AR-SALLE-1 : la salle en arabe (RTL), enseignant et eleve, 390 et 1440
 // clair et sombre, 320 x2. Rangees dans docs/current/captures/AR-SALLE-1/ :
 //   CAPTURE_DIR=docs/current/captures/AR-SALLE-1 flutter test \
@@ -1513,6 +1520,97 @@ void main() {
       }
     },
   );
+
+  // TB-11b (plan V2 §10 a §12, §19.5) : les quatre etats, synchronisation
+  // interrompue (ERR-01, enseignant et eleve), reprise (ERR-02, enseignant
+  // et eleve), sauvegarde en echec (ERR-03) et conservation dans la seance
+  // (Commandes ouvertes) ; 390 et 1440 clair et sombre, 320 x2 clair et
+  // sombre.
+  group('TB-11b : synchronisation et conservation', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (RoleSeance role, SituationTb situation, String etat)
+        in <(RoleSeance, SituationTb, String)>[
+          (RoleSeance.enseignant, SituationTb.err01, 'err01'),
+          (RoleSeance.eleve, SituationTb.err01, 'err01'),
+          (RoleSeance.enseignant, SituationTb.err02, 'err02'),
+          (RoleSeance.eleve, SituationTb.err02, 'err02'),
+          (RoleSeance.enseignant, SituationTb.err03, 'err03'),
+          (RoleSeance.enseignant, SituationTb.ped03, 'conservation'),
+        ]) {
+      for (final _Cadrage cas in <_Cadrage>[
+        for (final _Cadrage c in _cadragesTb)
+          if (<String>[
+            '390_x1_clair',
+            '390_x1_sombre',
+            '1440_x1_clair',
+            '1440_x1_sombre',
+            '320_x2_clair',
+          ].contains(c.$1))
+            c,
+        (
+          '320_x2_sombre',
+          const Size(320, 700),
+          2,
+          EdgeInsets.zero,
+          2,
+          ThemeMode.dark,
+        ),
+      ]) {
+        final String nom = 'tb11b_${role.name}_${etat}_${cas.$1}';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+          await tester.pumpWidget(
+            hoteCapture(
+              DemoSallePage(role: role, situation: situation),
+              themeMode: cas.$6,
+              echelleTexte: cas.$5,
+            ),
+          );
+          await tester.pumpAndSettle();
+          // ERR-03 au bureau : le bandeau et la conservation ensemble ; au
+          // telephone, le bandeau seul (la feuille le couvrirait).
+          final bool commandes =
+              etat == 'conservation' ||
+              (etat == 'err03' && cas.$2.width >= 1440);
+          if (commandes) {
+            final Finder declencheur = find.byKey(DeclencheurCommandes.cle);
+            await tester.ensureVisible(declencheur);
+            await tester.pumpAndSettle();
+            await tester.tap(declencheur);
+            await tester.pumpAndSettle();
+          }
+          if (etat == 'err03') {
+            expect(
+              find.textContaining(
+                t.salle.seance.synchro.nonSauvegardees,
+                findRichText: true,
+              ),
+              findsOneWidget,
+            );
+          }
+          if (commandes) {
+            final Finder conservation = find.byKey(
+              CommandesPedagogiques.cleConservation,
+            );
+            expect(conservation, findsOneWidget);
+            // A 320 x2, la feuille des Commandes defile : la phrase est
+            // amenee au milieu, entiere ; ailleurs, la colonne reste en tete.
+            if (cas.$2.width < 390) {
+              await tester.runAsync(
+                () => Scrollable.ensureVisible(
+                  tester.element(conservation),
+                  alignment: 0.5,
+                ),
+              );
+              await tester.pumpAndSettle();
+            }
+          }
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
+      }
+    }
+  });
 
   group('TB : captures de la salle', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);

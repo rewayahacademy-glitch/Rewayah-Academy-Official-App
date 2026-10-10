@@ -2938,6 +2938,7 @@ class Traductions$salle$seance$fr {
 	late final Traductions$salle$seance$commandes$fr commandes = Traductions$salle$seance$commandes$fr.internal(_root);
 	late final Traductions$salle$seance$bibliotheque$fr bibliotheque = Traductions$salle$seance$bibliotheque$fr.internal(_root);
 	late final Traductions$salle$seance$surface$fr surface = Traductions$salle$seance$surface$fr.internal(_root);
+	late final Traductions$salle$seance$synchro$fr synchro = Traductions$salle$seance$synchro$fr.internal(_root);
 	late final Traductions$salle$seance$rangement$fr rangement = Traductions$salle$seance$rangement$fr.internal(_root);
 	late final Traductions$salle$seance$capsule$fr capsule = Traductions$salle$seance$capsule$fr.internal(_root);
 	late final Traductions$salle$seance$contexte$fr contexte = Traductions$salle$seance$contexte$fr.internal(_root);
@@ -11679,6 +11680,39 @@ class Traductions$salle$seance$surface$fr {
 	String get supportMasque => 'Tableau, le support est masqué';
 }
 
+// Path: salle.seance.synchro
+class Traductions$salle$seance$synchro$fr {
+	Traductions$salle$seance$synchro$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vos nouvelles notes ne sont pas partagées.'
+	String get nonPartagees => 'Vos nouvelles notes ne sont pas partagées.';
+
+	/// fr: 'Les notes en pointillés ne se voient que sur votre écran, le temps que le tableau se reconnecte.'
+	String get nonPartageesSuite => 'Les notes en pointillés ne se voient que sur votre écran, le temps que le tableau se reconnecte.';
+
+	/// fr: 'Le tableau se reconnecte.'
+	String get seReconnecte => 'Le tableau se reconnecte.';
+
+	/// fr: 'Reprise du tableau…'
+	String get reprise => 'Reprise du tableau…';
+
+	/// fr: 'Le tableau revient.'
+	String get revient => 'Le tableau revient.';
+
+	/// fr: 'L'écriture reprend dès le retour du tableau.'
+	String get ecritureSuspendue => 'L\'écriture reprend dès le retour du tableau.';
+
+	/// fr: 'Les notes de cette séance ne sont pas sauvegardées.'
+	String get nonSauvegardees => 'Les notes de cette séance ne sont pas sauvegardées.';
+
+	/// fr: 'Elles restent au tableau jusqu'à la fin de la séance, mais ne seront pas retrouvées au prochain cours.'
+	String get nonSauvegardeesSuite => 'Elles restent au tableau jusqu\'à la fin de la séance, mais ne seront pas retrouvées au prochain cours.';
+}
+
 // Path: salle.seance.rangement
 class Traductions$salle$seance$rangement$fr {
 	Traductions$salle$seance$rangement$fr.internal(this._root);
@@ -16183,6 +16217,14 @@ extension on Traductions {
 			'salle.seance.surface.aucunSupport' => 'Choisissez un support ou écrivez au tableau.',
 			'salle.seance.surface.page' => ({required Object titre, required Object page, required Object pages}) => '${titre}, page ${page} sur ${pages}',
 			'salle.seance.surface.supportMasque' => 'Tableau, le support est masqué',
+			'salle.seance.synchro.nonPartagees' => 'Vos nouvelles notes ne sont pas partagées.',
+			'salle.seance.synchro.nonPartageesSuite' => 'Les notes en pointillés ne se voient que sur votre écran, le temps que le tableau se reconnecte.',
+			'salle.seance.synchro.seReconnecte' => 'Le tableau se reconnecte.',
+			'salle.seance.synchro.reprise' => 'Reprise du tableau…',
+			'salle.seance.synchro.revient' => 'Le tableau revient.',
+			'salle.seance.synchro.ecritureSuspendue' => 'L\'écriture reprend dès le retour du tableau.',
+			'salle.seance.synchro.nonSauvegardees' => 'Les notes de cette séance ne sont pas sauvegardées.',
+			'salle.seance.synchro.nonSauvegardeesSuite' => 'Elles restent au tableau jusqu\'à la fin de la séance, mais ne seront pas retrouvées au prochain cours.',
 			'salle.seance.rangement.ranger' => 'Ranger dans la bibliothèque',
 			'salle.seance.rangement.menuSupport' => 'Actions du support affiché',
 			'salle.seance.rangement.menuTableau' => 'Actions du tableau libre',
@@ -16380,6 +16422,8 @@ extension on Traductions {
 			'bienvenue.phrase' => 'Des séances en visio, à horaire fixe, pour vous ou pour les élèves de votre foyer.',
 			'bienvenue.pointsTitre' => 'Comment ça se passe',
 			'bienvenue.pointClasseTitre' => 'Une classe stable',
+			_ => null,
+		} ?? switch (path) {
 			'bienvenue.pointClasse' => 'Les mêmes camarades et le même horaire, chaque semaine.',
 			'bienvenue.pointEnseignantTitre' => 'Un enseignant attitré',
 			'bienvenue.pointEnseignant' => 'Un Sayyid ou une Sayyida qui suit chaque élève d\'une séance à l\'autre.',
@@ -16388,8 +16432,6 @@ extension on Traductions {
 			'bienvenue.commencer' => 'Commencer',
 			'bienvenue.dejaCompte' => 'J\'ai déjà un compte',
 			'attente.titre' => 'Votre dossier est en cours de vérification',
-			_ => null,
-		} ?? switch (path) {
 			'attente.dossierIncomplet' => 'Il manque encore des pièces à votre dossier.',
 			'attente.enVerification' => 'Nous vérifions votre dossier.',
 			'attente.refuse' => 'Dossier refusé',
@@ -16894,6 +16936,8 @@ extension on Traductions {
 			'creneaux.niveau' => ({required Object niveau}) => 'Niveau ${niveau}',
 			'creneaux.prendre' => ({required Object jour, required Object heure}) => 'Prendre ${jour} à ${heure} h',
 			'creneaux.priseEnCours' => 'Enregistrement',
+			_ => null,
+		} ?? switch (path) {
 			'creneaux.plafondAtteint' => ({required Object nombre}) => 'Vous suivez déjà ${nombre} élèves, votre maximum. Un élève pris est un engagement durable, pas une réservation.',
 			'creneaux.plafondDemander' => 'Demander à suivre plus d\'élèves',
 			'creneaux.demandeTitre' => 'Combien d\'élèves pouvez-vous suivre ?',
@@ -16902,8 +16946,6 @@ extension on Traductions {
 			'creneaux.demandeEnvoyer' => 'Envoyer la demande',
 			'creneaux.demandeEnvoyee' => 'Demande envoyée. L\'administration la tranchera.',
 			'creneaux.eleves' => ({required Object nombre}) => '${nombre} élèves',
-			_ => null,
-		} ?? switch (path) {
 			'creneaux.erreur' => ({required Object message}) => 'L\'opération n\'a pas abouti : ${message}',
 			'priere.fajr' => 'Fajr',
 			'priere.dhuhr' => 'Dhuhr',
@@ -17408,6 +17450,8 @@ extension on Traductions {
 			'admin.evaluations.resultatARevoir' => 'À revoir',
 			'admin.evaluations.planifier' => 'Planifier une évaluation',
 			'admin.evaluations.planifierTitre' => 'Planifier une évaluation',
+			_ => null,
+		} ?? switch (path) {
 			'admin.evaluations.champEleveId' => 'Identifiant de l\'élève',
 			'admin.evaluations.champNiveau' => 'Niveau évalué',
 			'admin.evaluations.champType' => 'Type',
@@ -17416,8 +17460,6 @@ extension on Traductions {
 			'admin.evaluations.planifierErreur' => ({required Object message}) => 'La planification n\'a pas abouti : ${message}',
 			'admin.evaluations.actionEnregistrerResultat' => 'Enregistrer le résultat',
 			'admin.evaluations.actionAnnuler' => 'Annuler l\'évaluation',
-			_ => null,
-		} ?? switch (path) {
 			'admin.evaluations.resultatTitre' => ({required Object eleve}) => 'Résultat de ${eleve}',
 			'admin.evaluations.champNotes' => 'Notes (optionnelles)',
 			'admin.evaluations.resultatEnvoyer' => 'Enregistrer',
@@ -17922,6 +17964,8 @@ extension on Traductions {
 			'compte.langueRegion' => 'Langue et région',
 			'compte.francaisDetail' => 'Langue de l\'interface',
 			'compte.actif' => 'Actif',
+			_ => null,
+		} ?? switch (path) {
 			'compte.arabe' => 'Arabe',
 			'compte.arabeDetail' => 'Bientôt disponible',
 			'compte.fuseauDetail' => 'Détecté automatiquement',
@@ -17930,8 +17974,6 @@ extension on Traductions {
 			'compte.notificationsCoursDetail' => 'Rappels avant vos cours',
 			'compte.notificationsFoyer' => 'Foyer',
 			'compte.notificationsFoyerDetail' => 'Activité des profils de votre foyer',
-			_ => null,
-		} ?? switch (path) {
 			'compte.notificationsEtat' => 'Les notifications dépendent aussi des réglages de votre appareil et de votre navigateur.',
 			'compte.coursDonnees' => 'Cours et données',
 			'compte.economieDonnees' => 'Économie de données',
@@ -18436,6 +18478,8 @@ extension on Traductions {
 			'classe.observation.motif.observationDesactivee' => 'L\'observation est fermée pour cette classe.',
 			'classe.observation.motif.lienAbsent' => 'Aucun élève de votre foyer n\'est rattaché à cette séance.',
 			'classe.observation.motif.enfantAbsent' => ({required Object prenom}) => 'L\'observation attend l\'arrivée de ${prenom}.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.observation.motif.presenceEnVerification' => ({required Object prenom}) => 'La présence de ${prenom} est en cours de vérification.',
 			'classe.observation.motif.visiteDejaOuverte' => 'Une visite est déjà ouverte, sur cet appareil ou sur un autre.',
 			'classe.observation.motif.garantieServeurAbsente' => 'L\'observation des séances n\'est pas encore ouverte.',
@@ -18444,8 +18488,6 @@ extension on Traductions {
 			'classe.pagePlanning.prochaines' => 'Prochaines séances',
 			'classe.pagePlanning.ligne' => ({required Object heure, required Object duree}) => '${heure} · ${duree}',
 			'classe.pagePlanning.ligneFuseau' => ({required Object heure, required Object fuseau, required Object duree}) => '${heure} (${fuseau}) · ${duree}',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pagePlanning.aucune' => 'Aucune séance à venir pour l\'instant',
 			'classe.pagePlanning.aucuneDetail' => ({required Object prenom}) => 'Les prochaines séances de ${prenom} apparaîtront ici dès qu\'elles seront programmées.',
 			'classe.pagePlanning.habituelIndisponible' => 'Les jours habituels de la classe ne sont pas encore affichés ici : seules les séances déjà programmées apparaissent.',
@@ -18950,6 +18992,8 @@ extension on Traductions {
 			'controleur.historique.sectionMission' => 'Classe observée',
 			'controleur.historique.sectionObservation' => 'Observation du Contrôleur',
 			'controleur.historique.sectionComplements' => 'Compléments',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.historique.sectionEchanges' => 'Échanges avec l\'administration',
 			'controleur.historique.cleClasse' => 'Classe',
 			'controleur.historique.cleEnseignant' => 'Enseignant',
@@ -18958,8 +19002,6 @@ extension on Traductions {
 			'controleur.historique.cleElevesPresents' => 'Présents',
 			'controleur.historique.cleReponse' => 'Réponse',
 			'controleur.historique.sansComplement' => 'Aucun complément.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.historique.faitsIndisponibles' => 'Le relevé automatique de cette visite (heures, élèves présents, reconnexions) n\'est pas encore reçu : la séance vient de se terminer ou la connexion a été coupée. Il s\'affichera ici dès sa réception. Le reste du rapport reste fiable.',
 			'controleur.historique.motif' => ({required Object motif}) => 'Motif : ${motif}',
 			'controleur.historique.ajouterComplement' => 'Ajouter un complément',
@@ -19464,6 +19506,8 @@ extension on Traductions {
 			'tc.observation.disponibilite.visiteOuverteTitre' => 'Une visite est déjà ouverte',
 			'tc.observation.disponibilite.visiteOuverte' => 'Une de vos visites est encore ouverte pour cette séance, sur cet appareil ou sur un autre. Elle compte parmi vos visites.',
 			'tc.observation.disponibilite.fermeeTitre' => 'Observation pas encore ouverte',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.disponibilite.fermee' => 'L\'observation des séances par les parents n\'est pas encore ouverte. Elle sera proposée ici dès son ouverture.',
 			'tc.observation.disponibilite.reseauTitre' => 'Vérification impossible',
 			'tc.observation.disponibilite.reseau' => 'La disponibilité de l\'observation n\'a pas pu être vérifiée. Aucune visite n\'a commencé.',
@@ -19472,8 +19516,6 @@ extension on Traductions {
 			'tc.observation.connexion.titre' => 'Connexion et vérification',
 			'tc.observation.connexion.phrase' => 'Vos visites restantes sont vérifiées. La visite commence dès que l\'entrée est acceptée, connexion vidéo comprise.',
 			'tc.observation.connexion.enCours' => 'Connexion et vérification en cours',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.connexion.prolongee' => 'Restez sur cette page : la vérification continue.',
 			'tc.observation.connexion.impossibleTitre' => 'Connexion impossible',
 			'tc.observation.connexion.impossible' => 'L\'entrée dans la séance n\'a pas abouti. Vérifiez votre connexion, puis réessayez : vos visites restantes seront vérifiées à nouveau.',

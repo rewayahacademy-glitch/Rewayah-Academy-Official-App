@@ -222,6 +222,40 @@ enum VueSurface {
   tableauSupportMasque,
 }
 
+/// TB-11b (plan V2 §10, §12, §19.5 ; ERR-01, ERR-02) : l'etat du tableau
+/// partage chez la personne devant l'ecran. Un AUTRE axe que
+/// [ConnexionSeance] (la room, l'audio, la video) : le tableau peut se
+/// reprendre pendant que l'appel continue, et une erreur du tableau
+/// n'interrompt jamais l'audio. Signal du moteur temps reel (TB-BR) ;
+/// demonstration seulement aujourd'hui.
+enum SynchroTableau {
+  /// Le tableau est partage : rien a dire.
+  partage,
+
+  /// Synchronisation interrompue (ERR-01) : l'enseignant ecrit encore
+  /// localement, ses nouveaux traits sont marques non partages ; chez
+  /// l'eleve, l'ecriture distante est suspendue.
+  interrompue,
+
+  /// Recuperation de l'etat courant (ERR-02) : l'ecriture est suspendue
+  /// pour tous jusqu'au retour du contexte et des droits. Aucune selection
+  /// manuelle de version, aucun bouton « Suivre ».
+  reprise,
+}
+
+/// TB-11b (plan V2 §11, §12 « Sauvegarde en echec », §20 « Sauvegarde
+/// absente » ; ERR-03) : ce que l'enseignant sait de la conservation des
+/// notes. Aucune valeur « sauvegardee » : le contrat durable n'existe pas
+/// encore (TB-BR-18), et un envoi LiveKit reussi n'est jamais une
+/// sauvegarde.
+enum ConservationNotes {
+  /// Sauvegarde absente : les notes restent dans cette seance seulement.
+  seanceSeulement,
+
+  /// Sauvegarde en echec : l'enseignant doit le savoir (§19.5 point 5).
+  nonSauvegardees,
+}
+
 /// L'etat d'enregistrement de la seance, a trois valeurs (UX_REVIEW_TB
 /// n. 7, TB12) : le point rouge ne se montre que sur `actif`. Inconnu par
 /// defaut : un etat qu'on ne connait pas ne se montre pas (TB-BR-23).
@@ -471,7 +505,24 @@ class VueSeance {
     this.supportsRanges = const <SupportPageFixe>[],
     this.titreEnseignant,
     this.ecritureRetiree = false,
+    this.synchroTableau = SynchroTableau.partage,
+    this.traitsNonPartages = const <String>{},
+    this.conservation = ConservationNotes.seanceSeulement,
   });
+
+  /// TB-11b (plan V2 §10, §12 ; ERR-01, ERR-02) : l'etat du tableau
+  /// partage chez la personne devant l'ecran, independant de [connexion].
+  final SynchroTableau synchroTableau;
+
+  /// TB-11b (plan V2 §10 « Les nouveaux traits locaux restent identifies
+  /// comme non partages jusqu'a reconciliation ») : les identifiants des
+  /// traits de [notesSurface] que la classe n'a pas recus. Statut d'envoi
+  /// du moteur (TB-BR) ; demonstration : le trait de la situation ERR-01.
+  final Set<String> traitsNonPartages;
+
+  /// TB-11b (plan V2 §11, §12, §20 ; ERR-03) : la conservation des notes,
+  /// lue par l'enseignant seul.
+  final ConservationNotes conservation;
 
   /// TB-10 (plan V2 §12, §20 « Choisir Sayyid/Sayyida selon le profil
   /// reel ») : le titre de l'enseignant, ou `null` s'il n'est pas connu
@@ -683,7 +734,11 @@ class VueSeance {
   // --- Ecrans de secours (lot CL-7, P05, P06, P09 a P12) ---
 
   /// Le bandeau non bloquant (reseau faible, reconnexion), ou `null`.
-  String? get texteBandeau => switch (connexion) {
+  /// TB-11b : sans etat de la room a dire, l'etat du tableau ([texteTableau])
+  /// prend le MEME bandeau, jamais un second (UX_REVIEW_TB, ERR-01).
+  String? get texteBandeau => _texteConnexion ?? texteTableau;
+
+  String? get _texteConnexion => switch (connexion) {
     ConnexionSeance.reseauFaible =>
       _guidee
           ? t.salle.secours.reseauFaibleGuidee
@@ -696,11 +751,87 @@ class VueSeance {
     ConnexionSeance.horsLigne => null,
   };
 
-  /// Le sous-texte du bandeau : guidee en reseau faible seulement.
-  String? get sousTexteBandeau =>
-      _guidee && connexion == ConnexionSeance.reseauFaible
-      ? t.salle.secours.reseauFaibleGuideeSuite
-      : null;
+  /// Le sous-texte du bandeau : guidee en reseau faible ; TB-11b, la suite
+  /// de l'etat du tableau quand c'est lui que le bandeau dit.
+  String? get sousTexteBandeau {
+    if (_guidee && connexion == ConnexionSeance.reseauFaible) {
+      return t.salle.secours.reseauFaibleGuideeSuite;
+    }
+    return _texteConnexion == null && texteTableau != null
+        ? _suiteTableau
+        : null;
+  }
+
+  // --- Tableau partage et conservation des notes (TB-11b) ---
+
+  /// TB-11b (plan V2 §12, §19.5 ; ERR-01 a ERR-03) : l'etat du tableau, ou
+  /// `null`. Enseignant : « Vos nouvelles notes ne sont pas partagees. »,
+  /// « Reprise du tableau… », « Les notes de cette seance ne sont pas
+  /// sauvegardees. » ; eleve et guidee : « Le tableau se reconnecte. »,
+  /// « Le tableau revient. », jamais d'alerte de sauvegarde (§12 « pas
+  /// d'alerte inutile »). Aucun texte de succes : ni « Sauvegarde », ni
+  /// retour a chaque trait. Le bloc d'echec de la room le remplace.
+  String? get texteTableau {
+    if (estFinie || voitBlocEchec) return null;
+    final Traductions$salle$seance$synchro$fr textes = t.salle.seance.synchro;
+    return switch (synchroTableau) {
+      SynchroTableau.interrompue =>
+        _enseignant ? textes.nonPartagees : textes.seReconnecte,
+      SynchroTableau.reprise => _enseignant ? textes.reprise : textes.revient,
+      SynchroTableau.partage =>
+        _enseignant && conservation == ConservationNotes.nonSauvegardees
+            ? textes.nonSauvegardees
+            : null,
+    };
+  }
+
+  /// La suite de [texteTableau] (K-59 : ce qui manque, la cause, la suite),
+  /// ou `null`.
+  String? get _suiteTableau {
+    final Traductions$salle$seance$synchro$fr textes = t.salle.seance.synchro;
+    if (_enseignant && synchroTableau == SynchroTableau.interrompue) {
+      return textes.nonPartageesSuite;
+    }
+    if (ecritureSuspendue && peutEcrire) return textes.ecritureSuspendue;
+    if (_enseignant &&
+        synchroTableau == SynchroTableau.partage &&
+        conservation == ConservationNotes.nonSauvegardees) {
+      return textes.nonSauvegardeesSuite;
+    }
+    return null;
+  }
+
+  /// TB-11b (plan V2 §10, §19.5 point 2) : l'ecriture est suspendue
+  /// pendant la reprise, pour tous ; pendant l'interruption, chez l'eleve
+  /// (« ecriture distante suspendue »). L'enseignant interrompu ecrit
+  /// encore : ses nouveaux traits sont marques non partages.
+  bool get ecritureSuspendue => switch (synchroTableau) {
+    SynchroTableau.partage => false,
+    SynchroTableau.interrompue => !_enseignant,
+    SynchroTableau.reprise => true,
+  };
+
+  /// La personne peut ecrire maintenant : son droit ([peutEcrire]) et le
+  /// tableau qui le permet (TB-11b).
+  bool get ecritPossible => peutEcrire && !ecritureSuspendue;
+
+  /// TB-11b (plan V2 §10) : la nouvelle encre de la personne n'est pas
+  /// partagee (enseignant, tableau interrompu) : elle est marquee.
+  bool get encreNonPartagee =>
+      _enseignant && synchroTableau == SynchroTableau.interrompue;
+
+  /// TB-11b (plan V2 §11, §20 « Sauvegarde absente ») : « Les notes sont
+  /// conservees dans cette seance uniquement. », dans le contexte de
+  /// conservation de l'enseignant (les Commandes, sous le support ou le
+  /// tableau montre), ou `null` : sans surface qui prend des notes ni
+  /// support range, rien a conserver. Vrai que des notes existent ou non :
+  /// la phrase dit ce que devient ce qu'on ecrit. Jamais chez l'eleve.
+  String? get texteConservation {
+    if (!_enseignant || estFinie) return null;
+    return ancrageSurface != null || supportsRanges.isNotEmpty
+        ? t.salle.seance.rangement.notesConservees
+        : null;
+  }
 
   /// Le retour bref « Connexion retablie. », ou `null`.
   String? get texteRetabli =>
@@ -853,7 +984,9 @@ class VueSeance {
   /// autorise, « Tu peux ecrire sur le tableau. » ou la variante adulte
   /// (tutoiement selon l'age, A4) ; `null` ailleurs.
   String? get avisEcriture {
-    if (_enseignant || !voitEcriture) return null;
+    // TB-11b : pendant la reprise, la phrase du bandeau le remplace ; « Tu
+    // peux ecrire » mentirait.
+    if (_enseignant || !voitEcriture || ecritureSuspendue) return null;
     return _tutoie
         ? t.salle.seance.ecriture.tuPeuxEcrire
         : t.salle.seance.ecriture.vousPouvezEcrire;
@@ -1219,6 +1352,9 @@ class VueSeance {
     List<TraitVectoriel>? notesSurface,
     List<SupportPageFixe>? supportsRanges,
     bool? ecritureRetiree,
+    SynchroTableau? synchroTableau,
+    Set<String>? traitsNonPartages,
+    ConservationNotes? conservation,
   }) => VueSeance(
     role: role ?? this.role,
     nomClasse: nomClasse,
@@ -1257,5 +1393,8 @@ class VueSeance {
     supportsRanges: supportsRanges ?? this.supportsRanges,
     titreEnseignant: titreEnseignant,
     ecritureRetiree: ecritureRetiree ?? this.ecritureRetiree,
+    synchroTableau: synchroTableau ?? this.synchroTableau,
+    traitsNonPartages: traitsNonPartages ?? this.traitsNonPartages,
+    conservation: conservation ?? this.conservation,
   );
 }

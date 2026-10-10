@@ -35,6 +35,7 @@ import '../../core/tc_etat_partage/shared_content_state.dart'
 import '../../core/tc_outils/ancrage_annotation.dart' show CarteDesBlocs;
 import '../../core/tc_outils/annotation_layer.dart' show TraitVectoriel;
 import '../../core/tc_outils/etat_outils.dart';
+import '../../core/tc_outils/evenements_outils.dart';
 import '../../core/tc_outils/port_dock_hote.dart';
 import '../../core/theme/app_contour.dart';
 import '../../core/theme/app_elevation.dart';
@@ -180,7 +181,7 @@ class _SurfacePageFixeState extends ConsumerState<SurfacePageFixe> {
   /// Les pointeurs qui deplacent la page, selon l'outil retenu.
   List<int> _quiDeplacent(EtatOutils etat) {
     final VueSeance vue = widget.vue;
-    final bool ecrit = vue.peutEcrire && etat.styletArme;
+    final bool ecrit = vue.ecritPossible && etat.styletArme;
     final bool pointe = vue.peutPointer && etat.pointeurArme;
     final List<int> doigts = <int>[
       for (final MapEntry<int, PointerDeviceKind> p in _poses.entries)
@@ -434,7 +435,15 @@ class _CalqueNotes extends ConsumerWidget {
     final bool arme = ref.watch(
       etatOutilsProvider.select((EtatOutils e) => e.styletArme),
     );
-    final bool saisie = vue.peutEcrire && arme;
+    // TB-11b : la reprise du tableau suspend l'ecriture (plan V2 §19.5).
+    final bool saisie = vue.ecritPossible && arme;
+    // TB-11b (plan V2 §10) : les traits que la classe n'a pas recus, tant
+    // que le tableau n'est pas revenu : ceux que dit la vue, et ceux que la
+    // personne vient de poser pendant l'interruption.
+    final Set<String> locaux = ref.watch(traitsNonPartagesProvider);
+    final Set<String> nonPartages = vue.synchroTableau == SynchroTableau.partage
+        ? vue.traitsNonPartages
+        : <String>{...vue.traitsNonPartages, ...locaux};
     // Les notes de la vue, puis celles que le depot a prises pour cette
     // page (l'encre posee reste peinte, meme quand la surface se remonte).
     final List<TraitVectoriel> notes = vue.notesAffichees;
@@ -473,6 +482,18 @@ class _CalqueNotes extends ConsumerWidget {
             zoneVisible: visible,
             // TB-10 : le droit retire pendant un trait le resout ici.
             saisie: saisie,
+            traitsNonPartages: nonPartages,
+            encreNonPartagee: vue.encreNonPartagee,
+            onEvenement: (EvenementOutil evenement) {
+              final TraitsNonPartages suivi = ref.read(
+                traitsNonPartagesProvider.notifier,
+              );
+              if (evenement is EvenementTraitTermine && vue.encreNonPartagee) {
+                suivi.ajouter(evenement.trait.id);
+              } else if (evenement is EvenementTraitRetire) {
+                suivi.retirer(evenement.traitId);
+              }
+            },
           ),
         ),
       ),

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' show PathMetric;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -86,7 +87,20 @@ class CoucheAnnotation extends ConsumerStatefulWidget {
     this.zoneVisible,
     this.gommeSurTous = true,
     this.saisie = true,
+    this.traitsNonPartages = const <String>{},
+    this.encreNonPartagee = false,
   });
+
+  /// TB-11b (plan V2 §10 « Les nouveaux traits locaux restent identifies
+  /// comme non partages jusqu'a reconciliation ») : les traits que la
+  /// classe n'a pas recus, peints en pointilles (une forme, pas une
+  /// couleur seule). Vide : tout est peint comme d'habitude.
+  final Set<String> traitsNonPartages;
+
+  /// TB-11b : la nouvelle encre de la personne n'est pas partagee (le
+  /// tableau est interrompu) ; le trait en cours et celui qui vient d'etre
+  /// pose sont peints en pointilles des le premier point.
+  final bool encreNonPartagee;
 
   /// TB-10 (plan V2 §19.3 point 7) : la personne peut-elle ecrire ? Faux,
   /// la couche se lit seulement. Quand la saisie se retire pendant un geste
@@ -260,6 +274,16 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
     ];
   }
 
+  /// TB-11b : les traits peints en pointilles. Ceux que l'hote dit non
+  /// partages, et, quand la nouvelle encre ne l'est pas, ceux que la couche
+  /// vient de poser et que l'hote ne rend pas encore.
+  Set<String> _nonPartages() => widget.encreNonPartagee && _poses.isNotEmpty
+      ? <String>{
+          ...widget.traitsNonPartages,
+          for (final TraitVectoriel trait in _poses) trait.id,
+        }
+      : widget.traitsNonPartages;
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -399,6 +423,7 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
                   marqueurs: widget.marqueurs,
                   intentionParDefaut: etat.intention,
                   largeurPage: largeurPage,
+                  nonPartages: _nonPartages(),
                 ),
               ),
             ),
@@ -412,6 +437,7 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
                 intention: etat.intention,
                 epaisseur: etat.epaisseur,
                 largeurPage: largeurPage,
+                pointille: widget.encreNonPartagee,
               ),
             ),
           ],
@@ -739,6 +765,7 @@ abstract final class _Trace {
     required double? pression,
     required EpaisseurTrait? epaisseur,
     required double? largeurPage,
+    bool pointille = false,
   }) {
     if (outil == OutilTrait.gomme || points.length < 2) {
       return;
@@ -768,7 +795,31 @@ abstract final class _Trace {
     for (final Offset point in points.skip(1)) {
       chemin.lineTo(point.dx, point.dy);
     }
-    canvas.drawPath(chemin, pinceau);
+    canvas.drawPath(
+      pointille ? pointiller(chemin, pinceau.strokeWidth) : chemin,
+      pinceau,
+    );
+  }
+
+  /// TB-11b (plan V2 §10) : le trait non partage, en pointilles. Chaque
+  /// tiret couvre [longueurTiret] le long du chemin ; le vide qui suit
+  /// laisse [longueurTiret] de page visible apres les bouts arrondis
+  /// (l'epaisseur du trait s'y ajoute), a toute epaisseur.
+  static const double longueurTiret = AppSpacing.sm;
+
+  /// Le chemin [chemin] decoupe en tirets, pour un trait d'[epaisseur].
+  static Path pointiller(Path chemin, double epaisseur) {
+    final Path tirets = Path();
+    final double pas = 2 * longueurTiret + epaisseur;
+    for (final PathMetric mesure in chemin.computeMetrics()) {
+      for (double debut = 0; debut < mesure.length; debut += pas) {
+        tirets.addPath(
+          mesure.extractPath(debut, debut + longueurTiret),
+          Offset.zero,
+        );
+      }
+    }
+    return tirets;
   }
 }
 
@@ -786,6 +837,7 @@ class _PeintreAnnotations extends CustomPainter {
     required this.marqueurs,
     required this.intentionParDefaut,
     this.largeurPage,
+    this.nonPartages = const <String>{},
   });
 
   /// Opacite de la bande d'un marqueur de plage. Plus discrete encore qu'un
@@ -801,6 +853,9 @@ class _PeintreAnnotations extends CustomPainter {
   /// La largeur de la page fixe, ou `null` (rendu reflowable : epaisseur
   /// en points d'ecran).
   final double? largeurPage;
+
+  /// TB-11b : les traits peints en pointilles (non partages).
+  final Set<String> nonPartages;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -835,6 +890,7 @@ class _PeintreAnnotations extends CustomPainter {
         pression: trait.pression,
         epaisseur: trait.epaisseur,
         largeurPage: largeurPage,
+        pointille: nonPartages.contains(trait.id),
       );
     }
   }
@@ -853,6 +909,7 @@ class _PeintreAnnotations extends CustomPainter {
       _geometrieChangee(ancien) ||
       ancien.intentionParDefaut != intentionParDefaut ||
       ancien.largeurPage != largeurPage ||
+      !setEquals(ancien.nonPartages, nonPartages) ||
       ancien.palette != palette;
 }
 
@@ -867,6 +924,7 @@ class _PeintreApercu extends CustomPainter {
     required this.intention,
     required this.epaisseur,
     required this.largeurPage,
+    this.pointille = false,
   }) : super(repaint: apercu);
 
   final AppPalette palette;
@@ -878,6 +936,9 @@ class _PeintreApercu extends CustomPainter {
   final IntentionPedagogique intention;
   final EpaisseurTrait epaisseur;
   final double? largeurPage;
+
+  /// TB-11b : la nouvelle encre n'est pas partagee.
+  final bool pointille;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -901,6 +962,7 @@ class _PeintreApercu extends CustomPainter {
       pression: null,
       epaisseur: epaisseur,
       largeurPage: largeurPage,
+      pointille: pointille,
     );
   }
 
@@ -911,5 +973,6 @@ class _PeintreApercu extends CustomPainter {
       ancien.intention != intention ||
       ancien.epaisseur != epaisseur ||
       ancien.largeurPage != largeurPage ||
+      ancien.pointille != pointille ||
       ancien.palette != palette;
 }
