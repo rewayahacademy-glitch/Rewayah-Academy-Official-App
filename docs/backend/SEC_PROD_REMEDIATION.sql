@@ -952,7 +952,7 @@ begin
     from regexp_matches(p_definition, '(if|elsif)[[:space:]]+not[^;]*then', 'gi') as m
   loop
     if v_condition ~* 'app_role[[:space:]]*[(]'
-       and v_condition !~* '^[[:space:]]*(if|elsif)[[:space:]]+not[[:space:]]+coalesce[[:space:]]*[(][[:space:]]*(public[.])?app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]*=[[:space:]]*''[^'']+''[[:space:]]+and[[:space:]]+(public[.])?app_account_valid[[:space:]]*[(][[:space:]]*[)][[:space:]]*,[[:space:]]*false[[:space:]]*[)][[:space:]]+then[[:space:]]*
+       and v_condition !~* '^[[:space:]]*(if|elsif)[[:space:]]+not[[:space:]]+coalesce[[:space:]]*[(][[:space:]]*(public[.])?app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]*=[[:space:]]*''[^'']+''[[:space:]]+and[[:space:]]+(public[.])?app_account_valid[[:space:]]*[(][[:space:]]*[)][[:space:]]*,[[:space:]]*false[[:space:]]*[)][[:space:]]+then[[:space:]]*$' then
       return true;
     end if;
   end loop;
@@ -982,99 +982,6 @@ begin
     'IF NOT coalesce(app_role() = ''admin'' AND app_account_valid(), false) AND app_role() = ''admin'' THEN RAISE; END IF;'
   ) then
     raise exception 'SEC-PROD M2 scanner missed role logic outside the null-safe guard';
-  end if;
-end
-$sec_prod_scanner_tests$;
-
-do $sec_prod_postflight$
-declare
-  v_anon integer;
-  v_auth integer;
-  v_agent integer;
-  v_name text;
-  v_views text[] := array['concern_famille_v', 'eleves_en_attente_v', 'mes_affectations_v', 'mes_appareils_v', 'mes_codes_appairage_v', 'mes_groupes_famille_v', 'mes_groupes_v', 'mes_seances_enseignant_v', 'mes_seances_v', 'presence_seance_v', 'profils_du_foyer_v', 'regles_profil_v', 'session_peers_v', 'teacher_roster_v', 'tendance_feedback_v'];
-begin
-  select count(*) into v_anon from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
-   where n.nspname='public' and p.prosecdef and has_function_privilege('anon',p.oid,'EXECUTE');
-  if v_anon <> 0 then raise exception 'SEC-PROD: % SECURITY DEFINER restent exécutables par anon', v_anon; end if;
-  select count(*) into v_auth from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
-   where n.nspname='public' and p.prosecdef and has_function_privilege('authenticated',p.oid,'EXECUTE');
-  if v_auth <> 118 then raise exception 'SEC-PROD: nombre inattendu de RPC authenticated (% au lieu de 118)', v_auth; end if;
-  select count(*) into v_agent from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
-   where n.nspname='public' and p.prosecdef and has_function_privilege('agent_ro',p.oid,'EXECUTE');
-  if v_agent <> 47 then raise exception 'SEC-PROD: droits agent_ro inattendus après retrait KYC (% au lieu de 47)', v_agent; end if;
-  if exists (
-    select 1 from pg_temp.sec_prod_expected_functions e
-    where has_function_privilege('agent_ro', e.signature, 'EXECUTE') is distinct from
-      (e.agent_ro_execute and e.signature not in ('public.read_kyc_documents()', 'public.autoriser_lecture_piece_identite(uuid)'))
-  ) then raise exception 'SEC-PROD: usage agent_ro non préservé conformément à la matrice'; end if;
-  if exists (
-    select 1 from pg_temp.sec_prod_expected_functions e
-    where has_function_privilege('authenticated', e.signature, 'EXECUTE') is distinct from e.authenticated_execute
-  ) then raise exception 'SEC-PROD: usage authenticated non préservé'; end if;
-  if not has_function_privilege('agent_ro','public.etat_presence(uuid,uuid)','EXECUTE') then
-    raise exception 'SEC-PROD: agent_ro a perdu etat_presence';
-  end if;
-  foreach v_name in array v_views loop
-    if not coalesce((select reloptions @> array['security_invoker=true'] from pg_catalog.pg_class where oid=to_regclass(format('public.%I',v_name))), false) then
-      raise exception 'SEC-PROD: vue non invoker: public.%', v_name;
-    end if;
-    if has_table_privilege('anon',format('public.%I',v_name),'SELECT') then
-      raise exception 'SEC-PROD: anon conserve SELECT sur public.%', v_name;
-    end if;
-    if not has_table_privilege('authenticated',format('public.%I',v_name),'SELECT') then
-      raise exception 'SEC-PROD: authenticated a perdu SELECT sur public.%', v_name;
-    end if;
-  end loop;
-  foreach v_name in array array['mes_appareils_v','mes_groupes_famille_v','mes_groupes_v','mes_seances_enseignant_v','teacher_roster_v'] loop
-    if has_table_privilege('agent_ro',format('public.%I',v_name),'SELECT') then
-      raise exception 'SEC-PROD: agent_ro conserve SELECT sans droits de dépendances sur public.%', v_name;
-    end if;
-  end loop;
-  if has_table_privilege('authenticated','public.kyc_documents','SELECT')
-     or has_table_privilege('anon','public.kyc_documents','SELECT')
-     or has_table_privilege('agent_ro','public.kyc_documents','SELECT') then
-    raise exception 'SEC-PROD: SELECT direct KYC restant';
-  end if;
-  if exists(select 1 from pg_catalog.pg_policies where schemaname='storage' and tablename='objects' and policyname='kyc_lecture_admin') then
-    raise exception 'SEC-PROD: policy Storage KYC lecture encore présente';
-  end if;
-  if exists(select 1 from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
-            where n.nspname in ('public','app_private') and p.prosecdef
-              and app_private.sec_prod_has_unsafe_role_guard(p.prosrc)) then
-    raise exception 'SEC-PROD M2: garde négative résiduelle';
-  end if;
-end
-$sec_prod_postflight$;
-
--- Ne modifie ni btree_gist ni l'index sessions_no_teacher_overlap:
--- pg_depend établit que le déplacement requiert une opération séparée et testée.
-commit;
- then
-      return true;
-    end if;
-  end loop;
-  return false;
-end
-$scanner$;
-revoke all on function app_private.sec_prod_has_unsafe_role_guard(text) from public, anon, authenticated, agent_ro;
-
-do $sec_prod_scanner_tests$
-begin
-  if not app_private.sec_prod_has_unsafe_role_guard(
-    'IF NOT (app_role() = ''admin'' OR app_role() = ''controller'') THEN RAISE; END IF;'
-  ) then
-    raise exception 'SEC-PROD M2 scanner failed: parenthesized OR';
-  end if;
-  if not app_private.sec_prod_has_unsafe_role_guard(
-    E'ELSIF NOT (\n  public.app_role() = ''admin''\n  OR public.app_role() = ''controller''\n) THEN RAISE; END IF;'
-  ) then
-    raise exception 'SEC-PROD M2 scanner failed: multiline ELSIF';
-  end if;
-  if app_private.sec_prod_has_unsafe_role_guard(
-    'IF NOT coalesce(app_role() = ''admin'' AND app_account_valid(), false) THEN RAISE; END IF;'
-  ) then
-    raise exception 'SEC-PROD M2 scanner rejects canonical null-safe guard';
   end if;
 end
 $sec_prod_scanner_tests$;
