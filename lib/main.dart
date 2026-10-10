@@ -12,6 +12,7 @@ import 'core/capacites/port_classes_foyer.dart';
 import 'core/capacites/revue_dossiers_depuis_validation.dart';
 import 'core/config/ecran_configuration_absente.dart';
 import 'core/config/env.dart';
+import 'core/i18n/langue_demarrage.dart';
 import 'core/i18n/strings.g.dart';
 import 'core/observabilite/supervision.dart';
 import 'core/session/session_controleur.dart';
@@ -50,7 +51,9 @@ Future<void> main() async {
   // aucune zone gardee et `appRunner` ne capterait pas une erreur de plus.
   await Supervision.demarrer();
 
-  await LocaleSettings.useDeviceLocale();
+  // Jamais `LocaleSettings.useDeviceLocale()` : une langue systeme mal formee
+  // (« en-US@posix ») y levait et arretait l'application (CLAVIER-ENTREE-1).
+  await appliquerLangueDeLAppareil();
 
   // La configuration est injectee a la compilation, jamais versionnee.
   // Sans elle, on echoue tot, en clair, et EN RELEASE AUSSI : un `assert` seul
