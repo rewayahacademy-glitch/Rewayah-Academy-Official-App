@@ -34,8 +34,9 @@ enum FormeBoutonIcone {
 /// du mode (`AppMetriques.cibleTactile`, 72 en interface guidee), et la
 /// surface peinte (disque, carre) la remplit.
 ///
-/// **Seul point d'entree** d'un bouton icone peint (disque ou carre) : aucun
-/// ecran ne le recompose (K-54, `bouton-recompose`). L'icone est centree en
+/// **Seul point d'entree** d'un bouton fait d'une seule icone, quelle que
+/// soit sa forme ([FormeBoutonIcone] : cercle a contour, carre eleve, disque
+/// de commande de lecteur, icone nue) : aucun ecran ne le recompose (K-54, `bouton-recompose`). L'icone est centree en
 /// largeur et en hauteur dans la cible ; le libelle n'est pas affiche, il est
 /// lu par les technologies d'assistance et montre en infobulle (un bouton sans
 /// mot se nomme toujours).
@@ -70,7 +71,12 @@ class BoutonIcone extends StatelessWidget {
   /// L'action. `null` rend le bouton inerte (icone en encre attenuee).
   final VoidCallback? onPress;
 
-  /// Disque a contour ou carre eleve.
+  /// La forme : [FormeBoutonIcone.cercle] (par defaut, disque a contour sans
+  /// fond), [FormeBoutonIcone.carre] (surface elevee), [FormeBoutonIcone.disque]
+  /// (commande de lecteur sur surface d'overlay) ou [FormeBoutonIcone.nue]
+  /// (icone seule). Cercle et carre portent une icone de 24 en encre
+  /// d'accent ; disque et nue une icone de 20 en encre forte. Toutes
+  /// remplissent la cible du mode.
   final FormeBoutonIcone forme;
 
   /// L'infobulle, quand elle dit plus que le libelle (raccourci clavier).
