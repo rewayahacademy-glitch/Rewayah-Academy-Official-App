@@ -16,11 +16,11 @@ Le balayage a d'abord rendu des faux positifs, ecartes : polices de test (Ahem) 
 | Ecran | Defaut | Gravite | Corrige |
 | :--- | :--- | :--- | :--- |
 | `/compte` (eleve, enseignant) | Ligne « Confidentialite / Bientot disponible » toujours inerte, rendue (une action qui ne peut pas aboutir ne se rend pas) ; decision deja prise par MA-GR-1 | basse | non : decision produit |
-| `salle_page.dart` | La preparation d'entree se choisit sur `session.role` (eleve / enseignant / autre), pas sur une capacite | moyenne | non : refonte du flux d'entree, hors « petit et local » |
-| `compte_page.dart` (l.276, 713) | `foyerDisponible` et le resume lisent le role de session | moyenne | non : meme motif |
-| `entree_observation_page.dart`, `options_entree_observation.dart` | Options et pre-requis par role tuteur / admin | moyenne | non |
-| `/enseignant/seance/:id/cahier` | Un identifiant inconnu ouvre le formulaire (le serveur refuse au depot) | basse | non |
-| `/enseignant/groupe/:id/revue` | Classe inconnue : « Rien ne demande votre attention » au lieu de « pas l'une des votres » | basse | non |
+| `salle_page.dart` | La preparation d'entree se choisit sur `session.role` (eleve / enseignant / autre), pas sur une capacite | moyenne | non : traite par EA-ECRANS sur `claude/corr1-suite` |
+| `compte_page.dart` (l.276, 713) | `foyerDisponible` et le resume lisent le role de session | moyenne | oui, 51a3c822 : `SessionState.aUnFoyer` et `peutGererAppareils`, test `test/core/session/capacites_session_test.dart` |
+| `entree_observation_page.dart`, `options_entree_observation.dart` | Options et pre-requis par role tuteur / admin | moyenne | oui, 51a3c822 : `SessionState.observeEnFamille / observeEnDirection / observeEnControle`, `OptionsEntreeObservation.depuis(session)` |
+| `/enseignant/seance/:id/cahier` | Un identifiant inconnu ouvre le formulaire (le serveur refuse au depot) | basse | oui, a7ac3c66 : etat « Seance introuvable » (`EtatCahier.introuvable`) quand le brouillon est nul et la seance inconnue de la journee, des retards et de la file ; test dans `cahier_test.dart` |
+| `/enseignant/groupe/:id/revue` | Classe inconnue : « Rien ne demande votre attention » au lieu de « pas l'une des votres » | basse | oui, a7ac3c66 ; test dans `revue_groupe_test.dart` |
 | `/eleve/coran` | Non balaye : ouvre `Supabase.instance` au montage (hors rendu du Coran, zone interdite) | info | sans objet |
 
 Aucun defaut petit et local avec un test rouge avant correction n'a ete trouve dans le perimetre balaye : pas de commit de correction. La garde ajoutee empeche la regression.
