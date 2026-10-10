@@ -55,55 +55,55 @@ create temporary table sec_prod_expected_functions (
 insert into pg_temp.sec_prod_expected_functions(signature, md5_definition, anon_execute, authenticated_execute, agent_ro_execute) values
   ('public.agent_identite_masquee()', 'd840394e84b8b4c9ba497dffaad20d54', true, true, true),
   ('public.agent_pre_request()', '6b20cd70194775bf54db14725128a3c5', true, true, true),
-  ('public.ajouter_eleve_groupe(p_groupe_id uuid, p_student_profile_id uuid, p_motif text)', '5c001c226d18ba90fdaf5a7581be9a66', false, true, false),
-  ('public.ajouter_niveau_programme(p_version_id uuid, p_code_technique text, p_nom_humain text, p_cycle text, p_ordre integer, p_description text)', 'cee5a197b02fbed73038efe1113f45cb', false, true, false),
-  ('public.annonce_observation_pour_moi(p_session_id uuid)', 'a527cfa220e0f6b3af044b1634ea152c', false, true, false),
-  ('public.annonces_observation(p_session_id uuid)', '4c3f4797c0e0a55d197fc4bb701a7300', false, true, false),
-  ('public.annuler_evaluation(p_evaluation_id uuid, p_motif text)', '4f9fd8b123ac1e3994921a19839ea657', false, true, false),
+  ('public.ajouter_eleve_groupe(uuid, uuid, text)', '5c001c226d18ba90fdaf5a7581be9a66', false, true, false),
+  ('public.ajouter_niveau_programme(uuid, text, text, text, integer, text)', 'cee5a197b02fbed73038efe1113f45cb', false, true, false),
+  ('public.annonce_observation_pour_moi(uuid)', 'a527cfa220e0f6b3af044b1634ea152c', false, true, false),
+  ('public.annonces_observation(uuid)', '4c3f4797c0e0a55d197fc4bb701a7300', false, true, false),
+  ('public.annuler_evaluation(uuid, text)', '4f9fd8b123ac1e3994921a19839ea657', false, true, false),
   ('public.anomalies_qualite()', 'cc4216e342fc0346371a6980b2399bea', false, true, true),
   ('public.app_account_valid()', '25ef4708ed7b2d0b81a58f3c13675f95', true, true, true),
-  ('public.app_config_int(p_key text, p_defaut integer)', '8e952a7f94ab026e910b91aa34871768', true, true, true),
+  ('public.app_config_int(text, integer)', '8e952a7f94ab026e910b91aa34871768', true, true, true),
   ('public.app_household_id()', '542ef88e02409f5373959100cd7a3d0c', true, true, true),
   ('public.app_role()', 'b20471b9c758fed68602f39e075717c1', true, true, true),
   ('public.app_user_id()', '662840b5e2b92eb18413856d550b1af3', true, true, true),
-  ('public.attribuer_eleve(p_student_profile_id uuid, p_teacher_profile_id uuid, p_weekday integer, p_hour integer, p_motif text)', '0f45793b6620c4126fb8021f9ad85f71', false, true, false),
-  ('public.autoriser_ecoute_archive(p_recording_id uuid)', '43b6560d4add3f778326e832a251088c', false, true, false),
-  ('public.autoriser_lecture_piece_identite(p_document_id uuid)', 'f3e4c7db59cc2000fd609e2fbe6f5cf3', false, true, false),
-  ('public.brouillon_cahier(p_session_id uuid)', '6abe6bbcb1515130213fb637cdd5cfb7', false, true, true),
-  ('public.budget_observation(p_session_id uuid)', '390f9c621dccf161c23501b6f7937c22', false, true, false),
-  ('public.clore_exception_progression(p_exception_id uuid, p_motif text)', 'ee94547ce13af07a6bb3a526c1b93019', false, true, false),
-  ('public.clore_regle(p_override_id uuid, p_motif text)', '69c2d22a82d2d06431a75488e9b96aad', false, true, false),
-  ('public.cloturer_groupe(p_groupe_id uuid, p_motif text)', 'c08ce88599444254b4155baff166302f', false, true, false),
+  ('public.attribuer_eleve(uuid, uuid, integer, integer, text)', '0f45793b6620c4126fb8021f9ad85f71', false, true, false),
+  ('public.autoriser_ecoute_archive(uuid)', '43b6560d4add3f778326e832a251088c', false, true, false),
+  ('public.autoriser_lecture_piece_identite(uuid)', 'f3e4c7db59cc2000fd609e2fbe6f5cf3', false, true, false),
+  ('public.brouillon_cahier(uuid)', '6abe6bbcb1515130213fb637cdd5cfb7', false, true, true),
+  ('public.budget_observation(uuid)', '390f9c621dccf161c23501b6f7937c22', false, true, false),
+  ('public.clore_exception_progression(uuid, text)', 'ee94547ce13af07a6bb3a526c1b93019', false, true, false),
+  ('public.clore_regle(uuid, text)', '69c2d22a82d2d06431a75488e9b96aad', false, true, false),
+  ('public.cloturer_groupe(uuid, text)', 'c08ce88599444254b4155baff166302f', false, true, false),
   ('public.completer_kyc_document()', '55e4cc15937dcb0b70a28ac0471ef7b8', true, true, false),
   ('public.comptes_admin()', '78817cf3395a6a3c301c91f45934e80f', true, true, true),
-  ('public.creer_code_appairage(p_student_profile_id uuid)', 'ed5103a9093421c68265efdef96ed16b', false, true, false),
-  ('public.creer_groupe(p_teacher_profile_id uuid, p_type_public text, p_libelle text, p_weekday smallint, p_hour_local smallint, p_seuil_max smallint, p_timezone_iana text, p_couleur_jeton smallint)', '97c8c9e666653e03584e0d875ad00c33', true, true, true),
-  ('public.creer_groupe(p_teacher_profile_id uuid, p_type_public text, p_libelle text, p_weekday smallint, p_hour_local smallint, p_seuil_max smallint)', 'd85b1b126ac26ab5628777ee722b71b0', false, true, false),
-  ('public.creer_jeton_agent(p_libelle text, p_profil_observe uuid, p_duree_heures integer, p_identite_masquee boolean)', '0084e98d6eada6c376364bfead236b22', false, true, false),
-  ('public.creer_profil_inscription(p_role text, p_first_name text, p_last_name text, p_gender gender, p_timezone text)', '4564536aa08e2389235fcecf00117611', false, true, false),
-  ('public.creer_version_programme(p_source_version_id uuid)', 'b72ca828b9c07f40cb69b8a2f6e11de3', false, true, false),
-  ('public.decider_demande(p_request_id uuid, p_accepte boolean, p_motif text)', '7e1986d430bef88eec0dffa29e290acf', false, true, false),
-  ('public.decider_dossier(p_document_id uuid, p_approuve boolean, p_motif text)', '9b1f8d0d3baea020be07d676c34de6e2', false, true, false),
-  ('public.decider_placement(p_student_id uuid, p_niveau_id uuid, p_motif text)', '57f9459ec3a73dbbc3b6b3dea0a0015d', false, true, false),
-  ('public.definir_politique_observation_groupe(p_groupe_id uuid, p_source text, p_max_visites smallint, p_max_secondes integer, p_max_secondes_par_visite integer)', '967659fc78d48da104daa224138b2de6', false, true, false),
-  ('public.demander(p_kind text, p_subject_profile_id uuid, p_motif text, p_rule_key text, p_rule_value integer)', 'ebb7508bf33843ce0602e66bbcf8dc82', false, true, false),
+  ('public.creer_code_appairage(uuid)', 'ed5103a9093421c68265efdef96ed16b', false, true, false),
+  ('public.creer_groupe(uuid, text, text, smallint, smallint, smallint, text, smallint)', '97c8c9e666653e03584e0d875ad00c33', true, true, true),
+  ('public.creer_groupe(uuid, text, text, smallint, smallint, smallint)', 'd85b1b126ac26ab5628777ee722b71b0', false, true, false),
+  ('public.creer_jeton_agent(text, uuid, integer, boolean)', '0084e98d6eada6c376364bfead236b22', false, true, false),
+  ('public.creer_profil_inscription(text, text, text, gender, text)', '4564536aa08e2389235fcecf00117611', false, true, false),
+  ('public.creer_version_programme(uuid)', 'b72ca828b9c07f40cb69b8a2f6e11de3', false, true, false),
+  ('public.decider_demande(uuid, boolean, text)', '7e1986d430bef88eec0dffa29e290acf', false, true, false),
+  ('public.decider_dossier(uuid, boolean, text)', '9b1f8d0d3baea020be07d676c34de6e2', false, true, false),
+  ('public.decider_placement(uuid, uuid, text)', '57f9459ec3a73dbbc3b6b3dea0a0015d', false, true, false),
+  ('public.definir_politique_observation_groupe(uuid, text, smallint, integer, integer)', '967659fc78d48da104daa224138b2de6', false, true, false),
+  ('public.demander(text, uuid, text, text, integer)', 'ebb7508bf33843ce0602e66bbcf8dc82', false, true, false),
   ('public.demandes_en_attente()', 'a9003a8e91895e4b6d7674e584a7fe75', false, true, true),
-  ('public.derniere_position_groupe(p_groupe_id uuid)', '73ddd94f8f873fb5ebed000d501b8ed6', false, true, false),
+  ('public.derniere_position_groupe(uuid)', '73ddd94f8f873fb5ebed000d501b8ed6', false, true, false),
   ('public.diagnostics_a_traiter()', 'b1294c4ac77aeeb86a308246beb5059d', false, true, true),
-  ('public.doit_demander_feedback(p_session_id uuid)', '03d6f39788bbe7ff8df48985b70ea879', false, true, false),
+  ('public.doit_demander_feedback(uuid)', '03d6f39788bbe7ff8df48985b70ea879', false, true, false),
   ('public.dossiers_en_attente()', 'b31b4fbc58d5a55117b4ed951a3403b5', false, true, true),
   ('public.eleves_sans_enseignant()', 'd3e14512ba428ffec5e9623d8e8bacbd', false, true, true),
-  ('public.enregistrer_resultat_evaluation(p_evaluation_id uuid, p_resultat text, p_notes text)', '4bd65c40df79915136eece059762a525', false, true, false),
-  ('public.enseignants_pour(p_student_profile_id uuid)', 'f2446791e27fe948db4a172470be5940', false, true, true),
-  ('public.entrer_observation(p_session_id uuid, p_role text)', '9da9386bb2c6b2d07eae3fadee3c2010', false, true, false),
-  ('public.est_du_foyer(p_profile_id uuid)', 'cf01e3f9efe82d50ca05275ce30428e9', false, true, false),
-  ('public.est_observateur_masque(p_session_id uuid, p_profile_id uuid)', 'a5e13b2fbdbff5a32f21616bb7637fff', false, true, true),
+  ('public.enregistrer_resultat_evaluation(uuid, text, text)', '4bd65c40df79915136eece059762a525', false, true, false),
+  ('public.enseignants_pour(uuid)', 'f2446791e27fe948db4a172470be5940', false, true, true),
+  ('public.entrer_observation(uuid, text)', '9da9386bb2c6b2d07eae3fadee3c2010', false, true, false),
+  ('public.est_du_foyer(uuid)', 'cf01e3f9efe82d50ca05275ce30428e9', false, true, false),
+  ('public.est_observateur_masque(uuid, uuid)', 'a5e13b2fbdbff5a32f21616bb7637fff', false, true, true),
   ('public.etat_dossier()', '8029881e3743ba27d7838fef226813a4', false, true, true),
-  ('public.etat_presence(p_session_id uuid, p_profile_id uuid)', '6915fe061c06c9f5617c7d9e9bf0f051', false, true, true),
+  ('public.etat_presence(uuid, uuid)', '6915fe061c06c9f5617c7d9e9bf0f051', false, true, true),
   ('public.evaluations_admin()', '71eff9577dda431a05fb4766db2c2032', false, true, true),
-  ('public.geler_archive_seance(p_recording_id uuid, p_motif text, p_gel boolean)', 'cdab571836d441c57694f9bea5099f40', false, true, false),
-  ('public.groupe_detail(p_groupe_id uuid)', 'dec65463d891f3cef2ec314efebe2051', false, true, true),
-  ('public.groupe_roster_enseignant(p_groupe_id uuid)', '20212f9b34187cef242bc98ce2fa57a2', false, true, false),
+  ('public.geler_archive_seance(uuid, text, boolean)', 'cdab571836d441c57694f9bea5099f40', false, true, false),
+  ('public.groupe_detail(uuid)', 'dec65463d891f3cef2ec314efebe2051', false, true, true),
+  ('public.groupe_roster_enseignant(uuid)', '20212f9b34187cef242bc98ce2fa57a2', false, true, false),
   ('public.groupes_admin()', '948e0562c8ef4086dd00f6fb70c7d1e2', true, true, true),
   ('public.guard_app_config_history()', '99b0223e1ea4211510dab2699c048d9b', true, true, false),
   ('public.guard_assignment_cap()', '8f663d8b6fe5b4e7ceca82229e3ac43b', true, true, false),
@@ -117,60 +117,60 @@ insert into pg_temp.sec_prod_expected_functions(signature, md5_definition, anon_
   ('public.guard_rule_override_coherente()', '3f5931edc446d04c9cd03fbfd5387052', true, true, false),
   ('public.guard_rule_override_immutable()', '458c3ca2dfc2858b89472aa0e6e988de', true, true, false),
   ('public.guard_session_state_transition()', '6337e0fa1c9f05b12440c7dd66a18b63', true, true, false),
-  ('public.horloge_seance(p_session_id uuid)', '879eb5957f8cabd0f25278807c5e0576', false, true, true),
+  ('public.horloge_seance(uuid)', '879eb5957f8cabd0f25278807c5e0576', false, true, true),
   ('public.indicateurs_admin()', 'd7e1209572394c2ab6d5f9dae3834aaa', false, true, true),
   ('public.jetons_agent_actifs()', '0712f58e294f778705822aab96d9bea4', false, true, true),
   ('public.journal_audit_filtres()', '49c1360b67ef589d2aaef8468ecc31bc', false, true, true),
-  ('public.journal_audit(p_acteur uuid, p_action text, p_depuis timestamp with time zone, p_limite integer, p_avant_date timestamp with time zone, p_avant_id bigint)', '973fec3923b807963042e424ef181e50', false, true, true),
-  ('public.log_sensitive_access(p_action text, p_table_name text, p_row_id text, p_payload jsonb)', 'f8bd87ae2b78060f31362ccf7697cbc4', false, true, false),
+  ('public.journal_audit(uuid, text, timestamp with time zone, integer, timestamp with time zone, bigint)', '973fec3923b807963042e424ef181e50', false, true, true),
+  ('public.log_sensitive_access(text, text, text, jsonb)', 'f8bd87ae2b78060f31362ccf7697cbc4', false, true, false),
   ('public.maintenant_serveur()', '544d5e02a1e48495e4d4aac532bc498b', false, true, true),
-  ('public.maj_eleve_pedagogie(p_profile_id uuid, p_level text, p_riwaya text)', 'f9164b5c4b9a7bbc582ae7675ff94678', false, true, false),
-  ('public.maj_profil_enseignant(p_country text, p_languages text[], p_timezone text)', '62a32e47dabb25ff2d1161077944eb83', false, true, false),
-  ('public.materialiser_seances(p_assignment_id uuid)', '3033a4a29b4fac32a7ba2cc093b5f09b', false, true, false),
+  ('public.maj_eleve_pedagogie(uuid, text, text)', 'f9164b5c4b9a7bbc582ae7675ff94678', false, true, false),
+  ('public.maj_profil_enseignant(text, text[], text)', '62a32e47dabb25ff2d1161077944eb83', false, true, false),
+  ('public.materialiser_seances(uuid)', '3033a4a29b4fac32a7ba2cc093b5f09b', false, true, false),
   ('public.mes_rapports_en_attente()', 'f5f2f30e05982a7880583244c343dd21', false, true, true),
-  ('public.modifier_groupe(p_groupe_id uuid, p_libelle text, p_seuil_max smallint, p_weekday smallint, p_hour_local smallint, p_timezone_iana text, p_couleur_jeton smallint)', '713d5acca4971058883ea90e06bb6ad4', true, true, true),
-  ('public.modifier_groupe(p_groupe_id uuid, p_libelle text, p_seuil_max smallint, p_weekday smallint, p_hour_local smallint)', '5bfb604429ef9b20ac632197218f9784', false, true, false),
-  ('public.modifier_niveau_programme(p_niveau_id uuid, p_nom_humain text, p_cycle text, p_ordre integer, p_description text)', 'b61928f62425d1439e3ac806c96a7f8c', false, true, false),
+  ('public.modifier_groupe(uuid, text, smallint, smallint, smallint, text, smallint)', '713d5acca4971058883ea90e06bb6ad4', true, true, true),
+  ('public.modifier_groupe(uuid, text, smallint, smallint, smallint)', '5bfb604429ef9b20ac632197218f9784', false, true, false),
+  ('public.modifier_niveau_programme(uuid, text, text, integer, text)', 'b61928f62425d1439e3ac806c96a7f8c', false, true, false),
   ('public.mon_fuseau()', 'df015b341503e85ecebe9e57fefb086b', false, true, true),
-  ('public.mon_groupe_detail(p_groupe_id uuid)', '2a294f40be8845fb7df1b98655ffea78', false, true, true),
-  ('public.next_immutable_id(role_code app_role, initials text)', 'b33f7d92b9211e63497e47240599ce72', false, true, false),
-  ('public.partie_concernee(p_profile_id uuid)', '1eb8c65b41d86791b900ab7e40208389', false, true, true),
+  ('public.mon_groupe_detail(uuid)', '2a294f40be8845fb7df1b98655ffea78', false, true, true),
+  ('public.next_immutable_id(app_role, text)', 'b33f7d92b9211e63497e47240599ce72', false, true, false),
+  ('public.partie_concernee(uuid)', '1eb8c65b41d86791b900ab7e40208389', false, true, true),
   ('public.personnes_observables()', '0f42e63032d25873d2658c53ea669399', true, true, true),
-  ('public.peut_deposer_piece_identite(p_profile_id uuid)', '363d0e5c384d1dbf1dc9c72765dca799', false, true, true),
-  ('public.peut_poser_disponibilite(p_profile_id uuid)', '73be37213e5c5f3ceb6cf11bdcc36605', false, true, true),
-  ('public.planifier_evaluation(p_student_id uuid, p_niveau_id uuid, p_type text, p_date_prevue date)', 'edeae79dea1ee637962a2f9f68e45968', false, true, false),
-  ('public.politique_observation_effective(p_groupe_id uuid)', 'fe478b6be57c4b0e11648dedfd6a8417', false, true, false),
-  ('public.poser_exception_progression(p_student_id uuid, p_type text, p_motif text)', '476c9fbc67014db1aba74e764b0acf67', false, true, false),
-  ('public.poser_regle(p_profile_id uuid, p_key text, p_value integer, p_motif text)', 'b42b46c02c394102058503378bc35c6e', false, true, false),
-  ('public.prendre_eleve(p_student_profile_id uuid, p_weekday integer, p_hour integer)', 'b5ac5d0c855282281567be91c3d211c1', false, true, false),
-  ('public.preparer_depot_piece_identite(p_profile_id uuid, p_doc_type text)', 'a5f61b7f8dad3d63938248b34ec77934', false, true, false),
-  ('public.profil_de_mon_foyer(p_profile_id text)', '9a229eac8bc0751df03eac3693c279d5', true, true, true),
-  ('public.programme_niveaux_admin(p_version_id uuid)', '528cede3db466e4026bd81f48b65abc2', false, true, true),
+  ('public.peut_deposer_piece_identite(uuid)', '363d0e5c384d1dbf1dc9c72765dca799', false, true, true),
+  ('public.peut_poser_disponibilite(uuid)', '73be37213e5c5f3ceb6cf11bdcc36605', false, true, true),
+  ('public.planifier_evaluation(uuid, uuid, text, date)', 'edeae79dea1ee637962a2f9f68e45968', false, true, false),
+  ('public.politique_observation_effective(uuid)', 'fe478b6be57c4b0e11648dedfd6a8417', false, true, false),
+  ('public.poser_exception_progression(uuid, text, text)', '476c9fbc67014db1aba74e764b0acf67', false, true, false),
+  ('public.poser_regle(uuid, text, integer, text)', 'b42b46c02c394102058503378bc35c6e', false, true, false),
+  ('public.prendre_eleve(uuid, integer, integer)', 'b5ac5d0c855282281567be91c3d211c1', false, true, false),
+  ('public.preparer_depot_piece_identite(uuid, text)', 'a5f61b7f8dad3d63938248b34ec77934', false, true, false),
+  ('public.profil_de_mon_foyer(text)', '9a229eac8bc0751df03eac3693c279d5', true, true, true),
+  ('public.programme_niveaux_admin(uuid)', '528cede3db466e4026bd81f48b65abc2', false, true, true),
   ('public.programme_versions_admin()', '0c527e4b9077b9c58db1abd84de39b08', false, true, true),
   ('public.progression_admin()', '68b358b2d8edf96816388202a8abaca9', false, true, true),
-  ('public.progression_promouvoir(p_student_id uuid, p_niveau_id uuid, p_motif text)', 'e538d880616ae549860df58ebe06b15f', false, true, false),
-  ('public.publier_etat_partage(p_session_id uuid, p_resource_id uuid, p_resource_version_id uuid, p_content_position jsonb, p_content_range jsonb, p_display_mode text, p_hidden_ranges jsonb, p_semantic_markers jsonb, p_group_resume_position jsonb, p_revision integer)', 'af005c1a3ad93786c1aed15c0e9fae0b', false, true, false),
-  ('public.publier_version_programme(p_version_id uuid, p_motif text)', 'c7715e24d0d338cea4113a3c787580c2', false, true, false),
-  ('public.quitter_salle(p_session_id uuid)', 'c36b13c2df7b623747bb070bfea6279c', false, true, false),
+  ('public.progression_promouvoir(uuid, uuid, text)', 'e538d880616ae549860df58ebe06b15f', false, true, false),
+  ('public.publier_etat_partage(uuid, uuid, uuid, jsonb, jsonb, text, jsonb, jsonb, jsonb, integer)', 'af005c1a3ad93786c1aed15c0e9fae0b', false, true, false),
+  ('public.publier_version_programme(uuid, text)', 'c7715e24d0d338cea4113a3c787580c2', false, true, false),
+  ('public.quitter_salle(uuid)', 'c36b13c2df7b623747bb070bfea6279c', false, true, false),
   ('public.read_kyc_documents()', 'cccb3f874b090ea4b6de084ca6ef70ff', false, true, true),
-  ('public.record_session_event(p_session_id uuid, p_profile_id uuid, p_event_type session_event_type, p_source text)', '380de00d3a207f33eee34e98c9287a4c', false, true, false),
-  ('public.regle_effective(p_profile_id uuid, p_key text)', '778d4a4cde1a262d94e15cf74931130d', false, true, true),
-  ('public.rejoindre_observation(p_session_id uuid)', '11297b9563e6816b369cf55bc842af5e', false, true, false),
-  ('public.ressources_du_groupe(p_groupe_id uuid)', '7f3868abf037296891b446a5ff3a83ee', false, true, true),
-  ('public.retirer_eleve_groupe(p_groupe_id uuid, p_student_profile_id uuid, p_motif text)', 'fcf523b2cdbebec969a5e2253de26aba', false, true, false),
-  ('public.revoquer_appareil(p_device_id uuid)', '94514a938b71c72c9c480554c0ac6bb1', false, true, false),
-  ('public.revoquer_jeton_agent(p_id uuid)', 'fc536a7b55da1011ebd638ca0c269206', false, true, false),
+  ('public.record_session_event(uuid, uuid, session_event_type, text)', '380de00d3a207f33eee34e98c9287a4c', false, true, false),
+  ('public.regle_effective(uuid, text)', '778d4a4cde1a262d94e15cf74931130d', false, true, true),
+  ('public.rejoindre_observation(uuid)', '11297b9563e6816b369cf55bc842af5e', false, true, false),
+  ('public.ressources_du_groupe(uuid)', '7f3868abf037296891b446a5ff3a83ee', false, true, true),
+  ('public.retirer_eleve_groupe(uuid, uuid, text)', 'fcf523b2cdbebec969a5e2253de26aba', false, true, false),
+  ('public.revoquer_appareil(uuid)', '94514a938b71c72c9c480554c0ac6bb1', false, true, false),
+  ('public.revoquer_jeton_agent(uuid)', 'fc536a7b55da1011ebd638ca0c269206', false, true, false),
   ('public.rls_auto_enable()', '6998ea6b4c2480f5d2e34b5dcf3f8d36', true, true, false),
-  ('public.session_belongs_to_teacher(p_session_id uuid, p_uid uuid)', '92f8a2b8ccf6814a0226c9ae2c339387', false, true, true),
-  ('public.session_has_participant(p_session_id uuid, p_uid uuid)', 'c72c6cbc12f9af1c5e7e1ff64adec966', false, true, true),
-  ('public.session_in_household(p_session_id uuid, p_household_id uuid)', '146fb204821facbc32ef2013fd421758', false, true, true),
-  ('public.sortir_observation(p_session_id uuid)', '51afae46db2d837c08fb32f7b8671aac', false, true, false),
-  ('public.supprimer_niveau_programme(p_niveau_id uuid, p_motif text)', '21449ed510bae1e51bd71972989b0fa7', false, true, false),
-  ('public.traiter_anomalie_qualite(p_type_anomalie text, p_ref_id uuid, p_note text)', '8a78c8c8605e0bad66f15f62f406462b', false, true, false),
-  ('public.transitions_fuseau_a_venir(p_jours integer)', 'c90a4ebcfe6a2f303dac10960cabddff', false, true, false),
-  ('public.verifier_chaine_audit(p_limite integer)', 'cf28eb75e08bd5cdd0cb8d18067c720b', false, true, true),
+  ('public.session_belongs_to_teacher(uuid, uuid)', '92f8a2b8ccf6814a0226c9ae2c339387', false, true, true),
+  ('public.session_has_participant(uuid, uuid)', 'c72c6cbc12f9af1c5e7e1ff64adec966', false, true, true),
+  ('public.session_in_household(uuid, uuid)', '146fb204821facbc32ef2013fd421758', false, true, true),
+  ('public.sortir_observation(uuid)', '51afae46db2d837c08fb32f7b8671aac', false, true, false),
+  ('public.supprimer_niveau_programme(uuid, text)', '21449ed510bae1e51bd71972989b0fa7', false, true, false),
+  ('public.traiter_anomalie_qualite(text, uuid, text)', '8a78c8c8605e0bad66f15f62f406462b', false, true, false),
+  ('public.transitions_fuseau_a_venir(integer)', 'c90a4ebcfe6a2f303dac10960cabddff', false, true, false),
+  ('public.verifier_chaine_audit(integer)', 'cf28eb75e08bd5cdd0cb8d18067c720b', false, true, true),
   ('public.video_config_lire()', '4af82d0a2db1602453eeeaf40a10e9cc', false, true, true),
-  ('public.visites_observation(p_session_id uuid)', 'fac9c7bb4194a98c08c7455afc18cd6c', false, true, false);
+  ('public.visites_observation(uuid)', 'fac9c7bb4194a98c08c7455afc18cd6c', false, true, false);
 
 do $sec_prod_functions_preflight$
 declare
@@ -535,13 +535,13 @@ grant execute on function public.etat_presence(uuid, uuid) to agent_ro;
 revoke all on function public.agent_identite_masquee() from public, anon;
 revoke all on function public.agent_pre_request() from public, anon;
 revoke all on function public.app_account_valid() from public, anon;
-revoke all on function public.app_config_int(p_key text, p_defaut integer) from public, anon;
+revoke all on function public.app_config_int(text, integer) from public, anon;
 revoke all on function public.app_household_id() from public, anon;
 revoke all on function public.app_role() from public, anon;
 revoke all on function public.app_user_id() from public, anon;
 revoke all on function public.completer_kyc_document() from public, anon;
 revoke all on function public.comptes_admin() from public, anon;
-revoke all on function public.creer_groupe(p_teacher_profile_id uuid, p_type_public text, p_libelle text, p_weekday smallint, p_hour_local smallint, p_seuil_max smallint, p_timezone_iana text, p_couleur_jeton smallint) from public, anon;
+revoke all on function public.creer_groupe(uuid, text, text, smallint, smallint, smallint, text, smallint) from public, anon;
 revoke all on function public.groupes_admin() from public, anon;
 revoke all on function public.guard_app_config_history() from public, anon;
 revoke all on function public.guard_assignment_cap() from public, anon;
@@ -555,61 +555,61 @@ revoke all on function public.guard_profile_privileged_columns() from public, an
 revoke all on function public.guard_rule_override_coherente() from public, anon;
 revoke all on function public.guard_rule_override_immutable() from public, anon;
 revoke all on function public.guard_session_state_transition() from public, anon;
-revoke all on function public.modifier_groupe(p_groupe_id uuid, p_libelle text, p_seuil_max smallint, p_weekday smallint, p_hour_local smallint, p_timezone_iana text, p_couleur_jeton smallint) from public, anon;
+revoke all on function public.modifier_groupe(uuid, text, smallint, smallint, smallint, text, smallint) from public, anon;
 revoke all on function public.personnes_observables() from public, anon;
-revoke all on function public.profil_de_mon_foyer(p_profile_id text) from public, anon;
+revoke all on function public.profil_de_mon_foyer(text) from public, anon;
 revoke all on function public.rls_auto_enable() from public, anon;
 grant execute on function public.agent_identite_masquee() to authenticated;
 grant execute on function public.agent_pre_request() to authenticated;
-grant execute on function public.ajouter_eleve_groupe(p_groupe_id uuid, p_student_profile_id uuid, p_motif text) to authenticated;
-grant execute on function public.ajouter_niveau_programme(p_version_id uuid, p_code_technique text, p_nom_humain text, p_cycle text, p_ordre integer, p_description text) to authenticated;
-grant execute on function public.annonce_observation_pour_moi(p_session_id uuid) to authenticated;
-grant execute on function public.annonces_observation(p_session_id uuid) to authenticated;
-grant execute on function public.annuler_evaluation(p_evaluation_id uuid, p_motif text) to authenticated;
+grant execute on function public.ajouter_eleve_groupe(uuid, uuid, text) to authenticated;
+grant execute on function public.ajouter_niveau_programme(uuid, text, text, text, integer, text) to authenticated;
+grant execute on function public.annonce_observation_pour_moi(uuid) to authenticated;
+grant execute on function public.annonces_observation(uuid) to authenticated;
+grant execute on function public.annuler_evaluation(uuid, text) to authenticated;
 grant execute on function public.anomalies_qualite() to authenticated;
 grant execute on function public.app_account_valid() to authenticated;
-grant execute on function public.app_config_int(p_key text, p_defaut integer) to authenticated;
+grant execute on function public.app_config_int(text, integer) to authenticated;
 grant execute on function public.app_household_id() to authenticated;
 grant execute on function public.app_role() to authenticated;
 grant execute on function public.app_user_id() to authenticated;
-grant execute on function public.attribuer_eleve(p_student_profile_id uuid, p_teacher_profile_id uuid, p_weekday integer, p_hour integer, p_motif text) to authenticated;
-grant execute on function public.autoriser_ecoute_archive(p_recording_id uuid) to authenticated;
-grant execute on function public.autoriser_lecture_piece_identite(p_document_id uuid) to authenticated;
-grant execute on function public.brouillon_cahier(p_session_id uuid) to authenticated;
-grant execute on function public.budget_observation(p_session_id uuid) to authenticated;
-grant execute on function public.clore_exception_progression(p_exception_id uuid, p_motif text) to authenticated;
-grant execute on function public.clore_regle(p_override_id uuid, p_motif text) to authenticated;
-grant execute on function public.cloturer_groupe(p_groupe_id uuid, p_motif text) to authenticated;
+grant execute on function public.attribuer_eleve(uuid, uuid, integer, integer, text) to authenticated;
+grant execute on function public.autoriser_ecoute_archive(uuid) to authenticated;
+grant execute on function public.autoriser_lecture_piece_identite(uuid) to authenticated;
+grant execute on function public.brouillon_cahier(uuid) to authenticated;
+grant execute on function public.budget_observation(uuid) to authenticated;
+grant execute on function public.clore_exception_progression(uuid, text) to authenticated;
+grant execute on function public.clore_regle(uuid, text) to authenticated;
+grant execute on function public.cloturer_groupe(uuid, text) to authenticated;
 grant execute on function public.completer_kyc_document() to authenticated;
 grant execute on function public.comptes_admin() to authenticated;
-grant execute on function public.creer_code_appairage(p_student_profile_id uuid) to authenticated;
-grant execute on function public.creer_groupe(p_teacher_profile_id uuid, p_type_public text, p_libelle text, p_weekday smallint, p_hour_local smallint, p_seuil_max smallint, p_timezone_iana text, p_couleur_jeton smallint) to authenticated;
-grant execute on function public.creer_groupe(p_teacher_profile_id uuid, p_type_public text, p_libelle text, p_weekday smallint, p_hour_local smallint, p_seuil_max smallint) to authenticated;
-grant execute on function public.creer_jeton_agent(p_libelle text, p_profil_observe uuid, p_duree_heures integer, p_identite_masquee boolean) to authenticated;
-grant execute on function public.creer_profil_inscription(p_role text, p_first_name text, p_last_name text, p_gender gender, p_timezone text) to authenticated;
-grant execute on function public.creer_version_programme(p_source_version_id uuid) to authenticated;
-grant execute on function public.decider_demande(p_request_id uuid, p_accepte boolean, p_motif text) to authenticated;
-grant execute on function public.decider_dossier(p_document_id uuid, p_approuve boolean, p_motif text) to authenticated;
-grant execute on function public.decider_placement(p_student_id uuid, p_niveau_id uuid, p_motif text) to authenticated;
-grant execute on function public.definir_politique_observation_groupe(p_groupe_id uuid, p_source text, p_max_visites smallint, p_max_secondes integer, p_max_secondes_par_visite integer) to authenticated;
-grant execute on function public.demander(p_kind text, p_subject_profile_id uuid, p_motif text, p_rule_key text, p_rule_value integer) to authenticated;
+grant execute on function public.creer_code_appairage(uuid) to authenticated;
+grant execute on function public.creer_groupe(uuid, text, text, smallint, smallint, smallint, text, smallint) to authenticated;
+grant execute on function public.creer_groupe(uuid, text, text, smallint, smallint, smallint) to authenticated;
+grant execute on function public.creer_jeton_agent(text, uuid, integer, boolean) to authenticated;
+grant execute on function public.creer_profil_inscription(text, text, text, gender, text) to authenticated;
+grant execute on function public.creer_version_programme(uuid) to authenticated;
+grant execute on function public.decider_demande(uuid, boolean, text) to authenticated;
+grant execute on function public.decider_dossier(uuid, boolean, text) to authenticated;
+grant execute on function public.decider_placement(uuid, uuid, text) to authenticated;
+grant execute on function public.definir_politique_observation_groupe(uuid, text, smallint, integer, integer) to authenticated;
+grant execute on function public.demander(text, uuid, text, text, integer) to authenticated;
 grant execute on function public.demandes_en_attente() to authenticated;
-grant execute on function public.derniere_position_groupe(p_groupe_id uuid) to authenticated;
+grant execute on function public.derniere_position_groupe(uuid) to authenticated;
 grant execute on function public.diagnostics_a_traiter() to authenticated;
-grant execute on function public.doit_demander_feedback(p_session_id uuid) to authenticated;
+grant execute on function public.doit_demander_feedback(uuid) to authenticated;
 grant execute on function public.dossiers_en_attente() to authenticated;
 grant execute on function public.eleves_sans_enseignant() to authenticated;
-grant execute on function public.enregistrer_resultat_evaluation(p_evaluation_id uuid, p_resultat text, p_notes text) to authenticated;
-grant execute on function public.enseignants_pour(p_student_profile_id uuid) to authenticated;
-grant execute on function public.entrer_observation(p_session_id uuid, p_role text) to authenticated;
-grant execute on function public.est_du_foyer(p_profile_id uuid) to authenticated;
-grant execute on function public.est_observateur_masque(p_session_id uuid, p_profile_id uuid) to authenticated;
+grant execute on function public.enregistrer_resultat_evaluation(uuid, text, text) to authenticated;
+grant execute on function public.enseignants_pour(uuid) to authenticated;
+grant execute on function public.entrer_observation(uuid, text) to authenticated;
+grant execute on function public.est_du_foyer(uuid) to authenticated;
+grant execute on function public.est_observateur_masque(uuid, uuid) to authenticated;
 grant execute on function public.etat_dossier() to authenticated;
-grant execute on function public.etat_presence(p_session_id uuid, p_profile_id uuid) to authenticated;
+grant execute on function public.etat_presence(uuid, uuid) to authenticated;
 grant execute on function public.evaluations_admin() to authenticated;
-grant execute on function public.geler_archive_seance(p_recording_id uuid, p_motif text, p_gel boolean) to authenticated;
-grant execute on function public.groupe_detail(p_groupe_id uuid) to authenticated;
-grant execute on function public.groupe_roster_enseignant(p_groupe_id uuid) to authenticated;
+grant execute on function public.geler_archive_seance(uuid, text, boolean) to authenticated;
+grant execute on function public.groupe_detail(uuid) to authenticated;
+grant execute on function public.groupe_roster_enseignant(uuid) to authenticated;
 grant execute on function public.groupes_admin() to authenticated;
 grant execute on function public.guard_app_config_history() to authenticated;
 grant execute on function public.guard_assignment_cap() to authenticated;
@@ -623,107 +623,107 @@ grant execute on function public.guard_profile_privileged_columns() to authentic
 grant execute on function public.guard_rule_override_coherente() to authenticated;
 grant execute on function public.guard_rule_override_immutable() to authenticated;
 grant execute on function public.guard_session_state_transition() to authenticated;
-grant execute on function public.horloge_seance(p_session_id uuid) to authenticated;
+grant execute on function public.horloge_seance(uuid) to authenticated;
 grant execute on function public.indicateurs_admin() to authenticated;
 grant execute on function public.jetons_agent_actifs() to authenticated;
 grant execute on function public.journal_audit_filtres() to authenticated;
-grant execute on function public.journal_audit(p_acteur uuid, p_action text, p_depuis timestamp with time zone, p_limite integer, p_avant_date timestamp with time zone, p_avant_id bigint) to authenticated;
-grant execute on function public.log_sensitive_access(p_action text, p_table_name text, p_row_id text, p_payload jsonb) to authenticated;
+grant execute on function public.journal_audit(uuid, text, timestamp with time zone, integer, timestamp with time zone, bigint) to authenticated;
+grant execute on function public.log_sensitive_access(text, text, text, jsonb) to authenticated;
 grant execute on function public.maintenant_serveur() to authenticated;
-grant execute on function public.maj_eleve_pedagogie(p_profile_id uuid, p_level text, p_riwaya text) to authenticated;
-grant execute on function public.maj_profil_enseignant(p_country text, p_languages text[], p_timezone text) to authenticated;
-grant execute on function public.materialiser_seances(p_assignment_id uuid) to authenticated;
+grant execute on function public.maj_eleve_pedagogie(uuid, text, text) to authenticated;
+grant execute on function public.maj_profil_enseignant(text, text[], text) to authenticated;
+grant execute on function public.materialiser_seances(uuid) to authenticated;
 grant execute on function public.mes_rapports_en_attente() to authenticated;
-grant execute on function public.modifier_groupe(p_groupe_id uuid, p_libelle text, p_seuil_max smallint, p_weekday smallint, p_hour_local smallint, p_timezone_iana text, p_couleur_jeton smallint) to authenticated;
-grant execute on function public.modifier_groupe(p_groupe_id uuid, p_libelle text, p_seuil_max smallint, p_weekday smallint, p_hour_local smallint) to authenticated;
-grant execute on function public.modifier_niveau_programme(p_niveau_id uuid, p_nom_humain text, p_cycle text, p_ordre integer, p_description text) to authenticated;
+grant execute on function public.modifier_groupe(uuid, text, smallint, smallint, smallint, text, smallint) to authenticated;
+grant execute on function public.modifier_groupe(uuid, text, smallint, smallint, smallint) to authenticated;
+grant execute on function public.modifier_niveau_programme(uuid, text, text, integer, text) to authenticated;
 grant execute on function public.mon_fuseau() to authenticated;
-grant execute on function public.mon_groupe_detail(p_groupe_id uuid) to authenticated;
-grant execute on function public.next_immutable_id(role_code app_role, initials text) to authenticated;
-grant execute on function public.partie_concernee(p_profile_id uuid) to authenticated;
+grant execute on function public.mon_groupe_detail(uuid) to authenticated;
+grant execute on function public.next_immutable_id(app_role, text) to authenticated;
+grant execute on function public.partie_concernee(uuid) to authenticated;
 grant execute on function public.personnes_observables() to authenticated;
-grant execute on function public.peut_deposer_piece_identite(p_profile_id uuid) to authenticated;
-grant execute on function public.peut_poser_disponibilite(p_profile_id uuid) to authenticated;
-grant execute on function public.planifier_evaluation(p_student_id uuid, p_niveau_id uuid, p_type text, p_date_prevue date) to authenticated;
-grant execute on function public.politique_observation_effective(p_groupe_id uuid) to authenticated;
-grant execute on function public.poser_exception_progression(p_student_id uuid, p_type text, p_motif text) to authenticated;
-grant execute on function public.poser_regle(p_profile_id uuid, p_key text, p_value integer, p_motif text) to authenticated;
-grant execute on function public.prendre_eleve(p_student_profile_id uuid, p_weekday integer, p_hour integer) to authenticated;
-grant execute on function public.preparer_depot_piece_identite(p_profile_id uuid, p_doc_type text) to authenticated;
-grant execute on function public.profil_de_mon_foyer(p_profile_id text) to authenticated;
-grant execute on function public.programme_niveaux_admin(p_version_id uuid) to authenticated;
+grant execute on function public.peut_deposer_piece_identite(uuid) to authenticated;
+grant execute on function public.peut_poser_disponibilite(uuid) to authenticated;
+grant execute on function public.planifier_evaluation(uuid, uuid, text, date) to authenticated;
+grant execute on function public.politique_observation_effective(uuid) to authenticated;
+grant execute on function public.poser_exception_progression(uuid, text, text) to authenticated;
+grant execute on function public.poser_regle(uuid, text, integer, text) to authenticated;
+grant execute on function public.prendre_eleve(uuid, integer, integer) to authenticated;
+grant execute on function public.preparer_depot_piece_identite(uuid, text) to authenticated;
+grant execute on function public.profil_de_mon_foyer(text) to authenticated;
+grant execute on function public.programme_niveaux_admin(uuid) to authenticated;
 grant execute on function public.programme_versions_admin() to authenticated;
 grant execute on function public.progression_admin() to authenticated;
-grant execute on function public.progression_promouvoir(p_student_id uuid, p_niveau_id uuid, p_motif text) to authenticated;
-grant execute on function public.publier_etat_partage(p_session_id uuid, p_resource_id uuid, p_resource_version_id uuid, p_content_position jsonb, p_content_range jsonb, p_display_mode text, p_hidden_ranges jsonb, p_semantic_markers jsonb, p_group_resume_position jsonb, p_revision integer) to authenticated;
-grant execute on function public.publier_version_programme(p_version_id uuid, p_motif text) to authenticated;
-grant execute on function public.quitter_salle(p_session_id uuid) to authenticated;
+grant execute on function public.progression_promouvoir(uuid, uuid, text) to authenticated;
+grant execute on function public.publier_etat_partage(uuid, uuid, uuid, jsonb, jsonb, text, jsonb, jsonb, jsonb, integer) to authenticated;
+grant execute on function public.publier_version_programme(uuid, text) to authenticated;
+grant execute on function public.quitter_salle(uuid) to authenticated;
 grant execute on function public.read_kyc_documents() to authenticated;
-grant execute on function public.record_session_event(p_session_id uuid, p_profile_id uuid, p_event_type session_event_type, p_source text) to authenticated;
-grant execute on function public.regle_effective(p_profile_id uuid, p_key text) to authenticated;
-grant execute on function public.rejoindre_observation(p_session_id uuid) to authenticated;
-grant execute on function public.ressources_du_groupe(p_groupe_id uuid) to authenticated;
-grant execute on function public.retirer_eleve_groupe(p_groupe_id uuid, p_student_profile_id uuid, p_motif text) to authenticated;
-grant execute on function public.revoquer_appareil(p_device_id uuid) to authenticated;
-grant execute on function public.revoquer_jeton_agent(p_id uuid) to authenticated;
+grant execute on function public.record_session_event(uuid, uuid, session_event_type, text) to authenticated;
+grant execute on function public.regle_effective(uuid, text) to authenticated;
+grant execute on function public.rejoindre_observation(uuid) to authenticated;
+grant execute on function public.ressources_du_groupe(uuid) to authenticated;
+grant execute on function public.retirer_eleve_groupe(uuid, uuid, text) to authenticated;
+grant execute on function public.revoquer_appareil(uuid) to authenticated;
+grant execute on function public.revoquer_jeton_agent(uuid) to authenticated;
 grant execute on function public.rls_auto_enable() to authenticated;
-grant execute on function public.session_belongs_to_teacher(p_session_id uuid, p_uid uuid) to authenticated;
-grant execute on function public.session_has_participant(p_session_id uuid, p_uid uuid) to authenticated;
-grant execute on function public.session_in_household(p_session_id uuid, p_household_id uuid) to authenticated;
-grant execute on function public.sortir_observation(p_session_id uuid) to authenticated;
-grant execute on function public.supprimer_niveau_programme(p_niveau_id uuid, p_motif text) to authenticated;
-grant execute on function public.traiter_anomalie_qualite(p_type_anomalie text, p_ref_id uuid, p_note text) to authenticated;
-grant execute on function public.transitions_fuseau_a_venir(p_jours integer) to authenticated;
-grant execute on function public.verifier_chaine_audit(p_limite integer) to authenticated;
+grant execute on function public.session_belongs_to_teacher(uuid, uuid) to authenticated;
+grant execute on function public.session_has_participant(uuid, uuid) to authenticated;
+grant execute on function public.session_in_household(uuid, uuid) to authenticated;
+grant execute on function public.sortir_observation(uuid) to authenticated;
+grant execute on function public.supprimer_niveau_programme(uuid, text) to authenticated;
+grant execute on function public.traiter_anomalie_qualite(text, uuid, text) to authenticated;
+grant execute on function public.transitions_fuseau_a_venir(integer) to authenticated;
+grant execute on function public.verifier_chaine_audit(integer) to authenticated;
 grant execute on function public.video_config_lire() to authenticated;
-grant execute on function public.visites_observation(p_session_id uuid) to authenticated;
+grant execute on function public.visites_observation(uuid) to authenticated;
 grant execute on function public.agent_identite_masquee() to agent_ro;
 grant execute on function public.agent_pre_request() to agent_ro;
 grant execute on function public.anomalies_qualite() to agent_ro;
 grant execute on function public.app_account_valid() to agent_ro;
-grant execute on function public.app_config_int(p_key text, p_defaut integer) to agent_ro;
+grant execute on function public.app_config_int(text, integer) to agent_ro;
 grant execute on function public.app_household_id() to agent_ro;
 grant execute on function public.app_role() to agent_ro;
 grant execute on function public.app_user_id() to agent_ro;
-grant execute on function public.brouillon_cahier(p_session_id uuid) to agent_ro;
+grant execute on function public.brouillon_cahier(uuid) to agent_ro;
 grant execute on function public.comptes_admin() to agent_ro;
-grant execute on function public.creer_groupe(p_teacher_profile_id uuid, p_type_public text, p_libelle text, p_weekday smallint, p_hour_local smallint, p_seuil_max smallint, p_timezone_iana text, p_couleur_jeton smallint) to agent_ro;
+grant execute on function public.creer_groupe(uuid, text, text, smallint, smallint, smallint, text, smallint) to agent_ro;
 grant execute on function public.demandes_en_attente() to agent_ro;
 grant execute on function public.diagnostics_a_traiter() to agent_ro;
 grant execute on function public.dossiers_en_attente() to agent_ro;
 grant execute on function public.eleves_sans_enseignant() to agent_ro;
-grant execute on function public.enseignants_pour(p_student_profile_id uuid) to agent_ro;
-grant execute on function public.est_observateur_masque(p_session_id uuid, p_profile_id uuid) to agent_ro;
+grant execute on function public.enseignants_pour(uuid) to agent_ro;
+grant execute on function public.est_observateur_masque(uuid, uuid) to agent_ro;
 grant execute on function public.etat_dossier() to agent_ro;
-grant execute on function public.etat_presence(p_session_id uuid, p_profile_id uuid) to agent_ro;
+grant execute on function public.etat_presence(uuid, uuid) to agent_ro;
 grant execute on function public.evaluations_admin() to agent_ro;
-grant execute on function public.groupe_detail(p_groupe_id uuid) to agent_ro;
+grant execute on function public.groupe_detail(uuid) to agent_ro;
 grant execute on function public.groupes_admin() to agent_ro;
-grant execute on function public.horloge_seance(p_session_id uuid) to agent_ro;
+grant execute on function public.horloge_seance(uuid) to agent_ro;
 grant execute on function public.indicateurs_admin() to agent_ro;
 grant execute on function public.jetons_agent_actifs() to agent_ro;
 grant execute on function public.journal_audit_filtres() to agent_ro;
-grant execute on function public.journal_audit(p_acteur uuid, p_action text, p_depuis timestamp with time zone, p_limite integer, p_avant_date timestamp with time zone, p_avant_id bigint) to agent_ro;
+grant execute on function public.journal_audit(uuid, text, timestamp with time zone, integer, timestamp with time zone, bigint) to agent_ro;
 grant execute on function public.maintenant_serveur() to agent_ro;
 grant execute on function public.mes_rapports_en_attente() to agent_ro;
-grant execute on function public.modifier_groupe(p_groupe_id uuid, p_libelle text, p_seuil_max smallint, p_weekday smallint, p_hour_local smallint, p_timezone_iana text, p_couleur_jeton smallint) to agent_ro;
+grant execute on function public.modifier_groupe(uuid, text, smallint, smallint, smallint, text, smallint) to agent_ro;
 grant execute on function public.mon_fuseau() to agent_ro;
-grant execute on function public.mon_groupe_detail(p_groupe_id uuid) to agent_ro;
-grant execute on function public.partie_concernee(p_profile_id uuid) to agent_ro;
+grant execute on function public.mon_groupe_detail(uuid) to agent_ro;
+grant execute on function public.partie_concernee(uuid) to agent_ro;
 grant execute on function public.personnes_observables() to agent_ro;
-grant execute on function public.peut_deposer_piece_identite(p_profile_id uuid) to agent_ro;
-grant execute on function public.peut_poser_disponibilite(p_profile_id uuid) to agent_ro;
-grant execute on function public.profil_de_mon_foyer(p_profile_id text) to agent_ro;
-grant execute on function public.programme_niveaux_admin(p_version_id uuid) to agent_ro;
+grant execute on function public.peut_deposer_piece_identite(uuid) to agent_ro;
+grant execute on function public.peut_poser_disponibilite(uuid) to agent_ro;
+grant execute on function public.profil_de_mon_foyer(text) to agent_ro;
+grant execute on function public.programme_niveaux_admin(uuid) to agent_ro;
 grant execute on function public.programme_versions_admin() to agent_ro;
 grant execute on function public.progression_admin() to agent_ro;
 grant execute on function public.read_kyc_documents() to agent_ro;
-grant execute on function public.regle_effective(p_profile_id uuid, p_key text) to agent_ro;
-grant execute on function public.ressources_du_groupe(p_groupe_id uuid) to agent_ro;
-grant execute on function public.session_belongs_to_teacher(p_session_id uuid, p_uid uuid) to agent_ro;
-grant execute on function public.session_has_participant(p_session_id uuid, p_uid uuid) to agent_ro;
-grant execute on function public.session_in_household(p_session_id uuid, p_household_id uuid) to agent_ro;
-grant execute on function public.verifier_chaine_audit(p_limite integer) to agent_ro;
+grant execute on function public.regle_effective(uuid, text) to agent_ro;
+grant execute on function public.ressources_du_groupe(uuid) to agent_ro;
+grant execute on function public.session_belongs_to_teacher(uuid, uuid) to agent_ro;
+grant execute on function public.session_has_participant(uuid, uuid) to agent_ro;
+grant execute on function public.session_in_household(uuid, uuid) to agent_ro;
+grant execute on function public.verifier_chaine_audit(integer) to agent_ro;
 grant execute on function public.video_config_lire() to agent_ro;
 
 -- Les vues deviennent SECURITY INVOKER: les droits/RLS des tables du lecteur s'appliquent.
@@ -807,7 +807,7 @@ begin
 end;
 $function$;
 
-create or replace function public.autoriser_lecture_piece_identite(p_document_id uuid)
+create or replace function public.autoriser_lecture_piece_identite(uuid)
 returns jsonb
 language plpgsql
 security definer
