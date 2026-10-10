@@ -8970,5 +8970,86 @@
     "sansDonnees": "les demandes de reprise",
     "indisponibleTitre": "Reprises de foyer indisponibles",
     "indisponiblePhrase": "Cette fonction sera disponible au branchement serveur."
+  },
+  "recherche": {
+    "titre": "Rechercher",
+    "retour": "Retour",
+    "champ": {
+      "libelle": "Rechercher dans votre espace",
+      "aide": "Un nom, une classe, un support"
+    },
+    "espace": {
+      "famille": "Dans votre espace Tuteur",
+      "eleve": "Dans votre espace Élève",
+      "eleveGuide": "Dans votre espace Élève",
+      "enseignant": "Dans votre espace Enseignant",
+      "controleur": "Dans votre espace Contrôle",
+      "comptable": "Dans votre espace Comptabilité",
+      "administration": "Dans votre espace Administration"
+    },
+    "initial": {
+      "titre": "Rechercher dans votre espace",
+      "phrase": "Saisissez un nom, une classe ou un support. Rien n'est cherché avant que vous écriviez."
+    },
+    "courte": "Saisissez au moins 3 caractères.",
+    "chargement": "Recherche en cours…",
+    "lent": "La recherche prend plus de temps que prévu. Les résultats déjà reçus restent affichés.",
+    "resultatsPour": "Résultats pour « {requete} »",
+    "categoriesAffichees(param=nombre)": {
+      "one": "{nombre} catégorie affichée",
+      "other": "{nombre} catégories affichées"
+    },
+    "domaines": {
+      "classes": "Classes",
+      "supports": "Supports",
+      "personnes": "Personnes",
+      "enseignants": "Enseignants",
+      "pedagogie": "Élèves",
+      "controle": "Contrôle",
+      "finances": "Finances",
+      "fils": "Fils de discussion"
+    },
+    "voirDavantage": "Voir davantage",
+    "pageSuivante": "Chargement de résultats supplémentaires…",
+    "pageEnEchec": "Les résultats suivants n'ont pas pu être chargés.",
+    "ouvrir": "Ouvrir {titre}",
+    "etats": {
+      "vide": {
+        "titre": "Aucun résultat pour cette recherche.",
+        "phrase": "Essayez un autre mot ou un filtre.",
+        "action": "Modifier la recherche"
+      },
+      "domaineIndisponible": {
+        "titre": "La recherche dans ce domaine est indisponible.",
+        "phrase": "Les autres catégories restent consultables.",
+        "action": "Réessayer ce domaine"
+      },
+      "erreur": {
+        "titre": "Impossible d'effectuer la recherche.",
+        "phrase": "Votre accès a été revérifié. Réessayez dans un instant."
+      },
+      "delai": {
+        "titre": "La recherche prend trop de temps.",
+        "phrase": "Précisez le domaine ou réessayez."
+      },
+      "horsLigne": {
+        "titre": "La recherche en ligne est indisponible.",
+        "phrase": "Elle reprendra quand la connexion reviendra. Aucun résultat privé n'est gardé en attendant."
+      },
+      "sessionExpiree": {
+        "titre": "Votre session a expiré.",
+        "phrase": "Reconnectez-vous pour reprendre la recherche."
+      },
+      "nonRaccorde": {
+        "titre": "Recherche indisponible pour le moment.",
+        "phrase": "Cette recherche n'est pas encore ouverte dans votre espace.",
+        "action": "Retour"
+      },
+      "inaccessible": {
+        "titre": "Cet élément n'est plus accessible.",
+        "phrase": "Vos résultats ont été actualisés.",
+        "action": "Retour aux résultats"
+      }
+    }
   }
 }

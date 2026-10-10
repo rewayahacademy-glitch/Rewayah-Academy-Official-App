@@ -50,6 +50,8 @@ import '../../core/offres/service_offres.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/profil/service_acceptations.dart';
+import '../../core/recherche/moteurs_demo_recherche.dart';
+import '../../core/recherche/port_recherche.dart';
 import '../../core/recrutement/port_invitations_enseignant.dart';
 import '../../core/recrutement/port_statuts_signature.dart';
 import '../../core/seance_famille/port_seances_famille.dart';
@@ -212,6 +214,9 @@ List<Override> surchargesDemoTuteur({
         RechargeFoyerFinanceDemo(jeu),
       ),
     ],
+    // RECH-1 : la recherche de demonstration (plusieurs milliers de classes
+    // et de supports fictifs) ; en production, aucun moteur n'est raccorde.
+    moteursRechercheProvider.overrideWithValue(moteursDemoRecherche()),
     portAccesFoyerProvider.overrideWithValue(const AccesFoyerDemo()),
     // La couleur de profil choisie par le tuteur (K-62) : gardee en memoire,
     // rien n'est envoye (FI-BR-19).
@@ -351,6 +356,7 @@ List<Override> surchargesDemoAdmin({
   fusionDemo = FusionDemo(classes: classesAdminDemo.toutesBrutes);
   return <Override>[
     sourceSessionProvider.overrideWithValue(const SourceSessionDemoAdmin()),
+    moteursRechercheProvider.overrideWithValue(moteursDemoRecherche()),
     portRevueDossiersProvider.overrideWithValue(RevueDossiersDemo(e)),
     portPolitiqueRevueKycProvider.overrideWithValue(PolitiqueRevueKycDemo(e)),
     // L'ecran ADM-02 actuel et l'Accueil admin : aucun appel serveur.

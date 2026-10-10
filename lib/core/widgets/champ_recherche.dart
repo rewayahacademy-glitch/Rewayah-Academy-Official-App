@@ -29,6 +29,7 @@ class ChampRecherche extends StatelessWidget {
     this.autofocus = false,
     this.focusNode,
     this.onChange,
+    this.onValider,
   });
 
   /// Le texte cherche ; l'appelant l'ecoute, ou passe [onChange].
@@ -56,6 +57,10 @@ class ChampRecherche extends StatelessWidget {
   /// Chaque changement du texte, effacement compris ; facultatif quand
   /// l'appelant ecoute [controleur].
   final ValueChanged<String>? onChange;
+
+  /// La validation explicite (touche Entree, bouton de recherche du clavier) :
+  /// la recherche partira sans attendre son delai (RECH-1).
+  final ValueChanged<String>? onValider;
 
   void _effacer() {
     controleur.clear();
@@ -112,6 +117,7 @@ class ChampRecherche extends StatelessWidget {
                 autofocus: autofocus,
                 textInputAction: TextInputAction.search,
                 onChanged: onChange,
+                onSubmitted: onValider,
                 decoration: InputDecoration(
                   labelText: dehors ? null : libelle,
                   hintText: aide,

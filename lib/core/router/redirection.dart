@@ -246,6 +246,14 @@ String? deciderRedirection({
         return null;
       }
 
+      // RECH-1 : la recherche est une surface commune, ouverte a chaque role
+      // actif ; ce qu'elle rend se decide serveur, par domaine (spec RECH-03
+      // §7.1). Une session d'observation d'agent n'y ouvre rien : sa page
+      // dit « indisponible » (aucune recherche par heritage, SEC-R16).
+      if (cheminDemande == Routes.recherche) {
+        return null;
+      }
+
       // Le Teaching Core vit sous `/tc/`, hors du prefixe unique de chaque
       // role (plan d'integration Teaching Core, etape 7 section 8.2 point 4).
       // Sans cette autorisation explicite, les sept chemins seraient tous

@@ -132,6 +132,7 @@ import '../../features/paiements_recus/recevoir_paiements_page.dart';
 import '../../features/parcours_offres/parcours_offres_page.dart';
 import '../../features/presentation_tuteur/demandes_presentation_page.dart';
 import '../../features/profil_enseignant/profil_enseignant_page.dart';
+import '../../features/recherche/page_recherche.dart';
 import '../../features/recrutement/invitation_candidat_page.dart';
 import '../../features/remplacements/remplacements_page.dart';
 import '../../features/revenus_enseignant/revenus_enseignant_page.dart';
@@ -370,6 +371,19 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.compte,
         builder: (BuildContext _, GoRouterState _) =>
             const _CoquilleSecondaire(child: ComptePage()),
+      ),
+      // RECH-1 : la recherche transversale, une seule route pour tous les
+      // espaces (spec RECH-03 §1). L'espace et le domaine d'ouverture sont
+      // des parametres d'interface ; le texte cherche n'est jamais dans
+      // l'adresse.
+      GoRoute(
+        path: Routes.recherche,
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
+          child: PageRecherche(
+            espaceDemande: etat.uri.queryParameters['espace'],
+            domaineDemande: etat.uri.queryParameters['domaine'],
+          ),
+        ),
       ),
       GoRoute(
         path: Routes.compteProfil,

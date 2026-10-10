@@ -98,6 +98,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$comptable$fr comptable = Traductions$comptable$fr.internal(_root);
 	late final Traductions$presentationTuteur$fr presentationTuteur = Traductions$presentationTuteur$fr.internal(_root);
 	late final Traductions$reprisesAdmin$fr reprisesAdmin = Traductions$reprisesAdmin$fr.internal(_root);
+	late final Traductions$recherche$fr recherche = Traductions$recherche$fr.internal(_root);
 }
 
 // Path: commun
@@ -3005,6 +3006,59 @@ class Traductions$reprisesAdmin$fr {
 
 	/// fr: 'Cette fonction sera disponible au branchement serveur.'
 	String get indisponiblePhrase => 'Cette fonction sera disponible au branchement serveur.';
+}
+
+// Path: recherche
+class Traductions$recherche$fr {
+	Traductions$recherche$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Rechercher'
+	String get titre => 'Rechercher';
+
+	/// fr: 'Retour'
+	String get retour => 'Retour';
+
+	late final Traductions$recherche$champ$fr champ = Traductions$recherche$champ$fr.internal(_root);
+	late final Traductions$recherche$espace$fr espace = Traductions$recherche$espace$fr.internal(_root);
+	late final Traductions$recherche$initial$fr initial = Traductions$recherche$initial$fr.internal(_root);
+
+	/// fr: 'Saisissez au moins 3 caractères.'
+	String get courte => 'Saisissez au moins 3 caractères.';
+
+	/// fr: 'Recherche en cours…'
+	String get chargement => 'Recherche en cours…';
+
+	/// fr: 'La recherche prend plus de temps que prévu. Les résultats déjà reçus restent affichés.'
+	String get lent => 'La recherche prend plus de temps que prévu. Les résultats déjà reçus restent affichés.';
+
+	/// fr: 'Résultats pour « {requete} »'
+	String resultatsPour({required Object requete}) => 'Résultats pour « ${requete} »';
+
+	/// fr: '(one) {{nombre} catégorie affichée} (other) {{nombre} catégories affichées}'
+	String categoriesAffichees({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: '${nombre} catégorie affichée',
+		other: '${nombre} catégories affichées',
+	);
+
+	late final Traductions$recherche$domaines$fr domaines = Traductions$recherche$domaines$fr.internal(_root);
+
+	/// fr: 'Voir davantage'
+	String get voirDavantage => 'Voir davantage';
+
+	/// fr: 'Chargement de résultats supplémentaires…'
+	String get pageSuivante => 'Chargement de résultats supplémentaires…';
+
+	/// fr: 'Les résultats suivants n'ont pas pu être chargés.'
+	String get pageEnEchec => 'Les résultats suivants n\'ont pas pu être chargés.';
+
+	/// fr: 'Ouvrir {titre}'
+	String ouvrir({required Object titre}) => 'Ouvrir ${titre}';
+
+	late final Traductions$recherche$etats$fr etats = Traductions$recherche$etats$fr.internal(_root);
 }
 
 // Path: commun.classeDistincte
@@ -17229,6 +17283,116 @@ class Traductions$reprisesAdmin$etat$fr {
 	String get refuseeParTitulaire => 'Refusée par le titulaire';
 }
 
+// Path: recherche.champ
+class Traductions$recherche$champ$fr {
+	Traductions$recherche$champ$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Rechercher dans votre espace'
+	String get libelle => 'Rechercher dans votre espace';
+
+	/// fr: 'Un nom, une classe, un support'
+	String get aide => 'Un nom, une classe, un support';
+}
+
+// Path: recherche.espace
+class Traductions$recherche$espace$fr {
+	Traductions$recherche$espace$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Dans votre espace Tuteur'
+	String get famille => 'Dans votre espace Tuteur';
+
+	/// fr: 'Dans votre espace Élève'
+	String get eleve => 'Dans votre espace Élève';
+
+	/// fr: 'Dans votre espace Élève'
+	String get eleveGuide => 'Dans votre espace Élève';
+
+	/// fr: 'Dans votre espace Enseignant'
+	String get enseignant => 'Dans votre espace Enseignant';
+
+	/// fr: 'Dans votre espace Contrôle'
+	String get controleur => 'Dans votre espace Contrôle';
+
+	/// fr: 'Dans votre espace Comptabilité'
+	String get comptable => 'Dans votre espace Comptabilité';
+
+	/// fr: 'Dans votre espace Administration'
+	String get administration => 'Dans votre espace Administration';
+}
+
+// Path: recherche.initial
+class Traductions$recherche$initial$fr {
+	Traductions$recherche$initial$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Rechercher dans votre espace'
+	String get titre => 'Rechercher dans votre espace';
+
+	/// fr: 'Saisissez un nom, une classe ou un support. Rien n'est cherché avant que vous écriviez.'
+	String get phrase => 'Saisissez un nom, une classe ou un support. Rien n\'est cherché avant que vous écriviez.';
+}
+
+// Path: recherche.domaines
+class Traductions$recherche$domaines$fr {
+	Traductions$recherche$domaines$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Classes'
+	String get classes => 'Classes';
+
+	/// fr: 'Supports'
+	String get supports => 'Supports';
+
+	/// fr: 'Personnes'
+	String get personnes => 'Personnes';
+
+	/// fr: 'Enseignants'
+	String get enseignants => 'Enseignants';
+
+	/// fr: 'Élèves'
+	String get pedagogie => 'Élèves';
+
+	/// fr: 'Contrôle'
+	String get controle => 'Contrôle';
+
+	/// fr: 'Finances'
+	String get finances => 'Finances';
+
+	/// fr: 'Fils de discussion'
+	String get fils => 'Fils de discussion';
+}
+
+// Path: recherche.etats
+class Traductions$recherche$etats$fr {
+	Traductions$recherche$etats$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$recherche$etats$vide$fr vide = Traductions$recherche$etats$vide$fr.internal(_root);
+	late final Traductions$recherche$etats$domaineIndisponible$fr domaineIndisponible = Traductions$recherche$etats$domaineIndisponible$fr.internal(_root);
+	late final Traductions$recherche$etats$erreur$fr erreur = Traductions$recherche$etats$erreur$fr.internal(_root);
+	late final Traductions$recherche$etats$delai$fr delai = Traductions$recherche$etats$delai$fr.internal(_root);
+	late final Traductions$recherche$etats$horsLigne$fr horsLigne = Traductions$recherche$etats$horsLigne$fr.internal(_root);
+	late final Traductions$recherche$etats$sessionExpiree$fr sessionExpiree = Traductions$recherche$etats$sessionExpiree$fr.internal(_root);
+	late final Traductions$recherche$etats$nonRaccorde$fr nonRaccorde = Traductions$recherche$etats$nonRaccorde$fr.internal(_root);
+	late final Traductions$recherche$etats$inaccessible$fr inaccessible = Traductions$recherche$etats$inaccessible$fr.internal(_root);
+}
+
 // Path: commun.etats.chargementProlonge
 class Traductions$commun$etats$chargementProlonge$fr {
 	Traductions$commun$etats$chargementProlonge$fr.internal(this._root);
@@ -26634,6 +26798,138 @@ class Traductions$comptable$direction$delegationPanneau$fr {
 
 	/// fr: 'La politique tarifaire reste à la direction.'
 	String get politiqueTarifaireDetail => 'La politique tarifaire reste à la direction.';
+}
+
+// Path: recherche.etats.vide
+class Traductions$recherche$etats$vide$fr {
+	Traductions$recherche$etats$vide$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucun résultat pour cette recherche.'
+	String get titre => 'Aucun résultat pour cette recherche.';
+
+	/// fr: 'Essayez un autre mot ou un filtre.'
+	String get phrase => 'Essayez un autre mot ou un filtre.';
+
+	/// fr: 'Modifier la recherche'
+	String get action => 'Modifier la recherche';
+}
+
+// Path: recherche.etats.domaineIndisponible
+class Traductions$recherche$etats$domaineIndisponible$fr {
+	Traductions$recherche$etats$domaineIndisponible$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La recherche dans ce domaine est indisponible.'
+	String get titre => 'La recherche dans ce domaine est indisponible.';
+
+	/// fr: 'Les autres catégories restent consultables.'
+	String get phrase => 'Les autres catégories restent consultables.';
+
+	/// fr: 'Réessayer ce domaine'
+	String get action => 'Réessayer ce domaine';
+}
+
+// Path: recherche.etats.erreur
+class Traductions$recherche$etats$erreur$fr {
+	Traductions$recherche$etats$erreur$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Impossible d'effectuer la recherche.'
+	String get titre => 'Impossible d\'effectuer la recherche.';
+
+	/// fr: 'Votre accès a été revérifié. Réessayez dans un instant.'
+	String get phrase => 'Votre accès a été revérifié. Réessayez dans un instant.';
+}
+
+// Path: recherche.etats.delai
+class Traductions$recherche$etats$delai$fr {
+	Traductions$recherche$etats$delai$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La recherche prend trop de temps.'
+	String get titre => 'La recherche prend trop de temps.';
+
+	/// fr: 'Précisez le domaine ou réessayez.'
+	String get phrase => 'Précisez le domaine ou réessayez.';
+}
+
+// Path: recherche.etats.horsLigne
+class Traductions$recherche$etats$horsLigne$fr {
+	Traductions$recherche$etats$horsLigne$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La recherche en ligne est indisponible.'
+	String get titre => 'La recherche en ligne est indisponible.';
+
+	/// fr: 'Elle reprendra quand la connexion reviendra. Aucun résultat privé n'est gardé en attendant.'
+	String get phrase => 'Elle reprendra quand la connexion reviendra. Aucun résultat privé n\'est gardé en attendant.';
+}
+
+// Path: recherche.etats.sessionExpiree
+class Traductions$recherche$etats$sessionExpiree$fr {
+	Traductions$recherche$etats$sessionExpiree$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre session a expiré.'
+	String get titre => 'Votre session a expiré.';
+
+	/// fr: 'Reconnectez-vous pour reprendre la recherche.'
+	String get phrase => 'Reconnectez-vous pour reprendre la recherche.';
+}
+
+// Path: recherche.etats.nonRaccorde
+class Traductions$recherche$etats$nonRaccorde$fr {
+	Traductions$recherche$etats$nonRaccorde$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Recherche indisponible pour le moment.'
+	String get titre => 'Recherche indisponible pour le moment.';
+
+	/// fr: 'Cette recherche n'est pas encore ouverte dans votre espace.'
+	String get phrase => 'Cette recherche n\'est pas encore ouverte dans votre espace.';
+
+	/// fr: 'Retour'
+	String get action => 'Retour';
+}
+
+// Path: recherche.etats.inaccessible
+class Traductions$recherche$etats$inaccessible$fr {
+	Traductions$recherche$etats$inaccessible$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Cet élément n'est plus accessible.'
+	String get titre => 'Cet élément n\'est plus accessible.';
+
+	/// fr: 'Vos résultats ont été actualisés.'
+	String get phrase => 'Vos résultats ont été actualisés.';
+
+	/// fr: 'Retour aux résultats'
+	String get action => 'Retour aux résultats';
 }
 
 // Path: salle.preparation.eleve.guidee
@@ -36217,6 +36513,56 @@ extension on Traductions {
 			'reprisesAdmin.sansDonnees' => 'les demandes de reprise',
 			'reprisesAdmin.indisponibleTitre' => 'Reprises de foyer indisponibles',
 			'reprisesAdmin.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
+			'recherche.titre' => 'Rechercher',
+			'recherche.retour' => 'Retour',
+			'recherche.champ.libelle' => 'Rechercher dans votre espace',
+			'recherche.champ.aide' => 'Un nom, une classe, un support',
+			'recherche.espace.famille' => 'Dans votre espace Tuteur',
+			'recherche.espace.eleve' => 'Dans votre espace Élève',
+			'recherche.espace.eleveGuide' => 'Dans votre espace Élève',
+			'recherche.espace.enseignant' => 'Dans votre espace Enseignant',
+			'recherche.espace.controleur' => 'Dans votre espace Contrôle',
+			'recherche.espace.comptable' => 'Dans votre espace Comptabilité',
+			'recherche.espace.administration' => 'Dans votre espace Administration',
+			'recherche.initial.titre' => 'Rechercher dans votre espace',
+			'recherche.initial.phrase' => 'Saisissez un nom, une classe ou un support. Rien n\'est cherché avant que vous écriviez.',
+			'recherche.courte' => 'Saisissez au moins 3 caractères.',
+			'recherche.chargement' => 'Recherche en cours…',
+			'recherche.lent' => 'La recherche prend plus de temps que prévu. Les résultats déjà reçus restent affichés.',
+			'recherche.resultatsPour' => ({required Object requete}) => 'Résultats pour « ${requete} »',
+			'recherche.categoriesAffichees' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} catégorie affichée', other: '${nombre} catégories affichées', ), 
+			'recherche.domaines.classes' => 'Classes',
+			'recherche.domaines.supports' => 'Supports',
+			'recherche.domaines.personnes' => 'Personnes',
+			'recherche.domaines.enseignants' => 'Enseignants',
+			'recherche.domaines.pedagogie' => 'Élèves',
+			'recherche.domaines.controle' => 'Contrôle',
+			'recherche.domaines.finances' => 'Finances',
+			'recherche.domaines.fils' => 'Fils de discussion',
+			'recherche.voirDavantage' => 'Voir davantage',
+			'recherche.pageSuivante' => 'Chargement de résultats supplémentaires…',
+			'recherche.pageEnEchec' => 'Les résultats suivants n\'ont pas pu être chargés.',
+			'recherche.ouvrir' => ({required Object titre}) => 'Ouvrir ${titre}',
+			'recherche.etats.vide.titre' => 'Aucun résultat pour cette recherche.',
+			'recherche.etats.vide.phrase' => 'Essayez un autre mot ou un filtre.',
+			'recherche.etats.vide.action' => 'Modifier la recherche',
+			'recherche.etats.domaineIndisponible.titre' => 'La recherche dans ce domaine est indisponible.',
+			'recherche.etats.domaineIndisponible.phrase' => 'Les autres catégories restent consultables.',
+			'recherche.etats.domaineIndisponible.action' => 'Réessayer ce domaine',
+			'recherche.etats.erreur.titre' => 'Impossible d\'effectuer la recherche.',
+			'recherche.etats.erreur.phrase' => 'Votre accès a été revérifié. Réessayez dans un instant.',
+			'recherche.etats.delai.titre' => 'La recherche prend trop de temps.',
+			'recherche.etats.delai.phrase' => 'Précisez le domaine ou réessayez.',
+			'recherche.etats.horsLigne.titre' => 'La recherche en ligne est indisponible.',
+			'recherche.etats.horsLigne.phrase' => 'Elle reprendra quand la connexion reviendra. Aucun résultat privé n\'est gardé en attendant.',
+			'recherche.etats.sessionExpiree.titre' => 'Votre session a expiré.',
+			'recherche.etats.sessionExpiree.phrase' => 'Reconnectez-vous pour reprendre la recherche.',
+			'recherche.etats.nonRaccorde.titre' => 'Recherche indisponible pour le moment.',
+			'recherche.etats.nonRaccorde.phrase' => 'Cette recherche n\'est pas encore ouverte dans votre espace.',
+			'recherche.etats.nonRaccorde.action' => 'Retour',
+			'recherche.etats.inaccessible.titre' => 'Cet élément n\'est plus accessible.',
+			'recherche.etats.inaccessible.phrase' => 'Vos résultats ont été actualisés.',
+			'recherche.etats.inaccessible.action' => 'Retour aux résultats',
 			_ => null,
 		};
 	}
