@@ -141,11 +141,11 @@ LANGUAGE sql STABLE SET search_path = ''
 AS $function$
   WITH semaine AS (
     SELECT pg_catalog.date_trunc(
-      'week', pg_catalog.now() AT TIME ZONE 'UTC'
-    )::date AS lundi_utc
+      'week', pg_catalog.now() AT TIME ZONE p_tz
+    )::date AS lundi_local
   ), candidat AS (
     SELECT (
-      s.lundi_utc + (p_weekday - 1) + (p_semaine_offset * 7)
+      s.lundi_local + (p_weekday - 1) + (p_semaine_offset * 7)
       + pg_catalog.make_interval(hours => p_hour)
     )::timestamp without time zone AS local
     FROM semaine s
