@@ -3822,8 +3822,8 @@ class _Traductions$com$socle$composants$pieceJointe$ar extends Traductions$com$s
 	@override String get retirer => 'إزالة';
 	@override String retirerLecteur({required Object nom}) => 'إزالة ${nom}';
 	@override String tailleOctets({required Object taille}) => '${taille} بايت';
-	@override String tailleKo({required Object taille}) => '${taille} كيلوبايت';
-	@override String tailleMo({required Object taille}) => '${taille} ميغابايت';
+	@override String tailleKo({required Object taille}) => '${taille} كيلوبايت';
+	@override String tailleMo({required Object taille}) => '${taille} ميغابايت';
 	@override String get autorisee => 'جاهز للإرسال';
 	@override String get tropVolumineuse => 'الملف كبير جدًا';
 	@override String get tropVolumineuseDetail => 'هذا الملف يتجاوز الحجم المسموح به. اختر ملفًا أصغر.';
@@ -5072,8 +5072,8 @@ extension on TraductionsAr {
 			'com.socle.composants.pieceJointe.retirer' => 'إزالة',
 			'com.socle.composants.pieceJointe.retirerLecteur' => ({required Object nom}) => 'إزالة ${nom}',
 			'com.socle.composants.pieceJointe.tailleOctets' => ({required Object taille}) => '${taille} بايت',
-			'com.socle.composants.pieceJointe.tailleKo' => ({required Object taille}) => '${taille} كيلوبايت',
-			'com.socle.composants.pieceJointe.tailleMo' => ({required Object taille}) => '${taille} ميغابايت',
+			'com.socle.composants.pieceJointe.tailleKo' => ({required Object taille}) => '${taille} كيلوبايت',
+			'com.socle.composants.pieceJointe.tailleMo' => ({required Object taille}) => '${taille} ميغابايت',
 			'com.socle.composants.pieceJointe.autorisee' => 'جاهز للإرسال',
 			'com.socle.composants.pieceJointe.tropVolumineuse' => 'الملف كبير جدًا',
 			'com.socle.composants.pieceJointe.tropVolumineuseDetail' => 'هذا الملف يتجاوز الحجم المسموح به. اختر ملفًا أصغر.',

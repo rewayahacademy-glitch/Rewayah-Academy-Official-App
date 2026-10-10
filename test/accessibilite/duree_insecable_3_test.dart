@@ -82,6 +82,35 @@ void main() {
       expect(nus, isEmpty, reason: 'Durees secables :\n${nus.join('\n')}');
     });
 
+    test('DUREE-FOND-1 : une unite liee en francais l\'est aussi en arabe', () {
+      // L'unite arabe (« كيلوبايت ») echappe au motif des unites : la garde
+      // compare donc les deux langues, parametre par parametre.
+      final List<String> fautes = unitesSecablesEnArabe();
+      expect(
+        fautes,
+        isEmpty,
+        reason: 'Unites secables en arabe :\n${fautes.join('\n')}',
+      );
+    });
+
+    test('DUREE-FOND-1 : la parite de l\'arabe releve une espace ordinaire', () {
+      final Directory dossier = Directory.systemTemp.createTempSync('parite');
+      addTearDown(() => dossier.deleteSync(recursive: true));
+      final File fr = File('${dossier.path}/fr.json')
+        ..writeAsStringSync('{"p":{"ko":"{taille}\u00A0Ko","n":"{n} min"}}');
+      final File ar = File('${dossier.path}/ar.json')
+        ..writeAsStringSync(
+          '{"p":{"ko":"{taille} كيلوبايت","n":"{n} دقيقة"}}',
+        );
+      expect(unitesSecablesEnArabe(francais: fr.path, arabe: ar.path), <String>[
+        'p.ko {taille} : {taille} كيلوبايت',
+      ]);
+      ar.writeAsStringSync(
+        '{"p":{"ko":"{taille}\u00A0كيلوبايت","n":"{n} دقيقة"}}',
+      );
+      expect(unitesSecablesEnArabe(francais: fr.path, arabe: ar.path), isEmpty);
+    });
+
     test('la garde suit les alias (final h = t.controleur.historique)', () {
       final Directory dossier = Directory.systemTemp.createTempSync('garde');
       addTearDown(() => dossier.deleteSync(recursive: true));

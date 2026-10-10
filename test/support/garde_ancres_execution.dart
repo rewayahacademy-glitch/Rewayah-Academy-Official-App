@@ -223,6 +223,13 @@ class BindingGardeAncres extends AutomatedTestWidgetsFlutterBinding {
   static bool _installe = false;
   static HttpOverrides? _fauxHttp;
 
+  /// Ce que [runTest] appelle a la fin du corps de chaque `testWidgets`,
+  /// ecran encore monte : [verifierAncresRendues]. Remplacable le temps d'un
+  /// test, pour prouver en permanence que le crochet de fin tourne
+  /// (`test/accessibilite/garde_ancres_execution_test.dart`, groupe « crochet
+  /// de fin ») ; a remettre aussitot.
+  static void Function() verificationDeFin = verifierAncresRendues;
+
   @override
   Future<void> runTest(
     Future<void> Function() testBody,
@@ -236,7 +243,7 @@ class BindingGardeAncres extends AutomatedTestWidgetsFlutterBinding {
     return super.runTest(
       () async {
         await testBody();
-        verifierAncresRendues();
+        verificationDeFin();
       },
       invariantTester,
       description: description,

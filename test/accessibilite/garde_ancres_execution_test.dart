@@ -231,6 +231,61 @@ Future<List<AncreRendue>> _doitEchouer(
 void main() {
   test('la suite tourne sous le binding de la garde', () {
     expect(TestWidgetsFlutterBinding.instance, isA<BindingGardeAncres>());
+    expect(
+      BindingGardeAncres.verificationDeFin,
+      same(verifierAncresRendues),
+      reason: 'le crochet de fin doit lancer la vraie garde',
+    );
+  });
+
+  // Preuve permanente du crochet de fin (relecture de DUREE-FOND-1) : un
+  // ecran fautif reste monte a la fin du corps d'un testWidgets ; le crochet
+  // de BindingGardeAncres.runTest, remplace le temps de ce seul test par un
+  // temoin, est appele APRES le corps, ecran encore monte, et la vraie garde
+  // lancee a cet instant leve une TestFailure (qui fait echouer le test). Le
+  // temoin rend la main sans lever, pour que ce test-ci passe ; le test qui
+  // suit lit ce qu'il a vu. Contre-epreuve : sans l'appel du crochet dans
+  // runTest, le second test echoue.
+  group('crochet de fin de testWidgets', () {
+    bool corpsTermine = false;
+    bool appele = false;
+    bool appeleApresCorps = false;
+    List<AncreRendue> vues = <AncreRendue>[];
+    Object? levee;
+
+    testWidgets('ecran fautif laisse monte a la fin du corps', (
+      WidgetTester tester,
+    ) async {
+      BindingGardeAncres.verificationDeFin = () {
+        BindingGardeAncres.verificationDeFin = verifierAncresRendues;
+        appele = true;
+        appeleApresCorps = corpsTermine;
+        vues = ancresRendues();
+        try {
+          verifierAncresRendues();
+        } on TestFailure catch (e) {
+          levee = e;
+        }
+      };
+      addTearDown(
+        () => BindingGardeAncres.verificationDeFin = verifierAncresRendues,
+      );
+      await tester.pumpWidget(_hote(Text('Duree : $_valeur')));
+      corpsTermine = true;
+    });
+
+    test('le crochet a tourne apres le corps et la garde a leve', () {
+      expect(appele, isTrue, reason: 'runTest n a pas appele le crochet');
+      expect(appeleApresCorps, isTrue);
+      // Texte rendu et libelle semantique du meme Text.
+      expect(vues, isNotEmpty);
+      expect(
+        vues.map((AncreRendue v) => v.texte),
+        everyElement('Duree : $_valeur'),
+      );
+      expect(levee, isA<TestFailure>());
+      expect(BindingGardeAncres.verificationDeFin, same(verifierAncresRendues));
+    });
   });
 
   group('position de l ancre', () {

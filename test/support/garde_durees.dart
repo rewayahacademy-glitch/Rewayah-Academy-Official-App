@@ -180,3 +180,39 @@ bool estInsecable(String enveloppe) {
   final String nom = enveloppe.split('.').last;
   return nom == 'insecable' || nom == 'valeurSeule';
 }
+
+/// DUREE-FOND-1 : parite de l'arabe. Un libelle francais qui lie son nombre a
+/// son unite par U+00A0 (« {taille} Ko ») est insecable par son texte ;
+/// la garde des unites, qui ne lit que le francais, le tient pour regle. Mais
+/// l'unite arabe (« كيلوبايت ») n'est pas dans le motif des unites : si la
+/// traduction garde une espace ordinaire apres le meme parametre, le nombre se
+/// separe encore de son unite a 320 px. Rend, pour chaque chemin ou le
+/// francais lie `{p}` par U+00A0 et ou l'arabe ecrit `{p}` suivi d'une espace
+/// ordinaire : « chemin {p} : texte arabe ».
+List<String> unitesSecablesEnArabe({
+  String francais = 'assets/i18n/fr.i18n.json',
+  String arabe = 'assets/i18n/ar.i18n.json',
+}) {
+  final Object? fr = jsonDecode(File(francais).readAsStringSync());
+  final Object? ar = jsonDecode(File(arabe).readAsStringSync());
+  final RegExp lie = RegExp('\\{(\\w+)\\} ');
+  final List<String> fautes = <String>[];
+  void parcourir(Object? f, Object? a, List<String> chemin) {
+    if (f is String) {
+      if (a is! String) return;
+      for (final RegExpMatch m in lie.allMatches(f)) {
+        if (a.contains('{${m[1]}} ')) {
+          fautes.add('${chemin.join('.')} {${m[1]}} : $a');
+        }
+      }
+      return;
+    }
+    if (f is! Map<String, Object?> || a is! Map<String, Object?>) return;
+    f.forEach(
+      (String k, Object? v) => parcourir(v, a[k], <String>[...chemin, k]),
+    );
+  }
+
+  parcourir(fr, ar, <String>[]);
+  return fautes;
+}
