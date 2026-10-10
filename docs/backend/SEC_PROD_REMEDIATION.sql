@@ -1227,6 +1227,934 @@ $sec_prod_scanner_tests$;
 -- authenticated clients must not be able to forge or flood audit entries.
 revoke all on function public.log_sensitive_access(text, text, text, jsonb) from authenticated;
 
+-- M2: guard read RPCs and SQL helpers against suspended accounts.
+-- Wrap complete predicates so an OR branch cannot bypass account validity.
+do $sec_prod_active_read_guards$
+declare
+  r record; v_oid oid; v_definition text; v_source text;
+  v_corrected_source text; v_corrected_definition text;
+  v_old text; v_new text; v_matches integer; v_seen integer := 0; v_policy text;
+begin
+  for r in
+    select signature, md5_definition from pg_temp.sec_prod_expected_functions
+     where signature in (
+       'public.derniere_position_groupe(uuid)','public.visites_observation(uuid)',
+       'public.partie_concernee(uuid)','public.peut_poser_disponibilite(uuid)'
+     ) order by signature
+  loop
+    v_oid := to_regprocedure(r.signature);
+    if v_oid is null or md5(pg_get_functiondef(v_oid)) is distinct from r.md5_definition then
+      raise exception 'SEC-PROD M2: définition inattendue avant garde lecture: %', r.signature;
+    end if;
+    v_definition := pg_get_functiondef(v_oid);
+    select p.prosrc into v_source from pg_catalog.pg_proc p where p.oid=v_oid;
+    if r.signature='public.derniere_position_groupe(uuid)' then
+      v_old := 'if not v_autorise then';
+      v_new := 'if not coalesce(public.app_account_valid() and v_autorise, false) then';
+      v_matches := (length(v_definition)-length(replace(v_definition,v_old,'')))/length(v_old);
+      if v_matches<>1 then raise exception 'SEC-PROD M2: garde propriétaire attendue une fois dans % (trouvé %)',r.signature,v_matches; end if;
+      v_corrected_definition := replace(v_definition,v_old,v_new);
+    elsif r.signature='public.visites_observation(uuid)' then
+      v_old := 'where v.session_id = p_session_id';
+      v_new := 'where public.app_account_valid() and v.session_id = p_session_id';
+      v_matches := (length(v_definition)-length(replace(v_definition,v_old,'')))/length(v_old);
+      if v_matches<>1 then raise exception 'SEC-PROD M2: filtre session attendu une fois dans % (trouvé %)',r.signature,v_matches; end if;
+      v_corrected_definition := replace(v_definition,v_old,v_new);
+    else
+      if v_source !~* '^[[:space:]]*select[[:space:]]+' or v_source !~ ';[[:space:]]*
+declare
+  v_anon integer;
+  v_auth integer;
+  v_agent integer;
+  v_name text;
+  v_views text[] := array['concern_famille_v', 'eleves_en_attente_v', 'mes_affectations_v', 'mes_appareils_v', 'mes_codes_appairage_v', 'mes_groupes_famille_v', 'mes_groupes_v', 'mes_seances_enseignant_v', 'mes_seances_v', 'presence_seance_v', 'profils_du_foyer_v', 'regles_profil_v', 'session_peers_v', 'teacher_roster_v', 'tendance_feedback_v'];
+begin
+  select count(*) into v_anon from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+   where n.nspname='public' and p.prosecdef and has_function_privilege('anon',p.oid,'EXECUTE');
+  if v_anon <> 0 then raise exception 'SEC-PROD: % SECURITY DEFINER restent exécutables par anon', v_anon; end if;
+  -- PROD read-only ACL review: authenticator is not a member of anon/authenticated;
+  -- retain its direct pre-request hook grant and revoke the three PUBLIC-only paths.
+  if not has_function_privilege('authenticator', 'public.agent_pre_request()', 'EXECUTE') then
+    raise exception 'SEC-PROD: authenticator a perdu EXECUTE sur le pre-request hook';
+  end if;
+  if (select count(*) from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+      where n.nspname='public' and p.prosecdef and has_function_privilege('authenticator',p.oid,'EXECUTE')) <> 1 then
+    raise exception 'SEC-PROD: droits authenticator SECURITY DEFINER inattendus après retrait PUBLIC/anon';
+  end if;
+  select count(*) into v_auth from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+   where n.nspname='public' and p.prosecdef and has_function_privilege('authenticated',p.oid,'EXECUTE');
+  if has_function_privilege('authenticated', 'public.log_sensitive_access(text, text, text, jsonb)', 'EXECUTE') then
+    raise exception 'SEC-PROD: authenticated conserve EXECUTE direct sur le writer d''audit';
+  end if;
+  if v_auth <> 117 then raise exception 'SEC-PROD: nombre inattendu de RPC authenticated (% au lieu de 117)', v_auth; end if;
+  select count(*) into v_agent from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+   where n.nspname='public' and p.prosecdef and has_function_privilege('agent_ro',p.oid,'EXECUTE');
+  if v_agent <> 47 then raise exception 'SEC-PROD: droits agent_ro inattendus après retrait KYC (% au lieu de 47)', v_agent; end if;
+  if exists (
+    select 1 from pg_temp.sec_prod_expected_functions e
+    where has_function_privilege('agent_ro', e.signature, 'EXECUTE') is distinct from
+      (e.agent_ro_execute and e.signature not in ('public.read_kyc_documents()', 'public.autoriser_lecture_piece_identite(uuid)'))
+  ) then raise exception 'SEC-PROD: usage agent_ro non préservé conformément à la matrice'; end if;
+  if exists (
+    select 1 from pg_temp.sec_prod_expected_functions e
+    where has_function_privilege('authenticated', e.signature, 'EXECUTE') is distinct from (e.authenticated_execute and e.signature <> 'public.log_sensitive_access(text, text, text, jsonb)')
+  ) then raise exception 'SEC-PROD: usage authenticated non préservé'; end if;
+  if not has_function_privilege('agent_ro','public.etat_presence(uuid,uuid)','EXECUTE') then
+    raise exception 'SEC-PROD: agent_ro a perdu etat_presence';
+  end if;
+  foreach v_name in array v_views loop
+    if not coalesce((select reloptions @> array['security_invoker=true'] from pg_catalog.pg_class where oid=to_regclass(format('public.%I',v_name))), false) then
+      raise exception 'SEC-PROD: vue non invoker: public.%', v_name;
+    end if;
+    if has_table_privilege('anon',format('public.%I',v_name),'SELECT') then
+      raise exception 'SEC-PROD: anon conserve SELECT sur public.%', v_name;
+    end if;
+    if not has_table_privilege('authenticated',format('public.%I',v_name),'SELECT') then
+      raise exception 'SEC-PROD: authenticated a perdu SELECT sur public.%', v_name;
+    end if;
+  end loop;
+  foreach v_name in array array['mes_appareils_v','mes_groupes_famille_v','mes_groupes_v','mes_seances_enseignant_v','teacher_roster_v'] loop
+    if has_table_privilege('agent_ro',format('public.%I',v_name),'SELECT') then
+      raise exception 'SEC-PROD: agent_ro conserve SELECT sans droits de dépendances sur public.%', v_name;
+    end if;
+  end loop;
+  if has_table_privilege('authenticated','public.kyc_documents','SELECT')
+     or has_table_privilege('anon','public.kyc_documents','SELECT')
+     or has_table_privilege('agent_ro','public.kyc_documents','SELECT') then
+    raise exception 'SEC-PROD: SELECT direct KYC restant';
+  end if;
+  if exists(select 1 from pg_catalog.pg_policies where schemaname='storage' and tablename='objects' and policyname='kyc_lecture_admin') then
+    raise exception 'SEC-PROD: policy Storage KYC lecture encore présente';
+  end if;
+  -- Le classificateur M2 couvre un corpus de cas de réécriture ci-dessus; il ne
+  -- démontre pas le contrôle de flux arbitraire de chaque corps PL/pgSQL. Le garde
+  -- global ici vérifie précisément qu'aucun comparateur négatif historique ciblé
+  -- n'a survécu à la transformation, sans rejeter des contrôles d'identité OR valides.
+  if exists(select 1 from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+            where n.nspname in ('public','app_private') and p.prosecdef
+              and app_private.has_unsafe_role_guard(p.prosrc)) then
+    raise exception 'SEC-PROD M2: comparateur de rôle négatif historique résiduel';
+  end if;
+end
+$sec_prod_postflight$;
+
+-- Ce RPC a un chemin enseignant par appartenance de séance; vérifier aussi la
+-- garde globale de validité du compte et la séparation des rôles après simulation.
+do $sec_prod_teacher_publish_postflight$
+declare
+  v_source text;
+  v_normalized text;
+  v_guard text := $guard$if not coalesce(((public.app_role() = 'teacher' and public.session_belongs_to_teacher(p_session_id, auth.uid())) or public.app_role() = 'admin') and public.app_account_valid(), false) then$guard$;
+begin
+  select p.prosrc into v_source
+    from pg_catalog.pg_proc p
+   where p.oid = to_regprocedure('public.publier_etat_partage(uuid, uuid, uuid, jsonb, jsonb, text, jsonb, jsonb, jsonb, integer)');
+  v_normalized := regexp_replace(lower(coalesce(v_source, '')), '[[:space:]]+', ' ', 'g');
+  if strpos(v_normalized, v_guard) = 0 then
+    raise exception 'SEC-PROD M2: garde teacher/admin valide manquante dans publier_etat_partage';
+  end if;
+end
+$sec_prod_teacher_publish_postflight$;
+
+do $sec_prod_active_read_postflight$
+declare v_source text; v_normalized text; v_policy text;
+begin
+  select prosrc into v_source from pg_catalog.pg_proc where oid=to_regprocedure('public.derniere_position_groupe(uuid)');
+  v_normalized:=regexp_replace(lower(coalesce(v_source,'')),'[[:space:]]+','','g');
+  if position('ifnotcoalesce(public.app_account_valid()andv_autorise,false)then' in v_normalized)=0 then raise exception 'SEC-PROD M2: account guard missing from derniere_position_groupe'; end if;
+
+  select prosrc into v_source from pg_catalog.pg_proc where oid=to_regprocedure('public.visites_observation(uuid)');
+  v_normalized:=regexp_replace(lower(coalesce(v_source,'')),'[[:space:]]+','','g');
+  if position('wherepublic.app_account_valid()andv.session_id=p_session_id' in v_normalized)=0 then raise exception 'SEC-PROD M2: account filter missing from visites_observation'; end if;
+
+  for v_source in select p.prosrc from pg_catalog.pg_proc p where p.oid in (
+    to_regprocedure('public.partie_concernee(uuid)'),to_regprocedure('public.peut_poser_disponibilite(uuid)')
+  ) loop
+    v_normalized:=regexp_replace(lower(coalesce(v_source,'')),'[[:space:]]+','','g');
+    if v_normalized !~ '^selectcoalesce[(]public[.]app_account_valid[(][)]and[(]' or v_normalized !~ '[)][,]false[)][;]
+  r record;
+  v_oid oid;
+  v_options text[];
+  v_expected_agent boolean;
+begin
+  for r in select * from pg_temp.sec_prod_expected_views order by view_name loop
+    v_oid := to_regclass(format('public.%I', r.view_name));
+    if v_oid is null then raise exception 'SEC-PROD: vue absente après remédiation: public.%', r.view_name; end if;
+    if md5(pg_get_viewdef(v_oid, true)) is distinct from r.md5_definition then
+      raise exception 'SEC-PROD: définition modifiée pendant remédiation: public.%', r.view_name;
+    end if;
+    select reloptions into v_options from pg_catalog.pg_class where oid=v_oid;
+    if not coalesce(v_options @> array['security_invoker=true'], false)
+       or cardinality(coalesce(v_options, array[]::text[])) <> cardinality(r.expected_reloptions) + 1
+       or not coalesce(v_options @> r.expected_reloptions, false) then
+      raise exception 'SEC-PROD: options invoker/barrier inattendues: public.%', r.view_name;
+    end if;
+    v_expected_agent := r.agent_ro_select
+      and r.view_name not in ('mes_appareils_v','mes_groupes_famille_v','mes_groupes_v','mes_seances_enseignant_v','teacher_roster_v');
+    if has_table_privilege('anon', v_oid, 'SELECT')
+       or has_table_privilege('authenticated', v_oid, 'SELECT') is distinct from r.authenticated_select
+       or has_table_privilege('agent_ro', v_oid, 'SELECT') is distinct from v_expected_agent then
+      raise exception 'SEC-PROD: droits SELECT post-remédiation inattendus: public.%', r.view_name;
+    end if;
+  end loop;
+end
+$sec_prod_views_postflight$;
+
+-- Ne modifie ni btree_gist ni l'index sessions_no_teacher_overlap:
+-- pg_depend établit que le déplacement requiert une opération séparée et testée.
+commit;
+ then
+        raise exception 'SEC-PROD M2: forme SQL inattendue pour %',r.signature;
+      end if;
+      v_corrected_source := regexp_replace(v_source,'^[[:space:]]*select[[:space:]]+','select coalesce(public.app_account_valid() and (','i');
+      v_corrected_source := regexp_replace(v_corrected_source,';[[:space:]]*
+declare
+  v_anon integer;
+  v_auth integer;
+  v_agent integer;
+  v_name text;
+  v_views text[] := array['concern_famille_v', 'eleves_en_attente_v', 'mes_affectations_v', 'mes_appareils_v', 'mes_codes_appairage_v', 'mes_groupes_famille_v', 'mes_groupes_v', 'mes_seances_enseignant_v', 'mes_seances_v', 'presence_seance_v', 'profils_du_foyer_v', 'regles_profil_v', 'session_peers_v', 'teacher_roster_v', 'tendance_feedback_v'];
+begin
+  select count(*) into v_anon from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+   where n.nspname='public' and p.prosecdef and has_function_privilege('anon',p.oid,'EXECUTE');
+  if v_anon <> 0 then raise exception 'SEC-PROD: % SECURITY DEFINER restent exécutables par anon', v_anon; end if;
+  -- PROD read-only ACL review: authenticator is not a member of anon/authenticated;
+  -- retain its direct pre-request hook grant and revoke the three PUBLIC-only paths.
+  if not has_function_privilege('authenticator', 'public.agent_pre_request()', 'EXECUTE') then
+    raise exception 'SEC-PROD: authenticator a perdu EXECUTE sur le pre-request hook';
+  end if;
+  if (select count(*) from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+      where n.nspname='public' and p.prosecdef and has_function_privilege('authenticator',p.oid,'EXECUTE')) <> 1 then
+    raise exception 'SEC-PROD: droits authenticator SECURITY DEFINER inattendus après retrait PUBLIC/anon';
+  end if;
+  select count(*) into v_auth from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+   where n.nspname='public' and p.prosecdef and has_function_privilege('authenticated',p.oid,'EXECUTE');
+  if has_function_privilege('authenticated', 'public.log_sensitive_access(text, text, text, jsonb)', 'EXECUTE') then
+    raise exception 'SEC-PROD: authenticated conserve EXECUTE direct sur le writer d''audit';
+  end if;
+  if v_auth <> 117 then raise exception 'SEC-PROD: nombre inattendu de RPC authenticated (% au lieu de 117)', v_auth; end if;
+  select count(*) into v_agent from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+   where n.nspname='public' and p.prosecdef and has_function_privilege('agent_ro',p.oid,'EXECUTE');
+  if v_agent <> 47 then raise exception 'SEC-PROD: droits agent_ro inattendus après retrait KYC (% au lieu de 47)', v_agent; end if;
+  if exists (
+    select 1 from pg_temp.sec_prod_expected_functions e
+    where has_function_privilege('agent_ro', e.signature, 'EXECUTE') is distinct from
+      (e.agent_ro_execute and e.signature not in ('public.read_kyc_documents()', 'public.autoriser_lecture_piece_identite(uuid)'))
+  ) then raise exception 'SEC-PROD: usage agent_ro non préservé conformément à la matrice'; end if;
+  if exists (
+    select 1 from pg_temp.sec_prod_expected_functions e
+    where has_function_privilege('authenticated', e.signature, 'EXECUTE') is distinct from (e.authenticated_execute and e.signature <> 'public.log_sensitive_access(text, text, text, jsonb)')
+  ) then raise exception 'SEC-PROD: usage authenticated non préservé'; end if;
+  if not has_function_privilege('agent_ro','public.etat_presence(uuid,uuid)','EXECUTE') then
+    raise exception 'SEC-PROD: agent_ro a perdu etat_presence';
+  end if;
+  foreach v_name in array v_views loop
+    if not coalesce((select reloptions @> array['security_invoker=true'] from pg_catalog.pg_class where oid=to_regclass(format('public.%I',v_name))), false) then
+      raise exception 'SEC-PROD: vue non invoker: public.%', v_name;
+    end if;
+    if has_table_privilege('anon',format('public.%I',v_name),'SELECT') then
+      raise exception 'SEC-PROD: anon conserve SELECT sur public.%', v_name;
+    end if;
+    if not has_table_privilege('authenticated',format('public.%I',v_name),'SELECT') then
+      raise exception 'SEC-PROD: authenticated a perdu SELECT sur public.%', v_name;
+    end if;
+  end loop;
+  foreach v_name in array array['mes_appareils_v','mes_groupes_famille_v','mes_groupes_v','mes_seances_enseignant_v','teacher_roster_v'] loop
+    if has_table_privilege('agent_ro',format('public.%I',v_name),'SELECT') then
+      raise exception 'SEC-PROD: agent_ro conserve SELECT sans droits de dépendances sur public.%', v_name;
+    end if;
+  end loop;
+  if has_table_privilege('authenticated','public.kyc_documents','SELECT')
+     or has_table_privilege('anon','public.kyc_documents','SELECT')
+     or has_table_privilege('agent_ro','public.kyc_documents','SELECT') then
+    raise exception 'SEC-PROD: SELECT direct KYC restant';
+  end if;
+  if exists(select 1 from pg_catalog.pg_policies where schemaname='storage' and tablename='objects' and policyname='kyc_lecture_admin') then
+    raise exception 'SEC-PROD: policy Storage KYC lecture encore présente';
+  end if;
+  -- Le classificateur M2 couvre un corpus de cas de réécriture ci-dessus; il ne
+  -- démontre pas le contrôle de flux arbitraire de chaque corps PL/pgSQL. Le garde
+  -- global ici vérifie précisément qu'aucun comparateur négatif historique ciblé
+  -- n'a survécu à la transformation, sans rejeter des contrôles d'identité OR valides.
+  if exists(select 1 from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+            where n.nspname in ('public','app_private') and p.prosecdef
+              and app_private.has_unsafe_role_guard(p.prosrc)) then
+    raise exception 'SEC-PROD M2: comparateur de rôle négatif historique résiduel';
+  end if;
+end
+$sec_prod_postflight$;
+
+-- Ce RPC a un chemin enseignant par appartenance de séance; vérifier aussi la
+-- garde globale de validité du compte et la séparation des rôles après simulation.
+do $sec_prod_teacher_publish_postflight$
+declare
+  v_source text;
+  v_normalized text;
+  v_guard text := $guard$if not coalesce(((public.app_role() = 'teacher' and public.session_belongs_to_teacher(p_session_id, auth.uid())) or public.app_role() = 'admin') and public.app_account_valid(), false) then$guard$;
+begin
+  select p.prosrc into v_source
+    from pg_catalog.pg_proc p
+   where p.oid = to_regprocedure('public.publier_etat_partage(uuid, uuid, uuid, jsonb, jsonb, text, jsonb, jsonb, jsonb, integer)');
+  v_normalized := regexp_replace(lower(coalesce(v_source, '')), '[[:space:]]+', ' ', 'g');
+  if strpos(v_normalized, v_guard) = 0 then
+    raise exception 'SEC-PROD M2: garde teacher/admin valide manquante dans publier_etat_partage';
+  end if;
+end
+$sec_prod_teacher_publish_postflight$;
+
+do $sec_prod_views_postflight$
+declare
+  r record;
+  v_oid oid;
+  v_options text[];
+  v_expected_agent boolean;
+begin
+  for r in select * from pg_temp.sec_prod_expected_views order by view_name loop
+    v_oid := to_regclass(format('public.%I', r.view_name));
+    if v_oid is null then raise exception 'SEC-PROD: vue absente après remédiation: public.%', r.view_name; end if;
+    if md5(pg_get_viewdef(v_oid, true)) is distinct from r.md5_definition then
+      raise exception 'SEC-PROD: définition modifiée pendant remédiation: public.%', r.view_name;
+    end if;
+    select reloptions into v_options from pg_catalog.pg_class where oid=v_oid;
+    if not coalesce(v_options @> array['security_invoker=true'], false)
+       or cardinality(coalesce(v_options, array[]::text[])) <> cardinality(r.expected_reloptions) + 1
+       or not coalesce(v_options @> r.expected_reloptions, false) then
+      raise exception 'SEC-PROD: options invoker/barrier inattendues: public.%', r.view_name;
+    end if;
+    v_expected_agent := r.agent_ro_select
+      and r.view_name not in ('mes_appareils_v','mes_groupes_famille_v','mes_groupes_v','mes_seances_enseignant_v','teacher_roster_v');
+    if has_table_privilege('anon', v_oid, 'SELECT')
+       or has_table_privilege('authenticated', v_oid, 'SELECT') is distinct from r.authenticated_select
+       or has_table_privilege('agent_ro', v_oid, 'SELECT') is distinct from v_expected_agent then
+      raise exception 'SEC-PROD: droits SELECT post-remédiation inattendus: public.%', r.view_name;
+    end if;
+  end loop;
+end
+$sec_prod_views_postflight$;
+
+-- Ne modifie ni btree_gist ni l'index sessions_no_teacher_overlap:
+-- pg_depend établit que le déplacement requiert une opération séparée et testée.
+commit;
+,'), false);');
+      if v_corrected_source is not distinct from v_source
+         or v_corrected_source !~* '^[[:space:]]*select[[:space:]]+coalesce[[:space:]]*[(][[:space:]]*public[.]app_account_valid[[:space:]]*[(][[:space:]]*[)][[:space:]]+and[[:space:]]*[(]'
+         or v_corrected_source !~ '[)][[:space:]]*,[[:space:]]*false[)][[:space:]]*;[[:space:]]*
+declare
+  v_anon integer;
+  v_auth integer;
+  v_agent integer;
+  v_name text;
+  v_views text[] := array['concern_famille_v', 'eleves_en_attente_v', 'mes_affectations_v', 'mes_appareils_v', 'mes_codes_appairage_v', 'mes_groupes_famille_v', 'mes_groupes_v', 'mes_seances_enseignant_v', 'mes_seances_v', 'presence_seance_v', 'profils_du_foyer_v', 'regles_profil_v', 'session_peers_v', 'teacher_roster_v', 'tendance_feedback_v'];
+begin
+  select count(*) into v_anon from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+   where n.nspname='public' and p.prosecdef and has_function_privilege('anon',p.oid,'EXECUTE');
+  if v_anon <> 0 then raise exception 'SEC-PROD: % SECURITY DEFINER restent exécutables par anon', v_anon; end if;
+  -- PROD read-only ACL review: authenticator is not a member of anon/authenticated;
+  -- retain its direct pre-request hook grant and revoke the three PUBLIC-only paths.
+  if not has_function_privilege('authenticator', 'public.agent_pre_request()', 'EXECUTE') then
+    raise exception 'SEC-PROD: authenticator a perdu EXECUTE sur le pre-request hook';
+  end if;
+  if (select count(*) from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+      where n.nspname='public' and p.prosecdef and has_function_privilege('authenticator',p.oid,'EXECUTE')) <> 1 then
+    raise exception 'SEC-PROD: droits authenticator SECURITY DEFINER inattendus après retrait PUBLIC/anon';
+  end if;
+  select count(*) into v_auth from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+   where n.nspname='public' and p.prosecdef and has_function_privilege('authenticated',p.oid,'EXECUTE');
+  if has_function_privilege('authenticated', 'public.log_sensitive_access(text, text, text, jsonb)', 'EXECUTE') then
+    raise exception 'SEC-PROD: authenticated conserve EXECUTE direct sur le writer d''audit';
+  end if;
+  if v_auth <> 117 then raise exception 'SEC-PROD: nombre inattendu de RPC authenticated (% au lieu de 117)', v_auth; end if;
+  select count(*) into v_agent from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+   where n.nspname='public' and p.prosecdef and has_function_privilege('agent_ro',p.oid,'EXECUTE');
+  if v_agent <> 47 then raise exception 'SEC-PROD: droits agent_ro inattendus après retrait KYC (% au lieu de 47)', v_agent; end if;
+  if exists (
+    select 1 from pg_temp.sec_prod_expected_functions e
+    where has_function_privilege('agent_ro', e.signature, 'EXECUTE') is distinct from
+      (e.agent_ro_execute and e.signature not in ('public.read_kyc_documents()', 'public.autoriser_lecture_piece_identite(uuid)'))
+  ) then raise exception 'SEC-PROD: usage agent_ro non préservé conformément à la matrice'; end if;
+  if exists (
+    select 1 from pg_temp.sec_prod_expected_functions e
+    where has_function_privilege('authenticated', e.signature, 'EXECUTE') is distinct from (e.authenticated_execute and e.signature <> 'public.log_sensitive_access(text, text, text, jsonb)')
+  ) then raise exception 'SEC-PROD: usage authenticated non préservé'; end if;
+  if not has_function_privilege('agent_ro','public.etat_presence(uuid,uuid)','EXECUTE') then
+    raise exception 'SEC-PROD: agent_ro a perdu etat_presence';
+  end if;
+  foreach v_name in array v_views loop
+    if not coalesce((select reloptions @> array['security_invoker=true'] from pg_catalog.pg_class where oid=to_regclass(format('public.%I',v_name))), false) then
+      raise exception 'SEC-PROD: vue non invoker: public.%', v_name;
+    end if;
+    if has_table_privilege('anon',format('public.%I',v_name),'SELECT') then
+      raise exception 'SEC-PROD: anon conserve SELECT sur public.%', v_name;
+    end if;
+    if not has_table_privilege('authenticated',format('public.%I',v_name),'SELECT') then
+      raise exception 'SEC-PROD: authenticated a perdu SELECT sur public.%', v_name;
+    end if;
+  end loop;
+  foreach v_name in array array['mes_appareils_v','mes_groupes_famille_v','mes_groupes_v','mes_seances_enseignant_v','teacher_roster_v'] loop
+    if has_table_privilege('agent_ro',format('public.%I',v_name),'SELECT') then
+      raise exception 'SEC-PROD: agent_ro conserve SELECT sans droits de dépendances sur public.%', v_name;
+    end if;
+  end loop;
+  if has_table_privilege('authenticated','public.kyc_documents','SELECT')
+     or has_table_privilege('anon','public.kyc_documents','SELECT')
+     or has_table_privilege('agent_ro','public.kyc_documents','SELECT') then
+    raise exception 'SEC-PROD: SELECT direct KYC restant';
+  end if;
+  if exists(select 1 from pg_catalog.pg_policies where schemaname='storage' and tablename='objects' and policyname='kyc_lecture_admin') then
+    raise exception 'SEC-PROD: policy Storage KYC lecture encore présente';
+  end if;
+  -- Le classificateur M2 couvre un corpus de cas de réécriture ci-dessus; il ne
+  -- démontre pas le contrôle de flux arbitraire de chaque corps PL/pgSQL. Le garde
+  -- global ici vérifie précisément qu'aucun comparateur négatif historique ciblé
+  -- n'a survécu à la transformation, sans rejeter des contrôles d'identité OR valides.
+  if exists(select 1 from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+            where n.nspname in ('public','app_private') and p.prosecdef
+              and app_private.has_unsafe_role_guard(p.prosrc)) then
+    raise exception 'SEC-PROD M2: comparateur de rôle négatif historique résiduel';
+  end if;
+end
+$sec_prod_postflight$;
+
+-- Ce RPC a un chemin enseignant par appartenance de séance; vérifier aussi la
+-- garde globale de validité du compte et la séparation des rôles après simulation.
+do $sec_prod_teacher_publish_postflight$
+declare
+  v_source text;
+  v_normalized text;
+  v_guard text := $guard$if not coalesce(((public.app_role() = 'teacher' and public.session_belongs_to_teacher(p_session_id, auth.uid())) or public.app_role() = 'admin') and public.app_account_valid(), false) then$guard$;
+begin
+  select p.prosrc into v_source
+    from pg_catalog.pg_proc p
+   where p.oid = to_regprocedure('public.publier_etat_partage(uuid, uuid, uuid, jsonb, jsonb, text, jsonb, jsonb, jsonb, integer)');
+  v_normalized := regexp_replace(lower(coalesce(v_source, '')), '[[:space:]]+', ' ', 'g');
+  if strpos(v_normalized, v_guard) = 0 then
+    raise exception 'SEC-PROD M2: garde teacher/admin valide manquante dans publier_etat_partage';
+  end if;
+end
+$sec_prod_teacher_publish_postflight$;
+
+do $sec_prod_views_postflight$
+declare
+  r record;
+  v_oid oid;
+  v_options text[];
+  v_expected_agent boolean;
+begin
+  for r in select * from pg_temp.sec_prod_expected_views order by view_name loop
+    v_oid := to_regclass(format('public.%I', r.view_name));
+    if v_oid is null then raise exception 'SEC-PROD: vue absente après remédiation: public.%', r.view_name; end if;
+    if md5(pg_get_viewdef(v_oid, true)) is distinct from r.md5_definition then
+      raise exception 'SEC-PROD: définition modifiée pendant remédiation: public.%', r.view_name;
+    end if;
+    select reloptions into v_options from pg_catalog.pg_class where oid=v_oid;
+    if not coalesce(v_options @> array['security_invoker=true'], false)
+       or cardinality(coalesce(v_options, array[]::text[])) <> cardinality(r.expected_reloptions) + 1
+       or not coalesce(v_options @> r.expected_reloptions, false) then
+      raise exception 'SEC-PROD: options invoker/barrier inattendues: public.%', r.view_name;
+    end if;
+    v_expected_agent := r.agent_ro_select
+      and r.view_name not in ('mes_appareils_v','mes_groupes_famille_v','mes_groupes_v','mes_seances_enseignant_v','teacher_roster_v');
+    if has_table_privilege('anon', v_oid, 'SELECT')
+       or has_table_privilege('authenticated', v_oid, 'SELECT') is distinct from r.authenticated_select
+       or has_table_privilege('agent_ro', v_oid, 'SELECT') is distinct from v_expected_agent then
+      raise exception 'SEC-PROD: droits SELECT post-remédiation inattendus: public.%', r.view_name;
+    end if;
+  end loop;
+end
+$sec_prod_views_postflight$;
+
+-- Ne modifie ni btree_gist ni l'index sessions_no_teacher_overlap:
+-- pg_depend établit que le déplacement requiert une opération séparée et testée.
+commit;
+ then
+        raise exception 'SEC-PROD M2: enveloppe compte actif invalide pour %',r.signature;
+      end if;
+      v_matches := (length(v_definition)-length(replace(v_definition,v_source,'')))/length(v_source);
+      if v_matches<>1 then raise exception 'SEC-PROD M2: source SQL non unique dans % (trouvé %)',r.signature,v_matches; end if;
+      v_corrected_definition := replace(v_definition,v_source,v_corrected_source);
+    end if;
+    if v_corrected_definition is not distinct from v_definition then raise exception 'SEC-PROD M2: aucun changement généré pour %',r.signature; end if;
+    execute v_corrected_definition;
+    v_seen := v_seen+1;
+  end loop;
+  if v_seen<>4 then raise exception 'SEC-PROD M2: nombre de RPC/helpers corrigés inattendu (%)',v_seen; end if;
+
+  select qual into v_policy from pg_catalog.pg_policies where schemaname='public' and tablename='matching_requests' and policyname='matching_requests_parties_read';
+  if v_policy is distinct from '((requested_by = auth.uid()) OR partie_concernee(subject_profile_id))' then raise exception 'SEC-PROD M2: policy matching_requests_parties_read divergée: %',v_policy; end if;
+  select qual into v_policy from pg_catalog.pg_policies where schemaname='public' and tablename='teacher_student_assignments' and policyname='assignments_parties_read';
+  if v_policy is distinct from '(partie_concernee(student_id) OR (teacher_id = auth.uid()))' then raise exception 'SEC-PROD M2: policy assignments_parties_read divergée: %',v_policy; end if;
+
+  alter policy matching_requests_parties_read on public.matching_requests
+    using (public.app_account_valid() and (requested_by=auth.uid() or public.partie_concernee(subject_profile_id)));
+  alter policy assignments_parties_read on public.teacher_student_assignments
+    using (public.app_account_valid() and (public.partie_concernee(student_id) or teacher_id=auth.uid()));
+end
+$sec_prod_active_read_guards$;
+
+do $sec_prod_postflight$
+declare
+  v_anon integer;
+  v_auth integer;
+  v_agent integer;
+  v_name text;
+  v_views text[] := array['concern_famille_v', 'eleves_en_attente_v', 'mes_affectations_v', 'mes_appareils_v', 'mes_codes_appairage_v', 'mes_groupes_famille_v', 'mes_groupes_v', 'mes_seances_enseignant_v', 'mes_seances_v', 'presence_seance_v', 'profils_du_foyer_v', 'regles_profil_v', 'session_peers_v', 'teacher_roster_v', 'tendance_feedback_v'];
+begin
+  select count(*) into v_anon from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+   where n.nspname='public' and p.prosecdef and has_function_privilege('anon',p.oid,'EXECUTE');
+  if v_anon <> 0 then raise exception 'SEC-PROD: % SECURITY DEFINER restent exécutables par anon', v_anon; end if;
+  -- PROD read-only ACL review: authenticator is not a member of anon/authenticated;
+  -- retain its direct pre-request hook grant and revoke the three PUBLIC-only paths.
+  if not has_function_privilege('authenticator', 'public.agent_pre_request()', 'EXECUTE') then
+    raise exception 'SEC-PROD: authenticator a perdu EXECUTE sur le pre-request hook';
+  end if;
+  if (select count(*) from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+      where n.nspname='public' and p.prosecdef and has_function_privilege('authenticator',p.oid,'EXECUTE')) <> 1 then
+    raise exception 'SEC-PROD: droits authenticator SECURITY DEFINER inattendus après retrait PUBLIC/anon';
+  end if;
+  select count(*) into v_auth from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+   where n.nspname='public' and p.prosecdef and has_function_privilege('authenticated',p.oid,'EXECUTE');
+  if has_function_privilege('authenticated', 'public.log_sensitive_access(text, text, text, jsonb)', 'EXECUTE') then
+    raise exception 'SEC-PROD: authenticated conserve EXECUTE direct sur le writer d''audit';
+  end if;
+  if v_auth <> 117 then raise exception 'SEC-PROD: nombre inattendu de RPC authenticated (% au lieu de 117)', v_auth; end if;
+  select count(*) into v_agent from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+   where n.nspname='public' and p.prosecdef and has_function_privilege('agent_ro',p.oid,'EXECUTE');
+  if v_agent <> 47 then raise exception 'SEC-PROD: droits agent_ro inattendus après retrait KYC (% au lieu de 47)', v_agent; end if;
+  if exists (
+    select 1 from pg_temp.sec_prod_expected_functions e
+    where has_function_privilege('agent_ro', e.signature, 'EXECUTE') is distinct from
+      (e.agent_ro_execute and e.signature not in ('public.read_kyc_documents()', 'public.autoriser_lecture_piece_identite(uuid)'))
+  ) then raise exception 'SEC-PROD: usage agent_ro non préservé conformément à la matrice'; end if;
+  if exists (
+    select 1 from pg_temp.sec_prod_expected_functions e
+    where has_function_privilege('authenticated', e.signature, 'EXECUTE') is distinct from (e.authenticated_execute and e.signature <> 'public.log_sensitive_access(text, text, text, jsonb)')
+  ) then raise exception 'SEC-PROD: usage authenticated non préservé'; end if;
+  if not has_function_privilege('agent_ro','public.etat_presence(uuid,uuid)','EXECUTE') then
+    raise exception 'SEC-PROD: agent_ro a perdu etat_presence';
+  end if;
+  foreach v_name in array v_views loop
+    if not coalesce((select reloptions @> array['security_invoker=true'] from pg_catalog.pg_class where oid=to_regclass(format('public.%I',v_name))), false) then
+      raise exception 'SEC-PROD: vue non invoker: public.%', v_name;
+    end if;
+    if has_table_privilege('anon',format('public.%I',v_name),'SELECT') then
+      raise exception 'SEC-PROD: anon conserve SELECT sur public.%', v_name;
+    end if;
+    if not has_table_privilege('authenticated',format('public.%I',v_name),'SELECT') then
+      raise exception 'SEC-PROD: authenticated a perdu SELECT sur public.%', v_name;
+    end if;
+  end loop;
+  foreach v_name in array array['mes_appareils_v','mes_groupes_famille_v','mes_groupes_v','mes_seances_enseignant_v','teacher_roster_v'] loop
+    if has_table_privilege('agent_ro',format('public.%I',v_name),'SELECT') then
+      raise exception 'SEC-PROD: agent_ro conserve SELECT sans droits de dépendances sur public.%', v_name;
+    end if;
+  end loop;
+  if has_table_privilege('authenticated','public.kyc_documents','SELECT')
+     or has_table_privilege('anon','public.kyc_documents','SELECT')
+     or has_table_privilege('agent_ro','public.kyc_documents','SELECT') then
+    raise exception 'SEC-PROD: SELECT direct KYC restant';
+  end if;
+  if exists(select 1 from pg_catalog.pg_policies where schemaname='storage' and tablename='objects' and policyname='kyc_lecture_admin') then
+    raise exception 'SEC-PROD: policy Storage KYC lecture encore présente';
+  end if;
+  -- Le classificateur M2 couvre un corpus de cas de réécriture ci-dessus; il ne
+  -- démontre pas le contrôle de flux arbitraire de chaque corps PL/pgSQL. Le garde
+  -- global ici vérifie précisément qu'aucun comparateur négatif historique ciblé
+  -- n'a survécu à la transformation, sans rejeter des contrôles d'identité OR valides.
+  if exists(select 1 from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+            where n.nspname in ('public','app_private') and p.prosecdef
+              and app_private.has_unsafe_role_guard(p.prosrc)) then
+    raise exception 'SEC-PROD M2: comparateur de rôle négatif historique résiduel';
+  end if;
+end
+$sec_prod_postflight$;
+
+-- Ce RPC a un chemin enseignant par appartenance de séance; vérifier aussi la
+-- garde globale de validité du compte et la séparation des rôles après simulation.
+do $sec_prod_teacher_publish_postflight$
+declare
+  v_source text;
+  v_normalized text;
+  v_guard text := $guard$if not coalesce(((public.app_role() = 'teacher' and public.session_belongs_to_teacher(p_session_id, auth.uid())) or public.app_role() = 'admin') and public.app_account_valid(), false) then$guard$;
+begin
+  select p.prosrc into v_source
+    from pg_catalog.pg_proc p
+   where p.oid = to_regprocedure('public.publier_etat_partage(uuid, uuid, uuid, jsonb, jsonb, text, jsonb, jsonb, jsonb, integer)');
+  v_normalized := regexp_replace(lower(coalesce(v_source, '')), '[[:space:]]+', ' ', 'g');
+  if strpos(v_normalized, v_guard) = 0 then
+    raise exception 'SEC-PROD M2: garde teacher/admin valide manquante dans publier_etat_partage';
+  end if;
+end
+$sec_prod_teacher_publish_postflight$;
+
+do $sec_prod_views_postflight$
+declare
+  r record;
+  v_oid oid;
+  v_options text[];
+  v_expected_agent boolean;
+begin
+  for r in select * from pg_temp.sec_prod_expected_views order by view_name loop
+    v_oid := to_regclass(format('public.%I', r.view_name));
+    if v_oid is null then raise exception 'SEC-PROD: vue absente après remédiation: public.%', r.view_name; end if;
+    if md5(pg_get_viewdef(v_oid, true)) is distinct from r.md5_definition then
+      raise exception 'SEC-PROD: définition modifiée pendant remédiation: public.%', r.view_name;
+    end if;
+    select reloptions into v_options from pg_catalog.pg_class where oid=v_oid;
+    if not coalesce(v_options @> array['security_invoker=true'], false)
+       or cardinality(coalesce(v_options, array[]::text[])) <> cardinality(r.expected_reloptions) + 1
+       or not coalesce(v_options @> r.expected_reloptions, false) then
+      raise exception 'SEC-PROD: options invoker/barrier inattendues: public.%', r.view_name;
+    end if;
+    v_expected_agent := r.agent_ro_select
+      and r.view_name not in ('mes_appareils_v','mes_groupes_famille_v','mes_groupes_v','mes_seances_enseignant_v','teacher_roster_v');
+    if has_table_privilege('anon', v_oid, 'SELECT')
+       or has_table_privilege('authenticated', v_oid, 'SELECT') is distinct from r.authenticated_select
+       or has_table_privilege('agent_ro', v_oid, 'SELECT') is distinct from v_expected_agent then
+      raise exception 'SEC-PROD: droits SELECT post-remédiation inattendus: public.%', r.view_name;
+    end if;
+  end loop;
+end
+$sec_prod_views_postflight$;
+
+-- Ne modifie ni btree_gist ni l'index sessions_no_teacher_overlap:
+-- pg_depend établit que le déplacement requiert une opération séparée et testée.
+commit;
+ then
+      raise exception 'SEC-PROD M2: SQL helper not wholly guarded by account-active';
+    end if;
+  end loop;
+
+  select qual into v_policy from pg_catalog.pg_policies where schemaname='public' and tablename='matching_requests' and policyname='matching_requests_parties_read';
+  v_normalized:=regexp_replace(replace(lower(coalesce(v_policy,'')),'public.',''),'[[:space:]]+','','g');
+  if v_normalized<>'(app_account_valid()and((requested_by=auth.uid())orpartie_concernee(subject_profile_id)))' then raise exception 'SEC-PROD M2: matching_requests guard unexpected: %',v_policy; end if;
+
+  select qual into v_policy from pg_catalog.pg_policies where schemaname='public' and tablename='teacher_student_assignments' and policyname='assignments_parties_read';
+  v_normalized:=regexp_replace(replace(lower(coalesce(v_policy,'')),'public.',''),'[[:space:]]+','','g');
+  if v_normalized<>'(app_account_valid()and(partie_concernee(student_id)or(teacher_id=auth.uid())))' then raise exception 'SEC-PROD M2: assignments guard unexpected: %',v_policy; end if;
+end
+$sec_prod_active_read_postflight$;
+
+do $sec_prod_views_postflight$
+declare
+  r record;
+  v_oid oid;
+  v_options text[];
+  v_expected_agent boolean;
+begin
+  for r in select * from pg_temp.sec_prod_expected_views order by view_name loop
+    v_oid := to_regclass(format('public.%I', r.view_name));
+    if v_oid is null then raise exception 'SEC-PROD: vue absente après remédiation: public.%', r.view_name; end if;
+    if md5(pg_get_viewdef(v_oid, true)) is distinct from r.md5_definition then
+      raise exception 'SEC-PROD: définition modifiée pendant remédiation: public.%', r.view_name;
+    end if;
+    select reloptions into v_options from pg_catalog.pg_class where oid=v_oid;
+    if not coalesce(v_options @> array['security_invoker=true'], false)
+       or cardinality(coalesce(v_options, array[]::text[])) <> cardinality(r.expected_reloptions) + 1
+       or not coalesce(v_options @> r.expected_reloptions, false) then
+      raise exception 'SEC-PROD: options invoker/barrier inattendues: public.%', r.view_name;
+    end if;
+    v_expected_agent := r.agent_ro_select
+      and r.view_name not in ('mes_appareils_v','mes_groupes_famille_v','mes_groupes_v','mes_seances_enseignant_v','teacher_roster_v');
+    if has_table_privilege('anon', v_oid, 'SELECT')
+       or has_table_privilege('authenticated', v_oid, 'SELECT') is distinct from r.authenticated_select
+       or has_table_privilege('agent_ro', v_oid, 'SELECT') is distinct from v_expected_agent then
+      raise exception 'SEC-PROD: droits SELECT post-remédiation inattendus: public.%', r.view_name;
+    end if;
+  end loop;
+end
+$sec_prod_views_postflight$;
+
+-- Ne modifie ni btree_gist ni l'index sessions_no_teacher_overlap:
+-- pg_depend établit que le déplacement requiert une opération séparée et testée.
+commit;
+ then
+        raise exception 'SEC-PROD M2: forme SQL inattendue pour %',r.signature;
+      end if;
+      v_corrected_source := regexp_replace(v_source,'^[[:space:]]*select[[:space:]]+','select coalesce(public.app_account_valid() and (','i');
+      v_corrected_source := regexp_replace(v_corrected_source,';[[:space:]]*
+declare
+  v_anon integer;
+  v_auth integer;
+  v_agent integer;
+  v_name text;
+  v_views text[] := array['concern_famille_v', 'eleves_en_attente_v', 'mes_affectations_v', 'mes_appareils_v', 'mes_codes_appairage_v', 'mes_groupes_famille_v', 'mes_groupes_v', 'mes_seances_enseignant_v', 'mes_seances_v', 'presence_seance_v', 'profils_du_foyer_v', 'regles_profil_v', 'session_peers_v', 'teacher_roster_v', 'tendance_feedback_v'];
+begin
+  select count(*) into v_anon from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+   where n.nspname='public' and p.prosecdef and has_function_privilege('anon',p.oid,'EXECUTE');
+  if v_anon <> 0 then raise exception 'SEC-PROD: % SECURITY DEFINER restent exécutables par anon', v_anon; end if;
+  -- PROD read-only ACL review: authenticator is not a member of anon/authenticated;
+  -- retain its direct pre-request hook grant and revoke the three PUBLIC-only paths.
+  if not has_function_privilege('authenticator', 'public.agent_pre_request()', 'EXECUTE') then
+    raise exception 'SEC-PROD: authenticator a perdu EXECUTE sur le pre-request hook';
+  end if;
+  if (select count(*) from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+      where n.nspname='public' and p.prosecdef and has_function_privilege('authenticator',p.oid,'EXECUTE')) <> 1 then
+    raise exception 'SEC-PROD: droits authenticator SECURITY DEFINER inattendus après retrait PUBLIC/anon';
+  end if;
+  select count(*) into v_auth from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+   where n.nspname='public' and p.prosecdef and has_function_privilege('authenticated',p.oid,'EXECUTE');
+  if has_function_privilege('authenticated', 'public.log_sensitive_access(text, text, text, jsonb)', 'EXECUTE') then
+    raise exception 'SEC-PROD: authenticated conserve EXECUTE direct sur le writer d''audit';
+  end if;
+  if v_auth <> 117 then raise exception 'SEC-PROD: nombre inattendu de RPC authenticated (% au lieu de 117)', v_auth; end if;
+  select count(*) into v_agent from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+   where n.nspname='public' and p.prosecdef and has_function_privilege('agent_ro',p.oid,'EXECUTE');
+  if v_agent <> 47 then raise exception 'SEC-PROD: droits agent_ro inattendus après retrait KYC (% au lieu de 47)', v_agent; end if;
+  if exists (
+    select 1 from pg_temp.sec_prod_expected_functions e
+    where has_function_privilege('agent_ro', e.signature, 'EXECUTE') is distinct from
+      (e.agent_ro_execute and e.signature not in ('public.read_kyc_documents()', 'public.autoriser_lecture_piece_identite(uuid)'))
+  ) then raise exception 'SEC-PROD: usage agent_ro non préservé conformément à la matrice'; end if;
+  if exists (
+    select 1 from pg_temp.sec_prod_expected_functions e
+    where has_function_privilege('authenticated', e.signature, 'EXECUTE') is distinct from (e.authenticated_execute and e.signature <> 'public.log_sensitive_access(text, text, text, jsonb)')
+  ) then raise exception 'SEC-PROD: usage authenticated non préservé'; end if;
+  if not has_function_privilege('agent_ro','public.etat_presence(uuid,uuid)','EXECUTE') then
+    raise exception 'SEC-PROD: agent_ro a perdu etat_presence';
+  end if;
+  foreach v_name in array v_views loop
+    if not coalesce((select reloptions @> array['security_invoker=true'] from pg_catalog.pg_class where oid=to_regclass(format('public.%I',v_name))), false) then
+      raise exception 'SEC-PROD: vue non invoker: public.%', v_name;
+    end if;
+    if has_table_privilege('anon',format('public.%I',v_name),'SELECT') then
+      raise exception 'SEC-PROD: anon conserve SELECT sur public.%', v_name;
+    end if;
+    if not has_table_privilege('authenticated',format('public.%I',v_name),'SELECT') then
+      raise exception 'SEC-PROD: authenticated a perdu SELECT sur public.%', v_name;
+    end if;
+  end loop;
+  foreach v_name in array array['mes_appareils_v','mes_groupes_famille_v','mes_groupes_v','mes_seances_enseignant_v','teacher_roster_v'] loop
+    if has_table_privilege('agent_ro',format('public.%I',v_name),'SELECT') then
+      raise exception 'SEC-PROD: agent_ro conserve SELECT sans droits de dépendances sur public.%', v_name;
+    end if;
+  end loop;
+  if has_table_privilege('authenticated','public.kyc_documents','SELECT')
+     or has_table_privilege('anon','public.kyc_documents','SELECT')
+     or has_table_privilege('agent_ro','public.kyc_documents','SELECT') then
+    raise exception 'SEC-PROD: SELECT direct KYC restant';
+  end if;
+  if exists(select 1 from pg_catalog.pg_policies where schemaname='storage' and tablename='objects' and policyname='kyc_lecture_admin') then
+    raise exception 'SEC-PROD: policy Storage KYC lecture encore présente';
+  end if;
+  -- Le classificateur M2 couvre un corpus de cas de réécriture ci-dessus; il ne
+  -- démontre pas le contrôle de flux arbitraire de chaque corps PL/pgSQL. Le garde
+  -- global ici vérifie précisément qu'aucun comparateur négatif historique ciblé
+  -- n'a survécu à la transformation, sans rejeter des contrôles d'identité OR valides.
+  if exists(select 1 from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+            where n.nspname in ('public','app_private') and p.prosecdef
+              and app_private.has_unsafe_role_guard(p.prosrc)) then
+    raise exception 'SEC-PROD M2: comparateur de rôle négatif historique résiduel';
+  end if;
+end
+$sec_prod_postflight$;
+
+-- Ce RPC a un chemin enseignant par appartenance de séance; vérifier aussi la
+-- garde globale de validité du compte et la séparation des rôles après simulation.
+do $sec_prod_teacher_publish_postflight$
+declare
+  v_source text;
+  v_normalized text;
+  v_guard text := $guard$if not coalesce(((public.app_role() = 'teacher' and public.session_belongs_to_teacher(p_session_id, auth.uid())) or public.app_role() = 'admin') and public.app_account_valid(), false) then$guard$;
+begin
+  select p.prosrc into v_source
+    from pg_catalog.pg_proc p
+   where p.oid = to_regprocedure('public.publier_etat_partage(uuid, uuid, uuid, jsonb, jsonb, text, jsonb, jsonb, jsonb, integer)');
+  v_normalized := regexp_replace(lower(coalesce(v_source, '')), '[[:space:]]+', ' ', 'g');
+  if strpos(v_normalized, v_guard) = 0 then
+    raise exception 'SEC-PROD M2: garde teacher/admin valide manquante dans publier_etat_partage';
+  end if;
+end
+$sec_prod_teacher_publish_postflight$;
+
+do $sec_prod_views_postflight$
+declare
+  r record;
+  v_oid oid;
+  v_options text[];
+  v_expected_agent boolean;
+begin
+  for r in select * from pg_temp.sec_prod_expected_views order by view_name loop
+    v_oid := to_regclass(format('public.%I', r.view_name));
+    if v_oid is null then raise exception 'SEC-PROD: vue absente après remédiation: public.%', r.view_name; end if;
+    if md5(pg_get_viewdef(v_oid, true)) is distinct from r.md5_definition then
+      raise exception 'SEC-PROD: définition modifiée pendant remédiation: public.%', r.view_name;
+    end if;
+    select reloptions into v_options from pg_catalog.pg_class where oid=v_oid;
+    if not coalesce(v_options @> array['security_invoker=true'], false)
+       or cardinality(coalesce(v_options, array[]::text[])) <> cardinality(r.expected_reloptions) + 1
+       or not coalesce(v_options @> r.expected_reloptions, false) then
+      raise exception 'SEC-PROD: options invoker/barrier inattendues: public.%', r.view_name;
+    end if;
+    v_expected_agent := r.agent_ro_select
+      and r.view_name not in ('mes_appareils_v','mes_groupes_famille_v','mes_groupes_v','mes_seances_enseignant_v','teacher_roster_v');
+    if has_table_privilege('anon', v_oid, 'SELECT')
+       or has_table_privilege('authenticated', v_oid, 'SELECT') is distinct from r.authenticated_select
+       or has_table_privilege('agent_ro', v_oid, 'SELECT') is distinct from v_expected_agent then
+      raise exception 'SEC-PROD: droits SELECT post-remédiation inattendus: public.%', r.view_name;
+    end if;
+  end loop;
+end
+$sec_prod_views_postflight$;
+
+-- Ne modifie ni btree_gist ni l'index sessions_no_teacher_overlap:
+-- pg_depend établit que le déplacement requiert une opération séparée et testée.
+commit;
+,'), false);');
+      if v_corrected_source is not distinct from v_source
+         or v_corrected_source !~* '^[[:space:]]*select[[:space:]]+coalesce[[:space:]]*[(][[:space:]]*public[.]app_account_valid[[:space:]]*[(][[:space:]]*[)][[:space:]]+and[[:space:]]*[(]'
+         or v_corrected_source !~ '[)][[:space:]]*,[[:space:]]*false[)][[:space:]]*;[[:space:]]*
+declare
+  v_anon integer;
+  v_auth integer;
+  v_agent integer;
+  v_name text;
+  v_views text[] := array['concern_famille_v', 'eleves_en_attente_v', 'mes_affectations_v', 'mes_appareils_v', 'mes_codes_appairage_v', 'mes_groupes_famille_v', 'mes_groupes_v', 'mes_seances_enseignant_v', 'mes_seances_v', 'presence_seance_v', 'profils_du_foyer_v', 'regles_profil_v', 'session_peers_v', 'teacher_roster_v', 'tendance_feedback_v'];
+begin
+  select count(*) into v_anon from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+   where n.nspname='public' and p.prosecdef and has_function_privilege('anon',p.oid,'EXECUTE');
+  if v_anon <> 0 then raise exception 'SEC-PROD: % SECURITY DEFINER restent exécutables par anon', v_anon; end if;
+  -- PROD read-only ACL review: authenticator is not a member of anon/authenticated;
+  -- retain its direct pre-request hook grant and revoke the three PUBLIC-only paths.
+  if not has_function_privilege('authenticator', 'public.agent_pre_request()', 'EXECUTE') then
+    raise exception 'SEC-PROD: authenticator a perdu EXECUTE sur le pre-request hook';
+  end if;
+  if (select count(*) from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+      where n.nspname='public' and p.prosecdef and has_function_privilege('authenticator',p.oid,'EXECUTE')) <> 1 then
+    raise exception 'SEC-PROD: droits authenticator SECURITY DEFINER inattendus après retrait PUBLIC/anon';
+  end if;
+  select count(*) into v_auth from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+   where n.nspname='public' and p.prosecdef and has_function_privilege('authenticated',p.oid,'EXECUTE');
+  if has_function_privilege('authenticated', 'public.log_sensitive_access(text, text, text, jsonb)', 'EXECUTE') then
+    raise exception 'SEC-PROD: authenticated conserve EXECUTE direct sur le writer d''audit';
+  end if;
+  if v_auth <> 117 then raise exception 'SEC-PROD: nombre inattendu de RPC authenticated (% au lieu de 117)', v_auth; end if;
+  select count(*) into v_agent from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+   where n.nspname='public' and p.prosecdef and has_function_privilege('agent_ro',p.oid,'EXECUTE');
+  if v_agent <> 47 then raise exception 'SEC-PROD: droits agent_ro inattendus après retrait KYC (% au lieu de 47)', v_agent; end if;
+  if exists (
+    select 1 from pg_temp.sec_prod_expected_functions e
+    where has_function_privilege('agent_ro', e.signature, 'EXECUTE') is distinct from
+      (e.agent_ro_execute and e.signature not in ('public.read_kyc_documents()', 'public.autoriser_lecture_piece_identite(uuid)'))
+  ) then raise exception 'SEC-PROD: usage agent_ro non préservé conformément à la matrice'; end if;
+  if exists (
+    select 1 from pg_temp.sec_prod_expected_functions e
+    where has_function_privilege('authenticated', e.signature, 'EXECUTE') is distinct from (e.authenticated_execute and e.signature <> 'public.log_sensitive_access(text, text, text, jsonb)')
+  ) then raise exception 'SEC-PROD: usage authenticated non préservé'; end if;
+  if not has_function_privilege('agent_ro','public.etat_presence(uuid,uuid)','EXECUTE') then
+    raise exception 'SEC-PROD: agent_ro a perdu etat_presence';
+  end if;
+  foreach v_name in array v_views loop
+    if not coalesce((select reloptions @> array['security_invoker=true'] from pg_catalog.pg_class where oid=to_regclass(format('public.%I',v_name))), false) then
+      raise exception 'SEC-PROD: vue non invoker: public.%', v_name;
+    end if;
+    if has_table_privilege('anon',format('public.%I',v_name),'SELECT') then
+      raise exception 'SEC-PROD: anon conserve SELECT sur public.%', v_name;
+    end if;
+    if not has_table_privilege('authenticated',format('public.%I',v_name),'SELECT') then
+      raise exception 'SEC-PROD: authenticated a perdu SELECT sur public.%', v_name;
+    end if;
+  end loop;
+  foreach v_name in array array['mes_appareils_v','mes_groupes_famille_v','mes_groupes_v','mes_seances_enseignant_v','teacher_roster_v'] loop
+    if has_table_privilege('agent_ro',format('public.%I',v_name),'SELECT') then
+      raise exception 'SEC-PROD: agent_ro conserve SELECT sans droits de dépendances sur public.%', v_name;
+    end if;
+  end loop;
+  if has_table_privilege('authenticated','public.kyc_documents','SELECT')
+     or has_table_privilege('anon','public.kyc_documents','SELECT')
+     or has_table_privilege('agent_ro','public.kyc_documents','SELECT') then
+    raise exception 'SEC-PROD: SELECT direct KYC restant';
+  end if;
+  if exists(select 1 from pg_catalog.pg_policies where schemaname='storage' and tablename='objects' and policyname='kyc_lecture_admin') then
+    raise exception 'SEC-PROD: policy Storage KYC lecture encore présente';
+  end if;
+  -- Le classificateur M2 couvre un corpus de cas de réécriture ci-dessus; il ne
+  -- démontre pas le contrôle de flux arbitraire de chaque corps PL/pgSQL. Le garde
+  -- global ici vérifie précisément qu'aucun comparateur négatif historique ciblé
+  -- n'a survécu à la transformation, sans rejeter des contrôles d'identité OR valides.
+  if exists(select 1 from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
+            where n.nspname in ('public','app_private') and p.prosecdef
+              and app_private.has_unsafe_role_guard(p.prosrc)) then
+    raise exception 'SEC-PROD M2: comparateur de rôle négatif historique résiduel';
+  end if;
+end
+$sec_prod_postflight$;
+
+-- Ce RPC a un chemin enseignant par appartenance de séance; vérifier aussi la
+-- garde globale de validité du compte et la séparation des rôles après simulation.
+do $sec_prod_teacher_publish_postflight$
+declare
+  v_source text;
+  v_normalized text;
+  v_guard text := $guard$if not coalesce(((public.app_role() = 'teacher' and public.session_belongs_to_teacher(p_session_id, auth.uid())) or public.app_role() = 'admin') and public.app_account_valid(), false) then$guard$;
+begin
+  select p.prosrc into v_source
+    from pg_catalog.pg_proc p
+   where p.oid = to_regprocedure('public.publier_etat_partage(uuid, uuid, uuid, jsonb, jsonb, text, jsonb, jsonb, jsonb, integer)');
+  v_normalized := regexp_replace(lower(coalesce(v_source, '')), '[[:space:]]+', ' ', 'g');
+  if strpos(v_normalized, v_guard) = 0 then
+    raise exception 'SEC-PROD M2: garde teacher/admin valide manquante dans publier_etat_partage';
+  end if;
+end
+$sec_prod_teacher_publish_postflight$;
+
+do $sec_prod_views_postflight$
+declare
+  r record;
+  v_oid oid;
+  v_options text[];
+  v_expected_agent boolean;
+begin
+  for r in select * from pg_temp.sec_prod_expected_views order by view_name loop
+    v_oid := to_regclass(format('public.%I', r.view_name));
+    if v_oid is null then raise exception 'SEC-PROD: vue absente après remédiation: public.%', r.view_name; end if;
+    if md5(pg_get_viewdef(v_oid, true)) is distinct from r.md5_definition then
+      raise exception 'SEC-PROD: définition modifiée pendant remédiation: public.%', r.view_name;
+    end if;
+    select reloptions into v_options from pg_catalog.pg_class where oid=v_oid;
+    if not coalesce(v_options @> array['security_invoker=true'], false)
+       or cardinality(coalesce(v_options, array[]::text[])) <> cardinality(r.expected_reloptions) + 1
+       or not coalesce(v_options @> r.expected_reloptions, false) then
+      raise exception 'SEC-PROD: options invoker/barrier inattendues: public.%', r.view_name;
+    end if;
+    v_expected_agent := r.agent_ro_select
+      and r.view_name not in ('mes_appareils_v','mes_groupes_famille_v','mes_groupes_v','mes_seances_enseignant_v','teacher_roster_v');
+    if has_table_privilege('anon', v_oid, 'SELECT')
+       or has_table_privilege('authenticated', v_oid, 'SELECT') is distinct from r.authenticated_select
+       or has_table_privilege('agent_ro', v_oid, 'SELECT') is distinct from v_expected_agent then
+      raise exception 'SEC-PROD: droits SELECT post-remédiation inattendus: public.%', r.view_name;
+    end if;
+  end loop;
+end
+$sec_prod_views_postflight$;
+
+-- Ne modifie ni btree_gist ni l'index sessions_no_teacher_overlap:
+-- pg_depend établit que le déplacement requiert une opération séparée et testée.
+commit;
+ then
+        raise exception 'SEC-PROD M2: enveloppe compte actif invalide pour %',r.signature;
+      end if;
+      v_matches := (length(v_definition)-length(replace(v_definition,v_source,'')))/length(v_source);
+      if v_matches<>1 then raise exception 'SEC-PROD M2: source SQL non unique dans % (trouvé %)',r.signature,v_matches; end if;
+      v_corrected_definition := replace(v_definition,v_source,v_corrected_source);
+    end if;
+    if v_corrected_definition is not distinct from v_definition then raise exception 'SEC-PROD M2: aucun changement généré pour %',r.signature; end if;
+    execute v_corrected_definition;
+    v_seen := v_seen+1;
+  end loop;
+  if v_seen<>4 then raise exception 'SEC-PROD M2: nombre de RPC/helpers corrigés inattendu (%)',v_seen; end if;
+
+  select qual into v_policy from pg_catalog.pg_policies where schemaname='public' and tablename='matching_requests' and policyname='matching_requests_parties_read';
+  if v_policy is distinct from '((requested_by = auth.uid()) OR partie_concernee(subject_profile_id))' then raise exception 'SEC-PROD M2: policy matching_requests_parties_read divergée: %',v_policy; end if;
+  select qual into v_policy from pg_catalog.pg_policies where schemaname='public' and tablename='teacher_student_assignments' and policyname='assignments_parties_read';
+  if v_policy is distinct from '(partie_concernee(student_id) OR (teacher_id = auth.uid()))' then raise exception 'SEC-PROD M2: policy assignments_parties_read divergée: %',v_policy; end if;
+
+  alter policy matching_requests_parties_read on public.matching_requests
+    using (public.app_account_valid() and (requested_by=auth.uid() or public.partie_concernee(subject_profile_id)));
+  alter policy assignments_parties_read on public.teacher_student_assignments
+    using (public.app_account_valid() and (public.partie_concernee(student_id) or teacher_id=auth.uid()));
+end
+$sec_prod_active_read_guards$;
+
 do $sec_prod_postflight$
 declare
   v_anon integer;
