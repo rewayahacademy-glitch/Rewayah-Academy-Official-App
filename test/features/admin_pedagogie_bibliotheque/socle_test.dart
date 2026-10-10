@@ -55,7 +55,10 @@ void main() {
       await stabiliser(tester);
       await tester.tap(find.text(a.titre).last);
       await stabiliser(tester);
-      expect(find.text(a.intro), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('catalogue-recherche')),
+        findsOneWidget,
+      );
     });
   });
 

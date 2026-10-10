@@ -25,6 +25,7 @@ import '../../features/admin_journal/journal_page.dart';
 import '../../features/admin_observations/observations_admin_page.dart';
 import '../../features/admin_pedagogie_bibliotheque/catalogue/catalogue_page.dart';
 import '../../features/admin_pedagogie_bibliotheque/fiche/fiche_page.dart';
+import '../../features/admin_pedagogie_bibliotheque/import/import_page.dart';
 import '../../features/admin_pedagogie_diagnostics/diagnostics_page.dart';
 import '../../features/admin_pedagogie_evaluations/evaluations_page.dart';
 import '../../features/admin_pedagogie_programmes/programmes_page.dart';
@@ -1506,6 +1507,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
           child: CataloguePage(),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminPedagogieBibliothequeNouveau,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.pedagogie,
+          child: ImportPage(),
         ),
       ),
       GoRoute(

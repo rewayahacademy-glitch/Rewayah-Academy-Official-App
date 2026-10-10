@@ -205,6 +205,23 @@ class FiltreCatalogue {
   int get hashCode => Object.hash(etat, type, niveau, langue, recherche);
 }
 
+/// Les valeurs que le catalogue propose en filtre : rendues par le serveur,
+/// jamais une liste ecrite dans l'ecran.
+@immutable
+class FacettesCatalogue {
+  /// Cree les facettes.
+  const FacettesCatalogue({
+    this.niveaux = const <String>[],
+    this.langues = const <String>[],
+  });
+
+  /// Les niveaux presents dans le catalogue.
+  final List<String> niveaux;
+
+  /// Les codes de langue presents dans le catalogue.
+  final List<String> langues;
+}
+
 /// Une page du catalogue, a curseur. **Aucun total** : un compteur global
 /// pourrait reveler un support non autorise (spec §3.2).
 @immutable

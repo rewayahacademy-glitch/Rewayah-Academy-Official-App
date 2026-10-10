@@ -86,6 +86,15 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
   /// Vrai : la lecture echoue, pour l'etat d'erreur.
   bool panne = false;
 
+  /// Vrai : seul le catalogue echoue (les capacites restent lues).
+  bool panneListe = false;
+
+  /// Si non nul, la page de ce rang (a partir de 1) et les suivantes echouent :
+  /// la pagination partielle.
+  int? panneAPartirDePage;
+
+  int _pagesLues = 0;
+
   final Map<String, _Etat> _supports = <String, _Etat>{};
   final Map<String, String> _uploads = <String, String>{};
   final Set<String> _annules = <String>{};
@@ -280,12 +289,24 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
   }
 
   @override
+  Future<FacettesCatalogue> facettes() async {
+    _garde();
+    return const FacettesCatalogue(niveaux: _niveaux, langues: _langues);
+  }
+
+  @override
   Future<PageSupports> lister({
     FiltreCatalogue filtre = const FiltreCatalogue(),
     String? curseur,
     int limite = 25,
   }) async {
     _garde();
+    if (panneListe) throw const BibliothequeHorsLigne();
+    _pagesLues = curseur == null ? 1 : _pagesLues + 1;
+    final int? limiteDePanne = panneAPartirDePage;
+    if (limiteDePanne != null && _pagesLues >= limiteDePanne) {
+      throw const BibliothequeHorsLigne();
+    }
     final String q = filtre.recherche.trim().toLowerCase();
     final List<SupportAdmin> tous =
         <SupportAdmin>[

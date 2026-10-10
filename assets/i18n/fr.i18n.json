@@ -3465,7 +3465,91 @@
       "sansDonnees": "le catalogue",
       "ficheTitre": "Support",
       "retourCatalogue": "Retour au catalogue",
-      "introuvable": "Ce support n'existe pas ou n'est pas accessible."
+      "introuvable": "Ce support n'existe pas ou n'est pas accessible.",
+      "libelles": {
+        "type": {
+          "quran": "Coran",
+          "texteStructure": "Texte structuré",
+          "pdf": "PDF",
+          "image": "Image",
+          "lecon": "Leçon"
+        },
+        "version": {
+          "brouillon": "Brouillon",
+          "publiee": "Publié",
+          "archivee": "Archivé",
+          "retire": "Retiré",
+          "numero": "Version {numero}",
+          "aucune": "Aucune version"
+        },
+        "droits": {
+          "aVerifier": "À vérifier",
+          "approuve": "Approuvé",
+          "refuse": "Refusé",
+          "expire": "Expiré"
+        },
+        "visibilite": {
+          "publique": "Publique",
+          "inscrits": "Inscrits",
+          "groupeAssigne": "Classes attribuées",
+          "enseignantSeul": "Enseignant seul",
+          "admin": "Administration seule"
+        },
+        "langue": {
+          "fr": "Français",
+          "ar": "Arabe",
+          "en": "Anglais"
+        },
+        "usage": {
+          "application": "Dans l'application",
+          "classe": "En classe",
+          "telechargement": "Téléchargement",
+          "horsLigne": "Hors ligne"
+        },
+        "horsLigne": {
+          "jamais": "Jamais",
+          "surDemande": "Sur demande",
+          "automatique": "Automatique"
+        }
+      },
+      "catalogue": {
+        "recherche": "Rechercher dans le catalogue",
+        "segments": {
+          "tous": "Tous",
+          "brouillons": "Brouillons",
+          "aVerifier": "À vérifier",
+          "publies": "Publiés",
+          "retires": "Retirés",
+          "droitsExpires": "Droits expirés"
+        },
+        "filtres": {
+          "type": "Type",
+          "niveau": "Niveau",
+          "langue": "Langue",
+          "tous": "Tous"
+        },
+        "colonnes": {
+          "support": "Support",
+          "type": "Type",
+          "langue": "Langue",
+          "categorie": "Catégorie",
+          "version": "Version",
+          "publication": "Publication",
+          "droits": "Droits",
+          "visibilite": "Visibilité",
+          "modifie": "Modifié"
+        },
+        "modifieLe": "Modifié le {date}",
+        "videRecherche": "Aucun résultat",
+        "videRechercheDetail": "Aucun support ne correspond à votre recherche ou à vos filtres.",
+        "effacerFiltres": "Effacer les filtres",
+        "voirPlus": "Voir plus de supports",
+        "pageErreur": "La suite du catalogue n'a pas pu être chargée.",
+        "ouvrir": "Ouvrir le support {titre}",
+        "droitsEchus": "Droits échus",
+        "alerteTitre": "Brouillons",
+        "pasDeAcces": "Vous ne pouvez pas modifier la bibliothèque."
+      }
     }
   },
   "agent": {

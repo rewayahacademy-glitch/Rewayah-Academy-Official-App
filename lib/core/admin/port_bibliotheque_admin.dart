@@ -87,6 +87,9 @@ abstract interface class PortBibliothequeAdmin {
   /// Ce que la personne connectee peut faire.
   Future<CapacitesBibliotheque> capacites();
 
+  /// Les valeurs de filtre (niveaux, langues) que le catalogue propose.
+  Future<FacettesCatalogue> facettes();
+
   /// Une page du catalogue. Filtres et curseur bornes, jamais de total.
   Future<PageSupports> lister({
     FiltreCatalogue filtre = const FiltreCatalogue(),

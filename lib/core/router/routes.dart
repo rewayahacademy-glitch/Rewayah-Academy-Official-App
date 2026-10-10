@@ -718,6 +718,10 @@ abstract final class Routes {
   static const String adminPedagogieBibliotheque =
       '/admin/pedagogie/bibliotheque';
 
+  /// CAP29-C : ajouter un support (import), avant `:supportId` dans le routeur.
+  static const String adminPedagogieBibliothequeNouveau =
+      '/admin/pedagogie/bibliotheque/nouveau';
+
   /// CAP29-0 : la fiche d'un support de la bibliotheque.
   static String adminPedagogieSupport(String supportId) =>
       '$adminPedagogieBibliotheque/$supportId';
