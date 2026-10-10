@@ -121,6 +121,7 @@ import 'package:rewayah_academy/features/salle_seance/surface_page_fixe.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/zone_support.dart';
 import 'package:rewayah_academy/features/tc_catalogue/surface_bibliotheque.dart';
+import 'package:rewayah_academy/features/tc_dock/barre_stylet.dart';
 
 import '../../capture/outil_capture.dart';
 
@@ -129,6 +130,13 @@ class _ControleurArme extends ControleurOutils {
   @override
   EtatOutils build() => const EtatOutils(outilActif: OutilDock.stylet);
 }
+
+/// L'entree « Commandes » : le declencheur, ou, pendant l'ecriture, le
+/// dernier bouton de la palette courte qui a pris sa place (TB-7b).
+final Finder _entreeCommandes = find.byWidgetPredicate(
+  (Widget w) =>
+      w.key == DeclencheurCommandes.cle || w.key == BarreStylet.cleCommandes,
+);
 
 typedef _Cadrage = (
   String nom,
@@ -713,7 +721,7 @@ void main() {
           ),
         );
         await stabiliser(tester);
-        await tester.tap(find.byKey(DeclencheurCommandes.cle));
+        await tester.tap(_entreeCommandes);
         await stabiliser(tester);
         final Finder plus = find.byWidgetPredicate(
           (Widget w) =>
@@ -798,7 +806,7 @@ void main() {
           await stabiliser(tester);
           expect(depot.couches.single.traits, hasLength(1));
           if (zoom) {
-            await tester.tap(find.byKey(DeclencheurCommandes.cle));
+            await tester.tap(_entreeCommandes);
             await stabiliser(tester);
             // TB-7b : outil arme, les Commandes s'ouvrent sur « Outils ».
             await tester.tap(
@@ -1232,27 +1240,27 @@ void main() {
       ].length;
     }
 
+    // Tour 2 : toutes les tailles, par les vrais boutons (avec les polices
+    // du depot, la feuille des Commandes tient a 320 x2).
     for (final _Cadrage cas in cadrages(<String>[
       '390_x1_clair',
       '390_x1_sombre',
+      '390_x2_clair',
+      '768_x1_clair',
+      '768_x1_sombre',
+      '768_x2_clair',
+      '1440_x1_clair',
+      '1440_x1_sombre',
+      '1440_x2_clair',
+      '320_x1_clair',
       '320_x2_clair',
       '320_x2_sombre',
     ])) {
       final String nom = 'tb7b_palette_${cas.$1}';
       testWidgets(nom, (WidgetTester tester) async {
         await monter(tester, cas);
-        if (cas.$5 > 1) {
-          // 320 x2 : la feuille des Commandes deborde deja a son ouverture
-          // (defaut anterieur, note au rapport) ; l'outil est retenu dans
-          // l'etat des outils, comme le ferait « Ecrire ».
-          ProviderScope.containerOf(
-            tester.element(find.byType(SalleSeance)),
-          ).read(etatOutilsProvider.notifier).choisirOutil(OutilDock.stylet);
-          await stabiliser(tester);
-        } else {
-          await ecrire(tester);
-          await taper(tester, find.byKey(PanneauSeance.cleReduire));
-        }
+        await ecrire(tester);
+        await taper(tester, find.byKey(PanneauSeance.cleReduire));
         await geste(tester, PointerDeviceKind.touch, 91);
         expect(traits(tester), 1);
         expect(find.byKey(PaletteEcriture.cle), findsOneWidget);
@@ -1264,7 +1272,13 @@ void main() {
     for (final _Cadrage cas in cadrages(<String>[
       '1440_x1_clair',
       '1440_x1_sombre',
+      '1440_x2_clair',
+      '768_x2_clair',
       '390_x1_clair',
+      '390_x2_clair',
+      '320_x1_clair',
+      '320_x2_clair',
+      '320_x2_sombre',
     ])) {
       final String nom = 'tb7b_panneau_ecrire_${cas.$1}';
       testWidgets(nom, (WidgetTester tester) async {
@@ -1300,6 +1314,41 @@ void main() {
         });
       }
     }
+
+    // RTL force (arabe) : la palette courte et le panneau Ecrire.
+    group('arabe', () {
+      setUp(() => LocaleSettings.setLocale(AppLocale.ar));
+      tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+      for (final _Cadrage cas in cadrages(<String>[
+        '390_x1_clair',
+        '320_x2_clair',
+      ])) {
+        for (final bool panneau in <bool>[false, true]) {
+          final String nom =
+              'tb7b_${panneau ? 'panneau_ecrire' : 'palette'}_ar_${cas.$1}';
+          testWidgets(nom, (WidgetTester tester) async {
+            await monter(tester, cas);
+            expect(
+              Directionality.of(tester.element(find.byType(SalleSeance))),
+              TextDirection.rtl,
+            );
+            await ecrire(tester);
+            if (panneau) {
+              await tester.ensureVisible(
+                find.byKey(EcritureSeance.cleEpaisseur),
+              );
+              await stabiliser(tester);
+            } else {
+              await taper(tester, find.byKey(PanneauSeance.cleReduire));
+              await geste(tester, PointerDeviceKind.touch, 93);
+              expect(find.byKey(PaletteEcriture.cle), findsOneWidget);
+            }
+            expect(tester.takeException(), isNull);
+            debugPrint('PNG ${await capturer(tester, nom)}');
+          });
+        }
+      }
+    });
   });
 
   group('TB : captures de la salle', skip: sautSansCapture, () {

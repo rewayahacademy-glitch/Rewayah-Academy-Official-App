@@ -295,9 +295,9 @@
         "marquer": "Marquer",
         "masquer": "Masquer",
         "ecrire": "Écrire",
-        "aideLecture": "Sans outil, la page se lit : un doigt la déplace quand elle est agrandie.",
+        "aideLecture": "Sans outil, la page se lit ; agrandie, elle se déplace en la faisant glisser.",
         "aidePointeur": "Pointeur : touchez la page pour montrer un passage, rien ne reste.",
-        "aideEcrire": "Écrire : écrivez sur la page, deux doigts la déplacent."
+        "aideEcrire": "Écrire : écrivez sur la page. Sur un écran tactile, deux doigts la déplacent."
       },
       "ecriture": {
         "palette": "Outils d'écriture",

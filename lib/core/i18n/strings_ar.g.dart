@@ -699,9 +699,9 @@ class _Traductions$salle$seance$outils$ar extends Traductions$salle$seance$outil
 	@override String get marquer => 'وضع علامة';
 	@override String get masquer => 'إخفاء';
 	@override String get ecrire => 'كتابة';
-	@override String get aideLecture => 'بدون أداة، تُقرأ الصفحة: يحرّكها إصبع واحد عند تكبيرها.';
+	@override String get aideLecture => 'بدون أداة، تُقرأ الصفحة؛ وعند تكبيرها تُحرَّك بسحبها.';
 	@override String get aidePointeur => 'المؤشر: المس الصفحة لتشير إلى مقطع، ولا يبقى أي أثر.';
-	@override String get aideEcrire => 'الكتابة: اكتب على الصفحة، وإصبعان يحرّكانها.';
+	@override String get aideEcrire => 'الكتابة: اكتب على الصفحة. على شاشة اللمس، يحرّكها إصبعان.';
 }
 
 // Path: salle.seance.ecriture
@@ -2459,9 +2459,9 @@ extension on TraductionsAr {
 			'salle.seance.outils.marquer' => 'وضع علامة',
 			'salle.seance.outils.masquer' => 'إخفاء',
 			'salle.seance.outils.ecrire' => 'كتابة',
-			'salle.seance.outils.aideLecture' => 'بدون أداة، تُقرأ الصفحة: يحرّكها إصبع واحد عند تكبيرها.',
+			'salle.seance.outils.aideLecture' => 'بدون أداة، تُقرأ الصفحة؛ وعند تكبيرها تُحرَّك بسحبها.',
 			'salle.seance.outils.aidePointeur' => 'المؤشر: المس الصفحة لتشير إلى مقطع، ولا يبقى أي أثر.',
-			'salle.seance.outils.aideEcrire' => 'الكتابة: اكتب على الصفحة، وإصبعان يحرّكانها.',
+			'salle.seance.outils.aideEcrire' => 'الكتابة: اكتب على الصفحة. على شاشة اللمس، يحرّكها إصبعان.',
 			'salle.seance.ecriture.palette' => 'أدوات الكتابة',
 			'salle.seance.ecriture.terminer' => 'إنهاء',
 			'salle.seance.ecriture.couleur' => 'اللون',

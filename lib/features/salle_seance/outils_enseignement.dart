@@ -7,6 +7,10 @@
 // TB-7b : l'outil retenu est l'etat des outils de cet appareil
 // (`etatOutilsProvider`, jamais diffuse) : la surface le lit pour savoir si
 // un doigt lit, pointe ou ecrit. Un deuxieme appui le repose (lecture).
+// Seulement si la salle a un depot d'annotations (`portAnnotationsProvider`) :
+// sans lui (Classe Live, qui ouvre le Teaching Dock par ces tuiles), la
+// tuile ne fait que son rappel, comme avant TB-7b ; un trait n'y serait
+// jamais pris.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,6 +18,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_outils/etat_outils.dart';
+import '../../core/tc_outils/port_annotations.dart';
 import '../../core/tc_outils/port_dock_hote.dart' show OutilDock;
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
@@ -71,6 +76,17 @@ OutilDock outilDock(OutilEnseignement outil) => switch (outil) {
   OutilEnseignement.masquer => OutilDock.masquer,
 };
 
+/// La salle a-t-elle un depot d'annotations ? (Le provider leve sans
+/// surcharge : aucune implementation serveur, TB-BR.)
+bool _depotDisponible(WidgetRef ref) {
+  try {
+    ref.read(portAnnotationsProvider);
+    return true;
+  } on Object {
+    return false;
+  }
+}
+
 /// Les outils, dans la [forme] voulue. Rien si [onOutil] est nul.
 class OutilsEnseignement extends ConsumerWidget {
   const OutilsEnseignement({
@@ -107,7 +123,9 @@ class OutilsEnseignement extends ConsumerWidget {
       outil: o,
       actif: outilDock(o) == actif,
       onPress: () {
-        ref.read(etatOutilsProvider.notifier).choisirOutil(outilDock(o));
+        if (_depotDisponible(ref)) {
+          ref.read(etatOutilsProvider.notifier).choisirOutil(outilDock(o));
+        }
         rappel(o);
       },
     );

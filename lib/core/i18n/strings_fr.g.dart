@@ -11396,14 +11396,14 @@ class Traductions$salle$seance$outils$fr {
 	/// fr: 'Écrire'
 	String get ecrire => 'Écrire';
 
-	/// fr: 'Sans outil, la page se lit : un doigt la déplace quand elle est agrandie.'
-	String get aideLecture => 'Sans outil, la page se lit : un doigt la déplace quand elle est agrandie.';
+	/// fr: 'Sans outil, la page se lit ; agrandie, elle se déplace en la faisant glisser.'
+	String get aideLecture => 'Sans outil, la page se lit ; agrandie, elle se déplace en la faisant glisser.';
 
 	/// fr: 'Pointeur : touchez la page pour montrer un passage, rien ne reste.'
 	String get aidePointeur => 'Pointeur : touchez la page pour montrer un passage, rien ne reste.';
 
-	/// fr: 'Écrire : écrivez sur la page, deux doigts la déplacent.'
-	String get aideEcrire => 'Écrire : écrivez sur la page, deux doigts la déplacent.';
+	/// fr: 'Écrire : écrivez sur la page. Sur un écran tactile, deux doigts la déplacent.'
+	String get aideEcrire => 'Écrire : écrivez sur la page. Sur un écran tactile, deux doigts la déplacent.';
 }
 
 // Path: salle.seance.ecriture
@@ -16051,9 +16051,9 @@ extension on Traductions {
 			'salle.seance.outils.marquer' => 'Marquer',
 			'salle.seance.outils.masquer' => 'Masquer',
 			'salle.seance.outils.ecrire' => 'Écrire',
-			'salle.seance.outils.aideLecture' => 'Sans outil, la page se lit : un doigt la déplace quand elle est agrandie.',
+			'salle.seance.outils.aideLecture' => 'Sans outil, la page se lit ; agrandie, elle se déplace en la faisant glisser.',
 			'salle.seance.outils.aidePointeur' => 'Pointeur : touchez la page pour montrer un passage, rien ne reste.',
-			'salle.seance.outils.aideEcrire' => 'Écrire : écrivez sur la page, deux doigts la déplacent.',
+			'salle.seance.outils.aideEcrire' => 'Écrire : écrivez sur la page. Sur un écran tactile, deux doigts la déplacent.',
 			'salle.seance.ecriture.palette' => 'Outils d\'écriture',
 			'salle.seance.ecriture.terminer' => 'Terminer',
 			'salle.seance.ecriture.couleur' => 'Couleur',

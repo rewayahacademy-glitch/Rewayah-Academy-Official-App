@@ -28,6 +28,7 @@ import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_outils/etat_outils.dart';
+import '../../core/tc_outils/operations_personnelles.dart';
 import '../../core/tc_outils/port_dock_hote.dart' show OutilDock;
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
@@ -273,7 +274,14 @@ class _CommandesPedagogiquesState extends ConsumerState<CommandesPedagogiques> {
       libelleConfirmer: t.salle.seance.rangement.effacer,
       irreversible: true,
     );
-    if (confirme) effacer();
+    if (!confirme) return;
+    effacer();
+    if (!mounted) return;
+    // TB-7b : « Annuler » ne rajoute jamais une note que l'effacement a
+    // retiree ; les operations personnelles de la surface s'en vont.
+    ref
+        .read(historiquePersonnelProvider.notifier)
+        .oublierSurface(surLaSurface(widget.vue.ancrageSurface));
   }
 
   /// Les actions rares du support ou du tableau, chacune seulement si la

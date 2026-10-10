@@ -30,11 +30,15 @@ import 'package:rewayah_academy/core/tc_outils/intention_pedagogique.dart';
 import 'package:rewayah_academy/core/tc_outils/operations_personnelles.dart';
 import 'package:rewayah_academy/core/tc_outils/port_annotations.dart';
 import 'package:rewayah_academy/core/tc_outils/port_dock_hote.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
+import 'package:rewayah_academy/features/salle_seance/actions_seance.dart'
+    show OutilEnseignement;
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
 import 'package:rewayah_academy/features/salle_seance/ecriture_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/outils_enseignement.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/surface_page_fixe.dart';
@@ -51,6 +55,12 @@ const Size _bureau = Size(1440, 900);
 
 final Finder _page = find.byKey(SurfacePageFixe.clePage);
 final Finder _declencheur = find.byKey(DeclencheurCommandes.cle);
+/// L'entree « Commandes » : le declencheur, ou, pendant l'ecriture, le
+/// dernier bouton de la palette courte qui a pris sa place (TB-7b).
+final Finder _entreeCommandes = find.byWidgetPredicate(
+  (Widget w) =>
+      w.key == DeclencheurCommandes.cle || w.key == BarreStylet.cleCommandes,
+);
 final Finder _onglets = find.byKey(CommandesPedagogiques.cleOnglets);
 final Finder _ecrire = find.byKey(const ValueKey<String>('outil-ecrire'));
 final Finder _pointeurOutil = find.byKey(
@@ -166,7 +176,7 @@ Future<void> _taper(WidgetTester tester, Finder cible) async {
 
 /// Commandes > Outils.
 Future<void> _outils(WidgetTester tester) async {
-  await _taper(tester, _declencheur);
+  await _taper(tester, _entreeCommandes);
   await _taper(
     tester,
     find.descendant(
@@ -190,7 +200,7 @@ Future<void> _armerEcrire(WidgetTester tester) async {
 
 /// Zoom local a 200 % par les Commandes (onglet Support, Lecture).
 Future<void> _zoom200(WidgetTester tester) async {
-  await _taper(tester, _declencheur);
+  await _taper(tester, _entreeCommandes);
   final Finder support = find.descendant(
     of: _onglets,
     matching: find.text(t.salle.seance.commandes.ongletSupport),
@@ -279,10 +289,18 @@ void main() {
         ),
       );
 
-      // Panneau reduit : la palette courte, a cote de « Commandes ».
+      // Panneau reduit : la palette courte prend la place du declencheur,
+      // « Commandes » devient son dernier bouton (une seule rangee).
       await _reduire(tester);
       expect(_palette, findsOneWidget);
-      expect(_declencheur, findsOneWidget);
+      expect(_declencheur, findsNothing);
+      expect(
+        find.descendant(
+          of: _palette,
+          matching: find.byKey(BarreStylet.cleCommandes),
+        ),
+        findsOneWidget,
+      );
       expect(
         find.descendant(
           of: _palette,
@@ -334,6 +352,30 @@ void main() {
       );
       expect(_ecriture, findsOneWidget);
       await _reduire(tester);
+      // « Commandes » de la palette les rouvre aussi, sur « Outils » ;
+      // Reduire rend le focus a ce bouton.
+      await _taper(
+        tester,
+        find.descendant(
+          of: _palette,
+          matching: find.byKey(BarreStylet.cleCommandes),
+        ),
+      );
+      expect(_ecriture, findsOneWidget);
+      expect(_palette, findsNothing, reason: 'panneau ouvert');
+      await _reduire(tester);
+      await tester.pump();
+      bool focusSurCommandes = false;
+      final BuildContext? focus = FocusManager.instance.primaryFocus?.context;
+      (focus as Element?)?.visitAncestorElements((Element a) {
+        if (a.widget.key == BarreStylet.cleCommandes) focusSurCommandes = true;
+        return !focusSurCommandes;
+      });
+      expect(
+        focusSurCommandes,
+        isTrue,
+        reason: 'le focus revient a « Commandes » de la palette',
+      );
 
       // Terminer : retour a la lecture ; la palette s'en va, un doigt
       // n'ecrit plus.
@@ -346,6 +388,7 @@ void main() {
       );
       expect(_outil(tester), isNull);
       expect(_palette, findsNothing);
+      expect(_declencheur, findsOneWidget, reason: 'le declencheur revient');
       await _glisser(
         tester,
         _surPage(tester, 0.2, 0.2),
@@ -617,6 +660,28 @@ void main() {
           PointNormalise(1, 0.5),
         ],
       );
+      // Temoin positif : un trait de l'eleve, pris par le depot et inscrit
+      // a son historique, sur le chemin du meme geste.
+      final TraitVectoriel mien = TraitVectoriel(
+        id: 'trait-eleve',
+        ancrage: page,
+        outil: OutilTrait.stylet,
+        points: const <PointNormalise>[
+          PointNormalise(0, 0.52),
+          PointNormalise(1, 0.52),
+        ],
+      );
+      final PorteeAnnotation portee = conteneur.read(etatOutilsProvider).portee;
+      await tester.runAsync(() async {
+        final AnnotationLayer? couche = await depot.couche(
+          resourceId: page.resourceId,
+          portee: portee,
+        );
+        await depot.ajouterTrait(couche!.id, mien);
+      });
+      conteneur
+          .read(historiquePersonnelProvider.notifier)
+          .traitPose(mien, portee: portee);
       fixerVueCapture(tester, const Size(400, 500), 1);
       await tester.pumpWidget(
         UncontrolledProviderScope(
@@ -637,7 +702,7 @@ void main() {
                     modeAffichage: ModeAffichagePartage.page,
                   ),
                   contexte: const ContexteDock(groupeId: 'g'),
-                  traits: <TraitVectoriel>[autre],
+                  traits: <TraitVectoriel>[autre, mien],
                   repereDePage: true,
                   gommeSurTous: false,
                 ),
@@ -655,10 +720,20 @@ void main() {
       }
       await tester.sendEventToBinding(doigt.up());
       await _attendre(tester);
+      await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+      await _attendre(tester);
       expect(
         conteneur.read(historiquePersonnelProvider).retires,
-        isEmpty,
-        reason: 'le trait d un autre reste',
+        <String>{'trait-eleve'},
+        reason: 'le geste retire le trait de l eleve, pas celui d un autre',
+      );
+      expect(
+        <String>[
+          for (final AnnotationLayer c in depot.couches)
+            for (final TraitVectoriel x in c.traits) x.id,
+        ],
+        isNot(contains('trait-eleve')),
+        reason: 'le depot a retire le trait de l eleve',
       );
     });
   });
@@ -900,48 +975,135 @@ void main() {
     expect(fin, greaterThan(0), reason: 'le trait fin est peint');
     expect(epais, greaterThan(fin * 2.5), reason: 'fin $fin, epais $epais');
   });
-
-  group('Palette courte : dans l ecran, rien de coupe', () {
-    for (final (String nom, Size taille, double texte) cas
-        in <(String, Size, double)>[
-          ('390 x1', _telephone, 1),
-          ('320 x2', const Size(320, 700), 2),
-          ('1440 x1', _bureau, 1),
-        ]) {
-      testWidgets(cas.$1, (WidgetTester tester) async {
-        await _monter(tester, taille: cas.$2, texte: cas.$3);
-        // Ecrire retenu (le parcours par les Commandes est prouve plus haut ;
-        // a 320 x2, la feuille des Commandes deborde deja a son ouverture,
-        // defaut anterieur note au rapport).
+  group('Historique : effacement et refus du depot (revue, tour 2)', () {
+    testWidgets('apres « Effacer les notes », Annuler ne rajoute rien : '
+        'l historique de la page est vide', (WidgetTester tester) async {
+      await _ouvrir(tester);
+      await _armerEcrire(tester);
+      await _glisser(
+        tester,
+        _surPage(tester, 0.2, 0.2),
+        _surPage(tester, 0.6, 0.25),
+      );
+      expect(_traits(tester), hasLength(1));
+      final Finder annuler = find.descendant(
+        of: _palette,
+        matching: find.byKey(BarreStylet.cleAnnuler),
+      );
+      expect(annuler, findsOneWidget);
+      // Commandes, menu du titre, Effacer, confirmation.
+      await _taper(tester, _entreeCommandes);
+      // Outil arme, les Commandes s'ouvrent sur « Outils » ; le menu du
+      // titre est celui de l'onglet Support.
+      await _taper(
+        tester,
+        find.descendant(
+          of: _onglets,
+          matching: find.text(t.salle.seance.commandes.ongletSupport),
+        ),
+      );
+      await _taper(tester, find.byKey(CommandesPedagogiques.cleMenu));
+      await _taper(tester, find.text(t.salle.seance.rangement.effacer).last);
+      await _taper(
+        tester,
+        find.widgetWithText(ActionPrincipale, t.salle.seance.rangement.effacer),
+      );
+      await _reduire(tester);
+      expect(_traits(tester), isEmpty);
+      expect(annuler, findsNothing, reason: 'plus rien a annuler');
+      final ContentPosition? surface = tester
+          .widget<SurfacePageFixe>(find.byType(SurfacePageFixe))
+          .vue
+          .ancrageSurface;
+      expect(
         _conteneur(
           tester,
-        ).read(etatOutilsProvider.notifier).choisirOutil(OutilDock.stylet);
-        await _attendre(tester);
-        expect(tester.takeException(), isNull);
-        final Rect ecran = Offset.zero & cas.$2;
-        for (final Finder f in <Finder>[
-          _palette,
-          _declencheur,
-          find.byKey(BarreStylet.cleTerminer),
-          find.byKey(BarreStylet.cleOutilActif),
-        ]) {
-          expect(f, findsOneWidget);
-          final Rect r = tester.getRect(f);
-          expect(
-            ecran.intersect(r) == r,
-            isTrue,
-            reason: '$f dans l ecran : $r',
-          );
-        }
-        // La palette ne recouvre pas le declencheur.
-        expect(
-          tester
-              .getRect(find.byKey(BarreStylet.cleTerminer))
-              .overlaps(tester.getRect(_declencheur)),
-          isFalse,
+        ).read(historiquePersonnelProvider).peutAnnuler(surLaSurface(surface)),
+        isFalse,
+      );
+    });
+
+    test('un retrait refuse sort du geste de gomme ; un geste vide s en va',
+        () {
+      final ProviderContainer c = ProviderContainer();
+      addTearDown(c.dispose);
+      const ContentPosition page = ContentPosition.page(resourceId: 'r', page: 1);
+      TraitVectoriel trait(String id) => TraitVectoriel(
+        id: id,
+        ancrage: page,
+        outil: OutilTrait.stylet,
+        points: const <PointNormalise>[
+          PointNormalise(0, 0),
+          PointNormalise(1, 1),
+        ],
+      );
+      final ControleurHistorique h = c.read(
+        historiquePersonnelProvider.notifier,
+      );
+      final PorteeAnnotation portee = c.read(etatOutilsProvider).portee;
+      h
+        ..masquer('a')
+        ..masquer('b')
+        ..traitsGommes(
+          <TraitVectoriel>[trait('a'), trait('b')],
+          surface: page,
+          portee: portee,
+        )
+        ..restaurer('a');
+      final OperationPersonnelle? op = c
+          .read(historiquePersonnelProvider)
+          .derniere(surLaSurface(page));
+      expect(
+        (op! as TraitsGommesPersonnels).traits.map((TraitVectoriel x) => x.id),
+        <String>['b'],
+      );
+      h.restaurer('b');
+      expect(
+        c.read(historiquePersonnelProvider).peutAnnuler(surLaSurface(page)),
+        isFalse,
+      );
+      // Refus arrive avant la fin du geste : le trait n'y entre pas.
+      h
+        ..masquer('c')
+        ..restaurer('c')
+        ..traitsGommes(
+          <TraitVectoriel>[trait('c')],
+          surface: page,
+          portee: portee,
         );
-        // Rien d'enseignant chez l'eleve : ni palette ni outil.
-      });
-    }
+      expect(
+        c.read(historiquePersonnelProvider).peutAnnuler(surLaSurface(page)),
+        isFalse,
+      );
+    });
   });
+
+  testWidgets('sans depot d annotations (Classe Live), une tuile d outil ne '
+      'fait que son rappel : aucun outil retenu', (WidgetTester tester) async {
+    final ProviderContainer c = ProviderContainer();
+    addTearDown(c.dispose);
+    final List<OutilEnseignement> rappels = <OutilEnseignement>[];
+    fixerVueCapture(tester, _telephone, 1);
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: c,
+        child: hoteCapture(
+          Material(
+            child: OutilsEnseignement(
+              onOutil: rappels.add,
+              forme: FormeOutils.rangee,
+            ),
+          ),
+        ),
+      ),
+    );
+    await _attendre(tester);
+    await _taper(tester, _ecrire);
+    expect(rappels, <OutilEnseignement>[OutilEnseignement.ecrire]);
+    expect(c.read(etatOutilsProvider).outilActif, isNull);
+  });
+
+  // La palette courte mesuree (largeurs, hauteur de la page, polices du
+  // depot, RTL) : palette_courte_test.dart.
 }

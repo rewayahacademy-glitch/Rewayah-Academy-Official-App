@@ -1042,8 +1042,11 @@ class _SalleEnseignant extends StatelessWidget {
   /// 09/10) ; il revient a la fermeture, ou le focus le retrouve.
   ///
   /// TB-7b (plan V2 §4.2) : panneau ferme pendant l'ecriture, la palette
-  /// courte (outil actif, Annuler, Terminer) se pose a cote de lui ; les
-  /// autres outils reparaissent par « Commandes ».
+  /// courte (outil actif, Annuler, Terminer) prend sa place, et « Commandes »
+  /// devient le dernier bouton de la palette, ou reparaissent les autres
+  /// outils. Une seule rangee : au telephone, la hauteur reste a la page au
+  /// moment ou l'on ecrit (une palette posee au-dessus du declencheur la
+  /// reduisait de moitie a 320 x2).
   Widget? _declencheur() {
     final VoidCallback? basculer = actions.onCommandes;
     if (basculer == null ||
@@ -1051,26 +1054,20 @@ class _SalleEnseignant extends StatelessWidget {
         !CommandesPedagogiques.aDesEntrees(vue, actions)) {
       return null;
     }
-    final Widget declencheur = DeclencheurCommandes(
-      onPress: basculer,
-      ouvert: vue.panneau == PanneauOuvert.commandes,
-      focusNode: focusCommandes,
-    );
     return Consumer(
       builder: (BuildContext _, WidgetRef ref, Widget? enfant) =>
           ecritSurLaSurface(ref, vue)
-          ? Wrap(
-              spacing: AppSpacing.md,
-              runSpacing: AppSpacing.sm,
-              alignment: WrapAlignment.center,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: <Widget>[
-                PaletteEcriture(vue: vue, onCommandes: basculer),
-                enfant!,
-              ],
+          ? PaletteEcriture(
+              vue: vue,
+              onCommandes: basculer,
+              focusCommandes: focusCommandes,
             )
           : enfant!,
-      child: declencheur,
+      child: DeclencheurCommandes(
+        onPress: basculer,
+        ouvert: vue.panneau == PanneauOuvert.commandes,
+        focusNode: focusCommandes,
+      ),
     );
   }
 

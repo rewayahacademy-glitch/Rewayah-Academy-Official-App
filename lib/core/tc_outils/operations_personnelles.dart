@@ -141,38 +141,74 @@ class ControleurHistorique extends Notifier<HistoriquePersonnel> {
     mesTraits: state.mesTraits,
   );
 
-  /// Le depot a refuse le retrait de [id] : le trait revient.
+  /// Le depot a refuse le retrait de [id] : le trait revient, et il sort du
+  /// geste de gomme qui le comptait (un « Annuler » ulterieur ne rajoute pas
+  /// un trait qui existe encore) ; un geste vide de tout trait s'en va.
   void restaurer(String id) => state = HistoriquePersonnel(
-    operations: state.operations,
+    operations: <OperationPersonnelle>[
+      for (final OperationPersonnelle o in state.operations)
+        if (o is TraitsGommesPersonnels &&
+            o.traits.any((TraitVectoriel t) => t.id == id))
+          ...<OperationPersonnelle>[
+            if (o.traits.length > 1)
+              TraitsGommesPersonnels(
+                traits: List<TraitVectoriel>.unmodifiable(<TraitVectoriel>[
+                  for (final TraitVectoriel t in o.traits)
+                    if (t.id != id) t,
+                ]),
+                surface: o.surface,
+                portee: o.portee,
+                sessionId: o.sessionId,
+              ),
+          ]
+        else
+          o,
+    ],
     retires: <String>{...state.retires}..remove(id),
     mesTraits: state.mesTraits,
   );
 
-  /// Un geste de gomme a retire [traits] de [surface].
+  /// Un geste de gomme a retire [traits] de [surface]. Un trait que le
+  /// depot a deja refuse de retirer ([restaurer], avant la fin du geste)
+  /// n'y entre pas.
   void traitsGommes(
     List<TraitVectoriel> traits, {
     required ContentPosition surface,
     required PorteeAnnotation portee,
     String? sessionId,
   }) {
-    if (traits.isEmpty) return;
+    final List<TraitVectoriel> retenus = <TraitVectoriel>[
+      for (final TraitVectoriel trait in traits)
+        if (state.retires.contains(trait.id)) trait,
+    ];
+    if (retenus.isEmpty) return;
     state = HistoriquePersonnel(
       operations: <OperationPersonnelle>[
         ...state.operations,
         TraitsGommesPersonnels(
-          traits: List<TraitVectoriel>.unmodifiable(traits),
+          traits: List<TraitVectoriel>.unmodifiable(retenus),
           surface: surface,
           portee: portee,
           sessionId: sessionId,
         ),
       ],
-      retires: <String>{
-        ...state.retires,
-        for (final TraitVectoriel trait in traits) trait.id,
-      },
+      retires: state.retires,
       mesTraits: state.mesTraits,
     );
   }
+
+  /// TB-9 : les notes de la surface que [sur] reconnait ont ete effacees ;
+  /// ses operations s'en vont (« Annuler » ne rajoute jamais un trait que
+  /// l'effacement a retire).
+  void oublierSurface(bool Function(ContentPosition surface) sur) =>
+      state = HistoriquePersonnel(
+        operations: <OperationPersonnelle>[
+          for (final OperationPersonnelle o in state.operations)
+            if (!sur(o.surface)) o,
+        ],
+        retires: state.retires,
+        mesTraits: state.mesTraits,
+      );
 
   /// Defait la derniere operation personnelle sur [surface] : un trait pose
   /// est retire, des traits gommes reviennent. Rien d'autre n'est touche.

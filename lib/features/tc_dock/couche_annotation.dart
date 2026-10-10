@@ -680,6 +680,10 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
         portee: etat.portee,
       );
       if (couche == null) {
+        // Aucune couche : rien n'a ete retire, le trait revient.
+        if (mounted) {
+          ref.read(historiquePersonnelProvider.notifier).restaurer(trait.id);
+        }
         return;
       }
       await annotations.retirerTrait(couche.id, trait.id);

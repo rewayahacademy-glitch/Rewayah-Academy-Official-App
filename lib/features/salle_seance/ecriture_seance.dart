@@ -203,13 +203,16 @@ String libelleEpaisseur(EpaisseurTrait epaisseur) => switch (epaisseur) {
 };
 
 /// La palette courte (plan V2 §4.2) : panneau ferme, l'outil actif, Annuler
-/// et Terminer. Toucher l'outil actif rouvre les Commandes ([onCommandes]),
+/// et Terminer. Elle prend la place du declencheur « Commandes », qui devient
+/// le dernier bouton de sa rangee (une seule rangee, la hauteur reste a la
+/// page) ; toucher l'outil actif rouvre aussi les Commandes ([onCommandes]),
 /// ou reparaissent les autres outils.
 class PaletteEcriture extends ConsumerWidget {
   /// Cree la palette.
   const PaletteEcriture({
     required this.vue,
     required this.onCommandes,
+    this.focusCommandes,
     super.key = cle,
   });
 
@@ -218,6 +221,10 @@ class PaletteEcriture extends ConsumerWidget {
 
   final VueSeance vue;
   final VoidCallback? onCommandes;
+
+  /// Le noeud du declencheur, porte par l'entree « Commandes » : la
+  /// fermeture du panneau y rend le focus.
+  final FocusNode? focusCommandes;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -237,6 +244,8 @@ class PaletteEcriture extends ConsumerWidget {
         peutAnnuler: peutAnnuler,
         avecPortee: false,
         onTerminer: ref.read(etatOutilsProvider.notifier).relacherOutil,
+        onCommandes: onCommandes,
+        focusCommandes: focusCommandes,
       ),
     );
   }
