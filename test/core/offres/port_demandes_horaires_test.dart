@@ -30,7 +30,7 @@ void main() {
 
   test('lit le regroupement sans identité familiale', () {
     final RegroupementDemandesHoraires regroupement =
-        RegroupementDemandesHoraires.depuisJson(<String, dynamic>{
+        RegroupementDemandesHoraires.depuisJson(const <String, dynamic>{
       'regroupement_id': 'a1b2',
       'type_public': 'adulte',
       'langue_code': 'francais',
