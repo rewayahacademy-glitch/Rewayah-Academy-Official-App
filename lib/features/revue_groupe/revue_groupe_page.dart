@@ -57,9 +57,15 @@ class RevueGroupePage extends ConsumerWidget {
     // Le nom de la Classe dans le titre (recette EN-12, decision EN-RC) : sans
     // lui, « Revue de la Classe » ne dit pas laquelle. Tant que la liste des
     // Classes n'est pas lue, le titre d'origine.
-    final String? nom = ref
-        .watch(groupesEnseignantProvider)
-        .value
+    final AsyncValue<List<GroupeEnseignant>> mesClasses = ref.watch(
+      groupesEnseignantProvider,
+    );
+    // `mes_groupes_v` ne rend que les Classes actives de l'appelant : une
+    // absence, la liste lue, est une Classe cloturee ou celle d'un collegue.
+    final bool pasLaSienne =
+        mesClasses.hasValue &&
+        !mesClasses.requireValue.any((GroupeEnseignant g) => g.id == groupeId);
+    final String? nom = mesClasses.value
         ?.where((GroupeEnseignant g) => g.id == groupeId)
         .map((GroupeEnseignant g) => g.libelle.trim())
         .where((String l) => l.isNotEmpty)
@@ -85,7 +91,15 @@ class RevueGroupePage extends ConsumerWidget {
             ),
           ),
           Ecart.vXxl,
-          _corps(ref, membres: membres, anomalies: lues, classe: nom ?? ''),
+          if (pasLaSienne)
+            EmptyState(
+              message: t.enseignant.ficheGroupe.introuvable,
+              invitation: t.enseignant.ficheGroupe.introuvableDetail,
+              icone: AppIcons.rienAAfficher,
+              registre: RegistreVide.subi,
+            )
+          else
+            _corps(ref, membres: membres, anomalies: lues, classe: nom ?? ''),
         ],
       ),
     );
