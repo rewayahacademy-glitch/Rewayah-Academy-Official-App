@@ -543,17 +543,19 @@ begin
 end $$;
 
 -- ============================================================
--- A12 : aucune fonction volatile n'est appelable par un agent
+-- A12 : seul le hook d'agent, sans mutation métier, est volatile et appelable
 -- ============================================================
 --
--- L'invariant `I2` de 0014, rejoue APRES les grants du harnais : c'est la seule
--- facon de verifier qu'un `grant ... to authenticated` de routine n'a pas rouvert
--- une porte d'ecriture par heritage.
+-- SEC-01 exige set_config(..., true) pour adapter auth.uid() dans la
+-- transaction PostgREST. Le hook reste SECURITY DEFINER, sans argument et ne
+-- fait que lire les portées puis modifier un GUC transaction-local. Toute
+-- autre fonction volatile applicative reste interdite à agent_ro.
 
-do $$
+do $
 declare
   v_n      int;
   v_detail text;
+  v_hook_ok boolean;
 begin
   select count(*), string_agg(p.proname, ', ')
     into v_n, v_detail
@@ -563,16 +565,28 @@ begin
     and p.prokind = 'f'
     and p.provolatile = 'v'
     and has_function_privilege('agent_ro', p.oid, 'EXECUTE')
+    and p.oid <> to_regprocedure('public.agent_pre_request()')
     -- Les fonctions d'extension sont hors sujet : `btree_gist` est installe
-    -- dans `public` par 0005, et ses 188 fonctions de support d'index restent
-    -- ouvertes a PUBLIC. Les refermer couterait la contrainte d'exclusion des
-    -- seances sans fermer la moindre porte d'ecriture.
+    -- dans `public` par 0005, et ses fonctions de support d'index restent
+    -- ouvertes a PUBLIC.
     and not exists (
       select 1 from pg_depend d where d.objid = p.oid and d.deptype = 'e'
     );
   if v_n > 0 then
-    raise exception 'A12 : agent_ro peut appeler % fonction(s) volatile(s) : %',
+    raise exception 'A12 : agent_ro peut appeler % fonction(s) volatile(s) hors hook : %',
       v_n, v_detail;
+  end if;
+
+  select p.provolatile = 'v'
+     and p.prosecdef
+     and p.pronargs = 0
+     and p.prorettype = 'void'::regtype
+     and has_function_privilege('agent_ro', p.oid, 'EXECUTE')
+    into v_hook_ok
+  from pg_proc p
+  where p.oid = to_regprocedure('public.agent_pre_request()');
+  if coalesce(v_hook_ok, false) IS NOT TRUE then
+    raise exception 'A12 : agent_pre_request absent ou privilèges hook incomplets';
   end if;
 
   select count(*), string_agg(distinct c.relname, ', ')
