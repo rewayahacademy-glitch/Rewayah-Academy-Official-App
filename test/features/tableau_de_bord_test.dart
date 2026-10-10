@@ -267,8 +267,8 @@ void main() {
       ];
       // Du plus ancien au plus recent ; le quatrieme reste dans la file.
       expect(lus, <String>[
-        'Ancien · ${LibellesGroupe.insecable(t.admin.tableau.attenteJours(jours: '7'))}',
-        'Milieu · ${LibellesGroupe.insecable(t.admin.tableau.attenteJours(jours: '3'))}',
+        'Ancien · ${LibellesGroupe.insecable(t.admin.tableau.attenteJours(jours: 7))}',
+        'Milieu · ${LibellesGroupe.insecable(t.admin.tableau.attenteJours(jours: 3))}',
         'Hier · ${t.admin.tableau.attenteUnJour}',
       ]);
       expect(find.textContaining('Recent'), findsNothing);

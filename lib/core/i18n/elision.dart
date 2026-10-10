@@ -17,11 +17,15 @@
 // h : les prenoms transcrits de l'arabe ont un h aspire (« de Hamza »,
 // « de Hana »), comme le faisaient deja les dossiers (textes_dossier.dart).
 //
-// Langue : l'arabe ne traduit qu'une partie des cles (98 sur plus de 4000),
-// les autres s'affichent en francais (`fallback_strategy: base_locale`). Le
-// texte francais de repli garde donc « de » / « d' ». Seul un appelant dont
-// la cle EST traduite dans la langue active doit recevoir le nom seul : il
-// passe [cle], et la fonction regarde si la langue active la traduit.
+// Langue (AR-ENS-1, puis reunion de la ligne arabe dans ccr) : hors du
+// francais, le nom est rendu seul, la langue cible porte sa propre
+// construction dans sa phrase. Mais l'arabe ne traduit pas encore toutes les
+// cles : les autres s'affichent en francais (`fallback_strategy:
+// base_locale`), et ce texte de repli doit garder « de » / « d' » (revue
+// croisee de LIB-DIR-1). L'appelant d'une cle qui peut tomber en repli passe
+// [cle] : la fonction regarde si la langue active la traduit, et garde
+// l'elision francaise sinon. Passer [cle] est toujours juste ; l'omettre
+// suppose la cle traduite dans la langue active.
 
 import 'strings.g.dart';
 
@@ -36,10 +40,10 @@ const String _voyelles = 'aeiouàâäéèêëïîôöùûü';
 /// « de Youssef », « de Yasmine », « de Yahya ». Suivi d'une consonne, il se
 /// prononce « i » et elide : « d'Yvette ».
 ///
-/// [cle] : la cle du libelle, a passer quand elle a une traduction hors du
-/// francais. Si la langue active la traduit, le nom est rendu seul (la
-/// traduction place le nom ou sa grammaire le demande) ; sinon le texte
-/// affiche est le repli francais, et l'elision francaise s'applique.
+/// Hors du francais, [nom] seul (la traduction place le nom ou sa grammaire
+/// le demande). [cle] : la cle du libelle ; si la langue active ne la traduit
+/// pas, le texte affiche est le repli francais, et l'elision francaise
+/// s'applique.
 String deDevant(String nom, {String? cle}) => _elide('de', 'd', nom, cle);
 
 /// Compose « que {nom} » ou « qu'{nom} » (LIB-OBJ-1 : « Ce qu'Aya doit
@@ -58,15 +62,15 @@ bool commenceParVoyelle(String nom) {
       : _voyelles.contains(premiere);
 }
 
-/// Vrai quand la langue active n'est pas le francais et traduit [cle]
-/// elle-meme (sans repli sur le francais).
-bool _traduiteHorsFrancais(String? cle) =>
-    cle != null &&
+/// Vrai quand la langue active n'est pas le francais et que le libelle est
+/// rendu dans cette langue : [cle] omise (supposee traduite, AR-ENS-1) ou
+/// traduite elle-meme (sans repli sur le francais).
+bool _nomSeul(String? cle) =>
     LocaleSettings.currentLocale != AppLocale.fr &&
-    t.$meta.getTranslation(cle) != null;
+    (cle == null || t.$meta.getTranslation(cle) != null);
 
 String _elide(String mot, String elide, String nom, String? cle) {
-  if (_traduiteHorsFrancais(cle)) {
+  if (_nomSeul(cle)) {
     return nom;
   }
   return commenceParVoyelle(nom) ? "$elide'$nom" : '$mot $nom';

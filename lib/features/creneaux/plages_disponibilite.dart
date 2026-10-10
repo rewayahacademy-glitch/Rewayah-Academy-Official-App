@@ -186,7 +186,7 @@ class _PlagesDisponibiliteEtat extends ConsumerState<PlagesDisponibilite> {
           TexteSansCoupure(switch (poses.length) {
             1 => t.disponibilites.poseeUne,
             _ => LibellesGroupe.valeurSeule(
-              t.disponibilites.posees(nombre: '${poses.length}'),
+              t.disponibilites.posees(nombre: poses.length),
             ),
           }, style: textes.bodySmall),
         ],

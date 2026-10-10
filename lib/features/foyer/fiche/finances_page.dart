@@ -153,10 +153,16 @@ class _CorpsFinances extends ConsumerWidget {
       textes: (
         indisponibleTitre: t.ficheEleve.finances.indisponibleTitre,
         indisponiblePhrase: t.ficheEleve.finances.indisponiblePhrase(
-          dePrenom: deDevant(profil.prenom),
+          dePrenom: deDevant(
+            profil.prenom,
+            cle: 'ficheEleve.finances.indisponiblePhrase',
+          ),
         ),
         erreurTitre: t.ficheEleve.finances.erreurTitre(
-          dePrenom: deDevant(profil.prenom),
+          dePrenom: deDevant(
+            profil.prenom,
+            cle: 'ficheEleve.finances.erreurTitre',
+          ),
         ),
         videTitre: t.ficheEleve.finances.videTitre(prenom: profil.prenom),
         videPhrase: t.ficheEleve.finances.videPhrase,
@@ -175,7 +181,10 @@ class _CorpsFinances extends ConsumerWidget {
             GoRouter.of(context)
                 .go(Routes.rechargePour(<String>[finance.profilId])),
         semantiqueMouvements: t.ficheEleve.finances.voirMouvementsSemantique(
-          dePrenom: deDevant(finance.prenom),
+          dePrenom: deDevant(
+            finance.prenom,
+            cle: 'ficheEleve.finances.voirMouvementsSemantique',
+          ),
         ),
         onMouvements: () =>
             GoRouter.of(context)
@@ -244,7 +253,10 @@ class _HistoriqueProfil extends ConsumerWidget {
         nature: NatureEtat.indisponible,
         titre: t.ficheEleve.mouvements.indisponibleTitre,
         phrase: t.ficheEleve.mouvements.indisponiblePhrase(
-          dePrenom: deDevant(profil.prenom),
+          dePrenom: deDevant(
+            profil.prenom,
+            cle: 'ficheEleve.mouvements.indisponiblePhrase',
+          ),
         ),
         dependance: erreur.dependance,
       );
@@ -254,7 +266,10 @@ class _HistoriqueProfil extends ConsumerWidget {
           : EtatSysteme(
               nature: NatureEtat.echecServeur,
               titre: t.ficheEleve.mouvements.erreurTitre(
-                dePrenom: deDevant(profil.prenom),
+                dePrenom: deDevant(
+                  profil.prenom,
+                  cle: 'ficheEleve.mouvements.erreurTitre',
+                ),
               ),
               onAction: relire,
             );
@@ -309,7 +324,10 @@ class _HistoriqueProfil extends ConsumerWidget {
                 key: FinancesElevePage.voirToutKey,
                 libelle: t.ficheEleve.finances.voirTout,
                 libelleSemantique: t.ficheEleve.finances.voirToutSemantique(
-                  dePrenom: deDevant(profil.prenom),
+                  dePrenom: deDevant(
+                    profil.prenom,
+                    cle: 'ficheEleve.finances.voirToutSemantique',
+                  ),
                 ),
                 onPress: () => GoRouter.of(
                   context,
@@ -420,7 +438,7 @@ class EtatsFinancesProfil extends ConsumerWidget {
       ),
     (final String m, null, null) => t.foyer.finances.manque(montant: m),
     (null, _, final String mo) => t.ficheEleve.finances.moisNonFinance(
-      deMois: deDevant(mo),
+      deMois: deDevant(mo, cle: 'ficheEleve.finances.moisNonFinance'),
     ),
     _ => t.ficheEleve.finances.sansManque,
   };

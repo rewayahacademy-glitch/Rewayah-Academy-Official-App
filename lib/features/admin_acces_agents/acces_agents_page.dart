@@ -143,7 +143,10 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
     }
     _libelle.text = LibellesGroupe.insecable(
       t.admin.agents.libelleAuto(
-        dePrenom: deDevant(qui.prenom.isEmpty ? qui.identifiant : qui.prenom),
+        dePrenom: deDevant(
+          qui.prenom.isEmpty ? qui.identifiant : qui.prenom,
+          cle: 'admin.agents.libelleAuto',
+        ),
         date: ChampDate.ecrire(ref.read(horlogeFormulairesProvider)()),
         duree: _duree,
       ),

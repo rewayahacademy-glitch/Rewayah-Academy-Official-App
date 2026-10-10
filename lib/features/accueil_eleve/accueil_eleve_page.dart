@@ -607,7 +607,7 @@ class _SansCoursAujourdhui extends StatelessWidget {
         (_, <= 0) => t.eleve.accueil.prochainAujourdhui,
         (_, 1) => t.eleve.accueil.prochainDemain,
         (_, _) => LibellesGroupe.insecable(
-          t.eleve.accueil.prochainDansJours(jours: '$jours'),
+          t.eleve.accueil.prochainDansJours(jours: jours),
         ),
       },
     );

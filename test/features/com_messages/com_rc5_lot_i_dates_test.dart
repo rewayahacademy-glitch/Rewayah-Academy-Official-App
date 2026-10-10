@@ -35,16 +35,36 @@ void main() {
       expect(horodatageMessage(_le), 'Dimanche 4\u00A0octobre, 09:05');
     });
 
+    // Reunion de la ligne arabe (10/10) : les gabarits de date arabes isolent
+    // chaque champ (U+2068 ... U+2069).
     test('arabe : mois et jours arabes, aucun mot francais', () async {
       await LocaleSettings.setLocale(AppLocale.ar);
-      expect(dateCourte(_le), '4 أكتوبر 2026');
-      expect(dateCompacte(_le, _maintenant), '4 أكتوبر');
-      expect(dateLongueHistorique(_le), 'الأحد 4 أكتوبر 2026');
-      expect(dateMoyenne(_le), 'الأحد 4 أكتوبر 2026');
-      expect(dateDeLAppareil(_le), 'الأحد 4 أكتوبر');
+      expect(
+        dateCourte(_le),
+        '\u20684\u2069 \u2068أكتوبر\u2069 \u20682026\u2069',
+      );
+      expect(
+        dateCompacte(_le, _maintenant),
+        '\u20684\u2069 \u2068أكتوبر\u2069',
+      );
+      expect(
+        dateLongueHistorique(_le),
+        '\u2068الأحد\u2069 \u20684\u2069 \u2068أكتوبر\u2069 \u20682026\u2069',
+      );
+      expect(
+        dateMoyenne(_le),
+        'الأحد \u20684\u2069 \u2068أكتوبر\u2069 \u20682026\u2069',
+      );
+      expect(
+        dateDeLAppareil(_le),
+        '\u2068الأحد\u2069 \u20684\u2069 \u2068أكتوبر\u2069',
+      );
       expect(momentCourt(_le, _maintenant), isNot(contains('oct')));
       final String horodatage = horodatageMessage(_le);
-      expect(horodatage, 'الأحد 4\u00A0أكتوبر · 09:05');
+      expect(
+        horodatage,
+        '\u2068الأحد\u2069 \u20684\u2069\u00A0\u2068أكتوبر\u2069 · 09:05',
+      );
       for (final String texte in <String>[
         dateCourte(_le),
         dateCompacte(_le, _maintenant),

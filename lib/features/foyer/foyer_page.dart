@@ -636,7 +636,10 @@ class _ListeMembres extends ConsumerWidget {
               key: FoyerPage.voirDetailKey(profil.eleveId),
               libelle: t.foyer.finances.voirDetail,
               libelleSemantique: t.foyer.finances.voirDetailSemantique(
-                dePrenom: deDevant(profil.prenom),
+                dePrenom: deDevant(
+                  profil.prenom,
+                  cle: 'foyer.finances.voirDetailSemantique',
+                ),
               ),
               onPress: () =>
                   aller(Routes.ficheEleveSousPage(profil.eleveId, 'finances')),

@@ -269,7 +269,7 @@ List<TuileBento> _tuilesBentoPrincipales() => <TuileBento>[
       // Chaque nom ouvre son dossier (DASH-ADM-1, D4 (a)).
       apercu: <LigneApercu>[
         LigneApercu(
-          'Aicha · ${t.admin.tableau.attenteJours(jours: '4')}',
+          'Aicha · ${t.admin.tableau.attenteJours(jours: 4)}',
           onPress: _rien,
         ),
         LigneApercu(

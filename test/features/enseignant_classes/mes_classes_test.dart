@@ -325,8 +325,9 @@ void main() {
   // celui de l'ecran.
   //
   // Revue COUPE-MOTS-1-R (m6) : le cas « ar » tourne aussi dans la vraie
-  // locale arabe (libelles en repli francais, sens fixe par la locale), et
-  // pas seulement avec des chaines francaises dans un sens force.
+  // locale arabe (sens fixe par la locale), et pas seulement avec des
+  // chaines francaises dans un sens force. Depuis la reunion de la ligne
+  // arabe, la legende y est traduite : le cas verifie sa traduction.
   group('COUPE-MOTS-2 : la legende garde « 3 élèves » en arabe', () {
     for (final (String nom, TextDirection sens, AppLocale locale)
         in <(String, TextDirection, AppLocale)>[
@@ -373,8 +374,22 @@ void main() {
         await tester.pumpAndSettle();
 
         final String effectif = t.enseignant.classes.eleves(
-          nombre: '${nour.nbMembres}',
+          nombre: nour.nbMembres,
         );
+        if (locale == AppLocale.ar) {
+          // Reunion de la ligne arabe (10/10) : la legende est traduite, le
+          // nombre isole (U+2068 ... U+2069) par la traduction elle-meme ;
+          // il n'y a plus de repli francais a retourner.
+          expect(
+            tester
+                .renderObjectList<RenderParagraph>(find.byType(RichText))
+                .map((RenderParagraph r) => r.text.toPlainText())
+                .where((String s) => s.contains(effectif)),
+            isNotEmpty,
+          );
+          expect(effectif, isNot(contains('élèves')));
+          return;
+        }
         final RenderParagraph p = tester
             .renderObjectList<RenderParagraph>(find.byType(RichText))
             .firstWhere(

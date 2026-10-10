@@ -20,6 +20,7 @@ import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/capsule_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
+import 'package:rewayah_academy/features/salle_seance/panneau_eleves.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
@@ -429,26 +430,29 @@ void main() {
       await tester.pump();
       await tester.tap(focus);
       await _attendre(tester);
-      // Le bouton Eleves se replie ; la sortie est dans les Commandes et dans
-      // la barre de l'appel (« Reduire »).
-      expect(find.byKey(const ValueKey<String>('bouton-eleves')), findsNothing);
-      expect(
-        _dans(focus, t.salle.seance.commandes.quitterFocus),
-        findsOneWidget,
-      );
+      // TB-5 (UX-14) : Focus replie les deux cotes, Commandes compris ; la
+      // sortie reste dans la barre de l'appel (« Reduire ») et dans les
+      // Commandes, que le declencheur rouvre seules (UX-15).
+      expect(find.byType(PanneauEleves), findsNothing);
+      expect(_contenu, findsNothing);
       expect(
         find.byKey(const ValueKey<String>('bouton-agrandir')),
+        findsOneWidget,
+      );
+      await tester.tap(_declencheur);
+      await _attendre(tester);
+      expect(find.byType(PanneauEleves), findsNothing);
+      expect(
+        _dans(focus, t.salle.seance.commandes.quitterFocus),
         findsOneWidget,
       );
       await tester.ensureVisible(focus);
       await tester.pump();
       await tester.tap(focus);
       await _attendre(tester);
+      // UX-16 : la composition d'avant revient (Participants, Commandes).
       expect(_dans(focus, t.salle.seance.commandes.focus), findsOneWidget);
-      expect(
-        find.byKey(const ValueKey<String>('bouton-eleves')),
-        findsOneWidget,
-      );
+      expect(find.byType(PanneauEleves), findsOneWidget);
     });
   });
 

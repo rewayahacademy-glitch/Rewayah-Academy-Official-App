@@ -218,8 +218,9 @@ void main() {
         find.text(t.salle.seance.statut.connexionInterrompue),
         findsOneWidget,
       );
-      // EN-9 : deux volets, le panneau a droite du support, jamais
-      // par-dessus. TB-4 : plus d'outils permanents (dans les Commandes).
+      // Deux volets, jamais par-dessus. TB-5 (n. 12, remplace EN-9 « a
+      // droite ») : les Participants a gauche du support. TB-4 : plus
+      // d'outils permanents (dans les Commandes).
       expect(find.byKey(const ValueKey<String>('outils-carte')), findsNothing);
       expect(find.byKey(const ValueKey<String>('outils-rangee')), findsNothing);
       final Rect panneau = tester.getRect(
@@ -228,7 +229,7 @@ void main() {
       final Rect support = tester.getRect(
         find.byKey(const ValueKey<String>('zone-support')),
       );
-      expect(panneau.left, greaterThan(support.right));
+      expect(panneau.right, lessThan(support.left));
     });
 
     testWidgets('une fiche depliee a la fois ; les actions visent l\'eleve', (

@@ -19,7 +19,9 @@ import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart'
     show TitreEnseignant;
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
+import 'package:rewayah_academy/features/salle_seance/bibliotheque_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
+import 'package:rewayah_academy/features/tc_catalogue/surface_bibliotheque.dart';
 
 import '../../router/support_routeur.dart';
 
@@ -288,20 +290,20 @@ void main() {
       );
     });
 
-    testWidgets('LIB-01 enseignant : panneau Supports ouvert', (
+    testWidgets('LIB-01 enseignant : la Bibliotheque ouverte (TB-8)', (
       WidgetTester tester,
     ) async {
       await ouvrir(tester, RoleSeance.enseignant, SituationTb.lib01);
-      final Finder panneau = find.byKey(
-        const ValueKey<String>('panneau-supports'),
-      );
+      final Finder panneau = find.byType(BibliothequeSeance);
       expect(panneau, findsOneWidget);
+      await tester.pumpAndSettle();
+      // Le catalogue unique (R14), celui de toute l'application.
       expect(
         find.descendant(
           of: panneau,
-          matching: find.text(DonneesSeanceDemo.supports.first.titre),
+          matching: find.byType(SurfaceBibliotheque),
         ),
-        findsWidgets,
+        findsOneWidget,
       );
     });
   });

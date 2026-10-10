@@ -331,7 +331,9 @@ class VueGlobaleFinanceContenu extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Text(
-          vueT.contexte(deMois: deDevant(mois)),
+          vueT.contexte(
+            deMois: deDevant(mois, cle: 'admin.finance.vue.contexte'),
+          ),
           style: palette.inkMuted.applyTo(
             textes.bodyLarge ?? const TextStyle(),
           ),
@@ -535,7 +537,12 @@ List<Widget> _graphiques(VueGlobaleFinance vue, String mois) {
     _Graphique(
       key: VueGlobaleFinanceContenu.graphiqueRepartitionKey,
       titre: vueT.graphiqueRepartition,
-      detail: vueT.graphiqueRepartitionDetail(deMois: deDevant(mois)),
+      detail: vueT.graphiqueRepartitionDetail(
+        deMois: deDevant(
+          mois,
+          cle: 'admin.finance.vue.graphiqueRepartitionDetail',
+        ),
+      ),
       barres: <_Barre>[
         for (int i = 0; i < vue.revenuParType.length; i++)
           _Barre(
@@ -916,7 +923,9 @@ class _TopClasses extends StatelessWidget {
         children: <Widget>[
           _TitreCarte(
             titre: vueT.topClasses,
-            detail: vueT.topClassesDetail(deMois: deDevant(mois)),
+            detail: vueT.topClassesDetail(
+              deMois: deDevant(mois, cle: 'admin.finance.vue.topClassesDetail'),
+            ),
           ),
           Ecart.vMd,
           if (classes.isEmpty)

@@ -166,9 +166,10 @@ String sansCoupureAuTrait(
 /// [texte] dont chaque nombre est lie au mot qui le suit par une espace
 /// insecable : « Dimanche 4 octobre » passe a la ligne apres « Dimanche »,
 /// jamais entre « 4 » et « octobre » (COM-RC tour 7, lot L). Valable en
-/// arabe (« الأحد 4 أكتوبر »).
+/// arabe (« الأحد 4 أكتوبر »), y compris quand la traduction isole le nombre
+/// (U+2068 4 U+2069, ligne arabe) : l'espace apres l'isolat est liee aussi.
 String nombresLiesAuMotSuivant(String texte) => texte.replaceAllMapped(
-  RegExp(r'(\d) (?=\S)'),
+  RegExp('(\\d\u2069?) (?=\\S)'),
   (Match m) => '${m[1]}\u00A0',
 );
 

@@ -740,20 +740,20 @@ String _libelleRegle(CleRegle? cle) => switch (cle) {
 /// lire « 5 » pour cinq minutes de cours. Insecable sans ancre de sens : la
 /// valeur est aussi glissee dans « Plateforme : 60 min » (DUREE-INSECABLE-3).
 String _valeur(CleRegle? cle, int valeur) => cle == CleRegle.plafondEleves
-    ? t.admin.demandes.eleves(valeur: '$valeur')
-    : LibellesGroupe.insecable(t.admin.demandes.minutes(valeur: '$valeur'));
+    ? t.admin.demandes.eleves(valeur: valeur)
+    : LibellesGroupe.insecable(t.admin.demandes.minutes(valeur: valeur));
 
 /// Ce que la demande reclame, dit en clair.
 String _reclame(Demande demande) => switch (demande.sorte) {
   SorteDemande.reaffectation => t.admin.demandes.reclameReaffectation(
     dePrenom: deDevant(demande.sujetLibelle),
   ),
-  SorteDemande.plafond =>
-    demande.valeurDemandee == null
-        ? t.admin.demandes.reclameRegleSansValeur(
-            regle: t.admin.demandes.reglePlafond,
-          )
-        : t.admin.demandes.reclamePlafond(valeur: '${demande.valeurDemandee}'),
+  SorteDemande.plafond => switch (demande.valeurDemandee) {
+    null => t.admin.demandes.reclameRegleSansValeur(
+      regle: t.admin.demandes.reglePlafond,
+    ),
+    final int valeur => t.admin.demandes.reclamePlafond(valeur: valeur),
+  },
   _ =>
     demande.valeurDemandee == null
         ? t.admin.demandes.reclameRegleSansValeur(

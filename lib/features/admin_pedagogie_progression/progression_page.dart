@@ -253,7 +253,7 @@ String _depuis(DateTime? quand) {
     <= 0 => t.admin.progression.depuisAujourdhui,
     1 => t.admin.progression.depuisUnJour,
     final int j => LibellesGroupe.valeurSeule(
-      t.admin.progression.depuisJours(jours: '$j'),
+      t.admin.progression.depuisJours(jours: j),
     ),
   };
 }

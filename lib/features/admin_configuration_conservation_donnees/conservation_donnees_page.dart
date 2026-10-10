@@ -90,7 +90,7 @@ class _Corps extends StatelessWidget {
           cle: 'recording_retention_days',
           valeur: v['recording_retention_days'] ?? 0,
           affichage: (int n) => LibellesGroupe.valeurSeule(
-            t.admin.conservationDonnees.uniteJours(n: '$n'),
+            t.admin.conservationDonnees.uniteJours(n: n),
           ),
           champValeur: t.admin.conservationDonnees.champValeur,
           envoyer: t.admin.conservationDonnees.envoyer,
@@ -104,7 +104,7 @@ class _Corps extends StatelessWidget {
           cle: 'kyc_retention_days',
           valeur: v['kyc_retention_days'] ?? 0,
           affichage: (int n) => LibellesGroupe.valeurSeule(
-            t.admin.conservationDonnees.uniteJours(n: '$n'),
+            t.admin.conservationDonnees.uniteJours(n: n),
           ),
           champValeur: t.admin.conservationDonnees.champValeur,
           envoyer: t.admin.conservationDonnees.envoyer,

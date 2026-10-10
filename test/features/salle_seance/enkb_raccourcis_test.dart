@@ -14,6 +14,7 @@ import 'package:rewayah_academy/features/compte/compte_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/libelles_salle_b.dart';
+import 'package:rewayah_academy/features/salle_seance/panneau_eleves.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/selecteur_ressources.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
@@ -138,12 +139,21 @@ void main() {
       expect(find.byType(SalleSeance), findsOneWidget);
     });
 
-    testWidgets('R ramene le panneau Eleves', (WidgetTester tester) async {
+    // TB-5 (n. 12) : sur bureau, R replie puis deplie la colonne des
+    // Participants, a gauche ; le panneau droit ouvert reste (§18.3).
+    testWidgets('R replie et deplie les Participants', (
+      WidgetTester tester,
+    ) async {
       await _monter(tester, const _Hote(raccourcis: true));
       await _touche(tester, LogicalKeyboardKey.keyB);
       expect(_etat(tester).panneau, PanneauOuvert.ressources);
+      expect(find.byType(PanneauEleves), findsOneWidget);
       await _touche(tester, LogicalKeyboardKey.keyR);
-      expect(_etat(tester).panneau, PanneauOuvert.eleves);
+      expect(find.byType(PanneauEleves), findsNothing);
+      expect(_etat(tester).panneau, PanneauOuvert.ressources);
+      await _touche(tester, LogicalKeyboardKey.keyR);
+      expect(find.byType(PanneauEleves), findsOneWidget);
+      expect(_etat(tester).panneau, PanneauOuvert.ressources);
     });
 
     testWidgets('rien quand un champ de texte a le focus', (

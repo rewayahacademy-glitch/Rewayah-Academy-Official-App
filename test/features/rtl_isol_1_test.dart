@@ -305,11 +305,11 @@ void main() {
     void dureeIsoleeSiArabe(String detail, {required bool phraseArabe}) {
       if (phraseArabe) {
         // JONCTION-LIGNES-1 : depuis COM-RC tour 7 (lot L), la duree d'une
-        // phrase arabe est arabe (« 8 د », `tc.groupe.duree`) : du meme
-        // sens que la phrase, elle n'a rien a isoler ; aucun mot francais.
-        expect(detail, matches(RegExp(r'\d+\s*د')), reason: detail);
+        // phrase arabe est arabe (« 8 د », `tc.groupe.duree`) ; aucun mot
+        // francais. Depuis la reunion de la ligne arabe (10/10), le nombre et
+        // le parametre sont isoles par la traduction (U+2068 ... U+2069).
+        expect(detail, matches(RegExp('\\d+$_pdi?\\s*د')), reason: detail);
         expect(detail, isNot(contains('min')), reason: detail);
-        expect(detail, isNot(contains(_fsi)), reason: detail);
       } else {
         expect(detail, isNot(contains(_fsi)), reason: detail);
         expect(detail, matches(RegExp(r'\d+\s*min')), reason: detail);
@@ -398,13 +398,20 @@ void main() {
         adresseDemoClasse(RoleEntree.eleve, EtatDemoClasse.aVenir),
         routesDemoClasse('dev'),
       );
-      final String debut = t.classe.entree.coursDans(duree: '').trim();
+      // Le parametre vide laisse son isolat en arabe (reunion du 10/10).
+      final String debut = t.classe.entree
+          .coursDans(duree: '')
+          .replaceAll(RegExp('[$_fsi$_pdi]'), '')
+          .trim();
       final RenderParagraph p = _paragraphe(tester, debut);
       // Depuis COM-RC tour 7 (lot L), la duree arabe est arabe (« 3 س
       // 28 د ») et se lit de droite a gauche, comme sa phrase ; la duree
       // francaise (« 3 h 28 ») de gauche a droite.
       final String heure = arabe ? 'س' : 'h';
-      final RegExpMatch? duree = RegExp('(\\d+)\\s*$heure\\s*(\\d+)')
+      // Le nombre arabe est isole par la traduction (reunion du 10/10).
+      final RegExpMatch? duree = RegExp(
+        '(\\d+)$_pdi?\\s*$heure\\s*$_fsi?(\\d+)',
+      )
           .firstMatch(p.text.toPlainText());
       expect(duree, isNotNull, reason: p.text.toPlainText());
       final TextDirection sensDuree = arabe
@@ -468,7 +475,7 @@ void main() {
       if (arabe) {
         _suit(
           _paragraphe(tester, 'جهاز لوحي'),
-          precedent: 'مدعومًا',
+          precedent: 'أيضًا',
           suivant: '.',
           sens: TextDirection.rtl,
         );
@@ -507,13 +514,28 @@ void main() {
           ),
         ),
       );
-      expect(t.tc.classe.fiche.sansPedagogieDetail, endsWith("l'enseignant."));
-      _aDroiteDe(
-        tester,
-        marque: 'ouverts',
-        precedent: 'enseignant',
-        suivant: '.',
-      );
+      // Traduit en arabe depuis la reunion de la ligne arabe (10/10) : le
+      // point reste en fin de phrase, dans le sens de sa langue.
+      if (arabe) {
+        expect(t.tc.classe.fiche.sansPedagogieDetail, endsWith('بعد.'));
+        _suit(
+          _paragraphe(tester, 'غير مفتوحة'),
+          precedent: 'بعد',
+          suivant: '.',
+          sens: TextDirection.rtl,
+        );
+      } else {
+        expect(
+          t.tc.classe.fiche.sansPedagogieDetail,
+          endsWith("l'enseignant."),
+        );
+        _aDroiteDe(
+          tester,
+          marque: 'ouverts',
+          precedent: 'enseignant',
+          suivant: '.',
+        );
+      }
     });
 
     testWidgets('Ma classe : « A propos » garde son point ($cas)', (
@@ -548,11 +570,13 @@ void main() {
           .substring(0, intro.length - 1)
           .split(' ')
           .last;
-      _aDroiteDe(
-        tester,
-        marque: intro.split(' ').take(3).join(' '),
+      // Traduite en arabe depuis la reunion de la ligne arabe (10/10) : le
+      // point suit le dernier mot dans le sens de la phrase.
+      _suit(
+        _paragraphe(tester, intro.split(' ').take(3).join(' ')),
         precedent: dernier,
         suivant: '.',
+        sens: sensDuTexte(intro) ?? TextDirection.ltr,
       );
     });
 
@@ -561,13 +585,24 @@ void main() {
     ) async {
       await _monterObservation(tester, langue);
       final String contexte = t.controleur.observation.contexteNature;
-      expect(contexte, endsWith("l'administration."));
-      _aDroiteDe(
-        tester,
-        marque: 'transmis',
-        precedent: 'administration',
-        suivant: '.',
-      );
+      // Traduite en arabe depuis la reunion de la ligne arabe (10/10).
+      if (arabe) {
+        expect(contexte, endsWith('الإدارة.'));
+        _suit(
+          _paragraphe(tester, 'تنضم'),
+          precedent: 'الإدارة',
+          suivant: '.',
+          sens: TextDirection.rtl,
+        );
+      } else {
+        expect(contexte, endsWith("l'administration."));
+        _aDroiteDe(
+          tester,
+          marque: 'transmis',
+          precedent: 'administration',
+          suivant: '.',
+        );
+      }
     });
 
     testWidgets('Observation : les valeurs Nature et Domaine sont isolees en '
@@ -579,9 +614,12 @@ void main() {
         ObservationControlePage.libelleDomaine(DomaineObservation.pedagogie),
       ]) {
         final RenderParagraph p = _paragraphe(tester, valeur);
+        // Une valeur traduite en arabe (reunion du 10/10) est du sens de
+        // l'interface : rien a isoler.
+        final bool autreSens = sensDuTexte(valeur) == TextDirection.ltr;
         expect(
           p.text.toPlainText(),
-          arabe ? isolerSens(valeur) : valeur,
+          arabe && autreSens ? isolerSens(valeur) : valeur,
           reason: 'Valeur « $valeur »',
         );
       }

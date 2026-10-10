@@ -264,12 +264,10 @@ class _Corps extends StatelessWidget {
                     <= 0 => t.admin.comptes.attenteUneAujourdhui,
                     1 => t.admin.comptes.attenteUneUnJour,
                     final int jours => LibellesGroupe.insecable(
-                      t.admin.comptes.attenteUne(jours: '$jours'),
+                      t.admin.comptes.attenteUne(jours: jours),
                     ),
                   }
-                : t.admin.comptes.attentePlusieurs(
-                    nombre: '${attendent.length}',
-                  ),
+                : t.admin.comptes.attentePlusieurs(nombre: attendent.length),
             style: Theme.of(context).textTheme.titleMedium,
           ),
           Ecart.vLg,
@@ -446,9 +444,7 @@ class _Corps extends StatelessWidget {
   static String _attente(int jours) => switch (jours) {
     0 => t.admin.comptes.attendAujourdhui,
     1 => t.admin.comptes.attendUnJour,
-    _ => LibellesGroupe.valeurSeule(
-      t.admin.comptes.attendJours(jours: '$jours'),
-    ),
+    _ => LibellesGroupe.valeurSeule(t.admin.comptes.attendJours(jours: jours)),
   };
 }
 

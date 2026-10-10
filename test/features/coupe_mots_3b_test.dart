@@ -273,6 +273,10 @@ void _aGaucheDe(
   );
 }
 
+/// Le signe du pourcentage : « ٪ » dans la traduction arabe (reunion de la
+/// ligne arabe, 10/10), « % » en francais.
+String _pourcent(AppLocale langue) => langue == AppLocale.ar ? '٪' : '%';
+
 /// La capacite de la carte, dans l'ordre de sa langue.
 void _capaciteDansLOrdre(WidgetTester tester, AppLocale langue) =>
     langue == AppLocale.ar
@@ -365,7 +369,12 @@ void main() {
       (WidgetTester tester) async {
         await _monterDemo(tester, langue, RoleEntree.enseignant);
         _capaciteDansLOrdre(tester, langue);
-        _aDroiteDe(tester, marque: 'Chapitre 1', precedent: '60', suivant: '%');
+        _aDroiteDe(
+          tester,
+          marque: 'Chapitre 1',
+          precedent: '60',
+          suivant: _pourcent(langue),
+        );
         _aDroiteDe(
           tester,
           marque: 'Chapitre 1',
@@ -381,9 +390,9 @@ void main() {
         await _monterDemo(tester, langue, RoleEntree.eleve);
         _aDroiteDe(
           tester,
-          marque: 'Chapitre 1 ·',
+          marque: 'Chapitre 1',
           precedent: '60',
-          suivant: '%',
+          suivant: _pourcent(langue),
         );
         // La capacite et le conseil d'appareil, traduits en arabe depuis
         // COM-RC tour 7 (lot L) : chacun dans l'ordre de sa langue.
@@ -392,7 +401,7 @@ void main() {
           _aGaucheDe(
             tester,
             marque: 'جهاز لوحي',
-            precedent: 'مدعومًا',
+            precedent: 'أيضًا',
             suivant: '.',
           );
         } else {
@@ -412,19 +421,46 @@ void main() {
       await _jusquAuRecapitulatif(tester, langue);
       final String question = t.controleur.observation.questionRecap;
       final String notice = t.controleur.compteRendu.notice;
-      // Les libelles du Controleur n'ont pas encore de traduction arabe : le
-      // test ne porte que sur ces phrases francaises.
       expect(question, endsWith('.'));
       expect(notice, endsWith('.'));
-      _aDroiteDe(tester, marque: 'avant l', precedent: 'envoi', suivant: '.');
-      _aDroiteDe(
-        tester,
-        marque: 'administration',
-        precedent: 'administration',
-        suivant: '.',
-      );
-      _aDroiteDe(tester, marque: 'Mariam', precedent: 'précis', suivant: '·');
-      _aDroiteDe(tester, marque: 'Mariam', precedent: '·', suivant: 'Mariam');
+      if (langue == AppLocale.ar) {
+        // Les libelles du Controleur sont traduits depuis la reunion de la
+        // ligne arabe (10/10) : chaque phrase dans l'ordre de sa langue.
+        _aGaucheDe(
+          tester,
+          marque: 'قبل الإرسال',
+          precedent: 'الإرسال',
+          suivant: '.',
+        );
+        _aGaucheDe(
+          tester,
+          marque: 'تلقائيًا',
+          precedent: 'الإدارة',
+          suivant: '.',
+        );
+        _aGaucheDe(tester, marque: 'Mariam', precedent: 'محدد', suivant: '·');
+        _aGaucheDe(tester, marque: 'Mariam', precedent: '·', suivant: 'Mariam');
+      } else {
+        _aDroiteDe(
+          tester,
+          marque: 'avant l',
+          precedent: 'envoi',
+          suivant: '.',
+        );
+        _aDroiteDe(
+          tester,
+          marque: 'administration',
+          precedent: 'administration',
+          suivant: '.',
+        );
+        _aDroiteDe(
+          tester,
+          marque: 'Mariam',
+          precedent: 'précis',
+          suivant: '·',
+        );
+        _aDroiteDe(tester, marque: 'Mariam', precedent: '·', suivant: 'Mariam');
+      }
       verifierEcranSansMotCoupe(tester);
     });
   }

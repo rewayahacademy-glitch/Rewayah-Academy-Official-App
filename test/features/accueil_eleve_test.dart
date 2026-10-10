@@ -322,9 +322,7 @@ void main() {
       expect(find.text(t.eleve.accueil.aucunCours), findsOneWidget);
       expect(
         find.text(
-          LibellesGroupe.insecable(
-            t.eleve.accueil.prochainDansJours(jours: '3'),
-          ),
+          LibellesGroupe.insecable(t.eleve.accueil.prochainDansJours(jours: 3)),
         ),
         findsOneWidget,
       );

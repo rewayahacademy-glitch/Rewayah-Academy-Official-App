@@ -123,14 +123,22 @@ String? libelleReference(RegroupementDemandes g) {
   if (heure == null) return null;
   return t.admin.regroupements.heureFuseau(
     heure: heure,
-    deVille: deDevant(villeDuFuseau(g.fuseau)),
+    deVille: deDevant(
+      villeDuFuseau(g.fuseau),
+      cle: 'admin.regroupements.heureFuseau',
+    ),
   );
 }
 
 /// « Heure de Paris » : le fuseau de reference, dit seul quand chaque jour a
 /// son heure.
-String libelleFuseau(RegroupementDemandes g) => t.admin.regroupements
-    .fuseauValeur(deVille: deDevant(villeDuFuseau(g.fuseau)));
+String libelleFuseau(RegroupementDemandes g) =>
+    t.admin.regroupements.fuseauValeur(
+      deVille: deDevant(
+        villeDuFuseau(g.fuseau),
+        cle: 'admin.regroupements.fuseauValeur',
+      ),
+    );
 
 /// « 12 h a Toronto », « 5 h le lendemain a Paris ».
 String libelleAilleurs(HeureDansFuseau h) {
