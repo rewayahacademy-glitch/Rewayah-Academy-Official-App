@@ -89,6 +89,9 @@ flutter:
   # Seuls les libelles audio sont de vrais assets d'execution.
   assets:
     - assets/audio/fr/
+    - assets/brand/logo/violet/
+    - assets/brand/logo/blanc/
+    - assets/brand/logo/encre/
 
   # Quatre familles, pas une de plus (design-tokens.md section 2).
   # Fichiers versionnes dans le depot : aucune police n'est chargee au reseau,

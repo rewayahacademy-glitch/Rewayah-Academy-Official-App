@@ -15,6 +15,7 @@ spécifications actives sont dans `docs/current/`. Tout le reste est archivé.
 | Produit, rôles, parcours, recette | `docs/current/01_PRODUIT_ET_PARCOURS.md` |
 | Schéma, RLS, RPC, LiveKit, R2, CI | `docs/current/02_ARCHITECTURE_ET_SECURITE.md` |
 | Écran, composant, thème, accessibilité | `docs/current/03_DESIGN_SYSTEM_ET_UX.md` puis `lib/CLAUDE.md` |
+| Logo (placement, couleur, tailles, variantes SVG) | **ssets/brand/logo/README.md** : obligatoire avant d'afficher le logo où que ce soit |
 | Branches, worktrees, déploiement, ménage | `docs/current/04_EXECUTION_GIT_CI_ET_MIGRATION.md` |
 | Périmètre MVP et statuts de preuve | `docs/current/06_SPEC_FONCTIONNELLE_MVP.md` |
 | Pédagogie avancée, finance (après MVP) | `docs/current/07_MEMOIRE_PEDAGOGIE_FINANCE.md` |
