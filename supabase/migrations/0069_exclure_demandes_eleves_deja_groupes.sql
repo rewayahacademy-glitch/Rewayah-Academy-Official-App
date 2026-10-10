@@ -8,13 +8,7 @@ declare
   v_cleanup text;
   v_filtered text;
 begin
-  select p.oid into v_oid
-  from pg_catalog.pg_proc p
-  join pg_catalog.pg_namespace n on n.oid = p.pronamespace
-  where n.nspname = 'public'
-    and p.proname = 'creer_classe_depuis_regroupement'
-    and pg_catalog.pg_get_function_identity_arguments(p.oid)
-      = 'p_regroupement_id text, p_cle_idempotence uuid, p_libelle text';
+  v_oid := 'public.creer_classe_depuis_regroupement(text, uuid, text)'::regprocedure;
   if v_oid is null then
     raise exception 'M2 : fonction canonique creer_classe_depuis_regroupement absente';
   end if;
