@@ -29,6 +29,7 @@ import '../../features/admin_pedagogie_programmes/programmes_page.dart';
 import '../../features/admin_pedagogie_progression/progression_page.dart';
 import '../../features/admin_pedagogie_qualite/qualite_page.dart';
 import '../../features/admin_regroupements/regroupements_page.dart';
+import '../../features/admin_reprises/reprises_page.dart';
 import '../../features/admin_tableau/tableau_de_bord_page.dart';
 import '../../features/admin_traitement/traitement_page.dart';
 import '../../features/agent_entree/agent_entree_page.dart';
@@ -127,6 +128,7 @@ import '../../features/journee/journee_page.dart';
 import '../../features/notifications/notifications_page.dart';
 import '../../features/paiements_recus/recevoir_paiements_page.dart';
 import '../../features/parcours_offres/parcours_offres_page.dart';
+import '../../features/presentation_tuteur/demandes_presentation_page.dart';
 import '../../features/profil_enseignant/profil_enseignant_page.dart';
 import '../../features/recrutement/invitation_candidat_page.dart';
 import '../../features/remplacements/remplacements_page.dart';
@@ -568,6 +570,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     path: 'notifications',
                     pageBuilder: glissee(
                       (GoRouterState _) => const NotificationsPage(),
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'presentation',
+                    pageBuilder: glissee(
+                      (GoRouterState _) => const DemandesPresentationPage(),
                     ),
                   ),
                   GoRoute(
@@ -1383,6 +1391,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.operations,
           child: RegroupementsPage(),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminPersonnesReprises,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: ReprisesPage(),
         ),
       ),
       GoRoute(

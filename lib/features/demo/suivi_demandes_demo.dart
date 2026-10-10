@@ -44,6 +44,7 @@ class DemandeServeurDemo {
     this.integreLe,
     this.premiereSeanceLe,
     this.premiereSeancePrevue,
+    this.motifCloture,
   });
 
   /// L'identifiant.
@@ -104,6 +105,23 @@ class DemandeServeurDemo {
   /// La premiere seance, date connue du serveur (jamais estimee).
   DateTime? premiereSeancePrevue;
 
+  /// BACK-FRONT-SUIVI-1 : le motif de cloture de la frise, quand il differe
+  /// des motifs d'OFFRES-FAM-1 (« deja en classe »). Sinon deduit de [motif].
+  MotifClotureFrise? motifCloture;
+
+  MotifClotureFrise? _clotureFrise() {
+    if (etape != EtapeDemande.close) return null;
+    return motifCloture ??
+        switch (motif) {
+          MotifCloture.retraitFamille => MotifClotureFrise.retraitFamille,
+          MotifCloture.offreRetiree => MotifClotureFrise.offreRetiree,
+          MotifCloture.classeNonConstituee =>
+            MotifClotureFrise.classeNonConstituee,
+          MotifCloture.refusDirection => MotifClotureFrise.refusDirection,
+          _ => MotifClotureFrise.inconnu,
+        };
+  }
+
   DateTime? _quand(EtapeDemande e) {
     for (final (EtapeDemande x, DateTime q) in transitions) {
       if (x == e) return q;
@@ -135,17 +153,24 @@ class DemandeServeurDemo {
       fuseauIana: fuseauIana,
       courante: courante,
       motifAttente: motifAttente,
+      cloture: _clotureFrise(),
+      peutChoisirAutreCreneau: peutChoisirAutreCreneau,
       etapes: <EtapeFrise>[
         EtapeFrise(type: TypeEtapeFrise.envoyee, quand: envoyee),
         if (attente)
           EtapeFrise(type: TypeEtapeFrise.enAttente, quand: attenteDepuis),
-        EtapeFrise(type: TypeEtapeFrise.classeCreee, quand: classe),
-        EtapeFrise(type: TypeEtapeFrise.enseignantAffecte, quand: affecte),
-        EtapeFrise(type: TypeEtapeFrise.eleveIntegre, quand: integreLe),
-        EtapeFrise(
-          type: TypeEtapeFrise.premiereSeance,
-          quand: premiereSeanceLe ?? premiereSeancePrevue,
-        ),
+        // Une demande close ne montre que les etapes franchies.
+        if (etape != EtapeDemande.close || classe != null)
+          EtapeFrise(type: TypeEtapeFrise.classeCreee, quand: classe),
+        if (etape != EtapeDemande.close || affecte != null)
+          EtapeFrise(type: TypeEtapeFrise.enseignantAffecte, quand: affecte),
+        if (etape != EtapeDemande.close)
+          EtapeFrise(type: TypeEtapeFrise.eleveIntegre, quand: integreLe),
+        if (etape != EtapeDemande.close)
+          EtapeFrise(
+            type: TypeEtapeFrise.premiereSeance,
+            quand: premiereSeanceLe ?? premiereSeancePrevue,
+          ),
       ],
     );
   }
@@ -238,6 +263,39 @@ class SuiviDemandesDemo implements PortSuiviDemandes {
       ..attenteDepuis = DateTime(2026, 10, 9, 8, 15)
       ..motifAttente = MotifAttente.classesPleines,
     demandeAichaAffectee(),
+    DemandeServeurDemo(
+      demandeId: 'demo-demande-bilal',
+      eleveId: 'demo-eleve-bilal',
+      prenom: 'Bilal',
+      creneau: CreneauDemande(
+        occurrences: const <OccurrenceCreneau>[
+          OccurrenceCreneau(jourIso: 3, heure: 19, minute: 30),
+        ],
+      ),
+      etape: EtapeDemande.close,
+      transitions: <(EtapeDemande, DateTime)>[
+        (EtapeDemande.envoyee, DateTime(2026, 9, 28, 20, 5)),
+        (EtapeDemande.close, DateTime(2026, 10, 6, 11)),
+      ],
+      motif: MotifCloture.offreRetiree,
+      peutChoisirAutreCreneau: true,
+    ),
+    DemandeServeurDemo(
+      demandeId: 'demo-demande-hana',
+      eleveId: 'demo-eleve-hana',
+      prenom: 'Hana',
+      creneau: CreneauDemande(
+        occurrences: const <OccurrenceCreneau>[
+          OccurrenceCreneau(jourIso: 2, heure: 18),
+        ],
+      ),
+      etape: EtapeDemande.close,
+      transitions: <(EtapeDemande, DateTime)>[
+        (EtapeDemande.envoyee, DateTime(2026, 10, 2, 9)),
+        (EtapeDemande.close, DateTime(2026, 10, 3, 10)),
+      ],
+      motifCloture: MotifClotureFrise.dejaEnClasse,
+    ),
     DemandeServeurDemo(
       demandeId: 'demo-demande-ines',
       eleveId: 'demo-eleve-ines',
@@ -364,8 +422,7 @@ class FriseDemandesDemo implements PortFriseDemandes {
   Stream<List<FriseDemande>> suivre() async* {
     if (suivi.echec) throw StateError('serveur');
     List<FriseDemande> lire() => <FriseDemande>[
-      for (final DemandeServeurDemo d in suivi.demandes)
-        if (d.etape != EtapeDemande.close) d.versFrise(),
+      for (final DemandeServeurDemo d in suivi.demandes) d.versFrise(),
     ];
     yield lire();
     await for (final void _ in suivi.changements) {
@@ -393,22 +450,39 @@ class NotificationsSuiviDemandesDemo implements PortNotifications {
         <NotificationTuteur>[
           for (final DemandeServeurDemo d in suivi.demandes)
             for (final (EtapeDemande etape, DateTime quand) in d.transitions)
-              NotificationTuteur(
-                id: '${d.demandeId}-${etape.name}',
-                titre: titreNotificationDemande(
-                  SuiviDemande(
-                    demandeId: d.demandeId,
-                    eleveId: d.eleveId,
-                    prenom: d.prenom,
-                    etape: etape,
-                    creneau: d.creneau,
-                    fuseauIana: d.fuseauIana,
-                    motif: d.motif,
+              if (!(etape == EtapeDemande.close &&
+                  d.motifCloture == MotifClotureFrise.dejaEnClasse))
+                NotificationTuteur(
+                  id: '${d.demandeId}-${etape.name}',
+                  titre: titreNotificationDemande(
+                    SuiviDemande(
+                      demandeId: d.demandeId,
+                      eleveId: d.eleveId,
+                      prenom: d.prenom,
+                      etape: etape,
+                      creneau: d.creneau,
+                      fuseauIana: d.fuseauIana,
+                      motif: d.motif,
+                    ),
                   ),
+                  date: quand,
+                  destination: Routes.tuteurDemandes,
                 ),
-                date: quand,
-                destination: Routes.tuteurDemandes,
-              ),
+          // BACK-FRONT-SUIVI-1 : « deja en classe » n'a pas de motif dans le
+          // suivi a trois etapes ; sa notification vient de la frise.
+          for (final DemandeServeurDemo d in suivi.demandes)
+            if (d.motifCloture == MotifClotureFrise.dejaEnClasse)
+              for (final (EtapeDemande etape, DateTime quand) in d.transitions)
+                if (etape == EtapeDemande.close)
+                  NotificationTuteur(
+                    id: '${d.demandeId}-close',
+                    titre: titreNotificationCloture(
+                      MotifClotureFrise.dejaEnClasse,
+                      d.prenom,
+                    ),
+                    date: quand,
+                    destination: Routes.tuteurDemande(d.demandeId),
+                  ),
           // SUIVI-FAMILLE : les passages que le suivi a trois etapes ne
           // connait pas (attente, integration, premiere seance).
           for (final DemandeServeurDemo d in suivi.demandes)

@@ -184,7 +184,7 @@ void main() {
         find.text(f.etapeCourante(etape: f.etapes.premiereSeance)),
         findsOneWidget,
       );
-      expect(find.text(f.voirSuivi), findsNWidgets(3));
+      expect(find.text(f.voirSuivi), findsNWidgets(5));
       verifierEcranSansMotCoupe(tester);
     });
 
@@ -366,7 +366,9 @@ void main() {
       );
       expect(
         find.bySemanticsLabel(
-          RegExp('${f.etapes.classeCreee}.*${f.etats.fait}', dotAll: true),
+          RegExp(
+            '${f.etapeSurTotal(n: 2, total: 5, etape: f.etapes.classeCreee)}, ${f.etats.fait}, ',
+          ),
         ),
         findsOneWidget,
       );
@@ -391,6 +393,123 @@ void main() {
         verifierEcranSansMotCoupe(tester);
       });
     }
+  });
+
+  group('demande close (BACK-FRONT-SUIVI-1)', () {
+    setUpAll(chargerPolicesDuDepot);
+
+    testWidgets('la liste dit le motif en clair', (tester) async {
+      await _liste(tester, surcharges: _avec(FriseDemandesDemo(_serveur())));
+      expect(find.text(f.close.motif.offreRetiree), findsOneWidget);
+      expect(
+        find.text(f.close.motif.dejaEnClasse(prenom: 'Hana')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('retiree : motif, suite possible et lien', (tester) async {
+      await _detail(
+        tester,
+        'demo-demande-bilal',
+        surcharges: _avec(FriseDemandesDemo(_serveur())),
+      );
+      expect(find.byKey(const ValueKey<String>('frise-cloture')), findsOne);
+      expect(find.text(f.close.motif.offreRetiree), findsOneWidget);
+      expect(find.text(f.close.suite(prenom: 'Bilal')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('frise-cloture-rechoisir')),
+        findsOneWidget,
+      );
+      // Aucune etape en cours sur une demande close.
+      expect(find.text(f.etats.enCours), findsNothing);
+      expect(find.text(f.etats.aVenir), findsNothing);
+      verifierEcranSansMotCoupe(tester);
+    });
+
+    testWidgets('deja en classe : message dedie, ni erreur ni piste', (
+      tester,
+    ) async {
+      await _detail(
+        tester,
+        'demo-demande-hana',
+        surcharges: _avec(FriseDemandesDemo(_serveur())),
+      );
+      expect(
+        find.text(f.close.motif.dejaEnClasse(prenom: 'Hana')),
+        findsOneWidget,
+      );
+      expect(find.text(f.close.suiteSansChoix), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('frise-cloture-rechoisir')),
+        findsNothing,
+      );
+      expect(find.byType(EtatSysteme), findsNothing);
+      expect(find.text(f.erreur), findsNothing);
+    });
+
+    testWidgets('320 px, texte x2, RTL', (tester) async {
+      await _detail(
+        tester,
+        'demo-demande-hana',
+        surcharges: _avec(FriseDemandesDemo(_serveur())),
+        largeur: 320,
+        echelle: 2,
+        direction: TextDirection.rtl,
+      );
+      expect(tester.takeException(), isNull);
+      verifierEcranSansMotCoupe(tester);
+    });
+
+    test('notification de cloture, « deja en classe » comprise', () async {
+      final List<NotificationTuteur> toutes =
+          await NotificationsSuiviDemandesDemo(_serveur()).liste();
+      expect(
+        toutes.where(
+          (NotificationTuteur n) => n.id == 'demo-demande-hana-close',
+        ),
+        hasLength(1),
+      );
+      expect(
+        toutes.firstWhere((n) => n.id == 'demo-demande-hana-close').titre,
+        titreNotificationCloture(MotifClotureFrise.dejaEnClasse, 'Hana'),
+      );
+    });
+  });
+
+  group('eleve adulte autonome', () {
+    testWidgets('voit lui-meme sa frise, sur ses routes', (tester) async {
+      await monterRecrutement(
+        tester,
+        chemin: '/eleve/adulte/demandes',
+        ecran: (_) => const SuiviFamillePage(chemins: CheminsSuivi.adulte),
+        autres: <String>['/eleve/adulte/demandes/:id', '/eleve/adulte'],
+        surcharges: _avec(FriseDemandesDemo(_serveur())),
+      );
+      expect(
+        find.byKey(const ValueKey<String>('suivi-famille-contenu')),
+        findsOne,
+      );
+      await tester.tap(
+        find.byKey(const ValueKey<String>('frise-voir-demo-demande-yusuf')),
+      );
+      await laisser(tester);
+      expect(find.text('temoin:/eleve/adulte/demandes/:id'), findsOneWidget);
+    });
+
+    testWidgets('vide : pas de bouton sans parcours de demande', (
+      tester,
+    ) async {
+      await monterRecrutement(
+        tester,
+        chemin: '/eleve/adulte/demandes',
+        ecran: (_) => const SuiviFamillePage(chemins: CheminsSuivi.adulte),
+        surcharges: _avec(
+          _PortFlux(() => Stream<List<FriseDemande>>.value(const [])),
+        ),
+      );
+      expect(find.byType(EmptyState), findsOneWidget);
+      expect(find.text(f.faireDemande), findsNothing);
+    });
   });
 
   group('notifications', () {

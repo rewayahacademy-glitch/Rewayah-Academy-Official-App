@@ -31,10 +31,14 @@ sealed class ResultatSortie {
 /// aucune.
 final class SortieFaite extends ResultatSortie {
   /// Cree la reponse.
-  const SortieFaite({this.nouvelleDemandeLe});
+  const SortieFaite({this.nouvelleDemandeLe, this.foyerPersonnelCree = false});
 
   /// La date a partir de laquelle une nouvelle demande pourra etre deposee.
   final DateTime? nouvelleDemandeLe;
+
+  /// BACK-FRONT-REPRISE-1 (K-65) : le serveur a cree un foyer personnel pour
+  /// la personne qui sort. L'ecran l'explique ; jamais deduit cote client.
+  final bool foyerPersonnelCree;
 }
 
 /// La connexion a coupe : la sortie n'est pas confirmee, l'ecran ne dit que
@@ -384,7 +388,9 @@ class _PageSortieState extends ConsumerState<_PageSortie> {
               icone: AppIcons.foyer,
               ton: TonEtat.neutre,
               titre: t.adulte.sortie.resultatTitre,
-              phrase: widget.resultatPhrase,
+              phrase: resultat.foyerPersonnelCree
+                  ? '${widget.resultatPhrase} ${t.adulte.sortie.foyerPersonnel}'
+                  : widget.resultatPhrase,
               encart: widget.montrerDelai && date != null
                   ? t.adulte.sortie.delaiPhrase(date: dateEcheance(date))
                   : null,

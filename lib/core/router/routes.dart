@@ -110,6 +110,14 @@ abstract final class Routes {
   /// seances de l'Accueil adulte (D6).
   static const String eleveAdulteSeances = '/eleve/adulte/seances';
 
+  /// Le suivi de ses demandes de creneau (BACK-FRONT-SUIVI-1) : l'eleve
+  /// adulte autonome voit lui-meme sa frise.
+  static const String eleveAdulteDemandes = '/eleve/adulte/demandes';
+
+  /// La frise d'une de ses demandes.
+  static String eleveAdulteDemande(String demandeId) =>
+      '$eleveAdulteDemandes/$demandeId';
+
   // --- fin du bloc DASH-EA-PROD ---------------------------------------------
 
   // --- Tuteur -------------------------------------------------------------
@@ -402,6 +410,9 @@ abstract final class Routes {
   /// Le suivi des demandes de creneau du foyer (OFFRES-FAM-1).
   static const String tuteurDemandes = '/tuteur/demandes';
 
+  /// Les demandes de presentation standard de ses enfants (MA-9).
+  static const String tuteurPresentation = '/tuteur/presentation';
+
   /// La frise d'une demande (SUIVI-FAMILLE, R20).
   static String tuteurDemande(String demandeId) => '$tuteurDemandes/$demandeId';
 
@@ -652,6 +663,9 @@ abstract final class Routes {
   /// Personnes.
   static const String adminPersonnesInvitations =
       '/admin/personnes/invitations';
+
+  /// BACK-FRONT-REPRISE-1 : la file des reprises de foyer, sous Personnes.
+  static const String adminPersonnesReprises = '/admin/personnes/reprises';
 
   /// Domaine Personnes.
   static const String adminPersonnes = '/admin/personnes';

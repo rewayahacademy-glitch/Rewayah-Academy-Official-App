@@ -96,6 +96,8 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$identiteProfil$fr identiteProfil = Traductions$identiteProfil$fr.internal(_root);
 	late final Traductions$com$fr com = Traductions$com$fr.internal(_root);
 	late final Traductions$comptable$fr comptable = Traductions$comptable$fr.internal(_root);
+	late final Traductions$presentationTuteur$fr presentationTuteur = Traductions$presentationTuteur$fr.internal(_root);
+	late final Traductions$reprisesAdmin$fr reprisesAdmin = Traductions$reprisesAdmin$fr.internal(_root);
 }
 
 // Path: commun
@@ -1479,6 +1481,8 @@ class Traductions$dossiers$fr {
 		one: 'Inscrit depuis ${jours} jour',
 		other: 'Inscrit depuis ${jours} jours',
 	);
+
+	late final Traductions$dossiers$accesKyc$fr accesKyc = Traductions$dossiers$accesKyc$fr.internal(_root);
 }
 
 // Path: admin
@@ -2636,6 +2640,11 @@ class Traductions$suiviFamille$fr {
 	late final Traductions$suiviFamille$motif$fr motif = Traductions$suiviFamille$motif$fr.internal(_root);
 	late final Traductions$suiviFamille$intervalle$fr intervalle = Traductions$suiviFamille$intervalle$fr.internal(_root);
 	late final Traductions$suiviFamille$notification$fr notification = Traductions$suiviFamille$notification$fr.internal(_root);
+
+	/// fr: 'Étape {n} sur {total} : {etape}'
+	String etapeSurTotal({required Object n, required Object total, required Object etape}) => 'Étape ${n} sur ${total} : ${etape}';
+
+	late final Traductions$suiviFamille$close$fr close = Traductions$suiviFamille$close$fr.internal(_root);
 }
 
 // Path: suiviDemandes
@@ -2858,6 +2867,136 @@ class Traductions$comptable$fr {
 	late final Traductions$comptable$validation$fr validation = Traductions$comptable$validation$fr.internal(_root);
 	late final Traductions$comptable$direction$fr direction = Traductions$comptable$direction$fr.internal(_root);
 	late final Traductions$comptable$demo$fr demo = Traductions$comptable$demo$fr.internal(_root);
+}
+
+// Path: presentationTuteur
+class Traductions$presentationTuteur$fr {
+	Traductions$presentationTuteur$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demandes de présentation'
+	String get titre => 'Demandes de présentation';
+
+	/// fr: 'Un enfant de votre foyer demande la présentation standard. C'est vous qui décidez.'
+	String get contexte => 'Un enfant de votre foyer demande la présentation standard. C\'est vous qui décidez.';
+
+	/// fr: '{prenom} demande la présentation standard.'
+	String ligne({required Object prenom}) => '${prenom} demande la présentation standard.';
+
+	/// fr: 'Demandé le {date} à {heure}'
+	String demandeeLe({required Object date, required Object heure}) => 'Demandé le ${date} à ${heure}';
+
+	/// fr: 'Accepter'
+	String get accepter => 'Accepter';
+
+	/// fr: 'Refuser'
+	String get refuser => 'Refuser';
+
+	/// fr: 'Présentation standard activée pour {prenom}.'
+	String acceptee({required Object prenom}) => 'Présentation standard activée pour ${prenom}.';
+
+	/// fr: 'Demande de {prenom} refusée.'
+	String refusee({required Object prenom}) => 'Demande de ${prenom} refusée.';
+
+	/// fr: 'Votre réponse n'a pas pu être confirmée. La demande reste en attente : réessayez.'
+	String get echecReponse => 'Votre réponse n\'a pas pu être confirmée. La demande reste en attente : réessayez.';
+
+	/// fr: 'Aucune demande de présentation en attente.'
+	String get vide => 'Aucune demande de présentation en attente.';
+
+	/// fr: 'Les demandes n'ont pas pu être chargées. Réessayez.'
+	String get erreur => 'Les demandes n\'ont pas pu être chargées. Réessayez.';
+
+	/// fr: 'les demandes de présentation'
+	String get sansDonnees => 'les demandes de présentation';
+
+	late final Traductions$presentationTuteur$accueil$fr accueil = Traductions$presentationTuteur$accueil$fr.internal(_root);
+
+	/// fr: '{prenom} demande la présentation standard'
+	String notification({required Object prenom}) => '${prenom} demande la présentation standard';
+}
+
+// Path: reprisesAdmin
+class Traductions$reprisesAdmin$fr {
+	Traductions$reprisesAdmin$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Reprises'
+	String get onglet => 'Reprises';
+
+	/// fr: 'Reprises de foyer'
+	String get titre => 'Reprises de foyer';
+
+	/// fr: 'Demandes d'un second adulte pour devenir titulaire du foyer. L'administration décide.'
+	String get sousTitre => 'Demandes d\'un second adulte pour devenir titulaire du foyer. L\'administration décide.';
+
+	/// fr: 'Demandeur'
+	String get demandeur => 'Demandeur';
+
+	/// fr: 'Foyer'
+	String get foyer => 'Foyer';
+
+	/// fr: 'Déposée le'
+	String get deposeeLe => 'Déposée le';
+
+	late final Traductions$reprisesAdmin$etat$fr etat = Traductions$reprisesAdmin$etat$fr.internal(_root);
+
+	/// fr: 'Examen possible à partir du {date}.'
+	String examenLe({required Object date}) => 'Examen possible à partir du ${date}.';
+
+	/// fr: 'Le titulaire a refusé cette demande. Aucune décision n'est attendue.'
+	String get refuseeInfo => 'Le titulaire a refusé cette demande. Aucune décision n\'est attendue.';
+
+	/// fr: 'Valider la reprise'
+	String get valider => 'Valider la reprise';
+
+	/// fr: 'Refuser la reprise'
+	String get refuser => 'Refuser la reprise';
+
+	/// fr: 'Valider la reprise du foyer par {prenom} ?'
+	String validerQuestion({required Object prenom}) => 'Valider la reprise du foyer par ${prenom} ?';
+
+	/// fr: 'Cette personne deviendra titulaire du foyer. Cette décision transfère la titularité.'
+	String get validerConsequence => 'Cette personne deviendra titulaire du foyer. Cette décision transfère la titularité.';
+
+	/// fr: 'Refuser la reprise du foyer par {prenom} ?'
+	String refuserQuestion({required Object prenom}) => 'Refuser la reprise du foyer par ${prenom} ?';
+
+	/// fr: 'Aucune permission n'est transférée. La personne pourra déposer une nouvelle demande après le délai prévu.'
+	String get refuserConsequence => 'Aucune permission n\'est transférée. La personne pourra déposer une nouvelle demande après le délai prévu.';
+
+	/// fr: 'Reprise validée.'
+	String get validee => 'Reprise validée.';
+
+	/// fr: 'Reprise refusée.'
+	String get refusee => 'Reprise refusée.';
+
+	/// fr: 'Cette demande a déjà été traitée. La liste est à jour.'
+	String get dejaTraitee => 'Cette demande a déjà été traitée. La liste est à jour.';
+
+	/// fr: 'La décision n'a pas pu être confirmée. Vérifiez la liste avant de réessayer.'
+	String get echecReseau => 'La décision n\'a pas pu être confirmée. Vérifiez la liste avant de réessayer.';
+
+	/// fr: 'Aucune demande de reprise à traiter.'
+	String get vide => 'Aucune demande de reprise à traiter.';
+
+	/// fr: 'Les demandes n'ont pas pu être chargées. Réessayez.'
+	String get erreur => 'Les demandes n\'ont pas pu être chargées. Réessayez.';
+
+	/// fr: 'les demandes de reprise'
+	String get sansDonnees => 'les demandes de reprise';
+
+	/// fr: 'Reprises de foyer indisponibles'
+	String get indisponibleTitre => 'Reprises de foyer indisponibles';
+
+	/// fr: 'Cette fonction sera disponible au branchement serveur.'
+	String get indisponiblePhrase => 'Cette fonction sera disponible au branchement serveur.';
 }
 
 // Path: commun.classeDistincte
@@ -6141,6 +6280,35 @@ class Traductions$dossiers$decision$fr {
 
 	/// fr: '{prenom} {nom}'
 	String nomComplet({required Object prenom, required Object nom}) => '${prenom} ${nom}';
+}
+
+// Path: dossiers.accesKyc
+class Traductions$dossiers$accesKyc$fr {
+	Traductions$dossiers$accesKyc$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Exception du super administrateur active'
+	String get exceptionTitre => 'Exception du super administrateur active';
+
+	/// fr: 'Vous pouvez ouvrir les pièces des deux genres. Chaque ouverture hors de votre genre est tracée.'
+	String get exceptionMessage => 'Vous pouvez ouvrir les pièces des deux genres. Chaque ouverture hors de votre genre est tracée.';
+
+	/// fr: 'Cette ouverture est hors de votre genre : elle sera tracée.'
+	String get exceptionPiece => 'Cette ouverture est hors de votre genre : elle sera tracée.';
+
+	/// fr: 'Vérification de vos droits d'accès…'
+	String get verification => 'Vérification de vos droits d\'accès…';
+
+	/// fr: 'Vos droits d'accès à cette pièce n'ont pas pu être vérifiés.'
+	String get verificationEchec => 'Vos droits d\'accès à cette pièce n\'ont pas pu être vérifiés.';
+
+	/// fr: 'Réessayer'
+	String get reessayer => 'Réessayer';
+
+	late final Traductions$dossiers$accesKyc$refus$fr refus = Traductions$dossiers$accesKyc$refus$fr.internal(_root);
 }
 
 // Path: admin.tableau
@@ -13658,6 +13826,9 @@ class Traductions$adulte$sortie$fr {
 
 	/// fr: 'Cette mesure permet de garantir la sécurité des foyers et la bonne gestion des accès des enfants.'
 	String get pourquoiPhrase => 'Cette mesure permet de garantir la sécurité des foyers et la bonne gestion des accès des enfants.';
+
+	/// fr: 'Un foyer personnel a été créé pour vous : vous y retrouvez votre compte et vos élèves.'
+	String get foyerPersonnel => 'Un foyer personnel a été créé pour vous : vous y retrouvez votre compte et vos élèves.';
 }
 
 // Path: adulte.reprise
@@ -14385,6 +14556,35 @@ class Traductions$suiviFamille$notification$fr {
 
 	/// fr: 'Demande {dePrenom} : première séance effectuée'
 	String premiereSeance({required Object dePrenom}) => 'Demande ${dePrenom} : première séance effectuée';
+
+	/// fr: 'Demande {dePrenom} : {motif}'
+	String close({required Object dePrenom, required Object motif}) => 'Demande ${dePrenom} : ${motif}';
+
+	/// fr: 'Demande {dePrenom} : élève déjà en classe, demande classée'
+	String dejaEnClasse({required Object dePrenom}) => 'Demande ${dePrenom} : élève déjà en classe, demande classée';
+}
+
+// Path: suiviFamille.close
+class Traductions$suiviFamille$close$fr {
+	Traductions$suiviFamille$close$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demande close'
+	String get etat => 'Demande close';
+
+	/// fr: 'Vous pouvez choisir un autre créneau pour {prenom}.'
+	String suite({required Object prenom}) => 'Vous pouvez choisir un autre créneau pour ${prenom}.';
+
+	/// fr: 'Rien d'autre à faire de votre côté.'
+	String get suiteSansChoix => 'Rien d\'autre à faire de votre côté.';
+
+	/// fr: 'Choisir un autre créneau pour {prenom}'
+	String choisirAutre({required Object prenom}) => 'Choisir un autre créneau pour ${prenom}';
+
+	late final Traductions$suiviFamille$close$motif$fr motif = Traductions$suiviFamille$close$motif$fr.internal(_root);
 }
 
 // Path: suiviDemandes.etapes
@@ -16203,6 +16403,36 @@ class Traductions$comptable$demo$fr {
 	String get groupeDirection => 'Direction';
 }
 
+// Path: presentationTuteur.accueil
+class Traductions$presentationTuteur$accueil$fr {
+	Traductions$presentationTuteur$accueil$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demande de présentation'
+	String get titre => 'Demande de présentation';
+
+	/// fr: 'Répondre'
+	String get voir => 'Répondre';
+}
+
+// Path: reprisesAdmin.etat
+class Traductions$reprisesAdmin$etat$fr {
+	Traductions$reprisesAdmin$etat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À examiner'
+	String get aExaminer => 'À examiner';
+
+	/// fr: 'Refusée par le titulaire'
+	String get refuseeParTitulaire => 'Refusée par le titulaire';
+}
+
 // Path: commun.etats.chargementProlonge
 class Traductions$commun$etats$chargementProlonge$fr {
 	Traductions$commun$etats$chargementProlonge$fr.internal(this._root);
@@ -17525,6 +17755,24 @@ class Traductions$dossiers$revue$etats$fr {
 
 	/// fr: 'Ce dossier ne peut pas être refusé dans son état actuel.'
 	String get refusNonAutorise => 'Ce dossier ne peut pas être refusé dans son état actuel.';
+}
+
+// Path: dossiers.accesKyc.refus
+class Traductions$dossiers$accesKyc$refus$fr {
+	Traductions$dossiers$accesKyc$refus$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Cette pièce est réservée à un administrateur du même genre que le candidat.'
+	String get genreDifferent => 'Cette pièce est réservée à un administrateur du même genre que le candidat.';
+
+	/// fr: 'Votre genre n'est pas renseigné : aucune pièce ne peut s'ouvrir. Demandez à la direction de le renseigner.'
+	String get adminSansGenre => 'Votre genre n\'est pas renseigné : aucune pièce ne peut s\'ouvrir. Demandez à la direction de le renseigner.';
+
+	/// fr: 'Votre profil ne peut pas consulter les pièces d'identité.'
+	String get profilNonAutorise => 'Votre profil ne peut pas consulter les pièces d\'identité.';
 }
 
 // Path: admin.tableau.activite
@@ -21800,6 +22048,9 @@ class Traductions$adulte$reprise$phrases$fr {
 
 	/// fr: 'L'administration a refusé la demande. Aucune permission du foyer n'est transférée.'
 	String get refusee => 'L\'administration a refusé la demande. Aucune permission du foyer n\'est transférée.';
+
+	/// fr: 'Une nouvelle demande pourra être déposée à partir du {date}.'
+	String redepotLe({required Object date}) => 'Une nouvelle demande pourra être déposée à partir du ${date}.';
 }
 
 // Path: adulte.reprise.titulaire
@@ -22073,6 +22324,33 @@ class Traductions$motifs$signalement$changement$fr {
 
 	/// fr: 'L'académie reviendra vers vous pour en parler.'
 	String get suite => 'L\'académie reviendra vers vous pour en parler.';
+}
+
+// Path: suiviFamille.close.motif
+class Traductions$suiviFamille$close$motif$fr {
+	Traductions$suiviFamille$close$motif$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous avez retiré cette demande.'
+	String get retraitFamille => 'Vous avez retiré cette demande.';
+
+	/// fr: 'Ce créneau n'est plus proposé.'
+	String get offreRetiree => 'Ce créneau n\'est plus proposé.';
+
+	/// fr: 'La classe de ce créneau n'a pas pu être constituée.'
+	String get classeNonConstituee => 'La classe de ce créneau n\'a pas pu être constituée.';
+
+	/// fr: 'La direction n'a pas retenu cette demande.'
+	String get refusDirection => 'La direction n\'a pas retenu cette demande.';
+
+	/// fr: '{prenom} a déjà une place en classe : cette demande n'est plus nécessaire.'
+	String dejaEnClasse({required Object prenom}) => '${prenom} a déjà une place en classe : cette demande n\'est plus nécessaire.';
+
+	/// fr: 'Cette demande est close.'
+	String get inconnu => 'Cette demande est close.';
 }
 
 // Path: suiviDemandes.close.motif
@@ -29203,6 +29481,15 @@ extension on Traductions {
 			'dossiers.inscritDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Inscrit depuis ${jours} jour', other: 'Inscrit depuis ${jours} jours', ), 
 			_ => null,
 		} ?? switch (path) {
+			'dossiers.accesKyc.exceptionTitre' => 'Exception du super administrateur active',
+			'dossiers.accesKyc.exceptionMessage' => 'Vous pouvez ouvrir les pièces des deux genres. Chaque ouverture hors de votre genre est tracée.',
+			'dossiers.accesKyc.exceptionPiece' => 'Cette ouverture est hors de votre genre : elle sera tracée.',
+			'dossiers.accesKyc.verification' => 'Vérification de vos droits d\'accès…',
+			'dossiers.accesKyc.verificationEchec' => 'Vos droits d\'accès à cette pièce n\'ont pas pu être vérifiés.',
+			'dossiers.accesKyc.reessayer' => 'Réessayer',
+			'dossiers.accesKyc.refus.genreDifferent' => 'Cette pièce est réservée à un administrateur du même genre que le candidat.',
+			'dossiers.accesKyc.refus.adminSansGenre' => 'Votre genre n\'est pas renseigné : aucune pièce ne peut s\'ouvrir. Demandez à la direction de le renseigner.',
+			'dossiers.accesKyc.refus.profilNonAutorise' => 'Votre profil ne peut pas consulter les pièces d\'identité.',
 			'admin.tableau.titre' => 'Centre de commande',
 			'admin.tableau.dossiers' => 'Dossiers à valider',
 			'admin.tableau.dossiersDetail' => 'Ouvrir la file, le plus ancien en premier.',
@@ -29706,6 +29993,8 @@ extension on Traductions {
 			'admin.evaluations.champNiveau' => 'Niveau évalué',
 			'admin.evaluations.champType' => 'Type',
 			'admin.evaluations.champDatePrevue' => 'Date prévue',
+			_ => null,
+		} ?? switch (path) {
 			'admin.evaluations.planifierEnvoyer' => 'Planifier',
 			'admin.evaluations.planifierErreur' => ({required Object message}) => 'La planification n\'a pas abouti : ${message}',
 			'admin.evaluations.actionEnregistrerResultat' => 'Enregistrer le résultat',
@@ -29715,8 +30004,6 @@ extension on Traductions {
 			'admin.evaluations.resultatEnvoyer' => 'Enregistrer',
 			'admin.evaluations.resultatErreur' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
 			'admin.evaluations.annulerTitre' => ({required Object deEleve}) => 'Annuler l\'évaluation ${deEleve}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.evaluations.annulerEnvoyer' => 'Annuler',
 			'admin.evaluations.annulerErreur' => ({required Object message}) => 'L\'annulation n\'a pas abouti : ${message}',
 			'admin.evaluations.champMotif' => 'Motif',
@@ -30220,6 +30507,8 @@ extension on Traductions {
 			'admin.finance.pol.separateurComparaison' => ' ; ',
 			'admin.finance.pol.invariants' => 'Règles fixes',
 			'admin.finance.pol.invariantsDetail' => 'Elles protègent l\'argent des familles : ce ne sont pas des réglages, aucune version ne les change.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.invariantConfirmation' => 'Un paiement est confirmé avant tout crédit sur un profil.',
 			'admin.finance.pol.invariantDoubleDebit' => 'Un même paiement n\'est jamais débité deux fois.',
 			'admin.finance.pol.invariantPeriode' => 'L\'accès au cours dépend de la période financée, jamais du solde.',
@@ -30229,8 +30518,6 @@ extension on Traductions {
 			'admin.finance.pol.publier' => 'Publier la version',
 			'admin.finance.pol.publierConsequence' => 'Publier rend ce brouillon applicable à partir de sa date d\'effet ; aucune facture déjà payée n\'est modifiée.',
 			'admin.finance.pol.publicationIndisponible' => 'La publication n\'est pas encore disponible',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.publicationIndisponibleDetail' => 'Rien n\'a été publié : le service de publication n\'est pas encore branché. La version active continue de s\'appliquer. Gardez cet écran ouvert pour conserver vos modifications, ou revenez quand la publication sera ouverte.',
 			'admin.finance.pol.publicationNonConfirmee' => 'Publication non confirmée',
 			'admin.finance.pol.publicationNonConfirmeeDetail' => 'La réponse n\'est pas arrivée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vérifiez la version active avant de réessayer.',
@@ -30734,6 +31021,8 @@ extension on Traductions {
 			'notifications.filtres.libelle' => 'Filtrer les notifications',
 			'notifications.filtres.toutes' => 'Toutes',
 			'notifications.filtres.nonLues' => 'Non lues',
+			_ => null,
+		} ?? switch (path) {
 			'notifications.filtres.mentions' => 'Mentions',
 			'notifications.filtres.actionRequise' => 'Action requise',
 			'notifications.filtreVideTitre' => 'Aucune notification dans ce filtre',
@@ -30743,8 +31032,6 @@ extension on Traductions {
 			'notifications.nonLueSemantique' => 'non lue',
 			'notifications.lectureNonConfirmee' => 'La lecture n\'est pas encore confirmée. Réessayez dans un instant.',
 			'notifications.detail.choisirTitre' => 'Choisissez une notification',
-			_ => null,
-		} ?? switch (path) {
 			'notifications.detail.choisirPhrase' => 'Son détail s\'affiche ici, à côté de la liste.',
 			'notifications.detail.recue' => ({required Object date, required Object heure}) => 'Reçue le ${date} à ${heure}',
 			'notifications.detail.ouvrir' => 'Ouvrir la page concernée',
@@ -31248,6 +31535,8 @@ extension on Traductions {
 			'enseignant.photo.titre' => 'Photo professionnelle',
 			'enseignant.photo.aide' => 'Votre photo est obligatoire : les familles ne confient pas leurs enfants à un inconnu sur internet. Elle est visible des familles de vos élèves.',
 			'enseignant.photo.obligatoireLecteur' => 'Photo obligatoire',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.photo.voile' => 'Si vous portez le voile intégral, votre photo de profil peut vous montrer voilée.',
 			'enseignant.photo.notice' => 'N\'utilisez pas votre pièce d\'identité.',
 			'enseignant.photo.choisir' => 'Choisir une photo',
@@ -31257,8 +31546,6 @@ extension on Traductions {
 			'enseignant.photo.changer' => 'Changer la photo',
 			'enseignant.photo.alternatif' => 'Votre photo publique',
 			'enseignant.photo.succes' => 'La photo est enregistrée.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.photo.echec' => 'La photo n\'a pas pu être envoyée. Rien n\'a changé sur le profil.',
 			'enseignant.photo.selectionEchec' => 'La photo n\'a pas pu être ouverte. Vérifiez l\'accès aux photos de l\'appareil, puis réessayez.',
 			'enseignant.photo.horsLigne' => 'La photo pourra être envoyée quand la connexion reviendra.',
@@ -31762,6 +32049,8 @@ extension on Traductions {
 			'controleur.complement.correctionAide' => 'Quand une information du rapport est inexacte · l\'original reste lisible, la correction s\'affiche dessous',
 			'controleur.complement.faitNouveau' => 'Information nouvelle',
 			'controleur.complement.faitNouveauAide' => 'Quand vous l\'apprenez après la visite · il est daté du jour de l\'ajout',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.complement.questionTexte' => 'Qu\'ajoutez-vous au rapport ?',
 			'controleur.complement.texteObligatoire' => 'Obligatoire : ce que vous avez constaté, en quelques phrases.',
 			'controleur.complement.libelleTexte' => 'Complément',
@@ -31771,8 +32060,6 @@ extension on Traductions {
 			'controleur.complement.cleRapport' => 'Rapport d\'origine',
 			'controleur.complement.rapportInchange' => ({required Object classe, required Object date}) => '${classe} · ${date}, inchangé',
 			'controleur.complement.cleMotif' => 'Motif',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.complement.sansMotif' => 'Aucun motif',
 			'controleur.complement.cleTexte' => 'Complément',
 			'controleur.complement.envoyer' => 'Envoyer le complément',
@@ -32276,6 +32563,8 @@ extension on Traductions {
 			'tc.observation.duree.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} minute', other: '${n} minutes', ), 
 			'tc.observation.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
 			'tc.observation.refus.politiqueDesactivee' => 'L\'observation est désactivée pour cette classe.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.refus.quotaVisites' => 'Vous avez déjà utilisé vos visites pour cette séance.',
 			'tc.observation.refus.tempsEpuise' => 'Votre temps d\'observation est épuisé pour cette séance.',
 			'tc.observation.refus.lienTuteur' => 'Vous n\'êtes rattaché à aucun élève de cette séance.',
@@ -32285,8 +32574,6 @@ extension on Traductions {
 			'tc.observation.refus.indisponibleInvitation' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',
 			'tc.observation.visite.titre' => 'Observation en cours',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.visite.quitter' => 'Quitter',
 			'tc.observation.visite.supportIndisponible' => 'Le support partagé par l\'enseignant s\'affiche ici.',
 			'tc.observation.visite.enseignant' => 'Enseignant',
@@ -32693,6 +32980,7 @@ extension on Traductions {
 			'adulte.sortie.delaiPhrase' => ({required Object date}) => 'Une nouvelle demande pourra être déposée à partir du ${date}. Elle devra ensuite être validée par l\'administration.',
 			'adulte.sortie.pourquoi' => 'Pourquoi cette attente ?',
 			'adulte.sortie.pourquoiPhrase' => 'Cette mesure permet de garantir la sécurité des foyers et la bonne gestion des accès des enfants.',
+			'adulte.sortie.foyerPersonnel' => 'Un foyer personnel a été créé pour vous : vous y retrouvez votre compte et vos élèves.',
 			'adulte.reprise.titre' => 'Demande de reprise du foyer',
 			'adulte.reprise.explication' => 'Utilisez cette démarche si le titulaire du foyer est décédé. La demande sera signalée au compte concerné et examinée par l\'administration.',
 			'adulte.reprise.reprisTitre' => 'Ce qui sera repris',
@@ -32730,6 +33018,7 @@ extension on Traductions {
 			'adulte.reprise.phrases.attenteAdministration' => 'Le titulaire n\'a pas répondu. Rien n\'est transféré automatiquement : l\'administration doit encore examiner la demande.',
 			'adulte.reprise.phrases.validee' => 'L\'administration a validé la demande. Vous êtes désormais titulaire du foyer.',
 			'adulte.reprise.phrases.refusee' => 'L\'administration a refusé la demande. Aucune permission du foyer n\'est transférée.',
+			'adulte.reprise.phrases.redepotLe' => ({required Object date}) => 'Une nouvelle demande pourra être déposée à partir du ${date}.',
 			'adulte.reprise.titulaire.notification' => 'Une demande de reprise de votre foyer a été déposée en indiquant votre décès.',
 			'adulte.reprise.titulaire.consigne' => 'Si cette demande est erronée, refusez-la.',
 			'adulte.reprise.titulaire.refuser' => 'Refuser la demande',
@@ -32788,6 +33077,8 @@ extension on Traductions {
 			'adulte.demo.etats.delai120' => 'Un délai suivant, plus long, est en cours.',
 			'adulte.demo.etats.departsSuivants' => 'Après le troisième départ, le délai suivant s\'applique toujours.',
 			'adulte.demo.etats.repriseDemandee' => 'Une demande de reprise du foyer a été déposée.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.etats.repriseRefuseeParTitulaire' => 'La demande de reprise a été refusée par le titulaire.',
 			'adulte.demo.etats.repriseSansReponse' => 'Sans réponse dans le délai, la demande attend l\'administration.',
 			'adulte.demo.etats.repriseValidee' => 'La reprise du foyer a été validée.',
@@ -32799,8 +33090,6 @@ extension on Traductions {
 			'adulte.demo.etats.emancipation' => 'Émancipation d\'un élève devenu adulte : non construite dans cette vague.',
 			'adulte.finances.indisponibleTitre' => 'Vos finances ne sont pas encore disponibles',
 			'adulte.finances.indisponiblePhrase' => 'Votre solde, votre période financée et votre mensualité s\'afficheront ici dès leur mise en service.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.finances.erreurTitre' => 'Vos finances ne peuvent pas être lues',
 			'adulte.finances.videTitre' => 'Aucune finance enregistrée',
 			'adulte.finances.videPhrase' => 'Aucun solde ni aucune mensualité n\'est encore rendu pour votre profil. Ils apparaîtront ici après votre inscription à une classe.',
@@ -32950,6 +33239,19 @@ extension on Traductions {
 			'suiviFamille.notification.enAttente' => ({required Object dePrenom}) => 'Demande ${dePrenom} : en liste d\'attente',
 			'suiviFamille.notification.eleveIntegre' => ({required Object dePrenom}) => 'Demande ${dePrenom} : élève intégré à la classe',
 			'suiviFamille.notification.premiereSeance' => ({required Object dePrenom}) => 'Demande ${dePrenom} : première séance effectuée',
+			'suiviFamille.notification.close' => ({required Object dePrenom, required Object motif}) => 'Demande ${dePrenom} : ${motif}',
+			'suiviFamille.notification.dejaEnClasse' => ({required Object dePrenom}) => 'Demande ${dePrenom} : élève déjà en classe, demande classée',
+			'suiviFamille.etapeSurTotal' => ({required Object n, required Object total, required Object etape}) => 'Étape ${n} sur ${total} : ${etape}',
+			'suiviFamille.close.etat' => 'Demande close',
+			'suiviFamille.close.suite' => ({required Object prenom}) => 'Vous pouvez choisir un autre créneau pour ${prenom}.',
+			'suiviFamille.close.suiteSansChoix' => 'Rien d\'autre à faire de votre côté.',
+			'suiviFamille.close.choisirAutre' => ({required Object prenom}) => 'Choisir un autre créneau pour ${prenom}',
+			'suiviFamille.close.motif.retraitFamille' => 'Vous avez retiré cette demande.',
+			'suiviFamille.close.motif.offreRetiree' => 'Ce créneau n\'est plus proposé.',
+			'suiviFamille.close.motif.classeNonConstituee' => 'La classe de ce créneau n\'a pas pu être constituée.',
+			'suiviFamille.close.motif.refusDirection' => 'La direction n\'a pas retenu cette demande.',
+			'suiviFamille.close.motif.dejaEnClasse' => ({required Object prenom}) => '${prenom} a déjà une place en classe : cette demande n\'est plus nécessaire.',
+			'suiviFamille.close.motif.inconnu' => 'Cette demande est close.',
 			'suiviDemandes.titre' => 'Suivi des demandes de créneau',
 			'suiviDemandes.contexte' => 'Chaque demande avance en trois étapes. Vous êtes prévenu à chaque passage.',
 			'suiviDemandes.carteTitre' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom}',
@@ -33289,6 +33591,8 @@ extension on Traductions {
 			'com.messages.demo.f.affectation' => 'Votre Classe An-Nour passe au mardi 18 h à partir du mois prochain. Merci de confirmer.',
 			'com.messages.demo.f.khadijaRevision' => 'Pensez à réviser la sourate Al-Mulk pour jeudi.',
 			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.vide' => 'Aucune conversation pour le moment.',
 			'com.vocal.composer.libelle' => 'Message vocal',
 			'com.vocal.composer.enregistrer' => 'Enregistrer un message vocal',
@@ -33313,8 +33617,6 @@ extension on Traductions {
 			'com.vocal.composer.preEcoute' => 'Pré-écoute',
 			'com.vocal.composer.preEcouteAide' => 'Écoutez votre message avant de l\'envoyer. Rien ne part sans votre accord.',
 			'com.vocal.composer.duree' => ({required Object duree}) => 'Durée : ${duree}',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.composer.actionPause' => 'Pause',
 			'com.vocal.composer.actionReprendre' => 'Reprendre',
 			'com.vocal.composer.actionArreter' => 'Arrêter',
@@ -33803,6 +34105,8 @@ extension on Traductions {
 			'com.annonces.administration.moderation.legende' => ({required Object date, required Object heure}) => 'Signalé le ${date} à ${heure}',
 			'com.annonces.administration.moderation.motif' => ({required Object motif}) => 'Motif : ${motif}',
 			'com.annonces.administration.moderation.extraitTitre' => 'Contenu signalé',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.moderation.extraitAbsent' => 'L\'extrait de ce contenu n\'est pas communiqué.',
 			'com.annonces.administration.moderation.regle' => 'Règle visée',
 			'com.annonces.administration.moderation.approuver' => 'Approuver après examen',
@@ -33827,8 +34131,6 @@ extension on Traductions {
 			'com.annonces.administration.moderation.sansAction' => 'Aucune action de modération ne vous est ouverte sur ce contenu.',
 			'com.annonces.administration.moderation.sansSanction' => 'Aucune sanction de compte n\'est appliquée automatiquement.',
 			'com.annonces.administration.moderation.politique' => 'Politique anti-promotion',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.moderation.ouvrirSemantique' => ({required Object objet, required Object motif}) => 'Examiner ${objet}, motif ${motif}',
 			'com.annonces.administration.moderation.regleMotif.publicite' => 'La publicité n\'est pas autorisée dans la Communauté enseignants.',
 			'com.annonces.administration.moderation.regleMotif.lienAffilie' => 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.',
@@ -34317,6 +34619,8 @@ extension on Traductions {
 			'comptable.tresorerie.transfert.refusPhrase' => ({required Object raison}) => 'Raison : ${raison}. Rien n\'a été déplacé.',
 			'comptable.tresorerie.transfert.erreurEnvoiTitre' => 'Réponse non reçue',
 			'comptable.tresorerie.transfert.erreurEnvoi' => 'La réponse n\'est pas arrivée. Consultez l\'historique avant de réessayer : le même mouvement ne sera jamais compté deux fois.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.transfert.indisponible' => 'Les mouvements entre coffres ne sont pas encore reliés au serveur. Rien n\'a été déplacé.',
 			'comptable.tresorerie.transfert.aucunCouple' => 'Aucun mouvement n\'est permis par la politique pour votre compte.',
 			'comptable.tresorerie.titre' => 'Trésorerie et coffres',
@@ -34341,8 +34645,6 @@ extension on Traductions {
 			'comptable.encaissements.profilsPour' => ({required Object prenoms}) => 'Pour ${prenoms}',
 			'comptable.encaissements.moyenPrestataire' => ({required Object moyen, required Object prestataire}) => '${moyen} · ${prestataire}',
 			'comptable.encaissements.videTitre' => 'Aucun encaissement pour l\'instant.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.videPhrase' => 'Les paiements des familles apparaîtront ici dès que le prestataire les aura transmis.',
 			'comptable.encaissements.videFiltreTitre' => 'Aucun encaissement ne correspond.',
 			'comptable.encaissements.videFiltrePhrase' => 'Choisissez « Tous » ou effacez la recherche pour revoir toute la liste.',
@@ -34762,6 +35064,46 @@ extension on Traductions {
 			'comptable.demo.groupeComptable' => 'Coquille du Comptable',
 			'comptable.demo.groupeCompte' => 'Compte et bénéficiaire',
 			'comptable.demo.groupeDirection' => 'Direction',
+			'presentationTuteur.titre' => 'Demandes de présentation',
+			'presentationTuteur.contexte' => 'Un enfant de votre foyer demande la présentation standard. C\'est vous qui décidez.',
+			'presentationTuteur.ligne' => ({required Object prenom}) => '${prenom} demande la présentation standard.',
+			'presentationTuteur.demandeeLe' => ({required Object date, required Object heure}) => 'Demandé le ${date} à ${heure}',
+			'presentationTuteur.accepter' => 'Accepter',
+			'presentationTuteur.refuser' => 'Refuser',
+			'presentationTuteur.acceptee' => ({required Object prenom}) => 'Présentation standard activée pour ${prenom}.',
+			'presentationTuteur.refusee' => ({required Object prenom}) => 'Demande de ${prenom} refusée.',
+			'presentationTuteur.echecReponse' => 'Votre réponse n\'a pas pu être confirmée. La demande reste en attente : réessayez.',
+			'presentationTuteur.vide' => 'Aucune demande de présentation en attente.',
+			'presentationTuteur.erreur' => 'Les demandes n\'ont pas pu être chargées. Réessayez.',
+			'presentationTuteur.sansDonnees' => 'les demandes de présentation',
+			'presentationTuteur.accueil.titre' => 'Demande de présentation',
+			'presentationTuteur.accueil.voir' => 'Répondre',
+			'presentationTuteur.notification' => ({required Object prenom}) => '${prenom} demande la présentation standard',
+			'reprisesAdmin.onglet' => 'Reprises',
+			'reprisesAdmin.titre' => 'Reprises de foyer',
+			'reprisesAdmin.sousTitre' => 'Demandes d\'un second adulte pour devenir titulaire du foyer. L\'administration décide.',
+			'reprisesAdmin.demandeur' => 'Demandeur',
+			'reprisesAdmin.foyer' => 'Foyer',
+			'reprisesAdmin.deposeeLe' => 'Déposée le',
+			'reprisesAdmin.etat.aExaminer' => 'À examiner',
+			'reprisesAdmin.etat.refuseeParTitulaire' => 'Refusée par le titulaire',
+			'reprisesAdmin.examenLe' => ({required Object date}) => 'Examen possible à partir du ${date}.',
+			'reprisesAdmin.refuseeInfo' => 'Le titulaire a refusé cette demande. Aucune décision n\'est attendue.',
+			'reprisesAdmin.valider' => 'Valider la reprise',
+			'reprisesAdmin.refuser' => 'Refuser la reprise',
+			'reprisesAdmin.validerQuestion' => ({required Object prenom}) => 'Valider la reprise du foyer par ${prenom} ?',
+			'reprisesAdmin.validerConsequence' => 'Cette personne deviendra titulaire du foyer. Cette décision transfère la titularité.',
+			'reprisesAdmin.refuserQuestion' => ({required Object prenom}) => 'Refuser la reprise du foyer par ${prenom} ?',
+			'reprisesAdmin.refuserConsequence' => 'Aucune permission n\'est transférée. La personne pourra déposer une nouvelle demande après le délai prévu.',
+			'reprisesAdmin.validee' => 'Reprise validée.',
+			'reprisesAdmin.refusee' => 'Reprise refusée.',
+			'reprisesAdmin.dejaTraitee' => 'Cette demande a déjà été traitée. La liste est à jour.',
+			'reprisesAdmin.echecReseau' => 'La décision n\'a pas pu être confirmée. Vérifiez la liste avant de réessayer.',
+			'reprisesAdmin.vide' => 'Aucune demande de reprise à traiter.',
+			'reprisesAdmin.erreur' => 'Les demandes n\'ont pas pu être chargées. Réessayez.',
+			'reprisesAdmin.sansDonnees' => 'les demandes de reprise',
+			'reprisesAdmin.indisponibleTitre' => 'Reprises de foyer indisponibles',
+			'reprisesAdmin.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
 			_ => null,
 		};
 	}

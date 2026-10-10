@@ -262,6 +262,11 @@ List<({String libelle, String chemin})> ongletsPersonnes() =>
         libelle: t.recrutement.invitations.onglet,
         chemin: Routes.adminPersonnesInvitations,
       ),
+      // BACK-FRONT-REPRISE-1 : la file des reprises de foyer.
+      (
+        libelle: t.reprisesAdmin.onglet,
+        chemin: Routes.adminPersonnesReprises,
+      ),
     ];
 
 /// Les deux fonctions pairs du domaine Securite et audit : le Journal et
