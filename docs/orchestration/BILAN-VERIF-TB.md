@@ -32,6 +32,11 @@ chevron posé sur le fondu, décidé par délégation), puis le commit des captu
 - **Pas fait** : suite complète après réunion (arrêtée sur ordre), captures de contrôle du
   téléphone couché et du bureau ×2 sur l'état réuni, planche web du directeur.
 
+Captures ouvertes après réunion (3ef49562) : 390 ×1 clair, 320 ×2 élève, 768 sombre,
+1440 ×2 Commandes. Page entière et plus grande à 320 ×2 ; à 1440 ×2, la dernière rangée
+(Support / Avec notes / Tableau) est coupée sous le fondu et le chevron de suite recouvre
+le mot « Avec » : défaut restant, relevé aussi par la relecture de L2.
+
 ## Reste
 
 - TB-RC : lancer la suite complète sur la tête de branche ; si verte, passer TB-RC « fait »
