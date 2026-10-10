@@ -56,6 +56,7 @@ import '../../features/com_messages/messages_page.dart';
 import '../../features/com_studio/studio_page.dart';
 import '../../features/comptable/aujourdhui/aujourdhui_page.dart';
 import '../../features/comptable/beneficiaires/beneficiaires_page.dart';
+import '../../features/comptable/beneficiaires/fil_profil_paiement_page.dart';
 import '../../features/comptable/beneficiaires/profil_paiement_page.dart';
 import '../../features/comptable/contractuels/contractuels_page.dart';
 import '../../features/comptable/contractuels/nouvelle_obligation_page.dart';
@@ -1727,6 +1728,20 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                                 'beneficiaireId',
                               ),
                             ),
+                        routes: <RouteBase>[
+                          // CPT-COM : le fil « Profil de paiement », ouvert
+                          // par « Relancer » (CPT-BR-11).
+                          GoRoute(
+                            path: 'fil',
+                            builder: (BuildContext _, GoRouterState etat) =>
+                                FilProfilPaiementPage(
+                                  beneficiaireId: _parametre(
+                                    etat,
+                                    'beneficiaireId',
+                                  ),
+                                ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

@@ -91,6 +91,32 @@ void main() {
     expect(find.text(t.enseignant.photo.succes), findsNothing);
   });
 
+  testWidgets('hors ligne : « Utiliser » n est pas rendu, jamais grise, la '
+      'phrase dit quand envoyer (BOUTONS-GRISES-1)', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      hoteCapture(
+        const Scaffold(body: EditeurPhotoPublique(prenom: 'Ibrahim')),
+        surcharges: <Override>[
+          choixPhotoPubliqueProvider.overrideWithValue(const _ChoixTemoin()),
+          horsLigneProvider.overrideWith((_) => Stream<bool>.value(true)),
+        ],
+      ),
+    );
+    await stabiliser(tester);
+    await _toucher(tester, find.byKey(EditeurPhotoPublique.choisirKey));
+
+    expect(find.byKey(EditeurPhotoPublique.apercuKey), findsOneWidget);
+    expect(find.byKey(EditeurPhotoPublique.utiliserKey), findsNothing);
+    expect(find.text(t.enseignant.photo.horsLigne), findsOneWidget);
+    // Choisir une autre photo reste possible : elle se prepare sans reseau.
+    expect(find.text(t.enseignant.photo.autre), findsOneWidget);
+  });
+
   testWidgets('ENS-01 en demonstration : la photo manque, puis est faite', (
     WidgetTester tester,
   ) async {

@@ -17,6 +17,7 @@ import 'package:rewayah_academy/core/admin/admin_domaine.dart';
 import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
@@ -91,6 +92,7 @@ Future<void> _monter(
   Size taille, {
   required EtatRevueDemo etat,
   PortRevueDossiers? port,
+  List<Override> plus = const <Override>[],
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -104,6 +106,7 @@ Future<void> _monter(
   if (port != null) {
     demo[1] = portRevueDossiersProvider.overrideWithValue(port);
   }
+  demo.addAll(plus);
   await tester.pumpWidget(
     ProviderScope(
       overrides: demo,
@@ -210,6 +213,52 @@ void main() {
     expect(etat.nombreDecisions, 1);
     expect(find.text(t.dossiers.refus.succes), findsOneWidget);
     expect(find.text(t.dossiers.refus.corps), findsNothing);
+  });
+
+  testWidgets('390 : le reseau tombe, feuille ouverte : la decision n est '
+      'plus proposee, jamais grisee, le message dit quand reessayer '
+      '(BOUTONS-GRISES-1)', (WidgetTester tester) async {
+    final StreamController<bool> reseau = StreamController<bool>();
+    addTearDown(reseau.close);
+    final EtatRevueDemo etat = EtatRevueDemo.initial();
+    await _monter(
+      tester,
+      _mobile,
+      etat: etat,
+      plus: <Override>[
+        horsLigneProvider.overrideWith((Ref ref) => reseau.stream),
+      ],
+    );
+    reseau.add(false);
+    await _stabiliser(tester);
+    await _ouvrir(tester, 'Omar');
+    await _toucher(tester, t.dossiers.refuser);
+    expect(find.text(t.dossiers.refus.corps), findsOneWidget);
+    expect(
+      find.widgetWithText(ActionPrincipale, t.dossiers.refuser),
+      findsWidgets,
+    );
+
+    reseau.add(true);
+    await _stabiliser(tester);
+    expect(find.text(t.dossiers.refus.horsLigne), findsOneWidget);
+    // Aucun « Refuser » inerte : le bouton n'est pas rendu.
+    for (final ActionPrincipale b in tester.widgetList<ActionPrincipale>(
+      find.byType(ActionPrincipale),
+    )) {
+      expect(b.onPress, isNotNull, reason: b.libelle);
+    }
+    expect(
+      find.descendant(
+        of: find.ancestor(
+          of: find.text(t.dossiers.refus.corps),
+          matching: find.byType(Scrollable),
+        ).first,
+        matching: find.widgetWithText(ActionPrincipale, t.dossiers.refuser),
+      ),
+      findsNothing,
+    );
+    expect(etat.nombreDecisions, 0);
   });
 
   testWidgets('390 : un motif saisi n est pas perdu (Annuler, Echap)', (

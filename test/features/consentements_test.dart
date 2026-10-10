@@ -16,6 +16,7 @@ import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/consentements/consentement_observation_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../support/annonces.dart';
 import '../support/harnais.dart';
 
 Acceptation _accordObservation({DateTime? quand}) => Acceptation(
@@ -203,6 +204,7 @@ void main() {
       testWidgets('la case non cochee ne signe rien', (
         WidgetTester tester,
       ) async {
+        final List<String> annonces = ecouterAnnonces(tester);
         final FauxPortConsentements port = await _monter(tester);
 
         await _tapperVisible(
@@ -211,6 +213,11 @@ void main() {
         );
 
         expect(port.accepteEnregistre, isEmpty);
+        // BOUTONS-GRISES-1 : actif, l'appui dit ce qui manque, l'annonce et
+        // rend le focus a la case.
+        expect(find.text(t.formulaire.manqueAccord), findsOneWidget);
+        expect(annonces, <String>[t.formulaire.manqueAccord]);
+        expect(FocusManager.instance.primaryFocus?.debugLabel, 'case-accord');
       });
 
       testWidgets('cocher puis Continuer enregistre l accord, dit merci', (

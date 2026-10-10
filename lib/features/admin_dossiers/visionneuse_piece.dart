@@ -362,14 +362,16 @@ class _VisionneusePieceState extends ConsumerState<VisionneusePiece> {
                   icone: AppIcons.moins,
                   libelle: t.dossiers.visionneuse.reduire,
                   touche: '-',
-                  onPress: _peutReduire ? _reduire : null,
+                  visible: _peutReduire,
+                  onPress: _reduire,
                 ),
                 Ecart.hSm,
                 _BoutonZoom(
                   icone: AppIcons.ajouter,
                   libelle: t.dossiers.visionneuse.agrandir,
                   touche: '+',
-                  onPress: _peutAgrandir ? _agrandir : null,
+                  visible: _peutAgrandir,
+                  onPress: _agrandir,
                 ),
                 Ecart.hSm,
                 _BoutonZoom(
@@ -527,7 +529,14 @@ class _BoutonZoom extends StatelessWidget {
     required this.libelle,
     required this.touche,
     required this.onPress,
+    this.visible = true,
   });
+
+  /// Faux a la borne (100 % pour reduire, 400 % pour agrandir) : le bouton
+  /// disparait, sa place reste reservee pour que les autres ne bougent pas,
+  /// comme la fleche de `BarrePrecedentSuivant` (NAV-FLECHES-1). Jamais
+  /// grise (BOUTONS-GRISES-1).
+  final bool visible;
 
   final AppIcon icone;
   final String libelle;
@@ -535,17 +544,23 @@ class _BoutonZoom extends StatelessWidget {
   /// La touche du raccourci, dite dans l'info-bulle (pas un texte a
   /// traduire : le symbole de la touche).
   final String touche;
-  final VoidCallback? onPress;
+  final VoidCallback onPress;
 
   @override
-  Widget build(BuildContext context) => BoutonIcone(
-    icone: icone,
-    libelle: libelle,
-    infobulle: t.dossiers.visionneuse.infoBulle(
-      action: libelle,
-      touche: touche,
+  Widget build(BuildContext context) => Visibility(
+    visible: visible,
+    maintainSize: true,
+    maintainAnimation: true,
+    maintainState: true,
+    child: BoutonIcone(
+      icone: icone,
+      libelle: libelle,
+      infobulle: t.dossiers.visionneuse.infoBulle(
+        action: libelle,
+        touche: touche,
+      ),
+      onPress: onPress,
     ),
-    onPress: onPress,
   );
 }
 

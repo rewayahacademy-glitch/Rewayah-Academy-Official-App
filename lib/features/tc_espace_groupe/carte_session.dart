@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/accessibilite/signaler_manque.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
@@ -44,7 +45,14 @@ class CarteSession extends StatefulWidget {
     this.actionHorsEntree,
     this.tutoiement = false,
     this.entreeRetiree = false,
+    this.attenteEntree,
   });
+
+  /// L'entree ne peut pas encore aboutir alors que la fenetre est ouverte
+  /// (acces de l'eleve qui se lit encore, FI-9a) : « Rejoindre » reste
+  /// present et actif, jamais grise (BOUTONS-GRISES-1) ; l'appui dit cette
+  /// phrase sous le bouton et l'annonce, sans entrer.
+  final String? attenteEntree;
 
   /// Vrai quand l'acces de l'eleve connecte ferme ses seances (FI-9a,
   /// FI-BR-08) : « Rejoindre » est retire de la carte, jamais grise, et
@@ -72,7 +80,8 @@ class CarteSession extends StatefulWidget {
   /// L'Espace Groupe auquel elle appartient.
   final GroupHomeVM espace;
 
-  /// Ce que fait « Rejoindre ». Nul tant qu'Agent Z ne l'a pas branche.
+  /// Ce que fait « Rejoindre ». Nul tant que l'hote ne l'a pas branche :
+  /// le bouton n'est alors pas rendu (jamais grise).
   final VoidCallback? onRejoindre;
 
   /// Relance la lecture quand l'emplacement propose « Reessayer ».
@@ -122,13 +131,15 @@ class _CarteSessionState extends State<CarteSession> {
     final OccurrenceSeance? occurrence = espace.identite.prochaineSeance;
 
     if (horloge == null || occurrence == null) {
-      return AppCard(
-        dominante: true,
-        child: EmptyState(
-          message: LibellesGroupe.aucuneSeance,
-          invitation: LibellesGroupe.aucuneSeanceDetail,
-          icone: AppIcons.cours,
-          registre: RegistreVide.subi,
+      return LargeurLectureCarte(
+        child: AppCard(
+          dominante: true,
+          child: EmptyState(
+            message: LibellesGroupe.aucuneSeance,
+            invitation: LibellesGroupe.aucuneSeanceDetail,
+            icone: AppIcons.cours,
+            registre: RegistreVide.subi,
+          ),
         ),
       );
     }
@@ -151,6 +162,27 @@ class _CarteSessionState extends State<CarteSession> {
     final TextTheme textes = Theme.of(context).textTheme;
     final bool retire = widget.entreeRetiree && emplacement.estBouton;
 
+    return LargeurLectureCarte(
+      child: _contenu(
+        context,
+        emplacement,
+        horloge,
+        occurrence,
+        textes,
+        retire: retire,
+      ),
+    );
+  }
+
+  Widget _contenu(
+    BuildContext context,
+    EmplacementEntree emplacement,
+    SessionClockVM horloge,
+    OccurrenceSeance occurrence,
+    TextTheme textes, {
+    required bool retire,
+  }) {
+    final GroupHomeVM espace = widget.espace;
     return AppCard(
       dominante: true,
       // Une seance annulee attenue la carte par sa surface, jamais par une
@@ -163,7 +195,10 @@ class _CarteSessionState extends State<CarteSession> {
         child: Semantics(
           header: true,
           child: Text(
-            horloge.horlogeUtilisateur.dateLocaleRendue,
+            isolerDansInterface(
+              horloge.horlogeUtilisateur.dateLocaleRendue,
+              Directionality.of(context),
+            ),
             key: const ValueKey<String>('carte-seance-titre'),
             style: textes.titleMedium ?? const TextStyle(),
           ),
@@ -200,7 +235,7 @@ class _CarteSessionState extends State<CarteSession> {
           // deviner.
           if (horloge.phase == PhaseSeance.attenteAvantT0) ...<Widget>[
             Ecart.vMd,
-            Text(
+            _TexteIsole(
               widget.tutoiement
                   ? t.accessibilite.tutoiement.attenteDetail
                   : LibellesGroupe.attenteAvantDebutDetail,
@@ -218,6 +253,7 @@ class _CarteSessionState extends State<CarteSession> {
               // ligne d'etat.
               sansBouton: espace.role == RoleEspaceGroupe.tuteur,
               onEntrer: widget.onRejoindre,
+              motifAttente: widget.attenteEntree,
               onReessayer: widget.onReessayer,
               focusRetour: _focusTitre,
             ),
@@ -317,7 +353,10 @@ class NoticeChangementHeure extends StatelessWidget {
           Icon(AppIcons.horloge.repos, size: AppSpacing.xl),
           Ecart.hSm,
           Expanded(
-            child: Text(texte, style: Theme.of(context).textTheme.bodySmall),
+            child: _TexteIsole(
+              texte,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
           ),
         ],
       ),
@@ -346,7 +385,12 @@ class EmplacementEntreeVue extends StatefulWidget {
     this.onReessayer,
     this.sansBouton = false,
     this.focusRetour,
+    this.motifAttente,
   });
+
+  /// Pose : l'appui sur le bouton n'entre pas, il dit cette phrase sous le
+  /// bouton (region live) et l'annonce (BOUTONS-GRISES-1, jamais grise).
+  final String? motifAttente;
 
   /// Recoit le focus quand le bouton focalise disparait (revue UX n° 13) ;
   /// en general le titre de la carte de seance.
@@ -355,10 +399,11 @@ class EmplacementEntreeVue extends StatefulWidget {
   /// Ce qu'il faut montrer.
   final EmplacementEntree emplacement;
 
-  /// « Rejoindre » ou « Preparer l'entree ».
+  /// « Rejoindre » ou « Preparer l'entree ». Nul (rien de branche), le
+  /// bouton n'est pas rendu : jamais un bouton grise.
   final VoidCallback? onEntrer;
 
-  /// « Reessayer ».
+  /// « Reessayer ». Nul, « Reessayer » n'est pas rendu.
   final VoidCallback? onReessayer;
 
   /// Vrai pour un role qui n'entre pas (tuteur) : le bouton devient la ligne.
@@ -370,6 +415,7 @@ class EmplacementEntreeVue extends StatefulWidget {
 
 class _EmplacementEntreeVueState extends State<EmplacementEntreeVue> {
   late String _annonce = widget.emplacement.annonce;
+  bool _attenteDite = false;
   final FocusNode _focusBouton = FocusNode(
     debugLabel: 'emplacement-entree',
     skipTraversal: true,
@@ -388,6 +434,7 @@ class _EmplacementEntreeVueState extends State<EmplacementEntreeVue> {
       ancien.emplacement,
     );
     if (nouvelle != null) _annonce = nouvelle;
+    if (widget.motifAttente == null) _attenteDite = false;
     // Le bouton focalise laisse place a une ligne d'etat : le focus revient
     // au titre de la carte. Le bouton qui apparait ne le prend jamais.
     final bool avaitBouton = ancien.emplacement.estBouton && !ancien.sansBouton;
@@ -404,18 +451,45 @@ class _EmplacementEntreeVueState extends State<EmplacementEntreeVue> {
   Widget build(BuildContext context) {
     final EmplacementEntree e = widget.emplacement;
     final bool mobile = AppGabarit.de(context) == Gabarit.mobile;
+    final VoidCallback? entrer = widget.onEntrer;
+    final String? motif = widget.motifAttente;
     final bool bouton = e.estBouton && !widget.sansBouton;
     final String? detail = e.detail;
 
     final List<Widget> contenu;
-    if (bouton) {
+    if (bouton && entrer == null) {
+      // Rien de branche : pas de bouton grise. La hauteur du bouton reste
+      // reservee, la ligne d'etat dit ce qui est connu.
+      contenu = <Widget>[
+        ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: AppPage.hauteurBouton),
+          child: Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: detail == null
+                ? const SizedBox.shrink()
+                : _LigneEtat(etat: e.etat, texte: detail),
+          ),
+        ),
+      ];
+    } else if (bouton && entrer != null) {
+      final VoidCallback appui = motif == null
+          ? entrer
+          : () {
+              setState(() => _attenteDite = true);
+              signalerManque(context, motif);
+            };
       final Widget action = Focus(
         focusNode: _focusBouton,
-        child: ActionPrincipale(
-          libelle: e.libelle,
-          libelleSemantique: e.libelleLecteur,
-          onPress: widget.onEntrer,
-          pleineLargeur: mobile,
+        child: Semantics(
+          label: e.libelleLecteur,
+          button: true,
+          excludeSemantics: true,
+          onTap: appui,
+          child: ActionPrincipale(
+            libelle: e.libelle,
+            onPress: appui,
+            pleineLargeur: mobile,
+          ),
         ),
       );
       contenu = <Widget>[
@@ -424,6 +498,19 @@ class _EmplacementEntreeVueState extends State<EmplacementEntreeVue> {
           Ecart.vLg,
         ],
         if (mobile) action else _EnFin(child: action),
+        if (_attenteDite && motif != null) ...<Widget>[
+          Ecart.vSm,
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              motif,
+              key: const ValueKey<String>('emplacement-attente-entree'),
+              style: AppPalette.of(context).inkMuted.applyTo(
+                Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
+        ],
       ];
     } else {
       contenu = <Widget>[
@@ -437,7 +524,7 @@ class _EmplacementEntreeVueState extends State<EmplacementEntreeVue> {
             ),
           ),
         ),
-        if (e.reessayer)
+        if (e.reessayer && widget.onReessayer != null)
           if (mobile)
             ActionPrincipale(
               libelle: t.classe.entree.reessayer,
@@ -519,7 +606,7 @@ class _LigneEtat extends StatelessWidget {
             // Aucun mot coupe a 320 px texte x2 (lecon 8, DASH-MA-PROD-b :
             // « une conn / exion » hors ligne sur l'Accueil MA).
             child: TexteSansCoupure(
-              texte,
+              isolerDansInterface(texte, Directionality.of(context)),
               // Un decompte : chiffres tabulaires (revue phase 0, jetons D4).
               style: AppTypography.tabulaire(
                 textes.titleMedium ?? const TextStyle(),
@@ -543,18 +630,20 @@ class SqueletteCarteSession extends StatelessWidget {
     return Semantics(
       label: t.classe.entree.chargementSeance,
       child: const ExcludeSemantics(
-        child: AppCard(
-          dominante: true,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Skeleton(hauteur: AppSpacing.xl),
-              Ecart.vLg,
-              Skeleton.texte(),
-              Ecart.vLg,
-              Skeleton(hauteur: AppPage.hauteurBouton),
-            ],
+        child: LargeurLectureCarte(
+          child: AppCard(
+            dominante: true,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Skeleton(hauteur: AppSpacing.xl),
+                Ecart.vLg,
+                Skeleton.texte(),
+                Ecart.vLg,
+                Skeleton(hauteur: AppPage.hauteurBouton),
+              ],
+            ),
           ),
         ),
       ),
@@ -630,7 +719,7 @@ class _LigneValeur extends StatelessWidget {
         alignment: WrapAlignment.spaceBetween,
         spacing: AppSpacing.md,
         children: <Widget>[
-          Text(
+          _TexteIsole(
             libelle,
             style: palette.inkMuted.applyTo(
               textes.bodySmall ?? const TextStyle(),
@@ -709,6 +798,47 @@ class _EnFin extends StatelessWidget {
     return Align(
       alignment: AlignmentDirectional.centerEnd,
       child: IntrinsicWidth(child: child),
+    );
+  }
+}
+
+/// DUREE-INSECABLE-4 : la carte de seance garde une largeur de lecture
+/// ([AppPage.largeurLecture]). A 1440 px, etiree sur toute la largeur, la
+/// date et la duree s'ecartaient de plus d'un metre d'ecran de leurs
+/// libelles ; bornee, elle reste au bord de debut de la page.
+class LargeurLectureCarte extends StatelessWidget {
+  /// Borne [child] a la largeur de lecture.
+  const LargeurLectureCarte({required this.child, super.key});
+
+  /// La carte.
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: AlignmentDirectional.topStart,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: AppPage.largeurLecture),
+        child: child,
+      ),
+    );
+  }
+}
+
+/// Un texte de la carte isole par l'isolat partage FSI ... PDI
+/// ([isolerDansInterface]) : en interface de droite a gauche, la ponctuation
+/// d'un libelle francais reste a sa place.
+class _TexteIsole extends StatelessWidget {
+  const _TexteIsole(this.texte, {this.style});
+
+  final String texte;
+  final TextStyle? style;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      isolerDansInterface(texte, Directionality.of(context)),
+      style: style,
     );
   }
 }

@@ -6,23 +6,29 @@
 // **2 infos manquantes** (`ens-03` sans methode, `ens-07` incomplet),
 // **1 methode modifiee recemment** (`ens-01`, 1er octobre), **1 externe
 // « Invitation envoyee »** (`ctr-05`), plus une methode en verification
-// (`ens-05`) et des paiements suspendus (`ens-11`). La relance reste
-// « preparee », jamais « envoyee » (CPT-BR-11) ; aucune coordonnee reelle :
+// (`ens-05`) et des paiements suspendus (`ens-11`). La relance ouvre le fil
+// metier « Profil de paiement » des Messages de demonstration (CPT-COM,
+// CPT-BR-11) : un message n'y est « Envoye » que sur l'accuse du port de
+// demonstration, et l'externe n'a pas de fil ; aucune coordonnee reelle :
 // les suffixes sont fictifs, l'app ne voit jamais rien d'autre, et la saisie
 // securisee rend un jeton opaque de demonstration.
 //
 // Hors production (K-09) : ces doubles ne sont branches que par
 // `surchargesDemoBeneficiaires`, lue par la demonstration Comptable.
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
 import '../../../core/capacites/port_beneficiaires_paiement.dart';
 import '../../../core/capacites/port_mes_moyens_paiement.dart';
-import '../../../core/capacites/port_relance_paiement.dart';
+import '../../../core/communications/capacites_communication.dart';
+import '../../../core/communications/port_brouillons.dart';
 import '../../../core/comptable/modeles_comptable.dart';
 import '../../../core/comptable/statuts_comptable.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/widgets/pastilles_comptable.dart';
+import '../../com_messages/port_messages_metier.dart';
+import '../communications/com_messages_demo.dart' show MessagesMetierDemo;
 import 'socle_comptable_demo.dart';
 
 /// Les profils de demonstration, construits a partir des personnes du socle.
@@ -328,21 +334,28 @@ class BeneficiairesPaiementDemo implements PortBeneficiairesPaiement {
   }
 }
 
-/// La relance en demonstration : le fil « Profil de paiement » prepare,
-/// avec le message modele §27.3, **jamais envoye** et sans route (la page de
-/// fil arrive avec CPT-COM).
-class RelancePaiementDemo implements PortRelancePaiement {
-  /// Cree le double.
-  const RelancePaiementDemo();
-
-  @override
-  Future<RelancePreparee> relancer(String beneficiaireId) async =>
-      RelancePreparee(
-        filId: 'fil-$typeObjetProfilPaiement-$beneficiaireId',
-        beneficiaireId: beneficiaireId,
-        messageModele: t.comptable.beneficiaires.profil.messageModele,
-      );
-}
+/// Les fils « Profil de paiement » que la relance peut ouvrir (CPT-COM) :
+/// un par beneficiaire qui a un compte Rewayah. L'externe sans compte n'en a
+/// pas (CPT-BR-08 : « Renvoyer l'invitation » reste son seul recours).
+/// L'objet se nomme « Profil de paiement » seul : l'interlocuteur est deja
+/// nomme en tete du fil, le repeter allongeait la ligne compacte a 320 en
+/// texte x2 (revue CPT-COM).
+List<ConversationPossible> conversationsProfilPaiementDemo() =>
+    <ConversationPossible>[
+      for (final IdentiteBeneficiaire b in <IdentiteBeneficiaire>[
+        ...SocleComptableDemo.enseignants,
+        ...SocleComptableDemo.contractuels,
+      ])
+        if (b.id != ProfilsBeneficiairesDemo.externe)
+          ConversationPossible(
+            interlocuteur: Participant(id: b.id, nomAffiche: b.nom),
+            objet: ObjetLie(
+              type: TypeObjetLie.profilPaiement,
+              id: b.id,
+              libelle: t.comptable.beneficiaires.profilTitre,
+            ),
+          ),
+    ];
 
 /// « Recevoir mes paiements » du Comptable de demonstration (§20) : une
 /// mise a jour demandee sur sa methode, donc la notice §27.1. **Avec etat**
@@ -545,11 +558,53 @@ class MesMoyensPaiementDemo implements PortMesMoyensPaiement {
   ];
 }
 
+/// L'etat des fils de la demonstration Comptable : UNE session pour toute
+/// la demonstration, car chaque ecran monte sa propre portee
+/// (`CoquilleComptableDemo`). Le message modele prerempli par « Relancer »
+/// sur le profil doit se retrouver dans le champ du fil, et un message
+/// envoye dans le fil doit y etre encore quand on y revient (CPT-COM). En
+/// memoire du processus seulement, hors production (K-09) ;
+/// [reinitialiserDemoBeneficiaires] repart d'une session vierge.
+final class SessionFilsDemoBeneficiaires {
+  SessionFilsDemoBeneficiaires._();
+
+  /// Les brouillons des fils (dont le message modele prerempli).
+  final BrouillonsMemoire brouillons = BrouillonsMemoire();
+
+  /// Les Messages metier : le fil « Profil de paiement » cree a la demande.
+  final MessagesMetierDemo messages = MessagesMetierDemo.surObjets(
+    aOuvrir: conversationsProfilPaiementDemo(),
+  );
+}
+
+SessionFilsDemoBeneficiaires? _session;
+
+/// La session en cours des fils de la demonstration Comptable.
+SessionFilsDemoBeneficiaires get sessionFilsDemoBeneficiaires =>
+    _session ??= SessionFilsDemoBeneficiaires._();
+
+/// Repart d'une session vierge : aucun brouillon, aucun fil ouvert. Les
+/// tests l'appellent avant chaque parcours, pour qu'aucun n'herite des
+/// brouillons ou des messages d'un autre.
+void reinitialiserDemoBeneficiaires() => _session = null;
+
 /// Les surcharges de la demonstration des beneficiaires.
 List<Override> surchargesDemoBeneficiaires() => <Override>[
   portBeneficiairesPaiementProvider.overrideWithValue(
     const BeneficiairesPaiementDemo(),
   ),
-  portRelancePaiementProvider.overrideWithValue(const RelancePaiementDemo()),
+  // CPT-COM : la relance ouvre le fil metier « Profil de paiement » des
+  // Messages de demonstration, ecriture ouverte (COM-BR-16), hors production.
+  portMessagesMetierProvider.overrideWithValue(
+    sessionFilsDemoBeneficiaires.messages,
+  ),
+  portBrouillonsProvider.overrideWithValue(
+    sessionFilsDemoBeneficiaires.brouillons,
+  ),
+  capacitesCommunicationProvider.overrideWith(
+    (Ref _) => const CapacitesCommunicationsFixes(<CapaciteCommunication>{
+      CapaciteCommunication.ecrireDansFil,
+    }).capacites(),
+  ),
   portMesMoyensPaiementProvider.overrideWithValue(MesMoyensPaiementDemo()),
 ];

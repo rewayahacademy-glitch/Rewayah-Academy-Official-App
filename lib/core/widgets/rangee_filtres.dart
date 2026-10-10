@@ -168,7 +168,7 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
     position.jumpTo(cibleDefilement);
   }
 
-  /// La largeur du fondu de bord ([_FonduBords]).
+  /// La largeur du fondu de bord ([FonduBordsRangee]).
   static const double _largeurFondu = AppSpacing.xxl;
 
   /// Vrai pour une puce qui porte un filtre en cours : une `FilterPill`
@@ -193,6 +193,9 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
     final bool deborde = m.maxScrollExtent > 0;
     final bool avant = m.pixels > m.minScrollExtent + 0.5;
     final bool apres = m.pixels < m.maxScrollExtent - 0.5;
+    // Seuls les changements d'etat reconstruisent la rangee : le fondu,
+    // lui, suit chaque pas de defilement en se redessinant seul
+    // ([RenduFonduBordsRangee] ecoute le controleur, COUPE-MOTS-FOND-1).
     if (deborde != _deborde || avant != _avant || apres != _apres) {
       setState(() {
         _deborde = deborde;
@@ -251,10 +254,10 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
               trackColor: palette.borderHairline.asBorderSide().color,
               trackBorderColor: palette.borderHairline.asBorderSide().color,
               // Le fondu sous la barre : elle reste nette d'un bord a l'autre.
-              child: _FonduBords(
+              child: FonduBordsRangee(
                 couleur: opaque,
-                avant: _avant,
-                apres: _apres,
+                // Le fondu se redessine a chaque pas, sans reconstruire.
+                defilement: _defilement,
                 child: SingleChildScrollView(
                   controller: _defilement,
                   scrollDirection: Axis.horizontal,
@@ -290,48 +293,195 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
 /// bord de l'ecran s'efface au lieu de s'arreter net, et le fondu dit qu'il y
 /// en a d'autres de ce cote. Bords pris dans le sens de lecture (le debut est
 /// a droite en arabe).
-class _FonduBords extends StatelessWidget {
-  const _FonduBords({
+class FonduBordsRangee extends SingleChildRenderObjectWidget {
+  /// Cree le fondu.
+  const FonduBordsRangee({
     required this.couleur,
-    required this.avant,
-    required this.apres,
-    required this.child,
+    required this.defilement,
+    required Widget super.child,
+    super.key,
   });
 
   /// Une couleur opaque quelconque : seul son canal alpha compte.
   final Color couleur;
-  final bool avant;
-  final bool apres;
-  final Widget child;
+
+  /// Le defilement de la rangee : chaque pas redessine le masque, sans
+  /// reconstruire la rangee (COUPE-MOTS-FOND-1).
+  final Listenable defilement;
 
   @override
-  Widget build(BuildContext context) {
-    final TextDirection sens = Directionality.of(context);
-    final Color transparent = couleur.withValues(alpha: 0);
-    // Le masque reste dans l'arbre meme sans fondu (`dst` rend la rangee
-    // telle quelle) : l'en retirer recreerait le defilement, revenu au debut.
-    return ShaderMask(
-      blendMode: avant || apres ? BlendMode.dstIn : BlendMode.dst,
-      shaderCallback: (Rect zone) {
-        final double f = zone.width <= 0
-            ? 0
-            : (_RangeeFiltresState._largeurFondu / zone.width).clamp(0, 0.5);
-        return LinearGradient(
-          begin: AlignmentDirectional.centerStart.resolve(sens),
-          end: AlignmentDirectional.centerEnd.resolve(sens),
-          colors: <Color>[
-            if (avant) transparent else couleur,
-            couleur,
-            couleur,
-            if (apres) transparent else couleur,
-          ],
-          stops: <double>[0, f, 1 - f, 1],
-        ).createShader(zone);
-      },
-      child: child,
-    );
+  RenduFonduBordsRangee createRenderObject(BuildContext context) =>
+      RenduFonduBordsRangee(couleur, Directionality.of(context), defilement);
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    RenduFonduBordsRangee renderObject,
+  ) {
+    renderObject
+      ..couleur = couleur
+      ..sens = Directionality.of(context)
+      ..defilement = defilement;
   }
 }
+
+/// Le rendu de [FonduBordsRangee] : l'etat du fondu se lit sur les puces
+/// POSEES, au moment de peindre (la mise en page est alors celle de l'image
+/// en cours, jamais la precedente), et le masque se pose sur un calque
+/// `ShaderMaskLayer` (COUPE-MOTS-FOND-1). Un bord porte un fondu des qu'il
+/// cache une puce, entiere ou en partie, et ce fondu couvre toute la partie
+/// visible de la puce coupee (au moins [largeurMinimale], au plus la moitie
+/// de la vue) : une puce a moitie visible s'efface, elle ne s'arrete jamais
+/// net.
+class RenduFonduBordsRangee extends RenderProxyBox {
+  /// Cree le rendu.
+  RenduFonduBordsRangee(this._couleur, this._sens, this._defilement);
+
+  /// La largeur minimale d'un fondu.
+  static const double largeurMinimale = _RangeeFiltresState._largeurFondu;
+
+  Color _couleur;
+  set couleur(Color valeur) {
+    if (valeur == _couleur) return;
+    _couleur = valeur;
+    markNeedsPaint();
+  }
+
+  TextDirection _sens;
+  set sens(TextDirection valeur) {
+    if (valeur == _sens) return;
+    _sens = valeur;
+    markNeedsPaint();
+  }
+
+  Listenable _defilement;
+  set defilement(Listenable valeur) {
+    if (identical(valeur, _defilement)) return;
+    if (attached) _defilement.removeListener(markNeedsPaint);
+    _defilement = valeur;
+    if (attached) _defilement.addListener(markNeedsPaint);
+    markNeedsPaint();
+  }
+
+  /// L'etat du fondu tel qu'il a ete PEINT en dernier (lu par les gardes,
+  /// sans relancer de mesure).
+  EtatFonduRangee get etatPeint => _etatPeint;
+  EtatFonduRangee _etatPeint = _aucun;
+
+  static const EtatFonduRangee _aucun = (
+    avant: false,
+    apres: false,
+    largeurAvant: largeurMinimale,
+    largeurApres: largeurMinimale,
+  );
+
+  @override
+  void attach(PipelineOwner owner) {
+    super.attach(owner);
+    _defilement.addListener(markNeedsPaint);
+  }
+
+  @override
+  void detach() {
+    _defilement.removeListener(markNeedsPaint);
+    super.detach();
+  }
+
+  @override
+  bool get alwaysNeedsCompositing => child != null;
+
+  @override
+  ShaderMaskLayer? get layer => super.layer as ShaderMaskLayer?;
+
+  /// L'etat du fondu, lu sur les puces posees sous ce rendu.
+  EtatFonduRangee _mesurer() {
+    final RenderBox? enfant = child;
+    if (enfant == null || !hasSize) return _aucun;
+    final double largeur = size.width;
+    double gauche = 0;
+    double droite = 0;
+    bool cacheGauche = false;
+    bool cacheDroite = false;
+    // Les puces : les enfants de la premiere rangee horizontale.
+    final List<RenderBox> puces = <RenderBox>[];
+    void chercher(RenderObject o) {
+      if (o is RenderFlex && o.direction == Axis.horizontal) {
+        o.visitChildren((RenderObject c) {
+          if (c is RenderBox) puces.add(c);
+        });
+        return;
+      }
+      o.visitChildren(chercher);
+    }
+
+    chercher(enfant);
+    for (final RenderBox puce in puces) {
+      if (!puce.hasSize) continue;
+      final Rect r = MatrixUtils.transformRect(
+        puce.getTransformTo(this),
+        Offset.zero & puce.size,
+      );
+      if (r.left < -0.5) {
+        cacheGauche = true;
+        if (r.right > 0) gauche = math.max(gauche, r.right);
+      }
+      if (r.right > largeur + 0.5) {
+        cacheDroite = true;
+        if (r.left < largeur) droite = math.max(droite, largeur - r.left);
+      }
+    }
+    double borne(double visible) =>
+        visible.clamp(largeurMinimale, math.max(largeurMinimale, largeur / 2));
+    final bool ltr = _sens == TextDirection.ltr;
+    return (
+      avant: ltr ? cacheGauche : cacheDroite,
+      apres: ltr ? cacheDroite : cacheGauche,
+      largeurAvant: borne(ltr ? gauche : droite),
+      largeurApres: borne(ltr ? droite : gauche),
+    );
+  }
+
+  @override
+  void paint(PaintingContext context, Offset offset) {
+    if (child == null) {
+      layer = null;
+      return;
+    }
+    final EtatFonduRangee e = _mesurer();
+    _etatPeint = e;
+    final Color transparent = _couleur.withValues(alpha: 0);
+    final Rect zone = Offset.zero & size;
+    double part(double largeur) =>
+        zone.width <= 0 ? 0 : (largeur / zone.width).clamp(0, 0.5);
+    // Le calque reste pose meme sans fondu (`dst` rend la rangee telle
+    // quelle) : la composition ne change pas d'un pas a l'autre.
+    layer ??= ShaderMaskLayer();
+    layer!
+      ..shader = LinearGradient(
+        begin: AlignmentDirectional.centerStart.resolve(_sens),
+        end: AlignmentDirectional.centerEnd.resolve(_sens),
+        colors: <Color>[
+          if (e.avant) transparent else _couleur,
+          _couleur,
+          _couleur,
+          if (e.apres) transparent else _couleur,
+        ],
+        stops: <double>[0, part(e.largeurAvant), 1 - part(e.largeurApres), 1],
+      ).createShader(zone)
+      ..maskRect = offset & size
+      ..blendMode = e.avant || e.apres ? BlendMode.dstIn : BlendMode.dst;
+    context.pushLayer(layer!, super.paint, offset);
+  }
+}
+
+/// L'etat d'un [FonduBordsRangee] : un fondu a chaque bord qui cache une
+/// puce, et sa largeur, dans le sens de lecture.
+typedef EtatFonduRangee = ({
+  bool avant,
+  bool apres,
+  double largeurAvant,
+  double largeurApres,
+});
 
 /// Une puce jamais plus large que la rangee : un libelle plus long que
 /// l'ecran (« Toutes les classes » a 320 px texte x2) passe a la ligne

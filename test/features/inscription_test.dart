@@ -333,14 +333,14 @@ void main() {
       await _taper(tester, find.text(t.inscription.creer));
 
       expect(find.text(t.inscription.erreurActualisation), findsOneWidget);
-      expect(
-        tester
-            .widget<ActionPrincipale>(
-              find.byKey(const Key('inscription-modifier-identite')),
-            )
-            .onPress,
-        isNull,
-      );
+      // Jamais grise (BOUTONS-GRISES-1) : « Modifier » n'est plus rendu.
+      for (final String cle in <String>[
+        'inscription-modifier-usage',
+        'inscription-modifier-identite',
+        'inscription-modifier-genre',
+      ]) {
+        expect(find.byKey(Key(cle)), findsNothing);
+      }
       expect(find.byKey(const Key('inscription-deconnexion')), findsOneWidget);
       // Plus d'etape precedente : la rangee reste, sans disque (demande
       // A-5.1) ; la seule sortie est « Se deconnecter », sans doublon.

@@ -47,6 +47,9 @@ const Set<TypeObjetLie> typesObjetsFilMetier = <TypeObjetLie>{
   TypeObjetLie.dossier,
   TypeObjetLie.mission,
   TypeObjetLie.remplacement,
+  // CPT-BR-11 : le fil « Profil de paiement » ouvert par la relance du
+  // Comptable ; le beneficiaire le lit dans ses Messages.
+  TypeObjetLie.profilPaiement,
   TypeObjetLie.autre,
 };
 

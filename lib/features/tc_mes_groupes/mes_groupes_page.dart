@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/capacites/port_acces_foyer.dart';
+import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
@@ -97,16 +98,25 @@ class _Corps extends ConsumerWidget {
     // L'acces de l'eleve connecte (FI-9a), la meme regle que son accueil :
     // seances fermees, Rejoindre est retire et la copie neutre le dit, sans
     // cause ni montant (guide §1.7, lecon 15) ; tant que l'acces se lit, le
-    // bouton reste present et inerte. Une lecture absente ou en echec (port
-    // neutre en production) ne change rien, et jamais selon un solde.
+    // bouton reste present, jamais grise : l'appui dit d'attendre
+    // (BOUTONS-GRISES-1). Une lecture absente ou en echec (port neutre en
+    // production) ne change rien, et jamais selon un solde.
     final AsyncValue<AccesBeneficiaire?> acces = ref.watch(
       accesAppelantProvider,
     );
     final bool accesFerme =
         ouvertureSeances(acces.value) == OuvertureSeances.fermees;
+    // Hors ligne ou acces en lecture : l'entree ne peut pas encore aboutir.
+    // « Rejoindre » reste present et actif ; l'appui dit quand entrer, sans
+    // redire « hors ligne » (K-59 : seul le bandeau le dit).
+    final String? attente = horsLigne
+        ? t.tc.groupe.carte.entreeAttendReseau
+        : accesEnAttente(acces)
+        ? t.tc.groupe.carte.entreeSePrepare
+        : null;
     final Widget grille = _Grille(
       groupes: liste,
-      horsLigne: horsLigne || accesEnAttente(acces),
+      attente: attente,
       accesFerme: accesFerme,
       onRejoindre: onRejoindre,
     );
@@ -130,15 +140,16 @@ class _Corps extends ConsumerWidget {
 class _Grille extends StatelessWidget {
   const _Grille({
     required this.groupes,
-    required this.horsLigne,
+    required this.attente,
     required this.accesFerme,
     this.onRejoindre,
   });
 
   final List<GroupSummaryVM> groupes;
 
-  /// Hors ligne, ou acces encore en lecture : la porte reste inerte.
-  final bool horsLigne;
+  /// Hors ligne, ou acces encore en lecture : ce que dit l'appui sur
+  /// « Rejoindre », qui n'entre pas encore (jamais grise).
+  final String? attente;
 
   /// Seances fermees (FI-9a) : Rejoindre est retire de chaque carte.
   final bool accesFerme;
@@ -151,7 +162,7 @@ class _Grille extends StatelessWidget {
       for (final GroupSummaryVM groupe in groupes)
         _CarteRoutee(
           groupe: groupe,
-          horsLigne: horsLigne,
+          attente: attente,
           accesFerme: accesFerme,
           onRejoindre: onRejoindre,
         ),
@@ -195,13 +206,13 @@ class _Grille extends StatelessWidget {
 class _CarteRoutee extends StatelessWidget {
   const _CarteRoutee({
     required this.groupe,
-    required this.horsLigne,
+    required this.attente,
     required this.accesFerme,
     this.onRejoindre,
   });
 
   final GroupSummaryVM groupe;
-  final bool horsLigne;
+  final String? attente;
   final bool accesFerme;
   final void Function(GroupSummaryVM groupe)? onRejoindre;
 
@@ -212,10 +223,11 @@ class _CarteRoutee extends StatelessWidget {
       groupe: groupe,
       onOuvrir: () =>
           GoRouter.of(context).go(CheminsTcA.espaceGroupe(groupe.groupeId)),
-      // Hors ligne, la carte reste lisible mais la porte de la salle est
-      // fermee : proposer une entree que le reseau ne peut pas honorer serait
-      // une promesse en l'air.
-      onRejoindre: horsLigne || rappel == null ? null : () => rappel(groupe),
+      // Hors ligne, la carte reste lisible et « Rejoindre » reste present :
+      // l'appui dit quand entrer au lieu d'ouvrir une salle que le reseau ne
+      // peut pas honorer (jamais grise, BOUTONS-GRISES-1).
+      onRejoindre: rappel == null ? null : () => rappel(groupe),
+      attenteEntree: attente,
       rejoindreRetire: accesFerme,
     );
   }

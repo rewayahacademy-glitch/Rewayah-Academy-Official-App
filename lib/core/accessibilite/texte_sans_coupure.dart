@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -125,6 +127,27 @@ class TexteSansCoupure extends StatelessWidget {
     );
   }
 }
+
+/// Le nombre de lignes qu'un texte d'aide (`InputDecoration.hintText`) peut
+/// prendre sans jamais etre tronque : une ligne par mot au plus, puisqu'un
+/// mot ne se coupe pas (COUPE-MOTS-FOND-1). A passer a `hintMaxLines` : le
+/// texte d'aide d'une recherche passe a la ligne entre ses mots au lieu de
+/// finir en ellipse (« Rechercher un tuteur ou un... » a 320 px texte x2).
+int lignesTexteAide(String texte) => math.max(
+  1,
+  texte.split(_espacesSecables).where((String m) => m.isNotEmpty).length,
+);
+
+/// Le texte d'aide d'un champ, a passer a `InputDecoration.hint` (a la place
+/// de `hintText`) : il passe a la ligne entre ses mots, et un mot plus large
+/// que le champ (« Rechercher » a cote de la loupe, 320 px texte x2,
+/// Interface guidee) se reduit, borne, au lieu d'etre coupe
+/// (COUPE-MOTS-FOND-1). Le style est celui des textes d'aide du theme.
+Widget texteAideSansCoupure(BuildContext context, String texte) =>
+    TexteSansCoupure(
+      texte,
+      style: Theme.of(context).inputDecorationTheme.hintStyle,
+    );
 
 /// Un trait d'union entre deux lettres : « Al-Badr », « Saint-Denis ».
 final RegExp _traitEntreLettres = RegExp(

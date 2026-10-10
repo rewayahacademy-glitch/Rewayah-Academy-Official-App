@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/signaler_manque.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/domain/enums.dart';
 import '../../core/dossier/selecteur_fichier.dart';
@@ -38,9 +39,44 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
   bool _envoi = false;
   String? _erreur;
 
+  /// Le choix du type, ou le focus revient quand il manque.
+  final FocusNode _focusType = FocusNode(debugLabel: 'type-piece');
+
+  /// Le lien « Choisir la photo », ou le focus revient quand elle manque.
+  final FocusNode _focusFichier = FocusNode(debugLabel: 'fichier-piece');
+
+  final GlobalKey _cleType = GlobalKey();
+
+  @override
+  void dispose() {
+    _focusType.dispose();
+    _focusFichier.dispose();
+    super.dispose();
+  }
+
+  /// Bouton jamais grise (BOUTONS-GRISES-1) : presse trop tot, il dit ce qui
+  /// manque, l'annonce au lecteur d'ecran et ramene le focus au bon geste.
+  void _direManque() {
+    final bool sansType = _type == null;
+    final String message = sansType ? t.kyc.manqueType : t.kyc.manquePhoto;
+    setState(() => _erreur = message);
+    if (sansType) {
+      final BuildContext? choix = _cleType.currentContext;
+      if (choix != null) {
+        unawaited(Scrollable.ensureVisible(choix));
+      }
+    }
+    signalerManque(
+      context,
+      message,
+      champ: sansType ? _focusType : _focusFichier,
+    );
+  }
+
   Future<void> _choisir() async {
     final TypePiece? type = _type;
     if (type == null) {
+      _direManque();
       return;
     }
     setState(() => _erreur = null);
@@ -70,6 +106,7 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
   Future<void> _envoyer() async {
     final PieceAEnvoyer? piece = _piece;
     if (piece == null) {
+      _direManque();
       return;
     }
     setState(() {
@@ -134,17 +171,20 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
           // Choisir un fichier est une action secondaire : une ligne de lien,
           // jamais un bouton plein (K-56, PHOTO-LIEN-1). "Envoyer" reste l'unique
           // bouton plein.
+          // Jamais grises (BOUTONS-GRISES-1) : sans type ou sans photo,
+          // l'appui dit ce qui manque au-dessus des actions.
           LienFleche(
             libelle: _piece == null
                 ? t.kyc.choisirFichier
                 : t.kyc.fichierChoisi,
-            onPress: _type == null ? null : () => unawaited(_choisir()),
+            focusNode: _focusFichier,
+            onPress: () => unawaited(_choisir()),
           ),
           Ecart.vMd,
           ActionPrincipale(
             libelle: t.kyc.envoyer,
             enCours: _envoi,
-            onPress: _piece == null ? null : () => unawaited(_envoyer()),
+            onPress: () => unawaited(_envoyer()),
           ),
         ],
       ),
@@ -169,37 +209,42 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
                 Ecart.vXxl,
                 TexteSansCoupure(t.kyc.typeQuestion, style: textes.titleMedium),
                 Ecart.vMd,
-                ChoiceCardGroup(
-                  options: <OptionChoix>[
-                    OptionChoix(
-                      valeur: TypePiece.carteIdentite.valeurSql,
-                      libelle: t.kyc.carteIdentite,
-                    ),
-                    OptionChoix(
-                      valeur: TypePiece.passeport.valeurSql,
-                      libelle: t.kyc.passeport,
-                    ),
-                    OptionChoix(
-                      valeur: TypePiece.titreSejour.valeurSql,
-                      libelle: t.kyc.titreSejour,
-                    ),
-                    // `other` existe en base : « Autre » est un type choisi
-                    // comme les trois autres. La carte « Autre » generique
-                    // ouvrait un champ libre dont le contenu n'etait jamais lu
-                    // (FORM-L11) : elle est retiree, la saisie ne servait a rien.
-                    OptionChoix(
-                      valeur: TypePiece.autre.valeurSql,
-                      libelle: t.kyc.autrePiece,
-                    ),
-                  ],
-                  autoriserSaisieLibre: false,
-                  onChange: (ReponseChoix reponse) => setState(() {
-                    final String? valeur = reponse.valeurs.isEmpty
-                        ? null
-                        : reponse.valeurs.first;
-                    _type = TypePiece.depuisSql(valeur);
-                    _piece = null;
-                  }),
+                Focus(
+                  key: _cleType,
+                  focusNode: _focusType,
+                  child: ChoiceCardGroup(
+                    options: <OptionChoix>[
+                      OptionChoix(
+                        valeur: TypePiece.carteIdentite.valeurSql,
+                        libelle: t.kyc.carteIdentite,
+                      ),
+                      OptionChoix(
+                        valeur: TypePiece.passeport.valeurSql,
+                        libelle: t.kyc.passeport,
+                      ),
+                      OptionChoix(
+                        valeur: TypePiece.titreSejour.valeurSql,
+                        libelle: t.kyc.titreSejour,
+                      ),
+                      // `other` existe en base : « Autre » est un type choisi
+                      // comme les trois autres. La carte « Autre » generique
+                      // ouvrait un champ libre dont le contenu n'etait jamais lu
+                      // (FORM-L11) : elle est retiree, la saisie ne servait a rien.
+                      OptionChoix(
+                        valeur: TypePiece.autre.valeurSql,
+                        libelle: t.kyc.autrePiece,
+                      ),
+                    ],
+                    autoriserSaisieLibre: false,
+                    onChange: (ReponseChoix reponse) => setState(() {
+                      final String? valeur = reponse.valeurs.isEmpty
+                          ? null
+                          : reponse.valeurs.first;
+                      _type = TypePiece.depuisSql(valeur);
+                      _piece = null;
+                      _erreur = null;
+                    }),
+                  ),
                 ),
               ],
             ),

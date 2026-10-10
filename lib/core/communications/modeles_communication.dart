@@ -137,8 +137,24 @@ enum TypeObjetLie {
   /// Une annonce.
   annonce,
 
+  /// Le profil de paiement d'un beneficiaire (CPT-BR-11, contrat C-12) :
+  /// objet du fil metier « Profil de paiement » ouvert par la relance du
+  /// Comptable. Aucune messagerie Finance (R-FIN-21) : c'est un fil metier
+  /// comme un autre. Chaine du contrat : `profilPaiement`.
+  profilPaiement,
+
   /// Un autre objet autorise par le serveur.
-  autre,
+  autre;
+
+  /// La nature lue d'une chaine du contrat (`'classe'`, `'profilPaiement'`).
+  /// Une valeur inconnue, absente ou vide retombe TOUJOURS sur [autre] :
+  /// un ajout cote serveur ne casse jamais la lecture (contrat C-12).
+  static TypeObjetLie depuis(String? valeur) {
+    for (final TypeObjetLie type in values) {
+      if (type.name == valeur) return type;
+    }
+    return autre;
+  }
 }
 
 /// L'objet metier canonique auquel se rattache une communication.
