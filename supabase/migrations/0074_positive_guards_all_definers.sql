@@ -4,6 +4,11 @@
 -- transformée fait échouer la migration.
 begin;
 
+-- PROD s'arrête au ledger 0042 et ne possède pas encore app_private.
+-- Créer le schéma ici rend ce scanner autonome sans ouvrir le schéma aux clients.
+create schema if not exists app_private;
+revoke all on schema app_private from public, anon, agent_ro;
+
 create or replace function app_private.has_unsafe_role_guard(p_definition text)
 returns boolean
 language sql
