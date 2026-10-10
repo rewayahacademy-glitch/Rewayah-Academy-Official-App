@@ -60,6 +60,7 @@ class ClasseListee {
     this.codeCourt,
     this.genre,
     this.sansEnseignant = false,
+    this.peutAffecterEnseignant = false,
   });
 
   /// Une ligne lue de `groupes_admin()` : ni numero, ni code, ni genre ; une
@@ -82,6 +83,11 @@ class ClasseListee {
 
   /// Vrai quand aucun enseignant n'est affecte (R7).
   final bool sansEnseignant;
+
+  /// Capacite rendue par le serveur : la personne connectee peut confirmer
+  /// l'enseignant de cette classe. Faux tant qu'il ne la rend pas : aucun
+  /// bouton d'affectation n'est alors rendu.
+  final bool peutAffecterEnseignant;
 
   /// L'identifiant de la classe.
   String get id => groupe.id;

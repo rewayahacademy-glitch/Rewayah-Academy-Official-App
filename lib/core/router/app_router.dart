@@ -28,6 +28,7 @@ import '../../features/admin_pedagogie_evaluations/evaluations_page.dart';
 import '../../features/admin_pedagogie_programmes/programmes_page.dart';
 import '../../features/admin_pedagogie_progression/progression_page.dart';
 import '../../features/admin_pedagogie_qualite/qualite_page.dart';
+import '../../features/admin_pilotage/pilotage_page.dart';
 import '../../features/admin_regroupements/regroupements_page.dart';
 import '../../features/admin_tableau/tableau_de_bord_page.dart';
 import '../../features/admin_traitement/traitement_page.dart';
@@ -1264,9 +1265,22 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: Routes.adminOperationsGroupes,
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          // ECHELLE-ADM-PILOTAGE-1 : `?etat=attente` ouvre la liste sur les
+          // classes en attente d'enseignant.
+          child: GroupesPage(
+            attenteInitiale: etat.uri.queryParameters['etat'] == 'attente',
+          ),
+        ),
+      ),
+      // ECHELLE-ADM-PILOTAGE-1 : le tableau de pilotage par horaire, atteint
+      // depuis l'Accueil (raccourci « Pilotage des horaires »).
+      GoRoute(
+        path: Routes.adminOperationsPilotage,
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.operations,
-          child: GroupesPage(),
+          child: PilotagePage(),
         ),
       ),
       GoRoute(

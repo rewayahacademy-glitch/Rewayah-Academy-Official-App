@@ -17,6 +17,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
 import '../../core/admin/port_classes_admin.dart';
+import '../../core/admin/port_pilotage.dart';
 import '../../core/admin/service_admin.dart';
 import '../../core/admin/service_groupes.dart';
 import '../../core/alertes/port_alertes.dart';
@@ -73,6 +74,7 @@ import 'classes_admin_demo.dart';
 import 'dossiers_demo.dart';
 import 'finance_demo.dart';
 import 'observation_demo.dart';
+import 'pilotage_demo.dart';
 import 'presence_demo.dart';
 import 'recrutement_demo.dart';
 import 'regroupements_demo.dart';
@@ -323,6 +325,18 @@ List<Override> surchargesDemoAdmin({
       ...regroupementsVolumeDemo(),
     ],
   );
+  // La liste des classes suit les enseignants confirmes pendant la visite ;
+  // le tableau de pilotage se recalcule depuis les deux.
+  final ClassesAdminDemo classesAdminDemo = ClassesAdminDemo(
+    creees: creees,
+    classes: <ClasseListee>[
+      ...familleDemo(),
+      ...<GroupeAdmin>[...groupesDemo()].map(ClasseListee.depuisGroupe),
+      ...volumeDemo(),
+    ],
+    enseignantAffecte: (String classeId) =>
+        regroupementsPortDemo.enseignantDe[classeId],
+  );
   return <Override>[
     sourceSessionProvider.overrideWithValue(const SourceSessionDemoAdmin()),
     portRevueDossiersProvider.overrideWithValue(RevueDossiersDemo(e)),
@@ -349,14 +363,12 @@ List<Override> surchargesDemoAdmin({
     groupesProvider.overrideWith((Ref ref) async => creees.toutes()),
     // R16, R17 : la liste paginee des classes, a grande echelle (30 classes
     // paralleles de meme cle, un grand volume simule, les classes creees).
-    portClassesAdminProvider.overrideWithValue(
-      ClassesAdminDemo(
-        creees: creees,
-        classes: <ClasseListee>[
-          ...familleDemo(),
-          ...<GroupeAdmin>[...groupesDemo()].map(ClasseListee.depuisGroupe),
-          ...volumeDemo(),
-        ],
+    portClassesAdminProvider.overrideWithValue(classesAdminDemo),
+    // ECHELLE-ADM-PILOTAGE-1 : le tableau de pilotage par horaire.
+    portPilotageProvider.overrideWithValue(
+      PilotageDemo(
+        classes: classesAdminDemo.toutes,
+        regroupements: regroupementsPortDemo.regroupements,
       ),
     ),
     portEnseignantsClasseProvider.overrideWithValue(

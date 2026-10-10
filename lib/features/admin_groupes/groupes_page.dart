@@ -66,8 +66,12 @@ import 'genre_classe_libelles.dart';
 /// ligne ouvre le detail en feuille, comme le reste du produit
 /// (`AppBottomSheet`, jamais une boite de dialogue Material).
 class GroupesPage extends ConsumerStatefulWidget {
-  /// Cree l'ecran des groupes.
-  const GroupesPage({super.key});
+  /// Cree l'ecran des groupes. [attenteInitiale] : s'ouvre filtre sur les
+  /// classes en attente d'enseignant (R7), depuis le tableau de pilotage.
+  const GroupesPage({super.key, this.attenteInitiale = false});
+
+  /// Vrai : le filtre d'etat part sur « En attente d'enseignant ».
+  final bool attenteInitiale;
 
   /// Largeur de l'inspecteur (AD-X) : celle de la file du contrat D.
   static const double largeurInspecteur = 336;
@@ -86,7 +90,9 @@ class GroupesPage extends ConsumerStatefulWidget {
 class _GroupesPageEtat extends ConsumerState<GroupesPage> {
   /// Le filtre courant (R17) : texte, public, etat, jour, heure, fuseau,
   /// genre, enseignant.
-  FiltreClasses _filtre = const FiltreClasses();
+  late FiltreClasses _filtre = widget.attenteInitiale
+      ? const FiltreClasses(etat: EtatClasseListee.attenteEnseignant)
+      : const FiltreClasses();
 
   /// La page courante, a partir de 1. Revient a 1 a chaque changement de
   /// filtre.

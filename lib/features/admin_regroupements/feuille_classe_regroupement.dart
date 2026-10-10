@@ -37,6 +37,8 @@ import 'package:uuid/uuid.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/enseignants_classe.dart';
+import '../../core/admin/port_classes_admin.dart' show pageClassesAdminProvider;
+import '../../core/admin/port_pilotage.dart' show pagePilotageProvider;
 import '../../core/admin/service_comptes.dart' show comptesProvider;
 import '../../core/admin/service_groupes.dart'
     show TypePublicGroupe, groupesProvider;
@@ -117,7 +119,10 @@ class _FeuilleClasseRegroupementEtat
 
   /// La liste de la page se relit apres tout changement que le serveur a
   /// confirme (ou refuse parce qu'un autre l'a fait avant).
-  void _relireListe() => ref.invalidate(regroupementsAdminProvider);
+  void _relireListe() => ref
+    ..invalidate(regroupementsAdminProvider)
+    ..invalidate(pageClassesAdminProvider)
+    ..invalidate(pagePilotageProvider);
 
   Future<void> _creer() async {
     // Double appui : le second ne part pas.

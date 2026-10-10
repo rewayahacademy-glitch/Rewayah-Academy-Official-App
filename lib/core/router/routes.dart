@@ -645,6 +645,11 @@ abstract final class Routes {
   static const String adminOperationsRegroupements =
       '/admin/operations/regroupements';
 
+  /// ECHELLE-ADM-PILOTAGE-1 : le tableau de pilotage par horaire (classes,
+  /// remplissage, demandes, enseignants libres et manquants), sous
+  /// Operations.
+  static const String adminOperationsPilotage = '/admin/operations/pilotage';
+
   /// RECRUT-ECRANS : inviter un enseignant (code a usage unique), sous
   /// Personnes.
   static const String adminPersonnesInvitations =

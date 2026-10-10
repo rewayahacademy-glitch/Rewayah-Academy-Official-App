@@ -83,6 +83,7 @@ List<ClasseListee> familleDemo() => <ClasseListee>[
       numeroDansFamille: n,
       genre: GenreClasse.hommes,
       sansEnseignant: numerosSansEnseignantDemo.contains(n),
+      peutAffecterEnseignant: numerosSansEnseignantDemo.contains(n),
     ),
 ];
 
@@ -126,6 +127,7 @@ List<ClasseListee> volumeDemo({int nombre = 600}) {
           numeroDansFamille: numero,
           genre: genre,
           sansEnseignant: sansEnseignant,
+          peutAffecterEnseignant: sansEnseignant,
         );
       }(),
   ];
@@ -141,10 +143,16 @@ class ClassesAdminDemo implements PortClassesAdmin {
     List<ClasseListee>? classes,
     this.latence = Duration.zero,
     this.horsLigne = false,
+    this.enseignantAffecte,
   }) : _classes = classes ?? <ClasseListee>[...familleDemo(), ...volumeDemo()];
 
   /// Les classes creees pendant la demonstration (CLASSE-FORM-1).
   final ClassesCreeesDemo? creees;
+
+  /// L'enseignant confirme pour une classe pendant la demonstration (la
+  /// feuille « Choisir l'enseignant »), par l'identifiant de la classe. Nul :
+  /// aucune affectation n'est suivie.
+  final String? Function(String classeId)? enseignantAffecte;
   final List<ClasseListee> _classes;
 
   /// Le delai de chaque reponse.
@@ -165,17 +173,45 @@ class ClassesAdminDemo implements PortClassesAdmin {
     pagesDemandees++;
     if (latence > Duration.zero) await Future<void>.delayed(latence);
     if (horsLigne) throw StateError('Aucune reponse du serveur.');
+    return paginerClasses(toutes(), filtre, page: page, taille: taille);
+  }
+
+  /// Toutes les classes de la demonstration, creees et affectees comprises.
+  List<ClasseListee> toutes() {
     final ClassesCreeesDemo? creees = this.creees;
-    return paginerClasses(
-      <ClasseListee>[
-        if (creees != null)
-          for (final GroupeAdmin g in creees.groupes)
-            ClasseListee(groupe: g, genre: creees.genreDe(g.id)),
-        ..._classes,
-      ],
-      filtre,
-      page: page,
-      taille: taille,
+    return <ClasseListee>[
+      if (creees != null)
+        for (final GroupeAdmin g in creees.groupes)
+          ClasseListee(groupe: g, genre: creees.genreDe(g.id)),
+      for (final ClasseListee c in _classes) _avecAffectation(c),
+    ];
+  }
+
+  /// Une classe sans enseignant qui en a recu un pendant la demonstration
+  /// n'attend plus : elle porte son enseignant.
+  ClasseListee _avecAffectation(ClasseListee c) {
+    final String? id = c.sansEnseignant ? enseignantAffecte?.call(c.id) : null;
+    if (id == null) return c;
+    final ({String identifiant, String nom, String prenom}) e =
+        enseignantDemoParId(id);
+    final GroupeAdmin g = c.groupe;
+    return ClasseListee(
+      groupe: GroupeAdmin(
+        id: g.id,
+        libelle: g.libelle,
+        type: g.type,
+        seuilMax: g.seuilMax,
+        teacherId: id,
+        teacherIdentifiant: e.identifiant,
+        teacherPrenom: e.prenom,
+        teacherNom: e.nom,
+        creneau: g.creneau,
+        nombreMembres: g.nombreMembres,
+        actif: g.actif,
+      ),
+      numeroDansFamille: c.numeroDansFamille,
+      codeCourt: c.codeCourt,
+      genre: c.genre,
     );
   }
 }

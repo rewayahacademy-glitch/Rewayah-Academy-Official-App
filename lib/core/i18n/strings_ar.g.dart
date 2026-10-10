@@ -567,6 +567,7 @@ class _Traductions$admin$ar extends Traductions$admin$fr {
 	@override late final _Traductions$admin$agents$ar agents = _Traductions$admin$agents$ar._(_root);
 	@override late final _Traductions$admin$notifications$ar notifications = _Traductions$admin$notifications$ar._(_root);
 	@override late final _Traductions$admin$regroupements$ar regroupements = _Traductions$admin$regroupements$ar._(_root);
+	@override late final _Traductions$admin$pilotage$ar pilotage = _Traductions$admin$pilotage$ar._(_root);
 }
 
 // Path: comptable
@@ -3552,6 +3553,8 @@ class _Traductions$admin$tableau$ar extends Traductions$admin$tableau$fr {
 		many: 'ينتظر منذ ⁨${jours}⁩ يومًا',
 		other: 'ينتظر منذ ⁨${jours}⁩ يوم',
 	);
+	@override String get outilsPilotage => 'متابعة المواعيد';
+	@override String get outilsPilotageDetail => 'لكل موعد: الفصول ونسبة امتلائها والطلبات المعلّقة والمعلمون المتاحون أو الناقصون.';
 }
 
 // Path: admin.demandes
@@ -4465,6 +4468,103 @@ class _Traductions$admin$regroupements$ar extends Traductions$admin$regroupement
 		other: 'يوجد ⁨${n}⁩ فصل مفتوح في هذا الموعد: ينضم إليها الفصل الجديد دون تعديل أي فصل.',
 	);
 	@override late final _Traductions$admin$regroupements$liste$ar liste = _Traductions$admin$regroupements$liste$ar._(_root);
+}
+
+// Path: admin.pilotage
+class _Traductions$admin$pilotage$ar extends Traductions$admin$pilotage$fr {
+	_Traductions$admin$pilotage$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'متابعة المواعيد';
+	@override String get sousTitre => 'لكل موعد ولكل فئة: الفصول ونسبة امتلائها والطلبات المعلّقة والمعلمون المتاحون أو الناقصون.';
+	@override String get sansDonnees => 'تعذّر تحميل لوحة المتابعة';
+	@override String get erreur => 'تعذّرت قراءة لوحة المتابعة: ربما لم تصل القراءة إلى رواية. أعيدوا المحاولة بعد قليل.';
+	@override String get indisponibleTitre => 'متاحة عند الربط بالخادم';
+	@override String get indisponiblePhrase => 'ستظهر متابعة المواعيد هنا فور الربط بالخادم. إلى ذلك الحين لا يُعرض شيء: لا أرقام مختلقة.';
+	@override String get vide => 'لا مواعيد للمتابعة';
+	@override String get videDetail => 'ستظهر المواعيد هنا بمجرد وجود فصل أو طلب.';
+	@override String get aucunAvecCeFiltre => 'لا مواعيد بهذا المعيار';
+	@override String get aucunAvecCeFiltreDetail => 'غيّروا المعيار لرؤية بقية المواعيد.';
+	@override String get vueEnsemble => 'نظرة عامة';
+	@override String get cleClasses => 'الفصول';
+	@override String get cleAttente => 'في انتظار معلم';
+	@override String get cleSousMinimum => 'دون الحد الأدنى';
+	@override String get cleDemandes => 'الطلبات المعلّقة';
+	@override String get cleLibres => 'المعلمون المتاحون';
+	@override String get cleManquants => 'المعلمون الناقصون';
+	@override String get attenteTitre => 'فصول في انتظار معلم';
+	@override String get attenteDetail => 'أكّدوا معلمًا لكل فصل: تُبلَّغ الأسرة فور ذلك.';
+	@override String attenteHoraire({required Object horaire}) => 'الموعد: ⁨${horaire}⁩';
+	@override String get voirToutes => 'عرض كل الفصول التي تنتظر معلمًا';
+	@override String get horairesTitre => 'المواعيد';
+	@override String horaire({required Object jour, required Object heure, required Object ville}) => '⁨${jour}⁩ · ⁨${heure}⁩ · ⁨${ville}⁩';
+	@override String get colonneHoraire => 'الموعد';
+	@override String get colonnePublic => 'الفئة';
+	@override String get colonneClasses => 'الفصول';
+	@override String get colonneRemplissage => 'الامتلاء';
+	@override String get colonneDemandes => 'الطلبات المعلّقة';
+	@override String get colonneLibres => 'المعلمون المتاحون';
+	@override String get colonneManquants => 'المعلمون الناقصون';
+	@override String get colonneEtat => 'ما يستدعي الانتباه';
+	@override String remplissage({required Object taux, required Object effectif, required Object capacite}) => '⁨${taux}⁩٪ (⁨${effectif}⁩ من ⁨${capacite}⁩)';
+	@override String get remplissageInconnu => 'لا أماكن مفتوحة';
+	@override String get aucun => 'لا أحد';
+	@override String nombreEtGenres({required Object n, required Object genres}) => '⁨${n}⁩ (⁨${genres}⁩)';
+	@override String genreHommes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا معلم',
+		one: 'معلم واحد',
+		two: 'معلمان',
+		few: '⁨${n}⁩ معلمين',
+		many: '⁨${n}⁩ معلمًا',
+		other: '⁨${n}⁩ معلم',
+	);
+	@override String genreFemmes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا معلمة',
+		one: 'معلمة واحدة',
+		two: 'معلمتان',
+		few: '⁨${n}⁩ معلمات',
+		many: '⁨${n}⁩ معلمة',
+		other: '⁨${n}⁩ معلمة',
+	);
+	@override String genreIndetermine({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا معلم',
+		one: 'معلم واحد، الجنس يُؤكَّد لاحقًا',
+		two: 'معلمان، الجنس يُؤكَّد لاحقًا',
+		few: '⁨${n}⁩ معلمين، الجنس يُؤكَّد لاحقًا',
+		many: '⁨${n}⁩ معلمًا، الجنس يُؤكَّد لاحقًا',
+		other: '⁨${n}⁩ معلم، الجنس يُؤكَّد لاحقًا',
+	);
+	@override String get etatPenurie => 'نقص في المعلمين';
+	@override String etatSousMinimum({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا فصل دون الحد الأدنى',
+		one: 'فصل واحد دون الحد الأدنى',
+		two: 'فصلان دون الحد الأدنى',
+		few: '⁨${n}⁩ فصول دون الحد الأدنى',
+		many: '⁨${n}⁩ فصلًا دون الحد الأدنى',
+		other: '⁨${n}⁩ فصل دون الحد الأدنى',
+	);
+	@override String etatAttente({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا فصل ينتظر معلمًا',
+		one: 'فصل واحد ينتظر معلمًا',
+		two: 'فصلان ينتظران معلمًا',
+		few: '⁨${n}⁩ فصول تنتظر معلمًا',
+		many: '⁨${n}⁩ فصلًا ينتظر معلمًا',
+		other: '⁨${n}⁩ فصل ينتظر معلمًا',
+	);
+	@override String get etatCouvert => 'مغطّى';
+	@override String get filtreTous => 'كل المواعيد';
+	@override String get filtrePenurie => 'نقص';
+	@override String get filtreSousMinimum => 'دون الحد الأدنى';
+	@override String get filtreAttente => 'في انتظار معلم';
+	@override String get filtrePublic => 'الفئة';
+	@override String get filtreTousPublics => 'كل الفئات';
+	@override String position({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩';
+	@override String positionSemantique({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩ من لوحة المتابعة';
+	@override String get precedente => 'الصفحة السابقة من لوحة المتابعة';
+	@override String get suivante => 'الصفحة التالية من لوحة المتابعة';
+	@override String resume({required Object debut, required Object fin, required Object total}) => 'المواعيد من ⁨${debut}⁩ إلى ⁨${fin}⁩ من أصل ⁨${total}⁩';
 }
 
 // Path: comptable.nav
@@ -14648,6 +14748,8 @@ extension on TraductionsAr {
 			'admin.tableau.attenteAujourdhui' => 'أُودع اليوم',
 			'admin.tableau.attenteUnJour' => 'ينتظر منذ يوم',
 			'admin.tableau.attenteJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'ينتظر منذ اليوم', one: 'ينتظر منذ يوم واحد', two: 'ينتظر منذ يومين', few: 'ينتظر منذ ⁨${jours}⁩ أيام', many: 'ينتظر منذ ⁨${jours}⁩ يومًا', other: 'ينتظر منذ ⁨${jours}⁩ يوم', ), 
+			'admin.tableau.outilsPilotage' => 'متابعة المواعيد',
+			'admin.tableau.outilsPilotageDetail' => 'لكل موعد: الفصول ونسبة امتلائها والطلبات المعلّقة والمعلمون المتاحون أو الناقصون.',
 			'admin.demandes.titre' => 'الطلبات والقواعد',
 			'admin.demandes.restanteUne' => 'طلب واحد قيد الانتظار',
 			'admin.demandes.restantes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا طلب قيد الانتظار', one: 'طلب واحد قيد الانتظار', two: 'طلبان قيد الانتظار', few: '⁨${n}⁩ طلبات قيد الانتظار', many: '⁨${n}⁩ طلبًا قيد الانتظار', other: '⁨${n}⁩ طلب قيد الانتظار', ), 
@@ -14661,10 +14763,10 @@ extension on TraductionsAr {
 			'admin.demandes.roleController' => 'مراقب',
 			'admin.demandes.roleInconnu' => 'طرف في الملف',
 			'admin.demandes.reclame' => 'المطلوب',
-			'admin.demandes.reclameReaffectation' => ({required Object dePrenom}) => 'تغيير معلم ⁨${dePrenom}⁩',
-			'admin.demandes.reclamePlafond' => ({required num valeur}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(valeur, zero: 'رفع الحد الأقصى إلى صفر', one: 'رفع الحد الأقصى إلى طالب واحد', two: 'رفع الحد الأقصى إلى طالبين', few: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طلاب', many: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طالبًا', other: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طالب', ), 
 			_ => null,
 		} ?? switch (path) {
+			'admin.demandes.reclameReaffectation' => ({required Object dePrenom}) => 'تغيير معلم ⁨${dePrenom}⁩',
+			'admin.demandes.reclamePlafond' => ({required num valeur}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(valeur, zero: 'رفع الحد الأقصى إلى صفر', one: 'رفع الحد الأقصى إلى طالب واحد', two: 'رفع الحد الأقصى إلى طالبين', few: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طلاب', many: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طالبًا', other: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طالب', ), 
 			'admin.demandes.reclameRegle' => ({required Object regle, required Object valeur}) => 'جعل ⁨${regle}⁩ ⁨${valeur}⁩ د',
 			'admin.demandes.reclameRegleSansValeur' => ({required Object regle}) => 'مراجعة ⁨${regle}⁩',
 			'admin.demandes.motifDemande' => 'السبب المذكور',
@@ -15175,10 +15277,10 @@ extension on TraductionsAr {
 			'admin.comptes.roleAdmin' => 'الإدارة',
 			'admin.comptes.roleComptable' => 'محاسب',
 			'admin.comptes.roleControleur' => 'مراقب',
-			'admin.comptes.roleEnseignant' => 'معلم',
-			'admin.comptes.roleTuteur' => 'وليّ أمر',
 			_ => null,
 		} ?? switch (path) {
+			'admin.comptes.roleEnseignant' => 'معلم',
+			'admin.comptes.roleTuteur' => 'وليّ أمر',
 			'admin.comptes.roleEleve' => 'طالب',
 			'admin.comptes.roleInconnu' => 'دور غير معروف',
 			'admin.comptes.pieceAucune' => 'لا وثيقة مودَعة',
@@ -15276,6 +15378,59 @@ extension on TraductionsAr {
 			'admin.regroupements.liste.precedente' => 'الصفحة السابقة من الطلبات المجمّعة',
 			'admin.regroupements.liste.suivante' => 'الصفحة التالية من الطلبات المجمّعة',
 			'admin.regroupements.liste.resume' => ({required Object debut, required Object fin, required Object total}) => 'الطلبات المجمّعة من ⁨${debut}⁩ إلى ⁨${fin}⁩ من أصل ⁨${total}⁩',
+			'admin.pilotage.titre' => 'متابعة المواعيد',
+			'admin.pilotage.sousTitre' => 'لكل موعد ولكل فئة: الفصول ونسبة امتلائها والطلبات المعلّقة والمعلمون المتاحون أو الناقصون.',
+			'admin.pilotage.sansDonnees' => 'تعذّر تحميل لوحة المتابعة',
+			'admin.pilotage.erreur' => 'تعذّرت قراءة لوحة المتابعة: ربما لم تصل القراءة إلى رواية. أعيدوا المحاولة بعد قليل.',
+			'admin.pilotage.indisponibleTitre' => 'متاحة عند الربط بالخادم',
+			'admin.pilotage.indisponiblePhrase' => 'ستظهر متابعة المواعيد هنا فور الربط بالخادم. إلى ذلك الحين لا يُعرض شيء: لا أرقام مختلقة.',
+			'admin.pilotage.vide' => 'لا مواعيد للمتابعة',
+			'admin.pilotage.videDetail' => 'ستظهر المواعيد هنا بمجرد وجود فصل أو طلب.',
+			'admin.pilotage.aucunAvecCeFiltre' => 'لا مواعيد بهذا المعيار',
+			'admin.pilotage.aucunAvecCeFiltreDetail' => 'غيّروا المعيار لرؤية بقية المواعيد.',
+			'admin.pilotage.vueEnsemble' => 'نظرة عامة',
+			'admin.pilotage.cleClasses' => 'الفصول',
+			'admin.pilotage.cleAttente' => 'في انتظار معلم',
+			'admin.pilotage.cleSousMinimum' => 'دون الحد الأدنى',
+			'admin.pilotage.cleDemandes' => 'الطلبات المعلّقة',
+			'admin.pilotage.cleLibres' => 'المعلمون المتاحون',
+			'admin.pilotage.cleManquants' => 'المعلمون الناقصون',
+			'admin.pilotage.attenteTitre' => 'فصول في انتظار معلم',
+			'admin.pilotage.attenteDetail' => 'أكّدوا معلمًا لكل فصل: تُبلَّغ الأسرة فور ذلك.',
+			'admin.pilotage.attenteHoraire' => ({required Object horaire}) => 'الموعد: ⁨${horaire}⁩',
+			'admin.pilotage.voirToutes' => 'عرض كل الفصول التي تنتظر معلمًا',
+			'admin.pilotage.horairesTitre' => 'المواعيد',
+			'admin.pilotage.horaire' => ({required Object jour, required Object heure, required Object ville}) => '⁨${jour}⁩ · ⁨${heure}⁩ · ⁨${ville}⁩',
+			'admin.pilotage.colonneHoraire' => 'الموعد',
+			'admin.pilotage.colonnePublic' => 'الفئة',
+			'admin.pilotage.colonneClasses' => 'الفصول',
+			'admin.pilotage.colonneRemplissage' => 'الامتلاء',
+			'admin.pilotage.colonneDemandes' => 'الطلبات المعلّقة',
+			'admin.pilotage.colonneLibres' => 'المعلمون المتاحون',
+			'admin.pilotage.colonneManquants' => 'المعلمون الناقصون',
+			'admin.pilotage.colonneEtat' => 'ما يستدعي الانتباه',
+			'admin.pilotage.remplissage' => ({required Object taux, required Object effectif, required Object capacite}) => '⁨${taux}⁩٪ (⁨${effectif}⁩ من ⁨${capacite}⁩)',
+			'admin.pilotage.remplissageInconnu' => 'لا أماكن مفتوحة',
+			'admin.pilotage.aucun' => 'لا أحد',
+			'admin.pilotage.nombreEtGenres' => ({required Object n, required Object genres}) => '⁨${n}⁩ (⁨${genres}⁩)',
+			'admin.pilotage.genreHommes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا معلم', one: 'معلم واحد', two: 'معلمان', few: '⁨${n}⁩ معلمين', many: '⁨${n}⁩ معلمًا', other: '⁨${n}⁩ معلم', ), 
+			'admin.pilotage.genreFemmes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا معلمة', one: 'معلمة واحدة', two: 'معلمتان', few: '⁨${n}⁩ معلمات', many: '⁨${n}⁩ معلمة', other: '⁨${n}⁩ معلمة', ), 
+			'admin.pilotage.genreIndetermine' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا معلم', one: 'معلم واحد، الجنس يُؤكَّد لاحقًا', two: 'معلمان، الجنس يُؤكَّد لاحقًا', few: '⁨${n}⁩ معلمين، الجنس يُؤكَّد لاحقًا', many: '⁨${n}⁩ معلمًا، الجنس يُؤكَّد لاحقًا', other: '⁨${n}⁩ معلم، الجنس يُؤكَّد لاحقًا', ), 
+			'admin.pilotage.etatPenurie' => 'نقص في المعلمين',
+			'admin.pilotage.etatSousMinimum' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا فصل دون الحد الأدنى', one: 'فصل واحد دون الحد الأدنى', two: 'فصلان دون الحد الأدنى', few: '⁨${n}⁩ فصول دون الحد الأدنى', many: '⁨${n}⁩ فصلًا دون الحد الأدنى', other: '⁨${n}⁩ فصل دون الحد الأدنى', ), 
+			'admin.pilotage.etatAttente' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا فصل ينتظر معلمًا', one: 'فصل واحد ينتظر معلمًا', two: 'فصلان ينتظران معلمًا', few: '⁨${n}⁩ فصول تنتظر معلمًا', many: '⁨${n}⁩ فصلًا ينتظر معلمًا', other: '⁨${n}⁩ فصل ينتظر معلمًا', ), 
+			'admin.pilotage.etatCouvert' => 'مغطّى',
+			'admin.pilotage.filtreTous' => 'كل المواعيد',
+			'admin.pilotage.filtrePenurie' => 'نقص',
+			'admin.pilotage.filtreSousMinimum' => 'دون الحد الأدنى',
+			'admin.pilotage.filtreAttente' => 'في انتظار معلم',
+			'admin.pilotage.filtrePublic' => 'الفئة',
+			'admin.pilotage.filtreTousPublics' => 'كل الفئات',
+			'admin.pilotage.position' => ({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩',
+			'admin.pilotage.positionSemantique' => ({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩ من لوحة المتابعة',
+			'admin.pilotage.precedente' => 'الصفحة السابقة من لوحة المتابعة',
+			'admin.pilotage.suivante' => 'الصفحة التالية من لوحة المتابعة',
+			'admin.pilotage.resume' => ({required Object debut, required Object fin, required Object total}) => 'المواعيد من ⁨${debut}⁩ إلى ⁨${fin}⁩ من أصل ⁨${total}⁩',
 			'comptable.nav.aujourdhui' => 'اليوم',
 			'comptable.nav.paiements' => 'المدفوعات',
 			'comptable.nav.tresorerie' => 'الخزينة',
@@ -15636,6 +15791,8 @@ extension on TraductionsAr {
 			'comptable.tresorerie.mouvementsHorsLigne' => 'غير متصل: تُستأنف الحركات بين الصناديق مع عودة الشبكة.',
 			'comptable.tresorerie.interdits' => 'أموال العملاء الملتزَم بها والضرائب والالتزامات لا تموّل أبدًا مصروفًا عاديًا؛ والتخصيص السابق لا يُعدَّل.',
 			'comptable.tresorerie.previsionTitre' => 'التوقعات',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.previsionPhrase' => 'الداخل والخارج المتوقع، حسب التاريخ.',
 			'comptable.tresorerie.previsionVide' => 'لا يوجد داخل ولا خارج متوقع حاليًا.',
 			'comptable.tresorerie.entree' => 'داخل',
@@ -15691,8 +15848,6 @@ extension on TraductionsAr {
 			'comptable.encaissements.colNet' => 'الصافي',
 			'comptable.encaissements.colMoyen' => 'الوسيلة',
 			'comptable.encaissements.colEtat' => 'الحالة',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.profilsPour' => ({required Object prenoms}) => 'لـ ${prenoms}',
 			'comptable.encaissements.moyenPrestataire' => ({required Object moyen, required Object prestataire}) => '${moyen} · ${prestataire}',
 			'comptable.encaissements.videTitre' => 'لا توجد مقبوضات حاليًا.',
@@ -16150,6 +16305,8 @@ extension on TraductionsAr {
 			'ficheEleve.introuvable.titre' => 'لم يُعثر على ملف الطالب هذا',
 			'ficheEleve.introuvable.phrase' => 'ليس من أسرتك، أو الرابط ناقص.',
 			'ficheEleve.introuvable.retour' => 'العودة إلى الأسرة',
+			_ => null,
+		} ?? switch (path) {
 			'ficheEleve.lignes.informations' => 'المعلومات',
 			'ficheEleve.lignes.informationsLegende' => 'الاسم والصورة',
 			'ficheEleve.lignes.inscription' => 'المسار والتسجيل',
@@ -16205,8 +16362,6 @@ extension on TraductionsAr {
 			'ficheEleve.inscription.classeEchec' => 'تعذّرت قراءة الفصل.',
 			'ficheEleve.inscription.relireClasse' => 'إعادة قراءة الفصل',
 			'ficheEleve.interface.titre' => 'الواجهة',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.interface.intro' => ({required Object dePrenom}) => 'اختر كيف يظهر Rewayah على جهاز ⁨${dePrenom}⁩. يمكنك تغيير هذا الاختيار في أي وقت.',
 			'ficheEleve.interface.guidee' => 'وضع إمكانية الوصول',
 			'ficheEleve.interface.guideeDescription' => ({required Object prenom}) => 'حين يفضّل ⁨${prenom}⁩ شاشات خفيفة: نصوص أكبر، وإجراء واحد في كل مرة. الأقسام نفسها والصلاحيات نفسها.',
@@ -16664,6 +16819,8 @@ extension on TraductionsAr {
 			'foyer.titre' => 'الأسرة',
 			'foyer.ajouterProfil' => 'إضافة ملف طالب',
 			'foyer.sousTitre' => 'ملفات الطلاب في أسرتك',
+			_ => null,
+		} ?? switch (path) {
 			'foyer.membres' => 'ملفات الطلاب',
 			'foyer.vide.titre' => 'لا ملف طالب حتى الآن',
 			'foyer.vide.phrase' => 'أضف ملف طالب لتسجيله في فصل وربط جهازه.',
@@ -16719,8 +16876,6 @@ extension on TraductionsAr {
 			'foyer.ajout.horsLigne' => 'أنت غير متصل. يمكن إنشاء الملف عند عودة الاتصال.',
 			'adulte.nav.accueil' => 'الرئيسية',
 			'adulte.nav.maClasse' => 'فصلي',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.nav.coran' => 'القرآن',
 			'adulte.nav.monEspace' => 'مساحتي',
 			'adulte.accueil.salutation' => ({required Object prenom}) => 'مرحبًا ⁨${prenom}⁩',
@@ -17178,6 +17333,8 @@ extension on TraductionsAr {
 			'bienvenue.pointEnseignant' => 'معلّم أو معلّمة، يُنادى «السيد» أو «السيدة»، يتابع كل طالب من حصة إلى أخرى.',
 			'bienvenue.pointFoyerTitre' => 'حساب واحد للأسرة',
 			'bienvenue.pointFoyer' => 'تُتابَع حصص كل طالب في الأسرة من حسابك.',
+			_ => null,
+		} ?? switch (path) {
 			'bienvenue.commencer' => 'ابدأ',
 			'bienvenue.dejaCompte' => 'لدي حساب بالفعل',
 			'creneaux.titre' => 'المواعيد',
@@ -17233,8 +17390,6 @@ extension on TraductionsAr {
 			'controleur.historique.provisoire' => 'هذه الشاشة قيد التحضير.',
 			'controleur.historique.envoye' => 'أُرسل',
 			'controleur.historique.complementAjoute' => 'أُضيفت تكملة',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.historique.aTerminer' => 'للإنهاء',
 			'controleur.historique.filtreEtat' => 'الحالة',
 			'controleur.historique.tousEtats' => 'كل الحالات',

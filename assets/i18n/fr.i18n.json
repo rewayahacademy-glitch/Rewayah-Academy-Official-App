@@ -1978,7 +1978,9 @@
       "attenteJours(param=jours)": {
         "one": "En attente depuis {jours} jour",
         "other": "En attente depuis {jours} jours"
-      }
+      },
+      "outilsPilotage": "Pilotage des horaires",
+      "outilsPilotageDetail": "Par horaire : les classes, leur remplissage, les demandes en attente et les enseignants libres ou manquants."
     },
     "traitement": {
       "titre": "Espace de traitement",
@@ -3206,6 +3208,76 @@
       },
       "reserveDelegation": "Réserve et délégation",
       "aValider": "À valider"
+    },
+    "pilotage": {
+      "titre": "Pilotage des horaires",
+      "sousTitre": "Pour chaque horaire et chaque public : les classes, leur remplissage, les demandes en attente, et les enseignants libres ou manquants.",
+      "sansDonnees": "Le tableau de pilotage n'a pas pu être chargé",
+      "erreur": "Le tableau de pilotage n'a pas pu être lu : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "indisponibleTitre": "Disponible au branchement serveur",
+      "indisponiblePhrase": "Le pilotage par horaire s'affichera ici dès le branchement serveur. D'ici là, rien n'est affiché : aucun chiffre n'est inventé.",
+      "vide": "Aucun horaire à piloter",
+      "videDetail": "Les horaires apparaîtront ici dès qu'une classe ou une demande existera.",
+      "aucunAvecCeFiltre": "Aucun horaire avec ce filtre",
+      "aucunAvecCeFiltreDetail": "Changez de filtre pour voir les autres horaires.",
+      "vueEnsemble": "Vue d'ensemble",
+      "cleClasses": "Classes",
+      "cleAttente": "En attente d'enseignant",
+      "cleSousMinimum": "Sous le minimum",
+      "cleDemandes": "Demandes en attente",
+      "cleLibres": "Enseignants libres",
+      "cleManquants": "Enseignants manquants",
+      "attenteTitre": "Classes en attente d'enseignant",
+      "attenteDetail": "Confirmez un enseignant pour chacune : la famille est prévenue dès que c'est fait.",
+      "attenteHoraire": "Horaire : {horaire}",
+      "voirToutes": "Voir toutes les classes en attente",
+      "horairesTitre": "Horaires",
+      "horaire": "{jour} · {heure} · {ville}",
+      "colonneHoraire": "Horaire",
+      "colonnePublic": "Public",
+      "colonneClasses": "Classes",
+      "colonneRemplissage": "Remplissage",
+      "colonneDemandes": "Demandes en attente",
+      "colonneLibres": "Enseignants libres",
+      "colonneManquants": "Enseignants manquants",
+      "colonneEtat": "À signaler",
+      "remplissage": "{taux} % ({effectif} sur {capacite})",
+      "remplissageInconnu": "Aucune place ouverte",
+      "aucun": "Aucun",
+      "nombreEtGenres": "{n} ({genres})",
+      "genreHommes": {
+        "one": "{n} enseignant",
+        "other": "{n} enseignants"
+      },
+      "genreFemmes": {
+        "one": "{n} enseignante",
+        "other": "{n} enseignantes"
+      },
+      "genreIndetermine": {
+        "one": "{n} enseignant, genre à confirmer",
+        "other": "{n} enseignants, genre à confirmer"
+      },
+      "etatPenurie": "Pénurie d'enseignants",
+      "etatSousMinimum": {
+        "one": "{n} classe sous le minimum",
+        "other": "{n} classes sous le minimum"
+      },
+      "etatAttente": {
+        "one": "{n} classe en attente d'enseignant",
+        "other": "{n} classes en attente d'enseignant"
+      },
+      "etatCouvert": "Couvert",
+      "filtreTous": "Tous les horaires",
+      "filtrePenurie": "Pénurie",
+      "filtreSousMinimum": "Sous le minimum",
+      "filtreAttente": "En attente d'enseignant",
+      "filtrePublic": "Public",
+      "filtreTousPublics": "Tous les publics",
+      "position": "Page {page} sur {total}",
+      "positionSemantique": "Page {page} sur {total} du tableau de pilotage",
+      "precedente": "Page précédente du tableau de pilotage",
+      "suivante": "Page suivante du tableau de pilotage",
+      "resume": "Horaires {debut} à {fin} sur {total}"
     }
   },
   "agent": {
