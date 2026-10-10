@@ -1,0 +1,32 @@
+{
+  "version": "CAP-29 canonical handoff V1 with high-fi concept references awaiting director validation",
+  "images": [
+    {
+      "path": "CAP29-M01-HIFI-CATALOGUE-DESKTOP.png",
+      "width": 1600,
+      "height": 900,
+      "sha256": "54070292055131b2f4fa49eeeb64ee654bfa53ae9544954761f040582099101e"
+    },
+    {
+      "path": "CAP29-M02-HIFI-FICHE-DESKTOP.png",
+      "width": 1600,
+      "height": 900,
+      "sha256": "4f2b3a9223f540216f423394bbfa9575983f7ddd3d595f8fa2d9575689cea96e"
+    },
+    {
+      "path": "CAP29-M03-HIFI-PUBLICATION-DESKTOP.png",
+      "width": 1600,
+      "height": 900,
+      "sha256": "68fb0e3e7e95aea7e68fb531daf4cccad60b13c17fcdeed714a0d3850df357e9"
+    },
+    {
+      "path": "CAP29-M04-HIFI-IMPORT-MOBILE.png",
+      "width": 430,
+      "height": 970,
+      "sha256": "95fd5b22c07577aca229c008c9b59a2e70fddf193a13cb45c67bd98588298de4"
+    }
+  ],
+  "type": "high-fi static UI designs, synthetic content; not Flutter capture",
+  "nav": "Admin > Pédagogie > Bibliothèque",
+  "storage": "Cloudflare R2 / private/applicative domain"
+}
