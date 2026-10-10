@@ -3587,5 +3587,20 @@
   "dossiers.accesKyc.reessayer": "règle KYC-ADMIN-GENRE du directeur (Questions!F69, Journal distant l.134, 10/10/2026) et BACK-FRONT-KYC-DIR-1 ; libellé rédigé par Claude, à relire par le directeur",
   "dossiers.accesKyc.refus.genreDifferent": "règle KYC-ADMIN-GENRE du directeur (Questions!F69, Journal distant l.134, 10/10/2026) et BACK-FRONT-KYC-DIR-1 ; libellé rédigé par Claude, à relire par le directeur",
   "dossiers.accesKyc.refus.adminSansGenre": "règle KYC-ADMIN-GENRE du directeur (Questions!F69, Journal distant l.134, 10/10/2026) et BACK-FRONT-KYC-DIR-1 ; libellé rédigé par Claude, à relire par le directeur",
-  "dossiers.accesKyc.refus.profilNonAutorise": "règle KYC-ADMIN-GENRE du directeur (Questions!F69, Journal distant l.134, 10/10/2026) et BACK-FRONT-KYC-DIR-1 ; libellé rédigé par Claude, à relire par le directeur"
+  "dossiers.accesKyc.refus.profilNonAutorise": "règle KYC-ADMIN-GENRE du directeur (Questions!F69, Journal distant l.134, 10/10/2026) et BACK-FRONT-KYC-DIR-1 ; libellé rédigé par Claude, à relire par le directeur",
+  "presentationTuteur.titre": "décision du directeur du 27/09 (S7 = b, présentation standard demandée au tuteur) et BACK-FRONT-AGE-1 (MA-9, B-17) ; libellé rédigé par Claude, à relire par le directeur",
+  "presentationTuteur.contexte": "décision du directeur du 27/09 (S7 = b, présentation standard demandée au tuteur) et BACK-FRONT-AGE-1 (MA-9, B-17) ; libellé rédigé par Claude, à relire par le directeur",
+  "presentationTuteur.ligne": "décision du directeur du 27/09 (S7 = b, présentation standard demandée au tuteur) et BACK-FRONT-AGE-1 (MA-9, B-17) ; libellé rédigé par Claude, à relire par le directeur",
+  "presentationTuteur.demandeeLe": "décision du directeur du 27/09 (S7 = b, présentation standard demandée au tuteur) et BACK-FRONT-AGE-1 (MA-9, B-17) ; libellé rédigé par Claude, à relire par le directeur",
+  "presentationTuteur.accepter": "décision du directeur du 27/09 (S7 = b, présentation standard demandée au tuteur) et BACK-FRONT-AGE-1 (MA-9, B-17) ; libellé rédigé par Claude, à relire par le directeur",
+  "presentationTuteur.refuser": "décision du directeur du 27/09 (S7 = b, présentation standard demandée au tuteur) et BACK-FRONT-AGE-1 (MA-9, B-17) ; libellé rédigé par Claude, à relire par le directeur",
+  "presentationTuteur.acceptee": "décision du directeur du 27/09 (S7 = b, présentation standard demandée au tuteur) et BACK-FRONT-AGE-1 (MA-9, B-17) ; libellé rédigé par Claude, à relire par le directeur",
+  "presentationTuteur.refusee": "décision du directeur du 27/09 (S7 = b, présentation standard demandée au tuteur) et BACK-FRONT-AGE-1 (MA-9, B-17) ; libellé rédigé par Claude, à relire par le directeur",
+  "presentationTuteur.echecReponse": "décision du directeur du 27/09 (S7 = b, présentation standard demandée au tuteur) et BACK-FRONT-AGE-1 (MA-9, B-17) ; libellé rédigé par Claude, à relire par le directeur",
+  "presentationTuteur.vide": "décision du directeur du 27/09 (S7 = b, présentation standard demandée au tuteur) et BACK-FRONT-AGE-1 (MA-9, B-17) ; libellé rédigé par Claude, à relire par le directeur",
+  "presentationTuteur.erreur": "décision du directeur du 27/09 (S7 = b, présentation standard demandée au tuteur) et BACK-FRONT-AGE-1 (MA-9, B-17) ; libellé rédigé par Claude, à relire par le directeur",
+  "presentationTuteur.sansDonnees": "décision du directeur du 27/09 (S7 = b, présentation standard demandée au tuteur) et BACK-FRONT-AGE-1 (MA-9, B-17) ; libellé rédigé par Claude, à relire par le directeur",
+  "presentationTuteur.accueil.titre": "décision du directeur du 27/09 (S7 = b, présentation standard demandée au tuteur) et BACK-FRONT-AGE-1 (MA-9, B-17) ; libellé rédigé par Claude, à relire par le directeur",
+  "presentationTuteur.accueil.voir": "décision du directeur du 27/09 (S7 = b, présentation standard demandée au tuteur) et BACK-FRONT-AGE-1 (MA-9, B-17) ; libellé rédigé par Claude, à relire par le directeur",
+  "presentationTuteur.notification": "décision du directeur du 27/09 (S7 = b, présentation standard demandée au tuteur) et BACK-FRONT-AGE-1 (MA-9, B-17) ; libellé rédigé par Claude, à relire par le directeur"
 }

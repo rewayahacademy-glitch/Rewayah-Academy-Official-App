@@ -96,6 +96,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$identiteProfil$fr identiteProfil = Traductions$identiteProfil$fr.internal(_root);
 	late final Traductions$com$fr com = Traductions$com$fr.internal(_root);
 	late final Traductions$comptable$fr comptable = Traductions$comptable$fr.internal(_root);
+	late final Traductions$presentationTuteur$fr presentationTuteur = Traductions$presentationTuteur$fr.internal(_root);
 }
 
 // Path: commun
@@ -2865,6 +2866,56 @@ class Traductions$comptable$fr {
 	late final Traductions$comptable$validation$fr validation = Traductions$comptable$validation$fr.internal(_root);
 	late final Traductions$comptable$direction$fr direction = Traductions$comptable$direction$fr.internal(_root);
 	late final Traductions$comptable$demo$fr demo = Traductions$comptable$demo$fr.internal(_root);
+}
+
+// Path: presentationTuteur
+class Traductions$presentationTuteur$fr {
+	Traductions$presentationTuteur$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demandes de présentation'
+	String get titre => 'Demandes de présentation';
+
+	/// fr: 'Un enfant de votre foyer demande la présentation standard. C'est vous qui décidez.'
+	String get contexte => 'Un enfant de votre foyer demande la présentation standard. C\'est vous qui décidez.';
+
+	/// fr: '{prenom} demande la présentation standard.'
+	String ligne({required Object prenom}) => '${prenom} demande la présentation standard.';
+
+	/// fr: 'Demandé le {date} à {heure}'
+	String demandeeLe({required Object date, required Object heure}) => 'Demandé le ${date} à ${heure}';
+
+	/// fr: 'Accepter'
+	String get accepter => 'Accepter';
+
+	/// fr: 'Refuser'
+	String get refuser => 'Refuser';
+
+	/// fr: 'Présentation standard activée pour {prenom}.'
+	String acceptee({required Object prenom}) => 'Présentation standard activée pour ${prenom}.';
+
+	/// fr: 'Demande de {prenom} refusée.'
+	String refusee({required Object prenom}) => 'Demande de ${prenom} refusée.';
+
+	/// fr: 'Votre réponse n'a pas pu être confirmée. La demande reste en attente : réessayez.'
+	String get echecReponse => 'Votre réponse n\'a pas pu être confirmée. La demande reste en attente : réessayez.';
+
+	/// fr: 'Aucune demande de présentation en attente.'
+	String get vide => 'Aucune demande de présentation en attente.';
+
+	/// fr: 'Les demandes n'ont pas pu être chargées. Réessayez.'
+	String get erreur => 'Les demandes n\'ont pas pu être chargées. Réessayez.';
+
+	/// fr: 'les demandes de présentation'
+	String get sansDonnees => 'les demandes de présentation';
+
+	late final Traductions$presentationTuteur$accueil$fr accueil = Traductions$presentationTuteur$accueil$fr.internal(_root);
+
+	/// fr: '{prenom} demande la présentation standard'
+	String notification({required Object prenom}) => '${prenom} demande la présentation standard';
 }
 
 // Path: commun.classeDistincte
@@ -16263,6 +16314,21 @@ class Traductions$comptable$demo$fr {
 
 	/// fr: 'Direction'
 	String get groupeDirection => 'Direction';
+}
+
+// Path: presentationTuteur.accueil
+class Traductions$presentationTuteur$accueil$fr {
+	Traductions$presentationTuteur$accueil$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demande de présentation'
+	String get titre => 'Demande de présentation';
+
+	/// fr: 'Répondre'
+	String get voir => 'Répondre';
 }
 
 // Path: commun.etats.chargementProlonge
@@ -34890,6 +34956,21 @@ extension on Traductions {
 			'comptable.demo.groupeComptable' => 'Coquille du Comptable',
 			'comptable.demo.groupeCompte' => 'Compte et bénéficiaire',
 			'comptable.demo.groupeDirection' => 'Direction',
+			'presentationTuteur.titre' => 'Demandes de présentation',
+			'presentationTuteur.contexte' => 'Un enfant de votre foyer demande la présentation standard. C\'est vous qui décidez.',
+			'presentationTuteur.ligne' => ({required Object prenom}) => '${prenom} demande la présentation standard.',
+			'presentationTuteur.demandeeLe' => ({required Object date, required Object heure}) => 'Demandé le ${date} à ${heure}',
+			'presentationTuteur.accepter' => 'Accepter',
+			'presentationTuteur.refuser' => 'Refuser',
+			'presentationTuteur.acceptee' => ({required Object prenom}) => 'Présentation standard activée pour ${prenom}.',
+			'presentationTuteur.refusee' => ({required Object prenom}) => 'Demande de ${prenom} refusée.',
+			'presentationTuteur.echecReponse' => 'Votre réponse n\'a pas pu être confirmée. La demande reste en attente : réessayez.',
+			'presentationTuteur.vide' => 'Aucune demande de présentation en attente.',
+			'presentationTuteur.erreur' => 'Les demandes n\'ont pas pu être chargées. Réessayez.',
+			'presentationTuteur.sansDonnees' => 'les demandes de présentation',
+			'presentationTuteur.accueil.titre' => 'Demande de présentation',
+			'presentationTuteur.accueil.voir' => 'Répondre',
+			'presentationTuteur.notification' => ({required Object prenom}) => '${prenom} demande la présentation standard',
 			_ => null,
 		};
 	}

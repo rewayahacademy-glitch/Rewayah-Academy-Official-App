@@ -8604,5 +8604,24 @@
       "groupeCompte": "Compte et bénéficiaire",
       "groupeDirection": "Direction"
     }
+  },
+  "presentationTuteur": {
+    "titre": "Demandes de présentation",
+    "contexte": "Un enfant de votre foyer demande la présentation standard. C'est vous qui décidez.",
+    "ligne": "{prenom} demande la présentation standard.",
+    "demandeeLe": "Demandé le {date} à {heure}",
+    "accepter": "Accepter",
+    "refuser": "Refuser",
+    "acceptee": "Présentation standard activée pour {prenom}.",
+    "refusee": "Demande de {prenom} refusée.",
+    "echecReponse": "Votre réponse n'a pas pu être confirmée. La demande reste en attente : réessayez.",
+    "vide": "Aucune demande de présentation en attente.",
+    "erreur": "Les demandes n'ont pas pu être chargées. Réessayez.",
+    "sansDonnees": "les demandes de présentation",
+    "accueil": {
+      "titre": "Demande de présentation",
+      "voir": "Répondre"
+    },
+    "notification": "{prenom} demande la présentation standard"
   }
 }

@@ -127,6 +127,7 @@ import '../../features/journee/journee_page.dart';
 import '../../features/notifications/notifications_page.dart';
 import '../../features/paiements_recus/recevoir_paiements_page.dart';
 import '../../features/parcours_offres/parcours_offres_page.dart';
+import '../../features/presentation_tuteur/demandes_presentation_page.dart';
 import '../../features/profil_enseignant/profil_enseignant_page.dart';
 import '../../features/recrutement/invitation_candidat_page.dart';
 import '../../features/remplacements/remplacements_page.dart';
@@ -568,6 +569,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     path: 'notifications',
                     pageBuilder: glissee(
                       (GoRouterState _) => const NotificationsPage(),
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'presentation',
+                    pageBuilder: glissee(
+                      (GoRouterState _) => const DemandesPresentationPage(),
                     ),
                   ),
                   GoRoute(

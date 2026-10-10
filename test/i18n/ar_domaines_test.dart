@@ -84,6 +84,7 @@ const Set<String> _enAttente = <String>{
   // RECRUT-ECRANS, SUIVI-FAMILLE : arabe non prioritaire au lancement
   // (REPRISE.md).
   'suiviFamille',
+  'presentationTuteur',
   'recrutement',
   'formulaire',
   'motifs',
