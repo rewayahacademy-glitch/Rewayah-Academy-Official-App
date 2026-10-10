@@ -27,3 +27,16 @@ Une des huit entrées PROD précédemment sans source fiable (`0011_presence_bor
 Aucune entrée ni migration n'a été réparée, renommée ou réappliquée. Les fichiers 0043–0048 présents à STAGING et absents du ledger PROD restent un écart distinct. La clôture de B-01 exige toujours la récupération/provenance des corps manquants, le rejeu complet PostgreSQL 17 frais et les scénarios. STAGING, dont le ledger courant atteint 0074, n'est pas la cible vierge compatible avec le préflight du candidat SEC-PROD qui attend le ledger PROD 0042.
 
 Aucun GO d'exécution PROD n'est demandé ni implicite dans cet addendum.
+
+
+## Vérification complémentaire de l'historique GitHub (2026-10-10)
+
+L'API GitHub des commits par chemin retourne un commit source pour chaque fichier candidat courant, et aucun fichier `0006_init.sql` ni `record_0006_0007_0008_versions.sql` dans l'historique interrogé :
+
+| Migration PROD | Commit qui introduit le fichier candidat | Portée de la preuve historique |
+|---|---|---|
+| `0006_init` | `9f92a0aea9c37881a80d8df83ff194c43e03e964`, fichier blob `17ddf39bf625710377bbf215d983aff54c920cc7` | Le message décrit la migration de rattrapage. Le diff dit explicitement que son application au projet réel reste à faire, car `db push` est bloqué. Le corps de ce fichier reste différent du corps PROD `0006_init` après normalisation. |
+| `0007_init` | `a736a43580deea36c50656801d2d6324ed761749`, fichier blob `9701feba4dc31b8dde1b17553e59e9080f92fff3` | Le message documente le lot N1 et ses scénarios de test; il ne nomme pas un déploiement PROD. Le corps reste différent de `0007_init`. |
+| `0008_init` | `1eddc9ca8f2736bead401adddea0fa45f68a8a58`, fichier blob `f4257f473f5664c797df04e031e516f8dcad56bc` | Le message documente le lot ADM-05 et un rejeu SQL 0001–0008 sur une base; il n'identifie pas cette base comme PROD. Le corps reste différent de `0008_init`. |
+
+Cette chronologie réduit l'ensemble des sources candidates mais ne prouve pas quel artefact a été exécuté pour créer les entrées PROD. Le commit 0006 prouve même qu'à son propre instant l'application réelle était annoncée comme restante; il ne permet pas d'exclure une application manuelle ultérieure. La clôture de provenance exige toujours un enregistrement d'exécution ou une source d'archive qui corresponde au corps PROD, pas seulement un commit proche dans le temps.
