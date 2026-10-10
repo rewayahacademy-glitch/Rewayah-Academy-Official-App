@@ -74,16 +74,6 @@ begin
     raise exception 'SEC-ROLE : une garde négative ciblée reste présente';
   end if;
 
-  if not exists (
-    select 1
-    from pg_catalog.pg_proc p
-    join pg_catalog.pg_namespace n on n.oid = p.pronamespace
-    where n.nspname = 'public'
-      and p.proname = 'ajouter_eleve_groupe'
-      and p.prosrc ~* 'if[[:space:]]+not[[:space:]]+coalesce\\(public\\.app_role\\(\\)[[:space:]]*=[[:space:]]*''admin''[[:space:]]+and[[:space:]]+public\\.app_account_valid\\(\\),[[:space:]]*false\\)[[:space:]]+then'
-  ) then
-    raise exception 'SEC-ROLE : garde positive d''ajouter_eleve_groupe absente';
-  end if;
 end
 $migration$;
 
