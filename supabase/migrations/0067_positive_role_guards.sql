@@ -51,8 +51,38 @@ begin
     v_modifiees := v_modifiees + 1;
   end loop;
 
-  if v_modifiees <> 14 then
-    raise exception 'SEC-ROLE : 14 fonctions attendues, % corrigées', v_modifiees;
+  if v_modifiees = 0 then
+    raise exception 'SEC-ROLE : aucune garde historique corrigée';
+  end if;
+
+  if exists (
+    select 1
+    from pg_catalog.pg_proc p
+    join pg_catalog.pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public'
+      and p.prokind = 'f'
+      and p.proname = any (array[
+        'prendre_eleve', 'attribuer_eleve', 'creer_jeton_agent',
+        'revoquer_jeton_agent', 'creer_groupe', 'modifier_groupe',
+        'ajouter_eleve_groupe', 'retirer_eleve_groupe', 'cloturer_groupe',
+        'creer_version_programme', 'ajouter_niveau_programme',
+        'modifier_niveau_programme', 'supprimer_niveau_programme',
+        'publier_version_programme'
+      ])
+      and p.prosrc ~* 'if[[:space:]]+public\\.app_role\\(\\)[[:space:]]*<>[[:space:]]*''[^'']+''[[:space:]]+or[[:space:]]+not[[:space:]]+public\\.app_account_valid\\(\\)[[:space:]]+then'
+  ) then
+    raise exception 'SEC-ROLE : une garde négative ciblée reste présente';
+  end if;
+
+  if not exists (
+    select 1
+    from pg_catalog.pg_proc p
+    join pg_catalog.pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public'
+      and p.proname = 'ajouter_eleve_groupe'
+      and p.prosrc ~* 'if[[:space:]]+not[[:space:]]+coalesce\\(public\\.app_role\\(\\)[[:space:]]*=[[:space:]]*''admin''[[:space:]]+and[[:space:]]+public\\.app_account_valid\\(\\),[[:space:]]*false\\)[[:space:]]+then'
+  ) then
+    raise exception 'SEC-ROLE : garde positive d''ajouter_eleve_groupe absente';
   end if;
 end
 $migration$;
