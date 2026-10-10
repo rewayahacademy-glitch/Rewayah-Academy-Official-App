@@ -1076,6 +1076,48 @@ end
 $scanner$;
 revoke all on function app_private.sec_prod_has_unsafe_role_guard(text) from public, anon, authenticated, agent_ro;
 
+-- M2: la null-sécurité du rôle ne remplace pas la validité du compte.
+-- Ces deux RPC restaient accessibles avec un JWT admin devenu invalide.
+-- Le snapshot hashé ci-dessus protège le patch ciblé contre une dérive de définition.
+do $sec_prod_account_validity$
+declare
+  r record;
+  v_oid oid;
+  v_definition text;
+  v_corrected text;
+  v_old text := 'if not coalesce(public.app_role() = ''admin'', false) then';
+  v_new text := 'if not coalesce(public.app_role() = ''admin'' and public.app_account_valid(), false) then';
+  v_count integer := 0;
+  v_matches integer;
+begin
+  for r in
+    select signature, md5_definition
+      from pg_temp.sec_prod_expected_functions
+     where signature in (
+       'public.dossiers_en_attente()',
+       'public.geler_archive_seance(uuid, text, boolean)'
+     )
+     order by signature
+  loop
+    v_oid := to_regprocedure(r.signature);
+    if v_oid is null or md5(pg_get_functiondef(v_oid)) <> r.md5_definition then
+      raise exception 'SEC-PROD M2: définition non conforme avant validité compte: %', r.signature;
+    end if;
+    v_definition := pg_get_functiondef(v_oid);
+    v_matches := (length(v_definition) - length(replace(v_definition, v_old, ''))) / length(v_old);
+    if v_matches <> 1 then
+      raise exception 'SEC-PROD M2: garde admin attendue exactement une fois dans % (trouvé %)', r.signature, v_matches;
+    end if;
+    v_corrected := replace(v_definition, v_old, v_new);
+    execute v_corrected;
+    v_count := v_count + 1;
+  end loop;
+  if v_count <> 2 then
+    raise exception 'SEC-PROD M2: nombre de gardes de compte corrigées inattendu (%)', v_count;
+  end if;
+end
+$sec_prod_account_validity$;
+
 do $sec_prod_scanner_tests$
 begin
   if not app_private.sec_prod_has_unsafe_role_guard(
@@ -1102,6 +1144,11 @@ begin
     'IF NOT coalesce(app_role() = ''admin'' AND NOT app_account_valid(), false) THEN RAISE; END IF;'
   ) then
     raise exception 'SEC-PROD M2 scanner missed negated account-validity conjunct';
+  end if;
+  if not app_private.sec_prod_has_unsafe_role_guard(
+    'IF NOT coalesce(app_role() = ''admin'', false) THEN RAISE; END IF;'
+  ) then
+    raise exception 'SEC-PROD M2 scanner missed missing account-validity check';
   end if;
   if app_private.sec_prod_has_unsafe_role_guard(
     E'IF NOT coalesce(\n  auth.uid() IS NOT NULL\n  AND v_seance.teacher_id = auth.uid()\n  AND public.app_role() = ''teacher''\n  AND public.app_account_valid(),\n  false\n) THEN RAISE; END IF;'
