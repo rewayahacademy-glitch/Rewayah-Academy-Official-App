@@ -208,7 +208,10 @@ void main() {
       expect(find.text(t.suiviDemandes.etats.fait), findsNWidgets(2));
       expect(find.text(t.suiviDemandes.etats.prochaine), findsOneWidget);
       expect(find.text(t.suiviDemandes.etats.aVenir), findsNothing);
-      expect(find.text('Samedi et dimanche'), findsOneWidget);
+      // C-10 bis : chaque jour avec son heure, le fuseau sur sa ligne.
+      expect(find.text('Samedi 10:00, dimanche 11:30'), findsOneWidget);
+      expect(find.text('Heure de Paris'), findsOneWidget);
+      expect(find.text(t.suiviDemandes.heureChoisie), findsNothing);
       await _demonter(tester);
     });
 
@@ -237,10 +240,10 @@ void main() {
           eleveId: 'e-ny',
           prenom: 'Adam',
           fuseauIana: 'America/New_York',
-          creneau: const CreneauDemande(
-            joursIso: <int>[2],
-            heure: 19,
-            minute: 15,
+          creneau: CreneauDemande(
+            occurrences: const <OccurrenceCreneau>[
+              OccurrenceCreneau(jourIso: 2, heure: 19, minute: 15),
+            ],
           ),
           etape: EtapeDemande.enseignantAffecte,
           transitions: <(EtapeDemande, DateTime)>[],
@@ -374,10 +377,10 @@ void main() {
           demandeId: 'vitrine',
           eleveId: 'e-v',
           prenom: 'Sara',
-          creneau: const CreneauDemande(
-            joursIso: <int>[1],
-            heure: 18,
-            minute: 0,
+          creneau: CreneauDemande(
+            occurrences: const <OccurrenceCreneau>[
+              OccurrenceCreneau(jourIso: 1, heure: 18, minute: 0),
+            ],
           ),
           etape: EtapeDemande.envoyee,
           transitions: <(EtapeDemande, DateTime)>[],
@@ -398,10 +401,10 @@ void main() {
           eleveId: 'e',
           prenom: 'P',
           etape: etape,
-          creneau: const CreneauDemande(
-            joursIso: <int>[1],
-            heure: 9,
-            minute: 0,
+          creneau: CreneauDemande(
+            occurrences: const <OccurrenceCreneau>[
+              OccurrenceCreneau(jourIso: 1, heure: 9, minute: 0),
+            ],
           ),
           fuseauIana: 'Europe/Paris',
           enseignant: 'Sayyida Khadija',
@@ -719,7 +722,11 @@ void main() {
       eleveId: 'e',
       prenom: 'Bilal',
       etape: etape,
-      creneau: const CreneauDemande(joursIso: <int>[1], heure: 18, minute: 0),
+      creneau: CreneauDemande(
+        occurrences: const <OccurrenceCreneau>[
+          OccurrenceCreneau(jourIso: 1, heure: 18),
+        ],
+      ),
       fuseauIana: fuseau,
       debutCours: debut,
       motif: motif,
@@ -802,6 +809,176 @@ void main() {
       // Une ville garde son « de ».
       expect(heureDemande(demande()), '18:00, heure de Paris');
     });
+  });
+
+  group('C-10 bis : une heure par jour', () {
+    setUpAll(chargerPolicesDuDepot);
+
+    CreneauDemande creneau(List<(int, int, int)> occurrences) => CreneauDemande(
+      occurrences: <OccurrenceCreneau>[
+        for (final (int j, int h, int m) in occurrences)
+          OccurrenceCreneau(jourIso: j, heure: h, minute: m),
+      ],
+    );
+
+    SuiviDemande demande(CreneauDemande c, {String fuseau = 'Europe/Paris'}) =>
+        SuiviDemande(
+          demandeId: 'c10',
+          eleveId: 'e-c10',
+          prenom: 'Sara',
+          etape: EtapeDemande.envoyee,
+          creneau: c,
+          fuseauIana: fuseau,
+        );
+
+    SuiviDemandesDemo seule(CreneauDemande c) =>
+        SuiviDemandesDemo(<DemandeServeurDemo>[
+          DemandeServeurDemo(
+            demandeId: 'c10',
+            eleveId: 'e-c10',
+            prenom: 'Sara',
+            creneau: c,
+            etape: EtapeDemande.envoyee,
+            transitions: <(EtapeDemande, DateTime)>[],
+          ),
+        ]);
+
+    test('le creneau trie par jour et garde l heure de chaque jour', () {
+      // Choisis mercredi 19:30 puis lundi 18:00.
+      final CreneauDemande c = creneau(<(int, int, int)>[
+        (3, 19, 30),
+        (1, 18, 0),
+      ]);
+      expect(c.occurrences, const <OccurrenceCreneau>[
+        OccurrenceCreneau(jourIso: 1, heure: 18),
+        OccurrenceCreneau(jourIso: 3, heure: 19, minute: 30),
+      ]);
+      expect(c.joursIso, <int>[1, 3]);
+      expect(c.heuresToutesEgales, isFalse);
+      expect(
+        creneau(<(int, int, int)>[(4, 18, 0), (1, 18, 0)]).heuresToutesEgales,
+        isTrue,
+      );
+      // La liste rendue ne se modifie pas.
+      expect(
+        () => c.occurrences.add(const OccurrenceCreneau(jourIso: 5, heure: 9)),
+        throwsUnsupportedError,
+      );
+    });
+
+    test('doublon de jour, liste vide, valeurs hors bornes : refuses', () {
+      expect(
+        () => creneau(<(int, int, int)>[(1, 18, 0), (1, 19, 0)]),
+        throwsA(isA<AssertionError>()),
+      );
+      expect(
+        () => CreneauDemande(occurrences: const <OccurrenceCreneau>[]),
+        throwsA(isA<AssertionError>()),
+      );
+      for (final (int j, int h, int m) in <(int, int, int)>[
+        (0, 18, 0),
+        (8, 18, 0),
+        (1, -1, 0),
+        (1, 24, 0),
+        (1, 18, -1),
+        (1, 18, 60),
+      ]) {
+        expect(
+          () => OccurrenceCreneau(jourIso: j, heure: h, minute: m),
+          throwsA(isA<AssertionError>()),
+          reason: '($j, $h, $m)',
+        );
+      }
+    });
+
+    test('libelles : heure commune une fois, sinon chaque jour la sienne', () {
+      final SuiviDemande egales = demande(
+        creneau(<(int, int, int)>[(4, 18, 0), (1, 18, 0), (2, 18, 0)]),
+      );
+      expect(joursDemande(egales.creneau.joursIso), 'Lundi, mardi et jeudi');
+      expect(heureDemande(egales), '18:00, heure de Paris');
+
+      final SuiviDemande differentes = demande(
+        creneau(<(int, int, int)>[(3, 19, 30), (1, 18, 0)]),
+      );
+      // Jamais l'heure du premier jour prise pour celle des autres.
+      expect(heureDemande(differentes), isNull);
+      expect(
+        joursEtHeuresDemande(differentes.creneau),
+        'Lundi 18:00, mercredi 19:30',
+      );
+      expect(fuseauDemande(differentes), 'Heure de Paris');
+      expect(
+        fuseauDemande(demande(differentes.creneau, fuseau: 'Etc/UTC')),
+        'Heure UTC',
+      );
+    });
+
+    testWidgets('heures egales : la phrase actuelle, inchangee', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        port: seule(
+          creneau(<(int, int, int)>[(4, 18, 0), (1, 18, 0), (2, 18, 0)]),
+        ),
+      );
+      expect(find.text(t.suiviDemandes.joursChoisis), findsOneWidget);
+      expect(find.text('Lundi, mardi et jeudi'), findsOneWidget);
+      expect(find.text(t.suiviDemandes.heureChoisie), findsOneWidget);
+      expect(find.text('18:00, heure de Paris'), findsOneWidget);
+      expect(find.text(t.suiviDemandes.creneauxChoisis), findsNothing);
+      await _demonter(tester);
+    });
+
+    testWidgets('heures differentes : chaque jour avec son heure, dans l ordre '
+        'de la semaine', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        port: seule(creneau(<(int, int, int)>[(3, 19, 30), (1, 18, 0)])),
+      );
+      expect(find.text(t.suiviDemandes.creneauxChoisis), findsOneWidget);
+      expect(find.text('Lundi 18:00, mercredi 19:30'), findsOneWidget);
+      expect(find.text(t.suiviDemandes.fuseauChoisi), findsOneWidget);
+      expect(find.text('Heure de Paris'), findsOneWidget);
+      // Ni l'ancienne ligne d'heure unique, ni une heure ecrasee.
+      expect(find.text(t.suiviDemandes.heureChoisie), findsNothing);
+      expect(find.text('18:00, heure de Paris'), findsNothing);
+      expect(find.text('Lundi et mercredi'), findsNothing);
+      await _demonter(tester);
+    });
+
+    for (final TextDirection direction in TextDirection.values) {
+      testWidgets('320 px, texte a 200 %, sept jours a heures differentes '
+          '(${direction.name})', (WidgetTester tester) async {
+        await _monter(
+          tester,
+          port: seule(
+            creneau(<(int, int, int)>[
+              for (int j = 1; j <= 7; j++) (j, 10 + j, j.isEven ? 30 : 0),
+            ]),
+          ),
+          largeur: 320,
+          echelle: 2,
+          direction: direction,
+        );
+        expect(tester.takeException(), isNull);
+        expect(
+          find.byKey(const ValueKey<String>('demande-jours-heures-c10')),
+          findsOneWidget,
+        );
+        expect(
+          find.text(
+            'Lundi 11:00, mardi 12:30, mercredi 13:00, jeudi 14:30, '
+            'vendredi 15:00, samedi 16:30, dimanche 17:00',
+          ),
+          findsOneWidget,
+        );
+        verifierEcranSansMotCoupe(tester);
+        verifierUnSeulBoutonPlein(tester, maximum: 0);
+        await _demonter(tester);
+      });
+    }
   });
 
   group('320 px, texte a 200 %', () {

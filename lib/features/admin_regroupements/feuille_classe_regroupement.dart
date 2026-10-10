@@ -511,17 +511,21 @@ class _FeuilleClasseRegroupementEtat
 List<Widget> lignesRegroupement(RegroupementDemandes g) {
   final r = t.admin.regroupements;
   return <Widget>[
-    LigneCleValeur(cle: r.cleJours, valeur: libelleJours(g.jours)),
-    LigneCleValeur(
-      cle: r.cleHeure,
-      valeur: libelleReference(g.reference),
-      chiffres: true,
-    ),
-    if (g.autresFuseaux.isNotEmpty)
+    // C-11 bis : une heure commune se dit une fois ; sinon chaque jour avec
+    // la sienne, et le fuseau de reference sur sa propre ligne.
+    if (libelleReference(g) case final String reference) ...<Widget>[
+      LigneCleValeur(cle: r.cleJours, valeur: libelleJours(g.jours)),
+      LigneCleValeur(cle: r.cleHeure, valeur: reference, chiffres: true),
+    ] else ...<Widget>[
       LigneCleValeur(
-        cle: r.cleAilleurs,
-        valeur: g.autresFuseaux.map(libelleAilleurs).join(' · '),
+        key: ValueKey<String>('regroupement-jours-heures-${g.id}'),
+        cle: r.cleJoursHeures,
+        valeur: libelleJoursHeures(g),
       ),
+      LigneCleValeur(cle: r.cleFuseau, valeur: libelleFuseau(g)),
+    ],
+    if (g.autresFuseaux.isNotEmpty)
+      LigneCleValeur(cle: r.cleAilleurs, valeur: libelleAutresFuseaux(g)),
     LigneCleValeur(cle: r.clePublic, valeur: nomPublic(g.public)),
     LigneCleValeur(cle: r.cleLangue, valeur: g.langueNom),
     LigneCleValeur(

@@ -2500,6 +2500,18 @@ class Traductions$suiviDemandes$fr {
 	/// fr: '{heure}, heure {deVille}'
 	String heureFuseau({required Object heure, required Object deVille}) => '${heure}, heure ${deVille}';
 
+	/// fr: 'Jours et heures choisis'
+	String get creneauxChoisis => 'Jours et heures choisis';
+
+	/// fr: '{jour} {heure}'
+	String jourHeure({required Object jour, required Object heure}) => '${jour} ${heure}';
+
+	/// fr: 'Fuseau horaire'
+	String get fuseauChoisi => 'Fuseau horaire';
+
+	/// fr: 'Heure {deVille}'
+	String fuseauValeur({required Object deVille}) => 'Heure ${deVille}';
+
 	late final Traductions$suiviDemandes$etapes$fr etapes = Traductions$suiviDemandes$etapes$fr.internal(_root);
 	late final Traductions$suiviDemandes$etats$fr etats = Traductions$suiviDemandes$etats$fr.internal(_root);
 	late final Traductions$suiviDemandes$situation$fr situation = Traductions$suiviDemandes$situation$fr.internal(_root);
@@ -5849,6 +5861,21 @@ class Traductions$admin$regroupements$fr {
 
 	/// fr: '{heure} le lendemain à {ville}'
 	String ailleursLendemain({required Object heure, required Object ville}) => '${heure} le lendemain à ${ville}';
+
+	/// fr: 'Jours et heures'
+	String get cleJoursHeures => 'Jours et heures';
+
+	/// fr: 'Fuseau de référence'
+	String get cleFuseau => 'Fuseau de référence';
+
+	/// fr: 'Heure {deVille}'
+	String fuseauValeur({required Object deVille}) => 'Heure ${deVille}';
+
+	/// fr: '{jour} {heure}'
+	String jourHeure({required Object jour, required Object heure}) => '${jour} ${heure}';
+
+	/// fr: '{jour} : {ailleurs}'
+	String ailleursJour({required Object jour, required Object ailleurs}) => '${jour} : ${ailleurs}';
 
 	/// fr: '(one) {{n} élève sur {quota}} (other) {{n} élèves sur {quota}}'
 	String eleves({required num n, required Object quota}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
@@ -18984,6 +19011,11 @@ extension on Traductions {
 			'admin.regroupements.ailleursMemeJour' => ({required Object heure, required Object ville}) => '${heure} à ${ville}',
 			'admin.regroupements.ailleursVeille' => ({required Object heure, required Object ville}) => '${heure} la veille à ${ville}',
 			'admin.regroupements.ailleursLendemain' => ({required Object heure, required Object ville}) => '${heure} le lendemain à ${ville}',
+			'admin.regroupements.cleJoursHeures' => 'Jours et heures',
+			'admin.regroupements.cleFuseau' => 'Fuseau de référence',
+			'admin.regroupements.fuseauValeur' => ({required Object deVille}) => 'Heure ${deVille}',
+			'admin.regroupements.jourHeure' => ({required Object jour, required Object heure}) => '${jour} ${heure}',
+			'admin.regroupements.ailleursJour' => ({required Object jour, required Object ailleurs}) => '${jour} : ${ailleurs}',
 			'admin.regroupements.eleves' => ({required num n, required Object quota}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève sur ${quota}', other: '${n} élèves sur ${quota}', ), 
 			'admin.regroupements.pret' => 'Prête',
 			'admin.regroupements.incomplete' => 'Incomplète',
@@ -19019,13 +19051,13 @@ extension on Traductions {
 			'admin.diagnostics.restants' => ({required Object n}) => '${n} élèves restants',
 			'admin.diagnostics.restantUn' => '1 élève restant',
 			'admin.diagnostics.inscritAujourdhui' => 'Inscrit aujourd\'hui',
+			_ => null,
+		} ?? switch (path) {
 			'admin.diagnostics.inscritDepuisUnJour' => 'Inscrit depuis 1 jour',
 			'admin.diagnostics.inscritDepuis' => ({required Object jours}) => 'Inscrit depuis ${jours} jours',
 			'admin.diagnostics.aucun' => 'Aucun élève à diagnostiquer',
 			'admin.diagnostics.aucunDetail' => 'Tous les élèves inscrits ont déjà un niveau décidé.',
 			'admin.diagnostics.champNiveau' => 'Niveau de placement',
-			_ => null,
-		} ?? switch (path) {
 			'admin.diagnostics.manqueNiveau' => 'Il manque le niveau de placement : choisissez-le dans la liste des niveaux.',
 			'admin.diagnostics.champMotif' => 'Motif',
 			'admin.diagnostics.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
@@ -19533,13 +19565,13 @@ extension on Traductions {
 			'parcours.niveauLectureLente' => 'La lecture est possible, lentement',
 			'parcours.niveauLectureCourante' => 'Le Coran se lit déjà couramment',
 			'parcours.niveauMemorisationPartielle' => 'Une partie est déjà mémorisée',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.objectifQuestion' => 'Que souhaitez-vous d\'abord ?',
 			'parcours.objectifRaison' => 'Vous pourrez changer d\'objectif plus tard : il oriente le travail de l\'enseignant, il ne vous engage pas.',
 			'parcours.objectifApprendreALire' => 'Apprendre à lire',
 			'parcours.objectifDevenirFluide' => 'Lire plus couramment',
 			'parcours.objectifMemoriser' => 'Mémoriser',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.objectifIndecis' => 'Je ne sais pas encore',
 			'parcours.momentsQuestion' => 'Quels moments de la journée vous conviennent le mieux ?',
 			'parcours.momentsRaison' => 'Cette réponse ne crée aucun horaire et ne réserve rien. Elle sert seulement à mettre en avant, parmi les horaires que l\'académie propose déjà, ceux qui tombent le mieux pour vous. Vous verrez tous les autres juste en dessous.',
@@ -20047,13 +20079,13 @@ extension on Traductions {
 			'tuteur.accueil.enCours' => ({required Object prenom}) => 'En cours avec ${prenom}',
 			'tuteur.accueil.depuisMinutes' => ({required Object minutes}) => 'Commencé il y a ${minutes} min',
 			'tuteur.accueil.depuisInstant' => 'Vient de commencer',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.aujourdhui' => ({required Object heure, required Object prenom}) => 'Aujourd\'hui à ${heure}, avec ${prenom}',
 			'tuteur.accueil.unAutreJour' => ({required Object jour, required Object heure, required Object prenom}) => '${jour} à ${heure}, avec ${prenom}',
 			'tuteur.accueil.rienAujourdhui' => 'Rien aujourd\'hui',
 			'tuteur.accueil.aucunCoursPrevu' => 'Aucun cours programmé pour l\'instant',
 			'tuteur.accueil.aucunCoursPrevuDetail' => 'Les cours de la semaine sont préparés à l\'avance. Celui-ci apparaîtra ici.',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.enRecherche' => 'En recherche d\'un enseignant',
 			'tuteur.accueil.enRechercheDepuis' => ({required Object date}) => 'Demande déposée le ${date}',
 			'tuteur.accueil.enRechercheSansDate' => ({required Object prenom}) => 'Un enseignant prendra ${prenom} en charge parmi les heures proposées.',
@@ -20561,13 +20593,13 @@ extension on Traductions {
 			'enseignant.cahier.faiblesseMakharij' => 'Makharij',
 			'enseignant.cahier.faiblesseMadd' => 'Madd',
 			'enseignant.cahier.faiblesseGhunna' => 'Ghunna',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.faiblesseWaqf' => 'Waqf',
 			'enseignant.cahier.faiblesseFluidite' => 'Fluidité',
 			'enseignant.cahier.faiblesseMemorisation' => 'Mémorisation',
 			'enseignant.cahier.niveauARevoirDetail' => 'La leçon est à reprendre à la prochaine séance.',
 			'enseignant.cahier.niveauEnProgresDetail' => 'L\'élève avance, quelques erreurs restent.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.niveauAcquisDetail' => 'La leçon est sue, avec peu d\'erreurs.',
 			'enseignant.cahier.niveauMaitriseDetail' => 'La leçon est sue sans erreur, l\'élève peut avancer.',
 			'enseignant.cahier.faiblesseMakharijDetail' => 'La prononciation des lettres.',
@@ -21075,13 +21107,13 @@ extension on Traductions {
 			'tc.bibliotheque.detail.apercuIndisponible' => 'L’aperçu de ce format n’est pas encore disponible dans l’application. Vous pouvez en enregistrer une copie.',
 			'tc.bibliotheque.detail.renduCoran' => 'Le Coran s’ouvre dans le lecteur dédié.',
 			'tc.bibliotheque.action.telecharger' => 'Rendre disponible hors ligne',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.action.liberer' => 'Libérer la place',
 			'tc.bibliotheque.action.enregistrerCopie' => 'Enregistrer une copie',
 			'tc.bibliotheque.message.copieEnregistree' => 'Copie enregistrée',
 			'tc.bibliotheque.message.copieImpossible' => 'Cette copie n’est pas disponible pour le moment',
 			'tc.bibliotheque.message.telechargementImpossible' => 'Ce support n’est pas encore disponible hors ligne',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.message.horsLigneNonTelecharge' => 'Disponible une fois téléchargé ou de retour en ligne',
 			'tc.bibliotheque.message.aucunTelechargement' => 'Aucun fichier à télécharger pour cette version.',
 			'tc.bibliotheque.classe.titre' => 'Choisir un support',
@@ -21589,13 +21621,13 @@ extension on Traductions {
 			'adulte.invitation.nomAidePrerempli' => 'Facultatif. Prérempli avec le nom de votre compte : modifiez-le si besoin.',
 			'adulte.invitation.courriel' => 'Adresse e-mail',
 			'adulte.invitation.courrielAideElle' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjointe l\'invitation à rejoindre Rewayah.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.invitation.courrielAideLui' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjoint l\'invitation à rejoindre Rewayah.',
 			'adulte.invitation.prenomRequis' => 'Indiquez son prénom.',
 			'adulte.invitation.courrielRequis' => 'Indiquez son adresse e-mail.',
 			'adulte.invitation.courrielInvalide' => 'Vérifiez l\'adresse e-mail : elle doit ressembler à nom@exemple.com.',
 			'adulte.invitation.verifier' => 'Continuer',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.verifierTitre' => 'Vérifier et envoyer',
 			'adulte.invitation.verifierPhrase' => 'Relisez ces informations. L\'invitation partira à cette adresse.',
 			'adulte.invitation.nonRenseigne' => 'Non renseigné',
@@ -21901,6 +21933,10 @@ extension on Traductions {
 			'suiviDemandes.heureChoisie' => 'Heure choisie',
 			'suiviDemandes.joursEt' => ({required Object debut, required Object dernier}) => '${debut} et ${dernier}',
 			'suiviDemandes.heureFuseau' => ({required Object heure, required Object deVille}) => '${heure}, heure ${deVille}',
+			'suiviDemandes.creneauxChoisis' => 'Jours et heures choisis',
+			'suiviDemandes.jourHeure' => ({required Object jour, required Object heure}) => '${jour} ${heure}',
+			'suiviDemandes.fuseauChoisi' => 'Fuseau horaire',
+			'suiviDemandes.fuseauValeur' => ({required Object deVille}) => 'Heure ${deVille}',
 			'suiviDemandes.etapes.envoyee' => 'Demande envoyée',
 			'suiviDemandes.etapes.classeValidee' => 'Classe validée',
 			'suiviDemandes.etapes.enseignantAffecte' => 'Enseignant affecté',

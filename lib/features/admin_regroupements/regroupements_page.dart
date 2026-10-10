@@ -243,9 +243,7 @@ class _CarteRegroupement extends StatelessWidget {
     final bool peutAgir = classe == null
         ? g.peutCreerClasse
         : classe.peutAffecterEnseignant;
-    final String titre =
-        classe?.libelle ??
-        '${libelleJours(g.jours)} · ${libelleHeure(g.reference)}';
+    final String titre = classe?.libelle ?? libelleCreneau(g);
 
     return AppCard(
       key: ValueKey<String>('regroupement-${g.id}'),
