@@ -385,13 +385,14 @@ class _Ligne extends StatelessWidget {
               TexteSansCoupure(
                 ligne.libelle,
                 key: const ValueKey<String>('groupe-reglages-libelle'),
-                style: palette.inkStrong
-                    .applyTo(textes.bodyLarge ?? const TextStyle())
-                    .copyWith(
-                      fontWeight: (ligne.selectionnee ?? false)
-                          ? FontWeight.w600
-                          : null,
-                    ),
+                // labelLarge : meme taille que bodyLarge dans les deux
+                // echelles, graisse 600 portee par le theme.
+                style: palette.inkStrong.applyTo(
+                  ((ligne.selectionnee ?? false)
+                          ? textes.labelLarge
+                          : textes.bodyLarge) ??
+                      const TextStyle(),
+                ),
               ),
               if (ligne.pastille != null && ligne.pastilleSousLibelle != true)
                 ligne.pastille!,
