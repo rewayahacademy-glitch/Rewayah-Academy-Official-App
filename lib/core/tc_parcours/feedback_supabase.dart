@@ -11,7 +11,7 @@ class FeedbackSupabase implements PortFeedback {
 
   @override
   Future<QuestionFeedback?> questionPour(String sessionId) async {
-    final dynamic value = await _client.rpc(
+    final dynamic value = await _client.rpc<dynamic>(
       'question_feedback_pour',
       params: <String, dynamic>{'p_session_id': sessionId},
     );
@@ -65,7 +65,7 @@ class FeedbackSupabase implements PortFeedback {
 
   @override
   Future<TendanceFeedback> tendance({required String groupeId}) async {
-    final dynamic value = await _client.rpc(
+    final dynamic value = await _client.rpc<dynamic>(
       'tendance_feedback_comprehension',
       params: <String, dynamic>{'p_groupe_id': groupeId},
     );
