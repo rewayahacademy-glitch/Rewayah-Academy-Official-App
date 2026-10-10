@@ -451,7 +451,7 @@ BEGIN
     country := v_teacher.country;
     titre_public := CASE v_teacher.gender
       WHEN 'female' THEN 'sayyida'
-      WHEN 'male' THEN 'sayyid'
+      WHEN 'male' THEN 'sayid'
       ELSE NULL
     END;
     timezone_iana := v_teacher.timezone_iana;
