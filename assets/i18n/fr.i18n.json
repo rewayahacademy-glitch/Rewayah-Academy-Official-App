@@ -1934,6 +1934,19 @@
     "inscritDepuis(param=jours)": {
       "one": "Inscrit depuis {jours} jour",
       "other": "Inscrit depuis {jours} jours"
+    },
+    "accesKyc": {
+      "exceptionTitre": "Exception du super administrateur active",
+      "exceptionMessage": "Vous pouvez ouvrir les pièces des deux genres. Chaque ouverture hors de votre genre est tracée.",
+      "exceptionPiece": "Cette ouverture est hors de votre genre : elle sera tracée.",
+      "verification": "Vérification de vos droits d'accès…",
+      "verificationEchec": "Vos droits d'accès à cette pièce n'ont pas pu être vérifiés.",
+      "reessayer": "Réessayer",
+      "refus": {
+        "genreDifferent": "Cette pièce est réservée à un administrateur du même genre que le candidat.",
+        "adminSansGenre": "Votre genre n'est pas renseigné : aucune pièce ne peut s'ouvrir. Demandez à la direction de le renseigner.",
+        "profilNonAutorise": "Votre profil ne peut pas consulter les pièces d'identité."
+      }
     }
   },
   "admin": {

@@ -724,6 +724,15 @@ controleur.compteRendu.visiteInconnue
 controleur.compteRendu.visiteInconnueAide
 controleur.echanges.contexteCompact
 controleur.observation.echecSansTexte
+dossiers.accesKyc.exceptionMessage
+dossiers.accesKyc.exceptionPiece
+dossiers.accesKyc.exceptionTitre
+dossiers.accesKyc.reessayer
+dossiers.accesKyc.refus.adminSansGenre
+dossiers.accesKyc.refus.genreDifferent
+dossiers.accesKyc.refus.profilNonAutorise
+dossiers.accesKyc.verification
+dossiers.accesKyc.verificationEchec
 dossiers.validation.corpsActivationElide
 dossiers.validation.corpsDocumentaireElide
 eleve.accueil.erreurCoursHorsLigneTitre
