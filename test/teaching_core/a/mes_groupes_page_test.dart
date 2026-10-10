@@ -30,6 +30,24 @@ Future<void> _poser(
 }
 
 void main() {
+  test('K-59 : les phrases dites a l appui d un Rejoindre en attente ne '
+      'redisent jamais « hors ligne » (seul le bandeau le dit)', () async {
+    for (final AppLocale langue in AppLocale.values) {
+      final Traductions tr = await langue.build();
+      for (final String phrase in <String>[
+        tr.eleve.accueil.horsLigneDetail,
+        tr.eleve.accueil.entreeSePrepare,
+        tr.tc.groupe.carte.entreeAttendReseau,
+        tr.tc.groupe.carte.entreeSePrepare,
+      ]) {
+        expect(phrase.toLowerCase(), isNot(contains('hors ligne')));
+        expect(phrase.toLowerCase(), isNot(contains('hors-ligne')));
+        expect(phrase.toLowerCase(), isNot(contains('offline')));
+        expect(phrase, isNot(contains('غير متصل')), reason: phrase);
+      }
+    }
+  });
+
   testWidgets('la liste montre les groupes du jeu de demonstration', (
     WidgetTester tester,
   ) async {
