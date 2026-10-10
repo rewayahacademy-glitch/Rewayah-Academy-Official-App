@@ -4,7 +4,8 @@ begin;
 insert into auth.users (id, email) values
   ('f1660000-0000-0000-0000-000000000001', 'notif-guardian@example.test'),
   ('f1660000-0000-0000-0000-000000000002', 'notif-student@example.test'),
-  ('f1660000-0000-0000-0000-000000000003', 'notif-teacher@example.test');
+  ('f1660000-0000-0000-0000-000000000003', 'notif-teacher@example.test'),
+  ('f1660000-0000-0000-0000-000000000004', 'notif-admin@example.test');
 insert into public.households (id, timezone)
 values ('f16fffff-0000-0000-0000-000000000011', 'Europe/Paris');
 insert into public.profiles
@@ -15,7 +16,9 @@ values
   ('f1660000-0000-0000-0000-000000000002', 'F1NOTIFSTUDENT', 'student',
    'f16fffff-0000-0000-0000-000000000011', 'Fixture', 'Student', 'active'),
   ('f1660000-0000-0000-0000-000000000003', 'F1NOTIFTEACHER', 'teacher',
-   'f16fffff-0000-0000-0000-000000000011', 'Fixture', 'Teacher', 'active');
+   'f16fffff-0000-0000-0000-000000000011', 'Fixture', 'Teacher', 'active'),
+  ('f1660000-0000-0000-0000-000000000004', 'F1NOTIFADMIN', 'admin',
+   null, 'Fixture', 'Admin', 'active');
 
 update public.households
 set primary_guardian_id = 'f1660000-0000-0000-0000-000000000001'
@@ -30,6 +33,7 @@ declare
   v_other_data boolean;
   v_group_id uuid := 'f16fffff-0000-0000-0000-000000000012';
   v_class_request uuid;
+  v_rejected_request uuid;
 begin
   select code into v_langue from public.langues_cours where actif order by code limit 1;
   if v_langue is null then
@@ -82,6 +86,9 @@ begin
           'personnalisee', 'envoyee', null)
   returning id into v_class_request;
 
+  insert into public.groupe_membres (groupe_id, student_id)
+  values (v_group_id, 'f1660000-0000-0000-0000-000000000002');
+
   update public.demandes_horaires_famille
      set etat = 'classe_validee', groupe_id = v_group_id
    where id = v_class_request;
@@ -94,6 +101,46 @@ begin
   if (select etat from public.demandes_horaires_famille
       where id = v_class_request) <> 'enseignant_affecte' then
     raise exception 'B-09: affectation du groupe ne fait pas progresser la demande';
+  end if;
+
+  perform set_config('request.jwt.claim.sub', 'f1660000-0000-0000-0000-000000000004', true);
+  perform set_config('request.jwt.claims',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text, true);
+  perform public.retirer_eleve_groupe(
+    v_group_id, 'f1660000-0000-0000-0000-000000000002', 'fixture retrait'
+  );
+  if not exists (
+    select 1 from public.demandes_horaires_famille
+    where id = v_class_request and etat = 'refusee' and motif = 'refus_direction'
+  ) then
+    raise exception 'M5: retirer un membre laisse la demande de classe active';
+  end if;
+  if (select count(*) from public.notifications
+      where destinataire = 'f1660000-0000-0000-0000-000000000001'
+        and evenement = 'demande_close'
+        and params ->> 'demande_id' = v_class_request::text) <> 1 then
+    raise exception 'M5: le retrait du membre ne notifie pas son foyer';
+  end if;
+
+  insert into public.demandes_horaires_famille
+    (eleve_id, type_public, langue_code, fuseau_iana, jours, heures_locales,
+     source)
+  values ('f1660000-0000-0000-0000-000000000002', 'enfant', v_langue,
+          'Europe/Paris', array[3]::smallint[], array[11]::smallint[],
+          'personnalisee')
+  returning id into v_rejected_request;
+  perform public.refuser_demande_horaire(v_rejected_request, 'refus_direction');
+  if not exists (
+    select 1 from public.demandes_horaires_famille
+    where id = v_rejected_request and etat = 'refusee' and motif = 'refus_direction'
+  ) then
+    raise exception 'M5: la RPC de refus ne ferme pas la demande avec son motif';
+  end if;
+  if (select count(*) from public.notifications
+      where destinataire = 'f1660000-0000-0000-0000-000000000001'
+        and evenement = 'demande_close'
+        and params ->> 'demande_id' = v_rejected_request::text) <> 1 then
+    raise exception 'M5: le refus ne notifie pas le foyer';
   end if;
 end
 $notification$;
