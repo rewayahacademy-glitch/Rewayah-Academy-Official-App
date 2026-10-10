@@ -641,7 +641,8 @@ VALUES
   ('f1490000-0000-0000-0000-000000000997', 1, 11, 'Europe/Paris'),
   ('f1490000-0000-0000-0000-000000000997', 3, 11, 'Europe/Paris'),
   ('f1490000-0000-0000-0000-000000000997', 3, 10, 'Africa/Conakry'),
-  ('f1490000-0000-0000-0000-000000000997', 4, 20, 'Europe/Paris');
+  ('f1490000-0000-0000-0000-000000000997', 4, 20, 'Europe/Paris'),
+  ('f1490000-0000-0000-0000-000000000997', 5, 18, 'Europe/Paris');
 
 INSERT INTO public.groupes
   (id, teacher_id, etat, type_public, genre_public, seuil_max, libelle,
@@ -658,11 +659,23 @@ VALUES
    4, 20, 'Europe/Paris', 'francais'),
   ('f1470000-0000-0000-0000-000000000104', NULL, 'en_attente_enseignant',
    'adulte', 'hommes', 6, 'C04 projection libre inter-fuseaux',
-   4, 20, 'Europe/Paris', 'francais');
+   6, 18, 'Europe/Paris', 'francais'),
+  ('f1470000-0000-0000-0000-000000000105', NULL, 'en_attente_enseignant',
+   'adulte', 'hommes', 6, 'C04 projection séance ponctuelle',
+   5, 18, 'Europe/Paris', 'francais');
 
 INSERT INTO public.groupe_creneaux (groupe_id, weekday, hour_local)
 VALUES ('f1470000-0000-0000-0000-000000000101', 3, 11)
 ON CONFLICT (groupe_id, weekday, hour_local) DO NOTHING;
+
+INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status)
+VALUES (
+  'f1470000-0000-0000-0000-000000000106',
+  'f1490000-0000-0000-0000-000000000997',
+  public.instant_creneau(4, 20, 'Europe/Paris', 0),
+  public.instant_creneau(4, 20, 'Europe/Paris', 0) + interval '60 minutes',
+  'planned'
+);
 
 DO $c04_c07$
 DECLARE
@@ -706,6 +719,20 @@ BEGIN
   ) THEN
     RAISE EXCEPTION
       'C-04: créneau libre affiché malgré collision hiver Paris/Conakry: %',
+      v_libres;
+  END IF;
+
+  SELECT creneaux_libres INTO v_libres
+  FROM public.enseignants_pour_classe('f1470000-0000-0000-0000-000000000105')
+  WHERE teacher_id = 'f1490000-0000-0000-0000-000000000997';
+  IF v_libres IS NULL OR EXISTS (
+    SELECT 1 FROM jsonb_array_elements(v_libres) AS slot
+    WHERE slot ->> 'timezone_iana' = 'Europe/Paris'
+      AND (slot ->> 'weekday')::integer = 4
+      AND (slot ->> 'hour_local')::integer = 20
+  ) THEN
+    RAISE EXCEPTION
+      'C-04: créneau libre affiché malgré séance ponctuelle: %',
       v_libres;
   END IF;
 
