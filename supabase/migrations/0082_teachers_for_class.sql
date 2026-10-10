@@ -353,12 +353,12 @@ BEGIN
     RAISE EXCEPTION 'proposition d''enseignants réservée à la direction active';
   END IF;
 
-  SELECT * INTO v_g
-  FROM public.groupes
-  WHERE id = p_classe_id
-    AND etat = 'en_attente_enseignant'
-    AND teacher_id IS NULL
-    AND ended_at IS NULL;
+  SELECT g.* INTO v_g
+  FROM public.groupes AS g
+  WHERE g.id = p_classe_id
+    AND g.etat = 'en_attente_enseignant'
+    AND g.teacher_id IS NULL
+    AND g.ended_at IS NULL;
   IF NOT FOUND THEN
     RAISE EXCEPTION 'classe en attente absente ou indisponible';
   END IF;
