@@ -48,6 +48,13 @@ BEGIN
 END;
 $agent_pre_request$;
 
+-- SEC-01 exception to the general agent_ro volatile-function denylist:
+-- PostgREST must execute this no-argument, SECURITY DEFINER hook as agent_ro.
+-- Its only non-read effect is transaction-local GUC state; it performs no
+-- business-table writes. scenarios_agt01.sql asserts it is the sole exception.
+GRANT EXECUTE ON FUNCTION public.agent_pre_request()
+  TO anon, authenticated, service_role, agent_ro;
+
 COMMENT ON FUNCTION public.agent_pre_request() IS
   'Valide à chaque requête le jeton agent et le profil observé courant; '
   'auth.uid() reçoit le profil après validation tandis que auth.jwt()->>sub '
