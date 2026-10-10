@@ -284,6 +284,13 @@ BEGIN
      ) THEN
     RAISE EXCEPTION 'M-a: des offsets saisonniers incompatibles sont regroupés';
   END IF;
+  IF public.cle_horaire_utc(
+       ARRAY[2,4,6]::smallint[], ARRAY[18,18,18]::smallint[], 'Europe/London'
+     ) IS NOT DISTINCT FROM public.cle_horaire_utc(
+       ARRAY[2,4,6]::smallint[], ARRAY[18,18,18]::smallint[], 'Africa/Abidjan'
+     ) THEN
+    RAISE EXCEPTION 'M-a: la comparaison hiver/été manque le décalage saisonnier';
+  END IF;
   IF public.instant_creneau(
        extract(isodow FROM (pg_catalog.now() AT TIME ZONE 'UTC'))::int,
        0, 'UTC', 0
