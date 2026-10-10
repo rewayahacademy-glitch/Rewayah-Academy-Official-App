@@ -19,6 +19,7 @@ import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/features/reglages_enfant/reglages_enfant_page.dart';
 
 import '../router/support_routeur.dart';
+import '../support/annonces.dart';
 import '../support/harnais.dart';
 
 EleveDuFoyer _enfant({
@@ -318,6 +319,57 @@ void main() {
       );
       expect(matching.demandes.single.valeur, isNull);
       expect(find.text(t.tuteur.reglages.demandeEnvoyee), findsOneWidget);
+    });
+
+    // BOUTONS-GRISES-1 (reserve SUPERPOS-1b) : la phrase qui dit ce qui
+    // manque est annoncee au lecteur d'ecran et le focus va au champ fautif.
+    testWidgets('demande de duree trop tot : annoncee, focus au champ', (
+      WidgetTester tester,
+    ) async {
+      final List<String> annonces = ecouterAnnonces(tester);
+      final FauxServiceMatching matching = FauxServiceMatching();
+      await _monter(
+        tester,
+        appairage: FauxServiceAppairage()
+          ..elevesRendus = <EleveDuFoyer>[_enfant()],
+        matching: matching,
+      );
+      await tester.tap(find.text(t.tuteur.reglages.demandeDuree));
+      await tester.pumpAndSettle();
+
+      final Finder envoyer = find.widgetWithText(
+        ActionPrincipale,
+        t.tuteur.reglages.demandeEnvoyer,
+      );
+      await tester.ensureVisible(envoyer);
+      await tester.tap(envoyer);
+      await tester.pumpAndSettle();
+
+      expect(matching.demandes, isEmpty);
+      expect(find.text(t.tuteur.reglages.demandeManqueValeur), findsOneWidget);
+      expect(annonces, <String>[t.tuteur.reglages.demandeManqueValeur]);
+      expect(FocusManager.instance.primaryFocus?.debugLabel, 'demande-valeur');
+
+      // La duree choisie, le motif manque : annonce, focus a la premiere puce.
+      await tester.tap(
+        find.text(
+          LibellesGroupe.valeurSeule(
+            t.tuteur.reglages.demandeMinutes(minutes: '30'),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(envoyer);
+      await tester.tap(envoyer);
+      await tester.pumpAndSettle();
+
+      expect(matching.demandes, isEmpty);
+      expect(find.text(t.formulaire.motif.manque), findsOneWidget);
+      expect(annonces.last, t.formulaire.motif.manque);
+      expect(
+        FocusManager.instance.primaryFocus?.debugLabel,
+        SelecteurMotif.focusPremierePuce,
+      );
     });
 
     testWidgets('une demande de duree porte la valeur choisie', (
