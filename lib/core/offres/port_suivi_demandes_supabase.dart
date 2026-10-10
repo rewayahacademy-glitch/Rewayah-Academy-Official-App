@@ -22,6 +22,26 @@ class PortSuiviDemandesSupabase implements PortSuiviDemandes {
 
     final StreamController<void> changements = StreamController<void>();
     final Completer<void> abonne = Completer<void>();
+    Timer? debounce;
+    bool stopping = false;
+
+    void invalider() {
+      debounce?.cancel();
+      debounce = Timer(const Duration(milliseconds: 200), () {
+        if (!changements.isClosed) changements.add(null);
+      });
+    }
+
+    void propagerErreur(Object? erreur, String message) {
+      if (stopping) return;
+      final Object cause = erreur ?? StateError(message);
+      if (!abonne.isCompleted) {
+        abonne.completeError(cause);
+      } else if (!changements.isClosed) {
+        changements.addError(cause);
+      }
+    }
+
     final RealtimeChannel canal = _client
         .channel('suivi-demandes-famille:$userId')
         .onPostgresChanges(
@@ -29,21 +49,17 @@ class PortSuiviDemandesSupabase implements PortSuiviDemandes {
           schema: 'public',
           table: 'demandes_horaires_famille',
           callback: (_) {
-            if (!changements.isClosed) changements.add(null);
+            invalider();
           },
         );
 
     canal.subscribe((RealtimeSubscribeStatus statut, Object? erreur) {
       if (statut == RealtimeSubscribeStatus.subscribed) {
         if (!abonne.isCompleted) abonne.complete();
-        if (!changements.isClosed) changements.add(null);
       } else if (statut == RealtimeSubscribeStatus.channelError ||
-          statut == RealtimeSubscribeStatus.timedOut) {
-        if (!abonne.isCompleted) {
-          abonne.completeError(
-            erreur ?? StateError('Abonnement aux demandes indisponible.'),
-          );
-        }
+          statut == RealtimeSubscribeStatus.timedOut ||
+          statut == RealtimeSubscribeStatus.closed) {
+        propagerErreur(erreur, 'Abonnement aux demandes interrompu.');
       }
     });
 
@@ -54,6 +70,8 @@ class PortSuiviDemandesSupabase implements PortSuiviDemandes {
         yield await _charger();
       }
     } finally {
+      stopping = true;
+      debounce?.cancel();
       await _client.removeChannel(canal);
       await changements.close();
     }

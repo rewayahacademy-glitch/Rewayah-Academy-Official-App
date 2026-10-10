@@ -3,6 +3,8 @@
 -- Rejoué après toutes les migrations sur une base jetable.
 BEGIN;
 
+SET LOCAL TIME ZONE 'Europe/Paris';
+
 INSERT INTO auth.users (id, email)
 SELECT ('f1490000-0000-0000-0000-' || lpad(g.n::text, 12, '0'))::uuid,
        'f1-adulte-' || g.n::text || '@example.test'
@@ -457,6 +459,7 @@ BEGIN
       AND ligne->>'etat' = 'enseignant_affecte'
       AND ligne->>'enseignant' = 'Sayid Enseignant'
       AND (ligne->>'debut_cours_local') !~ '(Z|[+-][0-9]{2}:[0-9]{2})$'
+      AND (ligne->>'debut_cours_local')::time = time '18:00'
   ) THEN
     RAISE EXCEPTION 'C-04/C-10 : titre masculin ou heure murale du cours absent';
   END IF;

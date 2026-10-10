@@ -70,6 +70,7 @@ BEGIN
             JOIN public.groupes g ON g.id = s.groupe_id
             WHERE s.groupe_id = d.groupe_id
               AND s.deleted_at IS NULL
+              AND s.status IN ('planned', 'preflight')
               AND s.started_at >= now()
             ORDER BY s.started_at
             LIMIT 1
