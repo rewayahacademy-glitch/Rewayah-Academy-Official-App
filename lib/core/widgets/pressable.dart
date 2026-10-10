@@ -346,9 +346,23 @@ class _PressableState extends State<Pressable>
             setState(() => _focus = focus);
           }
         },
+        // Deux intentions, une seule action (CLAVIER-ENTREE-1, WCAG 2.1.1).
+        // Hors Web, Entree, Entree du pave numerique et Espace donnent
+        // `ActivateIntent`. Sur le Web, Flutter ne lie a `ActivateIntent`
+        // que la barre d'espace : Entree et Entree du pave numerique y
+        // donnent `ButtonActivateIntent` (« enter activates buttons, but not
+        // other controls », `WidgetsApp.defaultShortcuts`). Sans la seconde
+        // entree, Entree ne declenchait rien dans le navigateur. Une touche
+        // ne produit qu'une intention : aucun double declenchement.
         actions: <Type, Action<Intent>>{
           ActivateIntent: CallbackAction<ActivateIntent>(
             onInvoke: (ActivateIntent _) {
+              _activerAuClavier();
+              return null;
+            },
+          ),
+          ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(
+            onInvoke: (ButtonActivateIntent _) {
               _activerAuClavier();
               return null;
             },
