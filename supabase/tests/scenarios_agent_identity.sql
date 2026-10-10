@@ -34,13 +34,13 @@ VALUES
    'student', pg_catalog.now() + interval '1 hour', pg_catalog.now(), 'ea000000-0000-0000-0000-000000000001', NULL),
   ('ea000000-0000-0000-0000-000000000011', 'SEC-01 revoked', 'rag_ea000011',
    'sec01-test-fingerprint-revoked', 'ea000000-0000-0000-0000-000000000003',
-   'student', pg_catalog.now() + interval '1 hour', 'ea000000-0000-0000-0000-000000000001', NULL),
+   'student', pg_catalog.now() + interval '1 hour', pg_catalog.now(), 'ea000000-0000-0000-0000-000000000001', NULL),
   ('ea000000-0000-0000-0000-000000000012', 'SEC-01 expired', 'rag_ea000012',
    'sec01-test-fingerprint-expired', 'ea000000-0000-0000-0000-000000000004',
    'student', pg_catalog.now() - interval '1 hour', pg_catalog.now() - interval '2 hours', 'ea000000-0000-0000-0000-000000000001', NULL),
   ('ea000000-0000-0000-0000-000000000013', 'SEC-01 role mismatch', 'rag_ea000013',
    'sec01-test-fingerprint-role', 'ea000000-0000-0000-0000-000000000005',
-   'student', pg_catalog.now() + interval '1 hour', 'ea000000-0000-0000-0000-000000000001', NULL);
+   'student', pg_catalog.now() + interval '1 hour', pg_catalog.now(), 'ea000000-0000-0000-0000-000000000001', NULL);
 
 CREATE FUNCTION pg_temp.sec01_set_agent(p_id uuid)
 RETURNS void
