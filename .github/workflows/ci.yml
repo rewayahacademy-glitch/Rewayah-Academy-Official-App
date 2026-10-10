@@ -50,10 +50,18 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b09_notifications.sql
 
+      - name: Scénarios des transitions de demandes (B-09)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_offres_notifications.sql
+
       # B-11 mesure ses ACL avant les scénarios historiques qui accordent des droits larges.
       - name: Scénarios B-11 (signalement)
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b11_student_concern.sql
+
+      - name: Scénarios des questions et agrégats feedback (B-11)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b11_feedback_questions.sql
 
       - name: Scénarios B-14 (état partagé)
         shell: bash
