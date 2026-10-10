@@ -158,4 +158,45 @@ begin
 end;
 $function$;
 
+
+-- M2 / REVUE-F2-I19 : détecter aussi les gardes négatives qui placent
+-- app_role() sous NOT (expression parenthésée), y compris IF/ELSIF
+-- multilignes et NOT unaire. NOT coalesce(..., false) positif canonique
+-- n'est pas capté, car coalesce est une fonction enveloppe.
+create or replace function app_private.has_unsafe_role_guard(p_definition text)
+returns boolean
+language sql
+immutable
+security invoker
+set search_path = ''
+as $function$
+  select coalesce(
+    p_definition ~*
+      '((if|elsif)[[:space:]]+not[[:space:]]*[(][[:space:]]*(public[.])?app_role[[:space:]]*[(][[:space:]]*[)])'
+    or p_definition ~*
+      '((if|elsif)[[:space:]]+not[[:space:]]+(public[.])?app_role[[:space:]]*[(][[:space:]]*[)])',
+    false
+  );
+$function$;
+revoke all on function app_private.has_unsafe_role_guard(text) from public;
+revoke all on function app_private.has_unsafe_role_guard(text) from anon, authenticated, agent_ro;
+
+do $m2_scan$
+declare
+  v record;
+begin
+  for v in
+    select p.oid
+    from pg_catalog.pg_proc p
+    join pg_catalog.pg_namespace n on n.oid = p.pronamespace
+    where n.nspname in ('public', 'app_private')
+      and p.prokind = 'f'
+      and p.prosecdef
+      and app_private.has_unsafe_role_guard(p.prosrc)
+  loop
+    raise exception '0084 M2: garde négative app_role résiduelle dans SECURITY DEFINER oid=%', v.oid;
+  end loop;
+end
+$m2_scan$;
+
 commit;
