@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
+import '../../../core/recrutement/port_invitations_enseignant.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/choice_card_group.dart';
@@ -46,7 +48,17 @@ class UsageEtape extends ConsumerWidget {
           pleineLargeur: false,
           onPress: () {
             controleur.choisirUsage(UsageInscription.enseignant);
-            avancerDepuis(context, _route);
+            // RECRUT-ECRANS : des que le serveur verifie les invitations,
+            // l'inscription enseignant exige un code valide (le serveur le
+            // consomme a la creation du profil). Sans port, l'ancien parcours.
+            final bool exigeCode =
+                ref.read(portVerificationInvitationProvider) != null &&
+                ref.read(codeInvitationRetenuProvider) == null;
+            if (exigeCode) {
+              context.go(Routes.inscriptionInvitation);
+            } else {
+              avancerDepuis(context, _route);
+            }
           },
         ),
       ),

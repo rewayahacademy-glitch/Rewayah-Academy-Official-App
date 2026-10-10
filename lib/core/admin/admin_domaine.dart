@@ -194,20 +194,17 @@ List<({String libelle, String chemin})> ongletsPedagogie() =>
 /// Reserve et la delegation sont de la gouvernance de tresorerie, un onglet
 /// de plus dans le meme domaine, jamais un second systeme Finance.
 /// Consommee par `SousNavigationDomaine` dans l'en-tete de `FinancePage`.
-List<({String libelle, String chemin})> ongletsFinance() =>
-    <({String libelle, String chemin})>[
-      (libelle: t.admin.finance.vueGlobale, chemin: Routes.adminFinance),
-      (
-        libelle: t.admin.finance.politiques,
-        chemin: Routes.adminFinancePolitiques,
-      ),
-      (
-        libelle: t.admin.finance.reserveDelegation,
-        chemin: Routes.adminFinanceReserveDelegation,
-      ),
-      // CPT-VAL-1 (decision Q-8 = (a) du 05/10) : les demandes du Comptable.
-      (libelle: t.admin.finance.aValider, chemin: Routes.adminFinanceAValider),
-    ];
+List<({String libelle, String chemin})>
+ongletsFinance() => <({String libelle, String chemin})>[
+  (libelle: t.admin.finance.vueGlobale, chemin: Routes.adminFinance),
+  (libelle: t.admin.finance.politiques, chemin: Routes.adminFinancePolitiques),
+  (
+    libelle: t.admin.finance.reserveDelegation,
+    chemin: Routes.adminFinanceReserveDelegation,
+  ),
+  // CPT-VAL-1 (decision Q-8 = (a) du 05/10) : les demandes du Comptable.
+  (libelle: t.admin.finance.aValider, chemin: Routes.adminFinanceAValider),
+];
 
 /// Les fonctions livrees du domaine Configuration, dans l'ordre du contrat
 /// metier (`docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_FINANCE_CONFIGURATION.md`) parmi les
@@ -260,6 +257,11 @@ List<({String libelle, String chemin})> ongletsPersonnes() =>
     <({String libelle, String chemin})>[
       (libelle: t.dossiers.titre, chemin: Routes.adminPersonnesDossiers),
       (libelle: t.admin.comptes.titre, chemin: Routes.adminPersonnesComptes),
+      // RECRUT-ECRANS : l'invitation des enseignants, avant leur dossier.
+      (
+        libelle: t.recrutement.invitations.onglet,
+        chemin: Routes.adminPersonnesInvitations,
+      ),
     ];
 
 /// Les deux fonctions pairs du domaine Securite et audit : le Journal et
