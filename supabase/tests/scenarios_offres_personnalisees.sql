@@ -172,7 +172,6 @@ DECLARE
   v_offre uuid;
   v_result uuid;
   v_groupe uuid;
-  v_groupe_rejoue uuid;
   v_sessions integer;
   v_projection jsonb;
   v_projection_eleves integer;
@@ -338,21 +337,33 @@ BEGIN
       v_fuseau, v_heures;
   END IF;
 
-  v_groupe := public.creer_classe_depuis_regroupement(
-    v_regroupement, 'c1200000-0000-0000-0000-000000000001', 'Classe F1 C-12'
+  v_reponse := public.creer_classe_depuis_regroupement_c11bis(
+    v_regroupement,
+    'c1200000-0000-0000-0000-000000000001',
+    'Classe F1 C-12',
+    'hommes'
   );
-  v_groupe_rejoue := public.creer_classe_depuis_regroupement(
-    v_regroupement, 'c1200000-0000-0000-0000-000000000001', 'Classe F1 C-12'
+  v_groupe := (v_reponse ->> 'classe_id')::uuid;
+  v_repetee := public.creer_classe_depuis_regroupement_c11bis(
+    v_regroupement,
+    'c1200000-0000-0000-0000-000000000001',
+    'Classe F1 C-12',
+    'hommes'
   );
-  IF v_groupe_rejoue <> v_groupe
+  IF v_reponse ->> 'statut' <> 'creee'
+     OR v_repetee ->> 'statut' <> 'deja_creee'
+     OR (v_reponse ->> 'eleves_integres')::integer <> v_quota
+     OR (v_reponse ->> 'genre_classe') <> 'hommes'
+     OR v_reponse ->> 'peut_affecter_enseignant' <> 'false'
      OR NOT EXISTS (
        SELECT 1 FROM public.groupes
        WHERE id = v_groupe AND teacher_id IS NULL
          AND etat = 'en_attente_enseignant'
+         AND genre_public = 'hommes'
      )
      OR (SELECT count(*) FROM public.groupe_membres
          WHERE groupe_id = v_groupe AND left_at IS NULL) <> v_quota THEN
-    RAISE EXCEPTION 'C-12: classe en attente, membres ou idempotence invalides';
+    RAISE EXCEPTION 'C-12: classe en attente, genre, membres ou idempotence invalides';
   END IF;
   IF NOT EXISTS (
     SELECT 1 FROM public.demandes_horaires_famille
@@ -448,6 +459,45 @@ BEGIN
   PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000999', true);
   PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text, true);
+  v_ok := false;
+  BEGIN
+    PERFORM public.affecter_enseignant_classe_c11bis(
+      v_groupe, 'f1490000-0000-0000-0000-000000000997'
+    );
+  EXCEPTION WHEN raise_exception THEN
+    IF SQLERRM = 'compatibilite enseignant non verifiable : source titre public absente' THEN
+      v_ok := true;
+    ELSE
+      RAISE;
+    END IF;
+  END;
+  IF NOT v_ok THEN
+    RAISE EXCEPTION 'C-04 ECHEC : affectation acceptée sans source de titre public';
+  END IF;
+
+  IF pg_catalog.has_function_privilege(
+       'anon',
+       'public.creer_classe_depuis_regroupement_c11bis(text,uuid,text,text)',
+       'execute'
+     )
+     OR NOT pg_catalog.has_function_privilege(
+       'authenticated',
+       'public.creer_classe_depuis_regroupement_c11bis(text,uuid,text,text)',
+       'execute'
+     )
+     OR pg_catalog.has_function_privilege(
+       'anon',
+       'public.affecter_enseignant_classe_c11bis(uuid,uuid)',
+       'execute'
+     )
+     OR NOT pg_catalog.has_function_privilege(
+       'authenticated',
+       'public.affecter_enseignant_classe_c11bis(uuid,uuid)',
+       'execute'
+     ) THEN
+    RAISE EXCEPTION 'C-11 ACL : wrappers anon/authenticated invalides';
+  END IF;
+
   PERFORM public.affecter_enseignant_classe(
     v_groupe, 'f1490000-0000-0000-0000-000000000997'
   );
