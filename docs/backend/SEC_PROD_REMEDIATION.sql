@@ -702,7 +702,7 @@ begin
           or v_compact !~ '(^|[^[:alnum:]_$])(public\.)?app_account_valid\(\)'
           or v_compact ~ '(and|or)not(public\.)?app_account_valid\(\)'
           or (
-            v_compact ~ '(^|[^[:alnum:]_])or([^[:alnum:]_]|$)'
+            v_condition ~* '(^|[^[:alnum:]_])or([^[:alnum:]_]|$)'
             and v_compact <> 'ifnotcoalesce(((public.app_role()=''x''andpublic.session_belongs_to_teacher(p_session_id,auth.uid()))orpublic.app_role()=''x'')andpublic.app_account_valid(),false)then'
           ) then
          return true;
