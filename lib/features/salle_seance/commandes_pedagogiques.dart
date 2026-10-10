@@ -28,7 +28,6 @@
 // effacement global.
 
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -48,6 +47,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bouton_icone.dart';
+import '../../core/widgets/bouton_outil.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/menu_actions.dart';
@@ -55,6 +55,7 @@ import 'actions_seance.dart';
 import 'barre_support.dart';
 import 'ecriture_seance.dart';
 import 'outils_enseignement.dart';
+import 'panneau_seance.dart' show DefilementAFondu;
 import 'rangement_support.dart';
 import 'salle_seance.dart' show BoutonPanneau;
 import 'vue_seance.dart';
@@ -90,7 +91,9 @@ class DeclencheurCommandes extends StatelessWidget {
 
   final VoidCallback onPress;
 
-  /// Le panneau est ouvert : le bouton se dit selectionne.
+  /// Le panneau est ouvert. Revue TB-R m13 : le declencheur n'est rendu
+  /// que panneau ferme ; il ne se dit plus « selectionne » ni « non
+  /// selectionne » (il ouvre un panneau, ce n'est pas un choix).
   final bool ouvert;
 
   /// Le noeud ou revient le focus a la fermeture du panneau.
@@ -102,49 +105,43 @@ class DeclencheurCommandes extends StatelessWidget {
     // TB-10 (MA-CMD-1, directeur 02/10) : en Mode Accessibilite, l'icone
     // seule, compacte ; le nom lu et l'infobulle gardent le mot.
     if (iconeSeule || AppMetriques.of(context).mode == InterfaceMode.enfant) {
-      return Semantics(
-        selected: ouvert,
-        child: BoutonIcone(
-          icone: AppIcons.replier,
-          libelle: t.salle.seance.commandes.declencheurSemantique,
-          infobulle: t.salle.seance.commandes.declencheur,
-          forme: FormeBoutonIcone.carre,
-          focusNode: focusNode,
-          onPress: onPress,
-        ),
+      return BoutonIcone(
+        icone: AppIcons.replier,
+        libelle: t.salle.seance.commandes.declencheurSemantique,
+        infobulle: t.salle.seance.commandes.declencheur,
+        forme: FormeBoutonIcone.carre,
+        focusNode: focusNode,
+        onPress: onPress,
       );
     }
     // La carte pressable du core (K-54), comme le bouton Eleves ; le mot
     // passe a la ligne a 200 % et a 320 au lieu de deborder ou d'etre coupe.
-    return Semantics(
-      selected: ouvert,
-      child: AppCard(
-        onPress: onPress,
-        // Le nom lu contient le mot visible (W-253) : « Ouvrir les commandes
-        // du support et du tableau » (plan V2 §20).
-        libelleSemantique: t.salle.seance.commandes.declencheurSemantique,
-        focusNode: focusNode,
-        marge: AppSpacing.md,
-        child: ExcludeSemantics(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              // Planche 1 : un chevron vers le haut, le panneau monte.
-              IconTheme(
-                data: palette.inkAccent.asIconTheme(size: AppSpacing.xl),
-                child: Icon(AppIcons.replier.repos),
-              ),
-              Ecart.hSm,
-              Flexible(
-                child: TexteSansCoupure(
-                  t.salle.seance.commandes.declencheur,
-                  style: palette.inkStrong.applyTo(
-                    Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
-                  ),
+    return AppCard(
+      onPress: onPress,
+      // Le nom lu contient le mot visible (W-253) : « Ouvrir les commandes
+      // du support et du tableau » (plan V2 §20).
+      libelleSemantique: t.salle.seance.commandes.declencheurSemantique,
+      focusNode: focusNode,
+      marge: AppSpacing.md,
+      child: ExcludeSemantics(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            // Planche 1 : un chevron vers le haut, le panneau monte.
+            IconTheme(
+              data: palette.inkAccent.asIconTheme(size: AppSpacing.xl),
+              child: Icon(AppIcons.replier.repos),
+            ),
+            Ecart.hSm,
+            Flexible(
+              child: TexteSansCoupure(
+                t.salle.seance.commandes.declencheur,
+                style: palette.inkStrong.applyTo(
+                  Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -216,6 +213,9 @@ class CommandesPedagogiques extends ConsumerStatefulWidget {
 
   /// Le fondu du haut : la colonne a defile.
   static const Key cleFonduHaut = ValueKey<String>('commandes-fondu-haut');
+
+  /// Revue TB-R M7 (K-58) : ce que voit la classe pour l'affichage choisi.
+  static const Key cleClasseVoit = ValueKey<String>('commandes-classe-voit');
 
   final VueSeance vue;
   final ActionsSeance actions;
@@ -298,6 +298,29 @@ class _CommandesPedagogiquesState extends ConsumerState<CommandesPedagogiques> {
   /// au-dessus du bord).
   final GlobalKey _retour = GlobalKey(debugLabel: 'commandes-retour-range');
 
+  /// Revue TB-R m9 : le noeud de l'entree Bibliotheque, ou revient le focus
+  /// apres « Ranger dans la bibliotheque » ou « Effacer les notes » (le menu
+  /// qui l'avait a disparu).
+  final FocusNode _focusBibliotheque = FocusNode(
+    debugLabel: 'commandes-bibliotheque',
+  );
+
+  @override
+  void dispose() {
+    _focusBibliotheque.dispose();
+    super.dispose();
+  }
+
+  /// Au cadre suivant, le focus sur l'entree Bibliotheque, si elle est
+  /// rendue.
+  void _focusSurBibliotheque() {
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (mounted && _focusBibliotheque.context != null) {
+        _focusBibliotheque.requestFocus();
+      }
+    });
+  }
+
   @override
   void didUpdateWidget(CommandesPedagogiques ancien) {
     super.didUpdateWidget(ancien);
@@ -314,6 +337,7 @@ class _CommandesPedagogiquesState extends ConsumerState<CommandesPedagogiques> {
     PorteeRangement.maybeOf(context)?.envoler(context);
     setState(() => _range = true);
     ranger();
+    _focusSurBibliotheque();
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
       final BuildContext? retour = _retour.currentContext;
       if (mounted && retour != null) {
@@ -342,6 +366,7 @@ class _CommandesPedagogiquesState extends ConsumerState<CommandesPedagogiques> {
     if (!confirme) return;
     effacer();
     if (!mounted) return;
+    _focusSurBibliotheque();
     // TB-7b : « Annuler » ne rajoute jamais une note que l'effacement a
     // retiree ; les operations personnelles de la surface s'en vont.
     ref
@@ -426,7 +451,11 @@ class _CommandesPedagogiquesState extends ConsumerState<CommandesPedagogiques> {
   /// `TeteSalleBornee` : un fondu au bord bas tant qu'il reste a lire, au
   /// bord haut des que la colonne a defile.
   Widget _colonne(List<Widget> lignes) {
-    return _ColonneDefilante(
+    return DefilementAFondu(
+      cleDefilement: CommandesPedagogiques.cleDefilement,
+      cleFonduBas: CommandesPedagogiques.cleFonduBas,
+      cleFonduHaut: CommandesPedagogiques.cleFonduHaut,
+      margeBas: AppSpacing.md,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -459,6 +488,7 @@ class _CommandesPedagogiquesState extends ConsumerState<CommandesPedagogiques> {
             icone: AppIcons.bibliotheque,
             libelle: t.salle.seance.commandes.bibliotheque,
             onPress: bibliotheque,
+            focusNode: _focusBibliotheque,
             etire: true,
           ),
         ),
@@ -491,30 +521,52 @@ class _CommandesPedagogiquesState extends ConsumerState<CommandesPedagogiques> {
         ),
       // Un clic par affichage (TB3) ; invisibles sans support presente.
       if (vue.voitAffichagesPartages && affichage != null)
-        KeyedSubtree(
-          key: CommandesPedagogiques.cleAffichages,
-          child: ControleSegmente<AffichagePartage>(
-            rectangle: true,
-            segments: <Segment<AffichagePartage>>[
-              Segment<AffichagePartage>(
-                valeur: AffichagePartage.support,
-                libelle: t.salle.seance.commandes.affichageSupport,
-                icone: AppIcons.fichierPdf,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            KeyedSubtree(
+              key: CommandesPedagogiques.cleAffichages,
+              child: ControleSegmente<AffichagePartage>(
+                rectangle: true,
+                segments: <Segment<AffichagePartage>>[
+                  Segment<AffichagePartage>(
+                    valeur: AffichagePartage.support,
+                    libelle: t.salle.seance.commandes.affichageSupport,
+                    icone: AppIcons.fichierPdf,
+                  ),
+                  Segment<AffichagePartage>(
+                    valeur: AffichagePartage.avecNotes,
+                    libelle: t.salle.seance.commandes.affichageAvecNotes,
+                    icone: AppIcons.annoter,
+                  ),
+                  Segment<AffichagePartage>(
+                    valeur: AffichagePartage.tableau,
+                    libelle: t.salle.seance.commandes.affichageTableau,
+                    icone: AppIcons.tabletteOuOrdinateur,
+                  ),
+                ],
+                valeur: vue.affichage,
+                onChange: affichage,
               ),
-              Segment<AffichagePartage>(
-                valeur: AffichagePartage.avecNotes,
-                libelle: t.salle.seance.commandes.affichageAvecNotes,
-                icone: AppIcons.annoter,
+            ),
+            // Revue TB-R M7 (K-58) : la consequence du choix, sous lui ; la
+            // ligne suit l'affichage retenu.
+            Ecart.vXs,
+            Text(
+              switch (vue.affichage) {
+                AffichagePartage.support =>
+                  t.salle.seance.commandes.classeVoitSupport,
+                AffichagePartage.avecNotes =>
+                  t.salle.seance.commandes.classeVoitAvecNotes,
+                AffichagePartage.tableau =>
+                  t.salle.seance.commandes.classeVoitTableau,
+              },
+              key: CommandesPedagogiques.cleClasseVoit,
+              style: AppPalette.of(context).inkMuted.applyTo(
+                Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
               ),
-              Segment<AffichagePartage>(
-                valeur: AffichagePartage.tableau,
-                libelle: t.salle.seance.commandes.affichageTableau,
-                icone: AppIcons.tabletteOuOrdinateur,
-              ),
-            ],
-            valeur: vue.affichage,
-            onChange: affichage,
-          ),
+            ),
+          ],
         ),
       // « Page {numero} sur {total} » entre ses fleches (plan V2 §20) ; sans
       // rappel, le texte seul, en lecture.
@@ -601,6 +653,10 @@ class _CommandesPedagogiquesState extends ConsumerState<CommandesPedagogiques> {
         (actions.onZoomMoins != null || actions.onZoomPlus != null);
     final VoidCallback? ajuster = actions.onAjusterEcran;
     final VoidCallback? focus = actions.onAgrandir;
+    // Revue TB-R m1 et m2 : un seul nom du focus, le meme dans la barre de
+    // l'appel et la barre du support ([nomsFocus]).
+    final NomsFocus noms = nomsFocus(context, agrandi: widget.agrandi);
+    final bool guidee = AppMetriques.of(context).mode == InterfaceMode.enfant;
     return <Widget>[
       if (vue.voitLectureCommandes && (zoom || ajuster != null))
         Column(
@@ -622,13 +678,26 @@ class _CommandesPedagogiquesState extends ConsumerState<CommandesPedagogiques> {
                     avecLibelle: false,
                   ),
                 if (ajuster != null)
-                  ActionPrincipale(
-                    key: CommandesPedagogiques.cleAjuster,
-                    libelle: t.salle.seance.commandes.ajuster,
-                    onPress: ajuster,
-                    niveau: NiveauAction.secondaire,
-                    pleineLargeur: false,
-                  ),
+                  if (guidee)
+                    // Revue TB-R m2 (plan V2 §5) : en Interface guidee,
+                    // « Voir toute la page », pictogramme et mot.
+                    BoutonOutil(
+                      key: CommandesPedagogiques.cleAjuster,
+                      icone: AppIcons.ajusterEcran,
+                      libelle: t.salle.seance.commandes.ajusterGuide,
+                      avecLibelle: true,
+                      lignesLibelle: 2,
+                      forme: FormeBoutonOutil.tuile,
+                      onPress: ajuster,
+                    )
+                  else
+                    ActionPrincipale(
+                      key: CommandesPedagogiques.cleAjuster,
+                      libelle: t.salle.seance.commandes.ajuster,
+                      onPress: ajuster,
+                      niveau: NiveauAction.secondaire,
+                      pleineLargeur: false,
+                    ),
               ],
             ),
           ],
@@ -639,18 +708,26 @@ class _CommandesPedagogiquesState extends ConsumerState<CommandesPedagogiques> {
           children: <Widget>[
             _TitreSection(texte: t.salle.seance.commandes.affichage),
             Ecart.vSm,
-            ActionPrincipale(
-              key: CommandesPedagogiques.cleFocus,
-              libelle: widget.agrandi
-                  ? t.salle.seance.commandes.quitterFocus
-                  : t.salle.seance.commandes.focus,
-              libelleSemantique: widget.agrandi
-                  ? null
-                  : t.salle.seance.commandes.focusSemantique,
-              onPress: focus,
-              niveau: NiveauAction.secondaire,
-              pleineLargeur: false,
-            ),
+            if (guidee)
+              // Revue TB-R m2 : « Agrandir », pictogramme et mot.
+              BoutonOutil(
+                key: CommandesPedagogiques.cleFocus,
+                icone: noms.icone,
+                libelle: noms.libelle,
+                avecLibelle: true,
+                lignesLibelle: 2,
+                forme: FormeBoutonOutil.tuile,
+                onPress: focus,
+              )
+            else
+              ActionPrincipale(
+                key: CommandesPedagogiques.cleFocus,
+                libelle: noms.libelle,
+                libelleSemantique: noms.semantique,
+                onPress: focus,
+                niveau: NiveauAction.secondaire,
+                pleineLargeur: false,
+              ),
           ],
         ),
     ];
@@ -783,98 +860,4 @@ class _EcritureSuspendue extends StatelessWidget {
     style: AppPalette.of(context).inkMuted
         .applyTo(Theme.of(context).textTheme.bodySmall ?? const TextStyle()),
   );
-}
-
-/// La colonne des Commandes qui defile, avec l'indice de defilement maison :
-/// un fondu au bord bas tant qu'il reste du contenu dessous, au bord haut
-/// des qu'elle a defile (meme dessin que `TeteSalleBornee`).
-class _ColonneDefilante extends StatefulWidget {
-  const _ColonneDefilante({required this.child});
-
-  final Widget child;
-
-  @override
-  State<_ColonneDefilante> createState() => _ColonneDefilanteState();
-}
-
-class _ColonneDefilanteState extends State<_ColonneDefilante> {
-  bool _suite = false;
-  bool _avant = false;
-
-  /// Le defilement garde sa position quand un fondu se pose ou se retire.
-  final GlobalKey _cleDefile = GlobalKey(debugLabel: 'commandes-colonne');
-
-  bool _suivre(ScrollMetrics m) {
-    final bool suite = m.extentAfter > 0.5;
-    final bool avant = m.extentBefore > 0.5;
-    if (suite != _suite || avant != _avant) {
-      setState(() {
-        _suite = suite;
-        _avant = avant;
-      });
-    }
-    return false;
-  }
-
-  /// Seule l'opacite de [fond] compte (melange `dstIn`).
-  Widget _fondre(
-    Key cle,
-    Color fond, {
-    required bool versLeBas,
-    required Widget child,
-  }) => ShaderMask(
-    key: cle,
-    blendMode: BlendMode.dstIn,
-    shaderCallback: (Rect r) {
-      // Une vue basse (320 x2 : 80 a 100 px) garde l'essentiel lisible : le
-      // fondu ne prend jamais plus du huitieme de sa hauteur.
-      final double fondu = math.min(AppSpacing.xxxl, r.height / 8);
-      return LinearGradient(
-        begin: versLeBas ? Alignment.topCenter : Alignment.bottomCenter,
-        end: versLeBas ? Alignment.bottomCenter : Alignment.topCenter,
-        stops: <double>[
-          if (r.height <= 0) 0 else math.max(0, 1 - fondu / r.height),
-          1,
-        ],
-        colors: <Color>[fond, fond.withValues(alpha: 0)],
-      ).createShader(r);
-    },
-    child: child,
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    Widget contenu = KeyedSubtree(
-      key: _cleDefile,
-      child: SingleChildScrollView(
-        key: CommandesPedagogiques.cleDefilement,
-        padding: const EdgeInsets.only(bottom: AppSpacing.md),
-        child: widget.child,
-      ),
-    );
-    final Color fond = AppPalette.of(context).surfaceRaised.background;
-    if (_suite) {
-      contenu = _fondre(
-        CommandesPedagogiques.cleFonduBas,
-        fond,
-        versLeBas: true,
-        child: contenu,
-      );
-    }
-    if (_avant) {
-      contenu = _fondre(
-        CommandesPedagogiques.cleFonduHaut,
-        fond,
-        versLeBas: false,
-        child: contenu,
-      );
-    }
-    return NotificationListener<ScrollUpdateNotification>(
-      onNotification: (ScrollUpdateNotification n) => _suivre(n.metrics),
-      child: NotificationListener<ScrollMetricsNotification>(
-        onNotification: (ScrollMetricsNotification n) => _suivre(n.metrics),
-        child: contenu,
-      ),
-    );
-  }
 }

@@ -289,7 +289,8 @@ void main() {
         ),
       );
       await tester.pump(const Duration(milliseconds: 300));
-      expect(find.text('Réduire'), findsOneWidget);
+      // Revue TB-R m1 : la sortie du focus garde le mot « Focus ».
+      expect(find.text('Focus'), findsOneWidget);
       expect(_bandeau, findsOneWidget);
     });
   });

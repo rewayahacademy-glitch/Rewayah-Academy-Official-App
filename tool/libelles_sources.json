@@ -206,5 +206,12 @@
   "salle.seance.ecriture.fine": "etape TB-7b (Supports et tableau, ecrire) : choix court d Epaisseur, plan V2 §20 (« selection lisible par forme, texte et couleur »), a valider par le directeur",
   "salle.seance.ecriture.moyenne": "etape TB-7b (Supports et tableau, ecrire) : choix court d Epaisseur, plan V2 §20, a valider par le directeur",
   "salle.seance.ecriture.epaisse": "etape TB-7b (Supports et tableau, ecrire) : choix court d Epaisseur, plan V2 §20, a valider par le directeur",
-  "tc.outils.trait.stylet": "etape TB-7b (Supports et tableau, ecrire) : texte exact du plan V2 §20 (Outils enseignant « Stylo »), remplace « Stylet »"
+  "tc.outils.trait.stylet": "etape TB-7b (Supports et tableau, ecrire) : texte exact du plan V2 §20 (Outils enseignant « Stylo »), remplace « Stylet »",
+  "salle.seance.commandes.quitterFocusSemantique": "revue TB-R 10/10, m1 : nom lu de la sortie du focus, le meme dans les Commandes, la barre de l'appel et la barre du support (plan V2 §20 « Sortie focus »)",
+  "salle.seance.commandes.focusGuide": "revue TB-R 10/10, m2 : Interface guidee, « Agrandir » avec pictogramme (plan V2 §5, Interface guidee)",
+  "salle.seance.commandes.quitterFocusGuide": "revue TB-R 10/10, m2 : Interface guidee, sortie de « Agrandir » (decide par delegation le 10/10, plan V2 §5 ne la nomme pas)",
+  "salle.seance.commandes.ajusterGuide": "revue TB-R 10/10, m2 : Interface guidee, « Voir toute la page » avec pictogramme (plan V2 §5, Interface guidee)",
+  "salle.seance.commandes.classeVoitSupport": "revue TB-R 10/10, M7 : ce que voit la classe pour l'affichage « Support » (K-58, plan V2 §17 PED-02)",
+  "salle.seance.commandes.classeVoitAvecNotes": "revue TB-R 10/10, M7 : ce que voit la classe pour l'affichage « Avec notes » (K-58, plan V2 §17 PED-03)",
+  "salle.seance.commandes.classeVoitTableau": "revue TB-R 10/10, M7 : ce que voit la classe pour l'affichage « Tableau » (K-58, plan V2 §17 PED-04)"
 }

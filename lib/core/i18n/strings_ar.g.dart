@@ -869,6 +869,13 @@ class _Traductions$salle$seance$commandes$ar extends Traductions$salle$seance$co
 	@override String get focus => 'التركيز';
 	@override String get focusSemantique => 'التركيز، تكبير المحتوى وتصغير اللوحات';
 	@override String get quitterFocus => 'الخروج من التركيز';
+	@override String get quitterFocusSemantique => 'الخروج من التركيز وإظهار اللوحات';
+	@override String get focusGuide => 'تكبير';
+	@override String get quitterFocusGuide => 'إيقاف التكبير';
+	@override String get ajusterGuide => 'عرض الصفحة كاملة';
+	@override String get classeVoitSupport => 'يرى الفصل الصفحة دون الملاحظات.';
+	@override String get classeVoitAvecNotes => 'يرى الفصل الصفحة والملاحظات.';
+	@override String get classeVoitTableau => 'يرى الفصل السبورة دون الصفحة.';
 }
 
 // Path: salle.seance.bibliotheque
@@ -2660,6 +2667,13 @@ extension on TraductionsAr {
 			'salle.seance.commandes.focus' => 'التركيز',
 			'salle.seance.commandes.focusSemantique' => 'التركيز، تكبير المحتوى وتصغير اللوحات',
 			'salle.seance.commandes.quitterFocus' => 'الخروج من التركيز',
+			'salle.seance.commandes.quitterFocusSemantique' => 'الخروج من التركيز وإظهار اللوحات',
+			'salle.seance.commandes.focusGuide' => 'تكبير',
+			'salle.seance.commandes.quitterFocusGuide' => 'إيقاف التكبير',
+			'salle.seance.commandes.ajusterGuide' => 'عرض الصفحة كاملة',
+			'salle.seance.commandes.classeVoitSupport' => 'يرى الفصل الصفحة دون الملاحظات.',
+			'salle.seance.commandes.classeVoitAvecNotes' => 'يرى الفصل الصفحة والملاحظات.',
+			'salle.seance.commandes.classeVoitTableau' => 'يرى الفصل السبورة دون الصفحة.',
 			'salle.seance.bibliotheque.intro' => 'المادة التي تختارها تُفتح لك وحدك. يبقى الفصل على المادة الحالية حتى «عرض على الفصل».',
 			'salle.seance.bibliotheque.apercu' => 'معاينة خاصة',
 			'salle.seance.bibliotheque.apercuClasse' => 'ما زال الطلاب يرون المادة الحالية.',
@@ -2897,6 +2911,8 @@ extension on TraductionsAr {
 			'tc.bibliotheque.filtre.type' => 'النوع',
 			'tc.bibliotheque.filtre.disponibilite' => 'التوفر',
 			'tc.bibliotheque.vide.message' => 'لا مادة منشورة حتى الآن',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.vide.invitation' => 'سيضع معلموك هنا مواد دروسك.',
 			'tc.bibliotheque.aucunResultat.message' => 'لا مادة مطابقة',
 			'tc.bibliotheque.aucunResultat.invitation' => 'جرّب كلمة أخرى، أو خفّف عوامل التصفية.',
@@ -2904,8 +2920,6 @@ extension on TraductionsAr {
 			'tc.bibliotheque.indisponible.action' => 'إعادة المحاولة',
 			'tc.bibliotheque.introuvable.message' => 'هذه المادة غير مفتوحة لك',
 			'tc.bibliotheque.introuvable.invitation' => 'ربما سُحبت، أو هي مخصصة لفصل آخر. يمكن لمعلمك أن يعيد فتحها لك.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.offline.aTelecharger' => 'للتنزيل',
 			'tc.bibliotheque.offline.enCours' => 'جارٍ التنزيل',
 			'tc.bibliotheque.offline.enCache' => 'في الذاكرة المؤقتة',

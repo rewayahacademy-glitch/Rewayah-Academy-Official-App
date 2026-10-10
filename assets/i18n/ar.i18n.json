@@ -309,7 +309,14 @@
         "affichage": "العرض",
         "focus": "التركيز",
         "focusSemantique": "التركيز، تكبير المحتوى وتصغير اللوحات",
-        "quitterFocus": "الخروج من التركيز"
+        "quitterFocus": "الخروج من التركيز",
+        "quitterFocusSemantique": "الخروج من التركيز وإظهار اللوحات",
+        "focusGuide": "تكبير",
+        "quitterFocusGuide": "إيقاف التكبير",
+        "ajusterGuide": "عرض الصفحة كاملة",
+        "classeVoitSupport": "يرى الفصل الصفحة دون الملاحظات.",
+        "classeVoitAvecNotes": "يرى الفصل الصفحة والملاحظات.",
+        "classeVoitTableau": "يرى الفصل السبورة دون الصفحة."
       },
       "bibliotheque": {
         "intro": "المادة التي تختارها تُفتح لك وحدك. يبقى الفصل على المادة الحالية حتى «عرض على الفصل».",

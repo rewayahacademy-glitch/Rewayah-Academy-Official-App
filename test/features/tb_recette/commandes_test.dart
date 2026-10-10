@@ -311,6 +311,10 @@ void main() {
       await _ouvrir(tester, RoleSeance.enseignant, SituationTb.cmd01);
       // A la premiere page, pas de fleche precedente (NAV-FLECHES-1).
       expect(find.byKey(const ValueKey<String>('nav-precedent')), findsNothing);
+      // TB-RC (M7) : la ligne « La classe voit… » descend la pagination ;
+      // comme une personne, on l'amene dans la vue.
+      await tester.ensureVisible(_pagination);
+      await tester.pump();
       await tester.tap(find.byKey(const ValueKey<String>('nav-suivant')));
       await tester.pump();
       expect(
@@ -570,6 +574,9 @@ void main() {
           ),
           sens: sens,
         );
+        // TB-RC (M7) : la pagination est amenee dans la vue.
+        await tester.ensureVisible(_pagination);
+        await tester.pump();
         await tester.tap(find.byKey(const ValueKey<String>('nav-suivant')));
         await tester.pump();
         final Finder precedent = find.byKey(

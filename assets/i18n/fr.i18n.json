@@ -377,7 +377,14 @@
         "affichage": "Affichage",
         "focus": "Focus",
         "focusSemantique": "Focus, agrandir le contenu et réduire les panneaux",
-        "quitterFocus": "Quitter le focus"
+        "quitterFocus": "Quitter le focus",
+        "quitterFocusSemantique": "Quitter le focus et revoir les panneaux",
+        "focusGuide": "Agrandir",
+        "quitterFocusGuide": "Arrêter d'agrandir",
+        "ajusterGuide": "Voir toute la page",
+        "classeVoitSupport": "La classe voit la page, sans les notes.",
+        "classeVoitAvecNotes": "La classe voit la page et les notes.",
+        "classeVoitTableau": "La classe voit le tableau, sans la page."
       },
       "bibliotheque": {
         "intro": "Un support choisi s'ouvre pour vous seul. La classe garde le support actuel jusqu'à « Présenter ».",

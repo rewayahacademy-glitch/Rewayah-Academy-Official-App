@@ -11633,6 +11633,27 @@ class Traductions$salle$seance$commandes$fr {
 
 	/// fr: 'Quitter le focus'
 	String get quitterFocus => 'Quitter le focus';
+
+	/// fr: 'Quitter le focus et revoir les panneaux'
+	String get quitterFocusSemantique => 'Quitter le focus et revoir les panneaux';
+
+	/// fr: 'Agrandir'
+	String get focusGuide => 'Agrandir';
+
+	/// fr: 'Arrêter d'agrandir'
+	String get quitterFocusGuide => 'Arrêter d\'agrandir';
+
+	/// fr: 'Voir toute la page'
+	String get ajusterGuide => 'Voir toute la page';
+
+	/// fr: 'La classe voit la page, sans les notes.'
+	String get classeVoitSupport => 'La classe voit la page, sans les notes.';
+
+	/// fr: 'La classe voit la page et les notes.'
+	String get classeVoitAvecNotes => 'La classe voit la page et les notes.';
+
+	/// fr: 'La classe voit le tableau, sans la page.'
+	String get classeVoitTableau => 'La classe voit le tableau, sans la page.';
 }
 
 // Path: salle.seance.bibliotheque
@@ -16212,6 +16233,13 @@ extension on Traductions {
 			'salle.seance.commandes.focus' => 'Focus',
 			'salle.seance.commandes.focusSemantique' => 'Focus, agrandir le contenu et réduire les panneaux',
 			'salle.seance.commandes.quitterFocus' => 'Quitter le focus',
+			'salle.seance.commandes.quitterFocusSemantique' => 'Quitter le focus et revoir les panneaux',
+			'salle.seance.commandes.focusGuide' => 'Agrandir',
+			'salle.seance.commandes.quitterFocusGuide' => 'Arrêter d\'agrandir',
+			'salle.seance.commandes.ajusterGuide' => 'Voir toute la page',
+			'salle.seance.commandes.classeVoitSupport' => 'La classe voit la page, sans les notes.',
+			'salle.seance.commandes.classeVoitAvecNotes' => 'La classe voit la page et les notes.',
+			'salle.seance.commandes.classeVoitTableau' => 'La classe voit le tableau, sans la page.',
 			'salle.seance.bibliotheque.intro' => 'Un support choisi s\'ouvre pour vous seul. La classe garde le support actuel jusqu\'à « Présenter ».',
 			'salle.seance.bibliotheque.apercu' => 'Aperçu personnel',
 			'salle.seance.bibliotheque.apercuClasse' => 'Les élèves voient toujours le support actuel.',
@@ -16421,6 +16449,8 @@ extension on Traductions {
 			'presence.retardMinutes' => ({required Object minutes}) => '${minutes} min après l\'heure',
 			'presence.silenceInstant' => 'sans nouvelles depuis quelques secondes',
 			'presence.silenceMinutes' => ({required Object minutes}) => 'sans nouvelles depuis ${minutes} min',
+			_ => null,
+		} ?? switch (path) {
 			'presence.attenteInstant' => 'le cours vient de commencer',
 			'presence.attenteMinutes' => ({required Object minutes}) => 'le cours a commencé il y a ${minutes} min',
 			'presence.etatMicroOuvert' => 'son micro est ouvert',
@@ -16428,8 +16458,6 @@ extension on Traductions {
 			'bienvenue.titre' => 'Bienvenue',
 			'bienvenue.accroche' => 'Apprendre le Coran en classe, avec un enseignant attitré',
 			'bienvenue.phrase' => 'Des séances en visio, à horaire fixe, pour vous ou pour les élèves de votre foyer.',
-			_ => null,
-		} ?? switch (path) {
 			'bienvenue.pointsTitre' => 'Comment ça se passe',
 			'bienvenue.pointClasseTitre' => 'Une classe stable',
 			'bienvenue.pointClasse' => 'Les mêmes camarades et le même horaire, chaque semaine.',
@@ -16935,6 +16963,8 @@ extension on Traductions {
 			'creneaux.titre' => 'Créneaux',
 			'creneaux.ongletHeures' => 'Mes heures',
 			'creneaux.ongletEleves' => 'Élèves en attente',
+			_ => null,
+		} ?? switch (path) {
 			'creneaux.mesEleves' => ({required Object nombre, required Object plafond}) => 'Vous suivez ${nombre} élèves sur ${plafond} possibles.',
 			'creneaux.aucunEleve' => 'Aucun élève en attente sur vos heures',
 			'creneaux.aucunEleveDetail' => 'Proposez d\'autres heures pour voir plus de familles.',
@@ -16942,8 +16972,6 @@ extension on Traductions {
 			'creneaux.attendUnJour' => 'Attend depuis 1 jour',
 			'creneaux.attendAujourdhui' => 'Demande déposée aujourd\'hui',
 			'creneaux.niveau' => ({required Object niveau}) => 'Niveau ${niveau}',
-			_ => null,
-		} ?? switch (path) {
 			'creneaux.prendre' => ({required Object jour, required Object heure}) => 'Prendre ${jour} à ${heure} h',
 			'creneaux.priseEnCours' => 'Enregistrement',
 			'creneaux.plafondAtteint' => ({required Object nombre}) => 'Vous suivez déjà ${nombre} élèves, votre maximum. Un élève pris est un engagement durable, pas une réservation.',
@@ -17449,6 +17477,8 @@ extension on Traductions {
 			'admin.evaluations.typeInitiale' => 'Initiale',
 			'admin.evaluations.typePeriodique' => 'Périodique',
 			'admin.evaluations.typeReevaluation' => 'Réévaluation',
+			_ => null,
+		} ?? switch (path) {
 			'admin.evaluations.typeCertification' => 'Certification',
 			'admin.evaluations.statutPlanifiee' => 'Planifiée',
 			'admin.evaluations.statutRealisee' => 'Réalisée',
@@ -17456,8 +17486,6 @@ extension on Traductions {
 			'admin.evaluations.resultatReussi' => 'Réussi',
 			'admin.evaluations.resultatEchec' => 'Échec',
 			'admin.evaluations.resultatARevoir' => 'À revoir',
-			_ => null,
-		} ?? switch (path) {
 			'admin.evaluations.planifier' => 'Planifier une évaluation',
 			'admin.evaluations.planifierTitre' => 'Planifier une évaluation',
 			'admin.evaluations.champEleveId' => 'Identifiant de l\'élève',
@@ -17963,6 +17991,8 @@ extension on Traductions {
 			'compte.themeClairDetail' => 'Fond clair, quel que soit le réglage de votre appareil',
 			'compte.themeSombre' => 'Sombre',
 			'compte.themeSombreDetail' => 'Fond sombre, quel que soit le réglage de votre appareil',
+			_ => null,
+		} ?? switch (path) {
 			'compte.accessibilite' => 'Accessibilité',
 			'compte.animations' => 'Réduire les animations',
 			'compte.animationsDetail' => 'Limite les mouvements à l\'écran',
@@ -17970,8 +18000,6 @@ extension on Traductions {
 			'compte.effetsDetail' => 'Limite les transparences et les ombres',
 			'compte.lisibiliteDetail' => 'La taille du texte suit le réglage de votre appareil.',
 			'compte.langueRegion' => 'Langue et région',
-			_ => null,
-		} ?? switch (path) {
 			'compte.francaisDetail' => 'Langue de l\'interface',
 			'compte.actif' => 'Actif',
 			'compte.arabe' => 'Arabe',
@@ -18477,6 +18505,8 @@ extension on Traductions {
 			'classe.observation.minutes' => ({required Object minutes}) => '${minutes} min',
 			'classe.observation.minutesSecondes' => ({required Object minutes, required Object secondes}) => '${minutes} min ${secondes} s',
 			'classe.observation.secondes' => ({required Object secondes}) => '${secondes} s',
+			_ => null,
+		} ?? switch (path) {
 			'classe.observation.motif.visitesEpuisees' => 'Vous avez utilisé vos visites pour cette séance.',
 			'classe.observation.motif.tempsEpuise' => 'Votre temps d\'observation est épuisé pour cette séance.',
 			'classe.observation.motif.seanceNonCommencee' => 'L\'observation ouvre quand la séance commence.',
@@ -18484,8 +18514,6 @@ extension on Traductions {
 			'classe.observation.motif.seanceNonTenue' => 'Cette séance n\'a pas lieu : il n\'y a rien à observer.',
 			'classe.observation.motif.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
 			'classe.observation.motif.observationDesactivee' => 'L\'observation est fermée pour cette classe.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.observation.motif.lienAbsent' => 'Aucun élève de votre foyer n\'est rattaché à cette séance.',
 			'classe.observation.motif.enfantAbsent' => ({required Object prenom}) => 'L\'observation attend l\'arrivée de ${prenom}.',
 			'classe.observation.motif.presenceEnVerification' => ({required Object prenom}) => 'La présence de ${prenom} est en cours de vérification.',
@@ -18991,6 +19019,8 @@ extension on Traductions {
 			'controleur.historique.duree' => ({required Object minutes}) => '${minutes} min observées',
 			'controleur.historique.meta' => ({required Object heure, required Object duree}) => '${heure} · ${duree}',
 			'controleur.historique.dateHeure' => ({required Object date, required Object heure}) => '${date}, ${heure}',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.historique.dateHeureAuteur' => ({required Object date, required Object heure, required Object auteur}) => '${date}, ${heure} · ${auteur}',
 			'controleur.historique.ligne' => ({required Object date, required Object classe, required Object enseignant, required Object duree, required Object statut}) => '${date}, ${classe}, ${enseignant}, ${duree}, ${statut}',
 			'controleur.historique.vide' => 'Aucun contrôle pour le moment.',
@@ -18998,8 +19028,6 @@ extension on Traductions {
 			'controleur.historique.resultats' => ({required Object n}) => 'Contrôles affichés : ${n}',
 			'controleur.historique.titreDetail' => ({required Object classe, required Object date}) => '${classe} · ${date}',
 			'controleur.historique.sectionMission' => 'Classe observée',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.historique.sectionObservation' => 'Observation du Contrôleur',
 			'controleur.historique.sectionComplements' => 'Compléments',
 			'controleur.historique.sectionEchanges' => 'Échanges avec l\'administration',
@@ -19505,6 +19533,8 @@ extension on Traductions {
 			'tc.observation.disponibilite.horsFenetre' => 'L\'observation est possible seulement pendant la séance.',
 			'tc.observation.disponibilite.desactiveeTitre' => 'Observation fermée pour cette classe',
 			'tc.observation.disponibilite.desactivee' => 'L\'administration a fermé l\'observation de cette classe.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.disponibilite.lienAbsentTitre' => 'Aucun de vos enfants dans cette séance',
 			'tc.observation.disponibilite.lienAbsent' => 'L\'observation est réservée aux parents des élèves de la séance.',
 			'tc.observation.disponibilite.enfantAbsentTitre' => 'Votre enfant n\'est pas dans la séance',
@@ -19512,8 +19542,6 @@ extension on Traductions {
 			'tc.observation.disponibilite.presenceTitre' => 'Présence en cours de vérification',
 			'tc.observation.disponibilite.presence' => 'L\'observation s\'ouvre dès que la présence de votre enfant est confirmée.',
 			'tc.observation.disponibilite.visiteOuverteTitre' => 'Une visite est déjà ouverte',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.disponibilite.visiteOuverte' => 'Une de vos visites est encore ouverte pour cette séance, sur cet appareil ou sur un autre. Elle compte parmi vos visites.',
 			'tc.observation.disponibilite.fermeeTitre' => 'Observation pas encore ouverte',
 			'tc.observation.disponibilite.fermee' => 'L\'observation des séances par les parents n\'est pas encore ouverte. Elle sera proposée ici dès son ouverture.',

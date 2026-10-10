@@ -5,14 +5,71 @@
 
 import 'package:flutter/material.dart';
 
+import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/barre_precedent_suivant.dart';
 import '../../core/widgets/commande_salle.dart';
 import '../../core/widgets/pressable.dart';
+
+/// Les noms du focus : le mot visible de l'action ([libelle], Commandes),
+/// le mot d'etat de la bascule ([etat], barre de l'appel et barre du
+/// support), le nom lu, le pictogramme.
+typedef NomsFocus = ({
+  String libelle,
+  String etat,
+  String semantique,
+  AppIcon icone,
+});
+
+/// Revue TB-R m1 et m2 (plan V2 §5 et §20) : un seul nom pour entrer dans le
+/// focus et en sortir, le meme dans les Commandes, la barre de l'appel et la
+/// barre du support. « Focus » / « Quitter le focus » ; en Interface guidee,
+/// « Agrandir » / « Arreter d'agrandir ». Jamais « Reduire » (le mot de la
+/// fermeture d'un panneau). Le nom lu contient le mot visible (W-253).
+///
+/// Une bascule montre son etat par un mot court (ETATS-BTN-1) : la barre de
+/// l'appel et celle du support disent « Focus » (« Agrandir » en guidee)
+/// dans les deux etats, l'etat se lisant au disque plein et a l'icone ; le
+/// nom lu dit l'action (« Quitter le focus et revoir les panneaux »). Le mot
+/// garde une ligne : la barre ne grandit pas en focus (decide par
+/// delegation le 10/10, regle ETATS-BTN-1 et garantie TB-5 « la surface
+/// descend au moins aussi bas en focus »).
+NomsFocus nomsFocus(BuildContext context, {required bool agrandi}) {
+  final bool guidee = AppMetriques.of(context).mode == InterfaceMode.enfant;
+  if (guidee) {
+    return agrandi
+        ? (
+            libelle: t.salle.seance.commandes.quitterFocusGuide,
+            etat: t.salle.seance.commandes.focusGuide,
+            semantique: t.salle.seance.commandes.quitterFocusGuide,
+            icone: AppIcons.reduire,
+          )
+        : (
+            libelle: t.salle.seance.commandes.focusGuide,
+            etat: t.salle.seance.commandes.focusGuide,
+            semantique: t.salle.seance.commandes.focusGuide,
+            icone: AppIcons.agrandir,
+          );
+  }
+  return agrandi
+      ? (
+          libelle: t.salle.seance.commandes.quitterFocus,
+          etat: t.salle.seance.commandes.focus,
+          semantique: t.salle.seance.commandes.quitterFocusSemantique,
+          icone: AppIcons.reduire,
+        )
+      : (
+          libelle: t.salle.seance.commandes.focus,
+          etat: t.salle.seance.commandes.focus,
+          semantique: t.salle.seance.commandes.focusSemantique,
+          icone: AppIcons.agrandir,
+        );
+}
 
 /// Le cadre commun des pastilles de la barre : surface surelevee, filet.
 BoxDecoration _cadre(AppPalette palette) => palette.surfaceRaised.decoration(
@@ -83,14 +140,20 @@ class PaginationSupport extends StatelessWidget {
     // Aux bornes la fleche disparait (NAV-FLECHES-1), elle n'est pas grisee.
     final VoidCallback? precedente = page > 1 ? onPrecedente : null;
     final VoidCallback? suivante = page < pages ? onSuivante : null;
+    // TB_RAPPORT n. 9 : en version longue, « Page 1 sur 12 » peut passer a
+    // la ligne (texte agrandi) ; la pastille devient un rectangle arrondi et
+    // garde une marge tout autour : les disques des fleches restent dedans,
+    // jamais poses sur son bord ni au-dela de son arrondi.
     return DecoratedBox(
       key: const ValueKey<String>('pagination-support'),
       decoration: palette.surfaceRaised.decoration(
-        borderRadius: AppRadius.arrondiFull,
+        borderRadius: longue ? AppRadius.arrondiLg : AppRadius.arrondiFull,
         side: palette.borderHairline.asBorderSide(),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+        padding: longue
+            ? const EdgeInsets.all(AppSpacing.xs)
+            : const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
         child: BarrePrecedentSuivant(
           etendue: longue,
           position: longue
@@ -140,6 +203,7 @@ class ZoomLocal extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final ThemeData theme = Theme.of(context);
     final VoidCallback? agrandir = onAgrandir;
+    final NomsFocus noms = nomsFocus(context, agrandi: agrandi);
     return Row(
       key: const ValueKey<String>('zoom-local'),
       mainAxisSize: MainAxisSize.min,
@@ -190,10 +254,12 @@ class ZoomLocal extends StatelessWidget {
           // Meme bascule que dans le dock (ETATS-BTN-1) : un seul composant,
           // donc le meme rendu a trois signaux (disque plein ou contour,
           // icone reduire / agrandir, mot d'etat).
+          // Revue TB-R m1 : le nom du focus, le meme partout ([nomsFocus]).
           CommandeSalle(
             key: const ValueKey<String>('bouton-agrandir-barre'),
-            icone: (agrandi ? AppIcons.reduire : AppIcons.agrandir).repos,
-            libelle: agrandi ? t.salle.seance.reduire : t.salle.seance.agrandir,
+            icone: noms.icone.repos,
+            libelle: noms.etat,
+            libelleSemantique: noms.semantique,
             bascule: agrandi,
             onPress: agrandir,
           ),

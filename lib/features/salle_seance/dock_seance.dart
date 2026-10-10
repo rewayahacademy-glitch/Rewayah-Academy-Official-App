@@ -20,6 +20,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/commande_salle.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import 'actions_seance.dart';
+import 'barre_support.dart' show NomsFocus, nomsFocus;
 import 'feuille_micro_bloque.dart';
 import 'vue_seance.dart';
 
@@ -194,13 +195,17 @@ class DockSeance extends StatelessWidget {
       case CommandeDock.agrandir:
         final VoidCallback? agrandir = actions.onAgrandir;
         if (agrandir == null) return null;
+        // Revue TB-R m1 : le nom du focus, le meme que dans les Commandes et
+        // la barre du support ; jamais « Reduire », le mot d'un panneau.
+        final NomsFocus noms = nomsFocus(context, agrandi: agrandi);
         return BoutonAppel(
           key: const ValueKey<String>('bouton-agrandir'),
-          icone: (agrandi ? AppIcons.reduire : AppIcons.agrandir).repos,
+          icone: noms.icone.repos,
           // Bascule a deux etats comme micro et camera (ETATS-BTN-1) : plein
           // quand le support occupe l'ecran, contour seul sinon, mot d'etat.
           bascule: agrandi,
-          libelle: agrandi ? t.salle.seance.reduire : t.salle.seance.agrandir,
+          libelle: noms.etat,
+          libelleSemantique: noms.semantique,
           onPress: agrandir,
         );
       case CommandeDock.reseau:
