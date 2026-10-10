@@ -17,6 +17,11 @@ BEGIN
     RETURN;
   END IF;
 
+  IF auth.jwt() ->> 'sub' IS DISTINCT FROM v_id::text THEN
+    RAISE EXCEPTION 'jeton agent refuse'
+      USING ERRCODE = '42501';
+  END IF;
+
   SELECT p.id
     INTO v_profil_observe
     FROM public.jetons_agent t
