@@ -27,6 +27,8 @@ where id = 'f16fffff-0000-0000-0000-000000000011';
 do $notification$
 declare
   v_langue text;
+  v_cohorte text;
+  v_admin jsonb;
   v_id uuid;
   v_received integer;
   v_closed integer;
@@ -37,9 +39,21 @@ declare
   v_suivi record;
 begin
   select code into v_langue from public.langues_cours where actif order by code limit 1;
-  if v_langue is null then
-    raise exception 'B-09: fixture requires at least one active course language';
+  select code into v_cohorte
+  from public.cohortes_age
+  where actif and type_public = 'enfant'
+  order by ordre, code
+  limit 1;
+  if v_langue is null or v_cohorte is null then
+    raise exception 'B-09: fixture requires an active language and child cohort';
   end if;
+
+  insert into public.student_profiles (profile_id, langue_cours, cohorte)
+  values (
+    'f1660000-0000-0000-0000-000000000002',
+    v_langue,
+    v_cohorte
+  );
 
   insert into public.demandes_horaires_famille
     (eleve_id, type_public, langue_code, fuseau_iana, jours, heures_locales, source)
@@ -162,6 +176,21 @@ begin
           'Europe/Paris', array[3]::smallint[], array[11]::smallint[],
           'personnalisee')
   returning id into v_rejected_request;
+
+  select ligne into v_admin
+  from public.regroupements_c11bis_admin() AS projection(ligne)
+  where ligne ->> 'type_public' = 'enfant'
+    and ligne ->> 'langue_code' = v_langue
+    and jsonb_array_length(ligne -> 'occurrences') = 1;
+  if v_admin is null
+     or v_admin ->> 'langue_nom' is null
+     or v_admin ->> 'fuseau_iana' <> 'Europe/Paris'
+     or (v_admin ->> 'nombre_eleves')::integer <> 1
+     or jsonb_array_length(v_admin -> 'autres_fuseaux') <> 0
+     or v_admin ? 'eleve_id' then
+    raise exception 'M6: projection admin incomplète ou divulgatrice: %', v_admin;
+  end if;
+
   perform public.refuser_demande_horaire(v_rejected_request, 'refus_direction');
   if not exists (
     select 1 from public.demandes_horaires_famille
