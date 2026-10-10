@@ -375,7 +375,7 @@ BEGIN
 
   SELECT projection
     INTO v_projection
-    FROM public.regroupements_c11bis_admin() AS projection
+    FROM public.regroupements_c11bis_admin() AS entries(projection)
    WHERE projection ->> 'regroupement_id' = 'g:' || v_groupe::text;
   SELECT count(*)::integer INTO v_projection_eleves
     FROM public.groupe_membres
