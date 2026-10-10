@@ -547,6 +547,8 @@ declare
   v_coalesce_pos integer;
   v_open_pos integer;
   v_close_pos integer;
+  v_comma_pos integer;
+  v_fallback text;
   v_backslash_escape boolean := false;
   v_role_alias text;
   v_role_alias_previous_count integer;
@@ -711,6 +713,8 @@ begin
       v_account_pos := strpos(v_compact, 'app_account_valid()');
       v_coalesce_pos := strpos(v_compact, 'coalesce(');
       v_close_pos := 0;
+      v_comma_pos := 0;
+      v_fallback := null;
       v_depth := 1;
       v_i := v_coalesce_pos + length('coalesce(');
 
@@ -724,14 +728,20 @@ begin
             v_close_pos := v_i;
             exit;
           end if;
+        elsif v_char = ',' and v_depth = 1 and v_comma_pos = 0 then
+          v_comma_pos := v_i;
         end if;
         v_i := v_i + 1;
       end loop;
+      if v_comma_pos > 0 and v_close_pos > v_comma_pos then
+        v_fallback := substring(v_compact from v_comma_pos + 1 for v_close_pos - v_comma_pos - 1);
+      end if;
 
        if v_coalesce_pos = 0
           or v_role_pos = 0
           or v_account_pos = 0
           or v_close_pos = 0
+          or v_fallback is distinct from 'false'
           or lower(btrim(substring(v_compact from v_close_pos + 1))) <> 'then'
           or v_compact ~ 'app_role\(\)=''x''(=false|isfalse|isnottrue)'
           or v_compact ~ 'coalesce\([^)]*not(public\.)?app_role\('
