@@ -12,7 +12,7 @@ Les corps SQL du ledger ont été comparés aux fichiers locaux après retrait d
 
 | Entrée PROD | Corps ledger | Source locale comparée | Résultat |
 |---|---:|---|---|
-| `20260912212505 / 0011_presence_bornee_controleur_invisible` | 2 344 caractères, 1 instruction | `supabase/migrations/0011_presence_bornee.sql`, blob `40df0e22cb5a5276c30199d3f179c0ad2becd5fe` sur ccr | Égalité normalisée exacte. Cette source n'est plus « sans homonyme fiable » pour le rapprochement de corps. |
+| `20260912212505 / 0011_presence_bornee_controleur_invisible` | 2 344 caractères, 1 instruction | `supabase/migrations/0011_presence_bornee.sql`, blob `40df0e22cb5a5276c30199d3f179c0ad2becd5fe` sur ccr ; candidat historique `0011_presence_bornee.sql` à `0bfc9e46c0ddc4a013273b8ced8a49791e327ba8`, blob `e6b7e9c37aebf9e46facc49b29cc57c469f1530d` | Les deux sources donnent l'égalité normalisée exacte avec le corps du ledger. Cette entrée n'est plus « sans homonyme fiable » pour le rapprochement de corps. |
 | `20260912025111 / 0006_init` | 923 caractères, 1 instruction | `0006_rattrapage_semaine_utc_et_foyer.sql`, blob `ff26f06a17b5797198a3b37bb206f464927842bd` | Différent après normalisation. |
 | `20260912025141 / 0007_init` | 11 575 caractères, 1 instruction | `0007_coran_structure_position_presence.sql`, blob `ee0b87b3c4f90654bc3c4662fca5ff1ee05a553c` | Différent après normalisation. |
 | `20260912025212 / 0008_init` | 6 598 caractères, 1 instruction | `0008_attribution_manuelle.sql`, blob `24a9f3f3b3827c58cb2a0f5c580770209486d12b` | Différent après normalisation. |
