@@ -261,6 +261,23 @@ enum ConservationNotes {
 /// defaut : un etat qu'on ne connait pas ne se montre pas (TB-BR-23).
 enum EtatEnregistrement { actif, inactif, inconnu }
 
+/// TB-RC (revue TB-R, M1 ; plan V2 §12) : le support presente, tel qu'il
+/// arrive chez le destinataire (eleve, guidee). L'enseignant connait deja
+/// l'ouverture par la Bibliotheque (« Ouverture du support… », TB-8).
+/// Demonstration : les situations « Le support arrive » et « Ressource
+/// indisponible » ; production : le chargement reel des pages (BR-1).
+enum EtatSupportRecu {
+  /// La page presentee est affichee.
+  pret,
+
+  /// « Le support arrive… » : le dernier contenu reste, marque en attente ;
+  /// l'audio continue.
+  enChargement,
+
+  /// « Le support ne s'affiche pas. » : Reessayer, sans quitter la seance.
+  indisponible,
+}
+
 /// Le controle de la seance, quand la donnee existe (plan V2 §4.3, §19.6,
 /// TB12) : l'oeil informe, il ne declenche rien et ne donne aucun droit.
 /// Aucune valeur « inconnu » : sans donnee, [VueSeance.controle] est `null`
@@ -508,7 +525,12 @@ class VueSeance {
     this.synchroTableau = SynchroTableau.partage,
     this.traitsNonPartages = const <String>{},
     this.conservation = ConservationNotes.seanceSeulement,
+    this.supportRecu = EtatSupportRecu.pret,
   });
+
+  /// TB-RC (M1, plan V2 §12) : le support presente chez le destinataire.
+  /// Lu par [etatSupportRecu], jamais directement par un widget.
+  final EtatSupportRecu supportRecu;
 
   /// TB-11b (plan V2 §10, §12 ; ERR-01, ERR-02) : l'etat du tableau
   /// partage chez la personne devant l'ecran, independant de [connexion].
@@ -1251,6 +1273,46 @@ class VueSeance {
   /// support : l'enseignant ; l'eleve voit le tableau sans consigne.
   bool get voitConsigneTableauLibre => role == RoleSeance.enseignant;
 
+  /// TB-RC (revue TB-R, m23) : la salle de qui mene la seance (colonne
+  /// d'outils et vignette de tablette plus etroite). Capacite lue par les
+  /// widgets a la place du role.
+  bool get meneLaSeance => _enseignant;
+
+  // --- Support recu (TB-RC, revue TB-R M1 ; plan V2 §12) ---
+
+  /// L'etat du support presente chez la personne devant l'ecran : le
+  /// destinataire seul (eleve, guidee) ; l'enseignant suit l'ouverture dans
+  /// la Bibliotheque. Sans support presente, rien a attendre.
+  EtatSupportRecu get etatSupportRecu =>
+      _enseignant || supportPresente == null || estFinie
+      ? EtatSupportRecu.pret
+      : supportRecu;
+
+  /// La phrase du §12 cote eleve, ou `null` quand le support est la.
+  String? get texteSupportRecu => switch (etatSupportRecu) {
+    EtatSupportRecu.pret => null,
+    EtatSupportRecu.enChargement => t.salle.seance.surface.supportArrive,
+    EtatSupportRecu.indisponible => t.salle.seance.surface.supportIndisponible,
+  };
+
+  /// La cause probable et quoi faire (K-59), sous la phrase de l'echec.
+  String? get detailSupportRecu =>
+      etatSupportRecu == EtatSupportRecu.indisponible
+      ? t.salle.seance.surface.supportIndisponibleDetail
+      : null;
+
+  /// Le dernier contenu reste, marque « en attente » (§12).
+  bool get supportEnAttente => etatSupportRecu != EtatSupportRecu.pret;
+
+  /// « Reessayer » sans quitter la seance (§12) : seulement l'echec.
+  bool get voitReessayerSupport =>
+      etatSupportRecu == EtatSupportRecu.indisponible;
+
+  /// TB-RC (revue TB-R, m11) : un changement de presentation (page, support,
+  /// Tableau) est annonce discretement a qui le recoit : eleve, guidee et
+  /// observateurs (lecture). L'enseignant, qui le fait, ne l'entend pas.
+  bool get annonceLaPresentation => !_enseignant;
+
   /// Le contexte deplie se montre : seulement depuis la capsule.
   bool get contexteOuvert => voitCapsule && contexte != ContexteOuvert.aucun;
 
@@ -1386,6 +1448,7 @@ class VueSeance {
     SynchroTableau? synchroTableau,
     Set<String>? traitsNonPartages,
     ConservationNotes? conservation,
+    EtatSupportRecu? supportRecu,
   }) => VueSeance(
     role: role ?? this.role,
     nomClasse: nomClasse,
@@ -1427,5 +1490,6 @@ class VueSeance {
     synchroTableau: synchroTableau ?? this.synchroTableau,
     traitsNonPartages: traitsNonPartages ?? this.traitsNonPartages,
     conservation: conservation ?? this.conservation,
+    supportRecu: supportRecu ?? this.supportRecu,
   );
 }

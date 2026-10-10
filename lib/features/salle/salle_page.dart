@@ -35,6 +35,7 @@ import '../../core/widgets/commande_salle.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_presence.dart';
+import '../../core/widgets/offline_banner.dart' show ReserveCoinFin;
 import '../../core/widgets/page_immersive.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/permanent_notice.dart';
@@ -1000,6 +1001,10 @@ class _EnteteControle extends StatelessWidget {
     final AppColorPair salle = AppPalette.of(context).surfaceInverse;
     final String? attente = _attenteDe(vue);
     final _EtatLien lien = _etatDuLien(vue);
+    // TB-RC (TB_RAPPORT §d n. 14) : en demonstration, le ruban d'angle
+    // (`ReserveCoinFin`) ne recouvre jamais « Quitter » ; en production, la
+    // reserve vaut 0.
+    final Widget reserve = SizedBox(width: ReserveCoinFin.de(context));
 
     // SALLE-200-1 : texte agrandi au-dela du seuil, la zone haute tient sur
     // une ligne : l'etat du lien, puis « Quitter » en icone seule (nom lu et
@@ -1032,6 +1037,7 @@ class _EnteteControle extends StatelessWidget {
             libelle: t.salle.quitter,
             onPress: onQuitter,
           ),
+          reserve,
         ],
       );
     }
@@ -1072,6 +1078,7 @@ class _EnteteControle extends StatelessWidget {
           pleineLargeur: false,
           onPress: onQuitter,
         ),
+        reserve,
       ],
     );
   }
@@ -1556,19 +1563,24 @@ class _PresentationLue extends StatelessWidget {
         if (page != null) ...<Widget>[
           // Un `Wrap` : a texte agrandi et a 320, la page passe sous le
           // titre plutot que de l'etrangler (SALLE-200-1).
-          Wrap(
-            spacing: AppSpacing.md,
-            runSpacing: AppSpacing.sm,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: <Widget>[
-              Text(
-                page.titre,
-                style: salle.applyTo(
-                  Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
+          // TB-RC (revue TB-R, m12) : titre et « 3 / 12 » sont deja dits par
+          // le nom de la page de la surface (annonce quand elle change) :
+          // lus une fois, pas trois.
+          ExcludeSemantics(
+            child: Wrap(
+              spacing: AppSpacing.md,
+              runSpacing: AppSpacing.sm,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: <Widget>[
+                Text(
+                  page.titre,
+                  style: salle.applyTo(
+                    Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
+                  ),
                 ),
-              ),
-              IndicateurPage(page: page.page, pages: page.total),
-            ],
+                IndicateurPage(page: page.page, pages: page.total),
+              ],
+            ),
           ),
           Ecart.vMd,
         ],

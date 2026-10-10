@@ -77,20 +77,25 @@ class CarteRessource extends StatelessWidget {
     return AppCard(
       onPress: onPress,
       libelleSemantique: libelleSemantique,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          SizedBox(
-            width: largeur,
-            child: VignetteRessource(
-              couverture: CouvertureRessource.pour(ressource),
-              image: couvertureDeposee,
-              compacte: largeur <= AppSpacing.respiration,
+      // TB-RC (TB_RAPPORT §d n. 22) : le nom lu dit deja titre, type et
+      // etat ; le texte peint se tait, la carte n'est pas lue deux fois.
+      child: ExcludeSemantics(
+        excluding: onPress != null,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(
+              width: largeur,
+              child: VignetteRessource(
+                couverture: CouvertureRessource.pour(ressource),
+                image: couvertureDeposee,
+                compacte: largeur <= AppSpacing.respiration,
+              ),
             ),
-          ),
-          Ecart.hLg,
-          Expanded(child: _texte(context)),
-        ],
+            Ecart.hLg,
+            Expanded(child: _texte(context)),
+          ],
+        ),
       ),
     );
   }

@@ -11685,8 +11685,8 @@ class Traductions$salle$seance$bibliotheque$fr {
 	/// fr: 'Fichier non ouvert.'
 	String get echec => 'Fichier non ouvert.';
 
-	/// fr: 'Le fichier de ce support n'a pas pu être chargé. Réessayez, ou revenez aux supports pour en choisir un autre.'
-	String get echecDetail => 'Le fichier de ce support n\'a pas pu être chargé. Réessayez, ou revenez aux supports pour en choisir un autre.';
+	/// fr: 'Le fichier de ce support est indisponible pour le moment. Réessayez, ou revenez aux supports pour en choisir un autre.'
+	String get echecDetail => 'Le fichier de ce support est indisponible pour le moment. Réessayez, ou revenez aux supports pour en choisir un autre.';
 }
 
 // Path: salle.seance.surface
@@ -11705,6 +11705,21 @@ class Traductions$salle$seance$surface$fr {
 
 	/// fr: 'Tableau, le support est masqué'
 	String get supportMasque => 'Tableau, le support est masqué';
+
+	/// fr: 'Le support arrive…'
+	String get supportArrive => 'Le support arrive…';
+
+	/// fr: 'Le support ne s'affiche pas.'
+	String get supportIndisponible => 'Le support ne s\'affiche pas.';
+
+	/// fr: 'Le fichier est indisponible pour le moment, souvent à cause d'une connexion lente. Réessayez : la séance et le son continuent.'
+	String get supportIndisponibleDetail => 'Le fichier est indisponible pour le moment, souvent à cause d\'une connexion lente. Réessayez : la séance et le son continuent.';
+
+	/// fr: 'Réessayer d'afficher le support'
+	String get reessayerSemantique => 'Réessayer d\'afficher le support';
+
+	/// fr: 'Support illustratif'
+	String get supportIllustratif => 'Support illustratif';
 }
 
 // Path: salle.seance.synchro
@@ -16247,10 +16262,15 @@ extension on Traductions {
 			'salle.seance.bibliotheque.revenir' => 'Revenir aux supports',
 			'salle.seance.bibliotheque.ouverture' => 'Ouverture du support…',
 			'salle.seance.bibliotheque.echec' => 'Fichier non ouvert.',
-			'salle.seance.bibliotheque.echecDetail' => 'Le fichier de ce support n\'a pas pu être chargé. Réessayez, ou revenez aux supports pour en choisir un autre.',
+			'salle.seance.bibliotheque.echecDetail' => 'Le fichier de ce support est indisponible pour le moment. Réessayez, ou revenez aux supports pour en choisir un autre.',
 			'salle.seance.surface.aucunSupport' => 'Choisissez un support ou écrivez au tableau.',
 			'salle.seance.surface.page' => ({required Object titre, required Object page, required Object pages}) => '${titre}, page ${page} sur ${pages}',
 			'salle.seance.surface.supportMasque' => 'Tableau, le support est masqué',
+			'salle.seance.surface.supportArrive' => 'Le support arrive…',
+			'salle.seance.surface.supportIndisponible' => 'Le support ne s\'affiche pas.',
+			'salle.seance.surface.supportIndisponibleDetail' => 'Le fichier est indisponible pour le moment, souvent à cause d\'une connexion lente. Réessayez : la séance et le son continuent.',
+			'salle.seance.surface.reessayerSemantique' => 'Réessayer d\'afficher le support',
+			'salle.seance.surface.supportIllustratif' => 'Support illustratif',
 			'salle.seance.synchro.nonPartagees' => 'Vos nouvelles notes ne sont pas partagées.',
 			'salle.seance.synchro.nonPartageesSuite' => 'Les notes en pointillés ne se voient que sur votre écran, le temps que le tableau se reconnecte.',
 			'salle.seance.synchro.seReconnecte' => 'Le tableau se reconnecte.',
@@ -16444,13 +16464,13 @@ extension on Traductions {
 			'presence.corrigeeManuel' => 'Correction manuelle',
 			'presence.finalisee' => 'Définitif',
 			'presence.inconnu' => 'État inconnu',
+			_ => null,
+		} ?? switch (path) {
 			'presence.entreeInstant' => 'en salle à l\'instant',
 			'presence.entreeMinutes' => ({required Object minutes}) => 'en salle depuis ${minutes} min',
 			'presence.retardMinutes' => ({required Object minutes}) => '${minutes} min après l\'heure',
 			'presence.silenceInstant' => 'sans nouvelles depuis quelques secondes',
 			'presence.silenceMinutes' => ({required Object minutes}) => 'sans nouvelles depuis ${minutes} min',
-			_ => null,
-		} ?? switch (path) {
 			'presence.attenteInstant' => 'le cours vient de commencer',
 			'presence.attenteMinutes' => ({required Object minutes}) => 'le cours a commencé il y a ${minutes} min',
 			'presence.etatMicroOuvert' => 'son micro est ouvert',
@@ -16958,13 +16978,13 @@ extension on Traductions {
 			'disponibilites.joursLongs.2' => 'mercredi',
 			'disponibilites.joursLongs.3' => 'jeudi',
 			'disponibilites.joursLongs.4' => 'vendredi',
+			_ => null,
+		} ?? switch (path) {
 			'disponibilites.joursLongs.5' => 'samedi',
 			'disponibilites.joursLongs.6' => 'dimanche',
 			'creneaux.titre' => 'Créneaux',
 			'creneaux.ongletHeures' => 'Mes heures',
 			'creneaux.ongletEleves' => 'Élèves en attente',
-			_ => null,
-		} ?? switch (path) {
 			'creneaux.mesEleves' => ({required Object nombre, required Object plafond}) => 'Vous suivez ${nombre} élèves sur ${plafond} possibles.',
 			'creneaux.aucunEleve' => 'Aucun élève en attente sur vos heures',
 			'creneaux.aucunEleveDetail' => 'Proposez d\'autres heures pour voir plus de familles.',
@@ -17472,13 +17492,13 @@ extension on Traductions {
 			'admin.evaluations.colonneNiveau' => 'Niveau',
 			'admin.evaluations.colonneType' => 'Type',
 			'admin.evaluations.colonneDatePrevue' => 'Prévue le',
+			_ => null,
+		} ?? switch (path) {
 			'admin.evaluations.colonneStatut' => 'Statut',
 			'admin.evaluations.colonneResultat' => 'Résultat',
 			'admin.evaluations.typeInitiale' => 'Initiale',
 			'admin.evaluations.typePeriodique' => 'Périodique',
 			'admin.evaluations.typeReevaluation' => 'Réévaluation',
-			_ => null,
-		} ?? switch (path) {
 			'admin.evaluations.typeCertification' => 'Certification',
 			'admin.evaluations.statutPlanifiee' => 'Planifiée',
 			'admin.evaluations.statutRealisee' => 'Réalisée',
@@ -17986,13 +18006,13 @@ extension on Traductions {
 			'compte.apparence' => 'Apparence',
 			'compte.themeContexte' => 'Choisissez l\'apparence de l\'application. Le changement est immédiat et reste sur cet appareil. Vous pouvez le modifier à tout moment.',
 			'compte.themeSysteme' => 'Système',
+			_ => null,
+		} ?? switch (path) {
 			'compte.themeSystemeDetail' => 'Suit le réglage de votre appareil',
 			'compte.themeClair' => 'Clair',
 			'compte.themeClairDetail' => 'Fond clair, quel que soit le réglage de votre appareil',
 			'compte.themeSombre' => 'Sombre',
 			'compte.themeSombreDetail' => 'Fond sombre, quel que soit le réglage de votre appareil',
-			_ => null,
-		} ?? switch (path) {
 			'compte.accessibilite' => 'Accessibilité',
 			'compte.animations' => 'Réduire les animations',
 			'compte.animationsDetail' => 'Limite les mouvements à l\'écran',
@@ -18500,13 +18520,13 @@ extension on Traductions {
 			'classe.observation.visites' => ({required Object nombre}) => '${nombre} visites disponibles',
 			'classe.observation.resume' => ({required Object visites, required Object duree}) => '${visites} · ${duree} par visite',
 			'classe.observation.restanteAucune' => 'Aucune visite restante pour cette séance',
+			_ => null,
+		} ?? switch (path) {
 			'classe.observation.restanteUne' => '1 visite restante pour cette séance',
 			'classe.observation.restantes' => ({required Object nombre}) => '${nombre} visites restantes pour cette séance',
 			'classe.observation.minutes' => ({required Object minutes}) => '${minutes} min',
 			'classe.observation.minutesSecondes' => ({required Object minutes, required Object secondes}) => '${minutes} min ${secondes} s',
 			'classe.observation.secondes' => ({required Object secondes}) => '${secondes} s',
-			_ => null,
-		} ?? switch (path) {
 			'classe.observation.motif.visitesEpuisees' => 'Vous avez utilisé vos visites pour cette séance.',
 			'classe.observation.motif.tempsEpuise' => 'Votre temps d\'observation est épuisé pour cette séance.',
 			'classe.observation.motif.seanceNonCommencee' => 'L\'observation ouvre quand la séance commence.',
@@ -19014,13 +19034,13 @@ extension on Traductions {
 			'controleur.historique.envoye' => 'Envoyé',
 			'controleur.historique.complementAjoute' => 'Complément ajouté',
 			'controleur.historique.aTerminer' => 'À terminer',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.historique.filtreEtat' => 'État',
 			'controleur.historique.tousEtats' => 'Tous les états',
 			'controleur.historique.duree' => ({required Object minutes}) => '${minutes} min observées',
 			'controleur.historique.meta' => ({required Object heure, required Object duree}) => '${heure} · ${duree}',
 			'controleur.historique.dateHeure' => ({required Object date, required Object heure}) => '${date}, ${heure}',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.historique.dateHeureAuteur' => ({required Object date, required Object heure, required Object auteur}) => '${date}, ${heure} · ${auteur}',
 			'controleur.historique.ligne' => ({required Object date, required Object classe, required Object enseignant, required Object duree, required Object statut}) => '${date}, ${classe}, ${enseignant}, ${duree}, ${statut}',
 			'controleur.historique.vide' => 'Aucun contrôle pour le moment.',
@@ -19528,13 +19548,13 @@ extension on Traductions {
 			'tc.observation.disponibilite.seanceTermineeTitre' => 'La séance est terminée',
 			'tc.observation.disponibilite.seanceTerminee' => 'Vous pourrez observer la prochaine séance.',
 			'tc.observation.disponibilite.seanceNonTenueTitre' => 'Cette séance n\'a pas lieu',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.disponibilite.seanceNonTenue' => 'Elle a été annulée, reportée ou n\'a pas été tenue.',
 			'tc.observation.disponibilite.horsFenetreTitre' => 'La séance n\'est pas ouverte en ce moment',
 			'tc.observation.disponibilite.horsFenetre' => 'L\'observation est possible seulement pendant la séance.',
 			'tc.observation.disponibilite.desactiveeTitre' => 'Observation fermée pour cette classe',
 			'tc.observation.disponibilite.desactivee' => 'L\'administration a fermé l\'observation de cette classe.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.disponibilite.lienAbsentTitre' => 'Aucun de vos enfants dans cette séance',
 			'tc.observation.disponibilite.lienAbsent' => 'L\'observation est réservée aux parents des élèves de la séance.',
 			'tc.observation.disponibilite.enfantAbsentTitre' => 'Votre enfant n\'est pas dans la séance',

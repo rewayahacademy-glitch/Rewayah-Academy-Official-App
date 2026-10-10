@@ -233,9 +233,16 @@ class OutilsEnseignement extends ConsumerWidget {
         ),
       ),
     };
+    // TB-RC (revue TB-R, m12) : un outil seul (Ecrire de l'eleve autorise)
+    // n'est pas un groupe : il garde son seul nom, jamais « Outils
+    // d'enseignement, Ecrire ». Plusieurs outils : le groupe nomme, chaque
+    // tuile dans son propre noeud.
     return Semantics(
       container: true,
-      label: t.salle.seance.outils.titre,
+      explicitChildNodes: true,
+      label: outils.length > 1 || pied != null
+          ? t.salle.seance.outils.titre
+          : null,
       child: KeyedSubtree(
         key: ValueKey<String>('outils-${forme.name}'),
         child: corps,

@@ -7,7 +7,10 @@
 // (`VueSeance.eleves`, source unique du compteur, I-6). Connaissance privee
 // minimale : ni telephone, ni e-mail, ni tuteur, ni « present » / « absent ».
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderAbstractViewport;
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/isolation_bidi.dart';
@@ -113,6 +116,45 @@ class _PanneauElevesState extends State<PanneauEleves> {
   /// inscrits de meme prenom ne se deplient pas ensemble.
   late String? _deplie = _premierDeplie();
 
+  /// TB-RC (TB_RAPPORT §d n. 8) : la carte depliee, amenee entiere dans la
+  /// liste (« Autoriser a ecrire » n'est plus coupe au bas du panneau).
+  final GlobalKey _carteDepliee = GlobalKey(debugLabel: 'carte-depliee');
+
+  @override
+  void initState() {
+    super.initState();
+    _montrerCarteDepliee();
+  }
+
+  /// Quand la carte depliee tient dans la liste mais deborde en bas, la
+  /// liste (elle seule) defile juste assez pour la montrer entiere, ses
+  /// actions comprises. Plus haute que la liste : rien ne bouge, le prenom
+  /// reste en haut. Le contexte deplie depuis la capsule garde la main
+  /// (il amene sa propre section).
+  void _montrerCarteDepliee() {
+    if (widget.entete != null) return;
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      final BuildContext? carte = _carteDepliee.currentContext;
+      if (!mounted || carte == null) return;
+      final ScrollableState? liste = Scrollable.maybeOf(carte);
+      final RenderObject? cible = carte.findRenderObject();
+      if (liste == null || cible is! RenderBox || !cible.hasSize) return;
+      final ScrollPosition position = liste.position;
+      // Le bord de la carte reste visible : une marge sous elle.
+      if (cible.size.height + AppSpacing.md > position.viewportDimension) {
+        return;
+      }
+      final double finCarte = RenderAbstractViewport.of(cible)
+          .getOffsetToReveal(cible, 1)
+          .offset;
+      final double voulu = math.min(
+        finCarte + AppSpacing.md,
+        position.maxScrollExtent,
+      );
+      if (voulu > position.pixels) position.jumpTo(voulu);
+    });
+  }
+
   String? _premierDeplie() {
     for (final EleveSeance e in widget.eleves) {
       if (e.statut == StatutEleveSeance.connecte && e.fiche != null) {
@@ -149,6 +191,7 @@ class _PanneauElevesState extends State<PanneauEleves> {
         final String cle = cleEleveSeance(e);
         final bool deplie = _deplie == cle && e.fiche != null;
         return _CarteEleve(
+          key: deplie ? _carteDepliee : null,
           eleve: e,
           deplie: deplie,
           large: widget.large,
@@ -157,7 +200,10 @@ class _PanneauElevesState extends State<PanneauEleves> {
           autorisationEcrire: widget.autorisationEcrire,
           onBasculer: e.fiche == null
               ? null
-              : () => setState(() => _deplie = deplie ? null : cle),
+              : () {
+                  setState(() => _deplie = deplie ? null : cle);
+                  _montrerCarteDepliee();
+                },
         );
       },
     );
@@ -166,6 +212,7 @@ class _PanneauElevesState extends State<PanneauEleves> {
 
 class _CarteEleve extends StatelessWidget {
   const _CarteEleve({
+    super.key,
     required this.eleve,
     required this.deplie,
     required this.large,
@@ -316,8 +363,14 @@ class _EnTeteEleve extends StatelessWidget {
     final String etat = eleve.peutEcrire
         ? '$statut, ${t.salle.seance.ecriture.peutEcrire}'
         : statut;
+    // TB-RC (revue TB-R, m12) : le nom lu dit deja le prenom et l'etat ; la
+    // ligne peinte se tait (sinon « Mariam, Connecte » est lu deux fois).
     if (basculer == null) {
-      return Semantics(label: '${eleve.prenom}, $etat', child: ligne);
+      return Semantics(
+        container: true,
+        label: '${eleve.prenom}, $etat',
+        child: ExcludeSemantics(child: ligne),
+      );
     }
     return Semantics(
       expanded: deplie,
@@ -326,7 +379,7 @@ class _EnTeteEleve extends StatelessWidget {
         libelleSemantique:
             '${deplie ? t.salle.seance.replierFiche(prenom: eleve.prenom) : t.salle.seance.deplierFiche(prenom: eleve.prenom)}, $etat',
         arrondiFocus: AppRadius.arrondiSm,
-        child: ligne,
+        child: ExcludeSemantics(child: ligne),
       ),
     );
   }
@@ -602,6 +655,11 @@ class _ActionsEleve extends StatelessWidget {
       // besoin » ensemble, comme sur les images.
       (AppIcons.signaler, t.salle.seance.signalerBesoin, actions.onSignaler),
     ];
+    final List<String> libelles = <String>[
+      for (final (AppIcon _, String libelle, ValueChanged<EleveSeance>? r)
+          in liste)
+        if (r != null) libelle,
+    ];
     final List<Widget> tuiles = <Widget>[
       for (final (AppIcon icone, String libelle, ValueChanged<EleveSeance>? r)
           in liste)
@@ -625,18 +683,76 @@ class _ActionsEleve extends StatelessWidget {
     );
     return Padding(
       padding: EdgeInsets.only(top: serre ? AppSpacing.xs : AppSpacing.sm),
-      child: large && tuiles.length > 2
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                rangee(tuiles.sublist(0, 2)),
-                Ecart.vXs,
-                rangee(tuiles.sublist(2)),
-              ],
-            )
-          : rangee(tuiles),
+      // TB-RC (TB-10 reste a, TB_RAPPORT §d n. 23) : le nombre de colonnes
+      // se mesure. Quatre tant que chaque mot tient dans sa tuile, sinon
+      // deux, sinon une : jamais un mot coupe (« Appeler di / scrèteme /
+      // nt » a 768 et 1440 x2). Colonne desktop : deux au plus (images).
+      child: LayoutBuilder(
+        builder: (BuildContext contexte, BoxConstraints c) {
+          int colonnes = colonnesSansCoupure(
+            contexte,
+            libelles: libelles,
+            largeur: c.maxWidth,
+          );
+          if (large) colonnes = math.min(colonnes, 2);
+          colonnes = math.min(colonnes, tuiles.length);
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: AppSpacing.xs,
+            children: <Widget>[
+              for (int i = 0; i < tuiles.length; i += colonnes)
+                rangee(<Widget>[
+                  ...tuiles.sublist(i, math.min(i + colonnes, tuiles.length)),
+                  // La derniere rangee garde la largeur des autres.
+                  for (
+                    int k = tuiles.length;
+                    k < i + colonnes && i + colonnes > tuiles.length;
+                    k++
+                  )
+                    const Spacer(),
+                ]),
+            ],
+          );
+        },
+      ),
     );
   }
+}
+
+/// TB-RC (TB-10 reste a) : le plus grand nombre de colonnes (4, 2 ou 1) ou
+/// chaque mot de chaque [libelles] tient dans sa tuile, au style et au
+/// texte de l'appareil (marges de `BoutonOutil` en tuile comprises). Un
+/// espace insecable garde ses deux mots ensemble.
+@visibleForTesting
+int colonnesSansCoupure(
+  BuildContext context, {
+  required List<String> libelles,
+  required double largeur,
+}) {
+  final TextStyle style = DefaultTextStyle.of(context).style
+      .merge(Theme.of(context).textTheme.labelSmall);
+  final TextScaler echelle = MediaQuery.textScalerOf(context);
+  final TextDirection sens = Directionality.of(context);
+  double motLePlusLong = 0;
+  for (final String libelle in libelles) {
+    for (final String mot in libelle.split(' ')) {
+      final TextPainter peintre = TextPainter(
+        text: TextSpan(text: mot, style: style),
+        textDirection: sens,
+        textScaler: echelle,
+        maxLines: 1,
+      )..layout();
+      motLePlusLong = math.max(motLePlusLong, peintre.width);
+      peintre.dispose();
+    }
+  }
+  for (final int n in const <int>[4, 2]) {
+    // La cellule, moins la marge interieure et le filet de la tuile.
+    final double cellule =
+        (largeur - (n - 1) * AppSpacing.xs) / n - 2 * AppSpacing.xs - 2;
+    if (motLePlusLong <= cellule) return n;
+  }
+  return 1;
 }
 
 /// TB-10 (plan V2 §4.3, §20 ; UX-20) : « Autoriser a ecrire » ou « Retirer
@@ -668,11 +784,16 @@ class _AutorisationEcrire extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text(
-            autorise
-                ? t.salle.seance.ecriture.retirerAide
-                : t.salle.seance.ecriture.autoriserAide(prenom: eleve.prenom),
-            style: palette.inkMuted.applyTo(_styleFiche(context)),
+          // TB-RC (revue TB-R, m12) : l'aide a son propre noeud, lu juste
+          // avant le bouton, jamais fondue dans la carte avant le prenom.
+          Semantics(
+            container: true,
+            child: Text(
+              autorise
+                  ? t.salle.seance.ecriture.retirerAide
+                  : t.salle.seance.ecriture.autoriserAide(prenom: eleve.prenom),
+              style: palette.inkMuted.applyTo(_styleFiche(context)),
+            ),
           ),
           Ecart.vSm,
           ActionPrincipale(

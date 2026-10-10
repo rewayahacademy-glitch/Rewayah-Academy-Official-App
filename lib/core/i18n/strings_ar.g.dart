@@ -62,6 +62,7 @@ class _Traductions$commun$ar extends Traductions$commun$fr {
 	@override String get annuler => 'إلغاء';
 	@override String get reessayer => 'إعادة المحاولة';
 	@override late final _Traductions$commun$sections$ar sections = _Traductions$commun$sections$ar._(_root);
+	@override late final _Traductions$commun$demonstration$ar demonstration = _Traductions$commun$demonstration$ar._(_root);
 }
 
 // Path: reseau
@@ -274,6 +275,17 @@ class _Traductions$commun$sections$ar extends Traductions$commun$sections$fr {
 
 	// Translations
 	@override String get page => 'أقسام الصفحة';
+}
+
+// Path: commun.demonstration
+class _Traductions$commun$demonstration$ar extends Traductions$commun$demonstration$fr {
+	_Traductions$commun$demonstration$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get repere => 'عرض توضيحي';
+	@override String get repereLu => 'وضع العرض التوضيحي';
 }
 
 // Path: classe.entree
@@ -892,7 +904,7 @@ class _Traductions$salle$seance$bibliotheque$ar extends Traductions$salle$seance
 	@override String get revenir => 'العودة إلى المواد';
 	@override String get ouverture => 'جارٍ فتح المادة…';
 	@override String get echec => 'تعذّر فتح الملف.';
-	@override String get echecDetail => 'تعذّر تحميل ملف هذه المادة. أعد المحاولة، أو عد إلى المواد لاختيار مادة أخرى.';
+	@override String get echecDetail => 'ملف هذه المادة غير متاح حاليًا. أعد المحاولة، أو عد إلى المواد لاختيار مادة أخرى.';
 }
 
 // Path: salle.seance.surface
@@ -905,6 +917,11 @@ class _Traductions$salle$seance$surface$ar extends Traductions$salle$seance$surf
 	@override String get aucunSupport => 'اختر مادة أو اكتب على السبورة.';
 	@override String page({required Object titre, required Object page, required Object pages}) => '⁨${titre}⁩، الصفحة ⁨${page}⁩ من ⁨${pages}⁩';
 	@override String get supportMasque => 'السبورة، المادة مخفية';
+	@override String get supportArrive => 'المادة في الطريق…';
+	@override String get supportIndisponible => 'المادة لا تظهر.';
+	@override String get supportIndisponibleDetail => 'الملف غير متاح حاليًا، وغالبًا بسبب بطء الاتصال. أعد المحاولة: الحصة والصوت مستمران.';
+	@override String get reessayerSemantique => 'إعادة محاولة عرض المادة';
+	@override String get supportIllustratif => 'مادة توضيحية';
 }
 
 // Path: salle.seance.synchro
@@ -2402,6 +2419,8 @@ extension on TraductionsAr {
 			'commun.annuler' => 'إلغاء',
 			'commun.reessayer' => 'إعادة المحاولة',
 			'commun.sections.page' => 'أقسام الصفحة',
+			'commun.demonstration.repere' => 'عرض توضيحي',
+			'commun.demonstration.repereLu' => 'وضع العرض التوضيحي',
 			'reseau.retabli' => 'عادت الشبكة',
 			'destructif.irreversible' => 'لا يمكن التراجع عن هذا الإجراء.',
 			'presence.titre' => 'الحضور',
@@ -2681,10 +2700,15 @@ extension on TraductionsAr {
 			'salle.seance.bibliotheque.revenir' => 'العودة إلى المواد',
 			'salle.seance.bibliotheque.ouverture' => 'جارٍ فتح المادة…',
 			'salle.seance.bibliotheque.echec' => 'تعذّر فتح الملف.',
-			'salle.seance.bibliotheque.echecDetail' => 'تعذّر تحميل ملف هذه المادة. أعد المحاولة، أو عد إلى المواد لاختيار مادة أخرى.',
+			'salle.seance.bibliotheque.echecDetail' => 'ملف هذه المادة غير متاح حاليًا. أعد المحاولة، أو عد إلى المواد لاختيار مادة أخرى.',
 			'salle.seance.surface.aucunSupport' => 'اختر مادة أو اكتب على السبورة.',
 			'salle.seance.surface.page' => ({required Object titre, required Object page, required Object pages}) => '⁨${titre}⁩، الصفحة ⁨${page}⁩ من ⁨${pages}⁩',
 			'salle.seance.surface.supportMasque' => 'السبورة، المادة مخفية',
+			'salle.seance.surface.supportArrive' => 'المادة في الطريق…',
+			'salle.seance.surface.supportIndisponible' => 'المادة لا تظهر.',
+			'salle.seance.surface.supportIndisponibleDetail' => 'الملف غير متاح حاليًا، وغالبًا بسبب بطء الاتصال. أعد المحاولة: الحصة والصوت مستمران.',
+			'salle.seance.surface.reessayerSemantique' => 'إعادة محاولة عرض المادة',
+			'salle.seance.surface.supportIllustratif' => 'مادة توضيحية',
 			'salle.seance.synchro.nonPartagees' => 'ملاحظاتك الجديدة غير مشارَكة.',
 			'salle.seance.synchro.nonPartageesSuite' => 'الملاحظات المنقّطة لا تظهر إلا على شاشتك، ريثما تعود السبورة إلى الاتصال.',
 			'salle.seance.synchro.seReconnecte' => 'السبورة تعيد الاتصال.',
@@ -2904,6 +2928,8 @@ extension on TraductionsAr {
 			'tc.bibliotheque.sections.recents' => 'المستخدمة مؤخرًا',
 			'tc.bibliotheque.sections.tousLesSupports' => 'كل المواد',
 			'tc.bibliotheque.sections.resultats' => 'النتائج',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.titre' => 'المكتبة',
 			'tc.bibliotheque.rechercheIndication' => 'العنوان أو المستوى أو السورة أو الصفحة',
 			'tc.bibliotheque.rechercheLibelle' => 'البحث عن مادة',
@@ -2911,8 +2937,6 @@ extension on TraductionsAr {
 			'tc.bibliotheque.filtre.type' => 'النوع',
 			'tc.bibliotheque.filtre.disponibilite' => 'التوفر',
 			'tc.bibliotheque.vide.message' => 'لا مادة منشورة حتى الآن',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.vide.invitation' => 'سيضع معلموك هنا مواد دروسك.',
 			'tc.bibliotheque.aucunResultat.message' => 'لا مادة مطابقة',
 			'tc.bibliotheque.aucunResultat.invitation' => 'جرّب كلمة أخرى، أو خفّف عوامل التصفية.',

@@ -72,7 +72,7 @@ class ZoneSupport extends StatelessWidget {
     final double largeurVignette = MesuresVignette.largeur(
       gabarit,
       guidee: vue.vignetteAgrandie,
-      enseignant: vue.role == RoleSeance.enseignant,
+      enseignant: vue.meneLaSeance,
       panneau: vue.panneau != PanneauOuvert.aucun,
     );
     // Guidee web etroit (image CLV-04-05-06 web etroit) : la grande vignette
@@ -354,7 +354,7 @@ extension on ZoneSupport {
     final double largeurVignette = MesuresVignette.largeur(
       gabarit,
       guidee: vue.vignetteAgrandie,
-      enseignant: vue.role == RoleSeance.enseignant,
+      enseignant: vue.meneLaSeance,
       panneau: vue.panneau != PanneauOuvert.aucun,
     );
     final Widget carte = Theme(

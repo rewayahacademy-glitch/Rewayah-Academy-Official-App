@@ -394,12 +394,17 @@
         "revenir": "Revenir aux supports",
         "ouverture": "Ouverture du support…",
         "echec": "Fichier non ouvert.",
-        "echecDetail": "Le fichier de ce support n'a pas pu être chargé. Réessayez, ou revenez aux supports pour en choisir un autre."
+        "echecDetail": "Le fichier de ce support est indisponible pour le moment. Réessayez, ou revenez aux supports pour en choisir un autre."
       },
       "surface": {
         "aucunSupport": "Choisissez un support ou écrivez au tableau.",
         "page": "{titre}, page {page} sur {pages}",
-        "supportMasque": "Tableau, le support est masqué"
+        "supportMasque": "Tableau, le support est masqué",
+        "supportArrive": "Le support arrive…",
+        "supportIndisponible": "Le support ne s'affiche pas.",
+        "supportIndisponibleDetail": "Le fichier est indisponible pour le moment, souvent à cause d'une connexion lente. Réessayez : la séance et le son continuent.",
+        "reessayerSemantique": "Réessayer d'afficher le support",
+        "supportIllustratif": "Support illustratif"
       },
       "synchro": {
         "nonPartagees": "Vos nouvelles notes ne sont pas partagées.",

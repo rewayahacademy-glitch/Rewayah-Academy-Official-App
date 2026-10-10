@@ -39,6 +39,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
 import '../../core/tc_bibliotheque/content_position.dart';
 import '../../core/tc_bibliotheque/library_resource.dart'
     show CapaciteRessource;
@@ -51,10 +52,12 @@ import '../../core/tc_outils/evenements_outils.dart';
 import '../../core/tc_outils/port_dock_hote.dart';
 import '../../core/theme/app_contour.dart';
 import '../../core/theme/app_elevation.dart';
+import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/widgets/action_principale.dart';
 import '../tc_dock/couche_annotation.dart';
 import 'ecriture_seance.dart' show emettreEcriture, traitsDeLaSurface;
 import 'notes_deposees.dart';
@@ -128,6 +131,16 @@ class SurfacePageFixe extends ConsumerStatefulWidget {
 
   /// TB-7b : la cle de l'indication du Pointeur, tant que le doigt est pose.
   static const Key clePointeur = ValueKey<String>('surface-pointeur');
+
+  /// TB-RC (M1) : la cle de l'etat du support recu (« Le support
+  /// arrive… », « Le support ne s'affiche pas. »).
+  static const Key cleSupportRecu = ValueKey<String>('surface-support-recu');
+
+  /// TB-RC (M1) : la cle de « Reessayer » de l'echec cote eleve.
+  static const Key cleReessayer = ValueKey<String>('surface-reessayer');
+
+  /// TB-RC (M1) : la cle du dernier contenu marque « en attente ».
+  static const Key cleEnAttente = ValueKey<String>('surface-en-attente');
 
   /// La hauteur de la phrase du §12 et de sa marge dans une surface de
   /// largeur [largeur], a l'echelle du texte de l'appareil : en dessous, la
@@ -353,13 +366,18 @@ class _SurfacePageFixeState extends ConsumerState<SurfacePageFixe> {
             children: <Widget>[
               // Le fond : la page du support, ou la feuille claire.
               if (fondSupport && page != null)
-                _Page(key: SurfacePageFixe.clePage, page: page)
+                _Page(
+                  key: SurfacePageFixe.clePage,
+                  page: page,
+                  annoncee: vue.annonceLaPresentation,
+                )
               else
                 _Feuille(
                   key: SurfacePageFixe.cleFeuille,
                   libelle: libre
                       ? t.salle.seance.commandes.affichageTableau
                       : t.salle.seance.surface.supportMasque,
+                  annoncee: vue.annonceLaPresentation,
                 ),
               // Le calque des notes : cache en Support, jamais demonte. Il
               // couvre la page exactement : son repere est la page (TB-7a).
@@ -405,13 +423,35 @@ class _SurfacePageFixeState extends ConsumerState<SurfacePageFixe> {
                           rect: rect,
                           child: KeyedSubtree(
                             key: repereRangement,
-                            child: feuille,
+                            // TB-RC (M1, §12) : le dernier contenu reste,
+                            // marque « en attente » tant que le nouveau
+                            // support n'est pas la (eleve, guidee).
+                            child: vue.supportEnAttente
+                                ? Opacity(
+                                    key: SurfacePageFixe.cleEnAttente,
+                                    opacity: 1 - AppMouvement.opaciteVoile,
+                                    child: feuille,
+                                  )
+                                : feuille,
                           ),
                         ),
                       ],
                     ),
                   ),
                 ),
+                // TB-RC (M1, plan V2 §12) : le support qui arrive ou qui ne
+                // s'affiche pas, chez le destinataire, par-dessus la page :
+                // la seance et le son continuent, rien n'est quitte.
+                if (vue.texteSupportRecu case final String texte)
+                  Positioned.fill(
+                    child: _SupportRecu(
+                      texte: texte,
+                      detail: vue.detailSupportRecu,
+                      onReessayer: vue.voitReessayerSupport
+                          ? PorteeSupportRecu.reessayerDe(context)
+                          : null,
+                    ),
+                  ),
                 // La phrase du §12 se pose sur toute la surface, pas dans la
                 // seule feuille : vide, celle-ci ne cache rien, et la phrase
                 // garde la largeur de l'ecran a texte agrandi (elle defile si
@@ -601,16 +641,24 @@ const double _ratioParDefaut = 1240 / 1754;
 /// dite au lecteur d'ecran ; ecrite, elle doublerait la pagination des
 /// Commandes de l'enseignant (TB14).
 class _Page extends StatelessWidget {
-  const _Page({required this.page, super.key});
+  const _Page({required this.page, this.annoncee = false, super.key});
 
   final SupportPageFixe page;
+
+  /// TB-RC (revue TB-R, m11) : le changement de page ou de support est
+  /// annonce discretement (region vivante) a qui le recoit.
+  final bool annoncee;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final String? mention = page.mention;
+    // TB-RC (revue TB-R, m7) : un noeud propre, jamais fondu dans l'en-tete
+    // ou dans l'ecran entier (eleve, guidee).
     return Semantics(
+      container: true,
+      liveRegion: annoncee,
       image: true,
       label: t.salle.seance.surface.page(
         titre: page.titre,
@@ -692,14 +740,18 @@ bool _gaucheADroite(int c) =>
 
 /// La feuille claire du tableau : meme ratio que la page, notes au-dessus.
 class _Feuille extends StatelessWidget {
-  const _Feuille({required this.libelle, super.key});
+  const _Feuille({required this.libelle, this.annoncee = false, super.key});
 
   final String libelle;
+
+  /// TB-RC (m11) : le passage a « Tableau » est annonce a qui le recoit.
+  final bool annoncee;
 
   @override
   Widget build(BuildContext context) => Semantics(
     label: libelle,
     container: true,
+    liveRegion: annoncee,
     child: const _Cadre(child: SizedBox.expand()),
   );
 }
@@ -725,3 +777,131 @@ class _Cadre extends StatelessWidget {
     );
   }
 }
+
+/// TB-RC (revue TB-R, M1 ; plan V2 §12) : qui peut redemander le support
+/// presente (« Reessayer » de l'echec cote eleve), pose par la salle autour
+/// de la surface. Absent : le bouton n'est pas rendu (un bouton qui ne peut
+/// pas aboutir n'est pas affiche), la phrase reste.
+class PorteeSupportRecu extends InheritedWidget {
+  /// Pose [onReessayer] pour la surface de [child].
+  const PorteeSupportRecu({
+    required this.onReessayer,
+    required super.child,
+    super.key,
+  });
+
+  /// Redemande le support presente, sans quitter la seance.
+  final VoidCallback onReessayer;
+
+  /// Le rappel en vigueur, ou `null`.
+  static VoidCallback? reessayerDe(BuildContext context) => context
+      .dependOnInheritedWidgetOfExactType<PorteeSupportRecu>()
+      ?.onReessayer;
+
+  @override
+  bool updateShouldNotify(PorteeSupportRecu ancien) =>
+      onReessayer != ancien.onReessayer;
+}
+
+/// TB-RC (M1, §12) : l'etat du support recu, au centre de la surface, sur
+/// une carte claire (meme bord que la page) : la phrase, et pour l'echec la
+/// cause probable et « Reessayer » (K-59). Annonce discretement.
+class _SupportRecu extends StatelessWidget {
+  const _SupportRecu({required this.texte, this.detail, this.onReessayer});
+
+  final String texte;
+  final String? detail;
+  final VoidCallback? onReessayer;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final String? suite = detail;
+    final VoidCallback? reessayer = onReessayer;
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: _largeurSupportRecu),
+          child: Semantics(
+            container: true,
+            liveRegion: true,
+            explicitChildNodes: true,
+            child: DecoratedBox(
+              key: SurfacePageFixe.cleSupportRecu,
+              decoration: palette.surfaceRaised
+                  .decoration(
+                    borderRadius: AppRadius.arrondiMd,
+                    side: palette.borderHairline.asBorderSide(),
+                  )
+                  .copyWith(boxShadow: AppElevation.niveau1(palette.ombre)),
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        ExcludeSemantics(
+                          child: IconTheme(
+                            data: palette.inkMuted.asIconTheme(
+                              size: AppSpacing.xl,
+                            ),
+                            child: Icon(
+                              suite != null
+                                  ? AppIcons.avertissement.repos
+                                  : AppIcons.attente.repos,
+                            ),
+                          ),
+                        ),
+                        Ecart.hSm,
+                        Expanded(
+                          child: Text(
+                            texte,
+                            style: palette.inkStrong.applyTo(
+                              textes.titleSmall ?? const TextStyle(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (suite != null) ...<Widget>[
+                      Ecart.vSm,
+                      Text(
+                        suite,
+                        style: palette.inkMuted.applyTo(
+                          textes.bodyMedium ?? const TextStyle(),
+                        ),
+                      ),
+                    ],
+                    if (reessayer != null) ...<Widget>[
+                      Ecart.vMd,
+                      Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: ActionPrincipale(
+                          key: SurfacePageFixe.cleReessayer,
+                          libelle: t.commun.reessayer,
+                          libelleSemantique:
+                              t.salle.seance.surface.reessayerSemantique,
+                          niveau: NiveauAction.secondaire,
+                          pleineLargeur: false,
+                          onPress: reessayer,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// La largeur de la carte de l'etat du support recu : une phrase courte se
+/// lit sur une ligne, jamais en travers d'une page de bureau.
+const double _largeurSupportRecu = 360;

@@ -154,7 +154,7 @@
   "salle.seance.bibliotheque.revenir": "etape TB-8 (Supports et tableau, Bibliotheque en seance) : texte exact du plan V2 §20 (Catalogue) et §12",
   "salle.seance.bibliotheque.ouverture": "etape TB-8 (Supports et tableau, Bibliotheque en seance) : texte exact du plan V2 §12 (« Chargement avant presentation »)",
   "salle.seance.bibliotheque.echec": "etape TB-8 (Supports et tableau, Bibliotheque en seance) : plan V2 §20 (« Echec ouverture ») et §12, raccourci par la revue du 09/10 (« Ce support ne peut pas etre ouvert. » tient sur deux lignes au texte x2 : a 320 x2, le titre et « Reessayer » ne tiennent pas ensemble dans la feuille ; une ligne a 320 x2), a valider par le directeur",
-  "salle.seance.bibliotheque.echecDetail": "etape TB-8 (Supports et tableau, Bibliotheque en seance) : suite du message d'echec (K-59 : ce qui manque, la cause, quoi faire), plan V2 §3 « un fichier non charge ne remplace jamais le support existant » ; revue du 09/10 : « la classe garde le support actuel » n'y est plus repete (dit une fois par l'apercu, apercuClasse), a valider par le directeur",
+  "salle.seance.bibliotheque.echecDetail": "etape TB-8 (Supports et tableau, Bibliotheque en seance) : suite du message d'echec (K-59 : ce qui manque, la cause, quoi faire) ; revue TB-R 10/10, m28 : cause probable ajoutee (« indisponible pour le moment »), plan V2 §3 « un fichier non charge ne remplace jamais le support existant » ; revue du 09/10 : « la classe garde le support actuel » n'y est plus repete (dit une fois par l'apercu, apercuClasse), a valider par le directeur",
   "salle.seance.ecriture.tuPeuxEcrire": "etape TB-10 (Supports et tableau, autorisation d'ecrire) : texte exact du plan V2 §5, §12 (Autorisation de dessin) et §20 (Enfant apres autorisation)",
   "salle.seance.ecriture.vousPouvezEcrire": "etape TB-10 (Supports et tableau, autorisation d'ecrire) : texte exact du plan V2 §5, §12 et §20 (Adulte apres autorisation)",
   "salle.seance.ecriture.repriseSayyid": "etape TB-10 (Supports et tableau, droit retire) : texte exact du plan V2 §12 (Droit retire), titre de l'enseignant",
@@ -213,5 +213,10 @@
   "salle.seance.commandes.ajusterGuide": "revue TB-R 10/10, m2 : Interface guidee, « Voir toute la page » avec pictogramme (plan V2 §5, Interface guidee)",
   "salle.seance.commandes.classeVoitSupport": "revue TB-R 10/10, M7 : ce que voit la classe pour l'affichage « Support » (K-58, plan V2 §17 PED-02)",
   "salle.seance.commandes.classeVoitAvecNotes": "revue TB-R 10/10, M7 : ce que voit la classe pour l'affichage « Avec notes » (K-58, plan V2 §17 PED-03)",
-  "salle.seance.commandes.classeVoitTableau": "revue TB-R 10/10, M7 : ce que voit la classe pour l'affichage « Tableau » (K-58, plan V2 §17 PED-04)"
+  "salle.seance.commandes.classeVoitTableau": "revue TB-R 10/10, M7 : ce que voit la classe pour l'affichage « Tableau » (K-58, plan V2 §17 PED-04)",
+  "salle.seance.surface.supportArrive": "revue TB-R 10/10, M1 : texte exact du plan V2 §12 (« Presentation en chargement cote eleve »), cote eleve et guidee",
+  "salle.seance.surface.supportIndisponible": "revue TB-R 10/10, M1 : texte exact du plan V2 §12 (« Ressource indisponible », colonne Eleve)",
+  "salle.seance.surface.supportIndisponibleDetail": "revue TB-R 10/10, M1 et K-59 : ce qui manque, la cause probable, quoi faire (plan V2 §12 « Reessayer sans quitter la seance », « Audio maintenu »), a valider par le directeur",
+  "salle.seance.surface.reessayerSemantique": "revue TB-R 10/10, M1 : nom lu de « Reessayer » cote eleve (plan V2 §12, qui et quoi), a valider par le directeur",
+  "salle.seance.surface.supportIllustratif": "revue TB-R 10/10, TB_RAPPORT §d n. 13 : mention de la page de demonstration, traduite (plus de francais en arabe), a valider par le directeur"
 }

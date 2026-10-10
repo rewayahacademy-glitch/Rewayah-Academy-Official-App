@@ -6,6 +6,7 @@
 
 import 'dart:math' as math;
 
+import '../../core/i18n/strings.g.dart';
 import '../../core/tc_bibliotheque/catalogue_local.dart';
 import '../../core/tc_bibliotheque/content_position.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
@@ -188,8 +189,13 @@ enum SituationTb {
     effacementTableau,
   };
 
-  /// L'eleve seulement : le support qui arrive chez le destinataire.
-  static const Set<SituationTb> _eleveSeul = <SituationTb>{supportArrive};
+  /// L'eleve seulement : le support qui arrive chez le destinataire, et
+  /// celui qui ne s'y affiche pas (TB-RC, M1 : cote enseignant, l'echec
+  /// d'ouverture est LIB-03, dans la Bibliotheque).
+  static const Set<SituationTb> _eleveSeul = <SituationTb>{
+    supportArrive,
+    ressourceIndisponible,
+  };
 
   /// La situation a-t-elle un sens pour [role] ? Une commande d'un autre
   /// role n'est jamais proposee (00_REPRISE §8).
@@ -406,7 +412,10 @@ abstract final class DonneesSeanceDemo {
   /// derive de [chapitre1] (meme identifiant, meme titre, meme version, meme
   /// nombre de pages). Une page neutre marquee « Support illustratif » :
   /// aucune page de Coran (TB27).
-  static final SupportPageFixe supportPageFixe = SupportPageFixe(
+  ///
+  /// TB-RC (TB_RAPPORT §d n. 13) : la mention est traduite, lue a chaque
+  /// appel dans la langue de l'interface.
+  static SupportPageFixe get supportPageFixe => SupportPageFixe(
     id: chapitre1.id,
     version: _versionChapitre1,
     titre: chapitre1.titre,
@@ -414,7 +423,7 @@ abstract final class DonneesSeanceDemo {
     total: chapitre1.contenu!.pages,
     largeurCanonique: largeurPage,
     hauteurCanonique: hauteurPage,
-    mention: 'Support illustratif',
+    mention: t.salle.seance.surface.supportIllustratif,
   );
 
   /// TB-7a : le trait de demonstration, un cercle pose sur la page 1 du
@@ -593,17 +602,30 @@ abstract final class DonneesSeanceDemo {
       total: total,
       largeurCanonique: largeurPage,
       hauteurCanonique: hauteurPage,
-      mention: 'Support illustratif',
+      mention: t.salle.seance.surface.supportIllustratif,
     );
   }
 
   /// La diapositive d'un support presente, s'il en a une (la capsule de
   /// l'en-tete suit le support partage).
-  static SupportSeance? diapositiveDe(String id) {
+  ///
+  /// TB-RC (TB_RAPPORT §d n. 22) : un support sans diapositive (le support
+  /// arabe) en recoit une, faite de sa page presentee ; la capsule et la
+  /// lecture ne gardent jamais celle du support precedent.
+  static SupportSeance? diapositiveDe(String id, {SupportPageFixe? page}) {
     for (final SupportDisponible s in supports) {
       if (s.id == id) return s.contenu;
     }
-    return null;
+    if (page == null) return null;
+    return SupportSeance(
+      chapitre: '',
+      titre: page.titre,
+      encadre: '',
+      points: const <String>[],
+      page: page.page,
+      pages: page.total,
+      ressourceId: page.id,
+    );
   }
 
   /// Le tableau libre : choix provisoire, meme repere que la page de
@@ -699,6 +721,14 @@ abstract final class DonneesSeanceDemo {
       conservation: situation == SituationTb.err03
           ? ConservationNotes.nonSauvegardees
           : ConservationNotes.seanceSeulement,
+      // TB-RC (revue TB-R, M1 ; plan V2 §12) : le support presente chez
+      // l'eleve, en chargement ou indisponible (aucun chargement reel avant
+      // BR-1 : la situation le nomme).
+      supportRecu: switch (situation) {
+        SituationTb.supportArrive => EtatSupportRecu.enChargement,
+        SituationTb.ressourceIndisponible => EtatSupportRecu.indisponible,
+        _ => EtatSupportRecu.pret,
+      },
       // ERR-01 : le trait que l'enseignant vient de poser n'a pas ete
       // recu ; la classe ne le voit pas, l'enseignant le voit marque.
       traitsNonPartages: situation == SituationTb.err01 && enseignant

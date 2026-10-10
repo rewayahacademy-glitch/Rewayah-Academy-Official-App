@@ -56,44 +56,46 @@ class FilterPill extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 
-    return Semantics(
-      selected: retenue,
-      button: true,
-      child: Pressable.selon(
-        onPress: onPress,
-        libelleSemantique: compteur == null ? libelle : '$libelle, $compteur',
-        arrondiFocus: AppRadius.arrondiFull,
-        constructeur: (BuildContext contexte, EtatPression etat) {
-          // La paire douce d'accent quand le filtre porte, la surface elevee
-          // sinon : jamais un aplat sature, une pilule n'est pas l'action
-          // principale de l'ecran (`01-systeme-visuel.md` section 3).
-          final AppColorPair fond = retenue
-              ? palette.washAccent
-              : palette.surfaceRaised;
-          // Le filet porteur de sens des que la pilule dit quelque chose :
-          // retenue, survolee ou pressee. Meme regle que `AppCard`.
-          final BorderSide filet =
-              (retenue || etat.survole || etat.presse
-                      ? palette.borderStrong
-                      : palette.borderHairline)
-                  .asBorderSide();
+    // TB-RC (revue TB-R, m10) : un seul noeud, celui du `Pressable`, porte
+    // le nom ET l'etat « choisi » ; le contenu peint est muet, pour que le
+    // nom ne soit pas lu deux fois.
+    return Pressable.selon(
+      onPress: onPress,
+      libelleSemantique: compteur == null ? libelle : '$libelle, $compteur',
+      selectionne: retenue,
+      arrondiFocus: AppRadius.arrondiFull,
+      constructeur: (BuildContext contexte, EtatPression etat) {
+        // La paire douce d'accent quand le filtre porte, la surface elevee
+        // sinon : jamais un aplat sature, une pilule n'est pas l'action
+        // principale de l'ecran (`01-systeme-visuel.md` section 3).
+        final AppColorPair fond = retenue
+            ? palette.washAccent
+            : palette.surfaceRaised;
+        // Le filet porteur de sens des que la pilule dit quelque chose :
+        // retenue, survolee ou pressee. Meme regle que `AppCard`.
+        final BorderSide filet =
+            (retenue || etat.survole || etat.presse
+                    ? palette.borderStrong
+                    : palette.borderHairline)
+                .asBorderSide();
 
-          return DecoratedBox(
-            decoration: fond.decoration(
-              borderRadius: AppRadius.arrondiFull,
-              side: filet,
+        return DecoratedBox(
+          decoration: fond.decoration(
+            borderRadius: AppRadius.arrondiFull,
+            side: filet,
+          ),
+          child: Padding(
+            padding: const EdgeInsetsDirectional.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.sm,
             ),
-            child: Padding(
-              padding: const EdgeInsetsDirectional.symmetric(
-                horizontal: AppSpacing.lg,
-                vertical: AppSpacing.sm,
-              ),
-              // K-54 : le contenu est centre dans la pilule, en largeur comme
-              // en hauteur (la cible tactile de 48 est plus haute que le
-              // texte), y compris quand le parent etire la pilule.
-              child: Center(
-                widthFactor: 1,
-                heightFactor: 1,
+            // K-54 : le contenu est centre dans la pilule, en largeur comme
+            // en hauteur (la cible tactile de 48 est plus haute que le
+            // texte), y compris quand le parent etire la pilule.
+            child: Center(
+              widthFactor: 1,
+              heightFactor: 1,
+              child: ExcludeSemantics(
                 child: Wrap(
                   alignment: WrapAlignment.center,
                   runAlignment: WrapAlignment.center,
@@ -101,7 +103,7 @@ class FilterPill extends StatelessWidget {
                   runSpacing: AppSpacing.xs,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: <Widget>[
-                    if (apercu case final Widget a) ExcludeSemantics(child: a),
+                    if (apercu case final Widget a) a,
                     Text(
                       libelle,
                       textAlign: TextAlign.center,
@@ -122,9 +124,9 @@ class FilterPill extends StatelessWidget {
                 ),
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

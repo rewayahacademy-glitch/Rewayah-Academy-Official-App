@@ -39,6 +39,7 @@ import '../salle_seance/panneau_eleves.dart';
 import '../salle_seance/resultat_seance.dart';
 import '../salle_seance/salle_seance.dart';
 import '../salle_seance/signalement_seance.dart';
+import '../salle_seance/surface_page_fixe.dart' show PorteeSupportRecu;
 import '../salle_seance/vue_seance.dart';
 import 'mode_demonstration.dart';
 import 'salle_observateur_demo.dart';
@@ -602,6 +603,11 @@ class _SalleDemoState extends State<SalleDemo> {
   /// TB-9 : le tableau libre a ete efface (« … du tableau ? »).
   bool _tableauEfface = false;
 
+  /// TB-RC (revue TB-R, M1 ; plan V2 §12) : le support recu apres
+  /// « Reessayer » ; `null` : celui de la situation. Demonstration : le
+  /// support revient (aucun chargement reel avant BR-1).
+  EtatSupportRecu? _supportRecu;
+
   /// TB-9 (plan V2 §3 « Ranger reellement », §19.2 points 4 et 5) : le
   /// support presente rejoint les supports ranges, a sa page ; le tableau
   /// libre revient, sans copie des notes du support. Aucune confirmation.
@@ -669,8 +675,16 @@ class _SalleDemoState extends State<SalleDemo> {
         // notes de la seance l'attendent a sa page.
         _range = false;
         _ranges.removeWhere((SupportPageFixe s) => s.id == ressource.id);
-        _presente = DonneesSeanceDemo.pagePresentee(ressource, page: page);
-        _support = DonneesSeanceDemo.diapositiveDe(ressource.id) ?? _support;
+        final SupportPageFixe presente = DonneesSeanceDemo.pagePresentee(
+          ressource,
+          page: page,
+        );
+        _presente = presente;
+        // TB-RC (n. 22) : la diapositive suit le support presente, meme
+        // sans diapositive propre (support arabe).
+        _support =
+            DonneesSeanceDemo.diapositiveDe(ressource.id, page: presente) ??
+            _support;
         _page = page;
         _affichage = AffichagePartage.avecNotes;
         _panneau = PanneauOuvert.aucun;
@@ -733,6 +747,7 @@ class _SalleDemoState extends State<SalleDemo> {
                 ),
             ],
       notesSurface: _notes,
+      supportRecu: _supportRecu,
       tableauLibre: tableau != null && _tableauEfface
           ? TableauLibre(
               largeurCanonique: tableau.largeurCanonique,
@@ -925,7 +940,12 @@ class _SalleDemoState extends State<SalleDemo> {
           notesDeposeesProvider.overrideWith2(NotesDeposees.new),
         ],
       ],
-      child: salle,
+      // TB-RC (M1) : « Reessayer » de l'eleve, sans quitter la seance.
+      child: PorteeSupportRecu(onReessayer: _reessayerSupport, child: salle),
     );
   }
+
+  /// TB-RC (M1) : le support redemande revient (demonstration).
+  void _reessayerSupport() =>
+      setState(() => _supportRecu = EtatSupportRecu.pret);
 }
