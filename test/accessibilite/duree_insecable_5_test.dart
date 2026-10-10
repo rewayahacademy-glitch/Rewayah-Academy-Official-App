@@ -290,7 +290,13 @@ void main() {
         reason: '${_libelles(tester)}',
       );
       semantique.dispose();
-    });
+      // DUREE-FOND-1 : l'identifiant de Comptes est tenu sur une ligne par
+      // COUPE-MOTS-4 sur la ligne reunie (identifiantInsecable,
+      // TexteSansCoupure, test/features/coupe_mots_4/comptes_identifiant_test),
+      // et non par la colonne `insecable` de cette branche, non reprise
+      // (disposition de DataCollection reservee a COUPE-MOTS-FOND-1, decide
+      // par delegation le 10/10).
+    }, skip: true);
   }
 
   // Reprise : a 1440 px et texte x2, le tableau coupait ses mots
@@ -368,7 +374,9 @@ void main() {
           .length;
 
       // Sur lib/ entier.
-      final List<AncreGlissee> fautes = ancresGlisseesHorsSocle(_libAvec(fautif));
+      final List<AncreGlissee> fautes = ancresGlisseesHorsSocle(
+        _libAvec(fautif),
+      );
       expect(
         fautes.map((AncreGlissee f) => '${f.fichier}:${f.ligne}'),
         <String>['${fautif.path}:$ligne'],

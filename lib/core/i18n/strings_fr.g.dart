@@ -2694,7 +2694,7 @@ class Traductions$identiteProfil$fr {
 	// Translations
 
 	/// fr: '{n} ans'
-	String age({required Object n}) => '${n} ans';
+	String age({required Object n}) => '${n} ans';
 
 	/// fr: 'Classe {classe}'
 	String classe({required Object classe}) => 'Classe ${classe}';
@@ -14414,7 +14414,7 @@ class Traductions$comptable$commun$fr {
 	String get manque => 'Manque à compléter';
 
 	/// fr: '{pourcent} % atteint'
-	String atteint({required Object pourcent}) => '${pourcent} % atteint';
+	String atteint({required Object pourcent}) => '${pourcent} % atteint';
 
 	/// fr: 'Mode de calcul'
 	String get modeCalcul => 'Mode de calcul';
@@ -14747,7 +14747,7 @@ class Traductions$comptable$tresorerie$fr {
 	String get coffreNonProtege => 'Non protégé';
 
 	/// fr: '{part} % de la trésorerie détenue'
-	String partDetenue({required Object part}) => '${part} % de la trésorerie détenue';
+	String partDetenue({required Object part}) => '${part} % de la trésorerie détenue';
 
 	/// fr: 'Règle d'usage : {regle}'
 	String regleUsage({required Object regle}) => 'Règle d\'usage : ${regle}';
@@ -14777,7 +14777,7 @@ class Traductions$comptable$tresorerie$fr {
 	late final Traductions$comptable$tresorerie$cadences$fr cadences = Traductions$comptable$tresorerie$cadences$fr.internal(_root);
 
 	/// fr: 'Alerte sous {pourcent} % du montant visé'
-	String seuilAlerte({required Object pourcent}) => 'Alerte sous ${pourcent} % du montant visé';
+	String seuilAlerte({required Object pourcent}) => 'Alerte sous ${pourcent} % du montant visé';
 
 	/// fr: 'Tout retrait exige une validation supplémentaire.'
 	String get retraitValidation => 'Tout retrait exige une validation supplémentaire.';
@@ -17102,7 +17102,7 @@ class Traductions$admin$finance$vue$fr {
 	String get marge => 'Marge projetée';
 
 	/// fr: '{valeur} %'
-	String margeValeur({required Object valeur}) => '${valeur} %';
+	String margeValeur({required Object valeur}) => '${valeur} %';
 
 	/// fr: 'Calculée sur la seule paie des enseignants, sans les autres charges : elle ne se compare pas à une marge nette.'
 	String get margeDetail => 'Calculée sur la seule paie des enseignants, sans les autres charges : elle ne se compare pas à une marge nette.';
@@ -17192,7 +17192,7 @@ class Traductions$admin$finance$vue$fr {
 	String get etatEnConfirmation => 'En confirmation';
 
 	/// fr: '{valeur} % des profils du mois'
-	String etatPart({required Object valeur}) => '${valeur} % des profils du mois';
+	String etatPart({required Object valeur}) => '${valeur} % des profils du mois';
 
 	/// fr: 'Aucun état de paiement rendu pour ce mois.'
 	String get etatVide => 'Aucun état de paiement rendu pour ce mois.';
@@ -17581,7 +17581,7 @@ class Traductions$admin$finance$pol$fr {
 	String get margeStretchDetail => 'Le repère ambitieux ; il ne descend pas sous la performance forte.';
 
 	/// fr: '{valeur} %'
-	String pourcentValeur({required Object valeur}) => '${valeur} %';
+	String pourcentValeur({required Object valeur}) => '${valeur} %';
 
 	/// fr: '%'
 	String get unitePourcent => '%';
@@ -17611,7 +17611,7 @@ class Traductions$admin$finance$pol$fr {
 	String get budgetOperationnel => 'Budget opérationnel';
 
 	/// fr: '{valeur} %, non contraignant'
-	String budgetValeur({required Object valeur}) => '${valeur} %, non contraignant';
+	String budgetValeur({required Object valeur}) => '${valeur} %, non contraignant';
 
 	/// fr: '{libelle} : {valeur}'
 	String budgetComparaison({required Object libelle, required Object valeur}) => '${libelle} : ${valeur}';
@@ -23867,7 +23867,7 @@ class Traductions$comptable$tresorerie$regle$fr {
 	String get montantFixe => 'Montant fixe à chaque échéance';
 
 	/// fr: '{pourcent} % de chaque encaissement consolidé'
-	String pourcentage({required Object pourcent}) => '${pourcent} % de chaque encaissement consolidé';
+	String pourcentage({required Object pourcent}) => '${pourcent} % de chaque encaissement consolidé';
 
 	/// fr: 'Compléter jusqu'au montant visé'
 	String get jusquAObjectif => 'Compléter jusqu\'au montant visé';
@@ -25362,10 +25362,10 @@ class Traductions$com$socle$composants$pieceJointe$fr {
 	String tailleOctets({required Object taille}) => '${taille} octets';
 
 	/// fr: '{taille} Ko'
-	String tailleKo({required Object taille}) => '${taille} Ko';
+	String tailleKo({required Object taille}) => '${taille} Ko';
 
 	/// fr: '{taille} Mo'
-	String tailleMo({required Object taille}) => '${taille} Mo';
+	String tailleMo({required Object taille}) => '${taille} Mo';
 
 	/// fr: 'Prêt à envoyer'
 	String get autorisee => 'Prêt à envoyer';
@@ -29109,7 +29109,7 @@ extension on Traductions {
 			'admin.finance.vue.paie' => 'Paie enseignants',
 			'admin.finance.vue.paieDetail' => 'Estimée pour le mois : une charge à venir, pas un paiement fait.',
 			'admin.finance.vue.marge' => 'Marge projetée',
-			'admin.finance.vue.margeValeur' => ({required Object valeur}) => '${valeur} %',
+			'admin.finance.vue.margeValeur' => ({required Object valeur}) => '${valeur} %',
 			'admin.finance.vue.margeDetail' => 'Calculée sur la seule paie des enseignants, sans les autres charges : elle ne se compare pas à une marge nette.',
 			'admin.finance.vue.margeSansActivite' => 'Aucune activité',
 			'admin.finance.vue.margeNonCalculable' => 'Non calculable',
@@ -29139,7 +29139,7 @@ extension on Traductions {
 			'admin.finance.vue.etatARegulariser' => 'À régulariser',
 			'admin.finance.vue.etatEnEssai' => 'En essai',
 			'admin.finance.vue.etatEnConfirmation' => 'En confirmation',
-			'admin.finance.vue.etatPart' => ({required Object valeur}) => '${valeur} % des profils du mois',
+			'admin.finance.vue.etatPart' => ({required Object valeur}) => '${valeur} % des profils du mois',
 			'admin.finance.vue.etatVide' => 'Aucun état de paiement rendu pour ce mois.',
 			'admin.finance.vue.topClasses' => 'Top classes',
 			'admin.finance.vue.topClassesDetail' => ({required Object deMois}) => 'Les classes qui ont le plus encaissé ${deMois}.',
@@ -29273,7 +29273,7 @@ extension on Traductions {
 			'admin.finance.pol.margeForteDetail' => 'Le repère d\'un mois très bon ; il ne descend pas sous l\'objectif.',
 			'admin.finance.pol.margeStretch' => 'Scénario stretch',
 			'admin.finance.pol.margeStretchDetail' => 'Le repère ambitieux ; il ne descend pas sous la performance forte.',
-			'admin.finance.pol.pourcentValeur' => ({required Object valeur}) => '${valeur} %',
+			'admin.finance.pol.pourcentValeur' => ({required Object valeur}) => '${valeur} %',
 			'admin.finance.pol.unitePourcent' => '%',
 			'admin.finance.pol.erreurMargeMax' => 'Saisissez une marge de 100 % au plus.',
 			'admin.finance.pol.erreurMargeForte' => ({required Object objectif}) => 'La performance forte ne descend pas sous l\'objectif (${objectif}) : saisissez une valeur au moins égale.',
@@ -29283,7 +29283,7 @@ extension on Traductions {
 			'admin.finance.pol.budgetsNonFixes' => 'Pas encore fixés',
 			'admin.finance.pol.budgetMarketing' => 'Budget marketing',
 			'admin.finance.pol.budgetOperationnel' => 'Budget opérationnel',
-			'admin.finance.pol.budgetValeur' => ({required Object valeur}) => '${valeur} %, non contraignant',
+			'admin.finance.pol.budgetValeur' => ({required Object valeur}) => '${valeur} %, non contraignant',
 			'admin.finance.pol.budgetComparaison' => ({required Object libelle, required Object valeur}) => '${libelle} : ${valeur}',
 			'admin.finance.pol.separateurComparaison' => ' ; ',
 			'admin.finance.pol.invariants' => 'Règles fixes',
@@ -32093,7 +32093,7 @@ extension on Traductions {
 			'argent.acces.reactiveAdulteSansDate' => 'Vous pouvez de nouveau rejoindre vos séances.',
 			'argent.acces.pastilleSuspendu' => 'Suspendu',
 			'argent.acces.pastilleReactive' => 'Réactivé',
-			'identiteProfil.age' => ({required Object n}) => '${n} ans',
+			'identiteProfil.age' => ({required Object n}) => '${n} ans',
 			'identiteProfil.classe' => ({required Object classe}) => 'Classe ${classe}',
 			'identiteProfil.ageEtClasse' => ({required Object age, required Object classe}) => '${age} · ${classe}',
 			'identiteProfil.lecteurEnfant' => ({required Object prenom}) => '${prenom}, profil enfant',
@@ -32120,8 +32120,8 @@ extension on Traductions {
 			'com.socle.composants.pieceJointe.retirer' => 'Retirer',
 			'com.socle.composants.pieceJointe.retirerLecteur' => ({required Object nom}) => 'Retirer ${nom}',
 			'com.socle.composants.pieceJointe.tailleOctets' => ({required Object taille}) => '${taille} octets',
-			'com.socle.composants.pieceJointe.tailleKo' => ({required Object taille}) => '${taille} Ko',
-			'com.socle.composants.pieceJointe.tailleMo' => ({required Object taille}) => '${taille} Mo',
+			'com.socle.composants.pieceJointe.tailleKo' => ({required Object taille}) => '${taille} Ko',
+			'com.socle.composants.pieceJointe.tailleMo' => ({required Object taille}) => '${taille} Mo',
 			'com.socle.composants.pieceJointe.autorisee' => 'Prêt à envoyer',
 			'com.socle.composants.pieceJointe.tropVolumineuse' => 'Fichier trop lourd',
 			'com.socle.composants.pieceJointe.tropVolumineuseDetail' => 'Ce fichier dépasse la taille autorisée. Choisissez un fichier plus léger.',
@@ -32982,7 +32982,7 @@ extension on Traductions {
 			'comptable.commun.objectifMois' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Objectif actuel : 1 mois de charges essentielles', other: 'Objectif actuel : ${n} mois de charges essentielles', ), 
 			'comptable.commun.montantActuel' => 'Montant actuel',
 			'comptable.commun.manque' => 'Manque à compléter',
-			'comptable.commun.atteint' => ({required Object pourcent}) => '${pourcent} % atteint',
+			'comptable.commun.atteint' => ({required Object pourcent}) => '${pourcent} % atteint',
 			'comptable.commun.modeCalcul' => 'Mode de calcul',
 			'comptable.commun.modeMontantFixe' => 'Montant cible fixe',
 			'comptable.commun.modeCouvertureMois' => 'Couverture en mois de charges essentielles',
@@ -33277,7 +33277,7 @@ extension on Traductions {
 			'comptable.tresorerie.coffresPhrase' => 'Où l\'argent est affecté. Une somme protégée n\'est jamais comptée comme libre.',
 			'comptable.tresorerie.coffreProtege' => 'Protégé',
 			'comptable.tresorerie.coffreNonProtege' => 'Non protégé',
-			'comptable.tresorerie.partDetenue' => ({required Object part}) => '${part} % de la trésorerie détenue',
+			'comptable.tresorerie.partDetenue' => ({required Object part}) => '${part} % de la trésorerie détenue',
 			'comptable.tresorerie.regleUsage' => ({required Object regle}) => 'Règle d\'usage : ${regle}',
 			'comptable.tresorerie.coffresVide' => 'Aucun coffre n\'est encore rendu.',
 			'comptable.tresorerie.coffresVidePhrase' => 'Les sept coffres apparaîtront ici dès que la source les rendra.',
@@ -33293,7 +33293,7 @@ extension on Traductions {
 			'comptable.tresorerie.alimentationAuto' => 'Alimentation automatique',
 			'comptable.tresorerie.regle.desactivee' => 'Désactivée',
 			'comptable.tresorerie.regle.montantFixe' => 'Montant fixe à chaque échéance',
-			'comptable.tresorerie.regle.pourcentage' => ({required Object pourcent}) => '${pourcent} % de chaque encaissement consolidé',
+			'comptable.tresorerie.regle.pourcentage' => ({required Object pourcent}) => '${pourcent} % de chaque encaissement consolidé',
 			'comptable.tresorerie.regle.jusquAObjectif' => 'Compléter jusqu\'au montant visé',
 			'comptable.tresorerie.regle.proposee' => 'Proposition à confirmer par vous',
 			'comptable.tresorerie.cadence' => 'Cadence',
@@ -33302,7 +33302,7 @@ extension on Traductions {
 			'comptable.tresorerie.cadences.mensuelle' => 'Chaque mois',
 			'comptable.tresorerie.cadences.apresEncaissementConsolide' => 'Après chaque encaissement consolidé',
 			'comptable.tresorerie.cadences.manuelle' => 'Manuelle',
-			'comptable.tresorerie.seuilAlerte' => ({required Object pourcent}) => 'Alerte sous ${pourcent} % du montant visé',
+			'comptable.tresorerie.seuilAlerte' => ({required Object pourcent}) => 'Alerte sous ${pourcent} % du montant visé',
 			'comptable.tresorerie.retraitValidation' => 'Tout retrait exige une validation supplémentaire.',
 			'comptable.tresorerie.retraitSansValidation' => 'La politique n\'exige pas de validation pour un retrait ; il reste traité comme un mouvement sensible.',
 			'comptable.tresorerie.version' => ({required Object version}) => 'Version ${version}',

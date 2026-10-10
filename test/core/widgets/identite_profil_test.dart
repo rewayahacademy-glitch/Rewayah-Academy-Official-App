@@ -31,7 +31,7 @@ void main() {
       find.bySemanticsLabel('Mariam, profil enfant, Classe An-Nour'),
       findsOneWidget,
     );
-    expect(find.text('10 ans · Classe An-Nour'), findsOneWidget);
+    expect(find.text('10\u00A0ans · Classe An-Nour'), findsOneWidget);
   });
 
   testWidgets('profil adulte, sans classe : « Fatimah, profil adulte »', (

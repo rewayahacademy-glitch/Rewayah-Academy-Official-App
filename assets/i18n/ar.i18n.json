@@ -1770,7 +1770,7 @@
       },
       "montantActuel": "المبلغ الحالي",
       "manque": "المتبقي لبلوغ الهدف",
-      "atteint": "تحقق {pourcent} %",
+      "atteint": "تحقق {pourcent} %",
       "modeCalcul": "طريقة الحساب",
       "modeMontantFixe": "مبلغ مستهدف ثابت",
       "modeCouvertureMois": "تغطية بعدد أشهر المصاريف الأساسية",
@@ -2143,7 +2143,7 @@
       "coffresPhrase": "حيث يُخصَّص المال. المبلغ المحمي لا يُحسب أبدًا ضمن الحر.",
       "coffreProtege": "محمي",
       "coffreNonProtege": "غير محمي",
-      "partDetenue": "{part} % من الخزينة المحتفَظ بها",
+      "partDetenue": "{part} % من الخزينة المحتفَظ بها",
       "regleUsage": "قاعدة الاستخدام: {regle}",
       "coffresVide": "لم يُرجَع أي صندوق بعد.",
       "coffresVidePhrase": "ستظهر الصناديق السبعة هنا بمجرد أن يُرجعها المصدر.",
@@ -2162,7 +2162,7 @@
       "regle": {
         "desactivee": "معطّلة",
         "montantFixe": "مبلغ ثابت في كل موعد",
-        "pourcentage": "{pourcent} % من كل مقبوض مُثبَّت",
+        "pourcentage": "{pourcent} % من كل مقبوض مُثبَّت",
         "jusquAObjectif": "الإكمال حتى المبلغ المستهدف",
         "proposee": "اقتراح يتطلب تأكيدك"
       },
@@ -2174,7 +2174,7 @@
         "apresEncaissementConsolide": "بعد كل مقبوض مُثبَّت",
         "manuelle": "يدوية"
       },
-      "seuilAlerte": "تنبيه دون {pourcent} % من المبلغ المستهدف",
+      "seuilAlerte": "تنبيه دون {pourcent} % من المبلغ المستهدف",
       "retraitValidation": "كل سحب يتطلب مصادقة إضافية.",
       "retraitSansValidation": "لا تشترط السياسة مصادقة للسحب؛ ويبقى معامَلًا كحركة حساسة.",
       "version": "الإصدار {version}",
