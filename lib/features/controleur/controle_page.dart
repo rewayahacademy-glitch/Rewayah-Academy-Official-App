@@ -309,7 +309,7 @@ class _CarteMission extends StatelessWidget {
             ],
           ),
           Ecart.vSm,
-          Text(mission.classe, style: fort),
+          Text(mission.classeDistincte, style: fort),
           Ecart.vLg,
           // AVATAR-1 : l'enseignant est un couple avatar + nom du composant
           // partage, avec au plus une ligne de role (horaire, duree, effectif).

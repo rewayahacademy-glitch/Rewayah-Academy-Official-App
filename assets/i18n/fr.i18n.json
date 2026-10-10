@@ -1,5 +1,10 @@
 {
   "commun": {
+    "classeDistincte": {
+      "numero": "{libelle} · n°\u00a0{numero}",
+      "code": "{libelle} · {code}",
+      "enseignant": "{libelle} · avec {enseignant}"
+    },
     "marque": "Rewayah Academy",
     "continuer": "Continuer",
     "retour": "Retour",
@@ -1976,6 +1981,30 @@
       "typeEnfant": "Enfants",
       "typeAdulte": "Adultes",
       "filtreTousTypes": "Tous les publics",
+      "liste": {
+        "rechercheLibelle": "Rechercher une classe",
+        "rechercheAide": "Nom, numéro, code ou enseignant de la classe",
+        "filtreAttente": "En attente d'enseignant",
+        "filtreJour": "Jour",
+        "filtreTousJours": "Tous les jours",
+        "filtreHeure": "Heure",
+        "filtreToutesHeures": "Toutes les heures",
+        "filtreFuseau": "Fuseau",
+        "filtreTousFuseaux": "Tous les fuseaux",
+        "filtreGenre": "Genre",
+        "filtreTousGenres": "Tous les genres",
+        "genreMasculin": "Garçons ou hommes",
+        "genreFeminin": "Filles ou femmes",
+        "filtreEnseignant": "Enseignant",
+        "filtreTousEnseignants": "Tous les enseignants",
+        "sansEnseignant": "Sans enseignant",
+        "etatAttente": "En attente d'enseignant",
+        "position": "Page {page} sur {total}",
+        "positionSemantique": "Page {page} sur {total} de la liste des classes",
+        "precedente": "Page précédente des classes",
+        "suivante": "Page suivante des classes",
+        "resume": "Classes {debut} à {fin} sur {total}"
+      },
       "etatActif": "Active",
       "etatCloture": "Clôturée",
       "membresSur": "{actifs} / {seuil}",
@@ -2103,7 +2132,7 @@
       "tri": "Les demandes prêtes à ouvrir une classe d'abord, puis les plus nombreuses.",
       "indisponibleTitre": "Disponible au branchement serveur",
       "indisponiblePhrase": "Les demandes réunies s'afficheront ici dès le branchement serveur. D'ici là, rien n'est affiché : aucune demande n'est inventée.",
-      "erreur": "Les demandes réunies n'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "erreur": "Les demandes réunies n'ont pas pu être affichées : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
       "sansDonnees": "Les demandes réunies n'ont pas pu être chargées",
       "vide": "Aucune demande en attente",
       "videDetail": "Les nouvelles demandes des familles apparaîtront ici, réunies quand elles se ressemblent.",
@@ -2114,7 +2143,7 @@
       "cleAilleurs": "Ailleurs",
       "clePublic": "Public",
       "cleLangue": "Langue",
-      "cleEleves": "Élèves",
+      "cleEleves": "Demandes",
       "heure": "{heure} h",
       "heureMinutes": "{heure} h {minutes}",
       "heureFuseau": "{heure}, heure {deVille}",
@@ -2126,30 +2155,31 @@
       "fuseauValeur": "Heure {deVille}",
       "jourHeure": "{jour} {heure}",
       "ailleursJour": "{jour} : {ailleurs}",
-      "eleves": {
-        "one": "{n} élève sur {quota}",
-        "other": "{n} élèves sur {quota}"
+      "demandes": {
+        "one": "{n} demande",
+        "other": "{n} demandes"
       },
+      "classesPossibles": {
+        "zero": "aucune classe possible",
+        "one": "{n} classe possible",
+        "other": "{n} classes possibles"
+      },
+      "demandesVersClasses": "{demandes} → {classes}",
       "pret": "Prête",
       "incomplete": "Incomplète",
       "pretDetail": "Le quota est atteint : la classe peut ouvrir complète.",
       "manquent": {
-        "one": "Il manque {n} élève pour atteindre le quota. Vous pouvez quand même créer la classe.",
-        "other": "Il manque {n} élèves pour atteindre le quota. Vous pouvez quand même créer la classe."
+        "one": "Il manque {n} demande pour atteindre le quota : la classe pourra être créée dès que le regroupement sera prêt.",
+        "other": "Il manque {n} demandes pour atteindre le quota : la classe pourra être créée dès que le regroupement sera prêt."
       },
       "nonOuvert": "La création de cette classe ne vous est pas ouverte : un membre de la direction qui en a le droit peut la faire.",
       "affectationNonOuverte": "La confirmation de l'enseignant ne vous est pas ouverte : un membre de la direction qui en a le droit peut la faire.",
       "classeAttend": "Classe {libelle} créée : son enseignant reste à confirmer.",
       "creer": "Créer la classe",
-      "creerIncomplete": "Créer la classe incomplète",
       "choisirEnseignant": "Choisir l'enseignant",
       "contexte": {
         "one": "L'élève de ces demandes sera intégré à la classe dès sa création. Vous confirmerez ensuite l'enseignant proposé.",
         "other": "Les {n} élèves de ces demandes seront intégrés à la classe dès sa création. Vous confirmerez ensuite l'enseignant proposé."
-      },
-      "incompletePhrase": {
-        "one": "Cette classe sera incomplète : {n} élève sur {quota}. Elle ouvrira quand même, et d'autres élèves pourront la rejoindre.",
-        "other": "Cette classe sera incomplète : {n} élèves sur {quota}. Elle ouvrira quand même, et d'autres élèves pourront la rejoindre."
       },
       "nomDetail": "Déduit du genre, du public, des jours et de l'heure.",
       "dejaCreee": "Un autre membre de la direction vient de créer cette classe : rien n'a été créé en double. Fermez cette feuille pour retrouver la liste à jour.",
@@ -6130,7 +6160,7 @@
       "choisirAutre": "Choisir un autre créneau pour {prenom}"
     },
     "vide": "Aucune demande de créneau en cours.",
-    "erreur": "Le suivi des demandes n'a pas pu être chargé : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+    "erreur": "Le suivi de vos demandes n'a pas pu être affiché : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Cet échec concerne seulement l'affichage du suivi : il ne dit rien de vos demandes de créneau. Réessayez dans un instant.",
     "sansDonnees": "Le suivi des demandes n'a pas pu être chargé",
     "accueil": {
       "titre": "Vos demandes de créneau",

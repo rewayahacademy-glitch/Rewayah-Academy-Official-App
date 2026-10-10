@@ -4,11 +4,13 @@
 /// Trois etapes dans une seule feuille, dans l'ordre de la decision du
 /// directeur (§3) :
 ///
-/// 1. **Creer** : le resume du regroupement, ce qui manque au quota dit en
-///    clair (« Cette classe sera incomplete : 3 eleves sur 5 »), le genre de
-///    la classe (les cartes de CLASSE-FORM-1), le nom deduit. Le bouton dit
-///    ce qu'il fait (« Creer la classe », « Creer la classe incomplete ») :
-///    c'est la confirmation de l'administration. Il ne se grise jamais ;
+/// 1. **Creer** : le resume du regroupement (« 12 demandes → 2 classes
+///    possibles »), le genre de la classe (les cartes de CLASSE-FORM-1), le
+///    nom deduit et son numero parmi les classes paralleles (R16). Le bouton
+///    « Creer la classe » est la confirmation de l'administration ; il ne se
+///    grise jamais. Un regroupement qui n'a pas atteint le quota n'a pas de
+///    bouton (le serveur refuse la creation, ECHELLE-CORR-ECRANS-1) : la
+///    phrase dit ce qui manque ;
 /// 2. **Enseignant** : la classe est creee et ses eleves integres ; la
 ///    feuille dit que les familles sont prevenues que leur classe est
 ///    validee (decision §4). Le premier choix est preselectionne, avec sa
@@ -20,7 +22,9 @@
 ///    le dit.
 ///
 /// Double appui : un seul envoi (drapeau d'envoi, et la meme `cleEnvoi` pour
-/// toute la feuille, que le serveur rend idempotente). Creation concurrente
+/// toute la feuille, que le serveur rend idempotente). La cle est un UUID v4
+/// tire a l'ouverture de la feuille ([nouvelleCleEnvoi]) : le parametre
+/// serveur `p_cle_idempotence` est de type `uuid`. Creation concurrente
 /// par deux membres de la direction : le serveur rend [CreationDejaFaite], la
 /// feuille le dit et ne cree rien.
 library;
@@ -29,6 +33,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/enseignants_classe.dart';
@@ -49,6 +54,10 @@ import '../../core/widgets/status_pill.dart';
 import '../admin_groupes/bas_de_feuille.dart';
 import '../admin_groupes/genre_classe_libelles.dart';
 import 'regroupements_libelles.dart';
+
+/// Une cle d'envoi neuve : un UUID v4 (le parametre serveur
+/// `p_cle_idempotence` est de type `uuid`, une autre forme y leve 22P02).
+String nouvelleCleEnvoi() => const Uuid().v4();
 
 /// Ou en est la feuille.
 enum EtapeFeuilleRegroupement {
@@ -89,10 +98,9 @@ class _FeuilleClasseRegroupementEtat
       : EtapeFeuilleRegroupement.enseignant;
 
   /// Une seule cle pour toute la feuille : deux pressions, ou une pression
-  /// apres une reponse perdue, reprennent la meme creation cote serveur.
-  late final String _cleEnvoi =
-      '${widget.regroupement.id}:${identityHashCode(this)}:'
-      '${DateTime.now().microsecondsSinceEpoch}';
+  /// apres une reponse perdue, reprennent la meme creation cote serveur. Une
+  /// nouvelle ouverture de la feuille tire une nouvelle cle.
+  final String _cleEnvoi = nouvelleCleEnvoi();
 
   GenreClasse? _genre;
   String? _enseignantId;
@@ -112,7 +120,7 @@ class _FeuilleClasseRegroupementEtat
 
   Future<void> _creer() async {
     // Double appui : le second ne part pas.
-    if (_envoi) return;
+    if (_envoi || !_r.pret) return;
     final GenreClasse? genre = _genre;
     if (genre == null) {
       setState(() => _message = t.admin.groupes.formulaire.manqueGenre);
@@ -248,7 +256,7 @@ class _FeuilleClasseRegroupementEtat
         Ecart.vLg,
         ...espacer(lignesRegroupement(_r)),
         Ecart.vLg,
-        EtatQuota(regroupement: _r, phraseFeuille: true),
+        EtatQuota(regroupement: _r),
         Ecart.vXxl,
         TitreChamp(f.titreGenre, style: textes.titleMedium, obligatoire: true),
         Ecart.vMd,
@@ -278,7 +286,7 @@ class _FeuilleClasseRegroupementEtat
         LigneCleValeur(
           key: const ValueKey<String>('regroupement-nom'),
           cle: f.titreNom,
-          valeur: nomDeduit(_r, _genre),
+          valeur: nomDeduitDistinct(_r, _genre),
         ),
         Ecart.vXs,
         TexteSansCoupure(r.nomDetail, style: textes.bodySmall),
@@ -311,10 +319,10 @@ class _FeuilleClasseRegroupementEtat
               onPress: () => Navigator.of(context).pop(),
             ),
           ),
-        ] else
+        ] else if (_r.pret)
           BasDeFeuille(
             key: const ValueKey<String>('regroupement-creer'),
-            libelle: _r.pret ? r.creer : r.creerIncomplete,
+            libelle: r.creer,
             enCours: _envoi,
             horsLigne: f.horsLigne,
             onPress: () => unawaited(_creer()),
@@ -388,8 +396,8 @@ class _FeuilleClasseRegroupementEtat
           liveRegion: true,
           child: TexteSansCoupure(
             integres == null
-                ? r.classeAttend(libelle: classe.libelle)
-                : r.creee(n: integres, libelle: classe.libelle),
+                ? r.classeAttend(libelle: nomClasseRegroupee(classe))
+                : r.creee(n: integres, libelle: nomClasseRegroupee(classe)),
             key: const ValueKey<String>('regroupement-creee'),
             style: textes.titleSmall,
           ),
@@ -476,7 +484,10 @@ class _FeuilleClasseRegroupementEtat
         else ...<Widget>[
           if (nom != null) ...<Widget>[
             TexteSansCoupure(
-              r.termineDetail(libelle: classe.libelle, enseignant: nom),
+              r.termineDetail(
+                libelle: nomClasseRegroupee(classe),
+                enseignant: nom,
+              ),
               style: textes.bodyMedium,
             ),
             Ecart.vLg,
@@ -529,8 +540,9 @@ List<Widget> lignesRegroupement(RegroupementDemandes g) {
     LigneCleValeur(cle: r.clePublic, valeur: nomPublic(g.public)),
     LigneCleValeur(cle: r.cleLangue, valeur: g.langueNom),
     LigneCleValeur(
+      key: ValueKey<String>('regroupement-demandes-${g.id}'),
       cle: r.cleEleves,
-      valeur: r.eleves(n: g.nombreEleves, quota: g.quota),
+      valeur: libelleDemandesClasses(g),
       chiffres: true,
     ),
   ];
@@ -546,32 +558,22 @@ List<Widget> espacer(List<Widget> lignes) => <Widget>[
 
 /// L'etat du quota : « Prete » ou « Incomplete », avec sa phrase. Trois
 /// signaux, jamais la couleur seule : la pastille (ton et mot), et la
-/// phrase.
+/// phrase. Incomplete : la phrase dit combien de demandes manquent et que la
+/// classe pourra etre creee quand le regroupement sera pret (le serveur
+/// refuse avant) ; elle ne promet ni ouverture ni arrivee ulterieure.
 class EtatQuota extends StatelessWidget {
   /// Cree l'etat.
-  const EtatQuota({
-    required this.regroupement,
-    this.phraseFeuille = false,
-    super.key,
-  });
+  const EtatQuota({required this.regroupement, super.key});
 
   /// Le regroupement.
   final RegroupementDemandes regroupement;
-
-  /// Vrai dans la feuille : la phrase dit que la classe sera incomplete,
-  /// avant la confirmation.
-  final bool phraseFeuille;
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
     final r = t.admin.regroupements;
     final RegroupementDemandes g = regroupement;
-    final String phrase = g.pret
-        ? r.pretDetail
-        : phraseFeuille
-        ? r.incompletePhrase(n: g.nombreEleves, quota: g.quota)
-        : r.manquent(n: g.manquants);
+    final String phrase = g.pret ? r.pretDetail : r.manquent(n: g.manquants);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -588,9 +590,7 @@ class EtatQuota extends StatelessWidget {
         Ecart.vSm,
         TexteSansCoupure(
           phrase,
-          key: phraseFeuille
-              ? const ValueKey<String>('regroupement-phrase-quota')
-              : null,
+          key: ValueKey<String>('regroupement-phrase-quota-${g.id}'),
           style: textes.bodyMedium,
         ),
       ],

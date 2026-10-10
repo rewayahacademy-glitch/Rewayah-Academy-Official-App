@@ -9,7 +9,8 @@
 // - la creation integre les eleves, puis enchaine sur la proposition
 //   d'enseignant (premier choix preselectionne, genre compatible), puis
 //   « Les familles ont ete prevenues » ;
-// - avant le quota, le bouton reste actif et la feuille dit « incomplete » ;
+// - avant le quota, aucun bouton (le serveur refuse) : la phrase dit ce qui
+//   manque, sans promettre d'ouverture (ECHELLE-CORR-ECRANS-1) ;
 // - creation concurrente par deux membres de la direction : message clair,
 //   rien en double ; double appui : un seul envoi ; reponse perdue : « non
 //   confirmee », et la meme cle reprend la meme creation ;
@@ -268,7 +269,7 @@ void main() {
         ),
         findsOneWidget,
       );
-      expect(find.text('5 élèves sur 5'), findsOneWidget);
+      expect(find.text('5 demandes → 1 classe possible'), findsOneWidget);
       expect(find.text('العربية'), findsOneWidget);
       verifierUnSeulBoutonPlein(tester);
       await _demonter(tester);
@@ -399,7 +400,7 @@ void main() {
       );
       expect(_parCle('regroupement-pret-trois'), findsOneWidget);
       expect(_parCle('regroupement-incomplet-six'), findsOneWidget);
-      expect(find.text('6 élèves sur 7'), findsOneWidget);
+      expect(find.text('6 demandes → aucune classe possible'), findsOneWidget);
       expect(find.text(t.admin.regroupements.manquent(n: 1)), findsOneWidget);
       await _demonter(tester);
     });
@@ -435,7 +436,12 @@ void main() {
       expect(port.creationsRecues, 0);
 
       await _choisirGenre(tester, GenreClasse.femmes);
-      expect(find.text('Filles, lundi, mardi, jeudi 18\u00a0h'), findsWidgets);
+      // R16 : le nom deduit et le numero que le serveur donnera a la classe
+      // parmi les classes paralleles de meme cle (4 dans la demonstration).
+      expect(
+        find.text('Filles, lundi, mardi, jeudi 18\u00a0h · n°\u00a04'),
+        findsWidgets,
+      );
       await _presser(tester, 'regroupement-creer');
       await _laisser(tester);
 
@@ -445,7 +451,7 @@ void main() {
         find.text(
           t.admin.regroupements.creee(
             n: 5,
-            libelle: 'Filles, lundi, mardi, jeudi 18\u00a0h',
+            libelle: 'Filles, lundi, mardi, jeudi 18\u00a0h · n°\u00a04',
           ),
         ),
         findsOneWidget,
@@ -500,27 +506,20 @@ void main() {
       await _demonter(tester);
     });
 
-    testWidgets('avant le quota : bouton actif, classe dite incomplete', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('avant le quota : pas de bouton, la phrase dit ce qui '
+        'manque, sans rien promettre', (WidgetTester tester) async {
       final RegroupementsDemo port = RegroupementsDemo();
       await _monter(tester, port: port);
       expect(_parCle('regroupement-incomplet-$_incomplet'), findsOneWidget);
-      await _ouvrir(tester, _incomplet);
-      expect(
-        find.text(t.admin.regroupements.incompletePhrase(n: 2, quota: 5)),
-        findsOneWidget,
-      );
-      final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
-        _boutonFeuille('regroupement-creer'),
-      );
-      expect(bouton.libelle, t.admin.regroupements.creerIncomplete);
-      expect(bouton.onPress, isNotNull);
-      await _choisirGenre(tester, GenreClasse.indetermine);
-      await _presser(tester, 'regroupement-creer');
-      await _laisser(tester);
-      expect(port.creationsRecues, 1);
-      expect(_parCle('regroupement-feuille-enseignant'), findsOneWidget);
+      // Le serveur refuse un regroupement qui n'est pas pret : aucun bouton
+      // qui ne pourrait pas aboutir, et aucune phrase « vous pouvez quand
+      // meme » ni « d'autres eleves pourront la rejoindre ».
+      expect(_action(_incomplet), findsNothing);
+      expect(_parCle('regroupement-ferme-$_incomplet'), findsNothing);
+      expect(find.text(t.admin.regroupements.manquent(n: 3)), findsOneWidget);
+      expect(find.textContaining('quand même'), findsNothing);
+      expect(find.textContaining('rejoindre'), findsNothing);
+      expect(port.creationsRecues, 0);
       await _demonter(tester);
     });
 
@@ -921,8 +920,8 @@ void main() {
         verifierEcranSansMotCoupe(tester);
         verifierUnSeulBoutonPlein(tester);
 
-        // La feuille de creation d'une classe incomplete, avec son message.
-        await _ouvrir(tester, _incomplet);
+        // La feuille de creation, avec son message (genre manquant).
+        await _ouvrir(tester, _pret);
         await _presser(tester, 'regroupement-creer');
         await tester.pump();
         expect(tester.takeException(), isNull);

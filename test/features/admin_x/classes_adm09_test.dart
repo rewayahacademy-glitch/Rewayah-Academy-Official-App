@@ -12,6 +12,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/admin/port_classes_admin.dart';
 import 'package:rewayah_academy/core/admin/service_groupes.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart'
@@ -205,7 +206,7 @@ void main() {
     // La ligne choisie est annoncee choisie, pas seulement coloree.
     expect(
       find.descendant(
-        of: find.byType(DataCollection<GroupeAdmin>),
+        of: find.byType(DataCollection<ClasseListee>),
         matching: find.byWidgetPredicate(
           (Widget w) => w is Semantics && (w.properties.selected ?? false),
         ),
@@ -288,7 +289,7 @@ void main() {
     WidgetTester tester,
   ) async {
     await _monter(tester, const Size(1440, 900));
-    final Finder tableau = find.byType(DataCollection<GroupeAdmin>);
+    final Finder tableau = find.byType(DataCollection<ClasseListee>);
     // La pastille d'etat de chaque ligne : la cloturee (sans menu) commence
     // au meme bord que les actives (avec menu). Avant la correction, sa
     // cellule de menu valait 0 et toute la ligne glissait.

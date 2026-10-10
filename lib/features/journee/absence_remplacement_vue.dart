@@ -152,7 +152,10 @@ List<LigneCleValeur> lignesRemplacement(
   required String date,
   bool heureLocale = false,
 }) => <LigneCleValeur>[
-  LigneCleValeur(cle: t.enseignant.journee.classe, valeur: offre.classe),
+  LigneCleValeur(
+    cle: t.enseignant.journee.classe,
+    valeur: offre.classeDistincte,
+  ),
   LigneCleValeur(cle: t.enseignant.journee.absence.cleDate, valeur: date),
   LigneCleValeur(
     cle: heureLocale
@@ -225,7 +228,7 @@ class CarteRemplacement extends StatelessWidget {
           Semantics(
             header: true,
             child: TexteSansCoupure(
-              offre.classe,
+              offre.classeDistincte,
               style: textes.titleLarge ?? const TextStyle(),
             ),
           ),
