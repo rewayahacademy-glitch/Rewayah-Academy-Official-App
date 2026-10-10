@@ -1238,5 +1238,37 @@ begin
 end
 $h1$;
 
+-- H2: un compte valide avec un JWT sans rôle ne peut pas rejoindre un groupe.
+-- Avant 0067, « role <> admin OR NOT compte_valide » valait NULL et IF NULL
+-- laissait passer cette mutation SECURITY DEFINER.
+do $h2$
+declare
+  v_refuse boolean := false;
+begin
+  set local role authenticated;
+  perform set_config('request.jwt.claims', '{}', true);
+  perform set_config('test.uid', 'a1730000-0000-0000-0000-000000000004', true);
+  perform set_config('test.jwt', '{}', true);
+
+  begin
+    perform public.ajouter_eleve_groupe(
+      'a173ffff-0000-0000-0000-000000000010',
+      'a1730000-0000-0000-0000-000000000004',
+      'H2 regression: no role claim'
+    );
+  exception when sqlstate 'P0001' then
+    if sqlerrm <> 'ajout d''un eleve a un groupe reserve a l''administration' then
+      raise;
+    end if;
+    v_refuse := true;
+  end;
+
+  if not v_refuse then
+    raise exception 'H2 ECHEC : un JWT sans rôle a ajouté un élève au groupe';
+  end if;
+  raise notice 'H2 ok : ajouter_eleve_groupe refuse un compte valide sans rôle JWT';
+end
+$h2$;
+
 reset role;
 rollback;
