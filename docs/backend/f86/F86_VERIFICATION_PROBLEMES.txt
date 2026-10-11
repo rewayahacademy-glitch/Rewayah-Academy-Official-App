@@ -1,0 +1,199 @@
+app_private.peut_lire_groupe(p_groupe_id uuid, p_student_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+private.tc_annotation_current_participant(p_session_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+private.tc_annotation_teacher_owns_session(p_session_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+private.tc_assignment_member_visible(p_group_id uuid, p_student_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+private.tc_assignment_teacher_owns_group(p_group_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.affecter_enseignant_classe(p_groupe_id uuid, p_teacher_profile_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.affecter_enseignant_classe_c11bis(p_groupe_id uuid, p_teacher_profile_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.agent_identite_masquee(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.agent_jeton_vivant(p_id uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.agent_pre_request(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.agent_pre_request(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.annonce_observation_pour_moi(p_session_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.annonces_observation(p_session_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.annuler_invitation_conjoint(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.anomalies_qualite(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.anomalies_qualite(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.app_account_valid(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.app_account_valid(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.app_config_int(p_key text, p_defaut integer): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.app_household_id(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.app_household_id(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.app_role(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.app_role(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.app_user_id(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.app_user_id(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.assister_seance(p_session_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.attacher_partition_audit(p_debut date): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.attribuer_eleve(p_student_profile_id uuid, p_teacher_profile_id uuid, p_weekday integer, p_hour integer, p_motif text): NO_GUARD_HELPER may not inspect role or JWT identity
+public.autoriser_ecoute_archive(p_recording_id uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.autoriser_ecoute_archive(p_recording_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.autoriser_jeton_video(p_session_id uuid, p_profile_id uuid, p_ws_url_cloud text, p_ws_url_self_hosted text): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.autoriser_lecture_piece_identite(p_document_id uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.autoriser_lecture_piece_identite(p_document_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.brouillon_cahier(p_session_id uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.brouillon_cahier(p_session_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.budget_observation(p_session_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.choisir_offre_horaire(p_membre_id uuid, p_offre_id uuid, p_fuseau_vue text): NO_GUARD_HELPER may not inspect role or JWT identity
+public.classes_a_confirmer_admin(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.completer_kyc_document(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.compte_en_parcours(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.compte_en_parcours(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.comptes_admin(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.confirmer_depot_piece_identite(p_document_id uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.consommer_code_appairage(p_code text, p_device_fingerprint text, p_platform text): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.creer_classe_depuis_regroupement(p_regroupement_id text, p_cle_idempotence uuid, p_libelle text): NO_GUARD_HELPER may not inspect role or JWT identity
+public.creer_classe_depuis_regroupement_c11bis(p_regroupement_id text, p_cle_idempotence uuid, p_libelle text, p_genre_classe text): NO_GUARD_HELPER may not inspect role or JWT identity
+public.creer_code_appairage(p_student_profile_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.creer_groupe(p_teacher_profile_id uuid, p_type_public text, p_libelle text, p_weekday smallint, p_hour_local smallint, p_seuil_max smallint, p_timezone_iana text, p_couleur_jeton smallint): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.creer_jeton_agent(p_libelle text, p_profil_observe uuid, p_duree_heures integer, p_identite_masquee boolean): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.creer_profil_eleve_titulaire(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.creer_profil_enfant(p_auth_user_id uuid, p_guardian_id uuid, p_first_name text, p_last_name text, p_age integer, p_level text): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.creer_profil_inscription(p_role text, p_first_name text, p_last_name text, p_gender gender, p_timezone text, p_parent_suit_des_cours boolean): NO_GUARD_HELPER may not inspect role or JWT identity
+public.custom_access_token_hook(event jsonb): NO_GUARD_HELPER may not inspect role or JWT identity
+public.definir_politique_observation_groupe(p_groupe_id uuid, p_source text, p_max_visites smallint, p_max_secondes integer, p_max_secondes_par_visite integer): NO_GUARD_HELPER may not inspect role or JWT identity
+public.demander(p_kind text, p_subject_profile_id uuid, p_motif text, p_rule_key text, p_rule_value integer): NO_GUARD_HELPER may not inspect role or JWT identity
+public.derniere_position_groupe(p_groupe_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.diagnostics_a_traiter(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.diagnostics_a_traiter(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.doit_demander_feedback(p_session_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.dossiers_en_attente(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.dossiers_en_attente(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.effacer_etat_partage(p_session_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.enregistrer_archive_seance(p_room_name text, p_egress_id text, p_object_key text, p_duration_seconds integer, p_size_bytes bigint, p_codec text): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.enregistrer_resume_seance(p_session_id uuid, p_student_id uuid, p_texte_famille text, p_jalon_atteint uuid, p_publier boolean): NO_GUARD_HELPER may not inspect role or JWT identity
+public.enregistrer_webhook_livekit(p_event_id text, p_event_type text, p_room_name text, p_profile_id uuid, p_server_ts timestamp with time zone, p_detail jsonb): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.enseignants_pour_classe(p_classe_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.entrer_observation(p_session_id uuid, p_role text): NO_GUARD_HELPER may not inspect role or JWT identity
+public.est_du_foyer(p_profile_id uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.est_observateur_masque(p_session_id uuid, p_profile_id uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.etat_dossier(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.etat_dossier(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.etat_presence(p_session_id uuid, p_profile_id uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.evaluations_admin(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.evaluations_admin(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.geler_archive_seance(p_recording_id uuid, p_motif text, p_gel boolean): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.geler_archive_seance(p_recording_id uuid, p_motif text, p_gel boolean): NO_GUARD_HELPER may not inspect role or JWT identity
+public.get_config(p_key text, p_default jsonb): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.groupe_detail(p_groupe_id uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.groupe_detail(p_groupe_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.groupe_roster_enseignant(p_groupe_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.groupes_admin(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.groupes_admin(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.guard_app_config_history(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.guard_app_config_history(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.guard_assignment_cap(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.guard_audit_logs_immutable(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.guard_contract_acceptances_immutable(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.guard_devices_max(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.guard_devices_max_reactivation(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.guard_prayer_adjustments(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.guard_profile_immutable_id(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.guard_rule_override_coherente(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.guard_rule_override_coherente(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.guard_rule_override_immutable(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.guard_session_overlap(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.guard_session_participant_cap(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.guard_session_state_transition(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.horloge_seance(p_session_id uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.horloge_seance(p_session_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.jetons_agent_actifs(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.jetons_agent_actifs(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.kyc_super_admin_exception_active(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.log_sensitive_access(p_action text, p_table_name text, p_row_id text, p_payload jsonb): NO_GUARD_HELPER may not inspect role or JWT identity
+public.ma_capacite_eleve(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.maintenant_serveur(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.maj_profil_enseignant(p_country text, p_languages text[], p_timezone text): NO_GUARD_HELPER may not inspect role or JWT identity
+public.materialiser_seances(p_assignment_id uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.materialiser_seances_groupe(p_groupe_id uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.mes_rapports_en_attente(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.mes_rapports_en_attente(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.modifier_groupe(p_groupe_id uuid, p_libelle text, p_seuil_max smallint, p_weekday smallint, p_hour_local smallint, p_timezone_iana text, p_couleur_jeton smallint): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.mon_fuseau(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.mon_fuseau(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.mon_groupe_detail(p_groupe_id uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.mon_groupe_detail(p_groupe_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.mon_invitation_en_cours(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.next_immutable_id(role_code app_role, initials text): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.offres_admin(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.offres_admin(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.offres_compatibles(p_membre_id uuid, p_fuseau_vue text): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.partie_concernee(p_profile_id uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.partie_concernee(p_profile_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.personnes_observables(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.personnes_observables(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.peut_decrire_apprenant(p_profile_id uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.peut_decrire_apprenant(p_profile_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.peut_deposer_piece_identite(p_profile_id uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.peut_deposer_piece_identite(p_profile_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.peut_poser_disponibilite(p_profile_id uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.peut_poser_disponibilite(p_profile_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.pool_offre(p_offre_id uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.pool_offre(p_offre_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.prendre_eleve(p_student_profile_id uuid, p_weekday integer, p_hour integer): NO_GUARD_HELPER may not inspect role or JWT identity
+public.preparer_depot_piece_identite(p_profile_id uuid, p_doc_type text): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.preparer_depot_piece_identite(p_profile_id uuid, p_doc_type text): NO_GUARD_HELPER may not inspect role or JWT identity
+public.profil_de_mon_foyer(p_profile_id text): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.profil_du_jeton_appareil(p_token text): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.profil_eleve_titulaire_existe(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.programme_niveaux_admin(p_version_id uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.programme_niveaux_admin(p_version_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.programme_versions_admin(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.programme_versions_admin(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.progression_admin(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.progression_admin(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.progression_famille(p_student_id uuid, p_limit integer): NO_GUARD_HELPER may not inspect role or JWT identity
+public.question_feedback_pour(p_session_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.quitter_salle(p_session_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.record_session_event(p_session_id uuid, p_profile_id uuid, p_event_type session_event_type, p_source text): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.regle_brute(p_profile_id uuid, p_key text): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.regle_effective(p_profile_id uuid, p_key text): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.regles_academie(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.regroupements_demandes_horaires_admin(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.rejoindre_observation(p_session_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.remettre_session_agent(p_jeton text): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.repondre_invitation_conjoint(p_decision text, p_cle uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.ressources_du_groupe(p_groupe_id uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.resume_seance_famille(p_session_id uuid, p_student_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.retirer_demande_horaire(p_membre_id uuid, p_motif text): NO_GUARD_HELPER may not inspect role or JWT identity
+public.revoquer_jeton_agent(p_id uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.session_belongs_to_teacher(p_session_id uuid, p_uid uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.session_has_participant(p_session_id uuid, p_uid uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.session_in_household(p_session_id uuid, p_household_id uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.signaler_horaire_insatisfait(p_membre_id uuid, p_detail jsonb): NO_GUARD_HELPER may not inspect role or JWT identity
+public.sortir_observation(p_session_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.soumettre_feedback(p_session_id uuid, p_question_id text, p_reponse text): NO_GUARD_HELPER may not inspect role or JWT identity
+public.suivi_demandes_horaires_foyer(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.tc_annuler_derniere_annotation(p_layer_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.tc_poser_annotation_marqueur(p_layer_id uuid, p_id uuid, p_plage jsonb, p_intention text, p_note text): NO_GUARD_HELPER may not inspect role or JWT identity
+public.tc_session_feedback_calculer_empreinte(): NO_GUARD_HELPER may not inspect role or JWT identity
+public.tendance_feedback_comprehension(p_groupe_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+public.transitions_fuseau_a_venir(p_jours integer): NO_GUARD_HELPER may not inspect role or JWT identity
+public.unite_curriculum(p_student_id uuid): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.video_config_lire(): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.video_route_de_seance(p_session_id uuid, p_ws_url_cloud text, p_ws_url_self_hosted text): PUBLIC/anon/agent_ro/service_role execute privilege is forbidden
+public.visites_observation(p_session_id uuid): NO_GUARD_HELPER may not inspect role or JWT identity
+trigger function is SECURITY DEFINER: public.completer_kyc_document()
+trigger function is SECURITY DEFINER: public.groupe_creneau_ancre()
+trigger function is SECURITY DEFINER: public.guard_app_config_history()
+trigger function is SECURITY DEFINER: public.guard_assignment_cap()
+trigger function is SECURITY DEFINER: public.guard_audit_logs_immutable()
+trigger function is SECURITY DEFINER: public.guard_contract_acceptances_immutable()
+trigger function is SECURITY DEFINER: public.guard_devices_max()
+trigger function is SECURITY DEFINER: public.guard_devices_max_reactivation()
+trigger function is SECURITY DEFINER: public.guard_groupe_membre_cap()
+trigger function is SECURITY DEFINER: public.guard_prayer_adjustments()
+trigger function is SECURITY DEFINER: public.guard_profile_immutable_id()
+trigger function is SECURITY DEFINER: public.guard_rule_override_coherente()
+trigger function is SECURITY DEFINER: public.guard_rule_override_immutable()
+trigger function is SECURITY DEFINER: public.guard_session_overlap()
+trigger function is SECURITY DEFINER: public.guard_session_participant_cap()
+trigger function is SECURITY DEFINER: public.guard_session_state_transition()
+trigger function is SECURITY DEFINER: public.tc_annotation_toucher_couche()
+trigger function is SECURITY DEFINER: public.tc_annotation_valider_marqueur()
+trigger function is SECURITY DEFINER: public.tc_annotation_valider_trait()
+trigger function is SECURITY DEFINER: public.tc_demande_horaire_cloture_retrait_groupe()
+trigger function is SECURITY DEFINER: public.tc_materialiser_apres_adhesion()
+trigger function is SECURITY DEFINER: public.tc_materialiser_apres_creation_groupe()
+trigger function is SECURITY DEFINER: public.tc_notification_etape_adulte_autonome()
+trigger function is SECURITY DEFINER: public.tc_session_feedback_calculer_empreinte()
