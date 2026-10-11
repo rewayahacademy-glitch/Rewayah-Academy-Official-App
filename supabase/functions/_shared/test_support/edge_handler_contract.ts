@@ -1,4 +1,4 @@
-﻿import { AccessToken } from 'npm:livekit-server-sdk@2.13.1'
+import { AccessToken } from 'npm:livekit-server-sdk@2.13.1'
 
 export interface CasEdge {
   succes: RequestInit
