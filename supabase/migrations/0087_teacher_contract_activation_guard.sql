@@ -89,7 +89,11 @@ DECLARE
   v_notice_version text;
   v_notice_signed text;
 BEGIN
-  IF public.app_role() <> 'admin'::public.app_role THEN
+  IF NOT coalesce(
+    public.app_role() = 'admin'::public.app_role
+      AND public.app_account_valid(),
+    false
+  ) THEN
     RAISE EXCEPTION USING ERRCODE = '42501', MESSAGE = 'admin_required';
   END IF;
   IF NOT EXISTS (
