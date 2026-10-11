@@ -53,6 +53,32 @@ update public.resource_version
 update public.library_resource
    set current_version_id = 'c3500000-0000-0000-0000-000000000012'
  where id = 'c3500000-0000-0000-0000-000000000011';
+insert into public.library_resource
+  (id, title, short_title, resource_type, access_policy, offline_policy)
+values
+  ('c3500000-0000-0000-0000-000000000014', 'C35 public', 'C35 public', 'pdf', 'publique', 'jamais'),
+  ('c3500000-0000-0000-0000-000000000017', 'C35 inscrits', 'C35 inscrits', 'pdf', 'inscrits', 'jamais');
+insert into public.resource_version (id, resource_id, numero_version, statut)
+values
+  ('c3500000-0000-0000-0000-000000000015', 'c3500000-0000-0000-0000-000000000014', 1, 'publiee'),
+  ('c3500000-0000-0000-0000-000000000018', 'c3500000-0000-0000-0000-000000000017', 1, 'publiee');
+insert into public.download_asset
+  (id, resource_version_id, format, cle_stockage, taille_octets, origine)
+values
+  ('c3500000-0000-0000-0000-000000000016', 'c3500000-0000-0000-0000-000000000015', 'pdf',
+   'supports/c3500000-0000-0000-0000-000000000016/1/public.pdf', 128, 'importe_tel_quel'),
+  ('c3500000-0000-0000-0000-000000000019', 'c3500000-0000-0000-0000-000000000018', 'pdf',
+   'supports/c3500000-0000-0000-0000-000000000019/1/inscrits.pdf', 128, 'importe_tel_quel');
+update public.resource_version
+   set download_asset_id = 'c3500000-0000-0000-0000-000000000016'
+ where id = 'c3500000-0000-0000-0000-000000000015';
+update public.resource_version
+   set download_asset_id = 'c3500000-0000-0000-0000-000000000019'
+ where id = 'c3500000-0000-0000-0000-000000000018';
+update public.library_resource set current_version_id = 'c3500000-0000-0000-0000-000000000015'
+ where id = 'c3500000-0000-0000-0000-000000000014';
+update public.library_resource set current_version_id = 'c3500000-0000-0000-0000-000000000018'
+ where id = 'c3500000-0000-0000-0000-000000000017';
 insert into public.library_version_rights
   (resource_version_id, source_titre, titulaire, usages, attribution,
    approuve, revu_par, revu_le, resource_id)
@@ -60,6 +86,16 @@ values ('c3500000-0000-0000-0000-000000000012', 'Support de test', 'Titulaire de
         array['application'], 'Attribution de test', true,
         'c3500000-0000-0000-0000-000000000002', now(),
         'c3500000-0000-0000-0000-000000000011');
+insert into public.library_version_rights
+  (resource_version_id, source_titre, titulaire, usages, attribution,
+   approuve, revu_par, revu_le, resource_id)
+values
+  ('c3500000-0000-0000-0000-000000000015', 'Support public de test', 'Titulaire de test',
+   array['application'], 'Attribution de test', true,
+   'c3500000-0000-0000-0000-000000000002', now(), 'c3500000-0000-0000-0000-000000000014'),
+  ('c3500000-0000-0000-0000-000000000018', 'Support inscrit de test', 'Titulaire de test',
+   array['application'], 'Attribution de test', true,
+   'c3500000-0000-0000-0000-000000000002', now(), 'c3500000-0000-0000-0000-000000000017');
 
 do $$
 begin
@@ -88,6 +124,14 @@ begin
   v_key := public.autoriser_lecture_version('c3500000-0000-0000-0000-000000000012');
   if v_key <> 'supports/c3500000-0000-0000-0000-000000000013/1/manuel.pdf' then
     raise exception 'C-35: la RPC n''a pas rendu le chemin de stockage attendu';
+  end if;
+  v_key := public.autoriser_lecture_version('c3500000-0000-0000-0000-000000000015');
+  if v_key <> 'supports/c3500000-0000-0000-0000-000000000016/1/public.pdf' then
+    raise exception 'C-35: un élève autorisé ne lit pas la ressource publique';
+  end if;
+  v_key := public.autoriser_lecture_version('c3500000-0000-0000-0000-000000000018');
+  if v_key <> 'supports/c3500000-0000-0000-0000-000000000019/1/inscrits.pdf' then
+    raise exception 'C-35: un élève authentifié ne lit pas la ressource inscrits';
   end if;
   begin
     perform public.autoriser_lecture_version('c3500000-0000-0000-0000-000000000099');
