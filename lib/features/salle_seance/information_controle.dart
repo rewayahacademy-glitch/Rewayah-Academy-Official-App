@@ -27,8 +27,8 @@ abstract final class InformationControle {
   ///
   /// Valeur du pilotage `14_controleur/juridique/COORDONNEES_LEGALES.md`
   /// (choix du directeur du 05/10/2026, porte par delegation le 05/10/2026).
-  /// **Condition avant fusion** : l'alias support@rewayahacademy.com doit
-  /// etre cree par le directeur (`docs/current/JUR-APP-1_RESTES.md`).
+  /// L'alias support@rewayahacademy.com est cree depuis le 05/10/2026
+  /// (`docs/current/JUR-APP-1_RESTES.md`, « Conditions restantes »).
   static const String contactConfidentialite = 'support@rewayahacademy.com';
 
   /// Le bouton « Signaler » de l'eleve n'existe pas encore dans la salle

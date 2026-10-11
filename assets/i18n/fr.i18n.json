@@ -5998,7 +5998,7 @@
         "ouvrirMushaf": "Ouvrir le mushaf",
         "lienEchec": "Le lien de lecture n'a pas pu être obtenu pour le moment.",
         "lienIndisponible": "L'ouverture n'est pas disponible pour ce support.",
-        "lienHorsLigne": "L'ouverture n'est pas possible pour le moment. Réessayez dans un instant.",
+        "lienHorsLigne": "L'ouverture pourra se faire quand la connexion reviendra.",
         "lienBloque": "Votre navigateur a bloqué l'ouverture. Autorisez les fenêtres de ce site, puis réessayez."
       },
       "actif": {

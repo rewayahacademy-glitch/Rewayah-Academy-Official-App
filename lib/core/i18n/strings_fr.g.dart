@@ -22306,8 +22306,8 @@ class Traductions$tc$bibliotheque$rendu$fr {
 	/// fr: 'L'ouverture n'est pas disponible pour ce support.'
 	String get lienIndisponible => 'L\'ouverture n\'est pas disponible pour ce support.';
 
-	/// fr: 'L'ouverture n'est pas possible pour le moment. Réessayez dans un instant.'
-	String get lienHorsLigne => 'L\'ouverture n\'est pas possible pour le moment. Réessayez dans un instant.';
+	/// fr: 'L'ouverture pourra se faire quand la connexion reviendra.'
+	String get lienHorsLigne => 'L\'ouverture pourra se faire quand la connexion reviendra.';
 
 	/// fr: 'Votre navigateur a bloqué l'ouverture. Autorisez les fenêtres de ce site, puis réessayez.'
 	String get lienBloque => 'Votre navigateur a bloqué l\'ouverture. Autorisez les fenêtres de ce site, puis réessayez.';
@@ -35971,7 +35971,7 @@ extension on Traductions {
 			'tc.bibliotheque.rendu.ouvrirMushaf' => 'Ouvrir le mushaf',
 			'tc.bibliotheque.rendu.lienEchec' => 'Le lien de lecture n\'a pas pu être obtenu pour le moment.',
 			'tc.bibliotheque.rendu.lienIndisponible' => 'L\'ouverture n\'est pas disponible pour ce support.',
-			'tc.bibliotheque.rendu.lienHorsLigne' => 'L\'ouverture n\'est pas possible pour le moment. Réessayez dans un instant.',
+			'tc.bibliotheque.rendu.lienHorsLigne' => 'L\'ouverture pourra se faire quand la connexion reviendra.',
 			'tc.bibliotheque.rendu.lienBloque' => 'Votre navigateur a bloqué l\'ouverture. Autorisez les fenêtres de ce site, puis réessayez.',
 			'tc.bibliotheque.actif.indisponibleTitre' => 'Support présenté pas encore ouvert',
 			'tc.bibliotheque.actif.indisponible' => 'Le suivi du support présenté s\'ouvrira au branchement serveur.',
