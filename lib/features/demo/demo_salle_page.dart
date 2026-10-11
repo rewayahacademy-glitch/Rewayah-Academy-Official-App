@@ -530,7 +530,11 @@ class _SalleDemoState extends State<SalleDemo> {
             enregistrement: widget.enregistrement,
           );
     // LIVE-CHRONO-01 : la demonstration porte les bornes d'une vraie seance,
-    // fixees une fois a l'ouverture de l'ecran.
+    // fixees une fois a l'ouverture de l'ecran. Les situations de la recette
+    // TB gardent leur en-tete d'origine (leurs mesures en dependent).
+    if (s != null) {
+      return vue;
+    }
     return vue.copyWith(
       chrono: vue.horloge is HorlogeDepassee ? _chronoDepasse : _chronoEnCours,
     );

@@ -20,6 +20,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_horloge/chrono_seance.dart';
 import '../../core/theme/app_palette.dart';
 import '../accueil_famille/ancre_horloge_serveur.dart';
@@ -170,9 +171,11 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
           );
     final String annonce = chrono.prevuEcoule
         ? d.chrono.annoncePrevuEcoule
-        : d.chrono.annonce(
-            ecoule: chrono.minutesEcoulees,
-            restant: chrono.minutesRestantes,
+        : LibellesGroupe.insecable(
+            d.chrono.annonce(
+              ecoule: chrono.minutesEcoulees,
+              restant: chrono.minutesRestantes,
+            ),
           );
     return Semantics(
       key: ChronoSalle.cleAnnonce,
