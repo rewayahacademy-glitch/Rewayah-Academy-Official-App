@@ -214,9 +214,6 @@ List<Override> surchargesDemoTuteur({
         RechargeFoyerFinanceDemo(jeu),
       ),
     ],
-    // RECH-1 : la recherche de demonstration (plusieurs milliers de classes
-    // et de supports fictifs) ; en production, aucun moteur n'est raccorde.
-    moteursRechercheProvider.overrideWithValue(moteursDemoRecherche()),
     portAccesFoyerProvider.overrideWithValue(const AccesFoyerDemo()),
     // La couleur de profil choisie par le tuteur (K-62) : gardee en memoire,
     // rien n'est envoye (FI-BR-19).
@@ -283,6 +280,10 @@ List<Override> surchargesDemoTuteur({
     // Presence (Accueil, verification prealable) et pieces signees (Compte).
     servicePresenceProvider.overrideWithValue(const PresenceDemo()),
     acceptationsProvider.overrideWith((Ref ref) async => const <Acceptation>[]),
+    // RECH-1 : la recherche de demonstration (milliers de classes et de
+    // supports fictifs), en fin de liste : des tests indexent les premieres
+    // surcharges. En production, aucun moteur n'est raccorde.
+    moteursRechercheProvider.overrideWithValue(moteursDemoRecherche()),
   ];
 }
 
@@ -356,7 +357,6 @@ List<Override> surchargesDemoAdmin({
   fusionDemo = FusionDemo(classes: classesAdminDemo.toutesBrutes);
   return <Override>[
     sourceSessionProvider.overrideWithValue(const SourceSessionDemoAdmin()),
-    moteursRechercheProvider.overrideWithValue(moteursDemoRecherche()),
     portRevueDossiersProvider.overrideWithValue(RevueDossiersDemo(e)),
     portPolitiqueRevueKycProvider.overrideWithValue(PolitiqueRevueKycDemo(e)),
     // L'ecran ADM-02 actuel et l'Accueil admin : aucun appel serveur.
@@ -441,6 +441,10 @@ List<Override> surchargesDemoAdmin({
     ),
     // Tous les autres services admin adosses a Supabase : « indisponible ».
     ...surchargesServicesAdminIndisponibles(),
+    // RECH-1 : la recherche de demonstration (milliers de classes et de
+    // supports fictifs), en fin de liste : des tests indexent les premieres
+    // surcharges. En production, aucun moteur n'est raccorde.
+    moteursRechercheProvider.overrideWithValue(moteursDemoRecherche()),
   ];
 }
 
