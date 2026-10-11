@@ -54,7 +54,7 @@ END;
 $function$;
 ALTER FUNCTION public.verdict_acces_dossier_kyc(uuid) OWNER TO postgres;
 REVOKE ALL ON FUNCTION public.verdict_acces_dossier_kyc(uuid)
-  FROM PUBLIC, anon, agent_ro;
+  FROM PUBLIC, anon, service_role, agent_ro;
 GRANT EXECUTE ON FUNCTION public.verdict_acces_dossier_kyc(uuid)
   TO authenticated;
 
@@ -66,7 +66,7 @@ COMMENT ON FUNCTION public.verdict_acces_dossier_kyc(uuid) IS
   'only valid admins; same-gender verdict; null-gender admin denied unless '
   'enabled super-admin; cross-gender verdict only for enabled super-admin; '
   'missing/deleted dossier returns only profilNonAutorise; no document metadata '
-  'or audit side effect; controller cannot execute the verdict.';
+  'or audit side effect; controller JWT is denied by the positive role guard.';
 
 DO $verification$
 BEGIN
@@ -79,6 +79,9 @@ BEGIN
     )
     OR has_function_privilege(
       'agent_ro', 'public.verdict_acces_dossier_kyc(uuid)', 'EXECUTE'
+    )
+    OR has_function_privilege(
+      'service_role', 'public.verdict_acces_dossier_kyc(uuid)', 'EXECUTE'
     )
     OR NOT EXISTS (
       SELECT 1 FROM pg_catalog.pg_proc p
