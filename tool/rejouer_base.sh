@@ -9,7 +9,7 @@ TMP=$(mktemp -d) || exit 2
 CREATED=0
 
 cleanup() {
-  if [ "$CREATED" -eq 1 ]; then dropdb --if-exists "$DB" >/dev/null; fi
+  if [ "$CREATED" -eq 1 ]; then dropdb -h 127.0.0.1 --if-exists "$DB" >/dev/null; fi
   rm -rf "$TMP"
 }
 trap cleanup 0
@@ -21,25 +21,18 @@ if ! command -v psql >/dev/null 2>&1 || ! command -v createdb >/dev/null 2>&1 ||
   exit 2
 fi
 
-# Inspect the server actually reached; reject remote PostgreSQL before creating
-# the disposable database. Local sockets and loopback TCP are accepted.
-ADDR=$(psql -X -d postgres -Atqc "select coalesce(inet_server_addr()::text, 'local-socket')" 2>/dev/null) || {
-  printf 'BLOQUÉ: connexion locale à la base postgres impossible.\n' >&2
-  exit 2
-}
-case "$ADDR" in
-  local-socket|127.*|::1) ;;
-  *) printf 'BLOQUÉ: serveur PostgreSQL non local (%s).\n' "$ADDR" >&2; exit 2 ;;
-esac
+# Never inspect a configured server by connecting to it: force loopback for
+# every libpq command, and discard host/service environment overrides first.
+unset PGHOST PGHOSTADDR PGSERVICE PGSERVICEFILE
 
-createdb --maintenance-db=postgres "$DB" || {
+createdb -h 127.0.0.1 --maintenance-db=postgres "$DB" || {
   printf 'BLOQUÉ: création de la base jetable impossible.\n' >&2
   exit 2
 }
 CREATED=1
 
 run_sql() {
-  psql -X -d "$DB" -v ON_ERROR_STOP=1 -f "$1"
+  psql -h 127.0.0.1 -X -d "$DB" -v ON_ERROR_STOP=1 -f "$1"
 }
 
 printf 'Base jetable locale: %s\n' "$DB"
