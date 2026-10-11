@@ -4425,6 +4425,14 @@
     "nonLue": "Non lue",
     "nonLueSemantique": "non lue",
     "lectureNonConfirmee": "La lecture n'est pas encore confirmée. Réessayez dans un instant.",
+    "evenements": {
+      "demandeRecue": { "titre": "Demande reçue", "texte": "Votre demande de créneau est arrivée à l'administration." },
+      "classeValidee": { "titre": "Classe validée", "texte": "Votre classe est prête : elle attend son enseignant." },
+      "enseignantAffecte": { "titre": "Enseignant affecté", "texte": "Un enseignant est affecté à votre classe." },
+      "demandeClose": { "titre": "Demande clôturée", "texte": "Votre demande est maintenant close." },
+      "remplacementPropose": { "titre": "Remplacement proposé", "texte": "Une séance a besoin d'un remplaçant. Ouvrez la page pour répondre." },
+      "remplacementPris": { "titre": "Remplacement pris", "texte": "Un enseignant a pris le remplacement." }
+    },
     "detail": {
       "choisirTitre": "Choisissez une notification",
       "choisirPhrase": "Son détail s'affiche ici, à côté de la liste.",

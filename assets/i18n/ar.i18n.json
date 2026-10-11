@@ -19,6 +19,14 @@
     "nonLue": "غير مقروء",
     "nonLueSemantique": "غير مقروء",
     "lectureNonConfirmee": "لم تُؤكَّد القراءة بعد. أعد المحاولة بعد قليل.",
+    "evenements": {
+      "demandeRecue": { "titre": "وصل الطلب", "texte": "وصل طلب الحصة إلى الإدارة." },
+      "classeValidee": { "titre": "تم اعتماد الفصل", "texte": "فصلكم جاهز: ينتظر معلمه." },
+      "enseignantAffecte": { "titre": "تم تعيين المعلم", "texte": "تم تعيين معلم لفصلكم." },
+      "demandeClose": { "titre": "تم إغلاق الطلب", "texte": "تم إغلاق طلبكم." },
+      "remplacementPropose": { "titre": "اقتراح استبدال", "texte": "حصة تحتاج إلى بديل. افتح الصفحة للرد." },
+      "remplacementPris": { "titre": "تم قبول الاستبدال", "texte": "تولّى معلم الاستبدال." }
+    },
     "detail": {
       "choisirTitre": "اختر إشعارًا",
       "choisirPhrase": "تظهر تفاصيله هنا، بجانب القائمة.",
