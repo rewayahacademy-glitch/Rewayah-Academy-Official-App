@@ -90,6 +90,14 @@ class VerifyAllowlistTests(unittest.TestCase):
         with self.assertRaisesRegex(GateFailure, "prosrc does not match catalog md5_prosrc"):
             verify(manifest, observed, "project-test")
 
+    def test_no_guard_helper_still_requires_catalog_body(self):
+        manifest, observed = fixture()
+        manifest["functions"][0]["classification"] = "NO_GUARD_HELPER"
+        manifest["functions"][0]["justification"] = "Pure helper with no authorization boundary."
+        observed["functions"][0].pop("prosrc")
+        with self.assertRaisesRegex(GateFailure, "catalog prosrc and md5_prosrc are required"):
+            verify(manifest, observed, "project-test")
+
     def test_non_definer_catalog_row_fails_closed(self):
         manifest, observed = fixture()
         observed["functions"][0]["security_definer"] = False

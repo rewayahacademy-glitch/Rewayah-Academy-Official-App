@@ -327,7 +327,9 @@ def verify(manifest: dict[str, Any], observed: dict[str, Any], project_ref: str)
             )
         prosrc = current.get("prosrc")
         catalog_digest = current.get("md5_prosrc")
-        if isinstance(prosrc, str) and isinstance(catalog_digest, str):
+        if not isinstance(prosrc, str) or not isinstance(catalog_digest, str) or not _MD5.fullmatch(catalog_digest):
+            problems.append(f"{signature}: catalog prosrc and md5_prosrc are required")
+        else:
             computed_digest = hashlib.md5(prosrc.encode("utf-8")).hexdigest()
             if computed_digest != catalog_digest:
                 problems.append(f"{signature}: prosrc does not match catalog md5_prosrc")
