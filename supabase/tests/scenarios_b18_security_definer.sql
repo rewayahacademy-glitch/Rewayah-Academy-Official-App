@@ -53,8 +53,10 @@ begin
   begin
     perform 1 from public.read_kyc_documents();
     raise exception 'B-18: read_kyc_documents accepted missing claims';
-  exception when raise_exception then
-    if sqlerrm <> 'acces KYC refuse' then raise; end if;
+  exception when raise_exception or insufficient_privilege then
+    -- 0078 raises the same denial with SQLSTATE 42501; older guards used
+    -- P0001. Preserve the message assertion for the legacy form.
+    if SQLSTATE = 'P0001' and sqlerrm <> 'acces KYC refuse' then raise; end if;
   end;
 end $$;
 reset role;
