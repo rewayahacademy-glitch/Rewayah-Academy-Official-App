@@ -163,6 +163,10 @@ VALUES
   ('c2a20000-0000-0000-0000-000000000006', 'COD2-TEACH-B', 'teacher',
    'c2a2ffff-0000-0000-0000-000000000002', 'Enseignant', 'B', 'active');
 
+INSERT INTO public.kyc_documents (profile_id, doc_type, gender, object_key) VALUES
+  ('c2a20000-0000-0000-0000-000000000001', 'id_card', 'male', 'codex2/kyc-a'),
+  ('c2a20000-0000-0000-0000-000000000002', 'id_card', 'female', 'codex2/kyc-b');
+
 INSERT INTO public.student_profiles (profile_id) VALUES
   ('c2a20000-0000-0000-0000-000000000002'),
   ('c2a20000-0000-0000-0000-000000000004');
@@ -221,6 +225,10 @@ INSERT INTO public.matching_requests (kind, subject_profile_id, reason, requeste
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at) VALUES
   ('c2a2e000-1000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000005', '2026-10-12 10:00:00+00', '2026-10-12 11:00:00+00'),
   ('c2a2e000-1000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000006', '2026-10-13 11:00:00+00', '2026-10-13 12:00:00+00');
+INSERT INTO public.session_presence_override
+  (session_id, profile_id, etat, motif, decide_par) VALUES
+  ('c2a2e000-1000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000004', 'excusee', 'codex2 A', 'c2a20000-0000-0000-0000-000000000005'),
+  ('c2a2e000-1000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000002', 'excusee', 'codex2 B', 'c2a20000-0000-0000-0000-000000000006');
 INSERT INTO public.session_participants (session_id, profile_id, role) VALUES
   ('c2a2e000-1000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000005', 'teacher'),
   ('c2a2e000-1000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000004', 'student'),
@@ -302,6 +310,66 @@ BEGIN
       INSERT INTO codex2_rls_violations VALUES ('missing-role-claim', v_table::text);
     END IF;
   END LOOP;
+  RESET ROLE;
+END $$;
+
+-- Le tuteur ne peut deposer un document KYC que pour son propre foyer.
+DO $$
+DECLARE v_denied boolean := false;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  INSERT INTO public.kyc_documents (profile_id, doc_type, gender, object_key)
+  VALUES ('c2a20000-0000-0000-0000-000000000001', 'passport', 'male', 'codex2/kyc-a-upload');
+  BEGIN
+    INSERT INTO public.kyc_documents (profile_id, doc_type, gender, object_key)
+    VALUES ('c2a20000-0000-0000-0000-000000000002', 'passport', 'female', 'codex2/kyc-b-cross');
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-KYC-INSERT: guardian A inserted KYC for B'; END IF;
+  RESET ROLE;
+END $$;
+
+DO $$
+DECLARE v_denied boolean := false;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000003', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  BEGIN
+    INSERT INTO public.kyc_documents (profile_id, doc_type, gender, object_key)
+    VALUES ('c2a20000-0000-0000-0000-000000000003', 'passport', 'male', 'codex2/kyc-disabled');
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'RLS-DISABLED-KYC-INSERT: disabled guardian submitted KYC'; END IF;
+  RESET ROLE;
+END $$;
+
+-- Les corrections de presence sont lisibles/ecrites par l'enseignant de la
+-- seance, jamais par celui d'une autre seance.
+DO $$
+DECLARE v_count integer; v_rows integer;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000005', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"teacher","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.session_presence_override
+   WHERE session_id = 'c2a2e000-1000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-PRESENCE-OVERRIDE: teacher A cannot read own correction'; END IF;
+  SELECT count(*) INTO v_count FROM public.session_presence_override
+   WHERE session_id = 'c2a2e000-1000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-PRESENCE-OVERRIDE-READ: teacher A sees correction B'; END IF;
+  UPDATE public.session_presence_override SET motif = motif
+   WHERE session_id = 'c2a2e000-1000-0000-0000-000000000001';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-PRESENCE-OVERRIDE-WRITE: teacher A cannot update own correction'; END IF;
+  UPDATE public.session_presence_override SET motif = motif
+   WHERE session_id = 'c2a2e000-1000-0000-0000-000000000002';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-PRESENCE-OVERRIDE-WRITE: teacher A updated correction B'; END IF;
   RESET ROLE;
 END $$;
 
