@@ -19,14 +19,14 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../comptable/visibilite_montants.dart';
-import '../../../finance/montant.dart';
-import '../../../i18n/strings.g.dart';
-import '../../../theme/app_palette.dart';
-import '../../../theme/app_spacing.dart';
-import '../../app_card.dart';
-import '../../lien_fleche.dart';
-import '../../montant_sensible.dart';
+import '../../../core/comptable/visibilite_montants.dart';
+import '../../../core/finance/montant.dart';
+import '../../../core/i18n/strings.g.dart';
+import '../../../core/theme/app_palette.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/lien_fleche.dart';
+import '../../../core/widgets/montant_sensible.dart';
 
 /// Les couleurs des graphiques, prises dans les jetons existants.
 class CouleursGraphiques {

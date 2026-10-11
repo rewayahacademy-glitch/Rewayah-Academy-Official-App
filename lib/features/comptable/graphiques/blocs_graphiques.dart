@@ -26,13 +26,13 @@ import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/bloc_asynchrone.dart';
-import '../../../core/widgets/comptable/graphiques/graphiques_comptable.dart';
 import '../../../core/widgets/comptable/pourcentage_sensible.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/etat_systeme.dart';
 import '../../../core/widgets/montant_argent.dart' show TailleMontant;
 import '../../../core/widgets/montant_sensible.dart';
 import '../../../core/widgets/skeleton.dart';
+import '../../../features/comptable/graphiques/graphiques_comptable.dart';
 
 /// Les libelles des coffres, dans l'ordre §8.1.
 String libelleCoffreGraphique(Coffre coffre) => switch (coffre) {

@@ -3314,13 +3314,13 @@
       "cetteSemaine": "Revenir à cette semaine",
       "horaire": "{debut} à {fin}",
       "sansEnseignant": "Sans enseignant",
-      "avecEnseignant": "Enseignant : {nom}",
+      "avecEnseignant": "Enseignant\u00a0: {nom}",
       "vide": "Aucune séance cette semaine",
       "videDetail": "Les séances apparaissent ici dès qu'une classe a un horaire cette semaine. Essayez une autre semaine.",
       "sansDonnees": "Le planning n'a pas pu être chargé",
-      "erreur": "Le planning n'a pas pu être lu : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "erreur": "Le planning n'a pas pu être lu\u00a0: il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
       "indisponibleTitre": "Disponible au branchement serveur",
-      "indisponiblePhrase": "Le planning s'affichera ici dès le branchement serveur. D'ici là, rien n'est affiché : aucune séance n'est inventée.",
+      "indisponiblePhrase": "Le planning s'affichera ici dès le branchement serveur. D'ici là, rien n'est affiché\u00a0: aucune séance n'est inventée.",
       "statutPrevue": "Prévue",
       "statutPreparation": "En préparation",
       "statutTerminee": "Terminée",
@@ -3330,7 +3330,7 @@
     },
     "incidents": {
       "titre": "Incidents des 24 dernières heures",
-      "sousTitre": "Les séances passées en incident technique, enseignant absent ou élève absent depuis 24 heures : ce que compte la tuile « Incidents (24 h) ».",
+      "sousTitre": "Les séances passées en incident technique, enseignant absent ou élève absent depuis 24 heures\u00a0: ce que compte la tuile «\u00a0Incidents (24 h)\u00a0».",
       "liste": "Séances en incident",
       "natureTechnique": "Incident technique",
       "natureEnseignantAbsent": "Enseignant absent",
@@ -3339,9 +3339,9 @@
       "vide": "Aucun incident depuis 24 heures",
       "videDetail": "Une séance passée en incident, en absence d'enseignant ou en absence d'élève apparaît ici dès qu'elle change de statut.",
       "sansDonnees": "Les incidents n'ont pas pu être chargés",
-      "erreur": "Les incidents n'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "erreur": "Les incidents n'ont pas pu être lus\u00a0: il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
       "indisponibleTitre": "Disponible au branchement serveur",
-      "indisponiblePhrase": "Les incidents s'afficheront ici dès le branchement serveur. D'ici là, rien n'est affiché : aucun incident n'est inventé."
+      "indisponiblePhrase": "Les incidents s'afficheront ici dès le branchement serveur. D'ici là, rien n'est affiché\u00a0: aucun incident n'est inventé."
     },
     "pilotage": {
       "titre": "Pilotage des horaires",
@@ -8452,7 +8452,7 @@
       "compte": "Compte"
     },
     "graphiques": {
-      "masque": "Les montants sont masqués : le graphique ne se dessine pas. Affichez les montants pour le voir.",
+      "masque": "Les montants sont masqués\u00a0: le graphique ne se dessine pas. Affichez les montants pour le voir.",
       "voirValeurs": "Voir les valeurs",
       "masquerValeurs": "Masquer les valeurs",
       "repartitionTitre": "Répartition par coffre",
@@ -8472,19 +8472,19 @@
       "kpiEntrees": "Entrées",
       "kpiSorties": "Sorties",
       "kpiPeriode": "30 derniers jours",
-      "variation": "{pourcent} % par rapport à la période précédente",
+      "variation": "{pourcent}\u00a0% par rapport à la période précédente",
       "rapportsTitre": "Rapports",
       "rapportsSousTitre": "Les entrées, les sorties et la trésorerie dans la durée.",
       "vide": "Aucune donnée à dessiner",
       "videDetail": "Les graphiques apparaîtront ici dès que des encaissements ou des paiements auront été enregistrés.",
-      "erreur": "Les graphiques n'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "erreur": "Les graphiques n'ont pas pu être lus\u00a0: il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
       "sansDonnees": "Les graphiques n'ont pas pu être chargés",
       "exporterRapport": "Exporter le rapport",
       "exporterSelection": "Exporter la sélection",
-      "exportIndisponible": "Les exports ne sont pas encore disponibles : ils s'ouvriront dès le branchement serveur.",
+      "exportIndisponible": "Les exports ne sont pas encore disponibles\u00a0: ils s'ouvriront dès le branchement serveur.",
       "exportEnCours": "Export en préparation",
-      "exportPret": "Export prêt : {reference} ({lignes} lignes).",
-      "exportEchec": "L'export n'a pas pu être préparé : la demande n'est peut-être pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
+      "exportPret": "Export prêt\u00a0: {reference} ({lignes} lignes).",
+      "exportEchec": "L'export n'a pas pu être préparé\u00a0: la demande n'est peut-être pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
     },
     "onglets": {
       "aEffectuer": "À effectuer",
@@ -8965,7 +8965,7 @@
       "titre": "Trésorerie et coffres",
       "sousTitre": "La Trésorerie libre est le seul chiffre dépensable.",
       "alimenter": "Alimenter la Réserve stratégique",
-      "erreurPartielle": "Une partie de la page n'a pas pu être lue : le reste est à jour. Réessayez pour compléter.",
+      "erreurPartielle": "Une partie de la page n'a pas pu être lue\u00a0: le reste est à jour. Réessayez pour compléter.",
       "erreurPartielleAction": "Réessayer"
     },
     "encaissements": {
@@ -9129,7 +9129,7 @@
         "motifDemandeDetail": "Le bénéficiaire a demandé à ne plus recevoir de versement pour l'instant.",
         "motifRequis": "Choisissez un motif pour continuer.",
         "voirFil": "Voir le fil de {nom}",
-        "voirFilRefuse": "Le fil de {nom} n'a pas pu s'ouvrir : il n'existe pas encore ou la lecture n'a pas abouti. Réessayez dans un instant."
+        "voirFilRefuse": "Le fil de {nom} n'a pas pu s'ouvrir\u00a0: il n'existe pas encore ou la lecture n'a pas abouti. Réessayez dans un instant."
       },
       "titre": "Bénéficiaires",
       "sousTitre": "Coordonnées masquées\u00a0: seul le bénéficiaire modifie les siennes.",
@@ -9287,7 +9287,7 @@
         "etat": "État",
         "historique": "Historique",
         "historiqueVide": "Aucune entrée pour l'instant.",
-        "historiqueErreur": "L'historique n'a pas pu être lu : ce n'est pas qu'il est vide. Réessayez dans un instant.",
+        "historiqueErreur": "L'historique n'a pas pu être lu\u00a0: ce n'est pas qu'il est vide. Réessayez dans un instant.",
         "historiqueReessayer": "Relire l'historique"
       },
       "valider": "Valider",
@@ -9434,7 +9434,7 @@
         "sensibleLieOperateur": "Bénéficiaire lié à l'opérateur",
         "sensibleLieOperateurDetail": "Un paiement vers une personne liée à l'opérateur de paiement.",
         "sensibleFournisseur": "Fournisseur indisponible",
-        "sensibleFournisseurDetail": "Un paiement dont le fournisseur de paiement ne répond pas.",
+        "sensibleFournisseurDetail": "Un paiement dont le fournisseur de paiement est indisponible.",
         "sensibleManuelle": "Obligation manuelle non approuvée",
         "sensibleManuelleDetail": "Une obligation saisie à la main et pas encore approuvée."
       },

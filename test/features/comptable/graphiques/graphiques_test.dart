@@ -25,9 +25,9 @@ import 'package:rewayah_academy/core/comptable/visibilite_montants.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
-import 'package:rewayah_academy/core/widgets/comptable/graphiques/graphiques_comptable.dart';
 import 'package:rewayah_academy/core/widgets/comptable/pourcentage_sensible.dart';
 import 'package:rewayah_academy/features/comptable/graphiques/blocs_graphiques.dart';
+import 'package:rewayah_academy/features/comptable/graphiques/graphiques_comptable.dart';
 import 'package:rewayah_academy/features/comptable/graphiques/rapports_page.dart';
 import 'package:rewayah_academy/features/demo/comptable/series_demo.dart';
 

@@ -8987,7 +8987,7 @@ class Traductions$admin$planning$fr {
 	String get sansEnseignant => 'Sans enseignant';
 
 	/// fr: 'Enseignant : {nom}'
-	String avecEnseignant({required Object nom}) => 'Enseignant : ${nom}';
+	String avecEnseignant({required Object nom}) => 'Enseignant : ${nom}';
 
 	/// fr: 'Aucune séance cette semaine'
 	String get vide => 'Aucune séance cette semaine';
@@ -8999,13 +8999,13 @@ class Traductions$admin$planning$fr {
 	String get sansDonnees => 'Le planning n\'a pas pu être chargé';
 
 	/// fr: 'Le planning n'a pas pu être lu : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
-	String get erreur => 'Le planning n\'a pas pu être lu : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+	String get erreur => 'Le planning n\'a pas pu être lu : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 
 	/// fr: 'Disponible au branchement serveur'
 	String get indisponibleTitre => 'Disponible au branchement serveur';
 
 	/// fr: 'Le planning s'affichera ici dès le branchement serveur. D'ici là, rien n'est affiché : aucune séance n'est inventée.'
-	String get indisponiblePhrase => 'Le planning s\'affichera ici dès le branchement serveur. D\'ici là, rien n\'est affiché : aucune séance n\'est inventée.';
+	String get indisponiblePhrase => 'Le planning s\'affichera ici dès le branchement serveur. D\'ici là, rien n\'est affiché : aucune séance n\'est inventée.';
 
 	/// fr: 'Prévue'
 	String get statutPrevue => 'Prévue';
@@ -9038,7 +9038,7 @@ class Traductions$admin$incidents$fr {
 	String get titre => 'Incidents des 24 dernières heures';
 
 	/// fr: 'Les séances passées en incident technique, enseignant absent ou élève absent depuis 24 heures : ce que compte la tuile « Incidents (24 h) ».'
-	String get sousTitre => 'Les séances passées en incident technique, enseignant absent ou élève absent depuis 24 heures : ce que compte la tuile « Incidents (24 h) ».';
+	String get sousTitre => 'Les séances passées en incident technique, enseignant absent ou élève absent depuis 24 heures : ce que compte la tuile « Incidents (24 h) ».';
 
 	/// fr: 'Séances en incident'
 	String get liste => 'Séances en incident';
@@ -9065,13 +9065,13 @@ class Traductions$admin$incidents$fr {
 	String get sansDonnees => 'Les incidents n\'ont pas pu être chargés';
 
 	/// fr: 'Les incidents n'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
-	String get erreur => 'Les incidents n\'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+	String get erreur => 'Les incidents n\'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 
 	/// fr: 'Disponible au branchement serveur'
 	String get indisponibleTitre => 'Disponible au branchement serveur';
 
 	/// fr: 'Les incidents s'afficheront ici dès le branchement serveur. D'ici là, rien n'est affiché : aucun incident n'est inventé.'
-	String get indisponiblePhrase => 'Les incidents s\'afficheront ici dès le branchement serveur. D\'ici là, rien n\'est affiché : aucun incident n\'est inventé.';
+	String get indisponiblePhrase => 'Les incidents s\'afficheront ici dès le branchement serveur. D\'ici là, rien n\'est affiché : aucun incident n\'est inventé.';
 }
 
 // Path: admin.pilotage
@@ -16260,7 +16260,7 @@ class Traductions$comptable$graphiques$fr {
 	// Translations
 
 	/// fr: 'Les montants sont masqués : le graphique ne se dessine pas. Affichez les montants pour le voir.'
-	String get masque => 'Les montants sont masqués : le graphique ne se dessine pas. Affichez les montants pour le voir.';
+	String get masque => 'Les montants sont masqués : le graphique ne se dessine pas. Affichez les montants pour le voir.';
 
 	/// fr: 'Voir les valeurs'
 	String get voirValeurs => 'Voir les valeurs';
@@ -16320,7 +16320,7 @@ class Traductions$comptable$graphiques$fr {
 	String get kpiPeriode => '30 derniers jours';
 
 	/// fr: '{pourcent} % par rapport à la période précédente'
-	String variation({required Object pourcent}) => '${pourcent} % par rapport à la période précédente';
+	String variation({required Object pourcent}) => '${pourcent} % par rapport à la période précédente';
 
 	/// fr: 'Rapports'
 	String get rapportsTitre => 'Rapports';
@@ -16335,7 +16335,7 @@ class Traductions$comptable$graphiques$fr {
 	String get videDetail => 'Les graphiques apparaîtront ici dès que des encaissements ou des paiements auront été enregistrés.';
 
 	/// fr: 'Les graphiques n'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
-	String get erreur => 'Les graphiques n\'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+	String get erreur => 'Les graphiques n\'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 
 	/// fr: 'Les graphiques n'ont pas pu être chargés'
 	String get sansDonnees => 'Les graphiques n\'ont pas pu être chargés';
@@ -16347,16 +16347,16 @@ class Traductions$comptable$graphiques$fr {
 	String get exporterSelection => 'Exporter la sélection';
 
 	/// fr: 'Les exports ne sont pas encore disponibles : ils s'ouvriront dès le branchement serveur.'
-	String get exportIndisponible => 'Les exports ne sont pas encore disponibles : ils s\'ouvriront dès le branchement serveur.';
+	String get exportIndisponible => 'Les exports ne sont pas encore disponibles : ils s\'ouvriront dès le branchement serveur.';
 
 	/// fr: 'Export en préparation'
 	String get exportEnCours => 'Export en préparation';
 
 	/// fr: 'Export prêt : {reference} ({lignes} lignes).'
-	String exportPret({required Object reference, required Object lignes}) => 'Export prêt : ${reference} (${lignes} lignes).';
+	String exportPret({required Object reference, required Object lignes}) => 'Export prêt : ${reference} (${lignes} lignes).';
 
 	/// fr: 'L'export n'a pas pu être préparé : la demande n'est peut-être pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
-	String get exportEchec => 'L\'export n\'a pas pu être préparé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+	String get exportEchec => 'L\'export n\'a pas pu être préparé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 }
 
 // Path: comptable.onglets
@@ -16895,7 +16895,7 @@ class Traductions$comptable$tresorerie$fr {
 	String get alimenter => 'Alimenter la Réserve stratégique';
 
 	/// fr: 'Une partie de la page n'a pas pu être lue : le reste est à jour. Réessayez pour compléter.'
-	String get erreurPartielle => 'Une partie de la page n\'a pas pu être lue : le reste est à jour. Réessayez pour compléter.';
+	String get erreurPartielle => 'Une partie de la page n\'a pas pu être lue : le reste est à jour. Réessayez pour compléter.';
 
 	/// fr: 'Réessayer'
 	String get erreurPartielleAction => 'Réessayer';
@@ -27467,7 +27467,7 @@ class Traductions$comptable$beneficiaires$profil$fr {
 	String voirFil({required Object nom}) => 'Voir le fil de ${nom}';
 
 	/// fr: 'Le fil de {nom} n'a pas pu s'ouvrir : il n'existe pas encore ou la lecture n'a pas abouti. Réessayez dans un instant.'
-	String voirFilRefuse({required Object nom}) => 'Le fil de ${nom} n\'a pas pu s\'ouvrir : il n\'existe pas encore ou la lecture n\'a pas abouti. Réessayez dans un instant.';
+	String voirFilRefuse({required Object nom}) => 'Le fil de ${nom} n\'a pas pu s\'ouvrir : il n\'existe pas encore ou la lecture n\'a pas abouti. Réessayez dans un instant.';
 }
 
 // Path: comptable.beneficiaires.recevoir
@@ -27662,7 +27662,7 @@ class Traductions$comptable$validation$detail$fr {
 	String get historiqueVide => 'Aucune entrée pour l\'instant.';
 
 	/// fr: 'L'historique n'a pas pu être lu : ce n'est pas qu'il est vide. Réessayez dans un instant.'
-	String get historiqueErreur => 'L\'historique n\'a pas pu être lu : ce n\'est pas qu\'il est vide. Réessayez dans un instant.';
+	String get historiqueErreur => 'L\'historique n\'a pas pu être lu : ce n\'est pas qu\'il est vide. Réessayez dans un instant.';
 
 	/// fr: 'Relire l'historique'
 	String get historiqueReessayer => 'Relire l\'historique';
@@ -27923,8 +27923,8 @@ class Traductions$comptable$direction$delegationPanneau$fr {
 	/// fr: 'Fournisseur indisponible'
 	String get sensibleFournisseur => 'Fournisseur indisponible';
 
-	/// fr: 'Un paiement dont le fournisseur de paiement ne répond pas.'
-	String get sensibleFournisseurDetail => 'Un paiement dont le fournisseur de paiement ne répond pas.';
+	/// fr: 'Un paiement dont le fournisseur de paiement est indisponible.'
+	String get sensibleFournisseurDetail => 'Un paiement dont le fournisseur de paiement est indisponible.';
 
 	/// fr: 'Obligation manuelle non approuvée'
 	String get sensibleManuelle => 'Obligation manuelle non approuvée';
@@ -33689,13 +33689,13 @@ extension on Traductions {
 			'admin.planning.cetteSemaine' => 'Revenir à cette semaine',
 			'admin.planning.horaire' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'admin.planning.sansEnseignant' => 'Sans enseignant',
-			'admin.planning.avecEnseignant' => ({required Object nom}) => 'Enseignant : ${nom}',
+			'admin.planning.avecEnseignant' => ({required Object nom}) => 'Enseignant : ${nom}',
 			'admin.planning.vide' => 'Aucune séance cette semaine',
 			'admin.planning.videDetail' => 'Les séances apparaissent ici dès qu\'une classe a un horaire cette semaine. Essayez une autre semaine.',
 			'admin.planning.sansDonnees' => 'Le planning n\'a pas pu être chargé',
-			'admin.planning.erreur' => 'Le planning n\'a pas pu être lu : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'admin.planning.erreur' => 'Le planning n\'a pas pu être lu : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'admin.planning.indisponibleTitre' => 'Disponible au branchement serveur',
-			'admin.planning.indisponiblePhrase' => 'Le planning s\'affichera ici dès le branchement serveur. D\'ici là, rien n\'est affiché : aucune séance n\'est inventée.',
+			'admin.planning.indisponiblePhrase' => 'Le planning s\'affichera ici dès le branchement serveur. D\'ici là, rien n\'est affiché : aucune séance n\'est inventée.',
 			'admin.planning.statutPrevue' => 'Prévue',
 			'admin.planning.statutPreparation' => 'En préparation',
 			'admin.planning.statutTerminee' => 'Terminée',
@@ -33703,7 +33703,7 @@ extension on Traductions {
 			'admin.planning.statutEnseignantAbsent' => 'Enseignant absent',
 			'admin.planning.statutEleveAbsent' => 'Élève absent',
 			'admin.incidents.titre' => 'Incidents des 24 dernières heures',
-			'admin.incidents.sousTitre' => 'Les séances passées en incident technique, enseignant absent ou élève absent depuis 24 heures : ce que compte la tuile « Incidents (24 h) ».',
+			'admin.incidents.sousTitre' => 'Les séances passées en incident technique, enseignant absent ou élève absent depuis 24 heures : ce que compte la tuile « Incidents (24 h) ».',
 			'admin.incidents.liste' => 'Séances en incident',
 			'admin.incidents.natureTechnique' => 'Incident technique',
 			'admin.incidents.natureEnseignantAbsent' => 'Enseignant absent',
@@ -33712,9 +33712,9 @@ extension on Traductions {
 			'admin.incidents.vide' => 'Aucun incident depuis 24 heures',
 			'admin.incidents.videDetail' => 'Une séance passée en incident, en absence d\'enseignant ou en absence d\'élève apparaît ici dès qu\'elle change de statut.',
 			'admin.incidents.sansDonnees' => 'Les incidents n\'ont pas pu être chargés',
-			'admin.incidents.erreur' => 'Les incidents n\'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'admin.incidents.erreur' => 'Les incidents n\'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'admin.incidents.indisponibleTitre' => 'Disponible au branchement serveur',
-			'admin.incidents.indisponiblePhrase' => 'Les incidents s\'afficheront ici dès le branchement serveur. D\'ici là, rien n\'est affiché : aucun incident n\'est inventé.',
+			'admin.incidents.indisponiblePhrase' => 'Les incidents s\'afficheront ici dès le branchement serveur. D\'ici là, rien n\'est affiché : aucun incident n\'est inventé.',
 			'admin.pilotage.titre' => 'Pilotage des horaires',
 			'admin.pilotage.sousTitre' => 'Pour chaque horaire et chaque public : les classes, leur remplissage, les demandes en attente, et les enseignants libres ou manquants.',
 			'admin.pilotage.sansDonnees' => 'Le tableau de pilotage n\'a pas pu être chargé',
@@ -37885,7 +37885,7 @@ extension on Traductions {
 			'comptable.nav.paiements' => 'Paiements',
 			'comptable.nav.tresorerie' => 'Trésorerie',
 			'comptable.nav.compte' => 'Compte',
-			'comptable.graphiques.masque' => 'Les montants sont masqués : le graphique ne se dessine pas. Affichez les montants pour le voir.',
+			'comptable.graphiques.masque' => 'Les montants sont masqués : le graphique ne se dessine pas. Affichez les montants pour le voir.',
 			'comptable.graphiques.voirValeurs' => 'Voir les valeurs',
 			'comptable.graphiques.masquerValeurs' => 'Masquer les valeurs',
 			'comptable.graphiques.repartitionTitre' => 'Répartition par coffre',
@@ -37905,19 +37905,19 @@ extension on Traductions {
 			'comptable.graphiques.kpiEntrees' => 'Entrées',
 			'comptable.graphiques.kpiSorties' => 'Sorties',
 			'comptable.graphiques.kpiPeriode' => '30 derniers jours',
-			'comptable.graphiques.variation' => ({required Object pourcent}) => '${pourcent} % par rapport à la période précédente',
+			'comptable.graphiques.variation' => ({required Object pourcent}) => '${pourcent} % par rapport à la période précédente',
 			'comptable.graphiques.rapportsTitre' => 'Rapports',
 			'comptable.graphiques.rapportsSousTitre' => 'Les entrées, les sorties et la trésorerie dans la durée.',
 			'comptable.graphiques.vide' => 'Aucune donnée à dessiner',
 			'comptable.graphiques.videDetail' => 'Les graphiques apparaîtront ici dès que des encaissements ou des paiements auront été enregistrés.',
-			'comptable.graphiques.erreur' => 'Les graphiques n\'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'comptable.graphiques.erreur' => 'Les graphiques n\'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'comptable.graphiques.sansDonnees' => 'Les graphiques n\'ont pas pu être chargés',
 			'comptable.graphiques.exporterRapport' => 'Exporter le rapport',
 			'comptable.graphiques.exporterSelection' => 'Exporter la sélection',
-			'comptable.graphiques.exportIndisponible' => 'Les exports ne sont pas encore disponibles : ils s\'ouvriront dès le branchement serveur.',
+			'comptable.graphiques.exportIndisponible' => 'Les exports ne sont pas encore disponibles : ils s\'ouvriront dès le branchement serveur.',
 			'comptable.graphiques.exportEnCours' => 'Export en préparation',
-			'comptable.graphiques.exportPret' => ({required Object reference, required Object lignes}) => 'Export prêt : ${reference} (${lignes} lignes).',
-			'comptable.graphiques.exportEchec' => 'L\'export n\'a pas pu être préparé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'comptable.graphiques.exportPret' => ({required Object reference, required Object lignes}) => 'Export prêt : ${reference} (${lignes} lignes).',
+			'comptable.graphiques.exportEchec' => 'L\'export n\'a pas pu être préparé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'comptable.onglets.aEffectuer' => 'À effectuer',
 			'comptable.onglets.contractuels' => 'Contractuels',
 			'comptable.onglets.beneficiaires' => 'Bénéficiaires',
@@ -38317,7 +38317,7 @@ extension on Traductions {
 			'comptable.tresorerie.titre' => 'Trésorerie et coffres',
 			'comptable.tresorerie.sousTitre' => 'La Trésorerie libre est le seul chiffre dépensable.',
 			'comptable.tresorerie.alimenter' => 'Alimenter la Réserve stratégique',
-			'comptable.tresorerie.erreurPartielle' => 'Une partie de la page n\'a pas pu être lue : le reste est à jour. Réessayez pour compléter.',
+			'comptable.tresorerie.erreurPartielle' => 'Une partie de la page n\'a pas pu être lue : le reste est à jour. Réessayez pour compléter.',
 			'comptable.tresorerie.erreurPartielleAction' => 'Réessayer',
 			'comptable.encaissements.filtreTous' => 'Tous',
 			'comptable.encaissements.filtreConfirmes' => 'Confirmés',
@@ -38474,7 +38474,7 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.motifDemandeDetail' => 'Le bénéficiaire a demandé à ne plus recevoir de versement pour l\'instant.',
 			'comptable.beneficiaires.profil.motifRequis' => 'Choisissez un motif pour continuer.',
 			'comptable.beneficiaires.profil.voirFil' => ({required Object nom}) => 'Voir le fil de ${nom}',
-			'comptable.beneficiaires.profil.voirFilRefuse' => ({required Object nom}) => 'Le fil de ${nom} n\'a pas pu s\'ouvrir : il n\'existe pas encore ou la lecture n\'a pas abouti. Réessayez dans un instant.',
+			'comptable.beneficiaires.profil.voirFilRefuse' => ({required Object nom}) => 'Le fil de ${nom} n\'a pas pu s\'ouvrir : il n\'existe pas encore ou la lecture n\'a pas abouti. Réessayez dans un instant.',
 			'comptable.beneficiaires.titre' => 'Bénéficiaires',
 			'comptable.beneficiaires.sousTitre' => 'Coordonnées masquées : seul le bénéficiaire modifie les siennes.',
 			'comptable.beneficiaires.profilTitre' => 'Profil de paiement',
@@ -38622,7 +38622,7 @@ extension on Traductions {
 			'comptable.validation.detail.etat' => 'État',
 			'comptable.validation.detail.historique' => 'Historique',
 			'comptable.validation.detail.historiqueVide' => 'Aucune entrée pour l\'instant.',
-			'comptable.validation.detail.historiqueErreur' => 'L\'historique n\'a pas pu être lu : ce n\'est pas qu\'il est vide. Réessayez dans un instant.',
+			'comptable.validation.detail.historiqueErreur' => 'L\'historique n\'a pas pu être lu : ce n\'est pas qu\'il est vide. Réessayez dans un instant.',
 			'comptable.validation.detail.historiqueReessayer' => 'Relire l\'historique',
 			'comptable.validation.valider' => 'Valider',
 			'comptable.validation.refuser' => 'Refuser',
@@ -38759,7 +38759,7 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.sensibleLieOperateur' => 'Bénéficiaire lié à l\'opérateur',
 			'comptable.direction.delegationPanneau.sensibleLieOperateurDetail' => 'Un paiement vers une personne liée à l\'opérateur de paiement.',
 			'comptable.direction.delegationPanneau.sensibleFournisseur' => 'Fournisseur indisponible',
-			'comptable.direction.delegationPanneau.sensibleFournisseurDetail' => 'Un paiement dont le fournisseur de paiement ne répond pas.',
+			'comptable.direction.delegationPanneau.sensibleFournisseurDetail' => 'Un paiement dont le fournisseur de paiement est indisponible.',
 			'comptable.direction.delegationPanneau.sensibleManuelle' => 'Obligation manuelle non approuvée',
 			'comptable.direction.delegationPanneau.sensibleManuelleDetail' => 'Une obligation saisie à la main et pas encore approuvée.',
 			'comptable.direction.titre' => 'Réserve et délégation',
