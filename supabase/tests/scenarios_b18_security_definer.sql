@@ -99,7 +99,8 @@ begin
       ('demandes_en_attente', 'select * from public.demandes_en_attente()', 'file des demandes reservee a l''administration'),
       ('journal_audit_filtres', 'select public.journal_audit_filtres()', 'journal d''audit reserve a l''administration'),
       ('maj_eleve_pedagogie', 'select public.maj_eleve_pedagogie(null::uuid, ''inconnu'', ''inconnu'')', 'seul un administrateur modifie le niveau ou la riwaya'),
-      ('decider_dossier', 'select public.decider_dossier(null::uuid, true)', 'seul un administrateur decide d''un dossier')
+      ('decider_dossier', 'select public.decider_dossier(null::uuid, true)', 'seul un administrateur decide d''un dossier'),
+      ('attribuer_eleve', 'select public.attribuer_eleve(null::uuid, null::uuid, 1, 1, null)', 'attribution manuelle reservee a l''administration')
     ) as tests(nom, commande, refus_attendu)
   loop
     begin
@@ -112,7 +113,7 @@ begin
     end;
   end loop;
 
-  raise notice 'B2 ok : compte Auth sans profil refusé par les sept RPC sensibles';
+  raise notice 'B2 ok : compte Auth sans profil refusé par les huit RPC sensibles';
 end
 $b2$;
 reset role;
