@@ -204,8 +204,6 @@ def _has_positive_nullsafe_guard(prosrc: str) -> bool:
     tokens = _sql_tokens(prosrc)
     if any(tokens[index:index + 2] == ["EXCEPTION", "WHEN"] for index in range(len(tokens) - 1)):
         return False
-    if any(tokens[index:index + 2] == ["EXCEPTION", "WHEN"] for index in range(len(tokens) - 1)):
-        return False
     try:
         body_start = tokens.index("BEGIN") + 1
     except ValueError:
@@ -237,6 +235,20 @@ def _has_positive_nullsafe_guard(prosrc: str) -> bool:
         return False
     end_raise = next((i for i in range(close + 4, len(tokens)) if tokens[i] == ";"), None)
     return end_raise is not None and tokens[end_raise + 1:end_raise + 4] == ["END", "IF", ";"]
+
+
+def _no_guard_helper_reads_identity(prosrc: str) -> bool:
+    """Reject identity access even through quoted names or dynamic SQL."""
+    tokens = _sql_tokens(prosrc)
+    forbidden = {"APP_ROLE", "JWT", "UID", "CLAIMS", "CURRENT_SETTING"}
+    for token in tokens:
+        if token in forbidden or token == "EXECUTE":
+            return True
+        prefix = "<QUOTED_IDENTIFIER:"
+        if token.startswith(prefix) and token.endswith(">"):
+            if token[len(prefix):-1].upper() in forbidden:
+                return True
+    return False
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -405,10 +417,10 @@ def verify(manifest: dict[str, Any], observed: dict[str, Any], project_ref: str)
         elif current.get("md5_functiondef") != digest:
             problems.append(f"{signature}: md5_functiondef changed")
         if approved.get("classification") == "NO_GUARD_HELPER":
-            helper_tokens = _sql_tokens(prosrc) if isinstance(prosrc, str) else []
-            forbidden = ("APP_ROLE", "JWT", "UID", "CLAIMS", "CURRENT_SETTING")
-            if any(token in forbidden for token in helper_tokens):
-                problems.append(f"{signature}: NO_GUARD_HELPER may not inspect role or JWT identity")
+            if isinstance(prosrc, str) and _no_guard_helper_reads_identity(prosrc):
+                problems.append(
+                    f"{signature}: NO_GUARD_HELPER may not inspect role or JWT identity or use dynamic SQL"
+                )
         for field in ("owner", "search_path", "execute", "execute_acl", "effective_execute_roles"):
             if current.get(field) != approved.get(field):
                 problems.append(f"{signature}: {field} differs from the reviewed manifest")

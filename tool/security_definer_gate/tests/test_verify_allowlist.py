@@ -198,6 +198,22 @@ class VerifyAllowlistTests(unittest.TestCase):
         with self.assertRaisesRegex(GateFailure, "may not inspect role or JWT identity"):
             verify(manifest, observed, "project-test")
 
+    def test_no_guard_helper_cannot_read_quoted_identity_function(self):
+        manifest, observed = fixture()
+        manifest["functions"][0]["classification"] = "NO_GUARD_HELPER"
+        manifest["functions"][0]["justification"] = "Pure helper."
+        observed["functions"][0]["prosrc"] = 'BEGIN RETURN auth."jwt"(); END;'
+        with self.assertRaisesRegex(GateFailure, "may not inspect role or JWT identity"):
+            verify(manifest, observed, "project-test")
+
+    def test_no_guard_helper_cannot_use_dynamic_sql(self):
+        manifest, observed = fixture()
+        manifest["functions"][0]["classification"] = "NO_GUARD_HELPER"
+        manifest["functions"][0]["justification"] = "Pure helper."
+        observed["functions"][0]["prosrc"] = "BEGIN EXECUTE 'SELECT auth.jwt()'; END;"
+        with self.assertRaisesRegex(GateFailure, "use dynamic SQL"):
+            verify(manifest, observed, "project-test")
+
     def test_only_allowlisted_functions_can_be_pinned_exceptions(self):
         manifest, observed = fixture()
         exception_signature = "public.ressources_du_groupe(p_groupe_id uuid)"
