@@ -84,6 +84,39 @@ class PositiveGuardScannerTests(unittest.TestCase):
             with self.subTest(statement=statement):
                 self.assertFalse(_has_positive_nullsafe_guard(f"BEGIN {statement} END;"))
 
+    def test_rejects_known_guard_bypass_shapes(self):
+        unsafe_bodies = (
+            # A nested fallback can turn a missing role claim into access.
+            "IF NOT COALESCE(COALESCE(public.app_role() = 'admin', true) AND public.app_account_valid(), false) THEN RAISE EXCEPTION 'x'; END IF;",
+            # The following rewrites let a missing or unauthorized role through.
+            "IF NOT (public.app_account_valid() AND public.app_role() = 'admin') THEN RAISE EXCEPTION 'x'; END IF;",
+            "IF (public.app_role() = 'admin') <> true THEN RAISE EXCEPTION 'x'; END IF;",
+            "IF NOT (COALESCE(public.app_account_valid() AND public.app_role() = 'admin', false) IS DISTINCT FROM true) THEN RAISE EXCEPTION 'x'; END IF;",
+            "IF NOT COALESCE(public.app_role() = 'admin' AND public.app_account_valid() = false, false) THEN RAISE EXCEPTION 'x'; END IF;",
+            "IF NOT COALESCE((public.app_account_valid()) IS FALSE AND public.app_role() = 'admin', false) THEN RAISE EXCEPTION 'x'; END IF;",
+            "IF NOT NOT COALESCE(public.app_account_valid() AND public.app_role() = 'admin', false) THEN RAISE EXCEPTION 'x'; END IF;",
+            "IF skip_check AND NOT COALESCE(public.app_account_valid() AND public.app_role() = 'admin', false) THEN RAISE EXCEPTION 'x'; END IF;",
+            "IF NOT COALESCE(public.app_account_valid() AND public.app_role()::text <> 'admin', false) THEN RAISE EXCEPTION 'x'; END IF;",
+            "IF NOT COALESCE(public.app_account_valid() AND public.app_role() <> ALL(ARRAY['guest']), false) THEN RAISE EXCEPTION 'x'; END IF;",
+            "IF NOT GREATEST(COALESCE(public.app_account_valid() AND public.app_role() = 'admin', false), true) THEN RAISE EXCEPTION 'x'; END IF;",
+        )
+        for statement in unsafe_bodies:
+            with self.subTest(statement=statement):
+                self.assertFalse(_has_positive_nullsafe_guard(f"BEGIN {statement} END;"))
+
+    def test_rejects_unrecognized_role_expressions_fail_closed(self):
+        unrecognized_bodies = (
+            # These forms are stricter or may be equivalent, but are not a reviewed template.
+            "IF NOT COALESCE(public.app_account_valid() AND lower(public.app_role()) = 'admin', false) THEN RAISE EXCEPTION 'x'; END IF;",
+            "IF NOT COALESCE(public.app_account_valid() AND public.app_role() = 'admin' AND public.fake_app_account_valid(), false) THEN RAISE EXCEPTION 'x'; END IF;",
+            # A case statement or dynamic query is not the first-statement guard.
+            "CASE WHEN COALESCE(public.app_account_valid() AND public.app_role() = 'admin', false) THEN NULL; ELSE NULL; END CASE;",
+            "EXECUTE 'SELECT NOT COALESCE(public.app_account_valid() AND public.app_role() = ''admin'', false)';",
+        )
+        for statement in unrecognized_bodies:
+            with self.subTest(statement=statement):
+                self.assertFalse(_has_positive_nullsafe_guard(f"BEGIN {statement} END;"))
+
     def test_rejects_textual_guard_inside_a_string_only(self):
         body = """
         BEGIN
