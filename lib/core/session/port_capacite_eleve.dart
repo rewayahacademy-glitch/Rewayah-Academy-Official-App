@@ -1,4 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'port_capacite_eleve_supabase.dart';
 
 /// Ce que le serveur sait de la capacite « eleve autonome » d'un compte
 /// (contrat C-24, feuille de liaison ; EA-ROLE-BR cote serveur).
@@ -63,6 +66,8 @@ final class PortCapaciteEleveFactice implements PortCapaciteEleve {
       autonomes.contains(profileId) ? const EleveAutonome() : const PasEleve();
 }
 
-/// Le port de capacite eleve utilise par l'application. Neutre en production.
+/// Le port de capacite eleve utilise par l'application.
 final Provider<PortCapaciteEleve> portCapaciteEleveProvider =
-    Provider<PortCapaciteEleve>((Ref ref) => const PortCapaciteEleveInconnu());
+    Provider<PortCapaciteEleve>(
+      (Ref ref) => PortCapaciteEleveSupabase(Supabase.instance.client),
+    );
