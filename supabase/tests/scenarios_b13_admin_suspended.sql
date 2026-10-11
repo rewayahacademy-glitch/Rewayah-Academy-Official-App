@@ -65,6 +65,21 @@ do $b13_active_admin$
 declare
   v_count integer;
 begin
+  if not pg_catalog.has_table_privilege(
+       'authenticated', 'public.guardian_session_visit', 'SELECT'
+     )
+     or pg_catalog.has_table_privilege(
+       'authenticated', 'public.guardian_session_visit', 'INSERT'
+     )
+     or pg_catalog.has_table_privilege(
+       'authenticated', 'public.guardian_session_visit', 'UPDATE'
+     )
+     or pg_catalog.has_table_privilege(
+       'authenticated', 'public.guardian_session_visit', 'DELETE'
+     ) THEN
+    raise exception 'B-13: authenticated must have read-only visit access';
+  end if;
+
   select count(*) into v_count from public.guardian_session_visit
    where id = 'b13fffff-0000-0000-0000-000000000004';
   if v_count <> 1 then
