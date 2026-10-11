@@ -1669,7 +1669,6 @@ begin
       ('public.creer_jeton_agent(text, uuid, integer, boolean)', '0084e98d6eada6c376364bfead236b22'),
       ('public.creer_version_programme(uuid)', 'b72ca828b9c07f40cb69b8a2f6e11de3'),
       ('public.definir_politique_observation_groupe(uuid, text, smallint, integer, integer)', '967659fc78d48da104daa224138b2de6'),
-      ('public.entrer_observation(uuid, text)', '9da9386bb2c6b2d07eae3fadee3c2010'),
       ('public.modifier_groupe(uuid, text, smallint, smallint, smallint, text, smallint)', '713d5acca4971058883ea90e06bb6ad4'),
       ('public.modifier_groupe(uuid, text, smallint, smallint, smallint)', '5bfb604429ef9b20ac632197218f9784'),
       ('public.modifier_niveau_programme(uuid, text, text, integer, text)', 'b61928f62425d1439e3ac806c96a7f8c'),
@@ -1717,12 +1716,64 @@ begin
     end if;
     v_seen := v_seen + 1;
   end loop;
-  if v_seen <> 22 then
+  if v_seen <> 21 then
     raise exception 'SEC-PROD M2: nombre de signatures patchées inattendu (%)', v_seen;
   end if;
 end
 $sec_prod_negative_role_guards$;
 -- Le scan M2 global est volontairement exécuté après tous les patchs ciblés.
+-- B2-01: p_role chooses v_role, so this signature needs its own pinned patch.
+do $sec_prod_b2_01_observation_role_guards$
+declare
+  v_oid oid;
+  v_definition text;
+  v_source text;
+  v_corrected_source text;
+  v_corrected_definition text;
+begin
+  v_oid := to_regprocedure('public.entrer_observation(uuid, text)');
+  if v_oid is null
+     or md5(pg_get_functiondef(v_oid)) is distinct from '9da9386bb2c6b2d07eae3fadee3c2010' then
+    raise exception 'SEC-PROD B2-01: unexpected signature or production hash';
+  end if;
+
+  select p.prosrc into v_source from pg_catalog.pg_proc p where p.oid = v_oid;
+  if regexp_count(v_source, 'if[[:space:]]+v_role[[:space:]]*=[[:space:]]*''guardian_observer''[[:space:]]+and[[:space:]]+public[.]app_role[(][)][[:space:]]*<>[[:space:]]*''guardian''[[:space:]]+then', 1, 'i') <> 1
+     or regexp_count(v_source, 'if[[:space:]]+v_role[[:space:]]+in[[:space:]]*[(][[:space:]]*''admin_masked''[[:space:]]*,[[:space:]]*''admin_visible''[[:space:]]*[)][[:space:]]+and[[:space:]]+public[.]app_role[(][)][[:space:]]*<>[[:space:]]*''admin''[[:space:]]+then', 1, 'i') <> 1 then
+    raise exception 'SEC-PROD B2-01: source guards missing or ambiguous';
+  end if;
+
+  v_corrected_source := regexp_replace(
+    v_source,
+    'if[[:space:]]+v_role[[:space:]]*=[[:space:]]*''guardian_observer''[[:space:]]+and[[:space:]]+public[.]app_role[(][)][[:space:]]*<>[[:space:]]*''guardian''[[:space:]]+then',
+    'if v_role in (''guardian_observer'') and not coalesce(public.app_account_valid() and public.app_role() = ''guardian'', false) then',
+    'i'
+  );
+  v_corrected_source := regexp_replace(
+    v_corrected_source,
+    'if[[:space:]]+v_role[[:space:]]+in[[:space:]]*[(][[:space:]]*''admin_masked''[[:space:]]*,[[:space:]]*''admin_visible''[[:space:]]*[)][[:space:]]+and[[:space:]]+public[.]app_role[(][)][[:space:]]*<>[[:space:]]*''admin''[[:space:]]+then',
+    'if v_role in (''admin_masked'', ''admin_visible'') and not coalesce(public.app_account_valid() and public.app_role() = ''admin'', false) then',
+    'i'
+  );
+  if v_corrected_source is not distinct from v_source
+     or regexp_count(v_corrected_source, 'if v_role in [(]''guardian_observer''[)] and not coalesce[(]public[.]app_account_valid[(][)] and public[.]app_role[(][)] = ''guardian'', false[)] then', 1, 'i') <> 1
+     or regexp_count(v_corrected_source, 'if v_role in [(]''admin_masked'', ''admin_visible''[)] and not coalesce[(]public[.]app_account_valid[(][)] and public[.]app_role[(][)] = ''admin'', false[)] then', 1, 'i') <> 1 then
+    raise exception 'SEC-PROD B2-01: positive guard patch did not produce both expected clauses';
+  end if;
+
+  v_definition := pg_get_functiondef(v_oid);
+  if (length(v_definition) - length(replace(v_definition, v_source, ''))) / length(v_source) <> 1 then
+    raise exception 'SEC-PROD B2-01: source is not unique in pg_get_functiondef';
+  end if;
+  v_corrected_definition := replace(v_definition, v_source, v_corrected_source);
+  execute v_corrected_definition;
+
+  if md5(pg_get_functiondef(v_oid)) is distinct from '965c5c4eae17d72155174cb6d27b39ac' then
+    raise exception 'SEC-PROD B2-01: unexpected post-patch function hash';
+  end if;
+end
+$sec_prod_b2_01_observation_role_guards$;
+
 do $m2_scan_postflight$
 declare
   v record;
