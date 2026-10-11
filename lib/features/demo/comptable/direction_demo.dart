@@ -349,13 +349,19 @@ class DelegationFinanceDemo
   Future<PolitiqueDelegationFinance> renouveler({
     required String cleIdempotence,
   }) async {
+    // Renouveler ne change que la date : une delegation suspendue le reste
+    // (seule la reactivation, avec sa raison, leve une suspension).
+    final bool suspendue = _courante.etat == EtatDelegation.suspendue;
     final PolitiqueDelegationFinance p = _avecEtat(
-      EtatDelegation.active,
+      suspendue ? EtatDelegation.suspendue : EtatDelegation.active,
       expireLe: SocleComptableDemo.aujourdhui.add(
         Duration(days: _courante.dureeJours ?? 90),
       ),
     );
-    _inscrire('Renouvellement de la délégation', 'Active');
+    _inscrire(
+      'Renouvellement de la délégation',
+      suspendue ? 'Suspendue' : 'Active',
+    );
     return p;
   }
 
