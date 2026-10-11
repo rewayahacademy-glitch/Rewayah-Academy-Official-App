@@ -83,6 +83,19 @@ function correspondNom(groupe: GroupeEnseignant, termes: string[]): boolean {
   return termes.every((terme) => nom.includes(terme));
 }
 
+function dedoublonnerEnseignants(
+  groupes: GroupeEnseignant[],
+): GroupeEnseignant[] {
+  const vus = new Set<string>();
+  return [...groupes]
+    .sort((a, b) => a.groupe_id.localeCompare(b.groupe_id))
+    .filter((groupe) => {
+      if (vus.has(groupe.teacher_id)) return false;
+      vus.add(groupe.teacher_id);
+      return true;
+    });
+}
+
 async function contexteAutorise(
   sql: AppelantRecherche["sql"],
   espace: string,
@@ -120,14 +133,23 @@ async function groupesVisibles(
   };
 }
 
-async function traiter(requete: Request): Promise<Response> {
+interface DependancesRecherche {
+  appelant?: (requete: Request) => Promise<AppelantRecherche | null>;
+  secretCurseur?: string;
+  maintenantMs?: () => number;
+}
+
+export async function traiter(
+  requete: Request,
+  dependances: DependancesRecherche = {},
+): Promise<Response> {
   if (requete.method === "OPTIONS") {
     return new Response("ok", { headers: enTetesCors });
   }
   if (requete.method !== "POST") {
     return reponse(domaine, "requeteInvalide", {}, 405);
   }
-  const appelant = await appelantRecherche(requete);
+  const appelant = await (dependances.appelant ?? appelantRecherche)(requete);
   if (!appelant) return reponse(domaine, "sessionExpiree", {}, 401);
 
   let corps: Record<string, unknown>;
@@ -182,7 +204,8 @@ async function traiter(requete: Request): Promise<Response> {
     return reponse(domaine, "requeteInvalide", {}, 400);
   }
 
-  const secret = Deno.env.get("RECHERCHE_CURSOR_SECRET");
+  const secret = dependances.secretCurseur ??
+    Deno.env.get("RECHERCHE_CURSOR_SECRET");
   if (!secret || new TextEncoder().encode(secret).length < 32) {
     return reponse(domaine, "indisponible", {}, 503);
   }
@@ -213,11 +236,17 @@ async function traiter(requete: Request): Promise<Response> {
       error.code === "42501" ? 403 : 503,
     );
   }
-  if (!data?.length) return reponse(domaine, "contexteRevoque", {}, 403);
+  if (!data?.length) {
+    return reponse(domaine, "ok", {
+      elements: [],
+      curseurSuivant: null,
+      aPlus: false,
+    });
+  }
   if (data.length > MAX_RESULTATS) return reponse(domaine, "limite", {}, 429);
 
   const termes = requeteNormalisee.split(" ");
-  const resultats = data
+  const resultats = dedoublonnerEnseignants(data)
     .filter((groupe) =>
       groupe.groupe_id > (apres ?? "00000000-0000-0000-0000-000000000000")
     )
@@ -240,7 +269,9 @@ async function traiter(requete: Request): Promise<Response> {
     ? await signerCurseur({
       ...contexte,
       apres: page[page.length - 1]._apres,
-      expireLe: Math.floor(Date.now() / 1000) + TTL_CURSEUR_S,
+      expireLe:
+        Math.floor((dependances.maintenantMs?.() ?? Date.now()) / 1000) +
+        TTL_CURSEUR_S,
     }, secret)
     : null;
   return reponse(domaine, "ok", {
