@@ -153,7 +153,7 @@ begin
     null;
   end;
   begin
-    select count(*) into v_rows from public.kyc_documents;
+    perform 1 from public.kyc_documents;
     raise exception 'B-06 ECHEC: direct KYC table read unexpectedly succeeded';
   exception when insufficient_privilege then
     null;
@@ -218,6 +218,12 @@ begin
     'IF public.app_role() = ''teacher'' AND p_genre_classe NOT IN (''hommes'', ''femmes'') THEN'
   ) then
     raise exception 'M2 ECHEC: NOT IN sur p_genre_classe est attribue a tort a app_role()';
+  end if;
+
+  if app_private.has_unsafe_role_guard(
+    'IF p_genre_classe NOT IN (''hommes'', ''femmes'') THEN'
+  ) then
+    raise exception 'M2 ECHEC: NOT IN autonome sur p_genre_classe est une fausse garde app_role()';
   end if;
 
   if exists (
