@@ -8644,6 +8644,8 @@ class _Traductions$tc$coran$modes$ar extends Traductions$tc$coran$modes$fr {
 	@override String get verset => 'قراءة مكبَّرة';
 	@override String get focus => 'التركيز';
 	@override String get choisir => 'طريقة القراءة';
+	@override String versets({required Object debut, required Object fin}) => 'الآيات ⁨${debut}⁩ إلى ⁨${fin}⁩';
+	@override String versetsEntre({required Object debut, required Object fin}) => '⁨${debut}⁩ إلى ⁨${fin}⁩';
 }
 
 // Path: tc.coran.mushaf
@@ -8681,6 +8683,7 @@ class _Traductions$tc$coran$zoom$ar extends Traductions$tc$coran$zoom$fr {
 	@override String get bride => 'التكبير محدود بالعرض: ما زاد عليه يقطع الكلمات.';
 	@override String valeur({required Object pourcent}) => '⁨${pourcent}⁩ ٪';
 	@override String get renvoiLectureAgrandie => 'لتكبير النص، انتقل إلى القراءة المكبَّرة: صفحة المصحف تحافظ على هيئتها.';
+	@override String get maximale => 'بلغ الحجم الأقصى';
 }
 
 // Path: tc.coran.navigation
@@ -15465,6 +15468,8 @@ extension on TraductionsAr {
 			'tc.coran.modes.verset' => 'قراءة مكبَّرة',
 			'tc.coran.modes.focus' => 'التركيز',
 			'tc.coran.modes.choisir' => 'طريقة القراءة',
+			'tc.coran.modes.versets' => ({required Object debut, required Object fin}) => 'الآيات ⁨${debut}⁩ إلى ⁨${fin}⁩',
+			'tc.coran.modes.versetsEntre' => ({required Object debut, required Object fin}) => '⁨${debut}⁩ إلى ⁨${fin}⁩',
 			'tc.coran.mushaf.coteDroite' => 'الصفحة اليمنى',
 			'tc.coran.mushaf.coteGauche' => 'الصفحة اليسرى',
 			'tc.coran.mushaf.ouverture' => ({required Object droite, required Object gauche}) => 'الصفحتان المفتوحتان ⁨${droite}⁩ و⁨${gauche}⁩',
@@ -15480,6 +15485,7 @@ extension on TraductionsAr {
 			'tc.coran.zoom.bride' => 'التكبير محدود بالعرض: ما زاد عليه يقطع الكلمات.',
 			'tc.coran.zoom.valeur' => ({required Object pourcent}) => '⁨${pourcent}⁩ ٪',
 			'tc.coran.zoom.renvoiLectureAgrandie' => 'لتكبير النص، انتقل إلى القراءة المكبَّرة: صفحة المصحف تحافظ على هيئتها.',
+			'tc.coran.zoom.maximale' => 'بلغ الحجم الأقصى',
 			'tc.coran.navigation.titre' => 'الانتقال إلى',
 			'tc.coran.navigation.ouvrir' => 'الانتقال إلى صفحة',
 			'tc.coran.navigation.champ' => 'صفحة أو سورة أو جزء أو مرجع',
@@ -15565,11 +15571,11 @@ extension on TraductionsAr {
 			'tc.classe.fiche.derniereSeance' => 'آخر حصة',
 			'tc.classe.fiche.page' => ({required Object page}) => 'الصفحة ⁨${page}⁩',
 			'tc.classe.fiche.travailEnCours' => ({required Object nombre}) => 'العناصر: ⁨${nombre}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.fiche.aReprendre' => 'للاستئناف',
 			'tc.classe.fiche.presenceRecente' => 'الحضور الأخير',
 			'tc.classe.fiche.assiduite' => ({required Object presences, required Object total}) => 'الدروس: ⁨${presences}⁩ من ⁨${total}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.fiche.travailActuel' => 'العمل الحالي',
 			'tc.classe.fiche.interfaceGuidee' => 'وضع إمكانية الوصول',
 			'tc.classe.fiche.sansPedagogie' => 'المتابعة التعليمية غير متاحة',
@@ -16079,11 +16085,11 @@ extension on TraductionsAr {
 			'com.vocal.composer.permissionPhrase' => 'يحتاج رواية إلى الميكروفون لتسجيل رسالتك الصوتية. لا يُرسل شيء دون موافقتك.',
 			'com.vocal.composer.autoriser' => 'السماح باستخدام الميكروفون',
 			'com.vocal.composer.annuler' => 'إلغاء',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.composer.refuse' => 'الميكروفون غير مسموح به لتطبيق رواية.',
 			'com.vocal.composer.refuseAide' => 'لإرسال رسالة صوتية، اسمح باستخدام الميكروفون من إعدادات جهازك، ثم عد إلى هنا.',
 			'com.vocal.composer.fermer' => 'إغلاق',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.composer.enregistrement' => 'التسجيل جارٍ',
 			'com.vocal.composer.pause' => 'التسجيل متوقف مؤقتًا',
 			'com.vocal.composer.reprise' => 'استُؤنف التسجيل',
@@ -16593,11 +16599,11 @@ extension on TraductionsAr {
 			'com.annonces.administration.moderation.rejete' => 'رُفض البلاغ',
 			'com.annonces.administration.moderation.restaure' => 'مستعاد',
 			'com.annonces.administration.moderation.enregistree' => 'سُجل القرار.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.moderation.nonConfirmee' => 'لم يُؤكَّد هذا القرار بعد. تحقق من الاتصال ثم أعد المحاولة.',
 			'com.annonces.administration.moderation.horsLigne' => 'أنت غير متصل. لا يمكن تحديث قائمة الإشراف.',
 			'com.annonces.administration.moderation.indisponible' => 'الإشراف غير متاح بعد. عد لاحقًا.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.moderation.videTitre' => 'لا يوجد محتوى للفحص',
 			'com.annonces.administration.moderation.vide' => 'تصل هنا بلاغات مجتمع المعلمين.',
 			'com.annonces.administration.moderation.refuseTitre' => 'قائمة خاصة بالإشراف',
@@ -17107,11 +17113,11 @@ extension on TraductionsAr {
 			'admin.evaluations.typePeriodique' => 'دوري',
 			'admin.evaluations.typeReevaluation' => 'إعادة تقييم',
 			'admin.evaluations.typeCertification' => 'شهادة',
+			_ => null,
+		} ?? switch (path) {
 			'admin.evaluations.statutPlanifiee' => 'مجدول',
 			'admin.evaluations.statutRealisee' => 'منجز',
 			'admin.evaluations.statutAnnulee' => 'ملغى',
-			_ => null,
-		} ?? switch (path) {
 			'admin.evaluations.resultatReussi' => 'ناجح',
 			'admin.evaluations.resultatEchec' => 'راسب',
 			'admin.evaluations.resultatARevoir' => 'للمراجعة',
@@ -17621,11 +17627,11 @@ extension on TraductionsAr {
 			'admin.tirage.ciblesDetail' => 'يُسحب الهدف أولًا عندما تكون حصته مباشرة. لا يُعلَن أبدًا للمراقب ولا للمعلم.',
 			'admin.tirage.aucuneCible' => 'لا هدف: لكل الحصص المباشرة الفرص نفسها، بحسب الوزن.',
 			'admin.tirage.cibleClasse' => 'فصل',
+			_ => null,
+		} ?? switch (path) {
 			'admin.tirage.cibleEnseignant' => 'معلم',
 			'admin.tirage.retirerCible' => ({required Object libelle}) => 'إزالة ⁨${libelle}⁩',
 			'admin.tirage.ajouterCible' => 'إضافة هدف',
-			_ => null,
-		} ?? switch (path) {
 			'admin.tirage.ajouterTitre' => 'إضافة هدف',
 			'admin.tirage.ajouterContexte' => 'اختاروا الفصل أو المعلم الذي يُسحب أولًا. يُضاف الهدف إلى القواعد ثم تحفظونها.',
 			'admin.tirage.ajouterChoix' => 'الفصل أو المعلم المستهدف',
@@ -18135,11 +18141,11 @@ extension on TraductionsAr {
 			'comptable.aujourdhui.accesContractuels' => 'إدارة التزامات المتعاقدين',
 			'comptable.aujourdhui.accesEncaissements' => 'عرض المقبوضات',
 			'comptable.aujourdhui.accesTresorerie' => 'عرض الخزينة والصناديق',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.aujourdhui.accesAlimenter' => 'تغذية الاحتياطي الاستراتيجي',
 			'comptable.aujourdhui.accesRapports' => 'عرض التقارير',
 			'comptable.aujourdhui.titre' => 'اليوم',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.aujourdhui.sousTitre' => 'ماذا عليّ أن أفعل الآن؟',
 			'comptable.aujourdhui.attention' => 'للمعالجة والتنبيهات',
 			'comptable.aujourdhui.aTraiter' => 'للمعالجة اليوم',
@@ -18649,11 +18655,11 @@ extension on TraductionsAr {
 			'comptable.contractuels.horsLigneCreation' => 'أنت غير متصل. أعد الاتصال لإنشاء الالتزام.',
 			'comptable.contractuels.erreurObjet' => 'أدخل موضوع الالتزام.',
 			'comptable.contractuels.erreurMontant' => 'أدخل مبلغًا أكبر من صفر، مثلًا 350 أو 350,50.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.erreurNomExterne' => 'أدخل اسم المستفيد الخارجي.',
 			'comptable.contractuels.erreurCreation' => 'لا نعلم إن كان الالتزام قد أُنشئ. حدّث القائمة قبل إعادة المحاولة.',
 			'comptable.contractuels.creationIndisponible' => 'لا يستطيع حسابك إنشاء التزام.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.retourListe' => 'العودة إلى المتعاقدين',
 			'comptable.contractuels.titre' => 'المتعاقدون والالتزامات',
 			'comptable.contractuels.sousTitre' => 'تُحدَّد المبالغ عند إنشاء الالتزام، وتُثبَّت بعد الاعتماد.',
@@ -19163,11 +19169,11 @@ extension on TraductionsAr {
 			'eleveConnexion.lecteur.occupeePhrase' => 'تطبيق آخر يستخدم الكاميرا. أغلقه ثم أعد المحاولة، أو أدخل الرمز.',
 			'eleveConnexion.lecteur.absenteTitre' => 'لا كاميرا',
 			'eleveConnexion.lecteur.absentePhrase' => 'لا كاميرا متاحة على هذا الجهاز. أدخل الرمز المعروض تحت رمز QR.',
+			_ => null,
+		} ?? switch (path) {
 			'eleveConnexion.lecteur.nonSupporteeTitre' => 'القراءة غير ممكنة هنا',
 			'eleveConnexion.lecteur.nonSupporteePhrase' => 'هذا الجهاز أو المتصفح لا يقرأ رموز QR. أدخل الرمز المعروض تحت رمز QR.',
 			'eleveConnexion.lecteur.erreurTitre' => 'لم تبدأ الكاميرا',
-			_ => null,
-		} ?? switch (path) {
 			'eleveConnexion.lecteur.erreurPhrase' => 'أعد المحاولة، أو أدخل الرمز المعروض تحت رمز QR.',
 			'eleveConnexion.refus.format' => 'الرمز ستة أحرف: أرقام من 2 إلى 9 وحروف لاتينية، دون I ولا O.',
 			'eleveConnexion.refus.inconnuTitre' => 'رمز غير معروف',
@@ -19677,11 +19683,11 @@ extension on TraductionsAr {
 			'adulte.sortie.quitterQuestion' => 'مغادرة باقة الأسرة؟',
 			'adulte.sortie.quitterConfirmer' => 'مغادرة الباقة',
 			'adulte.sortie.quitterConsequence' => 'يبقى حسابك ودروسك وسجلك ورصيدك متاحة. ينتهي الربط بباقة الأسرة.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.sortie.forfaitPhrase' => ({required Object dePrenom}) => 'أنت جزء من باقة أسرة ⁨${dePrenom}⁩.',
 			'adulte.sortie.resultatTitre' => 'انتهى الربط بباقة الأسرة',
 			'adulte.sortie.resultatTitulaire' => 'يبقى حسابه ودروسه وسجله ورصيده متاحة.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.sortie.resultatSecondAdulte' => 'يبقى حسابك ودروسك وسجلك ورصيدك متاحة.',
 			'adulte.sortie.compris' => 'فهمت',
 			'adulte.sortie.retraitEchecTitre' => 'لم تُؤكَّد الإزالة.',
@@ -20191,11 +20197,11 @@ extension on TraductionsAr {
 			'controleur.controle.titre' => 'المراقبة',
 			'controleur.controle.mission' => 'فصلك القادم للمراقبة',
 			'controleur.controle.missionEnDirect' => 'فصل للمراقبة الآن',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.controle.commencer' => 'بدء المراقبة',
 			'controleur.controle.vide' => 'لا مراقبة مطلوبة الآن.',
 			'controleur.controle.videAide' => 'سيقترح عليك Rewayah فصلًا للمراقبة حين تتوفر حصة مناسبة.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.controle.indisponible' => 'هذه الزيارة لم تعد مقترحة: أُلغيت الحصة أو أُسندت إلى مراقب آخر.',
 			'controleur.controle.attente' => 'تُفتح المراقبة بمجرد أن تصبح الحصة مباشرة.',
 			'controleur.controle.dejaEnCours' => 'مراقبة جارية بالفعل في هذا الفصل.',

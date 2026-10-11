@@ -22736,6 +22736,12 @@ class Traductions$tc$coran$modes$fr {
 
 	/// fr: 'Mode de lecture'
 	String get choisir => 'Mode de lecture';
+
+	/// fr: 'v. {debut} à {fin}'
+	String versets({required Object debut, required Object fin}) => 'v. ${debut} à ${fin}';
+
+	/// fr: '{debut} à {fin}'
+	String versetsEntre({required Object debut, required Object fin}) => '${debut} à ${fin}';
 }
 
 // Path: tc.coran.mushaf
@@ -22792,6 +22798,9 @@ class Traductions$tc$coran$zoom$fr {
 
 	/// fr: 'Pour grossir le texte, passez en lecture agrandie : la page du mushaf garde sa géométrie.'
 	String get renvoiLectureAgrandie => 'Pour grossir le texte, passez en lecture agrandie : la page du mushaf garde sa géométrie.';
+
+	/// fr: 'Taille maximale atteinte'
+	String get maximale => 'Taille maximale atteinte';
 }
 
 // Path: tc.coran.navigation
@@ -36715,6 +36724,8 @@ extension on Traductions {
 			'tc.coran.modes.verset' => 'Lecture agrandie',
 			'tc.coran.modes.focus' => 'Focus',
 			'tc.coran.modes.choisir' => 'Mode de lecture',
+			'tc.coran.modes.versets' => ({required Object debut, required Object fin}) => 'v. ${debut} à ${fin}',
+			'tc.coran.modes.versetsEntre' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'tc.coran.mushaf.coteDroite' => 'Page de droite',
 			'tc.coran.mushaf.coteGauche' => 'Page de gauche',
 			'tc.coran.mushaf.ouverture' => ({required Object droite, required Object gauche}) => 'Ouverture, pages ${droite} et ${gauche}',
@@ -36726,12 +36737,13 @@ extension on Traductions {
 			'tc.coran.mushaf.page15.aProposTanzil' => 'Tanzil demande que la source soit clairement indiquée et que tanzil.net soit joignable.',
 			'tc.coran.fidelite.approchee' => 'Composition approchée',
 			'tc.coran.fidelite.approcheeDetail' => 'Les versets de cette page sont exactement ceux de la page du Mushaf de Médine. Leur répartition sur les lignes, elle, est celle de cet écran : le découpage en lignes de l\'édition n\'est pas encore importé.',
-			'tc.coran.fidelite.fidele' => 'Composition de l\'édition',
-			'tc.coran.zoom.bride' => 'Grossissement limité par la largeur : au-delà, un mot serait coupé.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.coran.fidelite.fidele' => 'Composition de l\'édition',
+			'tc.coran.zoom.bride' => 'Grossissement limité par la largeur : au-delà, un mot serait coupé.',
 			'tc.coran.zoom.valeur' => ({required Object pourcent}) => '${pourcent} %',
 			'tc.coran.zoom.renvoiLectureAgrandie' => 'Pour grossir le texte, passez en lecture agrandie : la page du mushaf garde sa géométrie.',
+			'tc.coran.zoom.maximale' => 'Taille maximale atteinte',
 			'tc.coran.navigation.titre' => 'Aller à',
 			'tc.coran.navigation.ouvrir' => 'Aller à une page',
 			'tc.coran.navigation.champ' => 'Page, sourate, juz ou référence',
@@ -37239,11 +37251,11 @@ extension on Traductions {
 			'adulte.famille.profilNonCreeTitre' => 'Démonstration : aucun profil n\'a été créé',
 			'adulte.famille.profilNonCreePhrase' => 'En démonstration, rien n\'est envoyé. Ma famille reste telle qu\'elle était.',
 			'adulte.famille.profilNonCreePhraseSeul' => 'En démonstration, rien n\'est envoyé. Votre espace élève reste tel qu\'il était.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.famille.monProfilIndisponibleTitre' => 'Pas encore disponible',
 			'adulte.famille.monProfilIndisponiblePhrase' => 'La création d\'un profil élève séparé n\'est pas encore disponible. Vos cours et Ma famille restent tels qu\'ils sont.',
 			'adulte.famille.indisponibleTitre' => 'La rubrique famille n\'est pas encore disponible',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.famille.indisponiblePhrase' => 'Votre famille ou votre forfait famille s\'affichera ici dès qu\'il sera disponible.',
 			'adulte.famille.place.ajouterConjointe' => 'Ajouter une conjointe',
 			'adulte.famille.place.ajouterConjoint' => 'Ajouter un conjoint',
@@ -37753,11 +37765,11 @@ extension on Traductions {
 			'argent.moyen.webStripe' => 'Carte bancaire',
 			'argent.moyen.webStripeDetail' => 'Paiement par le web. Aucun débit avant votre confirmation.',
 			'argent.soldes.total' => 'Total des soldes (lecture)',
+			_ => null,
+		} ?? switch (path) {
 			'argent.soldes.totalDetail' => 'Une lecture : chaque solde reste celui de son profil.',
 			'argent.soldes.aPayer' => 'À payer ce mois',
 			'argent.soldes.profilsFinances' => 'Profils financés',
-			_ => null,
-		} ?? switch (path) {
 			'argent.soldes.profilsFinancesValeur' => ({required Object n, required Object total}) => '${n} sur ${total}',
 			'argent.soldes.paiements' => 'Paiements du mois',
 			'argent.acces.enfantTitre' => 'Accès à cette classe temporairement indisponible',
@@ -38267,11 +38279,11 @@ extension on Traductions {
 			'com.studio.aujourdhui.dansCanal' => ({required Object nom}) => 'Dans ${nom}',
 			'com.studio.aujourdhui.echeance' => ({required Object date}) => 'Échéance le ${date}',
 			'com.studio.aujourdhui.seTraiteDans' => ({required Object module}) => 'Se traite dans ${module}',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.aujourdhui.ouvrirDans' => ({required Object module, required Object libelle}) => 'Ouvrir dans ${module} : ${libelle}',
 			'com.studio.aujourdhui.modules.studio' => _root.com.socle.lexique.studio,
 			'com.studio.aujourdhui.modules.finance' => 'Finance',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.aujourdhui.modules.planning' => 'Planning',
 			'com.studio.aujourdhui.modules.dossiers' => 'Dossiers',
 			'com.studio.aujourdhui.modules.classes' => 'Classes',
@@ -38781,11 +38793,11 @@ extension on Traductions {
 			'comptable.statuts.reserve.alimentationPrevue' => 'Alimentation prévue',
 			'comptable.statuts.reserve.mouvementSensible' => 'Mouvement sensible',
 			'comptable.statuts.obligation.brouillon' => 'Brouillon',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.obligation.aApprouver' => 'À approuver',
 			'comptable.statuts.obligation.approuvee' => 'Approuvée',
 			'comptable.statuts.obligation.refusee' => 'Refusée',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.obligation.payable' => 'Payable',
 			'comptable.statuts.obligation.payee' => 'Payée',
 			'comptable.statuts.obligation.annulee' => 'Annulée',
@@ -39295,11 +39307,11 @@ extension on Traductions {
 			'comptable.contractuels.colonneBeneficiaire' => 'Bénéficiaire',
 			'comptable.contractuels.colonneObjet' => 'Objet',
 			'comptable.contractuels.colonneMontant' => 'Montant',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.colonneEcheance' => 'Échéance',
 			'comptable.contractuels.colonneStatut' => 'Statut',
 			'comptable.contractuels.typeRecurrente' => 'Récurrente',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.typePonctuelle' => 'Ponctuelle',
 			'comptable.contractuels.echeanceLe' => ({required Object date}) => 'Échéance : ${date}',
 			'comptable.contractuels.payer' => 'Payer',

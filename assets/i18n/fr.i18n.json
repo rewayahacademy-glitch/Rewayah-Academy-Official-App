@@ -6132,7 +6132,9 @@
         "mushaf": "Page du mushaf",
         "verset": "Lecture agrandie",
         "focus": "Focus",
-        "choisir": "Mode de lecture"
+        "choisir": "Mode de lecture",
+        "versets": "v. {debut} à {fin}",
+        "versetsEntre": "{debut} à {fin}"
       },
       "mushaf": {
         "coteDroite": "Page de droite",
@@ -6155,7 +6157,8 @@
       "zoom": {
         "bride": "Grossissement limité par la largeur\u00a0: au-delà, un mot serait coupé.",
         "valeur": "{pourcent} %",
-        "renvoiLectureAgrandie": "Pour grossir le texte, passez en lecture agrandie\u00a0: la page du mushaf garde sa géométrie."
+        "renvoiLectureAgrandie": "Pour grossir le texte, passez en lecture agrandie\u00a0: la page du mushaf garde sa géométrie.",
+        "maximale": "Taille maximale atteinte"
       },
       "navigation": {
         "titre": "Aller à",
