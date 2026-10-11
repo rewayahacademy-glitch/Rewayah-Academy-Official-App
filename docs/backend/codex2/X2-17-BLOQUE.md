@@ -61,3 +61,11 @@ compléter cette partie. Aucun taux ni événement n'a été supposé.
 - Le décodage du fixture Dart est maintenant typé; `flutter test --no-pub test/core/capacites/series_tresorerie_supabase_test.dart` passe 4/4.
 - `dart analyze --fatal-infos` n'a pas rendu de résultat après environ 2 minutes et a été interrompu; la commande de psql/PostgreSQL reste absente.
 - Le rejeu Claude confirme la table de règles, aal2, portée non-enseignant, audit et mutation aal1. Les triggers d'alimentation, `tresorerie_a_reprendre`, reprise, calcul rémunération et politique d'allocation ne sont toujours pas livrés; X2-17 reste PARTIEL.
+
+## Suivi après A119 — 2026-10-12
+
+- Le correctif du fixture est poussé sur `codex2/x2-17`; `dart analyze --fatal-infos test/core/capacites/series_tresorerie_supabase_test.dart` retourne `No issues found`.
+- A114 fournit maintenant le contrat des événements, de la reprise et de `remuneration_due_seance()`. Il ne fixe pas les règles de présence pour les événements incomplets/reconnexions; ce calcul doit consommer la durée réellement tenue, jamais la durée planifiée.
+- Le manifeste F86 trouvé dans `origin/claude/f86-manifeste` est un candidat explicitement non approuvé. Le déclenchement d'écritures internes ne sera pas revendiqué F86-conforme à partir de ce seul candidat.
+- PostgreSQL 16 n'a pas pu être installé ici: seule la distribution WSL `docker-desktop` est disponible; `psql`, `pg_ctl`, `initdb` et Docker fonctionnel sont absents. Le téléchargement des binaires EDB n'a reçu aucun octet en 60 secondes et a été interrompu. Aucun rejeu SQL n'est revendiqué.
+- En conséquence, restent non livrés et non prouvés: alimentation encaissement/prestation/payout/remboursement, `tresorerie_a_reprendre`, `reprendre_alimentation_tresorerie()`, `remuneration_due_seance()` et `politique_allocation_coffres`. Lot PARTIEL.
