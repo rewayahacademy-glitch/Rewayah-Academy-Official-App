@@ -92,7 +92,8 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
   /// Vrai : seule la lecture d'une fiche echoue, connexion perdue.
   bool panneFiche = false;
 
-  /// Vrai : la publication echoue, connexion perdue (rien n'est publie).
+  /// Vrai : la publication, l'attribution et le retrait echouent, connexion
+  /// perdue (rien n'est ecrit).
   bool panneEcriture = false;
 
   /// Vrai : la lecture d'une fiche echoue d'une panne du serveur.
@@ -805,6 +806,7 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
     final _Etat e = _trouve(supportId);
     if (!droitsServeur.peutAttribuer) throw const BibliothequeNonAutorisee();
     if (!e.support.publie) throw const BibliothequeNonAutorisee();
+    if (panneEcriture) throw const BibliothequeHorsLigne();
     if (e.revision != revisionAttendue) return const EcritureEnConflit();
     // Idempotent : une classe deja servie n'est pas comptee deux fois.
     e.classes.addAll(classeIds);
@@ -822,6 +824,7 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
     _garde();
     final _Etat e = _trouve(supportId);
     if (!droitsServeur.peutPublier) throw const BibliothequeNonAutorisee();
+    if (panneEcriture) throw const BibliothequeHorsLigne();
     if (e.revision != revisionAttendue) return const EcritureEnConflit();
     e.support = SupportAdmin(
       id: e.support.id,
