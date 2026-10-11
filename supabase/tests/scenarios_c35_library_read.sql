@@ -23,14 +23,25 @@ values
    'c35fffff-0000-0000-0000-000000000001', 'C35', 'Reviewer', 'active'),
   ('c3500000-0000-0000-0000-000000000003', 'C35STUDENT000003', 'student',
    'c35fffff-0000-0000-0000-000000000002', 'C35', 'Outsider', 'active');
+insert into public.student_profiles(profile_id,student_type,interface_mode)
+values ('c3500000-0000-0000-0000-000000000001','minor','child'),
+       ('c3500000-0000-0000-0000-000000000003','minor','child');
+insert into public.groupes
+  (id,teacher_id,type_public,seuil_max,libelle,weekday,hour_local,timezone_iana)
+values ('c3500000-0000-0000-0000-000000000021',
+  'c3500000-0000-0000-0000-000000000002','enfant',5,'C35 groupe assigne',1,18,'Europe/Paris');
+insert into public.groupe_membres(groupe_id,student_id)
+values ('c3500000-0000-0000-0000-000000000021','c3500000-0000-0000-0000-000000000001');
 
 insert into public.library_resource
   (id, title, short_title, resource_type, access_policy, offline_policy)
 values
-  ('c3500000-0000-0000-0000-000000000011', 'C35 support', 'C35', 'pdf', 'publique', 'jamais');
+  ('c3500000-0000-0000-0000-000000000011', 'C35 support', 'C35', 'pdf', 'groupe_assigne', 'jamais');
 insert into public.resource_version (id, resource_id, numero_version, statut)
 values ('c3500000-0000-0000-0000-000000000012',
         'c3500000-0000-0000-0000-000000000011', 1, 'publiee');
+insert into public.library_resource_groupe(resource_id,groupe_id)
+values ('c3500000-0000-0000-0000-000000000011','c3500000-0000-0000-0000-000000000021');
 insert into public.download_asset
   (id, resource_version_id, format, cle_stockage, taille_octets, origine)
 values ('c3500000-0000-0000-0000-000000000013',
@@ -76,7 +87,7 @@ begin
   end;
   v_key := public.autoriser_lecture_version('c3500000-0000-0000-0000-000000000012');
   if v_key <> 'supports/c3500000-0000-0000-0000-000000000013/1/manuel.pdf' then
-    raise exception 'C-35: la RPC n'a pas rendu la chemin de stockage attendu';
+    raise exception 'C-35: la RPC n''a pas rendu le chemin de stockage attendu';
   end if;
   begin
     perform public.autoriser_lecture_version('c3500000-0000-0000-0000-000000000099');
@@ -109,7 +120,7 @@ do $$
 begin
   begin
     perform public.autoriser_lecture_version('c3500000-0000-0000-0000-000000000012');
-    raise exception 'C-35: l'acces d'un compte non autorise a ete accorde';
+    raise exception 'C-35: l''acces d''un compte non autorise a ete accorde';
   exception when insufficient_privilege then null;
   end;
 end $$;

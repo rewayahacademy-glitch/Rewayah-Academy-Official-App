@@ -52,9 +52,9 @@ begin
      and (rights.preuve_id is null or proof.statut = 'confirmee')
      and (
        v_role = 'admin'
-       or v_access_policy in ('publique', 'inscrits')
+       or r.access_policy in ('publique', 'inscrits')
        or (
-         v_access_policy in ('groupe_assigne', 'enseignant_seul')
+         r.access_policy in ('groupe_assigne', 'enseignant_seul')
          and exists (
            select 1
              from public.library_resource_groupe lrg
@@ -64,7 +64,7 @@ begin
               and (
                 g.teacher_id = auth.uid()
                 or (
-                  v_access_policy = 'groupe_assigne'
+                  r.access_policy = 'groupe_assigne'
                   and exists (
                     select 1
                       from public.groupe_membres m
@@ -117,7 +117,7 @@ begin
      and pg_catalog.pg_get_function_identity_arguments(p.oid) = 'p_resource_version_id uuid';
   if v_owner is distinct from 'postgres'
      or not coalesce(v_search_path @> array['search_path=""'], false)
-     or position('if not coalesce(' in lower(v_definition) = 0
+     or position('if not coalesce(' in lower(v_definition)) = 0
      or has_function_privilege('anon', 'public.autoriser_lecture_version(uuid)', 'EXECUTE')
      or has_function_privilege('service_role', 'public.autoriser_lecture_version(uuid)', 'EXECUTE')
      or has_function_privilege('agent_ro', 'public.autoriser_lecture_version(uuid)', 'EXECUTE')
