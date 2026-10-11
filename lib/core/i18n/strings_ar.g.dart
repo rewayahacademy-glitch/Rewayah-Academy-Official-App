@@ -7085,7 +7085,7 @@ class _Traductions$suiviDemandes$notification$ar extends Traductions$suiviDemand
 	@override String enseignantAffecte({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: تم اعتماد الفصل وتعيين المعلم';
 	@override String eleveIntegre({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: الطالب مندمج في الفصل';
 	@override String coursCommences({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: بدأت الدروس';
-	@override String dejaEnClasse({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: الطالب في فصل بالفعل، تم حفظ الطلب';
+	@override String dejaEnClasse({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: الطالب في فصل بالفعل، أُغلق الطلب';
 	@override String changementFusion({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: دُمج فصلكم مع فصل آخر، عرض الفصل الجديد';
 	@override String changementTransfert({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: فصل جديد، عرض التفاصيل';
 	@override String close({required Object dePrenom, required Object motif}) => 'طلب موعد ⁨${dePrenom}⁩: ⁨${motif}⁩';
@@ -20055,7 +20055,7 @@ extension on TraductionsAr {
 			'suiviDemandes.notification.enseignantAffecte' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: تم اعتماد الفصل وتعيين المعلم',
 			'suiviDemandes.notification.eleveIntegre' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: الطالب مندمج في الفصل',
 			'suiviDemandes.notification.coursCommences' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: بدأت الدروس',
-			'suiviDemandes.notification.dejaEnClasse' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: الطالب في فصل بالفعل، تم حفظ الطلب',
+			'suiviDemandes.notification.dejaEnClasse' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: الطالب في فصل بالفعل، أُغلق الطلب',
 			'suiviDemandes.notification.changementFusion' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: دُمج فصلكم مع فصل آخر، عرض الفصل الجديد',
 			'suiviDemandes.notification.changementTransfert' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: فصل جديد، عرض التفاصيل',
 			'suiviDemandes.notification.close' => ({required Object dePrenom, required Object motif}) => 'طلب موعد ⁨${dePrenom}⁩: ⁨${motif}⁩',
