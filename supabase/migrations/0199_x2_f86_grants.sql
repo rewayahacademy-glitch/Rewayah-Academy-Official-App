@@ -1,9 +1,10 @@
--- X2-07 F86-ACL: ACLs explicites et fonctions de trigger SECURITY INVOKER.
+-- X2-07 F86-ACL: ACLs explicites et SECURITY INVOKER pour les triggers compatibles.
 -- Base fe253766: toutes les fonctions ciblees du manifeste sont presentes.
 begin;
+-- Ces huit RPC sont appelees avec le client service dans les fonctions Edge;
+-- leurs droits EXECUTE doivent rester disponibles apres cette migration.
 revoke execute on function public.agent_identite_masquee() from service_role;
 revoke execute on function public.agent_jeton_vivant(uuid) from service_role;
-revoke execute on function public.agent_pre_request() from service_role;
 revoke execute on function public.app_account_valid() from service_role;
 revoke execute on function public.app_config_int(text, integer) from service_role;
 revoke execute on function public.app_household_id() from service_role;
@@ -11,23 +12,16 @@ revoke execute on function public.app_role() from service_role;
 revoke execute on function public.app_user_id() from service_role;
 revoke execute on function public.attacher_partition_audit(date) from service_role;
 revoke execute on function public.autoriser_ecoute_archive(uuid) from service_role;
-revoke execute on function public.autoriser_jeton_video(uuid, uuid, text, text) from service_role;
 revoke execute on function public.autoriser_lecture_piece_identite(uuid) from service_role;
 revoke execute on function public.brouillon_cahier(uuid) from service_role;
 revoke execute on function public.classes_a_confirmer_admin() from service_role;
 revoke execute on function public.completer_kyc_document() from service_role;
-revoke execute on function public.confirmer_depot_piece_identite(uuid) from service_role;
-revoke execute on function public.consommer_code_appairage(text, text, text) from service_role;
 revoke execute on function public.creer_groupe(uuid, text, text, smallint, smallint, smallint, text, smallint) from service_role;
 revoke execute on function public.creer_jeton_agent(text, uuid, integer, boolean) from service_role;
-revoke execute on function public.creer_profil_enfant(uuid, uuid, text, text, integer, text) from service_role;
 revoke execute on function public.dossiers_en_attente() from service_role;
-revoke execute on function public.enregistrer_archive_seance(text, text, text, integer, bigint, text) from service_role;
-revoke execute on function public.enregistrer_webhook_livekit(text, text, text, uuid, timestamp with time zone, jsonb) from service_role;
 revoke execute on function public.est_observateur_masque(uuid, uuid) from service_role;
 revoke execute on function public.etat_presence(uuid, uuid) from service_role;
 revoke execute on function public.geler_archive_seance(uuid, text, boolean) from service_role;
-revoke execute on function public.get_config(text, jsonb) from service_role;
 revoke execute on function public.groupes_admin() from service_role;
 revoke execute on function public.guard_app_config_history() from service_role;
 revoke execute on function public.guard_assignment_cap() from service_role;
@@ -57,12 +51,10 @@ revoke execute on function public.peut_deposer_piece_identite(uuid) from service
 revoke execute on function public.peut_poser_disponibilite(uuid) from service_role;
 revoke execute on function public.preparer_depot_piece_identite(uuid, text) from service_role;
 revoke execute on function public.profil_de_mon_foyer(text) from service_role;
-revoke execute on function public.profil_du_jeton_appareil(text) from service_role;
 revoke execute on function public.record_session_event(uuid, uuid, session_event_type, text) from service_role;
 revoke execute on function public.regle_brute(uuid, text) from service_role;
 revoke execute on function public.regle_effective(uuid, text) from service_role;
 revoke execute on function public.regroupements_demandes_horaires_admin() from service_role;
-revoke execute on function public.remettre_session_agent(text) from service_role;
 revoke execute on function public.revoquer_jeton_agent(uuid) from service_role;
 revoke execute on function public.session_belongs_to_teacher(uuid, uuid) from service_role;
 revoke execute on function public.session_has_participant(uuid, uuid) from service_role;
@@ -70,9 +62,9 @@ revoke execute on function public.session_in_household(uuid, uuid) from service_
 revoke execute on function public.unite_curriculum(uuid) from service_role;
 revoke execute on function public.video_route_de_seance(uuid, text, text) from service_role;
 revoke execute on function public.agent_identite_masquee() from public, anon;
-revoke execute on function public.agent_pre_request() from public, anon;
+-- agent_pre_request reste EXECUTE pour le role effectif de chaque requete,
+-- comme etabli par 0014 et 0057 (anon, authenticated, service_role, agent_ro).
 revoke execute on function public.profil_de_mon_foyer(text) from public, anon;
-revoke execute on function public.agent_pre_request() from agent_ro;
 alter function public.completer_kyc_document() security invoker;
 alter function public.groupe_creneau_ancre() security invoker;
 alter function public.guard_app_config_history() security invoker;
@@ -89,12 +81,11 @@ alter function public.guard_rule_override_immutable() security invoker;
 alter function public.guard_session_overlap() security invoker;
 alter function public.guard_session_participant_cap() security invoker;
 alter function public.guard_session_state_transition() security invoker;
-alter function public.tc_annotation_toucher_couche() security invoker;
-alter function public.tc_annotation_valider_marqueur() security invoker;
-alter function public.tc_annotation_valider_trait() security invoker;
 alter function public.tc_demande_horaire_cloture_retrait_groupe() security invoker;
 alter function public.tc_materialiser_apres_adhesion() security invoker;
 alter function public.tc_materialiser_apres_creation_groupe() security invoker;
 alter function public.tc_notification_etape_adulte_autonome() security invoker;
 alter function public.tc_session_feedback_calculer_empreinte() security invoker;
+-- Les triggers tc_annotation_* doivent garder SECURITY DEFINER: leurs
+-- appelants n'ont volontairement pas d'acces direct a annotation_layer.
 commit;

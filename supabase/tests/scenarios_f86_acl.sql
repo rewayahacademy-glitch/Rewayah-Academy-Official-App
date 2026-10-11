@@ -16,23 +16,16 @@ begin
     'public.app_user_id()',
     'public.attacher_partition_audit(date)',
     'public.autoriser_ecoute_archive(uuid)',
-    'public.autoriser_jeton_video(uuid, uuid, text, text)',
     'public.autoriser_lecture_piece_identite(uuid)',
     'public.brouillon_cahier(uuid)',
     'public.classes_a_confirmer_admin()',
     'public.completer_kyc_document()',
-    'public.confirmer_depot_piece_identite(uuid)',
-    'public.consommer_code_appairage(text, text, text)',
     'public.creer_groupe(uuid, text, text, smallint, smallint, smallint, text, smallint)',
     'public.creer_jeton_agent(text, uuid, integer, boolean)',
-    'public.creer_profil_enfant(uuid, uuid, text, text, integer, text)',
     'public.dossiers_en_attente()',
-    'public.enregistrer_archive_seance(text, text, text, integer, bigint, text)',
-    'public.enregistrer_webhook_livekit(text, text, text, uuid, timestamp with time zone, jsonb)',
     'public.est_observateur_masque(uuid, uuid)',
     'public.etat_presence(uuid, uuid)',
     'public.geler_archive_seance(uuid, text, boolean)',
-    'public.get_config(text, jsonb)',
     'public.groupes_admin()',
     'public.guard_app_config_history()',
     'public.guard_assignment_cap()',
@@ -62,12 +55,10 @@ begin
     'public.peut_poser_disponibilite(uuid)',
     'public.preparer_depot_piece_identite(uuid, text)',
     'public.profil_de_mon_foyer(text)',
-    'public.profil_du_jeton_appareil(text)',
     'public.record_session_event(uuid, uuid, session_event_type, text)',
     'public.regle_brute(uuid, text)',
     'public.regle_effective(uuid, text)',
     'public.regroupements_demandes_horaires_admin()',
-    'public.remettre_session_agent(text)',
     'public.revoquer_jeton_agent(uuid)',
     'public.session_belongs_to_teacher(uuid, uuid)',
     'public.session_has_participant(uuid, uuid)',
@@ -81,7 +72,6 @@ begin
   end loop;
   foreach v_signature in array array[
     'public.agent_identite_masquee()',
-    'public.agent_pre_request()',
     'public.profil_de_mon_foyer(text)'
   ]::text[] loop
     v_function := to_regprocedure(v_signature);
@@ -99,9 +89,28 @@ begin
     if v_function is null then raise exception 'X2-07 missing claims helper: %', v_signature; end if;
     if not has_function_privilege('anon', v_function, 'EXECUTE') then raise exception 'X2-07 anon lost claims helper EXECUTE: %', v_signature; end if;
   end loop;
+  foreach v_signature in array array[
+    'public.enregistrer_webhook_livekit(text, text, text, uuid, timestamp with time zone, jsonb)',
+    'public.autoriser_jeton_video(uuid, uuid, text, text)',
+    'public.consommer_code_appairage(text, text, text)',
+    'public.profil_du_jeton_appareil(text)',
+    'public.confirmer_depot_piece_identite(uuid)',
+    'public.creer_profil_enfant(uuid, uuid, text, text, integer, text)',
+    'public.remettre_session_agent(text)',
+    'public.enregistrer_archive_seance(text, text, text, integer, bigint, text)',
+    'public.get_config(text, jsonb)'
+  ]::text[] loop
+    v_function := to_regprocedure(v_signature);
+    if v_function is null then raise exception 'X2-07 missing service-role callable function: %', v_signature; end if;
+    if not has_function_privilege('service_role', v_function, 'EXECUTE') then raise exception 'X2-07 service_role lost EXECUTE: %', v_signature; end if;
+  end loop;
   v_function := to_regprocedure('public.agent_pre_request()');
   if v_function is null then raise exception 'X2-07 missing agent_pre_request()'; end if;
-  if has_function_privilege('agent_ro', v_function, 'EXECUTE') then raise exception 'X2-07 agent_ro still has EXECUTE on agent_pre_request()'; end if;
+  foreach v_signature in array array['anon', 'authenticated', 'service_role', 'agent_ro']::text[] loop
+    if not has_function_privilege(v_signature, v_function, 'EXECUTE') then
+      raise exception 'X2-07 pre-request role lost EXECUTE: %', v_signature;
+    end if;
+  end loop;
   foreach v_signature in array array[
     'public.completer_kyc_document()',
     'public.groupe_creneau_ancre()',
@@ -119,9 +128,6 @@ begin
     'public.guard_session_overlap()',
     'public.guard_session_participant_cap()',
     'public.guard_session_state_transition()',
-    'public.tc_annotation_toucher_couche()',
-    'public.tc_annotation_valider_marqueur()',
-    'public.tc_annotation_valider_trait()',
     'public.tc_demande_horaire_cloture_retrait_groupe()',
     'public.tc_materialiser_apres_adhesion()',
     'public.tc_materialiser_apres_creation_groupe()',
@@ -132,6 +138,16 @@ begin
     if v_function is null then raise exception 'X2-07 missing trigger function: %', v_signature; end if;
     select p.prosecdef into v_security_definer from pg_proc p where p.oid = v_function;
     if v_security_definer then raise exception 'X2-07 trigger remains SECURITY DEFINER: %', v_signature; end if;
+  end loop;
+  foreach v_signature in array array[
+    'public.tc_annotation_toucher_couche()',
+    'public.tc_annotation_valider_marqueur()',
+    'public.tc_annotation_valider_trait()'
+  ]::text[] loop
+    v_function := to_regprocedure(v_signature);
+    if v_function is null then raise exception 'X2-07 missing annotation trigger function: %', v_signature; end if;
+    select p.prosecdef into v_security_definer from pg_proc p where p.oid = v_function;
+    if not v_security_definer then raise exception 'X2-07 annotation trigger must remain SECURITY DEFINER: %', v_signature; end if;
   end loop;
 end;
 $x2_f86_acl$;
