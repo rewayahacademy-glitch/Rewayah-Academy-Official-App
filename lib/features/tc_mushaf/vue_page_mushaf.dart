@@ -391,7 +391,7 @@ class TexteDePage extends StatelessWidget {
   Widget build(BuildContext context) {
     // MUSHAF-15L : une source de layout reelle (quinze lignes, cadres de
     // sourate, basmala, rosaces) se compose en page du Mushaf de Medine.
-    if (vue.fidelite == DisponibiliteLayout.fidele && vue.lignes.isNotEmpty) {
+    if (vue.estMadina15) {
       return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints contraintes) =>
             PageMadina15(

@@ -206,13 +206,18 @@ class _EtatPageMadina15 extends State<PageMadina15> {
           0,
           (double a, LigneMesureeMadina15 m) => math.max(a, m.largeurNaturelle),
         );
-    final double reference = largeurLogique > 0
-        ? largeurLogique
-        : mesures.fold<double>(
-            0,
-            (double a, LigneMesureeMadina15 m) =>
-                math.max(a, m.largeurNaturelle),
-          );
+    // 2 de plus au corps de base (0,1 %) : la marge qui garde la ligne la plus
+    // large de deborder d'un demi-pixel quand le moteur de texte arrondit
+    // autrement que la mesure.
+    final double reference =
+        (largeurLogique > 0
+            ? largeurLogique
+            : mesures.fold<double>(
+                0,
+                (double a, LigneMesureeMadina15 m) =>
+                    math.max(a, m.largeurNaturelle),
+              )) +
+        2;
     // Le papier garde une marge de 0,45 corps de chaque cote : la largeur du
     // texte est donc la largeur du cadre moins ces deux marges.
     final double echelle =
@@ -520,11 +525,18 @@ class _EntetePage extends StatelessWidget {
       ),
     );
     final String? hizb = _reperHizb();
-    Text texte(String s) => Text(
-      s,
-      textScaler: TextScaler.noScaling,
-      style: style,
-      softWrap: false,
+    // Chaque repere se reduit plutot que de deborder : un nom de sourate long
+    // sur un cadre etroit ne casse jamais la page.
+    Widget texte(String s) => Flexible(
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(
+          s,
+          textScaler: TextScaler.noScaling,
+          style: style,
+          softWrap: false,
+        ),
+      ),
     );
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

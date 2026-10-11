@@ -203,6 +203,15 @@ class PageMushafVM {
   /// une page fidele : ni dans le code, ni a l'ecran, ni dans le rapport.
   bool get compositionApprochee => fidelite != DisponibiliteLayout.fidele;
 
+  /// Vrai quand la page est composee d'apres la mise en page du Mushaf de
+  /// Medine en 15 lignes (MUSHAF-15L) : la source a rendu des lignes reelles
+  /// **et** les reperes de la page (hizb). Une autre source de lignes reelles
+  /// (generique) garde son rendu par ligne composee.
+  bool get estMadina15 =>
+      fidelite == DisponibiliteLayout.fidele &&
+      lignes.isNotEmpty &&
+      hizb != null;
+
   /// Les versets de la page, dans l'ordre du texte.
   ///
   /// Reconstitue depuis les sections : c'est ce que l'on compare aux versets
