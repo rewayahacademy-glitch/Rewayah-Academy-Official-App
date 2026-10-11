@@ -35,37 +35,72 @@ public.tresorerie_mouvements
   devise_ref       text not null                                   -- copie de la config au moment T
   survenu_le       timestamptz not null
   transfert_id     uuid null      -- même valeur sur la sortie et l'entrée d'un transfert entre coffres
-  source_type      text not null check (source_type in ('wallet_entry','payout','manuel'))
+  source_type      text not null check (source_type in ('encaissement','prestation','remboursement',
+                     'payout','transfert_interne','correction'))
+  regle            text not null    -- la règle d'alimentation appliquée (ex. 'encaissement->fonds_clients')
   source_id        text null
   note             text null check (char_length(note) <= 500)
-  cree_par         uuid not null default auth.uid()
+  motif            text null       -- obligatoire pour transfert_interne et correction
+  cree_par         uuid null       -- null = système (événement de paiement) ; sinon l'admin
   cree_le          timestamptz not null default now()
-  cle_idempotence  text not null, unique (cree_par, cle_idempotence)
+  unique (source_type, source_id, regle, coffre, sens)
 ```
 
-- Le registre est en ajout seul : pas d'UPDATE ni de DELETE (trigger qui refuse). Une erreur se
-  corrige par un mouvement inverse.
+- **Devise de référence : le dollar US** (décision du directeur, 11/10/2026). La clé de
+  configuration `devise_reference` vaut `USD` ; les unités mineures sont des cents. À l'insertion,
+  `montant_ref_minor` est calculé avec le dernier `fx_rates` dont `effective_at <= survenu_le` (de
+  `devise` vers `USD`), arrondi au plus proche avec les demi-unités arrondies loin de zéro. Il n'est
+  jamais recalculé ensuite. Sans taux disponible : erreur `22023 taux_change_absent`, et le
+  paiement source n'est pas perdu (voir la reprise plus bas). Pour une devise déjà en USD, le taux
+  vaut 1.
+
+### 1 bis. Alimentation automatique par les paiements (décision du directeur, 11/10/2026)
+
+**Le registre ne se remplit jamais à la main.** Chaque ligne naît d'un événement financier réel,
+dans la même transaction que cet événement (trigger serveur ou RPC qui l'enregistre). Ces
+fonctions sont `SECURITY DEFINER` si nécessaire, sous la procédure F86. Il n'existe aucune RPC
+d'entrée d'argent libre.
+
+| Événement réel | Mouvement(s) dans le registre |
+| :--- | :--- |
+| Paiement d'une famille **confirmé par le prestataire** (crédit `wallet_entries`, preuve webhook vérifiée, FI-BR-06) ; un retour navigateur ne suffit jamais | entrée dans `fonds_clients_engages` (argent reçu pour des cours pas encore donnés), `source_type = 'encaissement'` |
+| Prestation **acquise** : séance terminée et débitée sur le portefeuille (débit `wallet_entries`) | transfert depuis `fonds_clients_engages` : la rémunération due à l'enseignant vers `paie_a_decaisser`, puis le reste réparti selon la **politique d'allocation** en vigueur (`taxes_obligations`, `charges_essentielles`, `reserve_strategique` selon CPT-BR-12), et le solde vers `tresorerie_libre`. Ce sont des lignes liées par `transfert_id`, avec `source_type = 'prestation'` |
+| Paiement d'un enseignant demandé (`payouts` → `requested`) | transfert de `paie_a_decaisser` vers `en_transit` |
+| Paiement d'un enseignant confirmé (`payouts` → `paid`) | sortie de `en_transit` (argent réellement parti) |
+| Paiement d'un enseignant échoué ou annulé (`failed`, `cancelled`) | transfert inverse de `en_transit` vers `paie_a_decaisser` |
+| Remboursement d'une famille confirmé | sortie de `fonds_clients_engages`, `source_type = 'remboursement'` |
+
+Règles :
+
+- **Politique d'allocation** : table versionnée `politique_allocation_coffres` (pour mille par coffre,
+  date d'effet). Elle est écrite par la Direction seule (admin aal2), auditée, et ne change jamais
+  une allocation passée. Aucune valeur codée en dur. Sans politique en vigueur, le reste après la
+  paie va en entier vers `tresorerie_libre`, et une alerte « politique d'allocation absente » est
+  levée pour la Direction.
+- **Rémunération de l'enseignant** : le montant vient du calcul serveur de rémunération déjà en
+  place pour la séance. Si aucune source serveur de ce montant n'existe dans le schéma, Codex le
+  signale dans l'onglet avant d'écrire quoi que ce soit : on n'invente pas de taux.
+- **Idempotence** : `unique (source_type, source_id, regle, coffre, sens)`. Un webhook rejoué ou un
+  trigger relancé n'écrit jamais deux fois.
+- **Reprise** : si une conversion ou une allocation échoue (taux absent), l'événement source est
+  quand même enregistré, et il est noté dans `tresorerie_a_reprendre`. La RPC
+  `reprendre_alimentation_tresorerie()` (admin) rejoue ces événements quand le taux existe. Aucune
+  somme n'est saisie à la main.
+- **Seules interventions humaines permises** :
+  - les **transferts internes entre coffres** (CPT-BR-05), via `transferer_entre_coffres(de,
+    vers, montant_minor, devise, motif, cle_idempotence)`, en admin aal2, avec les quatre
+    interdits de §10.4 refusés par le serveur ;
+  - les **corrections** par contre-mouvement d'une ligne existante, avec un motif obligatoire.
+  Dans les deux cas, la somme totale détenue ne change pas, ou elle est ramenée à la vérité d'une
+  ligne réelle ; jamais d'argent créé.
+- Le registre est en ajout seul : pas d'UPDATE ni de DELETE (un trigger les refuse).
 - Les 7 valeurs de `coffre` correspondent une à une à l'enum Dart `Coffre`, dans le même ordre.
-- **Devise de référence.** La clé de configuration `devise_reference` vaut `EUR` par défaut. À
-  l'insertion, `montant_ref_minor` est calculé avec le dernier `fx_rates` dont
-  `effective_at <= survenu_le` (de `devise` vers `devise_ref`), arrondi au plus proche avec les
-  demi-unités arrondies loin de zéro. Il n'est jamais recalculé ensuite. Sans taux disponible :
-  erreur `22023 taux_change_absent`. Si la devise est déjà la devise de référence, le taux vaut 1.
-- **Écriture.** RPC `enregistrer_mouvement_tresorerie(coffre, sens, montant_minor, devise,
-  survenu_le, source_type, source_id, note, cle_idempotence)`, réservée à `admin` en aal2. Une
-  même clé avec les mêmes arguments renvoie la ligne existante ; avec d'autres arguments, elle
-  renvoie l'erreur `23505`.
-- **Transfert.** RPC `transferer_entre_coffres(de, vers, montant_minor, devise, note,
-  cle_idempotence)`, réservée à `admin` en aal2. Elle insère deux lignes (une sortie, une entrée)
-  avec le même `transfert_id`, dans une seule transaction. `de` doit être différent de `vers`.
-- L'alimentation automatique du registre depuis `wallet_entries` et `payouts` est hors périmètre
-  de ce lot. Elle fera l'objet d'un lot séparé, à demander.
 
 ## 2. X2-17 : `series_tresorerie()` (CPT-BR-18)
 
 RPC sans argument, `SECURITY INVOKER`, en lecture seule, réservée à `admin` et `accountant`. Elle
-renvoie un JSON qui suit exactement `SeriesTresorerie`. Tous les montants sont donnés dans la devise
-de référence : `{"mineur": <bigint>, "devise": "<devise_ref>"}`.
+renvoie un JSON qui suit exactement `SeriesTresorerie`. Tous les montants sont donnés en dollars US (devise
+de référence) : `{"mineur": <bigint>, "devise": "<devise_ref>"}`.
 
 - **Fuseau.** Clé de configuration `fuseau_comptable`, `Europe/Paris` par défaut. « Jour » et
   « mois » s'entendent dans ce fuseau.
@@ -146,7 +181,5 @@ public.exports_comptables
 
 ## 4. Hors périmètre, à décider plus tard
 
-- L'alimentation automatique du registre (lien avec `wallet_entries`, `payouts` et le paiement des
-  enseignants).
 - Le choix de la période du rapport dans l'écran : le port actuel n'a pas de paramètre de période.
   Ce sera un ajout au port, côté Claude, s'il est demandé.
