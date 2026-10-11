@@ -10,8 +10,12 @@ CREATE TABLE public.contract_required_versions (
   changed_at timestamptz NOT NULL DEFAULT now()
 );
 ALTER TABLE public.contract_required_versions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY contract_required_versions_admin_read
+  ON public.contract_required_versions FOR SELECT TO authenticated
+  USING (public.app_role() = 'admin'::public.app_role);
+GRANT SELECT ON TABLE public.contract_required_versions TO authenticated;
 REVOKE ALL ON TABLE public.contract_required_versions
-  FROM PUBLIC, anon, authenticated, service_role, agent_ro;
+  FROM PUBLIC, anon, service_role, agent_ro;
 INSERT INTO public.contract_required_versions (contract_kind, version)
 VALUES ('recording_and_control_notice', '2026-10-jur');
 
@@ -19,7 +23,7 @@ VALUES ('recording_and_control_notice', '2026-10-jur');
 -- quelle que soit la voie d'administration qui effectue la transition.
 CREATE FUNCTION public.guard_teacher_activation_signatures()
 RETURNS trigger
-LANGUAGE plpgsql SECURITY DEFINER SET search_path = ''
+LANGUAGE plpgsql SECURITY INVOKER SET search_path = ''
 AS $function$
 DECLARE
   v_teacher_version text;
@@ -72,10 +76,12 @@ WHEN (NEW.account_status = 'active'::public.account_status)
 EXECUTE FUNCTION public.guard_teacher_activation_signatures();
 
 -- Statuts destines a l'administration. Les versions sont calculees ici,
--- jamais comparees a une constante cote client.
+-- jamais comparees a une constante cote client. Les politiques RLS existantes
+-- autorisent les lectures necessaires a l'administrateur; la fonction reste
+-- invoker conformement au gate F79.
 CREATE FUNCTION public.teacher_signature_statuses(p_profile_id uuid)
 RETURNS jsonb
-LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = ''
+LANGUAGE plpgsql STABLE SECURITY INVOKER SET search_path = ''
 AS $function$
 DECLARE
   v_teacher_version text;
@@ -153,8 +159,25 @@ BEGIN
     'agent_ro', 'public.teacher_signature_statuses(uuid)', 'EXECUTE'
   ) OR NOT has_function_privilege(
     'authenticated', 'public.teacher_signature_statuses(uuid)', 'EXECUTE'
-  ) OR has_table_privilege(
+  ) OR NOT has_table_privilege(
     'authenticated', 'public.contract_required_versions', 'SELECT'
+  ) OR EXISTS (
+    SELECT 1 FROM pg_catalog.pg_proc p
+    WHERE p.oid IN (
+      'public.guard_teacher_activation_signatures()'::regprocedure,
+      'public.teacher_signature_statuses(uuid)'::regprocedure
+    ) AND p.prosecdef
+  ) OR EXISTS (
+    SELECT 1
+    FROM pg_catalog.pg_proc p
+    JOIN pg_catalog.pg_roles r ON r.oid = p.proowner
+    WHERE p.oid IN (
+      'public.guard_teacher_activation_signatures()'::regprocedure,
+      'public.teacher_signature_statuses(uuid)'::regprocedure
+    ) AND (
+      r.rolname <> 'postgres'
+      OR NOT (COALESCE(p.proconfig, ARRAY[]::text[]) @> ARRAY['search_path=""'])
+    )
   ) THEN
     RAISE EXCEPTION '0079 teacher contract activation guard postflight failed';
   END IF;

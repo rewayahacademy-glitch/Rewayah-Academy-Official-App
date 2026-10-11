@@ -9,7 +9,7 @@
 /// n'est calculee cote Flutter. L'horodatage d'une [Signature] est celui du
 /// serveur, jamais celui de l'appareil.
 ///
-/// Aucun branchement serveur ici : le port vaut `null` en production.
+/// L'adaptateur de production lit et signe le texte courant via Supabase.
 library;
 
 import 'package:flutter/foundation.dart';
