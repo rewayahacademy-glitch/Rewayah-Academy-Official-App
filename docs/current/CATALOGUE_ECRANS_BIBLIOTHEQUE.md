@@ -110,7 +110,7 @@ CAP29-BACK-1 (Codex).
 
 ### Écarts à connaître
 
-- Ports : `facettes`, `revoirDroits` et `FinaliteUpload` : ligne Contrats C-30 bis publiée le 11/10. `PortSupportActif` (CAP29-G) : ligne Contrats C-33 bis à lire dans le tableau.
+- Ports : `facettes`, `revoirDroits` et `FinaliteUpload` : ligne Contrats C-30 bis publiée le 11/10. `PortSupportActif` (CAP29-G) : ligne Contrats C-34.
 - Salle : `PresentationPort.pourSeance()` n'est pas encore appelé par `/salle` (les fichiers de la salle n'ont pas été modifiés) ; le rappel est prêt pour `onPresenter` des `ActionsSeance`.
 - Aperçu : sans lecteur PDF, texte structuré ni leçon dans `pubspec.yaml` ; le rendu réel attend ces lecteurs.
 - Captures : clair seulement ; pas de comparaison pixel aux maquettes M01 à M04 (aucune référence versionnée dans le dépôt) ; défaut corrigé grâce aux captures : mots coupés dans les pastilles et la visibilité du tableau du catalogue à 1440 px.
