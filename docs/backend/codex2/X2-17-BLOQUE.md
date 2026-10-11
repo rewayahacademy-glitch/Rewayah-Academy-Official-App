@@ -46,3 +46,11 @@ compléter cette partie. Aucun taux ni événement n'a été supposé.
   PostgreSQL local n'a été démarré. Aucun accès distant utilisé.
 - Vérification de la définition SQL et de l'ACL dynamique par PostgreSQL
   restent à faire par le rejeu de Claude.
+
+## Mise a jour apres Codex2!A114
+
+- Migration additive `20261012120000_codex2_remuneration_rules.sql`: ajoute `regles_remuneration_enseignant` sans taux precharge, avec date d'effet, portee globale ou par enseignant, motif, audit, append-only et insertion reservee a Direction active avec `aal2`.
+- La meme migration ajoute `wallet_entries.confirme_par_prestataire_le`, nullable. Aucun mouvement ne se declenche encore depuis cette colonne.
+- Le scenario SQL contient des assertions aal1/aal2, append-only et audit; aucune n'est prouvee en execution avant rejeu.
+- La duree reellement tenue n'est pas definie pour les intervalles incomplets, reconnexions et seances sans evenement `left`. Aucun montant de prestation n'est donc calcule. FI-BR-06 n'ecrit pas encore le marqueur.
+- Aucun trigger d'alimentation ou de reprise n'est branche. La migration et le scenario restent PARTIELS tant que F86 et le rejeu local PostgreSQL manquent.
