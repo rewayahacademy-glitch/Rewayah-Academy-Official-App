@@ -91,7 +91,7 @@ demander au directeur de coller la phrase de délégation.
 
 | Session | Dernier rôle | État au 11/10 10 h 30 |
 | :--- | :--- | :--- |
-| `session_01UBsJ9sE3GTYF7rbaa1bWyX` | recherche | **en cours : lot BIBLIO-LECTURE** sur `claude/biblio-lecture`. Contenu : bouton « Ouvrir le mushaf » dans la fiche Coran (`rendu_ressource.dart:53`) ; « Ouvrir » les PDF par un lien court du serveur dans un nouvel onglet, sans dépendance nouvelle ; l'élève, le tuteur et l'adulte doivent trouver la bibliothèque depuis leur navigation. Elle doit rendre un SHA. |
+| `session_01UBsJ9sE3GTYF7rbaa1bWyX` | recherche | **BIBLIO-LECTURE RENDU à 11 h 03 : `claude/biblio-lecture` @ `1252a49d`**, à faire vérifier par un non-auteur puis fusionner dans ccr. Suite : 14 013 réussis, 1 échec `etat_sans_donnees_test` (déjà présent à la base). Restes : adaptateur serveur du lien (Codex, C-35) ; pas de bouton « Ouvrir » sur mobile et bureau sans `url_launcher` (pubspec gelé) ; l'entrée est dans Compte, pas dans Accueil. Lot d'origine sur `claude/biblio-lecture`. Contenu : bouton « Ouvrir le mushaf » dans la fiche Coran (`rendu_ressource.dart:53`) ; « Ouvrir » les PDF par un lien court du serveur dans un nouvel onglet, sans dépendance nouvelle ; l'élève, le tuteur et l'adulte doivent trouver la bibliothèque depuis leur navigation. Elle doit rendre un SHA. |
 | `session_01615tdwc2KPzKR1y8seyeK2` | suivi-famille, bibliothèque, revues KYC | libre ; a rendu REVUE-C21-F70 (Questions l. 280) |
 | `session_01QgdsG1L3y7us5j8Gz19cf2` | tb-fin, intégration | libre ; intégrateur non auteur fiable |
 | `session_013XpsSBkb4xvUDDiVS6WR67` | echelle, intégration (INTEG-NUIT-2) | libre |
