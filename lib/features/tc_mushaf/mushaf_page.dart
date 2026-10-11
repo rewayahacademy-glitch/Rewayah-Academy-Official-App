@@ -1077,7 +1077,7 @@ class _ReglageTaille extends StatelessWidget {
           libelle: t.eleve.coran.reduire,
           niveau: NiveauAction.tertiaire,
           pleineLargeur: false,
-          onPress: zoom <= PositionLecture.zoomMin ? null : () => onZoom(-0.2),
+          onPress: () => onZoom(-0.2),
         ),
         // Isolee : sans lettre, « 100 % » se lisait « % 100 » en arabe
         // (CORAN-320-1b).
