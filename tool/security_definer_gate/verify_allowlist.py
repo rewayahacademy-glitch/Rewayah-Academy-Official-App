@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import sys
@@ -18,10 +19,214 @@ _CLASSIFICATIONS = {
     "NO_GUARD_HELPER",
 }
 _ROLES = {"anon", "authenticated", "agent_ro"}
+_ACCOUNT_VALID = ["PUBLIC", ".", "APP_ACCOUNT_VALID", "(", ")"]
+_APP_ROLE = ["PUBLIC", ".", "APP_ROLE", "(", ")"]
 
 
 class GateFailure(ValueError):
     """The inventory is incomplete or differs from the observed catalog."""
+
+
+def _sql_tokens(source: str) -> list[str]:
+    """Tokenize enough PL/pgSQL to recognize one exact first-statement guard.
+
+    Comments and quoted strings are opaque tokens, so guard-looking text inside
+    either cannot satisfy the check. Unsupported syntax is retained as tokens
+    and therefore fails the exact template match.
+    """
+    tokens: list[str] = []
+    index = 0
+    while index < len(source):
+        char = source[index]
+        if char.isspace():
+            index += 1
+            continue
+        if source.startswith("--", index):
+            newline = source.find("\n", index + 2)
+            index = len(source) if newline < 0 else newline + 1
+            continue
+        if source.startswith("/*", index):
+            depth = 1
+            index += 2
+            while index < len(source) and depth:
+                if source.startswith("/*", index):
+                    depth += 1
+                    index += 2
+                elif source.startswith("*/", index):
+                    depth -= 1
+                    index += 2
+                else:
+                    index += 1
+            if depth:
+                return ["<UNTERMINATED_COMMENT>"]
+            continue
+        if char in "Ee" and source.startswith("'", index + 1):
+            index += 2
+            literal: list[str] = []
+            while index < len(source):
+                if source[index] == "\\" and index + 1 < len(source):
+                    literal.append(source[index + 1])
+                    index += 2
+                    continue
+                if source[index] == "'":
+                    if index + 1 < len(source) and source[index + 1] == "'":
+                        literal.append("'")
+                        index += 2
+                        continue
+                    index += 1
+                    break
+                literal.append(source[index])
+                index += 1
+            else:
+                return ["<UNTERMINATED_ESCAPE_STRING>"]
+            tokens.append("<STRING:" + "".join(literal) + ">")
+            continue
+        if char == "'":
+            index += 1
+            literal: list[str] = []
+            while index < len(source):
+                if source[index] == "\\":
+                    # Ordinary string backslash semantics depend on the
+                    # function's creation-time setting. Refuse to guess.
+                    return ["<UNSUPPORTED_BACKSLASH_STRING>"]
+                if source[index] == "'":
+                    if index + 1 < len(source) and source[index + 1] == "'":
+                        literal.append("'")
+                        index += 2
+                        continue
+                    index += 1
+                    break
+                literal.append(source[index])
+                index += 1
+            else:
+                return ["<UNTERMINATED_STRING>"]
+            tokens.append("<STRING:" + "".join(literal) + ">")
+            continue
+        if char == '"':
+            index += 1
+            identifier: list[str] = []
+            while index < len(source):
+                if source[index] == '"':
+                    if index + 1 < len(source) and source[index + 1] == '"':
+                        identifier.append('"')
+                        index += 2
+                        continue
+                    index += 1
+                    break
+                identifier.append(source[index])
+                index += 1
+            else:
+                return ["<UNTERMINATED_IDENTIFIER>"]
+            tokens.append("<QUOTED_IDENTIFIER:" + "".join(identifier) + ">")
+            continue
+        if char == "$":
+            delimiter = re.match(r"\$[A-Za-z_][A-Za-z_0-9]*\$|\$\$", source[index:])
+            if delimiter:
+                tag = delimiter.group(0)
+                end = source.find(tag, index + len(tag))
+                if end < 0:
+                    return ["<UNTERMINATED_DOLLAR_STRING>"]
+                tokens.append("<STRING:" + source[index + len(tag):end] + ">")
+                index = end + len(tag)
+                continue
+        if char.isalpha() or char == "_":
+            end = index + 1
+            while end < len(source) and (source[end].isalnum() or source[end] in "_$"):
+                end += 1
+            tokens.append(source[index:end].upper())
+            index = end
+            continue
+        if source.startswith(("::", "<=", ">=", "<>", "!=", ":=", "=>"), index):
+            tokens.append(source[index:index + 2])
+            index += 2
+            continue
+        tokens.append(char)
+        index += 1
+    return tokens
+
+
+def _matching_paren(tokens: list[str], opening: int) -> int | None:
+    depth = 0
+    for index in range(opening, len(tokens)):
+        if tokens[index] == "(":
+            depth += 1
+        elif tokens[index] == ")":
+            depth -= 1
+            if depth == 0:
+                return index
+    return None
+
+
+def _is_role_check(tokens: list[str]) -> bool:
+    def role_expression(value: list[str]) -> bool:
+        prefix = _APP_ROLE
+        if value[:len(prefix)] != prefix:
+            return False
+        tail = value[len(prefix):]
+        if len(tail) == 2 and tail[0] == "=" and tail[1].startswith("<STRING:"):
+            return bool(tail[1][8:-1].strip())
+        if len(tail) < 4 or tail[:2] != ["IN", "("] or tail[-1] != ")":
+            return False
+        choices = tail[2:-1]
+        if not choices or len(choices) % 2 == 0:
+            return False
+        return all(
+            (position % 2 == 0 and token.startswith("<STRING:") and bool(token[8:-1].strip()))
+            or (position % 2 == 1 and token == ",")
+            for position, token in enumerate(choices)
+        )
+
+    # Compare the whole expression by splitting only at its top-level AND.
+    depth = 0
+    for index, token in enumerate(tokens):
+        if token == "(":
+            depth += 1
+        elif token == ")":
+            depth -= 1
+        elif token == "AND" and depth == 0:
+            left, right = tokens[:index], tokens[index + 1:]
+            return (left == _ACCOUNT_VALID and role_expression(right)) or (
+                right == _ACCOUNT_VALID and role_expression(left)
+            )
+    return False
+
+
+def _has_positive_nullsafe_guard(prosrc: str) -> bool:
+    """Return true only for the approved, null-safe first PL/pgSQL guard."""
+    if not isinstance(prosrc, str) or not prosrc:
+        return False
+    tokens = _sql_tokens(prosrc)
+    try:
+        body_start = tokens.index("BEGIN") + 1
+    except ValueError:
+        return False
+    if tokens[body_start:body_start + 4] != ["IF", "NOT", "COALESCE", "("]:
+        return False
+    close = _matching_paren(tokens, body_start + 3)
+    if close is None:
+        return False
+    inner = tokens[body_start + 4:close]
+    depth = 0
+    separator: int | None = None
+    for index, token in enumerate(inner):
+        if token == "(":
+            depth += 1
+        elif token == ")":
+            depth -= 1
+        elif token == "," and depth == 0:
+            if separator is not None:
+                return False
+            separator = index
+    if separator is None or inner[separator + 1:] != ["FALSE"]:
+        return False
+    if not _is_role_check(inner[:separator]):
+        return False
+    if tokens[close + 1:close + 3] != ["THEN", "RAISE"]:
+        return False
+    if close + 3 >= len(tokens) or tokens[close + 3] != "EXCEPTION":
+        return False
+    end_raise = next((i for i in range(close + 4, len(tokens)) if tokens[i] == ";"), None)
+    return end_raise is not None and tokens[end_raise + 1:end_raise + 4] == ["END", "IF", ";"]
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -31,6 +236,18 @@ def _load(path: Path) -> dict[str, Any]:
         raise GateFailure(f"cannot read JSON {path}: {error}") from error
     if not isinstance(value, dict):
         raise GateFailure(f"{path}: top level must be an object")
+    return value
+
+
+def _load_catalog_argument(argument: str) -> dict[str, Any]:
+    if argument != "-":
+        return _load(Path(argument))
+    try:
+        value = json.load(sys.stdin)
+    except json.JSONDecodeError as error:
+        raise GateFailure(f"cannot read catalog JSON from stdin: {error}") from error
+    if not isinstance(value, dict):
+        raise GateFailure("catalog stdin: top level must be an object")
     return value
 
 
@@ -102,6 +319,18 @@ def verify(manifest: dict[str, Any], observed: dict[str, Any], project_ref: str)
             _check_review(approved, signature)
         except GateFailure as error:
             problems.append(str(error))
+        if approved.get("classification") == "ROLE_POSITIVE_TEMPLATE" and not _has_positive_nullsafe_guard(
+            current.get("prosrc")
+        ):
+            problems.append(
+                f"{signature}: first executable statement is not an approved positive null-safe role guard"
+            )
+        prosrc = current.get("prosrc")
+        catalog_digest = current.get("md5_prosrc")
+        if isinstance(prosrc, str) and isinstance(catalog_digest, str):
+            computed_digest = hashlib.md5(prosrc.encode("utf-8")).hexdigest()
+            if computed_digest != catalog_digest:
+                problems.append(f"{signature}: prosrc does not match catalog md5_prosrc")
         digest = approved.get("md5_prosrc")
         if not isinstance(digest, str) or not _MD5.fullmatch(digest):
             problems.append(f"{signature}: invalid approved md5_prosrc")
@@ -138,11 +367,11 @@ def verify(manifest: dict[str, Any], observed: dict[str, Any], project_ref: str)
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", required=True, type=Path)
-    parser.add_argument("--catalog", required=True, type=Path)
+    parser.add_argument("--catalog", required=True, help="catalog JSON file, or - to read from stdin")
     parser.add_argument("--project-ref", required=True)
     args = parser.parse_args(argv)
     try:
-        verify(_load(args.manifest), _load(args.catalog), args.project_ref)
+        verify(_load(args.manifest), _load_catalog_argument(args.catalog), args.project_ref)
     except GateFailure as error:
         print(f"SECURITY DEFINER gate: FAIL\n{error}", file=sys.stderr)
         return 1

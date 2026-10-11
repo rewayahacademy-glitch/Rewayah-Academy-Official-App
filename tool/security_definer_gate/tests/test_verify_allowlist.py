@@ -1,4 +1,5 @@
 import sys
+import hashlib
 import unittest
 from copy import deepcopy
 from pathlib import Path
@@ -8,7 +9,8 @@ from verify_allowlist import GateFailure, verify  # noqa: E402
 
 
 SIGNATURE = "public.example(p_id uuid)"
-HASH = "0123456789abcdef0123456789abcdef"
+PROSRC = "BEGIN IF NOT COALESCE(public.app_account_valid() AND public.app_role() = 'admin', false) THEN RAISE EXCEPTION 'denied'; END IF; END;"
+HASH = hashlib.md5(PROSRC.encode("utf-8")).hexdigest()
 
 
 def manifest_row():
@@ -29,7 +31,7 @@ def fixture():
     current = deepcopy({key: approved[key] for key in (
         "signature", "md5_prosrc", "owner", "search_path", "execute"
     )})
-    current.update({"schema": "public", "security_definer": True})
+    current.update({"schema": "public", "security_definer": True, "prosrc": PROSRC})
     return (
         {
             "metadata": {
@@ -70,6 +72,22 @@ class VerifyAllowlistTests(unittest.TestCase):
         manifest, observed = fixture()
         observed["functions"][0]["md5_prosrc"] = "f" * 32
         with self.assertRaisesRegex(GateFailure, "md5_prosrc changed"):
+            verify(manifest, observed, "project-test")
+
+    def test_matching_hash_with_unsafe_first_statement_fails_guard_scan(self):
+        manifest, observed = fixture()
+        unsafe = "BEGIN UPDATE public.example SET value = true; END;"
+        digest = hashlib.md5(unsafe.encode("utf-8")).hexdigest()
+        manifest["functions"][0]["md5_prosrc"] = digest
+        observed["functions"][0]["md5_prosrc"] = digest
+        observed["functions"][0]["prosrc"] = unsafe
+        with self.assertRaisesRegex(GateFailure, "first executable statement"):
+            verify(manifest, observed, "project-test")
+
+    def test_catalog_prosrc_must_match_its_exported_hash(self):
+        manifest, observed = fixture()
+        observed["functions"][0]["prosrc"] = "BEGIN PERFORM 1; END;"
+        with self.assertRaisesRegex(GateFailure, "prosrc does not match catalog md5_prosrc"):
             verify(manifest, observed, "project-test")
 
     def test_non_definer_catalog_row_fails_closed(self):

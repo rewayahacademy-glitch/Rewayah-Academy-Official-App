@@ -16,6 +16,7 @@ SELECT pg_catalog.jsonb_build_object(
         'schema', n.nspname,
         'security_definer', p.prosecdef,
         'md5_prosrc', pg_catalog.md5(p.prosrc),
+        'prosrc', p.prosrc,
         'owner', r.rolname,
         'search_path', COALESCE((
           SELECT pg_catalog.array_agg(setting ORDER BY setting)

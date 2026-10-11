@@ -20,17 +20,19 @@ F79 a demandé un contrôle en CI et en postflight. L’ajout de ces fichiers ne
 
 ## Gate local de comparaison (composant partiel)
 
-`tool/security_definer_gate/catalog.sql` exporte en lecture seule les fonctions `SECURITY DEFINER` de `public` et `app_private`, leurs hashes, propriétaires, `search_path`, ACL effectives, ainsi que les fonctions trigger. `verify_allowlist.py` compare l’export au manifeste revu et refuse les entrées non approuvées, ajouts/suppressions/surcharges, différences de hash/ACL/propriétaire/search_path, fonctions trigger SECURITY DEFINER, et signatures sans classification/relecteur/date. Le script ne se connecte pas à la base et ne contient aucune clé.
+`tool/security_definer_gate/catalog.sql` exporte en lecture seule les fonctions `SECURITY DEFINER` de `public` et `app_private`, leurs hashes, corps `prosrc`, propriétaires, `search_path`, ACL effectives, ainsi que les fonctions trigger. Le flux JSON inclut les corps pour l’analyse locale : le passer directement par stdin à `verify_allowlist.py`, sans le rediriger dans un fichier. `verify_allowlist.py` compare signature/hash/ACL/propriétaire/search_path au manifeste et, pour `ROLE_POSITIVE_TEMPLATE`, vérifie que le premier statement PL/pgSQL est exactement le garde positif et null-safe reconnu, avant un `RAISE EXCEPTION`. Il ignore les commentaires et traite les littéraux comme opaques. Il refuse les corps absents, les DML antérieurs, les gardes imbriqués, les gardes dans des chaînes/commentaires, les fallbacks non `false`, les formes de rôle non reconnues, et les fonctions trigger `SECURITY DEFINER`. Le script ne se connecte pas à la base et ne contient aucune clé.
 
 Exemple après application du lot candidat sur une base PostgreSQL jetable :
 
 ```powershell
 psql -X -A -t -v ON_ERROR_STOP=1 -v project_ref=gggmtelinlpseweouyav `
-  -f tool/security_definer_gate/catalog.sql > catalog.json
-python tool/security_definer_gate/verify_allowlist.py `
-  --manifest docs/backend/SECURITY_DEFINER_INVENTORY_PROD_2026-10-11.json `
-  --catalog catalog.json --project-ref gggmtelinlpseweouyav
+  -f tool/security_definer_gate/catalog.sql |
+  python tool/security_definer_gate/verify_allowlist.py `
+    --manifest docs/backend/SECURITY_DEFINER_INVENTORY_PROD_2026-10-11.json `
+    --catalog - --project-ref gggmtelinlpseweouyav
 python -m unittest discover -s tool/security_definer_gate/tests -v
 ```
+
+Le scanner reconnaît volontairement une grammaire étroite : `IF NOT COALESCE(...) THEN RAISE EXCEPTION`, avec `public.app_account_valid()` ET `public.app_role()` comparé par `=` à un littéral ou par `IN` à des littéraux, dans l’un ou l’autre ordre. Une garde valide exprimée autrement échoue jusqu’à ajout explicite d’un gabarit et de cas de test; aucune approbation n’est déduite par heuristique. Les fixtures testées ne prouvent pas la correction du catalogue distant ni l’exhaustivité de tous les motifs P02–P32.
 
 Le manifeste actuel est `INVENTORY_ONLY_NOT_ALLOWLIST` et chaque entrée est `UNREVIEWED`; le gate doit donc refuser son utilisation. Cette comparaison ne remplace ni la revue manuelle des corps hashés, ni les scénarios positifs/négatifs du scanner de gardes, ni le branchement CI/postflight exigé par F79. Ce composant est partiel et ne change rien à distance.
