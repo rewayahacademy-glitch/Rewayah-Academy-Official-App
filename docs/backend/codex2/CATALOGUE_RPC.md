@@ -11,7 +11,7 @@ Sources locales uniquement : migrations suivies `0001–0048` sur `origin/ccr-1b
 - Port Dart : recherche statique des noms RPC/fonction dans `lib/**/*.dart`; « aucun port repéré » signifie aucune occurrence trouvée.
 - Les RPC grantées à un rôle supplémentaire le mentionnent; la capacité métier requise demeure celle des gardes SQL.
 
-Limite : les 111 signatures sont les grants directs détectés. La migration `0048_revoke_public_volatile_function_execute.sql:12-42` accorde aussi conditionnellement `EXECUTE` à `authenticated` pour toute fonction volatile publique qui avait déjà ce droit. Les signatures ciblées dépendent des ACL lues dans le DO de migration; sans catalogue runtime, elles ne sont pas reconstructibles et ne sont pas incluses dans le décompte.
+Limite d'exhaustivité : 110 signatures canoniques sont documentées à partir des grants directs. La migration `0048_revoke_public_volatile_function_execute.sql:12-42` accorde aussi conditionnellement `EXECUTE` à `authenticated` pour toute fonction volatile publique qui avait déjà ce droit. Les signatures de cet ensemble dépendent des ACL juste avant la migration; sans rejouer les migrations et lire `pg_proc`/`has_function_privilege`, elles ne sont pas reconstructibles avec certitude. Le critère « toutes les RPC exposées » reste donc partiellement non vérifié; ne pas traiter ce catalogue comme exhaustif tant que cette liste n'a pas été capturée.
 
 ## Catalogue
 ### `public.agent_pre_request()`
@@ -686,18 +686,6 @@ Limite : les 111 signatures sont les grants directs détectés. La migration `00
 - **Port Dart:** `lib/core/agent/service_agent.dart`.
 - **Source:** [`supabase/migrations/0016_masquage_coherent_en_observation.sql:376`](../../../../supabase/migrations/0016_masquage_coherent_en_observation.sql:376); grants: `supabase/migrations/0014_acces_agent.sql:781, supabase/migrations/0016_masquage_coherent_en_observation.sql:477`.
 
-### `public.journal_audit(uuid, text, timestamptz, int, timestamptz, bigint)`
-
-- **Paramètres:** p_acteur uuid default null; p_action text default null; p_depuis timestamptz default null; p_limite int default 50; p_avant_date timestamptz default null; p_avant_id bigint default null.
-- **Retour:** `table ( entree_id bigint, survenu_le timestamptz, acteur uuid, role_acteur text, nom_acteur text, type_evenement text, table_visee text, ligne_visee text, details jsonb )`.
-- **Roles explicitement grantés dans l’historique source:** `authenticated` (les grants historiques ne prouvent pas l’ACL runtime).
-- **Capacites/gardes observees:** aucune condition app_role/app_account_valid/auth.uid detectee par motifs.
-- **Erreurs SQL explicites:** `P0001` — `journal d'audit reserve a l'administration`; `P0001` — `limite hors bornes`; `P0001` — `curseur incomplet`.
-- **Effets:** aucune mutation directe détectée.
-- **Idempotence:** no explicit idempotence mechanism detected statically.
-- **Port Dart:** `lib/core/journal/service_journal.dart`, `lib/features/admin_tableau/activite_recente.dart`.
-- **Source:** [`supabase/migrations/0009_journal_audit.sql:68`](../../../../supabase/migrations/0009_journal_audit.sql:68); grants: `supabase/migrations/0009_journal_audit.sql:139`.
-
 ### `public.journal_audit(uuid, text, timestamptz, integer, timestamptz, bigint)`
 
 - **Paramètres:** p_acteur uuid default null; p_action text default null; p_depuis timestamptz default null; p_limite integer default 50; p_avant_date timestamptz default null; p_avant_id bigint default null.
@@ -708,7 +696,7 @@ Limite : les 111 signatures sont les grants directs détectés. La migration `00
 - **Effets:** aucune mutation directe détectée.
 - **Idempotence:** no explicit idempotence mechanism detected statically.
 - **Port Dart:** `lib/core/journal/service_journal.dart`, `lib/features/admin_tableau/activite_recente.dart`.
-- **Source:** [`supabase/migrations/0016_masquage_coherent_en_observation.sql:167`](../../../../supabase/migrations/0016_masquage_coherent_en_observation.sql:167); grants: `supabase/migrations/0016_masquage_coherent_en_observation.sql:474`.
+- **Source:** [`supabase/migrations/0016_masquage_coherent_en_observation.sql:167`](../../../../supabase/migrations/0016_masquage_coherent_en_observation.sql:167); grants: `supabase/migrations/0009_journal_audit.sql:139, supabase/migrations/0016_masquage_coherent_en_observation.sql:474`. `int` et `integer` sont des alias PostgreSQL d'une même signature; l'entrée n'est comptée qu'une fois.
 
 ### `public.journal_audit_filtres()`
 
@@ -1350,4 +1338,4 @@ Limite : les 111 signatures sont les grants directs détectés. La migration `00
 
 La boucle de `supabase/migrations/0048_revoke_public_volatile_function_execute.sql:12-42` parcourt chaque fonction `public` non-extension (`prokind = 'f'`, pas d'entree `pg_depend` de type extension) dont `provolatile = 'v'`. Avant la revocation, elle photographie `has_function_privilege('authenticated', oid, 'EXECUTE')`; elle retire ensuite EXECUTE a `PUBLIC`, `anon` et `agent_ro`, puis accorde explicitement EXECUTE a `authenticated` uniquement si cette photographie est vraie. La verification `:46-70` s'assure qu'aucune fonction volatile reste executable par `agent_ro`.
 
-Le catalogue de 111 lignes recense les signatures dont un GRANT direct a `authenticated` est retrouve textuellement dans les migrations. Il n'inclut pas une liste inventee des membres conditionnels de 0048: cette appartenance depend de l'ACL effective juste avant cette migration, y compris des privileges herites de PUBLIC et des default privileges du role applicateur. Pour fermer cet ecart sans acces distant, il faudrait rejouer les migrations avec le meme role/default ACL puis capturer les signatures avant/apres 0048. Aucun test de ce type n'a ete execute dans ce lot.
+Le catalogue de 110 entrées recense les signatures canoniques dont un GRANT direct à `authenticated` est retrouvé dans les migrations; les alias `int`/`integer` d'une même signature sont dédupliqués. Il n'inclut pas de membres conditionnels inventés pour 0048: cette appartenance dépend de l'ACL effective juste avant la migration, y compris les privilèges hérités de PUBLIC et les default privileges du rôle applicateur. Pour fermer cet écart, il faut rejouer les migrations avec le même rôle/default ACL et capturer les signatures effectives juste avant et après 0048. Aucune base locale Postgres n'est disponible et aucune base distante n'a été consultée.
