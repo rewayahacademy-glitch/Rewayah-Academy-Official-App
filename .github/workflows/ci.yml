@@ -10,6 +10,20 @@ on:
   workflow_dispatch:
 
 jobs:
+  security-definer-scanner:
+    name: SECURITY DEFINER gate scanner tests
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Test fail-closed scanner
+        run: python -m unittest discover -s tool/security_definer_gate/tests -v
+      - name: Compile scanner
+        run: python -m py_compile tool/security_definer_gate/verify_allowlist.py
+
   migrate-check:
     name: Migrations applicables (Postgres 17)
     # Le SQL et les fonctions Edge ne sont controles que vers `main` : les
