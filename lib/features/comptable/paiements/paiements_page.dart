@@ -271,6 +271,7 @@ class _PaiementsAEffectuerPageState
           ? null
           : BarreSelection(
               nombre: _selection.length,
+              identifiants: _selection.toList(),
               horsLigne: horsLigne,
               onPayer: retenues.isEmpty ? null : () => _payer(retenues),
               onVider: () => setState(_selection.clear),

@@ -1526,6 +1526,8 @@ class Traductions$admin$fr {
 	late final Traductions$admin$agents$fr agents = Traductions$admin$agents$fr.internal(_root);
 	late final Traductions$admin$notifications$fr notifications = Traductions$admin$notifications$fr.internal(_root);
 	late final Traductions$admin$finance$fr finance = Traductions$admin$finance$fr.internal(_root);
+	late final Traductions$admin$planning$fr planning = Traductions$admin$planning$fr.internal(_root);
+	late final Traductions$admin$incidents$fr incidents = Traductions$admin$incidents$fr.internal(_root);
 	late final Traductions$admin$pilotage$fr pilotage = Traductions$admin$pilotage$fr.internal(_root);
 	late final Traductions$admin$fusion$fr fusion = Traductions$admin$fusion$fr.internal(_root);
 	late final Traductions$admin$tirage$fr tirage = Traductions$admin$tirage$fr.internal(_root);
@@ -2881,6 +2883,7 @@ class Traductions$comptable$fr {
 
 	// Translations
 	late final Traductions$comptable$nav$fr nav = Traductions$comptable$nav$fr.internal(_root);
+	late final Traductions$comptable$graphiques$fr graphiques = Traductions$comptable$graphiques$fr.internal(_root);
 	late final Traductions$comptable$onglets$fr onglets = Traductions$comptable$onglets$fr.internal(_root);
 	late final Traductions$comptable$commun$fr commun = Traductions$comptable$commun$fr.internal(_root);
 	late final Traductions$comptable$coffres$fr coffres = Traductions$comptable$coffres$fr.internal(_root);
@@ -6525,6 +6528,12 @@ class Traductions$admin$tableau$fr {
 
 	/// fr: 'Par horaire : les classes, leur remplissage, les demandes en attente et les enseignants libres ou manquants.'
 	String get outilsPilotageDetail => 'Par horaire : les classes, leur remplissage, les demandes en attente et les enseignants libres ou manquants.';
+
+	/// fr: 'Planning de la semaine'
+	String get outilsPlanning => 'Planning de la semaine';
+
+	/// fr: 'Les séances de la semaine, jour par jour, avec leur classe et leur enseignant.'
+	String get outilsPlanningDetail => 'Les séances de la semaine, jour par jour, avec leur classe et leur enseignant.';
 }
 
 // Path: admin.traitement
@@ -8940,6 +8949,129 @@ class Traductions$admin$finance$fr {
 
 	/// fr: 'À valider'
 	String get aValider => 'À valider';
+}
+
+// Path: admin.planning
+class Traductions$admin$planning$fr {
+	Traductions$admin$planning$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Planning'
+	String get titre => 'Planning';
+
+	/// fr: 'Les séances de la semaine, toutes classes confondues, jour par jour.'
+	String get sousTitre => 'Les séances de la semaine, toutes classes confondues, jour par jour.';
+
+	/// fr: 'Semaine du {date}'
+	String semaine({required Object date}) => 'Semaine du ${date}';
+
+	/// fr: 'Semaine du {date}'
+	String semaineSemantique({required Object date}) => 'Semaine du ${date}';
+
+	/// fr: 'Semaine précédente'
+	String get precedente => 'Semaine précédente';
+
+	/// fr: 'Semaine suivante'
+	String get suivante => 'Semaine suivante';
+
+	/// fr: 'Revenir à cette semaine'
+	String get cetteSemaine => 'Revenir à cette semaine';
+
+	/// fr: '{debut} à {fin}'
+	String horaire({required Object debut, required Object fin}) => '${debut} à ${fin}';
+
+	/// fr: 'Sans enseignant'
+	String get sansEnseignant => 'Sans enseignant';
+
+	/// fr: 'Enseignant : {nom}'
+	String avecEnseignant({required Object nom}) => 'Enseignant : ${nom}';
+
+	/// fr: 'Aucune séance cette semaine'
+	String get vide => 'Aucune séance cette semaine';
+
+	/// fr: 'Les séances apparaissent ici dès qu'une classe a un horaire cette semaine. Essayez une autre semaine.'
+	String get videDetail => 'Les séances apparaissent ici dès qu\'une classe a un horaire cette semaine. Essayez une autre semaine.';
+
+	/// fr: 'Le planning n'a pas pu être chargé'
+	String get sansDonnees => 'Le planning n\'a pas pu être chargé';
+
+	/// fr: 'Le planning n'a pas pu être lu : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Le planning n\'a pas pu être lu : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: 'Disponible au branchement serveur'
+	String get indisponibleTitre => 'Disponible au branchement serveur';
+
+	/// fr: 'Le planning s'affichera ici dès le branchement serveur. D'ici là, rien n'est affiché : aucune séance n'est inventée.'
+	String get indisponiblePhrase => 'Le planning s\'affichera ici dès le branchement serveur. D\'ici là, rien n\'est affiché : aucune séance n\'est inventée.';
+
+	/// fr: 'Prévue'
+	String get statutPrevue => 'Prévue';
+
+	/// fr: 'En préparation'
+	String get statutPreparation => 'En préparation';
+
+	/// fr: 'Terminée'
+	String get statutTerminee => 'Terminée';
+
+	/// fr: 'Incident technique'
+	String get statutIncident => 'Incident technique';
+
+	/// fr: 'Enseignant absent'
+	String get statutEnseignantAbsent => 'Enseignant absent';
+
+	/// fr: 'Élève absent'
+	String get statutEleveAbsent => 'Élève absent';
+}
+
+// Path: admin.incidents
+class Traductions$admin$incidents$fr {
+	Traductions$admin$incidents$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Incidents des 24 dernières heures'
+	String get titre => 'Incidents des 24 dernières heures';
+
+	/// fr: 'Les séances passées en incident technique, enseignant absent ou élève absent depuis 24 heures : ce que compte la tuile « Incidents (24 h) ».'
+	String get sousTitre => 'Les séances passées en incident technique, enseignant absent ou élève absent depuis 24 heures : ce que compte la tuile « Incidents (24 h) ».';
+
+	/// fr: 'Séances en incident'
+	String get liste => 'Séances en incident';
+
+	/// fr: 'Incident technique'
+	String get natureTechnique => 'Incident technique';
+
+	/// fr: 'Enseignant absent'
+	String get natureEnseignantAbsent => 'Enseignant absent';
+
+	/// fr: 'Élève absent'
+	String get natureEleveAbsent => 'Élève absent';
+
+	/// fr: '{date}, {heure}'
+	String survenu({required Object date, required Object heure}) => '${date}, ${heure}';
+
+	/// fr: 'Aucun incident depuis 24 heures'
+	String get vide => 'Aucun incident depuis 24 heures';
+
+	/// fr: 'Une séance passée en incident, en absence d'enseignant ou en absence d'élève apparaît ici dès qu'elle change de statut.'
+	String get videDetail => 'Une séance passée en incident, en absence d\'enseignant ou en absence d\'élève apparaît ici dès qu\'elle change de statut.';
+
+	/// fr: 'Les incidents n'ont pas pu être chargés'
+	String get sansDonnees => 'Les incidents n\'ont pas pu être chargés';
+
+	/// fr: 'Les incidents n'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Les incidents n\'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: 'Disponible au branchement serveur'
+	String get indisponibleTitre => 'Disponible au branchement serveur';
+
+	/// fr: 'Les incidents s'afficheront ici dès le branchement serveur. D'ici là, rien n'est affiché : aucun incident n'est inventé.'
+	String get indisponiblePhrase => 'Les incidents s\'afficheront ici dès le branchement serveur. D\'ici là, rien n\'est affiché : aucun incident n\'est inventé.';
 }
 
 // Path: admin.pilotage
@@ -16119,6 +16251,114 @@ class Traductions$comptable$nav$fr {
 	String get compte => 'Compte';
 }
 
+// Path: comptable.graphiques
+class Traductions$comptable$graphiques$fr {
+	Traductions$comptable$graphiques$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les montants sont masqués : le graphique ne se dessine pas. Affichez les montants pour le voir.'
+	String get masque => 'Les montants sont masqués : le graphique ne se dessine pas. Affichez les montants pour le voir.';
+
+	/// fr: 'Voir les valeurs'
+	String get voirValeurs => 'Voir les valeurs';
+
+	/// fr: 'Masquer les valeurs'
+	String get masquerValeurs => 'Masquer les valeurs';
+
+	/// fr: 'Répartition par coffre'
+	String get repartitionTitre => 'Répartition par coffre';
+
+	/// fr: 'Répartition entre {n} coffres.'
+	String repartitionResume({required Object n}) => 'Répartition entre ${n} coffres.';
+
+	/// fr: 'Entrées et sorties sur 6 mois'
+	String get mensuelTitre => 'Entrées et sorties sur 6 mois';
+
+	/// fr: 'Entrées et sorties de {debut} à {fin}.'
+	String mensuelResume({required Object debut, required Object fin}) => 'Entrées et sorties de ${debut} à ${fin}.';
+
+	/// fr: 'Flux de trésorerie sur 30 jours'
+	String get fluxTitre => 'Flux de trésorerie sur 30 jours';
+
+	/// fr: 'Encaissements et décaissements du {debut} au {fin}.'
+	String fluxResume({required Object debut, required Object fin}) => 'Encaissements et décaissements du ${debut} au ${fin}.';
+
+	/// fr: 'Évolution sur 6 mois'
+	String get evolutionTitre => 'Évolution sur 6 mois';
+
+	/// fr: 'Trésorerie détenue de {debut} à {fin}.'
+	String evolutionResume({required Object debut, required Object fin}) => 'Trésorerie détenue de ${debut} à ${fin}.';
+
+	/// fr: 'Entrées'
+	String get legendeEntrees => 'Entrées';
+
+	/// fr: 'Sorties'
+	String get legendeSorties => 'Sorties';
+
+	/// fr: 'Encaissements'
+	String get legendeEncaissements => 'Encaissements';
+
+	/// fr: 'Décaissements'
+	String get legendeDecaissements => 'Décaissements';
+
+	/// fr: 'Trésorerie détenue'
+	String get legendeDetenue => 'Trésorerie détenue';
+
+	/// fr: 'Entrées et sorties'
+	String get kpiTitre => 'Entrées et sorties';
+
+	/// fr: 'Entrées'
+	String get kpiEntrees => 'Entrées';
+
+	/// fr: 'Sorties'
+	String get kpiSorties => 'Sorties';
+
+	/// fr: '30 derniers jours'
+	String get kpiPeriode => '30 derniers jours';
+
+	/// fr: '{pourcent} % par rapport à la période précédente'
+	String variation({required Object pourcent}) => '${pourcent} % par rapport à la période précédente';
+
+	/// fr: 'Rapports'
+	String get rapportsTitre => 'Rapports';
+
+	/// fr: 'Les entrées, les sorties et la trésorerie dans la durée.'
+	String get rapportsSousTitre => 'Les entrées, les sorties et la trésorerie dans la durée.';
+
+	/// fr: 'Aucune donnée à dessiner'
+	String get vide => 'Aucune donnée à dessiner';
+
+	/// fr: 'Les graphiques apparaîtront ici dès que des encaissements ou des paiements auront été enregistrés.'
+	String get videDetail => 'Les graphiques apparaîtront ici dès que des encaissements ou des paiements auront été enregistrés.';
+
+	/// fr: 'Les graphiques n'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Les graphiques n\'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: 'Les graphiques n'ont pas pu être chargés'
+	String get sansDonnees => 'Les graphiques n\'ont pas pu être chargés';
+
+	/// fr: 'Exporter le rapport'
+	String get exporterRapport => 'Exporter le rapport';
+
+	/// fr: 'Exporter la sélection'
+	String get exporterSelection => 'Exporter la sélection';
+
+	/// fr: 'Les exports ne sont pas encore disponibles : ils s'ouvriront dès le branchement serveur.'
+	String get exportIndisponible => 'Les exports ne sont pas encore disponibles : ils s\'ouvriront dès le branchement serveur.';
+
+	/// fr: 'Export en préparation'
+	String get exportEnCours => 'Export en préparation';
+
+	/// fr: 'Export prêt : {reference} ({lignes} lignes).'
+	String exportPret({required Object reference, required Object lignes}) => 'Export prêt : ${reference} (${lignes} lignes).';
+
+	/// fr: 'L'export n'a pas pu être préparé : la demande n'est peut-être pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get exportEchec => 'L\'export n\'a pas pu être préparé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+}
+
 // Path: comptable.onglets
 class Traductions$comptable$onglets$fr {
 	Traductions$comptable$onglets$fr.internal(this._root);
@@ -16144,6 +16384,9 @@ class Traductions$comptable$onglets$fr {
 
 	/// fr: 'Rapprochement'
 	String get rapprochement => 'Rapprochement';
+
+	/// fr: 'Rapports'
+	String get rapports => 'Rapports';
 }
 
 // Path: comptable.commun
@@ -16431,6 +16674,9 @@ class Traductions$comptable$aujourdhui$fr {
 	/// fr: 'Alimenter la Réserve stratégique'
 	String get accesAlimenter => 'Alimenter la Réserve stratégique';
 
+	/// fr: 'Voir les rapports'
+	String get accesRapports => 'Voir les rapports';
+
 	/// fr: 'Aujourd'hui'
 	String get titre => 'Aujourd\'hui';
 
@@ -16647,6 +16893,12 @@ class Traductions$comptable$tresorerie$fr {
 
 	/// fr: 'Alimenter la Réserve stratégique'
 	String get alimenter => 'Alimenter la Réserve stratégique';
+
+	/// fr: 'Une partie de la page n'a pas pu être lue : le reste est à jour. Réessayez pour compléter.'
+	String get erreurPartielle => 'Une partie de la page n\'a pas pu être lue : le reste est à jour. Réessayez pour compléter.';
+
+	/// fr: 'Réessayer'
+	String get erreurPartielleAction => 'Réessayer';
 }
 
 // Path: comptable.encaissements
@@ -17563,6 +17815,24 @@ class Traductions$recherche$contexte$fr {
 
 	/// fr: 'Enseignant de la classe {classe}'
 	String enseignantDeClasse({required Object classe}) => 'Enseignant de la classe ${classe}';
+
+	/// fr: 'Profil de votre foyer'
+	String get personneFoyer => 'Profil de votre foyer';
+
+	/// fr: 'Profil de votre foyer · {classe}'
+	String personneFoyerClasse({required Object classe}) => 'Profil de votre foyer · ${classe}';
+
+	/// fr: 'Trouvé par son identifiant'
+	String get personneParIdentifiant => 'Trouvé par son identifiant';
+
+	/// fr: 'Trouvé par son identifiant · {classe}'
+	String personneParIdentifiantClasse({required Object classe}) => 'Trouvé par son identifiant · ${classe}';
+
+	/// fr: 'Canal du Studio'
+	String get canalStudio => 'Canal du Studio';
+
+	/// fr: 'Encaissement · {famille}'
+	String encaissement({required Object famille}) => 'Encaissement · ${famille}';
 }
 
 // Path: commun.etats.chargementProlonge
@@ -22054,8 +22324,8 @@ class Traductions$tc$bibliotheque$rendu$fr {
 	/// fr: 'L'ouverture n'est pas disponible pour ce support.'
 	String get lienIndisponible => 'L\'ouverture n\'est pas disponible pour ce support.';
 
-	/// fr: 'L'ouverture n'est pas possible pour le moment. Réessayez dans un instant.'
-	String get lienHorsLigne => 'L\'ouverture n\'est pas possible pour le moment. Réessayez dans un instant.';
+	/// fr: 'L'ouverture pourra se faire quand la connexion reviendra.'
+	String get lienHorsLigne => 'L\'ouverture pourra se faire quand la connexion reviendra.';
 
 	/// fr: 'Votre navigateur a bloqué l'ouverture. Autorisez les fenêtres de ce site, puis réessayez.'
 	String get lienBloque => 'Votre navigateur a bloqué l\'ouverture. Autorisez les fenêtres de ce site, puis réessayez.';
@@ -27252,6 +27522,12 @@ class Traductions$comptable$beneficiaires$profil$fr {
 
 	/// fr: 'Choisissez un motif pour continuer.'
 	String get motifRequis => 'Choisissez un motif pour continuer.';
+
+	/// fr: 'Voir le fil de {nom}'
+	String voirFil({required Object nom}) => 'Voir le fil de ${nom}';
+
+	/// fr: 'Le fil de {nom} n'a pas pu s'ouvrir : il n'existe pas encore ou la lecture n'a pas abouti. Réessayez dans un instant.'
+	String voirFilRefuse({required Object nom}) => 'Le fil de ${nom} n\'a pas pu s\'ouvrir : il n\'existe pas encore ou la lecture n\'a pas abouti. Réessayez dans un instant.';
 }
 
 // Path: comptable.beneficiaires.recevoir
@@ -27444,6 +27720,12 @@ class Traductions$comptable$validation$detail$fr {
 
 	/// fr: 'Aucune entrée pour l'instant.'
 	String get historiqueVide => 'Aucune entrée pour l\'instant.';
+
+	/// fr: 'L'historique n'a pas pu être lu : ce n'est pas qu'il est vide. Réessayez dans un instant.'
+	String get historiqueErreur => 'L\'historique n\'a pas pu être lu : ce n\'est pas qu\'il est vide. Réessayez dans un instant.';
+
+	/// fr: 'Relire l'historique'
+	String get historiqueReessayer => 'Relire l\'historique';
 }
 
 // Path: comptable.validation.motifs
@@ -27889,6 +28171,42 @@ class Traductions$comptable$direction$delegationPanneau$fr {
 
 	/// fr: 'La délégation retrouve la politique générale. Rien n'est enregistré avant « Enregistrer ».'
 	String get exceptionRetirerPhrase => 'La délégation retrouve la politique générale. Rien n\'est enregistré avant « Enregistrer ».';
+
+	/// fr: 'Toujours sensible'
+	String get sensiblesTitre => 'Toujours sensible';
+
+	/// fr: 'Ces cinq cas demandent toujours une validation supplémentaire, quels que soient les réglages ci-dessus. Le premier paiement et les coordonnées récentes se règlent plus haut.'
+	String get sensiblesDetail => 'Ces cinq cas demandent toujours une validation supplémentaire, quels que soient les réglages ci-dessus. Le premier paiement et les coordonnées récentes se règlent plus haut.';
+
+	/// fr: 'Montant hors seuil'
+	String get sensibleHorsSeuil => 'Montant hors seuil';
+
+	/// fr: 'Un paiement au-dessus des plafonds fixés plus haut.'
+	String get sensibleHorsSeuilDetail => 'Un paiement au-dessus des plafonds fixés plus haut.';
+
+	/// fr: 'Paiement hors cycle'
+	String get sensibleHorsCycle => 'Paiement hors cycle';
+
+	/// fr: 'Un paiement qui ne suit pas la période de paie habituelle.'
+	String get sensibleHorsCycleDetail => 'Un paiement qui ne suit pas la période de paie habituelle.';
+
+	/// fr: 'Bénéficiaire lié à l'opérateur'
+	String get sensibleLieOperateur => 'Bénéficiaire lié à l\'opérateur';
+
+	/// fr: 'Un paiement vers une personne liée à l'opérateur de paiement.'
+	String get sensibleLieOperateurDetail => 'Un paiement vers une personne liée à l\'opérateur de paiement.';
+
+	/// fr: 'Fournisseur indisponible'
+	String get sensibleFournisseur => 'Fournisseur indisponible';
+
+	/// fr: 'Un paiement dont le fournisseur de paiement est indisponible.'
+	String get sensibleFournisseurDetail => 'Un paiement dont le fournisseur de paiement est indisponible.';
+
+	/// fr: 'Obligation manuelle non approuvée'
+	String get sensibleManuelle => 'Obligation manuelle non approuvée';
+
+	/// fr: 'Une obligation saisie à la main et pas encore approuvée.'
+	String get sensibleManuelleDetail => 'Une obligation saisie à la main et pas encore approuvée.';
 }
 
 // Path: recherche.etats.vide
@@ -32566,6 +32884,8 @@ extension on Traductions {
 			'admin.tableau.attenteJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'En attente depuis ${jours} jour', other: 'En attente depuis ${jours} jours', ), 
 			'admin.tableau.outilsPilotage' => 'Pilotage des horaires',
 			'admin.tableau.outilsPilotageDetail' => 'Par horaire : les classes, leur remplissage, les demandes en attente et les enseignants libres ou manquants.',
+			'admin.tableau.outilsPlanning' => 'Planning de la semaine',
+			'admin.tableau.outilsPlanningDetail' => 'Les séances de la semaine, jour par jour, avec leur classe et leur enseignant.',
 			'admin.traitement.titre' => 'Espace de traitement',
 			'admin.traitement.sousTitre' => 'Examinez les éléments en attente dans Rewayah, puis ouvrez chacun là où il se traite.',
 			'admin.traitement.compteurUn' => '1 élément en attente',
@@ -32957,10 +33277,10 @@ extension on Traductions {
 			'admin.qualite.colonneStatut' => 'Statut',
 			'admin.qualite.statutOuvert' => 'Ouverte',
 			'admin.qualite.statutTraite' => 'Traitée',
-			'admin.qualite.depuisAujourdhui' => 'Aujourd\'hui',
-			'admin.qualite.depuisUnJour' => '1 jour',
 			_ => null,
 		} ?? switch (path) {
+			'admin.qualite.depuisAujourdhui' => 'Aujourd\'hui',
+			'admin.qualite.depuisUnJour' => '1 jour',
 			'admin.qualite.actionTraiter' => 'Marquer traité',
 			'admin.qualite.traiterTitre' => ({required Object personne}) => 'Marquer traité : ${personne}',
 			'admin.qualite.champNote' => 'Note (optionnelle)',
@@ -33471,10 +33791,10 @@ extension on Traductions {
 			'admin.finance.pol.erreurPlafond' => ({required Object base}) => 'Le plafond est sous la base garantie (${base}) : le taux baisserait quand la classe se remplit. Saisissez au moins la base.',
 			'admin.finance.pol.erreurClassesMax' => ({required Object objectif}) => 'Le maximum est sous l\'objectif (${objectif}) : saisissez au moins l\'objectif.',
 			'admin.finance.pol.erreurMinimum' => ({required Object capacite}) => 'Le minimum dépasse la plus petite classe (${capacite}) : elle ne pourrait jamais ouvrir. Saisissez au plus cette capacité.',
-			'admin.finance.pol.erreurRemise' => ({required Object tarif}) => 'La remise dépasse le tarif (${tarif}) : la mensualité deviendrait négative. Saisissez au plus ce montant.',
-			'admin.finance.pol.parHeure' => ({required Object montant}) => '${montant} / h',
 			_ => null,
 		} ?? switch (path) {
+			'admin.finance.pol.erreurRemise' => ({required Object tarif}) => 'La remise dépasse le tarif (${tarif}) : la mensualité deviendrait négative. Saisissez au plus ce montant.',
+			'admin.finance.pol.parHeure' => ({required Object montant}) => '${montant} / h',
 			'admin.finance.pol.suffixeParHeure' => ({required Object symbole}) => '${symbole} / h',
 			'admin.finance.pol.suffixeRemise' => ({required Object symbole}) => '${symbole} de remise',
 			'admin.finance.pol.eleves' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève', other: '${n} élèves', ), 
@@ -33636,6 +33956,41 @@ extension on Traductions {
 			'admin.finance.pol.historiqueVide' => 'Aucune autre version pour l\'instant : seule la version active existe.',
 			'admin.finance.reserveDelegation' => 'Réserve et délégation',
 			'admin.finance.aValider' => 'À valider',
+			'admin.planning.titre' => 'Planning',
+			'admin.planning.sousTitre' => 'Les séances de la semaine, toutes classes confondues, jour par jour.',
+			'admin.planning.semaine' => ({required Object date}) => 'Semaine du ${date}',
+			'admin.planning.semaineSemantique' => ({required Object date}) => 'Semaine du ${date}',
+			'admin.planning.precedente' => 'Semaine précédente',
+			'admin.planning.suivante' => 'Semaine suivante',
+			'admin.planning.cetteSemaine' => 'Revenir à cette semaine',
+			'admin.planning.horaire' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
+			'admin.planning.sansEnseignant' => 'Sans enseignant',
+			'admin.planning.avecEnseignant' => ({required Object nom}) => 'Enseignant : ${nom}',
+			'admin.planning.vide' => 'Aucune séance cette semaine',
+			'admin.planning.videDetail' => 'Les séances apparaissent ici dès qu\'une classe a un horaire cette semaine. Essayez une autre semaine.',
+			'admin.planning.sansDonnees' => 'Le planning n\'a pas pu être chargé',
+			'admin.planning.erreur' => 'Le planning n\'a pas pu être lu : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'admin.planning.indisponibleTitre' => 'Disponible au branchement serveur',
+			'admin.planning.indisponiblePhrase' => 'Le planning s\'affichera ici dès le branchement serveur. D\'ici là, rien n\'est affiché : aucune séance n\'est inventée.',
+			'admin.planning.statutPrevue' => 'Prévue',
+			'admin.planning.statutPreparation' => 'En préparation',
+			'admin.planning.statutTerminee' => 'Terminée',
+			'admin.planning.statutIncident' => 'Incident technique',
+			'admin.planning.statutEnseignantAbsent' => 'Enseignant absent',
+			'admin.planning.statutEleveAbsent' => 'Élève absent',
+			'admin.incidents.titre' => 'Incidents des 24 dernières heures',
+			'admin.incidents.sousTitre' => 'Les séances passées en incident technique, enseignant absent ou élève absent depuis 24 heures : ce que compte la tuile « Incidents (24 h) ».',
+			'admin.incidents.liste' => 'Séances en incident',
+			'admin.incidents.natureTechnique' => 'Incident technique',
+			'admin.incidents.natureEnseignantAbsent' => 'Enseignant absent',
+			'admin.incidents.natureEleveAbsent' => 'Élève absent',
+			'admin.incidents.survenu' => ({required Object date, required Object heure}) => '${date}, ${heure}',
+			'admin.incidents.vide' => 'Aucun incident depuis 24 heures',
+			'admin.incidents.videDetail' => 'Une séance passée en incident, en absence d\'enseignant ou en absence d\'élève apparaît ici dès qu\'elle change de statut.',
+			'admin.incidents.sansDonnees' => 'Les incidents n\'ont pas pu être chargés',
+			'admin.incidents.erreur' => 'Les incidents n\'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'admin.incidents.indisponibleTitre' => 'Disponible au branchement serveur',
+			'admin.incidents.indisponiblePhrase' => 'Les incidents s\'afficheront ici dès le branchement serveur. D\'ici là, rien n\'est affiché : aucun incident n\'est inventé.',
 			'admin.pilotage.titre' => 'Pilotage des horaires',
 			'admin.pilotage.sousTitre' => 'Pour chaque horaire et chaque public : les classes, leur remplissage, les demandes en attente, et les enseignants libres ou manquants.',
 			'admin.pilotage.sansDonnees' => 'Le tableau de pilotage n\'a pas pu être chargé',
@@ -33950,6 +34305,8 @@ extension on Traductions {
 			'admin.bibliotheque.fiche.droitsChamps.preuveOui' => 'Déposée',
 			'admin.bibliotheque.fiche.droitsChamps.preuveNon' => 'Manquante',
 			'admin.bibliotheque.fiche.droitsChamps.usages' => 'Usages autorisés',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.fiche.droitsChamps.aucunUsage' => 'Aucun usage autorisé',
 			'admin.bibliotheque.fiche.droitsChamps.attribution' => 'Attribution',
 			'admin.bibliotheque.fiche.droitsChamps.echeance' => 'Échéance',
@@ -33987,8 +34344,6 @@ extension on Traductions {
 			'admin.bibliotheque.import.etats.confirmation' => 'Envoi terminé, en attente de la confirmation du serveur…',
 			'admin.bibliotheque.import.etats.verification' => 'Vérification du fichier…',
 			'admin.bibliotheque.import.etats.pret' => 'Fichier vérifié. Passez aux droits.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.import.etats.annule' => 'Dépôt annulé.',
 			'admin.bibliotheque.import.erreurs.taille' => 'Ce fichier est trop volumineux. Choisissez un fichier plus léger.',
 			'admin.bibliotheque.import.erreurs.type' => 'Ce type de fichier n\'est pas pris en charge pour ce support. Choisissez un autre fichier.',
@@ -34464,6 +34819,8 @@ extension on Traductions {
 			'historique.fuseauListe' => 'Heures affichées à l\'heure de cet appareil.',
 			'historique.fuseauDetail' => ({required Object decalage}) => 'Heures affichées à l\'heure de cet appareil (UTC${decalage}).',
 			'historique.classeInconnue' => 'Classe non disponible',
+			_ => null,
+		} ?? switch (path) {
 			'historique.selecteur.aucune' => 'Aucune séance',
 			'historique.selecteur.une' => '1 séance',
 			'historique.selecteur.plusieurs' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} séance', other: '${n} séances', ), 
@@ -34501,8 +34858,6 @@ extension on Traductions {
 			'historique.observations.visiteUne' => '1 visite',
 			'historique.observations.visites' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} visite', other: '${n} visites', ), 
 			'historique.observations.dureeNonConfirmee' => 'Durée non confirmée',
-			_ => null,
-		} ?? switch (path) {
 			'historique.observations.terminee' => 'Terminée',
 			'historique.observations.nonRefermee' => 'Sortie non enregistrée',
 			'historique.observations.eleveInconnu' => 'Élève',
@@ -34978,6 +35333,8 @@ extension on Traductions {
 			'classe.cartes.feuille.defauts.texteLong' => ({required Object max}) => 'Le texte dépasse ${max} caractères. Raccourcissez-le ou partagez un lien.',
 			'classe.cartes.feuille.defauts.lienInvalide' => 'Ce lien n\'est pas une adresse complète. Collez une adresse qui commence par https://.',
 			'classe.cartes.feuille.defauts.echeanceManquante' => 'Un devoir a besoin d\'une échéance. Choisissez la date d\'échéance.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.pays.semantique' => ({required Object pays}) => 'Pays : ${pays}',
 			'enseignant.classes.titre' => 'Classes',
 			'enseignant.classes.vide' => 'Aucune Classe attribuée',
@@ -35015,8 +35372,6 @@ extension on Traductions {
 			'enseignant.signalement.categories.autre' => 'Autre',
 			'enseignant.signalement.details' => 'Détails internes',
 			'enseignant.signalement.detailsAide' => 'Lu par l\'équipe de l\'académie seulement.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.signalement.resume' => 'Résumé partageable',
 			'enseignant.signalement.resumeAide' => 'Peut être partagé avec la famille par l\'académie.',
 			'enseignant.signalement.notice' => 'Les détails internes ne sont pas envoyés automatiquement à la famille.',
@@ -35492,6 +35847,8 @@ extension on Traductions {
 			'enseignant.revenus.totalDetail' => 'Rémunération pédagogique, hors aide Internet.',
 			'enseignant.revenus.heuresAssurees' => 'Heures assurées',
 			'enseignant.revenus.classesActives' => 'Classes',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.revenus.heures' => ({required Object heures}) => '${heures} h',
 			'enseignant.revenus.heuresMinutes' => ({required Object heures, required Object minutes}) => '${heures} h ${minutes}',
 			'enseignant.revenus.detailSection' => 'Détail par Classe',
@@ -35529,8 +35886,6 @@ extension on Traductions {
 			'enseignant.revenus.releveIndisponiblePhrase' => 'Les mois arrêtés par l\'académie s\'afficheront ici dès que le relevé sera en service. D\'ici là, seule l\'estimation du mois en cours est montrée.',
 			'enseignant.revenus.releveVide' => 'Aucun mois arrêté pour l\'instant',
 			'enseignant.revenus.releveVideDetail' => 'Chaque mois apparaîtra ici une fois arrêté par l\'académie.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.revenus.mention' => 'Ce montant est une estimation, pas une paie définitive. Le relevé arrêté par l\'académie fait foi.',
 			'enseignant.revenus.vide' => 'Aucune heure assurée ce mois-ci',
 			'enseignant.revenus.videDetail' => 'L\'estimation apparaîtra après votre première séance assurée du mois.',
@@ -35868,7 +36223,7 @@ extension on Traductions {
 			'tc.bibliotheque.rendu.ouvrirMushaf' => 'Ouvrir le mushaf',
 			'tc.bibliotheque.rendu.lienEchec' => 'Le lien de lecture n\'a pas pu être obtenu pour le moment.',
 			'tc.bibliotheque.rendu.lienIndisponible' => 'L\'ouverture n\'est pas disponible pour ce support.',
-			'tc.bibliotheque.rendu.lienHorsLigne' => 'L\'ouverture n\'est pas possible pour le moment. Réessayez dans un instant.',
+			'tc.bibliotheque.rendu.lienHorsLigne' => 'L\'ouverture pourra se faire quand la connexion reviendra.',
 			'tc.bibliotheque.rendu.lienBloque' => 'Votre navigateur a bloqué l\'ouverture. Autorisez les fenêtres de ce site, puis réessayez.',
 			'tc.bibliotheque.actif.indisponibleTitre' => 'Support présenté pas encore ouvert',
 			'tc.bibliotheque.actif.indisponible' => 'Le suivi du support présenté s\'ouvrira au branchement serveur.',
@@ -36006,6 +36361,8 @@ extension on Traductions {
 			'tc.classe.support.aucun' => 'Aucun support présenté',
 			'tc.classe.support.aucunDetail' => 'Ouvrez la Bibliothèque pour présenter un support à la Classe.',
 			'tc.classe.support.bibliotheque' => 'Bibliothèque',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.support.bibliothequeAbsente' => 'Bibliothèque non branchée',
 			'tc.classe.support.bibliothequeAbsenteDetail' => 'Le choix de support sera disponible dès l\'intégration du catalogue.',
 			'tc.classe.commandes.micro' => 'Ouvrir le micro',
@@ -36043,8 +36400,6 @@ extension on Traductions {
 			'tc.classe.observation.restant' => ({required Object secondes}) => 'Reste ${secondes} s',
 			'tc.realtime.transport.partage_indisponible' => 'Le partage du support n’est pas disponible sur ce serveur. Le cours continue, mais les autres appareils ne suivront pas la page.',
 			'tc.realtime.etat.restauration_impossible' => 'Impossible de retrouver le support en cours. Demandez à l’enseignant de le présenter à nouveau.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.entree.titre' => 'Observer la séance',
 			'tc.observation.entree.tuteurIntro' => 'Vous pouvez regarder un court moment le cours de votre enfant. Votre micro et votre caméra restent fermés.',
 			'tc.observation.entree.adminIntro' => 'Choisissez votre mode avant d\'entrer. Il ne change plus ensuite.',
@@ -36520,6 +36875,8 @@ extension on Traductions {
 			'adulte.sortie.compris' => 'Compris',
 			'adulte.sortie.retraitEchecTitre' => 'Le retrait n\'a pas été confirmé.',
 			'adulte.sortie.departEchecTitre' => 'Le départ n\'a pas été confirmé.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.sortie.echecPhrase' => 'Vérifiez avant de réessayer.',
 			'adulte.sortie.horsLigne' => 'Rien n\'est envoyé. Vous pourrez réessayer vous-même quand la connexion sera revenue.',
 			'adulte.sortie.notificationQuitte' => ({required Object prenom}) => '${prenom} a quitté votre forfait famille.',
@@ -36557,8 +36914,6 @@ extension on Traductions {
 			'adulte.reprise.deposeeLe' => 'Déposée le',
 			'adulte.reprise.etat' => 'État',
 			'adulte.reprise.etats.deposee' => 'Déposée',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.reprise.etats.refuseeParTitulaire' => 'Refusée par le titulaire',
 			'adulte.reprise.etats.attenteAdministration' => 'En attente de l\'administration',
 			'adulte.reprise.etats.validee' => 'Validée',
@@ -37034,6 +37389,8 @@ extension on Traductions {
 			'com.socle.lexique.actionRequise' => 'Action requise',
 			'com.socle.lexique.brouillon' => 'Brouillon',
 			'com.socle.lexique.elementsEpingles' => 'Éléments épinglés',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.lexique.fichiersPartages' => 'Fichiers partagés',
 			'com.socle.motifs.titre' => 'Pourquoi signalez-vous ce contenu ?',
 			'com.socle.motifs.publicite' => 'Publicité',
@@ -37071,8 +37428,6 @@ extension on Traductions {
 			'com.socle.navigation.provisoire.messagesDetail' => 'Les messages liés à vos Classes arriveront bientôt dans cet espace.',
 			'com.socle.navigation.provisoire.communauteTitre' => _root.com.socle.lexique.communaute,
 			'com.socle.navigation.provisoire.communauteDetail' => 'L\'espace d\'échange entre enseignants arrivera bientôt ici.',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.navigation.provisoire.studioTitre' => _root.com.socle.lexique.studio,
 			'com.socle.navigation.provisoire.studioDetail' => 'L\'espace de travail de l\'équipe arrivera bientôt ici.',
 			'com.socle.navigation.provisoire.administrationTitre' => 'Administration des communications',
@@ -37548,6 +37903,8 @@ extension on Traductions {
 			'com.studio.demo.sansCanaux' => 'Aucun canal ouvert',
 			'com.studio.demo.vue' => ({required Object situation}) => 'Situation : ${situation}',
 			'com.studio.demo.f.nadia' => 'Nadia',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.f.fonctionDirection' => 'Direction',
 			'com.studio.demo.f.mariam' => 'Mariam',
 			'com.studio.demo.f.fonctionCoordination' => 'Coordination générale',
@@ -37585,8 +37942,6 @@ extension on Traductions {
 			'com.studio.demo.f.messageRemplacement' => 'Mardi, la Classe An-Nour est assurée par un remplaçant. Le planning est à jour.',
 			'com.studio.demo.f.messageJustificatifs' => 'Les justificatifs de septembre sont rassemblés.',
 			'com.studio.demo.f.messageBudget' => 'Budget confidentiel du trimestre.',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.f.activiteBudget' => 'Budget confidentiel du trimestre',
 			'com.studio.demo.f.partagePlanning' => 'Planning du trimestre',
 			'com.studio.demo.f.partageModeration' => 'Guide de modération',
@@ -37814,12 +38169,46 @@ extension on Traductions {
 			'comptable.nav.paiements' => 'Paiements',
 			'comptable.nav.tresorerie' => 'Trésorerie',
 			'comptable.nav.compte' => 'Compte',
+			'comptable.graphiques.masque' => 'Les montants sont masqués : le graphique ne se dessine pas. Affichez les montants pour le voir.',
+			'comptable.graphiques.voirValeurs' => 'Voir les valeurs',
+			'comptable.graphiques.masquerValeurs' => 'Masquer les valeurs',
+			'comptable.graphiques.repartitionTitre' => 'Répartition par coffre',
+			'comptable.graphiques.repartitionResume' => ({required Object n}) => 'Répartition entre ${n} coffres.',
+			'comptable.graphiques.mensuelTitre' => 'Entrées et sorties sur 6 mois',
+			'comptable.graphiques.mensuelResume' => ({required Object debut, required Object fin}) => 'Entrées et sorties de ${debut} à ${fin}.',
+			'comptable.graphiques.fluxTitre' => 'Flux de trésorerie sur 30 jours',
+			'comptable.graphiques.fluxResume' => ({required Object debut, required Object fin}) => 'Encaissements et décaissements du ${debut} au ${fin}.',
+			'comptable.graphiques.evolutionTitre' => 'Évolution sur 6 mois',
+			'comptable.graphiques.evolutionResume' => ({required Object debut, required Object fin}) => 'Trésorerie détenue de ${debut} à ${fin}.',
+			'comptable.graphiques.legendeEntrees' => 'Entrées',
+			'comptable.graphiques.legendeSorties' => 'Sorties',
+			'comptable.graphiques.legendeEncaissements' => 'Encaissements',
+			'comptable.graphiques.legendeDecaissements' => 'Décaissements',
+			'comptable.graphiques.legendeDetenue' => 'Trésorerie détenue',
+			'comptable.graphiques.kpiTitre' => 'Entrées et sorties',
+			'comptable.graphiques.kpiEntrees' => 'Entrées',
+			'comptable.graphiques.kpiSorties' => 'Sorties',
+			'comptable.graphiques.kpiPeriode' => '30 derniers jours',
+			'comptable.graphiques.variation' => ({required Object pourcent}) => '${pourcent} % par rapport à la période précédente',
+			'comptable.graphiques.rapportsTitre' => 'Rapports',
+			'comptable.graphiques.rapportsSousTitre' => 'Les entrées, les sorties et la trésorerie dans la durée.',
+			'comptable.graphiques.vide' => 'Aucune donnée à dessiner',
+			'comptable.graphiques.videDetail' => 'Les graphiques apparaîtront ici dès que des encaissements ou des paiements auront été enregistrés.',
+			'comptable.graphiques.erreur' => 'Les graphiques n\'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'comptable.graphiques.sansDonnees' => 'Les graphiques n\'ont pas pu être chargés',
+			'comptable.graphiques.exporterRapport' => 'Exporter le rapport',
+			'comptable.graphiques.exporterSelection' => 'Exporter la sélection',
+			'comptable.graphiques.exportIndisponible' => 'Les exports ne sont pas encore disponibles : ils s\'ouvriront dès le branchement serveur.',
+			'comptable.graphiques.exportEnCours' => 'Export en préparation',
+			'comptable.graphiques.exportPret' => ({required Object reference, required Object lignes}) => 'Export prêt : ${reference} (${lignes} lignes).',
+			'comptable.graphiques.exportEchec' => 'L\'export n\'a pas pu être préparé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'comptable.onglets.aEffectuer' => 'À effectuer',
 			'comptable.onglets.contractuels' => 'Contractuels',
 			'comptable.onglets.beneficiaires' => 'Bénéficiaires',
 			'comptable.onglets.coffres' => 'Coffres',
 			'comptable.onglets.encaissements' => 'Encaissements',
 			'comptable.onglets.rapprochement' => 'Rapprochement',
+			'comptable.onglets.rapports' => 'Rapports',
 			'comptable.commun.montantMasque' => 'Montant masqué',
 			'comptable.commun.afficherMontants' => 'Afficher les montants',
 			'comptable.commun.masquerMontants' => 'Masquer les montants',
@@ -37975,6 +38364,7 @@ extension on Traductions {
 			'comptable.aujourdhui.accesEncaissements' => 'Voir les encaissements',
 			'comptable.aujourdhui.accesTresorerie' => 'Voir la trésorerie et les coffres',
 			'comptable.aujourdhui.accesAlimenter' => 'Alimenter la Réserve stratégique',
+			'comptable.aujourdhui.accesRapports' => 'Voir les rapports',
 			'comptable.aujourdhui.titre' => 'Aujourd\'hui',
 			'comptable.aujourdhui.sousTitre' => 'Que dois-je faire maintenant ?',
 			'comptable.aujourdhui.attention' => 'À traiter et alertes',
@@ -38027,6 +38417,8 @@ extension on Traductions {
 			'comptable.paiements.confirmation.demanderValidation' => 'Demander validation',
 			'comptable.paiements.confirmation.annuler' => 'Annuler',
 			'comptable.paiements.confirmation.fermer' => 'Fermer',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.soumisTitre' => 'Envoyé au prestataire',
 			'comptable.paiements.confirmation.soumisPhrase' => 'Un paiement envoyé n\'est pas encore reçu : son état vient du suivi du prestataire. Actualisez le suivi pour le voir avancer.',
 			'comptable.paiements.confirmation.actualiser' => 'Actualiser le suivi',
@@ -38099,8 +38491,6 @@ extension on Traductions {
 			'comptable.paiements.detail.methode' => 'Méthode de paiement',
 			'comptable.paiements.detail.informations' => 'Informations',
 			'comptable.paiements.detail.type' => 'Type',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.detail.periode' => 'Période / objet',
 			'comptable.paiements.detail.echeance' => 'Échéance',
 			'comptable.paiements.detail.prestataire' => 'Prestataire prévu',
@@ -38217,6 +38607,8 @@ extension on Traductions {
 			'comptable.tresorerie.titre' => 'Trésorerie et coffres',
 			'comptable.tresorerie.sousTitre' => 'La Trésorerie libre est le seul chiffre dépensable.',
 			'comptable.tresorerie.alimenter' => 'Alimenter la Réserve stratégique',
+			'comptable.tresorerie.erreurPartielle' => 'Une partie de la page n\'a pas pu être lue : le reste est à jour. Réessayez pour compléter.',
+			'comptable.tresorerie.erreurPartielleAction' => 'Réessayer',
 			'comptable.encaissements.filtreTous' => 'Tous',
 			'comptable.encaissements.filtreConfirmes' => 'Confirmés',
 			'comptable.encaissements.filtreEnAttente' => 'En attente',
@@ -38371,6 +38763,8 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.motifDemande' => 'Demande du bénéficiaire',
 			'comptable.beneficiaires.profil.motifDemandeDetail' => 'Le bénéficiaire a demandé à ne plus recevoir de versement pour l\'instant.',
 			'comptable.beneficiaires.profil.motifRequis' => 'Choisissez un motif pour continuer.',
+			'comptable.beneficiaires.profil.voirFil' => ({required Object nom}) => 'Voir le fil de ${nom}',
+			'comptable.beneficiaires.profil.voirFilRefuse' => ({required Object nom}) => 'Le fil de ${nom} n\'a pas pu s\'ouvrir : il n\'existe pas encore ou la lecture n\'a pas abouti. Réessayez dans un instant.',
 			'comptable.beneficiaires.titre' => 'Bénéficiaires',
 			'comptable.beneficiaires.sousTitre' => 'Coordonnées masquées : seul le bénéficiaire modifie les siennes.',
 			'comptable.beneficiaires.profilTitre' => 'Profil de paiement',
@@ -38518,6 +38912,8 @@ extension on Traductions {
 			'comptable.validation.detail.etat' => 'État',
 			'comptable.validation.detail.historique' => 'Historique',
 			'comptable.validation.detail.historiqueVide' => 'Aucune entrée pour l\'instant.',
+			'comptable.validation.detail.historiqueErreur' => 'L\'historique n\'a pas pu être lu : ce n\'est pas qu\'il est vide. Réessayez dans un instant.',
+			'comptable.validation.detail.historiqueReessayer' => 'Relire l\'historique',
 			'comptable.validation.valider' => 'Valider',
 			'comptable.validation.refuser' => 'Refuser',
 			'comptable.validation.annuler' => 'Annuler',
@@ -38535,6 +38931,8 @@ extension on Traductions {
 			'comptable.validation.erreurMotif' => 'Choisissez un motif pour refuser.',
 			'comptable.validation.erreurMotifAutre' => 'Précisez le motif pour refuser.',
 			'comptable.validation.decisionValidee' => 'Votre décision est enregistrée : la demande est validée.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.validation.decisionRefusee' => 'Votre décision est enregistrée : la demande est refusée, avec son motif.',
 			'comptable.validation.refusTitre' => 'Décision non enregistrée',
 			'comptable.validation.refusDemandeur' => 'Vous avez fait cette demande : une autre personne habilitée doit la décider. Rien n\'a changé.',
@@ -38613,8 +39011,6 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.paiementsStandards' => 'Payer les paiements standards',
 			'comptable.direction.delegationPanneau.paiementsStandardsDetail' => 'Un paiement au montant calculé, vers une méthode vérifiée, part sans validation quotidienne.',
 			'comptable.direction.delegationPanneau.remboursement' => 'Exécuter un remboursement standard',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.remboursementDetail' => 'Un remboursement conforme à la règle part sans validation.',
 			'comptable.direction.delegationPanneau.alimentationReserve' => 'Alimenter la Réserve stratégique',
 			'comptable.direction.delegationPanneau.alimentationReserveDetail' => 'Un mouvement vers la Réserve, conforme à sa politique.',
@@ -38716,6 +39112,18 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.exceptionGarder' => 'Garder l\'exception',
 			'comptable.direction.delegationPanneau.exceptionRetirer' => 'Retirer cette exception',
 			'comptable.direction.delegationPanneau.exceptionRetirerPhrase' => 'La délégation retrouve la politique générale. Rien n\'est enregistré avant « Enregistrer ».',
+			'comptable.direction.delegationPanneau.sensiblesTitre' => 'Toujours sensible',
+			'comptable.direction.delegationPanneau.sensiblesDetail' => 'Ces cinq cas demandent toujours une validation supplémentaire, quels que soient les réglages ci-dessus. Le premier paiement et les coordonnées récentes se règlent plus haut.',
+			'comptable.direction.delegationPanneau.sensibleHorsSeuil' => 'Montant hors seuil',
+			'comptable.direction.delegationPanneau.sensibleHorsSeuilDetail' => 'Un paiement au-dessus des plafonds fixés plus haut.',
+			'comptable.direction.delegationPanneau.sensibleHorsCycle' => 'Paiement hors cycle',
+			'comptable.direction.delegationPanneau.sensibleHorsCycleDetail' => 'Un paiement qui ne suit pas la période de paie habituelle.',
+			'comptable.direction.delegationPanneau.sensibleLieOperateur' => 'Bénéficiaire lié à l\'opérateur',
+			'comptable.direction.delegationPanneau.sensibleLieOperateurDetail' => 'Un paiement vers une personne liée à l\'opérateur de paiement.',
+			'comptable.direction.delegationPanneau.sensibleFournisseur' => 'Fournisseur indisponible',
+			'comptable.direction.delegationPanneau.sensibleFournisseurDetail' => 'Un paiement dont le fournisseur de paiement est indisponible.',
+			'comptable.direction.delegationPanneau.sensibleManuelle' => 'Obligation manuelle non approuvée',
+			'comptable.direction.delegationPanneau.sensibleManuelleDetail' => 'Une obligation saisie à la main et pas encore approuvée.',
 			'comptable.direction.titre' => 'Réserve et délégation',
 			'comptable.direction.sousTitre' => 'La politique de la Réserve stratégique et ce que le Comptable peut exécuter seul.',
 			'comptable.direction.reserve' => 'Politique de la Réserve stratégique',
@@ -38832,6 +39240,12 @@ extension on Traductions {
 			'recherche.contexte.missionEnseignant' => ({required Object enseignant}) => 'Mission de contrôle · ${enseignant}',
 			'recherche.contexte.eleveDeClasse' => ({required Object classe}) => 'Élève de la classe ${classe}',
 			'recherche.contexte.enseignantDeClasse' => ({required Object classe}) => 'Enseignant de la classe ${classe}',
+			'recherche.contexte.personneFoyer' => 'Profil de votre foyer',
+			'recherche.contexte.personneFoyerClasse' => ({required Object classe}) => 'Profil de votre foyer · ${classe}',
+			'recherche.contexte.personneParIdentifiant' => 'Trouvé par son identifiant',
+			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'Trouvé par son identifiant · ${classe}',
+			'recherche.contexte.canalStudio' => 'Canal du Studio',
+			'recherche.contexte.encaissement' => ({required Object famille}) => 'Encaissement · ${famille}',
 			_ => null,
 		};
 	}

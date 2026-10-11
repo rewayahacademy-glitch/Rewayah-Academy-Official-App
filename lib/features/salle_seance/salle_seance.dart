@@ -1887,6 +1887,14 @@ class _SalleEnseignant extends StatelessWidget {
         ? null
         : _bouton(etire: !gaucheTient && !courte);
     final Widget? boutonsEnHaut = courte ? null : boutons;
+    // TB-RC : volet temporaire ouvert dans une salle courte (telephone
+    // couche) : l'en-tete cede sa place au volet.
+    // « Couchee » : la hauteur reelle de l'ecran est courte (le facteur de
+    // texte n'y entre pas : un bureau a x2 garde son en-tete).
+    final bool couchee =
+        CompositionSalle.hauteurUtile(context) <
+        CompositionSalle.seuilHauteurCourte;
+    final bool teteRetiree = recouvre && couchee && !agrandi;
     // En focus, sous la surface ne reste que la palette pendant l'ecriture ;
     // le declencheur au repos passe dans la tete (verification TB-5).
     final Widget? declencheur = recouvre
@@ -1994,6 +2002,17 @@ class _SalleEnseignant extends StatelessWidget {
         if (agrandi) ...<Widget>[
           _teteFocus(
             declencheur: recouvre ? null : _declencheur(enEcriture: false),
+          ),
+        ] else if (teteRetiree) ...<Widget>[
+          // TB-RC (volet trop bas au telephone couche) : salle courte et
+          // volet ouvert, l'en-tete se retire comme en focus : le volet
+          // descend de tout le haut de la salle au lieu de n'avoir que
+          // 150 points. Reste l'etat critique (reconnexion, echec) ; la
+          // tete revient quand le volet se ferme (« Reduire »).
+          BandeauSecours(
+            vue: vue,
+            actions: actions,
+            espaceApres: AppSpacing.sm,
           ),
         ] else if (desktop) ...<Widget>[
           // TB-RC (revue TB-R M3) : bornee au bureau aussi ; a texte x2,

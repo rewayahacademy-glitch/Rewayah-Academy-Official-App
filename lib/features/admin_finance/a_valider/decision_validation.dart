@@ -34,6 +34,7 @@ import '../../../core/widgets/app_bottom_sheet.dart';
 import '../../../core/widgets/bandeau_attention.dart';
 import '../../../core/widgets/comptable/ligne_activite.dart';
 import '../../../core/widgets/filter_pill.dart';
+import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
 import '../../../core/widgets/montant_argent.dart';
 import '../../../core/widgets/pastilles_comptable.dart';
@@ -602,7 +603,24 @@ class _Historique extends ConsumerWidget {
         Ecart.vSm,
         if (entrees == null && journal.isLoading)
           const Skeleton.texte(lignes: 2)
-        else if (entrees == null || entrees.isEmpty)
+        else if (journal.hasError && entrees == null) ...<Widget>[
+          // Une lecture en echec n'est pas un historique vide (COMPTA-RECON-1
+          // §3.2, relevee par CPT-VAL-1) : la phrase dit ce qui manque et la
+          // relecture est a portee.
+          Text(
+            v.detail.historiqueErreur,
+            key: const ValueKey<String>('validation-historique-erreur'),
+            style: palette.inkAlert.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
+            ),
+          ),
+          Ecart.vSm,
+          LienFleche(
+            libelle: v.detail.historiqueReessayer,
+            alignerEnDebut: true,
+            onPress: () => ref.invalidate(journalValidationProvider(demandeId)),
+          ),
+        ] else if (entrees == null || entrees.isEmpty)
           Text(
             v.detail.historiqueVide,
             style: palette.inkMuted.applyTo(

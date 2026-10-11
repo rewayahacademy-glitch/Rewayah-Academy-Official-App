@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -97,4 +98,57 @@ class LoupeRecherche extends StatelessWidget {
     infobulle: t.recherche.titre,
     onPress: () => GoRouter.of(context).push(Routes.recherche),
   );
+}
+
+/// Le raccourci clavier Ctrl + K (Cmd + K sur Mac) vers la recherche (RECH-D5,
+/// spec RECH-03 §4.1) : la **meme** route `/recherche` que la loupe, jamais
+/// une seconde surface.
+///
+/// Pose par la coque, seulement quand un domaine est servi ([actif]) : sans
+/// domaine, la touche ne fait rien. Il ne repart pas depuis la recherche
+/// elle-meme (la coque n'enveloppe pas la route `/recherche`).
+class RaccourciRecherche extends StatefulWidget {
+  /// Cree le raccourci autour de [child].
+  const RaccourciRecherche({
+    required this.actif,
+    required this.child,
+    super.key,
+  });
+
+  /// Vrai quand la recherche est servie a cet espace.
+  final bool actif;
+
+  /// La coque.
+  final Widget child;
+
+  @override
+  State<RaccourciRecherche> createState() => _RaccourciRechercheState();
+}
+
+class _RaccourciRechercheState extends State<RaccourciRecherche> {
+  @override
+  void initState() {
+    super.initState();
+    HardwareKeyboard.instance.addHandler(_surTouche);
+  }
+
+  @override
+  void dispose() {
+    HardwareKeyboard.instance.removeHandler(_surTouche);
+    super.dispose();
+  }
+
+  bool _surTouche(KeyEvent evenement) {
+    if (!widget.actif || evenement is! KeyDownEvent) return false;
+    if (evenement.logicalKey != LogicalKeyboardKey.keyK) return false;
+    final HardwareKeyboard clavier = HardwareKeyboard.instance;
+    if (!(clavier.isControlPressed || clavier.isMetaPressed)) return false;
+    if (clavier.isShiftPressed || clavier.isAltPressed) return false;
+    if (!mounted) return false;
+    GoRouter.of(context).push(Routes.recherche);
+    return true;
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }

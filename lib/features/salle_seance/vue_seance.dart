@@ -847,11 +847,27 @@ class VueSeance {
     return null;
   }
 
+  /// TB-RC (revue TB-R, m20) : l'etat du tableau tel qu'il COMPORTE, la
+  /// coupure de la room comprise. Une room en reconnexion, hors ligne ou en
+  /// echec n'envoie plus rien : le tableau est au moins interrompu, meme si
+  /// le moteur du tableau ne l'a pas encore dit (`synchroTableau`). La
+  /// reprise, plus stricte, reste la reprise. Les phrases du bandeau
+  /// (`texteTableau`) suivent le signal du moteur ; l'ecriture et la marque
+  /// « non partage » suivent cet etat. Lie a TB-BR-06.
+  SynchroTableau get synchroEffective {
+    if (synchroTableau == SynchroTableau.reprise) return synchroTableau;
+    final bool coupee =
+        connexion == ConnexionSeance.reconnexion ||
+        connexion == ConnexionSeance.echec ||
+        connexion == ConnexionSeance.horsLigne;
+    return coupee ? SynchroTableau.interrompue : synchroTableau;
+  }
+
   /// TB-11b (plan V2 §10, §19.5 point 2) : l'ecriture est suspendue
   /// pendant la reprise, pour tous ; pendant l'interruption, chez l'eleve
   /// (« ecriture distante suspendue »). L'enseignant interrompu ecrit
   /// encore : ses nouveaux traits sont marques non partages.
-  bool get ecritureSuspendue => switch (synchroTableau) {
+  bool get ecritureSuspendue => switch (synchroEffective) {
     SynchroTableau.partage => false,
     SynchroTableau.interrompue => !_enseignant,
     SynchroTableau.reprise => true,
@@ -864,7 +880,7 @@ class VueSeance {
   /// TB-11b (plan V2 §10) : la nouvelle encre de la personne n'est pas
   /// partagee (enseignant, tableau interrompu) : elle est marquee.
   bool get encreNonPartagee =>
-      _enseignant && synchroTableau == SynchroTableau.interrompue;
+      _enseignant && synchroEffective == SynchroTableau.interrompue;
 
   /// TB-11b (plan V2 §11, §20 « Sauvegarde absente ») : « Les notes sont
   /// conservees dans cette seance uniquement. », dans le contexte de
