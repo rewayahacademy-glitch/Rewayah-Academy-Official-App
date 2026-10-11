@@ -2,6 +2,7 @@
 -- À exécuter après toutes les migrations sur PostgreSQL jetable seulement.
 begin;
 select set_config('request.jwt.claims', '{}', true);
+REVOKE SELECT ON public.kyc_documents FROM authenticated;
 
 set local role anon;
 do $$
@@ -245,6 +246,8 @@ $b18_scanner$;
 insert into auth.users (id, email) values
   ('b1840000-0000-0000-0000-000000000004', 'b18-null-role-guardian@example.test'),
   ('b1840000-0000-0000-0000-000000000005', 'b18-null-role-child@example.test');
+insert into public.households (id, timezone)
+values ('b1840000-0000-0000-0000-000000000010', 'Europe/Paris');
 insert into public.profiles
   (id, immutable_id, role, gender, first_name, last_name, account_status, household_id)
 values
