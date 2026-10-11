@@ -40,6 +40,11 @@ const PREFIXE_CLE: Record<DomaineStockage, string> = {
 /// R2, et une convention qui tolere les deux finit par en creer deux.
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
+/// Familles autorisees dans le seau prive commun. Ces prefixes separent les
+/// usages sans creer de nouveaux seaux ni accepter un chemin fourni par le client.
+const FAMILLES_PRIVEES = new Set(['export', 'libraryupload', 'libraryproof'])
+export type FamillePrivee = 'export' | 'libraryupload' | 'libraryproof'
+
 /// L'echec de construction ou de validation d'une cle.
 export class ErreurCleObjet extends Error {
   readonly motif: string
@@ -78,7 +83,7 @@ function exigerUuid(valeur: string, role: string): string {
 export function cleDe(_domaine: 'pieceIdentite', profilId: string, documentId: string): string
 export function cleDe(_domaine: 'archiveSeance', seanceId: string, archiveId: string): string
 export function cleDe(_domaine: 'pieceJointeMessage', conversationId: string, pieceId: string): string
-export function cleDe(_domaine: 'priveApplicatif', ressource: string, ressourceId: string): string
+export function cleDe(_domaine: 'priveApplicatif', ressource: FamillePrivee, ressourceId: string): string
 export function cleDe(domaine: DomaineStockage, parent: string, enfant: string): string {
   const prefixe = PREFIXE_CLE[domaine]
 
@@ -87,7 +92,7 @@ export function cleDe(domaine: DomaineStockage, parent: string, enfant: string):
     // famille de ressource. La liste reste fermee pour que ce segment ne
     // devienne pas un champ libre ecrit par un appelant.
     const famille = parent.trim().toLowerCase()
-    if (!/^[a-z][a-z0-9_]{1,31}$/.test(famille)) {
+    if (!FAMILLES_PRIVEES.has(famille)) {
       throw new ErreurCleObjet('famille de ressource hors convention')
     }
     return `${prefixe}/${famille}/${exigerUuid(enfant, 'identifiant de ressource')}`
@@ -138,7 +143,7 @@ export function verifierCle(domaine: DomaineStockage, cle: string): string {
   }
 
   if (domaine === 'priveApplicatif') {
-    if (!/^[a-z][a-z0-9_]{1,31}$/.test(segments[1])) {
+    if (!FAMILLES_PRIVEES.has(segments[1])) {
       throw new ErreurCleObjet('famille de ressource hors convention')
     }
     exigerUuid(segments[2], 'identifiant de ressource')

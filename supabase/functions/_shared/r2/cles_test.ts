@@ -57,7 +57,32 @@ Deno.test('7e -- un identifiant qui n est pas un UUID est refuse', () => {
   assert(!e.message.includes('autre-profil'))
 
   assertThrows(() => cleDe('archiveSeance', SEANCE, 'pas-un-uuid'), ErreurCleObjet)
-  assertThrows(() => cleDe('priveApplicatif', 'Export Des Eleves', ARCHIVE), ErreurCleObjet)
+  assertThrows(
+    () => verifierCle('priveApplicatif', `private/Export Des Eleves/${ARCHIVE}`),
+    ErreurCleObjet,
+  )
+})
+
+Deno.test('7g -- les deux familles de la bibliotheque sont distinctes et opaques', () => {
+  const support = cleDe('priveApplicatif', 'libraryupload', ARCHIVE)
+  const preuve = cleDe('priveApplicatif', 'libraryproof', ARCHIVE)
+
+  assertEquals(support, `private/libraryupload/${ARCHIVE}`)
+  assertEquals(preuve, `private/libraryproof/${ARCHIVE}`)
+  assertEquals(verifierCle('priveApplicatif', support), support)
+  assertEquals(verifierCle('priveApplicatif', preuve), preuve)
+  assertThrows(
+    () => verifierCle('priveApplicatif', `private/libraryupload/not-an-uuid`),
+    ErreurCleObjet,
+  )
+  assertThrows(
+    () => verifierCle('priveApplicatif', `private/libraryproof/${ARCHIVE}/extra`),
+    ErreurCleObjet,
+  )
+  assertThrows(
+    () => verifierCle('priveApplicatif', `private/unknown/${ARCHIVE}`),
+    ErreurCleObjet,
+  )
 })
 
 Deno.test('7f -- la casse est normalisee, pour ne pas creer deux objets', () => {
