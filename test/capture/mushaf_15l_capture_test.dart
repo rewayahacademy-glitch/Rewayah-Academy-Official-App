@@ -42,5 +42,29 @@ void main() {
         }
       }
     }
+
+    // La planche comparative de la page 544 : avant (composition approchee,
+    // flux Unicode) contre apres (mise en page de l'edition).
+    for (final ThemeMode theme in <ThemeMode>[
+      ThemeMode.light,
+      ThemeMode.dark,
+    ]) {
+      final String sombre = theme == ThemeMode.dark ? 'sombre' : 'clair';
+      testWidgets('page 544 avant la mise en page 390 $sombre', (
+        WidgetTester tester,
+      ) async {
+        await monterPageMadina15(
+          tester,
+          page: 544,
+          taille: const Size(390, 844),
+          theme: theme,
+          miseEnPage: false,
+        );
+        expect(tester.takeException(), isNull);
+        debugPrint(
+          'PNG ${await capturer(tester, 'm15_p544_avant_390_$sombre')}',
+        );
+      });
+    }
   });
 }

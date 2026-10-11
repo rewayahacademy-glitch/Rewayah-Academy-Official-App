@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../theme/app_typography.dart' show AppFontFamily;
 import 'donnees/layout_madina_15.g.dart';
 import 'port_layout_mushaf.dart';
 
@@ -18,7 +19,7 @@ import 'port_layout_mushaf.dart';
 /// avec `FontLoader` sous ce meme nom.
 abstract final class FamilleMushaf15L {
   /// Le nom de la famille declaree dans `pubspec.yaml`.
-  static const String nom = 'UthmanicHafs';
+  static const String nom = AppFontFamily.arabeMushaf;
 
   /// Le fichier de police, pour `FontLoader` dans les tests et les captures.
   static const String fichier = 'assets/fonts/UthmanicHafs-v-3.0.ttf';

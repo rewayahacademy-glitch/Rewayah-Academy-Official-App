@@ -13,6 +13,10 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/rosace_verset.dart';
 
+/// La cle de la ligne [numero] d'une page (tests, captures).
+ValueKey<String> cleLigneMadina15(int numero) =>
+    ValueKey<String>('madina15-ligne-$numero');
+
 /// Le corps de police sur lequel toute la page est composee, puis mise a
 /// l'echelle du cadre. Une page est un dessin : sa taille vient de la largeur
 /// du cadre, jamais de l'echelle de texte du systeme.
@@ -71,13 +75,8 @@ class ElementLigneMadina15 {
 }
 
 /// La style du texte de la page au corps de base.
-TextStyle styleTexteMadina15(Color encre) => TextStyle(
-  fontFamily: FamilleMushaf15L.nom,
-  fontFamilyFallback: const <String>[AppFontFamily.arabeDocument],
-  fontSize: _tailleBase,
-  height: 1,
-  color: encre,
-);
+TextStyle styleTexteMadina15(Color encre) =>
+    AppTypography.mushaf15L(taille: _tailleBase).copyWith(color: encre);
 
 /// Mesure les lignes de texte d'une page au corps de base. Une mesure par
 /// mot : la justification repartit ensuite l'espace restant entre les mots.
@@ -229,72 +228,78 @@ class _EtatPageMadina15 extends State<PageMadina15> {
           for (final LigneMesureeMadina15 m in mesures) m.ligne.numero: m,
         };
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: DecoratedBox(
-        // Le papier de la page : le parchemin de la palette (creme au clair,
-        // brun profond au sombre), jamais une couleur ecrite ici.
-        decoration: palette.surfaceQuran.decoration(
-          borderRadius: AppRadius.arrondiSm,
-          side: palette.borderHairline.asBorderSide(),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(_tailleBase * echelle * 0.45),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              ExcludeSemantics(
-                child: _EntetePage(
-                  vue: vue,
-                  echelle: echelle,
-                  palette: palette,
-                ),
-              ),
-              SizedBox(height: _tailleBase * echelle * 0.4),
-              ExcludeSemantics(
-                child: SizedBox(
-                  height: hauteurCadre,
-                  child: Column(
-                    children: <Widget>[
-                      for (final SectionLigne l in vue.lignes)
-                        SizedBox(
-                          height: hauteurLigne,
-                          width: largeurTexte,
-                          child: switch (l.type) {
-                            TypeLigneMushaf.enteteSourate => _CadreSourate(
-                              numero: l.sourate!,
-                              echelle: echelle,
-                              palette: palette,
-                            ),
-                            TypeLigneMushaf.basmala => _LigneBasmala(
-                              echelle: echelle,
-                              encre: encre,
-                            ),
-                            TypeLigneMushaf.texte => _LigneTexte(
-                              mesure: parNumero[l.numero]!,
-                              largeurLogique: reference,
-                              largeur: largeurTexte,
-                              echelle: echelle,
-                              palette: palette,
-                              encre: encre,
-                              surlignes: widget.versetsSurlignes,
-                            ),
-                          },
-                        ),
-                    ],
+    // Une page est un dessin : la rosace elle-meme (son numero) ne suit pas
+    // l'echelle de texte du systeme, ou la hauteur d'une ligne changerait.
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.noScaling),
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: DecoratedBox(
+          // Le papier de la page : le parchemin de la palette (creme au clair,
+          // brun profond au sombre), jamais une couleur ecrite ici.
+          decoration: palette.surfaceQuran.decoration(
+            borderRadius: AppRadius.arrondiSm,
+            side: palette.borderHairline.asBorderSide(),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(_tailleBase * echelle * 0.45),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                ExcludeSemantics(
+                  child: _EntetePage(
+                    vue: vue,
+                    echelle: echelle,
+                    palette: palette,
                   ),
                 ),
-              ),
-              SizedBox(height: _tailleBase * echelle * 0.4),
-              ExcludeSemantics(
-                child: _NumeroPage(
-                  numero: vue.numero,
-                  echelle: echelle,
-                  palette: palette,
+                SizedBox(height: _tailleBase * echelle * 0.4),
+                ExcludeSemantics(
+                  child: SizedBox(
+                    height: hauteurCadre,
+                    child: Column(
+                      children: <Widget>[
+                        for (final SectionLigne l in vue.lignes)
+                          SizedBox(
+                            key: cleLigneMadina15(l.numero),
+                            height: hauteurLigne,
+                            width: largeurTexte,
+                            child: switch (l.type) {
+                              TypeLigneMushaf.enteteSourate => _CadreSourate(
+                                numero: l.sourate!,
+                                echelle: echelle,
+                                palette: palette,
+                              ),
+                              TypeLigneMushaf.basmala => _LigneBasmala(
+                                echelle: echelle,
+                                encre: encre,
+                              ),
+                              TypeLigneMushaf.texte => _LigneTexte(
+                                mesure: parNumero[l.numero]!,
+                                largeurLogique: reference,
+                                largeur: largeurTexte,
+                                echelle: echelle,
+                                palette: palette,
+                                encre: encre,
+                                surlignes: widget.versetsSurlignes,
+                              ),
+                            },
+                          ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-              _SemantiqueVersets(versets: vue.versets),
-            ],
+                SizedBox(height: _tailleBase * echelle * 0.4),
+                ExcludeSemantics(
+                  child: _NumeroPage(
+                    numero: vue.numero,
+                    echelle: echelle,
+                    palette: palette,
+                  ),
+                ),
+                _SemantiqueVersets(versets: vue.versets),
+              ],
+            ),
           ),
         ),
       ),
@@ -442,13 +447,10 @@ class _CadreSourate extends StatelessWidget {
             child: Text(
               t.tc.coran.mushaf.page15.sourate(nom: nomSourateMadina15(numero)),
               textScaler: TextScaler.noScaling,
-              style: TextStyle(
-                fontFamily: FamilleMushaf15L.nom,
-                fontFamilyFallback: const <String>[AppFontFamily.arabeDocument],
-                fontSize: corps * 1.1,
-                height: 1.2,
-                color: palette.washAccent.onBackground,
-              ),
+              style: AppTypography.mushaf15L(
+                taille: corps * 1.1,
+                interligne: 1.2,
+              ).copyWith(color: palette.washAccent.onBackground),
             ),
           ),
         ),
@@ -516,11 +518,9 @@ class _EntetePage extends StatelessWidget {
         .whereType<int>()
         .firstOrNull;
     final TextStyle style = palette.inkMuted.applyTo(
-      TextStyle(
-        fontFamily: FamilleMushaf15L.nom,
-        fontFamilyFallback: const <String>[AppFontFamily.arabeDocument],
-        fontSize: _tailleBase * echelle * 0.62,
-        height: 1.3,
+      AppTypography.mushaf15L(
+        taille: _tailleBase * echelle * 0.62,
+        interligne: 1.3,
       ),
     );
     final String? hizb = _reperHizb();
@@ -583,7 +583,7 @@ class _SemantiqueVersets extends StatelessWidget {
   Widget build(BuildContext context) {
     if (versets.isEmpty) return const SizedBox.shrink();
     return SizedBox(
-      height: 1,
+      height: 0,
       child: Semantics(
         container: true,
         explicitChildNodes: true,
@@ -593,7 +593,7 @@ class _SemantiqueVersets extends StatelessWidget {
               Semantics(
                 container: true,
                 label: v.texte,
-                child: const SizedBox(width: 1, height: 0),
+                child: const SizedBox.shrink(),
               ),
           ],
         ),

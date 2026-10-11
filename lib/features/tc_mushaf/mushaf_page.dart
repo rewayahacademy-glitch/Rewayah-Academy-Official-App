@@ -11,6 +11,7 @@ import '../../core/tc_coran/etat_lecture_coran.dart';
 import '../../core/tc_coran/moteur_mushaf.dart';
 import '../../core/tc_coran/navigation_coran.dart';
 import '../../core/tc_coran/page_mushaf_vm.dart';
+import '../../core/tc_coran/port_layout_mushaf.dart';
 import '../../core/tc_coran/port_navigation_coran.dart';
 import '../../core/theme/app_contour.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -250,7 +251,13 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
             },
           ),
           if (vue != null && vue.aDuTexte)
-            _Attribution(key: MushafPage.attributionKey, compact: compact),
+            _Attribution(
+              key: MushafPage.attributionKey,
+              compact: compact,
+              // MUSHAF-15L : la mise en page de l'edition est un jeu CC-BY-4.0
+              // (quran.ws), dont le credit s'affiche a cote de celui de Tanzil.
+              miseEnPage: vue.fidelite == DisponibiliteLayout.fidele,
+            ),
           // CORAN-320-1 : a texte agrandi, les commandes passent dans le
           // contenu, sous une marge serree, au lieu de la marge de
           // l'emplacement des commandes.
@@ -575,17 +582,28 @@ class _BandeReprise extends StatelessWidget {
 /// soit joignable. Un credit relegue dans un ecran « a propos » ne serait lu
 /// par personne.
 class _Attribution extends StatelessWidget {
-  const _Attribution({required this.compact, super.key});
+  const _Attribution({
+    required this.compact,
+    this.miseEnPage = false,
+    super.key,
+  });
 
   /// Vrai a texte agrandi (CORAN-320-1) : l'attribution reste entiere, mais
   /// tient sur deux lignes au plus, sans jamais passer sous la taille de base
   /// ([AttributionCoranCompacte]), sans marge verticale propre.
   final bool compact;
 
+  /// Vrai quand la page est composee d'apres la mise en page de l'edition
+  /// (MUSHAF-15L) : le credit du jeu de donnees s'ajoute.
+  final bool miseEnPage;
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final String credit = miseEnPage
+        ? ' . ${t.tc.coran.mushaf.page15.creditMiseEnPage}'
+        : '';
 
     if (compact) {
       return Padding(
@@ -595,7 +613,7 @@ class _Attribution extends StatelessWidget {
         child: AttributionCoranCompacte(
           texte:
               '${t.eleve.coran.edition} . ${t.eleve.coran.source} . '
-              '${t.eleve.coran.sourceLien}',
+              '${t.eleve.coran.sourceLien}$credit',
           style: palette.inkFaint.applyTo(
             textes.labelSmall ?? const TextStyle(),
           ),
@@ -610,7 +628,7 @@ class _Attribution extends StatelessWidget {
       ),
       child: Text(
         '${t.eleve.coran.edition} . ${t.eleve.coran.source} . '
-        '${t.eleve.coran.sourceLien}',
+        '${t.eleve.coran.sourceLien}$credit',
         textAlign: TextAlign.center,
         style: palette.inkFaint.applyTo(textes.labelSmall ?? const TextStyle()),
       ),

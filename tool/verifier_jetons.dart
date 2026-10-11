@@ -119,8 +119,13 @@ const Map<String, String> vocabulairePerime = <String, String>{
 /// coordinateur du 24/09/2026, section 3.4). Toute famille declaree au
 /// `pubspec.yaml` ou nommee dans le code hors de cette liste est une
 /// violation, et chacune doit y etre declaree.
+///
+/// MUSHAF-15L (decision du directeur du 11/10/2026) : `UthmanicHafs`, la police
+/// KFGQPC de la mise en page du Mushaf de Medine, est la seule famille ajoutee
+/// (`docs/current/coran/PUBSPEC_MUSHAF_15L.md`).
 const Set<String> famillesAutorisees = <String>{
   'UthmanTahaNaskh',
+  'UthmanicHafs',
   'NotoSansArabic',
   'PlusJakartaSans',
   'DMSans',

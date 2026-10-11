@@ -115,10 +115,12 @@ class _LecteurALaPage extends ControleurLectureCoran {
 
 /// Les surcharges qui posent la mise en page de Medine et un corpus complet,
 /// le lecteur ouvert a la page [page].
-List<Override> surchargesMadina15({required int page}) {
+List<Override> surchargesMadina15({required int page, bool miseEnPage = true}) {
   final LayoutMadina15 source = LayoutMadina15();
   return <Override>[
-    portLayoutMushafProvider.overrideWithValue(source),
+    portLayoutMushafProvider.overrideWithValue(
+      miseEnPage ? source : const LayoutLignesIndisponible(),
+    ),
     portCorpusCoranProvider.overrideWithValue(CorpusDepuisLayout(source)),
     lectureCoranProvider.overrideWith(() => _LecteurALaPage(page)),
   ];
@@ -131,6 +133,7 @@ Future<void> monterPageMadina15(
   required Size taille,
   ThemeMode theme = ThemeMode.light,
   double echelleTexte = 1,
+  bool miseEnPage = true,
   Widget Function(Widget vue)? enrober,
 }) async {
   fixerVueCapture(tester, taille, 1);
@@ -142,7 +145,7 @@ Future<void> monterPageMadina15(
           child: (enrober ?? (Widget v) => v)(const VuePageMushaf()),
         ),
       ),
-      surcharges: surchargesMadina15(page: page),
+      surcharges: surchargesMadina15(page: page, miseEnPage: miseEnPage),
       themeMode: theme,
       echelleTexte: echelleTexte,
       interfaceMode: InterfaceMode.standard,

@@ -25,6 +25,16 @@ Sous `flutter:`, dans la liste `fonts:` existante (même niveau que `family: Uth
 Rien d'autre ne change dans `pubspec.yaml` (aucune dépendance). Le fichier de police et sa licence
 (`assets/fonts/LICENSE-UthmanicHafs.txt`) sont déjà dans la branche.
 
+## Garde-fous déjà préparés dans la branche
+
+- `tool/verifier_jetons.dart` : `UthmanicHafs` est dans `famillesAutorisees`. Tant que le bloc n'est
+  pas appliqué, la règle `famille-absente` (« autorisée mais non déclarée ») compte **une violation de
+  plus** : `verifier_jetons` donne 19 au lieu de 18. Une fois le bloc appliqué, il redonne 18.
+- `test/theme/typographie_test.dart` : accepte 6 ou 7 familles et 6 ou 7 fichiers de police ; la
+  septième ne peut être que `UthmanicHafs` (`AppFontFamily.arabeMushaf`, hors de `AppFontFamily.texte`).
+- Après application : relancer `dart run tool/verifier_jetons.dart` (attendu 18),
+  `flutter test test/theme` et `flutter test test/features/tc_mushaf`.
+
 ## Contraintes de licence (EULA KFGQPC)
 
 Usage, copie et distribution gratuits ; la police ne peut être ni vendue, ni modifiée, ni altérée.
