@@ -17,7 +17,7 @@ create function auth.uid() returns uuid language sql stable as $auth_uid$
     nullif(current_setting('request.jwt.claim.sub', true), ''),
     nullif(current_setting('test.uid', true), '')
   )::uuid
-$auth_uid$;
+$auth_uid$publication$;
 
 create function auth.jwt() returns jsonb language sql stable as $auth_jwt$
   select coalesce(
@@ -25,7 +25,7 @@ create function auth.jwt() returns jsonb language sql stable as $auth_jwt$
     nullif(current_setting('test.jwt', true), ''),
     '{}'
   )::jsonb
-$auth_jwt$;
+$auth_jwt$publication$;
 
 -- Storage minimal pour migrations et tests sur Postgres nu.
 -- Ce stub ne remplace jamais le service Storage d'un projet Supabase.
@@ -54,4 +54,16 @@ as $$
       then (string_to_array(name, '/'))[1:array_length(string_to_array(name, '/'), 1) - 1]
     else array[]::text[]
   end;
-$$;
+$$publication$;
+
+-- C20 references this publication even on a plain PostgreSQL test instance.
+DO $publication$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_publication
+    WHERE pubname = 'supabase_realtime'
+  ) THEN
+    CREATE PUBLICATION supabase_realtime;
+  END IF;
+END;
+$publication$;
