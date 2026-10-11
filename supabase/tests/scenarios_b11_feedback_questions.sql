@@ -123,5 +123,36 @@ begin
 end
 $feedback_teacher$;
 
+-- Un JWT encore valide ne suffit pas : un compte désactivé ne lit plus
+-- l'agrégat de tendance qui appartient à son groupe.
+reset role;
+update public.profiles
+   set account_status = 'disabled'
+ where id = 'f1650000-0000-0000-0000-000000000001';
+
+set local role authenticated;
+select pg_catalog.set_config('test.uid', 'f1650000-0000-0000-0000-000000000001', true);
+select pg_catalog.set_config('test.jwt',
+  '{"app_metadata":{"role":"teacher","household_id":"f16fffff-0000-0000-0000-000000000001"}}', true);
+
+do $feedback_disabled_account$
+declare
+  v_count integer;
+begin
+  select count(*) into v_count
+  from public.tendance_feedback_v
+  where groupe_id = 'f16fffff-0000-0000-0000-000000000002';
+  if v_count <> 0 then
+    raise exception 'B-11 feedback: un compte désactivé lit encore la tendance';
+  end if;
+
+  if pg_catalog.has_function_privilege(
+    'agent_ro', 'public.etat_presence(uuid,uuid)', 'EXECUTE'
+  ) then
+    raise exception 'C-22: agent_ro execute encore etat_presence';
+  end if;
+end
+$feedback_disabled_account$;
+
 reset role;
 rollback;
