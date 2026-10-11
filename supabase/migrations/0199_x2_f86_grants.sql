@@ -65,14 +65,15 @@ revoke execute on function public.agent_identite_masquee() from public, anon;
 -- agent_pre_request reste EXECUTE pour le role effectif de chaque requete,
 -- comme etabli par 0014 et 0057 (anon, authenticated, service_role, agent_ro).
 revoke execute on function public.profil_de_mon_foyer(text) from public, anon;
-alter function public.completer_kyc_document() security invoker;
+-- Ces deux triggers appellent get_config(); ils doivent s'executer comme leur proprietaire.
+alter function public.completer_kyc_document() security definer;
 alter function public.groupe_creneau_ancre() security invoker;
 alter function public.guard_app_config_history() security invoker;
 alter function public.guard_assignment_cap() security invoker;
 alter function public.guard_audit_logs_immutable() security invoker;
 alter function public.guard_contract_acceptances_immutable() security invoker;
 alter function public.guard_devices_max() security invoker;
-alter function public.guard_devices_max_reactivation() security invoker;
+alter function public.guard_devices_max_reactivation() security definer;
 alter function public.guard_groupe_membre_cap() security invoker;
 alter function public.guard_prayer_adjustments() security invoker;
 alter function public.guard_profile_immutable_id() security invoker;

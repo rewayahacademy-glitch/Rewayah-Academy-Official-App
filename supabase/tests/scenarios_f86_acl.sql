@@ -8,7 +8,6 @@ begin
   foreach v_signature in array array[
     'public.agent_identite_masquee()',
     'public.agent_jeton_vivant(uuid)',
-    'public.agent_pre_request()',
     'public.app_account_valid()',
     'public.app_config_int(text, integer)',
     'public.app_household_id()',
@@ -118,13 +117,20 @@ begin
   end loop;
   foreach v_signature in array array[
     'public.completer_kyc_document()',
+    'public.guard_devices_max_reactivation()'
+  ]::text[] loop
+    v_function := to_regprocedure(v_signature);
+    if v_function is null then raise exception 'X2-07 missing get_config trigger function: %', v_signature; end if;
+    select p.prosecdef into v_security_definer from pg_proc p where p.oid = v_function;
+    if not v_security_definer then raise exception 'X2-07 get_config trigger must remain SECURITY DEFINER: %', v_signature; end if;
+  end loop;
+  foreach v_signature in array array[
     'public.groupe_creneau_ancre()',
     'public.guard_app_config_history()',
     'public.guard_assignment_cap()',
     'public.guard_audit_logs_immutable()',
     'public.guard_contract_acceptances_immutable()',
     'public.guard_devices_max()',
-    'public.guard_devices_max_reactivation()',
     'public.guard_groupe_membre_cap()',
     'public.guard_prayer_adjustments()',
     'public.guard_profile_immutable_id()',
