@@ -20,7 +20,7 @@ void main() {
     });
 
     test('refuse une cle obligatoire absente', () {
-      final Map<String, dynamic> payload = _payload()..remove('evolution');
+      final Map<String, Object?> payload = _payload()..remove('evolution');
       expect(
         () => SeriesTresorerieSupabase.decoder(payload),
         throwsFormatException,
@@ -28,10 +28,12 @@ void main() {
     });
 
     test('refuse un coffre manquant ou duplique', () {
-      final Map<String, dynamic> payload = _payload();
+      final Map<String, Object?> payload = _payload();
+      final List<Object?> repartition =
+          payload['repartition']! as List<Object?>;
       payload['repartition'] = <Object?>[
-        ...(payload['repartition'] as List<Object?>).take(6),
-        (payload['repartition'] as List<Object?>).first,
+        ...repartition.take(6),
+        repartition.first,
       ];
       expect(
         () => SeriesTresorerieSupabase.decoder(payload),
@@ -40,8 +42,9 @@ void main() {
     });
 
     test('refuse les montants décimaux', () {
-      final Map<String, dynamic> payload = _payload();
-      final List<Object?> repartition = payload['repartition'] as List<Object?>;
+      final Map<String, Object?> payload = _payload();
+      final List<Object?> repartition =
+          payload['repartition']! as List<Object?>;
       final Map<String, dynamic> first =
           repartition.first as Map<String, dynamic>;
       final Map<String, dynamic> montant =
@@ -55,7 +58,7 @@ void main() {
   });
 }
 
-Map<String, dynamic> _payload() => <String, dynamic>{
+Map<String, Object?> _payload() => <String, Object?>{
   'repartition': <Map<String, dynamic>>[
     for (final coffre in <String>[
       'fonds_clients_engages',
