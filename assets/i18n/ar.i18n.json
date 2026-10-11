@@ -470,7 +470,9 @@
         "annonce": "الإعلان: \u2068{texte}\u2069",
         "detail": "التفاصيل: \u2068{texte}\u2069",
         "retour": "العودة إلى القائمة"
-      }
+      },
+      "indisponibleCourt": "تعذّر تحميل معلومات الحصة",
+      "indisponibleInvitation": "ربما لم يصل الطلب إلى رواية. أعد المحاولة بعد لحظة."
     },
     "catalogue": "اختيار فصل",
     "planning": "الجدول",
@@ -1154,7 +1156,8 @@
       "horsLigne": "لا شبكة",
       "horsLigneDetail": "يمكنك الدخول بمجرد عودة الشبكة.",
       "pausePriere": "استراحة للصلاة",
-      "pausePriereDetail": "\u2068{priere}\u2069، نحو \u2068{heure}\u2069"
+      "pausePriereDetail": "\u2068{priere}\u2069، نحو \u2068{heure}\u2069",
+      "entreeSePrepare": "دخولك قيد التحضير. أعد المحاولة بعد لحظة."
     },
     "coran": {
       "titre": "القرآن",
@@ -1256,7 +1259,6 @@
       "alertesErreur": "تعذّرت قراءة تنبيهات الحضور: لم يستجب الاتصال أو الخادم. أعد المحاولة بعد لحظة.",
       "voirAutreAlerte": "عرض التنبيه الآخر",
       "voirAutresAlertes": "عرض التنبيهات الأخرى (\u2068{nombre}\u2069)",
-      "remplacementsTitre": "الاستخلافات المؤكَّدة",
       "remplacementsVide": "لا درس لزميل تتولاه الآن.",
       "voirTousRemplacements": "عرض الكل: الاستخلافات المؤكَّدة (\u2068{nombre}\u2069)",
       "heure": "الساعة",
@@ -2037,7 +2039,8 @@
       "demandeEnvoyee": "أُرسل الطلب. ستحسم فيه الإدارة.",
       "aucunEnfant": "لا طفل في الأسرة",
       "aucunEnfantDetail": "أضف طفلًا لتتمكن من ضبط عرضه وكاميرته.",
-      "erreur": "لم يكتمل الحفظ: \u2068{message}\u2069"
+      "erreur": "لم يكتمل الحفظ: \u2068{message}\u2069",
+      "demandeManqueValeur": "المدة المطلوبة ناقصة: اخترها من القائمة، أو اضغط «آخر» واكتبها."
     }
   },
   "nav": {
@@ -2127,7 +2130,9 @@
           "few": "\u2068{membres}\u2069 طلاب من أصل \u2068{seuil}\u2069",
           "many": "\u2068{membres}\u2069 طالبًا من أصل \u2068{seuil}\u2069",
           "other": "\u2068{membres}\u2069 طالب من أصل \u2068{seuil}\u2069"
-        }
+        },
+        "entreeSePrepare": "دخولكم قيد التحضير. أعيدوا المحاولة بعد لحظة.",
+        "entreeAttendReseau": "ستتمكنون من الدخول عند عودة الشبكة."
       },
       "enseignant": {
         "sayyid": "سيد",
@@ -2849,8 +2854,8 @@
           "retirer": "إزالة",
           "retirerLecteur": "إزالة {nom}",
           "tailleOctets": "{taille} بايت",
-          "tailleKo": "{taille} كيلوبايت",
-          "tailleMo": "{taille} ميغابايت",
+          "tailleKo": "{taille} كيلوبايت",
+          "tailleMo": "{taille} ميغابايت",
           "autorisee": "جاهز للإرسال",
           "tropVolumineuse": "الملف كبير جدًا",
           "tropVolumineuseDetail": "هذا الملف يتجاوز الحجم المسموح به. اختر ملفًا أصغر.",
@@ -3024,7 +3029,7 @@
       "entete": {
         "avecAttention": "{entete}. {attention}",
         "deuxObjets": "{premier} · {second}",
-        "semantique": "محادثة مع {noms}\u200F، بخصوص {objets}",
+        "semantique": "محادثة مع {noms}\u200f، بخصوص {objets}",
         "semantiqueSansNoms": "محادثة بخصوص {objets}"
       },
       "types": {
@@ -3033,6 +3038,7 @@
         "dossier": "الملف",
         "mission": "مهمة المراقبة",
         "remplacement": "الاستبدال",
+        "profilPaiement": "ملف الدفع",
         "autre": "موضوع آخر"
       },
       "panneau": {
@@ -3140,7 +3146,7 @@
         "horsLigne": "أنت غير متصل. الرسالة الصوتية محفوظة هنا: أرسلها عند عودة الاتصال."
       },
       "lecteur": {
-        "libelleAuteur": "رسالة صوتية من {auteur}\u200F، {duree}",
+        "libelleAuteur": "رسالة صوتية من {auteur}\u200f، {duree}",
         "libelle": "رسالة صوتية، {duree}",
         "ecouter": "استماع",
         "pause": "إيقاف مؤقت",
@@ -3196,7 +3202,7 @@
         "ressourceExterne": "مورد تعليمي خارجي",
         "commercialInterdit": "رابط تجاري ممنوع",
         "nonVerifie": "رابط غير مُتحقَّق منه",
-        "semantique": "{adresse}\u200F، {etat}"
+        "semantique": "{adresse}\u200f، {etat}"
       },
       "sousTitre": "تبادل وتعاون بين المعلّمين",
       "sections": "فئات مجتمع المعلّمين",
@@ -3526,7 +3532,7 @@
         "videTitre": "لا توجد عناصر محفوظة",
         "vide": "اضغط على حفظ في لوحة قناة لتجد هنا قناة أو عنصرًا.",
         "ouvrir": "فتح {titre}",
-        "sansDestination": "{type}\u200F، لم يعد يُفتح من هنا",
+        "sansDestination": "{type}\u200f، لم يعد يُفتح من هنا",
         "types": {
           "canal": "قناة",
           "publication": "منشور",
@@ -3548,7 +3554,7 @@
         "messages": "الرسائل",
         "fichiers": "الملفات",
         "dansCanal": "في {canal}",
-        "messageDe": "{auteur}\u200F، في {canal}"
+        "messageDe": "{auteur}\u200f، في {canal}"
       },
       "demo": {
         "focus": "قناة في وضع التركيز",
@@ -3755,7 +3761,7 @@
           "sansAction": "لا يتاح لك أي إجراء إشراف على هذا المحتوى.",
           "sansSanction": "لا تُطبق أي عقوبة على الحساب تلقائيًا.",
           "politique": "سياسة منع الترويج",
-          "ouvrirSemantique": "فحص {objet}\u200F، السبب {motif}",
+          "ouvrirSemantique": "فحص {objet}\u200f، السبب {motif}",
           "regleMotif": {
             "publicite": "الإعلانات التجارية غير مسموح بها في مجتمع المعلّمين.",
             "lienAffilie": "روابط التسويق بالعمولة غير مسموح بها في مجتمع المعلّمين.",
@@ -3803,7 +3809,7 @@
       "annonce": "إعلان",
       "publier": "نشر إعلان",
       "videPublier": "لا توجد إعلانات لهذا الفصل. انشر أول إعلان للفصل كله.",
-      "auteurDate": "{auteur}\u200F، يوم {date} الساعة {heure}",
+      "auteurDate": "{auteur}\u200f، يوم {date} الساعة {heure}",
       "date": "يوم {date} الساعة {heure}",
       "lire": "قراءة الإعلان كاملًا",
       "ouvrirClasse": "فتح الفصل",
@@ -4328,7 +4334,8 @@
       "annulerErreur": "لم يكتمل الإلغاء: \u2068{message}\u2069",
       "champMotif": "السبب",
       "motifRequis": "السبب مطلوب، ويُدوَّن في سجل التدقيق.",
-      "journalisation": "تُدوَّن كل جدولة ونتيجة وإلغاء في سجل التدقيق."
+      "journalisation": "تُدوَّن كل جدولة ونتيجة وإلغاء في سجل التدقيق.",
+      "manqueResultat": "اختر أولًا نتيجة التقييم."
     },
     "progression": {
       "titre": "التقدم",
@@ -4425,7 +4432,8 @@
       "champDescription": "الوصف (اختياري)",
       "champMotif": "السبب",
       "motifRequis": "السبب مطلوب، ويُدوَّن في سجل التدقيق.",
-      "journalisation": "يُدوَّن كل إنشاء وتعديل وحذف ونشر في سجل التدقيق."
+      "journalisation": "يُدوَّن كل إنشاء وتعديل وحذف ونشر في سجل التدقيق.",
+      "publierSansNiveau": "أضف مستوى واحدًا على الأقل لتتمكن من نشر هذه النسخة."
     },
     "journal": {
       "titre": "السجل",
@@ -5068,7 +5076,7 @@
       },
       "montantActuel": "المبلغ الحالي",
       "manque": "المتبقي لبلوغ الهدف",
-      "atteint": "تحقق {pourcent} %",
+      "atteint": "تحقق {pourcent} %",
       "modeCalcul": "طريقة الحساب",
       "modeMontantFixe": "مبلغ مستهدف ثابت",
       "modeCouvertureMois": "تغطية بعدد أشهر المصاريف الأساسية",
@@ -5441,7 +5449,7 @@
       "coffresPhrase": "حيث يُخصَّص المال. المبلغ المحمي لا يُحسب أبدًا ضمن الحر.",
       "coffreProtege": "محمي",
       "coffreNonProtege": "غير محمي",
-      "partDetenue": "{part} % من الخزينة المحتفَظ بها",
+      "partDetenue": "{part} % من الخزينة المحتفَظ بها",
       "regleUsage": "قاعدة الاستخدام: {regle}",
       "coffresVide": "لم يُرجَع أي صندوق بعد.",
       "coffresVidePhrase": "ستظهر الصناديق السبعة هنا بمجرد أن يُرجعها المصدر.",
@@ -5460,7 +5468,7 @@
       "regle": {
         "desactivee": "معطّلة",
         "montantFixe": "مبلغ ثابت في كل موعد",
-        "pourcentage": "{pourcent} % من كل مقبوض مُثبَّت",
+        "pourcentage": "{pourcent} % من كل مقبوض مُثبَّت",
         "jusquAObjectif": "الإكمال حتى المبلغ المستهدف",
         "proposee": "اقتراح يتطلب تأكيدك"
       },
@@ -5472,7 +5480,7 @@
         "apresEncaissementConsolide": "بعد كل مقبوض مُثبَّت",
         "manuelle": "يدوية"
       },
-      "seuilAlerte": "تنبيه دون {pourcent} % من المبلغ المستهدف",
+      "seuilAlerte": "تنبيه دون {pourcent} % من المبلغ المستهدف",
       "retraitValidation": "كل سحب يتطلب مصادقة إضافية.",
       "retraitSansValidation": "لا تشترط السياسة مصادقة للسحب؛ ويبقى معامَلًا كحركة حساسة.",
       "version": "الإصدار {version}",
@@ -5669,12 +5677,11 @@
         "demanderMiseAJour": "طلب تحديث من {nom}",
         "suspendre": "إيقاف مدفوعات {nom}",
         "reprendre": "استئناف مدفوعات {nom}",
-        "voirFil": "عرض محادثة «ملف الدفع»",
         "externe": "ليس لدى {nom} حساب Rewayah: تتيح له دعوة آمنة إدخال وسيلته بنفسه. أعد إرسالها من التزامه، في المتعاقدين.",
         "voirContractuels": "عرض التزامات المتعاقدين",
         "aucuneAction": "لا يوجد أي إجراء مفتوح على هذا الملف: إنه محدَّث.",
-        "relanceTitre": "رسالة جاهزة في محادثة «ملف الدفع»",
-        "relanceObjet": "الموضوع: ملف الدفع",
+        "filTitre": "محادثة «ملف الدفع»",
+        "relanceRefusee": "لا يمكن فتح محادثة «ملف الدفع» مع {nom}: لا تسمح Rewayah بذلك لهذا المستفيد. اطلب تحديثًا بدلًا من ذلك، أو أبلغ الإدارة.",
         "messageModele": "يجب إكمال معلومات الدفع الخاصة بك قبل دفعتك القادمة. يمكنك إضافتها من مساحتك الشخصية.",
         "miseAJourDemandee": "سُجّل طلب التحديث لـ {nom}.",
         "suspendus": "أُوقفت مدفوعات {nom}: لن تُصرف أي دفعة ما لم تُستأنف.",
@@ -6750,7 +6757,8 @@
         "nom": "اللقب",
         "nomAide": "لا يُعرض لقب العائلة على المعلم أبدًا.",
         "age": "العمر",
-        "ageAide": "العمر يحدد العرض والكاميرا في البداية. يمكنك تغييرهما بعد ذلك."
+        "ageAide": "العمر يحدد العرض والكاميرا في البداية. يمكنك تغييرهما بعد ذلك.",
+        "ageFige": "الإرسال جارٍ: يمكن تغيير العمر بعد الرد."
       },
       "erreurs": {
         "prenomRequis": "أدخل اسم الطالب.",
@@ -7297,7 +7305,9 @@
     "envoiEnCours": "جارٍ الإرسال",
     "deposee": "استُلمت الوثيقة",
     "erreur": "لم يكتمل الإرسال. أعد المحاولة بعد لحظة.",
-    "tropVolumineux": "هذه الصورة تتجاوز \u2068{taille}\u2069 ميغابايت. التقطها بجودة أقل."
+    "tropVolumineux": "هذه الصورة تتجاوز \u2068{taille}\u2069 ميغابايت. التقطها بجودة أقل.",
+    "manquePhoto": "اختر أولًا صورة وثيقتك.",
+    "manqueType": "اختر أولًا الوثيقة التي تودعها."
   },
   "contrat": {
     "titre": "ما توقّع عليه",
@@ -7782,6 +7792,32 @@
       "changementFusion": "طلب موعد ⁨{dePrenom}⁩: دُمج فصلكم مع فصل آخر، عرض الفصل الجديد",
       "changementTransfert": "طلب موعد ⁨{dePrenom}⁩: فصل جديد، عرض التفاصيل",
       "close": "طلب موعد ⁨{dePrenom}⁩: ⁨{motif}⁩"
+    }
+  },
+  "formulaire": {
+    "manqueAccord": "موافقتك ناقصة: ضع علامة في الخانة للمتابعة.",
+    "motif": {
+      "manqueSaisi": "السبب ناقص: اكتبه في كلمات قليلة."
+    }
+  },
+  "motifs": {
+    "reglageEnseignant": {
+      "horaire": "التوقيت لم يعد مناسبًا",
+      "niveau": "المستوى لم يعد مناسبًا",
+      "fuseau": "تغيّر المنطقة الزمنية",
+      "fratrie": "جمع أطفال الأسرة معًا"
+    },
+    "reglageDuree": {
+      "tropLongue": "المدة طويلة بالنسبة للسن",
+      "plusDeTemps": "الحاجة إلى وقت أطول",
+      "pause": "الحاجة إلى استراحة أثناء الدرس",
+      "horaire": "قيود توقيت الأسرة"
+    },
+    "reglageMinimum": {
+      "ecourtees": "الحصص تُختصر كثيرًا",
+      "reseau": "انقطاعات متكررة في الشبكة",
+      "duree": "تغيّرت مدة الدروس",
+      "horaire": "قيود توقيت الأسرة"
     }
   }
 }

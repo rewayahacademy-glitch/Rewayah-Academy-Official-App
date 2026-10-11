@@ -1735,8 +1735,8 @@ void main() {
           expect(find.byKey(BandeauAccesEnfant.cle), findsOneWidget);
         }
         // Mes groupes : Rejoindre sur chaque carte ouverte, retire sinon.
-        // (La route ne branche pas encore l'entree en salle, `BilletSalle` :
-        // le bouton y est present et inerte quel que soit l'acces.)
+        // (BOUTONS-GRISES-1 : la route branche l'entree en salle, comme
+        // l'Espace Groupe ; le bouton n'est jamais inerte.)
         routeur.go(Routes.tcGroupes);
         await stabiliser(tester);
         final Finder rejoindreGroupe = find.widgetWithText(

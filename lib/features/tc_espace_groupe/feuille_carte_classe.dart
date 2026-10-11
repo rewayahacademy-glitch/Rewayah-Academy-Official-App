@@ -331,9 +331,13 @@ class _FeuilleCarteClasseEtat extends ConsumerState<FeuilleCarteClasse> {
         ),
         _Libelle(t.classe.cartes.feuille.champTitre),
         Ecart.vXs,
+        // FINITIONS-CORR2-1 : le champ porte son nom pour le lecteur
+        // d'ecran ; l'ecrit au-dessus le montre deja (comme le cahier).
         ZoneSaisie(
           cleChamp: FeuilleCarteClasse.titreKey,
           controleur: _titre,
+          libelle: t.classe.cartes.feuille.champTitre,
+          libelleVisible: false,
           sens: sensDeLaSaisie(_titre.text),
           onChanged: (String _) => _revalider(),
           actionClavier: TextInputAction.next,
@@ -351,6 +355,8 @@ class _FeuilleCarteClasseEtat extends ConsumerState<FeuilleCarteClasse> {
         ZoneSaisie(
           cleChamp: FeuilleCarteClasse.texteKey,
           controleur: _texte,
+          libelle: t.classe.cartes.feuille.champTexte,
+          libelleVisible: false,
           sens: sensDeLaSaisie(_texte.text),
           onChanged: (String _) => _revalider(),
           minLignes: 3,
@@ -360,18 +366,22 @@ class _FeuilleCarteClasseEtat extends ConsumerState<FeuilleCarteClasse> {
         Ecart.vLg,
         _Libelle(t.classe.cartes.feuille.champLien),
         Ecart.vXs,
-        TextField(
-          key: FeuilleCarteClasse.lienKey,
-          controller: _lien,
-          // Une adresse se lit toujours de gauche a droite.
-          textDirection: TextDirection.ltr,
-          onChanged: (String _) => _revalider(),
-          keyboardType: TextInputType.url,
-          decoration: InputDecoration(
-            helperText: isolerSens(t.classe.cartes.feuille.aideLien),
-            helperMaxLines: 6,
-            errorMaxLines: 8,
-            errorText: _erreur(const <DefautCarte>[DefautCarte.lienInvalide]),
+        // Le lien aussi porte son nom pour le lecteur d'ecran.
+        Semantics(
+          label: t.classe.cartes.feuille.champLien,
+          child: TextField(
+            key: FeuilleCarteClasse.lienKey,
+            controller: _lien,
+            // Une adresse se lit toujours de gauche a droite.
+            textDirection: TextDirection.ltr,
+            onChanged: (String _) => _revalider(),
+            keyboardType: TextInputType.url,
+            decoration: InputDecoration(
+              helperText: isolerSens(t.classe.cartes.feuille.aideLien),
+              helperMaxLines: 6,
+              errorMaxLines: 8,
+              errorText: _erreur(const <DefautCarte>[DefautCarte.lienInvalide]),
+            ),
           ),
         ),
         Ecart.vLg,
@@ -432,15 +442,20 @@ class _FeuilleCarteClasseEtat extends ConsumerState<FeuilleCarteClasse> {
   }
 }
 
-/// Le libelle d'un champ, pose au-dessus de lui, en entier, et lu juste
-/// avant lui : celui de la decoration se tronque a 320 px et texte x2
-/// (« Lien de la carte (facu... »).
+/// Le libelle d'un champ, pose au-dessus de lui, en entier : celui de la
+/// decoration se tronque a 320 px et texte x2 (« Lien de la carte
+/// (facu... »). Le lecteur d'ecran lit le nom sur le champ lui-meme
+/// (FINITIONS-CORR2-1) : l'ecrit ne le redit pas.
 class _Libelle extends StatelessWidget {
   const _Libelle(this.texte);
 
   final String texte;
 
   @override
-  Widget build(BuildContext context) =>
-      TexteSansCoupure(texte, style: Theme.of(context).textTheme.titleSmall);
+  Widget build(BuildContext context) => ExcludeSemantics(
+    child: TexteSansCoupure(
+      texte,
+      style: Theme.of(context).textTheme.titleSmall,
+    ),
+  );
 }

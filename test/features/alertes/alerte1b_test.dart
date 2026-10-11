@@ -314,10 +314,13 @@ void main() {
         Size(390, 700),
         route: Routes.adminConfigurationRegles,
       ),
-      // La tete d'Interface guidee du Journal est haute : elle prend plus de
-      // la moitie de la place laissee sous le bandeau fige, et defile donc
-      // avec la page (PAGESHELL-200-1e ; avant ALERTE-1b, elle debordait
-      // de 164 en tete fixe).
+      // La tete d'Interface guidee du Journal est haute (avant ALERTE-1b,
+      // elle debordait de 164 en tete fixe). Sous le bandeau fige, son noyau
+      // (titre, actions, onglets) reste fixe tant qu'il laisse au corps une
+      // cible tactile ; son complement (chaine et filtres,
+      // `PageShell.enteteSecondaire`) defile avec le corps (PAGESHELL-200-1e,
+      // reprise du 09/10 : la regle « plus de la moitie de la place » est
+      // retiree).
       _Cas(
         '390x844 Interface guidee, Journal',
         Size(390, 844),

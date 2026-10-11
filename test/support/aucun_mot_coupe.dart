@@ -181,7 +181,16 @@ final RegExp motifTaille = RegExp(
 /// sous la forme « texte : signe ». La typographie francaise les lie au mot
 /// voisin par une espace insecable ; une espace ordinaire les laisse partir
 /// a la ligne (« Pourquoi ce changement / ? »).
-List<String> ponctuationsIsolees(WidgetTester tester, Finder ou) {
+///
+/// [ligneVisuelleRtl] : vrai (defaut), un paragraphe RTL sans arabe est
+/// aussi lu sur sa ligne VISUELLE ([_ponctuationsDeplaceesRtl]). Faux
+/// seulement pour un ecran dont la traduction arabe est connue incomplete
+/// (repli francais attendu, `ecransTraduitsEnArabe`).
+List<String> ponctuationsIsolees(
+  WidgetTester tester,
+  Finder ou, {
+  bool ligneVisuelleRtl = true,
+}) {
   final List<String> fautes = <String>[];
   final Set<RenderParagraph> paragraphes = <RenderParagraph>{
     ...tester.renderObjectList<RenderObject>(ou).expand(_paragraphesSous),
@@ -216,9 +225,74 @@ List<String> ponctuationsIsolees(WidgetTester tester, Finder ou) {
         fautes.add('$texte : $c');
       }
     }
+    if (ligneVisuelleRtl) fautes.addAll(_ponctuationsDeplaceesRtl(p, texte));
   }
   return fautes;
 }
+
+/// Une lettre d'ecriture de droite a gauche (hebreu, arabe et ses formes de
+/// presentation).
+final RegExp _lettreRtl = RegExp('[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]');
+
+/// Une lettre ou un chiffre : le mot auquel un signe se lie.
+final RegExp _lettreOuChiffre = RegExp(r'[\p{L}\p{N}]', unicode: true);
+
+/// COUPE-MOTS-FOND-1 (relecture) : la ligne VISUELLE d'un texte latin rendu
+/// dans un paragraphe de droite a gauche (une cle sans traduction arabe,
+/// servie en repli francais dans une interface RTL).
+///
+/// L'algorithme bidirectionnel range le signe final d'un texte latin du
+/// cote du sens du paragraphe : « Pourquoi ce changement ? » s'affiche
+/// « ? Pourquoi ce changement », et a la ligne « ? changement » ;
+/// « ... de trancher. » donne « .trancher ». Le signe reste sur la meme
+/// ligne LOGIQUE que son mot (le controle par lignes ne le voit pas), mais
+/// sa boite n'est plus collee au mot : elle est en tete de ligne visuelle.
+///
+/// Chaque signe final (« ? ! : ; . , … » et « ») est lu par sa boite de
+/// glyphe (`getBoxesForSelection`) : il doit etre a DROITE du dernier
+/// caractere de son mot, sur la meme ligne ; un guillemet ouvrant, a gauche
+/// du premier caractere du mot qui suit. Un paragraphe qui contient de
+/// l'arabe suit la typographie arabe (le point a gauche de la phrase est
+/// juste) : il n'est pas mesure ici.
+List<String> _ponctuationsDeplaceesRtl(RenderParagraph p, String texte) {
+  if (p.textDirection != TextDirection.rtl || _lettreRtl.hasMatch(texte)) {
+    return const <String>[];
+  }
+  final List<String> fautes = <String>[];
+  final RegExp blanc = RegExp(r'\s');
+  for (int i = 0; i < texte.length; i++) {
+    final String c = texte[i];
+    final bool signeFinal = '?!:;.,\u2026»'.contains(c);
+    final bool ouvrant = c == '«';
+    if (!signeFinal && !ouvrant) continue;
+    int j = signeFinal ? i - 1 : i + 1;
+    while (j >= 0 && j < texte.length && blanc.hasMatch(texte[j])) {
+      j += signeFinal ? -1 : 1;
+    }
+    if (j < 0 || j >= texte.length) continue;
+    if (!_lettreOuChiffre.hasMatch(texte[j])) continue;
+    final List<TextBox> signe = p.getBoxesForSelection(
+      TextSelection(baseOffset: i, extentOffset: i + 1),
+    );
+    final List<TextBox> mot = p.getBoxesForSelection(
+      TextSelection(baseOffset: j, extentOffset: j + 1),
+    );
+    if (signe.isEmpty || mot.isEmpty) continue;
+    final TextBox s = signe.first;
+    final TextBox m = mot.first;
+    final bool memeLigne = _lignesDistinctes(<TextBox>[s, m]) == 1;
+    final bool colle = signeFinal
+        ? s.left >= m.right - _toleranceBoite
+        : s.right <= m.left + _toleranceBoite;
+    if (!memeLigne || !colle) {
+      fautes.add('$texte : $c (ligne visuelle, paragraphe RTL)');
+    }
+  }
+  return fautes;
+}
+
+/// Tolerance de position entre deux boites voisines, en pixels logiques.
+const double _toleranceBoite = 1;
 
 /// Le nombre de lignes occupees par [boites] : une boite appartient a une
 /// ligne deja vue quand son milieu vertical tombe dans la hauteur d'une

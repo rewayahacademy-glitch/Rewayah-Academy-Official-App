@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -153,10 +154,13 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
             textInputAction: TextInputAction.search,
             decoration: InputDecoration(
               isDense: true,
-              hintText: t.tc.bibliotheque.rechercheIndication,
-              // EA-HL-DOUBLE-1f : l'indication passe a la ligne (trois lignes
-              // au plus) au lieu d'etre tronquee a 320 px en texte x2 (K-54).
-              hintMaxLines: 3,
+              // EA-HL-DOUBLE-1f : l'indication passe a la ligne au lieu d'etre
+              // tronquee (K-54) ; COUPE-MOTS-FOND-1 : sans limite de lignes,
+              // et un mot trop large se reduit, borne (Interface guidee).
+              hint: texteAideSansCoupure(
+                context,
+                t.tc.bibliotheque.rechercheIndication,
+              ),
               prefixIcon: Icon(AppIcons.recherche.repos),
             ),
           ),
