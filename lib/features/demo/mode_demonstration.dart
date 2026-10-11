@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
+import '../../core/admin/port_bibliotheque_admin.dart';
 import '../../core/admin/port_classes_admin.dart';
 import '../../core/admin/port_fusion_classes.dart';
 import '../../core/admin/port_pilotage.dart';
@@ -69,6 +70,7 @@ import '../../core/theme/accent_profil.dart';
 import '../admin_tableau/activite_recente.dart';
 import 'admin_x_demo.dart';
 import 'alertes_demo.dart';
+import 'bibliotheque_admin_demo.dart';
 import 'cartes_classe_demo.dart';
 import 'catalogue_demo.dart';
 import 'classe_form_demo.dart';
@@ -315,6 +317,8 @@ List<Override> surchargesDemoAdmin({
   EtatRevueDemo? etat,
   bool avecAlertes = false,
   Duration? arriveeAlerte,
+  PortBibliothequeAdmin? bibliotheque,
+  bool bibliothequeAbsente = false,
 }) {
   if (!environnementAutoriseDemo(environnement ?? Env.environnement)) {
     throw StateError('Demonstration interdite en production.');
@@ -435,6 +439,13 @@ List<Override> surchargesDemoAdmin({
     ),
     // Tous les autres services admin adosses a Supabase : « indisponible ».
     ...surchargesServicesAdminIndisponibles(),
+    // CAP29-0 : la bibliotheque d'administration, en demonstration.
+    // [bibliotheque] pose un autre double (tests) ; [bibliothequeAbsente]
+    // laisse le port nul, comme en production.
+    if (!bibliothequeAbsente)
+      portBibliothequeAdminProvider.overrideWithValue(
+        bibliotheque ?? BibliothequeAdminDemo(),
+      ),
   ];
 }
 

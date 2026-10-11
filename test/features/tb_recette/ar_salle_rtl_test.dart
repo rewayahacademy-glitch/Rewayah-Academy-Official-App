@@ -59,6 +59,7 @@ const Map<String, String> _donneesDeDemonstration = <String, String>{
       '« 3 séances cette semaine » : la fiche de Mariam (ar_donnees_isolees)',
   'enseignant.eleve.titre': '« Fiche de mémorisation » : titre d\'un support',
   'nav.motSymbole': '« Rewayah » : la marque',
+  'admin.bibliotheque.libelles.type.pdf': '« PDF » : le nom du format, que la demonstration montre tel quel (typeLisible)',
   'enseignant.revenus.classe':
       '« Classe An-Nour » : le nom de la classe de la demonstration',
   'admin.groupes.detailTitre':

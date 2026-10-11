@@ -375,9 +375,16 @@ bool _dansLeSousArbre(String chemin, String racine) =>
 /// eleve, `/tc/observation/...` au tuteur, a l'admin et au controleur. La
 /// table vient du plan d'integration Teaching Core, section 8.2.
 bool _teachingCoreAutorise(String chemin, AppRole role) {
-  if (_dansLeSousArbre(chemin, Routes.tcGroupes) ||
-      _dansLeSousArbre(chemin, Routes.tcBibliotheque)) {
+  if (_dansLeSousArbre(chemin, Routes.tcGroupes)) {
     return role == AppRole.student || role == AppRole.guardian;
+  }
+  // CAP29-F : la bibliotheque est la meme pour les trois roles de la classe ;
+  // l'enseignant y arrive depuis la salle (aucun onglet principal), et ce que
+  // chacun voit reste decide par le serveur, ressource par ressource.
+  if (_dansLeSousArbre(chemin, Routes.tcBibliotheque)) {
+    return role == AppRole.student ||
+        role == AppRole.guardian ||
+        role == AppRole.teacher;
   }
   if (_dansLeSousArbre(chemin, Routes.tcClasse)) {
     return role == AppRole.teacher || role == AppRole.student;

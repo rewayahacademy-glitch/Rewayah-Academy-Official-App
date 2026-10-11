@@ -3527,6 +3527,334 @@
       "suivante": "Page suivante de l'historique des tirages",
       "resume": "Tirages {debut} à {fin} sur {total}",
       "quand": "{date} à {heure}"
+    },
+    "bibliotheque": {
+      "titre": "Bibliothèque",
+      "intro": "Les supports pédagogiques : les déposer, vérifier leurs droits, publier une version, les attribuer aux classes.",
+      "brouillonAlerte": "Un brouillon ne donne aucun accès aux élèves ni aux enseignants.",
+      "ajouter": "Ajouter un support",
+      "vide": "Aucun support",
+      "videDetail": "Ajoutez un premier support pour le préparer, vérifier ses droits, puis le publier.",
+      "erreur": "Le catalogue n'a pas pu être chargé. Réessayez.",
+      "nonAutorise": "Vous n'avez pas accès à la bibliothèque d'administration.",
+      "indisponibleTitre": "Bibliothèque pas encore ouverte",
+      "indisponiblePhrase": "Cette fonction sera disponible au branchement serveur.",
+      "sansDonnees": "le catalogue",
+      "ficheTitre": "Support",
+      "retourCatalogue": "Retour au catalogue",
+      "introuvable": "Ce support n'existe pas ou n'est pas accessible.",
+      "libelles": {
+        "type": {
+          "quran": "Coran",
+          "texteStructure": "Texte structuré",
+          "pdf": "PDF",
+          "image": "Image",
+          "lecon": "Leçon"
+        },
+        "version": {
+          "brouillon": "Brouillon",
+          "publiee": "Publié",
+          "archivee": "Archivé",
+          "retire": "Retiré",
+          "numero": "Version {numero}",
+          "aucune": "Aucune version"
+        },
+        "droits": {
+          "aVerifier": "À vérifier",
+          "approuve": "Approuvé",
+          "refuse": "Refusé",
+          "expire": "Expiré"
+        },
+        "visibilite": {
+          "publique": "Publique",
+          "inscrits": "Inscrits",
+          "groupeAssigne": "Classes attribuées",
+          "enseignantSeul": "Enseignant seul",
+          "admin": "Administration seule"
+        },
+        "langue": {
+          "fr": "Français",
+          "ar": "Arabe",
+          "en": "Anglais"
+        },
+        "usage": {
+          "application": "Dans l'application",
+          "classe": "En classe",
+          "telechargement": "Téléchargement",
+          "horsLigne": "Lecture sans internet"
+        },
+        "horsLigne": {
+          "jamais": "Jamais",
+          "surDemande": "Sur demande",
+          "automatique": "Automatique"
+        }
+      },
+      "catalogue": {
+        "recherche": "Rechercher dans le catalogue",
+        "segments": {
+          "tous": "Tous",
+          "brouillons": "Brouillons",
+          "aVerifier": "À vérifier",
+          "publies": "Publiés",
+          "retires": "Retirés",
+          "droitsExpires": "Droits expirés"
+        },
+        "filtres": {
+          "type": "Type",
+          "niveau": "Niveau",
+          "langue": "Langue",
+          "tous": "Tous"
+        },
+        "colonnes": {
+          "support": "Support",
+          "type": "Type",
+          "langue": "Langue",
+          "categorie": "Catégorie",
+          "version": "Version",
+          "publication": "Publication",
+          "droits": "Droits",
+          "visibilite": "Visibilité",
+          "modifie": "Modifié"
+        },
+        "modifieLe": "Modifié le {date}",
+        "videRecherche": "Aucun résultat",
+        "videRechercheDetail": "Aucun support ne correspond à votre recherche ou à vos filtres.",
+        "effacerFiltres": "Effacer les filtres",
+        "voirPlus": "Voir plus de supports",
+        "pageErreur": "La suite du catalogue n'a pas pu être chargée.",
+        "ouvrir": "Ouvrir le support {titre}",
+        "droitsEchus": "Droits échus",
+        "alerteTitre": "Brouillons",
+        "pasDeAcces": "Vous ne pouvez pas modifier la bibliothèque."
+      },
+      "fiche": {
+        "sections": {
+          "apercu": "Aperçu",
+          "edition": "Édition",
+          "metadonnees": "Métadonnées",
+          "workflow": "Publication",
+          "versions": "Versions",
+          "droits": "Droits",
+          "perimetre": "Périmètre",
+          "historique": "Historique"
+        },
+        "afficherSection": "Afficher la section {nom}",
+        "masquerSection": "Masquer la section {nom}",
+        "apercuAucunFichier": "Aucun fichier n'est déposé pour cette version.",
+        "apercuFichier": "Un fichier est déposé. Son rendu se contrôle à l'étape « Vérifier et publier ».",
+        "apercuPublie": "Version publiée : le contenu est figé.",
+        "deposer": "Déposer un fichier",
+        "remplacer": "Remplacer le fichier",
+        "champs": {
+          "titre": "Titre",
+          "titreCourt": "Titre court",
+          "edition": "Édition",
+          "organisme": "Organisme, auteur ou éditeur",
+          "description": "Description pédagogique",
+          "conditions": "Conditions d'attribution"
+        },
+        "meta": {
+          "type": "Type",
+          "langue": "Langue",
+          "categorie": "Catégorie",
+          "niveau": "Niveau",
+          "annee": "Année",
+          "visibilite": "Visibilité",
+          "horsLigne": "Lecture sans internet",
+          "nonRenseigne": "Non renseigné"
+        },
+        "enregistrer": "Enregistrer les modifications",
+        "enregistre": "Modifications enregistrées.",
+        "conflit": "Un autre administrateur a modifié ce support. Rechargez la fiche avant de continuer.",
+        "recharger": "Recharger la fiche",
+        "echecEnregistrer": "Les modifications n'ont pas pu être confirmées. Réessayez.",
+        "titreVide": "Le titre est obligatoire.",
+        "figee": "Version publiée et figée : pour la modifier, créez une nouvelle version.",
+        "retireMotif": "Retiré du catalogue. Motif : {motif}",
+        "retireSansMotif": "Retiré du catalogue.",
+        "retireRestaurer": "Il ne peut être republié qu'après une nouvelle vérification des droits.",
+        "actions": {
+          "verifier": "Vérifier et publier",
+          "nouvelleVersion": "Créer une nouvelle version",
+          "completerDroits": "Compléter les droits",
+          "associer": "Associer aux classes",
+          "retirer": "Retirer du catalogue"
+        },
+        "nouvelleVersionOk": "Nouvelle version créée en brouillon.",
+        "nouvelleVersionEchec": "La nouvelle version n'a pas pu être confirmée. Réessayez.",
+        "version": {
+          "publieeLe": "Publiée le {date}",
+          "empreinte": "Empreinte {valeur}",
+          "sansFichier": "Sans fichier"
+        },
+        "droitsChamps": {
+          "revue": "Revue des droits",
+          "source": "Source",
+          "titulaire": "Titulaire du droit",
+          "preuve": "Preuve d'autorisation",
+          "preuveOui": "Déposée",
+          "preuveNon": "Manquante",
+          "usages": "Usages autorisés",
+          "aucunUsage": "Aucun usage autorisé",
+          "attribution": "Attribution",
+          "echeance": "Échéance"
+        },
+        "classesServies": "Classes servies : {nombre}",
+        "historiqueVide": "Aucun événement.",
+        "audit": {
+          "creation": "Brouillon créé",
+          "depot": "Fichier déposé",
+          "revueDroits": "Droits revus",
+          "publication": "Version publiée",
+          "attribution": "Attribué à des classes",
+          "retrait": "Retiré du catalogue",
+          "restauration": "Restauré"
+        },
+        "auditMotif": "Motif : {motif}",
+        "auditVersion": "Version {numero}"
+      },
+      "import": {
+        "completer": "Compléter le support",
+        "sections": {
+          "ressource": "Ressource",
+          "fichier": "Fichier",
+          "droits": "Droits et accès"
+        },
+        "champs": {
+          "titre": "Titre",
+          "categorie": "Catégorie",
+          "type": "Type",
+          "langue": "Langue",
+          "niveau": "Niveau"
+        },
+        "completerDabord": "Renseignez d'abord le titre, le type, la langue et la catégorie.",
+        "choisirFichier": "Choisir un fichier",
+        "choisirAutre": "Choisir un autre fichier",
+        "annulerDepot": "Annuler le dépôt",
+        "progression": "Progression du dépôt",
+        "formats": {
+          "pdf": "Format accepté : PDF.",
+          "image": "Formats acceptés : PNG, JPEG, WebP.",
+          "json": "Format accepté : JSON structuré.",
+          "aucun": "Ce type n'accepte pas de fichier."
+        },
+        "etats": {
+          "attente": "Préparation du dépôt…",
+          "envoi": "Envoi en cours : {pourcent} %",
+          "confirmation": "Envoi terminé, en attente de la confirmation du serveur…",
+          "verification": "Vérification du fichier…",
+          "pret": "Fichier vérifié. Passez aux droits.",
+          "annule": "Dépôt annulé."
+        },
+        "erreurs": {
+          "taille": "Ce fichier est trop volumineux. Choisissez un fichier plus léger.",
+          "type": "Ce type de fichier n'est pas pris en charge pour ce support. Choisissez un autre fichier.",
+          "reseau": "La connexion s'est interrompue. Le dépôt n'est pas confirmé : réessayez.",
+          "refuse": "Le serveur a refusé ce dépôt. Réessayez ou choisissez un autre fichier.",
+          "empreinte": "Le fichier reçu ne correspond pas à celui envoyé. Réessayez.",
+          "creation": "Le brouillon n'a pas pu être créé. Réessayez.",
+          "droits": "Les droits n'ont pas pu être enregistrés. Réessayez."
+        },
+        "droits": {
+          "aide": "Aucun droit n'est présumé : une valeur inconnue bloque la publication.",
+          "source": "Source d'origine",
+          "titulaire": "Titulaire du droit",
+          "attribution": "Attribution exigée",
+          "usages": "Usages autorisés",
+          "preuve": "Preuve d'autorisation",
+          "deposerPreuve": "Déposer la preuve",
+          "preuveDeposee": "Preuve déposée."
+        },
+        "poursuivre": "Poursuivre vers la vérification",
+        "poursuivreAide": "Le fichier doit être vérifié par le serveur avant de poursuivre.",
+        "retour": "Retour au catalogue"
+      },
+      "publication": {
+        "titre": "Vérifier et publier",
+        "intro": "Chaque point est contrôlé par le serveur. La publication fige la version.",
+        "apercuTitre": "Source et fichier",
+        "apercuAucunFichier": "Aucun fichier n'est déposé : le rendu ne peut pas être contrôlé.",
+        "apercuFichier": "Fichier déposé. Son rendu se contrôle dans le lecteur de son type ; le serveur dit ci-dessous s'il a été testé.",
+        "empreinte": "Empreinte {valeur}",
+        "droitsTitre": "Revue des droits",
+        "confirmerControle": "J'ai contrôlé la source et la preuve de cette version.",
+        "enregistrerDroits": "Enregistrer la revue des droits",
+        "droitsEnregistres": "Revue des droits enregistrée.",
+        "droitsEchec": "La revue des droits n'a pas pu être confirmée. Réessayez.",
+        "droitsFiges": "Les droits d'une version publiée ne se modifient plus : créez une nouvelle version.",
+        "checklistTitre": "Contrôle de la version",
+        "criteres": {
+          "source": "Source confirmée",
+          "titulaire": "Titulaire du droit connu",
+          "preuve": "Preuve d'autorisation vérifiée",
+          "usageApplication": "Usage dans l'application permis",
+          "usageClasse": "Affichage en classe permis",
+          "usageTelechargement": "Téléchargement et lecture sans internet tranchés",
+          "expirationAttribution": "Échéance et attribution en règle",
+          "fichierSain": "Fichier sain (analyse du serveur)",
+          "renduTeste": "Rendu testé dans le lecteur du type",
+          "langueNiveau": "Langue et niveau renseignés",
+          "versionEmpreinte": "Version et empreinte figées"
+        },
+        "explications": {
+          "source": "Indiquez la source d'origine dans la revue des droits.",
+          "titulaire": "Indiquez le titulaire du droit, ou l'origine institutionnelle.",
+          "preuve": "Déposez la preuve d'autorisation de cette version.",
+          "usageApplication": "Autorisez l'usage dans l'application dans la revue des droits.",
+          "usageClasse": "Autorisez l'affichage en classe dans la revue des droits.",
+          "usageTelechargement": "Le serveur doit pouvoir trancher le téléchargement et la lecture sans internet.",
+          "expirationAttribution": "La licence est échue ou son attribution manque : renouvelez-la.",
+          "fichierSain": "Déposez un fichier : le serveur doit l'analyser.",
+          "renduTeste": "Le rendu n'a pas encore été testé par le serveur.",
+          "langueNiveau": "Renseignez la langue et le niveau sur la fiche.",
+          "versionEmpreinte": "Déposez un fichier pour figer la version et son empreinte."
+        },
+        "etats": {
+          "valide": "Validé",
+          "bloque": "Bloqué",
+          "inconnu": "Pas encore évalué"
+        },
+        "blocagesTitre": "Ce qui bloque la publication",
+        "aucunBlocage": "Tous les points sont validés par le serveur.",
+        "publier": "Publier la version",
+        "bloque": "Cette version ne peut pas être publiée tant que le serveur n'a pas validé tous les points du contrôle.",
+        "confirmerTitre": "Publier la version {numero} ?",
+        "confirmerEffet": "La version devient immuable et visible des classes auxquelles le support est attribué. Pour la modifier, vous créerez une nouvelle version.",
+        "confirmerBouton": "Publier",
+        "publiee": "Version publiée.",
+        "dejaPubliee": "Cette version est déjà publiée.",
+        "echec": "La publication n'a pas pu être confirmée. Rien n'est publié à moitié : consultez la fiche avant de réessayer.",
+        "versLaFiche": "Voir la fiche",
+        "pasDeCapacite": "Vous pouvez consulter le contrôle, mais pas publier."
+      },
+      "attribution": {
+        "titre": "Attribuer à des classes",
+        "intro": "Choisissez les classes qui verront cette version publiée. Ce que vous attribuez ici est visible de leurs élèves et de leur enseignant.",
+        "classesTitre": "Classes",
+        "classeServie": "Déjà attribuée",
+        "classeEpinglee": "Épinglée",
+        "epingler": "Épingler en tête de la bibliothèque de ces classes",
+        "aucune": "Aucune classe n'est ouverte à l'attribution pour le moment.",
+        "plusDeClasses": "Voir plus de classes",
+        "chargementPlus": "Chargement…",
+        "nonPublie": "Ce support n'est pas publié. Publiez une version avant de l'attribuer à des classes.",
+        "erreur": "Les classes n'ont pas pu être chargées. Réessayez.",
+        "attribuer": "Attribuer à {nombre} classe(s)",
+        "attribuerAucune": "Choisissez au moins une classe avant d'attribuer.",
+        "attribuee": "Support attribué. Les classes choisies le voient maintenant.",
+        "attribueEchec": "L'attribution n'a pas abouti. Réessayez dans un instant.",
+        "retraitTitre": "Retirer du catalogue",
+        "retraitIntro": "Un retrait masque le support de toutes les classes. Il ne supprime rien : le fichier et l'historique restent conservés.",
+        "motif": "Motif du retrait",
+        "motifRequis": "Écrivez le motif du retrait avant de continuer : il est conservé dans l'historique.",
+        "retirer": "Retirer ce support",
+        "retraitConfirmerTitre": "Retirer « {titre} » du catalogue ?",
+        "retraitConfirmerEffet": "Les classes ne le verront plus, y compris celles qui l'utilisent déjà. Le motif est conservé dans l'historique.",
+        "retraitConfirmerBouton": "Retirer le support",
+        "retire": "Support retiré du catalogue.",
+        "retraitEchec": "Le retrait n'a pas abouti. Réessayez dans un instant.",
+        "conflit": "Quelqu'un a modifié ce support entre-temps. Rechargez avant de continuer."
+      }
     }
   },
   "agent": {
@@ -5618,6 +5946,26 @@
       "classe": {
         "titre": "Choisir un support",
         "sousTitre": "Le support choisi remplace celui affiché. Le cours continue."
+      },
+      "rendu": {
+        "imageInaccessible": "L'image n'a pas pu être chargée pour le moment.",
+        "imageIllisible": "Ce fichier image ne peut pas être affiché.",
+        "reessayer": "Réessayer"
+      },
+      "actif": {
+        "indisponibleTitre": "Support présenté pas encore ouvert",
+        "indisponible": "Le suivi du support présenté s'ouvrira au branchement serveur.",
+        "sansDonnees": "le support présenté",
+        "erreur": "Le support présenté n'a pas pu être chargé. Réessayez.",
+        "aucun": "Aucun support présenté",
+        "aucunDetail": "Quand votre enseignant présentera un support, il apparaîtra ici sans rien faire de votre part.",
+        "titre": "Support présenté",
+        "version": "Version {numero}",
+        "page": "Page {page}",
+        "ouvrirFiche": "Ouvrir la fiche du support",
+        "ouvrirCoran": "Ouvrir dans le lecteur du Coran",
+        "retire": "« {titre} » a été retiré",
+        "retireDetail": "Votre enseignant a retiré ce support de la séance. Il n'est plus accessible."
       }
     },
     "coran": {
