@@ -21,9 +21,12 @@ import '../theme/app_spacing.dart';
 /// seul composant, partage entre toutes les vues de la salle, garantit qu'il
 /// ne peut jamais afficher un texte different selon l'ecran.
 ///
-/// Rendu (invariant I-1 de la vague Classe, 26/09/2026) : un point rouge plein
-/// de 8 px ([PointEnregistrement]) suivi d'un petit texte en encre
-/// secondaire, **sans fond, sans bordure, sans icone**, aligne au debut.
+/// Rendu (invariant I-1 de la vague Classe, 26/09/2026, amende par la
+/// decision du directeur du 11/10/2026, option b) : un point neutre plein de
+/// 8 px ([PointEnregistrement] `neutre`, jamais rouge : la mention ne dit plus
+/// que le cours est enregistre) suivi d'un petit texte en encre secondaire,
+/// **sans fond, sans bordure, sans icone**, aligne au debut. Le texte est
+/// « Visite de controle possible. » ; la permanence reste intacte (ADR-011).
 ///
 /// `tool/verifier_jetons.dart` echoue si ce constructeur gagne un parametre.
 class PermanentNotice extends StatelessWidget {
@@ -44,7 +47,7 @@ class PermanentNotice extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          const PointEnregistrement(),
+          const PointEnregistrement(neutre: true),
           Ecart.hSm,
           Flexible(
             child: Text(
@@ -67,8 +70,8 @@ class PermanentNotice extends StatelessWidget {
   }
 }
 
-/// Le point rouge de l'enregistrement : un disque plein de 8 px, encre
-/// d'alerte des points de statut.
+/// Le point de l'enregistrement : un disque plein de 8 px, encre d'alerte des
+/// points de statut (ou neutre, [neutre]).
 ///
 /// [clignote] : pendant une visite annoncee, l'opacite fait l'aller-retour
 /// 100 % vers 40 % sur [AppMouvement.pulsation] (cycle complet d'environ
@@ -76,10 +79,19 @@ class PermanentNotice extends StatelessWidget {
 /// (la notice) est portee par le texte, jamais par l'animation seule.
 class PointEnregistrement extends StatefulWidget {
   /// Cree le point.
-  const PointEnregistrement({this.clignote = false, super.key});
+  const PointEnregistrement({
+    this.clignote = false,
+    this.neutre = false,
+    super.key,
+  });
 
   /// Le point clignote doucement (visite en cours, hors guidee).
   final bool clignote;
+
+  /// Vrai : le point prend la couleur neutre des points de statut, non
+  /// alarmante (la mention permanente). Faux : encre d'alerte, l'enregistrement
+  /// reellement actif ou la visite annoncee.
+  final bool neutre;
 
   /// Diametre du point.
   static const double diametre = AppSpacing.sm;
@@ -133,7 +145,9 @@ class _PointEnregistrementState extends State<PointEnregistrement>
     final Widget point = SizedBox.square(
       dimension: PointEnregistrement.diametre,
       child: DecoratedBox(
-        decoration: AppPalette.of(context).pointsStatut.alerte.pastille(),
+        decoration: widget.neutre
+            ? AppPalette.of(context).pointsStatut.neutre.pastille()
+            : AppPalette.of(context).pointsStatut.alerte.pastille(),
       ),
     );
     final AnimationController? controleur = _controleur;

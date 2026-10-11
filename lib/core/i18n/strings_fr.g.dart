@@ -236,8 +236,8 @@ class Traductions$salle$fr {
 	// Translations
 	late final Traductions$salle$preparation$fr preparation = Traductions$salle$preparation$fr.internal(_root);
 
-	/// fr: 'Cours enregistré, visite de contrôle possible.'
-	String get bandeauPermanent => 'Cours enregistré, visite de contrôle possible.';
+	/// fr: 'Visite de contrôle possible.'
+	String get bandeauPermanent => 'Visite de contrôle possible.';
 
 	late final Traductions$salle$informationControle$fr informationControle = Traductions$salle$informationControle$fr.internal(_root);
 	late final Traductions$salle$secours$fr secours = Traductions$salle$secours$fr.internal(_root);
@@ -31197,7 +31197,7 @@ extension on Traductions {
 			'salle.preparation.eleve.demo.pret' => 'Prêt',
 			'salle.preparation.eleve.demo.microBloque' => 'Micro bloqué',
 			'salle.preparation.eleve.demo.horsLigne' => 'Hors ligne',
-			'salle.bandeauPermanent' => 'Cours enregistré, visite de contrôle possible.',
+			'salle.bandeauPermanent' => 'Visite de contrôle possible.',
 			'salle.informationControle.lien' => 'En savoir plus',
 			'salle.informationControle.e1.titre' => 'Quelqu\'un veille sur ton cours',
 			'salle.informationControle.e1.p1' => 'Parfois, une personne de l\'académie regarde et écoute ton cours en direct.',

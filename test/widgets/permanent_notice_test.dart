@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 
@@ -38,8 +39,10 @@ void main() {
             .join();
 
         expect(cotEleve, cotEnseignant);
-        expect(cotEleve, contains('enregistr'));
+        // m22 (decision du directeur du 11/10, option b) : plus de « enregistre ».
+        expect(cotEleve, isNot(contains('enregistr')));
         expect(cotEleve, contains('contr'));
+        expect(cotEleve, 'Visite de contrôle possible.');
       },
     );
 
@@ -55,6 +58,38 @@ void main() {
       );
       expect(find.byType(PermanentNotice), findsOneWidget);
       expect(find.text(t.salle.bandeauPermanent), findsOneWidget);
+    });
+
+    testWidgets('m22 : le point est neutre, jamais rouge', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        _hote(const PermanentNotice(), InterfaceMode.standard),
+      );
+      final AppPalette palette = AppPalette.of(
+        tester.element(find.byType(PermanentNotice)),
+      );
+      final BoxDecoration d =
+          tester
+                  .widget<DecoratedBox>(
+                    find.descendant(
+                      of: find.byType(PointEnregistrement),
+                      matching: find.byType(DecoratedBox),
+                    ),
+                  )
+                  .decoration
+              as BoxDecoration;
+      expect(d.color, palette.pointsStatut.neutre.debugValue);
+      expect(d.color, isNot(palette.pointsStatut.alerte.debugValue));
+    });
+
+    testWidgets('m22 : l arabe dit la visite sans le mot enregistre', (
+      WidgetTester tester,
+    ) async {
+      await LocaleSettings.setLocale(AppLocale.ar);
+      addTearDown(() => LocaleSettings.setLocale(AppLocale.fr));
+      expect(t.salle.bandeauPermanent, 'قد تجري زيارة مراقبة.');
+      expect(t.salle.bandeauPermanent, isNot(contains('يُسجَّل')));
     });
 
     test('le constructeur n accepte aucun parametre', () {
