@@ -386,6 +386,26 @@ void main() {
       expect(find.text(d.etatExpiree), findsNothing);
     });
 
+    testWidgets('renouveler une delegation suspendue la laisse suspendue', (
+      WidgetTester tester,
+    ) async {
+      final _Banc banc = _Banc();
+      await _monter(tester, banc.surcharges());
+      await suspendre(tester);
+      final PolitiqueDelegationFinance avant = await banc.source.politique();
+      expect(avant.etat, EtatDelegation.suspendue);
+      await _appuyer(tester, _cle(ControleDelegation.cleRenouveler));
+      final PolitiqueDelegationFinance apres = await banc.source.politique();
+      // La date repart, l'etat non : seule la reactivation (avec sa raison)
+      // leve une suspension.
+      expect(apres.expireLe, isNot(avant.expireLe));
+      expect(apres.etat, EtatDelegation.suspendue);
+      expect(find.text(d.etatSuspendue), findsWidgets);
+      expect(find.text(d.etatActive), findsNothing);
+      expect(_cle(ControleDelegation.cleReactiver), findsOneWidget);
+      expect(_cle(ControleDelegation.cleSuspendre), findsNothing);
+    });
+
     testWidgets('les sorties annulees pendant la suspension restent annulees', (
       WidgetTester tester,
     ) async {

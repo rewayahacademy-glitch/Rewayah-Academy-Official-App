@@ -317,6 +317,46 @@ void main() {
     expect(_texte(tester), contains('écoulé'));
   });
 
+  test(
+    'chrono visible : la ligne d\'etat ne repete pas les minutes restantes',
+    () {
+      final VueSeance sans = DonneesSeanceDemo.vue(
+        RoleSeance.enseignant,
+        EtatDemoSalle.repos,
+      );
+      expect(sans.horloge, isA<HorlogeRestante>());
+      final VueSeance avec = sans.copyWith(chrono: _bornes);
+      expect(avec.voitChrono, isTrue);
+      expect(avec.ligneEtat, isNot(contains('min restantes')));
+      expect(avec.ligneEtat, DonneesSeanceDemo.classe);
+    },
+  );
+
+  test('chrono masque : la ligne d\'etat garde « 32 min restantes »', () {
+    final VueSeance sans = DonneesSeanceDemo.vue(
+      RoleSeance.enseignant,
+      EtatDemoSalle.repos,
+    );
+    // Pas d'horodatages : rien ne change.
+    expect(sans.voitChrono, isFalse);
+    expect(sans.ligneEtat, contains('32'));
+    expect(sans.ligneEtat, contains('min restantes'));
+    // Chrono retire explicitement : meme ligne.
+    expect(
+      sans.copyWith(chrono: _bornes, sansChrono: true).ligneEtat,
+      sans.ligneEtat,
+    );
+  });
+
+  test('la guidee n\'a jamais de chrono ni de ligne d\'etat', () {
+    final VueSeance g = DonneesSeanceDemo.vue(
+      RoleSeance.guidee,
+      EtatDemoSalle.repos,
+    ).copyWith(chrono: _bornes);
+    expect(g.voitChrono, isFalse);
+    expect(g.ligneEtat, isNull);
+  });
+
   testWidgets('sans horodatages dans la source : aucune ligne', (
     WidgetTester tester,
   ) async {

@@ -742,6 +742,9 @@ class VueSeance {
             : base;
       case RoleSeance.enseignant:
         final String? suite = switch (horloge) {
+          // LIVE-CHRONO-01 : chrono visible, il porte le temps restant ; la
+          // ligne d'etat ne le repete pas.
+          HorlogeRestante() when voitChrono => null,
           HorlogeRestante(:final int minutes) => LibellesGroupe.insecable(
             t.salle.seance.minutesRestantes(minutes: minutes),
           ),

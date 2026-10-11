@@ -193,6 +193,11 @@ const Set<String> _motsLatinsAdmis = <String>{
   'iPhone',
   'iPad',
   'Tanzil',
+  // MUSHAF-15L : le credit du jeu de donnees de mise en page (CC-BY-4.0).
+  'quran',
+  'ws',
+  'CC',
+  'BY',
   'Project',
 };
 
