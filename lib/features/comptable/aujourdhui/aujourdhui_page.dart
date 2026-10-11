@@ -53,6 +53,7 @@ import '../../../core/widgets/section_header.dart';
 import '../../../core/widgets/signal_row.dart';
 import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/status_pill.dart';
+import '../graphiques/blocs_graphiques.dart';
 import 'file_attention.dart';
 import 'zones_aujourdhui.dart';
 
@@ -174,6 +175,7 @@ class _Corps extends StatelessWidget {
       return _Colonne(<Widget>[
         ResumeTresorerie(jour.tresorerie),
         _Reserve(jour: jour),
+        const CarteIndicateursFlux(),
         colonneA,
         colonneB,
         colonneC,
@@ -218,7 +220,15 @@ class _Corps extends StatelessWidget {
           );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[entete, Ecart.vSection, colonnes],
+      children: <Widget>[
+        entete,
+        Ecart.vXxl,
+        // COMPTA-GRAPH-1 : les indicateurs Entrees et Sorties, avec leur
+        // variation et leur mini-courbe (maquettes W01).
+        const CarteIndicateursFlux(),
+        Ecart.vSection,
+        colonnes,
+      ],
     );
   }
 }

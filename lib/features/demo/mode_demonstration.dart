@@ -19,7 +19,9 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import '../../core/admin/port_bibliotheque_admin.dart';
 import '../../core/admin/port_classes_admin.dart';
 import '../../core/admin/port_fusion_classes.dart';
+import '../../core/admin/port_incidents_seances.dart';
 import '../../core/admin/port_pilotage.dart';
+import '../../core/admin/port_planning_direction.dart';
 import '../../core/admin/service_admin.dart';
 import '../../core/admin/service_groupes.dart';
 import '../../core/alertes/port_alertes.dart';
@@ -85,6 +87,7 @@ import 'finance_demo.dart';
 import 'fusion_demo.dart';
 import 'observation_demo.dart';
 import 'pilotage_demo.dart';
+import 'planning_incidents_demo.dart';
 import 'presence_demo.dart';
 import 'recrutement_demo.dart';
 import 'regroupements_demo.dart';
@@ -414,6 +417,14 @@ List<Override> surchargesDemoAdmin({
     // ECHELLE-CTRL-DIRECT-1 : les regles et l'historique audite des tirages.
     portTirageControleProvider.overrideWithValue(TirageDemo()),
     // ECHELLE-ADM-PILOTAGE-1 : le tableau de pilotage par horaire.
+    // DASH-ADM-PLANNING, DASH-ADM-INC : le planning de la semaine et les
+    // incidents des 24 dernieres heures.
+    portPlanningDirectionProvider.overrideWithValue(
+      PlanningDirectionDemo(maintenant: () => e.maintenant),
+    ),
+    portIncidentsSeancesProvider.overrideWithValue(
+      const IncidentsSeancesDemo(),
+    ),
     portPilotageProvider.overrideWithValue(
       PilotageDemo(
         classes: classesAdminDemo.toutes,
