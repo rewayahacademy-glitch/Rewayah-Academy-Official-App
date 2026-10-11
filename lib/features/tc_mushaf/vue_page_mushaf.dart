@@ -46,6 +46,18 @@ class VuePageMushaf extends ConsumerWidget {
   /// Cree le rendu page.
   const VuePageMushaf({super.key});
 
+  /// Vrai quand la place tient deux pages en vis-a-vis.
+  ///
+  /// Partage avec les fleches de page (MUSHAF-15L), qui doivent savoir de
+  /// combien de pages elles tournent : une ouverture compte deux pages.
+  static bool doublePageDans(BoxConstraints contraintes, Gabarit gabarit) =>
+      PlancheMushafVM.tientEnDoublePage(
+        largeurDisponible: contraintes.maxWidth - gabarit.gouttiere * 2,
+        hauteurDisponible: contraintes.maxHeight,
+        ecartEntrePages: AppSpacing.lg,
+        gabaritLarge: gabarit.estLarge,
+      );
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final int page = ref.watch(
@@ -56,12 +68,7 @@ class VuePageMushaf extends ConsumerWidget {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints contraintes) {
         // [RESPONSIVE]
-        final bool doublePage = PlancheMushafVM.tientEnDoublePage(
-          largeurDisponible: contraintes.maxWidth - gabarit.gouttiere * 2,
-          hauteurDisponible: contraintes.maxHeight,
-          ecartEntrePages: AppSpacing.lg,
-          gabaritLarge: gabarit.estLarge,
-        );
+        final bool doublePage = doublePageDans(contraintes, gabarit);
 
         return _Feuilleteur(
           // Changer de forme d'ouverture change la numerotation des feuillets :
@@ -137,6 +144,9 @@ class _FeuilleteurEtat extends ConsumerState<_Feuilleteur> {
       textDirection: TextDirection.rtl,
       child: PageView.builder(
         controller: _controleur,
+        // Les pages voisines sont preparees avant le geste : tourner une page
+        // ne montre jamais un cadre vide (MUSHAF-15L).
+        allowImplicitScrolling: true,
         itemCount: _nombreFeuillets,
         onPageChanged: (int feuillet) => ref
             .read(lectureCoranProvider.notifier)

@@ -28920,6 +28920,21 @@ class Traductions$tc$coran$mushaf$page15$fr {
 
 	/// fr: 'Mise en page : KFGQPC, quran.ws (CC BY 4.0)'
 	String get creditMiseEnPage => 'Mise en page : KFGQPC, quran.ws (CC BY 4.0)';
+
+	/// fr: 'À propos de cette édition'
+	String get aProposOuvrir => 'À propos de cette édition';
+
+	/// fr: 'À propos de cette édition'
+	String get aProposTitre => 'À propos de cette édition';
+
+	/// fr: 'Police : KFGQPC UthmanicHafs v3.0 (Complexe du Roi Fahd)'
+	String get aProposPolice => 'Police : KFGQPC UthmanicHafs v3.0 (Complexe du Roi Fahd)';
+
+	/// fr: 'Licences : le texte et la police appartiennent au KFGQPC ; la mise en page est publiée sous CC BY 4.0 (quran.ws) ; les quarts de hizb viennent de quran-meta (MIT).'
+	String get aProposLicences => 'Licences : le texte et la police appartiennent au KFGQPC ; la mise en page est publiée sous CC BY 4.0 (quran.ws) ; les quarts de hizb viennent de quran-meta (MIT).';
+
+	/// fr: 'Tanzil demande que la source soit clairement indiquée et que tanzil.net soit joignable.'
+	String get aProposTanzil => 'Tanzil demande que la source soit clairement indiquée et que tanzil.net soit joignable.';
 }
 
 // Path: tc.outils.dock.position
@@ -35671,6 +35686,11 @@ extension on Traductions {
 			'tc.coran.mushaf.coteGauche' => 'Page de gauche',
 			'tc.coran.mushaf.ouverture' => ({required Object droite, required Object gauche}) => 'Ouverture, pages ${droite} et ${gauche}',
 			'tc.coran.mushaf.page15.creditMiseEnPage' => 'Mise en page : KFGQPC, quran.ws (CC BY 4.0)',
+			'tc.coran.mushaf.page15.aProposOuvrir' => 'À propos de cette édition',
+			'tc.coran.mushaf.page15.aProposTitre' => 'À propos de cette édition',
+			'tc.coran.mushaf.page15.aProposPolice' => 'Police : KFGQPC UthmanicHafs v3.0 (Complexe du Roi Fahd)',
+			'tc.coran.mushaf.page15.aProposLicences' => 'Licences : le texte et la police appartiennent au KFGQPC ; la mise en page est publiée sous CC BY 4.0 (quran.ws) ; les quarts de hizb viennent de quran-meta (MIT).',
+			'tc.coran.mushaf.page15.aProposTanzil' => 'Tanzil demande que la source soit clairement indiquée et que tanzil.net soit joignable.',
 			'tc.coran.fidelite.approchee' => 'Composition approchée',
 			'tc.coran.fidelite.approcheeDetail' => 'Les versets de cette page sont exactement ceux de la page du Mushaf de Médine. Leur répartition sur les lignes, elle, est celle de cet écran : le découpage en lignes de l\'édition n\'est pas encore importé.',
 			'tc.coran.fidelite.fidele' => 'Composition de l\'édition',
@@ -35818,13 +35838,13 @@ extension on Traductions {
 			'tc.classe.prevol.microOk' => 'Micro détecté',
 			'tc.classe.prevol.microAbsent' => 'Aucun micro utilisable',
 			'tc.classe.prevol.cameraOk' => 'Caméra détectée',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.prevol.cameraAbsente' => 'Aucune caméra. Le cours reste possible.',
 			'tc.classe.prevol.permissionRefusee' => 'Accès au micro refusé. Autorisez-le pour ouvrir le cours.',
 			'tc.classe.prevol.reessayer' => 'Vérifier à nouveau',
 			'tc.classe.observation.restant' => ({required Object secondes}) => 'Reste ${secondes} s',
 			'tc.realtime.transport.partage_indisponible' => 'Le partage du support n’est pas disponible sur ce serveur. Le cours continue, mais les autres appareils ne suivront pas la page.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.realtime.etat.restauration_impossible' => 'Impossible de retrouver le support en cours. Demandez à l’enseignant de le présenter à nouveau.',
 			'tc.observation.entree.titre' => 'Observer la séance',
 			'tc.observation.entree.tuteurIntro' => 'Vous pouvez regarder un court moment le cours de votre enfant. Votre micro et votre caméra restent fermés.',
@@ -36332,13 +36352,13 @@ extension on Traductions {
 			'adulte.reprise.deposerConsequence' => 'Le titulaire du foyer en sera informé et pourra la refuser. L\'administration examinera ensuite la demande et décidera.',
 			'adulte.reprise.horsLigne' => 'Rien n\'est envoyé. Vous pourrez déposer la demande vous-même quand la connexion sera revenue.',
 			'adulte.reprise.depotEchecTitre' => 'La demande n\'a pas été confirmée.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.reprise.echecPhrase' => 'Vérifiez avant de réessayer.',
 			'adulte.reprise.motif' => 'Motif',
 			'adulte.reprise.motifDeces' => 'Décès déclaré du titulaire',
 			'adulte.reprise.deposeeLe' => 'Déposée le',
 			'adulte.reprise.etat' => 'État',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.reprise.etats.deposee' => 'Déposée',
 			'adulte.reprise.etats.refuseeParTitulaire' => 'Refusée par le titulaire',
 			'adulte.reprise.etats.attenteAdministration' => 'En attente de l\'administration',
@@ -36846,13 +36866,13 @@ extension on Traductions {
 			'com.socle.navigation.communicationsDetail' => 'Annonces, modération et messages des Classes',
 			'com.socle.navigation.ongletAnnonces' => 'Annonces',
 			'com.socle.navigation.ongletModeration' => 'Modération',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.navigation.ongletMessages' => _root.com.socle.lexique.messages,
 			'com.socle.navigation.bientot' => 'Bientôt disponible',
 			'com.socle.navigation.provisoire.messagesTitre' => _root.com.socle.lexique.messages,
 			'com.socle.navigation.provisoire.messagesDetail' => 'Les messages liés à vos Classes arriveront bientôt dans cet espace.',
 			'com.socle.navigation.provisoire.communauteTitre' => _root.com.socle.lexique.communaute,
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.navigation.provisoire.communauteDetail' => 'L\'espace d\'échange entre enseignants arrivera bientôt ici.',
 			'com.socle.navigation.provisoire.studioTitre' => _root.com.socle.lexique.studio,
 			'com.socle.navigation.provisoire.studioDetail' => 'L\'espace de travail de l\'équipe arrivera bientôt ici.',
@@ -37360,13 +37380,13 @@ extension on Traductions {
 			'com.studio.demo.f.canalDirectionDetail' => 'Orientations de la direction',
 			'com.studio.demo.f.messagePlanning' => 'Bonjour à toute l\'équipe. Voici le planning du prochain trimestre, dites-moi si quelque chose ne va pas.',
 			'com.studio.demo.f.messageSupports' => 'Je mets à jour les supports du niveau 2 et on fait le point demain.',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.f.messageMerci' => 'Merci à tous pour la semaine.',
 			'com.studio.demo.f.messageDossiers' => 'Trois dossiers attendent une décision avant vendredi. Nadia, peux-tu regarder le dossier de la famille Karim ?',
 			'com.studio.demo.f.messageCompteRendu' => 'Le compte rendu des visites du mois est prêt.',
 			'com.studio.demo.f.messageRemplacement' => 'Mardi, la Classe An-Nour est assurée par un remplaçant. Le planning est à jour.',
 			'com.studio.demo.f.messageJustificatifs' => 'Les justificatifs de septembre sont rassemblés.',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.f.messageBudget' => 'Budget confidentiel du trimestre.',
 			'com.studio.demo.f.activiteBudget' => 'Budget confidentiel du trimestre',
 			'com.studio.demo.f.partagePlanning' => 'Planning du trimestre',
@@ -37874,13 +37894,13 @@ extension on Traductions {
 			'comptable.paiements.detail.methode' => 'Méthode de paiement',
 			'comptable.paiements.detail.informations' => 'Informations',
 			'comptable.paiements.detail.type' => 'Type',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.detail.periode' => 'Période / objet',
 			'comptable.paiements.detail.echeance' => 'Échéance',
 			'comptable.paiements.detail.prestataire' => 'Prestataire prévu',
 			'comptable.paiements.detail.preuve' => 'Preuve',
 			'comptable.paiements.detail.classes' => 'Classes',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.detail.version' => 'Version du calcul',
 			'comptable.paiements.detail.historique' => 'Historique',
 			'comptable.paiements.detail.historiqueVide' => 'Aucune opération enregistrée pour ce paiement.',
@@ -38388,13 +38408,13 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.paiementsStandards' => 'Payer les paiements standards',
 			'comptable.direction.delegationPanneau.paiementsStandardsDetail' => 'Un paiement au montant calculé, vers une méthode vérifiée, part sans validation quotidienne.',
 			'comptable.direction.delegationPanneau.remboursement' => 'Exécuter un remboursement standard',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.remboursementDetail' => 'Un remboursement conforme à la règle part sans validation.',
 			'comptable.direction.delegationPanneau.alimentationReserve' => 'Alimenter la Réserve stratégique',
 			'comptable.direction.delegationPanneau.alimentationReserveDetail' => 'Un mouvement vers la Réserve, conforme à sa politique.',
 			'comptable.direction.delegationPanneau.plafondsTitre' => 'Plafonds',
 			'comptable.direction.delegationPanneau.plafondsDetail' => 'Au-delà d\'un plafond, le paiement demande votre validation. Laissez vide pour ne fixer aucun plafond.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.plafondTransaction' => 'Plafond par transaction',
 			'comptable.direction.delegationPanneau.plafondTransactionDetail' => 'Le montant maximal d\'un seul paiement.',
 			'comptable.direction.delegationPanneau.plafondLot' => 'Plafond par lot',

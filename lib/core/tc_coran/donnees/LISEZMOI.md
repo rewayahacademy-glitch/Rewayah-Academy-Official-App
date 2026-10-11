@@ -19,9 +19,11 @@ Pourquoi ce jeu et pas un autre : le texte est celui du KFGQPC et ses lignes son
 fichier officiel verset par verset. Le jeu `zonetecde/mushaf-layout` (GitHub) a été écarté après
 contrôle : 17 sourates sans cadre, codes de sourate dupliqués, pages 586 et 590 à 12 lignes.
 
-**Attribution exigée par CC-BY-4.0** : le lecteur la montre à l'écran à côté de celle de Tanzil
-(`tc.coran.mushaf.page15.creditMiseEnPage`, au pied du lecteur quand la mise en page est celle de
-l'édition).
+**Attribution exigée par CC-BY-4.0** : elle n'occupe plus l'écran principal (décision du directeur
+du 11/10/2026). Le lecteur la montre, avec celle de Tanzil, les licences et les sources, dans la
+feuille « À propos de cette édition », ouverte depuis le menu du lecteur (≡ en en-tête sur
+téléphone, « Aller à une page » sur tablette et bureau)
+(`tc.coran.mushaf.page15.creditMiseEnPage`, `lib/features/tc_mushaf/a_propos_edition.dart`).
 
 ## Reproduire
 

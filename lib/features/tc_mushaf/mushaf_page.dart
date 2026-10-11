@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/coran/service_coran.dart';
@@ -17,6 +18,7 @@ import '../../core/tc_coran/port_layout_mushaf.dart';
 import '../../core/tc_coran/port_navigation_coran.dart';
 import '../../core/theme/app_contour.dart';
 import '../../core/theme/app_gabarit.dart';
+import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
@@ -32,6 +34,8 @@ import '../../core/widgets/selecteur_section.dart';
 // pas (CORAN-320-1).
 import '../accueil_eleve/coran_accessibilite.dart'
     show AttributionCoranCompacte;
+import 'a_propos_edition.dart';
+import 'fleches_page_mushaf.dart';
 import 'navigation_coran_feuille.dart';
 import 'vue_focus_classe.dart';
 import 'vue_page_mushaf.dart';
@@ -66,6 +70,9 @@ class MushafPage extends ConsumerStatefulWidget {
 
   /// La cle de l'attribution Tanzil (tests de geometrie, captures).
   static const Key attributionKey = ValueKey<String>('mushaf-attribution');
+
+  /// La cle du menu du lecteur, dans l'en-tete serre (MUSHAF-15L).
+  static const Key menuKey = ValueKey<String>('mushaf-menu');
 
   /// La cle du bouton qui deplie le choix du rendu, a texte agrandi.
   static const Key optionsKey = ValueKey<String>('mushaf-options');
@@ -198,12 +205,30 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
     // (celle du texte agrandi) pour lui en laisser le plus, et le fond est la
     // surface de l'application, pas le parchemin du registre.
     final bool madina15 = ref.watch(portLayoutMushafProvider) is LayoutMadina15;
+    final bool large = AppGabarit.de(context).estLarge;
     final bool compact =
-        MushafPage.texteAgrandi(context) ||
-        (madina15 && !AppGabarit.de(context).estLarge);
+        MushafPage.texteAgrandi(context) || (madina15 && !large);
+    // MUSHAF-15L (retours du directeur du 11/10) : en page du Mushaf de
+    // Medine, on tourne les pages sans barre ni « 544 / 604 ». Sur telephone,
+    // au glisser (le PageView de la vue), avec des actions d'accessibilite ; sur
+    // tablette et bureau, avec une fleche de chaque cote de la page et les
+    // touches gauche et droite. Le numero de page est la rosace au pied de la
+    // page.
+    final bool pageSeule = madina15 && etat.mode == ModeRenduCoran.mushaf;
+    final bool balayage = pageSeule && !large;
+    void ouvrirNavigation() => unawaited(
+      FeuilleNavigationCoran.ouvrir(
+        context,
+        onAller: (int p) => _allerA(p, origine: OrigineNavigation.personnelle),
+        onAPropos: madina15
+            ? () => unawaited(FeuilleAProposEdition.ouvrir(context))
+            : null,
+      ),
+    );
     final Widget commandes = _Commandes(
       key: MushafPage.commandesKey,
       compact: compact,
+      sansPagination: pageSeule,
       vue: vue,
       mode: etat.mode,
       zoom: etat.zoomLocal,
@@ -212,13 +237,7 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
         ref.read(lectureCoranProvider.notifier).zoomer(delta);
         _planifierEnregistrement();
       },
-      onNavigation: () => unawaited(
-        FeuilleNavigationCoran.ouvrir(
-          context,
-          onAller: (int p) =>
-              _allerA(p, origine: OrigineNavigation.personnelle),
-        ),
-      ),
+      onNavigation: ouvrirNavigation,
     );
 
     return PageImmersive(
@@ -229,7 +248,7 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
       entete: compact
           ? null
           : _Entete(key: MushafPage.enteteKey, vue: vue, mode: etat.mode),
-      commandes: compact ? null : commandes,
+      commandes: compact || balayage ? null : commandes,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -238,6 +257,7 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
               key: MushafPage.enteteKey,
               vue: vue,
               mode: etat.mode,
+              onMenu: balayage ? ouvrirNavigation : null,
               reglageTaille: _ReglageTaille(
                 zoom: etat.zoomLocal,
                 onZoom: (double delta) {
@@ -254,13 +274,17 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
                 _allerA(p, origine: OrigineNavigation.personnelle),
           ),
           Expanded(
-            child: switch (etat.mode) {
-              ModeRenduCoran.mushaf => const VuePageMushaf(),
-              ModeRenduCoran.versetAgrandi => const VueVersetAgrandi(),
-              ModeRenduCoran.focus => const VueFocusClasse(),
-            },
+            child: _Corps(
+              mode: etat.mode,
+              fleches: pageSeule && large,
+              actionsPages: balayage,
+              page: etat.page,
+              nombrePages: vue?.nombrePages ?? pagesMushafMedine,
+              onAller: (int p) =>
+                  _allerA(p, origine: OrigineNavigation.personnelle),
+            ),
           ),
-          if (vue != null && vue.aDuTexte)
+          if (vue != null && vue.aDuTexte && !pageSeule)
             _Attribution(
               key: MushafPage.attributionKey,
               compact: compact,
@@ -271,7 +295,7 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
           // CORAN-320-1 : a texte agrandi, les commandes passent dans le
           // contenu, sous une marge serree, au lieu de la marge de
           // l'emplacement des commandes.
-          if (compact)
+          if (compact && !balayage)
             Padding(
               padding: EdgeInsetsDirectional.symmetric(
                 horizontal: AppGabarit.de(context).gouttiere,
@@ -282,6 +306,92 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
         ],
       ),
     );
+  }
+}
+
+/// Le corps du lecteur : le rendu choisi, et ce qui tourne les pages.
+class _Corps extends StatelessWidget {
+  const _Corps({
+    required this.mode,
+    required this.fleches,
+    required this.actionsPages,
+    required this.page,
+    required this.nombrePages,
+    required this.onAller,
+  });
+
+  final ModeRenduCoran mode;
+
+  /// Vrai sur tablette et bureau, en page du Mushaf de Medine : une fleche de
+  /// chaque cote de la page.
+  final bool fleches;
+
+  /// Vrai sur telephone, en page du Mushaf de Medine : le glisser tourne les
+  /// pages, et il n'est pas accessible seul. Les lecteurs d'ecran recoivent
+  /// donc « page suivante » et « page precedente » en actions.
+  final bool actionsPages;
+
+  final int page;
+  final int nombrePages;
+  final void Function(int page) onAller;
+
+  /// La page de l'ouverture suivante : une ouverture compte deux pages quand la
+  /// place en tient deux (la page de droite est alors impaire).
+  int? _suivante({required bool deuxPages}) {
+    final int cible = deuxPages ? ((page - 1) ~/ 2 + 1) * 2 + 1 : page + 1;
+    return cible > nombrePages ? null : cible;
+  }
+
+  int? _precedente({required bool deuxPages}) {
+    final int cible = deuxPages ? ((page - 1) ~/ 2 - 1) * 2 + 1 : page - 1;
+    return cible < 1 ? null : cible;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget rendu = switch (mode) {
+      ModeRenduCoran.mushaf => const VuePageMushaf(),
+      ModeRenduCoran.versetAgrandi => const VueVersetAgrandi(),
+      ModeRenduCoran.focus => const VueFocusClasse(),
+    };
+    if (fleches) {
+      final Gabarit gabarit = AppGabarit.de(context);
+      final double colonne = AppMetriques.of(context).cibleTactile;
+      return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints contraintes) {
+          final bool deuxPages = VuePageMushaf.doublePageDans(
+            BoxConstraints(
+              maxWidth: contraintes.maxWidth - 2 * colonne,
+              maxHeight: contraintes.maxHeight,
+            ),
+            gabarit,
+          );
+          final int? precedente = _precedente(deuxPages: deuxPages);
+          final int? suivante = _suivante(deuxPages: deuxPages);
+          return PageAvecFlechesMushaf(
+            libellePrecedente: t.eleve.coran.pagePrecedente,
+            libelleSuivante: t.eleve.coran.pageSuivante,
+            onPrecedente: precedente == null ? null : () => onAller(precedente),
+            onSuivante: suivante == null ? null : () => onAller(suivante),
+            child: rendu,
+          );
+        },
+      );
+    }
+    if (actionsPages) {
+      final int? precedente = _precedente(deuxPages: false);
+      final int? suivante = _suivante(deuxPages: false);
+      return Semantics(
+        customSemanticsActions: <CustomSemanticsAction, VoidCallback>{
+          CustomSemanticsAction(label: t.eleve.coran.pageSuivante):
+              ?(suivante == null ? null : () => onAller(suivante)),
+          CustomSemanticsAction(label: t.eleve.coran.pagePrecedente):
+              ?(precedente == null ? null : () => onAller(precedente)),
+        },
+        child: rendu,
+      );
+    }
+    return rendu;
   }
 }
 
@@ -349,11 +459,17 @@ class _EnteteCompact extends StatefulWidget {
     required this.vue,
     required this.mode,
     required this.reglageTaille,
+    this.onMenu,
     super.key,
   });
 
   final PageMushafVM? vue;
   final ModeRenduCoran mode;
+
+  /// Le menu du lecteur, discret, dans l'en-tete : quand la pagination n'a plus
+  /// de barre (MUSHAF-15L), c'est par lui que l'on va a une page, une sourate,
+  /// ou aux credits de l'edition.
+  final VoidCallback? onMenu;
 
   /// Le reglage de taille du texte (lecture agrandie et focus), deplie avec
   /// le choix du rendu (CORAN-320-1b).
@@ -415,6 +531,13 @@ class _EnteteCompactEtat extends State<_EnteteCompact> {
                   ),
                 ),
                 const SizedBox(width: AppSpacing.sm),
+                if (widget.onMenu != null)
+                  BoutonIcone(
+                    key: MushafPage.menuKey,
+                    icone: AppIcons.menu,
+                    libelle: t.tc.coran.navigation.ouvrir,
+                    onPress: widget.onMenu!,
+                  ),
                 // Un bouton qui replie, pas un bouton grise : il est toujours
                 // actif, et son etat (deplie ou non) est annonce.
                 Semantics(
@@ -650,6 +773,7 @@ class _Attribution extends StatelessWidget {
 class _Commandes extends StatelessWidget {
   const _Commandes({
     required this.compact,
+    required this.sansPagination,
     required this.vue,
     required this.mode,
     required this.zoom,
@@ -661,6 +785,10 @@ class _Commandes extends StatelessWidget {
 
   /// Vrai a texte agrandi (CORAN-320-1) : une seule rangee, taille plafonnee.
   final bool compact;
+
+  /// Vrai en page du Mushaf de Medine : ni fleches ni « 544 / 604 » ici, les
+  /// pages se tournent ailleurs (glisser, fleches de chaque cote de la page).
+  final bool sansPagination;
 
   final PageMushafVM? vue;
   final ModeRenduCoran mode;
@@ -707,7 +835,7 @@ class _Commandes extends StatelessWidget {
       return MushafPage.plafonner(
         Row(
           children: <Widget>[
-            Expanded(child: barre),
+            Expanded(child: sansPagination ? const SizedBox.shrink() : barre),
             const SizedBox(width: AppSpacing.sm),
             BoutonIcone(
               icone: AppIcons.menu,
@@ -735,8 +863,10 @@ class _Commandes extends StatelessWidget {
           )
         else
           reglageTaille,
-        barre,
-        const SizedBox(height: AppSpacing.sm),
+        if (!sansPagination) ...<Widget>[
+          barre,
+          const SizedBox(height: AppSpacing.sm),
+        ],
         ActionPrincipale(
           libelle: t.tc.coran.navigation.ouvrir,
           niveau: NiveauAction.tertiaire,
