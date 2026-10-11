@@ -61,7 +61,7 @@ COMMENT ON FUNCTION public.custom_access_token_hook(jsonb) IS
   'Pose app_metadata.role/household_id et tranche_age (enfant/adulte/inconnu) sans DOB. tranche_age est une donnée de présentation, jamais une autorisation. Le hook ne rend jamais NULL.';
 
 REVOKE EXECUTE ON FUNCTION public.custom_access_token_hook(jsonb)
-  FROM anon, authenticated, public;
+  FROM anon, authenticated, service_role, agent_ro, public;
 GRANT EXECUTE ON FUNCTION public.custom_access_token_hook(jsonb)
   TO supabase_auth_admin;
 
@@ -117,9 +117,15 @@ DECLARE
   v_demande uuid;
 BEGIN
   IF NOT coalesce(
+    public.app_account_valid()
+      AND public.app_role() = 'student',
+    false
+  ) THEN
+    RAISE EXCEPTION 'demande reservee a un eleve mineur actif'
+      USING ERRCODE = '42501';
+  END IF;
+  IF NOT coalesce(
     v_eleve IS NOT NULL
-    AND public.app_role() = 'student'
-    AND public.app_account_valid()
     AND EXISTS (
       SELECT 1
       FROM public.profiles p
@@ -210,9 +216,15 @@ SET search_path = ''
 AS $function$
 BEGIN
   IF NOT coalesce(
+    public.app_account_valid()
+      AND public.app_role() = 'guardian',
+    false
+  ) THEN
+    RAISE EXCEPTION 'lecture reservee au tuteur du foyer'
+      USING ERRCODE = '42501';
+  END IF;
+  IF NOT coalesce(
     auth.uid() IS NOT NULL
-    AND public.app_role() = 'guardian'
-    AND public.app_account_valid()
     AND EXISTS (
       SELECT 1 FROM public.profiles p
       JOIN public.households h ON h.id = p.household_id
@@ -255,11 +267,17 @@ DECLARE
   v_foyer uuid;
 BEGIN
   IF NOT coalesce(
+    public.app_account_valid()
+      AND public.app_role() = 'guardian',
+    false
+  ) THEN
+    RAISE EXCEPTION 'reponse reservee au tuteur du foyer'
+      USING ERRCODE = '42501';
+  END IF;
+  IF NOT coalesce(
     p_demande_id IS NOT NULL
     AND p_statut IN ('acceptee', 'refusee')
     AND auth.uid() IS NOT NULL
-    AND public.app_role() = 'guardian'
-    AND public.app_account_valid()
     AND EXISTS (
       SELECT 1 FROM public.profiles guardian
       JOIN public.households h ON h.id = guardian.household_id
@@ -319,32 +337,68 @@ $function$;
 
 CREATE OR REPLACE FUNCTION public.accepter_demande_presentation(p_demande_id uuid)
 RETURNS text
-LANGUAGE sql VOLATILE SECURITY DEFINER SET search_path = ''
+LANGUAGE plpgsql VOLATILE SECURITY DEFINER SET search_path = ''
 AS $function$
-  SELECT public.repondre_demande_presentation(p_demande_id, 'acceptee');
+BEGIN
+  IF NOT coalesce(
+    public.app_account_valid() AND public.app_role() = 'guardian', false
+  ) THEN
+    RAISE EXCEPTION 'reponse reservee au tuteur du foyer'
+      USING ERRCODE = '42501';
+  END IF;
+  RETURN public.repondre_demande_presentation(p_demande_id, 'acceptee');
+END;
 $function$;
 
 CREATE OR REPLACE FUNCTION public.refuser_demande_presentation(p_demande_id uuid)
 RETURNS text
-LANGUAGE sql VOLATILE SECURITY DEFINER SET search_path = ''
+LANGUAGE plpgsql VOLATILE SECURITY DEFINER SET search_path = ''
 AS $function$
-  SELECT public.repondre_demande_presentation(p_demande_id, 'refusee');
+BEGIN
+  IF NOT coalesce(
+    public.app_account_valid() AND public.app_role() = 'guardian', false
+  ) THEN
+    RAISE EXCEPTION 'reponse reservee au tuteur du foyer'
+      USING ERRCODE = '42501';
+  END IF;
+  RETURN public.repondre_demande_presentation(p_demande_id, 'refusee');
+END;
 $function$;
 
+ALTER FUNCTION public.custom_access_token_hook(jsonb) OWNER TO postgres;
+ALTER FUNCTION public.demander_presentation_standard() OWNER TO postgres;
+ALTER FUNCTION public.lire_demandes_presentation_en_attente() OWNER TO postgres;
+ALTER FUNCTION public.repondre_demande_presentation(uuid, text) OWNER TO postgres;
+ALTER FUNCTION public.accepter_demande_presentation(uuid) OWNER TO postgres;
+ALTER FUNCTION public.refuser_demande_presentation(uuid) OWNER TO postgres;
+
 REVOKE ALL ON FUNCTION public.demander_presentation_standard()
-  FROM PUBLIC, anon, agent_ro;
+  FROM PUBLIC, anon, service_role, agent_ro;
 GRANT EXECUTE ON FUNCTION public.demander_presentation_standard() TO authenticated;
 REVOKE ALL ON FUNCTION public.lire_demandes_presentation_en_attente()
-  FROM PUBLIC, anon, agent_ro;
+  FROM PUBLIC, anon, service_role, agent_ro;
 GRANT EXECUTE ON FUNCTION public.lire_demandes_presentation_en_attente() TO authenticated;
 REVOKE ALL ON FUNCTION public.repondre_demande_presentation(uuid, text)
-  FROM PUBLIC, anon, authenticated, agent_ro;
+  FROM PUBLIC, anon, service_role, authenticated, agent_ro;
 REVOKE ALL ON FUNCTION public.accepter_demande_presentation(uuid)
-  FROM PUBLIC, anon, agent_ro;
+  FROM PUBLIC, anon, service_role, agent_ro;
 GRANT EXECUTE ON FUNCTION public.accepter_demande_presentation(uuid) TO authenticated;
 REVOKE ALL ON FUNCTION public.refuser_demande_presentation(uuid)
-  FROM PUBLIC, anon, agent_ro;
+  FROM PUBLIC, anon, service_role, agent_ro;
 GRANT EXECUTE ON FUNCTION public.refuser_demande_presentation(uuid) TO authenticated;
+
+COMMENT ON FUNCTION public.custom_access_token_hook(jsonb) IS
+  'F79 candidate allowlist: signature=public.custom_access_token_hook(jsonb); md5_prosrc=21f14545a1adeead83a5e72eebf048e6; guard_type=NO_GUARD_HELPER; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11; justification=Supabase Auth hook, granted only to supabase_auth_admin; tranche_age is presentation-only and never an authorization.';
+COMMENT ON FUNCTION public.demander_presentation_standard() IS
+  'F79 candidate allowlist: signature=public.demander_presentation_standard(); md5_prosrc=d8b88b455e81c26d6a6130ffe2df9d93; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: only active minor students may create a request; request and notification are atomic and idempotent.';
+COMMENT ON FUNCTION public.lire_demandes_presentation_en_attente() IS
+  'F79 candidate allowlist: signature=public.lire_demandes_presentation_en_attente(); md5_prosrc=062e6445915c2a8e9345f31908907882; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: only the active guardian reads requests from their household.';
+COMMENT ON FUNCTION public.repondre_demande_presentation(uuid, text) IS
+  'F79 candidate allowlist: signature=public.repondre_demande_presentation(uuid,text); md5_prosrc=6a029cb96d66ce1c71efdc31fc516279; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: only the active household guardian may decide; repeated same decision is idempotent and another household is denied.';
+COMMENT ON FUNCTION public.accepter_demande_presentation(uuid) IS
+  'F79 candidate allowlist: signature=public.accepter_demande_presentation(uuid); md5_prosrc=4a997e78b60f87759d00bfaa26c5f0eb; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: only active guardians may accept; the request function rechecks household ownership.';
+COMMENT ON FUNCTION public.refuser_demande_presentation(uuid) IS
+  'F79 candidate allowlist: signature=public.refuser_demande_presentation(uuid); md5_prosrc=c8cb33990137671cff21c724e169973e; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: only active guardians may refuse; the request function rechecks household ownership.';
 
 -- Contrôle ACL à l'application du schéma, avant les scénarios historiques qui
 -- accordent temporairement des privilèges larges à authenticated.
@@ -373,5 +427,59 @@ BEGIN
   END IF;
 END;
 $acl$;
+
+DO $f79_candidate$
+DECLARE
+  v_signatures text[] := ARRAY[
+    'public.custom_access_token_hook(jsonb)',
+    'public.demander_presentation_standard()',
+    'public.lire_demandes_presentation_en_attente()',
+    'public.repondre_demande_presentation(uuid,text)',
+    'public.accepter_demande_presentation(uuid)',
+    'public.refuser_demande_presentation(uuid)'
+  ];
+  v_hashes text[] := ARRAY[
+    '21f14545a1adeead83a5e72eebf048e6',
+    'd8b88b455e81c26d6a6130ffe2df9d93',
+    '062e6445915c2a8e9345f31908907882',
+    '6a029cb96d66ce1c71efdc31fc516279',
+    '301ca2901aa0509dad8f08aa8cb10c2d',
+    'e0bb19cbb01ec602590eec4eb35caca3'
+  ];
+  v_index integer;
+  v_signature text;
+BEGIN
+  FOR v_index IN 1..array_length(v_signatures, 1) LOOP
+    v_signature := v_signatures[v_index];
+    IF NOT EXISTS (
+      SELECT 1
+      FROM pg_catalog.pg_proc p
+      WHERE p.oid = pg_catalog.to_regprocedure(v_signature)
+        AND p.prosecdef
+        AND pg_catalog.pg_get_userbyid(p.proowner) = 'postgres'
+        AND p.proconfig @> ARRAY['search_path=""']
+        AND pg_catalog.md5(p.prosrc) = v_hashes[v_index]
+        AND pg_catalog.obj_description(p.oid, 'pg_proc') LIKE
+          '%F79 candidate allowlist:%signature=' || v_signature || '; md5_prosrc=' || v_hashes[v_index] || ';%'
+        AND NOT pg_catalog.has_function_privilege('anon', p.oid, 'EXECUTE')
+        AND NOT pg_catalog.has_function_privilege('agent_ro', p.oid, 'EXECUTE')
+        AND NOT pg_catalog.has_function_privilege('service_role', p.oid, 'EXECUTE')
+    ) THEN
+      RAISE EXCEPTION '0080 F79 owner/path/hash/ACL postflight failed: %', v_signature;
+    END IF;
+  END LOOP;
+  IF NOT pg_catalog.has_function_privilege(
+       'supabase_auth_admin', 'public.custom_access_token_hook(jsonb)', 'EXECUTE'
+     ) OR pg_catalog.has_function_privilege(
+       'authenticated', 'public.custom_access_token_hook(jsonb)', 'EXECUTE'
+     ) OR pg_catalog.has_function_privilege(
+       'authenticated', 'public.repondre_demande_presentation(uuid,text)', 'EXECUTE'
+     ) OR NOT pg_catalog.has_function_privilege(
+       'authenticated', 'public.demander_presentation_standard()', 'EXECUTE'
+     ) THEN
+    RAISE EXCEPTION '0080 F79 execution ACL postflight failed';
+  END IF;
+END;
+$f79_candidate$;
 
 COMMIT;
