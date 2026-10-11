@@ -4868,9 +4868,14 @@ class _Traductions$admin$tirage$ar extends Traductions$admin$tirage$fr {
 	@override String get reserveTitre => 'هذه الشاشة مخصصة للإدارة';
 	@override String get reservePhrase => 'ليس لحسابكم حق الاطلاع على القرعات: هي مخصصة للإدارة حتى لا يستطيع أحد توقع من سيُراقَب. إن احتجتم إلى ذلك فاطلبوا الإذن من الإدارة.';
 	@override String get reglesTitre => 'قواعد القرعة';
-	@override String get reglesIntro => 'تُطبَّق هذه القواعد على القرعات القادمة. المهام الموزعة لا تتغير. يُسجَّل كل تعديل في سجل التدقيق.';
+	@override String get reglesIntro => 'تُطبَّق هذه القواعد على القرعات القادمة. المهام الموزعة لا تتغير. كل تسجيل ينشئ نسخة جديدة؛ تُحفظ النسخ السابقة ولا تتغير أبدًا، وتُسجَّل كل نسخة في سجل التدقيق.';
 	@override String get frequenceTitre => 'التواتر';
-	@override String get frequenceDetail => 'أقصى عدد من المهام يتلقاه المراقب في الأسبوع.';
+	@override String get frequenceDetail => 'أقصى عدد من المهام يتلقاه المراقب في الأسبوع، من 0 إلى 50. يطبّق الخادم هذا العدد.';
+	@override String versionEnVigueur({required Object n}) => 'القواعد السارية: النسخة ⁨${n}⁩';
+	@override String get aucuneVersion => 'لم تُسجَّل أي قاعدة بعد.';
+	@override String get zeroPhrase => 'مع القيمة 0، لا تُسحب أي حصة للمراقبة.';
+	@override String get nombreInvalide => 'أدخل عددًا صحيحًا من 0 إلى 50، أو اختر إحدى البطاقات.';
+	@override String enregistreesVersion({required Object n}) => 'سُجّلت القواعد، النسخة ⁨${n}⁩. تسري على السحوب القادمة.';
 	@override String missionsParSemaine({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
 		zero: 'لا مهمة في الأسبوع',
 		one: 'مهمة واحدة في الأسبوع',
@@ -17273,9 +17278,14 @@ extension on TraductionsAr {
 			'admin.tirage.reserveTitre' => 'هذه الشاشة مخصصة للإدارة',
 			'admin.tirage.reservePhrase' => 'ليس لحسابكم حق الاطلاع على القرعات: هي مخصصة للإدارة حتى لا يستطيع أحد توقع من سيُراقَب. إن احتجتم إلى ذلك فاطلبوا الإذن من الإدارة.',
 			'admin.tirage.reglesTitre' => 'قواعد القرعة',
-			'admin.tirage.reglesIntro' => 'تُطبَّق هذه القواعد على القرعات القادمة. المهام الموزعة لا تتغير. يُسجَّل كل تعديل في سجل التدقيق.',
+			'admin.tirage.reglesIntro' => 'تُطبَّق هذه القواعد على القرعات القادمة. المهام الموزعة لا تتغير. كل تسجيل ينشئ نسخة جديدة؛ تُحفظ النسخ السابقة ولا تتغير أبدًا، وتُسجَّل كل نسخة في سجل التدقيق.',
 			'admin.tirage.frequenceTitre' => 'التواتر',
-			'admin.tirage.frequenceDetail' => 'أقصى عدد من المهام يتلقاه المراقب في الأسبوع.',
+			'admin.tirage.frequenceDetail' => 'أقصى عدد من المهام يتلقاه المراقب في الأسبوع، من 0 إلى 50. يطبّق الخادم هذا العدد.',
+			'admin.tirage.versionEnVigueur' => ({required Object n}) => 'القواعد السارية: النسخة ⁨${n}⁩',
+			'admin.tirage.aucuneVersion' => 'لم تُسجَّل أي قاعدة بعد.',
+			'admin.tirage.zeroPhrase' => 'مع القيمة 0، لا تُسحب أي حصة للمراقبة.',
+			'admin.tirage.nombreInvalide' => 'أدخل عددًا صحيحًا من 0 إلى 50، أو اختر إحدى البطاقات.',
+			'admin.tirage.enregistreesVersion' => ({required Object n}) => 'سُجّلت القواعد، النسخة ⁨${n}⁩. تسري على السحوب القادمة.',
 			'admin.tirage.missionsParSemaine' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا مهمة في الأسبوع', one: 'مهمة واحدة في الأسبوع', two: 'مهمتان في الأسبوع', few: '⁨${n}⁩ مهام في الأسبوع', many: '⁨${n}⁩ مهمة في الأسبوع', other: '⁨${n}⁩ مهمة في الأسبوع', ), 
 			'admin.tirage.ponderationTitre' => 'الترجيح',
 			'admin.tirage.ponderationDetail' => 'كلما قوي الوزن زادت فرص سحب هذه الحصص. تبقى القرعة غير قابلة للتوقع على المعلم والمراقب معًا.',
@@ -17399,13 +17409,13 @@ extension on TraductionsAr {
 			'admin.bibliotheque.catalogue.colonnes.support' => 'المادة',
 			'admin.bibliotheque.catalogue.colonnes.type' => 'النوع',
 			'admin.bibliotheque.catalogue.colonnes.langue' => 'اللغة',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.catalogue.colonnes.categorie' => 'التصنيف',
 			'admin.bibliotheque.catalogue.colonnes.version' => 'الإصدار',
 			'admin.bibliotheque.catalogue.colonnes.publication' => 'النشر',
 			'admin.bibliotheque.catalogue.colonnes.droits' => 'الحقوق',
 			'admin.bibliotheque.catalogue.colonnes.visibilite' => 'الظهور',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.catalogue.colonnes.modifie' => 'آخر تعديل',
 			'admin.bibliotheque.catalogue.modifieLe' => ({required Object date}) => 'عُدّلت في ⁨${date}⁩',
 			'admin.bibliotheque.catalogue.videRecherche' => 'لا توجد نتائج',
@@ -17913,13 +17923,13 @@ extension on TraductionsAr {
 			'comptable.paiements.vide.invitation' => 'تظهر الالتزامات هنا بمجرد حسابها في المصدر.',
 			'comptable.paiements.vide.filtreMessage' => 'لا توجد دفعة تطابق عوامل التصفية هذه.',
 			'comptable.paiements.vide.filtreInvitation' => 'امسح عوامل التصفية لرؤية كل المدفوعات مجددًا.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.horsLigne' => 'غير متصل: لا تُرسَل أي دفعة دون شبكة. أعد الاتصال لتدفع.',
 			'comptable.paiements.detail.total' => 'الإجمالي المستحق',
 			'comptable.paiements.detail.lignes' => 'تفاصيل الحساب',
 			'comptable.paiements.detail.ligneTotal' => 'الإجمالي',
 			'comptable.paiements.detail.source' => ({required Object source}) => 'المصدر: ${source}',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.detail.auteur' => ({required Object auteur}) => 'أضافه ${auteur}',
 			'comptable.paiements.detail.voirSource' => 'عرض المصدر',
 			'comptable.paiements.detail.methode' => 'وسيلة الدفع',
@@ -18427,13 +18437,13 @@ extension on TraductionsAr {
 			'comptable.direction.reservePanneau.cadenceTitre' => 'الوتيرة',
 			'comptable.direction.reservePanneau.cadenceDetail' => 'متى تتم التغذية.',
 			'comptable.direction.reservePanneau.cadence.clotureCycle' => 'عند كل إقفال دورة',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.reservePanneau.cadence.hebdomadaire' => 'كل أسبوع',
 			'comptable.direction.reservePanneau.cadence.mensuelle' => 'كل شهر',
 			'comptable.direction.reservePanneau.cadence.apresEncaissementConsolide' => 'بعد كل مقبوض مُثبَّت',
 			'comptable.direction.reservePanneau.cadence.manuelle' => 'يدوية',
 			'comptable.direction.reservePanneau.seuilTitre' => 'التنبيه',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.reservePanneau.seuil' => 'حد التنبيه',
 			'comptable.direction.reservePanneau.seuilDetail' => 'دون هذه الحصة من الهدف، يُشار إلى الاحتياطي بأنه «دون الهدف». اتركه فارغًا لعدم تحديد أي حد.',
 			'comptable.direction.reservePanneau.seuilIndice' => 'بلا حد',
@@ -18941,13 +18951,13 @@ extension on TraductionsAr {
 			'attente.aucunDocument' => 'ليس عليك إرسال أي وثيقة.',
 			'attente.accesContact' => 'يمكن للأكاديمية فتحه لك: تواصل معها.',
 			'attente.actualiserCompte' => 'تحديث',
+			_ => null,
+		} ?? switch (path) {
 			'attente.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم يبق أي عنصر للتقديم.', one: 'بقي عنصر واحد للتقديم.', two: 'بقي عنصران للتقديم.', few: 'بقيت ⁨${n}⁩ عناصر للتقديم.', many: 'بقي ⁨${n}⁩ عنصرًا للتقديم.', other: 'بقي ⁨${n}⁩ عنصر للتقديم.', ), 
 			'attente.etatAFournir' => 'للتقديم',
 			'attente.prochaineEtape' => ({required Object etape}) => 'الخطوة التالية: ⁨${etape}⁩',
 			'attente.refuseDetail' => ({required Object element}) => 'لطلب التحقق من جديد، ابدأ بهذا العنصر: ⁨${element}⁩.',
 			'attente.refuseSansElement' => 'يمكنك التواصل مع الأكاديمية لمعرفة الخطوات المطلوبة.',
-			_ => null,
-		} ?? switch (path) {
 			'attente.illisible' => 'حالة ملفك لا تظهر الآن.',
 			'attente.horsLigne' => 'أنت غير متصل. ستظهر حالة ملفك بمجرد عودة الشبكة.',
 			'inscription.titre' => 'إنشاء حسابك',
@@ -19455,13 +19465,13 @@ extension on TraductionsAr {
 			'dossiers.inscritAujourdhui' => 'مسجَّل اليوم',
 			'dossiers.inscritDepuisUnJour' => 'مسجَّل منذ يوم',
 			'dossiers.inscritDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'مسجَّل منذ اليوم', one: 'مسجَّل منذ يوم واحد', two: 'مسجَّل منذ يومين', few: 'مسجَّل منذ ⁨${jours}⁩ أيام', many: 'مسجَّل منذ ⁨${jours}⁩ يومًا', other: 'مسجَّل منذ ⁨${jours}⁩ يوم', ), 
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.sansPiece' => 'لا وثيقة مودَعة',
 			'dossiers.sansPieceDetail' => 'أنشأ هذا الشخص حسابه وقبل العقود، لكنه لم يرسل وثيقة هويته بعد. لا شيء للتحقق إذن: الخطوة عنده.',
 			'dossiers.pieceNonVisible' => 'وثيقة خارج صلاحيتك',
 			'dossiers.pieceNonVisibleDetail' => 'أُودعت وثيقة بالفعل، لكن قاعدة الجنس تمنعك من الاطلاع عليها. يجب أن يتحقق منها موظف من جنس هذا الشخص.',
 			'dossiers.rienATrancher' => 'لا شيء للحسم الآن',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.apercu' => 'الوثيقة المودَعة',
 			'dossiers.apercuIndisponible' => 'المعاينة غير متاحة',
 			'dossiers.verifications' => 'عمليات التحقق',
@@ -19969,6 +19979,8 @@ extension on TraductionsAr {
 			'recherche.contexte.enseignantDeClasse' => ({required Object classe}) => 'معلّم فصل ⁨${classe}⁩',
 			'recherche.contexte.personneFoyer' => 'ملف من أسرتك',
 			'recherche.contexte.personneFoyerClasse' => ({required Object classe}) => 'ملف من أسرتك · ⁨${classe}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.contexte.personneParIdentifiant' => 'وُجد بمعرّفه',
 			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'وُجد بمعرّفه · ⁨${classe}⁩',
 			'recherche.contexte.canalStudio' => 'قناة الاستوديو',

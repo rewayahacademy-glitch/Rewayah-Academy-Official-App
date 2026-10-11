@@ -96,6 +96,13 @@ class CibleTirage {
   int get hashCode => Object.hash(id, type);
 }
 
+/// Les bornes du nombre de missions par semaine. Le serveur les applique
+/// (0 a 50) ; l'ecran ne les rappelle que par courtoisie.
+const int missionsMin = 0;
+
+/// Voir [missionsMin].
+const int missionsMax = 50;
+
 /// Les regles du tirage, fixees par la direction.
 @immutable
 class ReglesTirage {
@@ -104,9 +111,16 @@ class ReglesTirage {
     required this.missionsParSemaine,
     required this.ponderations,
     required this.cibles,
+    this.version = 0,
   });
 
-  /// Le nombre de missions qu'un controleur recoit par semaine, au plus.
+  /// La version de ces regles, rendue par le serveur : chaque enregistrement
+  /// en cree une nouvelle (ajout seul, les anciennes ne changent jamais).
+  /// 0 : aucune regle n'a encore ete enregistree.
+  final int version;
+
+  /// Le nombre de missions qu'un controleur recoit par semaine, au plus
+  /// (de [missionsMin] a [missionsMax], que le serveur applique).
   final int missionsParSemaine;
 
   /// Le poids de chaque critere.
@@ -121,6 +135,7 @@ class ReglesTirage {
     Map<CriterePonderation, NiveauPonderation>? ponderations,
     List<CibleTirage>? cibles,
   }) => ReglesTirage(
+    version: version,
     missionsParSemaine: missionsParSemaine ?? this.missionsParSemaine,
     ponderations: ponderations ?? this.ponderations,
     cibles: cibles ?? this.cibles,
@@ -331,7 +346,10 @@ sealed class ResultatRegles {
 /// Les regles sont enregistrees et journalisees.
 final class ReglesEnregistrees extends ResultatRegles {
   /// Cree le resultat.
-  const ReglesEnregistrees();
+  const ReglesEnregistrees({this.version = 0});
+
+  /// La version creee par le serveur (0 : non rendue).
+  final int version;
 }
 
 /// Le serveur a refuse les regles, avec son motif en clair.
