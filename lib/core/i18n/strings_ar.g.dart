@@ -86,6 +86,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$disponibilites$ar disponibilites = _Traductions$disponibilites$ar._(_root);
 	@override late final _Traductions$controleur$ar controleur = _Traductions$controleur$ar._(_root);
 	@override late final _Traductions$agent$ar agent = _Traductions$agent$ar._(_root);
+	@override late final _Traductions$suiviFamille$ar suiviFamille = _Traductions$suiviFamille$ar._(_root);
 	@override late final _Traductions$suiviDemandes$ar suiviDemandes = _Traductions$suiviDemandes$ar._(_root);
 	@override late final _Traductions$formulaire$ar formulaire = _Traductions$formulaire$ar._(_root);
 	@override late final _Traductions$motifs$ar motifs = _Traductions$motifs$ar._(_root);
@@ -1385,6 +1386,38 @@ class _Traductions$agent$ar extends Traductions$agent$fr {
 	@override String get bandeau => 'متابعة، للقراءة فقط';
 	@override String get bandeauMasque => 'الأسماء مخفية';
 	@override String bandeauExpire({required Object heure}) => 'حتى ⁨${heure}⁩';
+}
+
+// Path: suiviFamille
+class _Traductions$suiviFamille$ar extends Traductions$suiviFamille$fr {
+	_Traductions$suiviFamille$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'متابعة الطلبات';
+	@override String get contexte => 'يتقدّم كل طلب خطوة بعد خطوة. نُبلغكم عند كل انتقال.';
+	@override String carteTitre({required Object dePrenom}) => 'طلب ⁨${dePrenom}⁩';
+	@override String detailTitre({required Object dePrenom}) => 'متابعة طلب ⁨${dePrenom}⁩';
+	@override String etapeCourante({required Object etape}) => 'الخطوة الحالية: ⁨${etape}⁩';
+	@override String get toutFait => 'اكتملت كل الخطوات.';
+	@override String get voirSuivi => 'عرض المتابعة';
+	@override String get vide => 'لا طلبات في الوقت الحالي.';
+	@override String get faireDemande => 'تقديم طلب';
+	@override String get erreur => 'تعذّر تحميل المتابعة. أعيدوا المحاولة.';
+	@override String get sansDonnees => 'طلباتكم';
+	@override String get introuvable => 'هذا الطلب لم يعد موجودًا أو ليس من طلباتكم.';
+	@override String get retour => 'العودة إلى الطلبات';
+	@override String fuseau({required Object deVille}) => 'الأوقات المعروضة بتوقيت ⁨${deVille}⁩.';
+	@override String horodatage({required Object date, required Object heure}) => '⁨${date}⁩ في ⁨${heure}⁩';
+	@override String prevue({required Object date, required Object heure}) => 'مقررة ⁨${date}⁩ في ⁨${heure}⁩';
+	@override late final _Traductions$suiviFamille$etapes$ar etapes = _Traductions$suiviFamille$etapes$ar._(_root);
+	@override late final _Traductions$suiviFamille$etats$ar etats = _Traductions$suiviFamille$etats$ar._(_root);
+	@override late final _Traductions$suiviFamille$motif$ar motif = _Traductions$suiviFamille$motif$ar._(_root);
+	@override late final _Traductions$suiviFamille$intervalle$ar intervalle = _Traductions$suiviFamille$intervalle$ar._(_root);
+	@override late final _Traductions$suiviFamille$notification$ar notification = _Traductions$suiviFamille$notification$ar._(_root);
+	@override String etapeSurTotal({required Object n, required Object total, required Object etape}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩: ⁨${etape}⁩';
+	@override late final _Traductions$suiviFamille$close$ar close = _Traductions$suiviFamille$close$ar._(_root);
 }
 
 // Path: suiviDemandes
@@ -6956,6 +6989,99 @@ class _Traductions$controleur$controle$ar extends Traductions$controleur$control
 	@override String get erreur => 'تعذّرت قراءة زيارتك القادمة، غالبًا بسبب الاتصال أو خدمة غير متاحة مؤقتًا. أعد المحاولة بعد لحظة.';
 }
 
+// Path: suiviFamille.etapes
+class _Traductions$suiviFamille$etapes$ar extends Traductions$suiviFamille$etapes$fr {
+	_Traductions$suiviFamille$etapes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get envoyee => 'تم إرسال الطلب';
+	@override String get enAttente => 'في قائمة الانتظار';
+	@override String get classeCreee => 'تم إنشاء الفصل';
+	@override String get enseignantAffecte => 'تم تعيين المعلم';
+	@override String get eleveIntegre => 'الطالب مندمج في الفصل';
+	@override String get premiereSeance => 'الحصة الأولى';
+}
+
+// Path: suiviFamille.etats
+class _Traductions$suiviFamille$etats$ar extends Traductions$suiviFamille$etats$fr {
+	_Traductions$suiviFamille$etats$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get fait => 'تم';
+	@override String get enCours => 'جارية';
+	@override String get aVenir => 'قادمة';
+}
+
+// Path: suiviFamille.motif
+class _Traductions$suiviFamille$motif$ar extends Traductions$suiviFamille$motif$fr {
+	_Traductions$suiviFamille$motif$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get classesPleines => 'كل فصول هذا الموعد مكتملة. سنبلغكم حالما يتوفر مكان.';
+	@override String get aucunEnseignantLibre => 'لا يتوفر معلم في هذا الموعد حاليًا. سنبلغكم حالما يتغير ذلك.';
+	@override String get inconnu => 'طلبكم قيد الانتظار. سنبلغكم حالما يتقدم.';
+}
+
+// Path: suiviFamille.intervalle
+class _Traductions$suiviFamille$intervalle$ar extends Traductions$suiviFamille$intervalle$fr {
+	_Traductions$suiviFamille$intervalle$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get moinsHeure => 'بعد أقل من ساعة';
+	@override String heures({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'بعد أقل من ساعة',
+		one: 'بعد ساعة',
+		two: 'بعد ساعتين',
+		few: 'بعد ⁨${n}⁩ ساعات',
+		many: 'بعد ⁨${n}⁩ ساعة',
+		other: 'بعد ⁨${n}⁩ ساعة',
+	);
+	@override String jours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'في اليوم نفسه',
+		one: 'بعد يوم',
+		two: 'بعد يومين',
+		few: 'بعد ⁨${n}⁩ أيام',
+		many: 'بعد ⁨${n}⁩ يومًا',
+		other: 'بعد ⁨${n}⁩ يوم',
+	);
+}
+
+// Path: suiviFamille.notification
+class _Traductions$suiviFamille$notification$ar extends Traductions$suiviFamille$notification$fr {
+	_Traductions$suiviFamille$notification$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String enAttente({required Object dePrenom}) => 'طلب ⁨${dePrenom}⁩: في قائمة الانتظار';
+	@override String eleveIntegre({required Object dePrenom}) => 'طلب ⁨${dePrenom}⁩: الطالب مندمج في الفصل';
+	@override String premiereSeance({required Object dePrenom}) => 'طلب ⁨${dePrenom}⁩: تمت الحصة الأولى';
+	@override String close({required Object dePrenom, required Object motif}) => 'طلب ⁨${dePrenom}⁩: ⁨${motif}⁩';
+	@override String dejaEnClasse({required Object dePrenom}) => 'طلب ⁨${dePrenom}⁩: الطالب في فصل بالفعل، أُغلق الطلب';
+}
+
+// Path: suiviFamille.close
+class _Traductions$suiviFamille$close$ar extends Traductions$suiviFamille$close$fr {
+	_Traductions$suiviFamille$close$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get etat => 'أُغلق الطلب';
+	@override String suite({required Object prenom}) => 'يمكنكم اختيار موعد آخر لـ⁨${prenom}⁩.';
+	@override String get suiteSansChoix => 'لا شيء آخر مطلوب منكم.';
+	@override String choisirAutre({required Object prenom}) => 'اختيار موعد آخر لـ⁨${prenom}⁩';
+	@override late final _Traductions$suiviFamille$close$motif$ar motif = _Traductions$suiviFamille$close$motif$ar._(_root);
+}
+
 // Path: suiviDemandes.etapes
 class _Traductions$suiviDemandes$etapes$ar extends Traductions$suiviDemandes$etapes$fr {
 	_Traductions$suiviDemandes$etapes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -11942,6 +12068,21 @@ class _Traductions$dossiers$revue$etats$ar extends Traductions$dossiers$revue$et
 	@override String get decisionIndisponible => 'القرار غير متاح الآن.';
 	@override String get actualiserDossier => 'تحديث الملف';
 	@override String get refusNonAutorise => 'لا يمكن رفض هذا الملف في حالته الحالية.';
+}
+
+// Path: suiviFamille.close.motif
+class _Traductions$suiviFamille$close$motif$ar extends Traductions$suiviFamille$close$motif$fr {
+	_Traductions$suiviFamille$close$motif$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get retraitFamille => 'لقد سحبتم هذا الطلب.';
+	@override String get offreRetiree => 'لم يعد هذا الموعد مقترحًا.';
+	@override String get classeNonConstituee => 'تعذّر تكوين فصل هذا الموعد.';
+	@override String get refusDirection => 'لم تقبل الإدارة هذا الطلب.';
+	@override String dejaEnClasse({required Object prenom}) => 'لدى ⁨${prenom}⁩ مكان في فصل بالفعل: لم يعد هذا الطلب لازمًا.';
+	@override String get inconnu => 'أُغلق هذا الطلب.';
 }
 
 // Path: suiviDemandes.close.motif
@@ -20220,6 +20361,53 @@ extension on TraductionsAr {
 			'agent.bandeau' => 'متابعة، للقراءة فقط',
 			'agent.bandeauMasque' => 'الأسماء مخفية',
 			'agent.bandeauExpire' => ({required Object heure}) => 'حتى ⁨${heure}⁩',
+			'suiviFamille.titre' => 'متابعة الطلبات',
+			'suiviFamille.contexte' => 'يتقدّم كل طلب خطوة بعد خطوة. نُبلغكم عند كل انتقال.',
+			'suiviFamille.carteTitre' => ({required Object dePrenom}) => 'طلب ⁨${dePrenom}⁩',
+			'suiviFamille.detailTitre' => ({required Object dePrenom}) => 'متابعة طلب ⁨${dePrenom}⁩',
+			'suiviFamille.etapeCourante' => ({required Object etape}) => 'الخطوة الحالية: ⁨${etape}⁩',
+			'suiviFamille.toutFait' => 'اكتملت كل الخطوات.',
+			'suiviFamille.voirSuivi' => 'عرض المتابعة',
+			'suiviFamille.vide' => 'لا طلبات في الوقت الحالي.',
+			'suiviFamille.faireDemande' => 'تقديم طلب',
+			'suiviFamille.erreur' => 'تعذّر تحميل المتابعة. أعيدوا المحاولة.',
+			'suiviFamille.sansDonnees' => 'طلباتكم',
+			'suiviFamille.introuvable' => 'هذا الطلب لم يعد موجودًا أو ليس من طلباتكم.',
+			'suiviFamille.retour' => 'العودة إلى الطلبات',
+			'suiviFamille.fuseau' => ({required Object deVille}) => 'الأوقات المعروضة بتوقيت ⁨${deVille}⁩.',
+			'suiviFamille.horodatage' => ({required Object date, required Object heure}) => '⁨${date}⁩ في ⁨${heure}⁩',
+			'suiviFamille.prevue' => ({required Object date, required Object heure}) => 'مقررة ⁨${date}⁩ في ⁨${heure}⁩',
+			'suiviFamille.etapes.envoyee' => 'تم إرسال الطلب',
+			'suiviFamille.etapes.enAttente' => 'في قائمة الانتظار',
+			'suiviFamille.etapes.classeCreee' => 'تم إنشاء الفصل',
+			'suiviFamille.etapes.enseignantAffecte' => 'تم تعيين المعلم',
+			'suiviFamille.etapes.eleveIntegre' => 'الطالب مندمج في الفصل',
+			'suiviFamille.etapes.premiereSeance' => 'الحصة الأولى',
+			'suiviFamille.etats.fait' => 'تم',
+			'suiviFamille.etats.enCours' => 'جارية',
+			'suiviFamille.etats.aVenir' => 'قادمة',
+			'suiviFamille.motif.classesPleines' => 'كل فصول هذا الموعد مكتملة. سنبلغكم حالما يتوفر مكان.',
+			'suiviFamille.motif.aucunEnseignantLibre' => 'لا يتوفر معلم في هذا الموعد حاليًا. سنبلغكم حالما يتغير ذلك.',
+			'suiviFamille.motif.inconnu' => 'طلبكم قيد الانتظار. سنبلغكم حالما يتقدم.',
+			'suiviFamille.intervalle.moinsHeure' => 'بعد أقل من ساعة',
+			'suiviFamille.intervalle.heures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'بعد أقل من ساعة', one: 'بعد ساعة', two: 'بعد ساعتين', few: 'بعد ⁨${n}⁩ ساعات', many: 'بعد ⁨${n}⁩ ساعة', other: 'بعد ⁨${n}⁩ ساعة', ), 
+			'suiviFamille.intervalle.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'في اليوم نفسه', one: 'بعد يوم', two: 'بعد يومين', few: 'بعد ⁨${n}⁩ أيام', many: 'بعد ⁨${n}⁩ يومًا', other: 'بعد ⁨${n}⁩ يوم', ), 
+			'suiviFamille.notification.enAttente' => ({required Object dePrenom}) => 'طلب ⁨${dePrenom}⁩: في قائمة الانتظار',
+			'suiviFamille.notification.eleveIntegre' => ({required Object dePrenom}) => 'طلب ⁨${dePrenom}⁩: الطالب مندمج في الفصل',
+			'suiviFamille.notification.premiereSeance' => ({required Object dePrenom}) => 'طلب ⁨${dePrenom}⁩: تمت الحصة الأولى',
+			'suiviFamille.notification.close' => ({required Object dePrenom, required Object motif}) => 'طلب ⁨${dePrenom}⁩: ⁨${motif}⁩',
+			'suiviFamille.notification.dejaEnClasse' => ({required Object dePrenom}) => 'طلب ⁨${dePrenom}⁩: الطالب في فصل بالفعل، أُغلق الطلب',
+			'suiviFamille.etapeSurTotal' => ({required Object n, required Object total, required Object etape}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩: ⁨${etape}⁩',
+			'suiviFamille.close.etat' => 'أُغلق الطلب',
+			'suiviFamille.close.suite' => ({required Object prenom}) => 'يمكنكم اختيار موعد آخر لـ⁨${prenom}⁩.',
+			'suiviFamille.close.suiteSansChoix' => 'لا شيء آخر مطلوب منكم.',
+			'suiviFamille.close.choisirAutre' => ({required Object prenom}) => 'اختيار موعد آخر لـ⁨${prenom}⁩',
+			'suiviFamille.close.motif.retraitFamille' => 'لقد سحبتم هذا الطلب.',
+			'suiviFamille.close.motif.offreRetiree' => 'لم يعد هذا الموعد مقترحًا.',
+			'suiviFamille.close.motif.classeNonConstituee' => 'تعذّر تكوين فصل هذا الموعد.',
+			'suiviFamille.close.motif.refusDirection' => 'لم تقبل الإدارة هذا الطلب.',
+			'suiviFamille.close.motif.dejaEnClasse' => ({required Object prenom}) => 'لدى ⁨${prenom}⁩ مكان في فصل بالفعل: لم يعد هذا الطلب لازمًا.',
+			'suiviFamille.close.motif.inconnu' => 'أُغلق هذا الطلب.',
 			'suiviDemandes.titre' => 'متابعة طلبات المواعيد',
 			'suiviDemandes.contexte' => 'يتقدّم كل طلب خطوة بعد خطوة. نُبلغكم عند كل انتقال.',
 			'suiviDemandes.carteTitre' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩',

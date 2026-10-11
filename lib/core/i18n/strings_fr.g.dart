@@ -15567,17 +15567,17 @@ class Traductions$suiviFamille$intervalle$fr {
 	/// fr: 'Moins d'une heure plus tard'
 	String get moinsHeure => 'Moins d\'une heure plus tard';
 
-	/// fr: '1 heure plus tard'
-	String get heure => '1 heure plus tard';
+	/// fr: '(one) {{n} heure plus tard} (other) {{n} heures plus tard}'
+	String heures({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} heure plus tard',
+		other: '${n} heures plus tard',
+	);
 
-	/// fr: '{n} heures plus tard'
-	String heures({required Object n}) => '${n} heures plus tard';
-
-	/// fr: '1 jour plus tard'
-	String get jour => '1 jour plus tard';
-
-	/// fr: '{n} jours plus tard'
-	String jours({required Object n}) => '${n} jours plus tard';
+	/// fr: '(one) {{n} jour plus tard} (other) {{n} jours plus tard}'
+	String jours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} jour plus tard',
+		other: '${n} jours plus tard',
+	);
 }
 
 // Path: suiviFamille.notification
@@ -37617,10 +37617,8 @@ extension on Traductions {
 			'suiviFamille.motif.aucunEnseignantLibre' => 'Aucun enseignant n\'est libre sur ce créneau pour le moment. Vous serez prévenu dès que ce changera.',
 			'suiviFamille.motif.inconnu' => 'Votre demande est en attente. Vous serez prévenu dès qu\'elle avance.',
 			'suiviFamille.intervalle.moinsHeure' => 'Moins d\'une heure plus tard',
-			'suiviFamille.intervalle.heure' => '1 heure plus tard',
-			'suiviFamille.intervalle.heures' => ({required Object n}) => '${n} heures plus tard',
-			'suiviFamille.intervalle.jour' => '1 jour plus tard',
-			'suiviFamille.intervalle.jours' => ({required Object n}) => '${n} jours plus tard',
+			'suiviFamille.intervalle.heures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} heure plus tard', other: '${n} heures plus tard', ), 
+			'suiviFamille.intervalle.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} jour plus tard', other: '${n} jours plus tard', ), 
 			'suiviFamille.notification.enAttente' => ({required Object dePrenom}) => 'Demande ${dePrenom} : en liste d\'attente',
 			'suiviFamille.notification.eleveIntegre' => ({required Object dePrenom}) => 'Demande ${dePrenom} : élève intégré à la classe',
 			'suiviFamille.notification.premiereSeance' => ({required Object dePrenom}) => 'Demande ${dePrenom} : première séance effectuée',
@@ -37756,10 +37754,10 @@ extension on Traductions {
 			'argent.soldes.totalDetail' => 'Une lecture : chaque solde reste celui de son profil.',
 			'argent.soldes.aPayer' => 'À payer ce mois',
 			'argent.soldes.profilsFinances' => 'Profils financés',
-			_ => null,
-		} ?? switch (path) {
 			'argent.soldes.profilsFinancesValeur' => ({required Object n, required Object total}) => '${n} sur ${total}',
 			'argent.soldes.paiements' => 'Paiements du mois',
+			_ => null,
+		} ?? switch (path) {
 			'argent.acces.enfantTitre' => 'Accès à cette classe temporairement indisponible',
 			'argent.acces.enfantMessage' => 'Votre tuteur peut gérer l\'accès.',
 			'argent.acces.regulariserTitre' => 'Accès à régulariser',
@@ -38270,10 +38268,10 @@ extension on Traductions {
 			'com.studio.aujourdhui.ouvrirDans' => ({required Object module, required Object libelle}) => 'Ouvrir dans ${module} : ${libelle}',
 			'com.studio.aujourdhui.modules.studio' => _root.com.socle.lexique.studio,
 			'com.studio.aujourdhui.modules.finance' => 'Finance',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.aujourdhui.modules.planning' => 'Planning',
 			'com.studio.aujourdhui.modules.dossiers' => 'Dossiers',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.aujourdhui.modules.classes' => 'Classes',
 			'com.studio.aujourdhui.modules.admissions' => 'Admissions',
 			'com.studio.aujourdhui.modules.demandes' => 'Demandes',
@@ -38784,10 +38782,10 @@ extension on Traductions {
 			'comptable.statuts.obligation.aApprouver' => 'À approuver',
 			'comptable.statuts.obligation.approuvee' => 'Approuvée',
 			'comptable.statuts.obligation.refusee' => 'Refusée',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.obligation.payable' => 'Payable',
 			'comptable.statuts.obligation.payee' => 'Payée',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.obligation.annulee' => 'Annulée',
 			'comptable.statuts.remboursement.demande' => 'Demandé',
 			'comptable.statuts.remboursement.approbationRequise' => 'Approbation requise',
@@ -39298,10 +39296,10 @@ extension on Traductions {
 			'comptable.contractuels.colonneEcheance' => 'Échéance',
 			'comptable.contractuels.colonneStatut' => 'Statut',
 			'comptable.contractuels.typeRecurrente' => 'Récurrente',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.typePonctuelle' => 'Ponctuelle',
 			'comptable.contractuels.echeanceLe' => ({required Object date}) => 'Échéance : ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.payer' => 'Payer',
 			'comptable.contractuels.payerLecteur' => ({required Object objet}) => 'Payer l\'obligation ${objet}',
 			'comptable.contractuels.approuver' => 'Approuver',
