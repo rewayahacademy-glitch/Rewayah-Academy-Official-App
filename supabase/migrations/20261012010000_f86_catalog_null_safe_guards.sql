@@ -61,13 +61,13 @@ END
 $f86_patch$;
 
 COMMENT ON FUNCTION public.annonces_observation(uuid) IS
-  'F86 candidate allowlist: signature=public.annonces_observation(uuid); md5_functiondef=A_CALCULER; guard_type=NULL_SAFE_OWNERSHIP; owner=postgres; search_path=""; reviewer=Claude; source=catalogue-canon-fixes@74be57a2.';
+  'F86 candidate allowlist: signature=public.annonces_observation(uuid); md5_functiondef=741a3984a5c2f280c06241c724e52b83; guard_type=NULL_SAFE_OWNERSHIP; owner=postgres; search_path=""; reviewer=Claude; source=catalogue-canon-fixes@74be57a2.';
 COMMENT ON FUNCTION public.transmettre_student_concern(uuid,text) IS
-  'F86 candidate allowlist: signature=public.transmettre_student_concern(uuid,text); md5_functiondef=A_CALCULER; guard_type=NULL_SAFE_TARGET_INTEGRITY; owner=postgres; search_path=""; reviewer=Claude; source=catalogue-canon-fixes@74be57a2.';
+  'F86 candidate allowlist: signature=public.transmettre_student_concern(uuid,text); md5_functiondef=25e186c690932a686da4bb644aae1023; guard_type=NULL_SAFE_TARGET_INTEGRITY; owner=postgres; search_path=""; reviewer=Claude; source=catalogue-canon-fixes@74be57a2.';
 COMMENT ON FUNCTION public.creer_classe_depuis_regroupement(text,uuid,text) IS
-  'F86 candidate allowlist: signature=public.creer_classe_depuis_regroupement(text,uuid,text); md5_functiondef=A_CALCULER; guard_type=NULL_ARRAY_DEFENSIVE; owner=postgres; search_path=""; reviewer=Claude; source=catalogue-canon-fixes@74be57a2.';
+  'F86 candidate allowlist: signature=public.creer_classe_depuis_regroupement(text,uuid,text); md5_functiondef=a5f142c717dcc4e9559744b168ae113d; guard_type=NULL_ARRAY_DEFENSIVE; owner=postgres; search_path=""; reviewer=Claude; source=catalogue-canon-fixes@74be57a2.';
 COMMENT ON FUNCTION public.creer_offre_horaire(text,text,text,smallint[],smallint,smallint) IS
-  'F86 candidate allowlist: signature=public.creer_offre_horaire(text,text,text,smallint[],smallint,smallint); md5_functiondef=A_CALCULER; guard_type=NULL_CONFIG_DEFENSIVE; owner=postgres; search_path=""; reviewer=Claude; source=catalogue-canon-fixes@74be57a2.';
+  'F86 candidate allowlist: signature=public.creer_offre_horaire(text,text,text,smallint[],smallint,smallint); md5_functiondef=4d8a856e87355b5fcba607603aa4ab97; guard_type=NULL_CONFIG_DEFENSIVE; owner=postgres; search_path=""; reviewer=Claude; source=catalogue-canon-fixes@74be57a2.';
 
 DO $f86_postflight$
 DECLARE
