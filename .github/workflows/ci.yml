@@ -10,6 +10,14 @@ on:
   workflow_dispatch:
 
 jobs:
+  security-definer-gate-tests:
+    name: Tests unitaires du gate SECURITY DEFINER
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tests unitaires du scanner et de la vérification d’allowlist
+        run: python3 -B -m unittest discover -s tool/security_definer_gate/tests -p 'test_*.py' -v
+
   migrate-check:
     name: Migrations applicables (Postgres 17)
     # Le SQL et les fonctions Edge ne sont controles que vers `main` : les
