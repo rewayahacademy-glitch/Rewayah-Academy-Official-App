@@ -169,7 +169,7 @@ DECLARE
   v_pret boolean;
   v_jours smallint[];
   v_heures smallint[];
-  v_regroupement text;
+  v_regroupement uuid;
   v_offre uuid;
   v_result uuid;
   v_groupe uuid;
@@ -268,10 +268,10 @@ BEGIN
   END IF;
 
   v_groupe := public.creer_classe_depuis_regroupement(
-    v_regroupement, 'c1200000-0000-0000-0000-000000000001', 'Classe F1 C-12'
+    v_regroupement, 'c1200000-0000-0000-0000-000000000001'::uuid, 'Classe F1 C-12'
   );
   v_groupe_rejoue := public.creer_classe_depuis_regroupement(
-    v_regroupement, 'c1200000-0000-0000-0000-000000000001', 'Classe F1 C-12'
+    v_regroupement, 'c1200000-0000-0000-0000-000000000001'::uuid, 'Classe F1 C-12'
   );
   IF v_groupe_rejoue <> v_groupe
      OR NOT EXISTS (
