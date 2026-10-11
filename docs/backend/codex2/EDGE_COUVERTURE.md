@@ -18,6 +18,8 @@ Execution de tous les fichiers: `deno test --no-check --allow-env ...` -> 20/20 
 
 `deno test` avec verification TypeScript reste en echec sur le code existant `supabase/functions/_shared/livekit.ts:104`: `TrackSource[]` n'est pas assignable au type de chaines attendu par la dependance. Le test `create-room-token` a egalement revele que le cas autorise avec publication audio echoue a l'execution dans cette conversion. Aucun handler n'est modifie par ce lot.
 
-Relance lors de la finalisation X2-05 (Deno 2.9.6 sous Windows, `--cached-only`): le processus panique avant le lancement des tests (`Unexpected client pipe failure`, `cli/tools/test/channel.rs:252`). Le résultat 20/20 ci-dessus correspond à l'exécution antérieure du lot; cette relance n'a pas pu le reproduire. Aucun accès réseau n'est permis par cette relance.
+Sous le sandbox Windows, Deno 2.9.6 panique avant les tests (`Unexpected client pipe failure`, `cli/tools/test/channel.rs:252`). L'exécution directe autorisée, limitée aux neuf fichiers `index_test.ts` en `--cached-only --no-check`, passe 20/20 après les assertions complémentaires. Aucun accès réseau ni secret réel n'est utilisé.
 
-À l'audit final, trois assertions supplémentaires ont été ajoutées dans les tests existants: corps JSON invalide authentifié de `creer-profil-enfant` -> 400; absence de jeton sur `piece-identite-confirme` et `piece-identite-depot` -> 401. Ces assertions sont présentes dans le worktree mais n'ont pas pu être exécutées après leur ajout, car Deno panique avant de lancer les tests.
+La commande standard avec vérification TypeScript activée échoue sur le défaut préexistant `supabase/functions/_shared/livekit.ts:104`: `("microphone" | "camera" | "screen_share")[]` n'est pas assignable à `TrackSource[]` dans `livekit-server-sdk`.
+
+Trois assertions complémentaires ont été ajoutées et exécutées: corps JSON invalide authentifié de `creer-profil-enfant` -> 400; absence de jeton sur `piece-identite-confirme` et `piece-identite-depot` -> 401.
