@@ -53,5 +53,15 @@ String libelleTypeCible(TypeCible type) => switch (type) {
   TypeCible.enseignant => t.admin.tirage.cibleEnseignant,
 };
 
-/// Les frequences proposees : une, deux ou trois missions par semaine.
-const List<int> frequencesProposees = <int>[1, 2, 3];
+/// Les frequences proposees ; la carte « Autre » prend tout entier de
+/// [missionsMin] a [missionsMax].
+const List<int> frequencesProposees = <int>[0, 1, 2, 3, 5, 10];
+
+/// Le nombre saisi, ou `null` s'il n'est pas un entier de [missionsMin] a
+/// [missionsMax] (courtoisie : le serveur decide).
+int? lireMissions(String? texte) {
+  final String s = (texte ?? '').trim();
+  if (!RegExp(r'^\d{1,3}$').hasMatch(s)) return null;
+  final int n = int.parse(s);
+  return n < missionsMin || n > missionsMax ? null : n;
+}
