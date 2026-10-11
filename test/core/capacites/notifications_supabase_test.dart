@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:rewayah_academy/core/capacites/notifications_supabase.dart';
 import 'package:rewayah_academy/core/capacites/port_notifications.dart';
-import 'package:rewayah_academy/core/communications/modeles_communication.dart';
 
 void main() {
   group('notificationDepuis', () {
@@ -40,28 +39,31 @@ void main() {
       expect(resolvedParams!.containsKey('groupe_id'), isFalse);
     });
 
-    test('maps read replacement notices to information without losing type', () {
-      final NotificationTuteur notification = notificationDepuis(
-        _row(
-          evenement: 'remplacement_propose',
-          destination: '/enseignant/journee/remplacements',
-          luLe: '2026-10-10T12:00:00Z',
-        ),
-        titrePour: (String _, Map<String, dynamic> __) =>
-            const NotificationContenu(titre: 'Remplacement proposé'),
-      );
+    test(
+      'maps read replacement notices to information without losing type',
+      () {
+        final NotificationTuteur notification = notificationDepuis(
+          _row(
+            evenement: 'remplacement_propose',
+            destination: '/enseignant/journee/remplacements',
+            luLe: '2026-10-10T12:00:00Z',
+          ),
+          titrePour: (String _, Map<String, dynamic> _) =>
+              const NotificationContenu(titre: 'Remplacement proposé'),
+        );
 
-      expect(notification.type, TypeNotification.remplacement);
-      expect(notification.lue, isTrue);
-      expect(notification.niveau, NiveauAttention.information);
-      expect(notification.destination, '/enseignant/journee/remplacements');
-    });
+        expect(notification.type, TypeNotification.remplacement);
+        expect(notification.lue, isTrue);
+        expect(notification.niveau, NiveauAttention.information);
+        expect(notification.destination, '/enseignant/journee/remplacements');
+      },
+    );
 
     test('rejects event values outside the database constraint', () {
       expect(
         () => notificationDepuis(
           _row(evenement: 'demande_presentation'),
-          titrePour: (String _, Map<String, dynamic> __) =>
+          titrePour: (String _, Map<String, dynamic> _) =>
               const NotificationContenu(titre: 'Inattendu'),
         ),
         throwsFormatException,
@@ -72,7 +74,7 @@ void main() {
       expect(
         () => notificationDepuis(
           _row(luLe: 'pas-une-date'),
-          titrePour: (String _, Map<String, dynamic> __) =>
+          titrePour: (String _, Map<String, dynamic> _) =>
               const NotificationContenu(titre: 'Demande reçue'),
         ),
         throwsFormatException,
@@ -82,7 +84,7 @@ void main() {
     test('drops destinations outside the table allowlist', () {
       final NotificationTuteur notification = notificationDepuis(
         _row(destination: 'https://example.invalid'),
-        titrePour: (String _, Map<String, dynamic> __) =>
+        titrePour: (String _, Map<String, dynamic> _) =>
             const NotificationContenu(titre: 'Demande reçue'),
       );
 

@@ -40,46 +40,43 @@ create policy notifications_destinataire_lecture
     )
   );
 
-revoke all on public.notifications from public, anon, authenticated, agent_ro;
-grant select on public.notifications to authenticated;
+create policy notifications_destinataire_accuse
+  on public.notifications
+  for update to authenticated
+  using (
+    coalesce(
+      public.app_account_valid()
+      and destinataire = auth.uid(),
+      false
+    )
+  )
+  with check (
+    coalesce(
+      public.app_account_valid()
+      and destinataire = auth.uid(),
+      false
+    )
+  );
 
-create or replace function public.marquer_notification_lue(p_notification_id uuid)
-returns void
+create function public.notifications_accuse_serveur()
+returns trigger
 language plpgsql
-security definer
+security invoker
 set search_path = ''
 as $function$
-declare
-  v_rows integer;
 begin
-  if not coalesce(
-    p_notification_id is not null
-    and public.app_account_valid()
-    and exists (
-      select 1
-        from public.notifications n
-       where n.id = p_notification_id
-         and n.destinataire = auth.uid()
-    ),
-    false
-  ) then
-    raise exception 'notification inaccessible' using errcode = '42501';
-  end if;
-
-  update public.notifications
-     set lu_le = coalesce(lu_le, pg_catalog.now())
-   where id = p_notification_id
-     and destinataire = auth.uid();
-  get diagnostics v_rows = row_count;
-
-  if v_rows <> 1 then
-    raise exception 'notification inaccessible' using errcode = '42501';
-  end if;
+  new.lu_le := coalesce(old.lu_le, pg_catalog.now());
+  return new;
 end;
 $function$;
 
-revoke all on function public.marquer_notification_lue(uuid)
-  from public, anon, agent_ro;
-grant execute on function public.marquer_notification_lue(uuid)
-  to authenticated;
+create trigger notifications_accuse_serveur
+before update of lu_le on public.notifications
+for each row execute function public.notifications_accuse_serveur();
+
+revoke all on public.notifications from public, anon, authenticated, agent_ro;
+grant select on public.notifications to authenticated;
+grant update (lu_le) on public.notifications to authenticated;
+revoke all on function public.notifications_accuse_serveur()
+  from public, anon, authenticated, agent_ro;
 commit;

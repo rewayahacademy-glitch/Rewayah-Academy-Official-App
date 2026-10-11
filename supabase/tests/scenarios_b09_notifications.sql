@@ -43,17 +43,26 @@ declare
 begin
   if not pg_catalog.has_table_privilege('authenticated', 'public.notifications', 'SELECT')
      or pg_catalog.has_table_privilege('authenticated', 'public.notifications', 'INSERT')
-     or pg_catalog.has_table_privilege('authenticated', 'public.notifications', 'UPDATE')
      or pg_catalog.has_table_privilege('authenticated', 'public.notifications', 'DELETE')
+     or not pg_catalog.has_column_privilege(
+       'authenticated', 'public.notifications', 'lu_le', 'UPDATE')
+     or pg_catalog.has_column_privilege(
+       'authenticated', 'public.notifications', 'params', 'UPDATE')
      or pg_catalog.has_table_privilege('anon', 'public.notifications', 'SELECT')
      or pg_catalog.has_table_privilege('agent_ro', 'public.notifications', 'SELECT')
-     or not pg_catalog.has_function_privilege(
-       'authenticated', 'public.marquer_notification_lue(uuid)', 'EXECUTE')
      or pg_catalog.has_function_privilege(
-       'anon', 'public.marquer_notification_lue(uuid)', 'EXECUTE')
-     or pg_catalog.has_function_privilege(
-       'agent_ro', 'public.marquer_notification_lue(uuid)', 'EXECUTE') then
-    raise exception 'B-09: table or function privileges do not match the contract';
+       'authenticated', 'public.notifications_accuse_serveur()', 'EXECUTE')
+     or not exists (
+       select 1
+         from pg_catalog.pg_proc p
+         join pg_catalog.pg_namespace n on n.oid = p.pronamespace
+        where n.nspname = 'public'
+          and p.proname = 'notifications_accuse_serveur'
+          and p.prorettype = 'trigger'::pg_catalog.regtype
+          and not p.prosecdef
+          and p.proconfig @> array['search_path=""']
+     ) then
+    raise exception 'B-09: table or trigger function privileges do not match the contract';
   end if;
 
   select count(*) into v_count from public.notifications;
@@ -61,29 +70,25 @@ begin
     raise exception 'B-09: recipient must see only their own notification';
   end if;
 
-  begin
-    perform public.marquer_notification_lue(
-      'b09fffff-0000-0000-0000-000000000003'
-    );
-    raise exception 'B-09: a recipient marked another profile notification as read';
-  exception when insufficient_privilege then
-    null;
-  end;
+  update public.notifications set lu_le = '2000-01-01T00:00:00Z'
+   where id = 'b09fffff-0000-0000-0000-000000000003';
+  if found then
+    raise exception 'B-09: a recipient updated another profile notification';
+  end if;
+
+  update public.notifications set lu_le = '2000-01-01T00:00:00Z'
+   where id = 'b09fffff-0000-0000-0000-000000000099';
+  if found then
+    raise exception 'B-09: a recipient updated an unknown notification';
+  end if;
+
+  update public.notifications set lu_le = '2000-01-01T00:00:00Z'
+   where id = 'b09fffff-0000-0000-0000-000000000002';
 
   begin
-    perform public.marquer_notification_lue(
-      'b09fffff-0000-0000-0000-000000000099'
-    );
-    raise exception 'B-09: a recipient marked an unknown notification as read';
-  exception when insufficient_privilege then
-    null;
-  end;
-
-  begin
-    update public.notifications
-       set lu_le = pg_catalog.now()
+    update public.notifications set params = '{"changed":true}'
      where id = 'b09fffff-0000-0000-0000-000000000002';
-    raise exception 'B-09: direct table update was accepted';
+    raise exception 'B-09: client changed notification content';
   exception when insufficient_privilege then
     null;
   end;
@@ -96,9 +101,8 @@ begin
     null;
   end;
 
-  perform public.marquer_notification_lue(
-    'b09fffff-0000-0000-0000-000000000002'
-  );
+  update public.notifications set lu_le = '2099-01-01T00:00:00Z'
+   where id = 'b09fffff-0000-0000-0000-000000000002';
 end
 $b09_recipient_only$;
 
@@ -115,6 +119,9 @@ begin
   if v_read_at is null or v_other_read_at is not null then
     raise exception 'B-09: read acknowledgement changed the wrong row';
   end if;
+  if v_read_at >= '2099-01-01T00:00:00Z'::timestamptz then
+    raise exception 'B-09: client controlled the server read timestamp';
+  end if;
 end
 $b09_read_marker$;
 
@@ -128,14 +135,6 @@ begin
     null;
   end;
 
-  begin
-    perform public.marquer_notification_lue(
-      'b09fffff-0000-0000-0000-000000000002'
-    );
-    raise exception 'B-09: anonymous read acknowledgement was accepted';
-  exception when insufficient_privilege then
-    null;
-  end;
 end
 $b09_anonymous_denied$;
 
