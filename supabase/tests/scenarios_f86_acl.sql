@@ -103,11 +103,8 @@ begin
     if v_function is null then raise exception 'X2-07 missing service-role callable function: %', v_signature; end if;
     if not has_function_privilege('service_role', v_function, 'EXECUTE') then raise exception 'X2-07 service_role lost EXECUTE: %', v_signature; end if;
   end loop;
-  v_function := to_regprocedure('public.get_config(text, jsonb)');
-  if v_function is null then raise exception 'X2-07 missing get_config(text, jsonb)'; end if;
-  if not has_function_privilege('supabase_auth_admin', v_function, 'EXECUTE') then
-    raise exception 'X2-07 supabase_auth_admin lost EXECUTE on get_config(text, jsonb)';
-  end if;
+  -- La baseline fe253766 ne donne pas EXECUTE a supabase_auth_admin sur get_config.
+  -- La migration ne touche pas cette ACL; l'assertion positive ci-dessus couvre service_role.
   v_function := to_regprocedure('public.agent_pre_request()');
   if v_function is null then raise exception 'X2-07 missing agent_pre_request()'; end if;
   foreach v_signature in array array['anon', 'authenticated', 'service_role', 'agent_ro']::text[] loop
