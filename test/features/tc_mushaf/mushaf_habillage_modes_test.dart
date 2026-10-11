@@ -205,9 +205,11 @@ void main() {
               tester.getSize(find.byKey(MushafPage.commandesKey)).height,
               lessThanOrEqualTo(48),
             );
+            // CORAN-320-FOND-1 : l'en-tete porte maintenant les deux boutons
+            // de taille ; son titre peut passer sur deux lignes a 320 x2.
             expect(
               tester.getSize(find.byKey(MushafPage.enteteKey)).height,
-              lessThanOrEqualTo(48 + 8),
+              lessThanOrEqualTo(48 + 16),
             );
             expect(find.text(t.eleve.coran.agrandir), findsNothing);
             // Le juz, que ces rendus n'ont nulle part ailleurs.
@@ -228,8 +230,8 @@ void main() {
       }
     }
 
-    testWidgets('le panneau « Mode de lecture » deplie le reglage de taille '
-        'en lecture agrandie, et il agit', (WidgetTester tester) async {
+    testWidgets('le reglage de taille est dans l en-tete, le panneau dit la '
+        'valeur', (WidgetTester tester) async {
       final List<String> erreurs = await monter(
         tester,
         mode: ModeRenduCoran.versetAgrandi,
@@ -237,22 +239,12 @@ void main() {
         echelle: 2,
       );
       expect(erreurs, isEmpty);
-      await tester.tap(find.byKey(_options));
+      // CORAN-320-FOND-1 : les deux boutons sont dans l'en-tete, sans ouvrir
+      // « Mode de lecture ».
+      expect(find.byKey(MushafPage.agrandirKey), findsOneWidget);
+      await tester.tap(find.byKey(MushafPage.agrandirKey));
       await tester.pump();
-      // Le reglage est dans le panneau de l'en-tete, pas dans la pagination.
-      expect(
-        find.descendant(
-          of: find.byKey(MushafPage.enteteKey),
-          matching: find.text(t.eleve.coran.reduire),
-        ),
-        findsOneWidget,
-      );
-      expect(find.text(t.eleve.coran.reduire), findsOneWidget);
-      expect(
-        find.textContaining(t.tc.coran.zoom.valeur(pourcent: 100)),
-        findsOneWidget,
-      );
-      await tester.tap(find.text(t.eleve.coran.agrandir));
+      await tester.tap(find.byKey(_options));
       await tester.pump();
       expect(
         find.textContaining(t.tc.coran.zoom.valeur(pourcent: 120)),

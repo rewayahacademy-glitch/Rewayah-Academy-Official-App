@@ -127,6 +127,10 @@ void main() {
       await tester.pumpWidget(ecran());
       await poser(tester);
 
+      // CORAN-320-FOND-1 : le telephone a l'habillage serre a toute echelle ;
+      // la mention est dans le panneau « Mode de lecture ».
+      await tester.tap(find.byKey(MushafPage.optionsKey));
+      await poser(tester);
       expect(find.text(t.tc.coran.zoom.renvoiLectureAgrandie), findsOneWidget);
     });
   });
