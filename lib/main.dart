@@ -10,6 +10,8 @@ import 'core/agent/session_agent.dart';
 import 'core/capacites/classes_foyer_supabase.dart';
 import 'core/capacites/port_classes_foyer.dart';
 import 'core/capacites/revue_dossiers_depuis_validation.dart';
+import 'core/controle/port_tirage_controle.dart';
+import 'core/controle/port_tirage_controle_supabase.dart';
 import 'core/config/ecran_configuration_absente.dart';
 import 'core/config/env.dart';
 import 'core/i18n/langue_demarrage.dart';
@@ -32,6 +34,9 @@ import 'features/demo/repere_demonstration.dart';
 List<Override> _surchargesAppReelle() => <Override>[
   portClassesFoyerProvider.overrideWithValue(
     ClassesFoyerSupabase(Supabase.instance.client),
+  ),
+  portTirageControleProvider.overrideWithValue(
+    PortTirageControleSupabase(Supabase.instance.client),
   ),
   surchargeRevueDossiersProduction,
 ];
