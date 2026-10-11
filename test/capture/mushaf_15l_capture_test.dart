@@ -33,6 +33,7 @@ void main() {
               page: page,
               taille: taille,
               theme: theme,
+              ecranComplet: true,
             );
             expect(tester.takeException(), isNull);
             debugPrint(
@@ -59,6 +60,7 @@ void main() {
           taille: const Size(390, 844),
           theme: theme,
           miseEnPage: false,
+          ecranComplet: true,
         );
         expect(tester.takeException(), isNull);
         debugPrint(

@@ -15,11 +15,15 @@ import 'package:rewayah_academy/core/tc_coran/donnees/layout_madina_15.g.dart';
 import 'package:rewayah_academy/core/tc_coran/etat_lecture_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/layout_lignes_indisponible.dart';
 import 'package:rewayah_academy/core/tc_coran/layout_madina_15.dart';
+import 'package:rewayah_academy/core/tc_coran/navigation_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/port_corpus_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/port_layout_mushaf.dart';
+import 'package:rewayah_academy/features/tc_mushaf/mushaf_page.dart';
 import 'package:rewayah_academy/features/tc_mushaf/vue_page_mushaf.dart';
 
 import '../capture/outil_capture.dart';
+import '../teaching_core/c/faux/faux_corpus_coran.dart'
+    show FauxNavigationCoran;
 
 /// Charge UthmanicHafs sous le nom de la famille, comme le ferait `pubspec`.
 Future<void> chargerPoliceMadina15() async {
@@ -134,18 +138,25 @@ Future<void> monterPageMadina15(
   ThemeMode theme = ThemeMode.light,
   double echelleTexte = 1,
   bool miseEnPage = true,
+  bool ecranComplet = false,
   Widget Function(Widget vue)? enrober,
 }) async {
   fixerVueCapture(tester, taille, 1);
   await tester.pumpWidget(
     hoteCapture(
-      Scaffold(
-        body: SizedBox(
-          height: taille.height,
-          child: (enrober ?? (Widget v) => v)(const VuePageMushaf()),
-        ),
-      ),
-      surcharges: surchargesMadina15(page: page, miseEnPage: miseEnPage),
+      ecranComplet
+          ? const MushafPage()
+          : Scaffold(
+              body: SizedBox(
+                height: taille.height,
+                child: (enrober ?? (Widget v) => v)(const VuePageMushaf()),
+              ),
+            ),
+      surcharges: <Override>[
+        ...surchargesMadina15(page: page, miseEnPage: miseEnPage),
+        if (ecranComplet)
+          portNavigationCoranProvider.overrideWithValue(FauxNavigationCoran()),
+      ],
       themeMode: theme,
       echelleTexte: echelleTexte,
       interfaceMode: InterfaceMode.standard,

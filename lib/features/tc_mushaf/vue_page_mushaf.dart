@@ -197,6 +197,16 @@ class OuvertureMushaf extends ConsumerWidget {
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints contraintes) {
+        // MUSHAF-15L : la page de Medine n'est ni dans une carte ni dans une
+        // zone defilante. Elle occupe toute la place entre l'en-tete et la
+        // barre de navigation, avec une gouttiere fine, comme dans les
+        // applications de mushaf : le corps du texte est calcule pour que les
+        // quinze lignes remplissent la hauteur et la largeur.
+        if (planche != null &&
+            planche.pages.every((PageMushafVM p) => p.estMadina15) &&
+            contraintes.hasBoundedHeight) {
+          return _OuvertureMadina15(planche: planche, contraintes: contraintes);
+        }
         final double utile = math.max(0, contraintes.maxWidth - gouttiere * 2);
         final bool deuxCadres = planche?.estDouble ?? numeroGauche != null;
         final double largeurCadre = deuxCadres
@@ -257,6 +267,57 @@ class OuvertureMushaf extends ConsumerWidget {
       return null;
     }
     return PlancheMushafVM.doublePage(droite: droite, gauche: gauche);
+  }
+}
+
+/// Une ouverture du Mushaf de Medine : une page seule, ou deux pages en
+/// vis-a-vis (grand ecran), chacune remplissant la hauteur disponible.
+class _OuvertureMadina15 extends StatelessWidget {
+  const _OuvertureMadina15({required this.planche, required this.contraintes});
+
+  final PlancheMushafVM planche;
+  final BoxConstraints contraintes;
+
+  @override
+  Widget build(BuildContext context) {
+    // Une gouttiere fine : la page est la matiere de l'ecran.
+    const double gouttiere = AppSpacing.xs;
+    final int n = planche.pages.length;
+    final double ecart = n > 1 ? AppSpacing.md : 0;
+    final double largeurPage = math.max(
+      0,
+      (contraintes.maxWidth - 2 * gouttiere - ecart * (n - 1)) / n,
+    );
+    final double hauteur = math.max(0, contraintes.maxHeight - 2 * gouttiere);
+    return Padding(
+      padding: const EdgeInsets.all(gouttiere),
+      child: Semantics(
+        label: planche.estDouble
+            ? t.tc.coran.mushaf.ouverture(
+                droite: planche.droite.numero,
+                gauche: planche.gauche!.numero,
+              )
+            : null,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            for (final PageMushafVM page in planche.pages) ...<Widget>[
+              if (page != planche.droite) SizedBox(width: ecart),
+              Semantics(
+                label: page.cote == CoteDePage.droite
+                    ? t.tc.coran.mushaf.coteDroite
+                    : t.tc.coran.mushaf.coteGauche,
+                child: PageMadina15(
+                  vue: page,
+                  largeur: largeurPage,
+                  hauteur: hauteur,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
   }
 }
 

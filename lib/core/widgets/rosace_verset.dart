@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_color_pair.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_typography.dart';
@@ -22,7 +23,12 @@ import '../theme/app_typography.dart';
 /// la reference dans son etiquette.
 class RosaceVerset extends StatelessWidget {
   /// Cree la rosace d'un numero de verset.
-  const RosaceVerset({required this.numero, super.key, this.echelle = 1});
+  const RosaceVerset({
+    required this.numero,
+    super.key,
+    this.echelle = 1,
+    this.encre,
+  });
 
   /// Le rang du verset dans sa sourate.
   final int numero;
@@ -32,6 +38,11 @@ class RosaceVerset extends StatelessWidget {
   /// Une rosace de taille fixe au milieu d'un texte grossi deux fois se
   /// verrait comme une coquille, et briserait la ligne de base.
   final double echelle;
+
+  /// L'encre du cercle et du chiffre, quand la page en choisit une autre que
+  /// celle des reperes (la rosace du Mushaf de Medine prend l'encre d'accent) ;
+  /// par defaut, les jetons de repere.
+  final AppInkColor? encre;
 
   /// Les chiffres arabo-indiens, de zero a neuf.
   static const List<String> _chiffres = <String>[
@@ -71,12 +82,14 @@ class RosaceVerset extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs / 2),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.fromBorderSide(palette.borderResting.asBorderSide()),
+        border: Border.fromBorderSide(
+          (encre ?? palette.borderResting).asBorderSide(),
+        ),
       ),
       child: Text(
         enChiffresArabes(numero),
         textAlign: TextAlign.center,
-        style: palette.inkMuted.applyTo(
+        style: (encre ?? palette.inkMuted).applyTo(
           AppTypography.document(taille: 12 * echelle, interligne: 1.1),
         ),
       ),

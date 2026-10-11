@@ -169,33 +169,39 @@ void main() {
       expect(avec - sans, 4);
     });
 
-    testWidgets('sombre : le papier est celui de la palette', (
-      WidgetTester tester,
-    ) async {
-      await monterPageMadina15(
-        tester,
-        page: 50,
-        taille: const Size(390, 844),
-        theme: ThemeMode.dark,
-      );
-      final AppPalette palette = AppPalette.of(
-        tester.element(find.byType(PageMadina15)),
-      );
-      final bool papier = tester
-          .widgetList<DecoratedBox>(find.byType(DecoratedBox))
-          .any(
-            (DecoratedBox d) =>
-                d.decoration is BoxDecoration &&
-                (d.decoration as BoxDecoration).color ==
-                    palette.surfaceQuran.background,
-          );
-      expect(papier, isTrue);
-      // Le texte prend l'encre du papier.
-      final RenderParagraph mot = tester.renderObject<RenderParagraph>(
-        find.descendant(of: _ligne(5), matching: find.byType(RichText)).first,
-      );
-      expect(mot.text.style?.color, palette.surfaceQuran.onBackground);
-    });
+    for (final ThemeMode theme in <ThemeMode>[
+      ThemeMode.light,
+      ThemeMode.dark,
+    ]) {
+      testWidgets('${theme.name} : le fond est la surface de l\'application', (
+        WidgetTester tester,
+      ) async {
+        await monterPageMadina15(
+          tester,
+          page: 50,
+          taille: const Size(390, 844),
+          theme: theme,
+        );
+        final AppPalette palette = AppPalette.of(
+          tester.element(find.byType(PageMadina15)),
+        );
+        // Ni parchemin ni brun : la surface de l'application, et son encre.
+        final ColoredBox fond = tester.widget<ColoredBox>(
+          find
+              .descendant(
+                of: find.byType(PageMadina15),
+                matching: find.byType(ColoredBox),
+              )
+              .first,
+        );
+        expect(fond.color, palette.surfaceCanvas.background);
+        expect(fond.color, isNot(palette.surfaceQuran.background));
+        final RenderParagraph mot = tester.renderObject<RenderParagraph>(
+          find.descendant(of: _ligne(5), matching: find.byType(RichText)).first,
+        );
+        expect(mot.text.style?.color, palette.surfaceCanvas.onBackground);
+      });
+    }
   });
 
   group('formats et accessibilite', () {

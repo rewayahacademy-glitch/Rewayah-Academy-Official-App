@@ -8,6 +8,8 @@ import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_coran/etat_lecture_coran.dart';
+import '../../core/tc_coran/layout_lignes_indisponible.dart';
+import '../../core/tc_coran/layout_madina_15.dart';
 import '../../core/tc_coran/moteur_mushaf.dart';
 import '../../core/tc_coran/navigation_coran.dart';
 import '../../core/tc_coran/page_mushaf_vm.dart';
@@ -191,7 +193,14 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
       pageMushafProvider(etat.page),
     );
     final PageMushafVM? vue = page.hasValue ? page.value : null;
-    final bool compact = MushafPage.texteAgrandi(context);
+    // MUSHAF-15L : la page de Medine prend toute la place que l'en-tete et les
+    // commandes lui laissent ; sur telephone, ils prennent leur forme serree
+    // (celle du texte agrandi) pour lui en laisser le plus, et le fond est la
+    // surface de l'application, pas le parchemin du registre.
+    final bool madina15 = ref.watch(portLayoutMushafProvider) is LayoutMadina15;
+    final bool compact =
+        MushafPage.texteAgrandi(context) ||
+        (madina15 && !AppGabarit.de(context).estLarge);
     final Widget commandes = _Commandes(
       key: MushafPage.commandesKey,
       compact: compact,
@@ -214,6 +223,7 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
 
     return PageImmersive(
       registre: RegistreImmersif.lecture,
+      surface: madina15 ? AppPalette.of(context).surfaceCanvas : null,
       // CORAN-320-1 : a texte agrandi, l'en-tete passe dans le contenu, sous
       // une marge serree, au lieu de la marge de l'emplacement d'en-tete.
       entete: compact
