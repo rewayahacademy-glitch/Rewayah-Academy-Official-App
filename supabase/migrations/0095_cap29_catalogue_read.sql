@@ -28,12 +28,9 @@ for each row execute function public.cap29_bump_library_resource_revision();
 create index library_resource_admin_search_trgm_idx
   on public.library_resource
   using gin (
-    concat_ws(
-      ' ',
-      lower(title),
-      lower(short_title),
-      lower(coalesce(edition, '')),
-      lower(category)
+    (
+      lower(title) || ' ' || lower(coalesce(short_title, '')) || ' ' ||
+      lower(coalesce(edition, '')) || ' ' || lower(category)
     ) extensions.gin_trgm_ops
   );
 

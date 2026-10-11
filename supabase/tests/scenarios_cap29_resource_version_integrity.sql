@@ -220,6 +220,10 @@ end;
 $$;
 
 -- Withdrawal archives the resource and clears its current pointer atomically.
+-- Previous fixture checks switched constraint triggers back to IMMEDIATE;
+-- defer them again so both sides of the pointer transition are validated at the
+-- transaction boundary, after the old published version is archived too.
+set constraints all deferred;
 update public.library_resource
    set archived_at = now(), current_version_id = null
  where id = 'c29a0000-0000-0000-0000-000000000001';

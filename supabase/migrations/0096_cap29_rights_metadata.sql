@@ -62,11 +62,6 @@ CREATE TABLE public.library_version_rights (
 ALTER TABLE public.library_version_rights ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON TABLE public.library_version_rights
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
-GRANT SELECT ON TABLE public.library_version_rights TO authenticated;
-CREATE POLICY library_version_rights_admin_read
-  ON public.library_version_rights
-  FOR SELECT TO authenticated
-  USING (public.app_role() = 'admin' AND public.app_account_valid());
 
 CREATE OR REPLACE FUNCTION public.cap29_guard_resource_version()
 RETURNS trigger

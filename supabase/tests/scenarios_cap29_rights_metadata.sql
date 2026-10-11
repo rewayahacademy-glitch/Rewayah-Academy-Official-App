@@ -12,6 +12,13 @@ BEGIN
              WHERE oid = 'public.library_version_rights'::regclass) THEN
     RAISE EXCEPTION 'CAP29: RLS missing on rights metadata';
   END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_index i
+    WHERE i.indexrelid = 'public.library_resource_admin_search_trgm_idx'::regclass
+      AND i.indisvalid
+  ) THEN
+    RAISE EXCEPTION 'CAP29: immutable catalogue search index missing/invalid';
+  END IF;
   IF has_table_privilege('anon', 'private.library_rights_proofs', 'SELECT')
      OR has_table_privilege('authenticated', 'private.library_rights_proofs', 'SELECT')
      OR has_table_privilege('service_role', 'private.library_rights_proofs', 'SELECT')
