@@ -46,15 +46,6 @@ abstract final class Env {
   static bool get mushaf15LActif =>
       mushaf15L || galerieActive || playgroundActif;
 
-  /// Le cadre ornemental de la page du Mushaf de Medine : `A` (filet double et
-  /// ornements de coin), `B` (bandeau d'ornements) ou `C` (ornement en haut et
-  /// en bas). Choisi par `--dart-define=MUSHAF_15L_CADRE=B` ; `A` par defaut.
-  /// Le choix du directeur n'est pas fait : le drapeau le garde ouvert.
-  static const String mushaf15LCadre = String.fromEnvironment(
-    'MUSHAF_15L_CADRE',
-    defaultValue: 'A',
-  );
-
   /// Active le raccourci de connexion par courriel fictif, sans Supabase
   /// (`SessionControleur.ouvrirDemo`).
   ///

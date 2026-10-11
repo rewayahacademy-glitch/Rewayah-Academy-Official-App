@@ -22,7 +22,6 @@ void main() {
     await chargerPoliceMadina15();
   });
   setUp(masquerRubanDebug);
-  tearDown(() => StyleCadreMushaf.surcharge = null);
 
   group('l\'ornement vient des fichiers du directeur', () {
     String lire(String dossier, String nom) =>
@@ -73,42 +72,25 @@ void main() {
     });
   });
 
-  group('le drapeau choisit le cadre', () {
-    test('A, B, C, sans egard a la casse ; A par defaut', () {
-      expect(StyleCadreMushaf.depuisCode('A'), StyleCadreMushaf.a);
-      expect(StyleCadreMushaf.depuisCode('b'), StyleCadreMushaf.b);
-      expect(StyleCadreMushaf.depuisCode(' C '), StyleCadreMushaf.c);
-      expect(StyleCadreMushaf.depuisCode(''), StyleCadreMushaf.a);
-      expect(StyleCadreMushaf.depuisCode('Z'), StyleCadreMushaf.a);
-      expect(StyleCadreMushaf.courant, StyleCadreMushaf.a);
+  group('un seul cadre : un ornement en haut et en bas', () {
+    test('le cadre ne prend pas plus de 4 % de la hauteur', () {
+      const GeometrieCadreMushaf g = GeometrieCadreMushaf(hauteurPage: 700);
+      expect(g.hauteurPrise / 700, lessThanOrEqualTo(0.04 + 1e-9));
     });
 
-    test('le cadre ne prend pas plus de 4 % de la hauteur', () {
-      for (final StyleCadreMushaf s in StyleCadreMushaf.values) {
-        final GeometrieCadreMushaf g = GeometrieCadreMushaf(
-          style: s,
-          hauteurPage: 700,
-        );
-        expect(g.hauteurPrise / 700, lessThanOrEqualTo(0.04 + 1e-9));
-      }
-      expect(
-        const GeometrieCadreMushaf(
-          style: StyleCadreMushaf.c,
-          hauteurPage: 700,
-        ).lateral,
-        0,
-        reason: 'C n\'a pas de bords',
-      );
+    test('plus de drapeau de choix, plus de styles A et B', () {
+      final String env = File('lib/core/config/env.dart').readAsStringSync();
+      expect(env, isNot(contains('MUSHAF_15L_CADRE')));
+      final String cadre = File('lib/features/tc_mushaf/cadre_ornement.dart')
+          .readAsStringSync();
+      expect(cadre, isNot(contains('StyleCadreMushaf')));
     });
   });
 
   group('la page remplit la place, avec un cadre dans la marge', () {
-    for (final StyleCadreMushaf style in StyleCadreMushaf.values) {
+    {
       for (final int page in <int>[1, 2, 50, 544, 604]) {
-        testWidgets('${style.name.toUpperCase()} page $page 390x700', (
-          WidgetTester tester,
-        ) async {
-          StyleCadreMushaf.surcharge = style;
+        testWidgets('page $page 390x700', (WidgetTester tester) async {
           await monterPageMadina15(
             tester,
             page: page,

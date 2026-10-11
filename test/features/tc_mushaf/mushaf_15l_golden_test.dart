@@ -11,7 +11,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rewayah_academy/features/tc_mushaf/cadre_ornement.dart';
 
 import '../../capture/outil_capture.dart';
 import '../../support/mushaf_15l.dart';
@@ -57,21 +56,18 @@ void main() {
       }
     }
 
-    // Les trois propositions de cadre : la page 544 a 390 points, claire et
-    // sombre, et la page 1 (version riche du bandeau B).
-    tearDown(() => StyleCadreMushaf.surcharge = null);
-    for (final StyleCadreMushaf style in StyleCadreMushaf.values) {
-      final String lettre = style.name.toUpperCase();
+    // Le cadre : la page 544 a 390 points, claire et
+    // sombre, et la page 1.
+    {
       for (final (int page, ThemeMode theme) in <(int, ThemeMode)>[
         (544, ThemeMode.light),
         (544, ThemeMode.dark),
-        if (style == StyleCadreMushaf.b) (1, ThemeMode.light),
+        (1, ThemeMode.light),
       ]) {
         final String sombre = theme == ThemeMode.dark ? 'sombre' : 'clair';
-        testWidgets('cadre $lettre page $page 390 $sombre', (
+        testWidgets('cadre page $page 390 $sombre', (
           WidgetTester tester,
         ) async {
-          StyleCadreMushaf.surcharge = style;
           await monterPageMadina15(
             tester,
             page: page,
@@ -82,7 +78,7 @@ void main() {
           await expectLater(
             find.byKey(cadreCapture),
             matchesGoldenFile(
-              'goldens/mushaf_15l/cadre_${lettre}_p${page}_390_$sombre.png',
+              'goldens/mushaf_15l/cadre_C_p${page}_390_$sombre.png',
             ),
           );
         });

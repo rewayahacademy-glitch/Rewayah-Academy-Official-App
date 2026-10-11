@@ -228,7 +228,6 @@ class PageMadina15 extends StatefulWidget {
     required this.vue,
     required this.largeur,
     this.hauteur,
-    this.cadre,
     this.versetsSurlignes = const <String>{},
     super.key,
   });
@@ -241,9 +240,6 @@ class PageMadina15 extends StatefulWidget {
 
   /// La hauteur de la place, ou `null` pour la hauteur naturelle de la page.
   final double? hauteur;
-
-  /// Le style du cadre ; par defaut, celui du drapeau `MUSHAF_15L_CADRE`.
-  final StyleCadreMushaf? cadre;
 
   /// Les versets surlignes, au format `sourate:rang`.
   final Set<String> versetsSurlignes;
@@ -304,16 +300,14 @@ class _EtatPageMadina15 extends State<PageMadina15> {
 
     // Le cadre vit dans la marge : sa bande du haut et du bas fait 2 % de la
     // hauteur de la page chacune.
-    final StyleCadreMushaf style = widget.cadre ?? StyleCadreMushaf.courant;
-    final bool riche = style == StyleCadreMushaf.b && vue.numero <= 2;
     final double hauteurDePlace =
         widget.hauteur ?? widget.largeur * _ratioHauteurNaturelle;
     final GeometrieCadreMushaf cadre = GeometrieCadreMushaf(
-      style: style,
       hauteurPage: hauteurDePlace,
     );
     final double bande = cadre.epaisseur;
-    final double lateral = cadre.lateral;
+    // Pas de bords lateraux : le cadre n'est qu'en haut et en bas.
+    const double lateral = 0;
 
     // L'echelle : la largeur la fixe, sauf si la hauteur tient moins bien. Le
     // texte demande la hauteur de ses lignes (huit seulement pour les pages 1
@@ -364,11 +358,7 @@ class _EtatPageMadina15 extends State<PageMadina15> {
         children: <Widget>[
           Positioned.fill(
             child: ExcludeSemantics(
-              child: CadreMushaf(
-                geometrie: cadre,
-                couleur: violet,
-                riche: riche,
-              ),
+              child: CadreMushaf(geometrie: cadre, couleur: violet),
             ),
           ),
           Padding(
@@ -385,15 +375,10 @@ class _EtatPageMadina15 extends State<PageMadina15> {
                 ExcludeSemantics(
                   child: SizedBox(
                     height: corps * _hauteurEntete,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: riche ? bande * 0.4 : 0,
-                      ),
-                      child: _EntetePage(
-                        vue: vue,
-                        echelle: echelle,
-                        palette: palette,
-                      ),
+                    child: _EntetePage(
+                      vue: vue,
+                      echelle: echelle,
+                      palette: palette,
                     ),
                   ),
                 ),
@@ -413,7 +398,6 @@ class _EtatPageMadina15 extends State<PageMadina15> {
                                 numero: l.sourate!,
                                 echelle: echelle,
                                 palette: palette,
-                                style: style,
                                 couleur: violet,
                               ),
                               TypeLigneMushaf.basmala => _LigneBasmala(
@@ -608,14 +592,12 @@ class _CadreSourate extends StatelessWidget {
     required this.numero,
     required this.echelle,
     required this.palette,
-    required this.style,
     required this.couleur,
   });
 
   final int numero;
   final double echelle;
   final AppPalette palette;
-  final StyleCadreMushaf style;
   final Color couleur;
 
   @override
@@ -626,16 +608,13 @@ class _CadreSourate extends StatelessWidget {
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints contraintes) {
           final double reserve = FiletsCartoucheMushaf.reserve(
-            style,
             contraintes.maxHeight,
           );
           return DecoratedBox(
             decoration: BoxDecoration(color: palette.washAccent.background),
             child: Stack(
               children: <Widget>[
-                Positioned.fill(
-                  child: FiletsCartoucheMushaf(style: style, couleur: couleur),
-                ),
+                Positioned.fill(child: FiletsCartoucheMushaf(couleur: couleur)),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: reserve),
                   child: Center(
@@ -772,9 +751,9 @@ class _NumeroPage extends StatelessWidget {
     child: RosaceVerset(
       numero: numero,
       encre: palette.inkAccent,
-      // Un cinquieme de moins que le pied : la rosace ne touche ni le texte ni
+      // Trois dixiemes de moins que le pied : la rosace ne touche ni le texte ni
       // le bandeau du cadre.
-      echelle: hauteur * 0.8 / AppSpacing.xl,
+      echelle: hauteur * 0.7 / AppSpacing.xl,
     ),
   );
 }
