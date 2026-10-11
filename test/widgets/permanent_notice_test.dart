@@ -83,9 +83,7 @@ void main() {
       expect(d.color, isNot(palette.pointsStatut.alerte.debugValue));
     });
 
-    testWidgets('m22 : l arabe dit la visite sans le mot enregistre', (
-      WidgetTester tester,
-    ) async {
+    test('m22 : l arabe dit la visite sans le mot enregistre', () async {
       await LocaleSettings.setLocale(AppLocale.ar);
       addTearDown(() => LocaleSettings.setLocale(AppLocale.fr));
       expect(t.salle.bandeauPermanent, 'قد تجري زيارة مراقبة.');
