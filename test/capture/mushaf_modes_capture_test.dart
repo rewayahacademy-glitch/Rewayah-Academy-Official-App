@@ -1,6 +1,7 @@
 // MUSHAF-MODES : captures des modes « Lecture agrandie » et « Focus » avec la
-// mise en page de Medine : 1440 clair et sombre (100 % et zoom maximal), 390
-// clair. Page 293. Saute sans CAPTURE_DIR. Sortie de preuve :
+// mise en page de Medine : 1440 et 390, clair et sombre, a 100 % et au zoom
+// maximal, plus la variante sans la police (texte Tanzil simple, police arabe de
+// l'application). Page 293. Saute sans CAPTURE_DIR. Sortie de preuve :
 // docs/current/captures/MUSHAF-15L/modes/ (les `avant_*` sont ceux de
 // claude/mushaf-15l-captures).
 
@@ -19,69 +20,50 @@ void main() {
     });
     setUp(masquerRubanDebug);
 
-    final List<(String, ModeRenduCoran, Size, double, ThemeMode)>
-    cas = <(String, ModeRenduCoran, Size, double, ThemeMode)>[
-      for (final ThemeMode theme in ThemeMode.values.skip(
-        1,
-      )) ...<(String, ModeRenduCoran, Size, double, ThemeMode)>[
-        (
-          'agrandie_1440_100_${theme == ThemeMode.light ? 'clair' : 'sombre'}',
-          ModeRenduCoran.versetAgrandi,
-          const Size(1440, 900),
-          1,
-          theme,
-        ),
-        (
-          'agrandie_1440_max_${theme == ThemeMode.light ? 'clair' : 'sombre'}',
-          ModeRenduCoran.versetAgrandi,
-          const Size(1440, 900),
-          4,
-          theme,
-        ),
-        (
-          'focus_1440_${theme == ThemeMode.light ? 'clair' : 'sombre'}',
-          ModeRenduCoran.focus,
-          const Size(1440, 900),
-          1,
-          theme,
-        ),
-      ],
-      (
-        'agrandie_390_100_clair',
-        ModeRenduCoran.versetAgrandi,
-        const Size(390, 844),
-        1,
-        ThemeMode.light,
-      ),
-      (
-        'focus_390_clair',
-        ModeRenduCoran.focus,
-        const Size(390, 844),
-        1,
-        ThemeMode.light,
-      ),
-    ];
-    for (final (
-          String nom,
-          ModeRenduCoran mode,
-          Size taille,
-          double zoom,
-          ThemeMode theme,
-        )
-        in cas) {
-      testWidgets(nom, (WidgetTester tester) async {
-        await monterPageMadina15(
-          tester,
-          page: 293,
-          taille: taille,
-          mode: mode,
-          zoom: zoom,
-          theme: theme,
-          ecranComplet: true,
-        );
-        expect(tester.takeException(), isNull);
-        debugPrint('PNG ${await capturer(tester, 'apres_$nom')}');
-      });
+    for (final (String nomMode, ModeRenduCoran mode)
+        in <(String, ModeRenduCoran)>[
+          ('agrandie', ModeRenduCoran.versetAgrandi),
+          ('focus', ModeRenduCoran.focus),
+        ]) {
+      for (final (String nomTaille, Size taille) in <(String, Size)>[
+        ('1440', const Size(1440, 900)),
+        ('390', const Size(390, 844)),
+      ]) {
+        for (final (String nomZoom, double zoom) in <(String, double)>[
+          ('100', 1),
+          ('max', 4),
+        ]) {
+          for (final (String nomTheme, ThemeMode theme)
+              in <(String, ThemeMode)>[
+                ('clair', ThemeMode.light),
+                ('sombre', ThemeMode.dark),
+              ]) {
+            for (final bool police in <bool>[true, false]) {
+              // La variante sans police : clair, 100 % seulement.
+              if (!police && (nomTheme != 'clair' || nomZoom != 'max'))
+                continue;
+              final String nom =
+                  'apres_${nomMode}_${nomTaille}_${nomZoom}_$nomTheme'
+                  '${police ? '' : '_sans_police'}';
+              testWidgets(nom, (WidgetTester tester) async {
+                await monterPageMadina15(
+                  tester,
+                  page: 293,
+                  taille: taille,
+                  mode: mode,
+                  zoom: zoom,
+                  theme: theme,
+                  tanzilSimple: true,
+                  policeMushaf: police,
+                  ecranComplet: true,
+                );
+                expect(tester.takeException(), isNull);
+                debugPrint('PNG ${await capturer(tester, nom)}');
+              });
+            }
+          }
+        }
+      }
     }
   });
 }

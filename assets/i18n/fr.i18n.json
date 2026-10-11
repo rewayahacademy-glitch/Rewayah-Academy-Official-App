@@ -6027,7 +6027,9 @@
         "mushaf": "Page du mushaf",
         "verset": "Lecture agrandie",
         "focus": "Focus",
-        "choisir": "Mode de lecture"
+        "choisir": "Mode de lecture",
+        "versets": "v. {debut} à {fin}",
+        "versetsEntre": "{debut} à {fin}"
       },
       "mushaf": {
         "coteDroite": "Page de droite",

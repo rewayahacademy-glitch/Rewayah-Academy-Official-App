@@ -8,8 +8,6 @@ import '../../core/icons/app_icons.dart';
 import '../../core/tc_bibliotheque/content_position.dart';
 import '../../core/tc_bibliotheque/content_range.dart';
 import '../../core/tc_coran/etat_lecture_coran.dart';
-import '../../core/tc_coran/layout_lignes_indisponible.dart';
-import '../../core/tc_coran/layout_madina_15.dart';
 import '../../core/tc_coran/metrique_texte_coran.dart';
 import '../../core/tc_coran/moteur_mushaf.dart';
 import '../../core/tc_coran/page_mushaf_vm.dart';
@@ -19,6 +17,8 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/rosace_verset.dart';
+import 'police_mushaf.dart';
+import 'texte_continu_mushaf.dart';
 import 'textes_lecteur_coran.dart';
 
 /// Le rendu « lecture agrandie » : un verset a la fois, reflowable.
@@ -58,12 +58,57 @@ class VueVersetAgrandi extends ConsumerWidget {
       return _EtatNonLisible(vue: vue);
     }
 
+    // MUSHAF-MODES : avec la mise en page de Medine, les versets se suivent en
+    // texte continu, la rosace en ligne. Le texte KFGQPC va avec UthmanicHafs,
+    // et seulement avec elle ; sans la police, le texte Tanzil simple.
+    if (vue.estMadina15) {
+      return ColonneContinueDeLaPage(
+        vue: vue,
+        zoom: etat.zoomLocal,
+        selectionnable: pageFeuilletee == null,
+      );
+    }
     return ColonneVersetsReflow(
       versets: vue.versets,
       zoom: etat.zoomLocal,
       sections: vue.sections,
-      policeMushaf: ref.watch(portLayoutMushafProvider) is LayoutMadina15,
-      selectionnable: pageFeuilletee == null,
+    );
+  }
+}
+
+/// La page de Medine en texte continu : choisit le texte selon la police.
+class ColonneContinueDeLaPage extends ConsumerWidget {
+  /// Cree la colonne.
+  const ColonneContinueDeLaPage({
+    required this.vue,
+    required this.zoom,
+    this.surlignes = const <String>{},
+    this.selectionnable = true,
+    super.key,
+  });
+
+  /// La page.
+  final PageMushafVM vue;
+
+  /// Le grossissement local.
+  final double zoom;
+
+  /// Les references a surligner (focus).
+  final Set<String> surlignes;
+
+  /// Faux dans un feuilletage tactile.
+  final bool selectionnable;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool police =
+        ref.watch(policeMushafDisponibleProvider).value ?? false;
+    return ColonneContinueMushaf(
+      versets: police ? versetsKfgqpc(vue) : versetsTanzil(vue),
+      zoom: zoom,
+      policeKfgqpc: police,
+      surlignes: surlignes,
+      selectionnable: selectionnable,
     );
   }
 }
@@ -110,19 +155,8 @@ class ColonneVersetsReflow extends StatelessWidget {
     required this.versets,
     required this.zoom,
     this.sections = const <SectionSourate>[],
-    this.policeMushaf = false,
-    this.selectionnable = true,
     super.key,
   });
-
-  /// Faux : le texte n'est pas selectionnable. Dans un feuilletage tactile
-  /// (MUSHAF-MODES), la zone de selection garde le geste horizontal et
-  /// l'empeche de tourner la page : on choisit de tourner.
-  final bool selectionnable;
-
-  /// Vrai : le texte est en UthmanicHafs, la police de la page du Mushaf de
-  /// Medine, avec la police des documents en repli (MUSHAF-MODES).
-  final bool policeMushaf;
 
   /// Les versets a rendre, dans l'ordre du texte.
   final List<VersetCoran> versets;
@@ -155,7 +189,6 @@ class ColonneVersetsReflow extends StatelessWidget {
                 verset: verset,
                 metrique: metrique,
                 debutDeSourate: _commenceUneSourate(verset),
-                policeMushaf: policeMushaf,
               ),
               const SizedBox(height: AppSpacing.xxl),
             ],
@@ -170,7 +203,7 @@ class ColonneVersetsReflow extends StatelessWidget {
           child: Center(
             child: SizedBox(
               width: metrique.largeurColonne,
-              child: selectionnable ? SelectionArea(child: colonne) : colonne,
+              child: SelectionArea(child: colonne),
             ),
           ),
         );
@@ -198,12 +231,8 @@ class BlocVerset extends StatelessWidget {
     required this.verset,
     required this.metrique,
     this.debutDeSourate = false,
-    this.policeMushaf = false,
     super.key,
   });
-
-  /// Vrai : UthmanicHafs, avec la police des documents en repli.
-  final bool policeMushaf;
 
   /// Le verset a rendre.
   final VersetCoran verset;
@@ -251,15 +280,10 @@ class BlocVerset extends StatelessWidget {
             ),
             textAlign: TextAlign.justify,
             style: palette.inkStrong.applyTo(
-              policeMushaf
-                  ? AppTypography.mushaf15L(
-                      taille: metrique.tailleTexte,
-                      interligne: metrique.interligne,
-                    )
-                  : AppTypography.document(
-                      taille: metrique.tailleTexte,
-                      interligne: metrique.interligne,
-                    ),
+              AppTypography.document(
+                taille: metrique.tailleTexte,
+                interligne: metrique.interligne,
+              ),
             ),
           ),
         ),

@@ -22413,6 +22413,12 @@ class Traductions$tc$coran$modes$fr {
 
 	/// fr: 'Mode de lecture'
 	String get choisir => 'Mode de lecture';
+
+	/// fr: 'v. {debut} à {fin}'
+	String versets({required Object debut, required Object fin}) => 'v. ${debut} à ${fin}';
+
+	/// fr: '{debut} à {fin}'
+	String versetsEntre({required Object debut, required Object fin}) => '${debut} à ${fin}';
 }
 
 // Path: tc.coran.mushaf
@@ -36057,6 +36063,8 @@ extension on Traductions {
 			'tc.coran.modes.verset' => 'Lecture agrandie',
 			'tc.coran.modes.focus' => 'Focus',
 			'tc.coran.modes.choisir' => 'Mode de lecture',
+			'tc.coran.modes.versets' => ({required Object debut, required Object fin}) => 'v. ${debut} à ${fin}',
+			'tc.coran.modes.versetsEntre' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'tc.coran.mushaf.coteDroite' => 'Page de droite',
 			'tc.coran.mushaf.coteGauche' => 'Page de gauche',
 			'tc.coran.mushaf.ouverture' => ({required Object droite, required Object gauche}) => 'Ouverture, pages ${droite} et ${gauche}',
@@ -36169,10 +36177,10 @@ extension on Traductions {
 			'tc.classe.action.noter' => 'Noter',
 			'tc.classe.action.signaler' => 'Signaler un besoin',
 			'tc.classe.action.contexte' => 'Ouvrir le contexte',
-			'tc.classe.rappel.recu' => 'Le professeur vous appelle',
-			'tc.classe.rappel.echec' => 'Le rappel n\'a pas pu être envoyé',
 			_ => null,
 		} ?? switch (path) {
+			'tc.classe.rappel.recu' => 'Le professeur vous appelle',
+			'tc.classe.rappel.echec' => 'Le rappel n\'a pas pu être envoyé',
 			'tc.classe.rappel.echecDroit' => 'Votre accès à cette séance ne permet pas d\'appeler un élève',
 			'tc.classe.rappel.cooldown' => ({required Object secondes}) => 'Déjà appelé. À nouveau dans ${secondes} s',
 			'tc.classe.recitation.titre' => 'Récitation',
@@ -36683,10 +36691,10 @@ extension on Traductions {
 			'adulte.sortie.retirerLui' => 'Retirer mon conjoint',
 			'adulte.sortie.retirerQuestionElle' => 'Retirer ma conjointe ?',
 			'adulte.sortie.retirerQuestionLui' => 'Retirer mon conjoint ?',
-			'adulte.sortie.retirerConsequence' => 'Son compte, ses cours, son historique et son solde ne seront pas supprimés.',
-			'adulte.sortie.placePhrase' => ({required Object prenom}) => '${prenom} fait partie de votre forfait famille, avec son propre compte.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.sortie.retirerConsequence' => 'Son compte, ses cours, son historique et son solde ne seront pas supprimés.',
+			'adulte.sortie.placePhrase' => ({required Object prenom}) => '${prenom} fait partie de votre forfait famille, avec son propre compte.',
 			'adulte.sortie.quitter' => 'Quitter le forfait famille',
 			'adulte.sortie.quitterQuestion' => 'Quitter le forfait famille ?',
 			'adulte.sortie.quitterConfirmer' => 'Quitter le forfait',
@@ -37197,10 +37205,10 @@ extension on Traductions {
 			'com.socle.lexique.messagesMetier' => 'Messages métier',
 			'com.socle.lexique.communaute' => 'Communauté enseignants',
 			'com.socle.lexique.studio' => 'Le Studio',
-			'com.socle.lexique.aujourdhui' => 'Aujourd\'hui',
-			'com.socle.lexique.notifications' => 'Notifications',
 			_ => null,
 		} ?? switch (path) {
+			'com.socle.lexique.aujourdhui' => 'Aujourd\'hui',
+			'com.socle.lexique.notifications' => 'Notifications',
 			'com.socle.lexique.annonce' => 'Annonce',
 			'com.socle.lexique.publication' => 'Publication',
 			'com.socle.lexique.reponse' => 'Réponse',
@@ -37711,10 +37719,10 @@ extension on Traductions {
 			'com.studio.recherche.canaux' => 'Canaux',
 			'com.studio.recherche.messages' => 'Messages',
 			'com.studio.recherche.fichiers' => 'Fichiers',
-			'com.studio.recherche.dansCanal' => ({required Object canal}) => 'Dans ${canal}',
-			'com.studio.recherche.messageDe' => ({required Object auteur, required Object canal}) => '${auteur}, dans ${canal}',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.recherche.dansCanal' => ({required Object canal}) => 'Dans ${canal}',
+			'com.studio.recherche.messageDe' => ({required Object auteur, required Object canal}) => '${auteur}, dans ${canal}',
 			'com.studio.demo.focus' => 'Un canal en mode focus',
 			'com.studio.demo.aujourdhuiVide' => 'Aujourd\'hui sans activité',
 			'com.studio.demo.horsDemo' => ({required Object module}) => 'Dans l\'application, cette ligne ouvre ${module}. La démonstration reste sur cette page.',
@@ -38225,10 +38233,10 @@ extension on Traductions {
 			'comptable.paiements.confirmation.plafond' => 'Délégation restante',
 			'comptable.paiements.confirmation.exclusTitre' => 'Exclus de ce lot : ils ne partiront pas',
 			'comptable.paiements.confirmation.aucunPretTitre' => 'Aucun paiement prêt',
-			'comptable.paiements.confirmation.aucunPret' => 'Rien ne partira. Ouvrez chaque paiement exclu pour lever sa raison, puis relancez le contrôle.',
-			'comptable.paiements.confirmation.erreursTitre' => 'Erreurs rendues par le contrôle',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.paiements.confirmation.aucunPret' => 'Rien ne partira. Ouvrez chaque paiement exclu pour lever sa raison, puis relancez le contrôle.',
+			'comptable.paiements.confirmation.erreursTitre' => 'Erreurs rendues par le contrôle',
 			'comptable.paiements.confirmation.confirmerUn' => ({required Object montant}) => 'Confirmer le paiement de ${montant}',
 			'comptable.paiements.confirmation.confirmerLot' => ({required num n, required Object montants}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Confirmer le paiement prêt de ${montants}', other: 'Confirmer les ${n} paiements prêts : ${montants}', ), 
 			'comptable.paiements.confirmation.demanderValidation' => 'Demander validation',
@@ -38739,10 +38747,10 @@ extension on Traductions {
 			'comptable.validation.motifs.coordonnees' => 'Coordonnées du bénéficiaire à vérifier',
 			'comptable.validation.motifs.montant' => 'Montant à vérifier à la source',
 			'comptable.validation.motifs.justificatif' => 'Justificatif manquant ou illisible',
-			'comptable.validation.motifs.reserve' => 'Hors de la politique de la Réserve',
-			'comptable.validation.motifs.reporter' => 'À reporter au prochain cycle',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.validation.motifs.reserve' => 'Hors de la politique de la Réserve',
+			'comptable.validation.motifs.reporter' => 'À reporter au prochain cycle',
 			'comptable.validation.motifs.autre' => 'Autre',
 			'comptable.validation.motifAutreChamp' => 'Précisez le motif',
 			'comptable.validation.erreurMotif' => 'Choisissez un motif pour refuser.',

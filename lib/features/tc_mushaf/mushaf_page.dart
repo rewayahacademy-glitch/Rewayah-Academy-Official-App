@@ -508,6 +508,24 @@ class _FeuilletageDesModesEtat extends State<FeuilletageDesModes> {
   }
 }
 
+/// La plage de versets de la page, pour l'en-tete (« v. 105 à 107 », ou
+/// « 17:105 à 18:3 » quand la page change de sourate) ; `null` sans versets.
+String? plageVersets(PageMushafVM? vue) {
+  final List<VersetCoran> versets = vue?.versets ?? const <VersetCoran>[];
+  if (versets.isEmpty) return null;
+  final VersetCoran premier = versets.first;
+  final VersetCoran dernier = versets.last;
+  return premier.sourateNumero == dernier.sourateNumero
+      ? t.tc.coran.modes.versets(
+          debut: '${premier.numero}',
+          fin: '${dernier.numero}',
+        )
+      : t.tc.coran.modes.versetsEntre(
+          debut: premier.reference,
+          fin: dernier.reference,
+        );
+}
+
 /// La ligne de contexte : ou l'on est, et dans quel rendu.
 ///
 /// Elle reste visible, et ce n'est pas une entorse au mode immersif : ce sont
@@ -560,6 +578,9 @@ class _Entete extends ConsumerWidget {
             ),
             if (vue?.juzNumero != null)
               t.eleve.coran.juz(juz: '${vue!.juzNumero}'),
+            // Les rendus a versets : la reference passe ici, plus devant
+            // chaque verset (MUSHAF-MODES).
+            if (mode != ModeRenduCoran.mushaf) ?plageVersets(vue),
           ].join(' . '),
           style: palette.inkMuted.applyTo(
             AppTypography.tabulaire(textes.bodySmall ?? const TextStyle()),
@@ -661,7 +682,8 @@ class _EnteteCompactEtat extends State<_EnteteCompact> {
                           TextSpan(
                             text:
                                 ' . '
-                                '${t.eleve.coran.juz(juz: '${vue!.juzNumero}')}',
+                                '${t.eleve.coran.juz(juz: '${vue!.juzNumero}')}'
+                                '${plageVersets(vue) == null ? '' : ' . ${plageVersets(vue)}'}',
                             style: palette.inkMuted.applyTo(
                               AppTypography.tabulaire(
                                 textes.bodySmall ?? const TextStyle(),

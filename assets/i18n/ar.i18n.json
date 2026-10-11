@@ -2414,7 +2414,9 @@
         "mushaf": "صفحة المصحف",
         "verset": "قراءة مكبَّرة",
         "focus": "التركيز",
-        "choisir": "طريقة القراءة"
+        "choisir": "طريقة القراءة",
+        "versets": "الآيات \u2068{debut}\u2069 إلى \u2068{fin}\u2069",
+        "versetsEntre": "\u2068{debut}\u2069 إلى \u2068{fin}\u2069"
       },
       "mushaf": {
         "coteDroite": "الصفحة اليمنى",

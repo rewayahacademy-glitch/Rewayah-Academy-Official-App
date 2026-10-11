@@ -4464,5 +4464,7 @@
   "recherche.contexte.personneParIdentifiant": "etape RECH-D2/RECH-D4 (spec RECH-03 V3 §3, §7.2 : familles, eleves, identifiant RA exact, finance, fils et canaux) : fiche du tableau, voie RECH, lot RECH-FIN demande par l'orchestrateur 019TSYR4",
   "recherche.contexte.personneParIdentifiantClasse(param=classe)": "etape RECH-D2/RECH-D4 (spec RECH-03 V3 §3, §7.2 : familles, eleves, identifiant RA exact, finance, fils et canaux) : fiche du tableau, voie RECH, lot RECH-FIN demande par l'orchestrateur 019TSYR4",
   "recherche.contexte.canalStudio": "etape RECH-D2/RECH-D4 (spec RECH-03 V3 §3, §7.2 : familles, eleves, identifiant RA exact, finance, fils et canaux) : fiche du tableau, voie RECH, lot RECH-FIN demande par l'orchestrateur 019TSYR4",
-  "recherche.contexte.encaissement(param=famille)": "etape RECH-D2/RECH-D4 (spec RECH-03 V3 §3, §7.2 : familles, eleves, identifiant RA exact, finance, fils et canaux) : fiche du tableau, voie RECH, lot RECH-FIN demande par l'orchestrateur 019TSYR4"
+  "recherche.contexte.encaissement(param=famille)": "etape RECH-D2/RECH-D4 (spec RECH-03 V3 §3, §7.2 : familles, eleves, identifiant RA exact, finance, fils et canaux) : fiche du tableau, voie RECH, lot RECH-FIN demande par l'orchestrateur 019TSYR4",
+  "tc.coran.modes.versets": "MUSHAF-MODES (retour du directeur du 11/10/2026) : la reference sourate:verset passe dans l'en-tete des rendus lecture agrandie et focus, les versets se suivent en texte continu",
+  "tc.coran.modes.versetsEntre": "MUSHAF-MODES (retour du directeur du 11/10/2026) : la reference sourate:verset passe dans l'en-tete des rendus lecture agrandie et focus, les versets se suivent en texte continu"
 }

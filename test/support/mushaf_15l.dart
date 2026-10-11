@@ -7,9 +7,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' show Ref;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/content_range.dart';
 import 'package:rewayah_academy/core/tc_coran/corpus_service_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/donnees/layout_madina_15.g.dart';
 import 'package:rewayah_academy/core/tc_coran/etat_lecture_coran.dart';
@@ -20,6 +22,7 @@ import 'package:rewayah_academy/core/tc_coran/page_mushaf_vm.dart';
 import 'package:rewayah_academy/core/tc_coran/port_corpus_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/port_layout_mushaf.dart';
 import 'package:rewayah_academy/features/tc_mushaf/mushaf_page.dart';
+import 'package:rewayah_academy/features/tc_mushaf/police_mushaf.dart';
 import 'package:rewayah_academy/features/tc_mushaf/vue_page_mushaf.dart';
 
 import '../capture/outil_capture.dart';
@@ -43,11 +46,20 @@ Future<void> chargerPoliceMadina15() async {
 /// ceux que la mise en page y pose. Le texte est celui de l'edition, pas celui
 /// de Tanzil : il ne sert qu'aux tests.
 class CorpusDepuisLayout implements PortCorpusCoran {
-  /// Cree le corpus sur [source].
-  CorpusDepuisLayout(this.source);
+  /// Cree le corpus sur [source]. Avec [tanzilSimple], le texte perd les signes
+  /// propres a l'ecriture uthmanie du KFGQPC (waqf, petites lettres) : il
+  /// figure le texte Tanzil simple de la base, distinct du texte des lignes.
+  CorpusDepuisLayout(this.source, {this.tanzilSimple = false});
 
   /// La source des lignes.
   final LayoutMadina15 source;
+
+  /// Vrai : le texte des versets est le texte Tanzil simple.
+  final bool tanzilSimple;
+
+  static final RegExp _signesKfgqpc = RegExp(
+    '[\u06D6-\u06DC\u06DE\u06E9\u08D3-\u08FF\u0670]',
+  );
 
   @override
   Future<List<SourateVM>> sourates() async => <SourateVM>[
@@ -87,7 +99,9 @@ class CorpusDepuisLayout implements PortCorpusCoran {
           VersetCorpus(
             sourate: int.parse(cle.split(':')[0]),
             numero: int.parse(cle.split(':')[1]),
-            texte: textes[cle].toString(),
+            texte: tanzilSimple
+                ? textes[cle].toString().replaceAll(_signesKfgqpc, '')
+                : textes[cle].toString(),
             pageNumero: numeroPage,
           ),
       ],
@@ -110,15 +124,29 @@ class CorpusDepuisLayout implements PortCorpusCoran {
 }
 
 class _LecteurALaPage extends ControleurLectureCoran {
-  _LecteurALaPage(this.page, this.mode, this.zoom);
+  _LecteurALaPage(this.page, this.mode, this.zoom, this.plage);
 
   final int page;
   final ModeRenduCoran mode;
   final double zoom;
+  final ContentRange? plage;
 
   @override
-  EtatLectureCoran build() =>
-      EtatLectureCoran.ouverture(page: page, zoom: zoom).versMode(mode);
+  EtatLectureCoran build() {
+    final EtatLectureCoran base = EtatLectureCoran.ouverture(
+      page: page,
+      zoom: zoom,
+    ).versMode(mode);
+    return plage == null
+        ? base
+        : EtatLectureCoran(
+            page: base.page,
+            mode: base.mode,
+            zoomLocal: base.zoomLocal,
+            origine: base.origine,
+            plageFocus: plage,
+          );
+  }
 }
 
 /// Les surcharges qui posent la mise en page de Medine et un corpus complet,
@@ -128,14 +156,24 @@ List<Override> surchargesMadina15({
   bool miseEnPage = true,
   ModeRenduCoran mode = ModeRenduCoran.mushaf,
   double zoom = 1,
+  bool tanzilSimple = false,
+  bool policeMushaf = true,
+  ContentRange? plageFocus,
 }) {
   final LayoutMadina15 source = LayoutMadina15();
   return <Override>[
     portLayoutMushafProvider.overrideWithValue(
       miseEnPage ? source : const LayoutLignesIndisponible(),
     ),
-    portCorpusCoranProvider.overrideWithValue(CorpusDepuisLayout(source)),
-    lectureCoranProvider.overrideWith(() => _LecteurALaPage(page, mode, zoom)),
+    portCorpusCoranProvider.overrideWithValue(
+      CorpusDepuisLayout(source, tanzilSimple: tanzilSimple),
+    ),
+    policeMushafDisponibleProvider.overrideWith(
+      (Ref ref) async => policeMushaf,
+    ),
+    lectureCoranProvider.overrideWith(
+      () => _LecteurALaPage(page, mode, zoom, plageFocus),
+    ),
   ];
 }
 
@@ -149,6 +187,9 @@ Future<void> monterPageMadina15(
   bool miseEnPage = true,
   ModeRenduCoran mode = ModeRenduCoran.mushaf,
   double zoom = 1,
+  bool tanzilSimple = false,
+  bool policeMushaf = true,
+  ContentRange? plageFocus,
   bool ecranComplet = false,
   Widget Function(Widget vue)? enrober,
 }) async {
@@ -169,6 +210,9 @@ Future<void> monterPageMadina15(
           miseEnPage: miseEnPage,
           mode: mode,
           zoom: zoom,
+          tanzilSimple: tanzilSimple,
+          policeMushaf: policeMushaf,
+          plageFocus: plageFocus,
         ),
         if (ecranComplet)
           portNavigationCoranProvider.overrideWithValue(FauxNavigationCoran()),

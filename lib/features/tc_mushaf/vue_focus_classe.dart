@@ -6,8 +6,6 @@ import '../../core/coran/vue_lecteur.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_coran/etat_lecture_coran.dart';
-import '../../core/tc_coran/layout_lignes_indisponible.dart';
-import '../../core/tc_coran/layout_madina_15.dart';
 import '../../core/tc_coran/moteur_mushaf.dart';
 import '../../core/tc_coran/page_mushaf_vm.dart';
 import '../../core/widgets/empty_state.dart';
@@ -67,18 +65,28 @@ class VueFocusClasse extends ConsumerWidget {
       etat.plageFocus,
     );
 
+    // MUSHAF-MODES : meme rendu que la lecture agrandie (texte continu, rosace
+    // en ligne), plus le surlignage discret de la plage que l'enseignant
+    // designe ; hors classe, la page ouverte en entier, sans phrase d'aide.
+    if (vue.estMadina15) {
+      return ColonneContinueDeLaPage(
+        vue: vue,
+        zoom: etat.zoomLocal,
+        surlignes: <String>{
+          if (retenus.length < vue.versets.length)
+            for (final VersetCoran v in retenus) v.reference,
+        },
+        selectionnable: pageFeuilletee == null,
+      );
+    }
     // Le passage retenu occupe le centre de l'ecran : c'est la seule difference
     // visible entre focus et lecture agrandie, et c'est celle qui compte quand
-    // un enseignant dit « regardez ici ». Hors classe, aucune plage n'est
-    // designee : la page ouverte est centree, sans phrase d'aide
-    // (MUSHAF-MODES).
+    // un enseignant dit « regardez ici ».
     return Center(
       child: ColonneVersetsReflow(
         versets: retenus,
         zoom: etat.zoomLocal,
         sections: vue.sections,
-        policeMushaf: ref.watch(portLayoutMushafProvider) is LayoutMadina15,
-        selectionnable: pageFeuilletee == null,
       ),
     );
   }
