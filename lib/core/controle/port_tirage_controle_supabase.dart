@@ -214,4 +214,24 @@ class PortTirageControleSupabase implements PortTirageControle {
       totalSansFiltre: _int(json['total_sans_filtre'], 'total_sans_filtre'),
     );
   }
+
+  @override
+  Future<void> declarerConflit(
+    String missionId, {
+    required String cleConflit,
+  }) async {
+    final Map<String, dynamic> result = _object(
+      await _client.rpc(
+        'declarer_conflit_mission',
+        params: {'p_mission_id': missionId, 'p_cle': cleConflit},
+      ),
+      'declarer_conflit_mission',
+    );
+    _throwServerError(result);
+    if (_string(result['statut'], 'statut') != 'conflit_declare') {
+      throw const FormatException(
+        'declarer_conflit_mission: statut de confirmation inattendu',
+      );
+    }
+  }
 }

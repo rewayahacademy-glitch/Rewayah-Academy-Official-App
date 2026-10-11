@@ -370,6 +370,13 @@ abstract interface class PortTirageControle {
     required int page,
     required int taille,
   });
+
+  /// Signale un conflit sur une mission attribuee. [cleConflit] doit rester
+  /// stable lors des reprises de la meme commande; le serveur est idempotent.
+  Future<void> declarerConflit(
+    String missionId, {
+    required String cleConflit,
+  });
 }
 
 /// L'identifiant de la dependance serveur, pour la trace et les tests
