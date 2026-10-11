@@ -182,6 +182,15 @@ INSERT INTO public.groupes (id, teacher_id, type_public, seuil_max, libelle, wee
 INSERT INTO public.groupe_membres (groupe_id, student_id) VALUES
   ('c2a2a000-2000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000004'),
   ('c2a2a000-2000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000002');
+INSERT INTO public.library_resource
+  (id, title, short_title, resource_type, access_policy, offline_policy) VALUES
+  ('c2a2b000-2000-0000-0000-000000000001', 'Codex2 resource', 'Codex2', 'quran', 'publique', 'jamais');
+INSERT INTO public.library_resource_groupe (resource_id, groupe_id, ajoutee_par) VALUES
+  ('c2a2b000-2000-0000-0000-000000000001', 'c2a2a000-2000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000005'),
+  ('c2a2b000-2000-0000-0000-000000000001', 'c2a2a000-2000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000006');
+INSERT INTO public.library_reading_position (profile_id, resource_id, type_ancrage, page) VALUES
+  ('c2a20000-0000-0000-0000-000000000004', 'c2a2b000-2000-0000-0000-000000000001', 'page', 2),
+  ('c2a20000-0000-0000-0000-000000000002', 'c2a2b000-2000-0000-0000-000000000001', 'page', 3);
 INSERT INTO public.student_reading_position
   (student_profile_id, mushaf_id, page_mushaf, sourate, verset)
 SELECT sp.profile_id, m.id, 2, 2, 1
@@ -238,6 +247,19 @@ INSERT INTO public.matching_requests (kind, subject_profile_id, reason, requeste
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at) VALUES
   ('c2a2e000-1000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000005', '2026-10-12 10:00:00+00', '2026-10-12 11:00:00+00'),
   ('c2a2e000-1000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000006', '2026-10-13 11:00:00+00', '2026-10-13 12:00:00+00');
+INSERT INTO public.annotation_layer (id, resource_id, session_id, auteur_profile_id, portee) VALUES
+  ('c2a2c000-2000-0000-0000-000000000001', 'c2a2b000-2000-0000-0000-000000000001', 'c2a2e000-1000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000005', 'seance'),
+  ('c2a2c000-2000-0000-0000-000000000002', 'c2a2b000-2000-0000-0000-000000000001', 'c2a2e000-1000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000006', 'seance');
+INSERT INTO public.annotation_trait (layer_id, ancrage, points, outil) VALUES
+  ('c2a2c000-2000-0000-0000-000000000001', '{"page":2}', '[{"x":1,"y":2}]', 'stylet'),
+  ('c2a2c000-2000-0000-0000-000000000002', '{"page":3}', '[{"x":3,"y":4}]', 'stylet');
+INSERT INTO public.annotation_marqueur (layer_id, plage, intention) VALUES
+  ('c2a2c000-2000-0000-0000-000000000001', '{"start":1,"end":2}', 'learn'),
+  ('c2a2c000-2000-0000-0000-000000000002', '{"start":3,"end":4}', 'review');
+INSERT INTO public.guardian_session_visit
+  (session_id, groupe_id, observateur_profile_id, role, enfant_profile_id, visit_number, policy_version) VALUES
+  ('c2a2e000-1000-0000-0000-000000000001', 'c2a2a000-2000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000001', 'guardian_observer', 'c2a20000-0000-0000-0000-000000000004', 1, 'codex2-v1'),
+  ('c2a2e000-1000-0000-0000-000000000002', 'c2a2a000-2000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000002', 'student', 'c2a20000-0000-0000-0000-000000000002', 1, 'codex2-v1');
 INSERT INTO public.session_video_route (session_id, provider, ws_url, room_name) VALUES
   ('c2a2e000-1000-0000-0000-000000000001', 'cloud', 'wss://a.example.invalid', 'codex2-room-a'),
   ('c2a2e000-1000-0000-0000-000000000002', 'cloud', 'wss://b.example.invalid', 'codex2-room-b');
@@ -1001,6 +1023,131 @@ BEGIN
    WHERE student_id = 'c2a20000-0000-0000-0000-000000000002';
   GET DIAGNOSTICS v_rows = ROW_COUNT;
   IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-CONCERN-WRITE: teacher A updated concern B'; END IF;
+  RESET ROLE;
+END $$;
+
+-- La progression de lecture dans la bibliotheque appartient au profil lui-meme.
+DO $$
+DECLARE v_count integer; v_rows integer;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000004', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"student","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.library_reading_position
+   WHERE profile_id = 'c2a20000-0000-0000-0000-000000000004';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-LIBRARY-POSITION: student A cannot read own progress'; END IF;
+  SELECT count(*) INTO v_count FROM public.library_reading_position
+   WHERE profile_id = 'c2a20000-0000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-LIBRARY-POSITION-READ: student A sees B progress'; END IF;
+  UPDATE public.library_reading_position SET page = page
+   WHERE profile_id = 'c2a20000-0000-0000-0000-000000000004';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-LIBRARY-POSITION-WRITE: student A cannot update own progress'; END IF;
+  UPDATE public.library_reading_position SET page = page
+   WHERE profile_id = 'c2a20000-0000-0000-0000-000000000002';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-LIBRARY-POSITION-WRITE: student A updated B progress'; END IF;
+  RESET ROLE;
+END $$;
+
+-- Une ressource affectee ne suit que le groupe A, pour son enseignant et son foyer.
+DO $$
+DECLARE v_count integer; v_rows integer;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000005', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"teacher","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.library_resource_groupe WHERE groupe_id = 'c2a2a000-2000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-LIBRARY-GROUP: teacher A cannot read own resource assignment'; END IF;
+  SELECT count(*) INTO v_count FROM public.library_resource_groupe WHERE groupe_id = 'c2a2a000-2000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-LIBRARY-GROUP-READ: teacher A sees B resource assignment'; END IF;
+  UPDATE public.library_resource_groupe SET epinglee = epinglee WHERE groupe_id = 'c2a2a000-2000-0000-0000-000000000002';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-LIBRARY-GROUP-WRITE: teacher A changed B assignment'; END IF;
+  RESET ROLE;
+
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.library_resource_groupe WHERE groupe_id = 'c2a2a000-2000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-FAMILY-LIBRARY-GROUP: household A cannot read assigned resource'; END IF;
+  SELECT count(*) INTO v_count FROM public.library_resource_groupe WHERE groupe_id = 'c2a2a000-2000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-FAMILY-LIBRARY-GROUP: household A sees B assignment'; END IF;
+  RESET ROLE;
+END $$;
+
+-- Les visites d'observation ne sont lisibles que par leur observateur.
+DO $$
+DECLARE v_count integer; v_rows integer;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.guardian_session_visit
+   WHERE observateur_profile_id = 'c2a20000-0000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-GUARDIAN-VISIT: guardian A cannot read own visit'; END IF;
+  SELECT count(*) INTO v_count FROM public.guardian_session_visit
+   WHERE observateur_profile_id = 'c2a20000-0000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-GUARDIAN-VISIT-READ: guardian A sees B visit'; END IF;
+  UPDATE public.guardian_session_visit SET left_at = now()
+   WHERE observateur_profile_id = 'c2a20000-0000-0000-0000-000000000002';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-GUARDIAN-VISIT-WRITE: guardian A updated B visit'; END IF;
+  RESET ROLE;
+END $$;
+
+-- Les couches d'annotation et leurs enfants sont accessibles a leur auteur,
+-- jamais a l'enseignant d'un autre foyer/seance.
+DO $$
+DECLARE v_count integer; v_rows integer; v_denied boolean;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000005', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"teacher","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.annotation_layer WHERE id = 'c2a2c000-2000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-ANNOTATION-LAYER: teacher A cannot read own layer'; END IF;
+  SELECT count(*) INTO v_count FROM public.annotation_layer WHERE id = 'c2a2c000-2000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-ANNOTATION-LAYER: teacher A sees layer B'; END IF;
+  UPDATE public.annotation_layer SET maj_le = maj_le WHERE id = 'c2a2c000-2000-0000-0000-000000000001';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-ANNOTATION-LAYER-WRITE: teacher A cannot update own layer'; END IF;
+  UPDATE public.annotation_layer SET maj_le = maj_le WHERE id = 'c2a2c000-2000-0000-0000-000000000002';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-ANNOTATION-LAYER-WRITE: teacher A updated layer B'; END IF;
+
+  SELECT count(*) INTO v_count FROM public.annotation_trait WHERE layer_id = 'c2a2c000-2000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-ANNOTATION-TRAIT: teacher A cannot read own trait'; END IF;
+  SELECT count(*) INTO v_count FROM public.annotation_trait WHERE layer_id = 'c2a2c000-2000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-ANNOTATION-TRAIT-READ: teacher A sees trait B'; END IF;
+  INSERT INTO public.annotation_trait (layer_id, ancrage, points, outil)
+  VALUES ('c2a2c000-2000-0000-0000-000000000001', '{"page":2}', '[{"x":5,"y":6}]', 'stylet');
+  v_denied := false;
+  BEGIN
+    INSERT INTO public.annotation_trait (layer_id, ancrage, points, outil)
+    VALUES ('c2a2c000-2000-0000-0000-000000000002', '{"page":3}', '[{"x":7,"y":8}]', 'stylet');
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-ANNOTATION-TRAIT-WRITE: teacher A wrote trait B'; END IF;
+  UPDATE public.annotation_trait SET points = points WHERE layer_id = 'c2a2c000-2000-0000-0000-000000000002';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-ANNOTATION-TRAIT-UPDATE: teacher A updated trait B'; END IF;
+
+  SELECT count(*) INTO v_count FROM public.annotation_marqueur WHERE layer_id = 'c2a2c000-2000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-ANNOTATION-MARKER: teacher A cannot read own marker'; END IF;
+  SELECT count(*) INTO v_count FROM public.annotation_marqueur WHERE layer_id = 'c2a2c000-2000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-ANNOTATION-MARKER-READ: teacher A sees marker B'; END IF;
+  INSERT INTO public.annotation_marqueur (layer_id, plage, intention)
+  VALUES ('c2a2c000-2000-0000-0000-000000000001', '{"start":5,"end":6}', 'review');
+  v_denied := false;
+  BEGIN
+    INSERT INTO public.annotation_marqueur (layer_id, plage, intention)
+    VALUES ('c2a2c000-2000-0000-0000-000000000002', '{"start":7,"end":8}', 'review');
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-ANNOTATION-MARKER-WRITE: teacher A wrote marker B'; END IF;
+  UPDATE public.annotation_marqueur SET plage = plage WHERE layer_id = 'c2a2c000-2000-0000-0000-000000000002';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-ANNOTATION-MARKER-UPDATE: teacher A updated marker B'; END IF;
   RESET ROLE;
 END $$;
 
